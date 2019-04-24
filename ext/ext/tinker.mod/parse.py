@@ -353,7 +353,7 @@ def parse_line_1(line):
     type_aspects = ''.join(part1.split(' '))
     symbol_aspects = ''.join(part2.split(' '))
 
-    # prase type_aspects
+    # parse type_aspects
     type_array = split_by_comma_outside_parentheses(type_aspects)
     this_type = ''
     for x in type_array:

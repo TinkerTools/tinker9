@@ -1,0 +1,38 @@
+#ifndef TINKER_MOD_VALFIT_HH_
+#define TINKER_MOD_VALFIT_HH_
+
+#include "util/macro.h"
+
+TINKER_NAMESPACE_BEGIN namespace valfit {
+extern int& fit_bond;
+extern int& fit_angle;
+extern int& fit_strbnd;
+extern int& fit_urey;
+extern int& fit_opbend;
+extern int& fit_tors;
+extern int& fit_struct;
+extern int& fit_force;
+
+#ifdef TINKER_MOD_CPP_
+extern "C" int m_tinker_mod(valfit, fit_bond);
+extern "C" int m_tinker_mod(valfit, fit_angle);
+extern "C" int m_tinker_mod(valfit, fit_strbnd);
+extern "C" int m_tinker_mod(valfit, fit_urey);
+extern "C" int m_tinker_mod(valfit, fit_opbend);
+extern "C" int m_tinker_mod(valfit, fit_tors);
+extern "C" int m_tinker_mod(valfit, fit_struct);
+extern "C" int m_tinker_mod(valfit, fit_force);
+
+int& fit_bond = m_tinker_mod(valfit, fit_bond);
+int& fit_angle = m_tinker_mod(valfit, fit_angle);
+int& fit_strbnd = m_tinker_mod(valfit, fit_strbnd);
+int& fit_urey = m_tinker_mod(valfit, fit_urey);
+int& fit_opbend = m_tinker_mod(valfit, fit_opbend);
+int& fit_tors = m_tinker_mod(valfit, fit_tors);
+int& fit_struct = m_tinker_mod(valfit, fit_struct);
+int& fit_force = m_tinker_mod(valfit, fit_force);
+#endif
+
+} TINKER_NAMESPACE_END
+
+#endif
