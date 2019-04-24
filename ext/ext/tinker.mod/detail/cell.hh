@@ -14,23 +14,23 @@ extern double& ycell2;
 extern double& zcell2;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(cell, ncell);
-extern "C" int* m_tinker_mod(cell, icell);
-extern "C" double m_tinker_mod(cell, xcell);
-extern "C" double m_tinker_mod(cell, ycell);
-extern "C" double m_tinker_mod(cell, zcell);
-extern "C" double m_tinker_mod(cell, xcell2);
-extern "C" double m_tinker_mod(cell, ycell2);
-extern "C" double m_tinker_mod(cell, zcell2);
+extern "C" int TINKER_MOD(cell, ncell);
+extern "C" int* TINKER_MOD(cell, icell);
+extern "C" double TINKER_MOD(cell, xcell);
+extern "C" double TINKER_MOD(cell, ycell);
+extern "C" double TINKER_MOD(cell, zcell);
+extern "C" double TINKER_MOD(cell, xcell2);
+extern "C" double TINKER_MOD(cell, ycell2);
+extern "C" double TINKER_MOD(cell, zcell2);
 
-int& ncell = m_tinker_mod(cell, ncell);
-int*& icell = m_tinker_mod(cell, icell);
-double& xcell = m_tinker_mod(cell, xcell);
-double& ycell = m_tinker_mod(cell, ycell);
-double& zcell = m_tinker_mod(cell, zcell);
-double& xcell2 = m_tinker_mod(cell, xcell2);
-double& ycell2 = m_tinker_mod(cell, ycell2);
-double& zcell2 = m_tinker_mod(cell, zcell2);
+int& ncell = TINKER_MOD(cell, ncell);
+int*& icell = TINKER_MOD(cell, icell);
+double& xcell = TINKER_MOD(cell, xcell);
+double& ycell = TINKER_MOD(cell, ycell);
+double& zcell = TINKER_MOD(cell, zcell);
+double& xcell2 = TINKER_MOD(cell, xcell2);
+double& ycell2 = TINKER_MOD(cell, ycell2);
+double& zcell2 = TINKER_MOD(cell, zcell2);
 #endif
 
 } TINKER_NAMESPACE_END

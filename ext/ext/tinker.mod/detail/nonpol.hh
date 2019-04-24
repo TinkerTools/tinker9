@@ -21,25 +21,25 @@ extern double*& rdisp;
 extern double*& cdisp;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(nonpol, solvprs);
-extern "C" double m_tinker_mod(nonpol, surften);
-extern "C" double m_tinker_mod(nonpol, spcut);
-extern "C" double m_tinker_mod(nonpol, spoff);
-extern "C" double m_tinker_mod(nonpol, stcut);
-extern "C" double m_tinker_mod(nonpol, stoff);
-extern "C" double* m_tinker_mod(nonpol, rcav);
-extern "C" double* m_tinker_mod(nonpol, rdisp);
-extern "C" double* m_tinker_mod(nonpol, cdisp);
+extern "C" double TINKER_MOD(nonpol, solvprs);
+extern "C" double TINKER_MOD(nonpol, surften);
+extern "C" double TINKER_MOD(nonpol, spcut);
+extern "C" double TINKER_MOD(nonpol, spoff);
+extern "C" double TINKER_MOD(nonpol, stcut);
+extern "C" double TINKER_MOD(nonpol, stoff);
+extern "C" double* TINKER_MOD(nonpol, rcav);
+extern "C" double* TINKER_MOD(nonpol, rdisp);
+extern "C" double* TINKER_MOD(nonpol, cdisp);
 
-double& solvprs = m_tinker_mod(nonpol, solvprs);
-double& surften = m_tinker_mod(nonpol, surften);
-double& spcut = m_tinker_mod(nonpol, spcut);
-double& spoff = m_tinker_mod(nonpol, spoff);
-double& stcut = m_tinker_mod(nonpol, stcut);
-double& stoff = m_tinker_mod(nonpol, stoff);
-double*& rcav = m_tinker_mod(nonpol, rcav);
-double*& rdisp = m_tinker_mod(nonpol, rdisp);
-double*& cdisp = m_tinker_mod(nonpol, cdisp);
+double& solvprs = TINKER_MOD(nonpol, solvprs);
+double& surften = TINKER_MOD(nonpol, surften);
+double& spcut = TINKER_MOD(nonpol, spcut);
+double& spoff = TINKER_MOD(nonpol, spoff);
+double& stcut = TINKER_MOD(nonpol, stcut);
+double& stoff = TINKER_MOD(nonpol, stoff);
+double*& rcav = TINKER_MOD(nonpol, rcav);
+double*& rdisp = TINKER_MOD(nonpol, rdisp);
+double*& cdisp = TINKER_MOD(nonpol, cdisp);
 #endif
 
 } TINKER_NAMESPACE_END

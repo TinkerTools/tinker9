@@ -16,27 +16,27 @@ extern double*& apaux;
 extern int& use_ielscf;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(ielscf, nfree_aux);
-extern "C" double m_tinker_mod(ielscf, tautemp_aux);
-extern "C" double m_tinker_mod(ielscf, kelvin_aux);
-extern "C" double* m_tinker_mod(ielscf, uaux);
-extern "C" double* m_tinker_mod(ielscf, upaux);
-extern "C" double* m_tinker_mod(ielscf, vaux);
-extern "C" double* m_tinker_mod(ielscf, vpaux);
-extern "C" double* m_tinker_mod(ielscf, aaux);
-extern "C" double* m_tinker_mod(ielscf, apaux);
-extern "C" int m_tinker_mod(ielscf, use_ielscf);
+extern "C" int TINKER_MOD(ielscf, nfree_aux);
+extern "C" double TINKER_MOD(ielscf, tautemp_aux);
+extern "C" double TINKER_MOD(ielscf, kelvin_aux);
+extern "C" double* TINKER_MOD(ielscf, uaux);
+extern "C" double* TINKER_MOD(ielscf, upaux);
+extern "C" double* TINKER_MOD(ielscf, vaux);
+extern "C" double* TINKER_MOD(ielscf, vpaux);
+extern "C" double* TINKER_MOD(ielscf, aaux);
+extern "C" double* TINKER_MOD(ielscf, apaux);
+extern "C" int TINKER_MOD(ielscf, use_ielscf);
 
-int& nfree_aux = m_tinker_mod(ielscf, nfree_aux);
-double& tautemp_aux = m_tinker_mod(ielscf, tautemp_aux);
-double& kelvin_aux = m_tinker_mod(ielscf, kelvin_aux);
-double*& uaux = m_tinker_mod(ielscf, uaux);
-double*& upaux = m_tinker_mod(ielscf, upaux);
-double*& vaux = m_tinker_mod(ielscf, vaux);
-double*& vpaux = m_tinker_mod(ielscf, vpaux);
-double*& aaux = m_tinker_mod(ielscf, aaux);
-double*& apaux = m_tinker_mod(ielscf, apaux);
-int& use_ielscf = m_tinker_mod(ielscf, use_ielscf);
+int& nfree_aux = TINKER_MOD(ielscf, nfree_aux);
+double& tautemp_aux = TINKER_MOD(ielscf, tautemp_aux);
+double& kelvin_aux = TINKER_MOD(ielscf, kelvin_aux);
+double*& uaux = TINKER_MOD(ielscf, uaux);
+double*& upaux = TINKER_MOD(ielscf, upaux);
+double*& vaux = TINKER_MOD(ielscf, vaux);
+double*& vpaux = TINKER_MOD(ielscf, vpaux);
+double*& aaux = TINKER_MOD(ielscf, aaux);
+double*& apaux = TINKER_MOD(ielscf, apaux);
+int& use_ielscf = TINKER_MOD(ielscf, use_ielscf);
 #endif
 
 } TINKER_NAMESPACE_END

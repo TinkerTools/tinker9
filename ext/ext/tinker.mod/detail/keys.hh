@@ -9,11 +9,11 @@ extern int& nkey;
 extern char (&keyline)[maxkey][240];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(keys, nkey);
-extern "C" char m_tinker_mod(keys, keyline)[maxkey][240];
+extern "C" int TINKER_MOD(keys, nkey);
+extern "C" char TINKER_MOD(keys, keyline)[maxkey][240];
 
-int& nkey = m_tinker_mod(keys, nkey);
-char (&keyline)[maxkey][240] = m_tinker_mod(keys, keyline);
+int& nkey = TINKER_MOD(keys, nkey);
+char (&keyline)[maxkey][240] = TINKER_MOD(keys, keyline);
 #endif
 
 } TINKER_NAMESPACE_END

@@ -8,11 +8,11 @@ extern double& twall;
 extern double& tcpu;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(chrono, twall);
-extern "C" double m_tinker_mod(chrono, tcpu);
+extern "C" double TINKER_MOD(chrono, twall);
+extern "C" double TINKER_MOD(chrono, tcpu);
 
-double& twall = m_tinker_mod(chrono, twall);
-double& tcpu = m_tinker_mod(chrono, tcpu);
+double& twall = TINKER_MOD(chrono, twall);
+double& tcpu = TINKER_MOD(chrono, tcpu);
 #endif
 
 } TINKER_NAMESPACE_END

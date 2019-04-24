@@ -9,13 +9,13 @@ extern double (&b1)[13][40];
 extern double (&b2)[13][40];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(rxnfld, ijk)[6][6][6];
-extern "C" double m_tinker_mod(rxnfld, b1)[13][40];
-extern "C" double m_tinker_mod(rxnfld, b2)[13][40];
+extern "C" int TINKER_MOD(rxnfld, ijk)[6][6][6];
+extern "C" double TINKER_MOD(rxnfld, b1)[13][40];
+extern "C" double TINKER_MOD(rxnfld, b2)[13][40];
 
-int (&ijk)[6][6][6] = m_tinker_mod(rxnfld, ijk);
-double (&b1)[13][40] = m_tinker_mod(rxnfld, b1);
-double (&b2)[13][40] = m_tinker_mod(rxnfld, b2);
+int (&ijk)[6][6][6] = TINKER_MOD(rxnfld, ijk);
+double (&b1)[13][40] = TINKER_MOD(rxnfld, b1);
+double (&b2)[13][40] = TINKER_MOD(rxnfld, b2);
 #endif
 
 } TINKER_NAMESPACE_END

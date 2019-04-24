@@ -8,11 +8,11 @@ extern double*& dspsix;
 extern double*& dspdmp;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double* m_tinker_mod(kdsp, dspsix);
-extern "C" double* m_tinker_mod(kdsp, dspdmp);
+extern "C" double* TINKER_MOD(kdsp, dspsix);
+extern "C" double* TINKER_MOD(kdsp, dspdmp);
 
-double*& dspsix = m_tinker_mod(kdsp, dspsix);
-double*& dspdmp = m_tinker_mod(kdsp, dspdmp);
+double*& dspsix = TINKER_MOD(kdsp, dspsix);
+double*& dspdmp = TINKER_MOD(kdsp, dspdmp);
 #endif
 
 } TINKER_NAMESPACE_END

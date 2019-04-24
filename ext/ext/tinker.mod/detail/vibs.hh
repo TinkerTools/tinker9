@@ -9,13 +9,13 @@ extern double*& phik;
 extern double*& pwork;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double* m_tinker_mod(vibs, phi);
-extern "C" double* m_tinker_mod(vibs, phik);
-extern "C" double* m_tinker_mod(vibs, pwork);
+extern "C" double* TINKER_MOD(vibs, phi);
+extern "C" double* TINKER_MOD(vibs, phik);
+extern "C" double* TINKER_MOD(vibs, pwork);
 
-double*& phi = m_tinker_mod(vibs, phi);
-double*& phik = m_tinker_mod(vibs, phik);
-double*& pwork = m_tinker_mod(vibs, pwork);
+double*& phi = TINKER_MOD(vibs, phi);
+double*& phik = TINKER_MOD(vibs, phik);
+double*& pwork = TINKER_MOD(vibs, pwork);
 #endif
 
 } TINKER_NAMESPACE_END

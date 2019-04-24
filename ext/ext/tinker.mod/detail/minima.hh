@@ -10,15 +10,15 @@ extern double& fctmin;
 extern double& hguess;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(minima, maxiter);
-extern "C" int m_tinker_mod(minima, nextiter);
-extern "C" double m_tinker_mod(minima, fctmin);
-extern "C" double m_tinker_mod(minima, hguess);
+extern "C" int TINKER_MOD(minima, maxiter);
+extern "C" int TINKER_MOD(minima, nextiter);
+extern "C" double TINKER_MOD(minima, fctmin);
+extern "C" double TINKER_MOD(minima, hguess);
 
-int& maxiter = m_tinker_mod(minima, maxiter);
-int& nextiter = m_tinker_mod(minima, nextiter);
-double& fctmin = m_tinker_mod(minima, fctmin);
-double& hguess = m_tinker_mod(minima, hguess);
+int& maxiter = TINKER_MOD(minima, maxiter);
+int& nextiter = TINKER_MOD(minima, nextiter);
+double& fctmin = TINKER_MOD(minima, fctmin);
+double& hguess = TINKER_MOD(minima, hguess);
 #endif
 
 } TINKER_NAMESPACE_END

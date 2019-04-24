@@ -11,17 +11,17 @@ extern double*& xmin2;
 extern double*& xm;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(syntrn, tpath);
-extern "C" double m_tinker_mod(syntrn, ppath);
-extern "C" double* m_tinker_mod(syntrn, xmin1);
-extern "C" double* m_tinker_mod(syntrn, xmin2);
-extern "C" double* m_tinker_mod(syntrn, xm);
+extern "C" double TINKER_MOD(syntrn, tpath);
+extern "C" double TINKER_MOD(syntrn, ppath);
+extern "C" double* TINKER_MOD(syntrn, xmin1);
+extern "C" double* TINKER_MOD(syntrn, xmin2);
+extern "C" double* TINKER_MOD(syntrn, xm);
 
-double& tpath = m_tinker_mod(syntrn, tpath);
-double& ppath = m_tinker_mod(syntrn, ppath);
-double*& xmin1 = m_tinker_mod(syntrn, xmin1);
-double*& xmin2 = m_tinker_mod(syntrn, xmin2);
-double*& xm = m_tinker_mod(syntrn, xm);
+double& tpath = TINKER_MOD(syntrn, tpath);
+double& ppath = TINKER_MOD(syntrn, ppath);
+double*& xmin1 = TINKER_MOD(syntrn, xmin1);
+double*& xmin2 = TINKER_MOD(syntrn, xmin2);
+double*& xm = TINKER_MOD(syntrn, xm);
 #endif
 
 } TINKER_NAMESPACE_END

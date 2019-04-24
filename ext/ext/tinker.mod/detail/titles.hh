@@ -8,11 +8,11 @@ extern int& ltitle;
 extern char (&title)[240];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(titles, ltitle);
-extern "C" char m_tinker_mod(titles, title)[240];
+extern "C" int TINKER_MOD(titles, ltitle);
+extern "C" char TINKER_MOD(titles, title)[240];
 
-int& ltitle = m_tinker_mod(titles, ltitle);
-char (&title)[240] = m_tinker_mod(titles, title);
+int& ltitle = TINKER_MOD(titles, ltitle);
+char (&title)[240] = TINKER_MOD(titles, title);
 #endif
 
 } TINKER_NAMESPACE_END

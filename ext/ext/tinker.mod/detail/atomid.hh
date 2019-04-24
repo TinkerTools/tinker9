@@ -16,21 +16,21 @@ extern char (&name)[maxatm][3];
 extern char (&story)[maxatm][24];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(atomid, tag)[maxatm];
-extern "C" int m_tinker_mod(atomid, class)[maxatm];
-extern "C" int m_tinker_mod(atomid, atomic)[maxatm];
-extern "C" int m_tinker_mod(atomid, valence)[maxatm];
-extern "C" double m_tinker_mod(atomid, mass)[maxatm];
-extern "C" char m_tinker_mod(atomid, name)[maxatm][3];
-extern "C" char m_tinker_mod(atomid, story)[maxatm][24];
+extern "C" int TINKER_MOD(atomid, tag)[maxatm];
+extern "C" int TINKER_MOD(atomid, class)[maxatm];
+extern "C" int TINKER_MOD(atomid, atomic)[maxatm];
+extern "C" int TINKER_MOD(atomid, valence)[maxatm];
+extern "C" double TINKER_MOD(atomid, mass)[maxatm];
+extern "C" char TINKER_MOD(atomid, name)[maxatm][3];
+extern "C" char TINKER_MOD(atomid, story)[maxatm][24];
 
-int (&tag)[maxatm] = m_tinker_mod(atomid, tag);
-int (&class_)[maxatm] = m_tinker_mod(atomid, class);
-int (&atomic)[maxatm] = m_tinker_mod(atomid, atomic);
-int (&valence)[maxatm] = m_tinker_mod(atomid, valence);
-double (&mass)[maxatm] = m_tinker_mod(atomid, mass);
-char (&name)[maxatm][3] = m_tinker_mod(atomid, name);
-char (&story)[maxatm][24] = m_tinker_mod(atomid, story);
+int (&tag)[maxatm] = TINKER_MOD(atomid, tag);
+int (&class_)[maxatm] = TINKER_MOD(atomid, class);
+int (&atomic)[maxatm] = TINKER_MOD(atomid, atomic);
+int (&valence)[maxatm] = TINKER_MOD(atomid, valence);
+double (&mass)[maxatm] = TINKER_MOD(atomid, mass);
+char (&name)[maxatm][3] = TINKER_MOD(atomid, name);
+char (&story)[maxatm][24] = TINKER_MOD(atomid, story);
 #endif
 
 } TINKER_NAMESPACE_END

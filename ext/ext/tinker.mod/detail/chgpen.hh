@@ -10,15 +10,15 @@ extern double*& pval;
 extern double*& palpha;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(chgpen, ncp);
-extern "C" double* m_tinker_mod(chgpen, pcore);
-extern "C" double* m_tinker_mod(chgpen, pval);
-extern "C" double* m_tinker_mod(chgpen, palpha);
+extern "C" int TINKER_MOD(chgpen, ncp);
+extern "C" double* TINKER_MOD(chgpen, pcore);
+extern "C" double* TINKER_MOD(chgpen, pval);
+extern "C" double* TINKER_MOD(chgpen, palpha);
 
-int& ncp = m_tinker_mod(chgpen, ncp);
-double*& pcore = m_tinker_mod(chgpen, pcore);
-double*& pval = m_tinker_mod(chgpen, pval);
-double*& palpha = m_tinker_mod(chgpen, palpha);
+int& ncp = TINKER_MOD(chgpen, ncp);
+double*& pcore = TINKER_MOD(chgpen, pcore);
+double*& pval = TINKER_MOD(chgpen, pval);
+double*& palpha = TINKER_MOD(chgpen, palpha);
 #endif
 
 } TINKER_NAMESPACE_END

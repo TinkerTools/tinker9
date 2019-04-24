@@ -8,11 +8,11 @@ extern int& ntortor;
 extern int*& itt;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(tortor, ntortor);
-extern "C" int* m_tinker_mod(tortor, itt);
+extern "C" int TINKER_MOD(tortor, ntortor);
+extern "C" int* TINKER_MOD(tortor, itt);
 
-int& ntortor = m_tinker_mod(tortor, ntortor);
-int*& itt = m_tinker_mod(tortor, itt);
+int& ntortor = TINKER_MOD(tortor, ntortor);
+int*& itt = TINKER_MOD(tortor, itt);
 #endif
 
 } TINKER_NAMESPACE_END

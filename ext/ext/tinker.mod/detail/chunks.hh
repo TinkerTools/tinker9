@@ -17,29 +17,29 @@ extern int& grdoff;
 extern int*& pmetable;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(chunks, nchunk);
-extern "C" int m_tinker_mod(chunks, nchk1);
-extern "C" int m_tinker_mod(chunks, nchk2);
-extern "C" int m_tinker_mod(chunks, nchk3);
-extern "C" int m_tinker_mod(chunks, ngrd1);
-extern "C" int m_tinker_mod(chunks, ngrd2);
-extern "C" int m_tinker_mod(chunks, ngrd3);
-extern "C" int m_tinker_mod(chunks, nlpts);
-extern "C" int m_tinker_mod(chunks, nrpts);
-extern "C" int m_tinker_mod(chunks, grdoff);
-extern "C" int* m_tinker_mod(chunks, pmetable);
+extern "C" int TINKER_MOD(chunks, nchunk);
+extern "C" int TINKER_MOD(chunks, nchk1);
+extern "C" int TINKER_MOD(chunks, nchk2);
+extern "C" int TINKER_MOD(chunks, nchk3);
+extern "C" int TINKER_MOD(chunks, ngrd1);
+extern "C" int TINKER_MOD(chunks, ngrd2);
+extern "C" int TINKER_MOD(chunks, ngrd3);
+extern "C" int TINKER_MOD(chunks, nlpts);
+extern "C" int TINKER_MOD(chunks, nrpts);
+extern "C" int TINKER_MOD(chunks, grdoff);
+extern "C" int* TINKER_MOD(chunks, pmetable);
 
-int& nchunk = m_tinker_mod(chunks, nchunk);
-int& nchk1 = m_tinker_mod(chunks, nchk1);
-int& nchk2 = m_tinker_mod(chunks, nchk2);
-int& nchk3 = m_tinker_mod(chunks, nchk3);
-int& ngrd1 = m_tinker_mod(chunks, ngrd1);
-int& ngrd2 = m_tinker_mod(chunks, ngrd2);
-int& ngrd3 = m_tinker_mod(chunks, ngrd3);
-int& nlpts = m_tinker_mod(chunks, nlpts);
-int& nrpts = m_tinker_mod(chunks, nrpts);
-int& grdoff = m_tinker_mod(chunks, grdoff);
-int*& pmetable = m_tinker_mod(chunks, pmetable);
+int& nchunk = TINKER_MOD(chunks, nchunk);
+int& nchk1 = TINKER_MOD(chunks, nchk1);
+int& nchk2 = TINKER_MOD(chunks, nchk2);
+int& nchk3 = TINKER_MOD(chunks, nchk3);
+int& ngrd1 = TINKER_MOD(chunks, ngrd1);
+int& ngrd2 = TINKER_MOD(chunks, ngrd2);
+int& ngrd3 = TINKER_MOD(chunks, ngrd3);
+int& nlpts = TINKER_MOD(chunks, nlpts);
+int& nrpts = TINKER_MOD(chunks, nrpts);
+int& grdoff = TINKER_MOD(chunks, grdoff);
+int*& pmetable = TINKER_MOD(chunks, pmetable);
 #endif
 
 } TINKER_NAMESPACE_END

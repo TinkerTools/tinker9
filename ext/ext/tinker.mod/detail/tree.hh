@@ -10,13 +10,13 @@ extern double& etree;
 extern double (&ilevel)[maxpss+1];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(tree, nlevel);
-extern "C" double m_tinker_mod(tree, etree);
-extern "C" double m_tinker_mod(tree, ilevel)[maxpss+1];
+extern "C" int TINKER_MOD(tree, nlevel);
+extern "C" double TINKER_MOD(tree, etree);
+extern "C" double TINKER_MOD(tree, ilevel)[maxpss+1];
 
-int& nlevel = m_tinker_mod(tree, nlevel);
-double& etree = m_tinker_mod(tree, etree);
-double (&ilevel)[maxpss+1] = m_tinker_mod(tree, ilevel);
+int& nlevel = TINKER_MOD(tree, nlevel);
+double& etree = TINKER_MOD(tree, etree);
+double (&ilevel)[maxpss+1] = TINKER_MOD(tree, ilevel);
 #endif
 
 } TINKER_NAMESPACE_END

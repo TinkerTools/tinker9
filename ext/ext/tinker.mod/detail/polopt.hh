@@ -17,27 +17,27 @@ extern double*& fopt;
 extern double*& foptp;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(polopt, optorder);
-extern "C" int m_tinker_mod(polopt, optlevel);
-extern "C" double* m_tinker_mod(polopt, copt);
-extern "C" double* m_tinker_mod(polopt, copm);
-extern "C" double* m_tinker_mod(polopt, uopt);
-extern "C" double* m_tinker_mod(polopt, uoptp);
-extern "C" double* m_tinker_mod(polopt, uopts);
-extern "C" double* m_tinker_mod(polopt, uoptps);
-extern "C" double* m_tinker_mod(polopt, fopt);
-extern "C" double* m_tinker_mod(polopt, foptp);
+extern "C" int TINKER_MOD(polopt, optorder);
+extern "C" int TINKER_MOD(polopt, optlevel);
+extern "C" double* TINKER_MOD(polopt, copt);
+extern "C" double* TINKER_MOD(polopt, copm);
+extern "C" double* TINKER_MOD(polopt, uopt);
+extern "C" double* TINKER_MOD(polopt, uoptp);
+extern "C" double* TINKER_MOD(polopt, uopts);
+extern "C" double* TINKER_MOD(polopt, uoptps);
+extern "C" double* TINKER_MOD(polopt, fopt);
+extern "C" double* TINKER_MOD(polopt, foptp);
 
-int& optorder = m_tinker_mod(polopt, optorder);
-int& optlevel = m_tinker_mod(polopt, optlevel);
-double*& copt = m_tinker_mod(polopt, copt);
-double*& copm = m_tinker_mod(polopt, copm);
-double*& uopt = m_tinker_mod(polopt, uopt);
-double*& uoptp = m_tinker_mod(polopt, uoptp);
-double*& uopts = m_tinker_mod(polopt, uopts);
-double*& uoptps = m_tinker_mod(polopt, uoptps);
-double*& fopt = m_tinker_mod(polopt, fopt);
-double*& foptp = m_tinker_mod(polopt, foptp);
+int& optorder = TINKER_MOD(polopt, optorder);
+int& optlevel = TINKER_MOD(polopt, optlevel);
+double*& copt = TINKER_MOD(polopt, copt);
+double*& copm = TINKER_MOD(polopt, copm);
+double*& uopt = TINKER_MOD(polopt, uopt);
+double*& uoptp = TINKER_MOD(polopt, uoptp);
+double*& uopts = TINKER_MOD(polopt, uopts);
+double*& uoptps = TINKER_MOD(polopt, uoptps);
+double*& fopt = TINKER_MOD(polopt, fopt);
+double*& foptp = TINKER_MOD(polopt, foptp);
 #endif
 
 } TINKER_NAMESPACE_END

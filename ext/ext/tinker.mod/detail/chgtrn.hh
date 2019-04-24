@@ -9,13 +9,13 @@ extern double*& chgct;
 extern double*& dmpct;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(chgtrn, nct);
-extern "C" double* m_tinker_mod(chgtrn, chgct);
-extern "C" double* m_tinker_mod(chgtrn, dmpct);
+extern "C" int TINKER_MOD(chgtrn, nct);
+extern "C" double* TINKER_MOD(chgtrn, chgct);
+extern "C" double* TINKER_MOD(chgtrn, dmpct);
 
-int& nct = m_tinker_mod(chgtrn, nct);
-double*& chgct = m_tinker_mod(chgtrn, chgct);
-double*& dmpct = m_tinker_mod(chgtrn, dmpct);
+int& nct = TINKER_MOD(chgtrn, nct);
+double*& chgct = TINKER_MOD(chgtrn, chgct);
+double*& dmpct = TINKER_MOD(chgtrn, dmpct);
 #endif
 
 } TINKER_NAMESPACE_END

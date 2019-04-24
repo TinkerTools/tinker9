@@ -9,13 +9,13 @@ extern double*& fgamma;
 extern int& use_sdarea;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(stodyn, friction);
-extern "C" double* m_tinker_mod(stodyn, fgamma);
-extern "C" int m_tinker_mod(stodyn, use_sdarea);
+extern "C" double TINKER_MOD(stodyn, friction);
+extern "C" double* TINKER_MOD(stodyn, fgamma);
+extern "C" int TINKER_MOD(stodyn, use_sdarea);
 
-double& friction = m_tinker_mod(stodyn, friction);
-double*& fgamma = m_tinker_mod(stodyn, fgamma);
-int& use_sdarea = m_tinker_mod(stodyn, use_sdarea);
+double& friction = TINKER_MOD(stodyn, friction);
+double*& fgamma = TINKER_MOD(stodyn, fgamma);
+int& use_sdarea = TINKER_MOD(stodyn, use_sdarea);
 #endif
 
 } TINKER_NAMESPACE_END

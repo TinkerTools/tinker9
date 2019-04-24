@@ -8,11 +8,11 @@ extern double (&vir)[3][3];
 extern int& use_virial;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(virial, vir)[3][3];
-extern "C" int m_tinker_mod(virial, use_virial);
+extern "C" double TINKER_MOD(virial, vir)[3][3];
+extern "C" int TINKER_MOD(virial, use_virial);
 
-double (&vir)[3][3] = m_tinker_mod(virial, vir);
-int& use_virial = m_tinker_mod(virial, use_virial);
+double (&vir)[3][3] = TINKER_MOD(virial, vir);
+int& use_virial = TINKER_MOD(virial, use_virial);
 #endif
 
 } TINKER_NAMESPACE_END

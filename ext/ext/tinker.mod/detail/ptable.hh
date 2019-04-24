@@ -11,15 +11,15 @@ extern double (&covrad)[maxele];
 extern char (&elemnt)[maxele][3];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(ptable, atmass)[maxele];
-extern "C" double m_tinker_mod(ptable, vdwrad)[maxele];
-extern "C" double m_tinker_mod(ptable, covrad)[maxele];
-extern "C" char m_tinker_mod(ptable, elemnt)[maxele][3];
+extern "C" double TINKER_MOD(ptable, atmass)[maxele];
+extern "C" double TINKER_MOD(ptable, vdwrad)[maxele];
+extern "C" double TINKER_MOD(ptable, covrad)[maxele];
+extern "C" char TINKER_MOD(ptable, elemnt)[maxele][3];
 
-double (&atmass)[maxele] = m_tinker_mod(ptable, atmass);
-double (&vdwrad)[maxele] = m_tinker_mod(ptable, vdwrad);
-double (&covrad)[maxele] = m_tinker_mod(ptable, covrad);
-char (&elemnt)[maxele][3] = m_tinker_mod(ptable, elemnt);
+double (&atmass)[maxele] = TINKER_MOD(ptable, atmass);
+double (&vdwrad)[maxele] = TINKER_MOD(ptable, vdwrad);
+double (&covrad)[maxele] = TINKER_MOD(ptable, covrad);
+char (&elemnt)[maxele][3] = TINKER_MOD(ptable, elemnt);
 #endif
 
 } TINKER_NAMESPACE_END

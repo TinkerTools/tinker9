@@ -7,9 +7,9 @@ TINKER_NAMESPACE_BEGIN namespace kanang {
 extern double*& anan;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double* m_tinker_mod(kanang, anan);
+extern "C" double* TINKER_MOD(kanang, anan);
 
-double*& anan = m_tinker_mod(kanang, anan);
+double*& anan = TINKER_MOD(kanang, anan);
 #endif
 
 } TINKER_NAMESPACE_END

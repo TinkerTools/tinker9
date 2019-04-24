@@ -9,13 +9,13 @@ extern int*& iuse;
 extern int*& use;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(usage, nuse);
-extern "C" int* m_tinker_mod(usage, iuse);
-extern "C" int* m_tinker_mod(usage, use);
+extern "C" int TINKER_MOD(usage, nuse);
+extern "C" int* TINKER_MOD(usage, iuse);
+extern "C" int* TINKER_MOD(usage, use);
 
-int& nuse = m_tinker_mod(usage, nuse);
-int*& iuse = m_tinker_mod(usage, iuse);
-int*& use = m_tinker_mod(usage, use);
+int& nuse = TINKER_MOD(usage, nuse);
+int*& iuse = TINKER_MOD(usage, iuse);
+int*& use = TINKER_MOD(usage, use);
 #endif
 
 } TINKER_NAMESPACE_END

@@ -7,9 +7,9 @@ TINKER_NAMESPACE_BEGIN namespace kchrge {
 extern double*& chg;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double* m_tinker_mod(kchrge, chg);
+extern "C" double* TINKER_MOD(kchrge, chg);
 
-double*& chg = m_tinker_mod(kchrge, chg);
+double*& chg = TINKER_MOD(kchrge, chg);
 #endif
 
 } TINKER_NAMESPACE_END

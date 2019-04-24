@@ -8,11 +8,11 @@ extern double*& ctchg;
 extern double*& ctdmp;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double* m_tinker_mod(kctrn, ctchg);
-extern "C" double* m_tinker_mod(kctrn, ctdmp);
+extern "C" double* TINKER_MOD(kctrn, ctchg);
+extern "C" double* TINKER_MOD(kctrn, ctdmp);
 
-double*& ctchg = m_tinker_mod(kctrn, ctchg);
-double*& ctdmp = m_tinker_mod(kctrn, ctdmp);
+double*& ctchg = TINKER_MOD(kctrn, ctchg);
+double*& ctdmp = TINKER_MOD(kctrn, ctdmp);
 #endif
 
 } TINKER_NAMESPACE_END

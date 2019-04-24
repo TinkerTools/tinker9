@@ -18,25 +18,25 @@ extern double (&tbxy)[maxntt][maxtgrd2];
 extern char (&ktt)[maxntt][20];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(ktrtor, tnx)[maxntt];
-extern "C" int m_tinker_mod(ktrtor, tny)[maxntt];
-extern "C" double m_tinker_mod(ktrtor, ttx)[maxntt][maxtgrd];
-extern "C" double m_tinker_mod(ktrtor, tty)[maxntt][maxtgrd];
-extern "C" double m_tinker_mod(ktrtor, tbf)[maxntt][maxtgrd2];
-extern "C" double m_tinker_mod(ktrtor, tbx)[maxntt][maxtgrd2];
-extern "C" double m_tinker_mod(ktrtor, tby)[maxntt][maxtgrd2];
-extern "C" double m_tinker_mod(ktrtor, tbxy)[maxntt][maxtgrd2];
-extern "C" char m_tinker_mod(ktrtor, ktt)[maxntt][20];
+extern "C" int TINKER_MOD(ktrtor, tnx)[maxntt];
+extern "C" int TINKER_MOD(ktrtor, tny)[maxntt];
+extern "C" double TINKER_MOD(ktrtor, ttx)[maxntt][maxtgrd];
+extern "C" double TINKER_MOD(ktrtor, tty)[maxntt][maxtgrd];
+extern "C" double TINKER_MOD(ktrtor, tbf)[maxntt][maxtgrd2];
+extern "C" double TINKER_MOD(ktrtor, tbx)[maxntt][maxtgrd2];
+extern "C" double TINKER_MOD(ktrtor, tby)[maxntt][maxtgrd2];
+extern "C" double TINKER_MOD(ktrtor, tbxy)[maxntt][maxtgrd2];
+extern "C" char TINKER_MOD(ktrtor, ktt)[maxntt][20];
 
-int (&tnx)[maxntt] = m_tinker_mod(ktrtor, tnx);
-int (&tny)[maxntt] = m_tinker_mod(ktrtor, tny);
-double (&ttx)[maxntt][maxtgrd] = m_tinker_mod(ktrtor, ttx);
-double (&tty)[maxntt][maxtgrd] = m_tinker_mod(ktrtor, tty);
-double (&tbf)[maxntt][maxtgrd2] = m_tinker_mod(ktrtor, tbf);
-double (&tbx)[maxntt][maxtgrd2] = m_tinker_mod(ktrtor, tbx);
-double (&tby)[maxntt][maxtgrd2] = m_tinker_mod(ktrtor, tby);
-double (&tbxy)[maxntt][maxtgrd2] = m_tinker_mod(ktrtor, tbxy);
-char (&ktt)[maxntt][20] = m_tinker_mod(ktrtor, ktt);
+int (&tnx)[maxntt] = TINKER_MOD(ktrtor, tnx);
+int (&tny)[maxntt] = TINKER_MOD(ktrtor, tny);
+double (&ttx)[maxntt][maxtgrd] = TINKER_MOD(ktrtor, ttx);
+double (&tty)[maxntt][maxtgrd] = TINKER_MOD(ktrtor, tty);
+double (&tbf)[maxntt][maxtgrd2] = TINKER_MOD(ktrtor, tbf);
+double (&tbx)[maxntt][maxtgrd2] = TINKER_MOD(ktrtor, tbx);
+double (&tby)[maxntt][maxtgrd2] = TINKER_MOD(ktrtor, tby);
+double (&tbxy)[maxntt][maxtgrd2] = TINKER_MOD(ktrtor, tbxy);
+char (&ktt)[maxntt][20] = TINKER_MOD(ktrtor, ktt);
 #endif
 
 } TINKER_NAMESPACE_END

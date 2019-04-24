@@ -11,17 +11,17 @@ extern double*& lslope;
 extern double*& torsp2;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double* m_tinker_mod(pistuf, bkpi);
-extern "C" double* m_tinker_mod(pistuf, blpi);
-extern "C" double* m_tinker_mod(pistuf, kslope);
-extern "C" double* m_tinker_mod(pistuf, lslope);
-extern "C" double* m_tinker_mod(pistuf, torsp2);
+extern "C" double* TINKER_MOD(pistuf, bkpi);
+extern "C" double* TINKER_MOD(pistuf, blpi);
+extern "C" double* TINKER_MOD(pistuf, kslope);
+extern "C" double* TINKER_MOD(pistuf, lslope);
+extern "C" double* TINKER_MOD(pistuf, torsp2);
 
-double*& bkpi = m_tinker_mod(pistuf, bkpi);
-double*& blpi = m_tinker_mod(pistuf, blpi);
-double*& kslope = m_tinker_mod(pistuf, kslope);
-double*& lslope = m_tinker_mod(pistuf, lslope);
-double*& torsp2 = m_tinker_mod(pistuf, torsp2);
+double*& bkpi = TINKER_MOD(pistuf, bkpi);
+double*& blpi = TINKER_MOD(pistuf, blpi);
+double*& kslope = TINKER_MOD(pistuf, kslope);
+double*& lslope = TINKER_MOD(pistuf, lslope);
+double*& torsp2 = TINKER_MOD(pistuf, torsp2);
 #endif
 
 } TINKER_NAMESPACE_END

@@ -20,35 +20,35 @@ extern double*& pnpl;
 extern int*& listpi;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(piorbs, norbit);
-extern "C" int m_tinker_mod(piorbs, nconj);
-extern "C" int m_tinker_mod(piorbs, reorbit);
-extern "C" int m_tinker_mod(piorbs, nbpi);
-extern "C" int m_tinker_mod(piorbs, ntpi);
-extern "C" int* m_tinker_mod(piorbs, iorbit);
-extern "C" int* m_tinker_mod(piorbs, iconj);
-extern "C" int* m_tinker_mod(piorbs, kconj);
-extern "C" int* m_tinker_mod(piorbs, piperp);
-extern "C" int* m_tinker_mod(piorbs, ibpi);
-extern "C" int* m_tinker_mod(piorbs, itpi);
-extern "C" double* m_tinker_mod(piorbs, pbpl);
-extern "C" double* m_tinker_mod(piorbs, pnpl);
-extern "C" int* m_tinker_mod(piorbs, listpi);
+extern "C" int TINKER_MOD(piorbs, norbit);
+extern "C" int TINKER_MOD(piorbs, nconj);
+extern "C" int TINKER_MOD(piorbs, reorbit);
+extern "C" int TINKER_MOD(piorbs, nbpi);
+extern "C" int TINKER_MOD(piorbs, ntpi);
+extern "C" int* TINKER_MOD(piorbs, iorbit);
+extern "C" int* TINKER_MOD(piorbs, iconj);
+extern "C" int* TINKER_MOD(piorbs, kconj);
+extern "C" int* TINKER_MOD(piorbs, piperp);
+extern "C" int* TINKER_MOD(piorbs, ibpi);
+extern "C" int* TINKER_MOD(piorbs, itpi);
+extern "C" double* TINKER_MOD(piorbs, pbpl);
+extern "C" double* TINKER_MOD(piorbs, pnpl);
+extern "C" int* TINKER_MOD(piorbs, listpi);
 
-int& norbit = m_tinker_mod(piorbs, norbit);
-int& nconj = m_tinker_mod(piorbs, nconj);
-int& reorbit = m_tinker_mod(piorbs, reorbit);
-int& nbpi = m_tinker_mod(piorbs, nbpi);
-int& ntpi = m_tinker_mod(piorbs, ntpi);
-int*& iorbit = m_tinker_mod(piorbs, iorbit);
-int*& iconj = m_tinker_mod(piorbs, iconj);
-int*& kconj = m_tinker_mod(piorbs, kconj);
-int*& piperp = m_tinker_mod(piorbs, piperp);
-int*& ibpi = m_tinker_mod(piorbs, ibpi);
-int*& itpi = m_tinker_mod(piorbs, itpi);
-double*& pbpl = m_tinker_mod(piorbs, pbpl);
-double*& pnpl = m_tinker_mod(piorbs, pnpl);
-int*& listpi = m_tinker_mod(piorbs, listpi);
+int& norbit = TINKER_MOD(piorbs, norbit);
+int& nconj = TINKER_MOD(piorbs, nconj);
+int& reorbit = TINKER_MOD(piorbs, reorbit);
+int& nbpi = TINKER_MOD(piorbs, nbpi);
+int& ntpi = TINKER_MOD(piorbs, ntpi);
+int*& iorbit = TINKER_MOD(piorbs, iorbit);
+int*& iconj = TINKER_MOD(piorbs, iconj);
+int*& kconj = TINKER_MOD(piorbs, kconj);
+int*& piperp = TINKER_MOD(piorbs, piperp);
+int*& ibpi = TINKER_MOD(piorbs, ibpi);
+int*& itpi = TINKER_MOD(piorbs, itpi);
+double*& pbpl = TINKER_MOD(piorbs, pbpl);
+double*& pnpl = TINKER_MOD(piorbs, pnpl);
+int*& listpi = TINKER_MOD(piorbs, listpi);
 #endif
 
 } TINKER_NAMESPACE_END

@@ -10,13 +10,13 @@ extern char (&mpaxis)[maxnmp][8];
 extern char (&kmp)[maxnmp][16];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(kmulti, multip)[maxnmp][13];
-extern "C" char m_tinker_mod(kmulti, mpaxis)[maxnmp][8];
-extern "C" char m_tinker_mod(kmulti, kmp)[maxnmp][16];
+extern "C" double TINKER_MOD(kmulti, multip)[maxnmp][13];
+extern "C" char TINKER_MOD(kmulti, mpaxis)[maxnmp][8];
+extern "C" char TINKER_MOD(kmulti, kmp)[maxnmp][16];
 
-double (&multip)[maxnmp][13] = m_tinker_mod(kmulti, multip);
-char (&mpaxis)[maxnmp][8] = m_tinker_mod(kmulti, mpaxis);
-char (&kmp)[maxnmp][16] = m_tinker_mod(kmulti, kmp);
+double (&multip)[maxnmp][13] = TINKER_MOD(kmulti, multip);
+char (&mpaxis)[maxnmp][8] = TINKER_MOD(kmulti, mpaxis);
+char (&kmp)[maxnmp][16] = TINKER_MOD(kmulti, kmp);
 #endif
 
 } TINKER_NAMESPACE_END

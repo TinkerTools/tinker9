@@ -9,13 +9,13 @@ extern int*& iopb;
 extern double*& opbk;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(opbend, nopbend);
-extern "C" int* m_tinker_mod(opbend, iopb);
-extern "C" double* m_tinker_mod(opbend, opbk);
+extern "C" int TINKER_MOD(opbend, nopbend);
+extern "C" int* TINKER_MOD(opbend, iopb);
+extern "C" double* TINKER_MOD(opbend, opbk);
 
-int& nopbend = m_tinker_mod(opbend, nopbend);
-int*& iopb = m_tinker_mod(opbend, iopb);
-double*& opbk = m_tinker_mod(opbend, opbk);
+int& nopbend = TINKER_MOD(opbend, nopbend);
+int*& iopb = TINKER_MOD(opbend, iopb);
+double*& opbk = TINKER_MOD(opbend, opbk);
 #endif
 
 } TINKER_NAMESPACE_END

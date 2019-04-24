@@ -11,17 +11,17 @@ extern int& pcgprec;
 extern int& pcgguess;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int* m_tinker_mod(polpcg, mindex);
-extern "C" double m_tinker_mod(polpcg, pcgpeek);
-extern "C" double* m_tinker_mod(polpcg, minv);
-extern "C" int m_tinker_mod(polpcg, pcgprec);
-extern "C" int m_tinker_mod(polpcg, pcgguess);
+extern "C" int* TINKER_MOD(polpcg, mindex);
+extern "C" double TINKER_MOD(polpcg, pcgpeek);
+extern "C" double* TINKER_MOD(polpcg, minv);
+extern "C" int TINKER_MOD(polpcg, pcgprec);
+extern "C" int TINKER_MOD(polpcg, pcgguess);
 
-int*& mindex = m_tinker_mod(polpcg, mindex);
-double& pcgpeek = m_tinker_mod(polpcg, pcgpeek);
-double*& minv = m_tinker_mod(polpcg, minv);
-int& pcgprec = m_tinker_mod(polpcg, pcgprec);
-int& pcgguess = m_tinker_mod(polpcg, pcgguess);
+int*& mindex = TINKER_MOD(polpcg, mindex);
+double& pcgpeek = TINKER_MOD(polpcg, pcgpeek);
+double*& minv = TINKER_MOD(polpcg, minv);
+int& pcgprec = TINKER_MOD(polpcg, pcgprec);
+int& pcgguess = TINKER_MOD(polpcg, pcgguess);
 #endif
 
 } TINKER_NAMESPACE_END

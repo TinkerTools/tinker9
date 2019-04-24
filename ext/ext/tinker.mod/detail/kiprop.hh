@@ -10,13 +10,13 @@ extern double (&tdi)[maxndi];
 extern char (&kdi)[maxndi][16];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(kiprop, dcon)[maxndi];
-extern "C" double m_tinker_mod(kiprop, tdi)[maxndi];
-extern "C" char m_tinker_mod(kiprop, kdi)[maxndi][16];
+extern "C" double TINKER_MOD(kiprop, dcon)[maxndi];
+extern "C" double TINKER_MOD(kiprop, tdi)[maxndi];
+extern "C" char TINKER_MOD(kiprop, kdi)[maxndi][16];
 
-double (&dcon)[maxndi] = m_tinker_mod(kiprop, dcon);
-double (&tdi)[maxndi] = m_tinker_mod(kiprop, tdi);
-char (&kdi)[maxndi][16] = m_tinker_mod(kiprop, kdi);
+double (&dcon)[maxndi] = TINKER_MOD(kiprop, dcon);
+double (&tdi)[maxndi] = TINKER_MOD(kiprop, tdi);
+char (&kdi)[maxndi][16] = TINKER_MOD(kiprop, kdi);
 #endif
 
 } TINKER_NAMESPACE_END

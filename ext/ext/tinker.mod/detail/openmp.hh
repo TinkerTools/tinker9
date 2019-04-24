@@ -8,11 +8,11 @@ extern int& nproc;
 extern int& nthread;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(openmp, nproc);
-extern "C" int m_tinker_mod(openmp, nthread);
+extern "C" int TINKER_MOD(openmp, nproc);
+extern "C" int TINKER_MOD(openmp, nthread);
 
-int& nproc = m_tinker_mod(openmp, nproc);
-int& nthread = m_tinker_mod(openmp, nthread);
+int& nproc = TINKER_MOD(openmp, nproc);
+int& nthread = TINKER_MOD(openmp, nthread);
 #endif
 
 } TINKER_NAMESPACE_END

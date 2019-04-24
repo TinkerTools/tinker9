@@ -13,21 +13,21 @@ extern double& atorunit;
 extern double& ttorunit;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(torpot, idihunit);
-extern "C" double m_tinker_mod(torpot, itorunit);
-extern "C" double m_tinker_mod(torpot, torsunit);
-extern "C" double m_tinker_mod(torpot, ptorunit);
-extern "C" double m_tinker_mod(torpot, storunit);
-extern "C" double m_tinker_mod(torpot, atorunit);
-extern "C" double m_tinker_mod(torpot, ttorunit);
+extern "C" double TINKER_MOD(torpot, idihunit);
+extern "C" double TINKER_MOD(torpot, itorunit);
+extern "C" double TINKER_MOD(torpot, torsunit);
+extern "C" double TINKER_MOD(torpot, ptorunit);
+extern "C" double TINKER_MOD(torpot, storunit);
+extern "C" double TINKER_MOD(torpot, atorunit);
+extern "C" double TINKER_MOD(torpot, ttorunit);
 
-double& idihunit = m_tinker_mod(torpot, idihunit);
-double& itorunit = m_tinker_mod(torpot, itorunit);
-double& torsunit = m_tinker_mod(torpot, torsunit);
-double& ptorunit = m_tinker_mod(torpot, ptorunit);
-double& storunit = m_tinker_mod(torpot, storunit);
-double& atorunit = m_tinker_mod(torpot, atorunit);
-double& ttorunit = m_tinker_mod(torpot, ttorunit);
+double& idihunit = TINKER_MOD(torpot, idihunit);
+double& itorunit = TINKER_MOD(torpot, itorunit);
+double& torsunit = TINKER_MOD(torpot, torsunit);
+double& ptorunit = TINKER_MOD(torpot, ptorunit);
+double& storunit = TINKER_MOD(torpot, storunit);
+double& atorunit = TINKER_MOD(torpot, atorunit);
+double& ttorunit = TINKER_MOD(torpot, ttorunit);
 #endif
 
 } TINKER_NAMESPACE_END

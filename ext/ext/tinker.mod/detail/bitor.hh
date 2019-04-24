@@ -8,11 +8,11 @@ extern int& nbitor;
 extern int*& ibitor;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(bitor, nbitor);
-extern "C" int* m_tinker_mod(bitor, ibitor);
+extern "C" int TINKER_MOD(bitor, nbitor);
+extern "C" int* TINKER_MOD(bitor, ibitor);
 
-int& nbitor = m_tinker_mod(bitor, nbitor);
-int*& ibitor = m_tinker_mod(bitor, ibitor);
+int& nbitor = TINKER_MOD(bitor, nbitor);
+int*& ibitor = TINKER_MOD(bitor, ibitor);
 #endif
 
 } TINKER_NAMESPACE_END

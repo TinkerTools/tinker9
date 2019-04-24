@@ -13,21 +13,21 @@ extern int& sktstop;
 extern int& use_socket;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(socket, skttyp);
-extern "C" int m_tinker_mod(socket, cstep);
-extern "C" double m_tinker_mod(socket, cdt);
-extern "C" double m_tinker_mod(socket, cenergy);
-extern "C" int m_tinker_mod(socket, sktstart);
-extern "C" int m_tinker_mod(socket, sktstop);
-extern "C" int m_tinker_mod(socket, use_socket);
+extern "C" int TINKER_MOD(socket, skttyp);
+extern "C" int TINKER_MOD(socket, cstep);
+extern "C" double TINKER_MOD(socket, cdt);
+extern "C" double TINKER_MOD(socket, cenergy);
+extern "C" int TINKER_MOD(socket, sktstart);
+extern "C" int TINKER_MOD(socket, sktstop);
+extern "C" int TINKER_MOD(socket, use_socket);
 
-int& skttyp = m_tinker_mod(socket, skttyp);
-int& cstep = m_tinker_mod(socket, cstep);
-double& cdt = m_tinker_mod(socket, cdt);
-double& cenergy = m_tinker_mod(socket, cenergy);
-int& sktstart = m_tinker_mod(socket, sktstart);
-int& sktstop = m_tinker_mod(socket, sktstop);
-int& use_socket = m_tinker_mod(socket, use_socket);
+int& skttyp = TINKER_MOD(socket, skttyp);
+int& cstep = TINKER_MOD(socket, cstep);
+double& cdt = TINKER_MOD(socket, cdt);
+double& cenergy = TINKER_MOD(socket, cenergy);
+int& sktstart = TINKER_MOD(socket, sktstart);
+int& sktstop = TINKER_MOD(socket, sktstop);
+int& use_socket = TINKER_MOD(socket, use_socket);
 #endif
 
 } TINKER_NAMESPACE_END

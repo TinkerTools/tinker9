@@ -11,17 +11,17 @@ extern double*& anat;
 extern double*& afld;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(angbnd, nangle);
-extern "C" int* m_tinker_mod(angbnd, iang);
-extern "C" double* m_tinker_mod(angbnd, ak);
-extern "C" double* m_tinker_mod(angbnd, anat);
-extern "C" double* m_tinker_mod(angbnd, afld);
+extern "C" int TINKER_MOD(angbnd, nangle);
+extern "C" int* TINKER_MOD(angbnd, iang);
+extern "C" double* TINKER_MOD(angbnd, ak);
+extern "C" double* TINKER_MOD(angbnd, anat);
+extern "C" double* TINKER_MOD(angbnd, afld);
 
-int& nangle = m_tinker_mod(angbnd, nangle);
-int*& iang = m_tinker_mod(angbnd, iang);
-double*& ak = m_tinker_mod(angbnd, ak);
-double*& anat = m_tinker_mod(angbnd, anat);
-double*& afld = m_tinker_mod(angbnd, afld);
+int& nangle = TINKER_MOD(angbnd, nangle);
+int*& iang = TINKER_MOD(angbnd, iang);
+double*& ak = TINKER_MOD(angbnd, ak);
+double*& anat = TINKER_MOD(angbnd, anat);
+double*& afld = TINKER_MOD(angbnd, afld);
 #endif
 
 } TINKER_NAMESPACE_END

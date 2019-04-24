@@ -14,17 +14,17 @@ extern double (&y)[maxatm];
 extern double (&z)[maxatm];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(atoms, n);
-extern "C" int m_tinker_mod(atoms, type)[maxatm];
-extern "C" double m_tinker_mod(atoms, x)[maxatm];
-extern "C" double m_tinker_mod(atoms, y)[maxatm];
-extern "C" double m_tinker_mod(atoms, z)[maxatm];
+extern "C" int TINKER_MOD(atoms, n);
+extern "C" int TINKER_MOD(atoms, type)[maxatm];
+extern "C" double TINKER_MOD(atoms, x)[maxatm];
+extern "C" double TINKER_MOD(atoms, y)[maxatm];
+extern "C" double TINKER_MOD(atoms, z)[maxatm];
 
-int& n = m_tinker_mod(atoms, n);
-int (&type)[maxatm] = m_tinker_mod(atoms, type);
-double (&x)[maxatm] = m_tinker_mod(atoms, x);
-double (&y)[maxatm] = m_tinker_mod(atoms, y);
-double (&z)[maxatm] = m_tinker_mod(atoms, z);
+int& n = TINKER_MOD(atoms, n);
+int (&type)[maxatm] = TINKER_MOD(atoms, type);
+double (&x)[maxatm] = TINKER_MOD(atoms, x);
+double (&y)[maxatm] = TINKER_MOD(atoms, y);
+double (&z)[maxatm] = TINKER_MOD(atoms, z);
 #endif
 
 } TINKER_NAMESPACE_END

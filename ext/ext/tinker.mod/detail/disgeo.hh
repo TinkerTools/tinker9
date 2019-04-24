@@ -13,21 +13,21 @@ extern int& use_invert;
 extern int& use_anneal;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(disgeo, vdwmax);
-extern "C" double m_tinker_mod(disgeo, compact);
-extern "C" double m_tinker_mod(disgeo, pathmax);
-extern "C" double* m_tinker_mod(disgeo, dbnd);
-extern "C" double* m_tinker_mod(disgeo, georad);
-extern "C" int m_tinker_mod(disgeo, use_invert);
-extern "C" int m_tinker_mod(disgeo, use_anneal);
+extern "C" double TINKER_MOD(disgeo, vdwmax);
+extern "C" double TINKER_MOD(disgeo, compact);
+extern "C" double TINKER_MOD(disgeo, pathmax);
+extern "C" double* TINKER_MOD(disgeo, dbnd);
+extern "C" double* TINKER_MOD(disgeo, georad);
+extern "C" int TINKER_MOD(disgeo, use_invert);
+extern "C" int TINKER_MOD(disgeo, use_anneal);
 
-double& vdwmax = m_tinker_mod(disgeo, vdwmax);
-double& compact = m_tinker_mod(disgeo, compact);
-double& pathmax = m_tinker_mod(disgeo, pathmax);
-double*& dbnd = m_tinker_mod(disgeo, dbnd);
-double*& georad = m_tinker_mod(disgeo, georad);
-int& use_invert = m_tinker_mod(disgeo, use_invert);
-int& use_anneal = m_tinker_mod(disgeo, use_anneal);
+double& vdwmax = TINKER_MOD(disgeo, vdwmax);
+double& compact = TINKER_MOD(disgeo, compact);
+double& pathmax = TINKER_MOD(disgeo, pathmax);
+double*& dbnd = TINKER_MOD(disgeo, dbnd);
+double*& georad = TINKER_MOD(disgeo, georad);
+int& use_invert = TINKER_MOD(disgeo, use_invert);
+int& use_anneal = TINKER_MOD(disgeo, use_anneal);
 #endif
 
 } TINKER_NAMESPACE_END

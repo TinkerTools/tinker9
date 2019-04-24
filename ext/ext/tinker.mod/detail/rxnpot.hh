@@ -9,13 +9,13 @@ extern double& rfsize;
 extern double& rfbulkd;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(rxnpot, rfterms);
-extern "C" double m_tinker_mod(rxnpot, rfsize);
-extern "C" double m_tinker_mod(rxnpot, rfbulkd);
+extern "C" int TINKER_MOD(rxnpot, rfterms);
+extern "C" double TINKER_MOD(rxnpot, rfsize);
+extern "C" double TINKER_MOD(rxnpot, rfbulkd);
 
-int& rfterms = m_tinker_mod(rxnpot, rfterms);
-double& rfsize = m_tinker_mod(rxnpot, rfsize);
-double& rfbulkd = m_tinker_mod(rxnpot, rfbulkd);
+int& rfterms = TINKER_MOD(rxnpot, rfterms);
+double& rfsize = TINKER_MOD(rxnpot, rfsize);
+double& rfbulkd = TINKER_MOD(rxnpot, rfbulkd);
 #endif
 
 } TINKER_NAMESPACE_END

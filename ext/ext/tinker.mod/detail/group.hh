@@ -15,25 +15,25 @@ extern int& use_intra;
 extern int& use_inter;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(group, ngrp);
-extern "C" int* m_tinker_mod(group, kgrp);
-extern "C" int* m_tinker_mod(group, grplist);
-extern "C" int* m_tinker_mod(group, igrp);
-extern "C" double* m_tinker_mod(group, grpmass);
-extern "C" double* m_tinker_mod(group, wgrp);
-extern "C" int m_tinker_mod(group, use_group);
-extern "C" int m_tinker_mod(group, use_intra);
-extern "C" int m_tinker_mod(group, use_inter);
+extern "C" int TINKER_MOD(group, ngrp);
+extern "C" int* TINKER_MOD(group, kgrp);
+extern "C" int* TINKER_MOD(group, grplist);
+extern "C" int* TINKER_MOD(group, igrp);
+extern "C" double* TINKER_MOD(group, grpmass);
+extern "C" double* TINKER_MOD(group, wgrp);
+extern "C" int TINKER_MOD(group, use_group);
+extern "C" int TINKER_MOD(group, use_intra);
+extern "C" int TINKER_MOD(group, use_inter);
 
-int& ngrp = m_tinker_mod(group, ngrp);
-int*& kgrp = m_tinker_mod(group, kgrp);
-int*& grplist = m_tinker_mod(group, grplist);
-int*& igrp = m_tinker_mod(group, igrp);
-double*& grpmass = m_tinker_mod(group, grpmass);
-double*& wgrp = m_tinker_mod(group, wgrp);
-int& use_group = m_tinker_mod(group, use_group);
-int& use_intra = m_tinker_mod(group, use_intra);
-int& use_inter = m_tinker_mod(group, use_inter);
+int& ngrp = TINKER_MOD(group, ngrp);
+int*& kgrp = TINKER_MOD(group, kgrp);
+int*& grplist = TINKER_MOD(group, grplist);
+int*& igrp = TINKER_MOD(group, igrp);
+double*& grpmass = TINKER_MOD(group, grpmass);
+double*& wgrp = TINKER_MOD(group, wgrp);
+int& use_group = TINKER_MOD(group, use_group);
+int& use_intra = TINKER_MOD(group, use_intra);
+int& use_inter = TINKER_MOD(group, use_inter);
 #endif
 
 } TINKER_NAMESPACE_END

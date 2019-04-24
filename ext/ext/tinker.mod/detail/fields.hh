@@ -9,11 +9,11 @@ extern int (&biotyp)[maxbio];
 extern char (&forcefield)[20];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(fields, biotyp)[maxbio];
-extern "C" char m_tinker_mod(fields, forcefield)[20];
+extern "C" int TINKER_MOD(fields, biotyp)[maxbio];
+extern "C" char TINKER_MOD(fields, forcefield)[20];
 
-int (&biotyp)[maxbio] = m_tinker_mod(fields, biotyp);
-char (&forcefield)[20] = m_tinker_mod(fields, forcefield);
+int (&biotyp)[maxbio] = TINKER_MOD(fields, biotyp);
+char (&forcefield)[20] = TINKER_MOD(fields, forcefield);
 #endif
 
 } TINKER_NAMESPACE_END

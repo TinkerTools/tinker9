@@ -9,13 +9,13 @@ extern double& small;
 extern double& huge;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(precis, tiny);
-extern "C" double m_tinker_mod(precis, small);
-extern "C" double m_tinker_mod(precis, huge);
+extern "C" double TINKER_MOD(precis, tiny);
+extern "C" double TINKER_MOD(precis, small);
+extern "C" double TINKER_MOD(precis, huge);
 
-double& tiny = m_tinker_mod(precis, tiny);
-double& small = m_tinker_mod(precis, small);
-double& huge = m_tinker_mod(precis, huge);
+double& tiny = TINKER_MOD(precis, tiny);
+double& small = TINKER_MOD(precis, small);
+double& huge = TINKER_MOD(precis, huge);
 #endif
 
 } TINKER_NAMESPACE_END

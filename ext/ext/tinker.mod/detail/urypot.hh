@@ -9,13 +9,13 @@ extern double& qury;
 extern double& ureyunit;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(urypot, cury);
-extern "C" double m_tinker_mod(urypot, qury);
-extern "C" double m_tinker_mod(urypot, ureyunit);
+extern "C" double TINKER_MOD(urypot, cury);
+extern "C" double TINKER_MOD(urypot, qury);
+extern "C" double TINKER_MOD(urypot, ureyunit);
 
-double& cury = m_tinker_mod(urypot, cury);
-double& qury = m_tinker_mod(urypot, qury);
-double& ureyunit = m_tinker_mod(urypot, ureyunit);
+double& cury = TINKER_MOD(urypot, cury);
+double& qury = TINKER_MOD(urypot, qury);
+double& ureyunit = TINKER_MOD(urypot, ureyunit);
 #endif
 
 } TINKER_NAMESPACE_END

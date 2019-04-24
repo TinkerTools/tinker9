@@ -15,25 +15,25 @@ extern int& use_rattle;
 extern int*& ratimage;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(freeze, nrat);
-extern "C" int m_tinker_mod(freeze, nratx);
-extern "C" int* m_tinker_mod(freeze, iratx);
-extern "C" int* m_tinker_mod(freeze, kratx);
-extern "C" int* m_tinker_mod(freeze, irat);
-extern "C" double m_tinker_mod(freeze, rateps);
-extern "C" double* m_tinker_mod(freeze, krat);
-extern "C" int m_tinker_mod(freeze, use_rattle);
-extern "C" int* m_tinker_mod(freeze, ratimage);
+extern "C" int TINKER_MOD(freeze, nrat);
+extern "C" int TINKER_MOD(freeze, nratx);
+extern "C" int* TINKER_MOD(freeze, iratx);
+extern "C" int* TINKER_MOD(freeze, kratx);
+extern "C" int* TINKER_MOD(freeze, irat);
+extern "C" double TINKER_MOD(freeze, rateps);
+extern "C" double* TINKER_MOD(freeze, krat);
+extern "C" int TINKER_MOD(freeze, use_rattle);
+extern "C" int* TINKER_MOD(freeze, ratimage);
 
-int& nrat = m_tinker_mod(freeze, nrat);
-int& nratx = m_tinker_mod(freeze, nratx);
-int*& iratx = m_tinker_mod(freeze, iratx);
-int*& kratx = m_tinker_mod(freeze, kratx);
-int*& irat = m_tinker_mod(freeze, irat);
-double& rateps = m_tinker_mod(freeze, rateps);
-double*& krat = m_tinker_mod(freeze, krat);
-int& use_rattle = m_tinker_mod(freeze, use_rattle);
-int*& ratimage = m_tinker_mod(freeze, ratimage);
+int& nrat = TINKER_MOD(freeze, nrat);
+int& nratx = TINKER_MOD(freeze, nratx);
+int*& iratx = TINKER_MOD(freeze, iratx);
+int*& kratx = TINKER_MOD(freeze, kratx);
+int*& irat = TINKER_MOD(freeze, irat);
+double& rateps = TINKER_MOD(freeze, rateps);
+double*& krat = TINKER_MOD(freeze, krat);
+int& use_rattle = TINKER_MOD(freeze, use_rattle);
+int*& ratimage = TINKER_MOD(freeze, ratimage);
 #endif
 
 } TINKER_NAMESPACE_END

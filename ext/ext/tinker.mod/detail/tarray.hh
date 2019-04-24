@@ -9,13 +9,13 @@ extern int*& tindex;
 extern double*& tdipdip;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(tarray, ntpair);
-extern "C" int* m_tinker_mod(tarray, tindex);
-extern "C" double* m_tinker_mod(tarray, tdipdip);
+extern "C" int TINKER_MOD(tarray, ntpair);
+extern "C" int* TINKER_MOD(tarray, tindex);
+extern "C" double* TINKER_MOD(tarray, tdipdip);
 
-int& ntpair = m_tinker_mod(tarray, ntpair);
-int*& tindex = m_tinker_mod(tarray, tindex);
-double*& tdipdip = m_tinker_mod(tarray, tdipdip);
+int& ntpair = TINKER_MOD(tarray, ntpair);
+int*& tindex = TINKER_MOD(tarray, tindex);
+double*& tdipdip = TINKER_MOD(tarray, tdipdip);
 #endif
 
 } TINKER_NAMESPACE_END

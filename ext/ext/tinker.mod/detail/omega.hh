@@ -10,15 +10,15 @@ extern int*& zline;
 extern double*& dihed;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(omega, nomega);
-extern "C" int* m_tinker_mod(omega, iomega);
-extern "C" int* m_tinker_mod(omega, zline);
-extern "C" double* m_tinker_mod(omega, dihed);
+extern "C" int TINKER_MOD(omega, nomega);
+extern "C" int* TINKER_MOD(omega, iomega);
+extern "C" int* TINKER_MOD(omega, zline);
+extern "C" double* TINKER_MOD(omega, dihed);
 
-int& nomega = m_tinker_mod(omega, nomega);
-int*& iomega = m_tinker_mod(omega, iomega);
-int*& zline = m_tinker_mod(omega, zline);
-double*& dihed = m_tinker_mod(omega, dihed);
+int& nomega = TINKER_MOD(omega, nomega);
+int*& iomega = TINKER_MOD(omega, iomega);
+int*& zline = TINKER_MOD(omega, zline);
+double*& dihed = TINKER_MOD(omega, dihed);
 #endif
 
 } TINKER_NAMESPACE_END

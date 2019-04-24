@@ -11,17 +11,17 @@ extern double& dsp5scale;
 extern int& use_dcorr;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(dsppot, dsp2scale);
-extern "C" double m_tinker_mod(dsppot, dsp3scale);
-extern "C" double m_tinker_mod(dsppot, dsp4scale);
-extern "C" double m_tinker_mod(dsppot, dsp5scale);
-extern "C" int m_tinker_mod(dsppot, use_dcorr);
+extern "C" double TINKER_MOD(dsppot, dsp2scale);
+extern "C" double TINKER_MOD(dsppot, dsp3scale);
+extern "C" double TINKER_MOD(dsppot, dsp4scale);
+extern "C" double TINKER_MOD(dsppot, dsp5scale);
+extern "C" int TINKER_MOD(dsppot, use_dcorr);
 
-double& dsp2scale = m_tinker_mod(dsppot, dsp2scale);
-double& dsp3scale = m_tinker_mod(dsppot, dsp3scale);
-double& dsp4scale = m_tinker_mod(dsppot, dsp4scale);
-double& dsp5scale = m_tinker_mod(dsppot, dsp5scale);
-int& use_dcorr = m_tinker_mod(dsppot, use_dcorr);
+double& dsp2scale = TINKER_MOD(dsppot, dsp2scale);
+double& dsp3scale = TINKER_MOD(dsppot, dsp3scale);
+double& dsp4scale = TINKER_MOD(dsppot, dsp4scale);
+double& dsp5scale = TINKER_MOD(dsppot, dsp5scale);
+int& use_dcorr = TINKER_MOD(dsppot, use_dcorr);
 #endif
 
 } TINKER_NAMESPACE_END

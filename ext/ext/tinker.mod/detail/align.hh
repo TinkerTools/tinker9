@@ -9,13 +9,13 @@ extern int*& ifit;
 extern double*& wfit;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(align, nfit);
-extern "C" int* m_tinker_mod(align, ifit);
-extern "C" double* m_tinker_mod(align, wfit);
+extern "C" int TINKER_MOD(align, nfit);
+extern "C" int* TINKER_MOD(align, ifit);
+extern "C" double* TINKER_MOD(align, wfit);
 
-int& nfit = m_tinker_mod(align, nfit);
-int*& ifit = m_tinker_mod(align, ifit);
-double*& wfit = m_tinker_mod(align, wfit);
+int& nfit = TINKER_MOD(align, nfit);
+int*& ifit = TINKER_MOD(align, ifit);
+double*& wfit = TINKER_MOD(align, wfit);
 #endif
 
 } TINKER_NAMESPACE_END

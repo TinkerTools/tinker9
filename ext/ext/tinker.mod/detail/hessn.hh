@@ -9,13 +9,13 @@ extern double*& hessy;
 extern double*& hessz;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double* m_tinker_mod(hessn, hessx);
-extern "C" double* m_tinker_mod(hessn, hessy);
-extern "C" double* m_tinker_mod(hessn, hessz);
+extern "C" double* TINKER_MOD(hessn, hessx);
+extern "C" double* TINKER_MOD(hessn, hessy);
+extern "C" double* TINKER_MOD(hessn, hessz);
 
-double*& hessx = m_tinker_mod(hessn, hessx);
-double*& hessy = m_tinker_mod(hessn, hessy);
-double*& hessz = m_tinker_mod(hessn, hessz);
+double*& hessx = TINKER_MOD(hessn, hessx);
+double*& hessy = TINKER_MOD(hessn, hessy);
+double*& hessz = TINKER_MOD(hessn, hessz);
 #endif
 
 } TINKER_NAMESPACE_END

@@ -19,31 +19,31 @@ extern double*& srpole;
 extern char (*&polaxe)[8];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(mpole, npole);
-extern "C" int* m_tinker_mod(mpole, ipole);
-extern "C" int* m_tinker_mod(mpole, polsiz);
-extern "C" int* m_tinker_mod(mpole, pollist);
-extern "C" int* m_tinker_mod(mpole, zaxis);
-extern "C" int* m_tinker_mod(mpole, xaxis);
-extern "C" int* m_tinker_mod(mpole, yaxis);
-extern "C" double* m_tinker_mod(mpole, pole);
-extern "C" double* m_tinker_mod(mpole, rpole);
-extern "C" double* m_tinker_mod(mpole, spole);
-extern "C" double* m_tinker_mod(mpole, srpole);
-extern "C" char (*m_tinker_mod(mpole, polaxe))[8];
+extern "C" int TINKER_MOD(mpole, npole);
+extern "C" int* TINKER_MOD(mpole, ipole);
+extern "C" int* TINKER_MOD(mpole, polsiz);
+extern "C" int* TINKER_MOD(mpole, pollist);
+extern "C" int* TINKER_MOD(mpole, zaxis);
+extern "C" int* TINKER_MOD(mpole, xaxis);
+extern "C" int* TINKER_MOD(mpole, yaxis);
+extern "C" double* TINKER_MOD(mpole, pole);
+extern "C" double* TINKER_MOD(mpole, rpole);
+extern "C" double* TINKER_MOD(mpole, spole);
+extern "C" double* TINKER_MOD(mpole, srpole);
+extern "C" char (*TINKER_MOD(mpole, polaxe))[8];
 
-int& npole = m_tinker_mod(mpole, npole);
-int*& ipole = m_tinker_mod(mpole, ipole);
-int*& polsiz = m_tinker_mod(mpole, polsiz);
-int*& pollist = m_tinker_mod(mpole, pollist);
-int*& zaxis = m_tinker_mod(mpole, zaxis);
-int*& xaxis = m_tinker_mod(mpole, xaxis);
-int*& yaxis = m_tinker_mod(mpole, yaxis);
-double*& pole = m_tinker_mod(mpole, pole);
-double*& rpole = m_tinker_mod(mpole, rpole);
-double*& spole = m_tinker_mod(mpole, spole);
-double*& srpole = m_tinker_mod(mpole, srpole);
-char (*&polaxe)[8] = m_tinker_mod(mpole, polaxe);
+int& npole = TINKER_MOD(mpole, npole);
+int*& ipole = TINKER_MOD(mpole, ipole);
+int*& polsiz = TINKER_MOD(mpole, polsiz);
+int*& pollist = TINKER_MOD(mpole, pollist);
+int*& zaxis = TINKER_MOD(mpole, zaxis);
+int*& xaxis = TINKER_MOD(mpole, xaxis);
+int*& yaxis = TINKER_MOD(mpole, yaxis);
+double*& pole = TINKER_MOD(mpole, pole);
+double*& rpole = TINKER_MOD(mpole, rpole);
+double*& spole = TINKER_MOD(mpole, spole);
+double*& srpole = TINKER_MOD(mpole, srpole);
+char (*&polaxe)[8] = TINKER_MOD(mpole, polaxe);
 #endif
 
 } TINKER_NAMESPACE_END

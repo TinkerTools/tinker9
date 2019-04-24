@@ -9,11 +9,11 @@ extern double (&opbn)[maxnopb];
 extern char (&kopb)[maxnopb][16];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(kopbnd, opbn)[maxnopb];
-extern "C" char m_tinker_mod(kopbnd, kopb)[maxnopb][16];
+extern "C" double TINKER_MOD(kopbnd, opbn)[maxnopb];
+extern "C" char TINKER_MOD(kopbnd, kopb)[maxnopb][16];
 
-double (&opbn)[maxnopb] = m_tinker_mod(kopbnd, opbn);
-char (&kopb)[maxnopb][16] = m_tinker_mod(kopbnd, kopb);
+double (&opbn)[maxnopb] = TINKER_MOD(kopbnd, opbn);
+char (&kopb)[maxnopb][16] = TINKER_MOD(kopbnd, kopb);
 #endif
 
 } TINKER_NAMESPACE_END

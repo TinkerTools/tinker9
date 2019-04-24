@@ -11,17 +11,17 @@ extern double*& csix;
 extern double*& adisp;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(disp, ndisp);
-extern "C" int* m_tinker_mod(disp, idisp);
-extern "C" double m_tinker_mod(disp, csixpr);
-extern "C" double* m_tinker_mod(disp, csix);
-extern "C" double* m_tinker_mod(disp, adisp);
+extern "C" int TINKER_MOD(disp, ndisp);
+extern "C" int* TINKER_MOD(disp, idisp);
+extern "C" double TINKER_MOD(disp, csixpr);
+extern "C" double* TINKER_MOD(disp, csix);
+extern "C" double* TINKER_MOD(disp, adisp);
 
-int& ndisp = m_tinker_mod(disp, ndisp);
-int*& idisp = m_tinker_mod(disp, idisp);
-double& csixpr = m_tinker_mod(disp, csixpr);
-double*& csix = m_tinker_mod(disp, csix);
-double*& adisp = m_tinker_mod(disp, adisp);
+int& ndisp = TINKER_MOD(disp, ndisp);
+int*& idisp = TINKER_MOD(disp, idisp);
+double& csixpr = TINKER_MOD(disp, csixpr);
+double*& csix = TINKER_MOD(disp, csix);
+double*& adisp = TINKER_MOD(disp, adisp);
 #endif
 
 } TINKER_NAMESPACE_END

@@ -9,11 +9,11 @@ extern int& nprm;
 extern char (&prmline)[maxprm][240];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(params, nprm);
-extern "C" char m_tinker_mod(params, prmline)[maxprm][240];
+extern "C" int TINKER_MOD(params, nprm);
+extern "C" char TINKER_MOD(params, prmline)[maxprm][240];
 
-int& nprm = m_tinker_mod(params, nprm);
-char (&prmline)[maxprm][240] = m_tinker_mod(params, prmline);
+int& nprm = TINKER_MOD(params, nprm);
+char (&prmline)[maxprm][240] = TINKER_MOD(params, prmline);
 #endif
 
 } TINKER_NAMESPACE_END

@@ -16,21 +16,21 @@ extern char (&seq)[maxres][3];
 extern char (&chntyp)[maxres][7];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(sequen, nseq);
-extern "C" int m_tinker_mod(sequen, nchain);
-extern "C" int m_tinker_mod(sequen, ichain)[maxres][2];
-extern "C" int m_tinker_mod(sequen, seqtyp)[maxres];
-extern "C" char m_tinker_mod(sequen, chnnam)[maxres][1];
-extern "C" char m_tinker_mod(sequen, seq)[maxres][3];
-extern "C" char m_tinker_mod(sequen, chntyp)[maxres][7];
+extern "C" int TINKER_MOD(sequen, nseq);
+extern "C" int TINKER_MOD(sequen, nchain);
+extern "C" int TINKER_MOD(sequen, ichain)[maxres][2];
+extern "C" int TINKER_MOD(sequen, seqtyp)[maxres];
+extern "C" char TINKER_MOD(sequen, chnnam)[maxres][1];
+extern "C" char TINKER_MOD(sequen, seq)[maxres][3];
+extern "C" char TINKER_MOD(sequen, chntyp)[maxres][7];
 
-int& nseq = m_tinker_mod(sequen, nseq);
-int& nchain = m_tinker_mod(sequen, nchain);
-int (&ichain)[maxres][2] = m_tinker_mod(sequen, ichain);
-int (&seqtyp)[maxres] = m_tinker_mod(sequen, seqtyp);
-char (&chnnam)[maxres][1] = m_tinker_mod(sequen, chnnam);
-char (&seq)[maxres][3] = m_tinker_mod(sequen, seq);
-char (&chntyp)[maxres][7] = m_tinker_mod(sequen, chntyp);
+int& nseq = TINKER_MOD(sequen, nseq);
+int& nchain = TINKER_MOD(sequen, nchain);
+int (&ichain)[maxres][2] = TINKER_MOD(sequen, ichain);
+int (&seqtyp)[maxres] = TINKER_MOD(sequen, seqtyp);
+char (&chnnam)[maxres][1] = TINKER_MOD(sequen, chnnam);
+char (&seq)[maxres][3] = TINKER_MOD(sequen, seq);
+char (&chntyp)[maxres][7] = TINKER_MOD(sequen, chntyp);
 #endif
 
 } TINKER_NAMESPACE_END

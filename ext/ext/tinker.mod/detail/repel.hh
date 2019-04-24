@@ -10,15 +10,15 @@ extern double*& dmppr;
 extern double*& elepr;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(repel, nrep);
-extern "C" double* m_tinker_mod(repel, sizpr);
-extern "C" double* m_tinker_mod(repel, dmppr);
-extern "C" double* m_tinker_mod(repel, elepr);
+extern "C" int TINKER_MOD(repel, nrep);
+extern "C" double* TINKER_MOD(repel, sizpr);
+extern "C" double* TINKER_MOD(repel, dmppr);
+extern "C" double* TINKER_MOD(repel, elepr);
 
-int& nrep = m_tinker_mod(repel, nrep);
-double*& sizpr = m_tinker_mod(repel, sizpr);
-double*& dmppr = m_tinker_mod(repel, dmppr);
-double*& elepr = m_tinker_mod(repel, elepr);
+int& nrep = TINKER_MOD(repel, nrep);
+double*& sizpr = TINKER_MOD(repel, sizpr);
+double*& dmppr = TINKER_MOD(repel, dmppr);
+double*& elepr = TINKER_MOD(repel, elepr);
 #endif
 
 } TINKER_NAMESPACE_END

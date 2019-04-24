@@ -21,35 +21,35 @@ extern int& use_pred;
 extern char (&polpred)[4];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(uprior, nualt);
-extern "C" int m_tinker_mod(uprior, maxualt);
-extern "C" double m_tinker_mod(uprior, gear)[maxpred];
-extern "C" double m_tinker_mod(uprior, aspc)[maxpred];
-extern "C" double m_tinker_mod(uprior, bpred)[maxpred];
-extern "C" double m_tinker_mod(uprior, bpredp)[maxpred];
-extern "C" double m_tinker_mod(uprior, bpreds)[maxpred];
-extern "C" double m_tinker_mod(uprior, bpredps)[maxpred];
-extern "C" double* m_tinker_mod(uprior, udalt);
-extern "C" double* m_tinker_mod(uprior, upalt);
-extern "C" double* m_tinker_mod(uprior, usalt);
-extern "C" double* m_tinker_mod(uprior, upsalt);
-extern "C" int m_tinker_mod(uprior, use_pred);
-extern "C" char m_tinker_mod(uprior, polpred)[4];
+extern "C" int TINKER_MOD(uprior, nualt);
+extern "C" int TINKER_MOD(uprior, maxualt);
+extern "C" double TINKER_MOD(uprior, gear)[maxpred];
+extern "C" double TINKER_MOD(uprior, aspc)[maxpred];
+extern "C" double TINKER_MOD(uprior, bpred)[maxpred];
+extern "C" double TINKER_MOD(uprior, bpredp)[maxpred];
+extern "C" double TINKER_MOD(uprior, bpreds)[maxpred];
+extern "C" double TINKER_MOD(uprior, bpredps)[maxpred];
+extern "C" double* TINKER_MOD(uprior, udalt);
+extern "C" double* TINKER_MOD(uprior, upalt);
+extern "C" double* TINKER_MOD(uprior, usalt);
+extern "C" double* TINKER_MOD(uprior, upsalt);
+extern "C" int TINKER_MOD(uprior, use_pred);
+extern "C" char TINKER_MOD(uprior, polpred)[4];
 
-int& nualt = m_tinker_mod(uprior, nualt);
-int& maxualt = m_tinker_mod(uprior, maxualt);
-double (&gear)[maxpred] = m_tinker_mod(uprior, gear);
-double (&aspc)[maxpred] = m_tinker_mod(uprior, aspc);
-double (&bpred)[maxpred] = m_tinker_mod(uprior, bpred);
-double (&bpredp)[maxpred] = m_tinker_mod(uprior, bpredp);
-double (&bpreds)[maxpred] = m_tinker_mod(uprior, bpreds);
-double (&bpredps)[maxpred] = m_tinker_mod(uprior, bpredps);
-double*& udalt = m_tinker_mod(uprior, udalt);
-double*& upalt = m_tinker_mod(uprior, upalt);
-double*& usalt = m_tinker_mod(uprior, usalt);
-double*& upsalt = m_tinker_mod(uprior, upsalt);
-int& use_pred = m_tinker_mod(uprior, use_pred);
-char (&polpred)[4] = m_tinker_mod(uprior, polpred);
+int& nualt = TINKER_MOD(uprior, nualt);
+int& maxualt = TINKER_MOD(uprior, maxualt);
+double (&gear)[maxpred] = TINKER_MOD(uprior, gear);
+double (&aspc)[maxpred] = TINKER_MOD(uprior, aspc);
+double (&bpred)[maxpred] = TINKER_MOD(uprior, bpred);
+double (&bpredp)[maxpred] = TINKER_MOD(uprior, bpredp);
+double (&bpreds)[maxpred] = TINKER_MOD(uprior, bpreds);
+double (&bpredps)[maxpred] = TINKER_MOD(uprior, bpredps);
+double*& udalt = TINKER_MOD(uprior, udalt);
+double*& upalt = TINKER_MOD(uprior, upalt);
+double*& usalt = TINKER_MOD(uprior, usalt);
+double*& upsalt = TINKER_MOD(uprior, upsalt);
+int& use_pred = TINKER_MOD(uprior, use_pred);
+char (&polpred)[4] = TINKER_MOD(uprior, polpred);
 #endif
 
 } TINKER_NAMESPACE_END

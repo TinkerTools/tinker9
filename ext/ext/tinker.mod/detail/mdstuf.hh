@@ -12,19 +12,19 @@ extern int& dorest;
 extern char (&integrate)[11];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(mdstuf, nfree);
-extern "C" int m_tinker_mod(mdstuf, irest);
-extern "C" int m_tinker_mod(mdstuf, bmnmix);
-extern "C" double m_tinker_mod(mdstuf, arespa);
-extern "C" int m_tinker_mod(mdstuf, dorest);
-extern "C" char m_tinker_mod(mdstuf, integrate)[11];
+extern "C" int TINKER_MOD(mdstuf, nfree);
+extern "C" int TINKER_MOD(mdstuf, irest);
+extern "C" int TINKER_MOD(mdstuf, bmnmix);
+extern "C" double TINKER_MOD(mdstuf, arespa);
+extern "C" int TINKER_MOD(mdstuf, dorest);
+extern "C" char TINKER_MOD(mdstuf, integrate)[11];
 
-int& nfree = m_tinker_mod(mdstuf, nfree);
-int& irest = m_tinker_mod(mdstuf, irest);
-int& bmnmix = m_tinker_mod(mdstuf, bmnmix);
-double& arespa = m_tinker_mod(mdstuf, arespa);
-int& dorest = m_tinker_mod(mdstuf, dorest);
-char (&integrate)[11] = m_tinker_mod(mdstuf, integrate);
+int& nfree = TINKER_MOD(mdstuf, nfree);
+int& irest = TINKER_MOD(mdstuf, irest);
+int& bmnmix = TINKER_MOD(mdstuf, bmnmix);
+double& arespa = TINKER_MOD(mdstuf, arespa);
+int& dorest = TINKER_MOD(mdstuf, dorest);
+char (&integrate)[11] = TINKER_MOD(mdstuf, integrate);
 #endif
 
 } TINKER_NAMESPACE_END

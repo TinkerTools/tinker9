@@ -9,13 +9,13 @@ extern int*& ipit;
 extern double*& kpit;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(pitors, npitors);
-extern "C" int* m_tinker_mod(pitors, ipit);
-extern "C" double* m_tinker_mod(pitors, kpit);
+extern "C" int TINKER_MOD(pitors, npitors);
+extern "C" int* TINKER_MOD(pitors, ipit);
+extern "C" double* TINKER_MOD(pitors, kpit);
 
-int& npitors = m_tinker_mod(pitors, npitors);
-int*& ipit = m_tinker_mod(pitors, ipit);
-double*& kpit = m_tinker_mod(pitors, kpit);
+int& npitors = TINKER_MOD(pitors, npitors);
+int*& ipit = TINKER_MOD(pitors, ipit);
+double*& kpit = TINKER_MOD(pitors, kpit);
 #endif
 
 } TINKER_NAMESPACE_END

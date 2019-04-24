@@ -19,33 +19,33 @@ extern int*& rgy;
 extern int*& rgz;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(light, nlight);
-extern "C" int* m_tinker_mod(light, kbx);
-extern "C" int* m_tinker_mod(light, kby);
-extern "C" int* m_tinker_mod(light, kbz);
-extern "C" int* m_tinker_mod(light, kex);
-extern "C" int* m_tinker_mod(light, key);
-extern "C" int* m_tinker_mod(light, kez);
-extern "C" int* m_tinker_mod(light, locx);
-extern "C" int* m_tinker_mod(light, locy);
-extern "C" int* m_tinker_mod(light, locz);
-extern "C" int* m_tinker_mod(light, rgx);
-extern "C" int* m_tinker_mod(light, rgy);
-extern "C" int* m_tinker_mod(light, rgz);
+extern "C" int TINKER_MOD(light, nlight);
+extern "C" int* TINKER_MOD(light, kbx);
+extern "C" int* TINKER_MOD(light, kby);
+extern "C" int* TINKER_MOD(light, kbz);
+extern "C" int* TINKER_MOD(light, kex);
+extern "C" int* TINKER_MOD(light, key);
+extern "C" int* TINKER_MOD(light, kez);
+extern "C" int* TINKER_MOD(light, locx);
+extern "C" int* TINKER_MOD(light, locy);
+extern "C" int* TINKER_MOD(light, locz);
+extern "C" int* TINKER_MOD(light, rgx);
+extern "C" int* TINKER_MOD(light, rgy);
+extern "C" int* TINKER_MOD(light, rgz);
 
-int& nlight = m_tinker_mod(light, nlight);
-int*& kbx = m_tinker_mod(light, kbx);
-int*& kby = m_tinker_mod(light, kby);
-int*& kbz = m_tinker_mod(light, kbz);
-int*& kex = m_tinker_mod(light, kex);
-int*& key = m_tinker_mod(light, key);
-int*& kez = m_tinker_mod(light, kez);
-int*& locx = m_tinker_mod(light, locx);
-int*& locy = m_tinker_mod(light, locy);
-int*& locz = m_tinker_mod(light, locz);
-int*& rgx = m_tinker_mod(light, rgx);
-int*& rgy = m_tinker_mod(light, rgy);
-int*& rgz = m_tinker_mod(light, rgz);
+int& nlight = TINKER_MOD(light, nlight);
+int*& kbx = TINKER_MOD(light, kbx);
+int*& kby = TINKER_MOD(light, kby);
+int*& kbz = TINKER_MOD(light, kbz);
+int*& kex = TINKER_MOD(light, kex);
+int*& key = TINKER_MOD(light, key);
+int*& kez = TINKER_MOD(light, kez);
+int*& locx = TINKER_MOD(light, locx);
+int*& locy = TINKER_MOD(light, locy);
+int*& locz = TINKER_MOD(light, locz);
+int*& rgx = TINKER_MOD(light, rgx);
+int*& rgy = TINKER_MOD(light, rgy);
+int*& rgz = TINKER_MOD(light, rgz);
 #endif
 
 } TINKER_NAMESPACE_END

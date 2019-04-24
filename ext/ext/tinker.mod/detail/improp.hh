@@ -10,15 +10,15 @@ extern double*& kprop;
 extern double*& vprop;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(improp, niprop);
-extern "C" int* m_tinker_mod(improp, iiprop);
-extern "C" double* m_tinker_mod(improp, kprop);
-extern "C" double* m_tinker_mod(improp, vprop);
+extern "C" int TINKER_MOD(improp, niprop);
+extern "C" int* TINKER_MOD(improp, iiprop);
+extern "C" double* TINKER_MOD(improp, kprop);
+extern "C" double* TINKER_MOD(improp, vprop);
 
-int& niprop = m_tinker_mod(improp, niprop);
-int*& iiprop = m_tinker_mod(improp, iiprop);
-double*& kprop = m_tinker_mod(improp, kprop);
-double*& vprop = m_tinker_mod(improp, vprop);
+int& niprop = TINKER_MOD(improp, niprop);
+int*& iiprop = TINKER_MOD(improp, iiprop);
+double*& kprop = TINKER_MOD(improp, kprop);
+double*& vprop = TINKER_MOD(improp, vprop);
 #endif
 
 } TINKER_NAMESPACE_END

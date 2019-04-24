@@ -7,9 +7,9 @@ TINKER_NAMESPACE_BEGIN namespace hescut {
 extern double& hesscut;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(hescut, hesscut);
+extern "C" double TINKER_MOD(hescut, hesscut);
 
-double& hesscut = m_tinker_mod(hescut, hesscut);
+double& hesscut = TINKER_MOD(hescut, hesscut);
 #endif
 
 } TINKER_NAMESPACE_END

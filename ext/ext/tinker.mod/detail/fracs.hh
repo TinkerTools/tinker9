@@ -9,13 +9,13 @@ extern double*& yfrac;
 extern double*& zfrac;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double* m_tinker_mod(fracs, xfrac);
-extern "C" double* m_tinker_mod(fracs, yfrac);
-extern "C" double* m_tinker_mod(fracs, zfrac);
+extern "C" double* TINKER_MOD(fracs, xfrac);
+extern "C" double* TINKER_MOD(fracs, yfrac);
+extern "C" double* TINKER_MOD(fracs, zfrac);
 
-double*& xfrac = m_tinker_mod(fracs, xfrac);
-double*& yfrac = m_tinker_mod(fracs, yfrac);
-double*& zfrac = m_tinker_mod(fracs, zfrac);
+double*& xfrac = TINKER_MOD(fracs, xfrac);
+double*& yfrac = TINKER_MOD(fracs, yfrac);
+double*& zfrac = TINKER_MOD(fracs, zfrac);
 #endif
 
 } TINKER_NAMESPACE_END

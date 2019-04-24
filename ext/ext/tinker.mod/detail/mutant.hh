@@ -20,35 +20,35 @@ extern double& scalpha;
 extern int*& mut;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(mutant, nmut);
-extern "C" int m_tinker_mod(mutant, vcouple);
-extern "C" int* m_tinker_mod(mutant, imut);
-extern "C" int* m_tinker_mod(mutant, type0);
-extern "C" int* m_tinker_mod(mutant, class0);
-extern "C" int* m_tinker_mod(mutant, type1);
-extern "C" int* m_tinker_mod(mutant, class1);
-extern "C" double m_tinker_mod(mutant, lambda);
-extern "C" double m_tinker_mod(mutant, tlambda);
-extern "C" double m_tinker_mod(mutant, vlambda);
-extern "C" double m_tinker_mod(mutant, elambda);
-extern "C" double m_tinker_mod(mutant, scexp);
-extern "C" double m_tinker_mod(mutant, scalpha);
-extern "C" int* m_tinker_mod(mutant, mut);
+extern "C" int TINKER_MOD(mutant, nmut);
+extern "C" int TINKER_MOD(mutant, vcouple);
+extern "C" int* TINKER_MOD(mutant, imut);
+extern "C" int* TINKER_MOD(mutant, type0);
+extern "C" int* TINKER_MOD(mutant, class0);
+extern "C" int* TINKER_MOD(mutant, type1);
+extern "C" int* TINKER_MOD(mutant, class1);
+extern "C" double TINKER_MOD(mutant, lambda);
+extern "C" double TINKER_MOD(mutant, tlambda);
+extern "C" double TINKER_MOD(mutant, vlambda);
+extern "C" double TINKER_MOD(mutant, elambda);
+extern "C" double TINKER_MOD(mutant, scexp);
+extern "C" double TINKER_MOD(mutant, scalpha);
+extern "C" int* TINKER_MOD(mutant, mut);
 
-int& nmut = m_tinker_mod(mutant, nmut);
-int& vcouple = m_tinker_mod(mutant, vcouple);
-int*& imut = m_tinker_mod(mutant, imut);
-int*& type0 = m_tinker_mod(mutant, type0);
-int*& class0 = m_tinker_mod(mutant, class0);
-int*& type1 = m_tinker_mod(mutant, type1);
-int*& class1 = m_tinker_mod(mutant, class1);
-double& lambda = m_tinker_mod(mutant, lambda);
-double& tlambda = m_tinker_mod(mutant, tlambda);
-double& vlambda = m_tinker_mod(mutant, vlambda);
-double& elambda = m_tinker_mod(mutant, elambda);
-double& scexp = m_tinker_mod(mutant, scexp);
-double& scalpha = m_tinker_mod(mutant, scalpha);
-int*& mut = m_tinker_mod(mutant, mut);
+int& nmut = TINKER_MOD(mutant, nmut);
+int& vcouple = TINKER_MOD(mutant, vcouple);
+int*& imut = TINKER_MOD(mutant, imut);
+int*& type0 = TINKER_MOD(mutant, type0);
+int*& class0 = TINKER_MOD(mutant, class0);
+int*& type1 = TINKER_MOD(mutant, type1);
+int*& class1 = TINKER_MOD(mutant, class1);
+double& lambda = TINKER_MOD(mutant, lambda);
+double& tlambda = TINKER_MOD(mutant, tlambda);
+double& vlambda = TINKER_MOD(mutant, vlambda);
+double& elambda = TINKER_MOD(mutant, elambda);
+double& scexp = TINKER_MOD(mutant, scexp);
+double& scalpha = TINKER_MOD(mutant, scalpha);
+int*& mut = TINKER_MOD(mutant, mut);
 #endif
 
 } TINKER_NAMESPACE_END

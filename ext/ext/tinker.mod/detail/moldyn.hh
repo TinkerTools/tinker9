@@ -9,13 +9,13 @@ extern double*& a;
 extern double*& aalt;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double* m_tinker_mod(moldyn, v);
-extern "C" double* m_tinker_mod(moldyn, a);
-extern "C" double* m_tinker_mod(moldyn, aalt);
+extern "C" double* TINKER_MOD(moldyn, v);
+extern "C" double* TINKER_MOD(moldyn, a);
+extern "C" double* TINKER_MOD(moldyn, aalt);
 
-double*& v = m_tinker_mod(moldyn, v);
-double*& a = m_tinker_mod(moldyn, a);
-double*& aalt = m_tinker_mod(moldyn, aalt);
+double*& v = TINKER_MOD(moldyn, v);
+double*& a = TINKER_MOD(moldyn, a);
+double*& aalt = TINKER_MOD(moldyn, aalt);
 #endif
 
 } TINKER_NAMESPACE_END

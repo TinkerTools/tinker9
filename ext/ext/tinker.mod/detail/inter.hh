@@ -7,9 +7,9 @@ TINKER_NAMESPACE_BEGIN namespace inter {
 extern double& einter;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(inter, einter);
+extern "C" double TINKER_MOD(inter, einter);
 
-double& einter = m_tinker_mod(inter, einter);
+double& einter = TINKER_MOD(inter, einter);
 #endif
 
 } TINKER_NAMESPACE_END

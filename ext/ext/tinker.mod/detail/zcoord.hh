@@ -13,15 +13,15 @@ extern double (&zang)[maxatm];
 extern double (&ztors)[maxatm];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(zcoord, iz)[maxatm][4];
-extern "C" double m_tinker_mod(zcoord, zbond)[maxatm];
-extern "C" double m_tinker_mod(zcoord, zang)[maxatm];
-extern "C" double m_tinker_mod(zcoord, ztors)[maxatm];
+extern "C" int TINKER_MOD(zcoord, iz)[maxatm][4];
+extern "C" double TINKER_MOD(zcoord, zbond)[maxatm];
+extern "C" double TINKER_MOD(zcoord, zang)[maxatm];
+extern "C" double TINKER_MOD(zcoord, ztors)[maxatm];
 
-int (&iz)[maxatm][4] = m_tinker_mod(zcoord, iz);
-double (&zbond)[maxatm] = m_tinker_mod(zcoord, zbond);
-double (&zang)[maxatm] = m_tinker_mod(zcoord, zang);
-double (&ztors)[maxatm] = m_tinker_mod(zcoord, ztors);
+int (&iz)[maxatm][4] = TINKER_MOD(zcoord, iz);
+double (&zbond)[maxatm] = TINKER_MOD(zcoord, zbond);
+double (&zang)[maxatm] = TINKER_MOD(zcoord, zang);
+double (&ztors)[maxatm] = TINKER_MOD(zcoord, ztors);
 #endif
 
 } TINKER_NAMESPACE_END

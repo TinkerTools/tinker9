@@ -26,15 +26,15 @@ extern double*& rpmf;
 extern double*& acsa;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(hpmf, npmf);
-extern "C" int* m_tinker_mod(hpmf, ipmf);
-extern "C" double* m_tinker_mod(hpmf, rpmf);
-extern "C" double* m_tinker_mod(hpmf, acsa);
+extern "C" int TINKER_MOD(hpmf, npmf);
+extern "C" int* TINKER_MOD(hpmf, ipmf);
+extern "C" double* TINKER_MOD(hpmf, rpmf);
+extern "C" double* TINKER_MOD(hpmf, acsa);
 
-int& npmf = m_tinker_mod(hpmf, npmf);
-int*& ipmf = m_tinker_mod(hpmf, ipmf);
-double*& rpmf = m_tinker_mod(hpmf, rpmf);
-double*& acsa = m_tinker_mod(hpmf, acsa);
+int& npmf = TINKER_MOD(hpmf, npmf);
+int*& ipmf = TINKER_MOD(hpmf, ipmf);
+double*& rpmf = TINKER_MOD(hpmf, rpmf);
+double*& acsa = TINKER_MOD(hpmf, acsa);
 #endif
 
 } TINKER_NAMESPACE_END

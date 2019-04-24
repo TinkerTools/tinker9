@@ -10,13 +10,13 @@ extern int (&listarg)[maxarg+1];
 extern char (&arg)[maxarg+1][240];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(argue, narg);
-extern "C" int m_tinker_mod(argue, listarg)[maxarg+1];
-extern "C" char m_tinker_mod(argue, arg)[maxarg+1][240];
+extern "C" int TINKER_MOD(argue, narg);
+extern "C" int TINKER_MOD(argue, listarg)[maxarg+1];
+extern "C" char TINKER_MOD(argue, arg)[maxarg+1][240];
 
-int& narg = m_tinker_mod(argue, narg);
-int (&listarg)[maxarg+1] = m_tinker_mod(argue, listarg);
-char (&arg)[maxarg+1][240] = m_tinker_mod(argue, arg);
+int& narg = TINKER_MOD(argue, narg);
+int (&listarg)[maxarg+1] = TINKER_MOD(argue, listarg);
+char (&arg)[maxarg+1][240] = TINKER_MOD(argue, arg);
 #endif
 
 } TINKER_NAMESPACE_END

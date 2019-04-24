@@ -10,15 +10,15 @@ extern double*& uk;
 extern double*& ul;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(urey, nurey);
-extern "C" int* m_tinker_mod(urey, iury);
-extern "C" double* m_tinker_mod(urey, uk);
-extern "C" double* m_tinker_mod(urey, ul);
+extern "C" int TINKER_MOD(urey, nurey);
+extern "C" int* TINKER_MOD(urey, iury);
+extern "C" double* TINKER_MOD(urey, uk);
+extern "C" double* TINKER_MOD(urey, ul);
 
-int& nurey = m_tinker_mod(urey, nurey);
-int*& iury = m_tinker_mod(urey, iury);
-double*& uk = m_tinker_mod(urey, uk);
-double*& ul = m_tinker_mod(urey, ul);
+int& nurey = TINKER_MOD(urey, nurey);
+int*& iury = TINKER_MOD(urey, iury);
+double*& uk = TINKER_MOD(urey, uk);
+double*& ul = TINKER_MOD(urey, ul);
 #endif
 
 } TINKER_NAMESPACE_END

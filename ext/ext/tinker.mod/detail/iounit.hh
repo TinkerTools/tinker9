@@ -8,11 +8,11 @@ extern int& input;
 extern int& iout;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(iounit, input);
-extern "C" int m_tinker_mod(iounit, iout);
+extern "C" int TINKER_MOD(iounit, input);
+extern "C" int TINKER_MOD(iounit, iout);
 
-int& input = m_tinker_mod(iounit, input);
-int& iout = m_tinker_mod(iounit, iout);
+int& input = TINKER_MOD(iounit, input);
+int& iout = TINKER_MOD(iounit, iout);
 #endif
 
 } TINKER_NAMESPACE_END

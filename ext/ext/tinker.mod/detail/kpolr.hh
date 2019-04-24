@@ -9,13 +9,13 @@ extern double*& polr;
 extern double*& athl;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int* m_tinker_mod(kpolr, pgrp);
-extern "C" double* m_tinker_mod(kpolr, polr);
-extern "C" double* m_tinker_mod(kpolr, athl);
+extern "C" int* TINKER_MOD(kpolr, pgrp);
+extern "C" double* TINKER_MOD(kpolr, polr);
+extern "C" double* TINKER_MOD(kpolr, athl);
 
-int*& pgrp = m_tinker_mod(kpolr, pgrp);
-double*& polr = m_tinker_mod(kpolr, polr);
-double*& athl = m_tinker_mod(kpolr, athl);
+int*& pgrp = TINKER_MOD(kpolr, pgrp);
+double*& polr = TINKER_MOD(kpolr, polr);
+double*& athl = TINKER_MOD(kpolr, athl);
 #endif
 
 } TINKER_NAMESPACE_END

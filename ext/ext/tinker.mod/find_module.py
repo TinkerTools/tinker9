@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+
+'''
+e.g.
+(1) ./find_module.py list [fortran_files] | bash
+'''
+
 import os
 import sys
 

@@ -1,0 +1,7 @@
+BasedOnStyle:                          LLVM
+AlignOperands:                         false
+AlwaysBreakTemplateDeclarations:       true
+ColumnLimit:                           80
+IndentPPDirectives:                    AfterHash
+FixNamespaceComments:                  false
+PointerAlignment: Left

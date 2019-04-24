@@ -9,11 +9,11 @@ extern double (&atcon)[maxnat][6];
 extern char (&kat)[maxnat][16];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(kantor, atcon)[maxnat][6];
-extern "C" char m_tinker_mod(kantor, kat)[maxnat][16];
+extern "C" double TINKER_MOD(kantor, atcon)[maxnat][6];
+extern "C" char TINKER_MOD(kantor, kat)[maxnat][16];
 
-double (&atcon)[maxnat][6] = m_tinker_mod(kantor, atcon);
-char (&kat)[maxnat][16] = m_tinker_mod(kantor, kat);
+double (&atcon)[maxnat][6] = TINKER_MOD(kantor, atcon);
+char (&kat)[maxnat][16] = TINKER_MOD(kantor, kat);
 #endif
 
 } TINKER_NAMESPACE_END

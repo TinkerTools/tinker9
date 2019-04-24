@@ -15,25 +15,25 @@ extern double*& wc;
 extern int*& linear;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double* m_tinker_mod(rgddyn, xcmo);
-extern "C" double* m_tinker_mod(rgddyn, ycmo);
-extern "C" double* m_tinker_mod(rgddyn, zcmo);
-extern "C" double* m_tinker_mod(rgddyn, vcm);
-extern "C" double* m_tinker_mod(rgddyn, wcm);
-extern "C" double* m_tinker_mod(rgddyn, lm);
-extern "C" double* m_tinker_mod(rgddyn, vc);
-extern "C" double* m_tinker_mod(rgddyn, wc);
-extern "C" int* m_tinker_mod(rgddyn, linear);
+extern "C" double* TINKER_MOD(rgddyn, xcmo);
+extern "C" double* TINKER_MOD(rgddyn, ycmo);
+extern "C" double* TINKER_MOD(rgddyn, zcmo);
+extern "C" double* TINKER_MOD(rgddyn, vcm);
+extern "C" double* TINKER_MOD(rgddyn, wcm);
+extern "C" double* TINKER_MOD(rgddyn, lm);
+extern "C" double* TINKER_MOD(rgddyn, vc);
+extern "C" double* TINKER_MOD(rgddyn, wc);
+extern "C" int* TINKER_MOD(rgddyn, linear);
 
-double*& xcmo = m_tinker_mod(rgddyn, xcmo);
-double*& ycmo = m_tinker_mod(rgddyn, ycmo);
-double*& zcmo = m_tinker_mod(rgddyn, zcmo);
-double*& vcm = m_tinker_mod(rgddyn, vcm);
-double*& wcm = m_tinker_mod(rgddyn, wcm);
-double*& lm = m_tinker_mod(rgddyn, lm);
-double*& vc = m_tinker_mod(rgddyn, vc);
-double*& wc = m_tinker_mod(rgddyn, wc);
-int*& linear = m_tinker_mod(rgddyn, linear);
+double*& xcmo = TINKER_MOD(rgddyn, xcmo);
+double*& ycmo = TINKER_MOD(rgddyn, ycmo);
+double*& zcmo = TINKER_MOD(rgddyn, zcmo);
+double*& vcm = TINKER_MOD(rgddyn, vcm);
+double*& wcm = TINKER_MOD(rgddyn, wcm);
+double*& lm = TINKER_MOD(rgddyn, lm);
+double*& vc = TINKER_MOD(rgddyn, vc);
+double*& wc = TINKER_MOD(rgddyn, wc);
+int*& linear = TINKER_MOD(rgddyn, linear);
 #endif
 
 } TINKER_NAMESPACE_END

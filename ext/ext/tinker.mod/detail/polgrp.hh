@@ -18,23 +18,23 @@ extern int*& ip13;
 extern int*& ip14;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int* m_tinker_mod(polgrp, np11);
-extern "C" int* m_tinker_mod(polgrp, np12);
-extern "C" int* m_tinker_mod(polgrp, np13);
-extern "C" int* m_tinker_mod(polgrp, np14);
-extern "C" int* m_tinker_mod(polgrp, ip11);
-extern "C" int* m_tinker_mod(polgrp, ip12);
-extern "C" int* m_tinker_mod(polgrp, ip13);
-extern "C" int* m_tinker_mod(polgrp, ip14);
+extern "C" int* TINKER_MOD(polgrp, np11);
+extern "C" int* TINKER_MOD(polgrp, np12);
+extern "C" int* TINKER_MOD(polgrp, np13);
+extern "C" int* TINKER_MOD(polgrp, np14);
+extern "C" int* TINKER_MOD(polgrp, ip11);
+extern "C" int* TINKER_MOD(polgrp, ip12);
+extern "C" int* TINKER_MOD(polgrp, ip13);
+extern "C" int* TINKER_MOD(polgrp, ip14);
 
-int*& np11 = m_tinker_mod(polgrp, np11);
-int*& np12 = m_tinker_mod(polgrp, np12);
-int*& np13 = m_tinker_mod(polgrp, np13);
-int*& np14 = m_tinker_mod(polgrp, np14);
-int*& ip11 = m_tinker_mod(polgrp, ip11);
-int*& ip12 = m_tinker_mod(polgrp, ip12);
-int*& ip13 = m_tinker_mod(polgrp, ip13);
-int*& ip14 = m_tinker_mod(polgrp, ip14);
+int*& np11 = TINKER_MOD(polgrp, np11);
+int*& np12 = TINKER_MOD(polgrp, np12);
+int*& np13 = TINKER_MOD(polgrp, np13);
+int*& np14 = TINKER_MOD(polgrp, np14);
+int*& ip11 = TINKER_MOD(polgrp, ip11);
+int*& ip12 = TINKER_MOD(polgrp, ip12);
+int*& ip13 = TINKER_MOD(polgrp, ip13);
+int*& ip14 = TINKER_MOD(polgrp, ip14);
 #endif
 
 } TINKER_NAMESPACE_END

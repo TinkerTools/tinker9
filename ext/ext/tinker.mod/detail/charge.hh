@@ -11,17 +11,17 @@ extern int*& kion;
 extern double*& pchg;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(charge, nion);
-extern "C" int* m_tinker_mod(charge, iion);
-extern "C" int* m_tinker_mod(charge, jion);
-extern "C" int* m_tinker_mod(charge, kion);
-extern "C" double* m_tinker_mod(charge, pchg);
+extern "C" int TINKER_MOD(charge, nion);
+extern "C" int* TINKER_MOD(charge, iion);
+extern "C" int* TINKER_MOD(charge, jion);
+extern "C" int* TINKER_MOD(charge, kion);
+extern "C" double* TINKER_MOD(charge, pchg);
 
-int& nion = m_tinker_mod(charge, nion);
-int*& iion = m_tinker_mod(charge, iion);
-int*& jion = m_tinker_mod(charge, jion);
-int*& kion = m_tinker_mod(charge, kion);
-double*& pchg = m_tinker_mod(charge, pchg);
+int& nion = TINKER_MOD(charge, nion);
+int*& iion = TINKER_MOD(charge, iion);
+int*& jion = TINKER_MOD(charge, jion);
+int*& kion = TINKER_MOD(charge, kion);
+double*& pchg = TINKER_MOD(charge, pchg);
 #endif
 
 } TINKER_NAMESPACE_END

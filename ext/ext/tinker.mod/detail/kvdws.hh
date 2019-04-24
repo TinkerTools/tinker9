@@ -11,17 +11,17 @@ extern double*& eps4;
 extern double*& reduct;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double* m_tinker_mod(kvdws, rad);
-extern "C" double* m_tinker_mod(kvdws, eps);
-extern "C" double* m_tinker_mod(kvdws, rad4);
-extern "C" double* m_tinker_mod(kvdws, eps4);
-extern "C" double* m_tinker_mod(kvdws, reduct);
+extern "C" double* TINKER_MOD(kvdws, rad);
+extern "C" double* TINKER_MOD(kvdws, eps);
+extern "C" double* TINKER_MOD(kvdws, rad4);
+extern "C" double* TINKER_MOD(kvdws, eps4);
+extern "C" double* TINKER_MOD(kvdws, reduct);
 
-double*& rad = m_tinker_mod(kvdws, rad);
-double*& eps = m_tinker_mod(kvdws, eps);
-double*& rad4 = m_tinker_mod(kvdws, rad4);
-double*& eps4 = m_tinker_mod(kvdws, eps4);
-double*& reduct = m_tinker_mod(kvdws, reduct);
+double*& rad = TINKER_MOD(kvdws, rad);
+double*& eps = TINKER_MOD(kvdws, eps);
+double*& rad4 = TINKER_MOD(kvdws, rad4);
+double*& eps4 = TINKER_MOD(kvdws, eps4);
+double*& reduct = TINKER_MOD(kvdws, reduct);
 #endif
 
 } TINKER_NAMESPACE_END

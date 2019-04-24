@@ -10,13 +10,13 @@ extern double (&dst13)[maxnu];
 extern char (&ku)[maxnu][12];
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double m_tinker_mod(kurybr, ucon)[maxnu];
-extern "C" double m_tinker_mod(kurybr, dst13)[maxnu];
-extern "C" char m_tinker_mod(kurybr, ku)[maxnu][12];
+extern "C" double TINKER_MOD(kurybr, ucon)[maxnu];
+extern "C" double TINKER_MOD(kurybr, dst13)[maxnu];
+extern "C" char TINKER_MOD(kurybr, ku)[maxnu][12];
 
-double (&ucon)[maxnu] = m_tinker_mod(kurybr, ucon);
-double (&dst13)[maxnu] = m_tinker_mod(kurybr, dst13);
-char (&ku)[maxnu][12] = m_tinker_mod(kurybr, ku);
+double (&ucon)[maxnu] = TINKER_MOD(kurybr, ucon);
+double (&dst13)[maxnu] = TINKER_MOD(kurybr, dst13);
+char (&ku)[maxnu][12] = TINKER_MOD(kurybr, ku);
 #endif
 
 } TINKER_NAMESPACE_END

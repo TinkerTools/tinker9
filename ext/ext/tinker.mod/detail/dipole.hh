@@ -10,15 +10,15 @@ extern double*& bdpl;
 extern double*& sdpl;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" int m_tinker_mod(dipole, ndipole);
-extern "C" int* m_tinker_mod(dipole, idpl);
-extern "C" double* m_tinker_mod(dipole, bdpl);
-extern "C" double* m_tinker_mod(dipole, sdpl);
+extern "C" int TINKER_MOD(dipole, ndipole);
+extern "C" int* TINKER_MOD(dipole, idpl);
+extern "C" double* TINKER_MOD(dipole, bdpl);
+extern "C" double* TINKER_MOD(dipole, sdpl);
 
-int& ndipole = m_tinker_mod(dipole, ndipole);
-int*& idpl = m_tinker_mod(dipole, idpl);
-double*& bdpl = m_tinker_mod(dipole, bdpl);
-double*& sdpl = m_tinker_mod(dipole, sdpl);
+int& ndipole = TINKER_MOD(dipole, ndipole);
+int*& idpl = TINKER_MOD(dipole, idpl);
+double*& bdpl = TINKER_MOD(dipole, bdpl);
+double*& sdpl = TINKER_MOD(dipole, sdpl);
 #endif
 
 } TINKER_NAMESPACE_END

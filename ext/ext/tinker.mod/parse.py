@@ -25,7 +25,7 @@ _CurrentModule = ''
 _SharedHeader = '"util/macro.h"'
 _FortranCodeBlockMacro = 'TINKER_FORTRAN_CODE'
 
-_TINKER_MOD = 'm_tinker_mod'
+_TINKER_MOD = 'TINKER_MOD'
 
 _KnownTypes = {
     'integer': 'int',
