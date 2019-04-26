@@ -1,5 +1,7 @@
 # Nsight
 Debug/*
+Release/*
 .cproject
 .project
 .settings/*
+/Debug/
