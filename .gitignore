@@ -1,0 +1,5 @@
+# Nsight
+Debug/*
+.cproject
+.project
+.settings/*
