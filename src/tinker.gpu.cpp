@@ -7,6 +7,7 @@
 TINKER_NAMESPACE_BEGIN
 namespace detail_ {
 static const char* main_name = "tinker.gpu";
+static const std::string dynamic_name = "dynamic";
 static const std::string helper_name = "help";
 static const std::map<std::string, std::function<void(int, char**)>>&
 launcher();
@@ -36,10 +37,11 @@ int main(int argc, char** argv) {
 help_message:
   launcher.at(detail_::helper_name)(argc, argv);
   std::exit(1);
-  return 0;
 }
 
 TINKER_NAMESPACE_BEGIN
+extern void dynamic_x(int, char**);
+
 namespace detail_ {
 static void help_x(int, char**) {
   std::vector<std::string> keys;
@@ -66,6 +68,7 @@ static void help_x(int, char**) {
 static const std::map<std::string, std::function<void(int, char**)>>&
 launcher() {
   static std::map<std::string, std::function<void(int, char**)>> x = {
+      {dynamic_name, dynamic_x},
       {helper_name, help_x},
   };
   return x;
