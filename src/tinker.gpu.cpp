@@ -1,5 +1,4 @@
-#include "util/cxx.h"
-#include "util/fort.rt.h"
+#include "tinker.gpu.h"
 #include <algorithm>
 #include <functional>
 #include <map>

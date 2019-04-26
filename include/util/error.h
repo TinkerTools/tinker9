@@ -24,7 +24,7 @@ public:
     m__ += " at ";                                                             \
     m__ += __FILE__;                                                           \
     m__ += ":";                                                                \
-    m__ += __LINE__;                                                           \
+    m__ += TINKER_STR(__LINE__);                                                           \
     throw FatalError(m__);                                                     \
   } while (0)
 TINKER_NAMESPACE_END
