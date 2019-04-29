@@ -6,6 +6,15 @@
 #include <string>
 
 TINKER_NAMESPACE_BEGIN
+/**
+ * @brief
+ * Print the calling stack.
+ *
+ * @param _out_stream  A reference to std::ostream object.
+ *                     The default argument is std::cerr.
+ */
+void print_backtrace(std::ostream& _out_stream = std::cerr);
+
 class FatalError : public std::exception {
 private:
   std::string msg_;
@@ -24,7 +33,7 @@ public:
     m__ += " at ";                                                             \
     m__ += __FILE__;                                                           \
     m__ += ":";                                                                \
-    m__ += TINKER_STR(__LINE__);                                                           \
+    m__ += TINKER_STR(__LINE__);                                               \
     throw FatalError(m__);                                                     \
   } while (0)
 TINKER_NAMESPACE_END
