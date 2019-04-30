@@ -1,40 +1,42 @@
 ############################################################
 #                                                          #
-#  Copy this Makefile and inc file to the build directory  #
+#  Copy Makefile and inc files to the build directory      #
 #                                                          #
 ############################################################
 
-config := default_config
-ifeq ($(config),default_config)
-	config := gfortran.inc
-endif
-include $(config)
+# release / debug / profile
+opt := release
 
-f77_default := gfortran
+# tinker.gpu directory
+src := ../tinker.gpu
 
-############################################################
+# Path to the precompiled libtinker.a
+libtinker := $(HOME)/git/tinker/source/libtinker.a
 
-ifeq ($(F77),f77)
-	F77 := $(f77_default)
-endif
-found_f77 := false
-
-use_gfortran := false
-f77_compiler := $(shell echo $(F77) | cut -c 1-8)
-ifeq ($(f77_compiler),gfortran)
-	use_gfortran := true
-	found_f77 := true
-	fortran_name_macro := TINKER_GFORTRAN
-endif
-
-############################################################
-#                                                          #
-# OS                                                       #
-#                                                          #
-############################################################
+# FFTW
+fftwflag := -L$(HOME)/local/fftw/lib -lfftw3 -lfftw3_threads
 
 # Darwin -> darwin
 os := $(shell uname -s 2>/dev/null | tr "[:upper:]" "[:lower:]")
+
+# CUDA directory
+cudadir := /usr/local/cuda
+
+# Compilers
+CXX := nvcc
+NVCC := nvcc
+
+config := default_config
+ifeq ($(config),default_config)
+	ifeq ($(os),linux)
+		config := linux.gfortran.inc
+	else ifeq ($(os),darwin)
+		config := macos.gfortran.inc
+	endif
+endif
+include $(config)
+
+############################################################
 
 ifeq ($(os),linux)
 	ifeq ($(opt),debug)
@@ -44,6 +46,18 @@ ifeq ($(os),linux)
 	else ifeq ($(opt),profile)
 		cxx_opt_flags := -O3 -DNDEBUG -g
 	endif
+	ar_flags := ar crusv
+	ranlib_flags := ranlib
+else ifeq ($(os),darwin)
+	ifeq ($(opt),debug)
+                cxx_opt_flags := -O0 -g -DDEBUG=1
+        else ifeq ($(opt),release)
+                cxx_opt_flags := -O3 -DNDEBUG
+        else ifeq ($(opt),profile)
+                cxx_opt_flags := -O3 -DNDEBUG -g
+        endif
+	ar_flags := ar crusv
+	ranlib_flags := ranlib -c
 endif
 
 ############################################################
@@ -53,7 +67,7 @@ endif
 ############################################################
 
 .PHONY: all
-all: tinker.gpu
+all: tinker.gpu test.all
 
 ############################################################
 #                                                          #
@@ -72,11 +86,12 @@ print-config:
 dirs:
 	@mkdir -p $(extdir)/fmt
 	@mkdir -p $(extdir)/tinker
+	@mkdir -p src/test
 	@mkdir -p src/util
 
 .PHONY: clean
 clean:
-	rm -rf ext src tinker.gpu *.a *dSYM
+	rm -rf ext src tinker.gpu test.all *.a *dSYM
 
 ########################################################################
 #                                                                      #
@@ -84,7 +99,7 @@ clean:
 #                                                                      #
 ########################################################################
 
-topdir := $(src)
+topdir := $(realpath $(src))
 extdir := ext/ext
 
 include_flags := -I$(topdir)/include
@@ -102,6 +117,7 @@ link_flags := $(cxx_common_flags) $(libtinker) $(fortrtflag) $(fftwflag)
 ext_cc_objs := $(extdir)/fmt/format.o $(extdir)/fmt/posix.o
 ext_cpp_objs := $(extdir)/tinker/tinker.mod.o $(extdir)/tinker/tinker.rt.o
 
+main_cc_objs := src/test/test.all.o
 main_cpp_objs := src/tinker.gpu.o
 
 # $(topdir)/src/util/foo.cpp -> src/util/foo.o
@@ -112,9 +128,15 @@ lib_cpp_files := $(shell find $(topdir)/src -type f -name '*.cpp' \
 lib_cpp_objs := $(subst $(topdir)/,,$(lib_cpp_files))
 lib_cpp_objs := $(patsubst %.cpp,%.o,$(lib_cpp_objs))
 
-all_cc_objs := $(ext_cc_objs)
-all_cpp_objs += $(main_cpp_objs)
-all_cpp_objs += $(ext_cpp_objs) $(lib_cpp_objs)
+# $(topdir)/src/test/test.foo.cpp -> src/test/test.foo.o
+test_cpp_files := $(wildcard $(topdir)/src/test/test.*.cpp)
+test_cpp_objs := $(subst $(topdir)/,,$(test_cpp_files))
+test_cpp_objs := $(patsubst %.cpp,%.o,$(test_cpp_objs))
+
+all_cc_objs := $(main_cc_objs)
+all_cpp_objs := $(main_cpp_objs)
+all_cc_objs += $(ext_cc_objs)
+all_cpp_objs += $(ext_cpp_objs) $(lib_cpp_objs) $(test_cpp_objs)
 
 # targets: normal-prerequisites | order-only-prerequisites
 $(all_cc_objs): %.o: $(topdir)/%.cc | dirs
@@ -123,8 +145,8 @@ $(all_cpp_objs): %.o: $(topdir)/%.cpp | dirs
 	$(CXX) $(cxx_compile_flags) $< -o $@
 
 libtinkergpu.a: $(ext_cc_objs) $(ext_cpp_objs) $(lib_cpp_objs)
-	ar qc $@ $^
-	ranlib $@
+	$(ar_flags) $@ $^
+	$(ranlib_flags) $@
 
 ########################################################################
 #                                                                      #
@@ -133,4 +155,17 @@ libtinkergpu.a: $(ext_cc_objs) $(ext_cpp_objs) $(lib_cpp_objs)
 ########################################################################
 
 tinker.gpu: src/tinker.gpu.o libtinkergpu.a
+	$(CXX) $(link_flags) $^ -o $@
+
+########################################################################
+#                                                                      #
+# tests                                                                #
+#                                                                      #
+########################################################################
+
+.PHONY: test
+test: test.all
+	@$(PWD)/test.all ~[act]
+
+test.all: src/test/test.all.o $(test_cpp_objs) libtinkergpu.a
 	$(CXX) $(link_flags) $^ -o $@
