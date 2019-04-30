@@ -4,5 +4,9 @@
 #include "util/cxx.h"
 #include "util/error.h"
 #include "util/fort.rt.h"
+#include "util/fort.str.h"
+#include "util/read.stream.h"
+#include <ext/tinker/tinker.mod.h>
+#include <ext/tinker/tinker.rt.h>
 
 #endif

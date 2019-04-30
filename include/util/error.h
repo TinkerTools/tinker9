@@ -2,6 +2,7 @@
 #define TINKER_UTIL_ERROR_H_
 
 #include "macro.h"
+#include <iostream>
 #include <stdexcept>
 #include <string>
 

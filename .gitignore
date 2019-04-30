@@ -4,4 +4,7 @@ Release/*
 .cproject
 .project
 .settings/*
-/Debug/
+
+# build
+build/*
+build*

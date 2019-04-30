@@ -1,5 +1,5 @@
 #include "tinker.rt.h"
-#include "ext/tinker.mod/tinker.mod.h"
+#include "tinker.mod.h"
 
 TINKER_NAMESPACE_BEGIN
 void nextarg(size_t _len, char* _str, logical& _exist) {
