@@ -53,7 +53,6 @@ double& zxqdp = TINKER_MOD(moment, zxqdp);
 double& zyqdp = TINKER_MOD(moment, zyqdp);
 double& zzqdp = TINKER_MOD(moment, zzqdp);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

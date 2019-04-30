@@ -47,7 +47,6 @@ int*& rgx = TINKER_MOD(light, rgx);
 int*& rgy = TINKER_MOD(light, rgy);
 int*& rgz = TINKER_MOD(light, rgz);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -23,7 +23,6 @@ double*& kslope = TINKER_MOD(pistuf, kslope);
 double*& lslope = TINKER_MOD(pistuf, lslope);
 double*& torsp2 = TINKER_MOD(pistuf, torsp2);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

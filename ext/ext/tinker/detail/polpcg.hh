@@ -23,7 +23,6 @@ double*& minv = TINKER_MOD(polpcg, minv);
 int& pcgprec = TINKER_MOD(polpcg, pcgprec);
 int& pcgguess = TINKER_MOD(polpcg, pcgguess);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

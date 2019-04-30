@@ -17,7 +17,6 @@ int& nrot = TINKER_MOD(rotbnd, nrot);
 int*& rot = TINKER_MOD(rotbnd, rot);
 int& use_short = TINKER_MOD(rotbnd, use_short);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -36,7 +36,6 @@ int*& ipmf = TINKER_MOD(hpmf, ipmf);
 double*& rpmf = TINKER_MOD(hpmf, rpmf);
 double*& acsa = TINKER_MOD(hpmf, acsa);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -56,7 +56,6 @@ char (*&pdbtyp)[6] = TINKER_MOD(pdb, pdbtyp);
 char (&chnsym)[20] = TINKER_MOD(pdb, chnsym);
 char (&instyp)[20] = TINKER_MOD(pdb, instyp);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

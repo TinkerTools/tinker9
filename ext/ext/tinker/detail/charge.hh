@@ -23,7 +23,6 @@ int*& jion = TINKER_MOD(charge, jion);
 int*& kion = TINKER_MOD(charge, kion);
 double*& pchg = TINKER_MOD(charge, pchg);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

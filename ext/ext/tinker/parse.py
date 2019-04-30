@@ -197,7 +197,7 @@ class module:
             print('')
             for x in self.entries:
                 x.print_fpp(op='define')
-            print('#endif\n')
+            print('#endif')
         print('} TINKER_NAMESPACE_END')
 
 

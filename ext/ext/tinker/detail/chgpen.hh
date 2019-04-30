@@ -20,7 +20,6 @@ double*& pcore = TINKER_MOD(chgpen, pcore);
 double*& pval = TINKER_MOD(chgpen, pval);
 double*& palpha = TINKER_MOD(chgpen, palpha);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

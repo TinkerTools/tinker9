@@ -50,7 +50,6 @@ double*& epsilon4 = TINKER_MOD(vdw, epsilon4);
 double*& radhbnd = TINKER_MOD(vdw, radhbnd);
 double*& epshbnd = TINKER_MOD(vdw, epshbnd);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

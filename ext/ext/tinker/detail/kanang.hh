@@ -11,7 +11,6 @@ extern "C" double* TINKER_MOD(kanang, anan);
 
 double*& anan = TINKER_MOD(kanang, anan);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

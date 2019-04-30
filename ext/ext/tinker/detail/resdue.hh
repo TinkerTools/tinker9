@@ -139,7 +139,6 @@ char (&nuclz1)[maxnuc][1] = TINKER_MOD(resdue, nuclz1);
 char (&amino)[maxamino][3] = TINKER_MOD(resdue, amino);
 char (&nuclz)[maxnuc][3] = TINKER_MOD(resdue, nuclz);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

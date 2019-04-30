@@ -17,7 +17,6 @@ int& nstrtor = TINKER_MOD(strtor, nstrtor);
 int*& ist = TINKER_MOD(strtor, ist);
 double*& kst = TINKER_MOD(strtor, kst);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

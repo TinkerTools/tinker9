@@ -77,7 +77,6 @@ double*& thetai3 = TINKER_MOD(pme, thetai3);
 double*& qgrid = TINKER_MOD(pme, qgrid);
 double*& qfac = TINKER_MOD(pme, qfac);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

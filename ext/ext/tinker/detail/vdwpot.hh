@@ -66,7 +66,6 @@ char (&radrule)[10] = TINKER_MOD(vdwpot, radrule);
 char (&epsrule)[10] = TINKER_MOD(vdwpot, epsrule);
 char (&vdwtyp)[13] = TINKER_MOD(vdwpot, vdwtyp);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

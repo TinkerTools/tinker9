@@ -50,7 +50,6 @@ double& scexp = TINKER_MOD(mutant, scexp);
 double& scalpha = TINKER_MOD(mutant, scalpha);
 int*& mut = TINKER_MOD(mutant, mut);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

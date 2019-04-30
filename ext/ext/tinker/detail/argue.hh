@@ -18,7 +18,6 @@ int& narg = TINKER_MOD(argue, narg);
 int (&listarg)[maxarg+1] = TINKER_MOD(argue, listarg);
 char (&arg)[maxarg+1][240] = TINKER_MOD(argue, arg);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -17,7 +17,6 @@ int& nopbend = TINKER_MOD(opbend, nopbend);
 int*& iopb = TINKER_MOD(opbend, iopb);
 double*& opbk = TINKER_MOD(opbend, opbk);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -38,7 +38,6 @@ double*& aaux = TINKER_MOD(ielscf, aaux);
 double*& apaux = TINKER_MOD(ielscf, apaux);
 int& use_ielscf = TINKER_MOD(ielscf, use_ielscf);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

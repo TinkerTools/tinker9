@@ -38,7 +38,6 @@ double*& fmp = TINKER_MOD(mrecip, fmp);
 double*& cphi = TINKER_MOD(mrecip, cphi);
 double*& fphi = TINKER_MOD(mrecip, fphi);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -53,7 +53,6 @@ double*& uinps = TINKER_MOD(polar, uinps);
 double*& uexact = TINKER_MOD(polar, uexact);
 int*& douind = TINKER_MOD(polar, douind);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -23,7 +23,6 @@ double& dsp4scale = TINKER_MOD(dsppot, dsp4scale);
 double& dsp5scale = TINKER_MOD(dsppot, dsp5scale);
 int& use_dcorr = TINKER_MOD(dsppot, use_dcorr);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

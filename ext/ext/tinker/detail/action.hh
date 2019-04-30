@@ -95,7 +95,6 @@ int& nelf = TINKER_MOD(action, nelf);
 int& neg = TINKER_MOD(action, neg);
 int& nex = TINKER_MOD(action, nex);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

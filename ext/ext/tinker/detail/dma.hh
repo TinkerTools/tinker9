@@ -35,7 +35,6 @@ double*& q21s = TINKER_MOD(dma, q21s);
 double*& q22c = TINKER_MOD(dma, q22c);
 double*& q22s = TINKER_MOD(dma, q22s);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -15,7 +15,6 @@ extern "C" char TINKER_MOD(params, prmline)[maxprm][240];
 int& nprm = TINKER_MOD(params, nprm);
 char (&prmline)[maxprm][240] = TINKER_MOD(params, prmline);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

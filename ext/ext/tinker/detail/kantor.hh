@@ -15,7 +15,6 @@ extern "C" char TINKER_MOD(kantor, kat)[maxnat][16];
 double (&atcon)[maxnat][6] = TINKER_MOD(kantor, atcon);
 char (&kat)[maxnat][16] = TINKER_MOD(kantor, kat);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

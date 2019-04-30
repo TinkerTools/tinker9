@@ -26,7 +26,6 @@ double& cappa = TINKER_MOD(linmin, cappa);
 double& slpmax = TINKER_MOD(linmin, slpmax);
 double& angmax = TINKER_MOD(linmin, angmax);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

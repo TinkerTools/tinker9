@@ -23,7 +23,6 @@ double*& xmin1 = TINKER_MOD(syntrn, xmin1);
 double*& xmin2 = TINKER_MOD(syntrn, xmin2);
 double*& xm = TINKER_MOD(syntrn, xm);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

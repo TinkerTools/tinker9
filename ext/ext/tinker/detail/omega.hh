@@ -20,7 +20,6 @@ int*& iomega = TINKER_MOD(omega, iomega);
 int*& zline = TINKER_MOD(omega, zline);
 double*& dihed = TINKER_MOD(omega, dihed);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

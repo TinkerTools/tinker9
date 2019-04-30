@@ -14,7 +14,6 @@ extern "C" char TINKER_MOD(titles, title)[240];
 int& ltitle = TINKER_MOD(titles, ltitle);
 char (&title)[240] = TINKER_MOD(titles, title);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

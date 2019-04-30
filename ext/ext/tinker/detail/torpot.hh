@@ -29,7 +29,6 @@ double& storunit = TINKER_MOD(torpot, storunit);
 double& atorunit = TINKER_MOD(torpot, atorunit);
 double& ttorunit = TINKER_MOD(torpot, ttorunit);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

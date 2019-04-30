@@ -17,7 +17,6 @@ int& nct = TINKER_MOD(chgtrn, nct);
 double*& chgct = TINKER_MOD(chgtrn, chgct);
 double*& dmpct = TINKER_MOD(chgtrn, dmpct);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

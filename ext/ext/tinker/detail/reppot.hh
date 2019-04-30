@@ -20,7 +20,6 @@ double& r3scale = TINKER_MOD(reppot, r3scale);
 double& r4scale = TINKER_MOD(reppot, r4scale);
 double& r5scale = TINKER_MOD(reppot, r5scale);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

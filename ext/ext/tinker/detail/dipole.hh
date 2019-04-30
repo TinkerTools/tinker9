@@ -20,7 +20,6 @@ int*& idpl = TINKER_MOD(dipole, idpl);
 double*& bdpl = TINKER_MOD(dipole, bdpl);
 double*& sdpl = TINKER_MOD(dipole, sdpl);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

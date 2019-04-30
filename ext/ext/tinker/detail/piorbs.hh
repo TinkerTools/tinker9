@@ -50,7 +50,6 @@ double*& pbpl = TINKER_MOD(piorbs, pbpl);
 double*& pnpl = TINKER_MOD(piorbs, pnpl);
 int*& listpi = TINKER_MOD(piorbs, listpi);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

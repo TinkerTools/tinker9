@@ -34,7 +34,6 @@ double& e0_lattice = TINKER_MOD(xtals, e0_lattice);
 char (&vartyp)[maxlsq][16] = TINKER_MOD(xtals, vartyp);
 char (&rsdtyp)[maxrsd][16] = TINKER_MOD(xtals, rsdtyp);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

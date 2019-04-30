@@ -95,7 +95,6 @@ double*& aelf = TINKER_MOD(analyz, aelf);
 double*& aeg = TINKER_MOD(analyz, aeg);
 double*& aex = TINKER_MOD(analyz, aex);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

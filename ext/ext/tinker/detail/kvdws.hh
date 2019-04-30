@@ -23,7 +23,6 @@ double*& rad4 = TINKER_MOD(kvdws, rad4);
 double*& eps4 = TINKER_MOD(kvdws, eps4);
 double*& reduct = TINKER_MOD(kvdws, reduct);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

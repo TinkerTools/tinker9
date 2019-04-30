@@ -56,6 +56,11 @@ two macros (TINKER_MOD and TINKER_RT) here to mimic its name mangling.
 #  define NDEBUG
 #endif
 
+// GPU precision
+#ifndef TINKER_GPU_DOUBLE
+#  define TINKER_GPU_SINGLE
+#endif
+
 // C++ features
 #if defined(__cplusplus)
 #  ifdef __cpp_if_constexpr

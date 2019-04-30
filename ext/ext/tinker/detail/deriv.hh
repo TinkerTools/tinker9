@@ -95,7 +95,6 @@ double*& delf = TINKER_MOD(deriv, delf);
 double*& deg = TINKER_MOD(deriv, deg);
 double*& dex = TINKER_MOD(deriv, dex);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

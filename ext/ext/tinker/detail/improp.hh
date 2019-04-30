@@ -20,7 +20,6 @@ int*& iiprop = TINKER_MOD(improp, iiprop);
 double*& kprop = TINKER_MOD(improp, kprop);
 double*& vprop = TINKER_MOD(improp, vprop);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

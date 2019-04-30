@@ -86,7 +86,6 @@ int& use_clist = TINKER_MOD(limits, use_clist);
 int& use_mlist = TINKER_MOD(limits, use_mlist);
 int& use_ulist = TINKER_MOD(limits, use_ulist);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

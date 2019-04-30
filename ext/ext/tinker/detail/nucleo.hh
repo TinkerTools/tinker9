@@ -29,7 +29,6 @@ int& dblhlx = TINKER_MOD(nucleo, dblhlx);
 int (&deoxy)[maxres] = TINKER_MOD(nucleo, deoxy);
 char (&hlxform)[1] = TINKER_MOD(nucleo, hlxform);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

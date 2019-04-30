@@ -14,7 +14,6 @@ extern "C" int* TINKER_MOD(bitor, ibitor);
 int& nbitor = TINKER_MOD(bitor, nbitor);
 int*& ibitor = TINKER_MOD(bitor, ibitor);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

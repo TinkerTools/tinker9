@@ -17,7 +17,6 @@ int (&ijk)[6][6][6] = TINKER_MOD(rxnfld, ijk);
 double (&b1)[13][40] = TINKER_MOD(rxnfld, b1);
 double (&b2)[13][40] = TINKER_MOD(rxnfld, b2);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

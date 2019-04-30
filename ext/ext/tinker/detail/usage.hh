@@ -17,7 +17,6 @@ int& nuse = TINKER_MOD(usage, nuse);
 int*& iuse = TINKER_MOD(usage, iuse);
 int*& use = TINKER_MOD(usage, use);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

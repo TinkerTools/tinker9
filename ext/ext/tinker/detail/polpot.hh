@@ -86,7 +86,6 @@ int& dpequal = TINKER_MOD(polpot, dpequal);
 int& use_thole = TINKER_MOD(polpot, use_thole);
 char (&poltyp)[6] = TINKER_MOD(polpot, poltyp);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

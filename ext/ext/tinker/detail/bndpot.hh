@@ -20,7 +20,6 @@ double& qbnd = TINKER_MOD(bndpot, qbnd);
 double& bndunit = TINKER_MOD(bndpot, bndunit);
 char (&bndtyp)[8] = TINKER_MOD(bndpot, bndtyp);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

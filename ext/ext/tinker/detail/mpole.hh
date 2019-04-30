@@ -45,7 +45,6 @@ double*& spole = TINKER_MOD(mpole, spole);
 double*& srpole = TINKER_MOD(mpole, srpole);
 char (*&polaxe)[8] = TINKER_MOD(mpole, polaxe);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

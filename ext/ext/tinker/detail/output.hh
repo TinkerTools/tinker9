@@ -20,7 +20,6 @@ int& noversion = TINKER_MOD(output, noversion);
 int& overwrite = TINKER_MOD(output, overwrite);
 char (&coordtype)[9] = TINKER_MOD(output, coordtype);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

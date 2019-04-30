@@ -17,7 +17,6 @@ int& npitors = TINKER_MOD(pitors, npitors);
 int*& ipit = TINKER_MOD(pitors, ipit);
 double*& kpit = TINKER_MOD(pitors, kpit);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -35,7 +35,6 @@ double& c5scale = TINKER_MOD(chgpot, c5scale);
 int& neutnbr = TINKER_MOD(chgpot, neutnbr);
 int& neutcut = TINKER_MOD(chgpot, neutcut);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

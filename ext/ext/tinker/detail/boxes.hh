@@ -80,7 +80,6 @@ int& triclinic = TINKER_MOD(boxes, triclinic);
 int& octahedron = TINKER_MOD(boxes, octahedron);
 char (&spacegrp)[10] = TINKER_MOD(boxes, spacegrp);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

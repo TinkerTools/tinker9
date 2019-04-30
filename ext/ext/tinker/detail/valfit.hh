@@ -32,7 +32,6 @@ int& fit_tors = TINKER_MOD(valfit, fit_tors);
 int& fit_struct = TINKER_MOD(valfit, fit_struct);
 int& fit_force = TINKER_MOD(valfit, fit_force);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

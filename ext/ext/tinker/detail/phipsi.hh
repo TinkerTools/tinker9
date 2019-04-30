@@ -29,7 +29,6 @@ double (&psi)[maxres] = TINKER_MOD(phipsi, psi);
 double (&omega)[maxres] = TINKER_MOD(phipsi, omega);
 double (&chi)[maxres][4] = TINKER_MOD(phipsi, chi);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

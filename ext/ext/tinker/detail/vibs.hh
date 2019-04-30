@@ -17,7 +17,6 @@ double*& phi = TINKER_MOD(vibs, phi);
 double*& phik = TINKER_MOD(vibs, phik);
 double*& pwork = TINKER_MOD(vibs, pwork);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

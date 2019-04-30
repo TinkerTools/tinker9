@@ -58,7 +58,6 @@ char (&ka4)[maxna4][12] = TINKER_MOD(kangs, ka4);
 char (&ka3)[maxna3][12] = TINKER_MOD(kangs, ka3);
 char (&kaf)[maxnaf][12] = TINKER_MOD(kangs, kaf);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

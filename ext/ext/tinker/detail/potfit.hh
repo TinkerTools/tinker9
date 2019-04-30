@@ -101,7 +101,6 @@ int*& fitpol = TINKER_MOD(potfit, fitpol);
 int*& gatm = TINKER_MOD(potfit, gatm);
 int*& fatm = TINKER_MOD(potfit, fatm);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

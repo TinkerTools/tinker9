@@ -14,7 +14,6 @@ extern "C" int TINKER_MOD(iounit, iout);
 int& input = TINKER_MOD(iounit, input);
 int& iout = TINKER_MOD(iounit, iout);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

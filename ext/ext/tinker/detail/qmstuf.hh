@@ -32,7 +32,6 @@ double*& gfreq = TINKER_MOD(qmstuf, gfreq);
 double*& gforce = TINKER_MOD(qmstuf, gforce);
 double*& gh = TINKER_MOD(qmstuf, gh);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

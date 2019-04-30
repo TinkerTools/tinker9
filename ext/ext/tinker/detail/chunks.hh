@@ -41,7 +41,6 @@ int& nrpts = TINKER_MOD(chunks, nrpts);
 int& grdoff = TINKER_MOD(chunks, grdoff);
 int*& pmetable = TINKER_MOD(chunks, pmetable);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

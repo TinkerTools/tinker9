@@ -95,7 +95,6 @@ double& elf = TINKER_MOD(energi, elf);
 double& eg = TINKER_MOD(energi, eg);
 double& ex = TINKER_MOD(energi, ex);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

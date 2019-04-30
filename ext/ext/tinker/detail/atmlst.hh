@@ -14,7 +14,6 @@ extern "C" int* TINKER_MOD(atmlst, anglist);
 int*& bndlist = TINKER_MOD(atmlst, bndlist);
 int*& anglist = TINKER_MOD(atmlst, anglist);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

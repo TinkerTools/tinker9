@@ -23,7 +23,6 @@ double*& ak = TINKER_MOD(angbnd, ak);
 double*& anat = TINKER_MOD(angbnd, anat);
 double*& afld = TINKER_MOD(angbnd, afld);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

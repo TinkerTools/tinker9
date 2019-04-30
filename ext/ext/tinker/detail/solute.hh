@@ -77,7 +77,6 @@ double*& uace = TINKER_MOD(solute, uace);
 char (&solvtyp)[8] = TINKER_MOD(solute, solvtyp);
 char (&borntyp)[8] = TINKER_MOD(solute, borntyp);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

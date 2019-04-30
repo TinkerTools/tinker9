@@ -18,7 +18,6 @@ double (&radhb)[maxnhb] = TINKER_MOD(khbond, radhb);
 double (&epshb)[maxnhb] = TINKER_MOD(khbond, epshb);
 char (&khb)[maxnhb][8] = TINKER_MOD(khbond, khb);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

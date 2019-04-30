@@ -23,7 +23,6 @@ int& leng = TINKER_MOD(files, leng);
 char (&filename)[240] = TINKER_MOD(files, filename);
 char (&outfile)[240] = TINKER_MOD(files, outfile);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

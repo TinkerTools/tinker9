@@ -17,7 +17,6 @@ int& nangang = TINKER_MOD(angang, nangang);
 int*& iaa = TINKER_MOD(angang, iaa);
 double*& kaa = TINKER_MOD(angang, kaa);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

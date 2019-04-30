@@ -221,7 +221,6 @@ int*& fpa = TINKER_MOD(faces, fpa);
 int*& fpncy = TINKER_MOD(faces, fpncy);
 int*& fpcy = TINKER_MOD(faces, fpcy);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

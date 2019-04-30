@@ -17,7 +17,6 @@ double*& hessx = TINKER_MOD(hessn, hessx);
 double*& hessy = TINKER_MOD(hessn, hessy);
 double*& hessz = TINKER_MOD(hessn, hessz);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

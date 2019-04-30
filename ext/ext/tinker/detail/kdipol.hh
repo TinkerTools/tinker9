@@ -48,7 +48,6 @@ char (&kd5)[maxnd5][8] = TINKER_MOD(kdipol, kd5);
 char (&kd4)[maxnd4][8] = TINKER_MOD(kdipol, kd4);
 char (&kd3)[maxnd3][8] = TINKER_MOD(kdipol, kd3);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

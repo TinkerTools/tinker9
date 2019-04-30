@@ -20,7 +20,6 @@ int*& ibnd = TINKER_MOD(bndstr, ibnd);
 double*& bk = TINKER_MOD(bndstr, bk);
 double*& bl = TINKER_MOD(bndstr, bl);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

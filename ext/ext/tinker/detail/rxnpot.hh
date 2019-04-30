@@ -17,7 +17,6 @@ int& rfterms = TINKER_MOD(rxnpot, rfterms);
 double& rfsize = TINKER_MOD(rxnpot, rfsize);
 double& rfbulkd = TINKER_MOD(rxnpot, rfbulkd);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

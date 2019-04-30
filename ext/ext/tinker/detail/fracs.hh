@@ -17,7 +17,6 @@ double*& xfrac = TINKER_MOD(fracs, xfrac);
 double*& yfrac = TINKER_MOD(fracs, yfrac);
 double*& zfrac = TINKER_MOD(fracs, zfrac);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

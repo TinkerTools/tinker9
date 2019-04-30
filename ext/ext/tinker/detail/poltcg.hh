@@ -32,7 +32,6 @@ double*& ubd = TINKER_MOD(poltcg, ubd);
 double*& ubp = TINKER_MOD(poltcg, ubp);
 int& tcgguess = TINKER_MOD(poltcg, tcgguess);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

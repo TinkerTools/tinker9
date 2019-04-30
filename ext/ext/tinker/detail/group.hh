@@ -35,7 +35,6 @@ int& use_group = TINKER_MOD(group, use_group);
 int& use_intra = TINKER_MOD(group, use_intra);
 int& use_inter = TINKER_MOD(group, use_inter);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -14,7 +14,6 @@ extern "C" int TINKER_MOD(virial, use_virial);
 double (&vir)[3][3] = TINKER_MOD(virial, vir);
 int& use_virial = TINKER_MOD(virial, use_virial);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -51,7 +51,6 @@ double*& upsalt = TINKER_MOD(uprior, upsalt);
 int& use_pred = TINKER_MOD(uprior, use_pred);
 char (&polpred)[4] = TINKER_MOD(uprior, polpred);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -15,7 +15,6 @@ extern "C" char TINKER_MOD(kstbnd, ksb)[maxnsb][12];
 double (&stbn)[maxnsb][2] = TINKER_MOD(kstbnd, stbn);
 char (&ksb)[maxnsb][12] = TINKER_MOD(kstbnd, ksb);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

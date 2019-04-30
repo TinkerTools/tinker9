@@ -23,7 +23,6 @@ double*& itors1 = TINKER_MOD(imptor, itors1);
 double*& itors2 = TINKER_MOD(imptor, itors2);
 double*& itors3 = TINKER_MOD(imptor, itors3);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

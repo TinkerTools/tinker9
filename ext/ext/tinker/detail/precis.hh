@@ -17,7 +17,6 @@ double& tiny = TINKER_MOD(precis, tiny);
 double& small = TINKER_MOD(precis, small);
 double& huge = TINKER_MOD(precis, huge);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

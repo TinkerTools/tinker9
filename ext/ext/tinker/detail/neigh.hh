@@ -119,7 +119,6 @@ int& doclst = TINKER_MOD(neigh, doclst);
 int& domlst = TINKER_MOD(neigh, domlst);
 int& doulst = TINKER_MOD(neigh, doulst);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

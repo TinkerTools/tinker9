@@ -47,7 +47,6 @@ char (&kpi)[maxnpi][8] = TINKER_MOD(korbs, kpi);
 char (&kpi5)[maxnpi5][8] = TINKER_MOD(korbs, kpi5);
 char (&kpi4)[maxnpi4][8] = TINKER_MOD(korbs, kpi4);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

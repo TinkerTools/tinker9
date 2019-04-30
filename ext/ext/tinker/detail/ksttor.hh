@@ -15,7 +15,6 @@ extern "C" char TINKER_MOD(ksttor, kbt)[maxnbt][16];
 double (&btcon)[maxnbt][9] = TINKER_MOD(ksttor, btcon);
 char (&kbt)[maxnbt][16] = TINKER_MOD(ksttor, kbt);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

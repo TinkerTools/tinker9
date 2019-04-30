@@ -35,7 +35,6 @@ double*& krat = TINKER_MOD(freeze, krat);
 int& use_rattle = TINKER_MOD(freeze, use_rattle);
 int*& ratimage = TINKER_MOD(freeze, ratimage);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

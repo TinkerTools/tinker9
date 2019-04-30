@@ -98,7 +98,6 @@ int& use_extra = TINKER_MOD(potent, use_extra);
 int& use_born = TINKER_MOD(potent, use_born);
 int& use_orbit = TINKER_MOD(potent, use_orbit);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -35,7 +35,6 @@ int*& i13 = TINKER_MOD(couple, i13);
 int*& i14 = TINKER_MOD(couple, i14);
 int*& i15 = TINKER_MOD(couple, i15);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

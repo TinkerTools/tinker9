@@ -41,7 +41,6 @@ double*& rcav = TINKER_MOD(nonpol, rcav);
 double*& rdisp = TINKER_MOD(nonpol, rdisp);
 double*& cdisp = TINKER_MOD(nonpol, cdisp);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

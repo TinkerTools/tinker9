@@ -17,7 +17,6 @@ double*& qorb = TINKER_MOD(orbits, qorb);
 double*& worb = TINKER_MOD(orbits, worb);
 double*& emorb = TINKER_MOD(orbits, emorb);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

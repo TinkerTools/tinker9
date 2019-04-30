@@ -14,7 +14,6 @@ extern "C" double* TINKER_MOD(kdsp, dspdmp);
 double*& dspsix = TINKER_MOD(kdsp, dspsix);
 double*& dspdmp = TINKER_MOD(kdsp, dspdmp);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

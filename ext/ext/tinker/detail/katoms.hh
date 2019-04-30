@@ -26,7 +26,6 @@ double*& weight = TINKER_MOD(katoms, weight);
 char (*&symbol)[3] = TINKER_MOD(katoms, symbol);
 char (*&describe)[24] = TINKER_MOD(katoms, describe);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

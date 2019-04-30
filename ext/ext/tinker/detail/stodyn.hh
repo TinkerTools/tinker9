@@ -17,7 +17,6 @@ double& friction = TINKER_MOD(stodyn, friction);
 double*& fgamma = TINKER_MOD(stodyn, fgamma);
 int& use_sdarea = TINKER_MOD(stodyn, use_sdarea);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

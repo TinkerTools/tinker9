@@ -17,7 +17,6 @@ double*& prsiz = TINKER_MOD(krepl, prsiz);
 double*& prdmp = TINKER_MOD(krepl, prdmp);
 double*& prele = TINKER_MOD(krepl, prele);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

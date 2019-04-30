@@ -23,7 +23,6 @@ double*& zrb = TINKER_MOD(rigid, zrb);
 double*& rbc = TINKER_MOD(rigid, rbc);
 int& use_rigid = TINKER_MOD(rigid, use_rigid);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

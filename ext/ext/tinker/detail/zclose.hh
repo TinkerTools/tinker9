@@ -23,7 +23,6 @@ int& ndel = TINKER_MOD(zclose, ndel);
 int (&iadd)[maxatm][2] = TINKER_MOD(zclose, iadd);
 int (&idel)[maxatm][2] = TINKER_MOD(zclose, idel);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -68,7 +68,6 @@ char (&angtrig)[8] = TINKER_MOD(angpot, angtrig);
 char (&opbtyp)[8] = TINKER_MOD(angpot, opbtyp);
 char (*&angtyp)[8] = TINKER_MOD(angpot, angtyp);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

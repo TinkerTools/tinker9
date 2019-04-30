@@ -20,7 +20,6 @@ int& nextiter = TINKER_MOD(minima, nextiter);
 double& fctmin = TINKER_MOD(minima, fctmin);
 double& hguess = TINKER_MOD(minima, hguess);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

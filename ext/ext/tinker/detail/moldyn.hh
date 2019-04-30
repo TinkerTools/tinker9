@@ -17,7 +17,6 @@ double*& v = TINKER_MOD(moldyn, v);
 double*& a = TINKER_MOD(moldyn, a);
 double*& aalt = TINKER_MOD(moldyn, aalt);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

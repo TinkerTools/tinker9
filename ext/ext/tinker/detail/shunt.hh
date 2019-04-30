@@ -62,7 +62,6 @@ double& f5 = TINKER_MOD(shunt, f5);
 double& f6 = TINKER_MOD(shunt, f6);
 double& f7 = TINKER_MOD(shunt, f7);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

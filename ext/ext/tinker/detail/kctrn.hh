@@ -14,7 +14,6 @@ extern "C" double* TINKER_MOD(kctrn, ctdmp);
 double*& ctchg = TINKER_MOD(kctrn, ctchg);
 double*& ctdmp = TINKER_MOD(kctrn, ctdmp);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

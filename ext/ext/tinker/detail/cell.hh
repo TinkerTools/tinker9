@@ -32,7 +32,6 @@ double& xcell2 = TINKER_MOD(cell, xcell2);
 double& ycell2 = TINKER_MOD(cell, ycell2);
 double& zcell2 = TINKER_MOD(cell, zcell2);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

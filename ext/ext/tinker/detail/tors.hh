@@ -32,7 +32,6 @@ double*& tors4 = TINKER_MOD(tors, tors4);
 double*& tors5 = TINKER_MOD(tors, tors5);
 double*& tors6 = TINKER_MOD(tors, tors6);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -36,7 +36,6 @@ int& debug = TINKER_MOD(inform, debug);
 int& holdup = TINKER_MOD(inform, holdup);
 int& abort = TINKER_MOD(inform, abort);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

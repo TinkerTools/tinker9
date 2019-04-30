@@ -18,7 +18,6 @@ double (&radpr)[maxnvp] = TINKER_MOD(kvdwpr, radpr);
 double (&epspr)[maxnvp] = TINKER_MOD(kvdwpr, epspr);
 char (&kvpr)[maxnvp][8] = TINKER_MOD(kvdwpr, kvpr);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

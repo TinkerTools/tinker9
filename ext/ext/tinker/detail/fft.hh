@@ -24,7 +24,6 @@ unsigned long long& planb = TINKER_MOD(fft, planb);
 double*& ffttable = TINKER_MOD(fft, ffttable);
 char (&ffttyp)[7] = TINKER_MOD(fft, ffttyp);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

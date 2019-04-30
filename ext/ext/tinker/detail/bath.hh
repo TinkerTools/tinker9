@@ -72,7 +72,6 @@ char (&volscale)[9] = TINKER_MOD(bath, volscale);
 char (&barostat)[11] = TINKER_MOD(bath, barostat);
 char (&thermostat)[11] = TINKER_MOD(bath, thermostat);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

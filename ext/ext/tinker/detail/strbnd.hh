@@ -17,7 +17,6 @@ int& nstrbnd = TINKER_MOD(strbnd, nstrbnd);
 int*& isb = TINKER_MOD(strbnd, isb);
 double*& sbk = TINKER_MOD(strbnd, sbk);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

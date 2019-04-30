@@ -99,7 +99,6 @@ char (&bcfl)[20] = TINKER_MOD(pbstuf, bcfl);
 char (&chgm)[20] = TINKER_MOD(pbstuf, chgm);
 char (&srfm)[20] = TINKER_MOD(pbstuf, srfm);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

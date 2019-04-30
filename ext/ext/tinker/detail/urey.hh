@@ -20,7 +20,6 @@ int*& iury = TINKER_MOD(urey, iury);
 double*& uk = TINKER_MOD(urey, uk);
 double*& ul = TINKER_MOD(urey, ul);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

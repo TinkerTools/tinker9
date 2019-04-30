@@ -21,7 +21,6 @@ double (&vdwrad)[maxele] = TINKER_MOD(ptable, vdwrad);
 double (&covrad)[maxele] = TINKER_MOD(ptable, covrad);
 char (&elemnt)[maxele][3] = TINKER_MOD(ptable, elemnt);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

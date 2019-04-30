@@ -14,7 +14,6 @@ extern "C" int* TINKER_MOD(tortor, itt);
 int& ntortor = TINKER_MOD(tortor, ntortor);
 int*& itt = TINKER_MOD(tortor, itt);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

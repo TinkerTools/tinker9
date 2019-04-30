@@ -254,7 +254,6 @@ double (&bci_1)[100][100] = TINKER_MOD(merck, bci_1);
 double (&pbci)[maxclass] = TINKER_MOD(merck, pbci);
 double (&fcadj)[maxclass] = TINKER_MOD(merck, fcadj);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

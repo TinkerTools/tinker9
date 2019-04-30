@@ -29,7 +29,6 @@ int& sktstart = TINKER_MOD(socket, sktstart);
 int& sktstop = TINKER_MOD(socket, sktstop);
 int& use_socket = TINKER_MOD(socket, use_socket);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

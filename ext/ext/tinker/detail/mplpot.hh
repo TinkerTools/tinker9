@@ -23,7 +23,6 @@ double& m4scale = TINKER_MOD(mplpot, m4scale);
 double& m5scale = TINKER_MOD(mplpot, m5scale);
 int& use_chgpen = TINKER_MOD(mplpot, use_chgpen);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

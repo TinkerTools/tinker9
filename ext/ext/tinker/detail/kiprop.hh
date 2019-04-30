@@ -18,7 +18,6 @@ double (&dcon)[maxndi] = TINKER_MOD(kiprop, dcon);
 double (&tdi)[maxndi] = TINKER_MOD(kiprop, tdi);
 char (&kdi)[maxndi][16] = TINKER_MOD(kiprop, kdi);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

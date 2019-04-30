@@ -35,7 +35,6 @@ double*& vc = TINKER_MOD(rgddyn, vc);
 double*& wc = TINKER_MOD(rgddyn, wc);
 int*& linear = TINKER_MOD(rgddyn, linear);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

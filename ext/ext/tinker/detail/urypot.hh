@@ -17,7 +17,6 @@ double& cury = TINKER_MOD(urypot, cury);
 double& qury = TINKER_MOD(urypot, qury);
 double& ureyunit = TINKER_MOD(urypot, ureyunit);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

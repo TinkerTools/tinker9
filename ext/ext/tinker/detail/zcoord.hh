@@ -23,7 +23,6 @@ double (&zbond)[maxatm] = TINKER_MOD(zcoord, zbond);
 double (&zang)[maxatm] = TINKER_MOD(zcoord, zang);
 double (&ztors)[maxatm] = TINKER_MOD(zcoord, ztors);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

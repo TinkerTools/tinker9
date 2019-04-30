@@ -26,7 +26,6 @@ int*& molcule = TINKER_MOD(molcul, molcule);
 double& totmass = TINKER_MOD(molcul, totmass);
 double*& molmass = TINKER_MOD(molcul, molmass);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

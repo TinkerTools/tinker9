@@ -89,7 +89,6 @@ double*& chir = TINKER_MOD(restrn, chir);
 int& use_basin = TINKER_MOD(restrn, use_basin);
 int& use_wall = TINKER_MOD(restrn, use_wall);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -26,7 +26,6 @@ double (&x)[maxatm] = TINKER_MOD(atoms, x);
 double (&y)[maxatm] = TINKER_MOD(atoms, y);
 double (&z)[maxatm] = TINKER_MOD(atoms, z);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -55,7 +55,6 @@ char (&kb4)[maxnb4][8] = TINKER_MOD(kbonds, kb4);
 char (&kb3)[maxnb3][8] = TINKER_MOD(kbonds, kb3);
 char (&kel)[maxnel][12] = TINKER_MOD(kbonds, kel);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

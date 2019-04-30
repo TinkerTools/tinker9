@@ -36,7 +36,6 @@ int*& ip12 = TINKER_MOD(polgrp, ip12);
 int*& ip13 = TINKER_MOD(polgrp, ip13);
 int*& ip14 = TINKER_MOD(polgrp, ip14);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -26,7 +26,6 @@ double& arespa = TINKER_MOD(mdstuf, arespa);
 int& dorest = TINKER_MOD(mdstuf, dorest);
 char (&integrate)[11] = TINKER_MOD(mdstuf, integrate);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

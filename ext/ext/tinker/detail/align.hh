@@ -17,7 +17,6 @@ int& nfit = TINKER_MOD(align, nfit);
 int*& ifit = TINKER_MOD(align, ifit);
 double*& wfit = TINKER_MOD(align, wfit);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

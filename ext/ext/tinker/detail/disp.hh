@@ -23,7 +23,6 @@ double& csixpr = TINKER_MOD(disp, csixpr);
 double*& csix = TINKER_MOD(disp, csix);
 double*& adisp = TINKER_MOD(disp, adisp);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

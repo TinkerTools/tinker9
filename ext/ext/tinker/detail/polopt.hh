@@ -39,7 +39,6 @@ double*& uoptps = TINKER_MOD(polopt, uoptps);
 double*& fopt = TINKER_MOD(polopt, fopt);
 double*& foptp = TINKER_MOD(polopt, foptp);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

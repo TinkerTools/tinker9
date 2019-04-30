@@ -14,7 +14,6 @@ extern "C" int TINKER_MOD(scales, set_scale);
 double*& scale = TINKER_MOD(scales, scale);
 int& set_scale = TINKER_MOD(scales, set_scale);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

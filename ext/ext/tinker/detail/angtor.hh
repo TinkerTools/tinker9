@@ -17,7 +17,6 @@ int& nangtor = TINKER_MOD(angtor, nangtor);
 int*& iat = TINKER_MOD(angtor, iat);
 double*& kant = TINKER_MOD(angtor, kant);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

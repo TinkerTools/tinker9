@@ -95,7 +95,6 @@ double*& telf = TINKER_MOD(domega, telf);
 double*& teg = TINKER_MOD(domega, teg);
 double*& tex = TINKER_MOD(domega, tex);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

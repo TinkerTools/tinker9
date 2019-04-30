@@ -32,7 +32,6 @@ double (&mass)[maxatm] = TINKER_MOD(atomid, mass);
 char (&name)[maxatm][3] = TINKER_MOD(atomid, name);
 char (&story)[maxatm][24] = TINKER_MOD(atomid, story);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

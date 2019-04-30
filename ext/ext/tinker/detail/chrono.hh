@@ -14,7 +14,6 @@ extern "C" double TINKER_MOD(chrono, tcpu);
 double& twall = TINKER_MOD(chrono, twall);
 double& tcpu = TINKER_MOD(chrono, tcpu);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

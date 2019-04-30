@@ -17,7 +17,6 @@ int*& pgrp = TINKER_MOD(kpolr, pgrp);
 double*& polr = TINKER_MOD(kpolr, polr);
 double*& athl = TINKER_MOD(kpolr, athl);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

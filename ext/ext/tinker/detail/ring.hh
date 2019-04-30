@@ -32,7 +32,6 @@ int*& iring4 = TINKER_MOD(ring, iring4);
 int*& iring5 = TINKER_MOD(ring, iring5);
 int*& iring6 = TINKER_MOD(ring, iring6);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

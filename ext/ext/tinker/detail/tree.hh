@@ -18,7 +18,6 @@ int& nlevel = TINKER_MOD(tree, nlevel);
 double& etree = TINKER_MOD(tree, etree);
 double (&ilevel)[maxpss+1] = TINKER_MOD(tree, ilevel);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

@@ -17,7 +17,6 @@ int& ntpair = TINKER_MOD(tarray, ntpair);
 int*& tindex = TINKER_MOD(tarray, tindex);
 double*& tdipdip = TINKER_MOD(tarray, tdipdip);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

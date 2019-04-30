@@ -14,7 +14,6 @@ extern "C" int TINKER_MOD(openmp, nthread);
 int& nproc = TINKER_MOD(openmp, nproc);
 int& nthread = TINKER_MOD(openmp, nthread);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

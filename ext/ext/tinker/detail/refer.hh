@@ -65,7 +65,6 @@ char (*&refnam)[3] = TINKER_MOD(refer, refnam);
 char (&reffile)[maxref][240] = TINKER_MOD(refer, reffile);
 char (&reftitle)[maxref][240] = TINKER_MOD(refer, reftitle);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

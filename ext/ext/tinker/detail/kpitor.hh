@@ -15,7 +15,6 @@ extern "C" char TINKER_MOD(kpitor, kpt)[maxnpt][8];
 double (&ptcon)[maxnpt] = TINKER_MOD(kpitor, ptcon);
 char (&kpt)[maxnpt][8] = TINKER_MOD(kpitor, kpt);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

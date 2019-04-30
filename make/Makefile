@@ -88,6 +88,7 @@ dirs:
 	@mkdir -p $(extdir)/tinker
 	@mkdir -p src/test
 	@mkdir -p src/util
+	@mkdir -p src/gpu
 
 .PHONY: clean
 clean:

@@ -32,7 +32,6 @@ double*& pstep = TINKER_MOD(paths, pstep);
 double*& pzet = TINKER_MOD(paths, pzet);
 double*& gc = TINKER_MOD(paths, gc);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

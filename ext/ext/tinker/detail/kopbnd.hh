@@ -15,7 +15,6 @@ extern "C" char TINKER_MOD(kopbnd, kopb)[maxnopb][16];
 double (&opbn)[maxnopb] = TINKER_MOD(kopbnd, opbn);
 char (&kopb)[maxnopb][16] = TINKER_MOD(kopbnd, kopb);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

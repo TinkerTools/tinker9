@@ -38,7 +38,6 @@ double (&tby)[maxntt][maxtgrd2] = TINKER_MOD(ktrtor, tby);
 double (&tbxy)[maxntt][maxtgrd2] = TINKER_MOD(ktrtor, tbxy);
 char (&ktt)[maxntt][20] = TINKER_MOD(ktrtor, ktt);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif

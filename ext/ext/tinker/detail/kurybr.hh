@@ -18,7 +18,6 @@ double (&ucon)[maxnu] = TINKER_MOD(kurybr, ucon);
 double (&dst13)[maxnu] = TINKER_MOD(kurybr, dst13);
 char (&ku)[maxnu][12] = TINKER_MOD(kurybr, ku);
 #endif
-
 } TINKER_NAMESPACE_END
 
 #endif
