@@ -2,6 +2,7 @@
 #define TINKER_UTIL_READ_STREAM_H_
 
 #include "cxx.h"
+#include "text.h"
 #include <sstream>
 
 TINKER_NAMESPACE_BEGIN
@@ -49,7 +50,6 @@ int read_string_1(__Arg& _arg, const char (&_src)[__Len]) {
  * @param[in]  _invalid    Function that returns true if _arg is invalid.
  * @param[in]  _istream    An std::istream object; use std::cin by default.
  */
-/*
 template <class __Arg, class __Invalid>
 void read_stream_1(__Arg& _arg, std::string _prompt, __Arg _auto_fill,
                    __Invalid&& _invalid, std::istream& _istream = std::cin) {
@@ -58,7 +58,7 @@ void read_stream_1(__Arg& _arg, std::string _prompt, __Arg _auto_fill,
   while (_invalid(_arg)) {
     std::cout << _prompt;
     std::getline(_istream, line);
-    auto vs = Text::split(line, Text::whitespaces);
+    auto vs = Text::split(line);
     if (vs.size() == 0) {
       _arg = _auto_fill;
     } else {
@@ -79,7 +79,6 @@ void read_stream_1(__Arg& _arg, std::string _prompt, __Arg _auto_fill,
     (void)0;
   }
 }
-*/
 TINKER_NAMESPACE_END
 
 #endif
