@@ -8,6 +8,11 @@ class Text : public std::vector<std::string> {
 public:
   static constexpr const char* whitespaces = " \t\n\v\f\r";
 
+  template <size_t __Len>
+  static std::string string(const char (&__src)[__Len]) {
+    return std::string(&__src[0], &__src[0] + __Len);
+  }
+
   // Replace
   static void replace(std::string& s, std::string old, char r);
   static void replace_by_kv(std::string& src, std::string key,
