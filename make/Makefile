@@ -48,6 +48,7 @@ ifeq ($(os),linux)
 	endif
 	ar_flags := ar crusv
 	ranlib_flags := ranlib
+	os_link_flags := -Xlinker --export-dynamic
 else ifeq ($(os),darwin)
 	ifeq ($(opt),debug)
                 cxx_opt_flags := -O0 -g -DDEBUG=1
@@ -58,6 +59,7 @@ else ifeq ($(os),darwin)
         endif
 	ar_flags := ar crusv
 	ranlib_flags := ranlib -c
+	os_link_flags :=
 endif
 
 ############################################################
@@ -113,7 +115,7 @@ cxx_common_flags += $(include_flags) $(cxx_opt_flags)
 
 cxx_compile_flags := -x c++ -c $(cxx_common_flags)
 
-link_flags := $(cxx_common_flags) $(libtinker) $(fortrtflag) $(fftwflag)
+link_flags := $(cxx_common_flags) $(os_link_flags) $(libtinker) $(fortrtflag) $(fftwflag)
 
 ext_cc_objs := $(extdir)/fmt/format.o $(extdir)/fmt/posix.o
 ext_cpp_objs := $(extdir)/tinker/tinker.mod.o $(extdir)/tinker/tinker.rt.o
