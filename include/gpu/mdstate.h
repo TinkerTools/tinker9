@@ -20,9 +20,6 @@ extern real *vx, *vy, *vz;
 extern real *ax, *ay, *az;
 extern real *gx, *gy, *gz;
 
-const int op_destroy = 0;
-const int op_create = 1;
-
 void xyz_data(int op);
 void vel_data(int op);
 void accel_data(int op);

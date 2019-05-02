@@ -61,13 +61,11 @@ two macros (TINKER_MOD and TINKER_RT) here to mimic its name mangling.
 #  define TINKER_GPU_SINGLE
 #endif
 
-// C++ features
-#if defined(__cplusplus)
-#  ifdef __cpp_if_constexpr
-#    define if_constexpr if constexpr
-#  else
-#    define if_constexpr if
-#  endif
+// features
+#ifdef __cpp_if_constexpr
+#  define if_constexpr if constexpr
+#else
+#  define if_constexpr if
 #endif
 
 #endif
