@@ -3,4 +3,8 @@
 
 #include "e.bond.h"
 
+extern "C" {
+void tinker_gpu_gradient1();
+}
+
 #endif

@@ -7,17 +7,15 @@ int use_data = 0;
 int n = 0;
 
 real* esum;
-real vir_xx, vir_yx, vir_zx;
-real vir_xy, vir_yy, vir_zy;
-real vir_xz, vir_yz, vir_zz;
+real* vir;
 real* mass;
 
 real *x, *y, *z;
 real *vx, *vy, *vz;
 real *ax, *ay, *az;
 real *gx, *gy, *gz;
-#pragma acc declare device_resident(x, y, z, vx, vy, vz)
-#pragma acc declare device_resident(ax, ay, az, gx, gy, gz)
+
+box_st* box;
 
 void n_data() { n = atoms::n; }
 
@@ -119,6 +117,7 @@ void energy_data(int op) {
     }
 
     if (use_virial & use_data) {
+      check_cudart(cudaFree(vir));
     }
   }
 
@@ -143,11 +142,12 @@ void energy_data(int op) {
     }
 
     if (use_virial & use_data) {
+      size = rs * 9;
+      check_cudart(cudaMalloc(&vir, size));
+      copyin_data_1(vir, &virial::vir[0][0], 9);
     }
   }
 }
-
-box_st* box;
 
 void box_data(int op) {
   if (op == op_destroy) {

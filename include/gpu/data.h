@@ -14,7 +14,6 @@ TINKER_NAMESPACE_END
 extern "C" {
 void tinker_gpu_data_create();
 void tinker_gpu_data_destroy();
-void tinker_gpu_gradient();
 }
 
 #endif

@@ -16,6 +16,10 @@ libtinker := $(HOME)/git/tinker/source/libtinker.a
 # FFTW
 fftwflag := -L$(HOME)/local/fftw/lib -lfftw3 -lfftw3_threads
 
+# Precision -DTINKER_GPU_DOUBLE or leave it empty
+# precision_macro := -DTINKER_GPU_DOUBLE
+precision_macro :=
+
 # Darwin -> darwin
 os := $(shell uname -s 2>/dev/null | tr "[:upper:]" "[:lower:]")
 
@@ -113,7 +117,7 @@ include_flags += -isystem $(cudadir)/include
 
 pgi_include_flags += -I$(topdir)/include
 
-cxx_common_flags := -std=c++11 -D$(fortran_name_macro)
+cxx_common_flags := -std=c++11 -D$(fortran_name_macro) $(precision_macro)
 cxx_common_flags += $(include_flags) $(cxx_opt_flags)
 
 cxx_compile_flags := -x c++ -c $(cxx_common_flags)
@@ -152,7 +156,7 @@ $(all_cc_objs): %.o: $(topdir)/%.cc | dirs
 $(all_cpp_objs): %.o: $(topdir)/%.cpp | dirs
 	$(CXX) $(cxx_compile_flags) $< -o $@
 $(lib_acc_objs): %.o: $(topdir)/%.cc | dirs
-	$(ACC) $(pgi_include_flags) -D$(fortran_name_macro) -std=c++11 -acc -c -Minfo=accel $< -o $@
+	$(ACC) $(pgi_include_flags) -D$(fortran_name_macro) $(precision_macro) -std=c++11 -acc -c -Minfo=accel $< -o $@
 
 libtinkergpu.a: $(ext_cc_objs) $(ext_cpp_objs) $(lib_cpp_objs)
 	$(ar_flags) $@ $^

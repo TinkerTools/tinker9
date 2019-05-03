@@ -8,17 +8,25 @@ int bndtyp = 0;
 int nbond = 0;
 int (*ibnd)[2] = NULL;
 real *bl, *bk;
-#pragma acc declare device_resident(ibnd, bl, bk)
+real* eb;
 
-real eb = 0;
+int use_ebond() { return potent::use_bond; }
+
+real get_ebond() {
+  real e;
+  check_cudart(cudaMemcpy(&e, eb, sizeof(real), cudaMemcpyDeviceToHost));
+  return e;
+}
+
 void e_bond_data(int op) {
-  if (!potent::use_bond)
+  if (!use_ebond())
     return;
 
   if (op == op_destroy) {
     check_cudart(cudaFree(ibnd));
     check_cudart(cudaFree(bl));
     check_cudart(cudaFree(bk));
+    check_cudart(cudaFree(eb));
   }
 
   if (op == op_create) {
@@ -43,6 +51,8 @@ void e_bond_data(int op) {
     copyin_data_1(&ibnd[0][0], ibndvec.data(), nbond * 2);
     copyin_data_1(bl, bndstr::bl, nbond);
     copyin_data_1(bk, bndstr::bk, nbond);
+
+    check_cudart(cudaMalloc(&eb, rs));
   }
 }
 }

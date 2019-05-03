@@ -1,4 +1,5 @@
 #include "gpu/e.bond.h"
+#include "gpu/image.h"
 #include "gpu/mdstate.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -9,18 +10,14 @@ void ebond_tmpl() {
   constexpr int do_g = USE & use_grad;
   constexpr int do_v = USE & use_virial;
 
-  real eb = 0;
 
-// clang-format off
-#pragma acc data deviceptr(x,y,z,gx,gy,gz,\
-                           ibnd,bl,bk)
-#pragma acc data copy(eb,vir_xx,vir_yx,vir_zx,\
-                         vir_xy,vir_yy,vir_zy,\
-                         vir_xz,vir_yz,vir_zz)
-#pragma acc parallel loop reduction(+:eb,vir_xx,vir_yx,vir_zx,\
-                                         vir_xy,vir_yy,vir_zy,\
-                                         vir_xz,vir_yz,vir_zz)
-  // clang-format on
+  #pragma acc data deviceptr(eb)
+  #pragma acc serial
+  { *eb = 0; }
+
+  #pragma acc data deviceptr(x,y,z,gx,gy,gz,vir,box,\
+                             ibnd,bl,bk,eb)
+  #pragma acc parallel loop
   for (int i = 0; i < nbond; ++i) {
     int ia = ibnd[i][0];
     int ib = ibnd[i][1];
@@ -31,7 +28,7 @@ void ebond_tmpl() {
     real yab = y[ia] - y[ib];
     real zab = z[ia] - z[ib];
 
-    // FIXME image
+    image(xab, yab, zab, box);
     real rab = REAL_SQRT(xab * xab + yab * yab + zab * zab);
     real dt = rab - ideal;
 
@@ -51,7 +48,10 @@ void ebond_tmpl() {
       if_constexpr(do_g) deddt = 4 * bde * (1 - expterm) * expterm;
     }
 
-    if_constexpr(do_e) eb += e;
+    if_constexpr(do_e) {
+      #pragma acc atomic update
+      *eb += e;
+    }
 
     real de;
     real dedx, dedy, dedz;
@@ -60,17 +60,17 @@ void ebond_tmpl() {
       dedx = de * xab;
       dedy = de * yab;
       dedz = de * zab;
-#pragma acc atomic update
+      #pragma acc atomic update
       gx[ia] += dedx;
-#pragma acc atomic update
+      #pragma acc atomic update
       gy[ia] += dedy;
-#pragma acc atomic update
+      #pragma acc atomic update
       gz[ia] += dedz;
-#pragma acc atomic update
+      #pragma acc atomic update
       gx[ib] -= dedx;
-#pragma acc atomic update
+      #pragma acc atomic update
       gy[ib] -= dedy;
-#pragma acc atomic update
+      #pragma acc atomic update
       gz[ib] -= dedz;
     }
 
@@ -82,15 +82,24 @@ void ebond_tmpl() {
       real vzy = zab * dedy;
       real vzz = zab * dedz;
 
-      vir_xx += vxx;
-      vir_yx += vyx;
-      vir_zx += vzx;
-      vir_xy += vyx;
-      vir_yy += vyy;
-      vir_zy += vzy;
-      vir_xz += vzx;
-      vir_yz += vzy;
-      vir_zz += vzz;
+      #pragma acc atomic update
+      vir[_xx] += vxx;
+      #pragma acc atomic update
+      vir[_yx] += vyx;
+      #pragma acc atomic update
+      vir[_zx] += vzx;
+      #pragma acc atomic update
+      vir[_xy] += vyx;
+      #pragma acc atomic update
+      vir[_yy] += vyy;
+      #pragma acc atomic update
+      vir[_zy] += vzy;
+      #pragma acc atomic update
+      vir[_xz] += vzx;
+      #pragma acc atomic update
+      vir[_yz] += vzy;
+      #pragma acc atomic update
+      vir[_zz] += vzz;
     }
   }
 }

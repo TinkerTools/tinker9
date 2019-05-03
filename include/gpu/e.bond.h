@@ -13,8 +13,10 @@ extern int bndtyp;
 extern int nbond;
 extern int (*ibnd)[2];
 extern real *bl, *bk;
+extern real* eb;
 
-extern real eb;
+int use_ebond();
+real get_ebond();
 void e_bond_data(int op);
 }
 TINKER_NAMESPACE_END

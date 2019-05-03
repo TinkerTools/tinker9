@@ -1,5 +1,4 @@
 #include "gpu/data.h"
-#include "gpu/mdstate.h"
 #include "util/error.cudart.h"
 #include <cuda_runtime.h>
 
@@ -36,6 +35,14 @@ void copyin_data_n(int idx0, int ndim, real* dst, const double* src,
   check_cudart(cudaMemcpy(dst, buf.data(), size, cudaMemcpyHostToDevice));
 }
 
+void n_data();
+void xyz_data(int op);
+void vel_data(int op);
+void accel_data(int op);
+void mass_data(int op);
+void energy_data(int op);
+
+void box_data(int op);
 void potential_data(int op);
 }
 TINKER_NAMESPACE_END
@@ -46,12 +53,15 @@ void tinker_gpu_data_create() {
   using namespace gpu;
   const int op = op_create;
 
+  n_data();
+
   xyz_data(op);
   vel_data(op);
   accel_data(op);
   mass_data(op);
   energy_data(op);
 
+  box_data(op);
   potential_data(op);
 }
 
@@ -66,6 +76,7 @@ void tinker_gpu_data_destroy() {
   mass_data(op);
   energy_data(op);
 
+  box_data(op);
   potential_data(op);
 }
 }

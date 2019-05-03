@@ -33,19 +33,19 @@ const int use_xyz    = 0x001; /// xyz
 const int use_vel    = 0x002; /// velocity
 const int use_accel  = 0x004; /// acceleration
 const int use_mass   = 0x008; /// mass
-const int use_energy = 0x010; /// energy
-const int use_grad   = 0x020; /// gradient
-const int use_virial = 0x040; /// virial
-const int use_analyz = 0x080; /// analyze
+const int use_energy = 0x010; /// energy 16
+const int use_grad   = 0x020; /// gradient 32
+const int use_virial = 0x040; /// virial 64
+const int use_analyz = 0x080; /// analyze 128
 
 namespace gpu {
-const int v0 = use_energy;
-const int v1 = use_energy + use_grad + use_virial;
-const int v3 = use_energy + use_analyz;
+const int v0 = use_energy;                         ///  16
+const int v1 = use_energy + use_grad + use_virial; /// 112
+const int v3 = use_energy + use_analyz;            /// 144
 
-const int v4 = use_energy + use_grad;
-const int v5 = use_grad;
-const int v6 = use_grad + use_virial;
+const int v4 = use_energy + use_grad;              ///  48
+const int v5 = use_grad;                           ///  32
+const int v6 = use_grad + use_virial;              ///  96
 }
 
 const int box_null  = 0x000; /// null
