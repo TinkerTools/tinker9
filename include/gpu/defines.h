@@ -1,6 +1,7 @@
 #ifndef TINKER_GPU_DEFINES_H_
 #define TINKER_GPU_DEFINES_H_
 
+#include "mathfunc.h"
 #include "util/macro.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -72,10 +73,10 @@ TINKER_NAMESPACE_END
 #define TINKER_BONDED_GEN_1_(func, suffix, tmpl, vers, ...)                    \
   void func##suffix() { tmpl<vers, ##__VA_ARGS__>(); }
 #define TINKER_BONDED_GEN(func, tmpl, ...)                                     \
-  TINKER_BONDED_GEN_1_(func, 0, tmpl, v0, ##__VA_ARGS__)                       \
-  TINKER_BONDED_GEN_1_(func, 1, tmpl, v1, ##__VA_ARGS__)                       \
-  TINKER_BONDED_GEN_1_(func, 4, tmpl, v4, ##__VA_ARGS__)                       \
-  TINKER_BONDED_GEN_1_(func, 5, tmpl, v5, ##__VA_ARGS__)                       \
-  TINKER_BONDED_GEN_1_(func, 6, tmpl, v6, ##__VA_ARGS__)
+  TINKER_BONDED_GEN_1_(func, 0, tmpl, gpu::v0, ##__VA_ARGS__)                  \
+  TINKER_BONDED_GEN_1_(func, 1, tmpl, gpu::v1, ##__VA_ARGS__)                  \
+  TINKER_BONDED_GEN_1_(func, 4, tmpl, gpu::v4, ##__VA_ARGS__)                  \
+  TINKER_BONDED_GEN_1_(func, 5, tmpl, gpu::v5, ##__VA_ARGS__)                  \
+  TINKER_BONDED_GEN_1_(func, 6, tmpl, gpu::v6, ##__VA_ARGS__)
 
 #endif

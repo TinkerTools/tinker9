@@ -5,14 +5,13 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void copyin_data_1(int* dst, const int* src, int nelem);
-void copyin_data_1(real* dst, const double* src, int nelem);
-void copyin_data_n(int idx0, int ndim, real* dst, const double* src, int nelem);
-
 extern int use_data;
+extern int n;
 
 extern real* esum;
-extern real* vir;
+extern real vir_xx, vir_yx, vir_zx;
+extern real vir_xy, vir_yy, vir_zy;
+extern real vir_xz, vir_yz, vir_zz;
 extern real* mass;
 
 extern real *x, *y, *z;
@@ -20,6 +19,7 @@ extern real *vx, *vy, *vz;
 extern real *ax, *ay, *az;
 extern real *gx, *gy, *gz;
 
+void n_data();
 void xyz_data(int op);
 void vel_data(int op);
 void accel_data(int op);

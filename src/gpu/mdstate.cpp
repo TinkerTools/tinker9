@@ -1,67 +1,42 @@
 #include "gpu/mdstate.h"
-#include "util/cxx.h"
-#include <cuda_runtime.h>
-#include <ext/tinker/tinker.mod.h>
+#include "tinker.mod.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void copyin_data_1(int* dst, const int* src, int nelem) {
-  cudaMemcpy(dst, src, sizeof(int) * nelem, cudaMemcpyHostToDevice);
-}
-
-void copyin_data_1(real* dst, const double* src, int nelem) {
-  const size_t rs = sizeof(real);
-  size_t size = rs * nelem;
-  if (rs == sizeof(double)) {
-    cudaMemcpy(dst, src, size, cudaMemcpyHostToDevice);
-  } else if (rs == sizeof(float)) {
-    std::vector<real> buf(nelem);
-    for (int i = 0; i < nelem; ++i) {
-      buf[i] = src[i];
-    }
-    cudaMemcpy(dst, buf.data(), size, cudaMemcpyHostToDevice);
-  } else {
-    assert(false);
-  }
-}
-
-void copyin_data_n(int idx0, int ndim, real* dst, const double* src,
-                   int nelem) {
-  size_t size = sizeof(real) * nelem;
-  std::vector<real> buf(nelem);
-  for (int i = 0; i < nelem; ++i) {
-    buf[i] = src[ndim * i + idx0];
-  }
-  cudaMemcpy(dst, buf.data(), size, cudaMemcpyHostToDevice);
-}
-
 int use_data = 0;
+int n = 0;
 
 real* esum;
-real* vir;
+real vir_xx, vir_yx, vir_zx;
+real vir_xy, vir_yy, vir_zy;
+real vir_xz, vir_yz, vir_zz;
 real* mass;
 
 real *x, *y, *z;
 real *vx, *vy, *vz;
 real *ax, *ay, *az;
 real *gx, *gy, *gz;
+#pragma acc declare device_resident(x, y, z, vx, vy, vz)
+#pragma acc declare device_resident(ax, ay, az, gx, gy, gz)
+
+void n_data() { n = atoms::n; }
 
 void xyz_data(int op) {
   if ((use_xyz & use_data) == 0)
     return;
 
   if (op == op_destroy) {
-    cudaFree(x);
-    cudaFree(y);
-    cudaFree(z);
+    check_cudart(cudaFree(x));
+    check_cudart(cudaFree(y));
+    check_cudart(cudaFree(z));
   }
 
   if (op == op_create) {
     int n = atoms::n;
     size_t size = sizeof(real) * n;
-    cudaMalloc(&x, size);
-    cudaMalloc(&y, size);
-    cudaMalloc(&z, size);
+    check_cudart(cudaMalloc(&x, size));
+    check_cudart(cudaMalloc(&y, size));
+    check_cudart(cudaMalloc(&z, size));
     copyin_data_1(x, atoms::x, n);
     copyin_data_1(y, atoms::y, n);
     copyin_data_1(z, atoms::z, n);
@@ -73,17 +48,17 @@ void vel_data(int op) {
     return;
 
   if (op == op_destroy) {
-    cudaFree(vx);
-    cudaFree(vy);
-    cudaFree(vz);
+    check_cudart(cudaFree(vx));
+    check_cudart(cudaFree(vy));
+    check_cudart(cudaFree(vz));
   }
 
   if (op == op_create) {
     int n = atoms::n;
     size_t size = sizeof(real) * n;
-    cudaMalloc(&vx, size);
-    cudaMalloc(&vy, size);
-    cudaMalloc(&vz, size);
+    check_cudart(cudaMalloc(&vx, size));
+    check_cudart(cudaMalloc(&vy, size));
+    check_cudart(cudaMalloc(&vz, size));
     copyin_data_n(0, 3, vx, moldyn::v, n);
     copyin_data_n(1, 3, vy, moldyn::v, n);
     copyin_data_n(2, 3, vz, moldyn::v, n);
@@ -95,17 +70,17 @@ void accel_data(int op) {
     return;
 
   if (op == op_destroy) {
-    cudaFree(ax);
-    cudaFree(ay);
-    cudaFree(az);
+    check_cudart(cudaFree(ax));
+    check_cudart(cudaFree(ay));
+    check_cudart(cudaFree(az));
   }
 
   if (op == op_create) {
     int n = atoms::n;
     size_t size = sizeof(real) * n;
-    cudaMalloc(&ax, size);
-    cudaMalloc(&ay, size);
-    cudaMalloc(&az, size);
+    check_cudart(cudaMalloc(&ax, size));
+    check_cudart(cudaMalloc(&ay, size));
+    check_cudart(cudaMalloc(&az, size));
     copyin_data_n(0, 3, ax, moldyn::a, n);
     copyin_data_n(1, 3, ay, moldyn::a, n);
     copyin_data_n(2, 3, az, moldyn::a, n);
@@ -117,13 +92,13 @@ void mass_data(int op) {
     return;
 
   if (op == op_destroy) {
-    cudaFree(mass);
+    check_cudart(cudaFree(mass));
   }
 
   if (op == op_create) {
     int n = atoms::n;
     size_t size = sizeof(real) * n;
-    cudaMalloc(&mass, size);
+    check_cudart(cudaMalloc(&mass, size));
     copyin_data_1(mass, atomid::mass, n);
   }
 }
@@ -134,17 +109,16 @@ void energy_data(int op) {
 
   if (op == op_destroy) {
     if (use_energy & use_data) {
-      cudaFree(esum);
+      check_cudart(cudaFree(esum));
     }
 
     if (use_grad & use_data) {
-      cudaFree(gx);
-      cudaFree(gy);
-      cudaFree(gz);
+      check_cudart(cudaFree(gx));
+      check_cudart(cudaFree(gy));
+      check_cudart(cudaFree(gz));
     }
 
     if (use_virial & use_data) {
-      cudaFree(vir);
     }
   }
 
@@ -153,25 +127,22 @@ void energy_data(int op) {
     size_t size = 0;
     if (use_energy & use_data) {
       size = rs;
-      cudaMalloc(&esum, size);
+      check_cudart(cudaMalloc(&esum, size));
       copyin_data_1(esum, &energi::esum, 1);
     }
 
     if (use_grad & use_data) {
       int n = atoms::n;
       size = rs * n;
-      cudaMalloc(&gx, size);
-      cudaMalloc(&gy, size);
-      cudaMalloc(&gz, size);
+      check_cudart(cudaMalloc(&gx, size));
+      check_cudart(cudaMalloc(&gy, size));
+      check_cudart(cudaMalloc(&gz, size));
       copyin_data_n(0, 3, gx, deriv::desum, n);
       copyin_data_n(1, 3, gy, deriv::desum, n);
       copyin_data_n(2, 3, gz, deriv::desum, n);
     }
 
     if (use_virial & use_data) {
-      size = rs * 9;
-      cudaMalloc(&vir, size);
-      copyin_data_1(vir, &virial::vir[0][0], 9);
     }
   }
 }
@@ -180,7 +151,7 @@ box_st* box;
 
 void box_data(int op) {
   if (op == op_destroy) {
-    cudaFree(box);
+    check_cudart(cudaFree(box));
   }
 
   if (op == op_create) {
@@ -195,7 +166,7 @@ void box_data(int op) {
       shape = box_oct;
 
     size_t size = sizeof(box_st);
-    cudaMalloc(&box, size);
+    check_cudart(cudaMalloc(&box, size));
 
     copyin_data_1(&box->xbox, &boxes::xbox, 1);
     copyin_data_1(&box->ybox, &boxes::ybox, 1);

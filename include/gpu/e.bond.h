@@ -5,7 +5,19 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
+const int ebond_harmonic = 0x001;
+const int ebond_morse = 0x002;
+
+extern real cbnd, qbnd, bndunit;
+extern int bndtyp;
+extern int nbond;
+extern int (*ibnd)[2];
+extern real *bl, *bk;
+
+extern real eb;
 void e_bond_data(int op);
+}
+TINKER_NAMESPACE_END
 
 extern "C" {
 void tinker_gpu_ebond_harmonic0();
@@ -20,7 +32,5 @@ void tinker_gpu_ebond_morse4();
 void tinker_gpu_ebond_morse5();
 void tinker_gpu_ebond_morse6();
 }
-}
-TINKER_NAMESPACE_END
 
 #endif

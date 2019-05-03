@@ -3,6 +3,7 @@
 
 #include "gpu/data.h"
 #include "gpu/mdstate.h"
+#include "gpu/potential.h"
 #include "util/cxx.h"
 #include "util/error.h"
 #include "util/fort.rt.h"
