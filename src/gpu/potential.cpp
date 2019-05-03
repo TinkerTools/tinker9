@@ -13,10 +13,15 @@ void tinker_gpu_gradient1() {
   const char* fmt = " {:20s}{:12.6f} kcal/mol\n";
   if (gpu::use_ebond()) {
     tinker_gpu_ebond_harmonic0();
+    print(stdout, fmt, "Bond0", gpu::get_ebond());
     tinker_gpu_ebond_harmonic1();
+    print(stdout, fmt, "Bond1", gpu::get_ebond());
     tinker_gpu_ebond_harmonic4();
+    print(stdout, fmt, "Bond4", gpu::get_ebond());
     tinker_gpu_ebond_harmonic5();
+    print(stdout, fmt, "Bond5", gpu::get_ebond());
     tinker_gpu_ebond_harmonic6();
+    print(stdout, fmt, "Bond6", gpu::get_ebond());
   }
 }
 }
