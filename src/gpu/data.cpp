@@ -43,6 +43,8 @@ void mass_data(int op);
 void energy_data(int op);
 
 void box_data(int op);
+void couple_data(int op);
+void nblist_data(int op);
 void potential_data(int op);
 }
 TINKER_NAMESPACE_END
@@ -62,6 +64,8 @@ void tinker_gpu_data_create() {
   energy_data(op);
 
   box_data(op);
+  couple_data(op);
+  nblist_data(op);
   potential_data(op);
 }
 
@@ -77,6 +81,8 @@ void tinker_gpu_data_destroy() {
   energy_data(op);
 
   box_data(op);
+  couple_data(op);
+  nblist_data(op);
   potential_data(op);
 }
 }

@@ -63,6 +63,25 @@ struct box_st {
   real recip[3][3];
   int shape;
 };
+
+struct couple_st {
+  static const int maxn12 = 8;
+  static const int maxn13 = 32;
+  static const int maxn14 = 96;  // 128;
+  static const int maxn15 = 224; // 256;
+
+  int *n12, *n13, *n14, *n15;
+  int (*i12)[maxn12];
+  int (*i13)[maxn13];
+  int (*i14)[maxn14];
+  int (*i15)[maxn15];
+};
+
+struct nblist_st {
+  int maxnlst;
+  int* nlst;
+  int* lst;
+};
 }
 TINKER_NAMESPACE_END
 
