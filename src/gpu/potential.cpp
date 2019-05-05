@@ -1,4 +1,5 @@
 #include "gpu/potential.h"
+#include "gpu/acc.h"
 #include "util/format.print.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -11,17 +12,19 @@ extern "C" {
 void tinker_gpu_gradient1() {
   m_tinker_using_namespace;
   const char* fmt = " {:20s}{:12.6f} kcal/mol\n";
+
+  gpu::async_launches_begin(&gpu::queue_b);
+
   if (gpu::use_ebond()) {
     tinker_gpu_ebond_harmonic0();
-    print(stdout, fmt, "Bond0", gpu::get_ebond());
-    tinker_gpu_ebond_harmonic1();
-    print(stdout, fmt, "Bond1", gpu::get_ebond());
     tinker_gpu_ebond_harmonic4();
-    print(stdout, fmt, "Bond4", gpu::get_ebond());
     tinker_gpu_ebond_harmonic5();
-    print(stdout, fmt, "Bond5", gpu::get_ebond());
     tinker_gpu_ebond_harmonic6();
-    print(stdout, fmt, "Bond6", gpu::get_ebond());
+    tinker_gpu_ebond_harmonic1();
   }
+
+  gpu::async_launches_end(gpu::queue_b);
+
+  print(stdout, fmt, "Bond1", gpu::get_ebond());
 }
 }

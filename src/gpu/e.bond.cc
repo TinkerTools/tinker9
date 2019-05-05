@@ -1,4 +1,5 @@
 #include "gpu/e.bond.h"
+#include "gpu/acc.h"
 #include "gpu/image.h"
 #include "gpu/mdstate.h"
 
@@ -13,10 +14,10 @@ void ebond_tmpl() {
   #pragma acc data deviceptr(x,y,z,gx,gy,gz,vir,box,\
                              ibnd,bl,bk,eb)
   {
-    #pragma acc serial
+    #pragma acc serial async(queue_b)
     { *eb = 0; }
 
-    #pragma acc parallel loop
+    #pragma acc parallel loop async(queue_b)
     for (int i = 0; i < nbond; ++i) {
       int ia = ibnd[i][0];
       int ib = ibnd[i][1];
