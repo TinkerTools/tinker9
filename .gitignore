@@ -8,3 +8,6 @@ Release/*
 # build
 build/*
 build*
+
+# vi
+*.swp
