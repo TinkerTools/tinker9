@@ -2,7 +2,6 @@
 #define TINKER_GPU_DEFINES_H_
 
 #include "mathfunc.h"
-#include "util/macro.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -78,9 +77,14 @@ struct couple_st {
 };
 
 struct nblist_st {
-  int maxnlst;
   int* nlst;
   int* lst;
+  real *xold, *yold, *zold;
+  const real* x;
+  const real* y;
+  const real* z;
+  int maxnlst;
+  real cutoff, buffer;
 };
 }
 TINKER_NAMESPACE_END
@@ -97,5 +101,11 @@ TINKER_NAMESPACE_END
   TINKER_BONDED_GEN_1_(func, 4, tmpl, gpu::v4, ##__VA_ARGS__)                  \
   TINKER_BONDED_GEN_1_(func, 5, tmpl, gpu::v5, ##__VA_ARGS__)                  \
   TINKER_BONDED_GEN_1_(func, 6, tmpl, gpu::v6, ##__VA_ARGS__)
-
+#define TINKER_NONBONDED_GEN(func, tmpl, ...)                                  \
+  TINKER_BONDED_GEN_1_(func, 0, tmpl, gpu::v0, ##__VA_ARGS__)                  \
+  TINKER_BONDED_GEN_1_(func, 1, tmpl, gpu::v1, ##__VA_ARGS__)                  \
+  TINKER_BONDED_GEN_1_(func, 3, tmpl, gpu::v3, ##__VA_ARGS__)                  \
+  TINKER_BONDED_GEN_1_(func, 4, tmpl, gpu::v4, ##__VA_ARGS__)                  \
+  TINKER_BONDED_GEN_1_(func, 5, tmpl, gpu::v5, ##__VA_ARGS__)                  \
+  TINKER_BONDED_GEN_1_(func, 6, tmpl, gpu::v6, ##__VA_ARGS__)
 #endif

@@ -22,10 +22,15 @@ extern couple_st couple_obj_;
 extern couple_st* couple;
 
 extern nblist_st vlist_obj_;
-extern nblist_st* vlist;
-
-extern nblist_st elist_obj_;
-extern nblist_st* elist;
+extern nblist_st* vlst;
+extern nblist_st dlist_obj_;
+extern nblist_st* dlst;
+extern nblist_st clist_obj_;
+extern nblist_st* clst;
+extern nblist_st mlist_obj_;
+extern nblist_st* mlst;
+extern nblist_st ulist_obj_;
+extern nblist_st* ulst;
 }
 TINKER_NAMESPACE_END
 

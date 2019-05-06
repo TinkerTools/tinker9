@@ -20,10 +20,15 @@ couple_st couple_obj_;
 couple_st* couple;
 
 nblist_st vlist_obj_;
-nblist_st* vlist;
-
-nblist_st elist_obj_;
-nblist_st* elist;
+nblist_st* vlst;
+nblist_st dlist_obj_;
+nblist_st* dlst;
+nblist_st clist_obj_;
+nblist_st* clst;
+nblist_st mlist_obj_;
+nblist_st* mlst;
+nblist_st ulist_obj_;
+nblist_st* ulst;
 
 void n_data() { n = atoms::n; }
 
@@ -220,9 +225,9 @@ void couple_data(int op) {
     check_cudart(cudaMalloc(&couple_obj_.i15, size));
 
     // see also attach.f
-    const int maxn13 = 3 * couple_st::maxn12;
-    const int maxn14 = 9 * couple_st::maxn12;
-    const int maxn15 = 27 * couple_st::maxn12;
+    const int maxn13 = 3 * sizes::maxval;
+    const int maxn14 = 9 * sizes::maxval;
+    const int maxn15 = 27 * sizes::maxval;
     std::vector<int> nbuf, ibuf;
     nbuf.resize(n);
 
@@ -291,7 +296,5 @@ void couple_data(int op) {
         cudaMemcpy(couple, &couple_obj_, size, cudaMemcpyHostToDevice));
   }
 }
-
-void nblist_data(int op) {}
 }
 TINKER_NAMESPACE_END

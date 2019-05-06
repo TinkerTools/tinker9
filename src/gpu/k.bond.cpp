@@ -8,8 +8,8 @@ int bndtyp = 0;
 int nbond = 0;
 int (*ibnd)[2] = NULL;
 real *bl, *bk;
-real* eb;
 
+real* eb;
 int use_ebond() { return potent::use_bond; }
 
 real get_ebond() {

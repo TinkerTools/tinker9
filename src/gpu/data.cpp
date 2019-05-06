@@ -43,9 +43,10 @@ void mass_data(int op);
 void energy_data(int op);
 
 void box_data(int op);
+void potential_data(int op);
+
 void couple_data(int op);
 void nblist_data(int op);
-void potential_data(int op);
 }
 TINKER_NAMESPACE_END
 
@@ -63,10 +64,11 @@ void tinker_gpu_data_create() {
   mass_data(op);
   energy_data(op);
 
+  potential_data(op);
+
   box_data(op);
   couple_data(op);
   nblist_data(op);
-  potential_data(op);
 }
 
 void tinker_gpu_data_destroy() {
@@ -80,9 +82,13 @@ void tinker_gpu_data_destroy() {
   mass_data(op);
   energy_data(op);
 
+  potential_data(op);
+
+  // Neighbor lists must be initialized after potential initialization.
+  // xred, yred, and zred need to be initialized in vdw routines and will be
+  // used in nblist setups.
   box_data(op);
   couple_data(op);
   nblist_data(op);
-  potential_data(op);
 }
 }
