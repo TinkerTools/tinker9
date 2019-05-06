@@ -33,7 +33,9 @@ TINKER_NONBONDED_GEN(tinker_gpu_evdw_gauss, gpu::evdw_tmpl, gpu::evdw_gauss);
 
 #define TINKER_GPU_EVDW_GEN_(ver)                                              \
   void tinker_gpu_evdw##ver() {                                                \
-    if (gpu::vdwtyp == gpu::evdw_buck)                                         \
+    if (gpu::vdwtyp == gpu::evdw_lj)                                           \
+      tinker_gpu_evdw_lj##ver();                                               \
+    else if (gpu::vdwtyp == gpu::evdw_buck)                                    \
       tinker_gpu_evdw_buck##ver();                                             \
     else if (gpu::vdwtyp == gpu::evdw_mm3hb)                                   \
       tinker_gpu_evdw_mm3hb##ver();                                            \
@@ -41,8 +43,6 @@ TINKER_NONBONDED_GEN(tinker_gpu_evdw_gauss, gpu::evdw_tmpl, gpu::evdw_gauss);
       tinker_gpu_evdw_hal##ver();                                              \
     else if (gpu::vdwtyp == gpu::evdw_gauss)                                   \
       tinker_gpu_evdw_gauss##ver();                                            \
-    else                                                                       \
-      tinker_gpu_evdw_lj##ver();                                               \
   }
 TINKER_GPU_EVDW_GEN_(0);
 TINKER_GPU_EVDW_GEN_(1);

@@ -2,6 +2,7 @@
 #define TINKER_GPU_DEFINES_H_
 
 #include "mathfunc.h"
+#include <string>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

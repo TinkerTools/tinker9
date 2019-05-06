@@ -4,25 +4,27 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-int vdwtyp;
+int vdwtyp = 0;
+std::string vdwtyp_str;
 
 real *xred, *yred, *zred;
 
 real* ev;
 int use_evdw() { return potent::use_vdw; }
 
-int get_evdw_type() {
+void get_evdw_type(int& typ, std::string& typ_str) {
   fstr_view str = vdwpot::vdwtyp;
-  if (str == "BUCKINGHAM")
-    return evdw_buck;
+  typ_str = str.trim();
+  if (str == "LENNARD-JONES")
+    typ = evdw_lj;
+  else if (str == "BUCKINGHAM")
+    typ = evdw_buck;
   else if (str == "MM3-HBOND")
-    return evdw_mm3hb;
+    typ = evdw_mm3hb;
   else if (str == "BUFFERED-14-7")
-    return evdw_hal;
+    typ = evdw_hal;
   else if (str == "GAUSSIAN")
-    return evdw_gauss;
-  else
-    return evdw_lj;
+    typ = evdw_gauss;
 }
 
 real get_evdw() {
@@ -44,7 +46,7 @@ void e_vdw_data(int op) {
   }
 
   if (op == op_create) {
-    vdwtyp = get_evdw_type();
+    get_evdw_type(vdwtyp, vdwtyp_str);
 
     const size_t rs = sizeof(real);
     size_t size;

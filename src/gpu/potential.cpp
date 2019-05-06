@@ -14,11 +14,9 @@ TINKER_NAMESPACE_END
 extern "C" {
 void tinker_gpu_gradient1() {
   m_tinker_using_namespace;
-  const char* fmt = " {:20s}{:12.6f} kcal/mol\n";
-  const char* fm2 = " {:20s}{:12.6f} kcal/mol Version {:6d}\n";
+  const char* fmt = " {:20s}{:12.6f} kcal/mol {}\n";
 
   gpu::async_launches_begin(&gpu::queue_b);
-
   if (gpu::use_ebond()) {
     tinker_gpu_ebond_harmonic0();
     tinker_gpu_ebond_harmonic4();
@@ -40,8 +38,8 @@ void tinker_gpu_gradient1() {
   gpu::async_launches_end(gpu::queue_b);
   gpu::async_launches_end(gpu::queue_nb);
 
-  print(stdout, fmt, "Bond1", gpu::get_ebond());
+  print(stdout, fmt, "Bond1", gpu::get_ebond(), gpu::bndtyp_str);
 
-  print(stdout, fm2, "Vdw1", gpu::get_evdw(), gpu::vdwtyp);
+  print(stdout, fmt, "Vdw1", gpu::get_evdw(), gpu::vdwtyp_str);
 }
 }

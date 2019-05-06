@@ -7,9 +7,10 @@ TINKER_NAMESPACE_BEGIN
 namespace gpu {
 const int ebond_harmonic = 0x001;
 const int ebond_morse = 0x002;
+extern int bndtyp;
+extern std::string bndtyp_str;
 
 extern real cbnd, qbnd, bndunit;
-extern int bndtyp;
 extern int nbond;
 extern int (*ibnd)[2];
 extern real *bl, *bk;

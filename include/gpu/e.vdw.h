@@ -11,6 +11,7 @@ const int evdw_mm3hb = 0x0004;
 const int evdw_hal = 0x0008;
 const int evdw_gauss = 0x0010;
 extern int vdwtyp;
+extern std::string vdwtyp_str;
 
 const int evdw_decouple = 0;
 const int evdw_annihilate = 1;
@@ -19,7 +20,7 @@ extern real *xred, *yred, *zred;
 
 extern real* ev;
 int use_evdw();
-int get_evdw_type();
+void get_evdw_type(int& typ, std::string& typ_str);
 real get_evdw();
 void e_vdw_data(int op);
 }

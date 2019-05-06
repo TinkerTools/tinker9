@@ -3,8 +3,10 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-real cbnd, qbnd, bndunit;
 int bndtyp = 0;
+std::string bndtyp_str;
+
+real cbnd, qbnd, bndunit;
 int nbond = 0;
 int (*ibnd)[2] = NULL;
 real *bl, *bk;
@@ -30,14 +32,16 @@ void e_bond_data(int op) {
   }
 
   if (op == op_create) {
-    cbnd = bndpot::cbnd;
-    qbnd = bndpot::qbnd;
-    bndunit = bndpot::bndunit;
     fstr_view btyp = bndpot::bndtyp;
     if (btyp == "HARMONIC")
       bndtyp = ebond_harmonic;
     else if (btyp == "MORSE")
       bndtyp = ebond_morse;
+    bndtyp_str = btyp.trim();
+
+    cbnd = bndpot::cbnd;
+    qbnd = bndpot::qbnd;
+    bndunit = bndpot::bndunit;
     nbond = bndstr::nbond;
 
     const size_t rs = sizeof(real);
