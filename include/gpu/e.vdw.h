@@ -13,16 +13,22 @@ const int evdw_gauss = 0x0010;
 extern int vdwtyp;
 extern std::string vdwtyp_str;
 
-const int evdw_decouple = 0;
-const int evdw_annihilate = 1;
-
+extern real *ghal, *dhal;
 extern real* vscales;
+
+extern real* vdw_switch_c;
 
 extern int *jvdw, *njvdw;
 extern int* ired;
 extern real* kred;
 extern real *xred, *yred, *zred;
 extern real *radmin, *epsilon;
+
+const int vcouple_decouple = 0;
+const int vcouple_annihilate = 1;
+extern int* vcouple;
+extern real *scexp, *scalpha;
+extern real* vlam;
 
 extern real* ev;
 int use_evdw();

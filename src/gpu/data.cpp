@@ -43,9 +43,9 @@ void accel_data(int op);
 void mass_data(int op);
 void energy_data(int op);
 
-void box_data(int op);
 void potential_data(int op);
 
+void box_data(int op);
 void couple_data(int op);
 void nblist_data(int op);
 }
