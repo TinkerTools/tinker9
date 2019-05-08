@@ -1,5 +1,6 @@
 #include "gpu/potential.h"
 #include "gpu/acc.h"
+#include "gpu/nblist.h"
 #include "util/format.print.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -26,6 +27,7 @@ void tinker_gpu_gradient1() {
   }
 
   gpu::async_launches_begin(&gpu::queue_nb);
+
   if (gpu::use_evdw()) {
     tinker_gpu_evdw0();
     tinker_gpu_evdw3();
@@ -35,8 +37,9 @@ void tinker_gpu_gradient1() {
     tinker_gpu_evdw1();
   }
 
-  gpu::async_launches_end(gpu::queue_b);
-  gpu::async_launches_end(gpu::queue_nb);
+  tinker_gpu_vlist_update();
+
+  gpu::async_launches_end();
 
   print(stdout, fmt, "Bond1", gpu::get_ebond(), gpu::bndtyp_str);
 

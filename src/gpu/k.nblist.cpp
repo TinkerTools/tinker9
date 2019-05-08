@@ -9,6 +9,9 @@ int use_vdw_list() {
   int ret = 0;
   if (use_evdw())
     ++ret;
+  else
+    return ret;
+
   if (limits::use_vlist)
     ++ret;
   return ret;
@@ -18,6 +21,9 @@ int use_disp_list() {
   int ret = 0;
   if (potent::use_disp)
     ++ret;
+  else
+    return ret;
+
   if (limits::use_dlist)
     ++ret;
   return ret;
@@ -27,6 +33,9 @@ int use_charge_list() {
   int ret = 0;
   if (potent::use_charge || potent::use_solv)
     ++ret;
+  else
+    return ret;
+
   if (limits::use_clist)
     ++ret;
   return ret;
@@ -37,6 +46,9 @@ int use_mpole_list() {
   if (potent::use_mpole || potent::use_polar || potent::use_chgtrn ||
       potent::use_solv)
     ++ret;
+  else
+    return ret;
+
   if (limits::use_mlist)
     ++ret;
   return ret;
@@ -46,6 +58,9 @@ int use_usolv_list() {
   int ret = 0;
   if (potent::use_polar)
     ++ret;
+  else
+    return ret;
+
   if (limits::use_ulist)
     ++ret;
   return ret;
@@ -123,6 +138,8 @@ void nblist_data(int op) {
 
     if (op == op_create) {
       maxnlst = 2500;
+      if (u == list_double_loop)
+        maxnlst = 1;
       nblist_data_1_(vlist_obj_, vlst, maxnlst, limits::vdwcut, neigh::lbuffer,
                      xred, yred, zred);
     }

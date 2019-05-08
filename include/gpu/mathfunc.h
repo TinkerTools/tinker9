@@ -28,4 +28,6 @@
 #  define REAL_ABS fabsf
 #endif
 
+#define REAL_SQ(x) ((x) * (x))
+
 #endif

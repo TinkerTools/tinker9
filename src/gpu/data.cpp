@@ -1,4 +1,5 @@
 #include "gpu/data.h"
+#include "gpu/nblist.h"
 #include "util/error.cudart.h"
 #include <cuda_runtime.h>
 
@@ -69,6 +70,9 @@ void tinker_gpu_data_create() {
   box_data(op);
   couple_data(op);
   nblist_data(op);
+
+  // build neighbor lists
+  tinker_gpu_vlist_build();
 }
 
 void tinker_gpu_data_destroy() {

@@ -19,5 +19,9 @@ void async_launches_begin(int* queue) {
 void async_launches_end(int queue) {
   #pragma acc wait(queue)
 }
+
+void async_launches_end() {
+  #pragma acc wait
+}
 }
 TINKER_NAMESPACE_END

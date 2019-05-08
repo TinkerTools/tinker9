@@ -17,7 +17,7 @@ libtinker := $(HOME)/git/tinker/source/libtinker.a
 fftwflag := -L$(HOME)/local/fftw/lib -lfftw3 -lfftw3_threads
 
 # Precision -DTINKER_GPU_DOUBLE or leave it empty
-# precision_macro := -DTINKER_GPU_DOUBLE
+#precision_macro := -DTINKER_GPU_DOUBLE
 precision_macro :=
 
 # Darwin -> darwin

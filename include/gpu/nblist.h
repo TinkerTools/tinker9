@@ -14,7 +14,15 @@ int use_disp_list();
 int use_charge_list();
 int use_mpole_list();
 int use_usolv_list();
+
+void nblist_construct(const nblist_st&, nblist_st*);
+void nblist_update(const nblist_st&, nblist_st*);
 }
 TINKER_NAMESPACE_END
+
+extern "C" {
+void tinker_gpu_vlist_build();
+void tinker_gpu_vlist_update();
+}
 
 #endif

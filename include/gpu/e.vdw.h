@@ -16,7 +16,13 @@ extern std::string vdwtyp_str;
 const int evdw_decouple = 0;
 const int evdw_annihilate = 1;
 
+extern real* vscales;
+
+extern int *jvdw, *njvdw;
+extern int* ired;
+extern real* kred;
 extern real *xred, *yred, *zred;
+extern real *radmin, *epsilon;
 
 extern real* ev;
 int use_evdw();
