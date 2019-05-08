@@ -65,8 +65,10 @@ inline void image(real& __restrict__ xr, real& __restrict__ yr,
   switch (pb->shape) {
   case box_ortho:
     pbc<box_ortho>::image(xr, yr, zr, pb);
+    break;
   default /* box_null */:
     pbc<box_null>::image();
+    break;
   }
 }
 
@@ -76,8 +78,10 @@ inline void imagen(real& __restrict__ xr, real& __restrict__ yr,
   switch (pb->shape) {
   case box_ortho:
     pbc<box_ortho>::imagen(xr, yr, zr, pb);
+    break;
   default /* box_null */:
     pbc<box_null>::imagen();
+    break;
   }
 }
 }
