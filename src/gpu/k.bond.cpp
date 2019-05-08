@@ -20,6 +20,8 @@ real get_ebond() {
   return e;
 }
 
+int count_ebond() { return nbond; }
+
 void e_bond_data(int op) {
   if (!use_ebond())
     return;

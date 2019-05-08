@@ -15,7 +15,8 @@ TINKER_NAMESPACE_END
 extern "C" {
 void tinker_gpu_gradient1() {
   m_tinker_using_namespace;
-  const char* fmt = " {:20s}{:12.6f} kcal/mol {}\n";
+  const char* title = " Energy Component Breakdown :{:>20s}{:>20s}\n\n";
+  const char* fmt = " {:28s}{:>20.4f}{:>17d}        {}\n";
 
   gpu::async_launches_begin(&gpu::queue_b);
   if (gpu::use_ebond()) {
@@ -41,8 +42,12 @@ void tinker_gpu_gradient1() {
 
   gpu::async_launches_end();
 
-  print(stdout, fmt, "Bond1", gpu::get_ebond(), gpu::bndtyp_str);
+  print(stdout, title, "Kcal/mole", "Interactions");
 
-  print(stdout, fmt, "Vdw1", gpu::get_evdw(), gpu::vdwtyp_str);
+  print(stdout, fmt, "Bond Stretching", gpu::get_ebond(), gpu::count_ebond(),
+        gpu::bndtyp_str);
+
+  print(stdout, fmt, "Van der Waals", gpu::get_evdw(), gpu::count_evdw(),
+        gpu::vdwtyp_str);
 }
 }

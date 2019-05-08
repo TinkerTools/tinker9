@@ -7,7 +7,7 @@ namespace gpu {
 // cut: taper
 // off: cutoff
 // c: at least c[6]
-static void switch_c05_no_check_(double cut, double off, double* c) {
+static double switch_c05_no_check_(double cut, double off, double* c) {
   c[0] = 0;
   c[1] = 0;
   c[2] = 0;
@@ -26,12 +26,13 @@ static void switch_c05_no_check_(double cut, double off, double* c) {
   c[4] = 15 * (off + cut) * _1_denom;
   c[5] = -6 * _1_denom;
   // }
+  return cut2;
 }
 
 // cut: taper
 // off: cutoff
 // f: at least f[8]
-static void switch_f07_no_check_(double cut, double off, double* f) {
+static double switch_f07_no_check_(double cut, double off, double* f) {
   f[0] = 0;
   f[1] = 0;
   f[2] = 0;
@@ -71,9 +72,10 @@ static void switch_f07_no_check_(double cut, double off, double* f) {
   f[6] = (36 * cut + 139 * off) * denom;
   f[7] = -25 * denom;
   // }
+  return cut2;
 }
 
-void switching(int switch_type, double* coeff) {
+void switching(int switch_type, double* coeff, double& taper2) {
   using namespace limits;
   double off, cut;
 
@@ -139,9 +141,9 @@ void switching(int switch_type, double* coeff) {
 
   if (cut < off) {
     if (switch_type != switch_charge)
-      switch_c05_no_check_(cut, off, coeff);
+      taper2 = switch_c05_no_check_(cut, off, coeff);
     else
-      switch_f07_no_check_(cut, off, coeff);
+      taper2 = switch_f07_no_check_(cut, off, coeff);
   }
 }
 }

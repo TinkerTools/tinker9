@@ -22,7 +22,7 @@ enum {
   switch_gksa,
 };
 
-void switching(int switch_type, double* coeff);
+void switching(int switch_type, double* coeff, double& taper2);
 }
 TINKER_NAMESPACE_END
 

@@ -156,7 +156,7 @@ $(all_cc_objs): %.o: $(topdir)/%.cc | dirs
 $(all_cpp_objs): %.o: $(topdir)/%.cpp | dirs
 	$(CXX) $(cxx_compile_flags) $< -o $@
 $(lib_acc_objs): %.o: $(topdir)/%.cc | dirs
-	$(ACC) $(pgi_include_flags) -D$(fortran_name_macro) $(precision_macro) -std=c++11 -acc -c -Minfo=accel $< -o $@
+	$(ACC) $(pgi_include_flags) -D$(fortran_name_macro) $(precision_macro) -I$(topdir)/ext -std=c++11 -acc -c -Minfo=accel $< -o $@
 
 libtinkergpu.a: $(ext_cc_objs) $(ext_cpp_objs) $(lib_cpp_objs)
 	$(ar_flags) $@ $^

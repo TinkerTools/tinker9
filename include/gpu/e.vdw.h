@@ -13,27 +13,27 @@ const int evdw_gauss = 0x0010;
 extern int vdwtyp;
 extern std::string vdwtyp_str;
 
-extern real *ghal, *dhal;
 extern real* vscales;
+extern double vdw_switch_c[6];
+extern double vdw_switch_cut2;
 
-extern real* vdw_switch_c;
-
-extern int *jvdw, *njvdw;
 extern int* ired;
 extern real* kred;
 extern real *xred, *yred, *zred;
+
+extern int *jvdw, *njvdw;
 extern real *radmin, *epsilon;
 
 const int vcouple_decouple = 0;
 const int vcouple_annihilate = 1;
-extern int* vcouple;
-extern real *scexp, *scalpha;
 extern real* vlam;
 
 extern real* ev;
+extern int* nev;
 int use_evdw();
 void get_evdw_type(int& typ, std::string& typ_str);
 real get_evdw();
+int count_evdw();
 void e_vdw_data(int op);
 }
 TINKER_NAMESPACE_END

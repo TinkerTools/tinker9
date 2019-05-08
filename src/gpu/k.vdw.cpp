@@ -10,22 +10,21 @@ namespace gpu {
 int vdwtyp = 0;
 std::string vdwtyp_str;
 
-real *ghal, *dhal;
 real* vscales;
+double vdw_switch_c[6];
+double vdw_switch_cut2;
 
-real* vdw_switch_c;
-
-int *jvdw, *njvdw;
 int* ired;
 real* kred;
 real *xred, *yred, *zred;
+
+int *jvdw, *njvdw;
 real *radmin, *epsilon;
 
-int* vcouple;
-real *scexp, *scalpha;
 real* vlam;
 
 real* ev;
+int* nev;
 int use_evdw() { return potent::use_vdw; }
 
 void get_evdw_type(int& typ, std::string& typ_str) {
@@ -49,19 +48,18 @@ real get_evdw() {
   return e;
 }
 
+int count_evdw() {
+  int c;
+  check_cudart(cudaMemcpy(&c, nev, sizeof(int), cudaMemcpyDeviceToHost));
+  return c;
+}
+
 void e_vdw_data(int op) {
   if (!use_evdw())
     return;
 
   if (op == op_destroy) {
-    check_cudart(cudaFree(ghal));
-    check_cudart(cudaFree(dhal));
     check_cudart(cudaFree(vscales));
-
-    check_cudart(cudaFree(vdw_switch_c));
-
-    check_cudart(cudaFree(jvdw));
-    check_cudart(cudaFree(njvdw));
 
     check_cudart(cudaFree(ired));
     check_cudart(cudaFree(kred));
@@ -69,15 +67,15 @@ void e_vdw_data(int op) {
     check_cudart(cudaFree(yred));
     check_cudart(cudaFree(zred));
 
+    check_cudart(cudaFree(jvdw));
+    check_cudart(cudaFree(njvdw));
     check_cudart(cudaFree(radmin));
     check_cudart(cudaFree(epsilon));
 
-    check_cudart(cudaFree(vcouple));
-    check_cudart(cudaFree(scexp));
-    check_cudart(cudaFree(scalpha));
     check_cudart(cudaFree(vlam));
 
     check_cudart(cudaFree(ev));
+    check_cudart(cudaFree(nev));
   }
 
   if (op == op_create) {
@@ -87,25 +85,31 @@ void e_vdw_data(int op) {
     size_t size;
 
     const int vscales_count = 4;
-    check_cudart(cudaMalloc(&ghal, rs));
-    check_cudart(cudaMalloc(&dhal, rs));
     size = vscales_count * rs;
     check_cudart(cudaMalloc(&vscales, size));
-    copyin_data_1(ghal, &vdwpot::ghal, 1);
-    copyin_data_1(dhal, &vdwpot::dhal, 1);
     std::vector<double> vscalesvec;
     vscalesvec.push_back(vdwpot::v2scale);
     vscalesvec.push_back(vdwpot::v3scale);
     vscalesvec.push_back(vdwpot::v4scale);
     vscalesvec.push_back(vdwpot::v5scale);
     copyin_data_1(vscales, vscalesvec.data(), vscales_count);
+    switching(switch_vdw, &vdw_switch_c[0], vdw_switch_cut2);
 
-    const int csize = 6;
-    double c[csize];
-    size = csize * rs;
-    check_cudart(cudaMalloc(&vdw_switch_c, size));
-    switching(switch_vdw, &c[0]);
-    copyin_data_1(vdw_switch_c, &c[0], csize);
+    size = n * rs;
+    check_cudart(cudaMalloc(&ired, n * sizeof(int)));
+    check_cudart(cudaMalloc(&kred, size));
+    check_cudart(cudaMalloc(&xred, size));
+    check_cudart(cudaMalloc(&yred, size));
+    check_cudart(cudaMalloc(&zred, size));
+    std::vector<int> iredbuf(n);
+    std::vector<double> kredbuf(n);
+    for (int i = 0; i < n; ++i) {
+      int jt = vdw::ired[i] - 1;
+      iredbuf[i] = jt;
+      kredbuf[i] = vdw::kred[i];
+    }
+    copyin_data_1(ired, iredbuf.data(), n);
+    copyin_data_1(kred, kredbuf.data(), n);
 
     check_cudart(cudaMalloc(&jvdw, n * sizeof(int)));
     check_cudart(cudaMalloc(&njvdw, sizeof(int)));
@@ -129,23 +133,6 @@ void e_vdw_data(int op) {
     }
     copyin_data_1(jvdw, jbuf.data(), n);
     copyin_data_1(njvdw, &jcount, 1);
-
-    size = n * rs;
-    check_cudart(cudaMalloc(&ired, n * sizeof(int)));
-    check_cudart(cudaMalloc(&kred, size));
-    check_cudart(cudaMalloc(&xred, size));
-    check_cudart(cudaMalloc(&yred, size));
-    check_cudart(cudaMalloc(&zred, size));
-    std::vector<int> iredbuf(n);
-    std::vector<double> kredbuf(n);
-    for (int i = 0; i < n; ++i) {
-      int jt = vdw::ired[i] - 1;
-      iredbuf[i] = jt;
-      kredbuf[i] = vdw::kred[i];
-    }
-    copyin_data_1(ired, iredbuf.data(), n);
-    copyin_data_1(kred, kredbuf.data(), n);
-
     size = jcount * jcount * rs;
     check_cudart(cudaMalloc(&radmin, size));
     check_cudart(cudaMalloc(&epsilon, size));
@@ -164,14 +151,8 @@ void e_vdw_data(int op) {
     copyin_data_1(radmin, radvec.data(), jcount * jcount);
     copyin_data_1(epsilon, epsvec.data(), jcount * jcount);
 
-    check_cudart(cudaMalloc(&vcouple, sizeof(int)));
-    check_cudart(cudaMalloc(&scexp, rs));
-    check_cudart(cudaMalloc(&scalpha, rs));
     size = n * rs;
     check_cudart(cudaMalloc(&vlam, size));
-    copyin_data_1(vcouple, &mutant::vcouple, 1);
-    copyin_data_1(scexp, &mutant::scexp, 1);
-    copyin_data_1(scalpha, &mutant::scalpha, 1);
     std::vector<double> vlamvec(n);
     for (int i = 0; i < n; ++i) {
       if (mutant::mut[i]) {
@@ -183,6 +164,7 @@ void e_vdw_data(int op) {
     copyin_data_1(vlam, vlamvec.data(), n);
 
     check_cudart(cudaMalloc(&ev, rs));
+    check_cudart(cudaMalloc(&nev, sizeof(int)));
   }
 }
 }
