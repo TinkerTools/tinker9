@@ -10,9 +10,7 @@ namespace gpu {
 int vdwtyp = 0;
 std::string vdwtyp_str;
 
-real* vscales;
-double vdw_switch_c[6];
-double vdw_switch_cut2;
+double vdw_switch_cut, vdw_switch_off;
 
 int* ired;
 real* kred;
@@ -43,12 +41,18 @@ void get_evdw_type(int& typ, std::string& typ_str) {
 }
 
 real get_evdw() {
+  if (!use_evdw())
+    return 0;
+
   real e;
   check_cudart(cudaMemcpy(&e, ev, sizeof(real), cudaMemcpyDeviceToHost));
   return e;
 }
 
 int count_evdw() {
+  if (!use_evdw())
+    return -1;
+
   int c;
   check_cudart(cudaMemcpy(&c, nev, sizeof(int), cudaMemcpyDeviceToHost));
   return c;
@@ -59,8 +63,6 @@ void e_vdw_data(int op) {
     return;
 
   if (op == op_destroy) {
-    check_cudart(cudaFree(vscales));
-
     check_cudart(cudaFree(ired));
     check_cudart(cudaFree(kred));
     check_cudart(cudaFree(xred));
@@ -84,16 +86,7 @@ void e_vdw_data(int op) {
     const size_t rs = sizeof(real);
     size_t size;
 
-    const int vscales_count = 4;
-    size = vscales_count * rs;
-    check_cudart(cudaMalloc(&vscales, size));
-    std::vector<double> vscalesvec;
-    vscalesvec.push_back(vdwpot::v2scale);
-    vscalesvec.push_back(vdwpot::v3scale);
-    vscalesvec.push_back(vdwpot::v4scale);
-    vscalesvec.push_back(vdwpot::v5scale);
-    copyin_data_1(vscales, vscalesvec.data(), vscales_count);
-    switching(switch_vdw, &vdw_switch_c[0], vdw_switch_cut2);
+    switch_cut_off(switch_vdw, vdw_switch_cut, vdw_switch_off);
 
     size = n * rs;
     check_cudart(cudaMalloc(&ired, n * sizeof(int)));

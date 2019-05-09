@@ -3,6 +3,7 @@
 #include "gpu/image.h"
 #include "gpu/mdstate.h"
 #include "gpu/nblist.h"
+#include "gpu/switch.h"
 #include <ext/tinker/tinker.mod.h>
 
 TINKER_NAMESPACE_BEGIN
@@ -24,7 +25,6 @@ TINKER_NAMESPACE_END
 extern "C" {
 void tinker_gpu_vlist_build() {
   m_tinker_using_namespace;
-
   if (gpu::use_vdw_list()) {
     gpu::evdw_reduce_xyz_();
     gpu::nblist_construct(gpu::vlist_obj_, gpu::vlst);
@@ -48,6 +48,8 @@ void evdw_tmpl() {
   constexpr int do_g = USE & use_grad;
   constexpr int do_v = USE & use_virial;
   constexpr int do_a = USE & use_analyz;
+  static_assert(do_v ? do_g : true, "");
+  static_assert(do_a ? do_e : true, "");
 
   const real ghal = vdwpot::ghal;
   const real dhal = vdwpot::dhal;
@@ -55,15 +57,16 @@ void evdw_tmpl() {
   const real scalpha = mutant::scalpha;
   const int vcouple = mutant::vcouple;
 
+  const real cut = vdw_switch_cut;
+  const real off = vdw_switch_off;
+  const real cut2 = cut * cut;
+  const real off2 = off * off;
   const int maxnlst = vlist_obj_.maxnlst;
-  const real cut2 = vdw_switch_cut2;
-  const real off2 = REAL_SQ(vlist_obj_.cutoff);
-  const real c0 = vdw_switch_c[0];
-  const real c1 = vdw_switch_c[1];
-  const real c2 = vdw_switch_c[2];
-  const real c3 = vdw_switch_c[3];
-  const real c4 = vdw_switch_c[4];
-  const real c5 = vdw_switch_c[5];
+
+  const real v2scale = vdwpot::v2scale;
+  const real v3scale = vdwpot::v3scale;
+  const real v4scale = vdwpot::v4scale;
+  const real v5scale = vdwpot::v5scale;
 
   static real* vscale = (real*)malloc(n * sizeof(real));
   // In order to use firstprivate, must assign values here.
@@ -72,7 +75,6 @@ void evdw_tmpl() {
   }
 
   #pragma acc data deviceptr(x,y,z,gx,gy,gz,vir,box,couple,vlst,\
-                             vscales,vdw_switch_c,\
                              ired,kred,xred,yred,zred,\
                              jvdw,njvdw,radmin,epsilon,\
                              vlam,\
@@ -93,16 +95,16 @@ void evdw_tmpl() {
       const int n15i = couple->n15[i];
       #pragma acc loop independent
       for (int j = 0; j < n12i; ++j)
-        vscale[couple->i12[i][j]] = vscales[0]; // v2scale
+        vscale[couple->i12[i][j]] = v2scale;
       #pragma acc loop independent
       for (int j = 0; j < n13i; ++j)
-        vscale[couple->i13[i][j]] = vscales[1]; // v3scale
+        vscale[couple->i13[i][j]] = v3scale;
       #pragma acc loop independent
       for (int j = 0; j < n14i; ++j)
-        vscale[couple->i14[i][j]] = vscales[2]; // v4scale
+        vscale[couple->i14[i][j]] = v4scale;
       #pragma acc loop independent
       for (int j = 0; j < n15i; ++j)
-        vscale[couple->i15[i][j]] = vscales[3]; // v5scale
+        vscale[couple->i15[i][j]] = v5scale;
 
       int iv = ired[i];
       real redi = kred[i];
@@ -146,7 +148,6 @@ void evdw_tmpl() {
 
         real e;
         real de;
-
         if_constexpr(VDWTYP & evdw_hal) {
           real rho = rik * REAL_RECIP(rv);
           real rho6 = REAL_POW(rho, 6);
@@ -167,15 +168,10 @@ void evdw_tmpl() {
         }
 
         if (rik2 > cut2) {
-          real rik3 = rik2 * rik;
-          real rik4 = rik2 * rik2;
-          real rik5 = rik2 * rik3;
-          real taper =
-              c5 * rik5 + c4 * rik4 + c3 * rik3 + c2 * rik2 + c1 * rik + c0;
-          real dtaper =
-              5 * c5 * rik4 + 4 * c4 * rik3 + 3 * c3 * rik2 + 2 * c2 * rik + c1;
-          de = e * dtaper + de * taper;
-          e = e * taper;
+          real taper, dtaper;
+          switch_taper5<do_g>(rik, cut, off, taper, dtaper);
+          if_constexpr(do_g) de = e * dtaper + de * taper;
+          if_constexpr(do_e) e = e * taper;
         }
 
         // Increment the energy, gradient, and virial.

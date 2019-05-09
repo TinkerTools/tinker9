@@ -13,9 +13,7 @@ const int evdw_gauss = 0x0010;
 extern int vdwtyp;
 extern std::string vdwtyp_str;
 
-extern real* vscales;
-extern double vdw_switch_c[6];
-extern double vdw_switch_cut2;
+extern double vdw_switch_cut, vdw_switch_off;
 
 extern int* ired;
 extern real* kred;

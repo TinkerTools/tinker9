@@ -15,12 +15,20 @@ real* eb;
 int use_ebond() { return potent::use_bond; }
 
 real get_ebond() {
+  if (!use_ebond())
+    return 0;
+
   real e;
   check_cudart(cudaMemcpy(&e, eb, sizeof(real), cudaMemcpyDeviceToHost));
   return e;
 }
 
-int count_ebond() { return nbond; }
+int count_ebond() {
+  if (!use_ebond())
+    return -1;
+
+  return nbond;
+}
 
 void e_bond_data(int op) {
   if (!use_ebond())

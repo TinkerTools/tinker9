@@ -10,6 +10,7 @@ void ebond_tmpl() {
   constexpr int do_e = USE & use_energy;
   constexpr int do_g = USE & use_grad;
   constexpr int do_v = USE & use_virial;
+  static_assert(do_v ? do_g : true, "");
 
   #pragma acc data deviceptr(x,y,z,gx,gy,gz,vir,box,\
                              ibnd,bl,bk,eb)

@@ -30,12 +30,15 @@ void tinker_gpu_gradient1() {
   gpu::async_launches_begin(&gpu::queue_nb);
 
   if (gpu::use_evdw()) {
+    /*
     tinker_gpu_evdw0();
     tinker_gpu_evdw3();
     tinker_gpu_evdw4();
     tinker_gpu_evdw5();
     tinker_gpu_evdw6();
     tinker_gpu_evdw1();
+    // */
+    tinker_gpu_evdw3();
   }
 
   tinker_gpu_vlist_update();
