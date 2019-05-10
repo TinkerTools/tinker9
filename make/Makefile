@@ -17,8 +17,8 @@ libtinker := $(HOME)/git/tinker/source/libtinker.a
 fftwflag := -L$(HOME)/local/fftw/lib -lfftw3 -lfftw3_threads
 
 # Precision -DTINKER_GPU_DOUBLE or leave it empty
-#precision_macro := -DTINKER_GPU_DOUBLE
-precision_macro :=
+#precision_flag := -DTINKER_GPU_DOUBLE
+precision_flag :=
 
 # Darwin -> darwin
 os := $(shell uname -s 2>/dev/null | tr "[:upper:]" "[:lower:]")
@@ -111,18 +111,22 @@ topdir := $(realpath $(src))
 extdir := ext/ext
 
 include_flags := -I$(topdir)/include
-include_flags += -isystem $(topdir)/ext
-include_flags += -isystem $(topdir)/ext/ext
-include_flags += -isystem $(cudadir)/include
+include_flags += -I$(topdir)/ext
+include_flags += -I$(topdir)/ext/ext
+include_flags += -I$(cudadir)/include
 
-pgi_include_flags += -I$(topdir)/include
-
-cxx_common_flags := -std=c++11 -D$(fortran_name_macro) $(precision_macro)
+cxx_common_flags := -std=c++11 -D$(fortran_name_macro) $(precision_flag)
 cxx_common_flags += $(include_flags) $(cxx_opt_flags)
-
 cxx_compile_flags := -x c++ -c $(cxx_common_flags)
 
-link_flags := $(cxx_common_flags) $(os_link_flags) $(libtinker) $(fortrtflag) $(fftwflag)
+acc_common_flags := $(cxx_common_flags)
+acc_compile_flags += -acc verystrict -c -Minfo=accel $(acc_common_flags)
+
+cxx_link_flags := $(cxx_common_flags)
+cxx_link_flags += $(os_link_flags) $(libtinker) $(fortrtflag) $(fftwflag)
+
+acc_link_flags := -acc -Mcuda
+acc_link_flags += $(acc_common_flags) $(libtinker) $(fortrtflag) $(fftwflag)
 
 ext_cc_objs := $(extdir)/fmt/format.o $(extdir)/fmt/posix.o
 ext_cpp_objs := $(extdir)/tinker/tinker.mod.o $(extdir)/tinker/tinker.rt.o
@@ -156,9 +160,9 @@ $(all_cc_objs): %.o: $(topdir)/%.cc | dirs
 $(all_cpp_objs): %.o: $(topdir)/%.cpp | dirs
 	$(CXX) $(cxx_compile_flags) $< -o $@
 $(lib_acc_objs): %.o: $(topdir)/%.cc | dirs
-	$(ACC) $(pgi_include_flags) -D$(fortran_name_macro) $(precision_macro) -I$(topdir)/ext -std=c++11 -acc -c -Minfo=accel $< -o $@
+	$(ACC) $(acc_compile_flags) $< -o $@
 
-libtinkergpu.a: $(ext_cc_objs) $(ext_cpp_objs) $(lib_cpp_objs)
+libtinkergpu.a: $(ext_cc_objs) $(ext_cpp_objs) $(lib_cpp_objs) $(lib_acc_objs)
 	$(ar_flags) $@ $^
 	$(ranlib_flags) $@
 
@@ -168,10 +172,9 @@ libtinkergpu.a: $(ext_cc_objs) $(ext_cpp_objs) $(lib_cpp_objs)
 #                                                                      #
 ########################################################################
 
-#tinker.gpu: src/tinker.gpu.o libtinkergpu.a
-#	$(CXX) $(link_flags) $^ -o $@
-tinker.gpu: src/tinker.gpu.o libtinkergpu.a $(lib_acc_objs)
-	$(ACC) $^ $(libtinker) $(fortrtflag) $(fftwflag) -Mcuda -acc -o $@
+tinker.gpu: src/tinker.gpu.o libtinkergpu.a
+#	$(CXX) $(cxx_link_flags) $^ -o $@
+	$(ACC) $^ $(acc_link_flags) -o $@
 
 ########################################################################
 #                                                                      #
@@ -184,4 +187,5 @@ test: all.tests
 	@$(PWD)/all.tests ~[act]
 
 all.tests: src/test/test.all.o $(test_cpp_objs) libtinkergpu.a
-	$(CXX) $(link_flags) $^ -o $@
+#	$(CXX) $(cxx_link_flags) $^ -o $@
+	$(ACC) $^ $(acc_link_flags) -o $@
