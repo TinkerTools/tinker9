@@ -20,6 +20,7 @@ extern "C" {
 void TINKER_RT(final)();
 void TINKER_RT(getxyz)();
 void TINKER_RT(initial)();
+void TINKER_RT(command)();
 void TINKER_RT(mdinit)();
 void TINKER_RT(mechanic)();
 }

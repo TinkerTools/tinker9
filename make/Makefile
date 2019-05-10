@@ -184,7 +184,7 @@ tinker.gpu: src/tinker.gpu.o libtinkergpu.a
 
 .PHONY: test
 test: all.tests
-	@$(PWD)/all.tests ~[act]
+	@$(PWD)/all.tests [forcefield]
 
 all.tests: src/test/test.all.o $(test_cpp_objs) libtinkergpu.a
 #	$(CXX) $(cxx_link_flags) $^ -o $@

@@ -1,3 +1,4 @@
+namespace tinker_6fe8e913fe4da3d46849d10248ad2a4872b4da93 {
 const char* water03_prm =
 R"**(      ##############################
       ##                          ##
@@ -159,3 +160,4 @@ multipole     2    1    2               0.25983
 polarize      1           0.837      0.390       2
 polarize      2           0.496      0.390       1
 )**";
+}
