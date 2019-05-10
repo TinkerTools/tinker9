@@ -99,7 +99,7 @@ dirs:
 
 .PHONY: clean
 clean:
-	rm -rf ext src tinker.gpu test.all *.a *dSYM
+	rm -rf ext src tinker.gpu all.tests *.a *dSYM
 
 ########################################################################
 #                                                                      #
@@ -180,8 +180,8 @@ tinker.gpu: src/tinker.gpu.o libtinkergpu.a $(lib_acc_objs)
 ########################################################################
 
 .PHONY: test
-test: test.all
-	@$(PWD)/test.all ~[act]
+test: all.tests
+	@$(PWD)/all.tests ~[act]
 
-test.all: src/test/test.all.o $(test_cpp_objs) libtinkergpu.a
+all.tests: src/test/test.all.o $(test_cpp_objs) libtinkergpu.a
 	$(CXX) $(link_flags) $^ -o $@
