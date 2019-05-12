@@ -34,4 +34,8 @@ extern nblist_st* ulst;
 }
 TINKER_NAMESPACE_END
 
+extern "C" {
+void tinker_gpu_zero_vag();
+}
+
 #endif

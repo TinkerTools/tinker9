@@ -298,3 +298,32 @@ void couple_data(int op) {
 }
 }
 TINKER_NAMESPACE_END
+
+extern "C" {
+void tinker_gpu_zero_vag() {
+  m_tinker_using_namespace;
+
+  int flag_v = gpu::use_data & use_vel;
+  int flag_a = gpu::use_data & use_accel;
+  int flag_g = gpu::use_data & use_grad;
+  int n = gpu::n;
+
+  if (flag_v) {
+    gpu::zero_data(gpu::vx, n);
+    gpu::zero_data(gpu::vy, n);
+    gpu::zero_data(gpu::vz, n);
+  }
+
+  if (flag_a) {
+    gpu::zero_data(gpu::ax, n);
+    gpu::zero_data(gpu::ay, n);
+    gpu::zero_data(gpu::az, n);
+  }
+
+  if (flag_g) {
+    gpu::zero_data(gpu::gx, n);
+    gpu::zero_data(gpu::gy, n);
+    gpu::zero_data(gpu::gz, n);
+  }
+}
+}

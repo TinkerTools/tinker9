@@ -36,6 +36,42 @@ void copyin_data_n(int idx0, int ndim, real* dst, const double* src,
   check_cudart(cudaMemcpy(dst, buf.data(), size, cudaMemcpyHostToDevice));
 }
 
+void copyout_data_1(int* dst, const int* src, int nelem) {
+  check_cudart(
+      cudaMemcpy(dst, src, sizeof(int) * nelem, cudaMemcpyDeviceToHost));
+}
+
+void copyout_data_1(double* dst, const real* src, int nelem) {
+  const size_t rs = sizeof(real);
+  size_t size = rs * nelem;
+  if (rs == sizeof(double)) {
+    check_cudart(cudaMemcpy(dst, src, size, cudaMemcpyDeviceToHost));
+  } else if (rs == sizeof(float)) {
+    std::vector<real> buf(nelem);
+    check_cudart(cudaMemcpy(buf.data(), src, size, cudaMemcpyDeviceToHost));
+    for (int i = 0; i < nelem; ++i) {
+      dst[i] = buf[i];
+    }
+  } else {
+    assert(false);
+  }
+}
+
+void copyout_data_n(int idx0, int ndim, double* dst, const real* src,
+                    int nelem) {
+  size_t size = sizeof(real) * nelem;
+  std::vector<real> buf(nelem);
+  check_cudart(cudaMemcpy(buf.data(), src, size, cudaMemcpyDeviceToHost));
+  for (int i = 0; i < nelem; ++i) {
+    dst[ndim * i + idx0] = buf[i];
+  }
+}
+
+void zero_data(real* dst, int nelem) {
+  size_t size = sizeof(real) * nelem;
+  check_cudart(cudaMemset(dst, 0, size));
+}
+
 void n_data();
 void xyz_data(int op);
 void vel_data(int op);
