@@ -1,5 +1,5 @@
-#ifndef TINKER_TEST_TEST_OS_H_
-#define TINKER_TEST_TEST_OS_H_
+#ifndef TINKER_TEST_OS_H_
+#define TINKER_TEST_OS_H_
 
 #include "util/fort.rt.h"
 #include <string>

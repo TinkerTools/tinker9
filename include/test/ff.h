@@ -1,5 +1,5 @@
-#ifndef TINKER_TEST_TEST_FF_H_
-#define TINKER_TEST_TEST_FF_H_
+#ifndef TINKER_TEST_FF_H_
+#define TINKER_TEST_FF_H_
 
 #include "gpu/decl-dataop.h"
 #include "gpu/decl-mdstate.h"

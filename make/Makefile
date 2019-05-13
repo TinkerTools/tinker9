@@ -146,8 +146,8 @@ lib_acc_files := $(wildcard $(topdir)/src/gpu/*.cc)
 lib_acc_objs := $(subst $(topdir)/,,$(lib_acc_files))
 lib_acc_objs := $(patsubst %.cc,%.o,$(lib_acc_objs))
 
-# $(topdir)/src/test/test.foo.cpp -> src/test/test.foo.o
-test_cpp_files := $(wildcard $(topdir)/src/test/test.*.cpp)
+# $(topdir)/src/test/foo.cpp -> src/test/foo.o
+test_cpp_files := $(wildcard $(topdir)/src/test/*.cpp)
 test_cpp_objs := $(subst $(topdir)/,,$(test_cpp_files))
 test_cpp_objs := $(patsubst %.cpp,%.o,$(test_cpp_objs))
 
