@@ -1,8 +1,8 @@
-#ifndef TINKER_GPU_IMAGE_H_
-#define TINKER_GPU_IMAGE_H_
+#ifndef TINKER_GPU_ACC_IMAGE_H_
+#define TINKER_GPU_ACC_IMAGE_H_
 
-#include "defines.h"
-#include "mathfunc.h"
+#include "acc-mathfunc.h"
+#include "decl-box.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

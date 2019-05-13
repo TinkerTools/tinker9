@@ -1,4 +1,4 @@
-#include "gpu/switch.h"
+#include "gpu/acc-switch.h"
 #include "tinker.mod.h"
 #include "util/math.h"
 

@@ -38,41 +38,79 @@ TEST_CASE("EHal-Switch-NaCl", "[forcefield]") {
     const double ref_eng = 51.4242;
     const int ref_count = 1;
     const double ref_grad[][3] = {{184.4899, 0.0, 0.0}, {-184.4899, 0.0, 0.0}};
+    const double ref_v[][3] = {
+        {-405.878, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
     test_begin_1_xyz(argc, argv);
     gpu::use_data = usage;
     tinker_gpu_data_create();
 
-#define COMPARE_CODE_BLOCK1_                                                   \
+#define COMPARE_ENERGY_                                                        \
   {                                                                            \
     double eng;                                                                \
+    eng = gpu::get_energy(gpu::ev);                                            \
+    REQUIRE(eng == Approx(ref_eng).epsilon(eps));                              \
+  }
+#define COMPARE_COUNT_                                                         \
+  {                                                                            \
     int count;                                                                 \
+    count = gpu::count_evdw();                                                 \
+    REQUIRE(count == ref_count);                                               \
+  }
+#define COMPARE_GRAD_                                                          \
+  {                                                                            \
     grad_t grad(gpu::n);                                                       \
     double* dst = &grad[0][0];                                                 \
-                                                                               \
-    tinker_gpu_zero_vag();                                                     \
-    tinker_gpu_evdw_hal0();                                                    \
-    eng = gpu::get_evdw();                                                     \
-    REQUIRE(eng == Approx(ref_eng).epsilon(eps));                              \
-                                                                               \
-    tinker_gpu_zero_vag();                                                     \
-    tinker_gpu_evdw_hal1();                                                    \
-    eng = gpu::get_evdw();                                                     \
-    REQUIRE(eng == Approx(ref_eng).epsilon(eps));                              \
     gpu::copyout_data_n(0, 3, dst, gpu::gx, gpu::n);                           \
     gpu::copyout_data_n(1, 3, dst, gpu::gy, gpu::n);                           \
     gpu::copyout_data_n(2, 3, dst, gpu::gz, gpu::n);                           \
-    for (int i = 0; i < gpu::n; ++i)                                           \
+    for (int i = 0; i < gpu::n; ++i) {                                         \
       for (int j = 0; j < 3; ++j) {                                            \
         REQUIRE(grad[i][j] == Approx(ref_grad[i][j]).epsilon(eps));            \
       }                                                                        \
+    }                                                                          \
+  }
+#define COMPARE_VIR_                                                           \
+  {                                                                            \
+    double vir[9];                                                             \
+    gpu::get_virial(vir, gpu::vir_ev);                                         \
+    for (int i = 0; i < 3; ++i) {                                              \
+      for (int j = 0; j < 3; ++j) {                                            \
+        int k = 3 * i + j;                                                     \
+        REQUIRE(vir[k] == Approx(ref_v[i][j]).epsilon(eps));                   \
+      }                                                                        \
+    }                                                                          \
+  }
+#define COMPARE_CODE_BLOCK1_                                                   \
+  {                                                                            \
+    tinker_gpu_zero_vag();                                                     \
+    tinker_gpu_evdw_hal0();                                                    \
+    COMPARE_ENERGY_;                                                           \
+                                                                               \
+    tinker_gpu_zero_vag();                                                     \
+    tinker_gpu_evdw_hal1();                                                    \
+    COMPARE_ENERGY_;                                                           \
+    COMPARE_GRAD_;                                                             \
+    COMPARE_VIR_;                                                              \
                                                                                \
     tinker_gpu_zero_vag();                                                     \
     tinker_gpu_evdw_hal3();                                                    \
-    eng = gpu::get_evdw();                                                     \
-    count = gpu::count_evdw();                                                 \
-    REQUIRE(eng == Approx(ref_eng).epsilon(eps));                              \
-    REQUIRE(count == ref_count);                                               \
+    COMPARE_ENERGY_;                                                           \
+    COMPARE_COUNT_;                                                            \
+                                                                               \
+    tinker_gpu_zero_vag();                                                     \
+    tinker_gpu_evdw_hal4();                                                    \
+    COMPARE_ENERGY_;                                                           \
+    COMPARE_GRAD_;                                                             \
+                                                                               \
+    tinker_gpu_zero_vag();                                                     \
+    tinker_gpu_evdw_hal5();                                                    \
+    COMPARE_GRAD_;                                                             \
+                                                                               \
+    tinker_gpu_zero_vag();                                                     \
+    tinker_gpu_evdw_hal6();                                                    \
+    COMPARE_GRAD_;                                                             \
+    COMPARE_VIR_;                                                              \
   }
 
     COMPARE_CODE_BLOCK1_;
@@ -88,6 +126,8 @@ TEST_CASE("EHal-Switch-NaCl", "[forcefield]") {
     const double ref_eng = 25.8420;
     const int ref_count = 1;
     const double ref_grad[][3] = {{149.0904, 0.0, 0.0}, {-149.0904, 0.0, 0.0}};
+    const double ref_v[][3] = {
+        {-354.835, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
     test_begin_1_xyz(argc, argv);
     gpu::use_data = usage;
@@ -106,6 +146,8 @@ TEST_CASE("EHal-Switch-NaCl", "[forcefield]") {
     const double ref_eng = 4.8849;
     const int ref_count = 1;
     const double ref_grad[][3] = {{127.6639, 0.0, 0.0}, {-127.6639, 0.0, 0.0}};
+    const double ref_v[][3] = {
+        {-319.160, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
     test_begin_1_xyz(argc, argv);
     gpu::use_data = usage;
@@ -118,4 +160,8 @@ TEST_CASE("EHal-Switch-NaCl", "[forcefield]") {
   }
 }
 
+#undef COMPARE_ENERGY_
+#undef COMPARE_COUNT_
+#undef COMPARE_GRAD_
+#undef COMPARE_VIR_
 #undef COMPARE_CODE_BLOCK1_

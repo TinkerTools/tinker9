@@ -1,7 +1,8 @@
-#ifndef TINKER_GPU_SWITCH_H_
-#define TINKER_GPU_SWITCH_H_
+#ifndef TINKER_GPU_ACC_SWITCH_H_
+#define TINKER_GPU_ACC_SWITCH_H_
 
-#include "defines.h"
+#include "acc-mathfunc.h"
+#include "decl-real.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -35,9 +36,7 @@ void switch_taper5(real rik, real cut, real off, real& taper, real& dtaper) {
   real x2 = x * x;
   real x3 = x2 * x;
   taper = x3 * (6 * x2 - 15 * x + 10);
-  if (DO_DTAPER) {
-    dtaper = 30 * REAL_SQ(x * (1 - x)) * _1_ab;
-  }
+  if_constexpr(DO_DTAPER) { dtaper = 30 * REAL_SQ(x * (1 - x)) * _1_ab; }
 }
 }
 TINKER_NAMESPACE_END

@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_E_BOND_H_
 #define TINKER_GPU_E_BOND_H_
 
-#include "defines.h"
+#include "decl-real.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -16,8 +16,8 @@ extern int (*ibnd)[2];
 extern real *bl, *bk;
 
 extern real* eb;
+extern real* vir_eb;
 int use_ebond();
-real get_ebond();
 int count_ebond();
 void e_bond_data(int op);
 }

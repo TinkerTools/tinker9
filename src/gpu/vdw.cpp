@@ -1,7 +1,7 @@
-#include "gpu/data.h"
-#include "gpu/e.vdw.h"
-#include "gpu/mdstate.h"
-#include "gpu/switch.h"
+#include "gpu/acc-switch.h"
+#include "gpu/decl-dataop.h"
+#include "gpu/decl-mdstate.h"
+#include "gpu/e-vdw.h"
 #include "tinker.mod.h"
 #include <map>
 
@@ -23,6 +23,7 @@ real* vlam;
 
 real* ev;
 int* nev;
+real* vir_ev;
 int use_evdw() { return potent::use_vdw; }
 
 void get_evdw_type(int& typ, std::string& typ_str) {
@@ -40,21 +41,12 @@ void get_evdw_type(int& typ, std::string& typ_str) {
     typ = evdw_gauss;
 }
 
-real get_evdw() {
-  if (!use_evdw())
-    return 0;
-
-  real e;
-  check_cudart(cudaMemcpy(&e, ev, sizeof(real), cudaMemcpyDeviceToHost));
-  return e;
-}
-
 int count_evdw() {
   if (!use_evdw())
     return -1;
 
   int c;
-  check_cudart(cudaMemcpy(&c, nev, sizeof(int), cudaMemcpyDeviceToHost));
+  copyout_data_1(&c, nev, 1);
   return c;
 }
 
@@ -78,6 +70,7 @@ void e_vdw_data(int op) {
 
     check_cudart(cudaFree(ev));
     check_cudart(cudaFree(nev));
+    check_cudart(cudaFree(vir_ev));
   }
 
   if (op == op_create) {
@@ -158,6 +151,7 @@ void e_vdw_data(int op) {
 
     check_cudart(cudaMalloc(&ev, rs));
     check_cudart(cudaMalloc(&nev, sizeof(int)));
+    check_cudart(cudaMalloc(&vir_ev, rs * 9));
   }
 }
 }

@@ -1,5 +1,5 @@
-#include "gpu/data.h"
-#include "gpu/nblist.h"
+#include "gpu/decl-dataop.h"
+#include "gpu/decl-nblist.h"
 #include "util/error.cudart.h"
 #include <cuda_runtime.h>
 

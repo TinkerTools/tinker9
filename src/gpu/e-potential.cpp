@@ -1,10 +1,20 @@
-#include "gpu/potential.h"
-#include "gpu/acc.h"
-#include "gpu/nblist.h"
+#include "gpu/e-potential.h"
+#include "gpu/decl-dataop.h"
+#include "gpu/decl-nblist.h"
 #include "util/format.print.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
+double get_energy(const real* e_gpu) {
+  double e_out;
+  copyout_data_1(&e_out, e_gpu, 1);
+  return e_out;
+}
+
+void get_virial(double* v_out, const real* v_gpu) {
+  copyout_data_1(v_out, v_gpu, 9);
+}
+
 void potential_data(int op) {
   e_bond_data(op);
   e_vdw_data(op);
@@ -18,7 +28,6 @@ void tinker_gpu_gradient1() {
   const char* title = " Energy Component Breakdown :{:>20s}{:>20s}\n\n";
   const char* fmt = " {:28s}{:>20.4f}{:>17d}        {}\n";
 
-  gpu::async_launches_begin(&gpu::queue_b);
   if (gpu::use_ebond()) {
     tinker_gpu_ebond_harmonic0();
     tinker_gpu_ebond_harmonic4();
@@ -26,8 +35,6 @@ void tinker_gpu_gradient1() {
     tinker_gpu_ebond_harmonic6();
     tinker_gpu_ebond_harmonic1();
   }
-
-  gpu::async_launches_begin(&gpu::queue_nb);
 
   if (gpu::use_evdw()) {
     /*
@@ -43,14 +50,14 @@ void tinker_gpu_gradient1() {
 
   tinker_gpu_vlist_update();
 
-  gpu::async_launches_end();
-
   print(stdout, title, "Kcal/mole", "Interactions");
 
-  print(stdout, fmt, "Bond Stretching", gpu::get_ebond(), gpu::count_ebond(),
-        gpu::bndtyp_str);
+  if (gpu::use_ebond())
+    print(stdout, fmt, "Bond Stretching", gpu::get_energy(gpu::eb),
+          gpu::count_ebond(), gpu::bndtyp_str);
 
-  print(stdout, fmt, "Van der Waals", gpu::get_evdw(), gpu::count_evdw(),
-        gpu::vdwtyp_str);
+  if (gpu::use_evdw())
+    print(stdout, fmt, "Van der Waals", gpu::get_energy(gpu::ev),
+          gpu::count_evdw(), gpu::vdwtyp_str);
 }
 }

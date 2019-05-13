@@ -1,9 +1,9 @@
 #ifndef TINKER_TEST_TEST_FF_H_
 #define TINKER_TEST_TEST_FF_H_
 
-#include "gpu/data.h"
-#include "gpu/mdstate.h"
-#include "gpu/potential.h"
+#include "gpu/decl-dataop.h"
+#include "gpu/decl-mdstate.h"
+#include "gpu/e-potential.h"
 #include <array>
 #include <vector>
 

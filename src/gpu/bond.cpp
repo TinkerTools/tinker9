@@ -1,4 +1,4 @@
-#include "gpu/e.bond.h"
+#include "gpu/e-bond.h"
 #include "tinker.mod.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -13,15 +13,6 @@ real *bl, *bk;
 
 real* eb;
 int use_ebond() { return potent::use_bond; }
-
-real get_ebond() {
-  if (!use_ebond())
-    return 0;
-
-  real e;
-  check_cudart(cudaMemcpy(&e, eb, sizeof(real), cudaMemcpyDeviceToHost));
-  return e;
-}
 
 int count_ebond() {
   if (!use_ebond())

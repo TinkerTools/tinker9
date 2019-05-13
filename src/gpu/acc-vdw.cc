@@ -1,16 +1,15 @@
-#include "gpu/e.vdw.h"
-#include "gpu/acc.h"
-#include "gpu/image.h"
-#include "gpu/mdstate.h"
-#include "gpu/nblist.h"
-#include "gpu/switch.h"
+#include "gpu/acc-image.h"
+#include "gpu/acc-switch.h"
+#include "gpu/decl-mdstate.h"
+#include "gpu/decl-nblist.h"
+#include "gpu/e-vdw.h"
 #include <ext/tinker/tinker.mod.h>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 static void evdw_reduce_xyz_() {
   #pragma acc data deviceptr(x,y,z,ired,kred,xred,yred,zred)
-  #pragma acc parallel loop async(queue_nb)
+  #pragma acc parallel loop
   for (int i = 0; i < n; ++i) {
     int iv = ired[i];
     real rdn = kred[i];
@@ -45,9 +44,9 @@ namespace gpu {
 template <int USE, int VDWTYP>
 void evdw_tmpl() {
   constexpr int do_e = USE & use_energy;
+  constexpr int do_a = USE & use_analyz;
   constexpr int do_g = USE & use_grad;
   constexpr int do_v = USE & use_virial;
-  constexpr int do_a = USE & use_analyz;
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
@@ -74,17 +73,21 @@ void evdw_tmpl() {
     vscale[i] = 1;
   }
 
-  #pragma acc data deviceptr(x,y,z,gx,gy,gz,vir,box,couple,vlst,\
+  #pragma acc data deviceptr(x,y,z,gx,gy,gz,box,couple,vlst,\
                              ired,kred,xred,yred,zred,\
                              jvdw,njvdw,radmin,epsilon,\
                              vlam,\
-                             ev)\
+                             ev,nev,vir_ev)\
    copyin(vscale[0:n])
   {
-    #pragma acc serial async(queue_nb)
+    #pragma acc serial
     {
       *ev = 0;
       if_constexpr(do_a) { *nev = 0; }
+      if_constexpr(do_v) {
+        for (int i = 0; i < 9; ++i)
+          vir_ev[i] = 0;
+      }
     }
 
     #pragma acc parallel loop firstprivate(vscale[0:n])
@@ -228,23 +231,23 @@ void evdw_tmpl() {
             real vzz = zr * dedz;
 
             #pragma acc atomic update
-            vir[_xx] += vxx;
+            vir_ev[_xx] += vxx;
             #pragma acc atomic update
-            vir[_yx] += vyx;
+            vir_ev[_yx] += vyx;
             #pragma acc atomic update
-            vir[_zx] += vzx;
+            vir_ev[_zx] += vzx;
             #pragma acc atomic update
-            vir[_xy] += vyx;
+            vir_ev[_xy] += vyx;
             #pragma acc atomic update
-            vir[_yy] += vyy;
+            vir_ev[_yy] += vyy;
             #pragma acc atomic update
-            vir[_zy] += vzy;
+            vir_ev[_zy] += vzy;
             #pragma acc atomic update
-            vir[_xz] += vzx;
+            vir_ev[_xz] += vzx;
             #pragma acc atomic update
-            vir[_yz] += vzy;
+            vir_ev[_yz] += vzy;
             #pragma acc atomic update
-            vir[_zz] += vzz;
+            vir_ev[_zz] += vzz;
           }
         }
       }

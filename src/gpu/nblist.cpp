@@ -1,6 +1,6 @@
-#include "gpu/e.vdw.h"
-#include "gpu/mdstate.h"
-#include "gpu/nblist.h"
+#include "gpu/decl-mdstate.h"
+#include "gpu/decl-nblist.h"
+#include "gpu/e-vdw.h"
 #include "tinker.mod.h"
 
 TINKER_NAMESPACE_BEGIN

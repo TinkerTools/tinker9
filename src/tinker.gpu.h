@@ -1,9 +1,9 @@
 #ifndef TINKER_SRC_TINKER_GPU_H_
 #define TINKER_SRC_TINKER_GPU_H_
 
-#include "gpu/data.h"
-#include "gpu/mdstate.h"
-#include "gpu/potential.h"
+#include "gpu/decl-dataop.h"
+#include "gpu/decl-mdstate.h"
+#include "gpu/e-potential.h"
 #include "util/cxx.h"
 #include "util/error.h"
 #include "util/fort.rt.h"

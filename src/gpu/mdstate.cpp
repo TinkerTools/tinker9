@@ -1,4 +1,4 @@
-#include "gpu/mdstate.h"
+#include "gpu/decl-mdstate.h"
 #include "tinker.mod.h"
 
 TINKER_NAMESPACE_BEGIN
