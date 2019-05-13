@@ -16,7 +16,7 @@ FILE_DECL_(amoeba09_prm);
 #include "file/watersmall.hh"
 FILE_DECL_(watersmall_xyz);
 
-// NaCl ion pair test sets
+// NaCl ion pair test set
 #include "file/nacl.hh"
 }
 TINKER_NAMESPACE_END

@@ -1,4 +1,5 @@
 #include "test/os.h"
+#include "util/fort.rt.h"
 #include <cstdio>
 #include <ext/tinker/tinker.mod.h>
 #include <ext/tinker/tinker.rt.h>
@@ -6,7 +7,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace test {
-file_gen::file_gen(const std::string& name, const std::string& content)
+file::file(const std::string& name, const std::string& content)
     : good_(false), name_(name) {
   std::ofstream fout(name);
   good_ = fout.is_open();
@@ -15,7 +16,7 @@ file_gen::file_gen(const std::string& name, const std::string& content)
   }
 }
 
-file_gen::~file_gen() {
+file::~file() {
   if (good_)
     std::remove(name_.c_str());
 }

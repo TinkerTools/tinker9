@@ -14,7 +14,7 @@ extern const char* amoeba09_prm;
 // xyz files
 extern const char* watersmall_xyz;
 
-// NaCl ion pair test sets
+// NaCl ion pair test set
 extern const char* nacl_xyz1;
 extern const char* nacl_xyz2;
 extern const char* nacl_xyz3;

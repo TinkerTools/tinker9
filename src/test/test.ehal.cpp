@@ -1,8 +1,9 @@
 #include "files.h"
+#include "test/os.h"
 #include "test/test.h"
-#include "test/test.os.h"
 
 m_tinker_using_namespace;
+using namespace test;
 
 TEST_CASE("EHal") {
   SECTION("1") {
@@ -31,9 +32,9 @@ polar-eps                   0.00001
 vdwterm                        only
 )**";
 
-    test::file_gen f_xyz(xyz, test::watersmall_xyz);
-    test::file_gen f_prm(prm, test::water03_prm);
-    test::file_gen f_key(key, key_content);
+    file f_xyz(xyz, test::watersmall_xyz);
+    file f_prm(prm, test::water03_prm);
+    file f_key(key, key_content);
 
     std::string cmd = "analyze ";
     cmd += xyz;

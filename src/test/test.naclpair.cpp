@@ -1,7 +1,7 @@
 #include "files.h"
-#include "test/test.ff.h"
+#include "test/ff.h"
+#include "test/os.h"
 #include "test/test.h"
-#include "test/test.os.h"
 
 m_tinker_using_namespace;
 using namespace test;
@@ -17,11 +17,11 @@ TEST_CASE("EHal-Switch-NaCl", "[forcefield]") {
   key += "multipoleterm                  none\n";
   key += "polarizeterm                   none\n";
 
-  file_gen fx1(x1, nacl_xyz1);
-  file_gen fx2(x2, nacl_xyz2);
-  file_gen fx3(x3, nacl_xyz3);
-  file_gen fpr(prm, amoeba09_prm);
-  file_gen fke(k, key);
+  file fx1(x1, nacl_xyz1);
+  file fx2(x2, nacl_xyz2);
+  file fx3(x3, nacl_xyz3);
+  file fpr(prm, amoeba09_prm);
+  file fke(k, key);
 
   int usage = 0;
   usage |= use_xyz;

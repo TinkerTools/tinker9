@@ -9,6 +9,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace test {
+/// @brief Gradient type used in unit tests.
 typedef std::vector<std::array<double, 3>> grad_t;
 }
 TINKER_NAMESPACE_END
