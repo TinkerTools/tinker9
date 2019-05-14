@@ -52,7 +52,7 @@ TEST_CASE("EHal-Switch-NaCl", "[forcefield][ehal][naclpair]") {
   }
 #define COMPARE_COUNT_                                                         \
   {                                                                            \
-    int count = gpu::count_evdw();                                             \
+    int count = gpu::get_count(gpu::nev);                                      \
     REQUIRE(count == ref_count);                                               \
   }
 #define COMPARE_GRAD_                                                          \

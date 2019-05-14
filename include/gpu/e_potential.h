@@ -2,6 +2,7 @@
 #define TINKER_GPU_E_POTENTIAL_H_
 
 #include "e_bond.h"
+#include "e_mpole.h"
 #include "e_vdw.h"
 
 TINKER_NAMESPACE_BEGIN

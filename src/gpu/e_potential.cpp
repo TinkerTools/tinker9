@@ -11,13 +11,21 @@ double get_energy(const real* e_gpu) {
   return e_out;
 }
 
+int get_count(const int* ecount_gpu) {
+  int c;
+  copyout_data(&c, ecount_gpu, 1);
+  return c;
+}
+
 void get_virial(double* v_out, const real* v_gpu) {
   copyout_data(v_out, v_gpu, 9);
 }
 
 void potential_data(int op) {
   e_bond_data(op);
+
   e_vdw_data(op);
+  e_mpole_data(op);
 }
 }
 TINKER_NAMESPACE_END
@@ -58,6 +66,6 @@ void tinker_gpu_gradient1() {
 
   if (gpu::use_evdw())
     print(stdout, fmt, "Van der Waals", gpu::get_energy(gpu::ev),
-          gpu::count_evdw(), gpu::vdwtyp_str);
+          gpu::get_count(gpu::nev), gpu::vdwtyp_str);
 }
 }

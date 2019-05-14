@@ -42,15 +42,6 @@ void get_evdw_type(int& typ, std::string& typ_str) {
     typ = evdw_gauss;
 }
 
-int count_evdw() {
-  if (!use_evdw())
-    return -1;
-
-  int c;
-  copyout_data(&c, nev, 1);
-  return c;
-}
-
 void e_vdw_data(int op) {
   if (!use_evdw())
     return;

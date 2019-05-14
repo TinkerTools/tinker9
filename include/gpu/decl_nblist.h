@@ -47,6 +47,8 @@ TINKER_NAMESPACE_END
 extern "C" {
 void tinker_gpu_vlist_build();
 void tinker_gpu_vlist_update();
+void tinker_gpu_mlist_build();
+void tinker_gpu_mlist_update();
 }
 
 #endif

@@ -51,7 +51,7 @@ TEST_CASE("Ehal-CLN025", "[forcefield][ehal][cln025]") {
   }
 #define COMPARE_COUNT_                                                         \
   {                                                                            \
-    int count = count = gpu::count_evdw();                                     \
+    int count = count = gpu::get_count(gpu::nev);                              \
     REQUIRE(count == ref_count);                                               \
   }
 #define COMPARE_GRAD_                                                          \

@@ -19,6 +19,7 @@ void copyout_data2(int idx0, int ndim, double* dst, const real* src, int nelem);
 void zero_data(real* dst, int nelem);
 
 double get_energy(const real* e_gpu);
+int get_count(const int* ecount_gpu);
 void get_virial(double* v_out, const real* v_gpu);
 }
 TINKER_NAMESPACE_END

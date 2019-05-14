@@ -31,7 +31,6 @@ extern int* nev;
 extern real* vir_ev;
 int use_evdw();
 void get_evdw_type(int& typ, std::string& typ_str);
-int count_evdw();
 void e_vdw_data(int op);
 }
 TINKER_NAMESPACE_END
