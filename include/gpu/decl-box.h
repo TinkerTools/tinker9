@@ -20,6 +20,8 @@ struct box_st {
 };
 
 extern box_st* box;
+
+void box_data(int op);
 }
 TINKER_NAMESPACE_END
 

@@ -1,5 +1,5 @@
 #include "files.h"
-#include "test/os.h"
+#include "test/rt.h"
 #include "test/test.h"
 
 m_tinker_using_namespace;

@@ -1,5 +1,4 @@
-#include "gpu/acc-image.h"
-#include "gpu/decl-mdstate.h"
+#include "acc-e.h"
 #include "gpu/e-bond.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -109,7 +108,7 @@ TINKER_NAMESPACE_END
 
 m_tinker_using_namespace;
 extern "C" {
-TINKER_BONDED_GEN(tinker_gpu_ebond_harmonic, gpu::ebond_tmpl,
+TINKER_BONDED_DEF(tinker_gpu_ebond_harmonic, gpu::ebond_tmpl,
                   gpu::ebond_harmonic);
-TINKER_BONDED_GEN(tinker_gpu_ebond_morse, gpu::ebond_tmpl, gpu::ebond_morse);
+TINKER_BONDED_DEF(tinker_gpu_ebond_morse, gpu::ebond_tmpl, gpu::ebond_morse);
 }

@@ -1,4 +1,4 @@
-#include "test/os.h"
+#include "test/rt.h"
 #include "util/fort.rt.h"
 #include <cstdio>
 #include <ext/tinker/tinker.mod.h>

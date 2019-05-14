@@ -1,5 +1,5 @@
-#ifndef TINKER_TEST_OS_H_
-#define TINKER_TEST_OS_H_
+#ifndef TINKER_TEST_RT_H_
+#define TINKER_TEST_RT_H_
 
 #include "util/macro.h"
 #include <string>

@@ -1,6 +1,6 @@
 #include "files.h"
 #include "test/ff.h"
-#include "test/os.h"
+#include "test/rt.h"
 #include "test/test.h"
 
 m_tinker_using_namespace;
@@ -24,10 +24,10 @@ TEST_CASE("EHal-Switch-NaCl", "[forcefield]") {
   file fke(k, key);
 
   int usage = 0;
-  usage |= use_xyz;
-  usage |= use_energy;
-  usage |= use_grad;
-  usage |= use_virial;
+  usage |= gpu::use_xyz;
+  usage |= gpu::use_energy;
+  usage |= gpu::use_grad;
+  usage |= gpu::use_virial;
 
   const double eps = 1.0e-5;
 
@@ -61,9 +61,9 @@ TEST_CASE("EHal-Switch-NaCl", "[forcefield]") {
   {                                                                            \
     grad_t grad(gpu::n);                                                       \
     double* dst = &grad[0][0];                                                 \
-    gpu::copyout_data_n(0, 3, dst, gpu::gx, gpu::n);                           \
-    gpu::copyout_data_n(1, 3, dst, gpu::gy, gpu::n);                           \
-    gpu::copyout_data_n(2, 3, dst, gpu::gz, gpu::n);                           \
+    gpu::copyout_data2(0, 3, dst, gpu::gx, gpu::n);                            \
+    gpu::copyout_data2(1, 3, dst, gpu::gy, gpu::n);                            \
+    gpu::copyout_data2(2, 3, dst, gpu::gz, gpu::n);                            \
     for (int i = 0; i < gpu::n; ++i) {                                         \
       for (int j = 0; j < 3; ++j) {                                            \
         REQUIRE(grad[i][j] == Approx(ref_grad[i][j]).epsilon(eps));            \
@@ -83,31 +83,31 @@ TEST_CASE("EHal-Switch-NaCl", "[forcefield]") {
   }
 #define COMPARE_CODE_BLOCK1_                                                   \
   {                                                                            \
-    tinker_gpu_zero_vag();                                                     \
+    gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal0();                                                    \
     COMPARE_ENERGY_;                                                           \
                                                                                \
-    tinker_gpu_zero_vag();                                                     \
+    gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal1();                                                    \
     COMPARE_ENERGY_;                                                           \
     COMPARE_GRAD_;                                                             \
     COMPARE_VIR_;                                                              \
                                                                                \
-    tinker_gpu_zero_vag();                                                     \
+    gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal3();                                                    \
     COMPARE_ENERGY_;                                                           \
     COMPARE_COUNT_;                                                            \
                                                                                \
-    tinker_gpu_zero_vag();                                                     \
+    gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal4();                                                    \
     COMPARE_ENERGY_;                                                           \
     COMPARE_GRAD_;                                                             \
                                                                                \
-    tinker_gpu_zero_vag();                                                     \
+    gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal5();                                                    \
     COMPARE_GRAD_;                                                             \
                                                                                \
-    tinker_gpu_zero_vag();                                                     \
+    gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal6();                                                    \
     COMPARE_GRAD_;                                                             \
     COMPARE_VIR_;                                                              \

@@ -4,10 +4,8 @@
 #include "util/macro.h"
 #include <string>
 
-/**
- * @file
- * Type name `real' was defined inside `TINKER_NAMESPACE::gpu'.
- */
+/// @file
+/// Type `real' was defined inside `TINKER_NAMESPACE::gpu'.
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

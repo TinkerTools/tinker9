@@ -53,9 +53,9 @@ void e_bond_data(int op) {
     for (size_t i = 0; i < ibndvec.size(); ++i) {
       ibndvec[i] = bndstr::ibnd[i] - 1;
     }
-    copyin_data_1(&ibnd[0][0], ibndvec.data(), nbond * 2);
-    copyin_data_1(bl, bndstr::bl, nbond);
-    copyin_data_1(bk, bndstr::bk, nbond);
+    copyin_data(&ibnd[0][0], ibndvec.data(), nbond * 2);
+    copyin_data(bl, bndstr::bl, nbond);
+    copyin_data(bk, bndstr::bk, nbond);
 
     check_cudart(cudaMalloc(&eb, rs));
   }

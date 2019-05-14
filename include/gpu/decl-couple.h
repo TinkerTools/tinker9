@@ -20,6 +20,8 @@ struct couple_st {
 
 extern couple_st couple_obj_;
 extern couple_st* couple;
+
+void couple_data(int op);
 }
 TINKER_NAMESPACE_END
 

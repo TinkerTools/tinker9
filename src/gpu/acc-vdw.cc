@@ -1,9 +1,5 @@
-#include "gpu/acc-image.h"
-#include "gpu/acc-switch.h"
-#include "gpu/decl-mdstate.h"
-#include "gpu/decl-nblist.h"
+#include "acc-e.h"
 #include "gpu/e-vdw.h"
-#include <ext/tinker/tinker.mod.h>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -272,13 +268,13 @@ TINKER_NAMESPACE_END
 
 extern "C" {
 m_tinker_using_namespace;
-TINKER_NONBONDED_GEN(tinker_gpu_evdw_lj, gpu::evdw_tmpl, gpu::evdw_lj);
-TINKER_NONBONDED_GEN(tinker_gpu_evdw_buck, gpu::evdw_tmpl, gpu::evdw_buck);
-TINKER_NONBONDED_GEN(tinker_gpu_evdw_mm3hb, gpu::evdw_tmpl, gpu::evdw_mm3hb);
-TINKER_NONBONDED_GEN(tinker_gpu_evdw_hal, gpu::evdw_tmpl, gpu::evdw_hal);
-TINKER_NONBONDED_GEN(tinker_gpu_evdw_gauss, gpu::evdw_tmpl, gpu::evdw_gauss);
+TINKER_NONBONDED_DEF(tinker_gpu_evdw_lj, gpu::evdw_tmpl, gpu::evdw_lj);
+TINKER_NONBONDED_DEF(tinker_gpu_evdw_buck, gpu::evdw_tmpl, gpu::evdw_buck);
+TINKER_NONBONDED_DEF(tinker_gpu_evdw_mm3hb, gpu::evdw_tmpl, gpu::evdw_mm3hb);
+TINKER_NONBONDED_DEF(tinker_gpu_evdw_hal, gpu::evdw_tmpl, gpu::evdw_hal);
+TINKER_NONBONDED_DEF(tinker_gpu_evdw_gauss, gpu::evdw_tmpl, gpu::evdw_gauss);
 
-#define TINKER_GPU_EVDW_GEN_(ver)                                              \
+#define TINKER_GPU_EVDW_DEF_(ver)                                              \
   void tinker_gpu_evdw##ver() {                                                \
     if (gpu::vdwtyp == gpu::evdw_lj)                                           \
       tinker_gpu_evdw_lj##ver();                                               \
@@ -291,11 +287,11 @@ TINKER_NONBONDED_GEN(tinker_gpu_evdw_gauss, gpu::evdw_tmpl, gpu::evdw_gauss);
     else if (gpu::vdwtyp == gpu::evdw_gauss)                                   \
       tinker_gpu_evdw_gauss##ver();                                            \
   }
-TINKER_GPU_EVDW_GEN_(0);
-TINKER_GPU_EVDW_GEN_(1);
-TINKER_GPU_EVDW_GEN_(3);
-TINKER_GPU_EVDW_GEN_(4);
-TINKER_GPU_EVDW_GEN_(5);
-TINKER_GPU_EVDW_GEN_(6);
-#undef TINKER_GPU_EVDW_GEN_
+TINKER_GPU_EVDW_DEF_(0);
+TINKER_GPU_EVDW_DEF_(1);
+TINKER_GPU_EVDW_DEF_(3);
+TINKER_GPU_EVDW_DEF_(4);
+TINKER_GPU_EVDW_DEF_(5);
+TINKER_GPU_EVDW_DEF_(6);
+#undef TINKER_GPU_EVDW_DEF_
 }

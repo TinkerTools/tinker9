@@ -1,16 +1,15 @@
 #include "gpu/decl-dataop.h"
-#include "gpu/decl-nblist.h"
 #include "util/error.cudart.h"
 #include <cuda_runtime.h>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void copyin_data_1(int* dst, const int* src, int nelem) {
+void copyin_data(int* dst, const int* src, int nelem) {
   check_cudart(
       cudaMemcpy(dst, src, sizeof(int) * nelem, cudaMemcpyHostToDevice));
 }
 
-void copyin_data_1(real* dst, const double* src, int nelem) {
+void copyin_data(real* dst, const double* src, int nelem) {
   const size_t rs = sizeof(real);
   size_t size = rs * nelem;
   if (rs == sizeof(double)) {
@@ -26,8 +25,7 @@ void copyin_data_1(real* dst, const double* src, int nelem) {
   }
 }
 
-void copyin_data_n(int idx0, int ndim, real* dst, const double* src,
-                   int nelem) {
+void copyin_data2(int idx0, int ndim, real* dst, const double* src, int nelem) {
   size_t size = sizeof(real) * nelem;
   std::vector<real> buf(nelem);
   for (int i = 0; i < nelem; ++i) {
@@ -36,12 +34,12 @@ void copyin_data_n(int idx0, int ndim, real* dst, const double* src,
   check_cudart(cudaMemcpy(dst, buf.data(), size, cudaMemcpyHostToDevice));
 }
 
-void copyout_data_1(int* dst, const int* src, int nelem) {
+void copyout_data(int* dst, const int* src, int nelem) {
   check_cudart(
       cudaMemcpy(dst, src, sizeof(int) * nelem, cudaMemcpyDeviceToHost));
 }
 
-void copyout_data_1(double* dst, const real* src, int nelem) {
+void copyout_data(double* dst, const real* src, int nelem) {
   const size_t rs = sizeof(real);
   size_t size = rs * nelem;
   if (rs == sizeof(double)) {
@@ -57,8 +55,8 @@ void copyout_data_1(double* dst, const real* src, int nelem) {
   }
 }
 
-void copyout_data_n(int idx0, int ndim, double* dst, const real* src,
-                    int nelem) {
+void copyout_data2(int idx0, int ndim, double* dst, const real* src,
+                   int nelem) {
   size_t size = sizeof(real) * nelem;
   std::vector<real> buf(nelem);
   check_cudart(cudaMemcpy(buf.data(), src, size, cudaMemcpyDeviceToHost));
@@ -71,21 +69,14 @@ void zero_data(real* dst, int nelem) {
   size_t size = sizeof(real) * nelem;
   check_cudart(cudaMemset(dst, 0, size));
 }
-
-void n_data();
-void xyz_data(int op);
-void vel_data(int op);
-void accel_data(int op);
-void mass_data(int op);
-void energy_data(int op);
-
-void potential_data(int op);
-
-void box_data(int op);
-void couple_data(int op);
-void nblist_data(int op);
 }
 TINKER_NAMESPACE_END
+
+#include "gpu/decl-box.h"
+#include "gpu/decl-couple.h"
+#include "gpu/decl-mdstate.h"
+#include "gpu/decl-nblist.h"
+#include "gpu/e-potential.h"
 
 extern "C" {
 void tinker_gpu_data_create() {
@@ -99,10 +90,13 @@ void tinker_gpu_data_create() {
   vel_data(op);
   accel_data(op);
   mass_data(op);
-  energy_data(op);
+  egv_data(op);
 
   potential_data(op);
 
+  // Neighbor lists must be initialized after potential initialization.
+  // xred, yred, and zred need to be initialized in vdw routines and will be
+  // used in nblist setups.
   box_data(op);
   couple_data(op);
   nblist_data(op);
@@ -120,13 +114,10 @@ void tinker_gpu_data_destroy() {
   vel_data(op);
   accel_data(op);
   mass_data(op);
-  energy_data(op);
+  egv_data(op);
 
   potential_data(op);
 
-  // Neighbor lists must be initialized after potential initialization.
-  // xred, yred, and zred need to be initialized in vdw routines and will be
-  // used in nblist setups.
   box_data(op);
   couple_data(op);
   nblist_data(op);

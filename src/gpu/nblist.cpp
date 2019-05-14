@@ -5,6 +5,17 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
+nblist_st vlist_obj_;
+nblist_st* vlst;
+nblist_st dlist_obj_;
+nblist_st* dlst;
+nblist_st clist_obj_;
+nblist_st* clst;
+nblist_st mlist_obj_;
+nblist_st* mlst;
+nblist_st ulist_obj_;
+nblist_st* ulst;
+
 int use_vdw_list() {
   int ret = 0;
   if (use_evdw())

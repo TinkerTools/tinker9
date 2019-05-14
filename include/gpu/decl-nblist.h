@@ -39,6 +39,8 @@ extern nblist_st mlist_obj_;
 extern nblist_st* mlst;
 extern nblist_st ulist_obj_;
 extern nblist_st* ulst;
+
+void nblist_data(int op);
 }
 TINKER_NAMESPACE_END
 

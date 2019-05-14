@@ -46,7 +46,7 @@ int count_evdw() {
     return -1;
 
   int c;
-  copyout_data_1(&c, nev, 1);
+  copyout_data(&c, nev, 1);
   return c;
 }
 
@@ -94,8 +94,8 @@ void e_vdw_data(int op) {
       iredbuf[i] = jt;
       kredbuf[i] = vdw::kred[i];
     }
-    copyin_data_1(ired, iredbuf.data(), n);
-    copyin_data_1(kred, kredbuf.data(), n);
+    copyin_data(ired, iredbuf.data(), n);
+    copyin_data(kred, kredbuf.data(), n);
 
     check_cudart(cudaMalloc(&jvdw, n * sizeof(int)));
     check_cudart(cudaMalloc(&njvdw, sizeof(int)));
@@ -117,8 +117,8 @@ void e_vdw_data(int op) {
         jbuf[i] = iter->second;
       }
     }
-    copyin_data_1(jvdw, jbuf.data(), n);
-    copyin_data_1(njvdw, &jcount, 1);
+    copyin_data(jvdw, jbuf.data(), n);
+    copyin_data(njvdw, &jcount, 1);
     size = jcount * jcount * rs;
     check_cudart(cudaMalloc(&radmin, size));
     check_cudart(cudaMalloc(&epsilon, size));
@@ -134,8 +134,8 @@ void e_vdw_data(int op) {
         epsvec.push_back(vdw::epsilon[offset]);
       }
     }
-    copyin_data_1(radmin, radvec.data(), jcount * jcount);
-    copyin_data_1(epsilon, epsvec.data(), jcount * jcount);
+    copyin_data(radmin, radvec.data(), jcount * jcount);
+    copyin_data(epsilon, epsvec.data(), jcount * jcount);
 
     size = n * rs;
     check_cudart(cudaMalloc(&vlam, size));
@@ -147,7 +147,7 @@ void e_vdw_data(int op) {
         vlamvec[i] = 1;
       }
     }
-    copyin_data_1(vlam, vlamvec.data(), n);
+    copyin_data(vlam, vlamvec.data(), n);
 
     check_cudart(cudaMalloc(&ev, rs));
     check_cudart(cudaMalloc(&nev, sizeof(int)));
