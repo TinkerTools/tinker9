@@ -10,11 +10,18 @@ void ebond_tmpl() {
   constexpr int do_v = USE & use_virial;
   static_assert(do_v ? do_g : true, "");
 
-  #pragma acc data deviceptr(x,y,z,gx,gy,gz,vir,box,\
-                             ibnd,bl,bk,eb)
+  #pragma acc data deviceptr(x,y,z,gx,gy,gz,box,\
+                             ibnd,bl,bk,\
+                             eb,vir_eb)
   {
     #pragma acc serial
-    { *eb = 0; }
+    {
+      *eb = 0;
+      if_constexpr(do_v) {
+        for (int i = 0; i < 9; ++i)
+          vir_eb[i] = 0;
+      }
+    }
 
     #pragma acc parallel loop
     for (int i = 0; i < nbond; ++i) {
@@ -82,23 +89,23 @@ void ebond_tmpl() {
         real vzz = zab * dedz;
 
         #pragma acc atomic update
-        vir[_xx] += vxx;
+        vir_eb[_xx] += vxx;
         #pragma acc atomic update
-        vir[_yx] += vyx;
+        vir_eb[_yx] += vyx;
         #pragma acc atomic update
-        vir[_zx] += vzx;
+        vir_eb[_zx] += vzx;
         #pragma acc atomic update
-        vir[_xy] += vyx;
+        vir_eb[_xy] += vyx;
         #pragma acc atomic update
-        vir[_yy] += vyy;
+        vir_eb[_yy] += vyy;
         #pragma acc atomic update
-        vir[_zy] += vzy;
+        vir_eb[_zy] += vzy;
         #pragma acc atomic update
-        vir[_xz] += vzx;
+        vir_eb[_xz] += vzx;
         #pragma acc atomic update
-        vir[_yz] += vzy;
+        vir_eb[_yz] += vzy;
         #pragma acc atomic update
-        vir[_zz] += vzz;
+        vir_eb[_zz] += vzz;
       }
     }
   }

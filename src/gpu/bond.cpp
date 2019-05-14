@@ -12,6 +12,7 @@ int (*ibnd)[2] = NULL;
 real *bl, *bk;
 
 real* eb;
+real* vir_eb;
 int use_ebond() { return potent::use_bond; }
 
 int count_ebond() {
@@ -30,6 +31,7 @@ void e_bond_data(int op) {
     check_cudart(cudaFree(bl));
     check_cudart(cudaFree(bk));
     check_cudart(cudaFree(eb));
+    check_cudart(cudaFree(vir_eb));
   }
 
   if (op == op_create) {
@@ -58,6 +60,7 @@ void e_bond_data(int op) {
     copyin_data(bk, bndstr::bk, nbond);
 
     check_cudart(cudaMalloc(&eb, rs));
+    check_cudart(cudaMalloc(&vir_eb, rs * 9));
   }
 }
 }
