@@ -1,5 +1,5 @@
-#include "gpu/e-bond.h"
-#include "tinker.mod.h"
+#include "gpu/e_bond.h"
+#include "tinker_mod.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

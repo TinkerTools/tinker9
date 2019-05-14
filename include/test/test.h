@@ -9,6 +9,6 @@
  *
  * Tag "[act]" is used for the test cases that don't contain any assertion.
  */
-#include <ext/catch-2.3.0>
+#include <ext/catch_2_3_0>
 
 #endif

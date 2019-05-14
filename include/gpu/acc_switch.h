@@ -1,8 +1,8 @@
 #ifndef TINKER_GPU_ACC_SWITCH_H_
 #define TINKER_GPU_ACC_SWITCH_H_
 
-#include "acc-mathfunc.h"
-#include "decl-real.h"
+#include "acc_mathfunc.h"
+#include "decl_real.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

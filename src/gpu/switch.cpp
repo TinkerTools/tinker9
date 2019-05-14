@@ -1,5 +1,5 @@
-#include "gpu/acc-switch.h"
-#include "tinker.mod.h"
+#include "gpu/acc_switch.h"
+#include "tinker_mod.h"
 #include "util/math.h"
 
 TINKER_NAMESPACE_BEGIN

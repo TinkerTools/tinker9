@@ -1,5 +1,5 @@
-#include "acc-e.h"
-#include "gpu/e-bond.h"
+#include "acc_e.h"
+#include "gpu/e_bond.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

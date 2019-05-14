@@ -1,7 +1,7 @@
-#include "gpu/decl-couple.h"
-#include "gpu/decl-dataop.h"
-#include "gpu/decl-mdstate.h"
-#include "tinker.mod.h"
+#include "gpu/decl_couple.h"
+#include "gpu/decl_dataop.h"
+#include "gpu/decl_mdstate.h"
+#include "tinker_mod.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

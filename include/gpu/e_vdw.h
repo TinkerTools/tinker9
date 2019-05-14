@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_E_VDW_H_
 #define TINKER_GPU_E_VDW_H_
 
-#include "decl-real.h"
+#include "decl_real.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

@@ -1,6 +1,6 @@
-#include "gpu/decl-box.h"
-#include "gpu/decl-dataop.h"
-#include "tinker.mod.h"
+#include "gpu/decl_box.h"
+#include "gpu/decl_dataop.h"
+#include "tinker_mod.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

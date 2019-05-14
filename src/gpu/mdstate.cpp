@@ -1,5 +1,5 @@
-#include "gpu/decl-mdstate.h"
-#include "tinker.mod.h"
+#include "gpu/decl_mdstate.h"
+#include "tinker_mod.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

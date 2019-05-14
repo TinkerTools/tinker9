@@ -1,5 +1,5 @@
-#include "acc-e.h"
-#include "gpu/e-vdw.h"
+#include "acc_e.h"
+#include "gpu/e_vdw.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

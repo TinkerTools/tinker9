@@ -1,8 +1,8 @@
 #ifndef TINKER_GPU_E_POTENTIAL_H_
 #define TINKER_GPU_E_POTENTIAL_H_
 
-#include "e-bond.h"
-#include "e-vdw.h"
+#include "e_bond.h"
+#include "e_vdw.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

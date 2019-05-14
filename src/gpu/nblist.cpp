@@ -1,7 +1,7 @@
-#include "gpu/decl-mdstate.h"
-#include "gpu/decl-nblist.h"
-#include "gpu/e-vdw.h"
-#include "tinker.mod.h"
+#include "gpu/decl_mdstate.h"
+#include "gpu/decl_nblist.h"
+#include "gpu/e_vdw.h"
+#include "tinker_mod.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

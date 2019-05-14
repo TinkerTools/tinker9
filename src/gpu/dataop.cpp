@@ -1,4 +1,4 @@
-#include "gpu/decl-dataop.h"
+#include "gpu/decl_dataop.h"
 #include "util/error_cudart.h"
 #include <cuda_runtime.h>
 
@@ -72,11 +72,11 @@ void zero_data(real* dst, int nelem) {
 }
 TINKER_NAMESPACE_END
 
-#include "gpu/decl-box.h"
-#include "gpu/decl-couple.h"
-#include "gpu/decl-mdstate.h"
-#include "gpu/decl-nblist.h"
-#include "gpu/e-potential.h"
+#include "gpu/decl_box.h"
+#include "gpu/decl_couple.h"
+#include "gpu/decl_mdstate.h"
+#include "gpu/decl_nblist.h"
+#include "gpu/e_potential.h"
 
 extern "C" {
 void tinker_gpu_data_create() {

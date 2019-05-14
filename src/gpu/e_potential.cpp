@@ -1,6 +1,6 @@
-#include "gpu/e-potential.h"
-#include "gpu/decl-dataop.h"
-#include "gpu/decl-nblist.h"
+#include "gpu/e_potential.h"
+#include "gpu/decl_dataop.h"
+#include "gpu/decl_nblist.h"
 #include "util/format_print.h"
 
 TINKER_NAMESPACE_BEGIN

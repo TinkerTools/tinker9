@@ -1,8 +1,8 @@
-#include "gpu/acc-switch.h"
-#include "gpu/decl-dataop.h"
-#include "gpu/decl-mdstate.h"
-#include "gpu/e-vdw.h"
-#include "tinker.mod.h"
+#include "gpu/acc_switch.h"
+#include "gpu/decl_dataop.h"
+#include "gpu/decl_mdstate.h"
+#include "gpu/e_vdw.h"
+#include "tinker_mod.h"
 #include <map>
 
 TINKER_NAMESPACE_BEGIN

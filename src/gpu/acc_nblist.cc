@@ -1,6 +1,6 @@
-#include "gpu/acc-image.h"
-#include "gpu/decl-mdstate.h"
-#include "gpu/decl-nblist.h"
+#include "gpu/acc_image.h"
+#include "gpu/decl_mdstate.h"
+#include "gpu/decl_nblist.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
