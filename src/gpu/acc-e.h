@@ -8,6 +8,6 @@
 #include "gpu/decl-dataop.h"
 #include "gpu/decl-mdstate.h"
 #include "gpu/decl-nblist.h"
-#include <ext/tinker/tinker.mod.h>
+#include <ext/tinker/tinker_mod.h>
 
 #endif

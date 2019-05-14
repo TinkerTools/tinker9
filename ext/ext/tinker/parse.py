@@ -21,7 +21,6 @@ _ModuleKeys = []
 _Modulus = {}
 _CurrentModule = ''
 
-# _SharedHeader = '"util/tinker.macro.h"'
 _SharedHeader = '"util/macro.h"'
 _FortranCodeBlockMacro = 'TINKER_FORTRAN_CODE'
 

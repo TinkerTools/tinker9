@@ -1,7 +1,7 @@
 #ifndef TINKER_UTIL_ERROR_H_
 #define TINKER_UTIL_ERROR_H_
 
-#include "format.print.h"
+#include "format_print.h"
 #include <stdexcept>
 
 TINKER_NAMESPACE_BEGIN

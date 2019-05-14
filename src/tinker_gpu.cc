@@ -1,4 +1,4 @@
-#include "tinker-gpu.h"
+#include "tinker_gpu.h"
 #include <algorithm>
 #include <functional>
 #include <map>

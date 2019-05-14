@@ -1,8 +1,8 @@
 #include "test/rt.h"
-#include "util/fort.rt.h"
+#include "util/fort_rt.h"
 #include <cstdio>
-#include <ext/tinker/tinker.mod.h>
-#include <ext/tinker/tinker.rt.h>
+#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/tinker_rt.h>
 #include <fstream>
 
 TINKER_NAMESPACE_BEGIN

@@ -1,4 +1,4 @@
-#include "util/fort.rt.h"
+#include "util/fort_rt.h"
 
 // GNU Fortran
 #ifdef TINKER_GFORTRAN

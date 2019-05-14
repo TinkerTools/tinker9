@@ -129,13 +129,13 @@ acc_link_flags := -acc -Mcuda
 acc_link_flags += $(acc_common_flags) $(libtinker) $(fortrtflag) $(fftwflag)
 
 ext_cc_objs := $(extdir)/fmt/format.o $(extdir)/fmt/posix.o
-ext_cpp_objs := $(extdir)/tinker/tinker.mod.o $(extdir)/tinker/tinker.rt.o
+ext_cpp_objs := $(extdir)/tinker/tinker_mod.o $(extdir)/tinker/tinker_rt.o
 
-main_cc_objs := src/test/test.all.o src/tinker.gpu.o
+main_cc_objs := src/test/test_all.o src/tinker_gpu.o
 
 # $(topdir)/src/util/foo.cpp -> src/util/foo.o
 lib_cpp_files := $(shell find $(topdir)/src -type f -name '*.cpp' \
--not -path $(topdir)/src/tinker.gpu.cpp \
+-not -path $(topdir)/src/tinker_gpu.cpp \
 -not -path '$(topdir)/$(extdir)/*' \
 -not -path '$(topdir)/src/test/*')
 lib_cpp_objs := $(subst $(topdir)/,,$(lib_cpp_files))
@@ -172,7 +172,7 @@ libtinkergpu.a: $(ext_cc_objs) $(ext_cpp_objs) $(lib_cpp_objs) $(lib_acc_objs)
 #                                                                      #
 ########################################################################
 
-tinker.gpu: src/tinker.gpu.o libtinkergpu.a
+tinker.gpu: src/tinker_gpu.o libtinkergpu.a
 #	$(CXX) $(cxx_link_flags) $^ -o $@
 	$(ACC) $^ $(acc_link_flags) -o $@
 
@@ -186,6 +186,6 @@ tinker.gpu: src/tinker.gpu.o libtinkergpu.a
 test: all.tests
 	@$(PWD)/all.tests [forcefield]
 
-all.tests: src/test/test.all.o $(test_cpp_objs) libtinkergpu.a
+all.tests: src/test/test_all.o $(test_cpp_objs) libtinkergpu.a
 #	$(CXX) $(cxx_link_flags) $^ -o $@
 	$(ACC) $^ $(acc_link_flags) -o $@

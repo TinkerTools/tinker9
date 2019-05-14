@@ -6,10 +6,10 @@
 #include "gpu/e-potential.h"
 #include "util/cxx.h"
 #include "util/error.h"
-#include "util/fort.rt.h"
-#include "util/fort.str.h"
-#include "util/read.stream.h"
-#include <ext/tinker/tinker.mod.h>
-#include <ext/tinker/tinker.rt.h>
+#include "util/fort_rt.h"
+#include "util/fort_str.h"
+#include "util/read_stream.h"
+#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/tinker_rt.h>
 
 #endif

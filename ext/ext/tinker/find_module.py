@@ -80,7 +80,7 @@ def option_list(files):
         _, _, _, dirname = determine_module_subroutine_program(f)
 
     text1 = '''#!/bin/bash
-HEADER=tinker.mod.h
+HEADER=tinker_mod.h
 DIR=detail
 
 rm -f $HEADER

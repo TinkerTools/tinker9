@@ -1,4 +1,4 @@
-#include "tinker-gpu.h"
+#include "tinker_gpu.h"
 #include <cmath>
 
 TINKER_NAMESPACE_BEGIN

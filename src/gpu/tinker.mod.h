@@ -3,9 +3,9 @@
 
 #include "gpu/decl-dataop.h"
 #include "util/cxx.h"
-#include "util/error.cudart.h"
-#include "util/fort.str.h"
+#include "util/error_cudart.h"
+#include "util/fort_str.h"
 #include <cuda_runtime.h>
-#include <ext/tinker/tinker.mod.h>
+#include <ext/tinker/tinker_mod.h>
 
 #endif

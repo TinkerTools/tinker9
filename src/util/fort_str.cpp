@@ -1,4 +1,4 @@
-#include "util/fort.str.h"
+#include "util/fort_str.h"
 #include <algorithm>
 
 TINKER_NAMESPACE_BEGIN

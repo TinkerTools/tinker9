@@ -1,7 +1,7 @@
 #include "gpu/e-potential.h"
 #include "gpu/decl-dataop.h"
 #include "gpu/decl-nblist.h"
-#include "util/format.print.h"
+#include "util/format_print.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
