@@ -1,6 +1,6 @@
 #include "gpu/decl_box.h"
 #include "gpu/decl_dataop.h"
-#include "tinker_mod.h"
+#include "rc_cudart.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

@@ -1,6 +1,5 @@
 #include "gpu/decl_dataop.h"
-#include "util/error_cudart.h"
-#include <cuda_runtime.h>
+#include "rc_cudart.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

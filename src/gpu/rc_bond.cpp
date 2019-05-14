@@ -1,5 +1,7 @@
+#include "gpu/decl_dataop.h"
 #include "gpu/e_bond.h"
-#include "tinker_mod.h"
+#include "rc_cudart.h"
+#include "util/fort_str.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

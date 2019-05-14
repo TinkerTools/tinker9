@@ -3,28 +3,10 @@
 
 #include "acc_mathfunc.h"
 #include "decl_real.h"
+#include "decl_switch.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-enum {
-  switch_default = 0,
-  switch_vdw,
-  switch_repuls,
-  switch_disp,
-  switch_charge,
-  switch_chgdpl,
-  switch_dipole,
-  switch_mpole,
-  switch_chgtrn,
-  switch_ewald,
-  switch_dewald,
-  switch_usolve,
-  switch_gkv,
-  switch_gksa,
-};
-
-void switch_cut_off(int switch_type, double& cut, double& off);
-
 #pragma acc routine seq
 template <int DO_DTAPER>
 void switch_taper5(real rik, real cut, real off, real& taper, real& dtaper) {

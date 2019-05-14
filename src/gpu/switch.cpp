@@ -1,6 +1,6 @@
-#include "gpu/acc_switch.h"
-#include "tinker_mod.h"
+#include "gpu/decl_switch.h"
 #include "util/math.h"
+#include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
