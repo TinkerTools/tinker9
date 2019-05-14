@@ -113,7 +113,7 @@ void evdw_tmpl() {
       xi = xred[i];
       yi = yred[i];
       zi = zred[i];
-      real lambda1 = vlam[i];
+      real lam1 = vlam[i];
 
       int base_it = it * (*njvdw);
       int nvlsti = vlst->nlst[i];
@@ -130,11 +130,9 @@ void evdw_tmpl() {
         real vlambda = vlam[k];
 
         if (vcouple == vcouple_decouple) {
-          vlambda =
-              (lambda1 == vlambda ? 1
-                                  : (lambda1 < vlambda ? lambda1 : vlambda));
+          vlambda = (lam1 == vlambda ? 1 : (lam1 < vlambda ? lam1 : vlambda));
         } else if (vcouple == vcouple_annihilate) {
-          vlambda = (lambda1 < vlambda ? lambda1 : vlambda);
+          vlambda = (lam1 < vlambda ? lam1 : vlambda);
         }
 
         image(xr, yr, zr, box);
@@ -156,10 +154,12 @@ void evdw_tmpl() {
             real s2 = REAL_RECIP(scal + rho7 + ghal);
             real t1 = REAL_POW(1 + dhal, 7) * s1;
             real t2 = (1 + ghal) * s2;
-            real dt1drho = -7 * REAL_POW(rho + dhal, 6) * t1 * s1;
-            real dt2drho = -7 * rho6 * t2 * s2;
             e = eps * t1 * (t2 - 2);
-            de = eps * (dt1drho * (t2 - 2) + t1 * dt2drho) * REAL_RECIP(rv);
+            if_constexpr(do_g) {
+              real dt1drho = -7 * REAL_POW(rho + dhal, 6) * t1 * s1;
+              real dt2drho = -7 * rho6 * t2 * s2;
+              de = eps * (dt1drho * (t2 - 2) + t1 * dt2drho) * REAL_RECIP(rv);
+            }
           }
 
           if (rik2 > cut2) {

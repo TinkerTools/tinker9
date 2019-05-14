@@ -88,17 +88,23 @@ void nblist_data_0_(nblist_st& st, nblist_st*& list) {
 }
 
 // see also cutoffs.f
+// In the gas phase calculation where neighbor list is not used, we should
+// always first check the value maxn.
+// If maxn is equal to 1, it means the value of cutoff can even be INF.
 int nblist_maxlst_(int maxn, double cutoff, double buffer) {
-  double buf = (cutoff + buffer);
-  int limit = buf * buf * buf + 100;
-  int ans = std::min(limit, maxn);
-
-  if (ans > 1) {
-    const int magic = 32;
-    ans = (ans + magic - 1) / magic;
-    ans *= magic;
+  if (maxn > 1) {
+    double buf = (cutoff + buffer);
+    int limit = buf * buf * buf + 100;
+    int ans = std::min(limit, maxn);
+    if (ans > 1) {
+      const int magic = 32;
+      ans = (ans + magic - 1) / magic;
+      ans *= magic;
+    }
+    return ans;
+  } else {
+    return 1;
   }
-  return ans;
 }
 
 void nblist_data_1_(nblist_st& st, nblist_st*& list, int maxn, double cutoff,
