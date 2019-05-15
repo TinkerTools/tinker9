@@ -49,6 +49,8 @@ extern real* torque;
 int use_empole();
 void get_empole_type(int& typ, std::string& typ_str);
 void e_mpole_data(int op);
+
+void rotpole();
 }
 TINKER_NAMESPACE_END
 

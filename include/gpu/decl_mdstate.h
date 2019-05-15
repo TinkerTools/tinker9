@@ -48,6 +48,9 @@ const int v6 = use_grad + use_virial;              ///  96
 extern real* esum;
 extern real* vir;
 extern real *gx, *gy, *gz;
+const int _x = 0;
+const int _y = 1;
+const int _z = 2;
 const int _xx = 0;
 const int _yx = 1;
 const int _zx = 2;

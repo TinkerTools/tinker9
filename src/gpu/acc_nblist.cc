@@ -17,7 +17,7 @@ void nblist_construct_double_loop_(nblist_st* lst) {
 
 void nblist_construct_nblist_(nblist_st* lst) {
   #pragma acc data deviceptr(lst,box)
-  #pragma acc parallel loop independent
+  #pragma acc parallel loop
   for (int i = 0; i < n; ++i) {
     real xi = lst->x[i];
     real yi = lst->y[i];

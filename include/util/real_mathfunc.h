@@ -10,7 +10,8 @@
 #  define REAL_FLOOR floor
 #  define REAL_ABS fabs
 #  define REAL_POW pow
-#  define REAL_RECIP(x) (1.0 / (x))
+#  define REAL_RECIP(x) (1 / (x))
+#  define REAL_RSQRT(x) (1 / sqrt(x))
 #endif
 
 #ifdef TINKER_GPU_SINGLE
@@ -19,7 +20,8 @@
 #  define REAL_FLOOR floorf
 #  define REAL_ABS fabsf
 #  define REAL_POW powf
-#  define REAL_RECIP(x) (1.0f / (x))
+#  define REAL_RECIP(x) (1 / (x))
+#  define REAL_RSQRT(x) (1 / sqrtf(x))
 #endif
 
 #define REAL_SQ(x) ((x) * (x))

@@ -72,6 +72,10 @@ void e_mpole_data(int op) {
     const size_t rs = sizeof(real);
     size_t size;
 
+    // Regarding chkpole routine:
+    // 1. The chiralities of the atoms will not change in the simulations;
+    // 2. chkpole routine has been called in mechanic routine so that the values
+    // in mpole::pole are correct.
     size = sizeof(local_frame_def_st);
     check_cudart(cudaMalloc(&zaxis, n * size));
     std::vector<int> zaxisbuf(4 * n);
