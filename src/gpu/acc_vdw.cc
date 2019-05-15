@@ -246,7 +246,7 @@ void evdw_tmpl() {
             vir_ev[_zz] += vzz;
           }
         }
-      }
+      } // end for (int kk)
 
       #pragma acc loop independent
       for (int j = 0; j < n12i; ++j)
@@ -260,7 +260,7 @@ void evdw_tmpl() {
       #pragma acc loop independent
       for (int j = 0; j < n15i; ++j)
         vscale[couple->i15[i][j]] = 1;
-    }
+    } // end for (int i)
   }
 }
 }

@@ -41,6 +41,8 @@ const int mpl_tinker[mpl_total] = {0, 1, 2, 3, 4, 5, 6, 8, 9, 12};
 extern real (*pole)[mpl_total];
 extern real (*rpole)[mpl_total];
 
+extern double mpole_switch_cut, mpole_switch_off;
+
 extern real* em;
 extern int* nem;
 extern real* vir_em;
@@ -53,5 +55,9 @@ void e_mpole_data(int op);
 void rotpole();
 }
 TINKER_NAMESPACE_END
+
+extern "C" {
+void tinker_gpu_empole_coulomb1();
+}
 
 #endif

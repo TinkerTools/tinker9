@@ -1,6 +1,7 @@
 #include "gpu/decl_dataop.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_nblist.h"
+#include "gpu/decl_switch.h"
 #include "gpu/e_mpole.h"
 #include "rc_cudart.h"
 #include "util/fort_str.h"
@@ -14,6 +15,8 @@ local_frame_def_st* zaxis;
 
 real (*pole)[mpl_total];
 real (*rpole)[mpl_total];
+
+double mpole_switch_cut, mpole_switch_off;
 
 real* em;
 int* nem;
@@ -71,6 +74,11 @@ void e_mpole_data(int op) {
 
     const size_t rs = sizeof(real);
     size_t size;
+
+    if (electyp == elec_coulomb)
+      switch_cut_off(switch_mpole, mpole_switch_cut, mpole_switch_off);
+    else if (electyp == elec_ewald)
+      switch_cut_off(switch_ewald, mpole_switch_cut, mpole_switch_off);
 
     // Regarding chkpole routine:
     // 1. The chiralities of the atoms will not change in the simulations;
