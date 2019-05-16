@@ -29,9 +29,5 @@ barostat                 MONTECARLO
 neighbor-list
 list-buffer                     0.1
 vdw-cutoff                      2.6
-ewald
-ewald-cutoff                    7.0
-
-polarization                 MUTUAL
-polar-eps                   0.00001
+mpole-cutoff                    5.0
 )**";

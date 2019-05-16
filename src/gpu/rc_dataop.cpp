@@ -102,6 +102,7 @@ void tinker_gpu_data_create() {
 
   // build neighbor lists
   tinker_gpu_vlist_build();
+  tinker_gpu_mlist_build();
 }
 
 void tinker_gpu_data_destroy() {

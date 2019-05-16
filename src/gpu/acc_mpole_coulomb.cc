@@ -14,9 +14,7 @@ void empole_coulomb_tmpl() {
 
   const real f = chgpot::electric / chgpot::dielec;
 
-  const real cut = mpole_switch_cut;
   const real off = mpole_switch_off;
-  const real cut2 = cut * cut;
   const real off2 = off * off;
   const int maxnlst = mlist_obj_.maxnlst;
 
@@ -24,6 +22,8 @@ void empole_coulomb_tmpl() {
   const real m3scale = mplpot::m3scale;
   const real m4scale = mplpot::m4scale;
   const real m5scale = mplpot::m5scale;
+
+  rotpole();
 
   static real* mscale = (real*)malloc(n * sizeof(real));
   // In order to use firstprivate, must assign values here.
@@ -315,8 +315,22 @@ void empole_coulomb_tmpl() {
 TINKER_NAMESPACE_END
 
 extern "C" {
-void tinker_gpu_empole_coulomb1() {
-  m_tinker_using_namespace;
-  gpu::empole_coulomb_tmpl<gpu::v1>();
+m_tinker_using_namespace;
+void tinker_gpu_empole_coulomb0() {
+  gpu::empole_coulomb_tmpl<gpu::v0>();
 }
+
+void tinker_gpu_empole_coulomb3() {
+  gpu::empole_coulomb_tmpl<gpu::v3>();
+}
+
+#define TINKER_GPU_EMPOLE_DEF_(ver)                                            \
+  void tinker_gpu_empole##ver() {                                              \
+    if (gpu::electyp == gpu::elec_coulomb) {                                   \
+      tinker_gpu_empole_coulomb##ver();                                        \
+    }                                                                          \
+  }
+TINKER_GPU_EMPOLE_DEF_(0);
+TINKER_GPU_EMPOLE_DEF_(3);
+#undef TINKER_GPU_EMPOLE_DEF_
 }
