@@ -46,7 +46,7 @@ extern double mpole_switch_cut, mpole_switch_off;
 extern real* em;
 extern int* nem;
 extern real* vir_em;
-extern real* torque;
+extern real *trqx, *trqy, *trqz;
 
 int use_empole();
 void get_empole_type(int& typ, std::string& typ_str);

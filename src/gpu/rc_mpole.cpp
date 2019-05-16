@@ -21,7 +21,7 @@ double mpole_switch_cut, mpole_switch_off;
 real* em;
 int* nem;
 real* vir_em;
-real* torque;
+real *trqx, *trqy, *trqz;
 
 int use_empole() { return potent::use_mpole; }
 
@@ -66,7 +66,9 @@ void e_mpole_data(int op) {
     check_cudart(cudaFree(em));
     check_cudart(cudaFree(nem));
     check_cudart(cudaFree(vir_em));
-    check_cudart(cudaFree(torque));
+    check_cudart(cudaFree(trqx));
+    check_cudart(cudaFree(trqy));
+    check_cudart(cudaFree(trqz));
   }
 
   if (op == op_create) {
@@ -126,7 +128,9 @@ void e_mpole_data(int op) {
     check_cudart(cudaMalloc(&nem, sizeof(int)));
     check_cudart(cudaMalloc(&vir_em, 9 * rs));
     if (use_data & use_grad)
-      check_cudart(cudaMalloc(&torque, 3 * rs * n));
+      check_cudart(cudaMalloc(&trqx, rs * n));
+    check_cudart(cudaMalloc(&trqy, rs * n));
+    check_cudart(cudaMalloc(&trqz, rs * n));
   }
 }
 }

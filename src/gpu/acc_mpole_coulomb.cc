@@ -33,7 +33,7 @@ void empole_coulomb_tmpl() {
 
   #pragma acc data deviceptr(x,y,z,gx,gy,gz,box,couple,mlst,\
                              rpole,\
-                             em,nem,vir_em,torque)\
+                             em,nem,vir_em,trqx,trqy,trqz)\
    copyin(mscale[0:n])
   {
     #pragma acc serial
@@ -247,11 +247,11 @@ void empole_coulomb_tmpl() {
             #pragma acc atomic update
             gz[i] += frcz;
             #pragma acc atomic update
-            torque[3 * i] += ttmi[0];
+            trqx[i] += ttmi[0];
             #pragma acc atomic update
-            torque[3 * i + 1] += ttmi[1];
+            trqy[i] += ttmi[1];
             #pragma acc atomic update
-            torque[3 * i + 2] += ttmi[2];
+            trqz[i] += ttmi[2];
             #pragma acc atomic update
             gx[k] -= frcx;
             #pragma acc atomic update
@@ -259,11 +259,11 @@ void empole_coulomb_tmpl() {
             #pragma acc atomic update
             gz[k] -= frcz;
             #pragma acc atomic update
-            torque[3 * k] += ttmk[0];
+            trqx[k] += ttmk[0];
             #pragma acc atomic update
-            torque[3 * k + 1] += ttmk[1];
+            trqy[k] += ttmk[1];
             #pragma acc atomic update
-            torque[3 * k + 2] += ttmk[2];
+            trqz[k] += ttmk[2];
           }
 
           if_constexpr(do_v) {
