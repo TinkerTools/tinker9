@@ -24,6 +24,10 @@ extern const char* nacl_key;
 // CLN025 test set
 extern const char* cln025_xyz;
 extern const char* cln025_key;
+
+// local_frame test set
+extern const char* local_frame_xyz;
+extern const char* local_frame_key;
 }
 TINKER_NAMESPACE_END
 

@@ -6,6 +6,72 @@
 m_tinker_using_namespace;
 using namespace test;
 
+#define COMPARE_ENERGY_(gpuptr)                                                \
+  {                                                                            \
+    double eng = gpu::get_energy(gpuptr);                                      \
+    REQUIRE(eng == Approx(ref_eng).epsilon(eps));                              \
+  }
+#define COMPARE_COUNT_(gpuptr)                                                 \
+  {                                                                            \
+    int count = count = gpu::get_count(gpuptr);                                \
+    REQUIRE(count == ref_count);                                               \
+  }
+#define COMPARE_GRAD_                                                          \
+  {                                                                            \
+    grad_t grad(gpu::n);                                                       \
+    double* dst = &grad[0][0];                                                 \
+    gpu::copyout_data2(0, 3, dst, gpu::gx, gpu::n);                            \
+    gpu::copyout_data2(1, 3, dst, gpu::gy, gpu::n);                            \
+    gpu::copyout_data2(2, 3, dst, gpu::gz, gpu::n);                            \
+    for (int i = 0; i < 6; ++i) {                                              \
+      for (int j = 0; j < 3; ++j) {                                            \
+        REQUIRE(grad[i * 30][j] == Approx(ref_g[i][j]).epsilon(eps));          \
+      }                                                                        \
+    }                                                                          \
+  }
+#define COMPARE_VIR_(gpuptr)                                                   \
+  {                                                                            \
+    double vir[9];                                                             \
+    gpu::get_virial(vir, gpuptr);                                              \
+    for (int i = 0; i < 3; ++i) {                                              \
+      for (int j = 0; j < 3; ++j) {                                            \
+        int k = 3 * i + j;                                                     \
+        REQUIRE(vir[k] == Approx(ref_v[i][j]).epsilon(eps));                   \
+      }                                                                        \
+    }                                                                          \
+  }
+#define COMPARE_CODE_BLOCK1_                                                   \
+  {                                                                            \
+    gpu::zero_egv();                                                           \
+    tinker_gpu_evdw_hal0();                                                    \
+    COMPARE_ENERGY_(gpu::ev);                                                  \
+                                                                               \
+    gpu::zero_egv();                                                           \
+    tinker_gpu_evdw_hal1();                                                    \
+    COMPARE_ENERGY_(gpu::ev);                                                  \
+    COMPARE_GRAD_;                                                             \
+    COMPARE_VIR_(gpu::vir_ev);                                                 \
+                                                                               \
+    gpu::zero_egv();                                                           \
+    tinker_gpu_evdw_hal3();                                                    \
+    COMPARE_ENERGY_(gpu::ev);                                                  \
+    COMPARE_COUNT_(gpu::nev);                                                  \
+                                                                               \
+    gpu::zero_egv();                                                           \
+    tinker_gpu_evdw_hal4();                                                    \
+    COMPARE_ENERGY_(gpu::ev);                                                  \
+    COMPARE_GRAD_;                                                             \
+                                                                               \
+    gpu::zero_egv();                                                           \
+    tinker_gpu_evdw_hal5();                                                    \
+    COMPARE_GRAD_;                                                             \
+                                                                               \
+    gpu::zero_egv();                                                           \
+    tinker_gpu_evdw_hal6();                                                    \
+    COMPARE_GRAD_;                                                             \
+    COMPARE_VIR_(gpu::vir_ev);                                                 \
+  }
+
 TEST_CASE("Ehal-CLN025", "[forcefield][ehal][cln025]") {
   const char* x = "test_cln025.xyz";
   const char* k = "test_cln025.key";
@@ -43,72 +109,6 @@ TEST_CASE("Ehal-CLN025", "[forcefield][ehal][cln025]") {
     test_begin_1_xyz(argc, argv);
     gpu::use_data = usage;
     tinker_gpu_data_create();
-
-#define COMPARE_ENERGY_                                                        \
-  {                                                                            \
-    double eng = gpu::get_energy(gpu::ev);                                     \
-    REQUIRE(eng == Approx(ref_eng).epsilon(eps));                              \
-  }
-#define COMPARE_COUNT_                                                         \
-  {                                                                            \
-    int count = count = gpu::get_count(gpu::nev);                              \
-    REQUIRE(count == ref_count);                                               \
-  }
-#define COMPARE_GRAD_                                                          \
-  {                                                                            \
-    grad_t grad(gpu::n);                                                       \
-    double* dst = &grad[0][0];                                                 \
-    gpu::copyout_data2(0, 3, dst, gpu::gx, gpu::n);                            \
-    gpu::copyout_data2(1, 3, dst, gpu::gy, gpu::n);                            \
-    gpu::copyout_data2(2, 3, dst, gpu::gz, gpu::n);                            \
-    for (int i = 0; i < 6; ++i) {                                              \
-      for (int j = 0; j < 3; ++j) {                                            \
-        REQUIRE(grad[i * 30][j] == Approx(ref_g[i][j]).epsilon(eps));          \
-      }                                                                        \
-    }                                                                          \
-  }
-#define COMPARE_VIR_                                                           \
-  {                                                                            \
-    double vir[9];                                                             \
-    gpu::get_virial(vir, gpu::vir_ev);                                         \
-    for (int i = 0; i < 3; ++i) {                                              \
-      for (int j = 0; j < 3; ++j) {                                            \
-        int k = 3 * i + j;                                                     \
-        REQUIRE(vir[k] == Approx(ref_v[i][j]).epsilon(eps));                   \
-      }                                                                        \
-    }                                                                          \
-  }
-#define COMPARE_CODE_BLOCK1_                                                   \
-  {                                                                            \
-    gpu::zero_egv();                                                           \
-    tinker_gpu_evdw_hal0();                                                    \
-    COMPARE_ENERGY_;                                                           \
-                                                                               \
-    gpu::zero_egv();                                                           \
-    tinker_gpu_evdw_hal1();                                                    \
-    COMPARE_ENERGY_;                                                           \
-    COMPARE_GRAD_;                                                             \
-    COMPARE_VIR_;                                                              \
-                                                                               \
-    gpu::zero_egv();                                                           \
-    tinker_gpu_evdw_hal3();                                                    \
-    COMPARE_ENERGY_;                                                           \
-    COMPARE_COUNT_;                                                            \
-                                                                               \
-    gpu::zero_egv();                                                           \
-    tinker_gpu_evdw_hal4();                                                    \
-    COMPARE_ENERGY_;                                                           \
-    COMPARE_GRAD_;                                                             \
-                                                                               \
-    gpu::zero_egv();                                                           \
-    tinker_gpu_evdw_hal5();                                                    \
-    COMPARE_GRAD_;                                                             \
-                                                                               \
-    gpu::zero_egv();                                                           \
-    tinker_gpu_evdw_hal6();                                                    \
-    COMPARE_GRAD_;                                                             \
-    COMPARE_VIR_;                                                              \
-  }
 
     COMPARE_CODE_BLOCK1_;
 

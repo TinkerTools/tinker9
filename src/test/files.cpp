@@ -23,6 +23,9 @@ FILE_DEF_(watersmall_xyz);
 
 // CLN025 test set
 #include "file/cln025.hh"
+
+// local_frame test set
+#include "file/local_frame.hh"
 }
 TINKER_NAMESPACE_END
 

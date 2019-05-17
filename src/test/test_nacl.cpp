@@ -6,44 +6,6 @@
 m_tinker_using_namespace;
 using namespace test;
 
-TEST_CASE("EHal-Switch-NaCl", "[forcefield][ehal][nacl]") {
-  const char* x1 = "test_nacl.xyz";
-  const char* x2 = "test_nacl.xyz_2";
-  const char* x3 = "test_nacl.xyz_3";
-  const char* prm = "amoeba09.prm";
-  const char* k = "test_nacl.key";
-
-  std::string key = nacl_key;
-  key += "vdwterm                        only\n";
-
-  file fx1(x1, nacl_xyz1);
-  file fx2(x2, nacl_xyz2);
-  file fx3(x3, nacl_xyz3);
-  file fpr(prm, amoeba09_prm);
-  file fke(k, key);
-
-  int usage = 0;
-  usage |= gpu::use_xyz;
-  usage |= gpu::use_energy;
-  usage |= gpu::use_grad;
-  usage |= gpu::use_virial;
-
-  const double eps = 1.0e-5;
-
-  SECTION("case 1, no-switch") {
-    const char* argv[] = {"dummy", x1};
-    int argc = 2;
-
-    const double ref_eng = 51.4242;
-    const int ref_count = 1;
-    const double ref_grad[][3] = {{184.4899, 0.0, 0.0}, {-184.4899, 0.0, 0.0}};
-    const double ref_v[][3] = {
-        {-405.878, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
-
-    test_begin_1_xyz(argc, argv);
-    gpu::use_data = usage;
-    tinker_gpu_data_create();
-
 #define COMPARE_ENERGY_(gpuptr)                                                \
   {                                                                            \
     double eng = gpu::get_energy(gpuptr);                                      \
@@ -109,6 +71,44 @@ TEST_CASE("EHal-Switch-NaCl", "[forcefield][ehal][nacl]") {
     COMPARE_GRAD_;                                                             \
     COMPARE_VIR_(gpu::vir_ev);                                                 \
   }
+
+TEST_CASE("EHal-Switch-NaCl", "[forcefield][ehal][nacl]") {
+  const char* x1 = "test_nacl.xyz";
+  const char* x2 = "test_nacl.xyz_2";
+  const char* x3 = "test_nacl.xyz_3";
+  const char* prm = "amoeba09.prm";
+  const char* k = "test_nacl.key";
+
+  std::string key = nacl_key;
+  key += "vdwterm                        only\n";
+
+  file fx1(x1, nacl_xyz1);
+  file fx2(x2, nacl_xyz2);
+  file fx3(x3, nacl_xyz3);
+  file fpr(prm, amoeba09_prm);
+  file fke(k, key);
+
+  int usage = 0;
+  usage |= gpu::use_xyz;
+  usage |= gpu::use_energy;
+  usage |= gpu::use_grad;
+  usage |= gpu::use_virial;
+
+  const double eps = 1.0e-5;
+
+  SECTION("case 1, no-switch") {
+    const char* argv[] = {"dummy", x1};
+    int argc = 2;
+
+    const double ref_eng = 51.4242;
+    const int ref_count = 1;
+    const double ref_grad[][3] = {{184.4899, 0.0, 0.0}, {-184.4899, 0.0, 0.0}};
+    const double ref_v[][3] = {
+        {-405.878, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
+
+    test_begin_1_xyz(argc, argv);
+    gpu::use_data = usage;
+    tinker_gpu_data_create();
 
     COMPARE_CODE_BLOCK1_;
 
