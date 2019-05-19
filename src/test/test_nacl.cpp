@@ -159,6 +159,8 @@ TEST_CASE("NaCl-2", "[forcefield][empole][coulomb][nacl]") {
 
     const double ref_eng = -150.9381;
     const int ref_count = 1;
+    const double ref_grad[][3] = {{-68.6082, 0.0, 0.0}, {68.6082, 0.0, 0.0}};
+    const double ref_v[][3] = {{150.938, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
     test_begin_1_xyz(argc, argv);
     gpu::use_data = usage;
@@ -167,6 +169,12 @@ TEST_CASE("NaCl-2", "[forcefield][empole][coulomb][nacl]") {
     gpu::zero_egv();
     tinker_gpu_empole0();
     COMPARE_ENERGY_(gpu::em, ref_eng, eps);
+
+    gpu::zero_egv();
+    tinker_gpu_empole1();
+    COMPARE_ENERGY_(gpu::em, ref_eng, eps);
+    COMPARE_GRAD_;
+    COMPARE_VIR_(gpu::vir_em, ref_v, eps);
 
     gpu::zero_egv();
     tinker_gpu_empole3();
