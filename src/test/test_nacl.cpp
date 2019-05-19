@@ -6,16 +6,6 @@
 m_tinker_using_namespace;
 using namespace test;
 
-#define COMPARE_ENERGY_(gpuptr)                                                \
-  {                                                                            \
-    double eng = gpu::get_energy(gpuptr);                                      \
-    REQUIRE(eng == Approx(ref_eng).epsilon(eps));                              \
-  }
-#define COMPARE_COUNT_(gpuptr)                                                 \
-  {                                                                            \
-    int count = gpu::get_count(gpuptr);                                        \
-    REQUIRE(count == ref_count);                                               \
-  }
 #define COMPARE_GRAD_                                                          \
   {                                                                            \
     grad_t grad(gpu::n);                                                       \
@@ -29,37 +19,26 @@ using namespace test;
       }                                                                        \
     }                                                                          \
   }
-#define COMPARE_VIR_(gpuptr)                                                   \
-  {                                                                            \
-    double vir[9];                                                             \
-    gpu::get_virial(vir, gpuptr);                                              \
-    for (int i = 0; i < 3; ++i) {                                              \
-      for (int j = 0; j < 3; ++j) {                                            \
-        int k = 3 * i + j;                                                     \
-        REQUIRE(vir[k] == Approx(ref_v[i][j]).epsilon(eps));                   \
-      }                                                                        \
-    }                                                                          \
-  }
 #define COMPARE_CODE_BLOCK1_                                                   \
   {                                                                            \
     gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal0();                                                    \
-    COMPARE_ENERGY_(gpu::ev);                                                  \
+    COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
                                                                                \
     gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal1();                                                    \
-    COMPARE_ENERGY_(gpu::ev);                                                  \
+    COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
     COMPARE_GRAD_;                                                             \
-    COMPARE_VIR_(gpu::vir_ev);                                                 \
+    COMPARE_VIR_(gpu::vir_ev, ref_v, eps);                                     \
                                                                                \
     gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal3();                                                    \
-    COMPARE_ENERGY_(gpu::ev);                                                  \
-    COMPARE_COUNT_(gpu::nev);                                                  \
+    COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
+    COMPARE_COUNT_(gpu::nev, ref_count);                                       \
                                                                                \
     gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal4();                                                    \
-    COMPARE_ENERGY_(gpu::ev);                                                  \
+    COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
     COMPARE_GRAD_;                                                             \
                                                                                \
     gpu::zero_egv();                                                           \
@@ -69,24 +48,15 @@ using namespace test;
     gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal6();                                                    \
     COMPARE_GRAD_;                                                             \
-    COMPARE_VIR_(gpu::vir_ev);                                                 \
+    COMPARE_VIR_(gpu::vir_ev, ref_v, eps);                                     \
   }
 
-TEST_CASE("EHal-Switch-NaCl", "[forcefield][ehal][nacl]") {
-  const char* x1 = "test_nacl.xyz";
-  const char* x2 = "test_nacl.xyz_2";
-  const char* x3 = "test_nacl.xyz_3";
-  const char* prm = "amoeba09.prm";
-  const char* k = "test_nacl.key";
+TEST_CASE("NaCl-1", "[forcefield][evdw][hal][switch][nacl]") {
+  file fpr("amoeba09.prm", amoeba09_prm);
 
   std::string key = nacl_key;
-  key += "vdwterm                        only\n";
-
-  file fx1(x1, nacl_xyz1);
-  file fx2(x2, nacl_xyz2);
-  file fx3(x3, nacl_xyz3);
-  file fpr(prm, amoeba09_prm);
-  file fke(k, key);
+  key += "vdwterm    only\n";
+  file fke("test_nacl.key", key);
 
   int usage = 0;
   usage |= gpu::use_xyz;
@@ -97,6 +67,9 @@ TEST_CASE("EHal-Switch-NaCl", "[forcefield][ehal][nacl]") {
   const double eps = 1.0e-5;
 
   SECTION("case 1, no-switch") {
+    const char* x1 = "test_nacl.xyz";
+    file fx1(x1, nacl_xyz1);
+
     const char* argv[] = {"dummy", x1};
     int argc = 2;
 
@@ -117,6 +90,8 @@ TEST_CASE("EHal-Switch-NaCl", "[forcefield][ehal][nacl]") {
   }
 
   SECTION("case 2, near-cut") {
+    const char* x2 = "test_nacl.xyz_2";
+    file fx2(x2, nacl_xyz2);
     const char* argv[] = {"dummy", x2};
     int argc = 2;
 
@@ -137,6 +112,9 @@ TEST_CASE("EHal-Switch-NaCl", "[forcefield][ehal][nacl]") {
   }
 
   SECTION("case 3, near-off") {
+    const char* x3 = "test_nacl.xyz_3";
+    file fx3(x3, nacl_xyz3);
+
     const char* argv[] = {"dummy", x3};
     int argc = 2;
 
@@ -157,17 +135,12 @@ TEST_CASE("EHal-Switch-NaCl", "[forcefield][ehal][nacl]") {
   }
 }
 
-TEST_CASE("EMpole-Coulomb-NaCl", "[forcefield][empole][nacl]") {
-  const char* x1 = "test_nacl.xyz";
-  const char* prm = "amoeba09.prm";
-  const char* k = "test_nacl.key";
+TEST_CASE("NaCl-2", "[forcefield][empole][coulomb][nacl]") {
+  file fpr("amoeba09.prm", amoeba09_prm);
 
   std::string key = nacl_key;
-  key += "multipoleterm                  only\n";
-
-  file fx1(x1, nacl_xyz1);
-  file fpr(prm, amoeba09_prm);
-  file fke(k, key);
+  key += "multipoleterm    only\n";
+  file fke("test_nacl.key", key);
 
   int usage = 0;
   usage |= gpu::use_xyz;
@@ -178,6 +151,9 @@ TEST_CASE("EMpole-Coulomb-NaCl", "[forcefield][empole][nacl]") {
   const double eps = 1.0e-5;
 
   SECTION("case 1") {
+    const char* x1 = "test_nacl.xyz";
+    file fx1(x1, nacl_xyz1);
+
     const char* argv[] = {"dummy", x1};
     int argc = 2;
 
@@ -190,20 +166,17 @@ TEST_CASE("EMpole-Coulomb-NaCl", "[forcefield][empole][nacl]") {
 
     gpu::zero_egv();
     tinker_gpu_empole0();
-    COMPARE_ENERGY_(gpu::em);
+    COMPARE_ENERGY_(gpu::em, ref_eng, eps);
 
     gpu::zero_egv();
     tinker_gpu_empole3();
-    COMPARE_ENERGY_(gpu::em);
-    COMPARE_COUNT_(gpu::nem);
+    COMPARE_ENERGY_(gpu::em, ref_eng, eps);
+    COMPARE_COUNT_(gpu::nem, ref_count);
 
     tinker_gpu_data_destroy();
     test_end();
   }
 }
 
-#undef COMPARE_ENERGY_
-#undef COMPARE_COUNT_
 #undef COMPARE_GRAD_
-#undef COMPARE_VIR_
 #undef COMPARE_CODE_BLOCK1_

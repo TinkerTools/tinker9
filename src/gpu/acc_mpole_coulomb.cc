@@ -1,5 +1,6 @@
 #include "acc_e.h"
 #include "gpu/e_mpole.h"
+#include <vector>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -12,6 +13,8 @@ void empole_coulomb_tmpl() {
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
+  rotpole();
+
   const real f = chgpot::electric / chgpot::dielec;
 
   const real off = mpole_switch_off;
@@ -23,9 +26,9 @@ void empole_coulomb_tmpl() {
   const real m4scale = mplpot::m4scale;
   const real m5scale = mplpot::m5scale;
 
-  rotpole();
-
-  static real* mscale = (real*)malloc(n * sizeof(real));
+  static std::vector<real> mscalebuf;
+  mscalebuf.resize(n);
+  real* mscale = mscalebuf.data();
   // In order to use firstprivate, must assign values here.
   for (int i = 0; i < n; ++i) {
     mscale[i] = 1;
@@ -316,13 +319,9 @@ TINKER_NAMESPACE_END
 
 extern "C" {
 m_tinker_using_namespace;
-void tinker_gpu_empole_coulomb0() {
-  gpu::empole_coulomb_tmpl<gpu::v0>();
-}
+void tinker_gpu_empole_coulomb0() { gpu::empole_coulomb_tmpl<gpu::v0>(); }
 
-void tinker_gpu_empole_coulomb3() {
-  gpu::empole_coulomb_tmpl<gpu::v3>();
-}
+void tinker_gpu_empole_coulomb3() { gpu::empole_coulomb_tmpl<gpu::v3>(); }
 
 #define TINKER_GPU_EMPOLE_DEF_(ver)                                            \
   void tinker_gpu_empole##ver() {                                              \

@@ -1,5 +1,6 @@
 #include "acc_e.h"
 #include "gpu/e_vdw.h"
+#include <vector>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -63,7 +64,9 @@ void evdw_tmpl() {
   const real v4scale = vdwpot::v4scale;
   const real v5scale = vdwpot::v5scale;
 
-  static real* vscale = (real*)malloc(n * sizeof(real));
+  static std::vector<real> vscalebuf;
+  vscalebuf.resize(n);
+  real* vscale = vscalebuf.data();
   // In order to use firstprivate, must assign values here.
   for (int i = 0; i < n; ++i) {
     vscale[i] = 1;
