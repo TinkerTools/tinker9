@@ -53,6 +53,9 @@ void get_empole_type(int& typ, std::string& typ_str);
 void e_mpole_data(int op);
 
 void rotpole();
+void zero_torque();
+void torque0(); // gradient only
+void torque1(); // gradient and virial
 }
 TINKER_NAMESPACE_END
 
@@ -63,7 +66,6 @@ void tinker_gpu_empole_coulomb3();
 void tinker_gpu_empole_coulomb4();
 void tinker_gpu_empole_coulomb5();
 void tinker_gpu_empole_coulomb6();
-
 
 void tinker_gpu_empole_ewald0();
 void tinker_gpu_empole_ewald1();

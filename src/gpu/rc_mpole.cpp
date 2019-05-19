@@ -133,5 +133,13 @@ void e_mpole_data(int op) {
     check_cudart(cudaMalloc(&trqz, rs * n));
   }
 }
+
+void zero_torque() {
+  if (use_data & use_grad) {
+    zero_data(trqx, n);
+    zero_data(trqy, n);
+    zero_data(trqz, n);
+  }
+}
 }
 TINKER_NAMESPACE_END
