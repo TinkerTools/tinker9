@@ -51,7 +51,7 @@ using namespace test;
     COMPARE_VIR_(gpu::vir_ev, ref_v, eps);                                     \
   }
 
-TEST_CASE("Ehal-CLN025", "[forcefield][ehal][cln025]") {
+TEST_CASE("CLN025", "[ff][ehal][cln025]") {
   const char* x = "test_cln025.xyz";
   const char* k = "test_cln025.key";
   const char* p = "amoebabio09.prm";
@@ -67,7 +67,7 @@ TEST_CASE("Ehal-CLN025", "[forcefield][ehal][cln025]") {
   usage |= gpu::use_grad;
   usage |= gpu::use_virial;
 
-  SECTION("gas phase, no cutoff") {
+  SECTION("ehal -- gas phase, no cutoff") {
     file kx(k, k0);
 
     const char* argv[] = {"dummy", x};
@@ -95,7 +95,7 @@ TEST_CASE("Ehal-CLN025", "[forcefield][ehal][cln025]") {
     test_end();
   }
 
-  SECTION("PBC") {
+  SECTION("ehal -- pbc, cutoff") {
     std::string k1 = k0;
     k1 += "neighbor-list\n";
     k1 += "vdw-cutoff        6.0\n";

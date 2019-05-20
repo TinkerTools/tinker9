@@ -78,7 +78,7 @@ int use_usolv_list() {
   return ret;
 }
 
-void nblist_data_0_(nblist_st& st, nblist_st*& list) {
+static void nblist_op_destroy_(nblist_st& st, nblist_st*& list) {
   check_cudart(cudaFree(st.nlst));
   check_cudart(cudaFree(st.lst));
   check_cudart(cudaFree(st.xold));
@@ -91,7 +91,7 @@ void nblist_data_0_(nblist_st& st, nblist_st*& list) {
 // In the gas phase calculation where neighbor list is not used, we should
 // always first check the value maxn.
 // If maxn is equal to 1, it means the value of cutoff can even be INF.
-int nblist_maxlst_(int maxn, double cutoff, double buffer) {
+static int nblist_maxlst_(int maxn, double cutoff, double buffer) {
   if (maxn > 1) {
     double buf = (cutoff + buffer);
     int limit = buf * buf * buf + 100;
@@ -107,9 +107,9 @@ int nblist_maxlst_(int maxn, double cutoff, double buffer) {
   }
 }
 
-void nblist_data_1_(nblist_st& st, nblist_st*& list, int maxn, double cutoff,
-                    double buffer, const real* _x, const real* _y,
-                    const real* _z) {
+static void nblist_op_create_(nblist_st& st, nblist_st*& list, int maxn,
+                              double cutoff, double buffer, const real* _x,
+                              const real* _y, const real* _z) {
   const size_t rs = sizeof(int);
   size_t size;
 
@@ -152,14 +152,14 @@ void nblist_data(int op) {
   u = use_vdw_list();
   if (u) {
     if (op == op_destroy)
-      nblist_data_0_(vlist_obj_, vlst);
+      nblist_op_destroy_(vlist_obj_, vlst);
 
     if (op == op_create) {
       maxnlst = 2500;
       if (u == list_double_loop)
         maxnlst = 1;
-      nblist_data_1_(vlist_obj_, vlst, maxnlst, limits::vdwcut, neigh::lbuffer,
-                     xred, yred, zred);
+      nblist_op_create_(vlist_obj_, vlst, maxnlst, limits::vdwcut,
+                        neigh::lbuffer, xred, yred, zred);
     }
   }
 
@@ -167,14 +167,14 @@ void nblist_data(int op) {
   u = use_disp_list();
   if (u) {
     if (op == op_destroy)
-      nblist_data_0_(dlist_obj_, dlst);
+      nblist_op_destroy_(dlist_obj_, dlst);
 
     if (op == op_create) {
       maxnlst = 2500;
       if (u == list_double_loop)
         maxnlst = 1;
-      nblist_data_1_(dlist_obj_, dlst, maxnlst, limits::dispcut, neigh::lbuffer,
-                     x, y, z);
+      nblist_op_create_(dlist_obj_, dlst, maxnlst, limits::dispcut,
+                        neigh::lbuffer, x, y, z);
     }
   }
 
@@ -182,14 +182,14 @@ void nblist_data(int op) {
   u = use_charge_list();
   if (u) {
     if (op == op_destroy)
-      nblist_data_0_(clist_obj_, clst);
+      nblist_op_destroy_(clist_obj_, clst);
 
     if (op == op_create) {
       maxnlst = 2500;
       if (u == list_double_loop)
         maxnlst = 1;
-      nblist_data_1_(clist_obj_, clst, maxnlst, limits::chgcut, neigh::lbuffer,
-                     x, y, z);
+      nblist_op_create_(clist_obj_, clst, maxnlst, limits::chgcut,
+                        neigh::lbuffer, x, y, z);
     }
   }
 
@@ -197,14 +197,14 @@ void nblist_data(int op) {
   u = use_mpole_list();
   if (u) {
     if (op == op_destroy)
-      nblist_data_0_(mlist_obj_, mlst);
+      nblist_op_destroy_(mlist_obj_, mlst);
 
     if (op == op_create) {
       maxnlst = 2500;
       if (u == list_double_loop)
         maxnlst = 1;
-      nblist_data_1_(mlist_obj_, mlst, maxnlst, limits::mpolecut,
-                     neigh::lbuffer, x, y, z);
+      nblist_op_create_(mlist_obj_, mlst, maxnlst, limits::mpolecut,
+                        neigh::lbuffer, x, y, z);
     }
   }
 
@@ -212,14 +212,14 @@ void nblist_data(int op) {
   u = use_usolv_list();
   if (u) {
     if (op == op_destroy)
-      nblist_data_0_(ulist_obj_, ulst);
+      nblist_op_destroy_(ulist_obj_, ulst);
 
     if (op == op_create) {
       maxnlst = 500;
       if (u == list_double_loop)
         maxnlst = 1;
-      nblist_data_1_(ulist_obj_, ulst, maxnlst, limits::usolvcut,
-                     neigh::pbuffer, x, y, z);
+      nblist_op_create_(ulist_obj_, ulst, maxnlst, limits::usolvcut,
+                        neigh::pbuffer, x, y, z);
     }
   }
 }

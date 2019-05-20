@@ -75,6 +75,7 @@ TINKER_NAMESPACE_END
 #include "gpu/decl_couple.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_nblist.h"
+#include "gpu/decl_pme.h"
 #include "gpu/e_potential.h"
 
 extern "C" {
@@ -92,6 +93,7 @@ void tinker_gpu_data_create() {
   egv_data(op);
 
   potential_data(op);
+  pme_data(op);
 
   // Neighbor lists must be initialized after potential initialization.
   // xred, yred, and zred need to be initialized in vdw routines and will be
@@ -117,6 +119,7 @@ void tinker_gpu_data_destroy() {
   egv_data(op);
 
   potential_data(op);
+  pme_data(op);
 
   box_data(op);
   couple_data(op);

@@ -38,7 +38,7 @@ using namespace test;
     COMPARE_VIR_(gpu::vir_ev, ref_v, eps);                                     \
   }
 
-TEST_CASE("NaCl-1", "[forcefield][evdw][hal][switch][nacl]") {
+TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
   file fpr("amoeba09.prm", amoeba09_prm);
 
   std::string key = nacl_key;
@@ -53,7 +53,7 @@ TEST_CASE("NaCl-1", "[forcefield][evdw][hal][switch][nacl]") {
 
   const double eps = 1.0e-5;
 
-  SECTION("case 1, no-switch") {
+  SECTION("ehal -- no switch") {
     const char* x1 = "test_nacl.xyz";
     file fx1(x1, nacl_xyz1);
 
@@ -76,7 +76,7 @@ TEST_CASE("NaCl-1", "[forcefield][evdw][hal][switch][nacl]") {
     test_end();
   }
 
-  SECTION("case 2, near-cut") {
+  SECTION("ehal -- switch, near cut") {
     const char* x2 = "test_nacl.xyz_2";
     file fx2(x2, nacl_xyz2);
     const char* argv[] = {"dummy", x2};
@@ -98,7 +98,7 @@ TEST_CASE("NaCl-1", "[forcefield][evdw][hal][switch][nacl]") {
     test_end();
   }
 
-  SECTION("case 3, near-off") {
+  SECTION("ehal -- switch, near off") {
     const char* x3 = "test_nacl.xyz_3";
     file fx3(x3, nacl_xyz3);
 
@@ -122,7 +122,7 @@ TEST_CASE("NaCl-1", "[forcefield][evdw][hal][switch][nacl]") {
   }
 }
 
-TEST_CASE("NaCl-2", "[forcefield][empole][coulomb][nacl]") {
+TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
   file fpr("amoeba09.prm", amoeba09_prm);
 
   std::string key = nacl_key;
@@ -137,7 +137,7 @@ TEST_CASE("NaCl-2", "[forcefield][empole][coulomb][nacl]") {
 
   const double eps = 1.0e-5;
 
-  SECTION("case 1") {
+  SECTION("empole -- coulomb, pbc") {
     const char* x1 = "test_nacl.xyz";
     file fx1(x1, nacl_xyz1);
 

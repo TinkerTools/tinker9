@@ -6,7 +6,7 @@
 m_tinker_using_namespace;
 using namespace test;
 
-TEST_CASE("Local_Frame_1", "[forcefield][empole][coulomb][local_frame]") {
+TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
   file fpr("amoeba09.prm", amoeba09_prm);
 
   const char* k = "test_local_frame.key";
@@ -23,7 +23,7 @@ TEST_CASE("Local_Frame_1", "[forcefield][empole][coulomb][local_frame]") {
 
   const double eps = 1.0e-5;
 
-  SECTION("case 1") {
+  SECTION("empole -- gas phase, no cutoff") {
     std::string key1 = key0;
     key1 += "multipoleterm    only\n";
     file fke(k, key1);
