@@ -44,4 +44,10 @@ void pme_data(int op);
 }
 TINKER_NAMESPACE_END
 
+TINKER_NAMESPACE_BEGIN
+namespace gpu {
+void cmp_to_fmp(const real(* cmp)[10], real (*fmp)[10], int pme_unit);
+}
+TINKER_NAMESPACE_END
+
 #endif
