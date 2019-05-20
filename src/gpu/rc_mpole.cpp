@@ -88,6 +88,7 @@ void e_mpole_data(int op) {
     // in mpole::pole are correct.
     size = sizeof(local_frame_def_st);
     check_cudart(cudaMalloc(&zaxis, n * size));
+    static_assert(sizeof(local_frame_def_st) == 4 * sizeof(int), "");
     std::vector<int> zaxisbuf(4 * n);
     for (int i = 0; i < n; ++i) {
       int base = 4 * i;
