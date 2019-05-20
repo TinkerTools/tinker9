@@ -6,19 +6,6 @@
 m_tinker_using_namespace;
 using namespace test;
 
-#define COMPARE_GRAD_                                                          \
-  {                                                                            \
-    grad_t grad(gpu::n);                                                       \
-    double* dst = &grad[0][0];                                                 \
-    gpu::copyout_data2(0, 3, dst, gpu::gx, gpu::n);                            \
-    gpu::copyout_data2(1, 3, dst, gpu::gy, gpu::n);                            \
-    gpu::copyout_data2(2, 3, dst, gpu::gz, gpu::n);                            \
-    for (int i = 0; i < gpu::n; ++i) {                                         \
-      for (int j = 0; j < 3; ++j) {                                            \
-        REQUIRE(grad[i][j] == Approx(ref_grad[i][j]).epsilon(eps));            \
-      }                                                                        \
-    }                                                                          \
-  }
 #define COMPARE_CODE_BLOCK1_                                                   \
   {                                                                            \
     gpu::zero_egv();                                                           \
@@ -28,7 +15,7 @@ using namespace test;
     gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal1();                                                    \
     COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
-    COMPARE_GRAD_;                                                             \
+    COMPARE_GRADIENT_(ref_grad, eps);                                          \
     COMPARE_VIR_(gpu::vir_ev, ref_v, eps);                                     \
                                                                                \
     gpu::zero_egv();                                                           \
@@ -39,15 +26,15 @@ using namespace test;
     gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal4();                                                    \
     COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
-    COMPARE_GRAD_;                                                             \
+    COMPARE_GRADIENT_(ref_grad, eps);                                          \
                                                                                \
     gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal5();                                                    \
-    COMPARE_GRAD_;                                                             \
+    COMPARE_GRADIENT_(ref_grad, eps);                                          \
                                                                                \
     gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal6();                                                    \
-    COMPARE_GRAD_;                                                             \
+    COMPARE_GRADIENT_(ref_grad, eps);                                          \
     COMPARE_VIR_(gpu::vir_ev, ref_v, eps);                                     \
   }
 
@@ -160,7 +147,8 @@ TEST_CASE("NaCl-2", "[forcefield][empole][coulomb][nacl]") {
     const double ref_eng = -150.9381;
     const int ref_count = 1;
     const double ref_grad[][3] = {{-68.6082, 0.0, 0.0}, {68.6082, 0.0, 0.0}};
-    const double ref_v[][3] = {{150.938, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
+    const double ref_v[][3] = {
+        {150.938, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
     test_begin_1_xyz(argc, argv);
     gpu::use_data = usage;
@@ -173,7 +161,7 @@ TEST_CASE("NaCl-2", "[forcefield][empole][coulomb][nacl]") {
     gpu::zero_egv();
     tinker_gpu_empole1();
     COMPARE_ENERGY_(gpu::em, ref_eng, eps);
-    COMPARE_GRAD_;
+    COMPARE_GRADIENT_(ref_grad, eps);
     COMPARE_VIR_(gpu::vir_em, ref_v, eps);
 
     gpu::zero_egv();
@@ -186,5 +174,4 @@ TEST_CASE("NaCl-2", "[forcefield][empole][coulomb][nacl]") {
   }
 }
 
-#undef COMPARE_GRAD_
 #undef COMPARE_CODE_BLOCK1_

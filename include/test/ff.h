@@ -34,6 +34,19 @@ typedef std::vector<std::array<double, 3>> grad_t;
       }                                                                        \
     }                                                                          \
   }
+#define COMPARE_GRADIENT_(ref_grad, eps)                                       \
+  {                                                                            \
+    grad_t grad(gpu::n);                                                       \
+    double* dst = &grad[0][0];                                                 \
+    gpu::copyout_data2(0, 3, dst, gpu::gx, gpu::n);                            \
+    gpu::copyout_data2(1, 3, dst, gpu::gy, gpu::n);                            \
+    gpu::copyout_data2(2, 3, dst, gpu::gz, gpu::n);                            \
+    for (int i = 0; i < gpu::n; ++i) {                                         \
+      for (int j = 0; j < 3; ++j) {                                            \
+        REQUIRE(grad[i][j] == Approx(ref_grad[i][j]).epsilon(eps));            \
+      }                                                                        \
+    }                                                                          \
+  }
 
 TINKER_NAMESPACE_END
 

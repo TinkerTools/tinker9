@@ -29,9 +29,9 @@ void torque_tmpl(real* gpu_vir) {
                              gpu_vir)
   #pragma acc parallel loop
   for (int i = 0; i < n; ++i) {
+    real frcz[3] = {0, 0, 0};
     real frcx[3] = {0, 0, 0};
     real frcy[3] = {0, 0, 0};
-    real frcz[3] = {0, 0, 0};
     const int axetyp = zaxis[i].polaxe;
     if (axetyp == pole_none)
       continue;
@@ -103,25 +103,25 @@ void torque_tmpl(real* gpu_vir) {
     real uvsiz, uwsiz, vwsiz;
     real uvsiz1, uwsiz1, vwsiz1;
 
+    CROSS_(uv, v, u);
+    uvsiz = NORM_(uv);
+    uvsiz1 = REAL_RECIP(uvsiz);
+    NORMALIZE_(uv, uvsiz1);
+
+    CROSS_(uw, w, u);
+    uwsiz = NORM_(uw);
+    uwsiz1 = REAL_RECIP(uwsiz);
+    NORMALIZE_(uw, uwsiz1);
+
+    CROSS_(vw, w, v);
+    vwsiz = NORM_(vw);
+    vwsiz1 = REAL_RECIP(vwsiz);
+    NORMALIZE_(vw, vwsiz1);
+
     real ur[3], us[3], vs[3], ws[3];
     real ursiz, ussiz, vssiz, wssiz;
     real ursiz1, ussiz1, vssiz1, wssiz1;
     if (axetyp == pole_z_bisect) {
-      CROSS_(uv, v, u);
-      uvsiz = NORM_(uv);
-      uvsiz1 = REAL_RECIP(uvsiz);
-      NORMALIZE_(uv, uvsiz1);
-
-      CROSS_(uw, w, u);
-      uwsiz = NORM_(uw);
-      uwsiz1 = REAL_RECIP(uwsiz);
-      NORMALIZE_(uw, uwsiz1);
-
-      CROSS_(vw, w, v);
-      vwsiz = NORM_(vw);
-      vwsiz1 = REAL_RECIP(vwsiz);
-      NORMALIZE_(vw, vwsiz1);
-
       CROSS_(ur, r, u);
       ursiz = NORM_(ur);
       ursiz1 = REAL_RECIP(ursiz);
@@ -207,7 +207,7 @@ void torque_tmpl(real* gpu_vir) {
     // force distribution
     if (axetyp == pole_z_only) {
       for (int j = 0; j < 3; ++j) {
-        real du = uv[j] * usiz1 * uvsin1 + uw[j] * dphidw * usiz1;
+        real du = uv[j] * dphidv * usiz1 * uvsin1 + uw[j] * dphidw * usiz1;
         #pragma acc atomic update
         de[j][ia] += du;
         #pragma acc atomic update
@@ -333,7 +333,7 @@ void torque_tmpl(real* gpu_vir) {
       CROSS_(del, r, v);
       delsiz1 = REAL_RSQRT(DOT_(del, del));
       NORMALIZE_(del, delsiz1);
-      dphiddel = -DOT_(del, v);
+      dphiddel = -DOT_(trq, del);
       CROSS_(eps, del, v);
       for (int j = 0; j < 3; ++j) {
         real dv = del[j] * dphidr * vsiz1 * rvsin1 +
@@ -394,8 +394,8 @@ void torque_tmpl(real* gpu_vir) {
       gpu_vir[_yz] += vyz;
       #pragma acc atomic update
       gpu_vir[_zz] += vzz;
-    }
-  } // end for (int i)
+    } // end if_constexpr(DO_V)
+  }   // end for (int i)
 }
 
 void torque0() { torque_tmpl<0>(nullptr); }
