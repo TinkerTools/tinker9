@@ -5,6 +5,10 @@ Release/*
 .project
 .settings/*
 
+# VSCode
+.vscode
+.vscode/*
+
 # build
 build/*
 build*
