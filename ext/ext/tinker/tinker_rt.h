@@ -23,6 +23,10 @@ void TINKER_RT(initial)();
 void TINKER_RT(command)();
 void TINKER_RT(mdinit)();
 void TINKER_RT(mechanic)();
+
+// pmestuf.f
+void TINKER_RT(bspline)(double* x, int* n, double* c);
+void TINKER_RT(dftmod)(double* bsmod, double* bsarray, int* nfft, int* order);
 }
 
 #endif

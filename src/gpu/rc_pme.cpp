@@ -2,6 +2,9 @@
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
 #include "rc_cudart.h"
+#include "util/math.h"
+#include <ext/tinker/tinker_rt.h>
+#include <vector>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -32,9 +35,31 @@ static void pme_op_create_(pme_st& st, pme_st*& dptr, int nfft1, int nfft2,
 
   size = 3 * n * sizeof(int);
   check_cudart(cudaMalloc(&st.igrid, size));
+
+  // see also subroutine moduli in pmestuf.f
   check_cudart(cudaMalloc(&st.bsmod1, rs * nfft1));
   check_cudart(cudaMalloc(&st.bsmod2, rs * nfft2));
   check_cudart(cudaMalloc(&st.bsmod3, rs * nfft3));
+  int maxfft = max_of(nfft1, nfft2, nfft3);
+  std::vector<double> array(bsorder);
+  std::vector<double> bsarray(maxfft);
+  double x = 0;
+  TINKER_RT(bspline)(&x, &bsorder, array.data());
+  for (int i = 0; i < maxfft; ++i) {
+    bsarray[i] = 0;
+  }
+  assert(bsorder + 1 <= maxfft);
+  for (int i = 0; i < bsorder; ++i) {
+    bsarray[i + 1] = array[i];
+  }
+  std::vector<double> bsmodbuf(maxfft);
+  TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &nfft1, &bsorder);
+  copyin_data(st.bsmod1, bsmodbuf.data(), nfft1);
+  TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &nfft2, &bsorder);
+  copyin_data(st.bsmod2, bsmodbuf.data(), nfft2);
+  TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &nfft3, &bsorder);
+  copyin_data(st.bsmod3, bsmodbuf.data(), nfft3);
+
   check_cudart(cudaMalloc(&st.bsbuild, rs * bsorder * bsorder));
   size = 4 * n * rs;
   check_cudart(cudaMalloc(&st.thetai1, size));
