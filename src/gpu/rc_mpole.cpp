@@ -120,8 +120,20 @@ void e_mpole_data(int op) {
     for (int i = 0; i < n; ++i) {
       int b1 = mpl_total * i;
       int b2 = mpole::maxpole * i;
-      for (int j = 0; j < mpl_total; ++j)
-        polebuf[b1 + j] = mpole::pole[b2 + mpl_tinker[j]];
+      // Tinker c = 0, dx = 1, dy = 2, dz = 3
+      // Tinker qxx = 4, qxy = 5, qxz = 6
+      //        qyx    , qyy = 8, qyz = 9
+      //        qzx    , qzy    , qzz = 12
+      polebuf[b1 + mpl_pme_0] = mpole::pole[b2 + 0];
+      polebuf[b1 + mpl_pme_x] = mpole::pole[b2 + 1];
+      polebuf[b1 + mpl_pme_y] = mpole::pole[b2 + 2];
+      polebuf[b1 + mpl_pme_z] = mpole::pole[b2 + 3];
+      polebuf[b1 + mpl_pme_xx] = mpole::pole[b2 + 4];
+      polebuf[b1 + mpl_pme_xy] = mpole::pole[b2 + 5];
+      polebuf[b1 + mpl_pme_xz] = mpole::pole[b2 + 6];
+      polebuf[b1 + mpl_pme_yy] = mpole::pole[b2 + 8];
+      polebuf[b1 + mpl_pme_yz] = mpole::pole[b2 + 9];
+      polebuf[b1 + mpl_pme_zz] = mpole::pole[b2 + 12];
     }
     copyin_data(reinterpret_cast<real*>(pole), polebuf.data(), mpl_total * n);
 

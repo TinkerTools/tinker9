@@ -20,15 +20,15 @@ static void rotsite(int isite, const real (*__restrict__ a)[3],
   // quadrupole
   real rp[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
   real mp[3][3];
-  mp[_x][_x] = pole[isite][mpl_qxx];
-  mp[_x][_y] = pole[isite][mpl_qxy];
-  mp[_x][_z] = pole[isite][mpl_qxz];
-  mp[_y][_x] = pole[isite][mpl_qyx];
-  mp[_y][_y] = pole[isite][mpl_qyy];
-  mp[_y][_z] = pole[isite][mpl_qyz];
-  mp[_z][_x] = pole[isite][mpl_qzx];
-  mp[_z][_y] = pole[isite][mpl_qzy];
-  mp[_z][_z] = pole[isite][mpl_qzz];
+  mp[_x][_x] = pole[isite][mpl_pme_xx];
+  mp[_x][_y] = pole[isite][mpl_pme_xy];
+  mp[_x][_z] = pole[isite][mpl_pme_xz];
+  mp[_y][_x] = pole[isite][mpl_pme_yx];
+  mp[_y][_y] = pole[isite][mpl_pme_yy];
+  mp[_y][_z] = pole[isite][mpl_pme_yz];
+  mp[_z][_x] = pole[isite][mpl_pme_zx];
+  mp[_z][_y] = pole[isite][mpl_pme_zy];
+  mp[_z][_z] = pole[isite][mpl_pme_zz];
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
       // if (j < i) {
@@ -40,12 +40,12 @@ static void rotsite(int isite, const real (*__restrict__ a)[3],
       // }
     }
   }
-  rpole[isite][mpl_qxx] = rp[_x][_x];
-  rpole[isite][mpl_qxy] = rp[_x][_y];
-  rpole[isite][mpl_qxz] = rp[_x][_z];
-  rpole[isite][mpl_qyy] = rp[_y][_y];
-  rpole[isite][mpl_qyz] = rp[_y][_z];
-  rpole[isite][mpl_qzz] = rp[_z][_z];
+  rpole[isite][mpl_pme_xx] = rp[_x][_x];
+  rpole[isite][mpl_pme_xy] = rp[_x][_y];
+  rpole[isite][mpl_pme_xz] = rp[_x][_z];
+  rpole[isite][mpl_pme_yy] = rp[_y][_y];
+  rpole[isite][mpl_pme_yz] = rp[_y][_z];
+  rpole[isite][mpl_pme_zz] = rp[_z][_z];
 }
 
 void rotpole() {

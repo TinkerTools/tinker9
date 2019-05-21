@@ -7,17 +7,20 @@ TINKER_NAMESPACE_BEGIN
 namespace gpu {
 /**
  * @brief
- * A Fortran matrix f(5,3) is equivalent to a 2D C array c[3][5], with NFRow = 5
- * and NFCol = 3.
+ * A Fortran matrix f(3,50) is equivalent to a 2D C array c[50][3],
+ * with NFRow = 3 and NFCol = 50.
  */
-template <class T, int NFRow, int NFCol>
+template <class T, int NFRow>
 class FortranMatrixView {
 private:
-  T (&data_)[NFCol][NFRow];
+  T (*data_)[NFRow];
 
 public:
   #pragma acc routine seq
-  FortranMatrixView(T (&_data)[NFCol][NFRow]) : data_(_data) {}
+  FortranMatrixView(const T (*_data)[NFRow])
+      : data_(const_cast<T (*)[NFRow]>(_data)) {}
+  #pragma acc routine seq
+  FortranMatrixView(T (*_data)[NFRow]) : data_(_data) {}
 
   #pragma acc routine seq
   const T& operator()(int ifrow1, int ifcol1) const {
@@ -30,9 +33,9 @@ public:
   }
 };
 
-template <int NFRow, int NFCol>
-using freal = FortranMatrixView<real, NFRow, NFCol>;
-using freal33 = FortranMatrixView<real, 3, 3>;
+template <int NFRow>
+using freal_mat = FortranMatrixView<real, NFRow>;
+using freal_mat3 = FortranMatrixView<real, 3>;
 }
 TINKER_NAMESPACE_END
 
