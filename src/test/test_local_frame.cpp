@@ -21,8 +21,6 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
   usage |= gpu::use_grad;
   usage |= gpu::use_virial;
 
-  const double eps = 1.0e-5;
-
   SECTION("empole -- gas phase, no cutoff") {
     std::string key1 = key0;
     key1 += "multipoleterm    only\n";
@@ -31,6 +29,7 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
     const char* argv[] = {"dummy", x1};
     int argc = 2;
 
+    const double eps_e = 1.0e-5;
     const double ref_eng = -95.7432;
     const int ref_count = 201;
     const double eps_g = 0.0005;
@@ -58,18 +57,69 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
 
     gpu::zero_egv();
     tinker_gpu_empole0();
-    COMPARE_ENERGY_(gpu::em, ref_eng, eps);
+    COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
 
     gpu::zero_egv();
     tinker_gpu_empole1();
-    COMPARE_ENERGY_(gpu::em, ref_eng, eps);
+    COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
     COMPARE_GRADIENT_(ref_grad, eps_g);
     COMPARE_VIR_(gpu::vir_em, ref_v, eps_v);
 
     gpu::zero_egv();
     tinker_gpu_empole3();
-    COMPARE_ENERGY_(gpu::em, ref_eng, eps);
+    COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
     COMPARE_COUNT_(gpu::nem, ref_count);
+
+    tinker_gpu_data_destroy();
+    test_end();
+  }
+}
+
+TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
+  file fpr("amoeba09.prm", amoeba09_prm);
+
+  const char* k = "test_local_frame.key";
+  std::string key0 = local_frame_key;
+
+  const char* x1 = "test_local_frame.xyz";
+  file fx1(x1, local_frame_xyz);
+
+  int usage = 0;
+  usage |= gpu::use_xyz;
+  usage |= gpu::use_energy;
+  usage |= gpu::use_grad;
+  usage |= gpu::use_virial;
+
+  SECTION("empole -- pme") {
+    std::string key1 = key0;
+    key1 += "multipoleterm    only\n";
+    key1 += "ewald\n";
+    key1 += "ewald-cutoff    7.0\n";
+    key1 += "neighbor-list\n";
+    key1 += "list-buffer    0.1\n";
+    key1 += "a-axis    20.0\n";
+    file fke(k, key1);
+
+    const char* argv[] = {"dummy", x1};
+    int argc = 2;
+
+    const double eps_e = 0.0005;
+    // emreal 132.76851908903473
+    // +recip 279.93038602122442 // recip 147.1618669321897
+    // +self -99.229836789909172 // self -379.1602228111336
+    const double ref_ereal = 132.76851908903473;
+    const double ref_erecip = 147.1618669321897;
+    const double ref_eself = -379.1602228111336;
+    const double ref_eng = ref_eself;
+    const int ref_count = 222;
+
+    test_begin_1_xyz(argc, argv);
+    gpu::use_data = usage;
+    tinker_gpu_data_create();
+
+    gpu::zero_egv();
+    tinker_gpu_empole0();
+    COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
 
     tinker_gpu_data_destroy();
     test_end();

@@ -347,6 +347,8 @@ void tinker_gpu_empole_coulomb6() { gpu::empole_coulomb_tmpl<gpu::v6>(); }
   void tinker_gpu_empole##ver() {                                              \
     if (gpu::electyp == gpu::elec_coulomb) {                                   \
       tinker_gpu_empole_coulomb##ver();                                        \
+    } else if (gpu::electyp == gpu::elec_ewald) {                              \
+      tinker_gpu_empole_ewald##ver();                                          \
     }                                                                          \
   }
 TINKER_GPU_EMPOLE_DEF_(0);
