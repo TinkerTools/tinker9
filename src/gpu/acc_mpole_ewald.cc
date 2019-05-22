@@ -71,6 +71,7 @@ void empole_ewald_tmpl() {
 
   zero_torque();
 
+  chkpole();
   rotpole();
 
   #pragma acc data deviceptr(em,nem,vir_em)

@@ -15,6 +15,7 @@ void empole_coulomb_tmpl() {
 
   zero_torque();
 
+  chkpole();
   rotpole();
 
   const real f = chgpot::electric / chgpot::dielec;
