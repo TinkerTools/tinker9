@@ -31,4 +31,6 @@
 #define REAL_SQ(x) ((x) * (x))
 #define REAL_CUBE(x) ((x) * (x) * (x))
 
+#define INT_ABS abs
+
 #endif

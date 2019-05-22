@@ -40,6 +40,8 @@ static void pme_op_create_(pme_st& st, pme_st*& dptr, int nfft1, int nfft2,
   check_cudart(cudaMalloc(&st.bsmod1, rs * nfft1));
   check_cudart(cudaMalloc(&st.bsmod2, rs * nfft2));
   check_cudart(cudaMalloc(&st.bsmod3, rs * nfft3));
+  // This code assumes that the FFT grids of an energy term will not change in a
+  // calculation.
   int maxfft = max_of(nfft1, nfft2, nfft3);
   std::vector<double> array(bsorder);
   std::vector<double> bsarray(maxfft);
@@ -107,9 +109,11 @@ int pme_open_unit(int nfft1, int nfft2, int nfft3, int bsorder) {
   return idx;
 }
 
-pme_st& pme_obj(int index) { return detail_::pme_objs()[index]; }
+pme_st& pme_obj(int pme_unit) { return detail_::pme_objs()[pme_unit]; }
 
-pme_st* pme_deviceptr(int index) { return detail_::pme_deviceptrs()[index]; }
+pme_st* pme_deviceptr(int pme_unit) {
+  return detail_::pme_deviceptrs()[pme_unit];
+}
 
 int epme_unit; // electrostatic
 int ppme_unit; // polarization
@@ -133,11 +137,12 @@ void pme_data(int op) {
     }
     detail_::pme_objs().clear();
     detail_::pme_deviceptrs().clear();
-    assert(detail_::pme_objs().size() == 0);
-    assert(detail_::pme_deviceptrs().size() == 0);
   }
 
   if (op == op_create) {
+    assert(detail_::pme_objs().size() == 0);
+    assert(detail_::pme_deviceptrs().size() == 0);
+
     // electrostatics
     epme_unit = -1;
     if (use_empole()) {
@@ -164,6 +169,8 @@ void pme_data(int op) {
           pme_open_unit(pme::ndfft1, pme::ndfft2, pme::ndfft3, pme::bsdorder);
     }
   }
+
+  detail_::fft_data(op);
 }
 }
 TINKER_NAMESPACE_END

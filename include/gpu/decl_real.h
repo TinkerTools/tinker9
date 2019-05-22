@@ -14,7 +14,7 @@ typedef double real;
 #elif defined(TINKER_GPU_SINGLE)
 typedef float real;
 #else
-#  error DEFAULT GPU FLOATING NUMBER PRECISION WAS NOT DEFINED.
+static_assert(false, "");
 #endif
 }
 TINKER_NAMESPACE_END

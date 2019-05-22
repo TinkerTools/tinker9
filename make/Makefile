@@ -125,7 +125,7 @@ acc_compile_flags += -acc verystrict -c -Minfo=accel $(acc_common_flags)
 cxx_link_flags := $(cxx_common_flags)
 cxx_link_flags += $(os_link_flags) $(libtinker) $(fortrtflag) $(fftwflag)
 
-acc_link_flags := -acc -Mcuda
+acc_link_flags := -acc -Mcuda -Mcudalib=cufft
 acc_link_flags += $(acc_common_flags) $(libtinker) $(fortrtflag) $(fftwflag)
 
 ext_cc_objs := $(extdir)/fmt/format.o $(extdir)/fmt/posix.o

@@ -33,8 +33,16 @@ std::vector<pme_st*>& pme_deviceptrs();
 }
 
 int pme_open_unit(int nfft1, int nfft2, int nfft3, int bsorder);
-pme_st& pme_obj(int index);
-pme_st* pme_deviceptr(int index);
+pme_st& pme_obj(int pme_unit);
+pme_st* pme_deviceptr(int pme_unit);
+
+namespace detail_ {
+/// This function must be called after pme_data has been called because it
+/// needs to know the number of pme objects created.
+void fft_data(int op);
+}
+void fftfront(int pme_unit);
+void fftback(int pme_unit);
 
 extern int epme_unit; // electrostatic
 extern int ppme_unit; // polarization

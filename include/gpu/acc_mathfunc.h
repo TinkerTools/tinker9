@@ -19,4 +19,6 @@
 #pragma acc routine(cosf) seq
 #pragma acc routine(sinf) seq
 
+#pragma acc routine(abs) seq
+
 #endif
