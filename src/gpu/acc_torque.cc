@@ -46,7 +46,7 @@ void torque_tmpl(real* gpu_vir) {
     const int ia = zaxis[i].zaxis;
     const int ib = i;
     const int ic = zaxis[i].xaxis;
-    const int id = zaxis[i].yaxis;
+    const int id = INT_ABS(zaxis[i].yaxis) - 1;
 
     // construct the three rotation axes for the local frame
 

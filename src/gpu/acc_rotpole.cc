@@ -58,7 +58,7 @@ void rotpole() {
     real zi = z[i];
     int iz = zaxis[i].zaxis;
     int ix = zaxis[i].xaxis;
-    int iy = zaxis[i].yaxis;
+    int iy = INT_ABS(zaxis[i].yaxis) - 1;
     int polaxe = zaxis[i].polaxe;
     real a[3][3] = {{1, 0, 0}, {0, 0, 0}, {0, 0, 1}};
 

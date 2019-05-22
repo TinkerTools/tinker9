@@ -85,7 +85,11 @@ void e_mpole_data(int op) {
     // Regarding chkpole routine:
     // 1. The chiralities of the atoms will not change in the simulations;
     // 2. chkpole routine has been called in mechanic routine so that the values
-    // in mpole::pole are correct.
+    // in mpole::pole are correct;
+    // 3. yaxis values are directly copied from Tinker, and are NOT
+    // subtracted by 1 becasue of the checks in chkpole;
+    // 4. GPU chkpole kernel is necessary when unexpected changes of charalities
+    // may happen, e.g. in Monte Carlo simulations.
     size = sizeof(local_frame_def_st);
     check_cudart(cudaMalloc(&zaxis, n * size));
     static_assert(sizeof(local_frame_def_st) == 4 * sizeof(int), "");
@@ -94,7 +98,7 @@ void e_mpole_data(int op) {
       int base = 4 * i;
       zaxisbuf[base] = mpole::zaxis[i] - 1;
       zaxisbuf[base + 1] = mpole::xaxis[i] - 1;
-      zaxisbuf[base + 2] = mpole::yaxis[i] - 1;
+      zaxisbuf[base + 2] = mpole::yaxis[i];
       fstr_view str = mpole::polaxe[i];
       int val;
       if (str == "Z-Only")

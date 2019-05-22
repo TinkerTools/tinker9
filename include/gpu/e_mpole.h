@@ -53,6 +53,7 @@ int use_empole();
 void get_empole_type(int& typ, std::string& typ_str);
 void e_mpole_data(int op);
 
+void chkpole();
 void rotpole();
 void zero_torque();
 void torque0(); // gradient only
