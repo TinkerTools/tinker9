@@ -23,13 +23,13 @@ void cmp_to_fmp(const real (*_cmp)[10], real (*_fmp)[10], int pme_unit) {
   #pragma acc parallel loop
   for (int iatom = 0; iatom < n; ++iatom) {
     real ctf_cpp[10][10];
-    freal_mat<10> ctf(ctf_cpp);
+    fmat_real<10> ctf(ctf_cpp);
 
     // see also subroutine cart_to_frac in pmestuf.f
     {
       real a_cpp[3][3];
-      freal_mat3 a(a_cpp);
-      freal_mat3 recip(box->recip);
+      fmat_real3 a(a_cpp);
+      fmat_real3 recip(box->recip);
 
       // set the reciprocal vector transformation matrix
 
@@ -79,8 +79,8 @@ void cmp_to_fmp(const real (*_cmp)[10], real (*_fmp)[10], int pme_unit) {
 
     // apply the transformation to get the fractional multipoles
     {
-      freal_mat<10> cmp(_cmp);
-      freal_mat<10> fmp(_fmp);
+      fmat_real<10> cmp(_cmp);
+      fmat_real<10> fmp(_fmp);
       const int i = iatom;
       fmp(1, i) = ctf(1, 1) * cmp(1, i);
       #pragma acc loop independent
@@ -116,13 +116,13 @@ void fphi_to_cphi(const real (*_fphi)[20], real (*_cphi)[10], int pme_unit) {
   #pragma acc parallel loop
   for (int iatom = 0; iatom < n; ++iatom) {
     real ftc_cpp[10][10];
-    freal_mat<10> ftc(ftc_cpp);
+    fmat_real<10> ftc(ftc_cpp);
 
     // see also subroutine frac_to_cart in pmestuf.f
     {
       real a_cpp[3][3];
-      freal_mat3 a(a_cpp);
-      freal_mat3 recip(box->recip);
+      fmat_real3 a(a_cpp);
+      fmat_real3 recip(box->recip);
 
       // set the reciprocal vector transformation matrix
 
@@ -176,8 +176,8 @@ void fphi_to_cphi(const real (*_fphi)[20], real (*_cphi)[10], int pme_unit) {
 
     // apply the transformation to get the Cartesian potential
     {
-      freal_mat<20> fphi(_fphi);
-      freal_mat<10> cphi(_cphi);
+      fmat_real<20> fphi(_fphi);
+      fmat_real<10> cphi(_cphi);
       const int i = iatom;
       cphi(1, i) = ftc(1, 1) * fphi(1, i);
       #pragma acc loop independent
