@@ -13,10 +13,6 @@ static void pme_op_destroy_(pme_st& st, pme_st*& dptr) {
   check_cudart(cudaFree(st.bsmod1));
   check_cudart(cudaFree(st.bsmod2));
   check_cudart(cudaFree(st.bsmod3));
-  check_cudart(cudaFree(st.bsbuild));
-  check_cudart(cudaFree(st.thetai1));
-  check_cudart(cudaFree(st.thetai2));
-  check_cudart(cudaFree(st.thetai3));
   check_cudart(cudaFree(st.qgrid));
   check_cudart(cudaFree(st.qfac));
 
@@ -62,11 +58,6 @@ static void pme_op_create_(pme_st& st, pme_st*& dptr, int nfft1, int nfft2,
   TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &nfft3, &bsorder);
   copyin_data(st.bsmod3, bsmodbuf.data(), nfft3);
 
-  check_cudart(cudaMalloc(&st.bsbuild, rs * bsorder * bsorder));
-  size = 4 * n * rs;
-  check_cudart(cudaMalloc(&st.thetai1, size));
-  check_cudart(cudaMalloc(&st.thetai2, size));
-  check_cudart(cudaMalloc(&st.thetai3, size));
   size = nfft1 * nfft2 * nfft3 * rs;
   check_cudart(cudaMalloc(&st.qgrid, 2 * size));
   check_cudart(cudaMalloc(&st.qfac, size));

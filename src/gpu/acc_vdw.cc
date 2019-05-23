@@ -76,8 +76,7 @@ void evdw_tmpl() {
                              ired,kred,xred,yred,zred,\
                              jvdw,njvdw,radmin,epsilon,\
                              vlam,\
-                             ev,nev,vir_ev)\
-   copyin(vscale[0:n])
+                             ev,nev,vir_ev)
   {
     #pragma acc serial
     {

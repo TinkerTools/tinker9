@@ -58,6 +58,20 @@ void rotpole();
 void zero_torque();
 void torque0(); // gradient only
 void torque1(); // gradient and virial
+
+/**
+ * @brief
+ * "grid_mpole" places the fractional atomic multipoles onto
+ * the particle mesh Ewald grid.
+ */
+void grid_mpole();
+
+/**
+ * @brief
+ * "fphi_mpole" extracts the permanent multipole potential from
+ * the particle mesh Ewald grid.
+ */
+void fphi_mpole();
 }
 TINKER_NAMESPACE_END
 

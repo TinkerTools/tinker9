@@ -22,9 +22,9 @@ namespace gpu {
  */
 struct pme_st {
   int nfft1, nfft2, nfft3, bsorder;
-  int* igrid;                                       // deviceptr
-  real *bsmod1, *bsmod2, *bsmod3, *bsbuild;         // deviceptr
-  real *thetai1, *thetai2, *thetai3, *qgrid, *qfac; // deviceptr
+  int* igrid;                     // deviceptr
+  real *bsmod1, *bsmod2, *bsmod3; // deviceptr
+  real *qgrid, *qfac;             // deviceptr
 };
 
 namespace detail_ {

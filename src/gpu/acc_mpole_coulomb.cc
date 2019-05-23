@@ -39,8 +39,7 @@ void empole_coulomb_tmpl() {
 
   #pragma acc data deviceptr(x,y,z,gx,gy,gz,box,couple,mlst,\
                              rpole,\
-                             em,nem,vir_em,trqx,trqy,trqz)\
-   copyin(mscale[0:n])
+                             em,nem,vir_em,trqx,trqy,trqz)
   {
     #pragma acc serial
     {
