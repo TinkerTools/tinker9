@@ -43,6 +43,35 @@ public:
 template <int NFRow>
 using fmat_real = FortranMatrixView<real, NFRow>;
 using fmat_real3 = FortranMatrixView<real, 3>;
+
+template <class T>
+class FortranDynamicMatrixView {
+private:
+  T* data_;
+  int nfrow_;
+
+public:
+  #pragma acc routine seq
+  FortranDynamicMatrixView(const T* _data, int _dim)
+      : data_(const_cast<T*>(_data)), nfrow_(_dim) {}
+
+  #pragma acc routine seq
+  FortranDynamicMatrixView(T* _data, int _dim) : data_(_data), nfrow_(_dim) {}
+
+  #pragma acc routine seq
+  const T& operator()(int ifrow1, int ifcol1) const {
+    return data_[(ifcol1 - 1) * nfrow_ + ifrow1 - 1];
+  }
+
+  #pragma acc routine seq
+  T& operator()(int ifrow1, int ifcol1) {
+    return data_[(ifcol1 - 1) * nfrow_ + ifrow1 - 1];
+  }
+};
+
+template <class T>
+using allocatable = FortranDynamicMatrixView<T>;
+using real_allocatable = allocatable<real>;
 }
 TINKER_NAMESPACE_END
 
