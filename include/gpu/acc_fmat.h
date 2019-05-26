@@ -59,6 +59,14 @@ public:
   FortranDynamicMatrixView(T* _data, int _dim) : data_(_data), nfrow_(_dim) {}
 
   #pragma acc routine seq
+  FortranDynamicMatrixView(const T* _data, int _dim, int /* dummy_dim */)
+      : data_(const_cast<T*>(_data)), nfrow_(_dim) {}
+
+  #pragma acc routine seq
+  FortranDynamicMatrixView(T* _data, int _dim, int /* dummy_dim */)
+      : data_(_data), nfrow_(_dim) {}
+
+  #pragma acc routine seq
   const T& operator()(int ifrow1, int ifcol1) const {
     return data_[(ifcol1 - 1) * nfrow_ + ifrow1 - 1];
   }

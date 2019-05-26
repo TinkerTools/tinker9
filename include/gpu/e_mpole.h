@@ -64,7 +64,7 @@ void torque1(); // gradient and virial
  * "grid_mpole" places the fractional atomic multipoles onto
  * the particle mesh Ewald grid.
  */
-void grid_mpole();
+void grid_mpole(real (*gpu_fmp)[10]);
 
 /**
  * @brief
