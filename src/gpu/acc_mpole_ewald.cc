@@ -1,4 +1,5 @@
 #include "acc_e.h"
+#include "gpu/decl_pme.h"
 #include "gpu/e_mpole.h"
 #include <vector>
 
@@ -14,7 +15,7 @@ void empole_real_tmpl() {
   static_assert(do_a ? do_e : true, "");
 
   const real f = chgpot::electric / chgpot::dielec;
-  const real aewald = ewald::aeewald;
+  const real aewald = pme_obj(epme_unit).aewald;
   const real aewald_sq_2 = 2 * aewald * aewald;
   const real fterm = -f * aewald * 0.5 * M_2_SQRTPI;
 
@@ -58,7 +59,26 @@ void empole_real_tmpl() {
 }
 
 template <int USE>
-void empole_recip_tmpl() {}
+void empole_recip_tmpl() {
+  constexpr int do_e = USE & use_energy;
+  constexpr int do_a = USE & use_analyz;
+  constexpr int do_g = USE & use_grad;
+  constexpr int do_v = USE & use_virial;
+  static_assert(do_v ? do_g : true, "");
+  static_assert(do_a ? do_e : true, "");
+
+  cmp_to_fmp(fmp, epme_unit);
+  // grid_mpole(fmp);
+  // fftfront(epme_unit);
+  // if_constexpr(do_v) {
+  //   pme_conv1(epme_unit, vir);
+  // } else {
+  //   pme_conv0(epme_unit);
+  // }
+  // fftback(epme_unit);
+  // fphi_mpole(fphi);
+  // fphi_to_cphi(fphi, cphi, epme_unit);
+}
 
 template <int USE>
 void empole_ewald_tmpl() {

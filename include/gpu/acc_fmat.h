@@ -5,13 +5,37 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
+template <class T, int... Ints>
+class FortranMatrixView;
+
+template <class T>
+class FortranMatrixView<T> {
+private:
+  T* data_;
+
+public:
+  #pragma acc routine seq
+  FortranMatrixView(const T* _data) : data_(const_cast<T*>(_data)) {}
+
+  #pragma acc routine seq
+  FortranMatrixView(T* _data) : data_(_data) {}
+
+  #pragma acc routine seq
+  const T& operator()(int if1) const { return data_[if1 - 1]; }
+
+  #pragma acc routine seq
+  T& operator()(int if1) { return data_[if1 - 1]; }
+};
+
+using farray_real = FortranMatrixView<real>;
+
 /**
  * @brief
  * A Fortran matrix f(3,50) is equivalent to a 2D C array c[50][3],
  * with NFRow = 3 and NFCol = 50.
  */
 template <class T, int NFRow>
-class FortranMatrixView {
+class FortranMatrixView<T, NFRow> {
 private:
   T* data_;
 

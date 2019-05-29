@@ -10,6 +10,9 @@ static inline void box_null_image() {}
 static inline void box_null_imagen() {}
 
 #pragma acc routine seq
+static inline real box_null_vobox() { return INFINITY; }
+
+#pragma acc routine seq
 static inline void box_ortho_image(real& __restrict__ xr, real& __restrict__ yr,
                                    real& __restrict__ zr,
                                    const box_st* __restrict__ pb) {
@@ -51,6 +54,11 @@ static inline void box_ortho_imagen(real& __restrict__ xr,
 }
 
 #pragma acc routine seq
+static inline real box_ortho_volbox(const box_st* __restrict__ pb) {
+  return pb->lvec[0][0] * pb->lvec[1][1] * pb->lvec[2][2];
+}
+
+#pragma acc routine seq
 void image(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
            const box_st* __restrict__ pb) {
   switch (pb->shape) {
@@ -74,6 +82,20 @@ void imagen(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
     box_null_imagen();
     break;
   }
+}
+
+#pragma acc routine seq
+real volbox(const box_st* __restrict__ pb) {
+  real val;
+  switch (pb->shape) {
+  case box_ortho:
+    val = box_ortho_volbox(pb);
+    break;
+  default /* box_null */:
+    val = box_null_vobox();
+    break;
+  }
+  return val;
 }
 }
 TINKER_NAMESPACE_END

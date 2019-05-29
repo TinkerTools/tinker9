@@ -174,4 +174,38 @@ TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
   }
 }
 
+TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]") {
+  file fpr("amoeba09.prm", amoeba09_prm);
+
+  std::string key = nacl_key4;
+  key += "multipoleterm    only\n";
+  file fke("test_nacl.key", key);
+
+  int usage = 0;
+  usage |= gpu::use_xyz;
+  usage |= gpu::use_energy;
+  usage |= gpu::use_grad;
+  usage |= gpu::use_virial;
+
+  const double eps = 1.0e-5;
+
+  SECTION("empole -- pme") {
+    const char* x4 = "test_nacl.xyz_4";
+    file fx1(x4, nacl_xyz4);
+
+    const char* argv[] = {"dummy", x4};
+    int argc = 2;
+
+    test_begin_1_xyz(argc, argv);
+    gpu::use_data = usage;
+    tinker_gpu_data_create();
+
+    gpu::zero_egv();
+    tinker_gpu_empole0();
+
+    tinker_gpu_data_destroy();
+    test_end();
+  }
+}
+
 #undef COMPARE_CODE_BLOCK1_

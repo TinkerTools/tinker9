@@ -20,6 +20,8 @@ extern const char* nacl_xyz1;
 extern const char* nacl_xyz2;
 extern const char* nacl_xyz3;
 extern const char* nacl_key;
+extern const char* nacl_xyz4;
+extern const char* nacl_key4;
 
 // CLN025 test set
 extern const char* cln025_xyz;

@@ -14,16 +14,16 @@ static void pme_op_destroy_(pme_st& st, pme_st*& dptr) {
   check_cudart(cudaFree(st.bsmod2));
   check_cudart(cudaFree(st.bsmod3));
   check_cudart(cudaFree(st.qgrid));
-  check_cudart(cudaFree(st.qfac));
 
   check_cudart(cudaFree(dptr));
 }
 
-static void pme_op_create_(pme_st& st, pme_st*& dptr, int nfft1, int nfft2,
-                           int nfft3, int bsorder) {
+static void pme_op_create_(pme_st& st, pme_st*& dptr, double aewald, int nfft1,
+                           int nfft2, int nfft3, int bsorder) {
   const size_t rs = sizeof(int);
   size_t size;
 
+  st.aewald = aewald;
   st.nfft1 = nfft1;
   st.nfft2 = nfft2;
   st.nfft3 = nfft3;
@@ -60,7 +60,6 @@ static void pme_op_create_(pme_st& st, pme_st*& dptr, int nfft1, int nfft2,
 
   size = nfft1 * nfft2 * nfft3 * rs;
   check_cudart(cudaMalloc(&st.qgrid, 2 * size));
-  check_cudart(cudaMalloc(&st.qfac, size));
 
   size = sizeof(pme_st);
   check_cudart(cudaMalloc(&dptr, size));
@@ -79,13 +78,14 @@ std::vector<pme_st*>& pme_deviceptrs() {
 }
 }
 
-int pme_open_unit(int nfft1, int nfft2, int nfft3, int bsorder) {
+int pme_open_unit(double aewald, int nfft1, int nfft2, int nfft3, int bsorder) {
   bool found = false;
+  const double eps = 1.0e-6;
   int idx;
   for (idx = 0; found == false && idx < detail_::pme_objs().size(); ++idx) {
     auto& st = detail_::pme_objs()[idx];
-    found = (nfft1 == st.nfft1 && nfft2 == st.nfft2 && nfft3 == st.nfft3 &&
-             bsorder == st.bsorder);
+    found = (fabs(aewald - st.aewald) < eps && nfft1 == st.nfft1 &&
+             nfft2 == st.nfft2 && nfft3 == st.nfft3 && bsorder == st.bsorder);
   }
 
   if (!found) {
@@ -93,7 +93,7 @@ int pme_open_unit(int nfft1, int nfft2, int nfft3, int bsorder) {
     detail_::pme_deviceptrs().emplace_back(nullptr);
     auto& st = detail_::pme_objs()[idx];
     auto& dptr = detail_::pme_deviceptrs()[idx];
-    pme_op_create_(st, dptr, nfft1, nfft2, nfft3, bsorder);
+    pme_op_create_(st, dptr, aewald, nfft1, nfft2, nfft3, bsorder);
   }
 
   assert(detail_::pme_objs().size() == detail_::pme_deviceptrs().size());
@@ -116,6 +116,10 @@ TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
+real (*fmp)[10];
+real (*cphi)[10];
+real (*fphi)[20];
+
 void pme_data(int op) {
   if (op == op_destroy) {
     assert(detail_::pme_objs().size() == detail_::pme_deviceptrs().size());
@@ -128,6 +132,10 @@ void pme_data(int op) {
     }
     detail_::pme_objs().clear();
     detail_::pme_deviceptrs().clear();
+
+    check_cudart(cudaFree(fmp));
+    check_cudart(cudaFree(cphi));
+    check_cudart(cudaFree(fphi));
   }
 
   if (op == op_create) {
@@ -142,23 +150,28 @@ void pme_data(int op) {
 
       get_empole_type(typ, typ_str);
       if (typ == elec_ewald)
-        epme_unit =
-            pme_open_unit(pme::nefft1, pme::nefft2, pme::nefft3, pme::bseorder);
+        epme_unit = pme_open_unit(ewald::aeewald, pme::nefft1, pme::nefft2,
+                                  pme::nefft3, pme::bseorder);
     }
 
     // polarization
     ppme_unit = -1;
     if (false) {
-      ppme_unit =
-          pme_open_unit(pme::nefft1, pme::nefft2, pme::nefft3, pme::bsporder);
+      ppme_unit = pme_open_unit(ewald::apewald, pme::nefft1, pme::nefft2,
+                                pme::nefft3, pme::bsporder);
     }
 
     // dispersion
     dpme_unit = -1;
     if (false) {
-      dpme_unit =
-          pme_open_unit(pme::ndfft1, pme::ndfft2, pme::ndfft3, pme::bsdorder);
+      dpme_unit = pme_open_unit(ewald::adewald, pme::ndfft1, pme::ndfft2,
+                                pme::ndfft3, pme::bsdorder);
     }
+
+    const size_t rs = sizeof(real);
+    check_cudart(cudaMalloc(&fmp, 10 * n * rs));
+    check_cudart(cudaMalloc(&cphi, 10 * n * rs));
+    check_cudart(cudaMalloc(&fphi, 20 * n * rs));
   }
 
   detail_::fft_data(op);

@@ -21,10 +21,11 @@ namespace gpu {
  * allocate (qfac(nfft1,nfft2,nfft3))    !! real*8
  */
 struct pme_st {
+  real aewald;
   int nfft1, nfft2, nfft3, bsorder;
   int* igrid;                     // deviceptr
   real *bsmod1, *bsmod2, *bsmod3; // deviceptr
-  real *qgrid, *qfac;             // deviceptr
+  real* qgrid;                    // deviceptr
 };
 
 namespace detail_ {
@@ -32,7 +33,7 @@ std::vector<pme_st>& pme_objs();
 std::vector<pme_st*>& pme_deviceptrs();
 }
 
-int pme_open_unit(int nfft1, int nfft2, int nfft3, int bsorder);
+int pme_open_unit(double aewald, int nfft1, int nfft2, int nfft3, int bsorder);
 pme_st& pme_obj(int pme_unit);
 pme_st* pme_deviceptr(int pme_unit);
 
@@ -48,13 +49,16 @@ extern int epme_unit; // electrostatic
 extern int ppme_unit; // polarization
 extern int dpme_unit; // dispersion
 
+extern real (*fmp)[10];
+extern real (*cphi)[10];
+extern real (*fphi)[20];
 void pme_data(int op);
 }
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void cmp_to_fmp(const real (*cmp)[10], real (*fmp)[10], int pme_unit);
+void cmp_to_fmp(real (*fmp)[10], int pme_unit);
 void fphi_to_cphi(const real (*fphi)[20], real (*cphi)[10], int pme_unit);
 }
 TINKER_NAMESPACE_END

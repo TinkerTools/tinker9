@@ -12,6 +12,9 @@ void image(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
 #pragma acc routine seq
 void imagen(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
             const box_st* __restrict__ pb);
+
+#pragma acc routine seq
+real volbox(const box_st* __restrict__ pb);
 }
 TINKER_NAMESPACE_END
 

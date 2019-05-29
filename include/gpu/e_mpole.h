@@ -71,7 +71,14 @@ void grid_mpole(real (*gpu_fmp)[10]);
  * "fphi_mpole" extracts the permanent multipole potential from
  * the particle mesh Ewald grid.
  */
-void fphi_mpole();
+void fphi_mpole(real (*gpu_fphi)[20]);
+
+/**
+ * @brief
+ * make the scalar summation over reciprocal lattice
+ */
+void pme_conv0(int pme_unit);                 // without virial
+void pme_conv1(int pme_unit, real* gpu_vir9); // with virial
 }
 TINKER_NAMESPACE_END
 
