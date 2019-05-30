@@ -201,7 +201,7 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]") {
     tinker_gpu_data_create();
 
     gpu::zero_egv();
-    tinker_gpu_empole0();
+    tinker_gpu_empole1();
 
     tinker_gpu_data_destroy();
     test_end();

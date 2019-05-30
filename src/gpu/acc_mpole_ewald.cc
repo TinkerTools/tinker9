@@ -69,13 +69,12 @@ void empole_recip_tmpl() {
 
   cmp_to_fmp(fmp, epme_unit);
   grid_mpole(fmp);
-  // fftfront(epme_unit);
-  // if_constexpr(do_v) {
-  //   pme_conv1(epme_unit, vir);
-  // } else {
-  //   pme_conv0(epme_unit);
-  // }
-  // fftback(epme_unit);
+  fftfront(epme_unit);
+  if_constexpr(do_v) { pme_conv1(epme_unit, vir_em); }
+  else {
+    pme_conv0(epme_unit);
+  }
+  fftback(epme_unit);
   // fphi_mpole(fphi);
   // fphi_to_cphi(fphi, cphi, epme_unit);
 }
