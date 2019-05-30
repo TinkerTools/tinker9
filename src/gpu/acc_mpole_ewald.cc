@@ -76,7 +76,7 @@ void empole_recip_tmpl() {
   }
   fftback(epme_unit);
   fphi_mpole(fphi);
-  // fphi_to_cphi(fphi, cphi, epme_unit);
+  fphi_to_cphi(fphi, cphi, epme_unit);
 }
 
 template <int USE>
