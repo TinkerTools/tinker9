@@ -68,7 +68,7 @@ void empole_recip_tmpl() {
   static_assert(do_a ? do_e : true, "");
 
   cmp_to_fmp(fmp, epme_unit);
-  // grid_mpole(fmp);
+  grid_mpole(fmp);
   // fftfront(epme_unit);
   // if_constexpr(do_v) {
   //   pme_conv1(epme_unit, vir);

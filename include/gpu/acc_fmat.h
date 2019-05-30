@@ -15,10 +15,19 @@ private:
 
 public:
   #pragma acc routine seq
-  FortranMatrixView(const T* _data) : data_(const_cast<T*>(_data)) {}
+  ~FortranMatrixView() {
+    #pragma acc exit data delete(this)
+  }
 
   #pragma acc routine seq
-  FortranMatrixView(T* _data) : data_(_data) {}
+  FortranMatrixView(const T* _data) : data_(const_cast<T*>(_data)) {
+    #pragma acc enter data copyin(this)
+  }
+
+  #pragma acc routine seq
+  FortranMatrixView(T* _data) : data_(_data) {
+    #pragma acc enter data copyin(this)
+  }
 
   #pragma acc routine seq
   const T& operator()(int if1) const { return data_[if1 - 1]; }
@@ -41,17 +50,30 @@ private:
 
 public:
   #pragma acc routine seq
-  FortranMatrixView(const T* _data) : data_(const_cast<T*>(_data)) {}
+  ~FortranMatrixView() {
+    #pragma acc exit data delete(this)
+  }
 
   #pragma acc routine seq
-  FortranMatrixView(T* _data) : data_(_data) {}
+  FortranMatrixView(const T* _data) : data_(const_cast<T*>(_data)) {
+    #pragma acc enter data copyin(this)
+  }
+
+  #pragma acc routine seq
+  FortranMatrixView(T* _data) : data_(_data) {
+    #pragma acc enter data copyin(this)
+  }
 
   #pragma acc routine seq
   FortranMatrixView(const T (*_data)[NFRow])
-      : data_(const_cast<T*>(&_data[0][0])) {}
+      : data_(const_cast<T*>(&_data[0][0])) {
+    #pragma acc enter data copyin(this)
+  }
 
   #pragma acc routine seq
-  FortranMatrixView(T (*_data)[NFRow]) : data_(&_data[0][0]) {}
+  FortranMatrixView(T (*_data)[NFRow]) : data_(&_data[0][0]) {
+    #pragma acc enter data copyin(this)
+  }
 
   #pragma acc routine seq
   const T& operator()(int ifrow1, int ifcol1) const {
@@ -76,19 +98,32 @@ private:
 
 public:
   #pragma acc routine seq
-  FortranDynamicMatrixView(const T* _data, int _dim)
-      : data_(const_cast<T*>(_data)), nfrow_(_dim) {}
+  ~FortranDynamicMatrixView() {
+    #pragma acc exit data delete(this)
+  }
 
   #pragma acc routine seq
-  FortranDynamicMatrixView(T* _data, int _dim) : data_(_data), nfrow_(_dim) {}
+  FortranDynamicMatrixView(const T* _data, int _dim)
+      : data_(const_cast<T*>(_data)), nfrow_(_dim) {
+    #pragma acc enter data copyin(this)
+  }
+
+  #pragma acc routine seq
+  FortranDynamicMatrixView(T* _data, int _dim) : data_(_data), nfrow_(_dim) {
+    #pragma acc enter data copyin(this)
+  }
 
   #pragma acc routine seq
   FortranDynamicMatrixView(const T* _data, int _dim, int /* dummy_dim */)
-      : data_(const_cast<T*>(_data)), nfrow_(_dim) {}
+      : data_(const_cast<T*>(_data)), nfrow_(_dim) {
+    #pragma acc enter data copyin(this)
+  }
 
   #pragma acc routine seq
   FortranDynamicMatrixView(T* _data, int _dim, int /* dummy_dim */)
-      : data_(_data), nfrow_(_dim) {}
+      : data_(_data), nfrow_(_dim) {
+    #pragma acc enter data copyin(this)
+  }
 
   #pragma acc routine seq
   const T& operator()(int ifrow1, int ifcol1) const {
