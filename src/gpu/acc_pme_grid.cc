@@ -290,14 +290,19 @@ void fphi_mpole(real (*fphi)[20]) {
     real tuv102 = 0;
     real tuv012 = 0;
     real tuv111 = 0;
-
-    for (int it3 = 0; it3 < bsorder; ++it3) {
-      int k = igrid3 + it3 - (igrid3 + it3 >= nfft3 ? nfft3 : 0);
-      int base_k = 4 * k;
-      real v0 = thetai3[base_k];
-      real v1 = thetai3[base_k + 1];
-      real v2 = thetai3[base_k + 2];
-      real v3 = thetai3[base_k + 3];
+    #pragma acc loop independent reduction(+:\
+                tuv000,tuv001,tuv010,tuv100,tuv200,\
+                tuv020,tuv002,tuv110,tuv101,tuv011,\
+                tuv300,tuv030,tuv003,tuv210,tuv201,\
+                tuv120,tuv021,tuv102,tuv012,tuv111)
+    for (int iz = 0; iz < bsorder; ++iz) {
+      int zbase = igrid3 + iz;
+      zbase -= (zbase >= nfft3 ? nfft3 : 0);
+      zbase *= (nfft1 * nfft2);
+      real v0 = thetai3[4 * iz];
+      real v1 = thetai3[4 * iz + 1];
+      real v2 = thetai3[4 * iz + 2];
+      real v3 = thetai3[4 * iz + 3];
       real tu00 = 0;
       real tu10 = 0;
       real tu01 = 0;
@@ -308,62 +313,61 @@ void fphi_mpole(real (*fphi)[20]) {
       real tu21 = 0;
       real tu12 = 0;
       real tu03 = 0;
-      for (int it2 = 0; it2 < bsorder; ++it2) {
-        int j = igrid2 + it2 - (igrid2 + it2 >= nfft2 ? nfft2 : 0);
-        int base_j = 4 * j;
-        real u0 = thetai2[base_j];
-        real u1 = thetai2[base_j + 1];
-        real u2 = thetai2[base_j + 2];
-        real u3 = thetai2[base_j + 3];
+      #pragma acc loop independent reduction(+:\
+                  tu00,tu10,tu01,tu20,tu11,tu02,tu30,tu21,tu12,tu03)
+      for (int iy = 0; iy < bsorder; ++iy) {
+        int ybase = igrid2 + iy;
+        ybase -= (ybase >= nfft2 ? nfft2 : 0);
+        ybase *= nfft1;
+        real u0 = thetai2[4 * iy];
+        real u1 = thetai2[4 * iy + 1];
+        real u2 = thetai2[4 * iy + 2];
+        real u3 = thetai2[4 * iy + 3];
         real t0 = 0;
         real t1 = 0;
         real t2 = 0;
         real t3 = 0;
-        for (int it1 = 0; it1 < bsorder; ++it1) {
-          int i = igrid1 + it1 - (igrid1 + it1 >= nfft1 ? nfft1 : 0);
-          int base_i = 4 * i;
-          real ww0 = thetai1[base_i];
-          real ww1 = thetai1[base_i + 1];
-          real ww2 = thetai1[base_i + 2];
-          real ww3 = thetai1[base_i + 3];
-          int ijk = i + j * nfft1 + k * nfft1 * nfft2;
-          real tq = dptr->qgrid[2 * ijk];
-          t0 += tq * ww0;
-          t1 += tq * ww1;
-          t2 += tq * ww2;
-          t3 += tq * ww3;
+        #pragma acc loop independent reduction(+:t0,t1,t2,t3)
+        for (int ix = 0; ix < bsorder; ++ix) {
+          int xbase = igrid1 + ix;
+          xbase -= (xbase >= nfft1 ? nfft1 : 0);
+          real tq = dptr->qgrid[2 * (xbase + ybase + zbase)];
+          t0 += tq * thetai1[4 * ix];
+          t1 += tq * thetai1[4 * ix + 1];
+          t2 += tq * thetai1[4 * ix + 2];
+          t3 += tq * thetai1[4 * ix + 3];
         }
-        tu00 = tu00 + t0 * u0;
-        tu10 = tu10 + t1 * u0;
-        tu01 = tu01 + t0 * u1;
-        tu20 = tu20 + t2 * u0;
-        tu11 = tu11 + t1 * u1;
-        tu02 = tu02 + t0 * u2;
-        tu30 = tu30 + t3 * u0;
-        tu21 = tu21 + t2 * u1;
-        tu12 = tu12 + t1 * u2;
-        tu03 = tu03 + t0 * u3;
+        tu00 += t0 * u0;
+        tu10 += t1 * u0;
+        tu01 += t0 * u1;
+        tu20 += t2 * u0;
+        tu11 += t1 * u1;
+        tu02 += t0 * u2;
+        tu30 += t3 * u0;
+        tu21 += t2 * u1;
+        tu12 += t1 * u2;
+        tu03 += t0 * u3;
       }
-      tuv000 = tuv000 + tu00 * v0;
-      tuv100 = tuv100 + tu10 * v0;
-      tuv010 = tuv010 + tu01 * v0;
-      tuv001 = tuv001 + tu00 * v1;
-      tuv200 = tuv200 + tu20 * v0;
-      tuv020 = tuv020 + tu02 * v0;
-      tuv002 = tuv002 + tu00 * v2;
-      tuv110 = tuv110 + tu11 * v0;
-      tuv101 = tuv101 + tu10 * v1;
-      tuv011 = tuv011 + tu01 * v1;
-      tuv300 = tuv300 + tu30 * v0;
-      tuv030 = tuv030 + tu03 * v0;
-      tuv003 = tuv003 + tu00 * v3;
-      tuv210 = tuv210 + tu21 * v0;
-      tuv201 = tuv201 + tu20 * v1;
-      tuv120 = tuv120 + tu12 * v0;
-      tuv021 = tuv021 + tu02 * v1;
-      tuv102 = tuv102 + tu10 * v2;
-      tuv012 = tuv012 + tu01 * v2;
-      tuv111 = tuv111 + tu11 * v1;
+      tuv000 += tu00 * v0;
+      tuv100 += tu10 * v0;
+      tuv010 += tu01 * v0;
+      tuv001 += tu00 * v1;
+      tuv200 += tu20 * v0;
+      tuv020 += tu02 * v0;
+      tuv002 += tu00 * v2;
+      tuv110 += tu11 * v0;
+      tuv101 += tu10 * v1;
+      tuv011 += tu01 * v1;
+      tuv300 += tu30 * v0;
+      tuv030 += tu03 * v0;
+      tuv003 += tu00 * v3;
+      tuv210 += tu21 * v0;
+      tuv201 += tu20 * v1;
+      tuv120 += tu12 * v0;
+      tuv021 += tu02 * v1;
+      tuv102 += tu10 * v2;
+      tuv012 += tu01 * v2;
+      tuv111 += tu11 * v1;
     }
     fphi[i][0] = tuv000;
     fphi[i][1] = tuv100;

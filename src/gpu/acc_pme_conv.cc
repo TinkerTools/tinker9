@@ -88,12 +88,12 @@ void pme_conv_tmpl(int pme_unit, real* gpu_vir9) {
         #pragma acc atomic update
         gpu_vir9[_zz] += vzz;
       }
-
-      // complete the transformation of the PME grid
-
-      dptr->qgrid[2 * i] *= expterm;
-      dptr->qgrid[2 * i + 1] *= expterm;
     }
+
+    // complete the transformation of the PME grid
+
+    dptr->qgrid[2 * i] *= expterm;
+    dptr->qgrid[2 * i + 1] *= expterm;
   }
 }
 
