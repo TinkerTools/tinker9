@@ -110,7 +110,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     const double ref_ereal = 132.76851908903473;
     const double ref_erecip = 147.1618669321897;
     const double ref_eself = -379.1602228111336;
-    const double ref_eng = ref_eself + ref_erecip;
+    const double ref_eng = ref_eself + ref_erecip + ref_ereal;
     const int ref_count = 222;
 
     test_begin_1_xyz(argc, argv);

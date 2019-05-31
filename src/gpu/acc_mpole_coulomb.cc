@@ -53,6 +53,9 @@ void empole_coulomb_tmpl() {
 
     #pragma acc parallel loop firstprivate(mscale[0:n])
     for (int i = 0; i < n; ++i) {
+
+      // set exclusion coefficients for connected atoms
+
       const int n12i = couple->n12[i];
       const int n13i = couple->n13[i];
       const int n14i = couple->n14[i];
@@ -89,10 +92,9 @@ void empole_coulomb_tmpl() {
       #pragma acc loop independent
       for (int kk = 0; kk < nmlsti; ++kk) {
         int k = mlst->lst[base + kk];
-        real xr, yr, zr;
-        xr = x[k] - xi;
-        yr = y[k] - yi;
-        zr = z[k] - zi;
+        real xr = x[k] - xi;
+        real yr = y[k] - yi;
+        real zr = z[k] - zi;
 
         image(xr, yr, zr, box);
         real r2 = xr * xr + yr * yr + zr * zr;
@@ -126,19 +128,19 @@ void empole_coulomb_tmpl() {
           real qiqk = 2 * (qixy * qkxy + qixz * qkxz + qiyz * qkyz) +
               qixx * qkxx + qiyy * qkyy + qizz * qkzz;
 
-          real term1 = ci * ck;
-          real term2 = ck * dir - ci * dkr + dik;
-          real term3 =
-              ci * qkr + ck * qir - dir * dkr + 2 * (dkqi - diqk + qiqk);
-          real term4 = dir * qkr - dkr * qir - 4 * qik;
-          real term5 = qir * qkr;
-
           real rr1 = f * mscale[k] * REAL_RECIP(r);
           real rr2 = REAL_RECIP(r2);
           real rr3 = rr1 * rr2;
           real rr5 = 3 * rr3 * rr2;
           real rr7 = 5 * rr5 * rr2;
           real rr9 = 7 * rr7 * rr2;
+
+          real term1 = ci * ck;
+          real term2 = ck * dir - ci * dkr + dik;
+          real term3 =
+              ci * qkr + ck * qir - dir * dkr + 2 * (dkqi - diqk + qiqk);
+          real term4 = dir * qkr - dkr * qir - 4 * qik;
+          real term5 = qir * qkr;
 
           if_constexpr(do_e) {
             real e = term1 * rr1 + term2 * rr3 + term3 * rr5 + term4 * rr7 +
@@ -151,9 +153,10 @@ void empole_coulomb_tmpl() {
                 *nem += 1;
               }
             }
-          } // end if_constexpr(do_e)
+          } // end if (do_e)
 
           if_constexpr(do_g) {
+
             // gradient
 
             real qixk = qixx * qkx + qixy * qky + qixz * qkz;
@@ -206,6 +209,7 @@ void empole_coulomb_tmpl() {
             gz[k] -= frcz;
 
             // torque
+
             real dirx = diy * zr - diz * yr;
             real diry = diz * xr - dix * zr;
             real dirz = dix * yr - diy * xr;
@@ -280,6 +284,8 @@ void empole_coulomb_tmpl() {
             #pragma acc atomic update
             trqz[k] += ttmk[2];
 
+            // virial
+
             if_constexpr(do_v) {
               real vxx = -xr * frcx;
               real vxy = -0.5f * (yr * frcx + xr * frcy);
@@ -306,10 +312,12 @@ void empole_coulomb_tmpl() {
               vir_em[_yz] += vyz;
               #pragma acc atomic update
               vir_em[_zz] += vzz;
-            } // end if_constexpr(do_v)
-          }   // end if_constexpr(do_g)
+            } // end if (do_v)
+          }   // end if (do_g)
         }     // end if (r2 <= off2)
       }       // end for (int kk)
+
+      // reset exclusion coefficients for connected atoms
 
       #pragma acc loop independent
       for (int j = 0; j < n12i; ++j)

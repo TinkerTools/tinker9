@@ -10,6 +10,8 @@
 #pragma acc routine(pow) seq
 #pragma acc routine(cos) seq
 #pragma acc routine(sin) seq
+#pragma acc routine(erf) seq
+#pragma acc routine(erfc) seq
 
 #pragma acc routine(sqrtf) seq
 #pragma acc routine(expf) seq
@@ -18,6 +20,8 @@
 #pragma acc routine(powf) seq
 #pragma acc routine(cosf) seq
 #pragma acc routine(sinf) seq
+#pragma acc routine(erff) seq
+#pragma acc routine(erfcf) seq
 
 #pragma acc routine(abs) seq
 

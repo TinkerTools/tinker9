@@ -4,33 +4,56 @@
 #include "macro.h"
 #include <cmath>
 
+TINKER_NAMESPACE_BEGIN
+
 #ifdef TINKER_GPU_DOUBLE
-#  define REAL_SQRT sqrt
-#  define REAL_EXP exp
-#  define REAL_FLOOR floor
-#  define REAL_ABS fabs
-#  define REAL_POW pow
+typedef double real_t__;
+
+#  define REAL_SQRT(x) sqrt(x)
+#  define REAL_EXP(x) exp(x)
+#  define REAL_FLOOR(x) floor(x)
+#  define REAL_ABS(x) fabs(x)
+#  define REAL_POW(x) pow(x)
 #  define REAL_RECIP(x) (1 / ((double)x))
-#  define REAL_RSQRT(x) (1 / sqrt(x))
+#  define REAL_RSQRT(x) (1 / sqrt((double)x))
 #  define REAL_COS(x) cos(x)
 #  define REAL_SIN(x) sin(x)
+#  define REAL_ERF(x) erf(x)
+#  define REAL_ERFC(x) erfc(x)
 #endif
 
 #ifdef TINKER_GPU_SINGLE
-#  define REAL_SQRT sqrtf
-#  define REAL_EXP expf
-#  define REAL_FLOOR floorf
-#  define REAL_ABS fabsf
-#  define REAL_POW powf
+typedef float real_t__;
+
+#  define REAL_SQRT(x) sqrtf(x)
+#  define REAL_EXP(x) expf(x)
+#  define REAL_FLOOR(x) floorf(x)
+#  define REAL_ABS(x) fabsf(x)
+#  define REAL_POW(x) powf(x)
 #  define REAL_RECIP(x) (1 / ((float)x))
-#  define REAL_RSQRT(x) (1 / sqrtf(x))
+#  define REAL_RSQRT(x) (1 / sqrtf((float)x))
 #  define REAL_COS(x) cosf(x)
 #  define REAL_SIN(x) sinf(x)
+#  define REAL_ERF(x) erff(x)
+#  define REAL_ERFC(x) erfcf(x)
 #endif
+
+#define INT_ABS(x) abs(x)
 
 #define REAL_SQ(x) ((x) * (x))
 #define REAL_CUBE(x) ((x) * (x) * (x))
 
-#define INT_ABS abs
+constexpr real_t__ twosix = 1.12246204830937298143;    // 2**(1/6)
+constexpr real_t__ sqrttwo = 1.41421356237309504880;   // sqrt(2)
+constexpr real_t__ sqrtthree = 1.73205080756887729353; // sqrt(3)
+
+constexpr real_t__ elog = M_E;
+constexpr real_t__ logten = M_LN10;
+
+constexpr real_t__ pi = M_PI;
+constexpr real_t__ radian = 57.2957795130823208768; // 180/PI
+constexpr real_t__ sqrtpi = 1.77245385090551602730; // sqrt(PI)
+
+TINKER_NAMESPACE_END
 
 #endif
