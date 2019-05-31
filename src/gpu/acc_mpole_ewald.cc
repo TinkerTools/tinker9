@@ -550,13 +550,15 @@ void empole_ewald_tmpl() {
   chkpole();
   rotpole();
 
-  #pragma acc serial deviceptr(em,nem,vir_em)
-  {
-    *em = 0;
-    if_constexpr(do_a) { *nem = 0; }
-    if_constexpr(do_v) {
-      for (int i = 0; i < 9; ++i)
-        vir_em[i] = 0;
+  if_constexpr(do_e || do_a || do_v) {
+    #pragma acc serial deviceptr(em,nem,vir_em)
+    {
+      if_constexpr(do_e) { *em = 0; }
+      if_constexpr(do_a) { *nem = 0; }
+      if_constexpr(do_v) {
+        for (int i = 0; i < 9; ++i)
+          vir_em[i] = 0;
+      }
     }
   }
 
