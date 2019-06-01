@@ -122,6 +122,38 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
   }
 }
 
+#define COMPARE_CODE_BLOCK2_                                                   \
+  {                                                                            \
+    gpu::zero_egv();                                                           \
+    tinker_gpu_empole0();                                                      \
+    COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
+                                                                               \
+    gpu::zero_egv();                                                           \
+    tinker_gpu_empole1();                                                      \
+    COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
+    COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
+    COMPARE_VIR_(gpu::vir_em, ref_v, eps);                                     \
+                                                                               \
+    gpu::zero_egv();                                                           \
+    tinker_gpu_empole3();                                                      \
+    COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
+    COMPARE_COUNT_(gpu::nem, ref_count);                                       \
+                                                                               \
+    gpu::zero_egv();                                                           \
+    tinker_gpu_empole4();                                                      \
+    COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
+    COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
+                                                                               \
+    gpu::zero_egv();                                                           \
+    tinker_gpu_empole5();                                                      \
+    COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
+                                                                               \
+    gpu::zero_egv();                                                           \
+    tinker_gpu_empole6();                                                      \
+    COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
+    COMPARE_VIR_(gpu::vir_em, ref_v, eps);                                     \
+  }
+
 TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
   file fpr("amoeba09.prm", amoeba09_prm);
 
@@ -146,6 +178,7 @@ TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
 
     const double ref_eng = -150.9381;
     const int ref_count = 1;
+    const double eps_g = eps;
     const double ref_grad[][3] = {{-68.6082, 0.0, 0.0}, {68.6082, 0.0, 0.0}};
     const double ref_v[][3] = {
         {150.938, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
@@ -154,20 +187,7 @@ TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
     gpu::use_data = usage;
     tinker_gpu_data_create();
 
-    gpu::zero_egv();
-    tinker_gpu_empole0();
-    COMPARE_ENERGY_(gpu::em, ref_eng, eps);
-
-    gpu::zero_egv();
-    tinker_gpu_empole1();
-    COMPARE_ENERGY_(gpu::em, ref_eng, eps);
-    COMPARE_GRADIENT_(ref_grad, eps);
-    COMPARE_VIR_(gpu::vir_em, ref_v, eps);
-
-    gpu::zero_egv();
-    tinker_gpu_empole3();
-    COMPARE_ENERGY_(gpu::em, ref_eng, eps);
-    COMPARE_COUNT_(gpu::nem, ref_count);
+    COMPARE_CODE_BLOCK2_;
 
     tinker_gpu_data_destroy();
     test_end();
@@ -187,7 +207,7 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]") {
   usage |= gpu::use_grad;
   usage |= gpu::use_virial;
 
-  const double eps = 1.0e-5;
+  const double eps = 5.0e-4;
 
   SECTION("empole -- pme") {
     const char* x4 = "test_nacl.xyz_4";
@@ -196,12 +216,39 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]") {
     const char* argv[] = {"dummy", x4};
     int argc = 2;
 
+    const double ref_eng = -0.3146;
+    const int ref_count = 2;
+    // total grad
+    const double eps_g = eps;
+    const double ref_grad[][3] = {{0.1731, 0.1921, 0.2103},
+                                  {-0.1668, -0.1917, -0.2081}};
+    // self grad = 0
+    // real grad
+    // const double ref_grad[][3] = {{21.9459, 24.1404, 26.3789},
+    //                               {-21.9459, -24.1404, -26.3789}};
+    // recip grad
+    // const double ref_grad[][3] = {{-21.7728, -23.9484, -26.1686},
+    //                               {21.7791, 23.9487, 26.1709}};
+    const double eps_v = 0.001;
+    // total virial
+    const double ref_v[][3] = {{0.059, -0.284, -0.311},
+                               {-0.284, 0.105, -0.342},
+                               {-0.311, -0.342, 0.155}};
+    // self virial = 0
+    // real virial
+    // const double ref_v[][3] = {{-21.946, -24.140, -26.379},
+    //                            {-24.140, -26.554, -29.017},
+    //                            {-26.379, -29.017, -31.707}};
+    // recip virial
+    // const double ref_v[][3] = {{22.005, 23.857, 26.068},
+    //                            {23.857, 26.659, 28.675},
+    //                            {26.068, 28.675, 31.863}};
+
     test_begin_1_xyz(argc, argv);
     gpu::use_data = usage;
     tinker_gpu_data_create();
 
-    gpu::zero_egv();
-    tinker_gpu_empole1();
+    COMPARE_CODE_BLOCK2_;
 
     tinker_gpu_data_destroy();
     test_end();
@@ -209,3 +256,4 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]") {
 }
 
 #undef COMPARE_CODE_BLOCK1_
+#undef COMPARE_CODE_BLOCK2_

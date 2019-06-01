@@ -20,7 +20,7 @@ static void pme_op_destroy_(pme_st& st, pme_st*& dptr) {
 
 static void pme_op_create_(pme_st& st, pme_st*& dptr, double aewald, int nfft1,
                            int nfft2, int nfft3, int bsorder) {
-  const size_t rs = sizeof(int);
+  const size_t rs = sizeof(real);
   size_t size;
 
   st.aewald = aewald;

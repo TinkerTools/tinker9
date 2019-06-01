@@ -15,7 +15,7 @@ using namespace test;
     gpu::copyout_data2(2, 3, dst, gpu::gz, gpu::n);                            \
     for (int i = 0; i < 6; ++i) {                                              \
       for (int j = 0; j < 3; ++j) {                                            \
-        REQUIRE(grad[i * 30][j] == Approx(ref_grad[i][j]).epsilon(eps));       \
+        REQUIRE(grad[i * 30][j] == Approx(ref_grad[i][j]).margin(eps));        \
       }                                                                        \
     }                                                                          \
   }
@@ -29,7 +29,7 @@ using namespace test;
     tinker_gpu_evdw_hal1();                                                    \
     COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
     COMPARE_GRAD_;                                                             \
-    COMPARE_VIR_(gpu::vir_ev, ref_v, eps);                                     \
+    COMPARE_VIR_(gpu::vir_ev, ref_v, eps_v);                                   \
                                                                                \
     gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal3();                                                    \
@@ -48,10 +48,10 @@ using namespace test;
     gpu::zero_egv();                                                           \
     tinker_gpu_evdw_hal6();                                                    \
     COMPARE_GRAD_;                                                             \
-    COMPARE_VIR_(gpu::vir_ev, ref_v, eps);                                     \
+    COMPARE_VIR_(gpu::vir_ev, ref_v, eps_v);                                   \
   }
 
-TEST_CASE("CLN025", "[ff][ehal][cln025]") {
+TEST_CASE("CLN025", "[ff][hal][cln025]") {
   const char* x = "test_cln025.xyz";
   const char* k = "test_cln025.key";
   const char* p = "amoebabio09.prm";
@@ -81,6 +81,7 @@ TEST_CASE("CLN025", "[ff][ehal][cln025]") {
         {-10.4202, 0.6937, 2.7019}, {4.0910, 2.0984, -2.4349},
         {-0.5266, 3.5665, 0.4037},  {-0.2577, -1.9100, 6.9858},
         {1.0470, 3.2855, -4.3019},  {4.3475, -2.2594, 1.8280}};
+    const double eps_v = 0.001;
     const double ref_v[][3] = {{-800.488, -37.589, -2.250},
                                {-37.589, -758.657, 41.895},
                                {-2.250, 41.895, -681.179}};
@@ -113,6 +114,7 @@ TEST_CASE("CLN025", "[ff][ehal][cln025]") {
         {-10.5674, 0.6411, 2.6721}, {4.0652, 2.1284, -2.4015},
         {-0.5214, 3.5720, 0.3980},  {-0.1419, -1.9235, 6.9387},
         {1.0707, 3.2989, -4.2483},  {4.3235, -2.2325, 1.8485}};
+    const double eps_v = 0.001;
     const double ref_v[][3] = {{-914.956, -8.336, 26.361},
                                {-8.336, -781.555, 29.820},
                                {26.361, 29.820, -706.064}};

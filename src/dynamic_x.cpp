@@ -102,7 +102,7 @@ void dynamic_x(int argc, char** argv) {
         integrate == "GHMC") {
       if (mode != 4) {
         mode = 4;
-        print(std::cout,
+        print(stdout,
               "\n Switching to NPT Ensemble as Required by Chosen Integrator");
       }
     }

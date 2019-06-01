@@ -126,6 +126,7 @@ void empole_real_tmpl() {
         real rr5 = 3 * rr3 * rr2;
         real rr7 = 5 * rr5 * rr2;
         real rr9 = 7 * rr7 * rr2;
+        real rr11;
 
         real ralpha = aewald * r;
         real bn[6];
@@ -152,7 +153,10 @@ void empole_real_tmpl() {
         bn[2] *= f;
         bn[3] *= f;
         bn[4] *= f;
-        if_constexpr(do_g) { bn[5] *= f; }
+        if_constexpr(do_g) {
+          bn[5] *= f;
+          rr11 = 9 * rr9 * rr2;
+        }
 
         real term1 = ci * ck;
         real term2 = ck * dir - ci * dkr + dik;
@@ -201,7 +205,6 @@ void empole_real_tmpl() {
           real dkqiy = dkx * qixy + dky * qiyy + dkz * qiyz;
           real dkqiz = dkx * qixz + dky * qiyz + dkz * qizz;
 
-          real rr11 = 9 * rr9 * rr2;
           rr11 = bn[5] - scalek * rr11;
 
           real de = term1 * rr3 + term2 * rr5 + term3 * rr7 + term4 * rr9 +
@@ -458,32 +461,32 @@ void empole_recip_tmpl() {
 
         // resolve site torques then increment forces and virial
 
-        real cmp_cpp[10];
-        farray_real cmp(cmp_cpp);
+        real cmp2 = rpole[iatom][mpl_pme_x];
+        real cmp3 = rpole[iatom][mpl_pme_y];
+        real cmp4 = rpole[iatom][mpl_pme_z];
+        real cmp5 = rpole[iatom][mpl_pme_xx];
+        real cmp6 = rpole[iatom][mpl_pme_yy];
+        real cmp7 = rpole[iatom][mpl_pme_zz];
+        real cmp8 = 2 * rpole[iatom][mpl_pme_xy];
+        real cmp9 = 2 * rpole[iatom][mpl_pme_xz];
+        real cmp10 = 2 * rpole[iatom][mpl_pme_yz];
+
         fmat_real<10> cphi(gpu::cphi);
 
         const int i = iatom + 1;
 
-        cmp(1) = rpole[iatom][mpl_pme_0];
-        cmp(2) = rpole[iatom][mpl_pme_x];
-        cmp(3) = rpole[iatom][mpl_pme_y];
-        cmp(4) = rpole[iatom][mpl_pme_z];
-        cmp(5) = rpole[iatom][mpl_pme_xx];
-        cmp(6) = rpole[iatom][mpl_pme_yy];
-        cmp(7) = rpole[iatom][mpl_pme_zz];
-        cmp(8) = 2 * rpole[iatom][mpl_pme_xy];
-        cmp(9) = 2 * rpole[iatom][mpl_pme_xz];
-        cmp(10) = 2 * rpole[iatom][mpl_pme_yz];
-
-        real tem1 = cmp(4) * cphi(3, i) - cmp(3) * cphi(4, i) +
-            2 * (cmp(7) - cmp(6)) * cphi(10, i) + cmp(9) * cphi(8, i) +
-            cmp(10) * cphi(6, i) - cmp(8) * cphi(9, i) - cmp(10) * cphi(7, i);
-        real tem2 = cmp(2) * cphi(4, i) - cmp(4) * cphi(2, i) +
-            2 * (cmp(5) - cmp(7)) * cphi(9, i) + cmp(8) * cphi(10, i) +
-            cmp(9) * cphi(7, i) - cmp(9) * cphi(5, i) - cmp(10) * cphi(8, i);
-        real tem3 = cmp(3) * cphi(2, i) - cmp(2) * cphi(3, i) +
-            2 * (cmp(6) - cmp(5)) * cphi(8, i) + cmp(8) * cphi(5, i) +
-            cmp(10) * cphi(9, i) - cmp(8) * cphi(6, i) - cmp(9) * cphi(10, i);
+        real tem1 = cmp4 * cphi(3, i) - cmp3 * cphi(4, i) +
+            2 * (cmp7 - cmp6) * cphi(10, i) + cmp9 * cphi(8, i) +
+            cmp10 * cphi(6, i) - cmp8 * cphi(9, i) - cmp10 * cphi(7, i);
+        real tem2 = cmp2 * cphi(4, i) - cmp4 * cphi(2, i) +
+            2 * (cmp5 - cmp7) * cphi(9, i) + cmp8 * cphi(10, i) +
+            cmp9 * cphi(7, i) - cmp9 * cphi(5, i) - cmp10 * cphi(8, i);
+        real tem3 = cmp3 * cphi(2, i) - cmp2 * cphi(3, i) +
+            2 * (cmp6 - cmp5) * cphi(8, i) + cmp8 * cphi(5, i) +
+            cmp10 * cphi(9, i) - cmp8 * cphi(6, i) - cmp9 * cphi(10, i);
+        tem1 *= f;
+        tem2 *= f;
+        tem3 *= f;
 
         #pragma acc atomic update
         trqx[iatom] += tem1;
@@ -493,24 +496,30 @@ void empole_recip_tmpl() {
         trqz[iatom] += tem3;
 
         if_constexpr(do_v) {
-          real vxx = -cmp(2) * cphi(2, i) - 2 * cmp(5) * cphi(5, i) -
-              cmp(8) * cphi(8, i) - cmp(9) * cphi(9, i);
-          real vxy = -0.5f * (cmp(3) * cphi(2, i) + cmp(2) * cphi(3, i)) -
-              (cmp(5) + cmp(6)) * cphi(8, i) -
-              0.5f * cmp(8) * (cphi(5, i) + cphi(6, i)) -
-              0.5f * (cmp(9) * cphi(10, i) + cmp(10) * cphi(9, i));
-          real vxz = -0.5f * (cmp(4) * cphi(2, i) + cmp(2) * cphi(4, i)) -
-              (cmp(5) + cmp(7)) * cphi(9, i) -
-              0.5f * cmp(9) * (cphi(5, i) + cphi(7, i)) -
-              0.5f * (cmp(8) * cphi(10, i) + cmp(10) * cphi(8, i));
-          real vyy = -cmp(3) * cphi(3, i) - 2 * cmp(6) * cphi(6, i) -
-              cmp(8) * cphi(8, i) - cmp(10) * cphi(10, i);
-          real vyz = -0.5f * (cmp(4) * cphi(3, i) + cmp(3) * cphi(4, i)) -
-              (cmp(6) + cmp(7)) * cphi(10, i) -
-              0.5f * cmp(10) * (cphi(6, i) + cphi(7, i)) -
-              0.5f * (cmp(8) * cphi(9, i) + cmp(9) * cphi(8, i));
-          real vzz = -cmp(4) * cphi(4, i) - 2 * cmp(7) * cphi(7, i) -
-              cmp(9) * cphi(9, i) - cmp(10) * cphi(10, i);
+          real vxx = -cmp2 * cphi(2, i) - 2 * cmp5 * cphi(5, i) -
+              cmp8 * cphi(8, i) - cmp9 * cphi(9, i);
+          real vxy = -0.5f * (cmp3 * cphi(2, i) + cmp2 * cphi(3, i)) -
+              (cmp5 + cmp6) * cphi(8, i) -
+              0.5f * cmp8 * (cphi(5, i) + cphi(6, i)) -
+              0.5f * (cmp9 * cphi(10, i) + cmp10 * cphi(9, i));
+          real vxz = -0.5f * (cmp4 * cphi(2, i) + cmp2 * cphi(4, i)) -
+              (cmp5 + cmp7) * cphi(9, i) -
+              0.5f * cmp9 * (cphi(5, i) + cphi(7, i)) -
+              0.5f * (cmp8 * cphi(10, i) + cmp10 * cphi(8, i));
+          real vyy = -cmp3 * cphi(3, i) - 2 * cmp6 * cphi(6, i) -
+              cmp8 * cphi(8, i) - cmp10 * cphi(10, i);
+          real vyz = -0.5f * (cmp4 * cphi(3, i) + cmp3 * cphi(4, i)) -
+              (cmp6 + cmp7) * cphi(10, i) -
+              0.5f * cmp10 * (cphi(6, i) + cphi(7, i)) -
+              0.5f * (cmp8 * cphi(9, i) + cmp9 * cphi(8, i));
+          real vzz = -cmp4 * cphi(4, i) - 2 * cmp7 * cphi(7, i) -
+              cmp9 * cphi(9, i) - cmp10 * cphi(10, i);
+          vxx *= f;
+          vxy *= f;
+          vxz *= f;
+          vyy *= f;
+          vyz *= f;
+          vzz *= f;
 
           #pragma acc atomic update
           vir_em[_xx] += vxx;
@@ -565,6 +574,11 @@ void empole_ewald_tmpl() {
   empole_real_tmpl<USE>();
 
   empole_recip_tmpl<USE>();
+
+  if_constexpr(do_v) { torque1(); }
+  else if_constexpr(do_g) {
+    torque0();
+  }
 }
 }
 TINKER_NAMESPACE_END
