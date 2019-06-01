@@ -103,7 +103,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     const char* argv[] = {"dummy", x1};
     int argc = 2;
 
-    const double eps_e = 0.0005;
+    const double eps_e = 0.0001;
     // emreal 132.76851908903473
     // +recip 279.93038602122442 // recip 147.1618669321897
     // +self -99.229836789909172 // self -379.1602228111336
@@ -112,14 +112,33 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     const double ref_eself = -379.1602228111336;
     const double ref_eng = ref_eself + ref_erecip + ref_ereal;
     const int ref_count = 222;
+    const double eps_g = 0.0005;
+    const double ref_grad[][3] = {
+        {-20.0239, 29.1238, 0.7844},   {11.8249, -9.4636, 3.1958},
+        {14.5683, -4.9576, 0.0931},    {-5.7229, 0.5038, -0.1740},
+        {-4.7824, 4.2038, -1.2616},    {35.8953, -26.6166, 10.8531},
+        {-10.9482, 10.2634, -1.7619},  {-26.6406, 13.8783, -5.5468},
+        {11.7934, -4.2057, 8.9439},    {-5.7126, 3.6221, -1.4949},
+        {3.5447, -2.8759, -1.0921},    {-1.4544, 0.9341, -0.4978},
+        {-2.1774, 1.4935, 0.3237},     {-1.9210, 1.7174, 0.9565},
+        {-0.6072, -4.9773, 9.5574},    {-1.8037, 1.1493, -2.7232},
+        {1.4169, -0.3143, -5.4280},    {0.0561, 6.4388, -7.8332},
+        {22.8962, -41.3767, -55.0242}, {-17.8085, 9.9950, 8.4640},
+        {-5.9679, 9.6342, 14.0679},    {3.6422, 2.0227, 25.5414}};
+    const double eps_v = 0.001;
+    const double ref_v[][3] = {{76.909, -31.146, 7.610},
+                               {-31.146, 53.934, 7.245},
+                               {7.610, 7.245, 3.181}};
 
     test_begin_1_xyz(argc, argv);
     gpu::use_data = usage;
     tinker_gpu_data_create();
 
     gpu::zero_egv();
-    tinker_gpu_empole0();
+    tinker_gpu_empole1();
     COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
+    COMPARE_GRADIENT_(ref_grad, eps_g);
+    COMPARE_VIR_(gpu::vir_em, ref_v, eps_v);
 
     tinker_gpu_data_destroy();
     test_end();
