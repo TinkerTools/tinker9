@@ -38,6 +38,8 @@ void empole_real_tmpl() {
   const real aewald_sq_2 = 2 * aewald * aewald;
   const real fterm = -f * aewald * 0.5 * M_2_SQRTPI;
 
+  real bn[6];
+
   #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,box,couple,mlst,\
                         rpole,\
@@ -80,7 +82,7 @@ void empole_real_tmpl() {
 
     int nmlsti = mlst->nlst[i];
     int base = i * maxnlst;
-    #pragma acc loop independent
+    #pragma acc loop independent private(bn[0:6])
     for (int kk = 0; kk < nmlsti; ++kk) {
       int k = mlst->lst[base + kk];
       real xr = x[k] - xi;
@@ -129,7 +131,7 @@ void empole_real_tmpl() {
         real rr11;
 
         real ralpha = aewald * r;
-        real bn[6];
+
         bn[0] = REAL_ERFC(ralpha) * invr1;
         real alsq2 = 2 * REAL_SQ(aewald);
         real alsq2n = (aewald > 0 ? REAL_RECIP(sqrtpi * aewald) : 0);
@@ -414,135 +416,135 @@ void empole_recip_tmpl() {
   const int nfft3 = st.nfft3;
   const real f = chgpot::electric / chgpot::dielec;
 
-  #pragma acc kernels deviceptr(gx,gy,gz,box,\
-                                rpole,fmp,cphi,fphi,\
-                                em,vir_em,trqx,trqy,trqz)
-  {
-    #pragma acc loop independent
-    for (int iatom = 0; iatom < n; ++iatom) {
-      real e = 0;
-      real f1 = 0;
-      real f2 = 0;
-      real f3 = 0;
-      #pragma acc loop independent reduction(+:e,f1,f2,f3)
-      for (int k = 0; k < 10; ++k) {
-        if_constexpr(do_e) { e += fmp[iatom][k] * fphi[iatom][k]; }
-
-        if_constexpr(do_g) {
-          f1 += fmp[iatom][k] * fphi[iatom][deriv1[k] - 1];
-          f2 += fmp[iatom][k] * fphi[iatom][deriv2[k] - 1];
-          f3 += fmp[iatom][k] * fphi[iatom][deriv3[k] - 1];
-        }
-      } // end for (int k)
-
-      // increment the permanent multipole energy and gradient
-
-      if_constexpr(do_e) {
-        #pragma acc atomic update
-        *em += 0.5f * e * f;
-      }
+  real cmp_cpp[10];
+  #pragma acc parallel loop independent\
+              deviceptr(gx,gy,gz,box,\
+                        rpole,fmp,cphi,fphi,\
+                        em,vir_em,trqx,trqy,trqz)\
+              private(cmp_cpp[0:10])
+  for (int iatom = 0; iatom < n; ++iatom) {
+    real e = 0;
+    real f1 = 0;
+    real f2 = 0;
+    real f3 = 0;
+    #pragma acc loop independent reduction(+:e,f1,f2,f3)
+    for (int k = 0; k < 10; ++k) {
+      if_constexpr(do_e) { e += fmp[iatom][k] * fphi[iatom][k]; }
 
       if_constexpr(do_g) {
-        f1 *= nfft1;
-        f2 *= nfft2;
-        f3 *= nfft3;
+        f1 += fmp[iatom][k] * fphi[iatom][deriv1[k] - 1];
+        f2 += fmp[iatom][k] * fphi[iatom][deriv2[k] - 1];
+        f3 += fmp[iatom][k] * fphi[iatom][deriv3[k] - 1];
+      }
+    } // end for (int k)
 
-        fmat_real3 recip(box->recip);
-        real h1 = recip(1, 1) * f1 + recip(1, 2) * f2 + recip(1, 3) * f3;
-        real h2 = recip(2, 1) * f1 + recip(2, 2) * f2 + recip(2, 3) * f3;
-        real h3 = recip(3, 1) * f1 + recip(3, 2) * f2 + recip(3, 3) * f3;
+    // increment the permanent multipole energy and gradient
+
+    if_constexpr(do_e) {
+      #pragma acc atomic update
+      *em += 0.5f * e * f;
+    }
+
+    if_constexpr(do_g) {
+      f1 *= nfft1;
+      f2 *= nfft2;
+      f3 *= nfft3;
+
+      fmat_real3 recip(box->recip);
+      real h1 = recip(1, 1) * f1 + recip(1, 2) * f2 + recip(1, 3) * f3;
+      real h2 = recip(2, 1) * f1 + recip(2, 2) * f2 + recip(2, 3) * f3;
+      real h3 = recip(3, 1) * f1 + recip(3, 2) * f2 + recip(3, 3) * f3;
+
+      #pragma acc atomic update
+      gx[iatom] += h1 * f;
+      #pragma acc atomic update
+      gy[iatom] += h2 * f;
+      #pragma acc atomic update
+      gz[iatom] += h3 * f;
+
+      // resolve site torques then increment forces and virial
+
+      fmat_real<10> cphi(gpu::cphi);
+      farray_real cmp(cmp_cpp);
+      cmp(2) = rpole[iatom][mpl_pme_x];
+      cmp(3) = rpole[iatom][mpl_pme_y];
+      cmp(4) = rpole[iatom][mpl_pme_z];
+      cmp(5) = rpole[iatom][mpl_pme_xx];
+      cmp(6) = rpole[iatom][mpl_pme_yy];
+      cmp(7) = rpole[iatom][mpl_pme_zz];
+      cmp(8) = 2 * rpole[iatom][mpl_pme_xy];
+      cmp(9) = 2 * rpole[iatom][mpl_pme_xz];
+      cmp(10) = 2 * rpole[iatom][mpl_pme_yz];
+
+      const int i = iatom + 1;
+
+      real tem1 = cmp(4) * cphi(3, i) - cmp(3) * cphi(4, i) +
+          2 * (cmp(7) - cmp(6)) * cphi(10, i) + cmp(9) * cphi(8, i) +
+          cmp(10) * cphi(6, i) - cmp(8) * cphi(9, i) - cmp(10) * cphi(7, i);
+      real tem2 = cmp(2) * cphi(4, i) - cmp(4) * cphi(2, i) +
+          2 * (cmp(5) - cmp(7)) * cphi(9, i) + cmp(8) * cphi(10, i) +
+          cmp(9) * cphi(7, i) - cmp(9) * cphi(5, i) - cmp(10) * cphi(8, i);
+      real tem3 = cmp(3) * cphi(2, i) - cmp(2) * cphi(3, i) +
+          2 * (cmp(6) - cmp(5)) * cphi(8, i) + cmp(8) * cphi(5, i) +
+          cmp(10) * cphi(9, i) - cmp(8) * cphi(6, i) - cmp(9) * cphi(10, i);
+      tem1 *= f;
+      tem2 *= f;
+      tem3 *= f;
+
+      #pragma acc atomic update
+      trqx[iatom] += tem1;
+      #pragma acc atomic update
+      trqy[iatom] += tem2;
+      #pragma acc atomic update
+      trqz[iatom] += tem3;
+
+      if_constexpr(do_v) {
+        real vxx = -cmp(2) * cphi(2, i) - 2 * cmp(5) * cphi(5, i) -
+            cmp(8) * cphi(8, i) - cmp(9) * cphi(9, i);
+        real vxy = -0.5f * (cmp(3) * cphi(2, i) + cmp(2) * cphi(3, i)) -
+            (cmp(5) + cmp(6)) * cphi(8, i) -
+            0.5f * cmp(8) * (cphi(5, i) + cphi(6, i)) -
+            0.5f * (cmp(9) * cphi(10, i) + cmp(10) * cphi(9, i));
+        real vxz = -0.5f * (cmp(4) * cphi(2, i) + cmp(2) * cphi(4, i)) -
+            (cmp(5) + cmp(7)) * cphi(9, i) -
+            0.5f * cmp(9) * (cphi(5, i) + cphi(7, i)) -
+            0.5f * (cmp(8) * cphi(10, i) + cmp(10) * cphi(8, i));
+        real vyy = -cmp(3) * cphi(3, i) - 2 * cmp(6) * cphi(6, i) -
+            cmp(8) * cphi(8, i) - cmp(10) * cphi(10, i);
+        real vyz = -0.5f * (cmp(4) * cphi(3, i) + cmp(3) * cphi(4, i)) -
+            (cmp(6) + cmp(7)) * cphi(10, i) -
+            0.5f * cmp(10) * (cphi(6, i) + cphi(7, i)) -
+            0.5f * (cmp(8) * cphi(9, i) + cmp(9) * cphi(8, i));
+        real vzz = -cmp(4) * cphi(4, i) - 2 * cmp(7) * cphi(7, i) -
+            cmp(9) * cphi(9, i) - cmp(10) * cphi(10, i);
+        vxx *= f;
+        vxy *= f;
+        vxz *= f;
+        vyy *= f;
+        vyz *= f;
+        vzz *= f;
 
         #pragma acc atomic update
-        gx[iatom] += h1 * f;
+        vir_em[_xx] += vxx;
         #pragma acc atomic update
-        gy[iatom] += h2 * f;
+        vir_em[_yx] += vxy;
         #pragma acc atomic update
-        gz[iatom] += h3 * f;
-
-        // resolve site torques then increment forces and virial
-
-        real cmp2 = rpole[iatom][mpl_pme_x];
-        real cmp3 = rpole[iatom][mpl_pme_y];
-        real cmp4 = rpole[iatom][mpl_pme_z];
-        real cmp5 = rpole[iatom][mpl_pme_xx];
-        real cmp6 = rpole[iatom][mpl_pme_yy];
-        real cmp7 = rpole[iatom][mpl_pme_zz];
-        real cmp8 = 2 * rpole[iatom][mpl_pme_xy];
-        real cmp9 = 2 * rpole[iatom][mpl_pme_xz];
-        real cmp10 = 2 * rpole[iatom][mpl_pme_yz];
-
-        fmat_real<10> cphi(gpu::cphi);
-
-        const int i = iatom + 1;
-
-        real tem1 = cmp4 * cphi(3, i) - cmp3 * cphi(4, i) +
-            2 * (cmp7 - cmp6) * cphi(10, i) + cmp9 * cphi(8, i) +
-            cmp10 * cphi(6, i) - cmp8 * cphi(9, i) - cmp10 * cphi(7, i);
-        real tem2 = cmp2 * cphi(4, i) - cmp4 * cphi(2, i) +
-            2 * (cmp5 - cmp7) * cphi(9, i) + cmp8 * cphi(10, i) +
-            cmp9 * cphi(7, i) - cmp9 * cphi(5, i) - cmp10 * cphi(8, i);
-        real tem3 = cmp3 * cphi(2, i) - cmp2 * cphi(3, i) +
-            2 * (cmp6 - cmp5) * cphi(8, i) + cmp8 * cphi(5, i) +
-            cmp10 * cphi(9, i) - cmp8 * cphi(6, i) - cmp9 * cphi(10, i);
-        tem1 *= f;
-        tem2 *= f;
-        tem3 *= f;
-
+        vir_em[_zx] += vxz;
         #pragma acc atomic update
-        trqx[iatom] += tem1;
+        vir_em[_xy] += vxy;
         #pragma acc atomic update
-        trqy[iatom] += tem2;
+        vir_em[_yy] += vyy;
         #pragma acc atomic update
-        trqz[iatom] += tem3;
-
-        if_constexpr(do_v) {
-          real vxx = -cmp2 * cphi(2, i) - 2 * cmp5 * cphi(5, i) -
-              cmp8 * cphi(8, i) - cmp9 * cphi(9, i);
-          real vxy = -0.5f * (cmp3 * cphi(2, i) + cmp2 * cphi(3, i)) -
-              (cmp5 + cmp6) * cphi(8, i) -
-              0.5f * cmp8 * (cphi(5, i) + cphi(6, i)) -
-              0.5f * (cmp9 * cphi(10, i) + cmp10 * cphi(9, i));
-          real vxz = -0.5f * (cmp4 * cphi(2, i) + cmp2 * cphi(4, i)) -
-              (cmp5 + cmp7) * cphi(9, i) -
-              0.5f * cmp9 * (cphi(5, i) + cphi(7, i)) -
-              0.5f * (cmp8 * cphi(10, i) + cmp10 * cphi(8, i));
-          real vyy = -cmp3 * cphi(3, i) - 2 * cmp6 * cphi(6, i) -
-              cmp8 * cphi(8, i) - cmp10 * cphi(10, i);
-          real vyz = -0.5f * (cmp4 * cphi(3, i) + cmp3 * cphi(4, i)) -
-              (cmp6 + cmp7) * cphi(10, i) -
-              0.5f * cmp10 * (cphi(6, i) + cphi(7, i)) -
-              0.5f * (cmp8 * cphi(9, i) + cmp9 * cphi(8, i));
-          real vzz = -cmp4 * cphi(4, i) - 2 * cmp7 * cphi(7, i) -
-              cmp9 * cphi(9, i) - cmp10 * cphi(10, i);
-          vxx *= f;
-          vxy *= f;
-          vxz *= f;
-          vyy *= f;
-          vyz *= f;
-          vzz *= f;
-
-          #pragma acc atomic update
-          vir_em[_xx] += vxx;
-          #pragma acc atomic update
-          vir_em[_yx] += vxy;
-          #pragma acc atomic update
-          vir_em[_zx] += vxz;
-          #pragma acc atomic update
-          vir_em[_xy] += vxy;
-          #pragma acc atomic update
-          vir_em[_yy] += vyy;
-          #pragma acc atomic update
-          vir_em[_zy] += vyz;
-          #pragma acc atomic update
-          vir_em[_xz] += vxz;
-          #pragma acc atomic update
-          vir_em[_yz] += vyz;
-          #pragma acc atomic update
-          vir_em[_zz] += vzz;
-        } // end if (do_v)
-      }   // end if (do_g)
-    }     // end for (int i)
-  }
+        vir_em[_zy] += vyz;
+        #pragma acc atomic update
+        vir_em[_xz] += vxz;
+        #pragma acc atomic update
+        vir_em[_yz] += vyz;
+        #pragma acc atomic update
+        vir_em[_zz] += vzz;
+      } // end if (do_v)
+    }   // end if (do_g)
+  }     // end for (int i)
 }
 
 template <int USE>

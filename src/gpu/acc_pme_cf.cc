@@ -20,11 +20,15 @@ void cmp_to_fmp(real (*_fmp)[10], int pme_unit) {
   constexpr int qi1[] = {1, 2, 3, 1, 1, 2};
   constexpr int qi2[] = {1, 2, 3, 2, 3, 3};
 
-  #pragma acc parallel loop deviceptr(box,rpole,_fmp)
+  real ctf3_cpp[3][3];
+  real ctf6_cpp[6][6];
+  real a_cpp[3][3];
+  real cmp_cpp[10];
+
+  #pragma acc parallel loop deviceptr(box,rpole,_fmp)\
+              private(ctf3_cpp[0:3][0:3],ctf6_cpp[0:6][0:6],\
+              a_cpp[0:3][0:3],cmp_cpp[0:10])
   for (int iatom = 0; iatom < n; ++iatom) {
-    real ctf3_cpp[3][3];
-    real ctf6_cpp[6][6];
-    real a_cpp[3][3];
 
     // see also subroutine cart_to_frac in pmestuf.f
 
@@ -77,14 +81,19 @@ void cmp_to_fmp(real (*_fmp)[10], int pme_unit) {
 
     // apply the transformation to get the fractional multipoles
 
-    real cmp_cpp[10] = {
-        rpole[iatom][mpl_pme_0],      rpole[iatom][mpl_pme_x],
-        rpole[iatom][mpl_pme_y],      rpole[iatom][mpl_pme_z],
-        rpole[iatom][mpl_pme_xx],     rpole[iatom][mpl_pme_yy],
-        rpole[iatom][mpl_pme_zz],     2 * rpole[iatom][mpl_pme_xy],
-        2 * rpole[iatom][mpl_pme_xz], 2 * rpole[iatom][mpl_pme_yz]};
-    farray_real cmp(cmp_cpp);
     fmat_real<10> fmp(_fmp);
+    farray_real cmp(cmp_cpp);
+    cmp(1) = rpole[iatom][mpl_pme_0];
+    cmp(2) = rpole[iatom][mpl_pme_x];
+    cmp(3) = rpole[iatom][mpl_pme_y];
+    cmp(4) = rpole[iatom][mpl_pme_z];
+    cmp(5) = rpole[iatom][mpl_pme_xx];
+    cmp(6) = rpole[iatom][mpl_pme_yy];
+    cmp(7) = rpole[iatom][mpl_pme_zz];
+    cmp(8) = 2 * rpole[iatom][mpl_pme_xy];
+    cmp(9) = 2 * rpole[iatom][mpl_pme_xz];
+    cmp(10) = 2 * rpole[iatom][mpl_pme_yz];
+
     // to use the fortran matrix wrapper
     // change the 0-based atom number to 1-based
     const int i = iatom + 1;
@@ -118,14 +127,13 @@ void fphi_to_cphi(const real (*_fphi)[20], real (*_cphi)[10], int pme_unit) {
   constexpr int qi1[] = {1, 2, 3, 1, 1, 2};
   constexpr int qi2[] = {1, 2, 3, 2, 3, 3};
 
-  #pragma acc parallel loop deviceptr(box,_fphi,_cphi)
-  for (int iatom = 0; iatom < n; ++iatom) {
-    // real ftc_cpp[10][10];
-    // fmat_real<10> ftc(ftc_cpp);
+  real ftc3_cpp[3][3];
+  real ftc6_cpp[6][6];
+  real a_cpp[3][3];
 
-    real ftc3_cpp[3][3];
-    real ftc6_cpp[6][6];
-    real a_cpp[3][3];
+  #pragma acc parallel loop deviceptr(box,_fphi,_cphi)\
+              private(ftc3_cpp[0:3][0:3],ftc6_cpp[0:6][0:6],a_cpp[0:3][0:3])
+  for (int iatom = 0; iatom < n; ++iatom) {
 
     // see also subroutine frac_to_cart in pmestuf.f
 
