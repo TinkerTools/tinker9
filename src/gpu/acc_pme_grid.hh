@@ -1,10 +1,4 @@
-#include "gpu/acc_fmat.h"
-#include "gpu/acc_mathfunc.h"
-#include "gpu/decl_box.h"
-#include "gpu/decl_mdstate.h"
-#include "gpu/decl_pme.h"
-#include "gpu/e_mpole.h"
-#include <vector>
+#ifdef TINKER_SRC_GPU_ACC_PMESTUFF_IMPL_
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -393,3 +387,5 @@ void fphi_mpole(real (*fphi)[20]) {
 }
 }
 TINKER_NAMESPACE_END
+
+#endif

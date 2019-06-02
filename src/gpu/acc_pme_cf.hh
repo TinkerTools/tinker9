@@ -1,13 +1,9 @@
+#ifdef TINKER_SRC_GPU_ACC_PMESTUFF_IMPL_
+
 /**
  * @file
  * Conversion between Cartesian and fractional coordinates.
  */
-
-#include "gpu/acc_fmat.h"
-#include "gpu/decl_box.h"
-#include "gpu/decl_mdstate.h"
-#include "gpu/decl_pme.h"
-#include "gpu/e_mpole.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -223,3 +219,5 @@ void fphi_to_cphi(const real (*_fphi)[20], real (*_cphi)[10], int pme_unit) {
 }
 }
 TINKER_NAMESPACE_END
+
+#endif
