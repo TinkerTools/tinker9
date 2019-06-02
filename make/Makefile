@@ -73,8 +73,23 @@ endif
 #                                                          #
 ############################################################
 
+tinker_gpu_name := tinker.gpu
+all_tests_name := all.tests
+libtinkergpu_name := libtinkergpu
+src_objdir := src
+ifeq ($(precision_flag),)
+	precision_suffix :=
+else
+	# -dp: double precision
+	precision_suffix := -dp
+	tinker_gpu_name := $(tinker_gpu_name)$(precision_suffix)
+	all_tests_name := $(all_tests_name)$(precision_suffix)
+	libtinkergpu_name := $(libtinkergpu_name)$(precision_suffix)
+	src_objdir := $(src_objdir)$(precision_suffix)
+endif
+
 .PHONY: all
-all: tinker.gpu
+all: $(tinker_gpu_name)
 
 ############################################################
 #                                                          #
@@ -88,18 +103,19 @@ print-config:
 	@echo 'opt level        =' $(opt)
 	@echo 'OS               =' $(os)
 	@echo 'source directory =' $(topdir)
+	@echo 'executable       =' $(tinker_gpu_name) $(all_tests_name)
 
 .PHONY: dirs
 dirs:
 	@mkdir -p $(extdir)/fmt
 	@mkdir -p $(extdir)/tinker
-	@mkdir -p src/test
-	@mkdir -p src/util
-	@mkdir -p src/gpu
+	@mkdir -p $(src_objdir)/test
+	@mkdir -p $(src_objdir)/util
+	@mkdir -p $(src_objdir)/gpu
 
 .PHONY: clean
 clean:
-	rm -rf ext src tinker.gpu all.tests *.a *dSYM
+	rm -rf ext src* tinker.gpu* all.tests* *.a *dSYM
 
 ########################################################################
 #                                                                      #
@@ -131,24 +147,23 @@ acc_link_flags += $(acc_common_flags) $(libtinker) $(fortrtflag) $(fftwflag)
 ext_cc_objs := $(extdir)/fmt/format.o $(extdir)/fmt/posix.o
 ext_cpp_objs := $(extdir)/tinker/tinker_mod.o $(extdir)/tinker/tinker_rt.o
 
-main_cc_objs := src/test/test_all.o src/tinker_gpu.o
+main_cc_objs := $(src_objdir)/test/test_all.o $(src_objdir)/tinker_gpu.o
 
-# $(topdir)/src/util/foo.cpp -> src/util/foo.o
+# $(topdir)/src/util/foo.cpp -> src-dp/util/foo.o
 lib_cpp_files := $(shell find $(topdir)/src -type f -name '*.cpp' \
--not -path $(topdir)/src/tinker_gpu.cpp \
 -not -path '$(topdir)/$(extdir)/*' \
 -not -path '$(topdir)/src/test/*')
-lib_cpp_objs := $(subst $(topdir)/,,$(lib_cpp_files))
+lib_cpp_objs := $(subst $(topdir)/src,$(src_objdir),$(lib_cpp_files))
 lib_cpp_objs := $(patsubst %.cpp,%.o,$(lib_cpp_objs))
 
-# $(topdir)/src/gpu/foo.cc -> src/gpu/foo.o
+# $(topdir)/src/gpu/foo.cc -> src-dp/gpu/foo.o
 lib_acc_files := $(wildcard $(topdir)/src/gpu/*.cc)
-lib_acc_objs := $(subst $(topdir)/,,$(lib_acc_files))
+lib_acc_objs := $(subst $(topdir)/src,$(src_objdir),$(lib_acc_files))
 lib_acc_objs := $(patsubst %.cc,%.o,$(lib_acc_objs))
 
-# $(topdir)/src/test/foo.cpp -> src/test/foo.o
+# $(topdir)/src/test/foo.cpp -> src-dp/test/foo.o
 test_cpp_files := $(wildcard $(topdir)/src/test/*.cpp)
-test_cpp_objs := $(subst $(topdir)/,,$(test_cpp_files))
+test_cpp_objs := $(subst $(topdir)/src,$(src_objdir),$(test_cpp_files))
 test_cpp_objs := $(patsubst %.cpp,%.o,$(test_cpp_objs))
 
 all_cc_objs := $(main_cc_objs) $(ext_cc_objs)
@@ -162,7 +177,7 @@ $(all_cpp_objs): %.o: $(topdir)/%.cpp | dirs
 $(lib_acc_objs): %.o: $(topdir)/%.cc | dirs
 	$(ACC) $(acc_compile_flags) $< -o $@
 
-libtinkergpu.a: $(ext_cc_objs) $(ext_cpp_objs) $(lib_cpp_objs) $(lib_acc_objs)
+$(libtinkergpu_name).a: $(ext_cc_objs) $(ext_cpp_objs) $(lib_cpp_objs) $(lib_acc_objs)
 	$(ar_flags) $@ $^
 	$(ranlib_flags) $@
 
@@ -172,7 +187,7 @@ libtinkergpu.a: $(ext_cc_objs) $(ext_cpp_objs) $(lib_cpp_objs) $(lib_acc_objs)
 #                                                                      #
 ########################################################################
 
-tinker.gpu: src/tinker_gpu.o libtinkergpu.a
+$(tinker_gpu_name): $(src_objdir)/tinker_gpu.o $(libtinkergpu_name).a
 #	$(CXX) $(cxx_link_flags) $^ -o $@
 	$(ACC) $^ $(acc_link_flags) -o $@
 
@@ -183,9 +198,9 @@ tinker.gpu: src/tinker_gpu.o libtinkergpu.a
 ########################################################################
 
 .PHONY: test
-test: all.tests
-	$(PWD)/all.tests [ff] --durations yes
+test: $(all_tests_name)
+	$(PWD)/$(all_tests_name) [ff] --durations yes
 
-all.tests: src/test/test_all.o $(test_cpp_objs) libtinkergpu.a
+$(all_tests_name): $(src_objdir)/test/test_all.o $(test_cpp_objs) $(libtinkergpu_name).a
 #	$(CXX) $(cxx_link_flags) $^ -o $@
 	$(ACC) $^ $(acc_link_flags) -o $@
