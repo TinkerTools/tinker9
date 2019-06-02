@@ -16,9 +16,10 @@ libtinker := $(HOME)/git/tinker/source/libtinker.a
 # FFTW
 fftwflag := -L$(HOME)/local/fftw/lib -lfftw3 -lfftw3_threads
 
-# Precision -DTINKER_GPU_DOUBLE or leave it empty
-precision_flag ?=
-#precision_flag ?= -DTINKER_GPU_DOUBLE
+# GPU Precision
+# real4 / 4 / 32 / float / single / s -> real4__
+# real8 / 8 / 64 / double / d         -> real8__
+prec := real4
 
 # Darwin -> darwin
 os := $(shell uname -s 2>/dev/null | tr "[:upper:]" "[:lower:]")
@@ -69,6 +70,21 @@ endif
 
 ############################################################
 #                                                          #
+# precision                                                #
+#                                                          #
+############################################################
+
+# Precision -DTINKER_GPU_DOUBLE or leave it empty
+ifeq ($(prec),$(filter $(prec),real4 4 32 float single s))
+	prec__ := real4__
+	precision_macro__ :=
+else ifeq ($(prec),$(filter $(prec),real8 8 64 double d))
+	prec__ := real8__
+	precision_macro__ := -DTINKER_GPU_DOUBLE
+endif
+
+############################################################
+#                                                          #
 # default target: all                                      #
 #                                                          #
 ############################################################
@@ -77,9 +93,9 @@ tinker_gpu_name := tinker.gpu
 all_tests_name := all.tests
 libtinkergpu_name := libtinkergpu
 src_objdir := src
-ifeq ($(precision_flag),)
+ifeq ($(prec__),real4__)
 	precision_suffix :=
-else
+else ifeq ($(prec__),real8__)
 	# -dp: double precision
 	precision_suffix := -dp
 	tinker_gpu_name := $(tinker_gpu_name)$(precision_suffix)
@@ -104,6 +120,7 @@ print-config:
 	@echo 'OS               =' $(os)
 	@echo 'source directory =' $(topdir)
 	@echo 'executable       =' $(tinker_gpu_name) $(all_tests_name)
+	@echo 'precision        =' $(prec)
 
 .PHONY: dirs
 dirs:
@@ -131,7 +148,7 @@ include_flags += -I$(topdir)/ext
 include_flags += -I$(topdir)/ext/ext
 include_flags += -I$(cudadir)/include
 
-cxx_common_flags := -std=c++11 -D$(fortran_name_macro) $(precision_flag)
+cxx_common_flags := -std=c++11 -D$(fortran_name_macro) $(precision_macro__)
 cxx_common_flags += $(include_flags) $(cxx_opt_flags)
 cxx_compile_flags := -x c++ -c $(cxx_common_flags)
 
@@ -200,6 +217,9 @@ $(tinker_gpu_name): $(src_objdir)/tinker_gpu.o $(libtinkergpu_name).a
 .PHONY: test
 test: $(all_tests_name)
 	$(PWD)/$(all_tests_name) [ff] --durations yes
+
+.PHONY: unittest
+unittest: $(all_tests_name)
 
 $(all_tests_name): $(src_objdir)/test/test_all.o $(test_cpp_objs) $(libtinkergpu_name).a
 #	$(CXX) $(cxx_link_flags) $^ -o $@
