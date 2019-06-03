@@ -35,6 +35,18 @@ typedef std::vector<std::array<double, 3>> grad_t;
       }                                                                        \
     }                                                                          \
   }
+#define COMPARE_VIR2_(gpuptr, gpuptr2, ref_v, eps)                             \
+  {                                                                            \
+    double vir[9], vir2[9];                                                    \
+    gpu::get_virial(vir, gpuptr);                                              \
+    gpu::get_virial(vir2, gpuptr2);                                            \
+    for (int i = 0; i < 3; ++i) {                                              \
+      for (int j = 0; j < 3; ++j) {                                            \
+        int k = 3 * i + j;                                                     \
+        REQUIRE((vir[k] + vir2[k]) == Approx(ref_v[i][j]).margin(eps));        \
+      }                                                                        \
+    }                                                                          \
+  }
 #define COMPARE_GRADIENT_(ref_grad, eps)                                       \
   {                                                                            \
     grad_t grad(gpu::n);                                                       \

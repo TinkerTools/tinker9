@@ -13,8 +13,6 @@ void empole_coulomb_tmpl() {
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
-  zero_torque();
-
   chkpole();
   rotpole();
 
@@ -333,11 +331,6 @@ void empole_coulomb_tmpl() {
     for (int j = 0; j < n15i; ++j)
       mscale[couple->i15[i][j]] = 1;
   } // end for (int i)
-
-  if_constexpr(do_v) { torque1(); }
-  else if_constexpr(do_g) {
-    torque0();
-  }
 }
 }
 TINKER_NAMESPACE_END

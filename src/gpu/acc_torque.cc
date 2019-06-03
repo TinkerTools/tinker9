@@ -1,5 +1,5 @@
 #include "acc_e.h"
-#include "gpu/e_mpole.h"
+#include "gpu/decl_elec.h"
 
 #define ADD_(ans, a, b)                                                        \
   ans[0] = a[0] + b[0];                                                        \
@@ -381,11 +381,15 @@ void torque_tmpl(real* gpu_vir) {
   }   // end for (int i)
 }
 
-void torque0() { torque_tmpl<0>(nullptr); }
+void torque(int vers) {
+  if (!use_elec())
+    return;
 
-void torque1() {
-  if (use_empole())
-    torque_tmpl<1>(vir_em);
+  if (vers & use_virial) {
+    torque_tmpl<1>(vir_trq);
+  } else if (vers & use_grad) {
+    torque_tmpl<0>(nullptr);
+  }
 }
 }
 TINKER_NAMESPACE_END

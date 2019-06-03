@@ -125,33 +125,45 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
 #define COMPARE_CODE_BLOCK2_                                                   \
   {                                                                            \
     gpu::zero_egv();                                                           \
+    gpu::zero_torque(gpu::v0);                                                 \
     tinker_gpu_empole0();                                                      \
+    gpu::torque(gpu::v0);                                                      \
     COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
                                                                                \
     gpu::zero_egv();                                                           \
+    gpu::zero_torque(gpu::v1);                                                 \
     tinker_gpu_empole1();                                                      \
+    gpu::torque(gpu::v1);                                                      \
     COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
     COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
-    COMPARE_VIR_(gpu::vir_em, ref_v, eps);                                     \
+    COMPARE_VIR2_(gpu::vir_em, gpu::vir_trq, ref_v, eps_v);                    \
                                                                                \
     gpu::zero_egv();                                                           \
+    gpu::zero_torque(gpu::v3);                                                 \
     tinker_gpu_empole3();                                                      \
+    gpu::torque(gpu::v3);                                                      \
     COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
     COMPARE_COUNT_(gpu::nem, ref_count);                                       \
                                                                                \
     gpu::zero_egv();                                                           \
+    gpu::zero_torque(gpu::v4);                                                 \
     tinker_gpu_empole4();                                                      \
+    gpu::torque(gpu::v4);                                                      \
     COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
     COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
                                                                                \
     gpu::zero_egv();                                                           \
+    gpu::zero_torque(gpu::v5);                                                 \
     tinker_gpu_empole5();                                                      \
+    gpu::torque(gpu::v5);                                                      \
     COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
                                                                                \
     gpu::zero_egv();                                                           \
+    gpu::zero_torque(gpu::v6);                                                 \
     tinker_gpu_empole6();                                                      \
+    gpu::torque(gpu::v6);                                                      \
     COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
-    COMPARE_VIR_(gpu::vir_em, ref_v, eps);                                     \
+    COMPARE_VIR2_(gpu::vir_em, gpu::vir_trq, ref_v, eps_v);                    \
   }
 
 TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
@@ -180,6 +192,7 @@ TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
     const int ref_count = 1;
     const double eps_g = eps;
     const double ref_grad[][3] = {{-68.6082, 0.0, 0.0}, {68.6082, 0.0, 0.0}};
+    const double eps_v = eps;
     const double ref_v[][3] = {
         {150.938, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
@@ -229,7 +242,7 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]") {
     // recip grad
     // const double ref_grad[][3] = {{-21.7728, -23.9484, -26.1686},
     //                               {21.7791, 23.9487, 26.1709}};
-    const double eps_v = 0.001;
+    const double eps_v = eps;
     // total virial
     const double ref_v[][3] = {{0.059, -0.284, -0.311},
                                {-0.284, 0.105, -0.342},

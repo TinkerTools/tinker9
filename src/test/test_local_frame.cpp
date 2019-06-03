@@ -56,14 +56,18 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
     tinker_gpu_data_create();
 
     gpu::zero_egv();
+    gpu::zero_torque(gpu::v0);
     tinker_gpu_empole0();
+    gpu::torque(gpu::v0);
     COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
 
     gpu::zero_egv();
+    gpu::zero_torque(gpu::v1);
     tinker_gpu_empole1();
+    gpu::torque(gpu::v1);
     COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
     COMPARE_GRADIENT_(ref_grad, eps_g);
-    COMPARE_VIR_(gpu::vir_em, ref_v, eps_v);
+    COMPARE_VIR2_(gpu::vir_em, gpu::vir_trq, ref_v, eps_v);
 
     gpu::zero_egv();
     tinker_gpu_empole3();
@@ -135,10 +139,12 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     tinker_gpu_data_create();
 
     gpu::zero_egv();
+    gpu::zero_torque(gpu::v1);
     tinker_gpu_empole1();
+    gpu::torque(gpu::v1);
     COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
     COMPARE_GRADIENT_(ref_grad, eps_g);
-    COMPARE_VIR_(gpu::vir_em, ref_v, eps_v);
+    COMPARE_VIR2_(gpu::vir_em, gpu::vir_trq, ref_v, eps_v);
 
     tinker_gpu_data_destroy();
     test_end();

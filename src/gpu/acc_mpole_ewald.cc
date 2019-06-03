@@ -556,8 +556,6 @@ void empole_ewald_tmpl() {
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
-  zero_torque();
-
   chkpole();
   rotpole();
 
@@ -576,11 +574,6 @@ void empole_ewald_tmpl() {
   empole_real_tmpl<USE>();
 
   empole_recip_tmpl<USE>();
-
-  if_constexpr(do_v) { torque1(); }
-  else if_constexpr(do_g) {
-    torque0();
-  }
 }
 }
 TINKER_NAMESPACE_END

@@ -3,6 +3,7 @@
 
 #include "e_bond.h"
 #include "e_mpole.h"
+#include "e_polar.h"
 #include "e_vdw.h"
 
 TINKER_NAMESPACE_BEGIN

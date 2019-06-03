@@ -25,7 +25,12 @@ void potential_data(int op) {
   e_bond_data(op);
 
   e_vdw_data(op);
+
+  // Must call elec_data() before any electrostatics routine.
+
+  elec_data(op);
   e_mpole_data(op);
+  e_polar_data(op);
 }
 }
 TINKER_NAMESPACE_END
