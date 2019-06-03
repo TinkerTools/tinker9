@@ -19,12 +19,12 @@ void print_backtrace_template(std::ostream& fp) {
   int frames = backtrace(callstack, max_frames);
   char** strs = backtrace_symbols(callstack, frames);
 
-  char* real_name;
+  char* demangled_name;
   int status;
   std::string num, caller, callee;
   const char* f1 = " Backtrace\n";
-  const char* f2 = " {:>4s}  {:24.24s}  {:s}\n";
-  const int tolerance = 10;
+  const char* f2 = " {:>4s}  {:36.36s}  {:s}\n";
+  const int tolerance = 20;
   print(fp, f1);
 
   for (auto i = 1; i < frames; ++i) {
@@ -51,13 +51,14 @@ void print_backtrace_template(std::ostream& fp) {
       callee = vs.at(1);
     }
 
-    real_name = abi::__cxa_demangle(callee.c_str(), 0, 0, &status);
+    demangled_name = abi::__cxa_demangle(callee.c_str(), 0, 0, &status);
     if (!status) /* This name CAN be demangled. */ {
       std::string tmp =
-          ((tolerance + std::strlen(real_name)) <= callee.length()) ? real_name
-                                                                    : callee;
+          ((tolerance + callee.length()) >= std::strlen(demangled_name))
+          ? demangled_name
+          : callee;
       callee = tmp;
-      free(real_name);
+      free(demangled_name);
     }
     print(fp, f2, num, caller, callee);
   }

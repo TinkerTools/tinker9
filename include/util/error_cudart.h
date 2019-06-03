@@ -14,7 +14,7 @@
       print_backtrace();                                                       \
       const char* msg = cudaGetErrorString(cures__);                           \
       std::string m__ =                                                        \
-          format("{} (errno {}) at {}:{}", msg, cures__, __FILE__, __LINE__);  \
+          format(" {} (errno {}) at {}:{}", msg, cures__, __FILE__, __LINE__); \
       throw FatalError(m__);                                                   \
     }                                                                          \
   } while (0)
@@ -25,7 +25,7 @@
     if (cures__ != cudaSuccess) {                                              \
       print_backtrace();                                                       \
       const char* msg = cudaGetErrorName(cures__);                             \
-      std::string m__ = format("{} {} (errno {}) at {}:{}", optmsg, msg,       \
+      std::string m__ = format(" {} {} (errno {}) at {}:{}", optmsg, msg,      \
                                cures__, __FILE__, __LINE__);                   \
       throw FatalError(m__);                                                   \
     }                                                                          \
@@ -36,7 +36,7 @@
     res_t cures__ = cucall;                                                    \
     if (cures__ != cu_0) {                                                     \
       print_backtrace();                                                       \
-      std::string m__ = format("errno {} of type {} at {}:{}", cures__,        \
+      std::string m__ = format(" errno {} of type {} at {}:{}", cures__,       \
                                TINKER_STR(res_t), __FILE__, __LINE__);         \
       throw FatalError(m__);                                                   \
     }                                                                          \

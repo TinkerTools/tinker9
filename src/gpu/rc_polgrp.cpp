@@ -10,6 +10,9 @@ static_assert(polargroup_st::maxp12 >= polgrp::maxp12, "");
 static_assert(polargroup_st::maxp13 >= polgrp::maxp13, "");
 static_assert(polargroup_st::maxp14 >= polgrp::maxp14, "");
 
+polargroup_st polargroup_obj_;
+polargroup_st* polargroup;
+
 void polargroup_data(int op) {
   if (op == op_destroy) {
     check_cudart(cudaFree(polargroup_obj_.np11));

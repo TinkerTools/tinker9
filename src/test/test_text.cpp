@@ -3,7 +3,7 @@
 
 m_tinker_using_namespace;
 
-TEST_CASE("Text") {
+TEST_CASE("Text", "[util]") {
   SECTION("Replace") {
     char c = ' ';
     std::string s, r, ans;

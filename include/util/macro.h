@@ -58,7 +58,9 @@ two macros (TINKER_MOD and TINKER_RT) here to mimic its name mangling.
 
 // GPU precision
 #ifndef TINKER_GPU_DOUBLE
-#  define TINKER_GPU_SINGLE
+#  ifndef TINKER_GPU_SINGLE
+#    define TINKER_GPU_SINGLE
+#  endif
 #endif
 
 // features
