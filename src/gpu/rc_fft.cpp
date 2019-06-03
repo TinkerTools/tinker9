@@ -2,7 +2,6 @@
 #include "gpu/decl_pme.h"
 #include "rc_cudart.h"
 #include <cufft.h>
-#include <vector>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

@@ -6,8 +6,8 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-int electyp;
-std::string electyp_str;
+int empole_electyp;
+std::string empole_electyp_str;
 
 double mpole_switch_cut, mpole_switch_off;
 
@@ -42,13 +42,13 @@ void e_mpole_data(int op) {
   }
 
   if (op == op_create) {
-    get_empole_type(electyp, electyp_str);
+    get_empole_type(empole_electyp, empole_electyp_str);
 
     const size_t rs = sizeof(real);
 
-    if (electyp == elec_coulomb)
+    if (empole_electyp == elec_coulomb)
       switch_cut_off(switch_mpole, mpole_switch_cut, mpole_switch_off);
-    else if (electyp == elec_ewald)
+    else if (empole_electyp == elec_ewald)
       switch_cut_off(switch_ewald, mpole_switch_cut, mpole_switch_off);
 
     check_cudart(cudaMalloc(&em, rs));

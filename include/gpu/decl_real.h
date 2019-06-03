@@ -1,8 +1,8 @@
 #ifndef TINKER_GPU_DECL_REAL_H_
 #define TINKER_GPU_DECL_REAL_H_
 
+#include "util/cxx.h"
 #include "util/real_mathfunc.h"
-#include <string>
 
 /// @file
 /// Type `real' was defined inside `TINKER_NAMESPACE::gpu'.

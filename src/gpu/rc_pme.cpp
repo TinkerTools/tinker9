@@ -4,7 +4,6 @@
 #include "rc_cudart.h"
 #include "util/math.h"
 #include <ext/tinker/tinker_rt.h>
-#include <vector>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

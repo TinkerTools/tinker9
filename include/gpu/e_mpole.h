@@ -5,8 +5,8 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-extern int electyp;
-extern std::string electyp_str;
+extern int empole_electyp;
+extern std::string empole_electyp_str;
 
 extern double mpole_switch_cut, mpole_switch_off;
 

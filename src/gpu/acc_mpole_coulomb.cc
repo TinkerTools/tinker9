@@ -1,6 +1,5 @@
 #include "acc_e.h"
 #include "gpu/e_mpole.h"
-#include <vector>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -346,9 +345,9 @@ void tinker_gpu_empole_coulomb6() { gpu::empole_coulomb_tmpl<gpu::v6>(); }
 
 #define TINKER_GPU_EMPOLE_DEF_(ver)                                            \
   void tinker_gpu_empole##ver() {                                              \
-    if (gpu::electyp == gpu::elec_coulomb) {                                   \
+    if (gpu::empole_electyp == gpu::elec_coulomb) {                            \
       tinker_gpu_empole_coulomb##ver();                                        \
-    } else if (gpu::electyp == gpu::elec_ewald) {                              \
+    } else if (gpu::empole_electyp == gpu::elec_ewald) {                       \
       tinker_gpu_empole_ewald##ver();                                          \
     }                                                                          \
   }

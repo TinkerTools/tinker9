@@ -2,7 +2,6 @@
 #define TINKER_GPU_DECL_PME_H_
 
 #include "decl_real.h"
-#include <vector>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

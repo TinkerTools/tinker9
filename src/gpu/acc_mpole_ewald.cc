@@ -2,7 +2,6 @@
 #include "gpu/acc_fmat.h"
 #include "gpu/decl_pme.h"
 #include "gpu/e_mpole.h"
-#include <vector>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
