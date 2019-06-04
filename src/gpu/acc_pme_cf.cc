@@ -1,4 +1,8 @@
-#ifdef TINKER_SRC_GPU_ACC_PMESTUFF_IMPL_
+#include "gpu/acc_fmat.h"
+#include "gpu/decl_box.h"
+#include "gpu/decl_mdstate.h"
+#include "gpu/decl_pme.h"
+#include "gpu/e_mpole.h"
 
 /**
  * @file
@@ -7,7 +11,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void cmp_to_fmp(real (*_fmp)[10], int pme_unit) {
+void cmp_to_fmp(int pme_unit, real (*_fmp)[10]) {
   pme_st& st = pme_obj(pme_unit);
   int nfft1 = st.nfft1;
   int nfft2 = st.nfft2;
@@ -114,7 +118,7 @@ void cmp_to_fmp(real (*_fmp)[10], int pme_unit) {
   }
 }
 
-void fphi_to_cphi(const real (*_fphi)[20], real (*_cphi)[10], int pme_unit) {
+void fphi_to_cphi(int pme_unit, const real (*_fphi)[20], real (*_cphi)[10]) {
   pme_st& st = pme_obj(pme_unit);
   int nfft1 = st.nfft1;
   int nfft2 = st.nfft2;
@@ -219,5 +223,3 @@ void fphi_to_cphi(const real (*_fphi)[20], real (*_cphi)[10], int pme_unit) {
 }
 }
 TINKER_NAMESPACE_END
-
-#endif

@@ -57,8 +57,15 @@ TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void cmp_to_fmp(real (*fmp)[10], int pme_unit);
-void fphi_to_cphi(const real (*fphi)[20], real (*cphi)[10], int pme_unit);
+void cmp_to_fmp(int pme_unit, real (*fmp)[10]);
+void fphi_to_cphi(int pme_unit, const real (*fphi)[20], real (*cphi)[10]);
+
+void grid_mpole(int pme_unit, real (*gpu_fmp)[10]);
+void fphi_mpole(int pme_unit, real (*gpu_fphi)[20]);
+
+void grid_uind(int pme_unit, real (*gpu_find)[3], real (*gpu_finp)[3]);
+void fphi_uind(int pme_unit, real (*gpu_fdip_phi1)[10],
+               real (*gpu_fdip_phi2)[10], real (*gpu_fdip_sum_phi)[20]);
 }
 TINKER_NAMESPACE_END
 

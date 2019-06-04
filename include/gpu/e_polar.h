@@ -25,7 +25,7 @@ void e_polar_data(int op);
 void dfield_coulomb(real* gpu_field, real* gpu_fieldp);
 void dfield_ewald(real* gpu_field, real* gpu_fieldp);
 void dfield_ewald_real(real* gpu_field, real* gpu_fieldp);
-void dfield_ewald_recip(real* gpu_field, real* gpu_fieldp);
+void dfield_ewald_recip(real* gpu_field);
 
 // mutual electrostatic field due to induced dipole moments
 void ufield_coulomb(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,

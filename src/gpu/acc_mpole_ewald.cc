@@ -394,16 +394,16 @@ void empole_recip_tmpl() {
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
-  cmp_to_fmp(fmp, epme_unit);
-  grid_mpole(fmp);
+  cmp_to_fmp(epme_unit, fmp);
+  grid_mpole(epme_unit, fmp);
   fftfront(epme_unit);
   if_constexpr(do_v) { pme_conv1(epme_unit, vir_em); }
   else {
     pme_conv0(epme_unit);
   }
   fftback(epme_unit);
-  fphi_mpole(fphi);
-  fphi_to_cphi(fphi, cphi, epme_unit);
+  fphi_mpole(epme_unit, fphi);
+  fphi_to_cphi(epme_unit, fphi, cphi);
 
   constexpr int deriv1[] = {2, 5, 8, 9, 11, 16, 18, 14, 15, 20};
   constexpr int deriv2[] = {3, 8, 6, 10, 14, 12, 19, 16, 20, 17};

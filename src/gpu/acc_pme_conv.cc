@@ -1,4 +1,7 @@
-#ifdef TINKER_SRC_GPU_ACC_PMESTUFF_IMPL_
+
+#include "acc_e.h"
+#include "gpu/acc_fmat.h"
+#include "gpu/decl_pme.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -100,5 +103,3 @@ void pme_conv1(int pme_unit, real* gpu_vir9) {
 }
 }
 TINKER_NAMESPACE_END
-
-#endif

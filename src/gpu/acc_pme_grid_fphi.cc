@@ -345,15 +345,15 @@ void grid_tmpl(int pme_unit, real* optional1, real* optional2) {
   }     // for (int i)
 }
 
-void grid_mpole(real (*fmp)[10]) {
+void grid_mpole(int pme_unit, real (*fmp)[10]) {
   real* opt1 = reinterpret_cast<real*>(fmp);
-  grid_tmpl<MPOLE_GRID>(epme_unit, opt1, nullptr);
+  grid_tmpl<MPOLE_GRID>(pme_unit, opt1, nullptr);
 }
 
-void grid_uind(real (*fuind)[3], real (*fuinp)[3]) {
+void grid_uind(int pme_unit, real (*fuind)[3], real (*fuinp)[3]) {
   real* opt1 = reinterpret_cast<real*>(fuind);
   real* opt2 = reinterpret_cast<real*>(fuinp);
-  grid_tmpl<UIND_GRID>(ppme_unit, opt1, opt2);
+  grid_tmpl<UIND_GRID>(pme_unit, opt1, opt2);
 }
 
 template <int WHAT>
@@ -784,17 +784,17 @@ void fphi_tmpl(int pme_unit, real* opt1, real* opt2, real* opt3) {
   }   // end for (int i)
 }
 
-void fphi_mpole(real (*fphi)[20]) {
+void fphi_mpole(int pme_unit, real (*fphi)[20]) {
   real* opt1 = reinterpret_cast<real*>(fphi);
-  fphi_tmpl<MPOLE_GRID>(epme_unit, opt1, nullptr, nullptr);
+  fphi_tmpl<MPOLE_GRID>(pme_unit, opt1, nullptr, nullptr);
 }
 
-void fphi_uind(real (*fdip_phi1)[10], real (*fdip_phi2)[10],
+void fphi_uind(int pme_unit, real (*fdip_phi1)[10], real (*fdip_phi2)[10],
                real (*fdip_sum_phi)[20]) {
   real* opt1 = reinterpret_cast<real*>(fdip_phi1);
   real* opt2 = reinterpret_cast<real*>(fdip_phi2);
   real* opt3 = reinterpret_cast<real*>(fdip_sum_phi);
-  fphi_tmpl<UIND_GRID>(ppme_unit, opt1, opt2, opt3);
+  fphi_tmpl<UIND_GRID>(pme_unit, opt1, opt2, opt3);
 }
 }
 TINKER_NAMESPACE_END
