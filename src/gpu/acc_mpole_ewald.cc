@@ -555,9 +555,6 @@ void empole_ewald_tmpl() {
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
-  chkpole();
-  rotpole();
-
   if_constexpr(do_e || do_a || do_v) {
     #pragma acc serial deviceptr(em,nem,vir_em)
     {

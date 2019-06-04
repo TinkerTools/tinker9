@@ -12,9 +12,6 @@ void empole_coulomb_tmpl() {
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
-  chkpole();
-  rotpole();
-
   const real f = chgpot::electric / chgpot::dielec;
 
   const real off = mpole_switch_off;

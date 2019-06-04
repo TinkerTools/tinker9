@@ -56,13 +56,13 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
     tinker_gpu_data_create();
 
     gpu::zero_egv();
-    gpu::zero_torque(gpu::v0);
+    gpu::elec_init(gpu::v0);
     tinker_gpu_empole0();
     gpu::torque(gpu::v0);
     COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
 
     gpu::zero_egv();
-    gpu::zero_torque(gpu::v1);
+    gpu::elec_init(gpu::v1);
     tinker_gpu_empole1();
     gpu::torque(gpu::v1);
     COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
@@ -139,7 +139,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     tinker_gpu_data_create();
 
     gpu::zero_egv();
-    gpu::zero_torque(gpu::v1);
+    gpu::elec_init(gpu::v1);
     tinker_gpu_empole1();
     gpu::torque(gpu::v1);
     COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
@@ -189,7 +189,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][ewald][local-frame]") {
     tinker_gpu_data_create();
 
     gpu::zero_egv();
-    gpu::zero_torque(gpu::v0);
+    gpu::elec_init(gpu::v0);
     tinker_gpu_epolar0();
     gpu::torque(gpu::v0);
     COMPARE_ENERGY_(gpu::ep, ref_eng, eps_e);

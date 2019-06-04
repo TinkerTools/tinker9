@@ -46,9 +46,12 @@ extern real* vir_trq;
 int use_elec();
 void elec_data(int op);
 
-void chkpole();
-void rotpole();
-void zero_torque(int ver);
+/**
+ * @brief
+ * Zero torque (if used), torque-related virial (if used), then call chkpole()
+ * and rotpole().
+ */
+void elec_init(int ver);
 void torque(int ver);
 }
 TINKER_NAMESPACE_END

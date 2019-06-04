@@ -127,9 +127,13 @@ void elec_data(int op) {
   }
 }
 
-void zero_torque(int vers) {
+void chkpole();
+void rotpole();
+void elec_init(int vers) {
   if (!use_elec())
     return;
+
+  // zero torque
 
   if (vers & use_grad) {
     zero_data(trqx, n);
@@ -137,9 +141,14 @@ void zero_torque(int vers) {
     zero_data(trqz, n);
   }
 
+  // zero torque-related virial
+
   if (vers & use_virial) {
     zero_data(vir_trq, 9);
   }
+
+  chkpole();
+  rotpole();
 }
 }
 TINKER_NAMESPACE_END
