@@ -9,5 +9,4 @@
 #define TINKER_SRC_GPU_ACC_PMESTUFF_IMPL_
 #include "acc_pme_cf.hh"
 #include "acc_pme_conv.hh"
-#include "acc_pme_grid.hh"
 #undef TINKER_SRC_GPU_ACC_PMESTUFF_IMPL_

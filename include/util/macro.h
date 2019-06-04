@@ -70,4 +70,10 @@ two macros (TINKER_MOD and TINKER_RT) here to mimic its name mangling.
 #  define if_constexpr if
 #endif
 
+#if __has_cpp_attribute(maybe_unused)
+#  define MAYBE_UNUSED [[maybe_unused]]
+#else
+#  define MAYBE_UNUSED __attribute__((unused))
+#endif
+
 #endif

@@ -20,6 +20,22 @@ extern real* vir_ep;
 int use_epolar();
 void get_epolar_type(int& typ, std::string& typ_str);
 void e_polar_data(int op);
+
+// electrostatic field due to permanent multipoles
+void dfield_coulomb(real* gpu_field, real* gpu_fieldp);
+void dfield_ewald(real* gpu_field, real* gpu_fieldp);
+void dfield_ewald_real(real* gpu_field, real* gpu_fieldp);
+void dfield_ewald_recip(real* gpu_field, real* gpu_fieldp);
+
+// mutual electrostatic field due to induced dipole moments
+void ufield_coulomb(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
+                    real* gpu_fieldp);
+void ufield_ewald(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
+                  real* gpu_fieldp);
+void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
+                       real* gpu_field, real* gpu_fieldp);
+void ufield_ewald_recip(const real* gpu_uind, const real* gpu_uinp,
+                        real* gpu_field, real* gpu_fieldp);
 }
 TINKER_NAMESPACE_END
 
