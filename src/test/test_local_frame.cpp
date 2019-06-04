@@ -150,3 +150,51 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     test_end();
   }
 }
+
+TEST_CASE("Local-Frame-3", "[ff][epolar][ewald][local-frame]") {
+  file fpr("amoeba09.prm", amoeba09_prm);
+
+  const char* k = "test_local_frame.key";
+  std::string key0 = local_frame_key;
+
+  const char* x1 = "test_local_frame.xyz";
+  file fx1(x1, local_frame_xyz);
+
+  int usage = 0;
+  usage |= gpu::use_xyz;
+  usage |= gpu::use_energy;
+  usage |= gpu::use_grad;
+  usage |= gpu::use_virial;
+
+  SECTION("epolar -- pme") {
+    std::string key1 = key0;
+    key1 += "polarizeterm    only\n";
+    key1 += "ewald\n";
+    key1 += "ewald-cutoff    7.0\n";
+    key1 += "neighbor-list\n";
+    key1 += "list-buffer    0.1\n";
+    key1 += "a-axis    20.0\n";
+    file fke(k, key1);
+
+    const char* argv[] = {"dummy", x1};
+    int argc = 2;
+
+    const double eps_e = 0.0001;
+    // const double ref_eng = -36.5477;
+    const double ref_eng = 0;
+    const int ref_count = 222;
+
+    test_begin_1_xyz(argc, argv);
+    gpu::use_data = usage;
+    tinker_gpu_data_create();
+
+    gpu::zero_egv();
+    gpu::zero_torque(gpu::v0);
+    tinker_gpu_epolar0();
+    gpu::torque(gpu::v0);
+    COMPARE_ENERGY_(gpu::ep, ref_eng, eps_e);
+
+    tinker_gpu_data_destroy();
+    test_end();
+  }
+}

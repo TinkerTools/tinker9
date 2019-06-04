@@ -23,7 +23,7 @@ void print_backtrace_template(std::ostream& fp) {
   int status;
   std::string num, caller, callee;
   const char* f1 = " Backtrace\n";
-  const char* f2 = " {:>4s}  {:36.36s}  {:s}\n";
+  const char* f2 = " {:>4s}  {:60.60s}  {:s}\n";
   const int tolerance = 20;
   print(fp, f1);
 
@@ -63,6 +63,8 @@ void print_backtrace_template(std::ostream& fp) {
     print(fp, f2, num, caller, callee);
   }
   free(strs);
+
+  fp << std::flush;
 }
 }
 

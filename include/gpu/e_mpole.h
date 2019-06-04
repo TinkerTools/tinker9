@@ -49,20 +49,6 @@ void tinker_gpu_empole_coulomb4();
 void tinker_gpu_empole_coulomb5();
 void tinker_gpu_empole_coulomb6();
 
-void tinker_gpu_emreal0();
-void tinker_gpu_emreal1();
-void tinker_gpu_emreal3();
-void tinker_gpu_emreal4();
-void tinker_gpu_emreal5();
-void tinker_gpu_emreal6();
-
-void tinker_gpu_emrecip0();
-void tinker_gpu_emrecip1();
-void tinker_gpu_emrecip3();
-void tinker_gpu_emrecip4();
-void tinker_gpu_emrecip5();
-void tinker_gpu_emrecip6();
-
 void tinker_gpu_empole_ewald0();
 void tinker_gpu_empole_ewald1();
 void tinker_gpu_empole_ewald3();

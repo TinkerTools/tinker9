@@ -159,7 +159,7 @@ include_flags += -I$(cudadir)/include
 
 cxx_common_flags := -std=c++11 -D$(fortran_name_macro) $(precision_macro__)
 cxx_common_flags += $(include_flags) $(cxx_opt_flags)
-cxx_compile_flags := -x c++ -c -fpic $(cxx_common_flags)
+cxx_compile_flags := -c -fpic $(cxx_common_flags)
 
 acc_common_flags := $(cxx_common_flags)
 acc_compile_flags += -acc verystrict -c -fpic -Minfo=accel $(acc_common_flags)

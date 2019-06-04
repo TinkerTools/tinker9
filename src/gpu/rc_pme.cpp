@@ -83,7 +83,7 @@ int pme_open_unit(double aewald, int nfft1, int nfft2, int nfft3, int bsorder) {
   int idx;
   for (idx = 0; found == false && idx < detail_::pme_objs().size(); ++idx) {
     auto& st = detail_::pme_objs()[idx];
-    found = (fabs(aewald - st.aewald) < eps && nfft1 == st.nfft1 &&
+    found = (std::abs(aewald - st.aewald) < eps && nfft1 == st.nfft1 &&
              nfft2 == st.nfft2 && nfft3 == st.nfft3 && bsorder == st.bsorder);
   }
 
@@ -112,6 +112,7 @@ int dpme_unit; // dispersion
 TINKER_NAMESPACE_END
 
 #include "gpu/e_mpole.h"
+#include "gpu/e_polar.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -155,9 +156,14 @@ void pme_data(int op) {
 
     // polarization
     ppme_unit = -1;
-    if (false) {
-      ppme_unit = pme_open_unit(ewald::apewald, pme::nefft1, pme::nefft2,
-                                pme::nefft3, pme::bsporder);
+    if (use_epolar()) {
+      int typ;
+      std::string typ_str;
+
+      get_epolar_type(typ, typ_str);
+      if (typ == elec_ewald)
+        ppme_unit = pme_open_unit(ewald::apewald, pme::nefft1, pme::nefft2,
+                                  pme::nefft3, pme::bsporder);
     }
 
     // dispersion

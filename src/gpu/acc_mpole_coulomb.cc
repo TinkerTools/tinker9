@@ -342,20 +342,4 @@ void tinker_gpu_empole_coulomb3() { gpu::empole_coulomb_tmpl<gpu::v3>(); }
 void tinker_gpu_empole_coulomb4() { gpu::empole_coulomb_tmpl<gpu::v4>(); }
 void tinker_gpu_empole_coulomb5() { gpu::empole_coulomb_tmpl<gpu::v5>(); }
 void tinker_gpu_empole_coulomb6() { gpu::empole_coulomb_tmpl<gpu::v6>(); }
-
-#define TINKER_GPU_EMPOLE_DEF_(ver)                                            \
-  void tinker_gpu_empole##ver() {                                              \
-    if (gpu::empole_electyp == gpu::elec_coulomb) {                            \
-      tinker_gpu_empole_coulomb##ver();                                        \
-    } else if (gpu::empole_electyp == gpu::elec_ewald) {                       \
-      tinker_gpu_empole_ewald##ver();                                          \
-    }                                                                          \
-  }
-TINKER_GPU_EMPOLE_DEF_(0);
-TINKER_GPU_EMPOLE_DEF_(1);
-TINKER_GPU_EMPOLE_DEF_(3);
-TINKER_GPU_EMPOLE_DEF_(4);
-TINKER_GPU_EMPOLE_DEF_(5);
-TINKER_GPU_EMPOLE_DEF_(6);
-#undef TINKER_GPU_EMPOLE_DEF_
 }
