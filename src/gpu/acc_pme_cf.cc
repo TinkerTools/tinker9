@@ -118,6 +118,39 @@ void cmp_to_fmp(int pme_unit, real (*_fmp)[10]) {
   }
 }
 
+void cuind_to_fuind(int pme_unit, const real (*cind)[3], const real (*cinp)[3],
+                    real (*fuind)[3], real (*fuinp)[3]) {
+  pme_st& st = pme_obj(pme_unit);
+  int nfft1 = st.nfft1;
+  int nfft2 = st.nfft2;
+  int nfft3 = st.nfft3;
+
+  real a[3][3];
+
+  #pragma acc parallel loop independent deviceptr(box,\
+              cind,cinp,fuind,fuinp)\
+              private(a[0:3][0:3])
+  for (int i = 0; i < n; ++i) {
+    a[0][0] = nfft1 * box->recip[0][0];
+    a[0][1] = nfft2 * box->recip[1][0];
+    a[0][2] = nfft3 * box->recip[2][0];
+    a[1][0] = nfft1 * box->recip[0][1];
+    a[1][1] = nfft2 * box->recip[1][1];
+    a[1][2] = nfft3 * box->recip[2][1];
+    a[2][0] = nfft1 * box->recip[0][2];
+    a[2][1] = nfft2 * box->recip[1][2];
+    a[2][2] = nfft3 * box->recip[2][2];
+
+    #pragma acc loop independent
+    for (int j = 0; j < 3; ++j) {
+      fuind[i][j] =
+          a[0][j] * cind[i][0] + a[1][j] * cind[i][1] + a[2][j] * cind[i][2];
+      fuinp[i][j] =
+          a[0][j] * cinp[i][0] + a[1][j] * cinp[i][1] + a[2][j] * cinp[i][2];
+    }
+  }
+}
+
 void fphi_to_cphi(int pme_unit, const real (*_fphi)[20], real (*_cphi)[10]) {
   pme_st& st = pme_obj(pme_unit);
   int nfft1 = st.nfft1;

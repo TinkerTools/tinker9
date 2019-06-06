@@ -37,8 +37,8 @@ void ufield_coulomb(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
                     real* gpu_fieldp);
 void ufield_ewald(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
                   real* gpu_fieldp);
-void ufield_ewald_recip(const real* gpu_uind, const real* gpu_uinp,
-                        real* gpu_field, real* gpu_fieldp);
+void ufield_ewald_recip_self(const real* gpu_uind, const real* gpu_uinp,
+                             real* gpu_field, real* gpu_fieldp);
 void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
                        real* gpu_field, real* gpu_fieldp);
 }

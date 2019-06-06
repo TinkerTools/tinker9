@@ -10,9 +10,6 @@ void dfield_ewald_recip_self(real* gpu_field) {
   const real aewald = pme_obj(ppme_unit).aewald;
   const real term = REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
 
-  auto& st = pme_obj(ppme_unit);
-  auto* dptr = pme_deviceptr(ppme_unit);
-
   cmp_to_fmp(ppme_unit, fmp);
   grid_mpole(ppme_unit, fmp);
   fftfront(ppme_unit);
@@ -341,6 +338,72 @@ void dfield_ewald(real* gpu_field, real* gpu_fieldp) {
   }
 
   dfield_ewald_real(gpu_field, gpu_fieldp);
+}
+
+// see also subroutine umutual1 in induce.f
+void ufield_ewald_recip_self(const real* gpu_uind, const real* gpu_uinp,
+                             real* gpu_field, real* gpu_fieldp) {
+  const real(*uind)[3] = reinterpret_cast<const real(*)[3]>(gpu_uind);
+  const real(*uinp)[3] = reinterpret_cast<const real(*)[3]>(gpu_uinp);
+  real(*field)[3] = reinterpret_cast<real(*)[3]>(gpu_field);
+  real(*fieldp)[3] = reinterpret_cast<real(*)[3]>(gpu_fieldp);
+
+  const int pu = ppme_unit;
+  auto& st = pme_obj(pu);
+  const int nfft1 = st.nfft1;
+  const int nfft2 = st.nfft2;
+  const int nfft3 = st.nfft3;
+  const real aewald = st.aewald;
+
+  cuind_to_fuind(pu, uind, uinp, fuind, fuinp);
+  grid_uind(pu, fuind, fuind);
+  fftfront(pu);
+  // TODO: store vs. recompute qfrac
+  pme_conv0(pu);
+  fftback(pu);
+  fphi_uind2(pu, fdip_phi1, fdip_phi2);
+
+  real a[3][3];
+
+  const real term = REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
+
+  #pragma acc parallel loop independent deviceptr(box,\
+              field,fieldp,uind,uinp,\
+              fdip_phi1,fdip_phi2)\
+              private(a[0:3][0:3])
+  for (int i = 0; i < n; ++i) {
+    a[0][0] = nfft1 * box->recip[0][0];
+    a[1][0] = nfft2 * box->recip[1][0];
+    a[2][0] = nfft3 * box->recip[2][0];
+    a[0][1] = nfft1 * box->recip[0][1];
+    a[1][1] = nfft2 * box->recip[1][1];
+    a[2][1] = nfft3 * box->recip[2][1];
+    a[0][2] = nfft1 * box->recip[0][2];
+    a[1][2] = nfft2 * box->recip[1][2];
+    a[2][2] = nfft3 * box->recip[2][2];
+
+    #pragma acc loop independent
+    for (int j = 0; j < 3; ++j) {
+      real df1 = a[0][j] * fdip_phi1[i][1] + a[1][j] * fdip_phi1[i][2] +
+          a[2][j] * fdip_phi1[i][3];
+      real df2 = a[0][j] * fdip_phi2[i][1] + a[1][j] * fdip_phi2[i][2] +
+          a[2][j] * fdip_phi2[i][3];
+      field[i][j] += (term * uind[i][j] - df1);
+      fieldp[i][j] += (term * uinp[i][j] - df2);
+    }
+  }
+}
+
+void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
+                       real* gpu_field, real* gpu_fieldp) {}
+
+void ufield_ewald(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
+                  real* gpu_fieldp) {
+  zero_data(gpu_field, 3 * n);
+  zero_data(gpu_fieldp, 3 * n);
+
+  ufield_ewald_recip_self(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);
+  ufield_ewald_real(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);
 }
 }
 TINKER_NAMESPACE_END

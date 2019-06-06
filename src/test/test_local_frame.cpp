@@ -229,6 +229,27 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][ewald][local-frame]") {
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
+    grad_t ud, up;
+    ud.resize(gpu::n);
+    up.resize(gpu::n);
+    for (int i = 0; i < gpu::n; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        ud[i][j] = 0.1 * (i + 1) + 0.03 * (j + 1);
+        up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
+      }
+    }
+    gpu::copyin_data(&gpu::uind[0][0], &ud[0][0], 3 * gpu::n);
+    gpu::copyin_data(&gpu::uinp[0][0], &up[0][0], 3 * gpu::n);
+    gpu::ufield_ewald(&gpu::uind[0][0], &gpu::uinp[0][0],
+                      &gpu::dir_fieldd[0][0], &gpu::dir_fieldp[0][0]);
+    gpu::copyout_data3(fieldd, gpu::dir_fieldd, gpu::n);
+    gpu::copyout_data3(fieldp, gpu::dir_fieldp, gpu::n);
+    PRINT_GRAD_T_(fieldd);
+    PRINT_GRAD_T_(fieldp);
+    gpu::torque(gpu::v0);
+
+    gpu::zero_egv();
+    gpu::elec_init(gpu::v0);
     tinker_gpu_epolar0();
     gpu::torque(gpu::v0);
     COMPARE_ENERGY_(gpu::ep, ref_eng, eps_e);

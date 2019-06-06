@@ -31,6 +31,9 @@ local_frame_def_st* zaxis;
 real (*pole)[mpl_total];
 real (*rpole)[mpl_total];
 
+real (*uind)[3];
+real (*uinp)[3];
+
 real *trqx, *trqy, *trqz;
 real* vir_trq;
 
@@ -44,6 +47,9 @@ void elec_data(int op) {
     check_cudart(cudaFree(zaxis));
     check_cudart(cudaFree(pole));
     check_cudart(cudaFree(rpole));
+
+    check_cudart(cudaFree(uind));
+    check_cudart(cudaFree(uinp));
 
     check_cudart(cudaFree(trqx));
     check_cudart(cudaFree(trqy));
@@ -113,6 +119,14 @@ void elec_data(int op) {
       polebuf[b1 + mpl_pme_zz] = mpole::pole[b2 + 12];
     }
     copyin_data(reinterpret_cast<real*>(pole), polebuf.data(), mpl_total * n);
+
+    if (use_epolar()) {
+      check_cudart(cudaMalloc(&uind, 3 * n * rs));
+      check_cudart(cudaMalloc(&uinp, 3 * n * rs));
+    } else {
+      uind = nullptr;
+      uinp = nullptr;
+    }
 
     if (use_data & use_grad) {
       check_cudart(cudaMalloc(&trqx, rs * n));

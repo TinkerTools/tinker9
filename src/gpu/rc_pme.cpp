@@ -133,6 +133,11 @@ real (*fmp)[10];
 real (*cphi)[10];
 real (*fphi)[20];
 
+real (*fuind)[3];
+real (*fuinp)[3];
+real (*fdip_phi1)[10];
+real (*fdip_phi2)[10];
+
 void pme_data(int op) {
   if (op == op_destroy) {
     assert(detail_::pme_objs().size() == detail_::pme_deviceptrs().size());
@@ -149,6 +154,11 @@ void pme_data(int op) {
     check_cudart(cudaFree(fmp));
     check_cudart(cudaFree(cphi));
     check_cudart(cudaFree(fphi));
+
+    check_cudart(cudaFree(fuind));
+    check_cudart(cudaFree(fuinp));
+    check_cudart(cudaFree(fdip_phi1));
+    check_cudart(cudaFree(fdip_phi2));
   }
 
   if (op == op_create) {
@@ -204,6 +214,18 @@ void pme_data(int op) {
       fmp = nullptr;
       cphi = nullptr;
       fphi = nullptr;
+    }
+
+    if (use_epolar()) {
+      check_cudart(cudaMalloc(&fuind, 3 * n * rs));
+      check_cudart(cudaMalloc(&fuinp, 3 * n * rs));
+      check_cudart(cudaMalloc(&fdip_phi1, 10 * n * rs));
+      check_cudart(cudaMalloc(&fdip_phi2, 10 * n * rs));
+    } else {
+      fuind = nullptr;
+      fuinp = nullptr;
+      fdip_phi1 = nullptr;
+      fdip_phi2 = nullptr;
     }
   }
 

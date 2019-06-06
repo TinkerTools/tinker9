@@ -53,6 +53,11 @@ extern double ewald_switch_cut, ewald_switch_off;
 extern real (*fmp)[10];
 extern real (*cphi)[10];
 extern real (*fphi)[20];
+
+extern real (*fuind)[3];
+extern real (*fuinp)[3];
+extern real (*fdip_phi1)[10];
+extern real (*fdip_phi2)[10];
 void pme_data(int op);
 }
 TINKER_NAMESPACE_END
@@ -72,6 +77,8 @@ void pme_conv1(int pme_unit, real* gpu_vir9); // with virial
  * Output: fmp, fractional rotated mpole.
  */
 void cmp_to_fmp(int pme_unit, real (*fmp)[10]);
+void cuind_to_fuind(int pme_unit, const real (*cind)[3], const real (*cinp)[3],
+                    real (*fuind)[3], real (*fuinp)[3]);
 /**
  * @brief
  * Input: fphi.
@@ -94,6 +101,8 @@ void fphi_mpole(int pme_unit, real (*gpu_fphi)[20]);
 void grid_uind(int pme_unit, real (*gpu_find)[3], real (*gpu_finp)[3]);
 void fphi_uind(int pme_unit, real (*gpu_fdip_phi1)[10],
                real (*gpu_fdip_phi2)[10], real (*gpu_fdip_sum_phi)[20]);
+void fphi_uind2(int pme_unit, real (*gpu_fdip_phi1)[10],
+                real (*gpu_fdip_phi2)[10]);
 }
 TINKER_NAMESPACE_END
 

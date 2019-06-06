@@ -134,10 +134,7 @@ static inline void bsplgen(real w, real* __restrict__ thetai,
   }
 }
 
-static const int PCHG_GRID = 1;
-static const int MPOLE_GRID = 2;
-static const int UIND_GRID = 3;
-static const int DISP_GRID = 4;
+enum { PCHG_GRID = 1, MPOLE_GRID, UIND_GRID, UIND_GRID_FPHI2, DISP_GRID };
 
 template <int WHAT>
 void grid_tmpl(int pme_unit, real* optional1, real* optional2) {
@@ -374,6 +371,10 @@ void fphi_tmpl(int pme_unit, real* opt1, real* opt2, real* opt3) {
     fdip_phi2 = reinterpret_cast<real(*)[10]>(opt2);
     fdip_sum_phi = reinterpret_cast<real(*)[20]>(opt3);
   }
+  if_constexpr(WHAT == UIND_GRID_FPHI2) {
+    fdip_phi1 = reinterpret_cast<real(*)[10]>(opt1);
+    fdip_phi2 = reinterpret_cast<real(*)[10]>(opt2);
+  }
 
   const int nfft1 = st.nfft1;
   const int nfft2 = st.nfft2;
@@ -426,7 +427,8 @@ void fphi_tmpl(int pme_unit, real* opt1, real* opt2, real* opt3) {
     int igrid3 = REAL_FLOOR(fr3);
     w3 = fr3 - igrid3;
 
-    if_constexpr(WHAT == MPOLE_GRID || WHAT == UIND_GRID) {
+    if_constexpr(WHAT == MPOLE_GRID || WHAT == UIND_GRID ||
+                 WHAT == UIND_GRID_FPHI2) {
       bsplgen<4>(w1, thetai1, bsbuild, bsorder);
       bsplgen<4>(w2, thetai2, bsbuild, bsorder);
       bsplgen<4>(w3, thetai3, bsbuild, bsorder);
@@ -561,7 +563,7 @@ void fphi_tmpl(int pme_unit, real* opt1, real* opt2, real* opt3) {
       fphi[i][19] = tuv111;
     } // end if (fphi_mpole)
 
-    if_constexpr(WHAT == UIND_GRID) {
+    if_constexpr(WHAT == UIND_GRID || WHAT == UIND_GRID_FPHI2) {
       real tuv100_1 = 0;
       real tuv010_1 = 0;
       real tuv001_1 = 0;
@@ -760,26 +762,28 @@ void fphi_tmpl(int pme_unit, real* opt1, real* opt2, real* opt3) {
       fdip_phi2[i][8] = tuv101_2;
       fdip_phi2[i][9] = tuv011_2;
 
-      fdip_sum_phi[i][0] = tuv000;
-      fdip_sum_phi[i][1] = tuv100;
-      fdip_sum_phi[i][2] = tuv010;
-      fdip_sum_phi[i][3] = tuv001;
-      fdip_sum_phi[i][4] = tuv200;
-      fdip_sum_phi[i][5] = tuv020;
-      fdip_sum_phi[i][6] = tuv002;
-      fdip_sum_phi[i][7] = tuv110;
-      fdip_sum_phi[i][8] = tuv101;
-      fdip_sum_phi[i][9] = tuv011;
-      fdip_sum_phi[i][10] = tuv300;
-      fdip_sum_phi[i][11] = tuv030;
-      fdip_sum_phi[i][12] = tuv003;
-      fdip_sum_phi[i][13] = tuv210;
-      fdip_sum_phi[i][14] = tuv201;
-      fdip_sum_phi[i][15] = tuv120;
-      fdip_sum_phi[i][16] = tuv021;
-      fdip_sum_phi[i][17] = tuv102;
-      fdip_sum_phi[i][18] = tuv012;
-      fdip_sum_phi[i][19] = tuv111;
+      if_constexpr(WHAT == UIND_GRID) {
+        fdip_sum_phi[i][0] = tuv000;
+        fdip_sum_phi[i][1] = tuv100;
+        fdip_sum_phi[i][2] = tuv010;
+        fdip_sum_phi[i][3] = tuv001;
+        fdip_sum_phi[i][4] = tuv200;
+        fdip_sum_phi[i][5] = tuv020;
+        fdip_sum_phi[i][6] = tuv002;
+        fdip_sum_phi[i][7] = tuv110;
+        fdip_sum_phi[i][8] = tuv101;
+        fdip_sum_phi[i][9] = tuv011;
+        fdip_sum_phi[i][10] = tuv300;
+        fdip_sum_phi[i][11] = tuv030;
+        fdip_sum_phi[i][12] = tuv003;
+        fdip_sum_phi[i][13] = tuv210;
+        fdip_sum_phi[i][14] = tuv201;
+        fdip_sum_phi[i][15] = tuv120;
+        fdip_sum_phi[i][16] = tuv021;
+        fdip_sum_phi[i][17] = tuv102;
+        fdip_sum_phi[i][18] = tuv012;
+        fdip_sum_phi[i][19] = tuv111;
+      }
     } // end if (fphi_uind)
   }   // end for (int i)
 }
@@ -795,6 +799,12 @@ void fphi_uind(int pme_unit, real (*fdip_phi1)[10], real (*fdip_phi2)[10],
   real* opt2 = reinterpret_cast<real*>(fdip_phi2);
   real* opt3 = reinterpret_cast<real*>(fdip_sum_phi);
   fphi_tmpl<UIND_GRID>(pme_unit, opt1, opt2, opt3);
+}
+
+void fphi_uind2(int pme_unit, real (*fdip_phi1)[10], real (*fdip_phi2)[10]) {
+  real* opt1 = reinterpret_cast<real*>(fdip_phi1);
+  real* opt2 = reinterpret_cast<real*>(fdip_phi2);
+  fphi_tmpl<UIND_GRID_FPHI2>(pme_unit, opt1, opt2, nullptr);
 }
 }
 TINKER_NAMESPACE_END
