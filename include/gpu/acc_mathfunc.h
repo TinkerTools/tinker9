@@ -12,6 +12,8 @@
 #pragma acc routine(sin) seq
 #pragma acc routine(erf) seq
 #pragma acc routine(erfc) seq
+#pragma acc routine(fmin) seq
+#pragma acc routine(fmax) seq
 
 #pragma acc routine(sqrtf) seq
 #pragma acc routine(expf) seq
@@ -22,6 +24,8 @@
 #pragma acc routine(sinf) seq
 #pragma acc routine(erff) seq
 #pragma acc routine(erfcf) seq
+#pragma acc routine(fminf) seq
+#pragma acc routine(fmaxf) seq
 
 #pragma acc routine(abs) seq
 

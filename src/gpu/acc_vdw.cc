@@ -64,12 +64,8 @@ void evdw_tmpl() {
   const real v5scale = vdwpot::v5scale;
 
   static std::vector<real> vscalebuf;
-  vscalebuf.resize(n);
+  vscalebuf.resize(n, 1);
   real* vscale = vscalebuf.data();
-  // In order to use firstprivate, must assign values here.
-  for (int i = 0; i < n; ++i) {
-    vscale[i] = 1;
-  }
 
   #pragma acc serial deviceptr(ev,nev,vir_ev)
   {

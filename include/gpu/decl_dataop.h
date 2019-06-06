@@ -15,6 +15,9 @@ void copyin_data2(int idx0, int ndim, real* dst, const double* src, int nelem);
 void copyout_data(int* dst, const int* src, int nelem);
 void copyout_data(double* dst, const real* src, int nelem);
 void copyout_data2(int idx0, int ndim, double* dst, const real* src, int nelem);
+void copyout_data3(double (*dst)[3], const real (*src)[3], int natom);
+void copyout_data3(std::vector<std::array<double, 3>>& dst,
+                   const real (*src)[3], int natom);
 
 void zero_data(real* dst, int nelem);
 

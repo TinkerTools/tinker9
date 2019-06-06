@@ -3,6 +3,7 @@
 
 #include "decl_real.h"
 #include "gpu/decl_elec.h"
+#include "gpu/decl_polgrp.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -10,12 +11,16 @@ extern int epolar_electyp;
 extern std::string epolar_electyp_str;
 
 extern real* polarity;
+extern real* thole;
 extern real* pdamp;
 extern real* polarity_inv;
 
 extern real* ep;
 extern int* nep;
 extern real* vir_ep;
+
+extern real (*dir_fieldd)[3];
+extern real (*dir_fieldp)[3];
 
 int use_epolar();
 void get_epolar_type(int& typ, std::string& typ_str);
@@ -24,18 +29,18 @@ void e_polar_data(int op);
 // electrostatic field due to permanent multipoles
 void dfield_coulomb(real* gpu_field, real* gpu_fieldp);
 void dfield_ewald(real* gpu_field, real* gpu_fieldp);
+void dfield_ewald_recip_self(real* gpu_field);
 void dfield_ewald_real(real* gpu_field, real* gpu_fieldp);
-void dfield_ewald_recip(real* gpu_field);
 
 // mutual electrostatic field due to induced dipole moments
 void ufield_coulomb(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
                     real* gpu_fieldp);
 void ufield_ewald(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
                   real* gpu_fieldp);
-void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
-                       real* gpu_field, real* gpu_fieldp);
 void ufield_ewald_recip(const real* gpu_uind, const real* gpu_uinp,
                         real* gpu_field, real* gpu_fieldp);
+void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
+                       real* gpu_field, real* gpu_fieldp);
 }
 TINKER_NAMESPACE_END
 

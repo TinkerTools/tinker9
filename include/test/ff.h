@@ -81,6 +81,13 @@ typedef std::vector<std::array<double, 3>> grad_t;
             i + 1, grad[i][0], grad[i][1], grad[i][2]);                        \
     }                                                                          \
   }
+#define PRINT_GRAD_T_(grad)                                                    \
+  {                                                                            \
+    for (int i = 0; i < grad.size(); ++i) {                                    \
+      print(stdout, " ATOM{:>6d}{:>12.4f}{:>12.4f}{:>12.4f}\n", i + 1,         \
+            grad[i][0], grad[i][1], grad[i][2]);                               \
+    }                                                                          \
+  }
 
 TINKER_NAMESPACE_END
 

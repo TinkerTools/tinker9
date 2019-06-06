@@ -7,8 +7,8 @@ TINKER_NAMESPACE_BEGIN
 namespace gpu {
 template <int DO_V>
 void pme_conv_tmpl(int pme_unit, real* gpu_vir9) {
-  pme_st& st = pme_obj(epme_unit);
-  pme_st* dptr = pme_deviceptr(epme_unit);
+  pme_st& st = pme_obj(pme_unit);
+  pme_st* dptr = pme_deviceptr(pme_unit);
 
   const int nfft1 = st.nfft1;
   const int nfft2 = st.nfft2;

@@ -24,12 +24,8 @@ void empole_coulomb_tmpl() {
   const real m5scale = mplpot::m5scale;
 
   static std::vector<real> mscalebuf;
-  mscalebuf.resize(n);
+  mscalebuf.resize(n, 1);
   real* mscale = mscalebuf.data();
-  // In order to use firstprivate, must assign values here.
-  for (int i = 0; i < n; ++i) {
-    mscale[i] = 1;
-  }
 
   if_constexpr(do_e || do_a || do_v) {
     #pragma acc serial deviceptr(em,nem,vir_em)

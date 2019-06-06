@@ -30,6 +30,8 @@ void potential_data(int op) {
 
   elec_data(op);
   e_mpole_data(op);
+  if (use_epolar())
+    polargroup_data(op);
   e_polar_data(op);
 }
 }

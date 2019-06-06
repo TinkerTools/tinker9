@@ -17,13 +17,6 @@ extern real* vir_em;
 int use_empole();
 void get_empole_type(int& typ, std::string& typ_str);
 void e_mpole_data(int op);
-
-/**
- * @brief
- * make the scalar summation over reciprocal lattice
- */
-void pme_conv0(int pme_unit);                 // without virial
-void pme_conv1(int pme_unit, real* gpu_vir9); // with virial
 }
 TINKER_NAMESPACE_END
 

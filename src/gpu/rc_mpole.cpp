@@ -44,8 +44,6 @@ void e_mpole_data(int op) {
 
     if (empole_electyp == elec_coulomb)
       switch_cut_off(switch_mpole, mpole_switch_cut, mpole_switch_off);
-    else if (empole_electyp == elec_ewald)
-      switch_cut_off(switch_ewald, mpole_switch_cut, mpole_switch_off);
 
     check_cudart(cudaMalloc(&em, rs));
     check_cudart(cudaMalloc(&nem, sizeof(int)));

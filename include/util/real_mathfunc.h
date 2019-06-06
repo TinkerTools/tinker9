@@ -20,6 +20,8 @@ typedef double real_t__;
 #  define REAL_SIN(x) sin(x)
 #  define REAL_ERF(x) erf(x)
 #  define REAL_ERFC(x) erfc(x)
+#  define REAL_MIN(x, y) fmin(x, y)
+#  define REAL_MAX(x, y) fmax(x, y)
 #endif
 
 #ifdef TINKER_GPU_SINGLE
@@ -36,6 +38,8 @@ typedef float real_t__;
 #  define REAL_SIN(x) sinf(x)
 #  define REAL_ERF(x) erff(x)
 #  define REAL_ERFC(x) erfcf(x)
+#  define REAL_MIN(x, y) fminf(x, y)
+#  define REAL_MAX(x, y) fmaxf(x, y)
 #endif
 
 #define INT_ABS(x) abs(x)

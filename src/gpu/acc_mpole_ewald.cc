@@ -16,7 +16,7 @@ void empole_real_tmpl() {
 
   const real f = chgpot::electric / chgpot::dielec;
 
-  const real off = mpole_switch_off;
+  const real off = ewald_switch_off;
   const real off2 = off * off;
   const int maxnlst = mlist_obj_.maxnlst;
 
@@ -26,12 +26,8 @@ void empole_real_tmpl() {
   const real m5scale = mplpot::m5scale;
 
   static std::vector<real> mscalebuf;
-  mscalebuf.resize(n);
+  mscalebuf.resize(n, 1);
   real* mscale = mscalebuf.data();
-  // In order to use firstprivate, must assign values here.
-  for (int i = 0; i < n; ++i) {
-    mscale[i] = 1;
-  }
 
   const real aewald = pme_obj(epme_unit).aewald;
   const real aewald_sq_2 = 2 * aewald * aewald;
@@ -121,7 +117,7 @@ void empole_real_tmpl() {
             qixx * qkxx + qiyy * qkyy + qizz * qkzz;
 
         real invr1 = REAL_RECIP(r);
-        real rr2 = REAL_RECIP(r2);
+        real rr2 = invr1 * invr1;
         real rr1 = f * invr1;
         real rr3 = rr1 * rr2;
         real rr5 = 3 * rr3 * rr2;

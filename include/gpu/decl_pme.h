@@ -48,6 +48,8 @@ extern int epme_unit; // electrostatic
 extern int ppme_unit; // polarization
 extern int dpme_unit; // dispersion
 
+extern double ewald_switch_cut, ewald_switch_off;
+
 extern real (*fmp)[10];
 extern real (*cphi)[10];
 extern real (*fphi)[20];
@@ -57,10 +59,36 @@ TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void cmp_to_fmp(int pme_unit, real (*fmp)[10]);
-void fphi_to_cphi(int pme_unit, const real (*fphi)[20], real (*cphi)[10]);
+/**
+ * @brief
+ * make the scalar summation over reciprocal lattice
+ */
+void pme_conv0(int pme_unit);                 // without virial
+void pme_conv1(int pme_unit, real* gpu_vir9); // with virial
 
+/**
+ * @brief
+ * Input: cmp, cartesian rotated mpole.
+ * Output: fmp, fractional rotated mpole.
+ */
+void cmp_to_fmp(int pme_unit, real (*fmp)[10]);
+/**
+ * @brief
+ * Input: fphi.
+ * Output: cphi.
+ */
+void fphi_to_cphi(int pme_unit, const real (*fphi)[20], real (*cphi)[10]);
+/**
+ * @brief
+ * Input: fmp.
+ * Output: qgrid.
+ */
 void grid_mpole(int pme_unit, real (*gpu_fmp)[10]);
+/**
+ * @brief
+ * Input: qgrid.
+ * Output: fphi.
+ */
 void fphi_mpole(int pme_unit, real (*gpu_fphi)[20]);
 
 void grid_uind(int pme_unit, real (*gpu_find)[3], real (*gpu_finp)[3]);

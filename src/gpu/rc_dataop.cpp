@@ -64,6 +64,16 @@ void copyout_data2(int idx0, int ndim, double* dst, const real* src,
   }
 }
 
+void copyout_data3(double (*dst)[3], const real (*src)[3], int natom) {
+  copyout_data(&dst[0][0], &src[0][0], 3 * natom);
+}
+
+void copyout_data3(std::vector<std::array<double, 3>>& dst,
+                   const real (*src)[3], int natom) {
+  dst.resize(natom);
+  copyout_data(&dst[0][0], &src[0][0], 3 * natom);
+}
+
 void zero_data(real* dst, int nelem) {
   size_t size = sizeof(real) * nelem;
   check_cudart(cudaMemset(dst, 0, size));

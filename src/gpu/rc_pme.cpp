@@ -1,6 +1,7 @@
 #include "gpu/decl_dataop.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
+#include "gpu/decl_switch.h"
 #include "rc_cudart.h"
 #include "util/math.h"
 #include <ext/tinker/tinker_rt.h>
@@ -99,15 +100,27 @@ int pme_open_unit(double aewald, int nfft1, int nfft2, int nfft3, int bsorder) {
   return idx;
 }
 
-pme_st& pme_obj(int pme_unit) { return detail_::pme_objs()[pme_unit]; }
+pme_st& pme_obj(int pme_unit) {
+#if TINKER_DEBUG
+  return detail_::pme_objs().at(pme_unit);
+#else
+  return detail_::pme_objs()[pme_unit];
+#endif
+}
 
 pme_st* pme_deviceptr(int pme_unit) {
+#if TINKER_DEBUG
+  return detail_::pme_deviceptrs().at(pme_unit);
+#else
   return detail_::pme_deviceptrs()[pme_unit];
+#endif
 }
 
 int epme_unit; // electrostatic
 int ppme_unit; // polarization
 int dpme_unit; // dispersion
+
+double ewald_switch_cut, ewald_switch_off;
 }
 TINKER_NAMESPACE_END
 
@@ -142,6 +155,8 @@ void pme_data(int op) {
     assert(detail_::pme_objs().size() == 0);
     assert(detail_::pme_deviceptrs().size() == 0);
 
+    bool use_elec_pme = false;
+
     // electrostatics
     epme_unit = -1;
     if (use_empole()) {
@@ -149,9 +164,11 @@ void pme_data(int op) {
       std::string typ_str;
 
       get_empole_type(typ, typ_str);
-      if (typ == elec_ewald)
+      if (typ == elec_ewald) {
+        use_elec_pme = true;
         epme_unit = pme_open_unit(ewald::aeewald, pme::nefft1, pme::nefft2,
                                   pme::nefft3, pme::bseorder);
+      }
     }
 
     // polarization
@@ -161,9 +178,11 @@ void pme_data(int op) {
       std::string typ_str;
 
       get_epolar_type(typ, typ_str);
-      if (typ == elec_ewald)
+      if (typ == elec_ewald) {
+        use_elec_pme = true;
         ppme_unit = pme_open_unit(ewald::apewald, pme::nefft1, pme::nefft2,
                                   pme::nefft3, pme::bsporder);
+      }
     }
 
     // dispersion
@@ -174,9 +193,18 @@ void pme_data(int op) {
     }
 
     const size_t rs = sizeof(real);
-    check_cudart(cudaMalloc(&fmp, 10 * n * rs));
-    check_cudart(cudaMalloc(&cphi, 10 * n * rs));
-    check_cudart(cudaMalloc(&fphi, 20 * n * rs));
+
+    if (use_elec_pme) {
+      switch_cut_off(switch_ewald, ewald_switch_cut, ewald_switch_off);
+
+      check_cudart(cudaMalloc(&fmp, 10 * n * rs));
+      check_cudart(cudaMalloc(&cphi, 10 * n * rs));
+      check_cudart(cudaMalloc(&fphi, 20 * n * rs));
+    } else {
+      fmp = nullptr;
+      cphi = nullptr;
+      fphi = nullptr;
+    }
   }
 
   detail_::fft_data(op);

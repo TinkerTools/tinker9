@@ -9,12 +9,16 @@ int epolar_electyp;
 std::string epolar_electyp_str;
 
 real* polarity;
+real* thole;
 real* pdamp;
 real* polarity_inv;
 
 real* ep;
 int* nep;
 real* vir_ep;
+
+real (*dir_fieldd)[3];
+real (*dir_fieldp)[3];
 
 int use_epolar() { return potent::use_polar; }
 
@@ -34,12 +38,16 @@ void e_polar_data(int op) {
 
   if (op == op_destroy) {
     check_cudart(cudaFree(polarity));
+    check_cudart(cudaFree(thole));
     check_cudart(cudaFree(pdamp));
     check_cudart(cudaFree(polarity_inv));
 
     check_cudart(cudaFree(ep));
     check_cudart(cudaFree(nep));
     check_cudart(cudaFree(vir_ep));
+
+    check_cudart(cudaFree(dir_fieldd));
+    check_cudart(cudaFree(dir_fieldp));
   }
 
   if (op == op_create) {
@@ -49,23 +57,26 @@ void e_polar_data(int op) {
     size_t size;
 
     check_cudart(cudaMalloc(&polarity, n * rs));
+    check_cudart(cudaMalloc(&thole, n * rs));
     check_cudart(cudaMalloc(&pdamp, rs * n));
     check_cudart(cudaMalloc(&polarity_inv, rs * n));
     // see also polmin in induce.f
     const double polmin = 0.00000001;
-    std::vector<double> pbuf(n), pdbuf(n), pinvbuf(n);
+    std::vector<double> pinvbuf(n);
     for (int i = 0; i < n; ++i) {
-      pbuf[i] = polar::polarity[i];
-      pdbuf[i] = polar::pdamp[i];
       pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
     }
-    copyin_data(polarity, pbuf.data(), n);
-    copyin_data(pdamp, pdbuf.data(), n);
+    copyin_data(polarity, polar::polarity, n);
+    copyin_data(thole, polar::thole, n);
+    copyin_data(pdamp, polar::pdamp, n);
     copyin_data(polarity_inv, pinvbuf.data(), n);
 
     check_cudart(cudaMalloc(&ep, rs));
     check_cudart(cudaMalloc(&nep, sizeof(int)));
     check_cudart(cudaMalloc(&vir_ep, 9 * rs));
+
+    check_cudart(cudaMalloc(&dir_fieldd, 3 * n * rs));
+    check_cudart(cudaMalloc(&dir_fieldp, 3 * n * rs));
   }
 }
 }

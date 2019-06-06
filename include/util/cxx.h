@@ -2,6 +2,7 @@
 #define TINKER_UTIL_CXX_H_
 
 #include "macro.h"
+#include <array>
 #include <cassert>
 #include <cstdlib>
 #include <cstring>

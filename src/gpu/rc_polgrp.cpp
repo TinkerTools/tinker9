@@ -55,7 +55,7 @@ void polargroup_data(int op) {
       int base = i * polargroup_st::maxp11;
       int bask = i * polgrp::maxp11;
       for (int j = 0; j < nn; ++j) {
-        int k = polgrp::np11[bask + j];
+        int k = polgrp::ip11[bask + j];
         ibuf[base + j] = k - 1;
       }
     }
@@ -70,7 +70,7 @@ void polargroup_data(int op) {
       int base = i * polargroup_st::maxp12;
       int bask = i * polgrp::maxp12;
       for (int j = 0; j < nn; ++j) {
-        int k = polgrp::np12[bask + j];
+        int k = polgrp::ip12[bask + j];
         ibuf[base + j] = k - 1;
       }
     }
@@ -85,7 +85,7 @@ void polargroup_data(int op) {
       int base = i * polargroup_st::maxp13;
       int bask = i * polgrp::maxp13;
       for (int j = 0; j < nn; ++j) {
-        int k = polgrp::np13[bask + j];
+        int k = polgrp::ip13[bask + j];
         ibuf[base + j] = k - 1;
       }
     }
@@ -100,7 +100,7 @@ void polargroup_data(int op) {
       int base = i * polargroup_st::maxp14;
       int bask = i * polgrp::maxp14;
       for (int j = 0; j < nn; ++j) {
-        int k = polgrp::np14[bask + j];
+        int k = polgrp::ip14[bask + j];
         ibuf[base + j] = k - 1;
       }
     }
