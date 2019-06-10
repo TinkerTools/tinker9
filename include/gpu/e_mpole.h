@@ -8,8 +8,6 @@ namespace gpu {
 extern int empole_electyp;
 extern std::string empole_electyp_str;
 
-extern double mpole_switch_cut, mpole_switch_off;
-
 extern real* em;
 extern int* nem;
 extern real* vir_em;

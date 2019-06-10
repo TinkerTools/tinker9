@@ -1,5 +1,6 @@
 #include "gpu/decl_dataop.h"
 #include "gpu/decl_mdstate.h"
+#include "gpu/decl_switch.h"
 #include "gpu/e_polar.h"
 #include "rc_cudart.h"
 #include "util/format_print.h"
@@ -36,7 +37,7 @@ void get_epolar_type(int& typ, std::string& typ_str) {
     typ = elec_ewald;
     typ_str = "EWALD";
   } else {
-    typ = elec_ewald;
+    typ = elec_coulomb;
     typ_str = "COULOMB";
   }
 }
@@ -69,6 +70,9 @@ void e_polar_data(int op) {
 
   if (op == op_create) {
     get_epolar_type(epolar_electyp, epolar_electyp_str);
+
+    if (epolar_electyp == elec_coulomb)
+      switch_cut_off(switch_mpole, mpole_switch_cut, mpole_switch_off);
 
     const size_t rs = sizeof(real);
     size_t size;

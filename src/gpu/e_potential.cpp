@@ -1,6 +1,7 @@
 #include "gpu/e_potential.h"
 #include "gpu/decl_dataop.h"
 #include "gpu/decl_nblist.h"
+#include "gpu/decl_pme.h"
 #include "util/format_print.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -29,6 +30,7 @@ void potential_data(int op) {
   // Must call elec_data() before any electrostatics routine.
 
   elec_data(op);
+  pme_data(op);
   e_mpole_data(op);
   if (use_epolar())
     polargroup_data(op);

@@ -9,8 +9,6 @@ namespace gpu {
 int empole_electyp;
 std::string empole_electyp_str;
 
-double mpole_switch_cut, mpole_switch_off;
-
 real* em;
 int* nem;
 real* vir_em;

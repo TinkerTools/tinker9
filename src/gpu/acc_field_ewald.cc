@@ -214,7 +214,7 @@ void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
         real damp = pdi * pdamp[k];
         if (damp != 0) {
           real pgamma = REAL_MIN(pti, thole[k]);
-          damp = -pgamma * REAL_CUBE((r / damp));
+          damp = -pgamma * REAL_CUBE(r / damp);
           if (damp > -50) {
             real expdamp = REAL_EXP(damp);
             scale3 = 1 - expdamp;
@@ -482,7 +482,7 @@ void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
         real damp = pdi * pdamp[k];
         if (damp != 0) {
           real pgamma = REAL_MIN(pti, thole[k]);
-          damp = -pgamma * REAL_CUBE((r / damp));
+          damp = -pgamma * REAL_CUBE(r / damp);
           if (damp > -50) {
             real expdamp = REAL_EXP(damp);
             scale3 = 1 - expdamp;

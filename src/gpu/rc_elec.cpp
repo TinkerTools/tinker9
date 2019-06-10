@@ -26,6 +26,8 @@ void tinker_gpu_mlist_update() {
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
+double mpole_switch_cut, mpole_switch_off;
+
 local_frame_def_st* zaxis;
 
 real (*pole)[mpl_total];

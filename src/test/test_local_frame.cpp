@@ -152,7 +152,131 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
   }
 }
 
-TEST_CASE("Local-Frame-3", "[ff][epolar][ewald][local-frame]") {
+TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
+  file fpr("amoeba09.prm", amoeba09_prm);
+
+  const char* k = "test_local_frame.key";
+  std::string key0 = local_frame_key;
+
+  const char* x1 = "test_local_frame.xyz";
+  file fx1(x1, local_frame_xyz);
+
+  int usage = 0;
+  usage |= gpu::use_xyz;
+  usage |= gpu::use_energy;
+  usage |= gpu::use_grad;
+  usage |= gpu::use_virial;
+
+  key0 += "usolve-cutoff    0.01\n";
+  key0 += "polarizeterm    only\n";
+  file fke(k, key0);
+
+  const char* argv[] = {"dummy", x1};
+  int argc = 2;
+
+  const double eps_f = 0.0001;
+
+  test_begin_1_xyz(argc, argv);
+  gpu::use_data = usage;
+  tinker_gpu_data_create();
+
+  SECTION("dfield -- coulomb no cutoff") {
+    const double ref_dir_field_d[][3] = {
+        {0.0632, -0.0886, -0.0018}, {0.0332, -0.0268, 0.0058},
+        {0.0771, -0.0274, 0.0004},  {0.0567, -0.0101, -0.0015},
+        {0.0609, -0.0428, 0.0132},  {0.1799, -0.1501, 0.0475},
+        {0.1291, -0.1097, 0.0187},  {0.2264, -0.1796, 0.0300},
+        {0.0617, -0.0242, 0.0407},  {0.0420, -0.0311, 0.0001},
+        {0.0230, -0.0237, -0.0167}, {0.0167, -0.0148, -0.0114},
+        {0.0190, -0.0233, -0.0202}, {0.0215, -0.0292, -0.0307},
+        {-0.0020, -0.0570, 0.0876}, {0.0402, -0.0723, 0.0618},
+        {-0.0272, -0.0261, 0.0970}, {0.0030, -0.0984, 0.1580},
+        {0.0209, -0.1631, -0.0351}, {0.0056, -0.0713, -0.0274},
+        {0.1466, -0.1529, 0.0013},  {-0.1215, -0.1945, -0.0897}};
+    const double ref_dir_field_p[][3] = {
+        {0.0632, -0.0886, -0.0018}, {0.0332, -0.0268, 0.0058},
+        {0.0771, -0.0274, 0.0004},  {0.0567, -0.0101, -0.0015},
+        {0.0609, -0.0428, 0.0132},  {0.1799, -0.1501, 0.0475},
+        {0.1291, -0.1097, 0.0187},  {0.2264, -0.1796, 0.0300},
+        {0.0697, -0.0275, 0.0461},  {0.0420, -0.0311, 0.0001},
+        {0.0230, -0.0237, -0.0167}, {0.0369, -0.0230, 0.0194},
+        {0.0607, -0.0264, -0.0032}, {0.0483, -0.0565, -0.0134},
+        {-0.0020, -0.0570, 0.0876}, {0.0402, -0.0723, 0.0618},
+        {-0.0272, -0.0261, 0.0970}, {0.0030, -0.0984, 0.1580},
+        {0.0209, -0.1631, -0.0351}, {0.0056, -0.0713, -0.0274},
+        {0.1466, -0.1529, 0.0013},  {-0.1215, -0.1945, -0.0897}};
+
+    gpu::zero_egv();
+    gpu::elec_init(gpu::v0);
+    gpu::dfield_coulomb(&gpu::udir[0][0], &gpu::udirp[0][0]);
+    grad_t fieldd, fieldp;
+    gpu::copyout_data3(fieldd, gpu::udir, gpu::n);
+    gpu::copyout_data3(fieldp, gpu::udirp, gpu::n);
+    for (int i = 0; i < gpu::n; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        REQUIRE(fieldd[i][j] == Approx(ref_dir_field_d[i][j]).margin(eps_f));
+        REQUIRE(fieldp[i][j] == Approx(ref_dir_field_p[i][j]).margin(eps_f));
+      }
+    }
+  }
+
+  SECTION("ufield -- coulomb no cutoff") {
+    const double ref_ufield_d[][3] = {
+        {0.2171, 1.7393, 0.3937},    {-0.0768, -0.7185, 0.1626},
+        {-0.4172, -0.8336, -0.7593}, {-0.3755, -0.4743, -0.5571},
+        {-0.3918, -1.1932, -0.6319}, {-0.4074, -0.4488, 0.0958},
+        {-0.5865, -0.2294, 0.5782},  {-0.2908, -0.4478, 0.2516},
+        {0.5830, -0.5150, -0.4780},  {0.1768, -1.2311, 0.0137},
+        {-1.3528, -1.3973, -0.7081}, {-1.0405, -0.5500, 0.6940},
+        {-0.0828, 0.0215, -0.2048},  {-1.0584, 0.0414, -0.1254},
+        {-1.7674, -1.6456, -1.6328}, {-0.7705, -1.2322, -1.0136},
+        {-1.2783, 0.2778, -0.1103},  {-0.9239, -1.1300, 0.6484},
+        {-1.9449, -2.2349, -2.4348}, {-0.0062, 0.3626, -1.6759},
+        {0.7257, -1.4398, -1.0205},  {-1.5095, -0.8471, -1.4955}};
+    const double ref_ufield_p[][3] = {
+        {0.1942, 1.6373, 0.3969},    {-0.0770, -0.6580, 0.1638},
+        {-0.3878, -0.6974, -0.5665}, {-0.3390, -0.3660, -0.4104},
+        {-0.3833, -1.0256, -0.4906}, {-0.3573, -0.3907, 0.1704},
+        {-0.5076, -0.2187, 0.5236},  {-0.2260, -0.4438, 0.2835},
+        {0.5554, -0.4572, -0.4330},  {0.1458, -1.1176, 0.0421},
+        {-1.3029, -1.2660, -0.6027}, {-0.9806, -0.4974, 0.6001},
+        {-0.0944, 0.0638, -0.1612},  {-1.0025, 0.0203, -0.0974},
+        {-1.6961, -1.5330, -1.4690}, {-0.7433, -1.1496, -0.8978},
+        {-1.2131, 0.2382, -0.0705},  {-0.8943, -1.0352, 0.5990},
+        {-1.8822, -2.1268, -2.2442}, {-0.0331, 0.4012, -1.5516},
+        {0.7016, -1.3551, -0.9421},  {-1.4662, -0.8545, -1.3742}};
+
+    gpu::zero_egv();
+    gpu::elec_init(gpu::v0);
+    grad_t ud, up;
+    ud.resize(gpu::n);
+    up.resize(gpu::n);
+    for (int i = 0; i < gpu::n; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        ud[i][j] = 0.1 * (i + 1) + 0.03 * (j + 1);
+        up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
+      }
+    }
+    gpu::copyin_data(&gpu::uind[0][0], &ud[0][0], 3 * gpu::n);
+    gpu::copyin_data(&gpu::uinp[0][0], &up[0][0], 3 * gpu::n);
+    gpu::ufield_coulomb(&gpu::uind[0][0], &gpu::uinp[0][0], &gpu::udir[0][0],
+                        &gpu::udirp[0][0]);
+    gpu::copyout_data3(ud, gpu::udir, gpu::n);
+    gpu::copyout_data3(up, gpu::udirp, gpu::n);
+    const double debye = units::debye;
+    for (int i = 0; i < gpu::n; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        REQUIRE(ud[i][j] == Approx(ref_ufield_d[i][j]).margin(eps_f));
+        REQUIRE(up[i][j] == Approx(ref_ufield_p[i][j]).margin(eps_f));
+      }
+    }
+  }
+
+  tinker_gpu_data_destroy();
+  test_end();
+}
+
+TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
   file fpr("amoeba09.prm", amoeba09_prm);
 
   const char* k = "test_local_frame.key";

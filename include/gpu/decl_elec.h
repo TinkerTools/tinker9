@@ -8,6 +8,8 @@ namespace gpu {
 const int elec_coulomb = 1;
 const int elec_ewald = 2;
 
+extern double mpole_switch_cut, mpole_switch_off;
+
 const int pole_none = 0;
 const int pole_z_only = 1;
 const int pole_z_then_x = 2;
