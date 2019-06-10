@@ -42,6 +42,8 @@ extern real (*rpole)[mpl_total];
 
 extern real (*uind)[3];
 extern real (*uinp)[3];
+extern real (*udir)[3];
+extern real (*udirp)[3];
 
 extern real *trqx, *trqy, *trqz;
 extern real* vir_trq;

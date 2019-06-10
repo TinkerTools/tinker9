@@ -33,6 +33,8 @@ real (*rpole)[mpl_total];
 
 real (*uind)[3];
 real (*uinp)[3];
+real (*udir)[3];
+real (*udirp)[3];
 
 real *trqx, *trqy, *trqz;
 real* vir_trq;
@@ -50,6 +52,8 @@ void elec_data(int op) {
 
     check_cudart(cudaFree(uind));
     check_cudart(cudaFree(uinp));
+    check_cudart(cudaFree(udir));
+    check_cudart(cudaFree(udirp));
 
     check_cudart(cudaFree(trqx));
     check_cudart(cudaFree(trqy));
@@ -123,9 +127,13 @@ void elec_data(int op) {
     if (use_epolar()) {
       check_cudart(cudaMalloc(&uind, 3 * n * rs));
       check_cudart(cudaMalloc(&uinp, 3 * n * rs));
+      check_cudart(cudaMalloc(&udir, 3 * n * rs));
+      check_cudart(cudaMalloc(&udirp, 3 * n * rs));
     } else {
       uind = nullptr;
       uinp = nullptr;
+      udir = nullptr;
+      udirp = nullptr;
     }
 
     if (use_data & use_grad) {

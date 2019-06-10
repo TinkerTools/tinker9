@@ -12,7 +12,7 @@ TINKER_NAMESPACE_BEGIN
  * @param _out_stream  A reference to std::ostream object.
  *                     The default argument is std::cerr.
  */
-void print_backtrace(std::ostream& _out_stream = std::cerr);
+void print_backtrace(std::ostream& _out_stream = std::cout);
 
 class FatalError : public std::exception {
 private:
@@ -27,6 +27,7 @@ public:
 
 #define m_tinker_throw(_msg)                                                   \
   do {                                                                         \
+    print_backtrace();                                                         \
     std::string m__ = format("{} at {}:{}", _msg, __FILE__, __LINE__);         \
     throw FatalError(m__);                                                     \
   } while (0)

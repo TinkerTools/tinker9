@@ -19,8 +19,16 @@ extern real* ep;
 extern int* nep;
 extern real* vir_ep;
 
-extern real (*dir_fieldd)[3];
-extern real (*dir_fieldp)[3];
+extern real (*work01__)[3];
+extern real (*work02__)[3];
+extern real (*work03__)[3];
+extern real (*work04__)[3];
+extern real (*work05__)[3];
+extern real (*work06__)[3];
+extern real (*work07__)[3];
+extern real (*work08__)[3];
+extern real (*work09__)[3];
+extern real (*work10__)[3];
 
 int use_epolar();
 void get_epolar_type(int& typ, std::string& typ_str);
@@ -41,6 +49,15 @@ void ufield_ewald_recip_self(const real* gpu_uind, const real* gpu_uinp,
                              real* gpu_field, real* gpu_fieldp);
 void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
                        real* gpu_field, real* gpu_fieldp);
+
+void dfield(real* gpu_field, real* gpu_fieldp);
+// -Tu operator
+void ufield(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
+            real* gpu_fieldp);
+
+// different induction algorithms
+void induce_mutual_pcg1(real* gpu_ud, real* gpu_up);
+void induce(real* gpu_ud, real* gpu_up);
 }
 TINKER_NAMESPACE_END
 

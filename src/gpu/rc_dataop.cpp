@@ -74,6 +74,16 @@ void copyout_data3(std::vector<std::array<double, 3>>& dst,
   copyout_data(&dst[0][0], &src[0][0], 3 * natom);
 }
 
+void copy_data(int* dst, const int* src, int nelem) {
+  size_t size = sizeof(int) * nelem;
+  check_cudart(cudaMemcpy(dst, src, size, cudaMemcpyDeviceToDevice));
+}
+
+void copy_data(real* dst, const real* src, int nelem) {
+  size_t size = sizeof(real) * nelem;
+  check_cudart(cudaMemcpy(dst, src, size, cudaMemcpyDeviceToDevice));
+}
+
 void zero_data(real* dst, int nelem) {
   size_t size = sizeof(real) * nelem;
   check_cudart(cudaMemset(dst, 0, size));

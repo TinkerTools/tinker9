@@ -19,6 +19,9 @@ void copyout_data3(double (*dst)[3], const real (*src)[3], int natom);
 void copyout_data3(std::vector<std::array<double, 3>>& dst,
                    const real (*src)[3], int natom);
 
+void copy_data(int* dst, const int* src, int nelem);
+void copy_data(real* dst, const real* src, int nelem);
+
 void zero_data(real* dst, int nelem);
 
 double get_energy(const real* e_gpu);

@@ -2,6 +2,7 @@
 #include "test/ff.h"
 #include "test/rt.h"
 #include "test/test.h"
+#include <ext/tinker/tinker_mod.h>
 
 m_tinker_using_namespace;
 using namespace test;
@@ -168,6 +169,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][ewald][local-frame]") {
 
   SECTION("epolar -- pme") {
     std::string key1 = key0;
+    key1 += "usolve-cutoff    0.01\n";
     key1 += "polarizeterm    only\n";
     key1 += "ewald\n";
     key1 += "ewald-cutoff    7.0\n";
@@ -179,10 +181,12 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][ewald][local-frame]") {
     const char* argv[] = {"dummy", x1};
     int argc = 2;
 
-    const double eps_e = 0.0001;
-    // const double ref_eng = -36.5477;
-    const double ref_eng = 0;
-    const int ref_count = 222;
+    test_begin_1_xyz(argc, argv);
+    gpu::use_data = usage;
+    tinker_gpu_data_create();
+
+    // dfield ewald version
+
     const double eps_f = 0.0001;
     const double ref_dir_field_d[][3] = {
         {0.0603, -0.0877, -0.0024}, {0.0304, -0.0254, 0.0053},
@@ -208,36 +212,21 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][ewald][local-frame]") {
         {-0.0302, -0.0249, 0.0959}, {-0.0002, -0.0971, 0.1573},
         {0.0176, -0.1618, -0.0356}, {0.0020, -0.0699, -0.0279},
         {0.1436, -0.1515, 0.0008},  {-0.1249, -0.1932, -0.0900}};
-
-    test_begin_1_xyz(argc, argv);
-    gpu::use_data = usage;
-    tinker_gpu_data_create();
-
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
-    gpu::dfield_ewald(&gpu::dir_fieldd[0][0], &gpu::dir_fieldp[0][0]);
+    gpu::dfield_ewald(&gpu::udir[0][0], &gpu::udirp[0][0]);
     grad_t fieldd, fieldp;
-    gpu::copyout_data3(fieldd, gpu::dir_fieldd, gpu::n);
-    gpu::copyout_data3(fieldp, gpu::dir_fieldp, gpu::n);
+    gpu::copyout_data3(fieldd, gpu::udir, gpu::n);
+    gpu::copyout_data3(fieldp, gpu::udirp, gpu::n);
     for (int i = 0; i < gpu::n; ++i) {
       for (int j = 0; j < 3; ++j) {
         REQUIRE(fieldd[i][j] == Approx(ref_dir_field_d[i][j]).margin(eps_f));
         REQUIRE(fieldp[i][j] == Approx(ref_dir_field_p[i][j]).margin(eps_f));
       }
     }
-    gpu::torque(gpu::v0);
 
-    gpu::zero_egv();
-    gpu::elec_init(gpu::v0);
-    grad_t ud, up;
-    ud.resize(gpu::n);
-    up.resize(gpu::n);
-    for (int i = 0; i < gpu::n; ++i) {
-      for (int j = 0; j < 3; ++j) {
-        ud[i][j] = 0.1 * (i + 1) + 0.03 * (j + 1);
-        up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
-      }
-    }
+    // ufield ewald version
+
     const double eps_uf = 0.0001;
     const double ref_ufield_d[][3] = {
         {0.2326, 1.7537, 0.4066},    {-0.0625, -0.7063, 0.1748},
@@ -263,19 +252,74 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][ewald][local-frame]") {
         {-1.1935, 0.2491, -0.0607},  {-0.8772, -1.0243, 0.6095},
         {-1.8666, -2.1138, -2.2301}, {-0.0191, 0.4125, -1.5382},
         {0.7158, -1.3417, -0.9288},  {-1.4493, -0.8422, -1.3602}};
+    gpu::zero_egv();
+    gpu::elec_init(gpu::v0);
+    grad_t ud, up;
+    ud.resize(gpu::n);
+    up.resize(gpu::n);
+    for (int i = 0; i < gpu::n; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        ud[i][j] = 0.1 * (i + 1) + 0.03 * (j + 1);
+        up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
+      }
+    }
     gpu::copyin_data(&gpu::uind[0][0], &ud[0][0], 3 * gpu::n);
     gpu::copyin_data(&gpu::uinp[0][0], &up[0][0], 3 * gpu::n);
-    gpu::ufield_ewald(&gpu::uind[0][0], &gpu::uinp[0][0],
-                      &gpu::dir_fieldd[0][0], &gpu::dir_fieldp[0][0]);
-    gpu::copyout_data3(fieldd, gpu::dir_fieldd, gpu::n);
-    gpu::copyout_data3(fieldp, gpu::dir_fieldp, gpu::n);
+    gpu::ufield_ewald(&gpu::uind[0][0], &gpu::uinp[0][0], &gpu::udir[0][0],
+                      &gpu::udirp[0][0]);
+    gpu::copyout_data3(fieldd, gpu::udir, gpu::n);
+    gpu::copyout_data3(fieldp, gpu::udirp, gpu::n);
+    const double debye = units::debye;
     for (int i = 0; i < gpu::n; ++i) {
       for (int j = 0; j < 3; ++j) {
         REQUIRE(fieldd[i][j] == Approx(ref_ufield_d[i][j]).margin(eps_uf));
         REQUIRE(fieldp[i][j] == Approx(ref_ufield_p[i][j]).margin(eps_uf));
       }
     }
-    gpu::torque(gpu::v0);
+
+    // diagnoal matrix pcg
+
+    const double eps_ind = 0.0001;
+    const double ref_ud_debye[][3] = {
+        {0.0243, -0.0845, -0.0109}, {1.2653, -0.8136, 0.5372},
+        {0.2268, -0.0683, 0.0078},  {0.0616, -0.0298, 0.0188},
+        {0.1019, -0.0927, 0.0913},  {0.5383, -0.5306, 0.1597},
+        {0.1600, -0.1537, -0.0985}, {0.5290, -0.4213, -0.0113},
+        {0.2702, -0.0662, 0.1661},  {0.2420, -0.1248, -0.0516},
+        {0.1211, -0.0628, -0.0252}, {0.0168, -0.0089, -0.0295},
+        {0.0499, -0.0125, -0.0515}, {0.0365, -0.0617, -0.0396},
+        {-0.0212, -0.1500, 0.3140}, {0.1487, -0.1622, 0.1192},
+        {-0.0466, 0.0288, 0.1480},  {-0.0021, -0.1708, 0.4490},
+        {0.2273, -0.6081, -0.0940}, {0.0143, -0.1151, -0.0139},
+        {0.3569, -0.1912, 0.0563},  {-0.2176, -0.4640, -0.1812}};
+    const double ref_up_debye[][3] = {
+        {0.0241, -0.0843, -0.0110}, {1.2706, -0.8115, 0.5494},
+        {0.2253, -0.0684, 0.0097},  {0.0612, -0.0301, 0.0192},
+        {0.1011, -0.0925, 0.0915},  {0.5377, -0.5296, 0.1603},
+        {0.1596, -0.1533, -0.0979}, {0.5288, -0.4205, -0.0101},
+        {0.3149, -0.0836, 0.1982},  {0.2894, -0.1421, -0.0248},
+        {0.0447, -0.0298, -0.0822}, {0.0657, -0.0302, 0.0391},
+        {0.1486, -0.0288, -0.0009}, {0.1037, -0.1202, 0.0087},
+        {-0.0179, -0.1459, 0.3136}, {0.1491, -0.1603, 0.1190},
+        {-0.0422, 0.0305, 0.1471},  {-0.0008, -0.1699, 0.4506},
+        {0.2227, -0.6054, -0.0918}, {0.0119, -0.1147, -0.0138},
+        {0.3551, -0.1907, 0.0577},  {-0.2191, -0.4626, -0.1832}};
+    gpu::zero_egv();
+    gpu::elec_init(gpu::v0);
+    gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
+    gpu::copyout_data3(ud, gpu::uind, gpu::n);
+    gpu::copyout_data3(up, gpu::uinp, gpu::n);
+    for (int i = 0; i < gpu::n; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        REQUIRE(ud[i][j] * debye == Approx(ref_ud_debye[i][j]).margin(eps_ind));
+        REQUIRE(up[i][j] * debye == Approx(ref_up_debye[i][j]).margin(eps_ind));
+      }
+    }
+
+    const double eps_e = 0.0001;
+    // const double ref_eng = -36.5477;
+    const double ref_eng = 0;
+    const int ref_count = 222;
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
