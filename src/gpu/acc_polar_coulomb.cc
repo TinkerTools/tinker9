@@ -24,6 +24,8 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
       }
     }
   }
+
+  if_constexpr(USE == use_energy) { epolar0_dotprod(gpu_uind, udirp); }
 }
 }
 TINKER_NAMESPACE_END
@@ -31,21 +33,27 @@ TINKER_NAMESPACE_END
 extern "C" {
 m_tinker_using_namespace;
 void tinker_gpu_epolar_coulomb0() {
+  gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
   gpu::epolar_coulomb_tmpl<gpu::v0>(gpu::uind, gpu::uinp);
 }
 void tinker_gpu_epolar_coulomb1() {
+  gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
   gpu::epolar_coulomb_tmpl<gpu::v1>(gpu::uind, gpu::uinp);
 }
 void tinker_gpu_epolar_coulomb3() {
+  gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
   gpu::epolar_coulomb_tmpl<gpu::v3>(gpu::uind, gpu::uinp);
 }
 void tinker_gpu_epolar_coulomb4() {
+  gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
   gpu::epolar_coulomb_tmpl<gpu::v4>(gpu::uind, gpu::uinp);
 }
 void tinker_gpu_epolar_coulomb5() {
+  gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
   gpu::epolar_coulomb_tmpl<gpu::v5>(gpu::uind, gpu::uinp);
 }
 void tinker_gpu_epolar_coulomb6() {
+  gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
   gpu::epolar_coulomb_tmpl<gpu::v6>(gpu::uind, gpu::uinp);
 }
 }

@@ -34,6 +34,9 @@ int use_epolar();
 void get_epolar_type(int& typ, std::string& typ_str);
 void e_polar_data(int op);
 
+// see also subroutine epolar0e in epolar.f
+void epolar0_dotprod(const real (*gpu_uind)[3], const real (*gpu_udirp)[3]);
+
 // electrostatic field due to permanent multipoles
 void dfield_coulomb(real* gpu_field, real* gpu_fieldp);
 void dfield_ewald(real* gpu_field, real* gpu_fieldp);

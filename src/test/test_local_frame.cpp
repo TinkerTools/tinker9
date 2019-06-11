@@ -313,6 +313,16 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
     }
   }
 
+  SECTION("epolar via dot product") {
+    const double ref_eng = -37.7476;
+
+    gpu::zero_egv();
+    gpu::elec_init(gpu::v0);
+    tinker_gpu_epolar0();
+    gpu::torque(gpu::v0);
+    COMPARE_ENERGY_(gpu::ep, ref_eng, eps_f);
+  }
+
   tinker_gpu_data_destroy();
   test_end();
 }
@@ -483,8 +493,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
     }
 
     const double eps_e = 0.0001;
-    // const double ref_eng = -36.5477;
-    const double ref_eng = 0;
+    const double ref_eng = -36.5477;
     const int ref_count = 222;
 
     gpu::zero_egv();
