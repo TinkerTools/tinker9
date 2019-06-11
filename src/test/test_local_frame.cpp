@@ -174,6 +174,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
   const char* argv[] = {"dummy", x1};
   int argc = 2;
 
+  const double debye = units::debye;
   const double eps_f = 0.0001;
 
   test_begin_1_xyz(argc, argv);
@@ -272,6 +273,46 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
     }
   }
 
+  SECTION("default induce routine") {
+    const double ref_ud_debye[][3] = {
+        {0.0256, -0.0849, -0.0107}, {1.3172, -0.8359, 0.5512},
+        {0.2342, -0.0712, 0.0100},  {0.0651, -0.0337, 0.0202},
+        {0.1076, -0.0967, 0.0939},  {0.5459, -0.5351, 0.1614},
+        {0.1637, -0.1555, -0.0992}, {0.5366, -0.4246, -0.0109},
+        {0.2835, -0.0694, 0.1701},  {0.2570, -0.1309, -0.0448},
+        {0.1316, -0.0672, -0.0213}, {0.0195, -0.0099, -0.0283},
+        {0.0558, -0.0130, -0.0514}, {0.0402, -0.0646, -0.0392},
+        {-0.0107, -0.1520, 0.3173}, {0.1540, -0.1650, 0.1211},
+        {-0.0419, 0.0277, 0.1490},  {0.0006, -0.1720, 0.4521},
+        {0.2376, -0.6121, -0.0925}, {0.0203, -0.1166, -0.0128},
+        {0.3638, -0.1926, 0.0577},  {-0.2110, -0.4679, -0.1808}};
+    const double ref_up_debye[][3] = {
+        {0.0254, -0.0847, -0.0108}, {1.3219, -0.8336, 0.5631},
+        {0.2326, -0.0713, 0.0118},  {0.0647, -0.0340, 0.0205},
+        {0.1068, -0.0964, 0.0940},  {0.5453, -0.5340, 0.1619},
+        {0.1633, -0.1551, -0.0986}, {0.5363, -0.4239, -0.0098},
+        {0.3281, -0.0868, 0.2021},  {0.3042, -0.1482, -0.0182},
+        {0.0552, -0.0342, -0.0785}, {0.0683, -0.0313, 0.0402},
+        {0.1544, -0.0293, -0.0008}, {0.1074, -0.1232, 0.0090},
+        {-0.0075, -0.1480, 0.3169}, {0.1544, -0.1631, 0.1208},
+        {-0.0376, 0.0295, 0.1482},  {0.0018, -0.1711, 0.4538},
+        {0.2329, -0.6094, -0.0903}, {0.0180, -0.1162, -0.0128},
+        {0.3620, -0.1921, 0.0590},  {-0.2126, -0.4665, -0.1829}};
+
+    gpu::zero_egv();
+    gpu::elec_init(gpu::v0);
+    gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
+    grad_t ud, up;
+    gpu::copyout_data3(ud, gpu::uind, gpu::n);
+    gpu::copyout_data3(up, gpu::uinp, gpu::n);
+    for (int i = 0; i < gpu::n; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        REQUIRE(ud[i][j] * debye == Approx(ref_ud_debye[i][j]).margin(eps_f));
+        REQUIRE(up[i][j] * debye == Approx(ref_up_debye[i][j]).margin(eps_f));
+      }
+    }
+  }
+
   tinker_gpu_data_destroy();
   test_end();
 }
@@ -290,6 +331,8 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
   usage |= gpu::use_energy;
   usage |= gpu::use_grad;
   usage |= gpu::use_virial;
+
+  const double debye = units::debye;
 
   SECTION("epolar -- pme") {
     std::string key1 = key0;
@@ -393,7 +436,6 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
                       &gpu::udirp[0][0]);
     gpu::copyout_data3(fieldd, gpu::udir, gpu::n);
     gpu::copyout_data3(fieldp, gpu::udirp, gpu::n);
-    const double debye = units::debye;
     for (int i = 0; i < gpu::n; ++i) {
       for (int j = 0; j < 3; ++j) {
         REQUIRE(fieldd[i][j] == Approx(ref_ufield_d[i][j]).margin(eps_uf));
@@ -401,7 +443,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
       }
     }
 
-    // diagnoal matrix pcg
+    // default induce routine
 
     const double eps_ind = 0.0001;
     const double ref_ud_debye[][3] = {

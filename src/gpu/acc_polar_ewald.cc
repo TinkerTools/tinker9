@@ -4,7 +4,7 @@
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 template <int USE>
-void epolar_ewald_tmpl() {
+void epolar_ewald_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   constexpr int do_e = USE & use_energy;
   constexpr int do_a = USE & use_analyz;
   constexpr int do_g = USE & use_grad;
@@ -30,10 +30,22 @@ TINKER_NAMESPACE_END
 
 extern "C" {
 m_tinker_using_namespace;
-void tinker_gpu_epolar_ewald0() { gpu::epolar_ewald_tmpl<gpu::v0>(); }
-void tinker_gpu_epolar_ewald1() { gpu::epolar_ewald_tmpl<gpu::v1>(); }
-void tinker_gpu_epolar_ewald3() { gpu::epolar_ewald_tmpl<gpu::v3>(); }
-void tinker_gpu_epolar_ewald4() { gpu::epolar_ewald_tmpl<gpu::v4>(); }
-void tinker_gpu_epolar_ewald5() { gpu::epolar_ewald_tmpl<gpu::v5>(); }
-void tinker_gpu_epolar_ewald6() { gpu::epolar_ewald_tmpl<gpu::v6>(); }
+void tinker_gpu_epolar_ewald0() {
+  gpu::epolar_ewald_tmpl<gpu::v0>(gpu::uind, gpu::uinp);
+}
+void tinker_gpu_epolar_ewald1() {
+  gpu::epolar_ewald_tmpl<gpu::v1>(gpu::uind, gpu::uinp);
+}
+void tinker_gpu_epolar_ewald3() {
+  gpu::epolar_ewald_tmpl<gpu::v3>(gpu::uind, gpu::uinp);
+}
+void tinker_gpu_epolar_ewald4() {
+  gpu::epolar_ewald_tmpl<gpu::v4>(gpu::uind, gpu::uinp);
+}
+void tinker_gpu_epolar_ewald5() {
+  gpu::epolar_ewald_tmpl<gpu::v5>(gpu::uind, gpu::uinp);
+}
+void tinker_gpu_epolar_ewald6() {
+  gpu::epolar_ewald_tmpl<gpu::v6>(gpu::uind, gpu::uinp);
+}
 }
