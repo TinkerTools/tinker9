@@ -201,6 +201,9 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
 
   const char* k = "test_local_frame.key";
   std::string key0 = local_frame_key;
+  key0 += "usolve-cutoff    0.01\n";
+  key0 += "polarizeterm    only\n";
+  file fke(k, key0);
 
   const char* x1 = "test_local_frame.xyz";
   file fx1(x1, local_frame_xyz);
@@ -210,10 +213,6 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
   usage |= gpu::use_energy;
   usage |= gpu::use_grad;
   usage |= gpu::use_virial;
-
-  key0 += "usolve-cutoff    0.01\n";
-  key0 += "polarizeterm    only\n";
-  file fke(k, key0);
 
   const char* argv[] = {"dummy", x1};
   int argc = 2;
@@ -317,7 +316,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
     }
   }
 
-  SECTION("default induce routine") {
+  SECTION("default induce routine -- coulomb no cutoff") {
     const double ref_ud_debye[][3] = {
         {0.0256, -0.0849, -0.0107}, {1.3172, -0.8359, 0.5512},
         {0.2342, -0.0712, 0.0100},  {0.0651, -0.0337, 0.0202},
@@ -367,7 +366,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
     COMPARE_ENERGY_(gpu::ep, ref_eng, eps_f);
   }
 
-  SECTION("various epolar versions") {
+  SECTION("various epolar versions -- coulomb no cutoff") {
     const double eps_e = eps_f;
     const double ref_eng = -37.7476;
     const int ref_count = 201;
@@ -401,6 +400,14 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
 
   const char* k = "test_local_frame.key";
   std::string key0 = local_frame_key;
+  key0 += "usolve-cutoff    0.01\n";
+  key0 += "polarizeterm    only\n";
+  key0 += "ewald\n";
+  key0 += "ewald-cutoff    7.0\n";
+  key0 += "neighbor-list\n";
+  key0 += "list-buffer    0.1\n";
+  key0 += "a-axis    20.0\n";
+  file fke(k, key0);
 
   const char* x1 = "test_local_frame.xyz";
   file fx1(x1, local_frame_xyz);
@@ -411,29 +418,17 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
   usage |= gpu::use_grad;
   usage |= gpu::use_virial;
 
+  const char* argv[] = {"dummy", x1};
+  int argc = 2;
+
   const double debye = units::debye;
+  const double eps_f = 0.0001;
 
-  SECTION("epolar -- pme") {
-    std::string key1 = key0;
-    key1 += "usolve-cutoff    0.01\n";
-    key1 += "polarizeterm    only\n";
-    key1 += "ewald\n";
-    key1 += "ewald-cutoff    7.0\n";
-    key1 += "neighbor-list\n";
-    key1 += "list-buffer    0.1\n";
-    key1 += "a-axis    20.0\n";
-    file fke(k, key1);
+  test_begin_1_xyz(argc, argv);
+  gpu::use_data = usage;
+  tinker_gpu_data_create();
 
-    const char* argv[] = {"dummy", x1};
-    int argc = 2;
-
-    test_begin_1_xyz(argc, argv);
-    gpu::use_data = usage;
-    tinker_gpu_data_create();
-
-    // dfield ewald version
-
-    const double eps_f = 0.0001;
+  SECTION("dfield -- pme") {
     const double ref_dir_field_d[][3] = {
         {0.0603, -0.0877, -0.0024}, {0.0304, -0.0254, 0.0053},
         {0.0743, -0.0256, -0.0002}, {0.0540, -0.0080, -0.0020},
@@ -458,6 +453,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
         {-0.0302, -0.0249, 0.0959}, {-0.0002, -0.0971, 0.1573},
         {0.0176, -0.1618, -0.0356}, {0.0020, -0.0699, -0.0279},
         {0.1436, -0.1515, 0.0008},  {-0.1249, -0.1932, -0.0900}};
+
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
     gpu::dfield_ewald(&gpu::udir[0][0], &gpu::udirp[0][0]);
@@ -470,10 +466,9 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
         REQUIRE(fieldp[i][j] == Approx(ref_dir_field_p[i][j]).margin(eps_f));
       }
     }
+  }
 
-    // ufield ewald version
-
-    const double eps_uf = 0.0001;
+  SECTION("ufield -- pme") {
     const double ref_ufield_d[][3] = {
         {0.2326, 1.7537, 0.4066},    {-0.0625, -0.7063, 0.1748},
         {-0.4040, -0.8194, -0.7421}, {-0.3634, -0.4587, -0.5382},
@@ -498,6 +493,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
         {-1.1935, 0.2491, -0.0607},  {-0.8772, -1.0243, 0.6095},
         {-1.8666, -2.1138, -2.2301}, {-0.0191, 0.4125, -1.5382},
         {0.7158, -1.3417, -0.9288},  {-1.4493, -0.8422, -1.3602}};
+
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
     grad_t ud, up;
@@ -513,18 +509,18 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
     gpu::copyin_data(&gpu::uinp[0][0], &up[0][0], 3 * gpu::n);
     gpu::ufield_ewald(&gpu::uind[0][0], &gpu::uinp[0][0], &gpu::udir[0][0],
                       &gpu::udirp[0][0]);
-    gpu::copyout_data3(fieldd, gpu::udir, gpu::n);
-    gpu::copyout_data3(fieldp, gpu::udirp, gpu::n);
+    gpu::copyout_data3(ud, gpu::udir, gpu::n);
+    gpu::copyout_data3(up, gpu::udirp, gpu::n);
+    const double debye = units::debye;
     for (int i = 0; i < gpu::n; ++i) {
       for (int j = 0; j < 3; ++j) {
-        REQUIRE(fieldd[i][j] == Approx(ref_ufield_d[i][j]).margin(eps_uf));
-        REQUIRE(fieldp[i][j] == Approx(ref_ufield_p[i][j]).margin(eps_uf));
+        REQUIRE(ud[i][j] == Approx(ref_ufield_d[i][j]).margin(eps_f));
+        REQUIRE(up[i][j] == Approx(ref_ufield_p[i][j]).margin(eps_f));
       }
     }
+  }
 
-    // default induce routine
-
-    const double eps_ind = 0.0001;
+  SECTION("default induce routine -- pme") {
     const double ref_ud_debye[][3] = {
         {0.0243, -0.0845, -0.0109}, {1.2653, -0.8136, 0.5372},
         {0.2268, -0.0683, 0.0078},  {0.0616, -0.0298, 0.0188},
@@ -549,31 +545,33 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
         {-0.0422, 0.0305, 0.1471},  {-0.0008, -0.1699, 0.4506},
         {0.2227, -0.6054, -0.0918}, {0.0119, -0.1147, -0.0138},
         {0.3551, -0.1907, 0.0577},  {-0.2191, -0.4626, -0.1832}};
+
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
     gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
+    grad_t ud, up;
     gpu::copyout_data3(ud, gpu::uind, gpu::n);
     gpu::copyout_data3(up, gpu::uinp, gpu::n);
     for (int i = 0; i < gpu::n; ++i) {
       for (int j = 0; j < 3; ++j) {
-        REQUIRE(ud[i][j] * debye == Approx(ref_ud_debye[i][j]).margin(eps_ind));
-        REQUIRE(up[i][j] * debye == Approx(ref_up_debye[i][j]).margin(eps_ind));
+        REQUIRE(ud[i][j] * debye == Approx(ref_ud_debye[i][j]).margin(eps_f));
+        REQUIRE(up[i][j] * debye == Approx(ref_up_debye[i][j]).margin(eps_f));
       }
     }
+  }
 
-    const double eps_e = 0.0001;
+  SECTION("epolar via dot product") {
     const double ref_eng = -36.5477;
-    const int ref_count = 222;
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
     tinker_gpu_epolar0();
     gpu::torque(gpu::v0);
-    COMPARE_ENERGY_(gpu::ep, ref_eng, eps_e);
-
-    tinker_gpu_data_destroy();
-    test_end();
+    COMPARE_ENERGY_(gpu::ep, ref_eng, eps_f);
   }
+
+  tinker_gpu_data_destroy();
+  test_end();
 }
 
 #undef COMPARE_CODE_BLOCK2_
