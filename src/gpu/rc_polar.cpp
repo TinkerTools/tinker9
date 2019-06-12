@@ -19,6 +19,9 @@ real* ep;
 int* nep;
 real* vir_ep;
 
+real (*ufld)[3];
+real (*dufld)[6];
+
 real (*work01__)[3];
 real (*work02__)[3];
 real (*work03__)[3];
@@ -55,6 +58,9 @@ void e_polar_data(int op) {
     check_cudart(cudaFree(ep));
     check_cudart(cudaFree(nep));
     check_cudart(cudaFree(vir_ep));
+
+    check_cudart(cudaFree(ufld));
+    check_cudart(cudaFree(dufld));
 
     check_cudart(cudaFree(work01__));
     check_cudart(cudaFree(work02__));
@@ -95,6 +101,14 @@ void e_polar_data(int op) {
     check_cudart(cudaMalloc(&ep, rs));
     check_cudart(cudaMalloc(&nep, sizeof(int)));
     check_cudart(cudaMalloc(&vir_ep, 9 * rs));
+
+    if (use_data & use_grad) {
+      check_cudart(cudaMalloc(&ufld, rs * 3 * n));
+      check_cudart(cudaMalloc(&dufld, rs * 6 * n));
+    } else {
+      ufld = nullptr;
+      dufld = nullptr;
+    }
 
     check_cudart(cudaMalloc(&work01__, 3 * n * rs));
     check_cudart(cudaMalloc(&work02__, 3 * n * rs));

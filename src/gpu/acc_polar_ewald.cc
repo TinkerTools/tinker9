@@ -1,4 +1,4 @@
-#include "gpu/decl_mdstate.h"
+#include "acc_e.h"
 #include "gpu/e_polar.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -25,7 +25,9 @@ void epolar_ewald_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
     }
   }
 
-  if_constexpr(USE == use_energy) { epolar0_dotprod(gpu_uind, udirp); }
+  if_constexpr(do_e && !do_a) epolar0_dotprod(gpu_uind, udirp);
+  static_assert(do_g || do_a,
+                "Do not use this template for the energy-only version.");
 }
 }
 TINKER_NAMESPACE_END
@@ -34,7 +36,7 @@ extern "C" {
 m_tinker_using_namespace;
 void tinker_gpu_epolar_ewald0() {
   gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
-  gpu::epolar_ewald_tmpl<gpu::v0>(gpu::uind, gpu::uinp);
+  gpu::epolar0_dotprod(gpu::uind, gpu::udirp);
 }
 void tinker_gpu_epolar_ewald1() {
   gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);

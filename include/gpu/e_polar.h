@@ -19,6 +19,9 @@ extern real* ep;
 extern int* nep;
 extern real* vir_ep;
 
+extern real (*ufld)[3];
+extern real (*dufld)[6];
+
 extern real (*work01__)[3];
 extern real (*work02__)[3];
 extern real (*work03__)[3];

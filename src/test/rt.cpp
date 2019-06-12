@@ -21,6 +21,16 @@ file::~file() {
     std::remove(name_.c_str());
 }
 
+double test_get_eps2(double eps_single, double eps_double) {
+#if defined(TINKER_GPU_SINGLE)
+  return eps_single;
+#elif defined(TINKER_GPU_DOUBLE)
+  return eps_double;
+#else
+  static_assert(false, "");
+#endif
+}
+
 void test_begin_1_xyz(int argc, const char** argv) {
   fortran_runtime_initialize(argc, const_cast<char**>(argv));
 
