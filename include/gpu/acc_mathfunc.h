@@ -44,6 +44,8 @@ TINKER_NAMESPACE_BEGIN
 void dotprod(float* cpu_ans, const float* gpu_a, const float* gpu_b, int cpu_n);
 void dotprod(double* cpu_ans, const double* gpu_a, const double* gpu_b,
              int cpu_n);
+void scale_data(float* gpu_dst, float scal, int nelem);
+void scale_data(double* gpu_dst, double scal, int nelem);
 TINKER_NAMESPACE_END
 
 #endif

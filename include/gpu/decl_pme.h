@@ -58,6 +58,8 @@ extern real (*fuind)[3];
 extern real (*fuinp)[3];
 extern real (*fdip_phi1)[10];
 extern real (*fdip_phi2)[10];
+extern real (*cphidp)[10];
+extern real (*fphidp)[20];
 void pme_data(int op);
 }
 TINKER_NAMESPACE_END

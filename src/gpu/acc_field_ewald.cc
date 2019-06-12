@@ -345,7 +345,7 @@ void ufield_ewald_recip_self(const real* gpu_uind, const real* gpu_uinp,
   real(*fieldp)[3] = reinterpret_cast<real(*)[3]>(gpu_fieldp);
 
   const int pu = ppme_unit;
-  auto& st = pme_obj(pu);
+  const auto& st = pme_obj(pu);
   const int nfft1 = st.nfft1;
   const int nfft2 = st.nfft2;
   const int nfft3 = st.nfft3;
@@ -354,7 +354,7 @@ void ufield_ewald_recip_self(const real* gpu_uind, const real* gpu_uinp,
   cuind_to_fuind(pu, uind, uinp, fuind, fuinp);
   grid_uind(pu, fuind, fuinp);
   fftfront(pu);
-  // TODO: store vs. recompute qfrac
+  // TODO: store vs. recompute qfac
   pme_conv0(pu);
   fftback(pu);
   fphi_uind2(pu, fdip_phi1, fdip_phi2);

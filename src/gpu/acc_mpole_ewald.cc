@@ -6,7 +6,7 @@
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 template <int USE>
-void empole_real_tmpl() {
+void empole_real_self_tmpl() {
   constexpr int do_e = USE & use_energy;
   constexpr int do_a = USE & use_analyz;
   constexpr int do_g = USE & use_grad;
@@ -563,7 +563,7 @@ void empole_ewald_tmpl() {
     }
   }
 
-  empole_real_tmpl<USE>();
+  empole_real_self_tmpl<USE>();
 
   empole_recip_tmpl<USE>();
 }

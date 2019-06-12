@@ -137,6 +137,8 @@ real (*fuind)[3];
 real (*fuinp)[3];
 real (*fdip_phi1)[10];
 real (*fdip_phi2)[10];
+real (*cphidp)[10];
+real (*fphidp)[20];
 
 void pme_data(int op) {
   if (op == op_destroy) {
@@ -159,6 +161,8 @@ void pme_data(int op) {
     check_cudart(cudaFree(fuinp));
     check_cudart(cudaFree(fdip_phi1));
     check_cudart(cudaFree(fdip_phi2));
+    check_cudart(cudaFree(cphidp));
+    check_cudart(cudaFree(fphidp));
   }
 
   if (op == op_create) {
@@ -221,11 +225,15 @@ void pme_data(int op) {
       check_cudart(cudaMalloc(&fuinp, 3 * n * rs));
       check_cudart(cudaMalloc(&fdip_phi1, 10 * n * rs));
       check_cudart(cudaMalloc(&fdip_phi2, 10 * n * rs));
+      check_cudart(cudaMalloc(&cphidp, 10 * n * rs));
+      check_cudart(cudaMalloc(&fphidp, 20 * n * rs));
     } else {
       fuind = nullptr;
       fuinp = nullptr;
       fdip_phi1 = nullptr;
       fdip_phi2 = nullptr;
+      cphidp = nullptr;
+      fphidp = nullptr;
     }
   }
 

@@ -570,6 +570,21 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
     COMPARE_ENERGY_(gpu::ep, ref_eng, eps_f);
   }
 
+  SECTION("various epolar versions -- pme") {
+    const double eps_e = eps_f;
+    const double ref_eng = -36.5477;
+    const int ref_count = 222;
+    const double eps_g = eps_f;
+    const double ref_grad[][3] = {{}};
+    const double eps_v = 0.001;
+    const double ref_v[][3] = {{}};
+
+    gpu::zero_egv();
+    gpu::elec_init(gpu::v5);
+    tinker_gpu_epolar5();
+    gpu::torque(gpu::v5);
+  }
+
   tinker_gpu_data_destroy();
   test_end();
 }
