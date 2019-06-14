@@ -247,7 +247,6 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
         }
 
         // if use_thole
-
         real damp = pdi * pdamp[k];
         if (damp != 0) {
           real pgamma = REAL_MIN(pti, thole[k]);

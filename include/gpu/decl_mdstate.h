@@ -17,6 +17,16 @@ const int use_virial = 0x040; /// virial 64
 const int use_analyz = 0x080; /// analyze 128
 // clang-format on
 
+template <int USE>
+void sanity_check() {
+  constexpr int do_e = USE & use_energy;
+  constexpr int do_a = USE & use_analyz;
+  constexpr int do_g = USE & use_grad;
+  constexpr int do_v = USE & use_virial;
+  static_assert(do_v ? do_g : true, "");
+  static_assert(do_a ? do_e : true, "");
+}
+
 extern int use_data;
 extern int n;
 

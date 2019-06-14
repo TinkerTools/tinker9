@@ -7,6 +7,14 @@
 m_tinker_using_namespace;
 using namespace test;
 
+/**
+ * @brief
+ * The last molecule in the local-frame test case is a NH3, where all of its 4
+ * atoms are in the xy-plane. Therefore the z-gradient components of this
+ * molecule are not included in the test.
+ */
+static auto do_ij = [&](int i, int /* j */) { return i < gpu::n - 4; };
+
 TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
   file fpr("amoeba09.prm", amoeba09_prm);
 
@@ -67,7 +75,7 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
     tinker_gpu_empole1();
     gpu::torque(gpu::v1);
     COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
-    COMPARE_GRADIENT_(ref_grad, eps_g);
+    COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);
     COMPARE_VIR2_(gpu::vir_em, gpu::vir_trq, ref_v, eps_v);
 
     gpu::zero_egv();
@@ -165,7 +173,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     tinker_gpu_epolar1();                                                      \
     gpu::torque(gpu::v1);                                                      \
     COMPARE_ENERGY_(gpu::ep, ref_eng, eps_e);                                  \
-    COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
+    COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                                \
     COMPARE_VIR2_(gpu::vir_ep, gpu::vir_trq, ref_v, eps_v);                    \
                                                                                \
     gpu::zero_egv();                                                           \
@@ -180,19 +188,19 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     tinker_gpu_epolar4();                                                      \
     gpu::torque(gpu::v4);                                                      \
     COMPARE_ENERGY_(gpu::ep, ref_eng, eps_e);                                  \
-    COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
+    COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                                \
                                                                                \
     gpu::zero_egv();                                                           \
     gpu::elec_init(gpu::v5);                                                   \
     tinker_gpu_epolar5();                                                      \
     gpu::torque(gpu::v5);                                                      \
-    COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
+    COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                                \
                                                                                \
     gpu::zero_egv();                                                           \
     gpu::elec_init(gpu::v6);                                                   \
     tinker_gpu_epolar6();                                                      \
     gpu::torque(gpu::v6);                                                      \
-    COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
+    COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                                \
     COMPARE_VIR2_(gpu::vir_ep, gpu::vir_trq, ref_v, eps_v);                    \
   }
 
@@ -370,7 +378,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
     const double eps_e = eps_f;
     const double ref_eng = -37.7476;
     const int ref_count = 201;
-    const double eps_g = test_get_eps2(2 * eps_f, eps_f);
+    const double eps_g = eps_f;
     const double ref_grad[][3] = {
         {6.5312, 20.1361, 5.8824},   {13.2027, -5.6940, 7.3885},
         {-3.2986, 0.8521, 1.9560},   {0.8378, 0.0755, -0.0391},
@@ -578,6 +586,13 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
     const double ref_grad[][3] = {{}};
     const double eps_v = 0.001;
     const double ref_v[][3] = {{}};
+
+    gpu::zero_egv();
+    gpu::elec_init(gpu::v3);
+    tinker_gpu_epolar3();
+    gpu::torque(gpu::v3);
+    COMPARE_ENERGY_(gpu::ep, ref_eng, eps_e);
+    COMPARE_COUNT_(gpu::nep, ref_count);
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v5);

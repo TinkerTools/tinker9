@@ -47,7 +47,7 @@ typedef std::vector<std::array<double, 3>> grad_t;
       }                                                                        \
     }                                                                          \
   }
-#define COMPARE_GRADIENT_(ref_grad, eps)                                       \
+#define COMPARE_GRADIENT2_(ref_grad, eps, check_ij)                            \
   {                                                                            \
     grad_t grad(gpu::n);                                                       \
     double* dst = &grad[0][0];                                                 \
@@ -56,9 +56,17 @@ typedef std::vector<std::array<double, 3>> grad_t;
     gpu::copyout_data2(2, 3, dst, gpu::gz, gpu::n);                            \
     for (int i = 0; i < gpu::n; ++i) {                                         \
       for (int j = 0; j < 3; ++j) {                                            \
-        REQUIRE(grad[i][j] == Approx(ref_grad[i][j]).margin(eps));             \
+        if (check_ij(i, j))                                                    \
+          REQUIRE(grad[i][j] == Approx(ref_grad[i][j]).margin(eps));           \
       }                                                                        \
     }                                                                          \
+  }
+#define COMPARE_GRADIENT_(ref_grad, eps)                                       \
+  COMPARE_GRADIENT2_(ref_grad, eps, [](int, int) { return true; })
+#define PRINT_ENERGY_(gpuptr)                                                  \
+  {                                                                            \
+    double e_ = gpu::get_energy(gpuptr);                                       \
+    print(stdout, " ENERGY{:>12.4f}\n", e_);                                   \
   }
 #define PRINT_VIR_(gpuptr)                                                     \
   {                                                                            \

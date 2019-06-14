@@ -118,12 +118,13 @@ void empole_real_self_tmpl() {
 
         real invr1 = REAL_RECIP(r);
         real rr2 = invr1 * invr1;
+
         real rr1 = f * invr1;
         real rr3 = rr1 * rr2;
         real rr5 = 3 * rr3 * rr2;
         real rr7 = 5 * rr5 * rr2;
         real rr9 = 7 * rr7 * rr2;
-        real rr11;
+        MAYBE_UNUSED real rr11;
 
         real ralpha = aewald * r;
 
