@@ -115,6 +115,27 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
           pscale[ij] = p5iscale;
     }
 
+    #pragma acc loop independent
+    for (int j = 0; j < np11i; ++j) {
+      dscale[polargroup->ip11[i][j]] = d1scale;
+      uscale[polargroup->ip11[i][j]] = u1scale;
+    }
+    #pragma acc loop independent
+    for (int j = 0; j < np12i; ++j) {
+      dscale[polargroup->ip12[i][j]] = d2scale;
+      uscale[polargroup->ip12[i][j]] = u2scale;
+    }
+    #pragma acc loop independent
+    for (int j = 0; j < np13i; ++j) {
+      dscale[polargroup->ip13[i][j]] = d3scale;
+      uscale[polargroup->ip13[i][j]] = u3scale;
+    }
+    #pragma acc loop independent
+    for (int j = 0; j < np14i; ++j) {
+      dscale[polargroup->ip14[i][j]] = d4scale;
+      uscale[polargroup->ip14[i][j]] = u4scale;
+    }
+
     real xi = x[i];
     real yi = y[i];
     real zi = z[i];
@@ -206,14 +227,14 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
         real exp2a = REAL_EXP(-REAL_SQ(ralpha));
         if_constexpr(!do_g) {
           #pragma acc loop seq
-          for (int j = 1; j < 4; ++j) {
+          for (int j = 1; j <= 3; ++j) {
             alsq2n *= alsq2;
             bn[j] = ((j + j - 1) * bn[j - 1] + alsq2n * exp2a) * rr2;
           }
         }
         else {
           #pragma acc loop seq
-          for (int j = 1; j < 3; ++j) {
+          for (int j = 1; j <= 4; ++j) {
             alsq2n *= alsq2;
             bn[j] = ((j + j - 1) * bn[j - 1] + alsq2n * exp2a) * rr2;
           }
@@ -292,30 +313,392 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
           }
           // end if
         }
+
+        if_constexpr(do_g) {
+          real uirp = uixp * xr + uiyp * yr + uizp * zr;
+          real ukrp = ukxp * xr + ukyp * yr + ukzp * zr;
+
+          real psc3 = 1 - sc3 * pscale[k];
+          real psc5 = 1 - sc5 * pscale[k];
+          real psc7 = 1 - sc7 * pscale[k];
+          real dsc3 = 1 - sc3 * dscale[k];
+          real dsc5 = 1 - sc5 * dscale[k];
+          real dsc7 = 1 - sc7 * dscale[k];
+          real usc3 = 1 - sc3 * uscale[k];
+          real usc5 = 1 - sc5 * uscale[k];
+          real psr3 = bn[1] - psc3 * rr3;
+          real psr5 = bn[2] - psc5 * rr5;
+          real psr7 = bn[3] - psc7 * rr7;
+          real dsr3 = bn[1] - dsc3 * rr3;
+          real dsr5 = bn[2] - dsc5 * rr5;
+          real dsr7 = bn[3] - dsc7 * rr7;
+          // variable "usr3" was declared but never referenced
+          // real usr3 = bn[1] - usc3 * rr3;
+          real usr5 = bn[2] - usc5 * rr5;
+
+          real prc31 = rc31 * pscale[k];
+          real prc51 = rc51 * pscale[k];
+          real prc71 = rc71 * pscale[k];
+          real drc31 = rc31 * dscale[k];
+          real drc51 = rc51 * dscale[k];
+          real drc71 = rc71 * dscale[k];
+          real urc31 = rc31 * uscale[k];
+          real urc51 = rc51 * uscale[k];
+
+          real prc32 = rc32 * pscale[k];
+          real prc52 = rc52 * pscale[k];
+          real prc72 = rc72 * pscale[k];
+          real drc32 = rc32 * dscale[k];
+          real drc52 = rc52 * dscale[k];
+          real drc72 = rc72 * dscale[k];
+          real urc32 = rc32 * uscale[k];
+          real urc52 = rc52 * uscale[k];
+
+          real prc33 = rc33 * pscale[k];
+          real prc53 = rc53 * pscale[k];
+          real prc73 = rc73 * pscale[k];
+          real drc33 = rc33 * dscale[k];
+          real drc53 = rc53 * dscale[k];
+          real drc73 = rc73 * dscale[k];
+          // variable "urc33" was declared but never referenced
+          // real urc33 = rc33 * uscale[k];
+          real urc53 = rc53 * uscale[k];
+
+          // get the induced dipole field used for dipole torques
+
+          real tuir, tukr;
+          real tix3 = psr3 * ukx + dsr3 * ukxp;
+          real tiy3 = psr3 * uky + dsr3 * ukyp;
+          real tiz3 = psr3 * ukz + dsr3 * ukzp;
+          real tkx3 = psr3 * uix + dsr3 * uixp;
+          real tky3 = psr3 * uiy + dsr3 * uiyp;
+          real tkz3 = psr3 * uiz + dsr3 * uizp;
+          tuir = -psr5 * ukr - dsr5 * ukrp;
+          tukr = -psr5 * uir - dsr5 * uirp;
+
+          #pragma acc atomic update
+          ufld[i][0] += tix3 + xr * tuir;
+          #pragma acc atomic update
+          ufld[i][1] += tiy3 + yr * tuir;
+          #pragma acc atomic update
+          ufld[i][2] += tiz3 + zr * tuir;
+          #pragma acc atomic update
+          ufld[k][0] += tkx3 + xr * tukr;
+          #pragma acc atomic update
+          ufld[k][1] += tky3 + yr * tukr;
+          #pragma acc atomic update
+          ufld[k][2] += tkz3 + zr * tukr;
+
+          // get induced dipole field gradient used for quadrupole torques
+
+          real tix5 = 2 * (psr5 * ukx + dsr5 * ukxp);
+          real tiy5 = 2 * (psr5 * uky + dsr5 * ukyp);
+          real tiz5 = 2 * (psr5 * ukz + dsr5 * ukzp);
+          real tkx5 = 2 * (psr5 * uix + dsr5 * uixp);
+          real tky5 = 2 * (psr5 * uiy + dsr5 * uiyp);
+          real tkz5 = 2 * (psr5 * uiz + dsr5 * uizp);
+          tuir = -psr7 * ukr - dsr7 * ukrp;
+          tukr = -psr7 * uir - dsr7 * uirp;
+
+          #pragma acc atomic update
+          dufld[i][0] += (xr * tix5 + xr * xr * tuir);
+          #pragma acc atomic update
+          dufld[i][1] += (xr * tiy5 + yr * tix5 + 2 * xr * yr * tuir);
+          #pragma acc atomic update
+          dufld[i][2] += (yr * tiy5 + yr * yr * tuir);
+          #pragma acc atomic update
+          dufld[i][3] += (xr * tiz5 + zr * tix5 + 2 * xr * zr * tuir);
+          #pragma acc atomic update
+          dufld[i][4] += (yr * tiz5 + zr * tiy5 + 2 * yr * zr * tuir);
+          #pragma acc atomic update
+          dufld[i][5] += (zr * tiz5 + zr * zr * tuir);
+
+          #pragma acc atomic update
+          dufld[k][0] += (-xr * tkx5 - xr * xr * tukr);
+          #pragma acc atomic update
+          dufld[k][1] += (-xr * tky5 - yr * tkx5 - 2 * xr * yr * tukr);
+          #pragma acc atomic update
+          dufld[k][2] += (-yr * tky5 - yr * yr * tukr);
+          #pragma acc atomic update
+          dufld[k][3] += (-xr * tkz5 - zr * tkx5 - 2 * xr * zr * tukr);
+          #pragma acc atomic update
+          dufld[k][4] += (-yr * tkz5 - zr * tky5 - 2 * yr * zr * tukr);
+          #pragma acc atomic update
+          dufld[k][5] += (-zr * tkz5 - zr * zr * tukr);
+
+          real term1, term2, term3, term4, term5, term6, term7;
+          real depx, depy, depz;
+          real frcx, frcy, frcz;
+
+          // get the dEd/dR terms used for direct polarization force
+
+          term1 = bn[2] - dsc3 * rr5;
+          term2 = bn[3] - dsc5 * rr7;
+          term3 = -dsr3 + term1 * xr * xr - rr3 * xr * drc31;
+          term4 = rr3 * drc31 - term1 * xr - dsr5 * xr;
+          term5 = term2 * xr * xr - dsr5 - rr5 * xr * drc51;
+          term6 = (bn[4] - dsc7 * rr9) * xr * xr - bn[3] - rr7 * xr * drc71;
+          term7 =
+              rr5 * drc51 - 2 * bn[3] * xr + (dsc5 + 1.5f * dsc7) * rr7 * xr;
+          real tixx = ci * term3 + dix * term4 + dir * term5 + 2 * dsr5 * qixx +
+              (qiy * yr + qiz * zr) * dsc7 * rr7 + 2 * qix * term7 +
+              qir * term6;
+          real tkxx = ck * term3 - dkx * term4 - dkr * term5 + 2 * dsr5 * qkxx +
+              (qky * yr + qkz * zr) * dsc7 * rr7 + 2 * qkx * term7 +
+              qkr * term6;
+
+          term3 = -dsr3 + term1 * yr * yr - rr3 * yr * drc32;
+          term4 = rr3 * drc32 - term1 * yr - dsr5 * yr;
+          term5 = term2 * yr * yr - dsr5 - rr5 * yr * drc52;
+          term6 = (bn[4] - dsc7 * rr9) * yr * yr - bn[3] - rr7 * yr * drc72;
+          term7 =
+              rr5 * drc52 - 2 * bn[3] * yr + (dsc5 + 1.5f * dsc7) * rr7 * yr;
+          real tiyy = ci * term3 + diy * term4 + dir * term5 + 2 * dsr5 * qiyy +
+              (qix * xr + qiz * zr) * dsc7 * rr7 + 2 * qiy * term7 +
+              qir * term6;
+          real tkyy = ck * term3 - dky * term4 - dkr * term5 + 2 * dsr5 * qkyy +
+              (qkx * xr + qkz * zr) * dsc7 * rr7 + 2 * qky * term7 +
+              qkr * term6;
+
+          term3 = -dsr3 + term1 * zr * zr - rr3 * zr * drc33;
+          term4 = rr3 * drc33 - term1 * zr - dsr5 * zr;
+          term5 = term2 * zr * zr - dsr5 - rr5 * zr * drc53;
+          term6 = (bn[4] - dsc7 * rr9) * zr * zr - bn[3] - rr7 * zr * drc73;
+          term7 =
+              rr5 * drc53 - 2 * bn[3] * zr + (dsc5 + 1.5f * dsc7) * rr7 * zr;
+          real tizz = ci * term3 + diz * term4 + dir * term5 + 2 * dsr5 * qizz +
+              (qix * xr + qiy * yr) * dsc7 * rr7 + 2 * qiz * term7 +
+              qir * term6;
+          real tkzz = ck * term3 - dkz * term4 - dkr * term5 + 2 * dsr5 * qkzz +
+              (qkx * xr + qky * yr) * dsc7 * rr7 + 2 * qkz * term7 +
+              qkr * term6;
+
+          term3 = term1 * xr * yr - rr3 * yr * drc31;
+          term4 = rr3 * drc31 - term1 * xr;
+          term5 = term2 * xr * yr - rr5 * yr * drc51;
+          term6 = (bn[4] - dsc7 * rr9) * xr * yr - rr7 * yr * drc71;
+          term7 = rr5 * drc51 - term2 * xr;
+          real tixy = ci * term3 - dsr5 * dix * yr + diy * term4 + dir * term5 +
+              2 * dsr5 * qixy - 2 * dsr7 * yr * qix + 2 * qiy * term7 +
+              qir * term6;
+          real tkxy = ck * term3 + dsr5 * dkx * yr - dky * term4 - dkr * term5 +
+              2 * dsr5 * qkxy - 2 * dsr7 * yr * qkx + 2 * qky * term7 +
+              qkr * term6;
+
+          term3 = term1 * xr * zr - rr3 * zr * drc31;
+          term5 = term2 * xr * zr - rr5 * zr * drc51;
+          term6 = (bn[4] - dsc7 * rr9) * xr * zr - rr7 * zr * drc71;
+          real tixz = ci * term3 - dsr5 * dix * zr + diz * term4 + dir * term5 +
+              2 * dsr5 * qixz - 2 * dsr7 * zr * qix + 2 * qiz * term7 +
+              qir * term6;
+          real tkxz = ck * term3 + dsr5 * dkx * zr - dkz * term4 - dkr * term5 +
+              2 * dsr5 * qkxz - 2 * dsr7 * zr * qkx + 2 * qkz * term7 +
+              qkr * term6;
+
+          term3 = term1 * yr * zr - rr3 * zr * drc32;
+          term4 = rr3 * drc32 - term1 * yr;
+          term5 = term2 * yr * zr - rr5 * zr * drc52;
+          term6 = (bn[4] - dsc7 * rr9) * yr * zr - rr7 * zr * drc72;
+          term7 = rr5 * drc52 - term2 * yr;
+          real tiyz = ci * term3 - dsr5 * diy * zr + diz * term4 + dir * term5 +
+              2 * dsr5 * qiyz - 2 * dsr7 * zr * qiy + 2 * qiz * term7 +
+              qir * term6;
+          real tkyz = ck * term3 + dsr5 * dky * zr - dkz * term4 - dkr * term5 +
+              2 * dsr5 * qkyz - 2 * dsr7 * zr * qky + 2 * qkz * term7 +
+              qkr * term6;
+
+          depx = tixx * ukxp + tixy * ukyp + tixz * ukzp - tkxx * uixp -
+              tkxy * uiyp - tkxz * uizp;
+          depy = tixy * ukxp + tiyy * ukyp + tiyz * ukzp - tkxy * uixp -
+              tkyy * uiyp - tkyz * uizp;
+          depz = tixz * ukxp + tiyz * ukyp + tizz * ukzp - tkxz * uixp -
+              tkyz * uiyp - tkzz * uizp;
+
+          frcx = depx;
+          frcy = depy;
+          frcz = depz;
+
+          // get the dEp/dR terms used for direct polarization force
+
+          term1 = bn[2] - psc3 * rr5;
+          term2 = bn[3] - psc5 * rr7;
+          term3 = -psr3 + term1 * xr * xr - rr3 * xr * prc31;
+          term4 = rr3 * prc31 - term1 * xr - psr5 * xr;
+          term5 = term2 * xr * xr - psr5 - rr5 * xr * prc51;
+          term6 = (bn[4] - psc7 * rr9) * xr * xr - bn[3] - rr7 * xr * prc71;
+          term7 =
+              rr5 * prc51 - 2 * bn[3] * xr + (psc5 + 1.5f * psc7) * rr7 * xr;
+          tixx = ci * term3 + dix * term4 + dir * term5 + 2 * psr5 * qixx +
+              (qiy * yr + qiz * zr) * psc7 * rr7 + 2 * qix * term7 +
+              qir * term6;
+          tkxx = ck * term3 - dkx * term4 - dkr * term5 + 2 * psr5 * qkxx +
+              (qky * yr + qkz * zr) * psc7 * rr7 + 2 * qkx * term7 +
+              qkr * term6;
+
+          term3 = -psr3 + term1 * yr * yr - rr3 * yr * prc32;
+          term4 = rr3 * prc32 - term1 * yr - psr5 * yr;
+          term5 = term2 * yr * yr - psr5 - rr5 * yr * prc52;
+          term6 = (bn[4] - psc7 * rr9) * yr * yr - bn[3] - rr7 * yr * prc72;
+          term7 =
+              rr5 * prc52 - 2 * bn[3] * yr + (psc5 + 1.5f * psc7) * rr7 * yr;
+          tiyy = ci * term3 + diy * term4 + dir * term5 + 2 * psr5 * qiyy +
+              (qix * xr + qiz * zr) * psc7 * rr7 + 2 * qiy * term7 +
+              qir * term6;
+          tkyy = ck * term3 - dky * term4 - dkr * term5 + 2 * psr5 * qkyy +
+              (qkx * xr + qkz * zr) * psc7 * rr7 + 2 * qky * term7 +
+              qkr * term6;
+
+          term3 = -psr3 + term1 * zr * zr - rr3 * zr * prc33;
+          term4 = rr3 * prc33 - term1 * zr - psr5 * zr;
+          term5 = term2 * zr * zr - psr5 - rr5 * zr * prc53;
+          term6 = (bn[4] - psc7 * rr9) * zr * zr - bn[3] - rr7 * zr * prc73;
+          term7 =
+              rr5 * prc53 - 2 * bn[3] * zr + (psc5 + 1.5f * psc7) * rr7 * zr;
+          tizz = ci * term3 + diz * term4 + dir * term5 + 2 * psr5 * qizz +
+              (qix * xr + qiy * yr) * psc7 * rr7 + 2 * qiz * term7 +
+              qir * term6;
+          tkzz = ck * term3 - dkz * term4 - dkr * term5 + 2 * psr5 * qkzz +
+              (qkx * xr + qky * yr) * psc7 * rr7 + 2 * qkz * term7 +
+              qkr * term6;
+
+          term3 = term1 * xr * yr - rr3 * yr * prc31;
+          term4 = rr3 * prc31 - term1 * xr;
+          term5 = term2 * xr * yr - rr5 * yr * prc51;
+          term6 = (bn[4] - psc7 * rr9) * xr * yr - rr7 * yr * prc71;
+          term7 = rr5 * prc51 - term2 * xr;
+          tixy = ci * term3 - psr5 * dix * yr + diy * term4 + dir * term5 +
+              2 * psr5 * qixy - 2 * psr7 * yr * qix + 2 * qiy * term7 +
+              qir * term6;
+          tkxy = ck * term3 + psr5 * dkx * yr - dky * term4 - dkr * term5 +
+              2 * psr5 * qkxy - 2 * psr7 * yr * qkx + 2 * qky * term7 +
+              qkr * term6;
+
+          term3 = term1 * xr * zr - rr3 * zr * prc31;
+          term5 = term2 * xr * zr - rr5 * zr * prc51;
+          term6 = (bn[4] - psc7 * rr9) * xr * zr - rr7 * zr * prc71;
+          tixz = ci * term3 - psr5 * dix * zr + diz * term4 + dir * term5 +
+              2 * psr5 * qixz - 2 * psr7 * zr * qix + 2 * qiz * term7 +
+              qir * term6;
+          tkxz = ck * term3 + psr5 * dkx * zr - dkz * term4 - dkr * term5 +
+              2 * psr5 * qkxz - 2 * psr7 * zr * qkx + 2 * qkz * term7 +
+              qkr * term6;
+
+          term3 = term1 * yr * zr - rr3 * zr * prc32;
+          term4 = rr3 * prc32 - term1 * yr;
+          term5 = term2 * yr * zr - rr5 * zr * prc52;
+          term6 = (bn[4] - psc7 * rr9) * yr * zr - rr7 * zr * prc72;
+          term7 = rr5 * prc52 - term2 * yr;
+          tiyz = ci * term3 - psr5 * diy * zr + diz * term4 + dir * term5 +
+              2 * psr5 * qiyz - 2 * psr7 * zr * qiy + 2 * qiz * term7 +
+              qir * term6;
+          tkyz = ck * term3 + psr5 * dky * zr - dkz * term4 - dkr * term5 +
+              2 * psr5 * qkyz - 2 * psr7 * zr * qky + 2 * qkz * term7 +
+              qkr * term6;
+
+          depx = tixx * ukx + tixy * uky + tixz * ukz - tkxx * uix -
+              tkxy * uiy - tkxz * uiz;
+          depy = tixy * ukx + tiyy * uky + tiyz * ukz - tkxy * uix -
+              tkyy * uiy - tkyz * uiz;
+          depz = tixz * ukx + tiyz * uky + tizz * ukz - tkxz * uix -
+              tkyz * uiy - tkzz * uiz;
+          frcx = frcx + depx;
+          frcy = frcy + depy;
+          frcz = frcz + depz;
+
+          // get the dtau/dr terms used for mutual polarization force
+
+          term1 = bn[2] - usc3 * rr5;
+          term2 = bn[3] - usc5 * rr7;
+          term3 = usr5 + term1;
+          term4 = rr3 * uscale[k];
+          term5 = -xr * term3 + rc31 * term4;
+          term6 = -usr5 + xr * xr * term2 - rr5 * xr * urc51;
+          tixx = uix * term5 + uir * term6;
+          tkxx = ukx * term5 + ukr * term6;
+
+          term5 = -yr * term3 + rc32 * term4;
+          term6 = -usr5 + yr * yr * term2 - rr5 * yr * urc52;
+          tiyy = uiy * term5 + uir * term6;
+          tkyy = uky * term5 + ukr * term6;
+
+          term5 = -zr * term3 + rc33 * term4;
+          term6 = -usr5 + zr * zr * term2 - rr5 * zr * urc53;
+          tizz = uiz * term5 + uir * term6;
+          tkzz = ukz * term5 + ukr * term6;
+
+          term4 = -usr5 * yr;
+          term5 = -xr * term1 + rr3 * urc31;
+          term6 = xr * yr * term2 - rr5 * yr * urc51;
+          tixy = uix * term4 + uiy * term5 + uir * term6;
+          tkxy = ukx * term4 + uky * term5 + ukr * term6;
+
+          term4 = -usr5 * zr;
+          term6 = xr * zr * term2 - rr5 * zr * urc51;
+          tixz = uix * term4 + uiz * term5 + uir * term6;
+          tkxz = ukx * term4 + ukz * term5 + ukr * term6;
+
+          term5 = -yr * term1 + rr3 * urc32;
+          term6 = yr * zr * term2 - rr5 * zr * urc52;
+          tiyz = uiy * term4 + uiz * term5 + uir * term6;
+          tkyz = uky * term4 + ukz * term5 + ukr * term6;
+
+          depx = tixx * ukxp + tixy * ukyp + tixz * ukzp + tkxx * uixp +
+              tkxy * uiyp + tkxz * uizp;
+          depy = tixy * ukxp + tiyy * ukyp + tiyz * ukzp + tkxy * uixp +
+              tkyy * uiyp + tkyz * uizp;
+          depz = tixz * ukxp + tiyz * ukyp + tizz * ukzp + tkxz * uixp +
+              tkyz * uiyp + tkzz * uizp;
+
+          frcx = frcx + depx;
+          frcy = frcy + depy;
+          frcz = frcz + depz;
+
+          #pragma acc atomic update
+          gx[i] -= frcx;
+          #pragma acc atomic update
+          gy[i] -= frcy;
+          #pragma acc atomic update
+          gz[i] -= frcz;
+          #pragma acc atomic update
+          gx[k] += frcx;
+          #pragma acc atomic update
+          gy[k] += frcy;
+          #pragma acc atomic update
+          gz[k] += frcz;
+
+          // virial
+
+          if_constexpr(do_v) {
+            real vxx = xr * frcx;
+            real vxy = 0.5f * (yr * frcx + xr * frcy);
+            real vxz = 0.5f * (zr * frcx + xr * frcz);
+            real vyy = yr * frcy;
+            real vyz = 0.5f * (zr * frcy + yr * frcz);
+            real vzz = zr * frcz;
+
+            #pragma acc atomic update
+            vir_ep[_xx] += vxx;
+            #pragma acc atomic update
+            vir_ep[_yx] += vxy;
+            #pragma acc atomic update
+            vir_ep[_zx] += vxz;
+            #pragma acc atomic update
+            vir_ep[_xy] += vxy;
+            #pragma acc atomic update
+            vir_ep[_yy] += vyy;
+            #pragma acc atomic update
+            vir_ep[_zy] += vyz;
+            #pragma acc atomic update
+            vir_ep[_xz] += vxz;
+            #pragma acc atomic update
+            vir_ep[_yz] += vyz;
+            #pragma acc atomic update
+            vir_ep[_zz] += vzz;
+          }
+        }
         // end if use_thole
       }
     } // end for (int kk)
-
-    #pragma acc loop independent
-    for (int j = 0; j < np11i; ++j) {
-      dscale[polargroup->ip11[i][j]] = d1scale;
-      uscale[polargroup->ip11[i][j]] = u1scale;
-    }
-    #pragma acc loop independent
-    for (int j = 0; j < np12i; ++j) {
-      dscale[polargroup->ip12[i][j]] = d2scale;
-      uscale[polargroup->ip12[i][j]] = u2scale;
-    }
-    #pragma acc loop independent
-    for (int j = 0; j < np13i; ++j) {
-      dscale[polargroup->ip13[i][j]] = d3scale;
-      uscale[polargroup->ip13[i][j]] = u3scale;
-    }
-    #pragma acc loop independent
-    for (int j = 0; j < np14i; ++j) {
-      dscale[polargroup->ip14[i][j]] = d4scale;
-      uscale[polargroup->ip14[i][j]] = u4scale;
-    }
 
     // reset exclusion coefficients for connected atoms
 
@@ -353,6 +736,38 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
       uscale[polargroup->ip14[i][j]] = 1;
     }
   } // end for (int i)
+
+  // torque
+
+  if_constexpr(do_g) {
+    #pragma acc parallel loop independent\
+                deviceptr(rpole,trqx,trqy,trqz,ufld,dufld)
+    for (int i = 0; i < n; ++i) {
+      real dix = rpole[i][mpl_pme_x];
+      real diy = rpole[i][mpl_pme_y];
+      real diz = rpole[i][mpl_pme_z];
+      real qixx = rpole[i][mpl_pme_xx];
+      real qixy = rpole[i][mpl_pme_xy];
+      real qixz = rpole[i][mpl_pme_xz];
+      real qiyy = rpole[i][mpl_pme_yy];
+      real qiyz = rpole[i][mpl_pme_yz];
+      real qizz = rpole[i][mpl_pme_zz];
+
+      real tep1 = diz * ufld[i][1] - diy * ufld[i][2] + qixz * dufld[i][1] -
+          qixy * dufld[i][3] + 2 * qiyz * (dufld[i][2] - dufld[i][5]) +
+          (qizz - qiyy) * dufld[i][4];
+      real tep2 = dix * ufld[i][2] - diz * ufld[i][0] - qiyz * dufld[i][1] +
+          qixy * dufld[i][4] + 2 * qixz * (dufld[i][5] - dufld[i][0]) +
+          (qixx - qizz) * dufld[i][3];
+      real tep3 = diy * ufld[i][0] - dix * ufld[i][1] + qiyz * dufld[i][3] -
+          qixz * dufld[i][4] + 2 * qixy * (dufld[i][0] - dufld[i][2]) +
+          (qiyy - qixx) * dufld[i][1];
+
+      trqx[i] += tep1;
+      trqy[i] += tep2;
+      trqz[i] += tep3;
+    }
+  }
 }
 
 template <int USE>
@@ -360,8 +775,8 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
                             const real (*gpu_uinp)[3]) {
   constexpr int do_e = USE & use_energy;
   constexpr int do_a = USE & use_analyz;
-  constexpr int do_g = USE & use_grad;
-  constexpr int do_v = USE & use_virial;
+  // constexpr int do_g = USE & use_grad;
+  // constexpr int do_v = USE & use_virial;
   sanity_check<USE>();
 
   const int pu = ppme_unit;

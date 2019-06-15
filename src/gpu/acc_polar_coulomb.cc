@@ -596,6 +596,8 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
     }
   } // end for (int i)
 
+  // torque
+
   if_constexpr(do_g) {
     #pragma acc parallel loop independent\
               deviceptr(rpole,trqx,trqy,trqz,ufld,dufld)

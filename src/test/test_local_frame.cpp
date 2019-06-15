@@ -583,9 +583,22 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
     const double ref_eng = -36.5477;
     const int ref_count = 222;
     const double eps_g = eps_f;
-    const double ref_grad[][3] = {{}};
+    const double ref_grad[][3] = {
+        {6.2894, 20.2084, 5.8392},   {13.1726, -5.7387, 7.3043},
+        {-3.1627, 0.7221, 1.9420},   {0.7778, 0.1382, -0.0498},
+        {1.1185, -1.4977, -2.3294},  {4.2613, -2.4784, 3.6942},
+        {0.8135, -0.1526, 1.3546},   {-13.1983, 5.5264, -0.7154},
+        {-0.8940, 0.5947, -4.0091},  {0.3292, -1.6380, 1.3897},
+        {0.1622, 0.8818, -0.3597},   {-0.1040, -0.2417, -0.0405},
+        {0.0955, -0.1813, 0.2299},   {-0.0968, -0.5834, -0.5770},
+        {-0.5504, 1.0980, -0.3873},  {0.7537, -0.3906, -0.1910},
+        {-0.2020, 0.0218, 0.7480},   {2.1083, 1.2493, -6.2425},
+        {0.8625, -6.5883, -2.0177},  {-1.9364, 1.0426, 1.6333},
+        {-2.8554, -1.0075, -1.8528}, {-7.7509, -10.9759, -5.4845}};
     const double eps_v = 0.001;
-    const double ref_v[][3] = {{}};
+    const double ref_v[][3] = {{46.473, 4.246, 13.751},
+                               {4.246, 36.899, 8.584},
+                               {13.751, 8.584, 33.337}};
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v3);
@@ -593,6 +606,13 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
     gpu::torque(gpu::v3);
     COMPARE_ENERGY_(gpu::ep, ref_eng, eps_e);
     COMPARE_COUNT_(gpu::nep, ref_count);
+
+    gpu::zero_egv();
+    gpu::elec_init(gpu::v1);
+    tinker_gpu_epolar1();
+    gpu::torque(gpu::v1);
+    COMPARE_ENERGY_(gpu::ep, ref_eng, eps_e);
+    COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v5);
