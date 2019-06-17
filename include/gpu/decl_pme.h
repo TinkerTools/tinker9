@@ -32,7 +32,8 @@ std::vector<pme_st>& pme_objs();
 std::vector<pme_st*>& pme_deviceptrs();
 }
 
-int pme_open_unit(double aewald, int nfft1, int nfft2, int nfft3, int bsorder);
+int pme_open_unit(double aewald, int nfft1, int nfft2, int nfft3, int bsorder,
+                  bool unique);
 pme_st& pme_obj(int pme_unit);
 pme_st* pme_deviceptr(int pme_unit);
 
@@ -48,8 +49,11 @@ extern int epme_unit; // electrostatic
 extern int ppme_unit; // polarization
 extern int dpme_unit; // dispersion
 
+extern int pvpme_unit; // polarization virial
+
 extern double ewald_switch_cut, ewald_switch_off;
 
+extern real (*cmp)[10];
 extern real (*fmp)[10];
 extern real (*cphi)[10];
 extern real (*fphi)[20];
@@ -60,6 +64,9 @@ extern real (*fdip_phi1)[10];
 extern real (*fdip_phi2)[10];
 extern real (*cphidp)[10];
 extern real (*fphidp)[20];
+
+extern real* vir_m;
+
 void pme_data(int op);
 }
 TINKER_NAMESPACE_END
@@ -73,12 +80,13 @@ namespace gpu {
 void pme_conv0(int pme_unit);                 // without virial
 void pme_conv1(int pme_unit, real* gpu_vir9); // with virial
 
+void rpole_to_cmp();
 /**
  * @brief
  * Input: cmp, cartesian rotated mpole.
  * Output: fmp, fractional rotated mpole.
  */
-void cmp_to_fmp(int pme_unit, real (*fmp)[10]);
+void cmp_to_fmp(int pme_unit, const real (*cmp)[10], real (*fmp)[10]);
 void cuind_to_fuind(int pme_unit, const real (*cind)[3], const real (*cinp)[3],
                     real (*fuind)[3], real (*fuinp)[3]);
 /**

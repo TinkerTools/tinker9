@@ -50,6 +50,7 @@ extern real (*udirp)[3];
 extern real *trqx, *trqy, *trqz;
 extern real* vir_trq;
 
+extern int use_elec_pme;
 int use_elec();
 void elec_data(int op);
 

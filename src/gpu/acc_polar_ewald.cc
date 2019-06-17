@@ -776,7 +776,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   constexpr int do_e = USE & use_energy;
   constexpr int do_a = USE & use_analyz;
   // constexpr int do_g = USE & use_grad;
-  // constexpr int do_v = USE & use_virial;
+  constexpr int do_v = USE & use_virial;
   sanity_check<USE>();
 
   const int pu = ppme_unit;
@@ -876,30 +876,22 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 
   real term = f * REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
   real fterm_term = -2 * f * REAL_CUBE(aewald) / 3 / sqrtpi;
-  real cmp[10];
   #pragma acc parallel loop independent\
               deviceptr(ep,nep,trqx,trqy,trqz,\
-              rpole,gpu_uind,gpu_uinp,cphidp) private(cmp[0:10])
+              rpole,cmp,gpu_uind,gpu_uinp,cphidp)
   for (int i = 0; i < n; ++i) {
-    cmp[0] = rpole[i][mpl_pme_0];
-    cmp[1] = rpole[i][mpl_pme_x];
-    cmp[2] = rpole[i][mpl_pme_y];
-    cmp[3] = rpole[i][mpl_pme_z];
-    cmp[4] = rpole[i][mpl_pme_xx];
-    cmp[5] = rpole[i][mpl_pme_yy];
-    cmp[6] = rpole[i][mpl_pme_zz];
-    cmp[7] = 2 * rpole[i][mpl_pme_xy];
-    cmp[8] = 2 * rpole[i][mpl_pme_xz];
-    cmp[9] = 2 * rpole[i][mpl_pme_yz];
-    real tep1 = cmp[3] * cphidp[i][2] - cmp[2] * cphidp[i][3] +
-        2 * (cmp[6] - cmp[5]) * cphidp[i][9] + cmp[8] * cphidp[i][7] +
-        cmp[9] * cphidp[i][5] - cmp[7] * cphidp[i][8] - cmp[9] * cphidp[i][6];
-    real tep2 = cmp[1] * cphidp[i][3] - cmp[3] * cphidp[i][1] +
-        2 * (cmp[4] - cmp[6]) * cphidp[i][8] + cmp[7] * cphidp[i][9] +
-        cmp[8] * cphidp[i][6] - cmp[8] * cphidp[i][4] - cmp[9] * cphidp[i][7];
-    real tep3 = cmp[2] * cphidp[i][1] - cmp[1] * cphidp[i][2] +
-        2 * (cmp[5] - cmp[4]) * cphidp[i][7] + cmp[7] * cphidp[i][4] +
-        cmp[9] * cphidp[i][8] - cmp[7] * cphidp[i][5] - cmp[8] * cphidp[i][9];
+    real tep1 = cmp[i][3] * cphidp[i][2] - cmp[i][2] * cphidp[i][3] +
+        2 * (cmp[i][6] - cmp[i][5]) * cphidp[i][9] + cmp[i][8] * cphidp[i][7] +
+        cmp[i][9] * cphidp[i][5] - cmp[i][7] * cphidp[i][8] -
+        cmp[i][9] * cphidp[i][6];
+    real tep2 = cmp[i][1] * cphidp[i][3] - cmp[i][3] * cphidp[i][1] +
+        2 * (cmp[i][4] - cmp[i][6]) * cphidp[i][8] + cmp[i][7] * cphidp[i][9] +
+        cmp[i][8] * cphidp[i][6] - cmp[i][8] * cphidp[i][4] -
+        cmp[i][9] * cphidp[i][7];
+    real tep3 = cmp[i][2] * cphidp[i][1] - cmp[i][1] * cphidp[i][2] +
+        2 * (cmp[i][5] - cmp[i][4]) * cphidp[i][7] + cmp[i][7] * cphidp[i][4] +
+        cmp[i][9] * cphidp[i][8] - cmp[i][7] * cphidp[i][5] -
+        cmp[i][8] * cphidp[i][9];
 
     // self term
 
@@ -928,6 +920,225 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       #pragma acc atomic update
       *nep += 1;
       // end if
+    }
+  }
+
+  // recip virial
+
+  if_constexpr(do_v) {
+
+    #pragma acc parallel loop independent deviceptr(vir_ep,vir_m)
+    for (int i = 0; i < 9; ++i) {
+      vir_ep[i] -= vir_m[i];
+    }
+
+    scale_data(&cphi[0][0], f, 10 * n);
+    scale_data(&fphid[0][0], f, 10 * n);
+    scale_data(&fphip[0][0], f, 10 * n);
+
+    real cphid[4], cphip[4];
+    real ftc[3][3];
+    #pragma acc parallel loop independent deviceptr(vir_ep,box,cmp,\
+                gpu_uind,gpu_uinp,fphid,fphip,cphi,cphidp)\
+                private(cphid[0:4],cphip[0:4],ftc[0:3][0:3])
+    for (int i = 0; i < n; ++i) {
+
+      // frac_to_cart
+
+      ftc[0][0] = nfft1 * box->recip[0][0];
+      ftc[1][0] = nfft2 * box->recip[1][0];
+      ftc[2][0] = nfft3 * box->recip[2][0];
+      ftc[0][1] = nfft1 * box->recip[0][1];
+      ftc[1][1] = nfft2 * box->recip[1][1];
+      ftc[2][1] = nfft3 * box->recip[2][1];
+      ftc[0][2] = nfft1 * box->recip[0][2];
+      ftc[1][2] = nfft2 * box->recip[1][2];
+      ftc[2][2] = nfft3 * box->recip[2][2];
+
+      #pragma acc loop independent
+      for (int j = 0; j < 3; ++j) {
+        cphid[j + 1] = 0;
+        cphip[j + 1] = 0;
+        #pragma acc loop seq
+        for (int k = 0; k < 3; ++k) {
+          cphid[j + 1] += ftc[k][j] * fphid[i][k + 1];
+          cphip[j + 1] += ftc[k][j] * fphip[i][k + 1];
+        }
+      }
+
+      real vxx = 0;
+      real vyy = 0;
+      real vzz = 0;
+      real vxy = 0;
+      real vxz = 0;
+      real vyz = 0;
+
+      vxx = vxx - cmp[i][1] * cphidp[i][1] -
+          0.5f * ((gpu_uind[i][0] + gpu_uinp[i][0]) * cphi[i][1]);
+      vxy = vxy - 0.5f * (cphidp[i][1] * cmp[i][2] + cphidp[i][2] * cmp[i][1]) -
+          0.25f *
+              ((gpu_uind[i][1] + gpu_uinp[i][1]) * cphi[i][1] +
+               (gpu_uind[i][0] + gpu_uinp[i][0]) * cphi[i][2]);
+      vxz = vxz - 0.5f * (cphidp[i][1] * cmp[i][3] + cphidp[i][3] * cmp[i][1]) -
+          0.25f *
+              ((gpu_uind[i][2] + gpu_uinp[i][2]) * cphi[i][1] +
+               (gpu_uind[i][0] + gpu_uinp[i][0]) * cphi[i][3]);
+      vyy = vyy - cmp[i][2] * cphidp[i][2] -
+          0.5f * ((gpu_uind[i][1] + gpu_uinp[i][1]) * cphi[i][2]);
+      vyz = vyz - 0.5f * (cphidp[i][2] * cmp[i][3] + cphidp[i][3] * cmp[i][2]) -
+          0.25f *
+              ((gpu_uind[i][2] + gpu_uinp[i][2]) * cphi[i][2] +
+               (gpu_uind[i][1] + gpu_uinp[i][1]) * cphi[i][3]);
+      vzz = vzz - cmp[i][3] * cphidp[i][3] -
+          0.5f * ((gpu_uind[i][2] + gpu_uinp[i][2]) * cphi[i][3]);
+      vxx = vxx - 2 * cmp[i][4] * cphidp[i][4] - cmp[i][7] * cphidp[i][7] -
+          cmp[i][8] * cphidp[i][8];
+      vxy = vxy - (cmp[i][4] + cmp[i][5]) * cphidp[i][7] -
+          0.5f *
+              (cmp[i][7] * (cphidp[i][5] + cphidp[i][4]) +
+               cmp[i][8] * cphidp[i][9] + cmp[i][9] * cphidp[i][8]);
+      vxz = vxz - (cmp[i][4] + cmp[i][6]) * cphidp[i][8] -
+          0.5f *
+              (cmp[i][8] * (cphidp[i][4] + cphidp[i][6]) +
+               cmp[i][7] * cphidp[i][9] + cmp[i][9] * cphidp[i][7]);
+      vyy = vyy - 2 * cmp[i][5] * cphidp[i][5] - cmp[i][7] * cphidp[i][7] -
+          cmp[i][9] * cphidp[i][9];
+      vyz = vyz - (cmp[i][5] + cmp[i][6]) * cphidp[i][9] -
+          0.5f *
+              (cmp[i][9] * (cphidp[i][5] + cphidp[i][6]) +
+               cmp[i][7] * cphidp[i][8] + cmp[i][8] * cphidp[i][7]);
+      vzz = vzz - 2 * cmp[i][6] * cphidp[i][6] - cmp[i][8] * cphidp[i][8] -
+          cmp[i][9] * cphidp[i][9];
+
+      // if (poltyp .eq. 'MUTUAL')
+      vxx =
+          vxx - 0.5f * (cphid[1] * gpu_uinp[i][0] + cphip[1] * gpu_uind[i][0]);
+      vxy = vxy -
+          0.25f *
+              (cphid[1] * gpu_uinp[i][1] + cphip[1] * gpu_uind[i][1] +
+               cphid[2] * gpu_uinp[i][0] + cphip[2] * gpu_uind[i][0]);
+      vxz = vxz -
+          0.25f *
+              (cphid[1] * gpu_uinp[i][2] + cphip[1] * gpu_uind[i][2] +
+               cphid[3] * gpu_uinp[i][0] + cphip[3] * gpu_uind[i][0]);
+      vyy =
+          vyy - 0.5f * (cphid[2] * gpu_uinp[i][1] + cphip[2] * gpu_uind[i][1]);
+      vyz = vyz -
+          0.25f *
+              (cphid[2] * gpu_uinp[i][2] + cphip[2] * gpu_uind[i][2] +
+               cphid[3] * gpu_uinp[i][1] + cphip[3] * gpu_uind[i][1]);
+      vzz =
+          vzz - 0.5f * (cphid[3] * gpu_uinp[i][2] + cphip[3] * gpu_uind[i][2]);
+      // end if
+
+      #pragma acc atomic update
+      vir_ep[_xx] += vxx;
+      #pragma acc atomic update
+      vir_ep[_yx] += vxy;
+      #pragma acc atomic update
+      vir_ep[_zx] += vxz;
+      #pragma acc atomic update
+      vir_ep[_xy] += vxy;
+      #pragma acc atomic update
+      vir_ep[_yy] += vyy;
+      #pragma acc atomic update
+      vir_ep[_zy] += vyz;
+      #pragma acc atomic update
+      vir_ep[_xz] += vxz;
+      #pragma acc atomic update
+      vir_ep[_yz] += vyz;
+      #pragma acc atomic update
+      vir_ep[_zz] += vzz;
+    }
+
+    // qgrip: pvu_qgrid
+    const int pvu = pvpme_unit;
+    #pragma acc parallel loop independent deviceptr(cmp,gpu_uinp)
+    for (int i = 0; i < n; ++i) {
+      cmp[i][1] += gpu_uinp[i][0];
+      cmp[i][2] += gpu_uinp[i][1];
+      cmp[i][3] += gpu_uinp[i][2];
+    }
+    cmp_to_fmp(pvu, cmp, fmp);
+    grid_mpole(pvu, fmp);
+    fftfront(pvu);
+
+    // qgrid: pu_qgrid
+    #pragma acc parallel loop independent deviceptr(cmp,gpu_uind,gpu_uinp)
+    for (int i = 0; i < n; ++i) {
+      cmp[i][1] += (gpu_uind[i][0] - gpu_uinp[i][0]);
+      cmp[i][2] += (gpu_uind[i][1] - gpu_uinp[i][1]);
+      cmp[i][3] += (gpu_uind[i][2] - gpu_uinp[i][2]);
+    }
+    cmp_to_fmp(pu, cmp, fmp);
+    grid_mpole(pu, fmp);
+    fftfront(pu);
+
+    const auto* d = pme_deviceptr(pu);
+    const auto* p = pme_deviceptr(pvu);
+    const int nff = nfft1 * nfft2;
+    const int ntot = nfft1 * nfft2 * nfft3;
+    real pterm = REAL_SQ(pi / aewald);
+
+    #pragma acc parallel loop independent deviceptr(box,d,p,vir_ep)
+    for (int i = 1; i < ntot; ++i) {
+      int k3 = i / nff;
+      int j = i - k3 * nff;
+      int k2 = j / nfft1;
+      int k1 = j - k2 * nfft1;
+
+      int r1 = (k1 < (nfft1 + 1) / 2) ? k1 : (k1 - nfft1);
+      int r2 = (k2 < (nfft2 + 1) / 2) ? k2 : (k2 - nfft2);
+      int r3 = (k3 < (nfft3 + 1) / 2) ? k3 : (k3 - nfft3);
+
+      real h1 =
+          box->recip[0][0] * r1 + box->recip[1][0] * r2 + box->recip[2][0] * r3;
+      real h2 =
+          box->recip[0][1] * r1 + box->recip[1][1] * r2 + box->recip[2][1] * r3;
+      real h3 =
+          box->recip[0][2] * r1 + box->recip[1][2] * r2 + box->recip[2][2] * r3;
+      real hsq = h1 * h1 + h2 * h2 + h3 * h3;
+      real term = -pterm * hsq;
+      real expterm = 0;
+      if (term > -50) {
+        // TODO: check/optimize volbox(); if .not. use_bounds; if octahedron;
+        // 2/hsq
+        const real volterm = pi * volbox(box);
+        real denom =
+            volterm * hsq * d->bsmod1[k1] * d->bsmod1[k2] * d->bsmod1[k3];
+        expterm = REAL_EXP(term) / denom;
+
+        real struc2 = d->qgrid[2 * i] * p->qgrid[2 * i] +
+            d->qgrid[2 * i + 1] * p->qgrid[2 * i + 1];
+        real eterm = 0.5f * f * expterm * struc2;
+        real vterm = (2 / hsq) * (1 - term) * eterm;
+
+        real vxx = (h1 * h1 * vterm - eterm);
+        real vxy = h1 * h2 * vterm;
+        real vxz = h1 * h3 * vterm;
+        real vyy = (h2 * h2 * vterm - eterm);
+        real vyz = h2 * h3 * vterm;
+        real vzz = (h3 * h3 * vterm - eterm);
+
+        #pragma acc atomic update
+        vir_ep[_xx] += vxx;
+        #pragma acc atomic update
+        vir_ep[_xy] += vxy;
+        #pragma acc atomic update
+        vir_ep[_xz] += vxz;
+        #pragma acc atomic update
+        vir_ep[_yx] += vxy;
+        #pragma acc atomic update
+        vir_ep[_yy] += vyy;
+        #pragma acc atomic update
+        vir_ep[_yz] += vyz;
+        #pragma acc atomic update
+        vir_ep[_zx] += vxz;
+        #pragma acc atomic update
+        vir_ep[_zy] += vyz;
+        #pragma acc atomic update
+        vir_ep[_zz] += vzz;
+      }
     }
   }
 }

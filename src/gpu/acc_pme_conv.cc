@@ -18,7 +18,7 @@ void pme_conv_tmpl(int pme_unit, real* gpu_vir9) {
 
   const real f = chgpot::electric / chgpot::dielec;
   real aewald = st.aewald;
-  real pterm = M_PI / aewald;
+  real pterm = pi / aewald;
   pterm *= pterm;
 
   #pragma acc parallel loop independent\
@@ -48,7 +48,9 @@ void pme_conv_tmpl(int pme_unit, real* gpu_vir9) {
     real term = -pterm * hsq;
     real expterm = 0;
     if (term > -50) {
-      const real volterm = (real)M_PI * volbox(box);
+      // TODO: check/optimize volbox(); if .not. use_bounds; if octahedron;
+      // 2/hsq
+      const real volterm = pi * volbox(box);
       real denom = volterm * hsq * dptr->bsmod1[k1] * dptr->bsmod1[k2] *
           dptr->bsmod1[k3];
       expterm = REAL_EXP(term) / denom;

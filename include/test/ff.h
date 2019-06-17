@@ -77,6 +77,18 @@ typedef std::vector<std::array<double, 3>> grad_t;
             vir[3 * i + 1], vir[3 * i + 2]);                                   \
     }                                                                          \
   }
+#define PRINT_VIR2_(gpuptr, gpuptr2)                                           \
+  {                                                                            \
+    double vir[9], vir2[9];                                                    \
+    gpu::get_virial(vir, gpuptr);                                              \
+    gpu::get_virial(vir2, gpuptr2);                                            \
+    for (int i = 0; i < 9; ++i)                                                \
+      vir[i] += vir2[i];                                                       \
+    for (int i = 0; i < 3; ++i) {                                              \
+      print(stdout, " VIRIAL{:>12.4f}{:>12.4f}{:>12.4f}\n", vir[3 * i],        \
+            vir[3 * i + 1], vir[3 * i + 2]);                                   \
+    }                                                                          \
+  }
 #define PRINT_GRADIENT_                                                        \
   {                                                                            \
     grad_t grad(gpu::n);                                                       \

@@ -11,7 +11,26 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void cmp_to_fmp(int pme_unit, real (*_fmp)[10]) {
+void rpole_to_cmp() {
+
+  // copy multipole moments and coordinates to local storage
+
+  #pragma acc parallel loop independent deviceptr(rpole,cmp)
+  for (int i = 0; i < n; ++i) {
+    cmp[i][0] = rpole[i][mpl_pme_0];
+    cmp[i][1] = rpole[i][mpl_pme_x];
+    cmp[i][2] = rpole[i][mpl_pme_y];
+    cmp[i][3] = rpole[i][mpl_pme_z];
+    cmp[i][4] = rpole[i][mpl_pme_xx];
+    cmp[i][5] = rpole[i][mpl_pme_yy];
+    cmp[i][6] = rpole[i][mpl_pme_zz];
+    cmp[i][7] = 2 * rpole[i][mpl_pme_xy];
+    cmp[i][8] = 2 * rpole[i][mpl_pme_xz];
+    cmp[i][9] = 2 * rpole[i][mpl_pme_yz];
+  }
+}
+
+void cmp_to_fmp(int pme_unit, const real (*cmp)[10], real (*_fmp)[10]) {
   pme_st& st = pme_obj(pme_unit);
   int nfft1 = st.nfft1;
   int nfft2 = st.nfft2;
@@ -23,11 +42,9 @@ void cmp_to_fmp(int pme_unit, real (*_fmp)[10]) {
   real ctf3_cpp[3][3];
   real ctf6_cpp[6][6];
   real a_cpp[3][3];
-  real cmp_cpp[10];
 
-  #pragma acc parallel loop deviceptr(box,rpole,_fmp)\
-              private(ctf3_cpp[0:3][0:3],ctf6_cpp[0:6][0:6],\
-              a_cpp[0:3][0:3],cmp_cpp[0:10])
+  #pragma acc parallel loop deviceptr(box,cmp,_fmp)\
+              private(ctf3_cpp[0:3][0:3],ctf6_cpp[0:6][0:6],a_cpp[0:3][0:3])
   for (int iatom = 0; iatom < n; ++iatom) {
 
     // see also subroutine cart_to_frac in pmestuf.f
@@ -82,23 +99,12 @@ void cmp_to_fmp(int pme_unit, real (*_fmp)[10]) {
     // apply the transformation to get the fractional multipoles
 
     fmat_real<10> fmp(_fmp);
-    farray_real cmp(cmp_cpp);
-    cmp(1) = rpole[iatom][mpl_pme_0];
-    cmp(2) = rpole[iatom][mpl_pme_x];
-    cmp(3) = rpole[iatom][mpl_pme_y];
-    cmp(4) = rpole[iatom][mpl_pme_z];
-    cmp(5) = rpole[iatom][mpl_pme_xx];
-    cmp(6) = rpole[iatom][mpl_pme_yy];
-    cmp(7) = rpole[iatom][mpl_pme_zz];
-    cmp(8) = 2 * rpole[iatom][mpl_pme_xy];
-    cmp(9) = 2 * rpole[iatom][mpl_pme_xz];
-    cmp(10) = 2 * rpole[iatom][mpl_pme_yz];
 
     // to use the fortran matrix wrapper
     // change the 0-based atom number to 1-based
     const int i = iatom + 1;
 
-    fmp(1, i) = cmp(1);
+    fmp(1, i) = cmp[iatom][0];
     #pragma acc loop independent
     for (int j = 2; j <= 10; ++j) {
       fmp(j, i) = 0;
@@ -106,13 +112,13 @@ void cmp_to_fmp(int pme_unit, real (*_fmp)[10]) {
     #pragma acc loop seq collapse(2)
     for (int j = 2; j <= 4; ++j) {
       for (int k = 2; k <= 4; ++k) {
-        fmp(j, i) += ctf3(j - 1, k - 1) * cmp(k);
+        fmp(j, i) += ctf3(j - 1, k - 1) * cmp[iatom][k - 1];
       }
     }
     #pragma acc loop seq collapse(2)
     for (int j = 5; j <= 10; ++j) {
       for (int k = 5; k <= 10; ++k) {
-        fmp(j, i) += ctf6(j - 4, k - 4) * cmp(k);
+        fmp(j, i) += ctf6(j - 4, k - 4) * cmp[iatom][k - 1];
       }
     }
   }

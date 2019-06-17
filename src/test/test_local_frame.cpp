@@ -600,24 +600,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
                                {4.246, 36.899, 8.584},
                                {13.751, 8.584, 33.337}};
 
-    gpu::zero_egv();
-    gpu::elec_init(gpu::v3);
-    tinker_gpu_epolar3();
-    gpu::torque(gpu::v3);
-    COMPARE_ENERGY_(gpu::ep, ref_eng, eps_e);
-    COMPARE_COUNT_(gpu::nep, ref_count);
-
-    gpu::zero_egv();
-    gpu::elec_init(gpu::v1);
-    tinker_gpu_epolar1();
-    gpu::torque(gpu::v1);
-    COMPARE_ENERGY_(gpu::ep, ref_eng, eps_e);
-    COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);
-
-    gpu::zero_egv();
-    gpu::elec_init(gpu::v5);
-    tinker_gpu_epolar5();
-    gpu::torque(gpu::v5);
+    COMPARE_CODE_BLOCK2_;
   }
 
   tinker_gpu_data_destroy();

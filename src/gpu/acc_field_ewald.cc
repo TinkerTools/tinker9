@@ -1,22 +1,27 @@
 #include "acc_e.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
+#include "gpu/e_mpole.h"
 #include "gpu/e_polar.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 // see also subroutine udirect1 in induce.f
 void dfield_ewald_recip_self(real* gpu_field) {
-  const real aewald = pme_obj(ppme_unit).aewald;
+  const int pu = ppme_unit;
+  const real aewald = pme_obj(pu).aewald;
   const real term = REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
 
-  cmp_to_fmp(ppme_unit, fmp);
-  grid_mpole(ppme_unit, fmp);
-  fftfront(ppme_unit);
-  pme_conv0(ppme_unit);
-  fftback(ppme_unit);
-  fphi_mpole(ppme_unit, fphi);
-  fphi_to_cphi(ppme_unit, fphi, cphi);
+  cmp_to_fmp(pu, cmp, fmp);
+  grid_mpole(pu, fmp);
+  fftfront(pu);
+  if (vir_m && !use_empole())
+    pme_conv1(pu, vir_m);
+  else
+    pme_conv0(pu);
+  fftback(pu);
+  fphi_mpole(pu, fphi);
+  fphi_to_cphi(pu, fphi, cphi);
 
   real(*field)[3] = reinterpret_cast<real(*)[3]>(gpu_field);
 
@@ -66,7 +71,8 @@ void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
   real* pscale = pscalebuf.data();
   real* dscale = dscalebuf.data();
 
-  const real aewald = pme_obj(ppme_unit).aewald;
+  const int pu = ppme_unit;
+  const real aewald = pme_obj(pu).aewald;
   const real aesq2 = 2 * aewald * aewald;
   const real aesq2n = (aewald > 0 ? 1 / (sqrtpi * aewald) : 0);
 
@@ -410,7 +416,8 @@ void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
   uscalebuf.resize(n, 1);
   real* uscale = uscalebuf.data();
 
-  const real aewald = pme_obj(ppme_unit).aewald;
+  const int pu = ppme_unit;
+  const real aewald = pme_obj(pu).aewald;
   const real aesq2 = 2 * aewald * aewald;
   const real aesq2n = (aewald > 0 ? 1 / (sqrtpi * aewald) : 0);
 

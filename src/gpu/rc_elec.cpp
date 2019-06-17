@@ -19,6 +19,7 @@ void tinker_gpu_mlist_update() {
 #include "gpu/decl_dataop.h"
 #include "gpu/decl_elec.h"
 #include "gpu/decl_mdstate.h"
+#include "gpu/decl_pme.h"
 #include "gpu/e_mpole.h"
 #include "gpu/e_polar.h"
 #include "rc_cudart.h"
@@ -40,6 +41,8 @@ real (*udirp)[3];
 
 real *trqx, *trqy, *trqz;
 real* vir_trq;
+
+int use_elec_pme;
 
 int use_elec() { return use_empole() || use_epolar(); }
 
@@ -173,6 +176,13 @@ void elec_init(int vers) {
 
   chkpole();
   rotpole();
+
+  if (use_elec_pme) {
+    rpole_to_cmp();
+    if (vir_m) {
+      zero_data(vir_m, 9);
+    }
+  }
 }
 }
 TINKER_NAMESPACE_END
