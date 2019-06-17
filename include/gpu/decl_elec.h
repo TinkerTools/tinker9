@@ -5,22 +5,32 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-const int elec_coulomb = 1;
-const int elec_ewald = 2;
-
-extern double mpole_switch_cut, mpole_switch_off;
-
-const int pole_none = 0;
-const int pole_z_only = 1;
-const int pole_z_then_x = 2;
-const int pole_bisector = 3;
-const int pole_z_bisect = 4;
-const int pole_3_fold = 5;
-struct local_frame_def_st {
-  int zaxis, xaxis, yaxis;
-  int polaxe;
+enum {
+  elec_coulomb = 1, /// coulomb interaction
+  elec_ewald = 2    /// particle mesh ewald summation
 };
-extern local_frame_def_st* zaxis;
+
+/// distance at which switching of the potential begins
+extern double mpole_switch_cut;
+/// distance at which the potential energy goes to zero
+extern double mpole_switch_off;
+
+/// local frame definitions
+enum {
+  pole_none = 0,
+  pole_z_only = 1,
+  pole_z_then_x = 2,
+  pole_bisector = 3,
+  pole_z_bisect = 4,
+  pole_3_fold = 5
+};
+typedef struct local_frame_def_st {
+  int zaxis;  /// z-axis defining atom, starting from 0
+  int xaxis;  /// x-axis defining atom, starting from 0
+  int yaxis;  /// y-axis defining atom, starting from ONE
+  int polaxe; /// local frame definition
+} local_frame_t;
+extern local_frame_t* zaxis;
 
 // PME: 0, x, y, z, xx, yy, zz, xy, xz, yz
 enum {
@@ -34,32 +44,70 @@ enum {
   mpl_pme_xy = 7,
   mpl_pme_xz = 8,
   mpl_pme_yz = 9,
+  mpl_total = 10,
   mpl_pme_yx = mpl_pme_xy,
   mpl_pme_zx = mpl_pme_xz,
-  mpl_pme_zy = mpl_pme_yz,
+  mpl_pme_zy = mpl_pme_yz
 };
-const int mpl_total = 10;
+/// traceless Cartesian multipoles in the local frame
 extern real (*pole)[mpl_total];
+/// traceless Cartesian multipoles in the global frame
 extern real (*rpole)[mpl_total];
 
-extern real (*uind)[3];
-extern real (*uinp)[3];
-extern real (*udir)[3];
-extern real (*udirp)[3];
-
+/// x, y, and z components of torques on multipole site
 extern real *trqx, *trqy, *trqz;
+/// internal virial Cartesian tensor due to the torques
 extern real* vir_trq;
 
-extern int use_elec_pme;
+/// direct induced dipole components at each multipole site
+extern real (*udir)[3];
+/// direct induced dipoles in field used for energy terms
+extern real (*udirp)[3];
+/// mutual induced dipole components at each multipole site
+extern real (*uind)[3];
+/// mutual induced dipoles in field used for energy terms
+extern real (*uinp)[3];
+
+/// @return 0 if no multipole electrostatics is involved; otherise, non-zero
 int use_elec();
+
+/**
+ * @param op  construct or destruct multipole electrostatics
+ *
+ * has no effect if no multipole electrostatics is involved
+ */
 void elec_data(int op);
 
 /**
- * @brief
- * Zero torque (if used), torque-related virial (if used), then call chkpole()
- * and rotpole().
+ * initializes the electrostatics calculation
+ *
+ * Input:
+ * @param ver  selects the code path
+ *
+ * Output:
+ * zero torque (if used);
+ * zero torque-related virial (if used);
+ * call chkpole() and rotpole();
+ * if use pme, initialize some pme data structures.
  */
 void elec_init(int ver);
+
+/**
+ * takes the torque values on a single site defined by a local coordinate frame
+ * and converts to Cartesian forces on the original site and sites specifying
+ * the local frame.
+ *
+ * Input:
+ * x, y, and z coordinates;
+ * x, y, and z torques;
+ * local frame definitions;
+ * @param ver  selects the code path
+ *
+ * Output:
+ * add energy gradients to the gradient components (if used);
+ * add virial to torque-related virial (if used);
+ * or do nothing (if nothing is used).
+ */
 void torque(int ver);
 }
 TINKER_NAMESPACE_END

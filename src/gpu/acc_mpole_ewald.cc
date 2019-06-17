@@ -398,7 +398,7 @@ void empole_recip_tmpl() {
   grid_mpole(pu, fmp);
   fftfront(pu);
   if_constexpr(do_v) {
-    if (use_epolar()) {
+    if (vir_m) {
       pme_conv1(pu, vir_m);
       #pragma acc parallel loop independent deviceptr(vir_m,vir_em)
       for (int i = 0; i < 9; ++i) {

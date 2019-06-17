@@ -153,6 +153,19 @@ real (*fphidp)[20];
 
 real* vir_m;
 
+int use_ewald() { return limits::use_ewald; }
+
+void pme_init(int vers) {
+  if (!use_ewald())
+    return;
+
+  rpole_to_cmp();
+
+  if (vir_m) {
+    zero_data(vir_m, 9);
+  }
+}
+
 void pme_data(int op) {
   if (op == op_destroy) {
     assert(detail_::pme_objs().size() == detail_::pme_deviceptrs().size());
@@ -186,8 +199,7 @@ void pme_data(int op) {
 
     const size_t rs = sizeof(real);
 
-    use_elec_pme = false;
-    bool unique_grids;
+    bool unique_grids = false;
 
     // electrostatics
     epme_unit = -1;
@@ -197,7 +209,6 @@ void pme_data(int op) {
 
       get_empole_type(typ, typ_str);
       if (typ == elec_ewald) {
-        use_elec_pme = true;
         unique_grids = false;
         epme_unit = pme_open_unit(ewald::aeewald, pme::nefft1, pme::nefft2,
                                   pme::nefft3, pme::bseorder, unique_grids);
@@ -213,8 +224,6 @@ void pme_data(int op) {
 
       get_epolar_type(typ, typ_str);
       if (typ == elec_ewald) {
-        use_elec_pme = true;
-
         unique_grids = false;
         ppme_unit = pme_open_unit(ewald::apewald, pme::nefft1, pme::nefft2,
                                   pme::nefft3, pme::bsporder, unique_grids);
@@ -229,6 +238,9 @@ void pme_data(int op) {
           check_cudart(cudaMalloc(&vir_m, 9 * rs));
         else
           vir_m = nullptr;
+
+        // Therefore, if (vir_m), it implies:
+        // use virial, use pme, and use epolar
       }
     }
 
@@ -242,7 +254,7 @@ void pme_data(int op) {
 
     // TODO: clean the logics here.
 
-    if (use_elec_pme) {
+    if (use_ewald()) {
       switch_cut_off(switch_ewald, ewald_switch_cut, ewald_switch_off);
 
       check_cudart(cudaMalloc(&cmp, 10 * n * rs));

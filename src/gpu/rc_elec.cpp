@@ -42,8 +42,6 @@ real (*udirp)[3];
 real *trqx, *trqy, *trqz;
 real* vir_trq;
 
-int use_elec_pme;
-
 int use_elec() { return use_empole() || use_epolar(); }
 
 void elec_data(int op) {
@@ -177,11 +175,8 @@ void elec_init(int vers) {
   chkpole();
   rotpole();
 
-  if (use_elec_pme) {
-    rpole_to_cmp();
-    if (vir_m) {
-      zero_data(vir_m, 9);
-    }
+  if (use_ewald()) {
+    pme_init(vers);
   }
 }
 }

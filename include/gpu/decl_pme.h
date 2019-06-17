@@ -67,6 +67,8 @@ extern real (*fphidp)[20];
 
 extern real* vir_m;
 
+int use_ewald();
+void pme_init(int vers);
 void pme_data(int op);
 }
 TINKER_NAMESPACE_END

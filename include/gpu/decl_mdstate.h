@@ -5,17 +5,17 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-// clang-format off
-const int use_xyz    = 0x001; /// xyz
-const int use_vel    = 0x002; /// velocity
-const int use_accel  = 0x004; /// acceleration
-const int use_mass   = 0x008; /// mass
+enum {
+  use_xyz = 0x001,   /// xyz
+  use_vel = 0x002,   /// velocity
+  use_accel = 0x004, /// acceleration
+  use_mass = 0x008,  /// mass
 
-const int use_energy = 0x010; /// energy 16
-const int use_grad   = 0x020; /// gradient 32
-const int use_virial = 0x040; /// virial 64
-const int use_analyz = 0x080; /// analyze 128
-// clang-format on
+  use_energy = 0x010, /// energy 16
+  use_grad = 0x020,   /// gradient 32
+  use_virial = 0x040, /// virial 64
+  use_analyz = 0x080  /// analyze 128
+};
 
 template <int USE>
 void sanity_check() {
