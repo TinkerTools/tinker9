@@ -104,9 +104,8 @@ void elec_init(int ver);
  * @param ver  selects the code path
  *
  * Output:
- * add energy gradients to the gradient components (if used);
- * add virial to torque-related virial (if used);
- * or do nothing (if nothing is used).
+ * According to the value of @param ver, it may add add energy gradients, add
+ * torque-related virial, or do nothing.
  */
 void torque(int ver);
 }

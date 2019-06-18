@@ -1,4 +1,3 @@
-#include "gpu/acc_fmat.h"
 #include "gpu/decl_box.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
@@ -10,9 +9,7 @@ namespace gpu {
 #pragma acc routine seq
 template <int LEVEL>
 static inline void bsplgen(real w, real* __restrict__ thetai,
-                           real* __restrict__ _bsbuild, int bsorder) {
-
-  real_allocatable bsbuild(_bsbuild, bsorder, bsorder);
+                           real* __restrict__ bsbuild_, int bsorder) {
 
   // e.g. bsorder = 5, theta = T, bsbuild = B
 
@@ -48,6 +45,8 @@ static inline void bsplgen(real w, real* __restrict__ thetai,
   // T(4,4) = B(2,4)
   // T(4,5) = B(2,5)
   // AND ALL LEVEL = 3, 2, 1
+
+#define bsbuild(j, i) bsbuild_[((i)-1) * bsorder + (j)-1]
 
   // initialization to get to 2nd order recursion
 
@@ -132,6 +131,8 @@ static inline void bsplgen(real w, real* __restrict__ thetai,
       thetai[4 * (i - 1) + (j - 1)] = bsbuild(bsorder - j + 1, i);
     }
   }
+
+#undef bsbuild
 }
 
 enum { PCHG_GRID = 1, MPOLE_GRID, UIND_GRID, UIND_GRID_FPHI2, DISP_GRID };
@@ -185,7 +186,6 @@ void grid_tmpl(int pme_unit, real* optional1, real* optional2) {
               private(bsbuild[0:bso2],\
               thetai1[0:order4],thetai2[0:order4],thetai3[0:order4])
   for (int i = 0; i < n; ++i) {
-    fmat_real3 recip(box->recip);
     real xi = x[i];
     real yi = y[i];
     real zi = z[i];
@@ -194,19 +194,22 @@ void grid_tmpl(int pme_unit, real* optional1, real* optional2) {
     // w -> (w + 0.5) - FLOOR(w + 0.5)
     // see also subroutine bspline_fill in pmestuf.f
 
-    real w1 = xi * recip(1, 1) + yi * recip(2, 1) + zi * recip(3, 1);
+    real w1 =
+        xi * box->recip[0][0] + yi * box->recip[0][1] + zi * box->recip[0][2];
     w1 = w1 + 0.5f - REAL_FLOOR(w1 + 0.5f);
     real fr1 = nfft1 * w1;
     int igrid1 = REAL_FLOOR(fr1);
     w1 = fr1 - igrid1;
 
-    real w2 = xi * recip(1, 2) + yi * recip(2, 2) + zi * recip(3, 2);
+    real w2 =
+        xi * box->recip[1][0] + yi * box->recip[1][1] + zi * box->recip[1][2];
     w2 = w2 + 0.5f - REAL_FLOOR(w2 + 0.5f);
     real fr2 = nfft2 * w2;
     int igrid2 = REAL_FLOOR(fr2);
     w2 = fr2 - igrid2;
 
-    real w3 = xi * recip(1, 3) + yi * recip(2, 3) + zi * recip(3, 3);
+    real w3 =
+        xi * box->recip[2][0] + yi * box->recip[2][1] + zi * box->recip[2][2];
     w3 = w3 + 0.5f - REAL_FLOOR(w3 + 0.5f);
     real fr3 = nfft3 * w3;
     int igrid3 = REAL_FLOOR(fr3);
@@ -400,7 +403,6 @@ void fphi_tmpl(int pme_unit, real* opt1, real* opt2, real* opt3) {
               private(bsbuild[0:bso2],\
               thetai1[0:order4],thetai2[0:order4],thetai3[0:order4])
   for (int i = 0; i < n; ++i) {
-    fmat_real3 recip(box->recip);
     real xi = x[i];
     real yi = y[i];
     real zi = z[i];
@@ -409,19 +411,22 @@ void fphi_tmpl(int pme_unit, real* opt1, real* opt2, real* opt3) {
     // w -> (w + 0.5) - FLOOR(w + 0.5)
     // see also subroutine bspline_fill in pmestuf.f
 
-    real w1 = xi * recip(1, 1) + yi * recip(2, 1) + zi * recip(3, 1);
+    real w1 =
+        xi * box->recip[0][0] + yi * box->recip[0][1] + zi * box->recip[0][2];
     w1 = w1 + 0.5f - REAL_FLOOR(w1 + 0.5f);
     real fr1 = nfft1 * w1;
     int igrid1 = REAL_FLOOR(fr1);
     w1 = fr1 - igrid1;
 
-    real w2 = xi * recip(1, 2) + yi * recip(2, 2) + zi * recip(3, 2);
+    real w2 =
+        xi * box->recip[1][0] + yi * box->recip[1][1] + zi * box->recip[1][2];
     w2 = w2 + 0.5f - REAL_FLOOR(w2 + 0.5f);
     real fr2 = nfft2 * w2;
     int igrid2 = REAL_FLOOR(fr2);
     w2 = fr2 - igrid2;
 
-    real w3 = xi * recip(1, 3) + yi * recip(2, 3) + zi * recip(3, 3);
+    real w3 =
+        xi * box->recip[2][0] + yi * box->recip[2][1] + zi * box->recip[2][2];
     w3 = w3 + 0.5f - REAL_FLOOR(w3 + 0.5f);
     real fr3 = nfft3 * w3;
     int igrid3 = REAL_FLOOR(fr3);

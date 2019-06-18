@@ -1,5 +1,4 @@
 #include "acc_e.h"
-#include "gpu/acc_fmat.h"
 #include "gpu/decl_pme.h"
 #include "gpu/e_mpole.h"
 #include "gpu/e_polar.h"
@@ -429,19 +428,19 @@ void empole_recip_tmpl() {
               deviceptr(gx,gy,gz,box,\
                         cmp,fmp,cphi,fphi,\
                         em,vir_em,trqx,trqy,trqz)
-  for (int iatom = 0; iatom < n; ++iatom) {
+  for (int i = 0; i < n; ++i) {
     real e = 0;
     real f1 = 0;
     real f2 = 0;
     real f3 = 0;
     #pragma acc loop independent reduction(+:e,f1,f2,f3)
     for (int k = 0; k < 10; ++k) {
-      if_constexpr(do_e) { e += fmp[iatom][k] * fphi[iatom][k]; }
+      if_constexpr(do_e) { e += fmp[i][k] * fphi[i][k]; }
 
       if_constexpr(do_g) {
-        f1 += fmp[iatom][k] * fphi[iatom][deriv1[k] - 1];
-        f2 += fmp[iatom][k] * fphi[iatom][deriv2[k] - 1];
-        f3 += fmp[iatom][k] * fphi[iatom][deriv3[k] - 1];
+        f1 += fmp[i][k] * fphi[i][deriv1[k] - 1];
+        f2 += fmp[i][k] * fphi[i][deriv2[k] - 1];
+        f3 += fmp[i][k] * fphi[i][deriv3[k] - 1];
       }
     } // end for (int k)
 
@@ -457,72 +456,64 @@ void empole_recip_tmpl() {
       f2 *= nfft2;
       f3 *= nfft3;
 
-      fmat_real3 recip(box->recip);
-      real h1 = recip(1, 1) * f1 + recip(1, 2) * f2 + recip(1, 3) * f3;
-      real h2 = recip(2, 1) * f1 + recip(2, 2) * f2 + recip(2, 3) * f3;
-      real h3 = recip(3, 1) * f1 + recip(3, 2) * f2 + recip(3, 3) * f3;
+      real h1 =
+          box->recip[0][0] * f1 + box->recip[1][0] * f2 + box->recip[2][0] * f3;
+      real h2 =
+          box->recip[0][1] * f1 + box->recip[1][1] * f2 + box->recip[2][1] * f3;
+      real h3 =
+          box->recip[0][2] * f1 + box->recip[1][2] * f2 + box->recip[2][2] * f3;
 
       #pragma acc atomic update
-      gx[iatom] += h1 * f;
+      gx[i] += h1 * f;
       #pragma acc atomic update
-      gy[iatom] += h2 * f;
+      gy[i] += h2 * f;
       #pragma acc atomic update
-      gz[iatom] += h3 * f;
+      gz[i] += h3 * f;
 
       // resolve site torques then increment forces and virial
 
-      fmat_real<10> cphi(gpu::cphi);
-
-      const int i = iatom + 1;
-
-      real tem1 = cmp[iatom][3] * cphi(3, i) - cmp[iatom][2] * cphi(4, i) +
-          2 * (cmp[iatom][6] - cmp[iatom][5]) * cphi(10, i) +
-          cmp[iatom][8] * cphi(8, i) + cmp[iatom][9] * cphi(6, i) -
-          cmp[iatom][7] * cphi(9, i) - cmp[iatom][9] * cphi(7, i);
-      real tem2 = cmp[iatom][1] * cphi(4, i) - cmp[iatom][3] * cphi(2, i) +
-          2 * (cmp[iatom][4] - cmp[iatom][6]) * cphi(9, i) +
-          cmp[iatom][7] * cphi(10, i) + cmp[iatom][8] * cphi(7, i) -
-          cmp[iatom][8] * cphi(5, i) - cmp[iatom][9] * cphi(8, i);
-      real tem3 = cmp[iatom][2] * cphi(2, i) - cmp[iatom][1] * cphi(3, i) +
-          2 * (cmp[iatom][5] - cmp[iatom][4]) * cphi(8, i) +
-          cmp[iatom][7] * cphi(5, i) + cmp[iatom][9] * cphi(9, i) -
-          cmp[iatom][7] * cphi(6, i) - cmp[iatom][8] * cphi(10, i);
+      real tem1 = cmp[i][3] * cphi[i][2] - cmp[i][2] * cphi[i][3] +
+          2 * (cmp[i][6] - cmp[i][5]) * cphi[i][9] + cmp[i][8] * cphi[i][7] +
+          cmp[i][9] * cphi[i][5] - cmp[i][7] * cphi[i][8] -
+          cmp[i][9] * cphi[i][6];
+      real tem2 = cmp[i][1] * cphi[i][3] - cmp[i][3] * cphi[i][1] +
+          2 * (cmp[i][4] - cmp[i][6]) * cphi[i][8] + cmp[i][7] * cphi[i][9] +
+          cmp[i][8] * cphi[i][6] - cmp[i][8] * cphi[i][4] -
+          cmp[i][9] * cphi[i][7];
+      real tem3 = cmp[i][2] * cphi[i][1] - cmp[i][1] * cphi[i][2] +
+          2 * (cmp[i][5] - cmp[i][4]) * cphi[i][7] + cmp[i][7] * cphi[i][4] +
+          cmp[i][9] * cphi[i][8] - cmp[i][7] * cphi[i][5] -
+          cmp[i][8] * cphi[i][9];
       tem1 *= f;
       tem2 *= f;
       tem3 *= f;
 
       #pragma acc atomic update
-      trqx[iatom] += tem1;
+      trqx[i] += tem1;
       #pragma acc atomic update
-      trqy[iatom] += tem2;
+      trqy[i] += tem2;
       #pragma acc atomic update
-      trqz[iatom] += tem3;
+      trqz[i] += tem3;
 
       if_constexpr(do_v) {
-        real vxx = -cmp[iatom][1] * cphi(2, i) -
-            2 * cmp[iatom][4] * cphi(5, i) - cmp[iatom][7] * cphi(8, i) -
-            cmp[iatom][8] * cphi(9, i);
-        real vxy =
-            -0.5f * (cmp[iatom][2] * cphi(2, i) + cmp[iatom][1] * cphi(3, i)) -
-            (cmp[iatom][4] + cmp[iatom][5]) * cphi(8, i) -
-            0.5f * cmp[iatom][7] * (cphi(5, i) + cphi(6, i)) -
-            0.5f * (cmp[iatom][8] * cphi(10, i) + cmp[iatom][9] * cphi(9, i));
-        real vxz =
-            -0.5f * (cmp[iatom][3] * cphi(2, i) + cmp[iatom][1] * cphi(4, i)) -
-            (cmp[iatom][4] + cmp[iatom][6]) * cphi(9, i) -
-            0.5f * cmp[iatom][8] * (cphi(5, i) + cphi(7, i)) -
-            0.5f * (cmp[iatom][7] * cphi(10, i) + cmp[iatom][9] * cphi(8, i));
-        real vyy = -cmp[iatom][2] * cphi(3, i) -
-            2 * cmp[iatom][5] * cphi(6, i) - cmp[iatom][7] * cphi(8, i) -
-            cmp[iatom][9] * cphi(10, i);
-        real vyz =
-            -0.5f * (cmp[iatom][3] * cphi(3, i) + cmp[iatom][2] * cphi(4, i)) -
-            (cmp[iatom][5] + cmp[iatom][6]) * cphi(10, i) -
-            0.5f * cmp[iatom][9] * (cphi(6, i) + cphi(7, i)) -
-            0.5f * (cmp[iatom][7] * cphi(9, i) + cmp[iatom][8] * cphi(8, i));
-        real vzz = -cmp[iatom][3] * cphi(4, i) -
-            2 * cmp[iatom][6] * cphi(7, i) - cmp[iatom][8] * cphi(9, i) -
-            cmp[iatom][9] * cphi(10, i);
+        real vxx = -cmp[i][1] * cphi[i][1] - 2 * cmp[i][4] * cphi[i][4] -
+            cmp[i][7] * cphi[i][7] - cmp[i][8] * cphi[i][8];
+        real vxy = -0.5f * (cmp[i][2] * cphi[i][1] + cmp[i][1] * cphi[i][2]) -
+            (cmp[i][4] + cmp[i][5]) * cphi[i][7] -
+            0.5f * cmp[i][7] * (cphi[i][4] + cphi[i][5]) -
+            0.5f * (cmp[i][8] * cphi[i][9] + cmp[i][9] * cphi[i][8]);
+        real vxz = -0.5f * (cmp[i][3] * cphi[i][1] + cmp[i][1] * cphi[i][3]) -
+            (cmp[i][4] + cmp[i][6]) * cphi[i][8] -
+            0.5f * cmp[i][8] * (cphi[i][4] + cphi[i][6]) -
+            0.5f * (cmp[i][7] * cphi[i][9] + cmp[i][9] * cphi[i][7]);
+        real vyy = -cmp[i][2] * cphi[i][2] - 2 * cmp[i][5] * cphi[i][5] -
+            cmp[i][7] * cphi[i][7] - cmp[i][9] * cphi[i][9];
+        real vyz = -0.5f * (cmp[i][3] * cphi[i][2] + cmp[i][2] * cphi[i][3]) -
+            (cmp[i][5] + cmp[i][6]) * cphi[i][9] -
+            0.5f * cmp[i][9] * (cphi[i][5] + cphi[i][6]) -
+            0.5f * (cmp[i][7] * cphi[i][8] + cmp[i][8] * cphi[i][7]);
+        real vzz = -cmp[i][3] * cphi[i][3] - 2 * cmp[i][6] * cphi[i][6] -
+            cmp[i][8] * cphi[i][8] - cmp[i][9] * cphi[i][9];
         vxx *= f;
         vxy *= f;
         vxz *= f;

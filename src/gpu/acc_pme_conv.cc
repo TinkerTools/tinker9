@@ -1,6 +1,4 @@
-
 #include "acc_e.h"
-#include "gpu/acc_fmat.h"
 #include "gpu/decl_pme.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -30,8 +28,6 @@ void pme_conv_tmpl(int pme_unit, real* gpu_vir9) {
       continue;
     }
 
-    const fmat_real3 recip(box->recip);
-
     int k3 = i / nff;
     int j = i - k3 * nff;
     int k2 = j / nfft1;
@@ -41,9 +37,12 @@ void pme_conv_tmpl(int pme_unit, real* gpu_vir9) {
     int r2 = (k2 < (nfft2 + 1) / 2) ? k2 : (k2 - nfft2);
     int r3 = (k3 < (nfft3 + 1) / 2) ? k3 : (k3 - nfft3);
 
-    real h1 = recip(1, 1) * r1 + recip(1, 2) * r2 + recip(1, 3) * r3;
-    real h2 = recip(2, 1) * r1 + recip(2, 2) * r2 + recip(2, 3) * r3;
-    real h3 = recip(3, 1) * r1 + recip(3, 2) * r2 + recip(3, 3) * r3;
+    real h1 =
+        box->recip[0][0] * r1 + box->recip[1][0] * r2 + box->recip[2][0] * r3;
+    real h2 =
+        box->recip[0][1] * r1 + box->recip[1][1] * r2 + box->recip[2][1] * r3;
+    real h3 =
+        box->recip[0][2] * r1 + box->recip[1][2] * r2 + box->recip[2][2] * r3;
     real hsq = h1 * h1 + h2 * h2 + h3 * h3;
     real term = -pterm * hsq;
     real expterm = 0;

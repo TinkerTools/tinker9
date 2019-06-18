@@ -1,7 +1,9 @@
 #ifndef TINKER_GPU_ACC_MATHFUNC_H_
 #define TINKER_GPU_ACC_MATHFUNC_H_
 
-#include "util/real_mathfunc.h"
+#include "decl_mathfunc.h"
+
+#pragma acc routine(abs) seq
 
 #pragma acc routine(sqrt) seq
 #pragma acc routine(exp) seq
@@ -26,26 +28,5 @@
 #pragma acc routine(erfcf) seq
 #pragma acc routine(fminf) seq
 #pragma acc routine(fmaxf) seq
-
-#pragma acc routine(abs) seq
-
-#define TINKER_ACC_PARALLEL_PRAGMA_STRING_(...)                                \
-  TINKER_STR_VA_ARGS_IMPL(acc parallel loop independent deviceptr(__VA_ARGS__))
-#define TINKER_ACC_PARALLEL(ITER, TOTAL, OPER, ...)                            \
-  {                                                                            \
-    _Pragma(TINKER_ACC_PARALLEL_PRAGMA_STRING_(                                \
-        __VA_ARGS__)) for (int ITER = 0; ITER < TOTAL; ++ITER) {               \
-      OPER;                                                                    \
-    }                                                                          \
-  }
-
-TINKER_NAMESPACE_BEGIN
-// ans = a dot b
-void dotprod(float* cpu_ans, const float* gpu_a, const float* gpu_b, int cpu_n);
-void dotprod(double* cpu_ans, const double* gpu_a, const double* gpu_b,
-             int cpu_n);
-void scale_data(float* gpu_dst, float scal, int nelem);
-void scale_data(double* gpu_dst, double scal, int nelem);
-TINKER_NAMESPACE_END
 
 #endif

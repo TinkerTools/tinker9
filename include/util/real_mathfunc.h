@@ -6,6 +6,8 @@
 
 TINKER_NAMESPACE_BEGIN
 
+#define INT_ABS(x) abs(x)
+
 #ifdef TINKER_GPU_DOUBLE
 typedef double real_t__;
 
@@ -41,8 +43,6 @@ typedef float real_t__;
 #  define REAL_MIN(x, y) fminf(x, y)
 #  define REAL_MAX(x, y) fmaxf(x, y)
 #endif
-
-#define INT_ABS(x) abs(x)
 
 #define REAL_SQ(x) ((x) * (x))
 #define REAL_CUBE(x) ((x) * (x) * (x))

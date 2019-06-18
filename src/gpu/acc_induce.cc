@@ -111,8 +111,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   // initial r(0) M r(0)
 
   real sum, sump;
-  dotprod(&sum, &rsd[0][0], &zrsd[0][0], n3);
-  dotprod(&sump, &rsdp[0][0], &zrsdp[0][0], n3);
+  sum = dotprod(&rsd[0][0], &zrsd[0][0], n3);
+  sump = dotprod(&rsdp[0][0], &zrsdp[0][0], n3);
 
   // conjugate gradient iteration of the mutual induced dipoles
 
@@ -147,8 +147,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
     // a <- p T p
     real a, ap;
-    dotprod(&a, &conj[0][0], &vec[0][0], n3);
-    dotprod(&ap, &conjp[0][0], &vecp[0][0], n3);
+    a = dotprod(&conj[0][0], &vec[0][0], n3);
+    ap = dotprod(&conjp[0][0], &vecp[0][0], n3);
     // a <- r M r / p T p
     if (a != 0)
       a = sum / a;
@@ -174,8 +174,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
     real b, bp;
     real sum1, sump1;
-    dotprod(&sum1, &rsd[0][0], &zrsd[0][0], n3);
-    dotprod(&sump1, &rsdp[0][0], &zrsdp[0][0], n3);
+    sum1 = dotprod(&rsd[0][0], &zrsd[0][0], n3);
+    sump1 = dotprod(&rsdp[0][0], &zrsdp[0][0], n3);
     if (sum != 0)
       b = sum1 / sum;
     if (sump != 0)
@@ -196,8 +196,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
     real epsd;
     real epsp;
-    dotprod(&epsd, &rsd[0][0], &rsd[0][0], n3);
-    dotprod(&epsp, &rsdp[0][0], &rsdp[0][0], n3);
+    epsd = dotprod(&rsd[0][0], &rsd[0][0], n3);
+    epsp = dotprod(&rsdp[0][0], &rsdp[0][0], n3);
 
     epsold = eps;
     eps = REAL_MAX(epsd, epsp);
