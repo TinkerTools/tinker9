@@ -5,16 +5,21 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
+/**
+ * applys periodic boundary conditions to displacement (xr, yr, zr) and
+ * preserves the correct signs
+ */
 #pragma acc routine seq
 void image(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
-           const box_st* __restrict__ pb);
+           const box_t* __restrict__ pb);
 
+/**
+ * applys periodic boundary conditions to displacement (xr, yr, zr) but only
+ * guarantee the lengths are correct
+ */
 #pragma acc routine seq
 void imagen(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
-            const box_st* __restrict__ pb);
-
-#pragma acc routine seq
-real volbox(const box_st* __restrict__ pb);
+            const box_t* __restrict__ pb);
 }
 TINKER_NAMESPACE_END
 

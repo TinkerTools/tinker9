@@ -29,7 +29,7 @@ TINKER_NAMESPACE_BEGIN
 namespace gpu {
 double mpole_switch_cut, mpole_switch_off;
 
-local_frame_def_st* zaxis;
+local_frame_t* zaxis;
 
 real (*pole)[mpl_total];
 real (*rpole)[mpl_total];
@@ -76,9 +76,9 @@ void elec_data(int op) {
     // subtracted by 1 becasue of the checks in chkpole;
     // 4. GPU chkpole kernel is necessary when unexpected changes of charalities
     // may happen, e.g. in Monte Carlo simulations.
-    size = sizeof(local_frame_def_st);
+    size = sizeof(local_frame_t);
     check_cudart(cudaMalloc(&zaxis, n * size));
-    static_assert(sizeof(local_frame_def_st) == 4 * sizeof(int), "");
+    static_assert(sizeof(local_frame_t) == 4 * sizeof(int), "");
     std::vector<int> zaxisbuf(4 * n);
     for (int i = 0; i < n; ++i) {
       int base = 4 * i;

@@ -5,21 +5,24 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-const int box_null = 0x000;  /// null
-const int box_ortho = 0x001; /// orthogonal
-const int box_mono = 0x002;  /// monoclinic
-const int box_tri = 0x004;   /// triclinic
-const int box_oct = 0x008;   /// truncated octahedron
+enum {
+  box_null = 0x000,  /// null
+  box_ortho = 0x001, /// orthogonal
+  box_mono = 0x002,  /// monoclinic
+  box_tri = 0x004,   /// triclinic
+  box_oct = 0x008    /// truncated octahedron
+};
 
-struct box_st {
+typedef struct box_def_st__ {
   real xbox, ybox, zbox;
   real alpha, beta, gamma;
   real lvec[3][3];
   real recip[3][3];
+  real volbox;
   int shape;
-};
+} box_t;
 
-extern box_st* box;
+extern box_t* box;
 
 void box_data(int op);
 }

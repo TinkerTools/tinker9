@@ -5,8 +5,11 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-const int op_destroy = 0;
-const int op_create = 1;
+enum {
+  op_destroy = 0x000, /// deallocate device memory
+  op_create = 0x001,  /// allocate device memory
+  op_copyin = 0x002   /// update device data from host memory
+};
 
 void copyin_data(int* dst, const int* src, int nelem);
 void copyin_data(real* dst, const double* src, int nelem);

@@ -4,7 +4,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-box_st* box;
+box_t* box;
 
 void box_data(int op) {
   if (op == op_destroy) {
@@ -22,7 +22,7 @@ void box_data(int op) {
     else if (boxes::octahedron)
       shape = box_oct;
 
-    size_t size = sizeof(box_st);
+    size_t size = sizeof(box_t);
     check_cudart(cudaMalloc(&box, size));
 
     copyin_data(&box->xbox, &boxes::xbox, 1);
@@ -33,6 +33,7 @@ void box_data(int op) {
     copyin_data(&box->gamma, &boxes::gamma, 1);
     copyin_data(&box->lvec[0][0], &boxes::lvec[0][0], 9);
     copyin_data(&box->recip[0][0], &boxes::recip[0][0], 9);
+    copyin_data(&box->volbox, &boxes::volbox, 1);
     copyin_data(&box->shape, &shape, 1);
   }
 }

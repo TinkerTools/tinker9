@@ -24,7 +24,7 @@ enum {
   pole_z_bisect = 4,
   pole_3_fold = 5
 };
-typedef struct local_frame_def_st {
+typedef struct local_frame_def_st__ {
   int zaxis;  /// z-axis defining atom, starting from 0
   int xaxis;  /// x-axis defining atom, starting from 0
   int yaxis;  /// y-axis defining atom, starting from ONE
