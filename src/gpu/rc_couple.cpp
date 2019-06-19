@@ -9,7 +9,7 @@ couple_st couple_obj_;
 couple_st* couple;
 
 void couple_data(int op) {
-  if (op == op_destroy) {
+  if (op & op_dealloc) {
     check_cudart(cudaFree(couple_obj_.n12));
     check_cudart(cudaFree(couple_obj_.n13));
     check_cudart(cudaFree(couple_obj_.n14));
@@ -19,6 +19,12 @@ void couple_data(int op) {
     check_cudart(cudaFree(couple_obj_.i14));
     check_cudart(cudaFree(couple_obj_.i15));
     check_cudart(cudaFree(couple));
+  }
+
+  // TODO
+  if (op & op_alloc) {
+  }
+  if (op & op_copyin) {
   }
 
   if (op == op_create) {

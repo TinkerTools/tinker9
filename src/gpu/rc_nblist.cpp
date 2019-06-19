@@ -78,7 +78,7 @@ int use_usolv_list() {
   return ret;
 }
 
-static void nblist_op_destroy_(nblist_st& st, nblist_st*& list) {
+static void nblist_op_dealloc_(nblist_st& st, nblist_st*& list) {
   check_cudart(cudaFree(st.nlst));
   check_cudart(cudaFree(st.lst));
   check_cudart(cudaFree(st.xold));
@@ -151,8 +151,14 @@ void nblist_data(int op) {
   // vlist
   u = use_vdw_list();
   if (u) {
-    if (op == op_destroy)
-      nblist_op_destroy_(vlist_obj_, vlst);
+    if (op & op_dealloc)
+      nblist_op_dealloc_(vlist_obj_, vlst);
+
+    // TODO
+    if (op & op_alloc) {
+    }
+    if (op & op_copyin) {
+    }
 
     if (op == op_create) {
       maxnlst = 2500;
@@ -166,8 +172,14 @@ void nblist_data(int op) {
   // dlist
   u = use_disp_list();
   if (u) {
-    if (op == op_destroy)
-      nblist_op_destroy_(dlist_obj_, dlst);
+    if (op & op_dealloc)
+      nblist_op_dealloc_(dlist_obj_, dlst);
+
+    // TODO
+    if (op & op_alloc) {
+    }
+    if (op & op_copyin) {
+    }
 
     if (op == op_create) {
       maxnlst = 2500;
@@ -181,8 +193,14 @@ void nblist_data(int op) {
   // clist
   u = use_charge_list();
   if (u) {
-    if (op == op_destroy)
-      nblist_op_destroy_(clist_obj_, clst);
+    if (op & op_dealloc)
+      nblist_op_dealloc_(clist_obj_, clst);
+
+    // TODO
+    if (op & op_alloc) {
+    }
+    if (op & op_copyin) {
+    }
 
     if (op == op_create) {
       maxnlst = 2500;
@@ -196,8 +214,14 @@ void nblist_data(int op) {
   // mlist
   u = use_mpole_list();
   if (u) {
-    if (op == op_destroy)
-      nblist_op_destroy_(mlist_obj_, mlst);
+    if (op & op_dealloc)
+      nblist_op_dealloc_(mlist_obj_, mlst);
+
+    // TODO
+    if (op & op_alloc) {
+    }
+    if (op & op_copyin) {
+    }
 
     if (op == op_create) {
       maxnlst = 2500;
@@ -211,8 +235,14 @@ void nblist_data(int op) {
   // ulist
   u = use_usolv_list();
   if (u) {
-    if (op == op_destroy)
-      nblist_op_destroy_(ulist_obj_, ulst);
+    if (op & op_dealloc)
+      nblist_op_dealloc_(ulist_obj_, ulst);
+
+    // TODO
+    if (op & op_alloc) {
+    }
+    if (op & op_copyin) {
+    }
 
     if (op == op_create) {
       maxnlst = 500;

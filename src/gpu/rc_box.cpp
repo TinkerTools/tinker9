@@ -7,8 +7,14 @@ namespace gpu {
 box_t* box;
 
 void box_data(int op) {
-  if (op == op_destroy) {
+  if (op & op_dealloc) {
     check_cudart(cudaFree(box));
+  }
+
+  // TODO
+  if (op & op_alloc) {
+  }
+  if (op & op_copyin) {
   }
 
   if (op == op_create) {

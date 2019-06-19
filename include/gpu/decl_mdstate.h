@@ -73,6 +73,10 @@ const int _zz = 8;
 
 void zero_egv();
 void egv_data(int op);
+
+double get_energy(const real* e_gpu);
+int get_count(const int* ecount_gpu);
+void get_virial(double* v_out, const real* v_gpu);
 }
 
 /**

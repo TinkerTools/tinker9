@@ -28,12 +28,18 @@ void e_bond_data(int op) {
   if (!use_ebond())
     return;
 
-  if (op == op_destroy) {
+  if (op & op_dealloc) {
     check_cudart(cudaFree(ibnd));
     check_cudart(cudaFree(bl));
     check_cudart(cudaFree(bk));
     check_cudart(cudaFree(eb));
     check_cudart(cudaFree(vir_eb));
+  }
+
+  // TODO
+  if (op & op_alloc) {
+  }
+  if (op & op_copyin) {
   }
 
   if (op == op_create) {

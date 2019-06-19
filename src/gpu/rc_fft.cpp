@@ -14,13 +14,19 @@ static std::vector<fft_plan_t>& fft_plans() {
 }
 
 void fft_data(int op) {
-  if (op == op_destroy) {
+  if (op & op_dealloc) {
     int idx = 0;
     while (idx < fft_plans().size()) {
       cufftDestroy(fft_plans()[idx]);
       ++idx;
     }
     detail_::fft_plans().clear();
+  }
+
+  // TODO
+  if (op & op_alloc) {
+  }
+  if (op & op_copyin) {
   }
 
   if (op == op_create) {

@@ -14,7 +14,7 @@ polargroup_st polargroup_obj_;
 polargroup_st* polargroup;
 
 void polargroup_data(int op) {
-  if (op == op_destroy) {
+  if (op & op_dealloc) {
     check_cudart(cudaFree(polargroup_obj_.np11));
     check_cudart(cudaFree(polargroup_obj_.np12));
     check_cudart(cudaFree(polargroup_obj_.np13));
@@ -24,6 +24,12 @@ void polargroup_data(int op) {
     check_cudart(cudaFree(polargroup_obj_.ip13));
     check_cudart(cudaFree(polargroup_obj_.ip14));
     check_cudart(cudaFree(polargroup));
+  }
+
+  // TODO
+  if (op & op_alloc) {
+  }
+  if (op & op_copyin) {
   }
 
   if (op == op_create) {

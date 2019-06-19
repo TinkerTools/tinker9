@@ -8,7 +8,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-static void pme_op_destroy_(pme_st& st, pme_st*& dptr) {
+static void pme_op_dealloc_(pme_st& st, pme_st*& dptr) {
   check_cudart(cudaFree(st.igrid));
   check_cudart(cudaFree(st.bsmod1));
   check_cudart(cudaFree(st.bsmod2));
@@ -167,13 +167,15 @@ void pme_init(int vers) {
 }
 
 void pme_data(int op) {
-  if (op == op_destroy) {
+  // TODO: clean the logics here.
+
+  if (op & op_dealloc) {
     assert(detail_::pme_objs().size() == detail_::pme_deviceptrs().size());
     int idx = 0;
     while (idx < detail_::pme_objs().size()) {
       auto& st = detail_::pme_objs()[idx];
       auto& dptr = detail_::pme_deviceptrs()[idx];
-      pme_op_destroy_(st, dptr);
+      pme_op_dealloc_(st, dptr);
       ++idx;
     }
     detail_::pme_objs().clear();
@@ -191,6 +193,12 @@ void pme_data(int op) {
     check_cudart(cudaFree(fphidp));
 
     check_cudart(cudaFree(vir_m));
+  }
+
+  // TODO
+  if (op & op_alloc) {
+  }
+  if (op & op_copyin) {
   }
 
   if (op == op_create) {
@@ -251,8 +259,6 @@ void pme_data(int op) {
       dpme_unit = pme_open_unit(ewald::adewald, pme::ndfft1, pme::ndfft2,
                                 pme::ndfft3, pme::bsdorder, unique_grids);
     }
-
-    // TODO: clean the logics here.
 
     if (use_ewald()) {
       switch_cut_off(switch_ewald, ewald_switch_cut, ewald_switch_off);

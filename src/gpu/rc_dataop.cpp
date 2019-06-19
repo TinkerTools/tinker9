@@ -102,6 +102,8 @@ void tinker_gpu_data_create() {
   m_tinker_using_namespace;
   using namespace gpu;
   const int op = op_create;
+  // TODO
+  // const int op = op_alloc | op_copyin;
 
   n_data();
 
@@ -128,7 +130,7 @@ void tinker_gpu_data_create() {
 void tinker_gpu_data_destroy() {
   m_tinker_using_namespace;
   using namespace gpu;
-  const int op = op_destroy;
+  const int op = op_dealloc;
 
   xyz_data(op);
   vel_data(op);

@@ -18,10 +18,16 @@ void xyz_data(int op) {
   if ((use_xyz & use_data) == 0)
     return;
 
-  if (op == op_destroy) {
+  if (op & op_dealloc) {
     check_cudart(cudaFree(x));
     check_cudart(cudaFree(y));
     check_cudart(cudaFree(z));
+  }
+
+  // TODO
+  if (op & op_alloc) {
+  }
+  if (op & op_copyin) {
   }
 
   if (op == op_create) {
@@ -40,10 +46,16 @@ void vel_data(int op) {
   if ((use_vel & use_data) == 0)
     return;
 
-  if (op == op_destroy) {
+  if (op & op_dealloc) {
     check_cudart(cudaFree(vx));
     check_cudart(cudaFree(vy));
     check_cudart(cudaFree(vz));
+  }
+
+  // TODO
+  if (op & op_alloc) {
+  }
+  if (op & op_copyin) {
   }
 
   if (op == op_create) {
@@ -62,10 +74,16 @@ void accel_data(int op) {
   if ((use_accel & use_data) == 0)
     return;
 
-  if (op == op_destroy) {
+  if (op & op_dealloc) {
     check_cudart(cudaFree(ax));
     check_cudart(cudaFree(ay));
     check_cudart(cudaFree(az));
+  }
+
+  // TODO
+  if (op & op_alloc) {
+  }
+  if (op & op_copyin) {
   }
 
   if (op == op_create) {
@@ -84,8 +102,14 @@ void mass_data(int op) {
   if ((use_mass & use_data) == 0)
     return;
 
-  if (op == op_destroy) {
+  if (op & op_dealloc) {
     check_cudart(cudaFree(mass));
+  }
+
+  // TODO
+  if (op & op_alloc) {
+  }
+  if (op & op_copyin) {
   }
 
   if (op == op_create) {
@@ -125,7 +149,7 @@ void egv_data(int op) {
   if (use_mass & (use_energy + use_grad + use_virial) == 0)
     return;
 
-  if (op == op_destroy) {
+  if (op & op_dealloc) {
     if (use_energy & use_data) {
       check_cudart(cudaFree(esum));
     }

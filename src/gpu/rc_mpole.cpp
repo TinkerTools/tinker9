@@ -29,10 +29,16 @@ void e_mpole_data(int op) {
   if (!use_empole())
     return;
 
-  if (op == op_destroy) {
+  if (op & op_dealloc) {
     check_cudart(cudaFree(em));
     check_cudart(cudaFree(nem));
     check_cudart(cudaFree(vir_em));
+  }
+
+  // TODO
+  if (op & op_alloc) {
+  }
+  if (op & op_copyin) {
   }
 
   if (op == op_create) {

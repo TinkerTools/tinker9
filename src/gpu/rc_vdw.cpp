@@ -46,7 +46,7 @@ void e_vdw_data(int op) {
   if (!use_evdw())
     return;
 
-  if (op == op_destroy) {
+  if (op & op_dealloc) {
     check_cudart(cudaFree(ired));
     check_cudart(cudaFree(kred));
     check_cudart(cudaFree(xred));
@@ -63,6 +63,12 @@ void e_vdw_data(int op) {
     check_cudart(cudaFree(ev));
     check_cudart(cudaFree(nev));
     check_cudart(cudaFree(vir_ev));
+  }
+
+  // TODO
+  if (op & op_alloc) {
+  }
+  if (op & op_copyin) {
   }
 
   if (op == op_create) {

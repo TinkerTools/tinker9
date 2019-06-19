@@ -49,7 +49,7 @@ void e_polar_data(int op) {
   if (!use_epolar())
     return;
 
-  if (op == op_destroy) {
+  if (op & op_dealloc) {
     check_cudart(cudaFree(polarity));
     check_cudart(cudaFree(thole));
     check_cudart(cudaFree(pdamp));
@@ -72,6 +72,12 @@ void e_polar_data(int op) {
     check_cudart(cudaFree(work08__));
     check_cudart(cudaFree(work09__));
     check_cudart(cudaFree(work10__));
+  }
+
+  // TODO
+  if (op & op_alloc) {
+  }
+  if (op & op_copyin) {
   }
 
   if (op == op_create) {

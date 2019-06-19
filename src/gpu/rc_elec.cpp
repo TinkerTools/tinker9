@@ -48,7 +48,7 @@ void elec_data(int op) {
   if (!use_elec())
     return;
 
-  if (op == op_destroy) {
+  if (op & op_dealloc) {
     check_cudart(cudaFree(zaxis));
     check_cudart(cudaFree(pole));
     check_cudart(cudaFree(rpole));
@@ -62,6 +62,12 @@ void elec_data(int op) {
     check_cudart(cudaFree(trqy));
     check_cudart(cudaFree(trqz));
     check_cudart(cudaFree(vir_trq));
+  }
+
+  // TODO
+  if (op & op_alloc) {
+  }
+  if (op & op_copyin) {
   }
 
   if (op == op_create) {
@@ -150,6 +156,8 @@ void elec_data(int op) {
     }
     check_cudart(cudaMalloc(&vir_trq, rs * 9));
   }
+
+  pme_data(op);
 }
 
 void chkpole();

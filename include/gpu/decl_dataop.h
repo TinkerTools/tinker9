@@ -3,12 +3,15 @@
 
 #include "decl_real.h"
 
+/// data operations
+
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 enum {
-  op_destroy = 0x000, /// deallocate device memory
-  op_create = 0x001,  /// allocate device memory
-  op_copyin = 0x002   /// update device data from host memory
+  op_create = 0x002,
+  op_dealloc = 0x001, /// deallocate device memory
+  op_alloc = 0x002,   /// allocate device memory
+  op_copyin = 0x004   /// update device data from host memory
 };
 
 void copyin_data(int* dst, const int* src, int nelem);
@@ -26,10 +29,6 @@ void copy_data(int* dst, const int* src, int nelem);
 void copy_data(real* dst, const real* src, int nelem);
 
 void zero_data(real* dst, int nelem);
-
-double get_energy(const real* e_gpu);
-int get_count(const int* ecount_gpu);
-void get_virial(double* v_out, const real* v_gpu);
 }
 TINKER_NAMESPACE_END
 
