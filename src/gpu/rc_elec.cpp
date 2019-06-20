@@ -58,16 +58,42 @@ void elec_data(int op) {
     check_cudart(cudaFree(vir_trq));
   }
 
-  // TODO
   if (op & op_alloc) {
-  }
-  if (op & op_copyin) {
-  }
-
-  if (op == op_create) {
     const size_t rs = sizeof(real);
     size_t size;
 
+    size = sizeof(local_frame_t);
+    check_cudart(cudaMalloc(&zaxis, n * size));
+    size = rs * mpl_total;
+    check_cudart(cudaMalloc(&pole, n * size));
+    check_cudart(cudaMalloc(&rpole, n * size));
+
+    if (use_epolar()) {
+      check_cudart(cudaMalloc(&uind, 3 * n * rs));
+      check_cudart(cudaMalloc(&uinp, 3 * n * rs));
+      check_cudart(cudaMalloc(&udir, 3 * n * rs));
+      check_cudart(cudaMalloc(&udirp, 3 * n * rs));
+    } else {
+      uind = nullptr;
+      uinp = nullptr;
+      udir = nullptr;
+      udirp = nullptr;
+    }
+
+    if (use_data & use_grad) {
+      check_cudart(cudaMalloc(&trqx, rs * n));
+      check_cudart(cudaMalloc(&trqy, rs * n));
+      check_cudart(cudaMalloc(&trqz, rs * n));
+    } else {
+      trqx = nullptr;
+      trqy = nullptr;
+      trqz = nullptr;
+    }
+
+    check_cudart(cudaMalloc(&vir_trq, rs * 9));
+  }
+
+  if (op & op_copyin) {
     // Regarding chkpole routine:
     // 1. The chiralities of the atoms will not change in the simulations;
     // 2. chkpole routine has been called in mechanic routine so that the values
@@ -76,8 +102,6 @@ void elec_data(int op) {
     // subtracted by 1 becasue of the checks in chkpole;
     // 4. GPU chkpole kernel is necessary when unexpected changes of charalities
     // may happen, e.g. in Monte Carlo simulations.
-    size = sizeof(local_frame_t);
-    check_cudart(cudaMalloc(&zaxis, n * size));
     static_assert(sizeof(local_frame_t) == 4 * sizeof(int), "");
     std::vector<int> zaxisbuf(4 * n);
     for (int i = 0; i < n; ++i) {
@@ -103,9 +127,6 @@ void elec_data(int op) {
     }
     copyin_data(reinterpret_cast<int*>(zaxis), zaxisbuf.data(), 4 * n);
 
-    size = rs * mpl_total;
-    check_cudart(cudaMalloc(&pole, n * size));
-    check_cudart(cudaMalloc(&rpole, n * size));
     std::vector<double> polebuf(mpl_total * n);
     for (int i = 0; i < n; ++i) {
       int b1 = mpl_total * i;
@@ -126,29 +147,6 @@ void elec_data(int op) {
       polebuf[b1 + mpl_pme_zz] = mpole::pole[b2 + 12];
     }
     copyin_data(reinterpret_cast<real*>(pole), polebuf.data(), mpl_total * n);
-
-    if (use_epolar()) {
-      check_cudart(cudaMalloc(&uind, 3 * n * rs));
-      check_cudart(cudaMalloc(&uinp, 3 * n * rs));
-      check_cudart(cudaMalloc(&udir, 3 * n * rs));
-      check_cudart(cudaMalloc(&udirp, 3 * n * rs));
-    } else {
-      uind = nullptr;
-      uinp = nullptr;
-      udir = nullptr;
-      udirp = nullptr;
-    }
-
-    if (use_data & use_grad) {
-      check_cudart(cudaMalloc(&trqx, rs * n));
-      check_cudart(cudaMalloc(&trqy, rs * n));
-      check_cudart(cudaMalloc(&trqz, rs * n));
-    } else {
-      trqx = nullptr;
-      trqy = nullptr;
-      trqz = nullptr;
-    }
-    check_cudart(cudaMalloc(&vir_trq, rs * 9));
   }
 
   pme_data(op);

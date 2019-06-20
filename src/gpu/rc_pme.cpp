@@ -8,64 +8,6 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-static void pme_op_dealloc_(pme_st& st, pme_st*& dptr) {
-  check_cudart(cudaFree(st.igrid));
-  check_cudart(cudaFree(st.bsmod1));
-  check_cudart(cudaFree(st.bsmod2));
-  check_cudart(cudaFree(st.bsmod3));
-  check_cudart(cudaFree(st.qgrid));
-
-  check_cudart(cudaFree(dptr));
-}
-
-static void pme_op_create_(pme_st& st, pme_st*& dptr, double aewald, int nfft1,
-                           int nfft2, int nfft3, int bsorder) {
-  const size_t rs = sizeof(real);
-  size_t size;
-
-  st.aewald = aewald;
-  st.nfft1 = nfft1;
-  st.nfft2 = nfft2;
-  st.nfft3 = nfft3;
-  st.bsorder = bsorder;
-
-  size = 3 * n * sizeof(int);
-  check_cudart(cudaMalloc(&st.igrid, size));
-
-  // see also subroutine moduli in pmestuf.f
-  check_cudart(cudaMalloc(&st.bsmod1, rs * nfft1));
-  check_cudart(cudaMalloc(&st.bsmod2, rs * nfft2));
-  check_cudart(cudaMalloc(&st.bsmod3, rs * nfft3));
-  // This code assumes that the FFT grids of an energy term will not change in a
-  // calculation.
-  int maxfft = max_of(nfft1, nfft2, nfft3);
-  std::vector<double> array(bsorder);
-  std::vector<double> bsarray(maxfft);
-  double x = 0;
-  TINKER_RT(bspline)(&x, &bsorder, array.data());
-  for (int i = 0; i < maxfft; ++i) {
-    bsarray[i] = 0;
-  }
-  assert(bsorder + 1 <= maxfft);
-  for (int i = 0; i < bsorder; ++i) {
-    bsarray[i + 1] = array[i];
-  }
-  std::vector<double> bsmodbuf(maxfft);
-  TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &nfft1, &bsorder);
-  copyin_data(st.bsmod1, bsmodbuf.data(), nfft1);
-  TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &nfft2, &bsorder);
-  copyin_data(st.bsmod2, bsmodbuf.data(), nfft2);
-  TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &nfft3, &bsorder);
-  copyin_data(st.bsmod3, bsmodbuf.data(), nfft3);
-
-  size = nfft1 * nfft2 * nfft3 * rs;
-  check_cudart(cudaMalloc(&st.qgrid, 2 * size));
-
-  size = sizeof(pme_st);
-  check_cudart(cudaMalloc(&dptr, size));
-  check_cudart(cudaMemcpy(dptr, &st, size, cudaMemcpyHostToDevice));
-}
-
 namespace detail_ {
 std::vector<pme_st>& pme_objs() {
   static std::vector<pme_st> objs;
@@ -78,8 +20,37 @@ std::vector<pme_st*>& pme_deviceptrs() {
 }
 }
 
-int pme_open_unit(double aewald, int nfft1, int nfft2, int nfft3, int bsorder,
-                  bool unique) {
+pme_st& pme_obj(int pme_unit) {
+#if TINKER_DEBUG
+  return detail_::pme_objs().at(pme_unit);
+#else
+  return detail_::pme_objs()[pme_unit];
+#endif
+}
+
+pme_st* pme_deviceptr(int pme_unit) {
+#if TINKER_DEBUG
+  return detail_::pme_deviceptrs().at(pme_unit);
+#else
+  return detail_::pme_deviceptrs()[pme_unit];
+#endif
+}
+
+static void pme_op_dealloc_(int pu) {
+  pme_st& st = pme_obj(pu);
+  pme_st* dptr = pme_deviceptr(pu);
+
+  check_cudart(cudaFree(st.igrid));
+  check_cudart(cudaFree(st.bsmod1));
+  check_cudart(cudaFree(st.bsmod2));
+  check_cudart(cudaFree(st.bsmod3));
+  check_cudart(cudaFree(st.qgrid));
+
+  check_cudart(cudaFree(dptr));
+}
+
+static int pme_op_alloc_(int& unit, double aewald, int nfft1, int nfft2,
+                         int nfft3, int bsorder, bool unique) {
   int count = 0;
   int first = -1;
   const double eps = 1.0e-6;
@@ -99,29 +70,66 @@ int pme_open_unit(double aewald, int nfft1, int nfft2, int nfft3, int bsorder,
     detail_::pme_deviceptrs().emplace_back(nullptr);
     auto& st = detail_::pme_objs()[idx];
     auto& dptr = detail_::pme_deviceptrs()[idx];
-    pme_op_create_(st, dptr, aewald, nfft1, nfft2, nfft3, bsorder);
+
+    const size_t rs = sizeof(real);
+    size_t size;
+
+    size = 3 * n * sizeof(int);
+    check_cudart(cudaMalloc(&st.igrid, size));
+    // see also subroutine moduli in pmestuf.f
+    check_cudart(cudaMalloc(&st.bsmod1, rs * nfft1));
+    check_cudart(cudaMalloc(&st.bsmod2, rs * nfft2));
+    check_cudart(cudaMalloc(&st.bsmod3, rs * nfft3));
+    size = nfft1 * nfft2 * nfft3 * rs;
+    check_cudart(cudaMalloc(&st.qgrid, 2 * size));
+
+    size = sizeof(pme_st);
+    check_cudart(cudaMalloc(&dptr, size));
+
+    st.aewald = aewald;
+    st.nfft1 = nfft1;
+    st.nfft2 = nfft2;
+    st.nfft3 = nfft3;
+    st.bsorder = bsorder;
   } else {
     idx = first;
   }
 
   assert(detail_::pme_objs().size() == detail_::pme_deviceptrs().size());
-  return idx;
+  unit = idx;
 }
 
-pme_st& pme_obj(int pme_unit) {
-#if TINKER_DEBUG
-  return detail_::pme_objs().at(pme_unit);
-#else
-  return detail_::pme_objs()[pme_unit];
-#endif
-}
+static void pme_op_copyin_(int unit) {
+  if (unit < 0)
+    return;
 
-pme_st* pme_deviceptr(int pme_unit) {
-#if TINKER_DEBUG
-  return detail_::pme_deviceptrs().at(pme_unit);
-#else
-  return detail_::pme_deviceptrs()[pme_unit];
-#endif
+  pme_st& st = pme_obj(unit);
+  pme_st* dptr = pme_deviceptr(unit);
+
+  // This code assumes that the FFT grids of an energy term will not change in a
+  // calculation.
+  int maxfft = max_of(st.nfft1, st.nfft2, st.nfft3);
+  std::vector<double> array(st.bsorder);
+  std::vector<double> bsarray(maxfft);
+  double x = 0;
+  TINKER_RT(bspline)(&x, &st.bsorder, array.data());
+  for (int i = 0; i < maxfft; ++i) {
+    bsarray[i] = 0;
+  }
+  assert(st.bsorder + 1 <= maxfft);
+  for (int i = 0; i < st.bsorder; ++i) {
+    bsarray[i + 1] = array[i];
+  }
+  std::vector<double> bsmodbuf(maxfft);
+  TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft1, &st.bsorder);
+  copyin_data(st.bsmod1, bsmodbuf.data(), st.nfft1);
+  TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft2, &st.bsorder);
+  copyin_data(st.bsmod2, bsmodbuf.data(), st.nfft2);
+  TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft3, &st.bsorder);
+  copyin_data(st.bsmod3, bsmodbuf.data(), st.nfft3);
+
+  size_t size = sizeof(pme_st);
+  check_cudart(cudaMemcpy(dptr, &st, size, cudaMemcpyHostToDevice));
 }
 
 int epme_unit; // electrostatic
@@ -167,112 +175,46 @@ void pme_init(int vers) {
 }
 
 void pme_data(int op) {
-  // TODO: clean the logics here.
+  if (!use_ewald())
+    return;
 
   if (op & op_dealloc) {
     assert(detail_::pme_objs().size() == detail_::pme_deviceptrs().size());
     int idx = 0;
     while (idx < detail_::pme_objs().size()) {
-      auto& st = detail_::pme_objs()[idx];
-      auto& dptr = detail_::pme_deviceptrs()[idx];
-      pme_op_dealloc_(st, dptr);
+      pme_op_dealloc_(idx);
       ++idx;
     }
     detail_::pme_objs().clear();
     detail_::pme_deviceptrs().clear();
 
+    check_cudart(cudaFree(cmp));
     check_cudart(cudaFree(fmp));
     check_cudart(cudaFree(cphi));
     check_cudart(cudaFree(fphi));
 
-    check_cudart(cudaFree(fuind));
-    check_cudart(cudaFree(fuinp));
-    check_cudart(cudaFree(fdip_phi1));
-    check_cudart(cudaFree(fdip_phi2));
-    check_cudart(cudaFree(cphidp));
-    check_cudart(cudaFree(fphidp));
+    if (use_epolar()) {
+      check_cudart(cudaFree(fuind));
+      check_cudart(cudaFree(fuinp));
+      check_cudart(cudaFree(fdip_phi1));
+      check_cudart(cudaFree(fdip_phi2));
+      check_cudart(cudaFree(cphidp));
+      check_cudart(cudaFree(fphidp));
+    }
 
     check_cudart(cudaFree(vir_m));
   }
 
-  // TODO
   if (op & op_alloc) {
-  }
-  if (op & op_copyin) {
-  }
-
-  if (op == op_create) {
     assert(detail_::pme_objs().size() == 0);
     assert(detail_::pme_deviceptrs().size() == 0);
 
     const size_t rs = sizeof(real);
 
-    bool unique_grids = false;
-
-    // electrostatics
-    epme_unit = -1;
-    if (use_empole()) {
-      int typ;
-      std::string typ_str;
-
-      get_empole_type(typ, typ_str);
-      if (typ == elec_ewald) {
-        unique_grids = false;
-        epme_unit = pme_open_unit(ewald::aeewald, pme::nefft1, pme::nefft2,
-                                  pme::nefft3, pme::bseorder, unique_grids);
-      }
-    }
-
-    // polarization
-    ppme_unit = -1;
-    pvpme_unit = -1;
-    if (use_epolar()) {
-      int typ;
-      std::string typ_str;
-
-      get_epolar_type(typ, typ_str);
-      if (typ == elec_ewald) {
-        unique_grids = false;
-        ppme_unit = pme_open_unit(ewald::apewald, pme::nefft1, pme::nefft2,
-                                  pme::nefft3, pme::bsporder, unique_grids);
-
-        if (use_data & use_virial) {
-          unique_grids = true;
-          pvpme_unit = pme_open_unit(ewald::apewald, pme::nefft1, pme::nefft2,
-                                     pme::nefft3, pme::bsporder, unique_grids);
-        }
-
-        if (use_data & use_virial)
-          check_cudart(cudaMalloc(&vir_m, 9 * rs));
-        else
-          vir_m = nullptr;
-
-        // Therefore, if (vir_m), it implies:
-        // use virial, use pme, and use epolar
-      }
-    }
-
-    // dispersion
-    dpme_unit = -1;
-    if (false) {
-      unique_grids = false;
-      dpme_unit = pme_open_unit(ewald::adewald, pme::ndfft1, pme::ndfft2,
-                                pme::ndfft3, pme::bsdorder, unique_grids);
-    }
-
-    if (use_ewald()) {
-      switch_cut_off(switch_ewald, ewald_switch_cut, ewald_switch_off);
-
-      check_cudart(cudaMalloc(&cmp, 10 * n * rs));
-      check_cudart(cudaMalloc(&fmp, 10 * n * rs));
-      check_cudart(cudaMalloc(&cphi, 10 * n * rs));
-      check_cudart(cudaMalloc(&fphi, 20 * n * rs));
-    } else {
-      cmp = nullptr;
-      fmp = nullptr;
-      cphi = nullptr;
-      fphi = nullptr;
-    }
+    check_cudart(cudaMalloc(&cmp, 10 * n * rs));
+    check_cudart(cudaMalloc(&fmp, 10 * n * rs));
+    check_cudart(cudaMalloc(&cphi, 10 * n * rs));
+    check_cudart(cudaMalloc(&fphi, 20 * n * rs));
 
     if (use_epolar()) {
       check_cudart(cudaMalloc(&fuind, 3 * n * rs));
@@ -281,14 +223,53 @@ void pme_data(int op) {
       check_cudart(cudaMalloc(&fdip_phi2, 10 * n * rs));
       check_cudart(cudaMalloc(&cphidp, 10 * n * rs));
       check_cudart(cudaMalloc(&fphidp, 20 * n * rs));
-    } else {
-      fuind = nullptr;
-      fuinp = nullptr;
-      fdip_phi1 = nullptr;
-      fdip_phi2 = nullptr;
-      cphidp = nullptr;
-      fphidp = nullptr;
+
+      // if (vir_m), it implies use virial and use epolar
+      if (use_data & use_virial)
+        check_cudart(cudaMalloc(&vir_m, 9 * rs));
+      else
+        vir_m = nullptr;
     }
+
+    bool unique_grids = false;
+
+    // electrostatics
+    epme_unit = -1;
+    if (use_empole()) {
+      unique_grids = false;
+      pme_op_alloc_(epme_unit, ewald::aeewald, pme::nefft1, pme::nefft2,
+                    pme::nefft3, pme::bseorder, unique_grids);
+    }
+
+    // polarization
+    ppme_unit = -1;
+    pvpme_unit = -1;
+    if (use_epolar()) {
+      pme_op_alloc_(ppme_unit, ewald::apewald, pme::nefft1, pme::nefft2,
+                    pme::nefft3, pme::bsporder, unique_grids);
+      if (use_data & use_virial) {
+        unique_grids = true;
+        pme_op_alloc_(pvpme_unit, ewald::apewald, pme::nefft1, pme::nefft2,
+                      pme::nefft3, pme::bsporder, unique_grids);
+      }
+    }
+
+    // dispersion
+    dpme_unit = -1;
+    if (false) {
+      unique_grids = false;
+      pme_op_alloc_(dpme_unit, ewald::adewald, pme::ndfft1, pme::ndfft2,
+                    pme::ndfft3, pme::bsdorder, unique_grids);
+    }
+  }
+
+  if (op & op_copyin) {
+    switch_cut_off(switch_ewald, ewald_switch_cut, ewald_switch_off);
+
+    pme_op_copyin_(epme_unit);
+    pme_op_copyin_(ppme_unit);
+    pme_op_copyin_(pvpme_unit);
+    pme_op_copyin_(dpme_unit);
   }
 
   detail_::fft_data(op);

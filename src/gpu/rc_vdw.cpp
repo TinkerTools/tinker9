@@ -47,7 +47,20 @@ void evdw_data(int op) {
   if (!use_evdw())
     return;
 
+  typedef int new_type;
+  typedef int old_type;
+  static std::map<old_type, new_type> jmap;
+  static std::vector<new_type> jvec;
+  static std::vector<new_type> jvdwbuf;
+  static int jcount;
+
   if (op & op_dealloc) {
+    // local static members
+    jmap.clear();
+    jvec.clear();
+    jvdwbuf.clear();
+    jcount = 0;
+
     check_cudart(cudaFree(ired));
     check_cudart(cudaFree(kred));
     check_cudart(cudaFree(xred));
@@ -66,19 +79,9 @@ void evdw_data(int op) {
     check_cudart(cudaFree(vir_ev));
   }
 
-  // TODO
   if (op & op_alloc) {
-  }
-  if (op & op_copyin) {
-  }
-
-  if (op == op_create) {
-    get_evdw_type(vdwtyp, vdwtyp_str);
-
     const size_t rs = sizeof(real);
     size_t size;
-
-    switch_cut_off(switch_vdw, vdw_switch_cut, vdw_switch_off);
 
     size = n * rs;
     check_cudart(cudaMalloc(&ired, n * sizeof(int)));
@@ -86,6 +89,43 @@ void evdw_data(int op) {
     check_cudart(cudaMalloc(&xred, size));
     check_cudart(cudaMalloc(&yred, size));
     check_cudart(cudaMalloc(&zred, size));
+
+    check_cudart(cudaMalloc(&jvdw, n * sizeof(int)));
+    check_cudart(cudaMalloc(&njvdw, sizeof(int)));
+
+    jvdwbuf.resize(n);
+    assert(jmap.size() == 0);
+    assert(jvec.size() == 0);
+    jcount = 0;
+    for (int i = 0; i < n; ++i) {
+      int jt = vdw::jvdw[i] - 1;
+      auto iter = jmap.find(jt);
+      if (iter == jmap.end()) {
+        jvdwbuf[i] = jcount;
+        jvec.push_back(jt);
+        jmap[jt] = jcount;
+        ++jcount;
+      } else {
+        jvdwbuf[i] = iter->second;
+      }
+    }
+    size = jcount * jcount * rs;
+    check_cudart(cudaMalloc(&radmin, size));
+    check_cudart(cudaMalloc(&epsilon, size));
+
+    size = n * rs;
+    check_cudart(cudaMalloc(&vlam, size));
+
+    check_cudart(cudaMalloc(&ev, rs));
+    check_cudart(cudaMalloc(&nev, sizeof(int)));
+    check_cudart(cudaMalloc(&vir_ev, rs * 9));
+  }
+
+  if (op & op_copyin) {
+    get_evdw_type(vdwtyp, vdwtyp_str);
+
+    switch_cut_off(switch_vdw, vdw_switch_cut, vdw_switch_off);
+
     std::vector<int> iredbuf(n);
     std::vector<double> kredbuf(n);
     for (int i = 0; i < n; ++i) {
@@ -96,31 +136,9 @@ void evdw_data(int op) {
     copyin_data(ired, iredbuf.data(), n);
     copyin_data(kred, kredbuf.data(), n);
 
-    check_cudart(cudaMalloc(&jvdw, n * sizeof(int)));
-    check_cudart(cudaMalloc(&njvdw, sizeof(int)));
-    std::vector<int> jbuf(n);
-    typedef int new_type;
-    typedef int old_type;
-    std::map<old_type, new_type> jmap;
-    std::vector<new_type> jvec;
-    int jcount = 0;
-    for (int i = 0; i < n; ++i) {
-      int jt = vdw::jvdw[i] - 1;
-      auto iter = jmap.find(jt);
-      if (iter == jmap.end()) {
-        jbuf[i] = jcount;
-        jvec.push_back(jt);
-        jmap[jt] = jcount;
-        ++jcount;
-      } else {
-        jbuf[i] = iter->second;
-      }
-    }
-    copyin_data(jvdw, jbuf.data(), n);
+    copyin_data(jvdw, jvdwbuf.data(), n);
     copyin_data(njvdw, &jcount, 1);
-    size = jcount * jcount * rs;
-    check_cudart(cudaMalloc(&radmin, size));
-    check_cudart(cudaMalloc(&epsilon, size));
+
     // see also kvdw.f
     std::vector<double> radvec, epsvec;
     for (int it_new = 0; it_new < jcount; ++it_new) {
@@ -136,8 +154,6 @@ void evdw_data(int op) {
     copyin_data(radmin, radvec.data(), jcount * jcount);
     copyin_data(epsilon, epsvec.data(), jcount * jcount);
 
-    size = n * rs;
-    check_cudart(cudaMalloc(&vlam, size));
     std::vector<double> vlamvec(n);
     for (int i = 0; i < n; ++i) {
       if (mutant::mut[i]) {
@@ -147,10 +163,6 @@ void evdw_data(int op) {
       }
     }
     copyin_data(vlam, vlamvec.data(), n);
-
-    check_cudart(cudaMalloc(&ev, rs));
-    check_cudart(cudaMalloc(&nev, sizeof(int)));
-    check_cudart(cudaMalloc(&vir_ev, rs * 9));
   }
 }
 }

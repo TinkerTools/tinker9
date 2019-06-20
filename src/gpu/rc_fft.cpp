@@ -23,18 +23,14 @@ void fft_data(int op) {
     detail_::fft_plans().clear();
   }
 
-  // TODO
   if (op & op_alloc) {
-  }
-  if (op & op_copyin) {
-  }
-
-  if (op == op_create) {
     assert(detail_::fft_plans().size() == 0);
 
     const size_t size = detail_::pme_objs().size();
     detail_::fft_plans().resize(size, fft_plan_t());
+  }
 
+  if (op & op_copyin) {
 #if defined(TINKER_GPU_SINGLE)
     const cufftType typ = CUFFT_C2C;
 #elif defined(TINKER_GPU_DOUBLE)

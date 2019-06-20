@@ -32,8 +32,6 @@ std::vector<pme_st>& pme_objs();
 std::vector<pme_st*>& pme_deviceptrs();
 }
 
-int pme_open_unit(double aewald, int nfft1, int nfft2, int nfft3, int bsorder,
-                  bool unique);
 pme_st& pme_obj(int pme_unit);
 pme_st* pme_deviceptr(int pme_unit);
 

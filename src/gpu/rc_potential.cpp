@@ -23,17 +23,18 @@ void get_virial(double* v_out, const real* v_gpu) {
 }
 
 void potential_data(int op) {
-  e_bond_data(op);
+  int op0 = op;
+  ebond_data(op);
 
   evdw_data(op);
 
   // Must call elec_data() before any electrostatics routine.
 
   elec_data(op);
-  e_mpole_data(op);
+  e_mpole_data(op0);
   if (use_epolar())
-    polargroup_data(op);
-  e_polar_data(op);
+    polargroup_data(op0);
+  e_polar_data(op0);
 }
 }
 TINKER_NAMESPACE_END

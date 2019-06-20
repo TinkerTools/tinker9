@@ -24,7 +24,7 @@ int count_ebond() {
   return nbond;
 }
 
-void e_bond_data(int op) {
+void ebond_data(int op) {
   if (!use_ebond())
     return;
 
@@ -36,13 +36,16 @@ void e_bond_data(int op) {
     check_cudart(cudaFree(vir_eb));
   }
 
-  // TODO
   if (op & op_alloc) {
-  }
-  if (op & op_copyin) {
+    const size_t rs = sizeof(real);
+    check_cudart(cudaMalloc(&ibnd, sizeof(int) * nbond * 2));
+    check_cudart(cudaMalloc(&bl, rs * nbond));
+    check_cudart(cudaMalloc(&bk, rs * nbond));
+    check_cudart(cudaMalloc(&eb, rs));
+    check_cudart(cudaMalloc(&vir_eb, rs * 9));
   }
 
-  if (op == op_create) {
+  if (op & op_copyin) {
     fstr_view btyp = bndpot::bndtyp;
     if (btyp == "HARMONIC")
       bndtyp = ebond_harmonic;
@@ -55,10 +58,6 @@ void e_bond_data(int op) {
     bndunit = bndpot::bndunit;
     nbond = bndstr::nbond;
 
-    const size_t rs = sizeof(real);
-    check_cudart(cudaMalloc(&ibnd, sizeof(int) * nbond * 2));
-    check_cudart(cudaMalloc(&bl, rs * nbond));
-    check_cudart(cudaMalloc(&bk, rs * nbond));
     std::vector<int> ibndvec(nbond * 2);
     for (size_t i = 0; i < ibndvec.size(); ++i) {
       ibndvec[i] = bndstr::ibnd[i] - 1;
@@ -66,9 +65,6 @@ void e_bond_data(int op) {
     copyin_data(&ibnd[0][0], ibndvec.data(), nbond * 2);
     copyin_data(bl, bndstr::bl, nbond);
     copyin_data(bk, bndstr::bk, nbond);
-
-    check_cudart(cudaMalloc(&eb, rs));
-    check_cudart(cudaMalloc(&vir_eb, rs * 9));
   }
 }
 }
