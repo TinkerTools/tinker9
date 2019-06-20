@@ -23,16 +23,11 @@ void polargroup_data(int op) {
     check_cudart(cudaFree(polargroup_obj_.ip12));
     check_cudart(cudaFree(polargroup_obj_.ip13));
     check_cudart(cudaFree(polargroup_obj_.ip14));
+
     check_cudart(cudaFree(polargroup));
   }
 
-  // TODO
   if (op & op_alloc) {
-  }
-  if (op & op_copyin) {
-  }
-
-  if (op == op_create) {
     const size_t rs = sizeof(int);
     size_t size;
 
@@ -49,6 +44,13 @@ void polargroup_data(int op) {
     check_cudart(cudaMalloc(&polargroup_obj_.ip13, size));
     size = polargroup_st::maxp14 * n * rs;
     check_cudart(cudaMalloc(&polargroup_obj_.ip14, size));
+
+    size = sizeof(polargroup_st);
+    check_cudart(cudaMalloc(&polargroup, size));
+  }
+
+  if (op & op_copyin) {
+    size_t size;
 
     std::vector<int> nbuf, ibuf;
     nbuf.resize(n);
@@ -114,7 +116,6 @@ void polargroup_data(int op) {
     copyin_data(&polargroup_obj_.ip14[0][0], ibuf.data(), size);
 
     size = sizeof(polargroup_st);
-    check_cudart(cudaMalloc(&polargroup, size));
     check_cudart(
         cudaMemcpy(polargroup, &polargroup_obj_, size, cudaMemcpyHostToDevice));
   }

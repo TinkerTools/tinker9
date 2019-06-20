@@ -101,7 +101,6 @@ extern "C" {
 void tinker_gpu_data_create() {
   m_tinker_using_namespace;
   using namespace gpu;
-  const int op0 = op_create;
   const int op = op_alloc | op_copyin;
 
   n_data(op);
@@ -112,7 +111,7 @@ void tinker_gpu_data_create() {
   mass_data(op);
   egv_data(op);
 
-  potential_data(op0);
+  potential_data(op);
 
   // Neighbor lists must be initialized after potential initialization.
   // xred, yred, and zred need to be initialized in vdw routines and will be

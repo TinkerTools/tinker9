@@ -14,7 +14,7 @@ extern real* vir_em;
 
 int use_empole();
 void get_empole_type(int& typ, std::string& typ_str);
-void e_mpole_data(int op);
+void empole_data(int op);
 }
 TINKER_NAMESPACE_END
 

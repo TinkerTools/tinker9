@@ -1,5 +1,6 @@
 #include "gpu/decl_dataop.h"
 #include "gpu/decl_mdstate.h"
+#include "gpu/decl_pme.h"
 #include "gpu/decl_switch.h"
 #include "gpu/e_polar.h"
 #include "rc_cudart.h"
@@ -36,7 +37,7 @@ real (*work10__)[3];
 int use_epolar() { return potent::use_polar; }
 
 void get_epolar_type(int& typ, std::string& typ_str) {
-  if (limits::use_ewald) {
+  if (use_ewald()) {
     typ = elec_ewald;
     typ_str = "EWALD";
   } else {
@@ -45,7 +46,7 @@ void get_epolar_type(int& typ, std::string& typ_str) {
   }
 }
 
-void e_polar_data(int op) {
+void epolar_data(int op) {
   if (!use_epolar())
     return;
 
@@ -74,18 +75,7 @@ void e_polar_data(int op) {
     check_cudart(cudaFree(work10__));
   }
 
-  // TODO
   if (op & op_alloc) {
-  }
-  if (op & op_copyin) {
-  }
-
-  if (op == op_create) {
-    get_epolar_type(epolar_electyp, epolar_electyp_str);
-
-    if (epolar_electyp == elec_coulomb)
-      switch_cut_off(switch_mpole, mpole_switch_cut, mpole_switch_off);
-
     const size_t rs = sizeof(real);
     size_t size;
 
@@ -93,16 +83,6 @@ void e_polar_data(int op) {
     check_cudart(cudaMalloc(&thole, n * rs));
     check_cudart(cudaMalloc(&pdamp, rs * n));
     check_cudart(cudaMalloc(&polarity_inv, rs * n));
-    // see also polmin in induce.f
-    const double polmin = 0.00000001;
-    std::vector<double> pinvbuf(n);
-    for (int i = 0; i < n; ++i) {
-      pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
-    }
-    copyin_data(polarity, polar::polarity, n);
-    copyin_data(thole, polar::thole, n);
-    copyin_data(pdamp, polar::pdamp, n);
-    copyin_data(polarity_inv, pinvbuf.data(), n);
 
     check_cudart(cudaMalloc(&ep, rs));
     check_cudart(cudaMalloc(&nep, sizeof(int)));
@@ -126,6 +106,24 @@ void e_polar_data(int op) {
     check_cudart(cudaMalloc(&work08__, 3 * n * rs));
     check_cudart(cudaMalloc(&work09__, 3 * n * rs));
     check_cudart(cudaMalloc(&work10__, 3 * n * rs));
+  }
+
+  if (op & op_copyin) {
+    get_epolar_type(epolar_electyp, epolar_electyp_str);
+
+    if (epolar_electyp == elec_coulomb)
+      switch_cut_off(switch_mpole, mpole_switch_cut, mpole_switch_off);
+
+    // see also polmin in induce.f
+    const double polmin = 0.00000001;
+    std::vector<double> pinvbuf(n);
+    for (int i = 0; i < n; ++i) {
+      pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
+    }
+    copyin_data(polarity, polar::polarity, n);
+    copyin_data(thole, polar::thole, n);
+    copyin_data(pdamp, polar::pdamp, n);
+    copyin_data(polarity_inv, pinvbuf.data(), n);
   }
 }
 

@@ -1,4 +1,5 @@
 #include "gpu/decl_dataop.h"
+#include "gpu/decl_pme.h"
 #include "gpu/decl_switch.h"
 #include "gpu/e_mpole.h"
 #include "rc_cudart.h"
@@ -16,7 +17,7 @@ real* vir_em;
 int use_empole() { return potent::use_mpole; }
 
 void get_empole_type(int& typ, std::string& typ_str) {
-  if (limits::use_ewald) {
+  if (use_ewald()) {
     typ = elec_ewald;
     typ_str = "EWALD";
   } else {
@@ -25,7 +26,7 @@ void get_empole_type(int& typ, std::string& typ_str) {
   }
 }
 
-void e_mpole_data(int op) {
+void empole_data(int op) {
   if (!use_empole())
     return;
 
@@ -35,23 +36,19 @@ void e_mpole_data(int op) {
     check_cudart(cudaFree(vir_em));
   }
 
-  // TODO
   if (op & op_alloc) {
-  }
-  if (op & op_copyin) {
-  }
-
-  if (op == op_create) {
-    get_empole_type(empole_electyp, empole_electyp_str);
-
     const size_t rs = sizeof(real);
-
-    if (empole_electyp == elec_coulomb)
-      switch_cut_off(switch_mpole, mpole_switch_cut, mpole_switch_off);
 
     check_cudart(cudaMalloc(&em, rs));
     check_cudart(cudaMalloc(&nem, sizeof(int)));
     check_cudart(cudaMalloc(&vir_em, 9 * rs));
+  }
+
+  if (op & op_copyin) {
+    get_empole_type(empole_electyp, empole_electyp_str);
+
+    if (empole_electyp == elec_coulomb)
+      switch_cut_off(switch_mpole, mpole_switch_cut, mpole_switch_off);
   }
 }
 }
