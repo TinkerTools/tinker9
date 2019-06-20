@@ -119,11 +119,7 @@ void tinker_gpu_data_create() {
   // used in nblist setups.
   box_data(op);
   couple_data(op);
-  nblist_data(op0);
-
-  // build neighbor lists
-  tinker_gpu_vlist_build();
-  tinker_gpu_mlist_build();
+  nblist_data(op);
 }
 
 void tinker_gpu_data_destroy() {

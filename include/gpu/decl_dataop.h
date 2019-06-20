@@ -11,7 +11,8 @@ enum {
   op_create = 0x002,
   op_dealloc = 0x001, /// deallocate device memory
   op_alloc = 0x002,   /// allocate device memory
-  op_copyin = 0x004   /// update device data from host memory
+  op_copyin = 0x004   /// update device data from host memory, or directly
+                      /// initialize device data
 };
 
 void copyin_data(int* dst, const int* src, int nelem);

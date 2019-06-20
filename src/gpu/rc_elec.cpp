@@ -2,12 +2,6 @@
 #include "gpu/decl_nblist.h"
 
 extern "C" {
-void tinker_gpu_mlist_build() {
-  m_tinker_using_namespace;
-  if (gpu::use_mpole_list()) {
-    gpu::nblist_construct(gpu::mlist_obj_, gpu::mlst);
-  }
-}
 void tinker_gpu_mlist_update() {
   m_tinker_using_namespace;
   if (gpu::use_mpole_list()) {

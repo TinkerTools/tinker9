@@ -78,18 +78,9 @@ int use_usolv_list() {
   return ret;
 }
 
-static void nblist_op_dealloc_(nblist_st& st, nblist_st*& list) {
-  check_cudart(cudaFree(st.nlst));
-  check_cudart(cudaFree(st.lst));
-  check_cudart(cudaFree(st.xold));
-  check_cudart(cudaFree(st.yold));
-  check_cudart(cudaFree(st.zold));
-  check_cudart(cudaFree(list));
-}
-
 // see also cutoffs.f
 // In the gas phase calculation where neighbor list is not used, we should
-// always first check the value maxn.
+// always first check the value of maxn.
 // If maxn is equal to 1, it means the value of cutoff can even be INF.
 static int nblist_maxlst_(int maxn, double cutoff, double buffer) {
   if (maxn > 1) {
@@ -107,9 +98,18 @@ static int nblist_maxlst_(int maxn, double cutoff, double buffer) {
   }
 }
 
-static void nblist_op_create_(nblist_st& st, nblist_st*& list, int maxn,
-                              double cutoff, double buffer, const real* _x,
-                              const real* _y, const real* _z) {
+static void nblist_op_dealloc_(nblist_st& st, nblist_st*& list) {
+  check_cudart(cudaFree(st.nlst));
+  check_cudart(cudaFree(st.lst));
+  check_cudart(cudaFree(st.xold));
+  check_cudart(cudaFree(st.yold));
+  check_cudart(cudaFree(st.zold));
+  check_cudart(cudaFree(list));
+}
+
+static void nblist_op_alloc_(nblist_st& st, nblist_st*& list, int maxn,
+                             double cutoff, double buffer, const real* _x,
+                             const real* _y, const real* _z) {
   const size_t rs = sizeof(int);
   size_t size;
 
@@ -154,18 +154,17 @@ void nblist_data(int op) {
     if (op & op_dealloc)
       nblist_op_dealloc_(vlist_obj_, vlst);
 
-    // TODO
     if (op & op_alloc) {
-    }
-    if (op & op_copyin) {
-    }
-
-    if (op == op_create) {
       maxnlst = 2500;
       if (u == list_double_loop)
         maxnlst = 1;
-      nblist_op_create_(vlist_obj_, vlst, maxnlst, limits::vdwcut,
-                        neigh::lbuffer, xred, yred, zred);
+      nblist_op_alloc_(vlist_obj_, vlst, maxnlst, limits::vdwcut,
+                       neigh::lbuffer, xred, yred, zred);
+    }
+
+    if (op & op_copyin) {
+      evdw_reduce_xyz();
+      nblist_build(vlist_obj_, vlst);
     }
   }
 
@@ -175,18 +174,15 @@ void nblist_data(int op) {
     if (op & op_dealloc)
       nblist_op_dealloc_(dlist_obj_, dlst);
 
-    // TODO
     if (op & op_alloc) {
-    }
-    if (op & op_copyin) {
-    }
-
-    if (op == op_create) {
       maxnlst = 2500;
       if (u == list_double_loop)
         maxnlst = 1;
-      nblist_op_create_(dlist_obj_, dlst, maxnlst, limits::dispcut,
-                        neigh::lbuffer, x, y, z);
+      nblist_op_alloc_(dlist_obj_, dlst, maxnlst, limits::dispcut,
+                       neigh::lbuffer, x, y, z);
+    }
+
+    if (op & op_copyin) {
     }
   }
 
@@ -196,18 +192,15 @@ void nblist_data(int op) {
     if (op & op_dealloc)
       nblist_op_dealloc_(clist_obj_, clst);
 
-    // TODO
     if (op & op_alloc) {
-    }
-    if (op & op_copyin) {
-    }
-
-    if (op == op_create) {
       maxnlst = 2500;
       if (u == list_double_loop)
         maxnlst = 1;
-      nblist_op_create_(clist_obj_, clst, maxnlst, limits::chgcut,
-                        neigh::lbuffer, x, y, z);
+      nblist_op_alloc_(clist_obj_, clst, maxnlst, limits::chgcut,
+                       neigh::lbuffer, x, y, z);
+    }
+
+    if (op & op_copyin) {
     }
   }
 
@@ -217,18 +210,16 @@ void nblist_data(int op) {
     if (op & op_dealloc)
       nblist_op_dealloc_(mlist_obj_, mlst);
 
-    // TODO
     if (op & op_alloc) {
-    }
-    if (op & op_copyin) {
-    }
-
-    if (op == op_create) {
       maxnlst = 2500;
       if (u == list_double_loop)
         maxnlst = 1;
-      nblist_op_create_(mlist_obj_, mlst, maxnlst, limits::mpolecut,
-                        neigh::lbuffer, x, y, z);
+      nblist_op_alloc_(mlist_obj_, mlst, maxnlst, limits::mpolecut,
+                       neigh::lbuffer, x, y, z);
+    }
+
+    if (op & op_copyin) {
+      nblist_build(mlist_obj_, mlst);
     }
   }
 
@@ -238,18 +229,15 @@ void nblist_data(int op) {
     if (op & op_dealloc)
       nblist_op_dealloc_(ulist_obj_, ulst);
 
-    // TODO
     if (op & op_alloc) {
-    }
-    if (op & op_copyin) {
-    }
-
-    if (op == op_create) {
       maxnlst = 500;
       if (u == list_double_loop)
         maxnlst = 1;
-      nblist_op_create_(ulist_obj_, ulst, maxnlst, limits::usolvcut,
-                        neigh::pbuffer, x, y, z);
+      nblist_op_alloc_(ulist_obj_, ulst, maxnlst, limits::usolvcut,
+                       neigh::pbuffer, x, y, z);
+    }
+
+    if (op & op_copyin) {
     }
   }
 }

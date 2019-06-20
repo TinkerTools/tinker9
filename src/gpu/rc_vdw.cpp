@@ -1,5 +1,6 @@
 #include "gpu/decl_dataop.h"
 #include "gpu/decl_mdstate.h"
+#include "gpu/decl_nblist.h"
 #include "gpu/decl_switch.h"
 #include "gpu/e_vdw.h"
 #include "rc_cudart.h"
@@ -42,7 +43,7 @@ void get_evdw_type(int& typ, std::string& typ_str) {
     typ = evdw_gauss;
 }
 
-void e_vdw_data(int op) {
+void evdw_data(int op) {
   if (!use_evdw())
     return;
 

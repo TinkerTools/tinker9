@@ -20,7 +20,7 @@ struct nblist_st {
   real cutoff, buffer;
 };
 
-void nblist_construct(const nblist_st&, nblist_st*);
+void nblist_build(const nblist_st&, nblist_st*);
 void nblist_update(const nblist_st&, nblist_st*);
 
 int use_vdw_list();
@@ -45,9 +45,7 @@ void nblist_data(int op);
 TINKER_NAMESPACE_END
 
 extern "C" {
-void tinker_gpu_vlist_build();
 void tinker_gpu_vlist_update();
-void tinker_gpu_mlist_build();
 void tinker_gpu_mlist_update();
 }
 

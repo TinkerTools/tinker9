@@ -3,7 +3,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-static void evdw_reduce_xyz_() {
+void evdw_reduce_xyz() {
   #pragma acc data deviceptr(x,y,z,ired,kred,xred,yred,zred)
   #pragma acc parallel loop
   for (int i = 0; i < n; ++i) {
@@ -18,18 +18,10 @@ static void evdw_reduce_xyz_() {
 TINKER_NAMESPACE_END
 
 extern "C" {
-void tinker_gpu_vlist_build() {
-  m_tinker_using_namespace;
-  if (gpu::use_vdw_list()) {
-    gpu::evdw_reduce_xyz_();
-    gpu::nblist_construct(gpu::vlist_obj_, gpu::vlst);
-  }
-}
-
 void tinker_gpu_vlist_update() {
   m_tinker_using_namespace;
   if (gpu::use_vdw_list()) {
-    gpu::evdw_reduce_xyz_();
+    gpu::evdw_reduce_xyz();
     gpu::nblist_update(gpu::vlist_obj_, gpu::vlst);
   }
 }

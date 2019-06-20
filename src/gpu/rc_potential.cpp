@@ -25,7 +25,7 @@ void get_virial(double* v_out, const real* v_gpu) {
 void potential_data(int op) {
   e_bond_data(op);
 
-  e_vdw_data(op);
+  evdw_data(op);
 
   // Must call elec_data() before any electrostatics routine.
 
