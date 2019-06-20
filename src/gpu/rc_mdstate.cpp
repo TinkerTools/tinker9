@@ -12,7 +12,15 @@ real *vx, *vy, *vz;
 real *ax, *ay, *az;
 real* mass;
 
-void n_data() { n = atoms::n; }
+void n_data(int op) {
+  if (op & op_dealloc)
+    n = 0;
+
+  // if (op & op_alloc) {}
+
+  if (op & op_copyin)
+    n = atoms::n;
+}
 
 void xyz_data(int op) {
   if ((use_xyz & use_data) == 0)
@@ -24,18 +32,14 @@ void xyz_data(int op) {
     check_cudart(cudaFree(z));
   }
 
-  // TODO
   if (op & op_alloc) {
-  }
-  if (op & op_copyin) {
-  }
-
-  if (op == op_create) {
-    int n = atoms::n;
     size_t size = sizeof(real) * n;
     check_cudart(cudaMalloc(&x, size));
     check_cudart(cudaMalloc(&y, size));
     check_cudart(cudaMalloc(&z, size));
+  }
+
+  if (op & op_copyin) {
     copyin_data(x, atoms::x, n);
     copyin_data(y, atoms::y, n);
     copyin_data(z, atoms::z, n);
@@ -52,18 +56,14 @@ void vel_data(int op) {
     check_cudart(cudaFree(vz));
   }
 
-  // TODO
   if (op & op_alloc) {
-  }
-  if (op & op_copyin) {
-  }
-
-  if (op == op_create) {
-    int n = atoms::n;
     size_t size = sizeof(real) * n;
     check_cudart(cudaMalloc(&vx, size));
     check_cudart(cudaMalloc(&vy, size));
     check_cudart(cudaMalloc(&vz, size));
+  }
+
+  if (op & op_copyin) {
     copyin_data2(0, 3, vx, moldyn::v, n);
     copyin_data2(1, 3, vy, moldyn::v, n);
     copyin_data2(2, 3, vz, moldyn::v, n);
@@ -80,18 +80,14 @@ void accel_data(int op) {
     check_cudart(cudaFree(az));
   }
 
-  // TODO
   if (op & op_alloc) {
-  }
-  if (op & op_copyin) {
-  }
-
-  if (op == op_create) {
-    int n = atoms::n;
     size_t size = sizeof(real) * n;
     check_cudart(cudaMalloc(&ax, size));
     check_cudart(cudaMalloc(&ay, size));
     check_cudart(cudaMalloc(&az, size));
+  }
+
+  if (op & op_copyin) {
     copyin_data2(0, 3, ax, moldyn::a, n);
     copyin_data2(1, 3, ay, moldyn::a, n);
     copyin_data2(2, 3, az, moldyn::a, n);
@@ -106,16 +102,12 @@ void mass_data(int op) {
     check_cudart(cudaFree(mass));
   }
 
-  // TODO
   if (op & op_alloc) {
-  }
-  if (op & op_copyin) {
-  }
-
-  if (op == op_create) {
-    int n = atoms::n;
     size_t size = sizeof(real) * n;
     check_cudart(cudaMalloc(&mass, size));
+  }
+
+  if (op & op_copyin) {
     copyin_data(mass, atomid::mass, n);
   }
 }
@@ -165,29 +157,40 @@ void egv_data(int op) {
     }
   }
 
-  if (op == op_create) {
+  if (op & op_alloc) {
     const size_t rs = sizeof(real);
     size_t size = 0;
+
     if (use_energy & use_data) {
       size = rs;
       check_cudart(cudaMalloc(&esum, size));
-      copyin_data(esum, &energi::esum, 1);
     }
 
     if (use_grad & use_data) {
-      int n = atoms::n;
       size = rs * n;
       check_cudart(cudaMalloc(&gx, size));
       check_cudart(cudaMalloc(&gy, size));
       check_cudart(cudaMalloc(&gz, size));
+    }
+
+    if (use_virial & use_data) {
+      size = rs * 9;
+      check_cudart(cudaMalloc(&vir, size));
+    }
+  }
+
+  if (op & op_copyin) {
+    if (use_energy & use_data) {
+      copyin_data(esum, &energi::esum, 1);
+    }
+
+    if (use_grad & use_data) {
       copyin_data2(0, 3, gx, deriv::desum, n);
       copyin_data2(1, 3, gy, deriv::desum, n);
       copyin_data2(2, 3, gz, deriv::desum, n);
     }
 
     if (use_virial & use_data) {
-      size = rs * 9;
-      check_cudart(cudaMalloc(&vir, size));
       copyin_data(vir, &virial::vir[0][0], 9);
     }
   }

@@ -21,13 +21,7 @@ void couple_data(int op) {
     check_cudart(cudaFree(couple));
   }
 
-  // TODO
   if (op & op_alloc) {
-  }
-  if (op & op_copyin) {
-  }
-
-  if (op == op_create) {
     const size_t rs = sizeof(int);
     size_t size;
 
@@ -44,6 +38,13 @@ void couple_data(int op) {
     check_cudart(cudaMalloc(&couple_obj_.i14, size));
     size = couple_st::maxn15 * n * rs;
     check_cudart(cudaMalloc(&couple_obj_.i15, size));
+
+    size = sizeof(couple_st);
+    check_cudart(cudaMalloc(&couple, size));
+  }
+
+  if (op & op_copyin) {
+    size_t size;
 
     // see also attach.f
     const int maxn13 = 3 * sizes::maxval;
@@ -112,7 +113,6 @@ void couple_data(int op) {
     copyin_data(&couple_obj_.i15[0][0], ibuf.data(), size);
 
     size = sizeof(couple_st);
-    check_cudart(cudaMalloc(&couple, size));
     check_cudart(
         cudaMemcpy(couple, &couple_obj_, size, cudaMemcpyHostToDevice));
   }

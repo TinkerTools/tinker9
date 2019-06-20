@@ -11,13 +11,12 @@ void box_data(int op) {
     check_cudart(cudaFree(box));
   }
 
-  // TODO
   if (op & op_alloc) {
-  }
-  if (op & op_copyin) {
+    size_t size = sizeof(box_t);
+    check_cudart(cudaMalloc(&box, size));
   }
 
-  if (op == op_create) {
+  if (op & op_copyin) {
     int shape = box_null;
     if (boxes::orthogonal)
       shape = box_ortho;
@@ -27,9 +26,6 @@ void box_data(int op) {
       shape = box_tri;
     else if (boxes::octahedron)
       shape = box_oct;
-
-    size_t size = sizeof(box_t);
-    check_cudart(cudaMalloc(&box, size));
 
     copyin_data(&box->lvec[0][0], &boxes::lvec[0][0], 9);
     copyin_data(&box->recip[0][0], &boxes::recip[0][0], 9);

@@ -35,7 +35,7 @@ extern real *vx, *vy, *vz;
 extern real *ax, *ay, *az;
 extern real* mass;
 
-void n_data();
+void n_data(int op);
 void xyz_data(int op);
 void vel_data(int op);
 void accel_data(int op);
