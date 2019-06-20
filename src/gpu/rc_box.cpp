@@ -31,12 +31,6 @@ void box_data(int op) {
     size_t size = sizeof(box_t);
     check_cudart(cudaMalloc(&box, size));
 
-    copyin_data(&box->xbox, &boxes::xbox, 1);
-    copyin_data(&box->ybox, &boxes::ybox, 1);
-    copyin_data(&box->zbox, &boxes::zbox, 1);
-    copyin_data(&box->alpha, &boxes::alpha, 1);
-    copyin_data(&box->beta, &boxes::beta, 1);
-    copyin_data(&box->gamma, &boxes::gamma, 1);
     copyin_data(&box->lvec[0][0], &boxes::lvec[0][0], 9);
     copyin_data(&box->recip[0][0], &boxes::recip[0][0], 9);
     copyin_data(&box->volbox, &boxes::volbox, 1);

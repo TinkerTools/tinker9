@@ -13,9 +13,28 @@ enum {
   box_oct = 0x008    /// truncated octahedron
 };
 
+/**
+ * matrix form of lvec/recip periodic box vectors
+ *
+ * triclinic
+ * a.x,b.x,c.x = a.x b.x c.x
+ * a.y,b.y,c.y =   0 b.y c.y
+ * a.z,b.z,c.z =   0   0 c.z
+ *
+ * monoclinic alpha = gamma = 90
+ * a.x,b.x,c.x = a.x   0 c.x
+ * a.y,b.y,c.y =   0 b.y   0
+ * a.z,b.z,c.z =   0   0 c.z
+ *
+ * orthogonal alpha = beta = gamma = 90
+ * a.x,b.x,c.x = a.x   0   0
+ * a.y,b.y,c.y =   0 b.y   0
+ * a.z,b.z,c.z =   0   0 c.z
+ *
+ * cartesian_column_vector dot recip = fractional_column_vector
+ * fractional_column_vector dot lvec = cartesian_column_vector
+ */
 typedef struct box_def_st__ {
-  real xbox, ybox, zbox;
-  real alpha, beta, gamma;
   real lvec[3][3];
   real recip[3][3];
   real volbox;

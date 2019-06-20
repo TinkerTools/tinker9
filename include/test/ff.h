@@ -68,6 +68,11 @@ typedef std::vector<std::array<double, 3>> grad_t;
     double e_ = gpu::get_energy(gpuptr);                                       \
     print(stdout, " ENERGY{:>12.4f}\n", e_);                                   \
   }
+#define PRINT_COUNT_(gpuptr)                                                   \
+  {                                                                            \
+    int c_ = gpu::get_count(gpuptr);                                           \
+    print(stdout, " COUNT{:>12d}\n", c_);                                      \
+  }
 #define PRINT_VIR_(gpuptr)                                                     \
   {                                                                            \
     double vir[9];                                                             \
