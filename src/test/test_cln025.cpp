@@ -22,31 +22,31 @@ using namespace test;
 #define COMPARE_CODE_BLOCK1_                                                   \
   {                                                                            \
     gpu::zero_egv();                                                           \
-    tinker_gpu_evdw_hal0();                                                    \
+    gpu::evdw_hal(gpu::v0);                                                    \
     COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
                                                                                \
     gpu::zero_egv();                                                           \
-    tinker_gpu_evdw_hal1();                                                    \
+    gpu::evdw_hal(gpu::v1);                                                    \
     COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
     COMPARE_GRAD_;                                                             \
     COMPARE_VIR_(gpu::vir_ev, ref_v, eps_v);                                   \
                                                                                \
     gpu::zero_egv();                                                           \
-    tinker_gpu_evdw_hal3();                                                    \
+    gpu::evdw_hal(gpu::v3);                                                    \
     COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
     COMPARE_COUNT_(gpu::nev, ref_count);                                       \
                                                                                \
     gpu::zero_egv();                                                           \
-    tinker_gpu_evdw_hal4();                                                    \
+    gpu::evdw_hal(gpu::v4);                                                    \
     COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
     COMPARE_GRAD_;                                                             \
                                                                                \
     gpu::zero_egv();                                                           \
-    tinker_gpu_evdw_hal5();                                                    \
+    gpu::evdw_hal(gpu::v5);                                                    \
     COMPARE_GRAD_;                                                             \
                                                                                \
     gpu::zero_egv();                                                           \
-    tinker_gpu_evdw_hal6();                                                    \
+    gpu::evdw_hal(gpu::v6);                                                    \
     COMPARE_GRAD_;                                                             \
     COMPARE_VIR_(gpu::vir_ev, ref_v, eps_v);                                   \
   }

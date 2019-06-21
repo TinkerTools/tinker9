@@ -62,7 +62,7 @@ TEST_CASE("Local-Frame2-1", "[ff][triclinic][evdw][hal][local-frame2]") {
     const int ref_count = 129;
 
     gpu::zero_egv();
-    tinker_gpu_evdw_hal3();
+    gpu::evdw_hal(gpu::v3);
     COMPARE_ENERGY_(gpu::ev, ref_eng, eps_e);
     COMPARE_COUNT_(gpu::nev, ref_count);
   }
@@ -90,7 +90,7 @@ TEST_CASE("Local-Frame2-2", "[ff][monoclinic][evdw][hal][local-frame2]") {
     const int ref_count = 125;
 
     gpu::zero_egv();
-    tinker_gpu_evdw_hal3();
+    gpu::evdw_hal(gpu::v3);
     COMPARE_ENERGY_(gpu::ev, ref_eng, eps_e);
     COMPARE_COUNT_(gpu::nev, ref_count);
   }

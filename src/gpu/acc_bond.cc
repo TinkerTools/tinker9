@@ -40,14 +40,14 @@ void ebond_tmpl() {
 
       real e;
       real deddt;
-      if_constexpr(BNDTYP & ebond_harmonic) {
+      if_constexpr(BNDTYP & bond_harmonic) {
         real dt2 = dt * dt;
         if_constexpr(do_e) e =
             bndunit * force * dt2 * (1 + cbnd * dt + qbnd * dt2);
         if_constexpr(do_g) deddt =
             2 * bndunit * force * dt * (1 + 1.5f * cbnd * dt + 2 * qbnd * dt2);
       }
-      else if_constexpr(BNDTYP & ebond_morse) {
+      else if_constexpr(BNDTYP & bond_morse) {
         real expterm = REAL_EXP(-2 * dt);
         real bde = 0.25f * bndunit * force;
         if_constexpr(do_e) e = bde * (1 - expterm) * (1 - expterm);
@@ -110,12 +110,31 @@ void ebond_tmpl() {
     }
   }
 }
+
+void ebond_harmonic(int vers) {
+  if (vers == v0 || vers == v3)
+    ebond_tmpl<v0, bond_harmonic>();
+  else if (vers == v1)
+    ebond_tmpl<v1, bond_harmonic>();
+  else if (vers == v4)
+    ebond_tmpl<v4, bond_harmonic>();
+  else if (vers == v5)
+    ebond_tmpl<v5, bond_harmonic>();
+  else if (vers == v6)
+    ebond_tmpl<v6, bond_harmonic>();
+}
+
+void ebond_morse(int vers) {
+  if (vers == v0 || vers == v3)
+    ebond_tmpl<v0, bond_morse>();
+  else if (vers == v1)
+    ebond_tmpl<v1, bond_morse>();
+  else if (vers == v4)
+    ebond_tmpl<v4, bond_morse>();
+  else if (vers == v5)
+    ebond_tmpl<v5, bond_morse>();
+  else if (vers == v6)
+    ebond_tmpl<v6, bond_morse>();
+}
 }
 TINKER_NAMESPACE_END
-
-m_tinker_using_namespace;
-extern "C" {
-TINKER_BONDED_DEF(tinker_gpu_ebond_harmonic, gpu::ebond_tmpl,
-                  gpu::ebond_harmonic);
-TINKER_BONDED_DEF(tinker_gpu_ebond_morse, gpu::ebond_tmpl, gpu::ebond_morse);
-}

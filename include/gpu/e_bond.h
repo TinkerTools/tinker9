@@ -5,8 +5,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-const int ebond_harmonic = 0x001;
-const int ebond_morse = 0x002;
+enum { bond_harmonic = 0x001, bond_morse = 0x002 };
 extern int bndtyp;
 extern std::string bndtyp_str;
 
@@ -20,21 +19,11 @@ extern real* vir_eb;
 int use_ebond();
 int count_ebond();
 void ebond_data(int op);
+
+void ebond_harmonic(int vers);
+void ebond_morse(int vers);
+void ebond(int vers);
 }
 TINKER_NAMESPACE_END
-
-extern "C" {
-void tinker_gpu_ebond_harmonic0();
-void tinker_gpu_ebond_harmonic1();
-void tinker_gpu_ebond_harmonic4();
-void tinker_gpu_ebond_harmonic5();
-void tinker_gpu_ebond_harmonic6();
-
-void tinker_gpu_ebond_morse0();
-void tinker_gpu_ebond_morse1();
-void tinker_gpu_ebond_morse4();
-void tinker_gpu_ebond_morse5();
-void tinker_gpu_ebond_morse6();
-}
 
 #endif

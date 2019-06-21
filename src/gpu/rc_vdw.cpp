@@ -32,15 +32,15 @@ void get_evdw_type(int& typ, std::string& typ_str) {
   fstr_view str = vdwpot::vdwtyp;
   typ_str = str.trim();
   if (str == "LENNARD-JONES")
-    typ = evdw_lj;
+    typ = vdw_lj;
   else if (str == "BUCKINGHAM")
-    typ = evdw_buck;
+    typ = vdw_buck;
   else if (str == "MM3-HBOND")
-    typ = evdw_mm3hb;
+    typ = vdw_mm3hb;
   else if (str == "BUFFERED-14-7")
-    typ = evdw_hal;
+    typ = vdw_hal;
   else if (str == "GAUSSIAN")
-    typ = evdw_gauss;
+    typ = vdw_gauss;
 }
 
 void evdw_data(int op) {
@@ -164,6 +164,19 @@ void evdw_data(int op) {
     }
     copyin_data(vlam, vlamvec.data(), n);
   }
+}
+
+void evdw(int vers) {
+  if (vdwtyp == vdw_lj)
+    evdw_lj(vers);
+  else if (vdwtyp == vdw_buck)
+    evdw_buck(vers);
+  else if (vdwtyp == vdw_mm3hb)
+    evdw_mm3hb(vers);
+  else if (vdwtyp == vdw_hal)
+    evdw_hal(vers);
+  else if (vdwtyp == vdw_gauss)
+    evdw_gauss(vers);
 }
 }
 TINKER_NAMESPACE_END

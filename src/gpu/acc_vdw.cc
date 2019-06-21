@@ -118,7 +118,7 @@ void evdw_tmpl() {
 
         real e;
         real de;
-        if_constexpr(VDWTYP & evdw_hal) {
+        if_constexpr(VDWTYP & vdw_hal) {
           real rho = rik * REAL_RECIP(rv);
           real rho6 = REAL_POW(rho, 6);
           real rho7 = rho6 * rho;
@@ -236,35 +236,28 @@ void evdw_tmpl() {
       vscale[couple->i15[i][j]] = 1;
   } // end for (int i)
 }
+
+#define TINKER_EVDW_IMPL_(typ)                                                 \
+  void evdw_##typ(int vers) {                                                  \
+    if (vers == v0)                                                            \
+      evdw_tmpl<v0, vdw_##typ>();                                              \
+    else if (vers == v1)                                                       \
+      evdw_tmpl<v1, vdw_##typ>();                                              \
+    else if (vers == v3)                                                       \
+      evdw_tmpl<v3, vdw_##typ>();                                              \
+    else if (vers == v4)                                                       \
+      evdw_tmpl<v4, vdw_##typ>();                                              \
+    else if (vers == v5)                                                       \
+      evdw_tmpl<v5, vdw_##typ>();                                              \
+    else if (vers == v6)                                                       \
+      evdw_tmpl<v6, vdw_##typ>();                                              \
+  }
+TINKER_EVDW_IMPL_(lj);
+TINKER_EVDW_IMPL_(buck);
+TINKER_EVDW_IMPL_(mm3hb);
+TINKER_EVDW_IMPL_(hal);
+TINKER_EVDW_IMPL_(gauss);
+#undef TINKER_EVDW_IMPL_
+
 }
 TINKER_NAMESPACE_END
-
-extern "C" {
-m_tinker_using_namespace;
-TINKER_NONBONDED_DEF(tinker_gpu_evdw_lj, gpu::evdw_tmpl, gpu::evdw_lj);
-TINKER_NONBONDED_DEF(tinker_gpu_evdw_buck, gpu::evdw_tmpl, gpu::evdw_buck);
-TINKER_NONBONDED_DEF(tinker_gpu_evdw_mm3hb, gpu::evdw_tmpl, gpu::evdw_mm3hb);
-TINKER_NONBONDED_DEF(tinker_gpu_evdw_hal, gpu::evdw_tmpl, gpu::evdw_hal);
-TINKER_NONBONDED_DEF(tinker_gpu_evdw_gauss, gpu::evdw_tmpl, gpu::evdw_gauss);
-
-#define TINKER_GPU_EVDW_DEF_(ver)                                              \
-  void tinker_gpu_evdw##ver() {                                                \
-    if (gpu::vdwtyp == gpu::evdw_lj)                                           \
-      tinker_gpu_evdw_lj##ver();                                               \
-    else if (gpu::vdwtyp == gpu::evdw_buck)                                    \
-      tinker_gpu_evdw_buck##ver();                                             \
-    else if (gpu::vdwtyp == gpu::evdw_mm3hb)                                   \
-      tinker_gpu_evdw_mm3hb##ver();                                            \
-    else if (gpu::vdwtyp == gpu::evdw_hal)                                     \
-      tinker_gpu_evdw_hal##ver();                                              \
-    else if (gpu::vdwtyp == gpu::evdw_gauss)                                   \
-      tinker_gpu_evdw_gauss##ver();                                            \
-  }
-TINKER_GPU_EVDW_DEF_(0);
-TINKER_GPU_EVDW_DEF_(1);
-TINKER_GPU_EVDW_DEF_(3);
-TINKER_GPU_EVDW_DEF_(4);
-TINKER_GPU_EVDW_DEF_(5);
-TINKER_GPU_EVDW_DEF_(6);
-#undef TINKER_GPU_EVDW_DEF_
-}

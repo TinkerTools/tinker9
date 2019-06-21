@@ -1,4 +1,5 @@
 #include "gpu/decl_dataop.h"
+#include "gpu/decl_mdstate.h"
 #include "gpu/decl_nblist.h"
 #include "gpu/decl_pme.h"
 #include "gpu/e_potential.h"
@@ -35,33 +36,17 @@ void potential_data(int op) {
     polargroup_data(op);
   epolar_data(op);
 }
-}
-TINKER_NAMESPACE_END
 
-extern "C" {
-void tinker_gpu_gradient1() {
-  m_tinker_using_namespace;
+void gradient(int vers) {
   const char* title = " Energy Component Breakdown :{:>20s}{:>20s}\n\n";
   const char* fmt = " {:28s}{:>20.4f}{:>17d}        {}\n";
 
   if (gpu::use_ebond()) {
-    tinker_gpu_ebond_harmonic0();
-    tinker_gpu_ebond_harmonic4();
-    tinker_gpu_ebond_harmonic5();
-    tinker_gpu_ebond_harmonic6();
-    tinker_gpu_ebond_harmonic1();
+    gpu::ebond(vers);
   }
 
   if (gpu::use_evdw()) {
-    /*
-    tinker_gpu_evdw0();
-    tinker_gpu_evdw3();
-    tinker_gpu_evdw4();
-    tinker_gpu_evdw5();
-    tinker_gpu_evdw6();
-    tinker_gpu_evdw1();
-    // */
-    tinker_gpu_evdw3();
+    gpu::evdw(vers);
   }
 
   print(stdout, title, "Kcal/mole", "Interactions");
@@ -75,3 +60,4 @@ void tinker_gpu_gradient1() {
           gpu::get_count(gpu::nev), gpu::vdwtyp_str);
 }
 }
+TINKER_NAMESPACE_END

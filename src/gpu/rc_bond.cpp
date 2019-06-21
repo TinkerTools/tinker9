@@ -48,9 +48,9 @@ void ebond_data(int op) {
   if (op & op_copyin) {
     fstr_view btyp = bndpot::bndtyp;
     if (btyp == "HARMONIC")
-      bndtyp = ebond_harmonic;
+      bndtyp = bond_harmonic;
     else if (btyp == "MORSE")
-      bndtyp = ebond_morse;
+      bndtyp = bond_morse;
     bndtyp_str = btyp.trim();
 
     cbnd = bndpot::cbnd;
@@ -66,6 +66,13 @@ void ebond_data(int op) {
     copyin_data(bl, bndstr::bl, nbond);
     copyin_data(bk, bndstr::bk, nbond);
   }
+}
+
+void ebond(int vers) {
+  if (bndtyp == bond_harmonic)
+    ebond_harmonic(vers);
+  else if (bndtyp == bond_morse)
+    ebond_morse(vers);
 }
 }
 TINKER_NAMESPACE_END
