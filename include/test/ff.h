@@ -4,6 +4,7 @@
 #include "gpu/decl_dataop.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_potential.h"
+#include "gpu/gpu.h"
 #include "util/format_print.h"
 #include <array>
 #include <vector>

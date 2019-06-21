@@ -4,6 +4,7 @@
 #include "gpu/decl_dataop.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_potential.h"
+#include "gpu/gpu.h"
 #include "util/cxx.h"
 #include "util/error.h"
 #include "util/fort_rt.h"

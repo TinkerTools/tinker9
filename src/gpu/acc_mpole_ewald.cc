@@ -569,15 +569,20 @@ void empole_ewald_tmpl() {
 
   empole_recip_tmpl<USE>();
 }
+
+void empole_ewald(int vers) {
+  if (vers == v0)
+    empole_ewald_tmpl<v0>();
+  else if (vers == v1)
+    empole_ewald_tmpl<v1>();
+  else if (vers == v3)
+    empole_ewald_tmpl<v3>();
+  else if (vers == v4)
+    empole_ewald_tmpl<v4>();
+  else if (vers == v5)
+    empole_ewald_tmpl<v5>();
+  else if (vers == v6)
+    empole_ewald_tmpl<v6>();
+}
 }
 TINKER_NAMESPACE_END
-
-extern "C" {
-m_tinker_using_namespace;
-void tinker_gpu_empole_ewald0() { gpu::empole_ewald_tmpl<gpu::v0>(); }
-void tinker_gpu_empole_ewald1() { gpu::empole_ewald_tmpl<gpu::v1>(); }
-void tinker_gpu_empole_ewald3() { gpu::empole_ewald_tmpl<gpu::v3>(); }
-void tinker_gpu_empole_ewald4() { gpu::empole_ewald_tmpl<gpu::v4>(); }
-void tinker_gpu_empole_ewald5() { gpu::empole_ewald_tmpl<gpu::v5>(); }
-void tinker_gpu_empole_ewald6() { gpu::empole_ewald_tmpl<gpu::v6>(); }
-}

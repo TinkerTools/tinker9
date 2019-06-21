@@ -324,15 +324,20 @@ void empole_coulomb_tmpl() {
       mscale[couple->i15[i][j]] = 1;
   } // end for (int i)
 }
+
+void empole_coulomb(int vers) {
+  if (vers == v0)
+    empole_coulomb_tmpl<v0>();
+  else if (vers == v1)
+    empole_coulomb_tmpl<v1>();
+  else if (vers == v3)
+    empole_coulomb_tmpl<v3>();
+  else if (vers == v4)
+    empole_coulomb_tmpl<v4>();
+  else if (vers == v5)
+    empole_coulomb_tmpl<v5>();
+  else if (vers == v6)
+    empole_coulomb_tmpl<v6>();
+}
 }
 TINKER_NAMESPACE_END
-
-extern "C" {
-m_tinker_using_namespace;
-void tinker_gpu_empole_coulomb0() { gpu::empole_coulomb_tmpl<gpu::v0>(); }
-void tinker_gpu_empole_coulomb1() { gpu::empole_coulomb_tmpl<gpu::v1>(); }
-void tinker_gpu_empole_coulomb3() { gpu::empole_coulomb_tmpl<gpu::v3>(); }
-void tinker_gpu_empole_coulomb4() { gpu::empole_coulomb_tmpl<gpu::v4>(); }
-void tinker_gpu_empole_coulomb5() { gpu::empole_coulomb_tmpl<gpu::v5>(); }
-void tinker_gpu_empole_coulomb6() { gpu::empole_coulomb_tmpl<gpu::v6>(); }
-}

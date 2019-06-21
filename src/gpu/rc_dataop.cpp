@@ -97,12 +97,9 @@ TINKER_NAMESPACE_END
 #include "gpu/decl_nblist.h"
 #include "gpu/e_potential.h"
 
-extern "C" {
-void tinker_gpu_data_create() {
-  m_tinker_using_namespace;
-  using namespace gpu;
-  const int op = op_alloc | op_copyin;
-
+TINKER_NAMESPACE_BEGIN
+namespace gpu {
+void gpu_data(int op) {
   n_data(op);
 
   xyz_data(op);
@@ -120,22 +117,5 @@ void tinker_gpu_data_create() {
   couple_data(op);
   nblist_data(op);
 }
-
-void tinker_gpu_data_destroy() {
-  m_tinker_using_namespace;
-  using namespace gpu;
-  const int op = op_dealloc;
-
-  xyz_data(op);
-  vel_data(op);
-  accel_data(op);
-  mass_data(op);
-  egv_data(op);
-
-  potential_data(op);
-
-  box_data(op);
-  couple_data(op);
-  nblist_data(op);
 }
-}
+TINKER_NAMESPACE_END

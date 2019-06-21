@@ -51,24 +51,13 @@ void empole_data(int op) {
       switch_cut_off(switch_mpole, mpole_switch_cut, mpole_switch_off);
   }
 }
+
+void empole(int vers) {
+  if (empole_electyp == elec_coulomb) {
+    empole_coulomb(vers);
+  } else if (empole_electyp == elec_ewald) {
+    empole_ewald(vers);
+  }
+}
 }
 TINKER_NAMESPACE_END
-
-extern "C" {
-m_tinker_using_namespace;
-#define TINKER_GPU_EMPOLE_DEF_(ver)                                            \
-  void tinker_gpu_empole##ver() {                                              \
-    if (gpu::empole_electyp == gpu::elec_coulomb) {                            \
-      tinker_gpu_empole_coulomb##ver();                                        \
-    } else if (gpu::empole_electyp == gpu::elec_ewald) {                       \
-      tinker_gpu_empole_ewald##ver();                                          \
-    }                                                                          \
-  }
-TINKER_GPU_EMPOLE_DEF_(0);
-TINKER_GPU_EMPOLE_DEF_(1);
-TINKER_GPU_EMPOLE_DEF_(3);
-TINKER_GPU_EMPOLE_DEF_(4);
-TINKER_GPU_EMPOLE_DEF_(5);
-TINKER_GPU_EMPOLE_DEF_(6);
-#undef TINKER_GPU_EMPOLE_DEF_
-}

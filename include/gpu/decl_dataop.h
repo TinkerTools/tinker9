@@ -7,13 +7,6 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-enum {
-  op_dealloc = 0x001, /// deallocate device memory
-  op_alloc = 0x002,   /// allocate device memory
-  op_copyin = 0x004   /// update device data from host memory, or directly
-                      /// initialize device data
-};
-
 void copyin_data(int* dst, const int* src, int nelem);
 void copyin_data(real* dst, const double* src, int nelem);
 void copyin_data2(int idx0, int ndim, real* dst, const double* src, int nelem);
@@ -29,12 +22,15 @@ void copy_data(int* dst, const int* src, int nelem);
 void copy_data(real* dst, const real* src, int nelem);
 
 void zero_data(real* dst, int nelem);
+
+enum {
+  op_dealloc = 0x001, /// deallocate device memory
+  op_alloc = 0x002,   /// allocate device memory
+  op_copyin = 0x004   /// update device data from host memory, or directly
+                      /// initialize device data
+};
+void gpu_data(int op);
 }
 TINKER_NAMESPACE_END
-
-extern "C" {
-void tinker_gpu_data_create();
-void tinker_gpu_data_destroy();
-}
 
 #endif

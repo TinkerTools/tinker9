@@ -66,20 +66,20 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
-    tinker_gpu_empole0();
+    gpu::empole(gpu::v0);
     gpu::torque(gpu::v0);
     COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v1);
-    tinker_gpu_empole1();
+    gpu::empole(gpu::v1);
     gpu::torque(gpu::v1);
     COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
     COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);
     COMPARE_VIR2_(gpu::vir_em, gpu::vir_trq, ref_v, eps_v);
 
     gpu::zero_egv();
-    tinker_gpu_empole3();
+    gpu::empole(gpu::v3);
     COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
     COMPARE_COUNT_(gpu::nem, ref_count);
 
@@ -149,7 +149,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v1);
-    tinker_gpu_empole1();
+    gpu::empole(gpu::v1);
     gpu::torque(gpu::v1);
     COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
     COMPARE_GRADIENT_(ref_grad, eps_g);

@@ -126,13 +126,13 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
   {                                                                            \
     gpu::zero_egv();                                                           \
     gpu::elec_init(gpu::v0);                                                   \
-    tinker_gpu_empole0();                                                      \
+    gpu::empole(gpu::v0);                                                      \
     gpu::torque(gpu::v0);                                                      \
     COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
                                                                                \
     gpu::zero_egv();                                                           \
     gpu::elec_init(gpu::v1);                                                   \
-    tinker_gpu_empole1();                                                      \
+    gpu::empole(gpu::v1);                                                      \
     gpu::torque(gpu::v1);                                                      \
     COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
     COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
@@ -140,27 +140,27 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
                                                                                \
     gpu::zero_egv();                                                           \
     gpu::elec_init(gpu::v3);                                                   \
-    tinker_gpu_empole3();                                                      \
+    gpu::empole(gpu::v3);                                                      \
     gpu::torque(gpu::v3);                                                      \
     COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
     COMPARE_COUNT_(gpu::nem, ref_count);                                       \
                                                                                \
     gpu::zero_egv();                                                           \
     gpu::elec_init(gpu::v4);                                                   \
-    tinker_gpu_empole4();                                                      \
+    gpu::empole(gpu::v4);                                                      \
     gpu::torque(gpu::v4);                                                      \
     COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
     COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
                                                                                \
     gpu::zero_egv();                                                           \
     gpu::elec_init(gpu::v5);                                                   \
-    tinker_gpu_empole5();                                                      \
+    gpu::empole(gpu::v5);                                                      \
     gpu::torque(gpu::v5);                                                      \
     COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
                                                                                \
     gpu::zero_egv();                                                           \
     gpu::elec_init(gpu::v6);                                                   \
-    tinker_gpu_empole6();                                                      \
+    gpu::empole(gpu::v6);                                                      \
     gpu::torque(gpu::v6);                                                      \
     COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
     COMPARE_VIR2_(gpu::vir_em, gpu::vir_trq, ref_v, eps_v);                    \
