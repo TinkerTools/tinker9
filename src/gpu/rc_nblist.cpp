@@ -78,6 +78,11 @@ int use_usolv_list() {
   return ret;
 }
 
+void nblist_update_vdw_list() {
+  evdw_reduce_xyz();
+  nblist_update(gpu::vlist_obj_, gpu::vlst);
+}
+
 // see also cutoffs.f
 // In the gas phase calculation where neighbor list is not used, we should
 // always first check the value of maxn.

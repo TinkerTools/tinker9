@@ -164,13 +164,13 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
   {                                                                            \
     gpu::zero_egv();                                                           \
     gpu::elec_init(gpu::v0);                                                   \
-    tinker_gpu_epolar0();                                                      \
+    gpu::epolar(gpu::v0);                                                      \
     gpu::torque(gpu::v0);                                                      \
     COMPARE_ENERGY_(gpu::ep, ref_eng, eps_e);                                  \
                                                                                \
     gpu::zero_egv();                                                           \
     gpu::elec_init(gpu::v1);                                                   \
-    tinker_gpu_epolar1();                                                      \
+    gpu::epolar(gpu::v1);                                                      \
     gpu::torque(gpu::v1);                                                      \
     COMPARE_ENERGY_(gpu::ep, ref_eng, eps_e);                                  \
     COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                                \
@@ -178,27 +178,27 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
                                                                                \
     gpu::zero_egv();                                                           \
     gpu::elec_init(gpu::v3);                                                   \
-    tinker_gpu_epolar3();                                                      \
+    gpu::epolar(gpu::v3);                                                      \
     gpu::torque(gpu::v3);                                                      \
     COMPARE_ENERGY_(gpu::ep, ref_eng, eps_e);                                  \
     COMPARE_COUNT_(gpu::nep, ref_count);                                       \
                                                                                \
     gpu::zero_egv();                                                           \
     gpu::elec_init(gpu::v4);                                                   \
-    tinker_gpu_epolar4();                                                      \
+    gpu::epolar(gpu::v4);                                                      \
     gpu::torque(gpu::v4);                                                      \
     COMPARE_ENERGY_(gpu::ep, ref_eng, eps_e);                                  \
     COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                                \
                                                                                \
     gpu::zero_egv();                                                           \
     gpu::elec_init(gpu::v5);                                                   \
-    tinker_gpu_epolar5();                                                      \
+    gpu::epolar(gpu::v5);                                                      \
     gpu::torque(gpu::v5);                                                      \
     COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                                \
                                                                                \
     gpu::zero_egv();                                                           \
     gpu::elec_init(gpu::v6);                                                   \
-    tinker_gpu_epolar6();                                                      \
+    gpu::epolar(gpu::v6);                                                      \
     gpu::torque(gpu::v6);                                                      \
     COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                                \
     COMPARE_VIR2_(gpu::vir_ep, gpu::vir_trq, ref_v, eps_v);                    \
@@ -369,7 +369,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
-    tinker_gpu_epolar0();
+    gpu::epolar(gpu::v0);
     gpu::torque(gpu::v0);
     COMPARE_ENERGY_(gpu::ep, ref_eng, eps_f);
   }
@@ -573,7 +573,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
-    tinker_gpu_epolar0();
+    gpu::epolar(gpu::v0);
     gpu::torque(gpu::v0);
     COMPARE_ENERGY_(gpu::ep, ref_eng, eps_f);
   }

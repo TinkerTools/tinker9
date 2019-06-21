@@ -197,5 +197,3 @@ void egv_data(int op) {
 }
 }
 TINKER_NAMESPACE_END
-
-extern "C" {}

@@ -53,11 +53,10 @@ void empole_data(int op) {
 }
 
 void empole(int vers) {
-  if (empole_electyp == elec_coulomb) {
+  if (empole_electyp == elec_coulomb)
     empole_coulomb(vers);
-  } else if (empole_electyp == elec_ewald) {
+  else if (empole_electyp == elec_ewald)
     empole_ewald(vers);
-  }
 }
 }
 TINKER_NAMESPACE_END

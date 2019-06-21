@@ -64,30 +64,11 @@ void ufield(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
 // different induction algorithms
 void induce_mutual_pcg1(real* gpu_ud, real* gpu_up);
 void induce(real* gpu_ud, real* gpu_up);
+
+void epolar_coulomb(int vers);
+void epolar_ewald(int vers);
+void epolar(int vers);
 }
 TINKER_NAMESPACE_END
-
-extern "C" {
-void tinker_gpu_epolar_coulomb0();
-void tinker_gpu_epolar_coulomb1();
-void tinker_gpu_epolar_coulomb3();
-void tinker_gpu_epolar_coulomb4();
-void tinker_gpu_epolar_coulomb5();
-void tinker_gpu_epolar_coulomb6();
-
-void tinker_gpu_epolar_ewald0();
-void tinker_gpu_epolar_ewald1();
-void tinker_gpu_epolar_ewald3();
-void tinker_gpu_epolar_ewald4();
-void tinker_gpu_epolar_ewald5();
-void tinker_gpu_epolar_ewald6();
-
-void tinker_gpu_epolar0();
-void tinker_gpu_epolar1();
-void tinker_gpu_epolar3();
-void tinker_gpu_epolar4();
-void tinker_gpu_epolar5();
-void tinker_gpu_epolar6();
-}
 
 #endif

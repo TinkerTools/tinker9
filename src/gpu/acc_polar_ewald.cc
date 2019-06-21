@@ -1172,33 +1172,27 @@ void epolar_ewald_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
 
   epolar_recip_self_tmpl<USE>(gpu_uind, gpu_uinp);
 }
+
+void epolar_ewald(int vers) {
+  if (vers == v0) {
+    induce(&uind[0][0], &uinp[0][0]);
+    epolar0_dotprod(uind, udirp);
+  } else if (vers == v1) {
+    induce(&uind[0][0], &uinp[0][0]);
+    epolar_ewald_tmpl<v1>(uind, uinp);
+  } else if (vers == v3) {
+    induce(&uind[0][0], &uinp[0][0]);
+    epolar_ewald_tmpl<v3>(uind, uinp);
+  } else if (vers == v4) {
+    induce(&uind[0][0], &uinp[0][0]);
+    epolar_ewald_tmpl<v4>(uind, uinp);
+  } else if (vers == v5) {
+    induce(&uind[0][0], &uinp[0][0]);
+    epolar_ewald_tmpl<v5>(uind, uinp);
+  } else if (vers == v6) {
+    induce(&uind[0][0], &uinp[0][0]);
+    epolar_ewald_tmpl<v6>(uind, uinp);
+  }
+}
 }
 TINKER_NAMESPACE_END
-
-extern "C" {
-m_tinker_using_namespace;
-void tinker_gpu_epolar_ewald0() {
-  gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
-  gpu::epolar0_dotprod(gpu::uind, gpu::udirp);
-}
-void tinker_gpu_epolar_ewald1() {
-  gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
-  gpu::epolar_ewald_tmpl<gpu::v1>(gpu::uind, gpu::uinp);
-}
-void tinker_gpu_epolar_ewald3() {
-  gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
-  gpu::epolar_ewald_tmpl<gpu::v3>(gpu::uind, gpu::uinp);
-}
-void tinker_gpu_epolar_ewald4() {
-  gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
-  gpu::epolar_ewald_tmpl<gpu::v4>(gpu::uind, gpu::uinp);
-}
-void tinker_gpu_epolar_ewald5() {
-  gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
-  gpu::epolar_ewald_tmpl<gpu::v5>(gpu::uind, gpu::uinp);
-}
-void tinker_gpu_epolar_ewald6() {
-  gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
-  gpu::epolar_ewald_tmpl<gpu::v6>(gpu::uind, gpu::uinp);
-}
-}

@@ -64,8 +64,6 @@ void tinker_gpu_gradient1() {
     tinker_gpu_evdw3();
   }
 
-  tinker_gpu_vlist_update();
-
   print(stdout, title, "Kcal/mole", "Interactions");
 
   if (gpu::use_ebond())

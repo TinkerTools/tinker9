@@ -14,21 +14,7 @@ void evdw_reduce_xyz() {
     zred[i] = rdn * (z[i] - z[iv]) + z[iv];
   }
 }
-}
-TINKER_NAMESPACE_END
 
-extern "C" {
-void tinker_gpu_vlist_update() {
-  m_tinker_using_namespace;
-  if (gpu::use_vdw_list()) {
-    gpu::evdw_reduce_xyz();
-    gpu::nblist_update(gpu::vlist_obj_, gpu::vlst);
-  }
-}
-}
-
-TINKER_NAMESPACE_BEGIN
-namespace gpu {
 template <int USE, int VDWTYP>
 void evdw_tmpl() {
   constexpr int do_e = USE & use_energy;

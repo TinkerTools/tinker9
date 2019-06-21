@@ -172,24 +172,12 @@ void induce(real* gpu_ud, real* gpu_up) {
     }
   }
 }
+
+void epolar(int vers) {
+  if (epolar_electyp == elec_coulomb)
+    epolar_coulomb(vers);
+  else if (epolar_electyp == elec_ewald)
+    epolar_ewald(vers);
+}
 }
 TINKER_NAMESPACE_END
-
-extern "C" {
-m_tinker_using_namespace;
-#define TINKER_GPU_EPOLAR_DEF_(ver)                                            \
-  void tinker_gpu_epolar##ver() {                                              \
-    if (gpu::epolar_electyp == gpu::elec_coulomb) {                            \
-      tinker_gpu_epolar_coulomb##ver();                                        \
-    } else if (gpu::epolar_electyp == gpu::elec_ewald) {                       \
-      tinker_gpu_epolar_ewald##ver();                                          \
-    }                                                                          \
-  }
-TINKER_GPU_EPOLAR_DEF_(0);
-TINKER_GPU_EPOLAR_DEF_(1);
-TINKER_GPU_EPOLAR_DEF_(3);
-TINKER_GPU_EPOLAR_DEF_(4);
-TINKER_GPU_EPOLAR_DEF_(5);
-TINKER_GPU_EPOLAR_DEF_(6);
-#undef TINKER_GPU_EPOLAR_DEF_
-}

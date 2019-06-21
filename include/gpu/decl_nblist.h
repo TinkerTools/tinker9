@@ -22,6 +22,7 @@ struct nblist_st {
 
 void nblist_build(const nblist_st&, nblist_st*);
 void nblist_update(const nblist_st&, nblist_st*);
+void nblist_update_vdw_list();
 
 int use_vdw_list();
 int use_disp_list();
@@ -43,10 +44,5 @@ extern nblist_st* ulst;
 void nblist_data(int op);
 }
 TINKER_NAMESPACE_END
-
-extern "C" {
-void tinker_gpu_vlist_update();
-void tinker_gpu_mlist_update();
-}
 
 #endif
