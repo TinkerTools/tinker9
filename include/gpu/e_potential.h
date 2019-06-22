@@ -1,7 +1,9 @@
 #ifndef TINKER_GPU_E_POTENTIAL_H_
 #define TINKER_GPU_E_POTENTIAL_H_
 
+#include "e_angle.h"
 #include "e_bond.h"
+
 #include "e_mpole.h"
 #include "e_polar.h"
 #include "e_vdw.h"

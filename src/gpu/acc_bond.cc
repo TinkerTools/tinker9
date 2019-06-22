@@ -8,7 +8,7 @@ void ebond_tmpl() {
   constexpr int do_e = USE & use_energy;
   constexpr int do_g = USE & use_grad;
   constexpr int do_v = USE & use_virial;
-  static_assert(do_v ? do_g : true, "");
+  sanity_check<USE>();
 
   #pragma acc data deviceptr(x,y,z,gx,gy,gz,box,\
                              ibnd,bl,bk,\
@@ -34,12 +34,12 @@ void ebond_tmpl() {
       real yab = y[ia] - y[ib];
       real zab = z[ia] - z[ib];
 
-      image(xab, yab, zab, box);
+      image(xab, yab, zab, box); // TODO: remove image()?
       real rab = REAL_SQRT(xab * xab + yab * yab + zab * zab);
       real dt = rab - ideal;
 
-      real e;
-      real deddt;
+      MAYBE_UNUSED real e;
+      MAYBE_UNUSED real deddt;
       if_constexpr(BNDTYP & bond_harmonic) {
         real dt2 = dt * dt;
         if_constexpr(do_e) e =
@@ -59,13 +59,11 @@ void ebond_tmpl() {
         *eb += e;
       }
 
-      real de;
-      real dedx, dedy, dedz;
       if_constexpr(do_g) {
-        de = deddt / rab;
-        dedx = de * xab;
-        dedy = de * yab;
-        dedz = de * zab;
+        real de = deddt * REAL_RECIP(rab);
+        real dedx = de * xab;
+        real dedy = de * yab;
+        real dedz = de * zab;
         #pragma acc atomic update
         gx[ia] += dedx;
         #pragma acc atomic update
@@ -78,34 +76,34 @@ void ebond_tmpl() {
         gy[ib] -= dedy;
         #pragma acc atomic update
         gz[ib] -= dedz;
-      }
 
-      if_constexpr(do_v) {
-        real vxx = xab * dedx;
-        real vyx = yab * dedx;
-        real vzx = zab * dedx;
-        real vyy = yab * dedy;
-        real vzy = zab * dedy;
-        real vzz = zab * dedz;
+        if_constexpr(do_v) {
+          real vxx = xab * dedx;
+          real vyx = yab * dedx;
+          real vzx = zab * dedx;
+          real vyy = yab * dedy;
+          real vzy = zab * dedy;
+          real vzz = zab * dedz;
 
-        #pragma acc atomic update
-        vir_eb[_xx] += vxx;
-        #pragma acc atomic update
-        vir_eb[_yx] += vyx;
-        #pragma acc atomic update
-        vir_eb[_zx] += vzx;
-        #pragma acc atomic update
-        vir_eb[_xy] += vyx;
-        #pragma acc atomic update
-        vir_eb[_yy] += vyy;
-        #pragma acc atomic update
-        vir_eb[_zy] += vzy;
-        #pragma acc atomic update
-        vir_eb[_xz] += vzx;
-        #pragma acc atomic update
-        vir_eb[_yz] += vzy;
-        #pragma acc atomic update
-        vir_eb[_zz] += vzz;
+          #pragma acc atomic update
+          vir_eb[_xx] += vxx;
+          #pragma acc atomic update
+          vir_eb[_yx] += vyx;
+          #pragma acc atomic update
+          vir_eb[_zx] += vzx;
+          #pragma acc atomic update
+          vir_eb[_xy] += vyx;
+          #pragma acc atomic update
+          vir_eb[_yy] += vyy;
+          #pragma acc atomic update
+          vir_eb[_zy] += vzy;
+          #pragma acc atomic update
+          vir_eb[_xz] += vzx;
+          #pragma acc atomic update
+          vir_eb[_yz] += vzy;
+          #pragma acc atomic update
+          vir_eb[_zz] += vzz;
+        }
       }
     }
   }

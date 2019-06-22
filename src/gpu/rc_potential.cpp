@@ -9,6 +9,7 @@ TINKER_NAMESPACE_BEGIN
 namespace gpu {
 void potential_data(int op) {
   ebond_data(op);
+  eangle_data(op);
 
   evdw_data(op);
 

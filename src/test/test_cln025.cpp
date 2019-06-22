@@ -51,7 +51,7 @@ using namespace test;
     COMPARE_VIR_(gpu::vir_ev, ref_v, eps_v);                                   \
   }
 
-TEST_CASE("CLN025", "[ff][hal][cln025]") {
+TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
   const char* x = "test_cln025.xyz";
   const char* k = "test_cln025.key";
   const char* p = "amoebabio09.prm";

@@ -48,13 +48,13 @@ typedef std::vector<std::array<double, 3>> grad_t;
       }                                                                        \
     }                                                                          \
   }
-#define COMPARE_GRADIENT2_(ref_grad, eps, check_ij)                            \
+#define COMPARE_GRADIENT3_(gx, gy, gz, ref_grad, eps, check_ij)                \
   {                                                                            \
     grad_t grad(gpu::n);                                                       \
     double* dst = &grad[0][0];                                                 \
-    gpu::copyout_data2(0, 3, dst, gpu::gx, gpu::n);                            \
-    gpu::copyout_data2(1, 3, dst, gpu::gy, gpu::n);                            \
-    gpu::copyout_data2(2, 3, dst, gpu::gz, gpu::n);                            \
+    gpu::copyout_data2(0, 3, dst, gx, gpu::n);                                 \
+    gpu::copyout_data2(1, 3, dst, gy, gpu::n);                                 \
+    gpu::copyout_data2(2, 3, dst, gz, gpu::n);                                 \
     for (int i = 0; i < gpu::n; ++i) {                                         \
       for (int j = 0; j < 3; ++j) {                                            \
         if (check_ij(i, j))                                                    \
@@ -62,6 +62,8 @@ typedef std::vector<std::array<double, 3>> grad_t;
       }                                                                        \
     }                                                                          \
   }
+#define COMPARE_GRADIENT2_(ref_grad, eps, check_ij)                            \
+  COMPARE_GRADIENT3_(gpu::gx, gpu::gy, gpu::gz, ref_grad, eps, check_ij)
 #define COMPARE_GRADIENT_(ref_grad, eps)                                       \
   COMPARE_GRADIENT2_(ref_grad, eps, [](int, int) { return true; })
 #define PRINT_ENERGY_(gpuptr)                                                  \
@@ -114,7 +116,36 @@ typedef std::vector<std::array<double, 3>> grad_t;
             grad[i][0], grad[i][1], grad[i][2]);                               \
     }                                                                          \
   }
-
+#define COMPARE_BONED_FORCE(routine, gpu_e, ref_e, eps_e, cpu_count,           \
+                            ref_count, gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g,   \
+                            gpu_v, ref_v, eps_v)                               \
+  {                                                                            \
+    auto do_ij_ = [](int, int) { return true; };                               \
+    gpu::zero_egv();                                                           \
+    routine(gpu::v3);                                                          \
+    COMPARE_ENERGY_(gpu_e, ref_e, eps_e);                                      \
+    REQUIRE(cpu_count == ref_count);                                           \
+                                                                               \
+    gpu::zero_egv();                                                           \
+    routine(gpu::v1);                                                          \
+    COMPARE_ENERGY_(gpu_e, ref_e, eps_e);                                      \
+    COMPARE_GRADIENT3_(gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);          \
+    COMPARE_VIR_(gpu_v, ref_v, eps_v);                                         \
+                                                                               \
+    gpu::zero_egv();                                                           \
+    routine(gpu::v4);                                                          \
+    COMPARE_ENERGY_(gpu_e, ref_e, eps_e);                                      \
+    COMPARE_GRADIENT3_(gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);          \
+                                                                               \
+    gpu::zero_egv();                                                           \
+    routine(gpu::v5);                                                          \
+    COMPARE_GRADIENT3_(gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);          \
+                                                                               \
+    gpu::zero_egv();                                                           \
+    routine(gpu::v6);                                                          \
+    COMPARE_GRADIENT3_(gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);          \
+    COMPARE_VIR_(gpu_v, ref_v, eps_v);                                         \
+  }
 TINKER_NAMESPACE_END
 
 #endif

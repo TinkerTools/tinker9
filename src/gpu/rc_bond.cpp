@@ -38,6 +38,8 @@ void ebond_data(int op) {
 
   if (op & op_alloc) {
     const size_t rs = sizeof(real);
+
+    nbond = bndstr::nbond;
     check_cudart(cudaMalloc(&ibnd, sizeof(int) * nbond * 2));
     check_cudart(cudaMalloc(&bl, rs * nbond));
     check_cudart(cudaMalloc(&bk, rs * nbond));
@@ -56,7 +58,6 @@ void ebond_data(int op) {
     cbnd = bndpot::cbnd;
     qbnd = bndpot::qbnd;
     bndunit = bndpot::bndunit;
-    nbond = bndstr::nbond;
 
     std::vector<int> ibndvec(nbond * 2);
     for (size_t i = 0; i < ibndvec.size(); ++i) {
