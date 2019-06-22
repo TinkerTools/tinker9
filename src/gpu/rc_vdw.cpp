@@ -3,7 +3,7 @@
 #include "gpu/decl_nblist.h"
 #include "gpu/decl_switch.h"
 #include "gpu/e_vdw.h"
-#include "rc_cudart.h"
+#include "rc.h"
 #include "util/fort_str.h"
 #include <map>
 

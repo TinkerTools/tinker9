@@ -2,7 +2,7 @@
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
 #include "gpu/decl_switch.h"
-#include "rc_cudart.h"
+#include "rc.h"
 #include "util/math.h"
 #include <ext/tinker/tinker_rt.h>
 
@@ -272,7 +272,7 @@ void pme_data(int op) {
     pme_op_copyin_(dpme_unit);
   }
 
-  detail_::fft_data(op);
+  fft_data(op);
 }
 }
 TINKER_NAMESPACE_END

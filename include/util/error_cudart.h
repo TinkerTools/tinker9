@@ -1,8 +1,10 @@
 #ifndef TINKER_UTIL_ERROR_CUDART_H_
 #define TINKER_UTIL_ERROR_CUDART_H_
 
+/**
+ * Header file <cuda_runtime.h> is intentionally not included here.
+ */
 #include "error.h"
-#include <cuda_runtime.h>
 
 #define m_tinker_get_3rd_arg_(arg1, arg2, arg3, ...) arg3
 #define m_tinker_get_4th_arg_(arg1, arg2, arg3, arg4, ...) arg4

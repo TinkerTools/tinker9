@@ -14,7 +14,8 @@ src := ..
 libtinker_dir := $(HOME)/git/tinker/source
 
 # FFTW
-fftwflag := -L$(HOME)/local/fftw/lib -lfftw3 -lfftw3_threads
+fftwdir := $(HOME)/local/fftw
+fftwflag := -L$(fftwdir)/lib -lfftw3 -lfftw3_threads
 
 # GPU Precision
 # real4 / 4 / 32 / float / single / s -> real4__
@@ -30,6 +31,8 @@ cudadir := /usr/local/cuda
 # Compilers
 CXX := g++
 ACC := pgc++
+
+hostonly := false
 
 config := default_config
 ifeq ($(config),default_config)
@@ -155,16 +158,28 @@ extdir := ext/ext
 include_flags := -I$(topdir)/include
 include_flags += -I$(topdir)/ext
 include_flags += -I$(topdir)/ext/ext
-include_flags += -I$(cudadir)/include
+ifeq ($(hostonly),false)
+	include_flags += -I$(cudadir)/include
+else
+	include_flags += -I$(fftwdir)/include -DTINKER_HOSTONLY
+endif
 
 cxx_common_flags := -std=c++11 -D$(fortran_name_macro) $(precision_macro__)
 cxx_common_flags += $(include_flags) $(cxx_opt_flags)
 cxx_compile_flags := -c -fpic $(cxx_common_flags)
 
 acc_common_flags := $(cxx_common_flags)
-acc_compile_flags += -acc verystrict -c -fpic -Minfo=accel $(acc_common_flags)
+acc_compile_flags := -c -fpic $(acc_common_flags)
+acc_link_flags := -rdynamic -Wl,-rpath='$$ORIGIN'
+ifeq ($(hostonly),false)
+	acc_compile_flags += -acc verystrict -Minfo=accel $(acc_common_flags)
+	acc_link_flags := -acc -Mcuda -Mcudalib=cufft
+else
+	ifeq ($(prec__),real4__)
+		acc_link_flags += -L$(fftwdir)/lib -lfftw3f
+	endif
+endif
 
-acc_link_flags := -rdynamic -acc -Mcuda -Mcudalib=cufft -Wl,-rpath='$$ORIGIN'
 acc_link_flags += $(acc_common_flags) -L. -ltinker -l$(libtinkergpu_name0) $(fortrtflag) $(fftwflag)
 
 ext_cc_objs := $(extdir)/fmt/format.o $(extdir)/fmt/posix.o

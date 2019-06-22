@@ -1,5 +1,5 @@
 #include "gpu/decl_dataop.h"
-#include "rc_cudart.h"
+#include "rc.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

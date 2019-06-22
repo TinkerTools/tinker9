@@ -3,7 +3,7 @@
 #include "gpu/decl_pme.h"
 #include "gpu/decl_switch.h"
 #include "gpu/e_polar.h"
-#include "rc_cudart.h"
+#include "rc.h"
 #include "util/format_print.h"
 
 TINKER_NAMESPACE_BEGIN
