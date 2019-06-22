@@ -4,13 +4,11 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-int use_data = 0;
-int n = 0;
+int use_data;
 
-real *x, *y, *z;
-real *vx, *vy, *vz;
-real *ax, *ay, *az;
-real* mass;
+//======================================================================
+/// number of atoms
+int n;
 
 void n_data(int op) {
   if (op & op_dealloc)
@@ -21,6 +19,10 @@ void n_data(int op) {
   if (op & op_copyin)
     n = atoms::n;
 }
+
+//======================================================================
+/// x y z coordinates
+real *x, *y, *z;
 
 void xyz_data(int op) {
   if ((use_xyz & use_data) == 0)
@@ -46,6 +48,10 @@ void xyz_data(int op) {
   }
 }
 
+//======================================================================
+/// velocitiies
+real *vx, *vy, *vz;
+
 void vel_data(int op) {
   if ((use_vel & use_data) == 0)
     return;
@@ -69,6 +75,10 @@ void vel_data(int op) {
     copyin_data2(2, 3, vz, moldyn::v, n);
   }
 }
+
+//======================================================================
+/// accelerations
+real *ax, *ay, *az;
 
 void accel_data(int op) {
   if ((use_accel & use_data) == 0)
@@ -94,6 +104,10 @@ void accel_data(int op) {
   }
 }
 
+//======================================================================
+/// atomic mass
+real* mass;
+
 void mass_data(int op) {
   if ((use_mass & use_data) == 0)
     return;
@@ -112,9 +126,29 @@ void mass_data(int op) {
   }
 }
 
+//======================================================================
+/// total potential energy
 real* esum;
-real* vir;
+/// total gradients
 real *gx, *gy, *gz;
+/// total virial
+real* vir;
+
+double get_energy(const real* e_gpu) {
+  double e_out;
+  copyout_data(&e_out, e_gpu, 1);
+  return e_out;
+}
+
+int get_count(const int* ecount_gpu) {
+  int c;
+  copyout_data(&c, ecount_gpu, 1);
+  return c;
+}
+
+void get_virial(double* v_out, const real* v_gpu) {
+  copyout_data(v_out, v_gpu, 9);
+}
 
 void zero_egv() {
   int flag_e = gpu::use_data & gpu::use_energy;

@@ -7,22 +7,6 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-double get_energy(const real* e_gpu) {
-  double e_out;
-  copyout_data(&e_out, e_gpu, 1);
-  return e_out;
-}
-
-int get_count(const int* ecount_gpu) {
-  int c;
-  copyout_data(&c, ecount_gpu, 1);
-  return c;
-}
-
-void get_virial(double* v_out, const real* v_gpu) {
-  copyout_data(v_out, v_gpu, 9);
-}
-
 void potential_data(int op) {
   ebond_data(op);
 
