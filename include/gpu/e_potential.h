@@ -3,6 +3,12 @@
 
 #include "e_angle.h"
 #include "e_bond.h"
+#include "e_opbend.h"
+#include "e_pitors.h"
+#include "e_strbnd.h"
+#include "e_tors.h"
+#include "e_tortor.h"
+#include "e_urey.h"
 
 #include "e_mpole.h"
 #include "e_polar.h"

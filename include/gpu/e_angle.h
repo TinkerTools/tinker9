@@ -24,8 +24,7 @@ extern int* angtyp;
 
 extern real* ea;
 extern real* vir_ea;
-int use_eangle();
-int count_eangle();
+
 void eangle_data(int op);
 
 void eangle_acc_impl__(int vers);

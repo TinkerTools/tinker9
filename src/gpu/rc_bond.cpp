@@ -1,4 +1,5 @@
 #include "gpu/decl_dataop.h"
+#include "gpu/decl_potent.h"
 #include "gpu/e_bond.h"
 #include "rc.h"
 #include "util/fort_str.h"
@@ -15,17 +16,9 @@ real *bl, *bk;
 
 real* eb;
 real* vir_eb;
-int use_ebond() { return potent::use_bond; }
-
-int count_ebond() {
-  if (!use_ebond())
-    return -1;
-
-  return nbond;
-}
 
 void ebond_data(int op) {
-  if (!use_ebond())
+  if (!use_potent(bond_term))
     return;
 
   if (op & op_dealloc) {
@@ -39,7 +32,7 @@ void ebond_data(int op) {
   if (op & op_alloc) {
     const size_t rs = sizeof(real);
 
-    nbond = bndstr::nbond;
+    nbond = count_bonded_term(bond_term);
     check_cudart(cudaMalloc(&ibnd, sizeof(int) * nbond * 2));
     check_cudart(cudaMalloc(&bl, rs * nbond));
     check_cudart(cudaMalloc(&bk, rs * nbond));

@@ -2,6 +2,7 @@
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_nblist.h"
 #include "gpu/decl_pme.h"
+#include "gpu/decl_potent.h"
 #include "gpu/e_potential.h"
 #include "util/format_print.h"
 
@@ -26,23 +27,23 @@ void gradient(int vers) {
   const char* title = " Energy Component Breakdown :{:>20s}{:>20s}\n\n";
   const char* fmt = " {:28s}{:>20.4f}{:>17d}        {}\n";
 
-  if (gpu::use_ebond()) {
-    gpu::ebond(vers);
+  if (use_potent(bond_term)) {
+    ebond(vers);
   }
 
-  if (gpu::use_evdw()) {
-    gpu::evdw(vers);
+  if (use_evdw()) {
+    evdw(vers);
   }
 
   print(stdout, title, "Kcal/mole", "Interactions");
 
-  if (gpu::use_ebond())
-    print(stdout, fmt, "Bond Stretching", gpu::get_energy(gpu::eb),
-          gpu::count_ebond(), gpu::bndtyp_str);
+  if (use_potent(bond_term))
+    print(stdout, fmt, "Bond Stretching", get_energy(eb),
+          count_bonded_term(bond_term), bndtyp_str);
 
-  if (gpu::use_evdw())
-    print(stdout, fmt, "Van der Waals", gpu::get_energy(gpu::ev),
-          gpu::get_count(gpu::nev), gpu::vdwtyp_str);
+  if (use_evdw())
+    print(stdout, fmt, "Van der Waals", get_energy(ev), get_count(nev),
+          vdwtyp_str);
 }
 }
 TINKER_NAMESPACE_END

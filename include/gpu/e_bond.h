@@ -16,8 +16,7 @@ extern real *bl, *bk;
 
 extern real* eb;
 extern real* vir_eb;
-int use_ebond();
-int count_ebond();
+
 void ebond_data(int op);
 
 void ebond_harmonic(int vers);
