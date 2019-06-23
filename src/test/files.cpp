@@ -13,6 +13,8 @@ FILE_DEF_(water03_prm);
 FILE_DEF_(amoeba09_prm);
 #include "file/amoebabio09.hh"
 FILE_DEF_(amoebabio09_prm);
+#include "file/amoebapro13.hh"
+FILE_DEF_(amoebapro13_prm);
 
 // xyz files
 #include "file/watersmall.hh"
@@ -26,6 +28,9 @@ FILE_DEF_(watersmall_xyz);
 
 // local_frame test set
 #include "file/local_frame.hh"
+
+// crambin3 test set
+#include "file/crambin3.hh"
 }
 TINKER_NAMESPACE_END
 

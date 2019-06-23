@@ -26,8 +26,9 @@ void zero_data(real* dst, int nelem);
 enum {
   op_dealloc = 0x001, /// deallocate device memory
   op_alloc = 0x002,   /// allocate device memory
-  op_copyin = 0x004   /// update device data from host memory, or directly
+  op_copyin = 0x004,  /// update device data from host memory, or directly
                       /// initialize device data
+  op_copyout = 0x008, /// update host data from device memory
 };
 void gpu_data(int op);
 }

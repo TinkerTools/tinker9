@@ -8,5 +8,6 @@
 
 #include "util/error_cudart.h"
 #include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/tinker_rt.h>
 
 #endif

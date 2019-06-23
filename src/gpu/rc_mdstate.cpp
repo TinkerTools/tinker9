@@ -18,6 +18,9 @@ void n_data(int op) {
 
   if (op & op_copyin)
     n = atoms::n;
+
+  // if (op & op_copyout)
+  //   atoms::n = n;
 }
 
 //======================================================================
@@ -45,6 +48,12 @@ void xyz_data(int op) {
     copyin_data(x, atoms::x, n);
     copyin_data(y, atoms::y, n);
     copyin_data(z, atoms::z, n);
+  }
+
+  if (op & op_copyout) {
+    copyout_data(atoms::x, x, n);
+    copyout_data(atoms::y, y, n);
+    copyout_data(atoms::z, z, n);
   }
 }
 
@@ -74,6 +83,12 @@ void vel_data(int op) {
     copyin_data2(1, 3, vy, moldyn::v, n);
     copyin_data2(2, 3, vz, moldyn::v, n);
   }
+
+  if (op & op_copyout) {
+    copyout_data2(0, 3, moldyn::v, vx, n);
+    copyout_data2(1, 3, moldyn::v, vy, n);
+    copyout_data2(2, 3, moldyn::v, vz, n);
+  }
 }
 
 //======================================================================
@@ -102,6 +117,12 @@ void accel_data(int op) {
     copyin_data2(1, 3, ay, moldyn::a, n);
     copyin_data2(2, 3, az, moldyn::a, n);
   }
+
+  if (op & op_copyout) {
+    copyout_data2(0, 3, moldyn::a, ax, n);
+    copyout_data2(1, 3, moldyn::a, ay, n);
+    copyout_data2(2, 3, moldyn::a, az, n);
+  }
 }
 
 //======================================================================
@@ -112,18 +133,19 @@ void mass_data(int op) {
   if ((use_mass & use_data) == 0)
     return;
 
-  if (op & op_dealloc) {
+  if (op & op_dealloc)
     check_cudart(cudaFree(mass));
-  }
 
   if (op & op_alloc) {
     size_t size = sizeof(real) * n;
     check_cudart(cudaMalloc(&mass, size));
   }
 
-  if (op & op_copyin) {
+  if (op & op_copyin)
     copyin_data(mass, atomid::mass, n);
-  }
+
+  // if (op & op_copyout)
+  //   copyout_data(atomid::mass, mass, n);
 }
 
 //======================================================================
@@ -171,22 +193,22 @@ void zero_egv() {
   }
 }
 
-void egv_data(int op) {
-  if (use_mass & (use_energy + use_grad + use_virial) == 0)
+void egv_data(int op, int _use) {
+  if ((_use & (use_energy | use_grad | use_virial)) == 0)
     return;
 
   if (op & op_dealloc) {
-    if (use_energy & use_data) {
+    if (use_energy & _use) {
       check_cudart(cudaFree(esum));
     }
 
-    if (use_grad & use_data) {
+    if (use_grad & _use) {
       check_cudart(cudaFree(gx));
       check_cudart(cudaFree(gy));
       check_cudart(cudaFree(gz));
     }
 
-    if (use_virial & use_data) {
+    if (use_virial & _use) {
       check_cudart(cudaFree(vir));
     }
   }
@@ -195,38 +217,50 @@ void egv_data(int op) {
     const size_t rs = sizeof(real);
     size_t size = 0;
 
-    if (use_energy & use_data) {
+    if (use_energy & _use) {
       size = rs;
       check_cudart(cudaMalloc(&esum, size));
     }
 
-    if (use_grad & use_data) {
+    if (use_grad & _use) {
       size = rs * n;
       check_cudart(cudaMalloc(&gx, size));
       check_cudart(cudaMalloc(&gy, size));
       check_cudart(cudaMalloc(&gz, size));
     }
 
-    if (use_virial & use_data) {
+    if (use_virial & _use) {
       size = rs * 9;
       check_cudart(cudaMalloc(&vir, size));
     }
   }
 
   if (op & op_copyin) {
-    if (use_energy & use_data) {
+    if (use_energy & _use)
       copyin_data(esum, &energi::esum, 1);
-    }
 
-    if (use_grad & use_data) {
+    if (use_grad & _use) {
       copyin_data2(0, 3, gx, deriv::desum, n);
       copyin_data2(1, 3, gy, deriv::desum, n);
       copyin_data2(2, 3, gz, deriv::desum, n);
     }
 
-    if (use_virial & use_data) {
+    if (use_virial & _use)
       copyin_data(vir, &virial::vir[0][0], 9);
+  }
+
+  if (op & op_copyout) {
+    if (use_energy & _use)
+      copyout_data(&energi::esum, esum, 1);
+
+    if (use_grad & _use) {
+      copyout_data2(0, 3, deriv::desum, gx, n);
+      copyout_data2(1, 3, deriv::desum, gy, n);
+      copyout_data2(2, 3, deriv::desum, gz, n);
     }
+
+    if (use_virial & _use)
+      copyout_data(&virial::vir[0][0], vir, 9);
   }
 }
 }
