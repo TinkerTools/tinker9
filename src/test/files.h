@@ -36,6 +36,10 @@ extern const char* local_frame_xyz2;
 // crambin3 test set
 extern const char* crambin3_xyz;
 extern const char* crambin3_key;
+
+// trpcage test set
+extern const char* trpcage_xyz;
+extern const char* trpcage_key;
 }
 TINKER_NAMESPACE_END
 

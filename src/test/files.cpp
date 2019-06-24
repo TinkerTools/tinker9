@@ -31,6 +31,9 @@ FILE_DEF_(watersmall_xyz);
 
 // crambin3 test set
 #include "file/crambin3.hh"
+
+// trpcage test set
+#include "file/trpcage.hh"
 }
 TINKER_NAMESPACE_END
 
