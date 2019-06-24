@@ -1,4 +1,5 @@
-#include "acc_e.h"
+#include "gpu/acc.h"
+#include "gpu/decl_mdstate.h"
 #include "gpu/e_bond.h"
 
 TINKER_NAMESPACE_BEGIN

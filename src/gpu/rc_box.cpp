@@ -1,5 +1,5 @@
 #include "gpu/decl_box.h"
-#include "rc.h"
+#include "gpu/rc.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -16,20 +16,20 @@ void box_data(rc_t rc) {
   }
 
   if (rc & rc_copyin) {
-    box_shape_t shape = box_null;
+    box_t::shape_t shape = box_t::null;
     if (boxes::orthogonal)
-      shape = box_ortho;
+      shape = box_t::ortho;
     else if (boxes::monoclinic)
-      shape = box_mono;
+      shape = box_t::mono;
     else if (boxes::triclinic)
-      shape = box_tri;
+      shape = box_t::tri;
     else if (boxes::octahedron)
-      shape = box_oct;
+      shape = box_t::oct;
 
     copyin_data(&box->lvec[0][0], &boxes::lvec[0][0], 9);
     copyin_data(&box->recip[0][0], &boxes::recip[0][0], 9);
     copyin_data(&box->volbox, &boxes::volbox, 1);
-    check_cudart(cudaMemcpy(&box->shape, &shape, sizeof(box_shape_t),
+    check_cudart(cudaMemcpy(&box->shape, &shape, sizeof(box_t::shape_t),
                             cudaMemcpyHostToDevice));
   }
 

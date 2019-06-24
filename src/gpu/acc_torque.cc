@@ -1,5 +1,5 @@
-#include "acc_e.h"
 #include "gpu/decl_elec.h"
+#include "gpu/decl_mdstate.h"
 
 #define ADD_(ans, a, b)                                                        \
   ans[0] = a[0] + b[0];                                                        \

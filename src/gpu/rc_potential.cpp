@@ -1,5 +1,4 @@
 #include "gpu/decl_mdstate.h"
-#include "gpu/decl_nblist.h"
 #include "gpu/decl_pme.h"
 #include "gpu/decl_potent.h"
 #include "gpu/e_potential.h"
@@ -43,7 +42,7 @@ void gradient(int vers) {
 
   if (use_evdw())
     print(stdout, fmt, "Van der Waals", get_energy(ev), get_count(nev),
-          vdwtyp_str);
+          vdwtyp_str(vdwtyp));
 }
 }
 TINKER_NAMESPACE_END

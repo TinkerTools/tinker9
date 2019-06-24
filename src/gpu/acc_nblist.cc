@@ -1,10 +1,10 @@
-#include "gpu/acc_image.h"
+#include "gpu/acc.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_nblist.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-static void nblist_build_double_loop_(nblist_st* lst) {
+static void nblist_build_double_loop_(nblist_t* lst) {
   #pragma acc data deviceptr(lst)
   #pragma acc parallel loop
   for (int i = 0; i < n; ++i) {
@@ -15,7 +15,7 @@ static void nblist_build_double_loop_(nblist_st* lst) {
 
 // static void nblist_update_double_loop_() {}
 
-static void nblist_build_nblist_(nblist_st* lst) {
+static void nblist_build_nblist_(nblist_t* lst) {
   #pragma acc data deviceptr(lst,box)
   #pragma acc parallel loop
   for (int i = 0; i < n; ++i) {
@@ -45,9 +45,9 @@ static void nblist_build_nblist_(nblist_st* lst) {
   }
 }
 
-static void nblist_update_nblist_(nblist_st*) {}
+static void nblist_update_nblist_(nblist_t*) {}
 
-void nblist_build(const nblist_st& st, nblist_st* lst) {
+void nblist_build(const nblist_t& st, nblist_t* lst) {
   if (st.maxnlst == 1) {
     nblist_build_double_loop_(lst);
   } else {
@@ -55,7 +55,7 @@ void nblist_build(const nblist_st& st, nblist_st* lst) {
   }
 }
 
-void nblist_update(const nblist_st& st, nblist_st* lst) {
+void nblist_update(const nblist_t& st, nblist_t* lst) {
   if (st.maxnlst == 1) {
     // nblist_update_double_loop_();
   } else {

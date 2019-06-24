@@ -5,7 +5,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-struct couple_st {
+typedef struct couple_def_st__ {
   static const int maxn12 = 8;
   static const int maxn13 = 32;  // 24 -> 32
   static const int maxn14 = 96;  // 72 -> 96
@@ -16,10 +16,10 @@ struct couple_st {
   int (*i13)[maxn13];
   int (*i14)[maxn14];
   int (*i15)[maxn15];
-};
+} couple_t;
 
-extern couple_st couple_obj_;
-extern couple_st* couple;
+extern couple_t couple_obj_;
+extern couple_t* couple;
 
 void couple_data(rc_t rc);
 }

@@ -1,4 +1,4 @@
-#include "gpu/acc_mathfunc.h"
+#include "gpu/acc.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

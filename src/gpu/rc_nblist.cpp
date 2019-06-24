@@ -1,20 +1,20 @@
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_nblist.h"
 #include "gpu/e_vdw.h"
-#include "rc.h"
+#include "gpu/rc.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-nblist_st vlist_obj_;
-nblist_st* vlst;
-nblist_st dlist_obj_;
-nblist_st* dlst;
-nblist_st clist_obj_;
-nblist_st* clst;
-nblist_st mlist_obj_;
-nblist_st* mlst;
-nblist_st ulist_obj_;
-nblist_st* ulst;
+nblist_t vlist_obj_;
+nblist_t* vlst;
+nblist_t dlist_obj_;
+nblist_t* dlst;
+nblist_t clist_obj_;
+nblist_t* clst;
+nblist_t mlist_obj_;
+nblist_t* mlst;
+nblist_t ulist_obj_;
+nblist_t* ulst;
 
 int use_vdw_list() {
   int ret = 0;
@@ -102,7 +102,7 @@ static int nblist_maxlst_(int maxn, double cutoff, double buffer) {
   }
 }
 
-static void nblist_op_dealloc_(nblist_st& st, nblist_st*& list) {
+static void nblist_op_dealloc_(nblist_t& st, nblist_t*& list) {
   check_cudart(cudaFree(st.nlst));
   check_cudart(cudaFree(st.lst));
   check_cudart(cudaFree(st.xold));
@@ -111,7 +111,7 @@ static void nblist_op_dealloc_(nblist_st& st, nblist_st*& list) {
   check_cudart(cudaFree(list));
 }
 
-static void nblist_op_alloc_(nblist_st& st, nblist_st*& list, int maxn,
+static void nblist_op_alloc_(nblist_t& st, nblist_t*& list, int maxn,
                              double cutoff, double buffer, const real* _x,
                              const real* _y, const real* _z) {
   const size_t rs = sizeof(int);
@@ -143,7 +143,7 @@ static void nblist_op_alloc_(nblist_st& st, nblist_st*& list, int maxn,
   st.y = _y;
   st.z = _z;
 
-  size = sizeof(nblist_st);
+  size = sizeof(nblist_t);
   check_cudart(cudaMalloc(&list, size));
   check_cudart(cudaMemcpy(list, &st, size, cudaMemcpyHostToDevice));
 }
@@ -160,7 +160,7 @@ void nblist_data(rc_t rc) {
 
     if (rc & rc_alloc) {
       maxnlst = 2500;
-      if (u == list_double_loop)
+      if (u == nblist_t::double_loop)
         maxnlst = 1;
       nblist_op_alloc_(vlist_obj_, vlst, maxnlst, limits::vdwcut,
                        neigh::lbuffer, xred, yred, zred);
@@ -180,7 +180,7 @@ void nblist_data(rc_t rc) {
 
     if (rc & rc_alloc) {
       maxnlst = 2500;
-      if (u == list_double_loop)
+      if (u == nblist_t::double_loop)
         maxnlst = 1;
       nblist_op_alloc_(dlist_obj_, dlst, maxnlst, limits::dispcut,
                        neigh::lbuffer, x, y, z);
@@ -198,7 +198,7 @@ void nblist_data(rc_t rc) {
 
     if (rc & rc_alloc) {
       maxnlst = 2500;
-      if (u == list_double_loop)
+      if (u == nblist_t::double_loop)
         maxnlst = 1;
       nblist_op_alloc_(clist_obj_, clst, maxnlst, limits::chgcut,
                        neigh::lbuffer, x, y, z);
@@ -216,7 +216,7 @@ void nblist_data(rc_t rc) {
 
     if (rc & rc_alloc) {
       maxnlst = 2500;
-      if (u == list_double_loop)
+      if (u == nblist_t::double_loop)
         maxnlst = 1;
       nblist_op_alloc_(mlist_obj_, mlst, maxnlst, limits::mpolecut,
                        neigh::lbuffer, x, y, z);
@@ -235,7 +235,7 @@ void nblist_data(rc_t rc) {
 
     if (rc & rc_alloc) {
       maxnlst = 500;
-      if (u == list_double_loop)
+      if (u == nblist_t::double_loop)
         maxnlst = 1;
       nblist_op_alloc_(ulist_obj_, ulst, maxnlst, limits::usolvcut,
                        neigh::pbuffer, x, y, z);

@@ -3,7 +3,7 @@
 #include "gpu/decl_pme.h"
 #include "gpu/e_mpole.h"
 #include "gpu/e_polar.h"
-#include "rc.h"
+#include "gpu/rc.h"
 #include "util/fort_str.h"
 
 TINKER_NAMESPACE_BEGIN

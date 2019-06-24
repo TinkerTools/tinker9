@@ -1,5 +1,5 @@
 #include "gpu/decl_mdstate.h"
-#include "rc.h"
+#include "gpu/rc.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -265,15 +265,11 @@ void egv_data(rc_t rc, int _use) {
 }
 TINKER_NAMESPACE_END
 
-#include "gpu/decl_box.h"
-#include "gpu/decl_couple.h"
-#include "gpu/decl_mdstate.h"
-#include "gpu/decl_nblist.h"
 #include "gpu/e_potential.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void gpu_data(rc_t rc) {
+void mdstate_data(rc_t rc) {
   n_data(rc);
 
   xyz_data(rc);

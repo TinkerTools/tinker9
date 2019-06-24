@@ -5,16 +5,16 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-enum {
+typedef enum {
   vdw_lj = 0x0001,
   vdw_buck = 0x0002,
   vdw_mm3hb = 0x0004,
   vdw_hal = 0x0008,
   vdw_gauss = 0x0010
-};
+} evdw_t;
 
-extern int vdwtyp;
-extern std::string vdwtyp_str;
+extern evdw_t vdwtyp;
+const char* vdwtyp_str(evdw_t typ);
 
 extern double vdw_switch_cut, vdw_switch_off;
 
@@ -33,7 +33,7 @@ extern real* ev;
 extern int* nev;
 extern real* vir_ev;
 int use_evdw();
-void get_evdw_type(int& typ, std::string& typ_str);
+void get_evdw_type(evdw_t& typ);
 void evdw_data(rc_t rc);
 
 void evdw_reduce_xyz();

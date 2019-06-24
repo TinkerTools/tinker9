@@ -1,5 +1,7 @@
-#include "acc_e.h"
+#include "gpu/acc.h"
+#include "gpu/decl_mdstate.h"
 #include "gpu/e_polar.h"
+#include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

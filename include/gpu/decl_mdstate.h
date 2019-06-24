@@ -93,8 +93,17 @@ void get_virial(double* v_out, const real* v_gpu);
 /// zero out global total energy, gradients, and virial on device
 void zero_egv();
 void egv_data(rc_t rc, int use = use_data);
+}
+TINKER_NAMESPACE_END
 
-void gpu_data(rc_t rc);
+#include "decl_box.h"
+#include "decl_couple.h"
+#include "decl_nblist.h"
+#include "decl_polgrp.h"
+
+TINKER_NAMESPACE_BEGIN
+namespace gpu {
+void mdstate_data(rc_t rc);
 }
 TINKER_NAMESPACE_END
 

@@ -1,5 +1,7 @@
-#include "acc_e.h"
+#include "gpu/acc.h"
+#include "gpu/decl_mdstate.h"
 #include "gpu/e_vdw.h"
+#include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -15,7 +17,7 @@ void evdw_reduce_xyz() {
   }
 }
 
-template <int USE, int VDWTYP>
+template <int USE, evdw_t VDWTYP>
 void evdw_tmpl() {
   constexpr int do_e = USE & use_energy;
   constexpr int do_a = USE & use_analyz;

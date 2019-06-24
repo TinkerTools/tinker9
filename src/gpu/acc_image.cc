@@ -1,5 +1,4 @@
-#include "gpu/acc_image.h"
-#include "gpu/acc_mathfunc.h"
+#include "gpu/acc.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -95,13 +94,13 @@ static inline void box_tri_imagen(real& __restrict__ xr, real& __restrict__ yr,
 void image(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
            const box_t* __restrict__ pb) {
   switch (pb->shape) {
-  case box_ortho:
+  case box_t::ortho:
     box_ortho_image(xr, yr, zr, pb);
     break;
-  case box_mono:
+  case box_t::mono:
     box_mono_image(xr, yr, zr, pb);
     break;
-  case box_tri:
+  case box_t::tri:
     box_tri_image(xr, yr, zr, pb);
     break;
   default /* box_null */:
@@ -114,13 +113,13 @@ void image(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
 void imagen(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
             const box_t* __restrict__ pb) {
   switch (pb->shape) {
-  case box_ortho:
+  case box_t::ortho:
     box_ortho_imagen(xr, yr, zr, pb);
     break;
-  case box_mono:
+  case box_t::mono:
     box_mono_imagen(xr, yr, zr, pb);
     break;
-  case box_tri:
+  case box_t::tri:
     box_tri_imagen(xr, yr, zr, pb);
     break;
   default /* box_null */:

@@ -5,11 +5,9 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-const int list_null = 0;
-const int list_double_loop = 1;
-const int list_nblist = 2;
+typedef struct nblist_def_st__ {
+  enum { null = 0, double_loop = 1, nblist = 2 };
 
-struct nblist_st {
   int* nlst;
   int* lst;
   real *xold, *yold, *zold;
@@ -18,10 +16,10 @@ struct nblist_st {
   const real* z;
   int maxnlst;
   real cutoff, buffer;
-};
+} nblist_t;
 
-void nblist_build(const nblist_st&, nblist_st*);
-void nblist_update(const nblist_st&, nblist_st*);
+void nblist_build(const nblist_t&, nblist_t*);
+void nblist_update(const nblist_t&, nblist_t*);
 void nblist_update_vdw_list();
 
 int use_vdw_list();
@@ -30,16 +28,16 @@ int use_charge_list();
 int use_mpole_list();
 int use_usolv_list();
 
-extern nblist_st vlist_obj_;
-extern nblist_st* vlst;
-extern nblist_st dlist_obj_;
-extern nblist_st* dlst;
-extern nblist_st clist_obj_;
-extern nblist_st* clst;
-extern nblist_st mlist_obj_;
-extern nblist_st* mlst;
-extern nblist_st ulist_obj_;
-extern nblist_st* ulst;
+extern nblist_t vlist_obj_;
+extern nblist_t* vlst;
+extern nblist_t dlist_obj_;
+extern nblist_t* dlst;
+extern nblist_t clist_obj_;
+extern nblist_t* clst;
+extern nblist_t mlist_obj_;
+extern nblist_t* mlst;
+extern nblist_t ulist_obj_;
+extern nblist_t* ulst;
 
 void nblist_data(rc_t rc);
 }

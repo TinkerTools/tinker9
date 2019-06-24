@@ -1,6 +1,6 @@
 #ifdef TINKER_HOSTONLY
 
-#  include "rc_hostonly.h"
+#  include "gpu/rc_hostonly.h"
 #  include <cstring>
 
 TINKER_NAMESPACE_BEGIN

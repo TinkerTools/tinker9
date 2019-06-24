@@ -1,15 +1,30 @@
 #include "gpu/decl_mdstate.h"
-#include "gpu/decl_nblist.h"
 #include "gpu/decl_switch.h"
 #include "gpu/e_vdw.h"
-#include "rc.h"
+#include "gpu/rc.h"
 #include "util/fort_str.h"
 #include <map>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-int vdwtyp = 0;
-std::string vdwtyp_str;
+evdw_t vdwtyp;
+
+const char* vdwtyp_str(evdw_t typ) {
+  if (typ == vdw_lj)
+    return "LENNARD-JONES";
+  else if (typ == vdw_buck)
+    return "BUCKINGHAM";
+  else if (typ == vdw_mm3hb)
+    return "MM3-HBOND";
+  else if (typ == vdw_hal)
+    return "BUFFERED-14-7";
+  else if (typ == vdw_gauss)
+    return "GAUSSIAN";
+  else {
+    assert(false);
+    return "";
+  }
+}
 
 double vdw_switch_cut, vdw_switch_off;
 
@@ -27,9 +42,8 @@ int* nev;
 real* vir_ev;
 int use_evdw() { return potent::use_vdw; }
 
-void get_evdw_type(int& typ, std::string& typ_str) {
+void get_evdw_type(evdw_t& typ) {
   fstr_view str = vdwpot::vdwtyp;
-  typ_str = str.trim();
   if (str == "LENNARD-JONES")
     typ = vdw_lj;
   else if (str == "BUCKINGHAM")
@@ -40,6 +54,8 @@ void get_evdw_type(int& typ, std::string& typ_str) {
     typ = vdw_hal;
   else if (str == "GAUSSIAN")
     typ = vdw_gauss;
+  else
+    assert(false);
 }
 
 void evdw_data(rc_t rc) {
@@ -121,7 +137,7 @@ void evdw_data(rc_t rc) {
   }
 
   if (rc & rc_copyin) {
-    get_evdw_type(vdwtyp, vdwtyp_str);
+    get_evdw_type(vdwtyp);
 
     switch_cut_off(switch_vdw, vdw_switch_cut, vdw_switch_off);
 

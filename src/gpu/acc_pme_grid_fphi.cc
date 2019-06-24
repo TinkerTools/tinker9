@@ -1,4 +1,3 @@
-#include "gpu/decl_box.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
 #include "gpu/e_mpole.h"

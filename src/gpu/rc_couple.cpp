@@ -1,11 +1,11 @@
 #include "gpu/decl_couple.h"
 #include "gpu/decl_mdstate.h"
-#include "rc.h"
+#include "gpu/rc.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-couple_st couple_obj_;
-couple_st* couple;
+couple_t couple_obj_;
+couple_t* couple;
 
 void couple_data(rc_t rc) {
   if (rc & rc_dealloc) {
@@ -29,16 +29,16 @@ void couple_data(rc_t rc) {
     check_cudart(cudaMalloc(&couple_obj_.n13, size));
     check_cudart(cudaMalloc(&couple_obj_.n14, size));
     check_cudart(cudaMalloc(&couple_obj_.n15, size));
-    size = couple_st::maxn12 * n * rs;
+    size = couple_t::maxn12 * n * rs;
     check_cudart(cudaMalloc(&couple_obj_.i12, size));
-    size = couple_st::maxn13 * n * rs;
+    size = couple_t::maxn13 * n * rs;
     check_cudart(cudaMalloc(&couple_obj_.i13, size));
-    size = couple_st::maxn14 * n * rs;
+    size = couple_t::maxn14 * n * rs;
     check_cudart(cudaMalloc(&couple_obj_.i14, size));
-    size = couple_st::maxn15 * n * rs;
+    size = couple_t::maxn15 * n * rs;
     check_cudart(cudaMalloc(&couple_obj_.i15, size));
 
-    size = sizeof(couple_st);
+    size = sizeof(couple_t);
     check_cudart(cudaMalloc(&couple, size));
   }
 
@@ -52,12 +52,12 @@ void couple_data(rc_t rc) {
     std::vector<int> nbuf, ibuf;
     nbuf.resize(n);
 
-    size = couple_st::maxn12 * n;
+    size = couple_t::maxn12 * n;
     ibuf.resize(size);
     for (int i = 0; i < n; ++i) {
       int nn = couple::n12[i];
       nbuf[i] = nn;
-      int base = i * couple_st::maxn12;
+      int base = i * couple_t::maxn12;
       for (int j = 0; j < nn; ++j) {
         int k = couple::i12[i][j];
         ibuf[base + j] = k - 1;
@@ -66,12 +66,12 @@ void couple_data(rc_t rc) {
     copyin_data(couple_obj_.n12, nbuf.data(), n);
     copyin_data(&couple_obj_.i12[0][0], ibuf.data(), size);
 
-    size = couple_st::maxn13 * n;
+    size = couple_t::maxn13 * n;
     ibuf.resize(size);
     for (int i = 0; i < n; ++i) {
       int nn = couple::n13[i];
       nbuf[i] = nn;
-      int base = i * couple_st::maxn13;
+      int base = i * couple_t::maxn13;
       int bask = i * maxn13;
       for (int j = 0; j < nn; ++j) {
         int k = couple::i13[bask + j];
@@ -81,12 +81,12 @@ void couple_data(rc_t rc) {
     copyin_data(couple_obj_.n13, nbuf.data(), n);
     copyin_data(&couple_obj_.i13[0][0], ibuf.data(), size);
 
-    size = couple_st::maxn14 * n;
+    size = couple_t::maxn14 * n;
     ibuf.resize(size);
     for (int i = 0; i < n; ++i) {
       int nn = couple::n14[i];
       nbuf[i] = nn;
-      int base = i * couple_st::maxn14;
+      int base = i * couple_t::maxn14;
       int bask = i * maxn14;
       for (int j = 0; j < nn; ++j) {
         int k = couple::i14[bask + j];
@@ -96,12 +96,12 @@ void couple_data(rc_t rc) {
     copyin_data(couple_obj_.n14, nbuf.data(), n);
     copyin_data(&couple_obj_.i14[0][0], ibuf.data(), size);
 
-    size = couple_st::maxn15 * n;
+    size = couple_t::maxn15 * n;
     ibuf.resize(size);
     for (int i = 0; i < n; ++i) {
       int nn = couple::n15[i];
       nbuf[i] = nn;
-      int base = i * couple_st::maxn15;
+      int base = i * couple_t::maxn15;
       int bask = i * maxn15;
       for (int j = 0; j < nn; ++j) {
         int k = couple::i15[bask + j];
@@ -111,7 +111,7 @@ void couple_data(rc_t rc) {
     copyin_data(couple_obj_.n15, nbuf.data(), n);
     copyin_data(&couple_obj_.i15[0][0], ibuf.data(), size);
 
-    size = sizeof(couple_st);
+    size = sizeof(couple_t);
     check_cudart(
         cudaMemcpy(couple, &couple_obj_, size, cudaMemcpyHostToDevice));
   }

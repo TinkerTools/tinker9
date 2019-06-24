@@ -1,5 +1,5 @@
 #include "gpu/decl_basic.h"
-#include "rc.h"
+#include "gpu/rc.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

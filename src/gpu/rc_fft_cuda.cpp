@@ -2,7 +2,7 @@
 #ifndef TINKER_HOSTONLY
 
 #  include "gpu/decl_pme.h"
-#  include "rc.h"
+#  include "gpu/rc.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

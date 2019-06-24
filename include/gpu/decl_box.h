@@ -5,14 +5,6 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-typedef enum {
-  box_null = 0x000,  /// null
-  box_ortho = 0x001, /// orthogonal
-  box_mono = 0x002,  /// monoclinic
-  box_tri = 0x004,   /// triclinic
-  box_oct = 0x008    /// truncated octahedron
-} box_shape_t;
-
 /**
  * matrix form of lvec/recip periodic box vectors
  *
@@ -35,10 +27,18 @@ typedef enum {
  * fractional_column_vector dot lvec = cartesian_column_vector
  */
 typedef struct box_def_st__ {
+  typedef enum {
+    null = 0x000,  /// null
+    ortho = 0x001, /// orthogonal
+    mono = 0x002,  /// monoclinic
+    tri = 0x004,   /// triclinic
+    oct = 0x008    /// truncated octahedron
+  } shape_t;
+
   real lvec[3][3];
   real recip[3][3];
   real volbox;
-  box_shape_t shape;
+  shape_t shape;
 } box_t;
 
 extern box_t* box;

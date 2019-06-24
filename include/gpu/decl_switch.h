@@ -5,8 +5,8 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-enum {
-  switch_default = 0,
+typedef enum {
+  switch_default,
   switch_vdw,
   switch_repuls,
   switch_disp,
@@ -20,9 +20,9 @@ enum {
   switch_usolve,
   switch_gkv,
   switch_gksa,
-};
+} switch_t;
 
-void switch_cut_off(int switch_type, double& cut, double& off);
+void switch_cut_off(switch_t switch_type, double& cut, double& off);
 }
 TINKER_NAMESPACE_END
 

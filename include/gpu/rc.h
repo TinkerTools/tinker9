@@ -1,10 +1,14 @@
-#ifndef TINKER_UTIL_ERROR_CUDART_H_
-#define TINKER_UTIL_ERROR_CUDART_H_
+#ifndef TINKER_SRC_GPU_RC_H_
+#define TINKER_SRC_GPU_RC_H_
 
-/**
- * Header file <cuda_runtime.h> is intentionally not included here.
- */
-#include "error.h"
+#include "rc_cudart.h"
+#include "rc_hostonly.h"
+
+//======================================================================
+
+#include "util/error.h"
+#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/tinker_rt.h>
 
 #define m_tinker_get_3rd_arg_(arg1, arg2, arg3, ...) arg3
 #define m_tinker_get_4th_arg_(arg1, arg2, arg3, arg4, ...) arg4

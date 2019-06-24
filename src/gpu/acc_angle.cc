@@ -1,4 +1,4 @@
-#include "gpu/decl_mathfunc.h"
+#include "gpu/acc.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_angle.h"
 

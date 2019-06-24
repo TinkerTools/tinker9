@@ -1,6 +1,6 @@
 #include "gpu/decl_potent.h"
 #include "gpu/e_strbnd.h"
-#include "rc.h"
+#include "gpu/rc.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

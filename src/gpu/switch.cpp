@@ -4,7 +4,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void switch_cut_off(int switch_type, double& cut, double& off) {
+void switch_cut_off(switch_t switch_type, double& cut, double& off) {
   using namespace limits;
   switch (switch_type) {
   case switch_vdw:

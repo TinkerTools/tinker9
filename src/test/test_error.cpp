@@ -1,9 +1,7 @@
 #define TINKER_ALWAYS_CHECK_CUDART
 
-#include "../gpu/rc.h"
+#include "gpu/rc.h"
 #include "test/test.h"
-#include "util/error.h"
-#include "util/error_cudart.h"
 #include "util/format_print.h"
 
 m_tinker_using_namespace;

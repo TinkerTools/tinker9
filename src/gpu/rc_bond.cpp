@@ -1,6 +1,6 @@
 #include "gpu/decl_potent.h"
 #include "gpu/e_bond.h"
-#include "rc.h"
+#include "gpu/rc.h"
 #include "util/fort_str.h"
 
 TINKER_NAMESPACE_BEGIN
