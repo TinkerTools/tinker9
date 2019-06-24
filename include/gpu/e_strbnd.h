@@ -5,8 +5,18 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
+extern int nstrbnd;
+extern int (*isb)[3];
+extern real (*sbk)[2];
+extern real stbnunit;
+
 extern real* eba;
 extern real* vir_eba;
+
+void estrbnd_data(int op);
+
+void estrbnd_acc_impl__(int vers);
+void estrbnd(int vers);
 }
 TINKER_NAMESPACE_END
 

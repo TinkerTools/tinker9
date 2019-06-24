@@ -16,7 +16,7 @@ void ebond_tmpl() {
   {
     #pragma acc serial
     {
-      *eb = 0;
+      if_constexpr(do_e) { *eb = 0; }
       if_constexpr(do_v) {
         for (int i = 0; i < 9; ++i)
           vir_eb[i] = 0;

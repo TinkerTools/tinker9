@@ -18,7 +18,7 @@ real* eb;
 real* vir_eb;
 
 void ebond_data(int op) {
-  if (!use_potent(bond_term))
+  if (!use_potent(bond_term) && !use_potent(strbnd_term))
     return;
 
   if (op & op_dealloc) {

@@ -13,14 +13,15 @@ void eangle_tmpl() {
 
   #pragma acc serial deviceptr(ea,vir_ea)
   {
-    *ea = 0;
+    if_constexpr(do_e) { *ea = 0; }
     if_constexpr(do_v) {
       for (int i = 0; i < 9; ++i)
         vir_ea[i] = 0;
     }
   }
 
-  #pragma acc parallel loop deviceptr(x,y,z,gx,gy,gz,\
+  #pragma acc parallel loop independent\
+              deviceptr(x,y,z,gx,gy,gz,\
               iang,anat,ak,angtyp,\
               ea,vir_ea)
   for (int i = 0; i < nangle; ++i) {

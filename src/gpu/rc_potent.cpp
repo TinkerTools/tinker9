@@ -13,6 +13,9 @@ int use_potent(potent_t term) {
   case angle_term:
     val = potent::use_angle;
     break;
+  case strbnd_term:
+    val = potent::use_strbnd;
+    break;
   default:
     assert(false);
     break;
@@ -22,18 +25,19 @@ int use_potent(potent_t term) {
 
 int count_bonded_term(potent_t term) {
   int val = -1;
-  if (use_potent(term)) {
-    switch (term) {
-    case bond_term:
-      val = bndstr::nbond;
-      break;
-    case angle_term:
-      val = angbnd::nangle;
-      break;
-    default:
-      assert(false);
-      break;
-    }
+  switch (term) {
+  case bond_term:
+    val = bndstr::nbond;
+    break;
+  case angle_term:
+    val = angbnd::nangle;
+    break;
+  case strbnd_term:
+    val = strbnd::nstrbnd;
+    break;
+  default:
+    assert(false);
+    break;
   }
   return val;
 }

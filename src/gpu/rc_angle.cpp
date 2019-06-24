@@ -22,7 +22,7 @@ real* ea;
 real* vir_ea;
 
 void eangle_data(int op) {
-  if (!use_potent(angle_term))
+  if (!use_potent(angle_term) && !use_potent(strbnd_term))
     return;
 
   if (op & op_dealloc) {
