@@ -63,8 +63,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
   // zero out the induced dipoles at each site
 
-  zero_data(&uind[0][0], n3);
-  zero_data(&uinp[0][0], n3);
+  zero_array(&uind[0][0], n3);
+  zero_array(&uinp[0][0], n3);
 
   // get the electrostatic field due to permanent multipoles
 

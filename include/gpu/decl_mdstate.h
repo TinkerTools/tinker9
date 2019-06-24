@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_DECL_MDSTATE_H_
 #define TINKER_GPU_DECL_MDSTATE_H_
 
-#include "decl_real.h"
+#include "decl_basic.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -57,27 +57,27 @@ extern int use_data;
 //======================================================================
 /// number of atoms
 extern int n;
-void n_data(int op);
+void n_data(rc_t rc);
 
 //======================================================================
 /// x y z coordinates
 extern real *x, *y, *z;
-void xyz_data(int op);
+void xyz_data(rc_t rc);
 
 //======================================================================
 /// velocities
 extern real *vx, *vy, *vz;
-void vel_data(int op);
+void vel_data(rc_t rc);
 
 //======================================================================
 /// accelerations
 extern real *ax, *ay, *az;
-void accel_data(int op);
+void accel_data(rc_t rc);
 
 //======================================================================
 /// atomic mass
 extern real* mass;
-void mass_data(int op);
+void mass_data(rc_t rc);
 
 //======================================================================
 /// total potential energy
@@ -92,7 +92,9 @@ int get_count(const int* ecount_gpu);
 void get_virial(double* v_out, const real* v_gpu);
 /// zero out global total energy, gradients, and virial on device
 void zero_egv();
-void egv_data(int op, int use = use_data);
+void egv_data(rc_t rc, int use = use_data);
+
+void gpu_data(rc_t rc);
 }
 TINKER_NAMESPACE_END
 

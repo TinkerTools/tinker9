@@ -1,5 +1,4 @@
 #include "gpu/decl_couple.h"
-#include "gpu/decl_dataop.h"
 #include "gpu/decl_mdstate.h"
 #include "rc.h"
 
@@ -8,8 +7,8 @@ namespace gpu {
 couple_st couple_obj_;
 couple_st* couple;
 
-void couple_data(int op) {
-  if (op & op_dealloc) {
+void couple_data(rc_t rc) {
+  if (rc & rc_dealloc) {
     check_cudart(cudaFree(couple_obj_.n12));
     check_cudart(cudaFree(couple_obj_.n13));
     check_cudart(cudaFree(couple_obj_.n14));
@@ -21,7 +20,7 @@ void couple_data(int op) {
     check_cudart(cudaFree(couple));
   }
 
-  if (op & op_alloc) {
+  if (rc & rc_alloc) {
     const size_t rs = sizeof(int);
     size_t size;
 
@@ -43,7 +42,7 @@ void couple_data(int op) {
     check_cudart(cudaMalloc(&couple, size));
   }
 
-  if (op & op_copyin) {
+  if (rc & rc_copyin) {
     size_t size;
 
     // see also attach.f

@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_DECL_POLGRP_H_
 #define TINKER_GPU_DECL_POLGRP_H_
 
-#include "decl_real.h"
+#include "decl_basic.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -21,7 +21,7 @@ struct polargroup_st {
 extern polargroup_st polargroup_obj_;
 extern polargroup_st* polargroup;
 
-void polargroup_data(int op);
+void polargroup_data(rc_t rc);
 }
 TINKER_NAMESPACE_END
 

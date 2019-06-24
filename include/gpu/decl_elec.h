@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_DECL_ELEC_H_
 #define TINKER_GPU_DECL_ELEC_H_
 
-#include "decl_real.h"
+#include "decl_basic.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -76,7 +76,7 @@ int use_elec();
  *
  * has no effect if no multipole electrostatics is involved
  */
-void elec_data(int op);
+void elec_data(rc_t rc);
 
 /**
  * initializes the electrostatics calculation

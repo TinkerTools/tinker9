@@ -1,4 +1,3 @@
-#include "gpu/decl_dataop.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
 #include "gpu/decl_switch.h"
@@ -170,15 +169,15 @@ void pme_init(int vers) {
   rpole_to_cmp();
 
   if (vir_m) {
-    zero_data(vir_m, 9);
+    zero_array(vir_m, 9);
   }
 }
 
-void pme_data(int op) {
+void pme_data(rc_t rc) {
   if (!use_ewald())
     return;
 
-  if (op & op_dealloc) {
+  if (rc & rc_dealloc) {
     assert(detail_::pme_objs().size() == detail_::pme_deviceptrs().size());
     int idx = 0;
     while (idx < detail_::pme_objs().size()) {
@@ -205,7 +204,7 @@ void pme_data(int op) {
     check_cudart(cudaFree(vir_m));
   }
 
-  if (op & op_alloc) {
+  if (rc & rc_alloc) {
     assert(detail_::pme_objs().size() == 0);
     assert(detail_::pme_deviceptrs().size() == 0);
 
@@ -263,7 +262,7 @@ void pme_data(int op) {
     }
   }
 
-  if (op & op_copyin) {
+  if (rc & rc_copyin) {
     switch_cut_off(switch_ewald, ewald_switch_cut, ewald_switch_off);
 
     pme_op_copyin_(epme_unit);
@@ -272,7 +271,7 @@ void pme_data(int op) {
     pme_op_copyin_(dpme_unit);
   }
 
-  fft_data(op);
+  fft_data(rc);
 }
 }
 TINKER_NAMESPACE_END

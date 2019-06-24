@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_DECL_PME_H_
 #define TINKER_GPU_DECL_PME_H_
 
-#include "decl_real.h"
+#include "decl_basic.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -37,7 +37,7 @@ pme_st* pme_deviceptr(int pme_unit);
 
 /// This function must be called after pme_data has been called because it
 /// needs to know the number of pme objects created.
-void fft_data(int op);
+void fft_data(rc_t rc);
 void fftfront(int pme_unit);
 void fftback(int pme_unit);
 
@@ -65,7 +65,7 @@ extern real* vir_m;
 
 int use_ewald();
 void pme_init(int vers);
-void pme_data(int op);
+void pme_data(rc_t rc);
 }
 TINKER_NAMESPACE_END
 

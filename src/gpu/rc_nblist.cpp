@@ -1,4 +1,3 @@
-#include "gpu/decl_dataop.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_nblist.h"
 #include "gpu/e_vdw.h"
@@ -149,17 +148,17 @@ static void nblist_op_alloc_(nblist_st& st, nblist_st*& list, int maxn,
   check_cudart(cudaMemcpy(list, &st, size, cudaMemcpyHostToDevice));
 }
 
-void nblist_data(int op) {
+void nblist_data(rc_t rc) {
   int maxnlst = 0;
   int u = 0;
 
   // vlist
   u = use_vdw_list();
   if (u) {
-    if (op & op_dealloc)
+    if (rc & rc_dealloc)
       nblist_op_dealloc_(vlist_obj_, vlst);
 
-    if (op & op_alloc) {
+    if (rc & rc_alloc) {
       maxnlst = 2500;
       if (u == list_double_loop)
         maxnlst = 1;
@@ -167,7 +166,7 @@ void nblist_data(int op) {
                        neigh::lbuffer, xred, yred, zred);
     }
 
-    if (op & op_copyin) {
+    if (rc & rc_copyin) {
       evdw_reduce_xyz();
       nblist_build(vlist_obj_, vlst);
     }
@@ -176,10 +175,10 @@ void nblist_data(int op) {
   // dlist
   u = use_disp_list();
   if (u) {
-    if (op & op_dealloc)
+    if (rc & rc_dealloc)
       nblist_op_dealloc_(dlist_obj_, dlst);
 
-    if (op & op_alloc) {
+    if (rc & rc_alloc) {
       maxnlst = 2500;
       if (u == list_double_loop)
         maxnlst = 1;
@@ -187,17 +186,17 @@ void nblist_data(int op) {
                        neigh::lbuffer, x, y, z);
     }
 
-    if (op & op_copyin) {
+    if (rc & rc_copyin) {
     }
   }
 
   // clist
   u = use_charge_list();
   if (u) {
-    if (op & op_dealloc)
+    if (rc & rc_dealloc)
       nblist_op_dealloc_(clist_obj_, clst);
 
-    if (op & op_alloc) {
+    if (rc & rc_alloc) {
       maxnlst = 2500;
       if (u == list_double_loop)
         maxnlst = 1;
@@ -205,17 +204,17 @@ void nblist_data(int op) {
                        neigh::lbuffer, x, y, z);
     }
 
-    if (op & op_copyin) {
+    if (rc & rc_copyin) {
     }
   }
 
   // mlist
   u = use_mpole_list();
   if (u) {
-    if (op & op_dealloc)
+    if (rc & rc_dealloc)
       nblist_op_dealloc_(mlist_obj_, mlst);
 
-    if (op & op_alloc) {
+    if (rc & rc_alloc) {
       maxnlst = 2500;
       if (u == list_double_loop)
         maxnlst = 1;
@@ -223,7 +222,7 @@ void nblist_data(int op) {
                        neigh::lbuffer, x, y, z);
     }
 
-    if (op & op_copyin) {
+    if (rc & rc_copyin) {
       nblist_build(mlist_obj_, mlst);
     }
   }
@@ -231,10 +230,10 @@ void nblist_data(int op) {
   // ulist
   u = use_usolv_list();
   if (u) {
-    if (op & op_dealloc)
+    if (rc & rc_dealloc)
       nblist_op_dealloc_(ulist_obj_, ulst);
 
-    if (op & op_alloc) {
+    if (rc & rc_alloc) {
       maxnlst = 500;
       if (u == list_double_loop)
         maxnlst = 1;
@@ -242,7 +241,7 @@ void nblist_data(int op) {
                        neigh::pbuffer, x, y, z);
     }
 
-    if (op & op_copyin) {
+    if (rc & rc_copyin) {
     }
   }
 }

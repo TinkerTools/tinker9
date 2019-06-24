@@ -1,4 +1,3 @@
-#include "gpu/decl_dataop.h"
 #include "gpu/decl_elec.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
@@ -26,11 +25,11 @@ real* vir_trq;
 
 int use_elec() { return use_empole() || use_epolar(); }
 
-void elec_data(int op) {
+void elec_data(rc_t rc) {
   if (!use_elec())
     return;
 
-  if (op & op_dealloc) {
+  if (rc & rc_dealloc) {
     check_cudart(cudaFree(zaxis));
     check_cudart(cudaFree(pole));
     check_cudart(cudaFree(rpole));
@@ -46,7 +45,7 @@ void elec_data(int op) {
     check_cudart(cudaFree(vir_trq));
   }
 
-  if (op & op_alloc) {
+  if (rc & rc_alloc) {
     const size_t rs = sizeof(real);
     size_t size;
 
@@ -81,7 +80,7 @@ void elec_data(int op) {
     check_cudart(cudaMalloc(&vir_trq, rs * 9));
   }
 
-  if (op & op_copyin) {
+  if (rc & rc_copyin) {
     // Regarding chkpole routine:
     // 1. The chiralities of the atoms will not change in the simulations;
     // 2. chkpole routine has been called in mechanic routine so that the values
@@ -137,7 +136,7 @@ void elec_data(int op) {
     copyin_data(reinterpret_cast<real*>(pole), polebuf.data(), mpl_total * n);
   }
 
-  pme_data(op);
+  pme_data(rc);
 }
 
 void chkpole();
@@ -149,15 +148,15 @@ void elec_init(int vers) {
   // zero torque
 
   if (vers & use_grad) {
-    zero_data(trqx, n);
-    zero_data(trqy, n);
-    zero_data(trqz, n);
+    zero_array(trqx, n);
+    zero_array(trqy, n);
+    zero_array(trqz, n);
   }
 
   // zero torque-related virial
 
   if (vers & use_virial) {
-    zero_data(vir_trq, 9);
+    zero_array(vir_trq, 9);
   }
 
   chkpole();

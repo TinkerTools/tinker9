@@ -1,4 +1,3 @@
-#include "gpu/decl_dataop.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_nblist.h"
 #include "gpu/decl_switch.h"
@@ -43,7 +42,7 @@ void get_evdw_type(int& typ, std::string& typ_str) {
     typ = vdw_gauss;
 }
 
-void evdw_data(int op) {
+void evdw_data(rc_t rc) {
   if (!use_evdw())
     return;
 
@@ -54,7 +53,7 @@ void evdw_data(int op) {
   static std::vector<new_type> jvdwbuf;
   static int jcount;
 
-  if (op & op_dealloc) {
+  if (rc & rc_dealloc) {
     // local static members
     jmap.clear();
     jvec.clear();
@@ -79,7 +78,7 @@ void evdw_data(int op) {
     check_cudart(cudaFree(vir_ev));
   }
 
-  if (op & op_alloc) {
+  if (rc & rc_alloc) {
     const size_t rs = sizeof(real);
     size_t size;
 
@@ -121,7 +120,7 @@ void evdw_data(int op) {
     check_cudart(cudaMalloc(&vir_ev, rs * 9));
   }
 
-  if (op & op_copyin) {
+  if (rc & rc_copyin) {
     get_evdw_type(vdwtyp, vdwtyp_str);
 
     switch_cut_off(switch_vdw, vdw_switch_cut, vdw_switch_off);

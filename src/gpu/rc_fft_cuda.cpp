@@ -1,7 +1,6 @@
 
 #ifndef TINKER_HOSTONLY
 
-#  include "gpu/decl_dataop.h"
 #  include "gpu/decl_pme.h"
 #  include "rc.h"
 
@@ -15,8 +14,8 @@ TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void fft_data(int op) {
-  if (op & op_dealloc) {
+void fft_data(rc_t rc) {
+  if (rc & rc_dealloc) {
     int idx = 0;
     while (idx < fft_plans().size()) {
       cufftDestroy(fft_plans()[idx]);
@@ -25,14 +24,14 @@ void fft_data(int op) {
     fft_plans().clear();
   }
 
-  if (op & op_alloc) {
+  if (rc & rc_alloc) {
     assert(fft_plans().size() == 0);
 
     const size_t size = detail_::pme_objs().size();
     fft_plans().resize(size, fft_plan_t());
   }
 
-  if (op & op_copyin) {
+  if (rc & rc_copyin) {
 #  if defined(TINKER_GPU_SINGLE)
     const cufftType typ = CUFFT_C2C;
 #  elif defined(TINKER_GPU_DOUBLE)

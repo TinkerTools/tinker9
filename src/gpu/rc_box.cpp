@@ -1,23 +1,22 @@
 #include "gpu/decl_box.h"
-#include "gpu/decl_dataop.h"
 #include "rc.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 box_t* box;
 
-void box_data(int op) {
-  if (op & op_dealloc) {
+void box_data(rc_t rc) {
+  if (rc & rc_dealloc) {
     check_cudart(cudaFree(box));
   }
 
-  if (op & op_alloc) {
+  if (rc & rc_alloc) {
     size_t size = sizeof(box_t);
     check_cudart(cudaMalloc(&box, size));
   }
 
-  if (op & op_copyin) {
-    int shape = box_null;
+  if (rc & rc_copyin) {
+    box_shape_t shape = box_null;
     if (boxes::orthogonal)
       shape = box_ortho;
     else if (boxes::monoclinic)
@@ -30,10 +29,11 @@ void box_data(int op) {
     copyin_data(&box->lvec[0][0], &boxes::lvec[0][0], 9);
     copyin_data(&box->recip[0][0], &boxes::recip[0][0], 9);
     copyin_data(&box->volbox, &boxes::volbox, 1);
-    copyin_data(&box->shape, &shape, 1);
+    check_cudart(cudaMemcpy(&box->shape, &shape, sizeof(box_shape_t),
+                            cudaMemcpyHostToDevice));
   }
 
-  if (op & op_copyout) {
+  if (rc & rc_copyout) {
     if (bound::use_bounds) {
       box_t b;
       check_cudart(cudaMemcpy(&b, box, sizeof(box_t), cudaMemcpyDeviceToHost));

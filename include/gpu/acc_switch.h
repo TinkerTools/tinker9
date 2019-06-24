@@ -2,7 +2,7 @@
 #define TINKER_GPU_ACC_SWITCH_H_
 
 #include "acc_mathfunc.h"
-#include "decl_real.h"
+#include "decl_basic.h"
 #include "decl_switch.h"
 
 TINKER_NAMESPACE_BEGIN

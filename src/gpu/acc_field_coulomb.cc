@@ -5,8 +5,8 @@ TINKER_NAMESPACE_BEGIN
 namespace gpu {
 // see also subroutine dfield0b in induce.f
 void dfield_coulomb(real* gpu_field, real* gpu_fieldp) {
-  zero_data(gpu_field, 3 * n);
-  zero_data(gpu_fieldp, 3 * n);
+  zero_array(gpu_field, 3 * n);
+  zero_array(gpu_fieldp, 3 * n);
 
   real(*field)[3] = reinterpret_cast<real(*)[3]>(gpu_field);
   real(*fieldp)[3] = reinterpret_cast<real(*)[3]>(gpu_fieldp);
@@ -260,8 +260,8 @@ void dfield_coulomb(real* gpu_field, real* gpu_fieldp) {
 // see also subroutine ufield0b in induce.f
 void ufield_coulomb(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
                     real* gpu_fieldp) {
-  zero_data(gpu_field, 3 * n);
-  zero_data(gpu_fieldp, 3 * n);
+  zero_array(gpu_field, 3 * n);
+  zero_array(gpu_fieldp, 3 * n);
 
   const real(*uind)[3] = reinterpret_cast<const real(*)[3]>(gpu_uind);
   const real(*uinp)[3] = reinterpret_cast<const real(*)[3]>(gpu_uinp);

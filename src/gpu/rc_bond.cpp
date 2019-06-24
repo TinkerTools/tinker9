@@ -1,4 +1,3 @@
-#include "gpu/decl_dataop.h"
 #include "gpu/decl_potent.h"
 #include "gpu/e_bond.h"
 #include "rc.h"
@@ -17,11 +16,11 @@ real *bl, *bk;
 real* eb;
 real* vir_eb;
 
-void ebond_data(int op) {
+void ebond_data(rc_t rc) {
   if (!use_potent(bond_term) && !use_potent(strbnd_term))
     return;
 
-  if (op & op_dealloc) {
+  if (rc & rc_dealloc) {
     check_cudart(cudaFree(ibnd));
     check_cudart(cudaFree(bl));
     check_cudart(cudaFree(bk));
@@ -29,7 +28,7 @@ void ebond_data(int op) {
     check_cudart(cudaFree(vir_eb));
   }
 
-  if (op & op_alloc) {
+  if (rc & rc_alloc) {
     const size_t rs = sizeof(real);
 
     nbond = count_bonded_term(bond_term);
@@ -40,7 +39,7 @@ void ebond_data(int op) {
     check_cudart(cudaMalloc(&vir_eb, rs * 9));
   }
 
-  if (op & op_copyin) {
+  if (rc & rc_copyin) {
     fstr_view btyp = bndpot::bndtyp;
     if (btyp == "HARMONIC")
       bndtyp = bond_harmonic;

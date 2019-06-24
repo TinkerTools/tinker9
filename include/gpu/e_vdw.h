@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_E_VDW_H_
 #define TINKER_GPU_E_VDW_H_
 
-#include "decl_real.h"
+#include "decl_basic.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -34,7 +34,7 @@ extern int* nev;
 extern real* vir_ev;
 int use_evdw();
 void get_evdw_type(int& typ, std::string& typ_str);
-void evdw_data(int op);
+void evdw_data(rc_t rc);
 
 void evdw_reduce_xyz();
 

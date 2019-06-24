@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_DECL_COUPLE_H_
 #define TINKER_GPU_DECL_COUPLE_H_
 
-#include "decl_real.h"
+#include "decl_basic.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -21,7 +21,7 @@ struct couple_st {
 extern couple_st couple_obj_;
 extern couple_st* couple;
 
-void couple_data(int op);
+void couple_data(rc_t rc);
 }
 TINKER_NAMESPACE_END
 

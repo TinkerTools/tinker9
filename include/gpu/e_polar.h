@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_E_POLAR_H_
 #define TINKER_GPU_E_POLAR_H_
 
-#include "decl_real.h"
+#include "decl_basic.h"
 #include "gpu/decl_elec.h"
 #include "gpu/decl_polgrp.h"
 
@@ -35,7 +35,7 @@ extern real (*work10__)[3];
 
 int use_epolar();
 void get_epolar_type(int& typ, std::string& typ_str);
-void epolar_data(int op);
+void epolar_data(rc_t rc);
 
 // see also subroutine epolar0e in epolar.f
 void epolar0_dotprod(const real (*gpu_uind)[3], const real (*gpu_udirp)[3]);

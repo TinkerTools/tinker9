@@ -1,4 +1,3 @@
-#include "gpu/decl_dataop.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_potent.h"
 #include "gpu/e_angle.h"
@@ -21,11 +20,11 @@ int* angtyp;
 real* ea;
 real* vir_ea;
 
-void eangle_data(int op) {
+void eangle_data(rc_t rc) {
   if (!use_potent(angle_term) && !use_potent(strbnd_term))
     return;
 
-  if (op & op_dealloc) {
+  if (rc & rc_dealloc) {
     check_cudart(cudaFree(iang));
     check_cudart(cudaFree(ak));
     check_cudart(cudaFree(anat));
@@ -36,7 +35,7 @@ void eangle_data(int op) {
     check_cudart(cudaFree(vir_ea));
   }
 
-  if (op & op_alloc) {
+  if (rc & rc_alloc) {
     const size_t rs = sizeof(real);
 
     nangle = count_bonded_term(angle_term);
@@ -50,7 +49,7 @@ void eangle_data(int op) {
     check_cudart(cudaMalloc(&vir_ea, rs * 9));
   }
 
-  if (op & op_copyin) {
+  if (rc & rc_copyin) {
     std::vector<int> iangvec(nangle * 4);
     for (size_t i = 0; i < iangvec.size(); ++i) {
       iangvec[i] = angbnd::iang[i] - 1;

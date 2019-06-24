@@ -16,7 +16,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void potential_data(int op);
+void potential_data(rc_t rc);
 
 void gradient(int vers);
 }

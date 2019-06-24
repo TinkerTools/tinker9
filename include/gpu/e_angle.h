@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_E_ANGLE_H_
 #define TINKER_GPU_E_ANGLE_H_
 
-#include "decl_real.h"
+#include "decl_basic.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -25,7 +25,7 @@ extern int* angtyp;
 extern real* ea;
 extern real* vir_ea;
 
-void eangle_data(int op);
+void eangle_data(rc_t rc);
 
 void eangle_acc_impl__(int vers);
 void eangle(int vers);

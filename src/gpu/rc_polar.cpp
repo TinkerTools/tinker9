@@ -1,4 +1,3 @@
-#include "gpu/decl_dataop.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
 #include "gpu/decl_switch.h"
@@ -46,11 +45,11 @@ void get_epolar_type(int& typ, std::string& typ_str) {
   }
 }
 
-void epolar_data(int op) {
+void epolar_data(rc_t rc) {
   if (!use_epolar())
     return;
 
-  if (op & op_dealloc) {
+  if (rc & rc_dealloc) {
     check_cudart(cudaFree(polarity));
     check_cudart(cudaFree(thole));
     check_cudart(cudaFree(pdamp));
@@ -75,7 +74,7 @@ void epolar_data(int op) {
     check_cudart(cudaFree(work10__));
   }
 
-  if (op & op_alloc) {
+  if (rc & rc_alloc) {
     const size_t rs = sizeof(real);
     size_t size;
 
@@ -108,7 +107,7 @@ void epolar_data(int op) {
     check_cudart(cudaMalloc(&work10__, 3 * n * rs));
   }
 
-  if (op & op_copyin) {
+  if (rc & rc_copyin) {
     get_epolar_type(epolar_electyp, epolar_electyp_str);
 
     if (epolar_electyp == elec_coulomb)

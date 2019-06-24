@@ -1,8 +1,13 @@
-#include "gpu/decl_dataop.h"
+#include "gpu/decl_basic.h"
 #include "rc.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
+void zero_array(real* dst, int nelem) {
+  size_t size = sizeof(real) * nelem;
+  check_cudart(cudaMemset(dst, 0, size));
+}
+
 void copyin_data(int* dst, const int* src, int nelem) {
   check_cudart(
       cudaMemcpy(dst, src, sizeof(int) * nelem, cudaMemcpyHostToDevice));
@@ -84,38 +89,5 @@ void copy_data(real* dst, const real* src, int nelem) {
   check_cudart(cudaMemcpy(dst, src, size, cudaMemcpyDeviceToDevice));
 }
 
-void zero_data(real* dst, int nelem) {
-  size_t size = sizeof(real) * nelem;
-  check_cudart(cudaMemset(dst, 0, size));
-}
-}
-TINKER_NAMESPACE_END
-
-#include "gpu/decl_box.h"
-#include "gpu/decl_couple.h"
-#include "gpu/decl_mdstate.h"
-#include "gpu/decl_nblist.h"
-#include "gpu/e_potential.h"
-
-TINKER_NAMESPACE_BEGIN
-namespace gpu {
-void gpu_data(int op) {
-  n_data(op);
-
-  xyz_data(op);
-  vel_data(op);
-  accel_data(op);
-  mass_data(op);
-  egv_data(op);
-
-  potential_data(op);
-
-  // Neighbor lists must be initialized after potential initialization.
-  // xred, yred, and zred need to be initialized in vdw routines and will be
-  // used in nblist setups.
-  box_data(op);
-  couple_data(op);
-  nblist_data(op);
-}
 }
 TINKER_NAMESPACE_END

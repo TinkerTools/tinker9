@@ -1,4 +1,3 @@
-#include "gpu/decl_dataop.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_polgrp.h"
 #include "rc.h"
@@ -13,8 +12,8 @@ static_assert(polargroup_st::maxp14 >= polgrp::maxp14, "");
 polargroup_st polargroup_obj_;
 polargroup_st* polargroup;
 
-void polargroup_data(int op) {
-  if (op & op_dealloc) {
+void polargroup_data(rc_t rc) {
+  if (rc & rc_dealloc) {
     check_cudart(cudaFree(polargroup_obj_.np11));
     check_cudart(cudaFree(polargroup_obj_.np12));
     check_cudart(cudaFree(polargroup_obj_.np13));
@@ -27,7 +26,7 @@ void polargroup_data(int op) {
     check_cudart(cudaFree(polargroup));
   }
 
-  if (op & op_alloc) {
+  if (rc & rc_alloc) {
     const size_t rs = sizeof(int);
     size_t size;
 
@@ -49,7 +48,7 @@ void polargroup_data(int op) {
     check_cudart(cudaMalloc(&polargroup, size));
   }
 
-  if (op & op_copyin) {
+  if (rc & rc_copyin) {
     size_t size;
 
     std::vector<int> nbuf, ibuf;

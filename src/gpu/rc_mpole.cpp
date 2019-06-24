@@ -1,4 +1,3 @@
-#include "gpu/decl_dataop.h"
 #include "gpu/decl_pme.h"
 #include "gpu/decl_switch.h"
 #include "gpu/e_mpole.h"
@@ -26,17 +25,17 @@ void get_empole_type(int& typ, std::string& typ_str) {
   }
 }
 
-void empole_data(int op) {
+void empole_data(rc_t rc) {
   if (!use_empole())
     return;
 
-  if (op & op_dealloc) {
+  if (rc & rc_dealloc) {
     check_cudart(cudaFree(em));
     check_cudart(cudaFree(nem));
     check_cudart(cudaFree(vir_em));
   }
 
-  if (op & op_alloc) {
+  if (rc & rc_alloc) {
     const size_t rs = sizeof(real);
 
     check_cudart(cudaMalloc(&em, rs));
@@ -44,7 +43,7 @@ void empole_data(int op) {
     check_cudart(cudaMalloc(&vir_em, 9 * rs));
   }
 
-  if (op & op_copyin) {
+  if (rc & rc_copyin) {
     get_empole_type(empole_electyp, empole_electyp_str);
 
     if (empole_electyp == elec_coulomb)

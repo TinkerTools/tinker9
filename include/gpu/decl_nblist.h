@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_DECL_NBLIST_H_
 #define TINKER_GPU_DECL_NBLIST_H_
 
-#include "decl_real.h"
+#include "decl_basic.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -41,7 +41,7 @@ extern nblist_st* mlst;
 extern nblist_st ulist_obj_;
 extern nblist_st* ulst;
 
-void nblist_data(int op);
+void nblist_data(rc_t rc);
 }
 TINKER_NAMESPACE_END
 

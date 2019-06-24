@@ -1,4 +1,3 @@
-#include "gpu/decl_dataop.h"
 #include "gpu/decl_potent.h"
 #include "gpu/e_strbnd.h"
 #include "rc.h"
@@ -13,11 +12,11 @@ real stbnunit;
 real* eba;
 real* vir_eba;
 
-void estrbnd_data(int op) {
+void estrbnd_data(rc_t rc) {
   if (!use_potent(strbnd_term))
     return;
 
-  if (op & op_dealloc) {
+  if (rc & rc_dealloc) {
     check_cudart(cudaFree(isb));
     check_cudart(cudaFree(sbk));
 
@@ -25,7 +24,7 @@ void estrbnd_data(int op) {
     check_cudart(cudaFree(vir_eba));
   }
 
-  if (op & op_alloc) {
+  if (rc & rc_alloc) {
     const size_t rs = sizeof(real);
 
     nstrbnd = count_bonded_term(strbnd_term);
@@ -37,7 +36,7 @@ void estrbnd_data(int op) {
     check_cudart(cudaMalloc(&vir_eba, rs * 9));
   }
 
-  if (op & op_copyin) {
+  if (rc & rc_copyin) {
     int nangle = count_bonded_term(angle_term);
     std::vector<int> ibuf(3 * nangle);
     for (int i = 0; i < 3 * nangle; ++i) {

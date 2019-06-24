@@ -330,8 +330,8 @@ void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
 }
 
 void dfield_ewald(real* gpu_field, real* gpu_fieldp) {
-  zero_data(gpu_field, 3 * n);
-  zero_data(gpu_fieldp, 3 * n);
+  zero_array(gpu_field, 3 * n);
+  zero_array(gpu_fieldp, 3 * n);
 
   dfield_ewald_recip_self(gpu_field);
   #pragma acc parallel loop independent deviceptr(gpu_field, gpu_fieldp)
@@ -583,8 +583,8 @@ void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
 
 void ufield_ewald(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
                   real* gpu_fieldp) {
-  zero_data(gpu_field, 3 * n);
-  zero_data(gpu_fieldp, 3 * n);
+  zero_array(gpu_field, 3 * n);
+  zero_array(gpu_fieldp, 3 * n);
 
   ufield_ewald_recip_self(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);
   ufield_ewald_real(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);

@@ -26,8 +26,8 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   }
 
   if_constexpr(do_g) {
-    zero_data(&ufld[0][0], 3 * n);
-    zero_data(&dufld[0][0], 6 * n);
+    zero_array(&ufld[0][0], 3 * n);
+    zero_array(&dufld[0][0], 6 * n);
   }
 
   if_constexpr(do_e && !do_a) epolar0_dotprod(gpu_uind, udirp);

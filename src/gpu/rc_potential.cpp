@@ -1,4 +1,3 @@
-#include "gpu/decl_dataop.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_nblist.h"
 #include "gpu/decl_pme.h"
@@ -8,20 +7,20 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void potential_data(int op) {
-  ebond_data(op);
-  eangle_data(op);
-  estrbnd_data(op);
+void potential_data(rc_t rc) {
+  ebond_data(rc);
+  eangle_data(rc);
+  estrbnd_data(rc);
 
-  evdw_data(op);
+  evdw_data(rc);
 
   // Must call elec_data() before any electrostatics routine.
 
-  elec_data(op);
-  empole_data(op);
+  elec_data(rc);
+  empole_data(rc);
   if (use_epolar())
-    polargroup_data(op);
-  epolar_data(op);
+    polargroup_data(rc);
+  epolar_data(rc);
 }
 
 void gradient(int vers) {
