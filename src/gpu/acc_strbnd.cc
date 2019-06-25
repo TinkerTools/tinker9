@@ -92,9 +92,9 @@ void estrbnd_tmpl() {
       term1 = stbnunit * force1;
       term2 = stbnunit * force2;
       real termr = term1 * dr1 + term2 * dr2;
-      real e = termr * dt;
 
       if_constexpr(do_e) {
+        real e = termr * dt;
         #pragma acc atomic update
         *eba += e;
       }
