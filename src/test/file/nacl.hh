@@ -19,7 +19,6 @@ R"**(     2  NaCl
 const char* nacl_key =
 R"**(
 parameters                 amoeba09
-verbose
 
 a-axis                       18.643
 integrator                    RESPA
@@ -41,7 +40,6 @@ R"**(     2  NaCl
 const char* nacl_key4 =
 R"**(
 parameters                 amoeba09
-verbose
 
 integrator                    RESPA
 thermostat                    BUSSI

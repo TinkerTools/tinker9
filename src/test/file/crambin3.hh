@@ -1925,7 +1925,6 @@ R"**(  1920  PLANT PROTEIN                           16-JUN-10   3NIR
 const char* crambin3_key =
 R"**(
 parameters          amoebapro13
-verbose
 
 a-axis           22.329
 b-axis           18.471

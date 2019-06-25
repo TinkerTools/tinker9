@@ -171,5 +171,4 @@ R"**(   166  CLN025 XTAL STRUCTURE (JACS, 130, 15327 '08)
 const char* cln025_key =
 R"**(
 parameters          amoebabio09
-verbose
 )**";
