@@ -78,15 +78,15 @@ void vel_data(rc_t rc) {
   }
 
   if (rc & rc_copyin) {
-    copyin_data2(0, 3, vx, moldyn::v, n);
-    copyin_data2(1, 3, vy, moldyn::v, n);
-    copyin_data2(2, 3, vz, moldyn::v, n);
+    copyin_array2(0, 3, vx, moldyn::v, n);
+    copyin_array2(1, 3, vy, moldyn::v, n);
+    copyin_array2(2, 3, vz, moldyn::v, n);
   }
 
   if (rc & rc_copyout) {
-    copyout_data2(0, 3, moldyn::v, vx, n);
-    copyout_data2(1, 3, moldyn::v, vy, n);
-    copyout_data2(2, 3, moldyn::v, vz, n);
+    copyout_array2(0, 3, moldyn::v, vx, n);
+    copyout_array2(1, 3, moldyn::v, vy, n);
+    copyout_array2(2, 3, moldyn::v, vz, n);
   }
 }
 
@@ -112,15 +112,15 @@ void accel_data(rc_t rc) {
   }
 
   if (rc & rc_copyin) {
-    copyin_data2(0, 3, ax, moldyn::a, n);
-    copyin_data2(1, 3, ay, moldyn::a, n);
-    copyin_data2(2, 3, az, moldyn::a, n);
+    copyin_array2(0, 3, ax, moldyn::a, n);
+    copyin_array2(1, 3, ay, moldyn::a, n);
+    copyin_array2(2, 3, az, moldyn::a, n);
   }
 
   if (rc & rc_copyout) {
-    copyout_data2(0, 3, moldyn::a, ax, n);
-    copyout_data2(1, 3, moldyn::a, ay, n);
-    copyout_data2(2, 3, moldyn::a, az, n);
+    copyout_array2(0, 3, moldyn::a, ax, n);
+    copyout_array2(1, 3, moldyn::a, ay, n);
+    copyout_array2(2, 3, moldyn::a, az, n);
   }
 }
 
@@ -239,9 +239,9 @@ void egv_data(rc_t rc, int _use) {
       copyin_data(esum, &energi::esum, 1);
 
     if (use_grad & _use) {
-      copyin_data2(0, 3, gx, deriv::desum, n);
-      copyin_data2(1, 3, gy, deriv::desum, n);
-      copyin_data2(2, 3, gz, deriv::desum, n);
+      copyin_array2(0, 3, gx, deriv::desum, n);
+      copyin_array2(1, 3, gy, deriv::desum, n);
+      copyin_array2(2, 3, gz, deriv::desum, n);
     }
 
     if (use_virial & _use)
@@ -253,9 +253,9 @@ void egv_data(rc_t rc, int _use) {
       copyout_data(&energi::esum, esum, 1);
 
     if (use_grad & _use) {
-      copyout_data2(0, 3, deriv::desum, gx, n);
-      copyout_data2(1, 3, deriv::desum, gy, n);
-      copyout_data2(2, 3, deriv::desum, gz, n);
+      copyout_array2(0, 3, deriv::desum, gx, n);
+      copyout_array2(1, 3, deriv::desum, gy, n);
+      copyout_array2(2, 3, deriv::desum, gz, n);
     }
 
     if (use_virial & _use)

@@ -36,19 +36,20 @@ void copyout_data(double* dst, const real* src, int nelem);
 // idx0 = 0, 1, ..., ndim-1
 // shape of dst: real dst[nelem], ie. real*(4 or 8) dst(nelem)
 // shape of src: double src[nelm][ndim], ie. real*8 src(ndim,nelem)
-void copyin_data2(int idx0, int ndim, real* dst, const double* src, int nelem);
-void copyout_data2(int idx0, int ndim, double* dst, const real* src, int nelem);
+void copyin_array2(int idx0, int ndim, real* dst, const double* src, int nelem);
+void copyout_array2(int idx0, int ndim, double* dst, const real* src,
+                    int nelem);
 
 // shape of dst: double dst[nelem][3], ie. real*8 dst(3,nelem)
 // shape of src: real src[nelem][3], ie. real*(4 or 8) src(3,nelem)
-void copyout_data3(double (*dst)[3], const real (*src)[3], int nelem);
+void copyout_array3(double (*dst)[3], const real (*src)[3], int nelem);
 // dst shall be resized inside this function
-void copyout_data3(std::vector<std::array<double, 3>>& dst,
-                   const real (*src)[3], int nelem);
+void copyout_array3(std::vector<std::array<double, 3>>& dst,
+                    const real (*src)[3], int nelem);
 
 // transfer data across two device memory address
-void copy_data(int* dst, const int* src, int nelem);
-void copy_data(real* dst, const real* src, int nelem);
+void copy_array(int* dst, const int* src, int nelem);
+void copy_array(real* dst, const real* src, int nelem);
 }
 TINKER_NAMESPACE_END
 

@@ -88,8 +88,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   }
 
   if (dirguess) {
-    copy_data(&uind[0][0], &udir[0][0], n3);
-    copy_data(&uinp[0][0], &udirp[0][0], n3);
+    copy_array(&uind[0][0], &udir[0][0], n3);
+    copy_array(&uinp[0][0], &udirp[0][0], n3);
   }
 
   // initial residual r(0)
@@ -102,15 +102,15 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   if (dirguess) {
     ufield(&udir[0][0], &udirp[0][0], &rsd[0][0], &rsdp[0][0]);
   } else {
-    copy_data(&rsd[0][0], &field[0][0], n3);
-    copy_data(&rsdp[0][0], &fieldp[0][0], n3);
+    copy_array(&rsd[0][0], &field[0][0], n3);
+    copy_array(&rsdp[0][0], &fieldp[0][0], n3);
   }
 
   // initial M r(0) and p(0)
 
   diag_precond(rsd, rsdp, zrsd, zrsdp);
-  copy_data(&conj[0][0], &zrsd[0][0], n3);
-  copy_data(&conjp[0][0], &zrsdp[0][0], n3);
+  copy_array(&conj[0][0], &zrsd[0][0], n3);
+  copy_array(&conjp[0][0], &zrsdp[0][0], n3);
 
   // initial r(0) M r(0)
 
