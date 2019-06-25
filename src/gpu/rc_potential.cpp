@@ -10,6 +10,8 @@ void potential_data(rc_t rc) {
   ebond_data(rc);
   eangle_data(rc);
   estrbnd_data(rc);
+  eurey_data(rc);
+  eopbend_data(rc);
   etors_data(rc);
 
   evdw_data(rc);

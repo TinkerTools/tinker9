@@ -16,6 +16,9 @@ int use_potent(potent_t term) {
   case strbnd_term:
     val = potent::use_strbnd;
     break;
+  case opbend_term:
+    val = potent::use_opbend;
+    break;
   case torsion_term:
     val = potent::use_tors;
     break;
@@ -37,6 +40,9 @@ int count_bonded_term(potent_t term) {
     break;
   case strbnd_term:
     val = strbnd::nstrbnd;
+    break;
+  case opbend_term:
+    val = opbend::nopbend;
     break;
   case torsion_term:
     val = tors::ntors;

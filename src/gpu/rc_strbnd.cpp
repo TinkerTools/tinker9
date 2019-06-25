@@ -27,7 +27,6 @@ void estrbnd_data(rc_t rc) {
   if (rc & rc_alloc) {
     const size_t rs = sizeof(real);
 
-    nstrbnd = count_bonded_term(strbnd_term);
     int nangle = count_bonded_term(angle_term);
     check_cudart(cudaMalloc(&isb, sizeof(int) * 3 * nangle));
     check_cudart(cudaMalloc(&sbk, rs * 2 * nangle));
@@ -37,6 +36,7 @@ void estrbnd_data(rc_t rc) {
   }
 
   if (rc & rc_copyin) {
+    nstrbnd = count_bonded_term(strbnd_term);
     int nangle = count_bonded_term(angle_term);
     std::vector<int> ibuf(3 * nangle);
     for (int i = 0; i < 3 * nangle; ++i) {

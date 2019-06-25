@@ -1,3 +1,4 @@
+#include "gpu/acc.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_tors.h"
 

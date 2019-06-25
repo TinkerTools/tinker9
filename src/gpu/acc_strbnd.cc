@@ -1,3 +1,4 @@
+#include "gpu/acc.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_angle.h"
 #include "gpu/e_bond.h"
