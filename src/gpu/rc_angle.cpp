@@ -53,9 +53,9 @@ void eangle_data(rc_t rc) {
     for (size_t i = 0; i < iangvec.size(); ++i) {
       iangvec[i] = angbnd::iang[i] - 1;
     }
-    copyin_data(&iang[0][0], iangvec.data(), nangle * 4);
-    copyin_data(ak, angbnd::ak, nangle);
-    copyin_data(anat, angbnd::anat, nangle);
+    copyin_array(&iang[0][0], iangvec.data(), nangle * 4);
+    copyin_array(ak, angbnd::ak, nangle);
+    copyin_array(anat, angbnd::anat, nangle);
 
     angunit = angpot::angunit;
     cang = angpot::cang;
@@ -76,7 +76,7 @@ void eangle_data(rc_t rc) {
         assert(false);
       }
     }
-    copyin_data(angtyp, iangvec.data(), nangle);
+    copyin_array(angtyp, iangvec.data(), nangle);
   }
 }
 

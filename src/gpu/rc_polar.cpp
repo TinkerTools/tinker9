@@ -119,10 +119,10 @@ void epolar_data(rc_t rc) {
     for (int i = 0; i < n; ++i) {
       pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
     }
-    copyin_data(polarity, polar::polarity, n);
-    copyin_data(thole, polar::thole, n);
-    copyin_data(pdamp, polar::pdamp, n);
-    copyin_data(polarity_inv, pinvbuf.data(), n);
+    copyin_array(polarity, polar::polarity, n);
+    copyin_array(thole, polar::thole, n);
+    copyin_array(pdamp, polar::pdamp, n);
+    copyin_array(polarity_inv, pinvbuf.data(), n);
   }
 }
 
@@ -147,7 +147,7 @@ void induce(real* gpu_ud, real* gpu_up) {
   if (inform::debug && use_epolar()) {
     std::vector<double> uindbuf;
     uindbuf.resize(3 * n);
-    copyout_data(uindbuf.data(), gpu_ud, 3 * n);
+    copyout_array(uindbuf.data(), gpu_ud, 3 * n);
     bool header = true;
     for (int i = 0; i < n; ++i) {
       if (polar::polarity[i] != 0) {

@@ -8,12 +8,12 @@ void zero_array(real* dst, int nelem) {
   check_cudart(cudaMemset(dst, 0, size));
 }
 
-void copyin_data(int* dst, const int* src, int nelem) {
+void copyin_array(int* dst, const int* src, int nelem) {
   check_cudart(
       cudaMemcpy(dst, src, sizeof(int) * nelem, cudaMemcpyHostToDevice));
 }
 
-void copyin_data(real* dst, const double* src, int nelem) {
+void copyin_array(real* dst, const double* src, int nelem) {
   const size_t rs = sizeof(real);
   size_t size = rs * nelem;
   if (rs == sizeof(double)) {
@@ -39,12 +39,12 @@ void copyin_array2(int idx0, int ndim, real* dst, const double* src,
   check_cudart(cudaMemcpy(dst, buf.data(), size, cudaMemcpyHostToDevice));
 }
 
-void copyout_data(int* dst, const int* src, int nelem) {
+void copyout_array(int* dst, const int* src, int nelem) {
   check_cudart(
       cudaMemcpy(dst, src, sizeof(int) * nelem, cudaMemcpyDeviceToHost));
 }
 
-void copyout_data(double* dst, const real* src, int nelem) {
+void copyout_array(double* dst, const real* src, int nelem) {
   const size_t rs = sizeof(real);
   size_t size = rs * nelem;
   if (rs == sizeof(double)) {
@@ -71,13 +71,13 @@ void copyout_array2(int idx0, int ndim, double* dst, const real* src,
 }
 
 void copyout_array3(double (*dst)[3], const real (*src)[3], int natom) {
-  copyout_data(&dst[0][0], &src[0][0], 3 * natom);
+  copyout_array(&dst[0][0], &src[0][0], 3 * natom);
 }
 
 void copyout_array3(std::vector<std::array<double, 3>>& dst,
                     const real (*src)[3], int natom) {
   dst.resize(natom);
-  copyout_data(&dst[0][0], &src[0][0], 3 * natom);
+  copyout_array(&dst[0][0], &src[0][0], 3 * natom);
 }
 
 void copy_array(int* dst, const int* src, int nelem) {

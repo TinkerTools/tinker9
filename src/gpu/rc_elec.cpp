@@ -112,7 +112,7 @@ void elec_data(rc_t rc) {
         val = pole_none;
       zaxisbuf[base + 3] = val;
     }
-    copyin_data(reinterpret_cast<int*>(zaxis), zaxisbuf.data(), 4 * n);
+    copyin_array(reinterpret_cast<int*>(zaxis), zaxisbuf.data(), 4 * n);
 
     std::vector<double> polebuf(mpl_total * n);
     for (int i = 0; i < n; ++i) {
@@ -133,7 +133,7 @@ void elec_data(rc_t rc) {
       polebuf[b1 + mpl_pme_yz] = mpole::pole[b2 + 9];
       polebuf[b1 + mpl_pme_zz] = mpole::pole[b2 + 12];
     }
-    copyin_data(reinterpret_cast<real*>(pole), polebuf.data(), mpl_total * n);
+    copyin_array(reinterpret_cast<real*>(pole), polebuf.data(), mpl_total * n);
   }
 
   pme_data(rc);

@@ -55,9 +55,9 @@ void ebond_data(rc_t rc) {
     for (size_t i = 0; i < ibndvec.size(); ++i) {
       ibndvec[i] = bndstr::ibnd[i] - 1;
     }
-    copyin_data(&ibnd[0][0], ibndvec.data(), nbond * 2);
-    copyin_data(bl, bndstr::bl, nbond);
-    copyin_data(bk, bndstr::bk, nbond);
+    copyin_array(&ibnd[0][0], ibndvec.data(), nbond * 2);
+    copyin_array(bl, bndstr::bl, nbond);
+    copyin_array(bk, bndstr::bk, nbond);
   }
 }
 

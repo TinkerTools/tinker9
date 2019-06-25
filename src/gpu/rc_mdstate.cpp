@@ -44,15 +44,15 @@ void xyz_data(rc_t rc) {
   }
 
   if (rc & rc_copyin) {
-    copyin_data(x, atoms::x, n);
-    copyin_data(y, atoms::y, n);
-    copyin_data(z, atoms::z, n);
+    copyin_array(x, atoms::x, n);
+    copyin_array(y, atoms::y, n);
+    copyin_array(z, atoms::z, n);
   }
 
   if (rc & rc_copyout) {
-    copyout_data(atoms::x, x, n);
-    copyout_data(atoms::y, y, n);
-    copyout_data(atoms::z, z, n);
+    copyout_array(atoms::x, x, n);
+    copyout_array(atoms::y, y, n);
+    copyout_array(atoms::z, z, n);
   }
 }
 
@@ -141,10 +141,10 @@ void mass_data(rc_t rc) {
   }
 
   if (rc & rc_copyin)
-    copyin_data(mass, atomid::mass, n);
+    copyin_array(mass, atomid::mass, n);
 
   // if (rc & rc_copyout)
-  //   copyout_data(atomid::mass, mass, n);
+  //   copyout_array(atomid::mass, mass, n);
 }
 
 //======================================================================
@@ -157,18 +157,18 @@ real* vir;
 
 double get_energy(const real* e_gpu) {
   double e_out;
-  copyout_data(&e_out, e_gpu, 1);
+  copyout_array(&e_out, e_gpu, 1);
   return e_out;
 }
 
 int get_count(const int* ecount_gpu) {
   int c;
-  copyout_data(&c, ecount_gpu, 1);
+  copyout_array(&c, ecount_gpu, 1);
   return c;
 }
 
 void get_virial(double* v_out, const real* v_gpu) {
-  copyout_data(v_out, v_gpu, 9);
+  copyout_array(v_out, v_gpu, 9);
 }
 
 void zero_egv() {
@@ -236,7 +236,7 @@ void egv_data(rc_t rc, int _use) {
 
   if (rc & rc_copyin) {
     if (use_energy & _use)
-      copyin_data(esum, &energi::esum, 1);
+      copyin_array(esum, &energi::esum, 1);
 
     if (use_grad & _use) {
       copyin_array2(0, 3, gx, deriv::desum, n);
@@ -245,12 +245,12 @@ void egv_data(rc_t rc, int _use) {
     }
 
     if (use_virial & _use)
-      copyin_data(vir, &virial::vir[0][0], 9);
+      copyin_array(vir, &virial::vir[0][0], 9);
   }
 
   if (rc & rc_copyout) {
     if (use_energy & _use)
-      copyout_data(&energi::esum, esum, 1);
+      copyout_array(&energi::esum, esum, 1);
 
     if (use_grad & _use) {
       copyout_array2(0, 3, deriv::desum, gx, n);
@@ -259,7 +259,7 @@ void egv_data(rc_t rc, int _use) {
     }
 
     if (use_virial & _use)
-      copyout_data(&virial::vir[0][0], vir, 9);
+      copyout_array(&virial::vir[0][0], vir, 9);
   }
 }
 }

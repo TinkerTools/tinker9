@@ -26,9 +26,9 @@ void box_data(rc_t rc) {
     else if (boxes::octahedron)
       shape = box_t::oct;
 
-    copyin_data(&box->lvec[0][0], &boxes::lvec[0][0], 9);
-    copyin_data(&box->recip[0][0], &boxes::recip[0][0], 9);
-    copyin_data(&box->volbox, &boxes::volbox, 1);
+    copyin_array(&box->lvec[0][0], &boxes::lvec[0][0], 9);
+    copyin_array(&box->recip[0][0], &boxes::recip[0][0], 9);
+    copyin_array(&box->volbox, &boxes::volbox, 1);
     check_cudart(cudaMemcpy(&box->shape, &shape, sizeof(box_t::shape_t),
                             cudaMemcpyHostToDevice));
   }

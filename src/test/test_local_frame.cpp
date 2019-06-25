@@ -309,8 +309,8 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
         up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
       }
     }
-    gpu::copyin_data(&gpu::uind[0][0], &ud[0][0], 3 * gpu::n);
-    gpu::copyin_data(&gpu::uinp[0][0], &up[0][0], 3 * gpu::n);
+    gpu::copyin_array(&gpu::uind[0][0], &ud[0][0], 3 * gpu::n);
+    gpu::copyin_array(&gpu::uinp[0][0], &up[0][0], 3 * gpu::n);
     gpu::ufield_coulomb(&gpu::uind[0][0], &gpu::uinp[0][0], &gpu::udir[0][0],
                         &gpu::udirp[0][0]);
     gpu::copyout_array3(ud, gpu::udir, gpu::n);
@@ -513,8 +513,8 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
         up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
       }
     }
-    gpu::copyin_data(&gpu::uind[0][0], &ud[0][0], 3 * gpu::n);
-    gpu::copyin_data(&gpu::uinp[0][0], &up[0][0], 3 * gpu::n);
+    gpu::copyin_array(&gpu::uind[0][0], &ud[0][0], 3 * gpu::n);
+    gpu::copyin_array(&gpu::uinp[0][0], &up[0][0], 3 * gpu::n);
     gpu::ufield_ewald(&gpu::uind[0][0], &gpu::uinp[0][0], &gpu::udir[0][0],
                       &gpu::udirp[0][0]);
     gpu::copyout_array3(ud, gpu::udir, gpu::n);

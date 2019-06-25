@@ -26,10 +26,10 @@ void zero_array(real* dst, int nelem);
 
 // copyin: copy data from host to device
 // copyout: data from device to host
-void copyin_data(int* dst, const int* src, int nelem);
-void copyin_data(real* dst, const double* src, int nelem);
-void copyout_data(int* dst, const int* src, int nelem);
-void copyout_data(double* dst, const real* src, int nelem);
+void copyin_array(int* dst, const int* src, int nelem);
+void copyin_array(real* dst, const double* src, int nelem);
+void copyout_array(int* dst, const int* src, int nelem);
+void copyout_array(double* dst, const real* src, int nelem);
 
 // copy all src[c][idx0] to dst[c] (c = 0, 1, ..., nelem-1), ie.
 // copy all src(idx0+1,f) to dst(f) (f = 1, 2, ..., nelem)

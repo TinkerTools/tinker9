@@ -120,11 +120,11 @@ static void pme_op_copyin_(int unit) {
   }
   std::vector<double> bsmodbuf(maxfft);
   TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft1, &st.bsorder);
-  copyin_data(st.bsmod1, bsmodbuf.data(), st.nfft1);
+  copyin_array(st.bsmod1, bsmodbuf.data(), st.nfft1);
   TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft2, &st.bsorder);
-  copyin_data(st.bsmod2, bsmodbuf.data(), st.nfft2);
+  copyin_array(st.bsmod2, bsmodbuf.data(), st.nfft2);
   TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft3, &st.bsorder);
-  copyin_data(st.bsmod3, bsmodbuf.data(), st.nfft3);
+  copyin_array(st.bsmod3, bsmodbuf.data(), st.nfft3);
 
   size_t size = sizeof(pme_st);
   check_cudart(cudaMemcpy(dptr, &st, size, cudaMemcpyHostToDevice));

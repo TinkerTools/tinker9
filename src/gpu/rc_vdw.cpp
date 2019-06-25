@@ -148,11 +148,11 @@ void evdw_data(rc_t rc) {
       iredbuf[i] = jt;
       kredbuf[i] = vdw::kred[i];
     }
-    copyin_data(ired, iredbuf.data(), n);
-    copyin_data(kred, kredbuf.data(), n);
+    copyin_array(ired, iredbuf.data(), n);
+    copyin_array(kred, kredbuf.data(), n);
 
-    copyin_data(jvdw, jvdwbuf.data(), n);
-    copyin_data(njvdw, &jcount, 1);
+    copyin_array(jvdw, jvdwbuf.data(), n);
+    copyin_array(njvdw, &jcount, 1);
 
     // see also kvdw.f
     std::vector<double> radvec, epsvec;
@@ -166,8 +166,8 @@ void evdw_data(rc_t rc) {
         epsvec.push_back(vdw::epsilon[offset]);
       }
     }
-    copyin_data(radmin, radvec.data(), jcount * jcount);
-    copyin_data(epsilon, epsvec.data(), jcount * jcount);
+    copyin_array(radmin, radvec.data(), jcount * jcount);
+    copyin_array(epsilon, epsvec.data(), jcount * jcount);
 
     std::vector<double> vlamvec(n);
     for (int i = 0; i < n; ++i) {
@@ -177,7 +177,7 @@ void evdw_data(rc_t rc) {
         vlamvec[i] = 1;
       }
     }
-    copyin_data(vlam, vlamvec.data(), n);
+    copyin_array(vlam, vlamvec.data(), n);
   }
 }
 

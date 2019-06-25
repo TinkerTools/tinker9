@@ -42,8 +42,8 @@ void estrbnd_data(rc_t rc) {
     for (int i = 0; i < 3 * nangle; ++i) {
       ibuf[i] = strbnd::isb[i] - 1;
     }
-    copyin_data(&isb[0][0], ibuf.data(), 3 * nangle);
-    copyin_data(&sbk[0][0], strbnd::sbk, 2 * nangle);
+    copyin_array(&isb[0][0], ibuf.data(), 3 * nangle);
+    copyin_array(&sbk[0][0], strbnd::sbk, 2 * nangle);
     stbnunit = angpot::stbnunit;
   }
 }

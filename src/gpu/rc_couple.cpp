@@ -63,8 +63,8 @@ void couple_data(rc_t rc) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_data(couple_obj_.n12, nbuf.data(), n);
-    copyin_data(&couple_obj_.i12[0][0], ibuf.data(), size);
+    copyin_array(couple_obj_.n12, nbuf.data(), n);
+    copyin_array(&couple_obj_.i12[0][0], ibuf.data(), size);
 
     size = couple_t::maxn13 * n;
     ibuf.resize(size);
@@ -78,8 +78,8 @@ void couple_data(rc_t rc) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_data(couple_obj_.n13, nbuf.data(), n);
-    copyin_data(&couple_obj_.i13[0][0], ibuf.data(), size);
+    copyin_array(couple_obj_.n13, nbuf.data(), n);
+    copyin_array(&couple_obj_.i13[0][0], ibuf.data(), size);
 
     size = couple_t::maxn14 * n;
     ibuf.resize(size);
@@ -93,8 +93,8 @@ void couple_data(rc_t rc) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_data(couple_obj_.n14, nbuf.data(), n);
-    copyin_data(&couple_obj_.i14[0][0], ibuf.data(), size);
+    copyin_array(couple_obj_.n14, nbuf.data(), n);
+    copyin_array(&couple_obj_.i14[0][0], ibuf.data(), size);
 
     size = couple_t::maxn15 * n;
     ibuf.resize(size);
@@ -108,8 +108,8 @@ void couple_data(rc_t rc) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_data(couple_obj_.n15, nbuf.data(), n);
-    copyin_data(&couple_obj_.i15[0][0], ibuf.data(), size);
+    copyin_array(couple_obj_.n15, nbuf.data(), n);
+    copyin_array(&couple_obj_.i15[0][0], ibuf.data(), size);
 
     size = sizeof(couple_t);
     check_cudart(

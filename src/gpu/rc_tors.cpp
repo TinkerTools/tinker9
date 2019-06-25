@@ -55,13 +55,13 @@ void etors_data(rc_t rc) {
     for (int i = 0; i < 4 * ntors; ++i) {
       ibuf[i] = tors::itors[i] - 1;
     }
-    copyin_data(&itors[0][0], ibuf.data(), 4 * ntors);
-    copyin_data(&tors1[0][0], tors::tors1, 4 * ntors);
-    copyin_data(&tors2[0][0], tors::tors2, 4 * ntors);
-    copyin_data(&tors3[0][0], tors::tors3, 4 * ntors);
-    copyin_data(&tors4[0][0], tors::tors4, 4 * ntors);
-    copyin_data(&tors5[0][0], tors::tors5, 4 * ntors);
-    copyin_data(&tors6[0][0], tors::tors6, 4 * ntors);
+    copyin_array(&itors[0][0], ibuf.data(), 4 * ntors);
+    copyin_array(&tors1[0][0], tors::tors1, 4 * ntors);
+    copyin_array(&tors2[0][0], tors::tors2, 4 * ntors);
+    copyin_array(&tors3[0][0], tors::tors3, 4 * ntors);
+    copyin_array(&tors4[0][0], tors::tors4, 4 * ntors);
+    copyin_array(&tors5[0][0], tors::tors5, 4 * ntors);
+    copyin_array(&tors6[0][0], tors::tors6, 4 * ntors);
     torsunit = torpot::torsunit;
   }
 }

@@ -66,8 +66,8 @@ void polargroup_data(rc_t rc) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_data(polargroup_obj_.np11, nbuf.data(), n);
-    copyin_data(&polargroup_obj_.ip11[0][0], ibuf.data(), size);
+    copyin_array(polargroup_obj_.np11, nbuf.data(), n);
+    copyin_array(&polargroup_obj_.ip11[0][0], ibuf.data(), size);
 
     size = polargroup_t::maxp12 * n;
     ibuf.resize(size);
@@ -81,8 +81,8 @@ void polargroup_data(rc_t rc) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_data(polargroup_obj_.np12, nbuf.data(), n);
-    copyin_data(&polargroup_obj_.ip12[0][0], ibuf.data(), size);
+    copyin_array(polargroup_obj_.np12, nbuf.data(), n);
+    copyin_array(&polargroup_obj_.ip12[0][0], ibuf.data(), size);
 
     size = polargroup_t::maxp13 * n;
     ibuf.resize(size);
@@ -96,8 +96,8 @@ void polargroup_data(rc_t rc) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_data(polargroup_obj_.np13, nbuf.data(), n);
-    copyin_data(&polargroup_obj_.ip13[0][0], ibuf.data(), size);
+    copyin_array(polargroup_obj_.np13, nbuf.data(), n);
+    copyin_array(&polargroup_obj_.ip13[0][0], ibuf.data(), size);
 
     size = polargroup_t::maxp14 * n;
     ibuf.resize(size);
@@ -111,8 +111,8 @@ void polargroup_data(rc_t rc) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_data(polargroup_obj_.np14, nbuf.data(), n);
-    copyin_data(&polargroup_obj_.ip14[0][0], ibuf.data(), size);
+    copyin_array(polargroup_obj_.np14, nbuf.data(), n);
+    copyin_array(&polargroup_obj_.ip14[0][0], ibuf.data(), size);
 
     size = sizeof(polargroup_t);
     check_cudart(
