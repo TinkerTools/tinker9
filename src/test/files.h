@@ -40,6 +40,10 @@ extern const char* crambin3_key;
 // trpcage test set
 extern const char* trpcage_xyz;
 extern const char* trpcage_key;
+
+// ten water molecules test set
+extern const char* h2o10_xyz;
+extern const char* h2o10_key;
 }
 TINKER_NAMESPACE_END
 

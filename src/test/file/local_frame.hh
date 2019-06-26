@@ -26,7 +26,7 @@ R"**(    22  NaCl/None, H2O/Bisector/Z-then-X, nitrile/Z-Only/Z-then-X, NH3/Z-Bi
 
 const char* local_frame_key =
 R"**(
-parameters amoeba09
+parameters  amoeba09
 )**";
 
 const char* local_frame_xyz2 =

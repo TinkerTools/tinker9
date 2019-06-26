@@ -16,6 +16,9 @@ int use_potent(potent_t term) {
   case strbnd_term:
     val = potent::use_strbnd;
     break;
+  case urey_term:
+    val = potent::use_urey;
+    break;
   case opbend_term:
     val = potent::use_opbend;
     break;
@@ -24,6 +27,9 @@ int use_potent(potent_t term) {
     break;
   case pitors_term:
     val = potent::use_pitors;
+    break;
+  case tortor_term:
+    val = potent::use_tortor;
     break;
   default:
     assert(false);
@@ -44,6 +50,9 @@ int count_bonded_term(potent_t term) {
   case strbnd_term:
     val = strbnd::nstrbnd;
     break;
+  case urey_term:
+    val = urey::nurey;
+    break;
   case opbend_term:
     val = opbend::nopbend;
     break;
@@ -52,6 +61,9 @@ int count_bonded_term(potent_t term) {
     break;
   case pitors_term:
     val = pitors::npitors;
+    break;
+  case tortor_term:
+    val = tortor::ntortor;
     break;
   default:
     assert(false);

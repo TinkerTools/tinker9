@@ -35,9 +35,8 @@ void epitors_data(rc_t rc) {
     npitors = count_bonded_term(pitors_term);
     int ntors = count_bonded_term(torsion_term);
     std::vector<int> ibuf(6 * ntors);
-    for (int i = 0; i < 6 * ntors; ++i) {
+    for (int i = 0; i < 6 * ntors; ++i)
       ibuf[i] = pitors::ipit[i] - 1;
-    }
     copyin_array(&ipit[0][0], ibuf.data(), 6 * ntors);
     copyin_array(kpit, pitors::kpit, ntors);
     ptorunit = torpot::ptorunit;

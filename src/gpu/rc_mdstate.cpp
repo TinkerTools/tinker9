@@ -6,20 +6,29 @@ namespace gpu {
 int use_data;
 
 //======================================================================
-/// number of atoms
+// number of atoms and atom types
+
 int n;
+int* type;
+int* atomic;
 
 void n_data(rc_t rc) {
-  if (rc & rc_dealloc)
+  if (rc & rc_dealloc) {
     n = 0;
+    check_cudart(cudaFree(type));
+    check_cudart(cudaFree(atomic));
+  }
 
-  // if (rc & rc_alloc) {}
-
-  if (rc & rc_copyin)
+  if (rc & rc_alloc) {
     n = atoms::n;
+    check_cudart(cudaMalloc(&type, sizeof(int) * n));
+    check_cudart(cudaMalloc(&atomic, sizeof(int) * n));
+  }
 
-  // if (rc & rc_copyout)
-  //   atoms::n = n;
+  if (rc & rc_copyin) {
+    copyin_array(type, atoms::type, n);
+    copyin_array(atomic, atomid::atomic, n);
+  }
 }
 
 //======================================================================

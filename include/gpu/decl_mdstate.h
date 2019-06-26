@@ -55,8 +55,11 @@ void sanity_check() {
 extern int use_data;
 
 //======================================================================
-/// number of atoms
+// number of atoms and atom types
+
 extern int n;
+extern int* type; // starts from 1, i.e. directly copied from Tinker
+extern int* atomic;
 void n_data(rc_t rc);
 
 //======================================================================

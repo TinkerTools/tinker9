@@ -34,6 +34,9 @@ FILE_DEF_(watersmall_xyz);
 
 // trpcage test set
 #include "file/trpcage.hh"
+
+// ten water molecules test set
+#include "file/h2o10.hh"
 }
 TINKER_NAMESPACE_END
 

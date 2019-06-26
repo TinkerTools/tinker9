@@ -46,9 +46,8 @@ void eopbend_data(rc_t rc) {
     nopbend = count_bonded_term(opbend_term);
     int nangle = count_bonded_term(angle_term);
     std::vector<int> ibuf(nangle);
-    for (int i = 0; i < nangle; ++i) {
+    for (int i = 0; i < nangle; ++i)
       ibuf[i] = opbend::iopb[i] - 1;
-    }
     copyin_array(iopb, ibuf.data(), nangle);
     copyin_array(opbk, opbend::opbk, nangle);
     opbunit = angpot::opbunit;
