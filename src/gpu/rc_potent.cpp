@@ -22,6 +22,9 @@ int use_potent(potent_t term) {
   case torsion_term:
     val = potent::use_tors;
     break;
+  case pitors_term:
+    val = potent::use_pitors;
+    break;
   default:
     assert(false);
     break;
@@ -46,6 +49,9 @@ int count_bonded_term(potent_t term) {
     break;
   case torsion_term:
     val = tors::ntors;
+    break;
+  case pitors_term:
+    val = pitors::npitors;
     break;
   default:
     assert(false);

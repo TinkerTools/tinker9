@@ -28,11 +28,9 @@ void eopbend_data(rc_t rc) {
   }
 
   if (rc & rc_alloc) {
-    const size_t rs = sizeof(real);
-
     int nangle = count_bonded_term(angle_term);
     check_cudart(cudaMalloc(&iopb, sizeof(int) * nangle));
-    check_cudart(cudaMalloc(&opbk, rs * nangle));
+    check_cudart(cudaMalloc(&opbk, sizeof(real) * nangle));
 
     alloc_ev(&eopb, &vir_eopb);
   }

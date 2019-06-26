@@ -13,6 +13,7 @@ void potential_data(rc_t rc) {
   eurey_data(rc);
   eopbend_data(rc);
   etors_data(rc);
+  epitors_data(rc);
 
   evdw_data(rc);
 

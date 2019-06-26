@@ -166,7 +166,7 @@ static const double ref_g_opbend_trpcage[][3] = {
     {0.0000, 0.0000, 0.0000},     {0.0000, 0.0000, 0.0000},
     {0.0000, 0.0000, 0.0000},     {0.0000, 0.0000, 0.0000},
     {0.0000, 0.0000, 0.0000},     {-0.1075, -0.4905, 0.8721}};
-TEST_CASE("Opbend-Trpcage", "[ff][eopbend][trpcage]") {
+TEST_CASE("Opbend-Trpcage", "[ff][eopbend][allinger][trpcage]") {
   const char* k = "test_trpcage.key";
   const char* x1 = "test_trpcage.xyz";
   const char* p = "amoebapro13.prm";

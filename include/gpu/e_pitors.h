@@ -5,8 +5,18 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-extern real* epitors;
-extern real* vir_epitors;
+extern int npitors;
+extern int (*ipit)[6];
+extern real* kpit;
+extern real ptorunit;
+
+extern real* ept;
+extern real* vir_ept;
+
+void epitors_data(rc_t rc);
+
+void epitors_acc_impl__(int vers);
+void epitors(int vers);
 }
 TINKER_NAMESPACE_END
 
