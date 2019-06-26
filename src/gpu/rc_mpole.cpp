@@ -29,19 +29,11 @@ void empole_data(rc_t rc) {
   if (!use_empole())
     return;
 
-  if (rc & rc_dealloc) {
-    check_cudart(cudaFree(em));
-    check_cudart(cudaFree(nem));
-    check_cudart(cudaFree(vir_em));
-  }
+  if (rc & rc_dealloc)
+    free_nev(nem, em, vir_em);
 
-  if (rc & rc_alloc) {
-    const size_t rs = sizeof(real);
-
-    check_cudart(cudaMalloc(&em, rs));
-    check_cudart(cudaMalloc(&nem, sizeof(int)));
-    check_cudart(cudaMalloc(&vir_em, 9 * rs));
-  }
+  if (rc & rc_alloc)
+    alloc_nev(&nem, &em, &vir_em);
 
   if (rc & rc_copyin) {
     get_empole_type(empole_electyp, empole_electyp_str);

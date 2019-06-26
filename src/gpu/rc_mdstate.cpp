@@ -197,8 +197,8 @@ void egv_data(rc_t rc, int _use) {
     return;
 
   if (rc & rc_dealloc) {
-    if (use_energy & _use) {
-      check_cudart(cudaFree(esum));
+    if ((use_energy | use_virial) & _use) {
+      free_ev(esum, vir);
     }
 
     if (use_grad & _use) {
@@ -206,31 +206,18 @@ void egv_data(rc_t rc, int _use) {
       check_cudart(cudaFree(gy));
       check_cudart(cudaFree(gz));
     }
-
-    if (use_virial & _use) {
-      check_cudart(cudaFree(vir));
-    }
   }
 
   if (rc & rc_alloc) {
-    const size_t rs = sizeof(real);
-    size_t size = 0;
-
-    if (use_energy & _use) {
-      size = rs;
-      check_cudart(cudaMalloc(&esum, size));
+    if ((use_energy | use_virial) & _use) {
+      alloc_ev(&esum, &vir);
     }
 
     if (use_grad & _use) {
-      size = rs * n;
+      const size_t size = sizeof(real) * n;
       check_cudart(cudaMalloc(&gx, size));
       check_cudart(cudaMalloc(&gy, size));
       check_cudart(cudaMalloc(&gz, size));
-    }
-
-    if (use_virial & _use) {
-      size = rs * 9;
-      check_cudart(cudaMalloc(&vir, size));
     }
   }
 

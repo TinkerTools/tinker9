@@ -30,8 +30,7 @@ void etors_data(rc_t rc) {
     check_cudart(cudaFree(tors5));
     check_cudart(cudaFree(tors6));
 
-    check_cudart(cudaFree(et));
-    check_cudart(cudaFree(vir_et));
+    free_ev(et, vir_et);
   }
 
   if (rc & rc_alloc) {
@@ -46,8 +45,7 @@ void etors_data(rc_t rc) {
     check_cudart(cudaMalloc(&tors5, rs * 4 * ntors));
     check_cudart(cudaMalloc(&tors6, rs * 4 * ntors));
 
-    check_cudart(cudaMalloc(&et, rs));
-    check_cudart(cudaMalloc(&vir_et, rs * 9));
+    alloc_ev(&et, &vir_et);
   }
 
   if (rc & rc_copyin) {

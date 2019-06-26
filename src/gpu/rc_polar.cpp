@@ -55,9 +55,7 @@ void epolar_data(rc_t rc) {
     check_cudart(cudaFree(pdamp));
     check_cudart(cudaFree(polarity_inv));
 
-    check_cudart(cudaFree(ep));
-    check_cudart(cudaFree(nep));
-    check_cudart(cudaFree(vir_ep));
+    free_nev(nep, ep, vir_ep);
 
     check_cudart(cudaFree(ufld));
     check_cudart(cudaFree(dufld));
@@ -83,9 +81,7 @@ void epolar_data(rc_t rc) {
     check_cudart(cudaMalloc(&pdamp, rs * n));
     check_cudart(cudaMalloc(&polarity_inv, rs * n));
 
-    check_cudart(cudaMalloc(&ep, rs));
-    check_cudart(cudaMalloc(&nep, sizeof(int)));
-    check_cudart(cudaMalloc(&vir_ep, 9 * rs));
+    alloc_nev(&nep, &ep, &vir_ep);
 
     if (use_data & use_grad) {
       check_cudart(cudaMalloc(&ufld, rs * 3 * n));

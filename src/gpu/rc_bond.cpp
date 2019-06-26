@@ -24,8 +24,8 @@ void ebond_data(rc_t rc) {
     check_cudart(cudaFree(ibnd));
     check_cudart(cudaFree(bl));
     check_cudart(cudaFree(bk));
-    check_cudart(cudaFree(eb));
-    check_cudart(cudaFree(vir_eb));
+
+    free_ev(eb, vir_eb);
   }
 
   if (rc & rc_alloc) {
@@ -35,8 +35,8 @@ void ebond_data(rc_t rc) {
     check_cudart(cudaMalloc(&ibnd, sizeof(int) * nbond * 2));
     check_cudart(cudaMalloc(&bl, rs * nbond));
     check_cudart(cudaMalloc(&bk, rs * nbond));
-    check_cudart(cudaMalloc(&eb, rs));
-    check_cudart(cudaMalloc(&vir_eb, rs * 9));
+
+    alloc_ev(&eb, &vir_eb);
   }
 
   if (rc & rc_copyin) {

@@ -90,5 +90,29 @@ void copy_array(real* dst, const real* src, int nelem) {
   check_cudart(cudaMemcpy(dst, src, size, cudaMemcpyDeviceToDevice));
 }
 
+void alloc_ev(real** gpu_e, real** gpu_v) {
+  // a[0] - a[1]: energy
+  // a[2] - a[10]: virial
+  size_t size = sizeof(real) * (2 + 9);
+  check_cudart(cudaMalloc(gpu_e, size));
+  *gpu_v = *gpu_e + 2;
+}
+
+void free_ev(real* gpu_e, real* /* gpu_v */) { check_cudart(cudaFree(gpu_e)); }
+
+void alloc_nev(int** gpu_ne, real** gpu_e, real** gpu_v) {
+  // b[0] - b[1] = (a[-1] if double) or (a[-2] - a[-1] if single): count
+  // a[0] - a[1]: energy
+  // a[2] - a[10]: virial
+  size_t size = sizeof(int) * 2 + sizeof(real) * (2 + 9);
+  check_cudart(cudaMalloc(gpu_ne, size));
+  void* ptr = *gpu_ne + 2;
+  *gpu_e = reinterpret_cast<real*>(ptr);
+  *gpu_v = *gpu_e + 2;
+}
+
+void free_nev(int* gpu_ne, real* /* gpu_e */, real* /* gpu_v */) {
+  check_cudart(cudaFree(gpu_ne));
+}
 }
 TINKER_NAMESPACE_END

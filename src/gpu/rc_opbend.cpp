@@ -24,8 +24,7 @@ void eopbend_data(rc_t rc) {
     check_cudart(cudaFree(iopb));
     check_cudart(cudaFree(opbk));
 
-    check_cudart(cudaFree(eopb));
-    check_cudart(cudaFree(vir_eopb));
+    free_ev(eopb, vir_eopb);
   }
 
   if (rc & rc_alloc) {
@@ -35,8 +34,7 @@ void eopbend_data(rc_t rc) {
     check_cudart(cudaMalloc(&iopb, sizeof(int) * nangle));
     check_cudart(cudaMalloc(&opbk, rs * nangle));
 
-    check_cudart(cudaMalloc(&eopb, rs));
-    check_cudart(cudaMalloc(&vir_eopb, rs * 9));
+    alloc_ev(&eopb, &vir_eopb);
   }
 
   if (rc & rc_copyin) {

@@ -31,8 +31,7 @@ void eangle_data(rc_t rc) {
 
     check_cudart(cudaFree(angtyp));
 
-    check_cudart(cudaFree(ea));
-    check_cudart(cudaFree(vir_ea));
+    free_ev(ea, vir_ea);
   }
 
   if (rc & rc_alloc) {
@@ -45,8 +44,7 @@ void eangle_data(rc_t rc) {
 
     check_cudart(cudaMalloc(&angtyp, sizeof(int) * nangle));
 
-    check_cudart(cudaMalloc(&ea, rs));
-    check_cudart(cudaMalloc(&vir_ea, rs * 9));
+    alloc_ev(&ea, &vir_ea);
   }
 
   if (rc & rc_copyin) {

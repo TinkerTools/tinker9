@@ -50,6 +50,15 @@ void copyout_array3(std::vector<std::array<double, 3>>& dst,
 // transfer data across two device memory address
 void copy_array(int* dst, const int* src, int nelem);
 void copy_array(real* dst, const real* src, int nelem);
+
+//======================================================================
+// energy, gradient, and virial de/allocation
+
+void alloc_ev(real** gpu_e, real** gpu_v);
+void free_ev(real* gpu_e, real* gpu_v);
+
+void alloc_nev(int** gpu_ne, real** gpu_e, real** gpu_v);
+void free_nev(int* gpu_ne, real* gpu_e, real* gpu_v);
 }
 TINKER_NAMESPACE_END
 

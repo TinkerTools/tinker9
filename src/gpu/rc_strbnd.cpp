@@ -20,8 +20,7 @@ void estrbnd_data(rc_t rc) {
     check_cudart(cudaFree(isb));
     check_cudart(cudaFree(sbk));
 
-    check_cudart(cudaFree(eba));
-    check_cudart(cudaFree(vir_eba));
+    free_ev(eba, vir_eba);
   }
 
   if (rc & rc_alloc) {
@@ -31,8 +30,7 @@ void estrbnd_data(rc_t rc) {
     check_cudart(cudaMalloc(&isb, sizeof(int) * 3 * nangle));
     check_cudart(cudaMalloc(&sbk, rs * 2 * nangle));
 
-    check_cudart(cudaMalloc(&eba, rs));
-    check_cudart(cudaMalloc(&vir_eba, rs * 9));
+    alloc_ev(&eba, &vir_eba);
   }
 
   if (rc & rc_copyin) {

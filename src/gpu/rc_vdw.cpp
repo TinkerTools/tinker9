@@ -89,9 +89,7 @@ void evdw_data(rc_t rc) {
 
     check_cudart(cudaFree(vlam));
 
-    check_cudart(cudaFree(ev));
-    check_cudart(cudaFree(nev));
-    check_cudart(cudaFree(vir_ev));
+    free_nev(nev, ev, vir_ev);
   }
 
   if (rc & rc_alloc) {
@@ -131,9 +129,7 @@ void evdw_data(rc_t rc) {
     size = n * rs;
     check_cudart(cudaMalloc(&vlam, size));
 
-    check_cudart(cudaMalloc(&ev, rs));
-    check_cudart(cudaMalloc(&nev, sizeof(int)));
-    check_cudart(cudaMalloc(&vir_ev, rs * 9));
+    alloc_nev(&nev, &ev, &vir_ev);
   }
 
   if (rc & rc_copyin) {
