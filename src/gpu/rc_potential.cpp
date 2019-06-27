@@ -7,6 +7,9 @@
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 void potential_data(rc_t rc) {
+
+  // bonded terms
+
   ebond_data(rc);
   eangle_data(rc);
   estrbnd_data(rc);
@@ -14,6 +17,9 @@ void potential_data(rc_t rc) {
   eopbend_data(rc);
   etors_data(rc);
   epitors_data(rc);
+  etortor_data(rc);
+
+  // non-bonded terms
 
   evdw_data(rc);
 
