@@ -82,7 +82,7 @@ void elec_data(rc_t rc);
  * initializes the electrostatics calculation
  *
  * Input:
- * @param ver  selects the code path
+ * @param vers  selects the code path
  *
  * Output:
  * zero torque (if used);
@@ -90,7 +90,7 @@ void elec_data(rc_t rc);
  * call chkpole() and rotpole();
  * if use pme, initialize some pme data structures.
  */
-void elec_init(int ver);
+void elec_init(int vers);
 
 /**
  * takes the torque values on a single site defined by a local coordinate frame
@@ -101,13 +101,13 @@ void elec_init(int ver);
  * x, y, and z coordinates;
  * x, y, and z torques;
  * local frame definitions;
- * @param ver  selects the code path
+ * @param vers  selects the code path
  *
  * Output:
  * According to the value of @param ver, it may add add energy gradients, add
  * torque-related virial, or do nothing.
  */
-void torque(int ver);
+void torque(int vers);
 }
 TINKER_NAMESPACE_END
 

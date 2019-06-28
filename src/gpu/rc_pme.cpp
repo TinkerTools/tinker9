@@ -1,5 +1,6 @@
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
+#include "gpu/decl_potent.h"
 #include "gpu/decl_switch.h"
 #include "gpu/rc.h"
 #include "util/math.h"
@@ -191,7 +192,7 @@ void pme_data(rc_t rc) {
     check_cudart(cudaFree(cphi));
     check_cudart(cudaFree(fphi));
 
-    if (use_epolar()) {
+    if (use_potent(polar_term)) {
       check_cudart(cudaFree(fuind));
       check_cudart(cudaFree(fuinp));
       check_cudart(cudaFree(fdip_phi1));
@@ -214,7 +215,7 @@ void pme_data(rc_t rc) {
     check_cudart(cudaMalloc(&cphi, 10 * n * rs));
     check_cudart(cudaMalloc(&fphi, 20 * n * rs));
 
-    if (use_epolar()) {
+    if (use_potent(polar_term)) {
       check_cudart(cudaMalloc(&fuind, 3 * n * rs));
       check_cudart(cudaMalloc(&fuinp, 3 * n * rs));
       check_cudart(cudaMalloc(&fdip_phi1, 10 * n * rs));
@@ -233,7 +234,7 @@ void pme_data(rc_t rc) {
 
     // electrostatics
     epme_unit = -1;
-    if (use_empole()) {
+    if (use_potent(mpole_term)) {
       unique_grids = false;
       pme_op_alloc_(epme_unit, ewald::aeewald, pme::nefft1, pme::nefft2,
                     pme::nefft3, pme::bseorder, unique_grids);
@@ -242,7 +243,7 @@ void pme_data(rc_t rc) {
     // polarization
     ppme_unit = -1;
     pvpme_unit = -1;
-    if (use_epolar()) {
+    if (use_potent(polar_term)) {
       pme_op_alloc_(ppme_unit, ewald::apewald, pme::nefft1, pme::nefft2,
                     pme::nefft3, pme::bsporder, unique_grids);
       if (use_data & use_virial) {

@@ -33,7 +33,6 @@ extern real (*work08__)[3];
 extern real (*work09__)[3];
 extern real (*work10__)[3];
 
-int use_epolar();
 void get_epolar_type(int& typ, std::string& typ_str);
 void epolar_data(rc_t rc);
 

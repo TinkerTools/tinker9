@@ -1,4 +1,5 @@
 #include "gpu/decl_mdstate.h"
+#include "gpu/decl_potent.h"
 #include "gpu/decl_switch.h"
 #include "gpu/e_vdw.h"
 #include "gpu/rc.h"
@@ -40,7 +41,6 @@ real* vlam;
 real* ev;
 int* nev;
 real* vir_ev;
-int use_evdw() { return potent::use_vdw; }
 
 void get_evdw_type(evdw_t& typ) {
   fstr_view str = vdwpot::vdwtyp;
@@ -59,7 +59,7 @@ void get_evdw_type(evdw_t& typ) {
 }
 
 void evdw_data(rc_t rc) {
-  if (!use_evdw())
+  if (!use_potent(vdw_term))
     return;
 
   typedef int new_type;

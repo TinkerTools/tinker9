@@ -12,7 +12,6 @@ extern real* em;
 extern int* nem;
 extern real* vir_em;
 
-int use_empole();
 void get_empole_type(int& typ, std::string& typ_str);
 void empole_data(rc_t rc);
 

@@ -163,7 +163,6 @@ void dynamic_x(int argc, char** argv) {
   if (bath::isobaric = _true_)
     gpu::use_data |= gpu::use_virial;
   tinker_gpu_data_create();
-  gpu::gradient(gpu::v1);
   tinker_gpu_data_destroy();
 
   // perform any final tasks before program exit

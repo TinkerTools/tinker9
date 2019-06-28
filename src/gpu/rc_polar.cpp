@@ -1,5 +1,6 @@
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
+#include "gpu/decl_potent.h"
 #include "gpu/decl_switch.h"
 #include "gpu/e_polar.h"
 #include "gpu/rc.h"
@@ -33,8 +34,6 @@ real (*work08__)[3];
 real (*work09__)[3];
 real (*work10__)[3];
 
-int use_epolar() { return potent::use_polar; }
-
 void get_epolar_type(int& typ, std::string& typ_str) {
   if (use_ewald()) {
     typ = elec_ewald;
@@ -46,7 +45,7 @@ void get_epolar_type(int& typ, std::string& typ_str) {
 }
 
 void epolar_data(rc_t rc) {
-  if (!use_epolar())
+  if (!use_potent(polar_term))
     return;
 
   if (rc & rc_dealloc) {
@@ -140,7 +139,7 @@ void ufield(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
 void induce(real* gpu_ud, real* gpu_up) {
   induce_mutual_pcg1(gpu_ud, gpu_up);
 
-  if (inform::debug && use_epolar()) {
+  if (inform::debug && use_potent(polar_term)) {
     std::vector<double> uindbuf;
     uindbuf.resize(3 * n);
     copyout_array(uindbuf.data(), gpu_ud, 3 * n);

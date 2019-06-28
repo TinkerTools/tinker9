@@ -1,5 +1,6 @@
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_nblist.h"
+#include "gpu/decl_potent.h"
 #include "gpu/e_vdw.h"
 #include "gpu/rc.h"
 
@@ -18,7 +19,7 @@ nblist_t* ulst;
 
 int use_vdw_list() {
   int ret = 0;
-  if (use_evdw())
+  if (use_potent(vdw_term))
     ++ret;
   else
     return ret;

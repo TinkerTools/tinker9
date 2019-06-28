@@ -7,6 +7,9 @@ namespace gpu {
 int use_potent(potent_t term) {
   int val = 0;
   switch (term) {
+
+    // bonded term
+
   case bond_term:
     val = potent::use_bond;
     break;
@@ -30,6 +33,18 @@ int use_potent(potent_t term) {
     break;
   case tortor_term:
     val = potent::use_tortor;
+    break;
+
+    // non-bonded term
+
+  case vdw_term:
+    val = potent::use_vdw;
+    break;
+  case mpole_term:
+    val = potent::use_mpole;
+    break;
+  case polar_term:
+    val = potent::use_polar;
     break;
   default:
     assert(false);

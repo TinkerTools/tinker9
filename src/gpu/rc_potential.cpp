@@ -27,32 +27,45 @@ void potential_data(rc_t rc) {
 
   elec_data(rc);
   empole_data(rc);
-  if (use_epolar())
+  if (use_potent(polar_term))
     polargroup_data(rc);
   epolar_data(rc);
 }
 
-void gradient(int vers) {
-  const char* title = " Energy Component Breakdown :{:>20s}{:>20s}\n\n";
-  const char* fmt = " {:28s}{:>20.4f}{:>17d}        {}\n";
+void energy_potential(int vers) {
 
-  if (use_potent(bond_term)) {
-    ebond(vers);
-  }
+  zero_egv();
 
-  if (use_evdw()) {
-    evdw(vers);
-  }
-
-  print(stdout, title, "Kcal/mole", "Interactions");
+  // bonded terms
 
   if (use_potent(bond_term))
-    print(stdout, fmt, "Bond Stretching", get_energy(eb),
-          count_bonded_term(bond_term), bndtyp_str);
+    ebond(vers);
+  if (use_potent(angle_term))
+    eangle(vers);
+  if (use_potent(strbnd_term))
+    estrbnd(vers);
+  if (use_potent(urey_term))
+    eurey(vers);
+  if (use_potent(opbend_term))
+    eopbend(vers);
+  if (use_potent(torsion_term))
+    etors(vers);
+  if (use_potent(pitors_term))
+    epitors(vers);
+  if (use_potent(tortor_term))
+    etortor(vers);
 
-  if (use_evdw())
-    print(stdout, fmt, "Van der Waals", get_energy(ev), get_count(nev),
-          vdwtyp_str(vdwtyp));
+  // non-bonded terms
+
+  if (use_potent(vdw_term))
+    evdw(vers);
+
+  gpu::elec_init(vers);
+  if (use_potent(mpole_term))
+    empole(vers);
+  if (use_potent(polar_term))
+    epolar(vers);
+  gpu::torque(vers);
 }
 }
 TINKER_NAMESPACE_END

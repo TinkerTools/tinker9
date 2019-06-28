@@ -1,4 +1,5 @@
 #include "gpu/decl_pme.h"
+#include "gpu/decl_potent.h"
 #include "gpu/decl_switch.h"
 #include "gpu/e_mpole.h"
 #include "gpu/rc.h"
@@ -13,8 +14,6 @@ real* em;
 int* nem;
 real* vir_em;
 
-int use_empole() { return potent::use_mpole; }
-
 void get_empole_type(int& typ, std::string& typ_str) {
   if (use_ewald()) {
     typ = elec_ewald;
@@ -26,7 +25,7 @@ void get_empole_type(int& typ, std::string& typ_str) {
 }
 
 void empole_data(rc_t rc) {
-  if (!use_empole())
+  if (!use_potent(mpole_term))
     return;
 
   if (rc & rc_dealloc)

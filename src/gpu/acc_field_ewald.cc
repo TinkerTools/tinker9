@@ -1,6 +1,7 @@
 #include "gpu/acc.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
+#include "gpu/decl_potent.h"
 #include "gpu/e_mpole.h"
 #include "gpu/e_polar.h"
 #include <ext/tinker/tinker_mod.h>
@@ -16,7 +17,7 @@ void dfield_ewald_recip_self(real* gpu_field) {
   cmp_to_fmp(pu, cmp, fmp);
   grid_mpole(pu, fmp);
   fftfront(pu);
-  if (vir_m && !use_empole())
+  if (vir_m && !use_potent(mpole_term))
     pme_conv1(pu, vir_m);
   else
     pme_conv0(pu);

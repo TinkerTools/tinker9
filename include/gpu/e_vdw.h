@@ -32,7 +32,7 @@ extern real* vlam;
 extern real* ev;
 extern int* nev;
 extern real* vir_ev;
-int use_evdw();
+
 void get_evdw_type(evdw_t& typ);
 void evdw_data(rc_t rc);
 

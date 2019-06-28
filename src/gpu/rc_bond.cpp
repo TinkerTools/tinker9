@@ -61,11 +61,6 @@ void ebond_data(rc_t rc) {
   }
 }
 
-void ebond(int vers) {
-  if (bndtyp == bond_harmonic)
-    ebond_harmonic(vers);
-  else if (bndtyp == bond_morse)
-    ebond_morse(vers);
-}
+void ebond(int vers) { ebond_acc_impl__(vers); }
 }
 TINKER_NAMESPACE_END

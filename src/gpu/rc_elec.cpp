@@ -1,6 +1,7 @@
 #include "gpu/decl_elec.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
+#include "gpu/decl_potent.h"
 #include "gpu/e_mpole.h"
 #include "gpu/e_polar.h"
 #include "gpu/rc.h"
@@ -23,7 +24,7 @@ real (*udirp)[3];
 real *trqx, *trqy, *trqz;
 real* vir_trq;
 
-int use_elec() { return use_empole() || use_epolar(); }
+int use_elec() { return use_potent(mpole_term) || use_potent(polar_term); }
 
 void elec_data(rc_t rc) {
   if (!use_elec())
@@ -55,7 +56,7 @@ void elec_data(rc_t rc) {
     check_cudart(cudaMalloc(&pole, n * size));
     check_cudart(cudaMalloc(&rpole, n * size));
 
-    if (use_epolar()) {
+    if (use_potent(polar_term)) {
       check_cudart(cudaMalloc(&uind, 3 * n * rs));
       check_cudart(cudaMalloc(&uinp, 3 * n * rs));
       check_cudart(cudaMalloc(&udir, 3 * n * rs));

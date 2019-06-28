@@ -104,6 +104,12 @@ static void bcuint1(const real (&__restrict__ y)[4],
 #undef BCUCOF__
 #undef BCUCOF_ANSY__
 
+/**
+ * Comments
+ * 
+ * The TORTORS grids are expected to be evenly distributed.
+ */
+
 template <int USE>
 void etortor_tmpl() {
   constexpr int do_e = USE & use_energy;
