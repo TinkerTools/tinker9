@@ -10,6 +10,11 @@ namespace gpu {
 extern int epolar_electyp;
 extern std::string epolar_electyp_str;
 
+extern real u1scale, u2scale, u3scale, u4scale;
+extern real d1scale, d2scale, d3scale, d4scale;
+extern real p2scale, p3scale, p4scale, p5scale;
+extern real p2iscale, p3iscale, p4iscale, p5iscale;
+
 extern real* polarity;
 extern real* thole;
 extern real* pdamp;

@@ -3,7 +3,6 @@
 #include "gpu/decl_pme.h"
 #include "gpu/e_mpole.h"
 #include "gpu/e_polar.h"
-#include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -16,16 +15,11 @@ void empole_real_self_tmpl() {
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
-  const real f = chgpot::electric / chgpot::dielec;
+  const real f = electric / dielec;
 
   const real off = ewald_switch_off;
   const real off2 = off * off;
   const int maxnlst = mlist_obj_.maxnlst;
-
-  const real m2scale = mplpot::m2scale;
-  const real m3scale = mplpot::m3scale;
-  const real m4scale = mplpot::m4scale;
-  const real m5scale = mplpot::m5scale;
 
   static std::vector<real> mscalebuf;
   mscalebuf.resize(n, 1);
@@ -424,7 +418,7 @@ void empole_recip_tmpl() {
   const int nfft1 = st.nfft1;
   const int nfft2 = st.nfft2;
   const int nfft3 = st.nfft3;
-  const real f = chgpot::electric / chgpot::dielec;
+  const real f = electric / dielec;
 
   #pragma acc parallel loop independent\
               deviceptr(gx,gy,gz,box,\
@@ -554,18 +548,6 @@ void empole_ewald_tmpl() {
   constexpr int do_v = USE & use_virial;
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
-
-  if_constexpr(do_e || do_a || do_v) {
-    #pragma acc serial deviceptr(em,nem,vir_em)
-    {
-      if_constexpr(do_e) { *em = 0; }
-      if_constexpr(do_a) { *nem = 0; }
-      if_constexpr(do_v) {
-        for (int i = 0; i < 9; ++i)
-          vir_em[i] = 0;
-      }
-    }
-  }
 
   empole_real_self_tmpl<USE>();
 

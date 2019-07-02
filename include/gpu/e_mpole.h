@@ -8,6 +8,8 @@ namespace gpu {
 extern int empole_electyp;
 extern std::string empole_electyp_str;
 
+extern real m2scale, m3scale, m4scale, m5scale;
+
 extern real* em;
 extern int* nem;
 extern real* vir_em;

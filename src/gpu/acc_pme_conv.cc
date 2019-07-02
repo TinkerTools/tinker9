@@ -1,6 +1,6 @@
+#include "gpu/decl_elec.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
-#include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -15,7 +15,7 @@ void pme_conv_tmpl(int pme_unit, real* gpu_vir9) {
   const int nff = nfft1 * nfft2;
   const int ntot = nfft1 * nfft2 * nfft3;
 
-  const real f = chgpot::electric / chgpot::dielec;
+  const real f = electric / dielec;
   real aewald = st.aewald;
   real pterm = pi / aewald;
   pterm *= pterm;

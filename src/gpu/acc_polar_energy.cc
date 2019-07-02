@@ -1,6 +1,5 @@
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_polar.h"
-#include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -14,7 +13,7 @@ void epolar0_dotprod(const real (*gpu_uind)[3], const real (*gpu_udirp)[3]) {
          gpu_uind[i][2] * gpu_udirp[i][2]);
   }
 
-  const real f = -0.5 * chgpot::electric / chgpot::dielec;
+  const real f = -0.5 * electric / dielec;
   #pragma acc serial deviceptr(ep)
   { *ep = f * e; }
 }

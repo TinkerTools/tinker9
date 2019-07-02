@@ -15,6 +15,8 @@ extern double mpole_switch_cut;
 /// distance at which the potential energy goes to zero
 extern double mpole_switch_off;
 
+extern real electric, dielec;
+
 /// local frame definitions
 enum {
   pole_none = 0,

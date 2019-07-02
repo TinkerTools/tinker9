@@ -1,7 +1,6 @@
 #include "gpu/acc.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_mpole.h"
-#include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -14,32 +13,15 @@ void empole_coulomb_tmpl() {
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
-  const real f = chgpot::electric / chgpot::dielec;
+  const real f = electric / dielec;
 
   const real off = mpole_switch_off;
   const real off2 = off * off;
   const int maxnlst = mlist_obj_.maxnlst;
 
-  const real m2scale = mplpot::m2scale;
-  const real m3scale = mplpot::m3scale;
-  const real m4scale = mplpot::m4scale;
-  const real m5scale = mplpot::m5scale;
-
   static std::vector<real> mscalebuf;
   mscalebuf.resize(n, 1);
   real* mscale = mscalebuf.data();
-
-  if_constexpr(do_e || do_a || do_v) {
-    #pragma acc serial deviceptr(em,nem,vir_em)
-    {
-      if_constexpr(do_e) { *em = 0; }
-      if_constexpr(do_a) { *nem = 0; }
-      if_constexpr(do_v) {
-        for (int i = 0; i < 9; ++i)
-          vir_em[i] = 0;
-      }
-    }
-  }
 
   #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,box,couple,mlst,\

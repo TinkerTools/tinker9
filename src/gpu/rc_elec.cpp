@@ -11,6 +11,8 @@ TINKER_NAMESPACE_BEGIN
 namespace gpu {
 double mpole_switch_cut, mpole_switch_off;
 
+real electric, dielec;
+
 local_frame_t* zaxis;
 
 real (*pole)[mpl_total];
@@ -82,6 +84,9 @@ void elec_data(rc_t rc) {
   }
 
   if (rc & rc_copyin) {
+    electric = chgpot::electric;
+    dielec = chgpot::dielec;
+
     // Regarding chkpole routine:
     // 1. The chiralities of the atoms will not change in the simulations;
     // 2. chkpole routine has been called in mechanic routine so that the values

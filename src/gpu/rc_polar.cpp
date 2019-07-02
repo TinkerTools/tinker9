@@ -11,6 +11,11 @@ namespace gpu {
 int epolar_electyp;
 std::string epolar_electyp_str;
 
+real u1scale, u2scale, u3scale, u4scale;
+real d1scale, d2scale, d3scale, d4scale;
+real p2scale, p3scale, p4scale, p5scale;
+real p2iscale, p3iscale, p4iscale, p5iscale;
+
 real* polarity;
 real* thole;
 real* pdamp;
@@ -107,6 +112,26 @@ void epolar_data(rc_t rc) {
 
     if (epolar_electyp == elec_coulomb)
       switch_cut_off(switch_mpole, mpole_switch_cut, mpole_switch_off);
+
+    u1scale = polpot::u1scale;
+    u2scale = polpot::u2scale;
+    u3scale = polpot::u3scale;
+    u4scale = polpot::u4scale;
+
+    d1scale = polpot::d1scale;
+    d2scale = polpot::d2scale;
+    d3scale = polpot::d3scale;
+    d4scale = polpot::d4scale;
+
+    p2scale = polpot::p2scale;
+    p3scale = polpot::p3scale;
+    p4scale = polpot::p4scale;
+    p5scale = polpot::p5scale;
+
+    p2iscale = polpot::p2iscale;
+    p3iscale = polpot::p3iscale;
+    p4iscale = polpot::p4iscale;
+    p5iscale = polpot::p5iscale;
 
     // see also polmin in induce.f
     const double polmin = 0.00000001;

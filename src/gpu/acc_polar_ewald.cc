@@ -2,7 +2,6 @@
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
 #include "gpu/e_polar.h"
-#include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -26,26 +25,6 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   const real off2 = off * off;
   const int maxnlst = mlist_obj_.maxnlst;
 
-  const real p2scale = polpot::p2scale;
-  const real p3scale = polpot::p3scale;
-  const real p4scale = polpot::p4scale;
-  const real p5scale = polpot::p5scale;
-
-  const real p2iscale = polpot::p2iscale;
-  const real p3iscale = polpot::p3iscale;
-  const real p4iscale = polpot::p4iscale;
-  const real p5iscale = polpot::p5iscale;
-
-  const real d1scale = polpot::d1scale;
-  const real d2scale = polpot::d2scale;
-  const real d3scale = polpot::d3scale;
-  const real d4scale = polpot::d4scale;
-
-  const real u1scale = polpot::u1scale;
-  const real u2scale = polpot::u2scale;
-  const real u3scale = polpot::u3scale;
-  const real u4scale = polpot::u4scale;
-
   static std::vector<real> pscalebuf;
   static std::vector<real> dscalebuf;
   static std::vector<real> uscalebuf;
@@ -56,7 +35,7 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   real* dscale = dscalebuf.data();
   real* uscale = uscalebuf.data();
 
-  const real f = 0.5 * chgpot::electric / chgpot::dielec;
+  const real f = 0.5 * electric / dielec;
 
   const real aewald = pme_obj(ppme_unit).aewald;
   real bn[5];
@@ -788,7 +767,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   const int nfft3 = st.nfft3;
   const real aewald = st.aewald;
 
-  const real f = chgpot::electric / chgpot::dielec;
+  const real f = electric / dielec;
 
   real(*fphid)[10] = fdip_phi1;
   real(*fphip)[10] = fdip_phi2;
@@ -1150,21 +1129,7 @@ void epolar_ewald_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   constexpr int do_e = USE & use_energy;
   constexpr int do_a = USE & use_analyz;
   constexpr int do_g = USE & use_grad;
-  constexpr int do_v = USE & use_virial;
   sanity_check<USE>();
-
-  if_constexpr(do_e || do_a || do_v) {
-    #pragma acc serial deviceptr(ep,nep,vir_ep)
-    {
-      if_constexpr(do_e) { *ep = 0; }
-      if_constexpr(do_a) { *nep = 0; }
-      if_constexpr(do_v) {
-        for (int i = 0; i < 9; ++i) {
-          vir_ep[i] = 0;
-        }
-      }
-    }
-  }
 
   if_constexpr(do_e && !do_a) epolar0_dotprod(gpu_uind, udirp);
   static_assert(do_g || do_a,

@@ -11,15 +11,6 @@ void epitors_tmpl() {
   constexpr int do_v = USE & use_virial;
   sanity_check<USE>();
 
-  #pragma acc serial deviceptr(ept,vir_ept)
-  {
-    if_constexpr(do_e) { *ept = 0; }
-    if_constexpr(do_v) {
-      for (int i = 0; i < 9; ++i)
-        vir_ept[i] = 0;
-    }
-  }
-
   #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
               ipit,kpit,\

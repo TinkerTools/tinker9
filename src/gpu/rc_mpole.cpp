@@ -4,11 +4,14 @@
 #include "gpu/decl_switch.h"
 #include "gpu/e_mpole.h"
 #include "util/fort_str.h"
+#include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 int empole_electyp;
 std::string empole_electyp_str;
+
+real m2scale, m3scale, m4scale, m5scale;
 
 real* em;
 int* nem;
@@ -39,6 +42,11 @@ void empole_data(rc_t rc) {
 
     if (empole_electyp == elec_coulomb)
       switch_cut_off(switch_mpole, mpole_switch_cut, mpole_switch_off);
+
+    m2scale = mplpot::m2scale;
+    m3scale = mplpot::m3scale;
+    m4scale = mplpot::m4scale;
+    m5scale = mplpot::m5scale;
   }
 }
 

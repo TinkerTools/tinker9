@@ -4,7 +4,6 @@
 #include "gpu/decl_potent.h"
 #include "gpu/e_mpole.h"
 #include "gpu/e_polar.h"
-#include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -50,21 +49,6 @@ void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
   const real off = ewald_switch_off;
   const real off2 = off * off;
   const int maxnlst = mlist_obj_.maxnlst;
-
-  const real p2scale = polpot::p2scale;
-  const real p3scale = polpot::p3scale;
-  const real p4scale = polpot::p4scale;
-  const real p5scale = polpot::p5scale;
-
-  const real p2iscale = polpot::p2iscale;
-  const real p3iscale = polpot::p3iscale;
-  const real p4iscale = polpot::p4iscale;
-  const real p5iscale = polpot::p5iscale;
-
-  const real d1scale = polpot::d1scale;
-  const real d2scale = polpot::d2scale;
-  const real d3scale = polpot::d3scale;
-  const real d4scale = polpot::d4scale;
 
   static std::vector<real> pscalebuf;
   static std::vector<real> dscalebuf;
@@ -408,11 +392,6 @@ void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
   const real off = ewald_switch_cut;
   const real off2 = off * off;
   const int maxnlst = mlist_obj_.maxnlst;
-
-  const real u1scale = polpot::u1scale;
-  const real u2scale = polpot::u2scale;
-  const real u3scale = polpot::u3scale;
-  const real u4scale = polpot::u4scale;
 
   static std::vector<real> uscalebuf;
   uscalebuf.resize(n, 1);
