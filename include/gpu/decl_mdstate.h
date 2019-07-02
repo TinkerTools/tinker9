@@ -103,10 +103,11 @@ double get_energy(const real* e_gpu);
 int get_count(const int* ecount_gpu);
 void get_virial(double* v_out, const real* v_gpu);
 /// zero out global total energy, gradients, and virial on device
+void zero_egv(int vers);
 void zero_egv();
 
-void sum_energy();
-void sum_virial();
+/// sum potential energies and virials
+void sum_energies(int vers);
 }
 TINKER_NAMESPACE_END
 

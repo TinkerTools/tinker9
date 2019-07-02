@@ -35,7 +35,7 @@ void potential_data__(rc_t rc) {
 
 void energy_potential(int vers) {
 
-  zero_egv();
+  zero_egv(vers);
 
   // bonded terms
 
@@ -68,10 +68,7 @@ void energy_potential(int vers) {
     epolar(vers);
   gpu::torque(vers);
 
-  if (vers & use_energy)
-    sum_energy();
-  if (vers & use_virial)
-    sum_virial();
+  sum_energies(vers);
 }
 }
 TINKER_NAMESPACE_END

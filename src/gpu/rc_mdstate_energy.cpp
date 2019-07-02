@@ -223,33 +223,35 @@ void get_virial(double* v_out, const real* v_gpu) {
   copyout_array(v_out, v_gpu, 9);
 }
 
-void zero_egv() {
-  if (use_data & use_analyz)
+void zero_egv(int vers) {
+  if (vers & use_analyz)
     zero_array(energy_buffer__::nebuf, energy_buffer__::cap);
 
-  if (use_data & use_energy)
+  if (vers & use_energy)
     zero_array(energy_buffer__::ebuf, energy_buffer__::cap);
 
-  if (use_data & use_virial)
+  if (vers & use_virial)
     zero_array(energy_buffer__::vbuf,
                energy_buffer__::cap * energy_buffer__::virlen);
 
-  if (use_data & use_grad) {
+  if (vers & use_grad) {
     zero_array(gx, n);
     zero_array(gy, n);
     zero_array(gz, n);
   }
 }
 
-extern void sum_energy_acc_impl__(real* ebuf, int end);
-void sum_energy() {
-  sum_energy_acc_impl__(energy_buffer__::ebuf, energy_buffer__::end);
-}
+void zero_egv() { zero_egv(use_data); }
 
+extern void sum_energy_acc_impl__(real* ebuf, int end);
 extern void sum_virial_acc_impl__(real* vbuf, int end, int virlen);
-void sum_virial() {
-  sum_virial_acc_impl__(energy_buffer__::vbuf, energy_buffer__::end,
-                        energy_buffer__::virlen);
+void sum_energies(int vers) {
+  if (vers & use_energy)
+    sum_energy_acc_impl__(energy_buffer__::ebuf, energy_buffer__::end);
+
+  if (vers & use_virial)
+    sum_virial_acc_impl__(energy_buffer__::vbuf, energy_buffer__::end,
+                          energy_buffer__::virlen);
 }
 }
 TINKER_NAMESPACE_END
