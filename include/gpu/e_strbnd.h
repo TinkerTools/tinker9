@@ -15,7 +15,6 @@ extern real* vir_eba;
 
 void estrbnd_data(rc_t rc);
 
-void estrbnd_acc_impl__(int vers);
 void estrbnd(int vers);
 }
 TINKER_NAMESPACE_END

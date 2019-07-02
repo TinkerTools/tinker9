@@ -188,7 +188,7 @@ TEST_CASE("Strbnd-Trpcage", "[ff][estrbnd][trpcage]") {
   const double ref_e = -0.6930;
   const int ref_count = 504;
   const double eps_g = test_get_eps2(0.0003, 0.0001);
-  const double eps_v = test_get_eps2(0.001, 0.001);
+  const double eps_v = 0.001;
   const double ref_v[][3] = {{-55.818, 18.525, 25.157},
                              {18.525, -26.515, -9.871},
                              {25.157, -9.871, -15.485}};

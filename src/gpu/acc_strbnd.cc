@@ -13,15 +13,6 @@ void estrbnd_tmpl() {
   constexpr int do_v = USE & use_virial;
   sanity_check<USE>();
 
-  #pragma acc serial deviceptr(eba,vir_eba)
-  {
-    if_constexpr(do_e) { *eba = 0; }
-    if_constexpr(do_v) {
-      for (int i = 0; i < 9; ++i)
-        vir_eba[i] = 0;
-    }
-  }
-
   #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
               isb,sbk,iang,anat,bl,\
