@@ -189,7 +189,6 @@ TEST_CASE("Bonded-Trpcage", "[ff][ebonded][trpcage]") {
   const double eps_e = 0.0001;
   const double ref_e = 103.9243;
   const int ref_bond_count = 310;
-  // TODO: fix eps
   const double eps_g = test_get_eps2(0.005, 0.0001);
   const double eps_v = test_get_eps2(0.002, 0.001);
   const double ref_v[][3] = {{938.362, 105.806, 258.684},

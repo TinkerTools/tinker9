@@ -65,6 +65,7 @@ void etors_data(rc_t rc) {
   }
 }
 
+extern void etors_acc_impl__(int vers);
 void etors(int vers) { etors_acc_impl__(vers); }
 }
 TINKER_NAMESPACE_END

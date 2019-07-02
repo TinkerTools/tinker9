@@ -117,15 +117,6 @@ void etortor_tmpl() {
   constexpr int do_v = USE & use_virial;
   sanity_check<USE>();
 
-  #pragma acc serial deviceptr(ett,vir_ett)
-  {
-    if_constexpr(do_e) { *ett = 0; }
-    if_constexpr(do_v) {
-      for (int i = 0; i < 9; ++i)
-        vir_ett[i] = 0;
-    }
-  }
-
   real ftt[4], ft12[4], ft1[4], ft2[4];
   #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\

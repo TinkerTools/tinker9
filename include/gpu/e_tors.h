@@ -20,7 +20,6 @@ extern real* vir_et;
 
 void etors_data(rc_t rc);
 
-void etors_acc_impl__(int vers);
 void etors(int vers);
 }
 TINKER_NAMESPACE_END

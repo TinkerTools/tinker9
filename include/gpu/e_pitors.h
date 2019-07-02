@@ -15,7 +15,6 @@ extern real* vir_ept;
 
 void epitors_data(rc_t rc);
 
-void epitors_acc_impl__(int vers);
 void epitors(int vers);
 }
 TINKER_NAMESPACE_END

@@ -44,6 +44,7 @@ void epitors_data(rc_t rc) {
   }
 }
 
+extern void epitors_acc_impl__(int vers);
 void epitors(int vers) { epitors_acc_impl__(vers); }
 }
 TINKER_NAMESPACE_END

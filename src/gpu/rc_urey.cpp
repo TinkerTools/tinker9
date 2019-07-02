@@ -54,6 +54,7 @@ void eurey_data(rc_t rc) {
   }
 }
 
+extern void eurey_acc_impl__(int vers);
 void eurey(int vers) { eurey_acc_impl__(vers); }
 }
 TINKER_NAMESPACE_END
