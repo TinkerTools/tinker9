@@ -13,15 +13,6 @@ void ebond_tmpl() {
   constexpr int do_v = USE & use_virial;
   sanity_check<USE>();
 
-  #pragma acc serial deviceptr(eb,vir_eb)
-  {
-    if_constexpr(do_e) { *eb = 0; }
-    if_constexpr(do_v) {
-      for (int i = 0; i < 9; ++i)
-        vir_eb[i] = 0;
-    }
-  }
-
   #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
               ibnd,bl,bk,\
@@ -41,14 +32,14 @@ void ebond_tmpl() {
 
     MAYBE_UNUSED real e;
     MAYBE_UNUSED real deddt;
-    if_constexpr(BNDTYP & bond_harmonic) {
+    if_constexpr(BNDTYP == bond_harmonic) {
       real dt2 = dt * dt;
       if_constexpr(do_e) e =
           bndunit * force * dt2 * (1 + cbnd * dt + qbnd * dt2);
       if_constexpr(do_g) deddt =
           2 * bndunit * force * dt * (1 + 1.5f * cbnd * dt + 2 * qbnd * dt2);
     }
-    else if_constexpr(BNDTYP & bond_morse) {
+    else if_constexpr(BNDTYP == bond_morse) {
       real expterm = REAL_EXP(-2 * dt);
       real bde = 0.25f * bndunit * force;
       if_constexpr(do_e) e = bde * (1 - expterm) * (1 - expterm);

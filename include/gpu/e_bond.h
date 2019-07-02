@@ -19,7 +19,6 @@ extern real* vir_eb;
 
 void ebond_data(rc_t rc);
 
-void ebond_acc_impl__(int vers);
 void ebond(int vers);
 }
 TINKER_NAMESPACE_END
