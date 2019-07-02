@@ -32,15 +32,6 @@ void eangle_tmpl() {
   constexpr int do_v = USE & use_virial;
   sanity_check<USE>();
 
-  #pragma acc serial deviceptr(ea,vir_ea)
-  {
-    if_constexpr(do_e) { *ea = 0; }
-    if_constexpr(do_v) {
-      for (int i = 0; i < 9; ++i)
-        vir_ea[i] = 0;
-    }
-  }
-
   #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
               iang,anat,ak,angtyp,\
