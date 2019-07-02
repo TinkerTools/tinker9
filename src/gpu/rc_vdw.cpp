@@ -29,6 +29,11 @@ const char* vdwtyp_str(evdw_t typ) {
 
 double vdw_switch_cut, vdw_switch_off;
 
+real ghal, dhal;
+real scexp, scalpha;
+int vcouple;
+real v2scale, v3scale, v4scale, v5scale;
+
 int* ired;
 real* kred;
 real *xred, *yred, *zred;
@@ -137,6 +142,17 @@ void evdw_data(rc_t rc) {
 
     switch_cut_off(switch_vdw, vdw_switch_cut, vdw_switch_off);
 
+    ghal = vdwpot::ghal;
+    dhal = vdwpot::dhal;
+    scexp = mutant::scexp;
+    scalpha = mutant::scalpha;
+    vcouple = mutant::vcouple;
+
+    v2scale = vdwpot::v2scale;
+    v3scale = vdwpot::v3scale;
+    v4scale = vdwpot::v4scale;
+    v5scale = vdwpot::v5scale;
+
     std::vector<int> iredbuf(n);
     std::vector<double> kredbuf(n);
     for (int i = 0; i < n; ++i) {
@@ -176,6 +192,21 @@ void evdw_data(rc_t rc) {
     copyin_array(vlam, vlamvec.data(), n);
   }
 }
+
+extern void evdw_lj_acc_impl__(int vers);
+void evdw_lj(int vers) { evdw_lj_acc_impl__(vers); }
+
+extern void evdw_buck_acc_impl__(int vers);
+void evdw_buck(int vers) { evdw_buck_acc_impl__(vers); }
+
+extern void evdw_mm3hb_acc_impl__(int vers);
+void evdw_mm3hb(int vers) { evdw_mm3hb_acc_impl__(vers); }
+
+extern void evdw_hal_acc_impl__(int vers);
+void evdw_hal(int vers) { evdw_hal_acc_impl__(vers); }
+
+extern void evdw_gauss_acc_impl__(int vers);
+void evdw_gauss(int vers) { evdw_gauss_acc_impl__(vers); }
 
 void evdw(int vers) {
   if (vdwtyp == vdw_lj)

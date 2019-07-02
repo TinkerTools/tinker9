@@ -1,7 +1,9 @@
 #include "gpu/acc.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_vdw.h"
-#include <ext/tinker/tinker_mod.h>
+
+// TODO: test lj, buck, mm3hb, gauss, and mutant
+// TODO: add vdw correction
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -26,36 +28,15 @@ void evdw_tmpl() {
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
-  const real ghal = vdwpot::ghal;
-  const real dhal = vdwpot::dhal;
-  const real scexp = mutant::scexp;
-  const real scalpha = mutant::scalpha;
-  const int vcouple = mutant::vcouple;
-
   const real cut = vdw_switch_cut;
   const real off = vdw_switch_off;
   const real cut2 = cut * cut;
   const real off2 = off * off;
   const int maxnlst = vlist_obj_.maxnlst;
 
-  const real v2scale = vdwpot::v2scale;
-  const real v3scale = vdwpot::v3scale;
-  const real v4scale = vdwpot::v4scale;
-  const real v5scale = vdwpot::v5scale;
-
   static std::vector<real> vscalebuf;
   vscalebuf.resize(n, 1);
   real* vscale = vscalebuf.data();
-
-  #pragma acc serial deviceptr(ev,nev,vir_ev)
-  {
-    *ev = 0;
-    if_constexpr(do_a) { *nev = 0; }
-    if_constexpr(do_v) {
-      for (int i = 0; i < 9; ++i)
-        vir_ev[i] = 0;
-    }
-  }
 
   #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,box,couple,vlst,\
@@ -240,7 +221,7 @@ void evdw_tmpl() {
 }
 
 #define TINKER_EVDW_IMPL_(typ)                                                 \
-  void evdw_##typ(int vers) {                                                  \
+  void evdw_##typ##_acc_impl__(int vers) {                                     \
     if (vers == v0)                                                            \
       evdw_tmpl<v0, vdw_##typ>();                                              \
     else if (vers == v1)                                                       \

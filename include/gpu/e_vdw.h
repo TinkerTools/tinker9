@@ -18,6 +18,11 @@ const char* vdwtyp_str(evdw_t typ);
 
 extern double vdw_switch_cut, vdw_switch_off;
 
+extern real ghal, dhal;
+extern real scexp, scalpha;
+extern int vcouple;
+extern real v2scale, v3scale, v4scale, v5scale;
+
 extern int* ired;
 extern real* kred;
 extern real *xred, *yred, *zred;
