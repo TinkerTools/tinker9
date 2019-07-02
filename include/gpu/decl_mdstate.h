@@ -88,12 +88,25 @@ extern real *gx, *gy, *gz;
 /// total virial
 extern real* vir;
 
+void egv_data(rc_t rc);
+
+//======================================================================
+// energy, gradient, and virial de/allocation
+
+void alloc_ev(real** gpu_e, real** gpu_v);
+void free_ev(real* gpu_e, real* gpu_v);
+
+void alloc_nev(int** gpu_ne, real** gpu_e, real** gpu_v);
+void free_nev(int* gpu_ne, real* gpu_e, real* gpu_v);
+
 double get_energy(const real* e_gpu);
 int get_count(const int* ecount_gpu);
 void get_virial(double* v_out, const real* v_gpu);
 /// zero out global total energy, gradients, and virial on device
 void zero_egv();
-void egv_data(rc_t rc, int use = use_data);
+
+void sum_energy();
+void sum_virial();
 }
 TINKER_NAMESPACE_END
 

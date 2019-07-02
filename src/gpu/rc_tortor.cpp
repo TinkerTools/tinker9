@@ -54,9 +54,7 @@ void etortor_data(rc_t rc) {
 
   if (rc & rc_alloc) {
     nbitor = bitor_::nbitor;
-    // see also subroutine bitors in bitors.f
-    int maxbitor = 54 * n;
-    check_cudart(cudaMalloc(&ibitor, sizeof(int) * 5 * maxbitor));
+    check_cudart(cudaMalloc(&ibitor, sizeof(int) * 5 * nbitor));
 
     check_cudart(cudaMalloc(&itt, sizeof(int) * 3 * nbitor));
 
@@ -81,12 +79,10 @@ void etortor_data(rc_t rc) {
   if (rc & rc_copyin) {
     std::vector<int> ibuf;
 
-    // see also subroutine bitors in bitors.f
-    int maxbitor = 54 * n;
-    ibuf.resize(5 * maxbitor);
-    for (int i = 0; i < 5 * maxbitor; ++i)
+    ibuf.resize(5 * nbitor);
+    for (int i = 0; i < 5 * nbitor; ++i)
       ibuf[i] = bitor_::ibitor[i] - 1;
-    copyin_array(&ibitor[0][0], ibuf.data(), 5 * maxbitor);
+    copyin_array(&ibitor[0][0], ibuf.data(), 5 * nbitor);
 
     ibuf.resize(3 * nbitor);
     for (int i = 0; i < 3 * nbitor; ++i)

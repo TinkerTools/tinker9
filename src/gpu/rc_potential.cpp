@@ -1,12 +1,13 @@
 #include "gpu/decl_mdstate.h"
-#include "gpu/decl_pme.h"
 #include "gpu/decl_potent.h"
 #include "gpu/e_potential.h"
-#include "util/format_print.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void potential_data(rc_t rc) {
+/// This function is used in void mdstate_data(rc_t).
+void potential_data__(rc_t rc) {
+
+  egv_data(rc);
 
   // bonded terms
 
@@ -66,6 +67,11 @@ void energy_potential(int vers) {
   if (use_potent(polar_term))
     epolar(vers);
   gpu::torque(vers);
+
+  if (vers & use_energy)
+    sum_energy();
+  if (vers & use_virial)
+    sum_virial();
 }
 }
 TINKER_NAMESPACE_END

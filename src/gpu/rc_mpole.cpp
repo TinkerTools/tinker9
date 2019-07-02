@@ -1,8 +1,8 @@
+#include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
 #include "gpu/decl_potent.h"
 #include "gpu/decl_switch.h"
 #include "gpu/e_mpole.h"
-#include "gpu/rc.h"
 #include "util/fort_str.h"
 
 TINKER_NAMESPACE_BEGIN

@@ -108,7 +108,6 @@ void eopbend_tmpl() {
     real rdb2 = xdb * xdb + ydb * ydb + zdb * zdb;
 
     if (rdb2 != 0 && cc != 0) {
-      real bkk2 = rdb2 - ee * ee * REAL_RECIP(cc);
       real sine = REAL_ABS(ee) * REAL_RSQRT(cc * rdb2);
       sine = REAL_MIN(1, sine);
       real angle = radian * REAL_ASIN(sine);
@@ -128,8 +127,8 @@ void eopbend_tmpl() {
         real deddt = opbunit * force * dt * radian *
             (2 + 3 * copb * dt + 4 * qopb * dt2 + 5 * popb * dt3 +
              6 * sopb * dt4);
-        real dedcos = -deddt * REAL_SIGN(1, ee) * REAL_RSQRT(cc * bkk2);
-
+        real dedcos =
+            -deddt * REAL_SIGN(1, ee) * REAL_RSQRT(cc * rdb2 - ee * ee);
         real term = ee * REAL_RECIP(cc);
         real dccdxia, dccdyia, dccdzia;
         real dccdxic, dccdyic, dccdzic;

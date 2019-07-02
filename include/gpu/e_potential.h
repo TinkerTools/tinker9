@@ -16,8 +16,6 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void potential_data(rc_t rc);
-
 void energy_potential(int vers);
 }
 TINKER_NAMESPACE_END

@@ -1,3 +1,4 @@
+#include "gpu/decl_mdstate.h"
 #include "gpu/decl_potent.h"
 #include "gpu/e_opbend.h"
 #include "gpu/rc.h"

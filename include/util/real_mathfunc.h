@@ -62,6 +62,7 @@ constexpr real_t__ logten = M_LN10;
 
 constexpr real_t__ pi = M_PI;
 constexpr real_t__ radian = 57.2957795130823208768; // 180/PI
+constexpr real_t__ radinv = 0.01745329251994329576924; // PI/180
 constexpr real_t__ sqrtpi = 1.77245385090551602730; // sqrt(PI)
 
 TINKER_NAMESPACE_END

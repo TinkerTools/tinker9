@@ -27,7 +27,6 @@ extern real* vir_ea;
 
 void eangle_data(rc_t rc);
 
-void eangle_acc_impl__(int vers);
 void eangle(int vers);
 }
 TINKER_NAMESPACE_END

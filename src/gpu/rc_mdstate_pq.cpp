@@ -149,115 +149,7 @@ void mass_data(rc_t rc) {
   //   copyout_array(atomid::mass, mass, n);
 }
 
-//======================================================================
-/// total potential energy
-real* esum;
-/// total gradients
-real *gx, *gy, *gz;
-/// total virial
-real* vir;
-
-double get_energy(const real* e_gpu) {
-  double e_out;
-  copyout_array(&e_out, e_gpu, 1);
-  return e_out;
-}
-
-int get_count(const int* ecount_gpu) {
-  int c;
-  copyout_array(&c, ecount_gpu, 1);
-  return c;
-}
-
-void get_virial(double* v_out, const real* v_gpu) {
-  copyout_array(v_out, v_gpu, 9);
-}
-
-void zero_egv() {
-  int flag_e = gpu::use_data & gpu::use_energy;
-  int flag_g = gpu::use_data & gpu::use_grad;
-  int flag_v = gpu::use_data & gpu::use_virial;
-  int n = gpu::n;
-
-  if (flag_e) {
-    gpu::zero_array(gpu::esum, 1);
-  }
-
-  if (flag_g) {
-    gpu::zero_array(gpu::gx, n);
-    gpu::zero_array(gpu::gy, n);
-    gpu::zero_array(gpu::gz, n);
-  }
-
-  if (flag_v) {
-    gpu::zero_array(gpu::vir, 9);
-  }
-}
-
-void egv_data(rc_t rc, int _use) {
-  if ((_use & (use_energy | use_grad | use_virial)) == 0)
-    return;
-
-  if (rc & rc_dealloc) {
-    if ((use_energy | use_virial) & _use) {
-      free_ev(esum, vir);
-    }
-
-    if (use_grad & _use) {
-      check_cudart(cudaFree(gx));
-      check_cudart(cudaFree(gy));
-      check_cudart(cudaFree(gz));
-    }
-  }
-
-  if (rc & rc_alloc) {
-    if ((use_energy | use_virial) & _use) {
-      alloc_ev(&esum, &vir);
-    }
-
-    if (use_grad & _use) {
-      const size_t size = sizeof(real) * n;
-      check_cudart(cudaMalloc(&gx, size));
-      check_cudart(cudaMalloc(&gy, size));
-      check_cudart(cudaMalloc(&gz, size));
-    }
-  }
-
-  if (rc & rc_copyin) {
-    if (use_energy & _use)
-      copyin_array(esum, &energi::esum, 1);
-
-    if (use_grad & _use) {
-      copyin_array2(0, 3, gx, deriv::desum, n);
-      copyin_array2(1, 3, gy, deriv::desum, n);
-      copyin_array2(2, 3, gz, deriv::desum, n);
-    }
-
-    if (use_virial & _use)
-      copyin_array(vir, &virial::vir[0][0], 9);
-  }
-
-  if (rc & rc_copyout) {
-    if (use_energy & _use)
-      copyout_array(&energi::esum, esum, 1);
-
-    if (use_grad & _use) {
-      copyout_array2(0, 3, deriv::desum, gx, n);
-      copyout_array2(1, 3, deriv::desum, gy, n);
-      copyout_array2(2, 3, deriv::desum, gz, n);
-    }
-
-    if (use_virial & _use)
-      copyout_array(&virial::vir[0][0], vir, 9);
-  }
-}
-}
-TINKER_NAMESPACE_END
-
-#include "gpu/e_potential.h"
-
-TINKER_NAMESPACE_BEGIN
-namespace gpu {
+extern void potential_data__(rc_t);
 void mdstate_data(rc_t rc) {
   n_data(rc);
 
@@ -265,9 +157,8 @@ void mdstate_data(rc_t rc) {
   vel_data(rc);
   accel_data(rc);
   mass_data(rc);
-  egv_data(rc);
 
-  potential_data(rc);
+  potential_data__(rc);
 
   // Neighbor lists must be initialized after potential initialization.
   // xred, yred, and zred need to be initialized in vdw routines and will be
