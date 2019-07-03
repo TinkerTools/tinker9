@@ -17,6 +17,7 @@ enum {
   use_analyz = 0x080, /// analyze 128
 
   // clang-format off
+  vmask = use_energy + use_grad + use_virial + use_analyz,
   v0 = use_energy,                         ///  16
   v1 = use_energy + use_grad + use_virial, /// 112
   v3 = use_energy + use_analyz,            /// 144
@@ -78,6 +79,7 @@ void accel_data(rc_t rc);
 //======================================================================
 /// atomic mass
 extern real* mass;
+extern real* massinv;
 void mass_data(rc_t rc);
 
 //======================================================================

@@ -129,21 +129,30 @@ void accel_data(rc_t rc) {
 //======================================================================
 /// atomic mass
 real* mass;
+real* massinv;
 
 void mass_data(rc_t rc) {
   if ((use_mass & use_data) == 0)
     return;
 
-  if (rc & rc_dealloc)
+  if (rc & rc_dealloc) {
     check_cudart(cudaFree(mass));
+    check_cudart(cudaFree(massinv));
+  }
 
   if (rc & rc_alloc) {
     size_t size = sizeof(real) * n;
     check_cudart(cudaMalloc(&mass, size));
+    check_cudart(cudaMalloc(&massinv, size));
   }
 
-  if (rc & rc_copyin)
+  if (rc & rc_copyin) {
     copyin_array(mass, atomid::mass, n);
+    std::vector<double> mbuf(n);
+    for (int i = 0; i < n; ++i)
+      mbuf[i] = 1 / atomid::mass[i];
+    copyin_array(massinv, mbuf.data(), n);
+  }
 
   // if (rc & rc_copyout)
   //   copyout_array(atomid::mass, mass, n);

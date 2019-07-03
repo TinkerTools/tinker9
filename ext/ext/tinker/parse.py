@@ -312,7 +312,7 @@ def parse_line(raw_line):
         pass
     elif 'implicit ' in line and ' none' in line:
         pass
-    elif 'save' in line:
+    elif line == 'save':
         pass
     elif 'module ' in line:
         _CurrentModule = line.split()[-1]
