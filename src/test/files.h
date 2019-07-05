@@ -44,6 +44,11 @@ extern const char* trpcage_key;
 // ten water molecules test set
 extern const char* h2o10_xyz;
 extern const char* h2o10_key;
+
+// six argon atoms test set
+extern const char* ar6_xyz;
+extern const char* ar6_key;
+extern const char* ar6_dyn;
 }
 TINKER_NAMESPACE_END
 

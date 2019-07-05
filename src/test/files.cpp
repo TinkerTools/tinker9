@@ -37,6 +37,9 @@ FILE_DEF_(watersmall_xyz);
 
 // ten water molecules test set
 #include "file/h2o10.hh"
+
+// six argon atoms test set
+#include "file/ar6.hh"
 }
 TINKER_NAMESPACE_END
 
