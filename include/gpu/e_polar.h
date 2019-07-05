@@ -27,16 +27,16 @@ extern real* vir_ep;
 extern real (*ufld)[3];
 extern real (*dufld)[6];
 
-extern real (*work01__)[3];
-extern real (*work02__)[3];
-extern real (*work03__)[3];
-extern real (*work04__)[3];
-extern real (*work05__)[3];
-extern real (*work06__)[3];
-extern real (*work07__)[3];
-extern real (*work08__)[3];
-extern real (*work09__)[3];
-extern real (*work10__)[3];
+extern real (*work01_)[3];
+extern real (*work02_)[3];
+extern real (*work03_)[3];
+extern real (*work04_)[3];
+extern real (*work05_)[3];
+extern real (*work06_)[3];
+extern real (*work07_)[3];
+extern real (*work08_)[3];
+extern real (*work09_)[3];
+extern real (*work10_)[3];
 
 void get_epolar_type(int& typ, std::string& typ_str);
 void epolar_data(rc_t rc);

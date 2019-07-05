@@ -34,14 +34,14 @@ void mdsave(int istep, real dt, real epot, real eksum) {
   TINKER_RT(mdsave)(&istep, &dt1, &epot1, &eksum1);
 }
 
-extern void mdrest_acc_impl__(int istep);
-void mdrest(int istep) { mdrest_acc_impl__(istep); }
+extern void mdrest_acc_impl_(int istep);
+void mdrest(int istep) { mdrest_acc_impl_(istep); }
 
-extern void propagate_xyz_acc_impl__(real dt);
-void propagate_xyz(real dt) { propagate_xyz_acc_impl__(dt); }
+extern void propagate_xyz_acc_impl_(real dt);
+void propagate_xyz(real dt) { propagate_xyz_acc_impl_(dt); }
 
-extern void propagate_velocity_acc_impl__(real dt);
-void propagate_velocity(real dt) { propagate_velocity_acc_impl__(dt); }
+extern void propagate_velocity_acc_impl_(real dt);
+void propagate_velocity(real dt) { propagate_velocity_acc_impl_(dt); }
 
 // integrators
 

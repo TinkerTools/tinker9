@@ -6,7 +6,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void mdrest_acc_impl__(int istep) {
+void mdrest_acc_impl_(int istep) {
   if (!mdstuf::dorest)
     return;
   if ((istep % mdstuf::irest) != 0)
@@ -167,7 +167,7 @@ void mdrest_acc_impl__(int istep) {
   }
 }
 
-void propagate_xyz_acc_impl__(real dt) {
+void propagate_xyz_acc_impl_(real dt) {
   #pragma acc parallel loop independent deviceptr(x,y,z,vx,vy,vz)
   for (int i = 0; i < n; ++i) {
     x[i] += dt * vx[i];
@@ -176,7 +176,7 @@ void propagate_xyz_acc_impl__(real dt) {
   }
 }
 
-void propagate_velocity_acc_impl__(real dt) {
+void propagate_velocity_acc_impl_(real dt) {
   const real ekcal = units::ekcal;
   #pragma acc parallel loop independent deviceptr(vx,vy,vz,gx,gy,gz,massinv)
   for (int i = 0; i < n; ++i) {

@@ -5,7 +5,7 @@
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 /// This function is used in void mdstate_data(rc_t).
-void potential_data__(rc_t rc) {
+void potential_data_(rc_t rc) {
 
   egv_data(rc);
 

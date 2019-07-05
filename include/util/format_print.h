@@ -7,14 +7,14 @@
 #include <ext/fmt/ostream.h>
 
 TINKER_NAMESPACE_BEGIN
-template <class __Out, class __Fmt, class... __Ts>
-void print(__Out& _out, const __Fmt& _fmtstr, const __Ts&... _args) {
-  fmt::print(_out, _fmtstr, _args...);
+template <class Out_, class Fmt_, class... Ts_>
+void print(Out_& out_, const Fmt_& fmtstr_, const Ts_&... args_) {
+  fmt::print(out_, fmtstr_, args_...);
 }
 
-template <class __Fmt, class... __Ts>
-std::string format(const __Fmt& _fmtstr, const __Ts&... _args) {
-  return fmt::format(_fmtstr, _args...);
+template <class Fmt_, class... Ts_>
+std::string format(const Fmt_& fmtstr_, const Ts_&... args_) {
+  return fmt::format(fmtstr_, args_...);
 }
 TINKER_NAMESPACE_END
 

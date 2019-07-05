@@ -87,7 +87,7 @@ void eurey_tmpl() {
   } // end for (int i)
 }
 
-void eurey_acc_impl__(int vers) {
+void eurey_acc_impl_(int vers) {
   if (vers == v0 || vers == v3)
     eurey_tmpl<v0>();
   else if (vers == v1)

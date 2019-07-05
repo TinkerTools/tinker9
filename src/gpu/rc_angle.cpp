@@ -79,7 +79,8 @@ void eangle_data(rc_t rc) {
   }
 }
 
-extern void eangle_acc_impl__(int vers);;
-void eangle(int vers) { eangle_acc_impl__(vers); }
+extern void eangle_acc_impl_(int vers);
+;
+void eangle(int vers) { eangle_acc_impl_(vers); }
 }
 TINKER_NAMESPACE_END

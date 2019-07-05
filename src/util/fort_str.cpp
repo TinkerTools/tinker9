@@ -63,16 +63,16 @@ FortranStringView& FortranStringView::operator=(const FortranStringView& _src) {
 
 //======================================================================
 
-bool FortranStringView::operator==(const char* __src) const {
-  return if_eq_(__src, std::strlen(__src));
+bool FortranStringView::operator==(const char* src_) const {
+  return if_eq_(src_, std::strlen(src_));
 }
 
-bool FortranStringView::operator==(const std::string& __src) const {
-  return if_eq_(__src.c_str(), __src.size());
+bool FortranStringView::operator==(const std::string& src_) const {
+  return if_eq_(src_.c_str(), src_.size());
 }
 
-bool FortranStringView::operator==(const FortranStringView& __src) const {
-  return if_eq_(__src.b_, __src.size());
+bool FortranStringView::operator==(const FortranStringView& src_) const {
+  return if_eq_(src_.b_, src_.size());
 }
 
 //======================================================================
@@ -93,10 +93,9 @@ std::string FortranStringView::trim() const {
   return std::string(b_, b_ + len_trim());
 }
 
-FortranStringView FortranStringView::operator()(int __begin1,
-                                                int __back1) const {
-  assert(1 <= __begin1 && __begin1 <= __back1 && __back1 <= size());
-  return FortranStringView(b_ + (__begin1 - 1), __back1 - __begin1 + 1);
+FortranStringView FortranStringView::operator()(int begin1_, int back1_) const {
+  assert(1 <= begin1_ && begin1_ <= back1_ && back1_ <= size());
+  return FortranStringView(b_ + (begin1_ - 1), back1_ - begin1_ + 1);
 }
 
 TINKER_NAMESPACE_END

@@ -158,7 +158,7 @@ void mass_data(rc_t rc) {
   //   copyout_array(atomid::mass, mass, n);
 }
 
-extern void potential_data__(rc_t);
+extern void potential_data_(rc_t);
 void mdstate_data(rc_t rc) {
   n_data(rc);
 
@@ -167,7 +167,7 @@ void mdstate_data(rc_t rc) {
   accel_data(rc);
   mass_data(rc);
 
-  potential_data__(rc);
+  potential_data_(rc);
 
   // Neighbor lists must be initialized after potential initialization.
   // xred, yred, and zred need to be initialized in vdw routines and will be

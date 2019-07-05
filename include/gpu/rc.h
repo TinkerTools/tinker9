@@ -15,36 +15,36 @@
 
 #define m_tinker_always_check_cudart_1_(cucall)                                \
   do {                                                                         \
-    cudaError_t cures__ = cucall;                                              \
-    if (cures__ != cudaSuccess) {                                              \
+    cudaError_t cures_ = cucall;                                               \
+    if (cures_ != cudaSuccess) {                                               \
       print_backtrace();                                                       \
-      const char* msg = cudaGetErrorString(cures__);                           \
-      std::string m__ =                                                        \
-          format(" {} (errno {}) at {}:{}", msg, cures__, __FILE__, __LINE__); \
-      throw FatalError(m__);                                                   \
+      const char* msg = cudaGetErrorString(cures_);                            \
+      std::string m_ =                                                         \
+          format(" {} (errno {}) at {}:{}", msg, cures_, __FILE__, __LINE__);  \
+      throw FatalError(m_);                                                    \
     }                                                                          \
   } while (0)
 
 #define m_tinker_always_check_cudart_2_(cucall, optmsg)                        \
   do {                                                                         \
-    cudaError_t cures__ = cucall;                                              \
-    if (cures__ != cudaSuccess) {                                              \
+    cudaError_t cures_ = cucall;                                               \
+    if (cures_ != cudaSuccess) {                                               \
       print_backtrace();                                                       \
-      const char* msg = cudaGetErrorName(cures__);                             \
-      std::string m__ = format(" {} {} (errno {}) at {}:{}", optmsg, msg,      \
-                               cures__, __FILE__, __LINE__);                   \
-      throw FatalError(m__);                                                   \
+      const char* msg = cudaGetErrorName(cures_);                              \
+      std::string m_ = format(" {} {} (errno {}) at {}:{}", optmsg, msg,       \
+                              cures_, __FILE__, __LINE__);                     \
+      throw FatalError(m_);                                                    \
     }                                                                          \
   } while (0)
 
 #define m_tinker_always_check_cudart_3_(cucall, res_t, cu_0)                   \
   do {                                                                         \
-    res_t cures__ = cucall;                                                    \
-    if (cures__ != cu_0) {                                                     \
+    res_t cures_ = cucall;                                                     \
+    if (cures_ != cu_0) {                                                      \
       print_backtrace();                                                       \
-      std::string m__ = format(" errno {} of type {} at {}:{}", cures__,       \
-                               TINKER_STR(res_t), __FILE__, __LINE__);         \
-      throw FatalError(m__);                                                   \
+      std::string m_ = format(" errno {} of type {} at {}:{}", cures_,         \
+                              TINKER_STR(res_t), __FILE__, __LINE__);          \
+      throw FatalError(m_);                                                    \
     }                                                                          \
   } while (0)
 

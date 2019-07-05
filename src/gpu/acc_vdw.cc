@@ -221,7 +221,7 @@ void evdw_tmpl() {
 }
 
 #define TINKER_EVDW_IMPL_(typ)                                                 \
-  void evdw_##typ##_acc_impl__(int vers) {                                     \
+  void evdw_##typ##_acc_impl_(int vers) {                                      \
     if (vers == v0)                                                            \
       evdw_tmpl<v0, vdw_##typ>();                                              \
     else if (vers == v1)                                                       \

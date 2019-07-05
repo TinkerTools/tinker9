@@ -8,9 +8,9 @@ class Text : public std::vector<std::string> {
 public:
   static constexpr const char* whitespaces = " \t\n\v\f\r";
 
-  template <size_t __Len>
-  static std::string string(const char (&__src)[__Len]) {
-    return std::string(&__src[0], &__src[0] + __Len);
+  template <size_t Len_>
+  static std::string string(const char (&src_)[Len_]) {
+    return std::string(&src_[0], &src_[0] + Len_);
   }
 
   // Replace

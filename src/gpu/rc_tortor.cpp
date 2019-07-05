@@ -24,7 +24,7 @@ real (*tbxy)[ktrtor::maxtgrd2];
 
 real ttorunit;
 
-int* chkttor_ia__;
+int* chkttor_ia_;
 
 real* ett;
 real* vir_ett;
@@ -47,7 +47,7 @@ void etortor_data(rc_t rc) {
     check_cudart(cudaFree(tby));
     check_cudart(cudaFree(tbxy));
 
-    check_cudart(cudaFree(chkttor_ia__));
+    check_cudart(cudaFree(chkttor_ia_));
 
     free_ev(ett, vir_ett);
   }
@@ -71,7 +71,7 @@ void etortor_data(rc_t rc) {
     check_cudart(cudaMalloc(&tbxy, rs * count));
 
     ntortor = count_bonded_term(tortor_term);
-    check_cudart(cudaMalloc(&chkttor_ia__, sizeof(int) * ntortor));
+    check_cudart(cudaMalloc(&chkttor_ia_, sizeof(int) * ntortor));
 
     alloc_ev(&ett, &vir_ett);
   }
@@ -157,11 +157,11 @@ void etortor_data(rc_t rc) {
       }
       ibuf[itortor] = ia;
     }
-    copyin_array(chkttor_ia__, ibuf.data(), ntortor);
+    copyin_array(chkttor_ia_, ibuf.data(), ntortor);
   }
 }
 
-extern void etortor_acc_impl__(int vers);
-void etortor(int vers) { etortor_acc_impl__(vers); }
+extern void etortor_acc_impl_(int vers);
+void etortor(int vers) { etortor_acc_impl_(vers); }
 }
 TINKER_NAMESPACE_END

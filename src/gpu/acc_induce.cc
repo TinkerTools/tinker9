@@ -52,16 +52,16 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   real(*uind)[3] = reinterpret_cast<real(*)[3]>(gpu_ud);
   real(*uinp)[3] = reinterpret_cast<real(*)[3]>(gpu_up);
 
-  real(*field)[3] = work01__;
-  real(*fieldp)[3] = work02__;
-  real(*rsd)[3] = work03__;
-  real(*rsdp)[3] = work04__;
-  real(*zrsd)[3] = work05__;
-  real(*zrsdp)[3] = work06__;
-  real(*conj)[3] = work07__;
-  real(*conjp)[3] = work08__;
-  real(*vec)[3] = work09__;
-  real(*vecp)[3] = work10__;
+  real(*field)[3] = work01_;
+  real(*fieldp)[3] = work02_;
+  real(*rsd)[3] = work03_;
+  real(*rsdp)[3] = work04_;
+  real(*zrsd)[3] = work05_;
+  real(*zrsdp)[3] = work06_;
+  real(*conj)[3] = work07_;
+  real(*conjp)[3] = work08_;
+  real(*vec)[3] = work09_;
+  real(*vecp)[3] = work10_;
 
   const bool dirguess = polpcg::pcgguess;
 

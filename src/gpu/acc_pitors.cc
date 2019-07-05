@@ -237,7 +237,7 @@ void epitors_tmpl() {
   } // end for (int i)
 }
 
-void epitors_acc_impl__(int vers) {
+void epitors_acc_impl_(int vers) {
   if (vers == v0 || vers == v3)
     epitors_tmpl<v0>();
   else if (vers == v1)

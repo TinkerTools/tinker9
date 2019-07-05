@@ -26,7 +26,7 @@ namespace gpu {
  * cartesian_column_vector dot recip = fractional_column_vector
  * fractional_column_vector dot lvec = cartesian_column_vector
  */
-typedef struct box_def_st__ {
+typedef struct box_def_st_ {
   typedef enum {
     null = 0x000,  /// null
     ortho = 0x001, /// orthogonal

@@ -2,7 +2,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void sum_energy_acc_impl__(real* ebuf, int top) {
+void sum_energy_acc_impl_(real* ebuf, int top) {
   #pragma acc serial deviceptr(ebuf,esum)
   {
     for (int i = 1; i < top; ++i)
@@ -10,7 +10,7 @@ void sum_energy_acc_impl__(real* ebuf, int top) {
   }
 }
 
-void sum_virial_acc_impl__(real* vbuf, int top, int virlen) {
+void sum_virial_acc_impl_(real* vbuf, int top, int virlen) {
   #pragma acc serial deviceptr(vbuf,vir)
   {
     for (int i = 1; i < top; ++i)

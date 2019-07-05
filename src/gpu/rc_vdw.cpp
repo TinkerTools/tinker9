@@ -193,20 +193,20 @@ void evdw_data(rc_t rc) {
   }
 }
 
-extern void evdw_lj_acc_impl__(int vers);
-void evdw_lj(int vers) { evdw_lj_acc_impl__(vers); }
+extern void evdw_lj_acc_impl_(int vers);
+void evdw_lj(int vers) { evdw_lj_acc_impl_(vers); }
 
-extern void evdw_buck_acc_impl__(int vers);
-void evdw_buck(int vers) { evdw_buck_acc_impl__(vers); }
+extern void evdw_buck_acc_impl_(int vers);
+void evdw_buck(int vers) { evdw_buck_acc_impl_(vers); }
 
-extern void evdw_mm3hb_acc_impl__(int vers);
-void evdw_mm3hb(int vers) { evdw_mm3hb_acc_impl__(vers); }
+extern void evdw_mm3hb_acc_impl_(int vers);
+void evdw_mm3hb(int vers) { evdw_mm3hb_acc_impl_(vers); }
 
-extern void evdw_hal_acc_impl__(int vers);
-void evdw_hal(int vers) { evdw_hal_acc_impl__(vers); }
+extern void evdw_hal_acc_impl_(int vers);
+void evdw_hal(int vers) { evdw_hal_acc_impl_(vers); }
 
-extern void evdw_gauss_acc_impl__(int vers);
-void evdw_gauss(int vers) { evdw_gauss_acc_impl__(vers); }
+extern void evdw_gauss_acc_impl_(int vers);
+void evdw_gauss(int vers) { evdw_gauss_acc_impl_(vers); }
 
 void evdw(int vers) {
   if (vdwtyp == vdw_lj)

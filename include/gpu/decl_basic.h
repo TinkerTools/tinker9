@@ -7,7 +7,7 @@
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 /// a new type is defined inside the namespace gpu
-typedef real_t__ real;
+typedef real_t_ real;
 
 /// resource management operations
 typedef enum {

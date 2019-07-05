@@ -5,7 +5,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-typedef struct polargroup_def_st__ {
+typedef struct polargroup_def_st_ {
   static const int maxp11 = 128;
   static const int maxp12 = 128; // 120 -> 128
   static const int maxp13 = 128; // 120 -> 128

@@ -9,21 +9,21 @@ TINKER_NAMESPACE_BEGIN
 /**
  * @brief
  * Read ONE value from a string.
- * _arg will not change until the reading successfully exits.
+ * arg_ will not change until the reading successfully exits.
  *
  * @return  Non-zero if any error happened.
  */
-template <class __Arg>
-int read_string_1(__Arg& _arg, const char* _str, size_t _len) {
+template <class Arg_>
+int read_string_1(Arg_& arg_, const char* str_, size_t len_) {
   const int succeed = 0;
   const int fail = 1;
-  std::istringstream iss(std::string(_str, _len));
-  __Arg tmp;
+  std::istringstream iss(std::string(str_, len_));
+  Arg_ tmp;
   iss >> tmp;
   if (iss.fail()) {
     return fail;
   } else {
-    _arg = tmp;
+    arg_ = tmp;
     return succeed;
   }
 }
@@ -31,49 +31,49 @@ int read_string_1(__Arg& _arg, const char* _str, size_t _len) {
 /**
  * @brief
  * Read one value from a char array.
- * _arg will not change until the reading successfully exits.
+ * arg_ will not change until the reading successfully exits.
  *
  * @return  Non-zero if any error happened.
  */
-template <class __Arg, size_t __Len>
-int read_string_1(__Arg& _arg, const char (&_src)[__Len]) {
-  return read_string_1(_arg, _src, __Len);
+template <class Arg_, size_t Len_>
+int read_string_1(Arg_& arg_, const char (&src_)[Len_]) {
+  return read_string_1(arg_, src_, Len_);
 };
 
 /**
  * @brief
  * Read one argument from an std::istream object.
  *
- * @param[out] _arg        Argument read from std::istream.
- * @param[in]  _prompt     Prompt string printed on terminal.
- * @param[in]  _auto_fill  Default value to be assigned to _arg.
- * @param[in]  _invalid    Function that returns true if _arg is invalid.
- * @param[in]  _istream    An std::istream object; use std::cin by default.
+ * @param[out] arg_        Argument read from std::istream.
+ * @param[in]  prompt_     Prompt string printed on terminal.
+ * @param[in]  auto_fill_  Default value to be assigned to arg_.
+ * @param[in]  invalid_    Function that returns true if arg_ is invalid.
+ * @param[in]  istream_    An std::istream object; use std::cin by default.
  */
-template <class __Arg, class __Invalid>
-void read_stream_1(__Arg& _arg, std::string _prompt, __Arg _auto_fill,
-                   __Invalid&& _invalid, std::istream& _istream = std::cin) {
+template <class Arg_, class Invalid_>
+void read_stream_1(Arg_& arg_, std::string prompt_, Arg_ auto_fill_,
+                   Invalid_&& invalid_, std::istream& istream_ = std::cin) {
   int input_fail = false;
   std::string line;
-  while (_invalid(_arg)) {
-    std::cout << _prompt;
-    std::getline(_istream, line);
+  while (invalid_(arg_)) {
+    std::cout << prompt_;
+    std::getline(istream_, line);
     auto vs = Text::split(line);
     if (vs.size() == 0) {
-      _arg = _auto_fill;
+      arg_ = auto_fill_;
     } else {
-      input_fail = read_string_1(_arg, line.data(), line.size());
+      input_fail = read_string_1(arg_, line.data(), line.size());
     }
     if (input_fail) {
       // reset failbit
-      _istream.clear();
+      istream_.clear();
       // expunge the remaining input and invisible '\n'
       // unnecessary if std::getline is used
-      // _istream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      // istream_.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       goto flag_continue;
     }
-    if (_invalid(_arg)) {
-      _arg = _auto_fill;
+    if (invalid_(arg_)) {
+      arg_ = auto_fill_;
     }
   flag_continue:
     (void)0;

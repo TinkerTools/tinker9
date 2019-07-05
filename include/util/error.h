@@ -28,8 +28,8 @@ public:
 #define m_tinker_throw(_msg)                                                   \
   do {                                                                         \
     print_backtrace();                                                         \
-    std::string m__ = format("{} at {}:{}", _msg, __FILE__, __LINE__);         \
-    throw FatalError(m__);                                                     \
+    std::string m_ = format("{} at {}:{}", _msg, __FILE__, __LINE__);          \
+    throw FatalError(m_);                                                      \
   } while (0)
 TINKER_NAMESPACE_END
 

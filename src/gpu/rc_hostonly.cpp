@@ -34,7 +34,7 @@ cudaError_t cudaMalloc(void** devPtr, size_t size) {
 }
 
 cudaError_t cudaMemcpy(void* dst, const void* src, size_t count,
-                       hostonly_cuda_enum__ /* kind */) {
+                       hostonly_cuda_enum_) {
   std::memcpy(dst, src, count);
   return cudaSuccess;
 }

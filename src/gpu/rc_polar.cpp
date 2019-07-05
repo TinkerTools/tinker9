@@ -28,16 +28,16 @@ real* vir_ep;
 real (*ufld)[3];
 real (*dufld)[6];
 
-real (*work01__)[3];
-real (*work02__)[3];
-real (*work03__)[3];
-real (*work04__)[3];
-real (*work05__)[3];
-real (*work06__)[3];
-real (*work07__)[3];
-real (*work08__)[3];
-real (*work09__)[3];
-real (*work10__)[3];
+real (*work01_)[3];
+real (*work02_)[3];
+real (*work03_)[3];
+real (*work04_)[3];
+real (*work05_)[3];
+real (*work06_)[3];
+real (*work07_)[3];
+real (*work08_)[3];
+real (*work09_)[3];
+real (*work10_)[3];
 
 void get_epolar_type(int& typ, std::string& typ_str) {
   if (use_ewald()) {
@@ -64,16 +64,16 @@ void epolar_data(rc_t rc) {
     check_cudart(cudaFree(ufld));
     check_cudart(cudaFree(dufld));
 
-    check_cudart(cudaFree(work01__));
-    check_cudart(cudaFree(work02__));
-    check_cudart(cudaFree(work03__));
-    check_cudart(cudaFree(work04__));
-    check_cudart(cudaFree(work05__));
-    check_cudart(cudaFree(work06__));
-    check_cudart(cudaFree(work07__));
-    check_cudart(cudaFree(work08__));
-    check_cudart(cudaFree(work09__));
-    check_cudart(cudaFree(work10__));
+    check_cudart(cudaFree(work01_));
+    check_cudart(cudaFree(work02_));
+    check_cudart(cudaFree(work03_));
+    check_cudart(cudaFree(work04_));
+    check_cudart(cudaFree(work05_));
+    check_cudart(cudaFree(work06_));
+    check_cudart(cudaFree(work07_));
+    check_cudart(cudaFree(work08_));
+    check_cudart(cudaFree(work09_));
+    check_cudart(cudaFree(work10_));
   }
 
   if (rc & rc_alloc) {
@@ -95,16 +95,16 @@ void epolar_data(rc_t rc) {
       dufld = nullptr;
     }
 
-    check_cudart(cudaMalloc(&work01__, 3 * n * rs));
-    check_cudart(cudaMalloc(&work02__, 3 * n * rs));
-    check_cudart(cudaMalloc(&work03__, 3 * n * rs));
-    check_cudart(cudaMalloc(&work04__, 3 * n * rs));
-    check_cudart(cudaMalloc(&work05__, 3 * n * rs));
-    check_cudart(cudaMalloc(&work06__, 3 * n * rs));
-    check_cudart(cudaMalloc(&work07__, 3 * n * rs));
-    check_cudart(cudaMalloc(&work08__, 3 * n * rs));
-    check_cudart(cudaMalloc(&work09__, 3 * n * rs));
-    check_cudart(cudaMalloc(&work10__, 3 * n * rs));
+    check_cudart(cudaMalloc(&work01_, 3 * n * rs));
+    check_cudart(cudaMalloc(&work02_, 3 * n * rs));
+    check_cudart(cudaMalloc(&work03_, 3 * n * rs));
+    check_cudart(cudaMalloc(&work04_, 3 * n * rs));
+    check_cudart(cudaMalloc(&work05_, 3 * n * rs));
+    check_cudart(cudaMalloc(&work06_, 3 * n * rs));
+    check_cudart(cudaMalloc(&work07_, 3 * n * rs));
+    check_cudart(cudaMalloc(&work08_, 3 * n * rs));
+    check_cudart(cudaMalloc(&work09_, 3 * n * rs));
+    check_cudart(cudaMalloc(&work10_, 3 * n * rs));
   }
 
   if (rc & rc_copyin) {

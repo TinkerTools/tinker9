@@ -5,7 +5,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-typedef struct nblist_def_st__ {
+typedef struct nblist_def_st_ {
   enum { null = 0, double_loop = 1, nblist = 2 };
 
   int* nlst;

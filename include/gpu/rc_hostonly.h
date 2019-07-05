@@ -9,7 +9,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-enum hostonly_cuda_enum__ {
+enum hostonly_cuda_enum_ {
   cudaSuccess = 0,
   cudaErrorInvalidHostPointer,
 
@@ -18,7 +18,7 @@ enum hostonly_cuda_enum__ {
   cudaMemcpyHostToDevice
 };
 
-typedef hostonly_cuda_enum__ cudaError_t;
+typedef hostonly_cuda_enum_ cudaError_t;
 const char* cudaGetErrorName(cudaError_t error);
 const char* cudaGetErrorString(cudaError_t error);
 
@@ -29,10 +29,10 @@ cudaError_t cudaMalloc(T** devPtr, size_t size) {
   return cudaMalloc(reinterpret_cast<void**>(devPtr), size);
 }
 cudaError_t cudaMemcpy(void* dst, const void* src, size_t count,
-                       hostonly_cuda_enum__ kind);
+                       hostonly_cuda_enum_ kind);
 cudaError_t cudaMemset(void* devPtr, int value, size_t count);
 
-typedef struct hostonly_fftw_plans_st__ {
+typedef struct hostonly_fftw_plans_st_ {
 #  if defined(TINKER_GPU_SINGLE)
   fftwf_plan
 #  elif defined(TINKER_GPU_DOUBLE)

@@ -213,7 +213,7 @@ void etors_tmpl() {
   } // end for (int i)
 }
 
-void etors_acc_impl__(int vers) {
+void etors_acc_impl_(int vers) {
   if (vers == v0 || vers == v3)
     etors_tmpl<v0>();
   else if (vers == v1)

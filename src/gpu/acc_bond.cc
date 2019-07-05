@@ -100,7 +100,7 @@ void ebond_tmpl() {
   } // end for (int i)
 }
 
-void ebond_acc_impl__(int vers) {
+void ebond_acc_impl_(int vers) {
   if (bndtyp == bond_harmonic)
     if (vers == v0 || vers == v3)
       ebond_tmpl<v0, bond_harmonic>();

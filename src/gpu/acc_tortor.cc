@@ -7,7 +7,7 @@
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 // see also bicubic.f
-#define BCUCOF__                                                               \
+#define BCUCOF_                                                                \
   real c[4][4];                                                                \
   real d1 = x1u - x1l;                                                         \
   real d2 = x2u - x2l;                                                         \
@@ -56,7 +56,7 @@ namespace gpu {
   real t = (x1 - x1l) * REAL_RECIP(x1u - x1l);                                 \
   real u = (x2 - x2l) * REAL_RECIP(x2u - x2l)
 
-#define BCUCOF_ANSY__                                                          \
+#define BCUCOF_ANSY_                                                           \
   real ay = ((c[3][3] * u + c[3][2]) * u + c[3][1]) * u + c[3][0];             \
   ay = t * ay + ((c[2][3] * u + c[2][2]) * u + c[2][1]) * u + c[2][0];         \
   ay = t * ay + ((c[1][3] * u + c[1][2]) * u + c[1][1]) * u + c[1][0];         \
@@ -69,8 +69,8 @@ static void bcuint0(const real (&__restrict__ y)[4],
                     const real (&__restrict__ y12i)[4], real x1l, real x1u,
                     real x2l, real x2u, real x1, real x2,
                     real& __restrict__ ansy) {
-  BCUCOF__;
-  BCUCOF_ANSY__;
+  BCUCOF_;
+  BCUCOF_ANSY_;
   ansy = ay;
 }
 
@@ -82,8 +82,8 @@ static void bcuint1(const real (&__restrict__ y)[4],
                     real x2l, real x2u, real x1, real x2,
                     real& __restrict__ ansy, real& __restrict__ ansy1,
                     real& __restrict__ ansy2) {
-  BCUCOF__;
-  BCUCOF_ANSY__;
+  BCUCOF_;
+  BCUCOF_ANSY_;
   ansy = ay;
 
   real day1 = (3 * c[3][3] * t + 2 * c[2][3]) * t + c[1][3];
@@ -101,12 +101,12 @@ static void bcuint1(const real (&__restrict__ y)[4],
   ansy2 = day2;
 }
 
-#undef BCUCOF__
-#undef BCUCOF_ANSY__
+#undef BCUCOF_
+#undef BCUCOF_ANSY_
 
 /**
  * Comments
- * 
+ *
  * The TORTORS grids are expected to be evenly distributed.
  */
 
@@ -120,7 +120,7 @@ void etortor_tmpl() {
   real ftt[4], ft12[4], ft1[4], ft2[4];
   #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
-              ibitor,itt,chkttor_ia__,\
+              ibitor,itt,chkttor_ia_,\
               tnx,tny,ttx,tty,tbf,tbx,tby,tbxy,\
               ett,vir_ett)\
               private(ftt[0:4],ft12[0:4],ft1[0:4],ft2[0:4])
@@ -209,7 +209,7 @@ void etortor_tmpl() {
 
       // check for inverted chirality at the central atom
 
-      const int chk_ia = chkttor_ia__[itortor];
+      const int chk_ia = chkttor_ia_[itortor];
       real vol = 1;
       if (chk_ia >= 0) {
         // if chiral
@@ -419,7 +419,7 @@ void etortor_tmpl() {
   } // end for (int itortor)
 }
 
-void etortor_acc_impl__(int vers) {
+void etortor_acc_impl_(int vers) {
   if (vers == v0 || vers == v3)
     etortor_tmpl<v0>();
   else if (vers == v1)

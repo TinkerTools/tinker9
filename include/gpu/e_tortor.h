@@ -25,7 +25,7 @@ extern real (*tbx)[ktrtor::maxtgrd2];
 extern real (*tby)[ktrtor::maxtgrd2];
 extern real (*tbxy)[ktrtor::maxtgrd2];
 
-extern int* chkttor_ia__; // of size ntortor
+extern int* chkttor_ia_; // of size ntortor
 
 extern real ttorunit;
 
