@@ -2,8 +2,6 @@
 #include "test/ff.h"
 #include "test/rt.h"
 #include "test/test.h"
-#include <ext/tinker/tinker_rt.h>
-#include <ext/tinker/tinker_mod.h>
 
 m_tinker_using_namespace;
 using namespace test;
@@ -27,8 +25,7 @@ TEST_CASE("Verlet-Ar6", "[noassert][verlet][ar6]") {
   const char* argv[] = {"dummy", x1};
   int argc = 2;
   test_begin_1_xyz(argc, argv);
-  bath::isobaric = _false_;
-  bath::isobaric = _false_;
+  test_mdinit(0, 0);
 
   gpu::use_data = usage_;
   tinker_gpu_data_create();

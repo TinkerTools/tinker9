@@ -7,10 +7,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace detail_ {
-enum class BackTraceOS {
-  osx,
-  linux,
-};
+enum class BackTraceOS { osx, linux };
 
 template <BackTraceOS os>
 void print_backtrace_template(std::ostream& fp) {

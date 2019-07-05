@@ -16,52 +16,52 @@ private:
   FortranStringView() = delete;
 
   /**
-   * If dst_ != src_, copy the first_n_ characters from src_ to dst_;
-   * fill dst_ with blanks if first_n_ is less than dstlen_;
-   * dst_ is NOT terminated by NULL.
+   * If dst != src, copy the first_n characters from src to dst;
+   * fill dst with blanks if first_n is less than dstlen;
+   * dst is NOT terminated by NULL.
    */
-  static void copy_with_blank_(char* dst_, size_t dstlen_, const char* src_,
-                               size_t first_n_);
+  static void copy_with_blank_(char* dst, size_t dstlen, const char* src,
+                               size_t first_n);
 
   /**
-   * Compare to string src_ of len_.
+   * Compare to string src of len.
    * The shorter string is filled by blanks prior to comparison.
    */
-  bool if_eq_(const char* src_, size_t len_) const;
+  bool if_eq_(const char* src, size_t len) const;
 
 public:
   //
   // Constructors.
   //
-  template <size_t Len_>
-  FortranStringView(const char (&src_)[Len_])
-      : b_(const_cast<char*>(src_)), e_(b_ + Len_) {}
-  FortranStringView(const char* src_, size_t len_);
-  FortranStringView(const char* src_);
-  FortranStringView(const std::string& src_);
+  template <size_t Len>
+  FortranStringView(const char (&src)[Len])
+      : b_(const_cast<char*>(src)), e_(b_ + Len) {}
+  FortranStringView(const char* src, size_t len);
+  FortranStringView(const char* src);
+  FortranStringView(const std::string& src);
 
   //
   // Assignment operators.
   //
-  template <size_t Len_>
-  FortranStringView& operator=(const char (&src_)[Len_]) {
-    copy_with_blank_(b_, size(), src_, Len_);
+  template <size_t Len>
+  FortranStringView& operator=(const char (&src)[Len]) {
+    copy_with_blank_(b_, size(), src, Len);
     return *this;
   }
-  FortranStringView& operator=(const char* src_);
-  FortranStringView& operator=(const std::string& src_);
-  FortranStringView& operator=(const FortranStringView& src_);
+  FortranStringView& operator=(const char* src);
+  FortranStringView& operator=(const std::string& src);
+  FortranStringView& operator=(const FortranStringView& src);
 
   //
   // Comparisons.
   //
-  template <size_t Len_>
-  bool operator==(const char (&src_)[Len_]) const {
-    return if_eq_(src_, Len_);
+  template <size_t Len>
+  bool operator==(const char (&src)[Len]) const {
+    return if_eq_(src, Len);
   }
-  bool operator==(const char* src_) const;
-  bool operator==(const std::string& src_) const;
-  bool operator==(const FortranStringView& src_) const;
+  bool operator==(const char* src) const;
+  bool operator==(const std::string& src) const;
+  bool operator==(const FortranStringView& src) const;
 
   /// @brief  Max number of characters in the string.
   size_t size() const;
@@ -74,11 +74,11 @@ public:
    * @brief
    * Analogous to Fortran str(x:y) syntax.
    *
-   * @param begin1_  One-based index for the beginning index.
-   * @param back1_   One-based index for the inclusive ending index.
-   * @return         A new FortranStringView object.
+   * @param begin1  One-based index for the beginning index.
+   * @param back1   One-based index for the inclusive ending index.
+   * @return        A new FortranStringView object.
    */
-  FortranStringView operator()(int begin1_, int back1_) const;
+  FortranStringView operator()(int begin1, int back1) const;
 };
 
 typedef FortranStringView fstr_view;

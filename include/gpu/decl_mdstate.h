@@ -26,6 +26,8 @@ enum {
   v6 = use_grad + use_virial,              ///  96
   // clang-format on
 
+  use_md = 0x1000,
+
   _x = 0, /// x direction
   _y = 1, /// y direction
   _z = 2, /// z direction

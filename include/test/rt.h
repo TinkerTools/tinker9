@@ -25,6 +25,7 @@ double test_get_eps2(double eps_single, double eps_double);
 
 void test_begin_1_xyz(int argc, const char** argv);
 void test_end();
+void test_mdinit(double t = 0, double atm = 0);
 }
 TINKER_NAMESPACE_END
 

@@ -38,18 +38,27 @@ void test_begin_1_xyz(int argc, const char** argv) {
   TINKER_RT(command)();
   TINKER_RT(getxyz)();
   TINKER_RT(mechanic)();
-
-  bath::isothermal = _true_;
-  bath::kelvin = 298;
-  bath::isobaric = _true_;
-  bath::atmsph = 1;
-
-  TINKER_RT(mdinit)();
 }
 
 void test_end() {
   TINKER_RT(final)();
   fortran_runtime_finish();
+}
+
+void test_mdinit(double t, double atm) {
+  if (t) {
+    bath::kelvin = t;
+    bath::isothermal = _true_;
+  } else
+    bath::isothermal = _false_;
+
+  if (atm) {
+    bath::atmsph = atm;
+    bath::isobaric = _true_;
+  } else
+    bath::isobaric = _false_;
+
+  TINKER_RT(mdinit)();
 }
 }
 TINKER_NAMESPACE_END

@@ -9,10 +9,9 @@ TINKER_NAMESPACE_BEGIN
  * @brief
  * Print the calling stack.
  *
- * @param _out_stream  A reference to std::ostream object.
- *                     The default argument is std::cerr.
+ * @param out_stream  A reference to std::ostream object.
  */
-void print_backtrace(std::ostream& _out_stream = std::cout);
+void print_backtrace(std::ostream& out_stream = std::cout);
 
 class FatalError : public std::exception {
 private:
@@ -25,10 +24,10 @@ public:
   const char* what() const noexcept override;
 };
 
-#define m_tinker_throw(_msg)                                                   \
+#define m_tinker_throw(msg)                                                    \
   do {                                                                         \
     print_backtrace();                                                         \
-    std::string m_ = format("{} at {}:{}", _msg, __FILE__, __LINE__);          \
+    std::string m_ = format("{} at {}:{}", msg, __FILE__, __LINE__);           \
     throw FatalError(m_);                                                      \
   } while (0)
 TINKER_NAMESPACE_END
