@@ -96,18 +96,21 @@ typedef std::vector<std::array<double, 3>> grad_t;
             vir[3 * i + 1], vir[3 * i + 2]);                                   \
     }                                                                          \
   }
-#define PRINT_GRADIENT_                                                        \
+#define PRINT_V3_(info, v1, v2, v3)                                            \
   {                                                                            \
     grad_t grad(gpu::n);                                                       \
     double* dst = &grad[0][0];                                                 \
-    gpu::copyout_array2(0, 3, dst, gpu::gx, gpu::n);                           \
-    gpu::copyout_array2(1, 3, dst, gpu::gy, gpu::n);                           \
-    gpu::copyout_array2(2, 3, dst, gpu::gz, gpu::n);                           \
+    gpu::copyout_array2(0, 3, dst, v1, gpu::n);                                \
+    gpu::copyout_array2(1, 3, dst, v2, gpu::n);                                \
+    gpu::copyout_array2(2, 3, dst, v3, gpu::n);                                \
     for (int i = 0; i < gpu::n; ++i) {                                         \
-      print(stdout, " GRADIENT ATOM{:>6d}{:>12.4f}{:>12.4f}{:>12.4f}\n",       \
+      print(stdout, " {:s} ATOM{:>6d}{:>12.6f}{:>12.6f}{:>12.6f}\n", info,     \
             i + 1, grad[i][0], grad[i][1], grad[i][2]);                        \
     }                                                                          \
   }
+#define PRINT_GRADIENT_ PRINT_V3_("GRADIENT", gpu::gx, gpu::gy, gpu::gz)
+#define PRINT_COORD_ PRINT_V3_("COORD", gpu::x, gpu::y, gpu::z)
+#define PRINT_VELOCITY_ PRINT_V3_("VELOCITY", gpu::vx, gpu::vy, gpu::vz)
 #define PRINT_GRAD_T_(grad)                                                    \
   {                                                                            \
     for (int i = 0; i < grad.size(); ++i) {                                    \

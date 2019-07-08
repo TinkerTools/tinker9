@@ -93,38 +93,38 @@ void vel_data(rc_t rc) {
 }
 
 //======================================================================
-/// accelerations
-real *ax, *ay, *az;
+// // accelerations
+// real *ax, *ay, *az;
 
-void accel_data(rc_t rc) {
-  if ((use_accel & use_data) == 0)
-    return;
+// void accel_data(rc_t rc) {
+//   if ((use_accel & use_data) == 0)
+//     return;
 
-  if (rc & rc_dealloc) {
-    check_cudart(cudaFree(ax));
-    check_cudart(cudaFree(ay));
-    check_cudart(cudaFree(az));
-  }
+//   if (rc & rc_dealloc) {
+//     check_cudart(cudaFree(ax));
+//     check_cudart(cudaFree(ay));
+//     check_cudart(cudaFree(az));
+//   }
 
-  if (rc & rc_alloc) {
-    size_t size = sizeof(real) * n;
-    check_cudart(cudaMalloc(&ax, size));
-    check_cudart(cudaMalloc(&ay, size));
-    check_cudart(cudaMalloc(&az, size));
-  }
+//   if (rc & rc_alloc) {
+//     size_t size = sizeof(real) * n;
+//     check_cudart(cudaMalloc(&ax, size));
+//     check_cudart(cudaMalloc(&ay, size));
+//     check_cudart(cudaMalloc(&az, size));
+//   }
 
-  if (rc & rc_copyin) {
-    copyin_array2(0, 3, ax, moldyn::a, n);
-    copyin_array2(1, 3, ay, moldyn::a, n);
-    copyin_array2(2, 3, az, moldyn::a, n);
-  }
+//   if (rc & rc_copyin) {
+//     copyin_array2(0, 3, ax, moldyn::a, n);
+//     copyin_array2(1, 3, ay, moldyn::a, n);
+//     copyin_array2(2, 3, az, moldyn::a, n);
+//   }
 
-  if (rc & rc_copyout) {
-    copyout_array2(0, 3, moldyn::a, ax, n);
-    copyout_array2(1, 3, moldyn::a, ay, n);
-    copyout_array2(2, 3, moldyn::a, az, n);
-  }
-}
+//   if (rc & rc_copyout) {
+//     copyout_array2(0, 3, moldyn::a, ax, n);
+//     copyout_array2(1, 3, moldyn::a, ay, n);
+//     copyout_array2(2, 3, moldyn::a, az, n);
+//   }
+// }
 
 //======================================================================
 /// atomic mass
@@ -164,7 +164,7 @@ void mdstate_data(rc_t rc) {
 
   xyz_data(rc);
   vel_data(rc);
-  accel_data(rc);
+  // accel_data(rc);
   mass_data(rc);
 
   potential_data_(rc);

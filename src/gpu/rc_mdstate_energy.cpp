@@ -173,17 +173,21 @@ void egv_data(rc_t rc) {
       check_cudart(cudaMalloc(&gz, size));
     }
 
-    if ((use_data & use_md) && (rc & rc_copyin)) {
-      copyin_array2(0, 3, gx, deriv::desum, n);
-      copyin_array2(1, 3, gy, deriv::desum, n);
-      copyin_array2(2, 3, gz, deriv::desum, n);
-    }
+    // We can never assume whether or not deriv::desum was allocated, because it
+    // was allocated inside subroutine gradient(...), which would be skipped in
+    // subroutine mdinit() if a dyn file existed to restart a simulation.
 
-    if ((use_data & use_md) && (rc & rc_copyout)) {
-      copyout_array2(0, 3, deriv::desum, gx, n);
-      copyout_array2(1, 3, deriv::desum, gy, n);
-      copyout_array2(2, 3, deriv::desum, gz, n);
-    }
+    // if (rc & rc_copyin) {
+    //   copyin_array2(2, 3, gz, deriv::desum, n);
+    //   copyin_array2(2, 3, gz, deriv::desum, n);
+    //   copyin_array2(2, 3, gz, deriv::desum, n);
+    // }
+
+    // if (rc & rc_copyout) {
+    //   copyout_array2(0, 3, deriv::desum, gx, n);
+    //   copyout_array2(1, 3, deriv::desum, gy, n);
+    //   copyout_array2(2, 3, deriv::desum, gz, n);
+    // }
   }
 }
 

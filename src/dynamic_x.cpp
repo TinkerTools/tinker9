@@ -156,7 +156,6 @@ void dynamic_x(int argc, char** argv) {
   gpu::use_data = 0;
   gpu::use_data |= gpu::use_xyz;
   gpu::use_data |= gpu::use_vel;
-  gpu::use_data |= gpu::use_accel;
   gpu::use_data |= gpu::use_mass;
   gpu::use_data |= gpu::use_energy;
   gpu::use_data |= gpu::use_grad;

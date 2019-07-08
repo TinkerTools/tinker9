@@ -171,8 +171,8 @@ void propagate_xyz_acc_impl_(real dt) {
   #pragma acc parallel loop independent deviceptr(x,y,z,vx,vy,vz)
   for (int i = 0; i < n; ++i) {
     x[i] += dt * vx[i];
-    y[i] += dt * vz[i];
-    z[i] += dt * vy[i];
+    y[i] += dt * vy[i];
+    z[i] += dt * vz[i];
   }
 }
 
@@ -182,8 +182,8 @@ void propagate_velocity_acc_impl_(real dt) {
   for (int i = 0; i < n; ++i) {
     real coef = -ekcal * massinv[i] * dt;
     vx[i] += coef * gx[i];
-    vy[i] += coef * gz[i];
-    vz[i] += coef * gy[i];
+    vy[i] += coef * gy[i];
+    vz[i] += coef * gz[i];
   }
 }
 }

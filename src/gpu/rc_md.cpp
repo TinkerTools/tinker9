@@ -3,9 +3,34 @@
 #include "gpu/decl_potent.h"
 #include "gpu/e_potential.h"
 #include "gpu/rc.h"
+#include "util/fort_str.h"
+#include <fstream>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
+void mdinit() {
+  fstr_view f1 = files::filename;
+  fstr_view f2 = f1(1, files::leng);
+  std::string dynfile = f2.trim() + ".dyn";
+  if (std::ifstream(dynfile)) {
+
+    // convert acceleration to gradient
+
+    std::vector<double> gbuf(n);
+    for (int i = 0; i < n; ++i)
+      gbuf[i] = -moldyn::a[3 * i] * atomid::mass[i] / units::ekcal;
+    copyin_array(gx, gbuf.data(), n);
+    for (int i = 0; i < n; ++i)
+      gbuf[i] = -moldyn::a[3 * i + 1] * atomid::mass[i] / units::ekcal;
+    copyin_array(gy, gbuf.data(), n);
+    for (int i = 0; i < n; ++i)
+      gbuf[i] = -moldyn::a[3 * i + 2] * atomid::mass[i] / units::ekcal;
+    copyin_array(gz, gbuf.data(), n);
+  } else {
+    energy_potential(use_data & vmask);
+  }
+}
+
 void mdsave(int istep, real dt, real epot, real eksum) {
   int modsave = istep % inform::iwrite;
   if (modsave != 0)

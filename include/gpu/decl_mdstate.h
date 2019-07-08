@@ -6,10 +6,10 @@
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 enum {
-  use_xyz = 0x001,   /// xyz
-  use_vel = 0x002,   /// velocity
-  use_accel = 0x004, /// acceleration
-  use_mass = 0x008,  /// mass
+  use_xyz = 0x001, /// xyz
+  use_vel = 0x002, /// velocity
+  // use_accel = 0x004, /// acceleration
+  use_mass = 0x008, /// mass
 
   use_energy = 0x010, /// energy 16
   use_grad = 0x020,   /// gradient 32
@@ -25,8 +25,6 @@ enum {
   v5 = use_grad,                           ///  32
   v6 = use_grad + use_virial,              ///  96
   // clang-format on
-
-  use_md = 0x1000,
 
   _x = 0, /// x direction
   _y = 1, /// y direction
@@ -74,9 +72,9 @@ extern real *vx, *vy, *vz;
 void vel_data(rc_t rc);
 
 //======================================================================
-/// accelerations
-extern real *ax, *ay, *az;
-void accel_data(rc_t rc);
+// // accelerations
+// extern real *ax, *ay, *az;
+// void accel_data(rc_t rc);
 
 //======================================================================
 /// atomic mass
