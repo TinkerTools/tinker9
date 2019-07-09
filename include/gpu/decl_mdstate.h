@@ -117,6 +117,7 @@ TINKER_NAMESPACE_END
 #include "decl_couple.h"
 #include "decl_nblist.h"
 #include "decl_polgrp.h"
+#include "decl_random.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

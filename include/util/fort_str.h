@@ -79,6 +79,14 @@ public:
    * @return        A new FortranStringView object.
    */
   FortranStringView operator()(int begin1, int back1) const;
+  /**
+   * @brief
+   * Analogous to Fortran str(x:) syntax.
+   *
+   * @param begin1  One-based index for the beginning index.
+   * @return        A new FortranStringView object.
+   */
+  FortranStringView operator()(int begin1) const;
 };
 
 typedef FortranStringView fstr_view;

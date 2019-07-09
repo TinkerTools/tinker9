@@ -1,4 +1,3 @@
-
 #ifndef TINKER_HOSTONLY
 
 #  include "gpu/decl_pme.h"

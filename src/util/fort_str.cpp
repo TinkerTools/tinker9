@@ -2,15 +2,13 @@
 #include <algorithm>
 
 TINKER_NAMESPACE_BEGIN
-static const char BLANK_ = ' ';
-
 void FortranStringView::copy_with_blank_(char* dst, size_t dstlen,
                                          const char* src, size_t first_n) {
   if (dst != src) {
     auto m = std::min(dstlen, first_n);
     std::memmove(dst, src, m); // [0, m)
     if (first_n < dstlen) {
-      std::fill(&dst[m], &dst[dstlen], BLANK_); // [m, dstlen)
+      std::fill(&dst[m], &dst[dstlen], ' '); // [m, dstlen)
     }
   }
 }
@@ -82,7 +80,7 @@ size_t FortranStringView::len_trim() const {
   size_t pos = 0;
   for (; pos < size() && b_[pos] != 0; ++pos)
     ;
-  for (; pos > 0 && b_[pos - 1] == BLANK_; --pos)
+  for (; pos > 0 && (b_[pos - 1] == ' ' || b_[pos - 1] == '\t'); --pos)
     ;
   return pos;
 }
@@ -96,4 +94,8 @@ FortranStringView FortranStringView::operator()(int begin1, int back1) const {
   return FortranStringView(b_ + (begin1 - 1), back1 - begin1 + 1);
 }
 
+FortranStringView FortranStringView::operator()(int begin1) const {
+  assert(1 <= begin1 && begin1 <= (e_ - b_));
+  return FortranStringView(b_ + (begin1 - 1), e_ - b_);
+}
 TINKER_NAMESPACE_END

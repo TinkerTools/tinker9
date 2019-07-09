@@ -12,6 +12,7 @@ typedef enum {
   thermo_nose_hoover_chain,
   thermo_null
 } thermostat_t;
+extern thermostat_t thermostat;
 
 typedef enum {
   baro_berendsen,
@@ -20,8 +21,13 @@ typedef enum {
   baro_montecarlo,
   baro_null
 } barostat_t;
+extern barostat_t barostat;
 
-void mdinit();
+void md_data(rc_t rc);
+
+void kinetic(real& eksum, real (&ekin)[3][3], real& temp);
+void temper(real dt, real& eksum, real (&ekin)[3][3], real& temp);
+
 /// pass device data back to Tinker mdsave subroutine
 void mdsave(int istep, real dt, real epot, real eksum);
 

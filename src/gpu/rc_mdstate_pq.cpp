@@ -175,6 +175,8 @@ void mdstate_data(rc_t rc) {
   box_data(rc);
   couple_data(rc);
   nblist_data(rc);
+
+  random_data(rc);
 }
 }
 TINKER_NAMESPACE_END

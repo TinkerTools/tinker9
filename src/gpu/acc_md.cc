@@ -6,6 +6,41 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
+void kinetic_acc_impl_(real& eksum, real (&ekin)[3][3], real& temp) {
+  const real ekcal_inv = 1.0 / units::ekcal;
+  real exx = 0;
+  real eyy = 0;
+  real ezz = 0;
+  real exy = 0;
+  real eyz = 0;
+  real ezx = 0;
+  #pragma acc parallel loop independent deviceptr(mass,vx,vy,vz)\
+          reduction(+:exx,eyy,ezz,exy,eyz,ezx)
+  for (int i = 0; i < n; ++i) {
+    real term = 0.5f * mass[i] * ekcal_inv;
+    exx += term * vx[i] * vx[i];
+    eyy += term * vy[i] * vy[i];
+    ezz += term * vz[i] * vz[i];
+    exy += term * vx[i] * vy[i];
+    eyz += term * vy[i] * vz[i];
+    ezx += term * vz[i] * vx[i];
+  }
+  ekin[0][0] = exx;
+  ekin[0][1] = exy;
+  ekin[0][2] = ezx;
+  ekin[1][0] = exy;
+  ekin[1][1] = eyy;
+  ekin[1][2] = eyz;
+  ekin[2][0] = ezx;
+  ekin[2][1] = eyz;
+  ekin[2][2] = ezz;
+  eksum = exx + eyy + ezz;
+  temp = 2 * eksum / (mdstuf::nfree * units::gasconst);
+
+  // TODO: RIGIDBODY
+  // TODO: if (isobaric .and. barostat.eq.'BUSSI')
+}
+
 void mdrest_acc_impl_(int istep) {
   if (!mdstuf::dorest)
     return;

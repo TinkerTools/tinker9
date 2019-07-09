@@ -33,7 +33,7 @@ TEST_CASE("Verlet-Ar6", "[noassert][verlet][ar6]") {
   gpu::use_data = usage_;
   tinker_gpu_data_create();
 
-  gpu::mdinit();
+  gpu::md_data(static_cast<gpu::rc_t>(gpu::rc_alloc | gpu::rc_copyin));
   gpu::velocity_verlet(1, 0.001);
 
   tinker_gpu_data_destroy();
