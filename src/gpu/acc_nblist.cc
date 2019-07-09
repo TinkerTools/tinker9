@@ -4,7 +4,10 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-static void nblist_build_double_loop_(nblist_t* lst) {
+
+//======================================================================
+// double loop
+static void build_double_loop_(nblist_t* lst) {
   #pragma acc data deviceptr(lst)
   #pragma acc parallel loop
   for (int i = 0; i < n; ++i) {
@@ -13,9 +16,13 @@ static void nblist_build_double_loop_(nblist_t* lst) {
   }
 }
 
-// static void nblist_update_double_loop_() {}
+// static void update_double_loop_() {}
 
-static void nblist_build_nblist_(nblist_t* lst) {
+//======================================================================
+// version 1
+// see also nblist.f
+
+static void build_v1_(nblist_t* lst) {
   #pragma acc data deviceptr(lst,box)
   #pragma acc parallel loop
   for (int i = 0; i < n; ++i) {
@@ -45,21 +52,23 @@ static void nblist_build_nblist_(nblist_t* lst) {
   }
 }
 
-static void nblist_update_nblist_(nblist_t*) {}
+static void update_v1_(nblist_t*) {}
 
-void nblist_build(const nblist_t& st, nblist_t* lst) {
+//======================================================================
+
+void nblist_build_acc_impl_(const nblist_t& st, nblist_t* lst) {
   if (st.maxnlst == 1) {
-    nblist_build_double_loop_(lst);
+    build_double_loop_(lst);
   } else {
-    nblist_build_nblist_(lst);
+    build_v1_(lst);
   }
 }
 
-void nblist_update(const nblist_t& st, nblist_t* lst) {
+void nblist_update_acc_impl_(const nblist_t& st, nblist_t* lst) {
   if (st.maxnlst == 1) {
-    // nblist_update_double_loop_();
+    // update_double_loop_();
   } else {
-    nblist_update_nblist_(lst);
+    update_v1_(lst);
   }
 }
 }

@@ -78,11 +78,6 @@ int use_usolv_list() {
   return ret;
 }
 
-void nblist_update_vdw_list() {
-  evdw_reduce_xyz();
-  nblist_update(gpu::vlist_obj_, gpu::vlst);
-}
-
 // see also cutoffs.f
 // In the gas phase calculation where neighbor list is not used, we should
 // always first check the value of maxn.
@@ -149,6 +144,8 @@ static void nblist_op_alloc_(nblist_t& st, nblist_t*& list, int maxn,
   check_cudart(cudaMemcpy(list, &st, size, cudaMemcpyHostToDevice));
 }
 
+extern void nblist_build_acc_impl_(const nblist_t& st, nblist_t* lst);
+extern void nblist_update_acc_impl_(const nblist_t&, nblist_t*);
 void nblist_data(rc_t rc) {
   int maxnlst = 0;
   int u = 0;
@@ -169,7 +166,12 @@ void nblist_data(rc_t rc) {
 
     if (rc & rc_copyin) {
       evdw_reduce_xyz();
-      nblist_build(vlist_obj_, vlst);
+      nblist_build_acc_impl_(vlist_obj_, vlst);
+    }
+
+    if (rc & rc_evolve) {
+      evdw_reduce_xyz();
+      nblist_update_acc_impl_(vlist_obj_, vlst);
     }
   }
 
@@ -223,9 +225,11 @@ void nblist_data(rc_t rc) {
                        neigh::lbuffer, x, y, z);
     }
 
-    if (rc & rc_copyin) {
-      nblist_build(mlist_obj_, mlst);
-    }
+    if (rc & rc_copyin)
+      nblist_build_acc_impl_(mlist_obj_, mlst);
+
+    if (rc & rc_evolve)
+      nblist_update_acc_impl_(mlist_obj_, mlst);
   }
 
   // ulist

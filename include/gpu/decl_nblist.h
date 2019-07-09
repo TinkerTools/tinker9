@@ -18,10 +18,6 @@ typedef struct nblist_def_st_ {
   real cutoff, buffer;
 } nblist_t;
 
-void nblist_build(const nblist_t&, nblist_t*);
-void nblist_update(const nblist_t&, nblist_t*);
-void nblist_update_vdw_list();
-
 int use_vdw_list();
 int use_disp_list();
 int use_charge_list();

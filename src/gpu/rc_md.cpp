@@ -75,7 +75,7 @@ void kinetic(real& eksum, real (&ekin)[3][3], real& temp) {
 
 extern void thermo_bussi_acc_impl_(double dt, double temp);
 void temper(real dt, real& eksum, real (&ekin)[3][3], real& temp) {
-  if (thermostat == thermo_bussi)
+  if (thermostat == thermo_null)
     return;
 
   kinetic(eksum, ekin, temp);
