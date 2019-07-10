@@ -39,9 +39,9 @@ void random_data(rc_t rc) {
       int hour = local_tm->tm_hour;
       int minute = local_tm->tm_min;
       int second = local_tm->tm_sec;
-      seed = seed + 32140800 * year + 2678400 * (month - 1);
-      seed = seed + 86400 * (day - 1) + 3600 * hour;
-      seed = seed + 60 * minute + second;
+      seed = 32140800 * year + 2678400 * (month - 1);
+      seed += 86400 * (day - 1) + 3600 * hour;
+      seed += 60 * minute + second;
     }
     generator_.seed(seed);
   }

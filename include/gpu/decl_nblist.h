@@ -10,6 +10,7 @@ typedef struct nblist_def_st_ {
 
   int* nlst;
   int* lst;
+  int* update;
   real *xold, *yold, *zold;
   const real* x;
   const real* y;

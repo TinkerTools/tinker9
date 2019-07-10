@@ -8,8 +8,8 @@
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 void evdw_reduce_xyz() {
-  #pragma acc data deviceptr(x,y,z,ired,kred,xred,yred,zred)
-  #pragma acc parallel loop
+  #pragma acc parallel loop independent\
+              deviceptr(x,y,z,ired,kred,xred,yred,zred)
   for (int i = 0; i < n; ++i) {
     int iv = ired[i];
     real rdn = kred[i];

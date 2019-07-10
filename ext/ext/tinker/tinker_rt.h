@@ -8,11 +8,11 @@ typedef int logical;
 const logical _true_ = 1;
 const logical _false_ = 0;
 
-void nextarg(size_t _len, char* _str, logical& _exist);
+void nextarg(size_t len, char* str, logical& exist);
 
-template <size_t _Len>
-void nextarg(char (&_str)[_Len], logical& _exist) {
-  nextarg(_Len, _str, _exist);
+template <size_t Len>
+void nextarg(char (&str)[Len], logical& exist) {
+  nextarg(Len, str, exist);
 }
 TINKER_NAMESPACE_END
 

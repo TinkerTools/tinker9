@@ -101,6 +101,7 @@ static int nblist_maxlst_(int maxn, double cutoff, double buffer) {
 static void nblist_op_dealloc_(nblist_t& st, nblist_t*& list) {
   check_cudart(cudaFree(st.nlst));
   check_cudart(cudaFree(st.lst));
+  check_cudart(cudaFree(st.update));
   check_cudart(cudaFree(st.xold));
   check_cudart(cudaFree(st.yold));
   check_cudart(cudaFree(st.zold));
@@ -120,15 +121,14 @@ static void nblist_op_alloc_(nblist_t& st, nblist_t*& list, int maxn,
   size = maxlst * n * rs;
   check_cudart(cudaMalloc(&st.lst, size));
 
-  st.maxnlst = maxlst;
-  st.cutoff = cutoff;
-  st.buffer = buffer;
-
   if (maxlst == 1) {
+    st.update = nullptr;
     st.xold = nullptr;
     st.yold = nullptr;
     st.zold = nullptr;
   } else {
+    size = n * rs;
+    check_cudart(cudaMalloc(&st.update, size));
     size = n * sizeof(real);
     check_cudart(cudaMalloc(&st.xold, size));
     check_cudart(cudaMalloc(&st.yold, size));
@@ -138,6 +138,10 @@ static void nblist_op_alloc_(nblist_t& st, nblist_t*& list, int maxn,
   st.x = _x;
   st.y = _y;
   st.z = _z;
+
+  st.maxnlst = maxlst;
+  st.cutoff = cutoff;
+  st.buffer = buffer;
 
   size = sizeof(nblist_t);
   check_cudart(cudaMalloc(&list, size));

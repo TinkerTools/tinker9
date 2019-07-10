@@ -69,6 +69,10 @@ void energy_potential(int vers) {
   gpu::torque(vers);
 
   sum_energies(vers);
+
+  // list update
+
+  nblist_data(rc_evolve);
 }
 }
 TINKER_NAMESPACE_END
