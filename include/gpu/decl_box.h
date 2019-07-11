@@ -42,6 +42,7 @@ typedef struct box_def_st_ {
 } box_t;
 
 extern box_t* box;
+extern box_t* trajbox;
 
 void box_data(rc_t rc);
 }

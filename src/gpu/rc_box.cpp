@@ -1,18 +1,32 @@
 #include "gpu/decl_box.h"
+#include "gpu/decl_mdstate.h"
 #include "gpu/rc.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 box_t* box;
+box_t* trajbox;
 
 void box_data(rc_t rc) {
   if (rc & rc_dealloc) {
-    check_cudart(cudaFree(box));
+    if (use_traj & use_data) {
+      box = nullptr;
+      check_cudart(cudaFree(trajbox));
+    } else {
+      check_cudart(cudaFree(box));
+      trajbox = nullptr;
+    }
   }
 
   if (rc & rc_alloc) {
     size_t size = sizeof(box_t);
-    check_cudart(cudaMalloc(&box, size));
+    if (use_traj & use_data) {
+      size *= trajn;
+      check_cudart(cudaMalloc(&trajbox, size));
+      box = trajbox;
+    } else {
+      check_cudart(cudaMalloc(&box, size));
+    }
   }
 
   if (rc & rc_copyin) {

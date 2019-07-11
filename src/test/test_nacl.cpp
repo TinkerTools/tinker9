@@ -47,9 +47,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
 
   int usage = 0;
   usage |= gpu::use_xyz;
-  usage |= gpu::use_energy;
-  usage |= gpu::use_grad;
-  usage |= gpu::use_virial;
+  usage |= gpu::vmask;
 
   const double eps = 1.0e-5;
 

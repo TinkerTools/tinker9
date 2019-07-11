@@ -36,8 +36,7 @@ beta    110.0
 gamma    90.0
 )**";
 
-static int usage =
-    gpu::use_xyz | gpu::use_energy | gpu::use_grad | gpu::use_virial;
+static int usage = gpu::use_xyz | gpu::vmask;
 static const char* k = "test_local_frame2.key";
 static const char* x1 = "test_local_frame2.xyz";
 static const char* argv[] = {"dummy", x1};

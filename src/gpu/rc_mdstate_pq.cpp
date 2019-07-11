@@ -8,24 +8,29 @@ int use_data;
 //======================================================================
 // number of atoms
 
+int trajn = -1;
 int n;
 
 void n_data(rc_t rc) {
   if (rc & rc_dealloc) {
+    trajn = -1;
     n = 0;
   }
 
   if (rc & rc_alloc) {
     n = atoms::n;
-  }
 
-  if (rc & rc_copyin) {
-    n = atoms::n;
+    if (use_traj & use_data) {
+      // trajn must have been initialized by this point
+      assert(trajn >= 0);
+    }
   }
 }
 
 //======================================================================
-/// x y z coordinates
+// x y z coordinates
+
+real *trajx, *trajy, *trajz;
 real *x, *y, *z;
 
 void xyz_data(rc_t rc) {
@@ -33,16 +38,38 @@ void xyz_data(rc_t rc) {
     return;
 
   if (rc & rc_dealloc) {
-    check_cudart(cudaFree(x));
-    check_cudart(cudaFree(y));
-    check_cudart(cudaFree(z));
+    if (use_traj & use_data) {
+      check_cudart(cudaFree(trajx));
+      check_cudart(cudaFree(trajy));
+      check_cudart(cudaFree(trajz));
+      x = nullptr;
+      y = nullptr;
+      z = nullptr;
+    } else {
+      trajx = nullptr;
+      trajy = nullptr;
+      trajz = nullptr;
+      check_cudart(cudaFree(x));
+      check_cudart(cudaFree(y));
+      check_cudart(cudaFree(z));
+    }
   }
 
   if (rc & rc_alloc) {
     size_t size = sizeof(real) * n;
-    check_cudart(cudaMalloc(&x, size));
-    check_cudart(cudaMalloc(&y, size));
-    check_cudart(cudaMalloc(&z, size));
+    if (use_traj & use_data) {
+      size *= trajn;
+      check_cudart(cudaMalloc(&trajx, size));
+      check_cudart(cudaMalloc(&trajy, size));
+      check_cudart(cudaMalloc(&trajz, size));
+      x = trajx;
+      y = trajy;
+      z = trajz;
+    } else {
+      check_cudart(cudaMalloc(&x, size));
+      check_cudart(cudaMalloc(&y, size));
+      check_cudart(cudaMalloc(&z, size));
+    }
   }
 
   if (rc & rc_copyin) {
@@ -59,7 +86,8 @@ void xyz_data(rc_t rc) {
 }
 
 //======================================================================
-/// velocitiies
+// velocitiies
+
 real *vx, *vy, *vz;
 
 void vel_data(rc_t rc) {
@@ -93,41 +121,8 @@ void vel_data(rc_t rc) {
 }
 
 //======================================================================
-// // accelerations
-// real *ax, *ay, *az;
+// atomic mass
 
-// void accel_data(rc_t rc) {
-//   if ((use_accel & use_data) == 0)
-//     return;
-
-//   if (rc & rc_dealloc) {
-//     check_cudart(cudaFree(ax));
-//     check_cudart(cudaFree(ay));
-//     check_cudart(cudaFree(az));
-//   }
-
-//   if (rc & rc_alloc) {
-//     size_t size = sizeof(real) * n;
-//     check_cudart(cudaMalloc(&ax, size));
-//     check_cudart(cudaMalloc(&ay, size));
-//     check_cudart(cudaMalloc(&az, size));
-//   }
-
-//   if (rc & rc_copyin) {
-//     copyin_array2(0, 3, ax, moldyn::a, n);
-//     copyin_array2(1, 3, ay, moldyn::a, n);
-//     copyin_array2(2, 3, az, moldyn::a, n);
-//   }
-
-//   if (rc & rc_copyout) {
-//     copyout_array2(0, 3, moldyn::a, ax, n);
-//     copyout_array2(1, 3, moldyn::a, ay, n);
-//     copyout_array2(2, 3, moldyn::a, az, n);
-//   }
-// }
-
-//======================================================================
-/// atomic mass
 real* mass;
 real* massinv;
 
@@ -153,9 +148,6 @@ void mass_data(rc_t rc) {
       mbuf[i] = 1 / atomid::mass[i];
     copyin_array(massinv, mbuf.data(), n);
   }
-
-  // if (rc & rc_copyout)
-  //   copyout_array(atomid::mass, mass, n);
 }
 
 extern void potential_data_(rc_t);
@@ -178,5 +170,15 @@ void mdstate_data(rc_t rc) {
 
   random_data(rc);
 }
+
+void goto_frame0(int idx0) {
+  assert(use_traj & use_data);
+  x = trajx + n * idx0;
+  y = trajy + n * idx0;
+  z = trajz + n * idx0;
+  box = trajbox + idx0;
+}
+
+void goto_frame1(int idx1) { goto_frame0(idx1 - 1); }
 }
 TINKER_NAMESPACE_END

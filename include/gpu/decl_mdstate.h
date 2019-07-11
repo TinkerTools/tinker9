@@ -6,10 +6,10 @@
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 enum {
-  use_xyz = 0x001, /// xyz
-  use_vel = 0x002, /// velocity
-  // use_accel = 0x004, /// acceleration
-  use_mass = 0x008, /// mass
+  use_xyz = 0x001,  /// xyz
+  use_vel = 0x002,  /// velocity
+  use_mass = 0x004, /// mass
+  use_traj = 0x008, /// trajectory
 
   use_energy = 0x010, /// energy 16
   use_grad = 0x020,   /// gradient 32
@@ -58,36 +58,36 @@ extern int use_data;
 //======================================================================
 // number of atoms
 
+extern int trajn; // number of frames
 extern int n;
 void n_data(rc_t rc);
 
 //======================================================================
-/// x y z coordinates
+// x y z coordinates
+
+extern real *trajx, *trajy, *trajz;
 extern real *x, *y, *z;
 void xyz_data(rc_t rc);
 
 //======================================================================
-/// velocities
+// velocities
+
 extern real *vx, *vy, *vz;
 void vel_data(rc_t rc);
 
 //======================================================================
-// // accelerations
-// extern real *ax, *ay, *az;
-// void accel_data(rc_t rc);
+// atomic mass
 
-//======================================================================
-/// atomic mass
 extern real* mass;
 extern real* massinv;
 void mass_data(rc_t rc);
 
 //======================================================================
-/// total potential energy
+// total potential energy
 extern real* esum;
-/// total gradients
+// total gradients
 extern real *gx, *gy, *gz;
-/// total virial
+// total virial
 extern real* vir;
 
 void egv_data(rc_t rc);
@@ -122,6 +122,8 @@ TINKER_NAMESPACE_END
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 void mdstate_data(rc_t rc);
+void goto_frame0(int idx0);
+void goto_frame1(int idx1);
 }
 TINKER_NAMESPACE_END
 

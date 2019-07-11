@@ -57,13 +57,15 @@ static std::normal_distribution<float> normalf_(0, 1);
 double normal_double() { return normald_(generator_); }
 float normal_float() { return normalf_(generator_); }
 
+static std::gamma_distribution<double> gammad_(1, 1);
+static std::gamma_distribution<float> gammaf_(1, 1);
 double chi_squared_double(int k) {
-  std::chi_squared_distribution<double> chi_squared_(k);
-  return chi_squared_(generator_);
+  gammad_.param(std::gamma_distribution<double>::param_type(0.5 * k, 2));
+  return gammad_(generator_);
 }
 float chi_squared_float(int k) {
-  std::chi_squared_distribution<float> chi_squared_(k);
-  return chi_squared_(generator_);
+  gammaf_.param(std::gamma_distribution<float>::param_type(0.5f * k, 2));
+  return gammaf_(generator_);
 }
 }
 TINKER_NAMESPACE_END

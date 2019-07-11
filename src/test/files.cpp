@@ -40,6 +40,9 @@ FILE_DEF_(watersmall_xyz);
 
 // six argon atoms test set
 #include "file/ar6.hh"
+
+// 216 argon box test set
+#include "file/arbox.hh"
 }
 TINKER_NAMESPACE_END
 

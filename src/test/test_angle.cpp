@@ -10,8 +10,7 @@ static const char* angleterm_only = R"**(
 angleterm  only
 )**";
 
-static int usage =
-    gpu::use_xyz | gpu::use_energy | gpu::use_grad | gpu::use_virial;
+static int usage = gpu::use_xyz | gpu::vmask;
 
 static const double ref_g_angle_trpcage[][3] = {
     {-3.7764, 0.1402, -1.4677},    {4.3577, -15.9432, -6.3659},

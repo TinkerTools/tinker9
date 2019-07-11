@@ -12,8 +12,7 @@ multipoleterm  none
 polarizeterm   none
 )**";
 
-static int usage =
-    gpu::use_xyz | gpu::use_energy | gpu::use_grad | gpu::use_virial;
+static int usage = gpu::use_xyz | gpu::vmask;
 
 static const double ref_g_bonded_trpcage[][3] = {
     {-8.1695, 0.3312, -10.8960},   {4.3225, -2.3232, -4.7012},

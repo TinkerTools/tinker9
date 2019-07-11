@@ -10,8 +10,7 @@ static const char* pitorsterm_only = R"**(
 pitorsterm  only
 )**";
 
-static int usage =
-    gpu::use_xyz | gpu::use_energy | gpu::use_grad | gpu::use_virial;
+static int usage = gpu::use_xyz | gpu::vmask;
 
 static const double ref_g_pitors_trpcage[][3] = {
     {0.0000, 0.0000, 0.0000},    {-0.0001, -0.0007, 0.0004},

@@ -128,9 +128,6 @@ static void dealloc3(real* /* pe */, real* /* pv */, int* /* pne */) {}
 //======================================================================
 
 void egv_data(rc_t rc) {
-  if ((use_data & (use_analyz | use_energy | use_virial | use_grad)) == 0)
-    return;
-
   if (use_data & (use_analyz | use_energy | use_virial)) {
     energy_buffer_::data(rc);
 
@@ -245,7 +242,7 @@ void zero_egv(int vers) {
   }
 }
 
-void zero_egv() { zero_egv(use_data); }
+void zero_egv() { zero_egv(use_data & vmask); }
 
 extern void sum_energy_acc_impl_(real* ebuf, int end);
 extern void sum_virial_acc_impl_(real* vbuf, int end, int virlen);

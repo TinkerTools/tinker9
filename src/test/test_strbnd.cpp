@@ -10,8 +10,7 @@ static const char* strbndterm_only = R"**(
 strbndterm  only
 )**";
 
-static int usage =
-    gpu::use_xyz | gpu::use_energy | gpu::use_grad | gpu::use_virial;
+static int usage = gpu::use_xyz | gpu::vmask;
 
 static const double ref_g_strbnd_trpcage[][3] = {
     {0.3985, 0.4851, 1.3054},    {1.0413, 0.9150, -1.2830},

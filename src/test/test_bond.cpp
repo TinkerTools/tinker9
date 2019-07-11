@@ -10,8 +10,7 @@ static const char* bondterm_only = R"**(
 bondterm  only
 )**";
 
-static int usage =
-    gpu::use_xyz | gpu::use_energy | gpu::use_grad | gpu::use_virial;
+static int usage = gpu::use_xyz | gpu::vmask;
 
 static const double ref_g_bond_trpcage[][3] = {
     {-4.5478, -0.0994, -10.7646},  {2.3617, 9.7931, -0.5016},

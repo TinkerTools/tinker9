@@ -49,6 +49,10 @@ extern const char* h2o10_key;
 extern const char* ar6_xyz;
 extern const char* ar6_key;
 extern const char* ar6_dyn;
+
+// 216 argon box test set
+extern const char* arbox_arc;
+extern const char* arbox_key;
 }
 TINKER_NAMESPACE_END
 

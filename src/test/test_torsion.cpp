@@ -10,8 +10,7 @@ static const char* torsionterm_only = R"**(
 torsionterm  only
 )**";
 
-static int usage =
-    gpu::use_xyz | gpu::use_energy | gpu::use_grad | gpu::use_virial;
+static int usage = gpu::use_xyz | gpu::vmask;
 
 static const double ref_g_tors_trpcage[][3] = {
     {-0.2438, -0.1946, 0.0309},  {-3.5996, 1.6062, 4.2184},

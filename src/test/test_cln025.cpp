@@ -63,9 +63,7 @@ TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
 
   int usage = 0;
   usage |= gpu::use_xyz;
-  usage |= gpu::use_energy;
-  usage |= gpu::use_grad;
-  usage |= gpu::use_virial;
+  usage |= gpu::vmask;
 
   SECTION("ehal -- gas phase, no cutoff") {
     file kx(k, k0);

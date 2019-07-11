@@ -104,6 +104,8 @@ void mdsave(int istep, real dt, real epot, real eksum) {
   if (output::velsave)
     vel_data(rc);
 
+  // TODO: accel copyout
+
   // if (output::frcsave)
   // TODO: frcsave
 

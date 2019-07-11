@@ -10,8 +10,7 @@ static const char* opbendterm_only = R"**(
 opbendterm  only
 )**";
 
-static int usage =
-    gpu::use_xyz | gpu::use_energy | gpu::use_grad | gpu::use_virial;
+static int usage = gpu::use_xyz | gpu::vmask;
 
 static const double ref_g_opbend_trpcage[][3] = {
     {0.0000, 0.0000, 0.0000},     {0.1615, 1.3064, -0.7696},

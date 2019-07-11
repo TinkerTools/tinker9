@@ -26,9 +26,7 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
 
   int usage = 0;
   usage |= gpu::use_xyz;
-  usage |= gpu::use_energy;
-  usage |= gpu::use_grad;
-  usage |= gpu::use_virial;
+  usage |= gpu::vmask;
 
   SECTION("empole -- gas phase, no cutoff") {
     std::string key1 = key0;
