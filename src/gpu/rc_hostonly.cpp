@@ -23,6 +23,12 @@ const char* cudaGetErrorString(cudaError_t error) {
     return s2;
 }
 
+cudaError_t cudaStreamCreate(cudaStream_t*) { return cudaSuccess; }
+
+cudaError_t cudaStreamDestroy(cudaStream_t) { return cudaSuccess; }
+
+cudaError_t cudaStreamSynchronize(cudaStream_t) { return cudaSuccess; }
+
 cudaError_t cudaFree(void* ptr) {
   std::free(ptr);
   return cudaSuccess;
@@ -35,6 +41,12 @@ cudaError_t cudaMalloc(void** devPtr, size_t size) {
 
 cudaError_t cudaMemcpy(void* dst, const void* src, size_t count,
                        hostonly_cuda_enum_) {
+  std::memcpy(dst, src, count);
+  return cudaSuccess;
+}
+
+cudaError_t cudaMemcpyAsync(void* dst, const void* src, size_t count,
+                            hostonly_cuda_enum_, cudaStream_t) {
   std::memcpy(dst, src, count);
   return cudaSuccess;
 }

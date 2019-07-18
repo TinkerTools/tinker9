@@ -174,7 +174,7 @@ void nblist_data(rc_t rc) {
     }
 
     if (rc & rc_evolve) {
-      evdw_reduce_xyz();
+      // assuming evdw_reduce_xyz() has been called in the energy routine
       nblist_update_acc_impl_(vlist_obj_, vlst);
     }
   }
@@ -232,8 +232,16 @@ void nblist_data(rc_t rc) {
     if (rc & rc_copyin)
       nblist_build_acc_impl_(mlist_obj_, mlst);
 
-    if (rc & rc_evolve)
+    if (rc & rc_evolve) {
+      if (use_data & use_traj) {
+        mlist_obj_.x = x;
+        mlist_obj_.y = y;
+        mlist_obj_.z = z;
+        check_cudart(cudaMemcpy(mlst, &mlist_obj_, sizeof(nblist_t),
+                                cudaMemcpyHostToDevice));
+      }
       nblist_update_acc_impl_(mlist_obj_, mlst);
+    }
   }
 
   // ulist

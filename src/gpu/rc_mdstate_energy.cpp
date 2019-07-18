@@ -5,6 +5,7 @@
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 real* esum;
+real eksum;
 real *gx, *gy, *gz;
 real* vir;
 
@@ -146,14 +147,6 @@ void egv_data(rc_t rc) {
       if (use_virial & use_data)
         copyin_array(vir, &virial::vir[0][0], 9);
     }
-
-    if (rc & rc_copyout) {
-      if (use_energy & use_data)
-        copyout_array(&energi::esum, esum, 1);
-
-      if (use_virial & use_data)
-        copyout_array(&virial::vir[0][0], vir, 9);
-    }
   }
 
   if (use_data & use_grad) {
@@ -178,12 +171,6 @@ void egv_data(rc_t rc) {
     //   copyin_array2(2, 3, gz, deriv::desum, n);
     //   copyin_array2(2, 3, gz, deriv::desum, n);
     //   copyin_array2(2, 3, gz, deriv::desum, n);
-    // }
-
-    // if (rc & rc_copyout) {
-    //   copyout_array2(0, 3, deriv::desum, gx, n);
-    //   copyout_array2(1, 3, deriv::desum, gy, n);
-    //   copyout_array2(2, 3, deriv::desum, gz, n);
     // }
   }
 }

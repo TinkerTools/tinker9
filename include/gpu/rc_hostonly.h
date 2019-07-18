@@ -22,6 +22,11 @@ typedef hostonly_cuda_enum_ cudaError_t;
 const char* cudaGetErrorName(cudaError_t error);
 const char* cudaGetErrorString(cudaError_t error);
 
+typedef hostonly_cuda_enum_* cudaStream_t;
+cudaError_t cudaStreamCreate(cudaStream_t*);
+cudaError_t cudaStreamDestroy(cudaStream_t);
+cudaError_t cudaStreamSynchronize(cudaStream_t);
+
 cudaError_t cudaFree(void* ptr);
 cudaError_t cudaMalloc(void** devPtr, size_t size);
 template <class T>
@@ -30,6 +35,8 @@ cudaError_t cudaMalloc(T** devPtr, size_t size) {
 }
 cudaError_t cudaMemcpy(void* dst, const void* src, size_t count,
                        hostonly_cuda_enum_ kind);
+cudaError_t cudaMemcpyAsync(void* dst, const void* src, size_t count,
+                            hostonly_cuda_enum_ kind, cudaStream_t stream);
 cudaError_t cudaMemset(void* devPtr, int value, size_t count);
 
 typedef struct hostonly_fftw_plans_st_ {

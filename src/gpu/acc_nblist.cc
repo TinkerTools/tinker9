@@ -58,6 +58,7 @@ namespace gpu {
 
 //======================================================================
 // double loop
+
 static void build_double_loop_(nblist_t* lst) {
   #pragma acc parallel loop independent deviceptr(lst)
   for (int i = 0; i < n; ++i) {
@@ -212,12 +213,15 @@ void nblist_build_acc_impl_(const nblist_t& st, nblist_t* lst) {
   }
 }
 
+// #define TINKER_DEFAULT_NBLIST_UPDATE_(st, lst) build_v1_(st, lst)
+#define TINKER_DEFAULT_NBLIST_UPDATE_(st, lst) update_v1_(st, lst)
 void nblist_update_acc_impl_(const nblist_t& st, nblist_t* lst) {
   if (st.maxnlst == 1) {
     // update_double_loop_();
   } else {
-    update_v1_(st, lst);
+    TINKER_DEFAULT_NBLIST_UPDATE_(st, lst);
   }
 }
+#undef TINKER_DEFAULT_NBLIST_UPDATE_
 }
 TINKER_NAMESPACE_END

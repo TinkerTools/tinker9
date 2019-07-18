@@ -54,6 +54,7 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]") {
     // update nblist
     if (ifr < gpu::trajn) {
       gpu::goto_frame0(ifr);
+      gpu::evdw_reduce_xyz();
       gpu::nblist_data(gpu::rc_evolve);
     } else
       break;

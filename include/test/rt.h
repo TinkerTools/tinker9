@@ -21,6 +21,15 @@ public:
   ~file();
 };
 
+class file_expected {
+private:
+  std::string name_;
+
+public:
+  file_expected(const std::string& name);
+  ~file_expected();
+};
+
 double test_get_eps2(double eps_single, double eps_double);
 
 void test_begin_1_xyz(int argc, const char** argv);

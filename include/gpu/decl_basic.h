@@ -15,9 +15,7 @@ typedef enum {
   rc_alloc = 0x002,   /// allocate device memory
   rc_copyin = 0x004,  /// update device data from host memory, or directly
                       /// initialize device data
-  rc_copyout = 0x008, /// update host data from device memory
-  rc_async = 0x010,
-  rc_evolve = 0x020,
+  rc_evolve = 0x010,
 } rc_t;
 
 //======================================================================

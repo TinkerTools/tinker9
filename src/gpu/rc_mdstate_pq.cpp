@@ -77,12 +77,6 @@ void xyz_data(rc_t rc) {
     copyin_array(y, atoms::y, n);
     copyin_array(z, atoms::z, n);
   }
-
-  if (rc & rc_copyout) {
-    copyout_array(atoms::x, x, n);
-    copyout_array(atoms::y, y, n);
-    copyout_array(atoms::z, z, n);
-  }
 }
 
 //======================================================================
@@ -111,12 +105,6 @@ void vel_data(rc_t rc) {
     copyin_array2(0, 3, vx, moldyn::v, n);
     copyin_array2(1, 3, vy, moldyn::v, n);
     copyin_array2(2, 3, vz, moldyn::v, n);
-  }
-
-  if (rc & rc_copyout) {
-    copyout_array2(0, 3, moldyn::v, vx, n);
-    copyout_array2(1, 3, moldyn::v, vy, n);
-    copyout_array2(2, 3, moldyn::v, vz, n);
   }
 }
 

@@ -45,6 +45,7 @@ extern box_t* box;
 extern box_t* trajbox;
 
 void box_data(rc_t rc);
+void box_data_copyout(const box_t& b);
 }
 TINKER_NAMESPACE_END
 

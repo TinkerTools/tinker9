@@ -21,6 +21,15 @@ file::~file() {
     std::remove(name_.c_str());
 }
 
+file_expected::file_expected(const std::string& name) : name_(name) {}
+
+file_expected::~file_expected() {
+  std::ifstream chk(name_);
+  if (chk) {
+    std::remove(name_.c_str());
+  }
+}
+
 double test_get_eps2(double eps_single, double eps_double) {
 #if defined(TINKER_GPU_SINGLE)
   return eps_single;
@@ -46,13 +55,13 @@ void test_end() {
 }
 
 void test_mdinit(double t, double atm) {
-  if (t) {
+  if (t > 0) {
     bath::kelvin = t;
     bath::isothermal = _true_;
   } else
     bath::isothermal = _false_;
 
-  if (atm) {
+  if (atm > 0) {
     bath::atmsph = atm;
     bath::isobaric = _true_;
   } else
