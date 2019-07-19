@@ -54,6 +54,7 @@ extern const char* ar6_dyn;
 extern const char* arbox_key;
 extern const char* arbox_xyz;
 extern const char* arbox_dyn;
+extern const char* arbox_dyn2;
 extern const char* arbox_arc;
 }
 TINKER_NAMESPACE_END

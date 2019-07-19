@@ -4,7 +4,10 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void thermo_bussi_acc_impl_(double dt, double temp) {
+void thermo_bussi_acc_impl_(real dt_real, real temp_real) {
+  double dt = dt_real;
+  double temp = temp_real;
+
   double tautemp = bath::tautemp;
   double kelvin = bath::kelvin;
   int nfree = mdstuf::nfree;

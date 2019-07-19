@@ -9,47 +9,50 @@ using namespace std;
 using namespace chrono;
 
 static int gpu_value;
-static mutex mtx_copy, mtx_write;
-static condition_variable cv_copy, cv_write;
-static bool idle_copy, idle_write;
-static future<void> fut_copy_then_write;
+static mutex mtx_dup, mtx_write;
+static condition_variable cv_dup, cv_write;
+static bool idle_dup, idle_write;
+static future<void> fut_dup_then_write;
 
 static mutex mtx_cout;
-static int write_ms, copy_ms;
+static int dup_ms, write_ms;
+static const int dup_coef = 5;
 
 static void init() {
   gpu_value = 0;
-  idle_copy = false;
+  idle_dup = false;
   idle_write = true;
 
   random_device rd;
   default_random_engine e(rd());
   uniform_int_distribution<int> ud(51, 300);
-  copy_ms = ud(e);
+  dup_ms = ud(e);
   write_ms = ud(e);
 
   mtx_cout.lock();
-  printf("RANDOM LAPSE: COPY %4d us; WRITE %4d us.\n\n", copy_ms, write_ms);
+  printf("RANDOM LAPSE: DUP %4d ms; WRITE %4d ms.\n\n", dup_ms,
+         dup_coef * dup_ms + write_ms);
   mtx_cout.unlock();
 }
 
 static void write_step(int idx) {
-  // time spent on copying
-  this_thread::sleep_for(microseconds(copy_ms));
-  int copyout_value = gpu_value;
-  int host_value = copyout_value;
-  mtx_copy.lock();
-  idle_copy = true;
-  cv_copy.notify_all();
-  mtx_copy.unlock();
+  // time spent on duplication
+  this_thread::sleep_for(milliseconds(dup_ms));
+  int dup_value = gpu_value;
+  mtx_dup.lock();
+  idle_dup = true;
+  cv_dup.notify_all();
+  mtx_dup.unlock();
 
   mtx_cout.lock();
-  printf("== ASYNC_WRITE_1 %4d | GPU VALUE %4d | HOST %4d\n", idx, gpu_value,
-         host_value);
+  printf("== ASYNC_WRITE_1 %4d | GPU VALUE %4d\n", idx, gpu_value);
   mtx_cout.unlock();
 
-  // time spent on writing
-  this_thread::sleep_for(microseconds(write_ms));
+  // time spent on getting gpu buffer and writing to external files
+  this_thread::sleep_for(milliseconds(dup_coef * dup_ms));
+  int host_value = dup_value;
+  this_thread::sleep_for(milliseconds(write_ms));
+
   mtx_write.lock();
   idle_write = true;
   cv_write.notify_all();
@@ -66,13 +69,13 @@ static void save_step(int i) {
   printf("SAVE %4d | %s\n", i, (idle_write ? "WRITE_IDLE" : "WRITE_BUSY"));
   mtx_cout.unlock();
 
-  // in copy_then_write():
-  // 1. async copy gpu value to the host;
-  // 2. async write host value to external files
+  // in dup_then_write():
+  // 1. async duplicate gpu value to another gpu buffer;
+  // 2. async get gpu buffer to host and then write to the external files
 
   // this routine must wait for the previous writing operations to finish before
-  // creating a new async thread; in copy_then_write() idle_write is set to TRUE
-  // and is then notified to other threads once writing is finished
+  // creating a new async thread; in dup_then_write() idle_write is set to TRUE
+  // and then notifies other threads once writing is finished
   unique_lock<mutex> lck_write(mtx_write);
   cv_write.wait(lck_write, [=]() { return idle_write; });
   idle_write = false;
@@ -81,22 +84,22 @@ static void save_step(int i) {
   printf("## BEFORE ASYNC_WRITE %3d\n", i);
   mtx_cout.unlock();
 
-  fut_copy_then_write = async(launch::async, write_step, i);
+  fut_dup_then_write = async(launch::async, write_step, i);
 
   mtx_cout.lock();
   printf("## AFTER  ASYNC_WRITE %3d\n************\n\n", i);
   mtx_cout.unlock();
 
   // gpu_value may change after exiting this routine even BEFORE
-  // copy_then_write() being called in the async thread; in copy_then_write()
-  // idle_copy is set to TRUE and is then notified to other threads once copy is
+  // dup_then_write() being called in the async thread; in dup_then_write()
+  // idle_dup is set to TRUE and then notifies other threads once copy is
   // finished
-  unique_lock<mutex> lck_copy(mtx_copy);
-  cv_copy.wait(lck_copy, [=]() { return idle_copy; });
-  idle_copy = false;
+  unique_lock<mutex> lck_dup(mtx_dup);
+  cv_dup.wait(lck_dup, [=]() { return idle_dup; });
+  idle_dup = false;
 }
 
-static void sync_write() { fut_copy_then_write.get(); }
+static void sync_write() { fut_dup_then_write.get(); }
 
 static void func() {
   init();

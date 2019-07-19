@@ -1,12 +1,11 @@
 #include "gpu/decl_md.h"
-#include "gpu/decl_mdstate.h"
 #include "util/format_print.h"
 #include <ext/tinker/tinker_mod.h>
 #include <ext/tinker/tinker_rt.h>
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void kinetic_acc_impl_(real& eksum, real (&ekin)[3][3], real& temp) {
+void kinetic_acc_impl_(real& temp) {
   const real ekcal_inv = 1.0 / units::ekcal;
   real exx = 0;
   real eyy = 0;
@@ -201,6 +200,9 @@ void mdrest_acc_impl_(int istep) {
           vang[0], vang[1], vang[2], "", erot);
   }
 }
+
+//======================================================================
+// propagate
 
 void propagate_xyz_acc_impl_(real dt) {
   #pragma acc parallel loop independent deviceptr(x,y,z,vx,vy,vz)

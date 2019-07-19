@@ -86,8 +86,8 @@ void mass_data(rc_t rc);
 
 // total potential energy
 extern real* esum;
-// total kinetic energy
-extern real eksum;
+// total potential energy and kinetic energy
+extern real epot, eksum, ekin[3][3];
 // total gradients
 extern real *gx, *gy, *gz;
 // total virial

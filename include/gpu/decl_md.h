@@ -1,10 +1,13 @@
 #ifndef TINKER_GPU_DECL_MD_H_
 #define TINKER_GPU_DECL_MD_H_
 
-#include "decl_basic.h"
+#include "decl_mdstate.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
+//======================================================================
+// integrator
+
 typedef enum {
   thermo_berendsen,
   thermo_bussi,
@@ -23,26 +26,36 @@ typedef enum {
 } barostat_t;
 extern barostat_t barostat;
 
-void md_data(rc_t rc);
+void integrate_data(rc_t);
 
-void kinetic(real& eksum, real (&ekin)[3][3], real& temp);
-void temper(real dt, real& eksum, real (&ekin)[3][3], real& temp);
-
-/// pass device data back to Tinker mdsave subroutine
-void mdsave(int istep, real dt, real epot, real eksum);
-
-/**
- * finds and removes any translational or rotational kinetic energy of the
- * overall system center of mass
- */
+void kinetic(real& temp);
+void temper(real dt, real& temp);
 void mdrest(int istep);
 
 void propagate_xyz(real dt);
 void propagate_velocity(real dt);
+void propagate(int nsteps, real dt_ps, void (*itg)(int, real) = nullptr);
 
-// integrators
+//======================================================================
+// mdsave
 
-void velocity_verlet(int istep, real dt);
+void mdsave_data(rc_t);
+
+void mdsave_async(int istep, real dt);
+void mdsave_synchronize();
+
+//======================================================================
+
+inline void md_data(rc_t rc) {
+  integrate_data(rc);
+  mdsave_data(rc);
+}
+}
+TINKER_NAMESPACE_END
+
+TINKER_NAMESPACE_BEGIN
+namespace gpu {
+void velocity_verlet(int istep, real dt_ps);
 }
 TINKER_NAMESPACE_END
 
