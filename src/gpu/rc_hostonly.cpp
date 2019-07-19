@@ -23,7 +23,10 @@ const char* cudaGetErrorString(cudaError_t error) {
     return s2;
 }
 
-cudaError_t cudaStreamCreate(cudaStream_t*) { return cudaSuccess; }
+cudaError_t cudaStreamCreate(cudaStream_t* s) {
+  *s = nullptr;
+  return cudaSuccess;
+}
 
 cudaError_t cudaStreamDestroy(cudaStream_t) { return cudaSuccess; }
 

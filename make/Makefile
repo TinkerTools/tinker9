@@ -173,7 +173,7 @@ acc_compile_flags := -c -fpic $(acc_common_flags)
 acc_link_flags := -rdynamic -Wl,-rpath='$$ORIGIN'
 ifeq ($(hostonly),false)
 	acc_compile_flags += -acc verystrict -Minfo=accel $(acc_common_flags)
-	acc_link_flags := -acc -Mcuda -Mcudalib=cufft
+	acc_link_flags += -acc -Mcuda -Mcudalib=cufft
 else
 	ifeq ($(prec__),real4__)
 		acc_link_flags += -L$(fftwdir)/lib -lfftw3f

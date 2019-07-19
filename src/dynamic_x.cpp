@@ -153,15 +153,15 @@ void dynamic_x(int argc, char** argv) {
 
   TINKER_RT(mdinit)();
 
-  gpu::use_data = 0;
-  gpu::use_data |= gpu::use_xyz;
-  gpu::use_data |= gpu::use_vel;
-  gpu::use_data |= gpu::use_mass;
-  gpu::use_data |= gpu::use_energy;
-  gpu::use_data |= gpu::use_grad;
-  if (bath::isobaric = _true_)
-    gpu::use_data |= gpu::use_virial;
+  int flags = gpu::use_md;
+  flags += (gpu::use_xyz + gpu::use_vel + gpu::use_mass);
+  flags += (gpu::use_energy + gpu::use_grad);
+  if (bath::isobaric == _true_)
+    flags += gpu::use_virial;
+
+  gpu::use_data = flags;
   tinker_gpu_data_create();
+  gpu::propagate(nstep, dt, nullptr);
   tinker_gpu_data_destroy();
 
   // perform any final tasks before program exit

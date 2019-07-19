@@ -46,10 +46,7 @@ void mdsave_synchronize();
 
 //======================================================================
 
-inline void md_data(rc_t rc) {
-  integrate_data(rc);
-  mdsave_data(rc);
-}
+void md_data(rc_t rc);
 }
 TINKER_NAMESPACE_END
 

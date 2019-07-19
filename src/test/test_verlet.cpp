@@ -9,7 +9,7 @@ using namespace test;
 
 static const char* verlet_intg = "integrator  verlet\n";
 static int usage_ = gpu::use_xyz | gpu::use_vel | gpu::use_mass |
-    gpu::use_energy | gpu::use_grad;
+    gpu::use_energy | gpu::use_grad | gpu::use_md;
 
 static double arbox_kin[] = {
     64.648662, 64.666678, 64.684785, 64.702988, 64.721287, 64.739686, 64.758188,
@@ -71,7 +71,6 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]") {
   gpu::use_data = usage_;
   tinker_gpu_data_create();
 
-  gpu::md_data(static_cast<gpu::rc_t>(gpu::rc_alloc | gpu::rc_copyin));
   const double dt_ps = 0.001;
   const int nsteps = 20;
   const double eps_e = 0.0001;

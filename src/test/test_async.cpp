@@ -99,7 +99,10 @@ static void save_step(int i) {
   idle_dup = false;
 }
 
-static void sync_write() { fut_dup_then_write.get(); }
+static void sync_write() {
+  if (fut_dup_then_write.valid())
+    fut_dup_then_write.get();
+}
 
 static void func() {
   init();

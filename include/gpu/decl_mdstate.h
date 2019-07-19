@@ -16,6 +16,8 @@ enum {
   use_virial = 0x040, /// virial 64
   use_analyz = 0x080, /// analyze 128
 
+  use_md = 0x100,
+
   // clang-format off
   vmask = use_energy + use_grad + use_virial + use_analyz,
   v0 = use_energy,                         ///  16

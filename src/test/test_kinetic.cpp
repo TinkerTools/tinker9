@@ -8,7 +8,8 @@ m_tinker_using_namespace;
 using namespace test;
 
 static const char* verlet_intg = "integrator  verlet\n";
-static int usage_ = gpu::use_xyz | gpu::use_vel | gpu::use_mass | gpu::vmask;
+static int usage_ =
+    gpu::use_xyz | gpu::use_vel | gpu::use_mass | gpu::vmask | gpu::use_md;
 
 TEST_CASE("Kinetic-ArBox", "[ff][kinetic][arbox]") {
   const char* k = "test_arbox.key";
@@ -32,7 +33,6 @@ TEST_CASE("Kinetic-ArBox", "[ff][kinetic][arbox]") {
   gpu::use_data = usage_;
   tinker_gpu_data_create();
 
-  gpu::md_data(static_cast<gpu::rc_t>(gpu::rc_alloc | gpu::rc_copyin));
   gpu::real temp;
   gpu::kinetic(temp);
 

@@ -105,5 +105,13 @@ void propagate(int nsteps, real dt_ps, void (*itg)(int, real)) {
   }
   mdsave_synchronize();
 }
+
+void md_data(rc_t rc) {
+  if ((use_md & use_data) == 0)
+    return;
+
+  integrate_data(rc);
+  mdsave_data(rc);
+}
 }
 TINKER_NAMESPACE_END

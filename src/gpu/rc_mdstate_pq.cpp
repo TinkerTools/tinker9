@@ -139,6 +139,7 @@ void mass_data(rc_t rc) {
 }
 
 extern void potential_data_(rc_t);
+extern void md_data(rc_t);
 void mdstate_data(rc_t rc) {
   n_data(rc);
 
@@ -157,6 +158,8 @@ void mdstate_data(rc_t rc) {
   nblist_data(rc);
 
   random_data(rc);
+
+  md_data(rc);
 }
 
 void goto_frame0(int idx0) {

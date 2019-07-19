@@ -24,6 +24,7 @@ static bool mdsave_use_uind_() {
 static cudaStream_t dup_stream_uind_;
 static real* dup_buf_uind_;
 static cudaStream_t dup_stream_bxyz_, dup_stream_v_, dup_stream_g_;
+static real* dup_buf_esum_;
 static box_t* dup_buf_box_;
 static real *dup_buf_x_, *dup_buf_y_, *dup_buf_z_;
 static real *dup_buf_vx_, *dup_buf_vy_, *dup_buf_vz_;
@@ -40,6 +41,7 @@ void mdsave_data(rc_t rc) {
     check_cudart(cudaStreamDestroy(dup_stream_v_));
     check_cudart(cudaStreamDestroy(dup_stream_g_));
 
+    check_cudart(cudaFree(dup_buf_esum_));
     check_cudart(cudaFree(dup_buf_box_));
     check_cudart(cudaFree(dup_buf_x_));
     check_cudart(cudaFree(dup_buf_y_));
@@ -69,30 +71,19 @@ void mdsave_data(rc_t rc) {
     check_cudart(cudaStreamCreate(&dup_stream_v_));
     check_cudart(cudaStreamCreate(&dup_stream_g_));
 
+    check_cudart(cudaMalloc(&dup_buf_esum_, sizeof(real)));
     check_cudart(cudaMalloc(&dup_buf_box_, sizeof(box_t)));
     check_cudart(cudaMalloc(&dup_buf_x_, rs * n));
     check_cudart(cudaMalloc(&dup_buf_y_, rs * n));
     check_cudart(cudaMalloc(&dup_buf_z_, rs * n));
 
-    if (output::velsave) {
-      check_cudart(cudaMalloc(&dup_buf_vx_, rs * n));
-      check_cudart(cudaMalloc(&dup_buf_vy_, rs * n));
-      check_cudart(cudaMalloc(&dup_buf_vz_, rs * n));
-    } else {
-      dup_buf_vx_ = nullptr;
-      dup_buf_vy_ = nullptr;
-      dup_buf_vz_ = nullptr;
-    }
+    check_cudart(cudaMalloc(&dup_buf_vx_, rs * n));
+    check_cudart(cudaMalloc(&dup_buf_vy_, rs * n));
+    check_cudart(cudaMalloc(&dup_buf_vz_, rs * n));
 
-    if (output::frcsave) {
-      check_cudart(cudaMalloc(&dup_buf_gx_, rs * n));
-      check_cudart(cudaMalloc(&dup_buf_gy_, rs * n));
-      check_cudart(cudaMalloc(&dup_buf_gz_, rs * n));
-    } else {
-      dup_buf_gx_ = nullptr;
-      dup_buf_gy_ = nullptr;
-      dup_buf_gz_ = nullptr;
-    }
+    check_cudart(cudaMalloc(&dup_buf_gx_, rs * n));
+    check_cudart(cudaMalloc(&dup_buf_gy_, rs * n));
+    check_cudart(cudaMalloc(&dup_buf_gz_, rs * n));
   }
 
   if (rc & rc_copyin) {
@@ -128,6 +119,8 @@ static void mdsave_dup_then_write_(int istep, real dt) {
 
   const size_t rs = sizeof(real);
 
+  check_cudart(cudaMemcpyAsync(dup_buf_esum_, esum, rs,
+                               cudaMemcpyDeviceToDevice, dup_stream_bxyz_));
   check_cudart(cudaMemcpyAsync(dup_buf_box_, box, sizeof(box_t),
                                cudaMemcpyDeviceToDevice, dup_stream_bxyz_));
   check_cudart(cudaMemcpyAsync(dup_buf_x_, x, rs * n, cudaMemcpyDeviceToDevice,
@@ -172,6 +165,7 @@ static void mdsave_dup_then_write_(int istep, real dt) {
   box_t b;
   std::vector<real> arrx(n), arry(n), arrz(n);
 
+  check_cudart(cudaMemcpy(&epot, dup_buf_esum_, rs, cudaMemcpyDeviceToHost));
   check_cudart(
       cudaMemcpy(&b, dup_buf_box_, sizeof(box_t), cudaMemcpyDeviceToHost));
   check_cudart(
@@ -238,20 +232,19 @@ static void mdsave_dup_then_write_(int istep, real dt) {
 void mdsave_async(int istep, real dt) {
   std::unique_lock<std::mutex> lck_write(mtx_write);
   cv_write.wait(lck_write, [=]() { return idle_write; });
-  mtx_write.lock();
   idle_write = false;
-  mtx_write.unlock();
 
   fut_dup_then_write =
       std::async(std::launch::async, mdsave_dup_then_write_, istep, dt);
 
   std::unique_lock<std::mutex> lck_copy(mtx_dup);
   cv_dup.wait(lck_copy, [=]() { return idle_dup; });
-  mtx_dup.lock();
   idle_dup = false;
-  mtx_dup.unlock();
 }
 
-void mdsave_synchronize() { fut_dup_then_write.get(); }
+void mdsave_synchronize() {
+  if (fut_dup_then_write.valid())
+    fut_dup_then_write.get();
+}
 }
 TINKER_NAMESPACE_END
