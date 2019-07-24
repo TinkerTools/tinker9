@@ -1,12 +1,12 @@
 #include "gpu/decl_mdstate.h"
-#include "gpu/decl_nblist.h"
 #include "gpu/decl_potent.h"
 #include "gpu/e_vdw.h"
+#include "gpu/mod_nblist.h"
 #include "gpu/rc.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-int use_vdw_list() {
+static int use_vdw_list() {
   int ret = 0;
   if (use_potent(vdw_term))
     ++ret;
@@ -18,7 +18,7 @@ int use_vdw_list() {
   return ret;
 }
 
-int use_disp_list() {
+static int use_disp_list() {
   int ret = 0;
   if (potent::use_disp)
     ++ret;
@@ -30,7 +30,7 @@ int use_disp_list() {
   return ret;
 }
 
-int use_charge_list() {
+static int use_charge_list() {
   int ret = 0;
   if (potent::use_charge || potent::use_solv)
     ++ret;
@@ -42,7 +42,7 @@ int use_charge_list() {
   return ret;
 }
 
-int use_mpole_list() {
+static int use_mpole_list() {
   int ret = 0;
   if (potent::use_mpole || potent::use_polar || potent::use_chgtrn ||
       potent::use_solv)
@@ -55,7 +55,7 @@ int use_mpole_list() {
   return ret;
 }
 
-int use_usolv_list() {
+static int use_usolv_list() {
   int ret = 0;
   if (potent::use_polar)
     ++ret;

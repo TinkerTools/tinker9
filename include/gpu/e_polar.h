@@ -3,7 +3,7 @@
 
 #include "decl_basic.h"
 #include "gpu/decl_elec.h"
-#include "gpu/decl_polgrp.h"
+#include "gpu/mod_polgrp.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

@@ -1,5 +1,5 @@
-#include "gpu/decl_couple.h"
 #include "gpu/decl_mdstate.h"
+#include "gpu/mod_couple.h"
 #include "gpu/rc.h"
 
 TINKER_NAMESPACE_BEGIN

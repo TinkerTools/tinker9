@@ -130,14 +130,6 @@ static void pme_op_copyin_(int unit) {
   size_t size = sizeof(pme_st);
   check_cudart(cudaMemcpy(dptr, &st, size, cudaMemcpyHostToDevice));
 }
-
-int epme_unit; // electrostatic
-int ppme_unit; // polarization
-int dpme_unit; // dispersion
-
-int pvpme_unit; // polarization virial
-
-double ewald_switch_cut, ewald_switch_off;
 }
 TINKER_NAMESPACE_END
 
@@ -146,19 +138,6 @@ TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-real (*cmp)[10];
-real (*fmp)[10];
-real (*cphi)[10];
-real (*fphi)[20];
-
-real (*fuind)[3];
-real (*fuinp)[3];
-real (*fdip_phi1)[10];
-real (*fdip_phi2)[10];
-real (*cphidp)[10];
-real (*fphidp)[20];
-
-real* vir_m;
 
 int use_ewald() { return limits::use_ewald; }
 

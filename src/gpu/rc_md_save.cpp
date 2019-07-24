@@ -113,6 +113,7 @@ void mdsave_data(rc_t rc) {
   }
 }
 
+extern void box_data_copyout(const box_t& b);
 static void mdsave_dup_then_write_(int istep, real dt) {
 
   // duplicate

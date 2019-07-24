@@ -4,8 +4,8 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-/// This function is used in void mdstate_data(rc_t).
-void potential_data_(rc_t rc) {
+extern void polargroup_data(rc_t);
+void potential_data(rc_t rc) {
   if ((use_data & vmask) == 0)
     return;
 

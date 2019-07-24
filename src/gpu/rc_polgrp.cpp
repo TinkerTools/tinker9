@@ -1,5 +1,4 @@
 #include "gpu/decl_mdstate.h"
-#include "gpu/decl_polgrp.h"
 #include "gpu/rc.h"
 
 TINKER_NAMESPACE_BEGIN

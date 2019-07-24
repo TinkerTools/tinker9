@@ -1,31 +1,10 @@
 #ifndef TINKER_GPU_DECL_PME_H_
 #define TINKER_GPU_DECL_PME_H_
 
-#include "decl_basic.h"
+#include "mod_pme.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-/**
- * pme.f and kewald.f
- *
- * allocate igrid(3,n)                   !! integer
- * allocate (bsmod1(nfft1))              !! real*8
- * allocate (bsmod2(nfft2))              !! real*8
- * allocate (bsmod3(nfft3))              !! real*8
- * allocate (bsbuild(bsorder,bsorder))   !! real*8
- * allocate (thetai1(4,bsorder,n))       !! real*8
- * allocate (thetai2(4,bsorder,n))       !! real*8
- * allocate (thetai3(4,bsorder,n))       !! real*8
- * allocate (qgrid(2,nfft1,nfft2,nfft3)) !! real*8
- * allocate (qfac(nfft1,nfft2,nfft3))    !! real*8
- */
-struct pme_st {
-  real aewald;
-  int nfft1, nfft2, nfft3, bsorder;
-  int* igrid;                     // deviceptr
-  real *bsmod1, *bsmod2, *bsmod3; // deviceptr
-  real* qgrid;                    // deviceptr
-};
 
 namespace detail_ {
 std::vector<pme_st>& pme_objs();
@@ -40,28 +19,6 @@ pme_st* pme_deviceptr(int pme_unit);
 void fft_data(rc_t rc);
 void fftfront(int pme_unit);
 void fftback(int pme_unit);
-
-extern int epme_unit; // electrostatic
-extern int ppme_unit; // polarization
-extern int dpme_unit; // dispersion
-
-extern int pvpme_unit; // polarization virial
-
-extern double ewald_switch_cut, ewald_switch_off;
-
-extern real (*cmp)[10];
-extern real (*fmp)[10];
-extern real (*cphi)[10];
-extern real (*fphi)[20];
-
-extern real (*fuind)[3];
-extern real (*fuinp)[3];
-extern real (*fdip_phi1)[10];
-extern real (*fdip_phi2)[10];
-extern real (*cphidp)[10];
-extern real (*fphidp)[20];
-
-extern real* vir_m;
 
 int use_ewald();
 void pme_init(int vers);

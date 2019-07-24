@@ -55,14 +55,6 @@ void sanity_check() {
   static_assert(do_a ? do_e : true, "");
 }
 
-void n_data(rc_t rc);
-
-void xyz_data(rc_t rc);
-
-void vel_data(rc_t rc);
-
-void mass_data(rc_t rc);
-
 //======================================================================
 void egv_data(rc_t rc);
 
@@ -87,15 +79,15 @@ void sum_energies(int vers);
 }
 TINKER_NAMESPACE_END
 
-#include "decl_box.h"
-#include "decl_couple.h"
-#include "decl_nblist.h"
-#include "decl_polgrp.h"
+#include "mod_box.h"
+#include "mod_couple.h"
+#include "mod_nblist.h"
+#include "mod_polgrp.h"
 #include "decl_random.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void mdstate_data(rc_t rc);
+void nblist_data(rc_t rc);
 void goto_frame0(int idx0);
 void goto_frame1(int idx1);
 }

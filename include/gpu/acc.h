@@ -38,7 +38,7 @@
 #pragma acc routine(fmaxf) seq
 #pragma acc routine(copysignf) seq
 
-#include "decl_box.h"
+#include "mod_box.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

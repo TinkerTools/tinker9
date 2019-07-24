@@ -4,8 +4,6 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-thermostat_t thermostat;
-barostat_t barostat;
 static void (*integrator_)(int, real);
 
 void integrate_data(rc_t rc) {

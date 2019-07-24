@@ -1,6 +1,5 @@
 #include "gpu/acc.h"
 #include "gpu/decl_mdstate.h"
-#include "gpu/decl_nblist.h"
 
 #ifdef TINKER_HOSTONLY
 #  include <algorithm>
