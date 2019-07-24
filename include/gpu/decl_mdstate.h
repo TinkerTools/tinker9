@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_DECL_MDSTATE_H_
 #define TINKER_GPU_DECL_MDSTATE_H_
 
-#include "decl_basic.h"
+#include "mod_mdstate.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -55,46 +55,15 @@ void sanity_check() {
   static_assert(do_a ? do_e : true, "");
 }
 
-extern int use_data;
-
-//======================================================================
-// number of atoms
-
-extern int trajn; // number of frames
-extern int n;
 void n_data(rc_t rc);
 
-//======================================================================
-// x y z coordinates
-
-extern real *trajx, *trajy, *trajz;
-extern real *x, *y, *z;
 void xyz_data(rc_t rc);
 
-//======================================================================
-// velocities
-
-extern real *vx, *vy, *vz;
 void vel_data(rc_t rc);
 
-//======================================================================
-// atomic mass
-
-extern real* mass;
-extern real* massinv;
 void mass_data(rc_t rc);
 
 //======================================================================
-
-// total potential energy
-extern real* esum;
-// total potential energy and kinetic energy
-extern real epot, eksum, ekin[3][3];
-// total gradients
-extern real *gx, *gy, *gz;
-// total virial
-extern real* vir;
-
 void egv_data(rc_t rc);
 
 //======================================================================

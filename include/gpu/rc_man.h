@@ -1,7 +1,7 @@
 #ifndef TINKER_SRC_GPU_RC_MAN_H_
 #define TINKER_SRC_GPU_RC_MAN_H_
 
-#include "util/cxx.h"
+#include "util/macro.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
@@ -16,13 +16,13 @@ typedef enum {
 
 /**
  * Resource Management
- * 
+ *
  * To deallocate resource in reverse order of allocation, use named objects.
  * @code
  * rc_man<foo_data> foo_random_name{rc};
  * rc_man<bar_data> bar_random_name{rc};
  * @endcode
- * 
+ *
  * To deallocate resource in the same order of allocation, use unnamed objects.
  * @code
  * rc_man<foo_data>{rc};

@@ -4,9 +4,6 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-box_t* box;
-box_t* trajbox;
-
 void box_data(rc_t rc) {
   if (rc & rc_dealloc) {
     if (use_traj & use_data) {

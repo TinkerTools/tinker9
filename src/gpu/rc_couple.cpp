@@ -4,9 +4,6 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-couple_t couple_obj_;
-couple_t* couple;
-
 void couple_data(rc_t rc) {
   if (rc & rc_dealloc) {
     check_cudart(cudaFree(couple_obj_.n12));

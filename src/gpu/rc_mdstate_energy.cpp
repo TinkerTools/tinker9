@@ -4,10 +4,6 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-real* esum;
-real epot, eksum, ekin[3][3];
-real *gx, *gy, *gz;
-real* vir;
 
 //======================================================================
 

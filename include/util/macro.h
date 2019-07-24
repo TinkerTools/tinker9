@@ -17,6 +17,13 @@
 two macros (TINKER_MOD and TINKER_RT) here to mimic its name mangling.
 #endif
 
+// extern
+#ifdef TINKER_EXTERN_DEFINITION_FILE
+#define TINKER_EXTERN
+#else
+#define TINKER_EXTERN extern
+#endif
+
 // Namespace
 #define TINKER_NAMESPACE tinker
 #define m_tinker_using_namespace using namespace TINKER_NAMESPACE

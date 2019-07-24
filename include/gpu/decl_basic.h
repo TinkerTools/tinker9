@@ -2,6 +2,7 @@
 #define TINKER_GPU_DECL_BASIC_H_
 
 #include "rc_man.h"
+#include "util/cxx.h"
 #include "util/real_mathfunc.h"
 
 TINKER_NAMESPACE_BEGIN

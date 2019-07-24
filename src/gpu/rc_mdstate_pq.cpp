@@ -4,13 +4,9 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-int use_data;
 
 //======================================================================
 // number of atoms
-
-int trajn = -1;
-int n;
 
 void n_data(rc_t rc) {
   if (rc & rc_dealloc) {
@@ -30,9 +26,6 @@ void n_data(rc_t rc) {
 
 //======================================================================
 // x y z coordinates
-
-real *trajx, *trajy, *trajz;
-real *x, *y, *z;
 
 void xyz_data(rc_t rc) {
   if ((use_xyz & use_data) == 0)
@@ -83,8 +76,6 @@ void xyz_data(rc_t rc) {
 //======================================================================
 // velocitiies
 
-real *vx, *vy, *vz;
-
 void vel_data(rc_t rc) {
   if ((use_vel & use_data) == 0)
     return;
@@ -111,9 +102,6 @@ void vel_data(rc_t rc) {
 
 //======================================================================
 // atomic mass
-
-real* mass;
-real* massinv;
 
 void mass_data(rc_t rc) {
   if ((use_mass & use_data) == 0)
