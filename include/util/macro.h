@@ -3,7 +3,6 @@
 
 // Stringification
 #define TINKER_STR_IMPL_(s) #s
-#define TINKER_STR_VA_ARGS_IMPL(...) #__VA_ARGS__
 #define TINKER_STR(s) TINKER_STR_IMPL_(s)
 
 // Fortran compiler

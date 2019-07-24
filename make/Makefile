@@ -4,87 +4,33 @@
 #                                                          #
 ############################################################
 
+# options following the `make' command
+# opt :=
+# src :=
+# prec :=
+# hostonly :=
+# config :=
+
+############################################################
+
+# Darwin -> darwin; Linux -> linux
+os__ := $(shell uname -s 2>/dev/null | tr "[:upper:]" "[:lower:]")
+ifeq ($(os__),linux)
+	shared_lib_suffix__ := so
+else ifeq ($(os__),darwin)
+	shared_lib_suffix__ := dylib
+endif
+
 # release / debug / profile
 opt := release
 
 # tinker.gpu directory
 src := ..
 
-# Path to the precompiled (static or shared) tinker library
-libtinker_dir := $(HOME)/git/tinker/source
-
-# FFTW
-fftwdir := $(HOME)/local/fftw
-fftwflag := -L$(fftwdir)/lib -lfftw3 -lfftw3_threads
-
 # GPU Precision
 # real4 / 4 / 32 / float / single / s -> real4__
-# real8 / 8 / 64 / double / d         -> real8__
+# real8 / 8 / 64 / double         / d -> real8__
 prec := real4
-
-# Darwin -> darwin
-os := $(shell uname -s 2>/dev/null | tr "[:upper:]" "[:lower:]")
-
-# CUDA directory
-cudadir := /usr/local/cuda
-
-# Compilers
-CXX := g++
-ACC := pgc++
-
-hostonly := false
-
-config := default_config
-ifeq ($(config),default_config)
-	ifeq ($(os),linux)
-		config := linux.gfortran.inc
-	else ifeq ($(os),darwin)
-		config := macos.gfortran.inc
-	endif
-endif
-include $(config)
-
-############################################################
-
-ifeq ($(os),linux)
-	ifeq ($(opt),debug)
-		cxx_opt_flags := -O0 -g -DDEBUG=1
-	else ifeq ($(opt),release)
-		cxx_opt_flags := -O3 -DNDEBUG
-	else ifeq ($(opt),profile)
-		cxx_opt_flags := -O3 -DNDEBUG -g
-	endif
-	ar_flags := ar crusv
-	ranlib_flags := ranlib
-	os_link_flags := -Xlinker --export-dynamic
-else ifeq ($(os),darwin)
-	ifeq ($(opt),debug)
-                cxx_opt_flags := -O0 -g -DDEBUG=1
-        else ifeq ($(opt),release)
-                cxx_opt_flags := -O3 -DNDEBUG
-        else ifeq ($(opt),profile)
-                cxx_opt_flags := -O3 -DNDEBUG -g
-        endif
-	ar_flags := ar crusv
-	ranlib_flags := ranlib -c
-	os_link_flags :=
-endif
-
-############################################################
-
-ifeq ($(os),linux)
-	shared_lib_suffix := so
-else ifeq ($(os),darwin)
-	shared_lib_suffix := dylib
-endif
-
-############################################################
-#                                                          #
-# precision                                                #
-#                                                          #
-############################################################
-
-# Precision -DTINKER_GPU_DOUBLE or leave it empty
 ifeq ($(prec),$(filter $(prec),real4 4 32 float single s))
 	prec__ := real4__
 	precision_macro__ := -DTINKER_GPU_SINGLE
@@ -93,30 +39,44 @@ else ifeq ($(prec),$(filter $(prec),real8 8 64 double d))
 	precision_macro__ := -DTINKER_GPU_DOUBLE
 endif
 
+hostonly := false
+
+config := default_config__
+ifeq ($(config),default_config__)
+	ifeq ($(os__),linux)
+		config := linux.gfortran.inc
+	endif
+endif
+include $(config)
+ifeq ($(prec__),real4__)
+	acc_host_link_flags__ += -L$(fftw_dir__)/lib -lfftw3f
+endif
+fftw_flags__ := -L$(fftw_dir__)/lib -lfftw3 -lfftw3_threads
+
 ############################################################
 #                                                          #
 # default target: all                                      #
 #                                                          #
 ############################################################
 
-tinker_gpu_name := tinker.gpu
-all_tests_name := all.tests
-libtinkergpu_name0 := tinkergpu
-src_objdir := src
+tinker_gpu_exec__ := tinker.gpu
+all_tests_exec__ := all.tests
+libtinkergpu_stem__ := tinkergpu
+src_obj_dir__ := src
 ifeq ($(prec__),real4__)
-	precision_suffix :=
+	precision_suffix__ :=
 else ifeq ($(prec__),real8__)
 	# -dp: double precision
-	precision_suffix := -dp
-	tinker_gpu_name := $(tinker_gpu_name)$(precision_suffix)
-	all_tests_name := $(all_tests_name)$(precision_suffix)
-	libtinkergpu_name0 := $(libtinkergpu_name0)$(precision_suffix)
-	src_objdir := $(src_objdir)$(precision_suffix)
+	precision_suffix__ := -dp
+	tinker_gpu_exec__ := $(tinker_gpu_exec__)$(precision_suffix__)
+	all_tests_exec__ := $(all_tests_exec__)$(precision_suffix__)
+	libtinkergpu_stem__ := $(libtinkergpu_stem__)$(precision_suffix__)
+	src_obj_dir__ := $(src_obj_dir__)$(precision_suffix__)
 endif
-libtinkergpu_name := lib$(libtinkergpu_name0)
+libtinkergpu_name__ := lib$(libtinkergpu_stem__)
 
 .PHONY: all
-all: $(tinker_gpu_name)
+all: $(tinker_gpu_exec__)
 
 ############################################################
 #                                                          #
@@ -126,21 +86,25 @@ all: $(tinker_gpu_name)
 
 .PHONY: print-config
 print-config:
-	@echo 'config file      =' $(config)
-	@echo 'opt level        =' $(opt)
-	@echo 'OS               =' $(os)
-	@echo 'source directory =' $(topdir)
-	@echo 'shared library   =' $(libtinkergpu_name).$(shared_lib_suffix)
-	@echo 'executable       =' $(tinker_gpu_name) $(all_tests_name)
-	@echo 'precision        =' $(prec)
+	@echo 'config file       =' $(config)
+	@echo 'opt level         =' $(opt)
+	@echo 'source directory  =' $(top_dir__)
+	@echo 'precision         =' $(prec)
+	@echo 'host-only         =' $(hostonly)
+	@echo 'OS                =' $(os__)
+	@echo 'shared library    =' $(libtinkergpu_name__).$(shared_lib_suffix__)
+	@echo 'executables       =' $(tinker_gpu_exec__) $(all_tests_exec__)
+	@echo 'cxx compile flags =' $(cxx_compile_flags__)
+	@echo 'acc compile flags =' $(acc_compile_flags__)
+	@echo 'acc link flags    =' $(acc_link_flags__)
 
 .PHONY: dirs
 dirs:
-	@mkdir -p $(extdir)/fmt
-	@mkdir -p $(extdir)/tinker
-	@mkdir -p $(src_objdir)/test
-	@mkdir -p $(src_objdir)/util
-	@mkdir -p $(src_objdir)/gpu
+	@mkdir -p $(ext_dir__)/fmt
+	@mkdir -p $(ext_dir__)/tinker
+	@mkdir -p $(src_obj_dir__)/test
+	@mkdir -p $(src_obj_dir__)/util
+	@mkdir -p $(src_obj_dir__)/gpu
 
 .PHONY: clean
 clean:
@@ -152,76 +116,87 @@ clean:
 #                                                                      #
 ########################################################################
 
-topdir := $(realpath $(src))
-extdir := ext/ext
+top_dir__ := $(realpath $(src))
+ext_dir__ := ext/ext
 
-include_flags := -I$(topdir)/include
-include_flags += -I$(topdir)/ext
-include_flags += -I$(topdir)/ext/ext
+include_flags__ := -I$(top_dir__)/include
+include_flags__ += -I$(top_dir__)/ext
+include_flags__ += -I$(top_dir__)/ext/ext
 ifeq ($(hostonly),false)
-	include_flags += -I$(cudadir)/include
+	include_flags__ += -I$(cuda_dir__)/include
 else
-	include_flags += -I$(fftwdir)/include -DTINKER_HOSTONLY
+	include_flags__ += -I$(fftw_dir__)/include -DTINKER_HOSTONLY
 endif
 
-cxx_common_flags := -std=c++11 -D$(fortran_name_macro) $(precision_macro__)
-cxx_common_flags += $(include_flags) $(cxx_opt_flags)
-cxx_compile_flags := -c -fpic $(cxx_common_flags)
+common_flags__ := -D$(fortran_compiler_macro__) \
+$(precision_macro__) $(include_flags__)
+cxx_common_flags__ := $(common_flags__) $(cxx_opt_flags__)
+acc_common_flags__ := $(common_flags__) $(acc_opt_flags__)
 
-acc_common_flags := $(cxx_common_flags)
-acc_compile_flags := -c -fpic $(acc_common_flags)
-acc_link_flags := -rdynamic -Wl,-rpath='$$ORIGIN'
+cxx_compile_flags__ := $(cxx_common_flags__) -std=c++11 -c -fpic
+acc_compile_flags__ := $(acc_common_flags__) -std=c++11 -c -fpic
 ifeq ($(hostonly),false)
-	acc_compile_flags += -acc verystrict -Minfo=accel $(acc_common_flags)
-	acc_link_flags += -acc -Mcuda -Mcudalib=cufft
+	acc_compile_flags__ += $(acc_device_compile_flags__)
 else
-	ifeq ($(prec__),real4__)
-		acc_link_flags += -L$(fftwdir)/lib -lfftw3f
-	endif
+	acc_compile_flags__ += $(acc_host_compile_flags__)
 endif
 
-acc_link_flags += $(acc_common_flags) -L. -ltinker -l$(libtinkergpu_name0) $(fortrtflag) $(fftwflag)
+acc_link_flags__ := -rdynamic -Wl,-rpath='$$ORIGIN'
+ifeq ($(hostonly),false)
+	acc_link_flags__ += $(acc_device_link_flags__)
+else
+	acc_link_flags__ += $(acc_host_link_flags__)
+endif
+acc_link_flags__ += $(acc_common_flags__) -L. -ltinker \
+-l$(libtinkergpu_stem__) $(fortran_runtime_flags__) $(fftw_flags__)
 
-ext_cc_objs := $(extdir)/fmt/format.o $(extdir)/fmt/posix.o
-ext_cpp_objs := $(extdir)/tinker/tinker_mod.o $(extdir)/tinker/tinker_rt.o
+########################################################################
 
-main_cc_objs := $(src_objdir)/test/test_all.o $(src_objdir)/tinker_gpu.o
+ext_cc_objs__ := $(ext_dir__)/fmt/format.o $(ext_dir__)/fmt/posix.o
+ext_cpp_objs__ := $(ext_dir__)/tinker/tinker_mod.o \
+$(ext_dir__)/tinker/tinker_rt.o
 
-# $(topdir)/src/util/foo.cpp -> src-dp/util/foo.o
-lib_cpp_files := $(shell find $(topdir)/src -type f -name '*.cpp' \
--not -path '$(topdir)/$(extdir)/*' \
--not -path '$(topdir)/src/test/*')
-lib_cpp_objs := $(subst $(topdir)/src,$(src_objdir),$(lib_cpp_files))
-lib_cpp_objs := $(patsubst %.cpp,%.o,$(lib_cpp_objs))
+main_cc_objs__ := $(src_obj_dir__)/test/test_all.o $(src_obj_dir__)/tinker_gpu.o
 
-# $(topdir)/src/gpu/foo.cc -> src-dp/gpu/foo.o
-lib_acc_files := $(wildcard $(topdir)/src/gpu/*.cc)
-lib_acc_objs := $(subst $(topdir)/src,$(src_objdir),$(lib_acc_files))
-lib_acc_objs := $(patsubst %.cc,%.o,$(lib_acc_objs))
+# $(top_dir__)/src/util/foo.cpp -> src-dp/util/foo.o
+lib_cpp_files__ := $(shell find $(top_dir__)/src -type f -name '*.cpp' \
+-not -path '$(top_dir__)/$(ext_dir__)/*' \
+-not -path '$(top_dir__)/src/test/*')
+lib_cpp_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(lib_cpp_files__))
+lib_cpp_objs__ := $(patsubst %.cpp,%.o,$(lib_cpp_objs__))
 
-# $(topdir)/src/test/foo.cpp -> src-dp/test/foo.o
-test_cpp_files := $(wildcard $(topdir)/src/test/*.cpp)
-test_cpp_objs := $(subst $(topdir)/src,$(src_objdir),$(test_cpp_files))
-test_cpp_objs := $(patsubst %.cpp,%.o,$(test_cpp_objs))
+# $(top_dir__)/src/gpu/foo.cc -> src-dp/gpu/foo.o
+lib_acc_files__ := $(wildcard $(top_dir__)/src/gpu/*.cc)
+lib_acc_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(lib_acc_files__))
+lib_acc_objs__ := $(patsubst %.cc,%.o,$(lib_acc_objs__))
 
-all_cc_objs := $(main_cc_objs) $(ext_cc_objs)
-all_cpp_objs := $(ext_cpp_objs) $(lib_cpp_objs) $(test_cpp_objs)
+# $(top_dir__)/src/test/foo.cpp -> src-dp/test/foo.o
+test_cpp_files__ := $(wildcard $(top_dir__)/src/test/*.cpp)
+test_cpp_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(test_cpp_files__))
+test_cpp_objs__ := $(patsubst %.cpp,%.o,$(test_cpp_objs__))
+
+all_cc_objs__ := $(main_cc_objs__) $(ext_cc_objs__)
+all_cpp_objs__ := $(ext_cpp_objs__) $(lib_cpp_objs__) $(test_cpp_objs__)
 
 # targets: normal-prerequisites | order-only-prerequisites
-$(all_cc_objs): %.o: $(topdir)/%.cc | dirs
-	$(CXX) $(cxx_compile_flags) $< -o $@
-$(all_cpp_objs): %.o: $(topdir)/%.cpp | dirs
-	$(CXX) $(cxx_compile_flags) $< -o $@
-$(lib_acc_objs): %.o: $(topdir)/%.cc | dirs
-	$(ACC) $(acc_compile_flags) $< -o $@
+$(all_cc_objs__): %.o: $(top_dir__)/%.cc | dirs
+	$(CXX) $(cxx_compile_flags__) $< -o $@
+$(all_cpp_objs__): %.o: $(top_dir__)/%.cpp | dirs
+	$(CXX) $(cxx_compile_flags__) $< -o $@
+$(lib_acc_objs__): %.o: $(top_dir__)/%.cc | dirs
+	$(ACC) $(acc_compile_flags__) $< -o $@
 
-# shared libtinkergpu does not include lib_acc_objs
-$(libtinkergpu_name).$(shared_lib_suffix): $(ext_cc_objs) $(ext_cpp_objs) $(lib_cpp_objs)
+########################################################################
+
+# shared libtinkergpu does not include lib_acc_objs__
+$(libtinkergpu_name__).$(shared_lib_suffix__): \
+$(ext_cc_objs__) $(ext_cpp_objs__) $(lib_cpp_objs__)
 	$(CXX) -shared -fpic -o $@ $^
 
 # shared libtinker
-$(shared_libtinker): $(libtinker_dir)/$(shared_libtinker)
+$(shared_libtinker__): $(libtinker_dir__)/$(shared_libtinker__)
 	cp $^ $@
+
 
 ########################################################################
 #                                                                      #
@@ -229,8 +204,10 @@ $(shared_libtinker): $(libtinker_dir)/$(shared_libtinker)
 #                                                                      #
 ########################################################################
 
-$(tinker_gpu_name): $(src_objdir)/tinker_gpu.o $(lib_acc_objs) | $(libtinkergpu_name).$(shared_lib_suffix) $(shared_libtinker)
-	$(ACC) $^ $(acc_link_flags) -o $@
+$(tinker_gpu_exec__): $(src_obj_dir__)/tinker_gpu.o $(lib_acc_objs__) \
+| $(libtinkergpu_name__).$(shared_lib_suffix__) $(shared_libtinker__)
+	$(ACC) $^ $(acc_link_flags__) -o $@
+
 
 ########################################################################
 #                                                                      #
@@ -239,11 +216,13 @@ $(tinker_gpu_name): $(src_objdir)/tinker_gpu.o $(lib_acc_objs) | $(libtinkergpu_
 ########################################################################
 
 .PHONY: test
-test: $(all_tests_name)
-	$(PWD)/$(all_tests_name) [ff] --durations yes
+test: $(all_tests_exec__)
+	$(PWD)/$(all_tests_exec__) [ff] --durations yes
 
 .PHONY: unittest
-unittest: $(all_tests_name)
+unittest: $(all_tests_exec__)
 
-$(all_tests_name): $(src_objdir)/test/test_all.o $(test_cpp_objs) $(lib_acc_objs) | $(libtinkergpu_name).$(shared_lib_suffix) $(shared_libtinker)
-	$(ACC) $^ $(acc_link_flags) -o $@
+$(all_tests_exec__): $(src_obj_dir__)/test/test_all.o $(test_cpp_objs__) \
+$(lib_acc_objs__) | $(libtinkergpu_name__).$(shared_lib_suffix__) \
+$(shared_libtinker__)
+	$(ACC) $^ $(acc_link_flags__) -o $@

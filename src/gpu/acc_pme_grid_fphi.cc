@@ -60,10 +60,12 @@ static inline void bsplgen(real w, real* __restrict__ thetai,
 
   // compute standard B-spline recursion to desired order
 
+  #pragma acc loop seq
   for (int i = 4; i <= bsorder; ++i) {
     int k = i - 1;
     real denom = REAL_RECIP(k);
     bsbuild(i, i) = denom * w * bsbuild(k, k);
+    #pragma acc loop seq
     for (int j = 1; j <= i - 2; j++) {
       bsbuild(i, i - j) = denom *
           ((w + j) * bsbuild(k, i - j - 1) + (i - j - w) * bsbuild(k, i - j));
@@ -79,6 +81,7 @@ static inline void bsplgen(real w, real* __restrict__ thetai,
 
     k = bsorder - 1;
     bsbuild(k, bsorder) = bsbuild(k, bsorder - 1);
+    #pragma acc loop seq
     for (int i = bsorder - 1; i >= 2; --i) {
       bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
     }
@@ -91,11 +94,13 @@ static inline void bsplgen(real w, real* __restrict__ thetai,
 
     k = bsorder - 2;
     bsbuild(k, bsorder - 1) = bsbuild(k, bsorder - 2);
+    #pragma acc loop seq
     for (int i = bsorder - 2; i >= 2; --i) {
       bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
     }
     bsbuild(k, 1) = -bsbuild(k, 1);
     bsbuild(k, bsorder) = bsbuild(k, bsorder - 1);
+    #pragma acc loop seq
     for (int i = bsorder - 1; i >= 2; --i) {
       bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
     }
@@ -108,16 +113,19 @@ static inline void bsplgen(real w, real* __restrict__ thetai,
 
     k = bsorder - 3;
     bsbuild(k, bsorder - 2) = bsbuild(k, bsorder - 3);
+    #pragma acc loop seq
     for (int i = bsorder - 3; i >= 2; --i) {
       bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
     }
     bsbuild(k, 1) = -bsbuild(k, 1);
     bsbuild(k, bsorder - 1) = bsbuild(k, bsorder - 2);
+    #pragma acc loop seq
     for (int i = bsorder - 2; i >= 2; --i) {
       bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
     }
     bsbuild(k, 1) = -bsbuild(k, 1);
     bsbuild(k, bsorder) = bsbuild(k, bsorder - 1);
+    #pragma acc loop seq
     for (int i = bsorder - 1; i >= 2; --i)
       bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
     bsbuild(k, 1) = -bsbuild(k, 1);
@@ -125,7 +133,9 @@ static inline void bsplgen(real w, real* __restrict__ thetai,
 
   // copy coefficients from temporary to permanent storage
 
+  #pragma acc loop seq
   for (int i = 1; i <= bsorder; ++i) {
+    #pragma acc loop seq
     for (int j = 1; j <= LEVEL; ++j) {
       thetai[4 * (i - 1) + (j - 1)] = bsbuild(bsorder - j + 1, i);
     }
@@ -182,8 +192,8 @@ void grid_tmpl(int pme_unit, real* optional1, real* optional2) {
   #pragma acc parallel loop independent\
               deviceptr(pchg,fmp,fuind,fuinp,\
               x,y,z,box,dptr)\
-              private(bsbuild[0:bso2],\
-              thetai1[0:order4],thetai2[0:order4],thetai3[0:order4])
+              private(bsbuild[0:bsorder*bsorder],\
+              thetai1[0:4*bsorder],thetai2[0:4*bsorder],thetai3[0:4*bsorder])
   for (int i = 0; i < n; ++i) {
     real xi = x[i];
     real yi = y[i];
@@ -215,20 +225,20 @@ void grid_tmpl(int pme_unit, real* optional1, real* optional2) {
     w3 = fr3 - igrid3;
 
     if_constexpr(WHAT == PCHG_GRID || WHAT == DISP_GRID) {
-      bsplgen<1>(w2, thetai2, bsbuild, bsorder);
       bsplgen<1>(w1, thetai1, bsbuild, bsorder);
+      bsplgen<1>(w2, thetai2, bsbuild, bsorder);
       bsplgen<1>(w3, thetai3, bsbuild, bsorder);
     }
 
     if_constexpr(WHAT == MPOLE_GRID) {
-      bsplgen<3>(w2, thetai2, bsbuild, bsorder);
       bsplgen<3>(w1, thetai1, bsbuild, bsorder);
+      bsplgen<3>(w2, thetai2, bsbuild, bsorder);
       bsplgen<3>(w3, thetai3, bsbuild, bsorder);
     }
 
     if_constexpr(WHAT == UIND_GRID) {
-      bsplgen<2>(w2, thetai2, bsbuild, bsorder);
       bsplgen<2>(w1, thetai1, bsbuild, bsorder);
+      bsplgen<2>(w2, thetai2, bsbuild, bsorder);
       bsplgen<2>(w3, thetai3, bsbuild, bsorder);
     }
 
@@ -399,8 +409,8 @@ void fphi_tmpl(int pme_unit, real* opt1, real* opt2, real* opt3) {
   #pragma acc parallel loop independent\
               deviceptr(fphi,fdip_phi1,fdip_phi2,fdip_sum_phi,\
               x,y,z,box,dptr)\
-              private(bsbuild[0:bso2],\
-              thetai1[0:order4],thetai2[0:order4],thetai3[0:order4])
+              private(bsbuild[0:bsorder*bsorder],\
+              thetai1[0:4*bsorder],thetai2[0:4*bsorder],thetai3[0:4*bsorder])
   for (int i = 0; i < n; ++i) {
     real xi = x[i];
     real yi = y[i];
