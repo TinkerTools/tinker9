@@ -1,22 +1,13 @@
 #ifndef TINKER_GPU_DECL_BASIC_H_
 #define TINKER_GPU_DECL_BASIC_H_
 
-#include "util/cxx.h"
+#include "rc_man.h"
 #include "util/real_mathfunc.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 /// a new type is defined inside the namespace gpu
 typedef real_t_ real;
-
-/// resource management operations
-typedef enum {
-  rc_dealloc = 0x001, /// deallocate device memory
-  rc_alloc = 0x002,   /// allocate device memory
-  rc_copyin = 0x004,  /// update device data from host memory, or directly
-                      /// initialize device data
-  rc_evolve = 0x010,
-} rc_t;
 
 //======================================================================
 void zero_array(int* dst, int nelem);
