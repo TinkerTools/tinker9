@@ -1,7 +1,7 @@
-#ifndef TINKER_UTIL_FORT_RT_H_
-#define TINKER_UTIL_FORT_RT_H_
+#ifndef TINKER_UTIL_RC_MAN_H_
+#define TINKER_UTIL_RC_MAN_H_
 
-#include "macro.h"
+#include "util_macro.h"
 
 TINKER_NAMESPACE_BEGIN
 void fortran_runtime_initialize(int, char**);

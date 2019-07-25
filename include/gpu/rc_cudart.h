@@ -5,7 +5,7 @@
 #  include <cuda_runtime.h>
 #  include <cufft.h>
 
-#  include "util/macro.h"
+#  include "util_macro.h"
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
 typedef cufftHandle fft_plan_t;

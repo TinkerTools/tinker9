@@ -1,7 +1,7 @@
 #ifndef TINKER_TEST_RT_H_
 #define TINKER_TEST_RT_H_
 
-#include "util/macro.h"
+#include "util_macro.h"
 #include <string>
 
 TINKER_NAMESPACE_BEGIN

@@ -1,7 +1,7 @@
 #ifndef TINKER_SRC_GPU_RC_MAN_H_
 #define TINKER_SRC_GPU_RC_MAN_H_
 
-#include "util/macro.h"
+#include "util_macro.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

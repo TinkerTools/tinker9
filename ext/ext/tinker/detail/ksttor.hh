@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_KSTTOR_HH_
 #define TINKER_MOD_KSTTOR_HH_
 
-#include "util/macro.h"
+#include "util_macro.h"
 
 TINKER_NAMESPACE_BEGIN namespace ksttor {
 const int maxnbt = 500;

@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_ZCOORD_HH_
 #define TINKER_MOD_ZCOORD_HH_
 
-#include "util/macro.h"
+#include "util_macro.h"
 #include "sizes.hh"
 
 TINKER_NAMESPACE_BEGIN namespace zcoord {

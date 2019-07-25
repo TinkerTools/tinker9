@@ -2,7 +2,7 @@
 
 #include "gpu/rc.h"
 #include "test/test.h"
-#include "util/format_print.h"
+#include "util_text.h"
 
 m_tinker_using_namespace;
 using namespace gpu;

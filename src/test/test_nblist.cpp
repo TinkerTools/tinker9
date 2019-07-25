@@ -11,7 +11,8 @@ using namespace test;
 // static const int ans[5][216][70];
 #include "test_nblist.hh"
 
-static int usage_ = gpu::use_xyz | gpu::use_mass | gpu::use_traj | gpu::use_energy;
+static int usage_ =
+    gpu::use_xyz | gpu::use_mass | gpu::use_traj | gpu::use_energy;
 
 // if all integers in ref can be found in array
 static bool find_match(const int* array, int na, int iframe, int iatom);

@@ -19,9 +19,9 @@ two macros (TINKER_MOD and TINKER_RT) here to mimic its name mangling.
 
 // extern
 #ifdef TINKER_EXTERN_DEFINITION_FILE
-#define TINKER_EXTERN
+#  define TINKER_EXTERN
 #else
-#define TINKER_EXTERN extern
+#  define TINKER_EXTERN extern
 #endif
 
 // Namespace

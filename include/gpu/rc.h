@@ -6,7 +6,7 @@
 
 //======================================================================
 
-#include "util/error.h"
+#include "util_text.h"
 #include <ext/tinker/tinker_mod.h>
 #include <ext/tinker/tinker_rt.h>
 

@@ -1,7 +1,6 @@
 #include "gpu/f_random.h"
 #include "gpu/rc.h"
-#include "util/fort_str.h"
-#include "util/text.h"
+#include "util_text.h"
 #include <chrono>
 #include <random>
 

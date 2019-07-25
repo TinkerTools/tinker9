@@ -1,5 +1,5 @@
 #include "gpu/decl_md.h"
-#include "util/format_print.h"
+#include "util_text.h"
 #include <ext/tinker/tinker_mod.h>
 #include <ext/tinker/tinker_rt.h>
 

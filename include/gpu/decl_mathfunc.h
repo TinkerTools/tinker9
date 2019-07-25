@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_DECL_MATHFUNC_H_
 #define TINKER_GPU_DECL_MATHFUNC_H_
 
-#include "util/real_mathfunc.h"
+#include "util_math.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

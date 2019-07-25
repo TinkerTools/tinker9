@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_VIBS_HH_
 #define TINKER_MOD_VIBS_HH_
 
-#include "util/macro.h"
+#include "util_macro.h"
 
 TINKER_NAMESPACE_BEGIN namespace vibs {
 extern double*& phi;

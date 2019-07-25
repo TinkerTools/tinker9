@@ -1,9 +1,7 @@
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_tinker_io.h"
 #include "gpu/rc.h"
-#include "util/error.h"
-#include "util/format_print.h"
-#include "util/text.h"
+#include "util_text.h"
 #include <ext/tinker/tinker_mod.h>
 #include <ext/tinker/tinker_rt.h>
 #include <fstream>

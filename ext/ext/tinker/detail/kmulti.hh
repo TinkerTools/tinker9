@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_KMULTI_HH_
 #define TINKER_MOD_KMULTI_HH_
 
-#include "util/macro.h"
+#include "util_macro.h"
 
 TINKER_NAMESPACE_BEGIN namespace kmulti {
 const int maxnmp = 2000;

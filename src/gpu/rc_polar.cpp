@@ -1,10 +1,10 @@
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
 #include "gpu/decl_potent.h"
-#include "gpu/f_switch.h"
 #include "gpu/e_polar.h"
+#include "gpu/f_switch.h"
 #include "gpu/rc.h"
-#include "util/format_print.h"
+#include "util_text.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

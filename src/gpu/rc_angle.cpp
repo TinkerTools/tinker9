@@ -2,7 +2,7 @@
 #include "gpu/decl_potent.h"
 #include "gpu/e_angle.h"
 #include "gpu/rc.h"
-#include "util/fort_str.h"
+#include "util_text.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

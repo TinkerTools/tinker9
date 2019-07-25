@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_DECL_POTENT_H_
 #define TINKER_GPU_DECL_POTENT_H_
 
-#include "util/macro.h"
+#include "util_macro.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

@@ -3,7 +3,7 @@
 
 #ifdef TINKER_HOSTONLY
 
-#  include "util/macro.h"
+#  include "util_macro.h"
 #  include <cstdlib>
 #  include <fftw3.h>
 

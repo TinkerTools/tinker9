@@ -1,7 +1,5 @@
 #if defined(__APPLE__) || defined(__linux__)
-#  include "util/error.h"
-#  include "util/format_print.h"
-#  include "util/text.h"
+#  include "util_text.h"
 #  include <cxxabi.h>
 #  include <execinfo.h>
 

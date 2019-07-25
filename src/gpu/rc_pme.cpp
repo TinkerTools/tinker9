@@ -3,7 +3,7 @@
 #include "gpu/decl_potent.h"
 #include "gpu/f_switch.h"
 #include "gpu/rc.h"
-#include "util/math.h"
+#include "util_math.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

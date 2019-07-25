@@ -1,5 +1,5 @@
 #include "gpu/decl_md.h"
-#include "util/fort_str.h"
+#include "util_text.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

@@ -1,9 +1,9 @@
 #ifndef TINKER_GPU_DECL_BASIC_H_
 #define TINKER_GPU_DECL_BASIC_H_
 
+#include "cxx.h"
 #include "rc_man.h"
-#include "util/cxx.h"
-#include "util/real_mathfunc.h"
+#include "util_math.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
