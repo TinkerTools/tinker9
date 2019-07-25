@@ -1,13 +1,13 @@
-#ifndef TINKER_GPU_DECL_RANDOM_H_
-#define TINKER_GPU_DECL_RANDOM_H_
+#ifndef TINKER_GPU_F_RANDOM_H_
+#define TINKER_GPU_F_RANDOM_H_
 
 #include "decl_basic.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-void random_data(rc_t rc);
-
-/// @return  a random number on [0,1] from a uniform distribution
+/**
+ * @return  a random number on [0,1] from a uniform distribution
+ */
 double random_double();
 float random_float();
 template <class T = real>

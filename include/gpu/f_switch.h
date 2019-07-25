@@ -1,5 +1,5 @@
-#ifndef TINKER_GPU_DECL_SWITCH_H_
-#define TINKER_GPU_DECL_SWITCH_H_
+#ifndef TINKER_GPU_F_SWITCH_H_
+#define TINKER_GPU_F_SWITCH_H_
 
 #include "util/macro.h"
 

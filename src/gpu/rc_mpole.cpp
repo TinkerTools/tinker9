@@ -1,7 +1,7 @@
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
 #include "gpu/decl_potent.h"
-#include "gpu/decl_switch.h"
+#include "gpu/f_switch.h"
 #include "gpu/e_mpole.h"
 #include "util/fort_str.h"
 #include <ext/tinker/tinker_mod.h>

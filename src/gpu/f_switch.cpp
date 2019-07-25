@@ -1,4 +1,4 @@
-#include "gpu/decl_switch.h"
+#include "gpu/f_switch.h"
 #include "util/math.h"
 #include <ext/tinker/tinker_mod.h>
 

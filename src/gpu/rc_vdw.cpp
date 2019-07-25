@@ -1,6 +1,6 @@
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_potent.h"
-#include "gpu/decl_switch.h"
+#include "gpu/f_switch.h"
 #include "gpu/e_vdw.h"
 #include "gpu/rc.h"
 #include "util/fort_str.h"

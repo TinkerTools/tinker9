@@ -1,5 +1,5 @@
-#ifndef TINKER_GPU_DECL_TINKER_IO_
-#define TINKER_GPU_DECL_TINKER_IO_
+#ifndef TINKER_GPU_DECL_TINKER_IO_H_
+#define TINKER_GPU_DECL_TINKER_IO_H_
 
 #include "decl_basic.h"
 

@@ -2,6 +2,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
+// TODO: update dotprod implementation
 template <class T>
 T dotprod_acc_impl(const T* gpu_a, const T* gpu_b, int cpu_n) {
   T val = 0;

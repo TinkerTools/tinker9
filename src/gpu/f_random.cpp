@@ -1,4 +1,4 @@
-#include "gpu/decl_random.h"
+#include "gpu/f_random.h"
 #include "gpu/rc.h"
 #include "util/fort_str.h"
 #include "util/text.h"
@@ -7,7 +7,7 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-/// @return  Zero if Tinker key file does not consist of a RANDOMSEED keyword
+/// @return  Zero if Tinker key file does not contain a RANDOMSEED keyword
 static int read_tinker_randomseed_() {
   int seed = 0;
   for (int i = 0; i < keys::nkey; ++i) {

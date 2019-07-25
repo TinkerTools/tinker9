@@ -9,23 +9,6 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-double mpole_switch_cut, mpole_switch_off;
-
-real electric, dielec;
-
-local_frame_t* zaxis;
-
-real (*pole)[mpl_total];
-real (*rpole)[mpl_total];
-
-real (*uind)[3];
-real (*uinp)[3];
-real (*udir)[3];
-real (*udirp)[3];
-
-real *trqx, *trqy, *trqz;
-real* vir_trq;
-
 int use_elec() { return use_potent(mpole_term) || use_potent(polar_term); }
 
 void elec_data(rc_t rc) {
