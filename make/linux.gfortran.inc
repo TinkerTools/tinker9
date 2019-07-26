@@ -30,5 +30,7 @@ else ifeq ($(opt),profile)
 	acc_device_compile_flags__ += -ta=tesla:fastmath,lineinfo
 endif
 acc_device_link_flags__ := -acc -Mcuda -Mcudalib=cufft
-acc_host_compile_flags__ := -acc verystrict -Minfo=accel -ta=multicore
-acc_host_link_flags__ := -ta=multicore
+# acc_host_compile_flags__ := -acc verystrict -Minfo=accel -ta=multicore
+# acc_host_link_flags__ := -ta=multicore
+acc_host_compile_flags__ :=
+acc_host_link_flags__ :=

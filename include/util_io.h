@@ -8,7 +8,8 @@ class Text : public std::vector<std::string> {
 public:
   static constexpr const char* whitespaces = " \t\n\v\f\r";
 
-  /// @return  True if ch is one of the white character.
+  /// @return
+  /// True if ch is one of the white characters.
   static bool is_ws(char ch);
 
   template <size_t Len>
