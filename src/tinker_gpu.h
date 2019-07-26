@@ -4,7 +4,6 @@
 #include "gpu/decl_md.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_potential.h"
-#include "gpu/gpu.h"
 #include "util_cxx.h"
 #include "util_io.h"
 #include "util_rc_man.h"

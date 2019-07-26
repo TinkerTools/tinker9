@@ -14,7 +14,9 @@
 #  define TINKER_RT(rt) rt##_
 #else
 #  error We do not recognize your Fortran compiler. You should implement these \
-two macros (TINKER_MOD and TINKER_RT) here to mimic its name mangling.
+two macros (TINKER_MOD and TINKER_RT) here to mimic its name mangling. You     \
+should also implement void fortran_runtime_initialize() and                    \
+void fortran_runtime_finish() funtions.
 #endif
 
 // extern

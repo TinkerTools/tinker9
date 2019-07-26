@@ -6,6 +6,8 @@
 TINKER_NAMESPACE_BEGIN
 void fortran_runtime_initialize(int, char**);
 void fortran_runtime_finish();
+void tinker_gpu_runtime_initialize();
+void tinker_gpu_runtime_finish();
 
 /**
  * Resource Management
@@ -63,6 +65,7 @@ constexpr rc_t rc_evolve = rc_t::evolve;
 typedef rc_t rc_op;
 
 void host_data(rc_op);
+void device_data(rc_op);
 TINKER_NAMESPACE_END
 
 #endif

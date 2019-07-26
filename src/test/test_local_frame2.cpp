@@ -53,7 +53,7 @@ TEST_CASE("Local-Frame2-1", "[ff][triclinic][evdw][hal][local-frame2]") {
 
   test_begin_1_xyz(argc, argv);
   gpu::use_data = usage;
-  tinker_gpu_data_create();
+  tinker_gpu_runtime_initialize();
 
   SECTION("ehal -- pbc, cutoff") {
     const double eps_e = 0.0001;
@@ -66,7 +66,7 @@ TEST_CASE("Local-Frame2-1", "[ff][triclinic][evdw][hal][local-frame2]") {
     COMPARE_COUNT_(gpu::nev, ref_count);
   }
 
-  tinker_gpu_data_destroy();
+  tinker_gpu_runtime_finish();
   test_end();
 }
 
@@ -81,7 +81,7 @@ TEST_CASE("Local-Frame2-2", "[ff][monoclinic][evdw][hal][local-frame2]") {
 
   test_begin_1_xyz(argc, argv);
   gpu::use_data = usage;
-  tinker_gpu_data_create();
+  tinker_gpu_runtime_initialize();
 
   SECTION("ehal -- pbc, cutoff") {
     const double eps_e = 0.0001;
@@ -94,6 +94,6 @@ TEST_CASE("Local-Frame2-2", "[ff][monoclinic][evdw][hal][local-frame2]") {
     COMPARE_COUNT_(gpu::nev, ref_count);
   }
 
-  tinker_gpu_data_destroy();
+  tinker_gpu_runtime_finish();
   test_end();
 }

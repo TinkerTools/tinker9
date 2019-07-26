@@ -60,7 +60,7 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
 
     test_begin_1_xyz(argc, argv);
     gpu::use_data = usage;
-    tinker_gpu_data_create();
+    tinker_gpu_runtime_initialize();
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
@@ -81,7 +81,7 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
     COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
     COMPARE_COUNT_(gpu::nem, ref_count);
 
-    tinker_gpu_data_destroy();
+    tinker_gpu_runtime_finish();
     test_end();
   }
 }
@@ -143,7 +143,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
 
     test_begin_1_xyz(argc, argv);
     gpu::use_data = usage;
-    tinker_gpu_data_create();
+    tinker_gpu_runtime_initialize();
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v1);
@@ -153,7 +153,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     COMPARE_GRADIENT_(ref_grad, eps_g);
     COMPARE_VIR2_(gpu::vir_em, gpu::vir_trq, ref_v, eps_v);
 
-    tinker_gpu_data_destroy();
+    tinker_gpu_runtime_finish();
     test_end();
   }
 }
@@ -228,7 +228,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
 
   test_begin_1_xyz(argc, argv);
   gpu::use_data = usage;
-  tinker_gpu_data_create();
+  tinker_gpu_runtime_initialize();
 
   SECTION("dfield -- coulomb no cutoff") {
     const double ref_dir_field_d[][3] = {
@@ -397,7 +397,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
     COMPARE_CODE_BLOCK2_;
   }
 
-  tinker_gpu_data_destroy();
+  tinker_gpu_runtime_finish();
   test_end();
 }
 
@@ -432,7 +432,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
 
   test_begin_1_xyz(argc, argv);
   gpu::use_data = usage;
-  tinker_gpu_data_create();
+  tinker_gpu_runtime_initialize();
 
   SECTION("dfield -- pme") {
     const double ref_dir_field_d[][3] = {
@@ -601,7 +601,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
     COMPARE_CODE_BLOCK2_;
   }
 
-  tinker_gpu_data_destroy();
+  tinker_gpu_runtime_finish();
   test_end();
 }
 

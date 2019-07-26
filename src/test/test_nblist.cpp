@@ -34,7 +34,7 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]") {
 
   gpu::use_data = usage_;
   gpu::trajn = 5;
-  tinker_gpu_data_create();
+  tinker_gpu_runtime_initialize();
 
   gpu::copyin_tinker_arc(x1, 1, 5, 1);
 
@@ -61,7 +61,7 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]") {
       break;
   }
 
-  tinker_gpu_data_destroy();
+  tinker_gpu_runtime_finish();
   test_end();
 }
 

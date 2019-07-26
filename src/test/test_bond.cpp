@@ -182,7 +182,7 @@ TEST_CASE("Bond-Trpcage", "[ff][ebond][harmonic][trpcage]") {
   int argc = 2;
   test_begin_1_xyz(argc, argv);
   gpu::use_data = usage;
-  tinker_gpu_data_create();
+  tinker_gpu_runtime_initialize();
 
   const double eps_e = 0.0001;
   const double ref_e = 19.4715;
@@ -197,6 +197,6 @@ TEST_CASE("Bond-Trpcage", "[ff][ebond][harmonic][trpcage]") {
                       gpu::gx, gpu::gy, gpu::gz, ref_g_bond_trpcage, eps_g,
                       gpu::vir_eb, ref_v, eps_v);
 
-  tinker_gpu_data_destroy();
+  tinker_gpu_runtime_finish();
   test_end();
 }

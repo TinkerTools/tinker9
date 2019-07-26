@@ -45,7 +45,7 @@ TEST_CASE("Urey-Ten-Water", "[ff][eurey][h2o10]") {
   int argc = 2;
   test_begin_1_xyz(argc, argv);
   gpu::use_data = usage;
-  tinker_gpu_data_create();
+  tinker_gpu_runtime_initialize();
 
   const double eps_e = 0.0001;
   const double ref_e = -0.1964;
@@ -59,6 +59,6 @@ TEST_CASE("Urey-Ten-Water", "[ff][eurey][h2o10]") {
                       gpu::gx, gpu::gy, gpu::gz, ref_g_urey_h2o10, eps_g,
                       gpu::vir_eub, ref_v, eps_v);
 
-  tinker_gpu_data_destroy();
+  tinker_gpu_runtime_finish();
   test_end();
 }

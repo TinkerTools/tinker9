@@ -66,11 +66,11 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
 
     test_begin_1_xyz(argc, argv);
     gpu::use_data = usage;
-    tinker_gpu_data_create();
+    tinker_gpu_runtime_initialize();
 
     COMPARE_CODE_BLOCK1_;
 
-    tinker_gpu_data_destroy();
+    tinker_gpu_runtime_finish();
     test_end();
   }
 
@@ -88,11 +88,11 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
 
     test_begin_1_xyz(argc, argv);
     gpu::use_data = usage;
-    tinker_gpu_data_create();
+    tinker_gpu_runtime_initialize();
 
     COMPARE_CODE_BLOCK1_;
 
-    tinker_gpu_data_destroy();
+    tinker_gpu_runtime_finish();
     test_end();
   }
 
@@ -111,11 +111,11 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
 
     test_begin_1_xyz(argc, argv);
     gpu::use_data = usage;
-    tinker_gpu_data_create();
+    tinker_gpu_runtime_initialize();
 
     COMPARE_CODE_BLOCK1_;
 
-    tinker_gpu_data_destroy();
+    tinker_gpu_runtime_finish();
     test_end();
   }
 }
@@ -196,11 +196,11 @@ TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
 
     test_begin_1_xyz(argc, argv);
     gpu::use_data = usage;
-    tinker_gpu_data_create();
+    tinker_gpu_runtime_initialize();
 
     COMPARE_CODE_BLOCK2_;
 
-    tinker_gpu_data_destroy();
+    tinker_gpu_runtime_finish();
     test_end();
   }
 }
@@ -257,11 +257,11 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]") {
 
     test_begin_1_xyz(argc, argv);
     gpu::use_data = usage;
-    tinker_gpu_data_create();
+    tinker_gpu_runtime_initialize();
 
     COMPARE_CODE_BLOCK2_;
 
-    tinker_gpu_data_destroy();
+    tinker_gpu_runtime_finish();
     test_end();
   }
 }

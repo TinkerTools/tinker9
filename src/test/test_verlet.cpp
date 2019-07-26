@@ -69,7 +69,7 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]") {
   test_mdinit(0, 0);
 
   gpu::use_data = usage_;
-  tinker_gpu_data_create();
+  tinker_gpu_runtime_initialize();
 
   const double dt_ps = 0.001;
   const int nsteps = 20;
@@ -81,7 +81,7 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]") {
     eksums.push_back(gpu::eksum);
   }
 
-  tinker_gpu_data_destroy();
+  tinker_gpu_runtime_finish();
   test_end();
 
   for (int i = 0; i < nsteps; ++i) {
