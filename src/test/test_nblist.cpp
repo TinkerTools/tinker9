@@ -5,7 +5,7 @@
 #include "test/rt.h"
 #include "test/test.h"
 
-m_tinker_using_namespace;
+using namespace TINKER_NAMESPACE;
 using namespace test;
 
 // static const int ans[5][216][70];
@@ -56,7 +56,7 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]") {
     if (ifr < gpu::trajn) {
       gpu::goto_frame0(ifr);
       gpu::evdw_reduce_xyz();
-      gpu::nblist_data(gpu::rc_evolve);
+      gpu::nblist_data(rc_t::evolve);
     } else
       break;
   }

@@ -4,7 +4,7 @@
 #include "test/test.h"
 #include <ext/tinker/tinker_mod.h>
 
-m_tinker_using_namespace;
+using namespace TINKER_NAMESPACE;
 using namespace test;
 
 /**

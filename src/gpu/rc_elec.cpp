@@ -5,7 +5,7 @@
 #include "gpu/e_mpole.h"
 #include "gpu/e_polar.h"
 #include "gpu/rc.h"
-#include "util_text.h"
+#include "util_io.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

@@ -3,7 +3,7 @@
 #include <functional>
 #include <map>
 
-m_tinker_using_namespace;
+using namespace TINKER_NAMESPACE;
 
 static const char* main_name = "tinker.gpu";
 static const std::string dynamic_name = "dynamic";
@@ -34,10 +34,10 @@ help_message:
 }
 
 TINKER_NAMESPACE_BEGIN
-extern void dynamic_x(int, char**);
+extern void x_dynamic(int, char**);
 TINKER_NAMESPACE_END
 
-static void help_x(int, char**) {
+static void x_help(int, char**) {
   std::vector<std::string> keys;
   for (const auto& x : launcher()) {
     if (x.first != helper_name) {
@@ -62,8 +62,8 @@ static void help_x(int, char**) {
 static const std::map<std::string, std::function<void(int, char**)>>&
 launcher() {
   static std::map<std::string, std::function<void(int, char**)>> x = {
-      {dynamic_name, dynamic_x},
-      {helper_name, help_x},
+      {dynamic_name, x_dynamic},
+      {helper_name, x_help},
   };
   return x;
 }

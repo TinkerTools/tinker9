@@ -3,7 +3,7 @@
 #include "test/rt.h"
 #include "test/test.h"
 
-m_tinker_using_namespace;
+using namespace TINKER_NAMESPACE;
 using namespace test;
 
 static const char* tortorterm_only = R"**(

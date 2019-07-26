@@ -3,7 +3,7 @@
 #include "gpu/decl_potent.h"
 #include "gpu/e_mpole.h"
 #include "gpu/f_switch.h"
-#include "util_text.h"
+#include "util_io.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

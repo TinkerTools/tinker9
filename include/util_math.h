@@ -9,8 +9,6 @@ TINKER_NAMESPACE_BEGIN
 #define INT_ABS(x) abs(x)
 
 #ifdef TINKER_GPU_DOUBLE
-typedef double real_t_;
-
 #  define REAL_SQRT(x) sqrt(x)
 #  define REAL_EXP(x) exp(x)
 #  define REAL_FLOOR(x) floor(x)
@@ -30,8 +28,6 @@ typedef double real_t_;
 #endif
 
 #ifdef TINKER_GPU_SINGLE
-typedef float real_t_;
-
 #  define REAL_SQRT(x) sqrtf(x)
 #  define REAL_EXP(x) expf(x)
 #  define REAL_FLOOR(x) floorf(x)
@@ -53,17 +49,17 @@ typedef float real_t_;
 #define REAL_SQ(x) ((x) * (x))
 #define REAL_CUBE(x) ((x) * (x) * (x))
 
-constexpr real_t_ twosix = 1.12246204830937298143;    // 2**(1/6)
-constexpr real_t_ sqrttwo = 1.41421356237309504880;   // sqrt(2)
-constexpr real_t_ sqrtthree = 1.73205080756887729353; // sqrt(3)
+constexpr real twosix = 1.12246204830937298143;    // 2**(1/6)
+constexpr real sqrttwo = 1.41421356237309504880;   // sqrt(2)
+constexpr real sqrtthree = 1.73205080756887729353; // sqrt(3)
 
-constexpr real_t_ elog = M_E;
-constexpr real_t_ logten = M_LN10;
+constexpr real elog = M_E;
+constexpr real logten = M_LN10;
 
-constexpr real_t_ pi = M_PI;
-constexpr real_t_ radian = 57.2957795130823208768;    // 180/PI
-constexpr real_t_ radinv = 0.01745329251994329576924; // PI/180
-constexpr real_t_ sqrtpi = 1.77245385090551602730;    // sqrt(PI)
+constexpr real pi = M_PI;
+constexpr real radian = 57.2957795130823208768;    // 180/PI
+constexpr real radinv = 0.01745329251994329576924; // PI/180
+constexpr real sqrtpi = 1.77245385090551602730;    // sqrt(PI)
 
 template <class T>
 T max_of(T a) {

@@ -1,11 +1,12 @@
-#include "gpu/f_random.h"
-#include "gpu/rc.h"
-#include "util_text.h"
+#include "util_random.h"
+#include "util_io.h"
+#include "util_rc_man.h"
+#include <ext/tinker/tinker_mod.h>
+
 #include <chrono>
 #include <random>
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 /// @return  Zero if Tinker key file does not contain a RANDOMSEED keyword
 static int read_tinker_randomseed_() {
   int seed = 0;
@@ -65,6 +66,5 @@ double chi_squared_double(int k) {
 float chi_squared_float(int k) {
   gammaf_.param(std::gamma_distribution<float>::param_type(0.5f * k, 2));
   return gammaf_(generator_);
-}
 }
 TINKER_NAMESPACE_END

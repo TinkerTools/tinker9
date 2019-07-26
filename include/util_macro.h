@@ -69,6 +69,14 @@ two macros (TINKER_MOD and TINKER_RT) here to mimic its name mangling.
 #    define TINKER_GPU_SINGLE
 #  endif
 #endif
+TINKER_NAMESPACE_BEGIN
+#ifdef TINKER_GPU_DOUBLE
+typedef double real;
+#endif
+#ifdef TINKER_GPU_SINGLE
+typedef float real;
+#endif
+TINKER_NAMESPACE_END
 
 // features
 #ifdef __cpp_if_constexpr

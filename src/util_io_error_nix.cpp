@@ -1,14 +1,14 @@
 #if defined(__APPLE__) || defined(__linux__)
-#  include "util_text.h"
+#  include "util_io.h"
 #  include <cxxabi.h>
 #  include <execinfo.h>
 
 TINKER_NAMESPACE_BEGIN
 namespace detail_ {
-enum class BackTraceOS { osx, linux };
+enum class BackTraceOS { macOS, Linux };
 
 template <BackTraceOS os>
-void print_backtrace_template(std::ostream& fp) {
+void print_backtrace_tmpl(std::ostream& fp) {
   const int max_frames = 128;
   void* callstack[max_frames];
   int frames = backtrace(callstack, max_frames);
@@ -28,7 +28,7 @@ void print_backtrace_template(std::ostream& fp) {
     // e.g.
     // 3   libdyld.dylib                       0x00007fffbc358235 start + 1
     // [0] [1]                                 [2]                [3]     [5]
-    if_constexpr(os == BackTraceOS::osx) {
+    if_constexpr(os == BackTraceOS::macOS) {
       auto vs = Text::split(tmp);
       num = vs.at(0);
       caller = vs.at(1);
@@ -38,7 +38,7 @@ void print_backtrace_template(std::ostream& fp) {
     // e.g.
     // /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xe7) [0x7f4c7dd9db97]
     // [0]                             [1]               [2]    [3]
-    else if_constexpr(os == BackTraceOS::linux) {
+    else if_constexpr(os == BackTraceOS::Linux) {
       Text::replace(tmp, "()[]+", ' ');
       auto vs = Text::split(tmp);
       num = std::to_string(i);
@@ -47,7 +47,8 @@ void print_backtrace_template(std::ostream& fp) {
     }
 
     demangled_name = abi::__cxa_demangle(callee.c_str(), 0, 0, &status);
-    if (!status) /* This name CAN be demangled. */ {
+    if (!status) {
+      // This name CAN be demangled.
       std::string tmp =
           ((tolerance + callee.length()) >= std::strlen(demangled_name))
           ? demangled_name
@@ -65,9 +66,9 @@ void print_backtrace_template(std::ostream& fp) {
 
 void print_backtrace(std::ostream& fp) {
 #  if defined(__APPLE__)
-  detail_::print_backtrace_template<detail_::BackTraceOS::osx>(fp);
+  detail_::print_backtrace_tmpl<detail_::BackTraceOS::macOS>(fp);
 #  elif defined(__linux__)
-  detail_::print_backtrace_template<detail_::BackTraceOS::linux>(fp);
+  detail_::print_backtrace_tmpl<detail_::BackTraceOS::Linux>(fp);
 #  endif
 }
 TINKER_NAMESPACE_END

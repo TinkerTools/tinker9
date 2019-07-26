@@ -2,7 +2,7 @@
 #include <cmath>
 
 TINKER_NAMESPACE_BEGIN
-void dynamic_x(int argc, char** argv) {
+void x_dynamic(int argc, char** argv) {
   char string[240];
   logical exist = _false_;
 

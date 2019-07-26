@@ -1,15 +1,12 @@
 #ifndef TINKER_GPU_DECL_BASIC_H_
 #define TINKER_GPU_DECL_BASIC_H_
 
-#include "cxx.h"
-#include "rc_man.h"
+#include "util_cxx.h"
 #include "util_math.h"
+#include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {
-/// a new type is defined inside the namespace gpu
-typedef real_t_ real;
-
 //======================================================================
 void zero_array(int* dst, int nelem);
 void zero_array(real* dst, int nelem);

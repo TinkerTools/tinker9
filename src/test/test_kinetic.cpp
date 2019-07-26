@@ -4,7 +4,7 @@
 #include "test/rt.h"
 #include "test/test.h"
 
-m_tinker_using_namespace;
+using namespace TINKER_NAMESPACE;
 using namespace test;
 
 static const char* verlet_intg = "integrator  verlet\n";
@@ -33,7 +33,7 @@ TEST_CASE("Kinetic-ArBox", "[ff][kinetic][arbox]") {
   gpu::use_data = usage_;
   tinker_gpu_data_create();
 
-  gpu::real temp;
+  real temp;
   gpu::kinetic(temp);
 
   const double ref_eksum = 100446.40376;

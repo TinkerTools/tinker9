@@ -2,9 +2,9 @@
 
 #include "gpu/rc.h"
 #include "test/test.h"
-#include "util_text.h"
+#include "util_io.h"
 
-m_tinker_using_namespace;
+using namespace TINKER_NAMESPACE;
 using namespace gpu;
 
 TEST_CASE("Error", "[noassert][util]") {

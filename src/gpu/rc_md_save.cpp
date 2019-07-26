@@ -2,7 +2,7 @@
 #include "gpu/decl_potent.h"
 #include "gpu/e_potential.h"
 #include "gpu/rc.h"
-#include "util_text.h"
+#include "util_io.h"
 #include <ext/tinker/tinker_mod.h>
 #include <ext/tinker/tinker_rt.h>
 

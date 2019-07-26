@@ -3,7 +3,7 @@
 #include "gpu/e_vdw.h"
 #include "gpu/f_switch.h"
 #include "gpu/rc.h"
-#include "util_text.h"
+#include "util_io.h"
 #include <map>
 
 TINKER_NAMESPACE_BEGIN

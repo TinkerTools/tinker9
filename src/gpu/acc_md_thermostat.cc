@@ -1,5 +1,5 @@
 #include "gpu/decl_mdstate.h"
-#include "gpu/f_random.h"
+#include "util_random.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

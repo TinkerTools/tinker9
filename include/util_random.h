@@ -1,15 +1,19 @@
-#ifndef TINKER_GPU_F_RANDOM_H_
-#define TINKER_GPU_F_RANDOM_H_
+#ifndef TINKER_UTIL_RANDOM_H_
+#define TINKER_UTIL_RANDOM_H_
 
-#include "decl_basic.h"
+#include "util_cxx.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
+double random_double();
+float random_float();
+double normal_double();
+float normal_float();
+double chi_squared_double(int k);
+float chi_squared_float(int k);
+
 /**
  * @return  a random number on [0,1] from a uniform distribution
  */
-double random_double();
-float random_float();
 template <class T = real>
 T random() {
   if_constexpr(std::is_same<T, double>::value) { random_double(); }
@@ -26,8 +30,6 @@ T random() {
  * a random number from a normal Gaussian distribution with a mean of zero and a
  * variance of one
  */
-double normal_double();
-float normal_float();
 template <class T = real>
 T normal() {
   if_constexpr(std::is_same<T, double>::value) { normal_double(); }
@@ -52,8 +54,7 @@ T normal() {
  *
  * chi2_dist(n) = gamma_dist(n/2,2)
  */
-double chi_squared_double(int k);
-float chi_squared_float(int k);
+
 template <class T = real>
 T chi_squared(int k) {
   if_constexpr(std::is_same<T, double>::value) { chi_squared_double(k); }
@@ -63,7 +64,6 @@ T chi_squared(int k) {
   else {
     assert(false);
   }
-}
 }
 TINKER_NAMESPACE_END
 

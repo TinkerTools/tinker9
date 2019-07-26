@@ -1,4 +1,4 @@
-#include "util_text.h"
+#include "util_rc_man.h"
 
 // GNU Fortran
 #ifdef TINKER_GFORTRAN
@@ -27,4 +27,9 @@ void fortran_runtime_finish() {
   for_rtl_finish_();
 #endif
 }
+TINKER_NAMESPACE_END
+
+TINKER_NAMESPACE_BEGIN
+extern void random_data(rc_op);
+void host_data(rc_op rc) { rc_man rand42_{random_data, rc}; }
 TINKER_NAMESPACE_END

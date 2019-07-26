@@ -1,4 +1,4 @@
-#include "util_text.h"
+#include "util_io.h"
 #include <algorithm>
 
 TINKER_NAMESPACE_BEGIN
@@ -80,7 +80,7 @@ size_t FortranStringView::len_trim() const {
   size_t pos = 0;
   for (; pos < size() && b_[pos] != 0; ++pos)
     ;
-  for (; pos > 0 && (b_[pos - 1] == ' ' || b_[pos - 1] == '\t'); --pos)
+  for (; pos > 0 && Text::is_ws(b_[pos - 1]); --pos)
     ;
   return pos;
 }

@@ -1,10 +1,15 @@
-#include "util_text.h"
+#include "util_io.h"
 #include <algorithm>
 #include <bitset>
 #include <regex>
 #include <sstream>
 
 TINKER_NAMESPACE_BEGIN
+bool Text::is_ws(char ch) {
+  static std::string ws = whitespaces;
+  return ws.find(ch) != std::string::npos;
+}
+
 void Text::replace(std::string& s, std::string old, char r) {
   std::bitset<128> alphabets;
   for (char c : old) {

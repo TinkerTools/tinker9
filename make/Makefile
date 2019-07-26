@@ -103,7 +103,6 @@ dirs:
 	@mkdir -p $(ext_dir__)/fmt
 	@mkdir -p $(ext_dir__)/tinker
 	@mkdir -p $(src_obj_dir__)/test
-	@mkdir -p $(src_obj_dir__)/util
 	@mkdir -p $(src_obj_dir__)/gpu
 
 .PHONY: clean
@@ -158,7 +157,7 @@ $(ext_dir__)/tinker/tinker_rt.o
 
 main_cc_objs__ := $(src_obj_dir__)/test/test_all.o $(src_obj_dir__)/tinker_gpu.o
 
-# $(top_dir__)/src/util/foo.cpp -> src-dp/util/foo.o
+# $(top_dir__)/src/foo.cpp -> src-dp/foo.o
 lib_cpp_files__ := $(shell find $(top_dir__)/src -type f -name '*.cpp' \
 -not -path '$(top_dir__)/$(ext_dir__)/*' \
 -not -path '$(top_dir__)/src/test/*')

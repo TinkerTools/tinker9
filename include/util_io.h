@@ -1,12 +1,15 @@
-#ifndef TINKER_UTIL_TEXT_H_
-#define TINKER_UTIL_TEXT_H_
+#ifndef TINKER_UTIL_IO_H_
+#define TINKER_UTIL_IO_H_
 
-#include "cxx.h"
+#include "util_cxx.h"
 
 TINKER_NAMESPACE_BEGIN
 class Text : public std::vector<std::string> {
 public:
   static constexpr const char* whitespaces = " \t\n\v\f\r";
+
+  /// @return  True if ch is one of the white character.
+  static bool is_ws(char ch);
 
   template <size_t Len>
   static std::string string(const char (&src)[Len]) {
@@ -26,6 +29,8 @@ public:
   static void upcase(std::string&);
   static void lowcase(std::string&);
 };
+
+typedef Text text_t;
 TINKER_NAMESPACE_END
 
 //======================================================================
