@@ -1,9 +1,8 @@
-#include "gpu/f_switch.h"
+#include "util_switch.h"
 #include "util_math.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 void switch_cut_off(switch_t switch_type, double& cut, double& off) {
   using namespace limits;
   switch (switch_type) {
@@ -59,12 +58,11 @@ void switch_cut_off(switch_t switch_type, double& cut, double& off) {
     off = nonpol::stcut;
     cut = nonpol::stoff;
     break;
-  default /* switch_default */:
+  default: // switch_default
     off = min_of(vdwcut, repcut, dispcut, chgcut, dplcut, mpolecut, ctrncut);
     cut = min_of(vdwtaper, reptaper, disptaper, chgtaper, dpltaper, mpoletaper,
                  ctrntaper);
     break;
   }
-}
 }
 TINKER_NAMESPACE_END

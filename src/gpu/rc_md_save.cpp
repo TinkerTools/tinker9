@@ -1,8 +1,8 @@
 #include "gpu/decl_md.h"
-#include "gpu/decl_potent.h"
 #include "gpu/e_potential.h"
 #include "gpu/rc.h"
 #include "util_io.h"
+#include "util_potent.h"
 #include <ext/tinker/tinker_mod.h>
 #include <ext/tinker/tinker_rt.h>
 

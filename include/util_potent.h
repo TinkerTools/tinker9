@@ -1,10 +1,9 @@
-#ifndef TINKER_GPU_DECL_POTENT_H_
-#define TINKER_GPU_DECL_POTENT_H_
+#ifndef TINKER_UTIL_POTENT_H_
+#define TINKER_UTIL_POTENT_H_
 
 #include "util_macro.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 typedef enum {
   bond_term,    // eb
   angle_term,   // ea
@@ -39,7 +38,6 @@ typedef enum {
 
 int use_potent(potent_t term);
 int count_bonded_term(potent_t term);
-}
 TINKER_NAMESPACE_END
 
 #endif

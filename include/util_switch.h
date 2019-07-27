@@ -1,10 +1,9 @@
-#ifndef TINKER_GPU_F_SWITCH_H_
-#define TINKER_GPU_F_SWITCH_H_
+#ifndef TINKER_UTIL_SWITCH_H_
+#define TINKER_UTIL_SWITCH_H_
 
 #include "util_macro.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 typedef enum {
   switch_default,
   switch_vdw,
@@ -23,7 +22,6 @@ typedef enum {
 } switch_t;
 
 void switch_cut_off(switch_t switch_type, double& cut, double& off);
-}
 TINKER_NAMESPACE_END
 
 #endif

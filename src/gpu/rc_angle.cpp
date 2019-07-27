@@ -1,8 +1,8 @@
 #include "gpu/decl_mdstate.h"
-#include "gpu/decl_potent.h"
 #include "gpu/e_angle.h"
 #include "gpu/rc.h"
 #include "util_io.h"
+#include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

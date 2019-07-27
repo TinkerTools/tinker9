@@ -1,9 +1,9 @@
 #include "gpu/acc.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
-#include "gpu/decl_potent.h"
 #include "gpu/e_mpole.h"
 #include "gpu/e_polar.h"
+#include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

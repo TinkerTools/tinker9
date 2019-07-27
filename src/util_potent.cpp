@@ -1,9 +1,8 @@
-#include "gpu/decl_potent.h"
+#include "util_potent.h"
 #include <cassert>
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 int use_potent(potent_t term) {
   int val = 0;
   switch (term) {
@@ -85,6 +84,5 @@ int count_bonded_term(potent_t term) {
     break;
   }
   return val;
-}
 }
 TINKER_NAMESPACE_END
