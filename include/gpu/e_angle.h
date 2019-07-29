@@ -1,7 +1,8 @@
 #ifndef TINKER_GPU_E_ANGLE_H_
 #define TINKER_GPU_E_ANGLE_H_
 
-#include "decl_basic.h"
+#include "util_cxx.h"
+#include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

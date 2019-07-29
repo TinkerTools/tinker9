@@ -1,7 +1,10 @@
 #ifndef TINKER_GPU_DECL_MDSTATE_H_
 #define TINKER_GPU_DECL_MDSTATE_H_
 
+#include "gpu_array.h"
 #include "mod_mdstate.h"
+#include "util_math.h"
+#include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

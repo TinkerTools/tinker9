@@ -1,7 +1,8 @@
 #ifndef TINKER_GPU_E_TORTOR_H_
 #define TINKER_GPU_E_TORTOR_H_
 
-#include "decl_basic.h"
+#include "util_cxx.h"
+#include "util_rc_man.h"
 #include <ext/tinker/detail/ktrtor.hh>
 
 TINKER_NAMESPACE_BEGIN

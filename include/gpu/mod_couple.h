@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_MOD_COUPLE_H_
 #define TINKER_GPU_MOD_COUPLE_H_
 
-#include "decl_basic.h"
+#include "util_cxx.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

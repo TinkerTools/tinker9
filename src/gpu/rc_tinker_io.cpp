@@ -1,5 +1,5 @@
 #include "gpu/decl_mdstate.h"
-#include "gpu/decl_tinker_io.h"
+#include "util_io.h"
 #include "gpu/rc.h"
 #include "util_io.h"
 #include <ext/tinker/tinker_mod.h>

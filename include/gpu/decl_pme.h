@@ -2,6 +2,7 @@
 #define TINKER_GPU_DECL_PME_H_
 
 #include "mod_pme.h"
+#include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

@@ -2,6 +2,7 @@
 #define TINKER_GPU_DECL_ELEC_H_
 
 #include "mod_elec.h"
+#include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

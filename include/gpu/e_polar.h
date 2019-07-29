@@ -1,7 +1,8 @@
 #ifndef TINKER_GPU_E_POLAR_H_
 #define TINKER_GPU_E_POLAR_H_
 
-#include "decl_basic.h"
+#include "util_cxx.h"
+#include "util_rc_man.h"
 #include "gpu/decl_elec.h"
 #include "gpu/mod_polgrp.h"
 
