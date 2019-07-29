@@ -1,6 +1,6 @@
 #include "gpu/decl_mdstate.h"
-#include "gpu/mod_box.h"
 #include "gpu/rc.h"
+#include "mod_box.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

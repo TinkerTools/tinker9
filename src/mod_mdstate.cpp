@@ -1,2 +1,2 @@
 #define TINKER_EXTERN_DEFINITION_FILE
-#include "gpu/mod_pme.h"
+#include "mod_mdstate.h"

@@ -1,8 +1,7 @@
-#include "gpu_array.h"
+#include "util_array.h"
 #include "gpu/rc.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 template <class T>
 void zero_array_tmpl(T* dst, int nelem) {
   size_t size = sizeof(T) * nelem;
@@ -144,6 +143,5 @@ void copy_array(float* dst, const float* src, int nelem) {
 
 void copy_array(double* dst, const double* src, int nelem) {
   copy_array_tmpl(dst, src, nelem);
-}
 }
 TINKER_NAMESPACE_END

@@ -4,7 +4,6 @@
 #  include <cstring>
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 const char* cudaGetErrorName(cudaError_t error) {
   const char* s1 = "HostOnlySuccess";
   const char* s2 = "HostOnlyGenericError";
@@ -57,7 +56,6 @@ cudaError_t cudaMemcpyAsync(void* dst, const void* src, size_t count,
 cudaError_t cudaMemset(void* devPtr, int value, size_t count) {
   std::memset(devPtr, value, count);
   return cudaSuccess;
-}
 }
 TINKER_NAMESPACE_END
 

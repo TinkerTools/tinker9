@@ -155,7 +155,8 @@ ext_cc_objs__ := $(ext_dir__)/fmt/format.o $(ext_dir__)/fmt/posix.o
 ext_cpp_objs__ := $(ext_dir__)/tinker/tinker_mod.o \
 $(ext_dir__)/tinker/tinker_rt.o
 
-main_cc_objs__ := $(src_obj_dir__)/test/test_all.o $(src_obj_dir__)/tinker_gpu.o
+main_cc_objs__ := $(src_obj_dir__)/test/main_test_all.o \
+$(src_obj_dir__)/main_tinker_gpu.o
 
 # $(top_dir__)/src/foo.cpp -> src-dp/foo.o
 lib_cpp_files__ := $(shell find $(top_dir__)/src -type f -name '*.cpp' \
@@ -203,7 +204,8 @@ $(shared_libtinker__): $(libtinker_dir__)/$(shared_libtinker__)
 #                                                                      #
 ########################################################################
 
-$(tinker_gpu_exec__): $(src_obj_dir__)/tinker_gpu.o $(lib_acc_objs__) \
+$(tinker_gpu_exec__): $(src_obj_dir__)/main_tinker_gpu.o \
+$(lib_acc_objs__) \
 | $(libtinkergpu_name__).$(shared_lib_suffix__) $(shared_libtinker__)
 	$(ACC) $^ $(acc_link_flags__) -o $@
 
@@ -221,7 +223,7 @@ test: $(all_tests_exec__)
 .PHONY: unittest
 unittest: $(all_tests_exec__)
 
-$(all_tests_exec__): $(src_obj_dir__)/test/test_all.o $(test_cpp_objs__) \
-$(lib_acc_objs__) | $(libtinkergpu_name__).$(shared_lib_suffix__) \
-$(shared_libtinker__)
+$(all_tests_exec__): $(src_obj_dir__)/test/main_test_all.o \
+$(test_cpp_objs__) $(lib_acc_objs__) \
+| $(libtinkergpu_name__).$(shared_lib_suffix__) $(shared_libtinker__)
 	$(ACC) $^ $(acc_link_flags__) -o $@

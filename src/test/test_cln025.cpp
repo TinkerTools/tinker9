@@ -10,9 +10,9 @@ using namespace test;
   {                                                                            \
     grad_t grad(gpu::n);                                                       \
     double* dst = &grad[0][0];                                                 \
-    gpu::copyout_array2(0, 3, dst, gpu::gx, gpu::n);                           \
-    gpu::copyout_array2(1, 3, dst, gpu::gy, gpu::n);                           \
-    gpu::copyout_array2(2, 3, dst, gpu::gz, gpu::n);                           \
+    copyout_array2(0, 3, dst, gpu::gx, gpu::n);                                \
+    copyout_array2(1, 3, dst, gpu::gy, gpu::n);                                \
+    copyout_array2(2, 3, dst, gpu::gz, gpu::n);                                \
     for (int i = 0; i < 6; ++i) {                                              \
       for (int j = 0; j < 3; ++j) {                                            \
         REQUIRE(grad[i * 30][j] == Approx(ref_grad[i][j]).margin(eps));        \

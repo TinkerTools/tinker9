@@ -1,10 +1,9 @@
-#ifndef TINKER_GPU_ARRAY_H_
-#define TINKER_GPU_ARRAY_H_
+#ifndef TINKER_UTIL_ARRAY_H_
+#define TINKER_UTIL_ARRAY_H_
 
 #include "util_cxx.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 void zero_array(int* dst, int nelem);
 void zero_array(float* dst, int nelem);
 void zero_array(double* dst, int nelem);
@@ -64,7 +63,6 @@ void copyout_array3(std::vector<std::array<DT, 3>>& dst, const ST (*src)[3],
 void copy_array(int* dst, const int* src, int nelem);
 void copy_array(float* dst, const float* src, int nelem);
 void copy_array(double* dst, const double* src, int nelem);
-}
 TINKER_NAMESPACE_END
 
 #endif

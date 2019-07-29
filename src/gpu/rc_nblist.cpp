@@ -1,7 +1,7 @@
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_vdw.h"
-#include "gpu/mod_nblist.h"
 #include "gpu/rc.h"
+#include "mod_nblist.h"
 #include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN

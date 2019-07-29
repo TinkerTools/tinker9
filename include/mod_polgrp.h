@@ -1,5 +1,5 @@
-#ifndef TINKER_GPU_MOD_POLGRP_H_
-#define TINKER_GPU_MOD_POLGRP_H_
+#ifndef TINKER_MOD_POLGRP_H_
+#define TINKER_MOD_POLGRP_H_
 
 #include "util_cxx.h"
 

@@ -1,10 +1,10 @@
 #ifndef TINKER_GPU_E_POLAR_H_
 #define TINKER_GPU_E_POLAR_H_
 
+#include "gpu/decl_elec.h"
+#include "mod_polgrp.h"
 #include "util_cxx.h"
 #include "util_rc_man.h"
-#include "gpu/decl_elec.h"
-#include "gpu/mod_polgrp.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace gpu {

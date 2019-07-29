@@ -1,10 +1,10 @@
 #include "files.h"
-#include "util_io.h"
-#include "util_rc_man.h"
 #include "gpu/decl_mdstate.h"
 #include "test/ff.h"
 #include "test/rt.h"
 #include "test/test.h"
+#include "util_io.h"
+#include "util_rc_man.h"
 
 using namespace TINKER_NAMESPACE;
 using namespace test;
@@ -37,7 +37,7 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]") {
   gpu::trajn = 5;
   tinker_gpu_runtime_initialize();
 
-  gpu::copyin_tinker_arc(x1, 1, 5, 1);
+  copyin_tinker_arc(x1, 1, 5, 1);
 
   const int maxnlst = gpu::vlist_obj_.maxnlst;
   std::vector<int> nlst;
@@ -46,8 +46,8 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]") {
   lst.resize(gpu::n * maxnlst);
 
   for (int ifr = 0;;) {
-    gpu::copyout_array(nlst.data(), gpu::vlist_obj_.nlst, gpu::n);
-    gpu::copyout_array(lst.data(), gpu::vlist_obj_.lst, gpu::n * maxnlst);
+    copyout_array(nlst.data(), gpu::vlist_obj_.nlst, gpu::n);
+    copyout_array(lst.data(), gpu::vlist_obj_.lst, gpu::n * maxnlst);
 
     for (int iatom = 0; iatom < gpu::n; ++iatom)
       REQUIRE(find_match(&lst[iatom * maxnlst], nlst[iatom], ifr, iatom));

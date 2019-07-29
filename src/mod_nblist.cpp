@@ -1,2 +1,2 @@
 #define TINKER_EXTERN_DEFINITION_FILE
-#include "gpu/mod_elec.h"
+#include "mod_nblist.h"

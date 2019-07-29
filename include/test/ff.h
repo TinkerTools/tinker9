@@ -50,9 +50,9 @@ typedef std::vector<std::array<double, 3>> grad_t;
   {                                                                            \
     grad_t grad(gpu::n);                                                       \
     double* dst = &grad[0][0];                                                 \
-    gpu::copyout_array2(0, 3, dst, gx, gpu::n);                                \
-    gpu::copyout_array2(1, 3, dst, gy, gpu::n);                                \
-    gpu::copyout_array2(2, 3, dst, gz, gpu::n);                                \
+    copyout_array2(0, 3, dst, gx, gpu::n);                                     \
+    copyout_array2(1, 3, dst, gy, gpu::n);                                     \
+    copyout_array2(2, 3, dst, gz, gpu::n);                                     \
     for (int i = 0; i < gpu::n; ++i) {                                         \
       for (int j = 0; j < 3; ++j) {                                            \
         if (check_ij(i, j))                                                    \
@@ -99,9 +99,9 @@ typedef std::vector<std::array<double, 3>> grad_t;
   {                                                                            \
     grad_t grad(gpu::n);                                                       \
     double* dst = &grad[0][0];                                                 \
-    gpu::copyout_array2(0, 3, dst, v1, gpu::n);                                \
-    gpu::copyout_array2(1, 3, dst, v2, gpu::n);                                \
-    gpu::copyout_array2(2, 3, dst, v3, gpu::n);                                \
+    copyout_array2(0, 3, dst, v1, gpu::n);                                     \
+    copyout_array2(1, 3, dst, v2, gpu::n);                                     \
+    copyout_array2(2, 3, dst, v3, gpu::n);                                     \
     for (int i = 0; i < gpu::n; ++i) {                                         \
       print(stdout, " {:s} ATOM{:>6d}{:>12.6f}{:>12.6f}{:>12.6f}\n", info,     \
             i + 1, grad[i][0], grad[i][1], grad[i][2]);                        \

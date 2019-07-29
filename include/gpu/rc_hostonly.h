@@ -8,7 +8,6 @@
 #  include <fftw3.h>
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 enum hostonly_cuda_enum_ {
   cudaSuccess = 0,
   cudaErrorInvalidHostPointer,
@@ -50,7 +49,6 @@ typedef struct hostonly_fftw_plans_st_ {
       planf, /// fft front plan
       planb; /// fft back plan
 } fft_plan_t;
-}
 TINKER_NAMESPACE_END
 
 #endif

@@ -1,5 +1,4 @@
 #include "gpu/decl_mdstate.h"
-#include "util_io.h"
 #include "gpu/rc.h"
 #include "util_io.h"
 #include <ext/tinker/tinker_mod.h>
@@ -8,7 +7,8 @@
 #include <sstream>
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
+using namespace gpu;
+
 void copyin_tinker_arc(const std::string& arcfile, int first1, int last1,
                        int step) {
 
@@ -144,6 +144,5 @@ void copyin_tinker_arc(const std::string& arcfile, int first1, int last1,
   boxes::alpha = anglesave[0];
   boxes::beta = anglesave[1];
   boxes::gamma = anglesave[2];
-}
 }
 TINKER_NAMESPACE_END

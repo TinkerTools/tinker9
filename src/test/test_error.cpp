@@ -5,7 +5,6 @@
 #include "util_io.h"
 
 using namespace TINKER_NAMESPACE;
-using namespace gpu;
 
 TEST_CASE("Error", "[noassert][util]") {
   const char* fmt = "=== end of this test section ===\n\n\n";
