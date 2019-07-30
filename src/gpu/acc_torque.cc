@@ -20,6 +20,7 @@
   a[2] *= _1_na
 
 TINKER_NAMESPACE_BEGIN
+
 namespace gpu {
 template <int DO_V>
 void torque_tmpl(real* gpu_vir) {

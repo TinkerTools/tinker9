@@ -68,7 +68,7 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]") {
   test_begin_1_xyz(argc, argv);
   test_mdinit(0, 0);
 
-  gpu::use_data = usage_;
+  use_data = usage_;
   tinker_gpu_runtime_initialize();
 
   const double dt_ps = 0.001;
@@ -77,8 +77,8 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]") {
   std::vector<double> epots, eksums;
   for (int i = 1; i <= nsteps; ++i) {
     gpu::velocity_verlet(i, dt_ps);
-    epots.push_back(gpu::get_energy(gpu::esum));
-    eksums.push_back(gpu::eksum);
+    epots.push_back(gpu::get_energy(esum));
+    eksums.push_back(eksum);
   }
 
   tinker_gpu_runtime_finish();

@@ -182,7 +182,7 @@ TEST_CASE("Bonded-Trpcage", "[ff][ebonded][trpcage]") {
   const char* argv[] = {"dummy", x1};
   int argc = 2;
   test_begin_1_xyz(argc, argv);
-  gpu::use_data = usage;
+  use_data = usage;
   tinker_gpu_runtime_initialize();
 
   const double eps_e = 0.0001;
@@ -194,9 +194,9 @@ TEST_CASE("Bonded-Trpcage", "[ff][ebonded][trpcage]") {
                              {105.806, 698.628, 26.980},
                              {258.684, 26.980, 1106.334}};
 
-  COMPARE_BONED_FORCE(gpu::energy_potential, gpu::esum, ref_e, eps_e,
-                      gpu::nbond, ref_bond_count, gpu::gx, gpu::gy, gpu::gz,
-                      ref_g_bonded_trpcage, eps_g, gpu::vir, ref_v, eps_v);
+  COMPARE_BONDED_FORCE(gpu::energy_potential, esum, ref_e, eps_e, gpu::nbond,
+                       ref_bond_count, gx, gy, gz, ref_g_bonded_trpcage, eps_g,
+                       vir, ref_v, eps_v);
 
   tinker_gpu_runtime_finish();
   test_end();

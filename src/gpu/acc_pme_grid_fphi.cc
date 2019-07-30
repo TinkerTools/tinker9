@@ -3,6 +3,7 @@
 #include "gpu/e_mpole.h"
 
 TINKER_NAMESPACE_BEGIN
+
 namespace gpu {
 // see also subroutine bsplgen in pmestuf.f
 #pragma acc routine seq

@@ -3,6 +3,7 @@
 #include "gpu/e_mpole.h"
 
 TINKER_NAMESPACE_BEGIN
+
 namespace gpu {
 void chkpole() {
   #pragma acc data deviceptr(x,y,z,zaxis,pole)

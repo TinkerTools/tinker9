@@ -4,6 +4,7 @@
 #include <ext/tinker/tinker_rt.h>
 
 TINKER_NAMESPACE_BEGIN
+
 namespace gpu {
 void kinetic_acc_impl_(real& temp) {
   const real ekcal_inv = 1.0 / units::ekcal;

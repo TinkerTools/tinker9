@@ -5,6 +5,7 @@
 // TODO: test morse potential
 
 TINKER_NAMESPACE_BEGIN
+
 namespace gpu {
 template <int USE, int BNDTYP>
 void ebond_tmpl() {

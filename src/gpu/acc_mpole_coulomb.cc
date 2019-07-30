@@ -24,7 +24,7 @@ void empole_coulomb_tmpl() {
   real* mscale = mscalebuf.data();
 
   #pragma acc parallel loop independent\
-              deviceptr(x,y,z,gx,gy,gz,box,couple,mlst,\
+              deviceptr(x,y,z,gx,gy,gz,box,coupl,mlst,\
                         rpole,\
                         em,nem,vir_em,trqx,trqy,trqz)\
               firstprivate(mscale[0:n])
@@ -32,22 +32,22 @@ void empole_coulomb_tmpl() {
 
     // set exclusion coefficients for connected atoms
 
-    const int n12i = couple->n12[i];
-    const int n13i = couple->n13[i];
-    const int n14i = couple->n14[i];
-    const int n15i = couple->n15[i];
+    const int n12i = coupl->n12[i];
+    const int n13i = coupl->n13[i];
+    const int n14i = coupl->n14[i];
+    const int n15i = coupl->n15[i];
     #pragma acc loop independent
     for (int j = 0; j < n12i; ++j)
-      mscale[couple->i12[i][j]] = m2scale;
+      mscale[coupl->i12[i][j]] = m2scale;
     #pragma acc loop independent
     for (int j = 0; j < n13i; ++j)
-      mscale[couple->i13[i][j]] = m3scale;
+      mscale[coupl->i13[i][j]] = m3scale;
     #pragma acc loop independent
     for (int j = 0; j < n14i; ++j)
-      mscale[couple->i14[i][j]] = m4scale;
+      mscale[coupl->i14[i][j]] = m4scale;
     #pragma acc loop independent
     for (int j = 0; j < n15i; ++j)
-      mscale[couple->i15[i][j]] = m5scale;
+      mscale[coupl->i15[i][j]] = m5scale;
 
     real xi = x[i];
     real yi = y[i];
@@ -296,16 +296,16 @@ void empole_coulomb_tmpl() {
 
     #pragma acc loop independent
     for (int j = 0; j < n12i; ++j)
-      mscale[couple->i12[i][j]] = 1;
+      mscale[coupl->i12[i][j]] = 1;
     #pragma acc loop independent
     for (int j = 0; j < n13i; ++j)
-      mscale[couple->i13[i][j]] = 1;
+      mscale[coupl->i13[i][j]] = 1;
     #pragma acc loop independent
     for (int j = 0; j < n14i; ++j)
-      mscale[couple->i14[i][j]] = 1;
+      mscale[coupl->i14[i][j]] = 1;
     #pragma acc loop independent
     for (int j = 0; j < n15i; ++j)
-      mscale[couple->i15[i][j]] = 1;
+      mscale[coupl->i15[i][j]] = 1;
   } // end for (int i)
 }
 

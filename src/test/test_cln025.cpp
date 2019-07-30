@@ -8,11 +8,11 @@ using namespace test;
 
 #define COMPARE_GRAD_                                                          \
   {                                                                            \
-    grad_t grad(gpu::n);                                                       \
+    grad_t grad(n);                                                            \
     double* dst = &grad[0][0];                                                 \
-    copyout_array2(0, 3, dst, gpu::gx, gpu::n);                                \
-    copyout_array2(1, 3, dst, gpu::gy, gpu::n);                                \
-    copyout_array2(2, 3, dst, gpu::gz, gpu::n);                                \
+    copyout_array2(0, 3, dst, gx, n);                                          \
+    copyout_array2(1, 3, dst, gy, n);                                          \
+    copyout_array2(2, 3, dst, gz, n);                                          \
     for (int i = 0; i < 6; ++i) {                                              \
       for (int j = 0; j < 3; ++j) {                                            \
         REQUIRE(grad[i * 30][j] == Approx(ref_grad[i][j]).margin(eps));        \
@@ -85,7 +85,7 @@ TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
                                {-2.250, 41.895, -681.179}};
 
     test_begin_1_xyz(argc, argv);
-    gpu::use_data = usage;
+    use_data = usage;
     tinker_gpu_runtime_initialize();
 
     COMPARE_CODE_BLOCK1_;
@@ -118,7 +118,7 @@ TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
                                {26.361, 29.820, -706.064}};
 
     test_begin_1_xyz(argc, argv);
-    gpu::use_data = usage;
+    use_data = usage;
     tinker_gpu_runtime_initialize();
 
     COMPARE_CODE_BLOCK1_;

@@ -4,7 +4,6 @@
 #include "util_cxx.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 /**
  * pme.f and kewald.f
  *
@@ -48,7 +47,6 @@ TINKER_EXTERN real (*cphidp)[10];
 TINKER_EXTERN real (*fphidp)[20];
 
 TINKER_EXTERN real* vir_m;
-}
 TINKER_NAMESPACE_END
 
 #endif

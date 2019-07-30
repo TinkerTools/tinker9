@@ -4,8 +4,7 @@
 #include "util_cxx.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
-typedef struct nblist_def_st_ {
+struct nblist_t {
   enum { null = 0, double_loop = 1, nblist = 2 };
 
   int* nlst;
@@ -17,7 +16,7 @@ typedef struct nblist_def_st_ {
   const real* z;
   int maxnlst;
   real cutoff, buffer;
-} nblist_t;
+};
 
 TINKER_EXTERN nblist_t vlist_obj_;
 TINKER_EXTERN nblist_t* vlst;
@@ -29,7 +28,6 @@ TINKER_EXTERN nblist_t mlist_obj_;
 TINKER_EXTERN nblist_t* mlst;
 TINKER_EXTERN nblist_t ulist_obj_;
 TINKER_EXTERN nblist_t* ulst;
-}
 TINKER_NAMESPACE_END
 
 #endif

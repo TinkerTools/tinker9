@@ -180,7 +180,7 @@ TEST_CASE("Tortor-Trpcage", "[ff][etortor][trpcage]") {
   const char* argv[] = {"dummy", x1};
   int argc = 2;
   test_begin_1_xyz(argc, argv);
-  gpu::use_data = usage;
+  use_data = usage;
   tinker_gpu_runtime_initialize();
 
   const double eps_e = 0.0001;
@@ -191,9 +191,9 @@ TEST_CASE("Tortor-Trpcage", "[ff][etortor][trpcage]") {
   const double ref_v[][3] = {
       {0.384, -0.444, 0.347}, {-0.444, 1.642, 0.528}, {0.347, 0.528, -2.027}};
 
-  COMPARE_BONED_FORCE(gpu::etortor, gpu::ett, ref_e, eps_e, gpu::ntortor,
-                      ref_count, gpu::gx, gpu::gy, gpu::gz,
-                      ref_g_tortor_trpcage, eps_g, gpu::vir_ett, ref_v, eps_v);
+  COMPARE_BONDED_FORCE(gpu::etortor, gpu::ett, ref_e, eps_e, gpu::ntortor,
+                       ref_count, gx, gy, gz, ref_g_tortor_trpcage, eps_g,
+                       gpu::vir_ett, ref_v, eps_v);
 
   tinker_gpu_runtime_finish();
   test_end();

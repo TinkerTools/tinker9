@@ -38,7 +38,7 @@ cudaError_t cudaMemcpyAsync(void* dst, const void* src, size_t count,
                             hostonly_cuda_enum_ kind, cudaStream_t stream);
 cudaError_t cudaMemset(void* devPtr, int value, size_t count);
 
-typedef struct hostonly_fftw_plans_st_ {
+struct fft_plan_t {
 #  if defined(TINKER_GPU_SINGLE)
   fftwf_plan
 #  elif defined(TINKER_GPU_DOUBLE)
@@ -48,7 +48,7 @@ typedef struct hostonly_fftw_plans_st_ {
 #  endif
       planf, /// fft front plan
       planb; /// fft back plan
-} fft_plan_t;
+};
 TINKER_NAMESPACE_END
 
 #endif

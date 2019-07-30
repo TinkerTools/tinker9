@@ -65,7 +65,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
         {-405.878, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
     test_begin_1_xyz(argc, argv);
-    gpu::use_data = usage;
+    use_data = usage;
     tinker_gpu_runtime_initialize();
 
     COMPARE_CODE_BLOCK1_;
@@ -87,7 +87,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
         {-354.835, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
     test_begin_1_xyz(argc, argv);
-    gpu::use_data = usage;
+    use_data = usage;
     tinker_gpu_runtime_initialize();
 
     COMPARE_CODE_BLOCK1_;
@@ -110,7 +110,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
         {-319.160, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
     test_begin_1_xyz(argc, argv);
-    gpu::use_data = usage;
+    use_data = usage;
     tinker_gpu_runtime_initialize();
 
     COMPARE_CODE_BLOCK1_;
@@ -134,7 +134,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
     gpu::torque(gpu::v1);                                                      \
     COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
     COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
-    COMPARE_VIR2_(gpu::vir_em, gpu::vir_trq, ref_v, eps_v);                    \
+    COMPARE_VIR2_(gpu::vir_em, vir_trq, ref_v, eps_v);                         \
                                                                                \
     gpu::zero_egv();                                                           \
     gpu::elec_init(gpu::v3);                                                   \
@@ -161,7 +161,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
     gpu::empole(gpu::v6);                                                      \
     gpu::torque(gpu::v6);                                                      \
     COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
-    COMPARE_VIR2_(gpu::vir_em, gpu::vir_trq, ref_v, eps_v);                    \
+    COMPARE_VIR2_(gpu::vir_em, vir_trq, ref_v, eps_v);                         \
   }
 
 TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
@@ -195,7 +195,7 @@ TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
         {150.938, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
     test_begin_1_xyz(argc, argv);
-    gpu::use_data = usage;
+    use_data = usage;
     tinker_gpu_runtime_initialize();
 
     COMPARE_CODE_BLOCK2_;
@@ -256,7 +256,7 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]") {
     //                            {26.068, 28.675, 31.863}};
 
     test_begin_1_xyz(argc, argv);
-    gpu::use_data = usage;
+    use_data = usage;
     tinker_gpu_runtime_initialize();
 
     COMPARE_CODE_BLOCK2_;

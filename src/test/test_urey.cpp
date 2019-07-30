@@ -44,7 +44,7 @@ TEST_CASE("Urey-Ten-Water", "[ff][eurey][h2o10]") {
   const char* argv[] = {"dummy", x1};
   int argc = 2;
   test_begin_1_xyz(argc, argv);
-  gpu::use_data = usage;
+  use_data = usage;
   tinker_gpu_runtime_initialize();
 
   const double eps_e = 0.0001;
@@ -55,9 +55,9 @@ TEST_CASE("Urey-Ten-Water", "[ff][eurey][h2o10]") {
   const double ref_v[][3] = {
       {2.318, -0.827, -1.078}, {-0.827, 3.061, 0.062}, {-1.078, 0.062, 4.915}};
 
-  COMPARE_BONED_FORCE(gpu::eurey, gpu::eub, ref_e, eps_e, gpu::nurey, ref_count,
-                      gpu::gx, gpu::gy, gpu::gz, ref_g_urey_h2o10, eps_g,
-                      gpu::vir_eub, ref_v, eps_v);
+  COMPARE_BONDED_FORCE(gpu::eurey, gpu::eub, ref_e, eps_e, gpu::nurey,
+                       ref_count, gx, gy, gz, ref_g_urey_h2o10, eps_g,
+                       gpu::vir_eub, ref_v, eps_v);
 
   tinker_gpu_runtime_finish();
   test_end();

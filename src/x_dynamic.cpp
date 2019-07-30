@@ -159,7 +159,7 @@ void x_dynamic(int argc, char** argv) {
   if (bath::isobaric == _true_)
     flags += gpu::use_virial;
 
-  gpu::use_data = flags;
+  use_data = flags;
   tinker_gpu_runtime_initialize();
   gpu::propagate(nstep, dt, nullptr);
   tinker_gpu_runtime_finish();

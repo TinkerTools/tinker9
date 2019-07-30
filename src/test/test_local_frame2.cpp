@@ -52,7 +52,7 @@ TEST_CASE("Local-Frame2-1", "[ff][triclinic][evdw][hal][local-frame2]") {
   file fx1(x1, local_frame_xyz2);
 
   test_begin_1_xyz(argc, argv);
-  gpu::use_data = usage;
+  use_data = usage;
   tinker_gpu_runtime_initialize();
 
   SECTION("ehal -- pbc, cutoff") {
@@ -80,7 +80,7 @@ TEST_CASE("Local-Frame2-2", "[ff][monoclinic][evdw][hal][local-frame2]") {
   file fx1(x1, local_frame_xyz2);
 
   test_begin_1_xyz(argc, argv);
-  gpu::use_data = usage;
+  use_data = usage;
   tinker_gpu_runtime_initialize();
 
   SECTION("ehal -- pbc, cutoff") {

@@ -39,28 +39,28 @@ void evdw_tmpl() {
   real* vscale = vscalebuf.data();
 
   #pragma acc parallel loop independent\
-              deviceptr(x,y,z,gx,gy,gz,box,couple,vlst,\
+              deviceptr(x,y,z,gx,gy,gz,box,coupl,vlst,\
                         ired,kred,xred,yred,zred,\
                         jvdw,njvdw,radmin,epsilon,vlam,\
                         ev,nev,vir_ev)\
               firstprivate(vscale[0:n])
   for (int i = 0; i < n; ++i) {
-    const int n12i = couple->n12[i];
-    const int n13i = couple->n13[i];
-    const int n14i = couple->n14[i];
-    const int n15i = couple->n15[i];
+    const int n12i = coupl->n12[i];
+    const int n13i = coupl->n13[i];
+    const int n14i = coupl->n14[i];
+    const int n15i = coupl->n15[i];
     #pragma acc loop independent
     for (int j = 0; j < n12i; ++j)
-      vscale[couple->i12[i][j]] = v2scale;
+      vscale[coupl->i12[i][j]] = v2scale;
     #pragma acc loop independent
     for (int j = 0; j < n13i; ++j)
-      vscale[couple->i13[i][j]] = v3scale;
+      vscale[coupl->i13[i][j]] = v3scale;
     #pragma acc loop independent
     for (int j = 0; j < n14i; ++j)
-      vscale[couple->i14[i][j]] = v4scale;
+      vscale[coupl->i14[i][j]] = v4scale;
     #pragma acc loop independent
     for (int j = 0; j < n15i; ++j)
-      vscale[couple->i15[i][j]] = v5scale;
+      vscale[coupl->i15[i][j]] = v5scale;
 
     int iv = ired[i];
     real redi = kred[i];
@@ -207,16 +207,16 @@ void evdw_tmpl() {
 
     #pragma acc loop independent
     for (int j = 0; j < n12i; ++j)
-      vscale[couple->i12[i][j]] = 1;
+      vscale[coupl->i12[i][j]] = 1;
     #pragma acc loop independent
     for (int j = 0; j < n13i; ++j)
-      vscale[couple->i13[i][j]] = 1;
+      vscale[coupl->i13[i][j]] = 1;
     #pragma acc loop independent
     for (int j = 0; j < n14i; ++j)
-      vscale[couple->i14[i][j]] = 1;
+      vscale[coupl->i14[i][j]] = 1;
     #pragma acc loop independent
     for (int j = 0; j < n15i; ++j)
-      vscale[couple->i15[i][j]] = 1;
+      vscale[coupl->i15[i][j]] = 1;
   } // end for (int i)
 }
 

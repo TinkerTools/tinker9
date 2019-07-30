@@ -4,18 +4,10 @@
 #include "util_cxx.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 enum {
   elec_coulomb = 1, /// coulomb interaction
   elec_ewald = 2    /// particle mesh ewald summation
 };
-
-/// distance at which switching of the potential begins
-TINKER_EXTERN double mpole_switch_cut;
-/// distance at which the potential energy goes to zero
-TINKER_EXTERN double mpole_switch_off;
-
-TINKER_EXTERN real electric, dielec;
 
 /// local frame definitions
 enum {
@@ -26,13 +18,13 @@ enum {
   pole_z_bisect = 4,
   pole_3_fold = 5
 };
-typedef struct local_frame_def_st_ {
+
+struct local_frame_t {
   int zaxis;  /// z-axis defining atom, starting from 0
   int xaxis;  /// x-axis defining atom, starting from 0
   int yaxis;  /// y-axis defining atom, starting from ONE
   int polaxe; /// local frame definition
-} local_frame_t;
-TINKER_EXTERN local_frame_t* zaxis;
+};
 
 // PME: 0, x, y, z, xx, yy, zz, xy, xz, yz
 enum {
@@ -51,6 +43,16 @@ enum {
   mpl_pme_zx = mpl_pme_xz,
   mpl_pme_zy = mpl_pme_yz
 };
+
+/// distance at which switching of the potential begins
+TINKER_EXTERN double mpole_switch_cut;
+/// distance at which the potential energy goes to zero
+TINKER_EXTERN double mpole_switch_off;
+
+TINKER_EXTERN real electric, dielec;
+
+TINKER_EXTERN local_frame_t* zaxis;
+
 /// traceless Cartesian multipoles in the local frame
 TINKER_EXTERN real (*pole)[mpl_total];
 /// traceless Cartesian multipoles in the global frame
@@ -69,7 +71,6 @@ TINKER_EXTERN real (*udirp)[3];
 TINKER_EXTERN real (*uind)[3];
 /// mutual induced dipoles in field used for energy terms
 TINKER_EXTERN real (*uinp)[3];
-}
 TINKER_NAMESPACE_END
 
 #endif

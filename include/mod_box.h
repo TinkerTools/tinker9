@@ -4,7 +4,6 @@
 #include "util_cxx.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 /**
  * matrix form of lvec/recip periodic box vectors
  *
@@ -26,7 +25,7 @@ namespace gpu {
  * cartesian_column_vector dot recip = fractional_column_vector
  * fractional_column_vector dot lvec = cartesian_column_vector
  */
-typedef struct box_def_st_ {
+struct PeriodicBoundaryConditionParameters {
   typedef enum {
     null = 0x000,  /// null
     ortho = 0x001, /// orthogonal
@@ -39,11 +38,11 @@ typedef struct box_def_st_ {
   real recip[3][3];
   real volbox;
   shape_t shape;
-} box_t;
+};
+typedef PeriodicBoundaryConditionParameters box_t;
 
 TINKER_EXTERN box_t* box;
 TINKER_EXTERN box_t* trajbox;
-}
 TINKER_NAMESPACE_END
 
 #endif

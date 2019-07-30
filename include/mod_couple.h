@@ -4,8 +4,7 @@
 #include "util_cxx.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
-typedef struct couple_def_st {
+struct NeighborConnectivityLists {
   static const int maxn12 = 8;
   static const int maxn13 = 32;  // 24 -> 32
   static const int maxn14 = 96;  // 72 -> 96
@@ -16,11 +15,11 @@ typedef struct couple_def_st {
   int (*i13)[maxn13];
   int (*i14)[maxn14];
   int (*i15)[maxn15];
-} couple_t;
+};
+typedef NeighborConnectivityLists couple_t;
 
-TINKER_EXTERN couple_t couple_obj_;
-TINKER_EXTERN couple_t* couple;
-}
+TINKER_EXTERN couple_t coupl_obj_;
+TINKER_EXTERN couple_t* coupl;
 TINKER_NAMESPACE_END
 
 #endif

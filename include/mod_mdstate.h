@@ -4,7 +4,6 @@
 #include "util_cxx.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 TINKER_EXTERN int use_data;
 // number of frames
 TINKER_EXTERN int trajn;
@@ -26,7 +25,6 @@ TINKER_EXTERN real epot, eksum, ekin[3][3];
 TINKER_EXTERN real *gx, *gy, *gz;
 // total virial
 TINKER_EXTERN real* vir;
-}
 TINKER_NAMESPACE_END
 
 #endif

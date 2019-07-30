@@ -30,7 +30,7 @@ TEST_CASE("Kinetic-ArBox", "[ff][kinetic][arbox]") {
   test_begin_1_xyz(argc, argv);
   test_mdinit(0, 0);
 
-  gpu::use_data = usage_;
+  use_data = usage_;
   tinker_gpu_runtime_initialize();
 
   real temp;
@@ -40,7 +40,7 @@ TEST_CASE("Kinetic-ArBox", "[ff][kinetic][arbox]") {
   const double ref_temp = 156008.001336;
   const double eps_e = 0.0001;
 
-  REQUIRE(gpu::eksum == Approx(ref_eksum).margin(eps_e));
+  REQUIRE(eksum == Approx(ref_eksum).margin(eps_e));
   REQUIRE(temp == Approx(ref_temp).margin(eps_e));
 
   tinker_gpu_runtime_finish();

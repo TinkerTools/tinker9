@@ -13,7 +13,7 @@ using namespace test;
  * atoms are in the xy-plane. Therefore the z-gradient components of this
  * molecule are not included in the test.
  */
-static auto do_ij = [&](int i, int /* j */) { return i < gpu::n - 4; };
+static auto do_ij = [&](int i, int /* j */) { return i < n - 4; };
 
 TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
   file fpr("amoeba09.prm", amoeba09_prm);
@@ -59,7 +59,7 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
                                {9.243, 6.517, 4.708}};
 
     test_begin_1_xyz(argc, argv);
-    gpu::use_data = usage;
+    use_data = usage;
     tinker_gpu_runtime_initialize();
 
     gpu::zero_egv();
@@ -74,7 +74,7 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
     gpu::torque(gpu::v1);
     COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
     COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);
-    COMPARE_VIR2_(gpu::vir_em, gpu::vir_trq, ref_v, eps_v);
+    COMPARE_VIR2_(gpu::vir_em, vir_trq, ref_v, eps_v);
 
     gpu::zero_egv();
     gpu::empole(gpu::v3);
@@ -142,7 +142,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
                                {7.610, 7.245, 3.181}};
 
     test_begin_1_xyz(argc, argv);
-    gpu::use_data = usage;
+    use_data = usage;
     tinker_gpu_runtime_initialize();
 
     gpu::zero_egv();
@@ -151,7 +151,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     gpu::torque(gpu::v1);
     COMPARE_ENERGY_(gpu::em, ref_eng, eps_e);
     COMPARE_GRADIENT_(ref_grad, eps_g);
-    COMPARE_VIR2_(gpu::vir_em, gpu::vir_trq, ref_v, eps_v);
+    COMPARE_VIR2_(gpu::vir_em, vir_trq, ref_v, eps_v);
 
     tinker_gpu_runtime_finish();
     test_end();
@@ -172,7 +172,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     gpu::torque(gpu::v1);                                                      \
     COMPARE_ENERGY_(gpu::ep, ref_eng, eps_e);                                  \
     COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                                \
-    COMPARE_VIR2_(gpu::vir_ep, gpu::vir_trq, ref_v, eps_v);                    \
+    COMPARE_VIR2_(gpu::vir_ep, vir_trq, ref_v, eps_v);                         \
                                                                                \
     gpu::zero_egv();                                                           \
     gpu::elec_init(gpu::v3);                                                   \
@@ -199,7 +199,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     gpu::epolar(gpu::v6);                                                      \
     gpu::torque(gpu::v6);                                                      \
     COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                                \
-    COMPARE_VIR2_(gpu::vir_ep, gpu::vir_trq, ref_v, eps_v);                    \
+    COMPARE_VIR2_(gpu::vir_ep, vir_trq, ref_v, eps_v);                         \
   }
 
 TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
@@ -227,7 +227,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
   const double eps_f = 0.0001;
 
   test_begin_1_xyz(argc, argv);
-  gpu::use_data = usage;
+  use_data = usage;
   tinker_gpu_runtime_initialize();
 
   SECTION("dfield -- coulomb no cutoff") {
@@ -258,11 +258,11 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
-    gpu::dfield_coulomb(&gpu::udir[0][0], &gpu::udirp[0][0]);
+    gpu::dfield_coulomb(&udir[0][0], &udirp[0][0]);
     grad_t fieldd, fieldp;
-    copyout_array3(fieldd, gpu::udir, gpu::n);
-    copyout_array3(fieldp, gpu::udirp, gpu::n);
-    for (int i = 0; i < gpu::n; ++i) {
+    copyout_array3(fieldd, udir, n);
+    copyout_array3(fieldp, udirp, n);
+    for (int i = 0; i < n; ++i) {
       for (int j = 0; j < 3; ++j) {
         REQUIRE(fieldd[i][j] == Approx(ref_dir_field_d[i][j]).margin(eps_f));
         REQUIRE(fieldp[i][j] == Approx(ref_dir_field_p[i][j]).margin(eps_f));
@@ -299,22 +299,21 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
     grad_t ud, up;
-    ud.resize(gpu::n);
-    up.resize(gpu::n);
-    for (int i = 0; i < gpu::n; ++i) {
+    ud.resize(n);
+    up.resize(n);
+    for (int i = 0; i < n; ++i) {
       for (int j = 0; j < 3; ++j) {
         ud[i][j] = 0.1 * (i + 1) + 0.03 * (j + 1);
         up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
       }
     }
-    copyin_array(&gpu::uind[0][0], &ud[0][0], 3 * gpu::n);
-    copyin_array(&gpu::uinp[0][0], &up[0][0], 3 * gpu::n);
-    gpu::ufield_coulomb(&gpu::uind[0][0], &gpu::uinp[0][0], &gpu::udir[0][0],
-                        &gpu::udirp[0][0]);
-    copyout_array3(ud, gpu::udir, gpu::n);
-    copyout_array3(up, gpu::udirp, gpu::n);
+    copyin_array(&uind[0][0], &ud[0][0], 3 * n);
+    copyin_array(&uinp[0][0], &up[0][0], 3 * n);
+    gpu::ufield_coulomb(&uind[0][0], &uinp[0][0], &udir[0][0], &udirp[0][0]);
+    copyout_array3(ud, udir, n);
+    copyout_array3(up, udirp, n);
     const double debye = units::debye;
-    for (int i = 0; i < gpu::n; ++i) {
+    for (int i = 0; i < n; ++i) {
       for (int j = 0; j < 3; ++j) {
         REQUIRE(ud[i][j] == Approx(ref_ufield_d[i][j]).margin(eps_f));
         REQUIRE(up[i][j] == Approx(ref_ufield_p[i][j]).margin(eps_f));
@@ -350,11 +349,11 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
-    gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
+    gpu::induce(&uind[0][0], &uinp[0][0]);
     grad_t ud, up;
-    copyout_array3(ud, gpu::uind, gpu::n);
-    copyout_array3(up, gpu::uinp, gpu::n);
-    for (int i = 0; i < gpu::n; ++i) {
+    copyout_array3(ud, uind, n);
+    copyout_array3(up, uinp, n);
+    for (int i = 0; i < n; ++i) {
       for (int j = 0; j < 3; ++j) {
         REQUIRE(ud[i][j] * debye == Approx(ref_ud_debye[i][j]).margin(eps_f));
         REQUIRE(up[i][j] * debye == Approx(ref_up_debye[i][j]).margin(eps_f));
@@ -431,7 +430,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
   const double eps_f = 0.0001;
 
   test_begin_1_xyz(argc, argv);
-  gpu::use_data = usage;
+  use_data = usage;
   tinker_gpu_runtime_initialize();
 
   SECTION("dfield -- pme") {
@@ -462,11 +461,11 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
-    gpu::dfield_ewald(&gpu::udir[0][0], &gpu::udirp[0][0]);
+    gpu::dfield_ewald(&udir[0][0], &udirp[0][0]);
     grad_t fieldd, fieldp;
-    copyout_array3(fieldd, gpu::udir, gpu::n);
-    copyout_array3(fieldp, gpu::udirp, gpu::n);
-    for (int i = 0; i < gpu::n; ++i) {
+    copyout_array3(fieldd, udir, n);
+    copyout_array3(fieldp, udirp, n);
+    for (int i = 0; i < n; ++i) {
       for (int j = 0; j < 3; ++j) {
         REQUIRE(fieldd[i][j] == Approx(ref_dir_field_d[i][j]).margin(eps_f));
         REQUIRE(fieldp[i][j] == Approx(ref_dir_field_p[i][j]).margin(eps_f));
@@ -503,22 +502,21 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
     grad_t ud, up;
-    ud.resize(gpu::n);
-    up.resize(gpu::n);
-    for (int i = 0; i < gpu::n; ++i) {
+    ud.resize(n);
+    up.resize(n);
+    for (int i = 0; i < n; ++i) {
       for (int j = 0; j < 3; ++j) {
         ud[i][j] = 0.1 * (i + 1) + 0.03 * (j + 1);
         up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
       }
     }
-    copyin_array(&gpu::uind[0][0], &ud[0][0], 3 * gpu::n);
-    copyin_array(&gpu::uinp[0][0], &up[0][0], 3 * gpu::n);
-    gpu::ufield_ewald(&gpu::uind[0][0], &gpu::uinp[0][0], &gpu::udir[0][0],
-                      &gpu::udirp[0][0]);
-    copyout_array3(ud, gpu::udir, gpu::n);
-    copyout_array3(up, gpu::udirp, gpu::n);
+    copyin_array(&uind[0][0], &ud[0][0], 3 * n);
+    copyin_array(&uinp[0][0], &up[0][0], 3 * n);
+    gpu::ufield_ewald(&uind[0][0], &uinp[0][0], &udir[0][0], &udirp[0][0]);
+    copyout_array3(ud, udir, n);
+    copyout_array3(up, udirp, n);
     const double debye = units::debye;
-    for (int i = 0; i < gpu::n; ++i) {
+    for (int i = 0; i < n; ++i) {
       for (int j = 0; j < 3; ++j) {
         REQUIRE(ud[i][j] == Approx(ref_ufield_d[i][j]).margin(eps_f));
         REQUIRE(up[i][j] == Approx(ref_ufield_p[i][j]).margin(eps_f));
@@ -554,11 +552,11 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
 
     gpu::zero_egv();
     gpu::elec_init(gpu::v0);
-    gpu::induce(&gpu::uind[0][0], &gpu::uinp[0][0]);
+    gpu::induce(&uind[0][0], &uinp[0][0]);
     grad_t ud, up;
-    copyout_array3(ud, gpu::uind, gpu::n);
-    copyout_array3(up, gpu::uinp, gpu::n);
-    for (int i = 0; i < gpu::n; ++i) {
+    copyout_array3(ud, uind, n);
+    copyout_array3(up, uinp, n);
+    for (int i = 0; i < n; ++i) {
       for (int j = 0; j < 3; ++j) {
         REQUIRE(ud[i][j] * debye == Approx(ref_ud_debye[i][j]).margin(eps_f));
         REQUIRE(up[i][j] * debye == Approx(ref_up_debye[i][j]).margin(eps_f));

@@ -25,35 +25,35 @@ typedef std::vector<std::array<double, 3>> grad_t;
   }
 #define COMPARE_VIR_(gpuptr, ref_v, eps)                                       \
   {                                                                            \
-    double vir[9];                                                             \
-    gpu::get_virial(vir, gpuptr);                                              \
+    double vir1[9];                                                            \
+    gpu::get_virial(vir1, gpuptr);                                             \
     for (int i = 0; i < 3; ++i) {                                              \
       for (int j = 0; j < 3; ++j) {                                            \
         int k = 3 * i + j;                                                     \
-        REQUIRE(vir[k] == Approx(ref_v[i][j]).margin(eps));                    \
+        REQUIRE(vir1[k] == Approx(ref_v[i][j]).margin(eps));                   \
       }                                                                        \
     }                                                                          \
   }
 #define COMPARE_VIR2_(gpuptr, gpuptr2, ref_v, eps)                             \
   {                                                                            \
-    double vir[9], vir2[9];                                                    \
-    gpu::get_virial(vir, gpuptr);                                              \
+    double vir1[9], vir2[9];                                                   \
+    gpu::get_virial(vir1, gpuptr);                                             \
     gpu::get_virial(vir2, gpuptr2);                                            \
     for (int i = 0; i < 3; ++i) {                                              \
       for (int j = 0; j < 3; ++j) {                                            \
         int k = 3 * i + j;                                                     \
-        REQUIRE((vir[k] + vir2[k]) == Approx(ref_v[i][j]).margin(eps));        \
+        REQUIRE((vir1[k] + vir2[k]) == Approx(ref_v[i][j]).margin(eps));       \
       }                                                                        \
     }                                                                          \
   }
 #define COMPARE_GRADIENT3_(gx, gy, gz, ref_grad, eps, check_ij)                \
   {                                                                            \
-    grad_t grad(gpu::n);                                                       \
+    grad_t grad(n);                                                            \
     double* dst = &grad[0][0];                                                 \
-    copyout_array2(0, 3, dst, gx, gpu::n);                                     \
-    copyout_array2(1, 3, dst, gy, gpu::n);                                     \
-    copyout_array2(2, 3, dst, gz, gpu::n);                                     \
-    for (int i = 0; i < gpu::n; ++i) {                                         \
+    copyout_array2(0, 3, dst, gx, n);                                          \
+    copyout_array2(1, 3, dst, gy, n);                                          \
+    copyout_array2(2, 3, dst, gz, n);                                          \
+    for (int i = 0; i < n; ++i) {                                              \
       for (int j = 0; j < 3; ++j) {                                            \
         if (check_ij(i, j))                                                    \
           REQUIRE(grad[i][j] == Approx(ref_grad[i][j]).margin(eps));           \
@@ -61,7 +61,7 @@ typedef std::vector<std::array<double, 3>> grad_t;
     }                                                                          \
   }
 #define COMPARE_GRADIENT2_(ref_grad, eps, check_ij)                            \
-  COMPARE_GRADIENT3_(gpu::gx, gpu::gy, gpu::gz, ref_grad, eps, check_ij)
+  COMPARE_GRADIENT3_(gx, gy, gz, ref_grad, eps, check_ij)
 #define COMPARE_GRADIENT_(ref_grad, eps)                                       \
   COMPARE_GRADIENT2_(ref_grad, eps, [](int, int) { return true; })
 #define PRINT_ENERGY_(gpuptr)                                                  \
@@ -76,38 +76,38 @@ typedef std::vector<std::array<double, 3>> grad_t;
   }
 #define PRINT_VIR_(gpuptr)                                                     \
   {                                                                            \
-    double vir[9];                                                             \
-    gpu::get_virial(vir, gpuptr);                                              \
+    double vir1[9];                                                            \
+    gpu::get_virial(vir1, gpuptr);                                             \
     for (int i = 0; i < 3; ++i) {                                              \
-      print(stdout, " VIRIAL{:>12.4f}{:>12.4f}{:>12.4f}\n", vir[3 * i],        \
-            vir[3 * i + 1], vir[3 * i + 2]);                                   \
+      print(stdout, " VIRIAL{:>12.4f}{:>12.4f}{:>12.4f}\n", vir1[3 * i],       \
+            vir1[3 * i + 1], vir1[3 * i + 2]);                                 \
     }                                                                          \
   }
 #define PRINT_VIR2_(gpuptr, gpuptr2)                                           \
   {                                                                            \
-    double vir[9], vir2[9];                                                    \
-    gpu::get_virial(vir, gpuptr);                                              \
+    double vir1[9], vir2[9];                                                   \
+    gpu::get_virial(vir1, gpuptr);                                             \
     gpu::get_virial(vir2, gpuptr2);                                            \
     for (int i = 0; i < 9; ++i)                                                \
-      vir[i] += vir2[i];                                                       \
+      vir1[i] += vir2[i];                                                      \
     for (int i = 0; i < 3; ++i) {                                              \
-      print(stdout, " VIRIAL{:>12.4f}{:>12.4f}{:>12.4f}\n", vir[3 * i],        \
-            vir[3 * i + 1], vir[3 * i + 2]);                                   \
+      print(stdout, " VIRIAL{:>12.4f}{:>12.4f}{:>12.4f}\n", vir1[3 * i],       \
+            vir1[3 * i + 1], vir1[3 * i + 2]);                                 \
     }                                                                          \
   }
 #define PRINT_V3_(info, v1, v2, v3)                                            \
   {                                                                            \
-    grad_t grad(gpu::n);                                                       \
+    grad_t grad(n);                                                            \
     double* dst = &grad[0][0];                                                 \
-    copyout_array2(0, 3, dst, v1, gpu::n);                                     \
-    copyout_array2(1, 3, dst, v2, gpu::n);                                     \
-    copyout_array2(2, 3, dst, v3, gpu::n);                                     \
-    for (int i = 0; i < gpu::n; ++i) {                                         \
+    copyout_array2(0, 3, dst, v1, n);                                          \
+    copyout_array2(1, 3, dst, v2, n);                                          \
+    copyout_array2(2, 3, dst, v3, n);                                          \
+    for (int i = 0; i < n; ++i) {                                              \
       print(stdout, " {:s} ATOM{:>6d}{:>12.6f}{:>12.6f}{:>12.6f}\n", info,     \
             i + 1, grad[i][0], grad[i][1], grad[i][2]);                        \
     }                                                                          \
   }
-#define PRINT_GRADIENT_ PRINT_V3_("GRADIENT", gpu::gx, gpu::gy, gpu::gz)
+#define PRINT_GRADIENT_ PRINT_V3_("GRADIENT", gx, gy, gz)
 #define PRINT_COORD_ PRINT_V3_("COORD", gpu::x, gpu::y, gpu::z)
 #define PRINT_VELOCITY_ PRINT_V3_("VELOCITY", gpu::vx, gpu::vy, gpu::vz)
 #define PRINT_GRAD_T_(grad)                                                    \
@@ -117,9 +117,9 @@ typedef std::vector<std::array<double, 3>> grad_t;
             grad[i][0], grad[i][1], grad[i][2]);                               \
     }                                                                          \
   }
-#define COMPARE_BONED_FORCE(routine, gpu_e, ref_e, eps_e, cpu_count,           \
-                            ref_count, gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g,   \
-                            gpu_v, ref_v, eps_v)                               \
+#define COMPARE_BONDED_FORCE(routine, gpu_e, ref_e, eps_e, cpu_count,          \
+                             ref_count, gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g,  \
+                             gpu_v, ref_v, eps_v)                              \
   {                                                                            \
     auto do_ij_ = [](int, int) { return true; };                               \
     gpu::zero_egv();                                                           \

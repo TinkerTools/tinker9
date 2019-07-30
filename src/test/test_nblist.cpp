@@ -33,28 +33,28 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]") {
   int argc = 2;
   test_begin_1_xyz(argc, argv);
 
-  gpu::use_data = usage_;
-  gpu::trajn = 5;
+  use_data = usage_;
+  trajn = 5;
   tinker_gpu_runtime_initialize();
 
   copyin_tinker_arc(x1, 1, 5, 1);
 
-  const int maxnlst = gpu::vlist_obj_.maxnlst;
+  const int maxnlst = vlist_obj_.maxnlst;
   std::vector<int> nlst;
-  nlst.resize(gpu::n);
+  nlst.resize(n);
   std::vector<int> lst;
-  lst.resize(gpu::n * maxnlst);
+  lst.resize(n * maxnlst);
 
   for (int ifr = 0;;) {
-    copyout_array(nlst.data(), gpu::vlist_obj_.nlst, gpu::n);
-    copyout_array(lst.data(), gpu::vlist_obj_.lst, gpu::n * maxnlst);
+    copyout_array(nlst.data(), vlist_obj_.nlst, n);
+    copyout_array(lst.data(), vlist_obj_.lst, n * maxnlst);
 
-    for (int iatom = 0; iatom < gpu::n; ++iatom)
+    for (int iatom = 0; iatom < n; ++iatom)
       REQUIRE(find_match(&lst[iatom * maxnlst], nlst[iatom], ifr, iatom));
 
     ++ifr;
     // update nblist
-    if (ifr < gpu::trajn) {
+    if (ifr < trajn) {
       gpu::goto_frame0(ifr);
       gpu::evdw_reduce_xyz();
       gpu::nblist_data(rc_t::evolve);

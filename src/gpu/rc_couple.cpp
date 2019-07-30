@@ -6,15 +6,15 @@ TINKER_NAMESPACE_BEGIN
 namespace gpu {
 void couple_data(rc_t rc) {
   if (rc & rc_dealloc) {
-    check_cudart(cudaFree(couple_obj_.n12));
-    check_cudart(cudaFree(couple_obj_.n13));
-    check_cudart(cudaFree(couple_obj_.n14));
-    check_cudart(cudaFree(couple_obj_.n15));
-    check_cudart(cudaFree(couple_obj_.i12));
-    check_cudart(cudaFree(couple_obj_.i13));
-    check_cudart(cudaFree(couple_obj_.i14));
-    check_cudart(cudaFree(couple_obj_.i15));
-    check_cudart(cudaFree(couple));
+    check_cudart(cudaFree(coupl_obj_.n12));
+    check_cudart(cudaFree(coupl_obj_.n13));
+    check_cudart(cudaFree(coupl_obj_.n14));
+    check_cudart(cudaFree(coupl_obj_.n15));
+    check_cudart(cudaFree(coupl_obj_.i12));
+    check_cudart(cudaFree(coupl_obj_.i13));
+    check_cudart(cudaFree(coupl_obj_.i14));
+    check_cudart(cudaFree(coupl_obj_.i15));
+    check_cudart(cudaFree(coupl));
   }
 
   if (rc & rc_alloc) {
@@ -22,21 +22,21 @@ void couple_data(rc_t rc) {
     size_t size;
 
     size = n * rs;
-    check_cudart(cudaMalloc(&couple_obj_.n12, size));
-    check_cudart(cudaMalloc(&couple_obj_.n13, size));
-    check_cudart(cudaMalloc(&couple_obj_.n14, size));
-    check_cudart(cudaMalloc(&couple_obj_.n15, size));
+    check_cudart(cudaMalloc(&coupl_obj_.n12, size));
+    check_cudart(cudaMalloc(&coupl_obj_.n13, size));
+    check_cudart(cudaMalloc(&coupl_obj_.n14, size));
+    check_cudart(cudaMalloc(&coupl_obj_.n15, size));
     size = couple_t::maxn12 * n * rs;
-    check_cudart(cudaMalloc(&couple_obj_.i12, size));
+    check_cudart(cudaMalloc(&coupl_obj_.i12, size));
     size = couple_t::maxn13 * n * rs;
-    check_cudart(cudaMalloc(&couple_obj_.i13, size));
+    check_cudart(cudaMalloc(&coupl_obj_.i13, size));
     size = couple_t::maxn14 * n * rs;
-    check_cudart(cudaMalloc(&couple_obj_.i14, size));
+    check_cudart(cudaMalloc(&coupl_obj_.i14, size));
     size = couple_t::maxn15 * n * rs;
-    check_cudart(cudaMalloc(&couple_obj_.i15, size));
+    check_cudart(cudaMalloc(&coupl_obj_.i15, size));
 
     size = sizeof(couple_t);
-    check_cudart(cudaMalloc(&couple, size));
+    check_cudart(cudaMalloc(&coupl, size));
   }
 
   if (rc & rc_copyin) {
@@ -60,8 +60,8 @@ void couple_data(rc_t rc) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(couple_obj_.n12, nbuf.data(), n);
-    copyin_array(&couple_obj_.i12[0][0], ibuf.data(), size);
+    copyin_array(coupl_obj_.n12, nbuf.data(), n);
+    copyin_array(&coupl_obj_.i12[0][0], ibuf.data(), size);
 
     size = couple_t::maxn13 * n;
     ibuf.resize(size);
@@ -75,8 +75,8 @@ void couple_data(rc_t rc) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(couple_obj_.n13, nbuf.data(), n);
-    copyin_array(&couple_obj_.i13[0][0], ibuf.data(), size);
+    copyin_array(coupl_obj_.n13, nbuf.data(), n);
+    copyin_array(&coupl_obj_.i13[0][0], ibuf.data(), size);
 
     size = couple_t::maxn14 * n;
     ibuf.resize(size);
@@ -90,8 +90,8 @@ void couple_data(rc_t rc) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(couple_obj_.n14, nbuf.data(), n);
-    copyin_array(&couple_obj_.i14[0][0], ibuf.data(), size);
+    copyin_array(coupl_obj_.n14, nbuf.data(), n);
+    copyin_array(&coupl_obj_.i14[0][0], ibuf.data(), size);
 
     size = couple_t::maxn15 * n;
     ibuf.resize(size);
@@ -105,12 +105,11 @@ void couple_data(rc_t rc) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(couple_obj_.n15, nbuf.data(), n);
-    copyin_array(&couple_obj_.i15[0][0], ibuf.data(), size);
+    copyin_array(coupl_obj_.n15, nbuf.data(), n);
+    copyin_array(&coupl_obj_.i15[0][0], ibuf.data(), size);
 
     size = sizeof(couple_t);
-    check_cudart(
-        cudaMemcpy(couple, &couple_obj_, size, cudaMemcpyHostToDevice));
+    check_cudart(cudaMemcpy(coupl, &coupl_obj_, size, cudaMemcpyHostToDevice));
   }
 }
 }

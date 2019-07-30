@@ -41,7 +41,7 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   real bn[5];
 
   #pragma acc parallel loop independent\
-              deviceptr(x,y,z,box,couple,polargroup,mlst,\
+              deviceptr(x,y,z,box,coupl,polargroup,mlst,\
               rpole,thole,pdamp,uind,uinp,\
               ep,nep,vir_ep,ufld,dufld)\
               firstprivate(pscale[0:n],dscale[0:n],uscale[0:n])
@@ -49,10 +49,10 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
 
     // set exclusion coefficients for connected atoms
 
-    const int n12i = couple->n12[i];
-    const int n13i = couple->n13[i];
-    const int n14i = couple->n14[i];
-    const int n15i = couple->n15[i];
+    const int n12i = coupl->n12[i];
+    const int n13i = coupl->n13[i];
+    const int n14i = coupl->n14[i];
+    const int n15i = coupl->n15[i];
 
     const int np11i = polargroup->np11[i];
     const int np12i = polargroup->np12[i];
@@ -61,7 +61,7 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
 
     #pragma acc loop independent
     for (int j = 0; j < n12i; ++j) {
-      int ij = couple->i12[i][j];
+      int ij = coupl->i12[i][j];
       pscale[ij] = p2scale;
       #pragma acc loop independent
       for (int k = 0; k < np11i; ++k)
@@ -70,7 +70,7 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
     }
     #pragma acc loop independent
     for (int j = 0; j < n13i; ++j) {
-      int ij = couple->i13[i][j];
+      int ij = coupl->i13[i][j];
       pscale[ij] = p3scale;
       #pragma acc loop independent
       for (int k = 0; k < np11i; ++k)
@@ -79,7 +79,7 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
     }
     #pragma acc loop independent
     for (int j = 0; j < n14i; ++j) {
-      int ij = couple->i14[i][j];
+      int ij = coupl->i14[i][j];
       pscale[ij] = p4scale;
       #pragma acc loop independent
       for (int k = 0; k < np11i; ++k)
@@ -88,7 +88,7 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
     }
     #pragma acc loop independent
     for (int j = 0; j < n15i; ++j) {
-      int ij = couple->i15[i][j];
+      int ij = coupl->i15[i][j];
       pscale[ij] = p5scale;
       #pragma acc loop independent
       for (int k = 0; k < np11i; ++k)
@@ -685,16 +685,16 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
 
     #pragma acc loop independent
     for (int j = 0; j < n12i; ++j)
-      pscale[couple->i12[i][j]] = 1;
+      pscale[coupl->i12[i][j]] = 1;
     #pragma acc loop independent
     for (int j = 0; j < n13i; ++j)
-      pscale[couple->i13[i][j]] = 1;
+      pscale[coupl->i13[i][j]] = 1;
     #pragma acc loop independent
     for (int j = 0; j < n14i; ++j)
-      pscale[couple->i14[i][j]] = 1;
+      pscale[coupl->i14[i][j]] = 1;
     #pragma acc loop independent
     for (int j = 0; j < n15i; ++j)
-      pscale[couple->i15[i][j]] = 1;
+      pscale[coupl->i15[i][j]] = 1;
 
     #pragma acc loop independent
     for (int j = 0; j < np11i; ++j) {
