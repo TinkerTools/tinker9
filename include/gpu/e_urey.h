@@ -5,7 +5,6 @@
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 // module urey
 extern int nurey;
 extern int (*iury)[3];
@@ -20,7 +19,6 @@ extern real* vir_eub;
 void eurey_data(rc_t rc);
 
 void eurey(int vers);
-}
 TINKER_NAMESPACE_END
 
 #endif

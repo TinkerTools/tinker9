@@ -5,7 +5,6 @@
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 typedef enum {
   vdw_lj = 0x0001,
   vdw_buck = 0x0002,
@@ -50,7 +49,6 @@ void evdw_mm3hb(int vers);
 void evdw_hal(int vers);
 void evdw_gauss(int vers);
 void evdw(int vers);
-}
 TINKER_NAMESPACE_END
 
 #endif

@@ -1,10 +1,8 @@
-#include "gpu/acc.h"
+#include "acc_seq.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_mpole.h"
 
 TINKER_NAMESPACE_BEGIN
-
-namespace gpu {
 void chkpole() {
   #pragma acc data deviceptr(x,y,z,zaxis,pole)
   #pragma acc parallel loop
@@ -48,6 +46,5 @@ void chkpole() {
       }
     }
   }
-}
 }
 TINKER_NAMESPACE_END

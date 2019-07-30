@@ -5,7 +5,6 @@
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 extern int nstrbnd;
 extern int (*isb)[3];
 extern real (*sbk)[2];
@@ -17,7 +16,6 @@ extern real* vir_eba;
 void estrbnd_data(rc_t rc);
 
 void estrbnd(int vers);
-}
 TINKER_NAMESPACE_END
 
 #endif

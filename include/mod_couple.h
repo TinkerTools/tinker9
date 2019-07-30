@@ -4,7 +4,7 @@
 #include "util_cxx.h"
 
 TINKER_NAMESPACE_BEGIN
-struct NeighborConnectivityLists {
+struct couple_t {
   static const int maxn12 = 8;
   static const int maxn13 = 32;  // 24 -> 32
   static const int maxn14 = 96;  // 72 -> 96
@@ -16,7 +16,6 @@ struct NeighborConnectivityLists {
   int (*i14)[maxn14];
   int (*i15)[maxn15];
 };
-typedef NeighborConnectivityLists couple_t;
 
 TINKER_EXTERN couple_t coupl_obj_;
 TINKER_EXTERN couple_t* coupl;

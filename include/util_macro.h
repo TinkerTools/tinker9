@@ -28,17 +28,14 @@ void fortran_runtime_finish() funtions.
 
 // Namespace
 #define TINKER_NAMESPACE tinker
-#define m_tinker_using_namespace using namespace TINKER_NAMESPACE
 #define TINKER_NAMESPACE_BEGIN namespace TINKER_NAMESPACE {
 #define TINKER_NAMESPACE_END }
 
-/*
- * Debug
- * If neither DEBUG nor NDEBUG is defined: define NDEBUG; TINKER_DEBUG <- 0.
- * As long as NDEBUG is defined: TINKER_DEBUG <- 0.
- * If DEBUG = 0: define NDEBUG; TINKER_DEBUG <- 0.
- * Otherwise, TINKER_DEBUG <- 1.
- */
+// Debug
+// If neither DEBUG nor NDEBUG is defined: define NDEBUG; TINKER_DEBUG <- 0.
+// As long as NDEBUG is defined: TINKER_DEBUG <- 0.
+// If DEBUG = 0: define NDEBUG; TINKER_DEBUG <- 0.
+// Otherwise, TINKER_DEBUG <- 1.
 #ifdef _DEBUG
 #  ifndef DEBUG
 #    define DEBUG _DEBUG
@@ -71,6 +68,7 @@ void fortran_runtime_finish() funtions.
 #    define TINKER_GPU_SINGLE
 #  endif
 #endif
+
 TINKER_NAMESPACE_BEGIN
 #ifdef TINKER_GPU_DOUBLE
 typedef double real;

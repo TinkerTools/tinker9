@@ -5,15 +5,13 @@
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
-
 namespace detail_ {
-std::vector<pme_st>& pme_objs();
-std::vector<pme_st*>& pme_deviceptrs();
+std::vector<pme_t>& pme_objs();
+std::vector<pme_t*>& pme_deviceptrs();
 }
 
-pme_st& pme_obj(int pme_unit);
-pme_st* pme_deviceptr(int pme_unit);
+pme_t& pme_obj(int pme_unit);
+pme_t* pme_deviceptr(int pme_unit);
 
 /// This function must be called after pme_data has been called because it
 /// needs to know the number of pme objects created.
@@ -24,11 +22,10 @@ void fftback(int pme_unit);
 int use_ewald();
 void pme_init(int vers);
 void pme_data(rc_t rc);
-}
+
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 /**
  * @brief
  * make the scalar summation over reciprocal lattice
@@ -69,7 +66,6 @@ void fphi_uind(int pme_unit, real (*gpu_fdip_phi1)[10],
                real (*gpu_fdip_phi2)[10], real (*gpu_fdip_sum_phi)[20]);
 void fphi_uind2(int pme_unit, real (*gpu_fdip_phi1)[10],
                 real (*gpu_fdip_phi2)[10]);
-}
 TINKER_NAMESPACE_END
 
 #endif

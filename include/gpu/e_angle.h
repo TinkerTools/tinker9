@@ -5,7 +5,6 @@
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 enum {
   angle_in_plane = 0x001,
   angle_harmonic = 0x002,
@@ -29,7 +28,6 @@ extern real* vir_ea;
 void eangle_data(rc_t rc);
 
 void eangle(int vers);
-}
 TINKER_NAMESPACE_END
 
 #endif

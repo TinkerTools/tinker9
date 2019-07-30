@@ -5,7 +5,6 @@
 #include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 // module angbnd
 int nangle;
 int (*iang)[4];
@@ -80,7 +79,5 @@ void eangle_data(rc_t rc) {
 }
 
 extern void eangle_acc_impl_(int vers);
-;
 void eangle(int vers) { eangle_acc_impl_(vers); }
-}
 TINKER_NAMESPACE_END

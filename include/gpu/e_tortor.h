@@ -6,7 +6,6 @@
 #include <ext/tinker/detail/ktrtor.hh>
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 // module bitor
 extern int nbitor;
 extern int (*ibitor)[5];
@@ -36,7 +35,6 @@ extern real* vir_ett;
 void etortor_data(rc_t rc);
 
 void etortor(int vers);
-}
 TINKER_NAMESPACE_END
 
 #endif

@@ -45,7 +45,6 @@ TINKER_NAMESPACE_BEGIN
 extern void random_data(rc_op);
 void host_data(rc_op rc) { rc_man rand42_{random_data, rc}; }
 
-namespace gpu {
 extern void n_data(rc_t);
 
 extern void xyz_data(rc_t);
@@ -59,11 +58,8 @@ extern void couple_data(rc_t);
 extern void nblist_data(rc_t);
 
 extern void md_data(rc_t);
-}
 
 void device_data(rc_t rc) {
-  using namespace gpu;
-
   rc_man n42_{n_data, rc};
 
   rc_man xyz42_{xyz_data, rc};

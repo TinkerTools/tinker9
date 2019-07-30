@@ -11,7 +11,7 @@ TEST_CASE("Error", "[noassert][util]") {
 
   SECTION("TinkerThrowMacro") {
     try {
-      m_tinker_throw("TinkerThrowMacro Test");
+      TINKER_THROW("TinkerThrowMacro Test");
     } catch (std::exception& e) {
       std::cout << e.what() << std::endl;
     }

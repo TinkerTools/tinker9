@@ -1,7 +1,6 @@
-#include "gpu/acc.h"
+#include "acc_seq.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 #pragma acc routine seq
 static inline void box_null_image() {}
 
@@ -126,6 +125,5 @@ void imagen(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
     box_null_imagen();
     break;
   }
-}
 }
 TINKER_NAMESPACE_END

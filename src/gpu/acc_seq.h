@@ -1,5 +1,5 @@
-#ifndef TINKER_GPU_ACC_H_
-#define TINKER_GPU_ACC_H_
+#ifndef TINKER_ACC_SEQ_H_
+#define TINKER_ACC_SEQ_H_
 
 //======================================================================
 // acc math functions
@@ -38,10 +38,7 @@
 #pragma acc routine(fmaxf) seq
 #pragma acc routine(copysignf) seq
 
-#include "mod_box.h"
-
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 //======================================================================
 // switch
 
@@ -58,10 +55,14 @@ void switch_taper5(real rik, real cut, real off, real& taper, real& dtaper) {
   taper = x3 * (6 * x2 - 15 * x + 10);
   if_constexpr(DO_DTAPER) { dtaper = 30 * REAL_SQ(x * (1 - x)) * _1_ab; }
 }
+TINKER_NAMESPACE_END
 
 //======================================================================
 // image and imagen
 
+#include "mod_box.h"
+
+TINKER_NAMESPACE_BEGIN
 /**
  * applys periodic boundary conditions to displacement (xr, yr, zr) and
  * preserves the correct signs
@@ -77,7 +78,6 @@ void image(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
 #pragma acc routine seq
 void imagen(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
             const box_t* __restrict__ pb);
-}
 TINKER_NAMESPACE_END
 
 #endif

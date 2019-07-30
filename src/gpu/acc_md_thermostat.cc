@@ -3,7 +3,6 @@
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 void thermo_bussi_acc_impl_(real dt_real, real temp_real) {
   double dt = dt_real;
   double temp = temp_real;
@@ -34,6 +33,5 @@ void thermo_bussi_acc_impl_(real dt_real, real temp_real) {
     vy[i] *= sc;
     vz[i] *= sc;
   }
-}
 }
 TINKER_NAMESPACE_END

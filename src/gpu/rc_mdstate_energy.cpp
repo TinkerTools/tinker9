@@ -3,7 +3,6 @@
 #include <map>
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 
 //======================================================================
 
@@ -125,7 +124,7 @@ static void dealloc3(real* /* pe */, real* /* pv */, int* /* pne */) {}
 //======================================================================
 
 void egv_data(rc_t rc) {
-  if (use_data & (use_analyz | use_energy | use_virial)) {
+  if (use_data & (calc::analyz | calc::energy | calc::virial)) {
     energy_buffer_::data(rc);
 
     if (rc & rc_dealloc) {
@@ -137,15 +136,15 @@ void egv_data(rc_t rc) {
     }
 
     if (rc & rc_copyin) {
-      if (use_energy & use_data)
+      if (calc::energy & use_data)
         copyin_array(esum, &energi::esum, 1);
 
-      if (use_virial & use_data)
+      if (calc::virial & use_data)
         copyin_array(vir, &virial::vir[0][0], 9);
     }
   }
 
-  if (use_data & use_grad) {
+  if (use_data & calc::grad) {
     if (rc & rc_dealloc) {
       check_cudart(cudaFree(gx));
       check_cudart(cudaFree(gy));
@@ -208,34 +207,33 @@ void get_virial(double* v_out, const real* v_gpu) {
 }
 
 void zero_egv(int vers) {
-  if (vers & use_analyz)
+  if (vers & calc::analyz)
     zero_array(energy_buffer_::nebuf, energy_buffer_::cap);
 
-  if (vers & use_energy)
+  if (vers & calc::energy)
     zero_array(energy_buffer_::ebuf, energy_buffer_::cap);
 
-  if (vers & use_virial)
+  if (vers & calc::virial)
     zero_array(energy_buffer_::vbuf,
                energy_buffer_::cap * energy_buffer_::virlen);
 
-  if (vers & use_grad) {
+  if (vers & calc::grad) {
     zero_array(gx, n);
     zero_array(gy, n);
     zero_array(gz, n);
   }
 }
 
-void zero_egv() { zero_egv(use_data & vmask); }
+void zero_egv() { zero_egv(use_data & calc::vmask); }
 
 extern void sum_energy_acc_impl_(real* ebuf, int end);
 extern void sum_virial_acc_impl_(real* vbuf, int end, int virlen);
 void sum_energies(int vers) {
-  if (vers & use_energy)
+  if (vers & calc::energy)
     sum_energy_acc_impl_(energy_buffer_::ebuf, energy_buffer_::end);
 
-  if (vers & use_virial)
+  if (vers & calc::virial)
     sum_virial_acc_impl_(energy_buffer_::vbuf, energy_buffer_::end,
                          energy_buffer_::virlen);
-}
 }
 TINKER_NAMESPACE_END

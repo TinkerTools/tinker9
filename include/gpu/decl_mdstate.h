@@ -7,54 +7,41 @@
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
+namespace calc {
 enum {
-  use_xyz = 0x001,  /// xyz
-  use_vel = 0x002,  /// velocity
-  use_mass = 0x004, /// mass
-  use_traj = 0x008, /// trajectory
+  xyz = 0x001,  /// xyz
+  vel = 0x002,  /// velocity
+  mass = 0x004, /// mass
+  traj = 0x008, /// trajectory
 
-  use_energy = 0x010, /// energy 16
-  use_grad = 0x020,   /// gradient 32
-  use_virial = 0x040, /// virial 64
-  use_analyz = 0x080, /// analyze 128
+  energy = 0x010, /// energy 16
+  grad = 0x020,   /// gradient 32
+  virial = 0x040, /// virial 64
+  analyz = 0x080, /// analyze 128
 
-  use_md = 0x100,
+  md = 0x100,
 
   // clang-format off
-  vmask = use_energy + use_grad + use_virial + use_analyz,
-  v0 = use_energy,                         ///  16
-  v1 = use_energy + use_grad + use_virial, /// 112
-  v3 = use_energy + use_analyz,            /// 144
-  v4 = use_energy + use_grad,              ///  48
-  v5 = use_grad,                           ///  32
-  v6 = use_grad + use_virial,              ///  96
+  vmask = energy + grad + virial +  analyz,
+  v0 = energy,                 ///  16
+  v1 = energy + grad + virial, /// 112
+  v3 = energy + analyz,        /// 144
+  v4 = energy + grad,          ///  48
+  v5 = grad,                   ///  32
+  v6 = grad + virial,          ///  96
   // clang-format on
-
-  _x = 0, /// x direction
-  _y = 1, /// y direction
-  _z = 2, /// z direction
-
-  _xx = 0, /// xx component
-  _yx = 1, /// yx component
-  _zx = 2, /// zx component
-  _xy = 3, /// xy component
-  _yy = 4, /// yy component
-  _zy = 5, /// zy component
-  _xz = 6, /// xz component
-  _yz = 7, /// yz component
-  _zz = 8  /// zz component
 };
+}
 
 template <int USE>
 void sanity_check() {
-  constexpr int do_e = USE & use_energy;
-  constexpr int do_a = USE & use_analyz;
-  constexpr int do_g = USE & use_grad;
-  constexpr int do_v = USE & use_virial;
-  // if use_virial, must use_grad
+  constexpr int do_e = USE & calc::energy;
+  constexpr int do_a = USE & calc::analyz;
+  constexpr int do_g = USE & calc::grad;
+  constexpr int do_v = USE & calc::virial;
+  // if calc::virial, must calc::grad
   static_assert(do_v ? do_g : true, "");
-  // if use_analyz, must use_energy
+  // if calc::analyz, must calc::energy
   static_assert(do_a ? do_e : true, "");
 }
 
@@ -79,7 +66,6 @@ void zero_egv();
 
 /// sum potential energies and virials
 void sum_energies(int vers);
-}
 TINKER_NAMESPACE_END
 
 #include "mod_box.h"
@@ -89,11 +75,9 @@ TINKER_NAMESPACE_END
 #include "util_random.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 void nblist_data(rc_t rc);
 void goto_frame0(int idx0);
 void goto_frame1(int idx1);
-}
 TINKER_NAMESPACE_END
 
 #endif

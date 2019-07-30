@@ -10,7 +10,7 @@ static const char* opbendterm_only = R"**(
 opbendterm  only
 )**";
 
-static int usage = gpu::use_xyz | gpu::vmask;
+static int usage = calc::xyz | calc::vmask;
 
 static const double ref_g_opbend_trpcage[][3] = {
     {0.0000, 0.0000, 0.0000},     {0.1615, 1.3064, -0.7696},
@@ -192,9 +192,8 @@ TEST_CASE("Opbend-Trpcage", "[ff][eopbend][allinger][trpcage]") {
                              {0.890, 3.006, -1.049},
                              {-0.224, -1.049, -1.359}};
 
-  COMPARE_BONDED_FORCE(gpu::eopbend, gpu::eopb, ref_e, eps_e, gpu::nopbend,
-                       ref_count, gx, gy, gz, ref_g_opbend_trpcage, eps_g,
-                       gpu::vir_eopb, ref_v, eps_v);
+  COMPARE_BONDED_FORCE(eopbend, eopb, ref_e, eps_e, nopbend, ref_count, gx, gy,
+                       gz, ref_g_opbend_trpcage, eps_g, vir_eopb, ref_v, eps_v);
 
   tinker_gpu_runtime_finish();
   test_end();

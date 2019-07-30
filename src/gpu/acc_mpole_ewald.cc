@@ -1,17 +1,16 @@
-#include "gpu/acc.h"
+#include "acc_seq.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
 #include "gpu/e_mpole.h"
 #include "gpu/e_polar.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 template <int USE>
 void empole_real_self_tmpl() {
-  constexpr int do_e = USE & use_energy;
-  constexpr int do_a = USE & use_analyz;
-  constexpr int do_g = USE & use_grad;
-  constexpr int do_v = USE & use_virial;
+  constexpr int do_e = USE & calc::energy;
+  constexpr int do_a = USE & calc::analyz;
+  constexpr int do_g = USE & calc::grad;
+  constexpr int do_v = USE & calc::virial;
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
@@ -381,10 +380,10 @@ void empole_real_self_tmpl() {
 
 template <int USE>
 void empole_recip_tmpl() {
-  constexpr int do_e = USE & use_energy;
-  constexpr int do_a = USE & use_analyz;
-  constexpr int do_g = USE & use_grad;
-  constexpr int do_v = USE & use_virial;
+  constexpr int do_e = USE & calc::energy;
+  constexpr int do_a = USE & calc::analyz;
+  constexpr int do_g = USE & calc::grad;
+  constexpr int do_v = USE & calc::virial;
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
@@ -414,7 +413,7 @@ void empole_recip_tmpl() {
   constexpr int deriv2[] = {3, 8, 6, 10, 14, 12, 19, 16, 20, 17};
   constexpr int deriv3[] = {4, 9, 10, 7, 15, 17, 13, 20, 18, 19};
 
-  pme_st& st = pme_obj(pu);
+  pme_t& st = pme_obj(pu);
   const int nfft1 = st.nfft1;
   const int nfft2 = st.nfft2;
   const int nfft3 = st.nfft3;
@@ -542,10 +541,10 @@ void empole_recip_tmpl() {
 
 template <int USE>
 void empole_ewald_tmpl() {
-  constexpr int do_e = USE & use_energy;
-  constexpr int do_a = USE & use_analyz;
-  constexpr int do_g = USE & use_grad;
-  constexpr int do_v = USE & use_virial;
+  constexpr int do_e = USE & calc::energy;
+  constexpr int do_a = USE & calc::analyz;
+  constexpr int do_g = USE & calc::grad;
+  constexpr int do_v = USE & calc::virial;
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
@@ -555,18 +554,17 @@ void empole_ewald_tmpl() {
 }
 
 void empole_ewald(int vers) {
-  if (vers == v0)
-    empole_ewald_tmpl<v0>();
-  else if (vers == v1)
-    empole_ewald_tmpl<v1>();
-  else if (vers == v3)
-    empole_ewald_tmpl<v3>();
-  else if (vers == v4)
-    empole_ewald_tmpl<v4>();
-  else if (vers == v5)
-    empole_ewald_tmpl<v5>();
-  else if (vers == v6)
-    empole_ewald_tmpl<v6>();
-}
+  if (vers == calc::v0)
+    empole_ewald_tmpl<calc::v0>();
+  else if (vers == calc::v1)
+    empole_ewald_tmpl<calc::v1>();
+  else if (vers == calc::v3)
+    empole_ewald_tmpl<calc::v3>();
+  else if (vers == calc::v4)
+    empole_ewald_tmpl<calc::v4>();
+  else if (vers == calc::v5)
+    empole_ewald_tmpl<calc::v5>();
+  else if (vers == calc::v6)
+    empole_ewald_tmpl<calc::v6>();
 }
 TINKER_NAMESPACE_END

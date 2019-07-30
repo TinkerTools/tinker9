@@ -1,4 +1,4 @@
-#include "gpu/acc.h"
+#include "acc_seq.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_angle.h"
 #include "gpu/e_opbend.h"
@@ -20,12 +20,11 @@
  */
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 template <int USE, eopbend_t TYP>
 void eopbend_tmpl() {
-  constexpr int do_e = USE & use_energy;
-  constexpr int do_g = USE & use_grad;
-  constexpr int do_v = USE & use_virial;
+  constexpr int do_e = USE & calc::energy;
+  constexpr int do_g = USE & calc::grad;
+  constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
   #pragma acc parallel loop independent\
@@ -232,30 +231,29 @@ void eopbend_tmpl() {
 
 void eopbend_acc_impl_(int vers) {
   if (opbtyp == opbend_w_d_c) {
-    if (vers == v0 || vers == v3)
-      eopbend_tmpl<v0, opbend_w_d_c>();
-    else if (vers == v1)
-      eopbend_tmpl<v1, opbend_w_d_c>();
-    else if (vers == v4)
-      eopbend_tmpl<v4, opbend_w_d_c>();
-    else if (vers == v5)
-      eopbend_tmpl<v5, opbend_w_d_c>();
-    else if (vers == v6)
-      eopbend_tmpl<v6, opbend_w_d_c>();
+    if (vers == calc::v0 || vers == calc::v3)
+      eopbend_tmpl<calc::v0, opbend_w_d_c>();
+    else if (vers == calc::v1)
+      eopbend_tmpl<calc::v1, opbend_w_d_c>();
+    else if (vers == calc::v4)
+      eopbend_tmpl<calc::v4, opbend_w_d_c>();
+    else if (vers == calc::v5)
+      eopbend_tmpl<calc::v5, opbend_w_d_c>();
+    else if (vers == calc::v6)
+      eopbend_tmpl<calc::v6, opbend_w_d_c>();
   } else if (opbtyp == opbend_allinger) {
-    if (vers == v0 || vers == v3)
-      eopbend_tmpl<v0, opbend_allinger>();
-    else if (vers == v1)
-      eopbend_tmpl<v1, opbend_allinger>();
-    else if (vers == v4)
-      eopbend_tmpl<v4, opbend_allinger>();
-    else if (vers == v5)
-      eopbend_tmpl<v5, opbend_allinger>();
-    else if (vers == v6)
-      eopbend_tmpl<v6, opbend_allinger>();
+    if (vers == calc::v0 || vers == calc::v3)
+      eopbend_tmpl<calc::v0, opbend_allinger>();
+    else if (vers == calc::v1)
+      eopbend_tmpl<calc::v1, opbend_allinger>();
+    else if (vers == calc::v4)
+      eopbend_tmpl<calc::v4, opbend_allinger>();
+    else if (vers == calc::v5)
+      eopbend_tmpl<calc::v5, opbend_allinger>();
+    else if (vers == calc::v6)
+      eopbend_tmpl<calc::v6, opbend_allinger>();
   } else {
     assert(false);
   }
-}
 }
 TINKER_NAMESPACE_END

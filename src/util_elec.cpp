@@ -1,4 +1,4 @@
-#include "gpu/decl_elec.h"
+#include "util_elec.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
 #include "gpu/e_mpole.h"
@@ -8,7 +8,6 @@
 #include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 int use_elec() { return use_potent(mpole_term) || use_potent(polar_term); }
 
 void elec_data(rc_t rc) {
@@ -53,7 +52,7 @@ void elec_data(rc_t rc) {
       udirp = nullptr;
     }
 
-    if (use_data & use_grad) {
+    if (use_data & calc::grad) {
       check_cudart(cudaMalloc(&trqx, rs * n));
       check_cudart(cudaMalloc(&trqy, rs * n));
       check_cudart(cudaMalloc(&trqz, rs * n));
@@ -136,7 +135,7 @@ void elec_init(int vers) {
 
   // zero torque
 
-  if (vers & use_grad) {
+  if (vers & calc::grad) {
     zero_array(trqx, n);
     zero_array(trqy, n);
     zero_array(trqz, n);
@@ -144,7 +143,7 @@ void elec_init(int vers) {
 
   // zero torque-related virial
 
-  if (vers & use_virial) {
+  if (vers & calc::virial) {
     zero_array(vir_trq, 9);
   }
 
@@ -154,6 +153,5 @@ void elec_init(int vers) {
   if (use_ewald()) {
     pme_init(vers);
   }
-}
 }
 TINKER_NAMESPACE_END

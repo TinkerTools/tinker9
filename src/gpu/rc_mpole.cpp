@@ -7,7 +7,6 @@
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 int empole_electyp;
 std::string empole_electyp_str;
 
@@ -55,6 +54,5 @@ void empole(int vers) {
     empole_coulomb(vers);
   else if (empole_electyp == elec_ewald)
     empole_ewald(vers);
-}
 }
 TINKER_NAMESPACE_END

@@ -3,8 +3,6 @@
 #include "gpu/e_mpole.h"
 
 TINKER_NAMESPACE_BEGIN
-
-namespace gpu {
 // see also subroutine bsplgen in pmestuf.f
 #pragma acc routine seq
 template <int LEVEL>
@@ -149,8 +147,8 @@ enum { PCHG_GRID = 1, MPOLE_GRID, UIND_GRID, UIND_GRID_FPHI2, DISP_GRID };
 
 template <int WHAT>
 void grid_tmpl(int pme_unit, real* optional1, real* optional2) {
-  pme_st& st = pme_obj(pme_unit);
-  pme_st* dptr = pme_deviceptr(pme_unit);
+  pme_t& st = pme_obj(pme_unit);
+  pme_t* dptr = pme_deviceptr(pme_unit);
 
   MAYBE_UNUSED real* pchg;
   if_constexpr(WHAT == PCHG_GRID || WHAT == DISP_GRID) { pchg = optional1; }
@@ -368,8 +366,8 @@ void grid_uind(int pme_unit, real (*fuind)[3], real (*fuinp)[3]) {
 
 template <int WHAT>
 void fphi_tmpl(int pme_unit, real* opt1, real* opt2, real* opt3) {
-  pme_st& st = pme_obj(pme_unit);
-  pme_st* dptr = pme_deviceptr(pme_unit);
+  pme_t& st = pme_obj(pme_unit);
+  pme_t* dptr = pme_deviceptr(pme_unit);
 
   MAYBE_UNUSED real(*fphi)[20];
   if_constexpr(WHAT == MPOLE_GRID) {
@@ -820,6 +818,5 @@ void fphi_uind2(int pme_unit, real (*fdip_phi1)[10], real (*fdip_phi2)[10]) {
   real* opt1 = reinterpret_cast<real*>(fdip_phi1);
   real* opt2 = reinterpret_cast<real*>(fdip_phi2);
   fphi_tmpl<UIND_GRID_FPHI2>(pme_unit, opt1, opt2, nullptr);
-}
 }
 TINKER_NAMESPACE_END

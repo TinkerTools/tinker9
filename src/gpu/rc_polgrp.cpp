@@ -2,7 +2,6 @@
 #include "gpu/rc.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 static_assert(polargroup_t::maxp11 >= polgrp::maxp11, "");
 static_assert(polargroup_t::maxp12 >= polgrp::maxp12, "");
 static_assert(polargroup_t::maxp13 >= polgrp::maxp13, "");
@@ -114,6 +113,5 @@ void polargroup_data(rc_t rc) {
     check_cudart(
         cudaMemcpy(polargroup, &polargroup_obj_, size, cudaMemcpyHostToDevice));
   }
-}
 }
 TINKER_NAMESPACE_END

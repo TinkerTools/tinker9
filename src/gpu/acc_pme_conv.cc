@@ -1,13 +1,12 @@
-#include "gpu/decl_elec.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
+#include "util_elec.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 template <int DO_V>
 void pme_conv_tmpl(int pme_unit, real* gpu_vir9) {
-  pme_st& st = pme_obj(pme_unit);
-  pme_st* dptr = pme_deviceptr(pme_unit);
+  pme_t& st = pme_obj(pme_unit);
+  pme_t* dptr = pme_deviceptr(pme_unit);
 
   const int nfft1 = st.nfft1;
   const int nfft2 = st.nfft2;
@@ -102,6 +101,5 @@ void pme_conv0(int pme_unit) { pme_conv_tmpl<0>(pme_unit, nullptr); }
 
 void pme_conv1(int pme_unit, real* gpu_vir9) {
   pme_conv_tmpl<1>(pme_unit, gpu_vir9);
-}
 }
 TINKER_NAMESPACE_END

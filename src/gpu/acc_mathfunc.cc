@@ -1,7 +1,6 @@
-#include "gpu/acc.h"
+#include "acc_seq.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 // TODO: update dotprod implementation
 template <class T>
 T dotprod_acc_impl(const T* gpu_a, const T* gpu_b, int cpu_n) {
@@ -36,6 +35,5 @@ void scale_data(float* gpu_dst, float scal, int nelem) {
 
 void scale_data(double* gpu_dst, double scal, int nelem) {
   scale_data_acc_impl<double>(gpu_dst, scal, nelem);
-}
 }
 TINKER_NAMESPACE_END

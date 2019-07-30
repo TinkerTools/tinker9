@@ -25,6 +25,20 @@ TINKER_EXTERN real epot, eksum, ekin[3][3];
 TINKER_EXTERN real *gx, *gy, *gz;
 // total virial
 TINKER_EXTERN real* vir;
+
+constexpr int _x = 0; /// x direction
+constexpr int _y = 1; /// y direction
+constexpr int _z = 2; /// z direction
+
+constexpr int _xx = 0; /// xx component
+constexpr int _yx = 1; /// yx component
+constexpr int _zx = 2; /// zx component
+constexpr int _xy = 3; /// xy component
+constexpr int _yy = 4; /// yy component
+constexpr int _zy = 5; /// zy component
+constexpr int _xz = 6; /// xz component
+constexpr int _yz = 7; /// yz component
+constexpr int _zz = 8; /// zz component
 TINKER_NAMESPACE_END
 
 #endif

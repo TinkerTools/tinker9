@@ -10,7 +10,7 @@ static const char* pitorsterm_only = R"**(
 pitorsterm  only
 )**";
 
-static int usage = gpu::use_xyz | gpu::vmask;
+static int usage = calc::xyz | calc::vmask;
 
 static const double ref_g_pitors_trpcage[][3] = {
     {0.0000, 0.0000, 0.0000},    {-0.0001, -0.0007, 0.0004},
@@ -191,9 +191,8 @@ TEST_CASE("Pitors-Trpcage", "[ff][epitors][trpcage]") {
   const double ref_v[][3] = {
       {-3.014, -1.132, 2.354}, {-1.132, 1.167, -0.679}, {2.354, -0.679, 1.847}};
 
-  COMPARE_BONDED_FORCE(gpu::epitors, gpu::ept, ref_e, eps_e, gpu::npitors,
-                       ref_count, gx, gy, gz, ref_g_pitors_trpcage, eps_g,
-                       gpu::vir_ept, ref_v, eps_v);
+  COMPARE_BONDED_FORCE(epitors, ept, ref_e, eps_e, npitors, ref_count, gx, gy,
+                       gz, ref_g_pitors_trpcage, eps_g, vir_ept, ref_v, eps_v);
 
   tinker_gpu_runtime_finish();
   test_end();

@@ -4,8 +4,6 @@
 #include <ext/tinker/tinker_rt.h>
 
 TINKER_NAMESPACE_BEGIN
-
-namespace gpu {
 void kinetic_acc_impl_(real& temp) {
   const real ekcal_inv = 1.0 / units::ekcal;
   real exx = 0;
@@ -223,6 +221,5 @@ void propagate_velocity_acc_impl_(real dt) {
     vy[i] += coef * gy[i];
     vz[i] += coef * gz[i];
   }
-}
 }
 TINKER_NAMESPACE_END

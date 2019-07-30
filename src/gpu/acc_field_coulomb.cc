@@ -1,10 +1,8 @@
-#include "gpu/acc.h"
+#include "acc_seq.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_polar.h"
 
 TINKER_NAMESPACE_BEGIN
-
-namespace gpu {
 // see also subroutine dfield0b in induce.f
 void dfield_coulomb(real* gpu_field, real* gpu_fieldp) {
   zero_array(gpu_field, 3 * n);
@@ -403,6 +401,5 @@ void ufield_coulomb(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
     for (int j = 0; j < np14i; ++j)
       uscale[polargroup->ip14[i][j]] = 1;
   } // end for (int i)
-}
 }
 TINKER_NAMESPACE_END

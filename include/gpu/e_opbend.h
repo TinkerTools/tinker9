@@ -5,7 +5,6 @@
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 typedef enum { opbend_w_d_c, opbend_allinger } eopbend_t;
 extern eopbend_t opbtyp;
 
@@ -21,7 +20,6 @@ extern real* vir_eopb;
 void eopbend_data(rc_t rc);
 
 void eopbend(int vers);
-}
 TINKER_NAMESPACE_END
 
 #endif

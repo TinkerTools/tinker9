@@ -10,7 +10,7 @@ static const char* torsionterm_only = R"**(
 torsionterm  only
 )**";
 
-static int usage = gpu::use_xyz | gpu::vmask;
+static int usage = calc::xyz | calc::vmask;
 
 static const double ref_g_tors_trpcage[][3] = {
     {-0.2438, -0.1946, 0.0309},  {-3.5996, 1.6062, 4.2184},
@@ -192,9 +192,8 @@ TEST_CASE("Torsion-Trpcage", "[ff][etors][trpcage]") {
                              {2.350, -0.934, -2.815},
                              {-4.405, -2.815, 1.456}};
 
-  COMPARE_BONDED_FORCE(gpu::etors, gpu::et, ref_e, eps_e, gpu::ntors, ref_count,
-                       gx, gy, gz, ref_g_tors_trpcage, eps_g, gpu::vir_et,
-                       ref_v, eps_v);
+  COMPARE_BONDED_FORCE(etors, et, ref_e, eps_e, ntors, ref_count, gx, gy, gz,
+                       ref_g_tors_trpcage, eps_g, vir_et, ref_v, eps_v);
 
   tinker_gpu_runtime_finish();
   test_end();

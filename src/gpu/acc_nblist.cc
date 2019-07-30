@@ -1,16 +1,13 @@
-#include "gpu/acc.h"
+#include "acc_seq.h"
 #include "gpu/decl_mdstate.h"
 
 #ifdef TINKER_HOSTONLY
 #  include <algorithm>
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 static void sort_v1_(int* arr, int len) { std::sort(arr, arr + len); }
-}
 TINKER_NAMESPACE_END
 #else
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 #  define m_swap_(a, b)                                                        \
     {                                                                          \
       auto tmp = b;                                                            \
@@ -48,12 +45,10 @@ static void sort_v1_(int* arr, int len) {
 }
 #  undef m_swap_
 #  undef m_max_heap_
-}
 TINKER_NAMESPACE_END
 #endif
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 
 //======================================================================
 // double loop
@@ -222,5 +217,4 @@ void nblist_update_acc_impl_(const nblist_t& st, nblist_t* lst) {
   }
 }
 #undef TINKER_DEFAULT_NBLIST_UPDATE_
-}
 TINKER_NAMESPACE_END

@@ -4,7 +4,6 @@
 #include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 int npitors;
 int (*ipit)[6];
 real* kpit;
@@ -46,5 +45,4 @@ void epitors_data(rc_t rc) {
 
 extern void epitors_acc_impl_(int vers);
 void epitors(int vers) { epitors_acc_impl_(vers); }
-}
 TINKER_NAMESPACE_END

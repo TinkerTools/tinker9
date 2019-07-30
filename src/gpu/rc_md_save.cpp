@@ -12,7 +12,6 @@
 #include <mutex>
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 static std::mutex mtx_dup, mtx_write;
 static std::condition_variable cv_dup, cv_write;
 static bool idle_dup, idle_write;
@@ -108,7 +107,7 @@ void mdsave_data(rc_t rc) {
         gbuf[i] = -moldyn::a[3 * i + 2] * atomid::mass[i] / units::ekcal;
       copyin_array(gz, gbuf.data(), n);
     } else {
-      energy_potential(use_data & vmask);
+      energy_potential(use_data & calc::vmask);
     }
   }
 }
@@ -246,6 +245,5 @@ void mdsave_async(int istep, real dt) {
 void mdsave_synchronize() {
   if (fut_dup_then_write.valid())
     fut_dup_then_write.get();
-}
 }
 TINKER_NAMESPACE_END

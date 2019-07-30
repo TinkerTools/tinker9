@@ -4,7 +4,6 @@
 #include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 // module bitor
 int nbitor;
 int (*ibitor)[5];
@@ -163,5 +162,4 @@ void etortor_data(rc_t rc) {
 
 extern void etortor_acc_impl_(int vers);
 void etortor(int vers) { etortor_acc_impl_(vers); }
-}
 TINKER_NAMESPACE_END

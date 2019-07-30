@@ -1,4 +1,4 @@
-#include "gpu/acc.h"
+#include "acc_seq.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_vdw.h"
 
@@ -6,7 +6,6 @@
 // TODO: add vdw correction
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 void evdw_reduce_xyz() {
   #pragma acc parallel loop independent\
               deviceptr(x,y,z,ired,kred,xred,yred,zred)
@@ -21,10 +20,10 @@ void evdw_reduce_xyz() {
 
 template <int USE, evdw_t VDWTYP>
 void evdw_tmpl() {
-  constexpr int do_e = USE & use_energy;
-  constexpr int do_a = USE & use_analyz;
-  constexpr int do_g = USE & use_grad;
-  constexpr int do_v = USE & use_virial;
+  constexpr int do_e = USE & calc::energy;
+  constexpr int do_a = USE & calc::analyz;
+  constexpr int do_g = USE & calc::grad;
+  constexpr int do_v = USE & calc::virial;
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
@@ -223,18 +222,18 @@ void evdw_tmpl() {
 #define TINKER_EVDW_IMPL_(typ)                                                 \
   void evdw_##typ##_acc_impl_(int vers) {                                      \
     evdw_reduce_xyz();                                                         \
-    if (vers == v0)                                                            \
-      evdw_tmpl<v0, vdw_##typ>();                                              \
-    else if (vers == v1)                                                       \
-      evdw_tmpl<v1, vdw_##typ>();                                              \
-    else if (vers == v3)                                                       \
-      evdw_tmpl<v3, vdw_##typ>();                                              \
-    else if (vers == v4)                                                       \
-      evdw_tmpl<v4, vdw_##typ>();                                              \
-    else if (vers == v5)                                                       \
-      evdw_tmpl<v5, vdw_##typ>();                                              \
-    else if (vers == v6)                                                       \
-      evdw_tmpl<v6, vdw_##typ>();                                              \
+    if (vers == calc::v0)                                                      \
+      evdw_tmpl<calc::v0, vdw_##typ>();                                        \
+    else if (vers == calc::v1)                                                 \
+      evdw_tmpl<calc::v1, vdw_##typ>();                                        \
+    else if (vers == calc::v3)                                                 \
+      evdw_tmpl<calc::v3, vdw_##typ>();                                        \
+    else if (vers == calc::v4)                                                 \
+      evdw_tmpl<calc::v4, vdw_##typ>();                                        \
+    else if (vers == calc::v5)                                                 \
+      evdw_tmpl<calc::v5, vdw_##typ>();                                        \
+    else if (vers == calc::v6)                                                 \
+      evdw_tmpl<calc::v6, vdw_##typ>();                                        \
   }
 TINKER_EVDW_IMPL_(lj);
 TINKER_EVDW_IMPL_(buck);
@@ -243,5 +242,4 @@ TINKER_EVDW_IMPL_(hal);
 TINKER_EVDW_IMPL_(gauss);
 #undef TINKER_EVDW_IMPL_
 
-}
 TINKER_NAMESPACE_END

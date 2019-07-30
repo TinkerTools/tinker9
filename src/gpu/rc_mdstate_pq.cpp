@@ -2,7 +2,6 @@
 #include "gpu/rc.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 
 //======================================================================
 // number of atoms
@@ -16,7 +15,7 @@ void n_data(rc_t rc) {
   if (rc & rc_alloc) {
     n = atoms::n;
 
-    if (use_traj & use_data) {
+    if (calc::traj & use_data) {
       // trajn must have been initialized by this point
       assert(trajn >= 0);
     }
@@ -27,11 +26,11 @@ void n_data(rc_t rc) {
 // x y z coordinates
 
 void xyz_data(rc_t rc) {
-  if ((use_xyz & use_data) == 0)
+  if ((calc::xyz & use_data) == 0)
     return;
 
   if (rc & rc_dealloc) {
-    if (use_traj & use_data) {
+    if (calc::traj & use_data) {
       check_cudart(cudaFree(trajx));
       check_cudart(cudaFree(trajy));
       check_cudart(cudaFree(trajz));
@@ -50,7 +49,7 @@ void xyz_data(rc_t rc) {
 
   if (rc & rc_alloc) {
     size_t size = sizeof(real) * n;
-    if (use_traj & use_data) {
+    if (calc::traj & use_data) {
       size *= trajn;
       check_cudart(cudaMalloc(&trajx, size));
       check_cudart(cudaMalloc(&trajy, size));
@@ -76,7 +75,7 @@ void xyz_data(rc_t rc) {
 // velocitiies
 
 void vel_data(rc_t rc) {
-  if ((use_vel & use_data) == 0)
+  if ((calc::vel & use_data) == 0)
     return;
 
   if (rc & rc_dealloc) {
@@ -103,7 +102,7 @@ void vel_data(rc_t rc) {
 // atomic mass
 
 void mass_data(rc_t rc) {
-  if ((use_mass & use_data) == 0)
+  if ((calc::mass & use_data) == 0)
     return;
 
   if (rc & rc_dealloc) {
@@ -127,7 +126,7 @@ void mass_data(rc_t rc) {
 }
 
 void goto_frame0(int idx0) {
-  assert(use_traj & use_data);
+  assert(calc::traj & use_data);
   x = trajx + n * idx0;
   y = trajy + n * idx0;
   z = trajz + n * idx0;
@@ -135,5 +134,5 @@ void goto_frame0(int idx0) {
 }
 
 void goto_frame1(int idx1) { goto_frame0(idx1 - 1); }
-}
+
 TINKER_NAMESPACE_END

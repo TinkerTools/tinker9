@@ -10,7 +10,7 @@ static const char* angleterm_only = R"**(
 angleterm  only
 )**";
 
-static int usage = gpu::use_xyz | gpu::vmask;
+static int usage = calc::xyz | calc::vmask;
 
 static const double ref_g_angle_trpcage[][3] = {
     {-3.7764, 0.1402, -1.4677},    {4.3577, -15.9432, -6.3659},
@@ -192,9 +192,8 @@ TEST_CASE("Angle-Trpcage", "[ff][eangle][trpcage]") {
                              {37.932, -71.780, -18.911},
                              {190.883, -18.911, 72.244}};
 
-  COMPARE_BONDED_FORCE(gpu::eangle, gpu::ea, ref_e, eps_e, gpu::nangle,
-                       ref_count, gx, gy, gz, ref_g_angle_trpcage, eps_g,
-                       gpu::vir_ea, ref_v, eps_v);
+  COMPARE_BONDED_FORCE(eangle, ea, ref_e, eps_e, nangle, ref_count, gx, gy, gz,
+                       ref_g_angle_trpcage, eps_g, vir_ea, ref_v, eps_v);
 
   tinker_gpu_runtime_finish();
   test_end();

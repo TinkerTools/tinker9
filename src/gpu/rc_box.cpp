@@ -3,10 +3,9 @@
 #include "mod_box.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 void box_data(rc_t rc) {
   if (rc & rc_dealloc) {
-    if (use_traj & use_data) {
+    if (calc::traj & use_data) {
       box = nullptr;
       check_cudart(cudaFree(trajbox));
     } else {
@@ -17,7 +16,7 @@ void box_data(rc_t rc) {
 
   if (rc & rc_alloc) {
     size_t size = sizeof(box_t);
-    if (use_traj & use_data) {
+    if (calc::traj & use_data) {
       size *= trajn;
       check_cudart(cudaMalloc(&trajbox, size));
       box = trajbox;
@@ -71,6 +70,5 @@ void box_data_copyout(const box_t& b) {
     boxes::gamma = c_deg;
     TINKER_RT(lattice)();
   }
-}
 }
 TINKER_NAMESPACE_END

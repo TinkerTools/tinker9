@@ -1,5 +1,5 @@
-#include "gpu/decl_elec.h"
 #include "gpu/decl_mdstate.h"
+#include "util_elec.h"
 
 #define ADD_(ans, a, b)                                                        \
   ans[0] = a[0] + b[0];                                                        \
@@ -21,7 +21,6 @@
 
 TINKER_NAMESPACE_BEGIN
 
-namespace gpu {
 template <int DO_V>
 void torque_tmpl(real* gpu_vir) {
   #pragma acc data deviceptr(x,y,z,gx,gy,gz,\
@@ -386,12 +385,11 @@ void torque(int vers) {
   if (!use_elec())
     return;
 
-  if (vers & use_virial) {
+  if (vers & calc::virial) {
     torque_tmpl<1>(vir_trq);
-  } else if (vers & use_grad) {
+  } else if (vers & calc::grad) {
     torque_tmpl<0>(nullptr);
   }
-}
 }
 TINKER_NAMESPACE_END
 

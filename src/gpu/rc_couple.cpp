@@ -3,7 +3,6 @@
 #include "mod_couple.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 void couple_data(rc_t rc) {
   if (rc & rc_dealloc) {
     check_cudart(cudaFree(coupl_obj_.n12));
@@ -111,6 +110,5 @@ void couple_data(rc_t rc) {
     size = sizeof(couple_t);
     check_cudart(cudaMemcpy(coupl, &coupl_obj_, size, cudaMemcpyHostToDevice));
   }
-}
 }
 TINKER_NAMESPACE_END

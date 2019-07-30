@@ -1,15 +1,14 @@
-#include "gpu/acc.h"
+#include "acc_seq.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_mpole.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 template <int USE>
 void empole_coulomb_tmpl() {
-  constexpr int do_e = USE & use_energy;
-  constexpr int do_a = USE & use_analyz;
-  constexpr int do_g = USE & use_grad;
-  constexpr int do_v = USE & use_virial;
+  constexpr int do_e = USE & calc::energy;
+  constexpr int do_a = USE & calc::analyz;
+  constexpr int do_g = USE & calc::grad;
+  constexpr int do_v = USE & calc::virial;
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
@@ -310,18 +309,17 @@ void empole_coulomb_tmpl() {
 }
 
 void empole_coulomb(int vers) {
-  if (vers == v0)
-    empole_coulomb_tmpl<v0>();
-  else if (vers == v1)
-    empole_coulomb_tmpl<v1>();
-  else if (vers == v3)
-    empole_coulomb_tmpl<v3>();
-  else if (vers == v4)
-    empole_coulomb_tmpl<v4>();
-  else if (vers == v5)
-    empole_coulomb_tmpl<v5>();
-  else if (vers == v6)
-    empole_coulomb_tmpl<v6>();
-}
+  if (vers == calc::v0)
+    empole_coulomb_tmpl<calc::v0>();
+  else if (vers == calc::v1)
+    empole_coulomb_tmpl<calc::v1>();
+  else if (vers == calc::v3)
+    empole_coulomb_tmpl<calc::v3>();
+  else if (vers == calc::v4)
+    empole_coulomb_tmpl<calc::v4>();
+  else if (vers == calc::v5)
+    empole_coulomb_tmpl<calc::v5>();
+  else if (vers == calc::v6)
+    empole_coulomb_tmpl<calc::v6>();
 }
 TINKER_NAMESPACE_END

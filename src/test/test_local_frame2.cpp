@@ -36,7 +36,7 @@ beta    110.0
 gamma    90.0
 )**";
 
-static int usage = gpu::use_xyz | gpu::vmask;
+static int usage = calc::xyz | calc::vmask;
 static const char* k = "test_local_frame2.key";
 static const char* x1 = "test_local_frame2.xyz";
 static const char* argv[] = {"dummy", x1};
@@ -60,10 +60,10 @@ TEST_CASE("Local-Frame2-1", "[ff][triclinic][evdw][hal][local-frame2]") {
     const double ref_eng = 206.5670;
     const int ref_count = 129;
 
-    gpu::zero_egv();
-    gpu::evdw_hal(gpu::v3);
-    COMPARE_ENERGY_(gpu::ev, ref_eng, eps_e);
-    COMPARE_COUNT_(gpu::nev, ref_count);
+    zero_egv();
+    evdw_hal(calc::v3);
+    COMPARE_ENERGY_(ev, ref_eng, eps_e);
+    COMPARE_COUNT_(nev, ref_count);
   }
 
   tinker_gpu_runtime_finish();
@@ -88,10 +88,10 @@ TEST_CASE("Local-Frame2-2", "[ff][monoclinic][evdw][hal][local-frame2]") {
     const double ref_eng = 182.5400;
     const int ref_count = 125;
 
-    gpu::zero_egv();
-    gpu::evdw_hal(gpu::v3);
-    COMPARE_ENERGY_(gpu::ev, ref_eng, eps_e);
-    COMPARE_COUNT_(gpu::nev, ref_count);
+    zero_egv();
+    evdw_hal(calc::v3);
+    COMPARE_ENERGY_(ev, ref_eng, eps_e);
+    COMPARE_COUNT_(nev, ref_count);
   }
 
   tinker_gpu_runtime_finish();

@@ -21,34 +21,34 @@ using namespace test;
   }
 #define COMPARE_CODE_BLOCK1_                                                   \
   {                                                                            \
-    gpu::zero_egv();                                                           \
-    gpu::evdw_hal(gpu::v0);                                                    \
-    COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
+    zero_egv();                                                                \
+    evdw_hal(calc::v0);                                                        \
+    COMPARE_ENERGY_(ev, ref_eng, eps);                                         \
                                                                                \
-    gpu::zero_egv();                                                           \
-    gpu::evdw_hal(gpu::v1);                                                    \
-    COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
+    zero_egv();                                                                \
+    evdw_hal(calc::v1);                                                        \
+    COMPARE_ENERGY_(ev, ref_eng, eps);                                         \
     COMPARE_GRAD_;                                                             \
-    COMPARE_VIR_(gpu::vir_ev, ref_v, eps_v);                                   \
+    COMPARE_VIR_(vir_ev, ref_v, eps_v);                                        \
                                                                                \
-    gpu::zero_egv();                                                           \
-    gpu::evdw_hal(gpu::v3);                                                    \
-    COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
-    COMPARE_COUNT_(gpu::nev, ref_count);                                       \
+    zero_egv();                                                                \
+    evdw_hal(calc::v3);                                                        \
+    COMPARE_ENERGY_(ev, ref_eng, eps);                                         \
+    COMPARE_COUNT_(nev, ref_count);                                            \
                                                                                \
-    gpu::zero_egv();                                                           \
-    gpu::evdw_hal(gpu::v4);                                                    \
-    COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
-    COMPARE_GRAD_;                                                             \
-                                                                               \
-    gpu::zero_egv();                                                           \
-    gpu::evdw_hal(gpu::v5);                                                    \
+    zero_egv();                                                                \
+    evdw_hal(calc::v4);                                                        \
+    COMPARE_ENERGY_(ev, ref_eng, eps);                                         \
     COMPARE_GRAD_;                                                             \
                                                                                \
-    gpu::zero_egv();                                                           \
-    gpu::evdw_hal(gpu::v6);                                                    \
+    zero_egv();                                                                \
+    evdw_hal(calc::v5);                                                        \
     COMPARE_GRAD_;                                                             \
-    COMPARE_VIR_(gpu::vir_ev, ref_v, eps_v);                                   \
+                                                                               \
+    zero_egv();                                                                \
+    evdw_hal(calc::v6);                                                        \
+    COMPARE_GRAD_;                                                             \
+    COMPARE_VIR_(vir_ev, ref_v, eps_v);                                        \
   }
 
 TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
@@ -62,8 +62,8 @@ TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
   file px(p, amoebabio09_prm);
 
   int usage = 0;
-  usage |= gpu::use_xyz;
-  usage |= gpu::vmask;
+  usage |= calc::xyz;
+  usage |= calc::vmask;
 
   SECTION("ehal -- gas phase, no cutoff") {
     file kx(k, k0);

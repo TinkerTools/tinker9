@@ -1,8 +1,7 @@
-#include "gpu/decl_elec.h"
 #include "gpu/decl_mdstate.h"
+#include "util_elec.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 #pragma acc routine seq
 static void rotsite(int isite, const real (*__restrict__ a)[3],
                     real (*__restrict__ rpole)[10],
@@ -227,6 +226,5 @@ void rotpole() {
     // rotsite routine
     rotsite(i, a, rpole, pole);
   }
-}
 }
 TINKER_NAMESPACE_END

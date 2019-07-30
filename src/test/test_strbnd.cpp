@@ -10,7 +10,7 @@ static const char* strbndterm_only = R"**(
 strbndterm  only
 )**";
 
-static int usage = gpu::use_xyz | gpu::vmask;
+static int usage = calc::xyz | calc::vmask;
 
 static const double ref_g_strbnd_trpcage[][3] = {
     {0.3985, 0.4851, 1.3054},    {1.0413, 0.9150, -1.2830},
@@ -192,9 +192,8 @@ TEST_CASE("Strbnd-Trpcage", "[ff][estrbnd][trpcage]") {
                              {18.525, -26.515, -9.871},
                              {25.157, -9.871, -15.485}};
 
-  COMPARE_BONDED_FORCE(gpu::estrbnd, gpu::eba, ref_e, eps_e, gpu::nstrbnd,
-                       ref_count, gx, gy, gz, ref_g_strbnd_trpcage, eps_g,
-                       gpu::vir_eba, ref_v, eps_v);
+  COMPARE_BONDED_FORCE(estrbnd, eba, ref_e, eps_e, nstrbnd, ref_count, gx, gy,
+                       gz, ref_g_strbnd_trpcage, eps_g, vir_eba, ref_v, eps_v);
 
   tinker_gpu_runtime_finish();
   test_end();

@@ -1,14 +1,13 @@
-#include "gpu/acc.h"
+#include "acc_seq.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_urey.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 template <int USE>
 void eurey_tmpl() {
-  constexpr int do_e = USE & use_energy;
-  constexpr int do_g = USE & use_grad;
-  constexpr int do_v = USE & use_virial;
+  constexpr int do_e = USE & calc::energy;
+  constexpr int do_g = USE & calc::grad;
+  constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
   #pragma acc parallel loop independent\
@@ -88,16 +87,15 @@ void eurey_tmpl() {
 }
 
 void eurey_acc_impl_(int vers) {
-  if (vers == v0 || vers == v3)
-    eurey_tmpl<v0>();
-  else if (vers == v1)
-    eurey_tmpl<v1>();
-  else if (vers == v4)
-    eurey_tmpl<v4>();
-  else if (vers == v5)
-    eurey_tmpl<v5>();
-  else if (vers == v6)
-    eurey_tmpl<v6>();
-}
+  if (vers == calc::v0 || vers == calc::v3)
+    eurey_tmpl<calc::v0>();
+  else if (vers == calc::v1)
+    eurey_tmpl<calc::v1>();
+  else if (vers == calc::v4)
+    eurey_tmpl<calc::v4>();
+  else if (vers == calc::v5)
+    eurey_tmpl<calc::v5>();
+  else if (vers == calc::v6)
+    eurey_tmpl<calc::v6>();
 }
 TINKER_NAMESPACE_END

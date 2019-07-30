@@ -1,16 +1,15 @@
-#include "gpu/acc.h"
+#include "acc_seq.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
 #include "gpu/e_polar.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 template <int USE>
 void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
-  constexpr int do_e = USE & use_energy;
-  constexpr int do_a = USE & use_analyz;
-  constexpr int do_g = USE & use_grad;
-  constexpr int do_v = USE & use_virial;
+  constexpr int do_e = USE & calc::energy;
+  constexpr int do_a = USE & calc::analyz;
+  constexpr int do_g = USE & calc::grad;
+  constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
   if_constexpr(do_g) {
@@ -754,10 +753,10 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
 template <int USE>
 void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
                             const real (*gpu_uinp)[3]) {
-  constexpr int do_e = USE & use_energy;
-  constexpr int do_a = USE & use_analyz;
-  // constexpr int do_g = USE & use_grad;
-  constexpr int do_v = USE & use_virial;
+  constexpr int do_e = USE & calc::energy;
+  constexpr int do_a = USE & calc::analyz;
+  // constexpr int do_g = USE & calc::grad;
+  constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
   const int pu = ppme_unit;
@@ -1126,9 +1125,9 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 
 template <int USE>
 void epolar_ewald_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
-  constexpr int do_e = USE & use_energy;
-  constexpr int do_a = USE & use_analyz;
-  constexpr int do_g = USE & use_grad;
+  constexpr int do_e = USE & calc::energy;
+  constexpr int do_a = USE & calc::analyz;
+  constexpr int do_g = USE & calc::grad;
   sanity_check<USE>();
 
   if_constexpr(do_e && !do_a) epolar0_dotprod(gpu_uind, udirp);
@@ -1141,25 +1140,24 @@ void epolar_ewald_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
 }
 
 void epolar_ewald(int vers) {
-  if (vers == v0) {
+  if (vers == calc::v0) {
     induce(&uind[0][0], &uinp[0][0]);
     epolar0_dotprod(uind, udirp);
-  } else if (vers == v1) {
+  } else if (vers == calc::v1) {
     induce(&uind[0][0], &uinp[0][0]);
-    epolar_ewald_tmpl<v1>(uind, uinp);
-  } else if (vers == v3) {
+    epolar_ewald_tmpl<calc::v1>(uind, uinp);
+  } else if (vers == calc::v3) {
     induce(&uind[0][0], &uinp[0][0]);
-    epolar_ewald_tmpl<v3>(uind, uinp);
-  } else if (vers == v4) {
+    epolar_ewald_tmpl<calc::v3>(uind, uinp);
+  } else if (vers == calc::v4) {
     induce(&uind[0][0], &uinp[0][0]);
-    epolar_ewald_tmpl<v4>(uind, uinp);
-  } else if (vers == v5) {
+    epolar_ewald_tmpl<calc::v4>(uind, uinp);
+  } else if (vers == calc::v5) {
     induce(&uind[0][0], &uinp[0][0]);
-    epolar_ewald_tmpl<v5>(uind, uinp);
-  } else if (vers == v6) {
+    epolar_ewald_tmpl<calc::v5>(uind, uinp);
+  } else if (vers == calc::v6) {
     induce(&uind[0][0], &uinp[0][0]);
-    epolar_ewald_tmpl<v6>(uind, uinp);
+    epolar_ewald_tmpl<calc::v6>(uind, uinp);
   }
-}
 }
 TINKER_NAMESPACE_END

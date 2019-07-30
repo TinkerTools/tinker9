@@ -15,18 +15,18 @@ typedef std::vector<std::array<double, 3>> grad_t;
 
 #define COMPARE_ENERGY_(gpuptr, ref_eng, eps)                                  \
   {                                                                            \
-    double eng = gpu::get_energy(gpuptr);                                      \
+    double eng = get_energy(gpuptr);                                           \
     REQUIRE(eng == Approx(ref_eng).margin(eps));                               \
   }
 #define COMPARE_COUNT_(gpuptr, ref_count)                                      \
   {                                                                            \
-    int count = gpu::get_count(gpuptr);                                        \
+    int count = get_count(gpuptr);                                             \
     REQUIRE(count == ref_count);                                               \
   }
 #define COMPARE_VIR_(gpuptr, ref_v, eps)                                       \
   {                                                                            \
     double vir1[9];                                                            \
-    gpu::get_virial(vir1, gpuptr);                                             \
+    get_virial(vir1, gpuptr);                                                  \
     for (int i = 0; i < 3; ++i) {                                              \
       for (int j = 0; j < 3; ++j) {                                            \
         int k = 3 * i + j;                                                     \
@@ -37,8 +37,8 @@ typedef std::vector<std::array<double, 3>> grad_t;
 #define COMPARE_VIR2_(gpuptr, gpuptr2, ref_v, eps)                             \
   {                                                                            \
     double vir1[9], vir2[9];                                                   \
-    gpu::get_virial(vir1, gpuptr);                                             \
-    gpu::get_virial(vir2, gpuptr2);                                            \
+    get_virial(vir1, gpuptr);                                                  \
+    get_virial(vir2, gpuptr2);                                                 \
     for (int i = 0; i < 3; ++i) {                                              \
       for (int j = 0; j < 3; ++j) {                                            \
         int k = 3 * i + j;                                                     \
@@ -66,18 +66,18 @@ typedef std::vector<std::array<double, 3>> grad_t;
   COMPARE_GRADIENT2_(ref_grad, eps, [](int, int) { return true; })
 #define PRINT_ENERGY_(gpuptr)                                                  \
   {                                                                            \
-    double e_ = gpu::get_energy(gpuptr);                                       \
+    double e_ = get_energy(gpuptr);                                            \
     print(stdout, " ENERGY{:>12.4f}\n", e_);                                   \
   }
 #define PRINT_COUNT_(gpuptr)                                                   \
   {                                                                            \
-    int c_ = gpu::get_count(gpuptr);                                           \
+    int c_ = get_count(gpuptr);                                                \
     print(stdout, " COUNT{:>12d}\n", c_);                                      \
   }
 #define PRINT_VIR_(gpuptr)                                                     \
   {                                                                            \
     double vir1[9];                                                            \
-    gpu::get_virial(vir1, gpuptr);                                             \
+    get_virial(vir1, gpuptr);                                                  \
     for (int i = 0; i < 3; ++i) {                                              \
       print(stdout, " VIRIAL{:>12.4f}{:>12.4f}{:>12.4f}\n", vir1[3 * i],       \
             vir1[3 * i + 1], vir1[3 * i + 2]);                                 \
@@ -86,8 +86,8 @@ typedef std::vector<std::array<double, 3>> grad_t;
 #define PRINT_VIR2_(gpuptr, gpuptr2)                                           \
   {                                                                            \
     double vir1[9], vir2[9];                                                   \
-    gpu::get_virial(vir1, gpuptr);                                             \
-    gpu::get_virial(vir2, gpuptr2);                                            \
+    get_virial(vir1, gpuptr);                                                  \
+    get_virial(vir2, gpuptr2);                                                 \
     for (int i = 0; i < 9; ++i)                                                \
       vir1[i] += vir2[i];                                                      \
     for (int i = 0; i < 3; ++i) {                                              \
@@ -108,8 +108,8 @@ typedef std::vector<std::array<double, 3>> grad_t;
     }                                                                          \
   }
 #define PRINT_GRADIENT_ PRINT_V3_("GRADIENT", gx, gy, gz)
-#define PRINT_COORD_ PRINT_V3_("COORD", gpu::x, gpu::y, gpu::z)
-#define PRINT_VELOCITY_ PRINT_V3_("VELOCITY", gpu::vx, gpu::vy, gpu::vz)
+#define PRINT_COORD_ PRINT_V3_("COORD", x, y, z)
+#define PRINT_VELOCITY_ PRINT_V3_("VELOCITY", vx, vy, vz)
 #define PRINT_GRAD_T_(grad)                                                    \
   {                                                                            \
     for (int i = 0; i < grad.size(); ++i) {                                    \
@@ -122,28 +122,28 @@ typedef std::vector<std::array<double, 3>> grad_t;
                              gpu_v, ref_v, eps_v)                              \
   {                                                                            \
     auto do_ij_ = [](int, int) { return true; };                               \
-    gpu::zero_egv();                                                           \
-    routine(gpu::v3);                                                          \
+    zero_egv();                                                                \
+    routine(calc::v3);                                                         \
     COMPARE_ENERGY_(gpu_e, ref_e, eps_e);                                      \
     REQUIRE(cpu_count == ref_count);                                           \
                                                                                \
-    gpu::zero_egv();                                                           \
-    routine(gpu::v1);                                                          \
+    zero_egv();                                                                \
+    routine(calc::v1);                                                         \
     COMPARE_ENERGY_(gpu_e, ref_e, eps_e);                                      \
     COMPARE_GRADIENT3_(gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);          \
     COMPARE_VIR_(gpu_v, ref_v, eps_v);                                         \
                                                                                \
-    gpu::zero_egv();                                                           \
-    routine(gpu::v4);                                                          \
+    zero_egv();                                                                \
+    routine(calc::v4);                                                         \
     COMPARE_ENERGY_(gpu_e, ref_e, eps_e);                                      \
     COMPARE_GRADIENT3_(gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);          \
                                                                                \
-    gpu::zero_egv();                                                           \
-    routine(gpu::v5);                                                          \
+    zero_egv();                                                                \
+    routine(calc::v5);                                                         \
     COMPARE_GRADIENT3_(gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);          \
                                                                                \
-    gpu::zero_egv();                                                           \
-    routine(gpu::v6);                                                          \
+    zero_egv();                                                                \
+    routine(calc::v6);                                                         \
     COMPARE_GRADIENT3_(gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);          \
     COMPARE_VIR_(gpu_v, ref_v, eps_v);                                         \
   }

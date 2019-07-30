@@ -9,7 +9,7 @@ public:
   static constexpr const char* whitespaces = " \t\n\v\f\r";
 
   /// @return
-  /// True if ch is one of the white characters.
+  /// True if ch is one of the white space characters.
   static bool is_ws(char ch);
 
   template <size_t Len>
@@ -30,7 +30,6 @@ public:
   static void upcase(std::string&);
   static void lowcase(std::string&);
 };
-
 typedef Text text_t;
 TINKER_NAMESPACE_END
 
@@ -158,7 +157,7 @@ public:
   const char* what() const noexcept override { return msg_.c_str(); }
 };
 
-#define m_tinker_throw(msg)                                                    \
+#define TINKER_THROW(msg)                                                      \
   do {                                                                         \
     print_backtrace();                                                         \
     std::string m_ = format("{} at {}:{}", msg, __FILE__, __LINE__);           \

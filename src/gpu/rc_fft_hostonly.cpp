@@ -5,12 +5,7 @@
 
 TINKER_NAMESPACE_BEGIN
 extern std::vector<fft_plan_t>& fft_plans();
-TINKER_NAMESPACE_END
 
-//======================================================================
-
-TINKER_NAMESPACE_BEGIN
-namespace gpu {
 void fft_data(rc_t rc) {
   if (rc & rc_dealloc) {
     int idx = 0;
@@ -101,7 +96,6 @@ void fftback(int pme_unit) {
 #  else
   static_assert(false, "");
 #  endif
-}
 }
 TINKER_NAMESPACE_END
 

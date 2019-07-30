@@ -1,13 +1,12 @@
 #ifndef TINKER_GPU_E_POLAR_H_
 #define TINKER_GPU_E_POLAR_H_
 
-#include "gpu/decl_elec.h"
 #include "mod_polgrp.h"
 #include "util_cxx.h"
+#include "util_elec.h"
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 extern int epolar_electyp;
 extern std::string epolar_electyp_str;
 
@@ -73,7 +72,6 @@ void induce(real* gpu_ud, real* gpu_up);
 void epolar_coulomb(int vers);
 void epolar_ewald(int vers);
 void epolar(int vers);
-}
 TINKER_NAMESPACE_END
 
 #endif

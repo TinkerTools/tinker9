@@ -7,15 +7,13 @@
 #include <sstream>
 
 TINKER_NAMESPACE_BEGIN
-using namespace gpu;
-
 void copyin_tinker_arc(const std::string& arcfile, int first1, int last1,
                        int step) {
 
   if (!(first1 >= 1 && last1 >= first1 && step > 0)) {
     std::string msg = format("Invalid First/Last/Step Values  : {:d}/{:d}/{:d}",
                              first1, last1, step);
-    m_tinker_throw(msg);
+    TINKER_THROW(msg);
   }
 
   // (1, 7, 2) -> 4
@@ -135,7 +133,7 @@ void copyin_tinker_arc(const std::string& arcfile, int first1, int last1,
   } else {
     std::string msg = "Cannot Open File ";
     msg += arcfile;
-    m_tinker_throw(msg);
+    TINKER_THROW(msg);
   }
 
   boxes::xbox = xyzsave[0];

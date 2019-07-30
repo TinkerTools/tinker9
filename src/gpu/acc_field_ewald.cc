@@ -1,4 +1,4 @@
-#include "gpu/acc.h"
+#include "acc_seq.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/decl_pme.h"
 #include "gpu/e_mpole.h"
@@ -6,8 +6,6 @@
 #include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN
-
-namespace gpu {
 // see also subroutine udirect1 in induce.f
 void dfield_ewald_recip_self(real* gpu_field) {
   const int pu = ppme_unit;
@@ -570,6 +568,5 @@ void ufield_ewald(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
 
   ufield_ewald_recip_self(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);
   ufield_ewald_real(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);
-}
 }
 TINKER_NAMESPACE_END

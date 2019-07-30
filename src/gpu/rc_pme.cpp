@@ -6,20 +6,19 @@
 #include "util_switch.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 namespace detail_ {
-std::vector<pme_st>& pme_objs() {
-  static std::vector<pme_st> objs;
+std::vector<pme_t>& pme_objs() {
+  static std::vector<pme_t> objs;
   return objs;
 }
 
-std::vector<pme_st*>& pme_deviceptrs() {
-  static std::vector<pme_st*> ptrs;
+std::vector<pme_t*>& pme_deviceptrs() {
+  static std::vector<pme_t*> ptrs;
   return ptrs;
 }
 }
 
-pme_st& pme_obj(int pme_unit) {
+pme_t& pme_obj(int pme_unit) {
 #if TINKER_DEBUG
   return detail_::pme_objs().at(pme_unit);
 #else
@@ -27,7 +26,7 @@ pme_st& pme_obj(int pme_unit) {
 #endif
 }
 
-pme_st* pme_deviceptr(int pme_unit) {
+pme_t* pme_deviceptr(int pme_unit) {
 #if TINKER_DEBUG
   return detail_::pme_deviceptrs().at(pme_unit);
 #else
@@ -36,8 +35,8 @@ pme_st* pme_deviceptr(int pme_unit) {
 }
 
 static void pme_op_dealloc_(int pu) {
-  pme_st& st = pme_obj(pu);
-  pme_st* dptr = pme_deviceptr(pu);
+  pme_t& st = pme_obj(pu);
+  pme_t* dptr = pme_deviceptr(pu);
 
   check_cudart(cudaFree(st.igrid));
   check_cudart(cudaFree(st.bsmod1));
@@ -65,7 +64,7 @@ static int pme_op_alloc_(int& unit, double aewald, int nfft1, int nfft2,
   }
 
   if (count == 0 || unique == true) {
-    detail_::pme_objs().emplace_back(pme_st());
+    detail_::pme_objs().emplace_back(pme_t());
     detail_::pme_deviceptrs().emplace_back(nullptr);
     auto& st = detail_::pme_objs()[idx];
     auto& dptr = detail_::pme_deviceptrs()[idx];
@@ -82,7 +81,7 @@ static int pme_op_alloc_(int& unit, double aewald, int nfft1, int nfft2,
     size = nfft1 * nfft2 * nfft3 * rs;
     check_cudart(cudaMalloc(&st.qgrid, 2 * size));
 
-    size = sizeof(pme_st);
+    size = sizeof(pme_t);
     check_cudart(cudaMalloc(&dptr, size));
 
     st.aewald = aewald;
@@ -102,8 +101,8 @@ static void pme_op_copyin_(int unit) {
   if (unit < 0)
     return;
 
-  pme_st& st = pme_obj(unit);
-  pme_st* dptr = pme_deviceptr(unit);
+  pme_t& st = pme_obj(unit);
+  pme_t* dptr = pme_deviceptr(unit);
 
   // This code assumes that the FFT grids of an energy term will not change in a
   // calculation.
@@ -127,9 +126,8 @@ static void pme_op_copyin_(int unit) {
   TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft3, &st.bsorder);
   copyin_array(st.bsmod3, bsmodbuf.data(), st.nfft3);
 
-  size_t size = sizeof(pme_st);
+  size_t size = sizeof(pme_t);
   check_cudart(cudaMemcpy(dptr, &st, size, cudaMemcpyHostToDevice));
-}
 }
 TINKER_NAMESPACE_END
 
@@ -137,7 +135,6 @@ TINKER_NAMESPACE_END
 #include "gpu/e_polar.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 
 int use_ewald() { return limits::use_ewald; }
 
@@ -203,7 +200,7 @@ void pme_data(rc_t rc) {
       check_cudart(cudaMalloc(&fphidp, 20 * n * rs));
 
       // if (vir_m), it implies use virial and use epolar
-      if (use_data & use_virial)
+      if (use_data & calc::virial)
         check_cudart(cudaMalloc(&vir_m, 9 * rs));
       else
         vir_m = nullptr;
@@ -225,7 +222,7 @@ void pme_data(rc_t rc) {
     if (use_potent(polar_term)) {
       pme_op_alloc_(ppme_unit, ewald::apewald, pme::nefft1, pme::nefft2,
                     pme::nefft3, pme::bsporder, unique_grids);
-      if (use_data & use_virial) {
+      if (use_data & calc::virial) {
         unique_grids = true;
         pme_op_alloc_(pvpme_unit, ewald::apewald, pme::nefft1, pme::nefft2,
                       pme::nefft3, pme::bsporder, unique_grids);
@@ -251,6 +248,5 @@ void pme_data(rc_t rc) {
   }
 
   fft_data(rc);
-}
 }
 TINKER_NAMESPACE_END

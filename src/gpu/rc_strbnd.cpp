@@ -4,7 +4,6 @@
 #include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 int nstrbnd;
 int (*isb)[3];
 real (*sbk)[2];
@@ -49,5 +48,4 @@ void estrbnd_data(rc_t rc) {
 
 extern void estrbnd_acc_impl_(int vers);
 void estrbnd(int vers) { estrbnd_acc_impl_(vers); }
-}
 TINKER_NAMESPACE_END

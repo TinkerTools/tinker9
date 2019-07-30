@@ -5,7 +5,6 @@
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 extern int ntors;
 extern int (*itors)[4];
 extern real (*tors1)[4];
@@ -22,7 +21,6 @@ extern real* vir_et;
 void etors_data(rc_t rc);
 
 void etors(int vers);
-}
 TINKER_NAMESPACE_END
 
 #endif

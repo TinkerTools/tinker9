@@ -10,7 +10,7 @@ static const char* bondterm_only = R"**(
 bondterm  only
 )**";
 
-static int usage = gpu::use_xyz | gpu::vmask;
+static int usage = calc::xyz | calc::vmask;
 
 static const double ref_g_bond_trpcage[][3] = {
     {-4.5478, -0.0994, -10.7646},  {2.3617, 9.7931, -0.5016},
@@ -193,9 +193,8 @@ TEST_CASE("Bond-Trpcage", "[ff][ebond][harmonic][trpcage]") {
                              {47.686, 792.043, 59.777},
                              {44.572, 59.777, 1049.659}};
 
-  COMPARE_BONDED_FORCE(gpu::ebond, gpu::eb, ref_e, eps_e, gpu::nbond, ref_count,
-                       gx, gy, gz, ref_g_bond_trpcage, eps_g, gpu::vir_eb,
-                       ref_v, eps_v);
+  COMPARE_BONDED_FORCE(ebond, eb, ref_e, eps_e, nbond, ref_count, gx, gy, gz,
+                       ref_g_bond_trpcage, eps_g, vir_eb, ref_v, eps_v);
 
   tinker_gpu_runtime_finish();
   test_end();

@@ -15,9 +15,7 @@
 #include "e_vdw.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 void energy_potential(int vers);
-}
 TINKER_NAMESPACE_END
 
 #endif

@@ -12,7 +12,7 @@ multipoleterm  none
 polarizeterm   none
 )**";
 
-static int usage = gpu::use_xyz | gpu::vmask;
+static int usage = calc::xyz | calc::vmask;
 
 static const double ref_g_bonded_trpcage[][3] = {
     {-8.1695, 0.3312, -10.8960},   {4.3225, -2.3232, -4.7012},
@@ -194,7 +194,7 @@ TEST_CASE("Bonded-Trpcage", "[ff][ebonded][trpcage]") {
                              {105.806, 698.628, 26.980},
                              {258.684, 26.980, 1106.334}};
 
-  COMPARE_BONDED_FORCE(gpu::energy_potential, esum, ref_e, eps_e, gpu::nbond,
+  COMPARE_BONDED_FORCE(energy_potential, esum, ref_e, eps_e, nbond,
                        ref_bond_count, gx, gy, gz, ref_g_bonded_trpcage, eps_g,
                        vir, ref_v, eps_v);
 

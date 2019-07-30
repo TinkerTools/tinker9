@@ -1,4 +1,4 @@
-#include "gpu/acc.h"
+#include "acc_seq.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_polar.h"
 #include "gpu/rc.h"
@@ -7,7 +7,6 @@
 #include <ext/tinker/tinker_rt.h>
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 // similar to uscale0a/uscale0b routines
 static inline void diag_precond(const real (*rsd)[3], const real (*rsdp)[3],
                                 real (*zrsd)[3], real (*zrsdp)[3]) {
@@ -253,8 +252,7 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
   if (iter >= maxiter || eps > epsold) {
     TINKER_RT(prterr)();
-    m_tinker_throw(" INDUCE  --  Warning, Induced Dipoles are not Converged");
+    TINKER_THROW(" INDUCE  --  Warning, Induced Dipoles are not Converged");
   }
-}
 }
 TINKER_NAMESPACE_END

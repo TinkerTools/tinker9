@@ -8,8 +8,8 @@ using namespace TINKER_NAMESPACE;
 using namespace test;
 
 static const char* verlet_intg = "integrator  verlet\n";
-static int usage_ = gpu::use_xyz | gpu::use_vel | gpu::use_mass |
-    gpu::use_energy | gpu::use_grad | gpu::use_md;
+static int usage_ =
+    calc::xyz | calc::vel | calc::mass | calc::energy | calc::grad | calc::md;
 
 static double arbox_kin[] = {
     64.648662, 64.666678, 64.684785, 64.702988, 64.721287, 64.739686, 64.758188,
@@ -76,8 +76,8 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]") {
   const double eps_e = 0.0001;
   std::vector<double> epots, eksums;
   for (int i = 1; i <= nsteps; ++i) {
-    gpu::velocity_verlet(i, dt_ps);
-    epots.push_back(gpu::get_energy(esum));
+    velocity_verlet(i, dt_ps);
+    epots.push_back(get_energy(esum));
     eksums.push_back(eksum);
   }
 

@@ -3,10 +3,9 @@
 #include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 extern void polargroup_data(rc_t);
 void potential_data(rc_t rc) {
-  if ((use_data & vmask) == 0)
+  if ((use_data & calc::vmask) == 0)
     return;
 
   egv_data(rc);
@@ -63,18 +62,17 @@ void energy_potential(int vers) {
   if (use_potent(vdw_term))
     evdw(vers);
 
-  gpu::elec_init(vers);
+  elec_init(vers);
   if (use_potent(mpole_term))
     empole(vers);
   if (use_potent(polar_term))
     epolar(vers);
-  gpu::torque(vers);
+  torque(vers);
 
   sum_energies(vers);
 
   // list update
 
   nblist_data(rc_evolve);
-}
 }
 TINKER_NAMESPACE_END

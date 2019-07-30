@@ -4,7 +4,6 @@
 #include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 // module urey
 int nurey;
 int (*iury)[3];
@@ -56,5 +55,4 @@ void eurey_data(rc_t rc) {
 
 extern void eurey_acc_impl_(int vers);
 void eurey(int vers) { eurey_acc_impl_(vers); }
-}
 TINKER_NAMESPACE_END

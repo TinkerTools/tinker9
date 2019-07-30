@@ -8,34 +8,34 @@ using namespace test;
 
 #define COMPARE_CODE_BLOCK1_                                                   \
   {                                                                            \
-    gpu::zero_egv();                                                           \
-    gpu::evdw_hal(gpu::v0);                                                    \
-    COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
+    zero_egv();                                                                \
+    evdw_hal(calc::v0);                                                        \
+    COMPARE_ENERGY_(ev, ref_eng, eps);                                         \
                                                                                \
-    gpu::zero_egv();                                                           \
-    gpu::evdw_hal(gpu::v1);                                                    \
-    COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
+    zero_egv();                                                                \
+    evdw_hal(calc::v1);                                                        \
+    COMPARE_ENERGY_(ev, ref_eng, eps);                                         \
     COMPARE_GRADIENT_(ref_grad, eps);                                          \
-    COMPARE_VIR_(gpu::vir_ev, ref_v, eps);                                     \
+    COMPARE_VIR_(vir_ev, ref_v, eps);                                          \
                                                                                \
-    gpu::zero_egv();                                                           \
-    gpu::evdw_hal(gpu::v3);                                                    \
-    COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
-    COMPARE_COUNT_(gpu::nev, ref_count);                                       \
+    zero_egv();                                                                \
+    evdw_hal(calc::v3);                                                        \
+    COMPARE_ENERGY_(ev, ref_eng, eps);                                         \
+    COMPARE_COUNT_(nev, ref_count);                                            \
                                                                                \
-    gpu::zero_egv();                                                           \
-    gpu::evdw_hal(gpu::v4);                                                    \
-    COMPARE_ENERGY_(gpu::ev, ref_eng, eps);                                    \
-    COMPARE_GRADIENT_(ref_grad, eps);                                          \
-                                                                               \
-    gpu::zero_egv();                                                           \
-    gpu::evdw_hal(gpu::v5);                                                    \
+    zero_egv();                                                                \
+    evdw_hal(calc::v4);                                                        \
+    COMPARE_ENERGY_(ev, ref_eng, eps);                                         \
     COMPARE_GRADIENT_(ref_grad, eps);                                          \
                                                                                \
-    gpu::zero_egv();                                                           \
-    gpu::evdw_hal(gpu::v6);                                                    \
+    zero_egv();                                                                \
+    evdw_hal(calc::v5);                                                        \
     COMPARE_GRADIENT_(ref_grad, eps);                                          \
-    COMPARE_VIR_(gpu::vir_ev, ref_v, eps);                                     \
+                                                                               \
+    zero_egv();                                                                \
+    evdw_hal(calc::v6);                                                        \
+    COMPARE_GRADIENT_(ref_grad, eps);                                          \
+    COMPARE_VIR_(vir_ev, ref_v, eps);                                          \
   }
 
 TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
@@ -46,8 +46,8 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
   file fke("test_nacl.key", key);
 
   int usage = 0;
-  usage |= gpu::use_xyz;
-  usage |= gpu::vmask;
+  usage |= calc::xyz;
+  usage |= calc::vmask;
 
   const double eps = 1.0e-5;
 
@@ -122,46 +122,46 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
 
 #define COMPARE_CODE_BLOCK2_                                                   \
   {                                                                            \
-    gpu::zero_egv();                                                           \
-    gpu::elec_init(gpu::v0);                                                   \
-    gpu::empole(gpu::v0);                                                      \
-    gpu::torque(gpu::v0);                                                      \
-    COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
+    zero_egv();                                                                \
+    elec_init(calc::v0);                                                       \
+    empole(calc::v0);                                                          \
+    torque(calc::v0);                                                          \
+    COMPARE_ENERGY_(em, ref_eng, eps);                                         \
                                                                                \
-    gpu::zero_egv();                                                           \
-    gpu::elec_init(gpu::v1);                                                   \
-    gpu::empole(gpu::v1);                                                      \
-    gpu::torque(gpu::v1);                                                      \
-    COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
+    zero_egv();                                                                \
+    elec_init(calc::v1);                                                       \
+    empole(calc::v1);                                                          \
+    torque(calc::v1);                                                          \
+    COMPARE_ENERGY_(em, ref_eng, eps);                                         \
     COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
-    COMPARE_VIR2_(gpu::vir_em, vir_trq, ref_v, eps_v);                         \
+    COMPARE_VIR2_(vir_em, vir_trq, ref_v, eps_v);                              \
                                                                                \
-    gpu::zero_egv();                                                           \
-    gpu::elec_init(gpu::v3);                                                   \
-    gpu::empole(gpu::v3);                                                      \
-    gpu::torque(gpu::v3);                                                      \
-    COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
-    COMPARE_COUNT_(gpu::nem, ref_count);                                       \
+    zero_egv();                                                                \
+    elec_init(calc::v3);                                                       \
+    empole(calc::v3);                                                          \
+    torque(calc::v3);                                                          \
+    COMPARE_ENERGY_(em, ref_eng, eps);                                         \
+    COMPARE_COUNT_(nem, ref_count);                                            \
                                                                                \
-    gpu::zero_egv();                                                           \
-    gpu::elec_init(gpu::v4);                                                   \
-    gpu::empole(gpu::v4);                                                      \
-    gpu::torque(gpu::v4);                                                      \
-    COMPARE_ENERGY_(gpu::em, ref_eng, eps);                                    \
-    COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
-                                                                               \
-    gpu::zero_egv();                                                           \
-    gpu::elec_init(gpu::v5);                                                   \
-    gpu::empole(gpu::v5);                                                      \
-    gpu::torque(gpu::v5);                                                      \
+    zero_egv();                                                                \
+    elec_init(calc::v4);                                                       \
+    empole(calc::v4);                                                          \
+    torque(calc::v4);                                                          \
+    COMPARE_ENERGY_(em, ref_eng, eps);                                         \
     COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
                                                                                \
-    gpu::zero_egv();                                                           \
-    gpu::elec_init(gpu::v6);                                                   \
-    gpu::empole(gpu::v6);                                                      \
-    gpu::torque(gpu::v6);                                                      \
+    zero_egv();                                                                \
+    elec_init(calc::v5);                                                       \
+    empole(calc::v5);                                                          \
+    torque(calc::v5);                                                          \
     COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
-    COMPARE_VIR2_(gpu::vir_em, vir_trq, ref_v, eps_v);                         \
+                                                                               \
+    zero_egv();                                                                \
+    elec_init(calc::v6);                                                       \
+    empole(calc::v6);                                                          \
+    torque(calc::v6);                                                          \
+    COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
+    COMPARE_VIR2_(vir_em, vir_trq, ref_v, eps_v);                              \
   }
 
 TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
@@ -172,10 +172,10 @@ TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
   file fke("test_nacl.key", key);
 
   int usage = 0;
-  usage |= gpu::use_xyz;
-  usage |= gpu::use_energy;
-  usage |= gpu::use_grad;
-  usage |= gpu::use_virial;
+  usage |= calc::xyz;
+  usage |= calc::energy;
+  usage |= calc::grad;
+  usage |= calc::virial;
 
   const double eps = 1.0e-5;
 
@@ -213,10 +213,10 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]") {
   file fke("test_nacl.key", key);
 
   int usage = 0;
-  usage |= gpu::use_xyz;
-  usage |= gpu::use_energy;
-  usage |= gpu::use_grad;
-  usage |= gpu::use_virial;
+  usage |= calc::xyz;
+  usage |= calc::energy;
+  usage |= calc::grad;
+  usage |= calc::virial;
 
   const double eps = 5.0e-4;
 

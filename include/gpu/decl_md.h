@@ -5,7 +5,6 @@
 #include "mod_md.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 //======================================================================
 // integrator
 
@@ -30,13 +29,10 @@ void mdsave_synchronize();
 //======================================================================
 
 void md_data(rc_t rc);
-}
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 void velocity_verlet(int istep, real dt_ps);
-}
 TINKER_NAMESPACE_END
 
 #endif

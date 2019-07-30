@@ -10,7 +10,7 @@ static const char* tortorterm_only = R"**(
 tortorterm  only
 )**";
 
-static int usage = gpu::use_xyz | gpu::vmask;
+static int usage = calc::xyz | calc::vmask;
 
 static const double ref_g_tortor_trpcage[][3] = {
     {0.0000, 0.0000, 0.0000},   {0.0000, 0.0000, 0.0000},
@@ -191,9 +191,8 @@ TEST_CASE("Tortor-Trpcage", "[ff][etortor][trpcage]") {
   const double ref_v[][3] = {
       {0.384, -0.444, 0.347}, {-0.444, 1.642, 0.528}, {0.347, 0.528, -2.027}};
 
-  COMPARE_BONDED_FORCE(gpu::etortor, gpu::ett, ref_e, eps_e, gpu::ntortor,
-                       ref_count, gx, gy, gz, ref_g_tortor_trpcage, eps_g,
-                       gpu::vir_ett, ref_v, eps_v);
+  COMPARE_BONDED_FORCE(etortor, ett, ref_e, eps_e, ntortor, ref_count, gx, gy,
+                       gz, ref_g_tortor_trpcage, eps_g, vir_ett, ref_v, eps_v);
 
   tinker_gpu_runtime_finish();
   test_end();

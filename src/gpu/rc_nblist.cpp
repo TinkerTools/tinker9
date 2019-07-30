@@ -5,7 +5,6 @@
 #include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 static int use_vdw_list() {
   int ret = 0;
   if (use_potent(vdw_term))
@@ -222,7 +221,7 @@ void nblist_data(rc_t rc) {
       nblist_build_acc_impl_(mlist_obj_, mlst);
 
     if (rc & rc_evolve) {
-      if (use_data & use_traj) {
+      if (use_data & calc::traj) {
         mlist_obj_.x = x;
         mlist_obj_.y = y;
         mlist_obj_.z = z;
@@ -250,6 +249,5 @@ void nblist_data(rc_t rc) {
     if (rc & rc_copyin) {
     }
   }
-}
 }
 TINKER_NAMESPACE_END

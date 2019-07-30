@@ -4,8 +4,6 @@
 #include "util_macro.h"
 #include <cmath>
 
-TINKER_NAMESPACE_BEGIN
-
 #define INT_ABS(x) abs(x)
 
 #ifdef TINKER_GPU_DOUBLE
@@ -49,6 +47,7 @@ TINKER_NAMESPACE_BEGIN
 #define REAL_SQ(x) ((x) * (x))
 #define REAL_CUBE(x) ((x) * (x) * (x))
 
+TINKER_NAMESPACE_BEGIN
 constexpr real twosix = 1.12246204830937298143;    // 2**(1/6)
 constexpr real sqrttwo = 1.41421356237309504880;   // sqrt(2)
 constexpr real sqrtthree = 1.73205080756887729353; // sqrt(3)
@@ -60,7 +59,9 @@ constexpr real pi = M_PI;
 constexpr real radian = 57.2957795130823208768;    // 180/PI
 constexpr real radinv = 0.01745329251994329576924; // PI/180
 constexpr real sqrtpi = 1.77245385090551602730;    // sqrt(PI)
+TINKER_NAMESPACE_END
 
+TINKER_NAMESPACE_BEGIN
 template <class T>
 T max_of(T a) {
   return a;
@@ -93,7 +94,6 @@ T min_of(T a, T b, Ts... cs) {
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 /**
  * n-dimensional dot product
  * ans = sum (a[i] * b[i]) for i in [1, 2, ..., n]
@@ -115,7 +115,6 @@ double dotprod(const double* gpu_a, const double* gpu_b, int cpu_n);
  */
 void scale_data(float* gpu_dst, float scal, int nelem);
 void scale_data(double* gpu_dst, double scal, int nelem);
-}
 TINKER_NAMESPACE_END
 
 #endif

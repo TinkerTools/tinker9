@@ -3,7 +3,6 @@
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 static void (*integrator_)(int, real);
 
 void integrate_data(rc_t rc) {
@@ -105,11 +104,10 @@ void propagate(int nsteps, real dt_ps, void (*itg)(int, real)) {
 }
 
 void md_data(rc_t rc) {
-  if ((use_md & use_data) == 0)
+  if ((calc::md & use_data) == 0)
     return;
 
   integrate_data(rc);
   mdsave_data(rc);
-}
 }
 TINKER_NAMESPACE_END

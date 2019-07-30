@@ -7,7 +7,6 @@
 #include "util_switch.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 int epolar_electyp;
 std::string epolar_electyp_str;
 
@@ -87,7 +86,7 @@ void epolar_data(rc_t rc) {
 
     alloc_nev(&nep, &ep, &vir_ep);
 
-    if (use_data & use_grad) {
+    if (use_data & calc::grad) {
       check_cudart(cudaMalloc(&ufld, rs * 3 * n));
       check_cudart(cudaMalloc(&dufld, rs * 6 * n));
     } else {
@@ -197,6 +196,5 @@ void epolar(int vers) {
     epolar_coulomb(vers);
   else if (epolar_electyp == elec_ewald)
     epolar_ewald(vers);
-}
 }
 TINKER_NAMESPACE_END

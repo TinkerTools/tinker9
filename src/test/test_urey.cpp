@@ -10,7 +10,7 @@ static const char* ureyterm_only = R"**(
 ureyterm  only
 )**";
 
-static int usage = gpu::use_xyz | gpu::vmask;
+static int usage = calc::xyz | calc::vmask;
 
 static const double ref_g_urey_h2o10[][3] = {
     {0.0000, 0.0000, 0.0000},   {-0.1502, -0.0096, 0.2033},
@@ -55,9 +55,8 @@ TEST_CASE("Urey-Ten-Water", "[ff][eurey][h2o10]") {
   const double ref_v[][3] = {
       {2.318, -0.827, -1.078}, {-0.827, 3.061, 0.062}, {-1.078, 0.062, 4.915}};
 
-  COMPARE_BONDED_FORCE(gpu::eurey, gpu::eub, ref_e, eps_e, gpu::nurey,
-                       ref_count, gx, gy, gz, ref_g_urey_h2o10, eps_g,
-                       gpu::vir_eub, ref_v, eps_v);
+  COMPARE_BONDED_FORCE(eurey, eub, ref_e, eps_e, nurey, ref_count, gx, gy, gz,
+                       ref_g_urey_h2o10, eps_g, vir_eub, ref_v, eps_v);
 
   tinker_gpu_runtime_finish();
   test_end();

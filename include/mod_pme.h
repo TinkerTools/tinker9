@@ -18,7 +18,7 @@ TINKER_NAMESPACE_BEGIN
  * allocate (qgrid(2,nfft1,nfft2,nfft3)) !! real*8
  * allocate (qfac(nfft1,nfft2,nfft3))    !! real*8
  */
-struct pme_st {
+struct pme_t {
   real aewald;
   int nfft1, nfft2, nfft3, bsorder;
   int* igrid;                     // deviceptr

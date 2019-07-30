@@ -1,17 +1,15 @@
-#include "gpu/acc.h"
+#include "acc_seq.h"
 #include "gpu/decl_mdstate.h"
 #include "gpu/e_bond.h"
 
 // TODO: test morse potential
 
 TINKER_NAMESPACE_BEGIN
-
-namespace gpu {
 template <int USE, int BNDTYP>
 void ebond_tmpl() {
-  constexpr int do_e = USE & use_energy;
-  constexpr int do_g = USE & use_grad;
-  constexpr int do_v = USE & use_virial;
+  constexpr int do_e = USE & calc::energy;
+  constexpr int do_g = USE & calc::grad;
+  constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
   #pragma acc parallel loop independent\
@@ -103,33 +101,32 @@ void ebond_tmpl() {
 
 void ebond_acc_impl_(int vers) {
   if (bndtyp == bond_harmonic)
-    if (vers == v0 || vers == v3)
-      ebond_tmpl<v0, bond_harmonic>();
-    else if (vers == v1)
-      ebond_tmpl<v1, bond_harmonic>();
-    else if (vers == v4)
-      ebond_tmpl<v4, bond_harmonic>();
-    else if (vers == v5)
-      ebond_tmpl<v5, bond_harmonic>();
-    else if (vers == v6)
-      ebond_tmpl<v6, bond_harmonic>();
+    if (vers == calc::v0 || vers == calc::v3)
+      ebond_tmpl<calc::v0, bond_harmonic>();
+    else if (vers == calc::v1)
+      ebond_tmpl<calc::v1, bond_harmonic>();
+    else if (vers == calc::v4)
+      ebond_tmpl<calc::v4, bond_harmonic>();
+    else if (vers == calc::v5)
+      ebond_tmpl<calc::v5, bond_harmonic>();
+    else if (vers == calc::v6)
+      ebond_tmpl<calc::v6, bond_harmonic>();
     else
       assert(false);
   else if (bndtyp == bond_morse)
-    if (vers == v0 || vers == v3)
-      ebond_tmpl<v0, bond_morse>();
-    else if (vers == v1)
-      ebond_tmpl<v1, bond_morse>();
-    else if (vers == v4)
-      ebond_tmpl<v4, bond_morse>();
-    else if (vers == v5)
-      ebond_tmpl<v5, bond_morse>();
-    else if (vers == v6)
-      ebond_tmpl<v6, bond_morse>();
+    if (vers == calc::v0 || vers == calc::v3)
+      ebond_tmpl<calc::v0, bond_morse>();
+    else if (vers == calc::v1)
+      ebond_tmpl<calc::v1, bond_morse>();
+    else if (vers == calc::v4)
+      ebond_tmpl<calc::v4, bond_morse>();
+    else if (vers == calc::v5)
+      ebond_tmpl<calc::v5, bond_morse>();
+    else if (vers == calc::v6)
+      ebond_tmpl<calc::v6, bond_morse>();
     else
       assert(false);
   else
     assert(false);
-}
 }
 TINKER_NAMESPACE_END

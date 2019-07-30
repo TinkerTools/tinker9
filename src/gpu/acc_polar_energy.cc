@@ -2,8 +2,6 @@
 #include "gpu/e_polar.h"
 
 TINKER_NAMESPACE_BEGIN
-
-namespace gpu {
 void epolar0_dotprod(const real (*gpu_uind)[3], const real (*gpu_udirp)[3]) {
   real e = 0;
   #pragma acc parallel loop independent copy(e) reduction(+:e)\
@@ -17,6 +15,5 @@ void epolar0_dotprod(const real (*gpu_uind)[3], const real (*gpu_udirp)[3]) {
   const real f = -0.5 * electric / dielec;
   #pragma acc serial deviceptr(ep)
   { *ep = f * e; }
-}
 }
 TINKER_NAMESPACE_END

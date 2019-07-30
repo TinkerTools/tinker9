@@ -1,7 +1,6 @@
 #include "gpu/decl_mdstate.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 void sum_energy_acc_impl_(real* ebuf, int top) {
   #pragma acc serial deviceptr(ebuf,esum)
   {
@@ -17,6 +16,5 @@ void sum_virial_acc_impl_(real* vbuf, int top, int virlen) {
       for (int j = 0; j < 9; ++j)
         vir[j] += vbuf[i * virlen + j];
   }
-}
 }
 TINKER_NAMESPACE_END

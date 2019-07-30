@@ -7,7 +7,6 @@
 #include <map>
 
 TINKER_NAMESPACE_BEGIN
-namespace gpu {
 evdw_t vdwtyp;
 
 const char* vdwtyp_str(evdw_t typ) {
@@ -219,6 +218,5 @@ void evdw(int vers) {
     evdw_hal(vers);
   else if (vdwtyp == vdw_gauss)
     evdw_gauss(vers);
-}
 }
 TINKER_NAMESPACE_END
