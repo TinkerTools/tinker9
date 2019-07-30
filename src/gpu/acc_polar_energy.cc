@@ -1,5 +1,5 @@
-#include "gpu/decl_mdstate.h"
 #include "gpu/e_polar.h"
+#include "util_mdstate.h"
 
 TINKER_NAMESPACE_BEGIN
 void epolar0_dotprod(const real (*gpu_uind)[3], const real (*gpu_udirp)[3]) {

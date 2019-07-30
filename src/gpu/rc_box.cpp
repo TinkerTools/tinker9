@@ -1,6 +1,7 @@
-#include "gpu/decl_mdstate.h"
-#include "gpu/rc.h"
 #include "mod_box.h"
+#include "util_mdstate.h"
+#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/tinker_rt.h>
 
 TINKER_NAMESPACE_BEGIN
 void box_data(rc_t rc) {

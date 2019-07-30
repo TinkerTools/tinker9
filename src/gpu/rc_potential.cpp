@@ -1,5 +1,5 @@
-#include "gpu/decl_mdstate.h"
 #include "gpu/e_potential.h"
+#include "util_mdstate.h"
 #include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN

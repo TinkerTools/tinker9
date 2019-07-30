@@ -1,8 +1,8 @@
-#include "gpu/decl_mdstate.h"
 #include "gpu/e_vdw.h"
-#include "gpu/rc.h"
 #include "mod_nblist.h"
+#include "util_mdstate.h"
 #include "util_potent.h"
+#include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
 static int use_vdw_list() {

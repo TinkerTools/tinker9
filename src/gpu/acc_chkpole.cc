@@ -1,6 +1,6 @@
 #include "acc_seq.h"
-#include "gpu/decl_mdstate.h"
 #include "gpu/e_mpole.h"
+#include "util_mdstate.h"
 
 TINKER_NAMESPACE_BEGIN
 void chkpole() {

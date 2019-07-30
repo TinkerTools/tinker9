@@ -1,6 +1,6 @@
 #include "acc_seq.h"
-#include "gpu/decl_mdstate.h"
 #include "gpu/e_vdw.h"
+#include "util_mdstate.h"
 
 // TODO: test lj, buck, mm3hb, gauss, and mutant
 // TODO: add vdw correction

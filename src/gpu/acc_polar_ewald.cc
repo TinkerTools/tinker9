@@ -1,7 +1,7 @@
 #include "acc_seq.h"
-#include "gpu/decl_mdstate.h"
-#include "gpu/decl_pme.h"
 #include "gpu/e_polar.h"
+#include "util_mdstate.h"
+#include "util_pme.h"
 
 TINKER_NAMESPACE_BEGIN
 template <int USE>

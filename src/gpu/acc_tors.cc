@@ -1,6 +1,6 @@
 #include "acc_seq.h"
-#include "gpu/decl_mdstate.h"
 #include "gpu/e_tors.h"
+#include "util_mdstate.h"
 
 // TOOD: use_smooth version
 

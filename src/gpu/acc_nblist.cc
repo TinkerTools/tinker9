@@ -1,5 +1,5 @@
 #include "acc_seq.h"
-#include "gpu/decl_mdstate.h"
+#include "util_mdstate.h"
 
 #ifdef TINKER_HOSTONLY
 #  include <algorithm>

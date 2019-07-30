@@ -1,8 +1,8 @@
 #include "acc_seq.h"
-#include "gpu/decl_mdstate.h"
 #include "gpu/e_angle.h"
 #include "gpu/e_bond.h"
 #include "gpu/e_strbnd.h"
+#include "util_mdstate.h"
 
 TINKER_NAMESPACE_BEGIN
 template <int USE>

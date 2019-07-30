@@ -1,5 +1,4 @@
-#include "gpu/decl_pme.h"
-#include "gpu/rc.h"
+#include "util_pme.h"
 
 TINKER_NAMESPACE_BEGIN
 std::vector<fft_plan_t>& fft_plans() {

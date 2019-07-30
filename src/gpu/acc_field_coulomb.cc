@@ -1,6 +1,6 @@
 #include "acc_seq.h"
-#include "gpu/decl_mdstate.h"
 #include "gpu/e_polar.h"
+#include "util_mdstate.h"
 
 TINKER_NAMESPACE_BEGIN
 // see also subroutine dfield0b in induce.f

@@ -1,8 +1,8 @@
 #include "files.h"
-#include "gpu/decl_md.h"
 #include "test/ff.h"
 #include "test/rt.h"
 #include "test/test.h"
+#include "util_md.h"
 
 using namespace TINKER_NAMESPACE;
 using namespace test;

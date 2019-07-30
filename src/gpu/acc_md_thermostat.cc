@@ -1,4 +1,4 @@
-#include "gpu/decl_mdstate.h"
+#include "util_mdstate.h"
 #include "util_random.h"
 #include <ext/tinker/tinker_mod.h>
 

@@ -1,10 +1,10 @@
-#include "gpu/decl_mdstate.h"
-#include "gpu/decl_pme.h"
 #include "gpu/e_polar.h"
-#include "gpu/rc.h"
 #include "util_io.h"
+#include "util_mdstate.h"
+#include "util_pme.h"
 #include "util_potent.h"
 #include "util_switch.h"
+#include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
 int epolar_electyp;

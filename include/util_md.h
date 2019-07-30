@@ -1,8 +1,7 @@
-#ifndef TINKER_GPU_DECL_MD_H_
-#define TINKER_GPU_DECL_MD_H_
+#ifndef TINKER_UTIL_MD_H_
+#define TINKER_UTIL_MD_H_
 
-#include "decl_mdstate.h"
-#include "mod_md.h"
+#include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 //======================================================================

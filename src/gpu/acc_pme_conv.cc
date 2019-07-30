@@ -1,6 +1,6 @@
-#include "gpu/decl_mdstate.h"
-#include "gpu/decl_pme.h"
 #include "util_elec.h"
+#include "util_mdstate.h"
+#include "util_pme.h"
 
 TINKER_NAMESPACE_BEGIN
 template <int DO_V>

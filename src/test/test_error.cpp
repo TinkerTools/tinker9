@@ -1,8 +1,8 @@
 #define TINKER_ALWAYS_CHECK_CUDART
 
-#include "gpu/rc.h"
 #include "test/test.h"
 #include "util_io.h"
+#include "util_rc_man.h"
 
 using namespace TINKER_NAMESPACE;
 

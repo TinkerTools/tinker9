@@ -1,4 +1,4 @@
-#include "gpu/decl_mdstate.h"
+#include "util_mdstate.h"
 
 TINKER_NAMESPACE_BEGIN
 void sum_energy_acc_impl_(real* ebuf, int top) {

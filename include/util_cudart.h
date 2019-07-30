@@ -1,5 +1,5 @@
-#ifndef TINKER_SRC_GPU_RC_CUDART_H_
-#define TINKER_SRC_GPU_RC_CUDART_H_
+#ifndef TINKER_UTIL_CUDART_H_
+#define TINKER_UTIL_CUDART_H_
 
 #ifndef TINKER_HOSTONLY
 #  include <cuda_runtime.h>

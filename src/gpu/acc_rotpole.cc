@@ -1,5 +1,5 @@
-#include "gpu/decl_mdstate.h"
 #include "util_elec.h"
+#include "util_mdstate.h"
 
 TINKER_NAMESPACE_BEGIN
 #pragma acc routine seq

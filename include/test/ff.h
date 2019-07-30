@@ -1,9 +1,9 @@
 #ifndef TINKER_TEST_FF_H_
 #define TINKER_TEST_FF_H_
 
-#include "gpu/decl_mdstate.h"
 #include "gpu/e_potential.h"
 #include "util_io.h"
+#include "util_mdstate.h"
 #include <array>
 #include <vector>
 

@@ -1,6 +1,6 @@
-#include "gpu/decl_mdstate.h"
-#include "gpu/decl_pme.h"
 #include "gpu/e_mpole.h"
+#include "util_mdstate.h"
+#include "util_pme.h"
 
 /**
  * @file

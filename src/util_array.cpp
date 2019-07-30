@@ -1,5 +1,5 @@
 #include "util_array.h"
-#include "gpu/rc.h"
+#include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 template <class T>
