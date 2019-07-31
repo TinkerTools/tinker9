@@ -1,6 +1,6 @@
 #include "acc_seq.h"
 #include "gpu/e_bond.h"
-#include "util_mdstate.h"
+#include "mod_md.h"
 
 // TODO: test morse potential
 

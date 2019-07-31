@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_POLGRP_H_
 #define TINKER_MOD_POLGRP_H_
 
-#include "util_cxx.h"
+#include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 struct polargroup_t {
@@ -20,6 +20,7 @@ struct polargroup_t {
 TINKER_EXTERN polargroup_t polargroup_obj_;
 TINKER_EXTERN polargroup_t* polargroup;
 
+void polargroup_data(rc_t);
 TINKER_NAMESPACE_END
 
 #endif

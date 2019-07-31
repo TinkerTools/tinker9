@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_ELEC_H_
 #define TINKER_MOD_ELEC_H_
 
-#include "util_cxx.h"
+#include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 enum {
@@ -71,6 +71,11 @@ TINKER_EXTERN real (*udirp)[3];
 TINKER_EXTERN real (*uind)[3];
 /// mutual induced dipoles in field used for energy terms
 TINKER_EXTERN real (*uinp)[3];
+
+void elec_data(rc_t rc);
+int use_elec();
+void elec_init(int vers);
+void torque(int vers);
 TINKER_NAMESPACE_END
 
 #endif

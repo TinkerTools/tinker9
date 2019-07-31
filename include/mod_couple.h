@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_COUPLE_H_
 #define TINKER_MOD_COUPLE_H_
 
-#include "util_cxx.h"
+#include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 struct couple_t {
@@ -19,6 +19,8 @@ struct couple_t {
 
 TINKER_EXTERN couple_t coupl_obj_;
 TINKER_EXTERN couple_t* coupl;
+
+void couple_data(rc_t);
 TINKER_NAMESPACE_END
 
 #endif

@@ -1,6 +1,7 @@
 #include "gpu/e_vdw.h"
+#include "mod_md.h"
+#include "util_array.h"
 #include "util_io.h"
-#include "util_mdstate.h"
 #include "util_potent.h"
 #include "util_switch.h"
 #include <ext/tinker/tinker_mod.h>

@@ -1,7 +1,7 @@
 #include "acc_seq.h"
 #include "gpu/e_angle.h"
 #include "gpu/e_opbend.h"
-#include "util_mdstate.h"
+#include "mod_md.h"
 
 // TODO: test W-D-C
 

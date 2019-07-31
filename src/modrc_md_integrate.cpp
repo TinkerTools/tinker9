@@ -1,4 +1,4 @@
-#include "mod_mdstate.h"
+#include "mod_md.h"
 #include "util_io.h"
 #include "util_md.h"
 #include <ext/tinker/tinker_mod.h>

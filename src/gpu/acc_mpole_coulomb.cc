@@ -1,6 +1,8 @@
 #include "acc_seq.h"
 #include "gpu/e_mpole.h"
-#include "util_mdstate.h"
+#include "mod_couple.h"
+#include "mod_md.h"
+#include "mod_nblist.h"
 
 TINKER_NAMESPACE_BEGIN
 template <int USE>

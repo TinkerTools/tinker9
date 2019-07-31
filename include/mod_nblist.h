@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_NBLIST_H_
 #define TINKER_MOD_NBLIST_H_
 
-#include "util_cxx.h"
+#include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 struct nblist_t {
@@ -28,6 +28,8 @@ TINKER_EXTERN nblist_t mlist_obj_;
 TINKER_EXTERN nblist_t* mlst;
 TINKER_EXTERN nblist_t ulist_obj_;
 TINKER_EXTERN nblist_t* ulst;
+
+void nblist_data(rc_t rc);
 TINKER_NAMESPACE_END
 
 #endif

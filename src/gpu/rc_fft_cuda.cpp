@@ -1,6 +1,6 @@
 #ifndef TINKER_HOSTONLY
 
-#  include "util_pme.h"
+#  include "mod_pme.h"
 
 TINKER_NAMESPACE_BEGIN
 extern std::vector<fft_plan_t>& fft_plans();

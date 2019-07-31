@@ -1,6 +1,7 @@
 #include "gpu/e_mpole.h"
-#include "util_mdstate.h"
-#include "util_pme.h"
+#include "mod_box.h"
+#include "mod_md.h"
+#include "mod_pme.h"
 
 /**
  * @file

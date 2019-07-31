@@ -1,37 +1,39 @@
-#include "gpu/e_potential.h"
-#include "util_mdstate.h"
+#include "util_potential.h"
+#include "mod_md.h"
+#include "mod_nblist.h"
+#include "mod_polgrp.h"
 #include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN
-extern void polargroup_data(rc_t);
 void potential_data(rc_t rc) {
   if ((use_data & calc::vmask) == 0)
     return;
 
-  egv_data(rc);
+  rc_man egv42_{egv_data, rc};
 
   // bonded terms
 
-  ebond_data(rc);
-  eangle_data(rc);
-  estrbnd_data(rc);
-  eurey_data(rc);
-  eopbend_data(rc);
-  etors_data(rc);
-  epitors_data(rc);
-  etortor_data(rc);
+  rc_man ebond42_{ebond_data, rc};
+  rc_man eangle42_{eangle_data, rc};
+  rc_man estrbnd42_{estrbnd_data, rc};
+  rc_man eurey42_{eurey_data, rc};
+  rc_man eopbend42_{eopbend_data, rc};
+  rc_man etors42_{etors_data, rc};
+  rc_man epitors42_{epitors_data, rc};
+  rc_man etortor42_{etortor_data, rc};
 
   // non-bonded terms
 
-  evdw_data(rc);
+  rc_man evdw42_{evdw_data, rc};
 
   // Must call elec_data() before any electrostatics routine.
 
-  elec_data(rc);
-  empole_data(rc);
+  rc_man elec42_{elec_data, rc};
+
+  rc_man empole42_{empole_data, rc};
   if (use_potent(polar_term))
-    polargroup_data(rc);
-  epolar_data(rc);
+    rc_man polargroup42_{polargroup_data, rc};
+  rc_man epolar42_{epolar_data, rc};
 }
 
 void energy_potential(int vers) {

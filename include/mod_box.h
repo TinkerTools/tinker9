@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_BOX_H_
 #define TINKER_MOD_BOX_H_
 
-#include "util_cxx.h"
+#include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 /**
@@ -42,6 +42,9 @@ struct box_t {
 
 TINKER_EXTERN box_t* box;
 TINKER_EXTERN box_t* trajbox;
+
+void box_data(rc_t);
+void box_data_copyout(const box_t&);
 TINKER_NAMESPACE_END
 
 #endif

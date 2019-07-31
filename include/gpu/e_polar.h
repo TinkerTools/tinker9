@@ -1,9 +1,9 @@
 #ifndef TINKER_GPU_E_POLAR_H_
 #define TINKER_GPU_E_POLAR_H_
 
+#include "mod_elec.h"
 #include "mod_polgrp.h"
 #include "util_cxx.h"
-#include "util_elec.h"
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN

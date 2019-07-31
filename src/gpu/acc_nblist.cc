@@ -1,5 +1,6 @@
 #include "acc_seq.h"
-#include "util_mdstate.h"
+#include "mod_md.h"
+#include "mod_nblist.h"
 
 #ifdef TINKER_HOSTONLY
 #  include <algorithm>

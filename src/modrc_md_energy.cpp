@@ -1,4 +1,5 @@
-#include "util_mdstate.h"
+#include "mod_md.h"
+#include "util_array.h"
 #include <ext/tinker/tinker_mod.h>
 
 #include <map>

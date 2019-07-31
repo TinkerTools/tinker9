@@ -1,7 +1,7 @@
 #include "gpu/e_mpole.h"
+#include "mod_md.h"
+#include "mod_pme.h"
 #include "util_io.h"
-#include "util_mdstate.h"
-#include "util_pme.h"
 #include "util_potent.h"
 #include "util_switch.h"
 #include <ext/tinker/tinker_mod.h>

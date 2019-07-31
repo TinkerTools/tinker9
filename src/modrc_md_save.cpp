@@ -1,10 +1,9 @@
-#include "gpu/e_potential.h"
 #include "mod_box.h"
-#include "mod_mdstate.h"
+#include "mod_md.h"
 #include "util_array.h"
 #include "util_io.h"
-#include "util_mdstate.h"
 #include "util_potent.h"
+#include "util_potential.h"
 #include <ext/tinker/tinker_mod.h>
 #include <ext/tinker/tinker_rt.h>
 
@@ -114,7 +113,6 @@ void mdsave_data(rc_t rc) {
   }
 }
 
-extern void box_data_copyout(const box_t& b);
 static void mdsave_dup_then_write_(int istep, real dt) {
 
   // duplicate

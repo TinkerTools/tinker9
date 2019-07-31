@@ -1,9 +1,10 @@
-#include "util_elec.h"
 #include "gpu/e_mpole.h"
 #include "gpu/e_polar.h"
+#include "mod_elec.h"
+#include "mod_md.h"
+#include "mod_pme.h"
+#include "util_array.h"
 #include "util_io.h"
-#include "util_mdstate.h"
-#include "util_pme.h"
 #include "util_potent.h"
 #include <ext/tinker/tinker_mod.h>
 
@@ -127,8 +128,8 @@ void elec_data(rc_t rc) {
   pme_data(rc);
 }
 
-void chkpole();
-void rotpole();
+extern void chkpole();
+extern void rotpole();
 void elec_init(int vers) {
   if (!use_elec())
     return;

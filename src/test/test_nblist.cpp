@@ -1,9 +1,10 @@
 #include "files.h"
+#include "mod_md.h"
+#include "mod_nblist.h"
 #include "test/ff.h"
 #include "test/rt.h"
 #include "test/test.h"
 #include "util_io.h"
-#include "util_mdstate.h"
 #include "util_rc_man.h"
 
 using namespace TINKER_NAMESPACE;

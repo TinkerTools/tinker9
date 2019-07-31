@@ -1,8 +1,11 @@
 #include "acc_seq.h"
 #include "gpu/e_mpole.h"
 #include "gpu/e_polar.h"
-#include "util_mdstate.h"
-#include "util_pme.h"
+#include "mod_couple.h"
+#include "mod_md.h"
+#include "mod_nblist.h"
+#include "mod_pme.h"
+#include "util_array.h"
 #include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN

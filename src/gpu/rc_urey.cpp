@@ -1,5 +1,6 @@
 #include "gpu/e_urey.h"
-#include "util_mdstate.h"
+#include "mod_md.h"
+#include "util_array.h"
 #include "util_potent.h"
 #include <ext/tinker/tinker_mod.h>
 

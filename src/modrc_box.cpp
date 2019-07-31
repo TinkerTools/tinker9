@@ -1,5 +1,7 @@
 #include "mod_box.h"
-#include "util_mdstate.h"
+#include "mod_md.h"
+#include "util_array.h"
+#include "util_math.h"
 #include <ext/tinker/tinker_mod.h>
 #include <ext/tinker/tinker_rt.h>
 
