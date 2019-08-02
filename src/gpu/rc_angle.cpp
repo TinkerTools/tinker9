@@ -26,11 +26,11 @@ void eangle_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    check_rt(cudaFree(iang));
-    check_rt(cudaFree(ak));
-    check_rt(cudaFree(anat));
+    dealloc_array(iang);
+    dealloc_array(ak);
+    dealloc_array(anat);
 
-    check_rt(cudaFree(angtyp));
+    dealloc_array(angtyp);
 
     free_ev(ea, vir_ea);
   }
@@ -39,11 +39,11 @@ void eangle_data(rc_op op) {
     const size_t rs = sizeof(real);
 
     nangle = count_bonded_term(angle_term);
-    check_rt(cudaMalloc(&iang, sizeof(int) * nangle * 4));
-    check_rt(cudaMalloc(&ak, rs * nangle));
-    check_rt(cudaMalloc(&anat, rs * nangle));
+    alloc_array(&iang, sizeof(int) * nangle * 4);
+    alloc_array(&ak, rs * nangle);
+    alloc_array(&anat, rs * nangle);
 
-    check_rt(cudaMalloc(&angtyp, sizeof(int) * nangle));
+    alloc_array(&angtyp, sizeof(int) * nangle);
 
     alloc_ev(&ea, &vir_ea);
   }

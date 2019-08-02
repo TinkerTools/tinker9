@@ -16,19 +16,19 @@ void elec_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    check_rt(cudaFree(zaxis));
-    check_rt(cudaFree(pole));
-    check_rt(cudaFree(rpole));
+    dealloc_array(zaxis);
+    dealloc_array(pole);
+    dealloc_array(rpole);
 
-    check_rt(cudaFree(uind));
-    check_rt(cudaFree(uinp));
-    check_rt(cudaFree(udir));
-    check_rt(cudaFree(udirp));
+    dealloc_array(uind);
+    dealloc_array(uinp);
+    dealloc_array(udir);
+    dealloc_array(udirp);
 
-    check_rt(cudaFree(trqx));
-    check_rt(cudaFree(trqy));
-    check_rt(cudaFree(trqz));
-    check_rt(cudaFree(vir_trq));
+    dealloc_array(trqx);
+    dealloc_array(trqy);
+    dealloc_array(trqz);
+    dealloc_array(vir_trq);
   }
 
   if (op & rc_alloc) {
@@ -36,16 +36,16 @@ void elec_data(rc_op op) {
     size_t size;
 
     size = sizeof(local_frame_t);
-    check_rt(cudaMalloc(&zaxis, n * size));
+    alloc_array(&zaxis, n * size);
     size = rs * mpl_total;
-    check_rt(cudaMalloc(&pole, n * size));
-    check_rt(cudaMalloc(&rpole, n * size));
+    alloc_array(&pole, n * size);
+    alloc_array(&rpole, n * size);
 
     if (use_potent(polar_term)) {
-      check_rt(cudaMalloc(&uind, 3 * n * rs));
-      check_rt(cudaMalloc(&uinp, 3 * n * rs));
-      check_rt(cudaMalloc(&udir, 3 * n * rs));
-      check_rt(cudaMalloc(&udirp, 3 * n * rs));
+      alloc_array(&uind, 3 * n * rs);
+      alloc_array(&uinp, 3 * n * rs);
+      alloc_array(&udir, 3 * n * rs);
+      alloc_array(&udirp, 3 * n * rs);
     } else {
       uind = nullptr;
       uinp = nullptr;
@@ -54,16 +54,16 @@ void elec_data(rc_op op) {
     }
 
     if (use_data & calc::grad) {
-      check_rt(cudaMalloc(&trqx, rs * n));
-      check_rt(cudaMalloc(&trqy, rs * n));
-      check_rt(cudaMalloc(&trqz, rs * n));
+      alloc_array(&trqx, rs * n);
+      alloc_array(&trqy, rs * n);
+      alloc_array(&trqz, rs * n);
     } else {
       trqx = nullptr;
       trqy = nullptr;
       trqz = nullptr;
     }
 
-    check_rt(cudaMalloc(&vir_trq, rs * 9));
+    alloc_array(&vir_trq, rs * 9);
   }
 
   if (op & rc_init) {

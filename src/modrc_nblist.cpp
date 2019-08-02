@@ -1,6 +1,7 @@
 #include "gpu/e_vdw.h"
 #include "mod_md.h"
 #include "mod_nblist.h"
+#include "util_array.h"
 #include "util_potent.h"
 #include <ext/tinker/tinker_mod.h>
 
@@ -87,13 +88,13 @@ static int nblist_maxlst_(int maxn, double cutoff, double buffer) {
 }
 
 static void nblist_op_dealloc_(nblist_t& st, nblist_t*& list) {
-  check_rt(cudaFree(st.nlst));
-  check_rt(cudaFree(st.lst));
-  check_rt(cudaFree(st.update));
-  check_rt(cudaFree(st.xold));
-  check_rt(cudaFree(st.yold));
-  check_rt(cudaFree(st.zold));
-  check_rt(cudaFree(list));
+  dealloc_array(st.nlst);
+  dealloc_array(st.lst);
+  dealloc_array(st.update);
+  dealloc_array(st.xold);
+  dealloc_array(st.yold);
+  dealloc_array(st.zold);
+  dealloc_array(list);
 }
 
 static void nblist_op_alloc_(nblist_t& st, nblist_t*& list, int maxn,
@@ -103,11 +104,11 @@ static void nblist_op_alloc_(nblist_t& st, nblist_t*& list, int maxn,
   size_t size;
 
   size = n * rs;
-  check_rt(cudaMalloc(&st.nlst, size));
+  alloc_array(&st.nlst, size);
 
   int maxlst = nblist_maxlst_(maxn, cutoff, buffer);
   size = maxlst * n * rs;
-  check_rt(cudaMalloc(&st.lst, size));
+  alloc_array(&st.lst, size);
 
   if (maxlst == 1) {
     st.update = nullptr;
@@ -116,11 +117,11 @@ static void nblist_op_alloc_(nblist_t& st, nblist_t*& list, int maxn,
     st.zold = nullptr;
   } else {
     size = n * rs;
-    check_rt(cudaMalloc(&st.update, size));
+    alloc_array(&st.update, size);
     size = n * sizeof(real);
-    check_rt(cudaMalloc(&st.xold, size));
-    check_rt(cudaMalloc(&st.yold, size));
-    check_rt(cudaMalloc(&st.zold, size));
+    alloc_array(&st.xold, size);
+    alloc_array(&st.yold, size);
+    alloc_array(&st.zold, size);
   }
 
   st.x = _x;
@@ -132,8 +133,8 @@ static void nblist_op_alloc_(nblist_t& st, nblist_t*& list, int maxn,
   st.buffer = buffer;
 
   size = sizeof(nblist_t);
-  check_rt(cudaMalloc(&list, size));
-  check_rt(cudaMemcpy(list, &st, size, cudaMemcpyHostToDevice));
+  alloc_array(&list, size);
+  copy_memory(list, &st, size, CopyDirection::HostToDevice);
 }
 
 extern void nblist_build_acc_impl_(const nblist_t& st, nblist_t* lst);
@@ -225,8 +226,8 @@ void nblist_data(rc_op op) {
         mlist_obj_.x = x;
         mlist_obj_.y = y;
         mlist_obj_.z = z;
-        check_rt(cudaMemcpy(mlst, &mlist_obj_, sizeof(nblist_t),
-                            cudaMemcpyHostToDevice));
+        copy_memory(mlst, &mlist_obj_, sizeof(nblist_t),
+                    CopyDirection::HostToDevice);
       }
       nblist_update_acc_impl_(mlist_obj_, mlst);
     }

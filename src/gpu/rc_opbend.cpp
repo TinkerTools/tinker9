@@ -22,16 +22,16 @@ void eopbend_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    check_rt(cudaFree(iopb));
-    check_rt(cudaFree(opbk));
+    dealloc_array(iopb);
+    dealloc_array(opbk);
 
     free_ev(eopb, vir_eopb);
   }
 
   if (op & rc_alloc) {
     int nangle = count_bonded_term(angle_term);
-    check_rt(cudaMalloc(&iopb, sizeof(int) * nangle));
-    check_rt(cudaMalloc(&opbk, sizeof(real) * nangle));
+    alloc_array(&iopb, sizeof(int) * nangle);
+    alloc_array(&opbk, sizeof(real) * nangle);
 
     alloc_ev(&eopb, &vir_eopb);
   }

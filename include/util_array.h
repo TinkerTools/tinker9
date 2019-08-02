@@ -4,6 +4,13 @@
 #include "util_cxx.h"
 
 TINKER_NAMESPACE_BEGIN
+void dealloc_array(void* ptr);
+void alloc_array(void** ptr, size_t nbytes);
+template <class T>
+void alloc_array(T** ptr, size_t nbytes) {
+  return alloc_array(reinterpret_cast<void**>(ptr), nbytes);
+}
+
 void zero_array(int* dst, int nelem);
 void zero_array(float* dst, int nelem);
 void zero_array(double* dst, int nelem);

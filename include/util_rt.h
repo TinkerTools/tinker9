@@ -7,8 +7,8 @@
 #  include "util_rt_cudart.h"
 #endif
 
-#include <stdexcept>
 #include "util_io.h"
+#include <stdexcept>
 
 TINKER_NAMESPACE_BEGIN
 /// @brief
@@ -40,50 +40,35 @@ TINKER_NAMESPACE_END
   } while (0)
 
 #define TINKER_GET_3RD_ARG_(arg1, arg2, arg3, ...) arg3
-#define TINKER_GET_4TH_ARG_(arg1, arg2, arg3, arg4, ...) arg4
 
-#define TINKER_ALWAYS_CHECK_CUDART_1_(cucall)                                  \
+#define TINKER_ALWAYS_CHECK_RT_1_(cucall)                                      \
   do {                                                                         \
-    cudaError_t cures_ = cucall;                                               \
-    if (cures_ != cudaSuccess) {                                               \
+    auto cures_ = cucall;                                                      \
+    if (cures_ != 0) {                                                         \
       print_backtrace();                                                       \
-      const char* msg = cudaGetErrorString(cures_);                            \
       std::string m_ =                                                         \
-          format(" {} (errno {}) at {}:{}", msg, cures_, __FILE__, __LINE__);  \
+          format(" errno {} at {}:{}", cures_, __FILE__, __LINE__);            \
       throw FatalError(m_);                                                    \
     }                                                                          \
   } while (0)
 
-#define TINKER_ALWAYS_CHECK_CUDART_2_(cucall, optmsg)                          \
+#define TINKER_ALWAYS_CHECK_RT_2_(cucall, optmsg)                              \
   do {                                                                         \
-    cudaError_t cures_ = cucall;                                               \
-    if (cures_ != cudaSuccess) {                                               \
+    auto cures_ = cucall;                                                      \
+    if (cures_ != 0) {                                                         \
       print_backtrace();                                                       \
-      const char* msg = cudaGetErrorName(cures_);                              \
-      std::string m_ = format(" {} {} (errno {}) at {}:{}", optmsg, msg,       \
-                              cures_, __FILE__, __LINE__);                     \
+      std::string m_ = format(" errno {} ({}) at {}:{}", cures_, optmsg,       \
+                              __FILE__, __LINE__);                             \
       throw FatalError(m_);                                                    \
     }                                                                          \
   } while (0)
 
-#define TINKER_ALWAYS_CHECK_CUDART_3_(cucall, res_t, cu_0)                     \
-  do {                                                                         \
-    res_t cures_ = cucall;                                                     \
-    if (cures_ != cu_0) {                                                      \
-      print_backtrace();                                                       \
-      std::string m_ = format(" errno {} of type {} at {}:{}", cures_,         \
-                              TINKER_STR(res_t), __FILE__, __LINE__);          \
-      throw FatalError(m_);                                                    \
-    }                                                                          \
-  } while (0)
+#define TINKER_ALWAYS_CHECK_RT_(...)                                           \
+  TINKER_GET_3RD_ARG_(__VA_ARGS__, TINKER_ALWAYS_CHECK_RT_2_,                  \
+                      TINKER_ALWAYS_CHECK_RT_1_)
 
-#define TINKER_ALWAYS_CHECK_CUDART_(...)                                       \
-  TINKER_GET_4TH_ARG_(__VA_ARGS__, TINKER_ALWAYS_CHECK_CUDART_3_,              \
-                      TINKER_ALWAYS_CHECK_CUDART_2_,                           \
-                      TINKER_ALWAYS_CHECK_CUDART_1_)
-
-#if TINKER_DEBUG || defined(TINKER_ALWAYS_CHECK_CUDART)
-#  define check_rt(...) TINKER_ALWAYS_CHECK_CUDART_(__VA_ARGS__)(__VA_ARGS__)
+#if TINKER_DEBUG || defined(TINKER_ALWAYS_CHECK_RT)
+#  define check_rt(...) TINKER_ALWAYS_CHECK_RT_(__VA_ARGS__)(__VA_ARGS__)
 #else
 #  define check_rt(cucall, ...) cucall
 #endif

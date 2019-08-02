@@ -81,18 +81,18 @@ void evdw_data(rc_op op) {
     jvdwbuf.clear();
     jcount = 0;
 
-    check_rt(cudaFree(ired));
-    check_rt(cudaFree(kred));
-    check_rt(cudaFree(xred));
-    check_rt(cudaFree(yred));
-    check_rt(cudaFree(zred));
+    dealloc_array(ired);
+    dealloc_array(kred);
+    dealloc_array(xred);
+    dealloc_array(yred);
+    dealloc_array(zred);
 
-    check_rt(cudaFree(jvdw));
-    check_rt(cudaFree(njvdw));
-    check_rt(cudaFree(radmin));
-    check_rt(cudaFree(epsilon));
+    dealloc_array(jvdw);
+    dealloc_array(njvdw);
+    dealloc_array(radmin);
+    dealloc_array(epsilon);
 
-    check_rt(cudaFree(vlam));
+    dealloc_array(vlam);
 
     free_nev(nev, ev, vir_ev);
   }
@@ -102,14 +102,14 @@ void evdw_data(rc_op op) {
     size_t size;
 
     size = n * rs;
-    check_rt(cudaMalloc(&ired, n * sizeof(int)));
-    check_rt(cudaMalloc(&kred, size));
-    check_rt(cudaMalloc(&xred, size));
-    check_rt(cudaMalloc(&yred, size));
-    check_rt(cudaMalloc(&zred, size));
+    alloc_array(&ired, n * sizeof(int));
+    alloc_array(&kred, size);
+    alloc_array(&xred, size);
+    alloc_array(&yred, size);
+    alloc_array(&zred, size);
 
-    check_rt(cudaMalloc(&jvdw, n * sizeof(int)));
-    check_rt(cudaMalloc(&njvdw, sizeof(int)));
+    alloc_array(&jvdw, n * sizeof(int));
+    alloc_array(&njvdw, sizeof(int));
 
     jvdwbuf.resize(n);
     assert(jmap.size() == 0);
@@ -128,11 +128,11 @@ void evdw_data(rc_op op) {
       }
     }
     size = jcount * jcount * rs;
-    check_rt(cudaMalloc(&radmin, size));
-    check_rt(cudaMalloc(&epsilon, size));
+    alloc_array(&radmin, size);
+    alloc_array(&epsilon, size);
 
     size = n * rs;
-    check_rt(cudaMalloc(&vlam, size));
+    alloc_array(&vlam, size);
 
     alloc_nev(&nev, &ev, &vir_ev);
   }

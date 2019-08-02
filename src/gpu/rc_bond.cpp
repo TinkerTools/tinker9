@@ -22,9 +22,9 @@ void ebond_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    check_rt(cudaFree(ibnd));
-    check_rt(cudaFree(bl));
-    check_rt(cudaFree(bk));
+    dealloc_array(ibnd);
+    dealloc_array(bl);
+    dealloc_array(bk);
 
     free_ev(eb, vir_eb);
   }
@@ -33,9 +33,9 @@ void ebond_data(rc_op op) {
     const size_t rs = sizeof(real);
 
     nbond = count_bonded_term(bond_term);
-    check_rt(cudaMalloc(&ibnd, sizeof(int) * nbond * 2));
-    check_rt(cudaMalloc(&bl, rs * nbond));
-    check_rt(cudaMalloc(&bk, rs * nbond));
+    alloc_array(&ibnd, sizeof(int) * nbond * 2);
+    alloc_array(&bl, rs * nbond);
+    alloc_array(&bk, rs * nbond);
 
     alloc_ev(&eb, &vir_eb);
   }

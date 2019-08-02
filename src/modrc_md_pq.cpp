@@ -33,9 +33,9 @@ void xyz_data(rc_op op) {
 
   if (op & rc_dealloc) {
     if (calc::traj & use_data) {
-      check_rt(cudaFree(trajx));
-      check_rt(cudaFree(trajy));
-      check_rt(cudaFree(trajz));
+      dealloc_array(trajx);
+      dealloc_array(trajy);
+      dealloc_array(trajz);
       x = nullptr;
       y = nullptr;
       z = nullptr;
@@ -43,9 +43,9 @@ void xyz_data(rc_op op) {
       trajx = nullptr;
       trajy = nullptr;
       trajz = nullptr;
-      check_rt(cudaFree(x));
-      check_rt(cudaFree(y));
-      check_rt(cudaFree(z));
+      dealloc_array(x);
+      dealloc_array(y);
+      dealloc_array(z);
     }
   }
 
@@ -53,16 +53,16 @@ void xyz_data(rc_op op) {
     size_t size = sizeof(real) * n;
     if (calc::traj & use_data) {
       size *= trajn;
-      check_rt(cudaMalloc(&trajx, size));
-      check_rt(cudaMalloc(&trajy, size));
-      check_rt(cudaMalloc(&trajz, size));
+      alloc_array(&trajx, size);
+      alloc_array(&trajy, size);
+      alloc_array(&trajz, size);
       x = trajx;
       y = trajy;
       z = trajz;
     } else {
-      check_rt(cudaMalloc(&x, size));
-      check_rt(cudaMalloc(&y, size));
-      check_rt(cudaMalloc(&z, size));
+      alloc_array(&x, size);
+      alloc_array(&y, size);
+      alloc_array(&z, size);
     }
   }
 
@@ -81,16 +81,16 @@ void vel_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    check_rt(cudaFree(vx));
-    check_rt(cudaFree(vy));
-    check_rt(cudaFree(vz));
+    dealloc_array(vx);
+    dealloc_array(vy);
+    dealloc_array(vz);
   }
 
   if (op & rc_alloc) {
     size_t size = sizeof(real) * n;
-    check_rt(cudaMalloc(&vx, size));
-    check_rt(cudaMalloc(&vy, size));
-    check_rt(cudaMalloc(&vz, size));
+    alloc_array(&vx, size);
+    alloc_array(&vy, size);
+    alloc_array(&vz, size);
   }
 
   if (op & rc_init) {
@@ -108,14 +108,14 @@ void mass_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    check_rt(cudaFree(mass));
-    check_rt(cudaFree(massinv));
+    dealloc_array(mass);
+    dealloc_array(massinv);
   }
 
   if (op & rc_alloc) {
     size_t size = sizeof(real) * n;
-    check_rt(cudaMalloc(&mass, size));
-    check_rt(cudaMalloc(&massinv, size));
+    alloc_array(&mass, size);
+    alloc_array(&massinv, size);
   }
 
   if (op & rc_init) {

@@ -24,11 +24,11 @@ static void data(rc_op op) {
     end = 0;
     cap = 0;
 
-    check_rt(cudaFree(nebuf));
+    dealloc_array(nebuf);
     nebuf = nullptr;
-    check_rt(cudaFree(ebuf));
+    dealloc_array(ebuf);
     ebuf = nullptr;
-    check_rt(cudaFree(vbuf));
+    dealloc_array(vbuf);
     vbuf = nullptr;
 
     ne_addr_idx.clear();
@@ -41,9 +41,9 @@ static void data(rc_op op) {
     cap = 4; // default initial capacity
 
     const size_t rs = sizeof(real);
-    check_rt(cudaMalloc(&nebuf, sizeof(int) * cap));
-    check_rt(cudaMalloc(&ebuf, rs * cap));
-    check_rt(cudaMalloc(&vbuf, rs * cap * virlen));
+    alloc_array(&nebuf, sizeof(int) * cap);
+    alloc_array(&ebuf, rs * cap);
+    alloc_array(&vbuf, rs * cap * virlen);
   }
 
   if (op & rc_init) {
@@ -64,23 +64,23 @@ static void grow_if_must() {
   const size_t rs = sizeof(real);
 
   int* new_nebuf;
-  check_rt(cudaMalloc(&new_nebuf, sizeof(int) * cap));
-  check_rt(cudaMemcpy(new_nebuf, nebuf, sizeof(int) * old_cap,
-                      cudaMemcpyDeviceToDevice));
-  check_rt(cudaFree(nebuf));
+  alloc_array(&new_nebuf, sizeof(int) * cap);
+  copy_memory(new_nebuf, nebuf, sizeof(int) * old_cap,
+              CopyDirection::DeviceToDevice);
+  dealloc_array(nebuf);
   nebuf = new_nebuf;
 
   real* new_ebuf;
-  check_rt(cudaMalloc(&new_ebuf, rs * cap));
-  check_rt(cudaMemcpy(new_ebuf, ebuf, rs * old_cap, cudaMemcpyDeviceToDevice));
-  check_rt(cudaFree(ebuf));
+  alloc_array(&new_ebuf, rs * cap);
+  copy_memory(new_ebuf, ebuf, rs * old_cap, CopyDirection::DeviceToDevice);
+  dealloc_array(ebuf);
   ebuf = new_ebuf;
 
   real* new_vbuf;
-  check_rt(cudaMalloc(&new_vbuf, rs * cap * virlen));
-  check_rt(cudaMemcpy(new_vbuf, vbuf, rs * old_cap * virlen,
-                      cudaMemcpyDeviceToDevice));
-  check_rt(cudaFree(vbuf));
+  alloc_array(&new_vbuf, rs * cap * virlen);
+  copy_memory(new_vbuf, vbuf, rs * old_cap * virlen,
+              CopyDirection::DeviceToDevice);
+  dealloc_array(vbuf);
   vbuf = new_vbuf;
 
   for (auto it : ne_addr_idx) {
@@ -147,16 +147,16 @@ void egv_data(rc_op op) {
 
   if (use_data & calc::grad) {
     if (op & rc_dealloc) {
-      check_rt(cudaFree(gx));
-      check_rt(cudaFree(gy));
-      check_rt(cudaFree(gz));
+      dealloc_array(gx);
+      dealloc_array(gy);
+      dealloc_array(gz);
     }
 
     if (op & rc_alloc) {
       const size_t size = sizeof(real) * n;
-      check_rt(cudaMalloc(&gx, size));
-      check_rt(cudaMalloc(&gy, size));
-      check_rt(cudaMalloc(&gz, size));
+      alloc_array(&gx, size);
+      alloc_array(&gy, size);
+      alloc_array(&gz, size);
     }
 
     // We can never assume whether or not deriv::desum was allocated, because it

@@ -54,57 +54,57 @@ void epolar_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    check_rt(cudaFree(polarity));
-    check_rt(cudaFree(thole));
-    check_rt(cudaFree(pdamp));
-    check_rt(cudaFree(polarity_inv));
+    dealloc_array(polarity);
+    dealloc_array(thole);
+    dealloc_array(pdamp);
+    dealloc_array(polarity_inv);
 
     free_nev(nep, ep, vir_ep);
 
-    check_rt(cudaFree(ufld));
-    check_rt(cudaFree(dufld));
+    dealloc_array(ufld);
+    dealloc_array(dufld);
 
-    check_rt(cudaFree(work01_));
-    check_rt(cudaFree(work02_));
-    check_rt(cudaFree(work03_));
-    check_rt(cudaFree(work04_));
-    check_rt(cudaFree(work05_));
-    check_rt(cudaFree(work06_));
-    check_rt(cudaFree(work07_));
-    check_rt(cudaFree(work08_));
-    check_rt(cudaFree(work09_));
-    check_rt(cudaFree(work10_));
+    dealloc_array(work01_);
+    dealloc_array(work02_);
+    dealloc_array(work03_);
+    dealloc_array(work04_);
+    dealloc_array(work05_);
+    dealloc_array(work06_);
+    dealloc_array(work07_);
+    dealloc_array(work08_);
+    dealloc_array(work09_);
+    dealloc_array(work10_);
   }
 
   if (op & rc_alloc) {
     const size_t rs = sizeof(real);
     size_t size;
 
-    check_rt(cudaMalloc(&polarity, n * rs));
-    check_rt(cudaMalloc(&thole, n * rs));
-    check_rt(cudaMalloc(&pdamp, rs * n));
-    check_rt(cudaMalloc(&polarity_inv, rs * n));
+    alloc_array(&polarity, n * rs);
+    alloc_array(&thole, n * rs);
+    alloc_array(&pdamp, rs * n);
+    alloc_array(&polarity_inv, rs * n);
 
     alloc_nev(&nep, &ep, &vir_ep);
 
     if (use_data & calc::grad) {
-      check_rt(cudaMalloc(&ufld, rs * 3 * n));
-      check_rt(cudaMalloc(&dufld, rs * 6 * n));
+      alloc_array(&ufld, rs * 3 * n);
+      alloc_array(&dufld, rs * 6 * n);
     } else {
       ufld = nullptr;
       dufld = nullptr;
     }
 
-    check_rt(cudaMalloc(&work01_, 3 * n * rs));
-    check_rt(cudaMalloc(&work02_, 3 * n * rs));
-    check_rt(cudaMalloc(&work03_, 3 * n * rs));
-    check_rt(cudaMalloc(&work04_, 3 * n * rs));
-    check_rt(cudaMalloc(&work05_, 3 * n * rs));
-    check_rt(cudaMalloc(&work06_, 3 * n * rs));
-    check_rt(cudaMalloc(&work07_, 3 * n * rs));
-    check_rt(cudaMalloc(&work08_, 3 * n * rs));
-    check_rt(cudaMalloc(&work09_, 3 * n * rs));
-    check_rt(cudaMalloc(&work10_, 3 * n * rs));
+    alloc_array(&work01_, 3 * n * rs);
+    alloc_array(&work02_, 3 * n * rs);
+    alloc_array(&work03_, 3 * n * rs);
+    alloc_array(&work04_, 3 * n * rs);
+    alloc_array(&work05_, 3 * n * rs);
+    alloc_array(&work06_, 3 * n * rs);
+    alloc_array(&work07_, 3 * n * rs);
+    alloc_array(&work08_, 3 * n * rs);
+    alloc_array(&work09_, 3 * n * rs);
+    alloc_array(&work10_, 3 * n * rs);
   }
 
   if (op & rc_init) {

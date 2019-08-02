@@ -4,7 +4,7 @@
 #  include "util_rt.h"
 
 TINKER_NAMESPACE_BEGIN
-extern std::vector<fft_plan_t>& fft_plans();
+extern std::vector<FFTPlan>& fft_plans();
 
 void fft_data(rc_op op) {
   if (op & rc_dealloc) {
@@ -32,12 +32,12 @@ void fft_data(rc_op op) {
     assert(fft_plans().size() == 0);
 
     const size_t size = PMEUnit::all_objs().size();
-    fft_plans().resize(size, fft_plan_t());
+    fft_plans().resize(size, FFTPlan());
   }
 
   if (op & rc_init) {
     int idx = 0;
-    for (fft_plan_t& iplan : fft_plans()) {
+    for (FFTPlan& iplan : fft_plans()) {
       auto& st = pme_obj(idx);
       const int nfft1 = st.nfft1;
       const int nfft2 = st.nfft2;
@@ -69,7 +69,7 @@ void fft_data(rc_op op) {
 }
 
 void fftfront(PMEUnit pme_u) {
-  fft_plan_t iplan = fft_plans()[pme_u.unit()];
+  FFTPlan iplan = fft_plans()[pme_u.unit()];
   auto& st = pme_obj(pme_u.unit());
 
 #  if defined(TINKER_SINGLE_PRECISION)
@@ -84,7 +84,7 @@ void fftfront(PMEUnit pme_u) {
 }
 
 void fftback(PMEUnit pme_u) {
-  fft_plan_t iplan = fft_plans()[pme_u.unit()];
+  FFTPlan iplan = fft_plans()[pme_u.unit()];
   auto& st = pme_obj(pme_u.unit());
 
 #  if defined(TINKER_SINGLE_PRECISION)

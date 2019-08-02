@@ -23,13 +23,13 @@ void etors_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    check_rt(cudaFree(itors));
-    check_rt(cudaFree(tors1));
-    check_rt(cudaFree(tors2));
-    check_rt(cudaFree(tors3));
-    check_rt(cudaFree(tors4));
-    check_rt(cudaFree(tors5));
-    check_rt(cudaFree(tors6));
+    dealloc_array(itors);
+    dealloc_array(tors1);
+    dealloc_array(tors2);
+    dealloc_array(tors3);
+    dealloc_array(tors4);
+    dealloc_array(tors5);
+    dealloc_array(tors6);
 
     free_ev(et, vir_et);
   }
@@ -38,13 +38,13 @@ void etors_data(rc_op op) {
     const size_t rs = sizeof(real);
 
     ntors = count_bonded_term(torsion_term);
-    check_rt(cudaMalloc(&itors, sizeof(int) * 4 * ntors));
-    check_rt(cudaMalloc(&tors1, rs * 4 * ntors));
-    check_rt(cudaMalloc(&tors2, rs * 4 * ntors));
-    check_rt(cudaMalloc(&tors3, rs * 4 * ntors));
-    check_rt(cudaMalloc(&tors4, rs * 4 * ntors));
-    check_rt(cudaMalloc(&tors5, rs * 4 * ntors));
-    check_rt(cudaMalloc(&tors6, rs * 4 * ntors));
+    alloc_array(&itors, sizeof(int) * 4 * ntors);
+    alloc_array(&tors1, rs * 4 * ntors);
+    alloc_array(&tors2, rs * 4 * ntors);
+    alloc_array(&tors3, rs * 4 * ntors);
+    alloc_array(&tors4, rs * 4 * ntors);
+    alloc_array(&tors5, rs * 4 * ntors);
+    alloc_array(&tors6, rs * 4 * ntors);
 
     alloc_ev(&et, &vir_et);
   }

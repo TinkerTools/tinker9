@@ -34,44 +34,44 @@ void etortor_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    check_rt(cudaFree(ibitor));
+    dealloc_array(ibitor);
 
-    check_rt(cudaFree(itt));
+    dealloc_array(itt);
 
-    check_rt(cudaFree(tnx));
-    check_rt(cudaFree(tny));
-    check_rt(cudaFree(ttx));
-    check_rt(cudaFree(tty));
-    check_rt(cudaFree(tbf));
-    check_rt(cudaFree(tbx));
-    check_rt(cudaFree(tby));
-    check_rt(cudaFree(tbxy));
+    dealloc_array(tnx);
+    dealloc_array(tny);
+    dealloc_array(ttx);
+    dealloc_array(tty);
+    dealloc_array(tbf);
+    dealloc_array(tbx);
+    dealloc_array(tby);
+    dealloc_array(tbxy);
 
-    check_rt(cudaFree(chkttor_ia_));
+    dealloc_array(chkttor_ia_);
 
     free_ev(ett, vir_ett);
   }
 
   if (op & rc_alloc) {
     nbitor = bitor_::nbitor;
-    check_rt(cudaMalloc(&ibitor, sizeof(int) * 5 * nbitor));
+    alloc_array(&ibitor, sizeof(int) * 5 * nbitor);
 
-    check_rt(cudaMalloc(&itt, sizeof(int) * 3 * nbitor));
+    alloc_array(&itt, sizeof(int) * 3 * nbitor);
 
     const size_t rs = sizeof(real);
-    check_rt(cudaMalloc(&tnx, sizeof(int) * ktrtor::maxntt));
-    check_rt(cudaMalloc(&tny, sizeof(int) * ktrtor::maxntt));
+    alloc_array(&tnx, sizeof(int) * ktrtor::maxntt);
+    alloc_array(&tny, sizeof(int) * ktrtor::maxntt);
     int count = ktrtor::maxtgrd * ktrtor::maxntt;
-    check_rt(cudaMalloc(&ttx, rs * count));
-    check_rt(cudaMalloc(&tty, rs * count));
+    alloc_array(&ttx, rs * count);
+    alloc_array(&tty, rs * count);
     count = ktrtor::maxtgrd2 * ktrtor::maxntt;
-    check_rt(cudaMalloc(&tbf, rs * count));
-    check_rt(cudaMalloc(&tbx, rs * count));
-    check_rt(cudaMalloc(&tby, rs * count));
-    check_rt(cudaMalloc(&tbxy, rs * count));
+    alloc_array(&tbf, rs * count);
+    alloc_array(&tbx, rs * count);
+    alloc_array(&tby, rs * count);
+    alloc_array(&tbxy, rs * count);
 
     ntortor = count_bonded_term(tortor_term);
-    check_rt(cudaMalloc(&chkttor_ia_, sizeof(int) * ntortor));
+    alloc_array(&chkttor_ia_, sizeof(int) * ntortor);
 
     alloc_ev(&ett, &vir_ett);
   }

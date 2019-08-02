@@ -10,9 +10,9 @@ void box_data(rc_op op) {
   if (op & rc_dealloc) {
     if (calc::traj & use_data) {
       box = nullptr;
-      check_rt(cudaFree(trajbox));
+      dealloc_array(trajbox);
     } else {
-      check_rt(cudaFree(box));
+      dealloc_array(box);
       trajbox = nullptr;
     }
   }
@@ -21,10 +21,10 @@ void box_data(rc_op op) {
     size_t size = sizeof(Box);
     if (calc::traj & use_data) {
       size *= trajn;
-      check_rt(cudaMalloc(&trajbox, size));
+      alloc_array(&trajbox, size);
       box = trajbox;
     } else {
-      check_rt(cudaMalloc(&box, size));
+      alloc_array(&box, size);
     }
   }
 
@@ -42,8 +42,8 @@ void box_data(rc_op op) {
     copyin_array(&box->lvec[0][0], &boxes::lvec[0][0], 9);
     copyin_array(&box->recip[0][0], &boxes::recip[0][0], 9);
     copyin_array(&box->volbox, &boxes::volbox, 1);
-    check_rt(cudaMemcpy(&box->shape, &shape, sizeof(Box::Shape),
-                        cudaMemcpyHostToDevice));
+    copy_memory(&box->shape, &shape, sizeof(Box::Shape),
+                CopyDirection::HostToDevice);
   }
 }
 

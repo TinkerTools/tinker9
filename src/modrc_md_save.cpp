@@ -21,9 +21,9 @@ static std::future<void> fut_dup_then_write;
 static bool mdsave_use_uind_() {
   return output::uindsave && use_potent(polar_term);
 }
-static cudaStream_t dup_stream_uind_;
+static Stream dup_stream_uind_;
 static real* dup_buf_uind_;
-static cudaStream_t dup_stream_bxyz_, dup_stream_v_, dup_stream_g_;
+static Stream dup_stream_bxyz_, dup_stream_v_, dup_stream_g_;
 static real* dup_buf_esum_;
 static Box* dup_buf_box_;
 static real *dup_buf_x_, *dup_buf_y_, *dup_buf_z_;
@@ -33,57 +33,57 @@ static real *dup_buf_gx_, *dup_buf_gy_, *dup_buf_gz_;
 void mdsave_data(rc_op op) {
   if (op & rc_dealloc) {
     if (mdsave_use_uind_()) {
-      check_rt(cudaStreamDestroy(dup_stream_uind_));
-      check_rt(cudaFree(dup_buf_uind_));
+      dealloc_stream(dup_stream_uind_);
+      dealloc_array(dup_buf_uind_);
     }
 
-    check_rt(cudaStreamDestroy(dup_stream_bxyz_));
-    check_rt(cudaStreamDestroy(dup_stream_v_));
-    check_rt(cudaStreamDestroy(dup_stream_g_));
+    dealloc_stream(dup_stream_bxyz_);
+    dealloc_stream(dup_stream_v_);
+    dealloc_stream(dup_stream_g_);
 
-    check_rt(cudaFree(dup_buf_esum_));
-    check_rt(cudaFree(dup_buf_box_));
-    check_rt(cudaFree(dup_buf_x_));
-    check_rt(cudaFree(dup_buf_y_));
-    check_rt(cudaFree(dup_buf_z_));
+    dealloc_array(dup_buf_esum_);
+    dealloc_array(dup_buf_box_);
+    dealloc_array(dup_buf_x_);
+    dealloc_array(dup_buf_y_);
+    dealloc_array(dup_buf_z_);
 
-    check_rt(cudaFree(dup_buf_vx_));
-    check_rt(cudaFree(dup_buf_vy_));
-    check_rt(cudaFree(dup_buf_vz_));
+    dealloc_array(dup_buf_vx_);
+    dealloc_array(dup_buf_vy_);
+    dealloc_array(dup_buf_vz_);
 
-    check_rt(cudaFree(dup_buf_gx_));
-    check_rt(cudaFree(dup_buf_gy_));
-    check_rt(cudaFree(dup_buf_gz_));
+    dealloc_array(dup_buf_gx_);
+    dealloc_array(dup_buf_gy_);
+    dealloc_array(dup_buf_gz_);
   }
 
   if (op & rc_alloc) {
     const size_t rs = sizeof(real);
 
     if (mdsave_use_uind_()) {
-      check_rt(cudaStreamCreate(&dup_stream_uind_));
-      check_rt(cudaMalloc(&dup_buf_uind_, rs * 3 * n));
+      alloc_stream(&dup_stream_uind_);
+      alloc_array(&dup_buf_uind_, rs * 3 * n);
     } else {
       dup_stream_uind_ = nullptr;
       dup_buf_uind_ = nullptr;
     }
 
-    check_rt(cudaStreamCreate(&dup_stream_bxyz_));
-    check_rt(cudaStreamCreate(&dup_stream_v_));
-    check_rt(cudaStreamCreate(&dup_stream_g_));
+    alloc_stream(&dup_stream_bxyz_);
+    alloc_stream(&dup_stream_v_);
+    alloc_stream(&dup_stream_g_);
 
-    check_rt(cudaMalloc(&dup_buf_esum_, sizeof(real)));
-    check_rt(cudaMalloc(&dup_buf_box_, sizeof(Box)));
-    check_rt(cudaMalloc(&dup_buf_x_, rs * n));
-    check_rt(cudaMalloc(&dup_buf_y_, rs * n));
-    check_rt(cudaMalloc(&dup_buf_z_, rs * n));
+    alloc_array(&dup_buf_esum_, sizeof(real));
+    alloc_array(&dup_buf_box_, sizeof(Box));
+    alloc_array(&dup_buf_x_, rs * n);
+    alloc_array(&dup_buf_y_, rs * n);
+    alloc_array(&dup_buf_z_, rs * n);
 
-    check_rt(cudaMalloc(&dup_buf_vx_, rs * n));
-    check_rt(cudaMalloc(&dup_buf_vy_, rs * n));
-    check_rt(cudaMalloc(&dup_buf_vz_, rs * n));
+    alloc_array(&dup_buf_vx_, rs * n);
+    alloc_array(&dup_buf_vy_, rs * n);
+    alloc_array(&dup_buf_vz_, rs * n);
 
-    check_rt(cudaMalloc(&dup_buf_gx_, rs * n));
-    check_rt(cudaMalloc(&dup_buf_gy_, rs * n));
-    check_rt(cudaMalloc(&dup_buf_gz_, rs * n));
+    alloc_array(&dup_buf_gx_, rs * n);
+    alloc_array(&dup_buf_gy_, rs * n);
+    alloc_array(&dup_buf_gz_, rs * n);
   }
 
   if (op & rc_init) {
@@ -119,41 +119,41 @@ static void mdsave_dup_then_write_(int istep, real dt) {
 
   const size_t rs = sizeof(real);
 
-  check_rt(cudaMemcpyAsync(dup_buf_esum_, esum, rs, cudaMemcpyDeviceToDevice,
-                           dup_stream_bxyz_));
-  check_rt(cudaMemcpyAsync(dup_buf_box_, box, sizeof(Box),
-                           cudaMemcpyDeviceToDevice, dup_stream_bxyz_));
-  check_rt(cudaMemcpyAsync(dup_buf_x_, x, rs * n, cudaMemcpyDeviceToDevice,
-                           dup_stream_bxyz_));
-  check_rt(cudaMemcpyAsync(dup_buf_y_, y, rs * n, cudaMemcpyDeviceToDevice,
-                           dup_stream_bxyz_));
-  check_rt(cudaMemcpyAsync(dup_buf_z_, z, rs * n, cudaMemcpyDeviceToDevice,
-                           dup_stream_bxyz_));
+  copy_memory_async(dup_buf_esum_, esum, rs, CopyDirection::DeviceToDevice,
+                    dup_stream_bxyz_);
+  copy_memory_async(dup_buf_box_, box, sizeof(Box),
+                    CopyDirection::DeviceToDevice, dup_stream_bxyz_);
+  copy_memory_async(dup_buf_x_, x, rs * n, CopyDirection::DeviceToDevice,
+                    dup_stream_bxyz_);
+  copy_memory_async(dup_buf_y_, y, rs * n, CopyDirection::DeviceToDevice,
+                    dup_stream_bxyz_);
+  copy_memory_async(dup_buf_z_, z, rs * n, CopyDirection::DeviceToDevice,
+                    dup_stream_bxyz_);
 
-  check_rt(cudaMemcpyAsync(dup_buf_vx_, vx, rs * n, cudaMemcpyDeviceToDevice,
-                           dup_stream_v_));
-  check_rt(cudaMemcpyAsync(dup_buf_vy_, vy, rs * n, cudaMemcpyDeviceToDevice,
-                           dup_stream_v_));
-  check_rt(cudaMemcpyAsync(dup_buf_vz_, vz, rs * n, cudaMemcpyDeviceToDevice,
-                           dup_stream_v_));
+  copy_memory_async(dup_buf_vx_, vx, rs * n, CopyDirection::DeviceToDevice,
+                    dup_stream_v_);
+  copy_memory_async(dup_buf_vy_, vy, rs * n, CopyDirection::DeviceToDevice,
+                    dup_stream_v_);
+  copy_memory_async(dup_buf_vz_, vz, rs * n, CopyDirection::DeviceToDevice,
+                    dup_stream_v_);
 
-  check_rt(cudaMemcpyAsync(dup_buf_gx_, gx, rs * n, cudaMemcpyDeviceToDevice,
-                           dup_stream_g_));
-  check_rt(cudaMemcpyAsync(dup_buf_gy_, gy, rs * n, cudaMemcpyDeviceToDevice,
-                           dup_stream_g_));
-  check_rt(cudaMemcpyAsync(dup_buf_gz_, gz, rs * n, cudaMemcpyDeviceToDevice,
-                           dup_stream_g_));
+  copy_memory_async(dup_buf_gx_, gx, rs * n, CopyDirection::DeviceToDevice,
+                    dup_stream_g_);
+  copy_memory_async(dup_buf_gy_, gy, rs * n, CopyDirection::DeviceToDevice,
+                    dup_stream_g_);
+  copy_memory_async(dup_buf_gz_, gz, rs * n, CopyDirection::DeviceToDevice,
+                    dup_stream_g_);
 
   if (mdsave_use_uind_()) {
-    check_rt(cudaMemcpyAsync(dup_buf_uind_, &uind[0][0], rs * 3 * n,
-                             cudaMemcpyDeviceToDevice, dup_stream_uind_));
+    copy_memory_async(dup_buf_uind_, &uind[0][0], rs * 3 * n,
+                      CopyDirection::DeviceToDevice, dup_stream_uind_);
   }
 
-  check_rt(cudaStreamSynchronize(dup_stream_bxyz_));
-  check_rt(cudaStreamSynchronize(dup_stream_g_));
-  check_rt(cudaStreamSynchronize(dup_stream_v_));
+  sync_stream(dup_stream_bxyz_);
+  sync_stream(dup_stream_g_);
+  sync_stream(dup_stream_v_);
   if (mdsave_use_uind_())
-    check_rt(cudaStreamSynchronize(dup_stream_uind_));
+    sync_stream(dup_stream_uind_);
 
   mtx_dup.lock();
   idle_dup = true;
@@ -165,11 +165,11 @@ static void mdsave_dup_then_write_(int istep, real dt) {
   Box b;
   std::vector<real> arrx(n), arry(n), arrz(n);
 
-  check_rt(cudaMemcpy(&epot, dup_buf_esum_, rs, cudaMemcpyDeviceToHost));
-  check_rt(cudaMemcpy(&b, dup_buf_box_, sizeof(Box), cudaMemcpyDeviceToHost));
-  check_rt(cudaMemcpy(arrx.data(), dup_buf_x_, rs * n, cudaMemcpyDeviceToHost));
-  check_rt(cudaMemcpy(arry.data(), dup_buf_y_, rs * n, cudaMemcpyDeviceToHost));
-  check_rt(cudaMemcpy(arrz.data(), dup_buf_z_, rs * n, cudaMemcpyDeviceToHost));
+  copy_memory(&epot, dup_buf_esum_, rs, CopyDirection::DeviceToHost);
+  copy_memory(&b, dup_buf_box_, sizeof(Box), CopyDirection::DeviceToHost);
+  copy_memory(arrx.data(), dup_buf_x_, rs * n, CopyDirection::DeviceToHost);
+  copy_memory(arry.data(), dup_buf_y_, rs * n, CopyDirection::DeviceToHost);
+  copy_memory(arrz.data(), dup_buf_z_, rs * n, CopyDirection::DeviceToHost);
   box_data_copyout(b);
   for (int i = 0; i < n; ++i) {
     atoms::x[i] = arrx[i];
@@ -177,12 +177,9 @@ static void mdsave_dup_then_write_(int istep, real dt) {
     atoms::z[i] = arrz[i];
   }
 
-  check_rt(
-      cudaMemcpy(arrx.data(), dup_buf_vx_, rs * n, cudaMemcpyDeviceToHost));
-  check_rt(
-      cudaMemcpy(arry.data(), dup_buf_vy_, rs * n, cudaMemcpyDeviceToHost));
-  check_rt(
-      cudaMemcpy(arrz.data(), dup_buf_vz_, rs * n, cudaMemcpyDeviceToHost));
+  copy_memory(arrx.data(), dup_buf_vx_, rs * n, CopyDirection::DeviceToHost);
+  copy_memory(arry.data(), dup_buf_vy_, rs * n, CopyDirection::DeviceToHost);
+  copy_memory(arrz.data(), dup_buf_vz_, rs * n, CopyDirection::DeviceToHost);
   for (int i = 0; i < n; ++i) {
     int j = 3 * i;
     moldyn::v[j] = arrx[i];
@@ -190,12 +187,9 @@ static void mdsave_dup_then_write_(int istep, real dt) {
     moldyn::v[j + 2] = arrz[i];
   }
 
-  check_rt(
-      cudaMemcpy(arrx.data(), dup_buf_gx_, rs * n, cudaMemcpyDeviceToHost));
-  check_rt(
-      cudaMemcpy(arry.data(), dup_buf_gy_, rs * n, cudaMemcpyDeviceToHost));
-  check_rt(
-      cudaMemcpy(arrz.data(), dup_buf_gz_, rs * n, cudaMemcpyDeviceToHost));
+  copy_memory(arrx.data(), dup_buf_gx_, rs * n, CopyDirection::DeviceToHost);
+  copy_memory(arry.data(), dup_buf_gy_, rs * n, CopyDirection::DeviceToHost);
+  copy_memory(arrz.data(), dup_buf_gz_, rs * n, CopyDirection::DeviceToHost);
   // convert gradient to acceleration
   const double ekcal = units::ekcal;
   for (int i = 0; i < n; ++i) {
@@ -208,8 +202,8 @@ static void mdsave_dup_then_write_(int istep, real dt) {
 
   if (mdsave_use_uind_()) {
     arrx.resize(3 * n);
-    check_rt(cudaMemcpy(arrx.data(), dup_buf_uind_, 3 * rs * n,
-                        cudaMemcpyDeviceToHost));
+    copy_memory(arrx.data(), dup_buf_uind_, 3 * rs * n,
+                CopyDirection::DeviceToHost);
     for (int i = 0; i < 3 * n; ++i)
       polar::uind[i] = arrx[i];
   }
