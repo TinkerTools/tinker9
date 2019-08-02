@@ -160,9 +160,9 @@ void x_dynamic(int argc, char** argv) {
     flags += calc::virial;
 
   use_data = flags;
-  tinker_gpu_runtime_initialize();
+  initialize();
   propagate(nstep, dt, nullptr);
-  tinker_gpu_runtime_finish();
+  finish();
 
   // perform any final tasks before program exit
 

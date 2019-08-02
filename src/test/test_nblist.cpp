@@ -35,7 +35,7 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]") {
 
   use_data = usage_;
   trajn = 5;
-  tinker_gpu_runtime_initialize();
+  initialize();
 
   copyin_tinker_arc(x1, 1, 5, 1);
 
@@ -62,7 +62,7 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]") {
       break;
   }
 
-  tinker_gpu_runtime_finish();
+  finish();
   test_end();
 }
 

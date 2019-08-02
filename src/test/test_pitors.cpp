@@ -181,7 +181,7 @@ TEST_CASE("Pitors-Trpcage", "[ff][epitors][trpcage]") {
   int argc = 2;
   test_begin_1_xyz(argc, argv);
   use_data = usage;
-  tinker_gpu_runtime_initialize();
+  initialize();
 
   const double eps_e = 0.0001;
   const double ref_e = 5.0769;
@@ -194,6 +194,6 @@ TEST_CASE("Pitors-Trpcage", "[ff][epitors][trpcage]") {
   COMPARE_BONDED_FORCE(epitors, ept, ref_e, eps_e, npitors, ref_count, gx, gy,
                        gz, ref_g_pitors_trpcage, eps_g, vir_ept, ref_v, eps_v);
 
-  tinker_gpu_runtime_finish();
+  finish();
   test_end();
 }

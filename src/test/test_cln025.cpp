@@ -86,11 +86,11 @@ TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
 
     test_begin_1_xyz(argc, argv);
     use_data = usage;
-    tinker_gpu_runtime_initialize();
+    initialize();
 
     COMPARE_CODE_BLOCK1_;
 
-    tinker_gpu_runtime_finish();
+    finish();
     test_end();
   }
 
@@ -119,11 +119,11 @@ TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
 
     test_begin_1_xyz(argc, argv);
     use_data = usage;
-    tinker_gpu_runtime_initialize();
+    initialize();
 
     COMPARE_CODE_BLOCK1_;
 
-    tinker_gpu_runtime_finish();
+    finish();
     test_end();
   }
 }

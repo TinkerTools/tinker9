@@ -34,13 +34,13 @@ void fortran_runtime_finish() {
 #endif
 }
 
-void tinker_gpu_runtime_initialize() {
+void initialize() {
   rc_op op = static_cast<rc_op>(rc_alloc | rc_init);
   host_data(op);
   device_data(op);
 }
 
-void tinker_gpu_runtime_finish() {
+void finish() {
   rc_op op = rc_dealloc;
   device_data(op);
   host_data(op);

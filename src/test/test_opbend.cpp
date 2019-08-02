@@ -181,7 +181,7 @@ TEST_CASE("Opbend-Trpcage", "[ff][eopbend][allinger][trpcage]") {
   int argc = 2;
   test_begin_1_xyz(argc, argv);
   use_data = usage;
-  tinker_gpu_runtime_initialize();
+  initialize();
 
   const double eps_e = 0.0001;
   const double ref_e = 4.3016;
@@ -195,6 +195,6 @@ TEST_CASE("Opbend-Trpcage", "[ff][eopbend][allinger][trpcage]") {
   COMPARE_BONDED_FORCE(eopbend, eopb, ref_e, eps_e, nopbend, ref_count, gx, gy,
                        gz, ref_g_opbend_trpcage, eps_g, vir_eopb, ref_v, eps_v);
 
-  tinker_gpu_runtime_finish();
+  finish();
   test_end();
 }

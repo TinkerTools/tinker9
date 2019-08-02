@@ -182,7 +182,7 @@ TEST_CASE("Bond-Trpcage", "[ff][ebond][harmonic][trpcage]") {
   int argc = 2;
   test_begin_1_xyz(argc, argv);
   use_data = usage;
-  tinker_gpu_runtime_initialize();
+  initialize();
 
   const double eps_e = 0.0001;
   const double ref_e = 19.4715;
@@ -196,6 +196,6 @@ TEST_CASE("Bond-Trpcage", "[ff][ebond][harmonic][trpcage]") {
   COMPARE_BONDED_FORCE(ebond, eb, ref_e, eps_e, nbond, ref_count, gx, gy, gz,
                        ref_g_bond_trpcage, eps_g, vir_eb, ref_v, eps_v);
 
-  tinker_gpu_runtime_finish();
+  finish();
   test_end();
 }

@@ -8,19 +8,20 @@
 #include <ext/tinker/tinker_rt.h>
 
 TINKER_NAMESPACE_BEGIN
-pme_t& pme_obj(int pme_u) {
+pme_t& pme_obj(PMEUnit pme_u) {
 #if TINKER_DEBUG
-  return PMEUnit::all_objs().at(pme_u);
+  return PMEUnit::all_objs().at(pme_u.unit());
 #else
-  return PMEUnit::all_objs()[pme_u];
+  return PMEUnit::all_objs()[pme_u.unit()];
 #endif
 }
 
-pme_t* pme_deviceptr(int pme_u) {
+pme_t* pme_deviceptr(PMEUnit pme_u) {
+  int u = pme_u.unit();
 #if TINKER_DEBUG
-  return PMEUnit::all_deviceptrs().at(pme_u);
+  return PMEUnit::all_deviceptrs().at(pme_u.unit());
 #else
-  return PMEUnit::all_deviceptrs()[pme_u];
+  return PMEUnit::all_deviceptrs()[pme_u.unit()];
 #endif
 }
 
@@ -37,7 +38,7 @@ static void pme_op_dealloc_(int pu) {
   check_rt(cudaFree(dptr));
 }
 
-static void pme_op_alloc_(int& unit, double aewald, int nfft1, int nfft2,
+static void pme_op_alloc_(PMEUnit& unit, double aewald, int nfft1, int nfft2,
                           int nfft3, int bsorder, bool unique) {
   int count = 0;
   int first = -1;
@@ -87,7 +88,7 @@ static void pme_op_alloc_(int& unit, double aewald, int nfft1, int nfft2,
   unit = idx;
 }
 
-static void pme_op_copyin_(int unit) {
+static void pme_op_copyin_(PMEUnit unit) {
   if (unit < 0)
     return;
 

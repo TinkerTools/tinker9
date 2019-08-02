@@ -69,7 +69,7 @@ TINKER_NAMESPACE_BEGIN
  */
 #pragma acc routine seq
 void image(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
-           const box_t* __restrict__ pb);
+           const Box* __restrict__ pb);
 
 /**
  * applys periodic boundary conditions to displacement (xr, yr, zr) but only
@@ -77,7 +77,7 @@ void image(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
  */
 #pragma acc routine seq
 void imagen(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
-            const box_t* __restrict__ pb);
+            const Box* __restrict__ pb);
 TINKER_NAMESPACE_END
 
 #endif

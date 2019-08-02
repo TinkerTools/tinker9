@@ -6,14 +6,14 @@
 TINKER_NAMESPACE_BEGIN
 /// @brief
 /// periodic boundary conditions (pbc)
-struct box_t {
+struct Box {
   typedef enum {
     null = 0x000,  ///< no pbc
     ortho = 0x001, ///< orthogonal
     mono = 0x002,  ///< monoclinic
     tri = 0x004,   ///< triclinic
     oct = 0x008    ///< truncated octahedron
-  } shape_t;
+  } Shape;
 
   /**
    * @brief
@@ -47,17 +47,17 @@ struct box_t {
   real recip[3][3];
   /// @}
 
-  real volbox;   ///< volume of the pbc box
-  shape_t shape; ///< shape of the pbc box
+  real volbox; ///< volume of the pbc box
+  Shape shape; ///< shape of the pbc box
 };
 
 /// device pointer to the pbc box
-TINKER_EXTERN box_t* box;
+TINKER_EXTERN Box* box;
 /// device pointer to the current pbc box of a trajectory
-TINKER_EXTERN box_t* trajbox;
+TINKER_EXTERN Box* trajbox;
 
 void box_data(rc_op);
-void box_data_copyout(const box_t&);
+void box_data_copyout(const Box&);
 TINKER_NAMESPACE_END
 
 #endif

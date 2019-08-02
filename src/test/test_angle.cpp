@@ -181,7 +181,7 @@ TEST_CASE("Angle-Trpcage", "[ff][eangle][trpcage]") {
   int argc = 2;
   test_begin_1_xyz(argc, argv);
   use_data = usage;
-  tinker_gpu_runtime_initialize();
+  initialize();
 
   const double eps_e = 0.0001;
   const double ref_e = 72.8274;
@@ -195,6 +195,6 @@ TEST_CASE("Angle-Trpcage", "[ff][eangle][trpcage]") {
   COMPARE_BONDED_FORCE(eangle, ea, ref_e, eps_e, nangle, ref_count, gx, gy, gz,
                        ref_g_angle_trpcage, eps_g, vir_ea, ref_v, eps_v);
 
-  tinker_gpu_runtime_finish();
+  finish();
   test_end();
 }

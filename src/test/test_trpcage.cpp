@@ -183,7 +183,7 @@ TEST_CASE("Bonded-Trpcage", "[ff][ebonded][trpcage]") {
   int argc = 2;
   test_begin_1_xyz(argc, argv);
   use_data = usage;
-  tinker_gpu_runtime_initialize();
+  initialize();
 
   const double eps_e = 0.0001;
   const double ref_e = 103.9243;
@@ -198,6 +198,6 @@ TEST_CASE("Bonded-Trpcage", "[ff][ebonded][trpcage]") {
                        ref_bond_count, gx, gy, gz, ref_g_bonded_trpcage, eps_g,
                        vir, ref_v, eps_v);
 
-  tinker_gpu_runtime_finish();
+  finish();
   test_end();
 }

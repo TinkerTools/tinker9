@@ -1,6 +1,7 @@
 #ifndef TINKER_HOSTONLY
 
 #  include "mod_pme.h"
+#  include "util_rt.h"
 
 TINKER_NAMESPACE_BEGIN
 extern std::vector<fft_plan_t>& fft_plans();
@@ -41,9 +42,9 @@ void fft_data(rc_op op) {
   }
 }
 
-void fftfront(int pme_u) {
-  fft_plan_t iplan = fft_plans()[pme_unit];
-  auto& st = PMEUnit::all_objs()[pme_unit];
+void fftfront(PMEUnit pme_u) {
+  fft_plan_t iplan = fft_plans()[pme_u.unit()];
+  auto& st = PMEUnit::all_objs()[pme_u.unit()];
 
 #  if defined(TINKER_SINGLE_PRECISION)
   cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),
@@ -56,9 +57,9 @@ void fftfront(int pme_u) {
 #  endif
 }
 
-void fftback(int pme_u) {
-  fft_plan_t iplan = fft_plans()[pme_unit];
-  auto& st = PMEUnit::all_objs()[pme_unit];
+void fftback(PMEUnit pme_u) {
+  fft_plan_t iplan = fft_plans()[pme_u.unit()];
+  auto& st = PMEUnit::all_objs()[pme_u.unit()];
 
 #  if defined(TINKER_SINGLE_PRECISION)
   cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),

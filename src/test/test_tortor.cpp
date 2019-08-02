@@ -181,7 +181,7 @@ TEST_CASE("Tortor-Trpcage", "[ff][etortor][trpcage]") {
   int argc = 2;
   test_begin_1_xyz(argc, argv);
   use_data = usage;
-  tinker_gpu_runtime_initialize();
+  initialize();
 
   const double eps_e = 0.0001;
   const double ref_e = -9.5128;
@@ -194,6 +194,6 @@ TEST_CASE("Tortor-Trpcage", "[ff][etortor][trpcage]") {
   COMPARE_BONDED_FORCE(etortor, ett, ref_e, eps_e, ntortor, ref_count, gx, gy,
                        gz, ref_g_tortor_trpcage, eps_g, vir_ett, ref_v, eps_v);
 
-  tinker_gpu_runtime_finish();
+  finish();
   test_end();
 }

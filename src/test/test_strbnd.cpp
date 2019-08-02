@@ -181,7 +181,7 @@ TEST_CASE("Strbnd-Trpcage", "[ff][estrbnd][trpcage]") {
   int argc = 2;
   test_begin_1_xyz(argc, argv);
   use_data = usage;
-  tinker_gpu_runtime_initialize();
+  initialize();
 
   const double eps_e = 0.0001;
   const double ref_e = -0.6930;
@@ -195,6 +195,6 @@ TEST_CASE("Strbnd-Trpcage", "[ff][estrbnd][trpcage]") {
   COMPARE_BONDED_FORCE(estrbnd, eba, ref_e, eps_e, nstrbnd, ref_count, gx, gy,
                        gz, ref_g_strbnd_trpcage, eps_g, vir_eba, ref_v, eps_v);
 
-  tinker_gpu_runtime_finish();
+  finish();
   test_end();
 }

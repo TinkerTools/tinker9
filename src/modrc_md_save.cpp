@@ -25,7 +25,7 @@ static cudaStream_t dup_stream_uind_;
 static real* dup_buf_uind_;
 static cudaStream_t dup_stream_bxyz_, dup_stream_v_, dup_stream_g_;
 static real* dup_buf_esum_;
-static box_t* dup_buf_box_;
+static Box* dup_buf_box_;
 static real *dup_buf_x_, *dup_buf_y_, *dup_buf_z_;
 static real *dup_buf_vx_, *dup_buf_vy_, *dup_buf_vz_;
 static real *dup_buf_gx_, *dup_buf_gy_, *dup_buf_gz_;
@@ -72,7 +72,7 @@ void mdsave_data(rc_op op) {
     check_rt(cudaStreamCreate(&dup_stream_g_));
 
     check_rt(cudaMalloc(&dup_buf_esum_, sizeof(real)));
-    check_rt(cudaMalloc(&dup_buf_box_, sizeof(box_t)));
+    check_rt(cudaMalloc(&dup_buf_box_, sizeof(Box)));
     check_rt(cudaMalloc(&dup_buf_x_, rs * n));
     check_rt(cudaMalloc(&dup_buf_y_, rs * n));
     check_rt(cudaMalloc(&dup_buf_z_, rs * n));
@@ -121,7 +121,7 @@ static void mdsave_dup_then_write_(int istep, real dt) {
 
   check_rt(cudaMemcpyAsync(dup_buf_esum_, esum, rs, cudaMemcpyDeviceToDevice,
                            dup_stream_bxyz_));
-  check_rt(cudaMemcpyAsync(dup_buf_box_, box, sizeof(box_t),
+  check_rt(cudaMemcpyAsync(dup_buf_box_, box, sizeof(Box),
                            cudaMemcpyDeviceToDevice, dup_stream_bxyz_));
   check_rt(cudaMemcpyAsync(dup_buf_x_, x, rs * n, cudaMemcpyDeviceToDevice,
                            dup_stream_bxyz_));
@@ -162,11 +162,11 @@ static void mdsave_dup_then_write_(int istep, real dt) {
 
   // get gpu buffer and write to external files
 
-  box_t b;
+  Box b;
   std::vector<real> arrx(n), arry(n), arrz(n);
 
   check_rt(cudaMemcpy(&epot, dup_buf_esum_, rs, cudaMemcpyDeviceToHost));
-  check_rt(cudaMemcpy(&b, dup_buf_box_, sizeof(box_t), cudaMemcpyDeviceToHost));
+  check_rt(cudaMemcpy(&b, dup_buf_box_, sizeof(Box), cudaMemcpyDeviceToHost));
   check_rt(cudaMemcpy(arrx.data(), dup_buf_x_, rs * n, cudaMemcpyDeviceToHost));
   check_rt(cudaMemcpy(arry.data(), dup_buf_y_, rs * n, cudaMemcpyDeviceToHost));
   check_rt(cudaMemcpy(arrz.data(), dup_buf_z_, rs * n, cudaMemcpyDeviceToHost));

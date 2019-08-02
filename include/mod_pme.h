@@ -10,12 +10,17 @@ private:
   int unit_;
 
 public:
+  GeneralUnit()
+      : unit_(-1) {}
+
   GeneralUnit(int u)
       : unit_(u) {}
 
   bool operator<(const GeneralUnit<T>& u) const { return unit_ < u.unit_; }
 
   bool operator==(const GeneralUnit<T>& u) const { return unit_ == u.unit_; }
+
+  int unit() const { return unit_; }
 
 public:
   static std::vector<T>& all_objs() {

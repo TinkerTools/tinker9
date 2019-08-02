@@ -91,7 +91,7 @@ void copyin_tinker_arc(const std::string& arcfile, int first1, int last1,
     }
 
     // copyin
-    std::vector<box_t> bbuf2;
+    std::vector<Box> bbuf2;
     if (has_boxsize) {
       bbuf2.resize(tn);
       for (int i = 0; i < tn; ++i) {
@@ -111,18 +111,18 @@ void copyin_tinker_arc(const std::string& arcfile, int first1, int last1,
           }
 
         bbuf2[i].volbox = boxes::volbox;
-        box_t::shape_t shape = box_t::null;
+        Box::Shape shape = Box::null;
         if (boxes::orthogonal)
-          shape = box_t::ortho;
+          shape = Box::ortho;
         else if (boxes::monoclinic)
-          shape = box_t::mono;
+          shape = Box::mono;
         else if (boxes::triclinic)
-          shape = box_t::tri;
+          shape = Box::tri;
         else if (boxes::octahedron)
-          shape = box_t::oct;
+          shape = Box::oct;
         bbuf2[i].shape = shape;
       }
-      check_rt(cudaMemcpy(trajbox, bbuf2.data(), sizeof(box_t) * tn,
+      check_rt(cudaMemcpy(trajbox, bbuf2.data(), sizeof(Box) * tn,
                           cudaMemcpyHostToDevice));
     }
     check_rt(cudaMemcpy(trajx, xbuf.data(), sizeof(real) * n * tn,

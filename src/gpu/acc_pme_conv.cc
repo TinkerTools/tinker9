@@ -99,7 +99,7 @@ void pme_conv_tmpl(PMEUnit pme_u, real* gpu_vir9) {
   }
 }
 
-void pme_conv0(int pme_u) { pme_conv_tmpl<0>(pme_u, nullptr); }
+void pme_conv0(PMEUnit pme_u) { pme_conv_tmpl<0>(pme_u, nullptr); }
 
 void pme_conv1(PMEUnit pme_u, real* gpu_vir9) {
   pme_conv_tmpl<1>(pme_u, gpu_vir9);

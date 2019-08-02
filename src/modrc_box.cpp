@@ -18,7 +18,7 @@ void box_data(rc_op op) {
   }
 
   if (op & rc_alloc) {
-    size_t size = sizeof(box_t);
+    size_t size = sizeof(Box);
     if (calc::traj & use_data) {
       size *= trajn;
       check_rt(cudaMalloc(&trajbox, size));
@@ -29,25 +29,25 @@ void box_data(rc_op op) {
   }
 
   if (op & rc_init) {
-    box_t::shape_t shape = box_t::null;
+    Box::Shape shape = Box::null;
     if (boxes::orthogonal)
-      shape = box_t::ortho;
+      shape = Box::ortho;
     else if (boxes::monoclinic)
-      shape = box_t::mono;
+      shape = Box::mono;
     else if (boxes::triclinic)
-      shape = box_t::tri;
+      shape = Box::tri;
     else if (boxes::octahedron)
-      shape = box_t::oct;
+      shape = Box::oct;
 
     copyin_array(&box->lvec[0][0], &boxes::lvec[0][0], 9);
     copyin_array(&box->recip[0][0], &boxes::recip[0][0], 9);
     copyin_array(&box->volbox, &boxes::volbox, 1);
-    check_rt(cudaMemcpy(&box->shape, &shape, sizeof(box_t::shape_t),
+    check_rt(cudaMemcpy(&box->shape, &shape, sizeof(Box::Shape),
                         cudaMemcpyHostToDevice));
   }
 }
 
-void box_data_copyout(const box_t& b) {
+void box_data_copyout(const Box& b) {
   if (bound::use_bounds) {
     double ax[3] = {b.lvec[0][0], b.lvec[1][0], b.lvec[2][0]};
     double bx[3] = {b.lvec[0][1], b.lvec[1][1], b.lvec[2][1]};

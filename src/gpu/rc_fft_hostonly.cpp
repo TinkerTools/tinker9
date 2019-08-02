@@ -68,9 +68,9 @@ void fft_data(rc_op op) {
   }
 }
 
-void fftfront(int pme_u) {
-  fft_plan_t iplan = fft_plans()[pme_u];
-  auto& st = pme_obj(pme_u);
+void fftfront(PMEUnit pme_u) {
+  fft_plan_t iplan = fft_plans()[pme_u.unit()];
+  auto& st = pme_obj(pme_u.unit());
 
 #  if defined(TINKER_SINGLE_PRECISION)
   fftwf_execute_dft(iplan.planf, reinterpret_cast<fftwf_complex*>(st.qgrid),
@@ -83,9 +83,9 @@ void fftfront(int pme_u) {
 #  endif
 }
 
-void fftback(int pme_u) {
-  fft_plan_t iplan = fft_plans()[pme_u];
-  auto& st = pme_obj(pme_u);
+void fftback(PMEUnit pme_u) {
+  fft_plan_t iplan = fft_plans()[pme_u.unit()];
+  auto& st = pme_obj(pme_u.unit());
 
 #  if defined(TINKER_SINGLE_PRECISION)
   fftwf_execute_dft(iplan.planb, reinterpret_cast<fftwf_complex*>(st.qgrid),

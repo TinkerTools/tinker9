@@ -20,8 +20,8 @@ void fortran_runtime_finish();
  * set up and clean up host and device environment
  */
 /// @{
-void tinker_gpu_runtime_initialize();
-void tinker_gpu_runtime_finish();
+void initialize();
+void finish();
 /// @}
 
 /**
