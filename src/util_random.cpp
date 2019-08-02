@@ -26,8 +26,8 @@ static int read_tinker_randomseed_() {
 }
 
 static std::default_random_engine generator_;
-void random_data(rc_t rc) {
-  if (rc & rc_copyin) {
+void random_data(rc_op op) {
+  if (op & rc_init) {
     int seed = read_tinker_randomseed_();
     if (seed == 0) {
       auto now = std::chrono::system_clock::now();

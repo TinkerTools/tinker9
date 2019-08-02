@@ -39,7 +39,7 @@ extern int* nev;
 extern real* vir_ev;
 
 void get_evdw_type(evdw_t& typ);
-void evdw_data(rc_t rc);
+void evdw_data(rc_op op);
 
 void evdw_reduce_xyz();
 

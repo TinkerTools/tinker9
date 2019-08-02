@@ -32,13 +32,16 @@ bool FortranStringView::if_eq_(const char* src, size_t len) const {
 //======================================================================
 
 FortranStringView::FortranStringView(const char* src, size_t len)
-    : b_(const_cast<char*>(src)), e_(b_ + len) {}
+    : b_(const_cast<char*>(src))
+    , e_(b_ + len) {}
 
 FortranStringView::FortranStringView(const char* src)
-    : b_(const_cast<char*>(src)), e_(b_ + std::strlen(src)) {}
+    : b_(const_cast<char*>(src))
+    , e_(b_ + std::strlen(src)) {}
 
 FortranStringView::FortranStringView(const std::string& src)
-    : b_(const_cast<char*>(&src[0])), e_(b_ + src.size()) {}
+    : b_(const_cast<char*>(&src[0]))
+    , e_(b_ + src.size()) {}
 
 //======================================================================
 

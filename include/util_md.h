@@ -7,7 +7,7 @@ TINKER_NAMESPACE_BEGIN
 //======================================================================
 // integrator
 
-void integrate_data(rc_t);
+void integrate_data(rc_op);
 
 void kinetic(real& temp);
 void temper(real dt, real& temp);
@@ -20,14 +20,14 @@ void propagate(int nsteps, real dt_ps, void (*itg)(int, real) = nullptr);
 //======================================================================
 // mdsave
 
-void mdsave_data(rc_t);
+void mdsave_data(rc_op);
 
 void mdsave_async(int istep, real dt);
 void mdsave_synchronize();
 
 //======================================================================
 
-void md_data(rc_t rc);
+void md_data(rc_op op);
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN

@@ -20,7 +20,7 @@ struct polargroup_t {
 TINKER_EXTERN polargroup_t polargroup_obj_;
 TINKER_EXTERN polargroup_t* polargroup;
 
-void polargroup_data(rc_t);
+void polargroup_data(rc_op);
 TINKER_NAMESPACE_END
 
 #endif

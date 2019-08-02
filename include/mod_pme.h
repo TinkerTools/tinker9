@@ -48,7 +48,7 @@ TINKER_EXTERN real (*fphidp)[20];
 
 TINKER_EXTERN real* vir_m;
 
-void pme_data(rc_t rc);
+void pme_data(rc_op op);
 
 namespace detail_ {
 std::vector<pme_t>& pme_objs();
@@ -60,7 +60,7 @@ pme_t* pme_deviceptr(int pme_unit);
 
 /// This function must be called after pme_data has been called because it
 /// needs to know the number of pme objects created.
-void fft_data(rc_t rc);
+void fft_data(rc_op op);
 void fftfront(int pme_unit);
 void fftback(int pme_unit);
 

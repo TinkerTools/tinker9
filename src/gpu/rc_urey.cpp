@@ -16,29 +16,29 @@ real cury, qury, ureyunit;
 real* eub;
 real* vir_eub;
 
-void eurey_data(rc_t rc) {
+void eurey_data(rc_op op) {
   if (!use_potent(urey_term))
     return;
 
-  if (rc & rc_dealloc) {
-    check_cudart(cudaFree(iury));
-    check_cudart(cudaFree(uk));
-    check_cudart(cudaFree(ul));
+  if (op & rc_dealloc) {
+    check_rt(cudaFree(iury));
+    check_rt(cudaFree(uk));
+    check_rt(cudaFree(ul));
 
     free_ev(eub, vir_eub);
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     const size_t rs = sizeof(real);
     int nangle = count_bonded_term(angle_term);
-    check_cudart(cudaMalloc(&iury, sizeof(int) * 3 * nangle));
-    check_cudart(cudaMalloc(&uk, rs * nangle));
-    check_cudart(cudaMalloc(&ul, rs * nangle));
+    check_rt(cudaMalloc(&iury, sizeof(int) * 3 * nangle));
+    check_rt(cudaMalloc(&uk, rs * nangle));
+    check_rt(cudaMalloc(&ul, rs * nangle));
 
     alloc_ev(&eub, &vir_eub);
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     nurey = count_bonded_term(urey_term);
     int nangle = count_bonded_term(angle_term);
     std::vector<int> ibuf(3 * nangle);

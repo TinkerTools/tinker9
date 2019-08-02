@@ -29,54 +29,54 @@ int* chkttor_ia_;
 real* ett;
 real* vir_ett;
 
-void etortor_data(rc_t rc) {
+void etortor_data(rc_op op) {
   if (!use_potent(tortor_term))
     return;
 
-  if (rc & rc_dealloc) {
-    check_cudart(cudaFree(ibitor));
+  if (op & rc_dealloc) {
+    check_rt(cudaFree(ibitor));
 
-    check_cudart(cudaFree(itt));
+    check_rt(cudaFree(itt));
 
-    check_cudart(cudaFree(tnx));
-    check_cudart(cudaFree(tny));
-    check_cudart(cudaFree(ttx));
-    check_cudart(cudaFree(tty));
-    check_cudart(cudaFree(tbf));
-    check_cudart(cudaFree(tbx));
-    check_cudart(cudaFree(tby));
-    check_cudart(cudaFree(tbxy));
+    check_rt(cudaFree(tnx));
+    check_rt(cudaFree(tny));
+    check_rt(cudaFree(ttx));
+    check_rt(cudaFree(tty));
+    check_rt(cudaFree(tbf));
+    check_rt(cudaFree(tbx));
+    check_rt(cudaFree(tby));
+    check_rt(cudaFree(tbxy));
 
-    check_cudart(cudaFree(chkttor_ia_));
+    check_rt(cudaFree(chkttor_ia_));
 
     free_ev(ett, vir_ett);
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     nbitor = bitor_::nbitor;
-    check_cudart(cudaMalloc(&ibitor, sizeof(int) * 5 * nbitor));
+    check_rt(cudaMalloc(&ibitor, sizeof(int) * 5 * nbitor));
 
-    check_cudart(cudaMalloc(&itt, sizeof(int) * 3 * nbitor));
+    check_rt(cudaMalloc(&itt, sizeof(int) * 3 * nbitor));
 
     const size_t rs = sizeof(real);
-    check_cudart(cudaMalloc(&tnx, sizeof(int) * ktrtor::maxntt));
-    check_cudart(cudaMalloc(&tny, sizeof(int) * ktrtor::maxntt));
+    check_rt(cudaMalloc(&tnx, sizeof(int) * ktrtor::maxntt));
+    check_rt(cudaMalloc(&tny, sizeof(int) * ktrtor::maxntt));
     int count = ktrtor::maxtgrd * ktrtor::maxntt;
-    check_cudart(cudaMalloc(&ttx, rs * count));
-    check_cudart(cudaMalloc(&tty, rs * count));
+    check_rt(cudaMalloc(&ttx, rs * count));
+    check_rt(cudaMalloc(&tty, rs * count));
     count = ktrtor::maxtgrd2 * ktrtor::maxntt;
-    check_cudart(cudaMalloc(&tbf, rs * count));
-    check_cudart(cudaMalloc(&tbx, rs * count));
-    check_cudart(cudaMalloc(&tby, rs * count));
-    check_cudart(cudaMalloc(&tbxy, rs * count));
+    check_rt(cudaMalloc(&tbf, rs * count));
+    check_rt(cudaMalloc(&tbx, rs * count));
+    check_rt(cudaMalloc(&tby, rs * count));
+    check_rt(cudaMalloc(&tbxy, rs * count));
 
     ntortor = count_bonded_term(tortor_term);
-    check_cudart(cudaMalloc(&chkttor_ia_, sizeof(int) * ntortor));
+    check_rt(cudaMalloc(&chkttor_ia_, sizeof(int) * ntortor));
 
     alloc_ev(&ett, &vir_ett);
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     std::vector<int> ibuf;
 
     ibuf.resize(5 * nbitor);

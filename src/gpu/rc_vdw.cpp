@@ -63,7 +63,7 @@ void get_evdw_type(evdw_t& typ) {
     assert(false);
 }
 
-void evdw_data(rc_t rc) {
+void evdw_data(rc_op op) {
   if (!use_potent(vdw_term))
     return;
 
@@ -74,42 +74,42 @@ void evdw_data(rc_t rc) {
   static std::vector<new_type> jvdwbuf;
   static int jcount;
 
-  if (rc & rc_dealloc) {
+  if (op & rc_dealloc) {
     // local static members
     jmap.clear();
     jvec.clear();
     jvdwbuf.clear();
     jcount = 0;
 
-    check_cudart(cudaFree(ired));
-    check_cudart(cudaFree(kred));
-    check_cudart(cudaFree(xred));
-    check_cudart(cudaFree(yred));
-    check_cudart(cudaFree(zred));
+    check_rt(cudaFree(ired));
+    check_rt(cudaFree(kred));
+    check_rt(cudaFree(xred));
+    check_rt(cudaFree(yred));
+    check_rt(cudaFree(zred));
 
-    check_cudart(cudaFree(jvdw));
-    check_cudart(cudaFree(njvdw));
-    check_cudart(cudaFree(radmin));
-    check_cudart(cudaFree(epsilon));
+    check_rt(cudaFree(jvdw));
+    check_rt(cudaFree(njvdw));
+    check_rt(cudaFree(radmin));
+    check_rt(cudaFree(epsilon));
 
-    check_cudart(cudaFree(vlam));
+    check_rt(cudaFree(vlam));
 
     free_nev(nev, ev, vir_ev);
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     const size_t rs = sizeof(real);
     size_t size;
 
     size = n * rs;
-    check_cudart(cudaMalloc(&ired, n * sizeof(int)));
-    check_cudart(cudaMalloc(&kred, size));
-    check_cudart(cudaMalloc(&xred, size));
-    check_cudart(cudaMalloc(&yred, size));
-    check_cudart(cudaMalloc(&zred, size));
+    check_rt(cudaMalloc(&ired, n * sizeof(int)));
+    check_rt(cudaMalloc(&kred, size));
+    check_rt(cudaMalloc(&xred, size));
+    check_rt(cudaMalloc(&yred, size));
+    check_rt(cudaMalloc(&zred, size));
 
-    check_cudart(cudaMalloc(&jvdw, n * sizeof(int)));
-    check_cudart(cudaMalloc(&njvdw, sizeof(int)));
+    check_rt(cudaMalloc(&jvdw, n * sizeof(int)));
+    check_rt(cudaMalloc(&njvdw, sizeof(int)));
 
     jvdwbuf.resize(n);
     assert(jmap.size() == 0);
@@ -128,16 +128,16 @@ void evdw_data(rc_t rc) {
       }
     }
     size = jcount * jcount * rs;
-    check_cudart(cudaMalloc(&radmin, size));
-    check_cudart(cudaMalloc(&epsilon, size));
+    check_rt(cudaMalloc(&radmin, size));
+    check_rt(cudaMalloc(&epsilon, size));
 
     size = n * rs;
-    check_cudart(cudaMalloc(&vlam, size));
+    check_rt(cudaMalloc(&vlam, size));
 
     alloc_nev(&nev, &ev, &vir_ev);
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     get_evdw_type(vdwtyp);
 
     switch_cut_off(switch_vdw, vdw_switch_cut, vdw_switch_off);

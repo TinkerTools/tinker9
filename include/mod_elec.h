@@ -5,8 +5,8 @@
 
 TINKER_NAMESPACE_BEGIN
 enum {
-  elec_coulomb = 1, /// coulomb interaction
-  elec_ewald = 2    /// particle mesh ewald summation
+  elec_coulomb = 1, ///< coulomb interaction
+  elec_ewald = 2    ///< particle mesh ewald summation
 };
 
 /// local frame definitions
@@ -20,10 +20,10 @@ enum {
 };
 
 struct local_frame_t {
-  int zaxis;  /// z-axis defining atom, starting from 0
-  int xaxis;  /// x-axis defining atom, starting from 0
-  int yaxis;  /// y-axis defining atom, starting from ONE
-  int polaxe; /// local frame definition
+  int zaxis;  ///< z-axis defining atom, starting from 0
+  int xaxis;  ///< x-axis defining atom, starting from 0
+  int yaxis;  ///< y-axis defining atom, starting from ONE
+  int polaxe; ///< local frame definition
 };
 
 // PME: 0, x, y, z, xx, yy, zz, xy, xz, yz
@@ -59,7 +59,9 @@ TINKER_EXTERN real (*pole)[mpl_total];
 TINKER_EXTERN real (*rpole)[mpl_total];
 
 /// x, y, and z components of torques on multipole site
+/// @{
 TINKER_EXTERN real *trqx, *trqy, *trqz;
+/// @}
 /// internal virial Cartesian tensor due to the torques
 TINKER_EXTERN real* vir_trq;
 
@@ -72,7 +74,7 @@ TINKER_EXTERN real (*uind)[3];
 /// mutual induced dipoles in field used for energy terms
 TINKER_EXTERN real (*uinp)[3];
 
-void elec_data(rc_t rc);
+void elec_data(rc_op op);
 int use_elec();
 void elec_init(int vers);
 void torque(int vers);

@@ -100,7 +100,7 @@ void sanity_check() {
 }
 
 //======================================================================
-void egv_data(rc_t rc);
+void egv_data(rc_op op);
 
 //======================================================================
 // energy, gradient, and virial de/allocation

@@ -6,29 +6,29 @@
 #include <ext/tinker/tinker_rt.h>
 
 TINKER_NAMESPACE_BEGIN
-void box_data(rc_t rc) {
-  if (rc & rc_dealloc) {
+void box_data(rc_op op) {
+  if (op & rc_dealloc) {
     if (calc::traj & use_data) {
       box = nullptr;
-      check_cudart(cudaFree(trajbox));
+      check_rt(cudaFree(trajbox));
     } else {
-      check_cudart(cudaFree(box));
+      check_rt(cudaFree(box));
       trajbox = nullptr;
     }
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     size_t size = sizeof(box_t);
     if (calc::traj & use_data) {
       size *= trajn;
-      check_cudart(cudaMalloc(&trajbox, size));
+      check_rt(cudaMalloc(&trajbox, size));
       box = trajbox;
     } else {
-      check_cudart(cudaMalloc(&box, size));
+      check_rt(cudaMalloc(&box, size));
     }
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     box_t::shape_t shape = box_t::null;
     if (boxes::orthogonal)
       shape = box_t::ortho;
@@ -42,8 +42,8 @@ void box_data(rc_t rc) {
     copyin_array(&box->lvec[0][0], &boxes::lvec[0][0], 9);
     copyin_array(&box->recip[0][0], &boxes::recip[0][0], 9);
     copyin_array(&box->volbox, &boxes::volbox, 1);
-    check_cudart(cudaMemcpy(&box->shape, &shape, sizeof(box_t::shape_t),
-                            cudaMemcpyHostToDevice));
+    check_rt(cudaMemcpy(&box->shape, &shape, sizeof(box_t::shape_t),
+                        cudaMemcpyHostToDevice));
   }
 }
 

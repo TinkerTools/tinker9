@@ -40,13 +40,13 @@ static void pme_op_dealloc_(int pu) {
   pme_t& st = pme_obj(pu);
   pme_t* dptr = pme_deviceptr(pu);
 
-  check_cudart(cudaFree(st.igrid));
-  check_cudart(cudaFree(st.bsmod1));
-  check_cudart(cudaFree(st.bsmod2));
-  check_cudart(cudaFree(st.bsmod3));
-  check_cudart(cudaFree(st.qgrid));
+  check_rt(cudaFree(st.igrid));
+  check_rt(cudaFree(st.bsmod1));
+  check_rt(cudaFree(st.bsmod2));
+  check_rt(cudaFree(st.bsmod3));
+  check_rt(cudaFree(st.qgrid));
 
-  check_cudart(cudaFree(dptr));
+  check_rt(cudaFree(dptr));
 }
 
 static int pme_op_alloc_(int& unit, double aewald, int nfft1, int nfft2,
@@ -75,16 +75,16 @@ static int pme_op_alloc_(int& unit, double aewald, int nfft1, int nfft2,
     size_t size;
 
     size = 3 * n * sizeof(int);
-    check_cudart(cudaMalloc(&st.igrid, size));
+    check_rt(cudaMalloc(&st.igrid, size));
     // see also subroutine moduli in pmestuf.f
-    check_cudart(cudaMalloc(&st.bsmod1, rs * nfft1));
-    check_cudart(cudaMalloc(&st.bsmod2, rs * nfft2));
-    check_cudart(cudaMalloc(&st.bsmod3, rs * nfft3));
+    check_rt(cudaMalloc(&st.bsmod1, rs * nfft1));
+    check_rt(cudaMalloc(&st.bsmod2, rs * nfft2));
+    check_rt(cudaMalloc(&st.bsmod3, rs * nfft3));
     size = nfft1 * nfft2 * nfft3 * rs;
-    check_cudart(cudaMalloc(&st.qgrid, 2 * size));
+    check_rt(cudaMalloc(&st.qgrid, 2 * size));
 
     size = sizeof(pme_t);
-    check_cudart(cudaMalloc(&dptr, size));
+    check_rt(cudaMalloc(&dptr, size));
 
     st.aewald = aewald;
     st.nfft1 = nfft1;
@@ -129,7 +129,7 @@ static void pme_op_copyin_(int unit) {
   copyin_array(st.bsmod3, bsmodbuf.data(), st.nfft3);
 
   size_t size = sizeof(pme_t);
-  check_cudart(cudaMemcpy(dptr, &st, size, cudaMemcpyHostToDevice));
+  check_rt(cudaMemcpy(dptr, &st, size, cudaMemcpyHostToDevice));
 }
 TINKER_NAMESPACE_END
 
@@ -151,11 +151,11 @@ void pme_init(int vers) {
   }
 }
 
-void pme_data(rc_t rc) {
+void pme_data(rc_op op) {
   if (!use_ewald())
     return;
 
-  if (rc & rc_dealloc) {
+  if (op & rc_dealloc) {
     assert(detail_::pme_objs().size() == detail_::pme_deviceptrs().size());
     int idx = 0;
     while (idx < detail_::pme_objs().size()) {
@@ -165,45 +165,45 @@ void pme_data(rc_t rc) {
     detail_::pme_objs().clear();
     detail_::pme_deviceptrs().clear();
 
-    check_cudart(cudaFree(cmp));
-    check_cudart(cudaFree(fmp));
-    check_cudart(cudaFree(cphi));
-    check_cudart(cudaFree(fphi));
+    check_rt(cudaFree(cmp));
+    check_rt(cudaFree(fmp));
+    check_rt(cudaFree(cphi));
+    check_rt(cudaFree(fphi));
 
     if (use_potent(polar_term)) {
-      check_cudart(cudaFree(fuind));
-      check_cudart(cudaFree(fuinp));
-      check_cudart(cudaFree(fdip_phi1));
-      check_cudart(cudaFree(fdip_phi2));
-      check_cudart(cudaFree(cphidp));
-      check_cudart(cudaFree(fphidp));
+      check_rt(cudaFree(fuind));
+      check_rt(cudaFree(fuinp));
+      check_rt(cudaFree(fdip_phi1));
+      check_rt(cudaFree(fdip_phi2));
+      check_rt(cudaFree(cphidp));
+      check_rt(cudaFree(fphidp));
     }
 
-    check_cudart(cudaFree(vir_m));
+    check_rt(cudaFree(vir_m));
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     assert(detail_::pme_objs().size() == 0);
     assert(detail_::pme_deviceptrs().size() == 0);
 
     const size_t rs = sizeof(real);
 
-    check_cudart(cudaMalloc(&cmp, 10 * n * rs));
-    check_cudart(cudaMalloc(&fmp, 10 * n * rs));
-    check_cudart(cudaMalloc(&cphi, 10 * n * rs));
-    check_cudart(cudaMalloc(&fphi, 20 * n * rs));
+    check_rt(cudaMalloc(&cmp, 10 * n * rs));
+    check_rt(cudaMalloc(&fmp, 10 * n * rs));
+    check_rt(cudaMalloc(&cphi, 10 * n * rs));
+    check_rt(cudaMalloc(&fphi, 20 * n * rs));
 
     if (use_potent(polar_term)) {
-      check_cudart(cudaMalloc(&fuind, 3 * n * rs));
-      check_cudart(cudaMalloc(&fuinp, 3 * n * rs));
-      check_cudart(cudaMalloc(&fdip_phi1, 10 * n * rs));
-      check_cudart(cudaMalloc(&fdip_phi2, 10 * n * rs));
-      check_cudart(cudaMalloc(&cphidp, 10 * n * rs));
-      check_cudart(cudaMalloc(&fphidp, 20 * n * rs));
+      check_rt(cudaMalloc(&fuind, 3 * n * rs));
+      check_rt(cudaMalloc(&fuinp, 3 * n * rs));
+      check_rt(cudaMalloc(&fdip_phi1, 10 * n * rs));
+      check_rt(cudaMalloc(&fdip_phi2, 10 * n * rs));
+      check_rt(cudaMalloc(&cphidp, 10 * n * rs));
+      check_rt(cudaMalloc(&fphidp, 20 * n * rs));
 
       // if (vir_m), it implies use virial and use epolar
       if (use_data & calc::virial)
-        check_cudart(cudaMalloc(&vir_m, 9 * rs));
+        check_rt(cudaMalloc(&vir_m, 9 * rs));
       else
         vir_m = nullptr;
     }
@@ -240,7 +240,7 @@ void pme_data(rc_t rc) {
     }
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     switch_cut_off(switch_ewald, ewald_switch_cut, ewald_switch_off);
 
     pme_op_copyin_(epme_unit);
@@ -249,6 +249,6 @@ void pme_data(rc_t rc) {
     pme_op_copyin_(dpme_unit);
   }
 
-  fft_data(rc);
+  fft_data(op);
 }
 TINKER_NAMESPACE_END

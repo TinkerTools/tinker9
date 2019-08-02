@@ -6,8 +6,8 @@
 TINKER_NAMESPACE_BEGIN
 static void (*integrator_)(int, real);
 
-void integrate_data(rc_t rc) {
-  if (rc & rc_copyin) {
+void integrate_data(rc_op op) {
+  if (op & rc_init) {
     if (bath::isothermal) {
       fstr_view th = bath::thermostat;
       if (th == "BERENDSEN")
@@ -104,11 +104,11 @@ void propagate(int nsteps, real dt_ps, void (*itg)(int, real)) {
   mdsave_synchronize();
 }
 
-void md_data(rc_t rc) {
+void md_data(rc_op op) {
   if ((calc::md & use_data) == 0)
     return;
 
-  integrate_data(rc);
-  mdsave_data(rc);
+  integrate_data(op);
+  mdsave_data(op);
 }
 TINKER_NAMESPACE_END

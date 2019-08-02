@@ -25,7 +25,7 @@ extern int* angtyp;
 extern real* ea;
 extern real* vir_ea;
 
-void eangle_data(rc_t rc);
+void eangle_data(rc_op op);
 
 void eangle(int vers);
 TINKER_NAMESPACE_END

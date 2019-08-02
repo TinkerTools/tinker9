@@ -13,7 +13,7 @@ extern real ptorunit;
 extern real* ept;
 extern real* vir_ept;
 
-void epitors_data(rc_t rc);
+void epitors_data(rc_op op);
 
 void epitors(int vers);
 TINKER_NAMESPACE_END

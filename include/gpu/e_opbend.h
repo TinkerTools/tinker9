@@ -17,7 +17,7 @@ extern real copb, qopb, popb, sopb;
 extern real* eopb;
 extern real* vir_eopb;
 
-void eopbend_data(rc_t rc);
+void eopbend_data(rc_op op);
 
 void eopbend(int vers);
 TINKER_NAMESPACE_END

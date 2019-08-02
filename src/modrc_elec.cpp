@@ -11,41 +11,41 @@
 TINKER_NAMESPACE_BEGIN
 int use_elec() { return use_potent(mpole_term) || use_potent(polar_term); }
 
-void elec_data(rc_t rc) {
+void elec_data(rc_op op) {
   if (!use_elec())
     return;
 
-  if (rc & rc_dealloc) {
-    check_cudart(cudaFree(zaxis));
-    check_cudart(cudaFree(pole));
-    check_cudart(cudaFree(rpole));
+  if (op & rc_dealloc) {
+    check_rt(cudaFree(zaxis));
+    check_rt(cudaFree(pole));
+    check_rt(cudaFree(rpole));
 
-    check_cudart(cudaFree(uind));
-    check_cudart(cudaFree(uinp));
-    check_cudart(cudaFree(udir));
-    check_cudart(cudaFree(udirp));
+    check_rt(cudaFree(uind));
+    check_rt(cudaFree(uinp));
+    check_rt(cudaFree(udir));
+    check_rt(cudaFree(udirp));
 
-    check_cudart(cudaFree(trqx));
-    check_cudart(cudaFree(trqy));
-    check_cudart(cudaFree(trqz));
-    check_cudart(cudaFree(vir_trq));
+    check_rt(cudaFree(trqx));
+    check_rt(cudaFree(trqy));
+    check_rt(cudaFree(trqz));
+    check_rt(cudaFree(vir_trq));
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     const size_t rs = sizeof(real);
     size_t size;
 
     size = sizeof(local_frame_t);
-    check_cudart(cudaMalloc(&zaxis, n * size));
+    check_rt(cudaMalloc(&zaxis, n * size));
     size = rs * mpl_total;
-    check_cudart(cudaMalloc(&pole, n * size));
-    check_cudart(cudaMalloc(&rpole, n * size));
+    check_rt(cudaMalloc(&pole, n * size));
+    check_rt(cudaMalloc(&rpole, n * size));
 
     if (use_potent(polar_term)) {
-      check_cudart(cudaMalloc(&uind, 3 * n * rs));
-      check_cudart(cudaMalloc(&uinp, 3 * n * rs));
-      check_cudart(cudaMalloc(&udir, 3 * n * rs));
-      check_cudart(cudaMalloc(&udirp, 3 * n * rs));
+      check_rt(cudaMalloc(&uind, 3 * n * rs));
+      check_rt(cudaMalloc(&uinp, 3 * n * rs));
+      check_rt(cudaMalloc(&udir, 3 * n * rs));
+      check_rt(cudaMalloc(&udirp, 3 * n * rs));
     } else {
       uind = nullptr;
       uinp = nullptr;
@@ -54,19 +54,19 @@ void elec_data(rc_t rc) {
     }
 
     if (use_data & calc::grad) {
-      check_cudart(cudaMalloc(&trqx, rs * n));
-      check_cudart(cudaMalloc(&trqy, rs * n));
-      check_cudart(cudaMalloc(&trqz, rs * n));
+      check_rt(cudaMalloc(&trqx, rs * n));
+      check_rt(cudaMalloc(&trqy, rs * n));
+      check_rt(cudaMalloc(&trqz, rs * n));
     } else {
       trqx = nullptr;
       trqy = nullptr;
       trqz = nullptr;
     }
 
-    check_cudart(cudaMalloc(&vir_trq, rs * 9));
+    check_rt(cudaMalloc(&vir_trq, rs * 9));
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     electric = chgpot::electric;
     dielec = chgpot::dielec;
 
@@ -125,7 +125,7 @@ void elec_data(rc_t rc) {
     copyin_array(reinterpret_cast<real*>(pole), polebuf.data(), mpl_total * n);
   }
 
-  pme_data(rc);
+  pme_data(op);
 }
 
 extern void chkpole();

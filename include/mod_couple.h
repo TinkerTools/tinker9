@@ -20,7 +20,7 @@ struct couple_t {
 TINKER_EXTERN couple_t coupl_obj_;
 TINKER_EXTERN couple_t* coupl;
 
-void couple_data(rc_t);
+void couple_data(rc_op);
 TINKER_NAMESPACE_END
 
 #endif

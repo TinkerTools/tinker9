@@ -49,65 +49,65 @@ void get_epolar_type(int& typ, std::string& typ_str) {
   }
 }
 
-void epolar_data(rc_t rc) {
+void epolar_data(rc_op op) {
   if (!use_potent(polar_term))
     return;
 
-  if (rc & rc_dealloc) {
-    check_cudart(cudaFree(polarity));
-    check_cudart(cudaFree(thole));
-    check_cudart(cudaFree(pdamp));
-    check_cudart(cudaFree(polarity_inv));
+  if (op & rc_dealloc) {
+    check_rt(cudaFree(polarity));
+    check_rt(cudaFree(thole));
+    check_rt(cudaFree(pdamp));
+    check_rt(cudaFree(polarity_inv));
 
     free_nev(nep, ep, vir_ep);
 
-    check_cudart(cudaFree(ufld));
-    check_cudart(cudaFree(dufld));
+    check_rt(cudaFree(ufld));
+    check_rt(cudaFree(dufld));
 
-    check_cudart(cudaFree(work01_));
-    check_cudart(cudaFree(work02_));
-    check_cudart(cudaFree(work03_));
-    check_cudart(cudaFree(work04_));
-    check_cudart(cudaFree(work05_));
-    check_cudart(cudaFree(work06_));
-    check_cudart(cudaFree(work07_));
-    check_cudart(cudaFree(work08_));
-    check_cudart(cudaFree(work09_));
-    check_cudart(cudaFree(work10_));
+    check_rt(cudaFree(work01_));
+    check_rt(cudaFree(work02_));
+    check_rt(cudaFree(work03_));
+    check_rt(cudaFree(work04_));
+    check_rt(cudaFree(work05_));
+    check_rt(cudaFree(work06_));
+    check_rt(cudaFree(work07_));
+    check_rt(cudaFree(work08_));
+    check_rt(cudaFree(work09_));
+    check_rt(cudaFree(work10_));
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     const size_t rs = sizeof(real);
     size_t size;
 
-    check_cudart(cudaMalloc(&polarity, n * rs));
-    check_cudart(cudaMalloc(&thole, n * rs));
-    check_cudart(cudaMalloc(&pdamp, rs * n));
-    check_cudart(cudaMalloc(&polarity_inv, rs * n));
+    check_rt(cudaMalloc(&polarity, n * rs));
+    check_rt(cudaMalloc(&thole, n * rs));
+    check_rt(cudaMalloc(&pdamp, rs * n));
+    check_rt(cudaMalloc(&polarity_inv, rs * n));
 
     alloc_nev(&nep, &ep, &vir_ep);
 
     if (use_data & calc::grad) {
-      check_cudart(cudaMalloc(&ufld, rs * 3 * n));
-      check_cudart(cudaMalloc(&dufld, rs * 6 * n));
+      check_rt(cudaMalloc(&ufld, rs * 3 * n));
+      check_rt(cudaMalloc(&dufld, rs * 6 * n));
     } else {
       ufld = nullptr;
       dufld = nullptr;
     }
 
-    check_cudart(cudaMalloc(&work01_, 3 * n * rs));
-    check_cudart(cudaMalloc(&work02_, 3 * n * rs));
-    check_cudart(cudaMalloc(&work03_, 3 * n * rs));
-    check_cudart(cudaMalloc(&work04_, 3 * n * rs));
-    check_cudart(cudaMalloc(&work05_, 3 * n * rs));
-    check_cudart(cudaMalloc(&work06_, 3 * n * rs));
-    check_cudart(cudaMalloc(&work07_, 3 * n * rs));
-    check_cudart(cudaMalloc(&work08_, 3 * n * rs));
-    check_cudart(cudaMalloc(&work09_, 3 * n * rs));
-    check_cudart(cudaMalloc(&work10_, 3 * n * rs));
+    check_rt(cudaMalloc(&work01_, 3 * n * rs));
+    check_rt(cudaMalloc(&work02_, 3 * n * rs));
+    check_rt(cudaMalloc(&work03_, 3 * n * rs));
+    check_rt(cudaMalloc(&work04_, 3 * n * rs));
+    check_rt(cudaMalloc(&work05_, 3 * n * rs));
+    check_rt(cudaMalloc(&work06_, 3 * n * rs));
+    check_rt(cudaMalloc(&work07_, 3 * n * rs));
+    check_rt(cudaMalloc(&work08_, 3 * n * rs));
+    check_rt(cudaMalloc(&work09_, 3 * n * rs));
+    check_rt(cudaMalloc(&work10_, 3 * n * rs));
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     get_epolar_type(epolar_electyp, epolar_electyp_str);
 
     if (epolar_electyp == elec_coulomb)

@@ -17,26 +17,26 @@ real copb, qopb, popb, sopb;
 real* eopb;
 real* vir_eopb;
 
-void eopbend_data(rc_t rc) {
+void eopbend_data(rc_op op) {
   if (!use_potent(opbend_term))
     return;
 
-  if (rc & rc_dealloc) {
-    check_cudart(cudaFree(iopb));
-    check_cudart(cudaFree(opbk));
+  if (op & rc_dealloc) {
+    check_rt(cudaFree(iopb));
+    check_rt(cudaFree(opbk));
 
     free_ev(eopb, vir_eopb);
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     int nangle = count_bonded_term(angle_term);
-    check_cudart(cudaMalloc(&iopb, sizeof(int) * nangle));
-    check_cudart(cudaMalloc(&opbk, sizeof(real) * nangle));
+    check_rt(cudaMalloc(&iopb, sizeof(int) * nangle));
+    check_rt(cudaMalloc(&opbk, sizeof(real) * nangle));
 
     alloc_ev(&eopb, &vir_eopb);
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     fstr_view otyp = angpot::opbtyp;
     if (otyp == "W-D-C")
       opbtyp = opbend_w_d_c;

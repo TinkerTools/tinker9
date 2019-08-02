@@ -4,46 +4,58 @@
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-/**
- * matrix form of lvec/recip periodic box vectors
- *
- * triclinic
- * a.x,b.x,c.x = a.x b.x c.x
- * a.y,b.y,c.y =   0 b.y c.y
- * a.z,b.z,c.z =   0   0 c.z
- *
- * monoclinic alpha = gamma = 90
- * a.x,b.x,c.x = a.x   0 c.x
- * a.y,b.y,c.y =   0 b.y   0
- * a.z,b.z,c.z =   0   0 c.z
- *
- * orthogonal alpha = beta = gamma = 90
- * a.x,b.x,c.x = a.x   0   0
- * a.y,b.y,c.y =   0 b.y   0
- * a.z,b.z,c.z =   0   0 c.z
- *
- * cartesian_column_vector dot recip = fractional_column_vector
- * fractional_column_vector dot lvec = cartesian_column_vector
- */
+/// @brief
+/// periodic boundary conditions (pbc)
 struct box_t {
   typedef enum {
-    null = 0x000,  /// null
-    ortho = 0x001, /// orthogonal
-    mono = 0x002,  /// monoclinic
-    tri = 0x004,   /// triclinic
-    oct = 0x008    /// truncated octahedron
+    null = 0x000,  ///< no pbc
+    ortho = 0x001, ///< orthogonal
+    mono = 0x002,  ///< monoclinic
+    tri = 0x004,   ///< triclinic
+    oct = 0x008    ///< truncated octahedron
   } shape_t;
 
+  /**
+   * the matrix form of lvec and recip pbc box vectors
+   *
+   * @code
+   * Triclinic
+   * a.x,b.x,c.x = a.x b.x c.x
+   * a.y,b.y,c.y =   0 b.y c.y
+   * a.z,b.z,c.z =   0   0 c.z
+   * @endcode
+   *
+   * @code
+   * Monoclinic
+   * alpha = gamma = 90 degrees
+   * a.x,b.x,c.x = a.x   0 c.x
+   * a.y,b.y,c.y =   0 b.y   0
+   * a.z,b.z,c.z =   0   0 c.z
+   * @endcode
+   *
+   * @code
+   * Orthogonal
+   * alpha = beta = gamma = 90 degrees
+   * a.x,b.x,c.x = a.x   0   0
+   * a.y,b.y,c.y =   0 b.y   0
+   * a.z,b.z,c.z =   0   0 c.z
+   * @endcode
+   */
+  /// @{
   real lvec[3][3];
   real recip[3][3];
-  real volbox;
-  shape_t shape;
+  /// @}
+
+  real volbox;   ///< volume of the pbc box
+  shape_t shape; ///< shape of the pbc box
 };
 
+/// device pointer to the pbc box
 TINKER_EXTERN box_t* box;
+/// device pointer to the current pbc box of a trajectory
 TINKER_EXTERN box_t* trajbox;
 
-void box_data(rc_t);
+void box_data(rc_op);
 void box_data_copyout(const box_t&);
 TINKER_NAMESPACE_END
 

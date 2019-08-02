@@ -17,30 +17,30 @@ real *bl, *bk;
 real* eb;
 real* vir_eb;
 
-void ebond_data(rc_t rc) {
+void ebond_data(rc_op op) {
   if (!use_potent(bond_term) && !use_potent(strbnd_term))
     return;
 
-  if (rc & rc_dealloc) {
-    check_cudart(cudaFree(ibnd));
-    check_cudart(cudaFree(bl));
-    check_cudart(cudaFree(bk));
+  if (op & rc_dealloc) {
+    check_rt(cudaFree(ibnd));
+    check_rt(cudaFree(bl));
+    check_rt(cudaFree(bk));
 
     free_ev(eb, vir_eb);
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     const size_t rs = sizeof(real);
 
     nbond = count_bonded_term(bond_term);
-    check_cudart(cudaMalloc(&ibnd, sizeof(int) * nbond * 2));
-    check_cudart(cudaMalloc(&bl, rs * nbond));
-    check_cudart(cudaMalloc(&bk, rs * nbond));
+    check_rt(cudaMalloc(&ibnd, sizeof(int) * nbond * 2));
+    check_rt(cudaMalloc(&bl, rs * nbond));
+    check_rt(cudaMalloc(&bk, rs * nbond));
 
     alloc_ev(&eb, &vir_eb);
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     fstr_view btyp = bndpot::bndtyp;
     if (btyp == "HARMONIC")
       bndtyp = bond_harmonic;

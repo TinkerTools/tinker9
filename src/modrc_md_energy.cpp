@@ -19,16 +19,16 @@ static std::map<int**, int> ne_addr_idx;
 static std::map<real**, int> e_addr_idx;
 static std::map<real**, int> v_addr_idx;
 
-static void data(rc_t rc) {
-  if (rc & rc_dealloc) {
+static void data(rc_op op) {
+  if (op & rc_dealloc) {
     end = 0;
     cap = 0;
 
-    check_cudart(cudaFree(nebuf));
+    check_rt(cudaFree(nebuf));
     nebuf = nullptr;
-    check_cudart(cudaFree(ebuf));
+    check_rt(cudaFree(ebuf));
     ebuf = nullptr;
-    check_cudart(cudaFree(vbuf));
+    check_rt(cudaFree(vbuf));
     vbuf = nullptr;
 
     ne_addr_idx.clear();
@@ -36,17 +36,17 @@ static void data(rc_t rc) {
     v_addr_idx.clear();
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     end = 0;
     cap = 4; // default initial capacity
 
     const size_t rs = sizeof(real);
-    check_cudart(cudaMalloc(&nebuf, sizeof(int) * cap));
-    check_cudart(cudaMalloc(&ebuf, rs * cap));
-    check_cudart(cudaMalloc(&vbuf, rs * cap * virlen));
+    check_rt(cudaMalloc(&nebuf, sizeof(int) * cap));
+    check_rt(cudaMalloc(&ebuf, rs * cap));
+    check_rt(cudaMalloc(&vbuf, rs * cap * virlen));
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     zero_array(nebuf, cap);
     zero_array(ebuf, cap);
     zero_array(vbuf, cap * virlen);
@@ -64,24 +64,23 @@ static void grow_if_must() {
   const size_t rs = sizeof(real);
 
   int* new_nebuf;
-  check_cudart(cudaMalloc(&new_nebuf, sizeof(int) * cap));
-  check_cudart(cudaMemcpy(new_nebuf, nebuf, sizeof(int) * old_cap,
-                          cudaMemcpyDeviceToDevice));
-  check_cudart(cudaFree(nebuf));
+  check_rt(cudaMalloc(&new_nebuf, sizeof(int) * cap));
+  check_rt(cudaMemcpy(new_nebuf, nebuf, sizeof(int) * old_cap,
+                      cudaMemcpyDeviceToDevice));
+  check_rt(cudaFree(nebuf));
   nebuf = new_nebuf;
 
   real* new_ebuf;
-  check_cudart(cudaMalloc(&new_ebuf, rs * cap));
-  check_cudart(
-      cudaMemcpy(new_ebuf, ebuf, rs * old_cap, cudaMemcpyDeviceToDevice));
-  check_cudart(cudaFree(ebuf));
+  check_rt(cudaMalloc(&new_ebuf, rs * cap));
+  check_rt(cudaMemcpy(new_ebuf, ebuf, rs * old_cap, cudaMemcpyDeviceToDevice));
+  check_rt(cudaFree(ebuf));
   ebuf = new_ebuf;
 
   real* new_vbuf;
-  check_cudart(cudaMalloc(&new_vbuf, rs * cap * virlen));
-  check_cudart(cudaMemcpy(new_vbuf, vbuf, rs * old_cap * virlen,
-                          cudaMemcpyDeviceToDevice));
-  check_cudart(cudaFree(vbuf));
+  check_rt(cudaMalloc(&new_vbuf, rs * cap * virlen));
+  check_rt(cudaMemcpy(new_vbuf, vbuf, rs * old_cap * virlen,
+                      cudaMemcpyDeviceToDevice));
+  check_rt(cudaFree(vbuf));
   vbuf = new_vbuf;
 
   for (auto it : ne_addr_idx) {
@@ -125,19 +124,19 @@ static void dealloc3(real* /* pe */, real* /* pv */, int* /* pne */) {}
 }
 //======================================================================
 
-void egv_data(rc_t rc) {
+void egv_data(rc_op op) {
   if (use_data & (calc::analyz | calc::energy | calc::virial)) {
-    energy_buffer_::data(rc);
+    energy_buffer_::data(op);
 
-    if (rc & rc_dealloc) {
+    if (op & rc_dealloc) {
       free_ev(esum, vir);
     }
 
-    if (rc & rc_alloc) {
+    if (op & rc_alloc) {
       alloc_ev(&esum, &vir);
     }
 
-    if (rc & rc_copyin) {
+    if (op & rc_init) {
       if (calc::energy & use_data)
         copyin_array(esum, &energi::esum, 1);
 
@@ -147,24 +146,24 @@ void egv_data(rc_t rc) {
   }
 
   if (use_data & calc::grad) {
-    if (rc & rc_dealloc) {
-      check_cudart(cudaFree(gx));
-      check_cudart(cudaFree(gy));
-      check_cudart(cudaFree(gz));
+    if (op & rc_dealloc) {
+      check_rt(cudaFree(gx));
+      check_rt(cudaFree(gy));
+      check_rt(cudaFree(gz));
     }
 
-    if (rc & rc_alloc) {
+    if (op & rc_alloc) {
       const size_t size = sizeof(real) * n;
-      check_cudart(cudaMalloc(&gx, size));
-      check_cudart(cudaMalloc(&gy, size));
-      check_cudart(cudaMalloc(&gz, size));
+      check_rt(cudaMalloc(&gx, size));
+      check_rt(cudaMalloc(&gy, size));
+      check_rt(cudaMalloc(&gz, size));
     }
 
     // We can never assume whether or not deriv::desum was allocated, because it
     // was allocated inside subroutine gradient(...), which would be skipped in
     // subroutine mdinit() if a dyn file existed to restart a simulation.
 
-    // if (rc & rc_copyin) {
+    // if (op & rc_init) {
     //   copyin_array2(2, 3, gz, deriv::desum, n);
     //   copyin_array2(2, 3, gz, deriv::desum, n);
     //   copyin_array2(2, 3, gz, deriv::desum, n);

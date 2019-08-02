@@ -5,35 +5,35 @@
 #include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN
-void potential_data(rc_t rc) {
+void potential_data(rc_op op) {
   if ((use_data & calc::vmask) == 0)
     return;
 
-  rc_man egv42_{egv_data, rc};
+  rc_man egv42_{egv_data, op};
 
   // bonded terms
 
-  rc_man ebond42_{ebond_data, rc};
-  rc_man eangle42_{eangle_data, rc};
-  rc_man estrbnd42_{estrbnd_data, rc};
-  rc_man eurey42_{eurey_data, rc};
-  rc_man eopbend42_{eopbend_data, rc};
-  rc_man etors42_{etors_data, rc};
-  rc_man epitors42_{epitors_data, rc};
-  rc_man etortor42_{etortor_data, rc};
+  rc_man ebond42_{ebond_data, op};
+  rc_man eangle42_{eangle_data, op};
+  rc_man estrbnd42_{estrbnd_data, op};
+  rc_man eurey42_{eurey_data, op};
+  rc_man eopbend42_{eopbend_data, op};
+  rc_man etors42_{etors_data, op};
+  rc_man epitors42_{epitors_data, op};
+  rc_man etortor42_{etortor_data, op};
 
   // non-bonded terms
 
-  rc_man evdw42_{evdw_data, rc};
+  rc_man evdw42_{evdw_data, op};
 
   // Must call elec_data() before any electrostatics routine.
 
-  rc_man elec42_{elec_data, rc};
+  rc_man elec42_{elec_data, op};
 
-  rc_man empole42_{empole_data, rc};
+  rc_man empole42_{empole_data, op};
   if (use_potent(polar_term))
-    rc_man polargroup42_{polargroup_data, rc};
-  rc_man epolar42_{epolar_data, rc};
+    rc_man polargroup42_{polargroup_data, op};
+  rc_man epolar42_{epolar_data, op};
 }
 
 void energy_potential(int vers) {
@@ -75,6 +75,6 @@ void energy_potential(int vers) {
 
   // list update
 
-  nblist_data(rc_evolve);
+  nblist_data(rc_man::evolve);
 }
 TINKER_NAMESPACE_END

@@ -5,7 +5,7 @@ TINKER_NAMESPACE_BEGIN
 template <class T>
 void zero_array_tmpl(T* dst, int nelem) {
   size_t size = sizeof(T) * nelem;
-  check_cudart(cudaMemset(dst, 0, size));
+  check_rt(cudaMemset(dst, 0, size));
 }
 
 void zero_array(int* dst, int nelem) { zero_array_tmpl(dst, nelem); }
@@ -22,13 +22,13 @@ void copyin_array_tmpl(DT* dst, const ST* src, int nelem) {
 
   size_t size = ds * nelem;
   if_constexpr(ds == ss) {
-    check_cudart(cudaMemcpy(dst, src, size, cudaMemcpyHostToDevice));
+    check_rt(cudaMemcpy(dst, src, size, cudaMemcpyHostToDevice));
   }
   else if_constexpr(ds < ss) {
     std::vector<DT> buf(nelem);
     for (int i = 0; i < nelem; ++i)
       buf[i] = src[i];
-    check_cudart(cudaMemcpy(dst, buf.data(), size, cudaMemcpyHostToDevice));
+    check_rt(cudaMemcpy(dst, buf.data(), size, cudaMemcpyHostToDevice));
   }
 }
 
@@ -40,11 +40,11 @@ void copyout_array_tmpl(DT* dst, const ST* src, int nelem) {
 
   size_t size = ss * nelem;
   if_constexpr(ds == ss) {
-    check_cudart(cudaMemcpy(dst, src, size, cudaMemcpyDeviceToHost));
+    check_rt(cudaMemcpy(dst, src, size, cudaMemcpyDeviceToHost));
   }
   else if_constexpr(ds > ss) {
     std::vector<ST> buf(nelem);
-    check_cudart(cudaMemcpy(buf.data(), src, size, cudaMemcpyDeviceToHost));
+    check_rt(cudaMemcpy(buf.data(), src, size, cudaMemcpyDeviceToHost));
     for (int i = 0; i < nelem; ++i)
       dst[i] = buf[i];
   }
@@ -130,7 +130,7 @@ template <class DT, class ST>
 void copy_array_tmpl(DT* dst, const ST* src, int nelem) {
   static_assert(std::is_same<DT, ST>::value, "");
   size_t size = sizeof(ST) * nelem;
-  check_cudart(cudaMemcpy(dst, src, size, cudaMemcpyDeviceToDevice));
+  check_rt(cudaMemcpy(dst, src, size, cudaMemcpyDeviceToDevice));
 }
 
 void copy_array(int* dst, const int* src, int nelem) {

@@ -122,15 +122,15 @@ void copyin_tinker_arc(const std::string& arcfile, int first1, int last1,
           shape = box_t::oct;
         bbuf2[i].shape = shape;
       }
-      check_cudart(cudaMemcpy(trajbox, bbuf2.data(), sizeof(box_t) * tn,
-                              cudaMemcpyHostToDevice));
+      check_rt(cudaMemcpy(trajbox, bbuf2.data(), sizeof(box_t) * tn,
+                          cudaMemcpyHostToDevice));
     }
-    check_cudart(cudaMemcpy(trajx, xbuf.data(), sizeof(real) * n * tn,
-                            cudaMemcpyHostToDevice));
-    check_cudart(cudaMemcpy(trajy, ybuf.data(), sizeof(real) * n * tn,
-                            cudaMemcpyHostToDevice));
-    check_cudart(cudaMemcpy(trajz, zbuf.data(), sizeof(real) * n * tn,
-                            cudaMemcpyHostToDevice));
+    check_rt(cudaMemcpy(trajx, xbuf.data(), sizeof(real) * n * tn,
+                        cudaMemcpyHostToDevice));
+    check_rt(cudaMemcpy(trajy, ybuf.data(), sizeof(real) * n * tn,
+                        cudaMemcpyHostToDevice));
+    check_rt(cudaMemcpy(trajz, zbuf.data(), sizeof(real) * n * tn,
+                        cudaMemcpyHostToDevice));
   } else {
     std::string msg = "Cannot Open File ";
     msg += arcfile;

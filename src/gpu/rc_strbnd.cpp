@@ -13,28 +13,28 @@ real stbnunit;
 real* eba;
 real* vir_eba;
 
-void estrbnd_data(rc_t rc) {
+void estrbnd_data(rc_op op) {
   if (!use_potent(strbnd_term))
     return;
 
-  if (rc & rc_dealloc) {
-    check_cudart(cudaFree(isb));
-    check_cudart(cudaFree(sbk));
+  if (op & rc_dealloc) {
+    check_rt(cudaFree(isb));
+    check_rt(cudaFree(sbk));
 
     free_ev(eba, vir_eba);
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     const size_t rs = sizeof(real);
 
     int nangle = count_bonded_term(angle_term);
-    check_cudart(cudaMalloc(&isb, sizeof(int) * 3 * nangle));
-    check_cudart(cudaMalloc(&sbk, rs * 2 * nangle));
+    check_rt(cudaMalloc(&isb, sizeof(int) * 3 * nangle));
+    check_rt(cudaMalloc(&sbk, rs * 2 * nangle));
 
     alloc_ev(&eba, &vir_eba);
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     nstrbnd = count_bonded_term(strbnd_term);
     int nangle = count_bonded_term(angle_term);
     std::vector<int> ibuf(3 * nangle);

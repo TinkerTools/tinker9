@@ -39,7 +39,7 @@ extern real (*work09_)[3];
 extern real (*work10_)[3];
 
 void get_epolar_type(int& typ, std::string& typ_str);
-void epolar_data(rc_t rc);
+void epolar_data(rc_op op);
 
 // see also subroutine epolar0e in epolar.f
 void epolar0_dotprod(const real (*gpu_uind)[3], const real (*gpu_udirp)[3]);

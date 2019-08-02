@@ -26,17 +26,17 @@ void get_empole_type(int& typ, std::string& typ_str) {
   }
 }
 
-void empole_data(rc_t rc) {
+void empole_data(rc_op op) {
   if (!use_potent(mpole_term))
     return;
 
-  if (rc & rc_dealloc)
+  if (op & rc_dealloc)
     free_nev(nem, em, vir_em);
 
-  if (rc & rc_alloc)
+  if (op & rc_alloc)
     alloc_nev(&nem, &em, &vir_em);
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     get_empole_type(empole_electyp, empole_electyp_str);
 
     if (empole_electyp == elec_coulomb)

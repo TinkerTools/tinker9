@@ -14,55 +14,52 @@ void tinker_gpu_runtime_finish();
  *
  * To deallocate resource in reverse order of allocation, use named objects.
  * @code
- * rc_man foo_random_name{foo_data, rc};
- * rc_man bar_random_name{bar_data, rc};
+ * rc_man foo_random_name{foo_data, op};
+ * rc_man bar_random_name{bar_data, op};
  * @endcode
  *
  * To deallocate resource in the same order of allocation, use unnamed objects.
  * @code
- * rc_man{foo_data, rc};
- * rc_man{bar_data, rc};
+ * rc_man{foo_data, op};
+ * rc_man{bar_data, op};
  * @endcode
  */
-class rc_man {
+class ResourceManagement {
 public:
   typedef enum {
-    rc_dealloc = 0x001, /// deallocate device memory
-    rc_alloc = 0x002,   /// allocate device memory
-    rc_copyin = 0x004,  /// update device data from host memory, or directly
-                        /// initialize device data
-    rc_evolve = 0x010,
+    dealloc = 0x001, ///< deallocate device memory
+    alloc = 0x002,   ///< allocate device memory
+    init = 0x004,    ///< update device data from host memory, or directly
+                     ///< initialize device data
 
-    dealloc = rc_dealloc,
-    alloc = rc_alloc,
-    init = rc_copyin,
-    evolve = rc_evolve
-  } rc_t;
+    evolve = 0x010
+  } op_t;
 
 private:
-  void (*f_)(rc_t);
-  rc_t rc_;
-  bool dealloc_() const { return rc_ & dealloc; }
+  void (*f_)(op_t);
+  op_t op_;
+  bool will_dealloc_() const { return op_ & dealloc; }
 
 public:
-  rc_man(void (*f)(rc_t), rc_t rc) : f_(f), rc_(rc) {
-    if (!dealloc_()) {
-      f_(rc_);
+  ResourceManagement(void (*f)(op_t), op_t op)
+      : f_(f)
+      , op_(op) {
+    if (!will_dealloc_()) {
+      f_(op_);
     }
   }
 
-  ~rc_man() {
-    if (dealloc_()) {
-      f_(rc_);
+  ~ResourceManagement() {
+    if (will_dealloc_()) {
+      f_(op_);
     }
   }
 };
-typedef rc_man::rc_t rc_t;
-constexpr rc_t rc_dealloc = rc_t::dealloc;
-constexpr rc_t rc_alloc = rc_t::alloc;
-constexpr rc_t rc_copyin = rc_t::init;
-constexpr rc_t rc_evolve = rc_t::evolve;
-typedef rc_t rc_op;
+typedef ResourceManagement rc_man;
+typedef rc_man::op_t rc_op;
+constexpr rc_op rc_dealloc = rc_man::dealloc;
+constexpr rc_op rc_alloc = rc_man::alloc;
+constexpr rc_op rc_init = rc_man::init;
 
 void host_data(rc_op);
 void device_data(rc_op);
@@ -72,10 +69,10 @@ TINKER_NAMESPACE_END
 #include "util_hostonly.h"
 #include "util_io.h"
 
-#define m_tinker_get_3rd_arg_(arg1, arg2, arg3, ...) arg3
-#define m_tinker_get_4th_arg_(arg1, arg2, arg3, arg4, ...) arg4
+#define TINKER_GET_3RD_ARG_(arg1, arg2, arg3, ...) arg3
+#define TINKER_GET_4TH_ARG_(arg1, arg2, arg3, arg4, ...) arg4
 
-#define m_tinker_always_check_cudart_1_(cucall)                                \
+#define TINKER_ALWAYS_CHECK_CUDART_1_(cucall)                                  \
   do {                                                                         \
     cudaError_t cures_ = cucall;                                               \
     if (cures_ != cudaSuccess) {                                               \
@@ -87,7 +84,7 @@ TINKER_NAMESPACE_END
     }                                                                          \
   } while (0)
 
-#define m_tinker_always_check_cudart_2_(cucall, optmsg)                        \
+#define TINKER_ALWAYS_CHECK_CUDART_2_(cucall, optmsg)                          \
   do {                                                                         \
     cudaError_t cures_ = cucall;                                               \
     if (cures_ != cudaSuccess) {                                               \
@@ -99,7 +96,7 @@ TINKER_NAMESPACE_END
     }                                                                          \
   } while (0)
 
-#define m_tinker_always_check_cudart_3_(cucall, res_t, cu_0)                   \
+#define TINKER_ALWAYS_CHECK_CUDART_3_(cucall, res_t, cu_0)                     \
   do {                                                                         \
     res_t cures_ = cucall;                                                     \
     if (cures_ != cu_0) {                                                      \
@@ -110,16 +107,15 @@ TINKER_NAMESPACE_END
     }                                                                          \
   } while (0)
 
-#define m_tinker_always_check_cudart_(...)                                     \
-  m_tinker_get_4th_arg_(__VA_ARGS__, m_tinker_always_check_cudart_3_,          \
-                        m_tinker_always_check_cudart_2_,                       \
-                        m_tinker_always_check_cudart_1_)
+#define TINKER_ALWAYS_CHECK_CUDART_(...)                                       \
+  TINKER_GET_4TH_ARG_(__VA_ARGS__, TINKER_ALWAYS_CHECK_CUDART_3_,              \
+                      TINKER_ALWAYS_CHECK_CUDART_2_,                           \
+                      TINKER_ALWAYS_CHECK_CUDART_1_)
 
 #if TINKER_DEBUG || defined(TINKER_ALWAYS_CHECK_CUDART)
-#  define check_cudart(...)                                                    \
-    m_tinker_always_check_cudart_(__VA_ARGS__)(__VA_ARGS__)
+#  define check_rt(...) TINKER_ALWAYS_CHECK_CUDART_(__VA_ARGS__)(__VA_ARGS__)
 #else
-#  define check_cudart(cucall, ...) cucall
+#  define check_rt(cucall, ...) cucall
 #endif
 
 #endif

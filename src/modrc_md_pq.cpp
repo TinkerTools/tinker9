@@ -8,13 +8,13 @@ TINKER_NAMESPACE_BEGIN
 //======================================================================
 // number of atoms
 
-void n_data(rc_t rc) {
-  if (rc & rc_dealloc) {
+void n_data(rc_op op) {
+  if (op & rc_dealloc) {
     trajn = -1;
     n = 0;
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     n = atoms::n;
 
     if (calc::traj & use_data) {
@@ -27,15 +27,15 @@ void n_data(rc_t rc) {
 //======================================================================
 // x y z coordinates
 
-void xyz_data(rc_t rc) {
+void xyz_data(rc_op op) {
   if ((calc::xyz & use_data) == 0)
     return;
 
-  if (rc & rc_dealloc) {
+  if (op & rc_dealloc) {
     if (calc::traj & use_data) {
-      check_cudart(cudaFree(trajx));
-      check_cudart(cudaFree(trajy));
-      check_cudart(cudaFree(trajz));
+      check_rt(cudaFree(trajx));
+      check_rt(cudaFree(trajy));
+      check_rt(cudaFree(trajz));
       x = nullptr;
       y = nullptr;
       z = nullptr;
@@ -43,30 +43,30 @@ void xyz_data(rc_t rc) {
       trajx = nullptr;
       trajy = nullptr;
       trajz = nullptr;
-      check_cudart(cudaFree(x));
-      check_cudart(cudaFree(y));
-      check_cudart(cudaFree(z));
+      check_rt(cudaFree(x));
+      check_rt(cudaFree(y));
+      check_rt(cudaFree(z));
     }
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     size_t size = sizeof(real) * n;
     if (calc::traj & use_data) {
       size *= trajn;
-      check_cudart(cudaMalloc(&trajx, size));
-      check_cudart(cudaMalloc(&trajy, size));
-      check_cudart(cudaMalloc(&trajz, size));
+      check_rt(cudaMalloc(&trajx, size));
+      check_rt(cudaMalloc(&trajy, size));
+      check_rt(cudaMalloc(&trajz, size));
       x = trajx;
       y = trajy;
       z = trajz;
     } else {
-      check_cudart(cudaMalloc(&x, size));
-      check_cudart(cudaMalloc(&y, size));
-      check_cudart(cudaMalloc(&z, size));
+      check_rt(cudaMalloc(&x, size));
+      check_rt(cudaMalloc(&y, size));
+      check_rt(cudaMalloc(&z, size));
     }
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     copyin_array(x, atoms::x, n);
     copyin_array(y, atoms::y, n);
     copyin_array(z, atoms::z, n);
@@ -76,24 +76,24 @@ void xyz_data(rc_t rc) {
 //======================================================================
 // velocitiies
 
-void vel_data(rc_t rc) {
+void vel_data(rc_op op) {
   if ((calc::vel & use_data) == 0)
     return;
 
-  if (rc & rc_dealloc) {
-    check_cudart(cudaFree(vx));
-    check_cudart(cudaFree(vy));
-    check_cudart(cudaFree(vz));
+  if (op & rc_dealloc) {
+    check_rt(cudaFree(vx));
+    check_rt(cudaFree(vy));
+    check_rt(cudaFree(vz));
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     size_t size = sizeof(real) * n;
-    check_cudart(cudaMalloc(&vx, size));
-    check_cudart(cudaMalloc(&vy, size));
-    check_cudart(cudaMalloc(&vz, size));
+    check_rt(cudaMalloc(&vx, size));
+    check_rt(cudaMalloc(&vy, size));
+    check_rt(cudaMalloc(&vz, size));
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     copyin_array2(0, 3, vx, moldyn::v, n);
     copyin_array2(1, 3, vy, moldyn::v, n);
     copyin_array2(2, 3, vz, moldyn::v, n);
@@ -103,22 +103,22 @@ void vel_data(rc_t rc) {
 //======================================================================
 // atomic mass
 
-void mass_data(rc_t rc) {
+void mass_data(rc_op op) {
   if ((calc::mass & use_data) == 0)
     return;
 
-  if (rc & rc_dealloc) {
-    check_cudart(cudaFree(mass));
-    check_cudart(cudaFree(massinv));
+  if (op & rc_dealloc) {
+    check_rt(cudaFree(mass));
+    check_rt(cudaFree(massinv));
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     size_t size = sizeof(real) * n;
-    check_cudart(cudaMalloc(&mass, size));
-    check_cudart(cudaMalloc(&massinv, size));
+    check_rt(cudaMalloc(&mass, size));
+    check_rt(cudaMalloc(&massinv, size));
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     copyin_array(mass, atomid::mass, n);
     std::vector<double> mbuf(n);
     for (int i = 0; i < n; ++i)

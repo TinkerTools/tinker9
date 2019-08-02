@@ -14,7 +14,7 @@ extern int* nem;
 extern real* vir_em;
 
 void get_empole_type(int& typ, std::string& typ_str);
-void empole_data(rc_t rc);
+void empole_data(rc_op op);
 
 void empole_coulomb(int vers);
 void empole_ewald(int vers);

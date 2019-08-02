@@ -87,13 +87,13 @@ static int nblist_maxlst_(int maxn, double cutoff, double buffer) {
 }
 
 static void nblist_op_dealloc_(nblist_t& st, nblist_t*& list) {
-  check_cudart(cudaFree(st.nlst));
-  check_cudart(cudaFree(st.lst));
-  check_cudart(cudaFree(st.update));
-  check_cudart(cudaFree(st.xold));
-  check_cudart(cudaFree(st.yold));
-  check_cudart(cudaFree(st.zold));
-  check_cudart(cudaFree(list));
+  check_rt(cudaFree(st.nlst));
+  check_rt(cudaFree(st.lst));
+  check_rt(cudaFree(st.update));
+  check_rt(cudaFree(st.xold));
+  check_rt(cudaFree(st.yold));
+  check_rt(cudaFree(st.zold));
+  check_rt(cudaFree(list));
 }
 
 static void nblist_op_alloc_(nblist_t& st, nblist_t*& list, int maxn,
@@ -103,11 +103,11 @@ static void nblist_op_alloc_(nblist_t& st, nblist_t*& list, int maxn,
   size_t size;
 
   size = n * rs;
-  check_cudart(cudaMalloc(&st.nlst, size));
+  check_rt(cudaMalloc(&st.nlst, size));
 
   int maxlst = nblist_maxlst_(maxn, cutoff, buffer);
   size = maxlst * n * rs;
-  check_cudart(cudaMalloc(&st.lst, size));
+  check_rt(cudaMalloc(&st.lst, size));
 
   if (maxlst == 1) {
     st.update = nullptr;
@@ -116,11 +116,11 @@ static void nblist_op_alloc_(nblist_t& st, nblist_t*& list, int maxn,
     st.zold = nullptr;
   } else {
     size = n * rs;
-    check_cudart(cudaMalloc(&st.update, size));
+    check_rt(cudaMalloc(&st.update, size));
     size = n * sizeof(real);
-    check_cudart(cudaMalloc(&st.xold, size));
-    check_cudart(cudaMalloc(&st.yold, size));
-    check_cudart(cudaMalloc(&st.zold, size));
+    check_rt(cudaMalloc(&st.xold, size));
+    check_rt(cudaMalloc(&st.yold, size));
+    check_rt(cudaMalloc(&st.zold, size));
   }
 
   st.x = _x;
@@ -132,23 +132,23 @@ static void nblist_op_alloc_(nblist_t& st, nblist_t*& list, int maxn,
   st.buffer = buffer;
 
   size = sizeof(nblist_t);
-  check_cudart(cudaMalloc(&list, size));
-  check_cudart(cudaMemcpy(list, &st, size, cudaMemcpyHostToDevice));
+  check_rt(cudaMalloc(&list, size));
+  check_rt(cudaMemcpy(list, &st, size, cudaMemcpyHostToDevice));
 }
 
 extern void nblist_build_acc_impl_(const nblist_t& st, nblist_t* lst);
 extern void nblist_update_acc_impl_(const nblist_t&, nblist_t*);
-void nblist_data(rc_t rc) {
+void nblist_data(rc_op op) {
   int maxnlst = 0;
   int u = 0;
 
   // vlist
   u = use_vdw_list();
   if (u) {
-    if (rc & rc_dealloc)
+    if (op & rc_dealloc)
       nblist_op_dealloc_(vlist_obj_, vlst);
 
-    if (rc & rc_alloc) {
+    if (op & rc_alloc) {
       maxnlst = 2500;
       if (u == nblist_t::double_loop)
         maxnlst = 1;
@@ -156,12 +156,12 @@ void nblist_data(rc_t rc) {
                        neigh::lbuffer, xred, yred, zred);
     }
 
-    if (rc & rc_copyin) {
+    if (op & rc_init) {
       evdw_reduce_xyz();
       nblist_build_acc_impl_(vlist_obj_, vlst);
     }
 
-    if (rc & rc_evolve) {
+    if (op & rc_man::evolve) {
       // assuming evdw_reduce_xyz() has been called in the energy routine
       nblist_update_acc_impl_(vlist_obj_, vlst);
     }
@@ -170,10 +170,10 @@ void nblist_data(rc_t rc) {
   // dlist
   u = use_disp_list();
   if (u) {
-    if (rc & rc_dealloc)
+    if (op & rc_dealloc)
       nblist_op_dealloc_(dlist_obj_, dlst);
 
-    if (rc & rc_alloc) {
+    if (op & rc_alloc) {
       maxnlst = 2500;
       if (u == nblist_t::double_loop)
         maxnlst = 1;
@@ -181,17 +181,17 @@ void nblist_data(rc_t rc) {
                        neigh::lbuffer, x, y, z);
     }
 
-    if (rc & rc_copyin) {
+    if (op & rc_init) {
     }
   }
 
   // clist
   u = use_charge_list();
   if (u) {
-    if (rc & rc_dealloc)
+    if (op & rc_dealloc)
       nblist_op_dealloc_(clist_obj_, clst);
 
-    if (rc & rc_alloc) {
+    if (op & rc_alloc) {
       maxnlst = 2500;
       if (u == nblist_t::double_loop)
         maxnlst = 1;
@@ -199,17 +199,17 @@ void nblist_data(rc_t rc) {
                        neigh::lbuffer, x, y, z);
     }
 
-    if (rc & rc_copyin) {
+    if (op & rc_init) {
     }
   }
 
   // mlist
   u = use_mpole_list();
   if (u) {
-    if (rc & rc_dealloc)
+    if (op & rc_dealloc)
       nblist_op_dealloc_(mlist_obj_, mlst);
 
-    if (rc & rc_alloc) {
+    if (op & rc_alloc) {
       maxnlst = 2500;
       if (u == nblist_t::double_loop)
         maxnlst = 1;
@@ -217,16 +217,16 @@ void nblist_data(rc_t rc) {
                        neigh::lbuffer, x, y, z);
     }
 
-    if (rc & rc_copyin)
+    if (op & rc_init)
       nblist_build_acc_impl_(mlist_obj_, mlst);
 
-    if (rc & rc_evolve) {
+    if (op & rc_man::evolve) {
       if (use_data & calc::traj) {
         mlist_obj_.x = x;
         mlist_obj_.y = y;
         mlist_obj_.z = z;
-        check_cudart(cudaMemcpy(mlst, &mlist_obj_, sizeof(nblist_t),
-                                cudaMemcpyHostToDevice));
+        check_rt(cudaMemcpy(mlst, &mlist_obj_, sizeof(nblist_t),
+                            cudaMemcpyHostToDevice));
       }
       nblist_update_acc_impl_(mlist_obj_, mlst);
     }
@@ -235,10 +235,10 @@ void nblist_data(rc_t rc) {
   // ulist
   u = use_usolv_list();
   if (u) {
-    if (rc & rc_dealloc)
+    if (op & rc_dealloc)
       nblist_op_dealloc_(ulist_obj_, ulst);
 
-    if (rc & rc_alloc) {
+    if (op & rc_alloc) {
       maxnlst = 500;
       if (u == nblist_t::double_loop)
         maxnlst = 1;
@@ -246,7 +246,7 @@ void nblist_data(rc_t rc) {
                        neigh::pbuffer, x, y, z);
     }
 
-    if (rc & rc_copyin) {
+    if (op & rc_init) {
     }
   }
 }

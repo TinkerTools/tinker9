@@ -39,9 +39,9 @@ cudaError_t cudaMemcpyAsync(void* dst, const void* src, size_t count,
 cudaError_t cudaMemset(void* devPtr, int value, size_t count);
 
 struct fft_plan_t {
-#  if defined(TINKER_GPU_SINGLE)
+#  if defined(TINKER_SINGLE_PRECISION)
   fftwf_plan
-#  elif defined(TINKER_GPU_DOUBLE)
+#  elif defined(TINKER_DOUBLE_PRECISION)
   fftw_plan
 #  else
   static_assert(false, "");

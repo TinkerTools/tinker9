@@ -13,26 +13,26 @@ real ptorunit;
 real* ept;
 real* vir_ept;
 
-void epitors_data(rc_t rc) {
+void epitors_data(rc_op op) {
   if (!use_potent(pitors_term))
     return;
 
-  if (rc & rc_dealloc) {
-    check_cudart(cudaFree(ipit));
-    check_cudart(cudaFree(kpit));
+  if (op & rc_dealloc) {
+    check_rt(cudaFree(ipit));
+    check_rt(cudaFree(kpit));
 
     free_ev(ept, vir_ept);
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     int ntors = count_bonded_term(torsion_term);
-    check_cudart(cudaMalloc(&ipit, sizeof(int) * 6 * ntors));
-    check_cudart(cudaMalloc(&kpit, sizeof(real) * ntors));
+    check_rt(cudaMalloc(&ipit, sizeof(int) * 6 * ntors));
+    check_rt(cudaMalloc(&kpit, sizeof(real) * ntors));
 
     alloc_ev(&ept, &vir_ept);
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     npitors = count_bonded_term(pitors_term);
     int ntors = count_bonded_term(torsion_term);
     std::vector<int> ibuf(6 * ntors);

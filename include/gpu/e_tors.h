@@ -18,7 +18,7 @@ extern real torsunit;
 extern real* et;
 extern real* vir_et;
 
-void etors_data(rc_t rc);
+void etors_data(rc_op op);
 
 void etors(int vers);
 TINKER_NAMESPACE_END

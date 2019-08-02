@@ -32,7 +32,7 @@ extern real ttorunit;
 extern real* ett;
 extern real* vir_ett;
 
-void etortor_data(rc_t rc);
+void etortor_data(rc_op op);
 
 void etortor(int vers);
 TINKER_NAMESPACE_END

@@ -20,35 +20,35 @@ int* angtyp;
 real* ea;
 real* vir_ea;
 
-void eangle_data(rc_t rc) {
+void eangle_data(rc_op op) {
   if (!use_potent(angle_term) && !use_potent(strbnd_term) &&
       !use_potent(opbend_term))
     return;
 
-  if (rc & rc_dealloc) {
-    check_cudart(cudaFree(iang));
-    check_cudart(cudaFree(ak));
-    check_cudart(cudaFree(anat));
+  if (op & rc_dealloc) {
+    check_rt(cudaFree(iang));
+    check_rt(cudaFree(ak));
+    check_rt(cudaFree(anat));
 
-    check_cudart(cudaFree(angtyp));
+    check_rt(cudaFree(angtyp));
 
     free_ev(ea, vir_ea);
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     const size_t rs = sizeof(real);
 
     nangle = count_bonded_term(angle_term);
-    check_cudart(cudaMalloc(&iang, sizeof(int) * nangle * 4));
-    check_cudart(cudaMalloc(&ak, rs * nangle));
-    check_cudart(cudaMalloc(&anat, rs * nangle));
+    check_rt(cudaMalloc(&iang, sizeof(int) * nangle * 4));
+    check_rt(cudaMalloc(&ak, rs * nangle));
+    check_rt(cudaMalloc(&anat, rs * nangle));
 
-    check_cudart(cudaMalloc(&angtyp, sizeof(int) * nangle));
+    check_rt(cudaMalloc(&angtyp, sizeof(int) * nangle));
 
     alloc_ev(&ea, &vir_ea);
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     std::vector<int> iangvec(nangle * 4);
     for (size_t i = 0; i < iangvec.size(); ++i) {
       iangvec[i] = angbnd::iang[i] - 1;

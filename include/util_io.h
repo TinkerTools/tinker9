@@ -151,9 +151,12 @@ private:
   std::string msg_;
 
 public:
-  FatalError(const char* msg) : msg_(msg) {}
-  FatalError(const std::string& msg) : msg_(msg) {}
-  FatalError(const FatalError& e) : msg_(e.msg_) {}
+  FatalError(const char* msg)
+      : msg_(msg) {}
+  FatalError(const std::string& msg)
+      : msg_(msg) {}
+  FatalError(const FatalError& e)
+      : msg_(e.msg_) {}
   const char* what() const noexcept override { return msg_.c_str(); }
 };
 
@@ -200,7 +203,8 @@ public:
   //
   template <size_t Len>
   FortranStringView(const char (&src)[Len])
-      : b_(const_cast<char*>(src)), e_(b_ + Len) {}
+      : b_(const_cast<char*>(src))
+      , e_(b_ + Len) {}
   FortranStringView(const char* src, size_t len);
   FortranStringView(const char* src);
   FortranStringView(const std::string& src);

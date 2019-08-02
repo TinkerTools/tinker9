@@ -16,7 +16,7 @@ extern real cury, qury, ureyunit;
 extern real* eub;
 extern real* vir_eub;
 
-void eurey_data(rc_t rc);
+void eurey_data(rc_op op);
 
 void eurey(int vers);
 TINKER_NAMESPACE_END

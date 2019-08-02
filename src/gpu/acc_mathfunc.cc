@@ -22,18 +22,18 @@ double dotprod(const double* a, const double* b, int n) {
 }
 
 template <class T>
-void scale_data_acc_impl(T* gpu_dst, T scal, int nelem) {
+void scale_array_acc_impl(T* gpu_dst, T scal, int nelem) {
   #pragma acc parallel loop independent deviceptr(gpu_dst)
   for (int i = 0; i < nelem; ++i) {
     gpu_dst[i] *= scal;
   }
 }
 
-void scale_data(float* gpu_dst, float scal, int nelem) {
-  scale_data_acc_impl<float>(gpu_dst, scal, nelem);
+void scale_array(float* gpu_dst, float scal, int nelem) {
+  scale_array_acc_impl<float>(gpu_dst, scal, nelem);
 }
 
-void scale_data(double* gpu_dst, double scal, int nelem) {
-  scale_data_acc_impl<double>(gpu_dst, scal, nelem);
+void scale_array(double* gpu_dst, double scal, int nelem) {
+  scale_array_acc_impl<double>(gpu_dst, scal, nelem);
 }
 TINKER_NAMESPACE_END

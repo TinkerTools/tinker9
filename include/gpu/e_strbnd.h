@@ -13,7 +13,7 @@ extern real stbnunit;
 extern real* eba;
 extern real* vir_eba;
 
-void estrbnd_data(rc_t rc);
+void estrbnd_data(rc_op op);
 
 void estrbnd(int vers);
 TINKER_NAMESPACE_END

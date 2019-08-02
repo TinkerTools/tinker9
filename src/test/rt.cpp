@@ -8,7 +8,8 @@
 TINKER_NAMESPACE_BEGIN
 namespace test {
 file::file(const std::string& name, const std::string& content)
-    : good_(false), name_(name) {
+    : good_(false)
+    , name_(name) {
   std::ofstream fout(name);
   good_ = fout.is_open();
   if (good_) {
@@ -21,7 +22,8 @@ file::~file() {
     std::remove(name_.c_str());
 }
 
-file_expected::file_expected(const std::string& name) : name_(name) {}
+file_expected::file_expected(const std::string& name)
+    : name_(name) {}
 
 file_expected::~file_expected() {
   std::ifstream chk(name_);
@@ -31,9 +33,9 @@ file_expected::~file_expected() {
 }
 
 double test_get_eps2(double eps_single, double eps_double) {
-#if defined(TINKER_GPU_SINGLE)
+#if defined(TINKER_SINGLE_PRECISION)
   return eps_single;
-#elif defined(TINKER_GPU_DOUBLE)
+#elif defined(TINKER_DOUBLE_PRECISION)
   return eps_double;
 #else
   static_assert(false, "");

@@ -33,10 +33,10 @@ src := ..
 prec := real4
 ifeq ($(prec),$(filter $(prec),real4 4 32 float single s))
 	prec__ := real4__
-	precision_macro__ := -DTINKER_GPU_SINGLE
+	precision_macro__ := -DTINKER_SINGLE_PRECISION
 else ifeq ($(prec),$(filter $(prec),real8 8 64 double d))
 	prec__ := real8__
-	precision_macro__ := -DTINKER_GPU_DOUBLE
+	precision_macro__ := -DTINKER_DOUBLE_PRECISION
 endif
 
 hostonly := false
@@ -107,7 +107,7 @@ dirs:
 
 .PHONY: clean
 clean:
-	rm -rf ext src* tinker.gpu* all.tests* libtinker* *dSYM
+	rm -rf ext src* tinker.gpu* all.tests* libtinker* *dSYM doc
 
 ########################################################################
 #                                                                      #
@@ -227,3 +227,14 @@ $(all_tests_exec__): $(src_obj_dir__)/test/main_test_all.o \
 $(test_cpp_objs__) $(lib_acc_objs__) \
 | $(libtinkergpu_name__).$(shared_lib_suffix__) $(shared_libtinker__)
 	$(ACC) $^ $(acc_link_flags__) -o $@
+
+
+########################################################################
+#                                                                      #
+# doc                                                                  #
+#                                                                      #
+########################################################################
+
+.PHONY: doc
+doc:
+	@doxygen $(top_dir__)/doc/Doxyfile

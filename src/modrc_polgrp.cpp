@@ -9,43 +9,43 @@ static_assert(polargroup_t::maxp12 >= polgrp::maxp12, "");
 static_assert(polargroup_t::maxp13 >= polgrp::maxp13, "");
 static_assert(polargroup_t::maxp14 >= polgrp::maxp14, "");
 
-void polargroup_data(rc_t rc) {
-  if (rc & rc_dealloc) {
-    check_cudart(cudaFree(polargroup_obj_.np11));
-    check_cudart(cudaFree(polargroup_obj_.np12));
-    check_cudart(cudaFree(polargroup_obj_.np13));
-    check_cudart(cudaFree(polargroup_obj_.np14));
-    check_cudart(cudaFree(polargroup_obj_.ip11));
-    check_cudart(cudaFree(polargroup_obj_.ip12));
-    check_cudart(cudaFree(polargroup_obj_.ip13));
-    check_cudart(cudaFree(polargroup_obj_.ip14));
+void polargroup_data(rc_op op) {
+  if (op & rc_dealloc) {
+    check_rt(cudaFree(polargroup_obj_.np11));
+    check_rt(cudaFree(polargroup_obj_.np12));
+    check_rt(cudaFree(polargroup_obj_.np13));
+    check_rt(cudaFree(polargroup_obj_.np14));
+    check_rt(cudaFree(polargroup_obj_.ip11));
+    check_rt(cudaFree(polargroup_obj_.ip12));
+    check_rt(cudaFree(polargroup_obj_.ip13));
+    check_rt(cudaFree(polargroup_obj_.ip14));
 
-    check_cudart(cudaFree(polargroup));
+    check_rt(cudaFree(polargroup));
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     const size_t rs = sizeof(int);
     size_t size;
 
     size = n * rs;
-    check_cudart(cudaMalloc(&polargroup_obj_.np11, size));
-    check_cudart(cudaMalloc(&polargroup_obj_.np12, size));
-    check_cudart(cudaMalloc(&polargroup_obj_.np13, size));
-    check_cudart(cudaMalloc(&polargroup_obj_.np14, size));
+    check_rt(cudaMalloc(&polargroup_obj_.np11, size));
+    check_rt(cudaMalloc(&polargroup_obj_.np12, size));
+    check_rt(cudaMalloc(&polargroup_obj_.np13, size));
+    check_rt(cudaMalloc(&polargroup_obj_.np14, size));
     size = polargroup_t::maxp11 * n * rs;
-    check_cudart(cudaMalloc(&polargroup_obj_.ip11, size));
+    check_rt(cudaMalloc(&polargroup_obj_.ip11, size));
     size = polargroup_t::maxp12 * n * rs;
-    check_cudart(cudaMalloc(&polargroup_obj_.ip12, size));
+    check_rt(cudaMalloc(&polargroup_obj_.ip12, size));
     size = polargroup_t::maxp13 * n * rs;
-    check_cudart(cudaMalloc(&polargroup_obj_.ip13, size));
+    check_rt(cudaMalloc(&polargroup_obj_.ip13, size));
     size = polargroup_t::maxp14 * n * rs;
-    check_cudart(cudaMalloc(&polargroup_obj_.ip14, size));
+    check_rt(cudaMalloc(&polargroup_obj_.ip14, size));
 
     size = sizeof(polargroup_t);
-    check_cudart(cudaMalloc(&polargroup, size));
+    check_rt(cudaMalloc(&polargroup, size));
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     size_t size;
 
     std::vector<int> nbuf, ibuf;
@@ -112,7 +112,7 @@ void polargroup_data(rc_t rc) {
     copyin_array(&polargroup_obj_.ip14[0][0], ibuf.data(), size);
 
     size = sizeof(polargroup_t);
-    check_cudart(
+    check_rt(
         cudaMemcpy(polargroup, &polargroup_obj_, size, cudaMemcpyHostToDevice));
   }
 }

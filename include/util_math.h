@@ -6,7 +6,7 @@
 
 #define INT_ABS(x) abs(x)
 
-#ifdef TINKER_GPU_DOUBLE
+#ifdef TINKER_DOUBLE_PRECISION
 #  define REAL_SQRT(x) sqrt(x)
 #  define REAL_EXP(x) exp(x)
 #  define REAL_FLOOR(x) floor(x)
@@ -25,7 +25,7 @@
 #  define REAL_SIGN(x, y) copysign(x, y)
 #endif
 
-#ifdef TINKER_GPU_SINGLE
+#ifdef TINKER_SINGLE_PRECISION
 #  define REAL_SQRT(x) sqrtf(x)
 #  define REAL_EXP(x) expf(x)
 #  define REAL_FLOOR(x) floorf(x)
@@ -113,8 +113,8 @@ double dotprod(const double* gpu_a, const double* gpu_b, int cpu_n);
  * @param scal     scalar
  * @param nelem    number of elements in the array
  */
-void scale_data(float* gpu_dst, float scal, int nelem);
-void scale_data(double* gpu_dst, double scal, int nelem);
+void scale_array(float* gpu_dst, float scal, int nelem);
+void scale_array(double* gpu_dst, double scal, int nelem);
 TINKER_NAMESPACE_END
 
 #endif

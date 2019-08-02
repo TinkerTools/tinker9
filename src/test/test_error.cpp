@@ -21,7 +21,7 @@ TEST_CASE("Error", "[noassert][util]") {
   SECTION("CudaRTError1") {
     auto func = []() { return cudaErrorInvalidHostPointer; };
     try {
-      check_cudart(func());
+      check_rt(func());
     } catch (std::exception& e) {
       std::cout << e.what() << std::endl;
     }
@@ -31,7 +31,7 @@ TEST_CASE("Error", "[noassert][util]") {
   SECTION("CudaRTError2") {
     auto func = []() { return cudaErrorInvalidHostPointer; };
     try {
-      check_cudart(func(), "Optional Error Message.");
+      check_rt(func(), "Optional Error Message.");
     } catch (std::exception& e) {
       std::cout << e.what() << std::endl;
     }
@@ -41,7 +41,7 @@ TEST_CASE("Error", "[noassert][util]") {
   SECTION("CudaRTError3") {
     auto func = []() { return cudaErrorInvalidHostPointer; };
     try {
-      check_cudart(func(), cudaError_t, cudaSuccess);
+      check_rt(func(), cudaError_t, cudaSuccess);
     } catch (std::exception& e) {
       std::cout << e.what() << std::endl;
     }

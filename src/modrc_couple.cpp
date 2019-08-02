@@ -4,42 +4,42 @@
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
-void couple_data(rc_t rc) {
-  if (rc & rc_dealloc) {
-    check_cudart(cudaFree(coupl_obj_.n12));
-    check_cudart(cudaFree(coupl_obj_.n13));
-    check_cudart(cudaFree(coupl_obj_.n14));
-    check_cudart(cudaFree(coupl_obj_.n15));
-    check_cudart(cudaFree(coupl_obj_.i12));
-    check_cudart(cudaFree(coupl_obj_.i13));
-    check_cudart(cudaFree(coupl_obj_.i14));
-    check_cudart(cudaFree(coupl_obj_.i15));
-    check_cudart(cudaFree(coupl));
+void couple_data(rc_op op) {
+  if (op & rc_dealloc) {
+    check_rt(cudaFree(coupl_obj_.n12));
+    check_rt(cudaFree(coupl_obj_.n13));
+    check_rt(cudaFree(coupl_obj_.n14));
+    check_rt(cudaFree(coupl_obj_.n15));
+    check_rt(cudaFree(coupl_obj_.i12));
+    check_rt(cudaFree(coupl_obj_.i13));
+    check_rt(cudaFree(coupl_obj_.i14));
+    check_rt(cudaFree(coupl_obj_.i15));
+    check_rt(cudaFree(coupl));
   }
 
-  if (rc & rc_alloc) {
+  if (op & rc_alloc) {
     const size_t rs = sizeof(int);
     size_t size;
 
     size = n * rs;
-    check_cudart(cudaMalloc(&coupl_obj_.n12, size));
-    check_cudart(cudaMalloc(&coupl_obj_.n13, size));
-    check_cudart(cudaMalloc(&coupl_obj_.n14, size));
-    check_cudart(cudaMalloc(&coupl_obj_.n15, size));
+    check_rt(cudaMalloc(&coupl_obj_.n12, size));
+    check_rt(cudaMalloc(&coupl_obj_.n13, size));
+    check_rt(cudaMalloc(&coupl_obj_.n14, size));
+    check_rt(cudaMalloc(&coupl_obj_.n15, size));
     size = couple_t::maxn12 * n * rs;
-    check_cudart(cudaMalloc(&coupl_obj_.i12, size));
+    check_rt(cudaMalloc(&coupl_obj_.i12, size));
     size = couple_t::maxn13 * n * rs;
-    check_cudart(cudaMalloc(&coupl_obj_.i13, size));
+    check_rt(cudaMalloc(&coupl_obj_.i13, size));
     size = couple_t::maxn14 * n * rs;
-    check_cudart(cudaMalloc(&coupl_obj_.i14, size));
+    check_rt(cudaMalloc(&coupl_obj_.i14, size));
     size = couple_t::maxn15 * n * rs;
-    check_cudart(cudaMalloc(&coupl_obj_.i15, size));
+    check_rt(cudaMalloc(&coupl_obj_.i15, size));
 
     size = sizeof(couple_t);
-    check_cudart(cudaMalloc(&coupl, size));
+    check_rt(cudaMalloc(&coupl, size));
   }
 
-  if (rc & rc_copyin) {
+  if (op & rc_init) {
     size_t size;
 
     // see also attach.f
@@ -109,7 +109,7 @@ void couple_data(rc_t rc) {
     copyin_array(&coupl_obj_.i15[0][0], ibuf.data(), size);
 
     size = sizeof(couple_t);
-    check_cudart(cudaMemcpy(coupl, &coupl_obj_, size, cudaMemcpyHostToDevice));
+    check_rt(cudaMemcpy(coupl, &coupl_obj_, size, cudaMemcpyHostToDevice));
   }
 }
 TINKER_NAMESPACE_END

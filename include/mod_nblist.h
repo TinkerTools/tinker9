@@ -29,7 +29,7 @@ TINKER_EXTERN nblist_t* mlst;
 TINKER_EXTERN nblist_t ulist_obj_;
 TINKER_EXTERN nblist_t* ulst;
 
-void nblist_data(rc_t rc);
+void nblist_data(rc_op op);
 TINKER_NAMESPACE_END
 
 #endif
