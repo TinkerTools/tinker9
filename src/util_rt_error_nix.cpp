@@ -1,10 +1,9 @@
 #if defined(__APPLE__) || defined(__linux__)
-#  include "util_io.h"
+#  include "util_rt.h"
 #  include <cxxabi.h>
 #  include <execinfo.h>
 
 TINKER_NAMESPACE_BEGIN
-namespace detail_ {
 enum class BackTraceOS { macOS, Linux };
 
 template <BackTraceOS os>
@@ -59,17 +58,15 @@ void print_backtrace_tmpl(std::ostream& fp) {
     print(fp, f2, num, caller, callee);
   }
   free(strs);
-
-  fp << std::flush;
-}
 }
 
-void print_backtrace(std::ostream& fp) {
+void print_backtrace(std::ostream& out) {
 #  if defined(__APPLE__)
-  detail_::print_backtrace_tmpl<detail_::BackTraceOS::macOS>(fp);
+  print_backtrace_tmpl<BackTraceOS::macOS>(out);
 #  elif defined(__linux__)
-  detail_::print_backtrace_tmpl<detail_::BackTraceOS::Linux>(fp);
+  print_backtrace_tmpl<BackTraceOS::Linux>(out);
 #  endif
+  out << std::flush;
 }
 TINKER_NAMESPACE_END
 

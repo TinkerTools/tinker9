@@ -15,8 +15,8 @@
 #else
 #  error We do not recognize your Fortran compiler. You should implement these \
 two macros (TINKER_MOD and TINKER_RT) here to mimic its name mangling. You     \
-should also implement void fortran_runtime_initialize() and                    \
-void fortran_runtime_finish() funtions.
+should also implement other functions whenever you see an                      \
+"unknown fortran compiler error".
 #endif
 
 // extern
@@ -51,7 +51,7 @@ void fortran_runtime_finish() funtions.
  * @c TINKER_DEBUG expands to either 0 or 1. It expands to 1 if and only if @c
  * DEBUG is defined and is not defined to 0.
  * @c NDEBUG is the default and supersedes @c DEBUG.
- * If @c DEBUG is defined to 0, it is equivalent to having defined @c NDEBUG.
+ * If @c DEBUG is defined to 0, it is equivalent to having @c NDEBUG defined.
  */
 #if !defined(NDEBUG) && !defined(DEBUG)
 #  define NDEBUG

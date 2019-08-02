@@ -13,7 +13,7 @@ using namespace test;
  * atoms are in the xy-plane. Therefore the z-gradient components of this
  * molecule are not included in the test.
  */
-static auto do_ij = [&](int i, int /* j */) { return i < n - 4; };
+static bool do_ij(int i, int /* j */) { return i < n - 4; }
 
 TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
   file fpr("amoeba09.prm", amoeba09_prm);

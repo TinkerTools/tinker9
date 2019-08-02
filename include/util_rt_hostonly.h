@@ -1,11 +1,9 @@
-#ifndef TINKER_UTIL_HOSTONLY_H_
-#define TINKER_UTIL_HOSTONLY_H_
+#ifndef TINKER_UTIL_RT_HOSTONLY_H_
+#define TINKER_UTIL_RT_HOSTONLY_H_
 
-#ifdef TINKER_HOSTONLY
-
-#  include "util_macro.h"
-#  include <cstdlib>
-#  include <fftw3.h>
+#include "util_macro.h"
+#include <cstdlib>
+#include <fftw3.h>
 
 TINKER_NAMESPACE_BEGIN
 enum hostonly_cuda_enum_ {
@@ -39,18 +37,16 @@ cudaError_t cudaMemcpyAsync(void* dst, const void* src, size_t count,
 cudaError_t cudaMemset(void* devPtr, int value, size_t count);
 
 struct fft_plan_t {
-#  if defined(TINKER_SINGLE_PRECISION)
+#if defined(TINKER_SINGLE_PRECISION)
   fftwf_plan
-#  elif defined(TINKER_DOUBLE_PRECISION)
+#elif defined(TINKER_DOUBLE_PRECISION)
   fftw_plan
-#  else
+#else
   static_assert(false, "");
-#  endif
-      planf, /// fft front plan
-      planb; /// fft back plan
+#endif
+      planf, ///< fft front plan
+      planb; ///< fft back plan
 };
 TINKER_NAMESPACE_END
-
-#endif
 
 #endif

@@ -1,6 +1,6 @@
 #ifdef TINKER_HOSTONLY
 
-#  include "util_hostonly.h"
+#  include "util_rt_hostonly.h"
 #  include <cstring>
 
 TINKER_NAMESPACE_BEGIN

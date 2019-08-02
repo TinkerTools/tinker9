@@ -1,5 +1,6 @@
 #include "util_array.h"
 #include "util_rc_man.h"
+#include "util_rt.h"
 
 TINKER_NAMESPACE_BEGIN
 template <class T>

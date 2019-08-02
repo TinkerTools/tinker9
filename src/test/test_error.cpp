@@ -1,8 +1,7 @@
 #define TINKER_ALWAYS_CHECK_CUDART
 
 #include "test/test.h"
-#include "util_io.h"
-#include "util_rc_man.h"
+#include "util_rt.h"
 
 using namespace TINKER_NAMESPACE;
 

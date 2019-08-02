@@ -16,7 +16,8 @@ struct box_t {
   } shape_t;
 
   /**
-   * the matrix form of lvec and recip pbc box vectors
+   * @brief
+   * the matrix form of @c lvec and @c recip pbc box vectors
    *
    * @code
    * Triclinic

@@ -49,8 +49,8 @@ static void pme_op_dealloc_(int pu) {
   check_rt(cudaFree(dptr));
 }
 
-static int pme_op_alloc_(int& unit, double aewald, int nfft1, int nfft2,
-                         int nfft3, int bsorder, bool unique) {
+static void pme_op_alloc_(int& unit, double aewald, int nfft1, int nfft2,
+                          int nfft3, int bsorder, bool unique) {
   int count = 0;
   int first = -1;
   const double eps = 1.0e-6;
