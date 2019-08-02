@@ -26,7 +26,7 @@ void empole_real_self_tmpl() {
   mscalebuf.resize(n, 1);
   real* mscale = mscalebuf.data();
 
-  const int pu = epme_unit;
+  const PMEUnit pu = epme_unit;
   const real aewald = pme_obj(pu).aewald;
   const real aewald_sq_2 = 2 * aewald * aewald;
   const real fterm = -f * aewald * 0.5 * M_2_SQRTPI;
@@ -389,7 +389,7 @@ void empole_recip_tmpl() {
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
-  const int pu = epme_unit;
+  const PMEUnit pu = epme_unit;
   cmp_to_fmp(pu, cmp, fmp);
   grid_mpole(pu, fmp);
   fftfront(pu);

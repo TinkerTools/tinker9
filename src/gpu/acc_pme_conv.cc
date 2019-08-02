@@ -6,9 +6,9 @@
 
 TINKER_NAMESPACE_BEGIN
 template <int DO_V>
-void pme_conv_tmpl(int pme_unit, real* gpu_vir9) {
-  pme_t& st = pme_obj(pme_unit);
-  pme_t* dptr = pme_deviceptr(pme_unit);
+void pme_conv_tmpl(PMEUnit pme_u, real* gpu_vir9) {
+  pme_t& st = pme_obj(pme_u);
+  pme_t* dptr = pme_deviceptr(pme_u);
 
   const int nfft1 = st.nfft1;
   const int nfft2 = st.nfft2;
@@ -99,9 +99,9 @@ void pme_conv_tmpl(int pme_unit, real* gpu_vir9) {
   }
 }
 
-void pme_conv0(int pme_unit) { pme_conv_tmpl<0>(pme_unit, nullptr); }
+void pme_conv0(int pme_u) { pme_conv_tmpl<0>(pme_u, nullptr); }
 
-void pme_conv1(int pme_unit, real* gpu_vir9) {
-  pme_conv_tmpl<1>(pme_unit, gpu_vir9);
+void pme_conv1(PMEUnit pme_u, real* gpu_vir9) {
+  pme_conv_tmpl<1>(pme_u, gpu_vir9);
 }
 TINKER_NAMESPACE_END

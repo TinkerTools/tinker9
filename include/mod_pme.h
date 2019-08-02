@@ -4,6 +4,31 @@
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
+template <class T>
+class GeneralUnit {
+private:
+  int unit_;
+
+public:
+  GeneralUnit(int u)
+      : unit_(u) {}
+
+  bool operator<(const GeneralUnit<T>& u) const { return unit_ < u.unit_; }
+
+  bool operator==(const GeneralUnit<T>& u) const { return unit_ == u.unit_; }
+
+public:
+  static std::vector<T>& all_objs() {
+    static std::vector<T> o;
+    return o;
+  }
+
+  static std::vector<T*>& all_deviceptrs() {
+    static std::vector<T*> o;
+    return o;
+  }
+};
+
 /**
  * pme.f and kewald.f
  *
@@ -26,11 +51,13 @@ struct pme_t {
   real* qgrid;                    // deviceptr
 };
 
-TINKER_EXTERN int epme_unit; // electrostatic
-TINKER_EXTERN int ppme_unit; // polarization
-TINKER_EXTERN int dpme_unit; // dispersion
+typedef GeneralUnit<pme_t> PMEUnit;
 
-TINKER_EXTERN int pvpme_unit; // polarization virial
+TINKER_EXTERN PMEUnit epme_unit; // electrostatic
+TINKER_EXTERN PMEUnit ppme_unit; // polarization
+TINKER_EXTERN PMEUnit dpme_unit; // dispersion
+
+TINKER_EXTERN PMEUnit pvpme_unit; // polarization virial
 
 TINKER_EXTERN double ewald_switch_cut, ewald_switch_off;
 
@@ -50,19 +77,14 @@ TINKER_EXTERN real* vir_m;
 
 void pme_data(rc_op op);
 
-namespace detail_ {
-std::vector<pme_t>& pme_objs();
-std::vector<pme_t*>& pme_deviceptrs();
-}
-
-pme_t& pme_obj(int pme_unit);
-pme_t* pme_deviceptr(int pme_unit);
+pme_t& pme_obj(PMEUnit pme_u);
+pme_t* pme_deviceptr(PMEUnit pme_u);
 
 /// This function must be called after pme_data has been called because it
 /// needs to know the number of pme objects created.
 void fft_data(rc_op op);
-void fftfront(int pme_unit);
-void fftback(int pme_unit);
+void fftfront(PMEUnit pme_u);
+void fftback(PMEUnit pme_u);
 
 int use_ewald();
 void pme_init(int vers);
@@ -73,8 +95,8 @@ TINKER_NAMESPACE_BEGIN
  * @brief
  * make the scalar summation over reciprocal lattice
  */
-void pme_conv0(int pme_unit);                 // without virial
-void pme_conv1(int pme_unit, real* gpu_vir9); // with virial
+void pme_conv0(PMEUnit pme_u);                 // without virial
+void pme_conv1(PMEUnit pme_u, real* gpu_vir9); // with virial
 
 void rpole_to_cmp();
 /**
@@ -82,32 +104,32 @@ void rpole_to_cmp();
  * Input: cmp, cartesian rotated mpole.
  * Output: fmp, fractional rotated mpole.
  */
-void cmp_to_fmp(int pme_unit, const real (*cmp)[10], real (*fmp)[10]);
-void cuind_to_fuind(int pme_unit, const real (*cind)[3], const real (*cinp)[3],
+void cmp_to_fmp(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10]);
+void cuind_to_fuind(PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3],
                     real (*fuind)[3], real (*fuinp)[3]);
 /**
  * @brief
  * Input: fphi.
  * Output: cphi.
  */
-void fphi_to_cphi(int pme_unit, const real (*fphi)[20], real (*cphi)[10]);
+void fphi_to_cphi(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10]);
 /**
  * @brief
  * Input: fmp.
  * Output: qgrid.
  */
-void grid_mpole(int pme_unit, real (*gpu_fmp)[10]);
+void grid_mpole(PMEUnit pme_u, real (*gpu_fmp)[10]);
 /**
  * @brief
  * Input: qgrid.
  * Output: fphi.
  */
-void fphi_mpole(int pme_unit, real (*gpu_fphi)[20]);
+void fphi_mpole(PMEUnit pme_u, real (*gpu_fphi)[20]);
 
-void grid_uind(int pme_unit, real (*gpu_find)[3], real (*gpu_finp)[3]);
-void fphi_uind(int pme_unit, real (*gpu_fdip_phi1)[10],
+void grid_uind(PMEUnit pme_u, real (*gpu_find)[3], real (*gpu_finp)[3]);
+void fphi_uind(PMEUnit pme_u, real (*gpu_fdip_phi1)[10],
                real (*gpu_fdip_phi2)[10], real (*gpu_fdip_sum_phi)[20]);
-void fphi_uind2(int pme_unit, real (*gpu_fdip_phi1)[10],
+void fphi_uind2(PMEUnit pme_u, real (*gpu_fdip_phi1)[10],
                 real (*gpu_fdip_phi2)[10]);
 TINKER_NAMESPACE_END
 

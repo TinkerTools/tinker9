@@ -11,7 +11,7 @@
 TINKER_NAMESPACE_BEGIN
 // see also subroutine udirect1 in induce.f
 void dfield_ewald_recip_self(real* gpu_field) {
-  const int pu = ppme_unit;
+  const PMEUnit pu = ppme_unit;
   const real aewald = pme_obj(pu).aewald;
   const real term = REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
 
@@ -59,7 +59,7 @@ void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
   real* pscale = pscalebuf.data();
   real* dscale = dscalebuf.data();
 
-  const int pu = ppme_unit;
+  const PMEUnit pu = ppme_unit;
   const real aewald = pme_obj(pu).aewald;
   const real aesq2 = 2 * aewald * aewald;
   const real aesq2n = (aewald > 0 ? 1 / (sqrtpi * aewald) : 0);
@@ -338,7 +338,7 @@ void ufield_ewald_recip_self(const real* gpu_uind, const real* gpu_uinp,
   real(*field)[3] = reinterpret_cast<real(*)[3]>(gpu_field);
   real(*fieldp)[3] = reinterpret_cast<real(*)[3]>(gpu_fieldp);
 
-  const int pu = ppme_unit;
+  const PMEUnit pu = ppme_unit;
   const auto& st = pme_obj(pu);
   const int nfft1 = st.nfft1;
   const int nfft2 = st.nfft2;
@@ -399,7 +399,7 @@ void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
   uscalebuf.resize(n, 1);
   real* uscale = uscalebuf.data();
 
-  const int pu = ppme_unit;
+  const PMEUnit pu = ppme_unit;
   const real aewald = pme_obj(pu).aewald;
   const real aesq2 = 2 * aewald * aewald;
   const real aesq2n = (aewald > 0 ? 1 / (sqrtpi * aewald) : 0);

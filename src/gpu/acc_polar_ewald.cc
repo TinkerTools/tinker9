@@ -762,7 +762,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
-  const int pu = ppme_unit;
+  const PMEUnit pu = ppme_unit;
   const auto& st = pme_obj(pu);
   const int nfft1 = st.nfft1;
   const int nfft2 = st.nfft2;
@@ -1035,7 +1035,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
     }
 
     // qgrip: pvu_qgrid
-    const int pvu = pvpme_unit;
+    const PMEUnit pvu = pvpme_unit;
     #pragma acc parallel loop independent deviceptr(cmp,gpu_uinp)
     for (int i = 0; i < n; ++i) {
       cmp[i][1] += gpu_uinp[i][0];

@@ -18,7 +18,7 @@ void fft_data(rc_op op) {
   if (op & rc_alloc) {
     assert(fft_plans().size() == 0);
 
-    const size_t size = detail_::pme_objs().size();
+    const size_t size = PMEUnit::all_objs().size();
     fft_plans().resize(size, fft_plan_t());
   }
 
@@ -33,7 +33,7 @@ void fft_data(rc_op op) {
 
     int idx = 0;
     for (fft_plan_t& iplan : fft_plans()) {
-      auto& st = detail_::pme_objs()[idx];
+      auto& st = PMEUnit::all_objs()[idx];
       check_rt(cufftPlan3d(&iplan, st.nfft1, st.nfft2, st.nfft3, typ),
                cufftResult, CUFFT_SUCCESS);
       ++idx;
@@ -41,9 +41,9 @@ void fft_data(rc_op op) {
   }
 }
 
-void fftfront(int pme_unit) {
+void fftfront(int pme_u) {
   fft_plan_t iplan = fft_plans()[pme_unit];
-  auto& st = detail_::pme_objs()[pme_unit];
+  auto& st = PMEUnit::all_objs()[pme_unit];
 
 #  if defined(TINKER_SINGLE_PRECISION)
   cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),
@@ -56,9 +56,9 @@ void fftfront(int pme_unit) {
 #  endif
 }
 
-void fftback(int pme_unit) {
+void fftback(int pme_u) {
   fft_plan_t iplan = fft_plans()[pme_unit];
-  auto& st = detail_::pme_objs()[pme_unit];
+  auto& st = PMEUnit::all_objs()[pme_unit];
 
 #  if defined(TINKER_SINGLE_PRECISION)
   cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),

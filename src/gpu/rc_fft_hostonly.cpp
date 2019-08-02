@@ -31,7 +31,7 @@ void fft_data(rc_op op) {
   if (op & rc_alloc) {
     assert(fft_plans().size() == 0);
 
-    const size_t size = detail_::pme_objs().size();
+    const size_t size = PMEUnit::all_objs().size();
     fft_plans().resize(size, fft_plan_t());
   }
 
@@ -68,9 +68,9 @@ void fft_data(rc_op op) {
   }
 }
 
-void fftfront(int pme_unit) {
-  fft_plan_t iplan = fft_plans()[pme_unit];
-  auto& st = pme_obj(pme_unit);
+void fftfront(int pme_u) {
+  fft_plan_t iplan = fft_plans()[pme_u];
+  auto& st = pme_obj(pme_u);
 
 #  if defined(TINKER_SINGLE_PRECISION)
   fftwf_execute_dft(iplan.planf, reinterpret_cast<fftwf_complex*>(st.qgrid),
@@ -83,9 +83,9 @@ void fftfront(int pme_unit) {
 #  endif
 }
 
-void fftback(int pme_unit) {
-  fft_plan_t iplan = fft_plans()[pme_unit];
-  auto& st = pme_obj(pme_unit);
+void fftback(int pme_u) {
+  fft_plan_t iplan = fft_plans()[pme_u];
+  auto& st = pme_obj(pme_u);
 
 #  if defined(TINKER_SINGLE_PRECISION)
   fftwf_execute_dft(iplan.planb, reinterpret_cast<fftwf_complex*>(st.qgrid),

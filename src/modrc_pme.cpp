@@ -8,31 +8,19 @@
 #include <ext/tinker/tinker_rt.h>
 
 TINKER_NAMESPACE_BEGIN
-namespace detail_ {
-std::vector<pme_t>& pme_objs() {
-  static std::vector<pme_t> objs;
-  return objs;
-}
-
-std::vector<pme_t*>& pme_deviceptrs() {
-  static std::vector<pme_t*> ptrs;
-  return ptrs;
-}
-}
-
-pme_t& pme_obj(int pme_unit) {
+pme_t& pme_obj(int pme_u) {
 #if TINKER_DEBUG
-  return detail_::pme_objs().at(pme_unit);
+  return PMEUnit::all_objs().at(pme_u);
 #else
-  return detail_::pme_objs()[pme_unit];
+  return PMEUnit::all_objs()[pme_u];
 #endif
 }
 
-pme_t* pme_deviceptr(int pme_unit) {
+pme_t* pme_deviceptr(int pme_u) {
 #if TINKER_DEBUG
-  return detail_::pme_deviceptrs().at(pme_unit);
+  return PMEUnit::all_deviceptrs().at(pme_u);
 #else
-  return detail_::pme_deviceptrs()[pme_unit];
+  return PMEUnit::all_deviceptrs()[pme_u];
 #endif
 }
 
@@ -55,8 +43,8 @@ static void pme_op_alloc_(int& unit, double aewald, int nfft1, int nfft2,
   int first = -1;
   const double eps = 1.0e-6;
   int idx;
-  for (idx = 0; idx < detail_::pme_objs().size(); ++idx) {
-    auto& st = detail_::pme_objs()[idx];
+  for (idx = 0; idx < PMEUnit::all_objs().size(); ++idx) {
+    auto& st = PMEUnit::all_objs()[idx];
     if (std::abs(aewald - st.aewald) < eps && nfft1 == st.nfft1 &&
         nfft2 == st.nfft2 && nfft3 == st.nfft3 && bsorder == st.bsorder) {
       ++count;
@@ -66,10 +54,10 @@ static void pme_op_alloc_(int& unit, double aewald, int nfft1, int nfft2,
   }
 
   if (count == 0 || unique == true) {
-    detail_::pme_objs().emplace_back(pme_t());
-    detail_::pme_deviceptrs().emplace_back(nullptr);
-    auto& st = detail_::pme_objs()[idx];
-    auto& dptr = detail_::pme_deviceptrs()[idx];
+    PMEUnit::all_objs().emplace_back(pme_t());
+    PMEUnit::all_deviceptrs().emplace_back(nullptr);
+    auto& st = PMEUnit::all_objs()[idx];
+    auto& dptr = PMEUnit::all_deviceptrs()[idx];
 
     const size_t rs = sizeof(real);
     size_t size;
@@ -95,7 +83,7 @@ static void pme_op_alloc_(int& unit, double aewald, int nfft1, int nfft2,
     idx = first;
   }
 
-  assert(detail_::pme_objs().size() == detail_::pme_deviceptrs().size());
+  assert(PMEUnit::all_objs().size() == PMEUnit::all_deviceptrs().size());
   unit = idx;
 }
 
@@ -156,14 +144,14 @@ void pme_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    assert(detail_::pme_objs().size() == detail_::pme_deviceptrs().size());
+    assert(PMEUnit::all_objs().size() == PMEUnit::all_deviceptrs().size());
     int idx = 0;
-    while (idx < detail_::pme_objs().size()) {
+    while (idx < PMEUnit::all_objs().size()) {
       pme_op_dealloc_(idx);
       ++idx;
     }
-    detail_::pme_objs().clear();
-    detail_::pme_deviceptrs().clear();
+    PMEUnit::all_objs().clear();
+    PMEUnit::all_deviceptrs().clear();
 
     check_rt(cudaFree(cmp));
     check_rt(cudaFree(fmp));
@@ -183,8 +171,8 @@ void pme_data(rc_op op) {
   }
 
   if (op & rc_alloc) {
-    assert(detail_::pme_objs().size() == 0);
-    assert(detail_::pme_deviceptrs().size() == 0);
+    assert(PMEUnit::all_objs().size() == 0);
+    assert(PMEUnit::all_deviceptrs().size() == 0);
 
     const size_t rs = sizeof(real);
 
