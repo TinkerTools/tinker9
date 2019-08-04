@@ -1,6 +1,7 @@
 #ifndef TINKER_GPU_E_MPOLE_H_
 #define TINKER_GPU_E_MPOLE_H_
 
+#include "util_cxx.h"
 #include "mod_elec.h"
 
 TINKER_NAMESPACE_BEGIN

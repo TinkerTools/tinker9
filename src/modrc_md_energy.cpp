@@ -123,7 +123,7 @@ static void dealloc3(real* /* pe */, real* /* pv */, int* /* pne */) {}
 //======================================================================
 
 void egv_data(rc_op op) {
-  if (use_data & (calc::analyz | calc::energy | calc::virial)) {
+  if (rc_flag & (calc::analyz | calc::energy | calc::virial)) {
     energy_buffer_::data(op);
 
     if (op & rc_dealloc) {
@@ -135,15 +135,15 @@ void egv_data(rc_op op) {
     }
 
     if (op & rc_init) {
-      if (calc::energy & use_data)
+      if (calc::energy & rc_flag)
         copyin_array(esum, &energi::esum, 1);
 
-      if (calc::virial & use_data)
+      if (calc::virial & rc_flag)
         copyin_array(vir, &virial::vir[0][0], 9);
     }
   }
 
-  if (use_data & calc::grad) {
+  if (rc_flag & calc::grad) {
     if (op & rc_dealloc) {
       dealloc_bytes(gx);
       dealloc_bytes(gy);
@@ -223,7 +223,7 @@ void zero_egv(int vers) {
   }
 }
 
-void zero_egv() { zero_egv(use_data & calc::vmask); }
+void zero_egv() { zero_egv(rc_flag & calc::vmask); }
 
 extern void sum_energy_acc_impl_(real* ebuf, int end);
 extern void sum_virial_acc_impl_(real* vbuf, int end, int virlen);

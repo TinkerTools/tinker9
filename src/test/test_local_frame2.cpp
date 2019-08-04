@@ -50,7 +50,7 @@ TEST_CASE("Local-Frame2-1", "[ff][triclinic][evdw][hal][local-frame2]") {
   TestFile fx1(x1, local_frame_xyz2);
 
   test_begin_with_args(argc, argv);
-  use_data = usage;
+  rc_flag = usage;
   initialize();
 
   SECTION("ehal -- pbc, cutoff") {
@@ -78,7 +78,7 @@ TEST_CASE("Local-Frame2-2", "[ff][monoclinic][evdw][hal][local-frame2]") {
   TestFile fx1(x1, local_frame_xyz2);
 
   test_begin_with_args(argc, argv);
-  use_data = usage;
+  rc_flag = usage;
   initialize();
 
   SECTION("ehal -- pbc, cutoff") {

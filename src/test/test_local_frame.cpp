@@ -57,7 +57,7 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
                                {9.243, 6.517, 4.708}};
 
     test_begin_with_args(argc, argv);
-    use_data = usage;
+    rc_flag = usage;
     initialize();
 
     zero_egv();
@@ -140,7 +140,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
                                {7.610, 7.245, 3.181}};
 
     test_begin_with_args(argc, argv);
-    use_data = usage;
+    rc_flag = usage;
     initialize();
 
     zero_egv();
@@ -225,7 +225,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
   const double eps_f = 0.0001;
 
   test_begin_with_args(argc, argv);
-  use_data = usage;
+  rc_flag = usage;
   initialize();
 
   SECTION("dfield -- coulomb no cutoff") {
@@ -428,7 +428,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
   const double eps_f = 0.0001;
 
   test_begin_with_args(argc, argv);
-  use_data = usage;
+  rc_flag = usage;
   initialize();
 
   SECTION("dfield -- pme") {

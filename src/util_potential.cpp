@@ -6,7 +6,7 @@
 
 TINKER_NAMESPACE_BEGIN
 void potential_data(rc_op op) {
-  if ((use_data & calc::vmask) == 0)
+  if ((rc_flag & calc::vmask) == 0)
     return;
 
   rc_man egv42_{egv_data, op};

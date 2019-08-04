@@ -9,7 +9,7 @@
 TINKER_NAMESPACE_BEGIN
 /**
  * @brief
- * can be used as signed integers, similar to Fortran I/O unit
+ * resource handle: can be used as signed integers, similar to Fortran I/O unit
  */
 template <class T, int USE_DPTR = 0>
 class GenericUnit {

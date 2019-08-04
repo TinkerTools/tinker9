@@ -63,7 +63,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
         {-405.878, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
     test_begin_with_args(argc, argv);
-    use_data = usage;
+    rc_flag = usage;
     initialize();
 
     COMPARE_CODE_BLOCK1_;
@@ -85,7 +85,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
         {-354.835, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
     test_begin_with_args(argc, argv);
-    use_data = usage;
+    rc_flag = usage;
     initialize();
 
     COMPARE_CODE_BLOCK1_;
@@ -108,7 +108,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
         {-319.160, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
     test_begin_with_args(argc, argv);
-    use_data = usage;
+    rc_flag = usage;
     initialize();
 
     COMPARE_CODE_BLOCK1_;
@@ -193,7 +193,7 @@ TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
         {150.938, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
     test_begin_with_args(argc, argv);
-    use_data = usage;
+    rc_flag = usage;
     initialize();
 
     COMPARE_CODE_BLOCK2_;
@@ -254,7 +254,7 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]") {
     //                            {26.068, 28.675, 31.863}};
 
     test_begin_with_args(argc, argv);
-    use_data = usage;
+    rc_flag = usage;
     initialize();
 
     COMPARE_CODE_BLOCK2_;

@@ -159,7 +159,7 @@ void x_dynamic(int argc, char** argv) {
   if (bath::isobaric == _true_)
     flags += calc::virial;
 
-  use_data = flags;
+  rc_flag = flags;
   initialize();
   propagate(nstep, dt, nullptr);
   finish();

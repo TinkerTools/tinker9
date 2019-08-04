@@ -222,7 +222,7 @@ void nblist_data(rc_op op) {
       nblist_build_acc_impl_(mlist_obj_, mlst);
 
     if (op & rc_man::evolve) {
-      if (use_data & calc::traj) {
+      if (rc_flag & calc::traj) {
         mlist_obj_.x = x;
         mlist_obj_.y = y;
         mlist_obj_.z = z;

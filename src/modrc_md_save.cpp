@@ -108,7 +108,7 @@ void mdsave_data(rc_op op) {
         gbuf[i] = -moldyn::a[3 * i + 2] * atomid::mass[i] / units::ekcal;
       copyin_array(gz, gbuf.data(), n);
     } else {
-      energy_potential(use_data & calc::vmask);
+      energy_potential(rc_flag & calc::vmask);
     }
   }
 }

@@ -66,7 +66,7 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]") {
   test_begin_with_args(argc, argv);
   test_mdinit(0, 0);
 
-  use_data = usage_;
+  rc_flag = usage_;
   initialize();
 
   const double dt_ps = 0.001;

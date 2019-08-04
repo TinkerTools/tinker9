@@ -5,7 +5,7 @@
 #include "util_rt.h"
 
 TINKER_NAMESPACE_BEGIN
-TINKER_EXTERN int use_data;
+TINKER_EXTERN int rc_flag;
 // number of frames
 TINKER_EXTERN int trajn;
 // number of atoms
@@ -64,27 +64,25 @@ enum {
 
 namespace calc {
 enum {
-  xyz = 0x001,  /// xyz
-  vel = 0x002,  /// velocity
-  mass = 0x004, /// mass
-  traj = 0x008, /// trajectory
+  xyz = 0x001,  ///< xyz
+  vel = 0x002,  ///< velocity
+  mass = 0x004, ///< mass
+  traj = 0x008, ///< trajectory
 
-  energy = 0x010, /// energy 16
-  grad = 0x020,   /// gradient 32
-  virial = 0x040, /// virial 64
-  analyz = 0x080, /// analyze 128
+  energy = 0x010, ///< energy 16
+  grad = 0x020,   ///< gradient 32
+  virial = 0x040, ///< virial 64
+  analyz = 0x080, ///< analyze 128
 
-  md = 0x100,
+  md = 0x100, ///< md calculation
 
-  // clang-format off
-  vmask = energy + grad + virial +  analyz,
-  v0 = energy,                 ///  16
-  v1 = energy + grad + virial, /// 112
-  v3 = energy + analyz,        /// 144
-  v4 = energy + grad,          ///  48
-  v5 = grad,                   ///  32
-  v6 = grad + virial,          ///  96
-  // clang-format on
+  vmask = energy + grad + virial + analyz,
+  v0 = energy,                 //  16
+  v1 = energy + grad + virial, // 112
+  v3 = energy + analyz,        // 144
+  v4 = energy + grad,          //  48
+  v5 = grad,                   //  32
+  v6 = grad + virial,          //  96
 };
 }
 

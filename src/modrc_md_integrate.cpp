@@ -105,7 +105,7 @@ void propagate(int nsteps, real dt_ps, void (*itg)(int, real)) {
 }
 
 void md_data(rc_op op) {
-  if ((calc::md & use_data) == 0)
+  if ((calc::md & rc_flag) == 0)
     return;
 
   integrate_data(op);

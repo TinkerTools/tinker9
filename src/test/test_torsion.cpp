@@ -178,7 +178,7 @@ TEST_CASE("Torsion-Trpcage", "[ff][etors][trpcage]") {
   const char* argv[] = {"dummy", x1};
   int argc = 2;
   test_begin_with_args(argc, argv);
-  use_data = usage;
+  rc_flag = usage;
   initialize();
 
   const double eps_e = 0.0001;

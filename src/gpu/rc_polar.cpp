@@ -87,7 +87,7 @@ void epolar_data(rc_op op) {
 
     alloc_nev(&nep, &ep, &vir_ep);
 
-    if (use_data & calc::grad) {
+    if (rc_flag & calc::grad) {
       alloc_bytes(&ufld, rs * 3 * n);
       alloc_bytes(&dufld, rs * 6 * n);
     } else {

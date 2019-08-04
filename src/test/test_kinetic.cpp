@@ -27,7 +27,7 @@ TEST_CASE("Kinetic-ArBox", "[ff][kinetic][arbox]") {
   test_begin_with_args(argc, argv);
   test_mdinit(0, 0);
 
-  use_data = usage_;
+  rc_flag = usage_;
   initialize();
 
   real temp;

@@ -174,7 +174,7 @@ void pme_data(rc_op op) {
       alloc_bytes(&fphidp, 20 * n * rs);
 
       // if (vir_m), it implies use virial and use epolar
-      if (use_data & calc::virial)
+      if (rc_flag & calc::virial)
         alloc_bytes(&vir_m, 9 * rs);
       else
         vir_m = nullptr;
@@ -196,7 +196,7 @@ void pme_data(rc_op op) {
     if (use_potent(polar_term)) {
       pme_op_alloc_(ppme_unit, ewald::apewald, pme::nefft1, pme::nefft2,
                     pme::nefft3, pme::bsporder, unique_grids);
-      if (use_data & calc::virial) {
+      if (rc_flag & calc::virial) {
         unique_grids = true;
         pme_op_alloc_(pvpme_unit, ewald::apewald, pme::nefft1, pme::nefft2,
                       pme::nefft3, pme::bsporder, unique_grids);

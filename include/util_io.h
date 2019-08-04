@@ -1,51 +1,64 @@
 #ifndef TINKER_UTIL_IO_H_
 #define TINKER_UTIL_IO_H_
 
-#include "util_cxx.h"
-
+#include "util_macro.h"
+#include <string>
+#include <vector>
 TINKER_NAMESPACE_BEGIN
+/// @brief
+/// plain ascii text stored by lines
 class Text : public std::vector<std::string> {
 public:
+  /// @brief
+  /// white space characters
   static constexpr const char* whitespaces = " \t\n\v\f\r";
 
   /// @return
-  /// True if ch is one of the white space characters.
+  /// True if @c ch is one of the white space characters.
   static bool is_ws(char ch);
 
+  /// @return
+  /// a c++ string from a c char array
   template <size_t Len>
   static std::string string(const char (&src)[Len]) {
     return std::string(&src[0], &src[0] + Len);
   }
 
-  // Replace
-  static void replace(std::string& s, std::string old, char r);
+  /// @brief
+  /// replace
+  /// @{
+  static void replace(std::string& src, std::string old, char r);
   static void replace_by_kv(std::string& src, std::string key,
                             std::string value);
+  /// @}
 
-  // Split
+  /// @brief
+  /// split a string to a vector of string by @c delimiters
   static std::vector<std::string> split(std::string str,
                                         std::string delimiters = whitespaces);
 
-  // Case
+  /// @brief
+  /// transform a string to upper or lower case
+  /// @{
   static void upcase(std::string&);
   static void lowcase(std::string&);
+  /// @}
 };
-typedef Text text_t;
 TINKER_NAMESPACE_END
 
-//======================================================================
-// reading from a stream
-
+#include <iostream>
 #include <sstream>
 
 TINKER_NAMESPACE_BEGIN
 /**
  * @brief
- * Read ONE value from a string.
- * arg will not change until the reading successfully exits.
+ * read ONE value from a/an string/array/io stream;
+ * @c arg will not change until the reading successfully exits
  *
- * @return  Non-zero if any error happened.
+ * @return
+ * Non-zero if any error happened.
  */
+/// @{
 template <class Arg>
 int read_string_1(Arg& arg, const char* str, size_t len) {
   const int succeed = 0;
@@ -61,17 +74,11 @@ int read_string_1(Arg& arg, const char* str, size_t len) {
   }
 }
 
-/**
- * @brief
- * Read one value from a char array.
- * arg will not change until the reading successfully exits.
- *
- * @return  Non-zero if any error happened.
- */
 template <class Arg, size_t Len>
 int read_string_1(Arg& arg, const char (&src)[Len]) {
   return read_string_1(arg, src, Len);
 };
+/// @}
 
 /**
  * @brief
@@ -119,7 +126,6 @@ TINKER_NAMESPACE_END
 
 // fmtlib
 #include <ext/fmt/ostream.h>
-
 TINKER_NAMESPACE_BEGIN
 template <class Out, class Fmt, class... Ts>
 void print(Out& out, const Fmt& fmtstr, const Ts&... args) {

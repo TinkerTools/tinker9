@@ -53,7 +53,7 @@ void elec_data(rc_op op) {
       udirp = nullptr;
     }
 
-    if (use_data & calc::grad) {
+    if (rc_flag & calc::grad) {
       alloc_bytes(&trqx, rs * n);
       alloc_bytes(&trqy, rs * n);
       alloc_bytes(&trqz, rs * n);

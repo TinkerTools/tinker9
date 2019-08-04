@@ -2,13 +2,15 @@
 #include "mod_md.h"
 #include "util_array.h"
 #include "util_math.h"
-#include <ext/tinker/tinker_mod.h>
+#include "util_rt.h"
+#include <ext/tinker/detail/bound.hh>
+#include <ext/tinker/detail/boxes.hh>
 #include <ext/tinker/tinker_rt.h>
 
 TINKER_NAMESPACE_BEGIN
 void box_data(rc_op op) {
   if (op & rc_dealloc) {
-    if (calc::traj & use_data) {
+    if (calc::traj & rc_flag) {
       box = nullptr;
       dealloc_bytes(trajbox);
     } else {
@@ -19,7 +21,7 @@ void box_data(rc_op op) {
 
   if (op & rc_alloc) {
     size_t size = sizeof(Box);
-    if (calc::traj & use_data) {
+    if (calc::traj & rc_flag) {
       size *= trajn;
       alloc_bytes(&trajbox, size);
       box = trajbox;

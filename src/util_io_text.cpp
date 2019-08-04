@@ -10,12 +10,12 @@ bool Text::is_ws(char ch) {
   return ws.find(ch) != std::string::npos;
 }
 
-void Text::replace(std::string& s, std::string old, char r) {
+void Text::replace(std::string& src, std::string old, char r) {
   std::bitset<128> alphabets;
   for (char c : old) {
     alphabets[c] = 1;
   }
-  for (char& rc : s) {
+  for (char& rc : src) {
     if (alphabets[rc]) {
       rc = r;
     }

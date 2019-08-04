@@ -7,7 +7,8 @@
 #include <random>
 
 TINKER_NAMESPACE_BEGIN
-/// @return  Zero if Tinker key file does not contain a RANDOMSEED keyword
+/// @return
+/// Zero if Tinker key file does not contain a RANDOMSEED keyword
 static int read_tinker_randomseed_() {
   int seed = 0;
   for (int i = 0; i < keys::nkey; ++i) {

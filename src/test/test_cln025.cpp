@@ -83,7 +83,7 @@ TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
                                {-2.250, 41.895, -681.179}};
 
     test_begin_with_args(argc, argv);
-    use_data = usage;
+    rc_flag = usage;
     initialize();
 
     COMPARE_CODE_BLOCK1_;
@@ -116,7 +116,7 @@ TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
                                {26.361, 29.820, -706.064}};
 
     test_begin_with_args(argc, argv);
-    use_data = usage;
+    rc_flag = usage;
     initialize();
 
     COMPARE_CODE_BLOCK1_;

@@ -17,7 +17,7 @@ void n_data(rc_op op) {
   if (op & rc_alloc) {
     n = atoms::n;
 
-    if (calc::traj & use_data) {
+    if (calc::traj & rc_flag) {
       // trajn must have been initialized by this point
       assert(trajn >= 0);
     }
@@ -28,11 +28,11 @@ void n_data(rc_op op) {
 // x y z coordinates
 
 void xyz_data(rc_op op) {
-  if ((calc::xyz & use_data) == 0)
+  if ((calc::xyz & rc_flag) == 0)
     return;
 
   if (op & rc_dealloc) {
-    if (calc::traj & use_data) {
+    if (calc::traj & rc_flag) {
       dealloc_bytes(trajx);
       dealloc_bytes(trajy);
       dealloc_bytes(trajz);
@@ -51,7 +51,7 @@ void xyz_data(rc_op op) {
 
   if (op & rc_alloc) {
     size_t size = sizeof(real) * n;
-    if (calc::traj & use_data) {
+    if (calc::traj & rc_flag) {
       size *= trajn;
       alloc_bytes(&trajx, size);
       alloc_bytes(&trajy, size);
@@ -77,7 +77,7 @@ void xyz_data(rc_op op) {
 // velocitiies
 
 void vel_data(rc_op op) {
-  if ((calc::vel & use_data) == 0)
+  if ((calc::vel & rc_flag) == 0)
     return;
 
   if (op & rc_dealloc) {
@@ -104,7 +104,7 @@ void vel_data(rc_op op) {
 // atomic mass
 
 void mass_data(rc_op op) {
-  if ((calc::mass & use_data) == 0)
+  if ((calc::mass & rc_flag) == 0)
     return;
 
   if (op & rc_dealloc) {
@@ -128,7 +128,7 @@ void mass_data(rc_op op) {
 }
 
 void goto_frame0(int idx0) {
-  assert(calc::traj & use_data);
+  assert(calc::traj & rc_flag);
   x = trajx + n * idx0;
   y = trajy + n * idx0;
   z = trajz + n * idx0;
