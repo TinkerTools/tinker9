@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_HESSN_HH_
 #define TINKER_MOD_HESSN_HH_
 
-#include "util_macro.h"
+#include "macro.h"
 
 TINKER_NAMESPACE_BEGIN namespace hessn {
 extern double*& hessx;

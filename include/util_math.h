@@ -1,7 +1,7 @@
 #ifndef TINKER_UTIL_MATH_H_
 #define TINKER_UTIL_MATH_H_
 
-#include "util_macro.h"
+#include "macro.h"
 #include <cmath>
 
 #define INT_ABS(x) abs(x)

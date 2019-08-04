@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_DSPPOT_HH_
 #define TINKER_MOD_DSPPOT_HH_
 
-#include "util_macro.h"
+#include "macro.h"
 
 TINKER_NAMESPACE_BEGIN namespace dsppot {
 extern double& dsp2scale;

@@ -1,7 +1,7 @@
-#ifndef TINKER_UTIL_RANDOM_H_
-#define TINKER_UTIL_RANDOM_H_
+#ifndef TINKER_RANDOM_H_
+#define TINKER_RANDOM_H_
 
-#include "util_macro.h"
+#include "macro.h"
 #include <cassert>
 #include <type_traits>
 

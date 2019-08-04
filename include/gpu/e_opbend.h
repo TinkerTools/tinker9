@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_E_OPBEND_H_
 #define TINKER_GPU_E_OPBEND_H_
 
-#include "util_cxx.h"
+#include "cxx.h"
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN

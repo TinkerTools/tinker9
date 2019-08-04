@@ -1,7 +1,7 @@
 #ifndef TINKER_UTIL_ARRAY_H_
 #define TINKER_UTIL_ARRAY_H_
 
-#include "util_cxx.h"
+#include "cxx.h"
 
 TINKER_NAMESPACE_BEGIN
 void zero_array(int* dst, int nelem);

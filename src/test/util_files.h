@@ -1,7 +1,7 @@
 #ifndef TINKER_SRC_TEST_UTIL_TEST_FILES_H_
 #define TINKER_SRC_TEST_UTIL_TEST_FILES_H_
 
-#include "util_macro.h"
+#include "macro.h"
 
 TINKER_NAMESPACE_BEGIN
 namespace tinker_6fe8e913fe4da3d46849d10248ad2a4872b4da93 {}

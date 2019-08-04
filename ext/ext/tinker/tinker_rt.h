@@ -1,7 +1,7 @@
 #ifndef TINKER_RT_H_
 #define TINKER_RT_H_
 
-#include "util_cxx.h"
+#include "cxx.h"
 
 TINKER_NAMESPACE_BEGIN
 typedef int logical;

@@ -22,8 +22,8 @@ _Modulus = {}
 _CurrentModule = ''
 
 # _SharedHeader = '"util/macro.h"'
-_SharedHeader = '"util_macro.h"'
-_FortranCodeBlockMacro = 'TINKER_FORTRAN_CODE'
+# _SharedHeader = '"util_macro.h"'
+_SharedHeader = '"macro.h"'
 
 _TINKER_MOD = 'TINKER_MOD'
 

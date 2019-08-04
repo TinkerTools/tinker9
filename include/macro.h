@@ -1,5 +1,5 @@
-#ifndef TINKER_UTIL_MACRO_H_
-#define TINKER_UTIL_MACRO_H_
+#ifndef TINKER_MACRO_H_
+#define TINKER_MACRO_H_
 
 // stringification
 #define TINKER_STR_IMPL_(s) #s

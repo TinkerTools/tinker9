@@ -1,7 +1,7 @@
 #ifndef TINKER_UTIL_IO_H_
 #define TINKER_UTIL_IO_H_
 
-#include "util_macro.h"
+#include "macro.h"
 #include <string>
 #include <vector>
 TINKER_NAMESPACE_BEGIN

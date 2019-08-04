@@ -1,7 +1,7 @@
-#ifndef TINKER_UTIL_CXX_H_
-#define TINKER_UTIL_CXX_H_
+#ifndef TINKER_CXX_H_
+#define TINKER_CXX_H_
 
-#include "util_macro.h"
+#include "macro.h"
 #include <array>
 #include <cassert>
 #include <cstdlib>

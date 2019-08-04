@@ -1,7 +1,7 @@
 #ifndef TINKER_UTIL_GENUNIT_H_
 #define TINKER_UTIL_GENUNIT_H_
 
-#include "util_macro.h"
+#include "macro.h"
 #include <cassert>
 #include <cstring>
 #include <vector>

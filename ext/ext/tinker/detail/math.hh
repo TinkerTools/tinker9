@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_MATH_HH_
 #define TINKER_MOD_MATH_HH_
 
-#include "util_macro.h"
+#include "macro.h"
 
 TINKER_NAMESPACE_BEGIN namespace math {
 const double pi = 3.141592653589793238e0;

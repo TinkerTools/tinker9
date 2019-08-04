@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_UNITS_HH_
 #define TINKER_MOD_UNITS_HH_
 
-#include "util_macro.h"
+#include "macro.h"
 
 TINKER_NAMESPACE_BEGIN namespace units {
 const double avogadro = 6.02214076e+23;

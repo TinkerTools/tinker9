@@ -1,7 +1,7 @@
 #ifndef TINKER_UTIL_RT_HOST_H_
 #define TINKER_UTIL_RT_HOST_H_
 
-#include "util_macro.h"
+#include "macro.h"
 #include <fftw3.h>
 
 #include <condition_variable>

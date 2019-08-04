@@ -1,6 +1,6 @@
 #include "mod_md.h"
 #include "util_math.h"
-#include "util_random.h"
+#include "random.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

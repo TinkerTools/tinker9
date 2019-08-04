@@ -3,7 +3,7 @@
 
 #include "mod_elec.h"
 #include "mod_polgrp.h"
-#include "util_cxx.h"
+#include "cxx.h"
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN

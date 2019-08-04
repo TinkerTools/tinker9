@@ -1,7 +1,7 @@
 #ifndef TINKER_UTIL_SWITCH_H_
 #define TINKER_UTIL_SWITCH_H_
 
-#include "util_macro.h"
+#include "macro.h"
 
 TINKER_NAMESPACE_BEGIN
 typedef enum {

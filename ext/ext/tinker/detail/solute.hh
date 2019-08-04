@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_SOLUTE_HH_
 #define TINKER_MOD_SOLUTE_HH_
 
-#include "util_macro.h"
+#include "macro.h"
 
 TINKER_NAMESPACE_BEGIN namespace solute {
 extern double& doffset;

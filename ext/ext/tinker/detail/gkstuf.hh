@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_GKSTUF_HH_
 #define TINKER_MOD_GKSTUF_HH_
 
-#include "util_macro.h"
+#include "macro.h"
 #include "sizes.hh"
 
 TINKER_NAMESPACE_BEGIN namespace gkstuf {

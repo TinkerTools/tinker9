@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_MRECIP_HH_
 #define TINKER_MOD_MRECIP_HH_
 
-#include "util_macro.h"
+#include "macro.h"
 
 TINKER_NAMESPACE_BEGIN namespace mrecip {
 extern double& vmxx;
