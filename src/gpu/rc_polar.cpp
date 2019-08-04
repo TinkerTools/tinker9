@@ -54,57 +54,57 @@ void epolar_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_array(polarity);
-    dealloc_array(thole);
-    dealloc_array(pdamp);
-    dealloc_array(polarity_inv);
+    dealloc_bytes(polarity);
+    dealloc_bytes(thole);
+    dealloc_bytes(pdamp);
+    dealloc_bytes(polarity_inv);
 
     free_nev(nep, ep, vir_ep);
 
-    dealloc_array(ufld);
-    dealloc_array(dufld);
+    dealloc_bytes(ufld);
+    dealloc_bytes(dufld);
 
-    dealloc_array(work01_);
-    dealloc_array(work02_);
-    dealloc_array(work03_);
-    dealloc_array(work04_);
-    dealloc_array(work05_);
-    dealloc_array(work06_);
-    dealloc_array(work07_);
-    dealloc_array(work08_);
-    dealloc_array(work09_);
-    dealloc_array(work10_);
+    dealloc_bytes(work01_);
+    dealloc_bytes(work02_);
+    dealloc_bytes(work03_);
+    dealloc_bytes(work04_);
+    dealloc_bytes(work05_);
+    dealloc_bytes(work06_);
+    dealloc_bytes(work07_);
+    dealloc_bytes(work08_);
+    dealloc_bytes(work09_);
+    dealloc_bytes(work10_);
   }
 
   if (op & rc_alloc) {
     const size_t rs = sizeof(real);
     size_t size;
 
-    alloc_array(&polarity, n * rs);
-    alloc_array(&thole, n * rs);
-    alloc_array(&pdamp, rs * n);
-    alloc_array(&polarity_inv, rs * n);
+    alloc_bytes(&polarity, n * rs);
+    alloc_bytes(&thole, n * rs);
+    alloc_bytes(&pdamp, rs * n);
+    alloc_bytes(&polarity_inv, rs * n);
 
     alloc_nev(&nep, &ep, &vir_ep);
 
     if (use_data & calc::grad) {
-      alloc_array(&ufld, rs * 3 * n);
-      alloc_array(&dufld, rs * 6 * n);
+      alloc_bytes(&ufld, rs * 3 * n);
+      alloc_bytes(&dufld, rs * 6 * n);
     } else {
       ufld = nullptr;
       dufld = nullptr;
     }
 
-    alloc_array(&work01_, 3 * n * rs);
-    alloc_array(&work02_, 3 * n * rs);
-    alloc_array(&work03_, 3 * n * rs);
-    alloc_array(&work04_, 3 * n * rs);
-    alloc_array(&work05_, 3 * n * rs);
-    alloc_array(&work06_, 3 * n * rs);
-    alloc_array(&work07_, 3 * n * rs);
-    alloc_array(&work08_, 3 * n * rs);
-    alloc_array(&work09_, 3 * n * rs);
-    alloc_array(&work10_, 3 * n * rs);
+    alloc_bytes(&work01_, 3 * n * rs);
+    alloc_bytes(&work02_, 3 * n * rs);
+    alloc_bytes(&work03_, 3 * n * rs);
+    alloc_bytes(&work04_, 3 * n * rs);
+    alloc_bytes(&work05_, 3 * n * rs);
+    alloc_bytes(&work06_, 3 * n * rs);
+    alloc_bytes(&work07_, 3 * n * rs);
+    alloc_bytes(&work08_, 3 * n * rs);
+    alloc_bytes(&work09_, 3 * n * rs);
+    alloc_bytes(&work10_, 3 * n * rs);
   }
 
   if (op & rc_init) {

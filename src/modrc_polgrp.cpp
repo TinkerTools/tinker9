@@ -11,16 +11,16 @@ static_assert(PolarGroup::maxp14 >= polgrp::maxp14, "");
 
 void polargroup_data(rc_op op) {
   if (op & rc_dealloc) {
-    dealloc_array(polargroup_obj_.np11);
-    dealloc_array(polargroup_obj_.np12);
-    dealloc_array(polargroup_obj_.np13);
-    dealloc_array(polargroup_obj_.np14);
-    dealloc_array(polargroup_obj_.ip11);
-    dealloc_array(polargroup_obj_.ip12);
-    dealloc_array(polargroup_obj_.ip13);
-    dealloc_array(polargroup_obj_.ip14);
+    dealloc_bytes(polargroup_obj_.np11);
+    dealloc_bytes(polargroup_obj_.np12);
+    dealloc_bytes(polargroup_obj_.np13);
+    dealloc_bytes(polargroup_obj_.np14);
+    dealloc_bytes(polargroup_obj_.ip11);
+    dealloc_bytes(polargroup_obj_.ip12);
+    dealloc_bytes(polargroup_obj_.ip13);
+    dealloc_bytes(polargroup_obj_.ip14);
 
-    dealloc_array(polargroup);
+    dealloc_bytes(polargroup);
   }
 
   if (op & rc_alloc) {
@@ -28,21 +28,21 @@ void polargroup_data(rc_op op) {
     size_t size;
 
     size = n * rs;
-    alloc_array(&polargroup_obj_.np11, size);
-    alloc_array(&polargroup_obj_.np12, size);
-    alloc_array(&polargroup_obj_.np13, size);
-    alloc_array(&polargroup_obj_.np14, size);
+    alloc_bytes(&polargroup_obj_.np11, size);
+    alloc_bytes(&polargroup_obj_.np12, size);
+    alloc_bytes(&polargroup_obj_.np13, size);
+    alloc_bytes(&polargroup_obj_.np14, size);
     size = PolarGroup::maxp11 * n * rs;
-    alloc_array(&polargroup_obj_.ip11, size);
+    alloc_bytes(&polargroup_obj_.ip11, size);
     size = PolarGroup::maxp12 * n * rs;
-    alloc_array(&polargroup_obj_.ip12, size);
+    alloc_bytes(&polargroup_obj_.ip12, size);
     size = PolarGroup::maxp13 * n * rs;
-    alloc_array(&polargroup_obj_.ip13, size);
+    alloc_bytes(&polargroup_obj_.ip13, size);
     size = PolarGroup::maxp14 * n * rs;
-    alloc_array(&polargroup_obj_.ip14, size);
+    alloc_bytes(&polargroup_obj_.ip14, size);
 
     size = sizeof(PolarGroup);
-    alloc_array(&polargroup, size);
+    alloc_bytes(&polargroup, size);
   }
 
   if (op & rc_init) {

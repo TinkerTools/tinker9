@@ -34,26 +34,26 @@ void mdsave_data(rc_op op) {
   if (op & rc_dealloc) {
     if (mdsave_use_uind_()) {
       dealloc_stream(dup_stream_uind_);
-      dealloc_array(dup_buf_uind_);
+      dealloc_bytes(dup_buf_uind_);
     }
 
     dealloc_stream(dup_stream_bxyz_);
     dealloc_stream(dup_stream_v_);
     dealloc_stream(dup_stream_g_);
 
-    dealloc_array(dup_buf_esum_);
-    dealloc_array(dup_buf_box_);
-    dealloc_array(dup_buf_x_);
-    dealloc_array(dup_buf_y_);
-    dealloc_array(dup_buf_z_);
+    dealloc_bytes(dup_buf_esum_);
+    dealloc_bytes(dup_buf_box_);
+    dealloc_bytes(dup_buf_x_);
+    dealloc_bytes(dup_buf_y_);
+    dealloc_bytes(dup_buf_z_);
 
-    dealloc_array(dup_buf_vx_);
-    dealloc_array(dup_buf_vy_);
-    dealloc_array(dup_buf_vz_);
+    dealloc_bytes(dup_buf_vx_);
+    dealloc_bytes(dup_buf_vy_);
+    dealloc_bytes(dup_buf_vz_);
 
-    dealloc_array(dup_buf_gx_);
-    dealloc_array(dup_buf_gy_);
-    dealloc_array(dup_buf_gz_);
+    dealloc_bytes(dup_buf_gx_);
+    dealloc_bytes(dup_buf_gy_);
+    dealloc_bytes(dup_buf_gz_);
   }
 
   if (op & rc_alloc) {
@@ -61,7 +61,7 @@ void mdsave_data(rc_op op) {
 
     if (mdsave_use_uind_()) {
       alloc_stream(&dup_stream_uind_);
-      alloc_array(&dup_buf_uind_, rs * 3 * n);
+      alloc_bytes(&dup_buf_uind_, rs * 3 * n);
     } else {
       dup_stream_uind_ = nullptr;
       dup_buf_uind_ = nullptr;
@@ -71,19 +71,19 @@ void mdsave_data(rc_op op) {
     alloc_stream(&dup_stream_v_);
     alloc_stream(&dup_stream_g_);
 
-    alloc_array(&dup_buf_esum_, sizeof(real));
-    alloc_array(&dup_buf_box_, sizeof(Box));
-    alloc_array(&dup_buf_x_, rs * n);
-    alloc_array(&dup_buf_y_, rs * n);
-    alloc_array(&dup_buf_z_, rs * n);
+    alloc_bytes(&dup_buf_esum_, sizeof(real));
+    alloc_bytes(&dup_buf_box_, sizeof(Box));
+    alloc_bytes(&dup_buf_x_, rs * n);
+    alloc_bytes(&dup_buf_y_, rs * n);
+    alloc_bytes(&dup_buf_z_, rs * n);
 
-    alloc_array(&dup_buf_vx_, rs * n);
-    alloc_array(&dup_buf_vy_, rs * n);
-    alloc_array(&dup_buf_vz_, rs * n);
+    alloc_bytes(&dup_buf_vx_, rs * n);
+    alloc_bytes(&dup_buf_vy_, rs * n);
+    alloc_bytes(&dup_buf_vz_, rs * n);
 
-    alloc_array(&dup_buf_gx_, rs * n);
-    alloc_array(&dup_buf_gy_, rs * n);
-    alloc_array(&dup_buf_gz_, rs * n);
+    alloc_bytes(&dup_buf_gx_, rs * n);
+    alloc_bytes(&dup_buf_gy_, rs * n);
+    alloc_bytes(&dup_buf_gz_, rs * n);
   }
 
   if (op & rc_init) {

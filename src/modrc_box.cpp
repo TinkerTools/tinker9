@@ -10,9 +10,9 @@ void box_data(rc_op op) {
   if (op & rc_dealloc) {
     if (calc::traj & use_data) {
       box = nullptr;
-      dealloc_array(trajbox);
+      dealloc_bytes(trajbox);
     } else {
-      dealloc_array(box);
+      dealloc_bytes(box);
       trajbox = nullptr;
     }
   }
@@ -21,10 +21,10 @@ void box_data(rc_op op) {
     size_t size = sizeof(Box);
     if (calc::traj & use_data) {
       size *= trajn;
-      alloc_array(&trajbox, size);
+      alloc_bytes(&trajbox, size);
       box = trajbox;
     } else {
-      alloc_array(&box, size);
+      alloc_bytes(&box, size);
     }
   }
 

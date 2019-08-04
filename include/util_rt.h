@@ -1,8 +1,8 @@
 #ifndef TINKER_UTIL_RT_H_
 #define TINKER_UTIL_RT_H_
 
-#ifdef TINKER_HOSTONLY
-#  include "util_rt_hostonly.h"
+#ifdef TINKER_HOST
+#  include "util_rt_host.h"
 #else
 #  include "util_rt_cudart.h"
 #endif
@@ -12,14 +12,22 @@
 TINKER_NAMESPACE_BEGIN
 typedef GenericUnit<FFTPlan> FFTPlanUnit;
 
-void copyin_bytes(void* dst, const void* src, size_t count);
-void copyout_bytes(void* dst, const void* src, size_t count);
-void copy_bytes(void* dst, const void* src, size_t count);
+void zero_bytes(void* ptr, size_t nbytes);
+void dealloc_bytes(void* ptr);
+void alloc_bytes(void** ptr, size_t nbytes);
+template <class T>
+void alloc_bytes(T** ptr, size_t nbytes) {
+  return alloc_bytes(reinterpret_cast<void**>(ptr), nbytes);
+}
+
+void copyin_bytes(void* dst, const void* src, size_t nbytes);
+void copyout_bytes(void* dst, const void* src, size_t nbytes);
+void copy_bytes(void* dst, const void* src, size_t nbytes);
 
 void dealloc_stream(Stream);
 void alloc_stream(Stream*);
 void sync_stream(Stream);
-void copy_bytes_async(void* dst, const void* src, size_t count, Stream s);
+void copy_bytes_async(void* dst, const void* src, size_t nbytes, Stream s);
 TINKER_NAMESPACE_END
 
 #include "util_io.h"

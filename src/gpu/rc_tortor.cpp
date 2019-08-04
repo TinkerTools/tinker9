@@ -34,44 +34,44 @@ void etortor_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_array(ibitor);
+    dealloc_bytes(ibitor);
 
-    dealloc_array(itt);
+    dealloc_bytes(itt);
 
-    dealloc_array(tnx);
-    dealloc_array(tny);
-    dealloc_array(ttx);
-    dealloc_array(tty);
-    dealloc_array(tbf);
-    dealloc_array(tbx);
-    dealloc_array(tby);
-    dealloc_array(tbxy);
+    dealloc_bytes(tnx);
+    dealloc_bytes(tny);
+    dealloc_bytes(ttx);
+    dealloc_bytes(tty);
+    dealloc_bytes(tbf);
+    dealloc_bytes(tbx);
+    dealloc_bytes(tby);
+    dealloc_bytes(tbxy);
 
-    dealloc_array(chkttor_ia_);
+    dealloc_bytes(chkttor_ia_);
 
     free_ev(ett, vir_ett);
   }
 
   if (op & rc_alloc) {
     nbitor = bitor_::nbitor;
-    alloc_array(&ibitor, sizeof(int) * 5 * nbitor);
+    alloc_bytes(&ibitor, sizeof(int) * 5 * nbitor);
 
-    alloc_array(&itt, sizeof(int) * 3 * nbitor);
+    alloc_bytes(&itt, sizeof(int) * 3 * nbitor);
 
     const size_t rs = sizeof(real);
-    alloc_array(&tnx, sizeof(int) * ktrtor::maxntt);
-    alloc_array(&tny, sizeof(int) * ktrtor::maxntt);
+    alloc_bytes(&tnx, sizeof(int) * ktrtor::maxntt);
+    alloc_bytes(&tny, sizeof(int) * ktrtor::maxntt);
     int count = ktrtor::maxtgrd * ktrtor::maxntt;
-    alloc_array(&ttx, rs * count);
-    alloc_array(&tty, rs * count);
+    alloc_bytes(&ttx, rs * count);
+    alloc_bytes(&tty, rs * count);
     count = ktrtor::maxtgrd2 * ktrtor::maxntt;
-    alloc_array(&tbf, rs * count);
-    alloc_array(&tbx, rs * count);
-    alloc_array(&tby, rs * count);
-    alloc_array(&tbxy, rs * count);
+    alloc_bytes(&tbf, rs * count);
+    alloc_bytes(&tbx, rs * count);
+    alloc_bytes(&tby, rs * count);
+    alloc_bytes(&tbxy, rs * count);
 
     ntortor = count_bonded_term(tortor_term);
-    alloc_array(&chkttor_ia_, sizeof(int) * ntortor);
+    alloc_bytes(&chkttor_ia_, sizeof(int) * ntortor);
 
     alloc_ev(&ett, &vir_ett);
   }

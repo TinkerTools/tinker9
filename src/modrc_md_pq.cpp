@@ -33,9 +33,9 @@ void xyz_data(rc_op op) {
 
   if (op & rc_dealloc) {
     if (calc::traj & use_data) {
-      dealloc_array(trajx);
-      dealloc_array(trajy);
-      dealloc_array(trajz);
+      dealloc_bytes(trajx);
+      dealloc_bytes(trajy);
+      dealloc_bytes(trajz);
       x = nullptr;
       y = nullptr;
       z = nullptr;
@@ -43,9 +43,9 @@ void xyz_data(rc_op op) {
       trajx = nullptr;
       trajy = nullptr;
       trajz = nullptr;
-      dealloc_array(x);
-      dealloc_array(y);
-      dealloc_array(z);
+      dealloc_bytes(x);
+      dealloc_bytes(y);
+      dealloc_bytes(z);
     }
   }
 
@@ -53,16 +53,16 @@ void xyz_data(rc_op op) {
     size_t size = sizeof(real) * n;
     if (calc::traj & use_data) {
       size *= trajn;
-      alloc_array(&trajx, size);
-      alloc_array(&trajy, size);
-      alloc_array(&trajz, size);
+      alloc_bytes(&trajx, size);
+      alloc_bytes(&trajy, size);
+      alloc_bytes(&trajz, size);
       x = trajx;
       y = trajy;
       z = trajz;
     } else {
-      alloc_array(&x, size);
-      alloc_array(&y, size);
-      alloc_array(&z, size);
+      alloc_bytes(&x, size);
+      alloc_bytes(&y, size);
+      alloc_bytes(&z, size);
     }
   }
 
@@ -81,16 +81,16 @@ void vel_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_array(vx);
-    dealloc_array(vy);
-    dealloc_array(vz);
+    dealloc_bytes(vx);
+    dealloc_bytes(vy);
+    dealloc_bytes(vz);
   }
 
   if (op & rc_alloc) {
     size_t size = sizeof(real) * n;
-    alloc_array(&vx, size);
-    alloc_array(&vy, size);
-    alloc_array(&vz, size);
+    alloc_bytes(&vx, size);
+    alloc_bytes(&vy, size);
+    alloc_bytes(&vz, size);
   }
 
   if (op & rc_init) {
@@ -108,14 +108,14 @@ void mass_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_array(mass);
-    dealloc_array(massinv);
+    dealloc_bytes(mass);
+    dealloc_bytes(massinv);
   }
 
   if (op & rc_alloc) {
     size_t size = sizeof(real) * n;
-    alloc_array(&mass, size);
-    alloc_array(&massinv, size);
+    alloc_bytes(&mass, size);
+    alloc_bytes(&massinv, size);
   }
 
   if (op & rc_init) {

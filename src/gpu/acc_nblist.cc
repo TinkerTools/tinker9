@@ -2,7 +2,7 @@
 #include "mod_md.h"
 #include "mod_nblist.h"
 
-#ifdef TINKER_HOSTONLY
+#ifdef TINKER_HOST
 #  include <algorithm>
 TINKER_NAMESPACE_BEGIN
 static void sort_v1_(int* arr, int len) { std::sort(arr, arr + len); }

@@ -12,13 +12,13 @@ static void pme_op_dealloc_(PMEUnit pu) {
   auto& st = pu.obj();
   auto* dptr = pu.deviceptr();
 
-  dealloc_array(st.igrid);
-  dealloc_array(st.bsmod1);
-  dealloc_array(st.bsmod2);
-  dealloc_array(st.bsmod3);
-  dealloc_array(st.qgrid);
+  dealloc_bytes(st.igrid);
+  dealloc_bytes(st.bsmod1);
+  dealloc_bytes(st.bsmod2);
+  dealloc_bytes(st.bsmod3);
+  dealloc_bytes(st.qgrid);
 
-  dealloc_array(dptr);
+  dealloc_bytes(dptr);
 }
 
 static void pme_op_alloc_(PMEUnit& unit, double aewald, int nfft1, int nfft2,
@@ -49,16 +49,16 @@ static void pme_op_alloc_(PMEUnit& unit, double aewald, int nfft1, int nfft2,
     size_t size;
 
     size = 3 * n * sizeof(int);
-    alloc_array(&st.igrid, size);
+    alloc_bytes(&st.igrid, size);
     // see also subroutine moduli in pmestuf.f
-    alloc_array(&st.bsmod1, rs * nfft1);
-    alloc_array(&st.bsmod2, rs * nfft2);
-    alloc_array(&st.bsmod3, rs * nfft3);
+    alloc_bytes(&st.bsmod1, rs * nfft1);
+    alloc_bytes(&st.bsmod2, rs * nfft2);
+    alloc_bytes(&st.bsmod3, rs * nfft3);
     size = nfft1 * nfft2 * nfft3 * rs;
-    alloc_array(&st.qgrid, 2 * size);
+    alloc_bytes(&st.qgrid, 2 * size);
 
     size = sizeof(PME);
-    alloc_array(&dptr, size);
+    alloc_bytes(&dptr, size);
 
     st.aewald = aewald;
     st.nfft1 = nfft1;
@@ -138,21 +138,21 @@ void pme_data(rc_op op) {
     }
     PMEUnit::clear();
 
-    dealloc_array(cmp);
-    dealloc_array(fmp);
-    dealloc_array(cphi);
-    dealloc_array(fphi);
+    dealloc_bytes(cmp);
+    dealloc_bytes(fmp);
+    dealloc_bytes(cphi);
+    dealloc_bytes(fphi);
 
     if (use_potent(polar_term)) {
-      dealloc_array(fuind);
-      dealloc_array(fuinp);
-      dealloc_array(fdip_phi1);
-      dealloc_array(fdip_phi2);
-      dealloc_array(cphidp);
-      dealloc_array(fphidp);
+      dealloc_bytes(fuind);
+      dealloc_bytes(fuinp);
+      dealloc_bytes(fdip_phi1);
+      dealloc_bytes(fdip_phi2);
+      dealloc_bytes(cphidp);
+      dealloc_bytes(fphidp);
     }
 
-    dealloc_array(vir_m);
+    dealloc_bytes(vir_m);
   }
 
   if (op & rc_alloc) {
@@ -160,22 +160,22 @@ void pme_data(rc_op op) {
 
     const size_t rs = sizeof(real);
 
-    alloc_array(&cmp, 10 * n * rs);
-    alloc_array(&fmp, 10 * n * rs);
-    alloc_array(&cphi, 10 * n * rs);
-    alloc_array(&fphi, 20 * n * rs);
+    alloc_bytes(&cmp, 10 * n * rs);
+    alloc_bytes(&fmp, 10 * n * rs);
+    alloc_bytes(&cphi, 10 * n * rs);
+    alloc_bytes(&fphi, 20 * n * rs);
 
     if (use_potent(polar_term)) {
-      alloc_array(&fuind, 3 * n * rs);
-      alloc_array(&fuinp, 3 * n * rs);
-      alloc_array(&fdip_phi1, 10 * n * rs);
-      alloc_array(&fdip_phi2, 10 * n * rs);
-      alloc_array(&cphidp, 10 * n * rs);
-      alloc_array(&fphidp, 20 * n * rs);
+      alloc_bytes(&fuind, 3 * n * rs);
+      alloc_bytes(&fuinp, 3 * n * rs);
+      alloc_bytes(&fdip_phi1, 10 * n * rs);
+      alloc_bytes(&fdip_phi2, 10 * n * rs);
+      alloc_bytes(&cphidp, 10 * n * rs);
+      alloc_bytes(&fphidp, 20 * n * rs);
 
       // if (vir_m), it implies use virial and use epolar
       if (use_data & calc::virial)
-        alloc_array(&vir_m, 9 * rs);
+        alloc_bytes(&vir_m, 9 * rs);
       else
         vir_m = nullptr;
     }

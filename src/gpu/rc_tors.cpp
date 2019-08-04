@@ -23,13 +23,13 @@ void etors_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_array(itors);
-    dealloc_array(tors1);
-    dealloc_array(tors2);
-    dealloc_array(tors3);
-    dealloc_array(tors4);
-    dealloc_array(tors5);
-    dealloc_array(tors6);
+    dealloc_bytes(itors);
+    dealloc_bytes(tors1);
+    dealloc_bytes(tors2);
+    dealloc_bytes(tors3);
+    dealloc_bytes(tors4);
+    dealloc_bytes(tors5);
+    dealloc_bytes(tors6);
 
     free_ev(et, vir_et);
   }
@@ -38,13 +38,13 @@ void etors_data(rc_op op) {
     const size_t rs = sizeof(real);
 
     ntors = count_bonded_term(torsion_term);
-    alloc_array(&itors, sizeof(int) * 4 * ntors);
-    alloc_array(&tors1, rs * 4 * ntors);
-    alloc_array(&tors2, rs * 4 * ntors);
-    alloc_array(&tors3, rs * 4 * ntors);
-    alloc_array(&tors4, rs * 4 * ntors);
-    alloc_array(&tors5, rs * 4 * ntors);
-    alloc_array(&tors6, rs * 4 * ntors);
+    alloc_bytes(&itors, sizeof(int) * 4 * ntors);
+    alloc_bytes(&tors1, rs * 4 * ntors);
+    alloc_bytes(&tors2, rs * 4 * ntors);
+    alloc_bytes(&tors3, rs * 4 * ntors);
+    alloc_bytes(&tors4, rs * 4 * ntors);
+    alloc_bytes(&tors5, rs * 4 * ntors);
+    alloc_bytes(&tors6, rs * 4 * ntors);
 
     alloc_ev(&et, &vir_et);
   }

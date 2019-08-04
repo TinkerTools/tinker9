@@ -2,6 +2,18 @@
 #include "util_rt.h"
 
 TINKER_NAMESPACE_BEGIN
+template <class T>
+void zero_array_tmpl(T* dst, int nelem) {
+  size_t size = sizeof(T) * nelem;
+  zero_bytes(dst, size);
+}
+
+void zero_array(int* dst, int nelem) { zero_array_tmpl(dst, nelem); }
+
+void zero_array(float* dst, int nelem) { zero_array_tmpl(dst, nelem); }
+
+void zero_array(double* dst, int nelem) { zero_array_tmpl(dst, nelem); }
+
 template <class DT, class ST>
 void copyin_array_tmpl(DT* dst, const ST* src, int nelem) {
   constexpr size_t ds = sizeof(DT);

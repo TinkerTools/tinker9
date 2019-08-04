@@ -21,9 +21,9 @@ void eurey_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_array(iury);
-    dealloc_array(uk);
-    dealloc_array(ul);
+    dealloc_bytes(iury);
+    dealloc_bytes(uk);
+    dealloc_bytes(ul);
 
     free_ev(eub, vir_eub);
   }
@@ -31,9 +31,9 @@ void eurey_data(rc_op op) {
   if (op & rc_alloc) {
     const size_t rs = sizeof(real);
     int nangle = count_bonded_term(angle_term);
-    alloc_array(&iury, sizeof(int) * 3 * nangle);
-    alloc_array(&uk, rs * nangle);
-    alloc_array(&ul, rs * nangle);
+    alloc_bytes(&iury, sizeof(int) * 3 * nangle);
+    alloc_bytes(&uk, rs * nangle);
+    alloc_bytes(&ul, rs * nangle);
 
     alloc_ev(&eub, &vir_eub);
   }

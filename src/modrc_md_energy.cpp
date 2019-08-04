@@ -24,11 +24,11 @@ static void data(rc_op op) {
     end = 0;
     cap = 0;
 
-    dealloc_array(nebuf);
+    dealloc_bytes(nebuf);
     nebuf = nullptr;
-    dealloc_array(ebuf);
+    dealloc_bytes(ebuf);
     ebuf = nullptr;
-    dealloc_array(vbuf);
+    dealloc_bytes(vbuf);
     vbuf = nullptr;
 
     ne_addr_idx.clear();
@@ -41,9 +41,9 @@ static void data(rc_op op) {
     cap = 4; // default initial capacity
 
     const size_t rs = sizeof(real);
-    alloc_array(&nebuf, sizeof(int) * cap);
-    alloc_array(&ebuf, rs * cap);
-    alloc_array(&vbuf, rs * cap * virlen);
+    alloc_bytes(&nebuf, sizeof(int) * cap);
+    alloc_bytes(&ebuf, rs * cap);
+    alloc_bytes(&vbuf, rs * cap * virlen);
   }
 
   if (op & rc_init) {
@@ -64,21 +64,21 @@ static void grow_if_must() {
   const size_t rs = sizeof(real);
 
   int* new_nebuf;
-  alloc_array(&new_nebuf, sizeof(int) * cap);
+  alloc_bytes(&new_nebuf, sizeof(int) * cap);
   copy_bytes(new_nebuf, nebuf, sizeof(int) * old_cap);
-  dealloc_array(nebuf);
+  dealloc_bytes(nebuf);
   nebuf = new_nebuf;
 
   real* new_ebuf;
-  alloc_array(&new_ebuf, rs * cap);
+  alloc_bytes(&new_ebuf, rs * cap);
   copy_bytes(new_ebuf, ebuf, rs * old_cap);
-  dealloc_array(ebuf);
+  dealloc_bytes(ebuf);
   ebuf = new_ebuf;
 
   real* new_vbuf;
-  alloc_array(&new_vbuf, rs * cap * virlen);
+  alloc_bytes(&new_vbuf, rs * cap * virlen);
   copy_bytes(new_vbuf, vbuf, rs * old_cap * virlen);
-  dealloc_array(vbuf);
+  dealloc_bytes(vbuf);
   vbuf = new_vbuf;
 
   for (auto it : ne_addr_idx) {
@@ -145,16 +145,16 @@ void egv_data(rc_op op) {
 
   if (use_data & calc::grad) {
     if (op & rc_dealloc) {
-      dealloc_array(gx);
-      dealloc_array(gy);
-      dealloc_array(gz);
+      dealloc_bytes(gx);
+      dealloc_bytes(gy);
+      dealloc_bytes(gz);
     }
 
     if (op & rc_alloc) {
       const size_t size = sizeof(real) * n;
-      alloc_array(&gx, size);
-      alloc_array(&gy, size);
-      alloc_array(&gz, size);
+      alloc_bytes(&gx, size);
+      alloc_bytes(&gy, size);
+      alloc_bytes(&gz, size);
     }
 
     // We can never assume whether or not deriv::desum was allocated, because it

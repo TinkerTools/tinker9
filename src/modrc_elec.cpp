@@ -16,19 +16,19 @@ void elec_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_array(zaxis);
-    dealloc_array(pole);
-    dealloc_array(rpole);
+    dealloc_bytes(zaxis);
+    dealloc_bytes(pole);
+    dealloc_bytes(rpole);
 
-    dealloc_array(uind);
-    dealloc_array(uinp);
-    dealloc_array(udir);
-    dealloc_array(udirp);
+    dealloc_bytes(uind);
+    dealloc_bytes(uinp);
+    dealloc_bytes(udir);
+    dealloc_bytes(udirp);
 
-    dealloc_array(trqx);
-    dealloc_array(trqy);
-    dealloc_array(trqz);
-    dealloc_array(vir_trq);
+    dealloc_bytes(trqx);
+    dealloc_bytes(trqy);
+    dealloc_bytes(trqz);
+    dealloc_bytes(vir_trq);
   }
 
   if (op & rc_alloc) {
@@ -36,16 +36,16 @@ void elec_data(rc_op op) {
     size_t size;
 
     size = sizeof(LocalFrame);
-    alloc_array(&zaxis, n * size);
+    alloc_bytes(&zaxis, n * size);
     size = rs * mpl_total;
-    alloc_array(&pole, n * size);
-    alloc_array(&rpole, n * size);
+    alloc_bytes(&pole, n * size);
+    alloc_bytes(&rpole, n * size);
 
     if (use_potent(polar_term)) {
-      alloc_array(&uind, 3 * n * rs);
-      alloc_array(&uinp, 3 * n * rs);
-      alloc_array(&udir, 3 * n * rs);
-      alloc_array(&udirp, 3 * n * rs);
+      alloc_bytes(&uind, 3 * n * rs);
+      alloc_bytes(&uinp, 3 * n * rs);
+      alloc_bytes(&udir, 3 * n * rs);
+      alloc_bytes(&udirp, 3 * n * rs);
     } else {
       uind = nullptr;
       uinp = nullptr;
@@ -54,16 +54,16 @@ void elec_data(rc_op op) {
     }
 
     if (use_data & calc::grad) {
-      alloc_array(&trqx, rs * n);
-      alloc_array(&trqy, rs * n);
-      alloc_array(&trqz, rs * n);
+      alloc_bytes(&trqx, rs * n);
+      alloc_bytes(&trqy, rs * n);
+      alloc_bytes(&trqz, rs * n);
     } else {
       trqx = nullptr;
       trqy = nullptr;
       trqz = nullptr;
     }
 
-    alloc_array(&vir_trq, rs * 9);
+    alloc_bytes(&vir_trq, rs * 9);
   }
 
   if (op & rc_init) {

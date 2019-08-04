@@ -18,8 +18,8 @@ void estrbnd_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_array(isb);
-    dealloc_array(sbk);
+    dealloc_bytes(isb);
+    dealloc_bytes(sbk);
 
     free_ev(eba, vir_eba);
   }
@@ -28,8 +28,8 @@ void estrbnd_data(rc_op op) {
     const size_t rs = sizeof(real);
 
     int nangle = count_bonded_term(angle_term);
-    alloc_array(&isb, sizeof(int) * 3 * nangle);
-    alloc_array(&sbk, rs * 2 * nangle);
+    alloc_bytes(&isb, sizeof(int) * 3 * nangle);
+    alloc_bytes(&sbk, rs * 2 * nangle);
 
     alloc_ev(&eba, &vir_eba);
   }

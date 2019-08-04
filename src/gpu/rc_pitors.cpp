@@ -18,16 +18,16 @@ void epitors_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_array(ipit);
-    dealloc_array(kpit);
+    dealloc_bytes(ipit);
+    dealloc_bytes(kpit);
 
     free_ev(ept, vir_ept);
   }
 
   if (op & rc_alloc) {
     int ntors = count_bonded_term(torsion_term);
-    alloc_array(&ipit, sizeof(int) * 6 * ntors);
-    alloc_array(&kpit, sizeof(real) * ntors);
+    alloc_bytes(&ipit, sizeof(int) * 6 * ntors);
+    alloc_bytes(&kpit, sizeof(real) * ntors);
 
     alloc_ev(&ept, &vir_ept);
   }

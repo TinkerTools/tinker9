@@ -1,5 +1,5 @@
-#ifndef TINKER_UTIL_RT_HOSTONLY_H_
-#define TINKER_UTIL_RT_HOSTONLY_H_
+#ifndef TINKER_UTIL_RT_HOST_H_
+#define TINKER_UTIL_RT_HOST_H_
 
 #include "util_macro.h"
 #include <fftw3.h>

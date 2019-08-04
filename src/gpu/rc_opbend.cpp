@@ -22,16 +22,16 @@ void eopbend_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_array(iopb);
-    dealloc_array(opbk);
+    dealloc_bytes(iopb);
+    dealloc_bytes(opbk);
 
     free_ev(eopb, vir_eopb);
   }
 
   if (op & rc_alloc) {
     int nangle = count_bonded_term(angle_term);
-    alloc_array(&iopb, sizeof(int) * nangle);
-    alloc_array(&opbk, sizeof(real) * nangle);
+    alloc_bytes(&iopb, sizeof(int) * nangle);
+    alloc_bytes(&opbk, sizeof(real) * nangle);
 
     alloc_ev(&eopb, &vir_eopb);
   }

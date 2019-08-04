@@ -88,13 +88,13 @@ static int nblist_maxlst_(int maxn, double cutoff, double buffer) {
 }
 
 static void nblist_op_dealloc_(NBList& st, NBList*& list) {
-  dealloc_array(st.nlst);
-  dealloc_array(st.lst);
-  dealloc_array(st.update);
-  dealloc_array(st.xold);
-  dealloc_array(st.yold);
-  dealloc_array(st.zold);
-  dealloc_array(list);
+  dealloc_bytes(st.nlst);
+  dealloc_bytes(st.lst);
+  dealloc_bytes(st.update);
+  dealloc_bytes(st.xold);
+  dealloc_bytes(st.yold);
+  dealloc_bytes(st.zold);
+  dealloc_bytes(list);
 }
 
 static void nblist_op_alloc_(NBList& st, NBList*& list, int maxn, double cutoff,
@@ -104,11 +104,11 @@ static void nblist_op_alloc_(NBList& st, NBList*& list, int maxn, double cutoff,
   size_t size;
 
   size = n * rs;
-  alloc_array(&st.nlst, size);
+  alloc_bytes(&st.nlst, size);
 
   int maxlst = nblist_maxlst_(maxn, cutoff, buffer);
   size = maxlst * n * rs;
-  alloc_array(&st.lst, size);
+  alloc_bytes(&st.lst, size);
 
   if (maxlst == 1) {
     st.update = nullptr;
@@ -117,11 +117,11 @@ static void nblist_op_alloc_(NBList& st, NBList*& list, int maxn, double cutoff,
     st.zold = nullptr;
   } else {
     size = n * rs;
-    alloc_array(&st.update, size);
+    alloc_bytes(&st.update, size);
     size = n * sizeof(real);
-    alloc_array(&st.xold, size);
-    alloc_array(&st.yold, size);
-    alloc_array(&st.zold, size);
+    alloc_bytes(&st.xold, size);
+    alloc_bytes(&st.yold, size);
+    alloc_bytes(&st.zold, size);
   }
 
   st.x = _x;
@@ -133,7 +133,7 @@ static void nblist_op_alloc_(NBList& st, NBList*& list, int maxn, double cutoff,
   st.buffer = buffer;
 
   size = sizeof(NBList);
-  alloc_array(&list, size);
+  alloc_bytes(&list, size);
   copyin_bytes(list, &st, size);
 }
 

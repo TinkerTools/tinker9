@@ -22,9 +22,9 @@ void ebond_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_array(ibnd);
-    dealloc_array(bl);
-    dealloc_array(bk);
+    dealloc_bytes(ibnd);
+    dealloc_bytes(bl);
+    dealloc_bytes(bk);
 
     free_ev(eb, vir_eb);
   }
@@ -33,9 +33,9 @@ void ebond_data(rc_op op) {
     const size_t rs = sizeof(real);
 
     nbond = count_bonded_term(bond_term);
-    alloc_array(&ibnd, sizeof(int) * nbond * 2);
-    alloc_array(&bl, rs * nbond);
-    alloc_array(&bk, rs * nbond);
+    alloc_bytes(&ibnd, sizeof(int) * nbond * 2);
+    alloc_bytes(&bl, rs * nbond);
+    alloc_bytes(&bk, rs * nbond);
 
     alloc_ev(&eb, &vir_eb);
   }

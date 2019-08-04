@@ -8,7 +8,7 @@
 # opt :=
 # src :=
 # prec :=
-# hostonly :=
+# host :=
 # config :=
 
 ############################################################
@@ -39,7 +39,7 @@ else ifeq ($(prec),$(filter $(prec),real8 8 64 double d))
 	precision_macro__ := -DTINKER_DOUBLE_PRECISION
 endif
 
-hostonly := false
+host := false
 
 config := default_config__
 ifeq ($(config),default_config__)
@@ -90,7 +90,7 @@ print-config:
 	@echo 'opt level         =' $(opt)
 	@echo 'source directory  =' $(top_dir__)
 	@echo 'precision         =' $(prec)
-	@echo 'host-only         =' $(hostonly)
+	@echo 'host-only         =' $(host)
 	@echo 'OS                =' $(os__)
 	@echo 'shared library    =' $(libtinkergpu_name__).$(shared_lib_suffix__)
 	@echo 'executables       =' $(tinker_gpu_exec__) $(all_tests_exec__)
@@ -121,10 +121,10 @@ ext_dir__ := ext/ext
 include_flags__ := -I$(top_dir__)/include
 include_flags__ += -I$(top_dir__)/ext
 include_flags__ += -I$(top_dir__)/ext/ext
-ifeq ($(hostonly),false)
+ifeq ($(host),false)
 	include_flags__ += -I$(cuda_dir__)/include
 else
-	include_flags__ += -I$(fftw_dir__)/include -DTINKER_HOSTONLY
+	include_flags__ += -I$(fftw_dir__)/include -DTINKER_HOST
 endif
 
 common_flags__ := -D$(fortran_compiler_macro__) \
@@ -134,14 +134,14 @@ acc_common_flags__ := $(common_flags__) $(acc_opt_flags__)
 
 cxx_compile_flags__ := $(cxx_common_flags__) -std=c++11 -c -fpic
 acc_compile_flags__ := $(acc_common_flags__) -std=c++11 -c -fpic
-ifeq ($(hostonly),false)
+ifeq ($(host),false)
 	acc_compile_flags__ += $(acc_device_compile_flags__)
 else
 	acc_compile_flags__ += $(acc_host_compile_flags__)
 endif
 
 acc_link_flags__ := -rdynamic -Wl,-rpath='$$ORIGIN'
-ifeq ($(hostonly),false)
+ifeq ($(host),false)
 	acc_link_flags__ += $(acc_device_link_flags__)
 else
 	acc_link_flags__ += $(acc_host_link_flags__)

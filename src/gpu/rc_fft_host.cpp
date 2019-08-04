@@ -1,4 +1,4 @@
-#ifdef TINKER_HOSTONLY
+#ifdef TINKER_HOST
 
 #  include "mod_pme.h"
 #  include "util_rt.h"

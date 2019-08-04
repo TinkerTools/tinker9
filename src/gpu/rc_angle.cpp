@@ -26,11 +26,11 @@ void eangle_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_array(iang);
-    dealloc_array(ak);
-    dealloc_array(anat);
+    dealloc_bytes(iang);
+    dealloc_bytes(ak);
+    dealloc_bytes(anat);
 
-    dealloc_array(angtyp);
+    dealloc_bytes(angtyp);
 
     free_ev(ea, vir_ea);
   }
@@ -39,11 +39,11 @@ void eangle_data(rc_op op) {
     const size_t rs = sizeof(real);
 
     nangle = count_bonded_term(angle_term);
-    alloc_array(&iang, sizeof(int) * nangle * 4);
-    alloc_array(&ak, rs * nangle);
-    alloc_array(&anat, rs * nangle);
+    alloc_bytes(&iang, sizeof(int) * nangle * 4);
+    alloc_bytes(&ak, rs * nangle);
+    alloc_bytes(&anat, rs * nangle);
 
-    alloc_array(&angtyp, sizeof(int) * nangle);
+    alloc_bytes(&angtyp, sizeof(int) * nangle);
 
     alloc_ev(&ea, &vir_ea);
   }
