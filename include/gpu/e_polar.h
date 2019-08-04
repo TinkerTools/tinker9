@@ -3,8 +3,8 @@
 
 #include "mod_elec.h"
 #include "mod_polgrp.h"
-#include "cxx.h"
-#include "util_rc_man.h"
+#include <string>
+#include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 extern int epolar_electyp;

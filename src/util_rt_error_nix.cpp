@@ -1,5 +1,6 @@
 #if defined(__APPLE__) || defined(__linux__)
-#  include "util_rt.h"
+#  include "rt.h"
+#  include "util_io.h"
 #  include <cxxabi.h>
 #  include <execinfo.h>
 

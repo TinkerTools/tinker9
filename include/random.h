@@ -52,9 +52,9 @@ T normal() {
  * early @c g++ @c random/chi_squared_distribution implementations, gamma
  * distribution is used here via the following equations:
  *
- * @f[p_{\chi^2}(x|n) = \frac{x^{n/2-1} exp(-x/2)}{2^{n/2} \Gamma(n/2)}@f]
- * @f[p_\Gamma(x|a,b) = \frac{x^{a-1}   exp(-x/b)}{b^a     \Gamma(a)}  @f]
- * @f[p_{\chi^2}(n) = p_\Gamma(n/2,2)                                      @f]
+ * @f[ p_{\chi^2}(x|n) = \frac{x^{n/2-1} exp(-x/2)}{2^{n/2} \Gamma(n/2)} @f]
+ * @f[ p_\Gamma(x|a,b) = \frac{x^{a-1}   exp(-x/b)}{b^a     \Gamma(a)}   @f]
+ * @f[ p_{\chi^2}(n) = p_\Gamma(n/2,2)                                   @f]
  */
 /// @{
 double chi_squared_double(int k);

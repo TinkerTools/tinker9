@@ -1,5 +1,5 @@
-#ifndef TINKER_UTIL_SWITCH_H_
-#define TINKER_UTIL_SWITCH_H_
+#ifndef TINKER_SWITCH_H_
+#define TINKER_SWITCH_H_
 
 #include "macro.h"
 
@@ -21,7 +21,17 @@ typedef enum {
   switch_gksa,
 } switch_t;
 
-void switch_cut_off(switch_t switch_type, double& cut, double& off);
+/**
+ * @param[in] mode
+ * potential type
+ *
+ * @param[out] cut
+ * distance at which switching of the potential begins
+ *
+ * @param[out] off
+ * distance at which the potential energy goes to zero
+ */
+void switch_cut_off(switch_t mode, double& cut, double& off);
 TINKER_NAMESPACE_END
 
 #endif

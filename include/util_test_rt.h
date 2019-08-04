@@ -2,10 +2,10 @@
 #define TINKER_UTIL_TEST_RT_H_
 
 #include "mod_md.h"
+#include "rc_man.h"
 #include "util_array.h"
 #include "util_io.h"
 #include "util_potential.h"
-#include "util_rc_man.h"
 #include <array>
 #include <string>
 #include <vector>
@@ -28,7 +28,7 @@ public:
 
 /**
  * @brief
- * if possible, remove the file with @c name in its destructor
+ * if possible, remove the file with the given name in its destructor
  */
 class TestFileExpected {
 private:

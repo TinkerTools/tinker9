@@ -1,5 +1,5 @@
-#ifndef TINKER_UTIL_MATH_H_
-#define TINKER_UTIL_MATH_H_
+#ifndef TINKER_MATHFUNC_H_
+#define TINKER_MATHFUNC_H_
 
 #include "macro.h"
 #include <cmath>
@@ -48,27 +48,30 @@
 #define REAL_CUBE(x) ((x) * (x) * (x))
 
 TINKER_NAMESPACE_BEGIN
-constexpr real twosix = 1.12246204830937298143;    // 2**(1/6)
-constexpr real sqrttwo = 1.41421356237309504880;   // sqrt(2)
-constexpr real sqrtthree = 1.73205080756887729353; // sqrt(3)
+constexpr real twosix = 1.12246204830937298143;    ///< @f$ \sqrt[6]{2} @f$
+constexpr real sqrttwo = 1.41421356237309504880;   ///< @f$ \sqrt{2} @f$
+constexpr real sqrtthree = 1.73205080756887729353; ///< @f$ \sqrt{3} @f$
 
-constexpr real elog = M_E;
-constexpr real logten = M_LN10;
+constexpr real elog = M_E;      ///< @f$ exp(1) @f$
+constexpr real logten = M_LN10; ///< @f$ ln(10) @f$
 
-constexpr real pi = M_PI;
-constexpr real radian = 57.2957795130823208768;    // 180/PI
-constexpr real radinv = 0.01745329251994329576924; // PI/180
-constexpr real sqrtpi = 1.77245385090551602730;    // sqrt(PI)
+constexpr real pi = M_PI;                          ///< @f$ \pi @f$
+constexpr real radian = 57.2957795130823208768;    ///< @f$ 180/\pi @f$
+constexpr real radinv = 0.01745329251994329576924; ///< @f$ \pi/180 @f$
+constexpr real sqrtpi = 1.77245385090551602730;    ///< @f$ \sqrt{\pi} @f$
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
+/// @brief
+/// find the max or min value of a variadic list
+/// @{
 template <class T>
 T max_of(T a) {
   return a;
 }
 
-template <class T>
-T max_of(T a, T b) {
+template <class T, class T2>
+T max_of(T a, T2 b) {
   return (a < b) ? b : a;
 }
 
@@ -82,8 +85,8 @@ T min_of(T a) {
   return a;
 }
 
-template <class T>
-T min_of(T a, T b) {
+template <class T, class T2>
+T min_of(T a, T2 b) {
   return (a < b) ? a : b;
 }
 
@@ -91,30 +94,53 @@ template <class T, class... Ts>
 T min_of(T a, T b, Ts... cs) {
   return min_of(min_of(a, b), cs...);
 }
+/// @}
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
 /**
+ * @brief
  * n-dimensional dot product
- * ans = sum (a[i] * b[i]) for i in [1, 2, ..., n]
+ * @f[
+ * dotprod = \sum_i^n a[i] \cdot b[i]
+ * @f]
  *
- * @param gpu_a  device pointer to array a
- * @param gpu_b  device pointer to array b
- * @param cpu_n  number of elements in each array
- * @return       the dot product to the cpu thread
+ * @param[in] a
+ * device pointer to array a
+ *
+ * @param[in] b
+ * device pointer to array b
+ *
+ * @param[in] n
+ * number of elements in each array
+ *
+ * @return
+ * the dot product to the host thread
  */
-float dotprod(const float* gpu_a, const float* gpu_b, int cpu_n);
-double dotprod(const double* gpu_a, const double* gpu_b, int cpu_n);
+/// @{
+float dotprod(const float* a, const float* b, int n);
+double dotprod(const double* a, const double* b, int n);
+/// @}
 
 /**
- * array[i] = scalar * array[i] for i in [1, 2, ..., n]
+ * @brief
+ * @f[
+ * array[i] = scalar \cdot array[i], 1 \leq i \leq n
+ * @f]
  *
- * @param gpu_dst  device pointer to the array
- * @param scal     scalar
- * @param nelem    number of elements in the array
+ * @param[in,out] dst
+ * device pointer to the array
+ *
+ * @param[in] scal
+ * scalar
+ *
+ * @param[in] nelem
+ * number of elements in the array
  */
-void scale_array(float* gpu_dst, float scal, int nelem);
-void scale_array(double* gpu_dst, double scal, int nelem);
+/// @{
+void scale_array(float* dst, float scal, int nelem);
+void scale_array(double* dst, double scal, int nelem);
+/// @}
 TINKER_NAMESPACE_END
 
 #endif

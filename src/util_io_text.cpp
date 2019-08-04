@@ -3,6 +3,7 @@
 #include <bitset>
 #include <regex>
 #include <sstream>
+#include <cassert>
 
 TINKER_NAMESPACE_BEGIN
 bool Text::is_ws(char ch) {

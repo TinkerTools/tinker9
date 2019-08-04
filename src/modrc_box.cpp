@@ -1,8 +1,8 @@
 #include "mod_box.h"
 #include "mod_md.h"
 #include "util_array.h"
-#include "util_math.h"
-#include "util_rt.h"
+#include "mathfunc.h"
+#include "rt.h"
 #include <ext/tinker/detail/bound.hh>
 #include <ext/tinker/detail/boxes.hh>
 #include <ext/tinker/tinker_rt.h>

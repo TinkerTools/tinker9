@@ -10,6 +10,8 @@
 #include <queue>
 
 TINKER_NAMESPACE_BEGIN
+/// @brief
+/// asynchronous stream
 class StreamSt {
 private:
   std::mutex mq_, mi_;
@@ -34,6 +36,8 @@ public:
 };
 typedef StreamSt* Stream;
 
+/// @brief
+/// FFT plan
 struct FFTPlan {
 #if defined(TINKER_SINGLE_PRECISION)
   fftwf_plan

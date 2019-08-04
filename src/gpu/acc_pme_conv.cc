@@ -2,7 +2,7 @@
 #include "mod_elec.h"
 #include "mod_md.h"
 #include "mod_pme.h"
-#include "util_math.h"
+#include "mathfunc.h"
 
 TINKER_NAMESPACE_BEGIN
 template <int DO_V>

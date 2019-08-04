@@ -1,6 +1,6 @@
 #define TINKER_ALWAYS_CHECK_RT
 
-#include "util_rt.h"
+#include "rt.h"
 #include "util_test.h"
 
 using namespace TINKER_NAMESPACE;

@@ -2,11 +2,11 @@
 #define TINKER_SRC_TINKER_GPU_H_
 
 #include "mod_md.h"
-#include "cxx.h"
+
 #include "util_io.h"
 #include "util_md.h"
 #include "util_potential.h"
-#include "util_rc_man.h"
+#include "rc_man.h"
 #include <ext/tinker/tinker_mod.h>
 #include <ext/tinker/tinker_rt.h>
 

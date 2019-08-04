@@ -1,4 +1,4 @@
-#include "util_rc_man.h"
+#include "rc_man.h"
 
 #ifdef TINKER_GFORTRAN
 // GNU Fortran

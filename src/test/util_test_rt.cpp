@@ -1,5 +1,5 @@
 #include "util_test_rt.h"
-#include "util_rc_man.h"
+#include "rc_man.h"
 #include <cstdio>
 #include <ext/tinker/tinker_mod.h>
 #include <ext/tinker/tinker_rt.h>

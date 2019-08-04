@@ -3,9 +3,10 @@
 #include "mod_elec.h"
 #include "mod_md.h"
 #include "mod_pme.h"
+#include "rt.h"
 #include "util_array.h"
+#include "util_io.h"
 #include "util_potent.h"
-#include "util_rt.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

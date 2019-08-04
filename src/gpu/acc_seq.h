@@ -4,7 +4,7 @@
 //======================================================================
 // acc math functions
 
-#include "util_math.h"
+#include "mathfunc.h"
 
 #pragma acc routine(abs) seq
 

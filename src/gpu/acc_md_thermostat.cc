@@ -1,5 +1,5 @@
 #include "mod_md.h"
-#include "util_math.h"
+#include "mathfunc.h"
 #include "random.h"
 #include <ext/tinker/tinker_mod.h>
 

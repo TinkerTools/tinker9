@@ -2,7 +2,7 @@
 #include "mod_box.h"
 #include "mod_md.h"
 #include "mod_pme.h"
-#include "util_math.h"
+#include "mathfunc.h"
 
 TINKER_NAMESPACE_BEGIN
 // see also subroutine bsplgen in pmestuf.f

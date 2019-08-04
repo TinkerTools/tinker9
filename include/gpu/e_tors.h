@@ -1,8 +1,8 @@
 #ifndef TINKER_GPU_E_TORS_H_
 #define TINKER_GPU_E_TORS_H_
 
-#include "cxx.h"
-#include "util_rc_man.h"
+
+#include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 extern int ntors;

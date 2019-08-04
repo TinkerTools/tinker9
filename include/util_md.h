@@ -1,7 +1,7 @@
 #ifndef TINKER_UTIL_MD_H_
 #define TINKER_UTIL_MD_H_
 
-#include "util_rc_man.h"
+#include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 //======================================================================

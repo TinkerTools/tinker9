@@ -1,7 +1,7 @@
 #ifndef TINKER_MOD_BOX_H_
 #define TINKER_MOD_BOX_H_
 
-#include "util_rc_man.h"
+#include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 /// @brief

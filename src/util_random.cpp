@@ -1,6 +1,6 @@
 #include "random.h"
 #include "util_io.h"
-#include "util_rc_man.h"
+#include "rc_man.h"
 #include <ext/tinker/tinker_mod.h>
 
 #include <chrono>

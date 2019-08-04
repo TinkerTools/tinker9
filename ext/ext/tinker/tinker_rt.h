@@ -1,7 +1,8 @@
 #ifndef TINKER_RT_H_
 #define TINKER_RT_H_
 
-#include "cxx.h"
+#include "macro.h"
+#include <cstring>
 
 TINKER_NAMESPACE_BEGIN
 typedef int logical;

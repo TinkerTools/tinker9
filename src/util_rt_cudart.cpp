@@ -1,4 +1,4 @@
-#include "util_rt.h"
+#include "rt.h"
 
 #ifndef TINKER_HOST
 TINKER_NAMESPACE_BEGIN

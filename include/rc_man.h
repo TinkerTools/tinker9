@@ -1,5 +1,5 @@
-#ifndef TINKER_UTIL_RC_MAN_H_
-#define TINKER_UTIL_RC_MAN_H_
+#ifndef TINKER_RC_MAN_H_
+#define TINKER_RC_MAN_H_
 
 #include "macro.h"
 

@@ -1,8 +1,8 @@
 #ifndef TINKER_MOD_PME_H_
 #define TINKER_MOD_PME_H_
 
-#include "util_genunit.h"
-#include "util_rc_man.h"
+#include "gen_unit.h"
+#include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
 /**

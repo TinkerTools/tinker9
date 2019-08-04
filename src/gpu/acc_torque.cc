@@ -1,6 +1,6 @@
 #include "mod_elec.h"
 #include "mod_md.h"
-#include "util_math.h"
+#include "mathfunc.h"
 
 #define ADD_(ans, a, b)                                                        \
   ans[0] = a[0] + b[0];                                                        \

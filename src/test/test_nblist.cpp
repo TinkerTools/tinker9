@@ -2,7 +2,7 @@
 #include "mod_nblist.h"
 #include "util_files.h"
 #include "util_io.h"
-#include "util_rc_man.h"
+#include "rc_man.h"
 #include "util_test.h"
 #include "util_test_rt.h"
 

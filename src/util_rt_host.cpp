@@ -1,4 +1,4 @@
-#include "util_rt.h"
+#include "rt.h"
 #include <thread>
 
 #ifdef TINKER_HOST

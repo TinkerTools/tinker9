@@ -4,7 +4,7 @@
 #include "util_array.h"
 #include "util_io.h"
 #include "util_potent.h"
-#include "util_switch.h"
+#include "switch.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

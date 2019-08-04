@@ -1,5 +1,5 @@
-#ifndef TINKER_UTIL_GENUNIT_H_
-#define TINKER_UTIL_GENUNIT_H_
+#ifndef TINKER_GEN_UNIT_H_
+#define TINKER_GEN_UNIT_H_
 
 #include "macro.h"
 #include <cassert>
