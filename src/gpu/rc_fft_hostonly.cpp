@@ -28,7 +28,7 @@ void fft_data(rc_op op) {
     assert(FFTPlanUnit::size() == 0);
 
     const size_t size = PMEUnit::size();
-    FFTPlanUnit::resize(size, FFTPlan());
+    FFTPlanUnit::resize(size);
   }
 
   if (op & rc_init) {

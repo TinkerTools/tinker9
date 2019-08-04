@@ -41,16 +41,12 @@ public:
       , op_(op) {
     if (!will_dealloc_()) {
       f_(op_);
-    } else {
-      assert(false);
     }
   }
 
   ~ResourceManagement() {
     if (only_dealloc_()) {
       f_(op_);
-    } else {
-      assert(false);
     }
   }
 };

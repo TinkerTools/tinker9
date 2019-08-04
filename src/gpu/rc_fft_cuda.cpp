@@ -19,7 +19,7 @@ void fft_data(rc_op op) {
     assert(FFTPlanUnit::size() == 0);
 
     const size_t size = PMEUnit::size();
-    FFTPlanUnit::resize(size, FFTPlan());
+    FFTPlanUnit::resize(size);
   }
 
   if (op & rc_init) {
@@ -32,7 +32,7 @@ void fft_data(rc_op op) {
 #  endif
 
     int idx = 0;
-    for (idx < FFTPlanUnit::size()) {
+    while (idx < FFTPlanUnit::size()) {
       FFTPlanUnit plan_u = idx;
       PMEUnit pme_u = idx;
       auto& iplan = plan_u.obj();
@@ -64,7 +64,6 @@ void fftback(PMEUnit pme_u) {
   FFTPlanUnit iplan_u = static_cast<int>(pme_u);
   auto& iplan = iplan_u.obj();
   auto& st = pme_u.obj();
-  ;
 
 #  if defined(TINKER_SINGLE_PRECISION)
   cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),

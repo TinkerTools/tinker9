@@ -3,6 +3,7 @@
 
 #include "util_macro.h"
 #include <cassert>
+#include <cstring>
 #include <vector>
 
 TINKER_NAMESPACE_BEGIN
@@ -29,7 +30,6 @@ private:
 public:
   static size_t size() {
     if_constexpr(USE_DPTR) assert(hostobjs_().size() == deviceptrs_().size());
-    else assert(deviceptrs_().size() == 0);
     return hostobjs_().size();
   }
 
@@ -38,8 +38,8 @@ public:
     if_constexpr(USE_DPTR) deviceptrs_().clear();
   }
 
-  static void resize(size_t s, const T& v) {
-    hostobjs_().resize(s, v);
+  static void resize(size_t s) {
+    hostobjs_().resize(s, T());
     if_constexpr(USE_DPTR) deviceptrs_().resize(s, nullptr);
   }
 
@@ -79,7 +79,7 @@ public:
 #endif
   }
 
-  T* deviceptr() {
+  T*& deviceptr() {
 #if TINKER_DEBUG
     return deviceptrs_().at(unit_);
 #else
