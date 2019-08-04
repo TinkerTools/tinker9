@@ -7,7 +7,11 @@
 #  include "util_rt_cudart.h"
 #endif
 
+#include "util_genunit.h"
+
 TINKER_NAMESPACE_BEGIN
+typedef GenericUnit<FFTPlan> FFTPlanUnit;
+
 void copyin_bytes(void* dst, const void* src, size_t count);
 void copyout_bytes(void* dst, const void* src, size_t count);
 void copy_bytes(void* dst, const void* src, size_t count);

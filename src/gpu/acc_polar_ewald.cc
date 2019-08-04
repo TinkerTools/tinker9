@@ -39,7 +39,8 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
 
   const real f = 0.5 * electric / dielec;
 
-  const real aewald = pme_obj(ppme_unit).aewald;
+  const PMEUnit pu = ppme_unit;
+  const real aewald = pu.obj().aewald;
   real bn[5];
 
   #pragma acc parallel loop independent\
@@ -763,7 +764,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   sanity_check<USE>();
 
   const PMEUnit pu = ppme_unit;
-  const auto& st = pme_obj(pu);
+  const auto& st = pu.obj();
   const int nfft1 = st.nfft1;
   const int nfft2 = st.nfft2;
   const int nfft3 = st.nfft3;
@@ -1057,8 +1058,8 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
     grid_mpole(pu, fmp);
     fftfront(pu);
 
-    const auto* d = pme_deviceptr(pu);
-    const auto* p = pme_deviceptr(pvu);
+    const auto* d = pu.deviceptr();
+    const auto* p = pvu.deviceptr();
     const int nff = nfft1 * nfft2;
     const int ntot = nfft1 * nfft2 * nfft3;
     real pterm = REAL_SQ(pi / aewald);

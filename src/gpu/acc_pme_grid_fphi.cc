@@ -149,8 +149,8 @@ enum { PCHG_GRID = 1, MPOLE_GRID, UIND_GRID, UIND_GRID_FPHI2, DISP_GRID };
 
 template <int WHAT>
 void grid_tmpl(PMEUnit pme_u, real* optional1, real* optional2) {
-  auto& st = pme_obj(pme_u);
-  auto* dptr = pme_deviceptr(pme_u);
+  auto& st = pme_u.obj();
+  auto* dptr = pme_u.deviceptr();
 
   MAYBE_UNUSED real* pchg;
   if_constexpr(WHAT == PCHG_GRID || WHAT == DISP_GRID) { pchg = optional1; }
@@ -368,8 +368,8 @@ void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3]) {
 
 template <int WHAT>
 void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3) {
-  auto& st = pme_obj(pme_u);
-  auto* dptr = pme_deviceptr(pme_u);
+  auto& st = pme_u.obj();
+  auto* dptr = pme_u.deviceptr();
 
   MAYBE_UNUSED real(*fphi)[20];
   if_constexpr(WHAT == MPOLE_GRID) {

@@ -8,26 +8,9 @@
 #include <ext/tinker/tinker_rt.h>
 
 TINKER_NAMESPACE_BEGIN
-PME& pme_obj(PMEUnit pme_u) {
-#if TINKER_DEBUG
-  return PMEUnit::all_objs().at(pme_u.unit());
-#else
-  return PMEUnit::all_objs()[pme_u.unit()];
-#endif
-}
-
-PME* pme_deviceptr(PMEUnit pme_u) {
-  int u = pme_u.unit();
-#if TINKER_DEBUG
-  return PMEUnit::all_deviceptrs().at(pme_u.unit());
-#else
-  return PMEUnit::all_deviceptrs()[pme_u.unit()];
-#endif
-}
-
-static void pme_op_dealloc_(int pu) {
-  auto& st = pme_obj(pu);
-  auto* dptr = pme_deviceptr(pu);
+static void pme_op_dealloc_(PMEUnit pu) {
+  auto& st = pu.obj();
+  auto* dptr = pu.deviceptr();
 
   dealloc_array(st.igrid);
   dealloc_array(st.bsmod1);
@@ -44,8 +27,10 @@ static void pme_op_alloc_(PMEUnit& unit, double aewald, int nfft1, int nfft2,
   int first = -1;
   const double eps = 1.0e-6;
   int idx;
-  for (idx = 0; idx < PMEUnit::all_objs().size(); ++idx) {
-    auto& st = PMEUnit::all_objs()[idx];
+  PMEUnit st_u;
+  for (idx = 0; idx < PMEUnit::size(); ++idx) {
+    st_u = idx;
+    auto& st = st_u.obj();
     if (std::abs(aewald - st.aewald) < eps && nfft1 == st.nfft1 &&
         nfft2 == st.nfft2 && nfft3 == st.nfft3 && bsorder == st.bsorder) {
       ++count;
@@ -55,10 +40,9 @@ static void pme_op_alloc_(PMEUnit& unit, double aewald, int nfft1, int nfft2,
   }
 
   if (count == 0 || unique == true) {
-    PMEUnit::all_objs().emplace_back(PME());
-    PMEUnit::all_deviceptrs().emplace_back(nullptr);
-    auto& st = PMEUnit::all_objs()[idx];
-    auto& dptr = PMEUnit::all_deviceptrs()[idx];
+    PMEUnit::emplace_back(PME());
+    auto& st = st_u.obj();
+    auto* dptr = st_u.deviceptr();
 
     const size_t rs = sizeof(real);
     size_t size;
@@ -84,7 +68,6 @@ static void pme_op_alloc_(PMEUnit& unit, double aewald, int nfft1, int nfft2,
     idx = first;
   }
 
-  assert(PMEUnit::all_objs().size() == PMEUnit::all_deviceptrs().size());
   unit = idx;
 }
 
@@ -92,8 +75,8 @@ static void pme_op_copyin_(PMEUnit unit) {
   if (unit < 0)
     return;
 
-  auto& st = pme_obj(unit);
-  auto* dptr = pme_deviceptr(unit);
+  auto& st = unit.obj();
+  auto* dptr = unit.deviceptr();
 
   // This code assumes that the FFT grids of an energy term will not change in a
   // calculation.
@@ -145,14 +128,14 @@ void pme_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    assert(PMEUnit::all_objs().size() == PMEUnit::all_deviceptrs().size());
+
     int idx = 0;
-    while (idx < PMEUnit::all_objs().size()) {
-      pme_op_dealloc_(idx);
+    while (idx < PMEUnit::size()) {
+      PMEUnit pu = idx;
+      pme_op_dealloc_(pu);
       ++idx;
     }
-    PMEUnit::all_objs().clear();
-    PMEUnit::all_deviceptrs().clear();
+    PMEUnit::clear();
 
     dealloc_array(cmp);
     dealloc_array(fmp);
@@ -172,8 +155,7 @@ void pme_data(rc_op op) {
   }
 
   if (op & rc_alloc) {
-    assert(PMEUnit::all_objs().size() == 0);
-    assert(PMEUnit::all_deviceptrs().size() == 0);
+    assert(PMEUnit::size() == 0);
 
     const size_t rs = sizeof(real);
 

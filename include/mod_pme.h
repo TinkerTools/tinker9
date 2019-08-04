@@ -27,7 +27,7 @@ struct PME {
   real* qgrid;                    // deviceptr
 };
 
-typedef GenericUnit<PME> PMEUnit;
+typedef GenericUnit<PME, 1> PMEUnit;
 
 TINKER_EXTERN PMEUnit epme_unit; // electrostatic
 TINKER_EXTERN PMEUnit ppme_unit; // polarization
@@ -52,9 +52,6 @@ TINKER_EXTERN real (*fphidp)[20];
 TINKER_EXTERN real* vir_m;
 
 void pme_data(rc_op op);
-
-PME& pme_obj(PMEUnit pme_u);
-PME* pme_deviceptr(PMEUnit pme_u);
 
 /// This function must be called after pme_data has been called because it
 /// needs to know the number of pme objects created.

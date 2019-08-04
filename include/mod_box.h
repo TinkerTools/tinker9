@@ -27,16 +27,14 @@ struct Box {
    * @endcode
    *
    * @code
-   * Monoclinic
-   * alpha = gamma = 90 degrees
+   * Monoclinic: alpha = gamma = 90 degrees
    * a.x,b.x,c.x = a.x   0 c.x
    * a.y,b.y,c.y =   0 b.y   0
    * a.z,b.z,c.z =   0   0 c.z
    * @endcode
    *
    * @code
-   * Orthogonal
-   * alpha = beta = gamma = 90 degrees
+   * Orthogonal: alpha = beta = gamma = 90 degrees
    * a.x,b.x,c.x = a.x   0   0
    * a.y,b.y,c.y =   0 b.y   0
    * a.z,b.z,c.z =   0   0 c.z

@@ -4,14 +4,12 @@
 #  include "util_rt.h"
 
 TINKER_NAMESPACE_BEGIN
-extern std::vector<FFTPlan>& fft_plans();
-
 void fft_data(rc_op op) {
   if (op & rc_dealloc) {
     int idx = 0;
-    while (idx < fft_plans().size()) {
-      auto& ps = fft_plans()[idx];
-
+    while (idx < FFTPlanUnit::size()) {
+      FFTPlanUnit u = idx;
+      auto& ps = u.obj();
 #  if defined(TINKER_SINGLE_PRECISION)
       fftwf_destroy_plan(ps.planf);
       fftwf_destroy_plan(ps.planb);
@@ -21,24 +19,26 @@ void fft_data(rc_op op) {
 #  else
       static_assert(false, "");
 #  endif
-
       ++idx;
     }
-
-    fft_plans().clear();
+    FFTPlanUnit::clear();
   }
 
   if (op & rc_alloc) {
-    assert(fft_plans().size() == 0);
+    assert(FFTPlanUnit::size() == 0);
 
-    const size_t size = PMEUnit::all_objs().size();
-    fft_plans().resize(size, FFTPlan());
+    const size_t size = PMEUnit::size();
+    FFTPlanUnit::resize(size, FFTPlan());
   }
 
   if (op & rc_init) {
     int idx = 0;
-    for (FFTPlan& iplan : fft_plans()) {
-      auto& st = pme_obj(idx);
+    while (idx < FFTPlanUnit::size()) {
+      FFTPlanUnit plan_u = idx;
+      PMEUnit pme_u = idx;
+      auto& iplan = plan_u.obj();
+      auto& st = pme_u.obj();
+
       const int nfft1 = st.nfft1;
       const int nfft2 = st.nfft2;
       const int nfft3 = st.nfft3;
@@ -69,8 +69,9 @@ void fft_data(rc_op op) {
 }
 
 void fftfront(PMEUnit pme_u) {
-  FFTPlan iplan = fft_plans()[pme_u.unit()];
-  auto& st = pme_obj(pme_u.unit());
+  FFTPlanUnit iplan_u = static_cast<int>(pme_u);
+  auto& iplan = iplan_u.obj();
+  auto& st = pme_u.obj();
 
 #  if defined(TINKER_SINGLE_PRECISION)
   fftwf_execute_dft(iplan.planf, reinterpret_cast<fftwf_complex*>(st.qgrid),
@@ -84,8 +85,9 @@ void fftfront(PMEUnit pme_u) {
 }
 
 void fftback(PMEUnit pme_u) {
-  FFTPlan iplan = fft_plans()[pme_u.unit()];
-  auto& st = pme_obj(pme_u.unit());
+  FFTPlanUnit iplan_u = static_cast<int>(pme_u);
+  auto& iplan = iplan_u.obj();
+  auto& st = pme_u.obj();
 
 #  if defined(TINKER_SINGLE_PRECISION)
   fftwf_execute_dft(iplan.planb, reinterpret_cast<fftwf_complex*>(st.qgrid),

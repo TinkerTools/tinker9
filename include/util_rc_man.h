@@ -6,26 +6,6 @@
 TINKER_NAMESPACE_BEGIN
 /**
  * @brief
- * wrappers of intel @c for_rtl_init_, @c for_rtl_finish_ functions;
- * of gnu @c _gfortran_set_args function; or
- * of other fortran runtime functions.
- */
-/// @{
-void fortran_runtime_initialize(int, char**);
-void fortran_runtime_finish();
-/// @}
-
-/**
- * @brief
- * set up and clean up host and device environment
- */
-/// @{
-void initialize();
-void finish();
-/// @}
-
-/**
- * @brief
  * resource management
  *
  * To deallocate resource in reverse order of allocation, use named objects.
@@ -61,12 +41,16 @@ public:
       , op_(op) {
     if (!will_dealloc_()) {
       f_(op_);
+    } else {
+      assert(false);
     }
   }
 
   ~ResourceManagement() {
     if (only_dealloc_()) {
       f_(op_);
+    } else {
+      assert(false);
     }
   }
 };
@@ -78,6 +62,26 @@ constexpr rc_op rc_init = rc_man::init;
 
 void host_data(rc_op);
 void device_data(rc_op);
+
+/**
+ * @brief
+ * set up and clean up host and device environment
+ */
+/// @{
+void initialize();
+void finish();
+/// @}
+
+/**
+ * @brief
+ * wrappers of intel @c for_rtl_init_, @c for_rtl_finish_ functions;
+ * of gnu @c _gfortran_set_args function; or
+ * of other fortran runtime functions.
+ */
+/// @{
+void fortran_runtime_initialize(int, char**);
+void fortran_runtime_finish();
+/// @}
 TINKER_NAMESPACE_END
 
 #endif
