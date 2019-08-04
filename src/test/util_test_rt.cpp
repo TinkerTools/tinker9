@@ -1,4 +1,4 @@
-#include "test/rt.h"
+#include "util_test_rt.h"
 #include "util_rc_man.h"
 #include <cstdio>
 #include <ext/tinker/tinker_mod.h>
@@ -6,8 +6,7 @@
 #include <fstream>
 
 TINKER_NAMESPACE_BEGIN
-namespace test {
-file::file(const std::string& name, const std::string& content)
+TestFile::TestFile(const std::string& name, const std::string& content)
     : good_(false)
     , name_(name) {
   std::ofstream fout(name);
@@ -17,22 +16,22 @@ file::file(const std::string& name, const std::string& content)
   }
 }
 
-file::~file() {
+TestFile::~TestFile() {
   if (good_)
     std::remove(name_.c_str());
 }
 
-file_expected::file_expected(const std::string& name)
+TestFileExpected::TestFileExpected(const std::string& name)
     : name_(name) {}
 
-file_expected::~file_expected() {
+TestFileExpected::~TestFileExpected() {
   std::ifstream chk(name_);
   if (chk) {
     std::remove(name_.c_str());
   }
 }
 
-double test_get_eps2(double eps_single, double eps_double) {
+double test_get_eps(double eps_single, double eps_double) {
 #if defined(TINKER_SINGLE_PRECISION)
   return eps_single;
 #elif defined(TINKER_DOUBLE_PRECISION)
@@ -42,7 +41,7 @@ double test_get_eps2(double eps_single, double eps_double) {
 #endif
 }
 
-void test_begin_1_xyz(int argc, const char** argv) {
+void test_begin_with_args(int argc, const char** argv) {
   fortran_runtime_initialize(argc, const_cast<char**>(argv));
 
   TINKER_RT(initial)();
@@ -70,6 +69,5 @@ void test_mdinit(double t, double atm) {
     bath::isobaric = _false_;
 
   TINKER_RT(mdinit)();
-}
 }
 TINKER_NAMESPACE_END

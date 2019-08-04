@@ -1,10 +1,8 @@
-#include "files.h"
-#include "test/ff.h"
-#include "test/rt.h"
-#include "test/test.h"
+#include "util_files.h"
+#include "util_test.h"
+#include "util_test_rt.h"
 
 using namespace TINKER_NAMESPACE;
-using namespace test;
 
 static const char* ureyterm_only = R"**(
 ureyterm  only
@@ -36,14 +34,14 @@ TEST_CASE("Urey-Ten-Water", "[ff][eurey][h2o10]") {
 
   std::string k0 = h2o10_key;
   k0 += ureyterm_only;
-  file fke(k, k0);
+  TestFile fke(k, k0);
 
-  file fx1(x1, h2o10_xyz);
-  file fpr(p, water03_prm);
+  TestFile fx1(x1, h2o10_xyz);
+  TestFile fpr(p, water03_prm);
 
   const char* argv[] = {"dummy", x1};
   int argc = 2;
-  test_begin_1_xyz(argc, argv);
+  test_begin_with_args(argc, argv);
   use_data = usage;
   initialize();
 

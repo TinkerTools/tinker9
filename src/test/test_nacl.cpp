@@ -1,10 +1,8 @@
-#include "files.h"
-#include "test/ff.h"
-#include "test/rt.h"
-#include "test/test.h"
+#include "util_files.h"
+#include "util_test.h"
+#include "util_test_rt.h"
 
 using namespace TINKER_NAMESPACE;
-using namespace test;
 
 #define COMPARE_CODE_BLOCK1_                                                   \
   {                                                                            \
@@ -39,11 +37,11 @@ using namespace test;
   }
 
 TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
-  file fpr("amoeba09.prm", amoeba09_prm);
+  TestFile fpr("amoeba09.prm", amoeba09_prm);
 
   std::string key = nacl_key;
   key += "vdwterm    only\n";
-  file fke("test_nacl.key", key);
+  TestFile fke("test_nacl.key", key);
 
   int usage = 0;
   usage |= calc::xyz;
@@ -53,7 +51,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
 
   SECTION("ehal -- no switch") {
     const char* x1 = "test_nacl.xyz";
-    file fx1(x1, nacl_xyz1);
+    TestFile fx1(x1, nacl_xyz1);
 
     const char* argv[] = {"dummy", x1};
     int argc = 2;
@@ -64,7 +62,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
     const double ref_v[][3] = {
         {-405.878, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
-    test_begin_1_xyz(argc, argv);
+    test_begin_with_args(argc, argv);
     use_data = usage;
     initialize();
 
@@ -76,7 +74,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
 
   SECTION("ehal -- switch, near cut") {
     const char* x2 = "test_nacl.xyz_2";
-    file fx2(x2, nacl_xyz2);
+    TestFile fx2(x2, nacl_xyz2);
     const char* argv[] = {"dummy", x2};
     int argc = 2;
 
@@ -86,7 +84,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
     const double ref_v[][3] = {
         {-354.835, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
-    test_begin_1_xyz(argc, argv);
+    test_begin_with_args(argc, argv);
     use_data = usage;
     initialize();
 
@@ -98,7 +96,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
 
   SECTION("ehal -- switch, near off") {
     const char* x3 = "test_nacl.xyz_3";
-    file fx3(x3, nacl_xyz3);
+    TestFile fx3(x3, nacl_xyz3);
 
     const char* argv[] = {"dummy", x3};
     int argc = 2;
@@ -109,7 +107,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
     const double ref_v[][3] = {
         {-319.160, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
-    test_begin_1_xyz(argc, argv);
+    test_begin_with_args(argc, argv);
     use_data = usage;
     initialize();
 
@@ -165,11 +163,11 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
   }
 
 TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
-  file fpr("amoeba09.prm", amoeba09_prm);
+  TestFile fpr("amoeba09.prm", amoeba09_prm);
 
   std::string key = nacl_key;
   key += "multipoleterm    only\n";
-  file fke("test_nacl.key", key);
+  TestFile fke("test_nacl.key", key);
 
   int usage = 0;
   usage |= calc::xyz;
@@ -181,7 +179,7 @@ TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
 
   SECTION("empole -- coulomb, pbc") {
     const char* x1 = "test_nacl.xyz";
-    file fx1(x1, nacl_xyz1);
+    TestFile fx1(x1, nacl_xyz1);
 
     const char* argv[] = {"dummy", x1};
     int argc = 2;
@@ -194,7 +192,7 @@ TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
     const double ref_v[][3] = {
         {150.938, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
-    test_begin_1_xyz(argc, argv);
+    test_begin_with_args(argc, argv);
     use_data = usage;
     initialize();
 
@@ -206,11 +204,11 @@ TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
 }
 
 TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]") {
-  file fpr("amoeba09.prm", amoeba09_prm);
+  TestFile fpr("amoeba09.prm", amoeba09_prm);
 
   std::string key = nacl_key4;
   key += "multipoleterm    only\n";
-  file fke("test_nacl.key", key);
+  TestFile fke("test_nacl.key", key);
 
   int usage = 0;
   usage |= calc::xyz;
@@ -222,7 +220,7 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]") {
 
   SECTION("empole -- pme") {
     const char* x4 = "test_nacl.xyz_4";
-    file fx1(x4, nacl_xyz4);
+    TestFile fx1(x4, nacl_xyz4);
 
     const char* argv[] = {"dummy", x4};
     int argc = 2;
@@ -255,7 +253,7 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]") {
     //                            {23.857, 26.659, 28.675},
     //                            {26.068, 28.675, 31.863}};
 
-    test_begin_1_xyz(argc, argv);
+    test_begin_with_args(argc, argv);
     use_data = usage;
     initialize();
 

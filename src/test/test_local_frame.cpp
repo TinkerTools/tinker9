@@ -1,11 +1,9 @@
-#include "files.h"
-#include "test/ff.h"
-#include "test/rt.h"
-#include "test/test.h"
+#include "util_files.h"
+#include "util_test.h"
+#include "util_test_rt.h"
 #include <ext/tinker/tinker_mod.h>
 
 using namespace TINKER_NAMESPACE;
-using namespace test;
 
 /**
  * @brief
@@ -16,13 +14,13 @@ using namespace test;
 static bool do_ij(int i, int /* j */) { return i < n - 4; }
 
 TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
-  file fpr("amoeba09.prm", amoeba09_prm);
+  TestFile fpr("amoeba09.prm", amoeba09_prm);
 
   const char* k = "test_local_frame.key";
   std::string key0 = local_frame_key;
 
   const char* x1 = "test_local_frame.xyz";
-  file fx1(x1, local_frame_xyz);
+  TestFile fx1(x1, local_frame_xyz);
 
   int usage = 0;
   usage |= calc::xyz;
@@ -31,7 +29,7 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
   SECTION("empole -- gas phase, no cutoff") {
     std::string key1 = key0;
     key1 += "multipoleterm    only\n";
-    file fke(k, key1);
+    TestFile fke(k, key1);
 
     const char* argv[] = {"dummy", x1};
     int argc = 2;
@@ -58,7 +56,7 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
                                {-34.992, 53.410, 6.517},
                                {9.243, 6.517, 4.708}};
 
-    test_begin_1_xyz(argc, argv);
+    test_begin_with_args(argc, argv);
     use_data = usage;
     initialize();
 
@@ -87,13 +85,13 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
 }
 
 TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
-  file fpr("amoeba09.prm", amoeba09_prm);
+  TestFile fpr("amoeba09.prm", amoeba09_prm);
 
   const char* k = "test_local_frame.key";
   std::string key0 = local_frame_key;
 
   const char* x1 = "test_local_frame.xyz";
-  file fx1(x1, local_frame_xyz);
+  TestFile fx1(x1, local_frame_xyz);
 
   int usage = 0;
   usage |= calc::xyz;
@@ -109,7 +107,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     key1 += "neighbor-list\n";
     key1 += "list-buffer    0.1\n";
     key1 += "a-axis    20.0\n";
-    file fke(k, key1);
+    TestFile fke(k, key1);
 
     const char* argv[] = {"dummy", x1};
     int argc = 2;
@@ -141,7 +139,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
                                {-31.146, 53.934, 7.245},
                                {7.610, 7.245, 3.181}};
 
-    test_begin_1_xyz(argc, argv);
+    test_begin_with_args(argc, argv);
     use_data = usage;
     initialize();
 
@@ -203,16 +201,16 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
   }
 
 TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
-  file fpr("amoeba09.prm", amoeba09_prm);
+  TestFile fpr("amoeba09.prm", amoeba09_prm);
 
   const char* k = "test_local_frame.key";
   std::string key0 = local_frame_key;
   key0 += "usolve-cutoff    0.01\n";
   key0 += "polarizeterm    only\n";
-  file fke(k, key0);
+  TestFile fke(k, key0);
 
   const char* x1 = "test_local_frame.xyz";
-  file fx1(x1, local_frame_xyz);
+  TestFile fx1(x1, local_frame_xyz);
 
   int usage = 0;
   usage |= calc::xyz;
@@ -226,7 +224,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
   const double debye = units::debye;
   const double eps_f = 0.0001;
 
-  test_begin_1_xyz(argc, argv);
+  test_begin_with_args(argc, argv);
   use_data = usage;
   initialize();
 
@@ -259,7 +257,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
     zero_egv();
     elec_init(calc::v0);
     dfield_coulomb(&udir[0][0], &udirp[0][0]);
-    grad_t fieldd, fieldp;
+    std::vector<std::array<double, 3>> fieldd, fieldp;
     copyout_array3(fieldd, udir, n);
     copyout_array3(fieldp, udirp, n);
     for (int i = 0; i < n; ++i) {
@@ -298,7 +296,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
 
     zero_egv();
     elec_init(calc::v0);
-    grad_t ud, up;
+    std::vector<std::array<double, 3>> ud, up;
     ud.resize(n);
     up.resize(n);
     for (int i = 0; i < n; ++i) {
@@ -350,7 +348,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
     zero_egv();
     elec_init(calc::v0);
     induce(&uind[0][0], &uinp[0][0]);
-    grad_t ud, up;
+    std::vector<std::array<double, 3>> ud, up;
     copyout_array3(ud, uind, n);
     copyout_array3(up, uinp, n);
     for (int i = 0; i < n; ++i) {
@@ -401,7 +399,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
 }
 
 TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
-  file fpr("amoeba09.prm", amoeba09_prm);
+  TestFile fpr("amoeba09.prm", amoeba09_prm);
 
   const char* k = "test_local_frame.key";
   std::string key0 = local_frame_key;
@@ -412,10 +410,10 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
   key0 += "neighbor-list\n";
   key0 += "list-buffer    0.1\n";
   key0 += "a-axis    20.0\n";
-  file fke(k, key0);
+  TestFile fke(k, key0);
 
   const char* x1 = "test_local_frame.xyz";
-  file fx1(x1, local_frame_xyz);
+  TestFile fx1(x1, local_frame_xyz);
 
   int usage = 0;
   usage |= calc::xyz;
@@ -429,7 +427,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
   const double debye = units::debye;
   const double eps_f = 0.0001;
 
-  test_begin_1_xyz(argc, argv);
+  test_begin_with_args(argc, argv);
   use_data = usage;
   initialize();
 
@@ -462,7 +460,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
     zero_egv();
     elec_init(calc::v0);
     dfield_ewald(&udir[0][0], &udirp[0][0]);
-    grad_t fieldd, fieldp;
+    std::vector<std::array<double, 3>> fieldd, fieldp;
     copyout_array3(fieldd, udir, n);
     copyout_array3(fieldp, udirp, n);
     for (int i = 0; i < n; ++i) {
@@ -501,7 +499,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
 
     zero_egv();
     elec_init(calc::v0);
-    grad_t ud, up;
+    std::vector<std::array<double, 3>> ud, up;
     ud.resize(n);
     up.resize(n);
     for (int i = 0; i < n; ++i) {
@@ -553,7 +551,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
     zero_egv();
     elec_init(calc::v0);
     induce(&uind[0][0], &uinp[0][0]);
-    grad_t ud, up;
+    std::vector<std::array<double, 3>> ud, up;
     copyout_array3(ud, uind, n);
     copyout_array3(up, uinp, n);
     for (int i = 0; i < n; ++i) {

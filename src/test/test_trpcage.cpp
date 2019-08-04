@@ -1,10 +1,8 @@
-#include "files.h"
-#include "test/ff.h"
-#include "test/rt.h"
-#include "test/test.h"
+#include "util_files.h"
+#include "util_test.h"
+#include "util_test_rt.h"
 
 using namespace TINKER_NAMESPACE;
-using namespace test;
 
 static const char* boned_term_only = R"**(
 vdwterm        none
@@ -174,22 +172,22 @@ TEST_CASE("Bonded-Trpcage", "[ff][ebonded][trpcage]") {
 
   std::string k0 = trpcage_key;
   k0 += boned_term_only;
-  file fke(k, k0);
+  TestFile fke(k, k0);
 
-  file fx1(x1, trpcage_xyz);
-  file fpr(p, amoebapro13_prm);
+  TestFile fx1(x1, trpcage_xyz);
+  TestFile fpr(p, amoebapro13_prm);
 
   const char* argv[] = {"dummy", x1};
   int argc = 2;
-  test_begin_1_xyz(argc, argv);
+  test_begin_with_args(argc, argv);
   use_data = usage;
   initialize();
 
   const double eps_e = 0.0001;
   const double ref_e = 103.9243;
   const int ref_bond_count = 310;
-  const double eps_g = test_get_eps2(0.005, 0.0001);
-  const double eps_v = test_get_eps2(0.002, 0.001);
+  const double eps_g = test_get_eps(0.005, 0.0001);
+  const double eps_v = test_get_eps(0.002, 0.001);
   const double ref_v[][3] = {{938.362, 105.806, 258.684},
                              {105.806, 698.628, 26.980},
                              {258.684, 26.980, 1106.334}};

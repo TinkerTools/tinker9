@@ -1,10 +1,8 @@
-#include "files.h"
-#include "test/ff.h"
-#include "test/rt.h"
-#include "test/test.h"
+#include "util_files.h"
+#include "util_test.h"
+#include "util_test_rt.h"
 
 using namespace TINKER_NAMESPACE;
-using namespace test;
 
 static const char* tortorterm_only = R"**(
 tortorterm  only
@@ -172,14 +170,14 @@ TEST_CASE("Tortor-Trpcage", "[ff][etortor][trpcage]") {
 
   std::string k0 = trpcage_key;
   k0 += tortorterm_only;
-  file fke(k, k0);
+  TestFile fke(k, k0);
 
-  file fx1(x1, trpcage_xyz);
-  file fpr(p, amoebapro13_prm);
+  TestFile fx1(x1, trpcage_xyz);
+  TestFile fpr(p, amoebapro13_prm);
 
   const char* argv[] = {"dummy", x1};
   int argc = 2;
-  test_begin_1_xyz(argc, argv);
+  test_begin_with_args(argc, argv);
   use_data = usage;
   initialize();
 

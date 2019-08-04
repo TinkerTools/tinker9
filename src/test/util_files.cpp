@@ -1,9 +1,8 @@
-#include "files.h"
+#include "util_files.h"
 
 #define FILE_DEF_(symb) const char* symb = current::symb
 
 TINKER_NAMESPACE_BEGIN
-namespace test {
 namespace current = tinker_6fe8e913fe4da3d46849d10248ad2a4872b4da93;
 
 // prm files
@@ -43,7 +42,6 @@ FILE_DEF_(watersmall_xyz);
 
 // 216 argon box test set
 #include "file/arbox.hh"
-}
 TINKER_NAMESPACE_END
 
 #undef FILE_DEF_

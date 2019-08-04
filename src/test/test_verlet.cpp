@@ -1,11 +1,9 @@
-#include "files.h"
-#include "test/ff.h"
-#include "test/rt.h"
-#include "test/test.h"
+#include "util_files.h"
 #include "util_md.h"
+#include "util_test.h"
+#include "util_test_rt.h"
 
 using namespace TINKER_NAMESPACE;
-using namespace test;
 
 static const char* verlet_intg = "integrator  verlet\n";
 static int usage_ =
@@ -57,15 +55,15 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]") {
 
   std::string k0 = arbox_key;
   k0 += "integrator  verlet\n";
-  file fke(k, k0);
+  TestFile fke(k, k0);
 
-  file fd(d, arbox_dyn);
-  file fx(x, arbox_xyz);
-  file fp(p, amoeba09_prm);
+  TestFile fd(d, arbox_dyn);
+  TestFile fx(x, arbox_xyz);
+  TestFile fp(p, amoeba09_prm);
 
   const char* argv[] = {"dummy", x};
   int argc = 2;
-  test_begin_1_xyz(argc, argv);
+  test_begin_with_args(argc, argv);
   test_mdinit(0, 0);
 
   use_data = usage_;
@@ -89,7 +87,7 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]") {
     REQUIRE(eksums[i] == Approx(arbox_kin[i]).margin(eps_e));
   }
 
-  file_expected("test_arbox.arc");
+  TestFileExpected("test_arbox.arc");
 #else
   REQUIRE(true);
 #endif

@@ -1,14 +1,12 @@
-#include "files.h"
-#include "test/ff.h"
-#include "test/rt.h"
-#include "test/test.h"
+#include "util_files.h"
+#include "util_test.h"
+#include "util_test_rt.h"
 
 using namespace TINKER_NAMESPACE;
-using namespace test;
 
 #define COMPARE_GRAD_                                                          \
   {                                                                            \
-    grad_t grad(n);                                                            \
+    std::vector<std::array<double, 3>> grad(n);                                \
     double* dst = &grad[0][0];                                                 \
     copyout_array2(0, 3, dst, gx, n);                                          \
     copyout_array2(1, 3, dst, gy, n);                                          \
@@ -58,15 +56,15 @@ TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
   std::string k0 = cln025_key;
   k0 += "vdwterm    only\n";
 
-  file fx(x, cln025_xyz);
-  file px(p, amoebabio09_prm);
+  TestFile fx(x, cln025_xyz);
+  TestFile px(p, amoebabio09_prm);
 
   int usage = 0;
   usage |= calc::xyz;
   usage |= calc::vmask;
 
   SECTION("ehal -- gas phase, no cutoff") {
-    file kx(k, k0);
+    TestFile kx(k, k0);
 
     const char* argv[] = {"dummy", x};
     int argc = 2;
@@ -84,7 +82,7 @@ TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
                                {-37.589, -758.657, 41.895},
                                {-2.250, 41.895, -681.179}};
 
-    test_begin_1_xyz(argc, argv);
+    test_begin_with_args(argc, argv);
     use_data = usage;
     initialize();
 
@@ -99,7 +97,7 @@ TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
     k1 += "neighbor-list\n";
     k1 += "vdw-cutoff        6.0\n";
     k1 += "a-axis           18.0\n";
-    file kx(k, k1);
+    TestFile kx(k, k1);
 
     const char* argv[] = {"dummy", x};
     int argc = 2;
@@ -117,7 +115,7 @@ TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
                                {-8.336, -781.555, 29.820},
                                {26.361, 29.820, -706.064}};
 
-    test_begin_1_xyz(argc, argv);
+    test_begin_with_args(argc, argv);
     use_data = usage;
     initialize();
 

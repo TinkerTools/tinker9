@@ -1,10 +1,8 @@
-#include "files.h"
-#include "test/ff.h"
-#include "test/rt.h"
-#include "test/test.h"
+#include "util_files.h"
+#include "util_test.h"
+#include "util_test_rt.h"
 
 using namespace TINKER_NAMESPACE;
-using namespace test;
 
 static const char* opbendterm_only = R"**(
 opbendterm  only
@@ -172,21 +170,21 @@ TEST_CASE("Opbend-Trpcage", "[ff][eopbend][allinger][trpcage]") {
 
   std::string k0 = trpcage_key;
   k0 += opbendterm_only;
-  file fke(k, k0);
+  TestFile fke(k, k0);
 
-  file fx1(x1, trpcage_xyz);
-  file fpr(p, amoebapro13_prm);
+  TestFile fx1(x1, trpcage_xyz);
+  TestFile fpr(p, amoebapro13_prm);
 
   const char* argv[] = {"dummy", x1};
   int argc = 2;
-  test_begin_1_xyz(argc, argv);
+  test_begin_with_args(argc, argv);
   use_data = usage;
   initialize();
 
   const double eps_e = 0.0001;
   const double ref_e = 4.3016;
   const int ref_count = 189;
-  const double eps_g = test_get_eps2(0.0004, 0.0001);
+  const double eps_g = test_get_eps(0.0004, 0.0001);
   const double eps_v = 0.001;
   const double ref_v[][3] = {{-1.646, 0.890, -0.224},
                              {0.890, 3.006, -1.049},

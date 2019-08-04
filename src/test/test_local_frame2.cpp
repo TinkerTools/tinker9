@@ -1,10 +1,8 @@
-#include "files.h"
-#include "test/ff.h"
-#include "test/rt.h"
-#include "test/test.h"
+#include "util_files.h"
+#include "util_test.h"
+#include "util_test_rt.h"
 
 using namespace TINKER_NAMESPACE;
-using namespace test;
 
 static const char* triclinic_box = R"**(
 ewald
@@ -46,12 +44,12 @@ TEST_CASE("Local-Frame2-1", "[ff][triclinic][evdw][hal][local-frame2]") {
   std::string k0 = local_frame_key;
   k0 += triclinic_box;
   k0 += "vdwterm  only\n";
-  file fke(k, k0);
+  TestFile fke(k, k0);
 
-  file fpr("amoeba09.prm", amoeba09_prm);
-  file fx1(x1, local_frame_xyz2);
+  TestFile fpr("amoeba09.prm", amoeba09_prm);
+  TestFile fx1(x1, local_frame_xyz2);
 
-  test_begin_1_xyz(argc, argv);
+  test_begin_with_args(argc, argv);
   use_data = usage;
   initialize();
 
@@ -74,12 +72,12 @@ TEST_CASE("Local-Frame2-2", "[ff][monoclinic][evdw][hal][local-frame2]") {
   std::string k0 = local_frame_key;
   k0 += monoclinic_box;
   k0 += "vdwterm  only\n";
-  file fke(k, k0);
+  TestFile fke(k, k0);
 
-  file fpr("amoeba09.prm", amoeba09_prm);
-  file fx1(x1, local_frame_xyz2);
+  TestFile fpr("amoeba09.prm", amoeba09_prm);
+  TestFile fx1(x1, local_frame_xyz2);
 
-  test_begin_1_xyz(argc, argv);
+  test_begin_with_args(argc, argv);
   use_data = usage;
   initialize();
 

@@ -1,14 +1,12 @@
-#include "files.h"
 #include "mod_md.h"
 #include "mod_nblist.h"
-#include "test/ff.h"
-#include "test/rt.h"
-#include "test/test.h"
+#include "util_files.h"
 #include "util_io.h"
 #include "util_rc_man.h"
+#include "util_test.h"
+#include "util_test_rt.h"
 
 using namespace TINKER_NAMESPACE;
-using namespace test;
 
 // static const int ans[5][216][70];
 #include "test_nblist.hh"
@@ -24,14 +22,14 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]") {
   const char* p = "amoeba09.prm";
 
   std::string k0 = arbox_key;
-  file fke(k, k0);
+  TestFile fke(k, k0);
 
-  file fx1(x1, arbox_arc);
-  file fpr(p, amoeba09_prm);
+  TestFile fx1(x1, arbox_arc);
+  TestFile fpr(p, amoeba09_prm);
 
   const char* argv[] = {"dummy", x1};
   int argc = 2;
-  test_begin_1_xyz(argc, argv);
+  test_begin_with_args(argc, argv);
 
   use_data = usage_;
   trajn = 5;
