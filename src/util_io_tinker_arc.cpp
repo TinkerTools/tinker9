@@ -122,15 +122,11 @@ void copyin_tinker_arc(const std::string& arcfile, int first1, int last1,
           shape = Box::oct;
         bbuf2[i].shape = shape;
       }
-      copy_memory(trajbox, bbuf2.data(), sizeof(Box) * tn,
-                  CopyDirection::HostToDevice);
+      copyin_bytes(trajbox, bbuf2.data(), sizeof(Box) * tn);
     }
-    copy_memory(trajx, xbuf.data(), sizeof(real) * n * tn,
-                CopyDirection::HostToDevice);
-    copy_memory(trajy, ybuf.data(), sizeof(real) * n * tn,
-                CopyDirection::HostToDevice);
-    copy_memory(trajz, zbuf.data(), sizeof(real) * n * tn,
-                CopyDirection::HostToDevice);
+    copyin_bytes(trajx, xbuf.data(), sizeof(real) * n * tn);
+    copyin_bytes(trajy, ybuf.data(), sizeof(real) * n * tn);
+    copyin_bytes(trajz, zbuf.data(), sizeof(real) * n * tn);
   } else {
     std::string msg = "Cannot Open File ";
     msg += arcfile;

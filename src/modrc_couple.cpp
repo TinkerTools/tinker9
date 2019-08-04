@@ -26,16 +26,16 @@ void couple_data(rc_op op) {
     alloc_array(&coupl_obj_.n13, size);
     alloc_array(&coupl_obj_.n14, size);
     alloc_array(&coupl_obj_.n15, size);
-    size = couple_t::maxn12 * n * rs;
+    size = Couple::maxn12 * n * rs;
     alloc_array(&coupl_obj_.i12, size);
-    size = couple_t::maxn13 * n * rs;
+    size = Couple::maxn13 * n * rs;
     alloc_array(&coupl_obj_.i13, size);
-    size = couple_t::maxn14 * n * rs;
+    size = Couple::maxn14 * n * rs;
     alloc_array(&coupl_obj_.i14, size);
-    size = couple_t::maxn15 * n * rs;
+    size = Couple::maxn15 * n * rs;
     alloc_array(&coupl_obj_.i15, size);
 
-    size = sizeof(couple_t);
+    size = sizeof(Couple);
     alloc_array(&coupl, size);
   }
 
@@ -49,12 +49,12 @@ void couple_data(rc_op op) {
     std::vector<int> nbuf, ibuf;
     nbuf.resize(n);
 
-    size = couple_t::maxn12 * n;
+    size = Couple::maxn12 * n;
     ibuf.resize(size);
     for (int i = 0; i < n; ++i) {
       int nn = couple::n12[i];
       nbuf[i] = nn;
-      int base = i * couple_t::maxn12;
+      int base = i * Couple::maxn12;
       for (int j = 0; j < nn; ++j) {
         int k = couple::i12[i][j];
         ibuf[base + j] = k - 1;
@@ -63,12 +63,12 @@ void couple_data(rc_op op) {
     copyin_array(coupl_obj_.n12, nbuf.data(), n);
     copyin_array(&coupl_obj_.i12[0][0], ibuf.data(), size);
 
-    size = couple_t::maxn13 * n;
+    size = Couple::maxn13 * n;
     ibuf.resize(size);
     for (int i = 0; i < n; ++i) {
       int nn = couple::n13[i];
       nbuf[i] = nn;
-      int base = i * couple_t::maxn13;
+      int base = i * Couple::maxn13;
       int bask = i * maxn13;
       for (int j = 0; j < nn; ++j) {
         int k = couple::i13[bask + j];
@@ -78,12 +78,12 @@ void couple_data(rc_op op) {
     copyin_array(coupl_obj_.n13, nbuf.data(), n);
     copyin_array(&coupl_obj_.i13[0][0], ibuf.data(), size);
 
-    size = couple_t::maxn14 * n;
+    size = Couple::maxn14 * n;
     ibuf.resize(size);
     for (int i = 0; i < n; ++i) {
       int nn = couple::n14[i];
       nbuf[i] = nn;
-      int base = i * couple_t::maxn14;
+      int base = i * Couple::maxn14;
       int bask = i * maxn14;
       for (int j = 0; j < nn; ++j) {
         int k = couple::i14[bask + j];
@@ -93,12 +93,12 @@ void couple_data(rc_op op) {
     copyin_array(coupl_obj_.n14, nbuf.data(), n);
     copyin_array(&coupl_obj_.i14[0][0], ibuf.data(), size);
 
-    size = couple_t::maxn15 * n;
+    size = Couple::maxn15 * n;
     ibuf.resize(size);
     for (int i = 0; i < n; ++i) {
       int nn = couple::n15[i];
       nbuf[i] = nn;
-      int base = i * couple_t::maxn15;
+      int base = i * Couple::maxn15;
       int bask = i * maxn15;
       for (int j = 0; j < nn; ++j) {
         int k = couple::i15[bask + j];
@@ -108,8 +108,8 @@ void couple_data(rc_op op) {
     copyin_array(coupl_obj_.n15, nbuf.data(), n);
     copyin_array(&coupl_obj_.i15[0][0], ibuf.data(), size);
 
-    size = sizeof(couple_t);
-    copy_memory(coupl, &coupl_obj_, size, CopyDirection::HostToDevice);
+    size = sizeof(Couple);
+    copyin_bytes(coupl, &coupl_obj_, size);
   }
 }
 TINKER_NAMESPACE_END

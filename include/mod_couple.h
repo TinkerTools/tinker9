@@ -4,7 +4,7 @@
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-struct couple_t {
+struct Couple {
   static const int maxn12 = 8;
   static const int maxn13 = 32;  // 24 -> 32
   static const int maxn14 = 96;  // 72 -> 96
@@ -17,8 +17,8 @@ struct couple_t {
   int (*i15)[maxn15];
 };
 
-TINKER_EXTERN couple_t coupl_obj_;
-TINKER_EXTERN couple_t* coupl;
+TINKER_EXTERN Couple coupl_obj_;
+TINKER_EXTERN Couple* coupl;
 
 void couple_data(rc_op);
 TINKER_NAMESPACE_END

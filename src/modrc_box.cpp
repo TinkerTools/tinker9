@@ -42,12 +42,14 @@ void box_data(rc_op op) {
     copyin_array(&box->lvec[0][0], &boxes::lvec[0][0], 9);
     copyin_array(&box->recip[0][0], &boxes::recip[0][0], 9);
     copyin_array(&box->volbox, &boxes::volbox, 1);
-    copy_memory(&box->shape, &shape, sizeof(Box::Shape),
-                CopyDirection::HostToDevice);
+    copyin_bytes(&box->shape, &shape, sizeof(Box::Shape));
   }
 }
 
-void box_data_copyout(const Box& b) {
+void copyout_box_data(const Box* pb) {
+  Box b;
+  copyout_bytes(&b, pb, sizeof(Box));
+
   if (bound::use_bounds) {
     double ax[3] = {b.lvec[0][0], b.lvec[1][0], b.lvec[2][0]};
     double bx[3] = {b.lvec[0][1], b.lvec[1][1], b.lvec[2][1]};

@@ -7,6 +7,17 @@
 #  include "util_rt_cudart.h"
 #endif
 
+TINKER_NAMESPACE_BEGIN
+void copyin_bytes(void* dst, const void* src, size_t count);
+void copyout_bytes(void* dst, const void* src, size_t count);
+void copy_bytes(void* dst, const void* src, size_t count);
+
+void dealloc_stream(Stream);
+void alloc_stream(Stream*);
+void sync_stream(Stream);
+void copy_bytes_async(void* dst, const void* src, size_t count, Stream s);
+TINKER_NAMESPACE_END
+
 #include "util_io.h"
 #include <stdexcept>
 

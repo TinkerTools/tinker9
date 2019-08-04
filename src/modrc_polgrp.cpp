@@ -4,10 +4,10 @@
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
-static_assert(polargroup_t::maxp11 >= polgrp::maxp11, "");
-static_assert(polargroup_t::maxp12 >= polgrp::maxp12, "");
-static_assert(polargroup_t::maxp13 >= polgrp::maxp13, "");
-static_assert(polargroup_t::maxp14 >= polgrp::maxp14, "");
+static_assert(PolarGroup::maxp11 >= polgrp::maxp11, "");
+static_assert(PolarGroup::maxp12 >= polgrp::maxp12, "");
+static_assert(PolarGroup::maxp13 >= polgrp::maxp13, "");
+static_assert(PolarGroup::maxp14 >= polgrp::maxp14, "");
 
 void polargroup_data(rc_op op) {
   if (op & rc_dealloc) {
@@ -32,16 +32,16 @@ void polargroup_data(rc_op op) {
     alloc_array(&polargroup_obj_.np12, size);
     alloc_array(&polargroup_obj_.np13, size);
     alloc_array(&polargroup_obj_.np14, size);
-    size = polargroup_t::maxp11 * n * rs;
+    size = PolarGroup::maxp11 * n * rs;
     alloc_array(&polargroup_obj_.ip11, size);
-    size = polargroup_t::maxp12 * n * rs;
+    size = PolarGroup::maxp12 * n * rs;
     alloc_array(&polargroup_obj_.ip12, size);
-    size = polargroup_t::maxp13 * n * rs;
+    size = PolarGroup::maxp13 * n * rs;
     alloc_array(&polargroup_obj_.ip13, size);
-    size = polargroup_t::maxp14 * n * rs;
+    size = PolarGroup::maxp14 * n * rs;
     alloc_array(&polargroup_obj_.ip14, size);
 
-    size = sizeof(polargroup_t);
+    size = sizeof(PolarGroup);
     alloc_array(&polargroup, size);
   }
 
@@ -51,12 +51,12 @@ void polargroup_data(rc_op op) {
     std::vector<int> nbuf, ibuf;
     nbuf.resize(n);
 
-    size = polargroup_t::maxp11 * n;
+    size = PolarGroup::maxp11 * n;
     ibuf.resize(size);
     for (int i = 0; i < n; ++i) {
       int nn = polgrp::np11[i];
       nbuf[i] = nn;
-      int base = i * polargroup_t::maxp11;
+      int base = i * PolarGroup::maxp11;
       int bask = i * polgrp::maxp11;
       for (int j = 0; j < nn; ++j) {
         int k = polgrp::ip11[bask + j];
@@ -66,12 +66,12 @@ void polargroup_data(rc_op op) {
     copyin_array(polargroup_obj_.np11, nbuf.data(), n);
     copyin_array(&polargroup_obj_.ip11[0][0], ibuf.data(), size);
 
-    size = polargroup_t::maxp12 * n;
+    size = PolarGroup::maxp12 * n;
     ibuf.resize(size);
     for (int i = 0; i < n; ++i) {
       int nn = polgrp::np12[i];
       nbuf[i] = nn;
-      int base = i * polargroup_t::maxp12;
+      int base = i * PolarGroup::maxp12;
       int bask = i * polgrp::maxp12;
       for (int j = 0; j < nn; ++j) {
         int k = polgrp::ip12[bask + j];
@@ -81,12 +81,12 @@ void polargroup_data(rc_op op) {
     copyin_array(polargroup_obj_.np12, nbuf.data(), n);
     copyin_array(&polargroup_obj_.ip12[0][0], ibuf.data(), size);
 
-    size = polargroup_t::maxp13 * n;
+    size = PolarGroup::maxp13 * n;
     ibuf.resize(size);
     for (int i = 0; i < n; ++i) {
       int nn = polgrp::np13[i];
       nbuf[i] = nn;
-      int base = i * polargroup_t::maxp13;
+      int base = i * PolarGroup::maxp13;
       int bask = i * polgrp::maxp13;
       for (int j = 0; j < nn; ++j) {
         int k = polgrp::ip13[bask + j];
@@ -96,12 +96,12 @@ void polargroup_data(rc_op op) {
     copyin_array(polargroup_obj_.np13, nbuf.data(), n);
     copyin_array(&polargroup_obj_.ip13[0][0], ibuf.data(), size);
 
-    size = polargroup_t::maxp14 * n;
+    size = PolarGroup::maxp14 * n;
     ibuf.resize(size);
     for (int i = 0; i < n; ++i) {
       int nn = polgrp::np14[i];
       nbuf[i] = nn;
-      int base = i * polargroup_t::maxp14;
+      int base = i * PolarGroup::maxp14;
       int bask = i * polgrp::maxp14;
       for (int j = 0; j < nn; ++j) {
         int k = polgrp::ip14[bask + j];
@@ -111,9 +111,8 @@ void polargroup_data(rc_op op) {
     copyin_array(polargroup_obj_.np14, nbuf.data(), n);
     copyin_array(&polargroup_obj_.ip14[0][0], ibuf.data(), size);
 
-    size = sizeof(polargroup_t);
-    copy_memory(polargroup, &polargroup_obj_, size,
-                CopyDirection::HostToDevice);
+    size = sizeof(PolarGroup);
+    copyin_bytes(polargroup, &polargroup_obj_, size);
   }
 }
 TINKER_NAMESPACE_END

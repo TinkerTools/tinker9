@@ -65,21 +65,19 @@ static void grow_if_must() {
 
   int* new_nebuf;
   alloc_array(&new_nebuf, sizeof(int) * cap);
-  copy_memory(new_nebuf, nebuf, sizeof(int) * old_cap,
-              CopyDirection::DeviceToDevice);
+  copy_bytes(new_nebuf, nebuf, sizeof(int) * old_cap);
   dealloc_array(nebuf);
   nebuf = new_nebuf;
 
   real* new_ebuf;
   alloc_array(&new_ebuf, rs * cap);
-  copy_memory(new_ebuf, ebuf, rs * old_cap, CopyDirection::DeviceToDevice);
+  copy_bytes(new_ebuf, ebuf, rs * old_cap);
   dealloc_array(ebuf);
   ebuf = new_ebuf;
 
   real* new_vbuf;
   alloc_array(&new_vbuf, rs * cap * virlen);
-  copy_memory(new_vbuf, vbuf, rs * old_cap * virlen,
-              CopyDirection::DeviceToDevice);
+  copy_bytes(new_vbuf, vbuf, rs * old_cap * virlen);
   dealloc_array(vbuf);
   vbuf = new_vbuf;
 

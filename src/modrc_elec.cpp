@@ -35,7 +35,7 @@ void elec_data(rc_op op) {
     const size_t rs = sizeof(real);
     size_t size;
 
-    size = sizeof(local_frame_t);
+    size = sizeof(LocalFrame);
     alloc_array(&zaxis, n * size);
     size = rs * mpl_total;
     alloc_array(&pole, n * size);
@@ -78,7 +78,7 @@ void elec_data(rc_op op) {
     // subtracted by 1 becasue of the checks in chkpole;
     // 4. GPU chkpole kernel is necessary when unexpected changes of charalities
     // may happen, e.g. in Monte Carlo simulations.
-    static_assert(sizeof(local_frame_t) == 4 * sizeof(int), "");
+    static_assert(sizeof(LocalFrame) == 4 * sizeof(int), "");
     std::vector<int> zaxisbuf(4 * n);
     for (int i = 0; i < n; ++i) {
       int base = 4 * i;

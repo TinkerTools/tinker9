@@ -415,7 +415,7 @@ void empole_recip_tmpl() {
   constexpr int deriv2[] = {3, 8, 6, 10, 14, 12, 19, 16, 20, 17};
   constexpr int deriv3[] = {4, 9, 10, 7, 15, 17, 13, 20, 18, 19};
 
-  pme_t& st = pme_obj(pu);
+  auto& st = pme_obj(pu);
   const int nfft1 = st.nfft1;
   const int nfft2 = st.nfft2;
   const int nfft3 = st.nfft3;

@@ -119,34 +119,22 @@ static void mdsave_dup_then_write_(int istep, real dt) {
 
   const size_t rs = sizeof(real);
 
-  copy_memory_async(dup_buf_esum_, esum, rs, CopyDirection::DeviceToDevice,
-                    dup_stream_bxyz_);
-  copy_memory_async(dup_buf_box_, box, sizeof(Box),
-                    CopyDirection::DeviceToDevice, dup_stream_bxyz_);
-  copy_memory_async(dup_buf_x_, x, rs * n, CopyDirection::DeviceToDevice,
-                    dup_stream_bxyz_);
-  copy_memory_async(dup_buf_y_, y, rs * n, CopyDirection::DeviceToDevice,
-                    dup_stream_bxyz_);
-  copy_memory_async(dup_buf_z_, z, rs * n, CopyDirection::DeviceToDevice,
-                    dup_stream_bxyz_);
+  copy_bytes_async(dup_buf_esum_, esum, rs, dup_stream_bxyz_);
+  copy_bytes_async(dup_buf_box_, box, sizeof(Box), dup_stream_bxyz_);
+  copy_bytes_async(dup_buf_x_, x, rs * n, dup_stream_bxyz_);
+  copy_bytes_async(dup_buf_y_, y, rs * n, dup_stream_bxyz_);
+  copy_bytes_async(dup_buf_z_, z, rs * n, dup_stream_bxyz_);
 
-  copy_memory_async(dup_buf_vx_, vx, rs * n, CopyDirection::DeviceToDevice,
-                    dup_stream_v_);
-  copy_memory_async(dup_buf_vy_, vy, rs * n, CopyDirection::DeviceToDevice,
-                    dup_stream_v_);
-  copy_memory_async(dup_buf_vz_, vz, rs * n, CopyDirection::DeviceToDevice,
-                    dup_stream_v_);
+  copy_bytes_async(dup_buf_vx_, vx, rs * n, dup_stream_v_);
+  copy_bytes_async(dup_buf_vy_, vy, rs * n, dup_stream_v_);
+  copy_bytes_async(dup_buf_vz_, vz, rs * n, dup_stream_v_);
 
-  copy_memory_async(dup_buf_gx_, gx, rs * n, CopyDirection::DeviceToDevice,
-                    dup_stream_g_);
-  copy_memory_async(dup_buf_gy_, gy, rs * n, CopyDirection::DeviceToDevice,
-                    dup_stream_g_);
-  copy_memory_async(dup_buf_gz_, gz, rs * n, CopyDirection::DeviceToDevice,
-                    dup_stream_g_);
+  copy_bytes_async(dup_buf_gx_, gx, rs * n, dup_stream_g_);
+  copy_bytes_async(dup_buf_gy_, gy, rs * n, dup_stream_g_);
+  copy_bytes_async(dup_buf_gz_, gz, rs * n, dup_stream_g_);
 
   if (mdsave_use_uind_()) {
-    copy_memory_async(dup_buf_uind_, &uind[0][0], rs * 3 * n,
-                      CopyDirection::DeviceToDevice, dup_stream_uind_);
+    copy_bytes_async(dup_buf_uind_, &uind[0][0], rs * 3 * n, dup_stream_uind_);
   }
 
   sync_stream(dup_stream_bxyz_);
@@ -162,24 +150,22 @@ static void mdsave_dup_then_write_(int istep, real dt) {
 
   // get gpu buffer and write to external files
 
-  Box b;
   std::vector<real> arrx(n), arry(n), arrz(n);
 
-  copy_memory(&epot, dup_buf_esum_, rs, CopyDirection::DeviceToHost);
-  copy_memory(&b, dup_buf_box_, sizeof(Box), CopyDirection::DeviceToHost);
-  copy_memory(arrx.data(), dup_buf_x_, rs * n, CopyDirection::DeviceToHost);
-  copy_memory(arry.data(), dup_buf_y_, rs * n, CopyDirection::DeviceToHost);
-  copy_memory(arrz.data(), dup_buf_z_, rs * n, CopyDirection::DeviceToHost);
-  box_data_copyout(b);
+  copyout_bytes(&epot, dup_buf_esum_, rs);
+  copyout_box_data(dup_buf_box_);
+  copyout_bytes(arrx.data(), dup_buf_x_, rs * n);
+  copyout_bytes(arry.data(), dup_buf_y_, rs * n);
+  copyout_bytes(arrz.data(), dup_buf_z_, rs * n);
   for (int i = 0; i < n; ++i) {
     atoms::x[i] = arrx[i];
     atoms::y[i] = arry[i];
     atoms::z[i] = arrz[i];
   }
 
-  copy_memory(arrx.data(), dup_buf_vx_, rs * n, CopyDirection::DeviceToHost);
-  copy_memory(arry.data(), dup_buf_vy_, rs * n, CopyDirection::DeviceToHost);
-  copy_memory(arrz.data(), dup_buf_vz_, rs * n, CopyDirection::DeviceToHost);
+  copyout_bytes(arrx.data(), dup_buf_vx_, rs * n);
+  copyout_bytes(arry.data(), dup_buf_vy_, rs * n);
+  copyout_bytes(arrz.data(), dup_buf_vz_, rs * n);
   for (int i = 0; i < n; ++i) {
     int j = 3 * i;
     moldyn::v[j] = arrx[i];
@@ -187,9 +173,9 @@ static void mdsave_dup_then_write_(int istep, real dt) {
     moldyn::v[j + 2] = arrz[i];
   }
 
-  copy_memory(arrx.data(), dup_buf_gx_, rs * n, CopyDirection::DeviceToHost);
-  copy_memory(arry.data(), dup_buf_gy_, rs * n, CopyDirection::DeviceToHost);
-  copy_memory(arrz.data(), dup_buf_gz_, rs * n, CopyDirection::DeviceToHost);
+  copyout_bytes(arrx.data(), dup_buf_gx_, rs * n);
+  copyout_bytes(arry.data(), dup_buf_gy_, rs * n);
+  copyout_bytes(arrz.data(), dup_buf_gz_, rs * n);
   // convert gradient to acceleration
   const double ekcal = units::ekcal;
   for (int i = 0; i < n; ++i) {
@@ -202,8 +188,7 @@ static void mdsave_dup_then_write_(int istep, real dt) {
 
   if (mdsave_use_uind_()) {
     arrx.resize(3 * n);
-    copy_memory(arrx.data(), dup_buf_uind_, 3 * rs * n,
-                CopyDirection::DeviceToHost);
+    copyout_bytes(arrx.data(), dup_buf_uind_, 3 * rs * n);
     for (int i = 0; i < 3 * n; ++i)
       polar::uind[i] = arrx[i];
   }

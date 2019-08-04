@@ -19,7 +19,7 @@ enum {
   pole_3_fold = 5
 };
 
-struct local_frame_t {
+struct LocalFrame {
   int zaxis;  ///< z-axis defining atom, starting from 0
   int xaxis;  ///< x-axis defining atom, starting from 0
   int yaxis;  ///< y-axis defining atom, starting from ONE
@@ -51,7 +51,7 @@ TINKER_EXTERN double mpole_switch_off;
 
 TINKER_EXTERN real electric, dielec;
 
-TINKER_EXTERN local_frame_t* zaxis;
+TINKER_EXTERN LocalFrame* zaxis;
 
 /// traceless Cartesian multipoles in the local frame
 TINKER_EXTERN real (*pole)[mpl_total];

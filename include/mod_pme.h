@@ -1,39 +1,10 @@
 #ifndef TINKER_MOD_PME_H_
 #define TINKER_MOD_PME_H_
 
+#include "util_genunit.h"
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-template <class T>
-class GeneralUnit {
-private:
-  int unit_;
-
-public:
-  GeneralUnit()
-      : unit_(-1) {}
-
-  GeneralUnit(int u)
-      : unit_(u) {}
-
-  bool operator<(const GeneralUnit<T>& u) const { return unit_ < u.unit_; }
-
-  bool operator==(const GeneralUnit<T>& u) const { return unit_ == u.unit_; }
-
-  int unit() const { return unit_; }
-
-public:
-  static std::vector<T>& all_objs() {
-    static std::vector<T> o;
-    return o;
-  }
-
-  static std::vector<T*>& all_deviceptrs() {
-    static std::vector<T*> o;
-    return o;
-  }
-};
-
 /**
  * pme.f and kewald.f
  *
@@ -48,7 +19,7 @@ public:
  * allocate (qgrid(2,nfft1,nfft2,nfft3)) !! real*8
  * allocate (qfac(nfft1,nfft2,nfft3))    !! real*8
  */
-struct pme_t {
+struct PME {
   real aewald;
   int nfft1, nfft2, nfft3, bsorder;
   int* igrid;                     // deviceptr
@@ -56,7 +27,7 @@ struct pme_t {
   real* qgrid;                    // deviceptr
 };
 
-typedef GeneralUnit<pme_t> PMEUnit;
+typedef GenericUnit<PME> PMEUnit;
 
 TINKER_EXTERN PMEUnit epme_unit; // electrostatic
 TINKER_EXTERN PMEUnit ppme_unit; // polarization
@@ -82,8 +53,8 @@ TINKER_EXTERN real* vir_m;
 
 void pme_data(rc_op op);
 
-pme_t& pme_obj(PMEUnit pme_u);
-pme_t* pme_deviceptr(PMEUnit pme_u);
+PME& pme_obj(PMEUnit pme_u);
+PME* pme_deviceptr(PMEUnit pme_u);
 
 /// This function must be called after pme_data has been called because it
 /// needs to know the number of pme objects created.

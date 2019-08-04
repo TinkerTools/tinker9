@@ -54,7 +54,7 @@ TINKER_NAMESPACE_BEGIN
 //======================================================================
 // double loop
 
-static void build_double_loop_(nblist_t* lst) {
+static void build_double_loop_(NBList* lst) {
   #pragma acc parallel loop independent deviceptr(lst)
   for (int i = 0; i < n; ++i) {
     lst->nlst[i] = n - i - 1;
@@ -68,7 +68,7 @@ static void build_double_loop_(nblist_t* lst) {
 // version 1
 // see also nblist.f
 
-static void build_v1_(const nblist_t& st, nblist_t* lst) {
+static void build_v1_(const NBList& st, NBList* lst) {
   const int maxnlst = st.maxnlst;
   const real buf2 = REAL_SQ(st.cutoff + st.buffer);
 
@@ -98,7 +98,7 @@ static void build_v1_(const nblist_t& st, nblist_t* lst) {
   }
 }
 
-static void displace_v1_(const nblist_t& st, nblist_t* lst) {
+static void displace_v1_(const NBList& st, NBList* lst) {
   const real lbuf2 = REAL_SQ(0.5f * st.buffer);
   #pragma acc parallel loop independent deviceptr(lst,box)
   for (int i = 0; i < n; ++i) {
@@ -120,7 +120,7 @@ static void displace_v1_(const nblist_t& st, nblist_t* lst) {
   }
 }
 
-static void update_v1_(const nblist_t& st, nblist_t* lst) {
+static void update_v1_(const NBList& st, NBList* lst) {
 
   // test sites for displacement exceeding half the buffer
 
@@ -200,7 +200,7 @@ static void update_v1_(const nblist_t& st, nblist_t* lst) {
 
 //======================================================================
 
-void nblist_build_acc_impl_(const nblist_t& st, nblist_t* lst) {
+void nblist_build_acc_impl_(const NBList& st, NBList* lst) {
   if (st.maxnlst == 1) {
     build_double_loop_(lst);
   } else {
@@ -210,7 +210,7 @@ void nblist_build_acc_impl_(const nblist_t& st, nblist_t* lst) {
 
 // #define TINKER_DEFAULT_NBLIST_UPDATE_(st, lst) build_v1_(st, lst)
 #define TINKER_DEFAULT_NBLIST_UPDATE_(st, lst) update_v1_(st, lst)
-void nblist_update_acc_impl_(const nblist_t& st, nblist_t* lst) {
+void nblist_update_acc_impl_(const NBList& st, NBList* lst) {
   if (st.maxnlst == 1) {
     // update_double_loop_();
   } else {

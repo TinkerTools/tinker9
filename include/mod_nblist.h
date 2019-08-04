@@ -4,7 +4,7 @@
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-struct nblist_t {
+struct NBList {
   enum { null = 0, double_loop = 1, nblist = 2 };
 
   int* nlst;
@@ -18,16 +18,16 @@ struct nblist_t {
   real cutoff, buffer;
 };
 
-TINKER_EXTERN nblist_t vlist_obj_;
-TINKER_EXTERN nblist_t* vlst;
-TINKER_EXTERN nblist_t dlist_obj_;
-TINKER_EXTERN nblist_t* dlst;
-TINKER_EXTERN nblist_t clist_obj_;
-TINKER_EXTERN nblist_t* clst;
-TINKER_EXTERN nblist_t mlist_obj_;
-TINKER_EXTERN nblist_t* mlst;
-TINKER_EXTERN nblist_t ulist_obj_;
-TINKER_EXTERN nblist_t* ulst;
+TINKER_EXTERN NBList vlist_obj_;
+TINKER_EXTERN NBList* vlst;
+TINKER_EXTERN NBList dlist_obj_;
+TINKER_EXTERN NBList* dlst;
+TINKER_EXTERN NBList clist_obj_;
+TINKER_EXTERN NBList* clst;
+TINKER_EXTERN NBList mlist_obj_;
+TINKER_EXTERN NBList* mlst;
+TINKER_EXTERN NBList ulist_obj_;
+TINKER_EXTERN NBList* ulst;
 
 void nblist_data(rc_op op);
 TINKER_NAMESPACE_END

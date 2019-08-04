@@ -57,7 +57,7 @@ TINKER_EXTERN Box* box;
 TINKER_EXTERN Box* trajbox;
 
 void box_data(rc_op);
-void box_data_copyout(const Box&);
+void copyout_box_data(const Box*);
 TINKER_NAMESPACE_END
 
 #endif

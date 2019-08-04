@@ -2,19 +2,37 @@
 #define TINKER_UTIL_RT_HOSTONLY_H_
 
 #include "util_macro.h"
-#include <cstdlib>
 #include <fftw3.h>
 
-TINKER_NAMESPACE_BEGIN
-typedef int* Stream;
-void dealloc_stream(Stream);
-void alloc_stream(Stream*);
-void sync_stream(Stream);
+#include <condition_variable>
+#include <functional>
+#include <mutex>
+#include <queue>
 
-enum class CopyDirection { DeviceToDevice, DeviceToHost, HostToDevice };
-void copy_memory(void* dst, const void* src, size_t count, CopyDirection);
-void copy_memory_async(void* dst, const void* src, size_t count, CopyDirection,
-                       Stream);
+TINKER_NAMESPACE_BEGIN
+class StreamSt {
+private:
+  std::mutex mq_, mi_;
+  std::condition_variable cvi_;
+  std::queue<std::function<void()>> q_;
+  bool idle_;
+  void clear_front_();
+
+public:
+  template <class F, class... Args>
+  void add_async_call(F&& call, Args&&... args) {
+    mq_.lock();
+    q_.emplace(std::bind(call, args...));
+    mq_.unlock();
+    if (idle_) {
+      idle_ = false;
+      clear_front_();
+    }
+  }
+  void sync();
+  StreamSt();
+};
+typedef StreamSt* Stream;
 
 struct FFTPlan {
 #if defined(TINKER_SINGLE_PRECISION)

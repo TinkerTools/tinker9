@@ -8,7 +8,7 @@
 #include <ext/tinker/tinker_rt.h>
 
 TINKER_NAMESPACE_BEGIN
-pme_t& pme_obj(PMEUnit pme_u) {
+PME& pme_obj(PMEUnit pme_u) {
 #if TINKER_DEBUG
   return PMEUnit::all_objs().at(pme_u.unit());
 #else
@@ -16,7 +16,7 @@ pme_t& pme_obj(PMEUnit pme_u) {
 #endif
 }
 
-pme_t* pme_deviceptr(PMEUnit pme_u) {
+PME* pme_deviceptr(PMEUnit pme_u) {
   int u = pme_u.unit();
 #if TINKER_DEBUG
   return PMEUnit::all_deviceptrs().at(pme_u.unit());
@@ -26,8 +26,8 @@ pme_t* pme_deviceptr(PMEUnit pme_u) {
 }
 
 static void pme_op_dealloc_(int pu) {
-  pme_t& st = pme_obj(pu);
-  pme_t* dptr = pme_deviceptr(pu);
+  auto& st = pme_obj(pu);
+  auto* dptr = pme_deviceptr(pu);
 
   dealloc_array(st.igrid);
   dealloc_array(st.bsmod1);
@@ -55,7 +55,7 @@ static void pme_op_alloc_(PMEUnit& unit, double aewald, int nfft1, int nfft2,
   }
 
   if (count == 0 || unique == true) {
-    PMEUnit::all_objs().emplace_back(pme_t());
+    PMEUnit::all_objs().emplace_back(PME());
     PMEUnit::all_deviceptrs().emplace_back(nullptr);
     auto& st = PMEUnit::all_objs()[idx];
     auto& dptr = PMEUnit::all_deviceptrs()[idx];
@@ -72,7 +72,7 @@ static void pme_op_alloc_(PMEUnit& unit, double aewald, int nfft1, int nfft2,
     size = nfft1 * nfft2 * nfft3 * rs;
     alloc_array(&st.qgrid, 2 * size);
 
-    size = sizeof(pme_t);
+    size = sizeof(PME);
     alloc_array(&dptr, size);
 
     st.aewald = aewald;
@@ -92,8 +92,8 @@ static void pme_op_copyin_(PMEUnit unit) {
   if (unit < 0)
     return;
 
-  pme_t& st = pme_obj(unit);
-  pme_t* dptr = pme_deviceptr(unit);
+  auto& st = pme_obj(unit);
+  auto* dptr = pme_deviceptr(unit);
 
   // This code assumes that the FFT grids of an energy term will not change in a
   // calculation.
@@ -117,8 +117,8 @@ static void pme_op_copyin_(PMEUnit unit) {
   TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft3, &st.bsorder);
   copyin_array(st.bsmod3, bsmodbuf.data(), st.nfft3);
 
-  size_t size = sizeof(pme_t);
-  copy_memory(dptr, &st, size, CopyDirection::HostToDevice);
+  size_t size = sizeof(PME);
+  copyin_bytes(dptr, &st, size);
 }
 TINKER_NAMESPACE_END
 

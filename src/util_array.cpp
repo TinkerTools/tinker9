@@ -1,5 +1,4 @@
 #include "util_array.h"
-#include "util_rc_man.h"
 #include "util_rt.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -10,14 +9,12 @@ void copyin_array_tmpl(DT* dst, const ST* src, int nelem) {
   static_assert(ds <= ss, "invalid if dst = double and src = float");
 
   size_t size = ds * nelem;
-  if_constexpr(ds == ss) {
-    copy_memory(dst, src, size, CopyDirection::HostToDevice);
-  }
+  if_constexpr(ds == ss) { copyin_bytes(dst, src, size); }
   else if_constexpr(ds < ss) {
     std::vector<DT> buf(nelem);
     for (int i = 0; i < nelem; ++i)
       buf[i] = src[i];
-    copy_memory(dst, buf.data(), size, CopyDirection::HostToDevice);
+    copyin_bytes(dst, buf.data(), size);
   }
 }
 
@@ -28,12 +25,10 @@ void copyout_array_tmpl(DT* dst, const ST* src, int nelem) {
   static_assert(ds >= ss, "invalid if dst = float and src = double");
 
   size_t size = ss * nelem;
-  if_constexpr(ds == ss) {
-    copy_memory(dst, src, size, CopyDirection::DeviceToHost);
-  }
+  if_constexpr(ds == ss) { copyout_bytes(dst, src, size); }
   else if_constexpr(ds > ss) {
     std::vector<ST> buf(nelem);
-    copy_memory(buf.data(), src, size, CopyDirection::DeviceToHost);
+    copyout_bytes(buf.data(), src, size);
     for (int i = 0; i < nelem; ++i)
       dst[i] = buf[i];
   }
@@ -119,7 +114,7 @@ template <class DT, class ST>
 void copy_array_tmpl(DT* dst, const ST* src, int nelem) {
   static_assert(std::is_same<DT, ST>::value, "");
   size_t size = sizeof(ST) * nelem;
-  copy_memory(dst, src, size, CopyDirection::DeviceToDevice);
+  copy_bytes(dst, src, size);
 }
 
 void copy_array(int* dst, const int* src, int nelem) {

@@ -87,7 +87,7 @@ static int nblist_maxlst_(int maxn, double cutoff, double buffer) {
   }
 }
 
-static void nblist_op_dealloc_(nblist_t& st, nblist_t*& list) {
+static void nblist_op_dealloc_(NBList& st, NBList*& list) {
   dealloc_array(st.nlst);
   dealloc_array(st.lst);
   dealloc_array(st.update);
@@ -97,9 +97,9 @@ static void nblist_op_dealloc_(nblist_t& st, nblist_t*& list) {
   dealloc_array(list);
 }
 
-static void nblist_op_alloc_(nblist_t& st, nblist_t*& list, int maxn,
-                             double cutoff, double buffer, const real* _x,
-                             const real* _y, const real* _z) {
+static void nblist_op_alloc_(NBList& st, NBList*& list, int maxn, double cutoff,
+                             double buffer, const real* _x, const real* _y,
+                             const real* _z) {
   const size_t rs = sizeof(int);
   size_t size;
 
@@ -132,13 +132,13 @@ static void nblist_op_alloc_(nblist_t& st, nblist_t*& list, int maxn,
   st.cutoff = cutoff;
   st.buffer = buffer;
 
-  size = sizeof(nblist_t);
+  size = sizeof(NBList);
   alloc_array(&list, size);
-  copy_memory(list, &st, size, CopyDirection::HostToDevice);
+  copyin_bytes(list, &st, size);
 }
 
-extern void nblist_build_acc_impl_(const nblist_t& st, nblist_t* lst);
-extern void nblist_update_acc_impl_(const nblist_t&, nblist_t*);
+extern void nblist_build_acc_impl_(const NBList& st, NBList* lst);
+extern void nblist_update_acc_impl_(const NBList&, NBList*);
 void nblist_data(rc_op op) {
   int maxnlst = 0;
   int u = 0;
@@ -151,7 +151,7 @@ void nblist_data(rc_op op) {
 
     if (op & rc_alloc) {
       maxnlst = 2500;
-      if (u == nblist_t::double_loop)
+      if (u == NBList::double_loop)
         maxnlst = 1;
       nblist_op_alloc_(vlist_obj_, vlst, maxnlst, limits::vdwcut,
                        neigh::lbuffer, xred, yred, zred);
@@ -176,7 +176,7 @@ void nblist_data(rc_op op) {
 
     if (op & rc_alloc) {
       maxnlst = 2500;
-      if (u == nblist_t::double_loop)
+      if (u == NBList::double_loop)
         maxnlst = 1;
       nblist_op_alloc_(dlist_obj_, dlst, maxnlst, limits::dispcut,
                        neigh::lbuffer, x, y, z);
@@ -194,7 +194,7 @@ void nblist_data(rc_op op) {
 
     if (op & rc_alloc) {
       maxnlst = 2500;
-      if (u == nblist_t::double_loop)
+      if (u == NBList::double_loop)
         maxnlst = 1;
       nblist_op_alloc_(clist_obj_, clst, maxnlst, limits::chgcut,
                        neigh::lbuffer, x, y, z);
@@ -212,7 +212,7 @@ void nblist_data(rc_op op) {
 
     if (op & rc_alloc) {
       maxnlst = 2500;
-      if (u == nblist_t::double_loop)
+      if (u == NBList::double_loop)
         maxnlst = 1;
       nblist_op_alloc_(mlist_obj_, mlst, maxnlst, limits::mpolecut,
                        neigh::lbuffer, x, y, z);
@@ -226,8 +226,7 @@ void nblist_data(rc_op op) {
         mlist_obj_.x = x;
         mlist_obj_.y = y;
         mlist_obj_.z = z;
-        copy_memory(mlst, &mlist_obj_, sizeof(nblist_t),
-                    CopyDirection::HostToDevice);
+        copyin_bytes(mlst, &mlist_obj_, sizeof(NBList));
       }
       nblist_update_acc_impl_(mlist_obj_, mlst);
     }
@@ -241,7 +240,7 @@ void nblist_data(rc_op op) {
 
     if (op & rc_alloc) {
       maxnlst = 500;
-      if (u == nblist_t::double_loop)
+      if (u == NBList::double_loop)
         maxnlst = 1;
       nblist_op_alloc_(ulist_obj_, ulst, maxnlst, limits::usolvcut,
                        neigh::pbuffer, x, y, z);

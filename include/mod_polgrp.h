@@ -4,7 +4,7 @@
 #include "util_rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-struct polargroup_t {
+struct PolarGroup {
   static const int maxp11 = 128;
   static const int maxp12 = 128; // 120 -> 128
   static const int maxp13 = 128; // 120 -> 128
@@ -17,8 +17,8 @@ struct polargroup_t {
   int (*ip14)[maxp14];
 };
 
-TINKER_EXTERN polargroup_t polargroup_obj_;
-TINKER_EXTERN polargroup_t* polargroup;
+TINKER_EXTERN PolarGroup polargroup_obj_;
+TINKER_EXTERN PolarGroup* polargroup;
 
 void polargroup_data(rc_op);
 TINKER_NAMESPACE_END
