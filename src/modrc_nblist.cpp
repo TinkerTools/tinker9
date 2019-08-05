@@ -87,7 +87,9 @@ static int nblist_maxlst_(int maxn, double cutoff, double buffer) {
   }
 }
 
-static void nblist_op_dealloc_(NBList& st, NBList*& list) {
+static void nblist_op_dealloc_(NBListUnit nblu) {
+  auto& st = nblu.obj();
+  auto* list = nblu.deviceptr();
   dealloc_bytes(st.nlst);
   dealloc_bytes(st.lst);
   dealloc_bytes(st.update);
@@ -97,9 +99,14 @@ static void nblist_op_dealloc_(NBList& st, NBList*& list) {
   dealloc_bytes(list);
 }
 
-static void nblist_op_alloc_(NBList& st, NBList*& list, int maxn, double cutoff,
+static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
                              double buffer, const real* _x, const real* _y,
                              const real* _z) {
+  NBListUnit::add_new();
+  nblu = NBListUnit::size();
+  NBList& st = nblu.obj();
+  NBList*& list = nblu.deviceptr();
+
   const size_t rs = sizeof(int);
   size_t size;
 
@@ -137,8 +144,8 @@ static void nblist_op_alloc_(NBList& st, NBList*& list, int maxn, double cutoff,
   copyin_bytes(list, &st, size);
 }
 
-extern void nblist_build_acc_impl_(const NBList& st, NBList* lst);
-extern void nblist_update_acc_impl_(const NBList&, NBList*);
+extern void nblist_build_acc_impl_(NBListUnit);
+extern void nblist_update_acc_impl_(NBListUnit);
 void nblist_data(rc_op op) {
   int maxnlst = 0;
   int u = 0;
@@ -147,24 +154,24 @@ void nblist_data(rc_op op) {
   u = use_vdw_list();
   if (u) {
     if (op & rc_dealloc)
-      nblist_op_dealloc_(vlist_obj_, vlst);
+      nblist_op_dealloc_(vlist_unit);
 
     if (op & rc_alloc) {
       maxnlst = 2500;
       if (u == NBList::double_loop)
         maxnlst = 1;
-      nblist_op_alloc_(vlist_obj_, vlst, maxnlst, limits::vdwcut,
-                       neigh::lbuffer, xred, yred, zred);
+      nblist_op_alloc_(vlist_unit, maxnlst, limits::vdwcut, neigh::lbuffer,
+                       xred, yred, zred);
     }
 
     if (op & rc_init) {
       evdw_reduce_xyz();
-      nblist_build_acc_impl_(vlist_obj_, vlst);
+      nblist_build_acc_impl_(vlist_unit);
     }
 
     if (op & rc_man::evolve) {
       // assuming evdw_reduce_xyz() has been called in the energy routine
-      nblist_update_acc_impl_(vlist_obj_, vlst);
+      nblist_update_acc_impl_(vlist_unit);
     }
   }
 
@@ -172,14 +179,14 @@ void nblist_data(rc_op op) {
   u = use_disp_list();
   if (u) {
     if (op & rc_dealloc)
-      nblist_op_dealloc_(dlist_obj_, dlst);
+      nblist_op_dealloc_(dlist_unit);
 
     if (op & rc_alloc) {
       maxnlst = 2500;
       if (u == NBList::double_loop)
         maxnlst = 1;
-      nblist_op_alloc_(dlist_obj_, dlst, maxnlst, limits::dispcut,
-                       neigh::lbuffer, x, y, z);
+      nblist_op_alloc_(dlist_unit, maxnlst, limits::dispcut, neigh::lbuffer, x,
+                       y, z);
     }
 
     if (op & rc_init) {
@@ -190,14 +197,14 @@ void nblist_data(rc_op op) {
   u = use_charge_list();
   if (u) {
     if (op & rc_dealloc)
-      nblist_op_dealloc_(clist_obj_, clst);
+      nblist_op_dealloc_(clist_unit);
 
     if (op & rc_alloc) {
       maxnlst = 2500;
       if (u == NBList::double_loop)
         maxnlst = 1;
-      nblist_op_alloc_(clist_obj_, clst, maxnlst, limits::chgcut,
-                       neigh::lbuffer, x, y, z);
+      nblist_op_alloc_(clist_unit, maxnlst, limits::chgcut, neigh::lbuffer, x,
+                       y, z);
     }
 
     if (op & rc_init) {
@@ -207,28 +214,30 @@ void nblist_data(rc_op op) {
   // mlist
   u = use_mpole_list();
   if (u) {
+    NBList& mlist_obj = mlist_unit.obj();
+    NBList*& mlst = mlist_unit.deviceptr();
     if (op & rc_dealloc)
-      nblist_op_dealloc_(mlist_obj_, mlst);
+      nblist_op_dealloc_(mlist_unit);
 
     if (op & rc_alloc) {
       maxnlst = 2500;
       if (u == NBList::double_loop)
         maxnlst = 1;
-      nblist_op_alloc_(mlist_obj_, mlst, maxnlst, limits::mpolecut,
-                       neigh::lbuffer, x, y, z);
+      nblist_op_alloc_(mlist_unit, maxnlst, limits::mpolecut, neigh::lbuffer, x,
+                       y, z);
     }
 
     if (op & rc_init)
-      nblist_build_acc_impl_(mlist_obj_, mlst);
+      nblist_build_acc_impl_(mlist_unit);
 
     if (op & rc_man::evolve) {
       if (rc_flag & calc::traj) {
-        mlist_obj_.x = x;
-        mlist_obj_.y = y;
-        mlist_obj_.z = z;
-        copyin_bytes(mlst, &mlist_obj_, sizeof(NBList));
+        mlist_obj.x = x;
+        mlist_obj.y = y;
+        mlist_obj.z = z;
+        copyin_bytes(mlst, &mlist_obj, sizeof(NBList));
       }
-      nblist_update_acc_impl_(mlist_obj_, mlst);
+      nblist_update_acc_impl_(mlist_unit);
     }
   }
 
@@ -236,14 +245,14 @@ void nblist_data(rc_op op) {
   u = use_usolv_list();
   if (u) {
     if (op & rc_dealloc)
-      nblist_op_dealloc_(ulist_obj_, ulst);
+      nblist_op_dealloc_(ulist_unit);
 
     if (op & rc_alloc) {
       maxnlst = 500;
       if (u == NBList::double_loop)
         maxnlst = 1;
-      nblist_op_alloc_(ulist_obj_, ulst, maxnlst, limits::usolvcut,
-                       neigh::pbuffer, x, y, z);
+      nblist_op_alloc_(ulist_unit, maxnlst, limits::usolvcut, neigh::pbuffer, x,
+                       y, z);
     }
 
     if (op & rc_init) {

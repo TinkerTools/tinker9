@@ -19,7 +19,8 @@ void empole_coulomb_tmpl() {
 
   const real off = mpole_switch_off;
   const real off2 = off * off;
-  const int maxnlst = mlist_obj_.maxnlst;
+  const int maxnlst = mlist_unit.obj().maxnlst;
+  const NBList* mlst = mlist_unit.deviceptr();
 
   static std::vector<real> mscalebuf;
   mscalebuf.resize(n, 1);

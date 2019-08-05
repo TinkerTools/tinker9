@@ -25,7 +25,8 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
 
   const real off = ewald_switch_off;
   const real off2 = off * off;
-  const int maxnlst = mlist_obj_.maxnlst;
+  const int maxnlst = mlist_unit.obj().maxnlst;
+  const NBList* mlst = mlist_unit.deviceptr();
 
   static std::vector<real> pscalebuf;
   static std::vector<real> dscalebuf;

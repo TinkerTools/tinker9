@@ -37,15 +37,15 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]") {
 
   copyin_tinker_arc(x1, 1, 5, 1);
 
-  const int maxnlst = vlist_obj_.maxnlst;
+  const int maxnlst = vlist_unit.obj().maxnlst;
   std::vector<int> nlst;
   nlst.resize(n);
   std::vector<int> lst;
   lst.resize(n * maxnlst);
 
   for (int ifr = 0;;) {
-    copyout_array(nlst.data(), vlist_obj_.nlst, n);
-    copyout_array(lst.data(), vlist_obj_.lst, n * maxnlst);
+    copyout_array(nlst.data(), vlist_unit.obj().nlst, n);
+    copyout_array(lst.data(), vlist_unit.obj().lst, n * maxnlst);
 
     for (int iatom = 0; iatom < n; ++iatom)
       REQUIRE(find_match(&lst[iatom * maxnlst], nlst[iatom], ifr, iatom));

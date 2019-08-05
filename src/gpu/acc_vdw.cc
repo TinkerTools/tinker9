@@ -34,7 +34,8 @@ void evdw_tmpl() {
   const real off = vdw_switch_off;
   const real cut2 = cut * cut;
   const real off2 = off * off;
-  const int maxnlst = vlist_obj_.maxnlst;
+  const int maxnlst = vlist_unit.obj().maxnlst;
+  const NBList* vlst = vlist_unit.deviceptr();
 
   static std::vector<real> vscalebuf;
   vscalebuf.resize(n, 1);

@@ -40,7 +40,7 @@ static void pme_op_alloc_(PMEUnit& unit, double aewald, int nfft1, int nfft2,
   }
 
   if (count == 0 || unique == true) {
-    PMEUnit::emplace_back(PME());
+    PMEUnit::add_new();
     st_u = idx;
     auto& st = st_u.obj();
     PME*& dptr = st_u.deviceptr();
