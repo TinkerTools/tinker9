@@ -3,6 +3,7 @@
 
 #include "macro.h"
 #include <cmath>
+#include <cstdlib>
 
 #define INT_ABS(x) abs(x)
 

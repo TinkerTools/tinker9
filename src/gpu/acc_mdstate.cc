@@ -1,4 +1,4 @@
-#include "mod_md.h"
+#include "md.h"
 
 TINKER_NAMESPACE_BEGIN
 void sum_energy_acc_impl_(real* ebuf, int top) {

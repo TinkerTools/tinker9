@@ -1,5 +1,5 @@
-#ifndef TINKER_MOD_ELEC_H_
-#define TINKER_MOD_ELEC_H_
+#ifndef TINKER_ELEC_H_
+#define TINKER_ELEC_H_
 
 #include "rc_man.h"
 

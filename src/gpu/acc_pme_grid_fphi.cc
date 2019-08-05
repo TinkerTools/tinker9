@@ -1,8 +1,8 @@
+#include "box.h"
 #include "gpu/e_mpole.h"
-#include "mod_box.h"
-#include "mod_md.h"
-#include "mod_pme.h"
 #include "mathfunc.h"
+#include "md.h"
+#include "pme.h"
 
 TINKER_NAMESPACE_BEGIN
 // see also subroutine bsplgen in pmestuf.f

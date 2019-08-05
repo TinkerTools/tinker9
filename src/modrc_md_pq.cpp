@@ -1,6 +1,6 @@
-#include "mod_box.h"
-#include "mod_md.h"
-#include "util_array.h"
+#include "array.h"
+#include "box.h"
+#include "md.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

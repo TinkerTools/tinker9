@@ -2,7 +2,7 @@
 #include "gpu/e_angle.h"
 #include "gpu/e_bond.h"
 #include "gpu/e_strbnd.h"
-#include "mod_md.h"
+#include "md.h"
 
 TINKER_NAMESPACE_BEGIN
 template <int USE>

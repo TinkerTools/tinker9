@@ -1,5 +1,5 @@
-#ifndef TINKER_MOD_COUPLE_H_
-#define TINKER_MOD_COUPLE_H_
+#ifndef TINKER_COUPLE_H_
+#define TINKER_COUPLE_H_
 
 #include "rc_man.h"
 

@@ -1,6 +1,6 @@
-#include "mod_md.h"
-#include "mod_polgrp.h"
-#include "util_array.h"
+#include "array.h"
+#include "md.h"
+#include "polgrp.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

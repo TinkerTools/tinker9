@@ -1,9 +1,9 @@
 #ifndef TINKER_UTIL_TEST_RT_H_
 #define TINKER_UTIL_TEST_RT_H_
 
-#include "mod_md.h"
+#include "array.h"
+#include "md.h"
 #include "rc_man.h"
-#include "util_array.h"
 #include "util_io.h"
 #include "util_potential.h"
 #include <array>

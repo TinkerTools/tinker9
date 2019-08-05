@@ -1,6 +1,6 @@
 #ifdef TINKER_HOST
 
-#  include "mod_pme.h"
+#  include "pme.h"
 #  include "rt.h"
 
 TINKER_NAMESPACE_BEGIN

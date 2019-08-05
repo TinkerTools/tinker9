@@ -1,6 +1,6 @@
 #include "acc_seq.h"
 #include "gpu/e_pitors.h"
-#include "mod_md.h"
+#include "md.h"
 
 TINKER_NAMESPACE_BEGIN
 template <int USE>

@@ -1,9 +1,10 @@
 #include "acc_seq.h"
+#include "array.h"
+#include "couple.h"
 #include "gpu/e_polar.h"
-#include "mod_couple.h"
-#include "mod_md.h"
-#include "mod_nblist.h"
-#include "util_array.h"
+#include "md.h"
+#include "nblist.h"
+#include <vector>
 
 TINKER_NAMESPACE_BEGIN
 // see also subroutine dfield0b in induce.f

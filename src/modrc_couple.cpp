@@ -1,6 +1,6 @@
-#include "mod_couple.h"
-#include "mod_md.h"
-#include "util_array.h"
+#include "array.h"
+#include "couple.h"
+#include "md.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

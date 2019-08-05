@@ -1,7 +1,7 @@
 #ifndef TINKER_SRC_TINKER_GPU_H_
 #define TINKER_SRC_TINKER_GPU_H_
 
-#include "mod_md.h"
+#include "md.h"
 
 #include "util_io.h"
 #include "util_md.h"

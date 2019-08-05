@@ -1,10 +1,10 @@
 #ifndef TINKER_GPU_E_POLAR_H_
 #define TINKER_GPU_E_POLAR_H_
 
-#include "mod_elec.h"
-#include "mod_polgrp.h"
-#include <string>
+#include "elec.h"
+#include "polgrp.h"
 #include "rc_man.h"
+#include <string>
 
 TINKER_NAMESPACE_BEGIN
 extern int epolar_electyp;

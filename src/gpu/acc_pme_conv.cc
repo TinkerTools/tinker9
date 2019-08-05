@@ -1,8 +1,8 @@
-#include "mod_box.h"
-#include "mod_elec.h"
-#include "mod_md.h"
-#include "mod_pme.h"
+#include "box.h"
+#include "elec.h"
 #include "mathfunc.h"
+#include "md.h"
+#include "pme.h"
 
 TINKER_NAMESPACE_BEGIN
 template <int DO_V>

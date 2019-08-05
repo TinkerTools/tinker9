@@ -1,8 +1,8 @@
 #ifndef TINKER_GPU_E_BOND_H_
 #define TINKER_GPU_E_BOND_H_
 
-#include <string>
 #include "rc_man.h"
+#include <string>
 
 TINKER_NAMESPACE_BEGIN
 enum { bond_harmonic = 0x001, bond_morse = 0x002 };

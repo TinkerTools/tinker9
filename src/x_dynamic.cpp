@@ -1,3 +1,4 @@
+#include "rt.h"
 #include "tinker_gpu.h"
 #include <cmath>
 

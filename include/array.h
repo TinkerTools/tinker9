@@ -1,18 +1,26 @@
-#ifndef TINKER_UTIL_ARRAY_H_
-#define TINKER_UTIL_ARRAY_H_
+#ifndef TINKER_ARRAY_H_
+#define TINKER_ARRAY_H_
 
 #include "macro.h"
-#include <array>
-#include <vector>
+#include "rt.h"
 
 TINKER_NAMESPACE_BEGIN
+/// @brief
+/// zero out the first n elements of an array on device
+/// @{
 void zero_array(int* dst, int nelem);
 void zero_array(float* dst, int nelem);
 void zero_array(double* dst, int nelem);
+/// @}
 
 // copyin: copy data from host to device
 // copyout: data from device to host
 
+/// @brief
+/// copy the first n elements bewtween two arrays,
+/// either from host to device (copyin),
+/// or from device to host (copyout)
+/// @{
 void copyin_array(int* dst, const int* src, int nelem);
 void copyout_array(int* dst, const int* src, int nelem);
 
@@ -24,13 +32,17 @@ void copyout_array(double* dst, const float* src, int nelem);
 
 void copyin_array(double* dst, const double* src, int nelem);
 void copyout_array(double* dst, const double* src, int nelem);
+/// @}
 
-// copy all src[c][idx0] to dst[c] (c = 0, 1, ..., nelem-1), i.e.
-// copy all src(idx0+1,f) to dst(f) (f = 1, 2, ..., nelem)
-// idx0 = 0, 1, ..., ndim-1
-// Shape of dst: dst[nelem], i.e. dst(nelem)
-// Shape of src: src[nelm][ndim], i.e. src(ndim,nelem)
-
+/// @brief
+/// copy the @c idx0-th of every @c ndim elements from @c src to @c dst
+///
+/// @param[in] idx0
+/// ranges from 0 to ndim-1
+///
+/// @param[in] nelem
+/// number of elements copied to @c dst
+/// @{
 void copyin_array2(int idx0, int ndim, float* dst, const float* src, int nelem);
 void copyout_array2(int idx0, int ndim, float* dst, const float* src,
                     int nelem);
@@ -44,27 +56,15 @@ void copyin_array2(int idx0, int ndim, double* dst, const double* src,
                    int nelem);
 void copyout_array2(int idx0, int ndim, double* dst, const double* src,
                     int nelem);
+/// @}
 
-// Shape of dst: dst[nelem][3], i.e. dst(3,nelem)
-// Shape of src: src[nelem][3], i.e. src(3,nelem)
-
-template <class DT, class ST>
-void copyout_array3(DT (*dst)[3], const ST (*src)[3], int natom) {
-  copyout_array(&dst[0][0], &src[0][0], 3 * natom);
-}
-
-// dst shall be resized inside this function
-template <class DT, class ST>
-void copyout_array3(std::vector<std::array<DT, 3>>& dst, const ST (*src)[3],
-                    int natom) {
-  dst.resize(natom);
-  copyout_array(&dst[0][0], &src[0][0], 3 * natom);
-}
-
-// transfer data across two device memory addresses
+/// @brief
+/// copy the first n elements between two arrays on device
+/// @{
 void copy_array(int* dst, const int* src, int nelem);
 void copy_array(float* dst, const float* src, int nelem);
 void copy_array(double* dst, const double* src, int nelem);
+/// @}
 TINKER_NAMESPACE_END
 
 #endif

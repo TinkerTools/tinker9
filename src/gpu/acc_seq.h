@@ -60,7 +60,7 @@ TINKER_NAMESPACE_END
 //======================================================================
 // image and imagen
 
-#include "mod_box.h"
+#include "box.h"
 
 TINKER_NAMESPACE_BEGIN
 /**

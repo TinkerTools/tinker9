@@ -1,7 +1,7 @@
 #include "util_potential.h"
-#include "mod_md.h"
-#include "mod_nblist.h"
-#include "mod_polgrp.h"
+#include "md.h"
+#include "nblist.h"
+#include "polgrp.h"
 #include "util_potent.h"
 
 TINKER_NAMESPACE_BEGIN

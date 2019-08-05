@@ -1,6 +1,6 @@
 #include "acc_seq.h"
-#include "mod_md.h"
-#include "mod_nblist.h"
+#include "md.h"
+#include "nblist.h"
 
 #ifdef TINKER_HOST
 #  include <algorithm>

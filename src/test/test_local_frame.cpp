@@ -258,8 +258,10 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
     elec_init(calc::v0);
     dfield_coulomb(&udir[0][0], &udirp[0][0]);
     std::vector<std::array<double, 3>> fieldd, fieldp;
-    copyout_array3(fieldd, udir, n);
-    copyout_array3(fieldp, udirp, n);
+    fieldd.resize(n);
+    fieldp.resize(n);
+    copyout_array(&fieldd[0][0], &udir[0][0], 3 * n);
+    copyout_array(&fieldp[0][0], &udirp[0][0], 3 * n);
     for (int i = 0; i < n; ++i) {
       for (int j = 0; j < 3; ++j) {
         REQUIRE(fieldd[i][j] == Approx(ref_dir_field_d[i][j]).margin(eps_f));
@@ -308,8 +310,10 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
     copyin_array(&uind[0][0], &ud[0][0], 3 * n);
     copyin_array(&uinp[0][0], &up[0][0], 3 * n);
     ufield_coulomb(&uind[0][0], &uinp[0][0], &udir[0][0], &udirp[0][0]);
-    copyout_array3(ud, udir, n);
-    copyout_array3(up, udirp, n);
+    ud.resize(n);
+    up.resize(n);
+    copyout_array(&ud[0][0], &udir[0][0], 3 * n);
+    copyout_array(&up[0][0], &udirp[0][0], 3 * n);
     const double debye = units::debye;
     for (int i = 0; i < n; ++i) {
       for (int j = 0; j < 3; ++j) {
@@ -349,8 +353,10 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
     elec_init(calc::v0);
     induce(&uind[0][0], &uinp[0][0]);
     std::vector<std::array<double, 3>> ud, up;
-    copyout_array3(ud, uind, n);
-    copyout_array3(up, uinp, n);
+    ud.resize(n);
+    up.resize(n);
+    copyout_array(&ud[0][0], &uind[0][0], 3 * n);
+    copyout_array(&up[0][0], &uinp[0][0], 3 * n);
     for (int i = 0; i < n; ++i) {
       for (int j = 0; j < 3; ++j) {
         REQUIRE(ud[i][j] * debye == Approx(ref_ud_debye[i][j]).margin(eps_f));
@@ -461,8 +467,10 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
     elec_init(calc::v0);
     dfield_ewald(&udir[0][0], &udirp[0][0]);
     std::vector<std::array<double, 3>> fieldd, fieldp;
-    copyout_array3(fieldd, udir, n);
-    copyout_array3(fieldp, udirp, n);
+    fieldd.resize(n);
+    fieldp.resize(n);
+    copyout_array(&fieldd[0][0], &udir[0][0], 3 * n);
+    copyout_array(&fieldp[0][0], &udirp[0][0], 3 * n);
     for (int i = 0; i < n; ++i) {
       for (int j = 0; j < 3; ++j) {
         REQUIRE(fieldd[i][j] == Approx(ref_dir_field_d[i][j]).margin(eps_f));
@@ -511,8 +519,11 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
     copyin_array(&uind[0][0], &ud[0][0], 3 * n);
     copyin_array(&uinp[0][0], &up[0][0], 3 * n);
     ufield_ewald(&uind[0][0], &uinp[0][0], &udir[0][0], &udirp[0][0]);
-    copyout_array3(ud, udir, n);
-    copyout_array3(up, udirp, n);
+    ud.resize(n);
+    up.resize(n);
+    copyout_array(&ud[0][0], &udir[0][0], 3 * n);
+    copyout_array(&up[0][0], &udirp[0][0], 3 * n);
+
     const double debye = units::debye;
     for (int i = 0; i < n; ++i) {
       for (int j = 0; j < 3; ++j) {
@@ -552,8 +563,10 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
     elec_init(calc::v0);
     induce(&uind[0][0], &uinp[0][0]);
     std::vector<std::array<double, 3>> ud, up;
-    copyout_array3(ud, uind, n);
-    copyout_array3(up, uinp, n);
+    ud.resize(n);
+    up.resize(n);
+    copyout_array(&ud[0][0], &uind[0][0], 3 * n);
+    copyout_array(&up[0][0], &uinp[0][0], 3 * n);
     for (int i = 0; i < n; ++i) {
       for (int j = 0; j < 3; ++j) {
         REQUIRE(ud[i][j] * debye == Approx(ref_ud_debye[i][j]).margin(eps_f));

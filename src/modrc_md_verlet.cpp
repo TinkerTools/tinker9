@@ -1,4 +1,4 @@
-#include "mod_md.h"
+#include "md.h"
 #include "util_md.h"
 #include "util_potential.h"
 #include <ext/tinker/tinker_mod.h>

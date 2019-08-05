@@ -1,7 +1,7 @@
+#include "box.h"
 #include "gpu/e_mpole.h"
-#include "mod_box.h"
-#include "mod_md.h"
-#include "mod_pme.h"
+#include "md.h"
+#include "pme.h"
 
 /**
  * @file

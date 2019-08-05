@@ -1,6 +1,6 @@
-#include "mod_elec.h"
-#include "mod_md.h"
+#include "elec.h"
 #include "mathfunc.h"
+#include "md.h"
 
 TINKER_NAMESPACE_BEGIN
 #pragma acc routine seq

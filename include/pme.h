@@ -1,5 +1,5 @@
-#ifndef TINKER_MOD_PME_H_
-#define TINKER_MOD_PME_H_
+#ifndef TINKER_PME_H_
+#define TINKER_PME_H_
 
 #include "gen_unit.h"
 #include "rc_man.h"

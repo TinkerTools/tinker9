@@ -1,5 +1,5 @@
-#ifndef TINKER_MOD_NBLIST_H_
-#define TINKER_MOD_NBLIST_H_
+#ifndef TINKER_NBLIST_H_
+#define TINKER_NBLIST_H_
 
 #include "rc_man.h"
 

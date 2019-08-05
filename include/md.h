@@ -1,8 +1,7 @@
-#ifndef TINKER_MOD_MD_H_
-#define TINKER_MOD_MD_H_
+#ifndef TINKER_MD_H_
+#define TINKER_MD_H_
 
 #include "rc_man.h"
-#include "rt.h"
 
 TINKER_NAMESPACE_BEGIN
 TINKER_EXTERN int rc_flag;

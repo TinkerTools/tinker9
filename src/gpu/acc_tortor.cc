@@ -1,6 +1,6 @@
 #include "acc_seq.h"
 #include "gpu/e_tortor.h"
-#include "mod_md.h"
+#include "md.h"
 
 // TODO: test chiral center
 

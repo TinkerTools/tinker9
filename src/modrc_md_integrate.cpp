@@ -1,6 +1,7 @@
-#include "mod_md.h"
+#include "md.h"
 #include "util_io.h"
 #include "util_md.h"
+#include <cassert>
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

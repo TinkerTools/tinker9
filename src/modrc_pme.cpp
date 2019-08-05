@@ -1,9 +1,9 @@
-#include "mod_md.h"
-#include "mod_pme.h"
-#include "util_array.h"
+#include "array.h"
 #include "mathfunc.h"
-#include "util_potent.h"
+#include "md.h"
+#include "pme.h"
 #include "switch.h"
+#include "util_potent.h"
 #include <ext/tinker/tinker_mod.h>
 #include <ext/tinker/tinker_rt.h>
 

@@ -1,7 +1,6 @@
 #ifndef TINKER_GPU_E_VDW_H_
 #define TINKER_GPU_E_VDW_H_
 
-
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN

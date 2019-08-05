@@ -1,6 +1,6 @@
 #include "acc_seq.h"
 #include "gpu/e_angle.h"
-#include "mod_md.h"
+#include "md.h"
 
 // TODO: test linear and fourier angles
 // TODO: merge the branching

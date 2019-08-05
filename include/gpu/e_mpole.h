@@ -1,8 +1,8 @@
 #ifndef TINKER_GPU_E_MPOLE_H_
 #define TINKER_GPU_E_MPOLE_H_
 
+#include "elec.h"
 #include <string>
-#include "mod_elec.h"
 
 TINKER_NAMESPACE_BEGIN
 extern int empole_electyp;
