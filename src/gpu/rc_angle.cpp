@@ -32,7 +32,7 @@ void eangle_data(rc_op op) {
 
     dealloc_bytes(angtyp);
 
-    free_ev(ea, vir_ea);
+    dealloc_ev(ea, vir_ea);
   }
 
   if (op & rc_alloc) {

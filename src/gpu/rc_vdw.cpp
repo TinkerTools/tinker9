@@ -94,7 +94,7 @@ void evdw_data(rc_op op) {
 
     dealloc_bytes(vlam);
 
-    free_nev(nev, ev, vir_ev);
+    dealloc_nev(nev, ev, vir_ev);
   }
 
   if (op & rc_alloc) {

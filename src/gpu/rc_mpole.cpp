@@ -31,7 +31,7 @@ void empole_data(rc_op op) {
     return;
 
   if (op & rc_dealloc)
-    free_nev(nem, em, vir_em);
+    dealloc_nev(nem, em, vir_em);
 
   if (op & rc_alloc)
     alloc_nev(&nem, &em, &vir_em);

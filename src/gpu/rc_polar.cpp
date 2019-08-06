@@ -60,7 +60,7 @@ void epolar_data(rc_op op) {
     dealloc_bytes(pdamp);
     dealloc_bytes(polarity_inv);
 
-    free_nev(nep, ep, vir_ep);
+    dealloc_nev(nep, ep, vir_ep);
 
     dealloc_bytes(ufld);
     dealloc_bytes(dufld);

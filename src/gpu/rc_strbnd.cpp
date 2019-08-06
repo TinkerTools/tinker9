@@ -21,7 +21,7 @@ void estrbnd_data(rc_op op) {
     dealloc_bytes(isb);
     dealloc_bytes(sbk);
 
-    free_ev(eba, vir_eba);
+    dealloc_ev(eba, vir_eba);
   }
 
   if (op & rc_alloc) {

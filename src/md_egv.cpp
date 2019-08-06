@@ -1,14 +1,16 @@
 #include "array.h"
 #include "md.h"
-#include <ext/tinker/tinker_mod.h>
-
+#include "rt.h"
+#include <ext/tinker/detail/energi.hh>
+#include <ext/tinker/detail/virial.hh>
 #include <map>
 
 TINKER_NAMESPACE_BEGIN
-
-//======================================================================
-
 namespace energy_buffer_ {
+static bool use_ev() {
+  return rc_flag & (calc::analyz | calc::energy | calc::virial);
+}
+
 static const int virlen = 16;
 static int end;
 static int cap;
@@ -20,6 +22,9 @@ static std::map<real**, int> e_addr_idx;
 static std::map<real**, int> v_addr_idx;
 
 static void data(rc_op op) {
+  if (!use_ev())
+    return;
+
   if (op & rc_dealloc) {
     end = 0;
     cap = 0;
@@ -118,64 +123,72 @@ static void alloc3(real** pe, real** pv, int** pne) {
   ++end;
 }
 
-static void dealloc3(real* /* pe */, real* /* pv */, int* /* pne */) {}
+static void dealloc3(real*, // pe
+                     real*, // pv
+                     int*)  // pne
+{}
 }
-//======================================================================
+TINKER_NAMESPACE_END
+
+TINKER_NAMESPACE_BEGIN
+static void ev_data_(rc_op op) {
+  if (!energy_buffer_::use_ev())
+    return;
+
+  if (op & rc_dealloc)
+    dealloc_ev(esum, vir);
+
+  if (op & rc_alloc)
+    alloc_ev(&esum, &vir);
+
+  if (op & rc_init) {
+    if (calc::energy & rc_flag)
+      copyin_array(esum, &energi::esum, 1);
+
+    if (calc::virial & rc_flag)
+      copyin_array(vir, &virial::vir[0][0], 9);
+  }
+}
+
+static void grad_data_(rc_op op) {
+  if (!(rc_flag & calc::grad))
+    return;
+
+  if (op & rc_dealloc) {
+    dealloc_bytes(gx);
+    dealloc_bytes(gy);
+    dealloc_bytes(gz);
+  }
+
+  if (op & rc_alloc) {
+    const size_t size = sizeof(real) * n;
+    alloc_bytes(&gx, size);
+    alloc_bytes(&gy, size);
+    alloc_bytes(&gz, size);
+  }
+
+  // we can never assume whether or not deriv::desum was allocated, because it
+  // was allocated inside subroutine gradient(...), which would be skipped in
+  // subroutine mdinit() if a dyn file existed to restart a simulation.
+
+  // if (op & rc_init) {
+  // copy in deriv::sum to gx, gy, and gz
+  // }
+}
 
 void egv_data(rc_op op) {
-  if (rc_flag & (calc::analyz | calc::energy | calc::virial)) {
-    energy_buffer_::data(op);
-
-    if (op & rc_dealloc) {
-      free_ev(esum, vir);
-    }
-
-    if (op & rc_alloc) {
-      alloc_ev(&esum, &vir);
-    }
-
-    if (op & rc_init) {
-      if (calc::energy & rc_flag)
-        copyin_array(esum, &energi::esum, 1);
-
-      if (calc::virial & rc_flag)
-        copyin_array(vir, &virial::vir[0][0], 9);
-    }
-  }
-
-  if (rc_flag & calc::grad) {
-    if (op & rc_dealloc) {
-      dealloc_bytes(gx);
-      dealloc_bytes(gy);
-      dealloc_bytes(gz);
-    }
-
-    if (op & rc_alloc) {
-      const size_t size = sizeof(real) * n;
-      alloc_bytes(&gx, size);
-      alloc_bytes(&gy, size);
-      alloc_bytes(&gz, size);
-    }
-
-    // We can never assume whether or not deriv::desum was allocated, because it
-    // was allocated inside subroutine gradient(...), which would be skipped in
-    // subroutine mdinit() if a dyn file existed to restart a simulation.
-
-    // if (op & rc_init) {
-    //   copyin_array2(2, 3, gz, deriv::desum, n);
-    //   copyin_array2(2, 3, gz, deriv::desum, n);
-    //   copyin_array2(2, 3, gz, deriv::desum, n);
-    // }
-  }
+  rc_man energy_buffer42_{energy_buffer_::data, op};
+  rc_man ev42_{ev_data_, op};
+  rc_man grad42_{grad_data_, op};
 }
+TINKER_NAMESPACE_END
 
-//======================================================================
-
+TINKER_NAMESPACE_BEGIN
 void alloc_ev(real** gpu_e, real** gpu_v) {
   energy_buffer_::alloc3(gpu_e, gpu_v, nullptr);
 }
 
-void free_ev(real* gpu_e, real* gpu_v) {
+void dealloc_ev(real* gpu_e, real* gpu_v) {
   energy_buffer_::dealloc3(gpu_e, gpu_v, nullptr);
 }
 
@@ -183,11 +196,9 @@ void alloc_nev(int** gpu_ne, real** gpu_e, real** gpu_v) {
   energy_buffer_::alloc3(gpu_e, gpu_v, gpu_ne);
 }
 
-void free_nev(int* gpu_ne, real* gpu_e, real* gpu_v) {
+void dealloc_nev(int* gpu_ne, real* gpu_e, real* gpu_v) {
   energy_buffer_::dealloc3(gpu_e, gpu_v, gpu_ne);
 }
-
-//======================================================================
 
 double get_energy(const real* e_gpu) {
   double e_out;

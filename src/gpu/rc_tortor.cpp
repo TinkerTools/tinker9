@@ -49,7 +49,7 @@ void etortor_data(rc_op op) {
 
     dealloc_bytes(chkttor_ia_);
 
-    free_ev(ett, vir_ett);
+    dealloc_ev(ett, vir_ett);
   }
 
   if (op & rc_alloc) {

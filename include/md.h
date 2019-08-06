@@ -4,26 +4,44 @@
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
+/// flags for the program
 TINKER_EXTERN int rc_flag;
-// number of frames
+
+/// number of frames
 TINKER_EXTERN int trajn;
-// number of atoms
+
+/// number of atoms
 TINKER_EXTERN int n;
-// x y z coordinates
+
+/// x, y, z coordinates
+/// @{
 TINKER_EXTERN real *trajx, *trajy, *trajz;
 TINKER_EXTERN real *x, *y, *z;
-// velocities
-TINKER_EXTERN real *vx, *vy, *vz;
-// atomic mass
-TINKER_EXTERN real *mass, *massinv;
+/// @}
 
-// total potential energy
+/// velocities
+/// @{
+TINKER_EXTERN real *vx, *vy, *vz;
+/// @}
+
+/// atomic mass and inversed mass
+/// @}
+TINKER_EXTERN real *mass, *massinv;
+/// @}
+
+/// total potential energy on device
 TINKER_EXTERN real* esum;
-// total potential energy and kinetic energy
+
+/// total potential energy and kinetic energy on host
+/// @{
 TINKER_EXTERN real epot, eksum, ekin[3][3];
-// total gradients
+
+/// total gradients
+/// @{
 TINKER_EXTERN real *gx, *gy, *gz;
-// total virial
+/// @}
+
+/// total virial
 TINKER_EXTERN real* vir;
 
 typedef enum {
@@ -34,6 +52,9 @@ typedef enum {
   thermo_null
 } thermostat_t;
 
+/// thermostat
+TINKER_EXTERN thermostat_t thermostat;
+
 typedef enum {
   baro_berendsen,
   baro_bussi,
@@ -42,7 +63,7 @@ typedef enum {
   baro_null
 } barostat_t;
 
-TINKER_EXTERN thermostat_t thermostat;
+/// barostat
 TINKER_EXTERN barostat_t barostat;
 
 namespace calc {
@@ -82,30 +103,37 @@ void sanity_check() {
   static_assert(do_a ? do_e : true, "");
 }
 
-//======================================================================
 void egv_data(rc_op op);
+TINKER_NAMESPACE_END
 
-//======================================================================
-// energy, gradient, and virial de/allocation
-
+TINKER_NAMESPACE_BEGIN
+/// @brief
+/// energy, virial, and count number de/allocation
+/// @{
 void alloc_ev(real** gpu_e, real** gpu_v);
-void free_ev(real* gpu_e, real* gpu_v);
-
+void dealloc_ev(real* gpu_e, real* gpu_v);
 void alloc_nev(int** gpu_ne, real** gpu_e, real** gpu_v);
-void free_nev(int* gpu_ne, real* gpu_e, real* gpu_v);
+void dealloc_nev(int* gpu_ne, real* gpu_e, real* gpu_v);
+/// @}
 
+/// @brief
+/// get energy, virial, and count number from device to host
+/// @{
 double get_energy(const real* e_gpu);
 int get_count(const int* ecount_gpu);
 void get_virial(double* v_out, const real* v_gpu);
+/// @}
+
+/// @brief
 /// zero out global total energy, gradients, and virial on device
+/// @{
 void zero_egv(int vers);
 void zero_egv();
+/// @}
 
-/// sum potential energies and virials
+/// @brief
+/// sum up potential energies and virials on device
 void sum_energies(int vers);
-
-void goto_frame0(int idx0);
-void goto_frame1(int idx1);
 TINKER_NAMESPACE_END
 
 #endif

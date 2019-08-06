@@ -25,7 +25,7 @@ void eopbend_data(rc_op op) {
     dealloc_bytes(iopb);
     dealloc_bytes(opbk);
 
-    free_ev(eopb, vir_eopb);
+    dealloc_ev(eopb, vir_eopb);
   }
 
   if (op & rc_alloc) {

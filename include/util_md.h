@@ -30,6 +30,7 @@ void mdsave_synchronize();
 
 void md_data(rc_op op);
 
+void goto_frame(int idx0);
 void copyin_tinker_arc(const std::string& arcfile, int first1, int last1,
                        int step);
 TINKER_NAMESPACE_END

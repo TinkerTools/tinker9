@@ -25,7 +25,7 @@ void eurey_data(rc_op op) {
     dealloc_bytes(uk);
     dealloc_bytes(ul);
 
-    free_ev(eub, vir_eub);
+    dealloc_ev(eub, vir_eub);
   }
 
   if (op & rc_alloc) {

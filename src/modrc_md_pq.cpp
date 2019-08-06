@@ -127,14 +127,11 @@ void mass_data(rc_op op) {
   }
 }
 
-void goto_frame0(int idx0) {
+void goto_frame(int idx0) {
   assert(calc::traj & rc_flag);
   x = trajx + n * idx0;
   y = trajy + n * idx0;
   z = trajz + n * idx0;
   box = trajbox + idx0;
 }
-
-void goto_frame1(int idx1) { goto_frame0(idx1 - 1); }
-
 TINKER_NAMESPACE_END

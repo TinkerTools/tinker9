@@ -26,7 +26,7 @@ void ebond_data(rc_op op) {
     dealloc_bytes(bl);
     dealloc_bytes(bk);
 
-    free_ev(eb, vir_eb);
+    dealloc_ev(eb, vir_eb);
   }
 
   if (op & rc_alloc) {

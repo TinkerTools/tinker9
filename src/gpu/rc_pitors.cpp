@@ -21,7 +21,7 @@ void epitors_data(rc_op op) {
     dealloc_bytes(ipit);
     dealloc_bytes(kpit);
 
-    free_ev(ept, vir_ept);
+    dealloc_ev(ept, vir_ept);
   }
 
   if (op & rc_alloc) {

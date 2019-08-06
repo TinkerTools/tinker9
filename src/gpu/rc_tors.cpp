@@ -31,7 +31,7 @@ void etors_data(rc_op op) {
     dealloc_bytes(tors5);
     dealloc_bytes(tors6);
 
-    free_ev(et, vir_et);
+    dealloc_ev(et, vir_et);
   }
 
   if (op & rc_alloc) {
