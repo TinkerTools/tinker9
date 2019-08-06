@@ -275,23 +275,23 @@ void empole_coulomb_tmpl() {
             real vzz = -zr * frcz;
 
             #pragma acc atomic update
-            vir_em[_xx] += vxx;
+            vir_em[0] += vxx;
             #pragma acc atomic update
-            vir_em[_yx] += vxy;
+            vir_em[1] += vxy;
             #pragma acc atomic update
-            vir_em[_zx] += vxz;
+            vir_em[2] += vxz;
             #pragma acc atomic update
-            vir_em[_xy] += vxy;
+            vir_em[3] += vxy;
             #pragma acc atomic update
-            vir_em[_yy] += vyy;
+            vir_em[4] += vyy;
             #pragma acc atomic update
-            vir_em[_zy] += vyz;
+            vir_em[5] += vyz;
             #pragma acc atomic update
-            vir_em[_xz] += vxz;
+            vir_em[6] += vxz;
             #pragma acc atomic update
-            vir_em[_yz] += vyz;
+            vir_em[7] += vyz;
             #pragma acc atomic update
-            vir_em[_zz] += vzz;
+            vir_em[8] += vzz;
           } // end if (do_v)
         }   // end if (do_g)
       }     // end if (r2 <= off2)

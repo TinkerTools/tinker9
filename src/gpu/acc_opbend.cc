@@ -207,23 +207,23 @@ void eopbend_tmpl() {
           real vzz = zab * dedzia + zcb * dedzic + zdb * dedzid;
 
           #pragma acc atomic update
-          vir_eopb[_xx] += vxx;
+          vir_eopb[0] += vxx;
           #pragma acc atomic update
-          vir_eopb[_yx] += vyx;
+          vir_eopb[1] += vyx;
           #pragma acc atomic update
-          vir_eopb[_zx] += vzx;
+          vir_eopb[2] += vzx;
           #pragma acc atomic update
-          vir_eopb[_xy] += vyx;
+          vir_eopb[3] += vyx;
           #pragma acc atomic update
-          vir_eopb[_yy] += vyy;
+          vir_eopb[4] += vyy;
           #pragma acc atomic update
-          vir_eopb[_zy] += vzy;
+          vir_eopb[5] += vzy;
           #pragma acc atomic update
-          vir_eopb[_xz] += vzx;
+          vir_eopb[6] += vzx;
           #pragma acc atomic update
-          vir_eopb[_yz] += vzy;
+          vir_eopb[7] += vzy;
           #pragma acc atomic update
-          vir_eopb[_zz] += vzz;
+          vir_eopb[8] += vzz;
         }
       }
     }

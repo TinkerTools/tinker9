@@ -189,23 +189,23 @@ void etors_tmpl() {
           real vzz = zcb * (dedzic + dedzid) - zba * dedzia + zdc * dedzid;
 
           #pragma acc atomic update
-          vir_et[_xx] += vxx;
+          vir_et[0] += vxx;
           #pragma acc atomic update
-          vir_et[_yx] += vyx;
+          vir_et[1] += vyx;
           #pragma acc atomic update
-          vir_et[_zx] += vzx;
+          vir_et[2] += vzx;
           #pragma acc atomic update
-          vir_et[_xy] += vyx;
+          vir_et[3] += vyx;
           #pragma acc atomic update
-          vir_et[_yy] += vyy;
+          vir_et[4] += vyy;
           #pragma acc atomic update
-          vir_et[_zy] += vzy;
+          vir_et[5] += vzy;
           #pragma acc atomic update
-          vir_et[_xz] += vzx;
+          vir_et[6] += vzx;
           #pragma acc atomic update
-          vir_et[_yz] += vzy;
+          vir_et[7] += vzy;
           #pragma acc atomic update
-          vir_et[_zz] += vzz;
+          vir_et[8] += vzz;
         }
       }
     }

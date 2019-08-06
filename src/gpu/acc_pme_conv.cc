@@ -72,23 +72,23 @@ void pme_conv_tmpl(PMEUnit pme_u, real* gpu_vir9) {
         real vzz = (h3 * h3 * vterm - eterm);
 
         #pragma acc atomic update
-        gpu_vir9[_xx] += vxx;
+        gpu_vir9[0] += vxx;
         #pragma acc atomic update
-        gpu_vir9[_xy] += vxy;
+        gpu_vir9[3] += vxy;
         #pragma acc atomic update
-        gpu_vir9[_xz] += vxz;
+        gpu_vir9[6] += vxz;
         #pragma acc atomic update
-        gpu_vir9[_yx] += vxy;
+        gpu_vir9[1] += vxy;
         #pragma acc atomic update
-        gpu_vir9[_yy] += vyy;
+        gpu_vir9[4] += vyy;
         #pragma acc atomic update
-        gpu_vir9[_yz] += vyz;
+        gpu_vir9[7] += vyz;
         #pragma acc atomic update
-        gpu_vir9[_zx] += vxz;
+        gpu_vir9[2] += vxz;
         #pragma acc atomic update
-        gpu_vir9[_zy] += vyz;
+        gpu_vir9[5] += vyz;
         #pragma acc atomic update
-        gpu_vir9[_zz] += vzz;
+        gpu_vir9[8] += vzz;
       }
     }
 

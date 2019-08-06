@@ -45,22 +45,6 @@ typedef enum {
 TINKER_EXTERN thermostat_t thermostat;
 TINKER_EXTERN barostat_t barostat;
 
-enum {
-  _x = 0, /// x direction
-  _y = 1, /// y direction
-  _z = 2, /// z direction
-
-  _xx = 0, /// xx component
-  _yx = 1, /// yx component
-  _zx = 2, /// zx component
-  _xy = 3, /// xy component
-  _yy = 4, /// yy component
-  _zy = 5, /// zy component
-  _xz = 6, /// xz component
-  _yz = 7, /// yz component
-  _zz = 8  /// zz component
-};
-
 namespace calc {
 enum {
   xyz = 0x001,  ///< xyz
@@ -68,20 +52,21 @@ enum {
   mass = 0x004, ///< mass
   traj = 0x008, ///< trajectory
 
-  energy = 0x010, ///< energy 16
-  grad = 0x020,   ///< gradient 32
-  virial = 0x040, ///< virial 64
-  analyz = 0x080, ///< analyze 128
+  energy = 0x010, ///<  16 energy
+  grad = 0x020,   ///<  32 gradient
+  virial = 0x040, ///<  64 virial
+  analyz = 0x080, ///< 128 analyze
+
+  v0 = energy,                 ///<  16 similar to version 0 tinker energies
+  v1 = energy + grad + virial, ///< 112 similar to version 1 tinker energies
+  v3 = energy + analyz,        ///< 144 similar to version 3 tinker energies
+  v4 = energy + grad,          ///<  48 energy and gradient only
+  v5 = grad,                   ///<  32 gradient only
+  v6 = grad + virial,          ///<  96 gradient and virial only
+
+  vmask = energy + grad + virial + analyz, ///< version flag mask
 
   md = 0x100, ///< md calculation
-
-  vmask = energy + grad + virial + analyz,
-  v0 = energy,                 //  16
-  v1 = energy + grad + virial, // 112
-  v3 = energy + analyz,        // 144
-  v4 = energy + grad,          //  48
-  v5 = grad,                   //  32
-  v6 = grad + virial,          //  96
 };
 }
 

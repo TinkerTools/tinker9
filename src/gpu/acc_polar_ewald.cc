@@ -665,23 +665,23 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
             real vzz = zr * frcz;
 
             #pragma acc atomic update
-            vir_ep[_xx] += vxx;
+            vir_ep[0] += vxx;
             #pragma acc atomic update
-            vir_ep[_yx] += vxy;
+            vir_ep[1] += vxy;
             #pragma acc atomic update
-            vir_ep[_zx] += vxz;
+            vir_ep[2] += vxz;
             #pragma acc atomic update
-            vir_ep[_xy] += vxy;
+            vir_ep[3] += vxy;
             #pragma acc atomic update
-            vir_ep[_yy] += vyy;
+            vir_ep[4] += vyy;
             #pragma acc atomic update
-            vir_ep[_zy] += vyz;
+            vir_ep[5] += vyz;
             #pragma acc atomic update
-            vir_ep[_xz] += vxz;
+            vir_ep[6] += vxz;
             #pragma acc atomic update
-            vir_ep[_yz] += vyz;
+            vir_ep[7] += vyz;
             #pragma acc atomic update
-            vir_ep[_zz] += vzz;
+            vir_ep[8] += vzz;
           }
         }
         // end if use_thole
@@ -1020,23 +1020,23 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       // end if
 
       #pragma acc atomic update
-      vir_ep[_xx] += vxx;
+      vir_ep[0] += vxx;
       #pragma acc atomic update
-      vir_ep[_yx] += vxy;
+      vir_ep[1] += vxy;
       #pragma acc atomic update
-      vir_ep[_zx] += vxz;
+      vir_ep[2] += vxz;
       #pragma acc atomic update
-      vir_ep[_xy] += vxy;
+      vir_ep[3] += vxy;
       #pragma acc atomic update
-      vir_ep[_yy] += vyy;
+      vir_ep[4] += vyy;
       #pragma acc atomic update
-      vir_ep[_zy] += vyz;
+      vir_ep[5] += vyz;
       #pragma acc atomic update
-      vir_ep[_xz] += vxz;
+      vir_ep[6] += vxz;
       #pragma acc atomic update
-      vir_ep[_yz] += vyz;
+      vir_ep[7] += vyz;
       #pragma acc atomic update
-      vir_ep[_zz] += vzz;
+      vir_ep[8] += vzz;
     }
 
     // qgrip: pvu_qgrid
@@ -1109,23 +1109,23 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
         real vzz = (h3 * h3 * vterm - eterm);
 
         #pragma acc atomic update
-        vir_ep[_xx] += vxx;
+        vir_ep[0] += vxx;
         #pragma acc atomic update
-        vir_ep[_xy] += vxy;
+        vir_ep[3] += vxy;
         #pragma acc atomic update
-        vir_ep[_xz] += vxz;
+        vir_ep[6] += vxz;
         #pragma acc atomic update
-        vir_ep[_yx] += vxy;
+        vir_ep[1] += vxy;
         #pragma acc atomic update
-        vir_ep[_yy] += vyy;
+        vir_ep[4] += vyy;
         #pragma acc atomic update
-        vir_ep[_yz] += vyz;
+        vir_ep[7] += vyz;
         #pragma acc atomic update
-        vir_ep[_zx] += vxz;
+        vir_ep[2] += vxz;
         #pragma acc atomic update
-        vir_ep[_zy] += vyz;
+        vir_ep[5] += vyz;
         #pragma acc atomic update
-        vir_ep[_zz] += vzz;
+        vir_ep[8] += vzz;
       }
     }
   }

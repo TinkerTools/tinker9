@@ -12,8 +12,8 @@ TINKER_NAMESPACE_BEGIN
  * resource handle: can be used as signed integers, similar to Fortran I/O unit
  *
  * @tparam USE_DPTR
- * whether to allocate memory on device and store the device pointer for the
- * host object
+ * whether to allocate memory on device and store the device pointer that
+ * corresponds to the host object
  */
 template <class T, int USE_DPTR = 0>
 class GenericUnit {
@@ -43,8 +43,8 @@ public:
   }
 
   static void resize(size_t s) {
-    hostobjs_().resize(s, T());
-    if_constexpr(USE_DPTR) deviceptrs_().resize(s, nullptr);
+    hostobjs_().resize(s);
+    if_constexpr(USE_DPTR) deviceptrs_().resize(s);
   }
 
   static GenericUnit add_new() {

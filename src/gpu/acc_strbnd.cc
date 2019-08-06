@@ -131,23 +131,23 @@ void estrbnd_tmpl() {
           real vzz = zab * dedzia + zcb * dedzic;
 
           #pragma acc atomic update
-          vir_eba[_xx] += vxx;
+          vir_eba[0] += vxx;
           #pragma acc atomic update
-          vir_eba[_yx] += vyx;
+          vir_eba[1] += vyx;
           #pragma acc atomic update
-          vir_eba[_zx] += vzx;
+          vir_eba[2] += vzx;
           #pragma acc atomic update
-          vir_eba[_xy] += vyx;
+          vir_eba[3] += vyx;
           #pragma acc atomic update
-          vir_eba[_yy] += vyy;
+          vir_eba[4] += vyy;
           #pragma acc atomic update
-          vir_eba[_zy] += vzy;
+          vir_eba[5] += vzy;
           #pragma acc atomic update
-          vir_eba[_xz] += vzx;
+          vir_eba[6] += vzx;
           #pragma acc atomic update
-          vir_eba[_yz] += vzy;
+          vir_eba[7] += vzy;
           #pragma acc atomic update
-          vir_eba[_zz] += vzz;
+          vir_eba[8] += vzz;
         }
       }
     }

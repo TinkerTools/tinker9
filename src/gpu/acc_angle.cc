@@ -136,23 +136,23 @@ void eangle_tmpl() {
             real vzz = zab * dedzia + zcb * dedzic;
 
             #pragma acc atomic update
-            vir_ea[_xx] += vxx;
+            vir_ea[0] += vxx;
             #pragma acc atomic update
-            vir_ea[_yx] += vyx;
+            vir_ea[1] += vyx;
             #pragma acc atomic update
-            vir_ea[_zx] += vzx;
+            vir_ea[2] += vzx;
             #pragma acc atomic update
-            vir_ea[_xy] += vyx;
+            vir_ea[3] += vyx;
             #pragma acc atomic update
-            vir_ea[_yy] += vyy;
+            vir_ea[4] += vyy;
             #pragma acc atomic update
-            vir_ea[_zy] += vzy;
+            vir_ea[5] += vzy;
             #pragma acc atomic update
-            vir_ea[_xz] += vzx;
+            vir_ea[6] += vzx;
             #pragma acc atomic update
-            vir_ea[_yz] += vzy;
+            vir_ea[7] += vzy;
             #pragma acc atomic update
-            vir_ea[_zz] += vzz;
+            vir_ea[8] += vzz;
           }
         }
       }
@@ -294,23 +294,23 @@ void eangle_tmpl() {
             real vzz = zad * dedzia + zbd * dedzib + zcd * dedzic;
 
             #pragma acc atomic update
-            vir_ea[_xx] += vxx;
+            vir_ea[0] += vxx;
             #pragma acc atomic update
-            vir_ea[_yx] += vyx;
+            vir_ea[1] += vyx;
             #pragma acc atomic update
-            vir_ea[_zx] += vzx;
+            vir_ea[2] += vzx;
             #pragma acc atomic update
-            vir_ea[_xy] += vyx;
+            vir_ea[3] += vyx;
             #pragma acc atomic update
-            vir_ea[_yy] += vyy;
+            vir_ea[4] += vyy;
             #pragma acc atomic update
-            vir_ea[_zy] += vzy;
+            vir_ea[5] += vzy;
             #pragma acc atomic update
-            vir_ea[_xz] += vzx;
+            vir_ea[6] += vzx;
             #pragma acc atomic update
-            vir_ea[_yz] += vzy;
+            vir_ea[7] += vzy;
             #pragma acc atomic update
-            vir_ea[_zz] += vzz;
+            vir_ea[8] += vzz;
           }
         }
       }

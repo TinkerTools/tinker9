@@ -189,23 +189,23 @@ void evdw_tmpl() {
           real vzz = zr * dedz;
 
           #pragma acc atomic update
-          vir_ev[_xx] += vxx;
+          vir_ev[0] += vxx;
           #pragma acc atomic update
-          vir_ev[_yx] += vyx;
+          vir_ev[1] += vyx;
           #pragma acc atomic update
-          vir_ev[_zx] += vzx;
+          vir_ev[2] += vzx;
           #pragma acc atomic update
-          vir_ev[_xy] += vyx;
+          vir_ev[3] += vyx;
           #pragma acc atomic update
-          vir_ev[_yy] += vyy;
+          vir_ev[4] += vyy;
           #pragma acc atomic update
-          vir_ev[_zy] += vzy;
+          vir_ev[5] += vzy;
           #pragma acc atomic update
-          vir_ev[_xz] += vzx;
+          vir_ev[6] += vzx;
           #pragma acc atomic update
-          vir_ev[_yz] += vzy;
+          vir_ev[7] += vzy;
           #pragma acc atomic update
-          vir_ev[_zz] += vzz;
+          vir_ev[8] += vzz;
         }
       }
     } // end for (int kk)

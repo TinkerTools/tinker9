@@ -64,23 +64,23 @@ void eurey_tmpl() {
         real vzz = zac * dedz;
 
         #pragma acc atomic update
-        vir_eub[_xx] += vxx;
+        vir_eub[0] += vxx;
         #pragma acc atomic update
-        vir_eub[_yx] += vyx;
+        vir_eub[1] += vyx;
         #pragma acc atomic update
-        vir_eub[_zx] += vzx;
+        vir_eub[2] += vzx;
         #pragma acc atomic update
-        vir_eub[_xy] += vyx;
+        vir_eub[3] += vyx;
         #pragma acc atomic update
-        vir_eub[_yy] += vyy;
+        vir_eub[4] += vyy;
         #pragma acc atomic update
-        vir_eub[_zy] += vzy;
+        vir_eub[5] += vzy;
         #pragma acc atomic update
-        vir_eub[_xz] += vzx;
+        vir_eub[6] += vzx;
         #pragma acc atomic update
-        vir_eub[_yz] += vzy;
+        vir_eub[7] += vzy;
         #pragma acc atomic update
-        vir_eub[_zz] += vzz;
+        vir_eub[8] += vzz;
       }
     }
   } // end for (int i)

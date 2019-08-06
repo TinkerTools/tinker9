@@ -361,23 +361,23 @@ void torque_tmpl(real* gpu_vir) {
       real vzz = zix * frcx[2] + ziy * frcy[2] + ziz * frcz[2];
 
       #pragma acc atomic update
-      gpu_vir[_xx] += vxx;
+      gpu_vir[0] += vxx;
       #pragma acc atomic update
-      gpu_vir[_yx] += vxy;
+      gpu_vir[1] += vxy;
       #pragma acc atomic update
-      gpu_vir[_zx] += vxz;
+      gpu_vir[2] += vxz;
       #pragma acc atomic update
-      gpu_vir[_xy] += vxy;
+      gpu_vir[3] += vxy;
       #pragma acc atomic update
-      gpu_vir[_yy] += vyy;
+      gpu_vir[4] += vyy;
       #pragma acc atomic update
-      gpu_vir[_zy] += vyz;
+      gpu_vir[5] += vyz;
       #pragma acc atomic update
-      gpu_vir[_xz] += vxz;
+      gpu_vir[6] += vxz;
       #pragma acc atomic update
-      gpu_vir[_yz] += vyz;
+      gpu_vir[7] += vyz;
       #pragma acc atomic update
-      gpu_vir[_zz] += vzz;
+      gpu_vir[8] += vzz;
     } // end if_constexpr(DO_V)
   }   // end for (int i)
 }

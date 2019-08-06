@@ -213,23 +213,23 @@ void epitors_tmpl() {
           real vzz = zdc * vzterm + zcp * dedzip - zqd * dedziq;
 
           #pragma acc atomic update
-          vir_ept[_xx] += vxx;
+          vir_ept[0] += vxx;
           #pragma acc atomic update
-          vir_ept[_yx] += vyx;
+          vir_ept[1] += vyx;
           #pragma acc atomic update
-          vir_ept[_zx] += vzx;
+          vir_ept[2] += vzx;
           #pragma acc atomic update
-          vir_ept[_xy] += vyx;
+          vir_ept[3] += vyx;
           #pragma acc atomic update
-          vir_ept[_yy] += vyy;
+          vir_ept[4] += vyy;
           #pragma acc atomic update
-          vir_ept[_zy] += vzy;
+          vir_ept[5] += vzy;
           #pragma acc atomic update
-          vir_ept[_xz] += vzx;
+          vir_ept[6] += vzx;
           #pragma acc atomic update
-          vir_ept[_yz] += vzy;
+          vir_ept[7] += vzy;
           #pragma acc atomic update
-          vir_ept[_zz] += vzz;
+          vir_ept[8] += vzz;
         }
       }
     }

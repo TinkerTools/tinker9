@@ -78,23 +78,23 @@ void ebond_tmpl() {
         real vzz = zab * dedz;
 
         #pragma acc atomic update
-        vir_eb[_xx] += vxx;
+        vir_eb[0] += vxx;
         #pragma acc atomic update
-        vir_eb[_yx] += vyx;
+        vir_eb[1] += vyx;
         #pragma acc atomic update
-        vir_eb[_zx] += vzx;
+        vir_eb[2] += vzx;
         #pragma acc atomic update
-        vir_eb[_xy] += vyx;
+        vir_eb[3] += vyx;
         #pragma acc atomic update
-        vir_eb[_yy] += vyy;
+        vir_eb[4] += vyy;
         #pragma acc atomic update
-        vir_eb[_zy] += vzy;
+        vir_eb[5] += vzy;
         #pragma acc atomic update
-        vir_eb[_xz] += vzx;
+        vir_eb[6] += vzx;
         #pragma acc atomic update
-        vir_eb[_yz] += vzy;
+        vir_eb[7] += vzy;
         #pragma acc atomic update
-        vir_eb[_zz] += vzz;
+        vir_eb[8] += vzz;
       }
     }
   } // end for (int i)

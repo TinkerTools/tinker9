@@ -395,23 +395,23 @@ void etortor_tmpl() {
           real vzz2 = zdc * (dedzid2 + dedzie2) - zcb * dedzib2 + zed * dedzie2;
 
           #pragma acc atomic update
-          vir_ett[_xx] += (vxx + vxx2);
+          vir_ett[0] += (vxx + vxx2);
           #pragma acc atomic update
-          vir_ett[_yx] += (vyx + vyx2);
+          vir_ett[1] += (vyx + vyx2);
           #pragma acc atomic update
-          vir_ett[_zx] += (vzx + vzx2);
+          vir_ett[2] += (vzx + vzx2);
           #pragma acc atomic update
-          vir_ett[_xy] += (vyx + vyx2);
+          vir_ett[3] += (vyx + vyx2);
           #pragma acc atomic update
-          vir_ett[_yy] += (vyy + vyy2);
+          vir_ett[4] += (vyy + vyy2);
           #pragma acc atomic update
-          vir_ett[_zy] += (vzy + vzy2);
+          vir_ett[5] += (vzy + vzy2);
           #pragma acc atomic update
-          vir_ett[_xz] += (vzx + vzx2);
+          vir_ett[6] += (vzx + vzx2);
           #pragma acc atomic update
-          vir_ett[_yz] += (vzy + vzy2);
+          vir_ett[7] += (vzy + vzy2);
           #pragma acc atomic update
-          vir_ett[_zz] += (vzz + vzz2);
+          vir_ett[8] += (vzz + vzz2);
         }
       }
     }
