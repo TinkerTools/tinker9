@@ -23,7 +23,7 @@ struct PolarGroup {
   ~PolarGroup();
 };
 
-typedef GenericUnit<PolarGroup, 1> PolarGroupUnit;
+typedef GenericUnit<PolarGroup, GenericUnitVersion::V1> PolarGroupUnit;
 TINKER_EXTERN PolarGroupUnit polargroup_unit;
 
 void polargroup_data(rc_op);

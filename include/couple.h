@@ -23,7 +23,7 @@ struct Couple {
   ~Couple();
 };
 
-typedef GenericUnit<Couple, 1> CoupleUnit;
+typedef GenericUnit<Couple, GenericUnitVersion::V0> CoupleUnit;
 TINKER_EXTERN CoupleUnit couple_unit;
 
 void couple_data(rc_op);

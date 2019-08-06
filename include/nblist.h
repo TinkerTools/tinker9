@@ -30,7 +30,7 @@ struct NBList {
   ~NBList();
 };
 
-typedef GenericUnit<NBList, 1> NBListUnit;
+typedef GenericUnit<NBList, GenericUnitVersion::V0> NBListUnit;
 TINKER_EXTERN NBListUnit vlist_unit;
 TINKER_EXTERN NBListUnit dlist_unit;
 TINKER_EXTERN NBListUnit clist_unit;

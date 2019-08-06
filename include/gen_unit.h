@@ -7,11 +7,13 @@
 #include <vector>
 
 TINKER_NAMESPACE_BEGIN
-template <int USE_DPTR>
+enum class GenericUnitVersion { V0, V1 };
+
+template <GenericUnitVersion VERS>
 struct GenericUnitAlloc;
 
 template <>
-struct GenericUnitAlloc<0> {
+struct GenericUnitAlloc<GenericUnitVersion::V0> {
   struct Dealloc {
     void operator()(void*) {}
   };
@@ -31,16 +33,17 @@ struct GenericUnitAlloc<0> {
  *
  * analogous to to Fortran I/O unit that can be used as signed integers
  *
- * @tparam USE_DPTR
- * whether to allocate memory on device and store the device pointer that
- * corresponds to the host object;
- * if greater than 0, can be extended to identify different de/allocation
- * methods
+ * @tparam VERSION
+ * mainly used for identifying whether to allocate memory on device and store
+ * the device pointer that corresponds to the host object; can be extended to
+ * specify different de/allocation methods
  */
-template <class T, int USE_DPTR = 0>
+template <class T, GenericUnitVersion VERSION = GenericUnitVersion::V0>
 class GenericUnit {
 private:
   int m_unit;
+
+  static constexpr int USE_DPTR = (VERSION == GenericUnitVersion::V0 ? 0 : 1);
 
   typedef std::vector<std::unique_ptr<T>> hostptr_vec;
   static hostptr_vec& hostptrs() {
@@ -48,7 +51,7 @@ private:
     return o;
   }
 
-  typedef typename GenericUnitAlloc<USE_DPTR>::Dealloc Dealloc;
+  typedef typename GenericUnitAlloc<VERSION>::Dealloc Dealloc;
   typedef std::vector<std::unique_ptr<T, Dealloc>> dptr_vec;
   static dptr_vec& deviceptrs() {
     assert(USE_DPTR);
@@ -56,8 +59,8 @@ private:
     return o;
   }
 
-  typedef typename GenericUnitAlloc<USE_DPTR>::Alloc Alloc;
-  typedef typename GenericUnitAlloc<USE_DPTR>::Copyin Copyin;
+  typedef typename GenericUnitAlloc<VERSION>::Alloc Alloc;
+  typedef typename GenericUnitAlloc<VERSION>::Copyin Copyin;
 
 public:
   static int size() {
