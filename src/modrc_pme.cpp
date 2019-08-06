@@ -21,29 +21,17 @@ static void pme_op_dealloc_(PMEUnit pu) {
   dealloc_bytes(dptr);
 }
 
-static void pme_op_alloc_(PMEUnit& unit, double aewald, int nfft1, int nfft2,
-                          int nfft3, int bsorder, bool unique) {
-  int count = 0;
-  int first = -1;
-  const double eps = 1.0e-6;
-  int idx;
-  PMEUnit st_u;
-  for (idx = 0; idx < PMEUnit::size(); ++idx) {
-    st_u = idx;
-    auto& st = st_u.obj();
-    if (std::abs(aewald - st.aewald) < eps && nfft1 == st.nfft1 &&
-        nfft2 == st.nfft2 && nfft3 == st.nfft3 && bsorder == st.bsorder) {
-      ++count;
-      if (count == 1)
-        first = idx;
-    }
+static void pme_op_alloc_(PMEUnit& unit, const PME::Params& M p, bool unique) {
+  unit = -1;
+  for (PMEUnit idx = 0; idx < PMEUnit::size(); idx = idx + 1) {
+    if (idx.obj() == p)
+      unit = idx;
   }
 
-  if (count == 0 || unique == true) {
-    PMEUnit::add_new();
-    st_u = idx;
-    auto& st = st_u.obj();
-    PME*& dptr = st_u.deviceptr();
+  if (unit == -1 || unique == true) {
+    unit = PMEUnit::add_new();
+    PME& st = unit.obj();
+    PME*& dptr = unit.deviceptr();
 
     const size_t rs = sizeof(real);
     size_t size;
@@ -51,25 +39,17 @@ static void pme_op_alloc_(PMEUnit& unit, double aewald, int nfft1, int nfft2,
     size = 3 * n * sizeof(int);
     alloc_bytes(&st.igrid, size);
     // see also subroutine moduli in pmestuf.f
-    alloc_bytes(&st.bsmod1, rs * nfft1);
-    alloc_bytes(&st.bsmod2, rs * nfft2);
-    alloc_bytes(&st.bsmod3, rs * nfft3);
-    size = nfft1 * nfft2 * nfft3 * rs;
+    alloc_bytes(&st.bsmod1, rs * p.nfft1);
+    alloc_bytes(&st.bsmod2, rs * p.nfft2);
+    alloc_bytes(&st.bsmod3, rs * p.nfft3);
+    size = p.nfft1 * p.nfft2 * p.nfft3 * rs;
     alloc_bytes(&st.qgrid, 2 * size);
 
     size = sizeof(PME);
     alloc_bytes(&dptr, size);
 
-    st.aewald = aewald;
-    st.nfft1 = nfft1;
-    st.nfft2 = nfft2;
-    st.nfft3 = nfft3;
-    st.bsorder = bsorder;
-  } else {
-    idx = first;
+    st.set_params(p);
   }
-
-  unit = idx;
 }
 
 static void pme_op_copyin_(PMEUnit unit) {
@@ -186,20 +166,21 @@ void pme_data(rc_op op) {
     epme_unit = -1;
     if (use_potent(mpole_term)) {
       unique_grids = false;
-      pme_op_alloc_(epme_unit, ewald::aeewald, pme::nefft1, pme::nefft2,
-                    pme::nefft3, pme::bseorder, unique_grids);
+      PME::Params p(ewald::aeewald, pme::nefft1, pme::nefft2, pme::nefft3,
+                    pme::bseorder);
+      pme_op_alloc_(epme_unit, p, unique_grids);
     }
 
     // polarization
     ppme_unit = -1;
     pvpme_unit = -1;
     if (use_potent(polar_term)) {
-      pme_op_alloc_(ppme_unit, ewald::apewald, pme::nefft1, pme::nefft2,
-                    pme::nefft3, pme::bsporder, unique_grids);
+      PME::Params p(ewald::apewald, pme::nefft1, pme::nefft2, pme::nefft3,
+                    pme::bsporder);
+      pme_op_alloc_(ppme_unit, p, unique_grids);
       if (rc_flag & calc::virial) {
         unique_grids = true;
-        pme_op_alloc_(pvpme_unit, ewald::apewald, pme::nefft1, pme::nefft2,
-                      pme::nefft3, pme::bsporder, unique_grids);
+        pme_op_alloc_(pvpme_unit, p, unique_grids);
       }
     }
 
@@ -207,8 +188,9 @@ void pme_data(rc_op op) {
     dpme_unit = -1;
     if (false) {
       unique_grids = false;
-      pme_op_alloc_(dpme_unit, ewald::adewald, pme::ndfft1, pme::ndfft2,
-                    pme::ndfft3, pme::bsdorder, unique_grids);
+      PME::Params p(ewald::adewald, pme::ndfft1, pme::ndfft2, pme::ndfft3,
+                    pme::bsdorder);
+      pme_op_alloc_(dpme_unit, p, unique_grids);
     }
   }
 

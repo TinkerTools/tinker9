@@ -3,28 +3,62 @@
 
 #include "gen_unit.h"
 #include "rc_man.h"
+#include <cmath>
 
 TINKER_NAMESPACE_BEGIN
 /**
- * pme.f and kewald.f
+ * @brief
+ * particle mesh ewald girds and parameters
  *
- * allocate igrid(3,n)                   !! integer
- * allocate (bsmod1(nfft1))              !! real*8
- * allocate (bsmod2(nfft2))              !! real*8
- * allocate (bsmod3(nfft3))              !! real*8
- * allocate (bsbuild(bsorder,bsorder))   !! real*8
- * allocate (thetai1(4,bsorder,n))       !! real*8
- * allocate (thetai2(4,bsorder,n))       !! real*8
- * allocate (thetai3(4,bsorder,n))       !! real*8
- * allocate (qgrid(2,nfft1,nfft2,nfft3)) !! real*8
- * allocate (qfac(nfft1,nfft2,nfft3))    !! real*8
+ * @code{.f}
+ * !! allocate igrid(3,n)
+ * !! allocate (bsbuild(bsorder,bsorder))
+ * !! allocate (thetai1(4,bsorder,n))
+ * !! allocate (thetai2(4,bsorder,n))
+ * !! allocate (thetai3(4,bsorder,n))
+ * !! allocate (qfac(nfft1,nfft2,nfft3))
+ * allocate (bsmod1(nfft1))
+ * allocate (bsmod2(nfft2))
+ * allocate (bsmod3(nfft3))
+ * allocate (qgrid(2,nfft1,nfft2,nfft3))
+ * @endcode
  */
 struct PME {
+  struct Params {
+    real aewald;
+    int nfft1, nfft2, nfft3, bsorder;
+    Params(real a, int n1, int n2, int n3, int o)
+        : aewald(a)
+        , nfft1(n1)
+        , nfft2(n2)
+        , nfft3(n3)
+        , bsorder(o) {}
+    bool operator==(const Params& st) const {
+      const double eps = 1.0e-6;
+      bool ans = std::fabs(aewald - st.aewald) < eps && nfft1 == st.nfft1 &&
+          nfft2 == st.nfft2 && nfft3 == st.nfft3 && bsorder == st.bsorder;
+      return ans;
+    }
+  };
+
   real aewald;
   int nfft1, nfft2, nfft3, bsorder;
   int* igrid;                     // deviceptr
   real *bsmod1, *bsmod2, *bsmod3; // deviceptr
   real* qgrid;                    // deviceptr
+
+  bool operator==(const Params& p) const {
+    Params p0(aewald, nfft1, nfft2, nfft3, bsorder);
+    return p0 == p;
+  }
+
+  void set_params(const Params& p) {
+    aewald = p.aewald;
+    nfft1 = p.nfft1;
+    nfft2 = p.nfft2;
+    nfft3 = p.nfft3;
+    bsorder = p.bsorder;
+  }
 };
 
 typedef GenericUnit<PME, 1> PMEUnit;

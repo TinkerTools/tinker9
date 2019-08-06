@@ -102,8 +102,7 @@ static void nblist_op_dealloc_(NBListUnit nblu) {
 static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
                              double buffer, const real* _x, const real* _y,
                              const real* _z) {
-  NBListUnit::add_new();
-  nblu = NBListUnit::size();
+  nblu = NBListUnit::add_new();
   NBList& st = nblu.obj();
   NBList*& list = nblu.deviceptr();
 
@@ -214,8 +213,6 @@ void nblist_data(rc_op op) {
   // mlist
   u = use_mpole_list();
   if (u) {
-    NBList& mlist_obj = mlist_unit.obj();
-    NBList*& mlst = mlist_unit.deviceptr();
     if (op & rc_dealloc)
       nblist_op_dealloc_(mlist_unit);
 
@@ -232,6 +229,8 @@ void nblist_data(rc_op op) {
 
     if (op & rc_man::evolve) {
       if (rc_flag & calc::traj) {
+        auto& mlist_obj = mlist_unit.obj();
+        auto* mlst = mlist_unit.deviceptr();
         mlist_obj.x = x;
         mlist_obj.y = y;
         mlist_obj.z = z;

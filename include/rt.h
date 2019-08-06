@@ -46,9 +46,9 @@ void sync_stream(Stream);
 void copy_bytes_async(void* dst, const void* src, size_t nbytes, Stream s);
 TINKER_NAMESPACE_END
 
-#include <ext/fmt/ostream.h>
 // fmtlib
 #include <ext/fmt/ostream.h>
+#include <iostream>
 TINKER_NAMESPACE_BEGIN
 template <class Out, class Fmt, class... Ts>
 void print(Out& out, const Fmt& fmtstr, const Ts&... args) {
@@ -61,9 +61,7 @@ std::string format(const Fmt& fmtstr, const Ts&... args) {
 }
 TINKER_NAMESPACE_END
 
-#include <iostream>
 #include <stdexcept>
-
 TINKER_NAMESPACE_BEGIN
 /// @brief
 /// print the call stack

@@ -40,14 +40,15 @@ typedef StreamSt* Stream;
 /// FFT plan
 struct FFTPlan {
 #if defined(TINKER_SINGLE_PRECISION)
-  fftwf_plan
+  typedef fftwf_plan type;
 #elif defined(TINKER_DOUBLE_PRECISION)
-  fftw_plan
+  typedef fftw_plan type;
 #else
   static_assert(false, "");
 #endif
-      planf, ///< fft front plan
-      planb; ///< fft back plan
+
+  type planf; ///< FFT front plan
+  type planb; ///< FFT back plan
 };
 TINKER_NAMESPACE_END
 

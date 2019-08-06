@@ -1,6 +1,7 @@
 #include "util_io.h"
 #include <algorithm>
 #include <cassert>
+#include <cstring>
 
 TINKER_NAMESPACE_BEGIN
 void FortranStringView::copy_with_blank_(char* dst, size_t dstlen,

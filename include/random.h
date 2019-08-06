@@ -49,8 +49,10 @@ T normal() {
  * @return
  * a random number as if the square of k independent standard normal N(0,1)
  * random variables were aggregated; notice that there is a bug in some (not so)
- * early @c g++ @c random/chi_squared_distribution implementations, gamma
- * distribution is used here via the following equations:
+ * early @c g++ @c random/chi_squared_distribution implementations
+ * [<a href="https://stackoverflow.com/questions/48248565">ref 1</a> and
+ * <a href="https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83833">ref 2</a>],
+ * gamma distribution is used here via the following equations:
  *
  * @f[ p_{\chi^2}(x|n) = \frac{x^{n/2-1} exp(-x/2)}{2^{n/2} \Gamma(n/2)} @f]
  * @f[ p_\Gamma(x|a,b) = \frac{x^{a-1}   exp(-x/b)}{b^a     \Gamma(a)}   @f]
