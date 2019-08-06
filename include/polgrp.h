@@ -3,6 +3,7 @@
 
 #include "gen_unit.h"
 #include "rc_man.h"
+#include "rt.h"
 
 TINKER_NAMESPACE_BEGIN
 /// @brief
@@ -18,6 +19,8 @@ struct PolarGroup {
   int (*ip12)[maxp12];
   int (*ip13)[maxp13];
   int (*ip14)[maxp14];
+
+  ~PolarGroup();
 };
 
 typedef GenericUnit<PolarGroup, 1> PolarGroupUnit;

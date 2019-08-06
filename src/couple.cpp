@@ -1,33 +1,29 @@
-#include "array.h"
 #include "couple.h"
+#include "array.h"
 #include "md.h"
-#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/detail/couple.hh>
+#include <ext/tinker/detail/sizes.hh>
 
 TINKER_NAMESPACE_BEGIN
+Couple::~Couple() {
+  dealloc_bytes(n12);
+  dealloc_bytes(n13);
+  dealloc_bytes(n14);
+  dealloc_bytes(n15);
+  dealloc_bytes(i12);
+  dealloc_bytes(i13);
+  dealloc_bytes(i14);
+  dealloc_bytes(i15);
+}
+
 void couple_data(rc_op op) {
-  if (op & rc_dealloc) {
-    auto& coupl_obj = couple_unit.obj();
-    auto* coupl = couple_unit.deviceptr();
-
-    dealloc_bytes(coupl_obj.n12);
-    dealloc_bytes(coupl_obj.n13);
-    dealloc_bytes(coupl_obj.n14);
-    dealloc_bytes(coupl_obj.n15);
-    dealloc_bytes(coupl_obj.i12);
-    dealloc_bytes(coupl_obj.i13);
-    dealloc_bytes(coupl_obj.i14);
-    dealloc_bytes(coupl_obj.i15);
-
-    dealloc_bytes(coupl);
-
+  if (op & rc_dealloc)
     CoupleUnit::clear();
-  }
 
   if (op & rc_alloc) {
     assert(CoupleUnit::size() == 0);
-    couple_unit = CoupleUnit::add_new();
-    Couple& coupl_obj = couple_unit.obj();
-    Couple*& coupl = couple_unit.deviceptr();
+    couple_unit = CoupleUnit::alloc_new();
+    auto& coupl_obj = couple_unit.obj();
 
     const size_t rs = sizeof(int);
     size_t size;
@@ -45,15 +41,10 @@ void couple_data(rc_op op) {
     alloc_bytes(&coupl_obj.i14, size);
     size = Couple::maxn15 * n * rs;
     alloc_bytes(&coupl_obj.i15, size);
-
-    size = sizeof(Couple);
-    alloc_bytes(&coupl, size);
   }
 
   if (op & rc_init) {
     auto& coupl_obj = couple_unit.obj();
-    auto* coupl = couple_unit.deviceptr();
-
     size_t size;
 
     // see also attach.f
@@ -122,8 +113,7 @@ void couple_data(rc_op op) {
     copyin_array(coupl_obj.n15, nbuf.data(), n);
     copyin_array(&coupl_obj.i15[0][0], ibuf.data(), size);
 
-    size = sizeof(Couple);
-    copyin_bytes(coupl, &coupl_obj, size);
+    couple_unit.init_deviceptr(coupl_obj);
   }
 }
 TINKER_NAMESPACE_END

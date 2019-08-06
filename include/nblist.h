@@ -3,6 +3,7 @@
 
 #include "gen_unit.h"
 #include "rc_man.h"
+#include "rt.h"
 
 TINKER_NAMESPACE_BEGIN
 /// @brief
@@ -25,6 +26,8 @@ struct NBList {
   int maxnlst;   ///< max number of neighbors for each atom
   real cutoff;   ///< list cutoff distance
   real buffer;   ///< width of the neighbor list buffer region
+
+  ~NBList();
 };
 
 typedef GenericUnit<NBList, 1> NBListUnit;

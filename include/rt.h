@@ -34,6 +34,23 @@ void copyout_bytes(void* dst, const void* src, size_t nbytes);
 void copy_bytes(void* dst, const void* src, size_t nbytes);
 /// @}
 
+template <>
+struct GenericUnitOp<1> {
+  struct Dealloc {
+    void operator()(void* ptr) { dealloc_bytes(ptr); }
+  };
+
+  struct Alloc {
+    void operator()(void** ptr, size_t nbytes) { alloc_bytes(ptr, nbytes); }
+  };
+
+  struct Copyin {
+    void operator()(void* dst, const void* src, size_t nbytes) {
+      copyin_bytes(dst, src, nbytes);
+    }
+  };
+};
+
 /// @brief
 /// deallocate, allocate, and synchronize the asynchronous stream
 /// @{

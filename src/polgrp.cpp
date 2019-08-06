@@ -1,7 +1,7 @@
+#include "polgrp.h"
 #include "array.h"
 #include "md.h"
-#include "polgrp.h"
-#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/detail/polgrp.hh>
 
 TINKER_NAMESPACE_BEGIN
 static_assert(PolarGroup::maxp11 >= polgrp::maxp11, "");
@@ -9,31 +9,25 @@ static_assert(PolarGroup::maxp12 >= polgrp::maxp12, "");
 static_assert(PolarGroup::maxp13 >= polgrp::maxp13, "");
 static_assert(PolarGroup::maxp14 >= polgrp::maxp14, "");
 
+PolarGroup::~PolarGroup() {
+  dealloc_bytes(np11);
+  dealloc_bytes(np12);
+  dealloc_bytes(np13);
+  dealloc_bytes(np14);
+  dealloc_bytes(ip11);
+  dealloc_bytes(ip12);
+  dealloc_bytes(ip13);
+  dealloc_bytes(ip14);
+}
+
 void polargroup_data(rc_op op) {
-  if (op & rc_dealloc) {
-    auto& polargroup_obj = polargroup_unit.obj();
-    auto* polargroup = polargroup_unit.deviceptr();
-
-    dealloc_bytes(polargroup_obj.np11);
-    dealloc_bytes(polargroup_obj.np12);
-    dealloc_bytes(polargroup_obj.np13);
-    dealloc_bytes(polargroup_obj.np14);
-    dealloc_bytes(polargroup_obj.ip11);
-    dealloc_bytes(polargroup_obj.ip12);
-    dealloc_bytes(polargroup_obj.ip13);
-    dealloc_bytes(polargroup_obj.ip14);
-
-    dealloc_bytes(polargroup);
-
+  if (op & rc_dealloc)
     PolarGroupUnit::clear();
-  }
 
   if (op & rc_alloc) {
     assert(PolarGroupUnit::size() == 0);
-    polargroup_unit = PolarGroupUnit::add_new();
-    PolarGroup& polargroup_obj = polargroup_unit.obj();
-    PolarGroup*& polargroup = polargroup_unit.deviceptr();
-
+    polargroup_unit = PolarGroupUnit::alloc_new();
+    auto& polargroup_obj = polargroup_unit.obj();
     const size_t rs = sizeof(int);
     size_t size;
 
@@ -50,15 +44,10 @@ void polargroup_data(rc_op op) {
     alloc_bytes(&polargroup_obj.ip13, size);
     size = PolarGroup::maxp14 * n * rs;
     alloc_bytes(&polargroup_obj.ip14, size);
-
-    size = sizeof(PolarGroup);
-    alloc_bytes(&polargroup, size);
   }
 
   if (op & rc_init) {
     auto& polargroup_obj = polargroup_unit.obj();
-    auto* polargroup = polargroup_unit.deviceptr();
-
     size_t size;
 
     std::vector<int> nbuf, ibuf;
@@ -124,8 +113,7 @@ void polargroup_data(rc_op op) {
     copyin_array(polargroup_obj.np14, nbuf.data(), n);
     copyin_array(&polargroup_obj.ip14[0][0], ibuf.data(), size);
 
-    size = sizeof(PolarGroup);
-    copyin_bytes(polargroup, &polargroup_obj, size);
+    polargroup_unit.init_deviceptr(polargroup_obj);
   }
 }
 TINKER_NAMESPACE_END

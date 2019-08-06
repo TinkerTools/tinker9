@@ -3,6 +3,7 @@
 
 #include "gen_unit.h"
 #include "rc_man.h"
+#include "rt.h"
 
 TINKER_NAMESPACE_BEGIN
 /// @brief
@@ -18,6 +19,8 @@ struct Couple {
   int (*i13)[maxn13];
   int (*i14)[maxn14];
   int (*i15)[maxn15];
+
+  ~Couple();
 };
 
 typedef GenericUnit<Couple, 1> CoupleUnit;

@@ -1,7 +1,7 @@
+#include "nblist.h"
 #include "array.h"
 #include "gpu/e_vdw.h"
 #include "md.h"
-#include "nblist.h"
 #include "util_potent.h"
 #include <ext/tinker/tinker_mod.h>
 
@@ -87,25 +87,20 @@ static int nblist_maxlst_(int maxn, double cutoff, double buffer) {
   }
 }
 
-static void nblist_op_dealloc_(NBListUnit nblu) {
-  auto& st = nblu.obj();
-  auto* list = nblu.deviceptr();
-  dealloc_bytes(st.nlst);
-  dealloc_bytes(st.lst);
-  dealloc_bytes(st.update);
-  dealloc_bytes(st.xold);
-  dealloc_bytes(st.yold);
-  dealloc_bytes(st.zold);
-  dealloc_bytes(list);
+NBList::~NBList() {
+  dealloc_bytes(nlst);
+  dealloc_bytes(lst);
+  dealloc_bytes(update);
+  dealloc_bytes(xold);
+  dealloc_bytes(yold);
+  dealloc_bytes(zold);
 }
 
 static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
                              double buffer, const real* _x, const real* _y,
                              const real* _z) {
-  nblu = NBListUnit::add_new();
-  NBList& st = nblu.obj();
-  NBList*& list = nblu.deviceptr();
-
+  nblu = NBListUnit::alloc_new();
+  auto& st = nblu.obj();
   const size_t rs = sizeof(int);
   size_t size;
 
@@ -138,26 +133,24 @@ static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
   st.cutoff = cutoff;
   st.buffer = buffer;
 
-  size = sizeof(NBList);
-  alloc_bytes(&list, size);
-  copyin_bytes(list, &st, size);
+  nblu.init_deviceptr(st);
 }
 
 extern void nblist_build_acc_impl_(NBListUnit);
 extern void nblist_update_acc_impl_(NBListUnit);
 void nblist_data(rc_op op) {
-  int maxnlst = 0;
-  int u = 0;
+  if (op & rc_dealloc)
+    NBListUnit::clear();
 
   if (op & rc_alloc)
     assert(NBListUnit::size() == 0);
 
+  int maxnlst = 0;
+  int u = 0;
+
   // vlist
   u = use_vdw_list();
   if (u) {
-    if (op & rc_dealloc)
-      nblist_op_dealloc_(vlist_unit);
-
     if (op & rc_alloc) {
       maxnlst = 2500;
       if (u == NBList::double_loop)
@@ -180,9 +173,6 @@ void nblist_data(rc_op op) {
   // dlist
   u = use_disp_list();
   if (u) {
-    if (op & rc_dealloc)
-      nblist_op_dealloc_(dlist_unit);
-
     if (op & rc_alloc) {
       maxnlst = 2500;
       if (u == NBList::double_loop)
@@ -198,9 +188,6 @@ void nblist_data(rc_op op) {
   // clist
   u = use_charge_list();
   if (u) {
-    if (op & rc_dealloc)
-      nblist_op_dealloc_(clist_unit);
-
     if (op & rc_alloc) {
       maxnlst = 2500;
       if (u == NBList::double_loop)
@@ -216,9 +203,6 @@ void nblist_data(rc_op op) {
   // mlist
   u = use_mpole_list();
   if (u) {
-    if (op & rc_dealloc)
-      nblist_op_dealloc_(mlist_unit);
-
     if (op & rc_alloc) {
       maxnlst = 2500;
       if (u == NBList::double_loop)
@@ -246,9 +230,6 @@ void nblist_data(rc_op op) {
   // ulist
   u = use_usolv_list();
   if (u) {
-    if (op & rc_dealloc)
-      nblist_op_dealloc_(ulist_unit);
-
     if (op & rc_alloc) {
       maxnlst = 500;
       if (u == NBList::double_loop)
@@ -260,8 +241,5 @@ void nblist_data(rc_op op) {
     if (op & rc_init) {
     }
   }
-
-  if (op & rc_dealloc)
-    NBListUnit::clear();
 }
 TINKER_NAMESPACE_END

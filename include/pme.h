@@ -3,7 +3,7 @@
 
 #include "gen_unit.h"
 #include "rc_man.h"
-#include <cmath>
+#include "rt.h"
 
 TINKER_NAMESPACE_BEGIN
 /**
@@ -24,41 +24,22 @@ TINKER_NAMESPACE_BEGIN
  * @endcode
  */
 struct PME {
-  struct Params {
-    real aewald;
-    int nfft1, nfft2, nfft3, bsorder;
-    Params(real a, int n1, int n2, int n3, int o)
-        : aewald(a)
-        , nfft1(n1)
-        , nfft2(n2)
-        , nfft3(n3)
-        , bsorder(o) {}
-    bool operator==(const Params& st) const {
-      const double eps = 1.0e-6;
-      bool ans = std::fabs(aewald - st.aewald) < eps && nfft1 == st.nfft1 &&
-          nfft2 == st.nfft2 && nfft3 == st.nfft3 && bsorder == st.bsorder;
-      return ans;
-    }
-  };
-
   real aewald;
   int nfft1, nfft2, nfft3, bsorder;
-  int* igrid;                     // deviceptr
   real *bsmod1, *bsmod2, *bsmod3; // deviceptr
   real* qgrid;                    // deviceptr
 
-  bool operator==(const Params& p) const {
-    Params p0(aewald, nfft1, nfft2, nfft3, bsorder);
-    return p0 == p;
-  }
+  struct Params {
+    real aewald;
+    int nfft1, nfft2, nfft3, bsorder;
+    bool operator==(const Params& st) const;
+    Params(real a, int n1, int n2, int n3, int o);
+  };
+  void set_params(const Params& p);
+  PME::Params get_params() const;
+  bool operator==(const Params& p) const;
 
-  void set_params(const Params& p) {
-    aewald = p.aewald;
-    nfft1 = p.nfft1;
-    nfft2 = p.nfft2;
-    nfft3 = p.nfft3;
-    bsorder = p.bsorder;
-  }
+  ~PME();
 };
 
 typedef GenericUnit<PME, 1> PMEUnit;

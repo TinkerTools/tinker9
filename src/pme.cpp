@@ -1,24 +1,47 @@
+#include "pme.h"
 #include "array.h"
 #include "mathfunc.h"
 #include "md.h"
-#include "pme.h"
 #include "switch.h"
 #include "util_potent.h"
 #include <ext/tinker/tinker_mod.h>
 #include <ext/tinker/tinker_rt.h>
 
 TINKER_NAMESPACE_BEGIN
-static void pme_op_dealloc_(PMEUnit pu) {
-  auto& st = pu.obj();
-  auto* dptr = pu.deviceptr();
+bool PME::Params::operator==(const Params& st) const {
+  const double eps = 1.0e-6;
+  bool ans = std::fabs(aewald - st.aewald) < eps && nfft1 == st.nfft1 &&
+      nfft2 == st.nfft2 && nfft3 == st.nfft3 && bsorder == st.bsorder;
+  return ans;
+}
 
-  dealloc_bytes(st.igrid);
-  dealloc_bytes(st.bsmod1);
-  dealloc_bytes(st.bsmod2);
-  dealloc_bytes(st.bsmod3);
-  dealloc_bytes(st.qgrid);
+PME::Params::Params(real a, int n1, int n2, int n3, int o)
+    : aewald(a)
+    , nfft1(n1)
+    , nfft2(n2)
+    , nfft3(n3)
+    , bsorder(o) {}
 
-  dealloc_bytes(dptr);
+void PME::set_params(const PME::Params& p) {
+  aewald = p.aewald;
+  nfft1 = p.nfft1;
+  nfft2 = p.nfft2;
+  nfft3 = p.nfft3;
+  bsorder = p.bsorder;
+}
+
+PME::Params PME::get_params() const {
+  Params p0(aewald, nfft1, nfft2, nfft3, bsorder);
+  return p0;
+}
+
+bool PME::operator==(const Params& p) const { return get_params() == p; }
+
+PME::~PME() {
+  dealloc_bytes(bsmod1);
+  dealloc_bytes(bsmod2);
+  dealloc_bytes(bsmod3);
+  dealloc_bytes(qgrid);
 }
 
 static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique) {
@@ -29,24 +52,17 @@ static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique) {
   }
 
   if (unit == -1 || unique == true) {
-    unit = PMEUnit::add_new();
-    PME& st = unit.obj();
-    PME*& dptr = unit.deviceptr();
-
+    unit = PMEUnit::alloc_new();
+    auto& st = unit.obj();
     const size_t rs = sizeof(real);
     size_t size;
 
-    size = 3 * n * sizeof(int);
-    alloc_bytes(&st.igrid, size);
     // see also subroutine moduli in pmestuf.f
     alloc_bytes(&st.bsmod1, rs * p.nfft1);
     alloc_bytes(&st.bsmod2, rs * p.nfft2);
     alloc_bytes(&st.bsmod3, rs * p.nfft3);
     size = p.nfft1 * p.nfft2 * p.nfft3 * rs;
     alloc_bytes(&st.qgrid, 2 * size);
-
-    size = sizeof(PME);
-    alloc_bytes(&dptr, size);
 
     st.set_params(p);
   }
@@ -57,7 +73,6 @@ static void pme_op_copyin_(PMEUnit unit) {
     return;
 
   auto& st = unit.obj();
-  auto* dptr = unit.deviceptr();
 
   // This code assumes that the FFT grids of an energy term will not change in a
   // calculation.
@@ -81,8 +96,7 @@ static void pme_op_copyin_(PMEUnit unit) {
   TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft3, &st.bsorder);
   copyin_array(st.bsmod3, bsmodbuf.data(), st.nfft3);
 
-  size_t size = sizeof(PME);
-  copyin_bytes(dptr, &st, size);
+  unit.init_deviceptr(st);
 }
 TINKER_NAMESPACE_END
 
@@ -109,13 +123,6 @@ void pme_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-
-    int idx = 0;
-    while (idx < PMEUnit::size()) {
-      PMEUnit pu = idx;
-      pme_op_dealloc_(pu);
-      ++idx;
-    }
     PMEUnit::clear();
 
     dealloc_bytes(cmp);
