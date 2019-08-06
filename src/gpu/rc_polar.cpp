@@ -2,9 +2,9 @@
 #include "gpu/e_polar.h"
 #include "md.h"
 #include "pme.h"
+#include "potent.h"
 #include "switch.h"
 #include "util_io.h"
-#include "util_potent.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

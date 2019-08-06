@@ -1,9 +1,9 @@
 #include "array.h"
 #include "gpu/e_vdw.h"
 #include "md.h"
+#include "potent.h"
 #include "switch.h"
 #include "util_io.h"
-#include "util_potent.h"
 #include <ext/tinker/tinker_mod.h>
 #include <map>
 

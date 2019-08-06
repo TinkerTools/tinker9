@@ -1,11 +1,11 @@
-#include "array.h"
 #include "elec.h"
+#include "array.h"
 #include "gpu/e_mpole.h"
 #include "gpu/e_polar.h"
 #include "md.h"
 #include "pme.h"
+#include "potent.h"
 #include "util_io.h"
-#include "util_potent.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

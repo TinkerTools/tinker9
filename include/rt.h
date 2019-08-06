@@ -35,7 +35,7 @@ void copy_bytes(void* dst, const void* src, size_t nbytes);
 /// @}
 
 template <>
-struct GenericUnitOp<1> {
+struct GenericUnitAlloc<1> {
   struct Dealloc {
     void operator()(void* ptr) { dealloc_bytes(ptr); }
   };

@@ -1,11 +1,11 @@
-#ifndef TINKER_UTIL_TEST_RT_H_
-#define TINKER_UTIL_TEST_RT_H_
+#ifndef TINKER_TEST_RT_H_
+#define TINKER_TEST_RT_H_
 
 #include "array.h"
+#include "energy.h"
 #include "md.h"
 #include "rc_man.h"
 #include "util_io.h"
-#include "util_potential.h"
 #include <array>
 #include <string>
 #include <vector>

@@ -2,8 +2,8 @@
 #include "gpu/e_angle.h"
 #include "md.h"
 #include "nblist.h"
+#include "potent.h"
 #include "util_io.h"
-#include "util_potent.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

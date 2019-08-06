@@ -6,7 +6,7 @@
 #include "md.h"
 #include "nblist.h"
 #include "pme.h"
-#include "util_potent.h"
+#include "potent.h"
 
 TINKER_NAMESPACE_BEGIN
 // see also subroutine udirect1 in induce.f

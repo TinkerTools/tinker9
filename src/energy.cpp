@@ -1,8 +1,8 @@
-#include "util_potential.h"
+#include "energy.h"
 #include "md.h"
 #include "nblist.h"
 #include "polgrp.h"
-#include "util_potent.h"
+#include "potent.h"
 
 TINKER_NAMESPACE_BEGIN
 void potential_data(rc_op op) {

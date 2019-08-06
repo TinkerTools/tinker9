@@ -1,6 +1,6 @@
 #include "md.h"
 #include "util_md.h"
-#include "util_potential.h"
+#include "energy.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

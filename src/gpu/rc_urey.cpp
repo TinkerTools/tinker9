@@ -1,7 +1,7 @@
 #include "array.h"
 #include "gpu/e_urey.h"
 #include "md.h"
-#include "util_potent.h"
+#include "potent.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

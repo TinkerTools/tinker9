@@ -1,5 +1,5 @@
-#ifndef TINKER_UTIL_POTENTIAL_H_
-#define TINKER_UTIL_POTENTIAL_H_
+#ifndef TINKER_ENERGY_H_
+#define TINKER_ENERGY_H_
 
 #include "gpu/e_angle.h"
 #include "gpu/e_bond.h"

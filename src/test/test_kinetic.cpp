@@ -1,7 +1,7 @@
-#include "util_files.h"
+#include "files.h"
+#include "test.h"
+#include "test_rt.h"
 #include "util_md.h"
-#include "util_test.h"
-#include "util_test_rt.h"
 
 using namespace TINKER_NAMESPACE;
 

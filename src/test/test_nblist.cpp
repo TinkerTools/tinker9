@@ -1,10 +1,10 @@
+#include "files.h"
 #include "md.h"
 #include "nblist.h"
 #include "rc_man.h"
 #include "rt.h"
-#include "util_files.h"
-#include "util_test.h"
-#include "util_test_rt.h"
+#include "test.h"
+#include "test_rt.h"
 
 using namespace TINKER_NAMESPACE;
 

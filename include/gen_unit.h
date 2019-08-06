@@ -8,10 +8,10 @@
 
 TINKER_NAMESPACE_BEGIN
 template <int USE_DPTR>
-struct GenericUnitOp;
+struct GenericUnitAlloc;
 
 template <>
-struct GenericUnitOp<0> {
+struct GenericUnitAlloc<0> {
   struct Dealloc {
     void operator()(void*) {}
   };
@@ -21,17 +21,21 @@ struct GenericUnitOp<0> {
   };
 
   struct Copyin {
-    void operator()(void*, const void*, size_t);
+    void operator()(void*, const void*, size_t) {}
   };
 };
 
 /**
  * @brief
- * resource handle: can be used as signed integers, similar to Fortran I/O unit
+ * resource handle
+ *
+ * analogous to to Fortran I/O unit that can be used as signed integers
  *
  * @tparam USE_DPTR
  * whether to allocate memory on device and store the device pointer that
- * corresponds to the host object
+ * corresponds to the host object;
+ * if greater than 0, can be extended to identify different de/allocation
+ * methods
  */
 template <class T, int USE_DPTR = 0>
 class GenericUnit {
@@ -44,7 +48,7 @@ private:
     return o;
   }
 
-  typedef typename GenericUnitOp<USE_DPTR>::Dealloc Dealloc;
+  typedef typename GenericUnitAlloc<USE_DPTR>::Dealloc Dealloc;
   typedef std::vector<std::unique_ptr<T, Dealloc>> dptr_vec;
   static dptr_vec& deviceptrs() {
     assert(USE_DPTR);
@@ -52,8 +56,8 @@ private:
     return o;
   }
 
-  typedef typename GenericUnitOp<USE_DPTR>::Alloc Alloc;
-  typedef typename GenericUnitOp<USE_DPTR>::Copyin Copyin;
+  typedef typename GenericUnitAlloc<USE_DPTR>::Alloc Alloc;
+  typedef typename GenericUnitAlloc<USE_DPTR>::Copyin Copyin;
 
 public:
   static int size() {
@@ -105,7 +109,6 @@ public:
   T& obj() {
     assert(0 <= m_unit && m_unit < hostptrs().size() &&
            "T& GenericUnit::obj()");
-    auto* pit = &hostptrs()[m_unit];
     return *hostptrs()[m_unit];
   }
 

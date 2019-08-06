@@ -1,5 +1,5 @@
-#ifndef TINKER_UTIL_TEST_H_
-#define TINKER_UTIL_TEST_H_
+#ifndef TINKER_TEST_H_
+#define TINKER_TEST_H_
 
 /// @file
 /// Tag "[noassert]" is used for the test cases that don't contain any

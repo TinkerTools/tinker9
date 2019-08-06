@@ -1,4 +1,4 @@
-#include "util_test_rt.h"
+#include "test_rt.h"
 #include "rc_man.h"
 #include <cstdio>
 #include <ext/tinker/tinker_mod.h>

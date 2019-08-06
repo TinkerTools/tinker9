@@ -2,8 +2,8 @@
 #include "array.h"
 #include "mathfunc.h"
 #include "md.h"
+#include "potent.h"
 #include "switch.h"
-#include "util_potent.h"
 #include <ext/tinker/tinker_mod.h>
 #include <ext/tinker/tinker_rt.h>
 

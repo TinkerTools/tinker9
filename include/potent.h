@@ -1,5 +1,5 @@
-#ifndef TINKER_UTIL_POTENT_H_
-#define TINKER_UTIL_POTENT_H_
+#ifndef TINKER_POTENT_H_
+#define TINKER_POTENT_H_
 
 #include "macro.h"
 

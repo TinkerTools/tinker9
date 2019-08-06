@@ -1,6 +1,6 @@
-#include "util_files.h"
-#include "util_test.h"
-#include "util_test_rt.h"
+#include "files.h"
+#include "test.h"
+#include "test_rt.h"
 #include <ext/tinker/tinker_mod.h>
 
 using namespace TINKER_NAMESPACE;

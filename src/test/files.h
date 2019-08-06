@@ -1,5 +1,5 @@
-#ifndef TINKER_SRC_TEST_UTIL_TEST_FILES_H_
-#define TINKER_SRC_TEST_UTIL_TEST_FILES_H_
+#ifndef TINKER_SRC_FILES_H_
+#define TINKER_SRC_FILES_H_
 
 #include "macro.h"
 

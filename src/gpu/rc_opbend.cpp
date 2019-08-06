@@ -1,8 +1,8 @@
 #include "array.h"
 #include "gpu/e_opbend.h"
 #include "md.h"
+#include "potent.h"
 #include "util_io.h"
-#include "util_potent.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
