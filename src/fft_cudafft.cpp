@@ -1,8 +1,8 @@
+#include "error.h"
+#include "pme.h"
+#include "rt.h"
+
 #ifndef TINKER_HOST
-
-#  include "pme.h"
-#  include "rt.h"
-
 TINKER_NAMESPACE_BEGIN
 void fft_data(rc_op op) {
   if (op & rc_dealloc) {

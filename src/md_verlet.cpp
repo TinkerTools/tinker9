@@ -1,7 +1,6 @@
 #include "energy.h"
 #include "md.h"
-#include "util_md.h"
-#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/detail/inform.hh>
 
 TINKER_NAMESPACE_BEGIN
 void velocity_verlet(int istep, real dt_ps) {

@@ -6,7 +6,6 @@
 #include "rt.h"
 #include "test.h"
 #include "test_rt.h"
-#include "util_md.h"
 
 using namespace TINKER_NAMESPACE;
 
@@ -37,7 +36,7 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]") {
   trajn = 5;
   initialize();
 
-  copyin_tinker_arc(x1, 1, 5, 1);
+  copyin_arc_file(x1, 1, 5, 1);
 
   const int maxnlst = vlist_unit.obj().maxnlst;
   std::vector<int> nlst;

@@ -1,4 +1,5 @@
 #include "rt.h"
+#include "error.h"
 
 #ifndef TINKER_HOST
 TINKER_NAMESPACE_BEGIN

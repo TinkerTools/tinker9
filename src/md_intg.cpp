@@ -1,10 +1,19 @@
 #include "io_fort_str.h"
 #include "md.h"
-#include "util_md.h"
 #include <cassert>
-#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/detail/bath.hh>
+#include <ext/tinker/detail/inform.hh>
+#include <ext/tinker/detail/mdstuf.hh>
 
 TINKER_NAMESPACE_BEGIN
+void md_data(rc_op op) {
+  if ((calc::md & rc_flag) == 0)
+    return;
+
+  rc_man intg42_{integrate_data, op};
+  rc_man save42_{mdsave_data, op};
+}
+
 static void (*integrator_)(int, real);
 
 void integrate_data(rc_op op) {
@@ -58,8 +67,6 @@ void integrate_data(rc_op op) {
   }
 }
 
-//======================================================================
-
 extern void kinetic_acc_impl_(real& temp);
 void kinetic(real& temp) { kinetic_acc_impl_(temp); }
 
@@ -81,9 +88,6 @@ void temper(real dt, real& temp) {
 extern void mdrest_acc_impl_(int istep);
 void mdrest(int istep) { mdrest_acc_impl_(istep); }
 
-//======================================================================
-// propagate
-
 extern void propagate_xyz_acc_impl_(real dt);
 void propagate_xyz(real dt) { propagate_xyz_acc_impl_(dt); }
 
@@ -103,13 +107,5 @@ void propagate(int nsteps, real dt_ps, void (*itg)(int, real)) {
     mdrest(istep);
   }
   mdsave_synchronize();
-}
-
-void md_data(rc_op op) {
-  if ((calc::md & rc_flag) == 0)
-    return;
-
-  integrate_data(op);
-  mdsave_data(op);
 }
 TINKER_NAMESPACE_END

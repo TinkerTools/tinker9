@@ -1,6 +1,5 @@
 #include "array.h"
 #include "md.h"
-#include "rt.h"
 #include <ext/tinker/detail/energi.hh>
 #include <ext/tinker/detail/virial.hh>
 #include <map>
