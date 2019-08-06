@@ -1,9 +1,9 @@
 #include "array.h"
 #include "box.h"
-#include "md.h"
-#include "util_io.h"
-#include "potent.h"
 #include "energy.h"
+#include "io_fort_str.h"
+#include "md.h"
+#include "potent.h"
 #include <ext/tinker/tinker_mod.h>
 #include <ext/tinker/tinker_rt.h>
 

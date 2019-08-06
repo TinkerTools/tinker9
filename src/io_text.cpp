@@ -1,4 +1,4 @@
-#include "util_io.h"
+#include "io_text.h"
 #include <algorithm>
 #include <bitset>
 #include <cassert>
@@ -31,13 +31,13 @@ void Text::replace_by_kv(std::string& src, std::string key, std::string value) {
 std::vector<std::string> Text::split(std::string str, std::string delimiters) {
   assert(delimiters.size());
 
-  char delimiter = delimiters[0];
-  replace(str, delimiters, delimiter);
+  char dlm = delimiters[0];
+  replace(str, delimiters, dlm);
   std::istringstream ssin(str);
   std::vector<std::string> vs;
   std::string line;
 
-  while (std::getline(ssin, line, delimiter)) {
+  while (std::getline(ssin, line, dlm)) {
     if (line != "") {
       vs.push_back(line);
     }

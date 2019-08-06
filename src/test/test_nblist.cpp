@@ -1,3 +1,4 @@
+#include "error.h"
 #include "files.h"
 #include "md.h"
 #include "nblist.h"
@@ -5,6 +6,7 @@
 #include "rt.h"
 #include "test.h"
 #include "test_rt.h"
+#include "util_md.h"
 
 using namespace TINKER_NAMESPACE;
 

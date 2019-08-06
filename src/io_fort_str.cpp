@@ -1,4 +1,5 @@
-#include "util_io.h"
+#include "io_fort_str.h"
+#include "io_text.h"
 #include <algorithm>
 #include <cassert>
 #include <cstring>
@@ -19,8 +20,8 @@ bool FortranStringView::if_eq_(const char* src, size_t len) const {
   auto lb = this->len_trim();
   auto lc = std::max(lb, len);
   auto buffer = std::string(lc, (char)0);
-  // If src is longer, copy b_ to buffer, then compare src and buffer;
-  // or copy src to buffer, then compare b_ and buffer.
+  // if src is longer, copy b_ to buffer, then compare src and buffer;
+  // or copy src to buffer, then compare b_ and buffer
   const char* ptr = b_;
   if (len > lb) {
     copy_with_blank_(&buffer[0], lc, b_, lb);
@@ -30,8 +31,6 @@ bool FortranStringView::if_eq_(const char* src, size_t len) const {
   }
   return !std::strncmp(ptr, buffer.c_str(), lc);
 }
-
-//======================================================================
 
 FortranStringView::FortranStringView(const char* src, size_t len)
     : b_(const_cast<char*>(src))
@@ -44,8 +43,6 @@ FortranStringView::FortranStringView(const char* src)
 FortranStringView::FortranStringView(const std::string& src)
     : b_(const_cast<char*>(&src[0]))
     , e_(b_ + src.size()) {}
-
-//======================================================================
 
 FortranStringView& FortranStringView::operator=(const char* src) {
   copy_with_blank_(b_, size(), src, std::strlen(src));
@@ -62,8 +59,6 @@ FortranStringView& FortranStringView::operator=(const FortranStringView& src) {
   return *this;
 }
 
-//======================================================================
-
 bool FortranStringView::operator==(const char* src) const {
   return if_eq_(src, std::strlen(src));
 }
@@ -75,8 +70,6 @@ bool FortranStringView::operator==(const std::string& src) const {
 bool FortranStringView::operator==(const FortranStringView& src) const {
   return if_eq_(src.b_, src.size());
 }
-
-//======================================================================
 
 size_t FortranStringView::size() const { return e_ - b_; }
 

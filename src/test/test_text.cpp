@@ -1,5 +1,5 @@
+#include "io_text.h"
 #include "test.h"
-#include "util_io.h"
 
 using namespace TINKER_NAMESPACE;
 

@@ -1,10 +1,11 @@
 #include "array.h"
 #include "gpu/e_polar.h"
+#include "io_fort_str.h"
+#include "io_print.h"
 #include "md.h"
 #include "pme.h"
 #include "potent.h"
 #include "switch.h"
-#include "util_io.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

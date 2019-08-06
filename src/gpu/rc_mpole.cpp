@@ -1,9 +1,9 @@
 #include "gpu/e_mpole.h"
+#include "io_fort_str.h"
 #include "md.h"
 #include "pme.h"
 #include "potent.h"
 #include "switch.h"
-#include "util_io.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

@@ -2,6 +2,7 @@
 #define TINKER_UTIL_MD_H_
 
 #include "rc_man.h"
+#include <string>
 
 TINKER_NAMESPACE_BEGIN
 //======================================================================
@@ -28,6 +29,9 @@ void mdsave_synchronize();
 //======================================================================
 
 void md_data(rc_op op);
+
+void copyin_tinker_arc(const std::string& arcfile, int first1, int last1,
+                       int step);
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN

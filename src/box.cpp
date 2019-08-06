@@ -1,5 +1,5 @@
-#include "array.h"
 #include "box.h"
+#include "array.h"
 #include "mathfunc.h"
 #include "md.h"
 #include <ext/tinker/detail/bound.hh>

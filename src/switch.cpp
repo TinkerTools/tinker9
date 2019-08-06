@@ -1,5 +1,5 @@
-#include "mathfunc.h"
 #include "switch.h"
+#include "mathfunc.h"
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN

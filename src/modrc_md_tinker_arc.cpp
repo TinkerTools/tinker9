@@ -1,7 +1,9 @@
 #include "array.h"
 #include "box.h"
+#include "error.h"
+#include "io_print.h"
+#include "io_text.h"
 #include "md.h"
-#include "util_io.h"
 #include <ext/tinker/tinker_mod.h>
 #include <ext/tinker/tinker_rt.h>
 #include <fstream>

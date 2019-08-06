@@ -39,22 +39,21 @@ void x_dynamic(int argc, char** argv) {
   int nstep = -1;
   nextarg(string, exist);
   if (exist) {
-    read_string_1(nstep, string);
+    read_string(nstep, string);
   }
-  read_stream_1(nstep,
-                "\n Enter the Number of Dynamics Steps to be Taken :  ", 0,
-                [](int i) { return i < 0; });
+  read_stream(nstep, "\n Enter the Number of Dynamics Steps to be Taken :  ", 0,
+              [](int i) { return i < 0; });
 
   // get the length of the dynamics time step in picoseconds
 
   double dt = -1;
   nextarg(string, exist);
   if (exist) {
-    read_string_1(dt, string);
+    read_string(dt, string);
   }
-  read_stream_1(dt,
-                "\n Enter the Time Step Length in Femtoseconds [1.0] :  ", 1.0,
-                [](double i) { return i <= 0; });
+  read_stream(dt,
+              "\n Enter the Time Step Length in Femtoseconds [1.0] :  ", 1.0,
+              [](double i) { return i <= 0; });
   dt *= 0.001;
 
   // enforce bounds on thermostat and barostat coupling times
@@ -67,11 +66,11 @@ void x_dynamic(int argc, char** argv) {
   double dtsave = -1;
   nextarg(string, exist);
   if (exist) {
-    read_string_1(dtsave, string);
+    read_string(dtsave, string);
   }
-  read_stream_1(dtsave,
-                "\n Enter Time between Saves in Picoseconds [0.1] :  ", 0.1,
-                [](double i) { return i <= 0; });
+  read_stream(dtsave,
+              "\n Enter Time between Saves in Picoseconds [0.1] :  ", 0.1,
+              [](double i) { return i <= 0; });
   inform::iwrite = std::round(dtsave / dt);
 
   // get choice of statistical ensemble for periodic system
@@ -88,7 +87,7 @@ void x_dynamic(int argc, char** argv) {
   if (bound::use_bounds) {
     nextarg(string, exist);
     if (exist) {
-      read_string_1(mode, string);
+      read_string(mode, string);
     }
     std::string prompt = R"(
  Available Statistical Mechanical Ensembles :
@@ -97,7 +96,7 @@ void x_dynamic(int argc, char** argv) {
     (3) Isoenthalpic-Isobaric (NPH)
     (4) Isothermal-Isobaric (NPT)
  Enter the Number of the Desired Choice  [1] :  )";
-    read_stream_1(mode, prompt, 1, [](int i) { return i <= 0; });
+    read_stream(mode, prompt, 1, [](int i) { return i <= 0; });
 
     if (integrate == "BUSSI" || integrate == "NOSE-HOOVER" ||
         integrate == "GHMC") {
@@ -113,9 +112,9 @@ void x_dynamic(int argc, char** argv) {
       bath::kelvin = -1;
       nextarg(string, exist);
       if (exist) {
-        read_string_1(bath::kelvin, string);
+        read_string(bath::kelvin, string);
       }
-      read_stream_1(bath::kelvin, ask_kelvin, default_kelvin, invalid_kelvin);
+      read_stream(bath::kelvin, ask_kelvin, default_kelvin, invalid_kelvin);
     }
 
     if (mode == 3 || mode == 4) {
@@ -123,30 +122,30 @@ void x_dynamic(int argc, char** argv) {
       bath::atmsph = -1;
       nextarg(string, exist);
       if (exist) {
-        read_string_1(bath::atmsph, string);
+        read_string(bath::atmsph, string);
       }
-      read_stream_1(bath::atmsph, ask_atm, default_atm, invalid_atm);
+      read_stream(bath::atmsph, ask_atm, default_atm, invalid_atm);
     }
   } else {
     nextarg(string, exist);
     if (exist) {
-      read_string_1(mode, string);
+      read_string(mode, string);
     }
     std::string prompt = R"(
  Available Simulation Control Modes :
     (1) Constant Total Energy Value (E)
     (2) Constant Temperature via Thermostat (T)
  Enter the Number of the Desired Choice [1] :  )";
-    read_stream_1(mode, prompt, 1, [](int i) { return i <= 0; });
+    read_stream(mode, prompt, 1, [](int i) { return i <= 0; });
 
     if (mode == 2) {
       bath::isothermal = _true_;
       bath::kelvin = -1;
       nextarg(string, exist);
       if (exist) {
-        read_string_1(bath::kelvin, string);
+        read_string(bath::kelvin, string);
       }
-      read_stream_1(bath::kelvin, ask_kelvin, default_kelvin, invalid_kelvin);
+      read_stream(bath::kelvin, ask_kelvin, default_kelvin, invalid_kelvin);
     }
   }
 

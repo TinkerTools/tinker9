@@ -5,7 +5,6 @@
 #include "energy.h"
 #include "md.h"
 #include "rc_man.h"
-#include "util_io.h"
 #include <array>
 #include <string>
 #include <vector>
