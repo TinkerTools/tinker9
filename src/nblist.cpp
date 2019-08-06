@@ -149,6 +149,9 @@ void nblist_data(rc_op op) {
   int maxnlst = 0;
   int u = 0;
 
+  if (op & rc_alloc)
+    assert(NBListUnit::size() == 0);
+
   // vlist
   u = use_vdw_list();
   if (u) {
@@ -257,5 +260,8 @@ void nblist_data(rc_op op) {
     if (op & rc_init) {
     }
   }
+
+  if (op & rc_dealloc)
+    NBListUnit::clear();
 }
 TINKER_NAMESPACE_END

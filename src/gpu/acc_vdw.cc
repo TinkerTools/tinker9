@@ -37,6 +37,8 @@ void evdw_tmpl() {
   const int maxnlst = vlist_unit.obj().maxnlst;
   const NBList* vlst = vlist_unit.deviceptr();
 
+  const auto* coupl = couple_unit.deviceptr();
+
   static std::vector<real> vscalebuf;
   vscalebuf.resize(n, 1);
   real* vscale = vscalebuf.data();

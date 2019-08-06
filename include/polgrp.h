@@ -1,9 +1,12 @@
 #ifndef TINKER_POLGRP_H_
 #define TINKER_POLGRP_H_
 
+#include "gen_unit.h"
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
+/// @brief
+/// polarization group connectivity lists
 struct PolarGroup {
   static const int maxp11 = 128;
   static const int maxp12 = 128; // 120 -> 128
@@ -17,8 +20,8 @@ struct PolarGroup {
   int (*ip14)[maxp14];
 };
 
-TINKER_EXTERN PolarGroup polargroup_obj_;
-TINKER_EXTERN PolarGroup* polargroup;
+typedef GenericUnit<PolarGroup, 1> PolarGroupUnit;
+TINKER_EXTERN PolarGroupUnit polargroup_unit;
 
 void polargroup_data(rc_op);
 TINKER_NAMESPACE_END

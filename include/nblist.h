@@ -26,8 +26,8 @@ struct NBList {
   real cutoff;   ///< list cutoff distance
   real buffer;   ///< width of the neighbor list buffer region
 };
-typedef GenericUnit<NBList, 1> NBListUnit;
 
+typedef GenericUnit<NBList, 1> NBListUnit;
 TINKER_EXTERN NBListUnit vlist_unit;
 TINKER_EXTERN NBListUnit dlist_unit;
 TINKER_EXTERN NBListUnit clist_unit;

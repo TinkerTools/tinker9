@@ -22,6 +22,8 @@ void empole_coulomb_tmpl() {
   const int maxnlst = mlist_unit.obj().maxnlst;
   const NBList* mlst = mlist_unit.deviceptr();
 
+  const auto* coupl = couple_unit.deviceptr();
+
   static std::vector<real> mscalebuf;
   mscalebuf.resize(n, 1);
   real* mscale = mscalebuf.data();

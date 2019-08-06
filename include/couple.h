@@ -1,9 +1,12 @@
 #ifndef TINKER_COUPLE_H_
 #define TINKER_COUPLE_H_
 
+#include "gen_unit.h"
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
+/// @brief
+/// atom neighbor connectivity lists
 struct Couple {
   static const int maxn12 = 8;
   static const int maxn13 = 32;  // 24 -> 32
@@ -17,8 +20,8 @@ struct Couple {
   int (*i15)[maxn15];
 };
 
-TINKER_EXTERN Couple coupl_obj_;
-TINKER_EXTERN Couple* coupl;
+typedef GenericUnit<Couple, 1> CoupleUnit;
+TINKER_EXTERN CoupleUnit couple_unit;
 
 void couple_data(rc_op);
 TINKER_NAMESPACE_END

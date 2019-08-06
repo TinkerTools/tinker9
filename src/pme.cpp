@@ -21,7 +21,7 @@ static void pme_op_dealloc_(PMEUnit pu) {
   dealloc_bytes(dptr);
 }
 
-static void pme_op_alloc_(PMEUnit& unit, const PME::Params& M p, bool unique) {
+static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique) {
   unit = -1;
   for (PMEUnit idx = 0; idx < PMEUnit::size(); idx = idx + 1) {
     if (idx.obj() == p)

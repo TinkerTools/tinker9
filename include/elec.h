@@ -19,6 +19,8 @@ enum {
   pole_3_fold = 5
 };
 
+/// @brief
+/// local axis type and x,y,z-axis defining atoms for each multipole site
 struct LocalFrame {
   int zaxis;  ///< z-axis defining atom, starting from 0
   int xaxis;  ///< x-axis defining atom, starting from 0

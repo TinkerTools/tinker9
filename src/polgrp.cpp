@@ -11,41 +11,54 @@ static_assert(PolarGroup::maxp14 >= polgrp::maxp14, "");
 
 void polargroup_data(rc_op op) {
   if (op & rc_dealloc) {
-    dealloc_bytes(polargroup_obj_.np11);
-    dealloc_bytes(polargroup_obj_.np12);
-    dealloc_bytes(polargroup_obj_.np13);
-    dealloc_bytes(polargroup_obj_.np14);
-    dealloc_bytes(polargroup_obj_.ip11);
-    dealloc_bytes(polargroup_obj_.ip12);
-    dealloc_bytes(polargroup_obj_.ip13);
-    dealloc_bytes(polargroup_obj_.ip14);
+    auto& polargroup_obj = polargroup_unit.obj();
+    auto* polargroup = polargroup_unit.deviceptr();
+
+    dealloc_bytes(polargroup_obj.np11);
+    dealloc_bytes(polargroup_obj.np12);
+    dealloc_bytes(polargroup_obj.np13);
+    dealloc_bytes(polargroup_obj.np14);
+    dealloc_bytes(polargroup_obj.ip11);
+    dealloc_bytes(polargroup_obj.ip12);
+    dealloc_bytes(polargroup_obj.ip13);
+    dealloc_bytes(polargroup_obj.ip14);
 
     dealloc_bytes(polargroup);
+
+    PolarGroupUnit::clear();
   }
 
   if (op & rc_alloc) {
+    assert(PolarGroupUnit::size() == 0);
+    polargroup_unit = PolarGroupUnit::add_new();
+    PolarGroup& polargroup_obj = polargroup_unit.obj();
+    PolarGroup*& polargroup = polargroup_unit.deviceptr();
+
     const size_t rs = sizeof(int);
     size_t size;
 
     size = n * rs;
-    alloc_bytes(&polargroup_obj_.np11, size);
-    alloc_bytes(&polargroup_obj_.np12, size);
-    alloc_bytes(&polargroup_obj_.np13, size);
-    alloc_bytes(&polargroup_obj_.np14, size);
+    alloc_bytes(&polargroup_obj.np11, size);
+    alloc_bytes(&polargroup_obj.np12, size);
+    alloc_bytes(&polargroup_obj.np13, size);
+    alloc_bytes(&polargroup_obj.np14, size);
     size = PolarGroup::maxp11 * n * rs;
-    alloc_bytes(&polargroup_obj_.ip11, size);
+    alloc_bytes(&polargroup_obj.ip11, size);
     size = PolarGroup::maxp12 * n * rs;
-    alloc_bytes(&polargroup_obj_.ip12, size);
+    alloc_bytes(&polargroup_obj.ip12, size);
     size = PolarGroup::maxp13 * n * rs;
-    alloc_bytes(&polargroup_obj_.ip13, size);
+    alloc_bytes(&polargroup_obj.ip13, size);
     size = PolarGroup::maxp14 * n * rs;
-    alloc_bytes(&polargroup_obj_.ip14, size);
+    alloc_bytes(&polargroup_obj.ip14, size);
 
     size = sizeof(PolarGroup);
     alloc_bytes(&polargroup, size);
   }
 
   if (op & rc_init) {
+    auto& polargroup_obj = polargroup_unit.obj();
+    auto* polargroup = polargroup_unit.deviceptr();
+
     size_t size;
 
     std::vector<int> nbuf, ibuf;
@@ -63,8 +76,8 @@ void polargroup_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(polargroup_obj_.np11, nbuf.data(), n);
-    copyin_array(&polargroup_obj_.ip11[0][0], ibuf.data(), size);
+    copyin_array(polargroup_obj.np11, nbuf.data(), n);
+    copyin_array(&polargroup_obj.ip11[0][0], ibuf.data(), size);
 
     size = PolarGroup::maxp12 * n;
     ibuf.resize(size);
@@ -78,8 +91,8 @@ void polargroup_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(polargroup_obj_.np12, nbuf.data(), n);
-    copyin_array(&polargroup_obj_.ip12[0][0], ibuf.data(), size);
+    copyin_array(polargroup_obj.np12, nbuf.data(), n);
+    copyin_array(&polargroup_obj.ip12[0][0], ibuf.data(), size);
 
     size = PolarGroup::maxp13 * n;
     ibuf.resize(size);
@@ -93,8 +106,8 @@ void polargroup_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(polargroup_obj_.np13, nbuf.data(), n);
-    copyin_array(&polargroup_obj_.ip13[0][0], ibuf.data(), size);
+    copyin_array(polargroup_obj.np13, nbuf.data(), n);
+    copyin_array(&polargroup_obj.ip13[0][0], ibuf.data(), size);
 
     size = PolarGroup::maxp14 * n;
     ibuf.resize(size);
@@ -108,11 +121,11 @@ void polargroup_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(polargroup_obj_.np14, nbuf.data(), n);
-    copyin_array(&polargroup_obj_.ip14[0][0], ibuf.data(), size);
+    copyin_array(polargroup_obj.np14, nbuf.data(), n);
+    copyin_array(&polargroup_obj.ip14[0][0], ibuf.data(), size);
 
     size = sizeof(PolarGroup);
-    copyin_bytes(polargroup, &polargroup_obj_, size);
+    copyin_bytes(polargroup, &polargroup_obj, size);
   }
 }
 TINKER_NAMESPACE_END

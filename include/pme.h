@@ -62,11 +62,9 @@ struct PME {
 };
 
 typedef GenericUnit<PME, 1> PMEUnit;
-
-TINKER_EXTERN PMEUnit epme_unit; // electrostatic
-TINKER_EXTERN PMEUnit ppme_unit; // polarization
-TINKER_EXTERN PMEUnit dpme_unit; // dispersion
-
+TINKER_EXTERN PMEUnit epme_unit;  // electrostatic
+TINKER_EXTERN PMEUnit ppme_unit;  // polarization
+TINKER_EXTERN PMEUnit dpme_unit;  // dispersion
 TINKER_EXTERN PMEUnit pvpme_unit; // polarization virial
 
 TINKER_EXTERN double ewald_switch_cut, ewald_switch_off;

@@ -6,40 +6,54 @@
 TINKER_NAMESPACE_BEGIN
 void couple_data(rc_op op) {
   if (op & rc_dealloc) {
-    dealloc_bytes(coupl_obj_.n12);
-    dealloc_bytes(coupl_obj_.n13);
-    dealloc_bytes(coupl_obj_.n14);
-    dealloc_bytes(coupl_obj_.n15);
-    dealloc_bytes(coupl_obj_.i12);
-    dealloc_bytes(coupl_obj_.i13);
-    dealloc_bytes(coupl_obj_.i14);
-    dealloc_bytes(coupl_obj_.i15);
+    auto& coupl_obj = couple_unit.obj();
+    auto* coupl = couple_unit.deviceptr();
+
+    dealloc_bytes(coupl_obj.n12);
+    dealloc_bytes(coupl_obj.n13);
+    dealloc_bytes(coupl_obj.n14);
+    dealloc_bytes(coupl_obj.n15);
+    dealloc_bytes(coupl_obj.i12);
+    dealloc_bytes(coupl_obj.i13);
+    dealloc_bytes(coupl_obj.i14);
+    dealloc_bytes(coupl_obj.i15);
+
     dealloc_bytes(coupl);
+
+    CoupleUnit::clear();
   }
 
   if (op & rc_alloc) {
+    assert(CoupleUnit::size() == 0);
+    couple_unit = CoupleUnit::add_new();
+    Couple& coupl_obj = couple_unit.obj();
+    Couple*& coupl = couple_unit.deviceptr();
+
     const size_t rs = sizeof(int);
     size_t size;
 
     size = n * rs;
-    alloc_bytes(&coupl_obj_.n12, size);
-    alloc_bytes(&coupl_obj_.n13, size);
-    alloc_bytes(&coupl_obj_.n14, size);
-    alloc_bytes(&coupl_obj_.n15, size);
+    alloc_bytes(&coupl_obj.n12, size);
+    alloc_bytes(&coupl_obj.n13, size);
+    alloc_bytes(&coupl_obj.n14, size);
+    alloc_bytes(&coupl_obj.n15, size);
     size = Couple::maxn12 * n * rs;
-    alloc_bytes(&coupl_obj_.i12, size);
+    alloc_bytes(&coupl_obj.i12, size);
     size = Couple::maxn13 * n * rs;
-    alloc_bytes(&coupl_obj_.i13, size);
+    alloc_bytes(&coupl_obj.i13, size);
     size = Couple::maxn14 * n * rs;
-    alloc_bytes(&coupl_obj_.i14, size);
+    alloc_bytes(&coupl_obj.i14, size);
     size = Couple::maxn15 * n * rs;
-    alloc_bytes(&coupl_obj_.i15, size);
+    alloc_bytes(&coupl_obj.i15, size);
 
     size = sizeof(Couple);
     alloc_bytes(&coupl, size);
   }
 
   if (op & rc_init) {
+    auto& coupl_obj = couple_unit.obj();
+    auto* coupl = couple_unit.deviceptr();
+
     size_t size;
 
     // see also attach.f
@@ -60,8 +74,8 @@ void couple_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(coupl_obj_.n12, nbuf.data(), n);
-    copyin_array(&coupl_obj_.i12[0][0], ibuf.data(), size);
+    copyin_array(coupl_obj.n12, nbuf.data(), n);
+    copyin_array(&coupl_obj.i12[0][0], ibuf.data(), size);
 
     size = Couple::maxn13 * n;
     ibuf.resize(size);
@@ -75,8 +89,8 @@ void couple_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(coupl_obj_.n13, nbuf.data(), n);
-    copyin_array(&coupl_obj_.i13[0][0], ibuf.data(), size);
+    copyin_array(coupl_obj.n13, nbuf.data(), n);
+    copyin_array(&coupl_obj.i13[0][0], ibuf.data(), size);
 
     size = Couple::maxn14 * n;
     ibuf.resize(size);
@@ -90,8 +104,8 @@ void couple_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(coupl_obj_.n14, nbuf.data(), n);
-    copyin_array(&coupl_obj_.i14[0][0], ibuf.data(), size);
+    copyin_array(coupl_obj.n14, nbuf.data(), n);
+    copyin_array(&coupl_obj.i14[0][0], ibuf.data(), size);
 
     size = Couple::maxn15 * n;
     ibuf.resize(size);
@@ -105,11 +119,11 @@ void couple_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(coupl_obj_.n15, nbuf.data(), n);
-    copyin_array(&coupl_obj_.i15[0][0], ibuf.data(), size);
+    copyin_array(coupl_obj.n15, nbuf.data(), n);
+    copyin_array(&coupl_obj.i15[0][0], ibuf.data(), size);
 
     size = sizeof(Couple);
-    copyin_bytes(coupl, &coupl_obj_, size);
+    copyin_bytes(coupl, &coupl_obj, size);
   }
 }
 TINKER_NAMESPACE_END

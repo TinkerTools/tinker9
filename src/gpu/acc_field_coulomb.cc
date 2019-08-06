@@ -20,6 +20,9 @@ void dfield_coulomb(real* gpu_field, real* gpu_fieldp) {
   const int maxnlst = mlist_unit.obj().maxnlst;
   const NBList* mlst = mlist_unit.deviceptr();
 
+  const auto* coupl = couple_unit.deviceptr();
+  const auto* polargroup = polargroup_unit.deviceptr();
+
   static std::vector<real> pscalebuf;
   static std::vector<real> dscalebuf;
   pscalebuf.resize(n, 1);
@@ -262,6 +265,8 @@ void ufield_coulomb(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
   const real off2 = off * off;
   const int maxnlst = mlist_unit.obj().maxnlst;
   const NBList* mlst = mlist_unit.deviceptr();
+
+  const auto* polargroup = polargroup_unit.deviceptr();
 
   static std::vector<real> uscalebuf;
   uscalebuf.resize(n, 1);

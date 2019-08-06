@@ -10,7 +10,7 @@
 #include "gen_unit.h"
 
 TINKER_NAMESPACE_BEGIN
-typedef GenericUnit<FFTPlan> FFTPlanUnit;
+typedef GenericUnit<FFTPlan, 0> FFTPlanUnit;
 
 /// @brief
 /// zero-out, deallocate, or allocate bytes on device
