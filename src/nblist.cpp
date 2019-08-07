@@ -1,9 +1,11 @@
 #include "nblist.h"
 #include "array.h"
-#include "gpu/e_vdw.h"
+#include "e_vdw.h"
 #include "md.h"
 #include "potent.h"
-#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/detail/limits.hh>
+#include <ext/tinker/detail/neigh.hh>
+#include <ext/tinker/detail/potent.hh>
 
 TINKER_NAMESPACE_BEGIN
 static int use_vdw_list() {

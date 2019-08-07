@@ -15,3 +15,6 @@
 #include "e_strbnd.h"
 #include "e_tors.h"
 #include "e_tortor.h"
+#include "e_urey.h"
+
+#include "e_vdw.h"

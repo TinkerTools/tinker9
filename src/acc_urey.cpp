@@ -1,5 +1,5 @@
 #include "acc_seq.h"
-#include "gpu/e_urey.h"
+#include "e_urey.h"
 #include "md.h"
 
 TINKER_NAMESPACE_BEGIN

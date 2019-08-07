@@ -1,21 +1,11 @@
+#include "e_urey.h"
 #include "array.h"
-#include "gpu/e_urey.h"
 #include "md.h"
 #include "potent.h"
-#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/detail/urey.hh>
+#include <ext/tinker/detail/urypot.hh>
 
 TINKER_NAMESPACE_BEGIN
-// module urey
-int nurey;
-int (*iury)[3];
-real *uk, *ul;
-
-// module urypot
-real cury, qury, ureyunit;
-
-real* eub;
-real* vir_eub;
-
 void eurey_data(rc_op op) {
   if (!use_potent(urey_term))
     return;

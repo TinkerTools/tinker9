@@ -8,11 +8,11 @@
 #include "e_strbnd.h"
 #include "e_tors.h"
 #include "e_tortor.h"
-#include "gpu/e_urey.h"
+#include "e_urey.h"
 
 #include "gpu/e_mpole.h"
 #include "gpu/e_polar.h"
-#include "gpu/e_vdw.h"
+#include "e_vdw.h"
 
 TINKER_NAMESPACE_BEGIN
 void energy_potential(int vers);

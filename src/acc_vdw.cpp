@@ -1,9 +1,8 @@
 #include "acc_seq.h"
 #include "couple.h"
-#include "gpu/e_vdw.h"
+#include "e_vdw.h"
 #include "md.h"
 #include "nblist.h"
-#include <vector>
 
 // TODO: test lj, buck, mm3hb, gauss, and mutant
 // TODO: add vdw correction
@@ -106,7 +105,7 @@ void evdw_tmpl() {
 
         real e;
         real de;
-        if_constexpr(VDWTYP & vdw_hal) {
+        if_constexpr(VDWTYP == evdw_t::hal) {
           real rho = rik * REAL_RECIP(rv);
           real rho6 = REAL_POW(rho, 6);
           real rho7 = rho6 * rho;
@@ -229,17 +228,17 @@ void evdw_tmpl() {
   void evdw_##typ##_acc_impl_(int vers) {                                      \
     evdw_reduce_xyz();                                                         \
     if (vers == calc::v0)                                                      \
-      evdw_tmpl<calc::v0, vdw_##typ>();                                        \
+      evdw_tmpl<calc::v0, evdw_t ::typ>();                                     \
     else if (vers == calc::v1)                                                 \
-      evdw_tmpl<calc::v1, vdw_##typ>();                                        \
+      evdw_tmpl<calc::v1, evdw_t ::typ>();                                     \
     else if (vers == calc::v3)                                                 \
-      evdw_tmpl<calc::v3, vdw_##typ>();                                        \
+      evdw_tmpl<calc::v3, evdw_t ::typ>();                                     \
     else if (vers == calc::v4)                                                 \
-      evdw_tmpl<calc::v4, vdw_##typ>();                                        \
+      evdw_tmpl<calc::v4, evdw_t ::typ>();                                     \
     else if (vers == calc::v5)                                                 \
-      evdw_tmpl<calc::v5, vdw_##typ>();                                        \
+      evdw_tmpl<calc::v5, evdw_t ::typ>();                                     \
     else if (vers == calc::v6)                                                 \
-      evdw_tmpl<calc::v6, vdw_##typ>();                                        \
+      evdw_tmpl<calc::v6, evdw_t ::typ>();                                     \
   }
 TINKER_EVDW_IMPL_(lj);
 TINKER_EVDW_IMPL_(buck);
@@ -247,5 +246,6 @@ TINKER_EVDW_IMPL_(mm3hb);
 TINKER_EVDW_IMPL_(hal);
 TINKER_EVDW_IMPL_(gauss);
 #undef TINKER_EVDW_IMPL_
+#undef TINKER_EVDW_T_PASTE_
 
 TINKER_NAMESPACE_END

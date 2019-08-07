@@ -1,68 +1,16 @@
+#include "e_vdw.h"
 #include "array.h"
-#include "gpu/e_vdw.h"
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"
 #include "switch.h"
-#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/detail/mutant.hh>
+#include <ext/tinker/detail/sizes.hh>
+#include <ext/tinker/detail/vdw.hh>
+#include <ext/tinker/detail/vdwpot.hh>
 #include <map>
 
 TINKER_NAMESPACE_BEGIN
-evdw_t vdwtyp;
-
-const char* vdwtyp_str(evdw_t typ) {
-  if (typ == vdw_lj)
-    return "LENNARD-JONES";
-  else if (typ == vdw_buck)
-    return "BUCKINGHAM";
-  else if (typ == vdw_mm3hb)
-    return "MM3-HBOND";
-  else if (typ == vdw_hal)
-    return "BUFFERED-14-7";
-  else if (typ == vdw_gauss)
-    return "GAUSSIAN";
-  else {
-    assert(false);
-    return "";
-  }
-}
-
-double vdw_switch_cut, vdw_switch_off;
-
-real ghal, dhal;
-real scexp, scalpha;
-int vcouple;
-real v2scale, v3scale, v4scale, v5scale;
-
-int* ired;
-real* kred;
-real *xred, *yred, *zred;
-
-int *jvdw, *njvdw;
-real *radmin, *epsilon;
-
-real* vlam;
-
-real* ev;
-int* nev;
-real* vir_ev;
-
-void get_evdw_type(evdw_t& typ) {
-  fstr_view str = vdwpot::vdwtyp;
-  if (str == "LENNARD-JONES")
-    typ = vdw_lj;
-  else if (str == "BUCKINGHAM")
-    typ = vdw_buck;
-  else if (str == "MM3-HBOND")
-    typ = vdw_mm3hb;
-  else if (str == "BUFFERED-14-7")
-    typ = vdw_hal;
-  else if (str == "GAUSSIAN")
-    typ = vdw_gauss;
-  else
-    assert(false);
-}
-
 void evdw_data(rc_op op) {
   if (!use_potent(vdw_term))
     return;
@@ -138,7 +86,19 @@ void evdw_data(rc_op op) {
   }
 
   if (op & rc_init) {
-    get_evdw_type(vdwtyp);
+    fstr_view str = vdwpot::vdwtyp;
+    if (str == "LENNARD-JONES")
+      vdwtyp = evdw_t::lj;
+    else if (str == "BUCKINGHAM")
+      vdwtyp = evdw_t::buck;
+    else if (str == "MM3-HBOND")
+      vdwtyp = evdw_t::mm3hb;
+    else if (str == "BUFFERED-14-7")
+      vdwtyp = evdw_t::hal;
+    else if (str == "GAUSSIAN")
+      vdwtyp = evdw_t::gauss;
+    else
+      assert(false);
 
     switch_cut_off(switch_vdw, vdw_switch_cut, vdw_switch_off);
 
@@ -209,15 +169,17 @@ extern void evdw_gauss_acc_impl_(int vers);
 void evdw_gauss(int vers) { evdw_gauss_acc_impl_(vers); }
 
 void evdw(int vers) {
-  if (vdwtyp == vdw_lj)
+  if (vdwtyp == evdw_t::lj)
     evdw_lj(vers);
-  else if (vdwtyp == vdw_buck)
+  else if (vdwtyp == evdw_t::buck)
     evdw_buck(vers);
-  else if (vdwtyp == vdw_mm3hb)
+  else if (vdwtyp == evdw_t::mm3hb)
     evdw_mm3hb(vers);
-  else if (vdwtyp == vdw_hal)
+  else if (vdwtyp == evdw_t::hal)
     evdw_hal(vers);
-  else if (vdwtyp == vdw_gauss)
+  else if (vdwtyp == evdw_t::gauss)
     evdw_gauss(vers);
+  else
+    assert(false);
 }
 TINKER_NAMESPACE_END
