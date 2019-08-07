@@ -1,4 +1,4 @@
-#include "tinker_gpu.h"
+#include "tinker_rt.h"
 #include <ext/tinker/detail/bath.hh>
 #include <ext/tinker/detail/bound.hh>
 #include <ext/tinker/detail/inform.hh>

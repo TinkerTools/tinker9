@@ -1,7 +1,9 @@
-#include "tinker_gpu.h"
+#include "rc_man.h"
 #include <algorithm>
 #include <functional>
 #include <map>
+#include <string>
+#include <vector>
 
 using namespace TINKER_NAMESPACE;
 

@@ -1,8 +1,12 @@
 #ifndef TINKER_TINKER_RT_H_
 #define TINKER_TINKER_RT_H_
 
-#include "macro.h"
-#include <cstring>
+#include "io_fort_str.h"
+#include "io_print.h"
+#include "io_read.h"
+#include "io_text.h"
+#include "mathfunc.h"
+#include "md.h"
 
 TINKER_NAMESPACE_BEGIN
 void nextarg(size_t len, char* str, int& exist);
