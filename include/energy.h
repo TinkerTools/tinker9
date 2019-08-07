@@ -1,7 +1,7 @@
 #ifndef TINKER_ENERGY_H_
 #define TINKER_ENERGY_H_
 
-#include "gpu/e_angle.h"
+#include "e_angle.h"
 #include "gpu/e_bond.h"
 #include "gpu/e_opbend.h"
 #include "gpu/e_pitors.h"

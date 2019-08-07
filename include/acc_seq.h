@@ -1,7 +1,6 @@
 #ifndef TINKER_ACC_SEQ_H_
 #define TINKER_ACC_SEQ_H_
 
-//======================================================================
 // acc math functions
 
 #include "mathfunc.h"
@@ -38,16 +37,29 @@
 #pragma acc routine(fmaxf) seq
 #pragma acc routine(copysignf) seq
 
-TINKER_NAMESPACE_BEGIN
-//======================================================================
 // switch
 
+TINKER_NAMESPACE_BEGIN
+/**
+ * @brief
+ * second order smooth step function
+ * @f[
+ * f: [cut,off]\rightarrow[1,0]
+ * @f]
+ *
+ * deriving from
+ * @f[ S_2: [0,1]\rightarrow[0,1] @f]
+ * @f[ S_2(x) = 6 x^5 - 15 x^4 + 10 x^3 @f]
+ *
+ * @param[out] taper
+ * @f$ f @f$ value
+ *
+ * @param[out] dtaper
+ * @f$ df/dx @f$ value
+ */
 #pragma acc routine seq
 template <int DO_DTAPER>
 void switch_taper5(real rik, real cut, real off, real& taper, real& dtaper) {
-  // S2(x) = 6 x**5 - 15 x**4 + 10 x**3
-  // S2(x): [0,1] :-> [0,1]
-  // taper5: [cut,off] :-> [1,0]
   real _1_ab = REAL_RECIP(cut - off);
   real x = (rik - off) * _1_ab;
   real x2 = x * x;
@@ -57,13 +69,13 @@ void switch_taper5(real rik, real cut, real off, real& taper, real& dtaper) {
 }
 TINKER_NAMESPACE_END
 
-//======================================================================
 // image and imagen
 
 #include "box.h"
 
 TINKER_NAMESPACE_BEGIN
 /**
+ * @brief
  * applys periodic boundary conditions to displacement (xr, yr, zr) and
  * preserves the correct signs
  */
@@ -72,6 +84,7 @@ void image(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
            const Box* __restrict__ pb);
 
 /**
+ * @brief
  * applys periodic boundary conditions to displacement (xr, yr, zr) but only
  * guarantee the lengths are correct
  */

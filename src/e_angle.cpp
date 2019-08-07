@@ -1,25 +1,12 @@
+#include "e_angle.h"
 #include "array.h"
-#include "gpu/e_angle.h"
 #include "io_fort_str.h"
 #include "md.h"
-#include "nblist.h"
 #include "potent.h"
-#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/detail/angbnd.hh>
+#include <ext/tinker/detail/angpot.hh>
 
 TINKER_NAMESPACE_BEGIN
-// module angbnd
-int nangle;
-int (*iang)[4];
-real *ak, *anat;
-
-// module angpot
-real angunit;
-real cang, qang, pang, sang;
-int* angtyp;
-
-real* ea;
-real* vir_ea;
-
 void eangle_data(rc_op op) {
   if (!use_potent(angle_term) && !use_potent(strbnd_term) &&
       !use_potent(opbend_term))

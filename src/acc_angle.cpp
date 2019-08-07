@@ -1,5 +1,5 @@
 #include "acc_seq.h"
-#include "gpu/e_angle.h"
+#include "e_angle.h"
 #include "md.h"
 
 // TODO: test linear and fourier angles

@@ -6,3 +6,5 @@
 #include "nblist.h"
 #include "pme.h"
 #include "polgrp.h"
+
+#include "e_angle.h"

@@ -103,7 +103,6 @@ dirs:
 	@mkdir -p $(ext_dir__)/fmt
 	@mkdir -p $(ext_dir__)/tinker
 	@mkdir -p $(src_obj_dir__)/test
-	@mkdir -p $(src_obj_dir__)/gpu
 
 .PHONY: clean
 clean:
@@ -155,35 +154,38 @@ ext_cc_objs__ := $(ext_dir__)/fmt/format.o $(ext_dir__)/fmt/posix.o
 ext_cpp_objs__ := $(ext_dir__)/tinker/tinker_mod.o \
 $(ext_dir__)/tinker/tinker_rt.o
 
-main_cc_objs__ := $(src_obj_dir__)/test/main_test_all.o \
-$(src_obj_dir__)/main_tinker_gpu.o
+main_cpp_objs__ := $(src_obj_dir__)/main_tinker_gpu.o \
+$(src_obj_dir__)/test/main_all_tests.o
+
+# $(top_dir__)/src/acc_foo.cpp -> src-dp/acc_foo.o
+lib_acc_files__ := $(wildcard $(top_dir__)/src/acc_*.cpp)
+lib_acc_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(lib_acc_files__))
+lib_acc_objs__ := $(patsubst %.cpp,%.o,$(lib_acc_objs__))
+
+# $(top_dir__)/src/test/foo.cpp -> src-dp/test/foo.o
+test_cpp_files__ := $(shell find $(top_dir__)/src/test -type f -name '*.cpp' \
+-not -path '$(top_dir__)/src/test/main_*.cpp')
+test_cpp_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(test_cpp_files__))
+test_cpp_objs__ := $(patsubst %.cpp,%.o,$(test_cpp_objs__))
 
 # $(top_dir__)/src/foo.cpp -> src-dp/foo.o
 lib_cpp_files__ := $(shell find $(top_dir__)/src -type f -name '*.cpp' \
--not -path '$(top_dir__)/$(ext_dir__)/*' \
+-not -path '$(top_dir__)/src/main_*.cpp' \
+-not -path '$(top_dir__)/src/acc_*.cpp' \
 -not -path '$(top_dir__)/src/test/*')
 lib_cpp_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(lib_cpp_files__))
 lib_cpp_objs__ := $(patsubst %.cpp,%.o,$(lib_cpp_objs__))
 
-# $(top_dir__)/src/gpu/foo.cc -> src-dp/gpu/foo.o
-lib_acc_files__ := $(wildcard $(top_dir__)/src/gpu/*.cc)
-lib_acc_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(lib_acc_files__))
-lib_acc_objs__ := $(patsubst %.cc,%.o,$(lib_acc_objs__))
-
-# $(top_dir__)/src/test/foo.cpp -> src-dp/test/foo.o
-test_cpp_files__ := $(wildcard $(top_dir__)/src/test/*.cpp)
-test_cpp_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(test_cpp_files__))
-test_cpp_objs__ := $(patsubst %.cpp,%.o,$(test_cpp_objs__))
-
-all_cc_objs__ := $(main_cc_objs__) $(ext_cc_objs__)
-all_cpp_objs__ := $(ext_cpp_objs__) $(lib_cpp_objs__) $(test_cpp_objs__)
+all_cc_objs__ := $(ext_cc_objs__)
+all_cpp_objs__ := $(main_cpp_objs__) $(ext_cpp_objs__) \
+$(lib_cpp_objs__) $(test_cpp_objs__)
 
 # targets: normal-prerequisites | order-only-prerequisites
 $(all_cc_objs__): %.o: $(top_dir__)/%.cc | dirs
 	$(CXX) $(cxx_compile_flags__) $< -o $@
 $(all_cpp_objs__): %.o: $(top_dir__)/%.cpp | dirs
 	$(CXX) $(cxx_compile_flags__) $< -o $@
-$(lib_acc_objs__): %.o: $(top_dir__)/%.cc | dirs
+$(lib_acc_objs__): %.o: $(top_dir__)/%.cpp | dirs
 	$(ACC) $(acc_compile_flags__) $< -o $@
 
 ########################################################################
@@ -223,7 +225,7 @@ test: $(all_tests_exec__)
 .PHONY: unittest
 unittest: $(all_tests_exec__)
 
-$(all_tests_exec__): $(src_obj_dir__)/test/main_test_all.o \
+$(all_tests_exec__): $(src_obj_dir__)/test/main_all_tests.o \
 $(test_cpp_objs__) $(lib_acc_objs__) \
 | $(libtinkergpu_name__).$(shared_lib_suffix__) $(shared_libtinker__)
 	$(ACC) $^ $(acc_link_flags__) -o $@
