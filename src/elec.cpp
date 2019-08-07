@@ -4,7 +4,9 @@
 #include "md.h"
 #include "pme.h"
 #include "potent.h"
-#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/detail/chgpot.hh>
+#include <ext/tinker/detail/limits.hh>
+#include <ext/tinker/detail/mpole.hh>
 
 TINKER_NAMESPACE_BEGIN
 int use_elec() { return use_potent(mpole_term) || use_potent(polar_term); }

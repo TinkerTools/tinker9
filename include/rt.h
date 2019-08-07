@@ -1,5 +1,5 @@
-#ifndef TINKER_UTIL_RT_H_
-#define TINKER_UTIL_RT_H_
+#ifndef TINKER_RT_H_
+#define TINKER_RT_H_
 
 #ifdef TINKER_HOST
 #  include "rt_host.h"

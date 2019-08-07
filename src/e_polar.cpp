@@ -6,7 +6,10 @@
 #include "pme.h"
 #include "potent.h"
 #include "switch.h"
-#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/detail/inform.hh>
+#include <ext/tinker/detail/polar.hh>
+#include <ext/tinker/detail/polpot.hh>
+#include <ext/tinker/detail/units.hh>
 
 TINKER_NAMESPACE_BEGIN
 void epolar_data(rc_op op) {

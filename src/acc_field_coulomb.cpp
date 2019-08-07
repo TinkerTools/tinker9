@@ -4,7 +4,6 @@
 #include "e_polar.h"
 #include "md.h"
 #include "nblist.h"
-#include <vector>
 
 TINKER_NAMESPACE_BEGIN
 // see also subroutine dfield0b in induce.f

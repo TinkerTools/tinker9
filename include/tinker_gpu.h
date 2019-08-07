@@ -9,7 +9,6 @@
 #include "io_text.h"
 #include "md.h"
 #include "rc_man.h"
-#include <ext/tinker/tinker_mod.h>
-#include <ext/tinker/tinker_rt.h>
+#include "tinker_rt.h"
 
 #endif

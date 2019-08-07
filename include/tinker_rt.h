@@ -1,18 +1,14 @@
-#ifndef TINKER_RT_H_
-#define TINKER_RT_H_
+#ifndef TINKER_TINKER_RT_H_
+#define TINKER_TINKER_RT_H_
 
 #include "macro.h"
 #include <cstring>
 
 TINKER_NAMESPACE_BEGIN
-typedef int logical;
-const logical _true_ = 1;
-const logical _false_ = 0;
-
-void nextarg(size_t len, char* str, logical& exist);
+void nextarg(size_t len, char* str, int& exist);
 
 template <size_t Len>
-void nextarg(char (&str)[Len], logical& exist) {
+void nextarg(char (&str)[Len], int& exist) {
   nextarg(Len, str, exist);
 }
 TINKER_NAMESPACE_END

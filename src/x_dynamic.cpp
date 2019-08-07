@@ -1,11 +1,14 @@
-#include "rt.h"
 #include "tinker_gpu.h"
-#include <cmath>
+#include <ext/tinker/detail/bath.hh>
+#include <ext/tinker/detail/bound.hh>
+#include <ext/tinker/detail/inform.hh>
+#include <ext/tinker/detail/keys.hh>
+#include <ext/tinker/detail/mdstuf.hh>
 
 TINKER_NAMESPACE_BEGIN
 void x_dynamic(int argc, char** argv) {
   char string[240];
-  logical exist = _false_;
+  int exist = false;
 
   TINKER_RT(initial)();
   TINKER_RT(getxyz)();
@@ -13,8 +16,8 @@ void x_dynamic(int argc, char** argv) {
 
   bath::kelvin = 0;
   bath::atmsph = 0;
-  bath::isothermal = _false_;
-  bath::isobaric = _false_;
+  bath::isothermal = false;
+  bath::isobaric = false;
 
   // check for keywords containing any altered parameters
 
@@ -108,7 +111,7 @@ void x_dynamic(int argc, char** argv) {
     }
 
     if (mode == 2 || mode == 4) {
-      bath::isothermal = _true_;
+      bath::isothermal = true;
       bath::kelvin = -1;
       nextarg(string, exist);
       if (exist) {
@@ -118,7 +121,7 @@ void x_dynamic(int argc, char** argv) {
     }
 
     if (mode == 3 || mode == 4) {
-      bath::isobaric = _true_;
+      bath::isobaric = true;
       bath::atmsph = -1;
       nextarg(string, exist);
       if (exist) {
@@ -139,7 +142,7 @@ void x_dynamic(int argc, char** argv) {
     read_stream(mode, prompt, 1, [](int i) { return i <= 0; });
 
     if (mode == 2) {
-      bath::isothermal = _true_;
+      bath::isothermal = true;
       bath::kelvin = -1;
       nextarg(string, exist);
       if (exist) {
@@ -156,7 +159,7 @@ void x_dynamic(int argc, char** argv) {
   int flags = calc::md;
   flags += (calc::xyz + calc::vel + calc::mass);
   flags += (calc::energy + calc::grad);
-  if (bath::isobaric == _true_)
+  if (bath::isobaric == true)
     flags += calc::virial;
 
   rc_flag = flags;

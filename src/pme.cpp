@@ -5,8 +5,9 @@
 #include "md.h"
 #include "potent.h"
 #include "switch.h"
-#include <ext/tinker/tinker_mod.h>
-#include <ext/tinker/tinker_rt.h>
+#include "tinker_rt.h"
+#include <ext/tinker/detail/ewald.hh>
+#include <ext/tinker/detail/pme.hh>
 
 TINKER_NAMESPACE_BEGIN
 bool PME::Params::operator==(const Params& st) const {

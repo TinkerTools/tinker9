@@ -128,8 +128,8 @@ TINKER_NAMESPACE_END
 #include "error.h"
 #include "io_print.h"
 #include "io_text.h"
+#include "tinker_rt.h"
 #include <ext/tinker/detail/boxes.hh>
-#include <ext/tinker/tinker_rt.h>
 #include <fstream>
 #include <sstream>
 

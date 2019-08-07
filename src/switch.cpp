@@ -1,6 +1,7 @@
 #include "switch.h"
 #include "mathfunc.h"
-#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/detail/limits.hh>
+#include <ext/tinker/detail/nonpol.hh>
 
 TINKER_NAMESPACE_BEGIN
 void switch_cut_off(switch_t switch_type, double& cut, double& off) {

@@ -151,8 +151,6 @@ acc_link_flags__ += $(acc_common_flags__) -L. -ltinker \
 ########################################################################
 
 ext_cc_objs__ := $(ext_dir__)/fmt/format.o $(ext_dir__)/fmt/posix.o
-ext_cpp_objs__ := $(ext_dir__)/tinker/tinker_mod.o \
-$(ext_dir__)/tinker/tinker_rt.o
 
 main_cpp_objs__ := $(src_obj_dir__)/main_tinker_gpu.o \
 $(src_obj_dir__)/test/main_all_tests.o
@@ -177,8 +175,7 @@ lib_cpp_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(lib_cpp_files__))
 lib_cpp_objs__ := $(patsubst %.cpp,%.o,$(lib_cpp_objs__))
 
 all_cc_objs__ := $(ext_cc_objs__)
-all_cpp_objs__ := $(main_cpp_objs__) $(ext_cpp_objs__) \
-$(lib_cpp_objs__) $(test_cpp_objs__)
+all_cpp_objs__ := $(main_cpp_objs__) $(lib_cpp_objs__) $(test_cpp_objs__)
 
 # targets: normal-prerequisites | order-only-prerequisites
 $(all_cc_objs__): %.o: $(top_dir__)/%.cc | dirs
@@ -191,8 +188,7 @@ $(lib_acc_objs__): %.o: $(top_dir__)/%.cpp | dirs
 ########################################################################
 
 # shared libtinkergpu does not include lib_acc_objs__
-$(libtinkergpu_name__).$(shared_lib_suffix__): \
-$(ext_cc_objs__) $(ext_cpp_objs__) $(lib_cpp_objs__)
+$(libtinkergpu_name__).$(shared_lib_suffix__): $(ext_cc_objs__) $(lib_cpp_objs__)
 	$(CXX) -shared -fpic -o $@ $^
 
 # shared libtinker

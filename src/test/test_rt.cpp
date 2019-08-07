@@ -1,8 +1,7 @@
 #include "test_rt.h"
 #include "rc_man.h"
-#include <cstdio>
-#include <ext/tinker/tinker_mod.h>
-#include <ext/tinker/tinker_rt.h>
+#include "tinker_rt.h"
+#include <ext/tinker/detail/bath.hh>
 #include <fstream>
 
 TINKER_NAMESPACE_BEGIN
@@ -58,15 +57,15 @@ void test_end() {
 void test_mdinit(double t, double atm) {
   if (t > 0) {
     bath::kelvin = t;
-    bath::isothermal = _true_;
+    bath::isothermal = true;
   } else
-    bath::isothermal = _false_;
+    bath::isothermal = false;
 
   if (atm > 0) {
     bath::atmsph = atm;
-    bath::isobaric = _true_;
+    bath::isobaric = true;
   } else
-    bath::isobaric = _false_;
+    bath::isobaric = false;
 
   TINKER_RT(mdinit)();
 }

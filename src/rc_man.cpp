@@ -9,7 +9,7 @@ extern "C" void for_rtl_init_(int*, char**);
 extern "C" void for_rtl_finish_();
 #else
 #  error "unknown fortran compiler error"
-#  error see also util_macro.h
+#  error see also "macro.h"
 #endif
 
 TINKER_NAMESPACE_BEGIN
@@ -20,7 +20,7 @@ void fortran_runtime_initialize(int argc, char** argv) {
   for_rtl_init_(&argc, argv);
 #else
 #  error "unknown fortran compiler error"
-#  error see also util_macro.h
+#  error see also "macro.h"
 #endif
 }
 
@@ -30,7 +30,7 @@ void fortran_runtime_finish() {
   for_rtl_finish_();
 #else
 #  error "unknown fortran compiler error"
-#  error see also util_macro.h
+#  error see also "macro.h"
 #endif
 }
 

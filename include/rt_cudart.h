@@ -1,5 +1,5 @@
-#ifndef TINKER_UTIL_RT_CUDART_H_
-#define TINKER_UTIL_RT_CUDART_H_
+#ifndef TINKER_RT_CUDART_H_
+#define TINKER_RT_CUDART_H_
 
 #include "macro.h"
 #include <cuda_runtime.h>

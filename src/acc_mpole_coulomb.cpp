@@ -3,7 +3,6 @@
 #include "e_mpole.h"
 #include "md.h"
 #include "nblist.h"
-#include <vector>
 
 TINKER_NAMESPACE_BEGIN
 template <int USE>
