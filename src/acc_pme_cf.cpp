@@ -1,5 +1,5 @@
 #include "box.h"
-#include "gpu/e_mpole.h"
+#include "e_mpole.h"
 #include "md.h"
 #include "pme.h"
 

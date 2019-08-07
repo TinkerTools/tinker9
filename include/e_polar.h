@@ -4,41 +4,38 @@
 #include "elec.h"
 #include "polgrp.h"
 #include "rc_man.h"
-#include <string>
 
 TINKER_NAMESPACE_BEGIN
-extern int epolar_electyp;
-extern std::string epolar_electyp_str;
+TINKER_EXTERN elec_t epolar_electyp;
 
-extern real u1scale, u2scale, u3scale, u4scale;
-extern real d1scale, d2scale, d3scale, d4scale;
-extern real p2scale, p3scale, p4scale, p5scale;
-extern real p2iscale, p3iscale, p4iscale, p5iscale;
+TINKER_EXTERN real u1scale, u2scale, u3scale, u4scale;
+TINKER_EXTERN real d1scale, d2scale, d3scale, d4scale;
+TINKER_EXTERN real p2scale, p3scale, p4scale, p5scale;
+TINKER_EXTERN real p2iscale, p3iscale, p4iscale, p5iscale;
 
-extern real* polarity;
-extern real* thole;
-extern real* pdamp;
-extern real* polarity_inv;
+TINKER_EXTERN real* polarity;
+TINKER_EXTERN real* thole;
+TINKER_EXTERN real* pdamp;
+TINKER_EXTERN real* polarity_inv;
 
-extern real* ep;
-extern int* nep;
-extern real* vir_ep;
+TINKER_EXTERN real* ep;
+TINKER_EXTERN int* nep;
+TINKER_EXTERN real* vir_ep;
 
-extern real (*ufld)[3];
-extern real (*dufld)[6];
+TINKER_EXTERN real (*ufld)[3];
+TINKER_EXTERN real (*dufld)[6];
 
-extern real (*work01_)[3];
-extern real (*work02_)[3];
-extern real (*work03_)[3];
-extern real (*work04_)[3];
-extern real (*work05_)[3];
-extern real (*work06_)[3];
-extern real (*work07_)[3];
-extern real (*work08_)[3];
-extern real (*work09_)[3];
-extern real (*work10_)[3];
+TINKER_EXTERN real (*work01_)[3];
+TINKER_EXTERN real (*work02_)[3];
+TINKER_EXTERN real (*work03_)[3];
+TINKER_EXTERN real (*work04_)[3];
+TINKER_EXTERN real (*work05_)[3];
+TINKER_EXTERN real (*work06_)[3];
+TINKER_EXTERN real (*work07_)[3];
+TINKER_EXTERN real (*work08_)[3];
+TINKER_EXTERN real (*work09_)[3];
+TINKER_EXTERN real (*work10_)[3];
 
-void get_epolar_type(int& typ, std::string& typ_str);
 void epolar_data(rc_op op);
 
 // see also subroutine epolar0e in epolar.f

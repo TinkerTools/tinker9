@@ -1,5 +1,5 @@
+#include "e_polar.h"
 #include "array.h"
-#include "gpu/e_polar.h"
 #include "io_fort_str.h"
 #include "io_print.h"
 #include "md.h"
@@ -9,47 +9,6 @@
 #include <ext/tinker/tinker_mod.h>
 
 TINKER_NAMESPACE_BEGIN
-int epolar_electyp;
-std::string epolar_electyp_str;
-
-real u1scale, u2scale, u3scale, u4scale;
-real d1scale, d2scale, d3scale, d4scale;
-real p2scale, p3scale, p4scale, p5scale;
-real p2iscale, p3iscale, p4iscale, p5iscale;
-
-real* polarity;
-real* thole;
-real* pdamp;
-real* polarity_inv;
-
-real* ep;
-int* nep;
-real* vir_ep;
-
-real (*ufld)[3];
-real (*dufld)[6];
-
-real (*work01_)[3];
-real (*work02_)[3];
-real (*work03_)[3];
-real (*work04_)[3];
-real (*work05_)[3];
-real (*work06_)[3];
-real (*work07_)[3];
-real (*work08_)[3];
-real (*work09_)[3];
-real (*work10_)[3];
-
-void get_epolar_type(int& typ, std::string& typ_str) {
-  if (use_ewald()) {
-    typ = elec_ewald;
-    typ_str = "EWALD";
-  } else {
-    typ = elec_coulomb;
-    typ_str = "COULOMB";
-  }
-}
-
 void epolar_data(rc_op op) {
   if (!use_potent(polar_term))
     return;
@@ -109,9 +68,13 @@ void epolar_data(rc_op op) {
   }
 
   if (op & rc_init) {
-    get_epolar_type(epolar_electyp, epolar_electyp_str);
+    if (use_ewald()) {
+      epolar_electyp = elec_t::ewald;
+    } else {
+      epolar_electyp = elec_t::coulomb;
+    }
 
-    if (epolar_electyp == elec_coulomb)
+    if (epolar_electyp == elec_t::coulomb)
       switch_cut_off(switch_mpole, mpole_switch_cut, mpole_switch_off);
 
     u1scale = polpot::u1scale;
@@ -148,7 +111,7 @@ void epolar_data(rc_op op) {
 }
 
 void dfield(real* gpu_field, real* gpu_fieldp) {
-  if (epolar_electyp == elec_ewald)
+  if (epolar_electyp == elec_t::ewald)
     dfield_ewald(gpu_field, gpu_fieldp);
   else
     dfield_coulomb(gpu_field, gpu_fieldp);
@@ -156,7 +119,7 @@ void dfield(real* gpu_field, real* gpu_fieldp) {
 
 void ufield(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
             real* gpu_fieldp) {
-  if (epolar_electyp == elec_ewald)
+  if (epolar_electyp == elec_t::ewald)
     ufield_ewald(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);
   else
     ufield_coulomb(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);
@@ -194,9 +157,9 @@ void induce(real* gpu_ud, real* gpu_up) {
 }
 
 void epolar(int vers) {
-  if (epolar_electyp == elec_coulomb)
+  if (epolar_electyp == elec_t::coulomb)
     epolar_coulomb(vers);
-  else if (epolar_electyp == elec_ewald)
+  else if (epolar_electyp == elec_t::ewald)
     epolar_ewald(vers);
 }
 TINKER_NAMESPACE_END

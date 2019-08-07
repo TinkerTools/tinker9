@@ -4,9 +4,9 @@
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-enum {
-  elec_coulomb = 1, ///< coulomb interaction
-  elec_ewald = 2    ///< particle mesh ewald summation
+enum class elec_t {
+  coulomb, ///< coulomb interaction
+  ewald    ///< particle mesh ewald summation
 };
 
 /// local frame definitions
@@ -78,6 +78,7 @@ TINKER_EXTERN real (*uinp)[3];
 
 void elec_data(rc_op op);
 int use_elec();
+int use_ewald();
 void elec_init(int vers);
 void torque(int vers);
 TINKER_NAMESPACE_END

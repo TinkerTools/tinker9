@@ -17,4 +17,6 @@
 #include "e_tortor.h"
 #include "e_urey.h"
 
+#include "e_mpole.h"
+#include "e_polar.h"
 #include "e_vdw.h"

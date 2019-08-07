@@ -1,7 +1,7 @@
 #include "acc_seq.h"
 #include "array.h"
+#include "e_polar.h"
 #include "error.h"
-#include "gpu/e_polar.h"
 #include "io_print.h"
 #include "md.h"
 #include <ext/tinker/tinker_mod.h>

@@ -1,5 +1,5 @@
 #include "acc_seq.h"
-#include "gpu/e_mpole.h"
+#include "e_mpole.h"
 #include "mathfunc.h"
 #include "md.h"
 

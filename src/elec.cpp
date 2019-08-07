@@ -1,7 +1,5 @@
 #include "elec.h"
 #include "array.h"
-#include "gpu/e_mpole.h"
-#include "gpu/e_polar.h"
 #include "io_fort_str.h"
 #include "md.h"
 #include "pme.h"
@@ -11,10 +9,9 @@
 TINKER_NAMESPACE_BEGIN
 int use_elec() { return use_potent(mpole_term) || use_potent(polar_term); }
 
-void elec_data(rc_op op) {
-  if (!use_elec())
-    return;
+int use_ewald() { return limits::use_ewald; }
 
+static void pole_data_(rc_op op) {
   if (op & rc_dealloc) {
     dealloc_bytes(zaxis);
     dealloc_bytes(pole);
@@ -124,8 +121,14 @@ void elec_data(rc_op op) {
     }
     copyin_array(reinterpret_cast<real*>(pole), polebuf.data(), mpl_total * n);
   }
+}
 
-  pme_data(op);
+void elec_data(rc_op op) {
+  if (!use_elec())
+    return;
+
+  rc_man pole42_{pole_data_, op};
+  rc_man pme42_{pme_data, op};
 }
 
 extern void chkpole();
@@ -151,8 +154,7 @@ void elec_init(int vers) {
   chkpole();
   rotpole();
 
-  if (use_ewald()) {
+  if (use_ewald())
     pme_init(vers);
-  }
 }
 TINKER_NAMESPACE_END

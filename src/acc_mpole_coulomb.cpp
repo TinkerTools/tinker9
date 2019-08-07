@@ -1,6 +1,6 @@
 #include "acc_seq.h"
 #include "couple.h"
-#include "gpu/e_mpole.h"
+#include "e_mpole.h"
 #include "md.h"
 #include "nblist.h"
 #include <vector>

@@ -1,5 +1,6 @@
 #include "pme.h"
 #include "array.h"
+#include "elec.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "potent.h"
@@ -100,28 +101,18 @@ static void pme_op_copyin_(PMEUnit unit) {
 }
 TINKER_NAMESPACE_END
 
-#include "gpu/e_mpole.h"
-#include "gpu/e_polar.h"
-
 TINKER_NAMESPACE_BEGIN
-
-int use_ewald() { return limits::use_ewald; }
-
 void pme_init(int vers) {
   if (!use_ewald())
     return;
 
   rpole_to_cmp();
 
-  if (vir_m) {
+  if (vir_m)
     zero_array(vir_m, 9);
-  }
 }
 
-void pme_data(rc_op op) {
-  if (!use_ewald())
-    return;
-
+static void pme_data1_(rc_op op) {
   if (op & rc_dealloc) {
     PMEUnit::clear();
 
@@ -209,7 +200,13 @@ void pme_data(rc_op op) {
     pme_op_copyin_(pvpme_unit);
     pme_op_copyin_(dpme_unit);
   }
+}
 
-  fft_data(op);
+void pme_data(rc_op op) {
+  if (!use_ewald())
+    return;
+
+  rc_man pme42_{pme_data1_, op};
+  rc_man fft42_{fft_data, op};
 }
 TINKER_NAMESPACE_END

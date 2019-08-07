@@ -1,4 +1,4 @@
-#include "gpu/e_polar.h"
+#include "e_polar.h"
 #include "md.h"
 
 TINKER_NAMESPACE_BEGIN
