@@ -1,34 +1,15 @@
+#include "e_tortor.h"
 #include "array.h"
-#include "gpu/e_tortor.h"
 #include "md.h"
 #include "potent.h"
-#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/detail/atomid.hh>
+#include <ext/tinker/detail/atoms.hh>
+#include <ext/tinker/detail/bitor.hh>
+#include <ext/tinker/detail/couple.hh>
+#include <ext/tinker/detail/torpot.hh>
+#include <ext/tinker/detail/tortor.hh>
 
 TINKER_NAMESPACE_BEGIN
-// module bitor
-int nbitor;
-int (*ibitor)[5];
-
-// module tortor
-int ntortor;
-int (*itt)[3];
-
-// module ktrtor
-int *tnx, *tny;
-real (*ttx)[ktrtor::maxtgrd];
-real (*tty)[ktrtor::maxtgrd];
-real (*tbf)[ktrtor::maxtgrd2];
-real (*tbx)[ktrtor::maxtgrd2];
-real (*tby)[ktrtor::maxtgrd2];
-real (*tbxy)[ktrtor::maxtgrd2];
-
-real ttorunit;
-
-int* chkttor_ia_;
-
-real* ett;
-real* vir_ett;
-
 void etortor_data(rc_op op) {
   if (!use_potent(tortor_term))
     return;

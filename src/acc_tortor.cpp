@@ -1,5 +1,5 @@
 #include "acc_seq.h"
-#include "gpu/e_tortor.h"
+#include "e_tortor.h"
 #include "md.h"
 
 // TODO: test chiral center

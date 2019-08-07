@@ -6,8 +6,8 @@
 #include "e_opbend.h"
 #include "e_pitors.h"
 #include "e_strbnd.h"
-#include "gpu/e_tors.h"
-#include "gpu/e_tortor.h"
+#include "e_tors.h"
+#include "e_tortor.h"
 #include "gpu/e_urey.h"
 
 #include "gpu/e_mpole.h"

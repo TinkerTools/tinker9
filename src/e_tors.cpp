@@ -1,23 +1,11 @@
+#include "e_tors.h"
 #include "array.h"
-#include "gpu/e_tors.h"
 #include "md.h"
 #include "potent.h"
-#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/detail/tors.hh>
+#include <ext/tinker/detail/torpot.hh>
 
 TINKER_NAMESPACE_BEGIN
-int ntors;
-int (*itors)[4];
-real (*tors1)[4];
-real (*tors2)[4];
-real (*tors3)[4];
-real (*tors4)[4];
-real (*tors5)[4];
-real (*tors6)[4];
-real torsunit;
-
-real* et;
-real* vir_et;
-
 void etors_data(rc_op op) {
   if (!use_potent(torsion_term))
     return;

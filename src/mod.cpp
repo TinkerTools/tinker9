@@ -1,4 +1,5 @@
 #define TINKER_EXTERN_DEFINITION_FILE
+
 #include "box.h"
 #include "couple.h"
 #include "elec.h"
@@ -12,3 +13,5 @@
 #include "e_opbend.h"
 #include "e_pitors.h"
 #include "e_strbnd.h"
+#include "e_tors.h"
+#include "e_tortor.h"
