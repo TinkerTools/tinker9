@@ -9,3 +9,4 @@
 
 #include "e_angle.h"
 #include "e_bond.h"
+#include "e_opbend.h"

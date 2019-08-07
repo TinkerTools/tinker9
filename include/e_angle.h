@@ -4,12 +4,7 @@
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-enum {
-  angle_in_plane = 0x001,
-  angle_harmonic = 0x002,
-  angle_linear = 0x004,
-  angle_fourier = 0x008
-};
+enum class eangle_t : int { in_plane, harmonic, linear, fourier };
 
 // module angbnd
 TINKER_EXTERN int nangle;
@@ -19,7 +14,7 @@ TINKER_EXTERN real *ak, *anat;
 // module angpot
 TINKER_EXTERN real angunit;
 TINKER_EXTERN real cang, qang, pang, sang;
-TINKER_EXTERN int* angtyp;
+TINKER_EXTERN eangle_t* angtyp;
 
 TINKER_EXTERN real* ea;
 TINKER_EXTERN real* vir_ea;

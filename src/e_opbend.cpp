@@ -1,22 +1,12 @@
+#include "e_opbend.h"
 #include "array.h"
-#include "gpu/e_opbend.h"
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"
-#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/detail/angpot.hh>
+#include <ext/tinker/detail/opbend.hh>
 
 TINKER_NAMESPACE_BEGIN
-eopbend_t opbtyp;
-
-int nopbend;
-int* iopb;
-real* opbk;
-real opbunit;
-real copb, qopb, popb, sopb;
-
-real* eopb;
-real* vir_eopb;
-
 void eopbend_data(rc_op op) {
   if (!use_potent(opbend_term))
     return;
@@ -39,9 +29,9 @@ void eopbend_data(rc_op op) {
   if (op & rc_init) {
     fstr_view otyp = angpot::opbtyp;
     if (otyp == "W-D-C")
-      opbtyp = opbend_w_d_c;
+      opbtyp = eopbend_t::w_d_c;
     else if (otyp == "ALLINGER")
-      opbtyp = opbend_allinger;
+      opbtyp = eopbend_t::allinger;
     else
       assert(false);
     nopbend = count_bonded_term(opbend_term);

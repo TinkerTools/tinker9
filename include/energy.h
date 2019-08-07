@@ -3,7 +3,7 @@
 
 #include "e_angle.h"
 #include "e_bond.h"
-#include "gpu/e_opbend.h"
+#include "e_opbend.h"
 #include "gpu/e_pitors.h"
 #include "gpu/e_strbnd.h"
 #include "gpu/e_tors.h"

@@ -49,21 +49,23 @@ void eangle_data(rc_op op) {
     qang = angpot::qang;
     pang = angpot::pang;
     sang = angpot::sang;
+    std::vector<eangle_t> angtypvec(nangle);
     for (int i = 0; i < nangle; ++i) {
       fstr_view atyp = angpot::angtyp[i];
       if (atyp == "IN-PLANE")
-        iangvec[i] = angle_in_plane;
+        angtypvec[i] = eangle_t::in_plane;
       else if (atyp == "HARMONIC")
-        iangvec[i] = angle_harmonic;
+        angtypvec[i] = eangle_t::harmonic;
       else if (atyp == "LINEAR")
-        iangvec[i] = angle_linear;
+        angtypvec[i] = eangle_t::linear;
       else if (atyp == "FOURIER")
-        iangvec[i] = angle_fourier;
+        angtypvec[i] = eangle_t::fourier;
       else {
         assert(false);
       }
     }
-    copyin_array(angtyp, iangvec.data(), nangle);
+    copyin_array(reinterpret_cast<int*>(angtyp),
+                 reinterpret_cast<const int*>(angtypvec.data()), nangle);
   }
 }
 

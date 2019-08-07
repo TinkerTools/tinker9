@@ -1,6 +1,6 @@
 #include "acc_seq.h"
 #include "e_angle.h"
-#include "gpu/e_opbend.h"
+#include "e_opbend.h"
 #include "md.h"
 #include <cassert>
 
@@ -73,7 +73,7 @@ void eopbend_tmpl() {
     MAYBE_UNUSED real rcb2, rcd2;
     MAYBE_UNUSED real dot;
     real cc;
-    if_constexpr(TYP == opbend_w_d_c) {
+    if_constexpr(TYP == eopbend_t::w_d_c) {
 
       // W-D-C angle between A-B-C plane and B-D vector for D-B<AC
 
@@ -82,7 +82,7 @@ void eopbend_tmpl() {
       cc = rab2 * rcb2 - REAL_SQ(xab * xcb + yab * ycb + zab * zcb);
       if_constexpr(do_g) dot = xab * xcb + yab * ycb + zab * zcb;
     }
-    else if_constexpr(TYP == opbend_allinger) {
+    else if_constexpr(TYP == eopbend_t::allinger) {
 
       // Allinger angle between A-C-D plane and D-B vector for D-B<AC
 
@@ -124,7 +124,7 @@ void eopbend_tmpl() {
         real dccdxia, dccdyia, dccdzia;
         real dccdxic, dccdyic, dccdzic;
         real dccdxid, dccdyid, dccdzid;
-        if_constexpr(TYP == opbend_w_d_c) {
+        if_constexpr(TYP == eopbend_t::w_d_c) {
           dccdxia = (xab * rcb2 - xcb * dot) * term;
           dccdyia = (yab * rcb2 - ycb * dot) * term;
           dccdzia = (zab * rcb2 - zcb * dot) * term;
@@ -135,7 +135,7 @@ void eopbend_tmpl() {
           dccdyid = 0;
           dccdzid = 0;
         }
-        else if_constexpr(TYP == opbend_allinger) {
+        else if_constexpr(TYP == eopbend_t::allinger) {
           dccdxia = (xad * rcd2 - xcd * dot) * term;
           dccdyia = (yad * rcd2 - ycd * dot) * term;
           dccdzia = (zad * rcd2 - zcd * dot) * term;
@@ -231,28 +231,28 @@ void eopbend_tmpl() {
 }
 
 void eopbend_acc_impl_(int vers) {
-  if (opbtyp == opbend_w_d_c) {
+  if (opbtyp == eopbend_t::w_d_c) {
     if (vers == calc::v0 || vers == calc::v3)
-      eopbend_tmpl<calc::v0, opbend_w_d_c>();
+      eopbend_tmpl<calc::v0, eopbend_t::w_d_c>();
     else if (vers == calc::v1)
-      eopbend_tmpl<calc::v1, opbend_w_d_c>();
+      eopbend_tmpl<calc::v1, eopbend_t::w_d_c>();
     else if (vers == calc::v4)
-      eopbend_tmpl<calc::v4, opbend_w_d_c>();
+      eopbend_tmpl<calc::v4, eopbend_t::w_d_c>();
     else if (vers == calc::v5)
-      eopbend_tmpl<calc::v5, opbend_w_d_c>();
+      eopbend_tmpl<calc::v5, eopbend_t::w_d_c>();
     else if (vers == calc::v6)
-      eopbend_tmpl<calc::v6, opbend_w_d_c>();
-  } else if (opbtyp == opbend_allinger) {
+      eopbend_tmpl<calc::v6, eopbend_t::w_d_c>();
+  } else if (opbtyp == eopbend_t::allinger) {
     if (vers == calc::v0 || vers == calc::v3)
-      eopbend_tmpl<calc::v0, opbend_allinger>();
+      eopbend_tmpl<calc::v0, eopbend_t::allinger>();
     else if (vers == calc::v1)
-      eopbend_tmpl<calc::v1, opbend_allinger>();
+      eopbend_tmpl<calc::v1, eopbend_t::allinger>();
     else if (vers == calc::v4)
-      eopbend_tmpl<calc::v4, opbend_allinger>();
+      eopbend_tmpl<calc::v4, eopbend_t::allinger>();
     else if (vers == calc::v5)
-      eopbend_tmpl<calc::v5, opbend_allinger>();
+      eopbend_tmpl<calc::v5, eopbend_t::allinger>();
     else if (vers == calc::v6)
-      eopbend_tmpl<calc::v6, opbend_allinger>();
+      eopbend_tmpl<calc::v6, eopbend_t::allinger>();
   } else {
     assert(false);
   }

@@ -4,8 +4,8 @@
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-enum { bond_harmonic = 0x001, bond_morse = 0x002 };
-TINKER_EXTERN int bndtyp;
+enum class ebond_t { harmonic, morse };
+TINKER_EXTERN ebond_t bndtyp;
 
 TINKER_EXTERN real cbnd, qbnd, bndunit;
 TINKER_EXTERN int nbond;

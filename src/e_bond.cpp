@@ -32,11 +32,10 @@ void ebond_data(rc_op op) {
 
   if (op & rc_init) {
     fstr_view btyp = bndpot::bndtyp;
-    bndtyp = 0;
     if (btyp == "HARMONIC")
-      bndtyp = bond_harmonic;
+      bndtyp = ebond_t::harmonic;
     else if (btyp == "MORSE")
-      bndtyp = bond_morse;
+      bndtyp = ebond_t::morse;
 
     cbnd = bndpot::cbnd;
     qbnd = bndpot::qbnd;

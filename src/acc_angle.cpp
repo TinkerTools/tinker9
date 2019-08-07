@@ -42,7 +42,7 @@ void eangle_tmpl() {
     int id = iang[i][3];
     real ideal = anat[i];
     real force = ak[i];
-    int angtypi = angtyp[i];
+    eangle_t angtypi = angtyp[i];
 
     real xia = x[ia];
     real yia = y[ia];
@@ -54,7 +54,7 @@ void eangle_tmpl() {
     real yic = y[ic];
     real zic = z[ic];
 
-    if (angtypi != angle_in_plane) {
+    if (angtypi != eangle_t::in_plane) {
       real xab = xia - xib;
       real yab = yia - yib;
       real zab = zia - zib;
@@ -78,7 +78,7 @@ void eangle_tmpl() {
 
         MAYBE_UNUSED real e;
         MAYBE_UNUSED real deddt;
-        if (angtypi == angle_harmonic) {
+        if (angtypi == eangle_t::harmonic) {
           real dt = angle - ideal;
           real dt2 = dt * dt;
           real dt3 = dt2 * dt;

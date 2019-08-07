@@ -6,7 +6,7 @@
 // TODO: test morse potential
 
 TINKER_NAMESPACE_BEGIN
-template <int USE, int BNDTYP>
+template <int USE, ebond_t BNDTYP>
 void ebond_tmpl() {
   constexpr int do_e = USE & calc::energy;
   constexpr int do_g = USE & calc::grad;
@@ -32,14 +32,14 @@ void ebond_tmpl() {
 
     MAYBE_UNUSED real e;
     MAYBE_UNUSED real deddt;
-    if_constexpr(BNDTYP == bond_harmonic) {
+    if_constexpr(BNDTYP == ebond_t::harmonic) {
       real dt2 = dt * dt;
       if_constexpr(do_e) e =
           bndunit * force * dt2 * (1 + cbnd * dt + qbnd * dt2);
       if_constexpr(do_g) deddt =
           2 * bndunit * force * dt * (1 + 1.5f * cbnd * dt + 2 * qbnd * dt2);
     }
-    else if_constexpr(BNDTYP == bond_morse) {
+    else if_constexpr(BNDTYP == ebond_t::morse) {
       real expterm = REAL_EXP(-2 * dt);
       real bde = 0.25f * bndunit * force;
       if_constexpr(do_e) e = bde * (1 - expterm) * (1 - expterm);
@@ -101,30 +101,30 @@ void ebond_tmpl() {
 }
 
 void ebond_acc_impl_(int vers) {
-  if (bndtyp == bond_harmonic)
+  if (bndtyp == ebond_t::harmonic)
     if (vers == calc::v0 || vers == calc::v3)
-      ebond_tmpl<calc::v0, bond_harmonic>();
+      ebond_tmpl<calc::v0, ebond_t::harmonic>();
     else if (vers == calc::v1)
-      ebond_tmpl<calc::v1, bond_harmonic>();
+      ebond_tmpl<calc::v1, ebond_t::harmonic>();
     else if (vers == calc::v4)
-      ebond_tmpl<calc::v4, bond_harmonic>();
+      ebond_tmpl<calc::v4, ebond_t::harmonic>();
     else if (vers == calc::v5)
-      ebond_tmpl<calc::v5, bond_harmonic>();
+      ebond_tmpl<calc::v5, ebond_t::harmonic>();
     else if (vers == calc::v6)
-      ebond_tmpl<calc::v6, bond_harmonic>();
+      ebond_tmpl<calc::v6, ebond_t::harmonic>();
     else
       assert(false);
-  else if (bndtyp == bond_morse)
+  else if (bndtyp == ebond_t::morse)
     if (vers == calc::v0 || vers == calc::v3)
-      ebond_tmpl<calc::v0, bond_morse>();
+      ebond_tmpl<calc::v0, ebond_t::morse>();
     else if (vers == calc::v1)
-      ebond_tmpl<calc::v1, bond_morse>();
+      ebond_tmpl<calc::v1, ebond_t::morse>();
     else if (vers == calc::v4)
-      ebond_tmpl<calc::v4, bond_morse>();
+      ebond_tmpl<calc::v4, ebond_t::morse>();
     else if (vers == calc::v5)
-      ebond_tmpl<calc::v5, bond_morse>();
+      ebond_tmpl<calc::v5, ebond_t::morse>();
     else if (vers == calc::v6)
-      ebond_tmpl<calc::v6, bond_morse>();
+      ebond_tmpl<calc::v6, ebond_t::morse>();
     else
       assert(false);
   else
