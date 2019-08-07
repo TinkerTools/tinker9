@@ -90,7 +90,7 @@ print-config:
 	@echo 'opt level         =' $(opt)
 	@echo 'source directory  =' $(top_dir__)
 	@echo 'precision         =' $(prec)
-	@echo 'host-only         =' $(host)
+	@echo 'host only         =' $(host)
 	@echo 'OS                =' $(os__)
 	@echo 'shared library    =' $(libtinkergpu_name__).$(shared_lib_suffix__)
 	@echo 'executables       =' $(tinker_gpu_exec__) $(all_tests_exec__)
@@ -101,12 +101,12 @@ print-config:
 .PHONY: dirs
 dirs:
 	@mkdir -p $(ext_dir__)/fmt
-	@mkdir -p $(ext_dir__)/tinker
 	@mkdir -p $(src_obj_dir__)/test
 
 .PHONY: clean
 clean:
 	rm -rf ext src* tinker.gpu* all.tests* libtinker* *dSYM doc
+
 
 ########################################################################
 #                                                                      #
@@ -127,12 +127,12 @@ else
 endif
 
 common_flags__ := -D$(fortran_compiler_macro__) \
-$(precision_macro__) $(include_flags__)
+$(precision_macro__) $(include_flags__) -std=c++11
 cxx_common_flags__ := $(common_flags__) $(cxx_opt_flags__)
 acc_common_flags__ := $(common_flags__) $(acc_opt_flags__)
 
-cxx_compile_flags__ := $(cxx_common_flags__) -std=c++11 -c -fpic
-acc_compile_flags__ := $(acc_common_flags__) -std=c++11 -c -fpic
+cxx_compile_flags__ := $(cxx_common_flags__) -c -fpic
+acc_compile_flags__ := $(acc_common_flags__) -c -fpic
 ifeq ($(host),false)
 	acc_compile_flags__ += $(acc_device_compile_flags__)
 else
@@ -152,8 +152,10 @@ acc_link_flags__ += $(acc_common_flags__) -L. -ltinker \
 
 ext_cc_objs__ := $(ext_dir__)/fmt/format.o $(ext_dir__)/fmt/posix.o
 
-main_cpp_objs__ := $(src_obj_dir__)/main_tinker_gpu.o \
-$(src_obj_dir__)/test/main_all_tests.o
+main_cpp_files__ := $(top_dir__)/src/main_tinker_gpu.cpp \
+$(top_dir__)/src/test/main_all_tests.cpp
+main_cpp_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(main_cpp_files__))
+main_cpp_objs__ := $(patsubst %.cpp,%.o,$(main_cpp_objs__))
 
 # $(top_dir__)/src/acc_foo.cpp -> src-dp/acc_foo.o
 lib_acc_files__ := $(wildcard $(top_dir__)/src/acc_*.cpp)
@@ -187,11 +189,12 @@ $(lib_acc_objs__): %.o: $(top_dir__)/%.cpp | dirs
 
 ########################################################################
 
-# shared libtinkergpu does not include lib_acc_objs__
+# shared tinkergpu library does not include lib_acc_objs__
+# lib_acc_objs__ should be statically linked
 $(libtinkergpu_name__).$(shared_lib_suffix__): $(ext_cc_objs__) $(lib_cpp_objs__)
 	$(CXX) -shared -fpic -o $@ $^
 
-# shared libtinker
+# copy the shared tinker library to the build directory
 $(shared_libtinker__): $(libtinker_dir__)/$(shared_libtinker__)
 	cp $^ $@
 
@@ -202,8 +205,9 @@ $(shared_libtinker__): $(libtinker_dir__)/$(shared_libtinker__)
 #                                                                      #
 ########################################################################
 
-$(tinker_gpu_exec__): $(src_obj_dir__)/main_tinker_gpu.o \
-$(lib_acc_objs__) \
+# tinker.gpu: main.o acc_objs.o | libtinkergpu.so libtinker.so
+# 	link tinker.gpu
+$(tinker_gpu_exec__): $(src_obj_dir__)/main_tinker_gpu.o $(lib_acc_objs__) \
 | $(libtinkergpu_name__).$(shared_lib_suffix__) $(shared_libtinker__)
 	$(ACC) $^ $(acc_link_flags__) -o $@
 
@@ -221,6 +225,8 @@ test: $(all_tests_exec__)
 .PHONY: unittest
 unittest: $(all_tests_exec__)
 
+# all.tests: main.o test_objs.o acc_objs.o | libtinkergpu.so libtinker.so
+# 	link all.tests
 $(all_tests_exec__): $(src_obj_dir__)/test/main_all_tests.o \
 $(test_cpp_objs__) $(lib_acc_objs__) \
 | $(libtinkergpu_name__).$(shared_lib_suffix__) $(shared_libtinker__)
@@ -235,4 +241,5 @@ $(test_cpp_objs__) $(lib_acc_objs__) \
 
 .PHONY: doc
 doc:
-	@doxygen $(top_dir__)/doc/Doxyfile
+	doxygen $(top_dir__)/doc/Doxyfile
+
