@@ -8,3 +8,4 @@
 #include "polgrp.h"
 
 #include "e_angle.h"
+#include "e_bond.h"

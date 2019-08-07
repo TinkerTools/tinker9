@@ -1,6 +1,6 @@
 #include "acc_seq.h"
 #include "e_angle.h"
-#include "gpu/e_bond.h"
+#include "e_bond.h"
 #include "gpu/e_strbnd.h"
 #include "md.h"
 

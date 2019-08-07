@@ -1,5 +1,5 @@
 #include "acc_seq.h"
-#include "gpu/e_bond.h"
+#include "e_bond.h"
 #include "md.h"
 #include <cassert>
 
