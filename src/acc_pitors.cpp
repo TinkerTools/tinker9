@@ -1,5 +1,5 @@
 #include "acc_seq.h"
-#include "gpu/e_pitors.h"
+#include "e_pitors.h"
 #include "md.h"
 
 TINKER_NAMESPACE_BEGIN

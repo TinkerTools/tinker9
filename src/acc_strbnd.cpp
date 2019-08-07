@@ -1,7 +1,7 @@
 #include "acc_seq.h"
 #include "e_angle.h"
 #include "e_bond.h"
-#include "gpu/e_strbnd.h"
+#include "e_strbnd.h"
 #include "md.h"
 
 TINKER_NAMESPACE_BEGIN

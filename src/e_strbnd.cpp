@@ -1,18 +1,11 @@
+#include "e_strbnd.h"
 #include "array.h"
-#include "gpu/e_strbnd.h"
 #include "md.h"
 #include "potent.h"
-#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/detail/angpot.hh>
+#include <ext/tinker/detail/strbnd.hh>
 
 TINKER_NAMESPACE_BEGIN
-int nstrbnd;
-int (*isb)[3];
-real (*sbk)[2];
-real stbnunit;
-
-real* eba;
-real* vir_eba;
-
 void estrbnd_data(rc_op op) {
   if (!use_potent(strbnd_term))
     return;

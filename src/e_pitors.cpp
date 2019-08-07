@@ -1,18 +1,11 @@
 #include "array.h"
-#include "gpu/e_pitors.h"
+#include "e_pitors.h"
 #include "md.h"
 #include "potent.h"
-#include <ext/tinker/tinker_mod.h>
+#include <ext/tinker/detail/pitors.hh>
+#include <ext/tinker/detail/torpot.hh>
 
 TINKER_NAMESPACE_BEGIN
-int npitors;
-int (*ipit)[6];
-real* kpit;
-real ptorunit;
-
-real* ept;
-real* vir_ept;
-
 void epitors_data(rc_op op) {
   if (!use_potent(pitors_term))
     return;

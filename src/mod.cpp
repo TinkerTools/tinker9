@@ -10,3 +10,5 @@
 #include "e_angle.h"
 #include "e_bond.h"
 #include "e_opbend.h"
+#include "e_pitors.h"
+#include "e_strbnd.h"
