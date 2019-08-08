@@ -114,8 +114,10 @@ print-config:
 
 
 .PHONY: dirs
-dirs:
+dirs: $(ext_dir__)/fmt $(src_obj_dir__)/test
+$(ext_dir__)/fmt:
 	@mkdir -p $(ext_dir__)/fmt
+$(src_obj_dir__)/test:
 	@mkdir -p $(src_obj_dir__)/test
 
 
@@ -182,11 +184,12 @@ acc_link_flags__ += $(acc_opt_flags__) -L. -ltinker \
 #                                                                      #
 ########################################################################
 
-
+# dir/foo.o; $(@D) dir; $(@F) foo.o; $(*D) dir; $(*F) foo
 # targets: normal-prerequisites | order-only-prerequisites
 $(acc_dependency__): %.d: $(top_dir__)/%.cpp | dirs
 	printf %s $(@D)/ > $@
 	$(ACC) $(acc_common_flags__) $< $(acc_depend_flags__) >> $@
+	rm -f $(*F).i $(*F).dbg
 $(cc_dependency__): %.d: $(top_dir__)/%.cc | dirs
 	printf %s $(@D)/ > $@
 	$(CXX) $(cxx_common_flags__) $< $(cxx_depend_flags__) >> $@
@@ -235,6 +238,3 @@ $(all_tests_exec__): $(src_obj_dir__)/test/main_all_tests.o \
 $(test_cpp_objs__) $(lib_acc_objs__) \
 | $(libtinkergpu_name__).$(shared_lib_suffix__) $(shared_libtinker__)
 	$(ACC) $^ $(acc_link_flags__) -o $@
-
-
-

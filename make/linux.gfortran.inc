@@ -22,7 +22,7 @@ ACC := pgc++
 acc_device_compile_flags__ := -acc verystrict -Minfo=accel
 ifeq ($(opt),debug)
 	acc_opt_flags__ := -O0 -g -traceback
-	acc_device_compile_flags__ += -ta=tesla:lineinfo
+	acc_device_compile_flags__ += -ta=tesla
 else ifeq ($(opt),release)
 	acc_opt_flags__ := -O3
 	acc_device_compile_flags__ += -ta=tesla:fastmath

@@ -31,7 +31,7 @@ struct GenericUnitAlloc<GenericUnitVersion::V0> {
  * @brief
  * resource handle
  *
- * analogous to to Fortran I/O unit that can be used as signed integers
+ * analogous to to fortran i/o unit that can be used as signed integers
  *
  * @tparam VERSION
  * mainly used for identifying whether to allocate memory on device and store
@@ -75,11 +75,15 @@ private:
   typedef typename GenericUnitAlloc<VERSION>::Copyin Copyin;
 
 public:
+  /// @brief
+  /// get the number of open units
   static int size() {
     if_constexpr(USE_DPTR) assert(hostptrs().size() == deviceptrs().size());
     return hostptrs().size();
   }
 
+  /// @brief
+  /// close all of the units and reset @c size() to 0
   static void clear() {
     // call ~T() here
     hostptrs().clear();
@@ -87,13 +91,20 @@ public:
     if_constexpr(USE_DPTR) deviceptrs().clear();
   }
 
+  /// @brief
+  /// resize the capacity for the objects on host;
+  /// cannot be called if device pointers are used
   static void resize(int s) {
     assert(!USE_DPTR);
-    for (int i = size(); i < s; ++i) {
+    for (int i = size(); i < s; ++i)
       hostptrs().emplace_back(new T);
-    }
   }
 
+  /// @brief
+  /// similar to inquiring a new fortran i/o unit
+  ///
+  /// @return
+  /// the new unit
   static GenericUnit alloc_new() {
     hostptrs().emplace_back(new T);
     if_constexpr(USE_DPTR) {
@@ -115,24 +126,41 @@ public:
 
   operator int() const { return m_unit; }
 
+  /// @brief
+  /// get the (const) reference to the object on host
+  /// @{
   const T& operator*() const { return obj(); }
   T& operator*() { return obj(); }
+  /// @}
 
+  /// @brief
+  /// get the (const) pointer to the object on host
+  /// @{
   const T* operator->() const { return &obj(); }
   T* operator->() { return &obj(); }
+  /// @}
 
+  /// @brief
+  /// get device pointer to the object
+  /// @{
   const T* deviceptr() const {
     assert(0 <= m_unit && m_unit < deviceptrs().size() &&
            "const T* GenericUnit::deviceptr() const");
     return deviceptrs()[m_unit].get();
   }
-
   T* deviceptr() {
     assert(0 <= m_unit && m_unit < deviceptrs().size() &&
            "T* GenericUnit::deviceptr()");
     return deviceptrs()[m_unit].get();
   }
+  /// @}
 
+  /// @brief
+  /// initialized the object on device by an object on host
+  ///
+  /// @param hobj
+  /// the reference to the same object on host
+  /// that can be accessed by the same unit number
   void init_deviceptr(const T& hobj) {
     assert(&hobj == &this->obj());
     Copyin copyin;
