@@ -55,7 +55,7 @@ fftw_flags__ := -L$(fftw_dir__)/lib -lfftw3 -lfftw3_threads
 
 ############################################################
 #                                                          #
-# default target: all                                      #
+# default target and all                                   #
 #                                                          #
 ############################################################
 
@@ -63,20 +63,14 @@ tinker_gpu_exec__ := tinker.gpu
 all_tests_exec__ := all.tests
 libtinkergpu_stem__ := tinkergpu
 src_obj_dir__ := src
-ifeq ($(prec__),real4__)
-	precision_suffix__ :=
-else ifeq ($(prec__),real8__)
-	# -dp: double precision
-	precision_suffix__ := -dp
-	tinker_gpu_exec__ := $(tinker_gpu_exec__)$(precision_suffix__)
-	all_tests_exec__ := $(all_tests_exec__)$(precision_suffix__)
-	libtinkergpu_stem__ := $(libtinkergpu_stem__)$(precision_suffix__)
-	src_obj_dir__ := $(src_obj_dir__)$(precision_suffix__)
-endif
 libtinkergpu_name__ := lib$(libtinkergpu_stem__)
 
+.PHONY: default_target__
+default_target__: $(tinker_gpu_exec__)
+
 .PHONY: all
-all: $(tinker_gpu_exec__)
+all: $(tinker_gpu_exec__) unittest
+
 
 ############################################################
 #                                                          #
@@ -105,7 +99,7 @@ dirs:
 
 .PHONY: clean
 clean:
-	rm -rf ext src* tinker.gpu* all.tests* libtinker* *dSYM doc
+	rm -rf ext src* tinker.gpu* all.tests* libtinker* *dSYM
 
 
 ########################################################################
@@ -157,18 +151,18 @@ $(top_dir__)/src/test/main_all_tests.cpp
 main_cpp_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(main_cpp_files__))
 main_cpp_objs__ := $(patsubst %.cpp,%.o,$(main_cpp_objs__))
 
-# $(top_dir__)/src/acc_foo.cpp -> src-dp/acc_foo.o
+# $(top_dir__)/src/acc_foo.cpp -> src/acc_foo.o
 lib_acc_files__ := $(wildcard $(top_dir__)/src/acc_*.cpp)
 lib_acc_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(lib_acc_files__))
 lib_acc_objs__ := $(patsubst %.cpp,%.o,$(lib_acc_objs__))
 
-# $(top_dir__)/src/test/foo.cpp -> src-dp/test/foo.o
+# $(top_dir__)/src/test/foo.cpp -> src/test/foo.o
 test_cpp_files__ := $(shell find $(top_dir__)/src/test -type f -name '*.cpp' \
 -not -path '$(top_dir__)/src/test/main_*.cpp')
 test_cpp_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(test_cpp_files__))
 test_cpp_objs__ := $(patsubst %.cpp,%.o,$(test_cpp_objs__))
 
-# $(top_dir__)/src/foo.cpp -> src-dp/foo.o
+# $(top_dir__)/src/foo.cpp -> src/foo.o
 lib_cpp_files__ := $(shell find $(top_dir__)/src -type f -name '*.cpp' \
 -not -path '$(top_dir__)/src/main_*.cpp' \
 -not -path '$(top_dir__)/src/acc_*.cpp' \
@@ -243,3 +237,24 @@ $(test_cpp_objs__) $(lib_acc_objs__) \
 doc:
 	doxygen $(top_dir__)/doc/Doxyfile
 
+
+########################################################################
+#                                                                      #
+# dependency                                                           #
+#                                                                      #
+########################################################################
+
+cc_dependency__ := $(all_cc_objs__:%.o=%.d)
+cpp_dependency__ := $(all_cpp_objs__:%.o=%.d)
+acc_dependency__ := $(lib_acc_objs__:%.o=%.d)
+
+$(cc_dependency__): %.d: $(top_dir__)/%.cc | dirs
+	$(CXX) $(common_flags__) $(cxx_opt_flags__) $< -MM -MF $@
+$(cpp_dependency__): %.d: $(top_dir__)/%.cpp | dirs
+	$(CXX) $(common_flags__) $(cxx_opt_flags__) $< -MM -MF $@
+$(acc_dependency__): %.d: $(top_dir__)/%.cpp | dirs
+	$(ACC) $(common_flags__) $(acc_opt_flags__) $< -E -MMD$@
+
+-include $(cc_dependency__)
+-include $(cpp_dependency__)
+-include $(acc_dependency__)
