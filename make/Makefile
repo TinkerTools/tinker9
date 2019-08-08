@@ -30,7 +30,7 @@ src := ..
 # GPU Precision
 # real4 / 4 / 32 / float / single / s -> real4__
 # real8 / 8 / 64 / double         / d -> real8__
-prec := real4
+prec := real8
 ifeq ($(prec),$(filter $(prec),real4 4 32 float single s))
 	prec__ := real4__
 	precision_macro__ := -DTINKER_SINGLE_PRECISION
@@ -39,7 +39,7 @@ else ifeq ($(prec),$(filter $(prec),real8 8 64 double d))
 	precision_macro__ := -DTINKER_DOUBLE_PRECISION
 endif
 
-host := false
+host := true
 
 config := default_config__
 ifeq ($(config),default_config__)
@@ -78,13 +78,19 @@ all: $(tinker_gpu_exec__) unittest
 #                                                          #
 ############################################################
 
+ifeq ($(host),$(filter $(host),false off 0))
+	host_only__ := false
+else ifeq ($(host),$(filter $(host),true on 1))
+	host_only__ := true
+endif
+
 .PHONY: print-config
 print-config:
 	@echo 'config file       =' $(config)
 	@echo 'opt level         =' $(opt)
 	@echo 'source directory  =' $(top_dir__)
 	@echo 'precision         =' $(prec)
-	@echo 'host only         =' $(host)
+	@echo 'host only         =' $(host_only__)
 	@echo 'OS                =' $(os__)
 	@echo 'shared library    =' $(libtinkergpu_name__).$(shared_lib_suffix__)
 	@echo 'executables       =' $(tinker_gpu_exec__) $(all_tests_exec__)
@@ -114,7 +120,7 @@ ext_dir__ := ext/ext
 include_flags__ := -I$(top_dir__)/include
 include_flags__ += -I$(top_dir__)/ext
 include_flags__ += -I$(top_dir__)/ext/ext
-ifeq ($(host),false)
+ifeq ($(host_only__),false)
 	include_flags__ += -I$(cuda_dir__)/include
 else
 	include_flags__ += -I$(fftw_dir__)/include -DTINKER_HOST
@@ -127,14 +133,14 @@ acc_common_flags__ := $(common_flags__) $(acc_opt_flags__)
 
 cxx_compile_flags__ := $(cxx_common_flags__) -c -fpic
 acc_compile_flags__ := $(acc_common_flags__) -c -fpic
-ifeq ($(host),false)
+ifeq ($(host_only__),false)
 	acc_compile_flags__ += $(acc_device_compile_flags__)
 else
 	acc_compile_flags__ += $(acc_host_compile_flags__)
 endif
 
 acc_link_flags__ := -rdynamic -Wl,-rpath='$$ORIGIN'
-ifeq ($(host),false)
+ifeq ($(host_only__),false)
 	acc_link_flags__ += $(acc_device_link_flags__)
 else
 	acc_link_flags__ += $(acc_host_link_flags__)
@@ -249,11 +255,11 @@ cpp_dependency__ := $(all_cpp_objs__:%.o=%.d)
 acc_dependency__ := $(lib_acc_objs__:%.o=%.d)
 
 $(cc_dependency__): %.d: $(top_dir__)/%.cc | dirs
-	$(CXX) $(common_flags__) $(cxx_opt_flags__) $< -MM -MF $@
+	$(CXX) $(common_flags__) $(cxx_opt_flags__) $< $(cxx_depend_flags__)$@
 $(cpp_dependency__): %.d: $(top_dir__)/%.cpp | dirs
-	$(CXX) $(common_flags__) $(cxx_opt_flags__) $< -MM -MF $@
+	$(CXX) $(common_flags__) $(cxx_opt_flags__) $< $(cxx_depend_flags__)$@
 $(acc_dependency__): %.d: $(top_dir__)/%.cpp | dirs
-	$(ACC) $(common_flags__) $(acc_opt_flags__) $< -E -MMD$@
+	$(ACC) $(common_flags__) $(acc_opt_flags__) $< $(acc_depend_flags__)$@
 
 -include $(cc_dependency__)
 -include $(cpp_dependency__)
