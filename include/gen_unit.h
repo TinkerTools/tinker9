@@ -51,6 +51,18 @@ private:
     return o;
   }
 
+  const T& obj() const {
+    assert(0 <= m_unit && m_unit < hostptrs().size() &&
+           "const T& GenericUnit::obj() const");
+    return *hostptrs()[m_unit];
+  }
+
+  T& obj() {
+    assert(0 <= m_unit && m_unit < hostptrs().size() &&
+           "T& GenericUnit::obj()");
+    return *hostptrs()[m_unit];
+  }
+
   typedef typename GenericUnitAlloc<VERSION>::Dealloc Dealloc;
   typedef std::vector<std::unique_ptr<T, Dealloc>> dptr_vec;
   static dptr_vec& deviceptrs() {
@@ -103,17 +115,11 @@ public:
 
   operator int() const { return m_unit; }
 
-  const T& obj() const {
-    assert(0 <= m_unit && m_unit < hostptrs().size() &&
-           "const T& GenericUnit::obj() const");
-    return *hostptrs()[m_unit];
-  }
+  const T& operator*() const { return obj(); }
+  T& operator*() { return obj(); }
 
-  T& obj() {
-    assert(0 <= m_unit && m_unit < hostptrs().size() &&
-           "T& GenericUnit::obj()");
-    return *hostptrs()[m_unit];
-  }
+  const T* operator->() const { return &obj(); }
+  T* operator->() { return &obj(); }
 
   const T* deviceptr() const {
     assert(0 <= m_unit && m_unit < deviceptrs().size() &&

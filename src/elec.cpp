@@ -1,12 +1,12 @@
 #include "elec.h"
 #include "array.h"
+#include "ext/tinker/detail/chgpot.hh"
+#include "ext/tinker/detail/limits.hh"
+#include "ext/tinker/detail/mpole.hh"
 #include "io_fort_str.h"
 #include "md.h"
 #include "pme.h"
 #include "potent.h"
-#include <ext/tinker/detail/chgpot.hh>
-#include <ext/tinker/detail/limits.hh>
-#include <ext/tinker/detail/mpole.hh>
 
 TINKER_NAMESPACE_BEGIN
 int use_elec() { return use_potent(mpole_term) || use_potent(polar_term); }

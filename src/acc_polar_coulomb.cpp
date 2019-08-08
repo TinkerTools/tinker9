@@ -29,7 +29,7 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
 
   const real off = mpole_switch_off;
   const real off2 = off * off;
-  const int maxnlst = mlist_unit.obj().maxnlst;
+  const int maxnlst = mlist_unit->maxnlst;
   const NBList* mlst = mlist_unit.deviceptr();
 
   const auto* coupl = couple_unit.deviceptr();

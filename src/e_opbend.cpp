@@ -1,10 +1,10 @@
 #include "e_opbend.h"
 #include "array.h"
+#include "ext/tinker/detail/angpot.hh"
+#include "ext/tinker/detail/opbend.hh"
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"
-#include <ext/tinker/detail/angpot.hh>
-#include <ext/tinker/detail/opbend.hh>
 
 TINKER_NAMESPACE_BEGIN
 void eopbend_data(rc_op op) {

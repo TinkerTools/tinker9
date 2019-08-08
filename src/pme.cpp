@@ -1,13 +1,13 @@
 #include "pme.h"
 #include "array.h"
 #include "elec.h"
+#include "ext/tinker/detail/ewald.hh"
+#include "ext/tinker/detail/pme.hh"
 #include "mathfunc.h"
 #include "md.h"
 #include "potent.h"
 #include "switch.h"
 #include "tinker_rt.h"
-#include <ext/tinker/detail/ewald.hh>
-#include <ext/tinker/detail/pme.hh>
 
 TINKER_NAMESPACE_BEGIN
 bool PME::Params::operator==(const Params& st) const {
@@ -49,13 +49,13 @@ PME::~PME() {
 static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique) {
   unit = -1;
   for (PMEUnit idx = 0; idx < PMEUnit::size(); idx = idx + 1) {
-    if (idx.obj() == p)
+    if (*idx == p)
       unit = idx;
   }
 
   if (unit == -1 || unique == true) {
     unit = PMEUnit::alloc_new();
-    auto& st = unit.obj();
+    auto& st = *unit;
     const size_t rs = sizeof(real);
     size_t size;
 
@@ -74,7 +74,7 @@ static void pme_op_copyin_(PMEUnit unit) {
   if (unit < 0)
     return;
 
-  auto& st = unit.obj();
+  auto& st = *unit;
 
   // This code assumes that the FFT grids of an energy term will not change in a
   // calculation.

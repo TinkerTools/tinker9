@@ -25,7 +25,7 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
 
   const real off = ewald_switch_off;
   const real off2 = off * off;
-  const int maxnlst = mlist_unit.obj().maxnlst;
+  const int maxnlst = mlist_unit->maxnlst;
   const NBList* mlst = mlist_unit.deviceptr();
 
   const auto* coupl = couple_unit.deviceptr();
@@ -44,7 +44,7 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   const real f = 0.5 * electric / dielec;
 
   const PMEUnit pu = ppme_unit;
-  const real aewald = pu.obj().aewald;
+  const real aewald = pu->aewald;
   real bn[5];
 
   #pragma acc parallel loop independent\
@@ -768,7 +768,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   sanity_check<USE>();
 
   const PMEUnit pu = ppme_unit;
-  const auto& st = pu.obj();
+  const auto& st = *pu;
   const int nfft1 = st.nfft1;
   const int nfft2 = st.nfft2;
   const int nfft3 = st.nfft3;

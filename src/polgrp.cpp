@@ -1,7 +1,7 @@
 #include "polgrp.h"
 #include "array.h"
+#include "ext/tinker/detail/polgrp.hh"
 #include "md.h"
-#include <ext/tinker/detail/polgrp.hh>
 
 TINKER_NAMESPACE_BEGIN
 static_assert(PolarGroup::maxp11 >= polgrp::maxp11, "");
@@ -27,7 +27,7 @@ void polargroup_data(rc_op op) {
   if (op & rc_alloc) {
     assert(PolarGroupUnit::size() == 0);
     polargroup_unit = PolarGroupUnit::alloc_new();
-    auto& polargroup_obj = polargroup_unit.obj();
+    auto& polargroup_obj = *polargroup_unit;
     const size_t rs = sizeof(int);
     size_t size;
 
@@ -47,7 +47,7 @@ void polargroup_data(rc_op op) {
   }
 
   if (op & rc_init) {
-    auto& polargroup_obj = polargroup_unit.obj();
+    auto& polargroup_obj = *polargroup_unit;
     size_t size;
 
     std::vector<int> nbuf, ibuf;

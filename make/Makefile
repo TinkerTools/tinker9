@@ -257,11 +257,14 @@ cpp_dependency__ := $(all_cpp_objs__:%.o=%.d)
 acc_dependency__ := $(lib_acc_objs__:%.o=%.d)
 
 $(cc_dependency__): %.d: $(top_dir__)/%.cc | dirs
-	$(CXX) $(common_flags__) $(cxx_opt_flags__) $< $(cxx_depend_flags__)$@
+	printf %s $(@D)/ > $@
+	$(CXX) $(common_flags__) $(cxx_opt_flags__) $< $(cxx_depend_flags__) >> $@
 $(cpp_dependency__): %.d: $(top_dir__)/%.cpp | dirs
-	$(CXX) $(common_flags__) $(cxx_opt_flags__) $< $(cxx_depend_flags__)$@
+	printf %s $(@D)/ > $@
+	$(CXX) $(common_flags__) $(cxx_opt_flags__) $< $(cxx_depend_flags__) >> $@
 $(acc_dependency__): %.d: $(top_dir__)/%.cpp | dirs
-	$(ACC) $(common_flags__) $(acc_opt_flags__) $< $(acc_depend_flags__)$@
+	printf %s $(@D)/ > $@
+	$(ACC) $(common_flags__) $(acc_opt_flags__) $< $(acc_depend_flags__) >> $@
 
 -include $(cc_dependency__)
 -include $(cpp_dependency__)

@@ -1,7 +1,7 @@
 #include "test_rt.h"
+#include "ext/tinker/detail/bath.hh"
 #include "rc_man.h"
 #include "tinker_rt.h"
-#include <ext/tinker/detail/bath.hh>
 #include <fstream>
 
 TINKER_NAMESPACE_BEGIN

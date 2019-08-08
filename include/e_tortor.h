@@ -1,8 +1,8 @@
 #ifndef TINKER_E_TORTOR_H_
 #define TINKER_E_TORTOR_H_
 
+#include "ext/tinker/detail/ktrtor.hh"
 #include "rc_man.h"
-#include <ext/tinker/detail/ktrtor.hh>
 
 TINKER_NAMESPACE_BEGIN
 // module bitor

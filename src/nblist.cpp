@@ -1,11 +1,11 @@
 #include "nblist.h"
 #include "array.h"
 #include "e_vdw.h"
+#include "ext/tinker/detail/limits.hh"
+#include "ext/tinker/detail/neigh.hh"
+#include "ext/tinker/detail/potent.hh"
 #include "md.h"
 #include "potent.h"
-#include <ext/tinker/detail/limits.hh>
-#include <ext/tinker/detail/neigh.hh>
-#include <ext/tinker/detail/potent.hh>
 
 TINKER_NAMESPACE_BEGIN
 static int use_vdw_list() {
@@ -102,7 +102,7 @@ static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
                              double buffer, const real* _x, const real* _y,
                              const real* _z) {
   nblu = NBListUnit::alloc_new();
-  auto& st = nblu.obj();
+  auto& st = *nblu;
   const size_t rs = sizeof(int);
   size_t size;
 
@@ -218,7 +218,7 @@ void nblist_data(rc_op op) {
 
     if (op & rc_man::evolve) {
       if (rc_flag & calc::traj) {
-        auto& mlist_obj = mlist_unit.obj();
+        auto& mlist_obj = *mlist_unit;
         auto* mlst = mlist_unit.deviceptr();
         mlist_obj.x = x;
         mlist_obj.y = y;

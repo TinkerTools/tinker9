@@ -1,8 +1,8 @@
 #include "couple.h"
 #include "array.h"
+#include "ext/tinker/detail/couple.hh"
+#include "ext/tinker/detail/sizes.hh"
 #include "md.h"
-#include <ext/tinker/detail/couple.hh>
-#include <ext/tinker/detail/sizes.hh>
 
 TINKER_NAMESPACE_BEGIN
 Couple::~Couple() {
@@ -23,7 +23,7 @@ void couple_data(rc_op op) {
   if (op & rc_alloc) {
     assert(CoupleUnit::size() == 0);
     couple_unit = CoupleUnit::alloc_new();
-    auto& coupl_obj = couple_unit.obj();
+    auto& coupl_obj = *couple_unit;
 
     const size_t rs = sizeof(int);
     size_t size;
@@ -44,7 +44,7 @@ void couple_data(rc_op op) {
   }
 
   if (op & rc_init) {
-    auto& coupl_obj = couple_unit.obj();
+    auto& coupl_obj = *couple_unit;
     size_t size;
 
     // see also attach.f

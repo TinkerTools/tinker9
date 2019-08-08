@@ -12,7 +12,7 @@ TINKER_NAMESPACE_BEGIN
 // see also subroutine udirect1 in induce.f
 void dfield_ewald_recip_self(real* gpu_field) {
   const PMEUnit pu = ppme_unit;
-  const real aewald = pu.obj().aewald;
+  const real aewald = pu->aewald;
   const real term = REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
 
   cmp_to_fmp(pu, cmp, fmp);
@@ -50,7 +50,7 @@ void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
 
   const real off = ewald_switch_off;
   const real off2 = off * off;
-  const int maxnlst = mlist_unit.obj().maxnlst;
+  const int maxnlst = mlist_unit->maxnlst;
   const NBList* mlst = mlist_unit.deviceptr();
 
   const auto* coupl = couple_unit.deviceptr();
@@ -64,7 +64,7 @@ void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
   real* dscale = dscalebuf.data();
 
   const PMEUnit pu = ppme_unit;
-  const real aewald = pu.obj().aewald;
+  const real aewald = pu->aewald;
   const real aesq2 = 2 * aewald * aewald;
   const real aesq2n = (aewald > 0 ? 1 / (sqrtpi * aewald) : 0);
 
@@ -343,7 +343,7 @@ void ufield_ewald_recip_self(const real* gpu_uind, const real* gpu_uinp,
   real(*fieldp)[3] = reinterpret_cast<real(*)[3]>(gpu_fieldp);
 
   const PMEUnit pu = ppme_unit;
-  const auto& st = pu.obj();
+  const auto& st = *pu;
   const int nfft1 = st.nfft1;
   const int nfft2 = st.nfft2;
   const int nfft3 = st.nfft3;
@@ -397,7 +397,7 @@ void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
 
   const real off = ewald_switch_cut;
   const real off2 = off * off;
-  const int maxnlst = mlist_unit.obj().maxnlst;
+  const int maxnlst = mlist_unit->maxnlst;
   const NBList* mlst = mlist_unit.deviceptr();
 
   const auto* polargroup = polargroup_unit.deviceptr();
@@ -407,7 +407,7 @@ void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
   real* uscale = uscalebuf.data();
 
   const PMEUnit pu = ppme_unit;
-  const real aewald = pu.obj().aewald;
+  const real aewald = pu->aewald;
   const real aesq2 = 2 * aewald * aewald;
   const real aesq2n = (aewald > 0 ? 1 / (sqrtpi * aewald) : 0);
 

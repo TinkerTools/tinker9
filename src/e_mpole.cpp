@@ -1,9 +1,9 @@
 #include "e_mpole.h"
+#include "ext/tinker/detail/mplpot.hh"
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"
 #include "switch.h"
-#include <ext/tinker/detail/mplpot.hh>
 
 TINKER_NAMESPACE_BEGIN
 void empole_data(rc_op op) {

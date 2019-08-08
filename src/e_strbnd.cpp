@@ -1,9 +1,9 @@
 #include "e_strbnd.h"
 #include "array.h"
+#include "ext/tinker/detail/angpot.hh"
+#include "ext/tinker/detail/strbnd.hh"
 #include "md.h"
 #include "potent.h"
-#include <ext/tinker/detail/angpot.hh>
-#include <ext/tinker/detail/strbnd.hh>
 
 TINKER_NAMESPACE_BEGIN
 void estrbnd_data(rc_op op) {

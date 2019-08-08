@@ -1,18 +1,17 @@
 #include "array.h"
 #include "box.h"
 #include "energy.h"
+#include "ext/tinker/detail/atomid.hh"
+#include "ext/tinker/detail/atoms.hh"
+#include "ext/tinker/detail/files.hh"
+#include "ext/tinker/detail/moldyn.hh"
+#include "ext/tinker/detail/output.hh"
+#include "ext/tinker/detail/polar.hh"
+#include "ext/tinker/detail/units.hh"
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"
 #include "tinker_rt.h"
-#include <ext/tinker/detail/atomid.hh>
-#include <ext/tinker/detail/atoms.hh>
-#include <ext/tinker/detail/files.hh>
-#include <ext/tinker/detail/moldyn.hh>
-#include <ext/tinker/detail/output.hh>
-#include <ext/tinker/detail/polar.hh>
-#include <ext/tinker/detail/units.hh>
-
 #include <condition_variable>
 #include <fstream>
 #include <future>

@@ -1,7 +1,7 @@
 #include "array.h"
+#include "ext/tinker/detail/energi.hh"
+#include "ext/tinker/detail/virial.hh"
 #include "md.h"
-#include <ext/tinker/detail/energi.hh>
-#include <ext/tinker/detail/virial.hh>
 #include <map>
 
 TINKER_NAMESPACE_BEGIN

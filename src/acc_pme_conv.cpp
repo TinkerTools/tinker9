@@ -7,7 +7,7 @@
 TINKER_NAMESPACE_BEGIN
 template <int DO_V>
 void pme_conv_tmpl(PMEUnit pme_u, real* gpu_vir9) {
-  auto& st = pme_u.obj();
+  auto& st = *pme_u;
   auto* dptr = pme_u.deviceptr();
 
   const int nfft1 = st.nfft1;

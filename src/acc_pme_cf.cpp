@@ -29,7 +29,7 @@ void rpole_to_cmp() {
 }
 
 void cmp_to_fmp(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10]) {
-  auto& st = pme_u.obj();
+  auto& st = *pme_u;
   int nfft1 = st.nfft1;
   int nfft2 = st.nfft2;
   int nfft3 = st.nfft3;
@@ -114,7 +114,7 @@ void cmp_to_fmp(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10]) {
 
 void cuind_to_fuind(PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3],
                     real (*fuind)[3], real (*fuinp)[3]) {
-  auto& st = pme_u.obj();
+  auto& st = *pme_u;
   int nfft1 = st.nfft1;
   int nfft2 = st.nfft2;
   int nfft3 = st.nfft3;
@@ -146,7 +146,7 @@ void cuind_to_fuind(PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3],
 }
 
 void fphi_to_cphi(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10]) {
-  auto& st = pme_u.obj();
+  auto& st = *pme_u;
   int nfft1 = st.nfft1;
   int nfft2 = st.nfft2;
   int nfft3 = st.nfft3;

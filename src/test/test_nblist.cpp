@@ -6,6 +6,7 @@
 #include "rt.h"
 #include "test.h"
 #include "test_rt.h"
+#include <set>
 
 using namespace TINKER_NAMESPACE;
 
@@ -38,15 +39,15 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]") {
 
   copyin_arc_file(x1, 1, 5, 1);
 
-  const int maxnlst = vlist_unit.obj().maxnlst;
+  const int maxnlst = vlist_unit->maxnlst;
   std::vector<int> nlst;
   nlst.resize(n);
   std::vector<int> lst;
   lst.resize(n * maxnlst);
 
   for (int ifr = 0;;) {
-    copyout_array(nlst.data(), vlist_unit.obj().nlst, n);
-    copyout_array(lst.data(), vlist_unit.obj().lst, n * maxnlst);
+    copyout_array(nlst.data(), vlist_unit->nlst, n);
+    copyout_array(lst.data(), vlist_unit->lst, n * maxnlst);
 
     for (int iatom = 0; iatom < n; ++iatom)
       REQUIRE(find_match(&lst[iatom * maxnlst], nlst[iatom], ifr, iatom));
@@ -65,7 +66,6 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]") {
   test_end();
 }
 
-#include <set>
 static bool find_match(const int* array, int na, int iframe, int iatom) {
   std::set<int> array_set(array, array + na);
   std::vector<int> missing;

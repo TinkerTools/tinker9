@@ -20,7 +20,7 @@ void empole_real_self_tmpl() {
 
   const real off = ewald_switch_off;
   const real off2 = off * off;
-  const int maxnlst = mlist_unit.obj().maxnlst;
+  const int maxnlst = mlist_unit->maxnlst;
   const NBList* mlst = mlist_unit.deviceptr();
 
   const auto* coupl = couple_unit.deviceptr();
@@ -30,7 +30,7 @@ void empole_real_self_tmpl() {
   real* mscale = mscalebuf.data();
 
   const PMEUnit pu = epme_unit;
-  const real aewald = pu.obj().aewald;
+  const real aewald = pu->aewald;
   const real aewald_sq_2 = 2 * aewald * aewald;
   const real fterm = -f * aewald * 0.5 * M_2_SQRTPI;
 
@@ -418,7 +418,7 @@ void empole_recip_tmpl() {
   constexpr int deriv2[] = {3, 8, 6, 10, 14, 12, 19, 16, 20, 17};
   constexpr int deriv3[] = {4, 9, 10, 7, 15, 17, 13, 20, 18, 19};
 
-  auto& st = pu.obj();
+  auto& st = *pu;
   const int nfft1 = st.nfft1;
   const int nfft2 = st.nfft2;
   const int nfft3 = st.nfft3;

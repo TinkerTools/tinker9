@@ -1,9 +1,8 @@
 #include "random.h"
+#include "ext/tinker/detail/keys.hh"
 #include "io_fort_str.h"
 #include "io_text.h"
 #include "rc_man.h"
-#include <ext/tinker/detail/keys.hh>
-
 #include <chrono>
 #include <random>
 

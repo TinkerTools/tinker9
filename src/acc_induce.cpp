@@ -2,13 +2,13 @@
 #include "array.h"
 #include "e_polar.h"
 #include "error.h"
+#include "ext/tinker/detail/inform.hh"
+#include "ext/tinker/detail/polpcg.hh"
+#include "ext/tinker/detail/polpot.hh"
+#include "ext/tinker/detail/units.hh"
 #include "io_print.h"
 #include "md.h"
 #include "tinker_rt.h"
-#include <ext/tinker/detail/inform.hh>
-#include <ext/tinker/detail/polpcg.hh>
-#include <ext/tinker/detail/polpot.hh>
-#include <ext/tinker/detail/units.hh>
 
 TINKER_NAMESPACE_BEGIN
 // similar to uscale0a/uscale0b routines

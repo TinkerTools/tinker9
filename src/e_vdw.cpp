@@ -1,13 +1,13 @@
 #include "e_vdw.h"
 #include "array.h"
+#include "ext/tinker/detail/mutant.hh"
+#include "ext/tinker/detail/sizes.hh"
+#include "ext/tinker/detail/vdw.hh"
+#include "ext/tinker/detail/vdwpot.hh"
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"
 #include "switch.h"
-#include <ext/tinker/detail/mutant.hh>
-#include <ext/tinker/detail/sizes.hh>
-#include <ext/tinker/detail/vdw.hh>
-#include <ext/tinker/detail/vdwpot.hh>
 #include <map>
 
 TINKER_NAMESPACE_BEGIN

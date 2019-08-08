@@ -9,7 +9,7 @@ void fft_data(rc_op op) {
     int idx = 0;
     while (idx < FFTPlanUnit::size()) {
       FFTPlanUnit u = idx;
-      cufftDestroy(u.obj());
+      cufftDestroy(*u);
       ++idx;
     }
     FFTPlanUnit::clear();
@@ -35,8 +35,8 @@ void fft_data(rc_op op) {
     while (idx < FFTPlanUnit::size()) {
       FFTPlanUnit plan_u = idx;
       PMEUnit pme_u = idx;
-      auto& iplan = plan_u.obj();
-      auto& st = pme_u.obj();
+      auto& iplan = *plan_u;
+      auto& st = *pme_u;
 
       check_rt(cufftPlan3d(&iplan, st.nfft1, st.nfft2, st.nfft3, typ));
       ++idx;
@@ -46,8 +46,8 @@ void fft_data(rc_op op) {
 
 void fftfront(PMEUnit pme_u) {
   FFTPlanUnit iplan_u = static_cast<int>(pme_u);
-  auto& iplan = iplan_u.obj();
-  auto& st = pme_u.obj();
+  auto& iplan = *iplan_u;
+  auto& st = *pme_u;
 
 #  if defined(TINKER_SINGLE_PRECISION)
   cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),
@@ -62,8 +62,8 @@ void fftfront(PMEUnit pme_u) {
 
 void fftback(PMEUnit pme_u) {
   FFTPlanUnit iplan_u = static_cast<int>(pme_u);
-  auto& iplan = iplan_u.obj();
-  auto& st = pme_u.obj();
+  auto& iplan = *iplan_u;
+  auto& st = *pme_u;
 
 #  if defined(TINKER_SINGLE_PRECISION)
   cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),

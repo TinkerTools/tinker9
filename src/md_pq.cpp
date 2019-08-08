@@ -1,9 +1,9 @@
 #include "array.h"
 #include "box.h"
+#include "ext/tinker/detail/atomid.hh"
+#include "ext/tinker/detail/atoms.hh"
+#include "ext/tinker/detail/moldyn.hh"
 #include "md.h"
-#include <ext/tinker/detail/atomid.hh>
-#include <ext/tinker/detail/atoms.hh>
-#include <ext/tinker/detail/moldyn.hh>
 
 TINKER_NAMESPACE_BEGIN
 void n_data(rc_op op) {
@@ -126,10 +126,10 @@ void goto_frame(int idx0) {
 TINKER_NAMESPACE_END
 
 #include "error.h"
+#include "ext/tinker/detail/boxes.hh"
 #include "io_print.h"
 #include "io_text.h"
 #include "tinker_rt.h"
-#include <ext/tinker/detail/boxes.hh>
 #include <fstream>
 #include <sstream>
 

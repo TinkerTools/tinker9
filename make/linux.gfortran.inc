@@ -16,7 +16,7 @@ else ifeq ($(opt),profile)
 	cxx_opt_flags__ := -O3 -DNDEBUG -pg
 endif
 cxx_dylib_flags__ := -shared
-cxx_depend_flags__ := -MM -MF \
+cxx_depend_flags__ := -MM
 
 ACC := pgc++
 acc_opt_flags__ :=
@@ -37,4 +37,4 @@ acc_device_link_flags__ := -acc -Mcuda -Mcudalib=cufft
 acc_host_compile_flags__ :=
 acc_host_link_flags__ :=
 acc_link_flags__ := -rdynamic -Wl,-rpath='$$ORIGIN'
-acc_depend_flags__ := -E -MMD
+acc_depend_flags__ := -MM

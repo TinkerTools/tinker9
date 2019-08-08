@@ -70,7 +70,7 @@ static void build_double_loop_(NBListUnit nu) {
 // see also nblist.f
 
 static void build_v1_(NBListUnit nu) {
-  auto& st = nu.obj();
+  auto& st = *nu;
   auto* lst = nu.deviceptr();
   const int maxnlst = st.maxnlst;
   const real buf2 = REAL_SQ(st.cutoff + st.buffer);
@@ -102,7 +102,7 @@ static void build_v1_(NBListUnit nu) {
 }
 
 static void displace_v1_(NBListUnit nu) {
-  auto& st = nu.obj();
+  auto& st = *nu;
   auto* lst = nu.deviceptr();
   const real lbuf2 = REAL_SQ(0.5f * st.buffer);
   #pragma acc parallel loop independent deviceptr(lst,box)
@@ -133,7 +133,7 @@ static void update_v1_(NBListUnit nu) {
 
   // rebuild the higher numbered neighbors for updated sites
 
-  auto& st = nu.obj();
+  auto& st = *nu;
   auto* lst = nu.deviceptr();
   const int maxnlst = st.maxnlst;
   const real buf2 = REAL_SQ(st.cutoff + st.buffer);
@@ -208,7 +208,7 @@ static void update_v1_(NBListUnit nu) {
 //======================================================================
 
 void nblist_build_acc_impl_(NBListUnit nu) {
-  if (nu.obj().maxnlst == 1) {
+  if (nu->maxnlst == 1) {
     build_double_loop_(nu);
   } else {
     build_v1_(nu);
@@ -218,7 +218,7 @@ void nblist_build_acc_impl_(NBListUnit nu) {
 // #define TINKER_DEFAULT_NBLIST_UPDATE_(nu) build_v1_(nu)
 #define TINKER_DEFAULT_NBLIST_UPDATE_(nu) update_v1_(nu)
 void nblist_update_acc_impl_(NBListUnit nu) {
-  if (nu.obj().maxnlst == 1) {
+  if (nu->maxnlst == 1) {
     // update_double_loop_();
   } else {
     TINKER_DEFAULT_NBLIST_UPDATE_(nu);

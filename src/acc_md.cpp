@@ -1,11 +1,11 @@
+#include "ext/tinker/detail/bound.hh"
+#include "ext/tinker/detail/inform.hh"
+#include "ext/tinker/detail/mdstuf.hh"
+#include "ext/tinker/detail/units.hh"
 #include "io_print.h"
 #include "md.h"
 #include "rt.h"
 #include "tinker_rt.h"
-#include <ext/tinker/detail/bound.hh>
-#include <ext/tinker/detail/inform.hh>
-#include <ext/tinker/detail/mdstuf.hh>
-#include <ext/tinker/detail/units.hh>
 
 TINKER_NAMESPACE_BEGIN
 void sum_energy_acc_impl_(real* ebuf, int top) {
