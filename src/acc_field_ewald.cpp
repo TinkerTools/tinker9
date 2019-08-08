@@ -51,7 +51,7 @@ void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
   const real off = ewald_switch_off;
   const real off2 = off * off;
   const int maxnlst = mlist_unit->maxnlst;
-  const NBList* mlst = mlist_unit.deviceptr();
+  const auto* mlst = mlist_unit.deviceptr();
 
   const auto* coupl = couple_unit.deviceptr();
   const auto* polargroup = polargroup_unit.deviceptr();
@@ -398,7 +398,7 @@ void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
   const real off = ewald_switch_cut;
   const real off2 = off * off;
   const int maxnlst = mlist_unit->maxnlst;
-  const NBList* mlst = mlist_unit.deviceptr();
+  const auto* mlst = mlist_unit.deviceptr();
 
   const auto* polargroup = polargroup_unit.deviceptr();
 

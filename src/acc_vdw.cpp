@@ -34,7 +34,7 @@ void evdw_tmpl() {
   const real cut2 = cut * cut;
   const real off2 = off * off;
   const int maxnlst = vlist_unit->maxnlst;
-  const NBList* vlst = vlist_unit.deviceptr();
+  const auto* vlst = vlist_unit.deviceptr();
 
   const auto* coupl = couple_unit.deviceptr();
 

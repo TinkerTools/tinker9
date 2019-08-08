@@ -37,6 +37,14 @@ TINKER_EXTERN NBListUnit clist_unit;
 TINKER_EXTERN NBListUnit mlist_unit;
 TINKER_EXTERN NBListUnit ulist_unit;
 
+// size cannot be determined in @c epolar_data(...)
+// when neighbor lists are not set up, so these variables
+// are declared here
+/// index into preconditioner inverse for PCG solver
+TINKER_EXTERN int* mindex;
+/// preconditioner inverse for induced dipole PCG solver
+TINKER_EXTERN real* minv;
+
 void nblist_data(rc_op op);
 TINKER_NAMESPACE_END
 

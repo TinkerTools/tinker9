@@ -34,9 +34,9 @@ struct GenericUnitAlloc<GenericUnitVersion::V0> {
  * analogous to to fortran i/o unit that can be used as signed integers
  *
  * @tparam VERSION
- * mainly used for identifying whether to allocate memory on device and store
- * the device pointer that corresponds to the host object; can be extended to
- * specify different de/allocation methods
+ * mainly to allow allocate memory on device and store the device pointer that
+ * corresponds to the host object; can be extended to specify different
+ * de/allocation methods
  */
 template <class T, GenericUnitVersion VERSION = GenericUnitVersion::V0>
 class GenericUnit {

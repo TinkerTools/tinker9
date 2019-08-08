@@ -8,10 +8,12 @@
 #include "ext/tinker/detail/units.hh"
 #include "io_print.h"
 #include "md.h"
+#include "nblist.h"
 #include "tinker_rt.h"
 
 TINKER_NAMESPACE_BEGIN
 // similar to uscale0a/uscale0b routines
+// the preconditioner is the diagnoal matrix
 static inline void diag_precond(const real (*rsd)[3], const real (*rsdp)[3],
                                 real (*zrsd)[3], real (*zrsdp)[3]) {
   #pragma acc parallel loop independent\
@@ -25,6 +27,70 @@ static inline void diag_precond(const real (*rsd)[3], const real (*rsdp)[3],
     }
   }
 }
+
+// similar to uscale0a/uscale0b routines
+// the preconditioner is the sparse diagnoal matrix
+static inline void sparse_diag_precond_apply(const real (*rsd)[3],
+                                             const real (*rsdp)[3],
+                                             real (*zrsd)[3],
+                                             real (*zrsdp)[3]) {
+  diag_precond(rsd, rsdp, zrsd, zrsdp);
+
+  const int maxnlst = ulist_unit->maxnlst;
+  const auto* ulst = ulist_unit.deviceptr();
+
+  #pragma acc parallel loop independent\
+              deviceptr(rsd,rsdp,zrsd,zrsdp,mindex,minv,ulst)
+  for (int i = 0; i < n; ++i) {
+    int m00 = mindex[i];
+    int nulsti = ulst->nlst[i];
+    int base = i * maxnlst;
+    #pragma acc loop independent
+    for (int kk = 0; kk < nulsti; ++i) {
+      int m = m00 + kk * 6;
+      int k = ulst->lst[base + kk];
+      real m0 = minv[m];
+      real m1 = minv[m + 1];
+      real m2 = minv[m + 2];
+      real m3 = minv[m + 3];
+      real m4 = minv[m + 4];
+      real m5 = minv[m + 5];
+
+      #pragma acc atomic update
+      zrsd[i][0] += m0 * rsd[k][0] + m1 * rsd[k][1] + m2 * rsd[k][2];
+      #pragma acc atomic update
+      zrsd[i][1] += m1 * rsd[k][0] + m3 * rsd[k][1] + m4 * rsd[k][2];
+      #pragma acc atomic update
+      zrsd[i][2] += m2 * rsd[k][0] + m4 * rsd[k][1] + m5 * rsd[k][2];
+
+      #pragma acc atomic update
+      zrsd[k][0] += m0 * rsd[i][0] + m1 * rsd[i][1] + m2 * rsd[i][2];
+      #pragma acc atomic update
+      zrsd[k][1] += m1 * rsd[i][0] + m3 * rsd[i][1] + m4 * rsd[i][2];
+      #pragma acc atomic update
+      zrsd[k][2] += m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2];
+
+      #pragma acc atomic update
+      zrsdp[i][0] += m0 * rsdp[k][0] + m1 * rsdp[k][1] + m2 * rsdp[k][2];
+      #pragma acc atomic update
+      zrsdp[i][1] += m1 * rsdp[k][0] + m3 * rsdp[k][1] + m4 * rsdp[k][2];
+      #pragma acc atomic update
+      zrsdp[i][2] += m2 * rsdp[k][0] + m4 * rsdp[k][1] + m5 * rsdp[k][2];
+
+      #pragma acc atomic update
+      zrsdp[k][0] += m0 * rsdp[i][0] + m1 * rsdp[i][1] + m2 * rsdp[i][2];
+      #pragma acc atomic update
+      zrsdp[k][1] += m1 * rsdp[i][0] + m3 * rsdp[i][1] + m4 * rsdp[i][2];
+      #pragma acc atomic update
+      zrsdp[k][2] += m2 * rsdp[i][0] + m4 * rsdp[i][1] + m5 * rsdp[i][2];
+    }
+  }
+}
+
+static inline void sparse_diag_precond_build(const real (*rsd)[3],
+                                             const real (*rsdp)[3],
+                                             real (*zrsd)[3],
+                                             real (*zrsdp)[3]) {}
 
 /**
  * PCG

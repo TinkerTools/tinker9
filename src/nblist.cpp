@@ -1,5 +1,4 @@
 #include "nblist.h"
-#include "array.h"
 #include "e_vdw.h"
 #include "ext/tinker/detail/limits.hh"
 #include "ext/tinker/detail/neigh.hh"
@@ -218,12 +217,10 @@ void nblist_data(rc_op op) {
 
     if (op & rc_man::evolve) {
       if (rc_flag & calc::traj) {
-        auto& mlist_obj = *mlist_unit;
-        auto* mlst = mlist_unit.deviceptr();
-        mlist_obj.x = x;
-        mlist_obj.y = y;
-        mlist_obj.z = z;
-        copyin_bytes(mlst, &mlist_obj, sizeof(NBList));
+        mlist_unit->x = x;
+        mlist_unit->y = y;
+        mlist_unit->z = z;
+        mlist_unit.init_deviceptr(*mlist_unit);
       }
       nblist_update_acc_impl_(mlist_unit);
     }
@@ -232,15 +229,32 @@ void nblist_data(rc_op op) {
   // ulist
   u = use_usolv_list();
   if (u) {
+    if (op & rc_dealloc) {
+      dealloc_bytes(mindex);
+      dealloc_bytes(minv);
+    }
+
     if (op & rc_alloc) {
       maxnlst = 500;
       if (u == NBList::double_loop)
         maxnlst = 1;
       nblist_op_alloc_(ulist_unit, maxnlst, limits::usolvcut, neigh::pbuffer, x,
                        y, z);
+      alloc_bytes(&minv, sizeof(int) * n);
+      alloc_bytes(&minv, sizeof(real) * 3 * ulist_unit->maxnlst * n);
     }
 
-    if (op & rc_init) {
+    if (op & rc_init)
+      nblist_build_acc_impl_(ulist_unit);
+
+    if (op & rc_man::evolve) {
+      if (rc_flag & calc::traj) {
+        ulist_unit->x = x;
+        ulist_unit->y = y;
+        ulist_unit->z = z;
+        ulist_unit.init_deviceptr(*mlist_unit);
+      }
+      nblist_update_acc_impl_(ulist_unit);
     }
   }
 }
