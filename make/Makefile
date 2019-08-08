@@ -78,6 +78,7 @@ all: $(tinker_gpu_exec__) unittest
 #                                                          #
 ############################################################
 
+host_only__ :=
 ifeq ($(host),$(filter $(host),false off 0))
 	host_only__ := false
 else ifeq ($(host),$(filter $(host),true on 1))
