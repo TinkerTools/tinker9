@@ -53,6 +53,7 @@
 # else ifeq ($(opt),profile)
 # 	cxx_opt_flags__ :=
 # endif
+# cxx_dylib_flags__ :=
 # cxx_depend_flags__ :=
 
 
@@ -75,4 +76,5 @@
 # acc_device_link_flags__ :=
 # acc_host_compile_flags__ :=
 # acc_host_link_flags__ :=
+# acc_link_flags__ :=
 # acc_depend_flags__ :=

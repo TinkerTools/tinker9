@@ -45,6 +45,8 @@ config := default_config__
 ifeq ($(config),default_config__)
 	ifeq ($(os__),linux)
 		config := linux.gfortran.inc
+	else ifeq ($(os__),darwin)
+		config := macos.gfortran.inc
 	endif
 endif
 include $(config)
@@ -140,7 +142,6 @@ else
 	acc_compile_flags__ += $(acc_host_compile_flags__)
 endif
 
-acc_link_flags__ := -rdynamic -Wl,-rpath='$$ORIGIN'
 ifeq ($(host_only__),false)
 	acc_link_flags__ += $(acc_device_link_flags__)
 else
@@ -193,7 +194,7 @@ $(lib_acc_objs__): %.o: $(top_dir__)/%.cpp | dirs
 # shared tinkergpu library does not include lib_acc_objs__
 # lib_acc_objs__ should be statically linked
 $(libtinkergpu_name__).$(shared_lib_suffix__): $(ext_cc_objs__) $(lib_cpp_objs__)
-	$(CXX) -shared -fpic -o $@ $^
+	$(CXX) $(cxx_dylib_flags__) -o $@ $^
 
 # copy the shared tinker library to the build directory
 $(shared_libtinker__): $(libtinker_dir__)/$(shared_libtinker__)

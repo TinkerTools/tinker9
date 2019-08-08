@@ -1,4 +1,5 @@
 #include "rt.h"
+#include <cstdlib>
 #include <cstring>
 #include <thread>
 
