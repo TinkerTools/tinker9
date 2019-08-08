@@ -1,7 +1,7 @@
 # **********************************************************
 # fortran compiler used to compiler libtinker
-# set to TINKER_GFORTRAN for gnu fortran compiler
-# set to TINKER_IFORT for intel fortran compiler
+# set to -DTINKER_GFORTRAN for gnu fortran compiler
+# set to -DTINKER_IFORT for intel fortran compiler
 # or leave it commented
 #
 # fortran_compiler_macro__ :=
@@ -61,16 +61,15 @@
 # OpenACC compiler and related flags
 #
 # ACC :=
-# acc_opt_flags__ :=
 # acc_device_compile_flags__ :=
 # ifeq ($(opt),debug)
-# 	acc_opt_flags__ +=
+# 	acc_opt_flags__ :=
 # 	acc_device_compile_flags__ +=
 # else ifeq ($(opt),release)
-# 	acc_opt_flags__ +=
+# 	acc_opt_flags__ :=
 # 	acc_device_compile_flags__ +=
 # else ifeq ($(opt),profile)
-# 	acc_opt_flags__ +=
+# 	acc_opt_flags__ :=
 # 	acc_device_compile_flags__ +=
 # endif
 # acc_device_link_flags__ :=

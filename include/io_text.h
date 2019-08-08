@@ -26,7 +26,7 @@ public:
   }
 
   /// @brief
-  /// in string @c src, replace any characters appeared in @c old to char @r
+  /// in string @c src, replace any characters appeared in @c old to char @c r
   static void replace(std::string& src, std::string old, char r);
 
   /// @brief

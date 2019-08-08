@@ -8,7 +8,7 @@ void x_info(int argc, char** argv) {
 
   print(out, " {}\n\n", "Program Information");
 
-  print(out, "   > This Build Is Synchronized with Tinker of Commit: {}\n",
+  print(out, "   > This Build is Synchronized with Tinker Commit: {}\n",
         get_SHA1());
 
 #ifdef TINKER_HOST

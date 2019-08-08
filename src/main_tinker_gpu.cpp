@@ -22,7 +22,6 @@ int main(int argc, char** argv) {
   argv++;
 
   if (launcher().find(argv[0]) == launcher().end()) {
-    fprintf(stdout, " Unrecognized program: %s\n\n", argv[0]);
     goto help_message;
   } else {
     fortran_runtime_initialize(argc, argv);
