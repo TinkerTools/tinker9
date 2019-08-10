@@ -1,10 +1,10 @@
 #ifndef TINKER_RT_H_
 #define TINKER_RT_H_
 
-#ifdef TINKER_HOST
-#  include "rt_host.h"
-#else
+#if defined(TINKER_CUDART)
 #  include "rt_cudart.h"
+#else
+#  include "rt_host.h"
 #endif
 
 #include "gen_unit.h"

@@ -2,12 +2,7 @@
 #include "md.h"
 #include "nblist.h"
 
-#ifdef TINKER_HOST
-#  include <algorithm>
-TINKER_NAMESPACE_BEGIN
-static void sort_v1_(int* arr, int len) { std::sort(arr, arr + len); }
-TINKER_NAMESPACE_END
-#else
+#if defined(TINKER_CUDART)
 TINKER_NAMESPACE_BEGIN
 #  define m_swap_(a, b)                                                        \
     {                                                                          \
@@ -46,6 +41,11 @@ static void sort_v1_(int* arr, int len) {
 }
 #  undef m_swap_
 #  undef m_max_heap_
+TINKER_NAMESPACE_END
+#else
+#  include <algorithm>
+TINKER_NAMESPACE_BEGIN
+static void sort_v1_(int* arr, int len) { std::sort(arr, arr + len); }
 TINKER_NAMESPACE_END
 #endif
 

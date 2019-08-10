@@ -2,7 +2,7 @@
 #include "pme.h"
 #include "rt.h"
 
-#ifndef TINKER_HOST
+#ifdef TINKER_CUDART
 TINKER_NAMESPACE_BEGIN
 void fft_data(rc_op op) {
   if (op & rc_dealloc) {

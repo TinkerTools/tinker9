@@ -99,6 +99,11 @@ typedef float real;
 #endif
 TINKER_NAMESPACE_END
 
+// host vs device
+#ifndef TINKER_HOST
+#  define TINKER_CUDART
+#endif
+
 // compiler features
 
 // if constexpr

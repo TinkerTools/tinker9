@@ -1,7 +1,7 @@
 #include "rt.h"
 #include "error.h"
 
-#ifndef TINKER_HOST
+#ifdef TINKER_CUDART
 TINKER_NAMESPACE_BEGIN
 void zero_bytes(void* dst, size_t nbytes) {
   check_rt(cudaMemset(dst, 0, nbytes));

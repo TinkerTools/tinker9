@@ -11,10 +11,10 @@ void x_info(int argc, char** argv) {
   print(out, "   > This Build is Synchronized with Tinker Commit: {}\n",
         get_SHA1());
 
-#ifdef TINKER_HOST
-  auto loc = "Host";
+#if defined(TINKER_CUDART)
+  auto loc = "Device with CUDA Runtime Library";
 #else
-  auto loc = "Device";
+  auto loc = "Host";
 #endif
   print(out, "   > Running on {}\n", loc);
 

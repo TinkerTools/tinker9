@@ -41,10 +41,14 @@ struct GenericUnitAlloc<GenericUnitVersion::V0> {
 template <class T, GenericUnitVersion VERSION = GenericUnitVersion::V0>
 class GenericUnit {
 private:
-  int m_unit;
+  int unit;
 
   static constexpr int USE_DPTR = (VERSION == GenericUnitVersion::V0 ? 0 : 1);
 
+  // The host vector will almost definitely expand its capacity, so if you don't
+  // want to implement the move constructors and/or the copy constructors of all
+  // the possible type T, don't change vector of host pointers to vector of host
+  // objects.
   typedef std::vector<std::unique_ptr<T>> hostptr_vec;
   static hostptr_vec& hostptrs() {
     static hostptr_vec o;
@@ -52,22 +56,21 @@ private:
   }
 
   const T& obj() const {
-    assert(0 <= m_unit && m_unit < hostptrs().size() &&
+    assert(0 <= unit && unit < hostptrs().size() &&
            "const T& GenericUnit::obj() const");
-    return *hostptrs()[m_unit];
+    return *hostptrs()[unit];
   }
 
   T& obj() {
-    assert(0 <= m_unit && m_unit < hostptrs().size() &&
-           "T& GenericUnit::obj()");
-    return *hostptrs()[m_unit];
+    assert(0 <= unit && unit < hostptrs().size() && "T& GenericUnit::obj()");
+    return *hostptrs()[unit];
   }
 
   typedef typename GenericUnitAlloc<VERSION>::Dealloc Dealloc;
-  typedef std::vector<std::unique_ptr<T, Dealloc>> dptr_vec;
-  static dptr_vec& deviceptrs() {
+  typedef std::vector<std::unique_ptr<T, Dealloc>> deviceptr_vec;
+  static deviceptr_vec& deviceptrs() {
     assert(USE_DPTR);
-    static dptr_vec o;
+    static deviceptr_vec o;
     return o;
   }
 
@@ -119,12 +122,12 @@ public:
 
 public:
   GenericUnit()
-      : m_unit(-1) {}
+      : unit(-1) {}
 
   GenericUnit(int u)
-      : m_unit(u) {}
+      : unit(u) {}
 
-  operator int() const { return m_unit; }
+  operator int() const { return unit; }
 
   /// @brief
   /// get the (const) reference to the object on host
@@ -144,14 +147,15 @@ public:
   /// get device pointer to the object
   /// @{
   const T* deviceptr() const {
-    assert(0 <= m_unit && m_unit < deviceptrs().size() &&
+    assert(0 <= unit && unit < deviceptrs().size() &&
            "const T* GenericUnit::deviceptr() const");
-    return deviceptrs()[m_unit].get();
+    return deviceptrs()[unit].get();
   }
+
   T* deviceptr() {
-    assert(0 <= m_unit && m_unit < deviceptrs().size() &&
+    assert(0 <= unit && unit < deviceptrs().size() &&
            "T* GenericUnit::deviceptr()");
-    return deviceptrs()[m_unit].get();
+    return deviceptrs()[unit].get();
   }
   /// @}
 
