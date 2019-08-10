@@ -173,7 +173,8 @@ TEST_CASE("Pitors-Trpcage", "[ff][epitors][trpcage]") {
   TestFile fke(k, k0);
 
   TestFile fx1(x1, trpcage_xyz);
-  TestFile fpr(p, amoebapro13_prm);
+  TestFile fpr(
+      p, commit_6fe8e913fe4da3d46849d10248ad2a4872b4da93::amoebapro13_prm);
 
   const char* argv[] = {"dummy", x1};
   int argc = 2;

@@ -27,7 +27,8 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]") {
   TestFile fke(k, k0);
 
   TestFile fx1(x1, arbox_arc);
-  TestFile fpr(p, amoeba09_prm);
+  TestFile fpr(p,
+               commit_6fe8e913fe4da3d46849d10248ad2a4872b4da93::amoeba09_prm);
 
   const char* argv[] = {"dummy", x1};
   int argc = 2;

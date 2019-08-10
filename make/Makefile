@@ -130,6 +130,10 @@ doc:
 clean:
 	rm -rf ext src* tinker.gpu* all.tests* libtinker* *dSYM
 
+.PHONY: clean-d
+clean-d:
+	rm -rf ext/ext/fmt/*.d src/*.d src/test/*.d
+
 
 ########################################################################
 #                                                                      #

@@ -1,4 +1,3 @@
-namespace tinker_6fe8e913fe4da3d46849d10248ad2a4872b4da93 {
 const char* watersmall_xyz =
 R"**(   648  Water Cubic Box (18.643 Ang, 216 AMOEBA)
      1  O      8.679662    7.087692   -0.696862     1     2     3
@@ -650,4 +649,3 @@ R"**(   648  Water Cubic Box (18.643 Ang, 216 AMOEBA)
    647  H     -8.345957    4.027222    3.589257     2   646
    648  H     -8.130328    2.845238    2.577949     2   646
 )**";
-}

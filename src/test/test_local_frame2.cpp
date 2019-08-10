@@ -46,7 +46,8 @@ TEST_CASE("Local-Frame2-1", "[ff][triclinic][evdw][hal][local-frame2]") {
   k0 += "vdwterm  only\n";
   TestFile fke(k, k0);
 
-  TestFile fpr("amoeba09.prm", amoeba09_prm);
+  TestFile fpr("amoeba09.prm",
+               commit_6fe8e913fe4da3d46849d10248ad2a4872b4da93::amoeba09_prm);
   TestFile fx1(x1, local_frame_xyz2);
 
   test_begin_with_args(argc, argv);
@@ -74,7 +75,8 @@ TEST_CASE("Local-Frame2-2", "[ff][monoclinic][evdw][hal][local-frame2]") {
   k0 += "vdwterm  only\n";
   TestFile fke(k, k0);
 
-  TestFile fpr("amoeba09.prm", amoeba09_prm);
+  TestFile fpr("amoeba09.prm",
+               commit_6fe8e913fe4da3d46849d10248ad2a4872b4da93::amoeba09_prm);
   TestFile fx1(x1, local_frame_xyz2);
 
   test_begin_with_args(argc, argv);

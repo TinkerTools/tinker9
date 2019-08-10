@@ -1,4 +1,4 @@
-namespace tinker_6fe8e913fe4da3d46849d10248ad2a4872b4da93 {
+namespace commit_6fe8e913fe4da3d46849d10248ad2a4872b4da93 {
 const char* water03_prm =
 R"**(      ##############################
       ##                          ##

@@ -57,7 +57,8 @@ TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
   k0 += "vdwterm    only\n";
 
   TestFile fx(x, cln025_xyz);
-  TestFile px(p, amoebabio09_prm);
+  TestFile px(p,
+              commit_6fe8e913fe4da3d46849d10248ad2a4872b4da93::amoebabio09_prm);
 
   int usage = 0;
   usage |= calc::xyz;

@@ -21,7 +21,6 @@ extern double& copd;
 extern double& qopd;
 extern double& popd;
 extern double& sopd;
-extern char (&angtrig)[8];
 extern char (&opbtyp)[8];
 extern char (*&angtyp)[8];
 
@@ -43,7 +42,6 @@ extern "C" double TINKER_MOD(angpot, copd);
 extern "C" double TINKER_MOD(angpot, qopd);
 extern "C" double TINKER_MOD(angpot, popd);
 extern "C" double TINKER_MOD(angpot, sopd);
-extern "C" char TINKER_MOD(angpot, angtrig)[8];
 extern "C" char TINKER_MOD(angpot, opbtyp)[8];
 extern "C" char (*TINKER_MOD(angpot, angtyp))[8];
 
@@ -64,7 +62,6 @@ double& copd = TINKER_MOD(angpot, copd);
 double& qopd = TINKER_MOD(angpot, qopd);
 double& popd = TINKER_MOD(angpot, popd);
 double& sopd = TINKER_MOD(angpot, sopd);
-char (&angtrig)[8] = TINKER_MOD(angpot, angtrig);
 char (&opbtyp)[8] = TINKER_MOD(angpot, opbtyp);
 char (*&angtyp)[8] = TINKER_MOD(angpot, angtyp);
 #endif

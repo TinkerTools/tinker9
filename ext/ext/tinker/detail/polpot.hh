@@ -29,6 +29,7 @@ extern double& w5scale;
 extern double& udiag;
 extern int& dpequal;
 extern int& use_thole;
+extern int& use_dirdamp;
 extern char (&poltyp)[6];
 
 #ifdef TINKER_MOD_CPP_
@@ -57,6 +58,7 @@ extern "C" double TINKER_MOD(polpot, w5scale);
 extern "C" double TINKER_MOD(polpot, udiag);
 extern "C" int TINKER_MOD(polpot, dpequal);
 extern "C" int TINKER_MOD(polpot, use_thole);
+extern "C" int TINKER_MOD(polpot, use_dirdamp);
 extern "C" char TINKER_MOD(polpot, poltyp)[6];
 
 int& politer = TINKER_MOD(polpot, politer);
@@ -84,6 +86,7 @@ double& w5scale = TINKER_MOD(polpot, w5scale);
 double& udiag = TINKER_MOD(polpot, udiag);
 int& dpequal = TINKER_MOD(polpot, dpequal);
 int& use_thole = TINKER_MOD(polpot, use_thole);
+int& use_dirdamp = TINKER_MOD(polpot, use_dirdamp);
 char (&poltyp)[6] = TINKER_MOD(polpot, poltyp);
 #endif
 } TINKER_NAMESPACE_END

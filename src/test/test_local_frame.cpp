@@ -14,7 +14,8 @@ using namespace TINKER_NAMESPACE;
 static bool do_ij(int i, int /* j */) { return i < n - 4; }
 
 TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
-  TestFile fpr("amoeba09.prm", amoeba09_prm);
+  TestFile fpr("amoeba09.prm",
+               commit_6fe8e913fe4da3d46849d10248ad2a4872b4da93::amoeba09_prm);
 
   const char* k = "test_local_frame.key";
   std::string key0 = local_frame_key;
@@ -85,7 +86,8 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
 }
 
 TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
-  TestFile fpr("amoeba09.prm", amoeba09_prm);
+  TestFile fpr("amoeba09.prm",
+               commit_6fe8e913fe4da3d46849d10248ad2a4872b4da93::amoeba09_prm);
 
   const char* k = "test_local_frame.key";
   std::string key0 = local_frame_key;
@@ -201,7 +203,8 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
   }
 
 TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
-  TestFile fpr("amoeba09.prm", amoeba09_prm);
+  TestFile fpr("amoeba09.prm",
+               commit_6fe8e913fe4da3d46849d10248ad2a4872b4da93::amoeba09_prm);
 
   const char* k = "test_local_frame.key";
   std::string key0 = local_frame_key;
@@ -405,7 +408,8 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
 }
 
 TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
-  TestFile fpr("amoeba09.prm", amoeba09_prm);
+  TestFile fpr("amoeba09.prm",
+               commit_6fe8e913fe4da3d46849d10248ad2a4872b4da93::amoeba09_prm);
 
   const char* k = "test_local_frame.key";
   std::string key0 = local_frame_key;
