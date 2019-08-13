@@ -175,8 +175,7 @@ TEST_CASE("Bonded-Trpcage", "[ff][ebonded][trpcage]") {
   TestFile fke(k, k0);
 
   TestFile fx1(x1, trpcage_xyz);
-  TestFile fpr(
-      p, commit_291a85c1435feddc835e80bfa340497b67cc1393::amoebapro13_prm);
+  TestFile fpr(p, commit_291a85c1::amoebapro13_prm);
 
   const char* argv[] = {"dummy", x1};
   int argc = 2;

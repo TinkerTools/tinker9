@@ -37,8 +37,7 @@ using namespace TINKER_NAMESPACE;
   }
 
 TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
-  TestFile fpr("amoeba09.prm",
-               commit_6fe8e913fe4da3d46849d10248ad2a4872b4da93::amoeba09_prm);
+  TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
 
   std::string key = nacl_key;
   key += "vdwterm    only\n";
@@ -164,8 +163,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
   }
 
 TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
-  TestFile fpr("amoeba09.prm",
-               commit_6fe8e913fe4da3d46849d10248ad2a4872b4da93::amoeba09_prm);
+  TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
 
   std::string key = nacl_key;
   key += "multipoleterm    only\n";
@@ -206,8 +204,7 @@ TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
 }
 
 TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]") {
-  TestFile fpr("amoeba09.prm",
-               commit_6fe8e913fe4da3d46849d10248ad2a4872b4da93::amoeba09_prm);
+  TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
 
   std::string key = nacl_key4;
   key += "multipoleterm    only\n";

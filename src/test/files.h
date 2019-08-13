@@ -5,14 +5,14 @@
 
 TINKER_NAMESPACE_BEGIN
 // prm files
-namespace commit_6fe8e913fe4da3d46849d10248ad2a4872b4da93 {
+namespace commit_6fe8e913 {
 extern const char* water03_prm;
 extern const char* amoeba09_prm;
 extern const char* amoebabio09_prm;
 extern const char* amoebapro13_prm;
 }
 
-namespace commit_291a85c1435feddc835e80bfa340497b67cc1393 {
+namespace commit_291a85c1 {
 extern const char* amoebapro13_prm;
 }
 

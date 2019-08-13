@@ -2,10 +2,10 @@
 
 TINKER_NAMESPACE_BEGIN
 // prm files
-#include "file/water03.hh"
 #include "file/amoeba09.hh"
 #include "file/amoebabio09.hh"
 #include "file/amoebapro13.hh"
+#include "file/water03.hh"
 
 // xyz files
 #include "file/watersmall.hh"

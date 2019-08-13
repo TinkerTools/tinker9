@@ -1,4 +1,4 @@
-namespace commit_6fe8e913fe4da3d46849d10248ad2a4872b4da93 {
+namespace commit_6fe8e913 {
 const char* amoebapro13_prm =
 R"**(
 
@@ -5932,7 +5932,7 @@ biotype    2015    I       "Iodide Ion"                      261
 )**";
 }
 
-namespace commit_291a85c1435feddc835e80bfa340497b67cc1393 {
+namespace commit_291a85c1 {
 const char* amoebapro13_prm =
 R"**(
       ##############################

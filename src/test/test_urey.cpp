@@ -37,7 +37,7 @@ TEST_CASE("Urey-Ten-Water", "[ff][eurey][h2o10]") {
   TestFile fke(k, k0);
 
   TestFile fx1(x1, h2o10_xyz);
-  TestFile fpr(p, commit_6fe8e913fe4da3d46849d10248ad2a4872b4da93::water03_prm);
+  TestFile fpr(p, commit_6fe8e913::water03_prm);
 
   const char* argv[] = {"dummy", x1};
   int argc = 2;
