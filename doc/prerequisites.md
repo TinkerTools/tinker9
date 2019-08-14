@@ -4,6 +4,7 @@
 * [Hardware](#hardware)
 * [Operating Systems and Compilers](#os)
 * [Libraries](#lib)
+* [Documentation](#doc)
 
 <a name='hardware'></a>
 # Hardware
@@ -37,3 +38,11 @@ Tinker GPU is in sync with
 [Tinker](https://github.com/TinkerTools/Tinker/tree/291a85c1435feddc835e80bfa340497b67cc1393)
 of commit `291a85c1`.
 For details, see section `Build and Install`.
+
+<a name='doc'></a>
+# Documentation
+[`doxygen`](http://www.doxygen.nl) is only required for the `make doc` command
+to generate documentation.
+
+If available, `doxygen` will use `dot` from `graphviz` to generate
+advanced diagrams and graphs in the documentation.
