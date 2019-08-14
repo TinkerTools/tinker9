@@ -11,7 +11,7 @@ Release/*
 
 # build
 build/*
-build*
+build*/*
 
 # vi
 *.swp

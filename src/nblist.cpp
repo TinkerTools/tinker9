@@ -240,7 +240,7 @@ void nblist_data(rc_op op) {
         maxnlst = 1;
       nblist_op_alloc_(ulist_unit, maxnlst, limits::usolvcut, neigh::pbuffer, x,
                        y, z);
-      alloc_bytes(&minv, sizeof(int) * n);
+      alloc_bytes(&mindex, sizeof(int) * n);
       alloc_bytes(&minv, sizeof(real) * 3 * ulist_unit->maxnlst * n);
     }
 

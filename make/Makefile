@@ -123,12 +123,13 @@ $(src_obj_dir__)/test:
 
 .PHONY: doc
 doc:
-	doxygen $(top_dir__)/doc/Doxyfile
+	cp -r $(top_dir__)/README.md $(top_dir__)/doc .
+	doxygen $(top_dir__)/Doxyfile
 
 
 .PHONY: clean
 clean:
-	rm -rf ext src* tinker.gpu* all.tests* libtinker* *dSYM
+	rm -rf ext src* tinker.gpu* all.tests* libtinker* *dSYM doc *.md
 
 .PHONY: clean-d
 clean-d:
