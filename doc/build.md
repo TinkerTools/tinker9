@@ -100,6 +100,10 @@ run-time installation.
 
 They are documented inside `make/example.inc`.
 
+* If you want to compile a debug GPU version with single precision, you can run
+```
+make opt=debug prec=s host=0
+```
 
 <a name='install'></a>
 # Install
