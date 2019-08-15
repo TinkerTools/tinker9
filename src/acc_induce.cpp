@@ -34,7 +34,16 @@ static inline void sparse_diag_precond_apply(const real (*rsd)[3],
                                              const real (*rsdp)[3],
                                              real (*zrsd)[3],
                                              real (*zrsdp)[3]) {
-  diag_precond(rsd, rsdp, zrsd, zrsdp);
+  #pragma acc parallel loop independent\
+              deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
+  for (int i = 0; i < n; ++i) {
+    real poli = udiag * polarity[i];
+    #pragma acc loop independent
+    for (int j = 0; j < 3; ++j) {
+      zrsd[i][j] = poli * rsd[i][j];
+      zrsdp[i][j] = poli * rsdp[i][j];
+    }
+  }
 
   const int maxnlst = ulist_unit->maxnlst;
   const auto* ulst = ulist_unit.deviceptr();
@@ -46,7 +55,7 @@ static inline void sparse_diag_precond_apply(const real (*rsd)[3],
     int nulsti = ulst->nlst[i];
     int base = i * maxnlst;
     #pragma acc loop independent
-    for (int kk = 0; kk < nulsti; ++i) {
+    for (int kk = 0; kk < nulsti; ++kk) {
       int m = m00 + kk * 6;
       int k = ulst->lst[base + kk];
       real m0 = minv[m];
@@ -90,7 +99,113 @@ static inline void sparse_diag_precond_apply(const real (*rsd)[3],
 static inline void sparse_diag_precond_build(const real (*rsd)[3],
                                              const real (*rsdp)[3],
                                              real (*zrsd)[3],
-                                             real (*zrsdp)[3]) {}
+                                             real (*zrsdp)[3]) {
+  const auto* nulst = ulist_unit->nlst;
+  #pragma acc serial deviceptr(mindex, nulst)
+  {
+    int m = 0;
+    for (int i = 0; i < n; ++i) {
+      mindex[i] = m;
+      m += 6 * nulst[i];
+    }
+  }
+
+  const int maxnlst = ulist_unit->maxnlst;
+  const auto* ulst = ulist_unit.deviceptr();
+
+  const auto* polargroup = polargroup_unit.deviceptr();
+
+  static std::vector<real> uscalebuf;
+  uscalebuf.resize(n, 1);
+  real* uscale = uscalebuf.data();
+
+  #pragma acc parallel loop independent\
+              deviceptr(mindex,minv,ulst,box,\
+              polargroup,x,y,z,polarity,pdamp,thole)
+  for (int i = 0; i < n; ++i) {
+
+    // set exclusion coefficients for connected atoms
+
+    const int np11i = polargroup->np11[i];
+    const int np12i = polargroup->np12[i];
+    const int np13i = polargroup->np13[i];
+    const int np14i = polargroup->np14[i];
+
+    #pragma acc loop independent
+    for (int j = 0; j < np11i; ++j)
+      uscale[polargroup->ip11[i][j]] = u1scale;
+    #pragma acc loop independent
+    for (int j = 0; j < np12i; ++j)
+      uscale[polargroup->ip12[i][j]] = u2scale;
+    #pragma acc loop independent
+    for (int j = 0; j < np13i; ++j)
+      uscale[polargroup->ip13[i][j]] = u3scale;
+    #pragma acc loop independent
+    for (int j = 0; j < np14i; ++j)
+      uscale[polargroup->ip14[i][j]] = u4scale;
+
+    real xi = x[i];
+    real yi = y[i];
+    real zi = z[i];
+    real poli = polarity[i];
+    //
+    real pdi = pdamp[i];
+    real pti = thole[i];
+    //
+
+    int nulsti = ulst->nlst[i];
+    int base = i * maxnlst;
+    #pragma acc loop independent
+    for (int kk = 0; kk < nulsti; ++kk) {
+      int k = ulst->lst[base + kk];
+      real xr = x[k] - xi;
+      real yr = y[k] - yi;
+      real zr = z[k] - zi;
+      image(xr, yr, zr, box);
+      real r2 = xr * xr + yr * yr + zr * zr;
+      real r = REAL_SQRT(r2);
+
+      //
+      real scale3 = uscale[k];
+      real scale5 = uscale[k];
+      real damp = pdi * pdamp[k];
+      if (damp != 0) {
+        real pgamma = REAL_MIN(pti, thole[k]);
+        damp = -pgamma * REAL_CUBE(r / damp);
+        if (damp > -50) {
+          real expdamp = REAL_EXP(damp);
+          scale3 *= (1 - expdamp);
+          scale5 *= (1 - expdamp * (1 - damp));
+        }
+      }
+      //
+      real polik = poli * polarity[k];
+      real rr3 = scale3 * polik / REAL_RECIP(r * r2);
+      real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
+
+      int m = mindex[i] + 6 * kk;
+      minv[m] = rr5 * xr * xr - rr3;
+      minv[m + 1] = rr5 * xr * yr;
+      minv[m + 2] = rr5 * xr * zr;
+      minv[m + 3] = rr5 * yr * yr - rr3;
+      minv[m + 4] = rr5 * yr * zr;
+      minv[m + 5] = rr5 * zr * zr - rr3;
+    } // end for (int kk)
+
+    #pragma acc loop independent
+    for (int j = 0; j < np11i; ++j)
+      uscale[polargroup->ip11[i][j]] = 1;
+    #pragma acc loop independent
+    for (int j = 0; j < np12i; ++j)
+      uscale[polargroup->ip12[i][j]] = 1;
+    #pragma acc loop independent
+    for (int j = 0; j < np13i; ++j)
+      uscale[polargroup->ip13[i][j]] = 1;
+    #pragma acc loop independent
+    for (int j = 0; j < np14i; ++j)
+      uscale[polargroup->ip14[i][j]] = 1;
+  }
+}
 
 /**
  * PCG
@@ -133,6 +248,9 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   real(*vecp)[3] = work10_;
 
   const bool dirguess = polpcg::pcgguess;
+  // use sparse matrix preconditioner
+  // or just use diagonal matrix preconditioner
+  const bool sparse_prec = polpcg::pcgprec;
 
   // zero out the induced dipoles at each site
 
@@ -177,7 +295,12 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
   // initial M r(0) and p(0)
 
+  // if (sparse_prec) {
+  //   sparse_diag_precond_build(rsd, rsdp, zrsd, zrsdp);
+  //   sparse_diag_precond_apply(rsd, rsdp, zrsd, zrsdp);
+  // } else {
   diag_precond(rsd, rsdp, zrsd, zrsdp);
+  // }
   copy_array(&conj[0][0], &zrsd[0][0], n3);
   copy_array(&conjp[0][0], &zrsdp[0][0], n3);
 
@@ -243,6 +366,9 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
     }
 
     // calculate/update M r
+    // if (sparse_prec)
+    //   sparse_diag_precond_apply(rsd, rsdp, zrsd, zrsdp);
+    // else
     diag_precond(rsd, rsdp, zrsd, zrsdp);
 
     real b, bp;

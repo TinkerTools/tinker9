@@ -100,6 +100,8 @@ void epolar_data(rc_op op) {
     p4iscale = polpot::p4iscale;
     p5iscale = polpot::p5iscale;
 
+    udiag = polpot::udiag;
+
     // see also polmin in induce.f
     const double polmin = 0.00000001;
     std::vector<double> pinvbuf(n);
