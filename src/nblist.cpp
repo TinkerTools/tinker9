@@ -75,7 +75,14 @@ static int use_usolv_list() {
 static int nblist_maxlst_(int maxn, double cutoff, double buffer) {
   if (maxn > 1) {
     double buf = (cutoff + buffer);
-    int limit = buf * buf * buf + 100;
+    double buf3 = buf * buf * buf + 100; // empirical formula
+    int limit;
+    // assuming buf3 does not overflow
+    // compare buf3 to 0x10000000 while max of int == 0x7FFFFFFF
+    if (buf3 > 0x10000000)
+      limit = maxn;
+    else
+      limit = buf3;
     int ans = std::min(limit, maxn);
     if (ans > 1) {
       const int magic = 32;
