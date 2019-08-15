@@ -13,6 +13,8 @@ TINKER_EXTERN real d1scale, d2scale, d3scale, d4scale;
 TINKER_EXTERN real p2scale, p3scale, p4scale, p5scale;
 TINKER_EXTERN real p2iscale, p3iscale, p4iscale, p5iscale;
 
+TINKER_EXTERN real udiag;
+
 TINKER_EXTERN real* polarity;
 TINKER_EXTERN real* thole;
 TINKER_EXTERN real* pdamp;

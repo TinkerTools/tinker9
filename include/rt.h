@@ -1,6 +1,8 @@
 #ifndef TINKER_RT_H_
 #define TINKER_RT_H_
 
+#include "macro.h"
+
 #if defined(TINKER_CUDART)
 #  include "rt_cudart.h"
 #else
