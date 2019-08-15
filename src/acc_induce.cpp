@@ -121,7 +121,8 @@ static inline void sparse_diag_precond_build(const real (*rsd)[3],
 
   #pragma acc parallel loop independent\
               deviceptr(mindex,minv,ulst,box,\
-              polargroup,x,y,z,polarity,pdamp,thole)
+              polargroup,x,y,z,polarity,pdamp,thole)\
+              firstprivate(uscale[0:n])
   for (int i = 0; i < n; ++i) {
 
     // set exclusion coefficients for connected atoms
@@ -180,7 +181,7 @@ static inline void sparse_diag_precond_build(const real (*rsd)[3],
       }
       //
       real polik = poli * polarity[k];
-      real rr3 = scale3 * polik / REAL_RECIP(r * r2);
+      real rr3 = scale3 * polik * REAL_RECIP(r * r2);
       real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
 
       int m = mindex[i] + 6 * kk;
@@ -295,12 +296,12 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
   // initial M r(0) and p(0)
 
-  // if (sparse_prec) {
-  //   sparse_diag_precond_build(rsd, rsdp, zrsd, zrsdp);
-  //   sparse_diag_precond_apply(rsd, rsdp, zrsd, zrsdp);
-  // } else {
-  diag_precond(rsd, rsdp, zrsd, zrsdp);
-  // }
+  if (sparse_prec) {
+    sparse_diag_precond_build(rsd, rsdp, zrsd, zrsdp);
+    sparse_diag_precond_apply(rsd, rsdp, zrsd, zrsdp);
+  } else {
+    diag_precond(rsd, rsdp, zrsd, zrsdp);
+  }
   copy_array(&conj[0][0], &zrsd[0][0], n3);
   copy_array(&conjp[0][0], &zrsdp[0][0], n3);
 
@@ -366,10 +367,10 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
     }
 
     // calculate/update M r
-    // if (sparse_prec)
-    //   sparse_diag_precond_apply(rsd, rsdp, zrsd, zrsdp);
-    // else
-    diag_precond(rsd, rsdp, zrsd, zrsdp);
+    if (sparse_prec)
+      sparse_diag_precond_apply(rsd, rsdp, zrsd, zrsdp);
+    else
+      diag_precond(rsd, rsdp, zrsd, zrsdp);
 
     real b, bp;
     real sum1, sump1;
@@ -405,11 +406,11 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
     if (debug) {
       if (iter == 1) {
         print(stdout,
-              "\n Determination of SCF Induced Dipole Moments "
-              ":{0:4s}Iter{0:4s}RMS Residual (Debye)\n",
+              "\n Determination of SCF Induced Dipole Moments\n\n"
+              "{0:4s}Iter{0:4s}RMS Residual (Debye)\n\n",
               "");
       }
-      print(stdout, "{0:>8d}{2:7s}{1:>16.10f}\n", iter, eps, "");
+      print(stdout, "{0:>8d}{2:8s}{1:<16.10f}\n", iter, eps, "");
     }
 
     if (eps < poleps)
