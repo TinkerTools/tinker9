@@ -1,15 +1,50 @@
 branches:
   only:
     - master
-    - travis
 
 
 language: generic
+
 
 matrix:
   include:
     - os: linux
       dist: xenial
-  install: true
-  script:
-    - pwd
+      env: CI_DEPEND_DIR=https://raw.githubusercontent.com/zhi-wang/ci-depend/master/xenial
+
+before_install:
+  - sudo apt-get install gfortran
+
+script:
+  - mkdir -p build
+  - cd build
+
+  - mkdir -p tinker/source
+  - curl $CI_DEPEND_DIR/tinker-291a85c1/libtinker.so -o tinker/source/libtinker.so
+
+  - mkdir -p fftw/include
+  - curl $CI_DEPEND_DIR/fftw/include/fftw3.h -o fftw/include/fftw3.h
+
+  - mkdir -p fftw/lib
+  - cd fftw/lib
+
+  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3.so.3.5.8          -o libfftw3.so.3.5.8
+  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3_threads.so.3.5.8  -o libfftw3_threads.so.3.5.8
+  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f.so.3.5.8         -o libfftw3f.so.3.5.8
+  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f_threads.so.3.5.8 -o libfftw3f_threads.so.3.5.8
+
+  - ln -s libfftw3.so.3.5.8          libfftw3.so
+  - ln -s libfftw3_threads.so.3.5.8  libfftw3_threads.so
+  - ln -s libfftw3f.so.3.5.8         libfftw3f.so
+  - ln -s libfftw3f_threads.so.3.5.8 libfftw3f_threads.so
+  - ls -l
+  - cd ../..
+
+  - gfortran -v
+  - g++ -v
+  - echo $HOME
+  - echo $PWD
+
+  - cp ../make/Makefile ../make/*.inc .
+  - make config=travisci.xenial.inc -j2 all
+  - make config=travisci.xenial.inc test
