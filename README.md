@@ -1,4 +1,7 @@
-# Tinker GPU
+Tinker GPU
+==========
+[//]: # (Badges)
+[![Build Status](https://travis-ci.com/zhi-wang/tinker.gpu.svg?branch=master)](https://travis-ci.com/zhi-wang/tinker.gpu)
 
 # Table of Contents
 * [Prerequisites](doc/prerequisites.md)
