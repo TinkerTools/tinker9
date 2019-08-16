@@ -3,6 +3,8 @@ branches:
     - travis
 
 
+language: c++
+
 matrix:
   include:
     - os: linux
