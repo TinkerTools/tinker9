@@ -3,14 +3,12 @@ branches:
     - travis
 
 
-language: c++
+language: generic
 
 matrix:
   include:
     - os: linux
       dist: xenial
-
-
-install:
-  - pwd
-
+  install: true
+  script:
+    - pwd
