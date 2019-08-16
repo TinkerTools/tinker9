@@ -243,12 +243,15 @@ void nblist_data(rc_op op) {
 
     if (op & rc_alloc) {
       maxnlst = 500;
+      int minv_size = maxnlst;
       if (u == NBList::double_loop)
         maxnlst = 1;
       nblist_op_alloc_(ulist_unit, maxnlst, limits::usolvcut, neigh::pbuffer, x,
                        y, z);
       alloc_bytes(&mindex, sizeof(int) * n);
-      alloc_bytes(&minv, sizeof(real) * 3 * ulist_unit->maxnlst * n);
+      minv_size = nblist_maxlst_(minv_size, limits::usolvcut, neigh::pbuffer);
+      int xx = ulist_unit->maxnlst;
+      alloc_bytes(&minv, sizeof(real) * 3 * minv_size * n);
     }
 
     if (op & rc_init)
