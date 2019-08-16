@@ -1,0 +1,14 @@
+branches:
+  only:
+    - travis
+
+
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+
+
+install:
+  - echo $PWD
+
