@@ -1,0 +1,17 @@
+# Nsight
+Debug/*
+Release/*
+.cproject
+.project
+.settings/*
+
+# VSCode
+.vscode
+.vscode/*
+
+# build
+build/*
+build*/*
+
+# vi
+*.swp

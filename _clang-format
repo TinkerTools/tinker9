@@ -5,3 +5,4 @@ ColumnLimit:                           80
 IndentPPDirectives:                    AfterHash
 FixNamespaceComments:                  false
 PointerAlignment: Left
+BreakConstructorInitializers:          BeforeComma
