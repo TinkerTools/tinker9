@@ -1,6 +1,6 @@
+#include "acc_mathfunc.h"
 #include "ext/tinker/detail/bath.hh"
 #include "ext/tinker/detail/mdstuf.hh"
-#include "mathfunc.h"
 #include "md.h"
 #include "random.h"
 

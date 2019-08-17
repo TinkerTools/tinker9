@@ -96,25 +96,25 @@ TINKER_NAMESPACE_END
   COMPARE_GRADIENT3_(gx, gy, gz, ref_grad, eps, check_ij)
 #define COMPARE_GRADIENT_(ref_grad, eps)                                       \
   COMPARE_GRADIENT2_(ref_grad, eps, [](int, int) { return true; })
-#define COMPARE_BONDED_FORCE(routine, gpu_e, ref_e, eps_e, cpu_count,          \
+#define COMPARE_BONDED_FORCE(routine, cpu_count, handle, ref_e, eps_e,         \
                              ref_count, gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g,  \
-                             gpu_v, ref_v, eps_v)                              \
+                             ref_v, eps_v)                                     \
   {                                                                            \
     auto do_ij_ = [](int, int) { return true; };                               \
     zero_egv();                                                                \
     routine(calc::v3);                                                         \
-    COMPARE_ENERGY_(gpu_e, ref_e, eps_e);                                      \
+    COMPARE_ENERGY_(handle.e(), ref_e, eps_e);                                 \
     REQUIRE(cpu_count == ref_count);                                           \
                                                                                \
     zero_egv();                                                                \
     routine(calc::v1);                                                         \
-    COMPARE_ENERGY_(gpu_e, ref_e, eps_e);                                      \
+    COMPARE_ENERGY_(handle.e(), ref_e, eps_e);                                 \
     COMPARE_GRADIENT3_(gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);          \
-    COMPARE_VIR_(gpu_v, ref_v, eps_v);                                         \
+    COMPARE_VIR_(handle.vir(), ref_v, eps_v);                                  \
                                                                                \
     zero_egv();                                                                \
     routine(calc::v4);                                                         \
-    COMPARE_ENERGY_(gpu_e, ref_e, eps_e);                                      \
+    COMPARE_ENERGY_(handle.e(), ref_e, eps_e);                                 \
     COMPARE_GRADIENT3_(gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);          \
                                                                                \
     zero_egv();                                                                \
@@ -124,7 +124,7 @@ TINKER_NAMESPACE_END
     zero_egv();                                                                \
     routine(calc::v6);                                                         \
     COMPARE_GRADIENT3_(gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);          \
-    COMPARE_VIR_(gpu_v, ref_v, eps_v);                                         \
+    COMPARE_VIR_(handle.vir(), ref_v, eps_v);                                  \
   }
 
 #endif

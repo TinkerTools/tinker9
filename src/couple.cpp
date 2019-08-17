@@ -22,7 +22,7 @@ void couple_data(rc_op op) {
 
   if (op & rc_alloc) {
     assert(CoupleUnit::size() == 0);
-    couple_unit = CoupleUnit::alloc_new();
+    couple_unit = CoupleUnit::inquire();
     auto& coupl_obj = *couple_unit;
 
     const size_t rs = sizeof(int);

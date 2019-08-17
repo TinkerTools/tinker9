@@ -1,4 +1,5 @@
-#include "acc_seq.h"
+#include "acc_image.h"
+#include "acc_mathfunc.h"
 
 TINKER_NAMESPACE_BEGIN
 #pragma acc routine seq

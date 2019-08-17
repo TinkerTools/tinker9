@@ -75,7 +75,7 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]") {
   std::vector<double> epots, eksums;
   for (int i = 1; i <= nsteps; ++i) {
     velocity_verlet(i, dt_ps);
-    epots.push_back(get_energy(esum));
+    epots.push_back(esum);
     eksums.push_back(eksum);
   }
 

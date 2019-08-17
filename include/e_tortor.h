@@ -1,6 +1,7 @@
 #ifndef TINKER_E_TORTOR_H_
 #define TINKER_E_TORTOR_H_
 
+#include "energy_buffer.h"
 #include "ext/tinker/detail/ktrtor.hh"
 #include "rc_man.h"
 
@@ -28,8 +29,7 @@ TINKER_EXTERN int* chkttor_ia_; // of size ntortor
 
 TINKER_EXTERN real ttorunit;
 
-TINKER_EXTERN real* ett;
-TINKER_EXTERN real* vir_ett;
+TINKER_EXTERN BondedEnergy ett_handle;
 
 void etortor_data(rc_op op);
 

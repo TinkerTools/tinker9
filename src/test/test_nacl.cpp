@@ -8,22 +8,22 @@ using namespace TINKER_NAMESPACE;
   {                                                                            \
     zero_egv();                                                                \
     evdw_hal(calc::v0);                                                        \
-    COMPARE_ENERGY_(ev, ref_eng, eps);                                         \
+    COMPARE_ENERGY_(ev_handle.e(), ref_eng, eps);                              \
                                                                                \
     zero_egv();                                                                \
     evdw_hal(calc::v1);                                                        \
-    COMPARE_ENERGY_(ev, ref_eng, eps);                                         \
+    COMPARE_ENERGY_(ev_handle.e(), ref_eng, eps);                              \
     COMPARE_GRADIENT_(ref_grad, eps);                                          \
-    COMPARE_VIR_(vir_ev, ref_v, eps);                                          \
+    COMPARE_VIR_(ev_handle.vir(), ref_v, eps);                                 \
                                                                                \
     zero_egv();                                                                \
     evdw_hal(calc::v3);                                                        \
-    COMPARE_ENERGY_(ev, ref_eng, eps);                                         \
-    COMPARE_COUNT_(nev, ref_count);                                            \
+    COMPARE_ENERGY_(ev_handle.e(), ref_eng, eps);                              \
+    COMPARE_COUNT_(ev_handle.ne(), ref_count);                                 \
                                                                                \
     zero_egv();                                                                \
     evdw_hal(calc::v4);                                                        \
-    COMPARE_ENERGY_(ev, ref_eng, eps);                                         \
+    COMPARE_ENERGY_(ev_handle.e(), ref_eng, eps);                              \
     COMPARE_GRADIENT_(ref_grad, eps);                                          \
                                                                                \
     zero_egv();                                                                \
@@ -33,7 +33,7 @@ using namespace TINKER_NAMESPACE;
     zero_egv();                                                                \
     evdw_hal(calc::v6);                                                        \
     COMPARE_GRADIENT_(ref_grad, eps);                                          \
-    COMPARE_VIR_(vir_ev, ref_v, eps);                                          \
+    COMPARE_VIR_(ev_handle.vir(), ref_v, eps);                                 \
   }
 
 TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
@@ -124,28 +124,28 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
     elec_init(calc::v0);                                                       \
     empole(calc::v0);                                                          \
     torque(calc::v0);                                                          \
-    COMPARE_ENERGY_(em, ref_eng, eps);                                         \
+    COMPARE_ENERGY_(em_handle.e(), ref_eng, eps);                              \
                                                                                \
     zero_egv();                                                                \
     elec_init(calc::v1);                                                       \
     empole(calc::v1);                                                          \
     torque(calc::v1);                                                          \
-    COMPARE_ENERGY_(em, ref_eng, eps);                                         \
+    COMPARE_ENERGY_(em_handle.e(), ref_eng, eps);                              \
     COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
-    COMPARE_VIR2_(vir_em, vir_trq, ref_v, eps_v);                              \
+    COMPARE_VIR2_(em_handle.vir(), vir_trq_handle, ref_v, eps_v);              \
                                                                                \
     zero_egv();                                                                \
     elec_init(calc::v3);                                                       \
     empole(calc::v3);                                                          \
     torque(calc::v3);                                                          \
-    COMPARE_ENERGY_(em, ref_eng, eps);                                         \
-    COMPARE_COUNT_(nem, ref_count);                                            \
+    COMPARE_ENERGY_(em_handle.e(), ref_eng, eps);                              \
+    COMPARE_COUNT_(em_handle.ne(), ref_count);                                 \
                                                                                \
     zero_egv();                                                                \
     elec_init(calc::v4);                                                       \
     empole(calc::v4);                                                          \
     torque(calc::v4);                                                          \
-    COMPARE_ENERGY_(em, ref_eng, eps);                                         \
+    COMPARE_ENERGY_(em_handle.e(), ref_eng, eps);                              \
     COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
                                                                                \
     zero_egv();                                                                \
@@ -159,7 +159,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]") {
     empole(calc::v6);                                                          \
     torque(calc::v6);                                                          \
     COMPARE_GRADIENT_(ref_grad, eps_g);                                        \
-    COMPARE_VIR2_(vir_em, vir_trq, ref_v, eps_v);                              \
+    COMPARE_VIR2_(em_handle.vir(), vir_trq_handle, ref_v, eps_v);              \
   }
 
 TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
@@ -171,9 +171,7 @@ TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]") {
 
   int usage = 0;
   usage |= calc::xyz;
-  usage |= calc::energy;
-  usage |= calc::grad;
-  usage |= calc::virial;
+  usage |= calc::vmask;
 
   const double eps = 1.0e-5;
 
@@ -212,9 +210,7 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]") {
 
   int usage = 0;
   usage |= calc::xyz;
-  usage |= calc::energy;
-  usage |= calc::grad;
-  usage |= calc::virial;
+  usage |= calc::vmask;
 
   const double eps = 5.0e-4;
 
@@ -225,6 +221,9 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]") {
     const char* argv[] = {"dummy", x4};
     int argc = 2;
 
+    // real space energy 149.1782
+    // recip space energy 54.7806
+    // self energy -204.2734
     const double ref_eng = -0.3146;
     const int ref_count = 2;
     // total grad

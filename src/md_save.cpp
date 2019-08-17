@@ -29,7 +29,7 @@ static bool mdsave_use_uind_() {
 static Stream dup_stream_uind_;
 static real* dup_buf_uind_;
 static Stream dup_stream_bxyz_, dup_stream_v_, dup_stream_g_;
-static real* dup_buf_esum_;
+static real dup_buf_esum_;
 static Box* dup_buf_box_;
 static real *dup_buf_x_, *dup_buf_y_, *dup_buf_z_;
 static real *dup_buf_vx_, *dup_buf_vy_, *dup_buf_vz_;
@@ -46,7 +46,6 @@ void mdsave_data(rc_op op) {
     dealloc_stream(dup_stream_v_);
     dealloc_stream(dup_stream_g_);
 
-    dealloc_bytes(dup_buf_esum_);
     dealloc_bytes(dup_buf_box_);
     dealloc_bytes(dup_buf_x_);
     dealloc_bytes(dup_buf_y_);
@@ -76,7 +75,6 @@ void mdsave_data(rc_op op) {
     alloc_stream(&dup_stream_v_);
     alloc_stream(&dup_stream_g_);
 
-    alloc_bytes(&dup_buf_esum_, sizeof(real));
     alloc_bytes(&dup_buf_box_, sizeof(Box));
     alloc_bytes(&dup_buf_x_, rs * n);
     alloc_bytes(&dup_buf_y_, rs * n);
@@ -124,7 +122,7 @@ static void mdsave_dup_then_write_(int istep, real dt) {
 
   const size_t rs = sizeof(real);
 
-  copy_bytes_async(dup_buf_esum_, esum, rs, dup_stream_bxyz_);
+  dup_buf_esum_ = esum;
   copy_bytes_async(dup_buf_box_, box, sizeof(Box), dup_stream_bxyz_);
   copy_bytes_async(dup_buf_x_, x, rs * n, dup_stream_bxyz_);
   copy_bytes_async(dup_buf_y_, y, rs * n, dup_stream_bxyz_);
@@ -157,7 +155,7 @@ static void mdsave_dup_then_write_(int istep, real dt) {
 
   std::vector<real> arrx(n), arry(n), arrz(n);
 
-  copyout_bytes(&epot, dup_buf_esum_, rs);
+  epot = dup_buf_esum_;
   copyout_box_data(dup_buf_box_);
   copyout_bytes(arrx.data(), dup_buf_x_, rs * n);
   copyout_bytes(arry.data(), dup_buf_y_, rs * n);

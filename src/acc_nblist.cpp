@@ -1,4 +1,4 @@
-#include "acc_seq.h"
+#include "acc_image.h"
 #include "md.h"
 #include "nblist.h"
 
@@ -51,7 +51,7 @@ TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
 
-//======================================================================
+//====================================================================//
 // double loop
 
 static void build_double_loop_(NBListUnit nu) {
@@ -65,7 +65,7 @@ static void build_double_loop_(NBListUnit nu) {
 
 // static void update_double_loop_() {}
 
-//======================================================================
+//====================================================================//
 // version 1
 // see also nblist.f
 
@@ -205,7 +205,7 @@ static void update_v1_(NBListUnit nu) {
   }
 }
 
-//======================================================================
+//====================================================================//
 
 void nblist_build_acc_impl_(NBListUnit nu) {
   if (nu->maxnlst == 1) {

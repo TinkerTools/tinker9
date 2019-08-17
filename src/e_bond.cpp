@@ -16,7 +16,7 @@ void ebond_data(rc_op op) {
     dealloc_bytes(bl);
     dealloc_bytes(bk);
 
-    dealloc_ev(eb, vir_eb);
+    eb_handle.dealloc();
   }
 
   if (op & rc_alloc) {
@@ -27,7 +27,7 @@ void ebond_data(rc_op op) {
     alloc_bytes(&bl, rs * nbond);
     alloc_bytes(&bk, rs * nbond);
 
-    alloc_ev(&eb, &vir_eb);
+    eb_handle.alloc(nbond);
   }
 
   if (op & rc_init) {

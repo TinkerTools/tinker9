@@ -7,13 +7,13 @@
 #include <vector>
 
 TINKER_NAMESPACE_BEGIN
-enum class GenericUnitVersion { V0, V1 };
+enum class GenericUnitVersion { DisableOnDevice, EnableOnDevice };
 
 template <GenericUnitVersion VERS>
 struct GenericUnitAlloc;
 
 template <>
-struct GenericUnitAlloc<GenericUnitVersion::V0> {
+struct GenericUnitAlloc<GenericUnitVersion::DisableOnDevice> {
   struct Dealloc {
     void operator()(void*) {}
   };
@@ -22,7 +22,7 @@ struct GenericUnitAlloc<GenericUnitVersion::V0> {
     void operator()(void**, size_t) {}
   };
 
-  struct Copyin {
+  struct CopyIn {
     void operator()(void*, const void*, size_t) {}
   };
 };
@@ -38,12 +38,14 @@ struct GenericUnitAlloc<GenericUnitVersion::V0> {
  * corresponds to the host object; can be extended to specify different
  * de/allocation methods
  */
-template <class T, GenericUnitVersion VERSION = GenericUnitVersion::V0>
+template <class T,
+          GenericUnitVersion VERSION = GenericUnitVersion::DisableOnDevice>
 class GenericUnit {
 private:
   int unit;
 
-  static constexpr int USE_DPTR = (VERSION == GenericUnitVersion::V0 ? 0 : 1);
+  static constexpr int USE_DPTR =
+      (VERSION == GenericUnitVersion::DisableOnDevice ? 0 : 1);
 
   // The host vector will almost definitely expand its capacity, so if you don't
   // want to implement the move constructors and/or the copy constructors of all
@@ -75,7 +77,7 @@ private:
   }
 
   typedef typename GenericUnitAlloc<VERSION>::Alloc Alloc;
-  typedef typename GenericUnitAlloc<VERSION>::Copyin Copyin;
+  typedef typename GenericUnitAlloc<VERSION>::CopyIn CopyIn;
 
 public:
   /// @brief
@@ -108,7 +110,7 @@ public:
   ///
   /// @return
   /// the new unit
-  static GenericUnit alloc_new() {
+  static GenericUnit inquire() {
     hostptrs().emplace_back(new T);
     if_constexpr(USE_DPTR) {
       T* ptr;
@@ -128,6 +130,8 @@ public:
       : unit(u) {}
 
   operator int() const { return unit; }
+
+  bool valid() const { return unit >= 0; }
 
   /// @brief
   /// get the (const) reference to the object on host
@@ -167,7 +171,7 @@ public:
   /// that can be accessed by the same unit number
   void init_deviceptr(const T& hobj) {
     assert(&hobj == &this->obj());
-    Copyin copyin;
+    CopyIn copyin;
     copyin(this->deviceptr(), &this->obj(), sizeof(T));
   }
 };

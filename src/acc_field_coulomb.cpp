@@ -1,4 +1,4 @@
-#include "acc_seq.h"
+#include "acc_image.h"
 #include "array.h"
 #include "couple.h"
 #include "e_polar.h"
@@ -22,6 +22,8 @@ void dfield_coulomb(real* gpu_field, real* gpu_fieldp) {
   const auto* coupl = couple_unit.deviceptr();
   const auto* polargroup = polargroup_unit.deviceptr();
 
+  auto bufsize = EnergyBuffer::calc_size(n);
+
   static std::vector<real> pscalebuf;
   static std::vector<real> dscalebuf;
   pscalebuf.resize(n, 1);
@@ -29,7 +31,7 @@ void dfield_coulomb(real* gpu_field, real* gpu_fieldp) {
   real* pscale = pscalebuf.data();
   real* dscale = dscalebuf.data();
 
-  #pragma acc parallel loop independent\
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(x,y,z,box,coupl,polargroup,mlst,\
               rpole,thole,pdamp,\
               field,fieldp)\
@@ -267,11 +269,13 @@ void ufield_coulomb(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
 
   const auto* polargroup = polargroup_unit.deviceptr();
 
+  auto bufsize = EnergyBuffer::calc_size(n);
+
   static std::vector<real> uscalebuf;
   uscalebuf.resize(n, 1);
   real* uscale = uscalebuf.data();
 
-  #pragma acc parallel loop independent\
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(x,y,z,box,polargroup,mlst,\
               thole,pdamp,uind,uinp,field,fieldp)\
               firstprivate(uscale[0:n])

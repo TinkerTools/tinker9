@@ -9,15 +9,21 @@ void zero_array_tmpl(T* dst, int nelem) {
 
 void zero_array(int* dst, int nelem) { zero_array_tmpl(dst, nelem); }
 
+void zero_array(unsigned long long* dst, int nelem) {
+  zero_array_tmpl(dst, nelem);
+}
+
 void zero_array(float* dst, int nelem) { zero_array_tmpl(dst, nelem); }
 
 void zero_array(double* dst, int nelem) { zero_array_tmpl(dst, nelem); }
 
+//====================================================================//
+
 template <class DT, class ST>
 void copyin_array_tmpl(DT* dst, const ST* src, int nelem) {
-  constexpr size_t ds = sizeof(DT);
-  constexpr size_t ss = sizeof(ST);
-  static_assert(ds <= ss, "invalid if dst = double and src = float");
+  constexpr size_t ds = sizeof(DT); // device type
+  constexpr size_t ss = sizeof(ST); // host type
+  static_assert(ds <= ss, "invalid if sizeof(DeviceType) > sizeof(HostType)");
 
   size_t size = ds * nelem;
   if_constexpr(ds == ss) { copyin_bytes(dst, src, size); }
@@ -31,9 +37,9 @@ void copyin_array_tmpl(DT* dst, const ST* src, int nelem) {
 
 template <class DT, class ST>
 void copyout_array_tmpl(DT* dst, const ST* src, int nelem) {
-  constexpr size_t ds = sizeof(DT);
-  constexpr size_t ss = sizeof(ST);
-  static_assert(ds >= ss, "invalid if dst = float and src = double");
+  constexpr size_t ds = sizeof(DT); // host type
+  constexpr size_t ss = sizeof(ST); // device type
+  static_assert(ds >= ss, "invalid if sizeof(DeviceType) > sizeof(HostType)");
 
   size_t size = ss * nelem;
   if_constexpr(ds == ss) { copyout_bytes(dst, src, size); }
@@ -50,6 +56,16 @@ void copyin_array(int* dst, const int* src, int nelem) {
 }
 
 void copyout_array(int* dst, const int* src, int nelem) {
+  copyout_array_tmpl(dst, src, nelem);
+}
+
+void copyin_array(unsigned long long* dst, const unsigned long long* src,
+                  int nelem) {
+  copyin_array_tmpl(dst, src, nelem);
+}
+
+void copyout_array(unsigned long long* dst, const unsigned long long* src,
+                   int nelem) {
   copyout_array_tmpl(dst, src, nelem);
 }
 
@@ -76,6 +92,8 @@ void copyin_array(double* dst, const double* src, int nelem) {
 void copyout_array(double* dst, const double* src, int nelem) {
   copyout_array_tmpl(dst, src, nelem);
 }
+
+//====================================================================//
 
 template <class DT, class ST>
 void copyin_array2_tmpl(int idx0, int ndim, DT* dst, const ST* src, int nelem) {

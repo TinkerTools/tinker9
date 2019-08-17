@@ -1,4 +1,7 @@
-#include "acc_seq.h"
+#include "acc_add.h"
+#include "acc_image.h"
+#include "acc_mathfunc.h"
+#include "acc_switch.h"
 #include "couple.h"
 #include "e_vdw.h"
 #include "md.h"
@@ -38,15 +41,20 @@ void evdw_tmpl() {
 
   const auto* coupl = couple_unit.deviceptr();
 
+  auto* nev = ev_handle.ne()->buffer();
+  auto* ev = ev_handle.e()->buffer();
+  auto* vir_ev = ev_handle.vir()->buffer();
+  auto bufsize = ev_handle.buffer_size();
+
   static std::vector<real> vscalebuf;
   vscalebuf.resize(n, 1);
-  real* vscale = vscalebuf.data();
+  auto* vscale = vscalebuf.data();
 
-  #pragma acc parallel loop independent\
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,box,coupl,vlst,\
-                        ired,kred,xred,yred,zred,\
-                        jvdw,njvdw,radmin,epsilon,vlam,\
-                        ev,nev,vir_ev)\
+              ired,kred,xred,yred,zred,\
+              jvdw,njvdw,radmin,epsilon,vlam,\
+              nev,ev,vir_ev)\
               firstprivate(vscale[0:n])
   for (int i = 0; i < n; ++i) {
     const int n12i = coupl->n12[i];
@@ -81,6 +89,7 @@ void evdw_tmpl() {
     int base = i * maxnlst;
     #pragma acc loop independent
     for (int kk = 0; kk < nvlsti; ++kk) {
+      int offset = kk & (bufsize - 1);
       int k = vlst->lst[base + kk];
       int kv = ired[k];
       int kt = jvdw[k];
@@ -133,22 +142,20 @@ void evdw_tmpl() {
         // Increment the energy, gradient, and virial.
 
         if_constexpr(do_e) {
-          #pragma acc atomic update
-          *ev += e;
+          atomic_add_value(e, ev, offset);
+
           if_constexpr(do_a) {
             if (e != 0) {
-              #pragma acc atomic update
-              *nev += 1;
+              atomic_add_value(1, nev, offset);
             }
           }
         }
 
-        real dedx, dedy, dedz;
         if_constexpr(do_g) {
           de *= REAL_RECIP(rik);
-          dedx = de * xr;
-          dedy = de * yr;
-          dedz = de * zr;
+          real dedx = de * xr;
+          real dedy = de * yr;
+          real dedz = de * zr;
 
           #pragma acc atomic update
           gx[i] += dedx * redi;
@@ -177,35 +184,27 @@ void evdw_tmpl() {
           gy[kv] -= dedy * redkv;
           #pragma acc atomic update
           gz[kv] -= dedz * redkv;
-        }
 
-        if_constexpr(do_v) {
-          real vxx = xr * dedx;
-          real vyx = yr * dedx;
-          real vzx = zr * dedx;
-          real vyy = yr * dedy;
-          real vzy = zr * dedy;
-          real vzz = zr * dedz;
+          if_constexpr(do_v) {
+            real vxx = xr * dedx;
+            real vyx = yr * dedx;
+            real vzx = zr * dedx;
+            real vyy = yr * dedy;
+            real vzy = zr * dedy;
+            real vzz = zr * dedz;
 
-          #pragma acc atomic update
-          vir_ev[0] += vxx;
-          #pragma acc atomic update
-          vir_ev[1] += vyx;
-          #pragma acc atomic update
-          vir_ev[2] += vzx;
-          #pragma acc atomic update
-          vir_ev[3] += vyx;
-          #pragma acc atomic update
-          vir_ev[4] += vyy;
-          #pragma acc atomic update
-          vir_ev[5] += vzy;
-          #pragma acc atomic update
-          vir_ev[6] += vzx;
-          #pragma acc atomic update
-          vir_ev[7] += vzy;
-          #pragma acc atomic update
-          vir_ev[8] += vzz;
-        }
+            int offv = offset * 16;
+            atomic_add_value(vxx, vir_ev, offv + 0);
+            atomic_add_value(vyx, vir_ev, offv + 1);
+            atomic_add_value(vzx, vir_ev, offv + 2);
+            atomic_add_value(vyx, vir_ev, offv + 3);
+            atomic_add_value(vyy, vir_ev, offv + 4);
+            atomic_add_value(vzy, vir_ev, offv + 5);
+            atomic_add_value(vzx, vir_ev, offv + 6);
+            atomic_add_value(vzy, vir_ev, offv + 7);
+            atomic_add_value(vzz, vir_ev, offv + 8);
+          } // end if (do_v)
+        }   // end if (do_g)
       }
     } // end for (int kk)
 

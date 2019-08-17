@@ -1,4 +1,4 @@
-#include "acc_seq.h"
+#include "acc_image.h"
 #include "array.h"
 #include "e_polar.h"
 #include "error.h"
@@ -115,11 +115,13 @@ static inline void sparse_diag_precond_build(const real (*rsd)[3],
 
   const auto* polargroup = polargroup_unit.deviceptr();
 
+  auto bufsize = EnergyBuffer::calc_size(n);
+
   static std::vector<real> uscalebuf;
   uscalebuf.resize(n, 1);
   real* uscale = uscalebuf.data();
 
-  #pragma acc parallel loop independent\
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(mindex,minv,ulst,box,\
               polargroup,x,y,z,polarity,pdamp,thole)\
               firstprivate(uscale[0:n])

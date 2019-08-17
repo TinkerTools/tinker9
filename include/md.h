@@ -1,6 +1,7 @@
 #ifndef TINKER_MD_H_
 #define TINKER_MD_H_
 
+#include "energy_buffer.h"
 #include "rc_man.h"
 #include <string>
 
@@ -34,7 +35,8 @@ TINKER_EXTERN real *mass, *massinv;
 /// @}
 
 /// total potential energy on device
-TINKER_EXTERN real* esum;
+TINKER_EXTERN real esum;
+TINKER_EXTERN Energy esum_handle;
 
 /// total potential energy and kinetic energy on host
 /// @{
@@ -46,7 +48,8 @@ TINKER_EXTERN real *gx, *gy, *gz;
 /// @}
 
 /// total virial
-TINKER_EXTERN real* vir;
+TINKER_EXTERN real vir[9];
+TINKER_EXTERN Virial vir_handle;
 
 typedef enum {
   thermo_berendsen,
@@ -111,23 +114,6 @@ void egv_data(rc_op op);
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
-/// @brief
-/// energy, virial, and count number de/allocation
-/// @{
-void alloc_ev(real** gpu_e, real** gpu_v);
-void dealloc_ev(real* gpu_e, real* gpu_v);
-void alloc_nev(int** gpu_ne, real** gpu_e, real** gpu_v);
-void dealloc_nev(int* gpu_ne, real* gpu_e, real* gpu_v);
-/// @}
-
-/// @brief
-/// get energy, virial, and count number from device to host
-/// @{
-double get_energy(const real* e_gpu);
-int get_count(const int* ecount_gpu);
-void get_virial(double* v_out, const real* v_gpu);
-/// @}
-
 /// @brief
 /// zero out global total energy, gradients, and virial on device
 /// @{

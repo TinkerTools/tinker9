@@ -1,6 +1,6 @@
+#include "acc_mathfunc.h"
 #include "box.h"
 #include "e_mpole.h"
-#include "mathfunc.h"
 #include "md.h"
 #include "pme.h"
 

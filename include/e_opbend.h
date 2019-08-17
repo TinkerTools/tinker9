@@ -1,6 +1,7 @@
 #ifndef TINKER_E_OPBEND_H_
 #define TINKER_E_OPBEND_H_
 
+#include "energy_buffer.h"
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -13,8 +14,7 @@ TINKER_EXTERN real* opbk;
 TINKER_EXTERN real opbunit;
 TINKER_EXTERN real copb, qopb, popb, sopb;
 
-TINKER_EXTERN real* eopb;
-TINKER_EXTERN real* vir_eopb;
+TINKER_EXTERN BondedEnergy eopb_handle;
 
 void eopbend_data(rc_op op);
 

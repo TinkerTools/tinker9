@@ -1,4 +1,4 @@
-#include "acc_seq.h"
+#include "acc_add.h"
 #include "e_angle.h"
 #include "e_bond.h"
 #include "e_strbnd.h"
@@ -12,11 +12,16 @@ void estrbnd_tmpl() {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
-  #pragma acc parallel loop independent\
+  auto* eba = eba_handle.e()->buffer();
+  auto* vir_eba = eba_handle.vir()->buffer();
+  auto bufsize = eba_handle.buffer_size();
+
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,\
               isb,sbk,iang,anat,bl,\
               eba,vir_eba)
   for (int istrbnd = 0; istrbnd < nstrbnd; ++istrbnd) {
+    int offset = istrbnd & (bufsize - 1);
     int i = isb[istrbnd][0];
     int j = isb[istrbnd][1];
     int k = isb[istrbnd][2];
@@ -86,8 +91,7 @@ void estrbnd_tmpl() {
 
       if_constexpr(do_e) {
         real e = termr * dt;
-        #pragma acc atomic update
-        *eba += e;
+        atomic_add_value(e, eba, offset);
       }
 
       if_constexpr(do_g) {
@@ -130,24 +134,16 @@ void estrbnd_tmpl() {
           real vzy = zab * dedyia + zcb * dedyic;
           real vzz = zab * dedzia + zcb * dedzic;
 
-          #pragma acc atomic update
-          vir_eba[0] += vxx;
-          #pragma acc atomic update
-          vir_eba[1] += vyx;
-          #pragma acc atomic update
-          vir_eba[2] += vzx;
-          #pragma acc atomic update
-          vir_eba[3] += vyx;
-          #pragma acc atomic update
-          vir_eba[4] += vyy;
-          #pragma acc atomic update
-          vir_eba[5] += vzy;
-          #pragma acc atomic update
-          vir_eba[6] += vzx;
-          #pragma acc atomic update
-          vir_eba[7] += vzy;
-          #pragma acc atomic update
-          vir_eba[8] += vzz;
+          int offv = offset * 16;
+          atomic_add_value(vxx, vir_eba, offv + 0);
+          atomic_add_value(vyx, vir_eba, offv + 1);
+          atomic_add_value(vzx, vir_eba, offv + 2);
+          atomic_add_value(vyx, vir_eba, offv + 3);
+          atomic_add_value(vyy, vir_eba, offv + 4);
+          atomic_add_value(vzy, vir_eba, offv + 5);
+          atomic_add_value(vzx, vir_eba, offv + 6);
+          atomic_add_value(vzy, vir_eba, offv + 7);
+          atomic_add_value(vzz, vir_eba, offv + 8);
         }
       }
     }

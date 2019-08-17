@@ -19,7 +19,7 @@ void etors_data(rc_op op) {
     dealloc_bytes(tors5);
     dealloc_bytes(tors6);
 
-    dealloc_ev(et, vir_et);
+    et_handle.dealloc();
   }
 
   if (op & rc_alloc) {
@@ -34,7 +34,7 @@ void etors_data(rc_op op) {
     alloc_bytes(&tors5, rs * 4 * ntors);
     alloc_bytes(&tors6, rs * 4 * ntors);
 
-    alloc_ev(&et, &vir_et);
+    et_handle.alloc(ntors);
   }
 
   if (op & rc_init) {

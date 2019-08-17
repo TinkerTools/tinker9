@@ -54,7 +54,7 @@ static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique) {
   }
 
   if (unit == -1 || unique == true) {
-    unit = PMEUnit::alloc_new();
+    unit = PMEUnit::inquire();
     auto& st = *unit;
     const size_t rs = sizeof(real);
     size_t size;
@@ -109,8 +109,8 @@ void pme_init(int vers) {
 
   rpole_to_cmp();
 
-  if (vir_m)
-    zero_array(vir_m, 9);
+  if (vir_m_handle > 0)
+    vir_m_handle->zero();
 }
 
 static void pme_data1_(rc_op op) {
@@ -130,8 +130,6 @@ static void pme_data1_(rc_op op) {
       dealloc_bytes(cphidp);
       dealloc_bytes(fphidp);
     }
-
-    dealloc_bytes(vir_m);
   }
 
   if (op & rc_alloc) {
@@ -152,11 +150,12 @@ static void pme_data1_(rc_op op) {
       alloc_bytes(&cphidp, 10 * n * rs);
       alloc_bytes(&fphidp, 20 * n * rs);
 
-      // if (vir_m), it implies use virial and use epolar
-      if (rc_flag & calc::virial)
-        alloc_bytes(&vir_m, 9 * rs);
-      else
-        vir_m = nullptr;
+      // if (vir_m_handle > 0), it implies use virial and use epolar
+      if (rc_flag & calc::virial) {
+        vir_m_handle = Virial::inquire();
+        vir_m_handle->alloc(n);
+      } else
+        vir_m_handle = -1;
     }
 
     bool unique_grids = false;

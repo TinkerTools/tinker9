@@ -1,4 +1,4 @@
-#include "acc_seq.h"
+#include "acc_add.h"
 #include "e_urey.h"
 #include "md.h"
 
@@ -10,11 +10,16 @@ void eurey_tmpl() {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
-  #pragma acc parallel loop independent\
+  auto* eub = eub_handle.e()->buffer();
+  auto* vir_eub = eub_handle.vir()->buffer();
+  auto bufsize = eub_handle.buffer_size();
+
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,\
               iury,uk,ul,\
               eub,vir_eub)
   for (int i = 0; i < nurey; ++i) {
+    int offset = i & (bufsize - 1);
     const int ia = iury[i][0];
     const int ic = iury[i][2];
     const real ideal = ul[i];
@@ -30,8 +35,7 @@ void eurey_tmpl() {
 
     if_constexpr(do_e) {
       real e = ureyunit * force * dt2 * (1 + cury * dt + qury * dt2);
-      #pragma acc atomic update
-      *eub += e;
+      atomic_add_value(e, eub, offset);
     }
 
     if_constexpr(do_g) {
@@ -63,24 +67,16 @@ void eurey_tmpl() {
         real vzy = zac * dedy;
         real vzz = zac * dedz;
 
-        #pragma acc atomic update
-        vir_eub[0] += vxx;
-        #pragma acc atomic update
-        vir_eub[1] += vyx;
-        #pragma acc atomic update
-        vir_eub[2] += vzx;
-        #pragma acc atomic update
-        vir_eub[3] += vyx;
-        #pragma acc atomic update
-        vir_eub[4] += vyy;
-        #pragma acc atomic update
-        vir_eub[5] += vzy;
-        #pragma acc atomic update
-        vir_eub[6] += vzx;
-        #pragma acc atomic update
-        vir_eub[7] += vzy;
-        #pragma acc atomic update
-        vir_eub[8] += vzz;
+        int offv = offset * 16;
+        atomic_add_value(vxx, vir_eub, offv + 0);
+        atomic_add_value(vyx, vir_eub, offv + 1);
+        atomic_add_value(vzx, vir_eub, offv + 2);
+        atomic_add_value(vyx, vir_eub, offv + 3);
+        atomic_add_value(vyy, vir_eub, offv + 4);
+        atomic_add_value(vzy, vir_eub, offv + 5);
+        atomic_add_value(vzx, vir_eub, offv + 6);
+        atomic_add_value(vzy, vir_eub, offv + 7);
+        atomic_add_value(vzz, vir_eub, offv + 8);
       }
     }
   } // end for (int i)

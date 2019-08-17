@@ -99,6 +99,33 @@ T min_of(T a, T2 b, Ts... cs) {
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
+bool is_pow2(size_t);
+size_t pow2_le(size_t);
+size_t pow2_ge(size_t);
+TINKER_NAMESPACE_END
+
+TINKER_NAMESPACE_BEGIN
+/// @{
+int reduce_sum(const int* gpu_a, int nelem);
+float reduce_sum(const float* gpu_a, int nelem);
+double reduce_sum(const double* gpu_a, int nelem);
+unsigned long long reduce_sum(const unsigned long long* gpu_a, int n);
+/// @}
+
+/**
+ * @brief
+ * E.g., a two dimensional array @c v[16][m] was used as a virial buffer, in
+ * which case, nelem = m, neach = 16. The total virial would be written to
+ * h_ans[9], in which case, hn = 9.
+ */
+/// @{
+void reduce_sum2(int* h_ans, int hn, const int* v, int nelem, int neach);
+void reduce_sum2(float* h_ans, int hn, const float* v, int nelem, int neach);
+void reduce_sum2(double* h_ans, int hn, const double* v, int nelem, int neach);
+void reduce_sum2(unsigned long long* h_ans, int hn, const unsigned long long* v,
+                 int nelem, int neach);
+/// @}
+
 /**
  * @brief
  * n-dimensional dot product

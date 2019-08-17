@@ -27,7 +27,6 @@ static void pole_data_(rc_op op) {
     dealloc_bytes(trqx);
     dealloc_bytes(trqy);
     dealloc_bytes(trqz);
-    dealloc_bytes(vir_trq);
   }
 
   if (op & rc_alloc) {
@@ -62,7 +61,8 @@ static void pole_data_(rc_op op) {
       trqz = nullptr;
     }
 
-    alloc_bytes(&vir_trq, rs * 9);
+    vir_trq_handle = Virial::inquire();
+    vir_trq_handle->alloc(n);
   }
 
   if (op & rc_init) {
@@ -150,7 +150,7 @@ void elec_init(int vers) {
   // zero torque-related virial
 
   if (vers & calc::virial) {
-    zero_array(vir_trq, 9);
+    vir_trq_handle->zero();
   }
 
   chkpole();

@@ -1,4 +1,4 @@
-#include "acc_seq.h"
+#include "acc_add.h"
 #include "e_angle.h"
 #include "md.h"
 
@@ -31,11 +31,16 @@ void eangle_tmpl() {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
-  #pragma acc parallel loop independent\
+  auto* ea = ea_handle.e()->buffer();
+  auto* vir_ea = ea_handle.vir()->buffer();
+  auto bufsize = ea_handle.buffer_size();
+
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,\
               iang,anat,ak,angtyp,\
               ea,vir_ea)
   for (int i = 0; i < nangle; ++i) {
+    int offset = i & (bufsize - 1);
     int ia = iang[i][0];
     int ib = iang[i][1];
     int ic = iang[i][2];
@@ -90,10 +95,7 @@ void eangle_tmpl() {
                6 * sang * dt4);
         }
 
-        if_constexpr(do_e) {
-          #pragma acc atomic update
-          *ea += e;
-        }
+        if_constexpr(do_e) { atomic_add_value(e, ea, offset); }
 
         if_constexpr(do_g) {
           real terma = -deddt * REAL_RECIP(rab2 * rp);
@@ -135,24 +137,16 @@ void eangle_tmpl() {
             real vzy = zab * dedyia + zcb * dedyic;
             real vzz = zab * dedzia + zcb * dedzic;
 
-            #pragma acc atomic update
-            vir_ea[0] += vxx;
-            #pragma acc atomic update
-            vir_ea[1] += vyx;
-            #pragma acc atomic update
-            vir_ea[2] += vzx;
-            #pragma acc atomic update
-            vir_ea[3] += vyx;
-            #pragma acc atomic update
-            vir_ea[4] += vyy;
-            #pragma acc atomic update
-            vir_ea[5] += vzy;
-            #pragma acc atomic update
-            vir_ea[6] += vzx;
-            #pragma acc atomic update
-            vir_ea[7] += vzy;
-            #pragma acc atomic update
-            vir_ea[8] += vzz;
+            int offv = offset * 16;
+            atomic_add_value(vxx, vir_ea, offv + 0);
+            atomic_add_value(vyx, vir_ea, offv + 1);
+            atomic_add_value(vzx, vir_ea, offv + 2);
+            atomic_add_value(vyx, vir_ea, offv + 3);
+            atomic_add_value(vyy, vir_ea, offv + 4);
+            atomic_add_value(vzy, vir_ea, offv + 5);
+            atomic_add_value(vzx, vir_ea, offv + 6);
+            atomic_add_value(vzy, vir_ea, offv + 7);
+            atomic_add_value(vzz, vir_ea, offv + 8);
           }
         }
       }
@@ -198,8 +192,7 @@ void eangle_tmpl() {
         if_constexpr(do_e) {
           real e = angunit * force * dt2 *
               (1 + cang * dt + qang * dt2 + pang * dt3 + sang * dt4);
-          #pragma acc atomic update
-          *ea += e;
+          atomic_add_value(e, ea, offset);
         }
 
         if_constexpr(do_g) {
@@ -293,24 +286,16 @@ void eangle_tmpl() {
             real vzy = zad * dedyia + zbd * dedyib + zcd * dedyic;
             real vzz = zad * dedzia + zbd * dedzib + zcd * dedzic;
 
-            #pragma acc atomic update
-            vir_ea[0] += vxx;
-            #pragma acc atomic update
-            vir_ea[1] += vyx;
-            #pragma acc atomic update
-            vir_ea[2] += vzx;
-            #pragma acc atomic update
-            vir_ea[3] += vyx;
-            #pragma acc atomic update
-            vir_ea[4] += vyy;
-            #pragma acc atomic update
-            vir_ea[5] += vzy;
-            #pragma acc atomic update
-            vir_ea[6] += vzx;
-            #pragma acc atomic update
-            vir_ea[7] += vzy;
-            #pragma acc atomic update
-            vir_ea[8] += vzz;
+            int offv = offset * 16;
+            atomic_add_value(vxx, vir_ea, offv + 0);
+            atomic_add_value(vyx, vir_ea, offv + 1);
+            atomic_add_value(vzx, vir_ea, offv + 2);
+            atomic_add_value(vyx, vir_ea, offv + 3);
+            atomic_add_value(vyy, vir_ea, offv + 4);
+            atomic_add_value(vzy, vir_ea, offv + 5);
+            atomic_add_value(vzx, vir_ea, offv + 6);
+            atomic_add_value(vzy, vir_ea, offv + 7);
+            atomic_add_value(vzz, vir_ea, offv + 8);
           }
         }
       }

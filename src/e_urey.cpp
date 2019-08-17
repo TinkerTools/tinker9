@@ -15,7 +15,7 @@ void eurey_data(rc_op op) {
     dealloc_bytes(uk);
     dealloc_bytes(ul);
 
-    dealloc_ev(eub, vir_eub);
+    eub_handle.dealloc();
   }
 
   if (op & rc_alloc) {
@@ -25,11 +25,11 @@ void eurey_data(rc_op op) {
     alloc_bytes(&uk, rs * nangle);
     alloc_bytes(&ul, rs * nangle);
 
-    alloc_ev(&eub, &vir_eub);
+    nurey = count_bonded_term(urey_term);
+    eub_handle.alloc(nurey);
   }
 
   if (op & rc_init) {
-    nurey = count_bonded_term(urey_term);
     int nangle = count_bonded_term(angle_term);
     std::vector<int> ibuf(3 * nangle);
     for (int i = 0; i < 3 * nangle; ++i)

@@ -1,6 +1,7 @@
 #ifndef TINKER_PME_H_
 #define TINKER_PME_H_
 
+#include "energy_buffer.h"
 #include "gen_unit.h"
 #include "rc_man.h"
 #include "rt.h"
@@ -42,7 +43,7 @@ struct PME {
   ~PME();
 };
 
-typedef GenericUnit<PME, GenericUnitVersion::V1> PMEUnit;
+typedef GenericUnit<PME, GenericUnitVersion::EnableOnDevice> PMEUnit;
 TINKER_EXTERN PMEUnit epme_unit;  // electrostatic
 TINKER_EXTERN PMEUnit ppme_unit;  // polarization
 TINKER_EXTERN PMEUnit dpme_unit;  // dispersion
@@ -62,7 +63,7 @@ TINKER_EXTERN real (*fdip_phi2)[10];
 TINKER_EXTERN real (*cphidp)[10];
 TINKER_EXTERN real (*fphidp)[20];
 
-TINKER_EXTERN real* vir_m;
+TINKER_EXTERN Virial vir_m_handle;
 
 void pme_data(rc_op op);
 
@@ -80,8 +81,8 @@ TINKER_NAMESPACE_BEGIN
  * @brief
  * make the scalar summation over reciprocal lattice
  */
-void pme_conv0(PMEUnit pme_u);                 // without virial
-void pme_conv1(PMEUnit pme_u, real* gpu_vir9); // with virial
+void pme_conv0(PMEUnit pme_u);           // without virial
+void pme_conv1(PMEUnit pme_u, Virial v); // with virial
 
 void rpole_to_cmp();
 /**

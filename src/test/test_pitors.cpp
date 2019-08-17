@@ -189,8 +189,8 @@ TEST_CASE("Pitors-Trpcage", "[ff][epitors][trpcage]") {
   const double ref_v[][3] = {
       {-3.014, -1.132, 2.354}, {-1.132, 1.167, -0.679}, {2.354, -0.679, 1.847}};
 
-  COMPARE_BONDED_FORCE(epitors, ept, ref_e, eps_e, npitors, ref_count, gx, gy,
-                       gz, ref_g_pitors_trpcage, eps_g, vir_ept, ref_v, eps_v);
+  COMPARE_BONDED_FORCE(epitors, npitors, ept_handle, ref_e, eps_e, ref_count,
+                       gx, gy, gz, ref_g_pitors_trpcage, eps_g, ref_v, eps_v);
 
   finish();
   test_end();

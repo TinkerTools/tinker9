@@ -190,8 +190,8 @@ TEST_CASE("Strbnd-Trpcage", "[ff][estrbnd][trpcage]") {
                              {18.525, -26.515, -9.871},
                              {25.157, -9.871, -15.485}};
 
-  COMPARE_BONDED_FORCE(estrbnd, eba, ref_e, eps_e, nstrbnd, ref_count, gx, gy,
-                       gz, ref_g_strbnd_trpcage, eps_g, vir_eba, ref_v, eps_v);
+  COMPARE_BONDED_FORCE(estrbnd, nstrbnd, eba_handle, ref_e, eps_e, ref_count,
+                       gx, gy, gz, ref_g_strbnd_trpcage, eps_g, ref_v, eps_v);
 
   finish();
   test_end();

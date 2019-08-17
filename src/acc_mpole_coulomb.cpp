@@ -1,4 +1,5 @@
-#include "acc_seq.h"
+#include "acc_add.h"
+#include "acc_image.h"
 #include "couple.h"
 #include "e_mpole.h"
 #include "md.h"
@@ -23,11 +24,16 @@ void empole_coulomb_tmpl() {
 
   const auto* coupl = couple_unit.deviceptr();
 
+  auto* nem = em_handle.ne()->buffer();
+  auto* em = em_handle.e()->buffer();
+  auto* vir_em = em_handle.vir()->buffer();
+  auto bufsize = em_handle.buffer_size();
+
   static std::vector<real> mscalebuf;
   mscalebuf.resize(n, 1);
   real* mscale = mscalebuf.data();
 
-  #pragma acc parallel loop independent\
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,box,coupl,mlst,\
                         rpole,\
                         em,nem,vir_em,trqx,trqy,trqz)\
@@ -71,6 +77,7 @@ void empole_coulomb_tmpl() {
     int base = i * maxnlst;
     #pragma acc loop independent
     for (int kk = 0; kk < nmlsti; ++kk) {
+      int offset = kk & (bufsize - 1);
       int k = mlst->lst[base + kk];
       real xr = x[k] - xi;
       real yr = y[k] - yi;
@@ -124,12 +131,10 @@ void empole_coulomb_tmpl() {
         if_constexpr(do_e) {
           real e = term1 * rr1 + term2 * rr3 + term3 * rr5 + term4 * rr7 +
               term5 * rr9;
-          #pragma acc atomic update
-          *em += e;
+          atomic_add_value(e, em, offset);
           if_constexpr(do_a) {
             if (e != 0) {
-              #pragma acc atomic update
-              *nem += 1;
+              atomic_add_value(1, nem, offset);
             }
           }
         } // end if (do_e)
@@ -273,24 +278,16 @@ void empole_coulomb_tmpl() {
             real vyz = -0.5f * (zr * frcy + yr * frcz);
             real vzz = -zr * frcz;
 
-            #pragma acc atomic update
-            vir_em[0] += vxx;
-            #pragma acc atomic update
-            vir_em[1] += vxy;
-            #pragma acc atomic update
-            vir_em[2] += vxz;
-            #pragma acc atomic update
-            vir_em[3] += vxy;
-            #pragma acc atomic update
-            vir_em[4] += vyy;
-            #pragma acc atomic update
-            vir_em[5] += vyz;
-            #pragma acc atomic update
-            vir_em[6] += vxz;
-            #pragma acc atomic update
-            vir_em[7] += vyz;
-            #pragma acc atomic update
-            vir_em[8] += vzz;
+            int offv = offset * 16;
+            atomic_add_value(vxx, vir_em, offv + 0);
+            atomic_add_value(vxy, vir_em, offv + 1);
+            atomic_add_value(vxz, vir_em, offv + 2);
+            atomic_add_value(vxy, vir_em, offv + 3);
+            atomic_add_value(vyy, vir_em, offv + 4);
+            atomic_add_value(vyz, vir_em, offv + 5);
+            atomic_add_value(vxz, vir_em, offv + 6);
+            atomic_add_value(vyz, vir_em, offv + 7);
+            atomic_add_value(vzz, vir_em, offv + 8);
           } // end if (do_v)
         }   // end if (do_g)
       }     // end if (r2 <= off2)
