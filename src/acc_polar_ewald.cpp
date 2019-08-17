@@ -763,7 +763,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
                             const real (*gpu_uinp)[3]) {
   constexpr int do_e = USE & calc::energy;
   constexpr int do_a = USE & calc::analyz;
-  // constexpr int do_g = USE & calc::grad;
+  constexpr int do_g = USE & calc::grad;
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
@@ -834,18 +834,20 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       f2 += fmp[i][k] * fphidp[i][deriv2[k]];
       f3 += fmp[i][k] * fphidp[i][deriv3[k]];
     }
-    f1 *= 0.5f * nfft1;
-    f2 *= 0.5f * nfft2;
-    f3 *= 0.5f * nfft3;
-    real h1 =
-        box->recip[0][0] * f1 + box->recip[1][0] * f2 + box->recip[2][0] * f3;
-    real h2 =
-        box->recip[0][1] * f1 + box->recip[1][1] * f2 + box->recip[2][1] * f3;
-    real h3 =
-        box->recip[0][2] * f1 + box->recip[1][2] * f2 + box->recip[2][2] * f3;
-    gx[i] += h1 * f;
-    gy[i] += h2 * f;
-    gz[i] += h3 * f;
+    if_constexpr(do_g) {
+      f1 *= 0.5f * nfft1;
+      f2 *= 0.5f * nfft2;
+      f3 *= 0.5f * nfft3;
+      real h1 =
+          box->recip[0][0] * f1 + box->recip[1][0] * f2 + box->recip[2][0] * f3;
+      real h2 =
+          box->recip[0][1] * f1 + box->recip[1][1] * f2 + box->recip[2][1] * f3;
+      real h3 =
+          box->recip[0][2] * f1 + box->recip[1][2] * f2 + box->recip[2][2] * f3;
+      gx[i] += h1 * f;
+      gy[i] += h2 * f;
+      gz[i] += h3 * f;
+    }
   } // end for (int i)
 
   // set the potential to be the induced dipole average
@@ -868,34 +870,37 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
               deviceptr(ep,nep,trqx,trqy,trqz,\
               rpole,cmp,gpu_uind,gpu_uinp,cphidp)
   for (int i = 0; i < n; ++i) {
-    real tep1 = cmp[i][3] * cphidp[i][2] - cmp[i][2] * cphidp[i][3] +
-        2 * (cmp[i][6] - cmp[i][5]) * cphidp[i][9] + cmp[i][8] * cphidp[i][7] +
-        cmp[i][9] * cphidp[i][5] - cmp[i][7] * cphidp[i][8] -
-        cmp[i][9] * cphidp[i][6];
-    real tep2 = cmp[i][1] * cphidp[i][3] - cmp[i][3] * cphidp[i][1] +
-        2 * (cmp[i][4] - cmp[i][6]) * cphidp[i][8] + cmp[i][7] * cphidp[i][9] +
-        cmp[i][8] * cphidp[i][6] - cmp[i][8] * cphidp[i][4] -
-        cmp[i][9] * cphidp[i][7];
-    real tep3 = cmp[i][2] * cphidp[i][1] - cmp[i][1] * cphidp[i][2] +
-        2 * (cmp[i][5] - cmp[i][4]) * cphidp[i][7] + cmp[i][7] * cphidp[i][4] +
-        cmp[i][9] * cphidp[i][8] - cmp[i][7] * cphidp[i][5] -
-        cmp[i][8] * cphidp[i][9];
-
-    // self term
-
     real dix = rpole[i][mpl_pme_x];
     real diy = rpole[i][mpl_pme_y];
     real diz = rpole[i][mpl_pme_z];
     real uix = 0.5f * (gpu_uind[i][0] + gpu_uinp[i][0]);
     real uiy = 0.5f * (gpu_uind[i][1] + gpu_uinp[i][1]);
     real uiz = 0.5f * (gpu_uind[i][2] + gpu_uinp[i][2]);
-    tep1 += term * (diy * uiz - diz * uiy);
-    tep2 += term * (diz * uix - dix * uiz);
-    tep3 += term * (dix * uiy - diy * uix);
 
-    trqx[i] += tep1;
-    trqy[i] += tep2;
-    trqz[i] += tep3;
+    if_constexpr(do_g) {
+      real tep1 = cmp[i][3] * cphidp[i][2] - cmp[i][2] * cphidp[i][3] +
+          2 * (cmp[i][6] - cmp[i][5]) * cphidp[i][9] +
+          cmp[i][8] * cphidp[i][7] + cmp[i][9] * cphidp[i][5] -
+          cmp[i][7] * cphidp[i][8] - cmp[i][9] * cphidp[i][6];
+      real tep2 = cmp[i][1] * cphidp[i][3] - cmp[i][3] * cphidp[i][1] +
+          2 * (cmp[i][4] - cmp[i][6]) * cphidp[i][8] +
+          cmp[i][7] * cphidp[i][9] + cmp[i][8] * cphidp[i][6] -
+          cmp[i][8] * cphidp[i][4] - cmp[i][9] * cphidp[i][7];
+      real tep3 = cmp[i][2] * cphidp[i][1] - cmp[i][1] * cphidp[i][2] +
+          2 * (cmp[i][5] - cmp[i][4]) * cphidp[i][7] +
+          cmp[i][7] * cphidp[i][4] + cmp[i][9] * cphidp[i][8] -
+          cmp[i][7] * cphidp[i][5] - cmp[i][8] * cphidp[i][9];
+
+      // self term
+
+      tep1 += term * (diy * uiz - diz * uiy);
+      tep2 += term * (diz * uix - dix * uiz);
+      tep3 += term * (dix * uiy - diy * uix);
+
+      trqx[i] += tep1;
+      trqy[i] += tep2;
+      trqz[i] += tep3;
+    }
 
     if_constexpr(do_e && do_a) {
       // if (pairwise .eq. .true.)
