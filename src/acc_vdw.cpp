@@ -42,7 +42,8 @@ void evdw_tmpl() {
   vscalebuf.resize(n, 1);
   real* vscale = vscalebuf.data();
 
-  #pragma acc parallel loop independent\
+  size_t ngangs = estimate_ngangs(n);
+  #pragma acc parallel loop gang num_gangs(ngangs) independent\
               deviceptr(x,y,z,gx,gy,gz,box,coupl,vlst,\
                         ired,kred,xred,yred,zred,\
                         jvdw,njvdw,radmin,epsilon,vlam,\

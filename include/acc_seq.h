@@ -93,4 +93,14 @@ void imagen(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
             const Box* __restrict__ pb);
 TINKER_NAMESPACE_END
 
+TINKER_NAMESPACE_BEGIN
+inline size_t estimate_ngangs(int natoms) {
+  const size_t max_MB = 64ul;
+  size_t max_bytes = max_MB * 1024 * 1024;
+  size_t denom = natoms * sizeof(real);
+  size_t ans = max_bytes / denom;
+  return ans < natoms ? ans : natoms;
+}
+TINKER_NAMESPACE_END
+
 #endif
