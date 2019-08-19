@@ -73,6 +73,45 @@ static void option_e() {
         "Interactions\n\n");
 
   const char* fmt = " {:<29s}{:19.4f}{:17d}\n";
+
+  if (use_potent(bond_term))
+    print(out, fmt, "Bond Stretching", get_energy(eb),
+          count_bonded_term(bond_term));
+
+  if (use_potent(angle_term))
+    print(out, fmt, "Angle Bending", get_energy(ea),
+          count_bonded_term(angle_term));
+
+  if (use_potent(strbnd_term))
+    print(out, fmt, "Stretch-Bend", get_energy(eba),
+          count_bonded_term(strbnd_term));
+
+  if (use_potent(urey_term))
+    print(out, fmt, "Urey-Bradley", get_energy(eub),
+          count_bonded_term(urey_term));
+
+  if (use_potent(opbend_term))
+    print(out, fmt, "Out-of-Plane Bend", get_energy(eopb),
+          count_bonded_term(opbend_term));
+
+  if (use_potent(torsion_term))
+    print(out, fmt, "Torsional Angle", get_energy(et),
+          count_bonded_term(torsion_term));
+
+  if (use_potent(pitors_term))
+    print(out, fmt, "Pi-Orbital Torsion", get_energy(ept),
+          count_bonded_term(pitors_term));
+
+  if (use_potent(tortor_term))
+    print(out, fmt, "Torsion-Torsion", get_energy(ett),
+          count_bonded_term(tortor_term));
+
+  if (use_potent(vdw_term))
+    print(out, fmt, "Van der Waals", get_energy(ev), get_count(nev));
+
+  if (use_potent(mpole_term))
+    print(out, fmt, "Atomic Multipoles", get_energy(em), get_count(nem));
+
   if (use_potent(polar_term))
     print(out, fmt, "Polarization", get_energy(ep), get_count(nep));
 

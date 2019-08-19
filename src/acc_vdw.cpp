@@ -143,12 +143,11 @@ void evdw_tmpl() {
           }
         }
 
-        real dedx, dedy, dedz;
         if_constexpr(do_g) {
           de *= REAL_RECIP(rik);
-          dedx = de * xr;
-          dedy = de * yr;
-          dedz = de * zr;
+          real dedx = de * xr;
+          real dedy = de * yr;
+          real dedz = de * zr;
 
           #pragma acc atomic update
           gx[i] += dedx * redi;
@@ -177,35 +176,35 @@ void evdw_tmpl() {
           gy[kv] -= dedy * redkv;
           #pragma acc atomic update
           gz[kv] -= dedz * redkv;
-        }
 
-        if_constexpr(do_v) {
-          real vxx = xr * dedx;
-          real vyx = yr * dedx;
-          real vzx = zr * dedx;
-          real vyy = yr * dedy;
-          real vzy = zr * dedy;
-          real vzz = zr * dedz;
+          if_constexpr(do_v) {
+            real vxx = xr * dedx;
+            real vyx = yr * dedx;
+            real vzx = zr * dedx;
+            real vyy = yr * dedy;
+            real vzy = zr * dedy;
+            real vzz = zr * dedz;
 
-          #pragma acc atomic update
-          vir_ev[0] += vxx;
-          #pragma acc atomic update
-          vir_ev[1] += vyx;
-          #pragma acc atomic update
-          vir_ev[2] += vzx;
-          #pragma acc atomic update
-          vir_ev[3] += vyx;
-          #pragma acc atomic update
-          vir_ev[4] += vyy;
-          #pragma acc atomic update
-          vir_ev[5] += vzy;
-          #pragma acc atomic update
-          vir_ev[6] += vzx;
-          #pragma acc atomic update
-          vir_ev[7] += vzy;
-          #pragma acc atomic update
-          vir_ev[8] += vzz;
-        }
+            #pragma acc atomic update
+            vir_ev[0] += vxx;
+            #pragma acc atomic update
+            vir_ev[1] += vyx;
+            #pragma acc atomic update
+            vir_ev[2] += vzx;
+            #pragma acc atomic update
+            vir_ev[3] += vyx;
+            #pragma acc atomic update
+            vir_ev[4] += vyy;
+            #pragma acc atomic update
+            vir_ev[5] += vzy;
+            #pragma acc atomic update
+            vir_ev[6] += vzx;
+            #pragma acc atomic update
+            vir_ev[7] += vzy;
+            #pragma acc atomic update
+            vir_ev[8] += vzz;
+          } // end if (do_v)
+        }   // end if (do_g)
       }
     } // end for (int kk)
 
