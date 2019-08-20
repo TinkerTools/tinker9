@@ -13,6 +13,12 @@ void zero_array(float* dst, int nelem) { zero_array_tmpl(dst, nelem); }
 
 void zero_array(double* dst, int nelem) { zero_array_tmpl(dst, nelem); }
 
+void zero_array(long long* dst, int nelem) { zero_array_tmpl(dst, nelem); }
+
+void zero_array(unsigned long long* dst, int nelem) {
+  zero_array_tmpl(dst, nelem);
+}
+
 template <class DT, class ST>
 void copyin_array_tmpl(DT* dst, const ST* src, int nelem) {
   constexpr size_t ds = sizeof(DT);
@@ -74,6 +80,24 @@ void copyin_array(double* dst, const double* src, int nelem) {
 }
 
 void copyout_array(double* dst, const double* src, int nelem) {
+  copyout_array_tmpl(dst, src, nelem);
+}
+
+void copyin_array(long long* dst, const long long* src, int nelem) {
+  copyin_array_tmpl(dst, src, nelem);
+}
+
+void copyout_array(long long* dst, const long long* src, int nelem) {
+  copyout_array_tmpl(dst, src, nelem);
+}
+
+void copyin_array(unsigned long long* dst, const unsigned long long* src,
+                  int nelem) {
+  copyin_array_tmpl(dst, src, nelem);
+}
+
+void copyout_array(unsigned long long* dst, const unsigned long long* src,
+                   int nelem) {
   copyout_array_tmpl(dst, src, nelem);
 }
 

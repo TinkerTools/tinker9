@@ -11,6 +11,8 @@ TINKER_NAMESPACE_BEGIN
 void zero_array(int* dst, int nelem);
 void zero_array(float* dst, int nelem);
 void zero_array(double* dst, int nelem);
+void zero_array(long long* dst, int nelem);
+void zero_array(unsigned long long* dst, int nelem);
 /// @}
 
 // copyin: copy data from host to device
@@ -32,6 +34,14 @@ void copyout_array(double* dst, const float* src, int nelem);
 
 void copyin_array(double* dst, const double* src, int nelem);
 void copyout_array(double* dst, const double* src, int nelem);
+
+void copyin_array(long long* dst, const long long* src, int nelem);
+void copyout_array(long long* dst, const long long* src, int nelem);
+
+void copyin_array(unsigned long long* dst, const unsigned long long* src,
+                  int nelem);
+void copyout_array(unsigned long long* dst, const unsigned long long* src,
+                   int nelem);
 /// @}
 
 /// @brief
