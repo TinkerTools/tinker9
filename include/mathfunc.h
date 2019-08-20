@@ -49,8 +49,7 @@
 #define REAL_CUBE(x) ((x) * (x) * (x))
 
 TINKER_NAMESPACE_BEGIN
-typedef unsigned long long fixed_point_t;
-constexpr fixed_point_t fixed_point = 0x100000000;
+constexpr unsigned long long fixed_point = 0x100000000ull;
 
 constexpr real twosix = 1.12246204830937298143;    ///< @f$ \sqrt[6]{2} @f$
 constexpr real sqrttwo = 1.41421356237309504880;   ///< @f$ \sqrt{2} @f$

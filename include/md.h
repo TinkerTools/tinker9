@@ -1,7 +1,6 @@
 #ifndef TINKER_MD_H_
 #define TINKER_MD_H_
 
-#include "mathfunc.h"
 #include "rc_man.h"
 #include <string>
 
@@ -112,28 +111,24 @@ void egv_data(rc_op op);
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
+size_t estimate_buffer_size(int nelem, size_t elem_bytes = sizeof(float),
+                            size_t max_MB = 64ul);
+
 /// @brief
 /// energy, virial, and count number de/allocation
 /// @{
-void alloc_ev(real** gpu_e, real** gpu_v);
-void dealloc_ev(real* gpu_e, real* gpu_v);
-void alloc_nev(int** gpu_ne, real** gpu_e, real** gpu_v);
-void dealloc_nev(int* gpu_ne, real* gpu_e, real* gpu_v);
-
-void alloc_ev(fixed_point_t** gpu_e, fixed_point_t** gpu_v);
-void dealloc_ev(fixed_point_t* gpu_e, fixed_point_t* gpu_v);
-void alloc_nev(int** gpu_ne, fixed_point_t** gpu_e, fixed_point_t** gpu_v);
-void dealloc_nev(int* gpu_ne, fixed_point_t* gpu_e, fixed_point_t* gpu_v);
+void alloc_ev(real_buffer_t** gpu_e, real_buffer_t** gpu_v);
+void dealloc_ev(real_buffer_t* gpu_e, real_buffer_t* gpu_v);
+void alloc_nev(int** gpu_ne, real_buffer_t** gpu_e, real_buffer_t** gpu_v);
+void dealloc_nev(int* gpu_ne, real_buffer_t* gpu_e, real_buffer_t* gpu_v);
 /// @}
 
 /// @brief
 /// get energy, virial, and count number from device to host
 /// @{
-double get_energy(const real* e_gpu);
-double get_energy(const fixed_point_t* e_gpu);
+double get_energy(const real_buffer_t* e_gpu);
 int get_count(const int* ecount_gpu);
-void get_virial(double* v_out, const real* v_gpu);
-void get_virial(double* v_out, const fixed_point_t* v_gpu);
+void get_virial(double* v_out, const real_buffer_t* v_gpu);
 /// @}
 
 /// @brief

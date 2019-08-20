@@ -42,8 +42,7 @@ void evdw_tmpl() {
   vscalebuf.resize(n, 1);
   real* vscale = vscalebuf.data();
 
-  size_t ngangs = estimate_ngangs(n);
-  #pragma acc parallel loop gang num_gangs(ngangs) independent\
+  #pragma acc parallel loop gang num_gangs(bufsize_ev) independent\
               deviceptr(x,y,z,gx,gy,gz,box,coupl,vlst,\
                         ired,kred,xred,yred,zred,\
                         jvdw,njvdw,radmin,epsilon,vlam,\
@@ -134,8 +133,8 @@ void evdw_tmpl() {
         // Increment the energy, gradient, and virial.
 
         if_constexpr(do_e) {
-          #pragma acc atomic update
-          *ev += e;
+          atomic_add_real(ev, e, (k & (bufsize_ev - 1)));
+
           if_constexpr(do_a) {
             if (e != 0) {
               #pragma acc atomic update

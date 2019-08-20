@@ -94,13 +94,22 @@ void imagen(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
-inline size_t estimate_ngangs(int natoms) {
-  const size_t max_MB = 64ul;
-  size_t max_bytes = max_MB * 1024 * 1024;
-  size_t denom = natoms * sizeof(real);
-  size_t ans = max_bytes / denom;
-  return ans < natoms ? ans : natoms;
+#if defined(TINKER_DOUBLE_PRECISION)
+#pragma acc routine seq
+inline void atomic_add_real(real_buffer_t* p, real e, int) {
+  #pragma acc atomic update
+  *p += e;
 }
+#elif defined(TINKER_SINGLE_PRECISION)
+#pragma acc routine seq
+inline void atomic_add_real(real_buffer_t* p, real e, int offset) {
+  #pragma acc atomic update
+  p[offset] +=
+      static_cast<unsigned long long>(static_cast<long long>(e * fixed_point));
+}
+#else
+static_assert(false, "");
+#endif
 TINKER_NAMESPACE_END
 
 #endif
