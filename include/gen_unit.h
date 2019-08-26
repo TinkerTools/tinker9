@@ -7,13 +7,13 @@
 #include <vector>
 
 TINKER_NAMESPACE_BEGIN
-enum class GenericUnitVersion { V0, V1 };
+enum class GenericUnitVersion { DisableOnDevice, EnableOnDevice };
 
 template <GenericUnitVersion VERS>
 struct GenericUnitAlloc;
 
 template <>
-struct GenericUnitAlloc<GenericUnitVersion::V0> {
+struct GenericUnitAlloc<GenericUnitVersion::DisableOnDevice> {
   struct Dealloc {
     void operator()(void*) {}
   };
@@ -38,12 +38,14 @@ struct GenericUnitAlloc<GenericUnitVersion::V0> {
  * corresponds to the host object; can be extended to specify different
  * de/allocation methods
  */
-template <class T, GenericUnitVersion VERSION = GenericUnitVersion::V0>
+template <class T,
+          GenericUnitVersion VERSION = GenericUnitVersion::DisableOnDevice>
 class GenericUnit {
 private:
   int unit;
 
-  static constexpr int USE_DPTR = (VERSION == GenericUnitVersion::V0 ? 0 : 1);
+  static constexpr int USE_DPTR =
+      (VERSION == GenericUnitVersion::DisableOnDevice ? 0 : 1);
 
   // The host vector will almost definitely expand its capacity, so if you don't
   // want to implement the move constructors and/or the copy constructors of all
@@ -108,7 +110,7 @@ public:
   ///
   /// @return
   /// the new unit
-  static GenericUnit alloc_new() {
+  static GenericUnit inquire() {
     hostptrs().emplace_back(new T);
     if_constexpr(USE_DPTR) {
       T* ptr;

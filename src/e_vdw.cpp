@@ -42,8 +42,7 @@ void evdw_data(rc_op op) {
 
     dealloc_bytes(vlam);
 
-    dealloc_nev(nev, ev, vir_ev);
-    bufsize_ev = 0;
+    ev_handle.dealloc();
   }
 
   if (op & rc_alloc) {
@@ -83,8 +82,7 @@ void evdw_data(rc_op op) {
     size = n * rs;
     alloc_bytes(&vlam, size);
 
-    alloc_nev(&nev, &ev, &vir_ev);
-    bufsize_ev = estimate_buffer_size(n, sizeof(real));
+    ev_handle.alloc(n);
   }
 
   if (op & rc_init) {

@@ -18,8 +18,8 @@ void dfield_ewald_recip_self(real* gpu_field) {
   cmp_to_fmp(pu, cmp, fmp);
   grid_mpole(pu, fmp);
   fftfront(pu);
-  if (vir_m && !use_potent(mpole_term))
-    pme_conv1(pu, vir_m);
+  if (vir_m_handle > 0 && !use_potent(mpole_term))
+    pme_conv1(pu, vir_m_handle);
   else
     pme_conv0(pu);
   fftback(pu);
@@ -56,6 +56,8 @@ void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
   const auto* coupl = couple_unit.deviceptr();
   const auto* polargroup = polargroup_unit.deviceptr();
 
+  auto bufsize = EnergyBuffer::estimate_size(n);
+
   static std::vector<real> pscalebuf;
   static std::vector<real> dscalebuf;
   pscalebuf.resize(n, 1);
@@ -70,7 +72,7 @@ void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
 
   real bn[4];
 
-  #pragma acc parallel loop independent\
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(x,y,z,box,coupl,polargroup,mlst,\
               rpole,thole,pdamp,\
               field,fieldp)\
@@ -402,6 +404,8 @@ void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
 
   const auto* polargroup = polargroup_unit.deviceptr();
 
+  auto bufsize = EnergyBuffer::estimate_size(n);
+
   static std::vector<real> uscalebuf;
   uscalebuf.resize(n, 1);
   real* uscale = uscalebuf.data();
@@ -413,7 +417,7 @@ void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
 
   real bn[3];
 
-  #pragma acc parallel loop independent\
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(x,y,z,box,polargroup,mlst,\
               thole,pdamp,uind,uinp,field,fieldp)\
               firstprivate(uscale[0:n])

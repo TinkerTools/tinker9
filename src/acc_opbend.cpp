@@ -28,11 +28,16 @@ void eopbend_tmpl() {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
-  #pragma acc parallel loop independent\
+  auto* eopb = eopb_handle.e()->buffer();
+  auto* vir_eopb = eopb_handle.vir()->buffer();
+  auto bufsize = eopb_handle.buffer_size();
+
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,\
               iopb,opbk,iang,\
               eopb,vir_eopb)
   for (int iopbend = 0; iopbend < nopbend; ++iopbend) {
+    int offset = iopbend & (bufsize - 1);
     const real force = opbk[iopbend];
     const int i = iopb[iopbend];
     const int ia = iang[i][0];
@@ -110,8 +115,7 @@ void eopbend_tmpl() {
       if_constexpr(do_e) {
         real e = opbunit * force * dt2 *
             (1 + copb * dt + qopb * dt2 + popb * dt3 + sopb * dt4);
-        #pragma acc atomic update
-        *eopb += e;
+        atomic_add_value(eopb, e, offset);
       }
 
       if_constexpr(do_g) {
@@ -206,24 +210,16 @@ void eopbend_tmpl() {
           real vzy = zab * dedyia + zcb * dedyic + zdb * dedyid;
           real vzz = zab * dedzia + zcb * dedzic + zdb * dedzid;
 
-          #pragma acc atomic update
-          vir_eopb[0] += vxx;
-          #pragma acc atomic update
-          vir_eopb[1] += vyx;
-          #pragma acc atomic update
-          vir_eopb[2] += vzx;
-          #pragma acc atomic update
-          vir_eopb[3] += vyx;
-          #pragma acc atomic update
-          vir_eopb[4] += vyy;
-          #pragma acc atomic update
-          vir_eopb[5] += vzy;
-          #pragma acc atomic update
-          vir_eopb[6] += vzx;
-          #pragma acc atomic update
-          vir_eopb[7] += vzy;
-          #pragma acc atomic update
-          vir_eopb[8] += vzz;
+          int offv = offset * 16;
+          atomic_add_value(vir_eopb, vxx, offv + 0);
+          atomic_add_value(vir_eopb, vyx, offv + 1);
+          atomic_add_value(vir_eopb, vzx, offv + 2);
+          atomic_add_value(vir_eopb, vyx, offv + 3);
+          atomic_add_value(vir_eopb, vyy, offv + 4);
+          atomic_add_value(vir_eopb, vzy, offv + 5);
+          atomic_add_value(vir_eopb, vzx, offv + 6);
+          atomic_add_value(vir_eopb, vzy, offv + 7);
+          atomic_add_value(vir_eopb, vzz, offv + 8);
         }
       }
     }

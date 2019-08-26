@@ -2,6 +2,7 @@
 #define TINKER_GPU_E_POLAR_H_
 
 #include "elec.h"
+#include "energy_buffer.h"
 #include "polgrp.h"
 #include "rc_man.h"
 
@@ -20,9 +21,7 @@ TINKER_EXTERN real* thole;
 TINKER_EXTERN real* pdamp;
 TINKER_EXTERN real* polarity_inv;
 
-TINKER_EXTERN real* ep;
-TINKER_EXTERN int* nep;
-TINKER_EXTERN real* vir_ep;
+TINKER_EXTERN NonbondedEnergy ep_handle;
 
 TINKER_EXTERN real (*ufld)[3];
 TINKER_EXTERN real (*dufld)[6];

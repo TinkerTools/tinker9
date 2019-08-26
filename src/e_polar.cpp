@@ -22,7 +22,7 @@ void epolar_data(rc_op op) {
     dealloc_bytes(pdamp);
     dealloc_bytes(polarity_inv);
 
-    dealloc_nev(nep, ep, vir_ep);
+    ep_handle.dealloc();
 
     dealloc_bytes(ufld);
     dealloc_bytes(dufld);
@@ -48,7 +48,7 @@ void epolar_data(rc_op op) {
     alloc_bytes(&pdamp, rs * n);
     alloc_bytes(&polarity_inv, rs * n);
 
-    alloc_nev(&nep, &ep, &vir_ep);
+    ep_handle.alloc(n);
 
     if (rc_flag & calc::grad) {
       alloc_bytes(&ufld, rs * 3 * n);

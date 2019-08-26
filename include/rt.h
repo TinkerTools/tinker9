@@ -12,7 +12,7 @@
 #include "gen_unit.h"
 
 TINKER_NAMESPACE_BEGIN
-typedef GenericUnit<FFTPlan, GenericUnitVersion::V0> FFTPlanUnit;
+typedef GenericUnit<FFTPlan, GenericUnitVersion::DisableOnDevice> FFTPlanUnit;
 
 /// @brief
 /// zero-out, deallocate, or allocate bytes on device
@@ -37,7 +37,7 @@ void copy_bytes(void* dst, const void* src, size_t nbytes);
 /// @}
 
 template <>
-struct GenericUnitAlloc<GenericUnitVersion::V1> {
+struct GenericUnitAlloc<GenericUnitVersion::EnableOnDevice> {
   struct Dealloc {
     void operator()(void* ptr) { dealloc_bytes(ptr); }
   };

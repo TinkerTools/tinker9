@@ -31,6 +31,11 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   const auto* coupl = couple_unit.deviceptr();
   const auto* polargroup = polargroup_unit.deviceptr();
 
+  auto* nep = ep_handle.ne()->buffer();
+  auto* ep = ep_handle.e()->buffer();
+  auto* vir_ep = ep_handle.vir()->buffer();
+  auto bufsize = ep_handle.buffer_size();
+
   static std::vector<real> pscalebuf;
   static std::vector<real> dscalebuf;
   static std::vector<real> uscalebuf;
@@ -47,7 +52,7 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   const real aewald = pu->aewald;
   real bn[5];
 
-  #pragma acc parallel loop independent\
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(x,y,z,box,coupl,polargroup,mlst,\
               rpole,thole,pdamp,uind,uinp,\
               ep,nep,vir_ep,ufld,dufld)\
@@ -153,6 +158,7 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
     int base = i * maxnlst;
     #pragma acc loop independent private(bn[0:5])
     for (int kk = 0; kk < nmlsti; ++kk) {
+      int offset = kk & (bufsize - 1);
       int k = mlst->lst[base + kk];
       real xr = x[k] - xi;
       real yr = y[k] - yi;
@@ -293,11 +299,9 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
           sr5 += (bn[2] - rr5);
           sr7 += (bn[3] - rr7);
           real e = term1 * sr3 + term2 * sr5 + term3 * sr7;
-          #pragma acc atomic update
-          *ep += e;
+          atomic_add_value(ep, e, offset);
           if (efull != 0) {
-            #pragma acc atomic update
-            *nep += 1;
+            atomic_add_value(nep, 1, offset);
           }
           // end if
         }
@@ -664,24 +668,16 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
             real vyz = 0.5f * (zr * frcy + yr * frcz);
             real vzz = zr * frcz;
 
-            #pragma acc atomic update
-            vir_ep[0] += vxx;
-            #pragma acc atomic update
-            vir_ep[1] += vxy;
-            #pragma acc atomic update
-            vir_ep[2] += vxz;
-            #pragma acc atomic update
-            vir_ep[3] += vxy;
-            #pragma acc atomic update
-            vir_ep[4] += vyy;
-            #pragma acc atomic update
-            vir_ep[5] += vyz;
-            #pragma acc atomic update
-            vir_ep[6] += vxz;
-            #pragma acc atomic update
-            vir_ep[7] += vyz;
-            #pragma acc atomic update
-            vir_ep[8] += vzz;
+            int offv = offset * 16;
+            atomic_add_value(vir_ep, vxx, offv + 0);
+            atomic_add_value(vir_ep, vxy, offv + 1);
+            atomic_add_value(vir_ep, vxz, offv + 2);
+            atomic_add_value(vir_ep, vxy, offv + 3);
+            atomic_add_value(vir_ep, vyy, offv + 4);
+            atomic_add_value(vir_ep, vyz, offv + 5);
+            atomic_add_value(vir_ep, vxz, offv + 6);
+            atomic_add_value(vir_ep, vyz, offv + 7);
+            atomic_add_value(vir_ep, vzz, offv + 8);
           }
         }
         // end if use_thole
@@ -776,19 +772,24 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 
   const real f = electric / dielec;
 
+  auto* nep = ep_handle.ne()->buffer();
+  auto* ep = ep_handle.e()->buffer();
+  auto bufsize = ep_handle.buffer_size();
+
   real(*fphid)[10] = fdip_phi1;
   real(*fphip)[10] = fdip_phi2;
 
   cuind_to_fuind(pu, gpu_uind, gpu_uinp, fuind, fuinp);
   if (do_e && do_a) {
     // if (pairwise .eq. .true.)
-    #pragma acc parallel loop independent deviceptr(fuind,fphi,ep)
+    #pragma acc parallel loop gang num_gangs(bufsize)\
+                deviceptr(fuind,fphi,ep)
     for (int i = 0; i < n; ++i) {
+      int offset = i & (bufsize - 1);
       real e = 0.5f * f *
           (fuind[i][0] * fphi[i][1] + fuind[i][1] * fphi[i][2] +
            fuind[i][2] * fphi[i][3]);
-      #pragma acc atomic update
-      *ep += e;
+      atomic_add_value(ep, e, offset);
     }
     // end if
   }
@@ -866,10 +867,11 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 
   real term = f * REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
   real fterm_term = -2 * f * REAL_CUBE(aewald) / 3 / sqrtpi;
-  #pragma acc parallel loop independent\
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(ep,nep,trqx,trqy,trqz,\
               rpole,cmp,gpu_uind,gpu_uinp,cphidp)
   for (int i = 0; i < n; ++i) {
+    int offset = i & (bufsize - 1);
     real dix = rpole[i][mpl_pme_x];
     real diy = rpole[i][mpl_pme_y];
     real diz = rpole[i][mpl_pme_z];
@@ -908,10 +910,8 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       uiy = gpu_uind[i][1];
       uiz = gpu_uind[i][2];
       real uii = dix * uix + diy * uiy + diz * uiz;
-      #pragma acc atomic update
-      *ep += fterm_term * uii;
-      #pragma acc atomic update
-      *nep += 1;
+      atomic_add_value(ep, fterm_term * uii, offset);
+      atomic_add_value(nep, 1, offset);
       // end if
     }
   }
@@ -920,8 +920,13 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 
   if_constexpr(do_v) {
 
+    auto* vir_ep = ep_handle.vir()->buffer();
+    auto* vir_m = vir_m_handle->buffer();
+    auto vir_m_len = vir_m_handle->size();
+    assert(bufsize >= vir_m_len);
+
     #pragma acc parallel loop independent deviceptr(vir_ep,vir_m)
-    for (int i = 0; i < 9; ++i) {
+    for (int i = 0; i < vir_m_len * 16; ++i) {
       vir_ep[i] -= vir_m[i];
     }
 
@@ -931,7 +936,8 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 
     real cphid[4], cphip[4];
     real ftc[3][3];
-    #pragma acc parallel loop independent deviceptr(vir_ep,box,cmp,\
+    #pragma acc parallel loop gang num_gangs(bufsize) independent\
+                deviceptr(vir_ep,box,cmp,\
                 gpu_uind,gpu_uinp,fphid,fphip,cphi,cphidp)\
                 private(cphid[0:4],cphip[0:4],ftc[0:3][0:3])
     for (int i = 0; i < n; ++i) {
@@ -1024,24 +1030,16 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
           vzz - 0.5f * (cphid[3] * gpu_uinp[i][2] + cphip[3] * gpu_uind[i][2]);
       // end if
 
-      #pragma acc atomic update
-      vir_ep[0] += vxx;
-      #pragma acc atomic update
-      vir_ep[1] += vxy;
-      #pragma acc atomic update
-      vir_ep[2] += vxz;
-      #pragma acc atomic update
-      vir_ep[3] += vxy;
-      #pragma acc atomic update
-      vir_ep[4] += vyy;
-      #pragma acc atomic update
-      vir_ep[5] += vyz;
-      #pragma acc atomic update
-      vir_ep[6] += vxz;
-      #pragma acc atomic update
-      vir_ep[7] += vyz;
-      #pragma acc atomic update
-      vir_ep[8] += vzz;
+      int offv = (i & (bufsize - 1)) * 16;
+      atomic_add_value(vir_ep, vxx, offv + 0);
+      atomic_add_value(vir_ep, vxy, offv + 1);
+      atomic_add_value(vir_ep, vxz, offv + 2);
+      atomic_add_value(vir_ep, vxy, offv + 3);
+      atomic_add_value(vir_ep, vyy, offv + 4);
+      atomic_add_value(vir_ep, vyz, offv + 5);
+      atomic_add_value(vir_ep, vxz, offv + 6);
+      atomic_add_value(vir_ep, vyz, offv + 7);
+      atomic_add_value(vir_ep, vzz, offv + 8);
     }
 
     // qgrip: pvu_qgrid
@@ -1073,7 +1071,8 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
     const int ntot = nfft1 * nfft2 * nfft3;
     real pterm = REAL_SQ(pi / aewald);
 
-    #pragma acc parallel loop independent deviceptr(box,d,p,vir_ep)
+    #pragma acc parallel loop gang num_gangs(bufsize) independent\
+                deviceptr(box,d,p,vir_ep)
     for (int i = 1; i < ntot; ++i) {
       const real volterm = pi * box->volbox;
 
@@ -1113,24 +1112,16 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
         real vyz = h2 * h3 * vterm;
         real vzz = (h3 * h3 * vterm - eterm);
 
-        #pragma acc atomic update
-        vir_ep[0] += vxx;
-        #pragma acc atomic update
-        vir_ep[3] += vxy;
-        #pragma acc atomic update
-        vir_ep[6] += vxz;
-        #pragma acc atomic update
-        vir_ep[1] += vxy;
-        #pragma acc atomic update
-        vir_ep[4] += vyy;
-        #pragma acc atomic update
-        vir_ep[7] += vyz;
-        #pragma acc atomic update
-        vir_ep[2] += vxz;
-        #pragma acc atomic update
-        vir_ep[5] += vyz;
-        #pragma acc atomic update
-        vir_ep[8] += vzz;
+        int offv = (i & (bufsize - 1)) * 16;
+        atomic_add_value(vir_ep, vxx, offv + 0);
+        atomic_add_value(vir_ep, vxy, offv + 3);
+        atomic_add_value(vir_ep, vxz, offv + 6);
+        atomic_add_value(vir_ep, vxy, offv + 1);
+        atomic_add_value(vir_ep, vyy, offv + 4);
+        atomic_add_value(vir_ep, vyz, offv + 7);
+        atomic_add_value(vir_ep, vxz, offv + 2);
+        atomic_add_value(vir_ep, vyz, offv + 5);
+        atomic_add_value(vir_ep, vzz, offv + 8);
       }
     }
   }

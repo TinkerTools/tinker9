@@ -25,6 +25,11 @@ void empole_real_self_tmpl() {
 
   const auto* coupl = couple_unit.deviceptr();
 
+  auto* nem = em_handle.ne()->buffer();
+  auto* em = em_handle.e()->buffer();
+  auto* vir_em = em_handle.vir()->buffer();
+  auto bufsize = em_handle.buffer_size();
+
   static std::vector<real> mscalebuf;
   mscalebuf.resize(n, 1);
   real* mscale = mscalebuf.data();
@@ -36,12 +41,13 @@ void empole_real_self_tmpl() {
 
   real bn[6];
 
-  #pragma acc parallel loop independent\
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,box,coupl,mlst,\
                         rpole,\
                         em,nem,vir_em,trqx,trqy,trqz)\
               firstprivate(mscale[0:n])
   for (int i = 0; i < n; ++i) {
+    int offset = i & (bufsize - 1);
 
     // set exclusion coefficients for connected atoms
 
@@ -80,6 +86,7 @@ void empole_real_self_tmpl() {
     int base = i * maxnlst;
     #pragma acc loop independent private(bn[0:6])
     for (int kk = 0; kk < nmlsti; ++kk) {
+      int offset = kk & (bufsize - 1);
       int k = mlst->lst[base + kk];
       real xr = x[k] - xi;
       real yr = y[k] - yi;
@@ -168,8 +175,7 @@ void empole_real_self_tmpl() {
               term5 * rr9;
           efull *= mscale[k];
           if (efull != 0) {
-            #pragma acc atomic update
-            *nem += 1;
+            atomic_add_value(nem, 1, offset);
           }
         } // end if (do_a)
 
@@ -182,8 +188,7 @@ void empole_real_self_tmpl() {
         if_constexpr(do_e) {
           real e = term1 * rr1 + term2 * rr3 + term3 * rr5 + term4 * rr7 +
               term5 * rr9;
-          #pragma acc atomic update
-          *em += e;
+          atomic_add_value(em, e, offset);
         } // end if (do_e)
 
         if_constexpr(do_g) {
@@ -325,24 +330,16 @@ void empole_real_self_tmpl() {
             real vyz = -0.5f * (zr * frcy + yr * frcz);
             real vzz = -zr * frcz;
 
-            #pragma acc atomic update
-            vir_em[0] += vxx;
-            #pragma acc atomic update
-            vir_em[1] += vxy;
-            #pragma acc atomic update
-            vir_em[2] += vxz;
-            #pragma acc atomic update
-            vir_em[3] += vxy;
-            #pragma acc atomic update
-            vir_em[4] += vyy;
-            #pragma acc atomic update
-            vir_em[5] += vyz;
-            #pragma acc atomic update
-            vir_em[6] += vxz;
-            #pragma acc atomic update
-            vir_em[7] += vyz;
-            #pragma acc atomic update
-            vir_em[8] += vzz;
+            int offv = offset * 16;
+            atomic_add_value(vir_em, vxx, offv + 0);
+            atomic_add_value(vir_em, vxy, offv + 1);
+            atomic_add_value(vir_em, vxz, offv + 2);
+            atomic_add_value(vir_em, vxy, offv + 3);
+            atomic_add_value(vir_em, vyy, offv + 4);
+            atomic_add_value(vir_em, vyz, offv + 5);
+            atomic_add_value(vir_em, vxz, offv + 6);
+            atomic_add_value(vir_em, vyz, offv + 7);
+            atomic_add_value(vir_em, vzz, offv + 8);
           } // end if (do_v)
         }   // end if (do_g)
       }     // end if (r2 <= off2)
@@ -373,12 +370,8 @@ void empole_real_self_tmpl() {
     if_constexpr(do_e) {
       real e = fterm *
           (cii + aewald_sq_2 * (dii / 3 + 2 * aewald_sq_2 * qii * (real)0.2));
-      #pragma acc atomic update
-      *em += e;
-      if_constexpr(do_a) {
-        #pragma acc atomic update
-        *nem += 1;
-      }
+      atomic_add_value(em, e, offset);
+      if_constexpr(do_a) { atomic_add_value(nem, 1, offset); }
     } // end if (do_e)
   }   // end for (int i)
 }
@@ -392,19 +385,26 @@ void empole_recip_tmpl() {
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
+  auto* em = em_handle.e()->buffer();
+  auto* vir_em = em_handle.vir()->buffer();
+  auto bufsize = em_handle.buffer_size();
+
   const PMEUnit pu = epme_unit;
   cmp_to_fmp(pu, cmp, fmp);
   grid_mpole(pu, fmp);
   fftfront(pu);
   if_constexpr(do_v) {
-    if (vir_m) {
-      pme_conv1(pu, vir_m);
+    if (vir_m_handle > 0) {
+      pme_conv1(pu, vir_m_handle);
+      auto vir_m_len = vir_m_handle->size();
+      auto* vir_m = vir_m_handle->buffer();
+      assert(bufsize >= vir_m_len);
       #pragma acc parallel loop independent deviceptr(vir_m,vir_em)
-      for (int i = 0; i < 9; ++i) {
+      for (int i = 0; i < vir_m_len * 16; ++i) {
         vir_em[i] += vir_m[i];
       }
     } else {
-      pme_conv1(pu, vir_em);
+      pme_conv1(pu, em_handle.vir());
     }
   }
   else {
@@ -424,11 +424,12 @@ void empole_recip_tmpl() {
   const int nfft3 = st.nfft3;
   const real f = electric / dielec;
 
-  #pragma acc parallel loop independent\
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(gx,gy,gz,box,\
                         cmp,fmp,cphi,fphi,\
                         em,vir_em,trqx,trqy,trqz)
   for (int i = 0; i < n; ++i) {
+    int offset = i & (bufsize - 1);
     real e = 0;
     real f1 = 0;
     real f2 = 0;
@@ -446,10 +447,7 @@ void empole_recip_tmpl() {
 
     // increment the permanent multipole energy and gradient
 
-    if_constexpr(do_e) {
-      #pragma acc atomic update
-      *em += 0.5f * e * f;
-    }
+    if_constexpr(do_e) { atomic_add_value(em, 0.5f * e * f, offset); }
 
     if_constexpr(do_g) {
       f1 *= nfft1;
@@ -521,24 +519,16 @@ void empole_recip_tmpl() {
         vyz *= f;
         vzz *= f;
 
-        #pragma acc atomic update
-        vir_em[0] += vxx;
-        #pragma acc atomic update
-        vir_em[1] += vxy;
-        #pragma acc atomic update
-        vir_em[2] += vxz;
-        #pragma acc atomic update
-        vir_em[3] += vxy;
-        #pragma acc atomic update
-        vir_em[4] += vyy;
-        #pragma acc atomic update
-        vir_em[5] += vyz;
-        #pragma acc atomic update
-        vir_em[6] += vxz;
-        #pragma acc atomic update
-        vir_em[7] += vyz;
-        #pragma acc atomic update
-        vir_em[8] += vzz;
+        int offv = offset * 16;
+        atomic_add_value(vir_em, vxx, offv + 0);
+        atomic_add_value(vir_em, vxy, offv + 1);
+        atomic_add_value(vir_em, vxz, offv + 2);
+        atomic_add_value(vir_em, vxy, offv + 3);
+        atomic_add_value(vir_em, vyy, offv + 4);
+        atomic_add_value(vir_em, vyz, offv + 5);
+        atomic_add_value(vir_em, vxz, offv + 6);
+        atomic_add_value(vir_em, vyz, offv + 7);
+        atomic_add_value(vir_em, vzz, offv + 8);
       } // end if (do_v)
     }   // end if (do_g)
   }     // end for (int i)

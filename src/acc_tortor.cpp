@@ -116,14 +116,19 @@ void etortor_tmpl() {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
+  auto* ett = ett_handle.e()->buffer();
+  auto* vir_ett = ett_handle.vir()->buffer();
+  auto bufsize = ett_handle.buffer_size();
+
   real ftt[4], ft12[4], ft1[4], ft2[4];
-  #pragma acc parallel loop independent\
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,\
               ibitor,itt,chkttor_ia_,\
               tnx,tny,ttx,tty,tbf,tbx,tby,tbxy,\
               ett,vir_ett)\
               private(ftt[0:4],ft12[0:4],ft1[0:4],ft2[0:4])
   for (int itortor = 0; itortor < ntortor; ++itortor) {
+    int offset = itortor & (bufsize - 1);
     int i = itt[itortor][0];
     int k = itt[itortor][1]; // parameter indice
     int ia, ib, ic, id, ie;
@@ -272,8 +277,7 @@ void etortor_tmpl() {
 
       if_constexpr(do_e) {
         e *= ttorunit;
-        #pragma acc atomic update
-        *ett += e;
+        atomic_add_value(ett, e, offset);
       }
 
       if_constexpr(do_g) {
@@ -394,24 +398,16 @@ void etortor_tmpl() {
           real vzy2 = zdc * (dedyid2 + dedyie2) - zcb * dedyib2 + zed * dedyie2;
           real vzz2 = zdc * (dedzid2 + dedzie2) - zcb * dedzib2 + zed * dedzie2;
 
-          #pragma acc atomic update
-          vir_ett[0] += (vxx + vxx2);
-          #pragma acc atomic update
-          vir_ett[1] += (vyx + vyx2);
-          #pragma acc atomic update
-          vir_ett[2] += (vzx + vzx2);
-          #pragma acc atomic update
-          vir_ett[3] += (vyx + vyx2);
-          #pragma acc atomic update
-          vir_ett[4] += (vyy + vyy2);
-          #pragma acc atomic update
-          vir_ett[5] += (vzy + vzy2);
-          #pragma acc atomic update
-          vir_ett[6] += (vzx + vzx2);
-          #pragma acc atomic update
-          vir_ett[7] += (vzy + vzy2);
-          #pragma acc atomic update
-          vir_ett[8] += (vzz + vzz2);
+          int offv = offset * 16;
+          atomic_add_value(vir_ett, vxx + vxx2, offv + 0);
+          atomic_add_value(vir_ett, vyx + vyx2, offv + 1);
+          atomic_add_value(vir_ett, vzx + vzx2, offv + 2);
+          atomic_add_value(vir_ett, vyx + vyx2, offv + 3);
+          atomic_add_value(vir_ett, vyy + vyy2, offv + 4);
+          atomic_add_value(vir_ett, vzy + vzy2, offv + 5);
+          atomic_add_value(vir_ett, vzx + vzx2, offv + 6);
+          atomic_add_value(vir_ett, vzy + vzy2, offv + 7);
+          atomic_add_value(vir_ett, vzz + vzz2, offv + 8);
         }
       }
     }

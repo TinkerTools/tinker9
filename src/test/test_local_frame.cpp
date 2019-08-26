@@ -64,20 +64,20 @@ TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
     elec_init(calc::v0);
     empole(calc::v0);
     torque(calc::v0);
-    COMPARE_ENERGY_(em, ref_eng, eps_e);
+    COMPARE_ENERGY_(em_handle.e(), ref_eng, eps_e);
 
     zero_egv();
     elec_init(calc::v1);
     empole(calc::v1);
     torque(calc::v1);
-    COMPARE_ENERGY_(em, ref_eng, eps_e);
+    COMPARE_ENERGY_(em_handle.e(), ref_eng, eps_e);
     COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);
-    COMPARE_VIR2_(vir_em, vir_trq, ref_v, eps_v);
+    COMPARE_VIR2_(em_handle.vir(), vir_trq_handle, ref_v, eps_v);
 
     zero_egv();
     empole(calc::v3);
-    COMPARE_ENERGY_(em, ref_eng, eps_e);
-    COMPARE_COUNT_(nem, ref_count);
+    COMPARE_ENERGY_(em_handle.e(), ref_eng, eps_e);
+    COMPARE_COUNT_(em_handle.ne(), ref_count);
 
     finish();
     test_end();
@@ -147,9 +147,9 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     elec_init(calc::v1);
     empole(calc::v1);
     torque(calc::v1);
-    COMPARE_ENERGY_(em, ref_eng, eps_e);
+    COMPARE_ENERGY_(em_handle.e(), ref_eng, eps_e);
     COMPARE_GRADIENT_(ref_grad, eps_g);
-    COMPARE_VIR2_(vir_em, vir_trq, ref_v, eps_v);
+    COMPARE_VIR2_(em_handle.vir(), vir_trq_handle, ref_v, eps_v);
 
     finish();
     test_end();
@@ -162,28 +162,28 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     elec_init(calc::v0);                                                       \
     epolar(calc::v0);                                                          \
     torque(calc::v0);                                                          \
-    COMPARE_ENERGY_(ep, ref_eng, eps_e);                                       \
+    COMPARE_ENERGY_(ep_handle.e(), ref_eng, eps_e);                            \
                                                                                \
     zero_egv();                                                                \
     elec_init(calc::v1);                                                       \
     epolar(calc::v1);                                                          \
     torque(calc::v1);                                                          \
-    COMPARE_ENERGY_(ep, ref_eng, eps_e);                                       \
+    COMPARE_ENERGY_(ep_handle.e(), ref_eng, eps_e);                            \
     COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                                \
-    COMPARE_VIR2_(vir_ep, vir_trq, ref_v, eps_v);                              \
+    COMPARE_VIR2_(ep_handle.vir(), vir_trq_handle, ref_v, eps_v);              \
                                                                                \
     zero_egv();                                                                \
     elec_init(calc::v3);                                                       \
     epolar(calc::v3);                                                          \
     torque(calc::v3);                                                          \
-    COMPARE_ENERGY_(ep, ref_eng, eps_e);                                       \
-    COMPARE_COUNT_(nep, ref_count);                                            \
+    COMPARE_ENERGY_(ep_handle.e(), ref_eng, eps_e);                            \
+    COMPARE_COUNT_(ep_handle.ne(), ref_count);                                 \
                                                                                \
     zero_egv();                                                                \
     elec_init(calc::v4);                                                       \
     epolar(calc::v4);                                                          \
     torque(calc::v4);                                                          \
-    COMPARE_ENERGY_(ep, ref_eng, eps_e);                                       \
+    COMPARE_ENERGY_(ep_handle.e(), ref_eng, eps_e);                            \
     COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                                \
                                                                                \
     zero_egv();                                                                \
@@ -197,7 +197,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     epolar(calc::v6);                                                          \
     torque(calc::v6);                                                          \
     COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                                \
-    COMPARE_VIR2_(vir_ep, vir_trq, ref_v, eps_v);                              \
+    COMPARE_VIR2_(ep_handle.vir(), vir_trq_handle, ref_v, eps_v);              \
   }
 
 TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
@@ -214,9 +214,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
 
   int usage = 0;
   usage |= calc::xyz;
-  usage |= calc::energy;
-  usage |= calc::grad;
-  usage |= calc::virial;
+  usage |= calc::vmask;
 
   const char* argv[] = {"dummy", x1};
   int argc = 2;
@@ -372,7 +370,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
     elec_init(calc::v0);
     epolar(calc::v0);
     torque(calc::v0);
-    COMPARE_ENERGY_(ep, ref_eng, eps_f);
+    COMPARE_ENERGY_(ep_handle.e(), ref_eng, eps_f);
   }
 
   SECTION("various epolar versions -- coulomb no cutoff") {
@@ -423,9 +421,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
 
   int usage = 0;
   usage |= calc::xyz;
-  usage |= calc::energy;
-  usage |= calc::grad;
-  usage |= calc::virial;
+  usage |= calc::vmask;
 
   const char* argv[] = {"dummy", x1};
   int argc = 2;
@@ -582,7 +578,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
     elec_init(calc::v0);
     epolar(calc::v0);
     torque(calc::v0);
-    COMPARE_ENERGY_(ep, ref_eng, eps_f);
+    COMPARE_ENERGY_(ep_handle.e(), ref_eng, eps_f);
   }
 
   SECTION("various epolar versions -- pme") {

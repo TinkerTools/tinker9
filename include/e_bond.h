@@ -1,6 +1,7 @@
 #ifndef TINKER_E_BOND_H_
 #define TINKER_E_BOND_H_
 
+#include "energy_buffer.h"
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -12,8 +13,7 @@ TINKER_EXTERN int nbond;
 TINKER_EXTERN int (*ibnd)[2];
 TINKER_EXTERN real *bl, *bk;
 
-TINKER_EXTERN real* eb;
-TINKER_EXTERN real* vir_eb;
+TINKER_EXTERN BondedEnergy eb_handle;
 
 void ebond_data(rc_op op);
 

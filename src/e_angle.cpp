@@ -19,7 +19,7 @@ void eangle_data(rc_op op) {
 
     dealloc_bytes(angtyp);
 
-    dealloc_ev(ea, vir_ea);
+    ea_handle.dealloc();
   }
 
   if (op & rc_alloc) {
@@ -32,7 +32,7 @@ void eangle_data(rc_op op) {
 
     alloc_bytes(&angtyp, sizeof(int) * nangle);
 
-    alloc_ev(&ea, &vir_ea);
+    ea_handle.alloc(nangle);
   }
 
   if (op & rc_init) {

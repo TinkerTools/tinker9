@@ -1,6 +1,7 @@
 #ifndef TINKER_E_UREY_H_
 #define TINKER_E_UREY_H_
 
+#include "energy_buffer.h"
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -12,8 +13,7 @@ TINKER_EXTERN real *uk, *ul;
 // module urypot
 TINKER_EXTERN real cury, qury, ureyunit;
 
-TINKER_EXTERN real* eub;
-TINKER_EXTERN real* vir_eub;
+TINKER_EXTERN BondedEnergy eub_handle;
 
 void eurey_data(rc_op op);
 

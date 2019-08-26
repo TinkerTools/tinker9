@@ -10,11 +10,16 @@ void epitors_tmpl() {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
-  #pragma acc parallel loop independent\
+  auto* ept = ept_handle.e()->buffer();
+  auto* vir_ept = ept_handle.vir()->buffer();
+  auto bufsize = ept_handle.buffer_size();
+
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,\
               ipit,kpit,\
               ept,vir_ept)
   for (int i = 0; i < npitors; ++i) {
+    int offset = i & (bufsize - 1);
     const int ia = ipit[i][0];
     const int ib = ipit[i][1];
     const int ic = ipit[i][2];
@@ -102,8 +107,7 @@ void epitors_tmpl() {
 
       if_constexpr(do_e) {
         real e = ptorunit * v2 * phi2;
-        #pragma acc atomic update
-        *ept += e;
+        atomic_add_value(ept, e, offset);
       }
 
       if_constexpr(do_g) {
@@ -212,24 +216,16 @@ void epitors_tmpl() {
           real vzy = zdc * vyterm + zcp * dedyip - zqd * dedyiq;
           real vzz = zdc * vzterm + zcp * dedzip - zqd * dedziq;
 
-          #pragma acc atomic update
-          vir_ept[0] += vxx;
-          #pragma acc atomic update
-          vir_ept[1] += vyx;
-          #pragma acc atomic update
-          vir_ept[2] += vzx;
-          #pragma acc atomic update
-          vir_ept[3] += vyx;
-          #pragma acc atomic update
-          vir_ept[4] += vyy;
-          #pragma acc atomic update
-          vir_ept[5] += vzy;
-          #pragma acc atomic update
-          vir_ept[6] += vzx;
-          #pragma acc atomic update
-          vir_ept[7] += vzy;
-          #pragma acc atomic update
-          vir_ept[8] += vzz;
+          int offv = offset * 16;
+          atomic_add_value(vir_ept, vxx, offv + 0);
+          atomic_add_value(vir_ept, vyx, offv + 1);
+          atomic_add_value(vir_ept, vzx, offv + 2);
+          atomic_add_value(vir_ept, vyx, offv + 3);
+          atomic_add_value(vir_ept, vyy, offv + 4);
+          atomic_add_value(vir_ept, vzy, offv + 5);
+          atomic_add_value(vir_ept, vzx, offv + 6);
+          atomic_add_value(vir_ept, vzy, offv + 7);
+          atomic_add_value(vir_ept, vzz, offv + 8);
         }
       }
     }

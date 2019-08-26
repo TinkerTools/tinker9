@@ -1,3 +1,4 @@
+#include "acc_add.h"
 #include "elec.h"
 #include "mathfunc.h"
 #include "md.h"
@@ -21,13 +22,17 @@
   a[2] *= _1_na
 
 TINKER_NAMESPACE_BEGIN
-
 template <int DO_V>
-void torque_tmpl(real* gpu_vir) {
-  #pragma acc data deviceptr(x,y,z,gx,gy,gz,\
-                             zaxis,trqx,trqy,trqz,\
-                             gpu_vir)
-  #pragma acc parallel loop
+void torque_tmpl(Virial v_handle) {
+  VirialBuffer::PointerType gpu_vir = nullptr;
+  auto bufsize = VirialBuffer::estimate_size(n);
+  if (v_handle >= 0) {
+    gpu_vir = v_handle->buffer();
+    bufsize = v_handle->size();
+  }
+
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
+              deviceptr(x,y,z,gx,gy,gz,zaxis,trqx,trqy,trqz,gpu_vir)
   for (int i = 0; i < n; ++i) {
     const int axetyp = zaxis[i].polaxe;
     if (axetyp == pole_none)
@@ -360,24 +365,16 @@ void torque_tmpl(real* gpu_vir) {
            yiy * frcy[2] + yiz * frcz[2]);
       real vzz = zix * frcx[2] + ziy * frcy[2] + ziz * frcz[2];
 
-      #pragma acc atomic update
-      gpu_vir[0] += vxx;
-      #pragma acc atomic update
-      gpu_vir[1] += vxy;
-      #pragma acc atomic update
-      gpu_vir[2] += vxz;
-      #pragma acc atomic update
-      gpu_vir[3] += vxy;
-      #pragma acc atomic update
-      gpu_vir[4] += vyy;
-      #pragma acc atomic update
-      gpu_vir[5] += vyz;
-      #pragma acc atomic update
-      gpu_vir[6] += vxz;
-      #pragma acc atomic update
-      gpu_vir[7] += vyz;
-      #pragma acc atomic update
-      gpu_vir[8] += vzz;
+      int offv = (i & (bufsize - 1)) * 16;
+      atomic_add_value(gpu_vir, vxx, offv + 0);
+      atomic_add_value(gpu_vir, vxy, offv + 1);
+      atomic_add_value(gpu_vir, vxz, offv + 2);
+      atomic_add_value(gpu_vir, vxy, offv + 3);
+      atomic_add_value(gpu_vir, vyy, offv + 4);
+      atomic_add_value(gpu_vir, vyz, offv + 5);
+      atomic_add_value(gpu_vir, vxz, offv + 6);
+      atomic_add_value(gpu_vir, vyz, offv + 7);
+      atomic_add_value(gpu_vir, vzz, offv + 8);
     } // end if_constexpr(DO_V)
   }   // end for (int i)
 }
@@ -387,9 +384,9 @@ void torque(int vers) {
     return;
 
   if (vers & calc::virial) {
-    torque_tmpl<1>(vir_trq);
+    torque_tmpl<1>(vir_trq_handle);
   } else if (vers & calc::grad) {
-    torque_tmpl<0>(nullptr);
+    torque_tmpl<0>(-1);
   }
 }
 TINKER_NAMESPACE_END

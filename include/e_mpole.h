@@ -2,15 +2,14 @@
 #define TINKER_E_MPOLE_H_
 
 #include "elec.h"
+#include "energy_buffer.h"
 
 TINKER_NAMESPACE_BEGIN
 TINKER_EXTERN elec_t empole_electyp;
 
 TINKER_EXTERN real m2scale, m3scale, m4scale, m5scale;
 
-TINKER_EXTERN real* em;
-TINKER_EXTERN int* nem;
-TINKER_EXTERN real* vir_em;
+TINKER_EXTERN NonbondedEnergy em_handle;
 
 void empole_data(rc_op op);
 

@@ -93,11 +93,9 @@ TINKER_NAMESPACE_BEGIN
  */
 #ifdef TINKER_DOUBLE_PRECISION
 typedef double real;
-typedef real real_buffer_t;
 #endif
 #ifdef TINKER_SINGLE_PRECISION
 typedef float real;
-typedef unsigned long long real_buffer_t;
 #endif
 TINKER_NAMESPACE_END
 

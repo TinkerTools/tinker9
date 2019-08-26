@@ -1,7 +1,7 @@
 #ifndef TINKER_E_VDW_H_
 #define TINKER_E_VDW_H_
 
-#include "list.h"
+#include "energy_buffer.h"
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -26,10 +26,7 @@ const int vcouple_decouple = 0;
 const int vcouple_annihilate = 1;
 TINKER_EXTERN real* vlam;
 
-TINKER_EXTERN int* nev;
-TINKER_EXTERN real_buffer_t* ev;
-TINKER_EXTERN real_buffer_t* vir_ev;
-TINKER_EXTERN size_t bufsize_ev;
+TINKER_EXTERN NonbondedEnergy ev_handle;
 
 void evdw_data(rc_op op);
 

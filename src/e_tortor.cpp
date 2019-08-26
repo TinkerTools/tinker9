@@ -30,7 +30,7 @@ void etortor_data(rc_op op) {
 
     dealloc_bytes(chkttor_ia_);
 
-    dealloc_ev(ett, vir_ett);
+    ett_handle.dealloc();
   }
 
   if (op & rc_alloc) {
@@ -54,7 +54,7 @@ void etortor_data(rc_op op) {
     ntortor = count_bonded_term(tortor_term);
     alloc_bytes(&chkttor_ia_, sizeof(int) * ntortor);
 
-    alloc_ev(&ett, &vir_ett);
+    ett_handle.alloc(ntortor);
   }
 
   if (op & rc_init) {

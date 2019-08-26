@@ -53,8 +53,8 @@ TEST_CASE("Urey-Ten-Water", "[ff][eurey][h2o10]") {
   const double ref_v[][3] = {
       {2.318, -0.827, -1.078}, {-0.827, 3.061, 0.062}, {-1.078, 0.062, 4.915}};
 
-  COMPARE_BONDED_FORCE(eurey, eub, ref_e, eps_e, nurey, ref_count, gx, gy, gz,
-                       ref_g_urey_h2o10, eps_g, vir_eub, ref_v, eps_v);
+  COMPARE_BONDED_FORCE(eurey, nurey, eub_handle, ref_e, eps_e, ref_count, gx,
+                       gy, gz, ref_g_urey_h2o10, eps_g, ref_v, eps_v);
 
   finish();
   test_end();

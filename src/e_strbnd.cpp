@@ -14,7 +14,7 @@ void estrbnd_data(rc_op op) {
     dealloc_bytes(isb);
     dealloc_bytes(sbk);
 
-    dealloc_ev(eba, vir_eba);
+    eba_handle.dealloc();
   }
 
   if (op & rc_alloc) {
@@ -24,11 +24,11 @@ void estrbnd_data(rc_op op) {
     alloc_bytes(&isb, sizeof(int) * 3 * nangle);
     alloc_bytes(&sbk, rs * 2 * nangle);
 
-    alloc_ev(&eba, &vir_eba);
+    nstrbnd = count_bonded_term(strbnd_term);
+    eba_handle.alloc(nstrbnd);
   }
 
   if (op & rc_init) {
-    nstrbnd = count_bonded_term(strbnd_term);
     int nangle = count_bonded_term(angle_term);
     std::vector<int> ibuf(3 * nangle);
     for (int i = 0; i < 3 * nangle; ++i) {

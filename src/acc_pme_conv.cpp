@@ -1,3 +1,4 @@
+#include "acc_seq.h"
 #include "box.h"
 #include "elec.h"
 #include "mathfunc.h"
@@ -6,7 +7,7 @@
 
 TINKER_NAMESPACE_BEGIN
 template <int DO_V>
-void pme_conv_tmpl(PMEUnit pme_u, real* gpu_vir9) {
+void pme_conv_tmpl(PMEUnit pme_u, Virial gpu_vir) {
   auto& st = *pme_u;
   auto* dptr = pme_u.deviceptr();
 
@@ -21,7 +22,14 @@ void pme_conv_tmpl(PMEUnit pme_u, real* gpu_vir9) {
   real pterm = pi / aewald;
   pterm *= pterm;
 
-  #pragma acc parallel loop independent\
+  VirialBuffer::PointerType gpu_vir9 = nullptr;
+  auto bufsize = VirialBuffer::estimate_size(ntot);
+  if (gpu_vir >= 0) {
+    gpu_vir9 = gpu_vir->buffer();
+    bufsize = gpu_vir->size();
+  }
+
+  #pragma acc parallel loop gang num_gangs(bufsize) independent\
               deviceptr(gpu_vir9,dptr,box)
   for (int i = 0; i < ntot; ++i) {
     const real volterm = pi * box->volbox;
@@ -71,24 +79,16 @@ void pme_conv_tmpl(PMEUnit pme_u, real* gpu_vir9) {
         real vyz = h2 * h3 * vterm;
         real vzz = (h3 * h3 * vterm - eterm);
 
-        #pragma acc atomic update
-        gpu_vir9[0] += vxx;
-        #pragma acc atomic update
-        gpu_vir9[3] += vxy;
-        #pragma acc atomic update
-        gpu_vir9[6] += vxz;
-        #pragma acc atomic update
-        gpu_vir9[1] += vxy;
-        #pragma acc atomic update
-        gpu_vir9[4] += vyy;
-        #pragma acc atomic update
-        gpu_vir9[7] += vyz;
-        #pragma acc atomic update
-        gpu_vir9[2] += vxz;
-        #pragma acc atomic update
-        gpu_vir9[5] += vyz;
-        #pragma acc atomic update
-        gpu_vir9[8] += vzz;
+        int offv = (i & (bufsize - 1)) * 16;
+        atomic_add_value(gpu_vir9, vxx, offv + 0);
+        atomic_add_value(gpu_vir9, vxy, offv + 1);
+        atomic_add_value(gpu_vir9, vxz, offv + 2);
+        atomic_add_value(gpu_vir9, vxy, offv + 3);
+        atomic_add_value(gpu_vir9, vyy, offv + 4);
+        atomic_add_value(gpu_vir9, vyz, offv + 5);
+        atomic_add_value(gpu_vir9, vxz, offv + 6);
+        atomic_add_value(gpu_vir9, vyz, offv + 7);
+        atomic_add_value(gpu_vir9, vzz, offv + 8);
       }
     }
 
@@ -99,9 +99,9 @@ void pme_conv_tmpl(PMEUnit pme_u, real* gpu_vir9) {
   }
 }
 
-void pme_conv0(PMEUnit pme_u) { pme_conv_tmpl<0>(pme_u, nullptr); }
+void pme_conv0(PMEUnit pme_u) { pme_conv_tmpl<0>(pme_u, -1); }
 
-void pme_conv1(PMEUnit pme_u, real* gpu_vir9) {
-  pme_conv_tmpl<1>(pme_u, gpu_vir9);
+void pme_conv1(PMEUnit pme_u, Virial gpu_vir) {
+  pme_conv_tmpl<1>(pme_u, gpu_vir);
 }
 TINKER_NAMESPACE_END

@@ -1,6 +1,7 @@
 #ifndef TINKER_E_TORS_H_
 #define TINKER_E_TORS_H_
 
+#include "energy_buffer.h"
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -14,8 +15,7 @@ TINKER_EXTERN real (*tors5)[4];
 TINKER_EXTERN real (*tors6)[4];
 TINKER_EXTERN real torsunit;
 
-TINKER_EXTERN real* et;
-TINKER_EXTERN real* vir_et;
+TINKER_EXTERN BondedEnergy et_handle;
 
 void etors_data(rc_op op);
 

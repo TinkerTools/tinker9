@@ -11,10 +11,10 @@ void empole_data(rc_op op) {
     return;
 
   if (op & rc_dealloc)
-    dealloc_nev(nem, em, vir_em);
+    em_handle.dealloc();
 
   if (op & rc_alloc)
-    alloc_nev(&nem, &em, &vir_em);
+    em_handle.alloc(n);
 
   if (op & rc_init) {
     if (use_ewald()) {

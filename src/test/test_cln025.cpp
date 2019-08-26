@@ -21,22 +21,22 @@ using namespace TINKER_NAMESPACE;
   {                                                                            \
     zero_egv();                                                                \
     evdw_hal(calc::v0);                                                        \
-    COMPARE_ENERGY_(ev, ref_eng, eps);                                         \
+    COMPARE_ENERGY_(ev_handle.e(), ref_eng, eps);                              \
                                                                                \
     zero_egv();                                                                \
     evdw_hal(calc::v1);                                                        \
-    COMPARE_ENERGY_(ev, ref_eng, eps);                                         \
+    COMPARE_ENERGY_(ev_handle.e(), ref_eng, eps);                              \
     COMPARE_GRAD_;                                                             \
-    COMPARE_VIR_(vir_ev, ref_v, eps_v);                                        \
+    COMPARE_VIR_(ev_handle.vir(), ref_v, eps_v);                               \
                                                                                \
     zero_egv();                                                                \
     evdw_hal(calc::v3);                                                        \
-    COMPARE_ENERGY_(ev, ref_eng, eps);                                         \
-    COMPARE_COUNT_(nev, ref_count);                                            \
+    COMPARE_ENERGY_(ev_handle.e(), ref_eng, eps);                              \
+    COMPARE_COUNT_(ev_handle.ne(), ref_count);                                 \
                                                                                \
     zero_egv();                                                                \
     evdw_hal(calc::v4);                                                        \
-    COMPARE_ENERGY_(ev, ref_eng, eps);                                         \
+    COMPARE_ENERGY_(ev_handle.e(), ref_eng, eps);                              \
     COMPARE_GRAD_;                                                             \
                                                                                \
     zero_egv();                                                                \
@@ -46,7 +46,7 @@ using namespace TINKER_NAMESPACE;
     zero_egv();                                                                \
     evdw_hal(calc::v6);                                                        \
     COMPARE_GRAD_;                                                             \
-    COMPARE_VIR_(vir_ev, ref_v, eps_v);                                        \
+    COMPARE_VIR_(ev_handle.vir(), ref_v, eps_v);                               \
   }
 
 TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {

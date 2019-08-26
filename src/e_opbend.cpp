@@ -15,7 +15,7 @@ void eopbend_data(rc_op op) {
     dealloc_bytes(iopb);
     dealloc_bytes(opbk);
 
-    dealloc_ev(eopb, vir_eopb);
+    eopb_handle.dealloc();
   }
 
   if (op & rc_alloc) {
@@ -23,7 +23,8 @@ void eopbend_data(rc_op op) {
     alloc_bytes(&iopb, sizeof(int) * nangle);
     alloc_bytes(&opbk, sizeof(real) * nangle);
 
-    alloc_ev(&eopb, &vir_eopb);
+    nopbend = count_bonded_term(opbend_term);
+    eopb_handle.alloc(nopbend);
   }
 
   if (op & rc_init) {
@@ -34,7 +35,6 @@ void eopbend_data(rc_op op) {
       opbtyp = eopbend_t::allinger;
     else
       assert(false);
-    nopbend = count_bonded_term(opbend_term);
     int nangle = count_bonded_term(angle_term);
     std::vector<int> ibuf(nangle);
     for (int i = 0; i < nangle; ++i)

@@ -49,8 +49,6 @@
 #define REAL_CUBE(x) ((x) * (x) * (x))
 
 TINKER_NAMESPACE_BEGIN
-constexpr unsigned long long fixed_point = 0x100000000ull;
-
 constexpr real twosix = 1.12246204830937298143;    ///< @f$ \sqrt[6]{2} @f$
 constexpr real sqrttwo = 1.41421356237309504880;   ///< @f$ \sqrt{2} @f$
 constexpr real sqrtthree = 1.73205080756887729353; ///< @f$ \sqrt{3} @f$
@@ -101,6 +99,26 @@ T min_of(T a, T2 b, Ts... cs) {
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
+/// @{
+int reduce_sum(const int* gpu_a, int nelem);
+float reduce_sum(const float* gpu_a, int nelem);
+double reduce_sum(const double* gpu_a, int nelem);
+unsigned long long reduce_sum(const unsigned long long* gpu_a, int n);
+/// @}
+
+/**
+ * @brief
+ * E.g., a two dimensional array @c v[16][m] was used as a virial buffer, in
+ * which case, nelem = m, neach = 16. The total virial would be written to
+ * h_ans[9], in which case, hn = 9.
+ */
+/// @{
+void reduce_sum2(float* h_ans, int hn, const float* v, int nelem, int neach);
+void reduce_sum2(double* h_ans, int hn, const double* v, int nelem, int neach);
+void reduce_sum2(unsigned long long* h_ans, int hn, const unsigned long long* v,
+                 int nelem, int neach);
+/// @}
+
 /**
  * @brief
  * n-dimensional dot product
@@ -144,6 +162,13 @@ double dotprod(const double* a, const double* b, int n);
 void scale_array(float* dst, float scal, int nelem);
 void scale_array(double* dst, double scal, int nelem);
 /// @}
+TINKER_NAMESPACE_END
+
+
+TINKER_NAMESPACE_BEGIN
+bool is_pow2(size_t);
+size_t pow2_le(size_t);
+size_t pow2_ge(size_t);
 TINKER_NAMESPACE_END
 
 #endif

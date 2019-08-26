@@ -1,6 +1,7 @@
 #ifndef TINKER_ELEC_H_
 #define TINKER_ELEC_H_
 
+#include "energy_buffer.h"
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -65,7 +66,7 @@ TINKER_EXTERN real (*rpole)[mpl_total];
 TINKER_EXTERN real *trqx, *trqy, *trqz;
 /// @}
 /// internal virial Cartesian tensor due to the torques
-TINKER_EXTERN real* vir_trq;
+TINKER_EXTERN Virial vir_trq_handle;
 
 /// direct induced dipole components at each multipole site
 TINKER_EXTERN real (*udir)[3];

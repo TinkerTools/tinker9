@@ -1,6 +1,7 @@
 #ifndef TINKER_E_ANGLE_H_
 #define TINKER_E_ANGLE_H_
 
+#include "energy_buffer.h"
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -16,8 +17,7 @@ TINKER_EXTERN real angunit;
 TINKER_EXTERN real cang, qang, pang, sang;
 TINKER_EXTERN eangle_t* angtyp;
 
-TINKER_EXTERN real* ea;
-TINKER_EXTERN real* vir_ea;
+TINKER_EXTERN BondedEnergy ea_handle;
 
 void eangle_data(rc_op op);
 
