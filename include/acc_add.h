@@ -31,7 +31,7 @@ inline void atomic_add_value(T value, unsigned long long* buffer,
                              int offset = 0) {
   #pragma acc atomic update
   buffer[offset] += static_cast<unsigned long long>(
-      static_cast<long long>(value * TINKER_FIXED_POINT));
+      static_cast<long long>(value * fixed_point));
 }
 TINKER_NAMESPACE_END
 

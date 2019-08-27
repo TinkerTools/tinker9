@@ -115,7 +115,7 @@ static inline void sparse_diag_precond_build(const real (*rsd)[3],
 
   const auto* polargroup = polargroup_unit.deviceptr();
 
-  auto bufsize = EnergyBuffer::estimate_size(n);
+  auto bufsize = EnergyBuffer::calc_size(n);
 
   static std::vector<real> uscalebuf;
   uscalebuf.resize(n, 1);

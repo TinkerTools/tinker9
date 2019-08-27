@@ -23,8 +23,8 @@ void pme_conv_tmpl(PMEUnit pme_u, Virial gpu_vir) {
   pterm *= pterm;
 
   VirialBuffer::PointerType gpu_vir9 = nullptr;
-  auto bufsize = VirialBuffer::estimate_size(ntot);
-  if (gpu_vir >= 0) {
+  auto bufsize = VirialBuffer::calc_size(ntot);
+  if (gpu_vir.valid()) {
     gpu_vir9 = gpu_vir->buffer();
     bufsize = gpu_vir->size();
   }

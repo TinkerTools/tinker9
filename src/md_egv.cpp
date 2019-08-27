@@ -98,11 +98,11 @@ void sum_energies(int vers) {
       for (int i = 0; i < Energy::size(); ++i) {
         Energy u = i;
         real e;
-        u->reduce(&e);
+        u->sum(&e);
         esum += e;
       }
     } else {
-      esum_handle->reduce(&esum);
+      esum_handle->sum(&esum);
     }
   }
 
@@ -113,12 +113,12 @@ void sum_energies(int vers) {
       for (int i = 0; i < Virial::size(); ++i) {
         Virial u = i;
         real v[9];
-        u->reduce(v);
+        u->sum(v);
         for (int iv = 0; iv < 9; ++iv)
           vir[iv] += v[iv];
       }
     } else {
-      vir_handle->reduce(&vir[0]);
+      vir_handle->sum(&vir[0]);
     }
   }
 }

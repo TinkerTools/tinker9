@@ -131,6 +131,8 @@ public:
 
   operator int() const { return unit; }
 
+  bool valid() const { return unit >= 0; }
+
   /// @brief
   /// get the (const) reference to the object on host
   /// @{

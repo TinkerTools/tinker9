@@ -22,7 +22,7 @@ void dfield_coulomb(real* gpu_field, real* gpu_fieldp) {
   const auto* coupl = couple_unit.deviceptr();
   const auto* polargroup = polargroup_unit.deviceptr();
 
-  auto bufsize = EnergyBuffer::estimate_size(n);
+  auto bufsize = EnergyBuffer::calc_size(n);
 
   static std::vector<real> pscalebuf;
   static std::vector<real> dscalebuf;
@@ -269,7 +269,7 @@ void ufield_coulomb(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
 
   const auto* polargroup = polargroup_unit.deviceptr();
 
-  auto bufsize = EnergyBuffer::estimate_size(n);
+  auto bufsize = EnergyBuffer::calc_size(n);
 
   static std::vector<real> uscalebuf;
   uscalebuf.resize(n, 1);

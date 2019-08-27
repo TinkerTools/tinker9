@@ -4,19 +4,19 @@
 TINKER_NAMESPACE_BEGIN
 int get_count(Count ne_) {
   int c;
-  ne_->reduce(&c);
+  ne_->sum(&c);
   return c;
 }
 
 double get_energy(Energy e_) {
   real real_out;
-  e_->reduce(&real_out);
+  e_->sum(&real_out);
   return real_out;
 }
 
 void get_virial(double* v_out, Virial vir_) {
   real r9[9];
-  vir_->reduce(r9);
+  vir_->sum(r9);
   for (int i = 0; i < 9; ++i)
     v_out[i] = r9[i];
 }
