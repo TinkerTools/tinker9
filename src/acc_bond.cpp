@@ -17,7 +17,7 @@ void ebond_tmpl() {
   auto* vir_eb = eb_handle.vir()->buffer();
   auto bufsize = eb_handle.buffer_size();
 
-  #pragma acc parallel loop gang num_gangs(bufsize) independent\
+  #pragma acc parallel loop gang(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,\
               ibnd,bl,bk,\
               eb,vir_eb)

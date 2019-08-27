@@ -16,7 +16,7 @@ void etors_tmpl() {
   auto* vir_et = et_handle.vir()->buffer();
   auto bufsize = et_handle.buffer_size();
 
-  #pragma acc parallel loop gang num_gangs(bufsize) independent\
+  #pragma acc parallel loop gang(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,\
               itors,tors1,tors2,tors3,tors4,tors5,tors6,\
               et,vir_et)

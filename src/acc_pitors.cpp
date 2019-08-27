@@ -14,7 +14,7 @@ void epitors_tmpl() {
   auto* vir_ept = ept_handle.vir()->buffer();
   auto bufsize = ept_handle.buffer_size();
 
-  #pragma acc parallel loop gang num_gangs(bufsize) independent\
+  #pragma acc parallel loop gang(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,\
               ipit,kpit,\
               ept,vir_ept)

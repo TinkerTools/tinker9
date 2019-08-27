@@ -50,7 +50,7 @@ void evdw_tmpl() {
   vscalebuf.resize(n, 1);
   auto* vscale = vscalebuf.data();
 
-  #pragma acc parallel loop gang num_gangs(bufsize) independent\
+  #pragma acc parallel loop gang(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,box,coupl,vlst,\
               ired,kred,xred,yred,zred,\
               jvdw,njvdw,radmin,epsilon,vlam,\

@@ -121,7 +121,7 @@ static inline void sparse_diag_precond_build(const real (*rsd)[3],
   uscalebuf.resize(n, 1);
   real* uscale = uscalebuf.data();
 
-  #pragma acc parallel loop gang num_gangs(bufsize) independent\
+  #pragma acc parallel loop gang(bufsize) independent\
               deviceptr(mindex,minv,ulst,box,\
               polargroup,x,y,z,polarity,pdamp,thole)\
               firstprivate(uscale[0:n])

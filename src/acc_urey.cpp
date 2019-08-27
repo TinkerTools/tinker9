@@ -14,7 +14,7 @@ void eurey_tmpl() {
   auto* vir_eub = eub_handle.vir()->buffer();
   auto bufsize = eub_handle.buffer_size();
 
-  #pragma acc parallel loop gang num_gangs(bufsize) independent\
+  #pragma acc parallel loop gang(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,\
               iury,uk,ul,\
               eub,vir_eub)

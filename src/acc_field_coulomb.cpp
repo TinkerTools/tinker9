@@ -31,7 +31,7 @@ void dfield_coulomb(real* gpu_field, real* gpu_fieldp) {
   real* pscale = pscalebuf.data();
   real* dscale = dscalebuf.data();
 
-  #pragma acc parallel loop gang num_gangs(bufsize) independent\
+  #pragma acc parallel loop gang(bufsize) independent\
               deviceptr(x,y,z,box,coupl,polargroup,mlst,\
               rpole,thole,pdamp,\
               field,fieldp)\
@@ -275,7 +275,7 @@ void ufield_coulomb(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
   uscalebuf.resize(n, 1);
   real* uscale = uscalebuf.data();
 
-  #pragma acc parallel loop gang num_gangs(bufsize) independent\
+  #pragma acc parallel loop gang(bufsize) independent\
               deviceptr(x,y,z,box,polargroup,mlst,\
               thole,pdamp,uind,uinp,field,fieldp)\
               firstprivate(uscale[0:n])
