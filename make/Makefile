@@ -88,6 +88,7 @@ unittest: $(all_tests_exec__)
 
 .PHONY: test
 test: $(all_tests_exec__)
+	$(PWD)/$(all_tests_exec__) info
 	$(PWD)/$(all_tests_exec__) [ff] --durations yes
 
 
