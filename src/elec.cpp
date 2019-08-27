@@ -27,6 +27,8 @@ static void pole_data_(rc_op op) {
     dealloc_bytes(trqx);
     dealloc_bytes(trqy);
     dealloc_bytes(trqz);
+
+    vir_trq_handle.close();
   }
 
   if (op & rc_alloc) {
@@ -61,7 +63,7 @@ static void pole_data_(rc_op op) {
       trqz = nullptr;
     }
 
-    vir_trq_handle = Virial::inquire();
+    vir_trq_handle = Virial::open();
     vir_trq_handle->alloc(n);
   }
 

@@ -107,7 +107,7 @@ NBList::~NBList() {
 static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
                              double buffer, const real* _x, const real* _y,
                              const real* _z) {
-  nblu = NBListUnit::inquire();
+  nblu = NBListUnit::open();
   auto& st = *nblu;
   const size_t rs = sizeof(int);
   size_t size;

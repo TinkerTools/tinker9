@@ -27,12 +27,16 @@ Energy BondedEnergy::e() { return e_; }
 
 Virial BondedEnergy::vir() { return vir_; }
 
-void BondedEnergy::dealloc() { bufsize_ = 0; }
+void BondedEnergy::dealloc() {
+  vir_.close();
+  e_.close();
+  bufsize_ = 0;
+}
 
 void BondedEnergy::alloc(int bsize) {
   if (rc_flag & calc::analyz) {
-    e_ = Energy::inquire();
-    vir_ = Virial::inquire();
+    e_ = Energy::open();
+    vir_ = Virial::open();
   } else {
     e_ = esum_handle;
     vir_ = vir_handle;
@@ -48,11 +52,14 @@ void BondedEnergy::alloc(int bsize) {
 
 Count NonbondedEnergy::ne() { return ne_; }
 
-void NonbondedEnergy::dealloc() { bufsize_ = 0; }
+void NonbondedEnergy::dealloc() {
+  ne_.close();
+  BondedEnergy::dealloc();
+}
 
 void NonbondedEnergy::alloc(int bsize) {
   BondedEnergy::alloc(bsize);
-  ne_ = Count::inquire();
+  ne_ = Count::open();
   ne_->alloc(bsize);
 
   assert(bufsize_ == ne_->size());

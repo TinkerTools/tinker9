@@ -18,7 +18,7 @@ void dfield_ewald_recip_self(real* gpu_field) {
   cmp_to_fmp(pu, cmp, fmp);
   grid_mpole(pu, fmp);
   fftfront(pu);
-  if (vir_m_handle > 0 && !use_potent(mpole_term))
+  if (vir_m_handle.valid() && !use_potent(mpole_term))
     pme_conv1(pu, vir_m_handle);
   else
     pme_conv0(pu);

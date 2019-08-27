@@ -171,8 +171,8 @@ void get_virial(double*, Virial);
 class BondedEnergy {
 protected:
   int bufsize_;
-  Virial vir_;
   Energy e_;
+  Virial vir_;
 
 public:
   int buffer_size() const;

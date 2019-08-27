@@ -45,12 +45,15 @@ static void ev_data_(rc_op op) {
     Count::clear();
     Energy::clear();
     Virial::clear();
+
+    esum_handle.close();
+    vir_handle.close();
   }
 
   if (op & rc_alloc) {
     if (!(rc_flag & calc::analyz)) {
-      esum_handle = Energy::inquire();
-      vir_handle = Virial::inquire();
+      esum_handle = Energy::open();
+      vir_handle = Virial::open();
     }
   }
 }
