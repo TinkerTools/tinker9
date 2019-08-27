@@ -1,9 +1,9 @@
 fortran_compiler_macro__ := -DTINKER_GFORTRAN
 fortran_runtime_flags__ := -L/usr/lib/gcc/x86_64-linux-gnu/5.4.0 -lgfortran -lgomp
-libtinker_dir__ := $(top_dir__)/build/tinker/source
+libtinker_dir__ := $(top_dir__)/build-travis/tinker/source
 shared_libtinker__ := libtinker.so
 
-fftw_dir__ := $(top_dir__)/build/fftw
+fftw_dir__ := $(top_dir__)/build-travis/fftw
 
 cuda_dir__ := /usr/local/cuda
 

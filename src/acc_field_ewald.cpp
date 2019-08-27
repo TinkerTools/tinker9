@@ -72,7 +72,7 @@ void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
 
   real bn[4];
 
-  #pragma acc parallel loop gang num_gangs(bufsize) independent\
+  #pragma acc parallel loop gang(bufsize) independent\
               deviceptr(x,y,z,box,coupl,polargroup,mlst,\
               rpole,thole,pdamp,\
               field,fieldp)\
@@ -417,7 +417,7 @@ void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
 
   real bn[3];
 
-  #pragma acc parallel loop gang num_gangs(bufsize) independent\
+  #pragma acc parallel loop gang(bufsize) independent\
               deviceptr(x,y,z,box,polargroup,mlst,\
               thole,pdamp,uind,uinp,field,fieldp)\
               firstprivate(uscale[0:n])

@@ -121,7 +121,7 @@ void etortor_tmpl() {
   auto bufsize = ett_handle.buffer_size();
 
   real ftt[4], ft12[4], ft1[4], ft2[4];
-  #pragma acc parallel loop gang num_gangs(bufsize) independent\
+  #pragma acc parallel loop gang(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,\
               ibitor,itt,chkttor_ia_,\
               tnx,tny,ttx,tty,tbf,tbx,tby,tbxy,\

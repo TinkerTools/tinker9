@@ -1,6 +1,7 @@
 branches:
   only:
     - master
+    - travis
 
 
 language: generic
@@ -18,8 +19,8 @@ before_install:
 
 
 script:
-  - mkdir -p build
-  - cd build
+  - mkdir -p build-travis
+  - cd build-travis
 
   - mkdir -p tinker/source
   - curl $CI_DEPEND_DIR/tinker-291a85c1/libtinker.so -o tinker/source/libtinker.so

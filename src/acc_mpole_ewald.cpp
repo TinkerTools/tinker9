@@ -42,7 +42,7 @@ void empole_real_self_tmpl() {
 
   real bn[6];
 
-  #pragma acc parallel loop gang num_gangs(bufsize) independent\
+  #pragma acc parallel loop gang(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,box,coupl,mlst,\
                         rpole,\
                         em,nem,vir_em,trqx,trqy,trqz)\
@@ -425,7 +425,7 @@ void empole_recip_tmpl() {
   const int nfft3 = st.nfft3;
   const real f = electric / dielec;
 
-  #pragma acc parallel loop gang num_gangs(bufsize) independent\
+  #pragma acc parallel loop gang(bufsize) independent\
               deviceptr(gx,gy,gz,box,\
                         cmp,fmp,cphi,fphi,\
                         em,vir_em,trqx,trqy,trqz)

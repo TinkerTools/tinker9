@@ -29,7 +29,7 @@ void pme_conv_tmpl(PMEUnit pme_u, Virial gpu_vir) {
     bufsize = gpu_vir->size();
   }
 
-  #pragma acc parallel loop gang num_gangs(bufsize) independent\
+  #pragma acc parallel loop gang(bufsize) independent\
               deviceptr(gpu_vir9,dptr,box)
   for (int i = 0; i < ntot; ++i) {
     const real volterm = pi * box->volbox;

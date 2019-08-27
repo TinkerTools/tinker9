@@ -33,7 +33,7 @@ void empole_coulomb_tmpl() {
   mscalebuf.resize(n, 1);
   real* mscale = mscalebuf.data();
 
-  #pragma acc parallel loop gang num_gangs(bufsize) independent\
+  #pragma acc parallel loop gang(bufsize) independent\
               deviceptr(x,y,z,gx,gy,gz,box,coupl,mlst,\
                         rpole,\
                         em,nem,vir_em,trqx,trqy,trqz)\
