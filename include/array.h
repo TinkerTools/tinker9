@@ -9,10 +9,9 @@ TINKER_NAMESPACE_BEGIN
 /// zero out the first n elements of an array on device
 /// @{
 void zero_array(int* dst, int nelem);
+void zero_array(unsigned long long* dst, int nelem);
 void zero_array(float* dst, int nelem);
 void zero_array(double* dst, int nelem);
-void zero_array(long long* dst, int nelem);
-void zero_array(unsigned long long* dst, int nelem);
 /// @}
 
 // copyin: copy data from host to device
@@ -26,6 +25,11 @@ void zero_array(unsigned long long* dst, int nelem);
 void copyin_array(int* dst, const int* src, int nelem);
 void copyout_array(int* dst, const int* src, int nelem);
 
+void copyin_array(unsigned long long* dst, const unsigned long long* src,
+                  int nelem);
+void copyout_array(unsigned long long* dst, const unsigned long long* src,
+                   int nelem);
+
 void copyin_array(float* dst, const float* src, int nelem);
 void copyout_array(float* dst, const float* src, int nelem);
 
@@ -34,24 +38,11 @@ void copyout_array(double* dst, const float* src, int nelem);
 
 void copyin_array(double* dst, const double* src, int nelem);
 void copyout_array(double* dst, const double* src, int nelem);
-
-void copyin_array(long long* dst, const long long* src, int nelem);
-void copyout_array(long long* dst, const long long* src, int nelem);
-
-void copyin_array(unsigned long long* dst, const unsigned long long* src,
-                  int nelem);
-void copyout_array(unsigned long long* dst, const unsigned long long* src,
-                   int nelem);
 /// @}
 
 /// @brief
-/// copy the @c idx0-th of every @c ndim elements from @c src to @c dst
-///
-/// @param[in] idx0
-/// ranges from 0 to ndim-1
-///
-/// @param[in] nelem
-/// number of elements copied to @c dst
+/// pick the @c idx0-th of every @c ndim elements from @c src to @c dst of
+/// length @c nelem
 /// @{
 void copyin_array2(int idx0, int ndim, float* dst, const float* src, int nelem);
 void copyout_array2(int idx0, int ndim, float* dst, const float* src,

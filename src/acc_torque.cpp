@@ -1,6 +1,6 @@
 #include "acc_add.h"
+#include "acc_mathfunc.h"
 #include "elec.h"
-#include "mathfunc.h"
 #include "md.h"
 
 #define ADD_(ans, a, b)                                                        \
@@ -366,15 +366,15 @@ void torque_tmpl(Virial v_handle) {
       real vzz = zix * frcx[2] + ziy * frcy[2] + ziz * frcz[2];
 
       int offv = (i & (bufsize - 1)) * 16;
-      atomic_add_value(gpu_vir, vxx, offv + 0);
-      atomic_add_value(gpu_vir, vxy, offv + 1);
-      atomic_add_value(gpu_vir, vxz, offv + 2);
-      atomic_add_value(gpu_vir, vxy, offv + 3);
-      atomic_add_value(gpu_vir, vyy, offv + 4);
-      atomic_add_value(gpu_vir, vyz, offv + 5);
-      atomic_add_value(gpu_vir, vxz, offv + 6);
-      atomic_add_value(gpu_vir, vyz, offv + 7);
-      atomic_add_value(gpu_vir, vzz, offv + 8);
+      atomic_add_value(vxx, gpu_vir, offv + 0);
+      atomic_add_value(vxy, gpu_vir, offv + 1);
+      atomic_add_value(vxz, gpu_vir, offv + 2);
+      atomic_add_value(vxy, gpu_vir, offv + 3);
+      atomic_add_value(vyy, gpu_vir, offv + 4);
+      atomic_add_value(vyz, gpu_vir, offv + 5);
+      atomic_add_value(vxz, gpu_vir, offv + 6);
+      atomic_add_value(vyz, gpu_vir, offv + 7);
+      atomic_add_value(vzz, gpu_vir, offv + 8);
     } // end if_constexpr(DO_V)
   }   // end for (int i)
 }

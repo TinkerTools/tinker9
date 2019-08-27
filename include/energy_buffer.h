@@ -5,14 +5,13 @@
 #include "mathfunc.h"
 #include "rt.h"
 #include <cassert>
-#include <type_traits>
 
 TINKER_NAMESPACE_BEGIN
-typedef unsigned long long EnergyBufferFixedPointType;
-
+namespace ebuf_detail {
 template <class T>
-T fixed_to_floating_point(EnergyBufferFixedPointType val) {
-  return static_cast<T>(static_cast<long long>(val)) / 0x100000000ull;
+T fixed_to_floating_point(FixedPointType val) {
+  assert(std::is_floating_point<T>::value);
+  return static_cast<T>(static_cast<long long>(val)) / TINKER_FIXED_POINT;
 }
 
 template <class Answer>
@@ -22,13 +21,48 @@ struct EnergyBufferStorage {
 
 template <>
 struct EnergyBufferStorage<float> {
-  typedef EnergyBufferFixedPointType Type;
+  typedef FixedPointType Type;
 };
 
 // template <>
 // struct EnergyBufferStorage<double> {
-//   typedef EnergyBufferFixedPointType Type;
+//   typedef FixedPointType Type;
 // };
+
+template <class Answer, class Store, int NAnswer, int NStore>
+void reduce(Answer* __restrict__ host_ans, const Store* __restrict__ dptr,
+            int nelem) {
+  static_assert(NAnswer >= 1, "");
+  static_assert(NStore >= NAnswer, "");
+
+  Store val[NAnswer];
+  if_constexpr(NAnswer == 1) { val[0] = reduce_sum(dptr, nelem); }
+  else {
+    reduce_sum2(val, NAnswer, dptr, nelem, NStore);
+  }
+
+  if_constexpr(std::is_same<Store, FixedPointType>::value &&
+               !std::is_same<Store, Answer>::value) {
+    if_constexpr(NAnswer == 1) {
+      *host_ans = fixed_to_floating_point<Answer>(val[0]);
+    }
+    else {
+      for (int i = 0; i < NAnswer; ++i)
+        host_ans[i] = fixed_to_floating_point<Answer>(val[i]);
+    }
+  }
+  else if_constexpr(std::is_same<Store, Answer>::value) {
+    if_constexpr(NAnswer == 1) { *host_ans = val[0]; }
+    else {
+      for (int i = 0; i < NAnswer; ++i)
+        host_ans[i] = val[i];
+    }
+  }
+  else {
+    assert(false);
+  }
+}
+}
 
 //====================================================================//
 
@@ -41,47 +75,27 @@ struct GenericBufferReduce;
 
 template <class Answer>
 struct GenericBufferReduce<Answer, GenericBufferVersion::A1S1> {
-  typedef typename EnergyBufferStorage<Answer>::Type Store;
+  typedef typename ebuf_detail::EnergyBufferStorage<Answer>::Type Store;
   static constexpr int NAnswer = 1;
   static constexpr int NStore = 1;
   struct Reduce {
     void operator()(Answer* host_ans, const Store* dptr, int nelem) {
-      Store val = reduce_sum(dptr, nelem);
-      if_constexpr(std::is_same<Store, EnergyBufferFixedPointType>::value &&
-                   !std::is_same<Store, Answer>::value) {
-        *host_ans = fixed_to_floating_point<Answer>(val);
-      }
-      else if_constexpr(std::is_same<Store, Answer>::value) {
-        *host_ans = val;
-      }
-      else {
-        assert(false);
-      }
+      ebuf_detail::reduce<Answer, Store, NAnswer, NStore>(host_ans, dptr,
+                                                          nelem);
     }
   };
 };
 
 template <class Answer>
 struct GenericBufferReduce<Answer, GenericBufferVersion::A9S16> {
-  typedef typename EnergyBufferStorage<Answer>::Type Store;
+  typedef typename ebuf_detail::EnergyBufferStorage<Answer>::Type Store;
   static constexpr int NAnswer = 9;
   static constexpr int NStore = 16;
   struct Reduce {
-    void operator()(Answer* host_ans, const Store* dptr, int nelem) {
-      Store val[NAnswer];
-      reduce_sum2(val, NAnswer, dptr, nelem, NStore);
-      if_constexpr(std::is_same<Store, EnergyBufferFixedPointType>::value &&
-                   !std::is_same<Store, Answer>::value) {
-        for (int i = 0; i < NAnswer; ++i)
-          host_ans[i] = fixed_to_floating_point<Answer>(val[i]);
-      }
-      else if_constexpr(std::is_same<Store, Answer>::value) {
-        for (int i = 0; i < NAnswer; ++i)
-          host_ans[i] = val[i];
-      }
-      else {
-        assert(false);
-      }
+    void operator()(Answer* __restrict__ host_ans,
+                    const Store* __restrict__ dptr, int nelem) {
+      ebuf_detail::reduce<Answer, Store, NAnswer, NStore>(host_ans, dptr,
+                                                          nelem);
     }
   };
 };
@@ -127,7 +141,7 @@ public:
 
     constexpr size_t max_parallel = 2048;
     constexpr size_t min_parallel = 32;
-    assert(max_n_parallel >= min_parallel && "Increase max_MB");
+    assert(max_n_parallel >= min_parallel && "must increase max_MB");
 
     size_t new_size = std::min(std::max(pow2_ge(nelem), min_parallel),
                                pow2_le(max_n_parallel));

@@ -1,4 +1,5 @@
-#include "acc_seq.h"
+#include "acc_add.h"
+#include "acc_image.h"
 #include "array.h"
 #include "couple.h"
 #include "e_polar.h"
@@ -299,9 +300,9 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
           sr5 += (bn[2] - rr5);
           sr7 += (bn[3] - rr7);
           real e = term1 * sr3 + term2 * sr5 + term3 * sr7;
-          atomic_add_value(ep, e, offset);
+          atomic_add_value(e, ep, offset);
           if (efull != 0) {
-            atomic_add_value(nep, 1, offset);
+            atomic_add_value(1, nep, offset);
           }
           // end if
         }
@@ -669,15 +670,15 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
             real vzz = zr * frcz;
 
             int offv = offset * 16;
-            atomic_add_value(vir_ep, vxx, offv + 0);
-            atomic_add_value(vir_ep, vxy, offv + 1);
-            atomic_add_value(vir_ep, vxz, offv + 2);
-            atomic_add_value(vir_ep, vxy, offv + 3);
-            atomic_add_value(vir_ep, vyy, offv + 4);
-            atomic_add_value(vir_ep, vyz, offv + 5);
-            atomic_add_value(vir_ep, vxz, offv + 6);
-            atomic_add_value(vir_ep, vyz, offv + 7);
-            atomic_add_value(vir_ep, vzz, offv + 8);
+            atomic_add_value(vxx, vir_ep, offv + 0);
+            atomic_add_value(vxy, vir_ep, offv + 1);
+            atomic_add_value(vxz, vir_ep, offv + 2);
+            atomic_add_value(vxy, vir_ep, offv + 3);
+            atomic_add_value(vyy, vir_ep, offv + 4);
+            atomic_add_value(vyz, vir_ep, offv + 5);
+            atomic_add_value(vxz, vir_ep, offv + 6);
+            atomic_add_value(vyz, vir_ep, offv + 7);
+            atomic_add_value(vzz, vir_ep, offv + 8);
           }
         }
         // end if use_thole
@@ -789,7 +790,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       real e = 0.5f * f *
           (fuind[i][0] * fphi[i][1] + fuind[i][1] * fphi[i][2] +
            fuind[i][2] * fphi[i][3]);
-      atomic_add_value(ep, e, offset);
+      atomic_add_value(e, ep, offset);
     }
     // end if
   }
@@ -910,8 +911,8 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       uiy = gpu_uind[i][1];
       uiz = gpu_uind[i][2];
       real uii = dix * uix + diy * uiy + diz * uiz;
-      atomic_add_value(ep, fterm_term * uii, offset);
-      atomic_add_value(nep, 1, offset);
+      atomic_add_value(fterm_term * uii, ep, offset);
+      atomic_add_value(1, nep, offset);
       // end if
     }
   }
@@ -1031,15 +1032,15 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       // end if
 
       int offv = (i & (bufsize - 1)) * 16;
-      atomic_add_value(vir_ep, vxx, offv + 0);
-      atomic_add_value(vir_ep, vxy, offv + 1);
-      atomic_add_value(vir_ep, vxz, offv + 2);
-      atomic_add_value(vir_ep, vxy, offv + 3);
-      atomic_add_value(vir_ep, vyy, offv + 4);
-      atomic_add_value(vir_ep, vyz, offv + 5);
-      atomic_add_value(vir_ep, vxz, offv + 6);
-      atomic_add_value(vir_ep, vyz, offv + 7);
-      atomic_add_value(vir_ep, vzz, offv + 8);
+      atomic_add_value(vxx, vir_ep, offv + 0);
+      atomic_add_value(vxy, vir_ep, offv + 1);
+      atomic_add_value(vxz, vir_ep, offv + 2);
+      atomic_add_value(vxy, vir_ep, offv + 3);
+      atomic_add_value(vyy, vir_ep, offv + 4);
+      atomic_add_value(vyz, vir_ep, offv + 5);
+      atomic_add_value(vxz, vir_ep, offv + 6);
+      atomic_add_value(vyz, vir_ep, offv + 7);
+      atomic_add_value(vzz, vir_ep, offv + 8);
     }
 
     // qgrip: pvu_qgrid
@@ -1113,15 +1114,15 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
         real vzz = (h3 * h3 * vterm - eterm);
 
         int offv = (i & (bufsize - 1)) * 16;
-        atomic_add_value(vir_ep, vxx, offv + 0);
-        atomic_add_value(vir_ep, vxy, offv + 3);
-        atomic_add_value(vir_ep, vxz, offv + 6);
-        atomic_add_value(vir_ep, vxy, offv + 1);
-        atomic_add_value(vir_ep, vyy, offv + 4);
-        atomic_add_value(vir_ep, vyz, offv + 7);
-        atomic_add_value(vir_ep, vxz, offv + 2);
-        atomic_add_value(vir_ep, vyz, offv + 5);
-        atomic_add_value(vir_ep, vzz, offv + 8);
+        atomic_add_value(vxx, vir_ep, offv + 0);
+        atomic_add_value(vxy, vir_ep, offv + 3);
+        atomic_add_value(vxz, vir_ep, offv + 6);
+        atomic_add_value(vxy, vir_ep, offv + 1);
+        atomic_add_value(vyy, vir_ep, offv + 4);
+        atomic_add_value(vyz, vir_ep, offv + 7);
+        atomic_add_value(vxz, vir_ep, offv + 2);
+        atomic_add_value(vyz, vir_ep, offv + 5);
+        atomic_add_value(vzz, vir_ep, offv + 8);
       }
     }
   }

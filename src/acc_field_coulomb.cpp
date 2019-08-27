@@ -1,4 +1,4 @@
-#include "acc_seq.h"
+#include "acc_image.h"
 #include "array.h"
 #include "couple.h"
 #include "e_polar.h"

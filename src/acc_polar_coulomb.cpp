@@ -1,4 +1,5 @@
-#include "acc_seq.h"
+#include "acc_add.h"
+#include "acc_image.h"
 #include "array.h"
 #include "couple.h"
 #include "e_polar.h"
@@ -266,8 +267,8 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
           real term3 = uir * qkr - ukr * qir;
           real e = pscale[k] * (term1 * sr3 + term2 * sr5 + term3 * sr7);
           if (e != 0) {
-            atomic_add_value(ep, e, offset);
-            atomic_add_value(nep, 1, offset);
+            atomic_add_value(e, ep, offset);
+            atomic_add_value(1, nep, offset);
           }
         }
 
@@ -514,15 +515,15 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
             real vzz = -zr * frcz;
 
             int offv = offset * 16;
-            atomic_add_value(vir_ep, vxx, offv + 0);
-            atomic_add_value(vir_ep, vxy, offv + 1);
-            atomic_add_value(vir_ep, vxz, offv + 2);
-            atomic_add_value(vir_ep, vxy, offv + 3);
-            atomic_add_value(vir_ep, vyy, offv + 4);
-            atomic_add_value(vir_ep, vyz, offv + 5);
-            atomic_add_value(vir_ep, vxz, offv + 6);
-            atomic_add_value(vir_ep, vyz, offv + 7);
-            atomic_add_value(vir_ep, vzz, offv + 8);
+            atomic_add_value(vxx, vir_ep, offv + 0);
+            atomic_add_value(vxy, vir_ep, offv + 1);
+            atomic_add_value(vxz, vir_ep, offv + 2);
+            atomic_add_value(vxy, vir_ep, offv + 3);
+            atomic_add_value(vyy, vir_ep, offv + 4);
+            atomic_add_value(vyz, vir_ep, offv + 5);
+            atomic_add_value(vxz, vir_ep, offv + 6);
+            atomic_add_value(vyz, vir_ep, offv + 7);
+            atomic_add_value(vzz, vir_ep, offv + 8);
           }
         }
         // end if use_thole

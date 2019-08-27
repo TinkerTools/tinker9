@@ -1,4 +1,4 @@
-#include "acc_seq.h"
+#include "acc_add.h"
 #include "e_tors.h"
 #include "md.h"
 
@@ -118,7 +118,7 @@ void etors_tmpl() {
         real e = torsunit *
             (v1 * phi1 + v2 * phi2 + v3 * phi3 + v4 * phi4 + v5 * phi5 +
              v6 * phi6);
-        atomic_add_value(et, e, offset);
+        atomic_add_value(e, et, offset);
       }
 
       if_constexpr(do_g) {
@@ -193,15 +193,15 @@ void etors_tmpl() {
           real vzz = zcb * (dedzic + dedzid) - zba * dedzia + zdc * dedzid;
 
           int offv = offset * 16;
-          atomic_add_value(vir_et, vxx, offv + 0);
-          atomic_add_value(vir_et, vyx, offv + 1);
-          atomic_add_value(vir_et, vzx, offv + 2);
-          atomic_add_value(vir_et, vyx, offv + 3);
-          atomic_add_value(vir_et, vyy, offv + 4);
-          atomic_add_value(vir_et, vzy, offv + 5);
-          atomic_add_value(vir_et, vzx, offv + 6);
-          atomic_add_value(vir_et, vzy, offv + 7);
-          atomic_add_value(vir_et, vzz, offv + 8);
+          atomic_add_value(vxx, vir_et, offv + 0);
+          atomic_add_value(vyx, vir_et, offv + 1);
+          atomic_add_value(vzx, vir_et, offv + 2);
+          atomic_add_value(vyx, vir_et, offv + 3);
+          atomic_add_value(vyy, vir_et, offv + 4);
+          atomic_add_value(vzy, vir_et, offv + 5);
+          atomic_add_value(vzx, vir_et, offv + 6);
+          atomic_add_value(vzy, vir_et, offv + 7);
+          atomic_add_value(vzz, vir_et, offv + 8);
         }
       }
     }

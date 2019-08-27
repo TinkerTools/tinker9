@@ -1,5 +1,5 @@
+#include "acc_mathfunc.h"
 #include "elec.h"
-#include "mathfunc.h"
 #include "md.h"
 
 TINKER_NAMESPACE_BEGIN

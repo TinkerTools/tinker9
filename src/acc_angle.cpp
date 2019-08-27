@@ -1,4 +1,4 @@
-#include "acc_seq.h"
+#include "acc_add.h"
 #include "e_angle.h"
 #include "md.h"
 
@@ -95,7 +95,7 @@ void eangle_tmpl() {
                6 * sang * dt4);
         }
 
-        if_constexpr(do_e) { atomic_add_value(ea, e, offset); }
+        if_constexpr(do_e) { atomic_add_value(e, ea, offset); }
 
         if_constexpr(do_g) {
           real terma = -deddt * REAL_RECIP(rab2 * rp);
@@ -138,15 +138,15 @@ void eangle_tmpl() {
             real vzz = zab * dedzia + zcb * dedzic;
 
             int offv = offset * 16;
-            atomic_add_value(vir_ea, vxx, offv + 0);
-            atomic_add_value(vir_ea, vyx, offv + 1);
-            atomic_add_value(vir_ea, vzx, offv + 2);
-            atomic_add_value(vir_ea, vyx, offv + 3);
-            atomic_add_value(vir_ea, vyy, offv + 4);
-            atomic_add_value(vir_ea, vzy, offv + 5);
-            atomic_add_value(vir_ea, vzx, offv + 6);
-            atomic_add_value(vir_ea, vzy, offv + 7);
-            atomic_add_value(vir_ea, vzz, offv + 8);
+            atomic_add_value(vxx, vir_ea, offv + 0);
+            atomic_add_value(vyx, vir_ea, offv + 1);
+            atomic_add_value(vzx, vir_ea, offv + 2);
+            atomic_add_value(vyx, vir_ea, offv + 3);
+            atomic_add_value(vyy, vir_ea, offv + 4);
+            atomic_add_value(vzy, vir_ea, offv + 5);
+            atomic_add_value(vzx, vir_ea, offv + 6);
+            atomic_add_value(vzy, vir_ea, offv + 7);
+            atomic_add_value(vzz, vir_ea, offv + 8);
           }
         }
       }
@@ -192,7 +192,7 @@ void eangle_tmpl() {
         if_constexpr(do_e) {
           real e = angunit * force * dt2 *
               (1 + cang * dt + qang * dt2 + pang * dt3 + sang * dt4);
-          atomic_add_value(ea, e, offset);
+          atomic_add_value(e, ea, offset);
         }
 
         if_constexpr(do_g) {
@@ -287,15 +287,15 @@ void eangle_tmpl() {
             real vzz = zad * dedzia + zbd * dedzib + zcd * dedzic;
 
             int offv = offset * 16;
-            atomic_add_value(vir_ea, vxx, offv + 0);
-            atomic_add_value(vir_ea, vyx, offv + 1);
-            atomic_add_value(vir_ea, vzx, offv + 2);
-            atomic_add_value(vir_ea, vyx, offv + 3);
-            atomic_add_value(vir_ea, vyy, offv + 4);
-            atomic_add_value(vir_ea, vzy, offv + 5);
-            atomic_add_value(vir_ea, vzx, offv + 6);
-            atomic_add_value(vir_ea, vzy, offv + 7);
-            atomic_add_value(vir_ea, vzz, offv + 8);
+            atomic_add_value(vxx, vir_ea, offv + 0);
+            atomic_add_value(vyx, vir_ea, offv + 1);
+            atomic_add_value(vzx, vir_ea, offv + 2);
+            atomic_add_value(vyx, vir_ea, offv + 3);
+            atomic_add_value(vyy, vir_ea, offv + 4);
+            atomic_add_value(vzy, vir_ea, offv + 5);
+            atomic_add_value(vzx, vir_ea, offv + 6);
+            atomic_add_value(vzy, vir_ea, offv + 7);
+            atomic_add_value(vzz, vir_ea, offv + 8);
           }
         }
       }

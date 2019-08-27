@@ -1,4 +1,4 @@
-#include "acc_seq.h"
+#include "acc_add.h"
 #include "e_angle.h"
 #include "e_bond.h"
 #include "e_strbnd.h"
@@ -91,7 +91,7 @@ void estrbnd_tmpl() {
 
       if_constexpr(do_e) {
         real e = termr * dt;
-        atomic_add_value(eba, e, offset);
+        atomic_add_value(e, eba, offset);
       }
 
       if_constexpr(do_g) {
@@ -135,15 +135,15 @@ void estrbnd_tmpl() {
           real vzz = zab * dedzia + zcb * dedzic;
 
           int offv = offset * 16;
-          atomic_add_value(vir_eba, vxx, offv + 0);
-          atomic_add_value(vir_eba, vyx, offv + 1);
-          atomic_add_value(vir_eba, vzx, offv + 2);
-          atomic_add_value(vir_eba, vyx, offv + 3);
-          atomic_add_value(vir_eba, vyy, offv + 4);
-          atomic_add_value(vir_eba, vzy, offv + 5);
-          atomic_add_value(vir_eba, vzx, offv + 6);
-          atomic_add_value(vir_eba, vzy, offv + 7);
-          atomic_add_value(vir_eba, vzz, offv + 8);
+          atomic_add_value(vxx, vir_eba, offv + 0);
+          atomic_add_value(vyx, vir_eba, offv + 1);
+          atomic_add_value(vzx, vir_eba, offv + 2);
+          atomic_add_value(vyx, vir_eba, offv + 3);
+          atomic_add_value(vyy, vir_eba, offv + 4);
+          atomic_add_value(vzy, vir_eba, offv + 5);
+          atomic_add_value(vzx, vir_eba, offv + 6);
+          atomic_add_value(vzy, vir_eba, offv + 7);
+          atomic_add_value(vzz, vir_eba, offv + 8);
         }
       }
     }

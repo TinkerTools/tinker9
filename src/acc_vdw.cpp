@@ -1,4 +1,7 @@
-#include "acc_seq.h"
+#include "acc_add.h"
+#include "acc_image.h"
+#include "acc_mathfunc.h"
+#include "acc_switch.h"
 #include "couple.h"
 #include "e_vdw.h"
 #include "md.h"
@@ -139,11 +142,11 @@ void evdw_tmpl() {
         // Increment the energy, gradient, and virial.
 
         if_constexpr(do_e) {
-          atomic_add_value(ev, e, offset);
+          atomic_add_value(e, ev, offset);
 
           if_constexpr(do_a) {
             if (e != 0) {
-              atomic_add_value(nev, 1, offset);
+              atomic_add_value(1, nev, offset);
             }
           }
         }
@@ -191,15 +194,15 @@ void evdw_tmpl() {
             real vzz = zr * dedz;
 
             int offv = offset * 16;
-            atomic_add_value(vir_ev, vxx, offv + 0);
-            atomic_add_value(vir_ev, vyx, offv + 1);
-            atomic_add_value(vir_ev, vzx, offv + 2);
-            atomic_add_value(vir_ev, vyx, offv + 3);
-            atomic_add_value(vir_ev, vyy, offv + 4);
-            atomic_add_value(vir_ev, vzy, offv + 5);
-            atomic_add_value(vir_ev, vzx, offv + 6);
-            atomic_add_value(vir_ev, vzy, offv + 7);
-            atomic_add_value(vir_ev, vzz, offv + 8);
+            atomic_add_value(vxx, vir_ev, offv + 0);
+            atomic_add_value(vyx, vir_ev, offv + 1);
+            atomic_add_value(vzx, vir_ev, offv + 2);
+            atomic_add_value(vyx, vir_ev, offv + 3);
+            atomic_add_value(vyy, vir_ev, offv + 4);
+            atomic_add_value(vzy, vir_ev, offv + 5);
+            atomic_add_value(vzx, vir_ev, offv + 6);
+            atomic_add_value(vzy, vir_ev, offv + 7);
+            atomic_add_value(vzz, vir_ev, offv + 8);
           } // end if (do_v)
         }   // end if (do_g)
       }

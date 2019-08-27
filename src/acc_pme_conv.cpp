@@ -1,7 +1,7 @@
-#include "acc_seq.h"
+#include "acc_add.h"
+#include "acc_mathfunc.h"
 #include "box.h"
 #include "elec.h"
-#include "mathfunc.h"
 #include "md.h"
 #include "pme.h"
 
@@ -80,15 +80,15 @@ void pme_conv_tmpl(PMEUnit pme_u, Virial gpu_vir) {
         real vzz = (h3 * h3 * vterm - eterm);
 
         int offv = (i & (bufsize - 1)) * 16;
-        atomic_add_value(gpu_vir9, vxx, offv + 0);
-        atomic_add_value(gpu_vir9, vxy, offv + 1);
-        atomic_add_value(gpu_vir9, vxz, offv + 2);
-        atomic_add_value(gpu_vir9, vxy, offv + 3);
-        atomic_add_value(gpu_vir9, vyy, offv + 4);
-        atomic_add_value(gpu_vir9, vyz, offv + 5);
-        atomic_add_value(gpu_vir9, vxz, offv + 6);
-        atomic_add_value(gpu_vir9, vyz, offv + 7);
-        atomic_add_value(gpu_vir9, vzz, offv + 8);
+        atomic_add_value(vxx, gpu_vir9, offv + 0);
+        atomic_add_value(vxy, gpu_vir9, offv + 1);
+        atomic_add_value(vxz, gpu_vir9, offv + 2);
+        atomic_add_value(vxy, gpu_vir9, offv + 3);
+        atomic_add_value(vyy, gpu_vir9, offv + 4);
+        atomic_add_value(vyz, gpu_vir9, offv + 5);
+        atomic_add_value(vxz, gpu_vir9, offv + 6);
+        atomic_add_value(vyz, gpu_vir9, offv + 7);
+        atomic_add_value(vzz, gpu_vir9, offv + 8);
       }
     }
 

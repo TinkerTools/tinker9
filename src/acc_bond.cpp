@@ -1,4 +1,4 @@
-#include "acc_seq.h"
+#include "acc_add.h"
 #include "e_bond.h"
 #include "md.h"
 #include <cassert>
@@ -51,7 +51,7 @@ void ebond_tmpl() {
       if_constexpr(do_g) deddt = 4 * bde * (1 - expterm) * expterm;
     }
 
-    if_constexpr(do_e) { atomic_add_value(eb, e, offset); }
+    if_constexpr(do_e) { atomic_add_value(e, eb, offset); }
 
     if_constexpr(do_g) {
       real de = deddt * REAL_RECIP(rab);
@@ -80,15 +80,15 @@ void ebond_tmpl() {
         real vzz = zab * dedz;
 
         int offv = offset * 16;
-        atomic_add_value(vir_eb, vxx, offv + 0);
-        atomic_add_value(vir_eb, vyx, offv + 1);
-        atomic_add_value(vir_eb, vzx, offv + 2);
-        atomic_add_value(vir_eb, vyx, offv + 3);
-        atomic_add_value(vir_eb, vyy, offv + 4);
-        atomic_add_value(vir_eb, vzy, offv + 5);
-        atomic_add_value(vir_eb, vzx, offv + 6);
-        atomic_add_value(vir_eb, vzy, offv + 7);
-        atomic_add_value(vir_eb, vzz, offv + 8);
+        atomic_add_value(vxx, vir_eb, offv + 0);
+        atomic_add_value(vyx, vir_eb, offv + 1);
+        atomic_add_value(vzx, vir_eb, offv + 2);
+        atomic_add_value(vyx, vir_eb, offv + 3);
+        atomic_add_value(vyy, vir_eb, offv + 4);
+        atomic_add_value(vzy, vir_eb, offv + 5);
+        atomic_add_value(vzx, vir_eb, offv + 6);
+        atomic_add_value(vzy, vir_eb, offv + 7);
+        atomic_add_value(vzz, vir_eb, offv + 8);
       }
     }
   } // end for (int i)

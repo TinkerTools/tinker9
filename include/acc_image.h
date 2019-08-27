@@ -6,8 +6,8 @@
 TINKER_NAMESPACE_BEGIN
 /**
  * @brief
- * applys periodic boundary conditions to displacement (xr, yr, zr) and
- * preserves the correct signs
+ * apply periodic boundary conditions to displacement (@c xr, @c yr, @c zr) and
+ * preserve the correct signs
  */
 #pragma acc routine seq
 void image(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
@@ -15,8 +15,8 @@ void image(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
 
 /**
  * @brief
- * applys periodic boundary conditions to displacement (xr, yr, zr) but only
- * guarantee the lengths are correct
+ * apply periodic boundary conditions to displacement (@c xr, @c yr, @c zr) but
+ * only guarantee the lengths are correct
  */
 #pragma acc routine seq
 void imagen(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,

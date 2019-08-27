@@ -1,4 +1,4 @@
-#include "acc_seq.h"
+#include "acc_image.h"
 #include "md.h"
 #include "nblist.h"
 

@@ -1,4 +1,5 @@
-#include "acc_seq.h"
+#include "acc_add.h"
+#include "acc_image.h"
 #include "couple.h"
 #include "e_mpole.h"
 #include "e_polar.h"
@@ -175,7 +176,7 @@ void empole_real_self_tmpl() {
               term5 * rr9;
           efull *= mscale[k];
           if (efull != 0) {
-            atomic_add_value(nem, 1, offset);
+            atomic_add_value(1, nem, offset);
           }
         } // end if (do_a)
 
@@ -188,7 +189,7 @@ void empole_real_self_tmpl() {
         if_constexpr(do_e) {
           real e = term1 * rr1 + term2 * rr3 + term3 * rr5 + term4 * rr7 +
               term5 * rr9;
-          atomic_add_value(em, e, offset);
+          atomic_add_value(e, em, offset);
         } // end if (do_e)
 
         if_constexpr(do_g) {
@@ -331,15 +332,15 @@ void empole_real_self_tmpl() {
             real vzz = -zr * frcz;
 
             int offv = offset * 16;
-            atomic_add_value(vir_em, vxx, offv + 0);
-            atomic_add_value(vir_em, vxy, offv + 1);
-            atomic_add_value(vir_em, vxz, offv + 2);
-            atomic_add_value(vir_em, vxy, offv + 3);
-            atomic_add_value(vir_em, vyy, offv + 4);
-            atomic_add_value(vir_em, vyz, offv + 5);
-            atomic_add_value(vir_em, vxz, offv + 6);
-            atomic_add_value(vir_em, vyz, offv + 7);
-            atomic_add_value(vir_em, vzz, offv + 8);
+            atomic_add_value(vxx, vir_em, offv + 0);
+            atomic_add_value(vxy, vir_em, offv + 1);
+            atomic_add_value(vxz, vir_em, offv + 2);
+            atomic_add_value(vxy, vir_em, offv + 3);
+            atomic_add_value(vyy, vir_em, offv + 4);
+            atomic_add_value(vyz, vir_em, offv + 5);
+            atomic_add_value(vxz, vir_em, offv + 6);
+            atomic_add_value(vyz, vir_em, offv + 7);
+            atomic_add_value(vzz, vir_em, offv + 8);
           } // end if (do_v)
         }   // end if (do_g)
       }     // end if (r2 <= off2)
@@ -370,8 +371,8 @@ void empole_real_self_tmpl() {
     if_constexpr(do_e) {
       real e = fterm *
           (cii + aewald_sq_2 * (dii / 3 + 2 * aewald_sq_2 * qii * (real)0.2));
-      atomic_add_value(em, e, offset);
-      if_constexpr(do_a) { atomic_add_value(nem, 1, offset); }
+      atomic_add_value(e, em, offset);
+      if_constexpr(do_a) { atomic_add_value(1, nem, offset); }
     } // end if (do_e)
   }   // end for (int i)
 }
@@ -447,7 +448,7 @@ void empole_recip_tmpl() {
 
     // increment the permanent multipole energy and gradient
 
-    if_constexpr(do_e) { atomic_add_value(em, 0.5f * e * f, offset); }
+    if_constexpr(do_e) { atomic_add_value(0.5f * e * f, em, offset); }
 
     if_constexpr(do_g) {
       f1 *= nfft1;
@@ -520,15 +521,15 @@ void empole_recip_tmpl() {
         vzz *= f;
 
         int offv = offset * 16;
-        atomic_add_value(vir_em, vxx, offv + 0);
-        atomic_add_value(vir_em, vxy, offv + 1);
-        atomic_add_value(vir_em, vxz, offv + 2);
-        atomic_add_value(vir_em, vxy, offv + 3);
-        atomic_add_value(vir_em, vyy, offv + 4);
-        atomic_add_value(vir_em, vyz, offv + 5);
-        atomic_add_value(vir_em, vxz, offv + 6);
-        atomic_add_value(vir_em, vyz, offv + 7);
-        atomic_add_value(vir_em, vzz, offv + 8);
+        atomic_add_value(vxx, vir_em, offv + 0);
+        atomic_add_value(vxy, vir_em, offv + 1);
+        atomic_add_value(vxz, vir_em, offv + 2);
+        atomic_add_value(vxy, vir_em, offv + 3);
+        atomic_add_value(vyy, vir_em, offv + 4);
+        atomic_add_value(vyz, vir_em, offv + 5);
+        atomic_add_value(vxz, vir_em, offv + 6);
+        atomic_add_value(vyz, vir_em, offv + 7);
+        atomic_add_value(vzz, vir_em, offv + 8);
       } // end if (do_v)
     }   // end if (do_g)
   }     // end for (int i)

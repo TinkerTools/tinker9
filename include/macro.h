@@ -99,6 +99,12 @@ typedef float real;
 #endif
 TINKER_NAMESPACE_END
 
+// fixed-point
+#define TINKER_FIXED_POINT 0x100000000ull
+TINKER_NAMESPACE_BEGIN
+typedef unsigned long long FixedPointType;
+TINKER_NAMESPACE_END
+
 // host vs device
 #ifndef TINKER_HOST
 #  define TINKER_CUDART

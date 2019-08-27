@@ -10,6 +10,7 @@
 #endif
 
 #include "gen_unit.h"
+#include <type_traits>
 
 TINKER_NAMESPACE_BEGIN
 typedef GenericUnit<FFTPlan, GenericUnitVersion::DisableOnDevice> FFTPlanUnit;
@@ -20,7 +21,8 @@ typedef GenericUnit<FFTPlan, GenericUnitVersion::DisableOnDevice> FFTPlanUnit;
 void zero_bytes(void* ptr, size_t nbytes);
 void dealloc_bytes(void* ptr);
 void alloc_bytes(void** ptr, size_t nbytes);
-template <class T>
+template <class T,
+          class = typename std::enable_if<!std::is_same<T, void>::value>::type>
 void alloc_bytes(T** ptr, size_t nbytes) {
   return alloc_bytes(reinterpret_cast<void**>(ptr), nbytes);
 }
@@ -46,7 +48,7 @@ struct GenericUnitAlloc<GenericUnitVersion::EnableOnDevice> {
     void operator()(void** ptr, size_t nbytes) { alloc_bytes(ptr, nbytes); }
   };
 
-  struct Copyin {
+  struct CopyIn {
     void operator()(void* dst, const void* src, size_t nbytes) {
       copyin_bytes(dst, src, nbytes);
     }
@@ -60,6 +62,7 @@ void dealloc_stream(Stream);
 void alloc_stream(Stream*);
 void sync_stream(Stream);
 /// @}
+
 /// @brief
 /// copy between two device addresses without blocking the calling thread
 void copy_bytes_async(void* dst, const void* src, size_t nbytes, Stream s);

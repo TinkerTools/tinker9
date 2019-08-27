@@ -22,7 +22,7 @@ struct GenericUnitAlloc<GenericUnitVersion::DisableOnDevice> {
     void operator()(void**, size_t) {}
   };
 
-  struct Copyin {
+  struct CopyIn {
     void operator()(void*, const void*, size_t) {}
   };
 };
@@ -77,7 +77,7 @@ private:
   }
 
   typedef typename GenericUnitAlloc<VERSION>::Alloc Alloc;
-  typedef typename GenericUnitAlloc<VERSION>::Copyin Copyin;
+  typedef typename GenericUnitAlloc<VERSION>::CopyIn CopyIn;
 
 public:
   /// @brief
@@ -169,7 +169,7 @@ public:
   /// that can be accessed by the same unit number
   void init_deviceptr(const T& hobj) {
     assert(&hobj == &this->obj());
-    Copyin copyin;
+    CopyIn copyin;
     copyin(this->deviceptr(), &this->obj(), sizeof(T));
   }
 };

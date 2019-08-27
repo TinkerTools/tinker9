@@ -1,4 +1,4 @@
-#include "acc_seq.h"
+#include "acc_add.h"
 #include "e_urey.h"
 #include "md.h"
 
@@ -35,7 +35,7 @@ void eurey_tmpl() {
 
     if_constexpr(do_e) {
       real e = ureyunit * force * dt2 * (1 + cury * dt + qury * dt2);
-      atomic_add_value(eub, e, offset);
+      atomic_add_value(e, eub, offset);
     }
 
     if_constexpr(do_g) {
@@ -68,15 +68,15 @@ void eurey_tmpl() {
         real vzz = zac * dedz;
 
         int offv = offset * 16;
-        atomic_add_value(vir_eub, vxx, offv + 0);
-        atomic_add_value(vir_eub, vyx, offv + 1);
-        atomic_add_value(vir_eub, vzx, offv + 2);
-        atomic_add_value(vir_eub, vyx, offv + 3);
-        atomic_add_value(vir_eub, vyy, offv + 4);
-        atomic_add_value(vir_eub, vzy, offv + 5);
-        atomic_add_value(vir_eub, vzx, offv + 6);
-        atomic_add_value(vir_eub, vzy, offv + 7);
-        atomic_add_value(vir_eub, vzz, offv + 8);
+        atomic_add_value(vxx, vir_eub, offv + 0);
+        atomic_add_value(vyx, vir_eub, offv + 1);
+        atomic_add_value(vzx, vir_eub, offv + 2);
+        atomic_add_value(vyx, vir_eub, offv + 3);
+        atomic_add_value(vyy, vir_eub, offv + 4);
+        atomic_add_value(vzy, vir_eub, offv + 5);
+        atomic_add_value(vzx, vir_eub, offv + 6);
+        atomic_add_value(vzy, vir_eub, offv + 7);
+        atomic_add_value(vzz, vir_eub, offv + 8);
       }
     }
   } // end for (int i)

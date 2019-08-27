@@ -15,15 +15,28 @@ TINKER_NAMESPACE_BEGIN
  * @f[ S_2: [0,1]\rightarrow[0,1] @f]
  * @f[ S_2(x) = 6 x^5 - 15 x^4 + 10 x^3 @f]
  *
+ * @param[in] rik
+ * distance
+ *
+ * @param[in] cut
+ * distance at which switching of the potential begins
+ *
+ * @param[out] off
+ * distance at which the potential energy goes to zero
+ *
  * @param[out] taper
  * @f$ f @f$ value
  *
  * @param[out] dtaper
  * @f$ df/dx @f$ value
+ *
+ * @tparam DO_DTAPER
+ * if @c false, @c dtaper will not be calculated
  */
 #pragma acc routine seq
 template <int DO_DTAPER>
-void switch_taper5(real rik, real cut, real off, real& taper, real& dtaper) {
+inline void switch_taper5(real rik, real cut, real off,
+                          real& __restrict__ taper, real& __restrict__ dtaper) {
   real _1_ab = REAL_RECIP(cut - off);
   real x = (rik - off) * _1_ab;
   real x2 = x * x;
