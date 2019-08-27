@@ -47,14 +47,14 @@ PME::~PME() {
 }
 
 static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique) {
-  unit = -1;
+  unit.close();
   for (PMEUnit idx = 0; idx < PMEUnit::size(); idx = idx + 1) {
     if (*idx == p)
       unit = idx;
   }
 
-  if (unit == -1 || unique == true) {
-    unit = PMEUnit::inquire();
+  if (!unit.valid() || unique == true) {
+    unit = PMEUnit::open();
     auto& st = *unit;
     const size_t rs = sizeof(real);
     size_t size;
@@ -71,7 +71,7 @@ static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique) {
 }
 
 static void pme_op_copyin_(PMEUnit unit) {
-  if (unit < 0)
+  if (!unit.valid())
     return;
 
   auto& st = *unit;
@@ -109,7 +109,7 @@ void pme_init(int vers) {
 
   rpole_to_cmp();
 
-  if (vir_m_handle > 0)
+  if (vir_m_handle.valid())
     vir_m_handle->zero();
 }
 
@@ -129,7 +129,14 @@ static void pme_data1_(rc_op op) {
       dealloc_bytes(fdip_phi2);
       dealloc_bytes(cphidp);
       dealloc_bytes(fphidp);
+
+      vir_m_handle.close();
     }
+
+    epme_unit.close();
+    ppme_unit.close();
+    pvpme_unit.close();
+    dpme_unit.close();
   }
 
   if (op & rc_alloc) {
@@ -150,18 +157,16 @@ static void pme_data1_(rc_op op) {
       alloc_bytes(&cphidp, 10 * n * rs);
       alloc_bytes(&fphidp, 20 * n * rs);
 
-      // if (vir_m_handle > 0), it implies use virial and use epolar
       if (rc_flag & calc::virial) {
-        vir_m_handle = Virial::inquire();
+        vir_m_handle = Virial::open();
         vir_m_handle->alloc(n);
-      } else
-        vir_m_handle = -1;
+      }
     }
 
     bool unique_grids = false;
 
     // electrostatics
-    epme_unit = -1;
+    epme_unit.close();
     if (use_potent(mpole_term)) {
       unique_grids = false;
       PME::Params p(ewald::aeewald, pme::nefft1, pme::nefft2, pme::nefft3,
@@ -170,8 +175,8 @@ static void pme_data1_(rc_op op) {
     }
 
     // polarization
-    ppme_unit = -1;
-    pvpme_unit = -1;
+    ppme_unit.close();
+    pvpme_unit.close();
     if (use_potent(polar_term)) {
       PME::Params p(ewald::apewald, pme::nefft1, pme::nefft2, pme::nefft3,
                     pme::bsporder);
@@ -183,7 +188,7 @@ static void pme_data1_(rc_op op) {
     }
 
     // dispersion
-    dpme_unit = -1;
+    dpme_unit.close();
     if (false) {
       unique_grids = false;
       PME::Params p(ewald::adewald, pme::ndfft1, pme::ndfft2, pme::ndfft3,

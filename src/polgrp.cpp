@@ -26,7 +26,7 @@ void polargroup_data(rc_op op) {
 
   if (op & rc_alloc) {
     assert(PolarGroupUnit::size() == 0);
-    polargroup_unit = PolarGroupUnit::inquire();
+    polargroup_unit = PolarGroupUnit::open();
     auto& polargroup_obj = *polargroup_unit;
     const size_t rs = sizeof(int);
     size_t size;

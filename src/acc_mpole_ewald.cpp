@@ -395,7 +395,7 @@ void empole_recip_tmpl() {
   grid_mpole(pu, fmp);
   fftfront(pu);
   if_constexpr(do_v) {
-    if (vir_m_handle > 0) {
+    if (vir_m_handle.valid()) {
       pme_conv1(pu, vir_m_handle);
       auto vir_m_len = vir_m_handle->size();
       auto* vir_m = vir_m_handle->buffer();

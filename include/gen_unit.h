@@ -106,11 +106,11 @@ public:
   }
 
   /// @brief
-  /// similar to inquiring a new fortran i/o unit
+  /// similar to opening a new fortran i/o unit
   ///
   /// @return
   /// the new unit
-  static GenericUnit inquire() {
+  static GenericUnit open() {
     hostptrs().emplace_back(new T);
     if_constexpr(USE_DPTR) {
       T* ptr;
@@ -132,6 +132,7 @@ public:
   operator int() const { return unit; }
 
   bool valid() const { return unit >= 0; }
+  void close() { unit = -1; }
 
   /// @brief
   /// get the (const) reference to the object on host
