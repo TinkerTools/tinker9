@@ -72,11 +72,11 @@ void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
 
   real bn[4];
 
-  #pragma acc parallel loop gang(bufsize) independent\
+  #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,box,coupl,polargroup,mlst,\
-              rpole,thole,pdamp,\
-              field,fieldp)\
+              rpole,thole,pdamp,field,fieldp)\
               firstprivate(pscale[0:n],dscale[0:n])
+  #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
 
     // set exclusion coefficients for connected atoms
@@ -417,10 +417,11 @@ void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
 
   real bn[3];
 
-  #pragma acc parallel loop gang(bufsize) independent\
+  #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,box,polargroup,mlst,\
               thole,pdamp,uind,uinp,field,fieldp)\
               firstprivate(uscale[0:n])
+  #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
 
     // set exclusion coefficients for connected atoms

@@ -1,5 +1,5 @@
-#ifndef TINKER_IO_TEXT_H_
-#define TINKER_IO_TEXT_H_
+#ifndef TINKER_IO_TIMER_H_
+#define TINKER_IO_TIMER_H_
 
 #include "macro.h"
 #include <string>

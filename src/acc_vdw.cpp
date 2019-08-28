@@ -50,12 +50,13 @@ void evdw_tmpl() {
   vscalebuf.resize(n, 1);
   auto* vscale = vscalebuf.data();
 
-  #pragma acc parallel loop gang(bufsize) independent\
+  #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,gx,gy,gz,box,coupl,vlst,\
               ired,kred,xred,yred,zred,\
               jvdw,njvdw,radmin,epsilon,vlam,\
               nev,ev,vir_ev)\
               firstprivate(vscale[0:n])
+  #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
     const int n12i = coupl->n12[i];
     const int n13i = coupl->n13[i];

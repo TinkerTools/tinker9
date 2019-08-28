@@ -12,6 +12,7 @@ static const std::string analyze_name = "analyze";
 static const std::string dynamic_name = "dynamic";
 static const std::string helper_name = "help";
 static const std::string info_name = "info";
+static const std::string testgrad_name = "testgrad";
 static const std::map<std::string, std::function<void(int, char**)>>&
 launcher();
 
@@ -40,6 +41,7 @@ TINKER_NAMESPACE_BEGIN
 extern void x_analyze(int, char**);
 extern void x_dynamic(int, char**);
 extern void x_info(int, char**);
+extern void x_testgrad(int, char**);
 TINKER_NAMESPACE_END
 
 static void x_help(int, char**) {
@@ -67,10 +69,9 @@ static void x_help(int, char**) {
 static const std::map<std::string, std::function<void(int, char**)>>&
 launcher() {
   static std::map<std::string, std::function<void(int, char**)>> x = {
-      {analyze_name, x_analyze},
-      {dynamic_name, x_dynamic},
-      {helper_name, x_help},
-      {info_name, x_info},
+      {analyze_name, x_analyze},   {dynamic_name, x_dynamic},
+      {helper_name, x_help},       {info_name, x_info},
+      {testgrad_name, x_testgrad},
   };
   return x;
 }

@@ -121,10 +121,11 @@ static inline void sparse_diag_precond_build(const real (*rsd)[3],
   uscalebuf.resize(n, 1);
   real* uscale = uscalebuf.data();
 
-  #pragma acc parallel loop gang(bufsize) independent\
+  #pragma acc parallel num_gangs(bufsize)\
               deviceptr(mindex,minv,ulst,box,\
               polargroup,x,y,z,polarity,pdamp,thole)\
               firstprivate(uscale[0:n])
+  #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
 
     // set exclusion coefficients for connected atoms

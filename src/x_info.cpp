@@ -20,6 +20,13 @@ void x_info(int argc, char** argv) {
 
   auto rs = sizeof(real);
   print(out, "   > Size of Real: {}\n", sizeof(real));
+
+#if TINKER_DEBUG
+  const char* dbg = "ON";
+#else
+  const char* dbg = "OFF";
+#endif
+  print(out, "   > Debug: {}\n", dbg);
 }
 
 static const char* get_SHA1() {

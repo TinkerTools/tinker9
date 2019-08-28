@@ -31,11 +31,11 @@ void dfield_coulomb(real* gpu_field, real* gpu_fieldp) {
   real* pscale = pscalebuf.data();
   real* dscale = dscalebuf.data();
 
-  #pragma acc parallel loop gang(bufsize) independent\
+  #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,box,coupl,polargroup,mlst,\
-              rpole,thole,pdamp,\
-              field,fieldp)\
+              rpole,thole,pdamp,field,fieldp)\
               firstprivate(pscale[0:n],dscale[0:n])
+  #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
 
     // set exclusion coefficients for connected atoms
@@ -275,10 +275,11 @@ void ufield_coulomb(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
   uscalebuf.resize(n, 1);
   real* uscale = uscalebuf.data();
 
-  #pragma acc parallel loop gang(bufsize) independent\
+  #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,box,polargroup,mlst,\
               thole,pdamp,uind,uinp,field,fieldp)\
               firstprivate(uscale[0:n])
+  #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
 
     // set exclusion coefficients for connected atoms
