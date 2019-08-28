@@ -14,10 +14,11 @@ void epitors_tmpl() {
   auto* vir_ept = ept_handle.vir()->buffer();
   auto bufsize = ept_handle.buffer_size();
 
-  #pragma acc parallel loop gang(bufsize) independent\
+  #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,gx,gy,gz,\
               ipit,kpit,\
               ept,vir_ept)
+  #pragma acc loop gang independent
   for (int i = 0; i < npitors; ++i) {
     int offset = i & (bufsize - 1);
     const int ia = ipit[i][0];

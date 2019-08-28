@@ -121,12 +121,13 @@ void etortor_tmpl() {
   auto bufsize = ett_handle.buffer_size();
 
   real ftt[4], ft12[4], ft1[4], ft2[4];
-  #pragma acc parallel loop gang(bufsize) independent\
+  #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,gx,gy,gz,\
               ibitor,itt,chkttor_ia_,\
               tnx,tny,ttx,tty,tbf,tbx,tby,tbxy,\
               ett,vir_ett)\
               private(ftt[0:4],ft12[0:4],ft1[0:4],ft2[0:4])
+  #pragma acc loop gang independent
   for (int itortor = 0; itortor < ntortor; ++itortor) {
     int offset = itortor & (bufsize - 1);
     int i = itt[itortor][0];

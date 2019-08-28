@@ -53,11 +53,12 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
 
   const real f = 0.5 * electric / dielec;
 
-  #pragma acc parallel loop gang(bufsize) independent\
+  #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,box,coupl,polargroup,mlst,\
               rpole,thole,pdamp,uind,uinp,\
               ep,nep,vir_ep,ufld,dufld)\
               firstprivate(pscale[0:n],dscale[0:n],uscale[0:n])
+  #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
 
     // set exclusion coefficients for connected atoms

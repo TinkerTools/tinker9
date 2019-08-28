@@ -3,7 +3,6 @@
 #include "io_read.h"
 #include "md.h"
 #include "potent.h"
-#include "rc_man.h"
 #include "tinker_rt.h"
 
 TINKER_NAMESPACE_BEGIN

@@ -53,11 +53,12 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   const real aewald = pu->aewald;
   real bn[5];
 
-  #pragma acc parallel loop gang(bufsize) independent\
+  #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,box,coupl,polargroup,mlst,\
               rpole,thole,pdamp,uind,uinp,\
               ep,nep,vir_ep,ufld,dufld)\
               firstprivate(pscale[0:n],dscale[0:n],uscale[0:n])
+  #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
 
     // set exclusion coefficients for connected atoms
@@ -783,8 +784,9 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   cuind_to_fuind(pu, gpu_uind, gpu_uinp, fuind, fuinp);
   if (do_e && do_a) {
     // if (pairwise .eq. .true.)
-    #pragma acc parallel loop gang(bufsize)\
+    #pragma acc parallel num_gangs(bufsize)\
                 deviceptr(fuind,fphi,ep)
+    #pragma acc loop gang independent
     for (int i = 0; i < n; ++i) {
       int offset = i & (bufsize - 1);
       real e = 0.5f * f *
@@ -868,9 +870,10 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 
   real term = f * REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
   real fterm_term = -2 * f * REAL_CUBE(aewald) / 3 / sqrtpi;
-  #pragma acc parallel loop gang(bufsize) independent\
+  #pragma acc parallel num_gangs(bufsize)\
               deviceptr(ep,nep,trqx,trqy,trqz,\
               rpole,cmp,gpu_uind,gpu_uinp,cphidp)
+  #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
     int offset = i & (bufsize - 1);
     real dix = rpole[i][mpl_pme_x];
@@ -937,10 +940,11 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 
     real cphid[4], cphip[4];
     real ftc[3][3];
-    #pragma acc parallel loop gang(bufsize) independent\
+    #pragma acc parallel num_gangs(bufsize)\
                 deviceptr(vir_ep,box,cmp,\
                 gpu_uind,gpu_uinp,fphid,fphip,cphi,cphidp)\
                 private(cphid[0:4],cphip[0:4],ftc[0:3][0:3])
+    #pragma acc loop gang independent
     for (int i = 0; i < n; ++i) {
 
       // frac_to_cart
@@ -1072,8 +1076,9 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
     const int ntot = nfft1 * nfft2 * nfft3;
     real pterm = REAL_SQ(pi / aewald);
 
-    #pragma acc parallel loop gang(bufsize) independent\
+    #pragma acc parallel num_gangs(bufsize)\
                 deviceptr(box,d,p,vir_ep)
+    #pragma acc loop gang independent
     for (int i = 1; i < ntot; ++i) {
       const real volterm = pi * box->volbox;
 
