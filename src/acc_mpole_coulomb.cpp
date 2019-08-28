@@ -33,11 +33,11 @@ void empole_coulomb_tmpl() {
   mscalebuf.resize(n, 1);
   real* mscale = mscalebuf.data();
 
-  #pragma acc parallel loop gang(bufsize) independent\
+  #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,gx,gy,gz,box,coupl,mlst,\
-                        rpole,\
-                        em,nem,vir_em,trqx,trqy,trqz)\
+              rpole,em,nem,vir_em,trqx,trqy,trqz)\
               firstprivate(mscale[0:n])
+  #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
 
     // set exclusion coefficients for connected atoms
