@@ -2,13 +2,13 @@
 #include "md.h"
 #include "nblist.h"
 
-// static const int GRID_SIZE = 32;
-// static const int GRID_SIZE = 64;
-static const int GRID_SIZE = 128;
-// static const int GRID_SIZE = 256;
-// static const int BLOCK_SIZE = 32;
-static const int BLOCK_SIZE = 64;
-// static const int BLOCK_SIZE = 128;
+// MAYBE_UNUSED static const int GRID_DIM = 32;
+// MAYBE_UNUSED static const int GRID_DIM = 64;
+MAYBE_UNUSED static const int GRID_DIM = 128;
+// MAYBE_UNUSED static const int GRID_DIM = 256;
+// MAYBE_UNUSED static const int BLOCK_DIM = 32;
+MAYBE_UNUSED static const int BLOCK_DIM = 64;
+// MAYBE_UNUSED static const int BLOCK_DIM = 128;
 
 #if defined(TINKER_CUDART)
 TINKER_NAMESPACE_BEGIN
@@ -36,7 +36,7 @@ TINKER_NAMESPACE_BEGIN
     }
 
 #pragma acc routine seq
-static void sort_v1_(int* arr, int len) {
+inline void sort_v1_(int* arr, int len) {
   // heapsort
   for (int i = len / 2 - 1; i >= 0; --i) {
     m_max_heap_(arr, i, len - 1);
@@ -53,7 +53,7 @@ TINKER_NAMESPACE_END
 #else
 #  include <algorithm>
 TINKER_NAMESPACE_BEGIN
-static void sort_v1_(int* arr, int len) { std::sort(arr, arr + len); }
+inline void sort_v1_(int* arr, int len) { std::sort(arr, arr + len); }
 TINKER_NAMESPACE_END
 #endif
 
@@ -62,7 +62,7 @@ TINKER_NAMESPACE_BEGIN
 //====================================================================//
 // double loop
 
-static void build_double_loop_(NBListUnit nu) {
+inline void build_double_loop_(NBListUnit nu) {
   auto* lst = nu.deviceptr();
   #pragma acc parallel loop independent deviceptr(lst)
   for (int i = 0; i < n; ++i) {
@@ -71,13 +71,13 @@ static void build_double_loop_(NBListUnit nu) {
   }
 }
 
-// static void update_double_loop_() {}
+// inline void update_double_loop_() {}
 
 //====================================================================//
 // version 1
 // see also nblist.f
 
-static void build_v1_(NBListUnit nu) {
+inline void build_v1_(NBListUnit nu) {
   auto& st = *nu;
   const int maxnlst = st.maxnlst;
   const real buf2 = REAL_SQ(st.cutoff + st.buffer);
@@ -91,7 +91,7 @@ static void build_v1_(NBListUnit nu) {
   auto* __restrict__ nlst = st.nlst;
   auto* __restrict__ lst = st.lst;
 
-  #pragma acc parallel num_gangs(GRID_SIZE) vector_length(BLOCK_SIZE)\
+  #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
               deviceptr(box,lx,ly,lz,xo,yo,zo,nlst,lst)
   #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
@@ -124,7 +124,7 @@ static void build_v1_(NBListUnit nu) {
   }
 }
 
-static void displace_v1_(NBListUnit nu) {
+inline void displace_v1_(NBListUnit nu) {
   auto& st = *nu;
   auto* lst = nu.deviceptr();
   const real lbuf2 = REAL_SQ(0.5f * st.buffer);
@@ -148,7 +148,7 @@ static void displace_v1_(NBListUnit nu) {
   }
 }
 
-static void update_v1_(NBListUnit nu) {
+inline void update_v1_(NBListUnit nu) {
 
   // test sites for displacement exceeding half the buffer
 

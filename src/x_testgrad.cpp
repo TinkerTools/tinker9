@@ -41,13 +41,15 @@ void x_testgrad(int argc, char** argv) {
   auto do_print = [](int i, int n) {
     if (n <= 10)
       return true;
-    if (i < 5)
+    else if (i < 5)
       return true;
-    if (i >= n - 5)
+    else if (i >= n - 5)
       return true;
+    else
+      return false;
   };
   for (int i = 0; i < n; ++i) {
-    if (do_print(i, n))
+    if (!do_print(i, n))
       continue;
 
     real x1 = gdx[i];
