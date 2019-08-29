@@ -7,6 +7,14 @@
 #include "md.h"
 #include "nblist.h"
 
+// static const int GRID_SIZE = 32;
+// static const int GRID_SIZE = 64;
+static const int GRID_SIZE = 128;
+// static const int GRID_SIZE = 256;
+// static const int BLOCK_SIZE = 32;
+static const int BLOCK_SIZE = 64;
+// static const int BLOCK_SIZE = 128;
+
 // TODO: test lj, buck, mm3hb, gauss, and mutant
 // TODO: add vdw correction
 
@@ -50,7 +58,7 @@ void evdw_tmpl() {
   vscalebuf.resize(n, 1);
   auto* vscale = vscalebuf.data();
 
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel num_gangs(GRID_SIZE) vector_length(BLOCK_SIZE)\
               deviceptr(x,y,z,gx,gy,gz,box,coupl,vlst,\
               ired,kred,xred,yred,zred,\
               jvdw,njvdw,radmin,epsilon,vlam,\
