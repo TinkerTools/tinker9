@@ -1,9 +1,13 @@
 fortran_compiler_macro__ := -DTINKER_GFORTRAN
 fortran_runtime_flags__ := -L/usr/lib/gcc/x86_64-linux-gnu/5.4.0 -lgfortran -lgomp
-libtinker_dir__ := $(HOME)/git/tinker/source
-shared_libtinker__ := libtinker.so
 
-fftw_dir__ := $(HOME)/local/fftw
+ifdef libtinker_dir
+libtinker_dir__ = $(libtinker_dir)
+else
+$(error libtinker_dir is not set)
+endif
+
+shared_libtinker__ := libtinker.so
 
 cuda_dir__ := /usr/local/cuda
 
