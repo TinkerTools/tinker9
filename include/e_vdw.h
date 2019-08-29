@@ -26,6 +26,10 @@ const int vcouple_decouple = 0;
 const int vcouple_annihilate = 1;
 TINKER_EXTERN real* vlam;
 
+TINKER_EXTERN int nvdw_excluded_;
+TINKER_EXTERN int (*vdw_excluded_)[2];
+TINKER_EXTERN real* vdw_excluded_scale_;
+
 TINKER_EXTERN NonbondedEnergy ev_handle;
 
 void evdw_data(rc_op op);

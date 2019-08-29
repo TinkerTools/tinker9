@@ -69,7 +69,7 @@ TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
     const char* argv[] = {"dummy", x};
     int argc = 2;
 
-    const double eps = 2.0e-4;
+    const double eps = 5.0e-3;
     const double ref_eng = 88.8860;
     const int ref_count = 13225;
     // atom 1, 31, 61, 91, 121, 151
@@ -102,7 +102,7 @@ TEST_CASE("CLN025", "[ff][evdw][hal][cln025]") {
     const char* argv[] = {"dummy", x};
     int argc = 2;
 
-    const double eps = 2.0e-4;
+    const double eps = 2.0e-3;
     const double ref_eng = 104.3872;
     const int ref_count = 4116;
     // atom 1, 31, 61, 91, 121, 151
