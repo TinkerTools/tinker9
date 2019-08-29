@@ -103,7 +103,7 @@ inline void build_v1_(NBListUnit nu) {
     zo[i] = zi;
 
     int ilst = 0;
-    #pragma acc loop independent
+    #pragma acc loop vector independent
     for (int k = i + 1; k < n; ++k) {
       real xr = xi - lx[k];
       real yr = yi - ly[k];
