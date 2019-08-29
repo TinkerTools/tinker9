@@ -8,16 +8,17 @@
 # src :=
 # opt :=
 # prec :=
-# host :=
+# host [True] :=
 # config :=
-
+# fftw_dir :=
+# fftw_lib [$(fftw_dir)/lib] :=
+# fftw_include [$(fftw_dir)/include] :=
 ############################################################
 
 # tinker.gpu directory
 src := ..
 top_dir__ := $(realpath $(src))
 include $(top_dir__)/make/name.make
-
 
 # default optimization
 # var opt; value release / debug / profile
@@ -63,8 +64,10 @@ ifeq ($(config),default_config__)
 		config := macos.clang.gfortran.inc
 	endif
 endif
+
 include $(config)
-fftw_flags__ := -L$(fftw_dir__)/lib -lfftw3 -lfftw3_threads
+include $(top_dir__)/make/fftw.make
+fftw_flags__ := -L$(fftw_lib__) -lfftw3 -lfftw3_threads
 
 
 ############################################################
@@ -157,7 +160,7 @@ include_flags__ += -I$(top_dir__)/ext/ext
 ifeq ($(host_only__),false)
 	include_flags__ += -I$(cuda_dir__)/include
 else
-	include_flags__ += -I$(fftw_dir__)/include
+	include_flags__ += -I$(fftw_include__)
 endif
 
 common_flags__ := $(all_macros__) $(include_flags__) -std=c++11
