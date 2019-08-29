@@ -1,5 +1,6 @@
 #include "e_vdw.h"
 #include "array.h"
+#include "ext/tinker/detail/couple.hh"
 #include "ext/tinker/detail/mutant.hh"
 #include "ext/tinker/detail/sizes.hh"
 #include "ext/tinker/detail/vdw.hh"
@@ -42,6 +43,10 @@ void evdw_data(rc_op op) {
 
     dealloc_bytes(vlam);
 
+    nvdw_excluded_ = 0;
+    dealloc_bytes(vdw_excluded_);
+    dealloc_bytes(vdw_excluded_scale_);
+
     ev_handle.dealloc();
   }
 
@@ -82,6 +87,83 @@ void evdw_data(rc_op op) {
     size = n * rs;
     alloc_bytes(&vlam, size);
 
+    v2scale = vdwpot::v2scale;
+    v3scale = vdwpot::v3scale;
+    v4scale = vdwpot::v4scale;
+    v5scale = vdwpot::v5scale;
+
+    nvdw_excluded_ = 0;
+    std::vector<int> exclik;
+    std::vector<real> exclvs;
+    // see also attach.f
+    const int maxn13 = 3 * sizes::maxval;
+    const int maxn14 = 9 * sizes::maxval;
+    const int maxn15 = 27 * sizes::maxval;
+    for (int i = 0; i < n; ++i) {
+      int nn;
+      int bask;
+
+      if (v2scale != 1) {
+        nn = couple::n12[i];
+        for (int j = 0; j < nn; ++j) {
+          int k = couple::i12[i][j];
+          k -= 1;
+          if (k > i) {
+            exclik.push_back(i);
+            exclik.push_back(k);
+            exclvs.push_back(v2scale - 1);
+          }
+        }
+      }
+
+      if (v3scale != 1) {
+        nn = couple::n13[i];
+        bask = i * maxn13;
+        for (int j = 0; j < nn; ++j) {
+          int k = couple::i13[bask + j];
+          k -= 1;
+          if (k > i) {
+            exclik.push_back(i);
+            exclik.push_back(k);
+            exclvs.push_back(v3scale - 1);
+          }
+        }
+      }
+
+      if (v4scale != 1) {
+        nn = couple::n14[i];
+        bask = i * maxn14;
+        for (int j = 0; j < nn; ++j) {
+          int k = couple::i14[bask + j];
+          k -= 1;
+          if (k > i) {
+            exclik.push_back(i);
+            exclik.push_back(k);
+            exclvs.push_back(v4scale - 1);
+          }
+        }
+      }
+
+      if (v5scale != 1) {
+        nn = couple::n15[i];
+        bask = i * maxn15;
+        for (int j = 0; j < nn; ++j) {
+          int k = couple::i15[bask + j];
+          k -= 1;
+          if (k > i) {
+            exclik.push_back(i);
+            exclik.push_back(k);
+            exclvs.push_back(v5scale - 1);
+          }
+        }
+      }
+    }
+    nvdw_excluded_ = exclvs.size();
+    alloc_bytes(&vdw_excluded_, 2 * sizeof(int) * nvdw_excluded_);
+    alloc_bytes(&vdw_excluded_scale_, sizeof(real) * nvdw_excluded_);
+    copyin_array(&vdw_excluded_[0][0], exclik.data(), 2 * nvdw_excluded_);
+    copyin_array(vdw_excluded_scale_, exclvs.data(), nvdw_excluded_);
+
     ev_handle.alloc(n);
   }
 
@@ -107,11 +189,6 @@ void evdw_data(rc_op op) {
     scexp = mutant::scexp;
     scalpha = mutant::scalpha;
     vcouple = mutant::vcouple;
-
-    v2scale = vdwpot::v2scale;
-    v3scale = vdwpot::v3scale;
-    v4scale = vdwpot::v4scale;
-    v5scale = vdwpot::v5scale;
 
     std::vector<int> iredbuf(n);
     std::vector<double> kredbuf(n);
