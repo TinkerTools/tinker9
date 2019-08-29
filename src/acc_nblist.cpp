@@ -2,6 +2,14 @@
 #include "md.h"
 #include "nblist.h"
 
+// static const int GRID_SIZE = 32;
+// static const int GRID_SIZE = 64;
+static const int GRID_SIZE = 128;
+// static const int GRID_SIZE = 256;
+// static const int BLOCK_SIZE = 32;
+static const int BLOCK_SIZE = 64;
+// static const int BLOCK_SIZE = 128;
+
 #if defined(TINKER_CUDART)
 TINKER_NAMESPACE_BEGIN
 #  define m_swap_(a, b)                                                        \
@@ -71,33 +79,48 @@ static void build_double_loop_(NBListUnit nu) {
 
 static void build_v1_(NBListUnit nu) {
   auto& st = *nu;
-  auto* lst = nu.deviceptr();
   const int maxnlst = st.maxnlst;
   const real buf2 = REAL_SQ(st.cutoff + st.buffer);
 
-  #pragma acc parallel loop independent deviceptr(lst,box)
-  for (int i = 0; i < n; ++i) {
-    real xi = lst->x[i];
-    real yi = lst->y[i];
-    real zi = lst->z[i];
-    lst->xold[i] = xi;
-    lst->yold[i] = yi;
-    lst->zold[i] = zi;
+  const auto* __restrict__ lx = st.x;
+  const auto* __restrict__ ly = st.y;
+  const auto* __restrict__ lz = st.z;
+  auto* __restrict__ xo = st.xold;
+  auto* __restrict__ yo = st.yold;
+  auto* __restrict__ zo = st.zold;
+  auto* __restrict__ nlst = st.nlst;
+  auto* __restrict__ lst = st.lst;
 
-    lst->nlst[i] = 0;
-    #pragma acc loop seq
+  #pragma acc parallel num_gangs(GRID_SIZE) vector_length(BLOCK_SIZE)\
+              deviceptr(box,lx,ly,lz,xo,yo,zo,nlst,lst)
+  #pragma acc loop gang independent
+  for (int i = 0; i < n; ++i) {
+    real xi = lx[i];
+    real yi = ly[i];
+    real zi = lz[i];
+    xo[i] = xi;
+    yo[i] = yi;
+    zo[i] = zi;
+
+    int ilst = 0;
+    #pragma acc loop independent
     for (int k = i + 1; k < n; ++k) {
-      real xr = xi - lst->x[k];
-      real yr = yi - lst->y[k];
-      real zr = zi - lst->z[k];
+      real xr = xi - lx[k];
+      real yr = yi - ly[k];
+      real zr = zi - lz[k];
       image(xr, yr, zr, box);
       real r2 = xr * xr + yr * yr + zr * zr;
       if (r2 <= buf2) {
-        const int j = lst->nlst[i];
-        lst->nlst[i] += 1;
-        lst->lst[i * maxnlst + j] = k;
+        int j;
+        #pragma acc atomic capture
+        {
+          j = ilst;
+          ilst += 1;
+        }
+        lst[i * maxnlst + j] = k;
       }
     }
+    nlst[i] = ilst;
   }
 }
 
