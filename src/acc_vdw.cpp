@@ -7,27 +7,51 @@
 #include "md.h"
 #include "nblist.h"
 
-// static const int GRID_SIZE = 32;
-// static const int GRID_SIZE = 64;
-static const int GRID_SIZE = 128;
-// static const int GRID_SIZE = 256;
-// static const int BLOCK_SIZE = 32;
-static const int BLOCK_SIZE = 64;
-// static const int BLOCK_SIZE = 128;
+// MAYBE_UNUSED static const int GRID_DIM = 32;
+// MAYBE_UNUSED static const int GRID_DIM = 64;
+MAYBE_UNUSED static const int GRID_DIM = 128;
+// MAYBE_UNUSED static const int GRID_DIM = 256;
+// MAYBE_UNUSED static const int BLOCK_DIM = 32;
+MAYBE_UNUSED static const int BLOCK_DIM = 64;
+// MAYBE_UNUSED static const int BLOCK_DIM = 128;
 
 // TODO: test lj, buck, mm3hb, gauss, and mutant
 // TODO: add vdw correction
 
 TINKER_NAMESPACE_BEGIN
 void evdw_reduce_xyz() {
-  #pragma acc parallel loop independent\
-              deviceptr(x,y,z,ired,kred,xred,yred,zred)
+  #pragma acc parallel deviceptr(x,y,z,ired,kred,xred,yred,zred)
+  #pragma loop independent
   for (int i = 0; i < n; ++i) {
     int iv = ired[i];
     real rdn = kred[i];
     xred[i] = rdn * (x[i] - x[iv]) + x[iv];
     yred[i] = rdn * (y[i] - y[iv]) + y[iv];
     zred[i] = rdn * (z[i] - z[iv]) + z[iv];
+  }
+}
+
+#pragma acc routine seq
+template <int DO_G>
+inline void ehal_pair(real rik,                                             //
+                      real rv, real eps, real ghal, real dhal,              //
+                      real vscalek, real vlambda, real scexp, real scalpha, //
+                      real& __restrict__ e, real& __restrict__ de) {
+  eps *= vscalek;
+  real rho = rik * REAL_RECIP(rv);
+  real rho6 = REAL_POW(rho, 6);
+  real rho7 = rho6 * rho;
+  eps *= REAL_POW(vlambda, scexp);
+  real scal = scalpha * REAL_POW(1 - vlambda, 2);
+  real s1 = REAL_RECIP(scal + REAL_POW(rho + dhal, 7));
+  real s2 = REAL_RECIP(scal + rho7 + ghal);
+  real t1 = REAL_POW(1 + dhal, 7) * s1;
+  real t2 = (1 + ghal) * s2;
+  e = eps * t1 * (t2 - 2);
+  if_constexpr(DO_G) {
+    real dt1drho = -7 * REAL_POW(rho + dhal, 6) * t1 * s1;
+    real dt2drho = -7 * rho6 * t2 * s2;
+    de = eps * (dt1drho * (t2 - 2) + t1 * dt2drho) * REAL_RECIP(rv);
   }
 }
 
@@ -58,7 +82,7 @@ void evdw_tmpl() {
   vscalebuf.resize(n, 1);
   auto* vscale = vscalebuf.data();
 
-  #pragma acc parallel num_gangs(GRID_SIZE) vector_length(BLOCK_SIZE)\
+  #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
               deviceptr(x,y,z,gx,gy,gz,box,coupl,vlst,\
               ired,kred,xred,yred,zred,\
               jvdw,njvdw,radmin,epsilon,vlam,\
@@ -119,26 +143,15 @@ void evdw_tmpl() {
       if (rik2 <= off2) {
         real rik = REAL_SQRT(rik2);
         real rv = radmin[base_it + kt];
-        real eps = epsilon[base_it + kt] * vscale[k];
+        real eps = epsilon[base_it + kt];
 
         real e;
         real de;
         if_constexpr(VDWTYP == evdw_t::hal) {
-          real rho = rik * REAL_RECIP(rv);
-          real rho6 = REAL_POW(rho, 6);
-          real rho7 = rho6 * rho;
-          eps *= REAL_POW(vlambda, scexp);
-          real scal = scalpha * REAL_POW(1 - vlambda, 2);
-          real s1 = REAL_RECIP(scal + REAL_POW(rho + dhal, 7));
-          real s2 = REAL_RECIP(scal + rho7 + ghal);
-          real t1 = REAL_POW(1 + dhal, 7) * s1;
-          real t2 = (1 + ghal) * s2;
-          e = eps * t1 * (t2 - 2);
-          if_constexpr(do_g) {
-            real dt1drho = -7 * REAL_POW(rho + dhal, 6) * t1 * s1;
-            real dt2drho = -7 * rho6 * t2 * s2;
-            de = eps * (dt1drho * (t2 - 2) + t1 * dt2drho) * REAL_RECIP(rv);
-          }
+          ehal_pair<do_g>(rik,                                //
+                          rv, eps, ghal, dhal,                //
+                          vscale[k], vlambda, scexp, scalpha, //
+                          e, de);
         }
 
         if (rik2 > cut2) {
