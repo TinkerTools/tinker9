@@ -19,8 +19,6 @@ before_install:
 
 
 script:
-  - mkdir -p build-travis
-  - cd build-travis
 
   - mkdir -p tinker/source
   - curl $CI_DEPEND_DIR/tinker-291a85c1/libtinker.so -o tinker/source/libtinker.so
@@ -41,13 +39,12 @@ script:
   - ln -s libfftw3f.so.3.5.8         libfftw3f.so
   - ln -s libfftw3f_threads.so.3.5.8 libfftw3f_threads.so
   - ls -l
-  - cd ../..
+  - cd ..
 
   - gfortran -v
   - g++ -v
   - echo $HOME
   - echo $PWD
 
-  - ls .. -ltr
-  - ../run.sh --install --fftw_dir build-travis/fftw --tinker_dir build-travis/tinker/source
-  - ../run.sh --test --fftw_dir build-travis/fftw --tinker_dir build-travis/tinker/source
+  - ./run.sh --install --fftw_dir fftw --tinker_dir tinker/source
+  - ./run.sh --test --fftw_dir travis/fftw --tinker_dir tinker/source
