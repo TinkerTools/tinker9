@@ -1,6 +1,6 @@
 branches:
   only:
-    - master
+    - dev
     - travis
 
 
@@ -48,6 +48,5 @@ script:
   - echo $HOME
   - echo $PWD
 
-  - cp ../make/Makefile ../make/*.inc .
-  - make config=travisci.xenial.inc -j2 all
-  - make config=travisci.xenial.inc test
+  - ./run.sh --install --fftw_dir ../src/build-travis/fftw --tinker_dir ../src/build-travis/tinker/source
+  - ./run.sh --test --fftw_dir ../src/build-travis/fftw --tinker_dir ../src/build-travis/tinker/source
