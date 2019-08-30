@@ -48,5 +48,5 @@ script:
   - echo $HOME
   - echo $PWD
 
-  - ./run.sh --install --fftw_dir ../src/build-travis/fftw --tinker_dir ../src/build-travis/tinker/source
-  - ./run.sh --test --fftw_dir ../src/build-travis/fftw --tinker_dir ../src/build-travis/tinker/source
+  - ./run.sh --install --fftw_dir build-travis/fftw --tinker_dir build-travis/tinker/source
+  - ./run.sh --test --fftw_dir build-travis/fftw --tinker_dir build-travis/tinker/source
