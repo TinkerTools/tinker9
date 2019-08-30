@@ -39,7 +39,7 @@ script:
   - ln -s libfftw3f.so.3.5.8         libfftw3f.so
   - ln -s libfftw3f_threads.so.3.5.8 libfftw3f_threads.so
   - ls -l
-  - cd ..
+  - cd ../..
 
   - gfortran -v
   - g++ -v
