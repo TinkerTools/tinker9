@@ -8,10 +8,10 @@
 
 // MAYBE_UNUSED static const int GRID_DIM = 32;
 // MAYBE_UNUSED static const int GRID_DIM = 64;
-MAYBE_UNUSED static const int GRID_DIM = 60;//128;
+MAYBE_UNUSED static const int GRID_DIM = 128;
 // MAYBE_UNUSED static const int GRID_DIM = 256;
 // MAYBE_UNUSED static const int BLOCK_DIM = 32;
-MAYBE_UNUSED static const int BLOCK_DIM = 256;//64;
+MAYBE_UNUSED static const int BLOCK_DIM = 64;
 // MAYBE_UNUSED static const int BLOCK_DIM = 128;
 
 // TODO: test lj, buck, mm3hb, gauss, and mutant
