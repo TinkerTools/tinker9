@@ -2,6 +2,7 @@
 #define TINKER_DEVICE_VECTOR_H_
 
 #include "device_memory.h"
+#include <cassert>
 
 TINKER_NAMESPACE_BEGIN
 template <class T, size_t N>
@@ -29,7 +30,14 @@ public:
     Base::reserve(nelem);
   }
 
+  using Base::clear;
+
 public:
+  void zero(size_t nelem) {
+    assert(nelem <= Base::capacity());
+    Allocate::zero_array(Base::data(), nelem);
+  }
+
   template <class U>
   void copyin(const U* first, size_t nelem) {
     // must use Base::data() so it will return a pointer of type T*

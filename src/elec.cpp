@@ -24,10 +24,6 @@ static void pole_data_(rc_op op) {
     dealloc_bytes(udir);
     dealloc_bytes(udirp);
 
-    dealloc_bytes(trqx);
-    dealloc_bytes(trqy);
-    dealloc_bytes(trqz);
-
     vir_trq_handle.close();
   }
 
@@ -54,13 +50,13 @@ static void pole_data_(rc_op op) {
     }
 
     if (rc_flag & calc::grad) {
-      alloc_bytes(&trqx, rs * n);
-      alloc_bytes(&trqy, rs * n);
-      alloc_bytes(&trqz, rs * n);
+      trqx_vec.reserve(n);
+      trqy_vec.reserve(n);
+      trqz_vec.reserve(n);
     } else {
-      trqx = nullptr;
-      trqy = nullptr;
-      trqz = nullptr;
+      trqx_vec.clear();
+      trqy_vec.clear();
+      trqz_vec.clear();
     }
 
     vir_trq_handle = Virial::open();
@@ -144,9 +140,9 @@ void elec_init(int vers) {
   // zero torque
 
   if (vers & calc::grad) {
-    zero_array(trqx, n);
-    zero_array(trqy, n);
-    zero_array(trqz, n);
+    trqx_vec.zero(n);
+    trqy_vec.zero(n);
+    trqz_vec.zero(n);
   }
 
   // zero torque-related virial

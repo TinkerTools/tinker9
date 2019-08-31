@@ -1,6 +1,7 @@
 #ifndef TINKER_ELEC_H_
 #define TINKER_ELEC_H_
 
+#include "device_vector.h"
 #include "energy_buffer.h"
 #include "rc_man.h"
 
@@ -63,7 +64,7 @@ TINKER_EXTERN real (*rpole)[mpl_total];
 
 /// x, y, and z components of torques on multipole site
 /// @{
-TINKER_EXTERN real *trqx, *trqy, *trqz;
+TINKER_EXTERN DeviceVector<real> trqx_vec, trqy_vec, trqz_vec;
 /// @}
 /// internal virial Cartesian tensor due to the torques
 TINKER_EXTERN Virial vir_trq_handle;

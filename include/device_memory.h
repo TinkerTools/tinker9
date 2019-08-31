@@ -42,7 +42,7 @@ struct DeviceMemory {
   };
 
   template <class DT, class ST>
-  static void copyout_array(DT* dst, const ST* src, int nelem) {
+  static void copyout_array(DT* dst, const ST* src, size_t nelem) {
     constexpr size_t ds = sizeof(DT); // host type
     constexpr size_t ss = sizeof(ST); // device type
     static_assert(ds >= ss, "invalid if sizeof(SrcType) > sizeof(DstType)");
@@ -77,6 +77,12 @@ struct DeviceMemory {
   struct Zero {
     void operator()(void* ptr, size_t nbytes) { zero_bytes(ptr, nbytes); }
   };
+
+  template <class T>
+  static void zero_array(T* dst, size_t nelem) {
+    size_t size = sizeof(T) * nelem;
+    zero_bytes(dst, size);
+  }
 
   static void deallocate_bytes(void* ptr);
 

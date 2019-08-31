@@ -31,6 +31,10 @@ void torque_tmpl(Virial v_handle) {
     bufsize = v_handle->size();
   }
 
+  const auto* trqx = trqx_vec.data();
+  const auto* trqy = trqy_vec.data();
+  const auto* trqz = trqz_vec.data();
+
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,gx,gy,gz,zaxis,\
               trqx,trqy,trqz,gpu_vir)

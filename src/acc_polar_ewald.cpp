@@ -53,6 +53,10 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   const real aewald = pu->aewald;
   real bn[5];
 
+  auto* trqx = trqx_vec.data();
+  auto* trqy = trqy_vec.data();
+  auto* trqz = trqz_vec.data();
+
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,box,coupl,polargroup,mlst,\
               rpole,thole,pdamp,uind,uinp,\
@@ -867,6 +871,10 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   fphi_to_cphi(pu, fphidp, cphidp);
 
   // recip and self torques
+
+  auto* trqx = trqx_vec.data();
+  auto* trqy = trqy_vec.data();
+  auto* trqz = trqz_vec.data();
 
   real term = f * REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
   real fterm_term = -2 * f * REAL_CUBE(aewald) / 3 / sqrtpi;
