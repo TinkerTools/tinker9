@@ -123,13 +123,6 @@ static void pme_data1_(rc_op op) {
     dealloc_bytes(fphi);
 
     if (use_potent(polar_term)) {
-      dealloc_bytes(fuind);
-      dealloc_bytes(fuinp);
-      dealloc_bytes(fdip_phi1);
-      dealloc_bytes(fdip_phi2);
-      dealloc_bytes(cphidp);
-      dealloc_bytes(fphidp);
-
       vir_m_handle.close();
     }
 
@@ -150,12 +143,12 @@ static void pme_data1_(rc_op op) {
     alloc_bytes(&fphi, 20 * n * rs);
 
     if (use_potent(polar_term)) {
-      alloc_bytes(&fuind, 3 * n * rs);
-      alloc_bytes(&fuinp, 3 * n * rs);
-      alloc_bytes(&fdip_phi1, 10 * n * rs);
-      alloc_bytes(&fdip_phi2, 10 * n * rs);
-      alloc_bytes(&cphidp, 10 * n * rs);
-      alloc_bytes(&fphidp, 20 * n * rs);
+      fuind_vec.reserve(3 * n);
+      fuinp_vec.reserve(3 * n);
+      fdip_phi1_vec.reserve(10 * n);
+      fdip_phi2_vec.reserve(10 * n);
+      cphidp_vec.reserve(10 * n);
+      fphidp_vec.reserve(20 * n);
 
       if (rc_flag & calc::virial) {
         vir_m_handle = Virial::open();

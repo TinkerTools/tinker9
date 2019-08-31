@@ -790,8 +790,10 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   auto* ep = ep_handle.e()->buffer();
   auto bufsize = ep_handle.buffer_size();
 
-  real(*fphid)[10] = fdip_phi1;
-  real(*fphip)[10] = fdip_phi2;
+  auto* fphid = fdip_phi1_vec.data();
+  auto* fphip = fdip_phi2_vec.data();
+  auto* fuind = fuind_vec.data();
+  auto* fuinp = fuinp_vec.data();
 
   cuind_to_fuind(pu, gpu_uind, gpu_uinp, fuind, fuinp);
   if (do_e && do_a) {
@@ -813,7 +815,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   // TODO: store vs. recompute qfac
   pme_conv0(pu);
   fftback(pu);
-  fphi_uind(pu, fphid, fphip, fphidp);
+  fphi_uind(pu, fphid, fphip, fphidp_vec.data());
 
   // increment the dipole polarization gradient contributions
 
@@ -823,6 +825,8 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   constexpr int deriv1[10] = {1, 4, 7, 8, 10, 15, 17, 13, 14, 19};
   constexpr int deriv2[10] = {2, 7, 5, 9, 13, 11, 18, 15, 19, 16};
   constexpr int deriv3[10] = {3, 8, 9, 6, 14, 16, 12, 19, 17, 18};
+
+  auto* fphidp = fphidp_vec.data();
 
   #pragma acc parallel loop independent deviceptr(box,gx,gy,gz,\
               fmp,fphi,fuind,fuinp,fphid,fphip,fphidp)
@@ -876,13 +880,14 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   // end do
   // Notice that only 10 * n elements were scaled in the original code.
   scale_array(&fphidp[0][0], 0.5f * f, 20 * n);
-  fphi_to_cphi(pu, fphidp, cphidp);
+  fphi_to_cphi(pu, fphidp_vec.data(), cphidp_vec.data());
 
   // recip and self torques
   const auto* rpole = rpole_vec.data();
   auto* trqx = trqx_vec.data();
   auto* trqy = trqy_vec.data();
   auto* trqz = trqz_vec.data();
+  auto* cphidp = cphidp_vec.data();
 
   real term = f * REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
   real fterm_term = -2 * f * REAL_CUBE(aewald) / 3 / sqrtpi;

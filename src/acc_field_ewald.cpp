@@ -357,6 +357,11 @@ void ufield_ewald_recip_self(const real* gpu_uind, const real* gpu_uinp,
   const int nfft3 = st.nfft3;
   const real aewald = st.aewald;
 
+  auto* fuind = fuind_vec.data();
+  auto* fuinp = fuinp_vec.data();
+  auto* fdip_phi1 = fdip_phi1_vec.data();
+  auto* fdip_phi2 = fdip_phi2_vec.data();
+
   cuind_to_fuind(pu, uind, uinp, fuind, fuinp);
   grid_uind(pu, fuind, fuinp);
   fftfront(pu);

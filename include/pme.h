@@ -1,6 +1,7 @@
 #ifndef TINKER_PME_H_
 #define TINKER_PME_H_
 
+#include "device_vector.h"
 #include "energy_buffer.h"
 #include "gen_unit.h"
 #include "rc_man.h"
@@ -56,12 +57,10 @@ TINKER_EXTERN real (*fmp)[10];
 TINKER_EXTERN real (*cphi)[10];
 TINKER_EXTERN real (*fphi)[20];
 
-TINKER_EXTERN real (*fuind)[3];
-TINKER_EXTERN real (*fuinp)[3];
-TINKER_EXTERN real (*fdip_phi1)[10];
-TINKER_EXTERN real (*fdip_phi2)[10];
-TINKER_EXTERN real (*cphidp)[10];
-TINKER_EXTERN real (*fphidp)[20];
+TINKER_EXTERN DeviceVector<real, 3> fuind_vec, fuinp_vec;
+TINKER_EXTERN DeviceVector<real, 10> fdip_phi1_vec, fdip_phi2_vec;
+TINKER_EXTERN DeviceVector<real, 10> cphidp_vec;
+TINKER_EXTERN DeviceVector<real, 20> fphidp_vec;
 
 TINKER_EXTERN Virial vir_m_handle;
 
