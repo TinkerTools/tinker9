@@ -23,20 +23,6 @@ void epolar_data(rc_op op) {
     dealloc_bytes(polarity_inv);
 
     ep_handle.dealloc();
-
-    dealloc_bytes(ufld);
-    dealloc_bytes(dufld);
-
-    dealloc_bytes(work01_);
-    dealloc_bytes(work02_);
-    dealloc_bytes(work03_);
-    dealloc_bytes(work04_);
-    dealloc_bytes(work05_);
-    dealloc_bytes(work06_);
-    dealloc_bytes(work07_);
-    dealloc_bytes(work08_);
-    dealloc_bytes(work09_);
-    dealloc_bytes(work10_);
   }
 
   if (op & rc_alloc) {
@@ -51,23 +37,23 @@ void epolar_data(rc_op op) {
     ep_handle.alloc(n);
 
     if (rc_flag & calc::grad) {
-      alloc_bytes(&ufld, rs * 3 * n);
-      alloc_bytes(&dufld, rs * 6 * n);
+      ufld_vec.reserve(3 * n);
+      dufld_vec.reserve(6 * n);
     } else {
-      ufld = nullptr;
-      dufld = nullptr;
+      ufld_vec.clear();
+      dufld_vec.clear();
     }
 
-    alloc_bytes(&work01_, 3 * n * rs);
-    alloc_bytes(&work02_, 3 * n * rs);
-    alloc_bytes(&work03_, 3 * n * rs);
-    alloc_bytes(&work04_, 3 * n * rs);
-    alloc_bytes(&work05_, 3 * n * rs);
-    alloc_bytes(&work06_, 3 * n * rs);
-    alloc_bytes(&work07_, 3 * n * rs);
-    alloc_bytes(&work08_, 3 * n * rs);
-    alloc_bytes(&work09_, 3 * n * rs);
-    alloc_bytes(&work10_, 3 * n * rs);
+    work01_.reserve(3 * n);
+    work02_.reserve(3 * n);
+    work03_.reserve(3 * n);
+    work04_.reserve(3 * n);
+    work05_.reserve(3 * n);
+    work06_.reserve(3 * n);
+    work07_.reserve(3 * n);
+    work08_.reserve(3 * n);
+    work09_.reserve(3 * n);
+    work10_.reserve(3 * n);
   }
 
   if (op & rc_init) {

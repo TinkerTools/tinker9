@@ -245,16 +245,16 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   real(*uind)[3] = reinterpret_cast<real(*)[3]>(gpu_ud);
   real(*uinp)[3] = reinterpret_cast<real(*)[3]>(gpu_up);
 
-  real(*field)[3] = work01_;
-  real(*fieldp)[3] = work02_;
-  real(*rsd)[3] = work03_;
-  real(*rsdp)[3] = work04_;
-  real(*zrsd)[3] = work05_;
-  real(*zrsdp)[3] = work06_;
-  real(*conj)[3] = work07_;
-  real(*conjp)[3] = work08_;
-  real(*vec)[3] = work09_;
-  real(*vecp)[3] = work10_;
+  auto* field = work01_.data();
+  auto* fieldp = work02_.data();
+  auto* rsd = work03_.data();
+  auto* rsdp = work04_.data();
+  auto* zrsd = work05_.data();
+  auto* zrsdp = work06_.data();
+  auto* conj = work07_.data();
+  auto* conjp = work08_.data();
+  auto* vec = work09_.data();
+  auto* vecp = work10_.data();
 
   const bool dirguess = polpcg::pcgguess;
   // use sparse matrix preconditioner

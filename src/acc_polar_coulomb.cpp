@@ -17,8 +17,8 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   static_assert(do_a ? do_e : true, "");
 
   if_constexpr(do_g) {
-    zero_array(&ufld[0][0], 3 * n);
-    zero_array(&dufld[0][0], 6 * n);
+    ufld_vec.zero(3 * n);
+    dufld_vec.zero(6 * n);
   }
 
   if_constexpr(do_e && !do_a) epolar0_dotprod(gpu_uind, udirp);
@@ -52,6 +52,9 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   real* uscale = uscalebuf.data();
 
   const real f = 0.5 * electric / dielec;
+
+  auto* ufld = ufld_vec.data();
+  auto* dufld = dufld_vec.data();
 
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,box,coupl,polargroup,mlst,\

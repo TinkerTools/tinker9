@@ -23,19 +23,11 @@ TINKER_EXTERN real* polarity_inv;
 
 TINKER_EXTERN NonbondedEnergy ep_handle;
 
-TINKER_EXTERN real (*ufld)[3];
-TINKER_EXTERN real (*dufld)[6];
+TINKER_EXTERN DeviceVector<real, 3> ufld_vec;
+TINKER_EXTERN DeviceVector<real, 6> dufld_vec;
 
-TINKER_EXTERN real (*work01_)[3];
-TINKER_EXTERN real (*work02_)[3];
-TINKER_EXTERN real (*work03_)[3];
-TINKER_EXTERN real (*work04_)[3];
-TINKER_EXTERN real (*work05_)[3];
-TINKER_EXTERN real (*work06_)[3];
-TINKER_EXTERN real (*work07_)[3];
-TINKER_EXTERN real (*work08_)[3];
-TINKER_EXTERN real (*work09_)[3];
-TINKER_EXTERN real (*work10_)[3];
+TINKER_EXTERN DeviceVector<real, 3> work01_, work02_, work03_, work04_, work05_,
+    work06_, work07_, work08_, work09_, work10_;
 
 void epolar_data(rc_op op);
 
