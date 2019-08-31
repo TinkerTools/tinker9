@@ -13,6 +13,11 @@ void estrbnd_tmpl() {
   sanity_check<USE>();
 
   const auto* bl = bl_vec.data();
+  const auto* iang = iang_vec.data();
+  const auto* anat = anat_vec.data();
+
+  const auto* isb = isb_vec.data();
+  const auto* sbk = sbk_vec.data();
 
   auto* eba = eba_handle.e()->buffer();
   auto* vir_eba = eba_handle.vir()->buffer();

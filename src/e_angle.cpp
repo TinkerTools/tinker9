@@ -13,12 +13,6 @@ void eangle_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_bytes(iang);
-    dealloc_bytes(ak);
-    dealloc_bytes(anat);
-
-    dealloc_bytes(angtyp);
-
     ea_handle.dealloc();
   }
 
@@ -26,11 +20,11 @@ void eangle_data(rc_op op) {
     const size_t rs = sizeof(real);
 
     nangle = count_bonded_term(angle_term);
-    alloc_bytes(&iang, sizeof(int) * nangle * 4);
-    alloc_bytes(&ak, rs * nangle);
-    alloc_bytes(&anat, rs * nangle);
+    iang_vec.resize(nangle * 4);
+    ak_vec.resize(nangle);
+    anat_vec.resize(nangle);
 
-    alloc_bytes(&angtyp, sizeof(int) * nangle);
+    angtyp_vec.resize(nangle);
 
     ea_handle.alloc(nangle);
   }
@@ -40,9 +34,9 @@ void eangle_data(rc_op op) {
     for (size_t i = 0; i < iangvec.size(); ++i) {
       iangvec[i] = angbnd::iang[i] - 1;
     }
-    copyin_array(&iang[0][0], iangvec.data(), nangle * 4);
-    copyin_array(ak, angbnd::ak, nangle);
-    copyin_array(anat, angbnd::anat, nangle);
+    iang_vec.copyin(iangvec.data(), nangle * 4);
+    ak_vec.copyin(angbnd::ak, nangle);
+    anat_vec.copyin(angbnd::anat, nangle);
 
     angunit = angpot::angunit;
     cang = angpot::cang;
@@ -64,8 +58,7 @@ void eangle_data(rc_op op) {
         assert(false);
       }
     }
-    copyin_array(reinterpret_cast<int*>(angtyp),
-                 reinterpret_cast<const int*>(angtypvec.data()), nangle);
+    angtyp_vec.copyin(angtypvec.data(), nangle);
   }
 }
 

@@ -28,6 +28,11 @@ void eopbend_tmpl() {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
+  const auto* iang = iang_vec.data();
+
+  const auto* iopb = iopb_vec.data();
+  const auto* opbk = opbk_vec.data();
+
   auto* eopb = eopb_handle.e()->buffer();
   auto* vir_eopb = eopb_handle.vir()->buffer();
   auto bufsize = eopb_handle.buffer_size();

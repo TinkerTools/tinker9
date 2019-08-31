@@ -11,9 +11,6 @@ void estrbnd_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_bytes(isb);
-    dealloc_bytes(sbk);
-
     eba_handle.dealloc();
   }
 
@@ -21,8 +18,8 @@ void estrbnd_data(rc_op op) {
     const size_t rs = sizeof(real);
 
     int nangle = count_bonded_term(angle_term);
-    alloc_bytes(&isb, sizeof(int) * 3 * nangle);
-    alloc_bytes(&sbk, rs * 2 * nangle);
+    isb_vec.resize(3 * nangle);
+    sbk_vec.resize(2 * nangle);
 
     nstrbnd = count_bonded_term(strbnd_term);
     eba_handle.alloc(nstrbnd);
@@ -34,8 +31,8 @@ void estrbnd_data(rc_op op) {
     for (int i = 0; i < 3 * nangle; ++i) {
       ibuf[i] = strbnd::isb[i] - 1;
     }
-    copyin_array(&isb[0][0], ibuf.data(), 3 * nangle);
-    copyin_array(&sbk[0][0], strbnd::sbk, 2 * nangle);
+    isb_vec.copyin(ibuf.data(), 3 * nangle);
+    sbk_vec.copyin(strbnd::sbk, 2 * nangle);
     stbnunit = angpot::stbnunit;
   }
 }
