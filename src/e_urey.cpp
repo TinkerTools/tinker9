@@ -16,9 +16,9 @@ void eurey_data(rc_op op) {
 
   if (op & rc_alloc) {
     int nangle = count_bonded_term(angle_term);
-    iury_vec.resize(3 * nangle);
-    uk_vec.resize(nangle);
-    ul_vec.resize(nangle);
+    iury_vec.reserve(3 * nangle);
+    uk_vec.reserve(nangle);
+    ul_vec.reserve(nangle);
 
     nurey = count_bonded_term(urey_term);
     eub_handle.alloc(nurey);

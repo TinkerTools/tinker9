@@ -23,7 +23,7 @@ private:
 public:
   PointerType data() { return reinterpret_cast<PointerType>(Base::data()); }
 
-  void resize(size_t nelem) {
+  void reserve(size_t nelem) {
     if (Base::size())
       Base::clear();
     Base::reserve(nelem);
@@ -32,7 +32,7 @@ public:
 public:
   template <class U>
   void copyin(const U* first, size_t nelem) {
-    // must be Base::data() so will return a pointer of type T*
+    // must use Base::data() so it will return a pointer of type T*
     // this->data() will return a pointer of type T(*)[N]
     Allocate::copyin_array(Base::data(), first, nelem);
   }

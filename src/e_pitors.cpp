@@ -16,8 +16,8 @@ void epitors_data(rc_op op) {
 
   if (op & rc_alloc) {
     int ntors = count_bonded_term(torsion_term);
-    ipit_vec.resize(6 * ntors);
-    kpit_vec.resize(ntors);
+    ipit_vec.reserve(6 * ntors);
+    kpit_vec.reserve(ntors);
 
     npitors = count_bonded_term(pitors_term);
     ept_handle.alloc(npitors);

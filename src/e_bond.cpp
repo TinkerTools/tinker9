@@ -17,9 +17,9 @@ void ebond_data(rc_op op) {
 
   if (op & rc_alloc) {
     nbond = count_bonded_term(bond_term);
-    ibnd_vec.resize(nbond * 2);
-    bl_vec.resize(nbond);
-    bk_vec.resize(nbond);
+    ibnd_vec.reserve(nbond * 2);
+    bl_vec.reserve(nbond);
+    bk_vec.reserve(nbond);
 
     eb_handle.alloc(nbond);
   }

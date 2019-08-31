@@ -16,13 +16,13 @@ void etors_data(rc_op op) {
 
   if (op & rc_alloc) {
     ntors = count_bonded_term(torsion_term);
-    itors_vec.resize(4 * ntors);
-    tors1_vec.resize(4 * ntors);
-    tors2_vec.resize(4 * ntors);
-    tors3_vec.resize(4 * ntors);
-    tors4_vec.resize(4 * ntors);
-    tors5_vec.resize(4 * ntors);
-    tors6_vec.resize(4 * ntors);
+    itors_vec.reserve(4 * ntors);
+    tors1_vec.reserve(4 * ntors);
+    tors2_vec.reserve(4 * ntors);
+    tors3_vec.reserve(4 * ntors);
+    tors4_vec.reserve(4 * ntors);
+    tors5_vec.reserve(4 * ntors);
+    tors6_vec.reserve(4 * ntors);
 
     et_handle.alloc(ntors);
   }

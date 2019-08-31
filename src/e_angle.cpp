@@ -18,11 +18,11 @@ void eangle_data(rc_op op) {
 
   if (op & rc_alloc) {
     nangle = count_bonded_term(angle_term);
-    iang_vec.resize(nangle * 4);
-    ak_vec.resize(nangle);
-    anat_vec.resize(nangle);
+    iang_vec.reserve(nangle * 4);
+    ak_vec.reserve(nangle);
+    anat_vec.reserve(nangle);
 
-    angtyp_vec.resize(nangle);
+    angtyp_vec.reserve(nangle);
 
     ea_handle.alloc(nangle);
   }

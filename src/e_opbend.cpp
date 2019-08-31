@@ -17,8 +17,8 @@ void eopbend_data(rc_op op) {
 
   if (op & rc_alloc) {
     int nangle = count_bonded_term(angle_term);
-    iopb_vec.resize(nangle);
-    opbk_vec.resize(nangle);
+    iopb_vec.reserve(nangle);
+    opbk_vec.reserve(nangle);
 
     nopbend = count_bonded_term(opbend_term);
     eopb_handle.alloc(nopbend);

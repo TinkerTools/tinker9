@@ -16,8 +16,8 @@ void estrbnd_data(rc_op op) {
 
   if (op & rc_alloc) {
     int nangle = count_bonded_term(angle_term);
-    isb_vec.resize(3 * nangle);
-    sbk_vec.resize(2 * nangle);
+    isb_vec.reserve(3 * nangle);
+    sbk_vec.reserve(2 * nangle);
 
     nstrbnd = count_bonded_term(strbnd_term);
     eba_handle.alloc(nstrbnd);

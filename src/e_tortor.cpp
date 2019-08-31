@@ -20,23 +20,23 @@ void etortor_data(rc_op op) {
 
   if (op & rc_alloc) {
     nbitor = bitor_::nbitor;
-    ibitor_vec.resize(5 * nbitor);
+    ibitor_vec.reserve(5 * nbitor);
 
-    itt_vec.resize(3 * nbitor);
+    itt_vec.reserve(3 * nbitor);
 
-    tnx_vec.resize(ktrtor::maxntt);
-    tny_vec.resize(ktrtor::maxntt);
+    tnx_vec.reserve(ktrtor::maxntt);
+    tny_vec.reserve(ktrtor::maxntt);
     int count = ktrtor::maxtgrd * ktrtor::maxntt;
-    ttx_vec.resize(count);
-    tty_vec.resize(count);
+    ttx_vec.reserve(count);
+    tty_vec.reserve(count);
     count = ktrtor::maxtgrd2 * ktrtor::maxntt;
-    tbf_vec.resize(count);
-    tbx_vec.resize(count);
-    tby_vec.resize(count);
-    tbxy_vec.resize(count);
+    tbf_vec.reserve(count);
+    tbx_vec.reserve(count);
+    tby_vec.reserve(count);
+    tbxy_vec.reserve(count);
 
     ntortor = count_bonded_term(tortor_term);
-    chkttor_ia_vec_.resize(ntortor);
+    chkttor_ia_vec_.reserve(ntortor);
 
     ett_handle.alloc(ntortor);
   }
