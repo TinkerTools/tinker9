@@ -21,7 +21,7 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
     dufld_vec.zero(6 * n);
   }
 
-  if_constexpr(do_e && !do_a) epolar0_dotprod(gpu_uind, udirp);
+  if_constexpr(do_e && !do_a) epolar0_dotprod(gpu_uind, udirp_vec.data());
   static_assert(do_g || do_a,
                 "Do not use this template for the energy-only version.");
 
@@ -53,6 +53,7 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
 
   const real f = 0.5 * electric / dielec;
 
+  const auto* rpole = rpole_vec.data();
   auto* ufld = ufld_vec.data();
   auto* dufld = dufld_vec.data();
 
@@ -610,23 +611,23 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
 
 void epolar_coulomb(int vers) {
   if (vers == calc::v0) {
-    induce(&uind[0][0], &uinp[0][0]);
-    epolar0_dotprod(uind, udirp);
+    induce(uind_vec.address(), uinp_vec.address());
+    epolar0_dotprod(uind_vec.data(), udirp_vec.data());
   } else if (vers == calc::v1) {
-    induce(&uind[0][0], &uinp[0][0]);
-    epolar_coulomb_tmpl<calc::v1>(uind, uinp);
+    induce(uind_vec.address(), uinp_vec.address());
+    epolar_coulomb_tmpl<calc::v1>(uind_vec.data(), uinp_vec.data());
   } else if (vers == calc::v3) {
-    induce(&uind[0][0], &uinp[0][0]);
-    epolar_coulomb_tmpl<calc::v3>(uind, uinp);
+    induce(uind_vec.address(), uinp_vec.address());
+    epolar_coulomb_tmpl<calc::v3>(uind_vec.data(), uinp_vec.data());
   } else if (vers == calc::v4) {
-    induce(&uind[0][0], &uinp[0][0]);
-    epolar_coulomb_tmpl<calc::v4>(uind, uinp);
+    induce(uind_vec.address(), uinp_vec.address());
+    epolar_coulomb_tmpl<calc::v4>(uind_vec.data(), uinp_vec.data());
   } else if (vers == calc::v5) {
-    induce(&uind[0][0], &uinp[0][0]);
-    epolar_coulomb_tmpl<calc::v5>(uind, uinp);
+    induce(uind_vec.address(), uinp_vec.address());
+    epolar_coulomb_tmpl<calc::v5>(uind_vec.data(), uinp_vec.data());
   } else if (vers == calc::v6) {
-    induce(&uind[0][0], &uinp[0][0]);
-    epolar_coulomb_tmpl<calc::v6>(uind, uinp);
+    induce(uind_vec.address(), uinp_vec.address());
+    epolar_coulomb_tmpl<calc::v6>(uind_vec.data(), uinp_vec.data());
   }
 }
 TINKER_NAMESPACE_END

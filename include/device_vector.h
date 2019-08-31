@@ -33,6 +33,8 @@ public:
   using Base::clear;
 
 public:
+  T* address() { return Base::data(); }
+
   void zero(size_t nelem) {
     assert(nelem <= Base::capacity());
     Allocate::zero_array(Base::data(), nelem);

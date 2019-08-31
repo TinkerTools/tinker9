@@ -16,37 +16,25 @@ int use_ewald() { return limits::use_ewald; }
 static void pole_data_(rc_op op) {
   if (op & rc_dealloc) {
     dealloc_bytes(zaxis);
-    dealloc_bytes(pole);
-    dealloc_bytes(rpole);
-
-    dealloc_bytes(uind);
-    dealloc_bytes(uinp);
-    dealloc_bytes(udir);
-    dealloc_bytes(udirp);
 
     vir_trq_handle.close();
   }
 
   if (op & rc_alloc) {
-    const size_t rs = sizeof(real);
-    size_t size;
-
-    size = sizeof(LocalFrame);
-    alloc_bytes(&zaxis, n * size);
-    size = rs * mpl_total;
-    alloc_bytes(&pole, n * size);
-    alloc_bytes(&rpole, n * size);
+    alloc_bytes(&zaxis, n * sizeof(LocalFrame));
+    pole_vec.reserve(n * mpl_total);
+    rpole_vec.reserve(n * mpl_total);
 
     if (use_potent(polar_term)) {
-      alloc_bytes(&uind, 3 * n * rs);
-      alloc_bytes(&uinp, 3 * n * rs);
-      alloc_bytes(&udir, 3 * n * rs);
-      alloc_bytes(&udirp, 3 * n * rs);
+      uind_vec.reserve(3 * n);
+      uinp_vec.reserve(3 * n);
+      udir_vec.reserve(3 * n);
+      udirp_vec.reserve(3 * n);
     } else {
-      uind = nullptr;
-      uinp = nullptr;
-      udir = nullptr;
-      udirp = nullptr;
+      uind_vec.clear();
+      uinp_vec.clear();
+      udir_vec.clear();
+      udirp_vec.clear();
     }
 
     if (rc_flag & calc::grad) {
@@ -119,7 +107,7 @@ static void pole_data_(rc_op op) {
       polebuf[b1 + mpl_pme_yz] = mpole::pole[b2 + 9];
       polebuf[b1 + mpl_pme_zz] = mpole::pole[b2 + 12];
     }
-    copyin_array(reinterpret_cast<real*>(pole), polebuf.data(), mpl_total * n);
+    pole_vec.copyin(polebuf.data(), mpl_total * n);
   }
 }
 

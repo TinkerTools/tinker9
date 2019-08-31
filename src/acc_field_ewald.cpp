@@ -28,6 +28,8 @@ void dfield_ewald_recip_self(real* gpu_field) {
 
   real(*field)[3] = reinterpret_cast<real(*)[3]>(gpu_field);
 
+  const auto* rpole = rpole_vec.data();
+
   #pragma acc parallel loop independent deviceptr(field,cphi,rpole)
   for (int i = 0; i < n; ++i) {
     real dix = rpole[i][mpl_pme_x];
@@ -71,6 +73,8 @@ void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
   const real aesq2n = (aewald > 0 ? 1 / (sqrtpi * aewald) : 0);
 
   real bn[4];
+
+  const auto* rpole = rpole_vec.data();
 
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,box,coupl,polargroup,mlst,\

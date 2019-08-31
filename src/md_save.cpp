@@ -137,7 +137,8 @@ static void mdsave_dup_then_write_(int istep, real dt) {
   copy_bytes_async(dup_buf_gz_, gz, rs * n, dup_stream_g_);
 
   if (mdsave_use_uind_()) {
-    copy_bytes_async(dup_buf_uind_, &uind[0][0], rs * 3 * n, dup_stream_uind_);
+    copy_bytes_async(dup_buf_uind_, uind_vec.address(), rs * 3 * n,
+                     dup_stream_uind_);
   }
 
   sync_stream(dup_stream_bxyz_);

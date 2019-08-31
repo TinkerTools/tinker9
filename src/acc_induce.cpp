@@ -272,6 +272,9 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
   // direct induced dipoles
 
+  auto* udir = udir_vec.data();
+  auto* udirp = udirp_vec.data();
+
   #pragma acc parallel loop independent\
               deviceptr(polarity,udir,udirp,field,fieldp)
   for (int i = 0; i < n; ++i) {

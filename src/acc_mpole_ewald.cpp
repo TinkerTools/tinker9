@@ -42,6 +42,7 @@ void empole_real_self_tmpl() {
 
   real bn[6];
 
+  const auto* rpole = rpole_vec.data();
   auto* trqx = trqx_vec.data();
   auto* trqy = trqy_vec.data();
   auto* trqz = trqz_vec.data();
