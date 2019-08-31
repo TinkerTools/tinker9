@@ -15,6 +15,12 @@ void dfield_ewald_recip_self(real* gpu_field) {
   const real aewald = pu->aewald;
   const real term = REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
 
+  const auto* rpole = rpole_vec.data();
+  auto* cmp = cmp_vec.data();
+  auto* fmp = fmp_vec.data();
+  auto* fphi = fphi_vec.data();
+  auto* cphi = cphi_vec.data();
+
   cmp_to_fmp(pu, cmp, fmp);
   grid_mpole(pu, fmp);
   fftfront(pu);
@@ -27,8 +33,6 @@ void dfield_ewald_recip_self(real* gpu_field) {
   fphi_to_cphi(pu, fphi, cphi);
 
   real(*field)[3] = reinterpret_cast<real(*)[3]>(gpu_field);
-
-  const auto* rpole = rpole_vec.data();
 
   #pragma acc parallel loop independent deviceptr(field,cphi,rpole)
   for (int i = 0; i < n; ++i) {

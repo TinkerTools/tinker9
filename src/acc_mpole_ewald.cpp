@@ -395,6 +395,11 @@ void empole_recip_tmpl() {
   auto* vir_em = em_handle.vir()->buffer();
   auto bufsize = em_handle.buffer_size();
 
+  auto* cmp = cmp_vec.data();
+  auto* fmp = fmp_vec.data();
+  auto* cphi = cphi_vec.data();
+  auto* fphi = fphi_vec.data();
+
   const PMEUnit pu = epme_unit;
   cmp_to_fmp(pu, cmp, fmp);
   grid_mpole(pu, fmp);

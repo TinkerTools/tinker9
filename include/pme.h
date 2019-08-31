@@ -52,10 +52,8 @@ TINKER_EXTERN PMEUnit pvpme_unit; // polarization virial
 
 TINKER_EXTERN double ewald_switch_cut, ewald_switch_off;
 
-TINKER_EXTERN real (*cmp)[10];
-TINKER_EXTERN real (*fmp)[10];
-TINKER_EXTERN real (*cphi)[10];
-TINKER_EXTERN real (*fphi)[20];
+TINKER_EXTERN DeviceVector<real, 10> cmp_vec, fmp_vec, cphi_vec;
+TINKER_EXTERN DeviceVector<real, 20> fphi_vec;
 
 TINKER_EXTERN DeviceVector<real, 3> fuind_vec, fuinp_vec;
 TINKER_EXTERN DeviceVector<real, 10> fdip_phi1_vec, fdip_phi2_vec;

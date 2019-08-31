@@ -117,11 +117,6 @@ static void pme_data1_(rc_op op) {
   if (op & rc_dealloc) {
     PMEUnit::clear();
 
-    dealloc_bytes(cmp);
-    dealloc_bytes(fmp);
-    dealloc_bytes(cphi);
-    dealloc_bytes(fphi);
-
     if (use_potent(polar_term)) {
       vir_m_handle.close();
     }
@@ -135,12 +130,10 @@ static void pme_data1_(rc_op op) {
   if (op & rc_alloc) {
     assert(PMEUnit::size() == 0);
 
-    const size_t rs = sizeof(real);
-
-    alloc_bytes(&cmp, 10 * n * rs);
-    alloc_bytes(&fmp, 10 * n * rs);
-    alloc_bytes(&cphi, 10 * n * rs);
-    alloc_bytes(&fphi, 20 * n * rs);
+    cmp_vec.reserve(10 * n);
+    fmp_vec.reserve(10 * n);
+    cphi_vec.reserve(10 * n);
+    fphi_vec.reserve(20 * n);
 
     if (use_potent(polar_term)) {
       fuind_vec.reserve(3 * n);

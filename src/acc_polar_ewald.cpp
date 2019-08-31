@@ -794,6 +794,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   auto* fphip = fdip_phi2_vec.data();
   auto* fuind = fuind_vec.data();
   auto* fuinp = fuinp_vec.data();
+  auto* fphi = fphi_vec.data();
 
   cuind_to_fuind(pu, gpu_uind, gpu_uinp, fuind, fuinp);
   if (do_e && do_a) {
@@ -826,6 +827,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   constexpr int deriv2[10] = {2, 7, 5, 9, 13, 11, 18, 15, 19, 16};
   constexpr int deriv3[10] = {3, 8, 9, 6, 14, 16, 12, 19, 17, 18};
 
+  auto* fmp = fmp_vec.data();
   auto* fphidp = fphidp_vec.data();
 
   #pragma acc parallel loop independent deviceptr(box,gx,gy,gz,\
@@ -888,6 +890,8 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   auto* trqy = trqy_vec.data();
   auto* trqz = trqz_vec.data();
   auto* cphidp = cphidp_vec.data();
+  auto* cmp = cmp_vec.data();
+  auto* cphi = cphi_vec.data();
 
   real term = f * REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
   real fterm_term = -2 * f * REAL_CUBE(aewald) / 3 / sqrtpi;
@@ -955,7 +959,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       vir_ep[i] -= vir_m[i];
     }
 
-    scale_array(&cphi[0][0], f, 10 * n);
+    scale_array(cphi_vec.address(), f, 10 * n);
     scale_array(&fphid[0][0], f, 10 * n);
     scale_array(&fphip[0][0], f, 10 * n);
 
