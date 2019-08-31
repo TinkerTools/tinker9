@@ -23,9 +23,11 @@ private:
 public:
   PointerType data() { return reinterpret_cast<PointerType>(Base::data()); }
 
-  void resize(size_t nelem) { Base::resize(nelem); }
-
-  size_t size() const { return Base::size(); }
+  void resize(size_t nelem) {
+    if (Base::size())
+      Base::clear();
+    Base::reserve(nelem);
+  }
 
 public:
   template <class U>

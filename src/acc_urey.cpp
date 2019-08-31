@@ -10,6 +10,10 @@ void eurey_tmpl() {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
+  const auto* iury = iury_vec.data();
+  const auto* uk = uk_vec.data();
+  const auto* ul = ul_vec.data();
+
   auto* eub = eub_handle.e()->buffer();
   auto* vir_eub = eub_handle.vir()->buffer();
   auto bufsize = eub_handle.buffer_size();

@@ -17,8 +17,6 @@ void eangle_data(rc_op op) {
   }
 
   if (op & rc_alloc) {
-    const size_t rs = sizeof(real);
-
     nangle = count_bonded_term(angle_term);
     iang_vec.resize(nangle * 4);
     ak_vec.resize(nangle);

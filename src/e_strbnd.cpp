@@ -15,8 +15,6 @@ void estrbnd_data(rc_op op) {
   }
 
   if (op & rc_alloc) {
-    const size_t rs = sizeof(real);
-
     int nangle = count_bonded_term(angle_term);
     isb_vec.resize(3 * nangle);
     sbk_vec.resize(2 * nangle);
