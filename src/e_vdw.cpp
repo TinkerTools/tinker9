@@ -30,39 +30,20 @@ void evdw_data(rc_op op) {
     jvdwbuf.clear();
     jcount = 0;
 
-    dealloc_bytes(ired);
-    dealloc_bytes(kred);
-    dealloc_bytes(xred);
-    dealloc_bytes(yred);
-    dealloc_bytes(zred);
-
-    dealloc_bytes(jvdw);
-    dealloc_bytes(njvdw);
-    dealloc_bytes(radmin);
-    dealloc_bytes(epsilon);
-
-    dealloc_bytes(vlam);
-
     nvdw_excluded_ = 0;
-    dealloc_bytes(vdw_excluded_);
-    dealloc_bytes(vdw_excluded_scale_);
 
     ev_handle.dealloc();
   }
 
   if (op & rc_alloc) {
-    const size_t rs = sizeof(real);
-    size_t size;
+    ired_vec.reserve(n);
+    kred_vec.reserve(n);
+    xred_vec.reserve(n);
+    yred_vec.reserve(n);
+    zred_vec.reserve(n);
 
-    size = n * rs;
-    alloc_bytes(&ired, n * sizeof(int));
-    alloc_bytes(&kred, size);
-    alloc_bytes(&xred, size);
-    alloc_bytes(&yred, size);
-    alloc_bytes(&zred, size);
-
-    alloc_bytes(&jvdw, n * sizeof(int));
-    alloc_bytes(&njvdw, sizeof(int));
+    jvdw_vec.reserve(n);
+    njvdw_vec.reserve(1);
 
     jvdwbuf.resize(n);
     assert(jmap.size() == 0);
@@ -80,12 +61,11 @@ void evdw_data(rc_op op) {
         jvdwbuf[i] = iter->second;
       }
     }
-    size = jcount * jcount * rs;
-    alloc_bytes(&radmin, size);
-    alloc_bytes(&epsilon, size);
 
-    size = n * rs;
-    alloc_bytes(&vlam, size);
+    radmin_vec.reserve(jcount * jcount);
+    epsilon_vec.reserve(jcount * jcount);
+
+    vlam_vec.reserve(n);
 
     v2scale = vdwpot::v2scale;
     v3scale = vdwpot::v3scale;
@@ -159,10 +139,10 @@ void evdw_data(rc_op op) {
       }
     }
     nvdw_excluded_ = exclvs.size();
-    alloc_bytes(&vdw_excluded_, 2 * sizeof(int) * nvdw_excluded_);
-    alloc_bytes(&vdw_excluded_scale_, sizeof(real) * nvdw_excluded_);
-    copyin_array(&vdw_excluded_[0][0], exclik.data(), 2 * nvdw_excluded_);
-    copyin_array(vdw_excluded_scale_, exclvs.data(), nvdw_excluded_);
+    vdw_excluded_vec_.reserve(2 * nvdw_excluded_);
+    vdw_excluded_scale_vec_.reserve(nvdw_excluded_);
+    vdw_excluded_vec_.copyin(exclik.data(), 2 * nvdw_excluded_);
+    vdw_excluded_scale_vec_.copyin(exclvs.data(), nvdw_excluded_);
 
     ev_handle.alloc(n);
   }
@@ -197,11 +177,11 @@ void evdw_data(rc_op op) {
       iredbuf[i] = jt;
       kredbuf[i] = vdw::kred[i];
     }
-    copyin_array(ired, iredbuf.data(), n);
-    copyin_array(kred, kredbuf.data(), n);
+    ired_vec.copyin(iredbuf.data(), n);
+    kred_vec.copyin(kredbuf.data(), n);
 
-    copyin_array(jvdw, jvdwbuf.data(), n);
-    copyin_array(njvdw, &jcount, 1);
+    jvdw_vec.copyin(jvdwbuf.data(), n);
+    njvdw_vec.copyin(&jcount, 1);
 
     // see also kvdw.f
     std::vector<double> radvec, epsvec;
@@ -215,8 +195,8 @@ void evdw_data(rc_op op) {
         epsvec.push_back(vdw::epsilon[offset]);
       }
     }
-    copyin_array(radmin, radvec.data(), jcount * jcount);
-    copyin_array(epsilon, epsvec.data(), jcount * jcount);
+    radmin_vec.copyin(radvec.data(), jcount * jcount);
+    epsilon_vec.copyin(epsvec.data(), jcount * jcount);
 
     std::vector<double> vlamvec(n);
     for (int i = 0; i < n; ++i) {
@@ -226,7 +206,7 @@ void evdw_data(rc_op op) {
         vlamvec[i] = 1;
       }
     }
-    copyin_array(vlam, vlamvec.data(), n);
+    vlam_vec.copyin(vlamvec.data(), n);
   }
 }
 

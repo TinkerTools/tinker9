@@ -48,6 +48,9 @@ static inline void sparse_diag_precond_apply(const real (*rsd)[3],
   const int maxnlst = ulist_unit->maxnlst;
   const auto* ulst = ulist_unit.deviceptr();
 
+  const auto* mindex = mindex_vec.data();
+  const auto* minv = minv_vec.data();
+
   #pragma acc parallel loop independent\
               deviceptr(rsd,rsdp,zrsd,zrsdp,mindex,minv,ulst)
   for (int i = 0; i < n; ++i) {
@@ -101,6 +104,8 @@ static inline void sparse_diag_precond_build(const real (*rsd)[3],
                                              real (*zrsd)[3],
                                              real (*zrsdp)[3]) {
   const auto* nulst = ulist_unit->nlst;
+  auto* mindex = mindex_vec.data();
+  auto* minv = minv_vec.data();
   #pragma acc serial deviceptr(mindex, nulst)
   {
     int m = 0;

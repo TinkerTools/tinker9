@@ -1,6 +1,7 @@
 #ifndef TINKER_E_VDW_H_
 #define TINKER_E_VDW_H_
 
+#include "device_vector.h"
 #include "energy_buffer.h"
 #include "rc_man.h"
 
@@ -15,20 +16,20 @@ TINKER_EXTERN real scexp, scalpha;
 TINKER_EXTERN int vcouple;
 TINKER_EXTERN real v2scale, v3scale, v4scale, v5scale;
 
-TINKER_EXTERN int* ired;
-TINKER_EXTERN real* kred;
-TINKER_EXTERN real *xred, *yred, *zred;
+TINKER_EXTERN DeviceVector<int> ired_vec;
+TINKER_EXTERN DeviceVector<real> kred_vec;
+TINKER_EXTERN DeviceVector<real> xred_vec, yred_vec, zred_vec;
 
-TINKER_EXTERN int *jvdw, *njvdw;
-TINKER_EXTERN real *radmin, *epsilon;
+TINKER_EXTERN DeviceVector<int> jvdw_vec, njvdw_vec;
+TINKER_EXTERN DeviceVector<real> radmin_vec, epsilon_vec;
 
 const int vcouple_decouple = 0;
 const int vcouple_annihilate = 1;
-TINKER_EXTERN real* vlam;
+TINKER_EXTERN DeviceVector<real> vlam_vec;
 
 TINKER_EXTERN int nvdw_excluded_;
-TINKER_EXTERN int (*vdw_excluded_)[2];
-TINKER_EXTERN real* vdw_excluded_scale_;
+TINKER_EXTERN DeviceVector<int, 2> vdw_excluded_vec_;
+TINKER_EXTERN DeviceVector<real> vdw_excluded_scale_vec_;
 
 TINKER_EXTERN NonbondedEnergy ev_handle;
 

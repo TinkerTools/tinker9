@@ -164,7 +164,7 @@ void nblist_data(rc_op op) {
       if (u == NBList::double_loop)
         maxnlst = 1;
       nblist_op_alloc_(vlist_unit, maxnlst, limits::vdwcut, neigh::lbuffer,
-                       xred, yred, zred);
+                       xred_vec.data(), yred_vec.data(), zred_vec.data());
     }
 
     if (op & rc_init) {
@@ -237,8 +237,6 @@ void nblist_data(rc_op op) {
   u = use_usolv_list();
   if (u) {
     if (op & rc_dealloc) {
-      dealloc_bytes(mindex);
-      dealloc_bytes(minv);
     }
 
     if (op & rc_alloc) {
@@ -248,9 +246,9 @@ void nblist_data(rc_op op) {
         maxnlst = 1;
       nblist_op_alloc_(ulist_unit, maxnlst, limits::usolvcut, neigh::pbuffer, x,
                        y, z);
-      alloc_bytes(&mindex, sizeof(int) * n);
+      mindex_vec.reserve(n);
       minv_size = nblist_maxlst_(minv_size, limits::usolvcut, neigh::pbuffer);
-      alloc_bytes(&minv, sizeof(real) * 3 * minv_size * n);
+      minv_vec.reserve(3 * minv_size * n);
     }
 
     if (op & rc_init)
