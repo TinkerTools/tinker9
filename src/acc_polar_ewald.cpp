@@ -942,9 +942,9 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
     real ftc[3][3];
     #pragma acc parallel num_gangs(bufsize)\
                 deviceptr(vir_ep,box,cmp,\
-                gpu_uind,gpu_uinp,fphid,fphip,cphi,cphidp)\
+                gpu_uind,gpu_uinp,fphid,fphip,cphi,cphidp)
+    #pragma acc loop gang independent\
                 private(cphid[0:4],cphip[0:4],ftc[0:3][0:3])
-    #pragma acc loop gang independent
     for (int i = 0; i < n; ++i) {
 
       // frac_to_cart

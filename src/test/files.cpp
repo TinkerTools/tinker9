@@ -13,9 +13,6 @@ TINKER_NAMESPACE_BEGIN
 // NaCl ion pair test set
 #include "file/nacl.hh"
 
-// CLN025 test set
-#include "file/cln025.hh"
-
 // local_frame test set
 #include "file/local_frame.hh"
 
