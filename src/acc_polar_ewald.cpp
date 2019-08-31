@@ -54,6 +54,8 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   real bn[5];
 
   const auto* rpole = rpole_vec.data();
+  const auto* thole = thole_vec.data();
+  const auto* pdamp = pdamp_vec.data();
 
   auto* trqx = trqx_vec.data();
   auto* trqy = trqy_vec.data();

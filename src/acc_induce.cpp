@@ -16,6 +16,7 @@ TINKER_NAMESPACE_BEGIN
 // the preconditioner is the diagnoal matrix
 static inline void diag_precond(const real (*rsd)[3], const real (*rsdp)[3],
                                 real (*zrsd)[3], real (*zrsdp)[3]) {
+  const auto* polarity = polarity_vec.data();
   #pragma acc parallel loop independent\
               deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
   for (int i = 0; i < n; ++i) {
@@ -34,6 +35,7 @@ static inline void sparse_diag_precond_apply(const real (*rsd)[3],
                                              const real (*rsdp)[3],
                                              real (*zrsd)[3],
                                              real (*zrsdp)[3]) {
+  const auto* polarity = polarity_vec.data();
   #pragma acc parallel loop independent\
               deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
   for (int i = 0; i < n; ++i) {
@@ -125,6 +127,10 @@ static inline void sparse_diag_precond_build(const real (*rsd)[3],
   static std::vector<real> uscalebuf;
   uscalebuf.resize(n, 1);
   real* uscale = uscalebuf.data();
+
+  const auto* polarity = polarity_vec.data();
+  const auto* thole = thole_vec.data();
+  const auto* pdamp = pdamp_vec.data();
 
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(mindex,minv,ulst,box,\
@@ -274,6 +280,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
   auto* udir = udir_vec.data();
   auto* udirp = udirp_vec.data();
+  const auto* polarity = polarity_vec.data();
+  const auto* polarity_inv = polarity_inv_vec.data();
 
   #pragma acc parallel loop independent\
               deviceptr(polarity,udir,udirp,field,fieldp)

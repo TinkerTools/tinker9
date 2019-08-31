@@ -54,6 +54,9 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   const real f = 0.5 * electric / dielec;
 
   const auto* rpole = rpole_vec.data();
+  const auto* thole = thole_vec.data();
+  const auto* pdamp = pdamp_vec.data();
+
   auto* ufld = ufld_vec.data();
   auto* dufld = dufld_vec.data();
 

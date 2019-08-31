@@ -9,6 +9,8 @@ void epolar0_dotprod(const real (*gpu_uind)[3], const real (*gpu_udirp)[3]) {
   auto* ep = ep_handle.e()->buffer();
   auto bufsize = ep_handle.buffer_size();
 
+  const auto* polarity_inv = polarity_inv_vec.data();
+
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(ep,gpu_uind,gpu_udirp,polarity_inv)
   #pragma acc loop gang independent

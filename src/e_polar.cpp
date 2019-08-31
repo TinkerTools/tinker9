@@ -17,22 +17,14 @@ void epolar_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_bytes(polarity);
-    dealloc_bytes(thole);
-    dealloc_bytes(pdamp);
-    dealloc_bytes(polarity_inv);
-
     ep_handle.dealloc();
   }
 
   if (op & rc_alloc) {
-    const size_t rs = sizeof(real);
-    size_t size;
-
-    alloc_bytes(&polarity, n * rs);
-    alloc_bytes(&thole, n * rs);
-    alloc_bytes(&pdamp, rs * n);
-    alloc_bytes(&polarity_inv, rs * n);
+    polarity_vec.reserve(n);
+    thole_vec.reserve(n);
+    pdamp_vec.reserve(n);
+    polarity_inv_vec.reserve(n);
 
     ep_handle.alloc(n);
 
@@ -94,10 +86,10 @@ void epolar_data(rc_op op) {
     for (int i = 0; i < n; ++i) {
       pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
     }
-    copyin_array(polarity, polar::polarity, n);
-    copyin_array(thole, polar::thole, n);
-    copyin_array(pdamp, polar::pdamp, n);
-    copyin_array(polarity_inv, pinvbuf.data(), n);
+    polarity_vec.copyin(polar::polarity, n);
+    thole_vec.copyin(polar::thole, n);
+    pdamp_vec.copyin(polar::pdamp, n);
+    polarity_inv_vec.copyin(pinvbuf.data(), n);
   }
 }
 

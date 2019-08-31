@@ -16,10 +16,8 @@ TINKER_EXTERN real p2iscale, p3iscale, p4iscale, p5iscale;
 
 TINKER_EXTERN real udiag;
 
-TINKER_EXTERN real* polarity;
-TINKER_EXTERN real* thole;
-TINKER_EXTERN real* pdamp;
-TINKER_EXTERN real* polarity_inv;
+TINKER_EXTERN DeviceVector<real> polarity_vec, thole_vec, pdamp_vec,
+    polarity_inv_vec;
 
 TINKER_EXTERN NonbondedEnergy ep_handle;
 
