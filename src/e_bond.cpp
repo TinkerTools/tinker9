@@ -12,10 +12,6 @@ void ebond_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_bytes(ibnd);
-    dealloc_bytes(bl);
-    dealloc_bytes(bk);
-
     eb_handle.dealloc();
   }
 
@@ -23,9 +19,9 @@ void ebond_data(rc_op op) {
     const size_t rs = sizeof(real);
 
     nbond = count_bonded_term(bond_term);
-    alloc_bytes(&ibnd, sizeof(int) * nbond * 2);
-    alloc_bytes(&bl, rs * nbond);
-    alloc_bytes(&bk, rs * nbond);
+    ibnd_vec.resize(nbond * 2);
+    bl_vec.resize(nbond);
+    bk_vec.resize(nbond);
 
     eb_handle.alloc(nbond);
   }
@@ -45,9 +41,9 @@ void ebond_data(rc_op op) {
     for (size_t i = 0; i < ibndvec.size(); ++i) {
       ibndvec[i] = bndstr::ibnd[i] - 1;
     }
-    copyin_array(&ibnd[0][0], ibndvec.data(), nbond * 2);
-    copyin_array(bl, bndstr::bl, nbond);
-    copyin_array(bk, bndstr::bk, nbond);
+    ibnd_vec.copyin(ibndvec.data(), nbond * 2);
+    bl_vec.copyin(bndstr::bl, nbond);
+    bk_vec.copyin(bndstr::bk, nbond);
   }
 }
 

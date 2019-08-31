@@ -12,6 +12,8 @@ void estrbnd_tmpl() {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
+  const auto* bl = bl_vec.data();
+
   auto* eba = eba_handle.e()->buffer();
   auto* vir_eba = eba_handle.vir()->buffer();
   auto bufsize = eba_handle.buffer_size();
