@@ -30,6 +30,22 @@ void evdw_reduce_xyz() {
   }
 }
 
+void evdw_resolve_gradient() {
+  #pragma acc parallel deviceptr(ired,kred,gxred,gyred,gzred,gx,gy,gz)
+  #pragma acc loop independent
+  for (int ii = 0; ii < n; ++ii) {
+    int iv = ired[ii];
+    real redii = kred[ii];
+    real rediv = 1 - redii;
+    gx[ii] += redii * gxred[ii];
+    gy[ii] += redii * gyred[ii];
+    gz[ii] += redii * gzred[ii];
+    gx[iv] += rediv * gxred[iv];
+    gy[iv] += rediv * gyred[iv];
+    gz[iv] += rediv * gzred[iv];
+  }
+}
+
 #pragma acc routine seq
 template <int DO_G>
 inline void ehal_pair(real rik,                                             //
@@ -75,8 +91,14 @@ void evdw_tmpl() {
   auto* vir_ev = ev_handle.vir()->buffer();
   auto bufsize = ev_handle.buffer_size();
 
+  if_constexpr(do_g) {
+    device_array::zero(gxred, n);
+    device_array::zero(gyred, n);
+    device_array::zero(gzred, n);
+  }
+
 #define DEVICE_PTRS_                                                           \
-  x, y, z, gx, gy, gz, box, ired, kred, xred, yred, zred, jvdw, njvdw, radmin, \
+  x, y, z, gxred, gyred, gzred, box, xred, yred, zred, jvdw, njvdw, radmin,    \
       epsilon, vlam, nev, ev, vir_ev
 
   #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
@@ -84,9 +106,6 @@ void evdw_tmpl() {
               vlst)
   #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
-    int iv = ired[i];
-    real redi = kred[i];
-    real rediv = 1 - redi;
     int it = jvdw[i];
     real xi, yi, zi;
     xi = xred[i];
@@ -101,7 +120,6 @@ void evdw_tmpl() {
     for (int kk = 0; kk < nvlsti; ++kk) {
       int offset = kk & (bufsize - 1);
       int k = vlst->lst[base + kk];
-      int kv = ired[k];
       int kt = jvdw[k];
       real xr, yr, zr;
       xr = xi - xred[k];
@@ -157,32 +175,17 @@ void evdw_tmpl() {
           real dedz = de * zr;
 
           #pragma acc atomic update
-          gx[i] += dedx * redi;
+          gxred[i] += dedx;
           #pragma acc atomic update
-          gy[i] += dedy * redi;
+          gyred[i] += dedy;
           #pragma acc atomic update
-          gz[i] += dedz * redi;
+          gzred[i] += dedz;
           #pragma acc atomic update
-          gx[iv] += dedx * rediv;
+          gxred[k] -= dedx;
           #pragma acc atomic update
-          gy[iv] += dedy * rediv;
+          gyred[k] -= dedy;
           #pragma acc atomic update
-          gz[iv] += dedz * rediv;
-
-          real redk = kred[k];
-          real redkv = 1 - redk;
-          #pragma acc atomic update
-          gx[k] -= dedx * redk;
-          #pragma acc atomic update
-          gy[k] -= dedy * redk;
-          #pragma acc atomic update
-          gz[k] -= dedz * redk;
-          #pragma acc atomic update
-          gx[kv] -= dedx * redkv;
-          #pragma acc atomic update
-          gy[kv] -= dedy * redkv;
-          #pragma acc atomic update
-          gz[kv] -= dedz * redkv;
+          gzred[k] -= dedz;
 
           if_constexpr(do_v) {
             real vxx = xr * dedx;
@@ -219,9 +222,6 @@ void evdw_tmpl() {
     int k = vdw_excluded_[ii][1];
     real vscale = vdw_excluded_scale_[ii];
 
-    int iv = ired[i];
-    real redi = kred[i];
-    real rediv = 1 - redi;
     int it = jvdw[i];
     real xi, yi, zi;
     xi = xred[i];
@@ -230,7 +230,6 @@ void evdw_tmpl() {
     real lam1 = vlam[i];
 
     int base_it = it * (*njvdw);
-    int kv = ired[k];
     int kt = jvdw[k];
     real xr, yr, zr;
     xr = xi - xred[k];
@@ -283,32 +282,17 @@ void evdw_tmpl() {
         real dedz = de * zr;
 
         #pragma acc atomic update
-        gx[i] += dedx * redi;
+        gxred[i] += dedx;
         #pragma acc atomic update
-        gy[i] += dedy * redi;
+        gyred[i] += dedy;
         #pragma acc atomic update
-        gz[i] += dedz * redi;
+        gzred[i] += dedz;
         #pragma acc atomic update
-        gx[iv] += dedx * rediv;
+        gxred[k] -= dedx;
         #pragma acc atomic update
-        gy[iv] += dedy * rediv;
+        gyred[k] -= dedy;
         #pragma acc atomic update
-        gz[iv] += dedz * rediv;
-
-        real redk = kred[k];
-        real redkv = 1 - redk;
-        #pragma acc atomic update
-        gx[k] -= dedx * redk;
-        #pragma acc atomic update
-        gy[k] -= dedy * redk;
-        #pragma acc atomic update
-        gz[k] -= dedz * redk;
-        #pragma acc atomic update
-        gx[kv] -= dedx * redkv;
-        #pragma acc atomic update
-        gy[kv] -= dedy * redkv;
-        #pragma acc atomic update
-        gz[kv] -= dedz * redkv;
+        gzred[k] -= dedz;
 
         if_constexpr(do_v) {
           real vxx = xr * dedx;
@@ -332,6 +316,8 @@ void evdw_tmpl() {
       }   // end if (do_g)
     }
   } // end for (int ii)
+
+  if_constexpr(do_g) evdw_resolve_gradient();
 }
 
 #define TINKER_EVDW_IMPL_(typ)                                                 \

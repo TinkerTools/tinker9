@@ -30,8 +30,9 @@ void evdw_data(rc_op op) {
     jvdwbuf.clear();
     jcount = 0;
 
-    device_array::deallocate(ired, kred, xred, yred, zred, jvdw, njvdw, radmin,
-                             epsilon, vlam, vdw_excluded_, vdw_excluded_scale_);
+    device_array::deallocate(ired, kred, xred, yred, zred, gxred, gyred, gzred,
+                             jvdw, njvdw, radmin, epsilon, vlam, vdw_excluded_,
+                             vdw_excluded_scale_);
 
     nvdw_excluded_ = 0;
 
@@ -44,6 +45,15 @@ void evdw_data(rc_op op) {
     device_array::allocate(&xred, n);
     device_array::allocate(&yred, n);
     device_array::allocate(&zred, n);
+    if (rc_flag & calc::grad) {
+      device_array::allocate(&gxred, n);
+      device_array::allocate(&gyred, n);
+      device_array::allocate(&gzred, n);
+    } else {
+      gxred = nullptr;
+      gyred = nullptr;
+      gzred = nullptr;
+    }
 
     device_array::allocate(&jvdw, n);
     device_array::allocate(&njvdw, 1);

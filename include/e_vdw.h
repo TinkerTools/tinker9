@@ -18,6 +18,7 @@ TINKER_EXTERN real v2scale, v3scale, v4scale, v5scale;
 
 TINKER_EXTERN device_array::ptr<int>::type ired;
 TINKER_EXTERN device_array::ptr<real>::type kred, xred, yred, zred;
+TINKER_EXTERN device_array::ptr<real>::type gxred, gyred, gzred;
 
 TINKER_EXTERN device_array::ptr<int>::type jvdw, njvdw;
 TINKER_EXTERN device_array::ptr<real>::type radmin, epsilon;
