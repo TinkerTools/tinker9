@@ -1,7 +1,7 @@
 #ifndef TINKER_GEN_UNIT_H_
 #define TINKER_GEN_UNIT_H_
 
-#include "macro.h"
+#include "dev_mem.h"
 #include <cassert>
 #include <memory>
 #include <vector>
@@ -14,17 +14,24 @@ struct GenericUnitAlloc;
 
 template <>
 struct GenericUnitAlloc<GenericUnitVersion::DisableOnDevice> {
-  struct Dealloc {
+  struct Deallocate {
     void operator()(void*) {}
   };
 
-  struct Alloc {
+  struct Allocate {
     void operator()(void**, size_t) {}
   };
 
   struct CopyIn {
     void operator()(void*, const void*, size_t) {}
   };
+};
+
+template <>
+struct GenericUnitAlloc<GenericUnitVersion::EnableOnDevice> {
+  typedef DeviceMemory::Deallocate Deallocate;
+  typedef DeviceMemory::Allocate Allocate;
+  typedef DeviceMemory::CopyIn CopyIn;
 };
 
 /**
@@ -68,15 +75,15 @@ private:
     return *hostptrs()[unit];
   }
 
-  typedef typename GenericUnitAlloc<VERSION>::Dealloc Dealloc;
-  typedef std::vector<std::unique_ptr<T, Dealloc>> deviceptr_vec;
+  typedef typename GenericUnitAlloc<VERSION>::Deallocate Deallocate;
+  typedef std::vector<std::unique_ptr<T, Deallocate>> deviceptr_vec;
   static deviceptr_vec& deviceptrs() {
     assert(USE_DPTR);
     static deviceptr_vec o;
     return o;
   }
 
-  typedef typename GenericUnitAlloc<VERSION>::Alloc Alloc;
+  typedef typename GenericUnitAlloc<VERSION>::Allocate Allocate;
   typedef typename GenericUnitAlloc<VERSION>::CopyIn CopyIn;
 
 public:
@@ -114,9 +121,9 @@ public:
     hostptrs().emplace_back(new T);
     if_constexpr(USE_DPTR) {
       T* ptr;
-      Alloc alloc;
+      Allocate alloc;
       alloc(reinterpret_cast<void**>(&ptr), sizeof(T));
-      Dealloc dealloc;
+      Deallocate dealloc;
       deviceptrs().emplace_back(ptr, dealloc);
     }
     return size() - 1;

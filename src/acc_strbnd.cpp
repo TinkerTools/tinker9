@@ -12,7 +12,6 @@ void estrbnd_tmpl() {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
-  const auto* bl = bl_vec.data();
   const auto* iang = iang_vec.data();
   const auto* anat = anat_vec.data();
 

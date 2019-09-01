@@ -1,5 +1,5 @@
 #include "e_urey.h"
-#include "array.h"
+
 #include "ext/tinker/detail/urey.hh"
 #include "ext/tinker/detail/urypot.hh"
 #include "md.h"

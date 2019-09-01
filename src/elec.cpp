@@ -1,5 +1,5 @@
 #include "elec.h"
-#include "array.h"
+
 #include "ext/tinker/detail/chgpot.hh"
 #include "ext/tinker/detail/limits.hh"
 #include "ext/tinker/detail/mpole.hh"
@@ -15,13 +15,13 @@ int use_ewald() { return limits::use_ewald; }
 
 static void pole_data_(rc_op op) {
   if (op & rc_dealloc) {
-    dealloc_bytes(zaxis);
+    DeviceMemory::deallocate_bytes(zaxis);
 
     vir_trq_handle.close();
   }
 
   if (op & rc_alloc) {
-    alloc_bytes(&zaxis, n * sizeof(LocalFrame));
+    DeviceMemory::allocate_bytes(&zaxis, n * sizeof(LocalFrame));
     pole_vec.reserve(n * mpl_total);
     rpole_vec.reserve(n * mpl_total);
 
@@ -86,7 +86,8 @@ static void pole_data_(rc_op op) {
         val = pole_none;
       zaxisbuf[base + 3] = val;
     }
-    copyin_array(reinterpret_cast<int*>(zaxis), zaxisbuf.data(), 4 * n);
+    DeviceMemory::copyin_array(reinterpret_cast<int*>(zaxis), zaxisbuf.data(),
+                               4 * n);
 
     std::vector<double> polebuf(mpl_total * n);
     for (int i = 0; i < n; ++i) {

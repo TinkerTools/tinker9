@@ -1,4 +1,3 @@
-#include "array.h"
 #include "energy.h"
 #include "io_text.h"
 #include "timer.h"
@@ -31,9 +30,9 @@ void x_testgrad(int argc, char** argv) {
     stopwatch_lap("gradient evaluation");
 
   std::vector<real> gdx(n), gdy(n), gdz(n);
-  copyout_array(gdx.data(), gx, n);
-  copyout_array(gdy.data(), gy, n);
-  copyout_array(gdz.data(), gz, n);
+  DeviceMemory::copyout_array(gdx.data(), gx, n);
+  DeviceMemory::copyout_array(gdy.data(), gy, n);
+  DeviceMemory::copyout_array(gdz.data(), gz, n);
   if (timing)
     stopwatch_lap("gradient copied out");
 

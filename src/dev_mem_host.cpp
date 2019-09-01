@@ -1,4 +1,4 @@
-#include "device_memory.h"
+#include "dev_mem.h"
 
 #ifdef TINKER_HOST
 #  include <cstdlib>

@@ -1,4 +1,4 @@
-#include "array.h"
+
 #include "md.h"
 #include <map>
 
@@ -12,16 +12,16 @@ static void grad_data_(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_bytes(gx);
-    dealloc_bytes(gy);
-    dealloc_bytes(gz);
+    DeviceMemory::deallocate_bytes(gx);
+    DeviceMemory::deallocate_bytes(gy);
+    DeviceMemory::deallocate_bytes(gz);
   }
 
   if (op & rc_alloc) {
     const size_t size = sizeof(double) * n;
-    alloc_bytes(&gx, size);
-    alloc_bytes(&gy, size);
-    alloc_bytes(&gz, size);
+    DeviceMemory::allocate_bytes(&gx, size);
+    DeviceMemory::allocate_bytes(&gy, size);
+    DeviceMemory::allocate_bytes(&gz, size);
   }
 
   // we can never assume whether or not deriv::desum was allocated, because it
@@ -88,9 +88,9 @@ void zero_egv(int vers) {
   }
 
   if (vers & calc::grad) {
-    zero_array(gx, n);
-    zero_array(gy, n);
-    zero_array(gz, n);
+    DeviceMemory::zero_array(gx, n);
+    DeviceMemory::zero_array(gy, n);
+    DeviceMemory::zero_array(gz, n);
   }
 }
 

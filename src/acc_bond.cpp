@@ -13,10 +13,6 @@ void ebond_tmpl() {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
-  const auto* ibnd = ibnd_vec.data();
-  const auto* bl = bl_vec.data();
-  const auto* bk = bk_vec.data();
-
   auto* eb = eb_handle.e()->buffer();
   auto* vir_eb = eb_handle.vir()->buffer();
   auto bufsize = eb_handle.buffer_size();

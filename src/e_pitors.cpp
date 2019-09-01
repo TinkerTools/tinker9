@@ -1,5 +1,5 @@
 #include "e_pitors.h"
-#include "array.h"
+
 #include "ext/tinker/detail/pitors.hh"
 #include "ext/tinker/detail/torpot.hh"
 #include "md.h"

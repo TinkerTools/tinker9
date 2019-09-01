@@ -1,17 +1,17 @@
 #ifndef TINKER_DEVICE_VECTOR_H_
 #define TINKER_DEVICE_VECTOR_H_
 
-#include "device_memory.h"
+#include "dev_mem.h"
 #include <cassert>
 
 TINKER_NAMESPACE_BEGIN
 template <class T, size_t N>
-struct DeviceRawPointer {
+struct DeviceVectorRawPointer {
   typedef T (*Type)[N];
 };
 
 template <class T>
-struct DeviceRawPointer<T, 1> {
+struct DeviceVectorRawPointer<T, 1> {
   typedef T* Type;
 };
 
@@ -19,7 +19,7 @@ template <class T, size_t N = 1, class Allocate = DeviceAllocator<T>>
 class DeviceVector : private std::vector<T, Allocate> {
 private:
   typedef std::vector<T, DeviceAllocator<T>> Base;
-  typedef typename DeviceRawPointer<T, N>::Type PointerType;
+  typedef typename DeviceVectorRawPointer<T, N>::Type PointerType;
 
 public:
   PointerType data() { return reinterpret_cast<PointerType>(Base::data()); }

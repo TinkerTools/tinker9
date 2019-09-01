@@ -1,5 +1,5 @@
 #include "acc_image.h"
-#include "array.h"
+
 #include "e_polar.h"
 #include "error.h"
 #include "ext/tinker/detail/inform.hh"
@@ -269,8 +269,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
   // zero out the induced dipoles at each site
 
-  zero_array(&uind[0][0], n3);
-  zero_array(&uinp[0][0], n3);
+  DeviceMemory::zero_array(&uind[0][0], n3);
+  DeviceMemory::zero_array(&uinp[0][0], n3);
 
   // get the electrostatic field due to permanent multipoles
 
@@ -295,8 +295,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   }
 
   if (dirguess) {
-    copy_array(&uind[0][0], &udir[0][0], n3);
-    copy_array(&uinp[0][0], &udirp[0][0], n3);
+    DeviceMemory::copy_array(&uind[0][0], &udir[0][0], n3);
+    DeviceMemory::copy_array(&uinp[0][0], &udirp[0][0], n3);
   }
 
   // initial residual r(0)
@@ -309,8 +309,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   if (dirguess) {
     ufield(&udir[0][0], &udirp[0][0], &rsd[0][0], &rsdp[0][0]);
   } else {
-    copy_array(&rsd[0][0], &field[0][0], n3);
-    copy_array(&rsdp[0][0], &fieldp[0][0], n3);
+    DeviceMemory::copy_array(&rsd[0][0], &field[0][0], n3);
+    DeviceMemory::copy_array(&rsdp[0][0], &fieldp[0][0], n3);
   }
 
   // initial M r(0) and p(0)
@@ -321,8 +321,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   } else {
     diag_precond(rsd, rsdp, zrsd, zrsdp);
   }
-  copy_array(&conj[0][0], &zrsd[0][0], n3);
-  copy_array(&conjp[0][0], &zrsdp[0][0], n3);
+  DeviceMemory::copy_array(&conj[0][0], &zrsd[0][0], n3);
+  DeviceMemory::copy_array(&conjp[0][0], &zrsdp[0][0], n3);
 
   // initial r(0) M r(0)
 

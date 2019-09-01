@@ -3,9 +3,9 @@
 
 #include "device_vector.h"
 #include "energy_buffer.h"
+#include "fft.h"
 #include "gen_unit.h"
 #include "rc_man.h"
-#include "rt.h"
 
 TINKER_NAMESPACE_BEGIN
 /**
@@ -69,6 +69,7 @@ void pme_data(rc_op op);
 void fft_data(rc_op op);
 void fftfront(PMEUnit pme_u);
 void fftback(PMEUnit pme_u);
+typedef GenericUnit<FFTPlan, GenericUnitVersion::DisableOnDevice> FFTPlanUnit;
 
 void pme_init(int vers);
 TINKER_NAMESPACE_END

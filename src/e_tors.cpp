@@ -1,5 +1,5 @@
 #include "e_tors.h"
-#include "array.h"
+
 #include "ext/tinker/detail/torpot.hh"
 #include "ext/tinker/detail/tors.hh"
 #include "md.h"

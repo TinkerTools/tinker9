@@ -1,5 +1,5 @@
 #include "pme.h"
-#include "array.h"
+
 #include "elec.h"
 #include "ext/tinker/detail/ewald.hh"
 #include "ext/tinker/detail/pme.hh"
@@ -40,10 +40,10 @@ PME::Params PME::get_params() const {
 bool PME::operator==(const Params& p) const { return get_params() == p; }
 
 PME::~PME() {
-  dealloc_bytes(bsmod1);
-  dealloc_bytes(bsmod2);
-  dealloc_bytes(bsmod3);
-  dealloc_bytes(qgrid);
+  DeviceMemory::deallocate_bytes(bsmod1);
+  DeviceMemory::deallocate_bytes(bsmod2);
+  DeviceMemory::deallocate_bytes(bsmod3);
+  DeviceMemory::deallocate_bytes(qgrid);
 }
 
 static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique) {
@@ -60,11 +60,11 @@ static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique) {
     size_t size;
 
     // see also subroutine moduli in pmestuf.f
-    alloc_bytes(&st.bsmod1, rs * p.nfft1);
-    alloc_bytes(&st.bsmod2, rs * p.nfft2);
-    alloc_bytes(&st.bsmod3, rs * p.nfft3);
+    DeviceMemory::allocate_bytes(&st.bsmod1, rs * p.nfft1);
+    DeviceMemory::allocate_bytes(&st.bsmod2, rs * p.nfft2);
+    DeviceMemory::allocate_bytes(&st.bsmod3, rs * p.nfft3);
     size = p.nfft1 * p.nfft2 * p.nfft3 * rs;
-    alloc_bytes(&st.qgrid, 2 * size);
+    DeviceMemory::allocate_bytes(&st.qgrid, 2 * size);
 
     st.set_params(p);
   }
@@ -92,11 +92,11 @@ static void pme_op_copyin_(PMEUnit unit) {
   }
   std::vector<double> bsmodbuf(maxfft);
   TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft1, &st.bsorder);
-  copyin_array(st.bsmod1, bsmodbuf.data(), st.nfft1);
+  DeviceMemory::copyin_array(st.bsmod1, bsmodbuf.data(), st.nfft1);
   TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft2, &st.bsorder);
-  copyin_array(st.bsmod2, bsmodbuf.data(), st.nfft2);
+  DeviceMemory::copyin_array(st.bsmod2, bsmodbuf.data(), st.nfft2);
   TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft3, &st.bsorder);
-  copyin_array(st.bsmod3, bsmodbuf.data(), st.nfft3);
+  DeviceMemory::copyin_array(st.bsmod3, bsmodbuf.data(), st.nfft3);
 
   unit.init_deviceptr(st);
 }

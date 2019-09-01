@@ -3,7 +3,6 @@
 #include "md.h"
 #include "nblist.h"
 #include "rc_man.h"
-#include "rt.h"
 #include "test.h"
 #include "test_rt.h"
 #include <set>
@@ -46,8 +45,8 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]") {
   lst.resize(n * maxnlst);
 
   for (int ifr = 0;;) {
-    copyout_array(nlst.data(), vlist_unit->nlst, n);
-    copyout_array(lst.data(), vlist_unit->lst, n * maxnlst);
+    DeviceMemory::copyout_array(nlst.data(), vlist_unit->nlst, n);
+    DeviceMemory::copyout_array(lst.data(), vlist_unit->lst, n * maxnlst);
 
     for (int iatom = 0; iatom < n; ++iatom)
       REQUIRE(find_match(&lst[iatom * maxnlst], nlst[iatom], ifr, iatom));

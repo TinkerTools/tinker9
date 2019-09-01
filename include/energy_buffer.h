@@ -3,7 +3,6 @@
 
 #include "gen_unit.h"
 #include "mathfunc.h"
-#include "rt.h"
 #include <cassert>
 
 TINKER_NAMESPACE_BEGIN
@@ -103,9 +102,9 @@ private:
     int new_cap = new_size;
 
     Store* new_buf;
-    alloc_bytes(&new_buf, rs * new_cap);
-    copy_bytes(new_buf, buf, rs * old_cap);
-    dealloc_bytes(buf);
+    DeviceMemory::allocate_bytes(&new_buf, rs * new_cap);
+    DeviceMemory::copy_bytes(new_buf, buf, rs * old_cap);
+    DeviceMemory::deallocate_bytes(buf);
 
     buf = new_buf;
     cap = new_cap;
@@ -133,7 +132,7 @@ public:
   const Store* buffer() const { return buf; }
   Store* buffer() { return buf; }
   int size() const { return cap; }
-  void zero() { zero_bytes(buf, rs * cap); }
+  void zero() { DeviceMemory::zero_bytes(buf, rs * cap); }
   void sum(Answer* host_ans) {
     ebuf_detail::Sum<Answer, Store, NAnswer, NStore>::exec(host_ans, buf, cap);
   }
@@ -149,7 +148,7 @@ public:
 
   ~GenericBuffer() {
     cap = 0;
-    dealloc_bytes(buf);
+    DeviceMemory::deallocate_bytes(buf);
     buf = nullptr;
   }
 };

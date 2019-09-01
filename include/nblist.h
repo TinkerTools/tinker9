@@ -4,7 +4,6 @@
 #include "device_vector.h"
 #include "gen_unit.h"
 #include "rc_man.h"
-#include "rt.h"
 
 TINKER_NAMESPACE_BEGIN
 /// @brief

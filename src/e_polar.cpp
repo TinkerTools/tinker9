@@ -1,5 +1,5 @@
 #include "e_polar.h"
-#include "array.h"
+
 #include "ext/tinker/detail/inform.hh"
 #include "ext/tinker/detail/polar.hh"
 #include "ext/tinker/detail/polpot.hh"
@@ -114,7 +114,7 @@ void induce(real* gpu_ud, real* gpu_up) {
   if (inform::debug && use_potent(polar_term)) {
     std::vector<double> uindbuf;
     uindbuf.resize(3 * n);
-    copyout_array(uindbuf.data(), gpu_ud, 3 * n);
+    DeviceMemory::copyout_array(uindbuf.data(), gpu_ud, 3 * n);
     bool header = true;
     for (int i = 0; i < n; ++i) {
       if (polar::polarity[i] != 0) {

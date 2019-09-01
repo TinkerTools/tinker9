@@ -1,5 +1,5 @@
-#ifndef TINKER_DEVICE_MEMORY_H_
-#define TINKER_DEVICE_MEMORY_H_
+#ifndef TINKER_DEV_MEM_H_
+#define TINKER_DEV_MEM_H_
 
 #include "macro.h"
 #include <cstring>
@@ -33,6 +33,17 @@ struct DeviceMemory {
     }
   }
 
+  template <class DT, class ST>
+  static void copyin_array2(size_t idx0, size_t ndim, DT* dst, const ST* src,
+                            size_t nelem) {
+    std::vector<DT> buf(nelem);
+    for (size_t i = 0; i < nelem; ++i)
+      buf[i] = src[ndim * i + idx0];
+    copyin_array(dst, buf.data(), nelem);
+  }
+
+  //====================================================================//
+
   static void copyout_bytes(void* dst, const void* src, size_t nbytes);
 
   struct CopyOut {
@@ -57,6 +68,17 @@ struct DeviceMemory {
     }
   }
 
+  template <class DT, class ST>
+  static void copyout_array2(size_t idx0, size_t ndim, DT* dst, const ST* src,
+                             size_t nelem) {
+    std::vector<ST> buf(nelem);
+    copyout_array(buf.data(), src, nelem);
+    for (size_t i = 0; i < nelem; ++i)
+      dst[ndim * i + idx0] = buf[i];
+  }
+
+  //====================================================================//
+
   static void copy_bytes(void* dst, const void* src, size_t nbytes);
 
   struct Copy {
@@ -72,6 +94,8 @@ struct DeviceMemory {
     copy_bytes(dst, src, size);
   }
 
+  //====================================================================//
+
   static void zero_bytes(void* ptr, size_t nbytes);
 
   struct Zero {
@@ -84,18 +108,22 @@ struct DeviceMemory {
     zero_bytes(dst, size);
   }
 
+  //====================================================================//
+
   static void deallocate_bytes(void* ptr);
 
   struct Deallocate {
     void operator()(void* ptr) { deallocate_bytes(ptr); }
   };
 
+  //====================================================================//
+
   static void allocate_bytes(void** pptr, size_t nbytes);
 
   template <
       class T,
       class = typename std::enable_if<!std::is_same<T, void>::value>::type>
-  void allocate_types(T** pptr, size_t nbytes) {
+  static void allocate_bytes(T** pptr, size_t nbytes) {
     return allocate_bytes(reinterpret_cast<void**>(pptr), nbytes);
   }
 
@@ -105,6 +133,8 @@ struct DeviceMemory {
     }
   };
 };
+
+//====================================================================//
 
 template <class T>
 struct DeviceAllocator : public DeviceMemory {

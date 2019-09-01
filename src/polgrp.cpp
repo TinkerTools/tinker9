@@ -1,5 +1,5 @@
 #include "polgrp.h"
-#include "array.h"
+#include "dev_mem.h"
 #include "ext/tinker/detail/polgrp.hh"
 #include "md.h"
 
@@ -10,14 +10,14 @@ static_assert(PolarGroup::maxp13 >= polgrp::maxp13, "");
 static_assert(PolarGroup::maxp14 >= polgrp::maxp14, "");
 
 PolarGroup::~PolarGroup() {
-  dealloc_bytes(np11);
-  dealloc_bytes(np12);
-  dealloc_bytes(np13);
-  dealloc_bytes(np14);
-  dealloc_bytes(ip11);
-  dealloc_bytes(ip12);
-  dealloc_bytes(ip13);
-  dealloc_bytes(ip14);
+  DeviceMemory::deallocate_bytes(np11);
+  DeviceMemory::deallocate_bytes(np12);
+  DeviceMemory::deallocate_bytes(np13);
+  DeviceMemory::deallocate_bytes(np14);
+  DeviceMemory::deallocate_bytes(ip11);
+  DeviceMemory::deallocate_bytes(ip12);
+  DeviceMemory::deallocate_bytes(ip13);
+  DeviceMemory::deallocate_bytes(ip14);
 }
 
 void polargroup_data(rc_op op) {
@@ -32,18 +32,18 @@ void polargroup_data(rc_op op) {
     size_t size;
 
     size = n * rs;
-    alloc_bytes(&polargroup_obj.np11, size);
-    alloc_bytes(&polargroup_obj.np12, size);
-    alloc_bytes(&polargroup_obj.np13, size);
-    alloc_bytes(&polargroup_obj.np14, size);
+    DeviceMemory::allocate_bytes(&polargroup_obj.np11, size);
+    DeviceMemory::allocate_bytes(&polargroup_obj.np12, size);
+    DeviceMemory::allocate_bytes(&polargroup_obj.np13, size);
+    DeviceMemory::allocate_bytes(&polargroup_obj.np14, size);
     size = PolarGroup::maxp11 * n * rs;
-    alloc_bytes(&polargroup_obj.ip11, size);
+    DeviceMemory::allocate_bytes(&polargroup_obj.ip11, size);
     size = PolarGroup::maxp12 * n * rs;
-    alloc_bytes(&polargroup_obj.ip12, size);
+    DeviceMemory::allocate_bytes(&polargroup_obj.ip12, size);
     size = PolarGroup::maxp13 * n * rs;
-    alloc_bytes(&polargroup_obj.ip13, size);
+    DeviceMemory::allocate_bytes(&polargroup_obj.ip13, size);
     size = PolarGroup::maxp14 * n * rs;
-    alloc_bytes(&polargroup_obj.ip14, size);
+    DeviceMemory::allocate_bytes(&polargroup_obj.ip14, size);
   }
 
   if (op & rc_init) {
@@ -65,8 +65,8 @@ void polargroup_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(polargroup_obj.np11, nbuf.data(), n);
-    copyin_array(&polargroup_obj.ip11[0][0], ibuf.data(), size);
+    DeviceMemory::copyin_array(polargroup_obj.np11, nbuf.data(), n);
+    DeviceMemory::copyin_array(&polargroup_obj.ip11[0][0], ibuf.data(), size);
 
     size = PolarGroup::maxp12 * n;
     ibuf.resize(size);
@@ -80,8 +80,8 @@ void polargroup_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(polargroup_obj.np12, nbuf.data(), n);
-    copyin_array(&polargroup_obj.ip12[0][0], ibuf.data(), size);
+    DeviceMemory::copyin_array(polargroup_obj.np12, nbuf.data(), n);
+    DeviceMemory::copyin_array(&polargroup_obj.ip12[0][0], ibuf.data(), size);
 
     size = PolarGroup::maxp13 * n;
     ibuf.resize(size);
@@ -95,8 +95,8 @@ void polargroup_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(polargroup_obj.np13, nbuf.data(), n);
-    copyin_array(&polargroup_obj.ip13[0][0], ibuf.data(), size);
+    DeviceMemory::copyin_array(polargroup_obj.np13, nbuf.data(), n);
+    DeviceMemory::copyin_array(&polargroup_obj.ip13[0][0], ibuf.data(), size);
 
     size = PolarGroup::maxp14 * n;
     ibuf.resize(size);
@@ -110,8 +110,8 @@ void polargroup_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(polargroup_obj.np14, nbuf.data(), n);
-    copyin_array(&polargroup_obj.ip14[0][0], ibuf.data(), size);
+    DeviceMemory::copyin_array(polargroup_obj.np14, nbuf.data(), n);
+    DeviceMemory::copyin_array(&polargroup_obj.ip14[0][0], ibuf.data(), size);
 
     polargroup_unit.init_deviceptr(polargroup_obj);
   }

@@ -1,19 +1,20 @@
 #include "couple.h"
-#include "array.h"
+
+#include "dev_mem.h"
 #include "ext/tinker/detail/couple.hh"
 #include "ext/tinker/detail/sizes.hh"
 #include "md.h"
 
 TINKER_NAMESPACE_BEGIN
 Couple::~Couple() {
-  dealloc_bytes(n12);
-  dealloc_bytes(n13);
-  dealloc_bytes(n14);
-  dealloc_bytes(n15);
-  dealloc_bytes(i12);
-  dealloc_bytes(i13);
-  dealloc_bytes(i14);
-  dealloc_bytes(i15);
+  DeviceMemory::deallocate_bytes(n12);
+  DeviceMemory::deallocate_bytes(n13);
+  DeviceMemory::deallocate_bytes(n14);
+  DeviceMemory::deallocate_bytes(n15);
+  DeviceMemory::deallocate_bytes(i12);
+  DeviceMemory::deallocate_bytes(i13);
+  DeviceMemory::deallocate_bytes(i14);
+  DeviceMemory::deallocate_bytes(i15);
 }
 
 void couple_data(rc_op op) {
@@ -29,18 +30,18 @@ void couple_data(rc_op op) {
     size_t size;
 
     size = n * rs;
-    alloc_bytes(&coupl_obj.n12, size);
-    alloc_bytes(&coupl_obj.n13, size);
-    alloc_bytes(&coupl_obj.n14, size);
-    alloc_bytes(&coupl_obj.n15, size);
+    DeviceMemory::allocate_bytes(&coupl_obj.n12, size);
+    DeviceMemory::allocate_bytes(&coupl_obj.n13, size);
+    DeviceMemory::allocate_bytes(&coupl_obj.n14, size);
+    DeviceMemory::allocate_bytes(&coupl_obj.n15, size);
     size = Couple::maxn12 * n * rs;
-    alloc_bytes(&coupl_obj.i12, size);
+    DeviceMemory::allocate_bytes(&coupl_obj.i12, size);
     size = Couple::maxn13 * n * rs;
-    alloc_bytes(&coupl_obj.i13, size);
+    DeviceMemory::allocate_bytes(&coupl_obj.i13, size);
     size = Couple::maxn14 * n * rs;
-    alloc_bytes(&coupl_obj.i14, size);
+    DeviceMemory::allocate_bytes(&coupl_obj.i14, size);
     size = Couple::maxn15 * n * rs;
-    alloc_bytes(&coupl_obj.i15, size);
+    DeviceMemory::allocate_bytes(&coupl_obj.i15, size);
   }
 
   if (op & rc_init) {
@@ -65,8 +66,8 @@ void couple_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(coupl_obj.n12, nbuf.data(), n);
-    copyin_array(&coupl_obj.i12[0][0], ibuf.data(), size);
+    DeviceMemory::copyin_array(coupl_obj.n12, nbuf.data(), n);
+    DeviceMemory::copyin_array(&coupl_obj.i12[0][0], ibuf.data(), size);
 
     size = Couple::maxn13 * n;
     ibuf.resize(size);
@@ -80,8 +81,8 @@ void couple_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(coupl_obj.n13, nbuf.data(), n);
-    copyin_array(&coupl_obj.i13[0][0], ibuf.data(), size);
+    DeviceMemory::copyin_array(coupl_obj.n13, nbuf.data(), n);
+    DeviceMemory::copyin_array(&coupl_obj.i13[0][0], ibuf.data(), size);
 
     size = Couple::maxn14 * n;
     ibuf.resize(size);
@@ -95,8 +96,8 @@ void couple_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(coupl_obj.n14, nbuf.data(), n);
-    copyin_array(&coupl_obj.i14[0][0], ibuf.data(), size);
+    DeviceMemory::copyin_array(coupl_obj.n14, nbuf.data(), n);
+    DeviceMemory::copyin_array(&coupl_obj.i14[0][0], ibuf.data(), size);
 
     size = Couple::maxn15 * n;
     ibuf.resize(size);
@@ -110,8 +111,8 @@ void couple_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(coupl_obj.n15, nbuf.data(), n);
-    copyin_array(&coupl_obj.i15[0][0], ibuf.data(), size);
+    DeviceMemory::copyin_array(coupl_obj.n15, nbuf.data(), n);
+    DeviceMemory::copyin_array(&coupl_obj.i15[0][0], ibuf.data(), size);
 
     couple_unit.init_deviceptr(coupl_obj);
   }

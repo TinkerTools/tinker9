@@ -1,6 +1,6 @@
 #include "acc_add.h"
 #include "acc_image.h"
-#include "array.h"
+
 #include "couple.h"
 #include "e_polar.h"
 #include "md.h"

@@ -1,5 +1,5 @@
 #include "e_tortor.h"
-#include "array.h"
+
 #include "ext/tinker/detail/atomid.hh"
 #include "ext/tinker/detail/atoms.hh"
 #include "ext/tinker/detail/bitor.hh"

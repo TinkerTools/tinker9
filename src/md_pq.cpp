@@ -1,5 +1,6 @@
-#include "array.h"
+
 #include "box.h"
+#include "dev_mem.h"
 #include "ext/tinker/detail/atomid.hh"
 #include "ext/tinker/detail/atoms.hh"
 #include "ext/tinker/detail/moldyn.hh"
@@ -28,9 +29,9 @@ void xyz_data(rc_op op) {
 
   if (op & rc_dealloc) {
     if (calc::traj & rc_flag) {
-      dealloc_bytes(trajx);
-      dealloc_bytes(trajy);
-      dealloc_bytes(trajz);
+      DeviceMemory::deallocate_bytes(trajx);
+      DeviceMemory::deallocate_bytes(trajy);
+      DeviceMemory::deallocate_bytes(trajz);
       x = nullptr;
       y = nullptr;
       z = nullptr;
@@ -38,9 +39,9 @@ void xyz_data(rc_op op) {
       trajx = nullptr;
       trajy = nullptr;
       trajz = nullptr;
-      dealloc_bytes(x);
-      dealloc_bytes(y);
-      dealloc_bytes(z);
+      DeviceMemory::deallocate_bytes(x);
+      DeviceMemory::deallocate_bytes(y);
+      DeviceMemory::deallocate_bytes(z);
     }
   }
 
@@ -48,23 +49,23 @@ void xyz_data(rc_op op) {
     size_t size = sizeof(real) * n;
     if (calc::traj & rc_flag) {
       size *= trajn;
-      alloc_bytes(&trajx, size);
-      alloc_bytes(&trajy, size);
-      alloc_bytes(&trajz, size);
+      DeviceMemory::allocate_bytes(&trajx, size);
+      DeviceMemory::allocate_bytes(&trajy, size);
+      DeviceMemory::allocate_bytes(&trajz, size);
       x = trajx;
       y = trajy;
       z = trajz;
     } else {
-      alloc_bytes(&x, size);
-      alloc_bytes(&y, size);
-      alloc_bytes(&z, size);
+      DeviceMemory::allocate_bytes(&x, size);
+      DeviceMemory::allocate_bytes(&y, size);
+      DeviceMemory::allocate_bytes(&z, size);
     }
   }
 
   if (op & rc_init) {
-    copyin_array(x, atoms::x, n);
-    copyin_array(y, atoms::y, n);
-    copyin_array(z, atoms::z, n);
+    DeviceMemory::copyin_array(x, atoms::x, n);
+    DeviceMemory::copyin_array(y, atoms::y, n);
+    DeviceMemory::copyin_array(z, atoms::z, n);
   }
 }
 
@@ -73,22 +74,22 @@ void vel_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_bytes(vx);
-    dealloc_bytes(vy);
-    dealloc_bytes(vz);
+    DeviceMemory::deallocate_bytes(vx);
+    DeviceMemory::deallocate_bytes(vy);
+    DeviceMemory::deallocate_bytes(vz);
   }
 
   if (op & rc_alloc) {
     size_t size = sizeof(real) * n;
-    alloc_bytes(&vx, size);
-    alloc_bytes(&vy, size);
-    alloc_bytes(&vz, size);
+    DeviceMemory::allocate_bytes(&vx, size);
+    DeviceMemory::allocate_bytes(&vy, size);
+    DeviceMemory::allocate_bytes(&vz, size);
   }
 
   if (op & rc_init) {
-    copyin_array2(0, 3, vx, moldyn::v, n);
-    copyin_array2(1, 3, vy, moldyn::v, n);
-    copyin_array2(2, 3, vz, moldyn::v, n);
+    DeviceMemory::copyin_array2(0, 3, vx, moldyn::v, n);
+    DeviceMemory::copyin_array2(1, 3, vy, moldyn::v, n);
+    DeviceMemory::copyin_array2(2, 3, vz, moldyn::v, n);
   }
 }
 
@@ -97,22 +98,22 @@ void mass_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_bytes(mass);
-    dealloc_bytes(massinv);
+    DeviceMemory::deallocate_bytes(mass);
+    DeviceMemory::deallocate_bytes(massinv);
   }
 
   if (op & rc_alloc) {
     size_t size = sizeof(real) * n;
-    alloc_bytes(&mass, size);
-    alloc_bytes(&massinv, size);
+    DeviceMemory::allocate_bytes(&mass, size);
+    DeviceMemory::allocate_bytes(&massinv, size);
   }
 
   if (op & rc_init) {
-    copyin_array(mass, atomid::mass, n);
+    DeviceMemory::copyin_array(mass, atomid::mass, n);
     std::vector<double> mbuf(n);
     for (int i = 0; i < n; ++i)
       mbuf[i] = 1 / atomid::mass[i];
-    copyin_array(massinv, mbuf.data(), n);
+    DeviceMemory::copyin_array(massinv, mbuf.data(), n);
   }
 }
 
@@ -248,11 +249,11 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
           shape = Box::oct;
         bbuf2[i].shape = shape;
       }
-      copyin_bytes(trajbox, bbuf2.data(), sizeof(Box) * tn);
+      DeviceMemory::copyin_bytes(trajbox, bbuf2.data(), sizeof(Box) * tn);
     }
-    copyin_bytes(trajx, xbuf.data(), sizeof(real) * n * tn);
-    copyin_bytes(trajy, ybuf.data(), sizeof(real) * n * tn);
-    copyin_bytes(trajz, zbuf.data(), sizeof(real) * n * tn);
+    DeviceMemory::copyin_bytes(trajx, xbuf.data(), sizeof(real) * n * tn);
+    DeviceMemory::copyin_bytes(trajy, ybuf.data(), sizeof(real) * n * tn);
+    DeviceMemory::copyin_bytes(trajz, zbuf.data(), sizeof(real) * n * tn);
   } else {
     std::string msg = "Cannot Open File ";
     msg += arcfile;

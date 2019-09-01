@@ -1,5 +1,5 @@
 #include "e_vdw.h"
-#include "array.h"
+
 #include "ext/tinker/detail/couple.hh"
 #include "ext/tinker/detail/mutant.hh"
 #include "ext/tinker/detail/sizes.hh"

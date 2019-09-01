@@ -1,4 +1,5 @@
 #include "nblist.h"
+#include "dev_mem.h"
 #include "e_vdw.h"
 #include "ext/tinker/detail/limits.hh"
 #include "ext/tinker/detail/neigh.hh"
@@ -96,12 +97,12 @@ static int nblist_maxlst_(int maxn, double cutoff, double buffer) {
 }
 
 NBList::~NBList() {
-  dealloc_bytes(nlst);
-  dealloc_bytes(lst);
-  dealloc_bytes(update);
-  dealloc_bytes(xold);
-  dealloc_bytes(yold);
-  dealloc_bytes(zold);
+  DeviceMemory::deallocate_bytes(nlst);
+  DeviceMemory::deallocate_bytes(lst);
+  DeviceMemory::deallocate_bytes(update);
+  DeviceMemory::deallocate_bytes(xold);
+  DeviceMemory::deallocate_bytes(yold);
+  DeviceMemory::deallocate_bytes(zold);
 }
 
 static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
@@ -113,11 +114,11 @@ static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
   size_t size;
 
   size = n * rs;
-  alloc_bytes(&st.nlst, size);
+  DeviceMemory::allocate_bytes(&st.nlst, size);
 
   int maxlst = nblist_maxlst_(maxn, cutoff, buffer);
   size = maxlst * n * rs;
-  alloc_bytes(&st.lst, size);
+  DeviceMemory::allocate_bytes(&st.lst, size);
 
   if (maxlst == 1) {
     st.update = nullptr;
@@ -126,11 +127,11 @@ static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
     st.zold = nullptr;
   } else {
     size = n * rs;
-    alloc_bytes(&st.update, size);
+    DeviceMemory::allocate_bytes(&st.update, size);
     size = n * sizeof(real);
-    alloc_bytes(&st.xold, size);
-    alloc_bytes(&st.yold, size);
-    alloc_bytes(&st.zold, size);
+    DeviceMemory::allocate_bytes(&st.xold, size);
+    DeviceMemory::allocate_bytes(&st.yold, size);
+    DeviceMemory::allocate_bytes(&st.zold, size);
   }
 
   st.x = _x;
