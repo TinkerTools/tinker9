@@ -49,8 +49,6 @@ static void rotsite(int isite, const real (*__restrict__ a)[3],
 }
 
 void rotpole() {
-  const auto* pole = pole_vec.data();
-  auto* rpole = rpole_vec.data();
   #pragma acc data deviceptr(x,y,z,zaxis,rpole,pole)
   #pragma acc parallel loop
   for (int i = 0; i < n; ++i) {

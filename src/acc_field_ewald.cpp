@@ -15,7 +15,6 @@ void dfield_ewald_recip_self(real* gpu_field) {
   const real aewald = pu->aewald;
   const real term = REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
 
-  const auto* rpole = rpole_vec.data();
   auto* cmp = cmp_vec.data();
   auto* fmp = fmp_vec.data();
   auto* fphi = fphi_vec.data();
@@ -78,7 +77,6 @@ void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
 
   real bn[4];
 
-  const auto* rpole = rpole_vec.data();
   const auto* thole = thole_vec.data();
   const auto* pdamp = pdamp_vec.data();
 

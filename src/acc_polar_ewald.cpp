@@ -53,13 +53,9 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   const real aewald = pu->aewald;
   real bn[5];
 
-  const auto* rpole = rpole_vec.data();
   const auto* thole = thole_vec.data();
   const auto* pdamp = pdamp_vec.data();
 
-  auto* trqx = trqx_vec.data();
-  auto* trqy = trqy_vec.data();
-  auto* trqz = trqz_vec.data();
   auto* ufld = ufld_vec.data();
   auto* dufld = dufld_vec.data();
 
@@ -885,10 +881,6 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   fphi_to_cphi(pu, fphidp_vec.data(), cphidp_vec.data());
 
   // recip and self torques
-  const auto* rpole = rpole_vec.data();
-  auto* trqx = trqx_vec.data();
-  auto* trqy = trqy_vec.data();
-  auto* trqz = trqz_vec.data();
   auto* cphidp = cphidp_vec.data();
   auto* cmp = cmp_vec.data();
   auto* cphi = cphi_vec.data();
@@ -1165,7 +1157,7 @@ void epolar_ewald_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   constexpr int do_g = USE & calc::grad;
   sanity_check<USE>();
 
-  if_constexpr(do_e && !do_a) epolar0_dotprod(gpu_uind, udirp_vec.data());
+  if_constexpr(do_e && !do_a) epolar0_dotprod(gpu_uind, udirp);
   static_assert(do_g || do_a,
                 "Do not use this template for the energy-only version.");
 
@@ -1176,23 +1168,23 @@ void epolar_ewald_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
 
 void epolar_ewald(int vers) {
   if (vers == calc::v0) {
-    induce(uind_vec.address(), uinp_vec.address());
-    epolar0_dotprod(uind_vec.data(), udirp_vec.data());
+    induce(&uind[0][0], &uinp[0][0]);
+    epolar0_dotprod(uind, udirp);
   } else if (vers == calc::v1) {
-    induce(uind_vec.address(), uinp_vec.address());
-    epolar_ewald_tmpl<calc::v1>(uind_vec.data(), uinp_vec.data());
+    induce(&uind[0][0], &uinp[0][0]);
+    epolar_ewald_tmpl<calc::v1>(uind, uinp);
   } else if (vers == calc::v3) {
-    induce(uind_vec.address(), uinp_vec.address());
-    epolar_ewald_tmpl<calc::v3>(uind_vec.data(), uinp_vec.data());
+    induce(&uind[0][0], &uinp[0][0]);
+    epolar_ewald_tmpl<calc::v3>(uind, uinp);
   } else if (vers == calc::v4) {
-    induce(uind_vec.address(), uinp_vec.address());
-    epolar_ewald_tmpl<calc::v4>(uind_vec.data(), uinp_vec.data());
+    induce(&uind[0][0], &uinp[0][0]);
+    epolar_ewald_tmpl<calc::v4>(uind, uinp);
   } else if (vers == calc::v5) {
-    induce(uind_vec.address(), uinp_vec.address());
-    epolar_ewald_tmpl<calc::v5>(uind_vec.data(), uinp_vec.data());
+    induce(&uind[0][0], &uinp[0][0]);
+    epolar_ewald_tmpl<calc::v5>(uind, uinp);
   } else if (vers == calc::v6) {
-    induce(uind_vec.address(), uinp_vec.address());
-    epolar_ewald_tmpl<calc::v6>(uind_vec.data(), uinp_vec.data());
+    induce(&uind[0][0], &uinp[0][0]);
+    epolar_ewald_tmpl<calc::v6>(uind, uinp);
   }
 }
 TINKER_NAMESPACE_END

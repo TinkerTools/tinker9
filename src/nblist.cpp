@@ -238,6 +238,7 @@ void nblist_data(rc_op op) {
   u = use_usolv_list();
   if (u) {
     if (op & rc_dealloc) {
+      device_array::deallocate(mindex, minv);
     }
 
     if (op & rc_alloc) {
@@ -247,9 +248,9 @@ void nblist_data(rc_op op) {
         maxnlst = 1;
       nblist_op_alloc_(ulist_unit, maxnlst, limits::usolvcut, neigh::pbuffer, x,
                        y, z);
-      mindex_vec.reserve(n);
+      device_array::allocate(&mindex, n);
       minv_size = nblist_maxlst_(minv_size, limits::usolvcut, neigh::pbuffer);
-      minv_vec.reserve(3 * minv_size * n);
+      device_array::allocate(&minv, 3 * minv_size * n);
     }
 
     if (op & rc_init)

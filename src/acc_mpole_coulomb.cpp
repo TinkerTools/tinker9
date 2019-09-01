@@ -33,11 +33,6 @@ void empole_coulomb_tmpl() {
   mscalebuf.resize(n, 1);
   real* mscale = mscalebuf.data();
 
-  const auto* rpole = rpole_vec.data();
-  auto* trqx = trqx_vec.data();
-  auto* trqy = trqy_vec.data();
-  auto* trqz = trqz_vec.data();
-
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,gx,gy,gz,box,coupl,mlst,\
               rpole,em,nem,vir_em,trqx,trqy,trqz)\

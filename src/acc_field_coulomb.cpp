@@ -30,7 +30,6 @@ void dfield_coulomb(real* gpu_field, real* gpu_fieldp) {
   real* pscale = pscalebuf.data();
   real* dscale = dscalebuf.data();
 
-  const auto* rpole = rpole_vec.data();
   const auto* thole = thole_vec.data();
   const auto* pdamp = pdamp_vec.data();
 

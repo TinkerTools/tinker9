@@ -1,7 +1,7 @@
 #ifndef TINKER_NBLIST_H_
 #define TINKER_NBLIST_H_
 
-#include "device_vector.h"
+#include "dev_array.h"
 #include "gen_unit.h"
 #include "rc_man.h"
 
@@ -41,9 +41,9 @@ TINKER_EXTERN NBListUnit ulist_unit;
 // when neighbor lists are not set up, so these variables
 // are declared here
 /// index into preconditioner inverse for PCG solver
-TINKER_EXTERN DeviceVector<int> mindex_vec;
+TINKER_EXTERN device_array::ptr<int>::type mindex;
 /// preconditioner inverse for induced dipole PCG solver
-TINKER_EXTERN DeviceVector<real> minv_vec;
+TINKER_EXTERN device_array::ptr<real>::type minv;
 
 void nblist_data(rc_op op);
 TINKER_NAMESPACE_END

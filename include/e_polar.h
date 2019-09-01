@@ -1,6 +1,7 @@
 #ifndef TINKER_GPU_E_POLAR_H_
 #define TINKER_GPU_E_POLAR_H_
 
+#include "device_vector.h"
 #include "elec.h"
 #include "energy_buffer.h"
 #include "polgrp.h"

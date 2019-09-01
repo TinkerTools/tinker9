@@ -4,8 +4,6 @@
 
 TINKER_NAMESPACE_BEGIN
 void chkpole() {
-  auto* pole = pole_vec.data();
-  auto* rpole = rpole_vec.data();
   #pragma acc data deviceptr(x,y,z,zaxis,pole)
   #pragma acc parallel loop
   for (int i = 0; i < n; ++i) {

@@ -15,36 +15,37 @@ int use_ewald() { return limits::use_ewald; }
 
 static void pole_data_(rc_op op) {
   if (op & rc_dealloc) {
-    DeviceMemory::deallocate_bytes(zaxis);
+    device_array::deallocate(zaxis, pole, rpole, trqx, trqy, trqz, udir, udirp,
+                             uind, uinp);
 
     vir_trq_handle.close();
   }
 
   if (op & rc_alloc) {
-    DeviceMemory::allocate_bytes(&zaxis, n * sizeof(LocalFrame));
-    pole_vec.reserve(n * mpl_total);
-    rpole_vec.reserve(n * mpl_total);
+    device_array::allocate(&zaxis, n);
+    device_array::allocate(&pole, n);
+    device_array::allocate(&rpole, n);
 
     if (use_potent(polar_term)) {
-      uind_vec.reserve(3 * n);
-      uinp_vec.reserve(3 * n);
-      udir_vec.reserve(3 * n);
-      udirp_vec.reserve(3 * n);
+      device_array::allocate(&uind, n);
+      device_array::allocate(&uinp, n);
+      device_array::allocate(&udir, n);
+      device_array::allocate(&udirp, n);
     } else {
-      uind_vec.clear();
-      uinp_vec.clear();
-      udir_vec.clear();
-      udirp_vec.clear();
+      uind = nullptr;
+      uinp = nullptr;
+      udir = nullptr;
+      udirp = nullptr;
     }
 
     if (rc_flag & calc::grad) {
-      trqx_vec.reserve(n);
-      trqy_vec.reserve(n);
-      trqz_vec.reserve(n);
+      device_array::allocate(&trqx, n);
+      device_array::allocate(&trqy, n);
+      device_array::allocate(&trqz, n);
     } else {
-      trqx_vec.clear();
-      trqy_vec.clear();
-      trqz_vec.clear();
+      trqx = nullptr;
+      trqy = nullptr;
+      trqz = nullptr;
     }
 
     vir_trq_handle = Virial::open();
@@ -64,12 +65,11 @@ static void pole_data_(rc_op op) {
     // 4. GPU chkpole kernel is necessary when unexpected changes of charalities
     // may happen, e.g. in Monte Carlo simulations.
     static_assert(sizeof(LocalFrame) == 4 * sizeof(int), "");
-    std::vector<int> zaxisbuf(4 * n);
+    std::vector<LocalFrame> zaxisbuf(n);
     for (int i = 0; i < n; ++i) {
-      int base = 4 * i;
-      zaxisbuf[base] = mpole::zaxis[i] - 1;
-      zaxisbuf[base + 1] = mpole::xaxis[i] - 1;
-      zaxisbuf[base + 2] = mpole::yaxis[i];
+      zaxisbuf[i].zaxis = mpole::zaxis[i] - 1;
+      zaxisbuf[i].xaxis = mpole::xaxis[i] - 1;
+      zaxisbuf[i].yaxis = mpole::yaxis[i];
       fstr_view str = mpole::polaxe[i];
       int val;
       if (str == "Z-Only")
@@ -84,10 +84,9 @@ static void pole_data_(rc_op op) {
         val = pole_3_fold;
       else
         val = pole_none;
-      zaxisbuf[base + 3] = val;
+      zaxisbuf[i].polaxe = val;
     }
-    DeviceMemory::copyin_array(reinterpret_cast<int*>(zaxis), zaxisbuf.data(),
-                               4 * n);
+    device_array::copyin(zaxis, zaxisbuf.data(), n);
 
     std::vector<double> polebuf(mpl_total * n);
     for (int i = 0; i < n; ++i) {
@@ -108,7 +107,7 @@ static void pole_data_(rc_op op) {
       polebuf[b1 + mpl_pme_yz] = mpole::pole[b2 + 9];
       polebuf[b1 + mpl_pme_zz] = mpole::pole[b2 + 12];
     }
-    pole_vec.copyin(polebuf.data(), mpl_total * n);
+    device_array::copyin(pole, polebuf.data(), n);
   }
 }
 
@@ -129,9 +128,9 @@ void elec_init(int vers) {
   // zero torque
 
   if (vers & calc::grad) {
-    trqx_vec.zero(n);
-    trqy_vec.zero(n);
-    trqz_vec.zero(n);
+    device_array::zero(trqx, n);
+    device_array::zero(trqy, n);
+    device_array::zero(trqz, n);
   }
 
   // zero torque-related virial

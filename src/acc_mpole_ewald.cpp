@@ -42,11 +42,6 @@ void empole_real_self_tmpl() {
 
   real bn[6];
 
-  const auto* rpole = rpole_vec.data();
-  auto* trqx = trqx_vec.data();
-  auto* trqy = trqy_vec.data();
-  auto* trqz = trqz_vec.data();
-
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,gx,gy,gz,box,coupl,mlst,\
               rpole,em,nem,vir_em,trqx,trqy,trqz)\
@@ -434,10 +429,6 @@ void empole_recip_tmpl() {
   const int nfft2 = st.nfft2;
   const int nfft3 = st.nfft3;
   const real f = electric / dielec;
-
-  auto* trqx = trqx_vec.data();
-  auto* trqy = trqy_vec.data();
-  auto* trqz = trqz_vec.data();
 
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(gx,gy,gz,box,\

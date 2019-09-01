@@ -13,7 +13,6 @@ void rpole_to_cmp() {
 
   // copy multipole moments and coordinates to local storage
 
-  const auto* rpole = rpole_vec.data();
   auto* cmp = cmp_vec.data();
   #pragma acc parallel loop independent deviceptr(rpole,cmp)
   for (int i = 0; i < n; ++i) {
