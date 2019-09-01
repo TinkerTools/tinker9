@@ -1,7 +1,7 @@
 #ifndef TINKER_E_VDW_H_
 #define TINKER_E_VDW_H_
 
-#include "device_vector.h"
+#include "dev_array.h"
 #include "energy_buffer.h"
 #include "rc_man.h"
 
@@ -16,20 +16,19 @@ TINKER_EXTERN real scexp, scalpha;
 TINKER_EXTERN int vcouple;
 TINKER_EXTERN real v2scale, v3scale, v4scale, v5scale;
 
-TINKER_EXTERN DeviceVector<int> ired_vec;
-TINKER_EXTERN DeviceVector<real> kred_vec;
-TINKER_EXTERN DeviceVector<real> xred_vec, yred_vec, zred_vec;
+TINKER_EXTERN device_array::ptr<int>::type ired;
+TINKER_EXTERN device_array::ptr<real>::type kred, xred, yred, zred;
 
-TINKER_EXTERN DeviceVector<int> jvdw_vec, njvdw_vec;
-TINKER_EXTERN DeviceVector<real> radmin_vec, epsilon_vec;
+TINKER_EXTERN device_array::ptr<int>::type jvdw, njvdw;
+TINKER_EXTERN device_array::ptr<real>::type radmin, epsilon;
 
 const int vcouple_decouple = 0;
 const int vcouple_annihilate = 1;
-TINKER_EXTERN DeviceVector<real> vlam_vec;
+TINKER_EXTERN device_array::ptr<real>::type vlam;
 
 TINKER_EXTERN int nvdw_excluded_;
-TINKER_EXTERN DeviceVector<int, 2> vdw_excluded_vec_;
-TINKER_EXTERN DeviceVector<real> vdw_excluded_scale_vec_;
+TINKER_EXTERN device_array::ptr<int, 2>::type vdw_excluded_;
+TINKER_EXTERN device_array::ptr<real>::type vdw_excluded_scale_;
 
 TINKER_EXTERN NonbondedEnergy ev_handle;
 

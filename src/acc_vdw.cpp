@@ -19,12 +19,6 @@ MAYBE_UNUSED static const int BLOCK_DIM = 64;
 
 TINKER_NAMESPACE_BEGIN
 void evdw_reduce_xyz() {
-  const auto* ired = ired_vec.data();
-  const auto* kred = kred_vec.data();
-  auto* xred = xred_vec.data();
-  auto* yred = yred_vec.data();
-  auto* zred = zred_vec.data();
-
   #pragma acc parallel deviceptr(x,y,z,ired,kred,xred,yred,zred)
   #pragma acc loop independent
   for (int i = 0; i < n; ++i) {
@@ -80,17 +74,6 @@ void evdw_tmpl() {
   auto* ev = ev_handle.e()->buffer();
   auto* vir_ev = ev_handle.vir()->buffer();
   auto bufsize = ev_handle.buffer_size();
-
-  const auto* ired = ired_vec.data();
-  const auto* kred = kred_vec.data();
-  const auto* xred = xred_vec.data();
-  const auto* yred = yred_vec.data();
-  const auto* zred = zred_vec.data();
-  const auto* jvdw = jvdw_vec.data();
-  const auto* njvdw = njvdw_vec.data();
-  const auto* radmin = radmin_vec.data();
-  const auto* epsilon = epsilon_vec.data();
-  const auto* vlam = vlam_vec.data();
 
 #define DEVICE_PTRS_                                                           \
   x, y, z, gx, gy, gz, box, ired, kred, xred, yred, zred, jvdw, njvdw, radmin, \
@@ -224,9 +207,6 @@ void evdw_tmpl() {
       }
     } // end for (int kk)
   }   // end for (int i)
-
-  const auto* vdw_excluded_ = vdw_excluded_vec_.data();
-  const auto* vdw_excluded_scale_ = vdw_excluded_scale_vec_.data();
 
   #pragma acc parallel\
               deviceptr(DEVICE_PTRS_,\

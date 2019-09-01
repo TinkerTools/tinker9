@@ -30,20 +30,23 @@ void evdw_data(rc_op op) {
     jvdwbuf.clear();
     jcount = 0;
 
+    device_array::deallocate(ired, kred, xred, yred, zred, jvdw, njvdw, radmin,
+                             epsilon, vlam, vdw_excluded_, vdw_excluded_scale_);
+
     nvdw_excluded_ = 0;
 
     ev_handle.dealloc();
   }
 
   if (op & rc_alloc) {
-    ired_vec.reserve(n);
-    kred_vec.reserve(n);
-    xred_vec.reserve(n);
-    yred_vec.reserve(n);
-    zred_vec.reserve(n);
+    device_array::allocate(&ired, n);
+    device_array::allocate(&kred, n);
+    device_array::allocate(&xred, n);
+    device_array::allocate(&yred, n);
+    device_array::allocate(&zred, n);
 
-    jvdw_vec.reserve(n);
-    njvdw_vec.reserve(1);
+    device_array::allocate(&jvdw, n);
+    device_array::allocate(&njvdw, 1);
 
     jvdwbuf.resize(n);
     assert(jmap.size() == 0);
@@ -62,10 +65,10 @@ void evdw_data(rc_op op) {
       }
     }
 
-    radmin_vec.reserve(jcount * jcount);
-    epsilon_vec.reserve(jcount * jcount);
+    device_array::allocate(&radmin, jcount * jcount);
+    device_array::allocate(&epsilon, jcount * jcount);
 
-    vlam_vec.reserve(n);
+    device_array::allocate(&vlam, n);
 
     v2scale = vdwpot::v2scale;
     v3scale = vdwpot::v3scale;
@@ -139,10 +142,10 @@ void evdw_data(rc_op op) {
       }
     }
     nvdw_excluded_ = exclvs.size();
-    vdw_excluded_vec_.reserve(2 * nvdw_excluded_);
-    vdw_excluded_scale_vec_.reserve(nvdw_excluded_);
-    vdw_excluded_vec_.copyin(exclik.data(), 2 * nvdw_excluded_);
-    vdw_excluded_scale_vec_.copyin(exclvs.data(), nvdw_excluded_);
+    device_array::allocate(&vdw_excluded_, nvdw_excluded_);
+    device_array::allocate(&vdw_excluded_scale_, nvdw_excluded_);
+    device_array::copyin(vdw_excluded_, exclik.data(), nvdw_excluded_);
+    device_array::copyin(vdw_excluded_scale_, exclvs.data(), nvdw_excluded_);
 
     ev_handle.alloc(n);
   }
@@ -177,11 +180,11 @@ void evdw_data(rc_op op) {
       iredbuf[i] = jt;
       kredbuf[i] = vdw::kred[i];
     }
-    ired_vec.copyin(iredbuf.data(), n);
-    kred_vec.copyin(kredbuf.data(), n);
+    device_array::copyin(ired, iredbuf.data(), n);
+    device_array::copyin(kred, kredbuf.data(), n);
 
-    jvdw_vec.copyin(jvdwbuf.data(), n);
-    njvdw_vec.copyin(&jcount, 1);
+    device_array::copyin(jvdw, jvdwbuf.data(), n);
+    device_array::copyin(njvdw, &jcount, 1);
 
     // see also kvdw.f
     std::vector<double> radvec, epsvec;
@@ -195,8 +198,8 @@ void evdw_data(rc_op op) {
         epsvec.push_back(vdw::epsilon[offset]);
       }
     }
-    radmin_vec.copyin(radvec.data(), jcount * jcount);
-    epsilon_vec.copyin(epsvec.data(), jcount * jcount);
+    device_array::copyin(radmin, radvec.data(), jcount * jcount);
+    device_array::copyin(epsilon, epsvec.data(), jcount * jcount);
 
     std::vector<double> vlamvec(n);
     for (int i = 0; i < n; ++i) {
@@ -206,7 +209,7 @@ void evdw_data(rc_op op) {
         vlamvec[i] = 1;
       }
     }
-    vlam_vec.copyin(vlamvec.data(), n);
+    device_array::copyin(vlam, vlamvec.data(), n);
   }
 }
 

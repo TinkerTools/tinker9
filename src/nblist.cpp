@@ -165,7 +165,7 @@ void nblist_data(rc_op op) {
       if (u == NBList::double_loop)
         maxnlst = 1;
       nblist_op_alloc_(vlist_unit, maxnlst, limits::vdwcut, neigh::lbuffer,
-                       xred_vec.data(), yred_vec.data(), zred_vec.data());
+                       xred, yred, zred);
     }
 
     if (op & rc_init) {
