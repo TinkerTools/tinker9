@@ -31,11 +31,6 @@ void eangle_tmpl() {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
-  const auto* iang = iang_vec.data();
-  const auto* anat = anat_vec.data();
-  const auto* ak = ak_vec.data();
-  const auto* angtyp = angtyp_vec.data();
-
   auto* ea = ea_handle.e()->buffer();
   auto* vir_ea = ea_handle.vir()->buffer();
   auto bufsize = ea_handle.buffer_size();

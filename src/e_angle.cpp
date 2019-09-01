@@ -13,16 +13,17 @@ void eangle_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
+    device_array::deallocate(iang, ak, anat, angtyp);
+
     ea_handle.dealloc();
   }
 
   if (op & rc_alloc) {
     nangle = count_bonded_term(angle_term);
-    iang_vec.reserve(nangle * 4);
-    ak_vec.reserve(nangle);
-    anat_vec.reserve(nangle);
-
-    angtyp_vec.reserve(nangle);
+    device_array::allocate(&iang, nangle);
+    device_array::allocate(&ak, nangle);
+    device_array::allocate(&anat, nangle);
+    device_array::allocate(&angtyp, nangle);
 
     ea_handle.alloc(nangle);
   }
@@ -32,9 +33,9 @@ void eangle_data(rc_op op) {
     for (size_t i = 0; i < iangvec.size(); ++i) {
       iangvec[i] = angbnd::iang[i] - 1;
     }
-    iang_vec.copyin(iangvec.data(), nangle * 4);
-    ak_vec.copyin(angbnd::ak, nangle);
-    anat_vec.copyin(angbnd::anat, nangle);
+    device_array::copyin(iang, iangvec.data(), nangle);
+    device_array::copyin(ak, angbnd::ak, nangle);
+    device_array::copyin(anat, angbnd::anat, nangle);
 
     angunit = angpot::angunit;
     cang = angpot::cang;
@@ -56,7 +57,7 @@ void eangle_data(rc_op op) {
         assert(false);
       }
     }
-    angtyp_vec.copyin(angtypvec.data(), nangle);
+    device_array::copyin(angtyp, angtypvec.data(), nangle);
   }
 }
 
