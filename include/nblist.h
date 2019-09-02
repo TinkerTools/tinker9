@@ -27,6 +27,12 @@ struct NBList {
   real cutoff;   ///< list cutoff distance
   real buffer;   ///< width of the neighbor list buffer region
 
+#ifdef TINKER_CUDA_ALGO
+  static constexpr int warp_size = 32;
+  int ntile;
+  device_array::ptr<int, 2>::type itile;
+#endif
+
   ~NBList();
 };
 

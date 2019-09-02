@@ -1,5 +1,4 @@
 #include "e_vdw.h"
-
 #include "ext/tinker/detail/couple.hh"
 #include "ext/tinker/detail/mutant.hh"
 #include "ext/tinker/detail/sizes.hh"
@@ -232,7 +231,14 @@ extern void evdw_mm3hb_acc_impl_(int vers);
 void evdw_mm3hb(int vers) { evdw_mm3hb_acc_impl_(vers); }
 
 extern void evdw_hal_acc_impl_(int vers);
-void evdw_hal(int vers) { evdw_hal_acc_impl_(vers); }
+extern void evdw_hal_cuda_impl_(int vers);
+void evdw_hal(int vers) {
+#ifdef TINKER_CUDA_ALGO
+  evdw_hal_cuda_impl_(vers);
+#else
+  evdw_hal_acc_impl_(vers);
+#endif
+}
 
 extern void evdw_gauss_acc_impl_(int vers);
 void evdw_gauss(int vers) { evdw_gauss_acc_impl_(vers); }

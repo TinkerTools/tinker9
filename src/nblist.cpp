@@ -103,6 +103,10 @@ NBList::~NBList() {
   DeviceMemory::deallocate_bytes(xold);
   DeviceMemory::deallocate_bytes(yold);
   DeviceMemory::deallocate_bytes(zold);
+
+#ifdef TINKER_CUDA_ALGO
+  device_array::deallocate(itile);
+#endif
 }
 
 static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
@@ -141,6 +145,10 @@ static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
   st.maxnlst = maxlst;
   st.cutoff = cutoff;
   st.buffer = buffer;
+
+#ifdef TINKER_CUDA_ALGO
+  device_array::allocate(&st.itile, maxlst * n);
+#endif
 
   nblu.init_deviceptr(st);
 }

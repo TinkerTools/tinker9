@@ -122,6 +122,69 @@ inline void build_v1_(NBListUnit nu) {
     }
     nlst[i] = ilst;
   }
+
+#ifdef TINKER_CUDA_ALGO
+  constexpr int warp_size = st.warp_size;
+  int max_warps = (n + warp_size - 1) / warp_size;
+
+  device_array::ptr<int>::type nwnbs, wnbs; // neighbors of the same warp tile
+  device_array::ptr<int>::type nwty, wty;   // all ty in a warp tile
+  device_array::allocate(&nwnbs, max_warps);
+  device_array::allocate(&nwty, max_warps);
+  device_array::allocate(&wnbs, max_warps * warp_size * maxnlst);
+  device_array::allocate(&wty, max_warps * maxnlst);
+
+  // copy all neighbors of atoms [i0, i0 + warp_size) and sort them
+  #pragma acc parallel deviceptr(nlst,lst,nwnbs,wnbs)
+  #pragma acc loop independent
+  for (int tx = 0; tx < max_warps; ++tx) {
+    int iwnbs = 0;
+    #pragma acc loop seq
+    for (int ilane = 0, i = tx * warp_size; ilane < warp_size && i < n;
+         ++ilane, ++i) {
+      for (int kk = 0; kk < nlst[i]; ++kk) {
+        int k = lst[i * maxnlst + kk];
+        wnbs[tx * warp_size * maxnlst + iwnbs] = k;
+        ++iwnbs;
+      }
+    }
+    sort_v1_(&wnbs[tx * warp_size * maxnlst], iwnbs);
+    nwnbs[tx] = iwnbs;
+  }
+
+  #pragma acc parallel deviceptr(nwnbs,wnbs,nwty,wty)
+  #pragma acc loop independent
+  for (int tx = 0; tx < max_warps; ++tx) {
+    int iwty = 0;
+    #pragma acc loop seq
+    for (int kk = 0; kk < nwnbs[tx]; ++kk) {
+      int k = wnbs[tx * warp_size * maxnlst + kk];
+      int ty = k / warp_size;
+      if (iwty == 0 || wty[tx * maxnlst + iwty - 1] < ty) {
+        wty[tx * maxnlst + iwty] = ty;
+        ++iwty;
+      }
+    }
+    nwty[tx] = iwty;
+  }
+
+  auto* __restrict__ itile = st.itile;
+  int ntile = 0;
+  #pragma acc serial deviceptr(nwty,wty,itile) copy(ntile)
+  for (int tx = 0; tx < max_warps; ++tx) {
+    int iwty = nwty[tx];
+    for (int kk = 0; kk < iwty; ++kk) {
+      int ty = wty[tx * maxnlst + kk];
+      itile[ntile + kk][0] = tx;
+      itile[ntile + kk][1] = ty;
+    }
+    ntile += iwty;
+  }
+  st.ntile = ntile;
+  nu.init_deviceptr(st);
+
+  device_array::deallocate(nwnbs, wnbs, nwty, wty);
+#endif
 }
 
 inline void displace_v1_(NBListUnit nu) {
