@@ -31,7 +31,7 @@ void evdw_data(rc_op op) {
     jcount = 0;
 
     device_array::deallocate(ired, kred, xred, yred, zred, gxred, gyred, gzred,
-                             jvdw, njvdw, radmin, epsilon, vlam, vdw_excluded_,
+                             jvdw, radmin, epsilon, vlam, vdw_excluded_,
                              vdw_excluded_scale_);
 
     nvdw_excluded_ = 0;
@@ -56,7 +56,6 @@ void evdw_data(rc_op op) {
     }
 
     device_array::allocate(&jvdw, n);
-    device_array::allocate(&njvdw, 1);
 
     jvdwbuf.resize(n);
     assert(jmap.size() == 0);
@@ -194,7 +193,7 @@ void evdw_data(rc_op op) {
     device_array::copyin(kred, kredbuf.data(), n);
 
     device_array::copyin(jvdw, jvdwbuf.data(), n);
-    device_array::copyin(njvdw, &jcount, 1);
+    njvdw = jcount;
 
     // see also kvdw.f
     std::vector<double> radvec, epsvec;

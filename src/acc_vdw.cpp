@@ -98,8 +98,8 @@ void evdw_tmpl() {
   }
 
 #define DEVICE_PTRS_                                                           \
-  x, y, z, gxred, gyred, gzred, box, xred, yred, zred, jvdw, njvdw, radmin,    \
-      epsilon, vlam, nev, ev, vir_ev
+  x, y, z, gxred, gyred, gzred, box, xred, yred, zred, jvdw, radmin, epsilon,  \
+      vlam, nev, ev, vir_ev
 
   #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
               deviceptr(DEVICE_PTRS_,\
@@ -113,7 +113,7 @@ void evdw_tmpl() {
     zi = zred[i];
     real lam1 = vlam[i];
 
-    int base_it = it * (*njvdw);
+    int base_it = it * njvdw;
     int nvlsti = vlst->nlst[i];
     int base = i * maxnlst;
     #pragma acc loop vector independent
@@ -229,7 +229,7 @@ void evdw_tmpl() {
     zi = zred[i];
     real lam1 = vlam[i];
 
-    int base_it = it * (*njvdw);
+    int base_it = it * njvdw;
     int kt = jvdw[k];
     real xr, yr, zr;
     xr = xi - xred[k];

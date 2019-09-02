@@ -20,7 +20,8 @@ TINKER_EXTERN device_array::ptr<int>::type ired;
 TINKER_EXTERN device_array::ptr<real>::type kred, xred, yred, zred;
 TINKER_EXTERN device_array::ptr<real>::type gxred, gyred, gzred;
 
-TINKER_EXTERN device_array::ptr<int>::type jvdw, njvdw;
+TINKER_EXTERN int njvdw;
+TINKER_EXTERN device_array::ptr<int>::type jvdw;
 TINKER_EXTERN device_array::ptr<real>::type radmin, epsilon;
 
 const int vcouple_decouple = 0;
