@@ -30,9 +30,9 @@ void x_testgrad(int argc, char** argv) {
     stopwatch_lap("gradient evaluation");
 
   std::vector<real> gdx(n), gdy(n), gdz(n);
-  DeviceMemory::copyout_array(gdx.data(), gx, n);
-  DeviceMemory::copyout_array(gdy.data(), gy, n);
-  DeviceMemory::copyout_array(gdz.data(), gz, n);
+  device_array::copyout(n, gdx.data(), gx);
+  device_array::copyout(n, gdy.data(), gy);
+  device_array::copyout(n, gdz.data(), gz);
   if (timing)
     stopwatch_lap("gradient copied out");
 

@@ -108,7 +108,7 @@ void induce(real (*ud)[3], real (*up)[3]) {
   if (inform::debug && use_potent(polar_term)) {
     std::vector<double> uindbuf;
     uindbuf.resize(3 * n);
-    device_array::copyout(3 * n, uindbuf.data(), ud);
+    device_array::copyout(n, uindbuf.data(), ud);
     bool header = true;
     for (int i = 0; i < n; ++i) {
       if (polar::polarity[i] != 0) {

@@ -12,16 +12,11 @@ static void grad_data_(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    DeviceMemory::deallocate_bytes(gx);
-    DeviceMemory::deallocate_bytes(gy);
-    DeviceMemory::deallocate_bytes(gz);
+    device_array::deallocate(gx, gy, gz);
   }
 
   if (op & rc_alloc) {
-    const size_t size = sizeof(double) * n;
-    DeviceMemory::allocate_bytes(&gx, size);
-    DeviceMemory::allocate_bytes(&gy, size);
-    DeviceMemory::allocate_bytes(&gz, size);
+    device_array::allocate(n, &gx, &gy, &gz);
   }
 
   // we can never assume whether or not deriv::desum was allocated, because it
@@ -88,9 +83,7 @@ void zero_egv(int vers) {
   }
 
   if (vers & calc::grad) {
-    DeviceMemory::zero_array(gx, n);
-    DeviceMemory::zero_array(gy, n);
-    DeviceMemory::zero_array(gz, n);
+    device_array::zero(n, gx, gy, gz);
   }
 }
 
