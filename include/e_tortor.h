@@ -1,7 +1,7 @@
 #ifndef TINKER_E_TORTOR_H_
 #define TINKER_E_TORTOR_H_
 
-#include "device_vector.h"
+#include "dev_array.h"
 #include "energy_buffer.h"
 #include "ext/tinker/detail/ktrtor.hh"
 #include "rc_man.h"
@@ -9,21 +9,20 @@
 TINKER_NAMESPACE_BEGIN
 // module bitor
 TINKER_EXTERN int nbitor;
-TINKER_EXTERN DeviceVector<int, 5> ibitor_vec;
+TINKER_EXTERN device_pointer<int, 5> ibitor;
 
 // module tortor
 TINKER_EXTERN int ntortor;
-TINKER_EXTERN DeviceVector<int, 3> itt_vec;
+TINKER_EXTERN device_pointer<int, 3> itt;
 
 // module ktrtor
-TINKER_EXTERN DeviceVector<int> tnx_vec, tny_vec; // of size maxntt
+TINKER_EXTERN device_pointer<int> tnx, tny; // of size maxntt
 // of size (maxtgrd,maxntt) i.e. [maxntt][maxtgrd]
-TINKER_EXTERN DeviceVector<real, ktrtor::maxtgrd> ttx_vec, tty_vec;
+TINKER_EXTERN device_pointer<real, ktrtor::maxtgrd> ttx, tty;
 // of size (maxtgrd2,maxntt) i.e. [maxntt][maxtgrd2]
-TINKER_EXTERN DeviceVector<real, ktrtor::maxtgrd2> tbf_vec, tbx_vec, tby_vec,
-    tbxy_vec;
+TINKER_EXTERN device_pointer<real, ktrtor::maxtgrd2> tbf, tbx, tby, tbxy;
 
-TINKER_EXTERN DeviceVector<int> chkttor_ia_vec_; // of size ntortor
+TINKER_EXTERN device_pointer<int> chkttor_ia_; // of size ntortor
 
 TINKER_EXTERN real ttorunit;
 
