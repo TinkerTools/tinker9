@@ -92,11 +92,27 @@ public:
   //====================================================================//
 
   template <class PTR, class U>
-  static void copyin(PTR dst, const U* src, size_t nelem) {
+  static void copyin(size_t nelem, PTR dst, const U* src) {
     typedef typename deduce<PTR>::type T;
     constexpr size_t N = deduce<PTR>::N;
     Allocator<T> a;
-    a.copyin_array(flatten(dst), src, nelem * N);
+    a.copyin_array(flatten(dst), flatten(src), nelem * N);
+  }
+
+  template <class PTR, class U>
+  static void copyout(size_t nelem, PTR dst, const U* src) {
+    typedef typename deduce<PTR>::type T;
+    constexpr size_t N = deduce<PTR>::N;
+    Allocator<T> a;
+    a.copyout_array(flatten(dst), flatten(src), nelem * N);
+  }
+
+  template <class PTR, class U>
+  static void copy(size_t nelem, PTR dst, const U* src) {
+    typedef typename deduce<PTR>::type T;
+    constexpr size_t N = deduce<PTR>::N;
+    Allocator<T> a;
+    a.copy_array(flatten(dst), flatten(src), nelem * N);
   }
 };
 

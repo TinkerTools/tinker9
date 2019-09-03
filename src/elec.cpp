@@ -78,7 +78,7 @@ static void pole_data_(rc_op op) {
         val = pole_none;
       zaxisbuf[i].polaxe = val;
     }
-    device_array::copyin(zaxis, zaxisbuf.data(), n);
+    device_array::copyin(n, zaxis, zaxisbuf.data());
 
     std::vector<double> polebuf(mpl_total * n);
     for (int i = 0; i < n; ++i) {
@@ -99,7 +99,7 @@ static void pole_data_(rc_op op) {
       polebuf[b1 + mpl_pme_yz] = mpole::pole[b2 + 9];
       polebuf[b1 + mpl_pme_zz] = mpole::pole[b2 + 12];
     }
-    device_array::copyin(pole, polebuf.data(), n);
+    device_array::copyin(n, pole, polebuf.data());
   }
 }
 

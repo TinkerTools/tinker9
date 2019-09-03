@@ -233,9 +233,6 @@ static inline void sparse_diag_precond_build(const real (*rsd)[3],
  * vec = T P
  */
 void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
-
-  const int n3 = 3 * n;
-
   real(*uind)[3] = reinterpret_cast<real(*)[3]>(gpu_ud);
   real(*uinp)[3] = reinterpret_cast<real(*)[3]>(gpu_up);
 
@@ -257,8 +254,7 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
   // zero out the induced dipoles at each site
 
-  DeviceMemory::zero_array(&uind[0][0], n3);
-  DeviceMemory::zero_array(&uinp[0][0], n3);
+  device_array::zero(n, uind, uinp);
 
   // get the electrostatic field due to permanent multipoles
 
@@ -278,8 +274,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   }
 
   if (dirguess) {
-    DeviceMemory::copy_array(&uind[0][0], &udir[0][0], n3);
-    DeviceMemory::copy_array(&uinp[0][0], &udirp[0][0], n3);
+    device_array::copy(n, uind, udir);
+    device_array::copy(n, uinp, udirp);
   }
 
   // initial residual r(0)
@@ -292,8 +288,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   if (dirguess) {
     ufield(&udir[0][0], &udirp[0][0], &rsd[0][0], &rsdp[0][0]);
   } else {
-    DeviceMemory::copy_array(&rsd[0][0], &field[0][0], n3);
-    DeviceMemory::copy_array(&rsdp[0][0], &fieldp[0][0], n3);
+    device_array::copy(n, rsd, field);
+    device_array::copy(n, rsdp, fieldp);
   }
 
   // initial M r(0) and p(0)
@@ -304,14 +300,14 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   } else {
     diag_precond(rsd, rsdp, zrsd, zrsdp);
   }
-  DeviceMemory::copy_array(&conj[0][0], &zrsd[0][0], n3);
-  DeviceMemory::copy_array(&conjp[0][0], &zrsdp[0][0], n3);
+  device_array::copy(n, conj, zrsd);
+  device_array::copy(n, conjp, zrsdp);
 
   // initial r(0) M r(0)
 
   real sum, sump;
-  sum = dotprod(&rsd[0][0], &zrsd[0][0], n3);
-  sump = dotprod(&rsdp[0][0], &zrsdp[0][0], n3);
+  sum = dotprod(&rsd[0][0], &zrsd[0][0], n * 3);
+  sump = dotprod(&rsdp[0][0], &zrsdp[0][0], n * 3);
 
   // conjugate gradient iteration of the mutual induced dipoles
 
@@ -346,8 +342,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
     // a <- p T p
     real a, ap;
-    a = dotprod(&conj[0][0], &vec[0][0], n3);
-    ap = dotprod(&conjp[0][0], &vecp[0][0], n3);
+    a = dotprod(&conj[0][0], &vec[0][0], n * 3);
+    ap = dotprod(&conjp[0][0], &vecp[0][0], n * 3);
     // a <- r M r / p T p
     if (a != 0)
       a = sum / a;
@@ -376,8 +372,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
     real b, bp;
     real sum1, sump1;
-    sum1 = dotprod(&rsd[0][0], &zrsd[0][0], n3);
-    sump1 = dotprod(&rsdp[0][0], &zrsdp[0][0], n3);
+    sum1 = dotprod(&rsd[0][0], &zrsd[0][0], n * 3);
+    sump1 = dotprod(&rsdp[0][0], &zrsdp[0][0], n * 3);
     if (sum != 0)
       b = sum1 / sum;
     if (sump != 0)
@@ -398,8 +394,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
     real epsd;
     real epsp;
-    epsd = dotprod(&rsd[0][0], &rsd[0][0], n3);
-    epsp = dotprod(&rsdp[0][0], &rsdp[0][0], n3);
+    epsd = dotprod(&rsd[0][0], &rsd[0][0], n * 3);
+    epsp = dotprod(&rsdp[0][0], &rsdp[0][0], n * 3);
 
     epsold = eps;
     eps = REAL_MAX(epsd, epsp);

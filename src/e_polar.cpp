@@ -80,10 +80,10 @@ void epolar_data(rc_op op) {
     for (int i = 0; i < n; ++i) {
       pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
     }
-    device_array::copyin(polarity, polar::polarity, n);
-    device_array::copyin(thole, polar::thole, n);
-    device_array::copyin(pdamp, polar::pdamp, n);
-    device_array::copyin(polarity_inv, pinvbuf.data(), n);
+    device_array::copyin(n, polarity, polar::polarity);
+    device_array::copyin(n, thole, polar::thole);
+    device_array::copyin(n, pdamp, polar::pdamp);
+    device_array::copyin(n, polarity_inv, pinvbuf.data());
   }
 }
 

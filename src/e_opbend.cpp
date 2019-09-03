@@ -37,8 +37,8 @@ void eopbend_data(rc_op op) {
     std::vector<int> ibuf(nangle);
     for (int i = 0; i < nangle; ++i)
       ibuf[i] = opbend::iopb[i] - 1;
-    device_array::copyin(iopb, ibuf.data(), nangle);
-    device_array::copyin(opbk, opbend::opbk, nangle);
+    device_array::copyin(nangle, iopb, ibuf.data());
+    device_array::copyin(nangle, opbk, opbend::opbk);
     opbunit = angpot::opbunit;
     copb = angpot::copb;
     qopb = angpot::qopb;

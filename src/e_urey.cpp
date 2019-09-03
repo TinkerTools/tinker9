@@ -29,9 +29,9 @@ void eurey_data(rc_op op) {
     std::vector<int> ibuf(3 * nangle);
     for (int i = 0; i < 3 * nangle; ++i)
       ibuf[i] = urey::iury[i] - 1;
-    device_array::copyin(iury, ibuf.data(), nangle);
-    device_array::copyin(uk, urey::uk, nangle);
-    device_array::copyin(ul, urey::ul, nangle);
+    device_array::copyin(nangle, iury, ibuf.data());
+    device_array::copyin(nangle, uk, urey::uk);
+    device_array::copyin(nangle, ul, urey::ul);
 
     cury = urypot::cury;
     qury = urypot::qury;
