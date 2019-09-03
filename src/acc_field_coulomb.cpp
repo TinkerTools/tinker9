@@ -247,12 +247,8 @@ void dfield_coulomb(real (*field)[3], real (*fieldp)[3]) {
 }
 
 // see also subroutine ufield0b in induce.f
-void ufield_coulomb(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
-                    real* gpu_fieldp) {
-  const real(*uind)[3] = reinterpret_cast<const real(*)[3]>(gpu_uind);
-  const real(*uinp)[3] = reinterpret_cast<const real(*)[3]>(gpu_uinp);
-  real(*field)[3] = reinterpret_cast<real(*)[3]>(gpu_field);
-  real(*fieldp)[3] = reinterpret_cast<real(*)[3]>(gpu_fieldp);
+void ufield_coulomb(const real (*uind)[3], const real (*uinp)[3],
+                    real (*field)[3], real (*fieldp)[3]) {
   device_array::zero(n, field, fieldp);
 
   const real off = mpole_switch_off;

@@ -307,7 +307,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
     }
     DeviceMemory::copyin_array(&uind[0][0], &ud[0][0], 3 * n);
     DeviceMemory::copyin_array(&uinp[0][0], &up[0][0], 3 * n);
-    ufield_coulomb(&uind[0][0], &uinp[0][0], &udir[0][0], &udirp[0][0]);
+    ufield_coulomb(uind, uinp, udir, udirp);
     ud.resize(n);
     up.resize(n);
     DeviceMemory::copyout_array(&ud[0][0], &udir[0][0], 3 * n);
@@ -514,7 +514,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
     }
     DeviceMemory::copyin_array(&uind[0][0], &ud[0][0], 3 * n);
     DeviceMemory::copyin_array(&uinp[0][0], &up[0][0], 3 * n);
-    ufield_ewald(&uind[0][0], &uinp[0][0], &udir[0][0], &udirp[0][0]);
+    ufield_ewald(uind, uinp, udir, udirp);
     ud.resize(n);
     up.resize(n);
     DeviceMemory::copyout_array(&ud[0][0], &udir[0][0], 3 * n);

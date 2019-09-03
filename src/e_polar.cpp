@@ -94,12 +94,12 @@ void dfield(real (*field)[3], real (*fieldp)[3]) {
     dfield_coulomb(field, fieldp);
 }
 
-void ufield(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
-            real* gpu_fieldp) {
+void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3],
+            real (*fieldp)[3]) {
   if (epolar_electyp == elec_t::ewald)
-    ufield_ewald(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);
+    ufield_ewald(uind, uinp, field, fieldp);
   else
-    ufield_coulomb(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);
+    ufield_coulomb(uind, uinp, field, fieldp);
 }
 
 void induce(real* gpu_ud, real* gpu_up) {

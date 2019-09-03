@@ -39,19 +39,19 @@ void dfield_ewald_recip_self(real (*field)[3]);
 void dfield_ewald_real(real (*field)[3], real (*fieldp)[3]);
 
 // mutual electrostatic field due to induced dipole moments
-void ufield_coulomb(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
-                    real* gpu_fieldp);
-void ufield_ewald(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
-                  real* gpu_fieldp);
-void ufield_ewald_recip_self(const real* gpu_uind, const real* gpu_uinp,
-                             real* gpu_field, real* gpu_fieldp);
-void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
-                       real* gpu_field, real* gpu_fieldp);
+void ufield_coulomb(const real (*uind)[3], const real (*uinp)[3],
+                    real (*field)[3], real (*fieldp)[3]);
+void ufield_ewald(const real (*uind)[3], const real (*uinp)[3],
+                  real (*field)[3], real (*fieldp)[3]);
+void ufield_ewald_recip_self(const real (*uind)[3], const real (*uinp)[3],
+                             real (*field)[3], real (*fieldp)[3]);
+void ufield_ewald_real(const real (*uind)[3], const real (*uinp)[3],
+                       real (*field)[3], real (*fieldp)[3]);
 
 void dfield(real (*field)[3], real (*fieldp)[3]);
 // -Tu operator
-void ufield(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
-            real* gpu_fieldp);
+void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3],
+            real (*fieldp)[3]);
 
 // different induction algorithms
 void induce_mutual_pcg1(real* gpu_ud, real* gpu_up);

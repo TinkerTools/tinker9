@@ -328,13 +328,8 @@ void dfield_ewald(real (*field)[3], real (*fieldp)[3]) {
 }
 
 // see also subroutine umutual1 in induce.f
-void ufield_ewald_recip_self(const real* gpu_uind, const real* gpu_uinp,
-                             real* gpu_field, real* gpu_fieldp) {
-  const real(*uind)[3] = reinterpret_cast<const real(*)[3]>(gpu_uind);
-  const real(*uinp)[3] = reinterpret_cast<const real(*)[3]>(gpu_uinp);
-  real(*field)[3] = reinterpret_cast<real(*)[3]>(gpu_field);
-  real(*fieldp)[3] = reinterpret_cast<real(*)[3]>(gpu_fieldp);
-
+void ufield_ewald_recip_self(const real (*uind)[3], const real (*uinp)[3],
+                             real (*field)[3], real (*fieldp)[3]) {
   const PMEUnit pu = ppme_unit;
   const auto& st = *pu;
   const int nfft1 = st.nfft1;
@@ -381,13 +376,8 @@ void ufield_ewald_recip_self(const real* gpu_uind, const real* gpu_uinp,
   }
 }
 
-void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
-                       real* gpu_field, real* gpu_fieldp) {
-  const real(*uind)[3] = reinterpret_cast<const real(*)[3]>(gpu_uind);
-  const real(*uinp)[3] = reinterpret_cast<const real(*)[3]>(gpu_uinp);
-  real(*field)[3] = reinterpret_cast<real(*)[3]>(gpu_field);
-  real(*fieldp)[3] = reinterpret_cast<real(*)[3]>(gpu_fieldp);
-
+void ufield_ewald_real(const real (*uind)[3], const real (*uinp)[3],
+                       real (*field)[3], real (*fieldp)[3]) {
   const real off = ewald_switch_cut;
   const real off2 = off * off;
   const int maxnlst = mlist_unit->maxnlst;
@@ -567,11 +557,11 @@ void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
   } // end for (int i)
 }
 
-void ufield_ewald(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
-                  real* gpu_fieldp) {
-  device_array::zero(3 * n, gpu_field, gpu_fieldp);
+void ufield_ewald(const real (*uind)[3], const real (*uinp)[3],
+                  real (*field)[3], real (*fieldp)[3]) {
+  device_array::zero(n, field, fieldp);
 
-  ufield_ewald_recip_self(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);
-  ufield_ewald_real(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);
+  ufield_ewald_recip_self(uind, uinp, field, fieldp);
+  ufield_ewald_real(uind, uinp, field, fieldp);
 }
 TINKER_NAMESPACE_END

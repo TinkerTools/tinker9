@@ -286,7 +286,7 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   //                       = -Tu udir
 
   if (dirguess) {
-    ufield(&udir[0][0], &udirp[0][0], &rsd[0][0], &rsdp[0][0]);
+    ufield(udir, udirp, rsd, rsdp);
   } else {
     device_array::copy(n, rsd, field);
     device_array::copy(n, rsdp, fieldp);
@@ -328,7 +328,7 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
     // vec = (inv_alpha + Tu) conj, field = -Tu conj
     // vec = inv_alpha * conj - field
-    ufield(&conj[0][0], &conjp[0][0], &field[0][0], &fieldp[0][0]);
+    ufield(conj, conjp, field, fieldp);
     #pragma acc parallel loop independent\
                 deviceptr(polarity_inv,vec,vecp,conj,conjp,field,fieldp)
     for (int i = 0; i < n; ++i) {
