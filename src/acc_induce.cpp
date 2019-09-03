@@ -303,8 +303,8 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]) {
   // initial r(0) M r(0)
 
   real sum, sump;
-  sum = dotprod(&rsd[0][0], &zrsd[0][0], n * 3);
-  sump = dotprod(&rsdp[0][0], &zrsdp[0][0], n * 3);
+  sum = device_array::dot(n, rsd, zrsd);
+  sump = device_array::dot(n, rsdp, zrsdp);
 
   // conjugate gradient iteration of the mutual induced dipoles
 
@@ -339,8 +339,8 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]) {
 
     // a <- p T p
     real a, ap;
-    a = dotprod(&conj[0][0], &vec[0][0], n * 3);
-    ap = dotprod(&conjp[0][0], &vecp[0][0], n * 3);
+    a = device_array::dot(n, conj, vec);
+    ap = device_array::dot(n, conjp, vecp);
     // a <- r M r / p T p
     if (a != 0)
       a = sum / a;
@@ -369,8 +369,8 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]) {
 
     real b, bp;
     real sum1, sump1;
-    sum1 = dotprod(&rsd[0][0], &zrsd[0][0], n * 3);
-    sump1 = dotprod(&rsdp[0][0], &zrsdp[0][0], n * 3);
+    sum1 = device_array::dot(n, rsd, zrsd);
+    sump1 = device_array::dot(n, rsdp, zrsdp);
     if (sum != 0)
       b = sum1 / sum;
     if (sump != 0)
@@ -391,8 +391,8 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]) {
 
     real epsd;
     real epsp;
-    epsd = dotprod(&rsd[0][0], &rsd[0][0], n * 3);
-    epsp = dotprod(&rsdp[0][0], &rsdp[0][0], n * 3);
+    epsd = device_array::dot(n, rsd, rsd);
+    epsp = device_array::dot(n, rsdp, rsdp);
 
     epsold = eps;
     eps = REAL_MAX(epsd, epsp);

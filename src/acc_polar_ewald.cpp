@@ -859,7 +859,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   //    end do
   // end do
   // Notice that only 10 * n elements were scaled in the original code.
-  scale_array(&fphidp[0][0], 0.5f * f, 20 * n);
+  device_array::scale(n, 0.5f * f, fphidp);
   fphi_to_cphi(pu, fphidp, cphidp);
 
   // recip and self torques
@@ -930,9 +930,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       vir_ep[i] -= vir_m[i];
     }
 
-    scale_array(device_array::flatten(cphi), f, 10 * n);
-    scale_array(device_array::flatten(fphid), f, 10 * n);
-    scale_array(device_array::flatten(fphip), f, 10 * n);
+    device_array::scale(n, f, cphi, fphid, fphip);
 
     real cphid[4], cphip[4];
     real ftc[3][3];

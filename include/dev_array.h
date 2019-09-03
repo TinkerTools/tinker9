@@ -2,6 +2,7 @@
 #define TINKER_DEV_ARRAY_H_
 
 #include "dev_allocator.h"
+#include "mathfunc.h"
 
 TINKER_NAMESPACE_BEGIN
 template <template <class> class Allocator>
@@ -113,6 +114,33 @@ public:
     constexpr size_t N = deduce<PTR>::N;
     Allocator<T> a;
     a.copy_array(flatten(dst), flatten(src), nelem * N);
+  }
+
+  //====================================================================//
+
+  template <class PTR, class PTR2>
+  static typename deduce<PTR>::type dot(size_t nelem, const PTR ptr,
+                                        const PTR2 b) {
+    typedef typename deduce<PTR>::type T;
+    constexpr size_t N = deduce<PTR>::N;
+    typedef typename deduce<PTR2>::type T2;
+    static_assert(std::is_same<T, T2>::value, "");
+    return mathfunc_detail::dotprod(flatten(ptr), flatten(b), nelem * N);
+  }
+
+  //====================================================================//
+
+  template <class FLT, class PTR>
+  static void scale(size_t nelem, FLT scal, PTR ptr) {
+    typedef typename deduce<PTR>::type T;
+    constexpr size_t N = deduce<PTR>::N;
+    mathfunc_detail::scale_array(flatten(ptr), scal, nelem * N);
+  }
+
+  template <class FLT, class PTR, class... PTRS>
+  static void scale(size_t nelem, FLT scal, PTR ptr, PTRS... ptrs) {
+    scale(nelem, scal, ptr);
+    scale(nelem, scal, ptrs...);
   }
 };
 
