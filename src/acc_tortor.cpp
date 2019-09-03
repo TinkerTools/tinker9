@@ -116,21 +116,6 @@ void etortor_tmpl() {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
-  const auto* ibitor = ibitor_vec.data();
-  const auto* itt = itt_vec.data();
-
-  const auto* tnx = tnx_vec.data();
-  const auto* tny = tny_vec.data();
-  const auto* ttx = ttx_vec.data();
-  const auto* tty = tty_vec.data();
-
-  const auto* tbf = tbf_vec.data();
-  const auto* tbx = tbx_vec.data();
-  const auto* tby = tby_vec.data();
-  const auto* tbxy = tbxy_vec.data();
-
-  const auto* chkttor_ia_ = chkttor_ia_vec_.data();
-
   auto* ett = ett_handle.e()->buffer();
   auto* vir_ett = ett_handle.vir()->buffer();
   auto bufsize = ett_handle.buffer_size();

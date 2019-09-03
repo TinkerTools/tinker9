@@ -1,5 +1,4 @@
 #include "acc_image.h"
-
 #include "e_polar.h"
 #include "error.h"
 #include "ext/tinker/detail/inform.hh"
@@ -16,7 +15,6 @@ TINKER_NAMESPACE_BEGIN
 // the preconditioner is the diagnoal matrix
 static inline void diag_precond(const real (*rsd)[3], const real (*rsdp)[3],
                                 real (*zrsd)[3], real (*zrsdp)[3]) {
-  const auto* polarity = polarity_vec.data();
   #pragma acc parallel loop independent\
               deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
   for (int i = 0; i < n; ++i) {
@@ -35,7 +33,6 @@ static inline void sparse_diag_precond_apply(const real (*rsd)[3],
                                              const real (*rsdp)[3],
                                              real (*zrsd)[3],
                                              real (*zrsdp)[3]) {
-  const auto* polarity = polarity_vec.data();
   #pragma acc parallel loop independent\
               deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
   for (int i = 0; i < n; ++i) {
@@ -122,10 +119,6 @@ static inline void sparse_diag_precond_build(const real (*rsd)[3],
   static std::vector<real> uscalebuf;
   uscalebuf.resize(n, 1);
   real* uscale = uscalebuf.data();
-
-  const auto* polarity = polarity_vec.data();
-  const auto* thole = thole_vec.data();
-  const auto* pdamp = pdamp_vec.data();
 
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(mindex,minv,ulst,box,\
@@ -239,23 +232,17 @@ static inline void sparse_diag_precond_build(const real (*rsd)[3],
  * conj = p
  * vec = T P
  */
-void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
-
-  const int n3 = 3 * n;
-
-  real(*uind)[3] = reinterpret_cast<real(*)[3]>(gpu_ud);
-  real(*uinp)[3] = reinterpret_cast<real(*)[3]>(gpu_up);
-
-  auto* field = work01_.data();
-  auto* fieldp = work02_.data();
-  auto* rsd = work03_.data();
-  auto* rsdp = work04_.data();
-  auto* zrsd = work05_.data();
-  auto* zrsdp = work06_.data();
-  auto* conj = work07_.data();
-  auto* conjp = work08_.data();
-  auto* vec = work09_.data();
-  auto* vecp = work10_.data();
+void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]) {
+  auto* field = work01_;
+  auto* fieldp = work02_;
+  auto* rsd = work03_;
+  auto* rsdp = work04_;
+  auto* zrsd = work05_;
+  auto* zrsdp = work06_;
+  auto* conj = work07_;
+  auto* conjp = work08_;
+  auto* vec = work09_;
+  auto* vecp = work10_;
 
   const bool dirguess = polpcg::pcgguess;
   // use sparse matrix preconditioner
@@ -264,17 +251,13 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
   // zero out the induced dipoles at each site
 
-  DeviceMemory::zero_array(&uind[0][0], n3);
-  DeviceMemory::zero_array(&uinp[0][0], n3);
+  device_array::zero(n, uind, uinp);
 
   // get the electrostatic field due to permanent multipoles
 
-  dfield(&field[0][0], &fieldp[0][0]);
+  dfield(field, fieldp);
 
   // direct induced dipoles
-
-  const auto* polarity = polarity_vec.data();
-  const auto* polarity_inv = polarity_inv_vec.data();
 
   #pragma acc parallel loop independent\
               deviceptr(polarity,udir,udirp,field,fieldp)
@@ -288,8 +271,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   }
 
   if (dirguess) {
-    DeviceMemory::copy_array(&uind[0][0], &udir[0][0], n3);
-    DeviceMemory::copy_array(&uinp[0][0], &udirp[0][0], n3);
+    device_array::copy(n, uind, udir);
+    device_array::copy(n, uinp, udirp);
   }
 
   // initial residual r(0)
@@ -300,10 +283,10 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   //                       = -Tu udir
 
   if (dirguess) {
-    ufield(&udir[0][0], &udirp[0][0], &rsd[0][0], &rsdp[0][0]);
+    ufield(udir, udirp, rsd, rsdp);
   } else {
-    DeviceMemory::copy_array(&rsd[0][0], &field[0][0], n3);
-    DeviceMemory::copy_array(&rsdp[0][0], &fieldp[0][0], n3);
+    device_array::copy(n, rsd, field);
+    device_array::copy(n, rsdp, fieldp);
   }
 
   // initial M r(0) and p(0)
@@ -314,14 +297,14 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   } else {
     diag_precond(rsd, rsdp, zrsd, zrsdp);
   }
-  DeviceMemory::copy_array(&conj[0][0], &zrsd[0][0], n3);
-  DeviceMemory::copy_array(&conjp[0][0], &zrsdp[0][0], n3);
+  device_array::copy(n, conj, zrsd);
+  device_array::copy(n, conjp, zrsdp);
 
   // initial r(0) M r(0)
 
   real sum, sump;
-  sum = dotprod(&rsd[0][0], &zrsd[0][0], n3);
-  sump = dotprod(&rsdp[0][0], &zrsdp[0][0], n3);
+  sum = dotprod(&rsd[0][0], &zrsd[0][0], n * 3);
+  sump = dotprod(&rsdp[0][0], &zrsdp[0][0], n * 3);
 
   // conjugate gradient iteration of the mutual induced dipoles
 
@@ -342,7 +325,7 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
     // vec = (inv_alpha + Tu) conj, field = -Tu conj
     // vec = inv_alpha * conj - field
-    ufield(&conj[0][0], &conjp[0][0], &field[0][0], &fieldp[0][0]);
+    ufield(conj, conjp, field, fieldp);
     #pragma acc parallel loop independent\
                 deviceptr(polarity_inv,vec,vecp,conj,conjp,field,fieldp)
     for (int i = 0; i < n; ++i) {
@@ -356,8 +339,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
     // a <- p T p
     real a, ap;
-    a = dotprod(&conj[0][0], &vec[0][0], n3);
-    ap = dotprod(&conjp[0][0], &vecp[0][0], n3);
+    a = dotprod(&conj[0][0], &vec[0][0], n * 3);
+    ap = dotprod(&conjp[0][0], &vecp[0][0], n * 3);
     // a <- r M r / p T p
     if (a != 0)
       a = sum / a;
@@ -386,8 +369,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
     real b, bp;
     real sum1, sump1;
-    sum1 = dotprod(&rsd[0][0], &zrsd[0][0], n3);
-    sump1 = dotprod(&rsdp[0][0], &zrsdp[0][0], n3);
+    sum1 = dotprod(&rsd[0][0], &zrsd[0][0], n * 3);
+    sump1 = dotprod(&rsdp[0][0], &zrsdp[0][0], n * 3);
     if (sum != 0)
       b = sum1 / sum;
     if (sump != 0)
@@ -408,8 +391,8 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
     real epsd;
     real epsp;
-    epsd = dotprod(&rsd[0][0], &rsd[0][0], n3);
-    epsp = dotprod(&rsdp[0][0], &rsdp[0][0], n3);
+    epsd = dotprod(&rsd[0][0], &rsd[0][0], n * 3);
+    epsp = dotprod(&rsdp[0][0], &rsdp[0][0], n * 3);
 
     epsold = eps;
     eps = REAL_MAX(epsd, epsp);

@@ -17,35 +17,29 @@ void epolar_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
+    device_array::deallocate(polarity, thole, pdamp, polarity_inv);
+
     ep_handle.dealloc();
+
+    device_array::deallocate(ufld, dufld);
+    device_array::deallocate(work01_, work02_, work03_, work04_, work05_,
+                             work06_, work07_, work08_, work09_, work10_);
   }
 
   if (op & rc_alloc) {
-    polarity_vec.reserve(n);
-    thole_vec.reserve(n);
-    pdamp_vec.reserve(n);
-    polarity_inv_vec.reserve(n);
+    device_array::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
 
     ep_handle.alloc(n);
 
     if (rc_flag & calc::grad) {
-      ufld_vec.reserve(3 * n);
-      dufld_vec.reserve(6 * n);
+      device_array::allocate(n, &ufld, &dufld);
     } else {
-      ufld_vec.clear();
-      dufld_vec.clear();
+      ufld = nullptr;
+      dufld = nullptr;
     }
 
-    work01_.reserve(3 * n);
-    work02_.reserve(3 * n);
-    work03_.reserve(3 * n);
-    work04_.reserve(3 * n);
-    work05_.reserve(3 * n);
-    work06_.reserve(3 * n);
-    work07_.reserve(3 * n);
-    work08_.reserve(3 * n);
-    work09_.reserve(3 * n);
-    work10_.reserve(3 * n);
+    device_array::allocate(n, &work01_, &work02_, &work03_, &work04_, &work05_,
+                           &work06_, &work07_, &work08_, &work09_, &work10_);
   }
 
   if (op & rc_init) {
@@ -86,35 +80,35 @@ void epolar_data(rc_op op) {
     for (int i = 0; i < n; ++i) {
       pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
     }
-    polarity_vec.copyin(polar::polarity, n);
-    thole_vec.copyin(polar::thole, n);
-    pdamp_vec.copyin(polar::pdamp, n);
-    polarity_inv_vec.copyin(pinvbuf.data(), n);
+    device_array::copyin(n, polarity, polar::polarity);
+    device_array::copyin(n, thole, polar::thole);
+    device_array::copyin(n, pdamp, polar::pdamp);
+    device_array::copyin(n, polarity_inv, pinvbuf.data());
   }
 }
 
-void dfield(real* gpu_field, real* gpu_fieldp) {
+void dfield(real (*field)[3], real (*fieldp)[3]) {
   if (epolar_electyp == elec_t::ewald)
-    dfield_ewald(gpu_field, gpu_fieldp);
+    dfield_ewald(field, fieldp);
   else
-    dfield_coulomb(gpu_field, gpu_fieldp);
+    dfield_coulomb(field, fieldp);
 }
 
-void ufield(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
-            real* gpu_fieldp) {
+void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3],
+            real (*fieldp)[3]) {
   if (epolar_electyp == elec_t::ewald)
-    ufield_ewald(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);
+    ufield_ewald(uind, uinp, field, fieldp);
   else
-    ufield_coulomb(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);
+    ufield_coulomb(uind, uinp, field, fieldp);
 }
 
-void induce(real* gpu_ud, real* gpu_up) {
-  induce_mutual_pcg1(gpu_ud, gpu_up);
+void induce(real (*ud)[3], real (*up)[3]) {
+  induce_mutual_pcg1(ud, up);
 
   if (inform::debug && use_potent(polar_term)) {
     std::vector<double> uindbuf;
     uindbuf.resize(3 * n);
-    DeviceMemory::copyout_array(uindbuf.data(), gpu_ud, 3 * n);
+    device_array::copyout(n, uindbuf.data(), ud);
     bool header = true;
     for (int i = 0; i < n; ++i) {
       if (polar::polarity[i] != 0) {

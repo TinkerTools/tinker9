@@ -91,11 +91,7 @@ void evdw_tmpl() {
   auto* vir_ev = ev_handle.vir()->buffer();
   auto bufsize = ev_handle.buffer_size();
 
-  if_constexpr(do_g) {
-    device_array::zero(gxred, n);
-    device_array::zero(gyred, n);
-    device_array::zero(gzred, n);
-  }
+  if_constexpr(do_g) { device_array::zero(n, gxred, gyred, gzred); }
 
 #define DEVICE_PTRS_                                                           \
   x, y, z, gxred, gyred, gzred, box, xred, yred, zred, jvdw, radmin, epsilon,  \

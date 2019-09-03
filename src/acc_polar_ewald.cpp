@@ -1,6 +1,5 @@
 #include "acc_add.h"
 #include "acc_image.h"
-
 #include "couple.h"
 #include "e_polar.h"
 #include "md.h"
@@ -16,10 +15,7 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
-  if_constexpr(do_g) {
-    ufld_vec.zero(3 * n);
-    dufld_vec.zero(6 * n);
-  }
+  if_constexpr(do_g) { device_array::zero(n, ufld, dufld); }
 
   const real(*uind)[3] = reinterpret_cast<const real(*)[3]>(gpu_uind);
   const real(*uinp)[3] = reinterpret_cast<const real(*)[3]>(gpu_uinp);
@@ -52,12 +48,6 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   const PMEUnit pu = ppme_unit;
   const real aewald = pu->aewald;
   real bn[5];
-
-  const auto* thole = thole_vec.data();
-  const auto* pdamp = pdamp_vec.data();
-
-  auto* ufld = ufld_vec.data();
-  auto* dufld = dufld_vec.data();
 
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,box,coupl,polargroup,mlst,\
@@ -732,8 +722,6 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   // torque
 
   if_constexpr(do_g) {
-    const auto* ufld = ufld_vec.data();
-    const auto* dufld = dufld_vec.data();
     #pragma acc parallel loop independent\
                 deviceptr(rpole,trqx,trqy,trqz,ufld,dufld)
     for (int i = 0; i < n; ++i) {
@@ -786,11 +774,8 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   auto* ep = ep_handle.e()->buffer();
   auto bufsize = ep_handle.buffer_size();
 
-  auto* fphid = fdip_phi1_vec.data();
-  auto* fphip = fdip_phi2_vec.data();
-  auto* fuind = fuind_vec.data();
-  auto* fuinp = fuinp_vec.data();
-  auto* fphi = fphi_vec.data();
+  auto* fphid = fdip_phi1;
+  auto* fphip = fdip_phi2;
 
   cuind_to_fuind(pu, gpu_uind, gpu_uinp, fuind, fuinp);
   if (do_e && do_a) {
@@ -812,7 +797,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   // TODO: store vs. recompute qfac
   pme_conv0(pu);
   fftback(pu);
-  fphi_uind(pu, fphid, fphip, fphidp_vec.data());
+  fphi_uind(pu, fphid, fphip, fphidp);
 
   // increment the dipole polarization gradient contributions
 
@@ -822,9 +807,6 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   constexpr int deriv1[10] = {1, 4, 7, 8, 10, 15, 17, 13, 14, 19};
   constexpr int deriv2[10] = {2, 7, 5, 9, 13, 11, 18, 15, 19, 16};
   constexpr int deriv3[10] = {3, 8, 9, 6, 14, 16, 12, 19, 17, 18};
-
-  auto* fmp = fmp_vec.data();
-  auto* fphidp = fphidp_vec.data();
 
   #pragma acc parallel loop independent deviceptr(box,gx,gy,gz,\
               fmp,fphi,fuind,fuinp,fphid,fphip,fphidp)
@@ -878,12 +860,9 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   // end do
   // Notice that only 10 * n elements were scaled in the original code.
   scale_array(&fphidp[0][0], 0.5f * f, 20 * n);
-  fphi_to_cphi(pu, fphidp_vec.data(), cphidp_vec.data());
+  fphi_to_cphi(pu, fphidp, cphidp);
 
   // recip and self torques
-  auto* cphidp = cphidp_vec.data();
-  auto* cmp = cmp_vec.data();
-  auto* cphi = cphi_vec.data();
 
   real term = f * REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
   real fterm_term = -2 * f * REAL_CUBE(aewald) / 3 / sqrtpi;
@@ -951,9 +930,9 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       vir_ep[i] -= vir_m[i];
     }
 
-    scale_array(cphi_vec.address(), f, 10 * n);
-    scale_array(&fphid[0][0], f, 10 * n);
-    scale_array(&fphip[0][0], f, 10 * n);
+    scale_array(device_array::flatten(cphi), f, 10 * n);
+    scale_array(device_array::flatten(fphid), f, 10 * n);
+    scale_array(device_array::flatten(fphip), f, 10 * n);
 
     real cphid[4], cphip[4];
     real ftc[3][3];
@@ -1151,39 +1130,39 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 }
 
 template <int USE>
-void epolar_ewald_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
+void epolar_ewald_tmpl(const real (*uind)[3], const real (*uinp)[3]) {
   constexpr int do_e = USE & calc::energy;
   constexpr int do_a = USE & calc::analyz;
   constexpr int do_g = USE & calc::grad;
   sanity_check<USE>();
 
-  if_constexpr(do_e && !do_a) epolar0_dotprod(gpu_uind, udirp);
+  if_constexpr(do_e && !do_a) epolar0_dotprod(uind, udirp);
   static_assert(do_g || do_a,
                 "Do not use this template for the energy-only version.");
 
-  epolar_real_tmpl<USE>(gpu_uind, gpu_uinp);
+  epolar_real_tmpl<USE>(uind, uinp);
 
-  epolar_recip_self_tmpl<USE>(gpu_uind, gpu_uinp);
+  epolar_recip_self_tmpl<USE>(uind, uinp);
 }
 
 void epolar_ewald(int vers) {
   if (vers == calc::v0) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar0_dotprod(uind, udirp);
   } else if (vers == calc::v1) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar_ewald_tmpl<calc::v1>(uind, uinp);
   } else if (vers == calc::v3) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar_ewald_tmpl<calc::v3>(uind, uinp);
   } else if (vers == calc::v4) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar_ewald_tmpl<calc::v4>(uind, uinp);
   } else if (vers == calc::v5) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar_ewald_tmpl<calc::v5>(uind, uinp);
   } else if (vers == calc::v6) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar_ewald_tmpl<calc::v6>(uind, uinp);
   }
 }

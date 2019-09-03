@@ -11,14 +11,14 @@ void eurey_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
+    device_array::deallocate(iury, uk, ul);
+
     eub_handle.dealloc();
   }
 
   if (op & rc_alloc) {
     int nangle = count_bonded_term(angle_term);
-    iury_vec.reserve(3 * nangle);
-    uk_vec.reserve(nangle);
-    ul_vec.reserve(nangle);
+    device_array::allocate(nangle, &iury, &uk, &ul);
 
     nurey = count_bonded_term(urey_term);
     eub_handle.alloc(nurey);
@@ -29,9 +29,9 @@ void eurey_data(rc_op op) {
     std::vector<int> ibuf(3 * nangle);
     for (int i = 0; i < 3 * nangle; ++i)
       ibuf[i] = urey::iury[i] - 1;
-    iury_vec.copyin(ibuf.data(), 3 * nangle);
-    uk_vec.copyin(urey::uk, nangle);
-    ul_vec.copyin(urey::ul, nangle);
+    device_array::copyin(nangle, iury, ibuf.data());
+    device_array::copyin(nangle, uk, urey::uk);
+    device_array::copyin(nangle, ul, urey::ul);
 
     cury = urypot::cury;
     qury = urypot::qury;

@@ -1,6 +1,5 @@
 #include "box.h"
-
-#include "dev_mem.h"
+#include "dev_memory.h"
 #include "ext/tinker/detail/bound.hh"
 #include "ext/tinker/detail/boxes.hh"
 #include "mathfunc.h"

@@ -11,8 +11,8 @@ TINKER_EXTERN ebond_t bndtyp;
 
 TINKER_EXTERN real cbnd, qbnd, bndunit;
 TINKER_EXTERN int nbond;
-TINKER_EXTERN device_array::ptr<int, 2>::type ibnd;
-TINKER_EXTERN device_array::ptr<real>::type bl, bk;
+TINKER_EXTERN device_pointer<int, 2> ibnd;
+TINKER_EXTERN device_pointer<real> bl, bk;
 
 TINKER_EXTERN BondedEnergy eb_handle;
 

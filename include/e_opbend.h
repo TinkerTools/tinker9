@@ -1,7 +1,7 @@
 #ifndef TINKER_E_OPBEND_H_
 #define TINKER_E_OPBEND_H_
 
-#include "device_vector.h"
+#include "dev_array.h"
 #include "energy_buffer.h"
 #include "rc_man.h"
 
@@ -10,8 +10,8 @@ enum class eopbend_t { w_d_c, allinger };
 TINKER_EXTERN eopbend_t opbtyp;
 
 TINKER_EXTERN int nopbend;
-TINKER_EXTERN DeviceVector<int> iopb_vec;
-TINKER_EXTERN DeviceVector<real> opbk_vec;
+TINKER_EXTERN device_pointer<int> iopb;
+TINKER_EXTERN device_pointer<real> opbk;
 TINKER_EXTERN real opbunit;
 TINKER_EXTERN real copb, qopb, popb, sopb;
 

@@ -15,28 +15,21 @@ void etortor_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
+    device_array::deallocate(ibitor, itt, tnx, tny, ttx, tty, tbf, tbx, tby,
+                             tbxy, chkttor_ia_);
+
     ett_handle.dealloc();
   }
 
   if (op & rc_alloc) {
     nbitor = bitor_::nbitor;
-    ibitor_vec.reserve(5 * nbitor);
+    device_array::allocate(nbitor, &ibitor, &itt);
 
-    itt_vec.reserve(3 * nbitor);
-
-    tnx_vec.reserve(ktrtor::maxntt);
-    tny_vec.reserve(ktrtor::maxntt);
-    int count = ktrtor::maxtgrd * ktrtor::maxntt;
-    ttx_vec.reserve(count);
-    tty_vec.reserve(count);
-    count = ktrtor::maxtgrd2 * ktrtor::maxntt;
-    tbf_vec.reserve(count);
-    tbx_vec.reserve(count);
-    tby_vec.reserve(count);
-    tbxy_vec.reserve(count);
+    device_array::allocate(ktrtor::maxntt, &tnx, &tny, &ttx, &tty, &tbf, &tbx,
+                           &tby, &tbxy);
 
     ntortor = count_bonded_term(tortor_term);
-    chkttor_ia_vec_.reserve(ntortor);
+    device_array::allocate(ntortor, &chkttor_ia_);
 
     ett_handle.alloc(ntortor);
   }
@@ -47,28 +40,26 @@ void etortor_data(rc_op op) {
     ibuf.resize(5 * nbitor);
     for (int i = 0; i < 5 * nbitor; ++i)
       ibuf[i] = bitor_::ibitor[i] - 1;
-    ibitor_vec.copyin(ibuf.data(), 5 * nbitor);
+    device_array::copyin(nbitor, ibitor, ibuf.data());
 
     ibuf.resize(3 * nbitor);
     for (int i = 0; i < 3 * nbitor; ++i)
       ibuf[i] = tortor::itt[i] - 1;
-    itt_vec.copyin(ibuf.data(), 3 * nbitor);
+    device_array::copyin(nbitor, itt, ibuf.data());
 
     ibuf.resize(ktrtor::maxntt);
     for (int i = 0; i < ktrtor::maxntt; ++i)
       ibuf[i] = ktrtor::tnx[i];
-    tnx_vec.copyin(ibuf.data(), ktrtor::maxntt);
+    device_array::copyin(ktrtor::maxntt, tnx, ibuf.data());
     for (int i = 0; i < ktrtor::maxntt; ++i)
       ibuf[i] = ktrtor::tny[i];
-    tny_vec.copyin(ibuf.data(), ktrtor::maxntt);
-    int count = ktrtor::maxtgrd * ktrtor::maxntt;
-    ttx_vec.copyin(&ktrtor::ttx[0][0], count);
-    tty_vec.copyin(&ktrtor::tty[0][0], count);
-    count = ktrtor::maxtgrd2 * ktrtor::maxntt;
-    tbf_vec.copyin(&ktrtor::tbf[0][0], count);
-    tbx_vec.copyin(&ktrtor::tbx[0][0], count);
-    tby_vec.copyin(&ktrtor::tby[0][0], count);
-    tbxy_vec.copyin(&ktrtor::tbxy[0][0], count);
+    device_array::copyin(ktrtor::maxntt, tny, ibuf.data());
+    device_array::copyin(ktrtor::maxntt, ttx, &ktrtor::ttx[0][0]);
+    device_array::copyin(ktrtor::maxntt, tty, &ktrtor::tty[0][0]);
+    device_array::copyin(ktrtor::maxntt, tbf, &ktrtor::tbf[0][0]);
+    device_array::copyin(ktrtor::maxntt, tbx, &ktrtor::tbx[0][0]);
+    device_array::copyin(ktrtor::maxntt, tby, &ktrtor::tby[0][0]);
+    device_array::copyin(ktrtor::maxntt, tbxy, &ktrtor::tbxy[0][0]);
 
     ttorunit = torpot::ttorunit;
 
@@ -122,7 +113,7 @@ void etortor_data(rc_op op) {
       }
       ibuf[itortor] = ia;
     }
-    chkttor_ia_vec_.copyin(ibuf.data(), ntortor);
+    device_array::copyin(ntortor, chkttor_ia_, ibuf.data());
   }
 }
 

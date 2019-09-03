@@ -1,5 +1,5 @@
 #include "polgrp.h"
-#include "dev_mem.h"
+#include "dev_memory.h"
 #include "ext/tinker/detail/polgrp.hh"
 #include "md.h"
 

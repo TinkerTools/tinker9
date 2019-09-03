@@ -1,5 +1,4 @@
 #include "elec.h"
-
 #include "ext/tinker/detail/chgpot.hh"
 #include "ext/tinker/detail/limits.hh"
 #include "ext/tinker/detail/mpole.hh"
@@ -22,15 +21,10 @@ static void pole_data_(rc_op op) {
   }
 
   if (op & rc_alloc) {
-    device_array::allocate(&zaxis, n);
-    device_array::allocate(&pole, n);
-    device_array::allocate(&rpole, n);
+    device_array::allocate(n, &zaxis, &pole, &rpole);
 
     if (use_potent(polar_term)) {
-      device_array::allocate(&uind, n);
-      device_array::allocate(&uinp, n);
-      device_array::allocate(&udir, n);
-      device_array::allocate(&udirp, n);
+      device_array::allocate(n, &uind, &uinp, &udir, &udirp);
     } else {
       uind = nullptr;
       uinp = nullptr;
@@ -39,9 +33,7 @@ static void pole_data_(rc_op op) {
     }
 
     if (rc_flag & calc::grad) {
-      device_array::allocate(&trqx, n);
-      device_array::allocate(&trqy, n);
-      device_array::allocate(&trqz, n);
+      device_array::allocate(n, &trqx, &trqy, &trqz);
     } else {
       trqx = nullptr;
       trqy = nullptr;
@@ -86,7 +78,7 @@ static void pole_data_(rc_op op) {
         val = pole_none;
       zaxisbuf[i].polaxe = val;
     }
-    device_array::copyin(zaxis, zaxisbuf.data(), n);
+    device_array::copyin(n, zaxis, zaxisbuf.data());
 
     std::vector<double> polebuf(mpl_total * n);
     for (int i = 0; i < n; ++i) {
@@ -107,7 +99,7 @@ static void pole_data_(rc_op op) {
       polebuf[b1 + mpl_pme_yz] = mpole::pole[b2 + 9];
       polebuf[b1 + mpl_pme_zz] = mpole::pole[b2 + 12];
     }
-    device_array::copyin(pole, polebuf.data(), n);
+    device_array::copyin(n, pole, polebuf.data());
   }
 }
 
@@ -128,9 +120,7 @@ void elec_init(int vers) {
   // zero torque
 
   if (vers & calc::grad) {
-    device_array::zero(trqx, n);
-    device_array::zero(trqy, n);
-    device_array::zero(trqz, n);
+    device_array::zero(n, trqx, trqy, trqz);
   }
 
   // zero torque-related virial
