@@ -29,9 +29,7 @@ void xyz_data(rc_op op) {
 
   if (op & rc_dealloc) {
     if (calc::traj & rc_flag) {
-      DeviceMemory::deallocate_bytes(trajx);
-      DeviceMemory::deallocate_bytes(trajy);
-      DeviceMemory::deallocate_bytes(trajz);
+      device_array::deallocate(trajx, trajy, trajz);
       x = nullptr;
       y = nullptr;
       z = nullptr;
@@ -39,33 +37,25 @@ void xyz_data(rc_op op) {
       trajx = nullptr;
       trajy = nullptr;
       trajz = nullptr;
-      DeviceMemory::deallocate_bytes(x);
-      DeviceMemory::deallocate_bytes(y);
-      DeviceMemory::deallocate_bytes(z);
+      device_array::deallocate(x, y, z);
     }
   }
 
   if (op & rc_alloc) {
-    size_t size = sizeof(real) * n;
     if (calc::traj & rc_flag) {
-      size *= trajn;
-      DeviceMemory::allocate_bytes(&trajx, size);
-      DeviceMemory::allocate_bytes(&trajy, size);
-      DeviceMemory::allocate_bytes(&trajz, size);
+      device_array::allocate(n * trajn, &trajx, &trajy, &trajz);
       x = trajx;
       y = trajy;
       z = trajz;
     } else {
-      DeviceMemory::allocate_bytes(&x, size);
-      DeviceMemory::allocate_bytes(&y, size);
-      DeviceMemory::allocate_bytes(&z, size);
+      device_array::allocate(n, &x, &y, &z);
     }
   }
 
   if (op & rc_init) {
-    DeviceMemory::copyin_array(x, atoms::x, n);
-    DeviceMemory::copyin_array(y, atoms::y, n);
-    DeviceMemory::copyin_array(z, atoms::z, n);
+    device_array::copyin(n, x, atoms::x);
+    device_array::copyin(n, y, atoms::y);
+    device_array::copyin(n, z, atoms::z);
   }
 }
 
@@ -74,16 +64,11 @@ void vel_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    DeviceMemory::deallocate_bytes(vx);
-    DeviceMemory::deallocate_bytes(vy);
-    DeviceMemory::deallocate_bytes(vz);
+    device_array::deallocate(vx, vy, vz);
   }
 
   if (op & rc_alloc) {
-    size_t size = sizeof(real) * n;
-    DeviceMemory::allocate_bytes(&vx, size);
-    DeviceMemory::allocate_bytes(&vy, size);
-    DeviceMemory::allocate_bytes(&vz, size);
+    device_array::allocate(n, &vx, &vy, &vz);
   }
 
   if (op & rc_init) {
@@ -98,22 +83,19 @@ void mass_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    DeviceMemory::deallocate_bytes(mass);
-    DeviceMemory::deallocate_bytes(massinv);
+    device_array::deallocate(mass, massinv);
   }
 
   if (op & rc_alloc) {
-    size_t size = sizeof(real) * n;
-    DeviceMemory::allocate_bytes(&mass, size);
-    DeviceMemory::allocate_bytes(&massinv, size);
+    device_array::allocate(n, &mass, &massinv);
   }
 
   if (op & rc_init) {
-    DeviceMemory::copyin_array(mass, atomid::mass, n);
+    device_array::copyin(n, mass, atomid::mass);
     std::vector<double> mbuf(n);
     for (int i = 0; i < n; ++i)
       mbuf[i] = 1 / atomid::mass[i];
-    DeviceMemory::copyin_array(massinv, mbuf.data(), n);
+    device_array::copyin(n, massinv, mbuf.data());
   }
 }
 
@@ -251,9 +233,9 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
       }
       DeviceMemory::copyin_bytes(trajbox, bbuf2.data(), sizeof(Box) * tn);
     }
-    DeviceMemory::copyin_bytes(trajx, xbuf.data(), sizeof(real) * n * tn);
-    DeviceMemory::copyin_bytes(trajy, ybuf.data(), sizeof(real) * n * tn);
-    DeviceMemory::copyin_bytes(trajz, zbuf.data(), sizeof(real) * n * tn);
+    device_array::copyin(n * tn, trajx, xbuf.data());
+    device_array::copyin(n * tn, trajy, ybuf.data());
+    device_array::copyin(n * tn, trajz, zbuf.data());
   } else {
     std::string msg = "Cannot Open File ";
     msg += arcfile;

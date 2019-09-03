@@ -48,22 +48,12 @@ void mdsave_data(rc_op op) {
     deallocate_stream(dup_stream_g_);
 
     DeviceMemory::deallocate_bytes(dup_buf_box_);
-    DeviceMemory::deallocate_bytes(dup_buf_x_);
-    DeviceMemory::deallocate_bytes(dup_buf_y_);
-    DeviceMemory::deallocate_bytes(dup_buf_z_);
-
-    DeviceMemory::deallocate_bytes(dup_buf_vx_);
-    DeviceMemory::deallocate_bytes(dup_buf_vy_);
-    DeviceMemory::deallocate_bytes(dup_buf_vz_);
-
-    DeviceMemory::deallocate_bytes(dup_buf_gx_);
-    DeviceMemory::deallocate_bytes(dup_buf_gy_);
-    DeviceMemory::deallocate_bytes(dup_buf_gz_);
+    device_array::deallocate(dup_buf_x_, dup_buf_y_, dup_buf_z_);
+    device_array::deallocate(dup_buf_vx_, dup_buf_vy_, dup_buf_vz_);
+    device_array::deallocate(dup_buf_gx_, dup_buf_gy_, dup_buf_gz_);
   }
 
   if (op & rc_alloc) {
-    const size_t rs = sizeof(real);
-
     if (mdsave_use_uind_()) {
       allocate_stream(&dup_stream_uind_);
       device_array::allocate(n, &dup_buf_uind_);
@@ -77,17 +67,9 @@ void mdsave_data(rc_op op) {
     allocate_stream(&dup_stream_g_);
 
     DeviceMemory::allocate_bytes(&dup_buf_box_, sizeof(Box));
-    DeviceMemory::allocate_bytes(&dup_buf_x_, rs * n);
-    DeviceMemory::allocate_bytes(&dup_buf_y_, rs * n);
-    DeviceMemory::allocate_bytes(&dup_buf_z_, rs * n);
-
-    DeviceMemory::allocate_bytes(&dup_buf_vx_, rs * n);
-    DeviceMemory::allocate_bytes(&dup_buf_vy_, rs * n);
-    DeviceMemory::allocate_bytes(&dup_buf_vz_, rs * n);
-
-    DeviceMemory::allocate_bytes(&dup_buf_gx_, rs * n);
-    DeviceMemory::allocate_bytes(&dup_buf_gy_, rs * n);
-    DeviceMemory::allocate_bytes(&dup_buf_gz_, rs * n);
+    device_array::allocate(n, &dup_buf_x_, &dup_buf_y_, &dup_buf_z_);
+    device_array::allocate(n, &dup_buf_vx_, &dup_buf_vy_, &dup_buf_vz_);
+    device_array::allocate(n, &dup_buf_gx_, &dup_buf_gy_, &dup_buf_gz_);
   }
 
   if (op & rc_init) {
@@ -104,13 +86,13 @@ void mdsave_data(rc_op op) {
       std::vector<double> gbuf(n);
       for (int i = 0; i < n; ++i)
         gbuf[i] = -moldyn::a[3 * i] * atomid::mass[i] / units::ekcal;
-      DeviceMemory::copyin_array(gx, gbuf.data(), n);
+      device_array::copyin(n, gx, gbuf.data());
       for (int i = 0; i < n; ++i)
         gbuf[i] = -moldyn::a[3 * i + 1] * atomid::mass[i] / units::ekcal;
-      DeviceMemory::copyin_array(gy, gbuf.data(), n);
+      device_array::copyin(n, gy, gbuf.data());
       for (int i = 0; i < n; ++i)
         gbuf[i] = -moldyn::a[3 * i + 2] * atomid::mass[i] / units::ekcal;
-      DeviceMemory::copyin_array(gz, gbuf.data(), n);
+      device_array::copyin(n, gz, gbuf.data());
     } else {
       energy_potential(rc_flag & calc::vmask);
     }

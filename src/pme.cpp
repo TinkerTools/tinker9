@@ -38,12 +38,7 @@ PME::Params PME::get_params() const {
 
 bool PME::operator==(const Params& p) const { return get_params() == p; }
 
-PME::~PME() {
-  DeviceMemory::deallocate_bytes(bsmod1);
-  DeviceMemory::deallocate_bytes(bsmod2);
-  DeviceMemory::deallocate_bytes(bsmod3);
-  DeviceMemory::deallocate_bytes(qgrid);
-}
+PME::~PME() { device_array::deallocate(bsmod1, bsmod2, bsmod3, qgrid); }
 
 static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique) {
   unit.close();
@@ -55,15 +50,12 @@ static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique) {
   if (!unit.valid() || unique == true) {
     unit = PMEUnit::open();
     auto& st = *unit;
-    const size_t rs = sizeof(real);
-    size_t size;
 
     // see also subroutine moduli in pmestuf.f
-    DeviceMemory::allocate_bytes(&st.bsmod1, rs * p.nfft1);
-    DeviceMemory::allocate_bytes(&st.bsmod2, rs * p.nfft2);
-    DeviceMemory::allocate_bytes(&st.bsmod3, rs * p.nfft3);
-    size = p.nfft1 * p.nfft2 * p.nfft3 * rs;
-    DeviceMemory::allocate_bytes(&st.qgrid, 2 * size);
+    device_array::allocate(p.nfft1, &st.bsmod1);
+    device_array::allocate(p.nfft2, &st.bsmod2);
+    device_array::allocate(p.nfft3, &st.bsmod3);
+    device_array::allocate(2 * p.nfft1 * p.nfft2 * p.nfft3, &st.qgrid);
 
     st.set_params(p);
   }
@@ -91,11 +83,11 @@ static void pme_op_copyin_(PMEUnit unit) {
   }
   std::vector<double> bsmodbuf(maxfft);
   TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft1, &st.bsorder);
-  DeviceMemory::copyin_array(st.bsmod1, bsmodbuf.data(), st.nfft1);
+  device_array::copyin(st.nfft1, st.bsmod1, bsmodbuf.data());
   TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft2, &st.bsorder);
-  DeviceMemory::copyin_array(st.bsmod2, bsmodbuf.data(), st.nfft2);
+  device_array::copyin(st.nfft2, st.bsmod2, bsmodbuf.data());
   TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft3, &st.bsorder);
-  DeviceMemory::copyin_array(st.bsmod3, bsmodbuf.data(), st.nfft3);
+  device_array::copyin(st.nfft3, st.bsmod3, bsmodbuf.data());
 
   unit.init_deviceptr(st);
 }
