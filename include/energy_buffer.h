@@ -1,6 +1,7 @@
 #ifndef TINKER_ENERGY_BUFFER_H_
 #define TINKER_ENERGY_BUFFER_H_
 
+#include "dev_array.h"
 #include "gen_unit.h"
 #include "mathfunc.h"
 
@@ -88,7 +89,7 @@ class GenericBuffer {
 private:
   static_assert(NStore >= NAnswer, "");
   typedef typename ebuf_detail::S<Answer>::Type Store;
-  static constexpr size_t rs = sizeof(Store) * NStore;
+  static constexpr size_t RS = sizeof(Store) * NStore;
 
   Store* buf;
   int cap;
@@ -101,9 +102,9 @@ private:
     int new_cap = new_size;
 
     Store* new_buf;
-    DeviceMemory::allocate_bytes(&new_buf, rs * new_cap);
-    DeviceMemory::copy_bytes(new_buf, buf, rs * old_cap);
-    DeviceMemory::deallocate_bytes(buf);
+    device_array::allocate(RS * new_cap, &new_buf);
+    device_array::copy(RS * old_cap, new_buf, buf);
+    device_array::deallocate(buf);
 
     buf = new_buf;
     cap = new_cap;
@@ -131,7 +132,7 @@ public:
   const Store* buffer() const { return buf; }
   Store* buffer() { return buf; }
   int size() const { return cap; }
-  void zero() { DeviceMemory::zero_bytes(buf, rs * cap); }
+  void zero() { device_array::zero(RS * cap, buf); }
   void sum(Answer* host_ans) {
     ebuf_detail::Sum<Answer, Store, NAnswer, NStore>::exec(host_ans, buf, cap);
   }
@@ -147,7 +148,7 @@ public:
 
   ~GenericBuffer() {
     cap = 0;
-    DeviceMemory::deallocate_bytes(buf);
+    device_array::deallocate(buf);
     buf = nullptr;
   }
 };

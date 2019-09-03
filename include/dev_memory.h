@@ -3,9 +3,6 @@
 
 #include "macro.h"
 #include <cstring>
-#include <type_traits>
-#include <vector>
-
 TINKER_NAMESPACE_BEGIN
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes);
 void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes);
@@ -13,7 +10,12 @@ void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes);
 void device_memory_zero_bytes(void* dst, size_t nbytes);
 void device_memory_deallocate_bytes(void* ptr);
 void device_memory_allocate_bytes(void** pptr, size_t nbytes);
+TINKER_NAMESPACE_END
 
+#include <stdexcept>
+#include <type_traits>
+#include <vector>
+TINKER_NAMESPACE_BEGIN
 struct DeviceMemory {
   static void copyin_bytes(void* dst, const void* src, size_t nbytes) {
     device_memory_copyin_bytes(dst, src, nbytes);
@@ -37,6 +39,8 @@ struct DeviceMemory {
 
   static void allocate_bytes(void** pptr, size_t nbytes) {
     device_memory_allocate_bytes(pptr, nbytes);
+    if (nbytes && *pptr == nullptr)
+      throw std::bad_alloc();
   }
 
   //====================================================================//
@@ -143,29 +147,171 @@ struct DeviceMemory {
     size_t size = sizeof(T) * nelem;
     zero_bytes(dst, size);
   }
+};
+TINKER_NAMESPACE_END
+
+#include "mathfunc.h"
+TINKER_NAMESPACE_BEGIN
+template <class Op>
+class DeviceArray {
+private:
+  template <class PTR>
+  struct deduce;
+
+  template <class T>
+  struct deduce<T*> {
+    typedef T type;
+    static constexpr size_t N = 1;
+  };
+
+  template <class T, size_t N1>
+  struct deduce<T (*)[N1]> {
+    typedef T type;
+    static constexpr size_t N = N1;
+  };
+
+public:
+  template <class T, size_t N = 1>
+  struct ptr;
+
+  template <class T>
+  struct ptr<T> {
+    typedef T* type;
+  };
+
+  template <class T, size_t N>
+  struct ptr {
+    static_assert(N > 1, "");
+    typedef T (*type)[N];
+  };
+
+  template <class PTR>
+  static typename deduce<PTR>::type* flatten(PTR p) {
+    typedef typename deduce<PTR>::type T;
+    return reinterpret_cast<T*>(p);
+  }
+
+  //====================================================================//
+
+  template <class PTR>
+  static void allocate(size_t nelem, PTR* pp) {
+    typedef typename deduce<PTR>::type T;
+    constexpr size_t N = deduce<PTR>::N;
+    Op a;
+    a.allocate_bytes(reinterpret_cast<void**>(pp), sizeof(T) * nelem * N);
+  }
+
+  template <class PTR>
+  static void deallocate(PTR p) {
+    Op a;
+    a.deallocate_bytes(flatten(p));
+  }
+
+  template <class PTR, class... PTRS>
+  static void allocate(size_t nelem, PTR* pp, PTRS... pps) {
+    allocate(nelem, pp);
+    allocate(nelem, pps...);
+  }
+
+  template <class PTR, class... PTRS>
+  static void deallocate(PTR p, PTRS... ps) {
+    deallocate(p);
+    deallocate(ps...);
+  }
+
+  //====================================================================//
+
+  template <class PTR>
+  static void zero(size_t nelem, PTR p) {
+    typedef typename deduce<PTR>::type T;
+    constexpr size_t N = deduce<PTR>::N;
+    Op a;
+    a.zero_bytes(flatten(p), sizeof(T) * nelem * N);
+  }
+
+  template <class PTR, class... PTRS>
+  static void zero(size_t nelem, PTR p, PTRS... ps) {
+    zero(nelem, p);
+    zero(nelem, ps...);
+  }
+
+  //====================================================================//
+
+  template <class PTR, class U>
+  static void copyin(size_t nelem, PTR dst, const U* src) {
+    typedef typename deduce<PTR>::type T;
+    constexpr size_t N = deduce<PTR>::N;
+    Op a;
+    a.copyin_array(flatten(dst), flatten(src), nelem * N);
+  }
+
+  template <class U, class PTR>
+  static void copyout(size_t nelem, U* dst, const PTR src) {
+    typedef typename deduce<PTR>::type T;
+    constexpr size_t N = deduce<PTR>::N;
+    Op a;
+    a.copyout_array(flatten(dst), flatten(src), nelem * N);
+  }
+
+  template <class PTR, class U>
+  static void copy(size_t nelem, PTR dst, const U* src) {
+    typedef typename deduce<PTR>::type T;
+    constexpr size_t N = deduce<PTR>::N;
+    Op a;
+    a.copy_array(flatten(dst), flatten(src), nelem * N);
+  }
 
   //====================================================================//
 
   template <class DT, class ST>
-  static void copyin_array2(size_t idx0, size_t ndim, DT* dst, const ST* src,
-                            size_t nelem) {
-    check_type<DT>();
-    check_type<ST>();
-    std::vector<DT> buf(nelem);
+  static void copyin2(size_t idx0, size_t ndim, size_t nelem, DT dst,
+                      const ST src) {
+    static_assert(deduce<DT>::N == 1, "");
+    static_assert(deduce<ST>::N == 1, "");
+    typedef typename deduce<DT>::type T;
+    std::vector<T> buf(nelem);
     for (size_t i = 0; i < nelem; ++i)
       buf[i] = src[ndim * i + idx0];
-    copyin_array(dst, buf.data(), nelem);
+    copyin(nelem, dst, buf.data());
   }
 
   template <class DT, class ST>
-  static void copyout_array2(size_t idx0, size_t ndim, DT* dst, const ST* src,
-                             size_t nelem) {
-    check_type<DT>();
-    check_type<ST>();
-    std::vector<ST> buf(nelem);
-    copyout_array(buf.data(), src, nelem);
+  static void copyout2(size_t idx0, size_t ndim, size_t nelem, DT dst,
+                       const ST src) {
+    static_assert(deduce<DT>::N == 1, "");
+    static_assert(deduce<ST>::N == 1, "");
+    typedef typename deduce<ST>::type T;
+    std::vector<T> buf(nelem);
+    copyout(nelem, buf.data(), src);
     for (size_t i = 0; i < nelem; ++i)
       dst[ndim * i + idx0] = buf[i];
+  }
+
+  //====================================================================//
+
+  template <class PTR, class PTR2>
+  static typename deduce<PTR>::type dot(size_t nelem, const PTR ptr,
+                                        const PTR2 b) {
+    typedef typename deduce<PTR>::type T;
+    constexpr size_t N = deduce<PTR>::N;
+    typedef typename deduce<PTR2>::type T2;
+    static_assert(std::is_same<T, T2>::value, "");
+    return mathfunc_detail::dotprod(flatten(ptr), flatten(b), nelem * N);
+  }
+
+  //====================================================================//
+
+  template <class FLT, class PTR>
+  static void scale(size_t nelem, FLT scal, PTR ptr) {
+    typedef typename deduce<PTR>::type T;
+    constexpr size_t N = deduce<PTR>::N;
+    mathfunc_detail::scale_array(flatten(ptr), scal, nelem * N);
+  }
+
+  template <class FLT, class PTR, class... PTRS>
+  static void scale(size_t nelem, FLT scal, PTR ptr, PTRS... ptrs) {
+    scale(nelem, scal, ptr);
+    scale(nelem, scal, ptrs...);
   }
 };
 TINKER_NAMESPACE_END
