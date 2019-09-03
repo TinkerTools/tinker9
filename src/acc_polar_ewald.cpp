@@ -1,6 +1,5 @@
 #include "acc_add.h"
 #include "acc_image.h"
-
 #include "couple.h"
 #include "e_polar.h"
 #include "md.h"
@@ -17,8 +16,8 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   sanity_check<USE>();
 
   if_constexpr(do_g) {
-    ufld_vec.zero(3 * n);
-    dufld_vec.zero(6 * n);
+    device_array::zero(ufld, n);
+    device_array::zero(dufld, n);
   }
 
   const real(*uind)[3] = reinterpret_cast<const real(*)[3]>(gpu_uind);
@@ -52,12 +51,6 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   const PMEUnit pu = ppme_unit;
   const real aewald = pu->aewald;
   real bn[5];
-
-  const auto* thole = thole_vec.data();
-  const auto* pdamp = pdamp_vec.data();
-
-  auto* ufld = ufld_vec.data();
-  auto* dufld = dufld_vec.data();
 
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,box,coupl,polargroup,mlst,\
@@ -732,8 +725,6 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   // torque
 
   if_constexpr(do_g) {
-    const auto* ufld = ufld_vec.data();
-    const auto* dufld = dufld_vec.data();
     #pragma acc parallel loop independent\
                 deviceptr(rpole,trqx,trqy,trqz,ufld,dufld)
     for (int i = 0; i < n; ++i) {

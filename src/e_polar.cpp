@@ -17,35 +17,29 @@ void epolar_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
+    device_array::deallocate(polarity, thole, pdamp, polarity_inv);
+
     ep_handle.dealloc();
+
+    device_array::deallocate(ufld, dufld);
+    device_array::deallocate(work01_, work02_, work03_, work04_, work05_,
+                             work06_, work07_, work08_, work09_, work10_);
   }
 
   if (op & rc_alloc) {
-    polarity_vec.reserve(n);
-    thole_vec.reserve(n);
-    pdamp_vec.reserve(n);
-    polarity_inv_vec.reserve(n);
+    device_array::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
 
     ep_handle.alloc(n);
 
     if (rc_flag & calc::grad) {
-      ufld_vec.reserve(3 * n);
-      dufld_vec.reserve(6 * n);
+      device_array::allocate(n, &ufld, &dufld);
     } else {
-      ufld_vec.clear();
-      dufld_vec.clear();
+      ufld = nullptr;
+      dufld = nullptr;
     }
 
-    work01_.reserve(3 * n);
-    work02_.reserve(3 * n);
-    work03_.reserve(3 * n);
-    work04_.reserve(3 * n);
-    work05_.reserve(3 * n);
-    work06_.reserve(3 * n);
-    work07_.reserve(3 * n);
-    work08_.reserve(3 * n);
-    work09_.reserve(3 * n);
-    work10_.reserve(3 * n);
+    device_array::allocate(n, &work01_, &work02_, &work03_, &work04_, &work05_,
+                           &work06_, &work07_, &work08_, &work09_, &work10_);
   }
 
   if (op & rc_init) {
@@ -86,10 +80,10 @@ void epolar_data(rc_op op) {
     for (int i = 0; i < n; ++i) {
       pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
     }
-    polarity_vec.copyin(polar::polarity, n);
-    thole_vec.copyin(polar::thole, n);
-    pdamp_vec.copyin(polar::pdamp, n);
-    polarity_inv_vec.copyin(pinvbuf.data(), n);
+    device_array::copyin(polarity, polar::polarity, n);
+    device_array::copyin(thole, polar::thole, n);
+    device_array::copyin(pdamp, polar::pdamp, n);
+    device_array::copyin(polarity_inv, pinvbuf.data(), n);
   }
 }
 

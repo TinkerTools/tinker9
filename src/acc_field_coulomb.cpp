@@ -30,9 +30,6 @@ void dfield_coulomb(real* gpu_field, real* gpu_fieldp) {
   real* pscale = pscalebuf.data();
   real* dscale = dscalebuf.data();
 
-  const auto* thole = thole_vec.data();
-  const auto* pdamp = pdamp_vec.data();
-
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,box,coupl,polargroup,mlst,\
               rpole,thole,pdamp,field,fieldp)\
@@ -276,9 +273,6 @@ void ufield_coulomb(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
   static std::vector<real> uscalebuf;
   uscalebuf.resize(n, 1);
   real* uscale = uscalebuf.data();
-
-  const auto* thole = thole_vec.data();
-  const auto* pdamp = pdamp_vec.data();
 
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,box,polargroup,mlst,\

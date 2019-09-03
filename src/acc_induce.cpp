@@ -1,5 +1,4 @@
 #include "acc_image.h"
-
 #include "e_polar.h"
 #include "error.h"
 #include "ext/tinker/detail/inform.hh"
@@ -16,7 +15,6 @@ TINKER_NAMESPACE_BEGIN
 // the preconditioner is the diagnoal matrix
 static inline void diag_precond(const real (*rsd)[3], const real (*rsdp)[3],
                                 real (*zrsd)[3], real (*zrsdp)[3]) {
-  const auto* polarity = polarity_vec.data();
   #pragma acc parallel loop independent\
               deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
   for (int i = 0; i < n; ++i) {
@@ -35,7 +33,6 @@ static inline void sparse_diag_precond_apply(const real (*rsd)[3],
                                              const real (*rsdp)[3],
                                              real (*zrsd)[3],
                                              real (*zrsdp)[3]) {
-  const auto* polarity = polarity_vec.data();
   #pragma acc parallel loop independent\
               deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
   for (int i = 0; i < n; ++i) {
@@ -122,10 +119,6 @@ static inline void sparse_diag_precond_build(const real (*rsd)[3],
   static std::vector<real> uscalebuf;
   uscalebuf.resize(n, 1);
   real* uscale = uscalebuf.data();
-
-  const auto* polarity = polarity_vec.data();
-  const auto* thole = thole_vec.data();
-  const auto* pdamp = pdamp_vec.data();
 
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(mindex,minv,ulst,box,\
@@ -246,16 +239,16 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   real(*uind)[3] = reinterpret_cast<real(*)[3]>(gpu_ud);
   real(*uinp)[3] = reinterpret_cast<real(*)[3]>(gpu_up);
 
-  auto* field = work01_.data();
-  auto* fieldp = work02_.data();
-  auto* rsd = work03_.data();
-  auto* rsdp = work04_.data();
-  auto* zrsd = work05_.data();
-  auto* zrsdp = work06_.data();
-  auto* conj = work07_.data();
-  auto* conjp = work08_.data();
-  auto* vec = work09_.data();
-  auto* vecp = work10_.data();
+  auto* field = work01_;
+  auto* fieldp = work02_;
+  auto* rsd = work03_;
+  auto* rsdp = work04_;
+  auto* zrsd = work05_;
+  auto* zrsdp = work06_;
+  auto* conj = work07_;
+  auto* conjp = work08_;
+  auto* vec = work09_;
+  auto* vecp = work10_;
 
   const bool dirguess = polpcg::pcgguess;
   // use sparse matrix preconditioner
@@ -272,9 +265,6 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
   dfield(&field[0][0], &fieldp[0][0]);
 
   // direct induced dipoles
-
-  const auto* polarity = polarity_vec.data();
-  const auto* polarity_inv = polarity_inv_vec.data();
 
   #pragma acc parallel loop independent\
               deviceptr(polarity,udir,udirp,field,fieldp)

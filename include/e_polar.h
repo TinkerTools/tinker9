@@ -1,7 +1,7 @@
 #ifndef TINKER_GPU_E_POLAR_H_
 #define TINKER_GPU_E_POLAR_H_
 
-#include "device_vector.h"
+#include "dev_array.h"
 #include "elec.h"
 #include "energy_buffer.h"
 #include "polgrp.h"
@@ -17,16 +17,15 @@ TINKER_EXTERN real p2iscale, p3iscale, p4iscale, p5iscale;
 
 TINKER_EXTERN real udiag;
 
-TINKER_EXTERN DeviceVector<real> polarity_vec, thole_vec, pdamp_vec,
-    polarity_inv_vec;
+TINKER_EXTERN device_pointer<real> polarity, thole, pdamp, polarity_inv;
 
 TINKER_EXTERN NonbondedEnergy ep_handle;
 
-TINKER_EXTERN DeviceVector<real, 3> ufld_vec;
-TINKER_EXTERN DeviceVector<real, 6> dufld_vec;
+TINKER_EXTERN device_pointer<real, 3> ufld;
+TINKER_EXTERN device_pointer<real, 6> dufld;
 
-TINKER_EXTERN DeviceVector<real, 3> work01_, work02_, work03_, work04_, work05_,
-    work06_, work07_, work08_, work09_, work10_;
+TINKER_EXTERN device_pointer<real, 3> work01_, work02_, work03_, work04_,
+    work05_, work06_, work07_, work08_, work09_, work10_;
 
 void epolar_data(rc_op op);
 

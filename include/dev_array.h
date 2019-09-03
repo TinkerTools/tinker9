@@ -95,6 +95,9 @@ public:
     a.copyin_array(flatten(dst), src, nelem * N);
   }
 };
+
+template <class T, size_t N = 1>
+using device_pointer = typename device_array::ptr<T, N>::type;
 TINKER_NAMESPACE_END
 
 #endif

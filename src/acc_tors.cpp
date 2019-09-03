@@ -12,14 +12,6 @@ void etors_tmpl() {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
-  const auto* itors = itors_vec.data();
-  const auto* tors1 = tors1_vec.data();
-  const auto* tors2 = tors2_vec.data();
-  const auto* tors3 = tors3_vec.data();
-  const auto* tors4 = tors4_vec.data();
-  const auto* tors5 = tors5_vec.data();
-  const auto* tors6 = tors6_vec.data();
-
   auto* et = et_handle.e()->buffer();
   auto* vir_et = et_handle.vir()->buffer();
   auto bufsize = et_handle.buffer_size();

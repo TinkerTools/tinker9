@@ -72,9 +72,6 @@ void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
 
   real bn[4];
 
-  const auto* thole = thole_vec.data();
-  const auto* pdamp = pdamp_vec.data();
-
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,box,coupl,polargroup,mlst,\
               rpole,thole,pdamp,field,fieldp)\
@@ -419,9 +416,6 @@ void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
   const real aesq2n = (aewald > 0 ? 1 / (sqrtpi * aewald) : 0);
 
   real bn[3];
-
-  const auto* thole = thole_vec.data();
-  const auto* pdamp = pdamp_vec.data();
 
   #pragma acc parallel num_gangs(bufsize)\
               deviceptr(x,y,z,box,polargroup,mlst,\

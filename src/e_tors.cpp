@@ -11,18 +11,15 @@ void etors_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
+    device_array::deallocate(itors, tors1, tors2, tors3, tors4, tors5, tors6);
+
     et_handle.dealloc();
   }
 
   if (op & rc_alloc) {
     ntors = count_bonded_term(torsion_term);
-    itors_vec.reserve(4 * ntors);
-    tors1_vec.reserve(4 * ntors);
-    tors2_vec.reserve(4 * ntors);
-    tors3_vec.reserve(4 * ntors);
-    tors4_vec.reserve(4 * ntors);
-    tors5_vec.reserve(4 * ntors);
-    tors6_vec.reserve(4 * ntors);
+    device_array::allocate(ntors, &itors, &tors1, &tors2, &tors3, &tors4,
+                           &tors5, &tors6);
 
     et_handle.alloc(ntors);
   }
@@ -32,13 +29,13 @@ void etors_data(rc_op op) {
     for (int i = 0; i < 4 * ntors; ++i) {
       ibuf[i] = tors::itors[i] - 1;
     }
-    itors_vec.copyin(ibuf.data(), 4 * ntors);
-    tors1_vec.copyin(tors::tors1, 4 * ntors);
-    tors2_vec.copyin(tors::tors2, 4 * ntors);
-    tors3_vec.copyin(tors::tors3, 4 * ntors);
-    tors4_vec.copyin(tors::tors4, 4 * ntors);
-    tors5_vec.copyin(tors::tors5, 4 * ntors);
-    tors6_vec.copyin(tors::tors6, 4 * ntors);
+    device_array::copyin(itors, ibuf.data(), ntors);
+    device_array::copyin(tors1, tors::tors1, ntors);
+    device_array::copyin(tors2, tors::tors2, ntors);
+    device_array::copyin(tors3, tors::tors3, ntors);
+    device_array::copyin(tors4, tors::tors4, ntors);
+    device_array::copyin(tors5, tors::tors5, ntors);
+    device_array::copyin(tors6, tors::tors6, ntors);
     torsunit = torpot::torsunit;
   }
 }
