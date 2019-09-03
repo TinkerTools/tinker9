@@ -1,5 +1,5 @@
 #include "box.h"
-#include "dev_memory.h"
+#include "dev_array.h"
 #include "ext/tinker/detail/bound.hh"
 #include "ext/tinker/detail/boxes.hh"
 #include "mathfunc.h"
@@ -11,21 +11,19 @@ void box_data(rc_op op) {
   if (op & rc_dealloc) {
     if (calc::traj & rc_flag) {
       box = nullptr;
-      DeviceMemory::deallocate_bytes(trajbox);
+      device_array::deallocate(trajbox);
     } else {
-      DeviceMemory::deallocate_bytes(box);
+      device_array::deallocate(box);
       trajbox = nullptr;
     }
   }
 
   if (op & rc_alloc) {
-    size_t size = sizeof(Box);
     if (calc::traj & rc_flag) {
-      size *= trajn;
-      DeviceMemory::allocate_bytes(&trajbox, size);
+      device_array::allocate(trajn, &trajbox);
       box = trajbox;
     } else {
-      DeviceMemory::allocate_bytes(&box, size);
+      device_array::allocate(1, &box);
     }
   }
 
@@ -40,16 +38,16 @@ void box_data(rc_op op) {
     else if (boxes::octahedron)
       shape = Box::oct;
 
-    DeviceMemory::copyin_array(&box->lvec[0][0], &boxes::lvec[0][0], 9);
-    DeviceMemory::copyin_array(&box->recip[0][0], &boxes::recip[0][0], 9);
-    DeviceMemory::copyin_array(&box->volbox, &boxes::volbox, 1);
-    DeviceMemory::copyin_bytes(&box->shape, &shape, sizeof(Box::Shape));
+    device_array::copyin(3, box->lvec, boxes::lvec);
+    device_array::copyin(3, box->recip, boxes::recip);
+    device_array::copyin(1, &box->volbox, &boxes::volbox);
+    device_array::copyin(1, &box->shape, &shape);
   }
 }
 
 void copyout_box_data(const Box* pb) {
   Box b;
-  DeviceMemory::copyout_bytes(&b, pb, sizeof(Box));
+  device_array::copyout(1, &b, pb);
 
   if (bound::use_bounds) {
     double ax[3] = {b.lvec[0][0], b.lvec[1][0], b.lvec[2][0]};

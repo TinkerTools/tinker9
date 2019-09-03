@@ -231,7 +231,7 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
           shape = Box::oct;
         bbuf2[i].shape = shape;
       }
-      DeviceMemory::copyin_bytes(trajbox, bbuf2.data(), sizeof(Box) * tn);
+      device_array::copyin(tn, trajbox, bbuf2.data());
     }
     device_array::copyin(n * tn, trajx, xbuf.data());
     device_array::copyin(n * tn, trajy, ybuf.data());

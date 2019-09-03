@@ -47,7 +47,7 @@ void mdsave_data(rc_op op) {
     deallocate_stream(dup_stream_v_);
     deallocate_stream(dup_stream_g_);
 
-    DeviceMemory::deallocate_bytes(dup_buf_box_);
+    device_array::deallocate(dup_buf_box_);
     device_array::deallocate(dup_buf_x_, dup_buf_y_, dup_buf_z_);
     device_array::deallocate(dup_buf_vx_, dup_buf_vy_, dup_buf_vz_);
     device_array::deallocate(dup_buf_gx_, dup_buf_gy_, dup_buf_gz_);
@@ -66,7 +66,7 @@ void mdsave_data(rc_op op) {
     allocate_stream(&dup_stream_v_);
     allocate_stream(&dup_stream_g_);
 
-    DeviceMemory::allocate_bytes(&dup_buf_box_, sizeof(Box));
+    device_array::allocate(1, &dup_buf_box_);
     device_array::allocate(n, &dup_buf_x_, &dup_buf_y_, &dup_buf_z_);
     device_array::allocate(n, &dup_buf_vx_, &dup_buf_vy_, &dup_buf_vz_);
     device_array::allocate(n, &dup_buf_gx_, &dup_buf_gy_, &dup_buf_gz_);
