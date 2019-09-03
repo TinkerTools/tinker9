@@ -121,9 +121,7 @@ void elec_init(int vers) {
   // zero torque
 
   if (vers & calc::grad) {
-    device_array::zero(trqx, n);
-    device_array::zero(trqy, n);
-    device_array::zero(trqz, n);
+    device_array::zero(n, trqx, trqy, trqz);
   }
 
   // zero torque-related virial

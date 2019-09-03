@@ -78,11 +78,17 @@ public:
   //====================================================================//
 
   template <class PTR>
-  static void zero(PTR p, size_t nelem) {
+  static void zero(size_t nelem, PTR p) {
     typedef typename deduce<PTR>::type T;
     constexpr size_t N = deduce<PTR>::N;
     allocator<T> a;
     a.zero_bytes(flatten(p), sizeof(T) * nelem * N);
+  }
+
+  template <class PTR, class... PTRS>
+  static void zero(size_t nelem, PTR p, PTRS... ps) {
+    zero(nelem, p);
+    zero(nelem, ps...);
   }
 
   //====================================================================//

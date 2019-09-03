@@ -15,10 +15,7 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
-  if_constexpr(do_g) {
-    device_array::zero(ufld, n);
-    device_array::zero(dufld, n);
-  }
+  if_constexpr(do_g) { device_array::zero(n, ufld, dufld); }
 
   const real(*uind)[3] = reinterpret_cast<const real(*)[3]>(gpu_uind);
   const real(*uinp)[3] = reinterpret_cast<const real(*)[3]>(gpu_uinp);

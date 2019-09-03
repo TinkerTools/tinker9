@@ -16,10 +16,7 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   static_assert(do_v ? do_g : true, "");
   static_assert(do_a ? do_e : true, "");
 
-  if_constexpr(do_g) {
-    device_array::zero(ufld, n);
-    device_array::zero(dufld, n);
-  }
+  if_constexpr(do_g) { device_array::zero(n, ufld, dufld); }
 
   if_constexpr(do_e && !do_a) epolar0_dotprod(gpu_uind, udirp);
   static_assert(do_g || do_a,
