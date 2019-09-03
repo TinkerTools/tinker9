@@ -1,6 +1,5 @@
 
 #include "box.h"
-#include "dev_memory.h"
 #include "ext/tinker/detail/atomid.hh"
 #include "ext/tinker/detail/atoms.hh"
 #include "ext/tinker/detail/moldyn.hh"
@@ -72,9 +71,9 @@ void vel_data(rc_op op) {
   }
 
   if (op & rc_init) {
-    DeviceMemory::copyin_array2(0, 3, vx, moldyn::v, n);
-    DeviceMemory::copyin_array2(1, 3, vy, moldyn::v, n);
-    DeviceMemory::copyin_array2(2, 3, vz, moldyn::v, n);
+    device_array::copyin2(0, 3, n, vx, moldyn::v);
+    device_array::copyin2(1, 3, n, vy, moldyn::v);
+    device_array::copyin2(2, 3, n, vz, moldyn::v);
   }
 }
 
@@ -231,7 +230,7 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
           shape = Box::oct;
         bbuf2[i].shape = shape;
       }
-      DeviceMemory::copyin_bytes(trajbox, bbuf2.data(), sizeof(Box) * tn);
+      device_array::copyin(tn, trajbox, bbuf2.data());
     }
     device_array::copyin(n * tn, trajx, xbuf.data());
     device_array::copyin(n * tn, trajy, ybuf.data());

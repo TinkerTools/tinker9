@@ -126,6 +126,7 @@ void reduce_sum2(unsigned long long* h_ans, int hn, const unsigned long long* v,
                  int nelem, int neach);
 /// @}
 
+namespace mathfunc_detail {
 /**
  * @brief
  * n-dimensional dot product
@@ -169,6 +170,7 @@ double dotprod(const double* a, const double* b, int n);
 void scale_array(float* dst, float scal, int nelem);
 void scale_array(double* dst, double scal, int nelem);
 /// @}
+}
 TINKER_NAMESPACE_END
 
 #endif

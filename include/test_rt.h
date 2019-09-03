@@ -81,9 +81,9 @@ TINKER_NAMESPACE_END
   {                                                                            \
     std::vector<std::array<double, 3>> grad(n);                                \
     double* dst = &grad[0][0];                                                 \
-    DeviceMemory::copyout_array2(0, 3, dst, gx, n);                            \
-    DeviceMemory::copyout_array2(1, 3, dst, gy, n);                            \
-    DeviceMemory::copyout_array2(2, 3, dst, gz, n);                            \
+    device_array::copyout2(0, 3, n, dst, gx);                                  \
+    device_array::copyout2(1, 3, n, dst, gy);                                  \
+    device_array::copyout2(2, 3, n, dst, gz);                                  \
     for (int i = 0; i < n; ++i) {                                              \
       for (int j = 0; j < 3; ++j) {                                            \
         if (check_ij(i, j))                                                    \
