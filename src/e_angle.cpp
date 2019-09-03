@@ -1,5 +1,4 @@
 #include "e_angle.h"
-#include "array.h"
 #include "ext/tinker/detail/angbnd.hh"
 #include "ext/tinker/detail/angpot.hh"
 #include "io_fort_str.h"
@@ -13,24 +12,14 @@ void eangle_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_bytes(iang);
-    dealloc_bytes(ak);
-    dealloc_bytes(anat);
-
-    dealloc_bytes(angtyp);
+    device_array::deallocate(iang, ak, anat, angtyp);
 
     ea_handle.dealloc();
   }
 
   if (op & rc_alloc) {
-    const size_t rs = sizeof(real);
-
     nangle = count_bonded_term(angle_term);
-    alloc_bytes(&iang, sizeof(int) * nangle * 4);
-    alloc_bytes(&ak, rs * nangle);
-    alloc_bytes(&anat, rs * nangle);
-
-    alloc_bytes(&angtyp, sizeof(int) * nangle);
+    device_array::allocate(nangle, &iang, &ak, &anat, &angtyp);
 
     ea_handle.alloc(nangle);
   }
@@ -40,9 +29,9 @@ void eangle_data(rc_op op) {
     for (size_t i = 0; i < iangvec.size(); ++i) {
       iangvec[i] = angbnd::iang[i] - 1;
     }
-    copyin_array(&iang[0][0], iangvec.data(), nangle * 4);
-    copyin_array(ak, angbnd::ak, nangle);
-    copyin_array(anat, angbnd::anat, nangle);
+    device_array::copyin(nangle, iang, iangvec.data());
+    device_array::copyin(nangle, ak, angbnd::ak);
+    device_array::copyin(nangle, anat, angbnd::anat);
 
     angunit = angpot::angunit;
     cang = angpot::cang;
@@ -64,8 +53,7 @@ void eangle_data(rc_op op) {
         assert(false);
       }
     }
-    copyin_array(reinterpret_cast<int*>(angtyp),
-                 reinterpret_cast<const int*>(angtypvec.data()), nangle);
+    device_array::copyin(nangle, angtyp, angtypvec.data());
   }
 }
 

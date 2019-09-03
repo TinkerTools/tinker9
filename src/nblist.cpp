@@ -1,4 +1,5 @@
 #include "nblist.h"
+#include "dev_array.h"
 #include "e_vdw.h"
 #include "ext/tinker/detail/limits.hh"
 #include "ext/tinker/detail/neigh.hh"
@@ -96,12 +97,7 @@ static int nblist_maxlst_(int maxn, double cutoff, double buffer) {
 }
 
 NBList::~NBList() {
-  dealloc_bytes(nlst);
-  dealloc_bytes(lst);
-  dealloc_bytes(update);
-  dealloc_bytes(xold);
-  dealloc_bytes(yold);
-  dealloc_bytes(zold);
+  device_array::deallocate(nlst, lst, update, xold, yold, zold);
 }
 
 static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
@@ -109,15 +105,11 @@ static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
                              const real* _z) {
   nblu = NBListUnit::open();
   auto& st = *nblu;
-  const size_t rs = sizeof(int);
-  size_t size;
 
-  size = n * rs;
-  alloc_bytes(&st.nlst, size);
+  device_array::allocate(n, &st.nlst);
 
   int maxlst = nblist_maxlst_(maxn, cutoff, buffer);
-  size = maxlst * n * rs;
-  alloc_bytes(&st.lst, size);
+  device_array::allocate(maxlst * n, &st.lst);
 
   if (maxlst == 1) {
     st.update = nullptr;
@@ -125,12 +117,7 @@ static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
     st.yold = nullptr;
     st.zold = nullptr;
   } else {
-    size = n * rs;
-    alloc_bytes(&st.update, size);
-    size = n * sizeof(real);
-    alloc_bytes(&st.xold, size);
-    alloc_bytes(&st.yold, size);
-    alloc_bytes(&st.zold, size);
+    device_array::allocate(n, &st.update, &st.xold, &st.yold, &st.zold);
   }
 
   st.x = _x;
@@ -237,8 +224,7 @@ void nblist_data(rc_op op) {
   u = use_usolv_list();
   if (u) {
     if (op & rc_dealloc) {
-      dealloc_bytes(mindex);
-      dealloc_bytes(minv);
+      device_array::deallocate(mindex, minv);
     }
 
     if (op & rc_alloc) {
@@ -248,9 +234,9 @@ void nblist_data(rc_op op) {
         maxnlst = 1;
       nblist_op_alloc_(ulist_unit, maxnlst, limits::usolvcut, neigh::pbuffer, x,
                        y, z);
-      alloc_bytes(&mindex, sizeof(int) * n);
+      device_array::allocate(n, &mindex);
       minv_size = nblist_maxlst_(minv_size, limits::usolvcut, neigh::pbuffer);
-      alloc_bytes(&minv, sizeof(real) * 3 * minv_size * n);
+      device_array::allocate(3 * minv_size * n, &minv);
     }
 
     if (op & rc_init)

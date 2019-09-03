@@ -1,5 +1,5 @@
 #include "e_pitors.h"
-#include "array.h"
+
 #include "ext/tinker/detail/pitors.hh"
 #include "ext/tinker/detail/torpot.hh"
 #include "md.h"
@@ -11,16 +11,14 @@ void epitors_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_bytes(ipit);
-    dealloc_bytes(kpit);
+    device_array::deallocate(ipit, kpit);
 
     ept_handle.dealloc();
   }
 
   if (op & rc_alloc) {
     int ntors = count_bonded_term(torsion_term);
-    alloc_bytes(&ipit, sizeof(int) * 6 * ntors);
-    alloc_bytes(&kpit, sizeof(real) * ntors);
+    device_array::allocate(ntors, &ipit, &kpit);
 
     npitors = count_bonded_term(pitors_term);
     ept_handle.alloc(npitors);
@@ -31,8 +29,8 @@ void epitors_data(rc_op op) {
     std::vector<int> ibuf(6 * ntors);
     for (int i = 0; i < 6 * ntors; ++i)
       ibuf[i] = pitors::ipit[i] - 1;
-    copyin_array(&ipit[0][0], ibuf.data(), 6 * ntors);
-    copyin_array(kpit, pitors::kpit, ntors);
+    device_array::copyin(ntors, ipit, ibuf.data());
+    device_array::copyin(ntors, kpit, pitors::kpit);
     ptorunit = torpot::ptorunit;
   }
 }

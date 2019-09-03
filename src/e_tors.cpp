@@ -1,5 +1,5 @@
 #include "e_tors.h"
-#include "array.h"
+
 #include "ext/tinker/detail/torpot.hh"
 #include "ext/tinker/detail/tors.hh"
 #include "md.h"
@@ -11,28 +11,15 @@ void etors_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_bytes(itors);
-    dealloc_bytes(tors1);
-    dealloc_bytes(tors2);
-    dealloc_bytes(tors3);
-    dealloc_bytes(tors4);
-    dealloc_bytes(tors5);
-    dealloc_bytes(tors6);
+    device_array::deallocate(itors, tors1, tors2, tors3, tors4, tors5, tors6);
 
     et_handle.dealloc();
   }
 
   if (op & rc_alloc) {
-    const size_t rs = sizeof(real);
-
     ntors = count_bonded_term(torsion_term);
-    alloc_bytes(&itors, sizeof(int) * 4 * ntors);
-    alloc_bytes(&tors1, rs * 4 * ntors);
-    alloc_bytes(&tors2, rs * 4 * ntors);
-    alloc_bytes(&tors3, rs * 4 * ntors);
-    alloc_bytes(&tors4, rs * 4 * ntors);
-    alloc_bytes(&tors5, rs * 4 * ntors);
-    alloc_bytes(&tors6, rs * 4 * ntors);
+    device_array::allocate(ntors, &itors, &tors1, &tors2, &tors3, &tors4,
+                           &tors5, &tors6);
 
     et_handle.alloc(ntors);
   }
@@ -42,13 +29,13 @@ void etors_data(rc_op op) {
     for (int i = 0; i < 4 * ntors; ++i) {
       ibuf[i] = tors::itors[i] - 1;
     }
-    copyin_array(&itors[0][0], ibuf.data(), 4 * ntors);
-    copyin_array(&tors1[0][0], tors::tors1, 4 * ntors);
-    copyin_array(&tors2[0][0], tors::tors2, 4 * ntors);
-    copyin_array(&tors3[0][0], tors::tors3, 4 * ntors);
-    copyin_array(&tors4[0][0], tors::tors4, 4 * ntors);
-    copyin_array(&tors5[0][0], tors::tors5, 4 * ntors);
-    copyin_array(&tors6[0][0], tors::tors6, 4 * ntors);
+    device_array::copyin(ntors, itors, ibuf.data());
+    device_array::copyin(ntors, tors1, tors::tors1);
+    device_array::copyin(ntors, tors2, tors::tors2);
+    device_array::copyin(ntors, tors3, tors::tors3);
+    device_array::copyin(ntors, tors4, tors::tors4);
+    device_array::copyin(ntors, tors5, tors::tors5);
+    device_array::copyin(ntors, tors6, tors::tors6);
     torsunit = torpot::torsunit;
   }
 }

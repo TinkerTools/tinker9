@@ -1,4 +1,4 @@
-#include "array.h"
+#include "async.h"
 #include "box.h"
 #include "energy.h"
 #include "ext/tinker/detail/atomid.hh"
@@ -27,7 +27,7 @@ static bool mdsave_use_uind_() {
   return output::uindsave && use_potent(polar_term);
 }
 static Stream dup_stream_uind_;
-static real* dup_buf_uind_;
+static real (*dup_buf_uind_)[3];
 static Stream dup_stream_bxyz_, dup_stream_v_, dup_stream_g_;
 static real dup_buf_esum_;
 static Box* dup_buf_box_;
@@ -38,55 +38,37 @@ static real *dup_buf_gx_, *dup_buf_gy_, *dup_buf_gz_;
 void mdsave_data(rc_op op) {
   if (op & rc_dealloc) {
     if (mdsave_use_uind_()) {
-      dealloc_stream(dup_stream_uind_);
-      dealloc_bytes(dup_buf_uind_);
+      deallocate_stream(dup_stream_uind_);
+      device_array::deallocate(dup_buf_uind_);
     }
 
-    dealloc_stream(dup_stream_bxyz_);
-    dealloc_stream(dup_stream_v_);
-    dealloc_stream(dup_stream_g_);
+    deallocate_stream(dup_stream_bxyz_);
+    deallocate_stream(dup_stream_v_);
+    deallocate_stream(dup_stream_g_);
 
-    dealloc_bytes(dup_buf_box_);
-    dealloc_bytes(dup_buf_x_);
-    dealloc_bytes(dup_buf_y_);
-    dealloc_bytes(dup_buf_z_);
-
-    dealloc_bytes(dup_buf_vx_);
-    dealloc_bytes(dup_buf_vy_);
-    dealloc_bytes(dup_buf_vz_);
-
-    dealloc_bytes(dup_buf_gx_);
-    dealloc_bytes(dup_buf_gy_);
-    dealloc_bytes(dup_buf_gz_);
+    device_array::deallocate(dup_buf_box_);
+    device_array::deallocate(dup_buf_x_, dup_buf_y_, dup_buf_z_);
+    device_array::deallocate(dup_buf_vx_, dup_buf_vy_, dup_buf_vz_);
+    device_array::deallocate(dup_buf_gx_, dup_buf_gy_, dup_buf_gz_);
   }
 
   if (op & rc_alloc) {
-    const size_t rs = sizeof(real);
-
     if (mdsave_use_uind_()) {
-      alloc_stream(&dup_stream_uind_);
-      alloc_bytes(&dup_buf_uind_, rs * 3 * n);
+      allocate_stream(&dup_stream_uind_);
+      device_array::allocate(n, &dup_buf_uind_);
     } else {
       dup_stream_uind_ = nullptr;
       dup_buf_uind_ = nullptr;
     }
 
-    alloc_stream(&dup_stream_bxyz_);
-    alloc_stream(&dup_stream_v_);
-    alloc_stream(&dup_stream_g_);
+    allocate_stream(&dup_stream_bxyz_);
+    allocate_stream(&dup_stream_v_);
+    allocate_stream(&dup_stream_g_);
 
-    alloc_bytes(&dup_buf_box_, sizeof(Box));
-    alloc_bytes(&dup_buf_x_, rs * n);
-    alloc_bytes(&dup_buf_y_, rs * n);
-    alloc_bytes(&dup_buf_z_, rs * n);
-
-    alloc_bytes(&dup_buf_vx_, rs * n);
-    alloc_bytes(&dup_buf_vy_, rs * n);
-    alloc_bytes(&dup_buf_vz_, rs * n);
-
-    alloc_bytes(&dup_buf_gx_, rs * n);
-    alloc_bytes(&dup_buf_gy_, rs * n);
-    alloc_bytes(&dup_buf_gz_, rs * n);
+    device_array::allocate(1, &dup_buf_box_);
+    device_array::allocate(n, &dup_buf_x_, &dup_buf_y_, &dup_buf_z_);
+    device_array::allocate(n, &dup_buf_vx_, &dup_buf_vy_, &dup_buf_vz_);
+    device_array::allocate(n, &dup_buf_gx_, &dup_buf_gy_, &dup_buf_gz_);
   }
 
   if (op & rc_init) {
@@ -103,13 +85,13 @@ void mdsave_data(rc_op op) {
       std::vector<double> gbuf(n);
       for (int i = 0; i < n; ++i)
         gbuf[i] = -moldyn::a[3 * i] * atomid::mass[i] / units::ekcal;
-      copyin_array(gx, gbuf.data(), n);
+      device_array::copyin(n, gx, gbuf.data());
       for (int i = 0; i < n; ++i)
         gbuf[i] = -moldyn::a[3 * i + 1] * atomid::mass[i] / units::ekcal;
-      copyin_array(gy, gbuf.data(), n);
+      device_array::copyin(n, gy, gbuf.data());
       for (int i = 0; i < n; ++i)
         gbuf[i] = -moldyn::a[3 * i + 2] * atomid::mass[i] / units::ekcal;
-      copyin_array(gz, gbuf.data(), n);
+      device_array::copyin(n, gz, gbuf.data());
     } else {
       energy_potential(rc_flag & calc::vmask);
     }
@@ -137,14 +119,15 @@ static void mdsave_dup_then_write_(int istep, real dt) {
   copy_bytes_async(dup_buf_gz_, gz, rs * n, dup_stream_g_);
 
   if (mdsave_use_uind_()) {
-    copy_bytes_async(dup_buf_uind_, &uind[0][0], rs * 3 * n, dup_stream_uind_);
+    copy_bytes_async(&dup_buf_uind_[0][0], &uind[0][0], rs * 3 * n,
+                     dup_stream_uind_);
   }
 
-  sync_stream(dup_stream_bxyz_);
-  sync_stream(dup_stream_g_);
-  sync_stream(dup_stream_v_);
+  synchronize_stream(dup_stream_bxyz_);
+  synchronize_stream(dup_stream_g_);
+  synchronize_stream(dup_stream_v_);
   if (mdsave_use_uind_())
-    sync_stream(dup_stream_uind_);
+    synchronize_stream(dup_stream_uind_);
 
   mtx_dup.lock();
   idle_dup = true;
@@ -157,18 +140,18 @@ static void mdsave_dup_then_write_(int istep, real dt) {
 
   epot = dup_buf_esum_;
   copyout_box_data(dup_buf_box_);
-  copyout_bytes(arrx.data(), dup_buf_x_, rs * n);
-  copyout_bytes(arry.data(), dup_buf_y_, rs * n);
-  copyout_bytes(arrz.data(), dup_buf_z_, rs * n);
+  device_array::copyout(n, arrx.data(), dup_buf_x_);
+  device_array::copyout(n, arry.data(), dup_buf_y_);
+  device_array::copyout(n, arrz.data(), dup_buf_z_);
   for (int i = 0; i < n; ++i) {
     atoms::x[i] = arrx[i];
     atoms::y[i] = arry[i];
     atoms::z[i] = arrz[i];
   }
 
-  copyout_bytes(arrx.data(), dup_buf_vx_, rs * n);
-  copyout_bytes(arry.data(), dup_buf_vy_, rs * n);
-  copyout_bytes(arrz.data(), dup_buf_vz_, rs * n);
+  device_array::copyout(n, arrx.data(), dup_buf_vx_);
+  device_array::copyout(n, arry.data(), dup_buf_vy_);
+  device_array::copyout(n, arrz.data(), dup_buf_vz_);
   for (int i = 0; i < n; ++i) {
     int j = 3 * i;
     moldyn::v[j] = arrx[i];
@@ -176,9 +159,9 @@ static void mdsave_dup_then_write_(int istep, real dt) {
     moldyn::v[j + 2] = arrz[i];
   }
 
-  copyout_bytes(arrx.data(), dup_buf_gx_, rs * n);
-  copyout_bytes(arry.data(), dup_buf_gy_, rs * n);
-  copyout_bytes(arrz.data(), dup_buf_gz_, rs * n);
+  device_array::copyout(n, arrx.data(), dup_buf_gx_);
+  device_array::copyout(n, arry.data(), dup_buf_gy_);
+  device_array::copyout(n, arrz.data(), dup_buf_gz_);
   // convert gradient to acceleration
   const double ekcal = units::ekcal;
   for (int i = 0; i < n; ++i) {
@@ -190,10 +173,7 @@ static void mdsave_dup_then_write_(int istep, real dt) {
   }
 
   if (mdsave_use_uind_()) {
-    arrx.resize(3 * n);
-    copyout_bytes(arrx.data(), dup_buf_uind_, 3 * rs * n);
-    for (int i = 0; i < 3 * n; ++i)
-      polar::uind[i] = arrx[i];
+    device_array::copyout(n, polar::uind, dup_buf_uind_);
   }
 
   double dt1 = dt;

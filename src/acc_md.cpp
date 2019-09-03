@@ -4,7 +4,6 @@
 #include "ext/tinker/detail/units.hh"
 #include "io_print.h"
 #include "md.h"
-#include "rt.h"
 #include "tinker_rt.h"
 
 TINKER_NAMESPACE_BEGIN

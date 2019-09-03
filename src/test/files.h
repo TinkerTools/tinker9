@@ -27,10 +27,6 @@ extern const char* nacl_key;
 extern const char* nacl_xyz4;
 extern const char* nacl_key4;
 
-// CLN025 test set
-extern const char* cln025_xyz;
-extern const char* cln025_key;
-
 // local_frame test set
 extern const char* local_frame_xyz;
 extern const char* local_frame_key;
