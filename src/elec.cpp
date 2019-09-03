@@ -22,15 +22,10 @@ static void pole_data_(rc_op op) {
   }
 
   if (op & rc_alloc) {
-    device_array::allocate(&zaxis, n);
-    device_array::allocate(&pole, n);
-    device_array::allocate(&rpole, n);
+    device_array::allocate(n, &zaxis, &pole, &rpole);
 
     if (use_potent(polar_term)) {
-      device_array::allocate(&uind, n);
-      device_array::allocate(&uinp, n);
-      device_array::allocate(&udir, n);
-      device_array::allocate(&udirp, n);
+      device_array::allocate(n, &uind, &uinp, &udir, &udirp);
     } else {
       uind = nullptr;
       uinp = nullptr;
@@ -39,9 +34,7 @@ static void pole_data_(rc_op op) {
     }
 
     if (rc_flag & calc::grad) {
-      device_array::allocate(&trqx, n);
-      device_array::allocate(&trqy, n);
-      device_array::allocate(&trqz, n);
+      device_array::allocate(n, &trqx, &trqy, &trqz);
     } else {
       trqx = nullptr;
       trqy = nullptr;

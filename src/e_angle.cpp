@@ -20,10 +20,7 @@ void eangle_data(rc_op op) {
 
   if (op & rc_alloc) {
     nangle = count_bonded_term(angle_term);
-    device_array::allocate(&iang, nangle);
-    device_array::allocate(&ak, nangle);
-    device_array::allocate(&anat, nangle);
-    device_array::allocate(&angtyp, nangle);
+    device_array::allocate(nangle, &iang, &ak, &anat, &angtyp);
 
     ea_handle.alloc(nangle);
   }

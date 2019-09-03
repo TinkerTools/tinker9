@@ -40,22 +40,16 @@ void evdw_data(rc_op op) {
   }
 
   if (op & rc_alloc) {
-    device_array::allocate(&ired, n);
-    device_array::allocate(&kred, n);
-    device_array::allocate(&xred, n);
-    device_array::allocate(&yred, n);
-    device_array::allocate(&zred, n);
+    device_array::allocate(n, &ired, &kred, &xred, &yred, &zred);
     if (rc_flag & calc::grad) {
-      device_array::allocate(&gxred, n);
-      device_array::allocate(&gyred, n);
-      device_array::allocate(&gzred, n);
+      device_array::allocate(n, &gxred, &gyred, &gzred);
     } else {
       gxred = nullptr;
       gyred = nullptr;
       gzred = nullptr;
     }
 
-    device_array::allocate(&jvdw, n);
+    device_array::allocate(n, &jvdw);
 
     jvdwbuf.resize(n);
     assert(jmap.size() == 0);
@@ -74,10 +68,9 @@ void evdw_data(rc_op op) {
       }
     }
 
-    device_array::allocate(&radmin, jcount * jcount);
-    device_array::allocate(&epsilon, jcount * jcount);
+    device_array::allocate(jcount * jcount, &radmin, &epsilon);
 
-    device_array::allocate(&vlam, n);
+    device_array::allocate(n, &vlam);
 
     v2scale = vdwpot::v2scale;
     v3scale = vdwpot::v3scale;
@@ -151,8 +144,8 @@ void evdw_data(rc_op op) {
       }
     }
     nvdw_excluded_ = exclvs.size();
-    device_array::allocate(&vdw_excluded_, nvdw_excluded_);
-    device_array::allocate(&vdw_excluded_scale_, nvdw_excluded_);
+    device_array::allocate(nvdw_excluded_, &vdw_excluded_,
+                           &vdw_excluded_scale_);
     device_array::copyin(vdw_excluded_, exclik.data(), nvdw_excluded_);
     device_array::copyin(vdw_excluded_scale_, exclvs.data(), nvdw_excluded_);
 

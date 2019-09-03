@@ -248,9 +248,9 @@ void nblist_data(rc_op op) {
         maxnlst = 1;
       nblist_op_alloc_(ulist_unit, maxnlst, limits::usolvcut, neigh::pbuffer, x,
                        y, z);
-      device_array::allocate(&mindex, n);
+      device_array::allocate(n, &mindex);
       minv_size = nblist_maxlst_(minv_size, limits::usolvcut, neigh::pbuffer);
-      device_array::allocate(&minv, 3 * minv_size * n);
+      device_array::allocate(3 * minv_size * n, &minv);
     }
 
     if (op & rc_init)

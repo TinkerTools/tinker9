@@ -19,9 +19,7 @@ void ebond_data(rc_op op) {
 
   if (op & rc_alloc) {
     nbond = count_bonded_term(bond_term);
-    device_array::allocate(&ibnd, nbond);
-    device_array::allocate(&bl, nbond);
-    device_array::allocate(&bk, nbond);
+    device_array::allocate(nbond, &ibnd, &bl, &bk);
 
     eb_handle.alloc(nbond);
   }

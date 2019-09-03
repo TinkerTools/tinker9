@@ -31,20 +31,24 @@ public:
   template <class T>
   struct ptr<T> {
     typedef T* type;
-    static T* flatten(type p) { return &p[0]; }
   };
 
   template <class T, size_t N>
   struct ptr {
     static_assert(N > 1, "");
     typedef T (*type)[N];
-    static T* flatten(type p) { return &p[0][0]; }
   };
+
+  template <class PTR>
+  static typename deduce<PTR>::type* flatten(PTR p) {
+    typedef typename deduce<PTR>::type T;
+    return reinterpret_cast<T*>(p);
+  }
 
   //====================================================================//
 
   template <class PTR>
-  static void allocate(PTR* pp, size_t nelem) {
+  static void allocate(size_t nelem, PTR* pp) {
     typedef typename deduce<PTR>::type T;
     constexpr size_t N = deduce<PTR>::N;
     allocator<T> a;
@@ -56,7 +60,13 @@ public:
     typedef typename deduce<PTR>::type T;
     constexpr size_t N = deduce<PTR>::N;
     allocator<T> a;
-    a.deallocate_bytes(ptr<T, N>::flatten(p));
+    a.deallocate_bytes(flatten(p));
+  }
+
+  template <class PTR, class... PTRS>
+  static void allocate(size_t nelem, PTR* pp, PTRS... pps) {
+    allocate(nelem, pp);
+    allocate(nelem, pps...);
   }
 
   template <class PTR, class... PTRS>
@@ -72,7 +82,7 @@ public:
     typedef typename deduce<PTR>::type T;
     constexpr size_t N = deduce<PTR>::N;
     allocator<T> a;
-    a.zero_bytes(ptr<T, N>::flatten(p), sizeof(T) * nelem * N);
+    a.zero_bytes(flatten(p), sizeof(T) * nelem * N);
   }
 
   //====================================================================//
@@ -82,7 +92,7 @@ public:
     typedef typename deduce<PTR>::type T;
     constexpr size_t N = deduce<PTR>::N;
     allocator<T> a;
-    a.copyin_array(ptr<T, N>::flatten(dst), src, nelem * N);
+    a.copyin_array(flatten(dst), src, nelem * N);
   }
 };
 TINKER_NAMESPACE_END

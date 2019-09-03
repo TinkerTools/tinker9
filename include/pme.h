@@ -1,7 +1,7 @@
 #ifndef TINKER_PME_H_
 #define TINKER_PME_H_
 
-#include "device_vector.h"
+#include "dev_array.h"
 #include "energy_buffer.h"
 #include "fft.h"
 #include "gen_unit.h"
@@ -52,13 +52,12 @@ TINKER_EXTERN PMEUnit pvpme_unit; // polarization virial
 
 TINKER_EXTERN double ewald_switch_cut, ewald_switch_off;
 
-TINKER_EXTERN DeviceVector<real, 10> cmp_vec, fmp_vec, cphi_vec;
-TINKER_EXTERN DeviceVector<real, 20> fphi_vec;
+TINKER_EXTERN device_array::ptr<real, 10>::type cmp, fmp, cphi;
+TINKER_EXTERN device_array::ptr<real, 20>::type fphi;
 
-TINKER_EXTERN DeviceVector<real, 3> fuind_vec, fuinp_vec;
-TINKER_EXTERN DeviceVector<real, 10> fdip_phi1_vec, fdip_phi2_vec;
-TINKER_EXTERN DeviceVector<real, 10> cphidp_vec;
-TINKER_EXTERN DeviceVector<real, 20> fphidp_vec;
+TINKER_EXTERN device_array::ptr<real, 3>::type fuind, fuinp;
+TINKER_EXTERN device_array::ptr<real, 10>::type fdip_phi1, fdip_phi2, cphidp;
+TINKER_EXTERN device_array::ptr<real, 20>::type fphidp;
 
 TINKER_EXTERN Virial vir_m_handle;
 

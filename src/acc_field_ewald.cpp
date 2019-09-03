@@ -15,11 +15,6 @@ void dfield_ewald_recip_self(real* gpu_field) {
   const real aewald = pu->aewald;
   const real term = REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
 
-  auto* cmp = cmp_vec.data();
-  auto* fmp = fmp_vec.data();
-  auto* fphi = fphi_vec.data();
-  auto* cphi = cphi_vec.data();
-
   cmp_to_fmp(pu, cmp, fmp);
   grid_mpole(pu, fmp);
   fftfront(pu);
@@ -358,11 +353,6 @@ void ufield_ewald_recip_self(const real* gpu_uind, const real* gpu_uinp,
   const int nfft2 = st.nfft2;
   const int nfft3 = st.nfft3;
   const real aewald = st.aewald;
-
-  auto* fuind = fuind_vec.data();
-  auto* fuinp = fuinp_vec.data();
-  auto* fdip_phi1 = fdip_phi1_vec.data();
-  auto* fdip_phi2 = fdip_phi2_vec.data();
 
   cuind_to_fuind(pu, uind, uinp, fuind, fuinp);
   grid_uind(pu, fuind, fuinp);

@@ -1,5 +1,4 @@
 #include "pme.h"
-
 #include "elec.h"
 #include "ext/tinker/detail/ewald.hh"
 #include "ext/tinker/detail/pme.hh"
@@ -117,7 +116,12 @@ static void pme_data1_(rc_op op) {
   if (op & rc_dealloc) {
     PMEUnit::clear();
 
+    device_array::deallocate(cmp, fmp, cphi, fphi);
+
     if (use_potent(polar_term)) {
+      device_array::deallocate(fuind, fuinp, fdip_phi1, fdip_phi2, cphidp,
+                               fphidp);
+
       vir_m_handle.close();
     }
 
@@ -130,18 +134,11 @@ static void pme_data1_(rc_op op) {
   if (op & rc_alloc) {
     assert(PMEUnit::size() == 0);
 
-    cmp_vec.reserve(10 * n);
-    fmp_vec.reserve(10 * n);
-    cphi_vec.reserve(10 * n);
-    fphi_vec.reserve(20 * n);
+    device_array::allocate(n, &cmp, &fmp, &cphi, &fphi);
 
     if (use_potent(polar_term)) {
-      fuind_vec.reserve(3 * n);
-      fuinp_vec.reserve(3 * n);
-      fdip_phi1_vec.reserve(10 * n);
-      fdip_phi2_vec.reserve(10 * n);
-      cphidp_vec.reserve(10 * n);
-      fphidp_vec.reserve(20 * n);
+      device_array::allocate(n, &fuind, &fuinp, &fdip_phi1, &fdip_phi2, &cphidp,
+                             &fphidp);
 
       if (rc_flag & calc::virial) {
         vir_m_handle = Virial::open();
