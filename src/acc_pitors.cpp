@@ -10,9 +10,6 @@ void epitors_tmpl() {
   constexpr int do_v = USE & calc::virial;
   sanity_check<USE>();
 
-  const auto* ipit = ipit_vec.data();
-  const auto* kpit = kpit_vec.data();
-
   auto* ept = ept_handle.e()->buffer();
   auto* vir_ept = ept_handle.vir()->buffer();
   auto bufsize = ept_handle.buffer_size();
