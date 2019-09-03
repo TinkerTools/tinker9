@@ -1,6 +1,5 @@
 #include "couple.h"
-
-#include "dev_mem.h"
+#include "dev_memory.h"
 #include "ext/tinker/detail/couple.hh"
 #include "ext/tinker/detail/sizes.hh"
 #include "md.h"

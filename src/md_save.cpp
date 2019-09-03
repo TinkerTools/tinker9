@@ -1,6 +1,6 @@
 #include "async.h"
 #include "box.h"
-#include "dev_mem.h"
+#include "dev_memory.h"
 #include "energy.h"
 #include "ext/tinker/detail/atomid.hh"
 #include "ext/tinker/detail/atoms.hh"

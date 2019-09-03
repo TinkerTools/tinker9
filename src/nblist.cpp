@@ -1,5 +1,5 @@
 #include "nblist.h"
-#include "dev_mem.h"
+#include "dev_memory.h"
 #include "e_vdw.h"
 #include "ext/tinker/detail/limits.hh"
 #include "ext/tinker/detail/neigh.hh"

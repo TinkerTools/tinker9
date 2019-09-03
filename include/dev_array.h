@@ -1,14 +1,12 @@
 #ifndef TINKER_DEV_ARRAY_H_
 #define TINKER_DEV_ARRAY_H_
 
-#include "dev_mem.h"
+#include "dev_allocator.h"
 
 TINKER_NAMESPACE_BEGIN
-class device_array {
+template <template <class> class Allocator>
+class DeviceArray {
 private:
-  template <class T>
-  using allocator = DeviceAllocator<T>;
-
   template <class PTR>
   struct deduce;
 
@@ -18,10 +16,10 @@ private:
     static constexpr size_t N = 1;
   };
 
-  template <class T, size_t M>
-  struct deduce<T (*)[M]> {
+  template <class T, size_t N1>
+  struct deduce<T (*)[N1]> {
     typedef T type;
-    static constexpr size_t N = M;
+    static constexpr size_t N = N1;
   };
 
 public:
@@ -51,7 +49,7 @@ public:
   static void allocate(size_t nelem, PTR* pp) {
     typedef typename deduce<PTR>::type T;
     constexpr size_t N = deduce<PTR>::N;
-    allocator<T> a;
+    Allocator<T> a;
     a.allocate_bytes(reinterpret_cast<void**>(pp), sizeof(T) * nelem * N);
   }
 
@@ -59,7 +57,7 @@ public:
   static void deallocate(PTR p) {
     typedef typename deduce<PTR>::type T;
     constexpr size_t N = deduce<PTR>::N;
-    allocator<T> a;
+    Allocator<T> a;
     a.deallocate_bytes(flatten(p));
   }
 
@@ -81,7 +79,7 @@ public:
   static void zero(size_t nelem, PTR p) {
     typedef typename deduce<PTR>::type T;
     constexpr size_t N = deduce<PTR>::N;
-    allocator<T> a;
+    Allocator<T> a;
     a.zero_bytes(flatten(p), sizeof(T) * nelem * N);
   }
 
@@ -97,10 +95,14 @@ public:
   static void copyin(PTR dst, const U* src, size_t nelem) {
     typedef typename deduce<PTR>::type T;
     constexpr size_t N = deduce<PTR>::N;
-    allocator<T> a;
+    Allocator<T> a;
     a.copyin_array(flatten(dst), src, nelem * N);
   }
 };
+
+template <class T>
+using DeviceArrayAllocator = DeviceAllocator<T, DeviceMemory>;
+typedef DeviceArray<DeviceArrayAllocator> device_array;
 
 template <class T, size_t N = 1>
 using device_pointer = typename device_array::ptr<T, N>::type;

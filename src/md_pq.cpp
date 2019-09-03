@@ -1,6 +1,6 @@
 
 #include "box.h"
-#include "dev_mem.h"
+#include "dev_memory.h"
 #include "ext/tinker/detail/atomid.hh"
 #include "ext/tinker/detail/atoms.hh"
 #include "ext/tinker/detail/moldyn.hh"

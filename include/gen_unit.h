@@ -1,10 +1,9 @@
 #ifndef TINKER_GEN_UNIT_H_
 #define TINKER_GEN_UNIT_H_
 
-#include "dev_mem.h"
+#include "dev_memory.h"
 #include <cassert>
 #include <memory>
-#include <vector>
 
 TINKER_NAMESPACE_BEGIN
 enum class GenericUnitVersion { DisableOnDevice, EnableOnDevice };

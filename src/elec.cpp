@@ -1,5 +1,4 @@
 #include "elec.h"
-
 #include "ext/tinker/detail/chgpot.hh"
 #include "ext/tinker/detail/limits.hh"
 #include "ext/tinker/detail/mpole.hh"

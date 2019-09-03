@@ -1,5 +1,4 @@
 #include "e_angle.h"
-
 #include "ext/tinker/detail/angbnd.hh"
 #include "ext/tinker/detail/angpot.hh"
 #include "io_fort_str.h"

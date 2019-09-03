@@ -3,7 +3,6 @@
 
 #include "gen_unit.h"
 #include "mathfunc.h"
-#include <cassert>
 
 TINKER_NAMESPACE_BEGIN
 namespace ebuf_detail {
