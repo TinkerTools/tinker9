@@ -8,8 +8,8 @@
 TINKER_NAMESPACE_BEGIN
 // module urey
 TINKER_EXTERN int nurey;
-TINKER_EXTERN device_array::ptr<int, 3>::type iury;
-TINKER_EXTERN device_array::ptr<real>::type uk, ul;
+TINKER_EXTERN device_pointer<int, 3> iury;
+TINKER_EXTERN device_pointer<real> uk, ul;
 
 // module urypot
 TINKER_EXTERN real cury, qury, ureyunit;
