@@ -1130,39 +1130,39 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 }
 
 template <int USE>
-void epolar_ewald_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
+void epolar_ewald_tmpl(const real (*uind)[3], const real (*uinp)[3]) {
   constexpr int do_e = USE & calc::energy;
   constexpr int do_a = USE & calc::analyz;
   constexpr int do_g = USE & calc::grad;
   sanity_check<USE>();
 
-  if_constexpr(do_e && !do_a) epolar0_dotprod(gpu_uind, udirp);
+  if_constexpr(do_e && !do_a) epolar0_dotprod(uind, udirp);
   static_assert(do_g || do_a,
                 "Do not use this template for the energy-only version.");
 
-  epolar_real_tmpl<USE>(gpu_uind, gpu_uinp);
+  epolar_real_tmpl<USE>(uind, uinp);
 
-  epolar_recip_self_tmpl<USE>(gpu_uind, gpu_uinp);
+  epolar_recip_self_tmpl<USE>(uind, uinp);
 }
 
 void epolar_ewald(int vers) {
   if (vers == calc::v0) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar0_dotprod(uind, udirp);
   } else if (vers == calc::v1) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar_ewald_tmpl<calc::v1>(uind, uinp);
   } else if (vers == calc::v3) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar_ewald_tmpl<calc::v3>(uind, uinp);
   } else if (vers == calc::v4) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar_ewald_tmpl<calc::v4>(uind, uinp);
   } else if (vers == calc::v5) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar_ewald_tmpl<calc::v5>(uind, uinp);
   } else if (vers == calc::v6) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar_ewald_tmpl<calc::v6>(uind, uinp);
   }
 }

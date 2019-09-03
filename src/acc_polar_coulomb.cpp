@@ -8,7 +8,7 @@
 
 TINKER_NAMESPACE_BEGIN
 template <int USE>
-void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
+void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3]) {
   constexpr int do_e = USE & calc::energy;
   constexpr int do_a = USE & calc::analyz;
   constexpr int do_g = USE & calc::grad;
@@ -18,12 +18,9 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
 
   if_constexpr(do_g) { device_array::zero(n, ufld, dufld); }
 
-  if_constexpr(do_e && !do_a) epolar0_dotprod(gpu_uind, udirp);
+  if_constexpr(do_e && !do_a) epolar0_dotprod(uind, udirp);
   static_assert(do_g || do_a,
                 "Do not use this template for the energy-only version.");
-
-  const real(*uind)[3] = reinterpret_cast<const real(*)[3]>(gpu_uind);
-  const real(*uinp)[3] = reinterpret_cast<const real(*)[3]>(gpu_uinp);
 
   const real off = mpole_switch_off;
   const real off2 = off * off;
@@ -600,22 +597,22 @@ void epolar_coulomb_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
 
 void epolar_coulomb(int vers) {
   if (vers == calc::v0) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar0_dotprod(uind, udirp);
   } else if (vers == calc::v1) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar_coulomb_tmpl<calc::v1>(uind, uinp);
   } else if (vers == calc::v3) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar_coulomb_tmpl<calc::v3>(uind, uinp);
   } else if (vers == calc::v4) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar_coulomb_tmpl<calc::v4>(uind, uinp);
   } else if (vers == calc::v5) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar_coulomb_tmpl<calc::v5>(uind, uinp);
   } else if (vers == calc::v6) {
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     epolar_coulomb_tmpl<calc::v6>(uind, uinp);
   }
 }

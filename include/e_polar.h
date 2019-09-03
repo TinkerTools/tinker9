@@ -30,7 +30,7 @@ TINKER_EXTERN device_pointer<real, 3> work01_, work02_, work03_, work04_,
 void epolar_data(rc_op op);
 
 // see also subroutine epolar0e in epolar.f
-void epolar0_dotprod(const real (*gpu_uind)[3], const real (*gpu_udirp)[3]);
+void epolar0_dotprod(const real (*uind)[3], const real (*udirp)[3]);
 
 // electrostatic field due to permanent multipoles
 void dfield_coulomb(real (*field)[3], real (*fieldp)[3]);
@@ -54,8 +54,8 @@ void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3],
             real (*fieldp)[3]);
 
 // different induction algorithms
-void induce_mutual_pcg1(real* gpu_ud, real* gpu_up);
-void induce(real* gpu_ud, real* gpu_up);
+void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]);
+void induce(real (*uind)[3], real (*uinp)[3]);
 
 void epolar_coulomb(int vers);
 void epolar_ewald(int vers);

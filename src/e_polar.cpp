@@ -102,13 +102,13 @@ void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3],
     ufield_coulomb(uind, uinp, field, fieldp);
 }
 
-void induce(real* gpu_ud, real* gpu_up) {
-  induce_mutual_pcg1(gpu_ud, gpu_up);
+void induce(real (*ud)[3], real (*up)[3]) {
+  induce_mutual_pcg1(ud, up);
 
   if (inform::debug && use_potent(polar_term)) {
     std::vector<double> uindbuf;
     uindbuf.resize(3 * n);
-    DeviceMemory::copyout_array(uindbuf.data(), gpu_ud, 3 * n);
+    device_array::copyout(3 * n, uindbuf.data(), ud);
     bool header = true;
     for (int i = 0; i < n; ++i) {
       if (polar::polarity[i] != 0) {

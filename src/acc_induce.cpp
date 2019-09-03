@@ -232,10 +232,7 @@ static inline void sparse_diag_precond_build(const real (*rsd)[3],
  * conj = p
  * vec = T P
  */
-void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
-  real(*uind)[3] = reinterpret_cast<real(*)[3]>(gpu_ud);
-  real(*uinp)[3] = reinterpret_cast<real(*)[3]>(gpu_up);
-
+void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]) {
   auto* field = work01_;
   auto* fieldp = work02_;
   auto* rsd = work03_;

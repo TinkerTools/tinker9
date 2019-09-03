@@ -349,7 +349,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
 
     zero_egv();
     elec_init(calc::v0);
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     std::vector<std::array<double, 3>> ud, up;
     ud.resize(n);
     up.resize(n);
@@ -557,7 +557,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
 
     zero_egv();
     elec_init(calc::v0);
-    induce(&uind[0][0], &uinp[0][0]);
+    induce(uind, uinp);
     std::vector<std::array<double, 3>> ud, up;
     ud.resize(n);
     up.resize(n);
