@@ -258,7 +258,7 @@ void induce_mutual_pcg1(real* gpu_ud, real* gpu_up) {
 
   // get the electrostatic field due to permanent multipoles
 
-  dfield(&field[0][0], &fieldp[0][0]);
+  dfield(field, fieldp);
 
   // direct induced dipoles
 

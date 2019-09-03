@@ -6,9 +6,7 @@
 
 TINKER_NAMESPACE_BEGIN
 // see also subroutine dfield0b in induce.f
-void dfield_coulomb(real* gpu_field, real* gpu_fieldp) {
-  real(*field)[3] = reinterpret_cast<real(*)[3]>(gpu_field);
-  real(*fieldp)[3] = reinterpret_cast<real(*)[3]>(gpu_fieldp);
+void dfield_coulomb(real (*field)[3], real (*fieldp)[3]) {
   device_array::zero(n, field, fieldp);
 
   const real off = mpole_switch_off;

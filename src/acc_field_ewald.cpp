@@ -10,7 +10,7 @@
 
 TINKER_NAMESPACE_BEGIN
 // see also subroutine udirect1 in induce.f
-void dfield_ewald_recip_self(real* gpu_field) {
+void dfield_ewald_recip_self(real (*field)[3]) {
   const PMEUnit pu = ppme_unit;
   const real aewald = pu->aewald;
   const real term = REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
@@ -25,8 +25,6 @@ void dfield_ewald_recip_self(real* gpu_field) {
   fftback(pu);
   fphi_mpole(pu, fphi);
   fphi_to_cphi(pu, fphi, cphi);
-
-  real(*field)[3] = reinterpret_cast<real(*)[3]>(gpu_field);
 
   #pragma acc parallel loop independent deviceptr(field,cphi,rpole)
   for (int i = 0; i < n; ++i) {
@@ -44,10 +42,7 @@ void dfield_ewald_recip_self(real* gpu_field) {
 }
 
 // see also subroutine udirect2b / dfield0c in induce.f
-void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
-  real(*field)[3] = reinterpret_cast<real(*)[3]>(gpu_field);
-  real(*fieldp)[3] = reinterpret_cast<real(*)[3]>(gpu_fieldp);
-
+void dfield_ewald_real(real (*field)[3], real (*fieldp)[3]) {
   const real off = ewald_switch_off;
   const real off2 = off * off;
   const int maxnlst = mlist_unit->maxnlst;
@@ -323,17 +318,13 @@ void dfield_ewald_real(real* gpu_field, real* gpu_fieldp) {
   } // end for (int i)
 }
 
-void dfield_ewald(real* gpu_field, real* gpu_fieldp) {
-  DeviceMemory::zero_array(gpu_field, 3 * n);
-  DeviceMemory::zero_array(gpu_fieldp, 3 * n);
+void dfield_ewald(real (*field)[3], real (*fieldp)[3]) {
+  device_array::zero(n, field, fieldp);
 
-  dfield_ewald_recip_self(gpu_field);
-  #pragma acc parallel loop independent deviceptr(gpu_field, gpu_fieldp)
-  for (int i = 0; i < 3 * n; ++i) {
-    gpu_fieldp[i] = gpu_field[i];
-  }
+  dfield_ewald_recip_self(field);
+  device_array::copy(n, fieldp, field);
 
-  dfield_ewald_real(gpu_field, gpu_fieldp);
+  dfield_ewald_real(field, fieldp);
 }
 
 // see also subroutine umutual1 in induce.f
@@ -578,8 +569,7 @@ void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
 
 void ufield_ewald(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
                   real* gpu_fieldp) {
-  DeviceMemory::zero_array(gpu_field, 3 * n);
-  DeviceMemory::zero_array(gpu_fieldp, 3 * n);
+  device_array::zero(3 * n, gpu_field, gpu_fieldp);
 
   ufield_ewald_recip_self(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);
   ufield_ewald_real(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);

@@ -87,11 +87,11 @@ void epolar_data(rc_op op) {
   }
 }
 
-void dfield(real* gpu_field, real* gpu_fieldp) {
+void dfield(real (*field)[3], real (*fieldp)[3]) {
   if (epolar_electyp == elec_t::ewald)
-    dfield_ewald(gpu_field, gpu_fieldp);
+    dfield_ewald(field, fieldp);
   else
-    dfield_coulomb(gpu_field, gpu_fieldp);
+    dfield_coulomb(field, fieldp);
 }
 
 void ufield(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,

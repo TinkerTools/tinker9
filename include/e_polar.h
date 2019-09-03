@@ -33,10 +33,10 @@ void epolar_data(rc_op op);
 void epolar0_dotprod(const real (*gpu_uind)[3], const real (*gpu_udirp)[3]);
 
 // electrostatic field due to permanent multipoles
-void dfield_coulomb(real* gpu_field, real* gpu_fieldp);
-void dfield_ewald(real* gpu_field, real* gpu_fieldp);
-void dfield_ewald_recip_self(real* gpu_field);
-void dfield_ewald_real(real* gpu_field, real* gpu_fieldp);
+void dfield_coulomb(real (*field)[3], real (*fieldp)[3]);
+void dfield_ewald(real (*field)[3], real (*fieldp)[3]);
+void dfield_ewald_recip_self(real (*field)[3]);
+void dfield_ewald_real(real (*field)[3], real (*fieldp)[3]);
 
 // mutual electrostatic field due to induced dipole moments
 void ufield_coulomb(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
@@ -48,7 +48,7 @@ void ufield_ewald_recip_self(const real* gpu_uind, const real* gpu_uinp,
 void ufield_ewald_real(const real* gpu_uind, const real* gpu_uinp,
                        real* gpu_field, real* gpu_fieldp);
 
-void dfield(real* gpu_field, real* gpu_fieldp);
+void dfield(real (*field)[3], real (*fieldp)[3]);
 // -Tu operator
 void ufield(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
             real* gpu_fieldp);

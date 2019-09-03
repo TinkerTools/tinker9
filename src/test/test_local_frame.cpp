@@ -254,7 +254,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]") {
 
     zero_egv();
     elec_init(calc::v0);
-    dfield_coulomb(&udir[0][0], &udirp[0][0]);
+    dfield_coulomb(udir, udirp);
     std::vector<std::array<double, 3>> fieldd, fieldp;
     fieldd.resize(n);
     fieldp.resize(n);
@@ -461,7 +461,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]") {
 
     zero_egv();
     elec_init(calc::v0);
-    dfield_ewald(&udir[0][0], &udirp[0][0]);
+    dfield_ewald(udir, udirp);
     std::vector<std::array<double, 3>> fieldd, fieldp;
     fieldd.resize(n);
     fieldp.resize(n);
