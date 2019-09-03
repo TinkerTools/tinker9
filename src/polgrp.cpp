@@ -1,5 +1,5 @@
 #include "polgrp.h"
-#include "array.h"
+#include "dev_array.h"
 #include "ext/tinker/detail/polgrp.hh"
 #include "md.h"
 
@@ -10,14 +10,7 @@ static_assert(PolarGroup::maxp13 >= polgrp::maxp13, "");
 static_assert(PolarGroup::maxp14 >= polgrp::maxp14, "");
 
 PolarGroup::~PolarGroup() {
-  dealloc_bytes(np11);
-  dealloc_bytes(np12);
-  dealloc_bytes(np13);
-  dealloc_bytes(np14);
-  dealloc_bytes(ip11);
-  dealloc_bytes(ip12);
-  dealloc_bytes(ip13);
-  dealloc_bytes(ip14);
+  device_array::deallocate(np11, np12, np13, np14, ip11, ip12, ip13, ip14);
 }
 
 void polargroup_data(rc_op op) {
@@ -28,33 +21,22 @@ void polargroup_data(rc_op op) {
     assert(PolarGroupUnit::size() == 0);
     polargroup_unit = PolarGroupUnit::open();
     auto& polargroup_obj = *polargroup_unit;
-    const size_t rs = sizeof(int);
-    size_t size;
 
-    size = n * rs;
-    alloc_bytes(&polargroup_obj.np11, size);
-    alloc_bytes(&polargroup_obj.np12, size);
-    alloc_bytes(&polargroup_obj.np13, size);
-    alloc_bytes(&polargroup_obj.np14, size);
-    size = PolarGroup::maxp11 * n * rs;
-    alloc_bytes(&polargroup_obj.ip11, size);
-    size = PolarGroup::maxp12 * n * rs;
-    alloc_bytes(&polargroup_obj.ip12, size);
-    size = PolarGroup::maxp13 * n * rs;
-    alloc_bytes(&polargroup_obj.ip13, size);
-    size = PolarGroup::maxp14 * n * rs;
-    alloc_bytes(&polargroup_obj.ip14, size);
+    device_array::allocate(n, //
+                           &polargroup_obj.np11, &polargroup_obj.np12,
+                           &polargroup_obj.np13,
+                           &polargroup_obj.np14, //
+                           &polargroup_obj.ip11, &polargroup_obj.ip12,
+                           &polargroup_obj.ip13, &polargroup_obj.ip14);
   }
 
   if (op & rc_init) {
     auto& polargroup_obj = *polargroup_unit;
-    size_t size;
 
     std::vector<int> nbuf, ibuf;
     nbuf.resize(n);
 
-    size = PolarGroup::maxp11 * n;
-    ibuf.resize(size);
+    ibuf.resize(PolarGroup::maxp11 * n);
     for (int i = 0; i < n; ++i) {
       int nn = polgrp::np11[i];
       nbuf[i] = nn;
@@ -65,11 +47,10 @@ void polargroup_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(polargroup_obj.np11, nbuf.data(), n);
-    copyin_array(&polargroup_obj.ip11[0][0], ibuf.data(), size);
+    device_array::copyin(n, polargroup_obj.np11, nbuf.data());
+    device_array::copyin(n, polargroup_obj.ip11, ibuf.data());
 
-    size = PolarGroup::maxp12 * n;
-    ibuf.resize(size);
+    ibuf.resize(PolarGroup::maxp12 * n);
     for (int i = 0; i < n; ++i) {
       int nn = polgrp::np12[i];
       nbuf[i] = nn;
@@ -80,11 +61,10 @@ void polargroup_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(polargroup_obj.np12, nbuf.data(), n);
-    copyin_array(&polargroup_obj.ip12[0][0], ibuf.data(), size);
+    device_array::copyin(n, polargroup_obj.np12, nbuf.data());
+    device_array::copyin(n, polargroup_obj.ip12, ibuf.data());
 
-    size = PolarGroup::maxp13 * n;
-    ibuf.resize(size);
+    ibuf.resize(PolarGroup::maxp13 * n);
     for (int i = 0; i < n; ++i) {
       int nn = polgrp::np13[i];
       nbuf[i] = nn;
@@ -95,11 +75,10 @@ void polargroup_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(polargroup_obj.np13, nbuf.data(), n);
-    copyin_array(&polargroup_obj.ip13[0][0], ibuf.data(), size);
+    device_array::copyin(n, polargroup_obj.np13, nbuf.data());
+    device_array::copyin(n, polargroup_obj.ip13, ibuf.data());
 
-    size = PolarGroup::maxp14 * n;
-    ibuf.resize(size);
+    ibuf.resize(PolarGroup::maxp14 * n);
     for (int i = 0; i < n; ++i) {
       int nn = polgrp::np14[i];
       nbuf[i] = nn;
@@ -110,8 +89,8 @@ void polargroup_data(rc_op op) {
         ibuf[base + j] = k - 1;
       }
     }
-    copyin_array(polargroup_obj.np14, nbuf.data(), n);
-    copyin_array(&polargroup_obj.ip14[0][0], ibuf.data(), size);
+    device_array::copyin(n, polargroup_obj.np14, nbuf.data());
+    device_array::copyin(n, polargroup_obj.ip14, ibuf.data());
 
     polargroup_unit.init_deviceptr(polargroup_obj);
   }

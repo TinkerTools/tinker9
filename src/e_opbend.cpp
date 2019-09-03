@@ -1,5 +1,5 @@
 #include "e_opbend.h"
-#include "array.h"
+
 #include "ext/tinker/detail/angpot.hh"
 #include "ext/tinker/detail/opbend.hh"
 #include "io_fort_str.h"
@@ -12,16 +12,14 @@ void eopbend_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_bytes(iopb);
-    dealloc_bytes(opbk);
+    device_array::deallocate(iopb, opbk);
 
     eopb_handle.dealloc();
   }
 
   if (op & rc_alloc) {
     int nangle = count_bonded_term(angle_term);
-    alloc_bytes(&iopb, sizeof(int) * nangle);
-    alloc_bytes(&opbk, sizeof(real) * nangle);
+    device_array::allocate(nangle, &iopb, &opbk);
 
     nopbend = count_bonded_term(opbend_term);
     eopb_handle.alloc(nopbend);
@@ -39,8 +37,8 @@ void eopbend_data(rc_op op) {
     std::vector<int> ibuf(nangle);
     for (int i = 0; i < nangle; ++i)
       ibuf[i] = opbend::iopb[i] - 1;
-    copyin_array(iopb, ibuf.data(), nangle);
-    copyin_array(opbk, opbend::opbk, nangle);
+    device_array::copyin(nangle, iopb, ibuf.data());
+    device_array::copyin(nangle, opbk, opbend::opbk);
     opbunit = angpot::opbunit;
     copb = angpot::copb;
     qopb = angpot::qopb;

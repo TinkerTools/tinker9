@@ -1,5 +1,5 @@
 #include "e_bond.h"
-#include "array.h"
+
 #include "ext/tinker/detail/bndpot.hh"
 #include "ext/tinker/detail/bndstr.hh"
 #include "io_fort_str.h"
@@ -12,20 +12,14 @@ void ebond_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_bytes(ibnd);
-    dealloc_bytes(bl);
-    dealloc_bytes(bk);
+    device_array::deallocate(ibnd, bl, bk);
 
     eb_handle.dealloc();
   }
 
   if (op & rc_alloc) {
-    const size_t rs = sizeof(real);
-
     nbond = count_bonded_term(bond_term);
-    alloc_bytes(&ibnd, sizeof(int) * nbond * 2);
-    alloc_bytes(&bl, rs * nbond);
-    alloc_bytes(&bk, rs * nbond);
+    device_array::allocate(nbond, &ibnd, &bl, &bk);
 
     eb_handle.alloc(nbond);
   }
@@ -45,9 +39,9 @@ void ebond_data(rc_op op) {
     for (size_t i = 0; i < ibndvec.size(); ++i) {
       ibndvec[i] = bndstr::ibnd[i] - 1;
     }
-    copyin_array(&ibnd[0][0], ibndvec.data(), nbond * 2);
-    copyin_array(bl, bndstr::bl, nbond);
-    copyin_array(bk, bndstr::bk, nbond);
+    device_array::copyin(nbond, ibnd, ibndvec.data());
+    device_array::copyin(nbond, bl, bndstr::bl);
+    device_array::copyin(nbond, bk, bndstr::bk);
   }
 }
 
