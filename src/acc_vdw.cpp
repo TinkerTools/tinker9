@@ -320,17 +320,17 @@ void evdw_tmpl() {
   void evdw_##typ##_acc_impl_(int vers) {                                      \
     evdw_reduce_xyz();                                                         \
     if (vers == calc::v0)                                                      \
-      evdw_tmpl<calc::v0, evdw_t ::typ>();                                     \
+      evdw_tmpl<calc::v0, evdw_t::typ>();                                      \
     else if (vers == calc::v1)                                                 \
-      evdw_tmpl<calc::v1, evdw_t ::typ>();                                     \
+      evdw_tmpl<calc::v1, evdw_t::typ>();                                      \
     else if (vers == calc::v3)                                                 \
-      evdw_tmpl<calc::v3, evdw_t ::typ>();                                     \
+      evdw_tmpl<calc::v3, evdw_t::typ>();                                      \
     else if (vers == calc::v4)                                                 \
-      evdw_tmpl<calc::v4, evdw_t ::typ>();                                     \
+      evdw_tmpl<calc::v4, evdw_t::typ>();                                      \
     else if (vers == calc::v5)                                                 \
-      evdw_tmpl<calc::v5, evdw_t ::typ>();                                     \
+      evdw_tmpl<calc::v5, evdw_t::typ>();                                      \
     else if (vers == calc::v6)                                                 \
-      evdw_tmpl<calc::v6, evdw_t ::typ>();                                     \
+      evdw_tmpl<calc::v6, evdw_t::typ>();                                      \
   }
 TINKER_EVDW_IMPL_(lj);
 TINKER_EVDW_IMPL_(buck);

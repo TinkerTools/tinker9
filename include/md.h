@@ -15,6 +15,10 @@ TINKER_EXTERN int trajn;
 
 /// number of atoms
 TINKER_EXTERN int n;
+TINKER_EXTERN int padded_n;
+constexpr int WARP_SIZE = 32;
+constexpr int BLOCK_SIZE = 64;
+static_assert(BLOCK_SIZE % WARP_SIZE == 0, "");
 
 /// x, y, z coordinates
 /// @{

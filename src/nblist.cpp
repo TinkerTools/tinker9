@@ -133,7 +133,9 @@ static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
   st.buffer = buffer;
 
 #ifdef TINKER_CUDA_ALGO
-  device_array::allocate(&st.itile, maxlst * n);
+  int max_nwarp = (n + WARP_SIZE - 1) / WARP_SIZE;
+  int max_ntile = max_nwarp * (max_nwarp + 1) / 2;
+  device_array::allocate(max_ntile, &st.itile);
 #endif
 
   nblu.init_deviceptr(st);

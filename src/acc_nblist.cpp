@@ -1,6 +1,10 @@
 #include "acc_image.h"
 #include "md.h"
 #include "nblist.h"
+#ifdef TINKER_CUDA_ALGO
+#  include "tinker_rt.h"
+#  include <ext/tinker/detail/atoms.hh>
+#endif
 
 // MAYBE_UNUSED static const int GRID_DIM = 32;
 // MAYBE_UNUSED static const int GRID_DIM = 64;
@@ -108,7 +112,7 @@ inline void build_v1_(NBListUnit nu) {
       real xr = xi - lx[k];
       real yr = yi - ly[k];
       real zr = zi - lz[k];
-      image(xr, yr, zr, box);
+      imagen(xr, yr, zr, box);
       real r2 = xr * xr + yr * yr + zr * zr;
       if (r2 <= buf2) {
         int j;
@@ -124,66 +128,47 @@ inline void build_v1_(NBListUnit nu) {
   }
 
 #ifdef TINKER_CUDA_ALGO
-  constexpr int warp_size = st.warp_size;
-  int max_warps = (n + warp_size - 1) / warp_size;
+  int max_warps = (n + WARP_SIZE - 1) / WARP_SIZE;
 
-  device_array::ptr<int>::type nwnbs, wnbs; // neighbors of the same warp tile
-  device_array::ptr<int>::type nwty, wty;   // all ty in a warp tile
-  device_array::allocate(&nwnbs, max_warps);
-  device_array::allocate(&nwty, max_warps);
-  device_array::allocate(&wnbs, max_warps * warp_size * maxnlst);
-  device_array::allocate(&wty, max_warps * maxnlst);
-
-  // copy all neighbors of atoms [i0, i0 + warp_size) and sort them
-  #pragma acc parallel deviceptr(nlst,lst,nwnbs,wnbs)
-  #pragma acc loop independent
+  // compute tiles on CPU and upload it to GPU
+  const auto* x = atoms::x;
+  const auto* y = atoms::y;
+  const auto* z = atoms::z;
+  std::vector<int> itilevec;
   for (int tx = 0; tx < max_warps; ++tx) {
-    int iwnbs = 0;
-    #pragma acc loop seq
-    for (int ilane = 0, i = tx * warp_size; ilane < warp_size && i < n;
-         ++ilane, ++i) {
-      for (int kk = 0; kk < nlst[i]; ++kk) {
-        int k = lst[i * maxnlst + kk];
-        wnbs[tx * warp_size * maxnlst + iwnbs] = k;
-        ++iwnbs;
+    for (int ty = tx; ty < max_warps; ++ty) {
+      for (int i0 = 0; i0 < WARP_SIZE; ++i0) {
+        int i = tx * WARP_SIZE + i0;
+        if (i < n) {
+          auto xi = x[i];
+          auto yi = y[i];
+          auto zi = z[i];
+          for (int k0 = 0; k0 < WARP_SIZE; ++k0) {
+            int k = ty * WARP_SIZE + k0;
+            if (k > i && k < n) {
+              auto xr = xi - x[k];
+              auto yr = yi - y[k];
+              auto zr = zi - z[k];
+              TINKER_RT(imagen)(&xr, &yr, &zr);
+              auto r2 = xr * xr + yr * yr + zr * zr;
+              if (r2 <= buf2) {
+                itilevec.push_back(tx);
+                itilevec.push_back(ty);
+                goto next_ty;
+              }
+            }
+          }
+        }
       }
+
+    next_ty:
+      (void)0;
     }
-    sort_v1_(&wnbs[tx * warp_size * maxnlst], iwnbs);
-    nwnbs[tx] = iwnbs;
   }
 
-  #pragma acc parallel deviceptr(nwnbs,wnbs,nwty,wty)
-  #pragma acc loop independent
-  for (int tx = 0; tx < max_warps; ++tx) {
-    int iwty = 0;
-    #pragma acc loop seq
-    for (int kk = 0; kk < nwnbs[tx]; ++kk) {
-      int k = wnbs[tx * warp_size * maxnlst + kk];
-      int ty = k / warp_size;
-      if (iwty == 0 || wty[tx * maxnlst + iwty - 1] < ty) {
-        wty[tx * maxnlst + iwty] = ty;
-        ++iwty;
-      }
-    }
-    nwty[tx] = iwty;
-  }
-
-  auto* __restrict__ itile = st.itile;
-  int ntile = 0;
-  #pragma acc serial deviceptr(nwty,wty,itile) copy(ntile)
-  for (int tx = 0; tx < max_warps; ++tx) {
-    int iwty = nwty[tx];
-    for (int kk = 0; kk < iwty; ++kk) {
-      int ty = wty[tx * maxnlst + kk];
-      itile[ntile + kk][0] = tx;
-      itile[ntile + kk][1] = ty;
-    }
-    ntile += iwty;
-  }
-  st.ntile = ntile;
+  st.ntile = itilevec.size() / 2;
+  device_array::copyin(st.ntile, st.itile, itilevec.data());
   nu.init_deviceptr(st);
-
-  device_array::deallocate(nwnbs, wnbs, nwty, wty);
 #endif
 }
 
