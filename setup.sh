@@ -104,11 +104,11 @@ done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
 if [ -z ${HOST} ]; then
-	HOST = 1
+	HOST := 1
 fi
 
 if [ -z ${ACC} ]; then
-        ACC = g++
+        ACC := g++
 fi
 
 if [ ! -z ${BUILD} ]; then
