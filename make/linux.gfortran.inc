@@ -11,8 +11,8 @@ shared_libtinker__ := libtinker.so
 
 cuda_dir__ := /usr/local/cuda
 
-ifdef ACC
-ACC := $(ACC)
+ifdef acc
+ACC := $(acc)
 else
 ACC := g++
 endif
