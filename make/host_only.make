@@ -1,3 +1,9 @@
+ifdef HOST
+host := $(HOST)
+else
+host := 1
+endif
+
 ifeq ($(host),$(filter $(host),false off 0))
 	host_only__ := false
 	host_only_macro__ :=

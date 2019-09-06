@@ -13,6 +13,8 @@
 # fftw_dir :=
 # fftw_lib [$(fftw_dir)/lib] :=
 # fftw_include [$(fftw_dir)/include] :=
+# acc
+# host [1]: 0 (false) or 1 (true)
 ############################################################
 
 # tinker.gpu directory
@@ -48,11 +50,6 @@ prec := real8
 include $(top_dir__)/make/prec.make
 
 
-# default host
-# var host; value true on 1 / false off 0
-host := true
-# var host_only__; value true / false
-# var host_only_macro__
 include $(top_dir__)/make/host_only.make
 
 
@@ -93,7 +90,6 @@ unittest: $(all_tests_exec__)
 test: $(all_tests_exec__)
 	$(PWD)/$(all_tests_exec__) info
 	$(PWD)/$(all_tests_exec__) [ff],[util] --durations yes --order rand --rng-seed time
-
 
 ############################################################
 #                                                          #

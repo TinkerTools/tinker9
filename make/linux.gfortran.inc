@@ -9,9 +9,10 @@ endif
 
 shared_libtinker__ := libtinker.so
 
-cuda_dir__ := /usr/local/cuda
+cuda_dir__ := /home/levnon/.local/opt/pgi/linux86-64-llvm/2019/cuda/10.0
 
 CXX := g++
+
 ifeq ($(opt),debug)
 	cxx_opt_flags__ := -O0 -g
 else ifeq ($(opt),release)
@@ -24,6 +25,7 @@ cxx_depend_flags__ := -MM
 
 ACC := pgc++
 acc_device_compile_flags__ := -acc verystrict -Minfo=accel
+
 ifeq ($(opt),debug)
 	acc_opt_flags__ := -O0 -g -traceback
 	acc_device_compile_flags__ += -ta=tesla
