@@ -1,5 +1,4 @@
 #include "pme.h"
-#include "array.h"
 #include "elec.h"
 #include "ext/tinker/detail/ewald.hh"
 #include "ext/tinker/detail/pme.hh"
@@ -39,12 +38,7 @@ PME::Params PME::get_params() const {
 
 bool PME::operator==(const Params& p) const { return get_params() == p; }
 
-PME::~PME() {
-  dealloc_bytes(bsmod1);
-  dealloc_bytes(bsmod2);
-  dealloc_bytes(bsmod3);
-  dealloc_bytes(qgrid);
-}
+PME::~PME() { device_array::deallocate(bsmod1, bsmod2, bsmod3, qgrid); }
 
 static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique) {
   unit.close();
@@ -56,15 +50,12 @@ static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique) {
   if (!unit.valid() || unique == true) {
     unit = PMEUnit::open();
     auto& st = *unit;
-    const size_t rs = sizeof(real);
-    size_t size;
 
     // see also subroutine moduli in pmestuf.f
-    alloc_bytes(&st.bsmod1, rs * p.nfft1);
-    alloc_bytes(&st.bsmod2, rs * p.nfft2);
-    alloc_bytes(&st.bsmod3, rs * p.nfft3);
-    size = p.nfft1 * p.nfft2 * p.nfft3 * rs;
-    alloc_bytes(&st.qgrid, 2 * size);
+    device_array::allocate(p.nfft1, &st.bsmod1);
+    device_array::allocate(p.nfft2, &st.bsmod2);
+    device_array::allocate(p.nfft3, &st.bsmod3);
+    device_array::allocate(2 * p.nfft1 * p.nfft2 * p.nfft3, &st.qgrid);
 
     st.set_params(p);
   }
@@ -92,11 +83,11 @@ static void pme_op_copyin_(PMEUnit unit) {
   }
   std::vector<double> bsmodbuf(maxfft);
   TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft1, &st.bsorder);
-  copyin_array(st.bsmod1, bsmodbuf.data(), st.nfft1);
+  device_array::copyin(st.nfft1, st.bsmod1, bsmodbuf.data());
   TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft2, &st.bsorder);
-  copyin_array(st.bsmod2, bsmodbuf.data(), st.nfft2);
+  device_array::copyin(st.nfft2, st.bsmod2, bsmodbuf.data());
   TINKER_RT(dftmod)(bsmodbuf.data(), bsarray.data(), &st.nfft3, &st.bsorder);
-  copyin_array(st.bsmod3, bsmodbuf.data(), st.nfft3);
+  device_array::copyin(st.nfft3, st.bsmod3, bsmodbuf.data());
 
   unit.init_deviceptr(st);
 }
@@ -117,18 +108,11 @@ static void pme_data1_(rc_op op) {
   if (op & rc_dealloc) {
     PMEUnit::clear();
 
-    dealloc_bytes(cmp);
-    dealloc_bytes(fmp);
-    dealloc_bytes(cphi);
-    dealloc_bytes(fphi);
+    device_array::deallocate(cmp, fmp, cphi, fphi);
 
     if (use_potent(polar_term)) {
-      dealloc_bytes(fuind);
-      dealloc_bytes(fuinp);
-      dealloc_bytes(fdip_phi1);
-      dealloc_bytes(fdip_phi2);
-      dealloc_bytes(cphidp);
-      dealloc_bytes(fphidp);
+      device_array::deallocate(fuind, fuinp, fdip_phi1, fdip_phi2, cphidp,
+                               fphidp);
 
       vir_m_handle.close();
     }
@@ -142,20 +126,11 @@ static void pme_data1_(rc_op op) {
   if (op & rc_alloc) {
     assert(PMEUnit::size() == 0);
 
-    const size_t rs = sizeof(real);
-
-    alloc_bytes(&cmp, 10 * n * rs);
-    alloc_bytes(&fmp, 10 * n * rs);
-    alloc_bytes(&cphi, 10 * n * rs);
-    alloc_bytes(&fphi, 20 * n * rs);
+    device_array::allocate(n, &cmp, &fmp, &cphi, &fphi);
 
     if (use_potent(polar_term)) {
-      alloc_bytes(&fuind, 3 * n * rs);
-      alloc_bytes(&fuinp, 3 * n * rs);
-      alloc_bytes(&fdip_phi1, 10 * n * rs);
-      alloc_bytes(&fdip_phi2, 10 * n * rs);
-      alloc_bytes(&cphidp, 10 * n * rs);
-      alloc_bytes(&fphidp, 20 * n * rs);
+      device_array::allocate(n, &fuind, &fuinp, &fdip_phi1, &fdip_phi2, &cphidp,
+                             &fphidp);
 
       if (rc_flag & calc::virial) {
         vir_m_handle = Virial::open();

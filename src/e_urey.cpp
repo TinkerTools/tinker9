@@ -1,5 +1,5 @@
 #include "e_urey.h"
-#include "array.h"
+
 #include "ext/tinker/detail/urey.hh"
 #include "ext/tinker/detail/urypot.hh"
 #include "md.h"
@@ -11,19 +11,14 @@ void eurey_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_bytes(iury);
-    dealloc_bytes(uk);
-    dealloc_bytes(ul);
+    device_array::deallocate(iury, uk, ul);
 
     eub_handle.dealloc();
   }
 
   if (op & rc_alloc) {
-    const size_t rs = sizeof(real);
     int nangle = count_bonded_term(angle_term);
-    alloc_bytes(&iury, sizeof(int) * 3 * nangle);
-    alloc_bytes(&uk, rs * nangle);
-    alloc_bytes(&ul, rs * nangle);
+    device_array::allocate(nangle, &iury, &uk, &ul);
 
     nurey = count_bonded_term(urey_term);
     eub_handle.alloc(nurey);
@@ -34,9 +29,9 @@ void eurey_data(rc_op op) {
     std::vector<int> ibuf(3 * nangle);
     for (int i = 0; i < 3 * nangle; ++i)
       ibuf[i] = urey::iury[i] - 1;
-    copyin_array(&iury[0][0], ibuf.data(), 3 * nangle);
-    copyin_array(uk, urey::uk, nangle);
-    copyin_array(ul, urey::ul, nangle);
+    device_array::copyin(nangle, iury, ibuf.data());
+    device_array::copyin(nangle, uk, urey::uk);
+    device_array::copyin(nangle, ul, urey::ul);
 
     cury = urypot::cury;
     qury = urypot::qury;

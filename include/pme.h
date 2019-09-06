@@ -1,10 +1,11 @@
 #ifndef TINKER_PME_H_
 #define TINKER_PME_H_
 
+#include "dev_array.h"
 #include "energy_buffer.h"
+#include "fft.h"
 #include "gen_unit.h"
 #include "rc_man.h"
-#include "rt.h"
 
 TINKER_NAMESPACE_BEGIN
 /**
@@ -51,17 +52,12 @@ TINKER_EXTERN PMEUnit pvpme_unit; // polarization virial
 
 TINKER_EXTERN double ewald_switch_cut, ewald_switch_off;
 
-TINKER_EXTERN real (*cmp)[10];
-TINKER_EXTERN real (*fmp)[10];
-TINKER_EXTERN real (*cphi)[10];
-TINKER_EXTERN real (*fphi)[20];
+TINKER_EXTERN device_pointer<real, 10> cmp, fmp, cphi;
+TINKER_EXTERN device_pointer<real, 20> fphi;
 
-TINKER_EXTERN real (*fuind)[3];
-TINKER_EXTERN real (*fuinp)[3];
-TINKER_EXTERN real (*fdip_phi1)[10];
-TINKER_EXTERN real (*fdip_phi2)[10];
-TINKER_EXTERN real (*cphidp)[10];
-TINKER_EXTERN real (*fphidp)[20];
+TINKER_EXTERN device_pointer<real, 3> fuind, fuinp;
+TINKER_EXTERN device_pointer<real, 10> fdip_phi1, fdip_phi2, cphidp;
+TINKER_EXTERN device_pointer<real, 20> fphidp;
 
 TINKER_EXTERN Virial vir_m_handle;
 
@@ -72,6 +68,7 @@ void pme_data(rc_op op);
 void fft_data(rc_op op);
 void fftfront(PMEUnit pme_u);
 void fftback(PMEUnit pme_u);
+typedef GenericUnit<FFTPlan, GenericUnitVersion::DisableOnDevice> FFTPlanUnit;
 
 void pme_init(int vers);
 TINKER_NAMESPACE_END

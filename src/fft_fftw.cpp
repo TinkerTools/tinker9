@@ -1,7 +1,8 @@
 #include "pme.h"
-#include "rt.h"
 
 #ifdef TINKER_HOST
+#  include "fft_fftw.h"
+
 TINKER_NAMESPACE_BEGIN
 void fft_data(rc_op op) {
   if (op & rc_dealloc) {

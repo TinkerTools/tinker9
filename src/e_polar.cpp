@@ -1,5 +1,5 @@
 #include "e_polar.h"
-#include "array.h"
+
 #include "ext/tinker/detail/inform.hh"
 #include "ext/tinker/detail/polar.hh"
 #include "ext/tinker/detail/polpot.hh"
@@ -17,57 +17,29 @@ void epolar_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    dealloc_bytes(polarity);
-    dealloc_bytes(thole);
-    dealloc_bytes(pdamp);
-    dealloc_bytes(polarity_inv);
+    device_array::deallocate(polarity, thole, pdamp, polarity_inv);
 
     ep_handle.dealloc();
 
-    dealloc_bytes(ufld);
-    dealloc_bytes(dufld);
-
-    dealloc_bytes(work01_);
-    dealloc_bytes(work02_);
-    dealloc_bytes(work03_);
-    dealloc_bytes(work04_);
-    dealloc_bytes(work05_);
-    dealloc_bytes(work06_);
-    dealloc_bytes(work07_);
-    dealloc_bytes(work08_);
-    dealloc_bytes(work09_);
-    dealloc_bytes(work10_);
+    device_array::deallocate(ufld, dufld);
+    device_array::deallocate(work01_, work02_, work03_, work04_, work05_,
+                             work06_, work07_, work08_, work09_, work10_);
   }
 
   if (op & rc_alloc) {
-    const size_t rs = sizeof(real);
-    size_t size;
-
-    alloc_bytes(&polarity, n * rs);
-    alloc_bytes(&thole, n * rs);
-    alloc_bytes(&pdamp, rs * n);
-    alloc_bytes(&polarity_inv, rs * n);
+    device_array::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
 
     ep_handle.alloc(n);
 
     if (rc_flag & calc::grad) {
-      alloc_bytes(&ufld, rs * 3 * n);
-      alloc_bytes(&dufld, rs * 6 * n);
+      device_array::allocate(n, &ufld, &dufld);
     } else {
       ufld = nullptr;
       dufld = nullptr;
     }
 
-    alloc_bytes(&work01_, 3 * n * rs);
-    alloc_bytes(&work02_, 3 * n * rs);
-    alloc_bytes(&work03_, 3 * n * rs);
-    alloc_bytes(&work04_, 3 * n * rs);
-    alloc_bytes(&work05_, 3 * n * rs);
-    alloc_bytes(&work06_, 3 * n * rs);
-    alloc_bytes(&work07_, 3 * n * rs);
-    alloc_bytes(&work08_, 3 * n * rs);
-    alloc_bytes(&work09_, 3 * n * rs);
-    alloc_bytes(&work10_, 3 * n * rs);
+    device_array::allocate(n, &work01_, &work02_, &work03_, &work04_, &work05_,
+                           &work06_, &work07_, &work08_, &work09_, &work10_);
   }
 
   if (op & rc_init) {
@@ -108,35 +80,35 @@ void epolar_data(rc_op op) {
     for (int i = 0; i < n; ++i) {
       pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
     }
-    copyin_array(polarity, polar::polarity, n);
-    copyin_array(thole, polar::thole, n);
-    copyin_array(pdamp, polar::pdamp, n);
-    copyin_array(polarity_inv, pinvbuf.data(), n);
+    device_array::copyin(n, polarity, polar::polarity);
+    device_array::copyin(n, thole, polar::thole);
+    device_array::copyin(n, pdamp, polar::pdamp);
+    device_array::copyin(n, polarity_inv, pinvbuf.data());
   }
 }
 
-void dfield(real* gpu_field, real* gpu_fieldp) {
+void dfield(real (*field)[3], real (*fieldp)[3]) {
   if (epolar_electyp == elec_t::ewald)
-    dfield_ewald(gpu_field, gpu_fieldp);
+    dfield_ewald(field, fieldp);
   else
-    dfield_coulomb(gpu_field, gpu_fieldp);
+    dfield_coulomb(field, fieldp);
 }
 
-void ufield(const real* gpu_uind, const real* gpu_uinp, real* gpu_field,
-            real* gpu_fieldp) {
+void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3],
+            real (*fieldp)[3]) {
   if (epolar_electyp == elec_t::ewald)
-    ufield_ewald(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);
+    ufield_ewald(uind, uinp, field, fieldp);
   else
-    ufield_coulomb(gpu_uind, gpu_uinp, gpu_field, gpu_fieldp);
+    ufield_coulomb(uind, uinp, field, fieldp);
 }
 
-void induce(real* gpu_ud, real* gpu_up) {
-  induce_mutual_pcg1(gpu_ud, gpu_up);
+void induce(real (*ud)[3], real (*up)[3]) {
+  induce_mutual_pcg1(ud, up);
 
   if (inform::debug && use_potent(polar_term)) {
     std::vector<double> uindbuf;
     uindbuf.resize(3 * n);
-    copyout_array(uindbuf.data(), gpu_ud, 3 * n);
+    device_array::copyout(n, uindbuf.data(), ud);
     bool header = true;
     for (int i = 0; i < n; ++i) {
       if (polar::polarity[i] != 0) {

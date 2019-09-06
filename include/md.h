@@ -1,6 +1,7 @@
 #ifndef TINKER_MD_H_
 #define TINKER_MD_H_
 
+#include "dev_array.h"
 #include "energy_buffer.h"
 #include "rc_man.h"
 #include <string>

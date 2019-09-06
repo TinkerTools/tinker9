@@ -1,6 +1,6 @@
+#include "fft.h"
 #include "error.h"
 #include "pme.h"
-#include "rt.h"
 
 #ifdef TINKER_CUDART
 TINKER_NAMESPACE_BEGIN
