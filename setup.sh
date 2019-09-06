@@ -5,8 +5,8 @@
 # Email: andrew.gaam [at] gmail [dot] com
 # Description: entry script for compiling/testing tinker.gpu
 # Usage example: 
-#	./run.sh --install --fftw_dir /usr/lib/x86_64-linux-gnu --tinker_dir ../../tinker/source --acc pgc++ --host
-#	./run.sh --install --fftw_dir ../src/build-travis/fftw --tinker_dir ../src/build-travis/tinker/source
+#	./setup.sh --install --fftw_dir /usr/lib/x86_64-linux-gnu --tinker_dir ../../tinker/source --acc pgc++
+#	./setup.sh --install --fftw_dir ../src/build-travis/fftw --tinker_dir ../src/build-travis/tinker/source
 
 function create_build {
 
