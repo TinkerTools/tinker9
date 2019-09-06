@@ -1,11 +1,10 @@
 branches:
   only:
+    - master
     - dev
     - travis
 
-
 language: generic
-
 
 matrix:
   include:
@@ -13,10 +12,8 @@ matrix:
       dist: xenial
       env: CI_DEPEND_DIR=https://raw.githubusercontent.com/zhi-wang/ci-depend/master/xenial
 
-
 before_install:
   - sudo apt-get install gfortran
-
 
 script:
 
