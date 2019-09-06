@@ -47,4 +47,4 @@ script:
   - echo $PWD
 
   - ./setup.sh --install --fftw_dir fftw --tinker_dir tinker/source --acc g++
-  - ./setup.sh --test --fftw_dir travis/fftw --tinker_dir tinker/source --acc g++
+  - ./setup.sh --test --fftw_dir fftw --tinker_dir tinker/source --acc g++
