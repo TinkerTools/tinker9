@@ -1,5 +1,5 @@
-ifdef HOST
-host := $(HOST)
+ifdef host
+host := $(host)
 else
 host := 1
 endif
