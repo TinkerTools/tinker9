@@ -3,16 +3,13 @@
 #include "acc_mathfunc.h"
 #include "acc_switch.h"
 #include "e_vdw.h"
+#include "gpu_card.h"
 #include "md.h"
 #include "nblist.h"
 
-// MAYBE_UNUSED static const int GRID_DIM = 32;
-// MAYBE_UNUSED static const int GRID_DIM = 64;
-MAYBE_UNUSED static const int GRID_DIM = 128;
-// MAYBE_UNUSED static const int GRID_DIM = 256;
 // MAYBE_UNUSED static const int BLOCK_DIM = 32;
-MAYBE_UNUSED static const int BLOCK_DIM = 64;
-// MAYBE_UNUSED static const int BLOCK_DIM = 128;
+// MAYBE_UNUSED static const int BLOCK_DIM = 64;
+MAYBE_UNUSED static const int BLOCK_DIM = 128;
 
 // TODO: test lj, buck, mm3hb, gauss, and mutant
 // TODO: add vdw correction
@@ -97,9 +94,9 @@ void evdw_tmpl() {
   x, y, z, gxred, gyred, gzred, box, xred, yred, zred, jvdw, radmin, epsilon,  \
       vlam, nev, ev, vir_ev
 
+  MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
   #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
-              deviceptr(DEVICE_PTRS_,\
-              vlst)
+              deviceptr(DEVICE_PTRS_,vlst)
   #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
     int it = jvdw[i];
@@ -114,7 +111,7 @@ void evdw_tmpl() {
     int base = i * maxnlst;
     #pragma acc loop vector independent
     for (int kk = 0; kk < nvlsti; ++kk) {
-      int offset = kk & (bufsize - 1);
+      int offset = (kk + i * n) & (bufsize - 1);
       int k = vlst->lst[base + kk];
       int kt = jvdw[k];
       real xr, yr, zr;
@@ -208,8 +205,7 @@ void evdw_tmpl() {
   }   // end for (int i)
 
   #pragma acc parallel\
-              deviceptr(DEVICE_PTRS_,\
-              vdw_excluded_,vdw_excluded_scale_)
+              deviceptr(DEVICE_PTRS_,vdw_excluded_,vdw_excluded_scale_)
   #pragma acc loop independent
   for (int ii = 0; ii < nvdw_excluded_; ++ii) {
     int offset = ii & (bufsize - 1);

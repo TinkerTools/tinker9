@@ -1,7 +1,7 @@
 #ifndef TINKER_ACC_SWITCH_H_
 #define TINKER_ACC_SWITCH_H_
 
-#include "macro.h"
+#include "acc_mathfunc.h"
 
 TINKER_NAMESPACE_BEGIN
 /**

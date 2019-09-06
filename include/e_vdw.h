@@ -37,6 +37,7 @@ TINKER_EXTERN NonbondedEnergy ev_handle;
 void evdw_data(rc_op op);
 
 void evdw_reduce_xyz();
+void evdw_resolve_gradient();
 
 void evdw_lj(int vers);
 void evdw_buck(int vers);

@@ -1,18 +1,21 @@
-#include "acc_image.h"
-#include "acc_mathfunc.h"
+#ifndef TINKER_CU_IMAGE_H_
+#define TINKER_CU_IMAGE_H_
+
+#include "box.h"
+#include "mathfunc.h"
 
 TINKER_NAMESPACE_BEGIN
-#pragma acc routine seq
-inline void box_null_image(real& __restrict__, real& __restrict__,
-                           real& __restrict__, const Box* __restrict__) {}
+inline __device__ void //
+box_null_image(real& __restrict__, real& __restrict__, real& __restrict__,
+               const Box* __restrict__) {}
 
-#pragma acc routine seq
-inline void box_null_imagen(real& __restrict__, real& __restrict__,
-                            real& __restrict__, const Box* __restrict__) {}
+inline __device__ void //
+box_null_imagen(real& __restrict__, real& __restrict__, real& __restrict__,
+                const Box* __restrict__) {}
 
-#pragma acc routine seq
-inline void box_ortho_image(real& __restrict__ xr, real& __restrict__ yr,
-                            real& __restrict__ zr, const Box* __restrict__ pb) {
+inline __device__ void //
+box_ortho_image(real& __restrict__ xr, real& __restrict__ yr,
+                real& __restrict__ zr, const Box* __restrict__ pb) {
   real fx = xr * pb->recip[0][0];
   real fy = yr * pb->recip[1][1];
   real fz = zr * pb->recip[2][2];
@@ -24,10 +27,9 @@ inline void box_ortho_image(real& __restrict__ xr, real& __restrict__ yr,
   zr -= (fz * pb->lvec[2][2]);
 }
 
-#pragma acc routine seq
-inline void box_ortho_imagen(real& __restrict__ xr, real& __restrict__ yr,
-                             real& __restrict__ zr,
-                             const Box* __restrict__ pb) {
+inline __device__ void //
+box_ortho_imagen(real& __restrict__ xr, real& __restrict__ yr,
+                 real& __restrict__ zr, const Box* __restrict__ pb) {
   real lx = pb->lvec[0][0];
   real lx2 = lx * 0.5f;
   real a = REAL_ABS(xr);
@@ -44,9 +46,9 @@ inline void box_ortho_imagen(real& __restrict__ xr, real& __restrict__ yr,
   zr = (c > lz2 ? c - lz : c);
 }
 
-#pragma acc routine seq
-inline void box_mono_image(real& __restrict__ xr, real& __restrict__ yr,
-                           real& __restrict__ zr, const Box* __restrict__ pb) {
+inline __device__ void //
+box_mono_image(real& __restrict__ xr, real& __restrict__ yr,
+               real& __restrict__ zr, const Box* __restrict__ pb) {
   real fx = xr * pb->recip[0][0] + zr * pb->recip[0][2];
   real fy = yr * pb->recip[1][1];
   real fz = zr * pb->recip[2][2];
@@ -58,16 +60,16 @@ inline void box_mono_image(real& __restrict__ xr, real& __restrict__ yr,
   zr -= (fz * pb->lvec[2][2]);
 }
 
-#pragma acc routine seq
-inline void box_mono_imagen(real& __restrict__ xr, real& __restrict__ yr,
-                            real& __restrict__ zr, const Box* __restrict__ pb) {
+inline __device__ void //
+box_mono_imagen(real& __restrict__ xr, real& __restrict__ yr,
+                real& __restrict__ zr, const Box* __restrict__ pb) {
   // TODO: a real imagen routine
   box_mono_image(xr, yr, zr, pb);
 }
 
-#pragma acc routine seq
-inline void box_tri_image(real& __restrict__ xr, real& __restrict__ yr,
-                          real& __restrict__ zr, const Box* __restrict__ pb) {
+inline __device__ void //
+box_tri_image(real& __restrict__ xr, real& __restrict__ yr,
+              real& __restrict__ zr, const Box* __restrict__ pb) {
   real fx = xr * pb->recip[0][0] + yr * pb->recip[0][1] + zr * pb->recip[0][2];
   real fy = yr * pb->recip[1][1] + zr * pb->recip[1][2];
   real fz = zr * pb->recip[2][2];
@@ -79,16 +81,16 @@ inline void box_tri_image(real& __restrict__ xr, real& __restrict__ yr,
   zr -= (fz * pb->lvec[2][2]);
 }
 
-#pragma acc routine seq
-inline void box_tri_imagen(real& __restrict__ xr, real& __restrict__ yr,
-                           real& __restrict__ zr, const Box* __restrict__ pb) {
+inline __device__ void //
+box_tri_imagen(real& __restrict__ xr, real& __restrict__ yr,
+               real& __restrict__ zr, const Box* __restrict__ pb) {
   // TODO: a real imagen routine
   box_tri_image(xr, yr, zr, pb);
 }
 
-#pragma acc routine seq
-void image(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
-           const Box* __restrict__ pb) {
+inline __device__ void //
+image(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
+      const Box* __restrict__ pb) {
   switch (pb->shape) {
   case Box::ortho:
     box_ortho_image(xr, yr, zr, pb);
@@ -101,14 +103,14 @@ void image(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
     break;
   default:
     // Box::null
-    box_null_image(xr, yr, zr, pb);
+    box_null_image();
     break;
   }
 }
 
-#pragma acc routine seq
-void imagen(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
-            const Box* __restrict__ pb) {
+inline __device__ void //
+imagen(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
+       const Box* __restrict__ pb) {
   switch (pb->shape) {
   case Box::ortho:
     box_ortho_imagen(xr, yr, zr, pb);
@@ -121,8 +123,10 @@ void imagen(real& __restrict__ xr, real& __restrict__ yr, real& __restrict__ zr,
     break;
   default:
     // Box::null
-    box_null_imagen(xr, yr, zr, pb);
+    box_null_imagen();
     break;
   }
 }
 TINKER_NAMESPACE_END
+
+#endif

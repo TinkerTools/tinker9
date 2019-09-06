@@ -105,6 +105,11 @@ typedef unsigned long long FixedPointType;
 const FixedPointType fixed_point = 0x100000000ull;
 TINKER_NAMESPACE_END
 
+// warp size
+TINKER_NAMESPACE_BEGIN
+constexpr int WARP_SIZE = 32;
+TINKER_NAMESPACE_END
+
 // host vs device
 #ifndef TINKER_HOST
 #  define TINKER_CUDART

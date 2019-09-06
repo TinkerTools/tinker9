@@ -1,5 +1,7 @@
 #define TINKER_EXTERN_DEFINITION_FILE
 
+#include "gpu_card.h"
+
 #include "box.h"
 #include "couple.h"
 #include "elec.h"
