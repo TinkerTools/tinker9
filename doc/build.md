@@ -30,9 +30,8 @@ $ pwd
     * add a new target to compile a shared library:
 ```
 # make sure TABs are used for indentations in the Makefile
-# e.g. on Linux with gfortran
 libtinker.so: $(OBJS)
-	gfortran -shared -fPIC -o $@ \
+        ${F77} -fPIC -shared -o $@ \
 	<various.o files, refer to libtinker.a>
 ```
 * Run command
