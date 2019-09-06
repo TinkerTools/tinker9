@@ -11,6 +11,12 @@ shared_libtinker__ := libtinker.so
 
 cuda_dir__ := /home/levnon/.local/opt/pgi/linux86-64-llvm/2019/cuda/10.0
 
+ifdef ACC
+ACC := $(ACC)
+else
+ACC := g++
+endif
+
 CXX := g++
 
 ifeq ($(opt),debug)
@@ -23,7 +29,6 @@ endif
 cxx_dylib_flags__ := -shared
 cxx_depend_flags__ := -MM
 
-ACC := pgc++
 acc_device_compile_flags__ := -acc verystrict -Minfo=accel
 
 ifeq ($(opt),debug)

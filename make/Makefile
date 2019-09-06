@@ -13,8 +13,8 @@
 # fftw_dir :=
 # fftw_lib [$(fftw_dir)/lib] :=
 # fftw_include [$(fftw_dir)/include] :=
-# acc
-# host [1]: 0 (false) or 1 (true)
+# acc [g++] :=
+# host [1]:= 0 (false) or 1 (true)
 ############################################################
 
 # tinker.gpu directory
