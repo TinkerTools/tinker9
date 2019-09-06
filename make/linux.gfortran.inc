@@ -9,7 +9,7 @@ endif
 
 shared_libtinker__ := libtinker.so
 
-cuda_dir__ := /home/levnon/.local/opt/pgi/linux86-64-llvm/2019/cuda/10.0
+cuda_dir__ := /usr/local/cuda
 
 ifdef ACC
 ACC := $(ACC)
@@ -46,5 +46,6 @@ acc_device_link_flags__ := -acc -Mcuda -Mcudalib=cufft
 # acc_host_link_flags__ := -ta=multicore
 acc_host_compile_flags__ :=
 acc_host_link_flags__ :=
-acc_link_flags__ := -rdynamic -Wl,-rpath='$$ORIGIN'
-acc_depend_flags__ := -MM -P
+acc_link_flags__ := -rdynamic -Wl,-rpath='$$ORIGIN' -pthread
+acc_depend_flags__ := -MM
+
