@@ -6,3 +6,6 @@ Tinker GPU
 # Table of Contents
 * [Prerequisites](doc/prerequisites.md)
 * [Build and Install](doc/build.md)
+
+# Documentation
+  [Doxygen](https://zhi-wang.github.io/tinker.gpu)
