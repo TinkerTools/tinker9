@@ -130,7 +130,7 @@ class entry:
                                                       self.module,
                                                       self.symbol)
             else:
-                 # extern char (*&d)[6]; <-> character*6, allocatable :: d(:,:)
+                # extern char (*&d)[6]; <-> character*6, allocatable :: d(:,:)
                 known_dimension = [x for x in self.dimension if x != ':']
                 if op == 'header':
                     line = 'extern %s (*&%s)' % (self.type, local_symbol)
@@ -208,18 +208,11 @@ def parse_ampersand(raw_file):
         return raw_file
     # totl >= 2
     contents = []
-    next_line_num = 1
-    current_line = ''
-    while next_line_num < totl:
-        this_line_num = next_line_num - 1
-        current_line = current_line + _RawContents[this_line_num]
-        next_line = _RawContents[next_line_num]
-        if len(next_line) > 6 and next_line[5] in ['&', '$']:
-            current_line = current_line + next_line[6:]
+    for line in _RawContents:
+        if len(line) > 6 and line[5] in ['&', '$']:
+            contents[-1] = contents[-1] + line[6:]
         else:
-            contents.append(current_line)
-            current_line = ''
-        next_line_num += 1
+            contents.append(line)
     return contents
 
 

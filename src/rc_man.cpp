@@ -49,7 +49,11 @@ TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
 extern void random_data(rc_op);
-void host_data(rc_op op) { rc_man rand42_{random_data, op}; }
+extern void gpu_card_data(rc_op);
+void host_data(rc_op op) {
+  rc_man rand42_{random_data, op};
+  rc_man gpu_card42_{gpu_card_data, op};
+}
 
 extern void n_data(rc_op);
 

@@ -1,6 +1,5 @@
 #include "acc_add.h"
 #include "acc_image.h"
-
 #include "couple.h"
 #include "e_polar.h"
 #include "md.h"
@@ -48,7 +47,7 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3]) {
   const real f = 0.5 * electric / dielec;
 
   #pragma acc parallel num_gangs(bufsize)\
-              deviceptr(x,y,z,box,coupl,polargroup,mlst,\
+              deviceptr(x,y,z,gx,gy,gz,box,coupl,polargroup,mlst,\
               rpole,thole,pdamp,uind,uinp,\
               ep,nep,vir_ep,ufld,dufld)\
               firstprivate(pscale[0:n],dscale[0:n],uscale[0:n])

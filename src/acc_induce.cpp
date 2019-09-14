@@ -444,7 +444,7 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]) {
 
   if (iter >= maxiter || eps > epsold) {
     TINKER_RT(prterr)();
-    TINKER_THROW(" INDUCE  --  Warning, Induced Dipoles are not Converged");
+    TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
   }
 }
 TINKER_NAMESPACE_END

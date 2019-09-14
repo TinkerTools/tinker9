@@ -1,6 +1,8 @@
 #ifndef TINKER_MACRO_H_
 #define TINKER_MACRO_H_
 
+/// \defgroup macro Macros
+
 // stringification
 #define TINKER_STR_IMPL_(s) #s
 #define TINKER_STR(s) TINKER_STR_IMPL_(s)
@@ -19,15 +21,25 @@ should also implement other functions whenever you see an                      \
 "unknown fortran compiler error".
 #endif
 
-// extern
 /**
- * @def TINKER_EXTERN
- * @brief
- * In general, macro @c TINKER_EXTERN expands to @c extern, unless macro @c
- * TINKER_EXTERN_DEFINITION_FILE has been predefined, which is useful to declare
- * and define global variables.
+ * \def TINKER_EXTERN_DEFINITION_FILE
+ * \ingroup macro
+ * Define this macro to \c true before this header file being included so that
+ * external variable declarations would become variable definitions in the
+ * current compilation unit.
  */
-#ifdef TINKER_EXTERN_DEFINITION_FILE
+/**
+ * \def TINKER_EXTERN
+ * \ingroup macro
+ * In general, macro \c TINKER_EXTERN expands to \c extern, unless macro \c
+ * TINKER_EXTERN_DEFINITION_FILE has been predefined to \c true.
+ * This method is useful to declare and define the global variables.
+ * \see TINKER_EXTERN_DEFINITION_FILE
+ */
+#ifndef TINKER_EXTERN_DEFINITION_FILE
+#  define TINKER_EXTERN_DEFINITION_FILE 0
+#endif
+#if TINKER_EXTERN_DEFINITION_FILE
 #  define TINKER_EXTERN
 #else
 #  define TINKER_EXTERN extern
