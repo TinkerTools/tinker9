@@ -29,9 +29,9 @@ void evdw_data(rc_op op) {
     jvdwbuf.clear();
     jcount = 0;
 
-    device_array::deallocate(ired, kred, gxred, gyred, gzred, jvdw, radmin,
-                             epsilon, vlam, vdw_excluded_, vdw_excluded_scale_);
-    device_array::deallocate(xred, yred, zred);
+    device_array::deallocate(ired, kred, xred, yred, zred, gxred, gyred, gzred,
+                             jvdw, radmin, epsilon, vlam, vdw_excluded_,
+                             vdw_excluded_scale_);
 
     nvdw_excluded_ = 0;
 
@@ -39,8 +39,7 @@ void evdw_data(rc_op op) {
   }
 
   if (op & rc_alloc) {
-    device_array::allocate(n, &ired, &kred);
-    device_array::allocate(padded_n, &xred, &yred, &zred);
+    device_array::allocate(n, &ired, &kred, &xred, &yred, &zred);
     if (rc_flag & calc::grad) {
       device_array::allocate(n, &gxred, &gyred, &gzred);
     } else {
@@ -203,33 +202,25 @@ void evdw_data(rc_op op) {
     device_array::copyin(jcount * jcount, radmin, radvec.data());
     device_array::copyin(jcount * jcount, epsilon, epsvec.data());
 
-    std::vector<double> vlamvec(n);
+    std::vector<real> vlamvec(n);
     for (int i = 0; i < n; ++i) {
       if (mutant::mut[i]) {
         vlamvec[i] = mutant::vlambda;
-      } else {
-        vlamvec[i] = 1;
       }
     }
     device_array::copyin(n, vlam, vlamvec.data());
   }
 }
 
-#ifdef TINKER_CUDA_ALGO
-extern void evdw_hal_cuda_impl_(int vers);
-void evdw_hal(int vers) { evdw_hal_cuda_impl_(vers); }
-#else
-extern void evdw_hal_acc_impl_(int vers);
-void evdw_hal(int vers) { evdw_hal_acc_impl_(vers); }
-#endif
-
 extern void evdw_lj_acc_impl_(int vers);
 extern void evdw_buck_acc_impl_(int vers);
 extern void evdw_mm3hb_acc_impl_(int vers);
+extern void evdw_hal_acc_impl_(int vers);
 extern void evdw_gauss_acc_impl_(int vers);
 void evdw_lj(int vers) { evdw_lj_acc_impl_(vers); }
 void evdw_buck(int vers) { evdw_buck_acc_impl_(vers); }
 void evdw_mm3hb(int vers) { evdw_mm3hb_acc_impl_(vers); }
+void evdw_hal(int vers) { evdw_hal_acc_impl_(vers); }
 void evdw_gauss(int vers) { evdw_gauss_acc_impl_(vers); }
 
 void evdw(int vers) {

@@ -59,6 +59,8 @@ void x_testgrad(int argc, char** argv) {
     print(stdout, fmt, i + 1, x1, y1, z1, norm);
   }
 
+  finish();
+
   if (timing) {
     stopwatch_stop();
     stopwatch_reset();

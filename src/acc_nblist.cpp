@@ -1,10 +1,6 @@
 #include "acc_image.h"
 #include "md.h"
 #include "nblist.h"
-#ifdef TINKER_CUDA_ALGO
-#  include "tinker_rt.h"
-#  include <ext/tinker/detail/atoms.hh>
-#endif
 
 // MAYBE_UNUSED static const int GRID_DIM = 32;
 // MAYBE_UNUSED static const int GRID_DIM = 64;
@@ -126,50 +122,6 @@ inline void build_v1_(NBListUnit nu) {
     }
     nlst[i] = ilst;
   }
-
-#ifdef TINKER_CUDA_ALGO
-  int max_warps = (n + WARP_SIZE - 1) / WARP_SIZE;
-
-  // compute tiles on CPU and upload it to GPU
-  const auto* x = atoms::x;
-  const auto* y = atoms::y;
-  const auto* z = atoms::z;
-  std::vector<int> itilevec;
-  for (int tx = 0; tx < max_warps; ++tx) {
-    for (int ty = tx; ty < max_warps; ++ty) {
-      for (int i0 = 0; i0 < WARP_SIZE; ++i0) {
-        int i = tx * WARP_SIZE + i0;
-        if (i < n) {
-          auto xi = x[i];
-          auto yi = y[i];
-          auto zi = z[i];
-          for (int k0 = 0; k0 < WARP_SIZE; ++k0) {
-            int k = ty * WARP_SIZE + k0;
-            if (k > i && k < n) {
-              auto xr = xi - x[k];
-              auto yr = yi - y[k];
-              auto zr = zi - z[k];
-              TINKER_RT(imagen)(&xr, &yr, &zr);
-              auto r2 = xr * xr + yr * yr + zr * zr;
-              if (r2 <= buf2) {
-                itilevec.push_back(tx);
-                itilevec.push_back(ty);
-                goto next_ty;
-              }
-            }
-          }
-        }
-      }
-
-    next_ty:
-      (void)0;
-    }
-  }
-
-  st.ntile = itilevec.size() / 2;
-  device_array::copyin(st.ntile, st.itile, itilevec.data());
-  nu.init_deviceptr(st);
-#endif
 }
 
 inline void displace_v1_(NBListUnit nu) {

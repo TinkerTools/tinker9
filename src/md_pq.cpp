@@ -3,6 +3,7 @@
 #include "ext/tinker/detail/atomid.hh"
 #include "ext/tinker/detail/atoms.hh"
 #include "ext/tinker/detail/moldyn.hh"
+#include "gpu_card.h"
 #include "md.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -15,8 +16,8 @@ void n_data(rc_op op) {
 
   if (op & rc_alloc) {
     n = atoms::n;
-    padded_n = (n + BLOCK_SIZE - 1) / BLOCK_SIZE;
-    padded_n *= BLOCK_SIZE;
+    padded_n = (n + MAX_BLOCK_SIZE - 1) / MAX_BLOCK_SIZE;
+    padded_n *= MAX_BLOCK_SIZE;
 
     if (calc::traj & rc_flag) {
       // trajn must have been initialized by this point

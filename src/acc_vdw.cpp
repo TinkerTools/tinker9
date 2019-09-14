@@ -96,28 +96,25 @@ void evdw_tmpl() {
 
   MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
   #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
-              deviceptr(DEVICE_PTRS_,vlst)
+               deviceptr(DEVICE_PTRS_,vlst)
   #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
     int it = jvdw[i];
-    real xi, yi, zi;
-    xi = xred[i];
-    yi = yred[i];
-    zi = zred[i];
+    real xi = xred[i];
+    real yi = yred[i];
+    real zi = zred[i];
     real lam1 = vlam[i];
+    MAYBE_UNUSED real gxi = 0, gyi = 0, gzi = 0;
 
-    int base_it = it * njvdw;
     int nvlsti = vlst->nlst[i];
-    int base = i * maxnlst;
-    #pragma acc loop vector independent
+    #pragma acc loop vector independent reduction(+:gxi,gyi,gzi)
     for (int kk = 0; kk < nvlsti; ++kk) {
       int offset = (kk + i * n) & (bufsize - 1);
-      int k = vlst->lst[base + kk];
+      int k = vlst->lst[i * maxnlst + kk];
       int kt = jvdw[k];
-      real xr, yr, zr;
-      xr = xi - xred[k];
-      yr = yi - yred[k];
-      zr = zi - zred[k];
+      real xr = xi - xred[k];
+      real yr = yi - yred[k];
+      real zr = zi - zred[k];
       real vlambda = vlam[k];
 
       if (vcouple == vcouple_decouple) {
@@ -130,11 +127,10 @@ void evdw_tmpl() {
       real rik2 = xr * xr + yr * yr + zr * zr;
       if (rik2 <= off2) {
         real rik = REAL_SQRT(rik2);
-        real rv = radmin[base_it + kt];
-        real eps = epsilon[base_it + kt];
+        real rv = radmin[it * njvdw + kt];
+        real eps = epsilon[it * njvdw + kt];
 
-        real e;
-        real de;
+        MAYBE_UNUSED real e, de;
         if_constexpr(VDWTYP == evdw_t::hal) {
           ehal_pair<do_g>(rik,                        //
                           rv, eps, ghal, dhal,        //
@@ -167,18 +163,12 @@ void evdw_tmpl() {
           real dedy = de * yr;
           real dedz = de * zr;
 
-          #pragma acc atomic update
-          gxred[i] += dedx;
-          #pragma acc atomic update
-          gyred[i] += dedy;
-          #pragma acc atomic update
-          gzred[i] += dedz;
-          #pragma acc atomic update
-          gxred[k] -= dedx;
-          #pragma acc atomic update
-          gyred[k] -= dedy;
-          #pragma acc atomic update
-          gzred[k] -= dedz;
+          gxi += dedx;
+          gyi += dedy;
+          gzi += dedz;
+          atomic_add_value(-dedx, gxred, k);
+          atomic_add_value(-dedy, gyred, k);
+          atomic_add_value(-dedz, gzred, k);
 
           if_constexpr(do_v) {
             real vxx = xr * dedx;
@@ -202,7 +192,13 @@ void evdw_tmpl() {
         }   // end if (do_g)
       }
     } // end for (int kk)
-  }   // end for (int i)
+
+    if_constexpr(do_g) {
+      atomic_add_value(gxi, gxred, i);
+      atomic_add_value(gyi, gyred, i);
+      atomic_add_value(gzi, gzred, i);
+    }
+  } // end for (int i)
 
   #pragma acc parallel\
               deviceptr(DEVICE_PTRS_,vdw_excluded_,vdw_excluded_scale_)
@@ -215,18 +211,15 @@ void evdw_tmpl() {
     real vscale = vdw_excluded_scale_[ii];
 
     int it = jvdw[i];
-    real xi, yi, zi;
-    xi = xred[i];
-    yi = yred[i];
-    zi = zred[i];
+    real xi = xred[i];
+    real yi = yred[i];
+    real zi = zred[i];
     real lam1 = vlam[i];
 
-    int base_it = it * njvdw;
     int kt = jvdw[k];
-    real xr, yr, zr;
-    xr = xi - xred[k];
-    yr = yi - yred[k];
-    zr = zi - zred[k];
+    real xr = xi - xred[k];
+    real yr = yi - yred[k];
+    real zr = zi - zred[k];
     real vlambda = vlam[k];
 
     if (vcouple == vcouple_decouple) {
@@ -239,11 +232,10 @@ void evdw_tmpl() {
     real rik2 = xr * xr + yr * yr + zr * zr;
     if (rik2 <= off2) {
       real rik = REAL_SQRT(rik2);
-      real rv = radmin[base_it + kt];
-      real eps = epsilon[base_it + kt];
+      real rv = radmin[it * njvdw + kt];
+      real eps = epsilon[it * njvdw + kt];
 
-      real e;
-      real de;
+      MAYBE_UNUSED real e, de;
       if_constexpr(VDWTYP == evdw_t::hal) {
         ehal_pair<do_g>(rik,                             //
                         rv, eps, ghal, dhal,             //
@@ -273,18 +265,12 @@ void evdw_tmpl() {
         real dedy = de * yr;
         real dedz = de * zr;
 
-        #pragma acc atomic update
-        gxred[i] += dedx;
-        #pragma acc atomic update
-        gyred[i] += dedy;
-        #pragma acc atomic update
-        gzred[i] += dedz;
-        #pragma acc atomic update
-        gxred[k] -= dedx;
-        #pragma acc atomic update
-        gyred[k] -= dedy;
-        #pragma acc atomic update
-        gzred[k] -= dedz;
+        atomic_add_value(dedx, gxred, i);
+        atomic_add_value(dedy, gyred, i);
+        atomic_add_value(dedz, gzred, i);
+        atomic_add_value(-dedx, gxred, k);
+        atomic_add_value(-dedy, gyred, k);
+        atomic_add_value(-dedz, gzred, k);
 
         if_constexpr(do_v) {
           real vxx = xr * dedx;
@@ -334,7 +320,6 @@ TINKER_EVDW_IMPL_(mm3hb);
 TINKER_EVDW_IMPL_(hal);
 TINKER_EVDW_IMPL_(gauss);
 #undef TINKER_EVDW_IMPL_
-#undef TINKER_EVDW_T_PASTE_
 
 #undef DEVICE_PTRS_
 

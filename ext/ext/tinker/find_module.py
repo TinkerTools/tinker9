@@ -34,6 +34,8 @@ def determine_module_subroutine_program(fortran_filename):
 
     # 'source/dynamic.f' -> 'dynamic.f'
     dirname = os.path.dirname(fortran_filename)
+    if dirname == '':
+        dirname == '.'
     base = os.path.basename(fortran_filename)
     stem, ext = os.path.splitext(base)  # 'dynamic.f' -> 'dynamic', '.f'
     content = [line.rstrip().lower() for line in open(fortran_filename)]

@@ -98,10 +98,6 @@ static int nblist_maxlst_(int maxn, double cutoff, double buffer) {
 
 NBList::~NBList() {
   device_array::deallocate(nlst, lst, update, xold, yold, zold);
-
-#ifdef TINKER_CUDA_ALGO
-  device_array::deallocate(itile);
-#endif
 }
 
 static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
@@ -131,12 +127,6 @@ static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
   st.maxnlst = maxlst;
   st.cutoff = cutoff;
   st.buffer = buffer;
-
-#ifdef TINKER_CUDA_ALGO
-  int max_nwarp = (n + WARP_SIZE - 1) / WARP_SIZE;
-  int max_ntile = max_nwarp * (max_nwarp + 1) / 2;
-  device_array::allocate(max_ntile, &st.itile);
-#endif
 
   nblu.init_deviceptr(st);
 }
