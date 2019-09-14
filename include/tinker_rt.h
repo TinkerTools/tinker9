@@ -28,6 +28,8 @@ void TINKER_RT(prterr)();
 void TINKER_RT(lattice)();
 void TINKER_RT(invert)(int* n, double* a);
 void TINKER_RT(mdsave)(int* istep, double* dt, double* epot, double* eksum);
+void TINKER_RT(image)(double*, double*, double*);
+void TINKER_RT(imagen)(double*, double*, double*);
 
 // pmestuf.f
 void TINKER_RT(bspline)(double* x, int* n, double* c);

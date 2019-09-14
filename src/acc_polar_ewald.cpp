@@ -50,7 +50,7 @@ void epolar_real_tmpl(const real (*gpu_uind)[3], const real (*gpu_uinp)[3]) {
   real bn[5];
 
   #pragma acc parallel num_gangs(bufsize)\
-              deviceptr(x,y,z,box,coupl,polargroup,mlst,\
+              deviceptr(x,y,z,gx,gy,gz,box,coupl,polargroup,mlst,\
               rpole,thole,pdamp,uind,uinp,\
               ep,nep,vir_ep,ufld,dufld)\
               firstprivate(pscale[0:n],dscale[0:n],uscale[0:n])

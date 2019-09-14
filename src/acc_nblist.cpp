@@ -108,7 +108,7 @@ inline void build_v1_(NBListUnit nu) {
       real xr = xi - lx[k];
       real yr = yi - ly[k];
       real zr = zi - lz[k];
-      image(xr, yr, zr, box);
+      imagen(xr, yr, zr, box);
       real r2 = xr * xr + yr * yr + zr * zr;
       if (r2 <= buf2) {
         int j;

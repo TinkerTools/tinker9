@@ -1,5 +1,4 @@
 #include "e_vdw.h"
-
 #include "ext/tinker/detail/couple.hh"
 #include "ext/tinker/detail/mutant.hh"
 #include "ext/tinker/detail/sizes.hh"
@@ -203,12 +202,10 @@ void evdw_data(rc_op op) {
     device_array::copyin(jcount * jcount, radmin, radvec.data());
     device_array::copyin(jcount * jcount, epsilon, epsvec.data());
 
-    std::vector<double> vlamvec(n);
+    std::vector<real> vlamvec(n);
     for (int i = 0; i < n; ++i) {
       if (mutant::mut[i]) {
         vlamvec[i] = mutant::vlambda;
-      } else {
-        vlamvec[i] = 1;
       }
     }
     device_array::copyin(n, vlam, vlamvec.data());
@@ -216,18 +213,14 @@ void evdw_data(rc_op op) {
 }
 
 extern void evdw_lj_acc_impl_(int vers);
-void evdw_lj(int vers) { evdw_lj_acc_impl_(vers); }
-
 extern void evdw_buck_acc_impl_(int vers);
-void evdw_buck(int vers) { evdw_buck_acc_impl_(vers); }
-
 extern void evdw_mm3hb_acc_impl_(int vers);
-void evdw_mm3hb(int vers) { evdw_mm3hb_acc_impl_(vers); }
-
 extern void evdw_hal_acc_impl_(int vers);
-void evdw_hal(int vers) { evdw_hal_acc_impl_(vers); }
-
 extern void evdw_gauss_acc_impl_(int vers);
+void evdw_lj(int vers) { evdw_lj_acc_impl_(vers); }
+void evdw_buck(int vers) { evdw_buck_acc_impl_(vers); }
+void evdw_mm3hb(int vers) { evdw_mm3hb_acc_impl_(vers); }
+void evdw_hal(int vers) { evdw_hal_acc_impl_(vers); }
 void evdw_gauss(int vers) { evdw_gauss_acc_impl_(vers); }
 
 void evdw(int vers) {

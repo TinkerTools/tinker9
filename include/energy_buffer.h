@@ -111,19 +111,11 @@ private:
   }
 
 public:
-  static int calc_size(int nelem, int max_MB = 64) {
+  static int calc_size(int nelem, int max_MB = 4) {
     size_t max_bytes = max_MB * 1024 * 1024ull;
-    size_t n_elem_bytes = nelem * sizeof(Answer);
-    size_t max_n_parallel = max_bytes / n_elem_bytes;
+    size_t new_size = max_bytes / sizeof(Answer);
 
-    constexpr size_t max_parallel = 2048;
-    constexpr size_t min_parallel = 32;
-    assert(max_n_parallel >= min_parallel && "must increase max_MB");
-
-    size_t new_size = min_of(max_of(pow2_ge(nelem), min_parallel),
-                             pow2_le(max_n_parallel), max_parallel);
     assert(is_pow2(new_size) && "new_size must be power of 2");
-
     return new_size;
   }
 
@@ -137,7 +129,7 @@ public:
     ebuf_detail::Sum<Answer, Store, NAnswer, NStore>::exec(host_ans, buf, cap);
   }
 
-  void alloc(int nelem, int max_MB = 64) {
+  void alloc(int nelem, int max_MB = 4) {
     int new_size = calc_size(nelem, max_MB);
     grow_if_must(new_size);
   }
