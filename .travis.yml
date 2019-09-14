@@ -1,11 +1,10 @@
 branches:
   only:
+    - master
     - dev
     - travis
 
-
 language: generic
-
 
 matrix:
   include:
@@ -13,10 +12,8 @@ matrix:
       dist: xenial
       env: CI_DEPEND_DIR=https://raw.githubusercontent.com/zhi-wang/ci-depend/master/xenial
 
-
 before_install:
   - sudo apt-get install gfortran
-
 
 script:
 
@@ -46,5 +43,5 @@ script:
   - echo $HOME
   - echo $PWD
 
-  - ./run.sh --install --fftw_dir fftw --tinker_dir tinker/source
-  - ./run.sh --test --fftw_dir travis/fftw --tinker_dir tinker/source
+  - ./setup.sh --install --fftw_dir $PWD/fftw --tinker_dir $PWD/tinker/source --acc g++
+  - ./setup.sh --test --fftw_dir $PWD/fftw --tinker_dir $PWD/tinker/source --acc g++

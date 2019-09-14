@@ -11,7 +11,14 @@ shared_libtinker__ := libtinker.so
 
 cuda_dir__ := /usr/local/cuda
 
+ifdef acc
+ACC := $(acc)
+else
+ACC := g++
+endif
+
 CXX := g++
+
 ifeq ($(opt),debug)
 	cxx_opt_flags__ := -O0 -g
 else ifeq ($(opt),release)
@@ -22,8 +29,8 @@ endif
 cxx_dylib_flags__ := -shared
 cxx_depend_flags__ := -MM
 
-ACC := pgc++
 acc_device_compile_flags__ := -acc verystrict -Minfo=accel
+
 ifeq ($(opt),debug)
 	acc_opt_flags__ := -O0 -g -traceback
 	acc_device_compile_flags__ += -ta=tesla
@@ -39,5 +46,6 @@ acc_device_link_flags__ := -acc -Mcuda -Mcudalib=cufft
 # acc_host_link_flags__ := -ta=multicore
 acc_host_compile_flags__ :=
 acc_host_link_flags__ :=
-acc_link_flags__ := -rdynamic -Wl,-rpath='$$ORIGIN'
-acc_depend_flags__ := -MM -P
+acc_link_flags__ := -rdynamic -Wl,-rpath='$$ORIGIN' -pthread
+acc_depend_flags__ := -MM
+
