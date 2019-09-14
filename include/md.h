@@ -7,20 +7,42 @@
 #include <string>
 
 TINKER_NAMESPACE_BEGIN
-/// flags for the program
+/**
+ * \defgroup gvar Global Variables
+ *
+ * \defgroup md MD Configuration
+ * \ingroup gvar
+ */
+
+/**
+ * \ingroup md
+ */
 TINKER_EXTERN int rc_flag;
 
-/// number of frames
+/// \ingroup md
+/// Number of the trajectory frames.
 TINKER_EXTERN int trajn;
 
-/// number of atoms
+/// \ingroup md
+/// Number of atoms.
 TINKER_EXTERN int n;
 
-/// x, y, z coordinates
-/// @{
-TINKER_EXTERN real *trajx, *trajy, *trajz;
-TINKER_EXTERN real *x, *y, *z;
-/// @}
+/// \ingroup md
+/// Padded (by \c MAX_BLOCK_SIZE) number of atoms.
+/// \f[ N \le PaddedN \f]
+/// \f[ 0 \le PaddedN - N \lt MaxBlockSize \f]
+/// \see MAX_BLOCK_SIZE
+TINKER_EXTERN int padded_n;
+
+/// \ingroup md
+/// \{
+/// X, Y, Z coordinates of the current frame or of the entire trajectory frames.
+/// \attention
+/// Arrays are allocated based on \c padded_n.
+/// \see padded_n
+TINKER_EXTERN real *trajx, *trajy, *trajz, *x, *y, *z;
+/// \}
+
 void goto_frame(int idx0);
 void copyin_arc_file(const std::string& arcfile, int first1, int last1,
                      int step);
