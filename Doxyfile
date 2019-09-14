@@ -125,7 +125,7 @@ EXCLUDE                = src/ext
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       =
 EXCLUDE_SYMBOLS        =
-EXAMPLE_PATH           =
+EXAMPLE_PATH           = include
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
 IMAGE_PATH             =
@@ -193,7 +193,7 @@ QHG_LOCATION           =
 GENERATE_ECLIPSEHELP   = NO
 ECLIPSE_DOC_ID         = org.doxygen.Project
 DISABLE_INDEX          = NO
-GENERATE_TREEVIEW      = NO
+GENERATE_TREEVIEW      = YES
 ENUM_VALUES_PER_LINE   = 4
 TREEVIEW_WIDTH         = 250
 EXT_LINKS_IN_WINDOW    = NO
@@ -282,7 +282,10 @@ EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
 INCLUDE_PATH           =
 INCLUDE_FILE_PATTERNS  =
-PREDEFINED             =
+PREDEFINED             = NDEBUG \
+                         TINKER_SINGLE_PRECISION \
+                         TINKER_CUDART \
+                         TINKER_EXTERN_DEFINITION_FILE
 EXPAND_AS_DEFINED      = YES
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
@@ -308,7 +311,7 @@ DOT_FONTSIZE           = 10
 DOT_FONTPATH           =
 CLASS_GRAPH            = YES
 COLLABORATION_GRAPH    = YES
-GROUP_GRAPHS           = YES
+GROUP_GRAPHS           = NO
 UML_LOOK               = NO
 UML_LIMIT_NUM_FIELDS   = 10
 TEMPLATE_RELATIONS     = NO
