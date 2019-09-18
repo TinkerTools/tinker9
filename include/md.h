@@ -37,7 +37,7 @@ TINKER_EXTERN int padded_n;
 /// \ingroup md
 /// \{
 /// X, Y, Z coordinates of the current frame or of the entire trajectory frames.
-/// \attention
+/// \note
 /// Arrays are allocated based on \c padded_n.
 /// \see padded_n
 TINKER_EXTERN real *trajx, *trajy, *trajz, *x, *y, *z;

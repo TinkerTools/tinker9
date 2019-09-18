@@ -1,10 +1,11 @@
 branches:
   only:
     - master
-    - dev
     - travis
 
+
 language: generic
+
 
 matrix:
   include:
@@ -12,11 +13,12 @@ matrix:
       dist: xenial
       env: CI_DEPEND_DIR=https://raw.githubusercontent.com/zhi-wang/ci-depend/master/xenial
 
+
 before_install:
   - sudo apt-get install gfortran
 
-script:
 
+script:
   - mkdir -p tinker/source
   - curl $CI_DEPEND_DIR/tinker-291a85c1/libtinker.so -o tinker/source/libtinker.so
 
@@ -43,5 +45,8 @@ script:
   - echo $HOME
   - echo $PWD
 
-  - ./setup.sh --install --fftw_dir $PWD/fftw --tinker_dir $PWD/tinker/source --acc g++
-  - ./setup.sh --test --fftw_dir $PWD/fftw --tinker_dir $PWD/tinker/source --acc g++
+  - make -f make/Makefile create_build build=build
+  - cd build
+  - make ignore=0 fftw_dir=../fftw tinker_dir=../tinker/source all
+  - make info
+  - make test
