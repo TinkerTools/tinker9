@@ -198,7 +198,7 @@ include_flags__ := -I$(top_dir__)/include
 include_flags__ += -I$(top_dir__)/ext
 include_flags__ += -I$(top_dir__)/ext/ext
 ifeq ($(host_only__),false)
-    include_flags__ += -I$(cuda_dir__)/include
+    include_flags__ += -I$(cuda_dir)/include
 else
     include_flags__ += -I$(fftw_include__)
 endif
@@ -345,7 +345,7 @@ copy_files: | dirs
 	@echo top_dir__ := $(top_dir__) > $(build)/top_dir.mk
 	@echo TINKER.GPU: Installation files copied to \`$(build)\' directory.
 	@echo TINKER.GPU: Now run \`cd $(build)\' then \`make\' to compile \`tinker.gpu\'\; \
-Run \`make help ignore=1\' for help.
+Run \`make help\' for help.
 .PHONY: create_build
 create_build: | copy_files
 

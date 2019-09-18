@@ -45,7 +45,8 @@ script:
   - echo $HOME
   - echo $PWD
 
-  - make -f make/Makefile -k create_build build=build
+  - make -f make/Makefile create_build build=build
   - cd build
-  - make -j2 fftw_dir=../fftw tinker_dir=../tinker/source acc=g++ all
-  - make -k test
+  - make -j2 fftw_dir=../fftw tinker_dir=../tinker/source all
+  - make info
+  - make test
