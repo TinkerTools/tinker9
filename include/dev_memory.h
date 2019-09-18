@@ -171,11 +171,11 @@ private:
   };
 
 public:
-  template <class T, size_t N = 1>
+  template <class T, size_t N>
   struct ptr;
 
   template <class T>
-  struct ptr<T> {
+  struct ptr<T, 1> {
     typedef T* type;
   };
 

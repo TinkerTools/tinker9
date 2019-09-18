@@ -4,7 +4,7 @@
 # DOC: 08/29/2019
 # Email: andrew.gaam [at] gmail [dot] com
 # Description: entry script for compiling/testing tinker.gpu
-# Usage example: 
+# Usage example:
 #	export FFTW_DIR=/usr/lib/x86_64-linux-gnu
 #	export TINKER_DIR=../../tinker/source
 #	export ACC=pgc++
@@ -147,14 +147,14 @@ fi
 if [ ! -z ${BUILD} ]; then
 	pre_install
 else
-	if [ ! -z ${INSTALL} ]; then 
+	if [ ! -z ${INSTALL} ]; then
 		install ${FFTW_INCLUDE} ${FFTW_LIB} ${TINKER_DIR} ${ACC} ${HOST}
 	else
 		if [ ! -z ${CLEAN} ]; then
 			clean
 		else
 			if [ ! -z ${TEST} ]; then
-				test ${FFTW_INCLUDE} ${FFTW_LIB} ${TINKER_DIR} ${ACC} ${HOST}  
+				test ${FFTW_INCLUDE} ${FFTW_LIB} ${TINKER_DIR} ${ACC} ${HOST}
 			fi
 		fi
 	fi
