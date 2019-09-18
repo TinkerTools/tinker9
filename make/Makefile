@@ -405,8 +405,10 @@ clean:
 	rm -rf ext src
 
 
+ifeq (0,$(ignore))
 $(shared_libtinker__): $(tinker_dir__)/$(shared_libtinker__)
 	cp $^ $@
+endif
 tinker.gpu: $(src_obj_dir__)/main_tinker_gpu.o $(all_acc_objs__) \
 libtinkergpu.$(shared_lib_suffix__) | $(shared_libtinker__)
 	$(LINK) $^ $(link_flags__) -o $@

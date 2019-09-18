@@ -47,6 +47,6 @@ script:
 
   - make -f make/Makefile create_build build=build
   - cd build
-  - make -j2 fftw_dir=../fftw tinker_dir=../tinker/source all
+  - make ignore=0 fftw_dir=../fftw tinker_dir=../tinker/source all
   - make info
   - make test
