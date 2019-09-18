@@ -265,8 +265,8 @@ ifeq ($(os__),linux)
         acc_config := linux.acc.device.pgc++.mk
         link_config := linux.link.device.pgc++.mk
     else ifeq ($(host_only__),true)
-        acc_config := TODO
-        link_config := TODO
+        acc_config := linux.acc.g++.mk
+        link_config := linux.link.g++.mk
     endif
 else ifeq ($(os__),darwin)
     fortran_config := macos.fort.gfortran.8.3.0.brew.mk
@@ -340,14 +340,12 @@ $(dirs__):
 dirs: $(dirs__)
 .PHONY: copy_files
 copy_files: | dirs
-	@cp $(top_dir__)/make/Makefile $(top_dir__)/make/*.mk $(build)
+	@cd $(build); ln -s $(top_dir__)/make/Makefile .; cd ..
+	@for x in $(top_dir__)/make/*.mk; do cd $(build); ln -s $$x .; cd ..; done
 	@echo top_dir__ := $(top_dir__) > $(build)/top_dir.mk
 	@echo TINKER.GPU: Installation files copied to \`$(build)\' directory.
 	@echo TINKER.GPU: Now run \`cd $(build)\' then \`make\' to compile \`tinker.gpu\'\; \
 Run \`make help ignore=1\' for help.
-.PHONY: copy
-copy:
-	@cp $(top_dir__)/make/Makefile $(top_dir__)/make/*.mk .
 .PHONY: create_build
 create_build: | copy_files
 
@@ -402,21 +400,20 @@ help:
 ##/
 .PHONY: clean
 clean:
-	rm -rf Makefile all.tests tinker.gpu libtinker* *dSYM
+	rm -rf all.tests tinker.gpu libtinker* *dSYM
 	rm -rf *.md doc include html
 	rm -rf ext src
 
 
-$(shared_libtinker__): $(tinker_dir)/$(shared_libtinker__)
+$(shared_libtinker__): $(tinker_dir__)/$(shared_libtinker__)
 	cp $^ $@
 tinker.gpu: $(src_obj_dir__)/main_tinker_gpu.o $(all_acc_objs__) \
 libtinkergpu.$(shared_lib_suffix__) | $(shared_libtinker__)
-	$(LINK) $(link_flags__) -o $@ $^
+	$(LINK) $^ $(link_flags__) -o $@
 all.tests: $(src_obj_dir__)/test/main_all_tests.o \
 $(test_cpp_objs__) $(all_acc_objs__) \
 libtinkergpu.$(shared_lib_suffix__) | $(shared_libtinker__)
-	$(LINK) $(link_flags__) -o $@ $^
-
+	$(LINK) $^ $(link_flags__) -o $@
 
 ##/ ------
 ##/
