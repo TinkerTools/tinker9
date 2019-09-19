@@ -211,13 +211,7 @@ void eopbend_tmpl() {
           real vzy = zab * dedyia + zcb * dedyic + zdb * dedyid;
           real vzz = zab * dedzia + zcb * dedzic + zdb * dedzid;
 
-          int offv = offset * 8;
-          atomic_add_value(vxx, vir_eopb, offv + 0);
-          atomic_add_value(vyx, vir_eopb, offv + 1);
-          atomic_add_value(vzx, vir_eopb, offv + 2);
-          atomic_add_value(vyy, vir_eopb, offv + 3);
-          atomic_add_value(vzy, vir_eopb, offv + 4);
-          atomic_add_value(vzz, vir_eopb, offv + 5);
+          atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_eopb, offset);
         }
       }
     }

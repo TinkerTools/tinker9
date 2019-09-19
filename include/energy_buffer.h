@@ -111,6 +111,9 @@ private:
   }
 
 public:
+  static constexpr size_t N = NAnswer;
+  static constexpr size_t NS = NStore;
+
   static int calc_size(int nelem) {
     size_t max_bytes = 4 * 1024 * 1024ull; // 4 MB
     if (nelem <= 16384)

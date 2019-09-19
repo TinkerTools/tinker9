@@ -138,13 +138,7 @@ void eangle_tmpl() {
             real vzy = zab * dedyia + zcb * dedyic;
             real vzz = zab * dedzia + zcb * dedzic;
 
-            int offv = offset * 8;
-            atomic_add_value(vxx, vir_ea, offv + 0);
-            atomic_add_value(vyx, vir_ea, offv + 1);
-            atomic_add_value(vzx, vir_ea, offv + 2);
-            atomic_add_value(vyy, vir_ea, offv + 3);
-            atomic_add_value(vzy, vir_ea, offv + 4);
-            atomic_add_value(vzz, vir_ea, offv + 5);
+            atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_ea, offset);
           }
         }
       }
@@ -284,13 +278,7 @@ void eangle_tmpl() {
             real vzy = zad * dedyia + zbd * dedyib + zcd * dedyic;
             real vzz = zad * dedzia + zbd * dedzib + zcd * dedzic;
 
-            int offv = offset * 8;
-            atomic_add_value(vxx, vir_ea, offv + 0);
-            atomic_add_value(vyx, vir_ea, offv + 1);
-            atomic_add_value(vzx, vir_ea, offv + 2);
-            atomic_add_value(vyy, vir_ea, offv + 3);
-            atomic_add_value(vzy, vir_ea, offv + 4);
-            atomic_add_value(vzz, vir_ea, offv + 5);
+            atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_ea, offset);
           }
         }
       }

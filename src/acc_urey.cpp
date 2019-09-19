@@ -68,13 +68,7 @@ void eurey_tmpl() {
         real vzy = zac * dedy;
         real vzz = zac * dedz;
 
-        int offv = offset * 8;
-        atomic_add_value(vxx, vir_eub, offv + 0);
-        atomic_add_value(vyx, vir_eub, offv + 1);
-        atomic_add_value(vzx, vir_eub, offv + 2);
-        atomic_add_value(vyy, vir_eub, offv + 3);
-        atomic_add_value(vzy, vir_eub, offv + 4);
-        atomic_add_value(vzz, vir_eub, offv + 5);
+        atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_eub, offset);
       }
     }
   } // end for (int i)

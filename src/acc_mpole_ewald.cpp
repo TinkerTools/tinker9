@@ -331,13 +331,7 @@ void empole_real_self_tmpl() {
             real vyz = -0.5f * (zr * frcy + yr * frcz);
             real vzz = -zr * frcz;
 
-            int offv = offset * 8;
-            atomic_add_value(vxx, vir_em, offv + 0);
-            atomic_add_value(vxy, vir_em, offv + 1);
-            atomic_add_value(vxz, vir_em, offv + 2);
-            atomic_add_value(vyy, vir_em, offv + 3);
-            atomic_add_value(vyz, vir_em, offv + 4);
-            atomic_add_value(vzz, vir_em, offv + 5);
+            atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
           } // end if (do_v)
         }   // end if (do_g)
       }     // end if (r2 <= off2)
@@ -398,7 +392,7 @@ void empole_recip_tmpl() {
       auto* vir_m = vir_m_handle->buffer();
       assert(bufsize >= vir_m_len);
       #pragma acc parallel loop independent deviceptr(vir_m,vir_em)
-      for (int i = 0; i < vir_m_len * 8; ++i) {
+      for (int i = 0; i < vir_m_len * VirialBuffer::NS; ++i) {
         vir_em[i] += vir_m[i];
       }
     } else {
@@ -517,13 +511,7 @@ void empole_recip_tmpl() {
         vyz *= f;
         vzz *= f;
 
-        int offv = offset * 8;
-        atomic_add_value(vxx, vir_em, offv + 0);
-        atomic_add_value(vxy, vir_em, offv + 1);
-        atomic_add_value(vxz, vir_em, offv + 2);
-        atomic_add_value(vyy, vir_em, offv + 3);
-        atomic_add_value(vyz, vir_em, offv + 4);
-        atomic_add_value(vzz, vir_em, offv + 5);
+        atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
       } // end if (do_v)
     }   // end if (do_g)
   }     // end for (int i)

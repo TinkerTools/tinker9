@@ -135,13 +135,7 @@ void estrbnd_tmpl() {
           real vzy = zab * dedyia + zcb * dedyic;
           real vzz = zab * dedzia + zcb * dedzic;
 
-          int offv = offset * 8;
-          atomic_add_value(vxx, vir_eba, offv + 0);
-          atomic_add_value(vyx, vir_eba, offv + 1);
-          atomic_add_value(vzx, vir_eba, offv + 2);
-          atomic_add_value(vyy, vir_eba, offv + 3);
-          atomic_add_value(vzy, vir_eba, offv + 4);
-          atomic_add_value(vzz, vir_eba, offv + 5);
+          atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_eba, offset);
         }
       }
     }

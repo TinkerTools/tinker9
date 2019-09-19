@@ -80,13 +80,7 @@ void ebond_tmpl() {
         real vzy = zab * dedy;
         real vzz = zab * dedz;
 
-        int offv = offset * 8;
-        atomic_add_value(vxx, vir_eb, offv + 0);
-        atomic_add_value(vyx, vir_eb, offv + 1);
-        atomic_add_value(vzx, vir_eb, offv + 2);
-        atomic_add_value(vyy, vir_eb, offv + 3);
-        atomic_add_value(vzy, vir_eb, offv + 4);
-        atomic_add_value(vzz, vir_eb, offv + 5);
+        atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_eb, offset);
       }
     }
   } // end for (int i)

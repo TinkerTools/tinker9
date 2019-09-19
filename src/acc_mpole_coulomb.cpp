@@ -278,13 +278,7 @@ void empole_coulomb_tmpl() {
             real vyz = -0.5f * (zr * frcy + yr * frcz);
             real vzz = -zr * frcz;
 
-            int offv = offset * 8;
-            atomic_add_value(vxx, vir_em, offv + 0);
-            atomic_add_value(vxy, vir_em, offv + 1);
-            atomic_add_value(vxz, vir_em, offv + 2);        
-            atomic_add_value(vyy, vir_em, offv + 3);
-            atomic_add_value(vyz, vir_em, offv + 4);
-            atomic_add_value(vzz, vir_em, offv + 5);
+            atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
           } // end if (do_v)
         }   // end if (do_g)
       }     // end if (r2 <= off2)
