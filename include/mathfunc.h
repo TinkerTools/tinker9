@@ -52,127 +52,166 @@
 /// \ingroup gvar
 
 TINKER_NAMESPACE_BEGIN
-constexpr real twosix = 1.12246204830937298143;    ///< @f$ \sqrt[6]{2} @f$
-constexpr real sqrttwo = 1.41421356237309504880;   ///< @f$ \sqrt{2} @f$
-constexpr real sqrtthree = 1.73205080756887729353; ///< @f$ \sqrt{3} @f$
+/// \ingroup math
+/// \f$ \sqrt[6]{2} \f$
+constexpr real twosix = 1.12246204830937298143;
+/// \ingroup math
+/// \f$ \sqrt{2} \f$
+constexpr real sqrttwo = 1.41421356237309504880;
+/// \ingroup math
+/// \f$ \sqrt{3} \f$
+constexpr real sqrtthree = 1.73205080756887729353;
 
-constexpr real elog = M_E;      ///< @f$ exp(1) @f$
-constexpr real logten = M_LN10; ///< @f$ ln(10) @f$
+/// \ingroup math
+/// \f$ exp(1) \f$
+constexpr real elog = M_E;
+/// \ingroup math
+/// \f$ ln(10) \f$
+constexpr real logten = M_LN10;
 
-constexpr real pi = M_PI;                          ///< @f$ \pi @f$
-constexpr real radian = 57.2957795130823208768;    ///< @f$ 180/\pi @f$
-constexpr real radinv = 0.01745329251994329576924; ///< @f$ \pi/180 @f$
-constexpr real sqrtpi = 1.77245385090551602730;    ///< @f$ \sqrt{\pi} @f$
+/// \ingroup math
+/// \f$ \pi \f$
+constexpr real pi = M_PI;
+/// \ingroup math
+/// \f$ 180/\pi \f$
+constexpr real radian = 57.2957795130823208768;
+/// \ingroup math
+/// \f$ \pi/180 \f$
+constexpr real radinv = 0.01745329251994329576924;
+/// \ingroup math
+/// \f$ \sqrt{\pi} \f$
+constexpr real sqrtpi = 1.77245385090551602730;
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
-/// @brief
-/// find the max or min value of a variadic list
-/// @{
+/// \ingroup math
 template <class T>
 T max_of(T a) {
   return a;
 }
 
+/// \ingroup math
 template <class T, class T2>
 T max_of(T a, T2 b) {
   return (a < b) ? b : a;
 }
 
+/// \ingroup math
+/// \return
+/// The maximum value from a variadic list of numbers.
 template <class T, class T2, class... Ts>
 T max_of(T a, T2 b, Ts... cs) {
   return max_of(max_of(a, b), cs...);
 }
 
+/// \ingroup math
 template <class T>
 T min_of(T a) {
   return a;
 }
 
+/// \ingroup math
 template <class T, class T2>
 T min_of(T a, T2 b) {
   return (a < b) ? a : b;
 }
 
+/// \ingroup math
+/// The minimum value from a variadic list of numbers.
 template <class T, class T2, class... Ts>
 T min_of(T a, T2 b, Ts... cs) {
   return min_of(min_of(a, b), cs...);
 }
-/// @}
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
-bool is_pow2(size_t);
-size_t pow2_le(size_t);
-size_t pow2_ge(size_t);
+/// \ingroup math
+/// \return
+/// True if and only if \c val is a power of 2.
+bool is_pow2(size_t val);
+
+/// \ingroup math
+/// \return
+/// A power of 2 that is less than or equal to \c val.
+/// \param val
+/// Must be greater than 0.
+size_t pow2_le(size_t val);
+
+/// \ingroup math
+/// \return
+/// A power of 2 that is greater than or equal to \c val.
+size_t pow2_ge(size_t val);
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
-/// @{
-int reduce_sum(const int* gpu_a, int nelem);
-float reduce_sum(const float* gpu_a, int nelem);
-double reduce_sum(const double* gpu_a, int nelem);
-unsigned long long reduce_sum(const unsigned long long* gpu_a, int n);
-/// @}
-
+namespace parallel {
 /**
- * @brief
- * E.g., a two dimensional array @c v[16][m] was used as a virial buffer, in
- * which case, nelem = m, neach = 16. The total virial would be written to
- * h_ans[9], in which case, hn = 9.
+ * \ingroup math
+ * \return
+ * The sum of an array.
  */
-/// @{
-void reduce_sum2(int* h_ans, int hn, const int* v, int nelem, int neach);
-void reduce_sum2(float* h_ans, int hn, const float* v, int nelem, int neach);
-void reduce_sum2(double* h_ans, int hn, const double* v, int nelem, int neach);
-void reduce_sum2(unsigned long long* h_ans, int hn, const unsigned long long* v,
-                 int nelem, int neach);
-/// @}
+int reduce_sum(const int* gpu_a, size_t nelem);
+/// \ingroup math
+float reduce_sum(const float* gpu_a, size_t nelem);
+/// \ingroup math
+double reduce_sum(const double* gpu_a, size_t nelem);
+/// \ingroup math
+unsigned long long reduce_sum(const unsigned long long* gpu_a, size_t nelem);
 
-namespace detail {
 /**
- * @brief
- * n-dimensional dot product
- * @f[
- * dotprod = \sum_i^n a[i] \cdot b[i]
- * @f]
+ * \ingroup math
+ * E.g., a two dimensional array \c v[16][m] is used as a virial buffer, in
+ * which case, \c nelem = m, \c neach = 16. The total virial will be written to
+ * \c h_ans[\c hn], where \c hn = 9.
+ */
+void reduce_sum2(int* h_ans, size_t hn, const int* v, size_t nelem,
+                 size_t neach);
+/// \ingroup math
+void reduce_sum2(float* h_ans, size_t hn, const float* v, size_t nelem,
+                 size_t neach);
+/// \ingroup math
+void reduce_sum2(double* h_ans, size_t hn, const double* v, size_t nelem,
+                 size_t neach);
+/// \ingroup math
+void reduce_sum2(unsigned long long* h_ans, size_t hn,
+                 const unsigned long long* v, size_t nelem, size_t neach);
+
+/**
+ * \ingroup math
+ * \brief N-dimensional dot product.
  *
- * @param[in] a
- * device pointer to array a
+ * \f[ DotProduct = \sum_i^n a_i \cdot b_i \f]
  *
- * @param[in] b
- * device pointer to array b
- *
- * @param[in] n
- * number of elements in each array
+ * \param[in] a
+ * Device pointer to array a.
+ * \param[in] b
+ * Device pointer to array b.
+ * \param[in] nelem
+ * Number of elements in each array.
  *
  * @return
- * the dot product to the host thread
+ * The dot product to the host thread.
  */
-/// @{
-float dotprod(const float* a, const float* b, int n);
-double dotprod(const double* a, const double* b, int n);
-/// @}
+float dotprod(const float* a, const float* b, size_t nelem);
+/// \ingroup math
+double dotprod(const double* a, const double* b, size_t nelem);
 
 /**
- * @brief
- * @f[
- * array[i] = scalar \cdot array[i], 1 \leq i \leq n
- * @f]
+ * \ingroup math
+ * \brief Multiply all of the elements in an array by a scalar.
  *
- * @param[in,out] dst
- * device pointer to the array
+ * \f[ array[i] = scalar \cdot array[i], 1 \leq i \leq n \f]
  *
- * @param[in] scal
- * scalar
- *
- * @param[in] nelem
- * number of elements in the array
+ * \param[in,out] dst
+ * Device pointer to the array.
+ * \param[in] scal
+ * The multiplier, a scalar.
+ * \param[in] nelem
+ * Number of elements in the array.
  */
-/// @{
-void scale_array(float* dst, float scal, int nelem);
-void scale_array(double* dst, double scal, int nelem);
-/// @}
+void scale_array(float* dst, float scal, size_t nelem);
+/// \ingroup math
+void scale_array(double* dst, double scal, size_t nelem);
 }
 TINKER_NAMESPACE_END
 

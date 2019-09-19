@@ -49,9 +49,9 @@ struct Sum {
     static_assert(NStore >= NAnswer, "");
 
     Store val[NAnswer];
-    if_constexpr(NAnswer == 1) { val[0] = reduce_sum(dptr, nelem); }
+    if_constexpr(NAnswer == 1) { val[0] = parallel::reduce_sum(dptr, nelem); }
     else {
-      reduce_sum2(val, NAnswer, dptr, nelem, NStore);
+      parallel::reduce_sum2(val, NAnswer, dptr, nelem, NStore);
     }
 
     if_constexpr(std::is_same<Store, FixedPoint>::value &&

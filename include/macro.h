@@ -192,14 +192,22 @@ TINKER_NAMESPACE_END
 #  endif
 #endif
 
-// if constexpr
+/**
+ * \def if_constexpr
+ * \ingroup macro
+ * If possible, use \c if \c constexpr to hint at the chances of optimizations.
+ */
 #ifdef __cpp_if_constexpr
 #  define if_constexpr if constexpr
 #else
 #  define if_constexpr if
 #endif
 
-// maybe unused
+/**
+ * \def MAYBE_UNUSED
+ * \ingroup macro
+ * Reduce the "unused variable" warnings from the compiler.
+ */
 #if __has_cpp_attribute(maybe_unused)
 #  define MAYBE_UNUSED [[maybe_unused]]
 #else

@@ -7,12 +7,10 @@
 #include <string>
 
 TINKER_NAMESPACE_BEGIN
-/**
- * \defgroup gvar Global Variables
- *
- * \defgroup md MD Configuration
- * \ingroup gvar
- */
+/// \defgroup gvar Functions and Global Variables
+
+/// \defgroup md MD Configuration
+/// \ingroup gvar
 
 /**
  * \ingroup md

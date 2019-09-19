@@ -296,7 +296,7 @@ public:
     constexpr size_t N = deduce<PTR>::N;
     typedef typename deduce<PTR2>::type T2;
     static_assert(std::is_same<T, T2>::value, "");
-    return detail::dotprod(flatten(ptr), flatten(b), nelem * N);
+    return parallel::dotprod(flatten(ptr), flatten(b), nelem * N);
   }
 
   //====================================================================//
@@ -305,7 +305,7 @@ public:
   static void scale(size_t nelem, FLT scal, PTR ptr) {
     typedef typename deduce<PTR>::type T;
     constexpr size_t N = deduce<PTR>::N;
-    detail::scale_array(flatten(ptr), scal, nelem * N);
+    parallel::scale_array(flatten(ptr), scal, nelem * N);
   }
 
   template <class FLT, class PTR, class... PTRS>

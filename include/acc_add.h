@@ -7,27 +7,27 @@
 
 TINKER_NAMESPACE_BEGIN
 /**
- * @brief
- * add @c value to @c buffer[@c offset] atomically
+ * \brief
+ * Add \c value to \c buffer[\c offset].
  */
 #pragma acc routine seq
 template <class T>
-inline void atomic_add_value(T value, T* buffer, int offset = 0) {
+inline void atomic_add_value(T value, T* buffer, size_t offset = 0) {
   #pragma acc atomic update
   buffer[offset] += value;
 }
 
 /**
- * @brief
- * add @c value to @c buffer[@c offset] atomically via fixed-point arithmetic
+ * \brief
+ * Add \c value to \c buffer[\c offset] via fixed-point arithmetic.
  *
- * @tparam T
- * must be a floating point type
+ * \tparam T
+ * Must be a floating point type.
  */
 #pragma acc routine seq
 template <class T>
 inline void atomic_add_value(T value, unsigned long long* buffer,
-                             int offset = 0) {
+                             size_t offset = 0) {
   static_assert(std::is_same<T, float>::value || std::is_same<T, double>::value,
                 "");
   #pragma acc atomic update
