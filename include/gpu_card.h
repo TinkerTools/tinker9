@@ -4,14 +4,14 @@
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-/// \defgroup nv Nvidia GPU
+/// \defgroup nvidia Nvidia GPU
 /// \ingroup gvar
 
-/// \ingroup nv
+/// \ingroup nvidia
 /// Number of threads in a warp.
 constexpr unsigned WARP_SIZE = 32;
 
-/// \ingroup nv
+/// \ingroup nvidia
 /// Maximum number of threads allowed in a thread block.
 constexpr unsigned MAX_BLOCK_SIZE = 256;
 TINKER_EXTERN int ndevice, idevice;

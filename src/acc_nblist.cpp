@@ -10,7 +10,7 @@ MAYBE_UNUSED static const int GRID_DIM = 128;
 MAYBE_UNUSED static const int BLOCK_DIM = 64;
 // MAYBE_UNUSED static const int BLOCK_DIM = 128;
 
-#if defined(TINKER_CUDART)
+#if TINKER_CUDART
 TINKER_NAMESPACE_BEGIN
 #  define m_swap_(a, b)                                                        \
     {                                                                          \

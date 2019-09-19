@@ -11,7 +11,7 @@ void x_info(int argc, char** argv) {
   print(out, "   > This Build is Synchronized with Tinker Commit: {}\n",
         get_SHA1());
 
-#if defined(TINKER_CUDART)
+#if TINKER_CUDART
   auto loc = "Device with CUDA Runtime Library";
 #else
   auto loc = "Host";

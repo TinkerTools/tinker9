@@ -11,7 +11,7 @@
 ##/ mandatory at the end of each paragraph of the documentation.
 ##/
 ##/ Every option has a default value and is documented as
-##/ `option = default_value`. In order to override the default value(s), set
+##/ `option=default_value`. In order to override the default value(s), set
 ##/ them in the command line as follows:
 ##/ `$> make option1=value1 option2=value2 targets`
 ##/
@@ -52,7 +52,7 @@ shared_flags__ :=
 link_flags__ :=
 
 
-##/ ### opt = release
+##/ ### opt=release
 ##/ Optimization level. Other valid values are `debug` and `profile`.
 ##/
 opt := release
@@ -65,7 +65,7 @@ else ifeq ($(opt),profile)
 endif
 
 
-##/ ### prec = real8
+##/ ### prec=real8
 ##/ Precision of the floating point numbers.
 ##/   - These equivalent values all compile the code to double precision:
 ##/     `real8`, `8`, `64`, `double`, `d`.
@@ -84,7 +84,7 @@ else
 endif
 
 
-##/ ### host = 1
+##/ ### host=1
 ##/ Flag to compile to GPU version or CPU version.
 ##/   - These equivalent values all compile the code to GPU version:
 ##/     `false`, `off`, `0`.
@@ -102,7 +102,7 @@ else
 endif
 
 
-##/ ### build = build
+##/ ### build=build
 ##/ The Makefile is capable of creating a directory with name `$build` in the
 ##/ current working directory. This option enables the user to change its
 ##/ default name.
@@ -110,7 +110,7 @@ endif
 build := build
 
 
-##/ ### tinker_dir = NO DEFAULT
+##/ ### tinker_dir (NO DEFAULT)
 ##/ The directory in which user compiled the `libtinker`.
 ##/ If this value is not set by a command line argument, the Makefile will
 ##/ attempt to locate `libtinker` under `$HOME/tinker/source` and emit a fatal
@@ -131,7 +131,7 @@ endif
 link_flags__ += -L. -ltinker
 
 
-##/ ### fftw_dir / fftw_include / fftw_lib = NO DEFAULT
+##/ ### fftw_dir / fftw_include / fftw_lib (NO DEFAULT)
 ##/ No default values are set for these three options.
 ##/
 ##/ `fftw_dir` is the top-level `FFTW` installation, under which
@@ -177,7 +177,7 @@ ifeq ($(prec__),real4__)
 endif
 
 
-##/ ### cuda_dir = /usr/local/cuda
+##/ ### cuda_dir=/usr/local/cuda
 ##/ Top-level `CUDA` installation directory, under which `include` and `lib`
 ##/ directories are expected to be found.
 ##/
@@ -232,7 +232,7 @@ all_cpp_objs__ := $(main_cpp_objs__) $(test_cpp_objs__) $(lib_cpp_objs__)
 all_acc_objs__ := $(acc_objs__)
 
 
-##/ ### fortran_config / cxx_config / acc_config / link_config = UNSPECIFIED
+##/ ### fortran_config / cxx_config / acc_config / link_config (UNSPECIFIED)
 ##/ Default configuration files that contain Fortran/C++/OpenAcc/linker
 ##/ related flags. This is the mechanism we adopt to extend the multi-compiler
 ##/ support. Tested compilers are tabulated below.

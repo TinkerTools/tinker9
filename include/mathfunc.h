@@ -7,7 +7,7 @@
 
 #define INT_ABS(x) abs(x)
 
-#ifdef TINKER_DOUBLE_PRECISION
+#if TINKER_DOUBLE_PRECISION
 #  define REAL_SQRT(x) sqrt(x)
 #  define REAL_EXP(x) exp(x)
 #  define REAL_FLOOR(x) floor(x)
@@ -26,7 +26,7 @@
 #  define REAL_SIGN(x, y) copysign(x, y)
 #endif
 
-#ifdef TINKER_SINGLE_PRECISION
+#if TINKER_SINGLE_PRECISION
 #  define REAL_SQRT(x) sqrtf(x)
 #  define REAL_EXP(x) expf(x)
 #  define REAL_FLOOR(x) floorf(x)
@@ -47,6 +47,9 @@
 
 #define REAL_SQ(x) ((x) * (x))
 #define REAL_CUBE(x) ((x) * (x) * (x))
+
+/// \defgroup math Math
+/// \ingroup gvar
 
 TINKER_NAMESPACE_BEGIN
 constexpr real twosix = 1.12246204830937298143;    ///< @f$ \sqrt[6]{2} @f$

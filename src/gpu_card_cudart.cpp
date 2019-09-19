@@ -1,6 +1,6 @@
 #include "gpu_card.h"
 
-#ifdef TINKER_CUDART
+#if TINKER_CUDART
 #  include "error.h"
 #  include "gpu_card_cudart.h"
 #  include <cuda_runtime.h>

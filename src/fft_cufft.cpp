@@ -2,7 +2,7 @@
 #include "error.h"
 #include "pme.h"
 
-#ifdef TINKER_CUDART
+#if TINKER_CUDART
 TINKER_NAMESPACE_BEGIN
 void fft_data(rc_op op) {
   if (op & rc_dealloc) {
@@ -23,9 +23,9 @@ void fft_data(rc_op op) {
   }
 
   if (op & rc_init) {
-#  if defined(TINKER_SINGLE_PRECISION)
+#  if TINKER_SINGLE_PRECISION
     const cufftType typ = CUFFT_C2C;
-#  elif defined(TINKER_DOUBLE_PRECISION)
+#  elif TINKER_DOUBLE_PRECISION
     const cufftType typ = CUFFT_Z2Z;
 #  else
     static_assert(false, "");
@@ -49,10 +49,10 @@ void fftfront(PMEUnit pme_u) {
   auto& iplan = *iplan_u;
   auto& st = *pme_u;
 
-#  if defined(TINKER_SINGLE_PRECISION)
+#  if TINKER_SINGLE_PRECISION
   cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),
                reinterpret_cast<cufftComplex*>(st.qgrid), CUFFT_FORWARD);
-#  elif defined(TINKER_DOUBLE_PRECISION)
+#  elif TINKER_DOUBLE_PRECISION
   cufftExecZ2Z(iplan, reinterpret_cast<cufftDoubleComplex*>(st.qgrid),
                reinterpret_cast<cufftDoubleComplex*>(st.qgrid), CUFFT_FORWARD);
 #  else
@@ -65,10 +65,10 @@ void fftback(PMEUnit pme_u) {
   auto& iplan = *iplan_u;
   auto& st = *pme_u;
 
-#  if defined(TINKER_SINGLE_PRECISION)
+#  if TINKER_SINGLE_PRECISION
   cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),
                reinterpret_cast<cufftComplex*>(st.qgrid), CUFFT_INVERSE);
-#  elif defined(TINKER_DOUBLE_PRECISION)
+#  elif TINKER_DOUBLE_PRECISION
   cufftExecZ2Z(iplan, reinterpret_cast<cufftDoubleComplex*>(st.qgrid),
                reinterpret_cast<cufftDoubleComplex*>(st.qgrid), CUFFT_INVERSE);
 #  else

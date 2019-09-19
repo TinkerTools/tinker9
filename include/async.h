@@ -4,14 +4,14 @@
 #include "macro.h"
 #include <cstring>
 
-#ifdef TINKER_CUDART
+#if TINKER_CUDART
 #  include <cuda_runtime.h>
 TINKER_NAMESPACE_BEGIN
 typedef cudaStream_t Stream;
 TINKER_NAMESPACE_END
 #endif
 
-#ifdef TINKER_HOST
+#if TINKER_HOST
 TINKER_NAMESPACE_BEGIN
 class StreamSt;
 typedef StreamSt* Stream;

@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <thread>
 
-#ifdef TINKER_HOST
+#if TINKER_HOST
 #  include <condition_variable>
 #  include <functional>
 #  include <mutex>

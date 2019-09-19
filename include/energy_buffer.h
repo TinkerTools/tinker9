@@ -11,7 +11,7 @@ namespace detail {
 /// Convert a fixed point scalar \c val to a floating point number.
 template <class T>
 struct FixedToFloating {
-  static T exec(FixedPointType val) {
+  static T exec(FixedPoint val) {
     assert(std::is_floating_point<T>::value);
     return static_cast<T>(static_cast<long long>(val)) / fixed_point;
   }
@@ -28,13 +28,13 @@ struct S {
 
 template <>
 struct S<float> {
-  typedef FixedPointType Type;
+  typedef FixedPoint Type;
 };
 
 template <>
 struct S<double> {
   typedef double Type;
-  // typedef FixedPointType Type;
+  // typedef FixedPoint Type;
 };
 /// @}
 
@@ -54,7 +54,7 @@ struct Sum {
       reduce_sum2(val, NAnswer, dptr, nelem, NStore);
     }
 
-    if_constexpr(std::is_same<Store, FixedPointType>::value &&
+    if_constexpr(std::is_same<Store, FixedPoint>::value &&
                  !std::is_same<Store, Answer>::value) {
       if_constexpr(NAnswer == 1) {
         *host_ans = FixedToFloating<Answer>::exec(val[0]);

@@ -65,5 +65,7 @@ void x_testgrad(int argc, char** argv) {
     stopwatch_stop();
     stopwatch_reset();
   }
+
+  TINKER_RT(final)();
 }
 TINKER_NAMESPACE_END

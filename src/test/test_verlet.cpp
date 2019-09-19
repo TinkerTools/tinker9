@@ -47,7 +47,7 @@ static double arbox_pot[] = {
     -278.614496, -278.621043, -278.627171, -278.632877, -278.638159,
     -278.643017, -278.647447, -278.651448, -278.655017, -278.658152};
 TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]") {
-#ifdef TINKER_DOUBLE_PRECISION
+#if TINKER_DOUBLE_PRECISION
   const char* k = "test_arbox.key";
   const char* d = "test_arbox.dyn";
   const char* x = "test_arbox.xyz";
