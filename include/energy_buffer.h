@@ -6,9 +6,9 @@
 #include "mathfunc.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace ebuf_detail {
-/// @brief
-/// convert fixed point scalar @c val to a floating point number
+namespace detail {
+/// \brief
+/// Convert a fixed point scalar \c val to a floating point number.
 template <class T>
 struct FixedToFloating {
   static T exec(FixedPointType val) {
@@ -88,7 +88,7 @@ template <class Answer, int NAnswer, int NStore>
 class GenericBuffer {
 private:
   static_assert(NStore >= NAnswer, "");
-  typedef typename ebuf_detail::S<Answer>::Type Store;
+  typedef typename detail::S<Answer>::Type Store;
   static constexpr size_t RS = sizeof(Store) * NStore;
 
   Store* buf;
@@ -111,8 +111,21 @@ private:
   }
 
 public:
-  static int calc_size(int nelem, int max_MB = 4) {
-    size_t max_bytes = max_MB * 1024 * 1024ull;
+  static int calc_size(int nelem) {
+    size_t max_bytes = 4 * 1024 * 1024ull; // 4 MB
+    if (nelem <= 16384)
+      max_bytes /= 2; // 2 MB
+    if (nelem <= 8192)
+      max_bytes /= 2; // 1 MB
+    if (nelem <= 4096)
+      max_bytes /= 2; // 512 KB
+    if (nelem <= 2048)
+      max_bytes /= 2; // 256 KB
+    if (nelem <= 1024)
+      max_bytes /= 2; // 128 KB
+    if (nelem <= 512)
+      max_bytes /= 2; // 64 KB 16384 words
+
     size_t new_size = max_bytes / sizeof(Answer);
 
     assert(is_pow2(new_size) && "new_size must be power of 2");
@@ -126,11 +139,11 @@ public:
   int size() const { return cap; }
   void zero() { device_array::zero(RS * cap, buf); }
   void sum(Answer* host_ans) {
-    ebuf_detail::Sum<Answer, Store, NAnswer, NStore>::exec(host_ans, buf, cap);
+    detail::Sum<Answer, Store, NAnswer, NStore>::exec(host_ans, buf, cap);
   }
 
-  void alloc(int nelem, int max_MB = 4) {
-    int new_size = calc_size(nelem, max_MB);
+  void alloc(int nelem) {
+    int new_size = calc_size(nelem);
     grow_if_must(new_size);
   }
 
@@ -149,7 +162,8 @@ public:
 
 typedef GenericBuffer<int, 1, 1> CountBuffer;
 typedef GenericBuffer<real, 1, 1> EnergyBuffer;
-typedef GenericBuffer<real, 9, 16> VirialBuffer;
+// typedef GenericBuffer<real, 9, 16> VirialBuffer;
+typedef GenericBuffer<real, 6, 8> VirialBuffer;
 
 typedef GenericUnit<CountBuffer, GenericUnitVersion::DisableOnDevice> Count;
 typedef GenericUnit<EnergyBuffer, GenericUnitVersion::DisableOnDevice> Energy;

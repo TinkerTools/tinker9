@@ -217,16 +217,13 @@ void epitors_tmpl() {
           real vzy = zdc * vyterm + zcp * dedyip - zqd * dedyiq;
           real vzz = zdc * vzterm + zcp * dedzip - zqd * dedziq;
 
-          int offv = offset * 16;
+          int offv = offset * 8;
           atomic_add_value(vxx, vir_ept, offv + 0);
           atomic_add_value(vyx, vir_ept, offv + 1);
           atomic_add_value(vzx, vir_ept, offv + 2);
-          atomic_add_value(vyx, vir_ept, offv + 3);
-          atomic_add_value(vyy, vir_ept, offv + 4);
-          atomic_add_value(vzy, vir_ept, offv + 5);
-          atomic_add_value(vzx, vir_ept, offv + 6);
-          atomic_add_value(vzy, vir_ept, offv + 7);
-          atomic_add_value(vzz, vir_ept, offv + 8);
+          atomic_add_value(vyy, vir_ept, offv + 3);
+          atomic_add_value(vzy, vir_ept, offv + 4);
+          atomic_add_value(vzz, vir_ept, offv + 5);
         }
       }
     }

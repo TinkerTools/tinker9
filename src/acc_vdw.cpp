@@ -178,16 +178,13 @@ void evdw_tmpl() {
             real vzy = zr * dedy;
             real vzz = zr * dedz;
 
-            int offv = offset * 16;
+            int offv = offset * 8;
             atomic_add_value(vxx, vir_ev, offv + 0);
             atomic_add_value(vyx, vir_ev, offv + 1);
             atomic_add_value(vzx, vir_ev, offv + 2);
-            atomic_add_value(vyx, vir_ev, offv + 3);
-            atomic_add_value(vyy, vir_ev, offv + 4);
-            atomic_add_value(vzy, vir_ev, offv + 5);
-            atomic_add_value(vzx, vir_ev, offv + 6);
-            atomic_add_value(vzy, vir_ev, offv + 7);
-            atomic_add_value(vzz, vir_ev, offv + 8);
+            atomic_add_value(vyy, vir_ev, offv + 3);
+            atomic_add_value(vzy, vir_ev, offv + 4);
+            atomic_add_value(vzz, vir_ev, offv + 5);
           } // end if (do_v)
         }   // end if (do_g)
       }
@@ -280,16 +277,13 @@ void evdw_tmpl() {
           real vzy = zr * dedy;
           real vzz = zr * dedz;
 
-          int offv = offset * 16;
+          int offv = offset * 8;
           atomic_add_value(vxx, vir_ev, offv + 0);
           atomic_add_value(vyx, vir_ev, offv + 1);
           atomic_add_value(vzx, vir_ev, offv + 2);
-          atomic_add_value(vyx, vir_ev, offv + 3);
-          atomic_add_value(vyy, vir_ev, offv + 4);
-          atomic_add_value(vzy, vir_ev, offv + 5);
-          atomic_add_value(vzx, vir_ev, offv + 6);
-          atomic_add_value(vzy, vir_ev, offv + 7);
-          atomic_add_value(vzz, vir_ev, offv + 8);
+          atomic_add_value(vyy, vir_ev, offv + 3);
+          atomic_add_value(vzy, vir_ev, offv + 4);
+          atomic_add_value(vzz, vir_ev, offv + 5);
         } // end if (do_v)
       }   // end if (do_g)
     }

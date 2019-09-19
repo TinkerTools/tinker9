@@ -126,7 +126,7 @@ void reduce_sum2(unsigned long long* h_ans, int hn, const unsigned long long* v,
                  int nelem, int neach);
 /// @}
 
-namespace mathfunc_detail {
+namespace detail {
 /**
  * @brief
  * n-dimensional dot product

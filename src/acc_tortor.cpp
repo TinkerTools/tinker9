@@ -399,16 +399,13 @@ void etortor_tmpl() {
           real vzy2 = zdc * (dedyid2 + dedyie2) - zcb * dedyib2 + zed * dedyie2;
           real vzz2 = zdc * (dedzid2 + dedzie2) - zcb * dedzib2 + zed * dedzie2;
 
-          int offv = offset * 16;
+          int offv = offset * 8;
           atomic_add_value(vxx + vxx2, vir_ett, offv + 0);
           atomic_add_value(vyx + vyx2, vir_ett, offv + 1);
           atomic_add_value(vzx + vzx2, vir_ett, offv + 2);
-          atomic_add_value(vyx + vyx2, vir_ett, offv + 3);
-          atomic_add_value(vyy + vyy2, vir_ett, offv + 4);
-          atomic_add_value(vzy + vzy2, vir_ett, offv + 5);
-          atomic_add_value(vzx + vzx2, vir_ett, offv + 6);
-          atomic_add_value(vzy + vzy2, vir_ett, offv + 7);
-          atomic_add_value(vzz + vzz2, vir_ett, offv + 8);
+          atomic_add_value(vyy + vyy2, vir_ett, offv + 3);
+          atomic_add_value(vzy + vzy2, vir_ett, offv + 4);
+          atomic_add_value(vzz + vzz2, vir_ett, offv + 5);
         }
       }
     }

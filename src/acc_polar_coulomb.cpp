@@ -508,16 +508,13 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3]) {
             real vyz = -0.5f * (zr * frcy + yr * frcz);
             real vzz = -zr * frcz;
 
-            int offv = offset * 16;
+            int offv = offset * 8;
             atomic_add_value(vxx, vir_ep, offv + 0);
             atomic_add_value(vxy, vir_ep, offv + 1);
             atomic_add_value(vxz, vir_ep, offv + 2);
-            atomic_add_value(vxy, vir_ep, offv + 3);
-            atomic_add_value(vyy, vir_ep, offv + 4);
-            atomic_add_value(vyz, vir_ep, offv + 5);
-            atomic_add_value(vxz, vir_ep, offv + 6);
-            atomic_add_value(vyz, vir_ep, offv + 7);
-            atomic_add_value(vzz, vir_ep, offv + 8);
+            atomic_add_value(vyy, vir_ep, offv + 3);
+            atomic_add_value(vyz, vir_ep, offv + 4);
+            atomic_add_value(vzz, vir_ep, offv + 5);
           }
         }
         // end if use_thole

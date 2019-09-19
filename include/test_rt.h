@@ -56,26 +56,32 @@ TINKER_NAMESPACE_END
   }
 #define COMPARE_VIR_(gpuptr, ref_v, eps)                                       \
   {                                                                            \
-    double vir1[9];                                                            \
+    double vir1[6];                                                            \
     get_virial(vir1, gpuptr);                                                  \
-    for (int i = 0; i < 3; ++i) {                                              \
-      for (int j = 0; j < 3; ++j) {                                            \
-        int k = 3 * i + j;                                                     \
-        REQUIRE(vir1[k] == Approx(ref_v[i][j]).margin(eps));                   \
-      }                                                                        \
-    }                                                                          \
+    REQUIRE(vir1[0] == Approx(ref_v[0][0]).margin(eps));                       \
+    REQUIRE(vir1[1] == Approx(ref_v[0][1]).margin(eps));                       \
+    REQUIRE(vir1[2] == Approx(ref_v[0][2]).margin(eps));                       \
+    REQUIRE(vir1[3] == Approx(ref_v[1][1]).margin(eps));                       \
+    REQUIRE(vir1[4] == Approx(ref_v[1][2]).margin(eps));                       \
+    REQUIRE(vir1[5] == Approx(ref_v[2][2]).margin(eps));                       \
+    REQUIRE(ref_v[1][0] == Approx(ref_v[0][1]).margin(eps));                   \
+    REQUIRE(ref_v[2][0] == Approx(ref_v[0][2]).margin(eps));                   \
+    REQUIRE(ref_v[2][1] == Approx(ref_v[1][2]).margin(eps));                   \
   }
 #define COMPARE_VIR2_(gpuptr, gpuptr2, ref_v, eps)                             \
   {                                                                            \
-    double vir1[9], vir2[9];                                                   \
+    double vir1[6], vir2[6];                                                   \
     get_virial(vir1, gpuptr);                                                  \
     get_virial(vir2, gpuptr2);                                                 \
-    for (int i = 0; i < 3; ++i) {                                              \
-      for (int j = 0; j < 3; ++j) {                                            \
-        int k = 3 * i + j;                                                     \
-        REQUIRE((vir1[k] + vir2[k]) == Approx(ref_v[i][j]).margin(eps));       \
-      }                                                                        \
-    }                                                                          \
+    REQUIRE(vir1[0] + vir2[0] == Approx(ref_v[0][0]).margin(eps));             \
+    REQUIRE(vir1[1] + vir2[1] == Approx(ref_v[0][1]).margin(eps));             \
+    REQUIRE(vir1[2] + vir2[2] == Approx(ref_v[0][2]).margin(eps));             \
+    REQUIRE(vir1[3] + vir2[3] == Approx(ref_v[1][1]).margin(eps));             \
+    REQUIRE(vir1[4] + vir2[4] == Approx(ref_v[1][2]).margin(eps));             \
+    REQUIRE(vir1[5] + vir2[5] == Approx(ref_v[2][2]).margin(eps));             \
+    REQUIRE(ref_v[1][0] == Approx(ref_v[0][1]).margin(eps));                   \
+    REQUIRE(ref_v[2][0] == Approx(ref_v[0][2]).margin(eps));                   \
+    REQUIRE(ref_v[2][1] == Approx(ref_v[1][2]).margin(eps));                   \
   }
 #define COMPARE_GRADIENT3_(gx, gy, gz, ref_grad, eps, check_ij)                \
   {                                                                            \

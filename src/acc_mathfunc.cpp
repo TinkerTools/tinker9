@@ -56,7 +56,7 @@ void reduce_sum2(unsigned long long* h_ans, int hn, const unsigned long long* v,
 
 //====================================================================//
 
-namespace mathfunc_detail {
+namespace detail {
 template <class T>
 T dotprod_acc_impl(const T* __restrict__ gpu_a, const T* __restrict__ gpu_b,
                    int cpu_n) {

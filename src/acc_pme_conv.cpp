@@ -80,16 +80,13 @@ void pme_conv_tmpl(PMEUnit pme_u, Virial gpu_vir) {
         real vyz = h2 * h3 * vterm;
         real vzz = (h3 * h3 * vterm - eterm);
 
-        int offv = (i & (bufsize - 1)) * 16;
+        int offv = (i & (bufsize - 1)) * 8;
         atomic_add_value(vxx, gpu_vir9, offv + 0);
         atomic_add_value(vxy, gpu_vir9, offv + 1);
         atomic_add_value(vxz, gpu_vir9, offv + 2);
-        atomic_add_value(vxy, gpu_vir9, offv + 3);
-        atomic_add_value(vyy, gpu_vir9, offv + 4);
-        atomic_add_value(vyz, gpu_vir9, offv + 5);
-        atomic_add_value(vxz, gpu_vir9, offv + 6);
-        atomic_add_value(vyz, gpu_vir9, offv + 7);
-        atomic_add_value(vzz, gpu_vir9, offv + 8);
+        atomic_add_value(vyy, gpu_vir9, offv + 3);
+        atomic_add_value(vyz, gpu_vir9, offv + 4);
+        atomic_add_value(vzz, gpu_vir9, offv + 5);
       }
     }
 

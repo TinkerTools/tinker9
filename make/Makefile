@@ -21,12 +21,6 @@
 ##/
 
 
-##/ ### ignore = 1
-##/ If set to a non-zero value, ignore the fatal errors emitted by the `make`
-##/ program. The non-default value will, for example, bypass the failure on the
-##/ mandatory library path checks.
-##/
-ignore := 1
 define errline
 
 **************************************************
@@ -103,7 +97,7 @@ ifeq ($(host),$(filter $(host),false off 0))
 else ifeq ($(host),$(filter $(host),true on 1))
     host_only__ := true
     shared_flags__ += -DTINKER_HOST
-else ifeq (0,$(ignore))
+else
     $(error Error! Flag host=$(host) was set incorrectly)
 endif
 
@@ -129,9 +123,10 @@ ifdef tinker_dir
 else
     ifneq (,$(wildcard $(HOME)/tinker/source/$(shared_libtinker__)))
         tinker_dir__ := $(HOME)/tinker/source
-    else ifeq (0,$(ignore))
-        $(warning $(errline)Error! tinker_dir must be supplied.$(errline))
     endif
+endif
+ifndef tinker_dir__
+    $(warning $(errline)Warning! tinker_dir must be supplied.$(errline))
 endif
 link_flags__ += -L. -ltinker
 
@@ -155,13 +150,9 @@ ifdef fftw_dir
 else
     ifneq (,$(wildcard /usr/local/include/fftw3.h))
         fftw_include__ := /usr/local/include
-    else
-        fftw_include__ :=
     endif
     ifneq (,$(wildcard /usr/local/lib/libfftw3.*))
         fftw_lib__ := /usr/local/lib
-    else
-        fftw_lib__ :=
     endif
 endif
 
@@ -169,16 +160,16 @@ endif
 ifdef fftw_include
     fftw_include__ := $(fftw_include)
 endif
-ifeq (0,$(ignore)$(fftw_include__))
-    $(warning $(errline)Error! fftw_include or fftw_dir must be supplied.$(errline))
+ifndef fftw_include__
+    $(warning $(errline)Warning! fftw_include or fftw_dir must be supplied.$(errline))
 endif
 
 
 ifdef fftw_lib
     fftw_lib__ := $(fftw_lib)
 endif
-ifeq (0,$(ignore)$(fftw_lib__))
-    $(warning $(errline)Error! fftw_lib or fftw_dir must be supplied.$(errline))
+ifndef fftw_lib__
+    $(warning $(errline)Warning! fftw_lib or fftw_dir must be supplied.$(errline))
 endif
 link_flags__ += -L$(fftw_lib__) -lfftw3 -lfftw3_threads
 ifeq ($(prec__),real4__)
@@ -238,13 +229,7 @@ acc_objs__ := $(acc_objs__:%.cpp=%.o)
 # all cpp acc
 lib_cpp_objs__ := $(ext_cpp_objs__) $(cpp_objs__)
 all_cpp_objs__ := $(main_cpp_objs__) $(test_cpp_objs__) $(lib_cpp_objs__)
-cpp_dependency__ := $(all_cpp_objs__:%.o=%.d)
 all_acc_objs__ := $(acc_objs__)
-acc_dependency__ := $(all_acc_objs__:%.o=%.d)
-ifeq (0,$(ignore))
-    include $(cpp_dependency__)
-    include $(acc_dependency__)
-endif
 
 
 ##/ ### fortran_config / cxx_config / acc_config / link_config = UNSPECIFIED
@@ -328,7 +313,7 @@ test: all.tests
 ##/ ```bash
 ##/ $> pwd
 ##/ #> /home/developer/tinker.gpu
-##/ $> make -f make/Makefile create_build ignore=1 build=build-v3
+##/ $> make -f make/Makefile create_build build=build-v3
 ##/ ```
 ##/
 dirs__ := $(build)/$(ext_obj_dir__)/fmt
@@ -400,15 +385,15 @@ help:
 ##/
 .PHONY: clean
 clean:
-	rm -rf all.tests tinker.gpu libtinker* *dSYM
-	rm -rf *.md doc include html
-	rm -rf ext src
+	rm -rf all.tests tinker.gpu libtinker* *dSYM *.out
+	rm -rf *.md doc include
+	rm -rf html/*
+	find ext/ -type f -name '*.o' -delete
+	find src/ -type f -name '*.o' -delete
 
 
-ifeq (0,$(ignore))
 $(shared_libtinker__): $(tinker_dir__)/$(shared_libtinker__)
 	cp $^ $@
-endif
 tinker.gpu: $(src_obj_dir__)/main_tinker_gpu.o $(all_acc_objs__) \
 libtinkergpu.$(shared_lib_suffix__) | $(shared_libtinker__)
 	$(LINK) $^ $(link_flags__) -o $@

@@ -15,10 +15,10 @@ double get_energy(Energy e_) {
 }
 
 void get_virial(double* v_out, Virial vir_) {
-  real r9[9];
-  vir_->sum(r9);
-  for (int i = 0; i < 9; ++i)
-    v_out[i] = r9[i];
+  real r6[6];
+  vir_->sum(r6);
+  for (int i = 0; i < 6; ++i)
+    v_out[i] = r6[i];
 }
 
 int BondedEnergy::buffer_size() const { return bufsize_; }

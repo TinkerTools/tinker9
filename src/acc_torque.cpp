@@ -367,16 +367,13 @@ void torque_tmpl(Virial v_handle) {
            yiy * frcy[2] + yiz * frcz[2]);
       real vzz = zix * frcx[2] + ziy * frcy[2] + ziz * frcz[2];
 
-      int offv = (i & (bufsize - 1)) * 16;
+      int offv = (i & (bufsize - 1)) * 8;
       atomic_add_value(vxx, gpu_vir, offv + 0);
       atomic_add_value(vxy, gpu_vir, offv + 1);
       atomic_add_value(vxz, gpu_vir, offv + 2);
-      atomic_add_value(vxy, gpu_vir, offv + 3);
-      atomic_add_value(vyy, gpu_vir, offv + 4);
-      atomic_add_value(vyz, gpu_vir, offv + 5);
-      atomic_add_value(vxz, gpu_vir, offv + 6);
-      atomic_add_value(vyz, gpu_vir, offv + 7);
-      atomic_add_value(vzz, gpu_vir, offv + 8);
+      atomic_add_value(vyy, gpu_vir, offv + 3);
+      atomic_add_value(vyz, gpu_vir, offv + 4);
+      atomic_add_value(vzz, gpu_vir, offv + 5);
     } // end if_constexpr(DO_V)
   }   // end for (int i)
 }
