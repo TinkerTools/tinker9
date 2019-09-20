@@ -147,8 +147,9 @@ TINKER_NAMESPACE_BEGIN
 namespace parallel {
 /**
  * \ingroup math
+ * \brief Sum all the elements of an array.
  * \return
- * The sum of an array.
+ * The sum.
  */
 int reduce_sum(const int* gpu_a, size_t nelem);
 /// \ingroup math
@@ -160,8 +161,10 @@ unsigned long long reduce_sum(const unsigned long long* gpu_a, size_t nelem);
 
 /**
  * \ingroup math
- * E.g., a two dimensional array \c v[16][m] is used as a virial buffer, in
- * which case, \c nelem = m, \c neach = 16. The total virial will be written to
+ * \brief Sum the elements of a 2-dimensional array to an 1-dimensional array.
+ * 
+ * E.g., a two dimensional array \c v[16][\c m] is used as a virial buffer, in
+ * which case, \c nelem = \m, \c neach = 16. The total virial will be written to
  * \c h_ans[\c hn], where \c hn = 9.
  */
 void reduce_sum2(int* h_ans, size_t hn, const int* v, size_t nelem,
@@ -179,7 +182,6 @@ void reduce_sum2(unsigned long long* h_ans, size_t hn,
 /**
  * \ingroup math
  * \brief N-dimensional dot product.
- *
  * \f[ DotProduct = \sum_i^n a_i \cdot b_i \f]
  *
  * \param[in] a
@@ -199,8 +201,7 @@ double dotprod(const double* a, const double* b, size_t nelem);
 /**
  * \ingroup math
  * \brief Multiply all of the elements in an array by a scalar.
- *
- * \f[ array[i] = scalar \cdot array[i], 1 \leq i \leq n \f]
+ * \f[ a_i = c \cdot a_i, 1 \leq i \leq n \f]
  *
  * \param[in,out] dst
  * Device pointer to the array.

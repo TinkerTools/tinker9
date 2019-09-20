@@ -117,9 +117,9 @@ void evdw_tmpl() {
       real zr = zi - zred[k];
       real vlambda = vlam[k];
 
-      if (vcouple == vcouple_decouple) {
+      if (vcouple == evdw_t::decouple) {
         vlambda = (lam1 == vlambda ? 1 : (lam1 < vlambda ? lam1 : vlambda));
-      } else if (vcouple == vcouple_annihilate) {
+      } else if (vcouple == evdw_t::annihilate) {
         vlambda = (lam1 < vlambda ? lam1 : vlambda);
       }
 
@@ -213,9 +213,9 @@ void evdw_tmpl() {
     real zr = zi - zred[k];
     real vlambda = vlam[k];
 
-    if (vcouple == vcouple_decouple) {
+    if (vcouple == evdw_t::decouple) {
       vlambda = (lam1 == vlambda ? 1 : (lam1 < vlambda ? lam1 : vlambda));
-    } else if (vcouple == vcouple_annihilate) {
+    } else if (vcouple == evdw_t::annihilate) {
       vlambda = (lam1 < vlambda ? lam1 : vlambda);
     }
 

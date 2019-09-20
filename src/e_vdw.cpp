@@ -172,7 +172,10 @@ void evdw_data(rc_op op) {
     dhal = vdwpot::dhal;
     scexp = mutant::scexp;
     scalpha = mutant::scalpha;
-    vcouple = mutant::vcouple;
+    if (static_cast<int>(evdw_t::decouple) == mutant::vcouple)
+      vcouple = evdw_t::decouple;
+    else if (static_cast<int>(evdw_t::annihilate) == mutant::vcouple)
+      vcouple = evdw_t::annihilate;
 
     std::vector<int> iredbuf(n);
     std::vector<double> kredbuf(n);

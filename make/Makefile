@@ -370,6 +370,8 @@ info:
 doc:
 	cp -r $(top_dir__)/README.md $(top_dir__)/doc $(top_dir__)/include .
 	grep '^\##/' $(top_dir__)/make/Makefile | sed -e 's|##/|///|' > doc/makefile_doc.h
+	doxygen -w html doc/header.html doc/footer.html doc/customdoxygen.css-orig
+	sed -e "s|Roboto,sans-serif|'Lucida Grande',Geneva,Helvetica,Arial,sans-serif|" doc/customdoxygen.css-orig > doc/customdoxygen.css
 	doxygen $(top_dir__)/Doxyfile
 
 
