@@ -5,6 +5,9 @@
 #include <cmath>
 #include <cstdlib>
 
+/// \defgroup math Math
+/// \ingroup gvar
+
 #define INT_ABS(x) abs(x)
 
 #if TINKER_DOUBLE_PRECISION
@@ -20,7 +23,8 @@
 #  define REAL_ACOS(x) acos(x)
 #  define REAL_ASIN(x) asin(x)
 #  define REAL_ERF(x) erf(x)
-#  define REAL_ERFC(x) erfc(x)
+// #  define REAL_ERFC(x) erfc(x)
+#  define REAL_ERFC(x) (1 - erf(x))
 #  define REAL_MIN(x, y) fmin(x, y)
 #  define REAL_MAX(x, y) fmax(x, y)
 #  define REAL_SIGN(x, y) copysign(x, y)
@@ -39,7 +43,8 @@
 #  define REAL_ACOS(x) acosf(x)
 #  define REAL_ASIN(x) asinf(x)
 #  define REAL_ERF(x) erff(x)
-#  define REAL_ERFC(x) erfcf(x)
+// #  define REAL_ERFC(x) erfcf(x)
+#  define REAL_ERFC(x) (1 - erff(x))
 #  define REAL_MIN(x, y) fminf(x, y)
 #  define REAL_MAX(x, y) fmaxf(x, y)
 #  define REAL_SIGN(x, y) copysignf(x, y)
@@ -47,9 +52,6 @@
 
 #define REAL_SQ(x) ((x) * (x))
 #define REAL_CUBE(x) ((x) * (x) * (x))
-
-/// \defgroup math Math
-/// \ingroup gvar
 
 TINKER_NAMESPACE_BEGIN
 /// \ingroup math

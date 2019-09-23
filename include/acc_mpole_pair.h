@@ -97,14 +97,12 @@ inline void empole_pair_acc(                                          //
     real exp2a = REAL_EXP(-REAL_SQ(ralpha));
 
     if_constexpr(!do_g) {
-      #pragma acc loop seq
       for (int j = 1; j <= 4; ++j) {
         alsq2n *= alsq2;
         bn[j] = ((j + j - 1) * bn[j - 1] + alsq2n * exp2a) * rr2;
       }
     }
     else {
-      #pragma acc loop seq
       for (int j = 1; j <= 5; ++j) {
         alsq2n *= alsq2;
         bn[j] = ((j + j - 1) * bn[j - 1] + alsq2n * exp2a) * rr2;
