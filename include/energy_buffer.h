@@ -6,68 +6,99 @@
 #include "mathfunc.h"
 
 TINKER_NAMESPACE_BEGIN
-namespace detail {
-/// \brief
-/// Convert a fixed point scalar \c val to a floating point number.
-template <class T>
-struct FixedToFloating {
-  static T exec(FixedPoint val) {
+/**
+ * \brief
+ * A buffer class to store the "energy" components, where the total energy can
+ * be obtained from the reduction operation, although unnecessarily within
+ * `O(1)` time.
+ *
+ * \tparam TA,NA
+ * \c TA and \c NA are referred to as \c A and \c N, respectively.
+ * The type of the total "energy" is \c A if \c N is 1,
+ * or `A[N]` if \c N is greater than 1.
+ * Type \c A also dictates the underlying storing type \c S on device.
+ * For examples, number of interactions: `int` or `size_t`;
+ * single precision energy `float`;
+ * double precision virial `double[6]` or `double[9]`, etc.
+ *
+ * \note
+ * The length of the underlying device array must be a power of 2.
+ */
+template <class TA, size_t NA>
+class GenericBuffer {
+public:
+  typedef TA A;
+  static constexpr size_t N = NA;
+
+  //====================================================================//
+
+private:
+  /// \brief
+  /// `Type` gives the underlying type of the device array.
+  template <class DUMMY, class T>
+  struct S0 {
+    typedef T Type;
+  };
+
+  template <class DUMMY>
+  struct S0<DUMMY, float> {
+    typedef FixedPoint Type;
+  };
+
+  template <class DUMMY>
+  struct S0<DUMMY, double> {
+    typedef double Type;
+    // typedef FixedPoint Type;
+  };
+
+public:
+  typedef typename S0<void, A>::Type S;
+  static constexpr size_t NS = pow2_ge(N);
+
+private:
+  static_assert(NS >= N, "");
+  static_assert(is_pow2(NS), "");
+  static constexpr size_t RS = sizeof(S) * NS;
+
+  //====================================================================//
+
+  /// \brief
+  /// Convert a fixed point scalar \c val to a floating point number.
+  template <class T>
+  static T fixed_to_floating(FixedPoint val) {
     assert(std::is_floating_point<T>::value);
     return static_cast<T>(static_cast<long long>(val)) / fixed_point;
   }
-};
 
-/// @brief
-/// @c S<T>::Type gives the underlying type of the buffer; by default using the
-/// same type as @c T; use partial specialization for special cases
-/// @{
-template <class T>
-struct S {
-  typedef T Type;
-};
+  //====================================================================//
 
-template <>
-struct S<float> {
-  typedef FixedPoint Type;
-};
+  /// \brief
+  /// Sum device array `dptr[nelem][NS]` and save to host array
+  /// `host_ans[A]`.
+  template <class Store, size_t NS>
+  static void sum(A* __restrict__ host_ans, const Store* __restrict__ dptr,
+                  size_t nelem) {
+    static_assert(N >= 1, "");
+    static_assert(NS >= N, "");
 
-template <>
-struct S<double> {
-  typedef double Type;
-  // typedef FixedPoint Type;
-};
-/// @}
-
-/// @brief
-/// sum device array @c dptr[@c nelem][@c NStore] and save to
-/// host array @c host_ans[@c Answer]
-template <class Answer, class Store, int NAnswer, int NStore>
-struct Sum {
-  static void exec(Answer* __restrict__ host_ans,
-                   const Store* __restrict__ dptr, int nelem) {
-    static_assert(NAnswer >= 1, "");
-    static_assert(NStore >= NAnswer, "");
-
-    Store val[NAnswer];
-    if_constexpr(NAnswer == 1) { val[0] = parallel::reduce_sum(dptr, nelem); }
+    Store val[N];
+    if_constexpr(N == 1) { val[0] = parallel::reduce_sum(dptr, nelem); }
     else {
-      parallel::reduce_sum2(val, NAnswer, dptr, nelem, NStore);
+      parallel::reduce_sum2(val, N, dptr, nelem, NS);
     }
 
     if_constexpr(std::is_same<Store, FixedPoint>::value &&
-                 !std::is_same<Store, Answer>::value) {
-      if_constexpr(NAnswer == 1) {
-        *host_ans = FixedToFloating<Answer>::exec(val[0]);
-      }
+                 !std::is_same<Store, A>::value) {
+      if_constexpr(N == 1) { *host_ans = fixed_to_floating<A>(val[0]); }
       else {
-        for (int i = 0; i < NAnswer; ++i)
-          host_ans[i] = FixedToFloating<Answer>::exec(val[i]);
+        for (size_t i = 0; i < N; ++i)
+          host_ans[i] = fixed_to_floating<A>(val[i]);
       }
     }
-    else if_constexpr(std::is_same<Store, Answer>::value) {
-      if_constexpr(NAnswer == 1) { *host_ans = val[0]; }
+    else if_constexpr(std::is_same<Store, A>::value) {
+      if_constexpr(N == 1) { *host_ans = val[0]; }
       else {
-        for (int i = 0; i < NAnswer; ++i)
+        for (size_t i = 0; i < N; ++i)
           host_ans[i] = val[i];
       }
     }
@@ -75,47 +106,32 @@ struct Sum {
       assert(false);
     }
   }
-};
-}
 
-//====================================================================//
+  //====================================================================//
 
-/// @brief
-/// each element of the buffer on device is of type @c Store[@c NStore];
-/// can be reduced to type @c Answer[@c NAnswer] on host;
-/// the length of the underlying device array must be a power of 2
-template <class Answer, int NAnswer, int NStore>
-class GenericBuffer {
-private:
-  static_assert(NStore >= NAnswer, "");
-  typedef typename detail::S<Answer>::Type Store;
-  static constexpr size_t RS = sizeof(Store) * NStore;
+  S* buf_;
+  size_t cap_;
 
-  Store* buf;
-  int cap;
-
-  void grow_if_must(int new_size) {
-    if (new_size <= cap)
+  void grow_if_must(size_t new_size) {
+    if (new_size <= cap_)
       return;
 
-    int old_cap = cap;
-    int new_cap = new_size;
+    size_t old_cap = cap_;
+    size_t new_cap = new_size;
 
-    Store* new_buf;
+    S* new_buf;
     device_array::allocate(RS * new_cap, &new_buf);
-    device_array::copy(RS * old_cap, new_buf, buf);
-    device_array::deallocate(buf);
+    device_array::copy(RS * old_cap, new_buf, buf_);
+    device_array::deallocate(buf_);
 
-    buf = new_buf;
-    cap = new_cap;
+    buf_ = new_buf;
+    cap_ = new_cap;
   }
 
 public:
-  static constexpr size_t N = NAnswer;
-  static constexpr size_t NS = NStore;
-
-  static int calc_size(int nelem) {
-    size_t max_bytes = 4 * 1024 * 1024ull; // 4 MB
+  static size_t calc_size(size_t nelem) {
+    size_t max_bytes = 4 * 1024 * 1024ull; // 4 MB for word size
+    max_bytes *= (sizeof(A) / sizeof(int));
     if (nelem <= 16384)
       max_bytes /= 2; // 2 MB
     if (nelem <= 8192)
@@ -129,44 +145,40 @@ public:
     if (nelem <= 512)
       max_bytes /= 2; // 64 KB 16384 words
 
-    size_t new_size = max_bytes / sizeof(Answer);
+    size_t new_size = max_bytes / sizeof(A);
 
     assert(is_pow2(new_size) && "new_size must be power of 2");
     return new_size;
   }
 
 public:
-  typedef Store* PointerType;
-  const Store* buffer() const { return buf; }
-  Store* buffer() { return buf; }
-  int size() const { return cap; }
-  void zero() { device_array::zero(RS * cap, buf); }
-  void sum(Answer* host_ans) {
-    detail::Sum<Answer, Store, NAnswer, NStore>::exec(host_ans, buf, cap);
-  }
+  const S* buffer() const { return buf_; }
+  S* buffer() { return buf_; }
+  size_t size() const { return cap_; }
+  void zero() { device_array::zero(RS * cap_, buf_); }
+  void sum(A* host_ans) { sum<S, NS>(host_ans, buf_, cap_); }
 
-  void alloc(int nelem) {
-    int new_size = calc_size(nelem);
+  void alloc(size_t nelem) {
+    size_t new_size = calc_size(nelem);
     grow_if_must(new_size);
   }
 
   GenericBuffer()
-      : buf(nullptr)
-      , cap(0) {}
+      : buf_(nullptr)
+      , cap_(0) {}
 
   ~GenericBuffer() {
-    cap = 0;
-    device_array::deallocate(buf);
-    buf = nullptr;
+    cap_ = 0;
+    device_array::deallocate(buf_);
+    buf_ = nullptr;
   }
 };
 
 //====================================================================//
 
-typedef GenericBuffer<int, 1, 1> CountBuffer;
-typedef GenericBuffer<real, 1, 1> EnergyBuffer;
-// typedef GenericBuffer<real, 9, 16> VirialBuffer;
-typedef GenericBuffer<real, 6, 8> VirialBuffer;
+typedef GenericBuffer<int, 1> CountBuffer;
+typedef GenericBuffer<real, 1> EnergyBuffer;
+typedef GenericBuffer<real, 6> VirialBuffer;
 
 typedef GenericUnit<CountBuffer, GenericUnitVersion::DisableOnDevice> Count;
 typedef GenericUnit<EnergyBuffer, GenericUnitVersion::DisableOnDevice> Energy;
@@ -178,17 +190,17 @@ void get_virial(double*, Virial);
 
 class BondedEnergy {
 protected:
-  int bufsize_;
+  size_t bufsize_;
   Energy e_;
   Virial vir_;
 
 public:
-  int buffer_size() const;
+  size_t buffer_size() const;
   Energy e();
   Virial vir();
 
   void dealloc();
-  void alloc(int bsize);
+  void alloc(size_t bsize);
 };
 
 class NonbondedEnergy : public BondedEnergy {
@@ -199,7 +211,7 @@ public:
   Count ne();
 
   void dealloc();
-  void alloc(int bsize);
+  void alloc(size_t bsize);
 };
 TINKER_NAMESPACE_END
 

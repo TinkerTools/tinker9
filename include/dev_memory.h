@@ -3,7 +3,11 @@
 
 #include "macro.h"
 #include <cstring>
+
 TINKER_NAMESPACE_BEGIN
+/// \defgroup mem Memory Management
+/// \ingroup gvar
+
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes);
 void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes);
 void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes);
@@ -15,6 +19,7 @@ TINKER_NAMESPACE_END
 #include <stdexcept>
 #include <type_traits>
 #include <vector>
+
 TINKER_NAMESPACE_BEGIN
 struct DeviceMemory {
   static void copyin_bytes(void* dst, const void* src, size_t nbytes) {

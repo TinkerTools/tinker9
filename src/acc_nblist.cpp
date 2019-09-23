@@ -1,14 +1,7 @@
 #include "acc_image.h"
+#include "gpu_card.h"
 #include "md.h"
 #include "nblist.h"
-
-// MAYBE_UNUSED static const int GRID_DIM = 32;
-// MAYBE_UNUSED static const int GRID_DIM = 64;
-MAYBE_UNUSED static const int GRID_DIM = 128;
-// MAYBE_UNUSED static const int GRID_DIM = 256;
-// MAYBE_UNUSED static const int BLOCK_DIM = 32;
-MAYBE_UNUSED static const int BLOCK_DIM = 64;
-// MAYBE_UNUSED static const int BLOCK_DIM = 128;
 
 #if TINKER_CUDART
 TINKER_NAMESPACE_BEGIN
@@ -91,6 +84,7 @@ inline void build_v1_(NBListUnit nu) {
   auto* __restrict__ nlst = st.nlst;
   auto* __restrict__ lst = st.lst;
 
+  MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
   #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
               deviceptr(box,lx,ly,lz,xo,yo,zo,nlst,lst)
   #pragma acc loop gang independent

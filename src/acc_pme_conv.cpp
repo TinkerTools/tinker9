@@ -22,7 +22,7 @@ void pme_conv_tmpl(PMEUnit pme_u, Virial gpu_vir) {
   real pterm = pi / aewald;
   pterm *= pterm;
 
-  VirialBuffer::PointerType gpu_vir_ = nullptr;
+  VirialBuffer::S* gpu_vir_ = nullptr;
   auto bufsize = VirialBuffer::calc_size(ntot);
   if (gpu_vir.valid()) {
     gpu_vir_ = gpu_vir->buffer();

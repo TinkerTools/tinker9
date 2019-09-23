@@ -14,6 +14,11 @@ constexpr unsigned WARP_SIZE = 32;
 /// \ingroup nvidia
 /// Maximum number of threads allowed in a thread block.
 constexpr unsigned MAX_BLOCK_SIZE = 256;
+
+// constexpr int BLOCK_DIM = 32;
+// constexpr int BLOCK_DIM = 64;
+constexpr int BLOCK_DIM = 128;
+
 TINKER_EXTERN int ndevice, idevice;
 
 void gpu_card_data(rc_op op);

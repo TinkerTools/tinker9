@@ -128,22 +128,36 @@ TINKER_NAMESPACE_BEGIN
 /// \ingroup math
 /// \return
 /// True if and only if \c val is a power of 2.
-bool is_pow2(size_t val);
+constexpr bool is_pow2(size_t val) {
+  return (val != 0) && ((val & (val - 1)) == 0);
+}
+
+/// \ingroup math
+/// \return
+/// The base-2 logarithm of positive integer \c n.
+/// \param val
+/// Must be greater than 0.
+constexpr size_t int_log2(size_t val) {
+  return val < 2 ? 0 : 1 + int_log2(val / 2);
+}
 
 /// \ingroup math
 /// \return
 /// A power of 2 that is less than or equal to \c val.
 /// \param val
 /// Must be greater than 0.
-size_t pow2_le(size_t val);
+constexpr size_t pow2_le(size_t val) { return 1ull << int_log2(val); }
 
 /// \ingroup math
 /// \return
 /// A power of 2 that is greater than or equal to \c val.
-size_t pow2_ge(size_t val);
+constexpr size_t pow2_ge(size_t val) {
+  return val <= 1 ? 1 : (1ull << (1 + int_log2(val - 1)));
+}
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
+/// Functions running in parallel.
 namespace parallel {
 /**
  * \ingroup math
@@ -162,7 +176,7 @@ unsigned long long reduce_sum(const unsigned long long* gpu_a, size_t nelem);
 /**
  * \ingroup math
  * \brief Sum the elements of a 2-dimensional array to an 1-dimensional array.
- * 
+ *
  * E.g., a two dimensional array \c v[16][\c m] is used as a virial buffer, in
  * which case, \c nelem = \m, \c neach = 16. The total virial will be written to
  * \c h_ans[\c hn], where \c hn = 9.

@@ -24,7 +24,7 @@
 TINKER_NAMESPACE_BEGIN
 template <int DO_V>
 void torque_tmpl(Virial v_handle) {
-  VirialBuffer::PointerType gpu_vir = nullptr;
+  VirialBuffer::S* gpu_vir = nullptr;
   auto bufsize = VirialBuffer::calc_size(n);
   if (v_handle.valid()) {
     gpu_vir = v_handle->buffer();

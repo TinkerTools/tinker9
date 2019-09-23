@@ -7,10 +7,6 @@
 #include "md.h"
 #include "nblist.h"
 
-// MAYBE_UNUSED static const int BLOCK_DIM = 32;
-// MAYBE_UNUSED static const int BLOCK_DIM = 64;
-MAYBE_UNUSED static const int BLOCK_DIM = 128;
-
 // TODO: test lj, buck, mm3hb, gauss, and mutant
 // TODO: add vdw correction
 
@@ -91,8 +87,8 @@ void evdw_tmpl() {
   if_constexpr(do_g) { device_array::zero(n, gxred, gyred, gzred); }
 
 #define DEVICE_PTRS_                                                           \
-  x, y, z, gxred, gyred, gzred, box, xred, yred, zred, jvdw, radmin, epsilon,  \
-      vlam, nev, ev, vir_ev
+  xred, yred, zred, gxred, gyred, gzred, box, jvdw, radmin, epsilon, vlam,     \
+      nev, ev, vir_ev
 
   MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
   #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
@@ -147,16 +143,8 @@ void evdw_tmpl() {
 
         // Increment the energy, gradient, and virial.
 
-        if_constexpr(do_e) {
-          atomic_add_value(e, ev, offset);
-
-          if_constexpr(do_a) {
-            if (e != 0) {
-              atomic_add_value(1, nev, offset);
-            }
-          }
-        }
-
+        if_constexpr(do_a) atomic_add_value(1, nev, offset);
+        if_constexpr(do_e) atomic_add_value(e, ev, offset);
         if_constexpr(do_g) {
           de *= REAL_RECIP(rik);
           real dedx = de * xr;
@@ -240,16 +228,9 @@ void evdw_tmpl() {
         if_constexpr(do_g) de = e * dtaper + de * taper;
         if_constexpr(do_e) e = e * taper;
       }
-      if_constexpr(do_e) {
-        atomic_add_value(e, ev, offset);
 
-        if_constexpr(do_a) {
-          if (e != 0) {
-            atomic_add_value(-1, nev, offset);
-          }
-        }
-      }
-
+      if_constexpr(do_a && vscale == -1) atomic_add_value(-1, nev, offset);
+      if_constexpr(do_e) atomic_add_value(e, ev, offset);
       if_constexpr(do_g) {
         de *= REAL_RECIP(rik);
         real dedx = de * xr;
@@ -301,8 +282,5 @@ TINKER_EVDW_IMPL_(buck);
 TINKER_EVDW_IMPL_(mm3hb);
 TINKER_EVDW_IMPL_(hal);
 TINKER_EVDW_IMPL_(gauss);
-#undef TINKER_EVDW_IMPL_
-
-#undef DEVICE_PTRS_
 
 TINKER_NAMESPACE_END

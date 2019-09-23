@@ -5,9 +5,16 @@
 #include "energy_buffer.h"
 
 TINKER_NAMESPACE_BEGIN
+/// \defgroup mpole Multipole Electrostatic Energy
+/// \ingroup gvar
+
 TINKER_EXTERN elec_t empole_electyp;
 
 TINKER_EXTERN real m2scale, m3scale, m4scale, m5scale;
+
+TINKER_EXTERN int nmpole_excluded_;
+TINKER_EXTERN device_pointer<int, 2> mpole_excluded_;
+TINKER_EXTERN device_pointer<real> mpole_excluded_scale_;
 
 TINKER_EXTERN NonbondedEnergy em_handle;
 

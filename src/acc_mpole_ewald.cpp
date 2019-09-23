@@ -1,8 +1,8 @@
 #include "acc_add.h"
 #include "acc_image.h"
-#include "couple.h"
+#include "acc_mpole_pair.h"
 #include "e_mpole.h"
-#include "e_polar.h"
+#include "gpu_card.h"
 #include "md.h"
 #include "nblist.h"
 #include "pme.h"
@@ -24,50 +24,130 @@ void empole_real_self_tmpl() {
   const int maxnlst = mlist_unit->maxnlst;
   const auto* mlst = mlist_unit.deviceptr();
 
-  const auto* coupl = couple_unit.deviceptr();
-
   auto* nem = em_handle.ne()->buffer();
   auto* em = em_handle.e()->buffer();
   auto* vir_em = em_handle.vir()->buffer();
   auto bufsize = em_handle.buffer_size();
-
-  static std::vector<real> mscalebuf;
-  mscalebuf.resize(n, 1);
-  real* mscale = mscalebuf.data();
 
   const PMEUnit pu = epme_unit;
   const real aewald = pu->aewald;
   const real aewald_sq_2 = 2 * aewald * aewald;
   const real fterm = -f * aewald * 0.5 * M_2_SQRTPI;
 
-  real bn[6];
+#define DEVICE_PTRS_                                                           \
+  x, y, z, gx, gy, gz, box, rpole, nem, em, vir_em, trqx, trqy, trqz
 
-  #pragma acc parallel num_gangs(bufsize)\
-              deviceptr(x,y,z,gx,gy,gz,box,coupl,mlst,\
-              rpole,em,nem,vir_em,trqx,trqy,trqz)\
-              firstprivate(mscale[0:n])
+  MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
+  #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+              deviceptr(DEVICE_PTRS_,mlst)
   #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
-    int offset = i & (bufsize - 1);
+    real xi = x[i];
+    real yi = y[i];
+    real zi = z[i];
+    real ci = rpole[i][mpl_pme_0];
+    real dix = rpole[i][mpl_pme_x];
+    real diy = rpole[i][mpl_pme_y];
+    real diz = rpole[i][mpl_pme_z];
+    real qixx = rpole[i][mpl_pme_xx];
+    real qixy = rpole[i][mpl_pme_xy];
+    real qixz = rpole[i][mpl_pme_xz];
+    real qiyy = rpole[i][mpl_pme_yy];
+    real qiyz = rpole[i][mpl_pme_yz];
+    real qizz = rpole[i][mpl_pme_zz];
+    MAYBE_UNUSED real gxi = 0, gyi = 0, gzi = 0;
+    MAYBE_UNUSED real txi = 0, tyi = 0, tzi = 0;
 
-    // set exclusion coefficients for connected atoms
+    int nmlsti = mlst->nlst[i];
+    int base = i * maxnlst;
+    #pragma acc loop vector independent reduction(+:gxi,gyi,gzi,txi,tyi,tzi)
+    for (int kk = 0; kk < nmlsti; ++kk) {
+      int offset = (kk + i * n) & (bufsize - 1);
+      int k = mlst->lst[base + kk];
+      real xr = x[k] - xi;
+      real yr = y[k] - yi;
+      real zr = z[k] - zi;
 
-    const int n12i = coupl->n12[i];
-    const int n13i = coupl->n13[i];
-    const int n14i = coupl->n14[i];
-    const int n15i = coupl->n15[i];
-    #pragma acc loop independent
-    for (int j = 0; j < n12i; ++j)
-      mscale[coupl->i12[i][j]] = m2scale;
-    #pragma acc loop independent
-    for (int j = 0; j < n13i; ++j)
-      mscale[coupl->i13[i][j]] = m3scale;
-    #pragma acc loop independent
-    for (int j = 0; j < n14i; ++j)
-      mscale[coupl->i14[i][j]] = m4scale;
-    #pragma acc loop independent
-    for (int j = 0; j < n15i; ++j)
-      mscale[coupl->i15[i][j]] = m5scale;
+      image(xr, yr, zr, box);
+      real r2 = xr * xr + yr * yr + zr * zr;
+      if (r2 <= off2) {
+        MAYBE_UNUSED real e;
+        MAYBE_UNUSED MPolePairGrad pgrad;
+        empole_pair_acc<USE, elec_t::ewald>(
+            r2, xr, yr, zr, f, 1, aewald, ci, dix, diy, diz, qixx, qixy, qixz,
+            qiyy, qiyz, qizz, rpole[k][mpl_pme_0], rpole[k][mpl_pme_x],
+            rpole[k][mpl_pme_y], rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx],
+            rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
+            rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], //
+            e, pgrad);
+
+        if_constexpr(do_a) atomic_add_value(1, nem, offset);
+        if_constexpr(do_e) atomic_add_value(e, em, offset);
+        if_constexpr(do_g) {
+          gxi += pgrad.frcx;
+          gyi += pgrad.frcy;
+          gzi += pgrad.frcz;
+          atomic_add_value(-pgrad.frcx, gx, k);
+          atomic_add_value(-pgrad.frcy, gy, k);
+          atomic_add_value(-pgrad.frcz, gz, k);
+
+          txi += pgrad.ttmi[0];
+          tyi += pgrad.ttmi[1];
+          tzi += pgrad.ttmi[2];
+          atomic_add_value(pgrad.ttmk[0], trqx, k);
+          atomic_add_value(pgrad.ttmk[1], trqy, k);
+          atomic_add_value(pgrad.ttmk[2], trqz, k);
+
+          // virial
+
+          if_constexpr(do_v) {
+            real vxx = -xr * pgrad.frcx;
+            real vxy = -0.5f * (yr * pgrad.frcx + xr * pgrad.frcy);
+            real vxz = -0.5f * (zr * pgrad.frcx + xr * pgrad.frcz);
+            real vyy = -yr * pgrad.frcy;
+            real vyz = -0.5f * (zr * pgrad.frcy + yr * pgrad.frcz);
+            real vzz = -zr * pgrad.frcz;
+
+            atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
+          } // end if (do_v)
+        }   // end if (do_g)
+      }     // end if (r2 <= off2)
+    }       // end for (int kk)
+
+    if_constexpr(do_g) {
+      atomic_add_value(gxi, gx, i);
+      atomic_add_value(gyi, gy, i);
+      atomic_add_value(gzi, gz, i);
+      atomic_add_value(txi, trqx, i);
+      atomic_add_value(tyi, trqy, i);
+      atomic_add_value(tzi, trqz, i);
+    }
+
+    // compute the self-energy part of the Ewald summation
+
+    real cii = ci * ci;
+    real dii = dix * dix + diy * diy + diz * diz;
+    real qii = 2 * (qixy * qixy + qixz * qixz + qiyz * qiyz) + qixx * qixx +
+        qiyy * qiyy + qizz * qizz;
+
+    if_constexpr(do_e) {
+      int offset = i & (bufsize - 1);
+      real e = fterm *
+          (cii + aewald_sq_2 * (dii / 3 + 2 * aewald_sq_2 * qii * (real)0.2));
+      atomic_add_value(e, em, offset);
+      if_constexpr(do_a) { atomic_add_value(1, nem, offset); }
+    } // end if (do_e)
+  }   // end for (int i)
+
+  #pragma acc parallel\
+              deviceptr(DEVICE_PTRS_,mpole_excluded_,mpole_excluded_scale_)
+  #pragma acc loop independent
+  for (int ii = 0; ii < nmpole_excluded_; ++ii) {
+    int offset = ii & (bufsize - 1);
+
+    int i = mpole_excluded_[ii][0];
+    int k = mpole_excluded_[ii][1];
+    real mscale = mpole_excluded_scale_[ii];
 
     real xi = x[i];
     real yi = y[i];
@@ -83,289 +163,54 @@ void empole_real_self_tmpl() {
     real qiyz = rpole[i][mpl_pme_yz];
     real qizz = rpole[i][mpl_pme_zz];
 
-    int nmlsti = mlst->nlst[i];
-    int base = i * maxnlst;
-    #pragma acc loop independent private(bn[0:6])
-    for (int kk = 0; kk < nmlsti; ++kk) {
-      int offset = kk & (bufsize - 1);
-      int k = mlst->lst[base + kk];
-      real xr = x[k] - xi;
-      real yr = y[k] - yi;
-      real zr = z[k] - zi;
+    real xr = x[k] - xi;
+    real yr = y[k] - yi;
+    real zr = z[k] - zi;
 
-      image(xr, yr, zr, box);
-      real r2 = xr * xr + yr * yr + zr * zr;
-      if (r2 <= off2) {
-        real r = REAL_SQRT(r2);
-        real ck = rpole[k][mpl_pme_0];
-        real dkx = rpole[k][mpl_pme_x];
-        real dky = rpole[k][mpl_pme_y];
-        real dkz = rpole[k][mpl_pme_z];
-        real qkxx = rpole[k][mpl_pme_xx];
-        real qkxy = rpole[k][mpl_pme_xy];
-        real qkxz = rpole[k][mpl_pme_xz];
-        real qkyy = rpole[k][mpl_pme_yy];
-        real qkyz = rpole[k][mpl_pme_yz];
-        real qkzz = rpole[k][mpl_pme_zz];
+    image(xr, yr, zr, box);
+    real r2 = xr * xr + yr * yr + zr * zr;
 
-        real dir = dix * xr + diy * yr + diz * zr;
-        real qix = qixx * xr + qixy * yr + qixz * zr;
-        real qiy = qixy * xr + qiyy * yr + qiyz * zr;
-        real qiz = qixz * xr + qiyz * yr + qizz * zr;
-        real qir = qix * xr + qiy * yr + qiz * zr;
-        real dkr = dkx * xr + dky * yr + dkz * zr;
-        real qkx = qkxx * xr + qkxy * yr + qkxz * zr;
-        real qky = qkxy * xr + qkyy * yr + qkyz * zr;
-        real qkz = qkxz * xr + qkyz * yr + qkzz * zr;
-        real qkr = qkx * xr + qky * yr + qkz * zr;
-        real dik = dix * dkx + diy * dky + diz * dkz;
-        real qik = qix * qkx + qiy * qky + qiz * qkz;
-        real diqk = dix * qkx + diy * qky + diz * qkz;
-        real dkqi = dkx * qix + dky * qiy + dkz * qiz;
-        real qiqk = 2 * (qixy * qkxy + qixz * qkxz + qiyz * qkyz) +
-            qixx * qkxx + qiyy * qkyy + qizz * qkzz;
+    MAYBE_UNUSED real e;
+    MAYBE_UNUSED MPolePairGrad pgrad;
+    empole_pair_acc<USE, elec_t::coulomb>(
+        r2, xr, yr, zr, f, mscale, aewald, ci, dix, diy, diz, qixx, qixy, qixz,
+        qiyy, qiyz, qizz, rpole[k][mpl_pme_0], rpole[k][mpl_pme_x],
+        rpole[k][mpl_pme_y], rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx],
+        rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
+        rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], //
+        e, pgrad);
 
-        real invr1 = REAL_RECIP(r);
-        real rr2 = invr1 * invr1;
+    if_constexpr(do_a) atomic_add_value(-1, nem, offset);
+    if_constexpr(do_e) atomic_add_value(e, em, offset);
+    if_constexpr(do_g) {
+      atomic_add_value(pgrad.frcx, gx, i);
+      atomic_add_value(pgrad.frcy, gy, i);
+      atomic_add_value(pgrad.frcz, gz, i);
+      atomic_add_value(-pgrad.frcx, gx, k);
+      atomic_add_value(-pgrad.frcy, gy, k);
+      atomic_add_value(-pgrad.frcz, gz, k);
 
-        real rr1 = f * invr1;
-        real rr3 = rr1 * rr2;
-        real rr5 = 3 * rr3 * rr2;
-        real rr7 = 5 * rr5 * rr2;
-        real rr9 = 7 * rr7 * rr2;
-        MAYBE_UNUSED real rr11;
+      atomic_add_value(pgrad.ttmi[0], trqx, i);
+      atomic_add_value(pgrad.ttmi[1], trqy, i);
+      atomic_add_value(pgrad.ttmi[2], trqz, i);
+      atomic_add_value(pgrad.ttmk[0], trqx, k);
+      atomic_add_value(pgrad.ttmk[1], trqy, k);
+      atomic_add_value(pgrad.ttmk[2], trqz, k);
 
-        real ralpha = aewald * r;
+      // virial
 
-        bn[0] = REAL_ERFC(ralpha) * invr1;
-        real alsq2 = 2 * REAL_SQ(aewald);
-        real alsq2n = (aewald > 0 ? REAL_RECIP(sqrtpi * aewald) : 0);
-        real exp2a = REAL_EXP(-REAL_SQ(ralpha));
-        if_constexpr(!do_g) {
-          #pragma acc loop seq
-          for (int j = 1; j <= 4; ++j) {
-            alsq2n *= alsq2;
-            bn[j] = ((j + j - 1) * bn[j - 1] + alsq2n * exp2a) * rr2;
-          }
-        }
-        else {
-          #pragma acc loop seq
-          for (int j = 1; j <= 5; ++j) {
-            alsq2n *= alsq2;
-            bn[j] = ((j + j - 1) * bn[j - 1] + alsq2n * exp2a) * rr2;
-          }
-        }
-        bn[0] *= f;
-        bn[1] *= f;
-        bn[2] *= f;
-        bn[3] *= f;
-        bn[4] *= f;
-        if_constexpr(do_g) {
-          bn[5] *= f;
-          rr11 = 9 * rr9 * rr2;
-        }
+      if_constexpr(do_v) {
+        real vxx = -xr * pgrad.frcx;
+        real vxy = -0.5f * (yr * pgrad.frcx + xr * pgrad.frcy);
+        real vxz = -0.5f * (zr * pgrad.frcx + xr * pgrad.frcz);
+        real vyy = -yr * pgrad.frcy;
+        real vyz = -0.5f * (zr * pgrad.frcy + yr * pgrad.frcz);
+        real vzz = -zr * pgrad.frcz;
 
-        real term1 = ci * ck;
-        real term2 = ck * dir - ci * dkr + dik;
-        real term3 = ci * qkr + ck * qir - dir * dkr + 2 * (dkqi - diqk + qiqk);
-        real term4 = dir * qkr - dkr * qir - 4 * qik;
-        real term5 = qir * qkr;
-
-        if_constexpr(do_a) {
-          real efull = term1 * rr1 + term2 * rr3 + term3 * rr5 + term4 * rr7 +
-              term5 * rr9;
-          efull *= mscale[k];
-          if (efull != 0) {
-            atomic_add_value(1, nem, offset);
-          }
-        } // end if (do_a)
-
-        real scalek = 1 - mscale[k];
-        rr1 = bn[0] - scalek * rr1;
-        rr3 = bn[1] - scalek * rr3;
-        rr5 = bn[2] - scalek * rr5;
-        rr7 = bn[3] - scalek * rr7;
-        rr9 = bn[4] - scalek * rr9;
-        if_constexpr(do_e) {
-          real e = term1 * rr1 + term2 * rr3 + term3 * rr5 + term4 * rr7 +
-              term5 * rr9;
-          atomic_add_value(e, em, offset);
-        } // end if (do_e)
-
-        if_constexpr(do_g) {
-
-          // gradient
-
-          real qixk = qixx * qkx + qixy * qky + qixz * qkz;
-          real qiyk = qixy * qkx + qiyy * qky + qiyz * qkz;
-          real qizk = qixz * qkx + qiyz * qky + qizz * qkz;
-          real qkxi = qkxx * qix + qkxy * qiy + qkxz * qiz;
-          real qkyi = qkxy * qix + qkyy * qiy + qkyz * qiz;
-          real qkzi = qkxz * qix + qkyz * qiy + qkzz * qiz;
-
-          real diqkx = dix * qkxx + diy * qkxy + diz * qkxz;
-          real diqky = dix * qkxy + diy * qkyy + diz * qkyz;
-          real diqkz = dix * qkxz + diy * qkyz + diz * qkzz;
-          real dkqix = dkx * qixx + dky * qixy + dkz * qixz;
-          real dkqiy = dkx * qixy + dky * qiyy + dkz * qiyz;
-          real dkqiz = dkx * qixz + dky * qiyz + dkz * qizz;
-
-          rr11 = bn[5] - scalek * rr11;
-
-          real de = term1 * rr3 + term2 * rr5 + term3 * rr7 + term4 * rr9 +
-              term5 * rr11;
-
-          term1 = -ck * rr3 + dkr * rr5 - qkr * rr7;
-          term2 = ci * rr3 + dir * rr5 + qir * rr7;
-          term3 = 2 * rr5;
-          term4 = 2 * (-ck * rr5 + dkr * rr7 - qkr * rr9);
-          term5 = 2 * (-ci * rr5 - dir * rr7 - qir * rr9);
-          real term6 = 4 * rr7;
-
-          real frcx = de * xr + term1 * dix + term2 * dkx +
-              term3 * (diqkx - dkqix) + term4 * qix + term5 * qkx +
-              term6 * (qixk + qkxi);
-          real frcy = de * yr + term1 * diy + term2 * dky +
-              term3 * (diqky - dkqiy) + term4 * qiy + term5 * qky +
-              term6 * (qiyk + qkyi);
-          real frcz = de * zr + term1 * diz + term2 * dkz +
-              term3 * (diqkz - dkqiz) + term4 * qiz + term5 * qkz +
-              term6 * (qizk + qkzi);
-
-          #pragma acc atomic update
-          gx[i] += frcx;
-          #pragma acc atomic update
-          gy[i] += frcy;
-          #pragma acc atomic update
-          gz[i] += frcz;
-          #pragma acc atomic update
-          gx[k] -= frcx;
-          #pragma acc atomic update
-          gy[k] -= frcy;
-          #pragma acc atomic update
-          gz[k] -= frcz;
-
-          // torque
-
-          real dirx = diy * zr - diz * yr;
-          real diry = diz * xr - dix * zr;
-          real dirz = dix * yr - diy * xr;
-          real dkrx = dky * zr - dkz * yr;
-          real dkry = dkz * xr - dkx * zr;
-          real dkrz = dkx * yr - dky * xr;
-          real dikx = diy * dkz - diz * dky;
-          real diky = diz * dkx - dix * dkz;
-          real dikz = dix * dky - diy * dkx;
-
-          real qirx = qiz * yr - qiy * zr;
-          real qiry = qix * zr - qiz * xr;
-          real qirz = qiy * xr - qix * yr;
-          real qkrx = qkz * yr - qky * zr;
-          real qkry = qkx * zr - qkz * xr;
-          real qkrz = qky * xr - qkx * yr;
-          real qikx = qky * qiz - qkz * qiy;
-          real qiky = qkz * qix - qkx * qiz;
-          real qikz = qkx * qiy - qky * qix;
-
-          real qikrx = qizk * yr - qiyk * zr;
-          real qikry = qixk * zr - qizk * xr;
-          real qikrz = qiyk * xr - qixk * yr;
-          real qkirx = qkzi * yr - qkyi * zr;
-          real qkiry = qkxi * zr - qkzi * xr;
-          real qkirz = qkyi * xr - qkxi * yr;
-
-          real diqkrx = diqkz * yr - diqky * zr;
-          real diqkry = diqkx * zr - diqkz * xr;
-          real diqkrz = diqky * xr - diqkx * yr;
-          real dkqirx = dkqiz * yr - dkqiy * zr;
-          real dkqiry = dkqix * zr - dkqiz * xr;
-          real dkqirz = dkqiy * xr - dkqix * yr;
-
-          real dqikx = diy * qkz - diz * qky + dky * qiz - dkz * qiy -
-              2 *
-                  (qixy * qkxz + qiyy * qkyz + qiyz * qkzz - qixz * qkxy -
-                   qiyz * qkyy - qizz * qkyz);
-          real dqiky = diz * qkx - dix * qkz + dkz * qix - dkx * qiz -
-              2 *
-                  (qixz * qkxx + qiyz * qkxy + qizz * qkxz - qixx * qkxz -
-                   qixy * qkyz - qixz * qkzz);
-          real dqikz = dix * qky - diy * qkx + dkx * qiy - dky * qix -
-              2 *
-                  (qixx * qkxy + qixy * qkyy + qixz * qkyz - qixy * qkxx -
-                   qiyy * qkxy - qiyz * qkxz);
-
-          real ttmi[3], ttmk[3];
-          ttmi[0] = -rr3 * dikx + term1 * dirx + term3 * (dqikx + dkqirx) -
-              term4 * qirx - term6 * (qikrx + qikx);
-          ttmi[1] = -rr3 * diky + term1 * diry + term3 * (dqiky + dkqiry) -
-              term4 * qiry - term6 * (qikry + qiky);
-          ttmi[2] = -rr3 * dikz + term1 * dirz + term3 * (dqikz + dkqirz) -
-              term4 * qirz - term6 * (qikrz + qikz);
-          ttmk[0] = rr3 * dikx + term2 * dkrx - term3 * (dqikx + diqkrx) -
-              term5 * qkrx - term6 * (qkirx - qikx);
-          ttmk[1] = rr3 * diky + term2 * dkry - term3 * (dqiky + diqkry) -
-              term5 * qkry - term6 * (qkiry - qiky);
-          ttmk[2] = rr3 * dikz + term2 * dkrz - term3 * (dqikz + diqkrz) -
-              term5 * qkrz - term6 * (qkirz - qikz);
-
-          #pragma acc atomic update
-          trqx[i] += ttmi[0];
-          #pragma acc atomic update
-          trqy[i] += ttmi[1];
-          #pragma acc atomic update
-          trqz[i] += ttmi[2];
-          #pragma acc atomic update
-          trqx[k] += ttmk[0];
-          #pragma acc atomic update
-          trqy[k] += ttmk[1];
-          #pragma acc atomic update
-          trqz[k] += ttmk[2];
-
-          // virial
-
-          if_constexpr(do_v) {
-            real vxx = -xr * frcx;
-            real vxy = -0.5f * (yr * frcx + xr * frcy);
-            real vxz = -0.5f * (zr * frcx + xr * frcz);
-            real vyy = -yr * frcy;
-            real vyz = -0.5f * (zr * frcy + yr * frcz);
-            real vzz = -zr * frcz;
-
-            atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
-          } // end if (do_v)
-        }   // end if (do_g)
-      }     // end if (r2 <= off2)
-    }       // end for (int kk)
-
-    // reset exclusion coefficients for connected atoms
-
-    #pragma acc loop independent
-    for (int j = 0; j < n12i; ++j)
-      mscale[coupl->i12[i][j]] = 1;
-    #pragma acc loop independent
-    for (int j = 0; j < n13i; ++j)
-      mscale[coupl->i13[i][j]] = 1;
-    #pragma acc loop independent
-    for (int j = 0; j < n14i; ++j)
-      mscale[coupl->i14[i][j]] = 1;
-    #pragma acc loop independent
-    for (int j = 0; j < n15i; ++j)
-      mscale[coupl->i15[i][j]] = 1;
-
-    // compute the self-energy part of the Ewald summation
-
-    real cii = ci * ci;
-    real dii = dix * dix + diy * diy + diz * diz;
-    real qii = 2 * (qixy * qixy + qixz * qixz + qiyz * qiyz) + qixx * qixx +
-        qiyy * qiyy + qizz * qizz;
-
-    if_constexpr(do_e) {
-      real e = fterm *
-          (cii + aewald_sq_2 * (dii / 3 + 2 * aewald_sq_2 * qii * (real)0.2));
-      atomic_add_value(e, em, offset);
-      if_constexpr(do_a) { atomic_add_value(1, nem, offset); }
-    } // end if (do_e)
-  }   // end for (int i)
+        atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
+      } // end if (do_v)
+    }   // end if (do_g)
+  }
 }
 
 template <int USE>
@@ -545,4 +390,5 @@ void empole_ewald(int vers) {
   else if (vers == calc::v6)
     empole_ewald_tmpl<calc::v6>();
 }
+
 TINKER_NAMESPACE_END
