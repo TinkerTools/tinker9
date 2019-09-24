@@ -179,15 +179,14 @@ void evdw_tmpl() {
     }
   } // end for (int i)
 
-  #pragma acc parallel\
-              deviceptr(DEVICE_PTRS_,vdw_excluded_,vdw_excluded_scale_)
+  #pragma acc parallel deviceptr(DEVICE_PTRS_,vexclude_,vexclude_scale_)
   #pragma acc loop independent
-  for (int ii = 0; ii < nvdw_excluded_; ++ii) {
+  for (int ii = 0; ii < nvexclude_; ++ii) {
     int offset = ii & (bufsize - 1);
 
-    int i = vdw_excluded_[ii][0];
-    int k = vdw_excluded_[ii][1];
-    real vscale = vdw_excluded_scale_[ii];
+    int i = vexclude_[ii][0];
+    int k = vexclude_[ii][1];
+    real vscale = vexclude_scale_[ii];
 
     int it = jvdw[i];
     real xi = xred[i];

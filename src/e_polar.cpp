@@ -1,8 +1,10 @@
 #include "e_polar.h"
-
+#include "ext/tinker/detail/couple.hh"
 #include "ext/tinker/detail/inform.hh"
 #include "ext/tinker/detail/polar.hh"
+#include "ext/tinker/detail/polgrp.hh"
 #include "ext/tinker/detail/polpot.hh"
+#include "ext/tinker/detail/sizes.hh"
 #include "ext/tinker/detail/units.hh"
 #include "io_fort_str.h"
 #include "io_print.h"
@@ -10,6 +12,7 @@
 #include "pme.h"
 #include "potent.h"
 #include "switch.h"
+#include <map>
 
 TINKER_NAMESPACE_BEGIN
 void epolar_data(rc_op op) {
@@ -17,6 +20,11 @@ void epolar_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
+    nuexclude_ = 0;
+    device_array::deallocate(uexclude_, uexclude_scale_);
+    ndpexclude_ = 0;
+    device_array::deallocate(dpexclude_, dpexclude_scale_);
+
     device_array::deallocate(polarity, thole, pdamp, polarity_inv);
 
     ep_handle.dealloc();
@@ -27,6 +35,241 @@ void epolar_data(rc_op op) {
   }
 
   if (op & rc_alloc) {
+    // see also attach.h
+    const int maxn13 = 3 * sizes::maxval;
+    const int maxn14 = 9 * sizes::maxval;
+    const int maxn15 = 27 * sizes::maxval;
+    const int maxp11 = polgrp::maxp11;
+    const int maxp12 = polgrp::maxp12;
+    const int maxp13 = polgrp::maxp13;
+    const int maxp14 = polgrp::maxp14;
+
+    std::vector<int> exclik;
+    std::vector<real> excls;
+
+    u1scale = polpot::u1scale;
+    u2scale = polpot::u2scale;
+    u3scale = polpot::u3scale;
+    u4scale = polpot::u4scale;
+    exclik.clear();
+    excls.clear();
+    for (int i = 0; i < n; ++i) {
+      int nn, bask;
+
+      if (u1scale != 1) {
+        nn = polgrp::np11[i];
+        bask = i * maxp11;
+        for (int j = 0; j < nn; ++j) {
+          int k = polgrp::ip11[bask + j] - 1;
+          if (k > i) {
+            exclik.push_back(i);
+            exclik.push_back(k);
+            exclik.push_back(u1scale - 1);
+          }
+        }
+      }
+
+      if (u2scale != 1) {
+        nn = polgrp::np12[i];
+        bask = i * maxp12;
+        for (int j = 0; j < nn; ++j) {
+          int k = polgrp::ip12[bask + j] - 1;
+          if (k > i) {
+            exclik.push_back(i);
+            exclik.push_back(k);
+            exclik.push_back(u2scale - 1);
+          }
+        }
+      }
+
+      if (u3scale != 1) {
+        nn = polgrp::np13[i];
+        bask = i * maxp13;
+        for (int j = 0; j < nn; ++j) {
+          int k = polgrp::ip13[bask + j] - 1;
+          if (k > i) {
+            exclik.push_back(i);
+            exclik.push_back(k);
+            exclik.push_back(u3scale - 1);
+          }
+        }
+      }
+
+      if (u4scale != 1) {
+        nn = polgrp::np14[i];
+        bask = i * maxp14;
+        for (int j = 0; j < nn; ++j) {
+          int k = polgrp::ip14[bask + j] - 1;
+          if (k > i) {
+            exclik.push_back(i);
+            exclik.push_back(k);
+            exclik.push_back(u4scale - 1);
+          }
+        }
+      }
+    }
+    nuexclude_ = excls.size();
+    device_array::allocate(nuexclude_, &uexclude_, &uexclude_scale_);
+    device_array::copyin(nuexclude_, uexclude_, exclik.data());
+    device_array::copyin(nuexclude_, uexclude_scale_, excls.data());
+
+    d1scale = polpot::d1scale;
+    d2scale = polpot::d2scale;
+    d3scale = polpot::d3scale;
+    d4scale = polpot::d4scale;
+
+    p2scale = polpot::p2scale;
+    p3scale = polpot::p3scale;
+    p4scale = polpot::p4scale;
+    p5scale = polpot::p5scale;
+
+    p2iscale = polpot::p2iscale;
+    p3iscale = polpot::p3iscale;
+    p4iscale = polpot::p4iscale;
+    p5iscale = polpot::p5iscale;
+    exclik.clear();
+    excls.clear();
+    struct dp_scale {
+      real d, p;
+    };
+    auto insert_dp = [](std::map<int, dp_scale>& m, int k, real val,
+                        char dpchar) {
+      auto it = m.find(k);
+      if (it == m.end()) {
+        dp_scale dp;
+        dp.d = 0;
+        dp.p = 0;
+        if (dpchar == 'd')
+          dp.d = val;
+        else if (dpchar == 'p')
+          dp.p = val;
+        m[k] = dp;
+      } else {
+        if (dpchar == 'd')
+          it->second.d = val;
+        else if (dpchar == 'p')
+          it->second.p = val;
+      }
+    };
+    for (int i = 0; i < n; ++i) {
+      std::map<int, dp_scale> k_dpscale;
+      int nn, bask;
+
+      if (d1scale != 1) {
+        nn = polgrp::np11[i];
+        bask = i * maxp11;
+        for (int j = 0; j < nn; ++j) {
+          int k = polgrp::ip11[bask + j] - 1;
+          if (k > i)
+            insert_dp(k_dpscale, k, d1scale - 1, 'd');
+        }
+      }
+
+      if (d2scale != 1) {
+        nn = polgrp::np12[i];
+        bask = i * maxp12;
+        for (int j = 0; j < nn; ++j) {
+          int k = polgrp::ip12[bask + j] - 1;
+          if (k > i)
+            insert_dp(k_dpscale, k, d2scale - 1, 'd');
+        }
+      }
+
+      if (d3scale != 1) {
+        nn = polgrp::np13[i];
+        bask = i * maxp13;
+        for (int j = 0; j < nn; ++j) {
+          int k = polgrp::ip13[bask + j] - 1;
+          if (k > i)
+            insert_dp(k_dpscale, k, d3scale - 1, 'd');
+        }
+      }
+
+      if (d4scale != 1) {
+        nn = polgrp::np14[i];
+        bask = i * maxp14;
+        for (int j = 0; j < nn; ++j) {
+          int k = polgrp::ip14[bask + j] - 1;
+          if (k > i)
+            insert_dp(k_dpscale, k, d4scale - 1, 'd');
+        }
+      }
+
+      if (p2scale != 1 || p2iscale != 1) {
+        nn = couple::n12[i];
+        for (int j = 0; j < nn; ++j) {
+          int k = couple::i12[i][j];
+          real val = p2scale - 1;
+          for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
+            if (k == polgrp::ip11[i * maxp11 + jj])
+              val = p2iscale - 1;
+          }
+          k -= 1;
+          if (k > i)
+            insert_dp(k_dpscale, k, val, 'p');
+        }
+      }
+
+      if (p3scale != 1 || p3iscale != 1) {
+        nn = couple::n13[i];
+        bask = i * maxn13;
+        for (int j = 0; j < nn; ++j) {
+          int k = couple::i13[bask + j];
+          real val = p3scale - 1;
+          for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
+            if (k == polgrp::ip11[i * maxp11 + jj])
+              val = p3iscale - 1;
+          }
+          k -= 1;
+          if (k > i)
+            insert_dp(k_dpscale, k, val, 'p');
+        }
+      }
+
+      if (p4scale != 1 || p4iscale != 1) {
+        nn = couple::n14[i];
+        bask = i * maxn14;
+        for (int j = 0; j < nn; ++j) {
+          int k = couple::i14[bask + j];
+          real val = p4scale - 1;
+          for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
+            if (k == polgrp::ip11[i * maxp11 + jj])
+              val = p4iscale - 1;
+          }
+          k -= 1;
+          if (k > i)
+            insert_dp(k_dpscale, k, val, 'p');
+        }
+      }
+
+      if (p5scale != 1 || p5iscale != 1) {
+        nn = couple::n15[i];
+        bask = i * maxn15;
+        for (int j = 0; j < nn; ++j) {
+          int k = couple::i15[bask + j];
+          real val = p5scale - 1;
+          for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
+            if (k == polgrp::ip11[i * maxp11 + jj])
+              val = p5iscale - 1;
+          }
+          k -= 1;
+          if (k > i)
+            insert_dp(k_dpscale, k, val, 'p');
+        }
+      }
+
+      for (auto& it : k_dpscale) {
+        exclik.push_back(i);
+        exclik.push_back(it.first);
+        excls.push_back(it.second.d);
+        excls.push_back(it.second.p);
+      }
+    }
+    ndpexclude_ = excls.size() / 2;
+    device_array::allocate(ndpexclude_, &dpexclude_, &dpexclude_scale_);
+    device_array::copyin(ndpexclude_, dpexclude_, exclik.data());
+    device_array::copyin(ndpexclude_, dpexclude_scale_, excls.data());
+
     device_array::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
 
     ep_handle.alloc(n);
@@ -51,26 +294,6 @@ void epolar_data(rc_op op) {
 
     if (epolar_electyp == elec_t::coulomb)
       switch_cut_off(switch_mpole, mpole_switch_cut, mpole_switch_off);
-
-    u1scale = polpot::u1scale;
-    u2scale = polpot::u2scale;
-    u3scale = polpot::u3scale;
-    u4scale = polpot::u4scale;
-
-    d1scale = polpot::d1scale;
-    d2scale = polpot::d2scale;
-    d3scale = polpot::d3scale;
-    d4scale = polpot::d4scale;
-
-    p2scale = polpot::p2scale;
-    p3scale = polpot::p3scale;
-    p4scale = polpot::p4scale;
-    p5scale = polpot::p5scale;
-
-    p2iscale = polpot::p2iscale;
-    p3iscale = polpot::p3iscale;
-    p4iscale = polpot::p4iscale;
-    p5iscale = polpot::p5iscale;
 
     udiag = polpot::udiag;
 

@@ -1,8 +1,10 @@
+#include "acc_add.h"
+#include "acc_field_pair.h"
 #include "acc_image.h"
-
-#include "couple.h"
+#include "couple.h" //
 #include "e_mpole.h"
 #include "e_polar.h"
+#include "gpu_card.h"
 #include "md.h"
 #include "nblist.h"
 #include "pme.h"
@@ -31,10 +33,6 @@ void dfield_ewald_recip_self(real (*field)[3]) {
     real dix = rpole[i][mpl_pme_x];
     real diy = rpole[i][mpl_pme_y];
     real diz = rpole[i][mpl_pme_z];
-
-    // increment the field at each multipole site
-    // get the self-energy portion of the permanent field
-
     field[i][0] += (-cphi[i][1] + term * dix);
     field[i][1] += (-cphi[i][2] + term * diy);
     field[i][2] += (-cphi[i][3] + term * diz);
@@ -48,93 +46,91 @@ void dfield_ewald_real(real (*field)[3], real (*fieldp)[3]) {
   const int maxnlst = mlist_unit->maxnlst;
   const auto* mlst = mlist_unit.deviceptr();
 
-  const auto* coupl = couple_unit.deviceptr();
-  const auto* polargroup = polargroup_unit.deviceptr();
-
-  auto bufsize = EnergyBuffer::calc_size(n);
-
-  static std::vector<real> pscalebuf;
-  static std::vector<real> dscalebuf;
-  pscalebuf.resize(n, 1);
-  dscalebuf.resize(n, 1);
-  real* pscale = pscalebuf.data();
-  real* dscale = dscalebuf.data();
-
   const PMEUnit pu = ppme_unit;
   const real aewald = pu->aewald;
-  const real aesq2 = 2 * aewald * aewald;
-  const real aesq2n = (aewald > 0 ? 1 / (sqrtpi * aewald) : 0);
 
-  real bn[4];
+#define DFIELD_DPTRS_ x, y, z, box, rpole, thole, pdamp, field, fieldp
 
-  #pragma acc parallel num_gangs(bufsize)\
-              deviceptr(x,y,z,box,coupl,polargroup,mlst,\
-              rpole,thole,pdamp,field,fieldp)\
-              firstprivate(pscale[0:n],dscale[0:n])
+  MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
+  #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+              deviceptr(DFIELD_DPTRS_,mlst)
   #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
+    real xi = x[i];
+    real yi = y[i];
+    real zi = z[i];
+    real ci = rpole[i][mpl_pme_0];
+    real dix = rpole[i][mpl_pme_x];
+    real diy = rpole[i][mpl_pme_y];
+    real diz = rpole[i][mpl_pme_z];
+    real qixx = rpole[i][mpl_pme_xx];
+    real qixy = rpole[i][mpl_pme_xy];
+    real qixz = rpole[i][mpl_pme_xz];
+    real qiyy = rpole[i][mpl_pme_yy];
+    real qiyz = rpole[i][mpl_pme_yz];
+    real qizz = rpole[i][mpl_pme_zz];
+    real pdi = pdamp[i];
+    real pti = thole[i];
+    real gxi = 0, gyi = 0, gzi = 0;
+    real txi = 0, tyi = 0, tzi = 0;
 
-    // set exclusion coefficients for connected atoms
+    int nmlsti = mlst->nlst[i];
+    int base = i * maxnlst;
+    #pragma acc loop vector independent reduction(+:gxi,gyi,gzi,txi,tyi,tzi)
+    for (int kk = 0; kk < nmlsti; ++kk) {
+      int k = mlst->lst[base + kk];
+      real xr = x[k] - xi;
+      real yr = y[k] - yi;
+      real zr = z[k] - zi;
 
-    const int n12i = coupl->n12[i];
-    const int n13i = coupl->n13[i];
-    const int n14i = coupl->n14[i];
-    const int n15i = coupl->n15[i];
+      image(xr, yr, zr, box);
+      real r2 = xr * xr + yr * yr + zr * zr;
+      if (r2 <= off2) {
+        FieldPair pairf;
+        dfield_pair_acc<elec_t::ewald>(         //
+            r2, xr, yr, zr,                     //
+            1, 1, aewald,                       //
+            ci, dix, diy, diz,                  //
+            qixx, qixy, qixz, qiyy, qiyz, qizz, //
+            pdi, pti,                           //
+            rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
+            rpole[k][mpl_pme_z], //
+            rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz],
+            rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], //
+            pdamp[k], thole[k],                                               //
+            pairf);
 
-    const int np11i = polargroup->np11[i];
-    const int np12i = polargroup->np12[i];
-    const int np13i = polargroup->np13[i];
-    const int np14i = polargroup->np14[i];
+        gxi += pairf.fid[0];
+        gyi += pairf.fid[1];
+        gzi += pairf.fid[2];
+        txi += pairf.fip[0];
+        tyi += pairf.fip[1];
+        tzi += pairf.fip[2];
 
-    #pragma acc loop independent
-    for (int j = 0; j < n12i; ++j) {
-      int ij = coupl->i12[i][j];
-      pscale[ij] = p2scale;
-      #pragma acc loop independent
-      for (int k = 0; k < np11i; ++k)
-        if (ij == polargroup->ip11[i][k])
-          pscale[ij] = p2iscale;
-    }
-    #pragma acc loop independent
-    for (int j = 0; j < n13i; ++j) {
-      int ij = coupl->i13[i][j];
-      pscale[ij] = p3scale;
-      #pragma acc loop independent
-      for (int k = 0; k < np11i; ++k)
-        if (ij == polargroup->ip11[i][k])
-          pscale[ij] = p3iscale;
-    }
-    #pragma acc loop independent
-    for (int j = 0; j < n14i; ++j) {
-      int ij = coupl->i14[i][j];
-      pscale[ij] = p4scale;
-      #pragma acc loop independent
-      for (int k = 0; k < np11i; ++k)
-        if (ij == polargroup->ip11[i][k])
-          pscale[ij] = p4iscale;
-    }
-    #pragma acc loop independent
-    for (int j = 0; j < n15i; ++j) {
-      int ij = coupl->i15[i][j];
-      pscale[ij] = p5scale;
-      #pragma acc loop independent
-      for (int k = 0; k < np11i; ++k)
-        if (ij == polargroup->ip11[i][k])
-          pscale[ij] = p5iscale;
-    }
+        atomic_add_value(pairf.fkd[0], &field[k][0]);
+        atomic_add_value(pairf.fkd[1], &field[k][1]);
+        atomic_add_value(pairf.fkd[2], &field[k][2]);
+        atomic_add_value(pairf.fkp[0], &fieldp[k][0]);
+        atomic_add_value(pairf.fkp[1], &fieldp[k][1]);
+        atomic_add_value(pairf.fkp[2], &fieldp[k][2]);
+      }
+    } // end for (int kk)
 
-    #pragma acc loop independent
-    for (int j = 0; j < np11i; ++j)
-      dscale[polargroup->ip11[i][j]] = d1scale;
-    #pragma acc loop independent
-    for (int j = 0; j < np12i; ++j)
-      dscale[polargroup->ip12[i][j]] = d2scale;
-    #pragma acc loop independent
-    for (int j = 0; j < np13i; ++j)
-      dscale[polargroup->ip13[i][j]] = d3scale;
-    #pragma acc loop independent
-    for (int j = 0; j < np14i; ++j)
-      dscale[polargroup->ip14[i][j]] = d4scale;
+    atomic_add_value(gxi, &field[i][0]);
+    atomic_add_value(gyi, &field[i][1]);
+    atomic_add_value(gzi, &field[i][2]);
+    atomic_add_value(txi, &fieldp[i][0]);
+    atomic_add_value(tyi, &fieldp[i][1]);
+    atomic_add_value(tzi, &fieldp[i][2]);
+  } // end for (int i)
+
+  #pragma acc parallel deviceptr(DFIELD_DPTRS_,dpexclude_,dpexclude_scale_)
+  #pragma acc loop independent
+  for (int ii = 0; ii < ndpexclude_; ++ii) {
+    int i = dpexclude_[ii][0];
+    int k = dpexclude_[ii][1];
+    real dscale = dpexclude_scale_[ii][0];
+    real pscale = dpexclude_scale_[ii][1];
 
     real xi = x[i];
     real yi = y[i];
@@ -152,170 +148,41 @@ void dfield_ewald_real(real (*field)[3], real (*fieldp)[3]) {
     real pdi = pdamp[i];
     real pti = thole[i];
 
-    int nmlsti = mlst->nlst[i];
-    int base = i * maxnlst;
-    #pragma acc loop independent private(bn[0:4])
-    for (int kk = 0; kk < nmlsti; ++kk) {
-      int k = mlst->lst[base + kk];
-      real xr = x[k] - xi;
-      real yr = y[k] - yi;
-      real zr = z[k] - zi;
+    real xr = x[k] - xi;
+    real yr = y[k] - yi;
+    real zr = z[k] - zi;
 
-      image(xr, yr, zr, box);
-      real r2 = xr * xr + yr * yr + zr * zr;
-      if (r2 <= off2) {
-        real r = REAL_SQRT(r2);
-        real rr1 = REAL_RECIP(r);
-        real rr2 = rr1 * rr1;
-        real rr3 = rr1 * rr2;
-        real rr5 = 3 * rr3 * rr2;
-        real rr7 = 5 * rr5 * rr2;
-        real ck = rpole[k][mpl_pme_0];
-        real dkx = rpole[k][mpl_pme_x];
-        real dky = rpole[k][mpl_pme_y];
-        real dkz = rpole[k][mpl_pme_z];
-        real qkxx = rpole[k][mpl_pme_xx];
-        real qkxy = rpole[k][mpl_pme_xy];
-        real qkxz = rpole[k][mpl_pme_xz];
-        real qkyy = rpole[k][mpl_pme_yy];
-        real qkyz = rpole[k][mpl_pme_yz];
-        real qkzz = rpole[k][mpl_pme_zz];
+    image(xr, yr, zr, box);
+    real r2 = xr * xr + yr * yr + zr * zr;
 
-        real dir = dix * xr + diy * yr + diz * zr;
-        real qix = qixx * xr + qixy * yr + qixz * zr;
-        real qiy = qixy * xr + qiyy * yr + qiyz * zr;
-        real qiz = qixz * xr + qiyz * yr + qizz * zr;
-        real qir = qix * xr + qiy * yr + qiz * zr;
-        real dkr = dkx * xr + dky * yr + dkz * zr;
-        real qkx = qkxx * xr + qkxy * yr + qkxz * zr;
-        real qky = qkxy * xr + qkyy * yr + qkyz * zr;
-        real qkz = qkxz * xr + qkyz * yr + qkzz * zr;
-        real qkr = qkx * xr + qky * yr + qkz * zr;
+    FieldPair pairf;
+    dfield_pair_acc<elec_t::coulomb>(       //
+        r2, xr, yr, zr,                     //
+        dscale, pscale, 0,                  //
+        ci, dix, diy, diz,                  //
+        qixx, qixy, qixz, qiyy, qiyz, qizz, //
+        pdi, pti,                           //
+        rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
+        rpole[k][mpl_pme_z], //
+        rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz],
+        rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], //
+        pdamp[k], thole[k],                                               //
+        pairf);
 
-        real ralpha = aewald * r;
-        bn[0] = REAL_ERFC(ralpha) * rr1;
-        real exp2a = REAL_EXP(-REAL_SQ(ralpha));
-        real aefac = aesq2n;
-        #pragma acc loop seq
-        for (int j = 1; j <= 3; ++j) {
-          aefac *= aesq2;
-          bn[j] = ((j + j - 1) * bn[j - 1] + aefac * exp2a) * rr2;
-        }
+    atomic_add_value(pairf.fid[0], &field[i][0]);
+    atomic_add_value(pairf.fid[1], &field[i][1]);
+    atomic_add_value(pairf.fid[2], &field[i][2]);
+    atomic_add_value(pairf.fip[0], &fieldp[i][0]);
+    atomic_add_value(pairf.fip[1], &fieldp[i][1]);
+    atomic_add_value(pairf.fip[2], &fieldp[i][2]);
 
-        // if use_thole
-        real scale3 = 1;
-        real scale5 = 1;
-        real scale7 = 1;
-        real damp = pdi * pdamp[k];
-        if (damp != 0) {
-          real pgamma = REAL_MIN(pti, thole[k]);
-          damp = -pgamma * REAL_CUBE(r / damp);
-          if (damp > -50) {
-            real expdamp = REAL_EXP(damp);
-            scale3 = 1 - expdamp;
-            scale5 = 1 - expdamp * (1 - damp);
-            scale7 = 1 - expdamp * (1 - damp + (real)0.6 * REAL_SQ(damp));
-          }
-        }
-        real scalek, bcn1, bcn2, bcn3;
-
-        scalek = dscale[k];
-        bcn1 = bn[1] - (1 - scalek * scale3) * rr3;
-        bcn2 = bn[2] - (1 - scalek * scale5) * rr5;
-        bcn3 = bn[3] - (1 - scalek * scale7) * rr7;
-
-        real fid1, fid2, fid3;
-        real fkd1, fkd2, fkd3;
-        fid1 = -xr * (bcn1 * ck - bcn2 * dkr + bcn3 * qkr) - bcn1 * dkx +
-            2 * bcn2 * qkx;
-        fid2 = -yr * (bcn1 * ck - bcn2 * dkr + bcn3 * qkr) - bcn1 * dky +
-            2 * bcn2 * qky;
-        fid3 = -zr * (bcn1 * ck - bcn2 * dkr + bcn3 * qkr) - bcn1 * dkz +
-            2 * bcn2 * qkz;
-        fkd1 = xr * (bcn1 * ci + bcn2 * dir + bcn3 * qir) - bcn1 * dix -
-            2 * bcn2 * qix;
-        fkd2 = yr * (bcn1 * ci + bcn2 * dir + bcn3 * qir) - bcn1 * diy -
-            2 * bcn2 * qiy;
-        fkd3 = zr * (bcn1 * ci + bcn2 * dir + bcn3 * qir) - bcn1 * diz -
-            2 * bcn2 * qiz;
-
-        scalek = pscale[k];
-        bcn1 = bn[1] - (1 - scalek * scale3) * rr3;
-        bcn2 = bn[2] - (1 - scalek * scale5) * rr5;
-        bcn3 = bn[3] - (1 - scalek * scale7) * rr7;
-
-        real fip1, fip2, fip3;
-        real fkp1, fkp2, fkp3;
-        fip1 = -xr * (bcn1 * ck - bcn2 * dkr + bcn3 * qkr) - bcn1 * dkx +
-            2 * bcn2 * qkx;
-        fip2 = -yr * (bcn1 * ck - bcn2 * dkr + bcn3 * qkr) - bcn1 * dky +
-            2 * bcn2 * qky;
-        fip3 = -zr * (bcn1 * ck - bcn2 * dkr + bcn3 * qkr) - bcn1 * dkz +
-            2 * bcn2 * qkz;
-        fkp1 = xr * (bcn1 * ci + bcn2 * dir + bcn3 * qir) - bcn1 * dix -
-            2 * bcn2 * qix;
-        fkp2 = yr * (bcn1 * ci + bcn2 * dir + bcn3 * qir) - bcn1 * diy -
-            2 * bcn2 * qiy;
-        fkp3 = zr * (bcn1 * ci + bcn2 * dir + bcn3 * qir) - bcn1 * diz -
-            2 * bcn2 * qiz;
-        // end if use_thole
-
-        #pragma acc atomic update
-        field[i][0] += fid1;
-        #pragma acc atomic update
-        field[i][1] += fid2;
-        #pragma acc atomic update
-        field[i][2] += fid3;
-        #pragma acc atomic update
-        field[k][0] += fkd1;
-        #pragma acc atomic update
-        field[k][1] += fkd2;
-        #pragma acc atomic update
-        field[k][2] += fkd3;
-
-        #pragma acc atomic update
-        fieldp[i][0] += fip1;
-        #pragma acc atomic update
-        fieldp[i][1] += fip2;
-        #pragma acc atomic update
-        fieldp[i][2] += fip3;
-        #pragma acc atomic update
-        fieldp[k][0] += fkp1;
-        #pragma acc atomic update
-        fieldp[k][1] += fkp2;
-        #pragma acc atomic update
-        fieldp[k][2] += fkp3;
-      }
-    } // end for (int kk)
-
-    // reset exclusion coefficients for connected atoms
-
-    #pragma acc loop independent
-    for (int j = 0; j < n12i; ++j)
-      pscale[coupl->i12[i][j]] = 1;
-    #pragma acc loop independent
-    for (int j = 0; j < n13i; ++j)
-      pscale[coupl->i13[i][j]] = 1;
-    #pragma acc loop independent
-    for (int j = 0; j < n14i; ++j)
-      pscale[coupl->i14[i][j]] = 1;
-    #pragma acc loop independent
-    for (int j = 0; j < n15i; ++j)
-      pscale[coupl->i15[i][j]] = 1;
-
-    #pragma acc loop independent
-    for (int j = 0; j < np11i; ++j)
-      dscale[polargroup->ip11[i][j]] = 1;
-    #pragma acc loop independent
-    for (int j = 0; j < np12i; ++j)
-      dscale[polargroup->ip12[i][j]] = 1;
-    #pragma acc loop independent
-    for (int j = 0; j < np13i; ++j)
-      dscale[polargroup->ip13[i][j]] = 1;
-    #pragma acc loop independent
-    for (int j = 0; j < np14i; ++j)
-      dscale[polargroup->ip14[i][j]] = 1;
-  } // end for (int i)
+    atomic_add_value(pairf.fkd[0], &field[k][0]);
+    atomic_add_value(pairf.fkd[1], &field[k][1]);
+    atomic_add_value(pairf.fkd[2], &field[k][2]);
+    atomic_add_value(pairf.fkp[0], &fieldp[k][0]);
+    atomic_add_value(pairf.fkp[1], &fieldp[k][1]);
+    atomic_add_value(pairf.fkp[2], &fieldp[k][2]);
+  }
 }
 
 void dfield_ewald(real (*field)[3], real (*fieldp)[3]) {

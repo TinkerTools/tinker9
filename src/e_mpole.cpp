@@ -13,9 +13,8 @@ void empole_data(rc_op op) {
     return;
 
   if (op & rc_dealloc) {
-    nmpole_excluded_ = 0;
-
-    device_array::deallocate(mpole_excluded_, mpole_excluded_scale_);
+    nmexclude_ = 0;
+    device_array::deallocate(mexclude_, mexclude_scale_);
 
     em_handle.dealloc();
   }
@@ -26,7 +25,6 @@ void empole_data(rc_op op) {
     m4scale = mplpot::m4scale;
     m5scale = mplpot::m5scale;
 
-    mpole_excluded_ = 0;
     std::vector<int> exclik;
     std::vector<real> excls;
     // see also attach.f
@@ -92,11 +90,10 @@ void empole_data(rc_op op) {
         }
       }
     }
-    nmpole_excluded_ = excls.size();
-    device_array::allocate(nmpole_excluded_, &mpole_excluded_,
-                           &mpole_excluded_scale_);
-    device_array::copyin(nmpole_excluded_, mpole_excluded_, exclik.data());
-    device_array::copyin(nmpole_excluded_, mpole_excluded_scale_, excls.data());
+    nmexclude_ = excls.size();
+    device_array::allocate(nmexclude_, &mexclude_, &mexclude_scale_);
+    device_array::copyin(nmexclude_, mexclude_, exclik.data());
+    device_array::copyin(nmexclude_, mexclude_scale_, excls.data());
 
     em_handle.alloc(n);
   }

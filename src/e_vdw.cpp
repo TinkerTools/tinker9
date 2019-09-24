@@ -30,10 +30,10 @@ void evdw_data(rc_op op) {
     jcount = 0;
 
     device_array::deallocate(ired, kred, xred, yred, zred, gxred, gyred, gzred,
-                             jvdw, radmin, epsilon, vlam, vdw_excluded_,
-                             vdw_excluded_scale_);
+                             jvdw, radmin, epsilon, vlam);
 
-    nvdw_excluded_ = 0;
+    nvexclude_ = 0;
+    device_array::deallocate(vexclude_, vexclude_scale_);
 
     ev_handle.dealloc();
   }
@@ -141,11 +141,10 @@ void evdw_data(rc_op op) {
         }
       }
     }
-    nvdw_excluded_ = excls.size();
-    device_array::allocate(nvdw_excluded_, &vdw_excluded_,
-                           &vdw_excluded_scale_);
-    device_array::copyin(nvdw_excluded_, vdw_excluded_, exclik.data());
-    device_array::copyin(nvdw_excluded_, vdw_excluded_scale_, excls.data());
+    nvexclude_ = excls.size();
+    device_array::allocate(nvexclude_, &vexclude_, &vexclude_scale_);
+    device_array::copyin(nvexclude_, vexclude_, exclik.data());
+    device_array::copyin(nvexclude_, vexclude_scale_, excls.data());
 
     ev_handle.alloc(n);
   }

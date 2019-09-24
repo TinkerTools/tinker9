@@ -12,9 +12,9 @@ TINKER_EXTERN elec_t empole_electyp;
 
 TINKER_EXTERN real m2scale, m3scale, m4scale, m5scale;
 
-TINKER_EXTERN int nmpole_excluded_;
-TINKER_EXTERN device_pointer<int, 2> mpole_excluded_;
-TINKER_EXTERN device_pointer<real> mpole_excluded_scale_;
+TINKER_EXTERN int nmexclude_;
+TINKER_EXTERN device_pointer<int, 2> mexclude_;
+TINKER_EXTERN device_pointer<real> mexclude_scale_;
 
 TINKER_EXTERN NonbondedEnergy em_handle;
 

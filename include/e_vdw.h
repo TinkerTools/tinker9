@@ -81,9 +81,9 @@ TINKER_EXTERN device_pointer<real> radmin, epsilon;
 /// potentials.
 TINKER_EXTERN device_pointer<real> vlam;
 
-TINKER_EXTERN int nvdw_excluded_;
-TINKER_EXTERN device_pointer<int, 2> vdw_excluded_;
-TINKER_EXTERN device_pointer<real> vdw_excluded_scale_;
+TINKER_EXTERN int nvexclude_;
+TINKER_EXTERN device_pointer<int, 2> vexclude_;
+TINKER_EXTERN device_pointer<real> vexclude_scale_;
 
 TINKER_EXTERN NonbondedEnergy ev_handle;
 

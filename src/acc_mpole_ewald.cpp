@@ -139,15 +139,14 @@ void empole_real_self_tmpl() {
     } // end if (do_e)
   }   // end for (int i)
 
-  #pragma acc parallel\
-              deviceptr(DEVICE_PTRS_,mpole_excluded_,mpole_excluded_scale_)
+  #pragma acc parallel deviceptr(DEVICE_PTRS_,mexclude_,mexclude_scale_)
   #pragma acc loop independent
-  for (int ii = 0; ii < nmpole_excluded_; ++ii) {
+  for (int ii = 0; ii < nmexclude_; ++ii) {
     int offset = ii & (bufsize - 1);
 
-    int i = mpole_excluded_[ii][0];
-    int k = mpole_excluded_[ii][1];
-    real mscale = mpole_excluded_scale_[ii];
+    int i = mexclude_[ii][0];
+    int k = mexclude_[ii][1];
+    real mscale = mexclude_scale_[ii];
 
     real xi = x[i];
     real yi = y[i];
@@ -173,8 +172,8 @@ void empole_real_self_tmpl() {
     MAYBE_UNUSED real e;
     MAYBE_UNUSED MPolePairGrad pgrad;
     empole_pair_acc<USE, elec_t::coulomb>(
-        r2, xr, yr, zr, f, mscale, aewald, ci, dix, diy, diz, qixx, qixy, qixz,
-        qiyy, qiyz, qizz, rpole[k][mpl_pme_0], rpole[k][mpl_pme_x],
+        r2, xr, yr, zr, f, mscale, 0, ci, dix, diy, diz, qixx, qixy, qixz, qiyy,
+        qiyz, qizz, rpole[k][mpl_pme_0], rpole[k][mpl_pme_x],
         rpole[k][mpl_pme_y], rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx],
         rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
         rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], //
@@ -261,20 +260,19 @@ void empole_recip_tmpl() {
   const int nfft3 = st.nfft3;
   const real f = electric / dielec;
 
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel loop independent\
               deviceptr(gx,gy,gz,box,\
               cmp,fmp,cphi,fphi,em,vir_em,trqx,trqy,trqz)
-  #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
     int offset = i & (bufsize - 1);
     real e = 0;
     real f1 = 0;
     real f2 = 0;
     real f3 = 0;
-    #pragma acc loop independent reduction(+:e,f1,f2,f3)
+
+    #pragma acc loop seq
     for (int k = 0; k < 10; ++k) {
       if_constexpr(do_e) { e += fmp[i][k] * fphi[i][k]; }
-
       if_constexpr(do_g) {
         f1 += fmp[i][k] * fphi[i][deriv1[k] - 1];
         f2 += fmp[i][k] * fphi[i][deriv2[k] - 1];
@@ -298,12 +296,9 @@ void empole_recip_tmpl() {
       real h3 =
           box->recip[0][2] * f1 + box->recip[1][2] * f2 + box->recip[2][2] * f3;
 
-      #pragma acc atomic update
-      gx[i] += h1 * f;
-      #pragma acc atomic update
-      gy[i] += h2 * f;
-      #pragma acc atomic update
-      gz[i] += h3 * f;
+      atomic_add_value(h1 * f, gx, i);
+      atomic_add_value(h2 * f, gy, i);
+      atomic_add_value(h3 * f, gz, i);
 
       // resolve site torques then increment forces and virial
 
@@ -323,12 +318,9 @@ void empole_recip_tmpl() {
       tem2 *= f;
       tem3 *= f;
 
-      #pragma acc atomic update
-      trqx[i] += tem1;
-      #pragma acc atomic update
-      trqy[i] += tem2;
-      #pragma acc atomic update
-      trqz[i] += tem3;
+      atomic_add_value(tem1, trqx, i);
+      atomic_add_value(tem2, trqy, i);
+      atomic_add_value(tem3, trqz, i);
 
       if_constexpr(do_v) {
         real vxx = -cmp[i][1] * cphi[i][1] - 2 * cmp[i][4] * cphi[i][4] -

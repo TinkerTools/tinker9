@@ -118,15 +118,14 @@ void empole_coulomb_tmpl() {
     }
   } // end for (int i)
 
-  #pragma acc parallel\
-              deviceptr(DEVICE_PTRS_,mpole_excluded_,mpole_excluded_scale_)
+  #pragma acc parallel deviceptr(DEVICE_PTRS_,mexclude_,mexclude_scale_)
   #pragma acc loop independent
-  for (int ii = 0; ii < nmpole_excluded_; ++ii) {
+  for (int ii = 0; ii < nmexclude_; ++ii) {
     int offset = ii & (bufsize - 1);
 
-    int i = mpole_excluded_[ii][0];
-    int k = mpole_excluded_[ii][1];
-    real mscale = mpole_excluded_scale_[ii];
+    int i = mexclude_[ii][0];
+    int k = mexclude_[ii][1];
+    real mscale = mexclude_scale_[ii];
 
     real xi = x[i];
     real yi = y[i];

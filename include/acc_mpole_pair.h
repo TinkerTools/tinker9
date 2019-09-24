@@ -61,23 +61,6 @@ inline void empole_pair_acc(                                          //
   constexpr int do_g = USE & calc::grad;
 
   real r = REAL_SQRT(r2);
-  real dir = dix * xr + diy * yr + diz * zr;
-  real qix = qixx * xr + qixy * yr + qixz * zr;
-  real qiy = qixy * xr + qiyy * yr + qiyz * zr;
-  real qiz = qixz * xr + qiyz * yr + qizz * zr;
-  real qir = qix * xr + qiy * yr + qiz * zr;
-  real dkr = dkx * xr + dky * yr + dkz * zr;
-  real qkx = qkxx * xr + qkxy * yr + qkxz * zr;
-  real qky = qkxy * xr + qkyy * yr + qkyz * zr;
-  real qkz = qkxz * xr + qkyz * yr + qkzz * zr;
-  real qkr = qkx * xr + qky * yr + qkz * zr;
-  real dik = dix * dkx + diy * dky + diz * dkz;
-  real qik = qix * qkx + qiy * qky + qiz * qkz;
-  real diqk = dix * qkx + diy * qky + diz * qkz;
-  real dkqi = dkx * qix + dky * qiy + dkz * qiz;
-  real qiqk = 2 * (qixy * qkxy + qixz * qkxz + qiyz * qkyz) + qixx * qkxx +
-      qiyy * qkyy + qizz * qkzz;
-
   real invr1 = REAL_RECIP(r);
   real rr2 = invr1 * invr1;
 
@@ -123,6 +106,23 @@ inline void empole_pair_acc(                                          //
     rr9 = 7 * rr7 * rr2;
     if_constexpr(do_g) rr11 = 9 * rr9 * rr2;
   }
+
+  real dir = dix * xr + diy * yr + diz * zr;
+  real qix = qixx * xr + qixy * yr + qixz * zr;
+  real qiy = qixy * xr + qiyy * yr + qiyz * zr;
+  real qiz = qixz * xr + qiyz * yr + qizz * zr;
+  real qir = qix * xr + qiy * yr + qiz * zr;
+  real dkr = dkx * xr + dky * yr + dkz * zr;
+  real qkx = qkxx * xr + qkxy * yr + qkxz * zr;
+  real qky = qkxy * xr + qkyy * yr + qkyz * zr;
+  real qkz = qkxz * xr + qkyz * yr + qkzz * zr;
+  real qkr = qkx * xr + qky * yr + qkz * zr;
+  real dik = dix * dkx + diy * dky + diz * dkz;
+  real qik = qix * qkx + qiy * qky + qiz * qkz;
+  real diqk = dix * qkx + diy * qky + diz * qkz;
+  real dkqi = dkx * qix + dky * qiy + dkz * qiz;
+  real qiqk = 2 * (qixy * qkxy + qixz * qkxz + qiyz * qkyz) + qixx * qkxx +
+      qiyy * qkyy + qizz * qkzz;
 
   real term1 = ci * ck;
   real term2 = ck * dir - ci * dkr + dik;
