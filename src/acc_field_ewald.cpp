@@ -347,7 +347,7 @@ void ufield_ewald_real(const real (*uind)[3], const real (*uinp)[3],
     FieldPair pairf;
     ufield_pair_acc<elec_t::coulomb>(       //
         r2, xr, yr, zr,                     //
-        uscale, aewald,                     //
+        uscale, 0,                          //
         uindi0, uindi1, uindi2,             //
         uinpi0, uinpi1, uinpi2,             //
         pdi, pti,                           //
