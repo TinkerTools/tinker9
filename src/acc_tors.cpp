@@ -16,11 +16,10 @@ void etors_tmpl() {
   auto* vir_et = et_handle.vir()->buffer();
   auto bufsize = et_handle.buffer_size();
 
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel loop\
               deviceptr(x,y,z,gx,gy,gz,\
               itors,tors1,tors2,tors3,tors4,tors5,tors6,\
               et,vir_et)
-  #pragma acc loop gang independent
   for (int i = 0; i < ntors; ++i) {
     int offset = i & (bufsize - 1);
     const int ia = itors[i][0];

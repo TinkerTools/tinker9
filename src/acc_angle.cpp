@@ -35,11 +35,10 @@ void eangle_tmpl() {
   auto* vir_ea = ea_handle.vir()->buffer();
   auto bufsize = ea_handle.buffer_size();
 
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel loop\
               deviceptr(x,y,z,gx,gy,gz,\
               iang,anat,ak,angtyp,\
               ea,vir_ea)
-  #pragma acc loop gang independent
   for (int i = 0; i < nangle; ++i) {
     int offset = i & (bufsize - 1);
     int ia = iang[i][0];

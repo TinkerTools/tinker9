@@ -17,11 +17,10 @@ void ebond_tmpl() {
   auto* vir_eb = eb_handle.vir()->buffer();
   auto bufsize = eb_handle.buffer_size();
 
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel loop\
               deviceptr(x,y,z,gx,gy,gz,\
               ibnd,bl,bk,\
               eb,vir_eb)
-  #pragma acc loop gang independent
   for (int i = 0; i < nbond; ++i) {
     int offset = i & (bufsize - 1);
     int ia = ibnd[i][0];

@@ -14,11 +14,10 @@ void eurey_tmpl() {
   auto* vir_eub = eub_handle.vir()->buffer();
   auto bufsize = eub_handle.buffer_size();
 
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel loop\
               deviceptr(x,y,z,gx,gy,gz,\
               iury,uk,ul,\
               eub,vir_eub)
-  #pragma acc loop gang independent
   for (int i = 0; i < nurey; ++i) {
     int offset = i & (bufsize - 1);
     const int ia = iury[i][0];

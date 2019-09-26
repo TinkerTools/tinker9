@@ -16,11 +16,10 @@ void estrbnd_tmpl() {
   auto* vir_eba = eba_handle.vir()->buffer();
   auto bufsize = eba_handle.buffer_size();
 
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel loop\
               deviceptr(x,y,z,gx,gy,gz,\
               isb,sbk,iang,anat,bl,\
               eba,vir_eba)
-  #pragma acc loop gang independent
   for (int istrbnd = 0; istrbnd < nstrbnd; ++istrbnd) {
     int offset = istrbnd & (bufsize - 1);
     int i = isb[istrbnd][0];
