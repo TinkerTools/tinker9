@@ -769,11 +769,9 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
   auto* fphip = fdip_phi2;
 
   cuind_to_fuind(pu, gpu_uind, gpu_uinp, fuind, fuinp);
-  if (do_e && do_a) {
+  if_constexpr(do_e && do_a) {
     // if (pairwise .eq. .true.)
-    #pragma acc parallel num_gangs(bufsize)\
-                deviceptr(fuind,fphi,ep)
-    #pragma acc loop gang independent
+    #pragma acc parallel loop independent deviceptr(fuind,fphi,ep)
     for (int i = 0; i < n; ++i) {
       int offset = i & (bufsize - 1);
       real e = 0.5f * f *
@@ -857,10 +855,9 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 
   real term = f * REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
   real fterm_term = -2 * f * REAL_CUBE(aewald) / 3 / sqrtpi;
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel loop independent\
               deviceptr(ep,nep,trqx,trqy,trqz,\
               rpole,cmp,gpu_uind,gpu_uinp,cphidp)
-  #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
     int offset = i & (bufsize - 1);
     real dix = rpole[i][mpl_pme_x];
@@ -923,14 +920,12 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 
     device_array::scale(n, f, cphi, fphid, fphip);
 
-    real cphid[4], cphip[4];
-    real ftc[3][3];
-    #pragma acc parallel num_gangs(bufsize)\
+    #pragma acc parallel loop independent\
                 deviceptr(vir_ep,box,cmp,\
                 gpu_uind,gpu_uinp,fphid,fphip,cphi,cphidp)
-    #pragma acc loop gang independent\
-                private(cphid[0:4],cphip[0:4],ftc[0:3][0:3])
     for (int i = 0; i < n; ++i) {
+      real cphid[4], cphip[4];
+      real ftc[3][3];
 
       // frac_to_cart
 
@@ -1052,9 +1047,8 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
     const int ntot = nfft1 * nfft2 * nfft3;
     real pterm = REAL_SQ(pi / aewald);
 
-    #pragma acc parallel num_gangs(bufsize)\
+    #pragma acc parallel loop independent\
                 deviceptr(box,d,p,vir_ep)
-    #pragma acc loop gang independent
     for (int i = 1; i < ntot; ++i) {
       const real volterm = pi * box->volbox;
 
