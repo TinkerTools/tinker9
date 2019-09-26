@@ -31,10 +31,9 @@ void torque_tmpl(Virial v_handle) {
     bufsize = v_handle->size();
   }
 
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,zaxis,\
               trqx,trqy,trqz,gpu_vir)
-  #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
     const int axetyp = zaxis[i].polaxe;
     if (axetyp == pole_none)
@@ -384,9 +383,3 @@ void torque(int vers) {
   }
 }
 TINKER_NAMESPACE_END
-
-#undef ADD_
-#undef SUB_
-#undef DOT_
-#undef CROSS_
-#undef NORMAL_

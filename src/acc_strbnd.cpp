@@ -16,7 +16,7 @@ void estrbnd_tmpl() {
   auto* vir_eba = eba_handle.vir()->buffer();
   auto bufsize = eba_handle.buffer_size();
 
-  #pragma acc parallel loop\
+  #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
               isb,sbk,iang,anat,bl,\
               eba,vir_eba)

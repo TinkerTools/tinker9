@@ -32,7 +32,7 @@ void eopbend_tmpl() {
   auto* vir_eopb = eopb_handle.vir()->buffer();
   auto bufsize = eopb_handle.buffer_size();
 
-  #pragma acc parallel loop\
+  #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
               iopb,opbk,iang,\
               eopb,vir_eopb)

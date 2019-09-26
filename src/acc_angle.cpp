@@ -35,7 +35,7 @@ void eangle_tmpl() {
   auto* vir_ea = ea_handle.vir()->buffer();
   auto bufsize = ea_handle.buffer_size();
 
-  #pragma acc parallel loop\
+  #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
               iang,anat,ak,angtyp,\
               ea,vir_ea)
