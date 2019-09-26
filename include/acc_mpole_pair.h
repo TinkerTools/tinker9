@@ -1,6 +1,7 @@
 #ifndef TINKER_ACC_MPOLE_PAIR_H_
 #define TINKER_ACC_MPOLE_PAIR_H_
 
+#include "acc_damp.h"
 #include "acc_mathfunc.h"
 #include "e_mpole.h"
 #include "md.h"
@@ -73,24 +74,8 @@ inline void empole_pair_acc(                                          //
   real& rr11 = bn[5];
 
   if_constexpr(ETYP == elec_t::ewald) {
-    real ralpha = aewald * r;
-    bn[0] = REAL_ERFC(ralpha) * invr1;
-    real alsq2 = 2 * REAL_SQ(aewald);
-    real alsq2n = (aewald > 0 ? REAL_RECIP(sqrtpi * aewald) : 0);
-    real exp2a = REAL_EXP(-REAL_SQ(ralpha));
-
-    if_constexpr(!do_g) {
-      for (int j = 1; j <= 4; ++j) {
-        alsq2n *= alsq2;
-        bn[j] = ((j + j - 1) * bn[j - 1] + alsq2n * exp2a) * rr2;
-      }
-    }
-    else {
-      for (int j = 1; j <= 5; ++j) {
-        alsq2n *= alsq2;
-        bn[j] = ((j + j - 1) * bn[j - 1] + alsq2n * exp2a) * rr2;
-      }
-    }
+    if_constexpr(!do_g) damp_ewald(bn, 5, r, invr1, rr2, aewald);
+    else damp_ewald(bn, 6, r, invr1, rr2, aewald);
     bn[0] *= f;
     bn[1] *= f;
     bn[2] *= f;

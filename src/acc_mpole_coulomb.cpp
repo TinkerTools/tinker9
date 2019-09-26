@@ -32,7 +32,7 @@ void empole_coulomb_tmpl() {
   x, y, z, gx, gy, gz, box, rpole, nem, em, vir_em, trqx, trqy, trqz
 
   MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
-  #pragma acc parallel num_gangs(bufsize) vector_length(BLOCK_DIM)\
+  #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
               deviceptr(DEVICE_PTRS_,mlst)
   #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
