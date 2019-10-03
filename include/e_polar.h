@@ -23,6 +23,10 @@ TINKER_EXTERN int ndpexclude_;
 TINKER_EXTERN device_pointer<int, 2> dpexclude_;
 TINKER_EXTERN device_pointer<real, 2> dpexclude_scale_;
 
+TINKER_EXTERN int ndpuexclude_;
+TINKER_EXTERN device_pointer<int, 2> dpuexclude_;
+TINKER_EXTERN device_pointer<real, 3> dpuexclude_scale_;
+
 TINKER_EXTERN real udiag;
 
 TINKER_EXTERN device_pointer<real> polarity, thole, pdamp, polarity_inv;

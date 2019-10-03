@@ -135,7 +135,7 @@ void empole_real_self_tmpl() {
       real e = fterm *
           (cii + aewald_sq_2 * (dii / 3 + 2 * aewald_sq_2 * qii * (real)0.2));
       atomic_add_value(e, em, offset);
-      if_constexpr(do_a) { atomic_add_value(1, nem, offset); }
+      if_constexpr(do_a) atomic_add_value(1, nem, offset);
     } // end if (do_e)
   }   // end for (int i)
 
@@ -179,7 +179,7 @@ void empole_real_self_tmpl() {
         rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], //
         e, pgrad);
 
-    if_constexpr(do_a) atomic_add_value(-1, nem, offset);
+    if_constexpr(do_a) if (mscale == -1) atomic_add_value(-1, nem, offset);
     if_constexpr(do_e) atomic_add_value(e, em, offset);
     if_constexpr(do_g) {
       atomic_add_value(pgrad.frcx, gx, i);
@@ -272,7 +272,7 @@ void empole_recip_tmpl() {
 
     #pragma acc loop seq
     for (int k = 0; k < 10; ++k) {
-      if_constexpr(do_e) { e += fmp[i][k] * fphi[i][k]; }
+      if_constexpr(do_e) e += fmp[i][k] * fphi[i][k];
       if_constexpr(do_g) {
         f1 += fmp[i][k] * fphi[i][deriv1[k] - 1];
         f2 += fmp[i][k] * fphi[i][deriv2[k] - 1];
@@ -282,7 +282,7 @@ void empole_recip_tmpl() {
 
     // increment the permanent multipole energy and gradient
 
-    if_constexpr(do_e) { atomic_add_value(0.5f * e * f, em, offset); }
+    if_constexpr(do_e) atomic_add_value(0.5f * e * f, em, offset);
 
     if_constexpr(do_g) {
       f1 *= nfft1;

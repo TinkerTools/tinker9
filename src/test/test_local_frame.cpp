@@ -11,7 +11,9 @@ using namespace TINKER_NAMESPACE;
  * atoms are in the xy-plane. Therefore the z-gradient components of this
  * molecule are not included in the test.
  */
-static bool do_ij(int i, int /* j */) { return i < n - 4; }
+static bool do_ij(int i, int /* j */) {
+  return i < n - 4;
+}
 
 TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]") {
   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
@@ -144,12 +146,23 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
     initialize();
 
     zero_egv();
+    elec_init(calc::v0);
+    empole(calc::v0);
+    torque(calc::v0);
+    COMPARE_ENERGY_(em_handle.e(), ref_eng, eps_e);
+
+    zero_egv();
     elec_init(calc::v1);
     empole(calc::v1);
     torque(calc::v1);
     COMPARE_ENERGY_(em_handle.e(), ref_eng, eps_e);
     COMPARE_GRADIENT_(ref_grad, eps_g);
     COMPARE_VIR2_(em_handle.vir(), vir_trq_handle, ref_v, eps_v);
+
+    zero_egv();
+    empole(calc::v3);
+    COMPARE_ENERGY_(em_handle.e(), ref_eng, eps_e);
+    COMPARE_COUNT_(em_handle.ne(), ref_count);
 
     finish();
     test_end();

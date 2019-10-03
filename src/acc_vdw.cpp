@@ -84,7 +84,7 @@ void evdw_tmpl() {
   auto* vir_ev = ev_handle.vir()->buffer();
   auto bufsize = ev_handle.buffer_size();
 
-  if_constexpr(do_g) { device_array::zero(n, gxred, gyred, gzred); }
+  if_constexpr(do_g) device_array::zero(n, gxred, gyred, gzred);
 
 #define DEVICE_PTRS_                                                           \
   xred, yred, zred, gxred, gyred, gzred, box, jvdw, radmin, epsilon, vlam,     \
@@ -228,7 +228,7 @@ void evdw_tmpl() {
         if_constexpr(do_e) e = e * taper;
       }
 
-      if_constexpr(do_a && vscale == -1) atomic_add_value(-1, nev, offset);
+      if_constexpr(do_a) if (vscale == -1) atomic_add_value(-1, nev, offset);
       if_constexpr(do_e) atomic_add_value(e, ev, offset);
       if_constexpr(do_g) {
         de *= REAL_RECIP(rik);

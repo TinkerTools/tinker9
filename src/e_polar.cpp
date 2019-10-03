@@ -24,6 +24,8 @@ void epolar_data(rc_op op) {
     device_array::deallocate(uexclude_, uexclude_scale_);
     ndpexclude_ = 0;
     device_array::deallocate(dpexclude_, dpexclude_scale_);
+    ndpuexclude_ = 0;
+    device_array::deallocate(dpuexclude_, dpuexclude_scale_);
 
     device_array::deallocate(polarity, thole, pdamp, polarity_inv);
 
@@ -44,6 +46,38 @@ void epolar_data(rc_op op) {
     const int maxp13 = polgrp::maxp13;
     const int maxp14 = polgrp::maxp14;
 
+    struct dpu_scale {
+      real d, p, u;
+    };
+    auto insert_dpu = [](std::map<std::pair<int, int>, dpu_scale>& m, int i,
+                         int k, real val, char ch) {
+      std::pair<int, int> key;
+      key.first = i;
+      key.second = k;
+      auto it = m.find(key);
+      if (it == m.end()) {
+        dpu_scale dpu;
+        dpu.d = 0;
+        dpu.p = 0;
+        dpu.u = 0;
+        if (ch == 'd')
+          dpu.d = val;
+        else if (ch == 'p')
+          dpu.p = val;
+        else if (ch == 'u')
+          dpu.u = val;
+        m[key] = dpu;
+      } else {
+        if (ch == 'd')
+          it->second.d = val;
+        else if (ch == 'p')
+          it->second.p = val;
+        else if (ch == 'u')
+          it->second.u = val;
+      }
+    };
+    std::map<std::pair<int, int>, dpu_scale> ik_dpu;
+
     std::vector<int> exclik;
     std::vector<real> excls;
 
@@ -62,6 +96,7 @@ void epolar_data(rc_op op) {
         for (int j = 0; j < nn; ++j) {
           int k = polgrp::ip11[bask + j] - 1;
           if (k > i) {
+            insert_dpu(ik_dpu, i, k, u1scale - 1, 'u');
             exclik.push_back(i);
             exclik.push_back(k);
             exclik.push_back(u1scale - 1);
@@ -75,6 +110,7 @@ void epolar_data(rc_op op) {
         for (int j = 0; j < nn; ++j) {
           int k = polgrp::ip12[bask + j] - 1;
           if (k > i) {
+            insert_dpu(ik_dpu, i, k, u2scale - 1, 'u');
             exclik.push_back(i);
             exclik.push_back(k);
             exclik.push_back(u2scale - 1);
@@ -88,6 +124,7 @@ void epolar_data(rc_op op) {
         for (int j = 0; j < nn; ++j) {
           int k = polgrp::ip13[bask + j] - 1;
           if (k > i) {
+            insert_dpu(ik_dpu, i, k, u3scale - 1, 'u');
             exclik.push_back(i);
             exclik.push_back(k);
             exclik.push_back(u3scale - 1);
@@ -101,6 +138,7 @@ void epolar_data(rc_op op) {
         for (int j = 0; j < nn; ++j) {
           int k = polgrp::ip14[bask + j] - 1;
           if (k > i) {
+            insert_dpu(ik_dpu, i, k, u4scale - 1, 'u');
             exclik.push_back(i);
             exclik.push_back(k);
             exclik.push_back(u4scale - 1);
@@ -160,8 +198,10 @@ void epolar_data(rc_op op) {
         bask = i * maxp11;
         for (int j = 0; j < nn; ++j) {
           int k = polgrp::ip11[bask + j] - 1;
-          if (k > i)
+          if (k > i) {
+            insert_dpu(ik_dpu, i, k, d1scale - 1, 'd');
             insert_dp(k_dpscale, k, d1scale - 1, 'd');
+          }
         }
       }
 
@@ -170,8 +210,10 @@ void epolar_data(rc_op op) {
         bask = i * maxp12;
         for (int j = 0; j < nn; ++j) {
           int k = polgrp::ip12[bask + j] - 1;
-          if (k > i)
+          if (k > i) {
+            insert_dpu(ik_dpu, i, k, d2scale - 1, 'd');
             insert_dp(k_dpscale, k, d2scale - 1, 'd');
+          }
         }
       }
 
@@ -180,8 +222,10 @@ void epolar_data(rc_op op) {
         bask = i * maxp13;
         for (int j = 0; j < nn; ++j) {
           int k = polgrp::ip13[bask + j] - 1;
-          if (k > i)
+          if (k > i) {
+            insert_dpu(ik_dpu, i, k, d3scale - 1, 'd');
             insert_dp(k_dpscale, k, d3scale - 1, 'd');
+          }
         }
       }
 
@@ -190,8 +234,10 @@ void epolar_data(rc_op op) {
         bask = i * maxp14;
         for (int j = 0; j < nn; ++j) {
           int k = polgrp::ip14[bask + j] - 1;
-          if (k > i)
+          if (k > i) {
+            insert_dpu(ik_dpu, i, k, d4scale - 1, 'd');
             insert_dp(k_dpscale, k, d4scale - 1, 'd');
+          }
         }
       }
 
@@ -205,8 +251,10 @@ void epolar_data(rc_op op) {
               val = p2iscale - 1;
           }
           k -= 1;
-          if (k > i)
+          if (k > i) {
+            insert_dpu(ik_dpu, i, k, val, 'p');
             insert_dp(k_dpscale, k, val, 'p');
+          }
         }
       }
 
@@ -221,8 +269,10 @@ void epolar_data(rc_op op) {
               val = p3iscale - 1;
           }
           k -= 1;
-          if (k > i)
+          if (k > i) {
+            insert_dpu(ik_dpu, i, k, val, 'p');
             insert_dp(k_dpscale, k, val, 'p');
+          }
         }
       }
 
@@ -237,8 +287,10 @@ void epolar_data(rc_op op) {
               val = p4iscale - 1;
           }
           k -= 1;
-          if (k > i)
+          if (k > i) {
+            insert_dpu(ik_dpu, i, k, val, 'p');
             insert_dp(k_dpscale, k, val, 'p');
+          }
         }
       }
 
@@ -253,8 +305,10 @@ void epolar_data(rc_op op) {
               val = p5iscale - 1;
           }
           k -= 1;
-          if (k > i)
+          if (k > i) {
+            insert_dpu(ik_dpu, i, k, val, 'p');
             insert_dp(k_dpscale, k, val, 'p');
+          }
         }
       }
 
@@ -265,6 +319,20 @@ void epolar_data(rc_op op) {
         excls.push_back(it.second.p);
       }
     }
+    std::vector<int> dpu_ik_vec;
+    std::vector<real> dpu_sc_vec;
+    for (auto& it : ik_dpu) {
+      dpu_ik_vec.push_back(it.first.first);
+      dpu_ik_vec.push_back(it.first.second);
+      dpu_sc_vec.push_back(it.second.d);
+      dpu_sc_vec.push_back(it.second.p);
+      dpu_sc_vec.push_back(it.second.u);
+    }
+    ndpuexclude_ = ik_dpu.size();
+    device_array::allocate(ndpuexclude_, &dpuexclude_, &dpuexclude_scale_);
+    device_array::copyin(ndpuexclude_, dpuexclude_, dpu_ik_vec.data());
+    device_array::copyin(ndpuexclude_, dpuexclude_scale_, dpu_sc_vec.data());
+
     ndpexclude_ = excls.size() / 2;
     device_array::allocate(ndpexclude_, &dpexclude_, &dpexclude_scale_);
     device_array::copyin(ndpexclude_, dpexclude_, exclik.data());

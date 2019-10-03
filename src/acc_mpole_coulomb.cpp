@@ -158,7 +158,7 @@ void empole_coulomb_tmpl() {
         rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], //
         e, pgrad);
 
-    if_constexpr(do_a && mscale == -1) atomic_add_value(-1, nem, offset);
+    if_constexpr(do_a) if (mscale == -1) atomic_add_value(-1, nem, offset);
     if_constexpr(do_e) atomic_add_value(e, em, offset);
     if_constexpr(do_g) {
       atomic_add_value(pgrad.frcx, gx, i);
