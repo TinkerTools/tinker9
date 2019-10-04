@@ -13,7 +13,7 @@ matrix:
       dist: xenial
       env:
         - CI_DEPEND_DIR=https://raw.githubusercontent.com/zhi-wang/ci-depend/master/xenial
-	- ARGS="fftw_dir=../fftw tinker_dir=../tinker/source fortran_config=linux.fort.gfortran.5.4.0.mk"
+        - ARGS="fftw_dir=../fftw tinker_dir=../tinker/source fortran_config=linux.fort.gfortran.5.4.0.mk"
 
 
 before_install:
