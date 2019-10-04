@@ -97,9 +97,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]") {
 
   int usage = 0;
   usage |= calc::xyz;
-  usage |= calc::energy;
-  usage |= calc::grad;
-  usage |= calc::virial;
+  usage |= calc::vmask;
 
   SECTION("empole -- pme") {
     std::string key1 = key0;

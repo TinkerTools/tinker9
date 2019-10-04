@@ -38,6 +38,12 @@ inline void epolar_pair_acc(                                    //
   constexpr int do_g = USE & calc::grad;
   constexpr int do_a = USE & calc::analyz;
 
+  if_constexpr(ETYP == elec_t::ewald) {
+    dscale = 1;
+    pscale = 1;
+    uscale = 1;
+  }
+
   real dir = dix * xr + diy * yr + diz * zr;
   real qix = qixx * xr + qixy * yr + qixz * zr;
   real qiy = qixy * xr + qiyy * yr + qiyz * zr;
@@ -55,34 +61,57 @@ inline void epolar_pair_acc(                                    //
   real invr1 = REAL_RECIP(r);
   real rr2 = invr1 * invr1;
 
-  MAYBE_UNUSED real bn[5];
-  if_constexpr(ETYP == elec_t::ewald) {
-    if_constexpr(!do_g) damp_ewald(bn, 4, r, invr1, rr2, aewald);
-    else damp_ewald(bn, 5, r, invr1, rr2, aewald);
-  }
   real rr1 = invr1;
   real rr3 = rr1 * rr2;
   real rr5 = 3 * rr3 * rr2;
   real rr7 = 5 * rr5 * rr2;
   MAYBE_UNUSED real rr9;
   if_constexpr(do_g) rr9 = 7 * rr7 * rr2;
+  real bn[5];
+  if_constexpr(ETYP == elec_t::ewald) {
+    if_constexpr(!do_g) damp_ewald(bn, 4, r, invr1, rr2, aewald);
+    else damp_ewald(bn, 5, r, invr1, rr2, aewald);
+  }
+  else if_constexpr(ETYP == elec_t::coulomb) {
+    bn[1] = rr3;
+    bn[2] = rr5;
+    bn[3] = rr7;
+    if_constexpr(do_g) bn[4] = rr9;
+  }
 
   // if use_thole
-  real sc3, sc5, sc7;
+  real ex3, ex5, ex7;
   MAYBE_UNUSED real rc31, rc32, rc33, rc51, rc52, rc53, rc71, rc72, rc73;
-  if_constexpr(!do_g)                    //
-      damp_thole3(r, pdi, pti, pdk, ptk, //
-                  sc3, sc5, sc7);
-  else                        //
-      damp_thole3g(           //
-          r, rr2, rr5,        //
-          xr, yr, zr,         //
-          pdi, pti, pdk, ptk, //
-          sc3, sc5, sc7,      //
-          rc31, rc32, rc33,   //
-          rc51, rc52, rc53,   //
-          rc71, rc72, rc73);
+  if_constexpr(!do_g) {
+    damp_thole3(r, pdi, pti, pdk, ptk, //
+                ex3, ex5, ex7);
+    ex3 = 1 - ex3;
+    ex5 = 1 - ex5;
+    ex7 = 1 - ex7;
+  }
+  else {
+    damp_thole3g(           //
+        r, rr2, xr, yr, zr, //
+        pdi, pti, pdk, ptk, //
+        ex3, ex5, ex7,      //
+        rc31, rc32, rc33,   //
+        rc51, rc52, rc53,   //
+        rc71, rc72, rc73);
+    rc31 *= rr3;
+    rc32 *= rr3;
+    rc33 *= rr3;
+    rc51 *= rr5;
+    rc52 *= rr5;
+    rc53 *= rr5;
+    rc71 *= rr7;
+    rc72 *= rr7;
+    rc73 *= rr7;
+  }
   // end if use_thole
+
+  real sr3 = bn[1] - ex3 * rr3;
+  real sr5 = bn[2] - ex5 * rr5;
+  real sr7 = bn[3] - ex7 * rr7;
 
   if_constexpr(do_e && do_a) {
     real diu = dix * ukx + diy * uky + diz * ukz;
@@ -92,48 +121,25 @@ inline void epolar_pair_acc(                                    //
     real term1 = ck * uir - ci * ukr + diu + dku;
     real term2 = 2 * (qiu - qku) - uir * dkr - dir * ukr;
     real term3 = uir * qkr - ukr * qir;
-    real sr3 = pscale * rr3 * sc3;
-    real sr5 = pscale * rr5 * sc5;
-    real sr7 = pscale * rr7 * sc7;
-    if_constexpr(ETYP == elec_t::ewald) {
-      sr3 += (bn[1] - rr3);
-      sr5 += (bn[2] - rr5);
-      sr7 += (bn[3] - rr7);
-    }
-    e = f * (term1 * sr3 + term2 * sr5 + term3 * sr7);
+    e = pscale * f * (term1 * sr3 + term2 * sr5 + term3 * sr7);
   }
 
   if_constexpr(do_g) {
     real uirp = uixp * xr + uiyp * yr + uizp * zr;
     real ukrp = ukxp * xr + ukyp * yr + ukzp * zr;
 
-    real dsr3, dsr5, dsr7, psr3, psr5, psr7;
-    if_constexpr(ETYP == elec_t::ewald) {
-      dsr3 = bn[1] - (1 - sc3) * rr3;
-      dsr5 = bn[2] - (1 - sc5) * rr5;
-      dsr7 = bn[3] - (1 - sc7) * rr7;
-    }
-    else if_constexpr(ETYP == elec_t::coulomb) {
-      dsr3 = rr3 * sc3 * dscale;
-      dsr5 = rr5 * sc5 * dscale;
-      dsr7 = rr7 * sc7 * dscale;
-      psr3 = rr3 * sc3 * pscale;
-      psr5 = rr5 * sc5 * pscale;
-      psr7 = rr7 * sc7 * pscale;
-    }
-
     // get the induced dipole field used for dipole torques
 
     real tuir, tukr;
 
-    real tix3 = psr3 * ukx + dsr3 * ukxp;
-    real tiy3 = psr3 * uky + dsr3 * ukyp;
-    real tiz3 = psr3 * ukz + dsr3 * ukzp;
-    real tkx3 = psr3 * uix + dsr3 * uixp;
-    real tky3 = psr3 * uiy + dsr3 * uiyp;
-    real tkz3 = psr3 * uiz + dsr3 * uizp;
-    tuir = -psr5 * ukr - dsr5 * ukrp;
-    tukr = -psr5 * uir - dsr5 * uirp;
+    real tix3 = pscale * sr3 * ukx + dscale * sr3 * ukxp;
+    real tiy3 = pscale * sr3 * uky + dscale * sr3 * ukyp;
+    real tiz3 = pscale * sr3 * ukz + dscale * sr3 * ukzp;
+    real tkx3 = pscale * sr3 * uix + dscale * sr3 * uixp;
+    real tky3 = pscale * sr3 * uiy + dscale * sr3 * uiyp;
+    real tkz3 = pscale * sr3 * uiz + dscale * sr3 * uizp;
+    tuir = -pscale * sr5 * ukr - dscale * sr5 * ukrp;
+    tukr = -pscale * sr5 * uir - dscale * sr5 * uirp;
 
     pgrad.ufldi[0] = f * (tix3 + xr * tuir);
     pgrad.ufldi[1] = f * (tiy3 + yr * tuir);
@@ -144,14 +150,14 @@ inline void epolar_pair_acc(                                    //
 
     // get induced dipole field gradient used for quadrupole torques
 
-    real tix5 = 2 * (psr5 * ukx + dsr5 * ukxp);
-    real tiy5 = 2 * (psr5 * uky + dsr5 * ukyp);
-    real tiz5 = 2 * (psr5 * ukz + dsr5 * ukzp);
-    real tkx5 = 2 * (psr5 * uix + dsr5 * uixp);
-    real tky5 = 2 * (psr5 * uiy + dsr5 * uiyp);
-    real tkz5 = 2 * (psr5 * uiz + dsr5 * uizp);
-    tuir = -psr7 * ukr - dsr7 * ukrp;
-    tukr = -psr7 * uir - dsr7 * uirp;
+    real tix5 = 2 * (pscale * sr5 * ukx + dscale * sr5 * ukxp);
+    real tiy5 = 2 * (pscale * sr5 * uky + dscale * sr5 * ukyp);
+    real tiz5 = 2 * (pscale * sr5 * ukz + dscale * sr5 * ukzp);
+    real tkx5 = 2 * (pscale * sr5 * uix + dscale * sr5 * uixp);
+    real tky5 = 2 * (pscale * sr5 * uiy + dscale * sr5 * uiyp);
+    real tkz5 = 2 * (pscale * sr5 * uiz + dscale * sr5 * uizp);
+    tuir = -pscale * sr7 * ukr - dscale * sr7 * ukrp;
+    tukr = -pscale * sr7 * uir - dscale * sr7 * uirp;
 
     pgrad.dufldi[0] = f * (xr * tix5 + xr * xr * tuir);
     pgrad.dufldi[1] = f * (xr * tiy5 + yr * tix5 + 2 * xr * yr * tuir);
@@ -168,79 +174,67 @@ inline void epolar_pair_acc(                                    //
 
     // get the field gradient for direct polarization force
 
-    real term1, term2, term3, term4, term5, term6, term7, term8;
+    real term1, term2, term3, term4, term5, term6, term7;
 
-    term1 = sc3 * (rr3 - rr5 * xr * xr) + rc31 * xr;
-    term2 = (sc3 + sc5) * rr5 * xr - rc31;
-    term3 = sc5 * (rr7 * xr * xr - rr5) - rc51 * xr;
-    term4 = 2 * sc5 * rr5;
-    term5 = 2 * (sc5 * rr7 * xr - rc51 + 1.5f * sc7 * rr7 * xr);
-    term6 = xr * (sc7 * rr9 * xr - rc71);
-    real tixx = ci * term1 + dix * term2 - dir * term3 - qixx * term4 +
-        qix * term5 - qir * term6 + (qiy * yr + qiz * zr) * sc7 * rr7;
-    real tkxx = ck * term1 - dkx * term2 + dkr * term3 - qkxx * term4 +
-        qkx * term5 - qkr * term6 + (qky * yr + qkz * zr) * sc7 * rr7;
+    term1 = bn[2] - ex3 * rr5;
+    term2 = bn[3] - ex5 * rr7;
+    term3 = -sr3 + term1 * xr * xr - xr * rc31;
+    term4 = rc31 - term1 * xr - sr5 * xr;
+    term5 = term2 * xr * xr - sr5 - xr * rc51;
+    term6 = (bn[4] - ex7 * rr9) * xr * xr - bn[3] - xr * rc71;
+    term7 = rc51 - 2 * bn[3] * xr + (ex5 + 1.5f * ex7) * rr7 * xr;
+    real tixx = ci * term3 + dix * term4 + dir * term5 + 2 * sr5 * qixx +
+        (qiy * yr + qiz * zr) * ex7 * rr7 + 2 * qix * term7 + qir * term6;
+    real tkxx = ck * term3 - dkx * term4 - dkr * term5 + 2 * sr5 * qkxx +
+        (qky * yr + qkz * zr) * ex7 * rr7 + 2 * qkx * term7 + qkr * term6;
 
-    term1 = sc3 * (rr3 - rr5 * yr * yr) + rc32 * yr;
-    term2 = (sc3 + sc5) * rr5 * yr - rc32;
-    term3 = sc5 * (rr7 * yr * yr - rr5) - rc52 * yr;
-    term4 = 2 * sc5 * rr5;
-    term5 = 2 * (sc5 * rr7 * yr - rc52 + 1.5f * sc7 * rr7 * yr);
-    term6 = yr * (sc7 * rr9 * yr - rc72);
-    real tiyy = ci * term1 + diy * term2 - dir * term3 - qiyy * term4 +
-        qiy * term5 - qir * term6 + (qix * xr + qiz * zr) * sc7 * rr7;
-    real tkyy = ck * term1 - dky * term2 + dkr * term3 - qkyy * term4 +
-        qky * term5 - qkr * term6 + (qkx * xr + qkz * zr) * sc7 * rr7;
+    term3 = -sr3 + term1 * yr * yr - yr * rc32;
+    term4 = rc32 - term1 * yr - sr5 * yr;
+    term5 = term2 * yr * yr - sr5 - yr * rc52;
+    term6 = (bn[4] - ex7 * rr9) * yr * yr - bn[3] - yr * rc72;
+    term7 = rc52 - 2 * bn[3] * yr + (ex5 + 1.5f * ex7) * rr7 * yr;
+    real tiyy = ci * term3 + diy * term4 + dir * term5 + 2 * sr5 * qiyy +
+        (qix * xr + qiz * zr) * ex7 * rr7 + 2 * qiy * term7 + qir * term6;
+    real tkyy = ck * term3 - dky * term4 - dkr * term5 + 2 * sr5 * qkyy +
+        (qkx * xr + qkz * zr) * ex7 * rr7 + 2 * qky * term7 + qkr * term6;
 
-    term1 = sc3 * (rr3 - rr5 * zr * zr) + rc33 * zr;
-    term2 = (sc3 + sc5) * rr5 * zr - rc33;
-    term3 = sc5 * (rr7 * zr * zr - rr5) - rc53 * zr;
-    term4 = 2 * sc5 * rr5;
-    term5 = 2 * (sc5 * rr7 * zr - rc53 + 1.5f * sc7 * rr7 * zr);
-    term6 = zr * (sc7 * rr9 * zr - rc73);
-    real tizz = ci * term1 + diz * term2 - dir * term3 - qizz * term4 +
-        qiz * term5 - qir * term6 + (qix * xr + qiy * yr) * sc7 * rr7;
-    real tkzz = ck * term1 - dkz * term2 + dkr * term3 - qkzz * term4 +
-        qkz * term5 - qkr * term6 + (qkx * xr + qky * yr) * sc7 * rr7;
+    term3 = -sr3 + term1 * zr * zr - zr * rc33;
+    term4 = rc33 - term1 * zr - sr5 * zr;
+    term5 = term2 * zr * zr - sr5 - zr * rc53;
+    term6 = (bn[4] - ex7 * rr9) * zr * zr - bn[3] - zr * rc73;
+    term7 = rc53 - 2 * bn[3] * zr + (ex5 + 1.5f * ex7) * rr7 * zr;
+    real tizz = ci * term3 + diz * term4 + dir * term5 + 2 * sr5 * qizz +
+        (qix * xr + qiy * yr) * ex7 * rr7 + 2 * qiz * term7 + qir * term6;
+    real tkzz = ck * term3 - dkz * term4 - dkr * term5 + 2 * sr5 * qkzz +
+        (qkx * xr + qky * yr) * ex7 * rr7 + 2 * qkz * term7 + qkr * term6;
 
-    term2 = sc3 * rr5 * xr - rc31;
-    term1 = yr * term2;
-    term3 = sc5 * rr5 * yr;
-    term4 = yr * (sc5 * rr7 * xr - rc51);
-    term5 = 2 * sc5 * rr5;
-    term6 = 2 * (sc5 * rr7 * xr - rc51);
-    term7 = 2 * sc7 * rr7 * yr;
-    term8 = yr * (sc7 * rr9 * xr - rc71);
-    real tixy = -ci * term1 + diy * term2 + dix * term3 - dir * term4 -
-        qixy * term5 + qiy * term6 + qix * term7 - qir * term8;
-    real tkxy = -ck * term1 - dky * term2 - dkx * term3 + dkr * term4 -
-        qkxy * term5 + qky * term6 + qkx * term7 - qkr * term8;
+    term3 = term1 * xr * yr - yr * rc31;
+    term4 = rc31 - term1 * xr;
+    term5 = term2 * xr * yr - yr * rc51;
+    term6 = (bn[4] - ex7 * rr9) * xr * yr - yr * rc71;
+    term7 = rc51 - term2 * xr;
+    real tixy = ci * term3 - sr5 * dix * yr + diy * term4 + dir * term5 +
+        2 * sr5 * qixy - 2 * sr7 * yr * qix + 2 * qiy * term7 + qir * term6;
+    real tkxy = ck * term3 + sr5 * dkx * yr - dky * term4 - dkr * term5 +
+        2 * sr5 * qkxy - 2 * sr7 * yr * qkx + 2 * qky * term7 + qkr * term6;
 
-    term2 = sc3 * rr5 * xr - rc31;
-    term1 = zr * term2;
-    term3 = sc5 * rr5 * zr;
-    term4 = zr * (sc5 * rr7 * xr - rc51);
-    term5 = 2 * sc5 * rr5;
-    term6 = 2 * (sc5 * rr7 * xr - rc51);
-    term7 = 2 * sc7 * rr7 * zr;
-    term8 = zr * (sc7 * rr9 * xr - rc71);
-    real tixz = -ci * term1 + diz * term2 + dix * term3 - dir * term4 -
-        qixz * term5 + qiz * term6 + qix * term7 - qir * term8;
-    real tkxz = -ck * term1 - dkz * term2 - dkx * term3 + dkr * term4 -
-        qkxz * term5 + qkz * term6 + qkx * term7 - qkr * term8;
+    term3 = term1 * xr * zr - zr * rc31;
+    term5 = term2 * xr * zr - zr * rc51;
+    term6 = (bn[4] - ex7 * rr9) * xr * zr - zr * rc71;
+    real tixz = ci * term3 - sr5 * dix * zr + diz * term4 + dir * term5 +
+        2 * sr5 * qixz - 2 * sr7 * zr * qix + 2 * qiz * term7 + qir * term6;
+    real tkxz = ck * term3 + sr5 * dkx * zr - dkz * term4 - dkr * term5 +
+        2 * sr5 * qkxz - 2 * sr7 * zr * qkx + 2 * qkz * term7 + qkr * term6;
 
-    term2 = sc3 * rr5 * yr - rc32;
-    term1 = zr * term2;
-    term3 = sc5 * rr5 * zr;
-    term4 = zr * (sc5 * rr7 * yr - rc52);
-    term5 = 2 * sc5 * rr5;
-    term6 = 2 * (sc5 * rr7 * yr - rc52);
-    term7 = 2 * sc7 * rr7 * zr;
-    term8 = zr * (sc7 * rr9 * yr - rc72);
-    real tiyz = -ci * term1 + diz * term2 + diy * term3 - dir * term4 -
-        qiyz * term5 + qiz * term6 + qiy * term7 - qir * term8;
-    real tkyz = -ck * term1 - dkz * term2 - dky * term3 + dkr * term4 -
-        qkyz * term5 + qkz * term6 + qky * term7 - qkr * term8;
+    term3 = term1 * yr * zr - zr * rc32;
+    term4 = rc32 - term1 * yr;
+    term5 = term2 * yr * zr - zr * rc52;
+    term6 = (bn[4] - ex7 * rr9) * yr * zr - zr * rc72;
+    term7 = rc52 - term2 * yr;
+    real tiyz = ci * term3 - sr5 * diy * zr + diz * term4 + dir * term5 +
+        2 * sr5 * qiyz - 2 * sr7 * zr * qiy + 2 * qiz * term7 + qir * term6;
+    real tkyz = ck * term3 + sr5 * dky * zr - dkz * term4 - dkr * term5 +
+        2 * sr5 * qkyz - 2 * sr7 * zr * qky + 2 * qkz * term7 + qkr * term6;
 
     // get the dEd/dR terms for Thole direct polarization force
 
@@ -253,14 +247,14 @@ inline void epolar_pair_acc(                                    //
     depz = tixz * ukxp + tiyz * ukyp + tizz * ukzp - tkxz * uixp - tkyz * uiyp -
         tkzz * uizp;
     if_constexpr(ETYP == elec_t::ewald) {
-      pgrad.frcx += depx;
-      pgrad.frcy += depy;
-      pgrad.frcz += depz;
+      pgrad.frcx = -depx;
+      pgrad.frcy = -depy;
+      pgrad.frcz = -depz;
     }
     else if_constexpr(ETYP == elec_t::coulomb) {
-      pgrad.frcx = dscale * depx;
-      pgrad.frcy = dscale * depy;
-      pgrad.frcz = dscale * depz;
+      pgrad.frcx = -depx * dscale;
+      pgrad.frcy = -depy * dscale;
+      pgrad.frcz = -depz * dscale;
     }
 
     // get the dEp/dR terms for Thole direct polarization force
@@ -272,47 +266,52 @@ inline void epolar_pair_acc(                                    //
     depz = tixz * ukx + tiyz * uky + tizz * ukz - tkxz * uix - tkyz * uiy -
         tkzz * uiz;
     if_constexpr(ETYP == elec_t::ewald) {
-      pgrad.frcx += depx;
-      pgrad.frcy += depy;
-      pgrad.frcz += depz;
+      pgrad.frcx -= depx;
+      pgrad.frcy -= depy;
+      pgrad.frcz -= depz;
     }
     else if_constexpr(ETYP == elec_t::coulomb) {
-      pgrad.frcx += pscale * depx;
-      pgrad.frcy += pscale * depy;
-      pgrad.frcz += pscale * depz;
+      pgrad.frcx -= pscale * depx;
+      pgrad.frcy -= pscale * depy;
+      pgrad.frcz -= pscale * depz;
     }
 
     // get the dtau/dr terms used for mutual polarization force
 
-    term1 = (sc3 + sc5) * rr5;
-    term2 = term1 * xr - rc31;
-    term3 = sc5 * (rr5 - rr7 * xr * xr) + rc51 * xr;
-    tixx = uix * term2 + uir * term3;
-    tkxx = ukx * term2 + ukr * term3;
+    term1 = bn[2] - ex3 * rr5;
+    term2 = bn[3] - ex5 * rr7;
+    term3 = sr5 + term1;
 
-    term2 = term1 * yr - rc32;
-    term3 = sc5 * (rr5 - rr7 * yr * yr) + rc52 * yr;
-    tiyy = uiy * term2 + uir * term3;
-    tkyy = uky * term2 + ukr * term3;
+    term5 = -xr * term3 + rc31;
+    term6 = -sr5 + xr * xr * term2 - xr * rc51;
+    tixx = uix * term5 + uir * term6;
+    tkxx = ukx * term5 + ukr * term6;
 
-    term2 = term1 * zr - rc33;
-    term3 = sc5 * (rr5 - rr7 * zr * zr) + rc53 * zr;
-    tizz = uiz * term2 + uir * term3;
-    tkzz = ukz * term2 + ukr * term3;
+    term5 = -yr * term3 + rc32;
+    term6 = -sr5 + yr * yr * term2 - yr * rc52;
+    tiyy = uiy * term5 + uir * term6;
+    tkyy = uky * term5 + ukr * term6;
 
-    term1 = sc5 * rr5 * yr;
-    term2 = sc3 * rr5 * xr - rc31;
-    term3 = yr * (sc5 * rr7 * xr - rc51);
-    tixy = uix * term1 + uiy * term2 - uir * term3;
-    tkxy = ukx * term1 + uky * term2 - ukr * term3;
-    term1 = sc5 * rr5 * zr;
-    term3 = zr * (sc5 * rr7 * xr - rc51);
-    tixz = uix * term1 + uiz * term2 - uir * term3;
-    tkxz = ukx * term1 + ukz * term2 - ukr * term3;
-    term2 = sc3 * rr5 * yr - rc32;
-    term3 = zr * (sc5 * rr7 * yr - rc52);
-    tiyz = uiy * term1 + uiz * term2 - uir * term3;
-    tkyz = uky * term1 + ukz * term2 - ukr * term3;
+    term5 = -zr * term3 + rc33;
+    term6 = -sr5 + zr * zr * term2 - zr * rc53;
+    tizz = uiz * term5 + uir * term6;
+    tkzz = ukz * term5 + ukr * term6;
+
+    term4 = -sr5 * yr;
+    term5 = -xr * term1 + rc31;
+    term6 = xr * yr * term2 - yr * rc51;
+    tixy = uix * term4 + uiy * term5 + uir * term6;
+    tkxy = ukx * term4 + uky * term5 + ukr * term6;
+
+    term4 = -sr5 * zr;
+    term6 = xr * zr * term2 - zr * rc51;
+    tixz = uix * term4 + uiz * term5 + uir * term6;
+    tkxz = ukx * term4 + ukz * term5 + ukr * term6;
+
+    term5 = -yr * term1 + rc32;
+    term6 = yr * zr * term2 - zr * rc52;
+    tiyz = uiy * term4 + uiz * term5 + uir * term6;
+    tkyz = uky * term4 + ukz * term5 + ukr * term6;
 
     depx = tixx * ukxp + tixy * ukyp + tixz * ukzp + tkxx * uixp + tkxy * uiyp +
         tkxz * uizp;
@@ -321,14 +320,14 @@ inline void epolar_pair_acc(                                    //
     depz = tixz * ukxp + tiyz * ukyp + tizz * ukzp + tkxz * uixp + tkyz * uiyp +
         tkzz * uizp;
     if_constexpr(ETYP == elec_t::ewald) {
-      pgrad.frcx += depx;
-      pgrad.frcy += depy;
-      pgrad.frcz += depz;
+      pgrad.frcx -= depx;
+      pgrad.frcy -= depy;
+      pgrad.frcz -= depz;
     }
     else if_constexpr(ETYP == elec_t::coulomb) {
-      pgrad.frcx += uscale * depx;
-      pgrad.frcy += uscale * depy;
-      pgrad.frcz += uscale * depz;
+      pgrad.frcx -= uscale * depx;
+      pgrad.frcy -= uscale * depy;
+      pgrad.frcz -= uscale * depz;
     }
 
     pgrad.frcx *= f;
