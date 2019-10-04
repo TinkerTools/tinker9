@@ -11,7 +11,9 @@ matrix:
   include:
     - os: linux
       dist: xenial
-      env: CI_DEPEND_DIR=https://raw.githubusercontent.com/zhi-wang/ci-depend/master/xenial
+      env:
+        - CI_DEPEND_DIR=https://raw.githubusercontent.com/zhi-wang/ci-depend/master/xenial
+        - ARGS="fftw_dir=../fftw tinker_dir=../tinker/source fortran_config=linux.fort.gfortran.5.4.0.mk"
 
 
 before_install:
@@ -47,6 +49,6 @@ script:
 
   - make -f make/Makefile create_build build=build
   - cd build
-  - make fftw_dir=../fftw tinker_dir=../tinker/source all
-  - make info
-  - make test
+  - make $ARGS all
+  - make $ARGS info
+  - make $ARGS test
