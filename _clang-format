@@ -7,3 +7,29 @@ FixNamespaceComments:                  false
 BreakConstructorInitializers:          BeforeComma
 PointerAlignment:                      Left
 AllowShortFunctionsOnASingleLine:      Empty
+
+AccessModifierOffset:                  -3
+IndentWidth:                           3
+ConstructorInitializerIndentWidth:     3
+ContinuationIndentWidth:               3
+SpaceBeforeParens:                     Always
+BreakBeforeBraces:                     Custom
+BraceWrapping:
+    AfterCaseLabel:                    false
+    AfterClass:                        true
+    AfterControlStatement:             false
+    AfterEnum:                         true
+    AfterFunction:                     true
+    AfterNamespace:                    false
+    AfterObjCDeclaration:              true
+    AfterStruct:                       true
+    AfterUnion:                        true
+    AfterExternBlock:                  true
+    BeforeCatch:                       false
+    BeforeElse:                        false
+    IndentBraces:                      false
+    SplitEmptyFunction:                false
+    SplitEmptyRecord:                  false
+    SplitEmptyNamespace:               false
+StatementMacros:
+    - CUDA_DEVICE_FUNCTION

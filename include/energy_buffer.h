@@ -42,13 +42,13 @@ private:
 
   template <class DUMMY>
   struct S0<DUMMY, float> {
-    typedef FixedPoint Type;
+    typedef fixed Type;
   };
 
   template <class DUMMY>
   struct S0<DUMMY, double> {
     typedef double Type;
-    // typedef FixedPoint Type;
+    // typedef fixed Type;
   };
 
 public:
@@ -65,7 +65,7 @@ private:
   /// \brief
   /// Convert a fixed point scalar \c val to a floating point number.
   template <class T>
-  static T fixed_to_floating(FixedPoint val) {
+  static T fixed_to_floating(fixed val) {
     assert(std::is_floating_point<T>::value);
     return static_cast<T>(static_cast<long long>(val)) / fixed_point;
   }
@@ -87,7 +87,7 @@ private:
       parallel::reduce_sum2(val, N, dptr, nelem, NS);
     }
 
-    if_constexpr(std::is_same<Store, FixedPoint>::value &&
+    if_constexpr(std::is_same<Store, fixed>::value &&
                  !std::is_same<Store, A>::value) {
       if_constexpr(N == 1) { *host_ans = fixed_to_floating<A>(val[0]); }
       else {

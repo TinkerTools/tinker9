@@ -1,7 +1,6 @@
 #include "energy.h"
 #include "md.h"
 #include "nblist.h"
-#include "polgrp.h"
 #include "potent.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -31,8 +30,6 @@ void potential_data(rc_op op) {
   rc_man elec42_{elec_data, op};
 
   rc_man empole42_{empole_data, op};
-  if (use_potent(polar_term))
-    rc_man polargroup42_{polargroup_data, op};
   rc_man epolar42_{epolar_data, op};
 }
 

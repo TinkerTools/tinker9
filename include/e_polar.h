@@ -4,7 +4,6 @@
 #include "dev_array.h"
 #include "elec.h"
 #include "energy_buffer.h"
-#include "polgrp.h"
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
