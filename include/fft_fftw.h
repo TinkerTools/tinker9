@@ -8,9 +8,9 @@ TINKER_NAMESPACE_BEGIN
 /// @brief
 /// FFT plan
 struct FFTPlan {
-#if defined(TINKER_SINGLE_PRECISION)
+#if TINKER_SINGLE_PRECISION
   typedef fftwf_plan type;
-#elif defined(TINKER_DOUBLE_PRECISION)
+#elif TINKER_DOUBLE_PRECISION
   typedef fftw_plan type;
 #else
   static_assert(false, "");

@@ -4,5 +4,6 @@ AlwaysBreakTemplateDeclarations:       true
 ColumnLimit:                           80
 IndentPPDirectives:                    AfterHash
 FixNamespaceComments:                  false
-PointerAlignment: Left
 BreakConstructorInitializers:          BeforeComma
+PointerAlignment:                      Left
+AllowShortFunctionsOnASingleLine:      Empty

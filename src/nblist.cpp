@@ -1,5 +1,6 @@
 #include "nblist.h"
 #include "dev_array.h"
+#include "e_polar.h"
 #include "e_vdw.h"
 #include "ext/tinker/detail/limits.hh"
 #include "ext/tinker/detail/neigh.hh"
@@ -224,7 +225,7 @@ void nblist_data(rc_op op) {
   u = use_usolv_list();
   if (u) {
     if (op & rc_dealloc) {
-      device_array::deallocate(mindex, minv);
+      device_array::deallocate(mindex, minv, minv_exclude_);
     }
 
     if (op & rc_alloc) {
@@ -237,6 +238,7 @@ void nblist_data(rc_op op) {
       device_array::allocate(n, &mindex);
       minv_size = nblist_maxlst_(minv_size, limits::usolvcut, neigh::pbuffer);
       device_array::allocate(3 * minv_size * n, &minv);
+      device_array::allocate(6 * nuexclude_, &minv_exclude_);
     }
 
     if (op & rc_init)

@@ -15,13 +15,13 @@ double get_energy(Energy e_) {
 }
 
 void get_virial(double* v_out, Virial vir_) {
-  real r9[9];
-  vir_->sum(r9);
-  for (int i = 0; i < 9; ++i)
-    v_out[i] = r9[i];
+  real r6[VirialBuffer::N];
+  vir_->sum(r6);
+  for (size_t i = 0; i < VirialBuffer::N; ++i)
+    v_out[i] = r6[i];
 }
 
-int BondedEnergy::buffer_size() const { return bufsize_; }
+size_t BondedEnergy::buffer_size() const { return bufsize_; }
 
 Energy BondedEnergy::e() { return e_; }
 
@@ -33,7 +33,7 @@ void BondedEnergy::dealloc() {
   bufsize_ = 0;
 }
 
-void BondedEnergy::alloc(int bsize) {
+void BondedEnergy::alloc(size_t bsize) {
   if (rc_flag & calc::analyz) {
     e_ = Energy::open();
     vir_ = Virial::open();
@@ -57,7 +57,7 @@ void NonbondedEnergy::dealloc() {
   BondedEnergy::dealloc();
 }
 
-void NonbondedEnergy::alloc(int bsize) {
+void NonbondedEnergy::alloc(size_t bsize) {
   BondedEnergy::alloc(bsize);
   ne_ = Count::open();
   ne_->alloc(bsize);

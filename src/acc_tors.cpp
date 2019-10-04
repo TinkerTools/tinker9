@@ -16,11 +16,10 @@ void etors_tmpl() {
   auto* vir_et = et_handle.vir()->buffer();
   auto bufsize = et_handle.buffer_size();
 
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
               itors,tors1,tors2,tors3,tors4,tors5,tors6,\
               et,vir_et)
-  #pragma acc loop gang independent
   for (int i = 0; i < ntors; ++i) {
     int offset = i & (bufsize - 1);
     const int ia = itors[i][0];
@@ -193,16 +192,7 @@ void etors_tmpl() {
           real vzy = zcb * (dedyic + dedyid) - zba * dedyia + zdc * dedyid;
           real vzz = zcb * (dedzic + dedzid) - zba * dedzia + zdc * dedzid;
 
-          int offv = offset * 16;
-          atomic_add_value(vxx, vir_et, offv + 0);
-          atomic_add_value(vyx, vir_et, offv + 1);
-          atomic_add_value(vzx, vir_et, offv + 2);
-          atomic_add_value(vyx, vir_et, offv + 3);
-          atomic_add_value(vyy, vir_et, offv + 4);
-          atomic_add_value(vzy, vir_et, offv + 5);
-          atomic_add_value(vzx, vir_et, offv + 6);
-          atomic_add_value(vzy, vir_et, offv + 7);
-          atomic_add_value(vzz, vir_et, offv + 8);
+          atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_et, offset);
         }
       }
     }

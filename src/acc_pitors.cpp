@@ -14,11 +14,10 @@ void epitors_tmpl() {
   auto* vir_ept = ept_handle.vir()->buffer();
   auto bufsize = ept_handle.buffer_size();
 
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
               ipit,kpit,\
               ept,vir_ept)
-  #pragma acc loop gang independent
   for (int i = 0; i < npitors; ++i) {
     int offset = i & (bufsize - 1);
     const int ia = ipit[i][0];
@@ -217,16 +216,7 @@ void epitors_tmpl() {
           real vzy = zdc * vyterm + zcp * dedyip - zqd * dedyiq;
           real vzz = zdc * vzterm + zcp * dedzip - zqd * dedziq;
 
-          int offv = offset * 16;
-          atomic_add_value(vxx, vir_ept, offv + 0);
-          atomic_add_value(vyx, vir_ept, offv + 1);
-          atomic_add_value(vzx, vir_ept, offv + 2);
-          atomic_add_value(vyx, vir_ept, offv + 3);
-          atomic_add_value(vyy, vir_ept, offv + 4);
-          atomic_add_value(vzy, vir_ept, offv + 5);
-          atomic_add_value(vzx, vir_ept, offv + 6);
-          atomic_add_value(vzy, vir_ept, offv + 7);
-          atomic_add_value(vzz, vir_ept, offv + 8);
+          atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_ept, offset);
         }
       }
     }

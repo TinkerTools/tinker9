@@ -44,6 +44,7 @@ TINKER_EXTERN NBListUnit ulist_unit;
 TINKER_EXTERN device_pointer<int> mindex;
 /// preconditioner inverse for induced dipole PCG solver
 TINKER_EXTERN device_pointer<real> minv;
+TINKER_EXTERN device_pointer<real> minv_exclude_;
 
 void nblist_data(rc_op op);
 TINKER_NAMESPACE_END

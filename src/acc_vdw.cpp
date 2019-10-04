@@ -7,10 +7,6 @@
 #include "md.h"
 #include "nblist.h"
 
-// MAYBE_UNUSED static const int BLOCK_DIM = 32;
-// MAYBE_UNUSED static const int BLOCK_DIM = 64;
-MAYBE_UNUSED static const int BLOCK_DIM = 128;
-
 // TODO: test lj, buck, mm3hb, gauss, and mutant
 // TODO: add vdw correction
 
@@ -88,11 +84,11 @@ void evdw_tmpl() {
   auto* vir_ev = ev_handle.vir()->buffer();
   auto bufsize = ev_handle.buffer_size();
 
-  if_constexpr(do_g) { device_array::zero(n, gxred, gyred, gzred); }
+  if_constexpr(do_g) device_array::zero(n, gxred, gyred, gzred);
 
 #define DEVICE_PTRS_                                                           \
-  x, y, z, gxred, gyred, gzred, box, xred, yred, zred, jvdw, radmin, epsilon,  \
-      vlam, nev, ev, vir_ev
+  xred, yred, zred, gxred, gyred, gzred, box, jvdw, radmin, epsilon, vlam,     \
+      nev, ev, vir_ev
 
   MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
   #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
@@ -117,9 +113,9 @@ void evdw_tmpl() {
       real zr = zi - zred[k];
       real vlambda = vlam[k];
 
-      if (vcouple == vcouple_decouple) {
+      if (vcouple == evdw_t::decouple) {
         vlambda = (lam1 == vlambda ? 1 : (lam1 < vlambda ? lam1 : vlambda));
-      } else if (vcouple == vcouple_annihilate) {
+      } else if (vcouple == evdw_t::annihilate) {
         vlambda = (lam1 < vlambda ? lam1 : vlambda);
       }
 
@@ -147,16 +143,8 @@ void evdw_tmpl() {
 
         // Increment the energy, gradient, and virial.
 
-        if_constexpr(do_e) {
-          atomic_add_value(e, ev, offset);
-
-          if_constexpr(do_a) {
-            if (e != 0) {
-              atomic_add_value(1, nev, offset);
-            }
-          }
-        }
-
+        if_constexpr(do_a) atomic_add_value(1, nev, offset);
+        if_constexpr(do_e) atomic_add_value(e, ev, offset);
         if_constexpr(do_g) {
           de *= REAL_RECIP(rik);
           real dedx = de * xr;
@@ -178,16 +166,7 @@ void evdw_tmpl() {
             real vzy = zr * dedy;
             real vzz = zr * dedz;
 
-            int offv = offset * 16;
-            atomic_add_value(vxx, vir_ev, offv + 0);
-            atomic_add_value(vyx, vir_ev, offv + 1);
-            atomic_add_value(vzx, vir_ev, offv + 2);
-            atomic_add_value(vyx, vir_ev, offv + 3);
-            atomic_add_value(vyy, vir_ev, offv + 4);
-            atomic_add_value(vzy, vir_ev, offv + 5);
-            atomic_add_value(vzx, vir_ev, offv + 6);
-            atomic_add_value(vzy, vir_ev, offv + 7);
-            atomic_add_value(vzz, vir_ev, offv + 8);
+            atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_ev, offset);
           } // end if (do_v)
         }   // end if (do_g)
       }
@@ -200,15 +179,14 @@ void evdw_tmpl() {
     }
   } // end for (int i)
 
-  #pragma acc parallel\
-              deviceptr(DEVICE_PTRS_,vdw_excluded_,vdw_excluded_scale_)
+  #pragma acc parallel deviceptr(DEVICE_PTRS_,vexclude_,vexclude_scale_)
   #pragma acc loop independent
-  for (int ii = 0; ii < nvdw_excluded_; ++ii) {
+  for (int ii = 0; ii < nvexclude_; ++ii) {
     int offset = ii & (bufsize - 1);
 
-    int i = vdw_excluded_[ii][0];
-    int k = vdw_excluded_[ii][1];
-    real vscale = vdw_excluded_scale_[ii];
+    int i = vexclude_[ii][0];
+    int k = vexclude_[ii][1];
+    real vscale = vexclude_scale_[ii];
 
     int it = jvdw[i];
     real xi = xred[i];
@@ -222,9 +200,9 @@ void evdw_tmpl() {
     real zr = zi - zred[k];
     real vlambda = vlam[k];
 
-    if (vcouple == vcouple_decouple) {
+    if (vcouple == evdw_t::decouple) {
       vlambda = (lam1 == vlambda ? 1 : (lam1 < vlambda ? lam1 : vlambda));
-    } else if (vcouple == vcouple_annihilate) {
+    } else if (vcouple == evdw_t::annihilate) {
       vlambda = (lam1 < vlambda ? lam1 : vlambda);
     }
 
@@ -249,16 +227,9 @@ void evdw_tmpl() {
         if_constexpr(do_g) de = e * dtaper + de * taper;
         if_constexpr(do_e) e = e * taper;
       }
-      if_constexpr(do_e) {
-        atomic_add_value(e, ev, offset);
 
-        if_constexpr(do_a) {
-          if (e != 0) {
-            atomic_add_value(-1, nev, offset);
-          }
-        }
-      }
-
+      if_constexpr(do_a) if (vscale == -1) atomic_add_value(-1, nev, offset);
+      if_constexpr(do_e) atomic_add_value(e, ev, offset);
       if_constexpr(do_g) {
         de *= REAL_RECIP(rik);
         real dedx = de * xr;
@@ -280,16 +251,7 @@ void evdw_tmpl() {
           real vzy = zr * dedy;
           real vzz = zr * dedz;
 
-          int offv = offset * 16;
-          atomic_add_value(vxx, vir_ev, offv + 0);
-          atomic_add_value(vyx, vir_ev, offv + 1);
-          atomic_add_value(vzx, vir_ev, offv + 2);
-          atomic_add_value(vyx, vir_ev, offv + 3);
-          atomic_add_value(vyy, vir_ev, offv + 4);
-          atomic_add_value(vzy, vir_ev, offv + 5);
-          atomic_add_value(vzx, vir_ev, offv + 6);
-          atomic_add_value(vzy, vir_ev, offv + 7);
-          atomic_add_value(vzz, vir_ev, offv + 8);
+          atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_ev, offset);
         } // end if (do_v)
       }   // end if (do_g)
     }
@@ -319,8 +281,5 @@ TINKER_EVDW_IMPL_(buck);
 TINKER_EVDW_IMPL_(mm3hb);
 TINKER_EVDW_IMPL_(hal);
 TINKER_EVDW_IMPL_(gauss);
-#undef TINKER_EVDW_IMPL_
-
-#undef DEVICE_PTRS_
 
 TINKER_NAMESPACE_END

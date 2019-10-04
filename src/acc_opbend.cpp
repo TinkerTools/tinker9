@@ -32,11 +32,10 @@ void eopbend_tmpl() {
   auto* vir_eopb = eopb_handle.vir()->buffer();
   auto bufsize = eopb_handle.buffer_size();
 
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
               iopb,opbk,iang,\
               eopb,vir_eopb)
-  #pragma acc loop gang independent
   for (int iopbend = 0; iopbend < nopbend; ++iopbend) {
     int offset = iopbend & (bufsize - 1);
     const real force = opbk[iopbend];
@@ -211,16 +210,7 @@ void eopbend_tmpl() {
           real vzy = zab * dedyia + zcb * dedyic + zdb * dedyid;
           real vzz = zab * dedzia + zcb * dedzic + zdb * dedzid;
 
-          int offv = offset * 16;
-          atomic_add_value(vxx, vir_eopb, offv + 0);
-          atomic_add_value(vyx, vir_eopb, offv + 1);
-          atomic_add_value(vzx, vir_eopb, offv + 2);
-          atomic_add_value(vyx, vir_eopb, offv + 3);
-          atomic_add_value(vyy, vir_eopb, offv + 4);
-          atomic_add_value(vzy, vir_eopb, offv + 5);
-          atomic_add_value(vzx, vir_eopb, offv + 6);
-          atomic_add_value(vzy, vir_eopb, offv + 7);
-          atomic_add_value(vzz, vir_eopb, offv + 8);
+          atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_eopb, offset);
         }
       }
     }

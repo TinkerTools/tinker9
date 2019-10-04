@@ -35,11 +35,10 @@ void eangle_tmpl() {
   auto* vir_ea = ea_handle.vir()->buffer();
   auto bufsize = ea_handle.buffer_size();
 
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
               iang,anat,ak,angtyp,\
               ea,vir_ea)
-  #pragma acc loop gang independent
   for (int i = 0; i < nangle; ++i) {
     int offset = i & (bufsize - 1);
     int ia = iang[i][0];
@@ -138,16 +137,7 @@ void eangle_tmpl() {
             real vzy = zab * dedyia + zcb * dedyic;
             real vzz = zab * dedzia + zcb * dedzic;
 
-            int offv = offset * 16;
-            atomic_add_value(vxx, vir_ea, offv + 0);
-            atomic_add_value(vyx, vir_ea, offv + 1);
-            atomic_add_value(vzx, vir_ea, offv + 2);
-            atomic_add_value(vyx, vir_ea, offv + 3);
-            atomic_add_value(vyy, vir_ea, offv + 4);
-            atomic_add_value(vzy, vir_ea, offv + 5);
-            atomic_add_value(vzx, vir_ea, offv + 6);
-            atomic_add_value(vzy, vir_ea, offv + 7);
-            atomic_add_value(vzz, vir_ea, offv + 8);
+            atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_ea, offset);
           }
         }
       }
@@ -287,16 +277,7 @@ void eangle_tmpl() {
             real vzy = zad * dedyia + zbd * dedyib + zcd * dedyic;
             real vzz = zad * dedzia + zbd * dedzib + zcd * dedzic;
 
-            int offv = offset * 16;
-            atomic_add_value(vxx, vir_ea, offv + 0);
-            atomic_add_value(vyx, vir_ea, offv + 1);
-            atomic_add_value(vzx, vir_ea, offv + 2);
-            atomic_add_value(vyx, vir_ea, offv + 3);
-            atomic_add_value(vyy, vir_ea, offv + 4);
-            atomic_add_value(vzy, vir_ea, offv + 5);
-            atomic_add_value(vzx, vir_ea, offv + 6);
-            atomic_add_value(vzy, vir_ea, offv + 7);
-            atomic_add_value(vzz, vir_ea, offv + 8);
+            atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_ea, offset);
           }
         }
       }

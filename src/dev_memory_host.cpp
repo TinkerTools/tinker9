@@ -1,6 +1,6 @@
 #include "macro.h"
 
-#ifdef TINKER_HOST
+#if TINKER_HOST
 #  include "macro.h"
 #  include <cstdlib>
 #  include <cstring>

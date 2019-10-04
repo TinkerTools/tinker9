@@ -15,6 +15,18 @@ TINKER_EXTERN real d1scale, d2scale, d3scale, d4scale;
 TINKER_EXTERN real p2scale, p3scale, p4scale, p5scale;
 TINKER_EXTERN real p2iscale, p3iscale, p4iscale, p5iscale;
 
+TINKER_EXTERN int nuexclude_;
+TINKER_EXTERN device_pointer<int, 2> uexclude_;
+TINKER_EXTERN device_pointer<real> uexclude_scale_;
+
+TINKER_EXTERN int ndpexclude_;
+TINKER_EXTERN device_pointer<int, 2> dpexclude_;
+TINKER_EXTERN device_pointer<real, 2> dpexclude_scale_;
+
+TINKER_EXTERN int ndpuexclude_;
+TINKER_EXTERN device_pointer<int, 2> dpuexclude_;
+TINKER_EXTERN device_pointer<real, 3> dpuexclude_scale_;
+
 TINKER_EXTERN real udiag;
 
 TINKER_EXTERN device_pointer<real> polarity, thole, pdamp, polarity_inv;

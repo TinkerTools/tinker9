@@ -3,7 +3,11 @@
 
 #include "macro.h"
 #include <cstring>
+
 TINKER_NAMESPACE_BEGIN
+/// \defgroup mem Memory Management
+/// \ingroup gvar
+
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes);
 void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes);
 void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes);
@@ -15,6 +19,7 @@ TINKER_NAMESPACE_END
 #include <stdexcept>
 #include <type_traits>
 #include <vector>
+
 TINKER_NAMESPACE_BEGIN
 struct DeviceMemory {
   static void copyin_bytes(void* dst, const void* src, size_t nbytes) {
@@ -296,7 +301,7 @@ public:
     constexpr size_t N = deduce<PTR>::N;
     typedef typename deduce<PTR2>::type T2;
     static_assert(std::is_same<T, T2>::value, "");
-    return mathfunc_detail::dotprod(flatten(ptr), flatten(b), nelem * N);
+    return parallel::dotprod(flatten(ptr), flatten(b), nelem * N);
   }
 
   //====================================================================//
@@ -305,7 +310,7 @@ public:
   static void scale(size_t nelem, FLT scal, PTR ptr) {
     typedef typename deduce<PTR>::type T;
     constexpr size_t N = deduce<PTR>::N;
-    mathfunc_detail::scale_array(flatten(ptr), scal, nelem * N);
+    parallel::scale_array(flatten(ptr), scal, nelem * N);
   }
 
   template <class FLT, class PTR, class... PTRS>

@@ -14,11 +14,10 @@ void eurey_tmpl() {
   auto* vir_eub = eub_handle.vir()->buffer();
   auto bufsize = eub_handle.buffer_size();
 
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
               iury,uk,ul,\
               eub,vir_eub)
-  #pragma acc loop gang independent
   for (int i = 0; i < nurey; ++i) {
     int offset = i & (bufsize - 1);
     const int ia = iury[i][0];
@@ -68,16 +67,7 @@ void eurey_tmpl() {
         real vzy = zac * dedy;
         real vzz = zac * dedz;
 
-        int offv = offset * 16;
-        atomic_add_value(vxx, vir_eub, offv + 0);
-        atomic_add_value(vyx, vir_eub, offv + 1);
-        atomic_add_value(vzx, vir_eub, offv + 2);
-        atomic_add_value(vyx, vir_eub, offv + 3);
-        atomic_add_value(vyy, vir_eub, offv + 4);
-        atomic_add_value(vzy, vir_eub, offv + 5);
-        atomic_add_value(vzx, vir_eub, offv + 6);
-        atomic_add_value(vzy, vir_eub, offv + 7);
-        atomic_add_value(vzz, vir_eub, offv + 8);
+        atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_eub, offset);
       }
     }
   } // end for (int i)

@@ -25,7 +25,7 @@ void x_testgrad(int argc, char** argv) {
   if (timing)
     stopwatch_lap("initialized libtinkergpu");
 
-  energy_potential(rc_flag & calc::grad);
+  energy_potential(rc_flag & calc::vmask);
   if (timing)
     stopwatch_lap("gradient evaluation");
 
@@ -65,5 +65,7 @@ void x_testgrad(int argc, char** argv) {
     stopwatch_stop();
     stopwatch_reset();
   }
+
+  TINKER_RT(final)();
 }
 TINKER_NAMESPACE_END

@@ -45,26 +45,35 @@ should also implement other functions whenever you see an                      \
 #  define TINKER_EXTERN extern
 #endif
 
-// namespace
+/**
+ * \{
+ * \def TINKER_NAMESPACE
+ * \ingroup macro
+ * \def TINKER_NAMESPACE_BEGIN
+ * \ingroup macro
+ * \def TINKER_NAMESPACE_END
+ * \ingroup macro
+ * These namespace macros would possibly improve the source code indentation.
+ * \}
+ */
 #define TINKER_NAMESPACE tinker
 #define TINKER_NAMESPACE_BEGIN namespace TINKER_NAMESPACE {
 #define TINKER_NAMESPACE_END }
 
-// Debug
+/**
+ * \def TINKER_DEBUG
+ * \ingroup macro
+ * \c TINKER_DEBUG either expands to 0 or 1. It expands to 1 if and only if \c
+ * DEBUG is defined and is not defined to 0.
+ * \c NDEBUG is the default and it supersedes \c DEBUG.
+ * If \c DEBUG is defined to 0, it is equivalent to having \c NDEBUG defined.
+ */
 #if defined(_DEBUG) && !defined(DEBUG)
 #  define DEBUG _DEBUG
 #endif
 #if defined(_NDEBUG) && !defined(NDEBUG)
 #  define NDEBUG _NDEBUG
 #endif
-/**
- * @def TINKER_DEBUG
- * @brief
- * @c TINKER_DEBUG expands to either 0 or 1. It expands to 1 if and only if @c
- * DEBUG is defined and is not defined to 0.
- * @c NDEBUG is the default and supersedes @c DEBUG.
- * If @c DEBUG is defined to 0, it is equivalent to having @c NDEBUG defined.
- */
 #if !defined(NDEBUG) && !defined(DEBUG)
 #  define NDEBUG
 #  define TINKER_DEBUG 0
@@ -91,47 +100,114 @@ should also implement other functions whenever you see an                      \
 #  define TINKER_DEBUG 0
 #endif
 
-// precision
-#ifndef TINKER_DOUBLE_PRECISION
-#  ifndef TINKER_SINGLE_PRECISION
-#    define TINKER_SINGLE_PRECISION
-#  endif
-#endif
-TINKER_NAMESPACE_BEGIN
 /**
- * @typedef real
- * @brief
- * Floating point type, defined to either @c float or @c double.
+ * \{
+ * \def TINKER_DOUBLE_PRECISION
+ * \ingroup macro
+ * \def TINKER_SINGLE_PRECISION
+ * \ingroup macro
+ * Based on whether \c TINKER_DOUBLE_PRECISION and \c TINKER_SINGLE_PRECISION
+ * being pre-defined, these two macros are set to either 0 or 1 as follows
+ *
+ * | ifdef D | ifdef S |  D  |  S  |
+ * |:-------:|:-------:|:---:|:---:|
+ * | true    | true    | 0   | 1   |
+ * | false   | true    | 0   | 1   |
+ * | true    | false   | 1   | 0   |
+ * | false   | false   | 0   | 1   |
+ * \}
  */
-#ifdef TINKER_DOUBLE_PRECISION
+#if defined(TINKER_DOUBLE_PRECISION) && !defined(TINKER_SINGLE_PRECISION)
+#  undef TINKER_DOUBLE_PRECISION
+#  define TINKER_DOUBLE_PRECISION 1
+#  define TINKER_SINGLE_PRECISION 0
+#else
+#  ifdef TINKER_DOUBLE_PRECISION
+#    undef TINKER_DOUBLE_PRECISION
+#  endif
+#  ifdef TINKER_SINGLE_PRECISION
+#    undef TINKER_SINGLE_PRECISION
+#  endif
+#  define TINKER_DOUBLE_PRECISION 0
+#  define TINKER_SINGLE_PRECISION 1
+#endif
+
+TINKER_NAMESPACE_BEGIN
+/// \defgroup typedef Type Definitions
+
+/**
+ * \typedef real
+ * \ingroup typedef
+ * The default floating point type, is either defined to \c float or \c double,
+ * based on the precision macros.
+ * \see TINKER_DOUBLE_PRECISION
+ * \see TINKER_SINGLE_PRECISION
+ */
+#if TINKER_DOUBLE_PRECISION
 typedef double real;
 #endif
-#ifdef TINKER_SINGLE_PRECISION
+#if TINKER_SINGLE_PRECISION
 typedef float real;
 #endif
 TINKER_NAMESPACE_END
 
-// fixed-point
 TINKER_NAMESPACE_BEGIN
-typedef unsigned long long FixedPointType;
-const FixedPointType fixed_point = 0x100000000ull;
+/// \ingroup typedef
+/// The fixed-point type used to accumulate floating-point numbers.
+typedef unsigned long long FixedPoint;
+/**
+ * \ingroup math
+ * Constant to convert a number between floating-point and fixed-point
+ * representations.
+ * \see FixedPoint
+ */
+constexpr FixedPoint fixed_point = 0x100000000ull;
 TINKER_NAMESPACE_END
 
-// host vs device
+/**
+ * \def TINKER_HOST
+ * \ingroup macro
+ * If \c true, use standard C++ runtime library on CPU.
+ * \see TINKER_CUDART
+ *
+ * \def TINKER_CUDART
+ * \ingroup macro
+ * If \c true, use CUDA runtime library on GPU.
+ * \see TINKER_HOST
+ */
 #ifndef TINKER_HOST
-#  define TINKER_CUDART
+#  define TINKER_HOST 0
+#  define TINKER_CUDART 1
+#else
+#  undef TINKER_HOST
+#  define TINKER_HOST 1
+#  define TINKER_CUDART 0
 #endif
 
 // compiler features
+#ifdef __cplusplus
+#  if __cplusplus < 201103L
+// C++11
+#    error Must enable C++11.
+#  endif
+#endif
 
-// if constexpr
+/**
+ * \def if_constexpr
+ * \ingroup macro
+ * If possible, use \c if \c constexpr to hint at the chances of optimizations.
+ */
 #ifdef __cpp_if_constexpr
 #  define if_constexpr if constexpr
 #else
 #  define if_constexpr if
 #endif
 
-// maybe unused
+/**
+ * \def MAYBE_UNUSED
+ * \ingroup macro
+ * Reduce the "unused variable" warnings from the compiler.
+ */
 #if __has_cpp_attribute(maybe_unused)
 #  define MAYBE_UNUSED [[maybe_unused]]
 #else
