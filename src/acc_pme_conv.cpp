@@ -22,16 +22,14 @@ void pme_conv_tmpl(PMEUnit pme_u, Virial gpu_vir) {
   real pterm = pi / aewald;
   pterm *= pterm;
 
-  VirialBuffer::PointerType gpu_vir9 = nullptr;
+  VirialBuffer::S* gpu_vir_ = nullptr;
   auto bufsize = VirialBuffer::calc_size(ntot);
   if (gpu_vir.valid()) {
-    gpu_vir9 = gpu_vir->buffer();
+    gpu_vir_ = gpu_vir->buffer();
     bufsize = gpu_vir->size();
   }
 
-  #pragma acc parallel num_gangs(bufsize)\
-              deviceptr(gpu_vir9,dptr,box)
-  #pragma acc loop gang independent
+  #pragma acc parallel loop independent deviceptr(gpu_vir_,dptr,box)
   for (int i = 0; i < ntot; ++i) {
     const real volterm = pi * box->volbox;
 
@@ -80,16 +78,8 @@ void pme_conv_tmpl(PMEUnit pme_u, Virial gpu_vir) {
         real vyz = h2 * h3 * vterm;
         real vzz = (h3 * h3 * vterm - eterm);
 
-        int offv = (i & (bufsize - 1)) * 16;
-        atomic_add_value(vxx, gpu_vir9, offv + 0);
-        atomic_add_value(vxy, gpu_vir9, offv + 1);
-        atomic_add_value(vxz, gpu_vir9, offv + 2);
-        atomic_add_value(vxy, gpu_vir9, offv + 3);
-        atomic_add_value(vyy, gpu_vir9, offv + 4);
-        atomic_add_value(vyz, gpu_vir9, offv + 5);
-        atomic_add_value(vxz, gpu_vir9, offv + 6);
-        atomic_add_value(vyz, gpu_vir9, offv + 7);
-        atomic_add_value(vzz, gpu_vir9, offv + 8);
+        atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir_,
+                         i & (bufsize - 1));
       }
     }
 

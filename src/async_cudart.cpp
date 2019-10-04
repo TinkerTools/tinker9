@@ -1,7 +1,7 @@
 #include "async.h"
 #include "error.h"
 
-#ifdef TINKER_CUDART
+#if TINKER_CUDART
 TINKER_NAMESPACE_BEGIN
 void deallocate_stream(Stream s) { check_rt(cudaStreamDestroy(s)); }
 

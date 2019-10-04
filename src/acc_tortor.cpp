@@ -120,15 +120,14 @@ void etortor_tmpl() {
   auto* vir_ett = ett_handle.vir()->buffer();
   auto bufsize = ett_handle.buffer_size();
 
-  real ftt[4], ft12[4], ft1[4], ft2[4];
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
               ibitor,itt,chkttor_ia_,\
               tnx,tny,ttx,tty,tbf,tbx,tby,tbxy,\
               ett,vir_ett)
-  #pragma acc loop gang independent\
-              private(ftt[0:4],ft12[0:4],ft1[0:4],ft2[0:4])
   for (int itortor = 0; itortor < ntortor; ++itortor) {
+    real ftt[4], ft12[4], ft1[4], ft2[4];
+
     int offset = itortor & (bufsize - 1);
     int i = itt[itortor][0];
     int k = itt[itortor][1]; // parameter indice
@@ -399,16 +398,8 @@ void etortor_tmpl() {
           real vzy2 = zdc * (dedyid2 + dedyie2) - zcb * dedyib2 + zed * dedyie2;
           real vzz2 = zdc * (dedzid2 + dedzie2) - zcb * dedzib2 + zed * dedzie2;
 
-          int offv = offset * 16;
-          atomic_add_value(vxx + vxx2, vir_ett, offv + 0);
-          atomic_add_value(vyx + vyx2, vir_ett, offv + 1);
-          atomic_add_value(vzx + vzx2, vir_ett, offv + 2);
-          atomic_add_value(vyx + vyx2, vir_ett, offv + 3);
-          atomic_add_value(vyy + vyy2, vir_ett, offv + 4);
-          atomic_add_value(vzy + vzy2, vir_ett, offv + 5);
-          atomic_add_value(vzx + vzx2, vir_ett, offv + 6);
-          atomic_add_value(vzy + vzy2, vir_ett, offv + 7);
-          atomic_add_value(vzz + vzz2, vir_ett, offv + 8);
+          atomic_add_value(vxx + vxx2, vyx + vyx2, vzx + vzx2, vyy + vyy2,
+                           vzy + vzy2, vzz + vzz2, vir_ett, offset);
         }
       }
     }

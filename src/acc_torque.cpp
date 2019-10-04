@@ -24,17 +24,16 @@
 TINKER_NAMESPACE_BEGIN
 template <int DO_V>
 void torque_tmpl(Virial v_handle) {
-  VirialBuffer::PointerType gpu_vir = nullptr;
+  VirialBuffer::S* gpu_vir = nullptr;
   auto bufsize = VirialBuffer::calc_size(n);
   if (v_handle.valid()) {
     gpu_vir = v_handle->buffer();
     bufsize = v_handle->size();
   }
 
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,zaxis,\
               trqx,trqy,trqz,gpu_vir)
-  #pragma acc loop gang independent
   for (int i = 0; i < n; ++i) {
     const int axetyp = zaxis[i].polaxe;
     if (axetyp == pole_none)
@@ -367,16 +366,8 @@ void torque_tmpl(Virial v_handle) {
            yiy * frcy[2] + yiz * frcz[2]);
       real vzz = zix * frcx[2] + ziy * frcy[2] + ziz * frcz[2];
 
-      int offv = (i & (bufsize - 1)) * 16;
-      atomic_add_value(vxx, gpu_vir, offv + 0);
-      atomic_add_value(vxy, gpu_vir, offv + 1);
-      atomic_add_value(vxz, gpu_vir, offv + 2);
-      atomic_add_value(vxy, gpu_vir, offv + 3);
-      atomic_add_value(vyy, gpu_vir, offv + 4);
-      atomic_add_value(vyz, gpu_vir, offv + 5);
-      atomic_add_value(vxz, gpu_vir, offv + 6);
-      atomic_add_value(vyz, gpu_vir, offv + 7);
-      atomic_add_value(vzz, gpu_vir, offv + 8);
+      atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir,
+                       i & (bufsize - 1));
     } // end if_constexpr(DO_V)
   }   // end for (int i)
 }
@@ -392,9 +383,3 @@ void torque(int vers) {
   }
 }
 TINKER_NAMESPACE_END
-
-#undef ADD_
-#undef SUB_
-#undef DOT_
-#undef CROSS_
-#undef NORMAL_

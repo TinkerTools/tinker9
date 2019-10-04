@@ -16,11 +16,10 @@ void estrbnd_tmpl() {
   auto* vir_eba = eba_handle.vir()->buffer();
   auto bufsize = eba_handle.buffer_size();
 
-  #pragma acc parallel num_gangs(bufsize)\
+  #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
               isb,sbk,iang,anat,bl,\
               eba,vir_eba)
-  #pragma acc loop gang independent
   for (int istrbnd = 0; istrbnd < nstrbnd; ++istrbnd) {
     int offset = istrbnd & (bufsize - 1);
     int i = isb[istrbnd][0];
@@ -135,16 +134,7 @@ void estrbnd_tmpl() {
           real vzy = zab * dedyia + zcb * dedyic;
           real vzz = zab * dedzia + zcb * dedzic;
 
-          int offv = offset * 16;
-          atomic_add_value(vxx, vir_eba, offv + 0);
-          atomic_add_value(vyx, vir_eba, offv + 1);
-          atomic_add_value(vzx, vir_eba, offv + 2);
-          atomic_add_value(vyx, vir_eba, offv + 3);
-          atomic_add_value(vyy, vir_eba, offv + 4);
-          atomic_add_value(vzy, vir_eba, offv + 5);
-          atomic_add_value(vzx, vir_eba, offv + 6);
-          atomic_add_value(vzy, vir_eba, offv + 7);
-          atomic_add_value(vzz, vir_eba, offv + 8);
+          atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_eba, offset);
         }
       }
     }

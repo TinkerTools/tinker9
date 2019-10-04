@@ -30,10 +30,10 @@ void evdw_data(rc_op op) {
     jcount = 0;
 
     device_array::deallocate(ired, kred, xred, yred, zred, gxred, gyred, gzred,
-                             jvdw, radmin, epsilon, vlam, vdw_excluded_,
-                             vdw_excluded_scale_);
+                             jvdw, radmin, epsilon, vlam);
 
-    nvdw_excluded_ = 0;
+    nvexclude_ = 0;
+    device_array::deallocate(vexclude_, vexclude_scale_);
 
     ev_handle.dealloc();
   }
@@ -76,9 +76,8 @@ void evdw_data(rc_op op) {
     v4scale = vdwpot::v4scale;
     v5scale = vdwpot::v5scale;
 
-    nvdw_excluded_ = 0;
     std::vector<int> exclik;
-    std::vector<real> exclvs;
+    std::vector<real> excls;
     // see also attach.f
     const int maxn13 = 3 * sizes::maxval;
     const int maxn14 = 9 * sizes::maxval;
@@ -95,7 +94,7 @@ void evdw_data(rc_op op) {
           if (k > i) {
             exclik.push_back(i);
             exclik.push_back(k);
-            exclvs.push_back(v2scale - 1);
+            excls.push_back(v2scale - 1);
           }
         }
       }
@@ -109,7 +108,7 @@ void evdw_data(rc_op op) {
           if (k > i) {
             exclik.push_back(i);
             exclik.push_back(k);
-            exclvs.push_back(v3scale - 1);
+            excls.push_back(v3scale - 1);
           }
         }
       }
@@ -123,7 +122,7 @@ void evdw_data(rc_op op) {
           if (k > i) {
             exclik.push_back(i);
             exclik.push_back(k);
-            exclvs.push_back(v4scale - 1);
+            excls.push_back(v4scale - 1);
           }
         }
       }
@@ -137,16 +136,15 @@ void evdw_data(rc_op op) {
           if (k > i) {
             exclik.push_back(i);
             exclik.push_back(k);
-            exclvs.push_back(v5scale - 1);
+            excls.push_back(v5scale - 1);
           }
         }
       }
     }
-    nvdw_excluded_ = exclvs.size();
-    device_array::allocate(nvdw_excluded_, &vdw_excluded_,
-                           &vdw_excluded_scale_);
-    device_array::copyin(nvdw_excluded_, vdw_excluded_, exclik.data());
-    device_array::copyin(nvdw_excluded_, vdw_excluded_scale_, exclvs.data());
+    nvexclude_ = excls.size();
+    device_array::allocate(nvexclude_, &vexclude_, &vexclude_scale_);
+    device_array::copyin(nvexclude_, vexclude_, exclik.data());
+    device_array::copyin(nvexclude_, vexclude_scale_, excls.data());
 
     ev_handle.alloc(n);
   }
@@ -172,7 +170,10 @@ void evdw_data(rc_op op) {
     dhal = vdwpot::dhal;
     scexp = mutant::scexp;
     scalpha = mutant::scalpha;
-    vcouple = mutant::vcouple;
+    if (static_cast<int>(evdw_t::decouple) == mutant::vcouple)
+      vcouple = evdw_t::decouple;
+    else if (static_cast<int>(evdw_t::annihilate) == mutant::vcouple)
+      vcouple = evdw_t::annihilate;
 
     std::vector<int> iredbuf(n);
     std::vector<double> kredbuf(n);

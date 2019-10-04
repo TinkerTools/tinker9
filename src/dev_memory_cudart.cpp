@@ -1,6 +1,6 @@
 #include "macro.h"
 
-#ifdef TINKER_CUDART
+#if TINKER_CUDART
 #  include "error.h"
 #  include <cstring>
 #  include <cuda_runtime.h>

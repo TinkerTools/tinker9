@@ -1,6 +1,6 @@
 #include "gpu_card.h"
 
-#ifdef TINKER_HOST
+#if TINKER_HOST
 TINKER_NAMESPACE_BEGIN
 void gpu_card_data(rc_op op) {
   if (op & rc_dealloc) {

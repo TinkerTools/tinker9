@@ -18,6 +18,19 @@ TEST_CASE("MathFunc", "[util]") {
     REQUIRE(f(8) == true);
   }
 
+  SECTION("IntLog2") {
+    auto f = int_log2;
+
+    REQUIRE(f(1) == 0);
+    REQUIRE(f(2) == 1);
+    REQUIRE(f(3) == 1);
+    REQUIRE(f(4) == 2);
+    REQUIRE(f(5) == 2);
+    REQUIRE(f(6) == 2);
+    REQUIRE(f(7) == 2);
+    REQUIRE(f(8) == 3);
+  }
+
   SECTION("Pow2LessOrEqual") {
     auto f = pow2_le;
 

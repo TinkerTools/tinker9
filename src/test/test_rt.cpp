@@ -31,9 +31,9 @@ TestFileExpected::~TestFileExpected() {
 }
 
 double test_get_eps(double eps_single, double eps_double) {
-#if defined(TINKER_SINGLE_PRECISION)
+#if TINKER_SINGLE_PRECISION
   return eps_single;
-#elif defined(TINKER_DOUBLE_PRECISION)
+#elif TINKER_DOUBLE_PRECISION
   return eps_double;
 #else
   static_assert(false, "");

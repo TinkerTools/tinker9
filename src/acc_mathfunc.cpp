@@ -2,94 +2,97 @@
 #include <cassert>
 
 TINKER_NAMESPACE_BEGIN
+namespace parallel {
 template <class T>
-T reduce_sum_tmpl(const T* gpu_a, int cpu_n) {
+T reduce_sum_tmpl(const T* gpu_a, size_t cpu_n) {
   T val = 0;
   #pragma acc parallel loop deviceptr(gpu_a) reduction(+:val)
-  for (int i = 0; i < cpu_n; ++i)
+  for (size_t i = 0; i < cpu_n; ++i)
     val += gpu_a[i];
   return val;
 }
 
-int reduce_sum(const int* a, int n) { return reduce_sum_tmpl(a, n); }
+int reduce_sum(const int* a, size_t n) { return reduce_sum_tmpl(a, n); }
 
-float reduce_sum(const float* a, int n) { return reduce_sum_tmpl(a, n); }
+float reduce_sum(const float* a, size_t n) { return reduce_sum_tmpl(a, n); }
 
-double reduce_sum(const double* a, int n) { return reduce_sum_tmpl(a, n); }
+double reduce_sum(const double* a, size_t n) { return reduce_sum_tmpl(a, n); }
 
-unsigned long long reduce_sum(const unsigned long long* a, int n) {
+unsigned long long reduce_sum(const unsigned long long* a, size_t n) {
   return reduce_sum_tmpl(a, n);
 }
 
 //====================================================================//
 
 template <class T>
-void reduce_sum2_tmpl(T* __restrict__ h_ans, int hn, const T* __restrict__ v,
-                      int nelem, int neach) {
+void reduce_sum2_tmpl(T* __restrict__ h_ans, size_t hn, const T* __restrict__ v,
+                      size_t nelem, size_t neach) {
   assert(hn <= neach);
   #pragma acc parallel loop gang deviceptr(v)
-  for (int iv = 0; iv < hn; ++iv) {
+  for (size_t iv = 0; iv < hn; ++iv) {
     T ans = 0;
     #pragma acc loop vector reduction(+:ans)
-    for (int ig = 0; ig < nelem; ++ig)
+    for (size_t ig = 0; ig < nelem; ++ig)
       ans += v[iv + ig * neach];
     h_ans[iv] = ans;
   }
 }
 
-void reduce_sum2(int* h_ans, int hn, const int* v, int nelem, int neach) {
+void reduce_sum2(int* h_ans, size_t hn, const int* v, size_t nelem,
+                 size_t neach) {
   reduce_sum2_tmpl(h_ans, hn, v, nelem, neach);
 }
 
-void reduce_sum2(float* h_ans, int hn, const float* v, int nelem, int neach) {
+void reduce_sum2(float* h_ans, size_t hn, const float* v, size_t nelem,
+                 size_t neach) {
   reduce_sum2_tmpl(h_ans, hn, v, nelem, neach);
 }
 
-void reduce_sum2(double* h_ans, int hn, const double* v, int nelem, int neach) {
+void reduce_sum2(double* h_ans, size_t hn, const double* v, size_t nelem,
+                 size_t neach) {
   reduce_sum2_tmpl(h_ans, hn, v, nelem, neach);
 }
 
-void reduce_sum2(unsigned long long* h_ans, int hn, const unsigned long long* v,
-                 int nelem, int neach) {
+void reduce_sum2(unsigned long long* h_ans, size_t hn,
+                 const unsigned long long* v, size_t nelem, size_t neach) {
   reduce_sum2_tmpl(h_ans, hn, v, nelem, neach);
 }
 
 //====================================================================//
 
-namespace mathfunc_detail {
 template <class T>
 T dotprod_acc_impl(const T* __restrict__ gpu_a, const T* __restrict__ gpu_b,
-                   int cpu_n) {
+                   size_t cpu_n) {
   T val = 0;
   #pragma acc parallel loop deviceptr(gpu_a,gpu_b) reduction(+:val)
-  for (int i = 0; i < cpu_n; ++i)
+  for (size_t i = 0; i < cpu_n; ++i)
     val += gpu_a[i] * gpu_b[i];
   return val;
 }
 
-float dotprod(const float* a, const float* b, int n) {
+float dotprod(const float* a, const float* b, size_t n) {
   return dotprod_acc_impl(a, b, n);
 }
 
-double dotprod(const double* a, const double* b, int n) {
+double dotprod(const double* a, const double* b, size_t n) {
   return dotprod_acc_impl(a, b, n);
 }
 
 //====================================================================//
 
 template <class T>
-void scale_array_acc_impl(T* gpu_dst, T scal, int nelem) {
+void scale_array_acc_impl(T* gpu_dst, T scal, size_t nelem) {
   #pragma acc parallel loop deviceptr(gpu_dst)
-  for (int i = 0; i < nelem; ++i) {
+  for (size_t i = 0; i < nelem; ++i) {
     gpu_dst[i] *= scal;
   }
 }
 
-void scale_array(float* gpu_dst, float scal, int nelem) {
+void scale_array(float* gpu_dst, float scal, size_t nelem) {
   scale_array_acc_impl(gpu_dst, scal, nelem);
 }
 
-void scale_array(double* gpu_dst, double scal, int nelem) {
+void scale_array(double* gpu_dst, double scal, size_t nelem) {
   scale_array_acc_impl(gpu_dst, scal, nelem);
 }
 }

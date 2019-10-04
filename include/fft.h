@@ -3,11 +3,11 @@
 
 #include "macro.h"
 
-#ifdef TINKER_CUDART
+#if TINKER_CUDART
 #  include "fft_cufft.h"
 #endif
 
-#ifdef TINKER_HOST
+#if TINKER_HOST
 #  include "fft_fftw.h"
 #endif
 

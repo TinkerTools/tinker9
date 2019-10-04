@@ -5,6 +5,8 @@ archive
 neighbor-list
 list-buffer      1.0
 cutoff           9.0
+
+vdwterm         only
 )**";
 
 const char* arbox_xyz = R"**(   216  Argon Atoms at 94 K
