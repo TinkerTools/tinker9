@@ -1,5 +1,4 @@
-#ifndef TINKER_E_VDW_H_
-#define TINKER_E_VDW_H_
+#pragma once
 
 #include "dev_array.h"
 #include "energy_buffer.h"
@@ -31,9 +30,6 @@ enum class evdw_t
    annihilate = 1,
 };
 TINKER_EXTERN evdw_t vdwtyp;
-
-TINKER_EXTERN double vdw_switch_cut;
-TINKER_EXTERN double vdw_switch_off;
 
 /// \ingroup vdw
 /// Value of \f$ \gamma \f$ in buffered 14-7 vdw potential.
@@ -128,5 +124,3 @@ void evdw_hal (int vers);
 void evdw_gauss (int vers);
 void evdw (int vers);
 TINKER_NAMESPACE_END
-
-#endif

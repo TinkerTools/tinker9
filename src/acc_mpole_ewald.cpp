@@ -1,5 +1,4 @@
-#include "acc_add.h"
-#include "acc_image.h"
+#include "acc_common.h"
 #include "acc_mpole_pair.h"
 #include "e_mpole.h"
 #include "gpu_card.h"
@@ -19,7 +18,7 @@ void empole_real_self_tmpl() {
 
   const real f = electric / dielec;
 
-  const real off = ewald_switch_off;
+  const real off = switch_off(switch_ewald);
   const real off2 = off * off;
   const int maxnlst = mlist_unit->maxnlst;
   const auto* mlst = mlist_unit.deviceptr();

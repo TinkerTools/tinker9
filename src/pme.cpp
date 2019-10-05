@@ -5,7 +5,6 @@
 #include "mathfunc.h"
 #include "md.h"
 #include "potent.h"
-#include "switch.h"
 #include "tinker_rt.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -173,8 +172,6 @@ static void pme_data1_(rc_op op) {
   }
 
   if (op & rc_init) {
-    switch_cut_off(switch_ewald, ewald_switch_cut, ewald_switch_off);
-
     pme_op_copyin_(epme_unit);
     pme_op_copyin_(ppme_unit);
     pme_op_copyin_(pvpme_unit);

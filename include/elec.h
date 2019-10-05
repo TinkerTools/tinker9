@@ -1,5 +1,4 @@
-#ifndef TINKER_ELEC_H_
-#define TINKER_ELEC_H_
+#pragma once
 
 #include "dev_array.h"
 #include "energy_buffer.h"
@@ -48,11 +47,6 @@ enum {
   mpl_pme_zy = mpl_pme_yz
 };
 
-/// distance at which switching of the potential begins
-TINKER_EXTERN double mpole_switch_cut;
-/// distance at which the potential energy goes to zero
-TINKER_EXTERN double mpole_switch_off;
-
 TINKER_EXTERN real electric, dielec;
 
 TINKER_EXTERN device_pointer<LocalFrame> zaxis;
@@ -84,5 +78,3 @@ int use_ewald();
 void elec_init(int vers);
 void torque(int vers);
 TINKER_NAMESPACE_END
-
-#endif

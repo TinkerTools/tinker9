@@ -1,5 +1,4 @@
-#ifndef TINKER_PME_H_
-#define TINKER_PME_H_
+#pragma once
 
 #include "dev_array.h"
 #include "energy_buffer.h"
@@ -49,8 +48,6 @@ TINKER_EXTERN PMEUnit epme_unit;  // electrostatic
 TINKER_EXTERN PMEUnit ppme_unit;  // polarization
 TINKER_EXTERN PMEUnit dpme_unit;  // dispersion
 TINKER_EXTERN PMEUnit pvpme_unit; // polarization virial
-
-TINKER_EXTERN double ewald_switch_cut, ewald_switch_off;
 
 TINKER_EXTERN device_pointer<real, 10> cmp, fmp, cphi;
 TINKER_EXTERN device_pointer<real, 20> fphi;
@@ -115,5 +112,3 @@ void fphi_uind(PMEUnit pme_u, real (*gpu_fdip_phi1)[10],
 void fphi_uind2(PMEUnit pme_u, real (*gpu_fdip_phi1)[10],
                 real (*gpu_fdip_phi2)[10]);
 TINKER_NAMESPACE_END
-
-#endif

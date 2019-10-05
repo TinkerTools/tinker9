@@ -5,7 +5,6 @@
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"
-#include "switch.h"
 
 TINKER_NAMESPACE_BEGIN
 void empole_data(rc_op op) {
@@ -104,9 +103,6 @@ void empole_data(rc_op op) {
     } else {
       empole_electyp = elec_t::coulomb;
     }
-
-    if (empole_electyp == elec_t::coulomb)
-      switch_cut_off(switch_mpole, mpole_switch_cut, mpole_switch_off);
   }
 }
 

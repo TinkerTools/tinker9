@@ -7,7 +7,6 @@
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"
-#include "switch.h"
 #include <map>
 
 TINKER_NAMESPACE_BEGIN
@@ -163,8 +162,6 @@ void evdw_data(rc_op op) {
       vdwtyp = evdw_t::gauss;
     else
       assert(false);
-
-    switch_cut_off(switch_vdw, vdw_switch_cut, vdw_switch_off);
 
     ghal = vdwpot::ghal;
     dhal = vdwpot::dhal;

@@ -11,7 +11,6 @@
 #include "md.h"
 #include "pme.h"
 #include "potent.h"
-#include "switch.h"
 #include <map>
 
 TINKER_NAMESPACE_BEGIN
@@ -359,9 +358,6 @@ void epolar_data(rc_op op) {
     } else {
       epolar_electyp = elec_t::coulomb;
     }
-
-    if (epolar_electyp == elec_t::coulomb)
-      switch_cut_off(switch_mpole, mpole_switch_cut, mpole_switch_off);
 
     udiag = polpot::udiag;
 

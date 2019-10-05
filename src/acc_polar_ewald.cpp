@@ -1,5 +1,4 @@
-#include "acc_add.h"
-#include "acc_image.h"
+#include "acc_common.h"
 #include "acc_polar_pair.h"
 #include "e_polar.h"
 #include "gpu_card.h"
@@ -18,7 +17,7 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3]) {
 
   if_constexpr(do_g) device_array::zero(n, ufld, dufld);
 
-  const real off = ewald_switch_off;
+  const real off = switch_off(switch_ewald);
   const real off2 = off * off;
   const int maxnlst = mlist_unit->maxnlst;
   const auto* mlst = mlist_unit.deviceptr();

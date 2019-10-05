@@ -1,6 +1,5 @@
-#include "acc_add.h"
+#include "acc_common.h"
 #include "acc_field_pair.h"
-#include "acc_image.h"
 #include "e_polar.h"
 #include "gpu_card.h"
 #include "md.h"
@@ -11,7 +10,7 @@ TINKER_NAMESPACE_BEGIN
 void dfield_coulomb(real (*field)[3], real (*fieldp)[3]) {
   device_array::zero(n, field, fieldp);
 
-  const real off = mpole_switch_off;
+  const real off = switch_off(switch_mpole);
   const real off2 = off * off;
   const int maxnlst = mlist_unit->maxnlst;
   const auto* mlst = mlist_unit.deviceptr();
@@ -157,7 +156,7 @@ void ufield_coulomb(const real (*uind)[3], const real (*uinp)[3],
                     real (*field)[3], real (*fieldp)[3]) {
   device_array::zero(n, field, fieldp);
 
-  const real off = mpole_switch_off;
+  const real off = switch_off(switch_mpole);
   const real off2 = off * off;
   const int maxnlst = mlist_unit->maxnlst;
   const auto* mlst = mlist_unit.deviceptr();

@@ -1,6 +1,5 @@
-#include "acc_add.h"
+#include "acc_common.h"
 #include "acc_field_pair.h"
-#include "acc_image.h"
 #include "e_mpole.h"
 #include "e_polar.h"
 #include "gpu_card.h"
@@ -40,7 +39,7 @@ void dfield_ewald_recip_self(real (*field)[3]) {
 
 // see also subroutine udirect2b / dfield0c in induce.f
 void dfield_ewald_real(real (*field)[3], real (*fieldp)[3]) {
-  const real off = ewald_switch_off;
+  const real off = switch_off(switch_ewald);
   const real off2 = off * off;
   const int maxnlst = mlist_unit->maxnlst;
   const auto* mlst = mlist_unit.deviceptr();
@@ -241,7 +240,7 @@ void ufield_ewald_recip_self(const real (*uind)[3], const real (*uinp)[3],
 
 void ufield_ewald_real(const real (*uind)[3], const real (*uinp)[3],
                        real (*field)[3], real (*fieldp)[3]) {
-  const real off = ewald_switch_cut;
+  const real off = switch_off(switch_ewald);
   const real off2 = off * off;
   const int maxnlst = mlist_unit->maxnlst;
   const auto* mlst = mlist_unit.deviceptr();

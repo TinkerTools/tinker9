@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mathfunc.h"
+#include "switch.h"
 
 TINKER_NAMESPACE_BEGIN
 /**

@@ -46,8 +46,8 @@ void evdw_tmpl ()
    static_assert (do_v ? do_g : true, "");
    static_assert (do_a ? do_e : true, "");
 
-   const real cut = vdw_switch_cut;
-   const real off = vdw_switch_off;
+   const real cut = switch_cut (switch_vdw);
+   const real off = switch_off (switch_vdw);
    const real cut2 = cut * cut;
    const real off2 = off * off;
    const int maxnlst = vlist_unit->maxnlst;
