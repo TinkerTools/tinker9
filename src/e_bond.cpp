@@ -6,44 +6,48 @@
 #include <ext/tinker/detail/bndstr.hh>
 
 TINKER_NAMESPACE_BEGIN
-void ebond_data(rc_op op) {
-  if (!use_potent(bond_term) && !use_potent(strbnd_term))
-    return;
+void ebond_data (rc_op op)
+{
+   if (!use_potent (bond_term) && !use_potent (strbnd_term))
+      return;
 
-  if (op & rc_dealloc) {
-    device_array::deallocate(ibnd, bl, bk);
+   if (op & rc_dealloc) {
+      device_array::deallocate (ibnd, bl, bk);
 
-    eb_handle.dealloc();
-  }
+      eb_handle.dealloc ();
+   }
 
-  if (op & rc_alloc) {
-    nbond = count_bonded_term(bond_term);
-    device_array::allocate(nbond, &ibnd, &bl, &bk);
+   if (op & rc_alloc) {
+      nbond = count_bonded_term (bond_term);
+      device_array::allocate (nbond, &ibnd, &bl, &bk);
 
-    eb_handle.alloc(nbond);
-  }
+      eb_handle.alloc (nbond);
+   }
 
-  if (op & rc_init) {
-    fstr_view btyp = bndpot::bndtyp;
-    if (btyp == "HARMONIC")
-      bndtyp = ebond_t::harmonic;
-    else if (btyp == "MORSE")
-      bndtyp = ebond_t::morse;
+   if (op & rc_init) {
+      fstr_view btyp = bndpot::bndtyp;
+      if (btyp == "HARMONIC")
+         bndtyp = ebond_t::harmonic;
+      else if (btyp == "MORSE")
+         bndtyp = ebond_t::morse;
 
-    cbnd = bndpot::cbnd;
-    qbnd = bndpot::qbnd;
-    bndunit = bndpot::bndunit;
+      cbnd = bndpot::cbnd;
+      qbnd = bndpot::qbnd;
+      bndunit = bndpot::bndunit;
 
-    std::vector<int> ibndvec(nbond * 2);
-    for (size_t i = 0; i < ibndvec.size(); ++i) {
-      ibndvec[i] = bndstr::ibnd[i] - 1;
-    }
-    device_array::copyin(nbond, ibnd, ibndvec.data());
-    device_array::copyin(nbond, bl, bndstr::bl);
-    device_array::copyin(nbond, bk, bndstr::bk);
-  }
+      std::vector<int> ibndvec (nbond * 2);
+      for (size_t i = 0; i < ibndvec.size (); ++i) {
+         ibndvec[i] = bndstr::ibnd[i] - 1;
+      }
+      device_array::copyin (nbond, ibnd, ibndvec.data ());
+      device_array::copyin (nbond, bl, bndstr::bl);
+      device_array::copyin (nbond, bk, bndstr::bk);
+   }
 }
 
-extern void ebond_acc_impl_(int vers);
-void ebond(int vers) { ebond_acc_impl_(vers); }
+extern void ebond_acc_impl_ (int vers);
+void ebond (int vers)
+{
+   ebond_acc_impl_ (vers);
+}
 TINKER_NAMESPACE_END

@@ -41,9 +41,9 @@ TINKER_EXTERN int padded_n;
 TINKER_EXTERN real *trajx, *trajy, *trajz, *x, *y, *z;
 /// \}
 
-void goto_frame(int idx0);
-void copyin_arc_file(const std::string& arcfile, int first1, int last1,
-                     int step);
+void goto_frame (int idx0);
+void copyin_arc_file (const std::string& arcfile, int first1, int last1,
+                      int step);
 
 /// velocities
 /// @{
@@ -72,23 +72,25 @@ TINKER_EXTERN real *gx, *gy, *gz;
 TINKER_EXTERN real vir[9];
 TINKER_EXTERN Virial vir_handle;
 
-typedef enum {
-  thermo_berendsen,
-  thermo_bussi,
-  thermo_andersen,
-  thermo_nose_hoover_chain,
-  thermo_null
+typedef enum
+{
+   thermo_berendsen,
+   thermo_bussi,
+   thermo_andersen,
+   thermo_nose_hoover_chain,
+   thermo_null
 } thermostat_t;
 
 /// thermostat
 TINKER_EXTERN thermostat_t thermostat;
 
-typedef enum {
-  baro_berendsen,
-  baro_bussi,
-  baro_nose_hoover_chain,
-  baro_montecarlo,
-  baro_null
+typedef enum
+{
+   baro_berendsen,
+   baro_bussi,
+   baro_nose_hoover_chain,
+   baro_montecarlo,
+   baro_null
 } barostat_t;
 
 /// barostat
@@ -153,56 +155,57 @@ constexpr int md = 0x100;
 }
 
 template <int USE>
-void sanity_check() {
-  constexpr int do_e = USE & calc::energy;
-  constexpr int do_a = USE & calc::analyz;
-  constexpr int do_g = USE & calc::grad;
-  constexpr int do_v = USE & calc::virial;
-  // if calc::virial, must calc::grad
-  static_assert(do_v ? do_g : true, "");
-  // if calc::analyz, must calc::energy
-  static_assert(do_a ? do_e : true, "");
+void sanity_check ()
+{
+   constexpr int do_e = USE & calc::energy;
+   constexpr int do_a = USE & calc::analyz;
+   constexpr int do_g = USE & calc::grad;
+   constexpr int do_v = USE & calc::virial;
+   // if calc::virial, must calc::grad
+   static_assert (do_v ? do_g : true, "");
+   // if calc::analyz, must calc::energy
+   static_assert (do_a ? do_e : true, "");
 }
 
-void egv_data(rc_op op);
+void egv_data (rc_op op);
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
 /// @brief
 /// zero out global total energy, gradients, and virial on device
 /// @{
-void zero_egv(int vers);
-void zero_egv();
+void zero_egv (int vers);
+void zero_egv ();
 /// @}
 
 /// @brief
 /// sum up potential energies and virials on device
-void sum_energies(int vers);
+void sum_energies (int vers);
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
 // mdsave
-void mdsave_data(rc_op);
+void mdsave_data (rc_op);
 
-void mdsave_async(int istep, real dt);
-void mdsave_synchronize();
+void mdsave_async (int istep, real dt);
+void mdsave_synchronize ();
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
-void md_data(rc_op op);
+void md_data (rc_op op);
 
 // integrator
-void integrate_data(rc_op);
+void integrate_data (rc_op);
 
-void kinetic(real& temp);
-void temper(real dt, real& temp);
-void mdrest(int istep);
+void kinetic (real& temp);
+void temper (real dt, real& temp);
+void mdrest (int istep);
 
-void propagate_xyz(real dt);
-void propagate_velocity(real dt);
-void propagate(int nsteps, real dt_ps, void (*itg)(int, real) = nullptr);
+void propagate_xyz (real dt);
+void propagate_velocity (real dt);
+void propagate (int nsteps, real dt_ps, void (*itg) (int, real) = nullptr);
 
-void velocity_verlet(int istep, real dt_ps);
+void velocity_verlet (int istep, real dt_ps);
 TINKER_NAMESPACE_END
 
 #endif

@@ -28,9 +28,9 @@ TINKER_EXTERN real ttorunit;
 
 TINKER_EXTERN BondedEnergy ett_handle;
 
-void etortor_data(rc_op op);
+void etortor_data (rc_op op);
 
-void etortor(int vers);
+void etortor (int vers);
 TINKER_NAMESPACE_END
 
 #endif

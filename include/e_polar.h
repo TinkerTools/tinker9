@@ -36,41 +36,41 @@ TINKER_EXTERN device_pointer<real, 3> ufld;
 TINKER_EXTERN device_pointer<real, 6> dufld;
 
 TINKER_EXTERN device_pointer<real, 3> work01_, work02_, work03_, work04_,
-    work05_, work06_, work07_, work08_, work09_, work10_;
+   work05_, work06_, work07_, work08_, work09_, work10_;
 
-void epolar_data(rc_op op);
+void epolar_data (rc_op op);
 
 // see also subroutine epolar0e in epolar.f
-void epolar0_dotprod(const real (*uind)[3], const real (*udirp)[3]);
+void epolar0_dotprod (const real (*uind)[3], const real (*udirp)[3]);
 
 // electrostatic field due to permanent multipoles
-void dfield_coulomb(real (*field)[3], real (*fieldp)[3]);
-void dfield_ewald(real (*field)[3], real (*fieldp)[3]);
-void dfield_ewald_recip_self(real (*field)[3]);
-void dfield_ewald_real(real (*field)[3], real (*fieldp)[3]);
+void dfield_coulomb (real (*field)[3], real (*fieldp)[3]);
+void dfield_ewald (real (*field)[3], real (*fieldp)[3]);
+void dfield_ewald_recip_self (real (*field)[3]);
+void dfield_ewald_real (real (*field)[3], real (*fieldp)[3]);
 
 // mutual electrostatic field due to induced dipole moments
-void ufield_coulomb(const real (*uind)[3], const real (*uinp)[3],
-                    real (*field)[3], real (*fieldp)[3]);
-void ufield_ewald(const real (*uind)[3], const real (*uinp)[3],
-                  real (*field)[3], real (*fieldp)[3]);
-void ufield_ewald_recip_self(const real (*uind)[3], const real (*uinp)[3],
-                             real (*field)[3], real (*fieldp)[3]);
-void ufield_ewald_real(const real (*uind)[3], const real (*uinp)[3],
-                       real (*field)[3], real (*fieldp)[3]);
+void ufield_coulomb (const real (*uind)[3], const real (*uinp)[3],
+                     real (*field)[3], real (*fieldp)[3]);
+void ufield_ewald (const real (*uind)[3], const real (*uinp)[3],
+                   real (*field)[3], real (*fieldp)[3]);
+void ufield_ewald_recip_self (const real (*uind)[3], const real (*uinp)[3],
+                              real (*field)[3], real (*fieldp)[3]);
+void ufield_ewald_real (const real (*uind)[3], const real (*uinp)[3],
+                        real (*field)[3], real (*fieldp)[3]);
 
-void dfield(real (*field)[3], real (*fieldp)[3]);
+void dfield (real (*field)[3], real (*fieldp)[3]);
 // -Tu operator
-void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3],
-            real (*fieldp)[3]);
+void ufield (const real (*uind)[3], const real (*uinp)[3], real (*field)[3],
+             real (*fieldp)[3]);
 
 // different induction algorithms
-void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]);
-void induce(real (*uind)[3], real (*uinp)[3]);
+void induce_mutual_pcg1 (real (*uind)[3], real (*uinp)[3]);
+void induce (real (*uind)[3], real (*uinp)[3]);
 
-void epolar_coulomb(int vers);
-void epolar_ewald(int vers);
-void epolar(int vers);
+void epolar_coulomb (int vers);
+void epolar_ewald (int vers);
+void epolar (int vers);
 TINKER_NAMESPACE_END
 
 #endif

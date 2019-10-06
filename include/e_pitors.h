@@ -13,9 +13,9 @@ TINKER_EXTERN real ptorunit;
 
 TINKER_EXTERN BondedEnergy ept_handle;
 
-void epitors_data(rc_op op);
+void epitors_data (rc_op op);
 
-void epitors(int vers);
+void epitors (int vers);
 TINKER_NAMESPACE_END
 
 #endif

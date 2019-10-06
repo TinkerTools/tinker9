@@ -6,7 +6,13 @@
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-enum class eangle_t : int { in_plane, harmonic, linear, fourier };
+enum class eangle_t : int
+{
+   in_plane,
+   harmonic,
+   linear,
+   fourier
+};
 
 // module angbnd
 TINKER_EXTERN int nangle;
@@ -20,9 +26,9 @@ TINKER_EXTERN device_pointer<eangle_t> angtyp;
 
 TINKER_EXTERN BondedEnergy ea_handle;
 
-void eangle_data(rc_op op);
+void eangle_data (rc_op op);
 
-void eangle(int vers);
+void eangle (int vers);
 TINKER_NAMESPACE_END
 
 #endif
