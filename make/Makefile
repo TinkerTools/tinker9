@@ -1,7 +1,6 @@
-##/ \file
-##/ \page make Makefile: Options and Targets
+##/ # Build Tinker GPU: Makefile, Options, and Targets
 ##/
-##/ # Introduction
+##/ ## Introduction
 ##/ This is a self-documenting Makefile. After being processed by `doxygen`,
 ##/ the documentation will appear in the `Related Pages` section. Simply run
 ##/ ```
@@ -17,7 +16,7 @@
 ##/
 ##/ ------
 ##/
-##/ # Options
+##/ ## Options
 ##/
 
 
@@ -268,7 +267,7 @@ link_flags__ += -ltinkergpu
 
 ##/ ------
 ##/
-##/ # Targets
+##/ ## Targets
 ##/
 
 
@@ -366,13 +365,15 @@ info:
 ##/ ### doc
 ##/ Generate documentation with `doxygen`.
 ##/
+git_head__ := $(shell git log -1 --format="%h (%cd)")
 .PHONY: doc
 doc:
 	cp -r $(top_dir__)/README.md $(top_dir__)/doc $(top_dir__)/include .
-	grep '^\##/' $(top_dir__)/make/Makefile | sed -e 's|##/|///|' > doc/makefile_doc.h
+	grep '^\##/' $(top_dir__)/make/Makefile | sed -e 's|##/ ||' | sed -e 's|##/||' > doc/build2.md
+	cp doc/build2.md $(top_dir__)/doc/build2.md
 	doxygen -w html doc/header.html doc/footer.html doc/customdoxygen.css-orig
 	sed -e "s|Roboto,sans-serif|'Lucida Grande',Geneva,Helvetica,Arial,sans-serif|" doc/customdoxygen.css-orig > doc/customdoxygen.css
-	doxygen $(top_dir__)/Doxyfile
+	ENV_GIT_HEAD="$(git_head__)" doxygen $(top_dir__)/Doxyfile
 
 
 ##/ ### help
@@ -380,7 +381,7 @@ doc:
 ##/
 .PHONY: help
 help:
-	@grep '^\##/' $(top_dir__)/make/Makefile | sed -e 's|##/||'
+	@grep '^\##/' $(top_dir__)/make/Makefile | sed -e 's|##/ ||' | sed -e 's|##/||'
 
 ##/ ### clean
 ##/ Clean up the current build directory.
@@ -406,5 +407,5 @@ libtinkergpu.$(shared_lib_suffix__) | $(shared_libtinker__)
 
 ##/ ------
 ##/
-##/ # Maintaining Multiple Build Directories
+##/ ## Maintaining Multiple Build Directories
 ##/

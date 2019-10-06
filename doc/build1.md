@@ -1,12 +1,4 @@
-# Build and Install
-
-# Table of Contents
-* [Build Tinker Library](#libtinker)
-* [Build Tinker GPU Library](#libtinkergpu)
-* [Install](#install)
-
-<a name='libtinker'></a>
-# Build Tinker Library
+# Build the Canonical Tinker
 
 * Clone Tinker from GitHub, checkout the required version (see section `Prerequisites`),
 and copy the `Makefile` to the `source` directory, e.g.,
@@ -103,6 +95,3 @@ They are documented inside `make/example.inc`.
 ```
 make opt=debug prec=s host=0
 ```
-
-<a name='install'></a>
-# Install
