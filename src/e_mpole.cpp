@@ -1,10 +1,10 @@
 #include "e_mpole.h"
-#include "ext/tinker/detail/couple.hh"
-#include "ext/tinker/detail/mplpot.hh"
-#include "ext/tinker/detail/sizes.hh"
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"
+#include <ext/tinker/detail/couple.hh>
+#include <ext/tinker/detail/mplpot.hh>
+#include <ext/tinker/detail/sizes.hh>
 
 TINKER_NAMESPACE_BEGIN
 void empole_data(rc_op op) {

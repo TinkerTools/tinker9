@@ -2,11 +2,11 @@
 #include "dev_array.h"
 #include "e_polar.h"
 #include "e_vdw.h"
-#include "ext/tinker/detail/limits.hh"
-#include "ext/tinker/detail/neigh.hh"
-#include "ext/tinker/detail/potent.hh"
 #include "md.h"
 #include "potent.h"
+#include <ext/tinker/detail/limits.hh>
+#include <ext/tinker/detail/neigh.hh>
+#include <ext/tinker/detail/potent.hh>
 
 TINKER_NAMESPACE_BEGIN
 static int use_vdw_list() {

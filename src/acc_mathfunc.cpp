@@ -1,4 +1,4 @@
-#include "acc_mathfunc.h"
+#include "mathfunc.h"
 #include <cassert>
 
 TINKER_NAMESPACE_BEGIN

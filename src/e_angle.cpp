@@ -1,9 +1,9 @@
 #include "e_angle.h"
-#include "ext/tinker/detail/angbnd.hh"
-#include "ext/tinker/detail/angpot.hh"
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"
+#include <ext/tinker/detail/angbnd.hh>
+#include <ext/tinker/detail/angpot.hh>
 
 TINKER_NAMESPACE_BEGIN
 void eangle_data(rc_op op) {

@@ -1,7 +1,7 @@
 #include "acc_add.h"
-#include "acc_mathfunc.h"
 #include "box.h"
 #include "elec.h"
+#include "mathfunc.h"
 #include "md.h"
 #include "pme.h"
 

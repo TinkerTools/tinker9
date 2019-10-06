@@ -1,9 +1,8 @@
 #include "e_pitors.h"
-
-#include "ext/tinker/detail/pitors.hh"
-#include "ext/tinker/detail/torpot.hh"
 #include "md.h"
 #include "potent.h"
+#include <ext/tinker/detail/pitors.hh>
+#include <ext/tinker/detail/torpot.hh>
 
 TINKER_NAMESPACE_BEGIN
 void epitors_data(rc_op op) {

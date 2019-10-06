@@ -1,10 +1,9 @@
 #include "e_bond.h"
-
-#include "ext/tinker/detail/bndpot.hh"
-#include "ext/tinker/detail/bndstr.hh"
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"
+#include <ext/tinker/detail/bndpot.hh>
+#include <ext/tinker/detail/bndstr.hh>
 
 TINKER_NAMESPACE_BEGIN
 void ebond_data(rc_op op) {

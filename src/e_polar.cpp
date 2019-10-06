@@ -1,16 +1,16 @@
 #include "e_polar.h"
-#include "ext/tinker/detail/couple.hh"
-#include "ext/tinker/detail/inform.hh"
-#include "ext/tinker/detail/polar.hh"
-#include "ext/tinker/detail/polgrp.hh"
-#include "ext/tinker/detail/polpot.hh"
-#include "ext/tinker/detail/sizes.hh"
-#include "ext/tinker/detail/units.hh"
 #include "io_fort_str.h"
 #include "io_print.h"
 #include "md.h"
 #include "pme.h"
 #include "potent.h"
+#include <ext/tinker/detail/couple.hh>
+#include <ext/tinker/detail/inform.hh>
+#include <ext/tinker/detail/polar.hh>
+#include <ext/tinker/detail/polgrp.hh>
+#include <ext/tinker/detail/polpot.hh>
+#include <ext/tinker/detail/sizes.hh>
+#include <ext/tinker/detail/units.hh>
 #include <map>
 
 TINKER_NAMESPACE_BEGIN

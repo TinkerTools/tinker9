@@ -1,4 +1,4 @@
-#include "acc_image.h"
+#include "drt_image.h"
 #include "gpu_card.h"
 #include "md.h"
 #include "nblist.h"

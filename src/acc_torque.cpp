@@ -1,6 +1,6 @@
 #include "acc_add.h"
-#include "acc_mathfunc.h"
 #include "elec.h"
+#include "mathfunc.h"
 #include "md.h"
 
 #define ADD_(ans, a, b)                                                        \
