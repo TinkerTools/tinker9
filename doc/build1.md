@@ -1,6 +1,8 @@
 # Build the Canonical Tinker
 
-* Clone Tinker from GitHub, checkout the required version (see section `Prerequisites`),
+
+## Checkout the Required Version of Tinker
+Clone Tinker from GitHub, checkout the required version (see `Prerequisites`),
 and copy the `Makefile` to the `source` directory, e.g.,
 ```
 $ pwd
@@ -13,7 +15,9 @@ $ cp ../make/Makefile .
 $ pwd
 > /home/user/tinker/source
 ```
-* Modify the `Makefile`
+
+
+## Make libtinker
     * change the value of variable `FFTWDIR` to the top-level `FFTW` installation;
     * locate the correct flags in the `Makefile` for your compiler and operating system,
     uncomment them, and comment out others;

@@ -39,12 +39,6 @@ endif
 
 # linux (Linux) / darwin (macOS)
 os__ := $(shell uname -s 2>/dev/null | tr "[:upper:]" "[:lower:]")
-# so (Linux) / dylib (macOS)
-ifeq ($(os__),linux)
-    shared_lib_suffix__ := so
-else ifeq ($(os__),darwin)
-    shared_lib_suffix__ := dylib
-endif
 
 
 shared_flags__ :=
@@ -116,18 +110,16 @@ build := build
 ##/ error when it fails to find it. No check will be performed if this option
 ##/ is set via command line arguments.
 ##/
-shared_libtinker__ := libtinker.$(shared_lib_suffix__)
 ifdef tinker_dir
     tinker_dir__ := $(tinker_dir)
 else
-    ifneq (,$(wildcard $(HOME)/tinker/source/$(shared_libtinker__)))
+    ifneq (,$(wildcard $(HOME)/tinker/source/libtinker.a))
         tinker_dir__ := $(HOME)/tinker/source
     endif
 endif
 ifndef tinker_dir__
     $(warning $(errline)Warning! tinker_dir must be supplied.$(errline))
 endif
-link_flags__ += -L. -ltinker
 
 
 ##/ ### fftw_dir / fftw_include / fftw_lib (NO DEFAULT)
@@ -170,9 +162,9 @@ endif
 ifndef fftw_lib__
     $(warning $(errline)Warning! fftw_lib or fftw_dir must be supplied.$(errline))
 endif
-link_flags__ += -L$(fftw_lib__) -lfftw3 -lfftw3_threads
+link_flags__ += $(fftw_lib__)/libfftw3.a $(fftw_lib__)/libfftw3_threads.a
 ifeq ($(prec__),real4__)
-    link_flags__ += -lfftw3f
+    link_flags__ += $(fftw_lib__)/libfftw3f.a $(fftw_lib__)/libfftw3f_threads.a
 endif
 
 
@@ -262,7 +254,6 @@ endif
 -include $(cxx_config)
 -include $(acc_config)
 -include $(link_config)
-link_flags__ += -ltinkergpu
 
 
 ##/ ------
@@ -383,6 +374,7 @@ doc:
 help:
 	@grep '^\##/' $(top_dir__)/make/Makefile | sed -e 's|##/ ||' | sed -e 's|##/||'
 
+
 ##/ ### clean
 ##/ Clean up the current build directory.
 ##/
@@ -395,15 +387,14 @@ clean:
 	find src/ -type f -name '*.o' -delete
 
 
-$(shared_libtinker__): $(tinker_dir__)/$(shared_libtinker__)
-	cp $^ $@
 tinker.gpu: $(src_obj_dir__)/main_tinker_gpu.o $(all_acc_objs__) \
-libtinkergpu.$(shared_lib_suffix__) | $(shared_libtinker__)
+$(lib_cpp_objs__) $(tinker_dir__)/libtinker.a
 	$(LINK) $^ $(link_flags__) -o $@
 all.tests: $(src_obj_dir__)/test/main_all_tests.o \
 $(test_cpp_objs__) $(all_acc_objs__) \
-libtinkergpu.$(shared_lib_suffix__) | $(shared_libtinker__)
+$(lib_cpp_objs__) $(tinker_dir__)/libtinker.a
 	$(LINK) $^ $(link_flags__) -o $@
+
 
 ##/ ------
 ##/

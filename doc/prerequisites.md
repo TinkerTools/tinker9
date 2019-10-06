@@ -3,7 +3,7 @@
 
 ## Hardware
 A relatively recent Nvidia GPU is mandatory for the GPU code.
-Nothing special is needed for the CPU platform.
+Nothing special is needed for the CPU code.
 
 
 ## Compilers and Operating Systems
@@ -12,7 +12,7 @@ Nothing special is needed for the CPU platform.
    - The most recent [PGI compiler](https://www.pgroup.com/products/community.htm) 
      for the `OpenACC` directives.
    - Linux and Windows 10 (Windows Subsystem for Linux) are preferred because
-     the PGI compiler does not support the GPU platform on macOS.
+     the PGI compiler does not support the GPU code on macOS.
 
 
 ## Libraries
@@ -20,8 +20,13 @@ Nothing special is needed for the CPU platform.
       - Tinker: `libfftw3` and `libfftw3_threads`.
       - Tinker GPU (single precision CPU version): `libfftw3f`, `libfftw3f_threads`.
    - Tinker
-      - Tinker GPU is in sync with [Tinker](https://github.com/TinkerTools/Tinker/tree/291a85c1435feddc835e80bfa340497b67cc1393)
-        of commit `291a85c1`. For details, see `Build the Canonical Tinker`.
+      - Tinker GPU is in sync with [Tinker](https://github.com/TinkerTools/Tinker) of commit `291a85c1`.
+      For details, see `Build the Canonical Tinker`.
    - CUDA
-      - Recent `CUDA` libraries are required the GPU platform,
+      - Recent `CUDA` libraries are required by the GPU code,
         which may have been included in the PGI compiler.
+
+
+## Other Nonmandatory Utilities
+   - [clang-format](https://clang.llvm.org/docs/ClangFormat.html): to format the source code.
+   - [doxygen](http://www.doxygen.nl): to generate the documentation.
