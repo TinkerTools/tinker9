@@ -4,11 +4,11 @@
 #include "macro.h"
 
 #if TINKER_CUDART
-#  include "fft_cufft.h"
+#   include "fft_cufft.h"
 #endif
 
 #if TINKER_HOST
-#  include "fft_fftw.h"
+#   include "fft_fftw.h"
 #endif
 
 #endif

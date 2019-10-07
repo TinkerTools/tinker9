@@ -1,23 +1,55 @@
-##/ \file
-##/ \page make Makefile: Options and Targets
+##/ # Build Tinker GPU
 ##/
-##/ # Introduction
+##/ ## Introduction
 ##/ This is a self-documenting Makefile. After being processed by `doxygen`,
-##/ the documentation will appear in the `Related Pages` section. Simply run
+##/ the documentation will appear in the `Related Pages`. Simply run
 ##/ ```
 ##/ $> make help
 ##/ ```
-##/ can also print the documentation in terminal window. An empty line is
-##/ mandatory at the end of each paragraph of the documentation.
+##/ can also print the documentation in terminal window.
 ##/
-##/ Every option has a default value and is documented as
-##/ `option=default_value`. In order to override the default value(s), set
+##/ Every option usually has a default value and is documented as
+##/ `option=default_value`. In order to override the defaults, set
 ##/ them in the command line as follows:
-##/ `$> make option1=value1 option2=value2 targets`
+##/ ```
+##/ $> make option1=value1 option2=value2 targets
+##/ ```
+##/
+##/ In order to correctly generate this documentations, an empty line is
+##/ mandatory at the end of each paragraph.
 ##/
 ##/ ------
 ##/
-##/ # Options
+##/ ## Maintaining Multiple Build Directories
+##/
+##/ The design of this Makefile strongly discourages compiling the object files
+##/ inside the source code directory, where the situation becomes extreamely
+##/ messy if you want to switch back and forth among different configurations.
+##/ And as you will see later, quite a few arguments are necessary to be passed
+##/ to the `make` file, and the `make` command becomes very long. Therefore, we
+##/ recommend you write and keep a shell script in every build directory to
+##/ replace the general `make` command, so that a lot of the common options are
+##/ saved in the script.
+##/
+##/ Some examples are given below.
+##/
+##/ ```
+##/ #!/bin/bash
+##/ # file name: build-v1/z.sh
+##/ # GPU/single/release/fftw_dir=$HOME/local/fftw
+##/ make ignore=0 host=off prec=s opt=release fftw_dir=$HOME/local/fftw "$@"
+##/ ```
+##/
+##/ ```
+##/ #!/bin/tcsh
+##/ # file name: build-v2/z.sh
+##/ # CPU/doube/debug/fftw_dir=$HOME/local/fftw
+##/ make ignore=0 host=on prec=d opt=debug fftw_dir=$HOME/local/fftw "$argv"
+##/ ```
+##/
+##/ ------
+##/
+##/ ## Options
 ##/
 
 
@@ -34,18 +66,12 @@ makefile_dir__ := $(dir $(makefile_path__))
 # `make' will not complain if file `top_dir.mk' does not exist
 -include top_dir.mk
 ifeq (,$(top_dir__))
-    top_dir__ := $(realpath $(makefile_dir__)/..)
+   top_dir__ := $(realpath $(makefile_dir__)/..)
 endif
 
 
 # linux (Linux) / darwin (macOS)
 os__ := $(shell uname -s 2>/dev/null | tr "[:upper:]" "[:lower:]")
-# so (Linux) / dylib (macOS)
-ifeq ($(os__),linux)
-    shared_lib_suffix__ := so
-else ifeq ($(os__),darwin)
-    shared_lib_suffix__ := dylib
-endif
 
 
 shared_flags__ :=
@@ -53,15 +79,16 @@ link_flags__ :=
 
 
 ##/ ### opt=release
-##/ Optimization level. Other valid values are `debug` and `profile`.
+##/ Optimization level.
+##/    - Other valid values are `debug` and `profile`.
 ##/
 opt := release
 ifeq ($(opt),debug)
-    shared_flags__ += -DDEBUG=1
+   shared_flags__ += -DDEBUG=1
 else ifeq ($(opt),release)
-    shared_flags__ += -DNDEBUG
+   shared_flags__ += -DNDEBUG
 else ifeq ($(opt),profile)
-    shared_flags__ += -DNDEBUG
+   shared_flags__ += -DNDEBUG
 endif
 
 
@@ -74,13 +101,13 @@ endif
 ##/
 prec := real8
 ifeq ($(prec),$(filter $(prec),real4 4 32 float single s))
-    prec__ := real4__
-    shared_flags__ += -DTINKER_SINGLE_PRECISION
+   prec__ := real4__
+   shared_flags__ += -DTINKER_SINGLE_PRECISION
 else ifeq ($(prec),$(filter $(prec),real8 8 64 double d))
-    prec__ := real8__
-    shared_flags__ += -DTINKER_DOUBLE_PRECISION
+   prec__ := real8__
+   shared_flags__ += -DTINKER_DOUBLE_PRECISION
 else
-    $(error Error! Flag prec=$(prec) was set incorrectly)
+   $(error Error! Flag prec=$(prec) was set incorrectly)
 endif
 
 
@@ -93,21 +120,33 @@ endif
 ##/
 host := 1
 ifeq ($(host),$(filter $(host),false off 0))
-    host_only__ := false
+   host_only__ := false
 else ifeq ($(host),$(filter $(host),true on 1))
-    host_only__ := true
-    shared_flags__ += -DTINKER_HOST
+   host_only__ := true
+   shared_flags__ += -DTINKER_HOST
 else
-    $(error Error! Flag host=$(host) was set incorrectly)
+   $(error Error! Flag host=$(host) was set incorrectly)
 endif
 
 
 ##/ ### build=build
-##/ The Makefile is capable of creating a directory with name `$build` in the
-##/ current working directory. This option enables the user to change its
-##/ default name.
+##/ By default, Makefile can create a `build` directory in the current
+##/ working directory. To create a build directory with another name,
+##/ change its default value by running
+##/
+##/ For more information, see `create_build`.
 ##/
 build := build
+
+
+##/ ### ignore=1
+##/ The default value will minimize the warning messages from the `make`
+##/ command, especially when we run `make clean`, `make doc`, etc., where
+##/ these warnings and errors are not critical.
+##/
+##/ `ignore` can also be set to 0, and is recommended to build the excutables.
+##/
+ignore := 1
 
 
 ##/ ### tinker_dir (NO DEFAULT)
@@ -115,65 +154,70 @@ build := build
 ##/ If this value is not set by a command line argument, the Makefile will
 ##/ attempt to locate `libtinker` under `$HOME/tinker/source` and emit a fatal
 ##/ error when it fails to find it. No check will be performed if this option
-##/ is set via command line arguments.
+##/ is set explicitly via command line arguments.
 ##/
-shared_libtinker__ := libtinker.$(shared_lib_suffix__)
 ifdef tinker_dir
-    tinker_dir__ := $(tinker_dir)
+   tinker_dir__ := $(tinker_dir)
 else
-    ifneq (,$(wildcard $(HOME)/tinker/source/$(shared_libtinker__)))
-        tinker_dir__ := $(HOME)/tinker/source
-    endif
+   ifneq (,$(wildcard $(HOME)/tinker/source/libtinker.a))
+      tinker_dir__ := $(HOME)/tinker/source
+   endif
 endif
 ifndef tinker_dir__
-    $(warning $(errline)Warning! tinker_dir must be supplied.$(errline))
+   ifeq ($(ignore),0)
+      $(warning $(errline)Warning! tinker_dir must be supplied.$(errline))
+   endif
 endif
-link_flags__ += -L. -ltinker
 
 
 ##/ ### fftw_dir / fftw_include / fftw_lib (NO DEFAULT)
 ##/ No default values are set for these three options.
 ##/
 ##/ `fftw_dir` is the top-level `FFTW` installation, under which
-##/ `include/fftw3.h` and `lib/libfftw3` are expected to be found.
+##/ `include/fftw3.h` and `lib/libfftw3.a` are expected to be found.
 ##/ If this value is not set by a command line argument, the Makefile will
 ##/ attempt to locate them under `/usr/local`. However, no fatal error will
 ##/ be emitted should the Makefile fail to find them.
 ##/
 ##/ `fftw_include` and `fftw_lib` will override the values set by `fftw_dir`.
 ##/ Fatal errors will be emitted if `fftw_x` (`x = include/lib`) is neither set
-##/ by `fftw_x` nor `fftw_dir`.
+##/ by `fftw_x` nor `fftw_dir`. No check will be performed on either one of the
+##/ explicitly set `fftw_x` in the command line.
 ##/
 ifdef fftw_dir
-    fftw_include__ := $(fftw_dir)/include
-    fftw_lib__ := $(fftw_dir)/lib
+   fftw_include__ := $(fftw_dir)/include
+   fftw_lib__ := $(fftw_dir)/lib
 else
-    ifneq (,$(wildcard /usr/local/include/fftw3.h))
-        fftw_include__ := /usr/local/include
-    endif
-    ifneq (,$(wildcard /usr/local/lib/libfftw3.*))
-        fftw_lib__ := /usr/local/lib
-    endif
+   ifneq (,$(wildcard /usr/local/include/fftw3.h))
+      fftw_include__ := /usr/local/include
+   endif
+   ifneq (,$(wildcard /usr/local/lib/libfftw3.a))
+      fftw_lib__ := /usr/local/lib
+   endif
 endif
 
 
 ifdef fftw_include
-    fftw_include__ := $(fftw_include)
+   fftw_include__ := $(fftw_include)
 endif
 ifndef fftw_include__
-    $(warning $(errline)Warning! fftw_include or fftw_dir must be supplied.$(errline))
+   ifeq ($(ignore),0)
+      $(warning $(errline)Warning! fftw_include or fftw_dir must be supplied.$(errline))
+   endif
 endif
 
 
 ifdef fftw_lib
-    fftw_lib__ := $(fftw_lib)
+   fftw_lib__ := $(fftw_lib)
 endif
 ifndef fftw_lib__
-    $(warning $(errline)Warning! fftw_lib or fftw_dir must be supplied.$(errline))
+   ifeq ($(ignore),0)
+      $(warning $(errline)Warning! fftw_lib or fftw_dir must be supplied.$(errline))
+   endif
 endif
-link_flags__ += -L$(fftw_lib__) -lfftw3 -lfftw3_threads
+link_flags__ += $(fftw_lib__)/libfftw3.a $(fftw_lib__)/libfftw3_threads.a
 ifeq ($(prec__),real4__)
-    link_flags__ += -lfftw3f
+   link_flags__ += $(fftw_lib__)/libfftw3f.a $(fftw_lib__)/libfftw3f_threads.a
 endif
 
 
@@ -189,9 +233,9 @@ include_flags__ := -I$(top_dir__)/include
 include_flags__ += -I$(top_dir__)/ext
 include_flags__ += -I$(top_dir__)/ext/ext
 ifeq ($(host_only__),false)
-    include_flags__ += -I$(cuda_dir)/include
+   include_flags__ += -I$(cuda_dir)/include
 else
-    include_flags__ += -I$(fftw_include__)
+   include_flags__ += -I$(fftw_include__)
 endif
 shared_flags__ += $(include_flags__)
 
@@ -233,9 +277,11 @@ all_acc_objs__ := $(acc_objs__)
 
 
 ##/ ### fortran_config / cxx_config / acc_config / link_config (UNSPECIFIED)
-##/ Default configuration files that contain Fortran/C++/OpenAcc/linker
-##/ related flags. This is the mechanism we adopt to extend the multi-compiler
-##/ support. Tested compilers are tabulated below.
+##/ Addtional files that contain Fortran/C++/OpenAcc/linker related flags.
+##/ This is the mechanism we adopt to extend the multi-compiler support.
+##/ The default file of each category on different operating systems are
+##/ different and there is **NO GUARANTEE** that the defaults will not change.
+##/ Tested compilers are tabulated below.
 ##/
 ##/ | OS    | Fortran                 | C++                | OpenACC         | Linker          |
 ##/ |:-----:|:-----------------------:|:------------------:|:---------------:|:---------------:|
@@ -244,31 +290,26 @@ all_acc_objs__ := $(acc_objs__)
 ##/ | macOS | gfortran 8.3.0 homebrew | clang++ xcode 10.1 | clang++         | clang++         |
 ##/
 ifeq ($(os__),linux)
-    fortran_config := linux.fort.gfortran.5.4.0.mk
-    cxx_config := linux.cxx.g++.mk
-    ifeq ($(host_only__),false)
-        acc_config := linux.acc.device.pgc++.mk
-        link_config := linux.link.device.pgc++.mk
-    else ifeq ($(host_only__),true)
-        acc_config := linux.acc.g++.mk
-        link_config := linux.link.g++.mk
-    endif
+   fortran_config := linux.fort.gfortran.5.4.0.mk
+   cxx_config := linux.cxx.g++.mk
+   ifeq ($(host_only__),false)
+      acc_config := linux.acc.device.pgc++.mk
+      link_config := linux.link.device.pgc++.mk
+   else ifeq ($(host_only__),true)
+      acc_config := linux.acc.g++.mk
+      link_config := linux.link.g++.mk
+   endif
 else ifeq ($(os__),darwin)
-    fortran_config := macos.fort.gfortran.8.3.0.brew.mk
-    cxx_config := macos.cxx.clang++.xcode.10.1.mk
-    acc_config := macos.acc.clang++.xcode.10.1.mk
-    link_config := macos.link.clang++.xcode.10.1.mk
+   fortran_config := macos.fort.gfortran.8.3.0.brew.mk
+   cxx_config := macos.cxx.clang++.xcode.10.1.mk
+   acc_config := macos.acc.clang++.xcode.10.1.mk
+   link_config := macos.link.clang++.xcode.10.1.mk
 endif
--include $(fortran_config)
--include $(cxx_config)
--include $(acc_config)
--include $(link_config)
-link_flags__ += -ltinkergpu
 
 
 ##/ ------
 ##/
-##/ # Targets
+##/ ## Targets
 ##/
 
 
@@ -301,16 +342,22 @@ test: all.tests
 	$(PWD)/$^ [ff],[util] --durations yes --order rand --rng-seed time
 
 
+-include $(fortran_config)
+-include $(cxx_config)
+-include $(acc_config)
+-include $(link_config)
+
+
 ##/ ### dirs
 ##/ Create sub-directories inside the `$build` directory.
 ##/ ### copy_files (depends on dirs)
 ##/ Copy files to the `$build` directory.
 ##/ ### create_build (depends on copy_files)
 ##/ Setup the `$build` directory, including copying the necessary files.
-##/ For example, setup a new build directory inside the `tinker.gpu` directory
-##/ `build-v3`:
+##/ For example, setup a new build directory `build-v3`
+##/ inside the `tinker.gpu` directory:
 ##/
-##/ ```bash
+##/ ```
 ##/ $> pwd
 ##/ #> /home/developer/tinker.gpu
 ##/ $> make -f make/Makefile create_build build=build-v3
@@ -336,7 +383,7 @@ create_build: | copy_files
 
 
 ##/ ### info
-##/ List some of the Makefile information.
+##/ Show some of the compiler and linker flags.
 ##/
 .PHONY: info
 info:
@@ -366,13 +413,15 @@ info:
 ##/ ### doc
 ##/ Generate documentation with `doxygen`.
 ##/
+git_head__ := $(shell git log -1 --format="%h (%cd)")
 .PHONY: doc
 doc:
 	cp -r $(top_dir__)/README.md $(top_dir__)/doc $(top_dir__)/include .
-	grep '^\##/' $(top_dir__)/make/Makefile | sed -e 's|##/|///|' > doc/makefile_doc.h
+	grep '^\##/' $(top_dir__)/make/Makefile | sed -e 's|##/ ||' | sed -e 's|##/||' > doc/build2.md
+	cp doc/build2.md $(top_dir__)/doc/build2.md
 	doxygen -w html doc/header.html doc/footer.html doc/customdoxygen.css-orig
 	sed -e "s|Roboto,sans-serif|'Lucida Grande',Geneva,Helvetica,Arial,sans-serif|" doc/customdoxygen.css-orig > doc/customdoxygen.css
-	doxygen $(top_dir__)/Doxyfile
+	ENV_GIT_HEAD="$(git_head__)" doxygen $(top_dir__)/Doxyfile
 
 
 ##/ ### help
@@ -380,7 +429,8 @@ doc:
 ##/
 .PHONY: help
 help:
-	@grep '^\##/' $(top_dir__)/make/Makefile | sed -e 's|##/||'
+	@grep '^\##/' $(top_dir__)/make/Makefile | sed -e 's|##/ ||' | sed -e 's|##/||'
+
 
 ##/ ### clean
 ##/ Clean up the current build directory.
@@ -394,17 +444,10 @@ clean:
 	find src/ -type f -name '*.o' -delete
 
 
-$(shared_libtinker__): $(tinker_dir__)/$(shared_libtinker__)
-	cp $^ $@
 tinker.gpu: $(src_obj_dir__)/main_tinker_gpu.o $(all_acc_objs__) \
-libtinkergpu.$(shared_lib_suffix__) | $(shared_libtinker__)
+$(lib_cpp_objs__) $(tinker_dir__)/libtinker.a
 	$(LINK) $^ $(link_flags__) -o $@
 all.tests: $(src_obj_dir__)/test/main_all_tests.o \
 $(test_cpp_objs__) $(all_acc_objs__) \
-libtinkergpu.$(shared_lib_suffix__) | $(shared_libtinker__)
+$(lib_cpp_objs__) $(tinker_dir__)/libtinker.a
 	$(LINK) $^ $(link_flags__) -o $@
-
-##/ ------
-##/
-##/ # Maintaining Multiple Build Directories
-##/

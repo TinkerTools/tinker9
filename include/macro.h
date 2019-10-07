@@ -1,24 +1,20 @@
-#ifndef TINKER_MACRO_H_
-#define TINKER_MACRO_H_
+#pragma once
 
-/// \defgroup macro Macros
+/**
+ * \defgroup macro Macros
+ */
 
-// stringification
-#define TINKER_STR_IMPL_(s) #s
-#define TINKER_STR(s) TINKER_STR_IMPL_(s)
-
-// fortran compiler
 #if defined(TINKER_GFORTRAN)
-#  define TINKER_MOD(mod, var) __##mod##_MOD_##var
-#  define TINKER_RT(rt) rt##_
+#   define TINKER_MOD(mod, var) __##mod##_MOD_##var
+#   define TINKER_RT(rt) rt##_
 #elif defined(TINKER_IFORT)
-#  define TINKER_MOD(mod, var) mod##_mp_##var##_
-#  define TINKER_RT(rt) rt##_
+#   define TINKER_MOD(mod, var) mod##_mp_##var##_
+#   define TINKER_RT(rt) rt##_
 #else
-#  error We do not recognize your Fortran compiler. You should implement these \
-two macros (TINKER_MOD and TINKER_RT) here to mimic its name mangling. You     \
-should also implement other functions whenever you see an                      \
-"unknown fortran compiler error".
+#   error We do not know what Fortran compiler you used to compile the Tinker  \
+library. You should implement these two macros (TINKER_MOD and TINKER_RT) here \
+to mimic its name mangling. Similarly, you should implement other functions    \
+whenever you see an "unknown fortran compiler error".
 #endif
 
 /**
@@ -37,12 +33,12 @@ should also implement other functions whenever you see an                      \
  * \see TINKER_EXTERN_DEFINITION_FILE
  */
 #ifndef TINKER_EXTERN_DEFINITION_FILE
-#  define TINKER_EXTERN_DEFINITION_FILE 0
+#   define TINKER_EXTERN_DEFINITION_FILE 0
 #endif
 #if TINKER_EXTERN_DEFINITION_FILE
-#  define TINKER_EXTERN
+#   define TINKER_EXTERN
 #else
-#  define TINKER_EXTERN extern
+#   define TINKER_EXTERN extern
 #endif
 
 /**
@@ -53,7 +49,8 @@ should also implement other functions whenever you see an                      \
  * \ingroup macro
  * \def TINKER_NAMESPACE_END
  * \ingroup macro
- * These namespace macros would possibly improve the source code indentation.
+ * These namespace macros would possibly improve the source code indentation and
+ * make the curly braces less confusing.
  * \}
  */
 #define TINKER_NAMESPACE tinker
@@ -65,39 +62,40 @@ should also implement other functions whenever you see an                      \
  * \ingroup macro
  * \c TINKER_DEBUG either expands to 0 or 1. It expands to 1 if and only if \c
  * DEBUG is defined and is not defined to 0.
- * \c NDEBUG is the default and it supersedes \c DEBUG.
- * If \c DEBUG is defined to 0, it is equivalent to having \c NDEBUG defined.
+ * \c NDEBUG is the default and it supersedes \c DEBUG should both of them
+ * appear together. If \c DEBUG is defined to 0, it is equivalent to having \c
+ * NDEBUG defined.
  */
 #if defined(_DEBUG) && !defined(DEBUG)
-#  define DEBUG _DEBUG
+#   define DEBUG _DEBUG
 #endif
 #if defined(_NDEBUG) && !defined(NDEBUG)
-#  define NDEBUG _NDEBUG
+#   define NDEBUG _NDEBUG
 #endif
 #if !defined(NDEBUG) && !defined(DEBUG)
-#  define NDEBUG
-#  define TINKER_DEBUG 0
+#   define NDEBUG
+#   define TINKER_DEBUG 0
 #elif defined(NDEBUG)
-#  define TINKER_DEBUG 0
+#   define TINKER_DEBUG 0
 #elif defined(DEBUG)
-#  define TINKER_DEBUG_DO_EXPAND_(VAL) VAL##1
-#  define TINKER_DEBUG_EXPAND_(VAL) TINKER_DEBUG_DO_EXPAND_(VAL)
+#   define TINKER_DEBUG_DO_EXPAND_(VAL) VAL##1
+#   define TINKER_DEBUG_EXPAND_(VAL) TINKER_DEBUG_DO_EXPAND_ (VAL)
 
-#  if TINKER_DEBUG_EXPAND_(DEBUG) == 1
+#   if TINKER_DEBUG_EXPAND_(DEBUG) == 1
 // DEBUG is defined to empty
-#    define TINKER_DEBUG 1
-#  elif DEBUG != 0
+#      define TINKER_DEBUG 1
+#   elif DEBUG != 0
 // DEBUG != 0
-#    define TINKER_DEBUG 1
-#  else
+#      define TINKER_DEBUG 1
+#   else
 // DEBUG == 0
-#    define TINKER_DEBUG 0
-#  endif
+#      define TINKER_DEBUG 0
+#   endif
 
-#  undef TINKER_DEBUG_DO_EXPAND_
-#  undef TINKER_DEBUG_EXPAND_
+#   undef TINKER_DEBUG_DO_EXPAND_
+#   undef TINKER_DEBUG_EXPAND_
 #else
-#  define TINKER_DEBUG 0
+#   define TINKER_DEBUG 0
 #endif
 
 /**
@@ -118,28 +116,30 @@ should also implement other functions whenever you see an                      \
  * \}
  */
 #if defined(TINKER_DOUBLE_PRECISION) && !defined(TINKER_SINGLE_PRECISION)
-#  undef TINKER_DOUBLE_PRECISION
-#  define TINKER_DOUBLE_PRECISION 1
-#  define TINKER_SINGLE_PRECISION 0
+#   undef TINKER_DOUBLE_PRECISION
+#   define TINKER_DOUBLE_PRECISION 1
+#   define TINKER_SINGLE_PRECISION 0
 #else
-#  ifdef TINKER_DOUBLE_PRECISION
-#    undef TINKER_DOUBLE_PRECISION
-#  endif
-#  ifdef TINKER_SINGLE_PRECISION
-#    undef TINKER_SINGLE_PRECISION
-#  endif
-#  define TINKER_DOUBLE_PRECISION 0
-#  define TINKER_SINGLE_PRECISION 1
+#   ifdef TINKER_DOUBLE_PRECISION
+#      undef TINKER_DOUBLE_PRECISION
+#   endif
+#   ifdef TINKER_SINGLE_PRECISION
+#      undef TINKER_SINGLE_PRECISION
+#   endif
+#   define TINKER_DOUBLE_PRECISION 0
+#   define TINKER_SINGLE_PRECISION 1
 #endif
 
+/**
+ * \defgroup typedef Type Definitions
+ */
 TINKER_NAMESPACE_BEGIN
-/// \defgroup typedef Type Definitions
-
 /**
  * \typedef real
  * \ingroup typedef
- * The default floating point type, is either defined to \c float or \c double,
- * based on the precision macros.
+ * The default floating point type based on the precision macros. Either defined
+ * to \c float or \c double,
+ *
  * \see TINKER_DOUBLE_PRECISION
  * \see TINKER_SINGLE_PRECISION
  */
@@ -149,19 +149,20 @@ typedef double real;
 #if TINKER_SINGLE_PRECISION
 typedef float real;
 #endif
-TINKER_NAMESPACE_END
 
-TINKER_NAMESPACE_BEGIN
-/// \ingroup typedef
-/// The fixed-point type used to accumulate floating-point numbers.
-typedef unsigned long long FixedPoint;
+/**
+ * \ingroup typedef
+ * The fixed-point type used to accumulate floating-point numbers.
+ */
+typedef unsigned long long fixed;
+
 /**
  * \ingroup math
  * Constant to convert a number between floating-point and fixed-point
  * representations.
- * \see FixedPoint
+ * \see fixed
  */
-constexpr FixedPoint fixed_point = 0x100000000ull;
+constexpr fixed fixed_point = 0x100000000ull;
 TINKER_NAMESPACE_END
 
 /**
@@ -176,32 +177,38 @@ TINKER_NAMESPACE_END
  * \see TINKER_HOST
  */
 #ifndef TINKER_HOST
-#  define TINKER_HOST 0
-#  define TINKER_CUDART 1
+#   define TINKER_HOST 0
+#   define TINKER_CUDART 1
 #else
-#  undef TINKER_HOST
-#  define TINKER_HOST 1
-#  define TINKER_CUDART 0
+#   undef TINKER_HOST
+#   define TINKER_HOST 1
+#   define TINKER_CUDART 0
 #endif
 
-// compiler features
-#ifdef __cplusplus
-#  if __cplusplus < 201103L
 // C++11
-#    error Must enable C++11.
-#  endif
+#ifdef __cplusplus
+#   if __cplusplus < 201103L
+#      error Must enable C++11.
+#   endif
 #endif
 
 /**
  * \def if_constexpr
  * \ingroup macro
- * If possible, use \c if \c constexpr to hint at the chances of optimizations.
+ * If possible, use `if constexpr` to hint at the chances of optimizations.
  */
 #ifdef __cpp_if_constexpr
-#  define if_constexpr if constexpr
+#   define if_constexpr if constexpr
 #else
-#  define if_constexpr if
+#   define if_constexpr if
 #endif
+
+/**
+ * \def RESTRICT
+ * \ingroup macro
+ * Expand to \c __restrict__ in the source code.
+ */
+#define RESTRICT __restrict__
 
 /**
  * \def MAYBE_UNUSED
@@ -209,9 +216,18 @@ TINKER_NAMESPACE_END
  * Reduce the "unused variable" warnings from the compiler.
  */
 #if __has_cpp_attribute(maybe_unused)
-#  define MAYBE_UNUSED [[maybe_unused]]
+#   define MAYBE_UNUSED [[maybe_unused]]
 #else
-#  define MAYBE_UNUSED __attribute__((unused))
+#   define MAYBE_UNUSED __attribute__ ((unused))
 #endif
 
+/**
+ * \def CUDA_DEVICE_FUNCTION
+ * \ingroup macro
+ * Expand to \c __device__ in the CUDA source code.
+ */
+#ifdef __CUDACC__
+#   define CUDA_DEVICE_FUNCTION __device__
+#else
+#   define CUDA_DEVICE_FUNCTION
 #endif

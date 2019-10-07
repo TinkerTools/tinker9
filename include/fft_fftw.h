@@ -7,17 +7,18 @@
 TINKER_NAMESPACE_BEGIN
 /// @brief
 /// FFT plan
-struct FFTPlan {
+struct FFTPlan
+{
 #if TINKER_SINGLE_PRECISION
-  typedef fftwf_plan type;
+   typedef fftwf_plan type;
 #elif TINKER_DOUBLE_PRECISION
-  typedef fftw_plan type;
+   typedef fftw_plan type;
 #else
-  static_assert(false, "");
+   static_assert (false, "");
 #endif
 
-  type planf; ///< FFT front plan
-  type planb; ///< FFT back plan
+   type planf; ///< FFT front plan
+   type planb; ///< FFT back plan
 };
 TINKER_NAMESPACE_END
 

@@ -14,122 +14,124 @@ TINKER_NAMESPACE_BEGIN
  * write a file to the disk in its constructor and remove this file in its
  * destructor
  */
-class TestFile {
+class TestFile
+{
 private:
-  bool good_;
-  std::string name_;
+   bool good_;
+   std::string name_;
 
 public:
-  TestFile(const std::string& name, const std::string& content);
-  ~TestFile();
+   TestFile (const std::string& name, const std::string& content);
+   ~TestFile ();
 };
 
 /**
  * @brief
  * if possible, remove the file with the given name in its destructor
  */
-class TestFileExpected {
+class TestFileExpected
+{
 private:
-  std::string name_;
+   std::string name_;
 
 public:
-  TestFileExpected(const std::string& name);
-  ~TestFileExpected();
+   TestFileExpected (const std::string& name);
+   ~TestFileExpected ();
 };
 
-double test_get_eps(double eps_single, double eps_double);
+double test_get_eps (double eps_single, double eps_double);
 
-void test_begin_with_args(int argc, const char** argv);
-void test_end();
-void test_mdinit(double t = 0, double atm = 0);
+void test_begin_with_args (int argc, const char** argv);
+void test_end ();
+void test_mdinit (double t = 0, double atm = 0);
 TINKER_NAMESPACE_END
 
 #define COMPARE_ENERGY_(gpuptr, ref_eng, eps)                                  \
-  {                                                                            \
-    double eng = get_energy(gpuptr);                                           \
-    REQUIRE(eng == Approx(ref_eng).margin(eps));                               \
-  }
+   {                                                                           \
+      double eng = get_energy (gpuptr);                                        \
+      REQUIRE (eng == Approx (ref_eng).margin (eps));                          \
+   }
 #define COMPARE_COUNT_(gpuptr, ref_count)                                      \
-  {                                                                            \
-    int count = get_count(gpuptr);                                             \
-    REQUIRE(count == ref_count);                                               \
-  }
+   {                                                                           \
+      int count = get_count (gpuptr);                                          \
+      REQUIRE (count == ref_count);                                            \
+   }
 #define COMPARE_VIR_(gpuptr, ref_v, eps)                                       \
-  {                                                                            \
-    double vir1[6];                                                            \
-    get_virial(vir1, gpuptr);                                                  \
-    REQUIRE(vir1[0] == Approx(ref_v[0][0]).margin(eps));                       \
-    REQUIRE(vir1[1] == Approx(ref_v[0][1]).margin(eps));                       \
-    REQUIRE(vir1[2] == Approx(ref_v[0][2]).margin(eps));                       \
-    REQUIRE(vir1[3] == Approx(ref_v[1][1]).margin(eps));                       \
-    REQUIRE(vir1[4] == Approx(ref_v[1][2]).margin(eps));                       \
-    REQUIRE(vir1[5] == Approx(ref_v[2][2]).margin(eps));                       \
-    REQUIRE(ref_v[1][0] == Approx(ref_v[0][1]).margin(eps));                   \
-    REQUIRE(ref_v[2][0] == Approx(ref_v[0][2]).margin(eps));                   \
-    REQUIRE(ref_v[2][1] == Approx(ref_v[1][2]).margin(eps));                   \
-  }
+   {                                                                           \
+      double vir1[6];                                                          \
+      get_virial (vir1, gpuptr);                                               \
+      REQUIRE (vir1[0] == Approx (ref_v[0][0]).margin (eps));                  \
+      REQUIRE (vir1[1] == Approx (ref_v[0][1]).margin (eps));                  \
+      REQUIRE (vir1[2] == Approx (ref_v[0][2]).margin (eps));                  \
+      REQUIRE (vir1[3] == Approx (ref_v[1][1]).margin (eps));                  \
+      REQUIRE (vir1[4] == Approx (ref_v[1][2]).margin (eps));                  \
+      REQUIRE (vir1[5] == Approx (ref_v[2][2]).margin (eps));                  \
+      REQUIRE (ref_v[1][0] == Approx (ref_v[0][1]).margin (eps));              \
+      REQUIRE (ref_v[2][0] == Approx (ref_v[0][2]).margin (eps));              \
+      REQUIRE (ref_v[2][1] == Approx (ref_v[1][2]).margin (eps));              \
+   }
 #define COMPARE_VIR2_(gpuptr, gpuptr2, ref_v, eps)                             \
-  {                                                                            \
-    double vir1[6], vir2[6];                                                   \
-    get_virial(vir1, gpuptr);                                                  \
-    get_virial(vir2, gpuptr2);                                                 \
-    REQUIRE(vir1[0] + vir2[0] == Approx(ref_v[0][0]).margin(eps));             \
-    REQUIRE(vir1[1] + vir2[1] == Approx(ref_v[0][1]).margin(eps));             \
-    REQUIRE(vir1[2] + vir2[2] == Approx(ref_v[0][2]).margin(eps));             \
-    REQUIRE(vir1[3] + vir2[3] == Approx(ref_v[1][1]).margin(eps));             \
-    REQUIRE(vir1[4] + vir2[4] == Approx(ref_v[1][2]).margin(eps));             \
-    REQUIRE(vir1[5] + vir2[5] == Approx(ref_v[2][2]).margin(eps));             \
-    REQUIRE(ref_v[1][0] == Approx(ref_v[0][1]).margin(eps));                   \
-    REQUIRE(ref_v[2][0] == Approx(ref_v[0][2]).margin(eps));                   \
-    REQUIRE(ref_v[2][1] == Approx(ref_v[1][2]).margin(eps));                   \
-  }
+   {                                                                           \
+      double vir1[6], vir2[6];                                                 \
+      get_virial (vir1, gpuptr);                                               \
+      get_virial (vir2, gpuptr2);                                              \
+      REQUIRE (vir1[0] + vir2[0] == Approx (ref_v[0][0]).margin (eps));        \
+      REQUIRE (vir1[1] + vir2[1] == Approx (ref_v[0][1]).margin (eps));        \
+      REQUIRE (vir1[2] + vir2[2] == Approx (ref_v[0][2]).margin (eps));        \
+      REQUIRE (vir1[3] + vir2[3] == Approx (ref_v[1][1]).margin (eps));        \
+      REQUIRE (vir1[4] + vir2[4] == Approx (ref_v[1][2]).margin (eps));        \
+      REQUIRE (vir1[5] + vir2[5] == Approx (ref_v[2][2]).margin (eps));        \
+      REQUIRE (ref_v[1][0] == Approx (ref_v[0][1]).margin (eps));              \
+      REQUIRE (ref_v[2][0] == Approx (ref_v[0][2]).margin (eps));              \
+      REQUIRE (ref_v[2][1] == Approx (ref_v[1][2]).margin (eps));              \
+   }
 #define COMPARE_GRADIENT3_(gx, gy, gz, ref_grad, eps, check_ij)                \
-  {                                                                            \
-    std::vector<std::array<double, 3>> grad(n);                                \
-    double* dst = &grad[0][0];                                                 \
-    device_array::copyout2(0, 3, n, dst, gx);                                  \
-    device_array::copyout2(1, 3, n, dst, gy);                                  \
-    device_array::copyout2(2, 3, n, dst, gz);                                  \
-    for (int i = 0; i < n; ++i) {                                              \
-      for (int j = 0; j < 3; ++j) {                                            \
-        if (check_ij(i, j))                                                    \
-          REQUIRE(grad[i][j] == Approx(ref_grad[i][j]).margin(eps));           \
+   {                                                                           \
+      std::vector<std::array<double, 3>> grad (n);                             \
+      double* dst = &grad[0][0];                                               \
+      device_array::copyout2 (0, 3, n, dst, gx);                               \
+      device_array::copyout2 (1, 3, n, dst, gy);                               \
+      device_array::copyout2 (2, 3, n, dst, gz);                               \
+      for (int i = 0; i < n; ++i) {                                            \
+         for (int j = 0; j < 3; ++j) {                                         \
+            if (check_ij (i, j))                                               \
+               REQUIRE (grad[i][j] == Approx (ref_grad[i][j]).margin (eps));   \
+         }                                                                     \
       }                                                                        \
-    }                                                                          \
-  }
+   }
 #define COMPARE_GRADIENT2_(ref_grad, eps, check_ij)                            \
-  COMPARE_GRADIENT3_(gx, gy, gz, ref_grad, eps, check_ij)
+   COMPARE_GRADIENT3_ (gx, gy, gz, ref_grad, eps, check_ij)
 #define COMPARE_GRADIENT_(ref_grad, eps)                                       \
-  COMPARE_GRADIENT2_(ref_grad, eps, [](int, int) { return true; })
+   COMPARE_GRADIENT2_ (ref_grad, eps, [] (int, int) { return true; })
 #define COMPARE_BONDED_FORCE(routine, cpu_count, handle, ref_e, eps_e,         \
                              ref_count, gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g,  \
                              ref_v, eps_v)                                     \
-  {                                                                            \
-    auto do_ij_ = [](int, int) { return true; };                               \
-    zero_egv();                                                                \
-    routine(calc::v3);                                                         \
-    COMPARE_ENERGY_(handle.e(), ref_e, eps_e);                                 \
-    REQUIRE(cpu_count == ref_count);                                           \
+   {                                                                           \
+      auto do_ij_ = [] (int, int) { return true; };                            \
+      zero_egv ();                                                             \
+      routine (calc::v3);                                                      \
+      COMPARE_ENERGY_ (handle.e (), ref_e, eps_e);                             \
+      REQUIRE (cpu_count == ref_count);                                        \
                                                                                \
-    zero_egv();                                                                \
-    routine(calc::v1);                                                         \
-    COMPARE_ENERGY_(handle.e(), ref_e, eps_e);                                 \
-    COMPARE_GRADIENT3_(gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);          \
-    COMPARE_VIR_(handle.vir(), ref_v, eps_v);                                  \
+      zero_egv ();                                                             \
+      routine (calc::v1);                                                      \
+      COMPARE_ENERGY_ (handle.e (), ref_e, eps_e);                             \
+      COMPARE_GRADIENT3_ (gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);       \
+      COMPARE_VIR_ (handle.vir (), ref_v, eps_v);                              \
                                                                                \
-    zero_egv();                                                                \
-    routine(calc::v4);                                                         \
-    COMPARE_ENERGY_(handle.e(), ref_e, eps_e);                                 \
-    COMPARE_GRADIENT3_(gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);          \
+      zero_egv ();                                                             \
+      routine (calc::v4);                                                      \
+      COMPARE_ENERGY_ (handle.e (), ref_e, eps_e);                             \
+      COMPARE_GRADIENT3_ (gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);       \
                                                                                \
-    zero_egv();                                                                \
-    routine(calc::v5);                                                         \
-    COMPARE_GRADIENT3_(gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);          \
+      zero_egv ();                                                             \
+      routine (calc::v5);                                                      \
+      COMPARE_GRADIENT3_ (gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);       \
                                                                                \
-    zero_egv();                                                                \
-    routine(calc::v6);                                                         \
-    COMPARE_GRADIENT3_(gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);          \
-    COMPARE_VIR_(handle.vir(), ref_v, eps_v);                                  \
-  }
+      zero_egv ();                                                             \
+      routine (calc::v6);                                                      \
+      COMPARE_GRADIENT3_ (gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);       \
+      COMPARE_VIR_ (handle.vir (), ref_v, eps_v);                              \
+   }
 
 #endif

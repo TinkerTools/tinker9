@@ -13,9 +13,9 @@ TINKER_EXTERN real torsunit;
 
 TINKER_EXTERN BondedEnergy et_handle;
 
-void etors_data(rc_op op);
+void etors_data (rc_op op);
 
-void etors(int vers);
+void etors (int vers);
 TINKER_NAMESPACE_END
 
 #endif

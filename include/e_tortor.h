@@ -3,8 +3,8 @@
 
 #include "dev_array.h"
 #include "energy_buffer.h"
-#include "ext/tinker/detail/ktrtor.hh"
 #include "rc_man.h"
+#include <ext/tinker/detail/ktrtor.hh>
 
 TINKER_NAMESPACE_BEGIN
 // module bitor
@@ -28,9 +28,9 @@ TINKER_EXTERN real ttorunit;
 
 TINKER_EXTERN BondedEnergy ett_handle;
 
-void etortor_data(rc_op op);
+void etortor_data (rc_op op);
 
-void etortor(int vers);
+void etortor (int vers);
 TINKER_NAMESPACE_END
 
 #endif

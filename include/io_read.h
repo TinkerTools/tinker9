@@ -16,23 +16,25 @@ TINKER_NAMESPACE_BEGIN
  */
 /// @{
 template <class Arg>
-int read_string(Arg& arg, const char* str, size_t len) {
-  const int succeed = 0;
-  const int fail = 1;
-  std::istringstream iss(std::string(str, len));
-  Arg tmp;
-  iss >> tmp;
-  if (iss.fail()) {
-    return fail;
-  } else {
-    arg = tmp;
-    return succeed;
-  }
+int read_string (Arg& arg, const char* str, size_t len)
+{
+   const int succeed = 0;
+   const int fail = 1;
+   std::istringstream iss (std::string (str, len));
+   Arg tmp;
+   iss >> tmp;
+   if (iss.fail ()) {
+      return fail;
+   } else {
+      arg = tmp;
+      return succeed;
+   }
 }
 
 template <class Arg, size_t Len>
-int read_string(Arg& arg, const char (&src)[Len]) {
-  return read_string(arg, src, Len);
+int read_string (Arg& arg, const char (&src)[Len])
+{
+   return read_string (arg, src, Len);
 };
 /// @}
 
@@ -58,33 +60,34 @@ int read_string(Arg& arg, const char (&src)[Len]) {
  * an @c std::istream object; use std::cin by default
  */
 template <class Arg, class Invalid>
-void read_stream(Arg& arg, std::string prompt, Arg auto_fill, Invalid&& invalid,
-                 std::istream& istream = std::cin) {
-  int input_fail = false;
-  std::string line;
-  while (invalid(arg)) {
-    std::cout << prompt;
-    std::getline(istream, line);
-    auto vs = Text::split(line);
-    if (vs.size() == 0) {
-      arg = auto_fill;
-    } else {
-      input_fail = read_string(arg, line.data(), line.size());
-    }
-    if (input_fail) {
-      // reset failbit
-      istream.clear();
-      // if using operator<<, expunge the remaining input and invisible '\n';
-      // istream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-      // unnecessary if std::getline(...) is used instead
-      goto flag_continue;
-    }
-    if (invalid(arg)) {
-      arg = auto_fill;
-    }
-  flag_continue:
-    (void)0;
-  }
+void read_stream (Arg& arg, std::string prompt, Arg auto_fill,
+                  Invalid&& invalid, std::istream& istream = std::cin)
+{
+   int input_fail = false;
+   std::string line;
+   while (invalid (arg)) {
+      std::cout << prompt;
+      std::getline (istream, line);
+      auto vs = Text::split (line);
+      if (vs.size () == 0) {
+         arg = auto_fill;
+      } else {
+         input_fail = read_string (arg, line.data (), line.size ());
+      }
+      if (input_fail) {
+         // reset failbit
+         istream.clear ();
+         // if using operator<<, expunge the remaining input and invisible '\n';
+         // istream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+         // unnecessary if std::getline(...) is used instead
+         goto flag_continue;
+      }
+      if (invalid (arg)) {
+         arg = auto_fill;
+      }
+   flag_continue:
+      (void)0;
+   }
 }
 TINKER_NAMESPACE_END
 
