@@ -30,10 +30,10 @@ script:
   - mkdir -p fftw/lib
   - cd fftw/lib
 
-  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3.a         -o libfftw3.a
-  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3_threads.a -o libfftw3_threads.a
-  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f.a        -o libfftw3f.a
-  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f_thread.a -o libfftw3f_threads.a
+  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3.a          -o libfftw3.a
+  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3_threads.a  -o libfftw3_threads.a
+  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f.a         -o libfftw3f.a
+  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f_threads.a -o libfftw3f_threads.a
 
   - ls -l
   - cd ../..
@@ -45,6 +45,6 @@ script:
 
   - make -f make/Makefile create_build build=build
   - cd build
-  - make $ARGS all
+  - make $ARGS all -j2
   - make $ARGS info
-  - make $ARGS test
+  - make $ARGS ignore=0 test

@@ -8,8 +8,8 @@ Nothing special is needed for the CPU code.
 
 ## Compilers and Operating Systems
    - A GNU or Intel Fortran compiler.
-   - A recent C++ compiler that supports C++11 syntax. 
-   - The most recent [PGI compiler](https://www.pgroup.com/products/community.htm) 
+   - A recent C++ compiler that supports C++11 syntax.
+   - The most recent [PGI compiler](https://www.pgroup.com/products/community.htm)
      for the `OpenACC` directives.
    - Linux and Windows 10 (Windows Subsystem for Linux) are preferred because
      the PGI compiler does not support the GPU code on macOS.

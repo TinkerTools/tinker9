@@ -7,7 +7,7 @@ Tinker GPU: Software Tools for Molecular Design
 ## Installation Guide
    - [Prerequisites](doc/prerequisites.md)
    - [Build the Canonical Tinker](doc/build1.md)
-   - [Build Tinker GPU: Makefile, Options, and Targets](doc/build2.md)
+   - [Build Tinker GPU](doc/build2.md)
 
 
 ## Documentation
