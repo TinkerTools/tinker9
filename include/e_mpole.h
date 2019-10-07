@@ -18,11 +18,11 @@ TINKER_EXTERN device_pointer<real> mexclude_scale_;
 
 TINKER_EXTERN NonbondedEnergy em_handle;
 
-void empole_data(rc_op op);
+void empole_data (rc_op op);
 
-void empole_coulomb(int vers);
-void empole_ewald(int vers);
-void empole(int vers);
+void empole_coulomb (int vers);
+void empole_ewald (int vers);
+void empole (int vers);
 TINKER_NAMESPACE_END
 
 #endif

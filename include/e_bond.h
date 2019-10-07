@@ -6,7 +6,11 @@
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-enum class ebond_t { harmonic, morse };
+enum class ebond_t
+{
+   harmonic,
+   morse
+};
 TINKER_EXTERN ebond_t bndtyp;
 
 TINKER_EXTERN real cbnd, qbnd, bndunit;
@@ -16,9 +20,9 @@ TINKER_EXTERN device_pointer<real> bl, bk;
 
 TINKER_EXTERN BondedEnergy eb_handle;
 
-void ebond_data(rc_op op);
+void ebond_data (rc_op op);
 
-void ebond(int vers);
+void ebond (int vers);
 TINKER_NAMESPACE_END
 
 #endif

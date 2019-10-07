@@ -1,14 +1,8 @@
-# Build and Install
+# Build the Canonical Tinker
 
-# Table of Contents
-* [Build Tinker Library](#libtinker)
-* [Build Tinker GPU Library](#libtinkergpu)
-* [Install](#install)
 
-<a name='libtinker'></a>
-# Build Tinker Library
-
-* Clone Tinker from GitHub, checkout the required version (see section `Prerequisites`),
+## Checkout the Required Version of Tinker
+Clone Tinker from GitHub, checkout the required version (see `Prerequisites`),
 and copy the `Makefile` to the `source` directory, e.g.,
 ```
 $ pwd
@@ -21,22 +15,15 @@ $ cp ../make/Makefile .
 $ pwd
 > /home/user/tinker/source
 ```
-* Modify the `Makefile`
-    * change the value of variable `FFTWDIR` to the top-level `FFTW` installation;
-    * locate the correct flags in the `Makefile` for your compiler and operating system,
-    uncomment them, and comment out others;
-    * modify the `OPTFLAGS`: use a more conservative optimization flag `-O2` instead of
-    `-Ofast` or `-O3`; add `-fPIC`; keep the `OpenMP` flag;
-    * add a new target to compile a shared library:
+
+
+## Make libtinker
+   - Change the value of variable `FFTWDIR` to the top-level `FFTW` installation.
+   - Locate the correct flags in the `Makefile` for your compiler and operating system,
+     uncomment them, and comment out the others.
+   - Run `make` command
 ```
-# make sure TABs are used for indentations in the Makefile
-libtinker.so: $(OBJS)
-        ${F77} -fPIC -shared -o $@ \
-	<various.o files, refer to libtinker.a>
-```
-* Run command
-```
-make libtinker.so
+make libtinker.a -j
 ```
 
 <a name='libtinkergpu'></a>
@@ -103,6 +90,3 @@ They are documented inside `make/example.inc`.
 ```
 make opt=debug prec=s host=0
 ```
-
-<a name='install'></a>
-# Install

@@ -13,9 +13,9 @@ TINKER_EXTERN real stbnunit;
 
 TINKER_EXTERN BondedEnergy eba_handle;
 
-void estrbnd_data(rc_op op);
+void estrbnd_data (rc_op op);
 
-void estrbnd(int vers);
+void estrbnd (int vers);
 TINKER_NAMESPACE_END
 
 #endif

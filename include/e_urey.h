@@ -16,9 +16,9 @@ TINKER_EXTERN real cury, qury, ureyunit;
 
 TINKER_EXTERN BondedEnergy eub_handle;
 
-void eurey_data(rc_op op);
+void eurey_data (rc_op op);
 
-void eurey(int vers);
+void eurey (int vers);
 TINKER_NAMESPACE_END
 
 #endif

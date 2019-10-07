@@ -21,8 +21,9 @@ TINKER_NAMESPACE_BEGIN
  * values to be printed out
  */
 template <class Out, class Fmt, class... Ts>
-void print(Out& out, const Fmt& fmtstr, const Ts&... args) {
-  fmt::print(out, fmtstr, args...);
+void print (Out& out, const Fmt& fmtstr, const Ts&... args)
+{
+   fmt::print (out, fmtstr, args...);
 }
 
 /**
@@ -39,8 +40,9 @@ void print(Out& out, const Fmt& fmtstr, const Ts&... args) {
  * the formatted @c std::string output
  */
 template <class Fmt, class... Ts>
-std::string format(const Fmt& fmtstr, const Ts&... args) {
-  return fmt::format(fmtstr, args...);
+std::string format (const Fmt& fmtstr, const Ts&... args)
+{
+   return fmt::format (fmtstr, args...);
 }
 TINKER_NAMESPACE_END
 

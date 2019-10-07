@@ -15,7 +15,7 @@
 #include "e_vdw.h"
 
 TINKER_NAMESPACE_BEGIN
-void energy_potential(int vers);
+void energy_potential (int vers);
 TINKER_NAMESPACE_END
 
 #endif

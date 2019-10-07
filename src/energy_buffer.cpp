@@ -2,66 +2,85 @@
 #include "md.h"
 
 TINKER_NAMESPACE_BEGIN
-int get_count(Count ne_) {
-  int c;
-  ne_->sum(&c);
-  return c;
+int get_count (Count ne_)
+{
+   int c;
+   ne_->sum (&c);
+   return c;
 }
 
-double get_energy(Energy e_) {
-  real real_out;
-  e_->sum(&real_out);
-  return real_out;
+double get_energy (Energy e_)
+{
+   real real_out;
+   e_->sum (&real_out);
+   return real_out;
 }
 
-void get_virial(double* v_out, Virial vir_) {
-  real r6[VirialBuffer::N];
-  vir_->sum(r6);
-  for (size_t i = 0; i < VirialBuffer::N; ++i)
-    v_out[i] = r6[i];
+void get_virial (double* v_out, Virial vir_)
+{
+   real r6[VirialBuffer::N];
+   vir_->sum (r6);
+   for (size_t i = 0; i < VirialBuffer::N; ++i)
+      v_out[i] = r6[i];
 }
 
-size_t BondedEnergy::buffer_size() const { return bufsize_; }
-
-Energy BondedEnergy::e() { return e_; }
-
-Virial BondedEnergy::vir() { return vir_; }
-
-void BondedEnergy::dealloc() {
-  vir_.close();
-  e_.close();
-  bufsize_ = 0;
+size_t BondedEnergy::buffer_size () const
+{
+   return bufsize_;
 }
 
-void BondedEnergy::alloc(size_t bsize) {
-  if (rc_flag & calc::analyz) {
-    e_ = Energy::open();
-    vir_ = Virial::open();
-  } else {
-    e_ = esum_handle;
-    vir_ = vir_handle;
-  }
-  e_->alloc(bsize);
-  vir_->alloc(bsize);
-
-  auto esize = e_->size();
-  auto vsize = vir_->size();
-  assert(esize == vsize);
-  bufsize_ = esize;
+Energy BondedEnergy::e ()
+{
+   return e_;
 }
 
-Count NonbondedEnergy::ne() { return ne_; }
-
-void NonbondedEnergy::dealloc() {
-  ne_.close();
-  BondedEnergy::dealloc();
+Virial BondedEnergy::vir ()
+{
+   return vir_;
 }
 
-void NonbondedEnergy::alloc(size_t bsize) {
-  BondedEnergy::alloc(bsize);
-  ne_ = Count::open();
-  ne_->alloc(bsize);
+void BondedEnergy::dealloc ()
+{
+   vir_.close ();
+   e_.close ();
+   bufsize_ = 0;
+}
 
-  assert(bufsize_ == ne_->size());
+void BondedEnergy::alloc (size_t bsize)
+{
+   if (rc_flag & calc::analyz) {
+      e_ = Energy::open ();
+      vir_ = Virial::open ();
+   } else {
+      e_ = esum_handle;
+      vir_ = vir_handle;
+   }
+   e_->alloc (bsize);
+   vir_->alloc (bsize);
+
+   auto esize = e_->size ();
+   auto vsize = vir_->size ();
+   assert (esize == vsize);
+   bufsize_ = esize;
+}
+
+Count NonbondedEnergy::ne ()
+{
+   return ne_;
+}
+
+void NonbondedEnergy::dealloc ()
+{
+   ne_.close ();
+   BondedEnergy::dealloc ();
+}
+
+void NonbondedEnergy::alloc (size_t bsize)
+{
+   BondedEnergy::alloc (bsize);
+   ne_ = Count::open ();
+   ne_->alloc (bsize);
+
+   assert (bufsize_ == ne_->size ());
 }
 TINKER_NAMESPACE_END

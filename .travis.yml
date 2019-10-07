@@ -22,7 +22,7 @@ before_install:
 
 script:
   - mkdir -p tinker/source
-  - curl $CI_DEPEND_DIR/tinker-291a85c1/libtinker.so -o tinker/source/libtinker.so
+  - curl $CI_DEPEND_DIR/tinker-291a85c1/libtinker.a -o tinker/source/libtinker.a
 
   - mkdir -p fftw/include
   - curl $CI_DEPEND_DIR/fftw/include/fftw3.h -o fftw/include/fftw3.h
@@ -30,15 +30,11 @@ script:
   - mkdir -p fftw/lib
   - cd fftw/lib
 
-  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3.so.3.5.8          -o libfftw3.so.3.5.8
-  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3_threads.so.3.5.8  -o libfftw3_threads.so.3.5.8
-  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f.so.3.5.8         -o libfftw3f.so.3.5.8
-  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f_threads.so.3.5.8 -o libfftw3f_threads.so.3.5.8
+  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3.a          -o libfftw3.a
+  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3_threads.a  -o libfftw3_threads.a
+  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f.a         -o libfftw3f.a
+  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f_threads.a -o libfftw3f_threads.a
 
-  - ln -s libfftw3.so.3.5.8          libfftw3.so
-  - ln -s libfftw3_threads.so.3.5.8  libfftw3_threads.so
-  - ln -s libfftw3f.so.3.5.8         libfftw3f.so
-  - ln -s libfftw3f_threads.so.3.5.8 libfftw3f_threads.so
   - ls -l
   - cd ../..
 
@@ -49,6 +45,6 @@ script:
 
   - make -f make/Makefile create_build build=build
   - cd build
-  - make $ARGS all
+  - make $ARGS all -j2
   - make $ARGS info
-  - make $ARGS test
+  - make $ARGS ignore=0 test

@@ -1,5 +1,4 @@
-#ifndef TINKER_MATHFUNC_H_
-#define TINKER_MATHFUNC_H_
+#pragma once
 
 #include "macro.h"
 #include <cmath>
@@ -8,50 +7,84 @@
 /// \defgroup math Math
 /// \ingroup gvar
 
-#define INT_ABS(x) abs(x)
+#define INT_ABS abs
 
 #if TINKER_DOUBLE_PRECISION
-#  define REAL_SQRT(x) sqrt(x)
-#  define REAL_EXP(x) exp(x)
-#  define REAL_FLOOR(x) floor(x)
-#  define REAL_ABS(x) fabs(x)
-#  define REAL_POW(x, idx) pow(x, idx)
-#  define REAL_RECIP(x) (1 / ((double)x))
-#  define REAL_RSQRT(x) (1 / sqrt((double)x))
-#  define REAL_COS(x) cos(x)
-#  define REAL_SIN(x) sin(x)
-#  define REAL_ACOS(x) acos(x)
-#  define REAL_ASIN(x) asin(x)
-#  define REAL_ERF(x) erf(x)
-// #  define REAL_ERFC(x) erfc(x)
-#  define REAL_ERFC(x) (1 - erf(x))
-#  define REAL_MIN(x, y) fmin(x, y)
-#  define REAL_MAX(x, y) fmax(x, y)
-#  define REAL_SIGN(x, y) copysign(x, y)
+#   define REAL_SQRT sqrt
+#   define REAL_EXP exp
+#   define REAL_FLOOR floor
+#   define REAL_ABS fabs
+#   define REAL_POW pow
+#   define REAL_RECIP(x) (1 / static_cast<double> (x))
+#   define REAL_RSQRT(x) (1 / sqrt (x))
+#   define REAL_COS cos
+#   define REAL_SIN sin
+#   define REAL_ACOS acos
+#   define REAL_ASIN asin
+#   define REAL_ERF erf
+// #   define REAL_ERFC erfc
+#   define REAL_ERFC(x) (1 - erf (x))
+#   define REAL_MIN fmin
+#   define REAL_MAX fmax
+#   define REAL_SIGN copysign
 #endif
 
 #if TINKER_SINGLE_PRECISION
-#  define REAL_SQRT(x) sqrtf(x)
-#  define REAL_EXP(x) expf(x)
-#  define REAL_FLOOR(x) floorf(x)
-#  define REAL_ABS(x) fabsf(x)
-#  define REAL_POW(x, idx) powf(x, idx)
-#  define REAL_RECIP(x) (1 / ((float)x))
-#  define REAL_RSQRT(x) (1 / sqrtf((float)x))
-#  define REAL_COS(x) cosf(x)
-#  define REAL_SIN(x) sinf(x)
-#  define REAL_ACOS(x) acosf(x)
-#  define REAL_ASIN(x) asinf(x)
-#  define REAL_ERF(x) erff(x)
-// #  define REAL_ERFC(x) erfcf(x)
-#  define REAL_ERFC(x) (1 - erff(x))
-#  define REAL_MIN(x, y) fminf(x, y)
-#  define REAL_MAX(x, y) fmaxf(x, y)
-#  define REAL_SIGN(x, y) copysignf(x, y)
+#   define REAL_SQRT sqrtf
+#   define REAL_EXP expf
+#   define REAL_FLOOR floorf
+#   define REAL_ABS fabsf
+#   define REAL_POW powf
+#   define REAL_RECIP(x) (1 / static_cast<float> (x))
+#   define REAL_RSQRT(x) (1 / sqrtf (x))
+#   define REAL_COS cosf
+#   define REAL_SIN sinf
+#   define REAL_ACOS acosf
+#   define REAL_ASIN asinf
+#   define REAL_ERF erff
+// #   define REAL_ERFC erfcf
+#   define REAL_ERFC(x) (1 - erff (x))
+#   define REAL_MIN fminf
+#   define REAL_MAX fmaxf
+#   define REAL_SIGN copysignf
 #endif
 
 #define REAL_SQ(x) ((x) * (x))
 #define REAL_CUBE(x) ((x) * (x) * (x))
+
+#ifdef _OPENACC
+#pragma acc routine(abs) seq
+
+#pragma acc routine(sqrt) seq
+#pragma acc routine(exp) seq
+#pragma acc routine(floor) seq
+#pragma acc routine(fabs) seq
+#pragma acc routine(pow) seq
+#pragma acc routine(cos) seq
+#pragma acc routine(sin) seq
+#pragma acc routine(acos) seq
+#pragma acc routine(asin) seq
+#pragma acc routine(erf) seq
+#pragma acc routine(erfc) seq
+#pragma acc routine(fmin) seq
+#pragma acc routine(fmax) seq
+#pragma acc routine(copysign) seq
+
+#pragma acc routine(sqrtf) seq
+#pragma acc routine(expf) seq
+#pragma acc routine(floorf) seq
+#pragma acc routine(fabsf) seq
+#pragma acc routine(powf) seq
+#pragma acc routine(cosf) seq
+#pragma acc routine(sinf) seq
+#pragma acc routine(acosf) seq
+#pragma acc routine(asinf) seq
+#pragma acc routine(erff) seq
+#pragma acc routine(erfcf) seq
+#pragma acc routine(fminf) seq
+#pragma acc routine(fmaxf) seq
+#pragma acc routine(copysignf) seq
+#endif
 
 TINKER_NAMESPACE_BEGIN
 /// \ingroup math
@@ -79,7 +112,7 @@ constexpr real pi = M_PI;
 constexpr real radian = 57.2957795130823208768;
 /// \ingroup math
 /// \f$ \pi/180 \f$
-constexpr real radinv = 0.01745329251994329576924;
+constexpr real _1radian = 0.01745329251994329576924;
 /// \ingroup math
 /// \f$ \sqrt{\pi} \f$
 constexpr real sqrtpi = 1.77245385090551602730;
@@ -88,41 +121,47 @@ TINKER_NAMESPACE_END
 TINKER_NAMESPACE_BEGIN
 /// \ingroup math
 template <class T>
-T max_of(T a) {
-  return a;
+T max_of (T a)
+{
+   return a;
 }
 
 /// \ingroup math
 template <class T, class T2>
-T max_of(T a, T2 b) {
-  return (a < b) ? b : a;
+T max_of (T a, T2 b)
+{
+   return (a < b) ? b : a;
 }
 
 /// \ingroup math
 /// \return
 /// The maximum value from a variadic list of numbers.
 template <class T, class T2, class... Ts>
-T max_of(T a, T2 b, Ts... cs) {
-  return max_of(max_of(a, b), cs...);
+T max_of (T a, T2 b, Ts... cs)
+{
+   return max_of (max_of (a, b), cs...);
 }
 
 /// \ingroup math
 template <class T>
-T min_of(T a) {
-  return a;
+T min_of (T a)
+{
+   return a;
 }
 
 /// \ingroup math
 template <class T, class T2>
-T min_of(T a, T2 b) {
-  return (a < b) ? a : b;
+T min_of (T a, T2 b)
+{
+   return (a < b) ? a : b;
 }
 
 /// \ingroup math
 /// The minimum value from a variadic list of numbers.
 template <class T, class T2, class... Ts>
-T min_of(T a, T2 b, Ts... cs) {
-  return min_of(min_of(a, b), cs...);
+T min_of (T a, T2 b, Ts... cs)
+{
+   return min_of (min_of (a, b), cs...);
 }
 TINKER_NAMESPACE_END
 
@@ -130,8 +169,9 @@ TINKER_NAMESPACE_BEGIN
 /// \ingroup math
 /// \return
 /// True if and only if \c val is a power of 2.
-constexpr bool is_pow2(size_t val) {
-  return (val != 0) && ((val & (val - 1)) == 0);
+constexpr bool is_pow2 (size_t val)
+{
+   return (val != 0) && ((val & (val - 1)) == 0);
 }
 
 /// \ingroup math
@@ -139,8 +179,9 @@ constexpr bool is_pow2(size_t val) {
 /// The base-2 logarithm of positive integer \c n.
 /// \param val
 /// Must be greater than 0.
-constexpr size_t int_log2(size_t val) {
-  return val < 2 ? 0 : 1 + int_log2(val / 2);
+constexpr size_t int_log2 (size_t val)
+{
+   return val < 2 ? 0 : 1 + int_log2 (val / 2);
 }
 
 /// \ingroup math
@@ -148,13 +189,17 @@ constexpr size_t int_log2(size_t val) {
 /// A power of 2 that is less than or equal to \c val.
 /// \param val
 /// Must be greater than 0.
-constexpr size_t pow2_le(size_t val) { return 1ull << int_log2(val); }
+constexpr size_t pow2_le (size_t val)
+{
+   return 1ull << int_log2 (val);
+}
 
 /// \ingroup math
 /// \return
 /// A power of 2 that is greater than or equal to \c val.
-constexpr size_t pow2_ge(size_t val) {
-  return val <= 1 ? 1 : (1ull << (1 + int_log2(val - 1)));
+constexpr size_t pow2_ge (size_t val)
+{
+   return val <= 1 ? 1 : (1ull << (1 + int_log2 (val - 1)));
 }
 TINKER_NAMESPACE_END
 
@@ -167,13 +212,13 @@ namespace parallel {
  * \return
  * The sum.
  */
-int reduce_sum(const int* gpu_a, size_t nelem);
+int reduce_sum (const int* gpu_a, size_t nelem);
 /// \ingroup math
-float reduce_sum(const float* gpu_a, size_t nelem);
+float reduce_sum (const float* gpu_a, size_t nelem);
 /// \ingroup math
-double reduce_sum(const double* gpu_a, size_t nelem);
+double reduce_sum (const double* gpu_a, size_t nelem);
 /// \ingroup math
-unsigned long long reduce_sum(const unsigned long long* gpu_a, size_t nelem);
+unsigned long long reduce_sum (const unsigned long long* gpu_a, size_t nelem);
 
 /**
  * \ingroup math
@@ -183,17 +228,17 @@ unsigned long long reduce_sum(const unsigned long long* gpu_a, size_t nelem);
  * which case, \c nelem = \m, \c neach = 16. The total virial will be written to
  * \c h_ans[\c hn], where \c hn = 9.
  */
-void reduce_sum2(int* h_ans, size_t hn, const int* v, size_t nelem,
-                 size_t neach);
+void reduce_sum2 (int* h_ans, size_t hn, const int* v, size_t nelem,
+                  size_t neach);
 /// \ingroup math
-void reduce_sum2(float* h_ans, size_t hn, const float* v, size_t nelem,
-                 size_t neach);
+void reduce_sum2 (float* h_ans, size_t hn, const float* v, size_t nelem,
+                  size_t neach);
 /// \ingroup math
-void reduce_sum2(double* h_ans, size_t hn, const double* v, size_t nelem,
-                 size_t neach);
+void reduce_sum2 (double* h_ans, size_t hn, const double* v, size_t nelem,
+                  size_t neach);
 /// \ingroup math
-void reduce_sum2(unsigned long long* h_ans, size_t hn,
-                 const unsigned long long* v, size_t nelem, size_t neach);
+void reduce_sum2 (unsigned long long* h_ans, size_t hn,
+                  const unsigned long long* v, size_t nelem, size_t neach);
 
 /**
  * \ingroup math
@@ -210,9 +255,9 @@ void reduce_sum2(unsigned long long* h_ans, size_t hn,
  * @return
  * The dot product to the host thread.
  */
-float dotprod(const float* a, const float* b, size_t nelem);
+float dotprod (const float* a, const float* b, size_t nelem);
 /// \ingroup math
-double dotprod(const double* a, const double* b, size_t nelem);
+double dotprod (const double* a, const double* b, size_t nelem);
 
 /**
  * \ingroup math
@@ -226,10 +271,8 @@ double dotprod(const double* a, const double* b, size_t nelem);
  * \param[in] nelem
  * Number of elements in the array.
  */
-void scale_array(float* dst, float scal, size_t nelem);
+void scale_array (float* dst, float scal, size_t nelem);
 /// \ingroup math
-void scale_array(double* dst, double scal, size_t nelem);
+void scale_array (double* dst, double scal, size_t nelem);
 }
 TINKER_NAMESPACE_END
-
-#endif

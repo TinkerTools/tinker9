@@ -1,31 +1,35 @@
-#ifndef TINKER_E_VDW_H_
-#define TINKER_E_VDW_H_
+#pragma once
 
 #include "dev_array.h"
 #include "energy_buffer.h"
 #include "rc_man.h"
 
+/**
+ * \defgroup vdw Van der Waals (VDW) Energy
+ * \ingroup gvar
+ *
+ * \todo Test lj, buck, mm3hb, gauss, and mutant.
+ * \todo Add vdw correction.
+ */
+
 TINKER_NAMESPACE_BEGIN
-/// \defgroup vdw Van der Waals (VDW) Energy
-/// \ingroup gvar
+/**
+ * \ingroup vdw
+ * \brief Constant flags for the VDW energy functions.
+ */
+enum class evdw_t
+{
+   lj,
+   buck,
+   mm3hb,
+   /// Halgren buffered 14-7 potential.
+   hal,
+   gauss,
 
-/// \ingroup vdw
-/// \brief Constant flags used in the VDW energy functions.
-enum class evdw_t {
-  lj,
-  buck,
-  mm3hb,
-  /// Halgren buffered 14-7 potential.
-  hal,
-  gauss,
-
-  decouple = 0,
-  annihilate = 1,
+   decouple = 0,
+   annihilate = 1,
 };
 TINKER_EXTERN evdw_t vdwtyp;
-
-TINKER_EXTERN double vdw_switch_cut;
-TINKER_EXTERN double vdw_switch_off;
 
 /// \ingroup vdw
 /// Value of \f$ \gamma \f$ in buffered 14-7 vdw potential.
@@ -87,14 +91,14 @@ TINKER_EXTERN device_pointer<real> vexclude_scale_;
 
 TINKER_EXTERN NonbondedEnergy ev_handle;
 
-void evdw_data(rc_op op);
+void evdw_data (rc_op op);
 
-void evdw_reduce_xyz();
-void evdw_resolve_gradient();
+void evdw_reduce_xyz ();
+void evdw_resolve_gradient ();
 
-void evdw_lj(int vers);
-void evdw_buck(int vers);
-void evdw_mm3hb(int vers);
+void evdw_lj (int vers);
+void evdw_buck (int vers);
+void evdw_mm3hb (int vers);
 /**
  * \ingroup vdw
  * \brief
@@ -116,9 +120,7 @@ void evdw_mm3hb(int vers);
  * \f]
  * \f[ t=5,\ \alpha=0.7 \f]
  */
-void evdw_hal(int vers);
-void evdw_gauss(int vers);
-void evdw(int vers);
+void evdw_hal (int vers);
+void evdw_gauss (int vers);
+void evdw (int vers);
 TINKER_NAMESPACE_END
-
-#endif

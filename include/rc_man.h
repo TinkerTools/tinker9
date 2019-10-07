@@ -20,35 +20,45 @@ TINKER_NAMESPACE_BEGIN
  * rc_man{bar_data, op};
  * @endcode
  */
-class ResourceManagement {
+class ResourceManagement
+{
 public:
-  typedef enum {
-    dealloc = 0x001, ///< deallocation
-    alloc = 0x002,   ///< allocation
-    init = 0x004,    ///< initialization
-    evolve = 0x008   ///< evolution
-  } rc_op;
+   typedef enum
+   {
+      dealloc = 0x001, ///< deallocation
+      alloc = 0x002,   ///< allocation
+      init = 0x004,    ///< initialization
+      evolve = 0x008   ///< evolution
+   } rc_op;
 
 private:
-  void (*f_)(rc_op);
-  rc_op op_;
-  bool will_dealloc_() const { return op_ & dealloc; }
-  bool only_dealloc_() const { return op_ == dealloc; }
+   void (*f_) (rc_op);
+   rc_op op_;
+   bool will_dealloc_ () const
+   {
+      return op_ & dealloc;
+   }
+   bool only_dealloc_ () const
+   {
+      return op_ == dealloc;
+   }
 
 public:
-  ResourceManagement(void (*f)(rc_op), rc_op op)
-      : f_(f)
-      , op_(op) {
-    if (!will_dealloc_()) {
-      f_(op_);
-    }
-  }
+   ResourceManagement (void (*f) (rc_op), rc_op op)
+      : f_ (f)
+      , op_ (op)
+   {
+      if (!will_dealloc_ ()) {
+         f_ (op_);
+      }
+   }
 
-  ~ResourceManagement() {
-    if (only_dealloc_()) {
-      f_(op_);
-    }
-  }
+   ~ResourceManagement ()
+   {
+      if (only_dealloc_ ()) {
+         f_ (op_);
+      }
+   }
 };
 typedef ResourceManagement rc_man;
 typedef rc_man::rc_op rc_op;
@@ -56,16 +66,16 @@ constexpr rc_op rc_dealloc = rc_man::dealloc;
 constexpr rc_op rc_alloc = rc_man::alloc;
 constexpr rc_op rc_init = rc_man::init;
 
-void host_data(rc_op);
-void device_data(rc_op);
+void host_data (rc_op);
+void device_data (rc_op);
 
 /**
  * @brief
  * set up and clean up host and device environment
  */
 /// @{
-void initialize();
-void finish();
+void initialize ();
+void finish ();
 /// @}
 
 /**
@@ -75,8 +85,8 @@ void finish();
  * of other fortran runtime functions.
  */
 /// @{
-void fortran_runtime_initialize(int, char**);
-void fortran_runtime_finish();
+void fortran_runtime_initialize (int, char**);
+void fortran_runtime_finish ();
 /// @}
 TINKER_NAMESPACE_END
 
