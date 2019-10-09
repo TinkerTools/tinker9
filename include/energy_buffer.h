@@ -20,11 +20,11 @@ size_t buffer_size();
 /**
  * \ingroup ebuf
  * \brief
- * A variable (an energy value, a virial, etc.) of type `T[N]` or `T` (if `N`
+ * A variable (an energy, a virial, etc.) of type `T[N]` or `T` (if `N`
  * equals 1) can be stored in a buffer to get better performance and higher
  * accuracy.
  *
- * Value `N` is also used as `n` inside this class. The type of the underlying
+ * Value `N` is also used as `n` inside the class. The type of the underlying
  * buffer elements is `type[value]`, which may or may not be the same as `T[N]`.
  * If the types are different, this class provides a cast function to convert
  * `type` back to `T`, otherwise, this cast function does nothing. `value` is a
@@ -73,13 +73,12 @@ using virial_buffer =
 /// \}
 
 
-/// \{
 /**
  * \ingroup ebuf
  * \brief
  * Allocate or deallocate device memory for the buffers.
  * \note
- * There is a global list to book keep all of the allocated buffers of its own
+ * There is a global list to bookkeep all of the allocated buffers of its own
  * kind, so that all of the buffers can be iterated.
  * \note
  * These functions cannot be used on `esum_buf` and `vir_buf`.
@@ -93,13 +92,17 @@ using virial_buffer =
  * \see calc::analyz
  */
 void buffer_allocate(energy_buffer*, virial_buffer*);
+/// \ingroup ebuf
+/// \see buffer_allocate
 void buffer_deallocate(energy_buffer, virial_buffer);
+/// \ingroup ebuf
+/// \see buffer_allocate
 void buffer_allocate(count_buffer*, energy_buffer*, virial_buffer*);
+/// \ingroup ebuf
+/// \see buffer_allocate
 void buffer_deallocate(count_buffer, energy_buffer, virial_buffer);
-/// \}
 
 
-/// \{
 /**
  * \ingroup ebuf
  * \brief
@@ -108,10 +111,15 @@ void buffer_deallocate(count_buffer, energy_buffer, virial_buffer);
  * time complexity.
  */
 int get_count(const count_buffer b);
+/// \ingroup ebuf
+/// \see get_count
 real get_energy(const energy_buffer b);
+/// \ingroup ebuf
+/// \see get_count
 void get_virial(real (&)[virial_buffer_traits::n], const virial_buffer b);
+/// \ingroup ebuf
+/// \see get_count
 void get_virial(real (&)[9], const virial_buffer b);
-/// \}
 
 
 /// \ingroup ebuf
@@ -125,4 +133,3 @@ extern std::vector<energy_buffer> energy_buffers;
 extern std::vector<virial_buffer> virial_buffers;
 TINKER_NAMESPACE_END
 /// \defgroup ebuf Energy Buffer
-/// \ingroup util

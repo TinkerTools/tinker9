@@ -1,6 +1,4 @@
 #pragma once
-
-
 #include "macro.h"
 #include <cstring>
 #include <type_traits>
@@ -8,7 +6,7 @@
 
 TINKER_NAMESPACE_BEGIN
 /**
- * \ingroup util
+ * \ingroup mem
  * \brief
  * A helper class to get the traits of the given 1D or 2D pointer type.
  *

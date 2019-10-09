@@ -1,11 +1,8 @@
 #pragma once
-
 #include "deduce_ptr.h"
 
-TINKER_NAMESPACE_BEGIN
-/// \defgroup mem Memory Management
-/// \ingroup gvar
 
+TINKER_NAMESPACE_BEGIN
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes);
 void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes);
 void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes);
@@ -356,3 +353,4 @@ struct DeviceArray
    }
 };
 TINKER_NAMESPACE_END
+/// \defgroup mem Memory Management

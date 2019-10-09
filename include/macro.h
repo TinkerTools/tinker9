@@ -159,6 +159,7 @@ typedef unsigned long long fixed;
 
 /**
  * \ingroup math
+ * \brief
  * Constant to convert a number between floating-point and fixed-point
  * representations.
  * \see fixed
