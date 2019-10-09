@@ -14,26 +14,26 @@
 #include <map>
 
 TINKER_NAMESPACE_BEGIN
-void epolar_data (rc_op op)
+void epolar_data(rc_op op)
 {
-   if (!use_potent (polar_term))
+   if (!use_potent(polar_term))
       return;
 
    if (op & rc_dealloc) {
       nuexclude_ = 0;
-      device_array::deallocate (uexclude_, uexclude_scale_);
+      device_array::deallocate(uexclude_, uexclude_scale_);
       ndpexclude_ = 0;
-      device_array::deallocate (dpexclude_, dpexclude_scale_);
+      device_array::deallocate(dpexclude_, dpexclude_scale_);
       ndpuexclude_ = 0;
-      device_array::deallocate (dpuexclude_, dpuexclude_scale_);
+      device_array::deallocate(dpuexclude_, dpuexclude_scale_);
 
-      device_array::deallocate (polarity, thole, pdamp, polarity_inv);
+      device_array::deallocate(polarity, thole, pdamp, polarity_inv);
 
-      ep_handle.dealloc ();
+      buffer_deallocate(nep, ep, vir_ep);
 
-      device_array::deallocate (ufld, dufld);
-      device_array::deallocate (work01_, work02_, work03_, work04_, work05_,
-                                work06_, work07_, work08_, work09_, work10_);
+      device_array::deallocate(ufld, dufld);
+      device_array::deallocate(work01_, work02_, work03_, work04_, work05_,
+                               work06_, work07_, work08_, work09_, work10_);
    }
 
    if (op & rc_alloc) {
@@ -50,13 +50,13 @@ void epolar_data (rc_op op)
       {
          real d, p, u;
       };
-      auto insert_dpu = [] (std::map<std::pair<int, int>, dpu_scale>& m, int i,
-                            int k, real val, char ch) {
+      auto insert_dpu = [](std::map<std::pair<int, int>, dpu_scale>& m, int i,
+                           int k, real val, char ch) {
          std::pair<int, int> key;
          key.first = i;
          key.second = k;
-         auto it = m.find (key);
-         if (it == m.end ()) {
+         auto it = m.find(key);
+         if (it == m.end()) {
             dpu_scale dpu;
             dpu.d = 0;
             dpu.p = 0;
@@ -86,8 +86,8 @@ void epolar_data (rc_op op)
       u2scale = polpot::u2scale;
       u3scale = polpot::u3scale;
       u4scale = polpot::u4scale;
-      exclik.clear ();
-      excls.clear ();
+      exclik.clear();
+      excls.clear();
       for (int i = 0; i < n; ++i) {
          int nn, bask;
 
@@ -97,10 +97,10 @@ void epolar_data (rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip11[bask + j] - 1;
                if (k > i) {
-                  insert_dpu (ik_dpu, i, k, u1scale - 1, 'u');
-                  exclik.push_back (i);
-                  exclik.push_back (k);
-                  exclik.push_back (u1scale - 1);
+                  insert_dpu(ik_dpu, i, k, u1scale - 1, 'u');
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  exclik.push_back(u1scale - 1);
                }
             }
          }
@@ -111,10 +111,10 @@ void epolar_data (rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip12[bask + j] - 1;
                if (k > i) {
-                  insert_dpu (ik_dpu, i, k, u2scale - 1, 'u');
-                  exclik.push_back (i);
-                  exclik.push_back (k);
-                  exclik.push_back (u2scale - 1);
+                  insert_dpu(ik_dpu, i, k, u2scale - 1, 'u');
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  exclik.push_back(u2scale - 1);
                }
             }
          }
@@ -125,10 +125,10 @@ void epolar_data (rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip13[bask + j] - 1;
                if (k > i) {
-                  insert_dpu (ik_dpu, i, k, u3scale - 1, 'u');
-                  exclik.push_back (i);
-                  exclik.push_back (k);
-                  exclik.push_back (u3scale - 1);
+                  insert_dpu(ik_dpu, i, k, u3scale - 1, 'u');
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  exclik.push_back(u3scale - 1);
                }
             }
          }
@@ -139,18 +139,18 @@ void epolar_data (rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip14[bask + j] - 1;
                if (k > i) {
-                  insert_dpu (ik_dpu, i, k, u4scale - 1, 'u');
-                  exclik.push_back (i);
-                  exclik.push_back (k);
-                  exclik.push_back (u4scale - 1);
+                  insert_dpu(ik_dpu, i, k, u4scale - 1, 'u');
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  exclik.push_back(u4scale - 1);
                }
             }
          }
       }
-      nuexclude_ = excls.size ();
-      device_array::allocate (nuexclude_, &uexclude_, &uexclude_scale_);
-      device_array::copyin (nuexclude_, uexclude_, exclik.data ());
-      device_array::copyin (nuexclude_, uexclude_scale_, excls.data ());
+      nuexclude_ = excls.size();
+      device_array::allocate(nuexclude_, &uexclude_, &uexclude_scale_);
+      device_array::copyin(nuexclude_, uexclude_, exclik.data());
+      device_array::copyin(nuexclude_, uexclude_scale_, excls.data());
 
       d1scale = polpot::d1scale;
       d2scale = polpot::d2scale;
@@ -166,16 +166,16 @@ void epolar_data (rc_op op)
       p3iscale = polpot::p3iscale;
       p4iscale = polpot::p4iscale;
       p5iscale = polpot::p5iscale;
-      exclik.clear ();
-      excls.clear ();
+      exclik.clear();
+      excls.clear();
       struct dp_scale
       {
          real d, p;
       };
-      auto insert_dp = [] (std::map<int, dp_scale>& m, int k, real val,
-                           char dpchar) {
-         auto it = m.find (k);
-         if (it == m.end ()) {
+      auto insert_dp = [](std::map<int, dp_scale>& m, int k, real val,
+                          char dpchar) {
+         auto it = m.find(k);
+         if (it == m.end()) {
             dp_scale dp;
             dp.d = 0;
             dp.p = 0;
@@ -201,8 +201,8 @@ void epolar_data (rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip11[bask + j] - 1;
                if (k > i) {
-                  insert_dpu (ik_dpu, i, k, d1scale - 1, 'd');
-                  insert_dp (k_dpscale, k, d1scale - 1, 'd');
+                  insert_dpu(ik_dpu, i, k, d1scale - 1, 'd');
+                  insert_dp(k_dpscale, k, d1scale - 1, 'd');
                }
             }
          }
@@ -213,8 +213,8 @@ void epolar_data (rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip12[bask + j] - 1;
                if (k > i) {
-                  insert_dpu (ik_dpu, i, k, d2scale - 1, 'd');
-                  insert_dp (k_dpscale, k, d2scale - 1, 'd');
+                  insert_dpu(ik_dpu, i, k, d2scale - 1, 'd');
+                  insert_dp(k_dpscale, k, d2scale - 1, 'd');
                }
             }
          }
@@ -225,8 +225,8 @@ void epolar_data (rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip13[bask + j] - 1;
                if (k > i) {
-                  insert_dpu (ik_dpu, i, k, d3scale - 1, 'd');
-                  insert_dp (k_dpscale, k, d3scale - 1, 'd');
+                  insert_dpu(ik_dpu, i, k, d3scale - 1, 'd');
+                  insert_dp(k_dpscale, k, d3scale - 1, 'd');
                }
             }
          }
@@ -237,8 +237,8 @@ void epolar_data (rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip14[bask + j] - 1;
                if (k > i) {
-                  insert_dpu (ik_dpu, i, k, d4scale - 1, 'd');
-                  insert_dp (k_dpscale, k, d4scale - 1, 'd');
+                  insert_dpu(ik_dpu, i, k, d4scale - 1, 'd');
+                  insert_dp(k_dpscale, k, d4scale - 1, 'd');
                }
             }
          }
@@ -254,8 +254,8 @@ void epolar_data (rc_op op)
                }
                k -= 1;
                if (k > i) {
-                  insert_dpu (ik_dpu, i, k, val, 'p');
-                  insert_dp (k_dpscale, k, val, 'p');
+                  insert_dpu(ik_dpu, i, k, val, 'p');
+                  insert_dp(k_dpscale, k, val, 'p');
                }
             }
          }
@@ -272,8 +272,8 @@ void epolar_data (rc_op op)
                }
                k -= 1;
                if (k > i) {
-                  insert_dpu (ik_dpu, i, k, val, 'p');
-                  insert_dp (k_dpscale, k, val, 'p');
+                  insert_dpu(ik_dpu, i, k, val, 'p');
+                  insert_dp(k_dpscale, k, val, 'p');
                }
             }
          }
@@ -290,8 +290,8 @@ void epolar_data (rc_op op)
                }
                k -= 1;
                if (k > i) {
-                  insert_dpu (ik_dpu, i, k, val, 'p');
-                  insert_dp (k_dpscale, k, val, 'p');
+                  insert_dpu(ik_dpu, i, k, val, 'p');
+                  insert_dp(k_dpscale, k, val, 'p');
                }
             }
          }
@@ -308,57 +308,56 @@ void epolar_data (rc_op op)
                }
                k -= 1;
                if (k > i) {
-                  insert_dpu (ik_dpu, i, k, val, 'p');
-                  insert_dp (k_dpscale, k, val, 'p');
+                  insert_dpu(ik_dpu, i, k, val, 'p');
+                  insert_dp(k_dpscale, k, val, 'p');
                }
             }
          }
 
          for (auto& it : k_dpscale) {
-            exclik.push_back (i);
-            exclik.push_back (it.first);
-            excls.push_back (it.second.d);
-            excls.push_back (it.second.p);
+            exclik.push_back(i);
+            exclik.push_back(it.first);
+            excls.push_back(it.second.d);
+            excls.push_back(it.second.p);
          }
       }
       std::vector<int> dpu_ik_vec;
       std::vector<real> dpu_sc_vec;
       for (auto& it : ik_dpu) {
-         dpu_ik_vec.push_back (it.first.first);
-         dpu_ik_vec.push_back (it.first.second);
-         dpu_sc_vec.push_back (it.second.d);
-         dpu_sc_vec.push_back (it.second.p);
-         dpu_sc_vec.push_back (it.second.u);
+         dpu_ik_vec.push_back(it.first.first);
+         dpu_ik_vec.push_back(it.first.second);
+         dpu_sc_vec.push_back(it.second.d);
+         dpu_sc_vec.push_back(it.second.p);
+         dpu_sc_vec.push_back(it.second.u);
       }
-      ndpuexclude_ = ik_dpu.size ();
-      device_array::allocate (ndpuexclude_, &dpuexclude_, &dpuexclude_scale_);
-      device_array::copyin (ndpuexclude_, dpuexclude_, dpu_ik_vec.data ());
-      device_array::copyin (ndpuexclude_, dpuexclude_scale_,
-                            dpu_sc_vec.data ());
+      ndpuexclude_ = ik_dpu.size();
+      device_array::allocate(ndpuexclude_, &dpuexclude_, &dpuexclude_scale_);
+      device_array::copyin(ndpuexclude_, dpuexclude_, dpu_ik_vec.data());
+      device_array::copyin(ndpuexclude_, dpuexclude_scale_, dpu_sc_vec.data());
 
-      ndpexclude_ = excls.size () / 2;
-      device_array::allocate (ndpexclude_, &dpexclude_, &dpexclude_scale_);
-      device_array::copyin (ndpexclude_, dpexclude_, exclik.data ());
-      device_array::copyin (ndpexclude_, dpexclude_scale_, excls.data ());
+      ndpexclude_ = excls.size() / 2;
+      device_array::allocate(ndpexclude_, &dpexclude_, &dpexclude_scale_);
+      device_array::copyin(ndpexclude_, dpexclude_, exclik.data());
+      device_array::copyin(ndpexclude_, dpexclude_scale_, excls.data());
 
-      device_array::allocate (n, &polarity, &thole, &pdamp, &polarity_inv);
+      device_array::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
 
-      ep_handle.alloc (n);
+      buffer_allocate(&nep, &ep, &vir_ep);
 
       if (rc_flag & calc::grad) {
-         device_array::allocate (n, &ufld, &dufld);
+         device_array::allocate(n, &ufld, &dufld);
       } else {
          ufld = nullptr;
          dufld = nullptr;
       }
 
-      device_array::allocate (n, &work01_, &work02_, &work03_, &work04_,
-                              &work05_, &work06_, &work07_, &work08_, &work09_,
-                              &work10_);
+      device_array::allocate(n, &work01_, &work02_, &work03_, &work04_,
+                             &work05_, &work06_, &work07_, &work08_, &work09_,
+                             &work10_);
    }
 
    if (op & rc_init) {
-      if (use_ewald ()) {
+      if (use_ewald()) {
          epolar_electyp = elec_t::ewald;
       } else {
          epolar_electyp = elec_t::coulomb;
@@ -368,72 +367,72 @@ void epolar_data (rc_op op)
 
       // see also polmin in induce.f
       const double polmin = 0.00000001;
-      std::vector<double> pinvbuf (n);
+      std::vector<double> pinvbuf(n);
       for (int i = 0; i < n; ++i) {
-         pinvbuf[i] = 1.0 / std::max (polar::polarity[i], polmin);
+         pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
       }
-      device_array::copyin (n, polarity, polar::polarity);
-      device_array::copyin (n, thole, polar::thole);
-      device_array::copyin (n, pdamp, polar::pdamp);
-      device_array::copyin (n, polarity_inv, pinvbuf.data ());
+      device_array::copyin(n, polarity, polar::polarity);
+      device_array::copyin(n, thole, polar::thole);
+      device_array::copyin(n, pdamp, polar::pdamp);
+      device_array::copyin(n, polarity_inv, pinvbuf.data());
    }
 }
 
-void dfield (real (*field)[3], real (*fieldp)[3])
+void dfield(real (*field)[3], real (*fieldp)[3])
 {
    if (epolar_electyp == elec_t::ewald)
-      dfield_ewald (field, fieldp);
+      dfield_ewald(field, fieldp);
    else
-      dfield_coulomb (field, fieldp);
+      dfield_coulomb(field, fieldp);
 }
 
-void ufield (const real (*uind)[3], const real (*uinp)[3], real (*field)[3],
-             real (*fieldp)[3])
+void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3],
+            real (*fieldp)[3])
 {
    if (epolar_electyp == elec_t::ewald)
-      ufield_ewald (uind, uinp, field, fieldp);
+      ufield_ewald(uind, uinp, field, fieldp);
    else
-      ufield_coulomb (uind, uinp, field, fieldp);
+      ufield_coulomb(uind, uinp, field, fieldp);
 }
 
-void induce (real (*ud)[3], real (*up)[3])
+void induce(real (*ud)[3], real (*up)[3])
 {
-   induce_mutual_pcg1 (ud, up);
+   induce_mutual_pcg1(ud, up);
 
-   if (inform::debug && use_potent (polar_term)) {
+   if (inform::debug && use_potent(polar_term)) {
       std::vector<double> uindbuf;
-      uindbuf.resize (3 * n);
-      device_array::copyout (n, uindbuf.data (), ud);
+      uindbuf.resize(3 * n);
+      device_array::copyout(n, uindbuf.data(), ud);
       bool header = true;
       for (int i = 0; i < n; ++i) {
          if (polar::polarity[i] != 0) {
             if (header) {
                header = false;
-               print (stdout, "\n Induced Dipole Moments (Debye) :\n");
-               print (stdout,
-                      "\n{0:4s}Atom{0:15s}X{0:12s}Y{0:12s}Z{0:11s}Total\n\n",
-                      "");
+               print(stdout, "\n Induced Dipole Moments (Debye) :\n");
+               print(stdout,
+                     "\n{0:4s}Atom{0:15s}X{0:12s}Y{0:12s}Z{0:11s}Total\n\n",
+                     "");
             }
             double u1 = uindbuf[3 * i];
             double u2 = uindbuf[3 * i + 1];
             double u3 = uindbuf[3 * i + 2];
-            double unorm = std::sqrt (u1 * u1 + u2 * u2 + u3 * u3);
+            double unorm = std::sqrt(u1 * u1 + u2 * u2 + u3 * u3);
             u1 *= units::debye;
             u2 *= units::debye;
             u3 *= units::debye;
             unorm *= units::debye;
-            print (stdout, "{:>8d}     {:13.4f}{:13.4f}{:13.4f} {:13.4f}\n",
-                   i + 1, u1, u2, u3, unorm);
+            print(stdout, "{:>8d}     {:13.4f}{:13.4f}{:13.4f} {:13.4f}\n",
+                  i + 1, u1, u2, u3, unorm);
          }
       }
    }
 }
 
-void epolar (int vers)
+void epolar(int vers)
 {
    if (epolar_electyp == elec_t::coulomb)
-      epolar_coulomb (vers);
+      epolar_coulomb(vers);
    else if (epolar_electyp == elec_t::ewald)
-      epolar_ewald (vers);
+      epolar_ewald(vers);
 }
 TINKER_NAMESPACE_END

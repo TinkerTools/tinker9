@@ -25,16 +25,14 @@
 
 TINKER_NAMESPACE_BEGIN
 template <int USE>
-void eangle_tmpl ()
+void eangle_tmpl()
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_g = USE & calc::grad;
    constexpr int do_v = USE & calc::virial;
-   sanity_check<USE> ();
+   sanity_check<USE>();
 
-   auto* ea = ea_handle.e ()->buffer ();
-   auto* vir_ea = ea_handle.vir ()->buffer ();
-   auto bufsize = ea_handle.buffer_size ();
+   auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
@@ -75,12 +73,12 @@ void eangle_tmpl ()
             real xp = ycb * zab - zcb * yab;
             real yp = zcb * xab - xcb * zab;
             real zp = xcb * yab - ycb * xab;
-            real rp = REAL_SQRT (xp * xp + yp * yp + zp * zp);
-            rp = REAL_MAX (rp, (real)0.0001);
+            real rp = REAL_SQRT(xp * xp + yp * yp + zp * zp);
+            rp = REAL_MAX(rp, (real)0.0001);
             real dot = xab * xcb + yab * ycb + zab * zcb;
-            real cosine = dot * REAL_RSQRT (rab2 * rcb2);
-            cosine = REAL_MIN ((real)0.1, REAL_MAX (-1, cosine));
-            real angle = radian * REAL_ACOS (cosine);
+            real cosine = dot * REAL_RSQRT(rab2 * rcb2);
+            cosine = REAL_MIN((real)0.1, REAL_MAX(-1, cosine));
+            real angle = radian * REAL_ACOS(cosine);
 
             MAYBE_UNUSED real e;
             MAYBE_UNUSED real deddt;
@@ -89,22 +87,22 @@ void eangle_tmpl ()
                real dt2 = dt * dt;
                real dt3 = dt2 * dt;
                real dt4 = dt2 * dt2;
-               if_constexpr (do_e) e = angunit * force * dt2 *
+               if_constexpr(do_e) e = angunit * force * dt2 *
                   (1 + cang * dt + qang * dt2 + pang * dt3 + sang * dt4);
-               if_constexpr (do_g) deddt = angunit * force * dt * radian *
+               if_constexpr(do_g) deddt = angunit * force * dt * radian *
                   (2 + 3 * cang * dt + 4 * qang * dt2 + 5 * pang * dt3 +
                    6 * sang * dt4);
             }
 
-            if_constexpr (do_e)
+            if_constexpr(do_e)
             {
-               atomic_add_value (e, ea, offset);
+               atomic_add_value(e, ea, offset);
             }
 
-            if_constexpr (do_g)
+            if_constexpr(do_g)
             {
-               real terma = -deddt * REAL_RECIP (rab2 * rp);
-               real termc = deddt * REAL_RECIP (rcb2 * rp);
+               real terma = -deddt * REAL_RECIP(rab2 * rp);
+               real termc = deddt * REAL_RECIP(rcb2 * rp);
                real dedxia = terma * (yab * zp - zab * yp);
                real dedyia = terma * (zab * xp - xab * zp);
                real dedzia = terma * (xab * yp - yab * xp);
@@ -134,7 +132,7 @@ void eangle_tmpl ()
                #pragma acc atomic update
                gz[ic] += dedzic;
 
-               if_constexpr (do_v)
+               if_constexpr(do_v)
                {
                   real vxx = xab * dedxia + xcb * dedxic;
                   real vyx = yab * dedxia + ycb * dedxic;
@@ -143,8 +141,8 @@ void eangle_tmpl ()
                   real vzy = zab * dedyia + zcb * dedyic;
                   real vzz = zab * dedzia + zcb * dedzic;
 
-                  atomic_add_value (vxx, vyx, vzx, vyy, vzy, vzz, vir_ea,
-                                    offset);
+                  atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_ea,
+                                   offset);
                }
             }
          }
@@ -165,7 +163,7 @@ void eangle_tmpl ()
          real yt = zad * xcd - xad * zcd;
          real zt = xad * ycd - yad * xcd;
          real rt2 = xt * xt + yt * yt + zt * zt;
-         real delta = -(xt * xbd + yt * ybd + zt * zbd) * REAL_RECIP (rt2);
+         real delta = -(xt * xbd + yt * ybd + zt * zbd) * REAL_RECIP(rt2);
          // real xip = xib + xt * delta;
          // real yip = yib + yt * delta;
          // real zip = zib + zt * delta;
@@ -179,22 +177,22 @@ void eangle_tmpl ()
          real rcp2 = xcp * xcp + ycp * ycp + zcp * zcp;
          if (rap2 != 0 && rcp2 != 0) {
             real dot = xap * xcp + yap * ycp + zap * zcp;
-            real cosine = dot * REAL_RSQRT (rap2 * rcp2);
-            cosine = REAL_MIN (1, REAL_MAX (-1, cosine));
-            real angle = radian * REAL_ACOS (cosine);
+            real cosine = dot * REAL_RSQRT(rap2 * rcp2);
+            cosine = REAL_MIN(1, REAL_MAX(-1, cosine));
+            real angle = radian * REAL_ACOS(cosine);
             real dt = angle - ideal;
             real dt2 = dt * dt;
             real dt3 = dt2 * dt;
             real dt4 = dt2 * dt2;
 
-            if_constexpr (do_e)
+            if_constexpr(do_e)
             {
                real e = angunit * force * dt2 *
                   (1 + cang * dt + qang * dt2 + pang * dt3 + sang * dt4);
-               atomic_add_value (e, ea, offset);
+               atomic_add_value(e, ea, offset);
             }
 
-            if_constexpr (do_g)
+            if_constexpr(do_g)
             {
                real deddt = angunit * force * dt * radian *
                   (2 + 3 * cang * dt + 4 * qang * dt2 + 5 * pang * dt3 +
@@ -202,13 +200,13 @@ void eangle_tmpl ()
                real xm = ycp * zap - zcp * yap;
                real ym = zcp * xap - xcp * zap;
                real zm = xcp * yap - ycp * xap;
-               real rm = REAL_SQRT (xm * xm + ym * ym + zm * zm);
-               rm = REAL_MAX (rm, (real)0.0001);
+               real rm = REAL_SQRT(xm * xm + ym * ym + zm * zm);
+               rm = REAL_MAX(rm, (real)0.0001);
 
                // chain rule terms for first derivative components
 
-               real terma = -deddt * REAL_RECIP (rap2 * rm);
-               real termc = deddt * REAL_RECIP (rcp2 * rm);
+               real terma = -deddt * REAL_RECIP(rap2 * rm);
+               real termc = deddt * REAL_RECIP(rcp2 * rm);
                real dedxia = terma * (yap * zm - zap * ym);
                real dedyia = terma * (zap * xm - xap * zm);
                real dedzia = terma * (xap * ym - yap * xm);
@@ -224,7 +222,7 @@ void eangle_tmpl ()
                real delta2, term;
                delta2 = 2 * delta;
                real ptrt2 =
-                  (dedxip * xt + dedyip * yt + dedzip * zt) * REAL_RECIP (rt2);
+                  (dedxip * xt + dedyip * yt + dedzip * zt) * REAL_RECIP(rt2);
                term = (zcd * ybd - ycd * zbd) + delta2 * (yt * zcd - zt * ycd);
                real dpdxia =
                   delta * (ycd * dedzip - zcd * dedyip) + term * ptrt2;
@@ -284,7 +282,7 @@ void eangle_tmpl ()
                #pragma acc atomic update
                gz[id] += dedzid;
 
-               if_constexpr (do_v)
+               if_constexpr(do_v)
                {
                   real vxx = xad * dedxia + xbd * dedxib + xcd * dedxic;
                   real vyx = yad * dedxia + ybd * dedxib + ycd * dedxic;
@@ -293,8 +291,8 @@ void eangle_tmpl ()
                   real vzy = zad * dedyia + zbd * dedyib + zcd * dedyic;
                   real vzz = zad * dedzia + zbd * dedzib + zcd * dedzic;
 
-                  atomic_add_value (vxx, vyx, vzx, vyy, vzy, vzz, vir_ea,
-                                    offset);
+                  atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_ea,
+                                   offset);
                }
             }
          }
@@ -302,17 +300,17 @@ void eangle_tmpl ()
    } // end for (int i)
 }
 
-void eangle_acc_impl_ (int vers)
+void eangle_acc_impl_(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
-      eangle_tmpl<calc::v0> ();
+      eangle_tmpl<calc::v0>();
    else if (vers == calc::v1)
-      eangle_tmpl<calc::v1> ();
+      eangle_tmpl<calc::v1>();
    else if (vers == calc::v4)
-      eangle_tmpl<calc::v4> ();
+      eangle_tmpl<calc::v4>();
    else if (vers == calc::v5)
-      eangle_tmpl<calc::v5> ();
+      eangle_tmpl<calc::v5>();
    else if (vers == calc::v6)
-      eangle_tmpl<calc::v6> ();
+      eangle_tmpl<calc::v6>();
 }
 TINKER_NAMESPACE_END

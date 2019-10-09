@@ -11,30 +11,30 @@ using namespace TINKER_NAMESPACE;
  * atoms are in the xy-plane. Therefore the z-gradient components of this
  * molecule are not included in the test.
  */
-static bool do_ij (int i, int /* j */)
+static bool do_ij(int i, int /* j */)
 {
    return i < n - 4;
 }
 
-TEST_CASE ("Local-Frame-1", "[ff][empole][coulomb][local-frame]")
+TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]")
 {
-   TestFile fpr ("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
 
    const char* k = "test_local_frame.key";
    std::string key0 = local_frame_key;
 
    const char* x1 = "test_local_frame.xyz";
-   TestFile fx1 (x1, local_frame_xyz);
+   TestFile fx1(x1, local_frame_xyz);
 
    int usage = 0;
    usage |= calc::xyz;
    usage |= calc::vmask;
 
-   SECTION ("empole -- gas phase, no cutoff")
+   SECTION("empole -- gas phase, no cutoff")
    {
       std::string key1 = key0;
       key1 += "multipoleterm    only\n";
-      TestFile fke (k, key1);
+      TestFile fke(k, key1);
 
       const char* argv[] = {"dummy", x1};
       int argc = 2;
@@ -61,49 +61,49 @@ TEST_CASE ("Local-Frame-1", "[ff][empole][coulomb][local-frame]")
                                  {-34.992, 53.410, 6.517},
                                  {9.243, 6.517, 4.708}};
 
-      test_begin_with_args (argc, argv);
+      test_begin_with_args(argc, argv);
       rc_flag = usage;
-      initialize ();
+      initialize();
 
-      zero_egv ();
-      elec_init (calc::v0);
-      empole (calc::v0);
-      torque (calc::v0);
-      COMPARE_ENERGY_ (em_handle.e (), ref_eng, eps_e);
+      zero_egv();
+      elec_init(calc::v0);
+      empole(calc::v0);
+      torque(calc::v0);
+      COMPARE_ENERGY_(em, ref_eng, eps_e);
 
-      zero_egv ();
-      elec_init (calc::v1);
-      empole (calc::v1);
-      torque (calc::v1);
-      COMPARE_ENERGY_ (em_handle.e (), ref_eng, eps_e);
-      COMPARE_GRADIENT2_ (ref_grad, eps_g, do_ij);
-      COMPARE_VIR2_ (em_handle.vir (), vir_trq_handle, ref_v, eps_v);
+      zero_egv();
+      elec_init(calc::v1);
+      empole(calc::v1);
+      torque(calc::v1);
+      COMPARE_ENERGY_(em, ref_eng, eps_e);
+      COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);
+      COMPARE_VIR2_(vir_em, vir_trq, ref_v, eps_v);
 
-      zero_egv ();
-      empole (calc::v3);
-      COMPARE_ENERGY_ (em_handle.e (), ref_eng, eps_e);
-      COMPARE_COUNT_ (em_handle.ne (), ref_count);
+      zero_egv();
+      empole(calc::v3);
+      COMPARE_ENERGY_(em, ref_eng, eps_e);
+      COMPARE_COUNT_(nem, ref_count);
 
-      finish ();
-      test_end ();
+      finish();
+      test_end();
    }
 }
 
-TEST_CASE ("Local-Frame-2", "[ff][empole][ewald][local-frame]")
+TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]")
 {
-   TestFile fpr ("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
 
    const char* k = "test_local_frame.key";
    std::string key0 = local_frame_key;
 
    const char* x1 = "test_local_frame.xyz";
-   TestFile fx1 (x1, local_frame_xyz);
+   TestFile fx1(x1, local_frame_xyz);
 
    int usage = 0;
    usage |= calc::xyz;
    usage |= calc::vmask;
 
-   SECTION ("empole -- pme")
+   SECTION("empole -- pme")
    {
       std::string key1 = key0;
       key1 += "multipoleterm    only\n";
@@ -112,7 +112,7 @@ TEST_CASE ("Local-Frame-2", "[ff][empole][ewald][local-frame]")
       key1 += "neighbor-list\n";
       key1 += "list-buffer    0.1\n";
       key1 += "a-axis    20.0\n";
-      TestFile fke (k, key1);
+      TestFile fke(k, key1);
 
       const char* argv[] = {"dummy", x1};
       int argc = 2;
@@ -144,90 +144,90 @@ TEST_CASE ("Local-Frame-2", "[ff][empole][ewald][local-frame]")
                                  {-31.146, 53.934, 7.245},
                                  {7.610, 7.245, 3.181}};
 
-      test_begin_with_args (argc, argv);
+      test_begin_with_args(argc, argv);
       rc_flag = usage;
-      initialize ();
+      initialize();
 
-      zero_egv ();
-      elec_init (calc::v0);
-      empole (calc::v0);
-      torque (calc::v0);
-      COMPARE_ENERGY_ (em_handle.e (), ref_eng, eps_e);
+      zero_egv();
+      elec_init(calc::v0);
+      empole(calc::v0);
+      torque(calc::v0);
+      COMPARE_ENERGY_(em, ref_eng, eps_e);
 
-      zero_egv ();
-      elec_init (calc::v1);
-      empole (calc::v1);
-      torque (calc::v1);
-      COMPARE_ENERGY_ (em_handle.e (), ref_eng, eps_e);
-      COMPARE_GRADIENT_ (ref_grad, eps_g);
-      COMPARE_VIR2_ (em_handle.vir (), vir_trq_handle, ref_v, eps_v);
+      zero_egv();
+      elec_init(calc::v1);
+      empole(calc::v1);
+      torque(calc::v1);
+      COMPARE_ENERGY_(em, ref_eng, eps_e);
+      COMPARE_GRADIENT_(ref_grad, eps_g);
+      COMPARE_VIR2_(vir_em, vir_trq, ref_v, eps_v);
 
-      zero_egv ();
-      empole (calc::v3);
-      COMPARE_ENERGY_ (em_handle.e (), ref_eng, eps_e);
-      COMPARE_COUNT_ (em_handle.ne (), ref_count);
+      zero_egv();
+      empole(calc::v3);
+      COMPARE_ENERGY_(em, ref_eng, eps_e);
+      COMPARE_COUNT_(nem, ref_count);
 
-      finish ();
-      test_end ();
+      finish();
+      test_end();
    }
 }
 
 #define COMPARE_CODE_BLOCK2_                                                   \
    {                                                                           \
-      zero_egv ();                                                             \
-      elec_init (calc::v0);                                                    \
-      epolar (calc::v0);                                                       \
-      torque (calc::v0);                                                       \
-      COMPARE_ENERGY_ (ep_handle.e (), ref_eng, eps_e);                        \
+      zero_egv();                                                              \
+      elec_init(calc::v0);                                                     \
+      epolar(calc::v0);                                                        \
+      torque(calc::v0);                                                        \
+      COMPARE_ENERGY_(ep, ref_eng, eps_e);                                     \
                                                                                \
-      zero_egv ();                                                             \
-      elec_init (calc::v1);                                                    \
-      epolar (calc::v1);                                                       \
-      torque (calc::v1);                                                       \
-      COMPARE_ENERGY_ (ep_handle.e (), ref_eng, eps_e);                        \
-      COMPARE_GRADIENT2_ (ref_grad, eps_g, do_ij);                             \
-      COMPARE_VIR2_ (ep_handle.vir (), vir_trq_handle, ref_v, eps_v);          \
+      zero_egv();                                                              \
+      elec_init(calc::v1);                                                     \
+      epolar(calc::v1);                                                        \
+      torque(calc::v1);                                                        \
+      COMPARE_ENERGY_(ep, ref_eng, eps_e);                                     \
+      COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                              \
+      COMPARE_VIR2_(vir_ep, vir_trq, ref_v, eps_v);                            \
                                                                                \
-      zero_egv ();                                                             \
-      elec_init (calc::v3);                                                    \
-      epolar (calc::v3);                                                       \
-      torque (calc::v3);                                                       \
-      COMPARE_ENERGY_ (ep_handle.e (), ref_eng, eps_e);                        \
-      COMPARE_COUNT_ (ep_handle.ne (), ref_count);                             \
+      zero_egv();                                                              \
+      elec_init(calc::v3);                                                     \
+      epolar(calc::v3);                                                        \
+      torque(calc::v3);                                                        \
+      COMPARE_ENERGY_(ep, ref_eng, eps_e);                                     \
+      COMPARE_COUNT_(nep, ref_count);                                          \
                                                                                \
-      zero_egv ();                                                             \
-      elec_init (calc::v4);                                                    \
-      epolar (calc::v4);                                                       \
-      torque (calc::v4);                                                       \
-      COMPARE_ENERGY_ (ep_handle.e (), ref_eng, eps_e);                        \
-      COMPARE_GRADIENT2_ (ref_grad, eps_g, do_ij);                             \
+      zero_egv();                                                              \
+      elec_init(calc::v4);                                                     \
+      epolar(calc::v4);                                                        \
+      torque(calc::v4);                                                        \
+      COMPARE_ENERGY_(ep, ref_eng, eps_e);                                     \
+      COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                              \
                                                                                \
-      zero_egv ();                                                             \
-      elec_init (calc::v5);                                                    \
-      epolar (calc::v5);                                                       \
-      torque (calc::v5);                                                       \
-      COMPARE_GRADIENT2_ (ref_grad, eps_g, do_ij);                             \
+      zero_egv();                                                              \
+      elec_init(calc::v5);                                                     \
+      epolar(calc::v5);                                                        \
+      torque(calc::v5);                                                        \
+      COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                              \
                                                                                \
-      zero_egv ();                                                             \
-      elec_init (calc::v6);                                                    \
-      epolar (calc::v6);                                                       \
-      torque (calc::v6);                                                       \
-      COMPARE_GRADIENT2_ (ref_grad, eps_g, do_ij);                             \
-      COMPARE_VIR2_ (ep_handle.vir (), vir_trq_handle, ref_v, eps_v);          \
+      zero_egv();                                                              \
+      elec_init(calc::v6);                                                     \
+      epolar(calc::v6);                                                        \
+      torque(calc::v6);                                                        \
+      COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                              \
+      COMPARE_VIR2_(vir_ep, vir_trq, ref_v, eps_v);                            \
    }
 
-TEST_CASE ("Local-Frame-3", "[ff][epolar][coulomb][local-frame]")
+TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]")
 {
-   TestFile fpr ("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
 
    const char* k = "test_local_frame.key";
    std::string key0 = local_frame_key;
    key0 += "usolve-cutoff    0.01\n";
    key0 += "polarizeterm    only\n";
-   TestFile fke (k, key0);
+   TestFile fke(k, key0);
 
    const char* x1 = "test_local_frame.xyz";
-   TestFile fx1 (x1, local_frame_xyz);
+   TestFile fx1(x1, local_frame_xyz);
 
    int usage = 0;
    usage |= calc::xyz;
@@ -239,11 +239,11 @@ TEST_CASE ("Local-Frame-3", "[ff][epolar][coulomb][local-frame]")
    const double debye = units::debye;
    const double eps_f = 0.0001;
 
-   test_begin_with_args (argc, argv);
+   test_begin_with_args(argc, argv);
    rc_flag = usage;
-   initialize ();
+   initialize();
 
-   SECTION ("dfield -- coulomb no cutoff")
+   SECTION("dfield -- coulomb no cutoff")
    {
       const double ref_dir_field_d[][3] = {
          {0.0632, -0.0886, -0.0018}, {0.0332, -0.0268, 0.0058},
@@ -270,25 +270,25 @@ TEST_CASE ("Local-Frame-3", "[ff][epolar][coulomb][local-frame]")
          {0.0209, -0.1631, -0.0351}, {0.0056, -0.0713, -0.0274},
          {0.1466, -0.1529, 0.0013},  {-0.1215, -0.1945, -0.0897}};
 
-      zero_egv ();
-      elec_init (calc::v0);
-      dfield_coulomb (udir, udirp);
+      zero_egv();
+      elec_init(calc::v0);
+      dfield_coulomb(udir, udirp);
       std::vector<std::array<double, 3>> fieldd, fieldp;
-      fieldd.resize (n);
-      fieldp.resize (n);
-      device_array::copyout (n, &fieldd[0][0], udir);
-      device_array::copyout (n, &fieldp[0][0], udirp);
+      fieldd.resize(n);
+      fieldp.resize(n);
+      device_array::copyout(n, &fieldd[0][0], udir);
+      device_array::copyout(n, &fieldp[0][0], udirp);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
-            REQUIRE (fieldd[i][j] ==
-                     Approx (ref_dir_field_d[i][j]).margin (eps_f));
-            REQUIRE (fieldp[i][j] ==
-                     Approx (ref_dir_field_p[i][j]).margin (eps_f));
+            REQUIRE(fieldd[i][j] ==
+                    Approx(ref_dir_field_d[i][j]).margin(eps_f));
+            REQUIRE(fieldp[i][j] ==
+                    Approx(ref_dir_field_p[i][j]).margin(eps_f));
          }
       }
    }
 
-   SECTION ("ufield -- coulomb no cutoff")
+   SECTION("ufield -- coulomb no cutoff")
    {
       const double ref_ufield_d[][3] = {
          {0.2171, 1.7393, 0.3937},    {-0.0768, -0.7185, 0.1626},
@@ -315,34 +315,34 @@ TEST_CASE ("Local-Frame-3", "[ff][epolar][coulomb][local-frame]")
          {-1.8822, -2.1268, -2.2442}, {-0.0331, 0.4012, -1.5516},
          {0.7016, -1.3551, -0.9421},  {-1.4662, -0.8545, -1.3742}};
 
-      zero_egv ();
-      elec_init (calc::v0);
+      zero_egv();
+      elec_init(calc::v0);
       std::vector<std::array<double, 3>> ud, up;
-      ud.resize (n);
-      up.resize (n);
+      ud.resize(n);
+      up.resize(n);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             ud[i][j] = 0.1 * (i + 1) + 0.03 * (j + 1);
             up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
          }
       }
-      device_array::copyin (n, uind, &ud[0][0]);
-      device_array::copyin (n, uinp, &up[0][0]);
-      ufield_coulomb (uind, uinp, udir, udirp);
-      ud.resize (n);
-      up.resize (n);
-      device_array::copyout (n, &ud[0][0], udir);
-      device_array::copyout (n, &up[0][0], udirp);
+      device_array::copyin(n, uind, &ud[0][0]);
+      device_array::copyin(n, uinp, &up[0][0]);
+      ufield_coulomb(uind, uinp, udir, udirp);
+      ud.resize(n);
+      up.resize(n);
+      device_array::copyout(n, &ud[0][0], udir);
+      device_array::copyout(n, &up[0][0], udirp);
       const double debye = units::debye;
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
-            REQUIRE (ud[i][j] == Approx (ref_ufield_d[i][j]).margin (eps_f));
-            REQUIRE (up[i][j] == Approx (ref_ufield_p[i][j]).margin (eps_f));
+            REQUIRE(ud[i][j] == Approx(ref_ufield_d[i][j]).margin(eps_f));
+            REQUIRE(up[i][j] == Approx(ref_ufield_p[i][j]).margin(eps_f));
          }
       }
    }
 
-   SECTION ("default induce routine -- coulomb no cutoff")
+   SECTION("default induce routine -- coulomb no cutoff")
    {
       const double ref_ud_debye[][3] = {
          {0.0256, -0.0849, -0.0107}, {1.3172, -0.8359, 0.5512},
@@ -369,36 +369,36 @@ TEST_CASE ("Local-Frame-3", "[ff][epolar][coulomb][local-frame]")
          {0.2329, -0.6094, -0.0903}, {0.0180, -0.1162, -0.0128},
          {0.3620, -0.1921, 0.0590},  {-0.2126, -0.4665, -0.1829}};
 
-      zero_egv ();
-      elec_init (calc::v0);
-      induce (uind, uinp);
+      zero_egv();
+      elec_init(calc::v0);
+      induce(uind, uinp);
       std::vector<std::array<double, 3>> ud, up;
-      ud.resize (n);
-      up.resize (n);
-      device_array::copyout (n, &ud[0][0], uind);
-      device_array::copyout (n, &up[0][0], uinp);
+      ud.resize(n);
+      up.resize(n);
+      device_array::copyout(n, &ud[0][0], uind);
+      device_array::copyout(n, &up[0][0], uinp);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
-            REQUIRE (ud[i][j] * debye ==
-                     Approx (ref_ud_debye[i][j]).margin (eps_f));
-            REQUIRE (up[i][j] * debye ==
-                     Approx (ref_up_debye[i][j]).margin (eps_f));
+            REQUIRE(ud[i][j] * debye ==
+                    Approx(ref_ud_debye[i][j]).margin(eps_f));
+            REQUIRE(up[i][j] * debye ==
+                    Approx(ref_up_debye[i][j]).margin(eps_f));
          }
       }
    }
 
-   SECTION ("epolar via dot product")
+   SECTION("epolar via dot product")
    {
       const double ref_eng = -37.7476;
 
-      zero_egv ();
-      elec_init (calc::v0);
-      epolar (calc::v0);
-      torque (calc::v0);
-      COMPARE_ENERGY_ (ep_handle.e (), ref_eng, eps_f);
+      zero_egv();
+      elec_init(calc::v0);
+      epolar(calc::v0);
+      torque(calc::v0);
+      COMPARE_ENERGY_(ep, ref_eng, eps_f);
    }
 
-   SECTION ("various epolar versions -- coulomb no cutoff")
+   SECTION("various epolar versions -- coulomb no cutoff")
    {
       const double eps_e = eps_f;
       const double ref_eng = -37.7476;
@@ -424,13 +424,13 @@ TEST_CASE ("Local-Frame-3", "[ff][epolar][coulomb][local-frame]")
       COMPARE_CODE_BLOCK2_;
    }
 
-   finish ();
-   test_end ();
+   finish();
+   test_end();
 }
 
-TEST_CASE ("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
+TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
 {
-   TestFile fpr ("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
 
    const char* k = "test_local_frame.key";
    std::string key0 = local_frame_key;
@@ -441,10 +441,10 @@ TEST_CASE ("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
    key0 += "neighbor-list\n";
    key0 += "list-buffer    0.1\n";
    key0 += "a-axis    20.0\n";
-   TestFile fke (k, key0);
+   TestFile fke(k, key0);
 
    const char* x1 = "test_local_frame.xyz";
-   TestFile fx1 (x1, local_frame_xyz);
+   TestFile fx1(x1, local_frame_xyz);
 
    int usage = 0;
    usage |= calc::xyz;
@@ -456,11 +456,11 @@ TEST_CASE ("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
    const double debye = units::debye;
    const double eps_f = 0.0001;
 
-   test_begin_with_args (argc, argv);
+   test_begin_with_args(argc, argv);
    rc_flag = usage;
-   initialize ();
+   initialize();
 
-   SECTION ("dfield -- pme")
+   SECTION("dfield -- pme")
    {
       const double ref_dir_field_d[][3] = {
          {0.0603, -0.0877, -0.0024}, {0.0304, -0.0254, 0.0053},
@@ -487,25 +487,25 @@ TEST_CASE ("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
          {0.0176, -0.1618, -0.0356}, {0.0020, -0.0699, -0.0279},
          {0.1436, -0.1515, 0.0008},  {-0.1249, -0.1932, -0.0900}};
 
-      zero_egv ();
-      elec_init (calc::v0);
-      dfield_ewald (udir, udirp);
+      zero_egv();
+      elec_init(calc::v0);
+      dfield_ewald(udir, udirp);
       std::vector<std::array<double, 3>> fieldd, fieldp;
-      fieldd.resize (n);
-      fieldp.resize (n);
-      device_array::copyout (n, &fieldd[0][0], udir);
-      device_array::copyout (n, &fieldp[0][0], udirp);
+      fieldd.resize(n);
+      fieldp.resize(n);
+      device_array::copyout(n, &fieldd[0][0], udir);
+      device_array::copyout(n, &fieldp[0][0], udirp);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
-            REQUIRE (fieldd[i][j] ==
-                     Approx (ref_dir_field_d[i][j]).margin (eps_f));
-            REQUIRE (fieldp[i][j] ==
-                     Approx (ref_dir_field_p[i][j]).margin (eps_f));
+            REQUIRE(fieldd[i][j] ==
+                    Approx(ref_dir_field_d[i][j]).margin(eps_f));
+            REQUIRE(fieldp[i][j] ==
+                    Approx(ref_dir_field_p[i][j]).margin(eps_f));
          }
       }
    }
 
-   SECTION ("ufield -- pme")
+   SECTION("ufield -- pme")
    {
       const double ref_ufield_d[][3] = {
          {0.2326, 1.7537, 0.4066},    {-0.0625, -0.7063, 0.1748},
@@ -532,35 +532,35 @@ TEST_CASE ("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
          {-1.8666, -2.1138, -2.2301}, {-0.0191, 0.4125, -1.5382},
          {0.7158, -1.3417, -0.9288},  {-1.4493, -0.8422, -1.3602}};
 
-      zero_egv ();
-      elec_init (calc::v0);
+      zero_egv();
+      elec_init(calc::v0);
       std::vector<std::array<double, 3>> ud, up;
-      ud.resize (n);
-      up.resize (n);
+      ud.resize(n);
+      up.resize(n);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             ud[i][j] = 0.1 * (i + 1) + 0.03 * (j + 1);
             up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
          }
       }
-      device_array::copyin (n, uind, &ud[0][0]);
-      device_array::copyin (n, uinp, &up[0][0]);
-      ufield_ewald (uind, uinp, udir, udirp);
-      ud.resize (n);
-      up.resize (n);
-      device_array::copyout (n, &ud[0][0], udir);
-      device_array::copyout (n, &up[0][0], udirp);
+      device_array::copyin(n, uind, &ud[0][0]);
+      device_array::copyin(n, uinp, &up[0][0]);
+      ufield_ewald(uind, uinp, udir, udirp);
+      ud.resize(n);
+      up.resize(n);
+      device_array::copyout(n, &ud[0][0], udir);
+      device_array::copyout(n, &up[0][0], udirp);
 
       const double debye = units::debye;
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
-            REQUIRE (ud[i][j] == Approx (ref_ufield_d[i][j]).margin (eps_f));
-            REQUIRE (up[i][j] == Approx (ref_ufield_p[i][j]).margin (eps_f));
+            REQUIRE(ud[i][j] == Approx(ref_ufield_d[i][j]).margin(eps_f));
+            REQUIRE(up[i][j] == Approx(ref_ufield_p[i][j]).margin(eps_f));
          }
       }
    }
 
-   SECTION ("default induce routine -- pme")
+   SECTION("default induce routine -- pme")
    {
       const double ref_ud_debye[][3] = {
          {0.0243, -0.0845, -0.0109}, {1.2653, -0.8136, 0.5372},
@@ -587,36 +587,36 @@ TEST_CASE ("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
          {0.2227, -0.6054, -0.0918}, {0.0119, -0.1147, -0.0138},
          {0.3551, -0.1907, 0.0577},  {-0.2191, -0.4626, -0.1832}};
 
-      zero_egv ();
-      elec_init (calc::v0);
-      induce (uind, uinp);
+      zero_egv();
+      elec_init(calc::v0);
+      induce(uind, uinp);
       std::vector<std::array<double, 3>> ud, up;
-      ud.resize (n);
-      up.resize (n);
-      device_array::copyout (n, &ud[0][0], uind);
-      device_array::copyout (n, &up[0][0], uinp);
+      ud.resize(n);
+      up.resize(n);
+      device_array::copyout(n, &ud[0][0], uind);
+      device_array::copyout(n, &up[0][0], uinp);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
-            REQUIRE (ud[i][j] * debye ==
-                     Approx (ref_ud_debye[i][j]).margin (eps_f));
-            REQUIRE (up[i][j] * debye ==
-                     Approx (ref_up_debye[i][j]).margin (eps_f));
+            REQUIRE(ud[i][j] * debye ==
+                    Approx(ref_ud_debye[i][j]).margin(eps_f));
+            REQUIRE(up[i][j] * debye ==
+                    Approx(ref_up_debye[i][j]).margin(eps_f));
          }
       }
    }
 
-   SECTION ("epolar via dot product")
+   SECTION("epolar via dot product")
    {
       const double ref_eng = -36.5477;
 
-      zero_egv ();
-      elec_init (calc::v0);
-      epolar (calc::v0);
-      torque (calc::v0);
-      COMPARE_ENERGY_ (ep_handle.e (), ref_eng, eps_f);
+      zero_egv();
+      elec_init(calc::v0);
+      epolar(calc::v0);
+      torque(calc::v0);
+      COMPARE_ENERGY_(ep, ref_eng, eps_f);
    }
 
-   SECTION ("various epolar versions -- pme")
+   SECTION("various epolar versions -- pme")
    {
       const double eps_e = eps_f;
       const double ref_eng = -36.5477;
@@ -642,8 +642,8 @@ TEST_CASE ("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
       COMPARE_CODE_BLOCK2_;
    }
 
-   finish ();
-   test_end ();
+   finish();
+   test_end();
 }
 
 #undef COMPARE_CODE_BLOCK2_

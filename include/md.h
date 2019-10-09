@@ -1,5 +1,5 @@
-#ifndef TINKER_MD_H_
-#define TINKER_MD_H_
+#pragma once
+
 
 #include "dev_array.h"
 #include "energy_buffer.h"
@@ -7,11 +7,6 @@
 #include <string>
 
 TINKER_NAMESPACE_BEGIN
-/// \defgroup gvar Functions and Global Variables
-
-/// \defgroup md MD Configuration
-/// \ingroup gvar
-
 /**
  * \ingroup md
  */
@@ -41,9 +36,9 @@ TINKER_EXTERN int padded_n;
 TINKER_EXTERN real *trajx, *trajy, *trajz, *x, *y, *z;
 /// \}
 
-void goto_frame (int idx0);
-void copyin_arc_file (const std::string& arcfile, int first1, int last1,
-                      int step);
+void goto_frame(int idx0);
+void copyin_arc_file(const std::string& arcfile, int first1, int last1,
+                     int step);
 
 /// velocities
 /// @{
@@ -57,7 +52,7 @@ TINKER_EXTERN real *mass, *massinv;
 
 /// total potential energy on device
 TINKER_EXTERN real esum;
-TINKER_EXTERN Energy esum_handle;
+TINKER_EXTERN energy_buffer esum_buf;
 
 /// total potential energy and kinetic energy on host
 /// @{
@@ -70,7 +65,7 @@ TINKER_EXTERN real *gx, *gy, *gz;
 
 /// total virial
 TINKER_EXTERN real vir[9];
-TINKER_EXTERN Virial vir_handle;
+TINKER_EXTERN virial_buffer vir_buf;
 
 typedef enum
 {
@@ -155,57 +150,59 @@ constexpr int md = 0x100;
 }
 
 template <int USE>
-void sanity_check ()
+void sanity_check()
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_a = USE & calc::analyz;
    constexpr int do_g = USE & calc::grad;
    constexpr int do_v = USE & calc::virial;
    // if calc::virial, must calc::grad
-   static_assert (do_v ? do_g : true, "");
+   static_assert(do_v ? do_g : true, "");
    // if calc::analyz, must calc::energy
-   static_assert (do_a ? do_e : true, "");
+   static_assert(do_a ? do_e : true, "");
 }
 
-void egv_data (rc_op op);
+void egv_data(rc_op op);
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
 /// @brief
 /// zero out global total energy, gradients, and virial on device
 /// @{
-void zero_egv (int vers);
-void zero_egv ();
+void zero_egv(int vers);
+void zero_egv();
 /// @}
 
 /// @brief
 /// sum up potential energies and virials on device
-void sum_energies (int vers);
+void sum_energies(int vers);
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
 // mdsave
-void mdsave_data (rc_op);
+void mdsave_data(rc_op);
 
-void mdsave_async (int istep, real dt);
-void mdsave_synchronize ();
+void mdsave_async(int istep, real dt);
+void mdsave_synchronize();
 TINKER_NAMESPACE_END
 
 TINKER_NAMESPACE_BEGIN
-void md_data (rc_op op);
+void md_data(rc_op op);
 
 // integrator
-void integrate_data (rc_op);
+void integrate_data(rc_op);
 
-void kinetic (real& temp);
-void temper (real dt, real& temp);
-void mdrest (int istep);
+void kinetic(real& temp);
+void temper(real dt, real& temp);
+void mdrest(int istep);
 
-void propagate_xyz (real dt);
-void propagate_velocity (real dt);
-void propagate (int nsteps, real dt_ps, void (*itg) (int, real) = nullptr);
+void propagate_xyz(real dt);
+void propagate_velocity(real dt);
+void propagate(int nsteps, real dt_ps, void (*itg)(int, real) = nullptr);
 
-void velocity_verlet (int istep, real dt_ps);
+void velocity_verlet(int istep, real dt_ps);
 TINKER_NAMESPACE_END
 
-#endif
+
+/// \defgroup md MD Configuration
+/// \ingroup gvar

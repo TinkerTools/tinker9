@@ -3,7 +3,7 @@
 #include "md.h"
 
 TINKER_NAMESPACE_BEGIN
-void chkpole ()
+void chkpole()
 {
    #pragma acc data deviceptr(x,y,z,zaxis,pole)
    #pragma acc parallel loop
@@ -16,7 +16,7 @@ void chkpole ()
          int ia = i;
          int ib = zaxis[i].zaxis;
          int ic = zaxis[i].xaxis;
-         int id = INT_ABS (k) - 1;
+         int id = INT_ABS(k) - 1;
 
          // compute the signed parallelpiped volume at chiral site
 

@@ -3,24 +3,24 @@
 
 #if TINKER_CUDART
 TINKER_NAMESPACE_BEGIN
-void deallocate_stream (Stream s)
+void deallocate_stream(Stream s)
 {
-   check_rt (cudaStreamDestroy (s));
+   check_rt(cudaStreamDestroy(s));
 }
 
-void allocate_stream (Stream* s)
+void allocate_stream(Stream* s)
 {
-   check_rt (cudaStreamCreate (s));
+   check_rt(cudaStreamCreate(s));
 }
 
-void synchronize_stream (Stream s)
+void synchronize_stream(Stream s)
 {
-   check_rt (cudaStreamSynchronize (s));
+   check_rt(cudaStreamSynchronize(s));
 }
 
-void copy_bytes_async (void* dst, const void* src, size_t nbytes, Stream s)
+void copy_bytes_async(void* dst, const void* src, size_t nbytes, Stream s)
 {
-   check_rt (cudaMemcpyAsync (dst, src, nbytes, cudaMemcpyDeviceToDevice, s));
+   check_rt(cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyDeviceToDevice, s));
 }
 TINKER_NAMESPACE_END
 #endif

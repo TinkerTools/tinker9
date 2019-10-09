@@ -3,7 +3,7 @@
 #include <ext/tinker/detail/inform.hh>
 
 TINKER_NAMESPACE_BEGIN
-void velocity_verlet (int istep, real dt_ps)
+void velocity_verlet(int istep, real dt_ps)
 {
    bool save = !(istep % inform::iwrite);
    int vers0 = rc_flag & (calc::virial | calc::grad | calc::energy);
@@ -12,20 +12,20 @@ void velocity_verlet (int istep, real dt_ps)
    real dt_2 = 0.5f * dt_ps;
 
    // v += a * dt/2
-   propagate_velocity (dt_2);
+   propagate_velocity(dt_2);
 
    // s += v * dt
-   propagate_xyz (dt_ps);
+   propagate_xyz(dt_ps);
    // update gradient
    if (save)
-      energy_potential (vers0);
+      energy_potential(vers0);
    else
-      energy_potential (vers1);
+      energy_potential(vers1);
 
    // v += a * dt/2
-   propagate_velocity (dt_2);
+   propagate_velocity(dt_2);
 
    real temp;
-   temper (dt_ps, temp);
+   temper(dt_ps, temp);
 }
 TINKER_NAMESPACE_END

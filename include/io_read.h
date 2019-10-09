@@ -16,14 +16,14 @@ TINKER_NAMESPACE_BEGIN
  */
 /// @{
 template <class Arg>
-int read_string (Arg& arg, const char* str, size_t len)
+int read_string(Arg& arg, const char* str, size_t len)
 {
    const int succeed = 0;
    const int fail = 1;
-   std::istringstream iss (std::string (str, len));
+   std::istringstream iss(std::string(str, len));
    Arg tmp;
    iss >> tmp;
-   if (iss.fail ()) {
+   if (iss.fail()) {
       return fail;
    } else {
       arg = tmp;
@@ -32,9 +32,9 @@ int read_string (Arg& arg, const char* str, size_t len)
 }
 
 template <class Arg, size_t Len>
-int read_string (Arg& arg, const char (&src)[Len])
+int read_string(Arg& arg, const char (&src)[Len])
 {
-   return read_string (arg, src, Len);
+   return read_string(arg, src, Len);
 };
 /// @}
 
@@ -60,29 +60,29 @@ int read_string (Arg& arg, const char (&src)[Len])
  * an @c std::istream object; use std::cin by default
  */
 template <class Arg, class Invalid>
-void read_stream (Arg& arg, std::string prompt, Arg auto_fill,
-                  Invalid&& invalid, std::istream& istream = std::cin)
+void read_stream(Arg& arg, std::string prompt, Arg auto_fill, Invalid&& invalid,
+                 std::istream& istream = std::cin)
 {
    int input_fail = false;
    std::string line;
-   while (invalid (arg)) {
+   while (invalid(arg)) {
       std::cout << prompt;
-      std::getline (istream, line);
-      auto vs = Text::split (line);
-      if (vs.size () == 0) {
+      std::getline(istream, line);
+      auto vs = Text::split(line);
+      if (vs.size() == 0) {
          arg = auto_fill;
       } else {
-         input_fail = read_string (arg, line.data (), line.size ());
+         input_fail = read_string(arg, line.data(), line.size());
       }
       if (input_fail) {
          // reset failbit
-         istream.clear ();
+         istream.clear();
          // if using operator<<, expunge the remaining input and invisible '\n';
          // istream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
          // unnecessary if std::getline(...) is used instead
          goto flag_continue;
       }
-      if (invalid (arg)) {
+      if (invalid(arg)) {
          arg = auto_fill;
       }
    flag_continue:

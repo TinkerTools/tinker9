@@ -6,7 +6,7 @@
 #include <ext/tinker/detail/mdstuf.hh>
 
 TINKER_NAMESPACE_BEGIN
-void md_data (rc_op op)
+void md_data(rc_op op)
 {
    if ((calc::md & rc_flag) == 0)
       return;
@@ -15,9 +15,9 @@ void md_data (rc_op op)
    rc_man save42_{mdsave_data, op};
 }
 
-static void (*integrator_) (int, real);
+static void (*integrator_)(int, real);
 
-void integrate_data (rc_op op)
+void integrate_data(rc_op op)
 {
    if (op & rc_init) {
       if (bath::isothermal) {
@@ -31,7 +31,7 @@ void integrate_data (rc_op op)
          else if (th == "NOSE-HOOVER")
             thermostat = thermo_nose_hoover_chain;
          else
-            assert (false);
+            assert(false);
       } else {
          thermostat = thermo_null;
       }
@@ -47,7 +47,7 @@ void integrate_data (rc_op op)
          else if (br == "MONTECARLO")
             barostat = baro_montecarlo;
          else
-            assert (false);
+            assert(false);
       } else {
          barostat = baro_null;
       }
@@ -69,59 +69,59 @@ void integrate_data (rc_op op)
    }
 }
 
-extern void kinetic_acc_impl_ (real& temp);
-void kinetic (real& temp)
+extern void kinetic_acc_impl_(real& temp);
+void kinetic(real& temp)
 {
-   kinetic_acc_impl_ (temp);
+   kinetic_acc_impl_(temp);
 }
 
-extern void thermo_bussi_acc_impl_ (real dt, real temp);
-void temper (real dt, real& temp)
+extern void thermo_bussi_acc_impl_(real dt, real temp);
+void temper(real dt, real& temp)
 {
    if (thermostat == thermo_null) {
-      kinetic (temp);
+      kinetic(temp);
       return;
    }
 
    if (thermostat == thermo_bussi)
-      thermo_bussi_acc_impl_ (dt, temp);
+      thermo_bussi_acc_impl_(dt, temp);
    else
-      assert (false);
+      assert(false);
 
-   kinetic (temp);
+   kinetic(temp);
 }
 
-extern void mdrest_acc_impl_ (int istep);
-void mdrest (int istep)
+extern void mdrest_acc_impl_(int istep);
+void mdrest(int istep)
 {
-   mdrest_acc_impl_ (istep);
+   mdrest_acc_impl_(istep);
 }
 
-extern void propagate_xyz_acc_impl_ (real dt);
-void propagate_xyz (real dt)
+extern void propagate_xyz_acc_impl_(real dt);
+void propagate_xyz(real dt)
 {
-   propagate_xyz_acc_impl_ (dt);
+   propagate_xyz_acc_impl_(dt);
 }
 
-extern void propagate_velocity_acc_impl_ (real dt);
-void propagate_velocity (real dt)
+extern void propagate_velocity_acc_impl_(real dt);
+void propagate_velocity(real dt)
 {
-   propagate_velocity_acc_impl_ (dt);
+   propagate_velocity_acc_impl_(dt);
 }
 
-void propagate (int nsteps, real dt_ps, void (*itg) (int, real))
+void propagate(int nsteps, real dt_ps, void (*itg)(int, real))
 {
    if (itg == nullptr)
       itg = integrator_;
 
    for (int istep = 1; istep <= nsteps; ++istep) {
-      itg (istep, dt_ps);
+      itg(istep, dt_ps);
 
       // mdstat
       if (istep % inform::iwrite == 0)
-         mdsave_async (istep, dt_ps);
-      mdrest (istep);
+         mdsave_async(istep, dt_ps);
+      mdrest(istep);
    }
-   mdsave_synchronize ();
+   mdsave_synchronize();
 }
 TINKER_NAMESPACE_END

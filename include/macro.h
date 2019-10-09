@@ -1,8 +1,5 @@
 #pragma once
 
-/**
- * \defgroup macro Macros
- */
 
 #if defined(TINKER_GFORTRAN)
 #   define TINKER_MOD(mod, var) __##mod##_MOD_##var
@@ -16,6 +13,7 @@ library. You should implement these two macros (TINKER_MOD and TINKER_RT) here \
 to mimic its name mangling. Similarly, you should implement other functions    \
 whenever you see an "unknown fortran compiler error".
 #endif
+
 
 /**
  * \def TINKER_EXTERN_DEFINITION_FILE
@@ -41,6 +39,7 @@ whenever you see an "unknown fortran compiler error".
 #   define TINKER_EXTERN extern
 #endif
 
+
 /**
  * \{
  * \def TINKER_NAMESPACE
@@ -56,6 +55,7 @@ whenever you see an "unknown fortran compiler error".
 #define TINKER_NAMESPACE tinker
 #define TINKER_NAMESPACE_BEGIN namespace TINKER_NAMESPACE {
 #define TINKER_NAMESPACE_END }
+
 
 /**
  * \def TINKER_DEBUG
@@ -79,7 +79,7 @@ whenever you see an "unknown fortran compiler error".
 #   define TINKER_DEBUG 0
 #elif defined(DEBUG)
 #   define TINKER_DEBUG_DO_EXPAND_(VAL) VAL##1
-#   define TINKER_DEBUG_EXPAND_(VAL) TINKER_DEBUG_DO_EXPAND_ (VAL)
+#   define TINKER_DEBUG_EXPAND_(VAL) TINKER_DEBUG_DO_EXPAND_(VAL)
 
 #   if TINKER_DEBUG_EXPAND_(DEBUG) == 1
 // DEBUG is defined to empty
@@ -97,6 +97,7 @@ whenever you see an "unknown fortran compiler error".
 #else
 #   define TINKER_DEBUG 0
 #endif
+
 
 /**
  * \{
@@ -130,13 +131,11 @@ whenever you see an "unknown fortran compiler error".
 #   define TINKER_SINGLE_PRECISION 1
 #endif
 
-/**
- * \defgroup typedef Type Definitions
- */
+
 TINKER_NAMESPACE_BEGIN
 /**
  * \typedef real
- * \ingroup typedef
+ * \ingroup util
  * The default floating point type based on the precision macros. Either defined
  * to \c float or \c double,
  *
@@ -150,11 +149,13 @@ typedef double real;
 typedef float real;
 #endif
 
+
 /**
- * \ingroup typedef
+ * \ingroup util
  * The fixed-point type used to accumulate floating-point numbers.
  */
 typedef unsigned long long fixed;
+
 
 /**
  * \ingroup math
@@ -164,6 +165,7 @@ typedef unsigned long long fixed;
  */
 constexpr fixed fixed_point = 0x100000000ull;
 TINKER_NAMESPACE_END
+
 
 /**
  * \def TINKER_HOST
@@ -185,12 +187,14 @@ TINKER_NAMESPACE_END
 #   define TINKER_CUDART 0
 #endif
 
+
 // C++11
 #ifdef __cplusplus
 #   if __cplusplus < 201103L
 #      error Must enable C++11.
 #   endif
 #endif
+
 
 /**
  * \def if_constexpr
@@ -203,12 +207,14 @@ TINKER_NAMESPACE_END
 #   define if_constexpr if
 #endif
 
+
 /**
  * \def RESTRICT
  * \ingroup macro
  * Expand to \c __restrict__ in the source code.
  */
 #define RESTRICT __restrict__
+
 
 /**
  * \def MAYBE_UNUSED
@@ -218,8 +224,9 @@ TINKER_NAMESPACE_END
 #if __has_cpp_attribute(maybe_unused)
 #   define MAYBE_UNUSED [[maybe_unused]]
 #else
-#   define MAYBE_UNUSED __attribute__ ((unused))
+#   define MAYBE_UNUSED __attribute__((unused))
 #endif
+
 
 /**
  * \def CUDA_DEVICE_FUNCTION
@@ -231,3 +238,13 @@ TINKER_NAMESPACE_END
 #else
 #   define CUDA_DEVICE_FUNCTION
 #endif
+
+
+/**
+ * \defgroup macro Macros
+ *
+ * \defgroup gvar Functions and Global Variables
+ *
+ * \defgroup util Utilities
+ * \ingroup gvar
+ */

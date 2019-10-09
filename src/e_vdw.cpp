@@ -2,6 +2,7 @@
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"
+#include <cassert>
 #include <ext/tinker/detail/couple.hh>
 #include <ext/tinker/detail/mutant.hh>
 #include <ext/tinker/detail/sizes.hh>
@@ -10,9 +11,9 @@
 #include <map>
 
 TINKER_NAMESPACE_BEGIN
-void evdw_data (rc_op op)
+void evdw_data(rc_op op)
 {
-   if (!use_potent (vdw_term))
+   if (!use_potent(vdw_term))
       return;
 
    typedef int new_type;
@@ -24,42 +25,42 @@ void evdw_data (rc_op op)
 
    if (op & rc_dealloc) {
       // local static members
-      jmap.clear ();
-      jvec.clear ();
-      jvdwbuf.clear ();
+      jmap.clear();
+      jvec.clear();
+      jvdwbuf.clear();
       jcount = 0;
 
-      device_array::deallocate (ired, kred, xred, yred, zred, gxred, gyred,
-                                gzred, jvdw, radmin, epsilon, vlam);
+      device_array::deallocate(ired, kred, xred, yred, zred, gxred, gyred,
+                               gzred, jvdw, radmin, epsilon, vlam);
 
       nvexclude_ = 0;
-      device_array::deallocate (vexclude_, vexclude_scale_);
+      device_array::deallocate(vexclude_, vexclude_scale_);
 
-      ev_handle.dealloc ();
+      buffer_deallocate(nev, ev, vir_ev);
    }
 
    if (op & rc_alloc) {
-      device_array::allocate (n, &ired, &kred, &xred, &yred, &zred);
+      device_array::allocate(n, &ired, &kred, &xred, &yred, &zred);
       if (rc_flag & calc::grad) {
-         device_array::allocate (n, &gxred, &gyred, &gzred);
+         device_array::allocate(n, &gxred, &gyred, &gzred);
       } else {
          gxred = nullptr;
          gyred = nullptr;
          gzred = nullptr;
       }
 
-      device_array::allocate (n, &jvdw);
+      device_array::allocate(n, &jvdw);
 
-      jvdwbuf.resize (n);
-      assert (jmap.size () == 0);
-      assert (jvec.size () == 0);
+      jvdwbuf.resize(n);
+      assert(jmap.size() == 0);
+      assert(jvec.size() == 0);
       jcount = 0;
       for (int i = 0; i < n; ++i) {
          int jt = vdw::jvdw[i] - 1;
-         auto iter = jmap.find (jt);
-         if (iter == jmap.end ()) {
+         auto iter = jmap.find(jt);
+         if (iter == jmap.end()) {
             jvdwbuf[i] = jcount;
-            jvec.push_back (jt);
+            jvec.push_back(jt);
             jmap[jt] = jcount;
             ++jcount;
          } else {
@@ -67,9 +68,9 @@ void evdw_data (rc_op op)
          }
       }
 
-      device_array::allocate (jcount * jcount, &radmin, &epsilon);
+      device_array::allocate(jcount * jcount, &radmin, &epsilon);
 
-      device_array::allocate (n, &vlam);
+      device_array::allocate(n, &vlam);
 
       v2scale = vdwpot::v2scale;
       v3scale = vdwpot::v3scale;
@@ -92,9 +93,9 @@ void evdw_data (rc_op op)
                int k = couple::i12[i][j];
                k -= 1;
                if (k > i) {
-                  exclik.push_back (i);
-                  exclik.push_back (k);
-                  excls.push_back (v2scale - 1);
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  excls.push_back(v2scale - 1);
                }
             }
          }
@@ -106,9 +107,9 @@ void evdw_data (rc_op op)
                int k = couple::i13[bask + j];
                k -= 1;
                if (k > i) {
-                  exclik.push_back (i);
-                  exclik.push_back (k);
-                  excls.push_back (v3scale - 1);
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  excls.push_back(v3scale - 1);
                }
             }
          }
@@ -120,9 +121,9 @@ void evdw_data (rc_op op)
                int k = couple::i14[bask + j];
                k -= 1;
                if (k > i) {
-                  exclik.push_back (i);
-                  exclik.push_back (k);
-                  excls.push_back (v4scale - 1);
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  excls.push_back(v4scale - 1);
                }
             }
          }
@@ -134,19 +135,19 @@ void evdw_data (rc_op op)
                int k = couple::i15[bask + j];
                k -= 1;
                if (k > i) {
-                  exclik.push_back (i);
-                  exclik.push_back (k);
-                  excls.push_back (v5scale - 1);
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  excls.push_back(v5scale - 1);
                }
             }
          }
       }
-      nvexclude_ = excls.size ();
-      device_array::allocate (nvexclude_, &vexclude_, &vexclude_scale_);
-      device_array::copyin (nvexclude_, vexclude_, exclik.data ());
-      device_array::copyin (nvexclude_, vexclude_scale_, excls.data ());
+      nvexclude_ = excls.size();
+      device_array::allocate(nvexclude_, &vexclude_, &vexclude_scale_);
+      device_array::copyin(nvexclude_, vexclude_, exclik.data());
+      device_array::copyin(nvexclude_, vexclude_scale_, excls.data());
 
-      ev_handle.alloc (n);
+      buffer_allocate(&nev, &ev, &vir_ev);
    }
 
    if (op & rc_init) {
@@ -162,28 +163,28 @@ void evdw_data (rc_op op)
       else if (str == "GAUSSIAN")
          vdwtyp = evdw_t::gauss;
       else
-         assert (false);
+         assert(false);
 
       ghal = vdwpot::ghal;
       dhal = vdwpot::dhal;
       scexp = mutant::scexp;
       scalpha = mutant::scalpha;
-      if (static_cast<int> (evdw_t::decouple) == mutant::vcouple)
+      if (static_cast<int>(evdw_t::decouple) == mutant::vcouple)
          vcouple = evdw_t::decouple;
-      else if (static_cast<int> (evdw_t::annihilate) == mutant::vcouple)
+      else if (static_cast<int>(evdw_t::annihilate) == mutant::vcouple)
          vcouple = evdw_t::annihilate;
 
-      std::vector<int> iredbuf (n);
-      std::vector<double> kredbuf (n);
+      std::vector<int> iredbuf(n);
+      std::vector<double> kredbuf(n);
       for (int i = 0; i < n; ++i) {
          int jt = vdw::ired[i] - 1;
          iredbuf[i] = jt;
          kredbuf[i] = vdw::kred[i];
       }
-      device_array::copyin (n, ired, iredbuf.data ());
-      device_array::copyin (n, kred, kredbuf.data ());
+      device_array::copyin(n, ired, iredbuf.data());
+      device_array::copyin(n, kred, kredbuf.data());
 
-      device_array::copyin (n, jvdw, jvdwbuf.data ());
+      device_array::copyin(n, jvdw, jvdwbuf.data());
       njvdw = jcount;
 
       // see also kvdw.f
@@ -194,62 +195,62 @@ void evdw_data (rc_op op)
          for (int jt_new = 0; jt_new < jcount; ++jt_new) {
             int jt_old = jvec[jt_new];
             int offset = base + jt_old;
-            radvec.push_back (vdw::radmin[offset]);
-            epsvec.push_back (vdw::epsilon[offset]);
+            radvec.push_back(vdw::radmin[offset]);
+            epsvec.push_back(vdw::epsilon[offset]);
          }
       }
-      device_array::copyin (jcount * jcount, radmin, radvec.data ());
-      device_array::copyin (jcount * jcount, epsilon, epsvec.data ());
+      device_array::copyin(jcount * jcount, radmin, radvec.data());
+      device_array::copyin(jcount * jcount, epsilon, epsvec.data());
 
-      std::vector<real> vlamvec (n);
+      std::vector<real> vlamvec(n);
       for (int i = 0; i < n; ++i) {
          if (mutant::mut[i]) {
             vlamvec[i] = mutant::vlambda;
          }
       }
-      device_array::copyin (n, vlam, vlamvec.data ());
+      device_array::copyin(n, vlam, vlamvec.data());
    }
 }
 
-extern void evdw_lj_acc_impl_ (int vers);
-extern void evdw_buck_acc_impl_ (int vers);
-extern void evdw_mm3hb_acc_impl_ (int vers);
-extern void evdw_hal_acc_impl_ (int vers);
-extern void evdw_gauss_acc_impl_ (int vers);
-void evdw_lj (int vers)
+extern void evdw_lj_acc_impl_(int vers);
+extern void evdw_buck_acc_impl_(int vers);
+extern void evdw_mm3hb_acc_impl_(int vers);
+extern void evdw_hal_acc_impl_(int vers);
+extern void evdw_gauss_acc_impl_(int vers);
+void evdw_lj(int vers)
 {
-   evdw_lj_acc_impl_ (vers);
+   evdw_lj_acc_impl_(vers);
 }
-void evdw_buck (int vers)
+void evdw_buck(int vers)
 {
-   evdw_buck_acc_impl_ (vers);
+   evdw_buck_acc_impl_(vers);
 }
-void evdw_mm3hb (int vers)
+void evdw_mm3hb(int vers)
 {
-   evdw_mm3hb_acc_impl_ (vers);
+   evdw_mm3hb_acc_impl_(vers);
 }
-void evdw_hal (int vers)
+void evdw_hal(int vers)
 {
-   evdw_hal_acc_impl_ (vers);
+   evdw_hal_acc_impl_(vers);
 }
-void evdw_gauss (int vers)
+void evdw_gauss(int vers)
 {
-   evdw_gauss_acc_impl_ (vers);
+   evdw_gauss_acc_impl_(vers);
 }
 
-void evdw (int vers)
+void evdw(int vers)
 {
    if (vdwtyp == evdw_t::lj)
-      evdw_lj (vers);
+      evdw_lj(vers);
    else if (vdwtyp == evdw_t::buck)
-      evdw_buck (vers);
+      evdw_buck(vers);
    else if (vdwtyp == evdw_t::mm3hb)
-      evdw_mm3hb (vers);
+      evdw_mm3hb(vers);
    else if (vdwtyp == evdw_t::hal)
-      evdw_hal (vers);
+      evdw_hal(vers);
    else if (vdwtyp == evdw_t::gauss)
-      evdw_gauss (vers);
+      evdw_gauss(vers);
    else
-      assert (false);
+      assert(false);
 }
 TINKER_NAMESPACE_END

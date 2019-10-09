@@ -6,16 +6,14 @@
 
 TINKER_NAMESPACE_BEGIN
 template <int USE>
-void etors_tmpl ()
+void etors_tmpl()
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_g = USE & calc::grad;
    constexpr int do_v = USE & calc::virial;
-   sanity_check<USE> ();
+   sanity_check<USE>();
 
-   auto* et = et_handle.e ()->buffer ();
-   auto* vir_et = et_handle.vir ()->buffer ();
-   auto bufsize = et_handle.buffer_size ();
+   auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
@@ -61,13 +59,13 @@ void etors_tmpl ()
       real ztu = xt * yu - xu * yt;
       real rt2 = xt * xt + yt * yt + zt * zt;
       real ru2 = xu * xu + yu * yu + zu * zu;
-      real rtru = REAL_SQRT (rt2 * ru2);
+      real rtru = REAL_SQRT(rt2 * ru2);
 
       if (rtru != 0) {
-         real rcb = REAL_SQRT (xcb * xcb + ycb * ycb + zcb * zcb);
-         real cosine = (xt * xu + yt * yu + zt * zu) * REAL_RECIP (rtru);
+         real rcb = REAL_SQRT(xcb * xcb + ycb * ycb + zcb * zcb);
+         real cosine = (xt * xu + yt * yu + zt * zu) * REAL_RECIP(rtru);
          real sine =
-            (xcb * xtu + ycb * ytu + zcb * ztu) * REAL_RECIP (rcb * rtru);
+            (xcb * xtu + ycb * ytu + zcb * ztu) * REAL_RECIP(rcb * rtru);
 
          // set the torsional parameters for this angle
 
@@ -116,15 +114,15 @@ void etors_tmpl ()
          real dphi5 = 5 * (cosine5 * s5 - sine5 * c5);
          real dphi6 = 6 * (cosine6 * s6 - sine6 * c6);
 
-         if_constexpr (do_e)
+         if_constexpr(do_e)
          {
             real e = torsunit *
                (v1 * phi1 + v2 * phi2 + v3 * phi3 + v4 * phi4 + v5 * phi5 +
                 v6 * phi6);
-            atomic_add_value (e, et, offset);
+            atomic_add_value(e, et, offset);
          }
 
-         if_constexpr (do_g)
+         if_constexpr(do_g)
          {
             real dedphi = torsunit *
                (v1 * dphi1 + v2 * dphi2 + v3 * dphi3 + v4 * dphi4 + v5 * dphi5 +
@@ -139,8 +137,8 @@ void etors_tmpl ()
             real ydb = yid - yib;
             real zdb = zid - zib;
 
-            real rt_inv = REAL_RECIP (rt2 * rcb);
-            real ru_inv = REAL_RECIP (ru2 * rcb);
+            real rt_inv = REAL_RECIP(rt2 * rcb);
+            real ru_inv = REAL_RECIP(ru2 * rcb);
             real dedxt = dedphi * (yt * zcb - ycb * zt) * rt_inv;
             real dedyt = dedphi * (zt * xcb - zcb * xt) * rt_inv;
             real dedzt = dedphi * (xt * ycb - xcb * yt) * rt_inv;
@@ -188,7 +186,7 @@ void etors_tmpl ()
             #pragma acc atomic update
             gz[id] += dedzid;
 
-            if_constexpr (do_v)
+            if_constexpr(do_v)
             {
                real vxx = xcb * (dedxic + dedxid) - xba * dedxia + xdc * dedxid;
                real vyx = ycb * (dedxic + dedxid) - yba * dedxia + ydc * dedxid;
@@ -197,24 +195,24 @@ void etors_tmpl ()
                real vzy = zcb * (dedyic + dedyid) - zba * dedyia + zdc * dedyid;
                real vzz = zcb * (dedzic + dedzid) - zba * dedzia + zdc * dedzid;
 
-               atomic_add_value (vxx, vyx, vzx, vyy, vzy, vzz, vir_et, offset);
+               atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_et, offset);
             }
          }
       }
    } // end for (int i)
 }
 
-void etors_acc_impl_ (int vers)
+void etors_acc_impl_(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
-      etors_tmpl<calc::v0> ();
+      etors_tmpl<calc::v0>();
    else if (vers == calc::v1)
-      etors_tmpl<calc::v1> ();
+      etors_tmpl<calc::v1>();
    else if (vers == calc::v4)
-      etors_tmpl<calc::v4> ();
+      etors_tmpl<calc::v4>();
    else if (vers == calc::v5)
-      etors_tmpl<calc::v5> ();
+      etors_tmpl<calc::v5>();
    else if (vers == calc::v6)
-      etors_tmpl<calc::v6> ();
+      etors_tmpl<calc::v6>();
 }
 TINKER_NAMESPACE_END

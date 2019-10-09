@@ -6,16 +6,14 @@
 
 TINKER_NAMESPACE_BEGIN
 template <int USE>
-void estrbnd_tmpl ()
+void estrbnd_tmpl()
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_g = USE & calc::grad;
    constexpr int do_v = USE & calc::virial;
-   sanity_check<USE> ();
+   sanity_check<USE>();
 
-   auto* eba = eba_handle.e ()->buffer ();
-   auto* vir_eba = eba_handle.vir ()->buffer ();
-   auto bufsize = eba_handle.buffer_size ();
+   auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
@@ -52,22 +50,22 @@ void estrbnd_tmpl ()
       real rab2 = xab * xab + yab * yab + zab * zab;
       real rcb2 = xcb * xcb + ycb * ycb + zcb * zcb;
 
-      if (REAL_MIN (rab2, rcb2) != 0) {
-         real rab = REAL_SQRT (rab2);
-         real rcb = REAL_SQRT (rcb2);
+      if (REAL_MIN(rab2, rcb2) != 0) {
+         real rab = REAL_SQRT(rab2);
+         real rcb = REAL_SQRT(rcb2);
          real xp = ycb * zab - zcb * yab;
          real yp = zcb * xab - xcb * zab;
          real zp = xcb * yab - ycb * xab;
-         real rp = REAL_SQRT (xp * xp + yp * yp + zp * zp);
-         rp = REAL_MAX (rp, (real) (0.0001));
+         real rp = REAL_SQRT(xp * xp + yp * yp + zp * zp);
+         rp = REAL_MAX(rp, (real)(0.0001));
          real dot = xab * xcb + yab * ycb + zab * zcb;
-         real cosine = dot * REAL_RECIP (rab * rcb);
-         cosine = REAL_MIN (1, REAL_MAX (-1, cosine));
-         real angle = radian * REAL_ACOS (cosine);
+         real cosine = dot * REAL_RECIP(rab * rcb);
+         cosine = REAL_MIN(1, REAL_MAX(-1, cosine));
+         real angle = radian * REAL_ACOS(cosine);
 
          real dt = angle - anat[i];
-         real term1 = -radian * REAL_RECIP (rab2 * rp);
-         real term2 = radian * REAL_RECIP (rcb2 * rp);
+         real term1 = -radian * REAL_RECIP(rab2 * rp);
+         real term2 = radian * REAL_RECIP(rcb2 * rp);
          real ddtdxia = term1 * (yab * zp - zab * yp);
          real ddtdyia = term1 * (zab * xp - xab * zp);
          real ddtdzia = term1 * (xab * yp - yab * xp);
@@ -76,9 +74,9 @@ void estrbnd_tmpl ()
          real ddtdzic = term2 * (xcb * yp - ycb * xp);
 
          real dr1 = rab - bl[j];
-         term1 = REAL_RECIP (rab);
+         term1 = REAL_RECIP(rab);
          real dr2 = rcb - bl[k];
-         term2 = REAL_RECIP (rcb);
+         term2 = REAL_RECIP(rcb);
          real ddrdxia = term1 * xab;
          real ddrdyia = term1 * yab;
          real ddrdzia = term1 * zab;
@@ -90,13 +88,13 @@ void estrbnd_tmpl ()
          term2 = stbnunit * force2;
          real termr = term1 * dr1 + term2 * dr2;
 
-         if_constexpr (do_e)
+         if_constexpr(do_e)
          {
             real e = termr * dt;
-            atomic_add_value (e, eba, offset);
+            atomic_add_value(e, eba, offset);
          }
 
-         if_constexpr (do_g)
+         if_constexpr(do_g)
          {
             real term1t = term1 * dt;
             real term2t = term2 * dt;
@@ -129,7 +127,7 @@ void estrbnd_tmpl ()
             #pragma acc atomic update
             gz[ic] += dedzic;
 
-            if_constexpr (do_v)
+            if_constexpr(do_v)
             {
                real vxx = xab * dedxia + xcb * dedxic;
                real vyx = yab * dedxia + ycb * dedxic;
@@ -138,24 +136,24 @@ void estrbnd_tmpl ()
                real vzy = zab * dedyia + zcb * dedyic;
                real vzz = zab * dedzia + zcb * dedzic;
 
-               atomic_add_value (vxx, vyx, vzx, vyy, vzy, vzz, vir_eba, offset);
+               atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_eba, offset);
             }
          }
       }
    }
 }
 
-void estrbnd_acc_impl_ (int vers)
+void estrbnd_acc_impl_(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
-      estrbnd_tmpl<calc::v0> ();
+      estrbnd_tmpl<calc::v0>();
    else if (vers == calc::v1)
-      estrbnd_tmpl<calc::v1> ();
+      estrbnd_tmpl<calc::v1>();
    else if (vers == calc::v4)
-      estrbnd_tmpl<calc::v4> ();
+      estrbnd_tmpl<calc::v4>();
    else if (vers == calc::v5)
-      estrbnd_tmpl<calc::v5> ();
+      estrbnd_tmpl<calc::v5>();
    else if (vers == calc::v6)
-      estrbnd_tmpl<calc::v6> ();
+      estrbnd_tmpl<calc::v6>();
 }
 TINKER_NAMESPACE_END

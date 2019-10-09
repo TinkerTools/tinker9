@@ -5,39 +5,39 @@
 #include <ext/tinker/detail/torpot.hh>
 
 TINKER_NAMESPACE_BEGIN
-void epitors_data (rc_op op)
+void epitors_data(rc_op op)
 {
-   if (!use_potent (pitors_term))
+   if (!use_potent(pitors_term))
       return;
 
    if (op & rc_dealloc) {
-      device_array::deallocate (ipit, kpit);
+      device_array::deallocate(ipit, kpit);
 
-      ept_handle.dealloc ();
+      buffer_deallocate(ept, vir_ept);
    }
 
    if (op & rc_alloc) {
-      int ntors = count_bonded_term (torsion_term);
-      device_array::allocate (ntors, &ipit, &kpit);
+      int ntors = count_bonded_term(torsion_term);
+      device_array::allocate(ntors, &ipit, &kpit);
 
-      npitors = count_bonded_term (pitors_term);
-      ept_handle.alloc (npitors);
+      npitors = count_bonded_term(pitors_term);
+      buffer_allocate(&ept, &vir_ept);
    }
 
    if (op & rc_init) {
-      int ntors = count_bonded_term (torsion_term);
-      std::vector<int> ibuf (6 * ntors);
+      int ntors = count_bonded_term(torsion_term);
+      std::vector<int> ibuf(6 * ntors);
       for (int i = 0; i < 6 * ntors; ++i)
          ibuf[i] = pitors::ipit[i] - 1;
-      device_array::copyin (ntors, ipit, ibuf.data ());
-      device_array::copyin (ntors, kpit, pitors::kpit);
+      device_array::copyin(ntors, ipit, ibuf.data());
+      device_array::copyin(ntors, kpit, pitors::kpit);
       ptorunit = torpot::ptorunit;
    }
 }
 
-extern void epitors_acc_impl_ (int vers);
-void epitors (int vers)
+extern void epitors_acc_impl_(int vers);
+void epitors(int vers)
 {
-   epitors_acc_impl_ (vers);
+   epitors_acc_impl_(vers);
 }
 TINKER_NAMESPACE_END

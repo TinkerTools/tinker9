@@ -4,16 +4,14 @@
 
 TINKER_NAMESPACE_BEGIN
 template <int USE>
-void epitors_tmpl ()
+void epitors_tmpl()
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_g = USE & calc::grad;
    constexpr int do_v = USE & calc::virial;
-   sanity_check<USE> ();
+   sanity_check<USE>();
 
-   auto* ept = ept_handle.e ()->buffer ();
-   auto* vir_ept = ept_handle.vir ()->buffer ();
-   auto bufsize = ept_handle.buffer_size ();
+   auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
@@ -86,12 +84,12 @@ void epitors_tmpl ()
       real ztu = xt * yu - xu * yt;
       real rt2 = xt * xt + yt * yt + zt * zt;
       real ru2 = xu * xu + yu * yu + zu * zu;
-      real rtru = REAL_SQRT (rt2 * ru2);
+      real rtru = REAL_SQRT(rt2 * ru2);
       if (rtru != 0) {
-         real rdc = REAL_SQRT (xdc * xdc + ydc * ydc + zdc * zdc);
-         real cosine = (xt * xu + yt * yu + zt * zu) * REAL_RECIP (rtru);
+         real rdc = REAL_SQRT(xdc * xdc + ydc * ydc + zdc * zdc);
+         real cosine = (xt * xu + yt * yu + zt * zu) * REAL_RECIP(rtru);
          real sine =
-            (xdc * xtu + ydc * ytu + zdc * ztu) * REAL_RECIP (rdc * rtru);
+            (xdc * xtu + ydc * ytu + zdc * ztu) * REAL_RECIP(rdc * rtru);
 
          // set the pi-system torsion parameters for this angle
 
@@ -107,13 +105,13 @@ void epitors_tmpl ()
 
          // calculate the pi-system torsion energy for this angle
 
-         if_constexpr (do_e)
+         if_constexpr(do_e)
          {
             real e = ptorunit * v2 * phi2;
-            atomic_add_value (e, ept, offset);
+            atomic_add_value(e, ept, offset);
          }
 
-         if_constexpr (do_g)
+         if_constexpr(do_g)
          {
             real dphi2 = 2 * (cosine2 * s2 - sine2 * c2);
             real dedphi = ptorunit * v2 * dphi2;
@@ -126,8 +124,8 @@ void epitors_tmpl ()
             real xqc = xiq - xic;
             real yqc = yiq - yic;
             real zqc = ziq - zic;
-            real rt2rdc_inv = REAL_RECIP (rt2 * rdc);
-            real ru2rdc_inv = REAL_RECIP (ru2 * rdc);
+            real rt2rdc_inv = REAL_RECIP(rt2 * rdc);
+            real ru2rdc_inv = REAL_RECIP(ru2 * rdc);
             real dedxt = dedphi * (yt * zdc - ydc * zt) * rt2rdc_inv;
             real dedyt = dedphi * (zt * xdc - zdc * xt) * rt2rdc_inv;
             real dedzt = dedphi * (xt * ydc - xdc * yt) * rt2rdc_inv;
@@ -209,7 +207,7 @@ void epitors_tmpl ()
             #pragma acc atomic update
             gz[ig] += dedzig;
 
-            if_constexpr (do_v)
+            if_constexpr(do_v)
             {
                real vxterm = dedxid + dedxia + dedxib;
                real vyterm = dedyid + dedyia + dedyib;
@@ -221,24 +219,24 @@ void epitors_tmpl ()
                real vzy = zdc * vyterm + zcp * dedyip - zqd * dedyiq;
                real vzz = zdc * vzterm + zcp * dedzip - zqd * dedziq;
 
-               atomic_add_value (vxx, vyx, vzx, vyy, vzy, vzz, vir_ept, offset);
+               atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_ept, offset);
             }
          }
       }
    } // end for (int i)
 }
 
-void epitors_acc_impl_ (int vers)
+void epitors_acc_impl_(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
-      epitors_tmpl<calc::v0> ();
+      epitors_tmpl<calc::v0>();
    else if (vers == calc::v1)
-      epitors_tmpl<calc::v1> ();
+      epitors_tmpl<calc::v1>();
    else if (vers == calc::v4)
-      epitors_tmpl<calc::v4> ();
+      epitors_tmpl<calc::v4>();
    else if (vers == calc::v5)
-      epitors_tmpl<calc::v5> ();
+      epitors_tmpl<calc::v5>();
    else if (vers == calc::v6)
-      epitors_tmpl<calc::v6> ();
+      epitors_tmpl<calc::v6>();
 }
 TINKER_NAMESPACE_END

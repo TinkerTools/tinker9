@@ -50,7 +50,7 @@ struct PairMPoleGrad
 #pragma acc routine seq
 template <int USE, elec_t ETYP>
 CUDA_DEVICE_FUNCTION
-void pair_mpole (                                   //
+void pair_mpole(                                    //
    real r2, real xr, real yr, real zr, real mscale, //
    real ci, real dix, real diy, real diz, real qixx, real qixy, real qixz,
    real qiyy, real qiyz, real qizz, //
@@ -61,8 +61,8 @@ void pair_mpole (                                   //
    constexpr int do_e = USE & calc::energy;
    constexpr int do_g = USE & calc::grad;
 
-   real r = REAL_SQRT (r2);
-   real invr1 = REAL_RECIP (r);
+   real r = REAL_SQRT(r2);
+   real invr1 = REAL_RECIP(r);
    real rr2 = invr1 * invr1;
 
    real bn[6];
@@ -73,25 +73,25 @@ void pair_mpole (                                   //
    real& rr9 = bn[4];
    real& rr11 = bn[5];
 
-   if_constexpr (ETYP == elec_t::ewald)
+   if_constexpr(ETYP == elec_t::ewald)
    {
-      if_constexpr (!do_g) damp_ewald (bn, 5, r, invr1, rr2, aewald);
-      else damp_ewald (bn, 6, r, invr1, rr2, aewald);
+      if_constexpr(!do_g) damp_ewald(bn, 5, r, invr1, rr2, aewald);
+      else damp_ewald(bn, 6, r, invr1, rr2, aewald);
       bn[0] *= f;
       bn[1] *= f;
       bn[2] *= f;
       bn[3] *= f;
       bn[4] *= f;
-      if_constexpr (do_g) bn[5] *= f;
+      if_constexpr(do_g) bn[5] *= f;
    }
-   else if_constexpr (ETYP == elec_t::coulomb)
+   else if_constexpr(ETYP == elec_t::coulomb)
    {
       rr1 = mscale * f * invr1;
       rr3 = rr1 * rr2;
       rr5 = 3 * rr3 * rr2;
       rr7 = 5 * rr5 * rr2;
       rr9 = 7 * rr7 * rr2;
-      if_constexpr (do_g) rr11 = 9 * rr9 * rr2;
+      if_constexpr(do_g) rr11 = 9 * rr9 * rr2;
    }
 
    real dir = dix * xr + diy * yr + diz * zr;
@@ -117,12 +117,12 @@ void pair_mpole (                                   //
    real term4 = dir * qkr - dkr * qir - 4 * qik;
    real term5 = qir * qkr;
 
-   if_constexpr (do_e)
+   if_constexpr(do_e)
    {
       e = term1 * rr1 + term2 * rr3 + term3 * rr5 + term4 * rr7 + term5 * rr9;
    } // end if (do_e)
 
-   if_constexpr (do_g)
+   if_constexpr(do_g)
    {
 
       // gradient

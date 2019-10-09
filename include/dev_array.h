@@ -6,7 +6,7 @@
 TINKER_NAMESPACE_BEGIN
 /**
  * \typedef device_array
- * \ingroup typedef
+ * \ingroup util
  * A collection of device array related functions.
  * \see DeviceArray
  * \see DeviceMemory
@@ -15,7 +15,7 @@ typedef DeviceArray<DeviceMemory> device_array;
 
 /**
  * \typedef device_pointer
- * \ingroup typedef
+ * \ingroup util
  * Based on the template parameters \c T and \c N, this type is either
  * defined to `T*` or `T(*)[N]` when \c N is greater than 1.
  * \c N is set to 1 by default.

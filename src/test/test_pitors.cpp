@@ -163,7 +163,7 @@ static const double ref_g_pitors_trpcage[][3] = {
    {0.0000, 0.0000, 0.0000},    {0.0000, 0.0000, 0.0000},
    {0.0000, 0.0000, 0.0000},    {0.0000, 0.0000, 0.0000},
    {0.0000, 0.0000, 0.0000},    {0.0000, 0.0000, 0.0000}};
-TEST_CASE ("Pitors-Trpcage", "[ff][epitors][trpcage]")
+TEST_CASE("Pitors-Trpcage", "[ff][epitors][trpcage]")
 {
    const char* k = "test_trpcage.key";
    const char* x1 = "test_trpcage.xyz";
@@ -171,16 +171,16 @@ TEST_CASE ("Pitors-Trpcage", "[ff][epitors][trpcage]")
 
    std::string k0 = trpcage_key;
    k0 += pitorsterm_only;
-   TestFile fke (k, k0);
+   TestFile fke(k, k0);
 
-   TestFile fx1 (x1, trpcage_xyz);
-   TestFile fpr (p, commit_6fe8e913::amoebapro13_prm);
+   TestFile fx1(x1, trpcage_xyz);
+   TestFile fpr(p, commit_6fe8e913::amoebapro13_prm);
 
    const char* argv[] = {"dummy", x1};
    int argc = 2;
-   test_begin_with_args (argc, argv);
+   test_begin_with_args(argc, argv);
    rc_flag = usage;
-   initialize ();
+   initialize();
 
    const double eps_e = 0.0001;
    const double ref_e = 5.0769;
@@ -190,9 +190,9 @@ TEST_CASE ("Pitors-Trpcage", "[ff][epitors][trpcage]")
    const double ref_v[][3] = {
       {-3.014, -1.132, 2.354}, {-1.132, 1.167, -0.679}, {2.354, -0.679, 1.847}};
 
-   COMPARE_BONDED_FORCE (epitors, npitors, ept_handle, ref_e, eps_e, ref_count,
-                         gx, gy, gz, ref_g_pitors_trpcage, eps_g, ref_v, eps_v);
+   COMPARE_BONDED_FORCE(epitors, npitors, ept, vir_ept, ref_e, eps_e, ref_count,
+                        gx, gy, gz, ref_g_pitors_trpcage, eps_g, ref_v, eps_v);
 
-   finish ();
-   test_end ();
+   finish();
+   test_end();
 }

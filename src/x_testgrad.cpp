@@ -7,38 +7,38 @@ TINKER_NAMESPACE_BEGIN
 static bool timing = true;
 // static bool timing = false;
 
-void x_testgrad (int argc, char** argv)
+void x_testgrad(int argc, char** argv)
 {
    if (timing)
-      stopwatch_start ();
+      stopwatch_start();
 
-   TINKER_RT (initial) ();
-   TINKER_RT (getxyz) ();
-   TINKER_RT (mechanic) ();
+   TINKER_RT(initial)();
+   TINKER_RT(getxyz)();
+   TINKER_RT(mechanic)();
    if (timing)
-      stopwatch_lap ("initialized libtinker");
+      stopwatch_lap("initialized libtinker");
 
    int flags = calc::xyz;
    flags += (calc::energy + calc::grad);
 
    rc_flag = flags;
-   initialize ();
+   initialize();
    if (timing)
-      stopwatch_lap ("initialized libtinkergpu");
+      stopwatch_lap("initialized libtinkergpu");
 
-   energy_potential (rc_flag & calc::vmask);
+   energy_potential(rc_flag & calc::vmask);
    if (timing)
-      stopwatch_lap ("gradient evaluation");
+      stopwatch_lap("gradient evaluation");
 
-   std::vector<real> gdx (n), gdy (n), gdz (n);
-   device_array::copyout (n, gdx.data (), gx);
-   device_array::copyout (n, gdy.data (), gy);
-   device_array::copyout (n, gdz.data (), gz);
+   std::vector<real> gdx(n), gdy(n), gdz(n);
+   device_array::copyout(n, gdx.data(), gx);
+   device_array::copyout(n, gdy.data(), gy);
+   device_array::copyout(n, gdz.data(), gz);
    if (timing)
-      stopwatch_lap ("gradient copied out");
+      stopwatch_lap("gradient copied out");
 
    const char* fmt = " Anlyt{:>10d}       {:12.4f}{:12.4f}{:12.4f}{:14.4f}\n";
-   auto do_print = [] (int i, int n) {
+   auto do_print = [](int i, int n) {
       if (n <= 10)
          return true;
       else if (i < 5)
@@ -49,24 +49,24 @@ void x_testgrad (int argc, char** argv)
          return false;
    };
    for (int i = 0; i < n; ++i) {
-      if (!do_print (i, n))
+      if (!do_print(i, n))
          continue;
 
       real x1 = gdx[i];
       real y1 = gdy[i];
       real z1 = gdz[i];
       real norm = x1 * x1 + y1 * y1 + z1 * z1;
-      norm = REAL_SQRT (norm);
-      print (stdout, fmt, i + 1, x1, y1, z1, norm);
+      norm = REAL_SQRT(norm);
+      print(stdout, fmt, i + 1, x1, y1, z1, norm);
    }
 
-   finish ();
+   finish();
 
    if (timing) {
-      stopwatch_stop ();
-      stopwatch_reset ();
+      stopwatch_stop();
+      stopwatch_reset();
    }
 
-   TINKER_RT (final) ();
+   TINKER_RT(final)();
 }
 TINKER_NAMESPACE_END

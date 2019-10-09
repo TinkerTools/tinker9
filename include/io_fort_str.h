@@ -18,7 +18,7 @@ class FortranStringView
 private:
    char* const b_; ///< begin in [begin, end)
    char* const e_; ///< end in [begin, end)
-   FortranStringView () = delete;
+   FortranStringView() = delete;
 
    /**
     * @brief
@@ -26,58 +26,58 @@ private:
     * fill @c dst with blanks if @c first_n is less than @c dstlen;
     * @c dst is NOT NULL-terminated NULL.
     */
-   static void copy_with_blank_ (char* dst, size_t dstlen, const char* src,
-                                 size_t first_n);
+   static void copy_with_blank_(char* dst, size_t dstlen, const char* src,
+                                size_t first_n);
 
    /**
     * @brief
     * compare to string @c src of @c len;
     * the shorter string is filled by blanks prior to comparison
     */
-   bool if_eq_ (const char* src, size_t len) const;
+   bool if_eq_(const char* src, size_t len) const;
 
 public:
    template <size_t Len>
-   FortranStringView (const char (&src)[Len])
-      : b_ (const_cast<char*> (src))
-      , e_ (b_ + Len)
+   FortranStringView(const char (&src)[Len])
+      : b_(const_cast<char*>(src))
+      , e_(b_ + Len)
    {}
-   FortranStringView (const char* src, size_t len);
-   FortranStringView (const char* src);
-   FortranStringView (const std::string& src);
+   FortranStringView(const char* src, size_t len);
+   FortranStringView(const char* src);
+   FortranStringView(const std::string& src);
 
    // assignment
    template <size_t Len>
-   FortranStringView& operator= (const char (&src)[Len])
+   FortranStringView& operator=(const char (&src)[Len])
    {
-      copy_with_blank_ (b_, size (), src, Len);
+      copy_with_blank_(b_, size(), src, Len);
       return *this;
    }
-   FortranStringView& operator= (const char* src);
-   FortranStringView& operator= (const std::string& src);
-   FortranStringView& operator= (const FortranStringView& src);
+   FortranStringView& operator=(const char* src);
+   FortranStringView& operator=(const std::string& src);
+   FortranStringView& operator=(const FortranStringView& src);
 
    // comparison
    template <size_t Len>
-   bool operator== (const char (&src)[Len]) const
+   bool operator==(const char (&src)[Len]) const
    {
-      return if_eq_ (src, Len);
+      return if_eq_(src, Len);
    }
-   bool operator== (const char* src) const;
-   bool operator== (const std::string& src) const;
-   bool operator== (const FortranStringView& src) const;
+   bool operator==(const char* src) const;
+   bool operator==(const std::string& src) const;
+   bool operator==(const FortranStringView& src) const;
 
    /// @return
    /// max number of characters in the string
-   size_t size () const;
+   size_t size() const;
 
    /// @return
    /// length of string, ignoring any trailing blanks
-   size_t len_trim () const;
+   size_t len_trim() const;
 
    /// @return
    /// trimmed result in std::string.
-   std::string trim () const;
+   std::string trim() const;
 
    /**
     * @brief
@@ -92,7 +92,7 @@ public:
     * @return
     * a new FortranStringView object
     */
-   FortranStringView operator() (int begin1, int back1) const;
+   FortranStringView operator()(int begin1, int back1) const;
 
    /**
     * @brief
@@ -104,7 +104,7 @@ public:
     * @return
     * a new FortranStringView object
     */
-   FortranStringView operator() (int begin1) const;
+   FortranStringView operator()(int begin1) const;
 };
 TINKER_NAMESPACE_END
 

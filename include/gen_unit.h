@@ -20,17 +20,17 @@ struct GenericUnitAlloc<GenericUnitVersion::DisableOnDevice>
 {
    struct Deallocate
    {
-      void operator() (void*) {}
+      void operator()(void*) {}
    };
 
    struct Allocate
    {
-      void operator() (void**, size_t) {}
+      void operator()(void**, size_t) {}
    };
 
    struct CopyIn
    {
-      void operator() (void*, const void*, size_t) {}
+      void operator()(void*, const void*, size_t) {}
    };
 };
 
@@ -68,31 +68,30 @@ private:
    // of all the possible type T, don't change vector of host pointers to vector
    // of host objects.
    typedef std::vector<std::unique_ptr<T>> hostptr_vec;
-   static hostptr_vec& hostptrs ()
+   static hostptr_vec& hostptrs()
    {
       static hostptr_vec o;
       return o;
    }
 
-   const T& obj () const
+   const T& obj() const
    {
-      assert (0 <= unit && unit < hostptrs ().size () &&
-              "const T& GenericUnit::obj() const");
-      return *hostptrs ()[unit];
+      assert(0 <= unit && unit < hostptrs().size() &&
+             "const T& GenericUnit::obj() const");
+      return *hostptrs()[unit];
    }
 
-   T& obj ()
+   T& obj()
    {
-      assert (0 <= unit && unit < hostptrs ().size () &&
-              "T& GenericUnit::obj()");
-      return *hostptrs ()[unit];
+      assert(0 <= unit && unit < hostptrs().size() && "T& GenericUnit::obj()");
+      return *hostptrs()[unit];
    }
 
    typedef typename GenericUnitAlloc<VERSION>::Deallocate Deallocate;
    typedef std::vector<std::unique_ptr<T, Deallocate>> deviceptr_vec;
-   static deviceptr_vec& deviceptrs ()
+   static deviceptr_vec& deviceptrs()
    {
-      assert (USE_DPTR);
+      assert(USE_DPTR);
       static deviceptr_vec o;
       return o;
    }
@@ -103,31 +102,30 @@ private:
 public:
    /// @brief
    /// get the number of open units
-   static int size ()
+   static int size()
    {
-      if_constexpr (USE_DPTR)
-         assert (hostptrs ().size () == deviceptrs ().size ());
-      return hostptrs ().size ();
+      if_constexpr(USE_DPTR) assert(hostptrs().size() == deviceptrs().size());
+      return hostptrs().size();
    }
 
    /// @brief
    /// close all of the units and reset @c size() to 0
-   static void clear ()
+   static void clear()
    {
       // call ~T() here
-      hostptrs ().clear ();
+      hostptrs().clear();
       // call Dealloc(T*) here
-      if_constexpr (USE_DPTR) deviceptrs ().clear ();
+      if_constexpr(USE_DPTR) deviceptrs().clear();
    }
 
    /// @brief
    /// resize the capacity for the objects on host;
    /// cannot be called if device pointers are used
-   static void resize (int s)
+   static void resize(int s)
    {
-      assert (!USE_DPTR);
-      for (int i = size (); i < s; ++i)
-         hostptrs ().emplace_back (new T);
+      assert(!USE_DPTR);
+      for (int i = size(); i < s; ++i)
+         hostptrs().emplace_back(new T);
    }
 
    /// @brief
@@ -135,39 +133,39 @@ public:
    ///
    /// @return
    /// the new unit
-   static GenericUnit open ()
+   static GenericUnit open()
    {
-      hostptrs ().emplace_back (new T);
-      if_constexpr (USE_DPTR)
+      hostptrs().emplace_back(new T);
+      if_constexpr(USE_DPTR)
       {
          T* ptr;
          Allocate alloc;
-         alloc (reinterpret_cast<void**> (&ptr), sizeof (T));
+         alloc(reinterpret_cast<void**>(&ptr), sizeof(T));
          Deallocate dealloc;
-         deviceptrs ().emplace_back (ptr, dealloc);
+         deviceptrs().emplace_back(ptr, dealloc);
       }
-      return size () - 1;
+      return size() - 1;
    }
 
 public:
-   GenericUnit ()
-      : unit (-1)
+   GenericUnit()
+      : unit(-1)
    {}
 
-   GenericUnit (int u)
-      : unit (u)
+   GenericUnit(int u)
+      : unit(u)
    {}
 
-   operator int () const
+   operator int() const
    {
       return unit;
    }
 
-   bool valid () const
+   bool valid() const
    {
       return unit >= 0;
    }
-   void close ()
+   void close()
    {
       unit = -1;
    }
@@ -175,44 +173,44 @@ public:
    /// @brief
    /// get the (const) reference to the object on host
    /// @{
-   const T& operator* () const
+   const T& operator*() const
    {
-      return obj ();
+      return obj();
    }
-   T& operator* ()
+   T& operator*()
    {
-      return obj ();
+      return obj();
    }
    /// @}
 
    /// @brief
    /// get the (const) pointer to the object on host
    /// @{
-   const T* operator-> () const
+   const T* operator->() const
    {
-      return &obj ();
+      return &obj();
    }
-   T* operator-> ()
+   T* operator->()
    {
-      return &obj ();
+      return &obj();
    }
    /// @}
 
    /// @brief
    /// get device pointer to the object
    /// @{
-   const T* deviceptr () const
+   const T* deviceptr() const
    {
-      assert (0 <= unit && unit < deviceptrs ().size () &&
-              "const T* GenericUnit::deviceptr() const");
-      return deviceptrs ()[unit].get ();
+      assert(0 <= unit && unit < deviceptrs().size() &&
+             "const T* GenericUnit::deviceptr() const");
+      return deviceptrs()[unit].get();
    }
 
-   T* deviceptr ()
+   T* deviceptr()
    {
-      assert (0 <= unit && unit < deviceptrs ().size () &&
-              "T* GenericUnit::deviceptr()");
-      return deviceptrs ()[unit].get ();
+      assert(0 <= unit && unit < deviceptrs().size() &&
+             "T* GenericUnit::deviceptr()");
+      return deviceptrs()[unit].get();
    }
    /// @}
 
@@ -222,11 +220,11 @@ public:
    /// @param hobj
    /// the reference to the same object on host
    /// that can be accessed by the same unit number
-   void init_deviceptr (const T& hobj)
+   void init_deviceptr(const T& hobj)
    {
-      assert (&hobj == &this->obj ());
+      assert(&hobj == &this->obj());
       CopyIn copyin;
-      copyin (this->deviceptr (), &this->obj (), sizeof (T));
+      copyin(this->deviceptr(), &this->obj(), sizeof(T));
    }
 };
 TINKER_NAMESPACE_END

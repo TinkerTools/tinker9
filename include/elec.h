@@ -65,7 +65,7 @@ TINKER_EXTERN device_pointer<real, mpl_total> rpole;
 TINKER_EXTERN device_pointer<real> trqx, trqy, trqz;
 /// @}
 /// internal virial Cartesian tensor due to the torques
-TINKER_EXTERN Virial vir_trq_handle;
+TINKER_EXTERN virial_buffer vir_trq;
 
 /// direct induced dipole components at each multipole site
 TINKER_EXTERN device_pointer<real, 3> udir;
@@ -76,9 +76,9 @@ TINKER_EXTERN device_pointer<real, 3> uind;
 /// mutual induced dipoles in field used for energy terms
 TINKER_EXTERN device_pointer<real, 3> uinp;
 
-void elec_data (rc_op op);
-int use_elec ();
-int use_ewald ();
-void elec_init (int vers);
-void torque (int vers);
+void elec_data(rc_op op);
+int use_elec();
+int use_ewald();
+void elec_init(int vers);
+void torque(int vers);
 TINKER_NAMESPACE_END

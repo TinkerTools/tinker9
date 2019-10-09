@@ -21,7 +21,7 @@ TINKER_NAMESPACE_BEGIN
             if (arr[dad] > arr[son])                                           \
                return;                                                         \
             else {                                                             \
-               m_swap_ (arr[dad], arr[son]);                                   \
+               m_swap_(arr[dad], arr[son]);                                    \
                dad = son;                                                      \
                son = dad * 2 + 1;                                              \
             }                                                                  \
@@ -29,16 +29,16 @@ TINKER_NAMESPACE_BEGIN
       }
 
 #pragma acc routine seq
-inline void sort_v1_ (int* arr, int len)
+inline void sort_v1_(int* arr, int len)
 {
    // heapsort
    for (int i = len / 2 - 1; i >= 0; --i) {
-      m_max_heap_ (arr, i, len - 1);
+      m_max_heap_(arr, i, len - 1);
    }
 
    for (int i = len - 1; i > 0; --i) {
-      m_swap_ (arr[0], arr[i]);
-      m_max_heap_ (arr, 0, i - 1);
+      m_swap_(arr[0], arr[i]);
+      m_max_heap_(arr, 0, i - 1);
    }
 }
 #   undef m_swap_
@@ -47,9 +47,9 @@ TINKER_NAMESPACE_END
 #else
 #   include <algorithm>
 TINKER_NAMESPACE_BEGIN
-inline void sort_v1_ (int* arr, int len)
+inline void sort_v1_(int* arr, int len)
 {
-   std::sort (arr, arr + len);
+   std::sort(arr, arr + len);
 }
 TINKER_NAMESPACE_END
 #endif
@@ -59,9 +59,9 @@ TINKER_NAMESPACE_BEGIN
 //====================================================================//
 // double loop
 
-inline void build_double_loop_ (NBListUnit nu)
+inline void build_double_loop_(NBListUnit nu)
 {
-   auto* lst = nu.deviceptr ();
+   auto* lst = nu.deviceptr();
    #pragma acc parallel loop independent deviceptr(lst)
    for (int i = 0; i < n; ++i) {
       lst->nlst[i] = n - i - 1;
@@ -75,11 +75,11 @@ inline void build_double_loop_ (NBListUnit nu)
 // version 1
 // see also nblist.f
 
-inline void build_v1_ (NBListUnit nu)
+inline void build_v1_(NBListUnit nu)
 {
    auto& st = *nu;
    const int maxnlst = st.maxnlst;
-   const real buf2 = REAL_SQ (st.cutoff + st.buffer);
+   const real buf2 = REAL_SQ(st.cutoff + st.buffer);
 
    const auto* __restrict__ lx = st.x;
    const auto* __restrict__ ly = st.y;
@@ -90,7 +90,7 @@ inline void build_v1_ (NBListUnit nu)
    auto* __restrict__ nlst = st.nlst;
    auto* __restrict__ lst = st.lst;
 
-   MAYBE_UNUSED int GRID_DIM = get_grid_size (BLOCK_DIM);
+   MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                deviceptr(box,lx,ly,lz,xo,yo,zo,nlst,lst)
    #pragma acc loop gang independent
@@ -108,7 +108,7 @@ inline void build_v1_ (NBListUnit nu)
          real xr = xi - lx[k];
          real yr = yi - ly[k];
          real zr = zi - lz[k];
-         imagen (xr, yr, zr, box);
+         imagen(xr, yr, zr, box);
          real r2 = xr * xr + yr * yr + zr * zr;
          if (r2 <= buf2) {
             int j;
@@ -124,11 +124,11 @@ inline void build_v1_ (NBListUnit nu)
    }
 }
 
-inline void displace_v1_ (NBListUnit nu)
+inline void displace_v1_(NBListUnit nu)
 {
    auto& st = *nu;
-   auto* lst = nu.deviceptr ();
-   const real lbuf2 = REAL_SQ (0.5f * st.buffer);
+   auto* lst = nu.deviceptr();
+   const real lbuf2 = REAL_SQ(0.5f * st.buffer);
    #pragma acc parallel loop independent deviceptr(lst,box)
    for (int i = 0; i < n; ++i) {
       real xi = lst->x[i];
@@ -137,7 +137,7 @@ inline void displace_v1_ (NBListUnit nu)
       real xr = xi - lst->xold[i];
       real yr = yi - lst->yold[i];
       real zr = zi - lst->zold[i];
-      imagen (xr, yr, zr, box);
+      imagen(xr, yr, zr, box);
       lst->update[i] = 0;
       real r2 = xr * xr + yr * yr + zr * zr;
       if (r2 >= lbuf2) {
@@ -149,20 +149,20 @@ inline void displace_v1_ (NBListUnit nu)
    }
 }
 
-inline void update_v1_ (NBListUnit nu)
+inline void update_v1_(NBListUnit nu)
 {
 
    // test sites for displacement exceeding half the buffer
 
-   displace_v1_ (nu);
+   displace_v1_(nu);
 
    // rebuild the higher numbered neighbors for updated sites
 
    auto& st = *nu;
-   auto* lst = nu.deviceptr ();
+   auto* lst = nu.deviceptr();
    const int maxnlst = st.maxnlst;
-   const real buf2 = REAL_SQ (st.cutoff + st.buffer);
-   const real bufx = REAL_SQ (st.cutoff + 2 * st.buffer);
+   const real buf2 = REAL_SQ(st.cutoff + st.buffer);
+   const real bufx = REAL_SQ(st.cutoff + 2 * st.buffer);
 
    #pragma acc kernels deviceptr(lst,box)
    {
@@ -178,7 +178,7 @@ inline void update_v1_ (NBListUnit nu)
                real xr = xi - lst->xold[k];
                real yr = yi - lst->yold[k];
                real zr = zi - lst->zold[k];
-               imagen (xr, yr, zr, box);
+               imagen(xr, yr, zr, box);
                real r2 = xr * xr + yr * yr + zr * zr;
                if (r2 <= buf2) {
                   int current = lst->nlst[i];
@@ -201,7 +201,7 @@ inline void update_v1_ (NBListUnit nu)
                   real xr = xi - lst->xold[k];
                   real yr = yi - lst->yold[k];
                   real zr = zi - lst->zold[k];
-                  imagen (xr, yr, zr, box);
+                  imagen(xr, yr, zr, box);
                   real r2 = xr * xr + yr * yr + zr * zr;
                   if (r2 <= buf2) {
                      for (int j = 0; j < lst->nlst[k]; ++j) {
@@ -224,7 +224,7 @@ inline void update_v1_ (NBListUnit nu)
                   }
                }
             }
-            sort_v1_ (&lst->lst[i * maxnlst], lst->nlst[i]);
+            sort_v1_(&lst->lst[i * maxnlst], lst->nlst[i]);
          }
       }
    }
@@ -232,23 +232,23 @@ inline void update_v1_ (NBListUnit nu)
 
 //====================================================================//
 
-void nblist_build_acc_impl_ (NBListUnit nu)
+void nblist_build_acc_impl_(NBListUnit nu)
 {
    if (nu->maxnlst == 1) {
-      build_double_loop_ (nu);
+      build_double_loop_(nu);
    } else {
-      build_v1_ (nu);
+      build_v1_(nu);
    }
 }
 
 // #define TINKER_DEFAULT_NBLIST_UPDATE_(nu) build_v1_(nu)
-#define TINKER_DEFAULT_NBLIST_UPDATE_(nu) update_v1_ (nu)
-void nblist_update_acc_impl_ (NBListUnit nu)
+#define TINKER_DEFAULT_NBLIST_UPDATE_(nu) update_v1_(nu)
+void nblist_update_acc_impl_(NBListUnit nu)
 {
    if (nu->maxnlst == 1) {
       // update_double_loop_();
    } else {
-      TINKER_DEFAULT_NBLIST_UPDATE_ (nu);
+      TINKER_DEFAULT_NBLIST_UPDATE_(nu);
    }
 }
 #undef TINKER_DEFAULT_NBLIST_UPDATE_

@@ -7,16 +7,16 @@
 #include <ext/tinker/detail/sizes.hh>
 
 TINKER_NAMESPACE_BEGIN
-void empole_data (rc_op op)
+void empole_data(rc_op op)
 {
-   if (!use_potent (mpole_term))
+   if (!use_potent(mpole_term))
       return;
 
    if (op & rc_dealloc) {
       nmexclude_ = 0;
-      device_array::deallocate (mexclude_, mexclude_scale_);
+      device_array::deallocate(mexclude_, mexclude_scale_);
 
-      em_handle.dealloc ();
+      buffer_deallocate(nem, em, vir_em);
    }
 
    if (op & rc_alloc) {
@@ -41,9 +41,9 @@ void empole_data (rc_op op)
                int k = couple::i12[i][j];
                k -= 1;
                if (k > i) {
-                  exclik.push_back (i);
-                  exclik.push_back (k);
-                  excls.push_back (m2scale - 1);
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  excls.push_back(m2scale - 1);
                }
             }
          }
@@ -55,9 +55,9 @@ void empole_data (rc_op op)
                int k = couple::i13[bask + j];
                k -= 1;
                if (k > i) {
-                  exclik.push_back (i);
-                  exclik.push_back (k);
-                  excls.push_back (m3scale - 1);
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  excls.push_back(m3scale - 1);
                }
             }
          }
@@ -69,9 +69,9 @@ void empole_data (rc_op op)
                int k = couple::i14[bask + j];
                k -= 1;
                if (k > i) {
-                  exclik.push_back (i);
-                  exclik.push_back (k);
-                  excls.push_back (m4scale - 1);
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  excls.push_back(m4scale - 1);
                }
             }
          }
@@ -83,23 +83,23 @@ void empole_data (rc_op op)
                int k = couple::i15[bask + j];
                k -= 1;
                if (k > i) {
-                  exclik.push_back (i);
-                  exclik.push_back (k);
-                  excls.push_back (m5scale - 1);
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  excls.push_back(m5scale - 1);
                }
             }
          }
       }
-      nmexclude_ = excls.size ();
-      device_array::allocate (nmexclude_, &mexclude_, &mexclude_scale_);
-      device_array::copyin (nmexclude_, mexclude_, exclik.data ());
-      device_array::copyin (nmexclude_, mexclude_scale_, excls.data ());
+      nmexclude_ = excls.size();
+      device_array::allocate(nmexclude_, &mexclude_, &mexclude_scale_);
+      device_array::copyin(nmexclude_, mexclude_, exclik.data());
+      device_array::copyin(nmexclude_, mexclude_scale_, excls.data());
 
-      em_handle.alloc (n);
+      buffer_allocate(&nem, &em, &vir_em);
    }
 
    if (op & rc_init) {
-      if (use_ewald ()) {
+      if (use_ewald()) {
          empole_electyp = elec_t::ewald;
       } else {
          empole_electyp = elec_t::coulomb;
@@ -107,11 +107,11 @@ void empole_data (rc_op op)
    }
 }
 
-void empole (int vers)
+void empole(int vers)
 {
    if (empole_electyp == elec_t::coulomb)
-      empole_coulomb (vers);
+      empole_coulomb(vers);
    else if (empole_electyp == elec_t::ewald)
-      empole_ewald (vers);
+      empole_ewald(vers);
 }
 TINKER_NAMESPACE_END

@@ -13,7 +13,7 @@ struct PairField
 #pragma acc routine seq
 template <elec_t ETYP>
 CUDA_DEVICE_FUNCTION
-void pair_dfield (                                               //
+void pair_dfield(                                                //
    real r2, real xr, real yr, real zr, real dscale, real pscale, //
    real ci, real dix, real diy, real diz, real qixx, real qixy, real qixz,
    real qiyy, real qiyz, real qizz, real pdi, real pti, //
@@ -21,16 +21,15 @@ void pair_dfield (                                               //
    real qkyy, real qkyz, real qkzz, real pdk, real ptk, //
    real aewald, PairField& RESTRICT pairf)
 {
-   real r = REAL_SQRT (r2);
-   real invr1 = REAL_RECIP (r);
+   real r = REAL_SQRT(r2);
+   real invr1 = REAL_RECIP(r);
    real rr2 = invr1 * invr1;
 
    real scale3, scale5, scale7;
-   damp_thole3 (r, pdi, pti, pdk, ptk, scale3, scale5, scale7);
+   damp_thole3(r, pdi, pti, pdk, ptk, scale3, scale5, scale7);
 
    MAYBE_UNUSED real bn[4];
-   if_constexpr (ETYP == elec_t::ewald)
-      damp_ewald (bn, 4, r, invr1, rr2, aewald);
+   if_constexpr(ETYP == elec_t::ewald) damp_ewald(bn, 4, r, invr1, rr2, aewald);
    real rr1 = invr1;
    real rr3 = rr1 * rr2;
    real rr5 = 3 * rr1 * rr2 * rr2;
@@ -51,13 +50,13 @@ void pair_dfield (                                               //
 
    // d-field
 
-   if_constexpr (ETYP == elec_t::ewald)
+   if_constexpr(ETYP == elec_t::ewald)
    {
       bcn1 = bn[1] - (1 - scale3) * rr3;
       bcn2 = bn[2] - (1 - scale5) * rr5;
       bcn3 = bn[3] - (1 - scale7) * rr7;
    }
-   else if_constexpr (ETYP == elec_t::coulomb)
+   else if_constexpr(ETYP == elec_t::coulomb)
    {
       bcn1 = dscale * scale3 * rr3;
       bcn2 = dscale * scale5 * rr5;
@@ -79,7 +78,7 @@ void pair_dfield (                                               //
 
    // p-field
 
-   if_constexpr (ETYP == elec_t::ewald)
+   if_constexpr(ETYP == elec_t::ewald)
    {
       pairf.fip[0] = pairf.fid[0];
       pairf.fip[1] = pairf.fid[1];
@@ -88,7 +87,7 @@ void pair_dfield (                                               //
       pairf.fkp[1] = pairf.fkd[1];
       pairf.fkp[2] = pairf.fkd[2];
    }
-   else if_constexpr (ETYP == elec_t::coulomb)
+   else if_constexpr(ETYP == elec_t::coulomb)
    {
       bcn1 = pscale * scale3 * rr3;
       bcn2 = pscale * scale5 * rr5;
@@ -110,7 +109,7 @@ void pair_dfield (                                               //
 
 template <elec_t ETYP>
 CUDA_DEVICE_FUNCTION
-void pair_ufield (                                  //
+void pair_ufield(                                   //
    real r2, real xr, real yr, real zr, real uscale, //
    real uindi0, real uindi1, real uindi2, real uinpi0, real uinpi1, real uinpi2,
    real pdi, real pti, //
@@ -118,27 +117,26 @@ void pair_ufield (                                  //
    real pdk, real ptk, //
    real aewald, PairField& RESTRICT pairf)
 {
-   real r = REAL_SQRT (r2);
-   real invr1 = REAL_RECIP (r);
+   real r = REAL_SQRT(r2);
+   real invr1 = REAL_RECIP(r);
    real rr2 = invr1 * invr1;
 
    real scale3, scale5;
-   damp_thole2 (r, pdi, pti, pdk, ptk, scale3, scale5);
+   damp_thole2(r, pdi, pti, pdk, ptk, scale3, scale5);
 
    MAYBE_UNUSED real bn[3];
-   if_constexpr (ETYP == elec_t::ewald)
-      damp_ewald (bn, 3, r, invr1, rr2, aewald);
+   if_constexpr(ETYP == elec_t::ewald) damp_ewald(bn, 3, r, invr1, rr2, aewald);
    real rr1 = invr1;
    real rr3 = rr1 * rr2;
    real rr5 = 3 * rr1 * rr2 * rr2;
 
    real bcn1, bcn2;
-   if_constexpr (ETYP == elec_t::ewald)
+   if_constexpr(ETYP == elec_t::ewald)
    {
       bcn1 = bn[1] - (1 - scale3) * rr3;
       bcn2 = bn[2] - (1 - scale5) * rr5;
    }
-   else if_constexpr (ETYP == elec_t::coulomb)
+   else if_constexpr(ETYP == elec_t::coulomb)
    {
       bcn1 = uscale * scale3 * rr3;
       bcn2 = uscale * scale5 * rr5;

@@ -7,7 +7,7 @@
 #include <ext/tinker/detail/units.hh>
 
 TINKER_NAMESPACE_BEGIN
-void kinetic_acc_impl_ (real& temp)
+void kinetic_acc_impl_(real& temp)
 {
    const real ekcal_inv = 1.0 / units::ekcal;
    real exx = 0;
@@ -43,7 +43,7 @@ void kinetic_acc_impl_ (real& temp)
    // TODO: if (isobaric .and. barostat.eq.'BUSSI')
 }
 
-void mdrest_acc_impl_ (int istep)
+void mdrest_acc_impl_(int istep)
 {
    if (!mdstuf::dorest)
       return;
@@ -151,7 +151,7 @@ void mdrest_acc_impl_ (int istep)
       tensor[2][2] = xx + yy + eps;
 
       int ndim = 3;
-      TINKER_RT (invert) (&ndim, &tensor[0][0]);
+      TINKER_RT(invert)(&ndim, &tensor[0][0]);
 
       // compute angular velocity and rotational kinetic energy
 
@@ -175,7 +175,7 @@ void mdrest_acc_impl_ (int istep)
    // print the translational velocity of the overall system
 
    if (inform::debug) {
-      print (
+      print(
          stdout,
          " System Linear Velocity :  {:12.2f}{:12.2f}{:12.2f}\n Translational "
          "Kinetic Energy :{:10s}{:12.4f} Kcal/mole\n",
@@ -199,14 +199,14 @@ void mdrest_acc_impl_ (int istep)
    // print the angular velocity of the overall system
 
    if (inform::debug) {
-      print (stdout,
-             " System Angular Velocity : {:12.2f}{:12.2f}{:12.2f}\n Rotational "
-             "Kinetic Energy :{:13s}{:12.4f} Kcal/mole\n",
-             vang[0], vang[1], vang[2], "", erot);
+      print(stdout,
+            " System Angular Velocity : {:12.2f}{:12.2f}{:12.2f}\n Rotational "
+            "Kinetic Energy :{:13s}{:12.4f} Kcal/mole\n",
+            vang[0], vang[1], vang[2], "", erot);
    }
 }
 
-void propagate_xyz_acc_impl_ (real dt)
+void propagate_xyz_acc_impl_(real dt)
 {
    #pragma acc parallel loop independent deviceptr(x,y,z,vx,vy,vz)
    for (int i = 0; i < n; ++i) {
@@ -216,7 +216,7 @@ void propagate_xyz_acc_impl_ (real dt)
    }
 }
 
-void propagate_velocity_acc_impl_ (real dt)
+void propagate_velocity_acc_impl_(real dt)
 {
    const real ekcal = units::ekcal;
    #pragma acc parallel loop independent deviceptr(vx,vy,vz,gx,gy,gz,massinv)

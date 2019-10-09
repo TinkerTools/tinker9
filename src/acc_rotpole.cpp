@@ -4,11 +4,11 @@
 
 TINKER_NAMESPACE_BEGIN
 #pragma acc routine seq
-static void rotsite (int isite, const real (*__restrict__ a)[3],
-                     real (*__restrict__ rpole)[10],
-                     const real (*__restrict__ pole)[10])
+static void rotsite(int isite, const real (*__restrict__ a)[3],
+                    real (*__restrict__ rpole)[10],
+                    const real (*__restrict__ pole)[10])
 {
-   static_assert (mpl_total == 10, "");
+   static_assert(mpl_total == 10, "");
 
    // charge
    rpole[isite][0] = pole[isite][0];
@@ -49,7 +49,7 @@ static void rotsite (int isite, const real (*__restrict__ a)[3],
    rpole[isite][mpl_pme_zz] = rp[2][2];
 }
 
-void rotpole ()
+void rotpole()
 {
    #pragma acc data deviceptr(x,y,z,zaxis,rpole,pole)
    #pragma acc parallel loop
@@ -60,7 +60,7 @@ void rotpole ()
       real zi = z[i];
       int iz = zaxis[i].zaxis;
       int ix = zaxis[i].xaxis;
-      int iy = INT_ABS (zaxis[i].yaxis) - 1;
+      int iy = INT_ABS(zaxis[i].yaxis) - 1;
       int polaxe = zaxis[i].polaxe;
       real a[3][3] = {{1, 0, 0}, {0, 0, 0}, {0, 0, 1}};
 
@@ -68,7 +68,7 @@ void rotpole ()
          real dx = x[iz] - xi;
          real dy = y[iz] - yi;
          real dz = z[iz] - zi;
-         real r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         real r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          a[2][0] = dx * r1;
          a[2][1] = dy * r1;
          a[2][2] = dz * r1;
@@ -77,7 +77,7 @@ void rotpole ()
          dy = 0;
          dz = 0;
          real dot = a[2][0];
-         if (REAL_ABS (dot) > (real)0.866) {
+         if (REAL_ABS(dot) > (real)0.866) {
             dx = 0;
             dy = 1;
             dot = a[2][1];
@@ -85,7 +85,7 @@ void rotpole ()
          dx -= dot * a[2][0];
          dy -= dot * a[2][1];
          dz -= dot * a[2][2];
-         r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          a[0][0] = dx * r1;
          a[0][1] = dy * r1;
          a[0][2] = dz * r1;
@@ -93,7 +93,7 @@ void rotpole ()
          real dx = x[iz] - xi;
          real dy = y[iz] - yi;
          real dz = z[iz] - zi;
-         real r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         real r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          a[2][0] = dx * r1;
          a[2][1] = dy * r1;
          a[2][2] = dz * r1;
@@ -105,7 +105,7 @@ void rotpole ()
          dx -= dot * a[2][0];
          dy -= dot * a[2][1];
          dz -= dot * a[2][2];
-         r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          a[0][0] = dx * r1;
          a[0][1] = dy * r1;
          a[0][2] = dz * r1;
@@ -113,7 +113,7 @@ void rotpole ()
          real dx = x[iz] - xi;
          real dy = y[iz] - yi;
          real dz = z[iz] - zi;
-         real r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         real r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          real dx1 = dx * r1;
          real dy1 = dy * r1;
          real dz1 = dz * r1;
@@ -121,7 +121,7 @@ void rotpole ()
          dx = x[ix] - xi;
          dy = y[ix] - yi;
          dz = z[ix] - zi;
-         r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          real dx2 = dx * r1;
          real dy2 = dy * r1;
          real dz2 = dz * r1;
@@ -129,7 +129,7 @@ void rotpole ()
          dx = dx1 + dx2;
          dy = dy1 + dy2;
          dz = dz1 + dz2;
-         r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          a[2][0] = dx * r1;
          a[2][1] = dy * r1;
          a[2][2] = dz * r1;
@@ -138,7 +138,7 @@ void rotpole ()
          dx = dx2 - dot * a[2][0];
          dy = dy2 - dot * a[2][1];
          dz = dz2 - dot * a[2][2];
-         r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          a[0][0] = dx * r1;
          a[0][1] = dy * r1;
          a[0][2] = dz * r1;
@@ -146,7 +146,7 @@ void rotpole ()
          real dx = x[iz] - xi;
          real dy = y[iz] - yi;
          real dz = z[iz] - zi;
-         real r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         real r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          a[2][0] = dx * r1;
          a[2][1] = dy * r1;
          a[2][2] = dz * r1;
@@ -154,21 +154,21 @@ void rotpole ()
          dx = x[ix] - xi;
          dy = y[ix] - yi;
          dz = z[ix] - zi;
-         r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          real dx1 = dx * r1;
          real dy1 = dy * r1;
          real dz1 = dz * r1;
          dx = x[iy] - xi;
          dy = y[iy] - yi;
          dz = z[iy] - zi;
-         r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          real dx2 = dx * r1;
          real dy2 = dy * r1;
          real dz2 = dz * r1;
          dx = dx1 + dx2;
          dy = dy1 + dy2;
          dz = dz1 + dz2;
-         r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          dx = dx * r1;
          dy = dy * r1;
          dz = dz * r1;
@@ -176,7 +176,7 @@ void rotpole ()
          dx -= dot * a[2][0];
          dy -= dot * a[2][1];
          dz -= dot * a[2][2];
-         r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          a[0][0] = dx * r1;
          a[0][1] = dy * r1;
          a[0][2] = dz * r1;
@@ -184,7 +184,7 @@ void rotpole ()
          real dx = x[iz] - xi;
          real dy = y[iz] - yi;
          real dz = z[iz] - zi;
-         real r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         real r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          real dx1 = dx * r1;
          real dy1 = dy * r1;
          real dz1 = dz * r1;
@@ -192,7 +192,7 @@ void rotpole ()
          dx = x[ix] - xi;
          dy = y[ix] - yi;
          dz = z[ix] - zi;
-         r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          real dx2 = dx * r1;
          real dy2 = dy * r1;
          real dz2 = dz * r1;
@@ -200,7 +200,7 @@ void rotpole ()
          dx = x[iy] - xi;
          dy = y[iy] - yi;
          dz = z[iy] - zi;
-         r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          real dx3 = dx * r1;
          real dy3 = dy * r1;
          real dz3 = dz * r1;
@@ -208,7 +208,7 @@ void rotpole ()
          dx = dx1 + dx2 + dx3;
          dy = dy1 + dy2 + dy3;
          dz = dz1 + dz2 + dz3;
-         r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          a[2][0] = dx * r1;
          a[2][1] = dy * r1;
          a[2][2] = dz * r1;
@@ -217,7 +217,7 @@ void rotpole ()
          dx = dx2 - dot * a[2][0];
          dy = dy2 - dot * a[2][1];
          dz = dz2 - dot * a[2][2];
-         r1 = REAL_RSQRT (dx * dx + dy * dy + dz * dz);
+         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
          a[0][0] = dx * r1;
          a[0][1] = dy * r1;
          a[0][2] = dz * r1;
@@ -227,7 +227,7 @@ void rotpole ()
       a[1][2] = a[0][1] * a[2][0] - a[0][0] * a[2][1];
 
       // rotsite routine
-      rotsite (i, a, rpole, pole);
+      rotsite(i, a, rpole, pole);
    }
 }
 TINKER_NAMESPACE_END

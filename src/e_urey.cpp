@@ -5,33 +5,33 @@
 #include <ext/tinker/detail/urypot.hh>
 
 TINKER_NAMESPACE_BEGIN
-void eurey_data (rc_op op)
+void eurey_data(rc_op op)
 {
-   if (!use_potent (urey_term))
+   if (!use_potent(urey_term))
       return;
 
    if (op & rc_dealloc) {
-      device_array::deallocate (iury, uk, ul);
+      device_array::deallocate(iury, uk, ul);
 
-      eub_handle.dealloc ();
+      buffer_deallocate(eub, vir_eub);
    }
 
    if (op & rc_alloc) {
-      int nangle = count_bonded_term (angle_term);
-      device_array::allocate (nangle, &iury, &uk, &ul);
+      int nangle = count_bonded_term(angle_term);
+      device_array::allocate(nangle, &iury, &uk, &ul);
 
-      nurey = count_bonded_term (urey_term);
-      eub_handle.alloc (nurey);
+      nurey = count_bonded_term(urey_term);
+      buffer_allocate(&eub, &vir_eub);
    }
 
    if (op & rc_init) {
-      int nangle = count_bonded_term (angle_term);
-      std::vector<int> ibuf (3 * nangle);
+      int nangle = count_bonded_term(angle_term);
+      std::vector<int> ibuf(3 * nangle);
       for (int i = 0; i < 3 * nangle; ++i)
          ibuf[i] = urey::iury[i] - 1;
-      device_array::copyin (nangle, iury, ibuf.data ());
-      device_array::copyin (nangle, uk, urey::uk);
-      device_array::copyin (nangle, ul, urey::ul);
+      device_array::copyin(nangle, iury, ibuf.data());
+      device_array::copyin(nangle, uk, urey::uk);
+      device_array::copyin(nangle, ul, urey::ul);
 
       cury = urypot::cury;
       qury = urypot::qury;
@@ -39,9 +39,9 @@ void eurey_data (rc_op op)
    }
 }
 
-extern void eurey_acc_impl_ (int vers);
-void eurey (int vers)
+extern void eurey_acc_impl_(int vers);
+void eurey(int vers)
 {
-   eurey_acc_impl_ (vers);
+   eurey_acc_impl_(vers);
 }
 TINKER_NAMESPACE_END

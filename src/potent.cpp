@@ -11,7 +11,7 @@
 #include <ext/tinker/detail/urey.hh>
 
 TINKER_NAMESPACE_BEGIN
-int use_potent (potent_t term)
+int use_potent(potent_t term)
 {
    int val = 0;
    switch (term) {
@@ -55,13 +55,13 @@ int use_potent (potent_t term)
       val = potent::use_polar;
       break;
    default:
-      assert (false);
+      assert(false);
       break;
    }
    return val;
 }
 
-int count_bonded_term (potent_t term)
+int count_bonded_term(potent_t term)
 {
    int val = -1;
    switch (term) {
@@ -90,7 +90,7 @@ int count_bonded_term (potent_t term)
       val = tortor::ntortor;
       break;
    default:
-      assert (false);
+      assert(false);
       break;
    }
    return val;

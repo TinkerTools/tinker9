@@ -163,7 +163,7 @@ static const double ref_g_tors_trpcage[][3] = {
    {-0.0698, -2.4663, 0.5071},  {0.8321, 2.5504, -2.1001},
    {0.4209, -0.0213, -0.0991},  {-0.3798, 0.2073, 0.0717},
    {-0.6758, -2.0470, 1.8181},  {0.0410, 0.1840, -0.3332}};
-TEST_CASE ("Torsion-Trpcage", "[ff][etors][trpcage]")
+TEST_CASE("Torsion-Trpcage", "[ff][etors][trpcage]")
 {
    const char* k = "test_trpcage.key";
    const char* x1 = "test_trpcage.xyz";
@@ -171,29 +171,29 @@ TEST_CASE ("Torsion-Trpcage", "[ff][etors][trpcage]")
 
    std::string k0 = trpcage_key;
    k0 += torsionterm_only;
-   TestFile fke (k, k0);
+   TestFile fke(k, k0);
 
-   TestFile fx1 (x1, trpcage_xyz);
-   TestFile fpr (p, commit_6fe8e913::amoebapro13_prm);
+   TestFile fx1(x1, trpcage_xyz);
+   TestFile fpr(p, commit_6fe8e913::amoebapro13_prm);
 
    const char* argv[] = {"dummy", x1};
    int argc = 2;
-   test_begin_with_args (argc, argv);
+   test_begin_with_args(argc, argv);
    rc_flag = usage;
-   initialize ();
+   initialize();
 
    const double eps_e = 0.0001;
    const double ref_e = 12.4527;
    const int ref_count = 843;
-   const double eps_g = test_get_eps (0.0003, 0.0001);
+   const double eps_g = test_get_eps(0.0003, 0.0001);
    const double eps_v = 0.001;
    const double ref_v[][3] = {{-0.522, 2.350, -4.405},
                               {2.350, -0.934, -2.815},
                               {-4.405, -2.815, 1.456}};
 
-   COMPARE_BONDED_FORCE (etors, ntors, et_handle, ref_e, eps_e, ref_count, gx,
-                         gy, gz, ref_g_tors_trpcage, eps_g, ref_v, eps_v);
+   COMPARE_BONDED_FORCE(etors, ntors, et, vir_et, ref_e, eps_e, ref_count, gx,
+                        gy, gz, ref_g_tors_trpcage, eps_g, ref_v, eps_v);
 
-   finish ();
-   test_end ();
+   finish();
+   test_end();
 }
