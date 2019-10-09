@@ -43,7 +43,7 @@ static double arbox_pot[] = {
    -278.566484, -278.575517, -278.584139, -278.592350, -278.600148, -278.607530,
    -278.614496, -278.621043, -278.627171, -278.632877, -278.638159, -278.643017,
    -278.647447, -278.651448, -278.655017, -278.658152};
-TEST_CASE ("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
+TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
 {
 #if TINKER_DOUBLE_PRECISION
    const char* k = "test_arbox.key";
@@ -53,40 +53,40 @@ TEST_CASE ("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
 
    std::string k0 = arbox_key;
    k0 += "integrator  verlet\n";
-   TestFile fke (k, k0);
+   TestFile fke(k, k0);
 
-   TestFile fd (d, arbox_dyn);
-   TestFile fx (x, arbox_xyz);
-   TestFile fp (p, commit_6fe8e913::amoeba09_prm);
+   TestFile fd(d, arbox_dyn);
+   TestFile fx(x, arbox_xyz);
+   TestFile fp(p, commit_6fe8e913::amoeba09_prm);
 
    const char* argv[] = {"dummy", x};
    int argc = 2;
-   test_begin_with_args (argc, argv);
-   test_mdinit (0, 0);
+   test_begin_with_args(argc, argv);
+   test_mdinit(0, 0);
 
    rc_flag = usage_;
-   initialize ();
+   initialize();
 
    const double dt_ps = 0.001;
    const int nsteps = 20;
    const double eps_e = 0.0001;
    std::vector<double> epots, eksums;
    for (int i = 1; i <= nsteps; ++i) {
-      velocity_verlet (i, dt_ps);
-      epots.push_back (esum);
-      eksums.push_back (eksum);
+      velocity_verlet(i, dt_ps);
+      epots.push_back(esum);
+      eksums.push_back(eksum);
    }
 
-   finish ();
-   test_end ();
+   finish();
+   test_end();
 
    for (int i = 0; i < nsteps; ++i) {
-      REQUIRE (epots[i] == Approx (arbox_pot[i]).margin (eps_e));
-      REQUIRE (eksums[i] == Approx (arbox_kin[i]).margin (eps_e));
+      REQUIRE(epots[i] == Approx(arbox_pot[i]).margin(eps_e));
+      REQUIRE(eksums[i] == Approx(arbox_kin[i]).margin(eps_e));
    }
 
-   TestFileExpected ("test_arbox.arc");
+   TestFileExpected("test_arbox.arc");
 #else
-   REQUIRE (true);
+   REQUIRE(true);
 #endif
 }

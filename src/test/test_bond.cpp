@@ -164,7 +164,7 @@ static const double ref_g_bond_trpcage[][3] = {
    {-0.0676, 0.7711, -0.4528},    {-0.4055, -0.5887, -0.4457},
    {2.7690, 4.4865, 6.0807},      {8.6810, -0.0632, 1.0336}};
 
-TEST_CASE ("Bond-Trpcage", "[ff][ebond][harmonic][trpcage]")
+TEST_CASE("Bond-Trpcage", "[ff][ebond][harmonic][trpcage]")
 {
    const char* k = "test_trpcage.key";
    const char* x1 = "test_trpcage.xyz";
@@ -172,29 +172,29 @@ TEST_CASE ("Bond-Trpcage", "[ff][ebond][harmonic][trpcage]")
 
    std::string k0 = trpcage_key;
    k0 += bondterm_only;
-   TestFile fke (k, k0);
+   TestFile fke(k, k0);
 
-   TestFile fx1 (x1, trpcage_xyz);
-   TestFile fpr (p, commit_6fe8e913::amoebapro13_prm);
+   TestFile fx1(x1, trpcage_xyz);
+   TestFile fpr(p, commit_6fe8e913::amoebapro13_prm);
 
    const char* argv[] = {"dummy", x1};
    int argc = 2;
-   test_begin_with_args (argc, argv);
+   test_begin_with_args(argc, argv);
    rc_flag = usage;
-   initialize ();
+   initialize();
 
    const double eps_e = 0.0001;
    const double ref_e = 19.4715;
    const int ref_count = 310;
-   const double eps_g = test_get_eps (0.004, 0.0001);
-   const double eps_v = test_get_eps (0.006, 0.001);
+   const double eps_g = test_get_eps(0.004, 0.0001);
+   const double eps_v = test_get_eps(0.006, 0.001);
    const double ref_v[][3] = {{999.440, 47.686, 44.572},
                               {47.686, 792.043, 59.777},
                               {44.572, 59.777, 1049.659}};
 
-   COMPARE_BONDED_FORCE (ebond, nbond, eb_handle, ref_e, eps_e, ref_count, gx,
-                         gy, gz, ref_g_bond_trpcage, eps_g, ref_v, eps_v);
+   COMPARE_BONDED_FORCE(ebond, nbond, eb, vir_eb, ref_e, eps_e, ref_count, gx,
+                        gy, gz, ref_g_bond_trpcage, eps_g, ref_v, eps_v);
 
-   finish ();
-   test_end ();
+   finish();
+   test_end();
 }

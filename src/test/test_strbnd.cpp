@@ -163,7 +163,7 @@ static const double ref_g_strbnd_trpcage[][3] = {
    {0.3881, -1.0727, 0.3141},   {-0.2190, 0.7281, 0.3998},
    {0.0242, 0.1653, -0.3613},   {0.1551, 0.1649, -0.1332},
    {-0.1380, -0.5422, -0.6618}, {-4.1085, 0.3956, -0.2928}};
-TEST_CASE ("Strbnd-Trpcage", "[ff][estrbnd][trpcage]")
+TEST_CASE("Strbnd-Trpcage", "[ff][estrbnd][trpcage]")
 {
    const char* k = "test_trpcage.key";
    const char* x1 = "test_trpcage.xyz";
@@ -171,29 +171,29 @@ TEST_CASE ("Strbnd-Trpcage", "[ff][estrbnd][trpcage]")
 
    std::string k0 = trpcage_key;
    k0 += strbndterm_only;
-   TestFile fke (k, k0);
+   TestFile fke(k, k0);
 
-   TestFile fx1 (x1, trpcage_xyz);
-   TestFile fpr (p, commit_6fe8e913::amoebapro13_prm);
+   TestFile fx1(x1, trpcage_xyz);
+   TestFile fpr(p, commit_6fe8e913::amoebapro13_prm);
 
    const char* argv[] = {"dummy", x1};
    int argc = 2;
-   test_begin_with_args (argc, argv);
+   test_begin_with_args(argc, argv);
    rc_flag = usage;
-   initialize ();
+   initialize();
 
    const double eps_e = 0.0001;
    const double ref_e = -0.6930;
    const int ref_count = 504;
-   const double eps_g = test_get_eps (0.0003, 0.0001);
+   const double eps_g = test_get_eps(0.0003, 0.0001);
    const double eps_v = 0.001;
    const double ref_v[][3] = {{-55.818, 18.525, 25.157},
                               {18.525, -26.515, -9.871},
                               {25.157, -9.871, -15.485}};
 
-   COMPARE_BONDED_FORCE (estrbnd, nstrbnd, eba_handle, ref_e, eps_e, ref_count,
-                         gx, gy, gz, ref_g_strbnd_trpcage, eps_g, ref_v, eps_v);
+   COMPARE_BONDED_FORCE(estrbnd, nstrbnd, eba, vir_eba, ref_e, eps_e, ref_count,
+                        gx, gy, gz, ref_g_strbnd_trpcage, eps_g, ref_v, eps_v);
 
-   finish ();
-   test_end ();
+   finish();
+   test_end();
 }

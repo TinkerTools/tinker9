@@ -1,7 +1,7 @@
 #pragma once
-
 #include "mathfunc.h"
 #include "switch.h"
+
 
 TINKER_NAMESPACE_BEGIN
 /**
@@ -25,20 +25,20 @@ TINKER_NAMESPACE_BEGIN
  * \f$ df/dx \f$ value
  *
  * \tparam DO_DTAPER
- * If \c false, \c dtaper will not be calculated and its original value will not
+ * If false, `dtaper` will not be calculated and its original value will not
  * be affected.
  */
 #pragma acc routine seq
 template <int DO_DTAPER>
 CUDA_DEVICE_FUNCTION
-void switch_taper5 (real rik, real cut, real off, real& RESTRICT taper,
-                    real& RESTRICT dtaper)
+void switch_taper5(real rik, real cut, real off, real& RESTRICT taper,
+                   real& RESTRICT dtaper)
 {
-   real _1_ab = REAL_RECIP (cut - off);
+   real _1_ab = REAL_RECIP(cut - off);
    real x = (rik - off) * _1_ab;
    real x2 = x * x;
    real x3 = x2 * x;
    taper = x3 * (6 * x2 - 15 * x + 10);
-   if_constexpr (DO_DTAPER) dtaper = 30 * REAL_SQ (x * (1 - x)) * _1_ab;
+   if_constexpr(DO_DTAPER) dtaper = 30 * REAL_SQ(x * (1 - x)) * _1_ab;
 }
 TINKER_NAMESPACE_END

@@ -29,7 +29,7 @@ struct NBList
    real cutoff;   ///< list cutoff distance
    real buffer;   ///< width of the neighbor list buffer region
 
-   ~NBList ();
+   ~NBList();
 };
 
 typedef GenericUnit<NBList, GenericUnitVersion::EnableOnDevice> NBListUnit;
@@ -48,7 +48,7 @@ TINKER_EXTERN device_pointer<int> mindex;
 TINKER_EXTERN device_pointer<real> minv;
 TINKER_EXTERN device_pointer<real> minv_exclude_;
 
-void nblist_data (rc_op op);
+void nblist_data(rc_op op);
 TINKER_NAMESPACE_END
 
 #endif

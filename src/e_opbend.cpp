@@ -2,27 +2,28 @@
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"
-#include <ext/tinker/detail/angpot.hh>
-#include <ext/tinker/detail/opbend.hh>
+#include <cassert>
+#include <tinker/detail/angpot.hh>
+#include <tinker/detail/opbend.hh>
 
 TINKER_NAMESPACE_BEGIN
-void eopbend_data (rc_op op)
+void eopbend_data(rc_op op)
 {
-   if (!use_potent (opbend_term))
+   if (!use_potent(opbend_term))
       return;
 
    if (op & rc_dealloc) {
-      device_array::deallocate (iopb, opbk);
+      device_array::deallocate(iopb, opbk);
 
-      eopb_handle.dealloc ();
+      buffer_deallocate(eopb, vir_eopb);
    }
 
    if (op & rc_alloc) {
-      int nangle = count_bonded_term (angle_term);
-      device_array::allocate (nangle, &iopb, &opbk);
+      int nangle = count_bonded_term(angle_term);
+      device_array::allocate(nangle, &iopb, &opbk);
 
-      nopbend = count_bonded_term (opbend_term);
-      eopb_handle.alloc (nopbend);
+      nopbend = count_bonded_term(opbend_term);
+      buffer_allocate(&eopb, &vir_eopb);
    }
 
    if (op & rc_init) {
@@ -32,13 +33,13 @@ void eopbend_data (rc_op op)
       else if (otyp == "ALLINGER")
          opbtyp = eopbend_t::allinger;
       else
-         assert (false);
-      int nangle = count_bonded_term (angle_term);
-      std::vector<int> ibuf (nangle);
+         assert(false);
+      int nangle = count_bonded_term(angle_term);
+      std::vector<int> ibuf(nangle);
       for (int i = 0; i < nangle; ++i)
          ibuf[i] = opbend::iopb[i] - 1;
-      device_array::copyin (nangle, iopb, ibuf.data ());
-      device_array::copyin (nangle, opbk, opbend::opbk);
+      device_array::copyin(nangle, iopb, ibuf.data());
+      device_array::copyin(nangle, opbk, opbend::opbk);
       opbunit = angpot::opbunit;
       copb = angpot::copb;
       qopb = angpot::qopb;
@@ -47,9 +48,9 @@ void eopbend_data (rc_op op)
    }
 }
 
-extern void eopbend_acc_impl_ (int vers);
-void eopbend (int vers)
+extern void eopbend_acc_impl_(int vers);
+void eopbend(int vers)
 {
-   eopbend_acc_impl_ (vers);
+   eopbend_acc_impl_(vers);
 }
 TINKER_NAMESPACE_END

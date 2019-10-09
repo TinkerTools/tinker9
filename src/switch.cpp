@@ -1,10 +1,10 @@
 #include "switch.h"
 #include "mathfunc.h"
-#include <ext/tinker/detail/limits.hh>
-#include <ext/tinker/detail/nonpol.hh>
+#include <tinker/detail/limits.hh>
+#include <tinker/detail/nonpol.hh>
 
 TINKER_NAMESPACE_BEGIN
-real switch_cut (switch_t mode)
+real switch_cut(switch_t mode)
 {
    real cut;
    using namespace limits;
@@ -23,7 +23,7 @@ real switch_cut (switch_t mode)
       cut = chgtaper;
       break;
    case switch_chgdpl:
-      cut = std::sqrt (chgtaper * dpltaper);
+      cut = std::sqrt(chgtaper * dpltaper);
       break;
    case switch_dipole:
       cut = dpltaper;
@@ -50,14 +50,14 @@ real switch_cut (switch_t mode)
       cut = nonpol::stoff;
       break;
    default: // switch_default
-      cut = min_of (vdwtaper, reptaper, disptaper, chgtaper, dpltaper,
-                    mpoletaper, ctrntaper);
+      cut = min_of(vdwtaper, reptaper, disptaper, chgtaper, dpltaper,
+                   mpoletaper, ctrntaper);
       break;
    }
    return cut;
 }
 
-real switch_off (switch_t mode)
+real switch_off(switch_t mode)
 {
    real off;
    using namespace limits;
@@ -75,7 +75,7 @@ real switch_off (switch_t mode)
       off = chgcut;
       break;
    case switch_chgdpl:
-      off = std::sqrt (chgcut * dplcut);
+      off = std::sqrt(chgcut * dplcut);
       break;
    case switch_dipole:
       off = dplcut;
@@ -102,7 +102,7 @@ real switch_off (switch_t mode)
       off = nonpol::stcut;
       break;
    default: // switch_default
-      off = min_of (vdwcut, repcut, dispcut, chgcut, dplcut, mpolecut, ctrncut);
+      off = min_of(vdwcut, repcut, dispcut, chgcut, dplcut, mpolecut, ctrncut);
       break;
    }
    return off;

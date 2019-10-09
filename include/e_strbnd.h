@@ -11,11 +11,12 @@ TINKER_EXTERN device_pointer<int, 3> isb;
 TINKER_EXTERN device_pointer<real, 2> sbk;
 TINKER_EXTERN real stbnunit;
 
-TINKER_EXTERN BondedEnergy eba_handle;
+TINKER_EXTERN energy_buffer eba;
+TINKER_EXTERN virial_buffer vir_eba;
 
-void estrbnd_data (rc_op op);
+void estrbnd_data(rc_op op);
 
-void estrbnd (int vers);
+void estrbnd(int vers);
 TINKER_NAMESPACE_END
 
 #endif

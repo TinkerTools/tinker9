@@ -22,16 +22,14 @@
 
 TINKER_NAMESPACE_BEGIN
 template <int USE, eopbend_t TYP>
-void eopbend_tmpl ()
+void eopbend_tmpl()
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_g = USE & calc::grad;
    constexpr int do_v = USE & calc::virial;
-   sanity_check<USE> ();
+   sanity_check<USE>();
 
-   auto* eopb = eopb_handle.e ()->buffer ();
-   auto* vir_eopb = eopb_handle.vir ()->buffer ();
-   auto bufsize = eopb_handle.buffer_size ();
+   auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
@@ -79,25 +77,25 @@ void eopbend_tmpl ()
       MAYBE_UNUSED real rcb2, rcd2;
       MAYBE_UNUSED real dot;
       real cc;
-      if_constexpr (TYP == eopbend_t::w_d_c)
+      if_constexpr(TYP == eopbend_t::w_d_c)
       {
 
          // W-D-C angle between A-B-C plane and B-D vector for D-B<AC
 
          rab2 = xab * xab + yab * yab + zab * zab;
          rcb2 = xcb * xcb + ycb * ycb + zcb * zcb;
-         cc = rab2 * rcb2 - REAL_SQ (xab * xcb + yab * ycb + zab * zcb);
-         if_constexpr (do_g) dot = xab * xcb + yab * ycb + zab * zcb;
+         cc = rab2 * rcb2 - REAL_SQ(xab * xcb + yab * ycb + zab * zcb);
+         if_constexpr(do_g) dot = xab * xcb + yab * ycb + zab * zcb;
       }
-      else if_constexpr (TYP == eopbend_t::allinger)
+      else if_constexpr(TYP == eopbend_t::allinger)
       {
 
          // Allinger angle between A-C-D plane and D-B vector for D-B<AC
 
          rad2 = xad * xad + yad * yad + zad * zad;
          rcd2 = xcd * xcd + ycd * ycd + zcd * zcd;
-         cc = rad2 * rcd2 - REAL_SQ (xad * xcd + yad * ycd + zad * zcd);
-         if_constexpr (do_g) dot = xad * xcd + yad * ycd + zad * zcd;
+         cc = rad2 * rcd2 - REAL_SQ(xad * xcd + yad * ycd + zad * zcd);
+         if_constexpr(do_g) dot = xad * xcd + yad * ycd + zad * zcd;
       }
 
       // find the out-of-plane angle bending energy
@@ -107,33 +105,33 @@ void eopbend_tmpl ()
       real rdb2 = xdb * xdb + ydb * ydb + zdb * zdb;
 
       if (rdb2 != 0 && cc != 0) {
-         real sine = REAL_ABS (ee) * REAL_RSQRT (cc * rdb2);
-         sine = REAL_MIN (1, sine);
-         real angle = radian * REAL_ASIN (sine);
+         real sine = REAL_ABS(ee) * REAL_RSQRT(cc * rdb2);
+         sine = REAL_MIN(1, sine);
+         real angle = radian * REAL_ASIN(sine);
          real dt = angle;
          real dt2 = dt * dt;
          real dt3 = dt2 * dt;
          real dt4 = dt2 * dt2;
 
-         if_constexpr (do_e)
+         if_constexpr(do_e)
          {
             real e = opbunit * force * dt2 *
                (1 + copb * dt + qopb * dt2 + popb * dt3 + sopb * dt4);
-            atomic_add_value (e, eopb, offset);
+            atomic_add_value(e, eopb, offset);
          }
 
-         if_constexpr (do_g)
+         if_constexpr(do_g)
          {
             real deddt = opbunit * force * dt * radian *
                (2 + 3 * copb * dt + 4 * qopb * dt2 + 5 * popb * dt3 +
                 6 * sopb * dt4);
             real dedcos =
-               -deddt * REAL_SIGN (1, ee) * REAL_RSQRT (cc * rdb2 - ee * ee);
-            real term = ee * REAL_RECIP (cc);
+               -deddt * REAL_SIGN(1, ee) * REAL_RSQRT(cc * rdb2 - ee * ee);
+            real term = ee * REAL_RECIP(cc);
             real dccdxia, dccdyia, dccdzia;
             real dccdxic, dccdyic, dccdzic;
             real dccdxid, dccdyid, dccdzid;
-            if_constexpr (TYP == eopbend_t::w_d_c)
+            if_constexpr(TYP == eopbend_t::w_d_c)
             {
                dccdxia = (xab * rcb2 - xcb * dot) * term;
                dccdyia = (yab * rcb2 - ycb * dot) * term;
@@ -145,7 +143,7 @@ void eopbend_tmpl ()
                dccdyid = 0;
                dccdzid = 0;
             }
-            else if_constexpr (TYP == eopbend_t::allinger)
+            else if_constexpr(TYP == eopbend_t::allinger)
             {
                dccdxia = (xad * rcd2 - xcd * dot) * term;
                dccdyia = (yad * rcd2 - ycd * dot) * term;
@@ -158,7 +156,7 @@ void eopbend_tmpl ()
                dccdzid = -dccdzia - dccdzic;
             }
 
-            term = ee * REAL_RECIP (rdb2);
+            term = ee * REAL_RECIP(rdb2);
             real deedxia = ydb * zcb - zdb * ycb;
             real deedyia = zdb * xcb - xdb * zcb;
             real deedzia = xdb * ycb - ydb * xcb;
@@ -209,7 +207,7 @@ void eopbend_tmpl ()
             #pragma acc atomic update
             gz[id] += dedzid;
 
-            if_constexpr (do_v)
+            if_constexpr(do_v)
             {
                real vxx = xab * dedxia + xcb * dedxic + xdb * dedxid;
                real vyx = yab * dedxia + ycb * dedxic + ydb * dedxid;
@@ -218,40 +216,39 @@ void eopbend_tmpl ()
                real vzy = zab * dedyia + zcb * dedyic + zdb * dedyid;
                real vzz = zab * dedzia + zcb * dedzic + zdb * dedzid;
 
-               atomic_add_value (vxx, vyx, vzx, vyy, vzy, vzz, vir_eopb,
-                                 offset);
+               atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_eopb, offset);
             }
          }
       }
    } // end for (int iopbend)
 }
 
-void eopbend_acc_impl_ (int vers)
+void eopbend_acc_impl_(int vers)
 {
    if (opbtyp == eopbend_t::w_d_c) {
       if (vers == calc::v0 || vers == calc::v3)
-         eopbend_tmpl<calc::v0, eopbend_t::w_d_c> ();
+         eopbend_tmpl<calc::v0, eopbend_t::w_d_c>();
       else if (vers == calc::v1)
-         eopbend_tmpl<calc::v1, eopbend_t::w_d_c> ();
+         eopbend_tmpl<calc::v1, eopbend_t::w_d_c>();
       else if (vers == calc::v4)
-         eopbend_tmpl<calc::v4, eopbend_t::w_d_c> ();
+         eopbend_tmpl<calc::v4, eopbend_t::w_d_c>();
       else if (vers == calc::v5)
-         eopbend_tmpl<calc::v5, eopbend_t::w_d_c> ();
+         eopbend_tmpl<calc::v5, eopbend_t::w_d_c>();
       else if (vers == calc::v6)
-         eopbend_tmpl<calc::v6, eopbend_t::w_d_c> ();
+         eopbend_tmpl<calc::v6, eopbend_t::w_d_c>();
    } else if (opbtyp == eopbend_t::allinger) {
       if (vers == calc::v0 || vers == calc::v3)
-         eopbend_tmpl<calc::v0, eopbend_t::allinger> ();
+         eopbend_tmpl<calc::v0, eopbend_t::allinger>();
       else if (vers == calc::v1)
-         eopbend_tmpl<calc::v1, eopbend_t::allinger> ();
+         eopbend_tmpl<calc::v1, eopbend_t::allinger>();
       else if (vers == calc::v4)
-         eopbend_tmpl<calc::v4, eopbend_t::allinger> ();
+         eopbend_tmpl<calc::v4, eopbend_t::allinger>();
       else if (vers == calc::v5)
-         eopbend_tmpl<calc::v5, eopbend_t::allinger> ();
+         eopbend_tmpl<calc::v5, eopbend_t::allinger>();
       else if (vers == calc::v6)
-         eopbend_tmpl<calc::v6, eopbend_t::allinger> ();
+         eopbend_tmpl<calc::v6, eopbend_t::allinger>();
    } else {
-      assert (false);
+      assert(false);
    }
 }
 TINKER_NAMESPACE_END

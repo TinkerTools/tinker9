@@ -4,7 +4,7 @@
 #include "potent.h"
 
 TINKER_NAMESPACE_BEGIN
-void potential_data (rc_op op)
+void potential_data(rc_op op)
 {
    if ((rc_flag & calc::vmask) == 0)
       return;
@@ -34,46 +34,46 @@ void potential_data (rc_op op)
    rc_man epolar42_{epolar_data, op};
 }
 
-void energy_potential (int vers)
+void energy_potential(int vers)
 {
 
-   zero_egv (vers);
+   zero_egv(vers);
 
    // bonded terms
 
-   if (use_potent (bond_term))
-      ebond (vers);
-   if (use_potent (angle_term))
-      eangle (vers);
-   if (use_potent (strbnd_term))
-      estrbnd (vers);
-   if (use_potent (urey_term))
-      eurey (vers);
-   if (use_potent (opbend_term))
-      eopbend (vers);
-   if (use_potent (torsion_term))
-      etors (vers);
-   if (use_potent (pitors_term))
-      epitors (vers);
-   if (use_potent (tortor_term))
-      etortor (vers);
+   if (use_potent(bond_term))
+      ebond(vers);
+   if (use_potent(angle_term))
+      eangle(vers);
+   if (use_potent(strbnd_term))
+      estrbnd(vers);
+   if (use_potent(urey_term))
+      eurey(vers);
+   if (use_potent(opbend_term))
+      eopbend(vers);
+   if (use_potent(torsion_term))
+      etors(vers);
+   if (use_potent(pitors_term))
+      epitors(vers);
+   if (use_potent(tortor_term))
+      etortor(vers);
 
    // non-bonded terms
 
-   if (use_potent (vdw_term))
-      evdw (vers);
+   if (use_potent(vdw_term))
+      evdw(vers);
 
-   elec_init (vers);
-   if (use_potent (mpole_term))
-      empole (vers);
-   if (use_potent (polar_term))
-      epolar (vers);
-   torque (vers);
+   elec_init(vers);
+   if (use_potent(mpole_term))
+      empole(vers);
+   if (use_potent(polar_term))
+      epolar(vers);
+   torque(vers);
 
-   sum_energies (vers);
+   sum_energies(vers);
 
    // list update
 
-   nblist_data (rc_man::evolve);
+   nblist_data(rc_man::evolve);
 }
 TINKER_NAMESPACE_END

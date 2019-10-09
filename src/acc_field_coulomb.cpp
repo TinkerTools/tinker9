@@ -7,18 +7,18 @@
 
 TINKER_NAMESPACE_BEGIN
 // see also subroutine dfield0b in induce.f
-void dfield_coulomb (real (*field)[3], real (*fieldp)[3])
+void dfield_coulomb(real (*field)[3], real (*fieldp)[3])
 {
-   device_array::zero (n, field, fieldp);
+   device_array::zero(n, field, fieldp);
 
-   const real off = switch_off (switch_mpole);
+   const real off = switch_off(switch_mpole);
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
-   const auto* mlst = mlist_unit.deviceptr ();
+   const auto* mlst = mlist_unit.deviceptr();
 
 #define DFIELD_DPTRS_ x, y, z, box, thole, pdamp, field, fieldp, rpole
 
-   MAYBE_UNUSED int GRID_DIM = get_grid_size (BLOCK_DIM);
+   MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                deviceptr(DFIELD_DPTRS_,mlst)
    #pragma acc loop gang independent
@@ -50,12 +50,12 @@ void dfield_coulomb (real (*field)[3], real (*fieldp)[3])
          real yr = y[k] - yi;
          real zr = z[k] - zi;
 
-         image (xr, yr, zr, box);
+         image(xr, yr, zr, box);
          real r2 = xr * xr + yr * yr + zr * zr;
          if (r2 <= off2) {
             PairField pairf;
-            pair_dfield<elec_t::coulomb> ( //
-               r2, xr, yr, zr, 1, 1,       //
+            pair_dfield<elec_t::coulomb>( //
+               r2, xr, yr, zr, 1, 1,      //
                ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, pdi,
                pti, //
                rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
@@ -71,21 +71,21 @@ void dfield_coulomb (real (*field)[3], real (*fieldp)[3])
             tyi += pairf.fip[1];
             tzi += pairf.fip[2];
 
-            atomic_add_value (pairf.fkd[0], &field[k][0]);
-            atomic_add_value (pairf.fkd[1], &field[k][1]);
-            atomic_add_value (pairf.fkd[2], &field[k][2]);
-            atomic_add_value (pairf.fkp[0], &fieldp[k][0]);
-            atomic_add_value (pairf.fkp[1], &fieldp[k][1]);
-            atomic_add_value (pairf.fkp[2], &fieldp[k][2]);
+            atomic_add_value(pairf.fkd[0], &field[k][0]);
+            atomic_add_value(pairf.fkd[1], &field[k][1]);
+            atomic_add_value(pairf.fkd[2], &field[k][2]);
+            atomic_add_value(pairf.fkp[0], &fieldp[k][0]);
+            atomic_add_value(pairf.fkp[1], &fieldp[k][1]);
+            atomic_add_value(pairf.fkp[2], &fieldp[k][2]);
          }
       } // end for (int kk)
 
-      atomic_add_value (gxi, &field[i][0]);
-      atomic_add_value (gyi, &field[i][1]);
-      atomic_add_value (gzi, &field[i][2]);
-      atomic_add_value (txi, &fieldp[i][0]);
-      atomic_add_value (tyi, &fieldp[i][1]);
-      atomic_add_value (tzi, &fieldp[i][2]);
+      atomic_add_value(gxi, &field[i][0]);
+      atomic_add_value(gyi, &field[i][1]);
+      atomic_add_value(gzi, &field[i][2]);
+      atomic_add_value(txi, &fieldp[i][0]);
+      atomic_add_value(tyi, &fieldp[i][1]);
+      atomic_add_value(tzi, &fieldp[i][2]);
    } // end for (int i)
 
    #pragma acc parallel deviceptr(DFIELD_DPTRS_,dpexclude_,dpexclude_scale_)
@@ -116,11 +116,11 @@ void dfield_coulomb (real (*field)[3], real (*fieldp)[3])
       real yr = y[k] - yi;
       real zr = z[k] - zi;
 
-      image (xr, yr, zr, box);
+      image(xr, yr, zr, box);
       real r2 = xr * xr + yr * yr + zr * zr;
 
       PairField pairf;
-      pair_dfield<elec_t::coulomb> (                                      //
+      pair_dfield<elec_t::coulomb>(                                       //
          r2, xr, yr, zr, dscale, pscale,                                  //
          ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, pdi, pti, //
          rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
@@ -129,36 +129,36 @@ void dfield_coulomb (real (*field)[3], real (*fieldp)[3])
          rpole[k][mpl_pme_zz], pdamp[k], thole[k], //
          0, pairf);
 
-      atomic_add_value (pairf.fid[0], &field[i][0]);
-      atomic_add_value (pairf.fid[1], &field[i][1]);
-      atomic_add_value (pairf.fid[2], &field[i][2]);
-      atomic_add_value (pairf.fip[0], &fieldp[i][0]);
-      atomic_add_value (pairf.fip[1], &fieldp[i][1]);
-      atomic_add_value (pairf.fip[2], &fieldp[i][2]);
+      atomic_add_value(pairf.fid[0], &field[i][0]);
+      atomic_add_value(pairf.fid[1], &field[i][1]);
+      atomic_add_value(pairf.fid[2], &field[i][2]);
+      atomic_add_value(pairf.fip[0], &fieldp[i][0]);
+      atomic_add_value(pairf.fip[1], &fieldp[i][1]);
+      atomic_add_value(pairf.fip[2], &fieldp[i][2]);
 
-      atomic_add_value (pairf.fkd[0], &field[k][0]);
-      atomic_add_value (pairf.fkd[1], &field[k][1]);
-      atomic_add_value (pairf.fkd[2], &field[k][2]);
-      atomic_add_value (pairf.fkp[0], &fieldp[k][0]);
-      atomic_add_value (pairf.fkp[1], &fieldp[k][1]);
-      atomic_add_value (pairf.fkp[2], &fieldp[k][2]);
+      atomic_add_value(pairf.fkd[0], &field[k][0]);
+      atomic_add_value(pairf.fkd[1], &field[k][1]);
+      atomic_add_value(pairf.fkd[2], &field[k][2]);
+      atomic_add_value(pairf.fkp[0], &fieldp[k][0]);
+      atomic_add_value(pairf.fkp[1], &fieldp[k][1]);
+      atomic_add_value(pairf.fkp[2], &fieldp[k][2]);
    }
 }
 
 // see also subroutine ufield0b in induce.f
-void ufield_coulomb (const real (*uind)[3], const real (*uinp)[3],
-                     real (*field)[3], real (*fieldp)[3])
+void ufield_coulomb(const real (*uind)[3], const real (*uinp)[3],
+                    real (*field)[3], real (*fieldp)[3])
 {
-   device_array::zero (n, field, fieldp);
+   device_array::zero(n, field, fieldp);
 
-   const real off = switch_off (switch_mpole);
+   const real off = switch_off(switch_mpole);
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
-   const auto* mlst = mlist_unit.deviceptr ();
+   const auto* mlst = mlist_unit.deviceptr();
 
 #define UFIELD_DPTRS_ x, y, z, box, thole, pdamp, field, fieldp, uind, uinp
 
-   MAYBE_UNUSED int GRID_DIM = get_grid_size (BLOCK_DIM);
+   MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                deviceptr(UFIELD_DPTRS_,mlst)
    #pragma acc loop gang independent
@@ -186,11 +186,11 @@ void ufield_coulomb (const real (*uind)[3], const real (*uinp)[3],
          real yr = y[k] - yi;
          real zr = z[k] - zi;
 
-         image (xr, yr, zr, box);
+         image(xr, yr, zr, box);
          real r2 = xr * xr + yr * yr + zr * zr;
          if (r2 <= off2) {
             PairField pairf;
-            pair_ufield<elec_t::coulomb> (                               //
+            pair_ufield<elec_t::coulomb>(                                //
                r2, xr, yr, zr, 1,                                        //
                uindi0, uindi1, uindi2, uinpi0, uinpi1, uinpi2, pdi, pti, //
                uind[k][0], uind[k][1], uind[k][2], uinp[k][0], uinp[k][1],
@@ -204,21 +204,21 @@ void ufield_coulomb (const real (*uind)[3], const real (*uinp)[3],
             tyi += pairf.fip[1];
             tzi += pairf.fip[2];
 
-            atomic_add_value (pairf.fkd[0], &field[k][0]);
-            atomic_add_value (pairf.fkd[1], &field[k][1]);
-            atomic_add_value (pairf.fkd[2], &field[k][2]);
-            atomic_add_value (pairf.fkp[0], &fieldp[k][0]);
-            atomic_add_value (pairf.fkp[1], &fieldp[k][1]);
-            atomic_add_value (pairf.fkp[2], &fieldp[k][2]);
+            atomic_add_value(pairf.fkd[0], &field[k][0]);
+            atomic_add_value(pairf.fkd[1], &field[k][1]);
+            atomic_add_value(pairf.fkd[2], &field[k][2]);
+            atomic_add_value(pairf.fkp[0], &fieldp[k][0]);
+            atomic_add_value(pairf.fkp[1], &fieldp[k][1]);
+            atomic_add_value(pairf.fkp[2], &fieldp[k][2]);
          }
       } // end for (int kk)
 
-      atomic_add_value (gxi, &field[i][0]);
-      atomic_add_value (gyi, &field[i][1]);
-      atomic_add_value (gzi, &field[i][2]);
-      atomic_add_value (txi, &fieldp[i][0]);
-      atomic_add_value (tyi, &fieldp[i][1]);
-      atomic_add_value (tzi, &fieldp[i][2]);
+      atomic_add_value(gxi, &field[i][0]);
+      atomic_add_value(gyi, &field[i][1]);
+      atomic_add_value(gzi, &field[i][2]);
+      atomic_add_value(txi, &fieldp[i][0]);
+      atomic_add_value(tyi, &fieldp[i][1]);
+      atomic_add_value(tzi, &fieldp[i][2]);
    } // end for (int i)
 
    #pragma acc parallel deviceptr(UFIELD_DPTRS_,uexclude_,uexclude_scale_)
@@ -244,30 +244,30 @@ void ufield_coulomb (const real (*uind)[3], const real (*uinp)[3],
       real yr = y[k] - yi;
       real zr = z[k] - zi;
 
-      image (xr, yr, zr, box);
+      image(xr, yr, zr, box);
       real r2 = xr * xr + yr * yr + zr * zr;
       if (r2 <= off2) {
          PairField pairf;
-         pair_ufield<elec_t::coulomb> (                               //
+         pair_ufield<elec_t::coulomb>(                                //
             r2, xr, yr, zr, uscale,                                   //
             uindi0, uindi1, uindi2, uinpi0, uinpi1, uinpi2, pdi, pti, //
             uind[k][0], uind[k][1], uind[k][2], uinp[k][0], uinp[k][1],
             uinp[k][2], pdamp[k], thole[k], //
             0, pairf);
 
-         atomic_add_value (pairf.fid[0], &field[i][0]);
-         atomic_add_value (pairf.fid[1], &field[i][1]);
-         atomic_add_value (pairf.fid[2], &field[i][2]);
-         atomic_add_value (pairf.fip[0], &fieldp[i][0]);
-         atomic_add_value (pairf.fip[1], &fieldp[i][1]);
-         atomic_add_value (pairf.fip[2], &fieldp[i][2]);
+         atomic_add_value(pairf.fid[0], &field[i][0]);
+         atomic_add_value(pairf.fid[1], &field[i][1]);
+         atomic_add_value(pairf.fid[2], &field[i][2]);
+         atomic_add_value(pairf.fip[0], &fieldp[i][0]);
+         atomic_add_value(pairf.fip[1], &fieldp[i][1]);
+         atomic_add_value(pairf.fip[2], &fieldp[i][2]);
 
-         atomic_add_value (pairf.fkd[0], &field[k][0]);
-         atomic_add_value (pairf.fkd[1], &field[k][1]);
-         atomic_add_value (pairf.fkd[2], &field[k][2]);
-         atomic_add_value (pairf.fkp[0], &fieldp[k][0]);
-         atomic_add_value (pairf.fkp[1], &fieldp[k][1]);
-         atomic_add_value (pairf.fkp[2], &fieldp[k][2]);
+         atomic_add_value(pairf.fkd[0], &field[k][0]);
+         atomic_add_value(pairf.fkd[1], &field[k][1]);
+         atomic_add_value(pairf.fkd[2], &field[k][2]);
+         atomic_add_value(pairf.fkp[0], &fieldp[k][0]);
+         atomic_add_value(pairf.fkp[1], &fieldp[k][1]);
+         atomic_add_value(pairf.fkp[2], &fieldp[k][2]);
       }
    }
 }

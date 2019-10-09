@@ -8,11 +8,12 @@ BreakConstructorInitializers:          BeforeComma
 PointerAlignment:                      Left
 AllowShortFunctionsOnASingleLine:      Empty
 
+MaxEmptyLinesToKeep:                   2
 AccessModifierOffset:                  -3
 IndentWidth:                           3
 ConstructorInitializerIndentWidth:     3
 ContinuationIndentWidth:               3
-SpaceBeforeParens:                     Always
+SpaceBeforeParens:                     ControlStatements
 BreakBeforeBraces:                     Custom
 BraceWrapping:
     AfterCaseLabel:                    false

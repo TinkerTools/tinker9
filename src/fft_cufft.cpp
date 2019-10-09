@@ -4,23 +4,23 @@
 
 #if TINKER_CUDART
 TINKER_NAMESPACE_BEGIN
-void fft_data (rc_op op)
+void fft_data(rc_op op)
 {
    if (op & rc_dealloc) {
       int idx = 0;
-      while (idx < FFTPlanUnit::size ()) {
+      while (idx < FFTPlanUnit::size()) {
          FFTPlanUnit u = idx;
-         cufftDestroy (*u);
+         cufftDestroy(*u);
          ++idx;
       }
-      FFTPlanUnit::clear ();
+      FFTPlanUnit::clear();
    }
 
    if (op & rc_alloc) {
-      assert (FFTPlanUnit::size () == 0);
+      assert(FFTPlanUnit::size() == 0);
 
-      const size_t size = PMEUnit::size ();
-      FFTPlanUnit::resize (size);
+      const size_t size = PMEUnit::size();
+      FFTPlanUnit::resize(size);
    }
 
    if (op & rc_init) {
@@ -29,55 +29,53 @@ void fft_data (rc_op op)
 #   elif TINKER_DOUBLE_PRECISION
       const cufftType typ = CUFFT_Z2Z;
 #   else
-      static_assert (false, "");
+      static_assert(false, "");
 #   endif
 
       int idx = 0;
-      while (idx < FFTPlanUnit::size ()) {
+      while (idx < FFTPlanUnit::size()) {
          FFTPlanUnit plan_u = idx;
          PMEUnit pme_u = idx;
          auto& iplan = *plan_u;
          auto& st = *pme_u;
 
-         check_rt (cufftPlan3d (&iplan, st.nfft1, st.nfft2, st.nfft3, typ));
+         check_rt(cufftPlan3d(&iplan, st.nfft1, st.nfft2, st.nfft3, typ));
          ++idx;
       }
    }
 }
 
-void fftfront (PMEUnit pme_u)
+void fftfront(PMEUnit pme_u)
 {
-   FFTPlanUnit iplan_u = static_cast<int> (pme_u);
+   FFTPlanUnit iplan_u = static_cast<int>(pme_u);
    auto& iplan = *iplan_u;
    auto& st = *pme_u;
 
 #   if TINKER_SINGLE_PRECISION
-   cufftExecC2C (iplan, reinterpret_cast<cufftComplex*> (st.qgrid),
-                 reinterpret_cast<cufftComplex*> (st.qgrid), CUFFT_FORWARD);
+   cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),
+                reinterpret_cast<cufftComplex*>(st.qgrid), CUFFT_FORWARD);
 #   elif TINKER_DOUBLE_PRECISION
-   cufftExecZ2Z (iplan, reinterpret_cast<cufftDoubleComplex*> (st.qgrid),
-                 reinterpret_cast<cufftDoubleComplex*> (st.qgrid),
-                 CUFFT_FORWARD);
+   cufftExecZ2Z(iplan, reinterpret_cast<cufftDoubleComplex*>(st.qgrid),
+                reinterpret_cast<cufftDoubleComplex*>(st.qgrid), CUFFT_FORWARD);
 #   else
-   static_assert (false, "");
+   static_assert(false, "");
 #   endif
 }
 
-void fftback (PMEUnit pme_u)
+void fftback(PMEUnit pme_u)
 {
-   FFTPlanUnit iplan_u = static_cast<int> (pme_u);
+   FFTPlanUnit iplan_u = static_cast<int>(pme_u);
    auto& iplan = *iplan_u;
    auto& st = *pme_u;
 
 #   if TINKER_SINGLE_PRECISION
-   cufftExecC2C (iplan, reinterpret_cast<cufftComplex*> (st.qgrid),
-                 reinterpret_cast<cufftComplex*> (st.qgrid), CUFFT_INVERSE);
+   cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),
+                reinterpret_cast<cufftComplex*>(st.qgrid), CUFFT_INVERSE);
 #   elif TINKER_DOUBLE_PRECISION
-   cufftExecZ2Z (iplan, reinterpret_cast<cufftDoubleComplex*> (st.qgrid),
-                 reinterpret_cast<cufftDoubleComplex*> (st.qgrid),
-                 CUFFT_INVERSE);
+   cufftExecZ2Z(iplan, reinterpret_cast<cufftDoubleComplex*>(st.qgrid),
+                reinterpret_cast<cufftDoubleComplex*>(st.qgrid), CUFFT_INVERSE);
 #   else
-   static_assert (false, "");
+   static_assert(false, "");
 #   endif
 }
 TINKER_NAMESPACE_END

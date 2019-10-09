@@ -23,7 +23,7 @@ struct DeviceAttribute
    int max_blocks_per_multiprocessor;
 };
 
-std::vector<DeviceAttribute>& get_device_attributes ();
+std::vector<DeviceAttribute>& get_device_attributes();
 TINKER_NAMESPACE_END
 
 #endif

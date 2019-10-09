@@ -1,10 +1,9 @@
-#ifndef TINKER_E_TORTOR_H_
-#define TINKER_E_TORTOR_H_
-
+#pragma once
 #include "dev_array.h"
 #include "energy_buffer.h"
 #include "rc_man.h"
-#include <ext/tinker/detail/ktrtor.hh>
+#include <tinker/detail/ktrtor.hh>
+
 
 TINKER_NAMESPACE_BEGIN
 // module bitor
@@ -26,11 +25,10 @@ TINKER_EXTERN device_pointer<int> chkttor_ia_; // of size ntortor
 
 TINKER_EXTERN real ttorunit;
 
-TINKER_EXTERN BondedEnergy ett_handle;
+TINKER_EXTERN energy_buffer ett;
+TINKER_EXTERN virial_buffer vir_ett;
 
-void etortor_data (rc_op op);
+void etortor_data(rc_op op);
 
-void etortor (int vers);
+void etortor(int vers);
 TINKER_NAMESPACE_END
-
-#endif

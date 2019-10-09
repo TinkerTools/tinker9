@@ -7,10 +7,10 @@
 
 TINKER_NAMESPACE_BEGIN
 template <int DO_V>
-void pme_conv_tmpl (PMEUnit pme_u, Virial gpu_vir)
+void pme_conv_tmpl(PMEUnit pme_u, virial_buffer gpu_vir)
 {
    auto& st = *pme_u;
-   auto* dptr = pme_u.deviceptr ();
+   auto* dptr = pme_u.deviceptr();
 
    const int nfft1 = st.nfft1;
    const int nfft2 = st.nfft2;
@@ -23,14 +23,9 @@ void pme_conv_tmpl (PMEUnit pme_u, Virial gpu_vir)
    real pterm = pi / aewald;
    pterm *= pterm;
 
-   VirialBuffer::S* gpu_vir_ = nullptr;
-   auto bufsize = VirialBuffer::calc_size (ntot);
-   if (gpu_vir.valid ()) {
-      gpu_vir_ = gpu_vir->buffer ();
-      bufsize = gpu_vir->size ();
-   }
+   auto bufsize = buffer_size();
 
-   #pragma acc parallel loop independent deviceptr(gpu_vir_,dptr,box)
+   #pragma acc parallel loop independent deviceptr(gpu_vir,dptr,box)
    for (int i = 0; i < ntot; ++i) {
       const real volterm = pi * box->volbox;
 
@@ -62,9 +57,9 @@ void pme_conv_tmpl (PMEUnit pme_u, Virial gpu_vir)
          // TODO: if .not. use_bounds; if octahedron; 2/hsq
          real denom = volterm * hsq * dptr->bsmod1[k1] * dptr->bsmod1[k2] *
             dptr->bsmod1[k3];
-         expterm = REAL_EXP (term) / denom;
+         expterm = REAL_EXP(term) / denom;
 
-         if_constexpr (DO_V)
+         if_constexpr(DO_V)
          {
             real gridx = dptr->qgrid[2 * i];
             real gridy = dptr->qgrid[2 * i + 1];
@@ -80,8 +75,8 @@ void pme_conv_tmpl (PMEUnit pme_u, Virial gpu_vir)
             real vyz = h2 * h3 * vterm;
             real vzz = (h3 * h3 * vterm - eterm);
 
-            atomic_add_value (vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir_,
-                              i & (bufsize - 1));
+            atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir,
+                             i & (bufsize - 1));
          }
       }
 
@@ -92,13 +87,13 @@ void pme_conv_tmpl (PMEUnit pme_u, Virial gpu_vir)
    }
 }
 
-void pme_conv0 (PMEUnit pme_u)
+void pme_conv0(PMEUnit pme_u)
 {
-   pme_conv_tmpl<0> (pme_u, -1);
+   pme_conv_tmpl<0>(pme_u, nullptr);
 }
 
-void pme_conv1 (PMEUnit pme_u, Virial gpu_vir)
+void pme_conv1(PMEUnit pme_u, virial_buffer gpu_vir)
 {
-   pme_conv_tmpl<1> (pme_u, gpu_vir);
+   pme_conv_tmpl<1>(pme_u, gpu_vir);
 }
 TINKER_NAMESPACE_END

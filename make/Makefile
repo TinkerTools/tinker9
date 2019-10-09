@@ -230,7 +230,6 @@ cuda_dir := /usr/local/cuda
 
 # include directories
 include_flags__ := -I$(top_dir__)/include
-include_flags__ += -I$(top_dir__)/ext
 include_flags__ += -I$(top_dir__)/ext/ext
 ifeq ($(host_only__),false)
    include_flags__ += -I$(cuda_dir)/include
@@ -241,7 +240,6 @@ shared_flags__ += $(include_flags__)
 
 
 src_obj_dir__ := src
-ext_obj_dir__ := ext/ext
 
 
 # cpp
@@ -249,8 +247,6 @@ ext_obj_dir__ := ext/ext
 main_cpp_objs__ := $(top_dir__)/src/main_tinker_gpu.cpp $(top_dir__)/src/test/main_all_tests.cpp
 main_cpp_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(main_cpp_objs__))
 main_cpp_objs__ := $(main_cpp_objs__:%.cpp=%.o)
-# ext
-ext_cpp_objs__ := $(ext_obj_dir__)/fmt/format.o $(ext_obj_dir__)/fmt/posix.o
 # test
 # $(top_dir__)/src/test/foo.cpp -> src/test/foo.o
 test_cpp_objs__ := $(shell find $(top_dir__)/src/test -type f -name '*.cpp' \
@@ -271,7 +267,7 @@ acc_objs__ := $(wildcard $(top_dir__)/src/acc_*.cpp)
 acc_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(acc_objs__))
 acc_objs__ := $(acc_objs__:%.cpp=%.o)
 # all cpp acc
-lib_cpp_objs__ := $(ext_cpp_objs__) $(cpp_objs__)
+lib_cpp_objs__ := $(cpp_objs__)
 all_cpp_objs__ := $(main_cpp_objs__) $(test_cpp_objs__) $(lib_cpp_objs__)
 all_acc_objs__ := $(acc_objs__)
 
@@ -363,8 +359,7 @@ test: all.tests
 ##/ $> make -f make/Makefile create_build build=build-v3
 ##/ ```
 ##/
-dirs__ := $(build)/$(ext_obj_dir__)/fmt
-dirs__ += $(build)/$(src_obj_dir__)/test
+dirs__ := $(build)/$(src_obj_dir__)/test
 $(dirs__):
 	@echo TINKER.GPU: Creating directory \`$@\'...
 	@mkdir -p $@
@@ -440,7 +435,6 @@ clean:
 	rm -rf all.tests tinker.gpu libtinker* *dSYM *.out
 	rm -rf *.md doc include
 	rm -rf html/*
-	find ext/ -type f -name '*.o' -delete
 	find src/ -type f -name '*.o' -delete
 
 

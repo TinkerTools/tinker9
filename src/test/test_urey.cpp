@@ -27,7 +27,7 @@ static const double ref_g_urey_h2o10[][3] = {
    {0.5657, -0.4544, 0.6075},  {0.0000, 0.0000, 0.0000},
    {0.2971, -0.0299, -0.9680}, {-0.2971, 0.0299, 0.9680},
 };
-TEST_CASE ("Urey-Ten-Water", "[ff][eurey][h2o10]")
+TEST_CASE("Urey-Ten-Water", "[ff][eurey][h2o10]")
 {
    const char* k = "test_h2o10.key";
    const char* x1 = "test_h2o10.xyz";
@@ -35,16 +35,16 @@ TEST_CASE ("Urey-Ten-Water", "[ff][eurey][h2o10]")
 
    std::string k0 = h2o10_key;
    k0 += ureyterm_only;
-   TestFile fke (k, k0);
+   TestFile fke(k, k0);
 
-   TestFile fx1 (x1, h2o10_xyz);
-   TestFile fpr (p, commit_6fe8e913::water03_prm);
+   TestFile fx1(x1, h2o10_xyz);
+   TestFile fpr(p, commit_6fe8e913::water03_prm);
 
    const char* argv[] = {"dummy", x1};
    int argc = 2;
-   test_begin_with_args (argc, argv);
+   test_begin_with_args(argc, argv);
    rc_flag = usage;
-   initialize ();
+   initialize();
 
    const double eps_e = 0.0001;
    const double ref_e = -0.1964;
@@ -54,9 +54,9 @@ TEST_CASE ("Urey-Ten-Water", "[ff][eurey][h2o10]")
    const double ref_v[][3] = {
       {2.318, -0.827, -1.078}, {-0.827, 3.061, 0.062}, {-1.078, 0.062, 4.915}};
 
-   COMPARE_BONDED_FORCE (eurey, nurey, eub_handle, ref_e, eps_e, ref_count, gx,
-                         gy, gz, ref_g_urey_h2o10, eps_g, ref_v, eps_v);
+   COMPARE_BONDED_FORCE(eurey, nurey, eub, vir_eub, ref_e, eps_e, ref_count, gx,
+                        gy, gz, ref_g_urey_h2o10, eps_g, ref_v, eps_v);
 
-   finish ();
-   test_end ();
+   finish();
+   test_end();
 }

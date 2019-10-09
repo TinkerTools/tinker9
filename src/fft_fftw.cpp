@@ -4,37 +4,37 @@
 #   include "fft_fftw.h"
 
 TINKER_NAMESPACE_BEGIN
-void fft_data (rc_op op)
+void fft_data(rc_op op)
 {
    if (op & rc_dealloc) {
       int idx = 0;
-      while (idx < FFTPlanUnit::size ()) {
+      while (idx < FFTPlanUnit::size()) {
          FFTPlanUnit u = idx;
          auto& ps = *u;
 #   if TINKER_SINGLE_PRECISION
-         fftwf_destroy_plan (ps.planf);
-         fftwf_destroy_plan (ps.planb);
+         fftwf_destroy_plan(ps.planf);
+         fftwf_destroy_plan(ps.planb);
 #   elif TINKER_DOUBLE_PRECISION
-         fftw_destroy_plan (ps.planf);
-         fftw_destroy_plan (ps.planb);
+         fftw_destroy_plan(ps.planf);
+         fftw_destroy_plan(ps.planb);
 #   else
-         static_assert (false, "");
+         static_assert(false, "");
 #   endif
          ++idx;
       }
-      FFTPlanUnit::clear ();
+      FFTPlanUnit::clear();
    }
 
    if (op & rc_alloc) {
-      assert (FFTPlanUnit::size () == 0);
+      assert(FFTPlanUnit::size() == 0);
 
-      const size_t size = PMEUnit::size ();
-      FFTPlanUnit::resize (size);
+      const size_t size = PMEUnit::size();
+      FFTPlanUnit::resize(size);
    }
 
    if (op & rc_init) {
       int idx = 0;
-      while (idx < FFTPlanUnit::size ()) {
+      while (idx < FFTPlanUnit::size()) {
          FFTPlanUnit plan_u = idx;
          PMEUnit pme_u = idx;
          auto& iplan = *plan_u;
@@ -48,58 +48,58 @@ void fft_data (rc_op op)
          const unsigned int iguess = 0;
 
 #   if TINKER_SINGLE_PRECISION
-         iplan.planf = fftwf_plan_dft_3d (
-            nfft1, nfft2, nfft3, reinterpret_cast<fftwf_complex*> (st.qgrid),
-            reinterpret_cast<fftwf_complex*> (st.qgrid), ifront, iguess);
-         iplan.planb = fftwf_plan_dft_3d (
-            nfft1, nfft2, nfft3, reinterpret_cast<fftwf_complex*> (st.qgrid),
-            reinterpret_cast<fftwf_complex*> (st.qgrid), iback, iguess);
+         iplan.planf = fftwf_plan_dft_3d(
+            nfft1, nfft2, nfft3, reinterpret_cast<fftwf_complex*>(st.qgrid),
+            reinterpret_cast<fftwf_complex*>(st.qgrid), ifront, iguess);
+         iplan.planb = fftwf_plan_dft_3d(
+            nfft1, nfft2, nfft3, reinterpret_cast<fftwf_complex*>(st.qgrid),
+            reinterpret_cast<fftwf_complex*>(st.qgrid), iback, iguess);
 #   elif TINKER_DOUBLE_PRECISION
-         iplan.planf = fftw_plan_dft_3d (
-            nfft1, nfft2, nfft3, reinterpret_cast<fftw_complex*> (st.qgrid),
-            reinterpret_cast<fftw_complex*> (st.qgrid), ifront, iguess);
-         iplan.planb = fftw_plan_dft_3d (
-            nfft1, nfft2, nfft3, reinterpret_cast<fftw_complex*> (st.qgrid),
-            reinterpret_cast<fftw_complex*> (st.qgrid), iback, iguess);
+         iplan.planf = fftw_plan_dft_3d(
+            nfft1, nfft2, nfft3, reinterpret_cast<fftw_complex*>(st.qgrid),
+            reinterpret_cast<fftw_complex*>(st.qgrid), ifront, iguess);
+         iplan.planb = fftw_plan_dft_3d(
+            nfft1, nfft2, nfft3, reinterpret_cast<fftw_complex*>(st.qgrid),
+            reinterpret_cast<fftw_complex*>(st.qgrid), iback, iguess);
 #   else
-         static_assert (false, "");
+         static_assert(false, "");
 #   endif
          ++idx;
       }
    }
 }
 
-void fftfront (PMEUnit pme_u)
+void fftfront(PMEUnit pme_u)
 {
-   FFTPlanUnit iplan_u = static_cast<int> (pme_u);
+   FFTPlanUnit iplan_u = static_cast<int>(pme_u);
    auto& iplan = *iplan_u;
    auto& st = *pme_u;
 
 #   if TINKER_SINGLE_PRECISION
-   fftwf_execute_dft (iplan.planf, reinterpret_cast<fftwf_complex*> (st.qgrid),
-                      reinterpret_cast<fftwf_complex*> (st.qgrid));
+   fftwf_execute_dft(iplan.planf, reinterpret_cast<fftwf_complex*>(st.qgrid),
+                     reinterpret_cast<fftwf_complex*>(st.qgrid));
 #   elif TINKER_DOUBLE_PRECISION
-   fftw_execute_dft (iplan.planf, reinterpret_cast<fftw_complex*> (st.qgrid),
-                     reinterpret_cast<fftw_complex*> (st.qgrid));
+   fftw_execute_dft(iplan.planf, reinterpret_cast<fftw_complex*>(st.qgrid),
+                    reinterpret_cast<fftw_complex*>(st.qgrid));
 #   else
-   static_assert (false, "");
+   static_assert(false, "");
 #   endif
 }
 
-void fftback (PMEUnit pme_u)
+void fftback(PMEUnit pme_u)
 {
-   FFTPlanUnit iplan_u = static_cast<int> (pme_u);
+   FFTPlanUnit iplan_u = static_cast<int>(pme_u);
    auto& iplan = *iplan_u;
    auto& st = *pme_u;
 
 #   if TINKER_SINGLE_PRECISION
-   fftwf_execute_dft (iplan.planb, reinterpret_cast<fftwf_complex*> (st.qgrid),
-                      reinterpret_cast<fftwf_complex*> (st.qgrid));
+   fftwf_execute_dft(iplan.planb, reinterpret_cast<fftwf_complex*>(st.qgrid),
+                     reinterpret_cast<fftwf_complex*>(st.qgrid));
 #   elif TINKER_DOUBLE_PRECISION
-   fftw_execute_dft (iplan.planb, reinterpret_cast<fftw_complex*> (st.qgrid),
-                     reinterpret_cast<fftw_complex*> (st.qgrid));
+   fftw_execute_dft(iplan.planb, reinterpret_cast<fftw_complex*>(st.qgrid),
+                    reinterpret_cast<fftw_complex*>(st.qgrid));
 #   else
-   static_assert (false, "");
+   static_assert(false, "");
 #   endif
 }
 TINKER_NAMESPACE_END

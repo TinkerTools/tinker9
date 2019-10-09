@@ -6,7 +6,7 @@
 
 /**
  * \defgroup vdw Van der Waals (VDW) Energy
- * \ingroup gvar
+ * \ingroup energy
  *
  * \todo Test lj, buck, mm3hb, gauss, and mutant.
  * \todo Add vdw correction.
@@ -89,16 +89,18 @@ TINKER_EXTERN int nvexclude_;
 TINKER_EXTERN device_pointer<int, 2> vexclude_;
 TINKER_EXTERN device_pointer<real> vexclude_scale_;
 
-TINKER_EXTERN NonbondedEnergy ev_handle;
+TINKER_EXTERN count_buffer nev;
+TINKER_EXTERN energy_buffer ev;
+TINKER_EXTERN virial_buffer vir_ev;
 
-void evdw_data (rc_op op);
+void evdw_data(rc_op op);
 
-void evdw_reduce_xyz ();
-void evdw_resolve_gradient ();
+void evdw_reduce_xyz();
+void evdw_resolve_gradient();
 
-void evdw_lj (int vers);
-void evdw_buck (int vers);
-void evdw_mm3hb (int vers);
+void evdw_lj(int vers);
+void evdw_buck(int vers);
+void evdw_mm3hb(int vers);
 /**
  * \ingroup vdw
  * \brief
@@ -120,7 +122,7 @@ void evdw_mm3hb (int vers);
  * \f]
  * \f[ t=5,\ \alpha=0.7 \f]
  */
-void evdw_hal (int vers);
-void evdw_gauss (int vers);
-void evdw (int vers);
+void evdw_hal(int vers);
+void evdw_gauss(int vers);
+void evdw(int vers);
 TINKER_NAMESPACE_END

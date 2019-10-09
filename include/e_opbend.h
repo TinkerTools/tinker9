@@ -19,11 +19,12 @@ TINKER_EXTERN device_pointer<real> opbk;
 TINKER_EXTERN real opbunit;
 TINKER_EXTERN real copb, qopb, popb, sopb;
 
-TINKER_EXTERN BondedEnergy eopb_handle;
+TINKER_EXTERN energy_buffer eopb;
+TINKER_EXTERN virial_buffer vir_eopb;
 
-void eopbend_data (rc_op op);
+void eopbend_data(rc_op op);
 
-void eopbend (int vers);
+void eopbend(int vers);
 TINKER_NAMESPACE_END
 
 #endif

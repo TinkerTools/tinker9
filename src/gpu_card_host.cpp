@@ -2,7 +2,7 @@
 
 #if TINKER_HOST
 TINKER_NAMESPACE_BEGIN
-void gpu_card_data (rc_op op)
+void gpu_card_data(rc_op op)
 {
    if (op & rc_dealloc) {
       ndevice = 0;
@@ -15,12 +15,12 @@ void gpu_card_data (rc_op op)
    }
 }
 
-int get_grid_size (int)
+int get_grid_size(int)
 {
    return 1;
 }
 
-int get_block_size (int)
+int get_block_size(int)
 {
    return 1;
 }

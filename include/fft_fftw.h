@@ -14,7 +14,7 @@ struct FFTPlan
 #elif TINKER_DOUBLE_PRECISION
    typedef fftw_plan type;
 #else
-   static_assert (false, "");
+   static_assert(false, "");
 #endif
 
    type planf; ///< FFT front plan
