@@ -1,12 +1,8 @@
-#ifndef TINKER_GPU_CARD_H_
-#define TINKER_GPU_CARD_H_
-
+#pragma once
 #include "rc_man.h"
 
-TINKER_NAMESPACE_BEGIN
-/// \defgroup nvidia Nvidia GPU
-/// \ingroup gvar
 
+TINKER_NAMESPACE_BEGIN
 /// \ingroup nvidia
 /// Number of threads in a warp.
 constexpr unsigned WARP_SIZE = 32;
@@ -25,5 +21,4 @@ void gpu_card_data(rc_op op);
 int get_grid_size(int nthreads_per_block);
 int get_block_size(int shared_bytes_per_thread);
 TINKER_NAMESPACE_END
-
-#endif
+/// \defgroup nvidia Nvidia GPU

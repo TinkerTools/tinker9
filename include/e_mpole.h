@@ -6,7 +6,7 @@
 
 TINKER_NAMESPACE_BEGIN
 /// \defgroup mpole Multipole Electrostatic Energy
-/// \ingroup gvar
+/// \ingroup energy
 
 TINKER_EXTERN elec_t empole_electyp;
 

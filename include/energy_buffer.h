@@ -50,7 +50,8 @@ struct buffer_traits<float, N>
 {
    static constexpr size_t n = N;
    static constexpr size_t value = pow2_ge(N);
-   typedef fixed type;
+   typedef unsigned long long type;
+   static constexpr type fixed_point = 0x100000000ull;
    static float cast(type val)
    {
       return static_cast<float>(static_cast<long long>(val)) / fixed_point;
@@ -58,19 +59,27 @@ struct buffer_traits<float, N>
 };
 
 
-/// \{
 /// \ingroup ebuf
 /// \see buffer_traits device_pointer
 using count_buffer_traits = buffer_traits<int, 1>;
+/// \ingroup ebuf
+/// \see buffer_traits device_pointer
 using energy_buffer_traits = buffer_traits<real, 1>;
+/// \ingroup ebuf
+/// \see buffer_traits device_pointer
 using virial_buffer_traits = buffer_traits<real, 6>;
+/// \ingroup ebuf
+/// \see buffer_traits device_pointer
 using count_buffer =
    device_pointer<count_buffer_traits::type, count_buffer_traits::value>;
+/// \ingroup ebuf
+/// \see buffer_traits device_pointer
 using energy_buffer =
    device_pointer<energy_buffer_traits::type, energy_buffer_traits::value>;
+/// \ingroup ebuf
+/// \see buffer_traits device_pointer
 using virial_buffer =
    device_pointer<virial_buffer_traits::type, virial_buffer_traits::value>;
-/// \}
 
 
 /**

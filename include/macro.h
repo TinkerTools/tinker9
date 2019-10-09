@@ -134,10 +134,10 @@ whenever you see an "unknown fortran compiler error".
 
 TINKER_NAMESPACE_BEGIN
 /**
- * \typedef real
- * \ingroup util
+ * \ingroup mem
+ * \brief
  * The default floating point type based on the precision macros. Either defined
- * to \c float or \c double,
+ * to `float` or `double`.
  *
  * \see TINKER_DOUBLE_PRECISION
  * \see TINKER_SINGLE_PRECISION
@@ -148,23 +148,6 @@ typedef double real;
 #if TINKER_SINGLE_PRECISION
 typedef float real;
 #endif
-
-
-/**
- * \ingroup util
- * The fixed-point type used to accumulate floating-point numbers.
- */
-typedef unsigned long long fixed;
-
-
-/**
- * \ingroup math
- * \brief
- * Constant to convert a number between floating-point and fixed-point
- * representations.
- * \see fixed
- */
-constexpr fixed fixed_point = 0x100000000ull;
 TINKER_NAMESPACE_END
 
 
@@ -240,12 +223,7 @@ TINKER_NAMESPACE_END
 #   define CUDA_DEVICE_FUNCTION
 #endif
 
-
-/**
- * \defgroup macro Macros
- *
- * \defgroup gvar Functions and Global Variables
- *
- * \defgroup util Utilities
- * \ingroup gvar
- */
+// end of file
+/// \defgroup energy Energy Terms
+/// \defgroup macro Macros
+/// \defgroup mem Memory Management

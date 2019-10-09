@@ -1,9 +1,5 @@
 #pragma once
-
-
-#include "macro.h"
-#include <cstring>
-#include <type_traits>
+#include "energy_buffer.h"
 
 
 TINKER_NAMESPACE_BEGIN
@@ -38,8 +34,8 @@ void atomic_add_value(T value, unsigned long long* buffer, size_t offset = 0)
       std::is_same<T, float>::value || std::is_same<T, double>::value, "");
    // float -> (signed) long long (int) -> unsigned long long (int)
    #pragma acc atomic update
-   buffer[offset] += static_cast<unsigned long long>(
-      static_cast<long long>(value * fixed_point));
+   buffer[offset] += static_cast<unsigned long long>(static_cast<long long>(
+      value * buffer_traits<float, 1>::fixed_point));
 }
 
 

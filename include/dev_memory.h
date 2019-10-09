@@ -353,4 +353,3 @@ struct DeviceArray
    }
 };
 TINKER_NAMESPACE_END
-/// \defgroup mem Memory Management
