@@ -230,7 +230,6 @@ cuda_dir := /usr/local/cuda
 
 # include directories
 include_flags__ := -I$(top_dir__)/include
-include_flags__ += -I$(top_dir__)/ext
 include_flags__ += -I$(top_dir__)/ext/ext
 ifeq ($(host_only__),false)
    include_flags__ += -I$(cuda_dir)/include

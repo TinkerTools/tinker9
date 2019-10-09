@@ -3,12 +3,12 @@
 #include "md.h"
 #include "potent.h"
 #include <cassert>
-#include <ext/tinker/detail/couple.hh>
-#include <ext/tinker/detail/mutant.hh>
-#include <ext/tinker/detail/sizes.hh>
-#include <ext/tinker/detail/vdw.hh>
-#include <ext/tinker/detail/vdwpot.hh>
 #include <map>
+#include <tinker/detail/couple.hh>
+#include <tinker/detail/mutant.hh>
+#include <tinker/detail/sizes.hh>
+#include <tinker/detail/vdw.hh>
+#include <tinker/detail/vdwpot.hh>
 
 TINKER_NAMESPACE_BEGIN
 void evdw_data(rc_op op)

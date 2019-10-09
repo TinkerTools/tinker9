@@ -4,14 +4,14 @@
 #include "md.h"
 #include "pme.h"
 #include "potent.h"
-#include <ext/tinker/detail/couple.hh>
-#include <ext/tinker/detail/inform.hh>
-#include <ext/tinker/detail/polar.hh>
-#include <ext/tinker/detail/polgrp.hh>
-#include <ext/tinker/detail/polpot.hh>
-#include <ext/tinker/detail/sizes.hh>
-#include <ext/tinker/detail/units.hh>
 #include <map>
+#include <tinker/detail/couple.hh>
+#include <tinker/detail/inform.hh>
+#include <tinker/detail/polar.hh>
+#include <tinker/detail/polgrp.hh>
+#include <tinker/detail/polpot.hh>
+#include <tinker/detail/sizes.hh>
+#include <tinker/detail/units.hh>
 
 TINKER_NAMESPACE_BEGIN
 void epolar_data(rc_op op)

@@ -1,10 +1,10 @@
 #include "io_print.h"
 #include "md.h"
 #include "tinker_rt.h"
-#include <ext/tinker/detail/bound.hh>
-#include <ext/tinker/detail/inform.hh>
-#include <ext/tinker/detail/mdstuf.hh>
-#include <ext/tinker/detail/units.hh>
+#include <tinker/detail/bound.hh>
+#include <tinker/detail/inform.hh>
+#include <tinker/detail/mdstuf.hh>
+#include <tinker/detail/units.hh>
 
 TINKER_NAMESPACE_BEGIN
 void kinetic_acc_impl_(real& temp)

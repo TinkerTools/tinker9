@@ -1,7 +1,7 @@
 #include "switch.h"
 #include "mathfunc.h"
-#include <ext/tinker/detail/limits.hh>
-#include <ext/tinker/detail/nonpol.hh>
+#include <tinker/detail/limits.hh>
+#include <tinker/detail/nonpol.hh>
 
 TINKER_NAMESPACE_BEGIN
 real switch_cut(switch_t mode)

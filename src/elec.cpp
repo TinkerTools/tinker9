@@ -3,9 +3,9 @@
 #include "md.h"
 #include "pme.h"
 #include "potent.h"
-#include <ext/tinker/detail/chgpot.hh>
-#include <ext/tinker/detail/limits.hh>
-#include <ext/tinker/detail/mpole.hh>
+#include <tinker/detail/chgpot.hh>
+#include <tinker/detail/limits.hh>
+#include <tinker/detail/mpole.hh>
 
 TINKER_NAMESPACE_BEGIN
 int use_elec()

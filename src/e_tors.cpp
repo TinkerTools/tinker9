@@ -1,8 +1,8 @@
 #include "e_tors.h"
 #include "md.h"
 #include "potent.h"
-#include <ext/tinker/detail/torpot.hh>
-#include <ext/tinker/detail/tors.hh>
+#include <tinker/detail/torpot.hh>
+#include <tinker/detail/tors.hh>
 
 TINKER_NAMESPACE_BEGIN
 void etors_data(rc_op op)

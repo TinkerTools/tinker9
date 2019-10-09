@@ -1,8 +1,8 @@
 #include "e_urey.h"
 #include "md.h"
 #include "potent.h"
-#include <ext/tinker/detail/urey.hh>
-#include <ext/tinker/detail/urypot.hh>
+#include <tinker/detail/urey.hh>
+#include <tinker/detail/urypot.hh>
 
 TINKER_NAMESPACE_BEGIN
 void eurey_data(rc_op op)

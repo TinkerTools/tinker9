@@ -1,8 +1,8 @@
 #include "test_rt.h"
 #include "rc_man.h"
 #include "tinker_rt.h"
-#include <ext/tinker/detail/bath.hh>
 #include <fstream>
+#include <tinker/detail/bath.hh>
 
 TINKER_NAMESPACE_BEGIN
 TestFile::TestFile(const std::string& name, const std::string& content)

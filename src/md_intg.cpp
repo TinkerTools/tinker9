@@ -1,9 +1,9 @@
 #include "io_fort_str.h"
 #include "md.h"
 #include <cassert>
-#include <ext/tinker/detail/bath.hh>
-#include <ext/tinker/detail/inform.hh>
-#include <ext/tinker/detail/mdstuf.hh>
+#include <tinker/detail/bath.hh>
+#include <tinker/detail/inform.hh>
+#include <tinker/detail/mdstuf.hh>
 
 TINKER_NAMESPACE_BEGIN
 void md_data(rc_op op)

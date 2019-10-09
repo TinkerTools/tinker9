@@ -1,9 +1,9 @@
 #include "tinker_rt.h"
-#include <ext/tinker/detail/bath.hh>
-#include <ext/tinker/detail/bound.hh>
-#include <ext/tinker/detail/inform.hh>
-#include <ext/tinker/detail/keys.hh>
-#include <ext/tinker/detail/mdstuf.hh>
+#include <tinker/detail/bath.hh>
+#include <tinker/detail/bound.hh>
+#include <tinker/detail/inform.hh>
+#include <tinker/detail/keys.hh>
+#include <tinker/detail/mdstuf.hh>
 
 TINKER_NAMESPACE_BEGIN
 void x_dynamic(int argc, char** argv)

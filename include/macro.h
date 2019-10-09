@@ -225,5 +225,6 @@ TINKER_NAMESPACE_END
 
 // end of file
 /// \defgroup energy Energy Terms
+/// \defgroup io Inputs and Outputs
 /// \defgroup macro Macros
 /// \defgroup mem Memory Management

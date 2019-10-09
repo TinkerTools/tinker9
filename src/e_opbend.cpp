@@ -3,8 +3,8 @@
 #include "md.h"
 #include "potent.h"
 #include <cassert>
-#include <ext/tinker/detail/angpot.hh>
-#include <ext/tinker/detail/opbend.hh>
+#include <tinker/detail/angpot.hh>
+#include <tinker/detail/opbend.hh>
 
 TINKER_NAMESPACE_BEGIN
 void eopbend_data(rc_op op)

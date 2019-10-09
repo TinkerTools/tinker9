@@ -1,12 +1,12 @@
 #include "e_tortor.h"
 #include "md.h"
 #include "potent.h"
-#include <ext/tinker/detail/atomid.hh>
-#include <ext/tinker/detail/atoms.hh>
-#include <ext/tinker/detail/bitor.hh>
-#include <ext/tinker/detail/couple.hh>
-#include <ext/tinker/detail/torpot.hh>
-#include <ext/tinker/detail/tortor.hh>
+#include <tinker/detail/atomid.hh>
+#include <tinker/detail/atoms.hh>
+#include <tinker/detail/bitor.hh>
+#include <tinker/detail/couple.hh>
+#include <tinker/detail/torpot.hh>
+#include <tinker/detail/tortor.hh>
 
 TINKER_NAMESPACE_BEGIN
 void etortor_data(rc_op op)

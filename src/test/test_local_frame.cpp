@@ -1,7 +1,7 @@
 #include "files.h"
 #include "test.h"
 #include "test_rt.h"
-#include <ext/tinker/detail/units.hh>
+#include <tinker/detail/units.hh>
 
 using namespace TINKER_NAMESPACE;
 

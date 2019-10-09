@@ -1,8 +1,8 @@
 #include "mathfunc.h"
 #include "md.h"
 #include "random.h"
-#include <ext/tinker/detail/bath.hh>
-#include <ext/tinker/detail/mdstuf.hh>
+#include <tinker/detail/bath.hh>
+#include <tinker/detail/mdstuf.hh>
 
 TINKER_NAMESPACE_BEGIN
 void thermo_bussi_acc_impl_(real dt_real, real temp_real)

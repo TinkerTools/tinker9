@@ -7,10 +7,10 @@
 #include "md.h"
 #include "nblist.h"
 #include "tinker_rt.h"
-#include <ext/tinker/detail/inform.hh>
-#include <ext/tinker/detail/polpcg.hh>
-#include <ext/tinker/detail/polpot.hh>
-#include <ext/tinker/detail/units.hh>
+#include <tinker/detail/inform.hh>
+#include <tinker/detail/polpcg.hh>
+#include <tinker/detail/polpot.hh>
+#include <tinker/detail/units.hh>
 
 TINKER_NAMESPACE_BEGIN
 // similar to uscale0a/uscale0b routines

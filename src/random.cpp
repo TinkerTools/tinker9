@@ -3,8 +3,8 @@
 #include "io_text.h"
 #include "rc_man.h"
 #include <chrono>
-#include <ext/tinker/detail/keys.hh>
 #include <random>
+#include <tinker/detail/keys.hh>
 
 TINKER_NAMESPACE_BEGIN
 /// @return

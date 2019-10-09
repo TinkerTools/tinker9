@@ -3,8 +3,8 @@
 #include "mathfunc.h"
 #include "md.h"
 #include "tinker_rt.h"
-#include <ext/tinker/detail/bound.hh>
-#include <ext/tinker/detail/boxes.hh>
+#include <tinker/detail/bound.hh>
+#include <tinker/detail/boxes.hh>
 
 TINKER_NAMESPACE_BEGIN
 void box_data(rc_op op)

@@ -1,6 +1,6 @@
 #include "tinker_rt.h"
 #include <algorithm>
-#include <ext/tinker/detail/argue.hh>
+#include <tinker/detail/argue.hh>
 
 TINKER_NAMESPACE_BEGIN
 void nextarg(size_t len, char* str, int& exist)

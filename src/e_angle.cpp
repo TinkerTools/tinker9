@@ -3,8 +3,8 @@
 #include "md.h"
 #include "potent.h"
 #include <cassert>
-#include <ext/tinker/detail/angbnd.hh>
-#include <ext/tinker/detail/angpot.hh>
+#include <tinker/detail/angbnd.hh>
+#include <tinker/detail/angpot.hh>
 
 TINKER_NAMESPACE_BEGIN
 void eangle_data(rc_op op)

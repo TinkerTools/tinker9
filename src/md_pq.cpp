@@ -3,9 +3,9 @@
 #include "gpu_card.h"
 #include "md.h"
 #include <cassert>
-#include <ext/tinker/detail/atomid.hh>
-#include <ext/tinker/detail/atoms.hh>
-#include <ext/tinker/detail/moldyn.hh>
+#include <tinker/detail/atomid.hh>
+#include <tinker/detail/atoms.hh>
+#include <tinker/detail/moldyn.hh>
 
 TINKER_NAMESPACE_BEGIN
 void n_data(rc_op op)
@@ -121,7 +121,7 @@ TINKER_NAMESPACE_END
 #include "io_print.h"
 #include "io_text.h"
 #include "tinker_rt.h"
-#include <ext/tinker/detail/boxes.hh>
+#include <tinker/detail/boxes.hh>
 #include <fstream>
 #include <sstream>
 
