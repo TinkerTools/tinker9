@@ -1,7 +1,7 @@
 #pragma once
-
 #include "mathfunc.h"
 #include "switch.h"
+
 
 TINKER_NAMESPACE_BEGIN
 /**
@@ -25,7 +25,7 @@ TINKER_NAMESPACE_BEGIN
  * \f$ df/dx \f$ value
  *
  * \tparam DO_DTAPER
- * If \c false, \c dtaper will not be calculated and its original value will not
+ * If false, `dtaper` will not be calculated and its original value will not
  * be affected.
  */
 #pragma acc routine seq

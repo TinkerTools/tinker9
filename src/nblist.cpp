@@ -137,7 +137,7 @@ static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
    st.cutoff = cutoff;
    st.buffer = buffer;
 
-   nblu.init_deviceptr(st);
+   nblu.update_deviceptr(st);
 }
 
 extern void nblist_build_acc_impl_(NBListUnit);
@@ -224,7 +224,7 @@ void nblist_data(rc_op op)
             mlist_unit->x = x;
             mlist_unit->y = y;
             mlist_unit->z = z;
-            mlist_unit.init_deviceptr(*mlist_unit);
+            mlist_unit.update_deviceptr(*mlist_unit);
          }
          nblist_update_acc_impl_(mlist_unit);
       }
@@ -259,7 +259,7 @@ void nblist_data(rc_op op)
             ulist_unit->x = x;
             ulist_unit->y = y;
             ulist_unit->z = z;
-            ulist_unit.init_deviceptr(*mlist_unit);
+            ulist_unit.update_deviceptr(*mlist_unit);
          }
          nblist_update_acc_impl_(ulist_unit);
       }

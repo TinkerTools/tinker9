@@ -103,7 +103,7 @@ static void pme_op_copyin_(PMEUnit unit)
    (bsmodbuf.data(), bsarray.data(), &st.nfft3, &st.bsorder);
    device_array::copyin(st.nfft3, st.bsmod3, bsmodbuf.data());
 
-   unit.init_deviceptr(st);
+   unit.update_deviceptr(st);
 }
 TINKER_NAMESPACE_END
 
