@@ -11,5 +11,8 @@ Tinker GPU: Software Tools for Molecular Design
 
 
 ## Documentation
+   - [Procedures](doc/procedures.md)
+
+
 For more information, visit the doxygen-generated documentation
 hosted on [github.io](https://zhi-wang.github.io/tinker.gpu).
