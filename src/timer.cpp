@@ -12,27 +12,27 @@ private:
    std::vector<ClockType::time_point> s_;
 
 public:
-   void start ();
-   void lap (std::string log = "");
-   void stop ();
-   void reset ();
+   void start();
+   void lap(std::string log = "");
+   void stop();
+   void reset();
 };
 
-void Stopwatch::start ()
+void Stopwatch::start()
 {
-   assert (s_.size () == 0);
-   s_.emplace_back (ClockType::now ());
+   assert(s_.size() == 0);
+   s_.emplace_back(ClockType::now());
 }
 
-void Stopwatch::lap (std::string log)
+void Stopwatch::lap(std::string log)
 {
-   auto now = ClockType::now ();
-   auto dur = now - s_.back ();
-   s_.emplace_back (ClockType::now ());
+   auto now = ClockType::now();
+   auto dur = now - s_.back();
+   s_.emplace_back(ClockType::now());
 
-   auto p = [=] (double& v, std::string& u) {
-      auto ns_i = std::chrono::nanoseconds (dur).count ();
-      double ns = static_cast<double> (ns_i);
+   auto p = [=](double& v, std::string& u) {
+      auto ns_i = std::chrono::nanoseconds(dur).count();
+      double ns = static_cast<double>(ns_i);
       if (ns < 1000) {
          v = ns;
          u = "ns";
@@ -61,41 +61,41 @@ void Stopwatch::lap (std::string log)
 
    double val;
    std::string u;
-   p (val, u);
+   p(val, u);
    if (log == "") {
-      print (stdout, " {:>12.4f} {}           Lap {:<d}\n", val, u,
-             s_.size () - 1);
+      print(stdout, " {:>12.4f} {}           Lap {:<d}\n", val, u,
+            s_.size() - 1);
    } else {
-      print (stdout, " {:>12.4f} {}           {}\n", val, u, log);
+      print(stdout, " {:>12.4f} {}           {}\n", val, u, log);
    }
 }
 
-void Stopwatch::stop () {}
+void Stopwatch::stop() {}
 
-void Stopwatch::reset ()
+void Stopwatch::reset()
 {
-   s_.clear ();
+   s_.clear();
 }
 
 static Stopwatch sw_;
 
-void stopwatch_start ()
+void stopwatch_start()
 {
-   sw_.start ();
+   sw_.start();
 }
 
-void stopwatch_lap (std::string log)
+void stopwatch_lap(std::string log)
 {
-   sw_.lap (log);
+   sw_.lap(log);
 }
 
-void stopwatch_stop ()
+void stopwatch_stop()
 {
-   sw_.stop ();
+   sw_.stop();
 }
 
-void stopwatch_reset ()
+void stopwatch_reset()
 {
-   sw_.reset ();
+   sw_.reset();
 }
 TINKER_NAMESPACE_END

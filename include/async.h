@@ -22,14 +22,14 @@ TINKER_NAMESPACE_BEGIN
 /// @brief
 /// deallocate, allocate, and synchronize the asynchronous stream
 /// @{
-void deallocate_stream (Stream);
-void allocate_stream (Stream*);
-void synchronize_stream (Stream);
+void deallocate_stream(Stream);
+void allocate_stream(Stream*);
+void synchronize_stream(Stream);
 /// @}
 
 /// @brief
 /// copy between two device addresses without blocking the calling thread
-void copy_bytes_async (void* dst, const void* src, size_t nbytes, Stream s);
+void copy_bytes_async(void* dst, const void* src, size_t nbytes, Stream s);
 TINKER_NAMESPACE_END
 
 #endif

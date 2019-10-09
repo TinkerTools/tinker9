@@ -23,14 +23,9 @@
 
 TINKER_NAMESPACE_BEGIN
 template <int DO_V>
-void torque_tmpl (Virial v_handle)
+void torque_tmpl(virial_buffer gpu_vir)
 {
-   VirialBuffer::S* gpu_vir = nullptr;
-   auto bufsize = VirialBuffer::calc_size (n);
-   if (v_handle.valid ()) {
-      gpu_vir = v_handle->buffer ();
-      bufsize = v_handle->size ();
-   }
+   auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,zaxis,\
@@ -54,20 +49,20 @@ void torque_tmpl (Virial v_handle)
       const int ia = zaxis[i].zaxis;
       const int ib = i;
       const int ic = zaxis[i].xaxis;
-      const int id = INT_ABS (zaxis[i].yaxis) - 1;
+      const int id = INT_ABS(zaxis[i].yaxis) - 1;
 
       // construct the three rotation axes for the local frame
 
       real u[3], usiz1;
-      SUB_ (u, ia, ib);
-      usiz1 = REAL_RSQRT (DOT_ (u, u));
+      SUB_(u, ia, ib);
+      usiz1 = REAL_RSQRT(DOT_(u, u));
 
       real v[3], vsiz1;
       if (axetyp != pole_z_only) {
-         SUB_ (v, ic, ib);
-         vsiz1 = REAL_RSQRT (DOT_ (v, v));
+         SUB_(v, ic, ib);
+         vsiz1 = REAL_RSQRT(DOT_(v, v));
       } else {
-         if (REAL_ABS (u[0]) * usiz1 > ((real)0.866)) {
+         if (REAL_ABS(u[0]) * usiz1 > ((real)0.866)) {
             v[0] = 0;
             v[1] = 1;
          } else {
@@ -80,44 +75,44 @@ void torque_tmpl (Virial v_handle)
 
       real w[3], wsiz1;
       if (axetyp == pole_z_bisect || axetyp == pole_3_fold) {
-         SUB_ (w, id, ib);
+         SUB_(w, id, ib);
       } else {
-         CROSS_ (w, u, v);
+         CROSS_(w, u, v);
       }
-      wsiz1 = REAL_RSQRT (DOT_ (w, w));
+      wsiz1 = REAL_RSQRT(DOT_(w, w));
 
-      NORMAL_ (u, usiz1);
-      NORMAL_ (v, vsiz1);
-      NORMAL_ (w, wsiz1);
+      NORMAL_(u, usiz1);
+      NORMAL_(v, vsiz1);
+      NORMAL_(w, wsiz1);
 
       // find the perpendicular and angle for each pair of axes
 
       real uv[3], uvsiz1;
-      CROSS_ (uv, v, u);
-      uvsiz1 = REAL_RSQRT (DOT_ (uv, uv));
-      NORMAL_ (uv, uvsiz1);
+      CROSS_(uv, v, u);
+      uvsiz1 = REAL_RSQRT(DOT_(uv, uv));
+      NORMAL_(uv, uvsiz1);
 
       real uw[3], uwsiz1;
-      CROSS_ (uw, w, u);
-      uwsiz1 = REAL_RSQRT (DOT_ (uw, uw));
-      NORMAL_ (uw, uwsiz1);
+      CROSS_(uw, w, u);
+      uwsiz1 = REAL_RSQRT(DOT_(uw, uw));
+      NORMAL_(uw, uwsiz1);
 
       real vw[3], vwsiz1;
-      CROSS_ (vw, w, v);
-      vwsiz1 = REAL_RSQRT (DOT_ (vw, vw));
-      NORMAL_ (vw, vwsiz1);
+      CROSS_(vw, w, v);
+      vwsiz1 = REAL_RSQRT(DOT_(vw, vw));
+      NORMAL_(vw, vwsiz1);
 
       // get sine and cosine of angles between the rotation axes
 
-      real uvcos = DOT_ (u, v);
-      real uvsin1 = REAL_RSQRT (1 - uvcos * uvcos);
+      real uvcos = DOT_(u, v);
+      real uvsin1 = REAL_RSQRT(1 - uvcos * uvcos);
 
       // negative of dot product of torque with unit vectors gives result of
       // infinitesimal rotation along these vectors
 
-      real dphidu = -DOT_ (trq, u);
-      real dphidv = -DOT_ (trq, v);
-      real dphidw = -DOT_ (trq, w);
+      real dphidu = -DOT_(trq, u);
+      real dphidv = -DOT_(trq, v);
+      real dphidw = -DOT_(trq, w);
 
       // force distribution
 
@@ -128,7 +123,7 @@ void torque_tmpl (Virial v_handle)
             de[j][ia] += du;
             #pragma acc atomic update
             de[j][ib] -= du;
-            if_constexpr (DO_V) frcz[j] += du;
+            if_constexpr(DO_V) frcz[j] += du;
          }
       } else if (axetyp == pole_z_then_x) {
          for (int j = 0; j < 3; ++j) {
@@ -140,7 +135,7 @@ void torque_tmpl (Virial v_handle)
             de[j][ic] += dv;
             #pragma acc atomic update
             de[j][ib] -= (du + dv);
-            if_constexpr (DO_V)
+            if_constexpr(DO_V)
             {
                frcz[j] += du;
                frcx[j] += dv;
@@ -158,7 +153,7 @@ void torque_tmpl (Virial v_handle)
             de[j][ic] += dv;
             #pragma acc atomic update
             de[j][ib] -= (du + dv);
-            if_constexpr (DO_V)
+            if_constexpr(DO_V)
             {
                frcz[j] += du;
                frcx[j] += dv;
@@ -169,46 +164,46 @@ void torque_tmpl (Virial v_handle)
          // build some additional axes needed for the Z-Bisect method
 
          real r[3], rsiz1;
-         ADD_ (r, v, w);
-         rsiz1 = REAL_RSQRT (DOT_ (r, r));
+         ADD_(r, v, w);
+         rsiz1 = REAL_RSQRT(DOT_(r, r));
 
          real s[3], ssiz1;
-         CROSS_ (s, u, r);
-         ssiz1 = REAL_RSQRT (DOT_ (s, s));
+         CROSS_(s, u, r);
+         ssiz1 = REAL_RSQRT(DOT_(s, s));
 
-         NORMAL_ (r, rsiz1);
-         NORMAL_ (s, ssiz1);
+         NORMAL_(r, rsiz1);
+         NORMAL_(s, ssiz1);
 
          // find the perpendicular and angle for each pair of axes
 
          real ur[3], ursiz1;
-         CROSS_ (ur, r, u);
-         ursiz1 = REAL_RSQRT (DOT_ (ur, ur));
-         NORMAL_ (ur, ursiz1);
+         CROSS_(ur, r, u);
+         ursiz1 = REAL_RSQRT(DOT_(ur, ur));
+         NORMAL_(ur, ursiz1);
 
          real us[3], ussiz1;
-         CROSS_ (us, s, u);
-         ussiz1 = REAL_RSQRT (DOT_ (us, us));
-         NORMAL_ (us, ussiz1);
+         CROSS_(us, s, u);
+         ussiz1 = REAL_RSQRT(DOT_(us, us));
+         NORMAL_(us, ussiz1);
 
          real vs[3], vssiz1;
-         CROSS_ (vs, s, v);
-         vssiz1 = REAL_RSQRT (DOT_ (vs, vs));
-         NORMAL_ (vs, vssiz1);
+         CROSS_(vs, s, v);
+         vssiz1 = REAL_RSQRT(DOT_(vs, vs));
+         NORMAL_(vs, vssiz1);
 
          real ws[3], wssiz1;
-         CROSS_ (ws, s, w);
-         wssiz1 = REAL_RSQRT (DOT_ (ws, ws));
-         NORMAL_ (ws, wssiz1);
+         CROSS_(ws, s, w);
+         wssiz1 = REAL_RSQRT(DOT_(ws, ws));
+         NORMAL_(ws, wssiz1);
 
          // get sine and cosine of angles between the rotation axes
 
-         real urcos = DOT_ (u, r);
-         real ursin1 = REAL_RSQRT (1 - urcos * urcos);
-         real vscos = DOT_ (v, s);
-         real vssin = REAL_SQRT (1 - vscos * vscos);
-         real wscos = DOT_ (w, s);
-         real wssin = REAL_SQRT (1 - wscos * wscos);
+         real urcos = DOT_(u, r);
+         real ursin1 = REAL_RSQRT(1 - urcos * urcos);
+         real vscos = DOT_(v, s);
+         real vssin = REAL_SQRT(1 - vscos * vscos);
+         real wscos = DOT_(w, s);
+         real wssin = REAL_SQRT(1 - wscos * wscos);
 
          // compute the projection of v and w onto the ru-plane
 
@@ -218,26 +213,26 @@ void torque_tmpl (Virial v_handle)
          t1[0] = v[0] - s[0] * vscos;
          t1[1] = v[1] - s[1] * vscos;
          t1[2] = v[2] - s[2] * vscos;
-         t1siz1 = REAL_RSQRT (DOT_ (t1, t1));
-         NORMAL_ (t1, t1siz1);
+         t1siz1 = REAL_RSQRT(DOT_(t1, t1));
+         NORMAL_(t1, t1siz1);
 
          t2[0] = w[0] - s[0] * wscos;
          t2[1] = w[1] - s[1] * wscos;
          t2[2] = w[2] - s[2] * wscos;
-         t2siz1 = REAL_RSQRT (DOT_ (t2, t2));
-         NORMAL_ (t2, t2siz1);
+         t2siz1 = REAL_RSQRT(DOT_(t2, t2));
+         NORMAL_(t2, t2siz1);
 
-         real ut1cos = DOT_ (u, t1);
-         real ut1sin = REAL_SQRT (1 - ut1cos * ut1cos);
-         real ut2cos = DOT_ (u, t2);
-         real ut2sin = REAL_SQRT (1 - ut2cos * ut2cos);
-         real _1_ut1sin_ut2sin = REAL_RECIP (ut1sin + ut2sin);
+         real ut1cos = DOT_(u, t1);
+         real ut1sin = REAL_SQRT(1 - ut1cos * ut1cos);
+         real ut2cos = DOT_(u, t2);
+         real ut2sin = REAL_SQRT(1 - ut2cos * ut2cos);
+         real _1_ut1sin_ut2sin = REAL_RECIP(ut1sin + ut2sin);
 
          // negative of dot product of torque with unit vectors gives result of
          // infinitesimal rotation along these vectors
 
-         real dphidr = -DOT_ (trq, r);
-         real dphids = -DOT_ (trq, s);
+         real dphidr = -DOT_(trq, r);
+         real dphids = -DOT_(trq, s);
 
          for (int j = 0; j < 3; ++j) {
             real du = ur[j] * dphidr * usiz1 * ursin1 + us[j] * dphids * usiz1;
@@ -253,7 +248,7 @@ void torque_tmpl (Virial v_handle)
             de[j][id] += dw;
             #pragma acc atomic update
             de[j][ib] -= (du + dv + dw);
-            if_constexpr (DO_V)
+            if_constexpr(DO_V)
             {
                frcz[j] += du;
                frcx[j] += dv;
@@ -265,28 +260,28 @@ void torque_tmpl (Virial v_handle)
          p[0] = u[0] + v[0] + w[0];
          p[1] = u[1] + v[1] + w[1];
          p[2] = u[2] + v[2] + w[2];
-         psiz1 = REAL_RSQRT (DOT_ (p, p));
-         NORMAL_ (p, psiz1);
+         psiz1 = REAL_RSQRT(DOT_(p, p));
+         NORMAL_(p, psiz1);
 
-         real wpcos = DOT_ (w, p);
-         real upcos = DOT_ (u, p);
-         real vpcos = DOT_ (v, p);
+         real wpcos = DOT_(w, p);
+         real upcos = DOT_(u, p);
+         real vpcos = DOT_(v, p);
 
          real r[3], rsiz1;
          real del[3], delsiz1;
          real eps[3], dphidr, dphiddel;
 
-         ADD_ (r, u, v);
-         rsiz1 = REAL_RSQRT (DOT_ (r, r));
-         NORMAL_ (r, rsiz1);
-         real rwcos = DOT_ (r, w);
-         real rwsin1 = REAL_RSQRT (1 - rwcos * rwcos);
-         dphidr = -DOT_ (trq, r);
-         CROSS_ (del, r, w);
-         delsiz1 = REAL_RSQRT (DOT_ (del, del));
-         NORMAL_ (del, delsiz1);
-         dphiddel = -DOT_ (trq, del);
-         CROSS_ (eps, del, w);
+         ADD_(r, u, v);
+         rsiz1 = REAL_RSQRT(DOT_(r, r));
+         NORMAL_(r, rsiz1);
+         real rwcos = DOT_(r, w);
+         real rwsin1 = REAL_RSQRT(1 - rwcos * rwcos);
+         dphidr = -DOT_(trq, r);
+         CROSS_(del, r, w);
+         delsiz1 = REAL_RSQRT(DOT_(del, del));
+         NORMAL_(del, delsiz1);
+         dphiddel = -DOT_(trq, del);
+         CROSS_(eps, del, w);
          for (int j = 0; j < 3; ++j) {
             real dw = del[j] * dphidr * wsiz1 * rwsin1 +
                eps[j] * dphiddel * wpcos * wsiz1 * psiz1;
@@ -294,20 +289,20 @@ void torque_tmpl (Virial v_handle)
             de[j][id] += dw;
             #pragma acc atomic update
             de[j][ib] -= dw;
-            if_constexpr (DO_V) frcy[j] += dw;
+            if_constexpr(DO_V) frcy[j] += dw;
          }
 
-         ADD_ (r, v, w);
-         rsiz1 = REAL_RSQRT (DOT_ (r, r));
-         NORMAL_ (r, rsiz1);
-         real rucos = DOT_ (r, u);
-         real rusin1 = REAL_RSQRT (1 - rucos * rucos);
-         dphidr = -DOT_ (trq, r);
-         CROSS_ (del, r, u);
-         delsiz1 = REAL_RSQRT (DOT_ (del, del));
-         NORMAL_ (del, delsiz1);
-         dphiddel = -DOT_ (trq, del);
-         CROSS_ (eps, del, u);
+         ADD_(r, v, w);
+         rsiz1 = REAL_RSQRT(DOT_(r, r));
+         NORMAL_(r, rsiz1);
+         real rucos = DOT_(r, u);
+         real rusin1 = REAL_RSQRT(1 - rucos * rucos);
+         dphidr = -DOT_(trq, r);
+         CROSS_(del, r, u);
+         delsiz1 = REAL_RSQRT(DOT_(del, del));
+         NORMAL_(del, delsiz1);
+         dphiddel = -DOT_(trq, del);
+         CROSS_(eps, del, u);
          for (int j = 0; j < 3; ++j) {
             real du = del[j] * dphidr * usiz1 * rusin1 +
                eps[j] * dphiddel * upcos * usiz1 * psiz1;
@@ -315,20 +310,20 @@ void torque_tmpl (Virial v_handle)
             de[j][ia] += du;
             #pragma acc atomic update
             de[j][ib] -= du;
-            if_constexpr (DO_V) frcz[j] += du;
+            if_constexpr(DO_V) frcz[j] += du;
          }
 
-         ADD_ (r, u, w);
-         rsiz1 = REAL_RSQRT (DOT_ (r, r));
-         NORMAL_ (r, rsiz1);
-         real rvcos = DOT_ (r, v);
-         real rvsin1 = REAL_RSQRT (1 - rvcos * rvcos);
-         dphidr = -DOT_ (trq, r);
-         CROSS_ (del, r, v);
-         delsiz1 = REAL_RSQRT (DOT_ (del, del));
-         NORMAL_ (del, delsiz1);
-         dphiddel = -DOT_ (trq, del);
-         CROSS_ (eps, del, v);
+         ADD_(r, u, w);
+         rsiz1 = REAL_RSQRT(DOT_(r, r));
+         NORMAL_(r, rsiz1);
+         real rvcos = DOT_(r, v);
+         real rvsin1 = REAL_RSQRT(1 - rvcos * rvcos);
+         dphidr = -DOT_(trq, r);
+         CROSS_(del, r, v);
+         delsiz1 = REAL_RSQRT(DOT_(del, del));
+         NORMAL_(del, delsiz1);
+         dphiddel = -DOT_(trq, del);
+         CROSS_(eps, del, v);
          for (int j = 0; j < 3; ++j) {
             real dv = del[j] * dphidr * vsiz1 * rvsin1 +
                eps[j] * dphiddel * vpcos * vsiz1 * psiz1;
@@ -336,11 +331,11 @@ void torque_tmpl (Virial v_handle)
             de[j][ic] += dv;
             #pragma acc atomic update
             de[j][ib] -= dv;
-            if_constexpr (DO_V) frcx[j] += dv;
+            if_constexpr(DO_V) frcx[j] += dv;
          }
       }
 
-      if_constexpr (DO_V)
+      if_constexpr(DO_V)
       {
          const int iaz = (ia == -1) ? i : ia;
          const int iax = (ic == -1) ? i : ic;
@@ -371,21 +366,21 @@ void torque_tmpl (Virial v_handle)
              yiy * frcy[2] + yiz * frcz[2]);
          real vzz = zix * frcx[2] + ziy * frcy[2] + ziz * frcz[2];
 
-         atomic_add_value (vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir,
-                           i & (bufsize - 1));
+         atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir,
+                          i & (bufsize - 1));
       } // end if_constexpr(DO_V)
    }    // end for (int i)
 }
 
-void torque (int vers)
+void torque(int vers)
 {
-   if (!use_elec ())
+   if (!use_elec())
       return;
 
    if (vers & calc::virial) {
-      torque_tmpl<1> (vir_trq_handle);
+      torque_tmpl<1>(vir_trq);
    } else if (vers & calc::grad) {
-      torque_tmpl<0> (-1);
+      torque_tmpl<0>(nullptr);
    }
 }
 TINKER_NAMESPACE_END

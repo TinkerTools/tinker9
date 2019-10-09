@@ -2,12 +2,13 @@
 #include "box.h"
 #include "gpu_card.h"
 #include "md.h"
-#include <ext/tinker/detail/atomid.hh>
-#include <ext/tinker/detail/atoms.hh>
-#include <ext/tinker/detail/moldyn.hh>
+#include <cassert>
+#include <tinker/detail/atomid.hh>
+#include <tinker/detail/atoms.hh>
+#include <tinker/detail/moldyn.hh>
 
 TINKER_NAMESPACE_BEGIN
-void n_data (rc_op op)
+void n_data(rc_op op)
 {
    if (op & rc_dealloc) {
       trajn = -1;
@@ -22,19 +23,19 @@ void n_data (rc_op op)
 
       if (calc::traj & rc_flag) {
          // trajn must have been initialized by this point
-         assert (trajn >= 0);
+         assert(trajn >= 0);
       }
    }
 }
 
-void xyz_data (rc_op op)
+void xyz_data(rc_op op)
 {
    if ((calc::xyz & rc_flag) == 0)
       return;
 
    if (op & rc_dealloc) {
       if (calc::traj & rc_flag) {
-         device_array::deallocate (trajx, trajy, trajz);
+         device_array::deallocate(trajx, trajy, trajz);
          x = nullptr;
          y = nullptr;
          z = nullptr;
@@ -42,73 +43,73 @@ void xyz_data (rc_op op)
          trajx = nullptr;
          trajy = nullptr;
          trajz = nullptr;
-         device_array::deallocate (x, y, z);
+         device_array::deallocate(x, y, z);
       }
    }
 
    if (op & rc_alloc) {
       if (calc::traj & rc_flag) {
-         device_array::allocate (padded_n * trajn, &trajx, &trajy, &trajz);
+         device_array::allocate(padded_n * trajn, &trajx, &trajy, &trajz);
          x = trajx;
          y = trajy;
          z = trajz;
       } else {
-         device_array::allocate (padded_n, &x, &y, &z);
+         device_array::allocate(padded_n, &x, &y, &z);
       }
    }
 
    if (op & rc_init) {
-      device_array::copyin (n, x, atoms::x);
-      device_array::copyin (n, y, atoms::y);
-      device_array::copyin (n, z, atoms::z);
+      device_array::copyin(n, x, atoms::x);
+      device_array::copyin(n, y, atoms::y);
+      device_array::copyin(n, z, atoms::z);
    }
 }
 
-void vel_data (rc_op op)
+void vel_data(rc_op op)
 {
    if ((calc::vel & rc_flag) == 0)
       return;
 
    if (op & rc_dealloc) {
-      device_array::deallocate (vx, vy, vz);
+      device_array::deallocate(vx, vy, vz);
    }
 
    if (op & rc_alloc) {
-      device_array::allocate (n, &vx, &vy, &vz);
+      device_array::allocate(n, &vx, &vy, &vz);
    }
 
    if (op & rc_init) {
-      device_array::copyin2 (0, 3, n, vx, moldyn::v);
-      device_array::copyin2 (1, 3, n, vy, moldyn::v);
-      device_array::copyin2 (2, 3, n, vz, moldyn::v);
+      device_array::copyin2(0, 3, n, vx, moldyn::v);
+      device_array::copyin2(1, 3, n, vy, moldyn::v);
+      device_array::copyin2(2, 3, n, vz, moldyn::v);
    }
 }
 
-void mass_data (rc_op op)
+void mass_data(rc_op op)
 {
    if ((calc::mass & rc_flag) == 0)
       return;
 
    if (op & rc_dealloc) {
-      device_array::deallocate (mass, massinv);
+      device_array::deallocate(mass, massinv);
    }
 
    if (op & rc_alloc) {
-      device_array::allocate (n, &mass, &massinv);
+      device_array::allocate(n, &mass, &massinv);
    }
 
    if (op & rc_init) {
-      device_array::copyin (n, mass, atomid::mass);
-      std::vector<double> mbuf (n);
+      device_array::copyin(n, mass, atomid::mass);
+      std::vector<double> mbuf(n);
       for (int i = 0; i < n; ++i)
          mbuf[i] = 1 / atomid::mass[i];
-      device_array::copyin (n, massinv, mbuf.data ());
+      device_array::copyin(n, massinv, mbuf.data());
    }
 }
 
-void goto_frame (int idx0)
+void goto_frame(int idx0)
 {
-   assert (calc::traj & rc_flag);
+   assert(calc::traj & rc_flag);
    x = trajx + padded_n * idx0;
    y = trajy + padded_n * idx0;
    z = trajz + padded_n * idx0;
@@ -120,26 +121,26 @@ TINKER_NAMESPACE_END
 #include "io_print.h"
 #include "io_text.h"
 #include "tinker_rt.h"
-#include <ext/tinker/detail/boxes.hh>
+#include <tinker/detail/boxes.hh>
 #include <fstream>
 #include <sstream>
 
 TINKER_NAMESPACE_BEGIN
-void copyin_arc_file (const std::string& arcfile, int first1, int last1,
-                      int step)
+void copyin_arc_file(const std::string& arcfile, int first1, int last1,
+                     int step)
 {
 
    if (!(first1 >= 1 && last1 >= first1 && step > 0)) {
       std::string msg =
-         format ("Invalid First/Last/Step Values  : {:d}/{:d}/{:d}", first1,
-                 last1, step);
-      TINKER_THROW (msg);
+         format("Invalid First/Last/Step Values  : {:d}/{:d}/{:d}", first1,
+                last1, step);
+      TINKER_THROW(msg);
    }
 
    // (1, 7, 2) -> 4
    // (1, 8, 2) -> 4
    int tn = (last1 - first1) / step + 1;
-   assert (tn <= trajn);
+   assert(tn <= trajn);
 
    double xyzsave[3], anglesave[3];
    xyzsave[0] = boxes::xbox;
@@ -149,18 +150,18 @@ void copyin_arc_file (const std::string& arcfile, int first1, int last1,
    anglesave[1] = boxes::beta;
    anglesave[2] = boxes::gamma;
 
-   std::ifstream iarc (arcfile);
+   std::ifstream iarc(arcfile);
    if (iarc) {
       std::string line;
-      std::getline (iarc, line); // n and title
+      std::getline(iarc, line); // n and title
 
-      std::getline (iarc, line); // either box size or first atom
+      std::getline(iarc, line); // either box size or first atom
       bool has_boxsize;
       try {
-         auto vs = Text::split (line);
+         auto vs = Text::split(line);
          double baxis =
-            std::stod (vs.at (1)); // will throw an exception here if
-                                   // this file does not include box size
+            std::stod(vs.at(1)); // will throw an exception here if
+                                 // this file does not include box size
          has_boxsize = true;
       } catch (std::invalid_argument&) {
          has_boxsize = false;
@@ -171,17 +172,17 @@ void copyin_arc_file (const std::string& arcfile, int first1, int last1,
 
       std::vector<double> bbuf;
       if (has_boxsize)
-         bbuf.resize (tn * 6);
-      std::vector<real> xbuf (tn * padded_n), ybuf (tn * padded_n),
-         zbuf (tn * padded_n);
+         bbuf.resize(tn * 6);
+      std::vector<real> xbuf(tn * padded_n), ybuf(tn * padded_n),
+         zbuf(tn * padded_n);
 
-      auto skip = [] (std::ifstream& f, int nl) {
-         f.ignore (std::numeric_limits<std::streamsize>::max (), '\n');
+      auto skip = [](std::ifstream& f, int nl) {
+         f.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       };
 
       // rewind
-      iarc.clear ();
-      iarc.seekg (0);
+      iarc.clear();
+      iarc.seekg(0);
 
       int current = 0;
       int dummy1;
@@ -190,31 +191,31 @@ void copyin_arc_file (const std::string& arcfile, int first1, int last1,
          bool require1 = (i >= first1);
          bool require2 = ((i - first1) % step == 0);
          if (require1 && require2) {
-            skip (iarc, 1); // skip n and title
+            skip(iarc, 1); // skip n and title
             if (has_boxsize) {
-               std::getline (iarc, line);
-               std::istringstream ss (line);
+               std::getline(iarc, line);
+               std::istringstream ss(line);
                int c = 6 * current;
                ss >> bbuf[c] >> bbuf[c + 1] >> bbuf[c + 2] >> bbuf[c + 3] >>
                   bbuf[c + 4] >> bbuf[c + 5];
             }
             int off = current * padded_n;
             for (int j = 0; j < n; ++j) {
-               std::getline (iarc, line);
-               std::istringstream ss (line);
+               std::getline(iarc, line);
+               std::istringstream ss(line);
                ss >> dummy1 >> dummy2 >> xbuf[off + j] >> ybuf[off + j] >>
                   zbuf[off + j];
             }
             ++current;
          } else {
-            skip (iarc, nlines_to_skip);
+            skip(iarc, nlines_to_skip);
          }
       }
 
       // copyin
       std::vector<Box> bbuf2;
       if (has_boxsize) {
-         bbuf2.resize (tn);
+         bbuf2.resize(tn);
          for (int i = 0; i < tn; ++i) {
             int c = i * 6;
             boxes::xbox = bbuf[c];
@@ -223,7 +224,7 @@ void copyin_arc_file (const std::string& arcfile, int first1, int last1,
             boxes::alpha = bbuf[c + 3];
             boxes::beta = bbuf[c + 4];
             boxes::gamma = bbuf[c + 5];
-            TINKER_RT (lattice) ();
+            TINKER_RT(lattice)();
 
             for (int j = 0; j < 3; ++j)
                for (int k = 0; k < 3; ++k) {
@@ -243,15 +244,15 @@ void copyin_arc_file (const std::string& arcfile, int first1, int last1,
                shape = Box::oct;
             bbuf2[i].shape = shape;
          }
-         device_array::copyin (tn, trajbox, bbuf2.data ());
+         device_array::copyin(tn, trajbox, bbuf2.data());
       }
-      device_array::copyin (padded_n * tn, trajx, xbuf.data ());
-      device_array::copyin (padded_n * tn, trajy, ybuf.data ());
-      device_array::copyin (padded_n * tn, trajz, zbuf.data ());
+      device_array::copyin(padded_n * tn, trajx, xbuf.data());
+      device_array::copyin(padded_n * tn, trajy, ybuf.data());
+      device_array::copyin(padded_n * tn, trajz, zbuf.data());
    } else {
       std::string msg = "Cannot Open File ";
       msg += arcfile;
-      TINKER_THROW (msg);
+      TINKER_THROW(msg);
    }
 
    boxes::xbox = xyzsave[0];

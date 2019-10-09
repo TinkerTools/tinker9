@@ -1,17 +1,17 @@
 #include "potent.h"
 #include <cassert>
-#include <ext/tinker/detail/angbnd.hh>
-#include <ext/tinker/detail/bndstr.hh>
-#include <ext/tinker/detail/opbend.hh>
-#include <ext/tinker/detail/pitors.hh>
-#include <ext/tinker/detail/potent.hh>
-#include <ext/tinker/detail/strbnd.hh>
-#include <ext/tinker/detail/tors.hh>
-#include <ext/tinker/detail/tortor.hh>
-#include <ext/tinker/detail/urey.hh>
+#include <tinker/detail/angbnd.hh>
+#include <tinker/detail/bndstr.hh>
+#include <tinker/detail/opbend.hh>
+#include <tinker/detail/pitors.hh>
+#include <tinker/detail/potent.hh>
+#include <tinker/detail/strbnd.hh>
+#include <tinker/detail/tors.hh>
+#include <tinker/detail/tortor.hh>
+#include <tinker/detail/urey.hh>
 
 TINKER_NAMESPACE_BEGIN
-int use_potent (potent_t term)
+int use_potent(potent_t term)
 {
    int val = 0;
    switch (term) {
@@ -55,13 +55,13 @@ int use_potent (potent_t term)
       val = potent::use_polar;
       break;
    default:
-      assert (false);
+      assert(false);
       break;
    }
    return val;
 }
 
-int count_bonded_term (potent_t term)
+int count_bonded_term(potent_t term)
 {
    int val = -1;
    switch (term) {
@@ -90,7 +90,7 @@ int count_bonded_term (potent_t term)
       val = tortor::ntortor;
       break;
    default:
-      assert (false);
+      assert(false);
       break;
    }
    return val;

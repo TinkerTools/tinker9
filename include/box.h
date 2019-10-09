@@ -56,8 +56,8 @@ TINKER_EXTERN Box* box;
 /// device pointer to the current pbc box of a trajectory
 TINKER_EXTERN Box* trajbox;
 
-void box_data (rc_op);
-void copyout_box_data (const Box*);
+void box_data(rc_op);
+void copyout_box_data(const Box*);
 TINKER_NAMESPACE_END
 
 #endif

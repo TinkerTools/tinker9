@@ -92,7 +92,7 @@ void polargroup_data(rc_op op) {
     device_array::copyin(n, polargroup_obj.np14, nbuf.data());
     device_array::copyin(n, polargroup_obj.ip14, ibuf.data());
 
-    polargroup_unit.init_deviceptr(polargroup_obj);
+    polargroup_unit.update_deviceptr(polargroup_obj);
   }
 }
 TINKER_NAMESPACE_END

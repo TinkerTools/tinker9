@@ -3,35 +3,35 @@
 #include "md.h"
 #include "pme.h"
 #include "potent.h"
-#include <ext/tinker/detail/chgpot.hh>
-#include <ext/tinker/detail/limits.hh>
-#include <ext/tinker/detail/mpole.hh>
+#include <tinker/detail/chgpot.hh>
+#include <tinker/detail/limits.hh>
+#include <tinker/detail/mpole.hh>
 
 TINKER_NAMESPACE_BEGIN
-int use_elec ()
+int use_elec()
 {
-   return use_potent (mpole_term) || use_potent (polar_term);
+   return use_potent(mpole_term) || use_potent(polar_term);
 }
 
-int use_ewald ()
+int use_ewald()
 {
    return limits::use_ewald;
 }
 
-static void pole_data_ (rc_op op)
+static void pole_data_(rc_op op)
 {
    if (op & rc_dealloc) {
-      device_array::deallocate (zaxis, pole, rpole, trqx, trqy, trqz, udir,
-                                udirp, uind, uinp);
+      device_array::deallocate(zaxis, pole, rpole, trqx, trqy, trqz, udir,
+                               udirp, uind, uinp);
 
-      vir_trq_handle.close ();
+      device_array::deallocate(vir_trq);
    }
 
    if (op & rc_alloc) {
-      device_array::allocate (n, &zaxis, &pole, &rpole);
+      device_array::allocate(n, &zaxis, &pole, &rpole);
 
-      if (use_potent (polar_term)) {
-         device_array::allocate (n, &uind, &uinp, &udir, &udirp);
+      if (use_potent(polar_term)) {
+         device_array::allocate(n, &uind, &uinp, &udir, &udirp);
       } else {
          uind = nullptr;
          uinp = nullptr;
@@ -40,15 +40,14 @@ static void pole_data_ (rc_op op)
       }
 
       if (rc_flag & calc::grad) {
-         device_array::allocate (n, &trqx, &trqy, &trqz);
+         device_array::allocate(n, &trqx, &trqy, &trqz);
       } else {
          trqx = nullptr;
          trqy = nullptr;
          trqz = nullptr;
       }
 
-      vir_trq_handle = Virial::open ();
-      vir_trq_handle->alloc (n);
+      device_array::allocate(buffer_size(), &vir_trq);
    }
 
    if (op & rc_init) {
@@ -63,8 +62,8 @@ static void pole_data_ (rc_op op)
       // subtracted by 1 becasue of the checks in chkpole;
       // 4. GPU chkpole kernel is necessary when unexpected changes of
       // charalities may happen, e.g. in Monte Carlo simulations.
-      static_assert (sizeof (LocalFrame) == 4 * sizeof (int), "");
-      std::vector<LocalFrame> zaxisbuf (n);
+      static_assert(sizeof(LocalFrame) == 4 * sizeof(int), "");
+      std::vector<LocalFrame> zaxisbuf(n);
       for (int i = 0; i < n; ++i) {
          zaxisbuf[i].zaxis = mpole::zaxis[i] - 1;
          zaxisbuf[i].xaxis = mpole::xaxis[i] - 1;
@@ -85,9 +84,9 @@ static void pole_data_ (rc_op op)
             val = pole_none;
          zaxisbuf[i].polaxe = val;
       }
-      device_array::copyin (n, zaxis, zaxisbuf.data ());
+      device_array::copyin(n, zaxis, zaxisbuf.data());
 
-      std::vector<double> polebuf (mpl_total * n);
+      std::vector<double> polebuf(mpl_total * n);
       for (int i = 0; i < n; ++i) {
          int b1 = mpl_total * i;
          int b2 = mpole::maxpole * i;
@@ -106,42 +105,41 @@ static void pole_data_ (rc_op op)
          polebuf[b1 + mpl_pme_yz] = mpole::pole[b2 + 9];
          polebuf[b1 + mpl_pme_zz] = mpole::pole[b2 + 12];
       }
-      device_array::copyin (n, pole, polebuf.data ());
+      device_array::copyin(n, pole, polebuf.data());
    }
 }
 
-void elec_data (rc_op op)
+void elec_data(rc_op op)
 {
-   if (!use_elec ())
+   if (!use_elec())
       return;
 
    rc_man pole42_{pole_data_, op};
    rc_man pme42_{pme_data, op};
 }
 
-extern void chkpole ();
-extern void rotpole ();
-void elec_init (int vers)
+extern void chkpole();
+extern void rotpole();
+void elec_init(int vers)
 {
-   if (!use_elec ())
+   if (!use_elec())
       return;
 
    // zero torque
 
    if (vers & calc::grad) {
-      device_array::zero (n, trqx, trqy, trqz);
+      device_array::zero(n, trqx, trqy, trqz);
    }
 
    // zero torque-related virial
 
-   if (vers & calc::virial) {
-      vir_trq_handle->zero ();
-   }
+   if (vers & calc::virial)
+      device_array::zero(buffer_size(), vir_trq);
 
-   chkpole ();
-   rotpole ();
+   chkpole();
+   rotpole();
 
-   if (use_ewald ())
-      pme_init (vers);
+   if (use_ewald())
+      pme_init(vers);
 }
 TINKER_NAMESPACE_END

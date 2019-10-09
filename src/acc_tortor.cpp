@@ -52,8 +52,8 @@ TINKER_NAMESPACE_BEGIN
       2 * (y1[0] + y1[1] - y1[2] - y1[3]) +                                    \
       2 * (y2[0] - y2[1] - y2[2] + y2[3]) + y12[0] + y12[1] + y12[2] + y12[3]; \
                                                                                \
-   real t = (x1 - x1l) * REAL_RECIP (x1u - x1l);                               \
-   real u = (x2 - x2l) * REAL_RECIP (x2u - x2l)
+   real t = (x1 - x1l) * REAL_RECIP(x1u - x1l);                                \
+   real u = (x2 - x2l) * REAL_RECIP(x2u - x2l)
 
 #define BCUCOF_ANSY_                                                           \
    real ay = ((c[3][3] * u + c[3][2]) * u + c[3][1]) * u + c[3][0];            \
@@ -62,12 +62,12 @@ TINKER_NAMESPACE_BEGIN
    ay = t * ay + ((c[0][3] * u + c[0][2]) * u + c[0][1]) * u + c[0][0]
 
 #pragma acc routine seq
-static void bcuint0 (const real (&__restrict__ y)[4],
-                     const real (&__restrict__ y1i)[4],
-                     const real (&__restrict__ y2i)[4],
-                     const real (&__restrict__ y12i)[4], real x1l, real x1u,
-                     real x2l, real x2u, real x1, real x2,
-                     real& __restrict__ ansy)
+static void bcuint0(const real (&__restrict__ y)[4],
+                    const real (&__restrict__ y1i)[4],
+                    const real (&__restrict__ y2i)[4],
+                    const real (&__restrict__ y12i)[4], real x1l, real x1u,
+                    real x2l, real x2u, real x1, real x2,
+                    real& __restrict__ ansy)
 {
    BCUCOF_;
    BCUCOF_ANSY_;
@@ -75,13 +75,13 @@ static void bcuint0 (const real (&__restrict__ y)[4],
 }
 
 #pragma acc routine seq
-static void bcuint1 (const real (&__restrict__ y)[4],
-                     const real (&__restrict__ y1i)[4],
-                     const real (&__restrict__ y2i)[4],
-                     const real (&__restrict__ y12i)[4], real x1l, real x1u,
-                     real x2l, real x2u, real x1, real x2,
-                     real& __restrict__ ansy, real& __restrict__ ansy1,
-                     real& __restrict__ ansy2)
+static void bcuint1(const real (&__restrict__ y)[4],
+                    const real (&__restrict__ y1i)[4],
+                    const real (&__restrict__ y2i)[4],
+                    const real (&__restrict__ y12i)[4], real x1l, real x1u,
+                    real x2l, real x2u, real x1, real x2,
+                    real& __restrict__ ansy, real& __restrict__ ansy1,
+                    real& __restrict__ ansy2)
 {
    BCUCOF_;
    BCUCOF_ANSY_;
@@ -91,14 +91,14 @@ static void bcuint1 (const real (&__restrict__ y)[4],
    day1 = u * day1 + (3 * c[3][2] * t + 2 * c[2][2]) * t + c[1][2];
    day1 = u * day1 + (3 * c[3][1] * t + 2 * c[2][1]) * t + c[1][1];
    day1 = u * day1 + (3 * c[3][0] * t + 2 * c[2][0]) * t + c[1][0];
-   day1 *= REAL_RECIP (x1u - x1l);
+   day1 *= REAL_RECIP(x1u - x1l);
    ansy1 = day1;
 
    real day2 = (3 * c[3][3] * u + 2 * c[3][2]) * u + c[3][1];
    day2 = t * day2 + (3 * c[2][3] * u + 2 * c[2][2]) * u + c[2][1];
    day2 = t * day2 + (3 * c[1][3] * u + 2 * c[1][2]) * u + c[1][1];
    day2 = t * day2 + (3 * c[0][3] * u + 2 * c[0][2]) * u + c[0][1];
-   day2 *= REAL_RECIP (x2u - x2l);
+   day2 *= REAL_RECIP(x2u - x2l);
    ansy2 = day2;
 }
 
@@ -112,16 +112,14 @@ static void bcuint1 (const real (&__restrict__ y)[4],
  */
 
 template <int USE>
-void etortor_tmpl ()
+void etortor_tmpl()
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_g = USE & calc::grad;
    constexpr int do_v = USE & calc::virial;
-   sanity_check<USE> ();
+   sanity_check<USE>();
 
-   auto* ett = ett_handle.e ()->buffer ();
-   auto* vir_ett = ett_handle.vir ()->buffer ();
-   auto bufsize = ett_handle.buffer_size ();
+   auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent\
               deviceptr(x,y,z,gx,gy,gz,\
@@ -190,28 +188,28 @@ void etortor_tmpl ()
       real zu = xcb * ydc - xdc * ycb;
       real rt2 = xt * xt + yt * yt + zt * zt;
       real ru2 = xu * xu + yu * yu + zu * zu;
-      real rtru = REAL_SQRT (rt2 * ru2);
+      real rtru = REAL_SQRT(rt2 * ru2);
       real xv = ydc * zed - yed * zdc;
       real yv = zdc * xed - zed * xdc;
       real zv = xdc * yed - xed * ydc;
       real rv2 = xv * xv + yv * yv + zv * zv;
-      real rurv = REAL_SQRT (ru2 * rv2);
+      real rurv = REAL_SQRT(ru2 * rv2);
 
       if (rtru != 0 && rurv != 0) {
          real sign;
 
-         real rcb = REAL_SQRT (xcb * xcb + ycb * ycb + zcb * zcb);
-         real cosine1 = (xt * xu + yt * yu + zt * zu) * REAL_RECIP (rtru);
-         cosine1 = REAL_MIN (1, REAL_MAX (-1, cosine1));
+         real rcb = REAL_SQRT(xcb * xcb + ycb * ycb + zcb * zcb);
+         real cosine1 = (xt * xu + yt * yu + zt * zu) * REAL_RECIP(rtru);
+         cosine1 = REAL_MIN(1, REAL_MAX(-1, cosine1));
          sign = xba * xu + yba * yu + zba * zu;
-         real angle1 = (sign < 0 ? -radian : radian) * REAL_ACOS (cosine1);
+         real angle1 = (sign < 0 ? -radian : radian) * REAL_ACOS(cosine1);
          real value1 = angle1;
 
-         real rdc = REAL_SQRT (xdc * xdc + ydc * ydc + zdc * zdc);
-         real cosine2 = (xu * xv + yu * yv + zu * zv) * REAL_RECIP (rurv);
-         cosine2 = REAL_MIN (1, REAL_MAX (-1, cosine2));
+         real rdc = REAL_SQRT(xdc * xdc + ydc * ydc + zdc * zdc);
+         real cosine2 = (xu * xv + yu * yv + zu * zv) * REAL_RECIP(rurv);
+         cosine2 = REAL_MIN(1, REAL_MAX(-1, cosine2));
          sign = xcb * xv + ycb * yv + zcb * zv;
-         real angle2 = (sign < 0 ? -radian : radian) * REAL_ACOS (cosine2);
+         real angle2 = (sign < 0 ? -radian : radian) * REAL_ACOS(cosine2);
          real value2 = angle2;
 
          // check for inverted chirality at the central atom
@@ -242,9 +240,8 @@ void etortor_tmpl ()
          // e.g., -180, -165, -150, ..., 165, 180, tnx[k] = 25
          // xlo = floor((value+180) / (360/(25-1)))
          int tnxk = tnx[k];
-         int xlo = REAL_FLOOR ((value1 + 180) * (tnxk - 1) * REAL_RECIP (360));
-         int ylo =
-            REAL_FLOOR ((value2 + 180) * (tny[k] - 1) * REAL_RECIP (360));
+         int xlo = REAL_FLOOR((value1 + 180) * (tnxk - 1) * REAL_RECIP(360));
+         int ylo = REAL_FLOOR((value2 + 180) * (tny[k] - 1) * REAL_RECIP(360));
          real x1l = ttx[k][xlo];
          real x1u = ttx[k][xlo + 1];
          real y1l = tty[k][ylo];
@@ -271,24 +268,23 @@ void etortor_tmpl ()
 
          real e;
          MAYBE_UNUSED real dedang1, dedang2;
-         if_constexpr (do_g)
+         if_constexpr(do_g)
          {
-            bcuint1 (ftt, ft1, ft2, ft12, x1l, x1u, y1l, y1u, value1, value2, e,
-                     dedang1, dedang2);
+            bcuint1(ftt, ft1, ft2, ft12, x1l, x1u, y1l, y1u, value1, value2, e,
+                    dedang1, dedang2);
          }
          else
          {
-            bcuint0 (ftt, ft1, ft2, ft12, x1l, x1u, y1l, y1u, value1, value2,
-                     e);
+            bcuint0(ftt, ft1, ft2, ft12, x1l, x1u, y1l, y1u, value1, value2, e);
          }
 
-         if_constexpr (do_e)
+         if_constexpr(do_e)
          {
             e *= ttorunit;
-            atomic_add_value (e, ett, offset);
+            atomic_add_value(e, ett, offset);
          }
 
-         if_constexpr (do_g)
+         if_constexpr(do_g)
          {
             dedang1 *= (sign * ttorunit * radian);
             dedang2 *= (sign * ttorunit * radian);
@@ -302,8 +298,8 @@ void etortor_tmpl ()
             real ydb = yid - yib;
             real zdb = zid - zib;
 
-            real rt2cb_inv = REAL_RECIP (rt2 * rcb);
-            real ru2cb_inv = REAL_RECIP (ru2 * rcb);
+            real rt2cb_inv = REAL_RECIP(rt2 * rcb);
+            real ru2cb_inv = REAL_RECIP(ru2 * rcb);
             real dedxt = dedang1 * (yt * zcb - ycb * zt) * rt2cb_inv;
             real dedyt = dedang1 * (zt * xcb - zcb * xt) * rt2cb_inv;
             real dedzt = dedang1 * (xt * ycb - xcb * yt) * rt2cb_inv;
@@ -332,8 +328,8 @@ void etortor_tmpl ()
             real yec = yie - yic;
             real zec = zie - zic;
 
-            real ru2dc_inv = REAL_RECIP (ru2 * rdc);
-            real rv2dc_inv = REAL_RECIP (rv2 * rdc);
+            real ru2dc_inv = REAL_RECIP(ru2 * rdc);
+            real rv2dc_inv = REAL_RECIP(rv2 * rdc);
             real dedxu2 = dedang2 * (yu * zdc - ydc * zu) * ru2dc_inv;
             real dedyu2 = dedang2 * (zu * xdc - zdc * xu) * ru2dc_inv;
             real dedzu2 = dedang2 * (xu * ydc - xdc * yu) * ru2dc_inv;
@@ -393,7 +389,7 @@ void etortor_tmpl ()
             #pragma acc atomic update
             gz[ie] += dedzie2;
 
-            if_constexpr (do_v)
+            if_constexpr(do_v)
             {
                real vxx = xcb * (dedxic + dedxid) - xba * dedxia + xdc * dedxid;
                real vyx = ycb * (dedxic + dedxid) - yba * dedxia + ydc * dedxid;
@@ -414,25 +410,25 @@ void etortor_tmpl ()
                real vzz2 =
                   zdc * (dedzid2 + dedzie2) - zcb * dedzib2 + zed * dedzie2;
 
-               atomic_add_value (vxx + vxx2, vyx + vyx2, vzx + vzx2, vyy + vyy2,
-                                 vzy + vzy2, vzz + vzz2, vir_ett, offset);
+               atomic_add_value(vxx + vxx2, vyx + vyx2, vzx + vzx2, vyy + vyy2,
+                                vzy + vzy2, vzz + vzz2, vir_ett, offset);
             }
          }
       }
    } // end for (int itortor)
 }
 
-void etortor_acc_impl_ (int vers)
+void etortor_acc_impl_(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
-      etortor_tmpl<calc::v0> ();
+      etortor_tmpl<calc::v0>();
    else if (vers == calc::v1)
-      etortor_tmpl<calc::v1> ();
+      etortor_tmpl<calc::v1>();
    else if (vers == calc::v4)
-      etortor_tmpl<calc::v4> ();
+      etortor_tmpl<calc::v4>();
    else if (vers == calc::v5)
-      etortor_tmpl<calc::v5> ();
+      etortor_tmpl<calc::v5>();
    else if (vers == calc::v6)
-      etortor_tmpl<calc::v6> ();
+      etortor_tmpl<calc::v6>();
 }
 TINKER_NAMESPACE_END

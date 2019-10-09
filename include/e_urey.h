@@ -14,11 +14,12 @@ TINKER_EXTERN device_pointer<real> uk, ul;
 // module urypot
 TINKER_EXTERN real cury, qury, ureyunit;
 
-TINKER_EXTERN BondedEnergy eub_handle;
+TINKER_EXTERN energy_buffer eub;
+TINKER_EXTERN virial_buffer vir_eub;
 
-void eurey_data (rc_op op);
+void eurey_data(rc_op op);
 
-void eurey (int vers);
+void eurey(int vers);
 TINKER_NAMESPACE_END
 
 #endif

@@ -90,7 +90,7 @@ void couple_data(rc_op op) {
     device_array::copyin(n, coupl_obj.n15, nbuf.data());
     device_array::copyin(n, coupl_obj.i15, ibuf.data());
 
-    couple_unit.init_deviceptr(coupl_obj);
+    couple_unit.update_deviceptr(coupl_obj);
   }
 }
 TINKER_NAMESPACE_END

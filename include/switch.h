@@ -22,7 +22,7 @@ typedef enum
 } switch_t;
 
 /// \return Distance at which switching of the potential begins.
-real switch_cut (switch_t mode);
+real switch_cut(switch_t mode);
 /// \return Distance at which the potential energy goes to zero.
-real switch_off (switch_t mode);
+real switch_off(switch_t mode);
 TINKER_NAMESPACE_END

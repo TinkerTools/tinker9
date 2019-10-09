@@ -2,26 +2,26 @@
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"
-#include <ext/tinker/detail/bndpot.hh>
-#include <ext/tinker/detail/bndstr.hh>
+#include <tinker/detail/bndpot.hh>
+#include <tinker/detail/bndstr.hh>
 
 TINKER_NAMESPACE_BEGIN
-void ebond_data (rc_op op)
+void ebond_data(rc_op op)
 {
-   if (!use_potent (bond_term) && !use_potent (strbnd_term))
+   if (!use_potent(bond_term) && !use_potent(strbnd_term))
       return;
 
    if (op & rc_dealloc) {
-      device_array::deallocate (ibnd, bl, bk);
+      device_array::deallocate(ibnd, bl, bk);
 
-      eb_handle.dealloc ();
+      buffer_deallocate(eb, vir_eb);
    }
 
    if (op & rc_alloc) {
-      nbond = count_bonded_term (bond_term);
-      device_array::allocate (nbond, &ibnd, &bl, &bk);
+      nbond = count_bonded_term(bond_term);
+      device_array::allocate(nbond, &ibnd, &bl, &bk);
 
-      eb_handle.alloc (nbond);
+      buffer_allocate(&eb, &vir_eb);
    }
 
    if (op & rc_init) {
@@ -35,19 +35,19 @@ void ebond_data (rc_op op)
       qbnd = bndpot::qbnd;
       bndunit = bndpot::bndunit;
 
-      std::vector<int> ibndvec (nbond * 2);
-      for (size_t i = 0; i < ibndvec.size (); ++i) {
+      std::vector<int> ibndvec(nbond * 2);
+      for (size_t i = 0; i < ibndvec.size(); ++i) {
          ibndvec[i] = bndstr::ibnd[i] - 1;
       }
-      device_array::copyin (nbond, ibnd, ibndvec.data ());
-      device_array::copyin (nbond, bl, bndstr::bl);
-      device_array::copyin (nbond, bk, bndstr::bk);
+      device_array::copyin(nbond, ibnd, ibndvec.data());
+      device_array::copyin(nbond, bl, bndstr::bl);
+      device_array::copyin(nbond, bk, bndstr::bk);
    }
 }
 
-extern void ebond_acc_impl_ (int vers);
-void ebond (int vers)
+extern void ebond_acc_impl_(int vers);
+void ebond(int vers)
 {
-   ebond_acc_impl_ (vers);
+   ebond_acc_impl_(vers);
 }
 TINKER_NAMESPACE_END

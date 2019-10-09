@@ -37,8 +37,8 @@ typedef enum
    extra_term   // ex
 } potent_t;
 
-int use_potent (potent_t term);
-int count_bonded_term (potent_t term);
+int use_potent(potent_t term);
+int count_bonded_term(potent_t term);
 TINKER_NAMESPACE_END
 
 #endif

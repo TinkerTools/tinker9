@@ -17,35 +17,35 @@ public:
 
    /// @return
    /// @c true if @c ch is one of the white space characters
-   static bool is_ws (char ch);
+   static bool is_ws(char ch);
 
    /// @return
    /// an @c std::string object from a c-style @c char array
    template <size_t Len>
-   static std::string string (const char (&src)[Len])
+   static std::string string(const char (&src)[Len])
    {
-      return std::string (&src[0], &src[0] + Len);
+      return std::string(&src[0], &src[0] + Len);
    }
 
    /// @brief
    /// in string @c src, replace any characters appeared in @c old to char @c r
-   static void replace (std::string& src, std::string old, char r);
+   static void replace(std::string& src, std::string old, char r);
 
    /// @brief
    /// in string @c src, replace any string @c key to string @c value
-   static void replace_by_kv (std::string& src, std::string key,
-                              std::string value);
+   static void replace_by_kv(std::string& src, std::string key,
+                             std::string value);
 
    /// @brief
    /// split a string @c str to a vector of strings by @c delimiters
-   static std::vector<std::string> split (std::string str,
-                                          std::string delimiters = whitespaces);
+   static std::vector<std::string> split(std::string str,
+                                         std::string delimiters = whitespaces);
 
    /// @brief
    /// transform a string to upper or lower case
    /// @{
-   static void upcase (std::string&);
-   static void lowcase (std::string&);
+   static void upcase(std::string&);
+   static void lowcase(std::string&);
    /// @}
 };
 TINKER_NAMESPACE_END

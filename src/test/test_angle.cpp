@@ -163,7 +163,7 @@ static const double ref_g_angle_trpcage[][3] = {
    {3.0840, 5.1936, 11.2318},     {6.2831, -8.3562, -7.9840},
    {-0.4297, -0.9594, -1.5695},   {1.8260, -0.4375, -1.0835},
    {-7.2834, 3.2321, 0.9319},     {-0.1681, 2.8839, 1.5875}};
-TEST_CASE ("Angle-Trpcage", "[ff][eangle][trpcage]")
+TEST_CASE("Angle-Trpcage", "[ff][eangle][trpcage]")
 {
    const char* k = "test_trpcage.key";
    const char* x1 = "test_trpcage.xyz";
@@ -171,29 +171,29 @@ TEST_CASE ("Angle-Trpcage", "[ff][eangle][trpcage]")
 
    std::string k0 = trpcage_key;
    k0 += angleterm_only;
-   TestFile fke (k, k0);
+   TestFile fke(k, k0);
 
-   TestFile fx1 (x1, trpcage_xyz);
-   TestFile fpr (p, commit_291a85c1::amoebapro13_prm);
+   TestFile fx1(x1, trpcage_xyz);
+   TestFile fpr(p, commit_291a85c1::amoebapro13_prm);
 
    const char* argv[] = {"dummy", x1};
    int argc = 2;
-   test_begin_with_args (argc, argv);
+   test_begin_with_args(argc, argv);
    rc_flag = usage;
-   initialize ();
+   initialize();
 
    const double eps_e = 0.0001;
    const double ref_e = 72.8274;
    const int ref_count = 565;
-   const double eps_g = test_get_eps (0.001, 0.0001);
-   const double eps_v = test_get_eps (0.003, 0.001);
+   const double eps_g = test_get_eps(0.001, 0.0001);
+   const double eps_v = test_get_eps(0.003, 0.001);
    const double ref_v[][3] = {{-0.464, 37.932, 190.883},
                               {37.932, -71.780, -18.911},
                               {190.883, -18.911, 72.244}};
 
-   COMPARE_BONDED_FORCE (eangle, nangle, ea_handle, ref_e, eps_e, ref_count, gx,
-                         gy, gz, ref_g_angle_trpcage, eps_g, ref_v, eps_v);
+   COMPARE_BONDED_FORCE(eangle, nangle, ea, vir_ea, ref_e, eps_e, ref_count, gx,
+                        gy, gz, ref_g_angle_trpcage, eps_g, ref_v, eps_v);
 
-   finish ();
-   test_end ();
+   finish();
+   test_end();
 }

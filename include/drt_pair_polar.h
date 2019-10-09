@@ -15,7 +15,7 @@ struct PairPolarGrad
 #pragma acc routine seq
 template <int USE, elec_t ETYP>
 CUDA_DEVICE_FUNCTION
-void pair_polar (                                                             //
+void pair_polar(                                                              //
    real r2, real xr, real yr, real zr, real dscale, real pscale, real uscale, //
    real ci, real dix, real diy, real diz, real qixx, real qixy, real qixz,
    real qiyy, real qiyz, real qizz, real uix, real uiy, real uiz, real uixp,
@@ -29,7 +29,7 @@ void pair_polar (                                                             //
    constexpr int do_g = USE & calc::grad;
    constexpr int do_a = USE & calc::analyz;
 
-   if_constexpr (ETYP == elec_t::ewald)
+   if_constexpr(ETYP == elec_t::ewald)
    {
       dscale = 1;
       pscale = 1;
@@ -49,8 +49,8 @@ void pair_polar (                                                             //
    real uir = uix * xr + uiy * yr + uiz * zr;
    real ukr = ukx * xr + uky * yr + ukz * zr;
 
-   real r = REAL_SQRT (r2);
-   real invr1 = REAL_RECIP (r);
+   real r = REAL_SQRT(r2);
+   real invr1 = REAL_RECIP(r);
    real rr2 = invr1 * invr1;
 
    real rr1 = invr1;
@@ -58,35 +58,35 @@ void pair_polar (                                                             //
    real rr5 = 3 * rr3 * rr2;
    real rr7 = 5 * rr5 * rr2;
    MAYBE_UNUSED real rr9;
-   if_constexpr (do_g) rr9 = 7 * rr7 * rr2;
+   if_constexpr(do_g) rr9 = 7 * rr7 * rr2;
    real bn[5];
-   if_constexpr (ETYP == elec_t::ewald)
+   if_constexpr(ETYP == elec_t::ewald)
    {
-      if_constexpr (!do_g) damp_ewald (bn, 4, r, invr1, rr2, aewald);
-      else damp_ewald (bn, 5, r, invr1, rr2, aewald);
+      if_constexpr(!do_g) damp_ewald(bn, 4, r, invr1, rr2, aewald);
+      else damp_ewald(bn, 5, r, invr1, rr2, aewald);
    }
-   else if_constexpr (ETYP == elec_t::coulomb)
+   else if_constexpr(ETYP == elec_t::coulomb)
    {
       bn[1] = rr3;
       bn[2] = rr5;
       bn[3] = rr7;
-      if_constexpr (do_g) bn[4] = rr9;
+      if_constexpr(do_g) bn[4] = rr9;
    }
 
    // if use_thole
    real ex3, ex5, ex7;
    MAYBE_UNUSED real rc31, rc32, rc33, rc51, rc52, rc53, rc71, rc72, rc73;
-   if_constexpr (!do_g)
+   if_constexpr(!do_g)
    {
-      damp_thole3 (r, pdi, pti, pdk, ptk, //
-                   ex3, ex5, ex7);
+      damp_thole3(r, pdi, pti, pdk, ptk, //
+                  ex3, ex5, ex7);
       ex3 = 1 - ex3;
       ex5 = 1 - ex5;
       ex7 = 1 - ex7;
    }
    else
    {
-      damp_thole3g (         //
+      damp_thole3g(          //
          r, rr2, xr, yr, zr, //
          pdi, pti, pdk, ptk, //
          ex3, ex5, ex7,      //
@@ -109,7 +109,7 @@ void pair_polar (                                                             //
    real sr5 = bn[2] - ex5 * rr5;
    real sr7 = bn[3] - ex7 * rr7;
 
-   if_constexpr (do_e && do_a)
+   if_constexpr(do_e && do_a)
    {
       real diu = dix * ukx + diy * uky + diz * ukz;
       real qiu = qix * ukx + qiy * uky + qiz * ukz;
@@ -121,7 +121,7 @@ void pair_polar (                                                             //
       e = pscale * f * (term1 * sr3 + term2 * sr5 + term3 * sr7);
    }
 
-   if_constexpr (do_g)
+   if_constexpr(do_g)
    {
       real uirp = uixp * xr + uiyp * yr + uizp * zr;
       real ukrp = ukxp * xr + ukyp * yr + ukzp * zr;
@@ -244,13 +244,13 @@ void pair_polar (                                                             //
          tkyy * uiyp - tkyz * uizp;
       depz = tixz * ukxp + tiyz * ukyp + tizz * ukzp - tkxz * uixp -
          tkyz * uiyp - tkzz * uizp;
-      if_constexpr (ETYP == elec_t::ewald)
+      if_constexpr(ETYP == elec_t::ewald)
       {
          pgrad.frcx = -depx;
          pgrad.frcy = -depy;
          pgrad.frcz = -depz;
       }
-      else if_constexpr (ETYP == elec_t::coulomb)
+      else if_constexpr(ETYP == elec_t::coulomb)
       {
          pgrad.frcx = -depx * dscale;
          pgrad.frcy = -depy * dscale;
@@ -265,13 +265,13 @@ void pair_polar (                                                             //
          tkyz * uiz;
       depz = tixz * ukx + tiyz * uky + tizz * ukz - tkxz * uix - tkyz * uiy -
          tkzz * uiz;
-      if_constexpr (ETYP == elec_t::ewald)
+      if_constexpr(ETYP == elec_t::ewald)
       {
          pgrad.frcx -= depx;
          pgrad.frcy -= depy;
          pgrad.frcz -= depz;
       }
-      else if_constexpr (ETYP == elec_t::coulomb)
+      else if_constexpr(ETYP == elec_t::coulomb)
       {
          pgrad.frcx -= pscale * depx;
          pgrad.frcy -= pscale * depy;
@@ -321,13 +321,13 @@ void pair_polar (                                                             //
          tkyy * uiyp + tkyz * uizp;
       depz = tixz * ukxp + tiyz * ukyp + tizz * ukzp + tkxz * uixp +
          tkyz * uiyp + tkzz * uizp;
-      if_constexpr (ETYP == elec_t::ewald)
+      if_constexpr(ETYP == elec_t::ewald)
       {
          pgrad.frcx -= depx;
          pgrad.frcy -= depy;
          pgrad.frcz -= depz;
       }
-      else if_constexpr (ETYP == elec_t::coulomb)
+      else if_constexpr(ETYP == elec_t::coulomb)
       {
          pgrad.frcx -= uscale * depx;
          pgrad.frcy -= uscale * depy;

@@ -3,9 +3,9 @@
 
 using namespace TINKER_NAMESPACE;
 
-TEST_CASE ("Text", "[util]")
+TEST_CASE("Text", "[util]")
 {
-   SECTION ("Replace")
+   SECTION("Replace")
    {
       char c = ' ';
       std::string s, r, ans;
@@ -14,13 +14,13 @@ TEST_CASE ("Text", "[util]")
       s = "";
       r = "x";
       ans = "";
-      f (s, r, c);
-      REQUIRE (s == ans);
+      f(s, r, c);
+      REQUIRE(s == ans);
 
       s = "1234567890";
       r = "42";
       ans = "1 3 567890";
-      f (s, r, c);
-      REQUIRE (s == ans);
+      f(s, r, c);
+      REQUIRE(s == ans);
    }
 }

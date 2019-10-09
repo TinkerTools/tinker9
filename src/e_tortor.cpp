@@ -1,70 +1,70 @@
 #include "e_tortor.h"
 #include "md.h"
 #include "potent.h"
-#include <ext/tinker/detail/atomid.hh>
-#include <ext/tinker/detail/atoms.hh>
-#include <ext/tinker/detail/bitor.hh>
-#include <ext/tinker/detail/couple.hh>
-#include <ext/tinker/detail/torpot.hh>
-#include <ext/tinker/detail/tortor.hh>
+#include <tinker/detail/atomid.hh>
+#include <tinker/detail/atoms.hh>
+#include <tinker/detail/bitor.hh>
+#include <tinker/detail/couple.hh>
+#include <tinker/detail/torpot.hh>
+#include <tinker/detail/tortor.hh>
 
 TINKER_NAMESPACE_BEGIN
-void etortor_data (rc_op op)
+void etortor_data(rc_op op)
 {
-   if (!use_potent (tortor_term))
+   if (!use_potent(tortor_term))
       return;
 
    if (op & rc_dealloc) {
-      device_array::deallocate (ibitor, itt, tnx, tny, ttx, tty, tbf, tbx, tby,
-                                tbxy, chkttor_ia_);
+      device_array::deallocate(ibitor, itt, tnx, tny, ttx, tty, tbf, tbx, tby,
+                               tbxy, chkttor_ia_);
 
-      ett_handle.dealloc ();
+      buffer_deallocate(ett, vir_ett);
    }
 
    if (op & rc_alloc) {
       nbitor = bitor_::nbitor;
-      device_array::allocate (nbitor, &ibitor, &itt);
+      device_array::allocate(nbitor, &ibitor, &itt);
 
-      device_array::allocate (ktrtor::maxntt, &tnx, &tny, &ttx, &tty, &tbf,
-                              &tbx, &tby, &tbxy);
+      device_array::allocate(ktrtor::maxntt, &tnx, &tny, &ttx, &tty, &tbf, &tbx,
+                             &tby, &tbxy);
 
-      ntortor = count_bonded_term (tortor_term);
-      device_array::allocate (ntortor, &chkttor_ia_);
+      ntortor = count_bonded_term(tortor_term);
+      device_array::allocate(ntortor, &chkttor_ia_);
 
-      ett_handle.alloc (ntortor);
+      buffer_allocate(&ett, &vir_ett);
    }
 
    if (op & rc_init) {
       std::vector<int> ibuf;
 
-      ibuf.resize (5 * nbitor);
+      ibuf.resize(5 * nbitor);
       for (int i = 0; i < 5 * nbitor; ++i)
          ibuf[i] = bitor_::ibitor[i] - 1;
-      device_array::copyin (nbitor, ibitor, ibuf.data ());
+      device_array::copyin(nbitor, ibitor, ibuf.data());
 
-      ibuf.resize (3 * nbitor);
+      ibuf.resize(3 * nbitor);
       for (int i = 0; i < 3 * nbitor; ++i)
          ibuf[i] = tortor::itt[i] - 1;
-      device_array::copyin (nbitor, itt, ibuf.data ());
+      device_array::copyin(nbitor, itt, ibuf.data());
 
-      ibuf.resize (ktrtor::maxntt);
+      ibuf.resize(ktrtor::maxntt);
       for (int i = 0; i < ktrtor::maxntt; ++i)
          ibuf[i] = ktrtor::tnx[i];
-      device_array::copyin (ktrtor::maxntt, tnx, ibuf.data ());
+      device_array::copyin(ktrtor::maxntt, tnx, ibuf.data());
       for (int i = 0; i < ktrtor::maxntt; ++i)
          ibuf[i] = ktrtor::tny[i];
-      device_array::copyin (ktrtor::maxntt, tny, ibuf.data ());
-      device_array::copyin (ktrtor::maxntt, ttx, &ktrtor::ttx[0][0]);
-      device_array::copyin (ktrtor::maxntt, tty, &ktrtor::tty[0][0]);
-      device_array::copyin (ktrtor::maxntt, tbf, &ktrtor::tbf[0][0]);
-      device_array::copyin (ktrtor::maxntt, tbx, &ktrtor::tbx[0][0]);
-      device_array::copyin (ktrtor::maxntt, tby, &ktrtor::tby[0][0]);
-      device_array::copyin (ktrtor::maxntt, tbxy, &ktrtor::tbxy[0][0]);
+      device_array::copyin(ktrtor::maxntt, tny, ibuf.data());
+      device_array::copyin(ktrtor::maxntt, ttx, &ktrtor::ttx[0][0]);
+      device_array::copyin(ktrtor::maxntt, tty, &ktrtor::tty[0][0]);
+      device_array::copyin(ktrtor::maxntt, tbf, &ktrtor::tbf[0][0]);
+      device_array::copyin(ktrtor::maxntt, tbx, &ktrtor::tbx[0][0]);
+      device_array::copyin(ktrtor::maxntt, tby, &ktrtor::tby[0][0]);
+      device_array::copyin(ktrtor::maxntt, tbxy, &ktrtor::tbxy[0][0]);
 
       ttorunit = torpot::ttorunit;
 
       // see also subroutine chkttor in etortor.f
-      ibuf.resize (ntortor);
+      ibuf.resize(ntortor);
       for (int itortor = 0; itortor < ntortor; ++itortor) {
          int ib, ic, id;
          int i = tortor::itt[itortor * 3] - 1;
@@ -113,13 +113,13 @@ void etortor_data (rc_op op)
          }
          ibuf[itortor] = ia;
       }
-      device_array::copyin (ntortor, chkttor_ia_, ibuf.data ());
+      device_array::copyin(ntortor, chkttor_ia_, ibuf.data());
    }
 }
 
-extern void etortor_acc_impl_ (int vers);
-void etortor (int vers)
+extern void etortor_acc_impl_(int vers);
+void etortor(int vers)
 {
-   etortor_acc_impl_ (vers);
+   etortor_acc_impl_(vers);
 }
 TINKER_NAMESPACE_END

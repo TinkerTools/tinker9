@@ -8,26 +8,23 @@
 
 TINKER_NAMESPACE_BEGIN
 template <int USE>
-void empole_real_self_tmpl ()
+void empole_real_self_tmpl()
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_a = USE & calc::analyz;
    constexpr int do_g = USE & calc::grad;
    constexpr int do_v = USE & calc::virial;
-   static_assert (do_v ? do_g : true, "");
-   static_assert (do_a ? do_e : true, "");
+   static_assert(do_v ? do_g : true, "");
+   static_assert(do_a ? do_e : true, "");
 
    const real f = electric / dielec;
 
-   const real off = switch_off (switch_ewald);
+   const real off = switch_off(switch_ewald);
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
-   const auto* mlst = mlist_unit.deviceptr ();
+   const auto* mlst = mlist_unit.deviceptr();
 
-   auto* nem = em_handle.ne ()->buffer ();
-   auto* em = em_handle.e ()->buffer ();
-   auto* vir_em = em_handle.vir ()->buffer ();
-   auto bufsize = em_handle.buffer_size ();
+   auto bufsize = buffer_size();
 
    const PMEUnit pu = epme_unit;
    const real aewald = pu->aewald;
@@ -37,7 +34,7 @@ void empole_real_self_tmpl ()
 #define DEVICE_PTRS_                                                           \
    x, y, z, gx, gy, gz, box, rpole, nem, em, vir_em, trqx, trqy, trqz
 
-   MAYBE_UNUSED int GRID_DIM = get_grid_size (BLOCK_DIM);
+   MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                deviceptr(DEVICE_PTRS_,mlst)
    #pragma acc loop gang independent
@@ -68,12 +65,12 @@ void empole_real_self_tmpl ()
          real yr = y[k] - yi;
          real zr = z[k] - zi;
 
-         image (xr, yr, zr, box);
+         image(xr, yr, zr, box);
          real r2 = xr * xr + yr * yr + zr * zr;
          if (r2 <= off2) {
             MAYBE_UNUSED real e;
             MAYBE_UNUSED PairMPoleGrad pgrad;
-            pair_mpole<USE, elec_t::ewald> (
+            pair_mpole<USE, elec_t::ewald>(
                r2, xr, yr, zr, 1,                                     //
                ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, //
                rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
@@ -82,27 +79,27 @@ void empole_real_self_tmpl ()
                rpole[k][mpl_pme_zz], //
                f, aewald, e, pgrad);
 
-            if_constexpr (do_a) atomic_add_value (1, nem, offset);
-            if_constexpr (do_e) atomic_add_value (e, em, offset);
-            if_constexpr (do_g)
+            if_constexpr(do_a) atomic_add_value(1, nem, offset);
+            if_constexpr(do_e) atomic_add_value(e, em, offset);
+            if_constexpr(do_g)
             {
                gxi += pgrad.frcx;
                gyi += pgrad.frcy;
                gzi += pgrad.frcz;
-               atomic_add_value (-pgrad.frcx, gx, k);
-               atomic_add_value (-pgrad.frcy, gy, k);
-               atomic_add_value (-pgrad.frcz, gz, k);
+               atomic_add_value(-pgrad.frcx, gx, k);
+               atomic_add_value(-pgrad.frcy, gy, k);
+               atomic_add_value(-pgrad.frcz, gz, k);
 
                txi += pgrad.ttmi[0];
                tyi += pgrad.ttmi[1];
                tzi += pgrad.ttmi[2];
-               atomic_add_value (pgrad.ttmk[0], trqx, k);
-               atomic_add_value (pgrad.ttmk[1], trqy, k);
-               atomic_add_value (pgrad.ttmk[2], trqz, k);
+               atomic_add_value(pgrad.ttmk[0], trqx, k);
+               atomic_add_value(pgrad.ttmk[1], trqy, k);
+               atomic_add_value(pgrad.ttmk[2], trqz, k);
 
                // virial
 
-               if_constexpr (do_v)
+               if_constexpr(do_v)
                {
                   real vxx = -xr * pgrad.frcx;
                   real vxy = -0.5f * (yr * pgrad.frcx + xr * pgrad.frcy);
@@ -111,21 +108,21 @@ void empole_real_self_tmpl ()
                   real vyz = -0.5f * (zr * pgrad.frcy + yr * pgrad.frcz);
                   real vzz = -zr * pgrad.frcz;
 
-                  atomic_add_value (vxx, vxy, vxz, vyy, vyz, vzz, vir_em,
-                                    offset);
+                  atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_em,
+                                   offset);
                } // end if (do_v)
             }    // end if (do_g)
          }       // end if (r2 <= off2)
       }          // end for (int kk)
 
-      if_constexpr (do_g)
+      if_constexpr(do_g)
       {
-         atomic_add_value (gxi, gx, i);
-         atomic_add_value (gyi, gy, i);
-         atomic_add_value (gzi, gz, i);
-         atomic_add_value (txi, trqx, i);
-         atomic_add_value (tyi, trqy, i);
-         atomic_add_value (tzi, trqz, i);
+         atomic_add_value(gxi, gx, i);
+         atomic_add_value(gyi, gy, i);
+         atomic_add_value(gzi, gz, i);
+         atomic_add_value(txi, trqx, i);
+         atomic_add_value(tyi, trqy, i);
+         atomic_add_value(tzi, trqz, i);
       }
 
       // compute the self-energy part of the Ewald summation
@@ -135,13 +132,13 @@ void empole_real_self_tmpl ()
       real qii = 2 * (qixy * qixy + qixz * qixz + qiyz * qiyz) + qixx * qixx +
          qiyy * qiyy + qizz * qizz;
 
-      if_constexpr (do_e)
+      if_constexpr(do_e)
       {
          int offset = i & (bufsize - 1);
          real e = fterm *
             (cii + aewald_sq_2 * (dii / 3 + 2 * aewald_sq_2 * qii * (real)0.2));
-         atomic_add_value (e, em, offset);
-         if_constexpr (do_a) atomic_add_value (1, nem, offset);
+         atomic_add_value(e, em, offset);
+         if_constexpr(do_a) atomic_add_value(1, nem, offset);
       } // end if (do_e)
    }    // end for (int i)
 
@@ -172,12 +169,12 @@ void empole_real_self_tmpl ()
       real yr = y[k] - yi;
       real zr = z[k] - zi;
 
-      image (xr, yr, zr, box);
+      image(xr, yr, zr, box);
       real r2 = xr * xr + yr * yr + zr * zr;
       if (r2 <= off2) {
          MAYBE_UNUSED real e;
          MAYBE_UNUSED PairMPoleGrad pgrad;
-         pair_mpole<USE, elec_t::coulomb> (                        //
+         pair_mpole<USE, elec_t::coulomb>(                         //
             r2, xr, yr, zr, mscale,                                //
             ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, //
             rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
@@ -186,31 +183,31 @@ void empole_real_self_tmpl ()
             rpole[k][mpl_pme_zz], //
             f, 0, e, pgrad);
 
-         if_constexpr (do_a)
+         if_constexpr(do_a)
          {
             if (mscale == -1)
-               atomic_add_value (-1, nem, offset);
+               atomic_add_value(-1, nem, offset);
          }
-         if_constexpr (do_e) atomic_add_value (e, em, offset);
-         if_constexpr (do_g)
+         if_constexpr(do_e) atomic_add_value(e, em, offset);
+         if_constexpr(do_g)
          {
-            atomic_add_value (pgrad.frcx, gx, i);
-            atomic_add_value (pgrad.frcy, gy, i);
-            atomic_add_value (pgrad.frcz, gz, i);
-            atomic_add_value (-pgrad.frcx, gx, k);
-            atomic_add_value (-pgrad.frcy, gy, k);
-            atomic_add_value (-pgrad.frcz, gz, k);
+            atomic_add_value(pgrad.frcx, gx, i);
+            atomic_add_value(pgrad.frcy, gy, i);
+            atomic_add_value(pgrad.frcz, gz, i);
+            atomic_add_value(-pgrad.frcx, gx, k);
+            atomic_add_value(-pgrad.frcy, gy, k);
+            atomic_add_value(-pgrad.frcz, gz, k);
 
-            atomic_add_value (pgrad.ttmi[0], trqx, i);
-            atomic_add_value (pgrad.ttmi[1], trqy, i);
-            atomic_add_value (pgrad.ttmi[2], trqz, i);
-            atomic_add_value (pgrad.ttmk[0], trqx, k);
-            atomic_add_value (pgrad.ttmk[1], trqy, k);
-            atomic_add_value (pgrad.ttmk[2], trqz, k);
+            atomic_add_value(pgrad.ttmi[0], trqx, i);
+            atomic_add_value(pgrad.ttmi[1], trqy, i);
+            atomic_add_value(pgrad.ttmi[2], trqz, i);
+            atomic_add_value(pgrad.ttmk[0], trqx, k);
+            atomic_add_value(pgrad.ttmk[1], trqy, k);
+            atomic_add_value(pgrad.ttmk[2], trqz, k);
 
             // virial
 
-            if_constexpr (do_v)
+            if_constexpr(do_v)
             {
                real vxx = -xr * pgrad.frcx;
                real vxy = -0.5f * (yr * pgrad.frcx + xr * pgrad.frcy);
@@ -219,7 +216,7 @@ void empole_real_self_tmpl ()
                real vyz = -0.5f * (zr * pgrad.frcy + yr * pgrad.frcz);
                real vzz = -zr * pgrad.frcz;
 
-               atomic_add_value (vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
+               atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
             } // end if (do_v)
          }    // end if (do_g)
       }
@@ -227,45 +224,41 @@ void empole_real_self_tmpl ()
 }
 
 template <int USE>
-void empole_recip_tmpl ()
+void empole_recip_tmpl()
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_a = USE & calc::analyz;
    constexpr int do_g = USE & calc::grad;
    constexpr int do_v = USE & calc::virial;
-   static_assert (do_v ? do_g : true, "");
-   static_assert (do_a ? do_e : true, "");
+   static_assert(do_v ? do_g : true, "");
+   static_assert(do_a ? do_e : true, "");
 
-   auto* em = em_handle.e ()->buffer ();
-   auto* vir_em = em_handle.vir ()->buffer ();
-   auto bufsize = em_handle.buffer_size ();
+   auto bufsize = buffer_size();
 
    const PMEUnit pu = epme_unit;
-   cmp_to_fmp (pu, cmp, fmp);
-   grid_mpole (pu, fmp);
-   fftfront (pu);
-   if_constexpr (do_v)
+   cmp_to_fmp(pu, cmp, fmp);
+   grid_mpole(pu, fmp);
+   fftfront(pu);
+   if_constexpr(do_v)
    {
-      if (vir_m_handle.valid ()) {
-         pme_conv1 (pu, vir_m_handle);
-         auto vir_m_len = vir_m_handle->size ();
-         auto* vir_m = vir_m_handle->buffer ();
-         assert (bufsize >= vir_m_len);
+      if (vir_m) {
+         pme_conv1(pu, vir_m);
+         auto size = buffer_size() * virial_buffer_traits::value;
          #pragma acc parallel loop independent deviceptr(vir_m,vir_em)
-         for (int i = 0; i < vir_m_len * VirialBuffer::NS; ++i) {
-            vir_em[i] += vir_m[i];
+         for (int i = 0; i < size; ++i) {
+            vir_em[0][i] += vir_m[0][i];
          }
       } else {
-         pme_conv1 (pu, em_handle.vir ());
+         pme_conv1(pu, vir_em);
       }
    }
    else
    {
-      pme_conv0 (pu);
+      pme_conv0(pu);
    }
-   fftback (pu);
-   fphi_mpole (pu, fphi);
-   fphi_to_cphi (pu, fphi, cphi);
+   fftback(pu);
+   fphi_mpole(pu, fphi);
+   fphi_to_cphi(pu, fphi, cphi);
 
    constexpr int deriv1[] = {2, 5, 8, 9, 11, 16, 18, 14, 15, 20};
    constexpr int deriv2[] = {3, 8, 6, 10, 14, 12, 19, 16, 20, 17};
@@ -289,8 +282,8 @@ void empole_recip_tmpl ()
 
       #pragma acc loop seq
       for (int k = 0; k < 10; ++k) {
-         if_constexpr (do_e) e += fmp[i][k] * fphi[i][k];
-         if_constexpr (do_g)
+         if_constexpr(do_e) e += fmp[i][k] * fphi[i][k];
+         if_constexpr(do_g)
          {
             f1 += fmp[i][k] * fphi[i][deriv1[k] - 1];
             f2 += fmp[i][k] * fphi[i][deriv2[k] - 1];
@@ -300,9 +293,9 @@ void empole_recip_tmpl ()
 
       // increment the permanent multipole energy and gradient
 
-      if_constexpr (do_e) atomic_add_value (0.5f * e * f, em, offset);
+      if_constexpr(do_e) atomic_add_value(0.5f * e * f, em, offset);
 
-      if_constexpr (do_g)
+      if_constexpr(do_g)
       {
          f1 *= nfft1;
          f2 *= nfft2;
@@ -315,9 +308,9 @@ void empole_recip_tmpl ()
          real h3 = box->recip[0][2] * f1 + box->recip[1][2] * f2 +
             box->recip[2][2] * f3;
 
-         atomic_add_value (h1 * f, gx, i);
-         atomic_add_value (h2 * f, gy, i);
-         atomic_add_value (h3 * f, gz, i);
+         atomic_add_value(h1 * f, gx, i);
+         atomic_add_value(h2 * f, gy, i);
+         atomic_add_value(h3 * f, gz, i);
 
          // resolve site torques then increment forces and virial
 
@@ -337,11 +330,11 @@ void empole_recip_tmpl ()
          tem2 *= f;
          tem3 *= f;
 
-         atomic_add_value (tem1, trqx, i);
-         atomic_add_value (tem2, trqy, i);
-         atomic_add_value (tem3, trqz, i);
+         atomic_add_value(tem1, trqx, i);
+         atomic_add_value(tem2, trqy, i);
+         atomic_add_value(tem3, trqz, i);
 
-         if_constexpr (do_v)
+         if_constexpr(do_v)
          {
             real vxx = -cmp[i][1] * cphi[i][1] - 2 * cmp[i][4] * cphi[i][4] -
                cmp[i][7] * cphi[i][7] - cmp[i][8] * cphi[i][8];
@@ -371,41 +364,41 @@ void empole_recip_tmpl ()
             vyz *= f;
             vzz *= f;
 
-            atomic_add_value (vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
+            atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
          } // end if (do_v)
       }    // end if (do_g)
    }       // end for (int i)
 }
 
 template <int USE>
-void empole_ewald_tmpl ()
+void empole_ewald_tmpl()
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_a = USE & calc::analyz;
    constexpr int do_g = USE & calc::grad;
    constexpr int do_v = USE & calc::virial;
-   static_assert (do_v ? do_g : true, "");
-   static_assert (do_a ? do_e : true, "");
+   static_assert(do_v ? do_g : true, "");
+   static_assert(do_a ? do_e : true, "");
 
-   empole_real_self_tmpl<USE> ();
+   empole_real_self_tmpl<USE>();
 
-   empole_recip_tmpl<USE> ();
+   empole_recip_tmpl<USE>();
 }
 
-void empole_ewald (int vers)
+void empole_ewald(int vers)
 {
    if (vers == calc::v0)
-      empole_ewald_tmpl<calc::v0> ();
+      empole_ewald_tmpl<calc::v0>();
    else if (vers == calc::v1)
-      empole_ewald_tmpl<calc::v1> ();
+      empole_ewald_tmpl<calc::v1>();
    else if (vers == calc::v3)
-      empole_ewald_tmpl<calc::v3> ();
+      empole_ewald_tmpl<calc::v3>();
    else if (vers == calc::v4)
-      empole_ewald_tmpl<calc::v4> ();
+      empole_ewald_tmpl<calc::v4>();
    else if (vers == calc::v5)
-      empole_ewald_tmpl<calc::v5> ();
+      empole_ewald_tmpl<calc::v5>();
    else if (vers == calc::v6)
-      empole_ewald_tmpl<calc::v6> ();
+      empole_ewald_tmpl<calc::v6>();
 }
 
 TINKER_NAMESPACE_END
