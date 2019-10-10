@@ -71,9 +71,5 @@ void energy_potential(int vers)
    torque(vers);
 
    sum_energies(vers);
-
-   // list update
-
-   nblist_data(rc_man::evolve);
 }
 TINKER_NAMESPACE_END
