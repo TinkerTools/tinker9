@@ -1,40 +1,36 @@
 #include "rc_man.h"
 
-#ifdef TINKER_GFORTRAN
-// GNU Fortran
-extern "C" void _gfortran_set_args(int, char**);
-#elif TINKER_IFORT
-// Intel
-extern "C" void for_rtl_init_(int*, char**);
-extern "C" void for_rtl_finish_();
-#else
-#   error "unknown fortran compiler error"
-#   error see also "macro.h"
-#endif
 
 TINKER_NAMESPACE_BEGIN
-void fortran_runtime_initialize(int argc, char** argv)
+bool ResourceManagement::will_dealloc_() const
 {
-#ifdef TINKER_GFORTRAN
-   _gfortran_set_args(argc, argv);
-#elif TINKER_IFORT
-   for_rtl_init_(&argc, argv);
-#else
-#   error "unknown fortran compiler error"
-#   error see also "macro.h"
-#endif
+   return op_ & dealloc;
 }
 
-void fortran_runtime_finish()
+
+bool ResourceManagement::only_dealloc_() const
 {
-#ifdef TINKER_GFORTRAN
-#elif TINKER_IFORT
-   for_rtl_finish_();
-#else
-#   error "unknown fortran compiler error"
-#   error see also "macro.h"
-#endif
+   return op_ == dealloc;
 }
+
+
+ResourceManagement::ResourceManagement(void (*f)(rc_op), rc_op op)
+   : f_(f)
+   , op_(op)
+{
+   if (!will_dealloc_()) {
+      f_(op_);
+   }
+}
+
+
+ResourceManagement::~ResourceManagement()
+{
+   if (only_dealloc_()) {
+      f_(op_);
+   }
+}
+
 
 void initialize()
 {
@@ -43,15 +39,15 @@ void initialize()
    device_data(op);
 }
 
+
 void finish()
 {
    rc_op op = rc_dealloc;
    device_data(op);
    host_data(op);
 }
-TINKER_NAMESPACE_END
 
-TINKER_NAMESPACE_BEGIN
+
 extern void random_data(rc_op);
 extern void gpu_card_data(rc_op);
 void host_data(rc_op op)
@@ -91,5 +87,50 @@ void device_data(rc_op op)
 
    rc_man md42_{md_data, op};
 }
-
 TINKER_NAMESPACE_END
+
+
+#if defined(TINKER_GFORTRAN)
+// GNU Fortran
+extern "C" void _gfortran_set_args(int, char**);
+
+
+TINKER_NAMESPACE_BEGIN
+void fortran_runtime_initialize(int argc, char** argv)
+{
+   _gfortran_set_args(argc, argv);
+}
+
+
+void fortran_runtime_finish() {}
+TINKER_NAMESPACE_END
+
+
+#elif defined(TINKER_IFORT)
+// Intel
+extern "C" void for_rtl_init_(int*, char**);
+extern "C" void for_rtl_finish_();
+
+
+TINKER_NAMESPACE_BEGIN
+void fortran_runtime_initialize(int argc, char** argv)
+{
+   for_rtl_init_(&argc, argv);
+}
+
+
+void fortran_runtime_finish()
+{
+   for_rtl_finish_();
+}
+TINKER_NAMESPACE_END
+
+
+#else
+#   error "unknown fortran compiler error"
+#   error see also "macro.h"
+
+
+TINKER_NAMESPACE_BEGIN
+TINKER_NAMESPACE_END
+#endif
