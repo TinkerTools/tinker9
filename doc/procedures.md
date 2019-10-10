@@ -7,23 +7,26 @@
       - `call initial`, `call getxyz`, `call mechanic`, etc.
    - Initialize `tinker.gpu`.
       - Assign/hard code the global flag `rc_flag`.
-      - `initialize()`, for details see section **Initialize**.
+      - `initialize()`, for details see [**Initialize**](#ctor).
    - MM/MD calculation, often involves with `energy_potential()`.
-     For details, see section **Evaluate**.
+     For details, see [**Evaluate**](#evaleng).
    - Stop `tinker.gpu`.
-      - `finish()`, for details see section **Finish**.
+      - `finish()`: recursively unset the data structures
+        set in [**Initialize**](#ctor).
    - Stop the canonical Tinker library.
       - `call final`.
    - Stop the Fortran runtime library.
 
 
+<a name='ctor'></a>
 ## Initialize
    - `host_data()`: random seed; GPU info.
    - `device_data()`:
       - `n_data()`: set number of atoms.
       - `xyz_data()`, `vel_data()`, `mass_data()`: set coordinates,
          velocity, and mass data.
-      - `potential_data()`: for details see section **Create Energy Terms**.
+      - `potential_data()`: for details see
+         [**Create Energy Terms**](#ctoreng).
       - `box_data()`: set the shape of the periodic boundary condition (PBC),
          including non-PBC.
       - `nblist_data()`: set the neighbor list, which must be set after
@@ -35,6 +38,7 @@
       - `md_data()`: return if `!calc::md`.
 
 
+<a name='ctoreng'></a>
 ## Create Energy Terms
    - Return if `rc_flag & calc::vmask == 0`.
    - `egv_data()`:
@@ -56,6 +60,7 @@
       - `epolar_data()`.
 
 
+<a name='evaleng'></a>
 ## Evaluate
    - `zero_egv()`:
       - If use `calc::analyz`, `calc::energy`, `calc::virial`, iterate and
@@ -83,7 +88,3 @@
         energy and virial buffers, respectively.
       - Of course, if `!calc::analyz`, there is only one buffer each for
         energy and virial so no need to iterate over the bookkeepings.
-
-
-## Finish
-Recursively unset the data structures set in section **Initialize**.
