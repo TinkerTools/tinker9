@@ -342,7 +342,25 @@ test: all.tests
 -include $(cxx_config)
 -include $(acc_config)
 -include $(link_config)
+# cuda
+all_cu_objs__ :=
+ifeq ($(host_only__),false)
+all_cu_objs__ += $(wildcard $(top_dir__)/src/*.cu)
+all_cu_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(all_cu_objs__))
+all_cu_objs__ := $(all_cu_objs__:%.cu=%.o)
 
+NVCC := nvcc
+ifeq ($(opt),debug)
+   cuda_opt_flags__ += -O0 -g
+else ifeq ($(opt),release)
+   cuda_opt_flags__ += -O3 --use_fast_math
+else ifeq ($(opt),profile)
+   cuda_opt_flags__ += -O3 --use_fast_math -g
+endif
+cuda_flags__ := -std=c++11 $(shared_flags__) $(cuda_opt_flags__)
+$(all_cu_objs__): %.o: $(top_dir__)/%.cu
+	$(NVCC) $< -c $(cuda_flags__) -o $@
+endif
 
 ##/ ### dirs
 ##/ Create sub-directories inside the `$build` directory.
@@ -439,9 +457,11 @@ clean:
 
 
 tinker.gpu: $(src_obj_dir__)/main_tinker_gpu.o $(all_acc_objs__) \
+$(all_cu_objs__) \
 $(lib_cpp_objs__) $(tinker_dir__)/libtinker.a
 	$(LINK) $^ $(link_flags__) -o $@
 all.tests: $(src_obj_dir__)/test/main_all_tests.o \
 $(test_cpp_objs__) $(all_acc_objs__) \
+$(all_cu_objs__) \
 $(lib_cpp_objs__) $(tinker_dir__)/libtinker.a
 	$(LINK) $^ $(link_flags__) -o $@

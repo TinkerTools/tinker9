@@ -66,6 +66,7 @@ extern void potential_data(rc_op);
 
 extern void box_data(rc_op);
 extern void nblist_data(rc_op);
+extern void spatial_data(rc_op);
 
 extern void md_data(rc_op);
 
@@ -84,6 +85,7 @@ void device_data(rc_op op)
    // used in nblist setups.
    rc_man box42_{box_data, op};
    rc_man nbl42_{nblist_data, op};
+   rc_man spatial42_{spatial_data, op};
 
    rc_man md42_{md_data, op};
 }

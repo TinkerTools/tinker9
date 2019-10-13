@@ -222,7 +222,6 @@ TINKER_NAMESPACE_END
 #else
 #   define CUDA_DEVICE_FUNCTION
 #endif
-
 // end of file
 /// \defgroup energy Energy Terms
 /// \defgroup io Inputs and Outputs

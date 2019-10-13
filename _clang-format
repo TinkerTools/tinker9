@@ -34,3 +34,6 @@ BraceWrapping:
     SplitEmptyNamespace:               false
 StatementMacros:
     - CUDA_DEVICE_FUNCTION
+    - __global__
+    - __host__
+    - __device__
