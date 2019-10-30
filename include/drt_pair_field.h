@@ -21,7 +21,7 @@ void pair_dfield(                                                //
    real qiyy, real qiyz, real qizz, real pdi, real pti, //
    real ck, real dkx, real dky, real dkz, real qkxx, real qkxy, real qkxz,
    real qkyy, real qkyz, real qkzz, real pdk, real ptk, //
-   real aewald, PairField& RESTRICT pairf)
+   real aewald, PairField& restrict pairf)
 {
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
@@ -118,7 +118,7 @@ void pair_ufield(                                   //
    real pdi, real pti, //
    real uindk0, real uindk1, real uindk2, real uinpk0, real uinpk1, real uinpk2,
    real pdk, real ptk, //
-   real aewald, PairField& RESTRICT pairf)
+   real aewald, PairField& restrict pairf)
 {
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);

@@ -193,11 +193,10 @@ TINKER_NAMESPACE_END
 
 
 /**
- * \def RESTRICT
+ * \def restrict
  * \ingroup macro
  * Expand to `__restrict__` in the source code.
  */
-#define RESTRICT __restrict__
 #define restrict __restrict__
 
 

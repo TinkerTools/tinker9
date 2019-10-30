@@ -7,15 +7,15 @@
 TINKER_NAMESPACE_BEGIN
 #pragma acc routine seq
 __device__
-inline void image_null(real& RESTRICT, real& RESTRICT, real& RESTRICT,
-                       const Box* RESTRICT)
+inline void image_null(real& restrict, real& restrict, real& restrict,
+                       const Box* restrict)
 {}
 
 
 #pragma acc routine seq
 __device__
-inline void imagen_null(real& RESTRICT, real& RESTRICT, real& RESTRICT,
-                        const Box* RESTRICT)
+inline void imagen_null(real& restrict, real& restrict, real& restrict,
+                        const Box* restrict)
 {}
 
 
@@ -24,9 +24,9 @@ inline void imagen_null(real& RESTRICT, real& RESTRICT, real& RESTRICT,
 
 #pragma acc routine seq
 __device__
-inline void frac_orthogonal(real& RESTRICT fx, real& RESTRICT fy,
-                            real& RESTRICT fz, real xr, real yr, real zr,
-                            const Box* RESTRICT pb)
+inline void frac_orthogonal(real& restrict fx, real& restrict fy,
+                            real& restrict fz, real xr, real yr, real zr,
+                            const Box* restrict pb)
 {
    fx = xr * pb->recip[0][0];
    fy = yr * pb->recip[1][1];
@@ -53,8 +53,8 @@ inline void frac_image_orthogonal(real& restrict fx, real& restrict fy,
 
 #pragma acc routine seq
 __device__
-inline void image_orthogonal(real& RESTRICT xr, real& RESTRICT yr,
-                             real& RESTRICT zr, const Box* RESTRICT pb)
+inline void image_orthogonal(real& restrict xr, real& restrict yr,
+                             real& restrict zr, const Box* restrict pb)
 {
    real fx = xr * pb->recip[0][0];
    real fy = yr * pb->recip[1][1];
@@ -70,8 +70,8 @@ inline void image_orthogonal(real& RESTRICT xr, real& RESTRICT yr,
 
 #pragma acc routine seq
 __device__
-inline void imagen_orthogonal(real& RESTRICT xr, real& RESTRICT yr,
-                              real& RESTRICT zr, const Box* RESTRICT pb)
+inline void imagen_orthogonal(real& restrict xr, real& restrict yr,
+                              real& restrict zr, const Box* restrict pb)
 {
    real lx = pb->lvec[0][0];
    real lx2 = lx * 0.5f;
@@ -95,9 +95,9 @@ inline void imagen_orthogonal(real& RESTRICT xr, real& RESTRICT yr,
 
 #pragma acc routine seq
 __device__
-inline void frac_monoclinic(real& RESTRICT fx, real& RESTRICT fy,
-                            real& RESTRICT fz, real xr, real yr, real zr,
-                            const Box* RESTRICT pb)
+inline void frac_monoclinic(real& restrict fx, real& restrict fy,
+                            real& restrict fz, real xr, real yr, real zr,
+                            const Box* restrict pb)
 {
    fx = xr * pb->recip[0][0] + zr * pb->recip[0][2];
    fy = yr * pb->recip[1][1];
@@ -124,8 +124,8 @@ inline void frac_image_monoclinic(real& restrict fx, real& restrict fy,
 
 #pragma acc routine seq
 __device__
-inline void image_monoclinic(real& RESTRICT xr, real& RESTRICT yr,
-                             real& RESTRICT zr, const Box* RESTRICT pb)
+inline void image_monoclinic(real& restrict xr, real& restrict yr,
+                             real& restrict zr, const Box* restrict pb)
 {
    real fx = xr * pb->recip[0][0] + zr * pb->recip[0][2];
    real fy = yr * pb->recip[1][1];
@@ -141,8 +141,8 @@ inline void image_monoclinic(real& RESTRICT xr, real& RESTRICT yr,
 
 #pragma acc routine seq
 __device__
-inline void imagen_monoclinic(real& RESTRICT xr, real& RESTRICT yr,
-                              real& RESTRICT zr, const Box* RESTRICT pb)
+inline void imagen_monoclinic(real& restrict xr, real& restrict yr,
+                              real& restrict zr, const Box* restrict pb)
 {
    // TODO: a real imagen routine
    image_monoclinic(xr, yr, zr, pb);
@@ -154,9 +154,9 @@ inline void imagen_monoclinic(real& RESTRICT xr, real& RESTRICT yr,
 
 #pragma acc routine seq
 __device__
-inline void frac_triclinic(real& RESTRICT fx, real& RESTRICT fy,
-                           real& RESTRICT fz, real xr, real yr, real zr,
-                           const Box* RESTRICT pb)
+inline void frac_triclinic(real& restrict fx, real& restrict fy,
+                           real& restrict fz, real xr, real yr, real zr,
+                           const Box* restrict pb)
 {
    fx = xr * pb->recip[0][0] + yr * pb->recip[0][1] + zr * pb->recip[0][2];
    fy = yr * pb->recip[1][1] + zr * pb->recip[1][2];
@@ -183,8 +183,8 @@ inline void frac_image_triclinic(real& restrict fx, real& restrict fy,
 
 #pragma acc routine seq
 __device__
-inline void image_triclinic(real& RESTRICT xr, real& RESTRICT yr,
-                            real& RESTRICT zr, const Box* RESTRICT pb)
+inline void image_triclinic(real& restrict xr, real& restrict yr,
+                            real& restrict zr, const Box* restrict pb)
 {
    real fx = xr * pb->recip[0][0] + yr * pb->recip[0][1] + zr * pb->recip[0][2];
    real fy = yr * pb->recip[1][1] + zr * pb->recip[1][2];
@@ -200,8 +200,8 @@ inline void image_triclinic(real& RESTRICT xr, real& RESTRICT yr,
 
 #pragma acc routine seq
 __device__
-inline void imagen_triclinic(real& RESTRICT xr, real& RESTRICT yr,
-                             real& RESTRICT zr, const Box* RESTRICT pb)
+inline void imagen_triclinic(real& restrict xr, real& restrict yr,
+                             real& restrict zr, const Box* restrict pb)
 {
    // TODO: a real imagen routine
    image_triclinic(xr, yr, zr, pb);
@@ -213,9 +213,9 @@ inline void imagen_triclinic(real& RESTRICT xr, real& RESTRICT yr,
 
 #pragma acc routine seq
 __device__
-inline void frac_general(real& RESTRICT fx, real& RESTRICT fy,
-                         real& RESTRICT fz, real xr, real yr, real zr,
-                         const Box* RESTRICT pb)
+inline void frac_general(real& restrict fx, real& restrict fy,
+                         real& restrict fz, real xr, real yr, real zr,
+                         const Box* restrict pb)
 {
    switch (pb->shape) {
    case Box::ortho:
@@ -254,8 +254,8 @@ inline void frac_image_general(real& restrict fx, real& restrict fy,
 
 #pragma acc routine seq
 __device__
-inline void image_general(real& RESTRICT xr, real& RESTRICT yr,
-                          real& RESTRICT zr, const Box* RESTRICT pb)
+inline void image_general(real& restrict xr, real& restrict yr,
+                          real& restrict zr, const Box* restrict pb)
 {
    switch (pb->shape) {
    case Box::ortho:
@@ -277,8 +277,8 @@ inline void image_general(real& RESTRICT xr, real& RESTRICT yr,
 
 #pragma acc routine seq
 __device__
-inline void imagen_general(real& RESTRICT xr, real& RESTRICT yr,
-                           real& RESTRICT zr, const Box* RESTRICT pb)
+inline void imagen_general(real& restrict xr, real& restrict yr,
+                           real& restrict zr, const Box* restrict pb)
 {
    switch (pb->shape) {
    case Box::ortho:

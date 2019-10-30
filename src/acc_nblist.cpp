@@ -81,14 +81,14 @@ inline void build_v1_(NBListUnit nu)
    const int maxnlst = st.maxnlst;
    const real buf2 = REAL_SQ(st.cutoff + st.buffer);
 
-   const auto* __restrict__ lx = st.x;
-   const auto* __restrict__ ly = st.y;
-   const auto* __restrict__ lz = st.z;
-   auto* __restrict__ xo = st.xold;
-   auto* __restrict__ yo = st.yold;
-   auto* __restrict__ zo = st.zold;
-   auto* __restrict__ nlst = st.nlst;
-   auto* __restrict__ lst = st.lst;
+   const auto* restrict lx = st.x;
+   const auto* restrict ly = st.y;
+   const auto* restrict lz = st.z;
+   auto* restrict xo = st.xold;
+   auto* restrict yo = st.yold;
+   auto* restrict zo = st.zold;
+   auto* restrict nlst = st.nlst;
+   auto* restrict lst = st.lst;
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\

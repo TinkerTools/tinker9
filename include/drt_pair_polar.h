@@ -25,7 +25,7 @@ void pair_polar(                                                              //
    real ck, real dkx, real dky, real dkz, real qkxx, real qkxy, real qkxz,
    real qkyy, real qkyz, real qkzz, real ukx, real uky, real ukz, real ukxp,
    real ukyp, real ukzp, real pdk, real ptk, //
-   real f, real aewald, real& RESTRICT e, PairPolarGrad& RESTRICT pgrad)
+   real f, real aewald, real& restrict e, PairPolarGrad& restrict pgrad)
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_g = USE & calc::grad;

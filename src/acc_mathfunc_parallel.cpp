@@ -19,7 +19,7 @@ template unsigned long long reduce_sum(const unsigned long long*, size_t);
 
 
 template <class HT, size_t HN, class DPTR>
-void reduce_sum2(HT (&RESTRICT h_ans)[HN], DPTR RESTRICT v, size_t nelem)
+void reduce_sum2(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem)
 {
    typedef typename deduce_ptr<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type DT;
@@ -44,7 +44,7 @@ template void reduce_sum2(unsigned long long (&)[6], unsigned long long (*)[8],
 
 
 template <class T>
-T dotprod(const T* RESTRICT gpu_a, const T* RESTRICT gpu_b, size_t cpu_n)
+T dotprod(const T* restrict gpu_a, const T* restrict gpu_b, size_t cpu_n)
 {
    T val = 0;
    #pragma acc parallel loop deviceptr(gpu_a,gpu_b) reduction(+:val)

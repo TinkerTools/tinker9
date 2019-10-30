@@ -10,7 +10,7 @@ static constexpr int MAX_BSORDER = 5;
 // see also subroutine bsplgen in pmestuf.f
 #pragma acc routine seq
 template <int LEVEL>
-static inline void bsplgen(real w, real* __restrict__ thetai, int bsorder)
+static inline void bsplgen(real w, real* restrict thetai, int bsorder)
 {
 
    // e.g. bsorder = 5, theta = T, bsbuild = B

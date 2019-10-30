@@ -13,7 +13,7 @@ __device__
 template <int DO_G>
 void pair_hal(real rik, real rv, real eps, real vscalek, real vlambda, //
               real ghal, real dhal, real scexp, real scalpha,          //
-              real& RESTRICT e, real& RESTRICT de)
+              real& restrict e, real& restrict de)
 {
    eps *= vscalek;
    real rho = rik * REAL_RECIP(rv);

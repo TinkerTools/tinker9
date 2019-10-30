@@ -58,7 +58,7 @@ void pair_mpole(                                    //
    real qiyy, real qiyz, real qizz, //
    real ck, real dkx, real dky, real dkz, real qkxx, real qkxy, real qkxz,
    real qkyy, real qkyz, real qkzz, //
-   real f, real aewald, real& RESTRICT e, PairMPoleGrad& RESTRICT pgrad)
+   real f, real aewald, real& restrict e, PairMPoleGrad& restrict pgrad)
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_g = USE & calc::grad;
