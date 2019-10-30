@@ -1,0 +1,36 @@
+\begin{tikzpicture}
+\node [Gray A] (aa) at (0.6in,0) {x/nax};
+\node [Blue A] (a0) at (0,0) {0}
+ node [Red A] (a1) [left=0 of a0] {...}
+ node [Blue A] (a2) [left=0 of a1] {ix0}
+ node [Red A] (a3) [left=0 of a2] {...}
+ node [Blue A] (a4) [left=0 of a3] {ix1}
+ node [Red A] (a5) [left=0 of a4] {...}
+ node [Blue A] (a6) [left=0 of a5] {ix2}
+ node [Red A] (a7) [left=0 of a6] {...}
+ node [Blue A] (a8) [left=0 of a7] {ixp}
+ node [Red A] (a9) [left=0 of a8] {...}
+ node [Blue A] (a10) [left=0 of a9] {nx-1}
+ node [Gray A] (a11) [left=0 of a10] {nx};
+
+\node [Gray A] (bb) at (0.6in,-1) {ax\_scan};
+\node [Red A] (ak) at (0.2in,-1) {0}
+ node [Blue A] (ak1) [left=0 of ak] {}
+ node [Red A] (ak2) [left=0 of ak1] {...}
+ node [Blue A] (ak3) [left=0 of ak2] {}
+ node [Red A] (ak4) [left=0 of ak3] {...}
+ node [Blue A] (ak5) [left=0 of ak4] {ix1]}
+ node [Red A] (ak6) [left=0 of ak5] {...}
+ node [Blue A] (ak7) [left=0 of ak6] {}
+ node [Red A] (ak8) [left=0 of ak7] {...}
+ node [Blue A] (ak9) [left=0 of ak8] {}
+ node [Red A] (ak10) [left=0 of ak9] {...}
+ node [Blue A] (ak11) [left=0 of ak10] {}
+ node [Gray A] (ak12) [left=0 of ak11] {};
+\path [->] (a0) edge (ak1);
+\path [->] (a0) edge (ak5);
+\path [->] (a1) edge (ak5);
+\path [->] (a2) edge (ak5);
+\path [->] (a3) edge (ak5);
+\path [->] (a4) edge (ak5);
+\end{tikzpicture}

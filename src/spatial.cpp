@@ -6,57 +6,79 @@
 
 
 TINKER_NAMESPACE_BEGIN
-KDTree::~KDTree()
+Spatial::~Spatial()
 {
-   device_array::deallocate(xyz, bbx, reorder, leaf_node);
+   // output
+   device_array::deallocate(lst); // iak and lst were allocated together
+   // internal
+   device_array::deallocate(sorted, boxnum);
+   device_array::deallocate(naak, xakf, xakf_scan);
+   device_array::deallocate(nearby);
+   device_array::deallocate(ax_scan);
+   device_array::deallocate(xkf);
 }
 
 
-static void spatial_data_alloc(KDTreeUnit& u, int n)
+static void spatial_data_alloc(SpatialUnit& u, int n)
 {
-   u = KDTreeUnit::open();
+   u = SpatialUnit::open();
    auto& st = *u;
 
-   st.n_atom = n;
-   st.n_block = KDTree::nleaf(st.n_atom);
-   st.padded_n_atom = st.n_block * KDTree::LEAF;
-   st.n_layer = KDTree::nlayer(st.n_atom);
+   // output
+   st.niak = 0;
+   // internal
+   st.n = n;
+   st.nak = (n + Spatial::BLOCK - 1) / Spatial::BLOCK;
+   int level = 1 + builtin_floor_log2(st.nak - 1);
+   st.px = (level + 2) / 3;
+   st.py = (level + 1) / 3;
+   st.pz = (level + 0) / 3;
+   st.nx = pow2(st.px + st.py + st.pz);
+   st.nxk = (st.nx + Spatial::BLOCK - 1) / Spatial::BLOCK;
+   st.near = 0;
+   st.xak_sum = 0;
+   st.xak_sum_cap = 0;
 
-   device_array::allocate(st.n_atom, &st.xyz);
-   device_array::allocate(pow2(st.n_layer), &st.bbx);
-   device_array::allocate(st.padded_n_atom, &st.reorder);
-   device_array::allocate(st.n_block, &st.leaf_node);
+   // output
+   st.iak = nullptr;
+   st.lst = nullptr;
+   // internal
+   device_array::allocate(st.n, &st.sorted, &st.boxnum);
+   device_array::allocate(st.nak, &st.naak, &st.xakf, &st.xakf_scan);
+   device_array::allocate(st.nx, &st.nearby);
+   device_array::allocate(st.nx + 1, &st.ax_scan);
+   device_array::allocate(st.nak * st.nxk, &st.xkf);
 
    u.update_deviceptr(st);
 }
 
 
-extern void spatial_data_init_cu(KDTreeUnit, NBListUnit);
+extern void spatial_data_init_cu(SpatialUnit, NBListUnit);
 void spatial_data(rc_op op)
 {
    if (op & rc_dealloc)
-      KDTreeUnit::clear();
+      SpatialUnit::clear();
 
    if (op & rc_alloc) {
       if (vlist_unit.valid())
-         spatial_data_alloc(vtree_unit, n);
+         spatial_data_alloc(vspatial_unit, n);
 
       if (mlist_unit.valid())
-         spatial_data_alloc(mtree_unit, n);
+         spatial_data_alloc(mspatial_unit, n);
    }
 
    if (op & rc_init) {
       if (vlist_unit.valid())
-         spatial_data_init_cu(vtree_unit, vlist_unit);
+         spatial_data_init_cu(vspatial_unit, vlist_unit);
 
       if (mlist_unit.valid())
-         spatial_data_init_cu(mtree_unit, mlist_unit);
+         spatial_data_init_cu(mspatial_unit, mlist_unit);
    }
 }
 
 
 #if !TINKER_CUDART
-void spatial_data_init_cu(KDTreeUnit, NBListUnit)
+void spatial_data_init_cu(SpatialUnit, NBListUnit)
 {
    TINKER_THROW("This dummy function should not have been called.");
 }

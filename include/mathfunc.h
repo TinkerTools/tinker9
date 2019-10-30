@@ -1,4 +1,5 @@
 #pragma once
+#include "mathfunc_bit.h"
 #include "mathfunc_const.h"
 #include "mathfunc_libfunc.h"
 #include "mathfunc_maxmin.h"

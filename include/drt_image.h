@@ -1,7 +1,7 @@
 #pragma once
-
 #include "box.h"
 #include "mathfunc.h"
+
 
 TINKER_NAMESPACE_BEGIN
 #pragma acc routine seq
@@ -10,11 +10,46 @@ inline void image_null(real& RESTRICT, real& RESTRICT, real& RESTRICT,
                        const Box* RESTRICT)
 {}
 
+
 #pragma acc routine seq
 CUDA_DEVICE_FUNCTION
 inline void imagen_null(real& RESTRICT, real& RESTRICT, real& RESTRICT,
                         const Box* RESTRICT)
 {}
+
+
+// orthogonal
+
+
+#pragma acc routine seq
+CUDA_DEVICE_FUNCTION
+inline void frac_orthogonal(real& RESTRICT fx, real& RESTRICT fy,
+                            real& RESTRICT fz, real xr, real yr, real zr,
+                            const Box* RESTRICT pb)
+{
+   fx = xr * pb->recip[0][0];
+   fy = yr * pb->recip[1][1];
+   fz = zr * pb->recip[2][2];
+   fx -= REAL_FLOOR(fx + 0.5f);
+   fy -= REAL_FLOOR(fy + 0.5f);
+   fz -= REAL_FLOOR(fz + 0.5f);
+}
+
+
+#pragma acc routine seq
+__host__
+__device__
+inline void frac_image_orthogonal(real& restrict fx, real& restrict fy,
+                                  real& restrict fz, const Box* restrict pb)
+{
+   fx -= REAL_FLOOR(fx + 0.5f);
+   fy -= REAL_FLOOR(fy + 0.5f);
+   fz -= REAL_FLOOR(fz + 0.5f);
+   fx *= pb->lvec[0][0];
+   fy *= pb->lvec[1][1];
+   fz *= pb->lvec[2][2];
+}
+
 
 #pragma acc routine seq
 CUDA_DEVICE_FUNCTION
@@ -31,6 +66,7 @@ inline void image_orthogonal(real& RESTRICT xr, real& RESTRICT yr,
    yr -= (fy * pb->lvec[1][1]);
    zr -= (fz * pb->lvec[2][2]);
 }
+
 
 #pragma acc routine seq
 CUDA_DEVICE_FUNCTION
@@ -53,6 +89,40 @@ inline void imagen_orthogonal(real& RESTRICT xr, real& RESTRICT yr,
    zr = (c > lz2 ? c - lz : c);
 }
 
+
+// monoclinic
+
+
+#pragma acc routine seq
+CUDA_DEVICE_FUNCTION
+inline void frac_monoclinic(real& RESTRICT fx, real& RESTRICT fy,
+                            real& RESTRICT fz, real xr, real yr, real zr,
+                            const Box* RESTRICT pb)
+{
+   fx = xr * pb->recip[0][0] + zr * pb->recip[0][2];
+   fy = yr * pb->recip[1][1];
+   fz = zr * pb->recip[2][2];
+   fx -= REAL_FLOOR(fx + 0.5f);
+   fy -= REAL_FLOOR(fy + 0.5f);
+   fz -= REAL_FLOOR(fz + 0.5f);
+}
+
+
+#pragma acc routine seq
+__host__
+__device__
+inline void frac_image_monoclinic(real& restrict fx, real& restrict fy,
+                                  real& restrict fz, const Box* restrict pb)
+{
+   fx -= REAL_FLOOR(fx + 0.5f);
+   fy -= REAL_FLOOR(fy + 0.5f);
+   fz -= REAL_FLOOR(fz + 0.5f);
+   fx = fx * pb->lvec[0][0] + fz * pb->lvec[0][2];
+   fy *= pb->lvec[1][1];
+   fz *= pb->lvec[2][2];
+}
+
+
 #pragma acc routine seq
 CUDA_DEVICE_FUNCTION
 inline void image_monoclinic(real& RESTRICT xr, real& RESTRICT yr,
@@ -69,15 +139,49 @@ inline void image_monoclinic(real& RESTRICT xr, real& RESTRICT yr,
    zr -= (fz * pb->lvec[2][2]);
 }
 
+
 #pragma acc routine seq
 CUDA_DEVICE_FUNCTION
 inline void imagen_monoclinic(real& RESTRICT xr, real& RESTRICT yr,
                               real& RESTRICT zr, const Box* RESTRICT pb)
 {
-   // TODO: a real imagen
-   // routine
+   // TODO: a real imagen routine
    image_monoclinic(xr, yr, zr, pb);
 }
+
+
+// triclinic
+
+
+#pragma acc routine seq
+CUDA_DEVICE_FUNCTION
+inline void frac_triclinic(real& RESTRICT fx, real& RESTRICT fy,
+                           real& RESTRICT fz, real xr, real yr, real zr,
+                           const Box* RESTRICT pb)
+{
+   fx = xr * pb->recip[0][0] + yr * pb->recip[0][1] + zr * pb->recip[0][2];
+   fy = yr * pb->recip[1][1] + zr * pb->recip[1][2];
+   fz = zr * pb->recip[2][2];
+   fx -= REAL_FLOOR(fx + 0.5f);
+   fy -= REAL_FLOOR(fy + 0.5f);
+   fz -= REAL_FLOOR(fz + 0.5f);
+}
+
+
+#pragma acc routine seq
+__host__
+__device__
+inline void frac_image_triclinic(real& restrict fx, real& restrict fy,
+                                 real& restrict fz, const Box* restrict pb)
+{
+   fx -= REAL_FLOOR(fx + 0.5f);
+   fy -= REAL_FLOOR(fy + 0.5f);
+   fz -= REAL_FLOOR(fz + 0.5f);
+   fx = fx * pb->lvec[0][0] + fy * pb->lvec[0][1] + fz * pb->lvec[0][2];
+   fy = fy * pb->lvec[1][1] + fz * pb->lvec[1][2];
+   fz *= pb->lvec[2][2];
+}
+
 
 #pragma acc routine seq
 CUDA_DEVICE_FUNCTION
@@ -95,15 +199,61 @@ inline void image_triclinic(real& RESTRICT xr, real& RESTRICT yr,
    zr -= (fz * pb->lvec[2][2]);
 }
 
+
 #pragma acc routine seq
 CUDA_DEVICE_FUNCTION
 inline void imagen_triclinic(real& RESTRICT xr, real& RESTRICT yr,
                              real& RESTRICT zr, const Box* RESTRICT pb)
 {
-   // TODO: a real imagen
-   // routine
+   // TODO: a real imagen routine
    image_triclinic(xr, yr, zr, pb);
 }
+
+
+// general
+
+
+#pragma acc routine seq
+CUDA_DEVICE_FUNCTION
+inline void frac_general(real& RESTRICT fx, real& RESTRICT fy,
+                         real& RESTRICT fz, real xr, real yr, real zr,
+                         const Box* RESTRICT pb)
+{
+   switch (pb->shape) {
+   case Box::ortho:
+      frac_orthogonal(fx, fy, fz, xr, yr, zr, pb);
+      break;
+   case Box::mono:
+      frac_monoclinic(fx, fy, fz, xr, yr, zr, pb);
+      break;
+   default:
+      // Box::tri
+      frac_triclinic(fx, fy, fz, xr, yr, zr, pb);
+      break;
+   }
+}
+
+
+#pragma acc routine seq
+__host__
+__device__
+inline void frac_image_general(real& restrict fx, real& restrict fy,
+                               real& restrict fz, const Box* restrict pb)
+{
+   switch (pb->shape) {
+   case Box::ortho:
+      frac_image_orthogonal(fx, fy, fz, pb);
+      break;
+   case Box::mono:
+      frac_image_monoclinic(fx, fy, fz, pb);
+      break;
+   default:
+      // Box::tri
+      frac_image_triclinic(fx, fy, fz, pb);
+      break;
+   }
+}
+
 
 #pragma acc routine seq
 CUDA_DEVICE_FUNCTION
@@ -127,6 +277,7 @@ inline void image_general(real& RESTRICT xr, real& RESTRICT yr,
    }
 }
 
+
 #pragma acc routine seq
 CUDA_DEVICE_FUNCTION
 inline void imagen_general(real& RESTRICT xr, real& RESTRICT yr,
@@ -149,6 +300,27 @@ inline void imagen_general(real& RESTRICT xr, real& RESTRICT yr,
    }
 }
 
+
+/**
+ * \def frac
+ * \ingroup macro
+ * Calculate the fractional coordinates of (`xr, yr, zr`). The range of the
+ * fractional coordinate is `[-1/2, 1/2)`.
+ */
+#ifndef frac
+#   define frac frac_general
+#endif
+
+
+/**
+ * \def frac_image
+ * \ingroup macro
+ */
+#ifndef frac_image
+#   define frac_image frac_image_general
+#endif
+
+
 /**
  * \def image
  * \ingroup macro
@@ -161,6 +333,7 @@ inline void imagen_general(real& RESTRICT xr, real& RESTRICT yr,
 #ifndef image
 #   define image image_general
 #endif
+
 
 /**
  * \def imagen

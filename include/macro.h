@@ -198,6 +198,7 @@ TINKER_NAMESPACE_END
  * Expand to `__restrict__` in the source code.
  */
 #define RESTRICT __restrict__
+#define restrict __restrict__
 
 
 /**
@@ -221,6 +222,11 @@ TINKER_NAMESPACE_END
 #   define CUDA_DEVICE_FUNCTION __device__
 #else
 #   define CUDA_DEVICE_FUNCTION
+#endif
+#ifndef __CUDACC__
+#   define __device__
+#   define __host__
+#   define __global__
 #endif
 // end of file
 /// \defgroup energy Energy Terms

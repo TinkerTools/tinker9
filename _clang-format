@@ -33,6 +33,8 @@ BraceWrapping:
     SplitEmptyRecord:                  false
     SplitEmptyNamespace:               false
 StatementMacros:
+    - TINKER_NAMESPACE_BEGIN
+    - TINKER_NAMESPACE_END
     - CUDA_DEVICE_FUNCTION
     - __global__
     - __host__
