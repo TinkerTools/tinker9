@@ -30,7 +30,7 @@ TEST_CASE("Spatial-V1", "[ff][spatial]")
 
 
       int ix, iy, iz;
-      box_to_ixyz(ix, iy, iz, 4, 3, 2, id);
+      spatial_v1::box_to_ixyz(ix, iy, iz, 4, 3, 2, id);
       REQUIRE(ix == 11);
       REQUIRE(iy == 5);
       REQUIRE(iz == 3);

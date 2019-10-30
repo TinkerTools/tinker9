@@ -59,10 +59,6 @@ inline void box_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
 }
 
 
-using namespace spatial_v1;
-// using namespace spatial_v2;
-
-
 #pragma acc routine seq
 __device__
 __host__
@@ -87,6 +83,10 @@ inline int ixyz_to_box(int px, int py, int pz, int ix, int iy, int iz)
    return id;
 }
 }
+
+
+using namespace spatial_v1;
+// using namespace spatial_v2;
 
 
 #pragma acc routine seq
