@@ -211,23 +211,6 @@ TINKER_NAMESPACE_END
 #else
 #   define MAYBE_UNUSED __attribute__((unused))
 #endif
-
-
-/**
- * \def CUDA_DEVICE_FUNCTION
- * \ingroup macro
- * Expand to `__device__` in the CUDA source code.
- */
-#ifdef __CUDACC__
-#   define CUDA_DEVICE_FUNCTION __device__
-#else
-#   define CUDA_DEVICE_FUNCTION
-#endif
-#ifndef __CUDACC__
-#   define __device__
-#   define __host__
-#   define __global__
-#endif
 // end of file
 /// \defgroup energy Energy Terms
 /// \defgroup io Inputs and Outputs

@@ -1,14 +1,15 @@
 #pragma once
-
 #include "macro.h"
+#include "macro_void_cuda_def.h"
 #include "mathfunc.h"
+
 
 TINKER_NAMESPACE_BEGIN
 /**
  * \ingroup vdw
  */
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 template <int DO_G>
 void pair_hal(real rik, real rv, real eps, real vscalek, real vlambda, //
               real ghal, real dhal, real scexp, real scalpha,          //

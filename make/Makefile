@@ -253,14 +253,25 @@ test_cpp_objs__ := $(shell find $(top_dir__)/src/test -type f -name '*.cpp' \
 -not -path '$(top_dir__)/src/test/main_*.cpp')
 test_cpp_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(test_cpp_objs__))
 test_cpp_objs__ := $(test_cpp_objs__:%.cpp=%.o)
+# host vs. cudart
+ifeq ($(host_only__),true)
+cpp_runtime_objs__ := $(shell find $(top_dir__)/src/host -type f -name '*.cpp')
+else ifeq ($(host_only__),false)
+cpp_runtime_objs__ := $(shell find $(top_dir__)/src/cudart -type f -name '*.cpp')
+endif
+cpp_runtime_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(cpp_runtime_objs__))
+cpp_runtime_objs__ := $(cpp_runtime_objs__:%.cpp=%.o)
 # misc.
 # $(top_dir__)/src/foo.cpp -> src/foo.o
 cpp_objs__ := $(shell find $(top_dir__)/src -type f -name '*.cpp' \
 -not -path '$(top_dir__)/src/main_*.cpp' \
 -not -path '$(top_dir__)/src/acc_*.cpp' \
+-not -path '$(top_dir__)/src/host/*.cpp' \
+-not -path '$(top_dir__)/src/cudart/*.cpp' \
 -not -path '$(top_dir__)/src/test/*')
 cpp_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(cpp_objs__))
 cpp_objs__ := $(cpp_objs__:%.cpp=%.o)
+cpp_objs__ += $(cpp_runtime_objs__)
 # acc
 # $(top_dir__)/src/acc_foo.cpp -> src/acc_foo.o
 acc_objs__ := $(wildcard $(top_dir__)/src/acc_*.cpp)
@@ -379,7 +390,9 @@ endif
 ##/ $> make -f make/Makefile create_build build=build-v3
 ##/ ```
 ##/
-dirs__ := $(build)/$(src_obj_dir__)/test
+dirs__ := $(build)/$(src_obj_dir__)/test \
+$(build)/$(src_obj_dir__)/host \
+$(build)/$(src_obj_dir__)/cudart
 $(dirs__):
 	@echo TINKER.GPU: Creating directory \`$@\'...
 	@mkdir -p $@

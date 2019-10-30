@@ -1,12 +1,12 @@
 #include "gpu_card.h"
-
-#if TINKER_CUDART
-#   include "error.h"
-#   include "gpu_card_cudart.h"
-#   include "mathfunc.h"
-#   include <cuda_runtime.h>
-#   include <limits>
-#   include <map>
+#include "error.h"
+#include "mathfunc.h"
+#include <cuda_runtime.h>
+#include <limits>
+#include <map>
+#if !TINKER_CUDART
+#   error TINKER_CUDART must be true.
+#endif
 
 TINKER_NAMESPACE_BEGIN
 std::vector<DeviceAttribute>& get_device_attributes()
@@ -14,6 +14,7 @@ std::vector<DeviceAttribute>& get_device_attributes()
    static std::vector<DeviceAttribute> a;
    return a;
 }
+
 
 static void get_device_attribute(DeviceAttribute& a, int device = 0)
 {
@@ -71,6 +72,7 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
    }
 }
 
+
 void gpu_card_data(rc_op op)
 {
    if (op & rc_dealloc) {
@@ -93,6 +95,7 @@ void gpu_card_data(rc_op op)
    }
 }
 
+
 int get_grid_size(int nthreads_per_block)
 {
    const auto& a = get_device_attributes()[idevice];
@@ -104,6 +107,7 @@ int get_grid_size(int nthreads_per_block)
 
    return a.multiprocessor_count * max_nblocks_per_MP;
 }
+
 
 static int get_block_size1(int shared_bytes_per_thread)
 {
@@ -155,6 +159,7 @@ static int get_block_size1(int shared_bytes_per_thread)
    return bsize;
 }
 
+
 int get_block_size(int shared_bytes_per_thread)
 {
    struct Config
@@ -188,4 +193,3 @@ int get_block_size(int shared_bytes_per_thread)
    }
 }
 TINKER_NAMESPACE_END
-#endif

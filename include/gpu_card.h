@@ -1,5 +1,8 @@
 #pragma once
 #include "rc_man.h"
+#if TINKER_CUDART
+#   include "gpu_card_cudart.h"
+#endif
 
 
 TINKER_NAMESPACE_BEGIN
@@ -18,9 +21,9 @@ constexpr unsigned ALL_LANES = 0xFFFFFFFF;
 constexpr unsigned MAX_BLOCK_SIZE = 256;
 
 
-// constexpr int BLOCK_DIM = 32;
 // constexpr int BLOCK_DIM = 64;
 constexpr int BLOCK_DIM = 128;
+// constexpr int BLOCK_DIM = 256;
 
 
 TINKER_EXTERN int ndevice, idevice;

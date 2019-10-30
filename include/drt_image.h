@@ -1,18 +1,19 @@
 #pragma once
 #include "box.h"
+#include "macro_void_cuda_def.h"
 #include "mathfunc.h"
 
 
 TINKER_NAMESPACE_BEGIN
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void image_null(real& RESTRICT, real& RESTRICT, real& RESTRICT,
                        const Box* RESTRICT)
 {}
 
 
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void imagen_null(real& RESTRICT, real& RESTRICT, real& RESTRICT,
                         const Box* RESTRICT)
 {}
@@ -22,7 +23,7 @@ inline void imagen_null(real& RESTRICT, real& RESTRICT, real& RESTRICT,
 
 
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void frac_orthogonal(real& RESTRICT fx, real& RESTRICT fy,
                             real& RESTRICT fz, real xr, real yr, real zr,
                             const Box* RESTRICT pb)
@@ -37,7 +38,6 @@ inline void frac_orthogonal(real& RESTRICT fx, real& RESTRICT fy,
 
 
 #pragma acc routine seq
-__host__
 __device__
 inline void frac_image_orthogonal(real& restrict fx, real& restrict fy,
                                   real& restrict fz, const Box* restrict pb)
@@ -52,7 +52,7 @@ inline void frac_image_orthogonal(real& restrict fx, real& restrict fy,
 
 
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void image_orthogonal(real& RESTRICT xr, real& RESTRICT yr,
                              real& RESTRICT zr, const Box* RESTRICT pb)
 {
@@ -69,7 +69,7 @@ inline void image_orthogonal(real& RESTRICT xr, real& RESTRICT yr,
 
 
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void imagen_orthogonal(real& RESTRICT xr, real& RESTRICT yr,
                               real& RESTRICT zr, const Box* RESTRICT pb)
 {
@@ -94,7 +94,7 @@ inline void imagen_orthogonal(real& RESTRICT xr, real& RESTRICT yr,
 
 
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void frac_monoclinic(real& RESTRICT fx, real& RESTRICT fy,
                             real& RESTRICT fz, real xr, real yr, real zr,
                             const Box* RESTRICT pb)
@@ -109,7 +109,6 @@ inline void frac_monoclinic(real& RESTRICT fx, real& RESTRICT fy,
 
 
 #pragma acc routine seq
-__host__
 __device__
 inline void frac_image_monoclinic(real& restrict fx, real& restrict fy,
                                   real& restrict fz, const Box* restrict pb)
@@ -124,7 +123,7 @@ inline void frac_image_monoclinic(real& restrict fx, real& restrict fy,
 
 
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void image_monoclinic(real& RESTRICT xr, real& RESTRICT yr,
                              real& RESTRICT zr, const Box* RESTRICT pb)
 {
@@ -141,7 +140,7 @@ inline void image_monoclinic(real& RESTRICT xr, real& RESTRICT yr,
 
 
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void imagen_monoclinic(real& RESTRICT xr, real& RESTRICT yr,
                               real& RESTRICT zr, const Box* RESTRICT pb)
 {
@@ -154,7 +153,7 @@ inline void imagen_monoclinic(real& RESTRICT xr, real& RESTRICT yr,
 
 
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void frac_triclinic(real& RESTRICT fx, real& RESTRICT fy,
                            real& RESTRICT fz, real xr, real yr, real zr,
                            const Box* RESTRICT pb)
@@ -169,7 +168,6 @@ inline void frac_triclinic(real& RESTRICT fx, real& RESTRICT fy,
 
 
 #pragma acc routine seq
-__host__
 __device__
 inline void frac_image_triclinic(real& restrict fx, real& restrict fy,
                                  real& restrict fz, const Box* restrict pb)
@@ -184,7 +182,7 @@ inline void frac_image_triclinic(real& restrict fx, real& restrict fy,
 
 
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void image_triclinic(real& RESTRICT xr, real& RESTRICT yr,
                             real& RESTRICT zr, const Box* RESTRICT pb)
 {
@@ -201,7 +199,7 @@ inline void image_triclinic(real& RESTRICT xr, real& RESTRICT yr,
 
 
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void imagen_triclinic(real& RESTRICT xr, real& RESTRICT yr,
                              real& RESTRICT zr, const Box* RESTRICT pb)
 {
@@ -214,7 +212,7 @@ inline void imagen_triclinic(real& RESTRICT xr, real& RESTRICT yr,
 
 
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void frac_general(real& RESTRICT fx, real& RESTRICT fy,
                          real& RESTRICT fz, real xr, real yr, real zr,
                          const Box* RESTRICT pb)
@@ -235,7 +233,6 @@ inline void frac_general(real& RESTRICT fx, real& RESTRICT fy,
 
 
 #pragma acc routine seq
-__host__
 __device__
 inline void frac_image_general(real& restrict fx, real& restrict fy,
                                real& restrict fz, const Box* restrict pb)
@@ -256,7 +253,7 @@ inline void frac_image_general(real& restrict fx, real& restrict fy,
 
 
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void image_general(real& RESTRICT xr, real& RESTRICT yr,
                           real& RESTRICT zr, const Box* RESTRICT pb)
 {
@@ -279,7 +276,7 @@ inline void image_general(real& RESTRICT xr, real& RESTRICT yr,
 
 
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void imagen_general(real& RESTRICT xr, real& RESTRICT yr,
                            real& RESTRICT zr, const Box* RESTRICT pb)
 {

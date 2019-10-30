@@ -1,4 +1,5 @@
 #pragma once
+#include "macro_void_cuda_def.h"
 #include "mathfunc.h"
 #include "switch.h"
 
@@ -30,7 +31,7 @@ TINKER_NAMESPACE_BEGIN
  */
 #pragma acc routine seq
 template <int DO_DTAPER>
-CUDA_DEVICE_FUNCTION
+__device__
 void switch_taper5(real rik, real cut, real off, real& RESTRICT taper,
                    real& RESTRICT dtaper)
 {

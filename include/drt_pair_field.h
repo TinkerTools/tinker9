@@ -1,8 +1,9 @@
 #pragma once
-
 #include "drt_damp.h"
 #include "elec.h"
+#include "macro_void_cuda_def.h"
 #include "md.h"
+
 
 TINKER_NAMESPACE_BEGIN
 struct PairField
@@ -10,9 +11,10 @@ struct PairField
    real fid[3], fkd[3], fip[3], fkp[3];
 };
 
+
 #pragma acc routine seq
 template <elec_t ETYP>
-CUDA_DEVICE_FUNCTION
+__device__
 void pair_dfield(                                                //
    real r2, real xr, real yr, real zr, real dscale, real pscale, //
    real ci, real dix, real diy, real diz, real qixx, real qixy, real qixz,
@@ -107,8 +109,9 @@ void pair_dfield(                                                //
    }
 }
 
+
 template <elec_t ETYP>
-CUDA_DEVICE_FUNCTION
+__device__
 void pair_ufield(                                   //
    real r2, real xr, real yr, real zr, real uscale, //
    real uindi0, real uindi1, real uindi2, real uinpi0, real uinpi1, real uinpi2,

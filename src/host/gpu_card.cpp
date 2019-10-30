@@ -1,6 +1,9 @@
 #include "gpu_card.h"
+#if !TINKER_HOST
+#   error TINKER_HOST must be true.
+#endif
 
-#if TINKER_HOST
+
 TINKER_NAMESPACE_BEGIN
 void gpu_card_data(rc_op op)
 {
@@ -15,14 +18,15 @@ void gpu_card_data(rc_op op)
    }
 }
 
+
 int get_grid_size(int)
 {
    return 1;
 }
+
 
 int get_block_size(int)
 {
    return 1;
 }
 TINKER_NAMESPACE_END
-#endif

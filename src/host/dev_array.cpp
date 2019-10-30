@@ -1,9 +1,11 @@
 #include "macro.h"
 #include <cstdlib>
 #include <cstring>
+#if !TINKER_HOST
+#   error TINKER_HOST must be true.
+#endif
 
 
-#if TINKER_HOST
 TINKER_NAMESPACE_BEGIN
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes)
 {
@@ -40,4 +42,3 @@ void device_memory_allocate_bytes(void** pptr, size_t nbytes)
    *pptr = std::malloc(nbytes);
 }
 TINKER_NAMESPACE_END
-#endif
