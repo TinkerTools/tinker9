@@ -1,5 +1,4 @@
 #include "acc_common.h"
-#include "drt_pair_field.h"
 #include "e_mpole.h"
 #include "e_polar.h"
 #include "gpu_card.h"
@@ -7,6 +6,7 @@
 #include "nblist.h"
 #include "pme.h"
 #include "potent.h"
+#include "seq_pair_field.h"
 
 TINKER_NAMESPACE_BEGIN
 // see also subroutine udirect1 in induce.f

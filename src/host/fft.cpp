@@ -1,7 +1,9 @@
+#include "fft_fftw.h"
 #include "pme.h"
+#if !TINKER_HOST
+#   error TINKER_HOST must be true.
+#endif
 
-#if TINKER_HOST
-#   include "fft_fftw.h"
 
 TINKER_NAMESPACE_BEGIN
 void fft_data(rc_op op)
@@ -11,15 +13,15 @@ void fft_data(rc_op op)
       while (idx < FFTPlanUnit::size()) {
          FFTPlanUnit u = idx;
          auto& ps = *u;
-#   if TINKER_SINGLE_PRECISION
+#if TINKER_SINGLE_PRECISION
          fftwf_destroy_plan(ps.planf);
          fftwf_destroy_plan(ps.planb);
-#   elif TINKER_DOUBLE_PRECISION
+#elif TINKER_DOUBLE_PRECISION
          fftw_destroy_plan(ps.planf);
          fftw_destroy_plan(ps.planb);
-#   else
+#else
          static_assert(false, "");
-#   endif
+#endif
          ++idx;
       }
       FFTPlanUnit::clear();
@@ -47,27 +49,28 @@ void fft_data(rc_op op)
          const int iback = 1;
          const unsigned int iguess = 0;
 
-#   if TINKER_SINGLE_PRECISION
+#if TINKER_SINGLE_PRECISION
          iplan.planf = fftwf_plan_dft_3d(
             nfft1, nfft2, nfft3, reinterpret_cast<fftwf_complex*>(st.qgrid),
             reinterpret_cast<fftwf_complex*>(st.qgrid), ifront, iguess);
          iplan.planb = fftwf_plan_dft_3d(
             nfft1, nfft2, nfft3, reinterpret_cast<fftwf_complex*>(st.qgrid),
             reinterpret_cast<fftwf_complex*>(st.qgrid), iback, iguess);
-#   elif TINKER_DOUBLE_PRECISION
+#elif TINKER_DOUBLE_PRECISION
          iplan.planf = fftw_plan_dft_3d(
             nfft1, nfft2, nfft3, reinterpret_cast<fftw_complex*>(st.qgrid),
             reinterpret_cast<fftw_complex*>(st.qgrid), ifront, iguess);
          iplan.planb = fftw_plan_dft_3d(
             nfft1, nfft2, nfft3, reinterpret_cast<fftw_complex*>(st.qgrid),
             reinterpret_cast<fftw_complex*>(st.qgrid), iback, iguess);
-#   else
+#else
          static_assert(false, "");
-#   endif
+#endif
          ++idx;
       }
    }
 }
+
 
 void fftfront(PMEUnit pme_u)
 {
@@ -75,16 +78,17 @@ void fftfront(PMEUnit pme_u)
    auto& iplan = *iplan_u;
    auto& st = *pme_u;
 
-#   if TINKER_SINGLE_PRECISION
+#if TINKER_SINGLE_PRECISION
    fftwf_execute_dft(iplan.planf, reinterpret_cast<fftwf_complex*>(st.qgrid),
                      reinterpret_cast<fftwf_complex*>(st.qgrid));
-#   elif TINKER_DOUBLE_PRECISION
+#elif TINKER_DOUBLE_PRECISION
    fftw_execute_dft(iplan.planf, reinterpret_cast<fftw_complex*>(st.qgrid),
                     reinterpret_cast<fftw_complex*>(st.qgrid));
-#   else
+#else
    static_assert(false, "");
-#   endif
+#endif
 }
+
 
 void fftback(PMEUnit pme_u)
 {
@@ -92,16 +96,14 @@ void fftback(PMEUnit pme_u)
    auto& iplan = *iplan_u;
    auto& st = *pme_u;
 
-#   if TINKER_SINGLE_PRECISION
+#if TINKER_SINGLE_PRECISION
    fftwf_execute_dft(iplan.planb, reinterpret_cast<fftwf_complex*>(st.qgrid),
                      reinterpret_cast<fftwf_complex*>(st.qgrid));
-#   elif TINKER_DOUBLE_PRECISION
+#elif TINKER_DOUBLE_PRECISION
    fftw_execute_dft(iplan.planb, reinterpret_cast<fftw_complex*>(st.qgrid),
                     reinterpret_cast<fftw_complex*>(st.qgrid));
-#   else
+#else
    static_assert(false, "");
-#   endif
+#endif
 }
 TINKER_NAMESPACE_END
-
-#endif

@@ -1,9 +1,9 @@
 #include "acc_common.h"
-#include "drt_pair_hal.h"
 #include "e_vdw.h"
 #include "gpu_card.h"
 #include "md.h"
 #include "nblist.h"
+#include "seq_pair_hal.h"
 
 TINKER_NAMESPACE_BEGIN
 void evdw_reduce_xyz()

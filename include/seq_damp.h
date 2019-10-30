@@ -1,12 +1,13 @@
 #pragma once
-
+#include "macro_void_cuda_def.h"
 #include "mathfunc.h"
+
 
 TINKER_NAMESPACE_BEGIN
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void damp_thole2(real r, real pdi, real pti, real pdk, real ptk,
-                        real& RESTRICT scale3, real& RESTRICT scale5)
+                        real& restrict scale3, real& restrict scale5)
 {
    scale3 = 1;
    scale5 = 1;
@@ -22,11 +23,12 @@ inline void damp_thole2(real r, real pdi, real pti, real pdk, real ptk,
    }
 }
 
+
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void damp_thole3(real r, real pdi, real pti, real pdk, real ptk,
-                        real& RESTRICT scale3, real& RESTRICT scale5,
-                        real& RESTRICT scale7)
+                        real& restrict scale3, real& restrict scale5,
+                        real& restrict scale7)
 {
    scale3 = 1;
    scale5 = 1;
@@ -44,16 +46,17 @@ inline void damp_thole3(real r, real pdi, real pti, real pdk, real ptk,
    }
 }
 
+
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
+__device__
 inline void damp_thole3g(real r, real rr2, real xr, real yr, real zr, real pdi,
-                         real pti, real pdk, real ptk, real& RESTRICT scale31,
-                         real& RESTRICT scale51, real& RESTRICT scale71,
-                         real& RESTRICT rc31, real& RESTRICT rc32,
-                         real& RESTRICT rc33, real& RESTRICT rc51,
-                         real& RESTRICT rc52, real& RESTRICT rc53,
-                         real& RESTRICT rc71, real& RESTRICT rc72,
-                         real& RESTRICT rc73)
+                         real pti, real pdk, real ptk, real& restrict scale31,
+                         real& restrict scale51, real& restrict scale71,
+                         real& restrict rc31, real& restrict rc32,
+                         real& restrict rc33, real& restrict rc51,
+                         real& restrict rc52, real& restrict rc53,
+                         real& restrict rc71, real& restrict rc72,
+                         real& restrict rc73)
 {
    scale31 = 0;
    scale51 = 0;
@@ -91,9 +94,10 @@ inline void damp_thole3g(real r, real rr2, real xr, real yr, real zr, real pdi,
    }
 }
 
+
 #pragma acc routine seq
-CUDA_DEVICE_FUNCTION
-inline void damp_ewald(real* RESTRICT bn, int order, real r, real rinv,
+__device__
+inline void damp_ewald(real* restrict bn, int order, real r, real rinv,
                        real rr2, real aewald)
 {
    real ralpha = aewald * r;

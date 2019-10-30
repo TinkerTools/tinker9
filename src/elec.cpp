@@ -125,14 +125,8 @@ void elec_init(int vers)
    if (!use_elec())
       return;
 
-   // zero torque
-
-   if (vers & calc::grad) {
+   if (vers & calc::grad)
       device_array::zero(n, trqx, trqy, trqz);
-   }
-
-   // zero torque-related virial
-
    if (vers & calc::virial)
       device_array::zero(buffer_size(), vir_trq);
 

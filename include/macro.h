@@ -193,11 +193,11 @@ TINKER_NAMESPACE_END
 
 
 /**
- * \def RESTRICT
+ * \def restrict
  * \ingroup macro
  * Expand to `__restrict__` in the source code.
  */
-#define RESTRICT __restrict__
+#define restrict __restrict__
 
 
 /**
@@ -210,19 +210,6 @@ TINKER_NAMESPACE_END
 #else
 #   define MAYBE_UNUSED __attribute__((unused))
 #endif
-
-
-/**
- * \def CUDA_DEVICE_FUNCTION
- * \ingroup macro
- * Expand to `__device__` in the CUDA source code.
- */
-#ifdef __CUDACC__
-#   define CUDA_DEVICE_FUNCTION __device__
-#else
-#   define CUDA_DEVICE_FUNCTION
-#endif
-
 // end of file
 /// \defgroup energy Energy Terms
 /// \defgroup io Inputs and Outputs

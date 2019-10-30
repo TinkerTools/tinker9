@@ -377,10 +377,9 @@ void torque(int vers)
    if (!use_elec())
       return;
 
-   if (vers & calc::virial) {
+   if (vers & calc::virial)
       torque_tmpl<1>(vir_trq);
-   } else if (vers & calc::grad) {
+   else if (vers & calc::grad)
       torque_tmpl<0>(nullptr);
-   }
 }
 TINKER_NAMESPACE_END

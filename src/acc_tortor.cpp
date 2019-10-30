@@ -62,12 +62,10 @@ TINKER_NAMESPACE_BEGIN
    ay = t * ay + ((c[0][3] * u + c[0][2]) * u + c[0][1]) * u + c[0][0]
 
 #pragma acc routine seq
-static void bcuint0(const real (&__restrict__ y)[4],
-                    const real (&__restrict__ y1i)[4],
-                    const real (&__restrict__ y2i)[4],
-                    const real (&__restrict__ y12i)[4], real x1l, real x1u,
-                    real x2l, real x2u, real x1, real x2,
-                    real& __restrict__ ansy)
+static void bcuint0(const real (&restrict y)[4], const real (&restrict y1i)[4],
+                    const real (&restrict y2i)[4],
+                    const real (&restrict y12i)[4], real x1l, real x1u,
+                    real x2l, real x2u, real x1, real x2, real& restrict ansy)
 {
    BCUCOF_;
    BCUCOF_ANSY_;
@@ -75,13 +73,11 @@ static void bcuint0(const real (&__restrict__ y)[4],
 }
 
 #pragma acc routine seq
-static void bcuint1(const real (&__restrict__ y)[4],
-                    const real (&__restrict__ y1i)[4],
-                    const real (&__restrict__ y2i)[4],
-                    const real (&__restrict__ y12i)[4], real x1l, real x1u,
-                    real x2l, real x2u, real x1, real x2,
-                    real& __restrict__ ansy, real& __restrict__ ansy1,
-                    real& __restrict__ ansy2)
+static void bcuint1(const real (&restrict y)[4], const real (&restrict y1i)[4],
+                    const real (&restrict y2i)[4],
+                    const real (&restrict y12i)[4], real x1l, real x1u,
+                    real x2l, real x2u, real x1, real x2, real& restrict ansy,
+                    real& restrict ansy1, real& restrict ansy2)
 {
    BCUCOF_;
    BCUCOF_ANSY_;

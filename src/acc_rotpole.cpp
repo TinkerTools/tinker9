@@ -4,9 +4,8 @@
 
 TINKER_NAMESPACE_BEGIN
 #pragma acc routine seq
-static void rotsite(int isite, const real (*__restrict__ a)[3],
-                    real (*__restrict__ rpole)[10],
-                    const real (*__restrict__ pole)[10])
+static void rotsite(int isite, const real (*restrict a)[3],
+                    real (*restrict rpole)[10], const real (*restrict pole)[10])
 {
    static_assert(mpl_total == 10, "");
 

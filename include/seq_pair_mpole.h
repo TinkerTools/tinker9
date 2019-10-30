@@ -1,8 +1,9 @@
 #pragma once
-
-#include "drt_damp.h"
 #include "elec.h"
+#include "macro_void_cuda_def.h"
 #include "md.h"
+#include "seq_damp.h"
+
 
 TINKER_NAMESPACE_BEGIN
 /**
@@ -23,6 +24,7 @@ struct PairMPoleGrad
    /// \brief x, y, and z torques on atom \c k.
    real ttmk[3];
 };
+
 
 /**
  * \ingroup mpole
@@ -49,14 +51,14 @@ struct PairMPoleGrad
  */
 #pragma acc routine seq
 template <int USE, elec_t ETYP>
-CUDA_DEVICE_FUNCTION
+__device__
 void pair_mpole(                                    //
    real r2, real xr, real yr, real zr, real mscale, //
    real ci, real dix, real diy, real diz, real qixx, real qixy, real qixz,
    real qiyy, real qiyz, real qizz, //
    real ck, real dkx, real dky, real dkz, real qkxx, real qkxy, real qkxz,
    real qkyy, real qkyz, real qkzz, //
-   real f, real aewald, real& RESTRICT e, PairMPoleGrad& RESTRICT pgrad)
+   real f, real aewald, real& restrict e, PairMPoleGrad& restrict pgrad)
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_g = USE & calc::grad;

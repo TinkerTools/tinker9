@@ -1,8 +1,9 @@
 #pragma once
-
-#include "drt_damp.h"
 #include "elec.h"
+#include "macro_void_cuda_def.h"
 #include "md.h"
+#include "seq_damp.h"
+
 
 TINKER_NAMESPACE_BEGIN
 struct PairPolarGrad
@@ -12,9 +13,10 @@ struct PairPolarGrad
    real dufldi[6], dufldk[6];
 };
 
+
 #pragma acc routine seq
 template <int USE, elec_t ETYP>
-CUDA_DEVICE_FUNCTION
+__device__
 void pair_polar(                                                              //
    real r2, real xr, real yr, real zr, real dscale, real pscale, real uscale, //
    real ci, real dix, real diy, real diz, real qixx, real qixy, real qixz,
@@ -23,7 +25,7 @@ void pair_polar(                                                              //
    real ck, real dkx, real dky, real dkz, real qkxx, real qkxy, real qkxz,
    real qkyy, real qkyz, real qkzz, real ukx, real uky, real ukz, real ukxp,
    real ukyp, real ukzp, real pdk, real ptk, //
-   real f, real aewald, real& RESTRICT e, PairPolarGrad& RESTRICT pgrad)
+   real f, real aewald, real& restrict e, PairPolarGrad& restrict pgrad)
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_g = USE & calc::grad;

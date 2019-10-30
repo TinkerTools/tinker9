@@ -1,8 +1,9 @@
 #pragma once
-
-#include "drt_damp.h"
 #include "elec.h"
+#include "macro_void_cuda_def.h"
 #include "md.h"
+#include "seq_damp.h"
+
 
 TINKER_NAMESPACE_BEGIN
 struct PairField
@@ -10,16 +11,17 @@ struct PairField
    real fid[3], fkd[3], fip[3], fkp[3];
 };
 
+
 #pragma acc routine seq
 template <elec_t ETYP>
-CUDA_DEVICE_FUNCTION
+__device__
 void pair_dfield(                                                //
    real r2, real xr, real yr, real zr, real dscale, real pscale, //
    real ci, real dix, real diy, real diz, real qixx, real qixy, real qixz,
    real qiyy, real qiyz, real qizz, real pdi, real pti, //
    real ck, real dkx, real dky, real dkz, real qkxx, real qkxy, real qkxz,
    real qkyy, real qkyz, real qkzz, real pdk, real ptk, //
-   real aewald, PairField& RESTRICT pairf)
+   real aewald, PairField& restrict pairf)
 {
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
@@ -107,15 +109,16 @@ void pair_dfield(                                                //
    }
 }
 
+
 template <elec_t ETYP>
-CUDA_DEVICE_FUNCTION
+__device__
 void pair_ufield(                                   //
    real r2, real xr, real yr, real zr, real uscale, //
    real uindi0, real uindi1, real uindi2, real uinpi0, real uinpi1, real uinpi2,
    real pdi, real pti, //
    real uindk0, real uindk1, real uindk2, real uinpk0, real uinpk1, real uinpk2,
    real pdk, real ptk, //
-   real aewald, PairField& RESTRICT pairf)
+   real aewald, PairField& restrict pairf)
 {
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);

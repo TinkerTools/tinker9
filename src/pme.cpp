@@ -110,9 +110,6 @@ TINKER_NAMESPACE_END
 TINKER_NAMESPACE_BEGIN
 void pme_init(int vers)
 {
-   if (!use_ewald())
-      return;
-
    rpole_to_cmp();
 
    if (vir_m)

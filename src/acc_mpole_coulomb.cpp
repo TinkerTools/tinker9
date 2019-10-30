@@ -1,9 +1,9 @@
 #include "acc_common.h"
-#include "drt_pair_mpole.h"
 #include "e_mpole.h"
 #include "gpu_card.h"
 #include "md.h"
 #include "nblist.h"
+#include "seq_pair_mpole.h"
 
 TINKER_NAMESPACE_BEGIN
 template <int USE>

@@ -7,6 +7,7 @@
 #include "md.h"
 #include "nblist.h"
 #include "pme.h"
+#include "spatial.h"
 
 #include "e_angle.h"
 #include "e_bond.h"

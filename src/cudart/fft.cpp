@@ -1,8 +1,11 @@
-#include "fft.h"
 #include "error.h"
+#include "fft_cufft.h"
 #include "pme.h"
+#if !TINKER_CUDART
+#   error TINKER_CUDART must be true.
+#endif
 
-#if TINKER_CUDART
+
 TINKER_NAMESPACE_BEGIN
 void fft_data(rc_op op)
 {
@@ -24,13 +27,13 @@ void fft_data(rc_op op)
    }
 
    if (op & rc_init) {
-#   if TINKER_SINGLE_PRECISION
+#if TINKER_SINGLE_PRECISION
       const cufftType typ = CUFFT_C2C;
-#   elif TINKER_DOUBLE_PRECISION
+#elif TINKER_DOUBLE_PRECISION
       const cufftType typ = CUFFT_Z2Z;
-#   else
+#else
       static_assert(false, "");
-#   endif
+#endif
 
       int idx = 0;
       while (idx < FFTPlanUnit::size()) {
@@ -45,22 +48,24 @@ void fft_data(rc_op op)
    }
 }
 
+
 void fftfront(PMEUnit pme_u)
 {
    FFTPlanUnit iplan_u = static_cast<int>(pme_u);
    auto& iplan = *iplan_u;
    auto& st = *pme_u;
 
-#   if TINKER_SINGLE_PRECISION
+#if TINKER_SINGLE_PRECISION
    cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),
                 reinterpret_cast<cufftComplex*>(st.qgrid), CUFFT_FORWARD);
-#   elif TINKER_DOUBLE_PRECISION
+#elif TINKER_DOUBLE_PRECISION
    cufftExecZ2Z(iplan, reinterpret_cast<cufftDoubleComplex*>(st.qgrid),
                 reinterpret_cast<cufftDoubleComplex*>(st.qgrid), CUFFT_FORWARD);
-#   else
+#else
    static_assert(false, "");
-#   endif
+#endif
 }
+
 
 void fftback(PMEUnit pme_u)
 {
@@ -68,16 +73,14 @@ void fftback(PMEUnit pme_u)
    auto& iplan = *iplan_u;
    auto& st = *pme_u;
 
-#   if TINKER_SINGLE_PRECISION
+#if TINKER_SINGLE_PRECISION
    cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),
                 reinterpret_cast<cufftComplex*>(st.qgrid), CUFFT_INVERSE);
-#   elif TINKER_DOUBLE_PRECISION
+#elif TINKER_DOUBLE_PRECISION
    cufftExecZ2Z(iplan, reinterpret_cast<cufftDoubleComplex*>(st.qgrid),
                 reinterpret_cast<cufftDoubleComplex*>(st.qgrid), CUFFT_INVERSE);
-#   else
+#else
    static_assert(false, "");
-#   endif
+#endif
 }
 TINKER_NAMESPACE_END
-
-#endif

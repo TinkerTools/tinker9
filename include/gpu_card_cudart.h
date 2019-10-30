@@ -1,9 +1,8 @@
-#ifndef TINKER_GPU_CARD_CUDART_H_
-#define TINKER_GPU_CARD_CUDART_H_
-
+#pragma once
 #include "macro.h"
 #include <string>
 #include <vector>
+
 
 TINKER_NAMESPACE_BEGIN
 struct DeviceAttribute
@@ -23,7 +22,6 @@ struct DeviceAttribute
    int max_blocks_per_multiprocessor;
 };
 
+
 std::vector<DeviceAttribute>& get_device_attributes();
 TINKER_NAMESPACE_END
-
-#endif

@@ -1,0 +1,29 @@
+\documentclass[10pt,landscape]{article}
+\usepackage[usenames]{color} %used for font color
+\usepackage{amssymb} %maths
+\usepackage{amsmath} %maths
+\usepackage[utf8]{inputenc} %useful to type directly diacritic characters
+
+\usepackage{sfmath}
+\renewcommand*{\sfdefault}{lmss}
+\renewcommand*{\familydefault}{\sfdefault}
+\def\MyBlue{rgb,255: red,52; green,152; blue,219}
+\def\MyRed{rgb,255: red,231; green,76; blue,60}
+\def\MyYellow{rgb,255: red,241; green,196; blue,15}
+\def\MyGreen{rgb,255: red,46; green,204; blue,113}
+\def\MyGray{rgb,255: red,204; green,204; blue,204}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,positioning}
+\def\MyShapeA#1#2{\tikzstyle{#1}=[fill=#2, draw=#2, shape=rectangle, line width=0, minimum width=0.2in, minimum height=0.2in]}
+\def\MyShapeB#1#2{\tikzstyle{#1}=[fill=#2, draw=#2, shape=rectangle, line width=0, minimum width=0.8in, minimum height=0.2in]}
+\MyShapeA{Blue A}{\MyBlue}
+\MyShapeA{Red A}{\MyRed}
+\MyShapeA{Yellow A}{\MyYellow}
+\MyShapeA{Green A}{\MyGreen}
+\MyShapeA{Gray A}{\MyGray}
+\MyShapeB{Blue B}{\MyBlue}
+\MyShapeB{Red B}{\MyRed}
+\MyShapeB{Yellow B}{\MyYellow}
+\MyShapeB{Gray B}{\MyGray}
+\tikzset{font=\tiny}

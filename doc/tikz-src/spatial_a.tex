@@ -1,0 +1,45 @@
+\begin{tikzpicture}
+\node [Gray A] (aa) at (0.4in,0) {a};
+\node [Blue A] (a0) at (0,0) {0}
+ node [Blue A] (a1) [left=0 of a0] {1}
+ node [Blue A] (a2) [left=0 of a1] {2}
+ node [Blue A] (a3) [left=0 of a2] {3}
+ node [Red A] (a4) [left=0 of a3] {4}
+ node [Red A] (a5) [left=0 of a4] {5}
+ node [Red A] (a6) [left=0 of a5] {6}
+ node [Red A] (a7) [left=0 of a6] {7}
+ node [Blue B] (a8) [left=0 of a7] {}
+ node [Red A] (a9) [left=0 of a8] {n-2}
+ node [Red A] (a10) [left=0 of a9] {n-1}
+ node [Gray A] (a11) [left=0 of a10] {n};
+
+\node [Gray A] (bb) at (0.4in,-1) {ak};
+\node [Blue B] (ak0) at (-0.3in,-1) {0}
+ node [Red B] (ak1) [left=0 of ak0] {1}
+ node [Blue B] (ak2) [left=0 of ak1] {}
+ node [Red B] (ak3) [left=0 of ak2] {nak-1}
+ node [Gray B] (ak4) [left=0 of ak3] {nak};
+
+\node [Gray A] (cc) at (0.4in,-2) {xakf};
+\node [Blue B] (xakf0) at (-0.3in,-2) {1011}
+ node [Red B] (xakf1) [left=0 of xakf0] {0011}
+ node [Blue B] (xakf2) [left=0 of xakf1] {}
+ node [Red B] (xakf3) [left=0 of xakf2] {0001}
+ node [Gray B] (xakf4) [left=0 of xakf3] {};
+
+\node [Gray A] (dd) at (0.4in,1) {box\#};
+\node [Green A] (bid0) at (0,1) {ix0}
+ node [Yellow A] (bid1) [left=0 of bid0] {ix1}
+ node [Yellow A] (bid2) [left=0 of bid1] {ix1}
+ node [Green A] (bid3) [left=0 of bid2] {ix2}
+ node [Yellow A] (bid4) [left=0 of bid3] {ix2}
+ node [Green A] (bid5) [left=0 of bid4] {ix3}
+ node [Green A] (bid6) [left=0 of bid5] {ix3}
+ node [Green A] (bid7) [left=0 of bid6] {ix3}
+ node [Yellow B] (bid8) [left=0 of bid7] {}
+ node [Green A] (bid9) [left=0 of bid8] {ixp}
+ node [Green A] (bid10) [left=0 of bid9] {ixp}
+ node [Gray A] (bid11) [left=0 of bid10] {ixp}
+ node [Gray A] (bid12) [left=0 of bid11] {ixp}
+ node [Gray A] (bid13) [left=0 of bid12] {};
+\end{tikzpicture}

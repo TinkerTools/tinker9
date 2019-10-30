@@ -1,11 +1,11 @@
 #include "acc_common.h"
-#include "drt_damp.h"
 #include "e_polar.h"
 #include "error.h"
 #include "gpu_card.h"
 #include "io_print.h"
 #include "md.h"
 #include "nblist.h"
+#include "seq_damp.h"
 #include "tinker_rt.h"
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/polpcg.hh>

@@ -1,9 +1,9 @@
 #include "error.h"
 #include <cstring>
-
-
-#if TINKER_CUDART
-#   include <cuda_runtime.h>
+#include <cuda_runtime.h>
+#if !TINKER_CUDART
+#   error TINKER_CUDART must be true.
+#endif
 
 
 TINKER_NAMESPACE_BEGIN
@@ -43,4 +43,3 @@ void device_memory_allocate_bytes(void** pptr, size_t nbytes)
    check_rt(cudaMalloc(pptr, nbytes));
 }
 TINKER_NAMESPACE_END
-#endif

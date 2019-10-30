@@ -1,16 +1,16 @@
 #include "async.h"
+#include <condition_variable>
 #include <cstdlib>
+#include <functional>
+#include <mutex>
+#include <queue>
 #include <thread>
+#if !TINKER_HOST
+#   error TINKER_HOST must be true.
+#endif
 
-#if TINKER_HOST
-#   include <condition_variable>
-#   include <functional>
-#   include <mutex>
-#   include <queue>
 
 TINKER_NAMESPACE_BEGIN
-/// @brief
-/// asynchronous stream
 class StreamSt
 {
 private:
@@ -19,6 +19,7 @@ private:
    std::queue<std::function<void()>> q_;
    bool idle_;
    void clear_front_();
+
 
 public:
    template <class F, class... Args>
@@ -35,9 +36,8 @@ public:
    void sync();
    StreamSt();
 };
-TINKER_NAMESPACE_END
 
-TINKER_NAMESPACE_BEGIN
+
 void StreamSt::clear_front_()
 {
    auto exec = [&]() {
@@ -55,6 +55,7 @@ void StreamSt::clear_front_()
    std::thread(exec).detach();
 }
 
+
 void StreamSt::sync()
 {
    std::unique_lock<std::mutex> lck_idle(mi_);
@@ -66,6 +67,7 @@ void StreamSt::sync()
    }
 }
 
+
 StreamSt::StreamSt()
    : mq_()
    , mi_()
@@ -74,24 +76,27 @@ StreamSt::StreamSt()
    , idle_(true)
 {}
 
+
 void deallocate_stream(Stream s)
 {
    delete s;
 }
+
 
 void allocate_stream(Stream* ps)
 {
    *ps = new StreamSt;
 }
 
+
 void synchronize_stream(Stream s)
 {
    s->sync();
 }
+
 
 void copy_bytes_async(void* dst, const void* src, size_t nbytes, Stream s)
 {
    s->add_async_call(std::memcpy, dst, src, nbytes);
 }
 TINKER_NAMESPACE_END
-#endif

@@ -119,7 +119,8 @@ FILE_PATTERNS          = \
                          *.h \
                          *.cc \
                          *.cpp \
-                         *.md
+                         *.md \
+                         *.svg
 RECURSIVE              = YES
 EXCLUDE                = src/ext
 EXCLUDE_SYMLINKS       = NO
@@ -128,7 +129,7 @@ EXCLUDE_SYMBOLS        =
 EXAMPLE_PATH           = include
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
-IMAGE_PATH             =
+IMAGE_PATH             = doc
 INPUT_FILTER           =
 FILTER_PATTERNS        =
 FILTER_SOURCE_FILES    = YES
