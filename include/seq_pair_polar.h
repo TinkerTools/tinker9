@@ -1,8 +1,8 @@
 #pragma once
-#include "drt_damp.h"
 #include "elec.h"
 #include "macro_void_cuda_def.h"
 #include "md.h"
+#include "seq_damp.h"
 
 
 TINKER_NAMESPACE_BEGIN

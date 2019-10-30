@@ -1,9 +1,9 @@
 #include "box.h"
 #include "cu_launch.h"
-#include "drt_image.h"
 #include "mathfunc_bit.h"
 #include "md.h"
 #include "nblist.h"
+#include "seq_image.h"
 #include "seq_spatial_box.h"
 #include "spatial.h"
 #include <thrust/remove.h>
