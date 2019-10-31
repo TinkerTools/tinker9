@@ -10,7 +10,7 @@ ThrustCache::ThrustCache()
 {}
 
 
-auto ThrustCache::allocate(std::ptrdiff_t numbyte) -> value_type*
+auto ThrustCache::allocate(ptrdiff_t numbyte) -> value_type*
 {
    if (numbyte > nbytes) {
       nbytes = numbyte;
@@ -21,7 +21,7 @@ auto ThrustCache::allocate(std::ptrdiff_t numbyte) -> value_type*
 }
 
 
-void ThrustCache::deallocate(value_type*, std::size_t)
+void ThrustCache::deallocate(value_type*, size_t)
 {
    // does not do anything
    return;
@@ -47,7 +47,7 @@ void thrust_cache_dealloc()
 
 void thrust_cache_alloc()
 {
-   const std::size_t numbyte = 10 * n * sizeof(real);
+   const size_t numbyte = 10 * n * sizeof(real);
    thrust_cache.allocate(numbyte);
 }
 TINKER_NAMESPACE_END

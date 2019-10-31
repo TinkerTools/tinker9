@@ -7,6 +7,7 @@
 #include "seq_spatial_box.h"
 #include "spatial.h"
 #include "thrust_cache.h"
+#include <thrust/extrema.h>
 #include <thrust/remove.h>
 #include <thrust/scan.h>
 #include <thrust/sort.h>
@@ -271,23 +272,25 @@ void spatial_data_init_cu(SpatialUnit u, NBListUnit nu)
 {
    const real cutbuf = nu->cutoff + nu->buffer;
    const int& nak = u->nak;
-   const int& nx = u->nx;
-   const int& nxk = u->nxk;
-
+   int& px = u->px;
+   int& py = u->py;
+   int& pz = u->pz;
+   int& nx = u->nx;
+   int& nxk = u->nxk;
    int& near = u->near;
    int& xak_sum = u->xak_sum;
    int& xak_sum_cap = u->xak_sum_cap;
    int& niak = u->niak;
 
 
-   auto* restrict sorted = u->sorted;
-   auto* restrict boxnum = u->boxnum;
-   auto* restrict naak = u->naak;
-   auto* restrict xakf = u->xakf;
-   auto* restrict xakf_scan = u->xakf_scan;
-   auto* restrict nearby = u->nearby;
-   auto* restrict ax_scan = u->ax_scan;
-   auto* restrict xkf = u->xkf;
+   auto*& sorted = u->sorted;
+   auto*& boxnum = u->boxnum;
+   auto*& naak = u->naak;
+   auto*& xakf = u->xakf;
+   auto*& xakf_scan = u->xakf_scan;
+   auto*& nearby = u->nearby;
+   auto*& ax_scan = u->ax_scan;
+   auto*& xkf = u->xkf;
 
 
    // auto policy = thrust::device;
@@ -298,6 +301,41 @@ void spatial_data_init_cu(SpatialUnit u, NBListUnit nu)
    device_array::zero(nx + 1, ax_scan);
    // B.2 B.3 B.4 C.1
    launch_kernel1(n, spatial_b234c1, u.deviceptr(), x, y, z, box, cutbuf);
+   // find max(nax) and compare to Spatial::BLOCK
+   // ax_scan[0] == 0 can never be the maximum
+   int level = 1 + builtin_floor_log2(nak - 1);
+   int mnax;
+   const int* mnaxptr = thrust::max_element(policy, ax_scan, ax_scan + 1 + nx);
+   device_array::copyout(1, &mnax, mnaxptr);
+   while (mnax > Spatial::BLOCK) {
+      device_array::deallocate(nearby, ax_scan, xkf);
+
+      int scale = (mnax - 1) / Spatial::BLOCK;
+      // mnax / mnax-1 / scale / 2^p / p
+      // 33   / 32     / 1     / 2   / 1
+      // 64   / 63     / 1     / 2   / 1
+      // 65   / 64     / 2     / 4   / 2
+      // 128  / 127    / 3     / 4   / 2
+      // 129  / 128    / 4     / 8   / 3
+      int p = 1 + builtin_floor_log2(scale);
+      level += p;
+      px = (level + 2) / 3;
+      py = (level + 1) / 3;
+      pz = (level + 0) / 3;
+      nx = pow2(px + py + pz);
+      nxk = (nx + Spatial::BLOCK - 1) / Spatial::BLOCK;
+
+      device_array::allocate(nx, &nearby);
+      device_array::allocate(nx + 1, &ax_scan);
+      device_array::allocate(nak * nxk, &xkf);
+
+      u.update_deviceptr(*u);
+
+      device_array::zero(nx + 1, ax_scan);
+      launch_kernel1(n, spatial_b234c1, u.deviceptr(), x, y, z, box, cutbuf);
+      mnaxptr = thrust::max_element(policy, ax_scan, ax_scan + 1 + nx);
+      device_array::copyout(1, &mnax, mnaxptr);
+   }
    // B.5
    thrust::stable_sort_by_key(policy, boxnum, boxnum + n, sorted);
    // C.2
