@@ -6,6 +6,7 @@
 #include "seq_image.h"
 #include "seq_spatial_box.h"
 #include "spatial.h"
+#include "thrust_cache.h"
 #include <thrust/remove.h>
 #include <thrust/scan.h>
 #include <thrust/sort.h>
@@ -289,30 +290,34 @@ void spatial_data_init_cu(SpatialUnit u, NBListUnit nu)
    auto* restrict xkf = u->xkf;
 
 
+   // auto policy = thrust::device;
+   auto policy = thrust::cuda::par(thrust_cache);
+
+
    // B.1 D.1
    device_array::zero(nx + 1, ax_scan);
    // B.2 B.3 B.4 C.1
    launch_kernel1(n, spatial_b234c1, u.deviceptr(), x, y, z, box, cutbuf);
    // B.5
-   thrust::stable_sort_by_key(thrust::device, boxnum, boxnum + n, sorted);
+   thrust::stable_sort_by_key(policy, boxnum, boxnum + n, sorted);
    // C.2
-   int* nearby_end = thrust::remove(thrust::device, nearby, nearby + nx, -1);
+   int* nearby_end = thrust::remove(policy, nearby, nearby + nx, -1);
    // C.3
    near = nearby_end - nearby;
    // D.2
    int* nax = ax_scan + 1;
    // D.3
-   thrust::inclusive_scan(thrust::device, nax, nax + nx, nax);
+   thrust::inclusive_scan(policy, nax, nax + nx, nax);
 
 
    // E
    launch_kernel1(nak * Spatial::BLOCK, spatial_e, u.deviceptr());
    // F.1
-   xak_sum = thrust::transform_reduce(thrust::device, xakf, xakf + nak, POPC(),
-                                      0, thrust::plus<int>());
+   xak_sum = thrust::transform_reduce(policy, xakf, xakf + nak, POPC(), 0,
+                                      thrust::plus<int>());
    // F.2
-   thrust::transform_exclusive_scan(thrust::device, xakf, xakf + nak, xakf_scan,
-                                    POPC(), 0, thrust::plus<int>());
+   thrust::transform_exclusive_scan(policy, xakf, xakf + nak, xakf_scan, POPC(),
+                                    0, thrust::plus<int>());
    if (xak_sum > xak_sum_cap) {
       device_array::deallocate(u->iak, u->lst);
       xak_sum_cap = xak_sum;
@@ -337,7 +342,7 @@ void spatial_data_init_cu(SpatialUnit u, NBListUnit nu)
       thrust::make_zip_iterator(thrust::make_tuple(u->iak, lst32));
    auto tup_end = thrust::make_zip_iterator(
       thrust::make_tuple(u->iak + near * xak_sum, lst32 + near * xak_sum));
-   auto end2 = thrust::remove_if(thrust::device, tup_begin, tup_end,
+   auto end2 = thrust::remove_if(policy, tup_begin, tup_end,
                                  IntInt32Pair::Int32IsZero());  // G.7
    u->niak = thrust::get<1>(end2.get_iterator_tuple()) - lst32; // G.7
    assert((thrust::get<0>(end2.get_iterator_tuple()) - u->iak) == u->niak);

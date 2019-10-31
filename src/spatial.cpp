@@ -54,18 +54,33 @@ static void spatial_data_alloc(SpatialUnit& u, int n)
 
 
 extern void spatial_data_init_cu(SpatialUnit, NBListUnit);
+extern void thrust_cache_dealloc();
+extern void thrust_cache_alloc();
 void spatial_data(rc_op op)
 {
-   if (op & rc_dealloc)
+   if (op & rc_dealloc) {
       SpatialUnit::clear();
+      thrust_cache_dealloc();
+   }
+
 
    if (op & rc_alloc) {
-      if (vlist_unit.valid())
-         spatial_data_alloc(vspatial_unit, n);
+      bool alloc_thrust_cache = false;
 
-      if (mlist_unit.valid())
+      if (vlist_unit.valid()) {
+         spatial_data_alloc(vspatial_unit, n);
+         alloc_thrust_cache = true;
+      }
+
+      if (mlist_unit.valid()) {
          spatial_data_alloc(mspatial_unit, n);
+         alloc_thrust_cache = true;
+      }
+
+      if (alloc_thrust_cache)
+         thrust_cache_alloc();
    }
+
 
    if (op & rc_init) {
       if (vlist_unit.valid())
@@ -77,10 +92,22 @@ void spatial_data(rc_op op)
 }
 
 
-#if !TINKER_CUDART
+#if TINKER_HOST
 void spatial_data_init_cu(SpatialUnit, NBListUnit)
 {
    TINKER_THROW("This dummy function should not have been called.");
+}
+
+
+void thrust_cache_dealloc()
+{
+   spatial_data_init_cu(0, 0);
+}
+
+
+void thrust_cache_alloc()
+{
+   spatial_data_init_cu(0, 0);
 }
 #endif
 TINKER_NAMESPACE_END

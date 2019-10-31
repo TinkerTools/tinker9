@@ -1,0 +1,53 @@
+#include "dev_array.h"
+#include "md.h"
+#include "thrust_cache.h"
+
+
+TINKER_NAMESPACE_BEGIN
+ThrustCache::ThrustCache()
+   : nbytes(0)
+   , ptr(nullptr)
+{}
+
+
+auto ThrustCache::allocate(std::ptrdiff_t numbyte) -> value_type*
+{
+   if (numbyte > nbytes) {
+      nbytes = numbyte;
+      device_memory_deallocate_bytes(ptr);
+      device_memory_allocate_bytes(reinterpret_cast<void**>(&ptr), nbytes);
+   }
+   return ptr;
+}
+
+
+void ThrustCache::deallocate(value_type*, std::size_t)
+{
+   // does not do anything
+   return;
+}
+
+
+void ThrustCache::clear()
+{
+   device_memory_deallocate_bytes(ptr);
+   ptr = nullptr;
+   nbytes = 0;
+}
+
+
+ThrustCache thrust_cache;
+
+
+void thrust_cache_dealloc()
+{
+   thrust_cache.clear();
+}
+
+
+void thrust_cache_alloc()
+{
+   const std::size_t numbyte = 10 * n * sizeof(real);
+   thrust_cache.allocate(numbyte);
+}
+TINKER_NAMESPACE_END
