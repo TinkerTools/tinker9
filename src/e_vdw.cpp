@@ -206,6 +206,8 @@ void evdw_data(rc_op op)
       for (int i = 0; i < n; ++i) {
          if (mutant::mut[i]) {
             vlamvec[i] = mutant::vlambda;
+         } else {
+            vlamvec[i] = 1;
          }
       }
       device_array::copyin(n, vlam, vlamvec.data());
@@ -216,6 +218,7 @@ extern void evdw_lj_acc_impl_(int vers);
 extern void evdw_buck_acc_impl_(int vers);
 extern void evdw_mm3hb_acc_impl_(int vers);
 extern void evdw_hal_acc_impl_(int vers);
+extern void evdw_hal_cu(int vers);
 extern void evdw_gauss_acc_impl_(int vers);
 void evdw_lj(int vers)
 {

@@ -9,8 +9,8 @@ TINKER_NAMESPACE_BEGIN
  * \ingroup vdw
  */
 #pragma acc routine seq
-__device__
 template <int DO_G>
+__device__
 void pair_hal(real rik, real rv, real eps, real vscalek, real vlambda, //
               real ghal, real dhal, real scexp, real scalpha,          //
               real& restrict e, real& restrict de)

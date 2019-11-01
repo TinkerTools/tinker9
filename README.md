@@ -14,5 +14,12 @@ Tinker GPU: Software Tools for Molecular Design
    - [Procedures](doc/procedures.md)
 
 
+## Repository
+<a href="https://github.com/zhi-wang/tinker.gpu">
+   <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+   alt="GitHub Repository" width="100"/>
+</a>
+
+
 For more information, visit the doxygen-generated documentation
 hosted on [github.io](https://zhi-wang.github.io/tinker.gpu).

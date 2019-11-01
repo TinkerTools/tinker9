@@ -12,7 +12,7 @@ TINKER_NAMESPACE_BEGIN
  *
  * ### A. Concepts
  *    - Boxes (`x`): The periodic boundary box ("the big box") is partitioned
- *      into smaller boxes. The ranges of the **fractional** coordinates are all
+ *      into smaller boxes. The ranges of the fractional coordinates are all
  *      `[-0.5, 0.5)`. Along x, y, and z axes, each direction is equally split
  *      into \f$ 2^{px} \f$, \f$ 2^{py} \f$, and \f$ 2^{pz} \f$ parts,
  *      respectively, where each small box contains no more than 32 atoms.
@@ -52,8 +52,7 @@ TINKER_NAMESPACE_BEGIN
  * ### B. Sort the Atoms
  *    1. Zero out the `ax_scan` array (see **D**).
  *    2. Before sorting, the `sorted[n]` array is initialized by the the
- *       fractional coordinates and the original atom number of the unsorted
- *       atoms.
+ *       coordinates and the original atom number of the unsorted atoms.
  *    3. In the mean time, `boxnum[n]` array is initialized by the box to which
  *       the unsorted atom belongs.
  *    4. The `nax[nx]` array is also updated while the box numbers are
@@ -73,7 +72,7 @@ TINKER_NAMESPACE_BEGIN
  *    3. Return an index number `near` such that the remaining `i` values are
  *       stored consecutively from `nearby[0]` to `nearby[near-1]`.
  *
- * Procedure 1 and 2 are all parallel algorithms.
+ * Procedures 1 and 2 are all parallel algorithms.
  *
  * ### D. Atom-Box-Scan (ax_scan[nax+1])
  *
@@ -105,11 +104,11 @@ TINKER_NAMESPACE_BEGIN
  *    4. If all of the atoms in atom block `i` are in the same box, `xakf[i]` is
  *       set to 1 (`0x01`).
  *    5. (CUDA) Given a local variable `var` which may have different values in
- *       other threads, if thread `i` and `j` are in the same warp,
+ *       other threads, if threads `i` and `j` are in the same warp,
  *       `__shfl_sync` can retrieve `var` in thread `j` from thread `i`, and
  *       vice versa.
  *    6. (CUDA) *Generally*, calling `__ballot_sync` with `val` will return a
- *       32-bit flag, whose k-th bit is set if the `val` is true for the k-th
+ *       32-bit flag, whose k-th bit is set if `val` is true for the k-th
  *       thread of the warp.
  *    7. Number of unique boxes for AtomBlock `i`: `POPC(xakf[i])`.
  *    8. E.g, if `POPC(xakf[i])>=2`, the 2nd unique box number for AtomBlock
@@ -119,12 +118,12 @@ TINKER_NAMESPACE_BEGIN
  *    1. xak_sum: `sum(POPC(xakf))`.
  *    2. xakf_scan: `ExclusionScan(POPC(xakf))`.
  *    3. For instance, `near` equals 55. To find out all of the neighbors of
- *       the atoms from AtomBlock 0 to `nak-1`, we need to consider candidates
+ *       the atoms from AtomBlocks 0 to `nak-1`, we need to consider candidates
  *       from at most `55*xak_sum` spatial boxes.
  *    4. As each spatial box does not contain more than 32 atoms, the maximum
  *       preallocated array size for the neighbors is `32*55*xak_sum`.
  *    5. `xakf_scan` stores the "offset indices" of the neighbors of AtomBlocks.
- *       For AtomBlock `i`, its first first neighbor will appear in
+ *       For AtomBlock `i`, its first neighbor will appear in
  *       `array[32*55*xakf_scan[i]]`.
  *    6. The maximum number of neighbors for AtomBlock `i` equals
  *       `32*55*POPC(xakf[i])`.
@@ -147,7 +146,7 @@ TINKER_NAMESPACE_BEGIN
  *    7. Check every 32 integers in `lst`. If starting from `lst[32*j]`, all of
  *       the 32 elements are zeros, remove them from `lst` and remove `iak[j]`
  *       from `iak` as well. `niak` elements are left in `iak` and `32*niak`
- *       elements are left in `lst`.
+ *       elements are left in `lst` at the end of this procedure.
  *
  * ### H. Details in Finding Neighbors
  *    1. `naak[nak]` and `xkf[nak*nxk]` are the internal data structures.
@@ -156,15 +155,14 @@ TINKER_NAMESPACE_BEGIN
  *       boxes in AtomBlock `i` as "box 1", and each "box 1" has `near` nearby
  *       boxes ("box 2"). Different "box 1" may share a few "box 2".
  *    3. `xkf[i*nxk:(i+1)*nxk]` (`32*nxk` bits in total) are used to eliminate
- *       the duplication of "box 2" for AtomBlock `i` that if the k-th bit is
- *       set, atoms in box `k` should be considered as neighbors of AtomBlock
- *       `i`.
+ *       the duplication of "box 2" for AtomBlock `i`. If the k-th bit is set,
+ *       atoms in box `k` should be considered as neighbors of AtomBlock `i`.
  *    4. Suppose atoms in box `j` will be copied to `lst` for AtomBlock `i`.
  *       The sorted atom numbers are in the range of `[escan[j], iscan[j])`
  *       (D.4), and more importantly, only atom numbers **GREATER** than the
  *       minimum atom number of AtomBlock `i` (which equals `32*i`) are valid
  *       neighbors.
- *    5. (Continued.) Therefore, the range `[begin, end)` is adjusted so that
+ *    5. (Continued.) Therefore, the range `[begin, end)` is adjusted such that
  *       `begin=max(32*i+1,escan[j])`. The adjusted length of the range (`len`)
  *       is `(iscan[j]-begin)`.
  *    6. `naak[i]` stores the number of neighbors for AtomBlock `i`. Since
@@ -173,12 +171,12 @@ TINKER_NAMESPACE_BEGIN
 struct Spatial
 {
    /**
-    * \brief Sorted atoms, containing the fractional x, y, and z coordinates,
+    * \brief Sorted atoms, containing the x, y, and z coordinates,
     * and the unsorted atom number.
     */
    struct SortedAtom
    {
-      real fx, fy, fz;
+      real x, y, z;
       int unsorted;
 #if TINKER_DOUBLE_PRECISION
       int padding_;

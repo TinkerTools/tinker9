@@ -146,9 +146,9 @@ void spatial_b234c1(Spatial* restrict sp, const real* restrict x,
       real zr = z[i];
       real fx, fy, fz;
       frac(fx, fy, fz, xr, yr, zr, box);
-      sorted[i].fx = fx;      // B.2
-      sorted[i].fy = fy;      // B.2
-      sorted[i].fz = fz;      // B.2
+      sorted[i].x = xr;       // B.2
+      sorted[i].y = yr;       // B.2
+      sorted[i].z = zr;       // B.2
       sorted[i].unsorted = i; // B.2
       int id = frac_to_box(px, py, pz, fx, fy, fz);
       boxnum[i] = id;         // B.3
@@ -249,7 +249,7 @@ void spatial_gh(Spatial* restrict sp)
          if ((oldflag & (1 << jj)) == 0) {
             // copy atoms in jbox to lstbuf
             int begin_i = begin[jbox];
-            begin_i = max(atom_block_min + 1, begin_i);        // H.5
+            begin_i = max(atom_block_min + 1, begin_i);        // H.4
             int len = end[jbox] - begin_i;                     // H.5
             int start_pos = atomicAdd(&naak[iw], max(0, len)); // H.6
             // atomicAdd() will return the old value;
@@ -297,7 +297,10 @@ void spatial_data_init_cu(SpatialUnit u, NBListUnit nu)
    // B.1 D.1
    device_array::zero(nx + 1, ax_scan);
    // B.2 B.3 B.4 C.1
-   launch_kernel1(n, spatial_b234c1, u.deviceptr(), x, y, z, box, cutbuf);
+   const auto* lx = nu->x;
+   const auto* ly = nu->y;
+   const auto* lz = nu->z;
+   launch_kernel1(n, spatial_b234c1, u.deviceptr(), lx, ly, lz, box, cutbuf);
    // find max(nax) and compare to Spatial::BLOCK
    // ax_scan[0] == 0 can never be the maximum
    int level = 1 + builtin_floor_log2(nak - 1);
@@ -329,7 +332,7 @@ void spatial_data_init_cu(SpatialUnit u, NBListUnit nu)
       u.update_deviceptr(*u);
 
       device_array::zero(nx + 1, ax_scan);
-      launch_kernel1(n, spatial_b234c1, u.deviceptr(), x, y, z, box, cutbuf);
+      launch_kernel1(n, spatial_b234c1, u.deviceptr(), lx, ly, lz, box, cutbuf);
       mnaxptr = thrust::max_element(policy, ax_scan, ax_scan + 1 + nx);
       device_array::copyout(1, &mnax, mnaxptr);
    }
