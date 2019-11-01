@@ -61,6 +61,8 @@ void spatial_data(rc_op op)
    if (op & rc_dealloc) {
       SpatialUnit::clear();
       thrust_cache_dealloc();
+      vspatial_unit.close();
+      mspatial_unit.close();
    }
 
 

@@ -144,8 +144,14 @@ extern void nblist_build_acc_impl_(NBListUnit);
 extern void nblist_update_acc_impl_(NBListUnit);
 void nblist_data(rc_op op)
 {
-   if (op & rc_dealloc)
+   if (op & rc_dealloc) {
       NBListUnit::clear();
+      vlist_unit.close();
+      dlist_unit.close();
+      clist_unit.close();
+      mlist_unit.close();
+      ulist_unit.close();
+   }
 
    if (op & rc_alloc)
       assert(NBListUnit::size() == 0);

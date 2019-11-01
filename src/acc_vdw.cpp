@@ -25,14 +25,23 @@ void evdw_resolve_gradient()
    #pragma acc loop independent
    for (int ii = 0; ii < n; ++ii) {
       int iv = ired[ii];
-      real redii = kred[ii];
-      real rediv = 1 - redii;
-      gx[ii] += redii * gxred[ii];
-      gy[ii] += redii * gyred[ii];
-      gz[ii] += redii * gzred[ii];
-      gx[iv] += rediv * gxred[iv];
-      gy[iv] += rediv * gyred[iv];
-      gz[iv] += rediv * gzred[iv];
+      real fx = gxred[ii];
+      real fy = gyred[ii];
+      real fz = gzred[ii];
+      if (ii == iv) {
+         atomic_add_value(fx, gx, ii);
+         atomic_add_value(fy, gy, ii);
+         atomic_add_value(fz, gz, ii);
+      } else {
+         real redii = kred[ii];
+         real rediv = 1 - redii;
+         atomic_add_value(fx * redii, gx, ii);
+         atomic_add_value(fy * redii, gy, ii);
+         atomic_add_value(fz * redii, gz, ii);
+         atomic_add_value(fx * rediv, gx, iv);
+         atomic_add_value(fy * rediv, gy, iv);
+         atomic_add_value(fz * rediv, gz, iv);
+      }
    }
 }
 
