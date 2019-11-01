@@ -226,15 +226,12 @@ void spatial_gh(Spatial* restrict sp)
       int flag = xakf[iw];        // E.7
       int nbox = __popc(flag);    // E.7
 
-      auto* restrict iakbuf = iak + near * offset; // G.4
-      for (int j = ilane; j < nbox; j += WARP_SIZE) {
-         iakbuf[j] = iw; // G.4
-      }
-
+      auto* restrict iakbuf = iak + near * offset;             // G.4
       auto* restrict lstbuf = lst + near * offset * WARP_SIZE; // G.5
       auto* restrict ixkf = xkf + iw * nxk;                    // H.2
       const int atom_block_min = iw * WARP_SIZE;               // H.4
       for (int j = ilane; j < nbox * near; j += WARP_SIZE) {
+         iakbuf[j] = iw;    // G.4
          int i0 = j / near; // the i-th least significant bit is i0 + 1
          int pos = ffsn(flag, i0 + 1) - 1;        // E.8
          int ibox = boxnum[iw * WARP_SIZE + pos]; // E.8
