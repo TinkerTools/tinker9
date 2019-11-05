@@ -195,7 +195,7 @@ void spatial_e(Spatial* restrict sp)
 
 
 __global__
-void spatial_gh(Spatial* restrict sp)
+void spatial_ghi(Spatial* restrict sp, const Box* restrict box, real cutbuf)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
@@ -260,6 +260,60 @@ void spatial_gh(Spatial* restrict sp)
          }
       }
    }
+
+
+   real off2 = cutbuf * cutbuf;
+   const int n = sp->n;
+   const auto* restrict sorted = sp->sorted;
+   for (int iw = iwarp; iw < nak; iw += nwarp) {
+      int offset = xakf_scan[iw];
+      const auto* restrict iakbuf = iak + near * offset;
+      auto* restrict lstbuf = lst + near * offset * WARP_SIZE;
+      int naak_coarse = naak[iw]; // I.1
+
+
+      int start_pos = 0;
+      int atomi;
+      atomi = min(iakbuf[0] * WARP_SIZE + ilane, n - 1); // I.4
+      real xi = sorted[atomi].x;
+      real yi = sorted[atomi].y;
+      real zi = sorted[atomi].z;
+      int shatomk;
+      real shx, shy, shz;
+      int idx_max = (naak_coarse + WARP_SIZE - 1) / WARP_SIZE;
+      idx_max *= WARP_SIZE; // I.2a
+      for (int idx = ilane; idx < idx_max; idx += WARP_SIZE) {
+         shatomk = lstbuf[idx]; // I.2b
+         shx = sorted[shatomk].x;
+         shy = sorted[shatomk].y;
+         shz = sorted[shatomk].z;
+         lstbuf[idx] = 0; // I.3
+
+
+         int jflag = 0;
+         for (int j = 0; j < WARP_SIZE; ++j) {
+            int srclane = j;
+            int atomk = __shfl_sync(ALL_LANES, shatomk, srclane);
+            real xr = xi - __shfl_sync(ALL_LANES, shx, srclane);
+            real yr = yi - __shfl_sync(ALL_LANES, shy, srclane);
+            real zr = zi - __shfl_sync(ALL_LANES, shz, srclane);
+            imagen(xr, yr, zr, box);
+            real rik2 = xr * xr + yr * yr + zr * zr;
+            int ilane_incl_j = (atomi < atomk && rik2 <= off2) ? 1 : 0; // I.5
+            int incl_j = __ballot_sync(ALL_LANES, ilane_incl_j);
+            if (incl_j)
+               jflag |= (1 << j); // I.5
+         }
+
+
+         int njbit = __popc(jflag);
+         int jth = ffsn(jflag, ilane + 1) - 1;
+         int atomnb = __shfl_sync(ALL_LANES, shatomk, jth); // I.6a
+         if (ilane < njbit)
+            lstbuf[start_pos + ilane] = atomnb; // I.6b
+         start_pos += njbit;
+      }
+   }
 }
 TINKER_NAMESPACE_END
 
@@ -269,6 +323,7 @@ void spatial_data_init_cu(SpatialUnit u, NBListUnit nu)
 {
    const real cutbuf = nu->cutoff + nu->buffer;
    const int& nak = u->nak;
+   const int padded = nak * Spatial::BLOCK;
    int& px = u->px;
    int& py = u->py;
    int& pz = u->pz;
@@ -349,7 +404,7 @@ void spatial_data_init_cu(SpatialUnit u, NBListUnit nu)
 
 
    // E
-   launch_kernel1(nak * Spatial::BLOCK, spatial_e, u.deviceptr());
+   launch_kernel1(padded, spatial_e, u.deviceptr());
    // F.1
    xak_sum = thrust::transform_reduce(policy, xakf, xakf + nak, POPC(), 0,
                                       thrust::plus<int>());
@@ -372,7 +427,7 @@ void spatial_data_init_cu(SpatialUnit u, NBListUnit nu)
    device_array::zero(near * xak_sum * Spatial::BLOCK, u->lst); // G.6
    device_array::zero(nak, naak);                               // H.1
    device_array::zero(nak * nxk, xkf);                          // H.1
-   launch_kernel1(nak * Spatial::BLOCK, spatial_gh, u.deviceptr());
+   launch_kernel1(padded, spatial_ghi, u.deviceptr(), box, cutbuf);
 
 
    Int32* lst32 = (Int32*)u->lst;

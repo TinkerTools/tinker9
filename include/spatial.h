@@ -167,6 +167,25 @@ TINKER_NAMESPACE_BEGIN
  *       is `(iscan[j]-begin)`.
  *    6. `naak[i]` stores the number of neighbors for AtomBlock `i`. Since
  *       `len` can be negative, the increment is `max(0, len)`.
+ *
+ * ### I. Fined-Grained Neighbor Search
+ *    1. After the coarse-grained neighbor search, AtomBlock `i` has stored
+ *       `naak[i]` neighboring atoms ("k atoms") in `lst`, although some of
+ *       which may be too far for this AtomBlock.
+ *    2. (a) `lst` has been allocated to ensure that the lengths of its slices
+ *       are not shorter than 32-padded `naak[i]`. (b) Therefore, reading data
+ *       with indices exceed `naak[i]` is still safe and will get zeros.
+ *    3. Once the "k atoms" are read into the local variables, set `lst` to
+ *       zero.
+ *    4. The range of the "i atoms" for AtomBlock `i` is `[i*32, (i+1)*32)`. For
+ *       the last AtomBlock, the upper limit may exceed the last atom number,
+ *       and those "i atoms" are set to `n-1` should it be the case.
+ *    5. Every 32 "k atoms" are testes together against the 32 "i atoms" and the
+ *       result for the test is written to a 32-bit flag, where the j-th bit of
+ *       the flag is set if the j-th "k atom" (`kj`) is close to at least one of
+ *       the 32 "i atoms" (`ia`) and if `ia < kj`.
+ *    6. (a) Retrieve the j-th "k atom" from the local variable (see **I.3**).
+ *       (b) Write the neighbor atom back to `lst`.
  */
 struct Spatial
 {

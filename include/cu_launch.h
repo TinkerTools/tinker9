@@ -9,10 +9,10 @@
 TINKER_NAMESPACE_BEGIN
 /**
  * \ingroup nvidia
- * \brief Launch a CUDA kernel with specified thread block size.
+ * \brief Launch a CUDA kernel with a specified thread block size.
  * \param block_size Thread block size.
  * \param nparallel  Loop limit.
- * \param k          CUDA `__globa__` kernel.
+ * \param k          CUDA `__global__` kernel.
  * \param args       Argument list of the kernel.
  */
 template <class K, class... Ts>
@@ -25,15 +25,16 @@ void launch_kernel2(int block_size, int nparallel, K k, Ts&&... args)
 
 /**
  * \ingroup nvidia
- * \brief Launch a CUDA kernel with the a thread block size of 128.
+ * \brief Launch a CUDA kernel with BLOCK_DIM threads per block.
  * \param nparallel Loop limit.
- * \param k         CUDA `__globa__` kernel.
+ * \param k         CUDA `__global__` kernel.
  * \param args      Argument list of the kernel.
+ * \see BLOCK_DIM
  */
 template <class K, class... Ts>
 void launch_kernel1(int nparallel, K k, Ts&&... args)
 {
-   const int block_size = 128;
+   const int block_size = BLOCK_DIM;
    launch_kernel2(block_size, nparallel, k, std::forward<Ts>(args)...);
 }
 TINKER_NAMESPACE_END

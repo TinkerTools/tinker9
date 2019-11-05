@@ -21,9 +21,11 @@ constexpr unsigned ALL_LANES = 0xFFFFFFFF;
 constexpr unsigned MAX_BLOCK_SIZE = 256;
 
 
-// constexpr int BLOCK_DIM = 64;
-constexpr int BLOCK_DIM = 128;
-// constexpr int BLOCK_DIM = 256;
+/// \ingroup nvidia
+/// Default dimension of thread blocks.
+// constexpr unsigned BLOCK_DIM = 64;
+constexpr unsigned BLOCK_DIM = 128;
+// constexpr unsigned BLOCK_DIM = 256;
 
 
 TINKER_EXTERN int ndevice, idevice;

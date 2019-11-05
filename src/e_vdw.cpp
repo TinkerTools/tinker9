@@ -234,6 +234,11 @@ void evdw_mm3hb(int vers)
 }
 void evdw_hal(int vers)
 {
+#if TINKER_CUDART
+   evdw_hal_cu(vers);
+   return;
+#endif
+   // the default implementation
    evdw_hal_acc_impl_(vers);
 }
 void evdw_gauss(int vers)
