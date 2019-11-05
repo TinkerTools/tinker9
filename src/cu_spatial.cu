@@ -70,8 +70,6 @@ bool nearby_box0(int boxj, int px, int py, int pz, const Box* restrict box,
    int ix, iy, iz;
    box_to_ixyz(ix, iy, iz, px, py, pz, boxj);
 
-   // may not be correct for non-orthognal box
-
    // (a, b): (-0.5, a+1/dim)
    // (c, d): (a+ix/dim, c+1/dim)
    // da = a+(ix+1)/dim - a = (ix+1)/dim

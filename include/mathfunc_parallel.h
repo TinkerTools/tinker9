@@ -25,7 +25,7 @@ T reduce_sum(const T* gpu_a, size_t nelem);
  * Fortran syntax:
  * \f[ Ans(k) = \sum_i^n v(k,i), 1 \le k \le HN \f]
  * C++ syntax:
- * \f[ Ans[k] = \sum_i^n v[i][k], 0 \le k \lt HN \f]
+ * \f[ Ans[k] = \sum_i^n v[i][k], 0 \le k < HN \f]
  */
 template <class HT, size_t HN, class DPTR>
 void reduce_sum2(HT (&h_ans)[HN], DPTR v, size_t nelem);

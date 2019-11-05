@@ -23,7 +23,7 @@ TINKER_EXTERN int n;
 /// \ingroup md
 /// Padded (by \c MAX_BLOCK_SIZE) number of atoms.
 /// \f[ N \le PaddedN \f]
-/// \f[ 0 \le PaddedN - N \lt MaxBlockSize \f]
+/// \f[ 0 \le PaddedN - N < MaxBlockSize \f]
 /// \see MAX_BLOCK_SIZE
 TINKER_EXTERN int padded_n;
 

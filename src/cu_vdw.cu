@@ -12,6 +12,7 @@
  * Overheads:
  *    - Different vcouple methods.
  *    - PBC type in image().
+ *    - Random access to the "i" parameters and gradients.
  *    - (If not hard-coded) ghal, dhal, scexp, scalpha.
  */
 
