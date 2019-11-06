@@ -349,6 +349,9 @@ test: all.tests
 	$(PWD)/$^ [ff],[util] --durations yes --order rand --rng-seed time
 
 
+git_head__ := $(shell git log -1 --format="%h (%cd)")
+git_sha1__ := $(shell git log -1 --format="%h")
+cxx_flags__ := -DTINKER_GPU_GIT_SHORT_HASH=$(git_sha1__)
 -include $(fortran_config)
 -include $(cxx_config)
 -include $(acc_config)
@@ -441,7 +444,6 @@ info:
 ##/ ### doc
 ##/ Generate documentation with `doxygen`.
 ##/
-git_head__ := $(shell git log -1 --format="%h (%cd)")
 .PHONY: doc
 doc:
 	cp -r $(top_dir__)/README.md $(top_dir__)/doc $(top_dir__)/include .

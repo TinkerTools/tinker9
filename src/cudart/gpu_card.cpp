@@ -4,11 +4,43 @@
 #include <cuda_runtime.h>
 #include <limits>
 #include <map>
+#include <thrust/version.h>
 #if !TINKER_CUDART
 #   error TINKER_CUDART must be true.
 #endif
 
+
 TINKER_NAMESPACE_BEGIN
+std::string get_cuda_runtime_version_string()
+{
+   int ver, major, minor;
+   check_rt(cudaRuntimeGetVersion(&ver));
+   // ver = 1000*major + 10*minor
+   major = ver / 1000;
+   minor = (ver - major * 1000) / 10;
+   return format("{}.{}", major, minor);
+}
+
+
+std::string get_cuda_driver_version_string()
+{
+   int ver, major, minor;
+   check_rt(cudaDriverGetVersion(&ver));
+   // ver = 1000*major + 10*minor
+   major = ver / 1000;
+   minor = (ver - major * 1000) / 10;
+   return format("{}.{}", major, minor);
+}
+
+
+std::string get_thrust_version_string()
+{
+   return format("{}.{}.{} patch {}", THRUST_MAJOR_VERSION,
+                 THRUST_MINOR_VERSION, THRUST_SUBMINOR_VERSION,
+                 THRUST_PATCH_NUMBER);
+}
+
+
 std::vector<DeviceAttribute>& get_device_attributes()
 {
    static std::vector<DeviceAttribute> a;
@@ -24,9 +56,32 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
    a.device = device;
    a.name = prop.name;
 
+   a.pci_string = format("{:02x}:{:02x}.{}", prop.pciBusID, prop.pciDeviceID,
+                         prop.pciDomainID);
+
+
    a.cc_major = prop.major;
    a.cc_minor = prop.minor;
    a.cc = a.cc_major * 10 + a.cc_minor;
+   a.single_double_ratio = prop.singleToDoublePrecisionPerfRatio;
+
+
+   if (prop.computeMode == cudaComputeModeExclusive)
+      a.compute_mode_string = "Exclusive Thread";
+   else if (prop.computeMode == cudaComputeModeProhibited)
+      a.compute_mode_string = "Prohibited";
+   else if (prop.computeMode == cudaComputeModeExclusiveProcess)
+      a.compute_mode_string = "Exclusive Process";
+   else
+      a.compute_mode_string = "Default";
+   if (prop.ECCEnabled)
+      a.ecc_string = "ON";
+   else
+      a.ecc_string = "OFF";
+
+
+   check_rt(cudaMemGetInfo(&a.free_mem_bytes, &a.total_mem_bytes));
+
 
    a.max_threads_per_block = prop.maxThreadsPerBlock;
    a.max_shared_bytes_per_block = prop.sharedMemPerBlock;

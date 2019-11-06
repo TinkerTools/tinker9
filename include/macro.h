@@ -15,6 +15,10 @@ whenever you see an "unknown fortran compiler error".
 #endif
 
 
+#define TINKER_STR(s) TINKER_STR1_(s)
+#define TINKER_STR1_(s) #s
+
+
 /**
  * \def TINKER_EXTERN_DEFINITION_FILE
  * \ingroup macro
@@ -211,7 +215,3 @@ TINKER_NAMESPACE_END
 #   define MAYBE_UNUSED __attribute__((unused))
 #endif
 // end of file
-/// \defgroup energy Energy Terms
-/// \defgroup io Inputs and Outputs
-/// \defgroup macro Macros
-/// \defgroup mem Memory Management

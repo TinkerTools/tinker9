@@ -232,4 +232,3 @@ TINKER_EXTERN SpatialUnit mspatial_unit;
 
 void spatial_data(rc_op);
 TINKER_NAMESPACE_END
-/// \defgroup spatial Spatial Decomposition

@@ -141,4 +141,3 @@ extern std::vector<energy_buffer> energy_buffers;
 /// \brief Bookkeeping list for the virial buffers.
 extern std::vector<virial_buffer> virial_buffers;
 TINKER_NAMESPACE_END
-/// \defgroup ebuf Energy Buffer

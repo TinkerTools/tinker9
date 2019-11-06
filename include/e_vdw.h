@@ -5,9 +5,6 @@
 #include "rc_man.h"
 
 /**
- * \defgroup vdw Van der Waals (VDW) Energy
- * \ingroup energy
- *
  * \todo Test lj, buck, mm3hb, gauss, and mutant.
  * \todo Add vdw correction.
  */

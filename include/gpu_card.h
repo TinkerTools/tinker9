@@ -35,4 +35,3 @@ void gpu_card_data(rc_op op);
 int get_grid_size(int nthreads_per_block);
 int get_block_size(int shared_bytes_per_thread);
 TINKER_NAMESPACE_END
-/// \defgroup nvidia Nvidia GPU
