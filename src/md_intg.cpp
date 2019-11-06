@@ -1,5 +1,7 @@
 #include "io_fort_str.h"
 #include "md.h"
+#include "nblist.h"
+#include "spatial.h"
 #include <cassert>
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
@@ -101,6 +103,10 @@ extern void propagate_xyz_acc_impl_(real dt);
 void propagate_xyz(real dt)
 {
    propagate_xyz_acc_impl_(dt);
+   nblist_data(rc_evolve);
+#if TINKER_CUDART
+   spatial_data(rc_evolve);
+#endif
 }
 
 extern void propagate_velocity_acc_impl_(real dt);

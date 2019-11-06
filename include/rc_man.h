@@ -52,6 +52,8 @@ constexpr rc_op rc_dealloc = rc_man::dealloc;
 constexpr rc_op rc_alloc = rc_man::alloc;
 /// \ingroup mem
 constexpr rc_op rc_init = rc_man::init;
+/// \ingroup mem
+constexpr rc_op rc_evolve = rc_man::evolve;
 
 
 /// \ingroup mem

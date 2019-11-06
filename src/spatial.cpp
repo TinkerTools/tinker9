@@ -84,9 +84,11 @@ void spatial_data(rc_op op)
    }
 
 
-   if (op & rc_init) {
-      if (vlist_unit.valid())
+   if (op & (rc_init | rc_evolve)) {
+      if (vlist_unit.valid()) {
+         // evdw_reduce_xyz(); // if is not always called after nblist_data()
          spatial_data_init_cu(vspatial_unit, vlist_unit);
+      }
 
       if (mlist_unit.valid())
          spatial_data_init_cu(mspatial_unit, mlist_unit);

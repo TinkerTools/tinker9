@@ -245,7 +245,6 @@ void evdw_tmpl()
 #define TINKER_EVDW_IMPL_(typ)                                                 \
    void evdw_##typ##_acc_impl_(int vers)                                       \
    {                                                                           \
-      evdw_reduce_xyz();                                                       \
       if (vers == calc::v0)                                                    \
          evdw_tmpl<calc::v0, evdw_t::typ>();                                   \
       else if (vers == calc::v1)                                               \

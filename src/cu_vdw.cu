@@ -338,7 +338,6 @@ void evdw_cu()
 
 void evdw_hal_cu(int vers)
 {
-   evdw_reduce_xyz();
    if (vers == calc::v0)
       evdw_cu<calc::v0, evdw_t::hal>();
    else if (vers == calc::v1)

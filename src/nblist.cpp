@@ -175,8 +175,8 @@ void nblist_data(rc_op op)
          nblist_build_acc_impl_(vlist_unit);
       }
 
-      if (op & rc_man::evolve) {
-         // assuming evdw_reduce_xyz() has been called in the energy routine
+      if (op & rc_evolve) {
+         evdw_reduce_xyz();
          nblist_update_acc_impl_(vlist_unit);
       }
    }
@@ -225,7 +225,7 @@ void nblist_data(rc_op op)
       if (op & rc_init)
          nblist_build_acc_impl_(mlist_unit);
 
-      if (op & rc_man::evolve) {
+      if (op & rc_evolve) {
          if (rc_flag & calc::traj) {
             mlist_unit->x = x;
             mlist_unit->y = y;
@@ -260,7 +260,7 @@ void nblist_data(rc_op op)
       if (op & rc_init)
          nblist_build_acc_impl_(ulist_unit);
 
-      if (op & rc_man::evolve) {
+      if (op & rc_evolve) {
          if (rc_flag & calc::traj) {
             ulist_unit->x = x;
             ulist_unit->y = y;
