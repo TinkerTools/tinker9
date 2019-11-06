@@ -6,7 +6,8 @@
 #include "tinker_rt.h"
 
 TINKER_NAMESPACE_BEGIN
-static void option_e();
+void x_analyze_e();
+void x_analyze_v();
 
 void x_analyze(int argc, char** argv)
 {
@@ -39,34 +40,42 @@ void x_analyze(int argc, char** argv)
  The Tinker Energy Analysis Utility Can :
 
  Total Potential Energy and its Components [E]
+ Internal Virial, dE/dV Values & Pressure [V]
 
  Enter the Desired Analysis Types [E] :  )";
    read_stream(opt, prompt, std::string("#"), [](std::string s) {
       Text::upcase(s);
-      if (s == "E")
-         return false;
+      auto failed = std::string::npos;
+      if (s.find("E") != failed || s.find("V") != failed)
+         return 0;
       else
-         return true;
+         return 1;
    });
 
-   Text::upcase(opt);
-   if (opt == "E")
-      option_e();
 
-   TINKER_RT(final)();
-}
-
-static void option_e()
-{
    int flags = calc::xyz + calc::mass;
-   flags += (calc::energy + calc::analyz);
-
+   flags += (calc::energy + calc::grad + calc::virial + calc::analyz);
    rc_flag = flags;
    initialize();
 
-   energy_potential(rc_flag & calc::vmask);
 
-   auto& out = std::cout;
+   auto failed = std::string::npos;
+   Text::upcase(opt);
+   if (opt.find("E") != failed)
+      x_analyze_e();
+   if (opt.find("V") != failed)
+      x_analyze_v();
+
+
+   finish();
+   TINKER_RT(final)();
+}
+
+void x_analyze_e()
+{
+   energy_potential(calc::energy + calc::analyz);
+
+   auto& out = stdout;
    print(out, "\n Total Potential Energy :        {:16.4f} Kcal/mole\n", esum);
    print(out,
          "\n Energy Component Breakdown :           Kcal/mole        "
@@ -114,7 +123,18 @@ static void option_e()
 
    if (use_potent(polar_term))
       print(out, fmt, "Polarization", get_energy(ep), get_count(nep));
+}
 
-   finish();
+
+void x_analyze_v()
+{
+   energy_potential(calc::grad + calc::virial);
+   auto& out = stdout;
+
+   const char* fmt = " {:36s} {:12.3f} {:12.3f} {:12.3f}\n";
+   print(out, "\n");
+   print(out, fmt, "Internal Virial Tensor :", vir[0], vir[1], vir[2]);
+   print(out, fmt, "", vir[3], vir[4], vir[5]);
+   print(out, fmt, "", vir[6], vir[7], vir[8]);
 }
 TINKER_NAMESPACE_END
