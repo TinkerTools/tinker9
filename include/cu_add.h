@@ -1,8 +1,7 @@
 #pragma once
-#include "energy_buffer.h"
-#if !TINKER_CUDART
-#   error TINKER_CUDART must be true.
-#endif
+#include "marco_cudart.h"
+#include <cstring>
+#include <type_traits>
 
 
 // https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#atomic-functions
@@ -37,9 +36,12 @@ template <class T>
 __device__
 void atomic_add_value(T value, unsigned long long* buffer, size_t offset = 0)
 {
+   static_assert(
+      std::is_same<T, float>::value || std::is_same<T, double>::value, "");
+   // float -> (signed) long long (int) -> unsigned long long (int)
    atomicAdd(&buffer[offset],
-             static_cast<unsigned long long>(static_cast<long long>(
-                value * buffer_traits<float, 1>::fixed_point)));
+             static_cast<unsigned long long>(
+                static_cast<long long>(value * 0x100000000ull)));
 }
 
 

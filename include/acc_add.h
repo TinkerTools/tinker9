@@ -1,14 +1,14 @@
 #pragma once
-#include "energy_buffer.h"
+#include "macro.h"
+#include <cstring>
+#include <type_traits>
 
 
 TINKER_NAMESPACE_BEGIN
 /**
- * \ingroup util
- * \brief
- * Add \c value to `buffer[offset]`.
- * \note
- * \c value and \c buffer elements are of the same type.
+ * \ingroup atomic
+ * \brief Add `value` to `buffer[offset]`.
+ * \note `value` and `buffer` elements are of the same type.
  */
 #pragma acc routine seq
 template <class T>
@@ -20,11 +20,9 @@ void atomic_add_value(T value, T* buffer, size_t offset = 0)
 
 
 /**
- * \ingroup util
- * \brief
- * Add \c value to `buffer[offset]` via fixed-point arithmetic.
- * \tparam T
- * Must be a floating point type.
+ * \ingroup atomic
+ * \brief Add `value` to `buffer[offset]` via fixed-point arithmetic.
+ * \tparam T Must be a floating point type.
  */
 #pragma acc routine seq
 template <class T>
@@ -35,16 +33,14 @@ void atomic_add_value(T value, unsigned long long* buffer, size_t offset = 0)
    // float -> (signed) long long (int) -> unsigned long long (int)
    #pragma acc atomic update
    buffer[offset] += static_cast<unsigned long long>(
-      static_cast<long long>(value * buffer_traits<float, 1>::fixed_point));
+      static_cast<long long>(value * 0x100000000ull));
 }
 
 
 /**
- * \ingroup util
- * \brief
- * Add virial to the virial buffer.
- * \note
- * Virial and virial buffer are of the same type.
+ * \ingroup atomic
+ * \brief Add virial to the virial buffer.
+ * \note Virial and virial buffer are of the same type.
  */
 #pragma acc routine seq
 template <class T>
@@ -61,9 +57,9 @@ void atomic_add_value(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T (*buffer)[8],
 
 
 /**
- * \ingroup util
- * \brief
- * Add virial to the virial buffer via fixed-point arithmetic.
+ * \ingroup atomic
+ * \brief Add virial to the virial buffer via fixed-point arithmetic.
+ * \tparam T Must be a floating point type.
  */
 #pragma acc routine seq
 template <class T>

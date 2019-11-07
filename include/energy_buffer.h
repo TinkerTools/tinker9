@@ -51,10 +51,9 @@ struct buffer_traits<float, N>
    static constexpr size_t n = N;
    static constexpr size_t value = pow2_ge(N);
    typedef unsigned long long type;
-   static constexpr type fixed_point = 0x100000000ull;
    static float cast(type val)
    {
-      return static_cast<float>(static_cast<long long>(val)) / fixed_point;
+      return static_cast<float>(static_cast<long long>(val)) / 0x100000000ull;
    }
 };
 

@@ -89,7 +89,6 @@ typedef enum
 /// barostat
 TINKER_EXTERN barostat_t barostat;
 
-/// Integer flags for different kinds of atom data and energy routines.
 namespace calc {
 /// \ingroup md
 /// Use coordinates.

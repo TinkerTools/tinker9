@@ -13,8 +13,7 @@ T max_of(T a, T2 b)
 
 
 /// \ingroup math
-/// \return
-/// The maximum value from a variadic list of numbers.
+/// \return The maximum value from a variadic list of numbers.
 template <class T, class T2, class... Ts>
 T max_of(T a, T2 b, Ts... cs)
 {
@@ -32,8 +31,7 @@ T min_of(T a, T2 b)
 
 
 /// \ingroup math
-/// \return
-/// The minimum value from a variadic list of numbers.
+/// \return The minimum value from a variadic list of numbers.
 template <class T, class T2, class... Ts>
 T min_of(T a, T2 b, Ts... cs)
 {
