@@ -134,6 +134,8 @@ void bsplgen(real w, real* restrict thetai, int bsorder)
    // copy coefficients from temporary to permanent storage
 
    for (int i = 1; i <= bsorder; ++i) {
+      // keep this line to work on Tesla
+      #pragma acc loop seq
       for (int j = 1; j <= LEVEL; ++j) {
          thetai[4 * (i - 1) + (j - 1)] = bsbuild(bsorder - j + 1, i);
       }

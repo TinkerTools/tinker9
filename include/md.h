@@ -19,18 +19,8 @@ TINKER_EXTERN int trajn;
 TINKER_EXTERN int n;
 
 /// \ingroup md
-/// Padded (by \c MAX_BLOCK_SIZE) number of atoms.
-/// \f[ N \le PaddedN \f]
-/// \f[ 0 \le PaddedN - N < MaxBlockSize \f]
-/// \see MAX_BLOCK_SIZE
-TINKER_EXTERN int padded_n;
-
-/// \ingroup md
 /// \{
 /// X, Y, Z coordinates of the current frame or of the entire trajectory frames.
-/// \note
-/// Arrays are allocated based on \c padded_n.
-/// \see padded_n
 TINKER_EXTERN real *trajx, *trajy, *trajz, *x, *y, *z;
 /// \}
 

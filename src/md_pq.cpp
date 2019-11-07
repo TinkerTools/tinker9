@@ -13,13 +13,10 @@ void n_data(rc_op op)
    if (op & rc_dealloc) {
       trajn = -1;
       n = 0;
-      padded_n = 0;
    }
 
    if (op & rc_alloc) {
       n = atoms::n;
-      padded_n = (n + MAX_BLOCK_SIZE - 1) / MAX_BLOCK_SIZE;
-      padded_n *= MAX_BLOCK_SIZE;
 
       if (calc::traj & rc_flag) {
          // trajn must have been initialized by this point
@@ -49,12 +46,12 @@ void xyz_data(rc_op op)
 
    if (op & rc_alloc) {
       if (calc::traj & rc_flag) {
-         device_array::allocate(padded_n * trajn, &trajx, &trajy, &trajz);
+         device_array::allocate(n * trajn, &trajx, &trajy, &trajz);
          x = trajx;
          y = trajy;
          z = trajz;
       } else {
-         device_array::allocate(padded_n, &x, &y, &z);
+         device_array::allocate(n, &x, &y, &z);
       }
    }
 
@@ -110,9 +107,9 @@ void mass_data(rc_op op)
 void goto_frame(int idx0)
 {
    assert(calc::traj & rc_flag);
-   x = trajx + padded_n * idx0;
-   y = trajy + padded_n * idx0;
-   z = trajz + padded_n * idx0;
+   x = trajx + n * idx0;
+   y = trajy + n * idx0;
+   z = trajz + n * idx0;
    box = trajbox + idx0;
 }
 TINKER_NAMESPACE_END
@@ -121,9 +118,9 @@ TINKER_NAMESPACE_END
 #include "io_print.h"
 #include "io_text.h"
 #include "tinker_rt.h"
-#include <tinker/detail/boxes.hh>
 #include <fstream>
 #include <sstream>
+#include <tinker/detail/boxes.hh>
 
 TINKER_NAMESPACE_BEGIN
 void copyin_arc_file(const std::string& arcfile, int first1, int last1,
@@ -173,8 +170,7 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
       std::vector<double> bbuf;
       if (has_boxsize)
          bbuf.resize(tn * 6);
-      std::vector<real> xbuf(tn * padded_n), ybuf(tn * padded_n),
-         zbuf(tn * padded_n);
+      std::vector<real> xbuf(tn * n), ybuf(tn * n), zbuf(tn * n);
 
       auto skip = [](std::ifstream& f, int nl) {
          f.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -199,7 +195,7 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
                ss >> bbuf[c] >> bbuf[c + 1] >> bbuf[c + 2] >> bbuf[c + 3] >>
                   bbuf[c + 4] >> bbuf[c + 5];
             }
-            int off = current * padded_n;
+            int off = current * n;
             for (int j = 0; j < n; ++j) {
                std::getline(iarc, line);
                std::istringstream ss(line);
@@ -246,9 +242,9 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
          }
          device_array::copyin(tn, trajbox, bbuf2.data());
       }
-      device_array::copyin(padded_n * tn, trajx, xbuf.data());
-      device_array::copyin(padded_n * tn, trajy, ybuf.data());
-      device_array::copyin(padded_n * tn, trajz, zbuf.data());
+      device_array::copyin(n * tn, trajx, xbuf.data());
+      device_array::copyin(n * tn, trajy, ybuf.data());
+      device_array::copyin(n * tn, trajz, zbuf.data());
    } else {
       std::string msg = "Cannot Open File ";
       msg += arcfile;
