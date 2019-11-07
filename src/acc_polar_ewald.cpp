@@ -1,10 +1,12 @@
-#include "acc_common.h"
+#include "acc_add.h"
 #include "e_polar.h"
 #include "gpu_card.h"
 #include "md.h"
 #include "nblist.h"
 #include "pme.h"
+#include "seq_image.h"
 #include "seq_pair_polar.h"
+#include "seq_switch.h"
 
 TINKER_NAMESPACE_BEGIN
 template <int USE>

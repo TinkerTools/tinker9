@@ -1,9 +1,11 @@
-#include "acc_common.h"
+#include "acc_add.h"
 #include "e_polar.h"
 #include "gpu_card.h"
 #include "md.h"
 #include "nblist.h"
+#include "seq_image.h"
 #include "seq_pair_field.h"
+#include "seq_switch.h"
 
 TINKER_NAMESPACE_BEGIN
 // see also subroutine dfield0b in induce.f

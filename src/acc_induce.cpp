@@ -1,4 +1,4 @@
-#include "acc_common.h"
+#include "acc_add.h"
 #include "e_polar.h"
 #include "error.h"
 #include "gpu_card.h"
@@ -6,6 +6,7 @@
 #include "md.h"
 #include "nblist.h"
 #include "seq_damp.h"
+#include "seq_image.h"
 #include "tinker_rt.h"
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/polpcg.hh>
