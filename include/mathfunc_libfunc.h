@@ -53,6 +53,9 @@
 
 
 #ifdef _OPENACC
+#include <accelmath.h>
+
+
 #pragma acc routine(abs) seq
 
 

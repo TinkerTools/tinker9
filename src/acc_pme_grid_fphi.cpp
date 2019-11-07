@@ -10,7 +10,7 @@ static constexpr int MAX_BSORDER = 5;
 // see also subroutine bsplgen in pmestuf.f
 #pragma acc routine seq
 template <int LEVEL>
-static inline void bsplgen(real w, real* restrict thetai, int bsorder)
+void bsplgen(real w, real* restrict thetai, int bsorder)
 {
 
    // e.g. bsorder = 5, theta = T, bsbuild = B
@@ -65,12 +65,10 @@ static inline void bsplgen(real w, real* restrict thetai, int bsorder)
 
    // compute standard B-spline recursion to desired order
 
-   #pragma acc loop seq
    for (int i = 4; i <= bsorder; ++i) {
       int k = i - 1;
       real denom = REAL_RECIP(k);
       bsbuild(i, i) = denom * w * bsbuild(k, k);
-      #pragma acc loop seq
       for (int j = 1; j <= i - 2; j++) {
          bsbuild(i, i - j) = denom *
             ((w + j) * bsbuild(k, i - j - 1) + (i - j - w) * bsbuild(k, i - j));
@@ -87,7 +85,6 @@ static inline void bsplgen(real w, real* restrict thetai, int bsorder)
 
       k = bsorder - 1;
       bsbuild(k, bsorder) = bsbuild(k, bsorder - 1);
-      #pragma acc loop seq
       for (int i = bsorder - 1; i >= 2; --i) {
          bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
       }
@@ -101,13 +98,11 @@ static inline void bsplgen(real w, real* restrict thetai, int bsorder)
 
       k = bsorder - 2;
       bsbuild(k, bsorder - 1) = bsbuild(k, bsorder - 2);
-      #pragma acc loop seq
       for (int i = bsorder - 2; i >= 2; --i) {
          bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
       }
       bsbuild(k, 1) = -bsbuild(k, 1);
       bsbuild(k, bsorder) = bsbuild(k, bsorder - 1);
-      #pragma acc loop seq
       for (int i = bsorder - 1; i >= 2; --i) {
          bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
       }
@@ -121,19 +116,16 @@ static inline void bsplgen(real w, real* restrict thetai, int bsorder)
 
       k = bsorder - 3;
       bsbuild(k, bsorder - 2) = bsbuild(k, bsorder - 3);
-      #pragma acc loop seq
       for (int i = bsorder - 3; i >= 2; --i) {
          bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
       }
       bsbuild(k, 1) = -bsbuild(k, 1);
       bsbuild(k, bsorder - 1) = bsbuild(k, bsorder - 2);
-      #pragma acc loop seq
       for (int i = bsorder - 2; i >= 2; --i) {
          bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
       }
       bsbuild(k, 1) = -bsbuild(k, 1);
       bsbuild(k, bsorder) = bsbuild(k, bsorder - 1);
-      #pragma acc loop seq
       for (int i = bsorder - 1; i >= 2; --i)
          bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
       bsbuild(k, 1) = -bsbuild(k, 1);
@@ -141,9 +133,7 @@ static inline void bsplgen(real w, real* restrict thetai, int bsorder)
 
    // copy coefficients from temporary to permanent storage
 
-   #pragma acc loop seq
    for (int i = 1; i <= bsorder; ++i) {
-      #pragma acc loop seq
       for (int j = 1; j <= LEVEL; ++j) {
          thetai[4 * (i - 1) + (j - 1)] = bsbuild(bsorder - j + 1, i);
       }
