@@ -1,19 +1,23 @@
+#include "fft.h"
 #include "error.h"
-#include "fft_cufft.h"
 #include "pme.h"
-#if !TINKER_CUDART
-#   error TINKER_CUDART must be true.
-#endif
+#include <cufft.h>
 
 
 TINKER_NAMESPACE_BEGIN
+struct FFTPlanCUFFT : public FFTPlan
+{
+   cufftHandle h;
+};
+
+
 void fft_data(rc_op op)
 {
    if (op & rc_dealloc) {
       int idx = 0;
       while (idx < FFTPlanUnit::size()) {
          FFTPlanUnit u = idx;
-         cufftDestroy(*u);
+         cufftDestroy(u->self<FFTPlanCUFFT>().h);
          ++idx;
       }
       FFTPlanUnit::clear();
@@ -23,7 +27,7 @@ void fft_data(rc_op op)
       assert(FFTPlanUnit::size() == 0);
 
       const size_t size = PMEUnit::size();
-      FFTPlanUnit::resize(size);
+      FFTPlanUnit::resize<FFTPlanCUFFT>(size);
    }
 
    if (op & rc_init) {
@@ -39,7 +43,7 @@ void fft_data(rc_op op)
       while (idx < FFTPlanUnit::size()) {
          FFTPlanUnit plan_u = idx;
          PMEUnit pme_u = idx;
-         auto& iplan = *plan_u;
+         auto& iplan = plan_u->self<FFTPlanCUFFT>().h;
          auto& st = *pme_u;
 
          check_rt(cufftPlan3d(&iplan, st.nfft1, st.nfft2, st.nfft3, typ));
@@ -52,7 +56,7 @@ void fft_data(rc_op op)
 void fftfront(PMEUnit pme_u)
 {
    FFTPlanUnit iplan_u = static_cast<int>(pme_u);
-   auto& iplan = *iplan_u;
+   auto& iplan = iplan_u->self<FFTPlanCUFFT>().h;
    auto& st = *pme_u;
 
 #if TINKER_SINGLE_PRECISION
@@ -70,7 +74,7 @@ void fftfront(PMEUnit pme_u)
 void fftback(PMEUnit pme_u)
 {
    FFTPlanUnit iplan_u = static_cast<int>(pme_u);
-   auto& iplan = *iplan_u;
+   auto& iplan = iplan_u->self<FFTPlanCUFFT>().h;
    auto& st = *pme_u;
 
 #if TINKER_SINGLE_PRECISION

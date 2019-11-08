@@ -5,9 +5,6 @@
 #include <mutex>
 #include <queue>
 #include <thread>
-#if !TINKER_HOST
-#   error TINKER_HOST must be true.
-#endif
 
 
 TINKER_NAMESPACE_BEGIN

@@ -131,11 +131,13 @@ public:
 
    /// \brief Resize the capacity for the objects on host.
    /// \note Cannot be called if device pointers are used.
+   template <class DT = T>
    static void resize(int s)
    {
+      static_assert(std::is_base_of<T, DT>::value, "");
       assert(!USE_DPTR);
       for (int i = size(); i < s; ++i)
-         hostptrs().emplace_back(new T);
+         hostptrs().emplace_back(new DT);
    }
 
 

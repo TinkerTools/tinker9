@@ -225,6 +225,12 @@ endif
 ##/ Top-level `CUDA` installation directory, under which `include` and `lib`
 ##/ directories are expected to be found.
 ##/
+##/ Sometimes the PGI compiler and the NVCC compiler are not "compatible". For
+##/ instance, PGI 19.4 supports CUDA 9.2, 10.0, 10.1, and the default CUDA
+##/ version used in PGI 19.4 may be 9.2 and the external NVCC version is 10.1.
+##/ One solution is to pass `CUDA_HOME=${cuda_dir}` to the PGI compiler, in
+##/ which case, `cuda_dir` should be set to "/usr/local/cuda-10.1".
+##/
 cuda_dir := /usr/local/cuda
 
 

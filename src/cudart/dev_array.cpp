@@ -1,9 +1,6 @@
 #include "error.h"
 #include <cstring>
 #include <cuda_runtime.h>
-#if !TINKER_CUDART
-#   error TINKER_CUDART must be true.
-#endif
 
 
 TINKER_NAMESPACE_BEGIN

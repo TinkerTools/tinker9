@@ -1,5 +1,5 @@
 #pragma once
-#include "macro_cudart.h"
+#include "macro.h"
 #include <cstring>
 #include <type_traits>
 

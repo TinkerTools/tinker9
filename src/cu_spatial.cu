@@ -21,7 +21,7 @@ struct POPC
    __device__
    int operator()(int flag)
    {
-      return __popc(flag);
+      return builtin::popc(flag);
    }
 };
 
@@ -220,9 +220,9 @@ void spatial_ghi(Spatial* restrict sp, const Box* restrict box, real cutbuf)
    auto* restrict xkf = sp->xkf;
 
    for (int iw = iwarp; iw < nak; iw += nwarp) {
-      int offset = xakf_scan[iw]; // F.5
-      int flag = xakf[iw];        // E.7
-      int nbox = __popc(flag);    // E.7
+      int offset = xakf_scan[iw];     // F.5
+      int flag = xakf[iw];            // E.7
+      int nbox = builtin::popc(flag); // E.7
 
       auto* restrict iakbuf = iak + near * offset;             // G.4
       auto* restrict lstbuf = lst + near * offset * WARP_SIZE; // G.5
@@ -304,7 +304,7 @@ void spatial_ghi(Spatial* restrict sp, const Box* restrict box, real cutbuf)
          }
 
 
-         int njbit = __popc(jflag);
+         int njbit = builtin::popc(jflag);
          int jth = ffsn(jflag, ilane + 1) - 1;
          int atomnb = __shfl_sync(ALL_LANES, shatomk, jth); // I.6a
          if (ilane < njbit)
@@ -356,7 +356,7 @@ void spatial_data_init_cu(SpatialUnit u, NBListUnit nu)
    launch_kernel1(n, spatial_b234c1, u.deviceptr(), lx, ly, lz, box, cutbuf);
    // find max(nax) and compare to Spatial::BLOCK
    // ax_scan[0] == 0 can never be the maximum
-   int level = 1 + builtin_floor_log2(nak - 1);
+   int level = 1 + floor_log2(nak - 1);
    int mnax;
    const int* mnaxptr = thrust::max_element(policy, ax_scan, ax_scan + 1 + nx);
    device_array::copyout(1, &mnax, mnaxptr);
@@ -370,12 +370,12 @@ void spatial_data_init_cu(SpatialUnit u, NBListUnit nu)
       // 65   / 64     / 2     / 4   / 2
       // 128  / 127    / 3     / 4   / 2
       // 129  / 128    / 4     / 8   / 3
-      int p = 1 + builtin_floor_log2(scale);
+      int p = 1 + floor_log2(scale);
       level += p;
       px = (level + 2) / 3;
       py = (level + 1) / 3;
       pz = (level + 0) / 3;
-      nx = pow2(px + py + pz);
+      nx = ct::pow2(px + py + pz);
       nxk = (nx + Spatial::BLOCK - 1) / Spatial::BLOCK;
 
       device_array::allocate(nx, &nearby);

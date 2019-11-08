@@ -1,14 +1,14 @@
-#ifndef TINKER_FFT_H_
-#define TINKER_FFT_H_
-
+#pragma once
 #include "macro.h"
 
-#if TINKER_CUDART
-#   include "fft_cufft.h"
-#endif
 
-#if TINKER_HOST
-#   include "fft_fftw.h"
-#endif
-
-#endif
+TINKER_NAMESPACE_BEGIN
+struct FFTPlan
+{
+   template <class T>
+   T& self()
+   {
+      return *reinterpret_cast<T*>(this);
+   }
+};
+TINKER_NAMESPACE_END

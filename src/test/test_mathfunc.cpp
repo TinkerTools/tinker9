@@ -3,11 +3,11 @@
 using namespace TINKER_NAMESPACE;
 
 
-TEST_CASE("MathFunc", "[util]")
+TEST_CASE("MathFuncPow2", "[util]")
 {
    SECTION("IsPow2")
    {
-      auto f = is_pow2;
+      auto f = ct::is_pow2;
 
       REQUIRE(f(0) == false);
       REQUIRE(f(1) == true);
@@ -23,8 +23,8 @@ TEST_CASE("MathFunc", "[util]")
 
    SECTION("Pow2")
    {
-      auto f = pow2;
-      auto g = pow2ll;
+      auto f = ct::pow2;
+      auto g = ct::pow2ll;
 
       REQUIRE(f(0) == 0x00000001);
       REQUIRE(f(1) == 0x00000002);
@@ -45,9 +45,9 @@ TEST_CASE("MathFunc", "[util]")
 
    SECTION("FloorLog2")
    {
-      auto f = int_log2;
-      int (*g)(int) = builtin_floor_log2;
-      int (*k)(long long) = builtin_floor_log2;
+      auto f = ct::floor_log2;
+      int (*g)(int) = floor_log2;
+      int (*k)(long long) = floor_log2;
 
       // corner case
       REQUIRE(f(0) == 0);
@@ -85,8 +85,8 @@ TEST_CASE("MathFunc", "[util]")
 
    SECTION("CeilLog2")
    {
-      int (*f)(int) = builtin_ceil_log2;
-      int (*g)(long long) = builtin_ceil_log2;
+      int (*f)(int) = ceil_log2;
+      int (*g)(long long) = ceil_log2;
 
       REQUIRE(f(1) == 0);
       REQUIRE(f(2) == 1);
@@ -112,7 +112,7 @@ TEST_CASE("MathFunc", "[util]")
 
    SECTION("Pow2LessOrEqual")
    {
-      auto f = pow2_le;
+      auto f = ct::pow2_le;
 
       REQUIRE(f(1) == 1);
       REQUIRE(f(2) == 2);
@@ -131,7 +131,7 @@ TEST_CASE("MathFunc", "[util]")
 
    SECTION("Pow2GreaterOrEqual")
    {
-      auto f = pow2_ge;
+      auto f = ct::pow2_ge;
 
       REQUIRE(f(0) == 1);
       REQUIRE(f(1) == 1);

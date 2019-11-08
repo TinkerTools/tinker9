@@ -3,23 +3,11 @@
 #include <cstring>
 
 
-#if TINKER_CUDART
-#   include <cuda_runtime.h>
-TINKER_NAMESPACE_BEGIN
-using Stream = cudaStream_t;
-TINKER_NAMESPACE_END
-#endif
-
-
-#if TINKER_HOST
 TINKER_NAMESPACE_BEGIN
 class StreamSt;
 typedef StreamSt* Stream;
-TINKER_NAMESPACE_END
-#endif
 
 
-TINKER_NAMESPACE_BEGIN
 /// \brief Deallocate the asynchronous stream.
 void deallocate_stream(Stream);
 /// \brief Allocate the asynchronous stream.

@@ -1,7 +1,4 @@
 #include "gpu_card.h"
-#if !TINKER_HOST
-#   error TINKER_HOST must be true.
-#endif
 
 
 TINKER_NAMESPACE_BEGIN

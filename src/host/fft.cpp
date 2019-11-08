@@ -1,18 +1,32 @@
-#include "fft_fftw.h"
+#include "fft.h"
 #include "pme.h"
-#if !TINKER_HOST
-#   error TINKER_HOST must be true.
-#endif
+#include <fftw3.h>
 
 
 TINKER_NAMESPACE_BEGIN
+struct FFTPlanFFTW : public FFTPlan
+{
+#if TINKER_SINGLE_PRECISION
+   using type = fftwf_plan;
+#elif TINKER_DOUBLE_PRECISION
+   using type = fftw_plan;
+#else
+   static_assert(false, "");
+#endif
+
+
+   type planf; ///< FFT front plan.
+   type planb; ///< FFT back plan.
+};
+
+
 void fft_data(rc_op op)
 {
    if (op & rc_dealloc) {
       int idx = 0;
       while (idx < FFTPlanUnit::size()) {
          FFTPlanUnit u = idx;
-         auto& ps = *u;
+         auto& ps = u->self<FFTPlanFFTW>();
 #if TINKER_SINGLE_PRECISION
          fftwf_destroy_plan(ps.planf);
          fftwf_destroy_plan(ps.planb);
@@ -31,7 +45,7 @@ void fft_data(rc_op op)
       assert(FFTPlanUnit::size() == 0);
 
       const size_t size = PMEUnit::size();
-      FFTPlanUnit::resize(size);
+      FFTPlanUnit::resize<FFTPlanFFTW>(size);
    }
 
    if (op & rc_init) {
@@ -39,7 +53,7 @@ void fft_data(rc_op op)
       while (idx < FFTPlanUnit::size()) {
          FFTPlanUnit plan_u = idx;
          PMEUnit pme_u = idx;
-         auto& iplan = *plan_u;
+         auto& iplan = plan_u->self<FFTPlanFFTW>();
          auto& st = *pme_u;
 
          const int nfft1 = st.nfft1;
@@ -75,7 +89,7 @@ void fft_data(rc_op op)
 void fftfront(PMEUnit pme_u)
 {
    FFTPlanUnit iplan_u = static_cast<int>(pme_u);
-   auto& iplan = *iplan_u;
+   auto& iplan = iplan_u->self<FFTPlanFFTW>();
    auto& st = *pme_u;
 
 #if TINKER_SINGLE_PRECISION
@@ -93,7 +107,7 @@ void fftfront(PMEUnit pme_u)
 void fftback(PMEUnit pme_u)
 {
    FFTPlanUnit iplan_u = static_cast<int>(pme_u);
-   auto& iplan = *iplan_u;
+   auto& iplan = iplan_u->self<FFTPlanFFTW>();
    auto& st = *pme_u;
 
 #if TINKER_SINGLE_PRECISION

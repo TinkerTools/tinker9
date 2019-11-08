@@ -1,31 +1,34 @@
 #include "async.h"
 #include "error.h"
-#if !TINKER_CUDART
-#   error TINKER_CUDART must be true.
-#endif
+#include <cuda_runtime.h>
 
 
 TINKER_NAMESPACE_BEGIN
+class StreamSt
+{};
+
+
 void deallocate_stream(Stream s)
 {
-   check_rt(cudaStreamDestroy(s));
+   check_rt(cudaStreamDestroy(reinterpret_cast<cudaStream_t>(s)));
 }
 
 
 void allocate_stream(Stream* s)
 {
-   check_rt(cudaStreamCreate(s));
+   check_rt(cudaStreamCreate(reinterpret_cast<cudaStream_t*>(s)));
 }
 
 
 void synchronize_stream(Stream s)
 {
-   check_rt(cudaStreamSynchronize(s));
+   check_rt(cudaStreamSynchronize(reinterpret_cast<cudaStream_t>(s)));
 }
 
 
 void copy_bytes_async(void* dst, const void* src, size_t nbytes, Stream s)
 {
-   check_rt(cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyDeviceToDevice, s));
+   check_rt(cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyDeviceToDevice,
+                            reinterpret_cast<cudaStream_t>(s)));
 }
 TINKER_NAMESPACE_END

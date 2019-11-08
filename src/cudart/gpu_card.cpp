@@ -5,9 +5,6 @@
 #include <limits>
 #include <map>
 #include <thrust/version.h>
-#if !TINKER_CUDART
-#   error TINKER_CUDART must be true.
-#endif
 
 
 TINKER_NAMESPACE_BEGIN
@@ -210,7 +207,7 @@ static int get_block_size1(int shared_bytes_per_thread)
                 shared_bytes_per_thread));
    }
 
-   assert(is_pow2(bsize));
+   assert(ct::is_pow2(bsize));
    return bsize;
 }
 

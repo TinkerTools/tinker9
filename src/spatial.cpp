@@ -29,11 +29,11 @@ static void spatial_data_alloc(SpatialUnit& u, int n)
    // internal
    st.n = n;
    st.nak = (n + Spatial::BLOCK - 1) / Spatial::BLOCK;
-   int level = 1 + builtin_floor_log2(st.nak - 1);
+   int level = 1 + floor_log2(st.nak - 1);
    st.px = (level + 2) / 3;
    st.py = (level + 1) / 3;
    st.pz = (level + 0) / 3;
-   st.nx = pow2(st.px + st.py + st.pz);
+   st.nx = ct::pow2(st.px + st.py + st.pz);
    st.nxk = (st.nx + Spatial::BLOCK - 1) / Spatial::BLOCK;
    st.near = 0;
    st.xak_sum = 0;

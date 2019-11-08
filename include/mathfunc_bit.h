@@ -1,20 +1,8 @@
 #pragma once
-#include "macro.h"
+#include "builtin.h"
 
 
 TINKER_NAMESPACE_BEGIN
-#define FFSN_CODE_(val_, n_, ffs_func_)                                        \
-   unsigned int v = val_;                                                      \
-   int ans = 0;                                                                \
-   int i = 0;                                                                  \
-   while (v && (i++ < n_)) {                                                   \
-      int pos = ffs_func_(v);                                                  \
-      ans += pos;                                                              \
-      v >>= pos;                                                               \
-   }                                                                           \
-   return ans
-
-
 /**
  * \ingroup math
  * \brief
@@ -29,18 +17,19 @@ TINKER_NAMESPACE_BEGIN
  *    - If `n` is greater than `POPC`, which is the number of bits that are set
  *      to 1 in `val`, returns as if `n` equals `POPC`.
  */
-inline int builtin_ffsn(int val, int n)
-{
-   FFSN_CODE_(val, n, __builtin_ffs);
-}
-
-
 #ifdef __CUDACC__
+__host__
 __device__
+#endif
 inline int ffsn(int val, int n)
 {
-   FFSN_CODE_(val, n, __ffs);
+   int ans = 0;
+   int i = 0;
+   while (val && (i++ < n)) {
+      int pos = builtin::ffs(val);
+      ans += pos;
+      val >>= pos;
+   }
+   return ans;
 }
-#endif
-#undef FFSN_CODE_
 TINKER_NAMESPACE_END

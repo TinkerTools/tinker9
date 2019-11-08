@@ -43,6 +43,12 @@ namespace calc {}
 
 
 /**
+ * \brief Compile-time math functions. Some of them are also run-time functions.
+ */
+namespace ct {}
+
+
+/**
  * \brief Math functions running in parallel.
  */
 namespace parallel {}
