@@ -490,3 +490,18 @@ $(test_cpp_objs__) $(all_acc_objs__) \
 $(all_cu_objs__) \
 $(lib_cpp_objs__) $(tinker_dir__)/libtinker.a
 	$(LINK) $^ $(link_flags__) -o $@
+
+
+##/ ### headers
+##/ Test whether the "include" directives in every header file are complete.
+##/
+hobjs__ := $(shell find $(top_dir__)/include -type f -name '*.h' \
+-not -path '$(top_dir__)/include/cu_*.h')
+hobjs__ := $(subst $(top_dir__)/include,include,$(hobjs__))
+hobjs__ := $(hobjs__:%.h=%.o)
+$(hobjs__): %.o: $(top_dir__)/%.h
+	@mkdir -p include
+	@touch include/headers__.cpp
+	$(CXX) -include $< $(cxx_compile_flags__) include/headers__.cpp -o $@
+.PHONY: headers
+headers: $(hobjs__)
