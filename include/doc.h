@@ -11,6 +11,8 @@
 
 
 /**
+ * \defgroup geom  Geometrical Restraints
+ * \ingroup ff
  * \defgroup mpole Multipole Electrostatics
  * \ingroup ff
  * \defgroup vdw   Van der Waals (VDW)

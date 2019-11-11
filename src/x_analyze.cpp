@@ -123,6 +123,10 @@ void x_analyze_e()
 
    if (use_potent(polar_term))
       print(out, fmt, "Polarization", get_energy(ep), get_count(nep));
+
+   if (use_potent(geom_term))
+      print(out, fmt, "Geometric Restraints", get_energy(eg),
+            count_bonded_term(geom_term));
 }
 
 

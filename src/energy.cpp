@@ -22,6 +22,10 @@ void potential_data(rc_op op)
    rc_man epitors42_{epitors_data, op};
    rc_man etortor42_{etortor_data, op};
 
+   // misc. terms
+
+   rc_man egeom42_{egeom_data, op};
+
    // non-bonded terms
 
    rc_man evdw42_{evdw_data, op};
@@ -57,6 +61,11 @@ void energy_potential(int vers)
       epitors(vers);
    if (use_potent(tortor_term))
       etortor(vers);
+
+   // misc. terms
+
+   if (use_potent(geom_term))
+      egeom(vers);
 
    // non-bonded terms
 

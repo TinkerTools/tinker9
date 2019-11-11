@@ -1,6 +1,6 @@
 #include "box.h"
 #include "cu_launch.h"
-#include "mathfunc_bit.h"
+#include "mathfunc.cuh"
 #include "md.h"
 #include "nblist.h"
 #include "seq_image.h"
@@ -21,7 +21,7 @@ struct POPC
    __device__
    int operator()(int flag)
    {
-      return builtin::popc(flag);
+      return __popc(flag);
    }
 };
 
@@ -220,9 +220,9 @@ void spatial_ghi(Spatial* restrict sp, const Box* restrict box, real cutbuf)
    auto* restrict xkf = sp->xkf;
 
    for (int iw = iwarp; iw < nak; iw += nwarp) {
-      int offset = xakf_scan[iw];     // F.5
-      int flag = xakf[iw];            // E.7
-      int nbox = builtin::popc(flag); // E.7
+      int offset = xakf_scan[iw]; // F.5
+      int flag = xakf[iw];        // E.7
+      int nbox = __popc(flag);    // E.7
 
       auto* restrict iakbuf = iak + near * offset;             // G.4
       auto* restrict lstbuf = lst + near * offset * WARP_SIZE; // G.5
@@ -304,7 +304,7 @@ void spatial_ghi(Spatial* restrict sp, const Box* restrict box, real cutbuf)
          }
 
 
-         int njbit = builtin::popc(jflag);
+         int njbit = __popc(jflag);
          int jth = ffsn(jflag, ilane + 1) - 1;
          int atomnb = __shfl_sync(ALL_LANES, shatomk, jth); // I.6a
          if (ilane < njbit)

@@ -1,5 +1,5 @@
 #pragma once
-#include "builtin.h"
+#include "macro.h"
 
 
 TINKER_NAMESPACE_BEGIN
@@ -17,16 +17,13 @@ TINKER_NAMESPACE_BEGIN
  *    - If `n` is greater than `POPC`, which is the number of bits that are set
  *      to 1 in `val`, returns as if `n` equals `POPC`.
  */
-#ifdef __CUDACC__
-__host__
 __device__
-#endif
 inline int ffsn(int val, int n)
 {
    int ans = 0;
    int i = 0;
    while (val && (i++ < n)) {
-      int pos = builtin::ffs(val);
+      int pos = __ffs(val);
       ans += pos;
       val >>= pos;
    }

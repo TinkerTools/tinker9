@@ -17,11 +17,6 @@ constexpr unsigned ALL_LANES = 0xFFFFFFFF;
 
 
 /// \ingroup nvidia
-/// Maximum number of threads allowed in a thread block.
-constexpr unsigned MAX_BLOCK_SIZE = 256;
-
-
-/// \ingroup nvidia
 /// Default dimension of thread blocks.
 // constexpr unsigned BLOCK_DIM = 64;
 constexpr unsigned BLOCK_DIM = 128;

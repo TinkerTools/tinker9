@@ -1,14 +1,17 @@
 #include "potent.h"
 #include <cassert>
 #include <tinker/detail/angbnd.hh>
+#include <tinker/detail/atoms.hh>
 #include <tinker/detail/bndstr.hh>
 #include <tinker/detail/opbend.hh>
 #include <tinker/detail/pitors.hh>
 #include <tinker/detail/potent.hh>
+#include <tinker/detail/restrn.hh>
 #include <tinker/detail/strbnd.hh>
 #include <tinker/detail/tors.hh>
 #include <tinker/detail/tortor.hh>
 #include <tinker/detail/urey.hh>
+
 
 TINKER_NAMESPACE_BEGIN
 int use_potent(potent_t term)
@@ -16,7 +19,7 @@ int use_potent(potent_t term)
    int val = 0;
    switch (term) {
 
-      // bonded term
+      // bonded terms
 
    case bond_term:
       val = potent::use_bond;
@@ -43,7 +46,13 @@ int use_potent(potent_t term)
       val = potent::use_tortor;
       break;
 
-      // non-bonded term
+      // misc. terms
+
+   case geom_term:
+      val = potent::use_geom;
+      break;
+
+      // non-bonded terms
 
    case vdw_term:
       val = potent::use_vdw;
@@ -60,6 +69,7 @@ int use_potent(potent_t term)
    }
    return val;
 }
+
 
 int count_bonded_term(potent_t term)
 {
@@ -89,6 +99,26 @@ int count_bonded_term(potent_t term)
    case tortor_term:
       val = tortor::ntortor;
       break;
+
+      // misc. terms
+
+   case geom_term: {
+      val = 0;
+      val += restrn::npfix;    // position restraints
+      val += restrn::ndfix;    // distance restraints
+      val += restrn::nafix;    // angle restraints
+      val += restrn::ntfix;    // torsional restraints
+      val += restrn::ngfix;    // group distance restraints
+      val += restrn::nchir;    // chirality restraints
+      if (restrn::use_basin) { // Gaussian basin
+         val += atoms::n * (atoms::n - 1) / 2;
+      }
+      if (restrn::use_wall) { // droplet boundary
+         val += atoms::n;
+      }
+      break;
+   }
+
    default:
       assert(false);
       break;

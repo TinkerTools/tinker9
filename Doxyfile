@@ -117,6 +117,7 @@ INPUT                  = README.md include doc
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = \
                          *.h \
+                         *.cuh \
                          *.cc \
                          *.cpp \
                          *.md \

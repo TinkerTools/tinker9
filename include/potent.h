@@ -1,7 +1,6 @@
-#ifndef TINKER_POTENT_H_
-#define TINKER_POTENT_H_
-
+#pragma once
 #include "macro.h"
+
 
 TINKER_NAMESPACE_BEGIN
 typedef enum
@@ -40,5 +39,3 @@ typedef enum
 int use_potent(potent_t term);
 int count_bonded_term(potent_t term);
 TINKER_NAMESPACE_END
-
-#endif

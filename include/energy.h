@@ -1,5 +1,4 @@
-#ifndef TINKER_ENERGY_H_
-#define TINKER_ENERGY_H_
+#pragma once
 
 #include "e_angle.h"
 #include "e_bond.h"
@@ -10,6 +9,8 @@
 #include "e_tortor.h"
 #include "e_urey.h"
 
+#include "e_geom.h"
+
 #include "e_mpole.h"
 #include "e_polar.h"
 #include "e_vdw.h"
@@ -17,5 +18,3 @@
 TINKER_NAMESPACE_BEGIN
 void energy_potential(int vers);
 TINKER_NAMESPACE_END
-
-#endif

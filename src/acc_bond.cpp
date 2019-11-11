@@ -3,7 +3,6 @@
 #include "md.h"
 #include <cassert>
 
-// TODO: test morse potential
 
 TINKER_NAMESPACE_BEGIN
 template <int USE, ebond_t BNDTYP>
@@ -17,9 +16,9 @@ void ebond_tmpl()
    auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent\
-              deviceptr(x,y,z,gx,gy,gz,\
-              ibnd,bl,bk,\
-              eb,vir_eb)
+               deviceptr(x,y,z,gx,gy,gz,\
+               ibnd,bl,bk,\
+               eb,vir_eb)
    for (int i = 0; i < nbond; ++i) {
       int offset = i & (bufsize - 1);
       int ia = ibnd[i][0];

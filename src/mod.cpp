@@ -4,7 +4,9 @@
 
 #include "box.h"
 #include "elec.h"
+#include "group.h"
 #include "md.h"
+#include "molecule.h"
 #include "nblist.h"
 #include "pme.h"
 #include "spatial.h"
@@ -17,6 +19,8 @@
 #include "e_tors.h"
 #include "e_tortor.h"
 #include "e_urey.h"
+
+#include "e_geom.h"
 
 #include "e_mpole.h"
 #include "e_polar.h"

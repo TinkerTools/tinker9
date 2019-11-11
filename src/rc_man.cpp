@@ -61,6 +61,8 @@ extern void n_data(rc_op);
 extern void xyz_data(rc_op);
 extern void vel_data(rc_op);
 extern void mass_data(rc_op);
+extern void molecule_data(rc_op);
+extern void group_data(rc_op);
 
 extern void potential_data(rc_op);
 
@@ -77,6 +79,8 @@ void device_data(rc_op op)
    rc_man xyz42_{xyz_data, op};
    rc_man vel42_{vel_data, op};
    rc_man mass42_{mass_data, op};
+   rc_man molecule42_{molecule_data, op};
+   rc_man group42_{group_data, op};
 
    rc_man pd42_{potential_data, op};
 
