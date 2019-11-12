@@ -14,9 +14,9 @@ void eurey_tmpl()
    auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent\
-              deviceptr(x,y,z,gx,gy,gz,\
-              iury,uk,ul,\
-              eub,vir_eub)
+               deviceptr(x,y,z,gx,gy,gz,\
+               iury,uk,ul,\
+               eub,vir_eub)
    for (int i = 0; i < nurey; ++i) {
       int offset = i & (bufsize - 1);
       const int ia = iury[i][0];
@@ -47,18 +47,12 @@ void eurey_tmpl()
          real dedy = de * yac;
          real dedz = de * zac;
 
-         #pragma acc atomic update
-         gx[ia] += dedx;
-         #pragma acc atomic update
-         gy[ia] += dedy;
-         #pragma acc atomic update
-         gz[ia] += dedz;
-         #pragma acc atomic update
-         gx[ic] -= dedx;
-         #pragma acc atomic update
-         gy[ic] -= dedy;
-         #pragma acc atomic update
-         gz[ic] -= dedz;
+         atomic_add_value(dedx, gx, ia);
+         atomic_add_value(dedy, gy, ia);
+         atomic_add_value(dedz, gz, ia);
+         atomic_add_value(-dedx, gx, ic);
+         atomic_add_value(-dedy, gy, ic);
+         atomic_add_value(-dedz, gz, ic);
 
          if_constexpr(do_v)
          {

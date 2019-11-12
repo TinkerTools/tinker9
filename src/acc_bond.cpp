@@ -62,18 +62,12 @@ void ebond_tmpl()
          real dedx = de * xab;
          real dedy = de * yab;
          real dedz = de * zab;
-         #pragma acc atomic update
-         gx[ia] += dedx;
-         #pragma acc atomic update
-         gy[ia] += dedy;
-         #pragma acc atomic update
-         gz[ia] += dedz;
-         #pragma acc atomic update
-         gx[ib] -= dedx;
-         #pragma acc atomic update
-         gy[ib] -= dedy;
-         #pragma acc atomic update
-         gz[ib] -= dedz;
+         atomic_add_value(dedx, gx, ia);
+         atomic_add_value(dedy, gy, ia);
+         atomic_add_value(dedz, gz, ia);
+         atomic_add_value(-dedx, gx, ib);
+         atomic_add_value(-dedy, gy, ib);
+         atomic_add_value(-dedz, gz, ib);
 
          if_constexpr(do_v)
          {

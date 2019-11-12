@@ -32,9 +32,9 @@ void eopbend_tmpl()
    auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent\
-              deviceptr(x,y,z,gx,gy,gz,\
-              iopb,opbk,iang,\
-              eopb,vir_eopb)
+               deviceptr(x,y,z,gx,gy,gz,\
+               iopb,opbk,iang,\
+               eopb,vir_eopb)
    for (int iopbend = 0; iopbend < nopbend; ++iopbend) {
       int offset = iopbend & (bufsize - 1);
       const real force = opbk[iopbend];
@@ -182,30 +182,18 @@ void eopbend_tmpl()
             real dedyib = -dedyia - dedyic - dedyid;
             real dedzib = -dedzia - dedzic - dedzid;
 
-            #pragma acc atomic update
-            gx[ia] += dedxia;
-            #pragma acc atomic update
-            gy[ia] += dedyia;
-            #pragma acc atomic update
-            gz[ia] += dedzia;
-            #pragma acc atomic update
-            gx[ib] += dedxib;
-            #pragma acc atomic update
-            gy[ib] += dedyib;
-            #pragma acc atomic update
-            gz[ib] += dedzib;
-            #pragma acc atomic update
-            gx[ic] += dedxic;
-            #pragma acc atomic update
-            gy[ic] += dedyic;
-            #pragma acc atomic update
-            gz[ic] += dedzic;
-            #pragma acc atomic update
-            gx[id] += dedxid;
-            #pragma acc atomic update
-            gy[id] += dedyid;
-            #pragma acc atomic update
-            gz[id] += dedzid;
+            atomic_add_value(dedxia, gx, ia);
+            atomic_add_value(dedyia, gy, ia);
+            atomic_add_value(dedzia, gz, ia);
+            atomic_add_value(dedxib, gx, ib);
+            atomic_add_value(dedyib, gy, ib);
+            atomic_add_value(dedzib, gz, ib);
+            atomic_add_value(dedxic, gx, ic);
+            atomic_add_value(dedyic, gy, ic);
+            atomic_add_value(dedzic, gz, ic);
+            atomic_add_value(dedxid, gx, id);
+            atomic_add_value(dedyid, gy, id);
+            atomic_add_value(dedzid, gz, id);
 
             if_constexpr(do_v)
             {

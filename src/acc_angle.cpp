@@ -35,9 +35,9 @@ void eangle_tmpl()
    auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent\
-              deviceptr(x,y,z,gx,gy,gz,\
-              iang,anat,ak,angtyp,\
-              ea,vir_ea)
+               deviceptr(x,y,z,gx,gy,gz,\
+               iang,anat,ak,angtyp,\
+               ea,vir_ea)
    for (int i = 0; i < nangle; ++i) {
       int offset = i & (bufsize - 1);
       int ia = iang[i][0];
@@ -113,24 +113,15 @@ void eangle_tmpl()
                real dedyib = -dedyia - dedyic;
                real dedzib = -dedzia - dedzic;
 
-               #pragma acc atomic update
-               gx[ia] += dedxia;
-               #pragma acc atomic update
-               gy[ia] += dedyia;
-               #pragma acc atomic update
-               gz[ia] += dedzia;
-               #pragma acc atomic update
-               gx[ib] += dedxib;
-               #pragma acc atomic update
-               gy[ib] += dedyib;
-               #pragma acc atomic update
-               gz[ib] += dedzib;
-               #pragma acc atomic update
-               gx[ic] += dedxic;
-               #pragma acc atomic update
-               gy[ic] += dedyic;
-               #pragma acc atomic update
-               gz[ic] += dedzic;
+               atomic_add_value(dedxia, gx, ia);
+               atomic_add_value(dedyia, gy, ia);
+               atomic_add_value(dedzia, gz, ia);
+               atomic_add_value(dedxib, gx, ib);
+               atomic_add_value(dedyib, gy, ib);
+               atomic_add_value(dedzib, gz, ib);
+               atomic_add_value(dedxic, gx, ic);
+               atomic_add_value(dedyic, gy, ic);
+               atomic_add_value(dedzic, gz, ic);
 
                if_constexpr(do_v)
                {
@@ -257,30 +248,18 @@ void eangle_tmpl()
                real dedyid = -dedyia - dedyib - dedyic;
                real dedzid = -dedzia - dedzib - dedzic;
 
-               #pragma acc atomic update
-               gx[ia] += dedxia;
-               #pragma acc atomic update
-               gy[ia] += dedyia;
-               #pragma acc atomic update
-               gz[ia] += dedzia;
-               #pragma acc atomic update
-               gx[ib] += dedxib;
-               #pragma acc atomic update
-               gy[ib] += dedyib;
-               #pragma acc atomic update
-               gz[ib] += dedzib;
-               #pragma acc atomic update
-               gx[ic] += dedxic;
-               #pragma acc atomic update
-               gy[ic] += dedyic;
-               #pragma acc atomic update
-               gz[ic] += dedzic;
-               #pragma acc atomic update
-               gx[id] += dedxid;
-               #pragma acc atomic update
-               gy[id] += dedyid;
-               #pragma acc atomic update
-               gz[id] += dedzid;
+               atomic_add_value(dedxia, gx, ia);
+               atomic_add_value(dedyia, gy, ia);
+               atomic_add_value(dedzia, gz, ia);
+               atomic_add_value(dedxib, gx, ib);
+               atomic_add_value(dedyib, gy, ib);
+               atomic_add_value(dedzib, gz, ib);
+               atomic_add_value(dedxic, gx, ic);
+               atomic_add_value(dedyic, gy, ic);
+               atomic_add_value(dedzic, gz, ic);
+               atomic_add_value(dedxid, gx, id);
+               atomic_add_value(dedyid, gy, id);
+               atomic_add_value(dedzid, gz, id);
 
                if_constexpr(do_v)
                {

@@ -118,10 +118,10 @@ void etortor_tmpl()
    auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent\
-              deviceptr(x,y,z,gx,gy,gz,\
-              ibitor,itt,chkttor_ia_,\
-              tnx,tny,ttx,tty,tbf,tbx,tby,tbxy,\
-              ett,vir_ett)
+               deviceptr(x,y,z,gx,gy,gz,\
+               ibitor,itt,chkttor_ia_,\
+               tnx,tny,ttx,tty,tbf,tbx,tby,tbxy,\
+               ett,vir_ett)
    for (int itortor = 0; itortor < ntortor; ++itortor) {
       real ftt[4], ft12[4], ft1[4], ft2[4];
 
@@ -354,36 +354,21 @@ void etortor_tmpl()
             real dedyie2 = xdc * dedzv2 - zdc * dedxv2;
             real dedzie2 = ydc * dedxv2 - xdc * dedyv2;
 
-            #pragma acc atomic update
-            gx[ia] += dedxia;
-            #pragma acc atomic update
-            gy[ia] += dedyia;
-            #pragma acc atomic update
-            gz[ia] += dedzia;
-            #pragma acc atomic update
-            gx[ib] += dedxib + dedxib2;
-            #pragma acc atomic update
-            gy[ib] += dedyib + dedyib2;
-            #pragma acc atomic update
-            gz[ib] += dedzib + dedzib2;
-            #pragma acc atomic update
-            gx[ic] += dedxic + dedxic2;
-            #pragma acc atomic update
-            gy[ic] += dedyic + dedyic2;
-            #pragma acc atomic update
-            gz[ic] += dedzic + dedzic2;
-            #pragma acc atomic update
-            gx[id] += dedxid + dedxid2;
-            #pragma acc atomic update
-            gy[id] += dedyid + dedyid2;
-            #pragma acc atomic update
-            gz[id] += dedzid + dedzid2;
-            #pragma acc atomic update
-            gx[ie] += dedxie2;
-            #pragma acc atomic update
-            gy[ie] += dedyie2;
-            #pragma acc atomic update
-            gz[ie] += dedzie2;
+            atomic_add_value(dedxia, gx, ia);
+            atomic_add_value(dedyia, gy, ia);
+            atomic_add_value(dedzia, gz, ia);
+            atomic_add_value(dedxib + dedxib2, gx, ib);
+            atomic_add_value(dedyib + dedyib2, gy, ib);
+            atomic_add_value(dedzib + dedzib2, gz, ib);
+            atomic_add_value(dedxic + dedxic2, gx, ic);
+            atomic_add_value(dedyic + dedyic2, gy, ic);
+            atomic_add_value(dedzic + dedzic2, gz, ic);
+            atomic_add_value(dedxid + dedxid2, gx, id);
+            atomic_add_value(dedyid + dedyid2, gy, id);
+            atomic_add_value(dedzid + dedzid2, gz, id);
+            atomic_add_value(dedxie2, gx, ie);
+            atomic_add_value(dedyie2, gy, ie);
+            atomic_add_value(dedzie2, gz, ie);
 
             if_constexpr(do_v)
             {
