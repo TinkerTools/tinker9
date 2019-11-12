@@ -59,7 +59,7 @@ TINKER_NAMESPACE_BEGIN
  *       calculated.
  *    5. Swap the atoms as the box numbers are being sorted.
  *
- * \image html doc/spatial_a.svg "Fig. 1  SortedAtoms and Box-AtomBlock-Flags"
+ * \image  html doc/spatial_a.svg "Fig. 1  SortedAtoms and Box-AtomBlock-Flags"
  *
  * ###C. Nearby boxes (near and nearby[nx])
  * These two work together as a "template" to find the nearby boxes.
@@ -74,9 +74,13 @@ TINKER_NAMESPACE_BEGIN
  *
  * Procedures 1 and 2 are all parallel algorithms.
  *
- * ### D. Atom-Box-Scan (ax_scan[nax+1])
+ * ### D. Atom-Box-Scan (ax_scan[nx+1])
+ * After sorting the atoms, the box numbers are now in ascending order. This
+ * section will generate a data structure that is similar to `igrp(2,*)` in
+ * Tinker `group` module so that we can easily find the `[begin,end)` interval
+ * of atoms for any box `i`.
  *
- * \image html doc/spatial_x.svg "Fig. 2  Boxes and Atom-Box-Scan"
+ * \image  html doc/spatial_x.svg "Fig. 2  Boxes and Atom-Box-Scan"
  *
  * Suppose there are three temporary arrays `nax[nx]`, `escan[nx]`, and
  * `iscan[nx]`. `nax` stores that there are `nax[i]` atoms belong to box `i`.
@@ -148,7 +152,16 @@ TINKER_NAMESPACE_BEGIN
  *       from `iak` as well. `niak` elements are left in `iak` and `32*niak`
  *       elements are left in `lst` at the end of this procedure.
  *
- * ### H. Details in Finding Neighbors
+ * ### H. Coarse-Grained Neighbor Search
+ * Suppose we have AtomBlock `i` and a nearby box `j`. Even if we do not
+ * directly compare the distances between atom pairs in the coarse-grained
+ * search, the following problems still need to be solved:
+ *    - Have we already processed box `j` for this AtomBlock?
+ *    - Which atoms are in box `j`?
+ *    - How many atoms in box `j` have atom numbers that are large enough to be
+ *      the neighbors of AtomBlock `i`?
+ *
+ * The procedures are as follows:
  *    1. `naak[nak]` and `xkf[nak*nxk]` are the internal data structures.
  *    2. `lst` is calculated in parallel; each AtomBlock adopts 32 threads to
  *       iterate `near*POPC(xakf[i])` nearby boxes. There are `POPC(xakf[i])`
@@ -162,11 +175,11 @@ TINKER_NAMESPACE_BEGIN
  *       (D.4), and more importantly, only atom numbers **GREATER** than the
  *       minimum atom number of AtomBlock `i` (which equals `32*i`) are valid
  *       neighbors.
- *    5. (Continued.) Therefore, the range `[begin, end)` is adjusted such that
+ *    5. (Continued.) Therefore, the range `[begin,end)` is adjusted such that
  *       `begin=max(32*i+1,escan[j])`. The adjusted length of the range (`len`)
  *       is `(iscan[j]-begin)`.
  *    6. `naak[i]` stores the number of neighbors for AtomBlock `i`. Since
- *       `len` can be negative, the increment is `max(0, len)`.
+ *       `len` can be negative, the increment is `max(0,len)`.
  *
  * ### I. Fined-Grained Neighbor Search
  *    1. After the coarse-grained neighbor search, AtomBlock `i` has stored

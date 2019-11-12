@@ -126,9 +126,9 @@ inline int offset_box(int nx, int ny, int nz, int ix1, int iy1, int iz1,
 
 
 __global__
-void spatial_b234c1(Spatial* restrict sp, const real* restrict x,
-                    const real* restrict y, const real* restrict z,
-                    const Box* restrict box, real cutbuf)
+void spatial_bc(Spatial* restrict sp, const real* restrict x,
+                const real* restrict y, const real* restrict z,
+                const Box* restrict box, real cutbuf)
 {
    int n = sp->n;
    int px = sp->px;
@@ -353,7 +353,7 @@ void spatial_data_init_cu(SpatialUnit u, NBListUnit nu)
    const auto* lx = nu->x;
    const auto* ly = nu->y;
    const auto* lz = nu->z;
-   launch_kernel1(n, spatial_b234c1, u.deviceptr(), lx, ly, lz, box, cutbuf);
+   launch_kernel1(n, spatial_bc, u.deviceptr(), lx, ly, lz, box, cutbuf);
    // find max(nax) and compare to Spatial::BLOCK
    // ax_scan[0] == 0 can never be the maximum
    int level = 1 + floor_log2(nak - 1);
@@ -385,7 +385,7 @@ void spatial_data_init_cu(SpatialUnit u, NBListUnit nu)
       u.update_deviceptr(*u);
 
       device_array::zero(nx + 1, ax_scan);
-      launch_kernel1(n, spatial_b234c1, u.deviceptr(), lx, ly, lz, box, cutbuf);
+      launch_kernel1(n, spatial_bc, u.deviceptr(), lx, ly, lz, box, cutbuf);
       mnaxptr = thrust::max_element(policy, ax_scan, ax_scan + 1 + nx);
       device_array::copyout(1, &mnax, mnaxptr);
    }
