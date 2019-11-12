@@ -71,9 +71,10 @@ TINKER_NAMESPACE_BEGIN
 namespace detail {
 const char* get_SHA1()
 {
-   return //
-      "291a85c1";
-   // "6fe8e913";
+   return         //
+      "11e84c69"; // Tue Nov 12 14:56:12 2019 -0600
+   // "291a85c1"; // Fri Jul 19 16:21:27 2019 +0200
+   // "6fe8e913"; // Sun Apr 21 13:34:28 2019 -0500
    // "904bc012";
    // "ddfb803a";
    // "36063480";
