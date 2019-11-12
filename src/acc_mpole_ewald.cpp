@@ -81,23 +81,23 @@ void empole_real_self_tmpl()
                rpole[k][mpl_pme_zz], //
                f, aewald, e, pgrad);
 
-            if_constexpr(do_a) atomic_add_value(1, nem, offset);
-            if_constexpr(do_e) atomic_add_value(e, em, offset);
+            if_constexpr(do_a) atomic_add(1, nem, offset);
+            if_constexpr(do_e) atomic_add(e, em, offset);
             if_constexpr(do_g)
             {
                gxi += pgrad.frcx;
                gyi += pgrad.frcy;
                gzi += pgrad.frcz;
-               atomic_add_value(-pgrad.frcx, gx, k);
-               atomic_add_value(-pgrad.frcy, gy, k);
-               atomic_add_value(-pgrad.frcz, gz, k);
+               atomic_add(-pgrad.frcx, gx, k);
+               atomic_add(-pgrad.frcy, gy, k);
+               atomic_add(-pgrad.frcz, gz, k);
 
                txi += pgrad.ttmi[0];
                tyi += pgrad.ttmi[1];
                tzi += pgrad.ttmi[2];
-               atomic_add_value(pgrad.ttmk[0], trqx, k);
-               atomic_add_value(pgrad.ttmk[1], trqy, k);
-               atomic_add_value(pgrad.ttmk[2], trqz, k);
+               atomic_add(pgrad.ttmk[0], trqx, k);
+               atomic_add(pgrad.ttmk[1], trqy, k);
+               atomic_add(pgrad.ttmk[2], trqz, k);
 
                // virial
 
@@ -110,8 +110,7 @@ void empole_real_self_tmpl()
                   real vyz = -0.5f * (zr * pgrad.frcy + yr * pgrad.frcz);
                   real vzz = -zr * pgrad.frcz;
 
-                  atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_em,
-                                   offset);
+                  atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
                } // end if (do_v)
             }    // end if (do_g)
          }       // end if (r2 <= off2)
@@ -119,12 +118,12 @@ void empole_real_self_tmpl()
 
       if_constexpr(do_g)
       {
-         atomic_add_value(gxi, gx, i);
-         atomic_add_value(gyi, gy, i);
-         atomic_add_value(gzi, gz, i);
-         atomic_add_value(txi, trqx, i);
-         atomic_add_value(tyi, trqy, i);
-         atomic_add_value(tzi, trqz, i);
+         atomic_add(gxi, gx, i);
+         atomic_add(gyi, gy, i);
+         atomic_add(gzi, gz, i);
+         atomic_add(txi, trqx, i);
+         atomic_add(tyi, trqy, i);
+         atomic_add(tzi, trqz, i);
       }
 
       // compute the self-energy part of the Ewald summation
@@ -139,8 +138,8 @@ void empole_real_self_tmpl()
          int offset = i & (bufsize - 1);
          real e = fterm *
             (cii + aewald_sq_2 * (dii / 3 + 2 * aewald_sq_2 * qii * (real)0.2));
-         atomic_add_value(e, em, offset);
-         if_constexpr(do_a) atomic_add_value(1, nem, offset);
+         atomic_add(e, em, offset);
+         if_constexpr(do_a) atomic_add(1, nem, offset);
       } // end if (do_e)
    }    // end for (int i)
 
@@ -188,24 +187,24 @@ void empole_real_self_tmpl()
          if_constexpr(do_a)
          {
             if (mscale == -1)
-               atomic_add_value(-1, nem, offset);
+               atomic_add(-1, nem, offset);
          }
-         if_constexpr(do_e) atomic_add_value(e, em, offset);
+         if_constexpr(do_e) atomic_add(e, em, offset);
          if_constexpr(do_g)
          {
-            atomic_add_value(pgrad.frcx, gx, i);
-            atomic_add_value(pgrad.frcy, gy, i);
-            atomic_add_value(pgrad.frcz, gz, i);
-            atomic_add_value(-pgrad.frcx, gx, k);
-            atomic_add_value(-pgrad.frcy, gy, k);
-            atomic_add_value(-pgrad.frcz, gz, k);
+            atomic_add(pgrad.frcx, gx, i);
+            atomic_add(pgrad.frcy, gy, i);
+            atomic_add(pgrad.frcz, gz, i);
+            atomic_add(-pgrad.frcx, gx, k);
+            atomic_add(-pgrad.frcy, gy, k);
+            atomic_add(-pgrad.frcz, gz, k);
 
-            atomic_add_value(pgrad.ttmi[0], trqx, i);
-            atomic_add_value(pgrad.ttmi[1], trqy, i);
-            atomic_add_value(pgrad.ttmi[2], trqz, i);
-            atomic_add_value(pgrad.ttmk[0], trqx, k);
-            atomic_add_value(pgrad.ttmk[1], trqy, k);
-            atomic_add_value(pgrad.ttmk[2], trqz, k);
+            atomic_add(pgrad.ttmi[0], trqx, i);
+            atomic_add(pgrad.ttmi[1], trqy, i);
+            atomic_add(pgrad.ttmi[2], trqz, i);
+            atomic_add(pgrad.ttmk[0], trqx, k);
+            atomic_add(pgrad.ttmk[1], trqy, k);
+            atomic_add(pgrad.ttmk[2], trqz, k);
 
             // virial
 
@@ -218,7 +217,7 @@ void empole_real_self_tmpl()
                real vyz = -0.5f * (zr * pgrad.frcy + yr * pgrad.frcz);
                real vzz = -zr * pgrad.frcz;
 
-               atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
+               atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
             } // end if (do_v)
          }    // end if (do_g)
       }
@@ -295,7 +294,7 @@ void empole_recip_tmpl()
 
       // increment the permanent multipole energy and gradient
 
-      if_constexpr(do_e) atomic_add_value(0.5f * e * f, em, offset);
+      if_constexpr(do_e) atomic_add(0.5f * e * f, em, offset);
 
       if_constexpr(do_g)
       {
@@ -310,9 +309,9 @@ void empole_recip_tmpl()
          real h3 = box->recip[0][2] * f1 + box->recip[1][2] * f2 +
             box->recip[2][2] * f3;
 
-         atomic_add_value(h1 * f, gx, i);
-         atomic_add_value(h2 * f, gy, i);
-         atomic_add_value(h3 * f, gz, i);
+         atomic_add(h1 * f, gx, i);
+         atomic_add(h2 * f, gy, i);
+         atomic_add(h3 * f, gz, i);
 
          // resolve site torques then increment forces and virial
 
@@ -332,9 +331,9 @@ void empole_recip_tmpl()
          tem2 *= f;
          tem3 *= f;
 
-         atomic_add_value(tem1, trqx, i);
-         atomic_add_value(tem2, trqy, i);
-         atomic_add_value(tem3, trqz, i);
+         atomic_add(tem1, trqx, i);
+         atomic_add(tem2, trqy, i);
+         atomic_add(tem3, trqz, i);
 
          if_constexpr(do_v)
          {
@@ -366,7 +365,7 @@ void empole_recip_tmpl()
             vyz *= f;
             vzz *= f;
 
-            atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
+            atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
          } // end if (do_v)
       }    // end if (do_g)
    }       // end for (int i)

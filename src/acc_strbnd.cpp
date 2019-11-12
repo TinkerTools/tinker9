@@ -91,7 +91,7 @@ void estrbnd_tmpl()
          if_constexpr(do_e)
          {
             real e = termr * dt;
-            atomic_add_value(e, eba, offset);
+            atomic_add(e, eba, offset);
          }
 
          if_constexpr(do_g)
@@ -108,15 +108,15 @@ void estrbnd_tmpl()
             real dedyib = -dedyia - dedyic;
             real dedzib = -dedzia - dedzic;
 
-            atomic_add_value(dedxia, gx, ia);
-            atomic_add_value(dedyia, gy, ia);
-            atomic_add_value(dedzia, gz, ia);
-            atomic_add_value(dedxib, gx, ib);
-            atomic_add_value(dedyib, gy, ib);
-            atomic_add_value(dedzib, gz, ib);
-            atomic_add_value(dedxic, gx, ic);
-            atomic_add_value(dedyic, gy, ic);
-            atomic_add_value(dedzic, gz, ic);
+            atomic_add(dedxia, gx, ia);
+            atomic_add(dedyia, gy, ia);
+            atomic_add(dedzia, gz, ia);
+            atomic_add(dedxib, gx, ib);
+            atomic_add(dedyib, gy, ib);
+            atomic_add(dedzib, gz, ib);
+            atomic_add(dedxic, gx, ic);
+            atomic_add(dedyic, gy, ic);
+            atomic_add(dedzic, gz, ic);
 
             if_constexpr(do_v)
             {
@@ -127,7 +127,7 @@ void estrbnd_tmpl()
                real vzy = zab * dedyia + zcb * dedyic;
                real vzz = zab * dedzia + zcb * dedzic;
 
-               atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_eba, offset);
+               atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_eba, offset);
             }
          }
       }

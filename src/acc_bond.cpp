@@ -53,7 +53,7 @@ void ebond_tmpl()
 
       if_constexpr(do_e)
       {
-         atomic_add_value(e, eb, offset);
+         atomic_add(e, eb, offset);
       }
 
       if_constexpr(do_g)
@@ -62,12 +62,12 @@ void ebond_tmpl()
          real dedx = de * xab;
          real dedy = de * yab;
          real dedz = de * zab;
-         atomic_add_value(dedx, gx, ia);
-         atomic_add_value(dedy, gy, ia);
-         atomic_add_value(dedz, gz, ia);
-         atomic_add_value(-dedx, gx, ib);
-         atomic_add_value(-dedy, gy, ib);
-         atomic_add_value(-dedz, gz, ib);
+         atomic_add(dedx, gx, ia);
+         atomic_add(dedy, gy, ia);
+         atomic_add(dedz, gz, ia);
+         atomic_add(-dedx, gx, ib);
+         atomic_add(-dedy, gy, ib);
+         atomic_add(-dedz, gz, ib);
 
          if_constexpr(do_v)
          {
@@ -78,7 +78,7 @@ void ebond_tmpl()
             real vzy = zab * dedy;
             real vzz = zab * dedz;
 
-            atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_eb, offset);
+            atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_eb, offset);
          }
       }
    } // end for (int i)

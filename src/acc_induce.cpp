@@ -79,32 +79,32 @@ static inline void sparse_diag_precond_apply(const real (*rsd)[3],
          gyi += m1 * rsd[k][0] + m3 * rsd[k][1] + m4 * rsd[k][2];
          gzi += m2 * rsd[k][0] + m4 * rsd[k][1] + m5 * rsd[k][2];
 
-         atomic_add_value(m0 * rsd[i][0] + m1 * rsd[i][1] + m2 * rsd[i][2],
-                          &zrsd[k][0]);
-         atomic_add_value(m1 * rsd[i][0] + m3 * rsd[i][1] + m4 * rsd[i][2],
-                          &zrsd[k][1]);
-         atomic_add_value(m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2],
-                          &zrsd[k][2]);
+         atomic_add(m0 * rsd[i][0] + m1 * rsd[i][1] + m2 * rsd[i][2],
+                    &zrsd[k][0]);
+         atomic_add(m1 * rsd[i][0] + m3 * rsd[i][1] + m4 * rsd[i][2],
+                    &zrsd[k][1]);
+         atomic_add(m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2],
+                    &zrsd[k][2]);
 
          txi += m0 * rsdp[k][0] + m1 * rsdp[k][1] + m2 * rsdp[k][2];
          tyi += m1 * rsdp[k][0] + m3 * rsdp[k][1] + m4 * rsdp[k][2];
          tzi += m2 * rsdp[k][0] + m4 * rsdp[k][1] + m5 * rsdp[k][2];
 
-         atomic_add_value(m0 * rsdp[i][0] + m1 * rsdp[i][1] + m2 * rsdp[i][2],
-                          &zrsdp[k][0]);
-         atomic_add_value(m1 * rsdp[i][0] + m3 * rsdp[i][1] + m4 * rsdp[i][2],
-                          &zrsdp[k][1]);
-         atomic_add_value(m2 * rsdp[i][0] + m4 * rsdp[i][1] + m5 * rsdp[i][2],
-                          &zrsdp[k][2]);
+         atomic_add(m0 * rsdp[i][0] + m1 * rsdp[i][1] + m2 * rsdp[i][2],
+                    &zrsdp[k][0]);
+         atomic_add(m1 * rsdp[i][0] + m3 * rsdp[i][1] + m4 * rsdp[i][2],
+                    &zrsdp[k][1]);
+         atomic_add(m2 * rsdp[i][0] + m4 * rsdp[i][1] + m5 * rsdp[i][2],
+                    &zrsdp[k][2]);
       }
 
-      atomic_add_value(gxi, &zrsd[i][0]);
-      atomic_add_value(gyi, &zrsd[i][1]);
-      atomic_add_value(gzi, &zrsd[i][2]);
+      atomic_add(gxi, &zrsd[i][0]);
+      atomic_add(gyi, &zrsd[i][1]);
+      atomic_add(gzi, &zrsd[i][2]);
 
-      atomic_add_value(txi, &zrsdp[i][0]);
-      atomic_add_value(tyi, &zrsdp[i][1]);
-      atomic_add_value(tzi, &zrsdp[i][2]);
+      atomic_add(txi, &zrsdp[i][0]);
+      atomic_add(tyi, &zrsdp[i][1]);
+      atomic_add(tzi, &zrsdp[i][2]);
    }
 
    #pragma acc parallel loop deviceptr(APPLY_DPTRS_,uexclude_,minv_exclude_)
@@ -119,33 +119,27 @@ static inline void sparse_diag_precond_apply(const real (*rsd)[3],
       real m4 = minv_exclude_[m + 4];
       real m5 = minv_exclude_[m + 5];
 
-      atomic_add_value(m0 * rsd[k][0] + m1 * rsd[k][1] + m2 * rsd[k][2],
-                       &zrsd[i][0]);
-      atomic_add_value(m1 * rsd[k][0] + m3 * rsd[k][1] + m4 * rsd[k][2],
-                       &zrsd[i][1]);
-      atomic_add_value(m2 * rsd[k][0] + m4 * rsd[k][1] + m5 * rsd[k][2],
-                       &zrsd[i][2]);
+      atomic_add(m0 * rsd[k][0] + m1 * rsd[k][1] + m2 * rsd[k][2], &zrsd[i][0]);
+      atomic_add(m1 * rsd[k][0] + m3 * rsd[k][1] + m4 * rsd[k][2], &zrsd[i][1]);
+      atomic_add(m2 * rsd[k][0] + m4 * rsd[k][1] + m5 * rsd[k][2], &zrsd[i][2]);
 
-      atomic_add_value(m0 * rsd[i][0] + m1 * rsd[i][1] + m2 * rsd[i][2],
-                       &zrsd[k][0]);
-      atomic_add_value(m1 * rsd[i][0] + m3 * rsd[i][1] + m4 * rsd[i][2],
-                       &zrsd[k][1]);
-      atomic_add_value(m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2],
-                       &zrsd[k][2]);
+      atomic_add(m0 * rsd[i][0] + m1 * rsd[i][1] + m2 * rsd[i][2], &zrsd[k][0]);
+      atomic_add(m1 * rsd[i][0] + m3 * rsd[i][1] + m4 * rsd[i][2], &zrsd[k][1]);
+      atomic_add(m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2], &zrsd[k][2]);
 
-      atomic_add_value(m0 * rsdp[k][0] + m1 * rsdp[k][1] + m2 * rsdp[k][2],
-                       &zrsdp[i][0]);
-      atomic_add_value(m1 * rsdp[k][0] + m3 * rsdp[k][1] + m4 * rsdp[k][2],
-                       &zrsdp[i][1]);
-      atomic_add_value(m2 * rsdp[k][0] + m4 * rsdp[k][1] + m5 * rsdp[k][2],
-                       &zrsdp[i][2]);
+      atomic_add(m0 * rsdp[k][0] + m1 * rsdp[k][1] + m2 * rsdp[k][2],
+                 &zrsdp[i][0]);
+      atomic_add(m1 * rsdp[k][0] + m3 * rsdp[k][1] + m4 * rsdp[k][2],
+                 &zrsdp[i][1]);
+      atomic_add(m2 * rsdp[k][0] + m4 * rsdp[k][1] + m5 * rsdp[k][2],
+                 &zrsdp[i][2]);
 
-      atomic_add_value(m0 * rsdp[i][0] + m1 * rsdp[i][1] + m2 * rsdp[i][2],
-                       &zrsdp[k][0]);
-      atomic_add_value(m1 * rsdp[i][0] + m3 * rsdp[i][1] + m4 * rsdp[i][2],
-                       &zrsdp[k][1]);
-      atomic_add_value(m2 * rsdp[i][0] + m4 * rsdp[i][1] + m5 * rsdp[i][2],
-                       &zrsdp[k][2]);
+      atomic_add(m0 * rsdp[i][0] + m1 * rsdp[i][1] + m2 * rsdp[i][2],
+                 &zrsdp[k][0]);
+      atomic_add(m1 * rsdp[i][0] + m3 * rsdp[i][1] + m4 * rsdp[i][2],
+                 &zrsdp[k][1]);
+      atomic_add(m2 * rsdp[i][0] + m4 * rsdp[i][1] + m5 * rsdp[i][2],
+                 &zrsdp[k][2]);
    }
 }
 

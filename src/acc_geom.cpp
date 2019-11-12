@@ -86,7 +86,7 @@ void egeom_acc_tmpl()
          {
             real dt2 = dt * dt;
             real e = force * dt2;
-            atomic_add_value(e, eg, offset);
+            atomic_add(e, eg, offset);
          }
          if_constexpr(do_g)
          {
@@ -100,18 +100,18 @@ void egeom_acc_tmpl()
             for (int j = ja1; j < ja2; ++j) {
                int k = kgrp[j];
                real ratio = mass[k] * weigha;
-               atomic_add_value(dedx * ratio, gx, k);
-               atomic_add_value(dedy * ratio, gy, k);
-               atomic_add_value(dedz * ratio, gz, k);
+               atomic_add(dedx * ratio, gx, k);
+               atomic_add(dedy * ratio, gy, k);
+               atomic_add(dedz * ratio, gz, k);
             }
 
             #pragma acc loop independent
             for (int j = jb1; j < jb2; ++j) {
                int k = kgrp[j];
                real ratio = mass[k] * weighb;
-               atomic_add_value(-dedx * ratio, gx, k);
-               atomic_add_value(-dedy * ratio, gy, k);
-               atomic_add_value(-dedz * ratio, gz, k);
+               atomic_add(-dedx * ratio, gx, k);
+               atomic_add(-dedy * ratio, gy, k);
+               atomic_add(-dedz * ratio, gz, k);
             }
 
             if_constexpr(do_v)
@@ -123,7 +123,7 @@ void egeom_acc_tmpl()
                real vzy = zr * dedy;
                real vzz = zr * dedz;
 
-               atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_eg, offset);
+               atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_eg, offset);
             } // end if (do_v)
          }    // end if (do_g)
       }       // end ngfix loop

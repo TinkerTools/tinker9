@@ -277,7 +277,7 @@ void etortor_tmpl()
          if_constexpr(do_e)
          {
             e *= ttorunit;
-            atomic_add_value(e, ett, offset);
+            atomic_add(e, ett, offset);
          }
 
          if_constexpr(do_g)
@@ -354,21 +354,21 @@ void etortor_tmpl()
             real dedyie2 = xdc * dedzv2 - zdc * dedxv2;
             real dedzie2 = ydc * dedxv2 - xdc * dedyv2;
 
-            atomic_add_value(dedxia, gx, ia);
-            atomic_add_value(dedyia, gy, ia);
-            atomic_add_value(dedzia, gz, ia);
-            atomic_add_value(dedxib + dedxib2, gx, ib);
-            atomic_add_value(dedyib + dedyib2, gy, ib);
-            atomic_add_value(dedzib + dedzib2, gz, ib);
-            atomic_add_value(dedxic + dedxic2, gx, ic);
-            atomic_add_value(dedyic + dedyic2, gy, ic);
-            atomic_add_value(dedzic + dedzic2, gz, ic);
-            atomic_add_value(dedxid + dedxid2, gx, id);
-            atomic_add_value(dedyid + dedyid2, gy, id);
-            atomic_add_value(dedzid + dedzid2, gz, id);
-            atomic_add_value(dedxie2, gx, ie);
-            atomic_add_value(dedyie2, gy, ie);
-            atomic_add_value(dedzie2, gz, ie);
+            atomic_add(dedxia, gx, ia);
+            atomic_add(dedyia, gy, ia);
+            atomic_add(dedzia, gz, ia);
+            atomic_add(dedxib + dedxib2, gx, ib);
+            atomic_add(dedyib + dedyib2, gy, ib);
+            atomic_add(dedzib + dedzib2, gz, ib);
+            atomic_add(dedxic + dedxic2, gx, ic);
+            atomic_add(dedyic + dedyic2, gy, ic);
+            atomic_add(dedzic + dedzic2, gz, ic);
+            atomic_add(dedxid + dedxid2, gx, id);
+            atomic_add(dedyid + dedyid2, gy, id);
+            atomic_add(dedzid + dedzid2, gz, id);
+            atomic_add(dedxie2, gx, ie);
+            atomic_add(dedyie2, gy, ie);
+            atomic_add(dedzie2, gz, ie);
 
             if_constexpr(do_v)
             {
@@ -391,8 +391,8 @@ void etortor_tmpl()
                real vzz2 =
                   zdc * (dedzid2 + dedzie2) - zcb * dedzib2 + zed * dedzie2;
 
-               atomic_add_value(vxx + vxx2, vyx + vyx2, vzx + vzx2, vyy + vyy2,
-                                vzy + vzy2, vzz + vzz2, vir_ett, offset);
+               atomic_add(vxx + vxx2, vyx + vyx2, vzx + vzx2, vyy + vyy2,
+                          vzy + vzy2, vzz + vzz2, vir_ett, offset);
             }
          }
       }

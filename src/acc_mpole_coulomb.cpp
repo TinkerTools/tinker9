@@ -75,23 +75,23 @@ void empole_coulomb_tmpl()
                rpole[k][mpl_pme_zz], //
                f, 0, e, pgrad);
 
-            if_constexpr(do_a) atomic_add_value(1, nem, offset);
-            if_constexpr(do_e) atomic_add_value(e, em, offset);
+            if_constexpr(do_a) atomic_add(1, nem, offset);
+            if_constexpr(do_e) atomic_add(e, em, offset);
             if_constexpr(do_g)
             {
                gxi += pgrad.frcx;
                gyi += pgrad.frcy;
                gzi += pgrad.frcz;
-               atomic_add_value(-pgrad.frcx, gx, k);
-               atomic_add_value(-pgrad.frcy, gy, k);
-               atomic_add_value(-pgrad.frcz, gz, k);
+               atomic_add(-pgrad.frcx, gx, k);
+               atomic_add(-pgrad.frcy, gy, k);
+               atomic_add(-pgrad.frcz, gz, k);
 
                txi += pgrad.ttmi[0];
                tyi += pgrad.ttmi[1];
                tzi += pgrad.ttmi[2];
-               atomic_add_value(pgrad.ttmk[0], trqx, k);
-               atomic_add_value(pgrad.ttmk[1], trqy, k);
-               atomic_add_value(pgrad.ttmk[2], trqz, k);
+               atomic_add(pgrad.ttmk[0], trqx, k);
+               atomic_add(pgrad.ttmk[1], trqy, k);
+               atomic_add(pgrad.ttmk[2], trqz, k);
 
                // virial
 
@@ -104,8 +104,7 @@ void empole_coulomb_tmpl()
                   real vyz = -0.5f * (zr * pgrad.frcy + yr * pgrad.frcz);
                   real vzz = -zr * pgrad.frcz;
 
-                  atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_em,
-                                   offset);
+                  atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
                } // end if (do_v)
             }    // end if (do_g)
          }       // end if (r2 <= off2)
@@ -113,12 +112,12 @@ void empole_coulomb_tmpl()
 
       if_constexpr(do_g)
       {
-         atomic_add_value(gxi, gx, i);
-         atomic_add_value(gyi, gy, i);
-         atomic_add_value(gzi, gz, i);
-         atomic_add_value(txi, trqx, i);
-         atomic_add_value(tyi, trqy, i);
-         atomic_add_value(tzi, trqz, i);
+         atomic_add(gxi, gx, i);
+         atomic_add(gyi, gy, i);
+         atomic_add(gzi, gz, i);
+         atomic_add(txi, trqx, i);
+         atomic_add(tyi, trqy, i);
+         atomic_add(tzi, trqz, i);
       }
    } // end for (int i)
 
@@ -163,23 +162,23 @@ void empole_coulomb_tmpl()
             rpole[k][mpl_pme_zz], //
             f, 0, e, pgrad);
 
-         if_constexpr(do_a) if (mscale == -1) atomic_add_value(-1, nem, offset);
-         if_constexpr(do_e) atomic_add_value(e, em, offset);
+         if_constexpr(do_a) if (mscale == -1) atomic_add(-1, nem, offset);
+         if_constexpr(do_e) atomic_add(e, em, offset);
          if_constexpr(do_g)
          {
-            atomic_add_value(pgrad.frcx, gx, i);
-            atomic_add_value(pgrad.frcy, gy, i);
-            atomic_add_value(pgrad.frcz, gz, i);
-            atomic_add_value(-pgrad.frcx, gx, k);
-            atomic_add_value(-pgrad.frcy, gy, k);
-            atomic_add_value(-pgrad.frcz, gz, k);
+            atomic_add(pgrad.frcx, gx, i);
+            atomic_add(pgrad.frcy, gy, i);
+            atomic_add(pgrad.frcz, gz, i);
+            atomic_add(-pgrad.frcx, gx, k);
+            atomic_add(-pgrad.frcy, gy, k);
+            atomic_add(-pgrad.frcz, gz, k);
 
-            atomic_add_value(pgrad.ttmi[0], trqx, i);
-            atomic_add_value(pgrad.ttmi[1], trqy, i);
-            atomic_add_value(pgrad.ttmi[2], trqz, i);
-            atomic_add_value(pgrad.ttmk[0], trqx, k);
-            atomic_add_value(pgrad.ttmk[1], trqy, k);
-            atomic_add_value(pgrad.ttmk[2], trqz, k);
+            atomic_add(pgrad.ttmi[0], trqx, i);
+            atomic_add(pgrad.ttmi[1], trqy, i);
+            atomic_add(pgrad.ttmi[2], trqz, i);
+            atomic_add(pgrad.ttmk[0], trqx, k);
+            atomic_add(pgrad.ttmk[1], trqy, k);
+            atomic_add(pgrad.ttmk[2], trqz, k);
 
             // virial
 
@@ -192,7 +191,7 @@ void empole_coulomb_tmpl()
                real vyz = -0.5f * (zr * pgrad.frcy + yr * pgrad.frcz);
                real vzz = -zr * pgrad.frcz;
 
-               atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
+               atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
             } // end if (do_v)
          }    // end if (do_g)
       }

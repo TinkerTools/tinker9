@@ -16,7 +16,7 @@ void epolar0_dotprod(const real (*gpu_uind)[3], const real (*gpu_udirp)[3])
       real e = polarity_inv[i] *
          (gpu_uind[i][0] * gpu_udirp[i][0] + gpu_uind[i][1] * gpu_udirp[i][1] +
           gpu_uind[i][2] * gpu_udirp[i][2]);
-      atomic_add_value(f * e, ep, offset);
+      atomic_add(f * e, ep, offset);
    }
 }
 TINKER_NAMESPACE_END

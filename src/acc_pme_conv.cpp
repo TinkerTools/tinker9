@@ -75,8 +75,8 @@ void pme_conv_tmpl(PMEUnit pme_u, virial_buffer gpu_vir)
             real vyz = h2 * h3 * vterm;
             real vzz = (h3 * h3 * vterm - eterm);
 
-            atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir,
-                             i & (bufsize - 1));
+            atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir,
+                       i & (bufsize - 1));
          }
       }
 

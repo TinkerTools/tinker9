@@ -188,19 +188,19 @@ void evdw_hal_cu1(HAL_ARGS, const Spatial* restrict sp)
       }
 
 
-      if_constexpr(do_a) atomic_add_value(ctl, nev, offset);
-      if_constexpr(do_e) atomic_add_value(etl, ev, offset);
+      if_constexpr(do_a) atomic_add(ctl, nev, offset);
+      if_constexpr(do_e) atomic_add(etl, ev, offset);
       if_constexpr(do_g)
       {
-         atomic_add_value(gxi, gxred, i);
-         atomic_add_value(gyi, gyred, i);
-         atomic_add_value(gzi, gzred, i);
-         atomic_add_value(gxk[threadIdx.x], gxred, shk);
-         atomic_add_value(gyk[threadIdx.x], gyred, shk);
-         atomic_add_value(gzk[threadIdx.x], gzred, shk);
+         atomic_add(gxi, gxred, i);
+         atomic_add(gyi, gyred, i);
+         atomic_add(gzi, gzred, i);
+         atomic_add(gxk[threadIdx.x], gxred, shk);
+         atomic_add(gyk[threadIdx.x], gyred, shk);
+         atomic_add(gzk[threadIdx.x], gzred, shk);
       }
-      if_constexpr(do_v) atomic_add_value(vtlxx, vtlyx, vtlzx, vtlyy, vtlzy,
-                                          vtlzz, vir_ev, offset);
+      if_constexpr(do_v)
+         atomic_add(vtlxx, vtlyx, vtlzx, vtlyy, vtlzy, vtlzz, vir_ev, offset);
    } // end for (iw)
 }
 
@@ -263,8 +263,8 @@ void evdw_hal_cu2(HAL_ARGS, const real* restrict xred,
             if_constexpr(do_e) e = e * taper;
          }
 
-         if_constexpr(do_a) if (vscale == -1) atomic_add_value(-1, nev, offset);
-         if_constexpr(do_e) atomic_add_value(e, ev, offset);
+         if_constexpr(do_a) if (vscale == -1) atomic_add(-1, nev, offset);
+         if_constexpr(do_e) atomic_add(e, ev, offset);
          if_constexpr(do_g)
          {
             de *= REAL_RECIP(rik);
@@ -272,12 +272,12 @@ void evdw_hal_cu2(HAL_ARGS, const real* restrict xred,
             real dedy = de * yr;
             real dedz = de * zr;
 
-            atomic_add_value(dedx, gxred, i);
-            atomic_add_value(dedy, gyred, i);
-            atomic_add_value(dedz, gzred, i);
-            atomic_add_value(-dedx, gxred, k);
-            atomic_add_value(-dedy, gyred, k);
-            atomic_add_value(-dedz, gzred, k);
+            atomic_add(dedx, gxred, i);
+            atomic_add(dedy, gyred, i);
+            atomic_add(dedz, gzred, i);
+            atomic_add(-dedx, gxred, k);
+            atomic_add(-dedy, gyred, k);
+            atomic_add(-dedz, gzred, k);
 
             if_constexpr(do_v)
             {
@@ -287,7 +287,7 @@ void evdw_hal_cu2(HAL_ARGS, const real* restrict xred,
                real vyy = yr * dedy;
                real vzy = zr * dedy;
                real vzz = zr * dedz;
-               atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_ev, offset);
+               atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_ev, offset);
             } // end if (do_v)
          }    // end if (do_g)
       }

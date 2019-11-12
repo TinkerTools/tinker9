@@ -366,8 +366,7 @@ void torque_tmpl(virial_buffer gpu_vir)
              yiy * frcy[2] + yiz * frcz[2]);
          real vzz = zix * frcx[2] + ziy * frcy[2] + ziz * frcz[2];
 
-         atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir,
-                          i & (bufsize - 1));
+         atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir, i & (bufsize - 1));
       } // end if_constexpr(DO_V)
    }    // end for (int i)
 }

@@ -117,7 +117,7 @@ void eopbend_tmpl()
          {
             real e = opbunit * force * dt2 *
                (1 + copb * dt + qopb * dt2 + popb * dt3 + sopb * dt4);
-            atomic_add_value(e, eopb, offset);
+            atomic_add(e, eopb, offset);
          }
 
          if_constexpr(do_g)
@@ -182,18 +182,18 @@ void eopbend_tmpl()
             real dedyib = -dedyia - dedyic - dedyid;
             real dedzib = -dedzia - dedzic - dedzid;
 
-            atomic_add_value(dedxia, gx, ia);
-            atomic_add_value(dedyia, gy, ia);
-            atomic_add_value(dedzia, gz, ia);
-            atomic_add_value(dedxib, gx, ib);
-            atomic_add_value(dedyib, gy, ib);
-            atomic_add_value(dedzib, gz, ib);
-            atomic_add_value(dedxic, gx, ic);
-            atomic_add_value(dedyic, gy, ic);
-            atomic_add_value(dedzic, gz, ic);
-            atomic_add_value(dedxid, gx, id);
-            atomic_add_value(dedyid, gy, id);
-            atomic_add_value(dedzid, gz, id);
+            atomic_add(dedxia, gx, ia);
+            atomic_add(dedyia, gy, ia);
+            atomic_add(dedzia, gz, ia);
+            atomic_add(dedxib, gx, ib);
+            atomic_add(dedyib, gy, ib);
+            atomic_add(dedzib, gz, ib);
+            atomic_add(dedxic, gx, ic);
+            atomic_add(dedyic, gy, ic);
+            atomic_add(dedzic, gz, ic);
+            atomic_add(dedxid, gx, id);
+            atomic_add(dedyid, gy, id);
+            atomic_add(dedzid, gz, id);
 
             if_constexpr(do_v)
             {
@@ -204,7 +204,7 @@ void eopbend_tmpl()
                real vzy = zab * dedyia + zcb * dedyic + zdb * dedyid;
                real vzz = zab * dedzia + zcb * dedzic + zdb * dedzid;
 
-               atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_eopb, offset);
+               atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_eopb, offset);
             }
          }
       }

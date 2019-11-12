@@ -108,7 +108,7 @@ void epitors_tmpl()
          if_constexpr(do_e)
          {
             real e = ptorunit * v2 * phi2;
-            atomic_add_value(e, ept, offset);
+            atomic_add(e, ept, offset);
          }
 
          if_constexpr(do_g)
@@ -170,24 +170,24 @@ void epitors_tmpl()
             dedyid += (dedyiq - dedyia - dedyib);
             dedzid += (dedziq - dedzia - dedzib);
 
-            atomic_add_value(dedxia, gx, ia);
-            atomic_add_value(dedyia, gy, ia);
-            atomic_add_value(dedzia, gz, ia);
-            atomic_add_value(dedxib, gx, ib);
-            atomic_add_value(dedyib, gy, ib);
-            atomic_add_value(dedzib, gz, ib);
-            atomic_add_value(dedxic, gx, ic);
-            atomic_add_value(dedyic, gy, ic);
-            atomic_add_value(dedzic, gz, ic);
-            atomic_add_value(dedxid, gx, id);
-            atomic_add_value(dedyid, gy, id);
-            atomic_add_value(dedzid, gz, id);
-            atomic_add_value(dedxie, gx, ie);
-            atomic_add_value(dedyie, gy, ie);
-            atomic_add_value(dedzie, gz, ie);
-            atomic_add_value(dedxig, gx, ig);
-            atomic_add_value(dedyig, gy, ig);
-            atomic_add_value(dedzig, gz, ig);
+            atomic_add(dedxia, gx, ia);
+            atomic_add(dedyia, gy, ia);
+            atomic_add(dedzia, gz, ia);
+            atomic_add(dedxib, gx, ib);
+            atomic_add(dedyib, gy, ib);
+            atomic_add(dedzib, gz, ib);
+            atomic_add(dedxic, gx, ic);
+            atomic_add(dedyic, gy, ic);
+            atomic_add(dedzic, gz, ic);
+            atomic_add(dedxid, gx, id);
+            atomic_add(dedyid, gy, id);
+            atomic_add(dedzid, gz, id);
+            atomic_add(dedxie, gx, ie);
+            atomic_add(dedyie, gy, ie);
+            atomic_add(dedzie, gz, ie);
+            atomic_add(dedxig, gx, ig);
+            atomic_add(dedyig, gy, ig);
+            atomic_add(dedzig, gz, ig);
 
             if_constexpr(do_v)
             {
@@ -201,7 +201,7 @@ void epitors_tmpl()
                real vzy = zdc * vyterm + zcp * dedyip - zqd * dedyiq;
                real vzz = zdc * vzterm + zcp * dedzip - zqd * dedziq;
 
-               atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_ept, offset);
+               atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_ept, offset);
             }
          }
       }

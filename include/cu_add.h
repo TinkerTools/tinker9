@@ -26,7 +26,7 @@ double atomicAdd(double* ptr, double v)
 TINKER_NAMESPACE_BEGIN
 template <class T>
 __device__
-void atomic_add_value(T value, T* buffer, size_t offset = 0)
+void atomic_add(T value, T* buffer, size_t offset = 0)
 {
    atomicAdd(&buffer[offset], value);
 }
@@ -34,7 +34,7 @@ void atomic_add_value(T value, T* buffer, size_t offset = 0)
 
 template <class T>
 __device__
-void atomic_add_value(T value, unsigned long long* buffer, size_t offset = 0)
+void atomic_add(T value, unsigned long long* buffer, size_t offset = 0)
 {
    static_assert(
       std::is_same<T, float>::value || std::is_same<T, double>::value, "");
@@ -47,28 +47,28 @@ void atomic_add_value(T value, unsigned long long* buffer, size_t offset = 0)
 
 template <class T>
 __device__
-void atomic_add_value(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T (*buffer)[8],
-                      size_t offset = 0)
+void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T (*buffer)[8],
+                size_t offset = 0)
 {
-   atomic_add_value(vxx, buffer[offset], 0);
-   atomic_add_value(vyx, buffer[offset], 1);
-   atomic_add_value(vzx, buffer[offset], 2);
-   atomic_add_value(vyy, buffer[offset], 3);
-   atomic_add_value(vzy, buffer[offset], 4);
-   atomic_add_value(vzz, buffer[offset], 5);
+   atomic_add(vxx, buffer[offset], 0);
+   atomic_add(vyx, buffer[offset], 1);
+   atomic_add(vzx, buffer[offset], 2);
+   atomic_add(vyy, buffer[offset], 3);
+   atomic_add(vzy, buffer[offset], 4);
+   atomic_add(vzz, buffer[offset], 5);
 }
 
 
 template <class T>
 __device__
-void atomic_add_value(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz,
-                      unsigned long long (*buffer)[8], size_t offset = 0)
+void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz,
+                unsigned long long (*buffer)[8], size_t offset = 0)
 {
-   atomic_add_value(vxx, buffer[offset], 0);
-   atomic_add_value(vyx, buffer[offset], 1);
-   atomic_add_value(vzx, buffer[offset], 2);
-   atomic_add_value(vyy, buffer[offset], 3);
-   atomic_add_value(vzy, buffer[offset], 4);
-   atomic_add_value(vzz, buffer[offset], 5);
+   atomic_add(vxx, buffer[offset], 0);
+   atomic_add(vyx, buffer[offset], 1);
+   atomic_add(vzx, buffer[offset], 2);
+   atomic_add(vyy, buffer[offset], 3);
+   atomic_add(vzy, buffer[offset], 4);
+   atomic_add(vzz, buffer[offset], 5);
 }
 TINKER_NAMESPACE_END

@@ -117,8 +117,8 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
 
             if_constexpr(do_a && do_e)
             {
-               atomic_add_value(1, nep, offset);
-               atomic_add_value(e, ep, offset);
+               atomic_add(1, nep, offset);
+               atomic_add(e, ep, offset);
             }
 
             if_constexpr(do_g)
@@ -126,16 +126,16 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
                gxi += pgrad.frcx;
                gyi += pgrad.frcy;
                gzi += pgrad.frcz;
-               atomic_add_value(-pgrad.frcx, gx, k);
-               atomic_add_value(-pgrad.frcy, gy, k);
-               atomic_add_value(-pgrad.frcz, gz, k);
+               atomic_add(-pgrad.frcx, gx, k);
+               atomic_add(-pgrad.frcy, gy, k);
+               atomic_add(-pgrad.frcz, gz, k);
 
                txi += pgrad.ufldi[0];
                tyi += pgrad.ufldi[1];
                tzi += pgrad.ufldi[2];
-               atomic_add_value(pgrad.ufldk[0], &ufld[k][0]);
-               atomic_add_value(pgrad.ufldk[1], &ufld[k][1]);
-               atomic_add_value(pgrad.ufldk[2], &ufld[k][2]);
+               atomic_add(pgrad.ufldk[0], &ufld[k][0]);
+               atomic_add(pgrad.ufldk[1], &ufld[k][1]);
+               atomic_add(pgrad.ufldk[2], &ufld[k][2]);
 
                du0 += pgrad.dufldi[0];
                du1 += pgrad.dufldi[1];
@@ -143,12 +143,12 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
                du3 += pgrad.dufldi[3];
                du4 += pgrad.dufldi[4];
                du5 += pgrad.dufldi[5];
-               atomic_add_value(pgrad.dufldk[0], &dufld[k][0]);
-               atomic_add_value(pgrad.dufldk[1], &dufld[k][1]);
-               atomic_add_value(pgrad.dufldk[2], &dufld[k][2]);
-               atomic_add_value(pgrad.dufldk[3], &dufld[k][3]);
-               atomic_add_value(pgrad.dufldk[4], &dufld[k][4]);
-               atomic_add_value(pgrad.dufldk[5], &dufld[k][5]);
+               atomic_add(pgrad.dufldk[0], &dufld[k][0]);
+               atomic_add(pgrad.dufldk[1], &dufld[k][1]);
+               atomic_add(pgrad.dufldk[2], &dufld[k][2]);
+               atomic_add(pgrad.dufldk[3], &dufld[k][3]);
+               atomic_add(pgrad.dufldk[4], &dufld[k][4]);
+               atomic_add(pgrad.dufldk[5], &dufld[k][5]);
 
                if_constexpr(do_v)
                {
@@ -159,8 +159,7 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
                   real vyz = -0.5f * (zr * pgrad.frcy + yr * pgrad.frcz);
                   real vzz = -zr * pgrad.frcz;
 
-                  atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep,
-                                   offset);
+                  atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep, offset);
                }
             }
          }
@@ -170,18 +169,18 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
 
       if_constexpr(do_g)
       {
-         atomic_add_value(gxi, gx, i);
-         atomic_add_value(gyi, gy, i);
-         atomic_add_value(gzi, gz, i);
-         atomic_add_value(txi, &ufld[i][0]);
-         atomic_add_value(tyi, &ufld[i][1]);
-         atomic_add_value(tzi, &ufld[i][2]);
-         atomic_add_value(du0, &dufld[i][0]);
-         atomic_add_value(du1, &dufld[i][1]);
-         atomic_add_value(du2, &dufld[i][2]);
-         atomic_add_value(du3, &dufld[i][3]);
-         atomic_add_value(du4, &dufld[i][4]);
-         atomic_add_value(du5, &dufld[i][5]);
+         atomic_add(gxi, gx, i);
+         atomic_add(gyi, gy, i);
+         atomic_add(gzi, gz, i);
+         atomic_add(txi, &ufld[i][0]);
+         atomic_add(tyi, &ufld[i][1]);
+         atomic_add(tzi, &ufld[i][2]);
+         atomic_add(du0, &dufld[i][0]);
+         atomic_add(du1, &dufld[i][1]);
+         atomic_add(du2, &dufld[i][2]);
+         atomic_add(du3, &dufld[i][3]);
+         atomic_add(du4, &dufld[i][4]);
+         atomic_add(du5, &dufld[i][5]);
       }
    } // end for (int i)
 
@@ -263,38 +262,38 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
          if_constexpr(do_a && do_e)
          {
             if (pscale == -1)
-               atomic_add_value(-1, nep, offset);
-            atomic_add_value(e, ep, offset);
+               atomic_add(-1, nep, offset);
+            atomic_add(e, ep, offset);
          }
 
          if_constexpr(do_g)
          {
-            atomic_add_value(pgrad.frcx, gx, i);
-            atomic_add_value(pgrad.frcy, gy, i);
-            atomic_add_value(pgrad.frcz, gz, i);
-            atomic_add_value(-pgrad.frcx, gx, k);
-            atomic_add_value(-pgrad.frcy, gy, k);
-            atomic_add_value(-pgrad.frcz, gz, k);
+            atomic_add(pgrad.frcx, gx, i);
+            atomic_add(pgrad.frcy, gy, i);
+            atomic_add(pgrad.frcz, gz, i);
+            atomic_add(-pgrad.frcx, gx, k);
+            atomic_add(-pgrad.frcy, gy, k);
+            atomic_add(-pgrad.frcz, gz, k);
 
-            atomic_add_value(pgrad.ufldi[0], &ufld[i][0]);
-            atomic_add_value(pgrad.ufldi[1], &ufld[i][1]);
-            atomic_add_value(pgrad.ufldi[2], &ufld[i][2]);
-            atomic_add_value(pgrad.ufldk[0], &ufld[k][0]);
-            atomic_add_value(pgrad.ufldk[1], &ufld[k][1]);
-            atomic_add_value(pgrad.ufldk[2], &ufld[k][2]);
+            atomic_add(pgrad.ufldi[0], &ufld[i][0]);
+            atomic_add(pgrad.ufldi[1], &ufld[i][1]);
+            atomic_add(pgrad.ufldi[2], &ufld[i][2]);
+            atomic_add(pgrad.ufldk[0], &ufld[k][0]);
+            atomic_add(pgrad.ufldk[1], &ufld[k][1]);
+            atomic_add(pgrad.ufldk[2], &ufld[k][2]);
 
-            atomic_add_value(pgrad.dufldi[0], &dufld[i][0]);
-            atomic_add_value(pgrad.dufldi[1], &dufld[i][1]);
-            atomic_add_value(pgrad.dufldi[2], &dufld[i][2]);
-            atomic_add_value(pgrad.dufldi[3], &dufld[i][3]);
-            atomic_add_value(pgrad.dufldi[4], &dufld[i][4]);
-            atomic_add_value(pgrad.dufldi[5], &dufld[i][5]);
-            atomic_add_value(pgrad.dufldk[0], &dufld[k][0]);
-            atomic_add_value(pgrad.dufldk[1], &dufld[k][1]);
-            atomic_add_value(pgrad.dufldk[2], &dufld[k][2]);
-            atomic_add_value(pgrad.dufldk[3], &dufld[k][3]);
-            atomic_add_value(pgrad.dufldk[4], &dufld[k][4]);
-            atomic_add_value(pgrad.dufldk[5], &dufld[k][5]);
+            atomic_add(pgrad.dufldi[0], &dufld[i][0]);
+            atomic_add(pgrad.dufldi[1], &dufld[i][1]);
+            atomic_add(pgrad.dufldi[2], &dufld[i][2]);
+            atomic_add(pgrad.dufldi[3], &dufld[i][3]);
+            atomic_add(pgrad.dufldi[4], &dufld[i][4]);
+            atomic_add(pgrad.dufldi[5], &dufld[i][5]);
+            atomic_add(pgrad.dufldk[0], &dufld[k][0]);
+            atomic_add(pgrad.dufldk[1], &dufld[k][1]);
+            atomic_add(pgrad.dufldk[2], &dufld[k][2]);
+            atomic_add(pgrad.dufldk[3], &dufld[k][3]);
+            atomic_add(pgrad.dufldk[4], &dufld[k][4]);
+            atomic_add(pgrad.dufldk[5], &dufld[k][5]);
 
             if_constexpr(do_v)
             {
@@ -305,7 +304,7 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
                real vyz = -0.5f * (zr * pgrad.frcy + yr * pgrad.frcz);
                real vzz = -zr * pgrad.frcz;
 
-               atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep, offset);
+               atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep, offset);
             }
          }
       }
@@ -379,7 +378,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
          real e = 0.5f * f *
             (fuind[i][0] * fphi[i][1] + fuind[i][1] * fphi[i][2] +
              fuind[i][2] * fphi[i][3]);
-         atomic_add_value(e, ep, offset);
+         atomic_add(e, ep, offset);
       }
       // end if
    }
@@ -503,8 +502,8 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
          uiy = gpu_uind[i][1];
          uiz = gpu_uind[i][2];
          real uii = dix * uix + diy * uiy + diz * uiz;
-         atomic_add_value(fterm_term * uii, ep, offset);
-         atomic_add_value(1, nep, offset);
+         atomic_add(fterm_term * uii, ep, offset);
+         atomic_add(1, nep, offset);
          // end if
       }
    }
@@ -619,8 +618,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
             0.5f * (cphid[3] * gpu_uinp[i][2] + cphip[3] * gpu_uind[i][2]);
          // end if
 
-         atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep,
-                          i & (bufsize - 1));
+         atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep, i & (bufsize - 1));
       }
 
       // qgrip: pvu_qgrid
@@ -693,8 +691,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
             real vyz = h2 * h3 * vterm;
             real vzz = (h3 * h3 * vterm - eterm);
 
-            atomic_add_value(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep,
-                             i & (bufsize - 1));
+            atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep, i & (bufsize - 1));
          }
       }
    }

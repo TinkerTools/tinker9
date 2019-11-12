@@ -35,7 +35,7 @@ void eurey_tmpl()
       if_constexpr(do_e)
       {
          real e = ureyunit * force * dt2 * (1 + cury * dt + qury * dt2);
-         atomic_add_value(e, eub, offset);
+         atomic_add(e, eub, offset);
       }
 
       if_constexpr(do_g)
@@ -47,12 +47,12 @@ void eurey_tmpl()
          real dedy = de * yac;
          real dedz = de * zac;
 
-         atomic_add_value(dedx, gx, ia);
-         atomic_add_value(dedy, gy, ia);
-         atomic_add_value(dedz, gz, ia);
-         atomic_add_value(-dedx, gx, ic);
-         atomic_add_value(-dedy, gy, ic);
-         atomic_add_value(-dedz, gz, ic);
+         atomic_add(dedx, gx, ia);
+         atomic_add(dedy, gy, ia);
+         atomic_add(dedz, gz, ia);
+         atomic_add(-dedx, gx, ic);
+         atomic_add(-dedy, gy, ic);
+         atomic_add(-dedz, gz, ic);
 
          if_constexpr(do_v)
          {
@@ -63,7 +63,7 @@ void eurey_tmpl()
             real vzy = zac * dedy;
             real vzz = zac * dedz;
 
-            atomic_add_value(vxx, vyx, vzx, vyy, vzy, vzz, vir_eub, offset);
+            atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_eub, offset);
          }
       }
    } // end for (int i)
