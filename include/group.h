@@ -19,9 +19,6 @@ struct Group
    real* grpmass;
    /// \brief Weight for each set of group-group interactions.
    real* wgrp;
-
-
-   ~Group();
 };
 TINKER_EXTERN Group grp;
 

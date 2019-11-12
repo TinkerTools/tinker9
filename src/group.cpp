@@ -6,21 +6,12 @@
 
 
 TINKER_NAMESPACE_BEGIN
-Group::~Group()
-{
-   device_array::deallocate(kgrp, grplist, igrp, grpmass, wgrp);
-   kgrp = nullptr;
-   grplist = nullptr;
-   igrp = nullptr;
-   grpmass = nullptr;
-   wgrp = nullptr;
-}
-
-
 void group_data(rc_op op)
 {
    if (op & rc_dealloc) {
-      grp.~Group();
+      auto& st = grp;
+      device_array::deallocate(st.kgrp, st.grplist, st.igrp, st.grpmass,
+                               st.wgrp);
    }
 
 

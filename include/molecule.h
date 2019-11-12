@@ -19,9 +19,6 @@ struct Molecule
    real totmass;
    /// \brief Molecular weight for each molecule in the system.
    real* molmass;
-
-
-   ~Molecule();
 };
 TINKER_EXTERN Molecule molecule;
 

@@ -108,6 +108,12 @@ explicitly set `fftw_x` in the command line.
 Top-level `CUDA` installation directory, under which `include` and `lib`
 directories are expected to be found.
 
+Sometimes the PGI compiler and the NVCC compiler are not "compatible". For
+instance, PGI 19.4 supports CUDA 9.2, 10.0, 10.1, and the default CUDA
+version used in PGI 19.4 may be 9.2 and the external NVCC version is 10.1.
+One solution is to pass `CUDA_HOME=${cuda_dir}` to the PGI compiler, in
+which case, `cuda_dir` should be set to "/usr/local/cuda-10.1".
+
 ### fortran_config / cxx_config / acc_config / link_config (UNSPECIFIED)
 Addtional files that contain Fortran/C++/OpenAcc/linker related flags.
 This is the mechanism we adopt to extend the multi-compiler support.
@@ -162,4 +168,7 @@ Print the Makefile documentation in the terminal window.
 
 ### clean
 Clean up the current build directory.
+
+### headers
+Test whether the "include" directives in every header file are complete.
 

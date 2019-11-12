@@ -5,20 +5,11 @@
 
 
 TINKER_NAMESPACE_BEGIN
-Molecule::~Molecule()
-{
-   device_array::deallocate(imol, kmol, molecule, molmass);
-   imol = nullptr;
-   kmol = nullptr;
-   molecule = nullptr;
-   molmass = nullptr;
-}
-
-
 void molecule_data(rc_op op)
 {
    if (op & rc_dealloc) {
-      molecule.~Molecule();
+      auto& st = molecule;
+      device_array::deallocate(st.imol, st.kmol, st.molecule, st.molmass);
    }
 
 
