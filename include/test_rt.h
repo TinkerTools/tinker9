@@ -1,6 +1,4 @@
-#ifndef TINKER_TEST_RT_H_
-#define TINKER_TEST_RT_H_
-
+#pragma once
 #include "energy.h"
 #include "md.h"
 #include "rc_man.h"
@@ -8,11 +6,12 @@
 #include <string>
 #include <vector>
 
+
 TINKER_NAMESPACE_BEGIN
 /**
- * @brief
- * write a file to the disk in its constructor and remove this file in its
- * destructor
+ * \ingroup test
+ * \brief Write a file to the disk in its constructor and remove this file in
+ * its destructor, unless the file is set to be kept on disk.
  */
 class TestFile
 {
@@ -23,11 +22,13 @@ private:
 public:
    TestFile(const std::string& name, const std::string& content);
    ~TestFile();
+   void keep();
 };
 
+
 /**
- * @brief
- * if possible, remove the file with the given name in its destructor
+ * \ingroup
+ * \brief Remove the file with the given name in its destructor if possible.
  */
 class TestFileExpected
 {
@@ -133,5 +134,3 @@ TINKER_NAMESPACE_END
       COMPARE_GRADIENT3_(gpu_gx, gpu_gy, gpu_gz, ref_g, eps_g, do_ij_);        \
       COMPARE_VIR_(gpu_v, ref_v, eps_v);                                       \
    }
-
-#endif

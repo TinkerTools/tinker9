@@ -6,6 +6,7 @@
  * \defgroup md      MD Configuration
  * \defgroup nvidia  Nvidia GPU
  * \defgroup spatial Spatial Decomposition
+ * \defgroup test    Unit Test
  * \defgroup util    Utilities
  */
 

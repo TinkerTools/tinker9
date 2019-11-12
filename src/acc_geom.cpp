@@ -109,9 +109,9 @@ void egeom_acc_tmpl()
             for (int j = jb1; j < jb2; ++j) {
                int k = kgrp[j];
                real ratio = mass[k] * weighb;
-               atomic_add_value(dedx * ratio, gx, k);
-               atomic_add_value(dedy * ratio, gy, k);
-               atomic_add_value(dedz * ratio, gz, k);
+               atomic_add_value(-dedx * ratio, gx, k);
+               atomic_add_value(-dedy * ratio, gy, k);
+               atomic_add_value(-dedz * ratio, gz, k);
             }
 
             if_constexpr(do_v)

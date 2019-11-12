@@ -1,6 +1,4 @@
-#ifndef TINKER_TINKER_RT_H_
-#define TINKER_TINKER_RT_H_
-
+#pragma once
 #include "io_fort_str.h"
 #include "io_print.h"
 #include "io_read.h"
@@ -8,8 +6,10 @@
 #include "mathfunc.h"
 #include "md.h"
 
+
 TINKER_NAMESPACE_BEGIN
 void nextarg(size_t len, char* str, int& exist);
+
 
 template <size_t Len>
 void nextarg(char (&str)[Len], int& exist)
@@ -17,6 +17,7 @@ void nextarg(char (&str)[Len], int& exist)
    nextarg(Len, str, exist);
 }
 TINKER_NAMESPACE_END
+
 
 extern "C"
 {
@@ -38,5 +39,3 @@ extern "C"
    void TINKER_RT(dftmod)(double* bsmod, double* bsarray, int* nfft,
                           int* order);
 }
-
-#endif

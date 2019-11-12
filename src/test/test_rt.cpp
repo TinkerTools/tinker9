@@ -4,6 +4,7 @@
 #include <fstream>
 #include <tinker/detail/bath.hh>
 
+
 TINKER_NAMESPACE_BEGIN
 TestFile::TestFile(const std::string& name, const std::string& content)
    : good_(false)
@@ -16,15 +17,24 @@ TestFile::TestFile(const std::string& name, const std::string& content)
    }
 }
 
+
 TestFile::~TestFile()
 {
    if (good_)
       std::remove(name_.c_str());
 }
 
+
+void TestFile::keep()
+{
+   good_ = false;
+}
+
+
 TestFileExpected::TestFileExpected(const std::string& name)
    : name_(name)
 {}
+
 
 TestFileExpected::~TestFileExpected()
 {
@@ -33,6 +43,7 @@ TestFileExpected::~TestFileExpected()
       std::remove(name_.c_str());
    }
 }
+
 
 double test_get_eps(double eps_single, double eps_double)
 {
@@ -45,6 +56,7 @@ double test_get_eps(double eps_single, double eps_double)
 #endif
 }
 
+
 void test_begin_with_args(int argc, const char** argv)
 {
    fortran_runtime_initialize(argc, const_cast<char**>(argv));
@@ -55,11 +67,13 @@ void test_begin_with_args(int argc, const char** argv)
    TINKER_RT(mechanic)();
 }
 
+
 void test_end()
 {
    TINKER_RT(final)();
    fortran_runtime_finish();
 }
+
 
 void test_mdinit(double t, double atm)
 {
