@@ -19,10 +19,8 @@ void dfield_ewald_real(real (*field)[3], real (*fieldp)[3])
 void dfield_ewald(real (*field)[3], real (*fieldp)[3])
 {
    device_array::zero(n, field, fieldp);
-
    dfield_ewald_recip_self(field);
    device_array::copy(n, fieldp, field);
-
    dfield_ewald_real(field, fieldp);
 }
 
@@ -68,9 +66,24 @@ void ufield_ewald(const real (*uind)[3], const real (*uinp)[3],
                   real (*field)[3], real (*fieldp)[3])
 {
    device_array::zero(n, field, fieldp);
-
    ufield_ewald_recip_self(uind, uinp, field, fieldp);
    ufield_ewald_real(uind, uinp, field, fieldp);
+}
+
+
+extern void ufield_coulomb_acc(const real (*)[3], const real (*)[3],
+                               real (*)[3], real (*)[3]);
+extern void ufield_coulomb_cu(const real (*)[3], const real (*)[3], real (*)[3],
+                              real (*)[3]);
+void ufield_coulomb(const real (*uind)[3], const real (*uinp)[3],
+                    real (*field)[3], real (*fieldp)[3])
+{
+#if TINKER_CUDART
+   if (bound::use_bounds)
+      ufield_coulomb_cu(uind, uinp, field, fieldp);
+   else
+#endif
+      ufield_coulomb_acc(uind, uinp, field, fieldp);
 }
 
 

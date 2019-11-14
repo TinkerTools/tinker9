@@ -148,8 +148,8 @@ void dfield_coulomb_acc(real (*field)[3], real (*fieldp)[3])
 }
 
 // see also subroutine ufield0b in induce.f
-void ufield_coulomb(const real (*uind)[3], const real (*uinp)[3],
-                    real (*field)[3], real (*fieldp)[3])
+void ufield_coulomb_acc(const real (*uind)[3], const real (*uinp)[3],
+                        real (*field)[3], real (*fieldp)[3])
 {
    device_array::zero(n, field, fieldp);
 

@@ -267,6 +267,7 @@ void dfield_coulomb_cu(real (*field)[3], real (*fieldp)[3])
    const auto* sp = mspatial_unit.deviceptr();
 
 
+   device_array::zero(n, field, fieldp);
    launch_kernel1(WARP_SIZE * st.niak, dfield_cu1<elec_t::coulomb>, field,
                   fieldp, thole, pdamp, rpole, box, off, sp, 0);
    if (ndpexclude_ > 0)
@@ -283,8 +284,9 @@ void dfield_coulomb_cu(real (*field)[3], real (*fieldp)[3])
       const Box *restrict box, real off
 
 
+template <elec_t ETYP>
 __global__
-void ufield_ewald_real_cu1(UFIELD_ARGS, real aewald, const Spatial* restrict sp)
+void ufield_cu1(UFIELD_ARGS, const Spatial* restrict sp, real aewald)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
@@ -374,10 +376,20 @@ void ufield_ewald_real_cu1(UFIELD_ARGS, real aewald, const Spatial* restrict sp)
          image(xr, yr, zr, box);
          real r2 = xr * xr + yr * yr + zr * zr;
          if (atomi < atomk && r2 <= off2) {
-            pair_ufield<elec_t::ewald>(r2, xr, yr, zr, 1, uindi0, uindi1,
-                                       uindi2, uinpi0, uinpi1, uinpi2, pdi, pti,
-                                       uindk0, uindk1, uindk2, uinpk0, uinpk1,
-                                       uinpk2, pdk, ptk, aewald, pairf);
+            if_constexpr(ETYP == elec_t::ewald)
+            {
+               pair_ufield<elec_t::ewald>(
+                  r2, xr, yr, zr, 1, uindi0, uindi1, uindi2, uinpi0, uinpi1,
+                  uinpi2, pdi, pti, uindk0, uindk1, uindk2, uinpk0, uinpk1,
+                  uinpk2, pdk, ptk, aewald, pairf);
+            }
+            if_constexpr(ETYP == elec_t::coulomb)
+            {
+               pair_ufield<elec_t::coulomb>(r2, xr, yr, zr, 1, uindi0, uindi1,
+                                            uindi2, uinpi0, uinpi1, uinpi2, pdi,
+                                            pti, uindk0, uindk1, uindk2, uinpk0,
+                                            uinpk1, uinpk2, pdk, ptk, 0, pairf);
+            }
          } // end if (include)
 
 
@@ -485,8 +497,27 @@ void ufield_ewald_real_cu(const real (*uind)[3], const real (*uinp)[3],
    const real aewald = pu->aewald;
 
 
-   launch_kernel1(WARP_SIZE * st.niak, ufield_ewald_real_cu1, uind, uinp, field,
-                  fieldp, thole, pdamp, box, off, aewald, sp);
+   launch_kernel1(WARP_SIZE * st.niak, ufield_cu1<elec_t::ewald>, uind, uinp,
+                  field, fieldp, thole, pdamp, box, off, sp, aewald);
+   if (nuexclude_) {
+      launch_kernel1(nuexclude_, ufield_cu2, uind, uinp, field, fieldp, thole,
+                     pdamp, box, off, x, y, z, nuexclude_, uexclude_,
+                     uexclude_scale_);
+   }
+}
+
+
+void ufield_coulomb_cu(float const (*uind)[3], float const (*uinp)[3],
+                       float (*field)[3], float (*fieldp)[3])
+{
+   const real off = switch_off(switch_mpole);
+   const auto& st = *mspatial_unit;
+   const auto* sp = mspatial_unit.deviceptr();
+
+
+   device_array::zero(n, field, fieldp);
+   launch_kernel1(WARP_SIZE * st.niak, ufield_cu1<elec_t::coulomb>, uind, uinp,
+                  field, fieldp, thole, pdamp, box, off, sp, 0);
    if (nuexclude_) {
       launch_kernel1(nuexclude_, ufield_cu2, uind, uinp, field, fieldp, thole,
                      pdamp, box, off, x, y, z, nuexclude_, uexclude_,
