@@ -19,8 +19,9 @@ TINKER_NAMESPACE_BEGIN
       const real(*restrict rpole)[10], const Box *restrict box, real off
 
 
+template <elec_t ETYP>
 __global__
-void dfield_ewald_real_cu1(DFIELD_ARGS, real aewald, const Spatial* restrict sp)
+void dfield_cu1(DFIELD_ARGS, const Spatial* restrict sp, real aewald)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
@@ -122,10 +123,20 @@ void dfield_ewald_real_cu1(DFIELD_ARGS, real aewald, const Spatial* restrict sp)
          image(xr, yr, zr, box);
          real r2 = xr * xr + yr * yr + zr * zr;
          if (atomi < atomk && r2 <= off2) {
-            pair_dfield<elec_t::ewald>(
-               r2, xr, yr, zr, 1, 1, ci, dix, diy, diz, qixx, qixy, qixz, qiyy,
-               qiyz, qizz, pdi, pti, ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy,
-               qkyz, qkzz, pdk, ptk, aewald, pairf);
+            if_constexpr(ETYP == elec_t::ewald)
+            {
+               pair_dfield<elec_t::ewald>(
+                  r2, xr, yr, zr, 1, 1, ci, dix, diy, diz, qixx, qixy, qixz,
+                  qiyy, qiyz, qizz, pdi, pti, ck, dkx, dky, dkz, qkxx, qkxy,
+                  qkxz, qkyy, qkyz, qkzz, pdk, ptk, aewald, pairf);
+            }
+            if_constexpr(ETYP == elec_t::coulomb)
+            {
+               pair_dfield<elec_t::coulomb>(
+                  r2, xr, yr, zr, 1, 1, ci, dix, diy, diz, qixx, qixy, qixz,
+                  qiyy, qiyz, qizz, pdi, pti, ck, dkx, dky, dkz, qkxx, qkxy,
+                  qkxz, qkyy, qkyz, qkzz, pdk, ptk, 0, pairf);
+            }
          } // end if (include)
 
 
@@ -161,10 +172,10 @@ void dfield_ewald_real_cu1(DFIELD_ARGS, real aewald, const Spatial* restrict sp)
 
 
 __global__
-void dfield_real_cu2(DFIELD_ARGS, const real* restrict x,
-                     const real* restrict y, const real* restrict z,
-                     int ndpexclude_, const int (*restrict dpexclude_)[2],
-                     const real (*restrict dpexclude_scale_)[2])
+void dfield_cu2(DFIELD_ARGS, const real* restrict x, const real* restrict y,
+                const real* restrict z, int ndpexclude_,
+                const int (*restrict dpexclude_)[2],
+                const real (*restrict dpexclude_scale_)[2])
 {
    const real off2 = off * off;
    for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < ndpexclude_;
@@ -240,10 +251,26 @@ void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
    const real aewald = pu->aewald;
 
 
-   launch_kernel1(WARP_SIZE * st.niak, dfield_ewald_real_cu1, field, fieldp,
-                  thole, pdamp, rpole, box, off, aewald, sp);
+   launch_kernel1(WARP_SIZE * st.niak, dfield_cu1<elec_t::ewald>, field, fieldp,
+                  thole, pdamp, rpole, box, off, sp, aewald);
    if (ndpexclude_ > 0)
-      launch_kernel1(ndpexclude_, dfield_real_cu2, field, fieldp, thole, pdamp,
+      launch_kernel1(ndpexclude_, dfield_cu2, field, fieldp, thole, pdamp,
+                     rpole, box, off, x, y, z, ndpexclude_, dpexclude_,
+                     dpexclude_scale_);
+}
+
+
+void dfield_coulomb_cu(real (*field)[3], real (*fieldp)[3])
+{
+   const real off = switch_off(switch_mpole);
+   const auto& st = *mspatial_unit;
+   const auto* sp = mspatial_unit.deviceptr();
+
+
+   launch_kernel1(WARP_SIZE * st.niak, dfield_cu1<elec_t::coulomb>, field,
+                  fieldp, thole, pdamp, rpole, box, off, sp, 0);
+   if (ndpexclude_ > 0)
+      launch_kernel1(ndpexclude_, dfield_cu2, field, fieldp, thole, pdamp,
                      rpole, box, off, x, y, z, ndpexclude_, dpexclude_,
                      dpexclude_scale_);
 }
@@ -386,10 +413,10 @@ void ufield_ewald_real_cu1(UFIELD_ARGS, real aewald, const Spatial* restrict sp)
 
 
 __global__
-void ufield_real_cu2(UFIELD_ARGS, const real* restrict x,
-                     const real* restrict y, const real* restrict z,
-                     int nuexclude_, const int (*restrict uexclude_)[2],
-                     const real* restrict uexclude_scale_)
+void ufield_cu2(UFIELD_ARGS, const real* restrict x, const real* restrict y,
+                const real* restrict z, int nuexclude_,
+                const int (*restrict uexclude_)[2],
+                const real* restrict uexclude_scale_)
 {
    const real off2 = off * off;
    for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < nuexclude_;
@@ -461,8 +488,8 @@ void ufield_ewald_real_cu(const real (*uind)[3], const real (*uinp)[3],
    launch_kernel1(WARP_SIZE * st.niak, ufield_ewald_real_cu1, uind, uinp, field,
                   fieldp, thole, pdamp, box, off, aewald, sp);
    if (nuexclude_) {
-      launch_kernel1(nuexclude_, ufield_real_cu2, uind, uinp, field, fieldp,
-                     thole, pdamp, box, off, x, y, z, nuexclude_, uexclude_,
+      launch_kernel1(nuexclude_, ufield_cu2, uind, uinp, field, fieldp, thole,
+                     pdamp, box, off, x, y, z, nuexclude_, uexclude_,
                      uexclude_scale_);
    }
 }

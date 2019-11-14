@@ -1,5 +1,6 @@
 #include "e_polar.h"
 #include "md.h"
+#include <tinker/detail/bound.hh>
 
 
 TINKER_NAMESPACE_BEGIN
@@ -23,6 +24,19 @@ void dfield_ewald(real (*field)[3], real (*fieldp)[3])
    device_array::copy(n, fieldp, field);
 
    dfield_ewald_real(field, fieldp);
+}
+
+
+extern void dfield_coulomb_acc(real (*)[3], real (*)[3]);
+extern void dfield_coulomb_cu(real (*)[3], real (*)[3]);
+void dfield_coulomb(real (*field)[3], real (*fieldp)[3])
+{
+#if TINKER_CUDART
+   if (bound::use_bounds)
+      dfield_coulomb_cu(field, fieldp);
+   else
+#endif
+      dfield_coulomb_acc(field, fieldp);
 }
 
 
