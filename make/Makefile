@@ -344,7 +344,7 @@ unittest: all.tests
 ##/ Both `default` and `unittest` targets.
 ##/
 .PHONY: all
-all: default unittest
+all: default unittest copy_gpu_scripts__
 
 
 ##/ ### test
@@ -505,3 +505,9 @@ $(hobjs__): %.o: $(top_dir__)/%.h
 	$(CXX) -include $< $(cxx_compile_flags__) include/headers__.cpp -o $@
 .PHONY: headers
 headers: $(hobjs__)
+
+
+all_gpu_scripts__ := $(wildcard $(top_dir__)/shell/*.gpu)
+.PHONY: copy_gpu_scripts__
+copy_gpu_scripts__:
+	cp $(all_gpu_scripts__) .
