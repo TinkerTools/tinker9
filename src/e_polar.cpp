@@ -378,27 +378,11 @@ void epolar_data(rc_op op)
    }
 }
 
-void dfield(real (*field)[3], real (*fieldp)[3])
-{
-   if (epolar_electyp == elec_t::ewald)
-      dfield_ewald(field, fieldp);
-   else
-      dfield_coulomb(field, fieldp);
-}
-
-void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3],
-            real (*fieldp)[3])
-{
-   if (epolar_electyp == elec_t::ewald)
-      ufield_ewald(uind, uinp, field, fieldp);
-   else
-      ufield_coulomb(uind, uinp, field, fieldp);
-}
-
 void induce(real (*ud)[3], real (*up)[3])
 {
    induce_mutual_pcg1(ud, up);
 
+   /*//
    if (inform::debug && use_potent(polar_term)) {
       std::vector<double> uindbuf;
       uindbuf.resize(3 * n);
@@ -426,6 +410,7 @@ void induce(real (*ud)[3], real (*up)[3])
          }
       }
    }
+   //*/
 }
 
 void epolar(int vers)

@@ -41,7 +41,7 @@ void dfield_ewald_recip_self(real (*field)[3])
 }
 
 // see also subroutine udirect2b / dfield0c in induce.f
-void dfield_ewald_real(real (*field)[3], real (*fieldp)[3])
+void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
 {
    const real off = switch_off(switch_ewald);
    const real off2 = off * off;
@@ -179,16 +179,6 @@ void dfield_ewald_real(real (*field)[3], real (*fieldp)[3])
          atomic_add(pairf.fkp[2], &fieldp[k][2]);
       }
    }
-}
-
-void dfield_ewald(real (*field)[3], real (*fieldp)[3])
-{
-   device_array::zero(n, field, fieldp);
-
-   dfield_ewald_recip_self(field);
-   device_array::copy(n, fieldp, field);
-
-   dfield_ewald_real(field, fieldp);
 }
 
 // see also subroutine umutual1 in induce.f

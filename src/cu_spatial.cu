@@ -1,5 +1,5 @@
 #include "box.h"
-#include "cu_launch.h"
+#include "launch.cuh"
 #include "mathfunc.cuh"
 #include "md.h"
 #include "nblist.h"

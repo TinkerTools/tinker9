@@ -1,6 +1,6 @@
-#include "cu_add.h"
-#include "cu_launch.h"
+#include "add.cuh"
 #include "e_vdw.h"
+#include "launch.cuh"
 #include "md.h"
 #include "seq_image.h"
 #include "seq_pair_hal.h"

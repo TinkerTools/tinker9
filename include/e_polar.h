@@ -1,6 +1,4 @@
-#ifndef TINKER_GPU_E_POLAR_H_
-#define TINKER_GPU_E_POLAR_H_
-
+#pragma once
 #include "dev_array.h"
 #include "elec.h"
 #include "energy_buffer.h"
@@ -74,5 +72,3 @@ void epolar_coulomb(int vers);
 void epolar_ewald(int vers);
 void epolar(int vers);
 TINKER_NAMESPACE_END
-
-#endif

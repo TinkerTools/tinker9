@@ -16,8 +16,8 @@
 TINKER_NAMESPACE_BEGIN
 // similar to uscale0a/uscale0b routines
 // the preconditioner is the diagnoal matrix
-static inline void diag_precond(const real (*rsd)[3], const real (*rsdp)[3],
-                                real (*zrsd)[3], real (*zrsdp)[3])
+inline void diag_precond(const real (*rsd)[3], const real (*rsdp)[3],
+                         real (*zrsd)[3], real (*zrsdp)[3])
 {
    #pragma acc parallel loop independent\
               deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
@@ -33,9 +33,9 @@ static inline void diag_precond(const real (*rsd)[3], const real (*rsdp)[3],
 
 // similar to uscale0a/uscale0b routines
 // the preconditioner is the sparse diagnoal matrix
-static inline void sparse_diag_precond_apply(const real (*rsd)[3],
-                                             const real (*rsdp)[3],
-                                             real (*zrsd)[3], real (*zrsdp)[3])
+inline void sparse_diag_precond_apply(const real (*rsd)[3],
+                                      const real (*rsdp)[3], real (*zrsd)[3],
+                                      real (*zrsdp)[3])
 {
    #pragma acc parallel loop independent\
               deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
@@ -143,9 +143,9 @@ static inline void sparse_diag_precond_apply(const real (*rsd)[3],
    }
 }
 
-static inline void sparse_diag_precond_build(const real (*rsd)[3],
-                                             const real (*rsdp)[3],
-                                             real (*zrsd)[3], real (*zrsdp)[3])
+inline void sparse_diag_precond_build(const real (*rsd)[3],
+                                      const real (*rsdp)[3], real (*zrsd)[3],
+                                      real (*zrsdp)[3])
 {
    const auto* nulst = ulist_unit->nlst;
    #pragma acc serial deviceptr(mindex, nulst)
