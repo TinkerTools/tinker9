@@ -12,6 +12,24 @@ struct PairField
 };
 
 
+__device__
+inline void zero(PairField& pairf)
+{
+   pairf.fid[0] = 0;
+   pairf.fid[1] = 0;
+   pairf.fid[2] = 0;
+   pairf.fkd[0] = 0;
+   pairf.fkd[1] = 0;
+   pairf.fkd[2] = 0;
+   pairf.fip[0] = 0;
+   pairf.fip[1] = 0;
+   pairf.fip[2] = 0;
+   pairf.fkp[0] = 0;
+   pairf.fkp[1] = 0;
+   pairf.fkp[2] = 0;
+}
+
+
 #pragma acc routine seq
 template <elec_t ETYP>
 __device__

@@ -228,8 +228,8 @@ void ufield_ewald_recip_self(const real (*uind)[3], const real (*uinp)[3],
    }
 }
 
-void ufield_ewald_real(const real (*uind)[3], const real (*uinp)[3],
-                       real (*field)[3], real (*fieldp)[3])
+void ufield_ewald_real_acc(const real (*uind)[3], const real (*uinp)[3],
+                           real (*field)[3], real (*fieldp)[3])
 {
    const real off = switch_off(switch_ewald);
    const real off2 = off * off;
@@ -353,14 +353,5 @@ void ufield_ewald_real(const real (*uind)[3], const real (*uinp)[3],
          atomic_add(pairf.fkp[2], &fieldp[k][2]);
       }
    }
-}
-
-void ufield_ewald(const real (*uind)[3], const real (*uinp)[3],
-                  real (*field)[3], real (*fieldp)[3])
-{
-   device_array::zero(n, field, fieldp);
-
-   ufield_ewald_recip_self(uind, uinp, field, fieldp);
-   ufield_ewald_real(uind, uinp, field, fieldp);
 }
 TINKER_NAMESPACE_END
