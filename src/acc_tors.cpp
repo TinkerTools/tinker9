@@ -114,16 +114,14 @@ void etors_tmpl()
          real dphi5 = 5 * (cosine5 * s5 - sine5 * c5);
          real dphi6 = 6 * (cosine6 * s6 - sine6 * c6);
 
-         if_constexpr(do_e)
-         {
+         if CONSTEXPR (do_e) {
             real e = torsunit *
                (v1 * phi1 + v2 * phi2 + v3 * phi3 + v4 * phi4 + v5 * phi5 +
                 v6 * phi6);
             atomic_add(e, et, offset);
          }
 
-         if_constexpr(do_g)
-         {
+         if CONSTEXPR (do_g) {
             real dedphi = torsunit *
                (v1 * dphi1 + v2 * dphi2 + v3 * dphi3 + v4 * dphi4 + v5 * dphi5 +
                 v6 * dphi6);
@@ -174,8 +172,7 @@ void etors_tmpl()
             atomic_add(dedyid, gy, id);
             atomic_add(dedzid, gz, id);
 
-            if_constexpr(do_v)
-            {
+            if CONSTEXPR (do_v) {
                real vxx = xcb * (dedxic + dedxid) - xba * dedxia + xdc * dedxid;
                real vyx = ycb * (dedxic + dedxid) - yba * dedxia + ydc * dedxid;
                real vzx = zcb * (dedxic + dedxid) - zba * dedxia + zdc * dedxid;

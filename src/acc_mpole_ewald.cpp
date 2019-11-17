@@ -81,10 +81,11 @@ void empole_real_self_tmpl()
                rpole[k][mpl_pme_zz], //
                f, aewald, e, pgrad);
 
-            if_constexpr(do_a) atomic_add(1, nem, offset);
-            if_constexpr(do_e) atomic_add(e, em, offset);
-            if_constexpr(do_g)
-            {
+            if CONSTEXPR (do_a)
+               atomic_add(1, nem, offset);
+            if CONSTEXPR (do_e)
+               atomic_add(e, em, offset);
+            if CONSTEXPR (do_g) {
                gxi += pgrad.frcx;
                gyi += pgrad.frcy;
                gzi += pgrad.frcz;
@@ -101,8 +102,7 @@ void empole_real_self_tmpl()
 
                // virial
 
-               if_constexpr(do_v)
-               {
+               if CONSTEXPR (do_v) {
                   real vxx = -xr * pgrad.frcx;
                   real vxy = -0.5f * (yr * pgrad.frcx + xr * pgrad.frcy);
                   real vxz = -0.5f * (zr * pgrad.frcx + xr * pgrad.frcz);
@@ -116,8 +116,7 @@ void empole_real_self_tmpl()
          }       // end if (r2 <= off2)
       }          // end for (int kk)
 
-      if_constexpr(do_g)
-      {
+      if CONSTEXPR (do_g) {
          atomic_add(gxi, gx, i);
          atomic_add(gyi, gy, i);
          atomic_add(gzi, gz, i);
@@ -133,13 +132,13 @@ void empole_real_self_tmpl()
       real qii = 2 * (qixy * qixy + qixz * qixz + qiyz * qiyz) + qixx * qixx +
          qiyy * qiyy + qizz * qizz;
 
-      if_constexpr(do_e)
-      {
+      if CONSTEXPR (do_e) {
          int offset = i & (bufsize - 1);
          real e = fterm *
             (cii + aewald_sq_2 * (dii / 3 + 2 * aewald_sq_2 * qii * (real)0.2));
          atomic_add(e, em, offset);
-         if_constexpr(do_a) atomic_add(1, nem, offset);
+         if CONSTEXPR (do_a)
+            atomic_add(1, nem, offset);
       } // end if (do_e)
    }    // end for (int i)
 
@@ -184,14 +183,13 @@ void empole_real_self_tmpl()
             rpole[k][mpl_pme_zz], //
             f, 0, e, pgrad);
 
-         if_constexpr(do_a)
-         {
+         if CONSTEXPR (do_a) {
             if (mscale == -1)
                atomic_add(-1, nem, offset);
          }
-         if_constexpr(do_e) atomic_add(e, em, offset);
-         if_constexpr(do_g)
-         {
+         if CONSTEXPR (do_e)
+            atomic_add(e, em, offset);
+         if CONSTEXPR (do_g) {
             atomic_add(pgrad.frcx, gx, i);
             atomic_add(pgrad.frcy, gy, i);
             atomic_add(pgrad.frcz, gz, i);
@@ -208,8 +206,7 @@ void empole_real_self_tmpl()
 
             // virial
 
-            if_constexpr(do_v)
-            {
+            if CONSTEXPR (do_v) {
                real vxx = -xr * pgrad.frcx;
                real vxy = -0.5f * (yr * pgrad.frcx + xr * pgrad.frcy);
                real vxz = -0.5f * (zr * pgrad.frcx + xr * pgrad.frcz);
@@ -240,8 +237,7 @@ void empole_recip_tmpl()
    cmp_to_fmp(pu, cmp, fmp);
    grid_mpole(pu, fmp);
    fftfront(pu);
-   if_constexpr(do_v)
-   {
+   if CONSTEXPR (do_v) {
       if (vir_m) {
          pme_conv1(pu, vir_m);
          auto size = buffer_size() * virial_buffer_traits::value;
@@ -252,9 +248,7 @@ void empole_recip_tmpl()
       } else {
          pme_conv1(pu, vir_em);
       }
-   }
-   else
-   {
+   } else {
       pme_conv0(pu);
    }
    fftback(pu);
@@ -283,9 +277,9 @@ void empole_recip_tmpl()
 
       #pragma acc loop seq
       for (int k = 0; k < 10; ++k) {
-         if_constexpr(do_e) e += fmp[i][k] * fphi[i][k];
-         if_constexpr(do_g)
-         {
+         if CONSTEXPR (do_e)
+            e += fmp[i][k] * fphi[i][k];
+         if CONSTEXPR (do_g) {
             f1 += fmp[i][k] * fphi[i][deriv1[k] - 1];
             f2 += fmp[i][k] * fphi[i][deriv2[k] - 1];
             f3 += fmp[i][k] * fphi[i][deriv3[k] - 1];
@@ -294,10 +288,10 @@ void empole_recip_tmpl()
 
       // increment the permanent multipole energy and gradient
 
-      if_constexpr(do_e) atomic_add(0.5f * e * f, em, offset);
+      if CONSTEXPR (do_e)
+         atomic_add(0.5f * e * f, em, offset);
 
-      if_constexpr(do_g)
-      {
+      if CONSTEXPR (do_g) {
          f1 *= nfft1;
          f2 *= nfft2;
          f3 *= nfft3;
@@ -335,8 +329,7 @@ void empole_recip_tmpl()
          atomic_add(tem2, trqy, i);
          atomic_add(tem3, trqz, i);
 
-         if_constexpr(do_v)
-         {
+         if CONSTEXPR (do_v) {
             real vxx = -cmp[i][1] * cphi[i][1] - 2 * cmp[i][4] * cphi[i][4] -
                cmp[i][7] * cphi[i][7] - cmp[i][8] * cphi[i][8];
             real vxy =

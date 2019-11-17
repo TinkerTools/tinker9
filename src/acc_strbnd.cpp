@@ -88,14 +88,12 @@ void estrbnd_tmpl()
          term2 = stbnunit * force2;
          real termr = term1 * dr1 + term2 * dr2;
 
-         if_constexpr(do_e)
-         {
+         if CONSTEXPR (do_e) {
             real e = termr * dt;
             atomic_add(e, eba, offset);
          }
 
-         if_constexpr(do_g)
-         {
+         if CONSTEXPR (do_g) {
             real term1t = term1 * dt;
             real term2t = term2 * dt;
             real dedxia = term1t * ddrdxia + termr * ddtdxia;
@@ -118,8 +116,7 @@ void estrbnd_tmpl()
             atomic_add(dedyic, gy, ic);
             atomic_add(dedzic, gz, ic);
 
-            if_constexpr(do_v)
-            {
+            if CONSTEXPR (do_v) {
                real vxx = xab * dedxia + xcb * dedxic;
                real vyx = yab * dedxia + ycb * dedxic;
                real vzx = zab * dedxia + zcb * dedxic;

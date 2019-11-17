@@ -26,8 +26,7 @@ void pair_hal(real rik, real rv, real eps, real vscalek, real vlambda, //
    real t1 = REAL_POW(1 + dhal, 7) * s1;
    real t2 = (1 + ghal) * s2;
    e = eps * t1 * (t2 - 2);
-   if_constexpr(DO_G)
-   {
+   if CONSTEXPR (DO_G) {
       real dt1drho = -7 * REAL_POW(rho + dhal, 6) * t1 * s1;
       real dt2drho = -7 * rho6 * t2 * s2;
       de = eps * (dt1drho * (t2 - 2) + t1 * dt2drho) * REAL_RECIP(rv);

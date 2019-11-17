@@ -264,24 +264,19 @@ void etortor_tmpl()
 
          real e;
          MAYBE_UNUSED real dedang1, dedang2;
-         if_constexpr(do_g)
-         {
+         if CONSTEXPR (do_g) {
             bcuint1(ftt, ft1, ft2, ft12, x1l, x1u, y1l, y1u, value1, value2, e,
                     dedang1, dedang2);
-         }
-         else
-         {
+         } else {
             bcuint0(ftt, ft1, ft2, ft12, x1l, x1u, y1l, y1u, value1, value2, e);
          }
 
-         if_constexpr(do_e)
-         {
+         if CONSTEXPR (do_e) {
             e *= ttorunit;
             atomic_add(e, ett, offset);
          }
 
-         if_constexpr(do_g)
-         {
+         if CONSTEXPR (do_g) {
             dedang1 *= (sign * ttorunit * radian);
             dedang2 *= (sign * ttorunit * radian);
 
@@ -370,8 +365,7 @@ void etortor_tmpl()
             atomic_add(dedyie2, gy, ie);
             atomic_add(dedzie2, gz, ie);
 
-            if_constexpr(do_v)
-            {
+            if CONSTEXPR (do_v) {
                real vxx = xcb * (dedxic + dedxid) - xba * dedxia + xdc * dedxid;
                real vyx = ycb * (dedxic + dedxid) - yba * dedxia + ydc * dedxid;
                real vzx = zcb * (dedxic + dedxid) - zba * dedxia + zdc * dedxid;

@@ -75,25 +75,26 @@ void pair_mpole(                                    //
    real& rr9 = bn[4];
    real& rr11 = bn[5];
 
-   if_constexpr(ETYP == elec_t::ewald)
-   {
-      if_constexpr(!do_g) damp_ewald(bn, 5, r, invr1, rr2, aewald);
-      else damp_ewald(bn, 6, r, invr1, rr2, aewald);
+   if CONSTEXPR (ETYP == elec_t::ewald) {
+      if CONSTEXPR (!do_g)
+         damp_ewald(bn, 5, r, invr1, rr2, aewald);
+      else
+         damp_ewald(bn, 6, r, invr1, rr2, aewald);
       bn[0] *= f;
       bn[1] *= f;
       bn[2] *= f;
       bn[3] *= f;
       bn[4] *= f;
-      if_constexpr(do_g) bn[5] *= f;
-   }
-   else if_constexpr(ETYP == elec_t::coulomb)
-   {
+      if CONSTEXPR (do_g)
+         bn[5] *= f;
+   } else if CONSTEXPR (ETYP == elec_t::coulomb) {
       rr1 = mscale * f * invr1;
       rr3 = rr1 * rr2;
       rr5 = 3 * rr3 * rr2;
       rr7 = 5 * rr5 * rr2;
       rr9 = 7 * rr7 * rr2;
-      if_constexpr(do_g) rr11 = 9 * rr9 * rr2;
+      if CONSTEXPR (do_g)
+         rr11 = 9 * rr9 * rr2;
    }
 
    real dir = dix * xr + diy * yr + diz * zr;
@@ -119,13 +120,11 @@ void pair_mpole(                                    //
    real term4 = dir * qkr - dkr * qir - 4 * qik;
    real term5 = qir * qkr;
 
-   if_constexpr(do_e)
-   {
+   if CONSTEXPR (do_e) {
       e = term1 * rr1 + term2 * rr3 + term3 * rr5 + term4 * rr7 + term5 * rr9;
    } // end if (do_e)
 
-   if_constexpr(do_g)
-   {
+   if CONSTEXPR (do_g) {
 
       // gradient
 

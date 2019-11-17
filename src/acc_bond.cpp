@@ -35,29 +35,27 @@ void ebond_tmpl()
 
       MAYBE_UNUSED real e;
       MAYBE_UNUSED real deddt;
-      if_constexpr(BNDTYP == ebond_t::harmonic)
-      {
+      if CONSTEXPR (BNDTYP == ebond_t::harmonic) {
          real dt2 = dt * dt;
-         if_constexpr(do_e) e =
-            bndunit * force * dt2 * (1 + cbnd * dt + qbnd * dt2);
-         if_constexpr(do_g) deddt =
-            2 * bndunit * force * dt * (1 + 1.5f * cbnd * dt + 2 * qbnd * dt2);
-      }
-      else if_constexpr(BNDTYP == ebond_t::morse)
-      {
+         if CONSTEXPR (do_e)
+            e = bndunit * force * dt2 * (1 + cbnd * dt + qbnd * dt2);
+         if CONSTEXPR (do_g)
+            deddt = 2 * bndunit * force * dt *
+               (1 + 1.5f * cbnd * dt + 2 * qbnd * dt2);
+      } else if CONSTEXPR (BNDTYP == ebond_t::morse) {
          real expterm = REAL_EXP(-2 * dt);
          real bde = 0.25f * bndunit * force;
-         if_constexpr(do_e) e = bde * (1 - expterm) * (1 - expterm);
-         if_constexpr(do_g) deddt = 4 * bde * (1 - expterm) * expterm;
+         if CONSTEXPR (do_e)
+            e = bde * (1 - expterm) * (1 - expterm);
+         if CONSTEXPR (do_g)
+            deddt = 4 * bde * (1 - expterm) * expterm;
       }
 
-      if_constexpr(do_e)
-      {
+      if CONSTEXPR (do_e) {
          atomic_add(e, eb, offset);
       }
 
-      if_constexpr(do_g)
-      {
+      if CONSTEXPR (do_g) {
          real de = deddt * REAL_RECIP(rab);
          real dedx = de * xab;
          real dedy = de * yab;
@@ -69,8 +67,7 @@ void ebond_tmpl()
          atomic_add(-dedy, gy, ib);
          atomic_add(-dedz, gz, ib);
 
-         if_constexpr(do_v)
-         {
+         if CONSTEXPR (do_v) {
             real vxx = xab * dedx;
             real vyx = yab * dedx;
             real vzx = zab * dedx;

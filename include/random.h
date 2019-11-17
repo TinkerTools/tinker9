@@ -16,16 +16,11 @@ float random_float();
 template <class T = real>
 T random()
 {
-   if_constexpr(std::is_same<T, double>::value)
-   {
+   if CONSTEXPR (std::is_same<T, double>::value) {
       random_double();
-   }
-   else if_constexpr(std::is_same<T, float>::value)
-   {
+   } else if CONSTEXPR (std::is_same<T, float>::value) {
       random_float();
-   }
-   else
-   {
+   } else {
       assert(false);
    }
 }
@@ -42,16 +37,11 @@ float normal_float();
 template <class T = real>
 T normal()
 {
-   if_constexpr(std::is_same<T, double>::value)
-   {
+   if CONSTEXPR (std::is_same<T, double>::value) {
       normal_double();
-   }
-   else if_constexpr(std::is_same<T, float>::value)
-   {
+   } else if CONSTEXPR (std::is_same<T, float>::value) {
       normal_float();
-   }
-   else
-   {
+   } else {
       assert(false);
    }
 }
@@ -76,16 +66,11 @@ float chi_squared_float(int k);
 template <class T = real>
 T chi_squared(int k)
 {
-   if_constexpr(std::is_same<T, double>::value)
-   {
+   if CONSTEXPR (std::is_same<T, double>::value) {
       chi_squared_double(k);
-   }
-   else if_constexpr(std::is_same<T, float>::value)
-   {
+   } else if CONSTEXPR (std::is_same<T, float>::value) {
       chi_squared_float(k);
-   }
-   else
-   {
+   } else {
       assert(false);
    }
 }

@@ -33,8 +33,7 @@ void switch_taper5(real rik, real cut, real off, real& restrict taper,
    real x2 = x * x;
    real x3 = x2 * x;
    taper = x3 * (6 * x2 - 15 * x + 10);
-   if_constexpr(DO_DTAPER)
-   {
+   if CONSTEXPR (DO_DTAPER) {
       dtaper = 30 * REAL_SQ(x * (1 - x)) * rinv;
    }
 }

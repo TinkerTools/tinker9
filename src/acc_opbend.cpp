@@ -77,25 +77,24 @@ void eopbend_tmpl()
       MAYBE_UNUSED real rcb2, rcd2;
       MAYBE_UNUSED real dot;
       real cc;
-      if_constexpr(TYP == eopbend_t::w_d_c)
-      {
+      if CONSTEXPR (TYP == eopbend_t::w_d_c) {
 
          // W-D-C angle between A-B-C plane and B-D vector for D-B<AC
 
          rab2 = xab * xab + yab * yab + zab * zab;
          rcb2 = xcb * xcb + ycb * ycb + zcb * zcb;
          cc = rab2 * rcb2 - REAL_SQ(xab * xcb + yab * ycb + zab * zcb);
-         if_constexpr(do_g) dot = xab * xcb + yab * ycb + zab * zcb;
-      }
-      else if_constexpr(TYP == eopbend_t::allinger)
-      {
+         if CONSTEXPR (do_g)
+            dot = xab * xcb + yab * ycb + zab * zcb;
+      } else if CONSTEXPR (TYP == eopbend_t::allinger) {
 
          // Allinger angle between A-C-D plane and D-B vector for D-B<AC
 
          rad2 = xad * xad + yad * yad + zad * zad;
          rcd2 = xcd * xcd + ycd * ycd + zcd * zcd;
          cc = rad2 * rcd2 - REAL_SQ(xad * xcd + yad * ycd + zad * zcd);
-         if_constexpr(do_g) dot = xad * xcd + yad * ycd + zad * zcd;
+         if CONSTEXPR (do_g)
+            dot = xad * xcd + yad * ycd + zad * zcd;
       }
 
       // find the out-of-plane angle bending energy
@@ -113,15 +112,13 @@ void eopbend_tmpl()
          real dt3 = dt2 * dt;
          real dt4 = dt2 * dt2;
 
-         if_constexpr(do_e)
-         {
+         if CONSTEXPR (do_e) {
             real e = opbunit * force * dt2 *
                (1 + copb * dt + qopb * dt2 + popb * dt3 + sopb * dt4);
             atomic_add(e, eopb, offset);
          }
 
-         if_constexpr(do_g)
-         {
+         if CONSTEXPR (do_g) {
             real deddt = opbunit * force * dt * radian *
                (2 + 3 * copb * dt + 4 * qopb * dt2 + 5 * popb * dt3 +
                 6 * sopb * dt4);
@@ -131,8 +128,7 @@ void eopbend_tmpl()
             real dccdxia, dccdyia, dccdzia;
             real dccdxic, dccdyic, dccdzic;
             real dccdxid, dccdyid, dccdzid;
-            if_constexpr(TYP == eopbend_t::w_d_c)
-            {
+            if CONSTEXPR (TYP == eopbend_t::w_d_c) {
                dccdxia = (xab * rcb2 - xcb * dot) * term;
                dccdyia = (yab * rcb2 - ycb * dot) * term;
                dccdzia = (zab * rcb2 - zcb * dot) * term;
@@ -142,9 +138,7 @@ void eopbend_tmpl()
                dccdxid = 0;
                dccdyid = 0;
                dccdzid = 0;
-            }
-            else if_constexpr(TYP == eopbend_t::allinger)
-            {
+            } else if CONSTEXPR (TYP == eopbend_t::allinger) {
                dccdxia = (xad * rcd2 - xcd * dot) * term;
                dccdyia = (yad * rcd2 - ycd * dot) * term;
                dccdzia = (zad * rcd2 - zcd * dot) * term;
@@ -195,8 +189,7 @@ void eopbend_tmpl()
             atomic_add(dedyid, gy, id);
             atomic_add(dedzid, gz, id);
 
-            if_constexpr(do_v)
-            {
+            if CONSTEXPR (do_v) {
                real vxx = xab * dedxia + xcb * dedxic + xdb * dedxid;
                real vyx = yab * dedxia + ycb * dedxic + ydb * dedxid;
                real vzx = zab * dedxia + zcb * dedxic + zdb * dedxid;

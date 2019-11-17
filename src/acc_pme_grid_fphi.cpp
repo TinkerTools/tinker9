@@ -78,8 +78,7 @@ void bsplgen(real w, real* restrict thetai, int bsorder)
 
    int k;
 
-   if_constexpr(LEVEL >= 2)
-   {
+   if CONSTEXPR (LEVEL >= 2) {
 
       // get coefficients for the B-spline first derivative
 
@@ -91,8 +90,7 @@ void bsplgen(real w, real* restrict thetai, int bsorder)
       bsbuild(k, 1) = -bsbuild(k, 1);
    }
 
-   if_constexpr(LEVEL >= 3)
-   {
+   if CONSTEXPR (LEVEL >= 3) {
 
       // get coefficients for the B-spline second derivative
 
@@ -109,8 +107,7 @@ void bsplgen(real w, real* restrict thetai, int bsorder)
       bsbuild(k, 1) = -bsbuild(k, 1);
    }
 
-   if_constexpr(LEVEL == 4)
-   {
+   if CONSTEXPR (LEVEL == 4) {
 
       // get coefficients for the B-spline third derivative
 
@@ -160,21 +157,18 @@ void grid_tmpl(PMEUnit pme_u, real* optional1, real* optional2)
    auto* dptr = pme_u.deviceptr();
 
    MAYBE_UNUSED real* pchg;
-   if_constexpr(WHAT == PCHG_GRID || WHAT == DISP_GRID)
-   {
+   if CONSTEXPR (WHAT == PCHG_GRID || WHAT == DISP_GRID) {
       pchg = optional1;
    }
 
    MAYBE_UNUSED real(*fmp)[10];
-   if_constexpr(WHAT == MPOLE_GRID)
-   {
+   if CONSTEXPR (WHAT == MPOLE_GRID) {
       fmp = reinterpret_cast<real(*)[10]>(optional1);
    }
 
    MAYBE_UNUSED real(*fuind)[3];
    MAYBE_UNUSED real(*fuinp)[3];
-   if_constexpr(WHAT == UIND_GRID)
-   {
+   if CONSTEXPR (WHAT == UIND_GRID) {
       fuind = reinterpret_cast<real(*)[3]>(optional1);
       fuinp = reinterpret_cast<real(*)[3]>(optional2);
    }
@@ -222,22 +216,19 @@ void grid_tmpl(PMEUnit pme_u, real* optional1, real* optional2)
       int igrid3 = REAL_FLOOR(fr3);
       w3 = fr3 - igrid3;
 
-      if_constexpr(WHAT == PCHG_GRID || WHAT == DISP_GRID)
-      {
+      if CONSTEXPR (WHAT == PCHG_GRID || WHAT == DISP_GRID) {
          bsplgen<1>(w1, thetai1, bsorder);
          bsplgen<1>(w2, thetai2, bsorder);
          bsplgen<1>(w3, thetai3, bsorder);
       }
 
-      if_constexpr(WHAT == MPOLE_GRID)
-      {
+      if CONSTEXPR (WHAT == MPOLE_GRID) {
          bsplgen<3>(w1, thetai1, bsorder);
          bsplgen<3>(w2, thetai2, bsorder);
          bsplgen<3>(w3, thetai3, bsorder);
       }
 
-      if_constexpr(WHAT == UIND_GRID)
-      {
+      if CONSTEXPR (WHAT == UIND_GRID) {
          bsplgen<2>(w1, thetai1, bsorder);
          bsplgen<2>(w2, thetai2, bsorder);
          bsplgen<2>(w3, thetai3, bsorder);
@@ -250,8 +241,7 @@ void grid_tmpl(PMEUnit pme_u, real* optional1, real* optional2)
       igrid2 += (igrid2 < 0 ? nfft2 : 0);
       igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
-      if_constexpr(WHAT == PCHG_GRID || WHAT == DISP_GRID)
-      {
+      if CONSTEXPR (WHAT == PCHG_GRID || WHAT == DISP_GRID) {
          #pragma acc loop seq
          for (int iz = 0; iz < bsorder; ++iz) {
             int zbase = igrid3 + iz;
@@ -278,8 +268,7 @@ void grid_tmpl(PMEUnit pme_u, real* optional1, real* optional2)
          } // end for (int iz)
       }    // end if (grid_pchg || grid_disp)
 
-      if_constexpr(WHAT == MPOLE_GRID)
-      {
+      if CONSTEXPR (WHAT == MPOLE_GRID) {
          #pragma acc loop seq
          for (int iz = 0; iz < bsorder; ++iz) {
             int zbase = igrid3 + iz;
@@ -321,8 +310,7 @@ void grid_tmpl(PMEUnit pme_u, real* optional1, real* optional2)
          } // end for (int iz)
       }    // end if (grid_mpole)
 
-      if_constexpr(WHAT == UIND_GRID)
-      {
+      if CONSTEXPR (WHAT == UIND_GRID) {
          #pragma acc loop seq
          for (int iz = 0; iz < bsorder; ++iz) {
             int zbase = igrid3 + iz;
@@ -379,22 +367,19 @@ void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
    auto* dptr = pme_u.deviceptr();
 
    MAYBE_UNUSED real(*fphi)[20];
-   if_constexpr(WHAT == MPOLE_GRID)
-   {
+   if CONSTEXPR (WHAT == MPOLE_GRID) {
       fphi = reinterpret_cast<real(*)[20]>(opt1);
    }
 
    MAYBE_UNUSED real(*fdip_phi1)[10];
    MAYBE_UNUSED real(*fdip_phi2)[10];
    MAYBE_UNUSED real(*fdip_sum_phi)[20];
-   if_constexpr(WHAT == UIND_GRID)
-   {
+   if CONSTEXPR (WHAT == UIND_GRID) {
       fdip_phi1 = reinterpret_cast<real(*)[10]>(opt1);
       fdip_phi2 = reinterpret_cast<real(*)[10]>(opt2);
       fdip_sum_phi = reinterpret_cast<real(*)[20]>(opt3);
    }
-   if_constexpr(WHAT == UIND_GRID_FPHI2)
-   {
+   if CONSTEXPR (WHAT == UIND_GRID_FPHI2) {
       fdip_phi1 = reinterpret_cast<real(*)[10]>(opt1);
       fdip_phi2 = reinterpret_cast<real(*)[10]>(opt2);
    }
@@ -441,9 +426,8 @@ void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
       int igrid3 = REAL_FLOOR(fr3);
       w3 = fr3 - igrid3;
 
-      if_constexpr(WHAT == MPOLE_GRID || WHAT == UIND_GRID ||
-                   WHAT == UIND_GRID_FPHI2)
-      {
+      if CONSTEXPR (WHAT == MPOLE_GRID || WHAT == UIND_GRID ||
+                    WHAT == UIND_GRID_FPHI2) {
          bsplgen<4>(w1, thetai1, bsorder);
          bsplgen<4>(w2, thetai2, bsorder);
          bsplgen<4>(w3, thetai3, bsorder);
@@ -456,8 +440,7 @@ void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
       igrid2 += (igrid2 < 0 ? nfft2 : 0);
       igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
-      if_constexpr(WHAT == MPOLE_GRID)
-      {
+      if CONSTEXPR (WHAT == MPOLE_GRID) {
          real tuv000 = 0;
          real tuv001 = 0;
          real tuv010 = 0;
@@ -574,8 +557,7 @@ void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
          fphi[i][19] = tuv111;
       } // end if (fphi_mpole)
 
-      if_constexpr(WHAT == UIND_GRID || WHAT == UIND_GRID_FPHI2)
-      {
+      if CONSTEXPR (WHAT == UIND_GRID || WHAT == UIND_GRID_FPHI2) {
          real tuv100_1 = 0;
          real tuv010_1 = 0;
          real tuv001_1 = 0;
@@ -762,8 +744,7 @@ void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
          fdip_phi2[i][8] = tuv101_2;
          fdip_phi2[i][9] = tuv011_2;
 
-         if_constexpr(WHAT == UIND_GRID)
-         {
+         if CONSTEXPR (WHAT == UIND_GRID) {
             fdip_sum_phi[i][0] = tuv000;
             fdip_sum_phi[i][1] = tuv100;
             fdip_sum_phi[i][2] = tuv010;

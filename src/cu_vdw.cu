@@ -95,10 +95,11 @@ void evdw_hal_cu1(HAL_ARGS, const Spatial* restrict sp)
       real shlam = vlam[shk];
 
 
-      if_constexpr(do_a) ctl = 0;
-      if_constexpr(do_e) etl = 0;
-      if_constexpr(do_g)
-      {
+      if CONSTEXPR (do_a)
+         ctl = 0;
+      if CONSTEXPR (do_e)
+         etl = 0;
+      if CONSTEXPR (do_g) {
          gxi = 0;
          gyi = 0;
          gzi = 0;
@@ -106,8 +107,7 @@ void evdw_hal_cu1(HAL_ARGS, const Spatial* restrict sp)
          gyk[threadIdx.x] = 0;
          gzk[threadIdx.x] = 0;
       }
-      if_constexpr(do_v)
-      {
+      if CONSTEXPR (do_v) {
          vtlxx = 0;
          vtlyx = 0;
          vtlzx = 0;
@@ -148,23 +148,25 @@ void evdw_hal_cu1(HAL_ARGS, const Spatial* restrict sp)
             if (rik2 > cut2) {
                real taper, dtaper;
                switch_taper5<do_g>(rik, cut, off, taper, dtaper);
-               if_constexpr(do_g) de = e * dtaper + de * taper;
-               if_constexpr(do_e) e = e * taper;
+               if CONSTEXPR (do_g)
+                  de = e * dtaper + de * taper;
+               if CONSTEXPR (do_e)
+                  e = e * taper;
             }
 
 
-            if_constexpr(do_a) ctl += 1;
-            if_constexpr(do_e) etl += e;
-            if_constexpr(do_g)
-            {
+            if CONSTEXPR (do_a)
+               ctl += 1;
+            if CONSTEXPR (do_e)
+               etl += e;
+            if CONSTEXPR (do_g) {
                de *= REAL_RECIP(rik);
                dedx = de * xr;
                dedy = de * yr;
                dedz = de * zr;
 
 
-               if_constexpr(do_v)
-               {
+               if CONSTEXPR (do_v) {
                   vtlxx += xr * dedx;
                   vtlyx += yr * dedx;
                   vtlzx += zr * dedx;
@@ -176,8 +178,7 @@ void evdw_hal_cu1(HAL_ARGS, const Spatial* restrict sp)
          }
 
 
-         if_constexpr(do_g)
-         {
+         if CONSTEXPR (do_g) {
             gxi += dedx;
             gyi += dedy;
             gzi += dedz;
@@ -188,10 +189,11 @@ void evdw_hal_cu1(HAL_ARGS, const Spatial* restrict sp)
       }
 
 
-      if_constexpr(do_a) atomic_add(ctl, nev, offset);
-      if_constexpr(do_e) atomic_add(etl, ev, offset);
-      if_constexpr(do_g)
-      {
+      if CONSTEXPR (do_a)
+         atomic_add(ctl, nev, offset);
+      if CONSTEXPR (do_e)
+         atomic_add(etl, ev, offset);
+      if CONSTEXPR (do_g) {
          atomic_add(gxi, gxred, i);
          atomic_add(gyi, gyred, i);
          atomic_add(gzi, gzred, i);
@@ -199,7 +201,7 @@ void evdw_hal_cu1(HAL_ARGS, const Spatial* restrict sp)
          atomic_add(gyk[threadIdx.x], gyred, shk);
          atomic_add(gzk[threadIdx.x], gzred, shk);
       }
-      if_constexpr(do_v)
+      if CONSTEXPR (do_v)
          atomic_add(vtlxx, vtlyx, vtlzx, vtlyy, vtlzy, vtlzz, vir_ev, offset);
    } // end for (iw)
 }
@@ -259,14 +261,18 @@ void evdw_hal_cu2(HAL_ARGS, const real* restrict xred,
          if (rik2 > cut2) {
             real taper, dtaper;
             switch_taper5<do_g>(rik, cut, off, taper, dtaper);
-            if_constexpr(do_g) de = e * dtaper + de * taper;
-            if_constexpr(do_e) e = e * taper;
+            if CONSTEXPR (do_g)
+               de = e * dtaper + de * taper;
+            if CONSTEXPR (do_e)
+               e = e * taper;
          }
 
-         if_constexpr(do_a) if (vscale == -1) atomic_add(-1, nev, offset);
-         if_constexpr(do_e) atomic_add(e, ev, offset);
-         if_constexpr(do_g)
-         {
+         if CONSTEXPR (do_a)
+            if (vscale == -1)
+               atomic_add(-1, nev, offset);
+         if CONSTEXPR (do_e)
+            atomic_add(e, ev, offset);
+         if CONSTEXPR (do_g) {
             de *= REAL_RECIP(rik);
             real dedx = de * xr;
             real dedy = de * yr;
@@ -279,8 +285,7 @@ void evdw_hal_cu2(HAL_ARGS, const real* restrict xred,
             atomic_add(-dedy, gyred, k);
             atomic_add(-dedz, gzred, k);
 
-            if_constexpr(do_v)
-            {
+            if CONSTEXPR (do_v) {
                real vxx = xr * dedx;
                real vyx = yr * dedx;
                real vzx = zr * dedx;
@@ -312,13 +317,11 @@ void evdw_cu()
 
    auto bufsize = buffer_size();
 
-   if_constexpr(do_g)
-   {
+   if CONSTEXPR (do_g) {
       device_array::zero(n, gxred, gyred, gzred);
    }
 
-   if_constexpr(VDWTYP == evdw_t::hal)
-   {
+   if CONSTEXPR (VDWTYP == evdw_t::hal) {
       launch_kernel1(WARP_SIZE * st.niak, evdw_hal_cu1<USE>, bufsize, nev, ev,
                      vir_ev, gxred, gyred, gzred, box, njvdw, jvdw, radmin,
                      epsilon, vlam, vcouple, cut, off, sp);
@@ -329,8 +332,7 @@ void evdw_cu()
                         vexclude_, vexclude_scale_);
    }
 
-   if_constexpr(do_g)
-   {
+   if CONSTEXPR (do_g) {
       evdw_resolve_gradient();
    }
 }

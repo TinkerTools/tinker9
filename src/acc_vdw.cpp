@@ -66,7 +66,8 @@ void evdw_tmpl()
 
    auto bufsize = buffer_size();
 
-   if_constexpr(do_g) device_array::zero(n, gxred, gyred, gzred);
+   if CONSTEXPR (do_g)
+      device_array::zero(n, gxred, gyred, gzred);
 
 #define DEVICE_PTRS_                                                           \
    xred, yred, zred, gxred, gyred, gzred, box, jvdw, radmin, epsilon, vlam,    \
@@ -109,7 +110,7 @@ void evdw_tmpl()
             real eps = epsilon[it * njvdw + kt];
 
             MAYBE_UNUSED real e, de;
-            if_constexpr(VDWTYP == evdw_t::hal)
+            if CONSTEXPR (VDWTYP == evdw_t::hal)
                pair_hal<do_g>(rik, rv, eps, 1, vlambda,   //
                               ghal, dhal, scexp, scalpha, //
                               e, de);
@@ -117,16 +118,19 @@ void evdw_tmpl()
             if (rik2 > cut2) {
                real taper, dtaper;
                switch_taper5<do_g>(rik, cut, off, taper, dtaper);
-               if_constexpr(do_g) de = e * dtaper + de * taper;
-               if_constexpr(do_e) e = e * taper;
+               if CONSTEXPR (do_g)
+                  de = e * dtaper + de * taper;
+               if CONSTEXPR (do_e)
+                  e = e * taper;
             }
 
             // Increment the energy, gradient, and virial.
 
-            if_constexpr(do_a) atomic_add(1, nev, offset);
-            if_constexpr(do_e) atomic_add(e, ev, offset);
-            if_constexpr(do_g)
-            {
+            if CONSTEXPR (do_a)
+               atomic_add(1, nev, offset);
+            if CONSTEXPR (do_e)
+               atomic_add(e, ev, offset);
+            if CONSTEXPR (do_g) {
                de *= REAL_RECIP(rik);
                real dedx = de * xr;
                real dedy = de * yr;
@@ -139,8 +143,7 @@ void evdw_tmpl()
                atomic_add(-dedy, gyred, k);
                atomic_add(-dedz, gzred, k);
 
-               if_constexpr(do_v)
-               {
+               if CONSTEXPR (do_v) {
                   real vxx = xr * dedx;
                   real vyx = yr * dedx;
                   real vzx = zr * dedx;
@@ -154,8 +157,7 @@ void evdw_tmpl()
          }
       } // end for (int kk)
 
-      if_constexpr(do_g)
-      {
+      if CONSTEXPR (do_g) {
          atomic_add(gxi, gxred, i);
          atomic_add(gyi, gyred, i);
          atomic_add(gzi, gzred, i);
@@ -197,7 +199,7 @@ void evdw_tmpl()
          real eps = epsilon[it * njvdw + kt];
 
          MAYBE_UNUSED real e, de;
-         if_constexpr(VDWTYP == evdw_t::hal)
+         if CONSTEXPR (VDWTYP == evdw_t::hal)
             pair_hal<do_g>(rik, rv, eps, vscale, vlambda, //
                            ghal, dhal, scexp, scalpha,    //
                            e, de);
@@ -205,14 +207,18 @@ void evdw_tmpl()
          if (rik2 > cut2) {
             real taper, dtaper;
             switch_taper5<do_g>(rik, cut, off, taper, dtaper);
-            if_constexpr(do_g) de = e * dtaper + de * taper;
-            if_constexpr(do_e) e = e * taper;
+            if CONSTEXPR (do_g)
+               de = e * dtaper + de * taper;
+            if CONSTEXPR (do_e)
+               e = e * taper;
          }
 
-         if_constexpr(do_a) if (vscale == -1) atomic_add(-1, nev, offset);
-         if_constexpr(do_e) atomic_add(e, ev, offset);
-         if_constexpr(do_g)
-         {
+         if CONSTEXPR (do_a)
+            if (vscale == -1)
+               atomic_add(-1, nev, offset);
+         if CONSTEXPR (do_e)
+            atomic_add(e, ev, offset);
+         if CONSTEXPR (do_g) {
             de *= REAL_RECIP(rik);
             real dedx = de * xr;
             real dedy = de * yr;
@@ -225,8 +231,7 @@ void evdw_tmpl()
             atomic_add(-dedy, gyred, k);
             atomic_add(-dedz, gzred, k);
 
-            if_constexpr(do_v)
-            {
+            if CONSTEXPR (do_v) {
                real vxx = xr * dedx;
                real vyx = yr * dedx;
                real vzx = zr * dedx;
@@ -240,7 +245,8 @@ void evdw_tmpl()
       }
    } // end for (int ii)
 
-   if_constexpr(do_g) evdw_resolve_gradient();
+   if CONSTEXPR (do_g)
+      evdw_resolve_gradient();
 }
 
 #define TINKER_EVDW_IMPL_(typ)                                                 \

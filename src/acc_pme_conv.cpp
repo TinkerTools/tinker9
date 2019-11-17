@@ -59,8 +59,7 @@ void pme_conv_tmpl(PMEUnit pme_u, virial_buffer gpu_vir)
             dptr->bsmod1[k3];
          expterm = REAL_EXP(term) / denom;
 
-         if_constexpr(DO_V)
-         {
+         if CONSTEXPR (DO_V) {
             real gridx = dptr->qgrid[2 * i];
             real gridy = dptr->qgrid[2 * i + 1];
 

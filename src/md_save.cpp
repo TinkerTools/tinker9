@@ -6,6 +6,9 @@
 #include "potent.h"
 #include "tinker_rt.h"
 #include <condition_variable>
+#include <fstream>
+#include <future>
+#include <mutex>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>
 #include <tinker/detail/files.hh>
@@ -13,9 +16,6 @@
 #include <tinker/detail/output.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/units.hh>
-#include <fstream>
-#include <future>
-#include <mutex>
 
 TINKER_NAMESPACE_BEGIN
 static std::mutex mtx_dup, mtx_write;

@@ -75,10 +75,11 @@ void empole_coulomb_tmpl()
                rpole[k][mpl_pme_zz], //
                f, 0, e, pgrad);
 
-            if_constexpr(do_a) atomic_add(1, nem, offset);
-            if_constexpr(do_e) atomic_add(e, em, offset);
-            if_constexpr(do_g)
-            {
+            if CONSTEXPR (do_a)
+               atomic_add(1, nem, offset);
+            if CONSTEXPR (do_e)
+               atomic_add(e, em, offset);
+            if CONSTEXPR (do_g) {
                gxi += pgrad.frcx;
                gyi += pgrad.frcy;
                gzi += pgrad.frcz;
@@ -95,8 +96,7 @@ void empole_coulomb_tmpl()
 
                // virial
 
-               if_constexpr(do_v)
-               {
+               if CONSTEXPR (do_v) {
                   real vxx = -xr * pgrad.frcx;
                   real vxy = -0.5f * (yr * pgrad.frcx + xr * pgrad.frcy);
                   real vxz = -0.5f * (zr * pgrad.frcx + xr * pgrad.frcz);
@@ -110,8 +110,7 @@ void empole_coulomb_tmpl()
          }       // end if (r2 <= off2)
       }          // end for (int kk)
 
-      if_constexpr(do_g)
-      {
+      if CONSTEXPR (do_g) {
          atomic_add(gxi, gx, i);
          atomic_add(gyi, gy, i);
          atomic_add(gzi, gz, i);
@@ -162,10 +161,12 @@ void empole_coulomb_tmpl()
             rpole[k][mpl_pme_zz], //
             f, 0, e, pgrad);
 
-         if_constexpr(do_a) if (mscale == -1) atomic_add(-1, nem, offset);
-         if_constexpr(do_e) atomic_add(e, em, offset);
-         if_constexpr(do_g)
-         {
+         if CONSTEXPR (do_a)
+            if (mscale == -1)
+               atomic_add(-1, nem, offset);
+         if CONSTEXPR (do_e)
+            atomic_add(e, em, offset);
+         if CONSTEXPR (do_g) {
             atomic_add(pgrad.frcx, gx, i);
             atomic_add(pgrad.frcy, gy, i);
             atomic_add(pgrad.frcz, gz, i);
@@ -182,8 +183,7 @@ void empole_coulomb_tmpl()
 
             // virial
 
-            if_constexpr(do_v)
-            {
+            if CONSTEXPR (do_v) {
                real vxx = -xr * pgrad.frcx;
                real vxy = -0.5f * (yr * pgrad.frcx + xr * pgrad.frcy);
                real vxz = -0.5f * (zr * pgrad.frcx + xr * pgrad.frcz);

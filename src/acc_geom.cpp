@@ -82,14 +82,12 @@ void egeom_acc_tmpl()
          real target = (r < gf1 ? gf1 : (r > gf2 ? gf2 : r));
          real dt = r - target;
 
-         if_constexpr(do_e)
-         {
+         if CONSTEXPR (do_e) {
             real dt2 = dt * dt;
             real e = force * dt2;
             atomic_add(e, eg, offset);
          }
-         if_constexpr(do_g)
-         {
+         if CONSTEXPR (do_g) {
             real rinv = (r == 0 ? 1 : REAL_RECIP(r));
             real de = 2 * force * dt * rinv;
             real dedx = de * xr;
@@ -114,8 +112,7 @@ void egeom_acc_tmpl()
                atomic_add(-dedz * ratio, gz, k);
             }
 
-            if_constexpr(do_v)
-            {
+            if CONSTEXPR (do_v) {
                real vxx = xr * dedx;
                real vyx = yr * dedx;
                real vzx = zr * dedx;

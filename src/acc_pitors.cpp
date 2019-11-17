@@ -105,14 +105,12 @@ void epitors_tmpl()
 
          // calculate the pi-system torsion energy for this angle
 
-         if_constexpr(do_e)
-         {
+         if CONSTEXPR (do_e) {
             real e = ptorunit * v2 * phi2;
             atomic_add(e, ept, offset);
          }
 
-         if_constexpr(do_g)
-         {
+         if CONSTEXPR (do_g) {
             real dphi2 = 2 * (cosine2 * s2 - sine2 * c2);
             real dedphi = ptorunit * v2 * dphi2;
 
@@ -189,8 +187,7 @@ void epitors_tmpl()
             atomic_add(dedyig, gy, ig);
             atomic_add(dedzig, gz, ig);
 
-            if_constexpr(do_v)
-            {
+            if CONSTEXPR (do_v) {
                real vxterm = dedxid + dedxia + dedxib;
                real vyterm = dedyid + dedyia + dedyib;
                real vzterm = dedzid + dedzia + dedzib;

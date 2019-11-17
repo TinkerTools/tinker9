@@ -185,14 +185,14 @@ TINKER_NAMESPACE_END
 
 
 /**
- * \def if_constexpr
+ * \def CONSTEXPR
  * \ingroup macro
- * If possible, use `if constexpr` to hint at the chances of optimizations.
+ * If possible, use `if CONSTEXPR` to hint at the chances of optimizations.
  */
 #ifdef __cpp_if_constexpr
-#   define if_constexpr if constexpr
+#   define CONSTEXPR constexpr
 #else
-#   define if_constexpr if
+#   define CONSTEXPR
 #endif
 
 

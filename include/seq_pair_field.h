@@ -49,7 +49,8 @@ void pair_dfield(                                                //
    damp_thole3(r, pdi, pti, pdk, ptk, scale3, scale5, scale7);
 
    MAYBE_UNUSED real bn[4];
-   if_constexpr(ETYP == elec_t::ewald) damp_ewald(bn, 4, r, invr1, rr2, aewald);
+   if CONSTEXPR (ETYP == elec_t::ewald)
+      damp_ewald(bn, 4, r, invr1, rr2, aewald);
    real rr1 = invr1;
    real rr3 = rr1 * rr2;
    real rr5 = 3 * rr1 * rr2 * rr2;
@@ -70,14 +71,11 @@ void pair_dfield(                                                //
 
    // d-field
 
-   if_constexpr(ETYP == elec_t::ewald)
-   {
+   if CONSTEXPR (ETYP == elec_t::ewald) {
       bcn1 = bn[1] - (1 - scale3) * rr3;
       bcn2 = bn[2] - (1 - scale5) * rr5;
       bcn3 = bn[3] - (1 - scale7) * rr7;
-   }
-   else if_constexpr(ETYP == elec_t::coulomb)
-   {
+   } else if CONSTEXPR (ETYP == elec_t::coulomb) {
       bcn1 = dscale * scale3 * rr3;
       bcn2 = dscale * scale5 * rr5;
       bcn3 = dscale * scale7 * rr7;
@@ -98,17 +96,14 @@ void pair_dfield(                                                //
 
    // p-field
 
-   if_constexpr(ETYP == elec_t::ewald)
-   {
+   if CONSTEXPR (ETYP == elec_t::ewald) {
       pairf.fip[0] = pairf.fid[0];
       pairf.fip[1] = pairf.fid[1];
       pairf.fip[2] = pairf.fid[2];
       pairf.fkp[0] = pairf.fkd[0];
       pairf.fkp[1] = pairf.fkd[1];
       pairf.fkp[2] = pairf.fkd[2];
-   }
-   else if_constexpr(ETYP == elec_t::coulomb)
-   {
+   } else if CONSTEXPR (ETYP == elec_t::coulomb) {
       bcn1 = pscale * scale3 * rr3;
       bcn2 = pscale * scale5 * rr5;
       bcn3 = pscale * scale7 * rr7;
@@ -146,19 +141,17 @@ void pair_ufield(                                   //
    damp_thole2(r, pdi, pti, pdk, ptk, scale3, scale5);
 
    MAYBE_UNUSED real bn[3];
-   if_constexpr(ETYP == elec_t::ewald) damp_ewald(bn, 3, r, invr1, rr2, aewald);
+   if CONSTEXPR (ETYP == elec_t::ewald)
+      damp_ewald(bn, 3, r, invr1, rr2, aewald);
    real rr1 = invr1;
    real rr3 = rr1 * rr2;
    real rr5 = 3 * rr1 * rr2 * rr2;
 
    real bcn1, bcn2;
-   if_constexpr(ETYP == elec_t::ewald)
-   {
+   if CONSTEXPR (ETYP == elec_t::ewald) {
       bcn1 = bn[1] - (1 - scale3) * rr3;
       bcn2 = bn[2] - (1 - scale5) * rr5;
-   }
-   else if_constexpr(ETYP == elec_t::coulomb)
-   {
+   } else if CONSTEXPR (ETYP == elec_t::coulomb) {
       bcn1 = uscale * scale3 * rr3;
       bcn2 = uscale * scale5 * rr5;
    }

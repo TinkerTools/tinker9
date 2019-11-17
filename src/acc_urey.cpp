@@ -32,14 +32,12 @@ void eurey_tmpl()
       real dt = rac - ideal;
       real dt2 = dt * dt;
 
-      if_constexpr(do_e)
-      {
+      if CONSTEXPR (do_e) {
          real e = ureyunit * force * dt2 * (1 + cury * dt + qury * dt2);
          atomic_add(e, eub, offset);
       }
 
-      if_constexpr(do_g)
-      {
+      if CONSTEXPR (do_g) {
          real deddt =
             2 * ureyunit * force * dt * (1 + 1.5f * cury * dt + 2 * qury * dt2);
          real de = deddt * REAL_RECIP(rac);
@@ -54,8 +52,7 @@ void eurey_tmpl()
          atomic_add(-dedy, gy, ic);
          atomic_add(-dedz, gz, ic);
 
-         if_constexpr(do_v)
-         {
+         if CONSTEXPR (do_v) {
             real vxx = xac * dedx;
             real vyx = yac * dedx;
             real vzx = zac * dedx;

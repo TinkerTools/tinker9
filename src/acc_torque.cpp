@@ -123,7 +123,8 @@ void torque_tmpl(virial_buffer gpu_vir)
             de[j][ia] += du;
             #pragma acc atomic update
             de[j][ib] -= du;
-            if_constexpr(DO_V) frcz[j] += du;
+            if CONSTEXPR (DO_V)
+               frcz[j] += du;
          }
       } else if (axetyp == pole_z_then_x) {
          for (int j = 0; j < 3; ++j) {
@@ -135,8 +136,7 @@ void torque_tmpl(virial_buffer gpu_vir)
             de[j][ic] += dv;
             #pragma acc atomic update
             de[j][ib] -= (du + dv);
-            if_constexpr(DO_V)
-            {
+            if CONSTEXPR (DO_V) {
                frcz[j] += du;
                frcx[j] += dv;
             }
@@ -153,8 +153,7 @@ void torque_tmpl(virial_buffer gpu_vir)
             de[j][ic] += dv;
             #pragma acc atomic update
             de[j][ib] -= (du + dv);
-            if_constexpr(DO_V)
-            {
+            if CONSTEXPR (DO_V) {
                frcz[j] += du;
                frcx[j] += dv;
             }
@@ -248,8 +247,7 @@ void torque_tmpl(virial_buffer gpu_vir)
             de[j][id] += dw;
             #pragma acc atomic update
             de[j][ib] -= (du + dv + dw);
-            if_constexpr(DO_V)
-            {
+            if CONSTEXPR (DO_V) {
                frcz[j] += du;
                frcx[j] += dv;
                frcy[j] += dw;
@@ -289,7 +287,8 @@ void torque_tmpl(virial_buffer gpu_vir)
             de[j][id] += dw;
             #pragma acc atomic update
             de[j][ib] -= dw;
-            if_constexpr(DO_V) frcy[j] += dw;
+            if CONSTEXPR (DO_V)
+               frcy[j] += dw;
          }
 
          ADD_(r, v, w);
@@ -310,7 +309,8 @@ void torque_tmpl(virial_buffer gpu_vir)
             de[j][ia] += du;
             #pragma acc atomic update
             de[j][ib] -= du;
-            if_constexpr(DO_V) frcz[j] += du;
+            if CONSTEXPR (DO_V)
+               frcz[j] += du;
          }
 
          ADD_(r, u, w);
@@ -331,12 +331,12 @@ void torque_tmpl(virial_buffer gpu_vir)
             de[j][ic] += dv;
             #pragma acc atomic update
             de[j][ib] -= dv;
-            if_constexpr(DO_V) frcx[j] += dv;
+            if CONSTEXPR (DO_V)
+               frcx[j] += dv;
          }
       }
 
-      if_constexpr(DO_V)
-      {
+      if CONSTEXPR (DO_V) {
          const int iaz = (ia == -1) ? i : ia;
          const int iax = (ic == -1) ? i : ic;
          const int iay = (id == -1) ? i : id;
@@ -367,7 +367,7 @@ void torque_tmpl(virial_buffer gpu_vir)
          real vzz = zix * frcx[2] + ziy * frcy[2] + ziz * frcz[2];
 
          atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir, i & (bufsize - 1));
-      } // end if_constexpr(DO_V)
+      } // end if CONSTEXPR(DO_V)
    }    // end for (int i)
 }
 

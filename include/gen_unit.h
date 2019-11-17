@@ -112,7 +112,7 @@ public:
    /// \brief Get the number of open units.
    static int size()
    {
-      if (USE_DPTR)
+      if CONSTEXPR (USE_DPTR)
          assert(hostptrs().size() == deviceptrs().size());
       return hostptrs().size();
    }
@@ -124,7 +124,7 @@ public:
       // call ~T() on host here
       hostptrs().clear();
       // call deallocate(T*) on device here
-      if (USE_DPTR)
+      if CONSTEXPR (USE_DPTR)
          deviceptrs().clear();
    }
 
@@ -147,7 +147,7 @@ public:
    static GenericUnit open()
    {
       hostptrs().emplace_back(new T);
-      if (USE_DPTR) {
+      if CONSTEXPR (USE_DPTR) {
          T* ptr;
          mem_op::allocate(reinterpret_cast<void**>(&ptr), sizeof(T));
          deviceptrs().emplace_back(ptr, mem_op::deallocate);

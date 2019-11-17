@@ -123,15 +123,13 @@ void dfield_cu1(DFIELD_ARGS, const Spatial* restrict sp, real aewald)
          image(xr, yr, zr, box);
          real r2 = xr * xr + yr * yr + zr * zr;
          if (atomi < atomk && r2 <= off2) {
-            if_constexpr(ETYP == elec_t::ewald)
-            {
+            if CONSTEXPR (ETYP == elec_t::ewald) {
                pair_dfield<elec_t::ewald>(
                   r2, xr, yr, zr, 1, 1, ci, dix, diy, diz, qixx, qixy, qixz,
                   qiyy, qiyz, qizz, pdi, pti, ck, dkx, dky, dkz, qkxx, qkxy,
                   qkxz, qkyy, qkyz, qkzz, pdk, ptk, aewald, pairf);
             }
-            if_constexpr(ETYP == elec_t::coulomb)
-            {
+            if CONSTEXPR (ETYP == elec_t::coulomb) {
                pair_dfield<elec_t::coulomb>(
                   r2, xr, yr, zr, 1, 1, ci, dix, diy, diz, qixx, qixy, qixz,
                   qiyy, qiyz, qizz, pdi, pti, ck, dkx, dky, dkz, qkxx, qkxy,
@@ -376,15 +374,13 @@ void ufield_cu1(UFIELD_ARGS, const Spatial* restrict sp, real aewald)
          image(xr, yr, zr, box);
          real r2 = xr * xr + yr * yr + zr * zr;
          if (atomi < atomk && r2 <= off2) {
-            if_constexpr(ETYP == elec_t::ewald)
-            {
+            if CONSTEXPR (ETYP == elec_t::ewald) {
                pair_ufield<elec_t::ewald>(
                   r2, xr, yr, zr, 1, uindi0, uindi1, uindi2, uinpi0, uinpi1,
                   uinpi2, pdi, pti, uindk0, uindk1, uindk2, uinpk0, uinpk1,
                   uinpk2, pdk, ptk, aewald, pairf);
             }
-            if_constexpr(ETYP == elec_t::coulomb)
-            {
+            if CONSTEXPR (ETYP == elec_t::coulomb) {
                pair_ufield<elec_t::coulomb>(r2, xr, yr, zr, 1, uindi0, uindi1,
                                             uindi2, uinpi0, uinpi1, uinpi2, pdi,
                                             pti, uindk0, uindk1, uindk2, uinpk0,

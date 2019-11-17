@@ -143,8 +143,7 @@ void spatial_bc(Spatial* restrict sp, const real* restrict x,
       real xr = x[i];
       real yr = y[i];
       real zr = z[i];
-      if_constexpr(!ZERO_LBUF)
-      {
+      if CONSTEXPR (!ZERO_LBUF) {
          sp->xold[i] = xr;
          sp->yold[i] = yr;
          sp->zold[i] = zr;

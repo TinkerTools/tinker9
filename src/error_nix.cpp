@@ -33,8 +33,7 @@ void print_backtrace_tmpl(std::ostream& fp)
       // e.g.
       // 3   libdyld.dylib                       0x00007fffbc358235 start + 1
       // [0] [1]                                 [2]                [3]     [5]
-      if_constexpr(os == BackTraceOS::macOS)
-      {
+      if CONSTEXPR (os == BackTraceOS::macOS) {
          auto vs = Text::split(tmp);
          num = vs.at(0);
          caller = vs.at(1);
@@ -45,8 +44,7 @@ void print_backtrace_tmpl(std::ostream& fp)
       // /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xe7)
       // [0x7f4c7dd9db97] [0]                             [1]               [2]
       // [3]
-      else if_constexpr(os == BackTraceOS::Linux)
-      {
+      else if CONSTEXPR (os == BackTraceOS::Linux) {
          Text::replace(tmp, "()[]+", ' ');
          auto vs = Text::split(tmp);
          num = std::to_string(i);

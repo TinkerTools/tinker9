@@ -18,9 +18,11 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
    static_assert(do_v ? do_g : true, "");
    static_assert(do_a ? do_e : true, "");
 
-   if_constexpr(do_g) device_array::zero(n, ufld, dufld);
+   if CONSTEXPR (do_g)
+      device_array::zero(n, ufld, dufld);
 
-   if_constexpr(do_e && !do_a) epolar0_dotprod(uind, udirp);
+   if CONSTEXPR (do_e && !do_a)
+      epolar0_dotprod(uind, udirp);
    static_assert(do_g || do_a,
                  "Do not use this template for the energy-only version.");
 
@@ -61,8 +63,7 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
       real pdi = pdamp[i];
       real pti = thole[i];
       MAYBE_UNUSED real uixp, uiyp, uizp;
-      if_constexpr(do_g)
-      {
+      if CONSTEXPR (do_g) {
          uixp = uinp[i][0];
          uiyp = uinp[i][1];
          uizp = uinp[i][2];
@@ -99,8 +100,7 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
             real uky = uind[k][1];
             real ukz = uind[k][2];
             MAYBE_UNUSED real ukxp, ukyp, ukzp;
-            if_constexpr(do_g)
-            {
+            if CONSTEXPR (do_g) {
                ukxp = uinp[k][0];
                ukyp = uinp[k][1];
                ukzp = uinp[k][2];
@@ -116,14 +116,12 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
                ukz, ukxp, ukyp, ukzp, pdamp[k], thole[k], //
                f, 0, e, pgrad);
 
-            if_constexpr(do_a && do_e)
-            {
+            if CONSTEXPR (do_a && do_e) {
                atomic_add(1, nep, offset);
                atomic_add(e, ep, offset);
             }
 
-            if_constexpr(do_g)
-            {
+            if CONSTEXPR (do_g) {
                gxi += pgrad.frcx;
                gyi += pgrad.frcy;
                gzi += pgrad.frcz;
@@ -151,8 +149,7 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
                atomic_add(pgrad.dufldk[4], &dufld[k][4]);
                atomic_add(pgrad.dufldk[5], &dufld[k][5]);
 
-               if_constexpr(do_v)
-               {
+               if CONSTEXPR (do_v) {
                   real vxx = -xr * pgrad.frcx;
                   real vxy = -0.5f * (yr * pgrad.frcx + xr * pgrad.frcy);
                   real vxz = -0.5f * (zr * pgrad.frcx + xr * pgrad.frcz);
@@ -166,8 +163,7 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
          }
       } // end for (int kk)
 
-      if_constexpr(do_g)
-      {
+      if CONSTEXPR (do_g) {
          atomic_add(gxi, gx, i);
          atomic_add(gyi, gy, i);
          atomic_add(gzi, gz, i);
@@ -213,8 +209,7 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
       real pdi = pdamp[i];
       real pti = thole[i];
       MAYBE_UNUSED real uixp, uiyp, uizp;
-      if_constexpr(do_g)
-      {
+      if CONSTEXPR (do_g) {
          uixp = uinp[i][0];
          uiyp = uinp[i][1];
          uizp = uinp[i][2];
@@ -241,8 +236,7 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
          real uky = uind[k][1];
          real ukz = uind[k][2];
          MAYBE_UNUSED real ukxp, ukyp, ukzp;
-         if_constexpr(do_g)
-         {
+         if CONSTEXPR (do_g) {
             ukxp = uinp[k][0];
             ukyp = uinp[k][1];
             ukzp = uinp[k][2];
@@ -258,15 +252,13 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
             ukz, ukxp, ukyp, ukzp, pdamp[k], thole[k], //
             f, 0, e, pgrad);
 
-         if_constexpr(do_a && do_e)
-         {
+         if CONSTEXPR (do_a && do_e) {
             if (pscale == -1)
                atomic_add(-1, nep, offset);
             atomic_add(e, ep, offset);
          }
 
-         if_constexpr(do_g)
-         {
+         if CONSTEXPR (do_g) {
             atomic_add(pgrad.frcx, gx, i);
             atomic_add(pgrad.frcy, gy, i);
             atomic_add(pgrad.frcz, gz, i);
@@ -294,8 +286,7 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
             atomic_add(pgrad.dufldk[4], &dufld[k][4]);
             atomic_add(pgrad.dufldk[5], &dufld[k][5]);
 
-            if_constexpr(do_v)
-            {
+            if CONSTEXPR (do_v) {
                real vxx = -xr * pgrad.frcx;
                real vxy = -0.5f * (yr * pgrad.frcx + xr * pgrad.frcy);
                real vxz = -0.5f * (zr * pgrad.frcx + xr * pgrad.frcz);
@@ -311,8 +302,7 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
 
    // torque
 
-   if_constexpr(do_g)
-   {
+   if CONSTEXPR (do_g) {
       #pragma acc parallel loop independent\
                 deviceptr(rpole,trqx,trqy,trqz,ufld,dufld)
       for (int i = 0; i < n; ++i) {
