@@ -72,6 +72,11 @@ public:
 #else
 #   define check_rt(call, ...) call
 #endif
+
+#define TINKER_DUMMY_FUNCTION(r)                                               \
+   TINKER_THROW(                                                               \
+      format("This dummy function, {}(), should not have been called.\n",      \
+             TINKER_STR(r)))
 TINKER_NAMESPACE_END
 
 #endif

@@ -236,6 +236,15 @@ struct Spatial
    int* xkf;                     // nax * nxk
 
 
+   int rebuild;
+   real cutoff, buffer;
+   const real* x;
+   const real* y;
+   const real* z;
+   int* update;              // n
+   real *xold, *yold, *zold; // n
+
+
    ~Spatial();
 };
 using SpatialUnit = GenericUnit<Spatial, GenericUnitVersion::EnableOnDevice>;
@@ -243,5 +252,6 @@ TINKER_EXTERN SpatialUnit vspatial_unit;
 TINKER_EXTERN SpatialUnit mspatial_unit;
 
 
-void spatial_data(rc_op);
+void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer,
+                        const real* x, const real* y, const real* z);
 TINKER_NAMESPACE_END

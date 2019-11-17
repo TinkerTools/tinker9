@@ -34,6 +34,7 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]")
    test_begin_with_args(argc, argv);
 
    rc_flag = usage_;
+   always_use_nblist = 1;
    trajn = 5;
    initialize();
 

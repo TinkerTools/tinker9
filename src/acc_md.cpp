@@ -206,7 +206,7 @@ void mdrest_acc_impl_(int istep)
    }
 }
 
-void propagate_xyz_acc_impl_(real dt)
+void propagate_xyz_acc(real dt)
 {
    #pragma acc parallel loop independent deviceptr(x,y,z,vx,vy,vz)
    for (int i = 0; i < n; ++i) {
@@ -216,7 +216,7 @@ void propagate_xyz_acc_impl_(real dt)
    }
 }
 
-void propagate_velocity_acc_impl_(real dt)
+void propagate_velocity_acc(real dt)
 {
    const real ekcal = units::ekcal;
    #pragma acc parallel loop independent deviceptr(vx,vy,vz,gx,gy,gz,massinv)

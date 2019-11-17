@@ -99,20 +99,17 @@ void mdrest(int istep)
    mdrest_acc_impl_(istep);
 }
 
-extern void propagate_xyz_acc_impl_(real dt);
+extern void propagate_xyz_acc(real dt);
 void propagate_xyz(real dt)
 {
-   propagate_xyz_acc_impl_(dt);
+   propagate_xyz_acc(dt);
    nblist_data(rc_evolve);
-#if TINKER_CUDART
-   spatial_data(rc_evolve);
-#endif
 }
 
-extern void propagate_velocity_acc_impl_(real dt);
+extern void propagate_velocity_acc(real dt);
 void propagate_velocity(real dt)
 {
-   propagate_velocity_acc_impl_(dt);
+   propagate_velocity_acc(dt);
 }
 
 void propagate(int nsteps, real dt_ps, void (*itg)(int, real))

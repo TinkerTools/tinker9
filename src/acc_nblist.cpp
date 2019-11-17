@@ -55,6 +55,69 @@ TINKER_NAMESPACE_END
 #endif
 
 TINKER_NAMESPACE_BEGIN
+void check_nblist_acc(int n, real lbuf, const Box* restrict box,
+                      int* restrict update, const real* restrict x,
+                      const real* restrict y, const real* restrict z,
+                      real* restrict xold, real* restrict yold,
+                      real* restrict zold)
+{
+   const real lbuf2 = REAL_SQ(0.5f * lbuf);
+   #pragma acc parallel loop independent\
+               deviceptr(box,update,x,y,z,xold,yold,zold)
+   for (int i = 0; i < n; ++i) {
+      real xi = x[i];
+      real yi = y[i];
+      real zi = z[i];
+      real xr = xi - xold[i];
+      real yr = yi - yold[i];
+      real zr = zi - zold[i];
+      imagen(xr, yr, zr, box);
+      real r2 = xr * xr + yr * yr + zr * zr;
+      update[i] = 0;
+      if (r2 >= lbuf2) {
+         update[i] = 1;
+         xold[i] = xi;
+         yold[i] = yi;
+         zold[i] = zi;
+      }
+   }
+}
+
+int check_spatial_acc(int n, real lbuf, const Box* restrict box,
+                      int* restrict update, const real* restrict x,
+                      const real* restrict y, const real* restrict z,
+                      real* restrict xold, real* restrict yold,
+                      real* restrict zold)
+{
+   if (lbuf == 0)
+      return 1;
+
+
+   int rebuild = 0;
+   const real lbuf2 = REAL_SQ(0.5f * lbuf);
+   #pragma acc kernels deviceptr(box,update,x,y,z,xold,yold,zold) copy(rebuild)
+   {
+      #pragma acc loop independent
+      for (int i = 0; i < n; ++i) {
+         real xr = x[i] - xold[i];
+         real yr = y[i] - yold[i];
+         real zr = z[i] - zold[i];
+         imagen(xr, yr, zr, box);
+         real r2 = xr * xr + yr * yr + zr * zr;
+         update[i] = (r2 >= lbuf2 ? 1 : 0);
+      }
+
+
+      #pragma acc loop independent reduction(max:rebuild)
+      for (int i = 0; i < n; ++i) {
+         int upi = update[i];
+         rebuild = (rebuild > upi ? rebuild : upi);
+      }
+   }
+
+
+   return rebuild;
+}
 
 //====================================================================//
 // double loop
@@ -124,41 +187,17 @@ inline void build_v1_(NBListUnit nu)
    }
 }
 
-inline void displace_v1_(NBListUnit nu)
-{
-   auto& st = *nu;
-   auto* lst = nu.deviceptr();
-   const real lbuf2 = REAL_SQ(0.5f * st.buffer);
-   #pragma acc parallel loop independent deviceptr(lst,box)
-   for (int i = 0; i < n; ++i) {
-      real xi = lst->x[i];
-      real yi = lst->y[i];
-      real zi = lst->z[i];
-      real xr = xi - lst->xold[i];
-      real yr = yi - lst->yold[i];
-      real zr = zi - lst->zold[i];
-      imagen(xr, yr, zr, box);
-      lst->update[i] = 0;
-      real r2 = xr * xr + yr * yr + zr * zr;
-      if (r2 >= lbuf2) {
-         lst->update[i] = 1;
-         lst->xold[i] = xi;
-         lst->yold[i] = yi;
-         lst->zold[i] = zi;
-      }
-   }
-}
-
 inline void update_v1_(NBListUnit nu)
 {
 
    // test sites for displacement exceeding half the buffer
 
-   displace_v1_(nu);
+   auto& st = *nu;
+   check_nblist_acc(n, st.buffer, box, st.update, st.x, st.y, st.z, st.xold,
+                    st.yold, st.zold);
 
    // rebuild the higher numbered neighbors for updated sites
 
-   auto& st = *nu;
    auto* lst = nu.deviceptr();
    const int maxnlst = st.maxnlst;
    const real buf2 = REAL_SQ(st.cutoff + st.buffer);

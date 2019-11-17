@@ -1,19 +1,20 @@
-#ifndef TINKER_NBLIST_H_
-#define TINKER_NBLIST_H_
-
+#pragma once
+#include "box.h"
 #include "dev_array.h"
 #include "gen_unit.h"
 #include "rc_man.h"
 
+
 TINKER_NAMESPACE_BEGIN
-/// @brief
-/// pairwise neighbor list indices and storage
+/// \brief
+/// Verlet list: pairwise neighbor list indices and storage.
 struct NBList
 {
    enum
    {
-      double_loop = 1, ///< double loop version
-      nblist = 2       ///< neighbor list version
+      double_loop = 0x1, ///< Double loop version.
+      nblist = 0x2,      ///< Neighbor list version.
+      spatial = 0x4      ///< Spatial decomposition version.
    };
 
    int* nlst;     ///< number of sites in list for each atom
@@ -31,13 +32,21 @@ struct NBList
 
    ~NBList();
 };
-
 typedef GenericUnit<NBList, GenericUnitVersion::EnableOnDevice> NBListUnit;
 TINKER_EXTERN NBListUnit vlist_unit;
 TINKER_EXTERN NBListUnit dlist_unit;
 TINKER_EXTERN NBListUnit clist_unit;
 TINKER_EXTERN NBListUnit mlist_unit;
 TINKER_EXTERN NBListUnit ulist_unit;
+
+
+int vlist_version();
+int dlist_version();
+int clist_version();
+int mlist_version();
+int ulist_version();
+extern int always_use_nblist;
+
 
 // size cannot be determined in @c epolar_data(...)
 // when neighbor lists are not set up, so these variables
@@ -50,5 +59,3 @@ TINKER_EXTERN device_pointer<real> minv_exclude_;
 
 void nblist_data(rc_op op);
 TINKER_NAMESPACE_END
-
-#endif

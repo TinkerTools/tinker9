@@ -125,6 +125,7 @@ inline int offset_box(int nx, int ny, int nz, int ix1, int iy1, int iz1,
 }
 
 
+template <bool ZERO_LBUF>
 __global__
 void spatial_bc(Spatial* restrict sp, const real* restrict x,
                 const real* restrict y, const real* restrict z,
@@ -142,6 +143,12 @@ void spatial_bc(Spatial* restrict sp, const real* restrict x,
       real xr = x[i];
       real yr = y[i];
       real zr = z[i];
+      if_constexpr(!ZERO_LBUF)
+      {
+         sp->xold[i] = xr;
+         sp->yold[i] = yr;
+         sp->zold[i] = zr;
+      }
       real fx, fy, fz;
       frac(fx, fy, fz, xr, yr, zr, box);
       sorted[i].x = xr;       // B.2
@@ -317,9 +324,12 @@ TINKER_NAMESPACE_END
 
 
 TINKER_NAMESPACE_BEGIN
-void spatial_data_init_cu(SpatialUnit u, NBListUnit nu)
+void spatial_data_init_cu(SpatialUnit u)
 {
-   const real cutbuf = nu->cutoff + nu->buffer;
+   assert(u->rebuild == 1);
+   u->rebuild = 0;
+   const real cutbuf = u->cutoff + u->buffer;
+   const real lbuf = u->buffer;
    const int& nak = u->nak;
    const int padded = nak * Spatial::BLOCK;
    int& px = u->px;
@@ -350,10 +360,15 @@ void spatial_data_init_cu(SpatialUnit u, NBListUnit nu)
    // B.1 D.1
    device_array::zero(nx + 1, ax_scan);
    // B.2 B.3 B.4 C.1
-   const auto* lx = nu->x;
-   const auto* ly = nu->y;
-   const auto* lz = nu->z;
-   launch_kernel1(n, spatial_bc, u.deviceptr(), lx, ly, lz, box, cutbuf);
+   const auto* lx = u->x;
+   const auto* ly = u->y;
+   const auto* lz = u->z;
+   if (lbuf > 0)
+      launch_kernel1(n, spatial_bc<false>, u.deviceptr(), lx, ly, lz, box,
+                     cutbuf);
+   else if (lbuf == 0)
+      launch_kernel1(n, spatial_bc<true>, u.deviceptr(), lx, ly, lz, box,
+                     cutbuf);
    // find max(nax) and compare to Spatial::BLOCK
    // ax_scan[0] == 0 can never be the maximum
    int level = 1 + floor_log2(nak - 1);
@@ -385,7 +400,12 @@ void spatial_data_init_cu(SpatialUnit u, NBListUnit nu)
       u.update_deviceptr(*u);
 
       device_array::zero(nx + 1, ax_scan);
-      launch_kernel1(n, spatial_bc, u.deviceptr(), lx, ly, lz, box, cutbuf);
+      if (lbuf > 0)
+         launch_kernel1(n, spatial_bc<false>, u.deviceptr(), lx, ly, lz, box,
+                        cutbuf);
+      else if (lbuf == 0)
+         launch_kernel1(n, spatial_bc<true>, u.deviceptr(), lx, ly, lz, box,
+                        cutbuf);
       mnaxptr = thrust::max_element(policy, ax_scan, ax_scan + 1 + nx);
       device_array::copyout(1, &mnax, mnaxptr);
    }

@@ -4,76 +4,104 @@
 #include "e_vdw.h"
 #include "md.h"
 #include "potent.h"
+#include "spatial.h"
+#include <tinker/detail/bound.hh>
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/neigh.hh>
 #include <tinker/detail/potent.hh>
 
+
 TINKER_NAMESPACE_BEGIN
-static int use_vdw_list()
-{
-   int ret = 0;
-   if (use_potent(vdw_term))
-      ++ret;
-   else
-      return ret;
+void check_nblist_acc(int, real, const Box*, int*, const real*, const real*,
+                      const real*, real*, real*, real*);
+int check_spatial_acc(int, real, const Box*, int*, const real*, const real*,
+                      const real*, real*, real*, real*);
+int always_use_nblist;
 
-   if (limits::use_vlist)
-      ++ret;
-   return ret;
+
+int vlist_version()
+{
+   if (!use_potent(vdw_term))
+      return 0;
+   if (!limits::use_vlist)
+      return NBList::double_loop;
+   if (!bound::use_bounds)
+      return NBList::nblist;
+#if TINKER_CUDART
+   if (always_use_nblist)
+      return NBList::nblist;
+   else
+      return NBList::spatial;
+#else
+   return NBList::nblist;
+#endif
 }
 
-static int use_disp_list()
-{
-   int ret = 0;
-   if (potent::use_disp)
-      ++ret;
-   else
-      return ret;
 
-   if (limits::use_dlist)
-      ++ret;
-   return ret;
+int dlist_version()
+{
+   if (!use_potent(disp_term))
+      return 0;
+   if (!limits::use_dlist)
+      return NBList::double_loop;
+   if (!bound::use_bounds)
+      return NBList::nblist;
+#if TINKER_CUDART
+   return NBList::spatial;
+#else
+   return NBList::nblist;
+#endif
 }
 
-static int use_charge_list()
-{
-   int ret = 0;
-   if (potent::use_charge || potent::use_solv)
-      ++ret;
-   else
-      return ret;
 
-   if (limits::use_clist)
-      ++ret;
-   return ret;
+int clist_version()
+{
+   if (!use_potent(charge_term) /* && !use_potent(solv_term) */)
+      return 0;
+   if (!limits::use_clist)
+      return NBList::double_loop;
+   if (!bound::use_bounds)
+      return NBList::nblist;
+#if TINKER_CUDART
+   return NBList::spatial;
+#else
+   return NBList::nblist;
+#endif
 }
 
-static int use_mpole_list()
-{
-   int ret = 0;
-   if (potent::use_mpole || potent::use_polar || potent::use_chgtrn ||
-       potent::use_solv)
-      ++ret;
-   else
-      return ret;
 
-   if (limits::use_mlist)
-      ++ret;
-   return ret;
+int mlist_version()
+{
+   if (!use_potent(mpole_term) && !use_potent(polar_term)
+       /* && !use_potent(chgtrn_term) && !use_potent(solv_term) */)
+      return 0;
+   if (!limits::use_mlist)
+      return NBList::double_loop;
+   if (!bound::use_bounds)
+      return NBList::nblist;
+#if TINKER_CUDART
+   return NBList::spatial;
+#else
+   return NBList::nblist;
+#endif
 }
 
-static int use_usolv_list()
-{
-   int ret = 0;
-   if (potent::use_polar)
-      ++ret;
-   else
-      return ret;
 
-   if (limits::use_ulist)
-      ++ret;
-   return ret;
+int ulist_version()
+{
+   if (!use_potent(polar_term))
+      return 0;
+   if (!limits::use_ulist)
+      return NBList::double_loop;
+   if (!bound::use_bounds)
+      return NBList::nblist;
+#if TINKER_CUDART
+   return NBList::spatial;
+#else
+   return NBList::nblist;
+#endif
 }
+
 
 // see also cutoffs.f
 // In the gas phase calculation where neighbor list is not used, we should
@@ -142,6 +170,9 @@ static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
 
 extern void nblist_build_acc_impl_(NBListUnit);
 extern void nblist_update_acc_impl_(NBListUnit);
+extern void spatial_data_init_cu(SpatialUnit);
+extern void thrust_cache_dealloc();
+extern void thrust_cache_alloc();
 void nblist_data(rc_op op)
 {
    if (op & rc_dealloc) {
@@ -151,23 +182,41 @@ void nblist_data(rc_op op)
       clist_unit.close();
       mlist_unit.close();
       ulist_unit.close();
+
+      always_use_nblist = 0;
+
+#if TINKER_CUDART
+      SpatialUnit::clear();
+      thrust_cache_dealloc();
+      vspatial_unit.close();
+      mspatial_unit.close();
+#endif
    }
 
-   if (op & rc_alloc)
+
+   if (op & rc_alloc) {
       assert(NBListUnit::size() == 0);
+      assert(SpatialUnit::size() == 0);
+   }
+
 
    int maxnlst = 0;
    int u = 0;
+   bool alloc_thrust_cache = false;
+   double cut = 0;
+   double buf = 0;
+
 
    // vlist
-   u = use_vdw_list();
-   if (u) {
+   u = vlist_version();
+   cut = limits::vdwcut;
+   buf = neigh::lbuffer;
+   if (u & (NBList::nblist | NBList::double_loop)) {
       if (op & rc_alloc) {
          maxnlst = 2500;
          if (u == NBList::double_loop)
             maxnlst = 1;
-         nblist_op_alloc_(vlist_unit, maxnlst, limits::vdwcut, neigh::lbuffer,
-                          xred, yred, zred);
+         nblist_op_alloc_(vlist_unit, maxnlst, cut, buf, xred, yred, zred);
       }
 
       if (op & rc_init) {
@@ -179,40 +228,36 @@ void nblist_data(rc_op op)
          evdw_reduce_xyz();
          nblist_update_acc_impl_(vlist_unit);
       }
+   } else if (u & NBList::spatial) {
+      if (op & rc_alloc) {
+         spatial_data_alloc(vspatial_unit, n, cut, buf, xred, yred, zred);
+         alloc_thrust_cache = true;
+      }
+
+      if (op & rc_init) {
+         evdw_reduce_xyz();
+         spatial_data_init_cu(vspatial_unit);
+      }
+
+      if (op & rc_evolve) {
+         evdw_reduce_xyz();
+         auto& st = *vspatial_unit;
+         st.rebuild = check_spatial_acc(st.n, st.buffer, box, st.update, st.x,
+                                        st.y, st.z, st.xold, st.yold, st.zold);
+         if (st.rebuild)
+            spatial_data_init_cu(vspatial_unit);
+      }
    }
 
    // dlist
-   u = use_disp_list();
-   if (u) {
-      if (op & rc_alloc) {
-         maxnlst = 2500;
-         if (u == NBList::double_loop)
-            maxnlst = 1;
-         nblist_op_alloc_(dlist_unit, maxnlst, limits::dispcut, neigh::lbuffer,
-                          x, y, z);
-      }
-
-      if (op & rc_init) {
-      }
-   }
 
    // clist
-   u = use_charge_list();
-   if (u) {
-      if (op & rc_alloc) {
-         maxnlst = 2500;
-         if (u == NBList::double_loop)
-            maxnlst = 1;
-         nblist_op_alloc_(clist_unit, maxnlst, limits::chgcut, neigh::lbuffer,
-                          x, y, z);
-      }
-
-      if (op & rc_init) {
-      }
-   }
 
    // mlist
-   u = use_mpole_list();
+   u = mlist_version();
+   cut = limits::mpolecut;
+   buf = neigh::lbuffer;
+   // if (u & (NBList::nblist | NBList::double_loop)) {
    if (u) {
       if (op & rc_alloc) {
          maxnlst = 2500;
@@ -235,9 +280,30 @@ void nblist_data(rc_op op)
          nblist_update_acc_impl_(mlist_unit);
       }
    }
+   // else if (u & NBList::spatial) {
+#if TINKER_CUDART
+   if (u) {
+      if (op & rc_alloc) {
+         spatial_data_alloc(mspatial_unit, n, cut, buf, x, y, z);
+         alloc_thrust_cache = true;
+      }
+
+      if (op & rc_init) {
+         spatial_data_init_cu(mspatial_unit);
+      }
+
+      if (op & rc_evolve) {
+         auto& st = *mspatial_unit;
+         st.rebuild = check_spatial_acc(st.n, st.buffer, box, st.update, st.x,
+                                        st.y, st.z, st.xold, st.yold, st.zold);
+         if (st.rebuild)
+            spatial_data_init_cu(mspatial_unit);
+      }
+   }
+#endif
 
    // ulist
-   u = use_usolv_list();
+   u = ulist_version();
    if (u) {
       if (op & rc_dealloc) {
          device_array::deallocate(mindex, minv, minv_exclude_);
@@ -270,5 +336,9 @@ void nblist_data(rc_op op)
          nblist_update_acc_impl_(ulist_unit);
       }
    }
+
+
+   if (alloc_thrust_cache)
+      thrust_cache_alloc();
 }
 TINKER_NAMESPACE_END
