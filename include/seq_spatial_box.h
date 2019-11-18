@@ -102,6 +102,9 @@ __device__
 inline int frac_to_box(int px, int py, int pz, real fx, real fy, real fz)
 {
    int ix, iy, iz;
+   fx -= REAL_FLOOR(fx + 0.5f);
+   fy -= REAL_FLOOR(fy + 0.5f);
+   fz -= REAL_FLOOR(fz + 0.5f);
    frac_to_ixyz(ix, iy, iz, px, py, pz, fx, fy, fz);
    return ixyz_to_box(px, py, pz, ix, iy, iz);
 }

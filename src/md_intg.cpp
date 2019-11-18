@@ -80,10 +80,9 @@ void kinetic(real& temp)
 extern void thermo_bussi_acc_impl_(real dt, real temp);
 void temper(real dt, real& temp)
 {
-   if (thermostat == thermo_null) {
-      kinetic(temp);
+   kinetic(temp);
+   if (thermostat == thermo_null)
       return;
-   }
 
    if (thermostat == thermo_bussi)
       thermo_bussi_acc_impl_(dt, temp);
