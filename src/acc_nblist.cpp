@@ -93,9 +93,9 @@ int check_spatial_acc(int n, real lbuf, const Box* restrict box,
       return 1;
 
 
-   int rebuild = 0;
+   int ans;
    const real lbuf2 = REAL_SQ(0.5f * lbuf);
-   #pragma acc kernels deviceptr(box,update,x,y,z,xold,yold,zold) copy(rebuild)
+   #pragma acc kernels deviceptr(box,update,x,y,z,xold,yold,zold) copyout(ans)
    {
       #pragma acc loop independent
       for (int i = 0; i < n; ++i) {
@@ -107,16 +107,18 @@ int check_spatial_acc(int n, real lbuf, const Box* restrict box,
          update[i] = (r2 >= lbuf2 ? 1 : 0);
       }
 
-
+      int rebuild = 0;
       #pragma acc loop independent reduction(max:rebuild)
       for (int i = 0; i < n; ++i) {
          int upi = update[i];
          rebuild = (rebuild > upi ? rebuild : upi);
       }
+
+      ans = rebuild;
    }
 
 
-   return rebuild;
+   return ans;
 }
 
 //====================================================================//
