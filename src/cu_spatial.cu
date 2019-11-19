@@ -430,7 +430,7 @@ void spatial_data_init_cu(SpatialUnit u)
    thrust::transform_exclusive_scan(policy, xakf, xakf + nak, xakf_scan, POPC(),
                                     0, thrust::plus<int>());
    if (xak_sum > xak_sum_cap) {
-      device_array::deallocate(u->iak, u->lst);
+      device_array::deallocate(u->lst); // lst and iak were allocated together
       xak_sum_cap = xak_sum;
       size_t iak_size = near * xak_sum;            // F.3
       size_t lst_size = iak_size * Spatial::BLOCK; // F.4

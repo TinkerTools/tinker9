@@ -9,7 +9,7 @@ TINKER_NAMESPACE_BEGIN
 Spatial::~Spatial()
 {
    // output
-   device_array::deallocate(lst); // iak and lst were allocated together
+   device_array::deallocate(lst); // lst and iak were allocated together
    // internal
    device_array::deallocate(sorted, boxnum);
    device_array::deallocate(naak, xakf, xakf_scan);
