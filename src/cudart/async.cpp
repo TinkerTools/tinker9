@@ -4,34 +4,33 @@
 
 
 TINKER_NAMESPACE_BEGIN
-class StreamSt
-{};
-
-
 void* async_acc;
 
 
-void deallocate_stream(Stream s)
+void deallocate_stream(void* s)
 {
-   check_rt(cudaStreamDestroy(reinterpret_cast<cudaStream_t>(s)));
+   auto ss = reinterpret_cast<cudaStream_t>(s);
+   check_rt(cudaStreamDestroy(ss));
 }
 
 
-void allocate_stream(Stream* s)
+void allocate_stream(void** s)
 {
-   check_rt(cudaStreamCreate(reinterpret_cast<cudaStream_t*>(s)));
+   auto ss = reinterpret_cast<cudaStream_t*>(s);
+   check_rt(cudaStreamCreate(ss));
 }
 
 
-void synchronize_stream(Stream s)
+void synchronize_stream(void* s)
 {
-   check_rt(cudaStreamSynchronize(reinterpret_cast<cudaStream_t>(s)));
+   auto ss = reinterpret_cast<cudaStream_t>(s);
+   check_rt(cudaStreamSynchronize(ss));
 }
 
 
-void copy_bytes_async(void* dst, const void* src, size_t nbytes, Stream s)
+void copy_bytes_async(void* dst, const void* src, size_t nbytes, void* s)
 {
-   check_rt(cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyDeviceToDevice,
-                            reinterpret_cast<cudaStream_t>(s)));
+   auto ss = reinterpret_cast<cudaStream_t>(s);
+   check_rt(cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyDeviceToDevice, ss));
 }
 TINKER_NAMESPACE_END

@@ -8,6 +8,10 @@
 
 
 TINKER_NAMESPACE_BEGIN
+class StreamSt;
+using Stream = StreamSt*;
+
+
 class StreamSt
 {
 private:
@@ -77,26 +81,29 @@ StreamSt::StreamSt()
 void* async_acc;
 
 
-void deallocate_stream(Stream s)
+void deallocate_stream(void* ss)
 {
+   auto s = reinterpret_cast<Stream>(ss);
    delete s;
 }
 
 
-void allocate_stream(Stream* ps)
+void allocate_stream(void** ps)
 {
    *ps = new StreamSt;
 }
 
 
-void synchronize_stream(Stream s)
+void synchronize_stream(void* ss)
 {
+   auto s = reinterpret_cast<Stream>(ss);
    s->sync();
 }
 
 
-void copy_bytes_async(void* dst, const void* src, size_t nbytes, Stream s)
+void copy_bytes_async(void* dst, const void* src, size_t nbytes, void* ss)
 {
+   auto s = reinterpret_cast<Stream>(ss);
    s->add_async_call(std::memcpy, dst, src, nbytes);
 }
 TINKER_NAMESPACE_END

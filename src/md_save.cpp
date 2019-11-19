@@ -27,9 +27,9 @@ static bool mdsave_use_uind_()
 {
    return output::uindsave && use_potent(polar_term);
 }
-static Stream dup_stream_uind_;
+static void* dup_stream_uind_;
 static real (*dup_buf_uind_)[3];
-static Stream dup_stream_bxyz_, dup_stream_v_, dup_stream_g_;
+static void *dup_stream_bxyz_, *dup_stream_v_, *dup_stream_g_;
 static real dup_buf_esum_;
 static Box* dup_buf_box_;
 static real *dup_buf_x_, *dup_buf_y_, *dup_buf_z_;

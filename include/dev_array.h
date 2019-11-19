@@ -7,15 +7,13 @@
 
 TINKER_NAMESPACE_BEGIN
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
-                                void* stream = nullptr);
+                                void* s = 0, int sync = 1);
 void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
-                                 void* stream = nullptr);
+                                 void* s = 0, int sync = 1);
 void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
-                              void* stream = nullptr);
-void device_memory_zero_bytes_async(void* dst, size_t nbytes,
-                                    void* stream = async_acc);
-/// \deprecated
-void device_memory_zero_bytes(void* dst, size_t nbytes);
+                              void* s = 0, int sync = 1);
+void device_memory_zero_bytes(void* dst, size_t nbytes, void* s = 0,
+                              int sync = 1);
 void device_memory_deallocate_bytes(void* ptr);
 void device_memory_allocate_bytes(void** pptr, size_t nbytes);
 TINKER_NAMESPACE_END
@@ -169,7 +167,7 @@ struct device_array
    {
       typedef typename deduce_ptr<PTR>::type T;
       constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_zero_bytes_async(flatten(p), sizeof(T) * nelem * N, stream);
+      device_memory_zero_bytes(flatten(p), sizeof(T) * nelem * N, stream, 0);
    }
 
 

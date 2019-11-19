@@ -21,7 +21,7 @@ $ pwd
    - Change the value of variable `FFTWDIR` to the top-level `FFTW` installation.
    - Locate the correct flags in the `Makefile` for your compiler and operating system,
      uncomment them, and comment out the others.
-   - **Must disable the OpenMP flags.**
+   - **Must disable the OpenMP flag.**
    - Run `make` command
 ```
 make libtinker.a -j
