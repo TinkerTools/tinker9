@@ -4,13 +4,13 @@
 TINKER_NAMESPACE_BEGIN
 bool ResourceManagement::will_dealloc_() const
 {
-   return op_ & dealloc;
+   return op_ & rc_op::dealloc;
 }
 
 
 bool ResourceManagement::only_dealloc_() const
 {
-   return op_ == dealloc;
+   return op_ == rc_op::dealloc;
 }
 
 
@@ -56,6 +56,8 @@ void host_data(rc_op op)
    rc_man gpu_card42_{gpu_card_data, op};
 }
 
+extern void async_acc_queue_data(rc_op);
+
 extern void n_data(rc_op);
 
 extern void xyz_data(rc_op);
@@ -73,6 +75,8 @@ extern void md_data(rc_op);
 
 void device_data(rc_op op)
 {
+   rc_man aaq42_{async_acc_queue_data, op};
+
    rc_man n42_{n_data, op};
 
    rc_man xyz42_{xyz_data, op};

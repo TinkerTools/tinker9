@@ -1,11 +1,15 @@
 #pragma once
-#include "macro.h"
+#include "rc_man.h"
 #include <cstring>
 
 
 TINKER_NAMESPACE_BEGIN
 class StreamSt;
 typedef StreamSt* Stream;
+
+
+void async_acc_queue_data(rc_op);
+extern void* async_acc;
 
 
 /// \brief Deallocate the asynchronous stream.

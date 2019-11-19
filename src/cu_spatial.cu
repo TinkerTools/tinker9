@@ -352,12 +352,13 @@ void spatial_data_init_cu(SpatialUnit u)
    auto*& xkf = u->xkf;
 
 
+   cudaStream_t ay = reinterpret_cast<cudaStream_t>(async_acc);
    // auto policy = thrust::device;
-   auto policy = thrust::cuda::par(thrust_cache);
+   auto policy = thrust::cuda::par(thrust_cache).on(ay);
 
 
    // B.1 D.1
-   device_array::zero(nx + 1, ax_scan);
+   device_array::zero_async(ay, nx + 1, ax_scan);
    // B.2 B.3 B.4 C.1
    const auto* lx = u->x;
    const auto* ly = u->y;
@@ -398,7 +399,7 @@ void spatial_data_init_cu(SpatialUnit u)
 
       u.update_deviceptr(*u);
 
-      device_array::zero(nx + 1, ax_scan);
+      device_array::zero_async(ay, nx + 1, ax_scan);
       if (lbuf > 0)
          launch_kernel1(n, spatial_bc<false>, u.deviceptr(), lx, ly, lz, box,
                         cutbuf);
@@ -441,9 +442,10 @@ void spatial_data_init_cu(SpatialUnit u)
    u.update_deviceptr(*u);
 
 
-   device_array::zero(near * xak_sum * Spatial::BLOCK, u->lst); // G.6
-   device_array::zero(nak, naak);                               // H.1
-   device_array::zero(nak * nxk, xkf);                          // H.1
+   device_array::zero_async(ay, near * xak_sum * Spatial::BLOCK,
+                            u->lst);             // G.6
+   device_array::zero_async(ay, nak, naak);      // H.1
+   device_array::zero_async(ay, nak * nxk, xkf); // H.1
    launch_kernel1(padded, spatial_ghi, u.deviceptr(), box, cutbuf);
 
 

@@ -1,4 +1,5 @@
 #include "fft.h"
+#include "async.h"
 #include "error.h"
 #include "pme.h"
 #include <cufft.h>
@@ -47,6 +48,8 @@ void fft_data(rc_op op)
          auto& st = *pme_u;
 
          check_rt(cufftPlan3d(&iplan, st.nfft1, st.nfft2, st.nfft3, typ));
+         auto asy = reinterpret_cast<cudaStream_t>(async_acc);
+         check_rt(cufftSetStream(iplan, asy));
          ++idx;
       }
    }

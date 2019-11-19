@@ -7,7 +7,7 @@
 #include <tinker/detail/units.hh>
 
 TINKER_NAMESPACE_BEGIN
-void kinetic_acc_impl_(real& temp)
+void kinetic_acc(real& temp)
 {
    const real ekcal_inv = 1.0 / units::ekcal;
    real exx = 0;
@@ -38,19 +38,14 @@ void kinetic_acc_impl_(real& temp)
    ekin[2][2] = ezz;
    eksum = exx + eyy + ezz;
    temp = 2 * eksum / (mdstuf::nfree * units::gasconst);
-
-   // TODO: RIGIDBODY
-   // TODO: if (isobaric .and. barostat.eq.'BUSSI')
 }
 
-void mdrest_acc_impl_(int istep)
+void mdrest_acc(int istep)
 {
    if (!mdstuf::dorest)
       return;
    if ((istep % mdstuf::irest) != 0)
       return;
-
-   // TODO: special treatment for 'RIGIDBODY'
 
    const real ekcal = units::ekcal;
 
@@ -225,6 +220,16 @@ void propagate_velocity_acc(real dt)
       vx[i] += coef * gx[i];
       vy[i] += coef * gy[i];
       vz[i] += coef * gz[i];
+   }
+}
+
+void zero_gradient_async(int nelem, real* gx, real* gy, real* gz)
+{
+   #pragma acc parallel loop independent deviceptr(gx,gy,gz)
+   for (int i = 0; i < nelem; ++i) {
+      gx[i] = 0;
+      gy[i] = 0;
+      gz[i] = 0;
    }
 }
 TINKER_NAMESPACE_END

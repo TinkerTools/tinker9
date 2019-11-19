@@ -8,6 +8,9 @@ class StreamSt
 {};
 
 
+void* async_acc;
+
+
 void deallocate_stream(Stream s)
 {
    check_rt(cudaStreamDestroy(reinterpret_cast<cudaStream_t>(s)));

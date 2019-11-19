@@ -238,8 +238,10 @@ cuda_dir := /usr/local/cuda
 include_flags__ := -I$(top_dir__)/include
 include_flags__ += -I$(top_dir__)/ext/ext
 ifeq ($(host_only__),false)
+   include_flags__ += -I$(top_dir__)/include/cudart
    include_flags__ += -I$(cuda_dir)/include
 else
+   include_flags__ += -I$(top_dir__)/include/host
    include_flags__ += -I$(fftw_include__)
 endif
 shared_flags__ += $(include_flags__)

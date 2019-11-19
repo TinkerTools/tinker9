@@ -19,7 +19,7 @@ template <class K, class... Ts>
 void launch_kernel2(int block_size, int nparallel, K k, Ts&&... args)
 {
    int gs = (nparallel + block_size - 1) / block_size;
-   k<<<gs, block_size>>>(std::forward<Ts>(args)...);
+   k<<<gs, block_size, 0, async_acc>>>(std::forward<Ts>(args)...);
 }
 
 

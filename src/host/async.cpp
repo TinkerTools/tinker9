@@ -74,6 +74,9 @@ StreamSt::StreamSt()
 {}
 
 
+void* async_acc;
+
+
 void deallocate_stream(Stream s)
 {
    delete s;

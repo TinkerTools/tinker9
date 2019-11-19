@@ -1,22 +1,24 @@
-#include "macro.h"
+#include "dev_array.h"
 #include <cstdlib>
 #include <cstring>
 
 
 TINKER_NAMESPACE_BEGIN
-void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes)
+void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
+                                void*)
 {
    std::memcpy(dst, src, nbytes);
 }
 
 
-void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes)
+void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
+                                 void*)
 {
    std::memcpy(dst, src, nbytes);
 }
 
 
-void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes)
+void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes, void*)
 {
    std::memcpy(dst, src, nbytes);
 }
@@ -25,6 +27,12 @@ void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes)
 void device_memory_zero_bytes(void* dst, size_t nbytes)
 {
    std::memset(dst, 0, nbytes);
+}
+
+
+void device_memory_zero_bytes_async(void* dst, size_t nbytes, void*)
+{
+   device_memory_zero_bytes(dst, nbytes);
 }
 
 

@@ -23,7 +23,8 @@ TINKER_NAMESPACE_BEGIN
 class ResourceManagement
 {
 public:
-   using rc_op = enum {
+   enum class rc_op : int
+   {
       dealloc = 0x001, ///< Deallocation.
       alloc = 0x002,   ///< Allocation.
       init = 0x004,    ///< Initialization.
@@ -47,14 +48,23 @@ using rc_man = ResourceManagement;
 /// \ingroup mem
 using rc_op = rc_man::rc_op;
 /// \ingroup mem
-constexpr rc_op rc_dealloc = rc_man::dealloc;
+constexpr rc_op rc_dealloc = rc_op::dealloc;
 /// \ingroup mem
-constexpr rc_op rc_alloc = rc_man::alloc;
+constexpr rc_op rc_alloc = rc_op::alloc;
 /// \ingroup mem
-constexpr rc_op rc_init = rc_man::init;
+constexpr rc_op rc_init = rc_op::init;
 /// \ingroup mem
-constexpr rc_op rc_evolve = rc_man::evolve;
+constexpr rc_op rc_evolve = rc_op::evolve;
 
+inline int operator&(rc_op o1, rc_op o2)
+{
+   return static_cast<int>(o1) & static_cast<int>(o2);
+}
+
+inline int operator|(rc_op o1, rc_op o2)
+{
+   return static_cast<int>(o1) | static_cast<int>(o2);
+}
 
 /// \ingroup mem
 /// \brief Set up host and device environment.

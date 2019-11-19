@@ -1,3 +1,4 @@
+#include "async.h"
 #include "energy_buffer.h"
 #include "md.h"
 
@@ -75,7 +76,7 @@ void zero_egv(int vers)
       size_t size = count_buffers.size();
       for (size_t i = 0; i < size; ++i) {
          count_buffer u = count_buffers[i];
-         device_array::zero(buffer_size(), u);
+         device_array::zero_async(async_acc, buffer_size(), u);
       }
    }
 
@@ -83,7 +84,7 @@ void zero_egv(int vers)
       size_t size = energy_buffers.size();
       for (size_t i = 0; i < size; ++i) {
          energy_buffer u = energy_buffers[i];
-         device_array::zero(buffer_size(), u);
+         device_array::zero_async(async_acc, buffer_size(), u);
       }
    }
 
@@ -91,12 +92,12 @@ void zero_egv(int vers)
       size_t size = virial_buffers.size();
       for (size_t i = 0; i < size; ++i) {
          virial_buffer u = virial_buffers[i];
-         device_array::zero(buffer_size(), u);
+         device_array::zero_async(async_acc, buffer_size(), u);
       }
    }
 
    if (vers & calc::grad) {
-      device_array::zero(n, gx, gy, gz);
+      zero_gradient_async(n, gx, gy, gz);
    }
 }
 

@@ -318,7 +318,7 @@ void evdw_cu()
    auto bufsize = buffer_size();
 
    if CONSTEXPR (do_g) {
-      device_array::zero(n, gxred, gyred, gzred);
+      zero_gradient_async(n, gxred, gyred, gzred);
    }
 
    if CONSTEXPR (VDWTYP == evdw_t::hal) {

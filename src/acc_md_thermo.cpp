@@ -5,7 +5,7 @@
 #include <tinker/detail/mdstuf.hh>
 
 TINKER_NAMESPACE_BEGIN
-void thermo_bussi_acc_impl_(real dt_real, real temp_real)
+void thermo_bussi_acc(real dt_real, real temp_real)
 {
    double dt = dt_real;
    double temp = temp_real;
@@ -28,7 +28,6 @@ void thermo_bussi_acc_impl_(real dt_real, real temp_real)
       scale = -scale;
    eta *= scale;
 
-   // TODO: RIGIDBODY
    real sc = scale;
    #pragma acc parallel loop independent deviceptr(vx,vy,vz)
    for (int i = 0; i < n; ++i) {

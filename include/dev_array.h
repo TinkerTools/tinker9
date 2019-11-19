@@ -1,13 +1,20 @@
 #pragma once
+#include "async.h"
 #include "deduce_ptr.h"
 #include "mathfunc.h"
 #include <vector>
 
 
 TINKER_NAMESPACE_BEGIN
-void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes);
-void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes);
-void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes);
+void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
+                                void* stream = nullptr);
+void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
+                                 void* stream = nullptr);
+void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
+                              void* stream = nullptr);
+void device_memory_zero_bytes_async(void* dst, size_t nbytes,
+                                    void* stream = async_acc);
+/// \deprecated
 void device_memory_zero_bytes(void* dst, size_t nbytes);
 void device_memory_deallocate_bytes(void* ptr);
 void device_memory_allocate_bytes(void** pptr, size_t nbytes);
@@ -154,6 +161,23 @@ struct device_array
    {
       zero(nelem, p);
       zero(nelem, ps...);
+   }
+
+
+   template <class PTR>
+   static void zero_async(void* stream, size_t nelem, PTR p)
+   {
+      typedef typename deduce_ptr<PTR>::type T;
+      constexpr size_t N = deduce_ptr<PTR>::n;
+      device_memory_zero_bytes_async(flatten(p), sizeof(T) * nelem * N, stream);
+   }
+
+
+   template <class PTR, class... PTRS>
+   static void zero_async(void* stream, size_t nelem, PTR p, PTRS... ps)
+   {
+      zero_async(stream, nelem, p);
+      zero_async(stream, nelem, ps...);
    }
 
 

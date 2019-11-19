@@ -71,13 +71,13 @@ void integrate_data(rc_op op)
    }
 }
 
-extern void kinetic_acc_impl_(real& temp);
+extern void kinetic_acc(real& temp);
 void kinetic(real& temp)
 {
-   kinetic_acc_impl_(temp);
+   kinetic_acc(temp);
 }
 
-extern void thermo_bussi_acc_impl_(real dt, real temp);
+extern void thermo_bussi_acc(real dt, real temp);
 void temper(real dt, real& temp)
 {
    kinetic(temp);
@@ -85,17 +85,17 @@ void temper(real dt, real& temp)
       return;
 
    if (thermostat == thermo_bussi)
-      thermo_bussi_acc_impl_(dt, temp);
+      thermo_bussi_acc(dt, temp);
    else
       assert(false);
 
    kinetic(temp);
 }
 
-extern void mdrest_acc_impl_(int istep);
+extern void mdrest_acc(int istep);
 void mdrest(int istep)
 {
-   mdrest_acc_impl_(istep);
+   mdrest_acc(istep);
 }
 
 extern void propagate_xyz_acc(real dt);
