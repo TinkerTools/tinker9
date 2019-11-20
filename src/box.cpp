@@ -56,17 +56,16 @@ void copyout_box_data(const Box* pb)
       double bx[3] = {b.lvec[0][1], b.lvec[1][1], b.lvec[2][1]};
       double cx[3] = {b.lvec[0][2], b.lvec[1][2], b.lvec[2][2]};
 
-#define DOT_IMPL_(a, b) (a[0] * b[0] + a[1] * b[1] + a[2] * b[2])
-      double xbox = std::sqrt(DOT_IMPL_(ax, ax));
-      double ybox = std::sqrt(DOT_IMPL_(bx, bx));
-      double zbox = std::sqrt(DOT_IMPL_(cx, cx));
-      double cos_a = DOT_IMPL_(bx, cx) / (ybox * zbox);
-      double cos_b = DOT_IMPL_(cx, ax) / (zbox * xbox);
-      double cos_c = DOT_IMPL_(ax, bx) / (xbox * ybox);
-      double a_deg = radian * std::acos(cos_a);
-      double b_deg = radian * std::acos(cos_b);
-      double c_deg = radian * std::acos(cos_c);
-#undef DOT_IMPL_
+#define DOT3(a, b) (a[0] * b[0] + a[1] * b[1] + a[2] * b[2])
+      double xbox = std::sqrt(DOT3(ax, ax));
+      double ybox = std::sqrt(DOT3(bx, bx));
+      double zbox = std::sqrt(DOT3(cx, cx));
+      double cos_a = DOT3(bx, cx) / (ybox * zbox);
+      double cos_b = DOT3(cx, ax) / (zbox * xbox);
+      double cos_c = DOT3(ax, bx) / (xbox * ybox);
+      double a_deg = radian_dp * std::acos(cos_a);
+      double b_deg = radian_dp * std::acos(cos_b);
+      double c_deg = radian_dp * std::acos(cos_c);
 
       boxes::xbox = xbox;
       boxes::ybox = ybox;
