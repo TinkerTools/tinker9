@@ -88,8 +88,6 @@ void temper(real dt, real& temp)
       thermo_bussi_acc(dt, temp);
    else
       assert(false);
-
-   kinetic(temp);
 }
 
 extern void mdrest_acc(int istep);
@@ -120,8 +118,11 @@ void propagate(int nsteps, real dt_ps, void (*itg)(int, real))
       itg(istep, dt_ps);
 
       // mdstat
-      if (istep % inform::iwrite == 0)
+      if (istep % inform::iwrite == 0) {
+         real temp;
+         kinetic(temp);
          mdsave_async(istep, dt_ps);
+      }
       mdrest(istep);
    }
    mdsave_synchronize();
