@@ -1,8 +1,55 @@
-#include "elec.h"
+#include "e_mpole.h"
 #include "mathfunc.h"
 #include "md.h"
 
+
 TINKER_NAMESPACE_BEGIN
+void chkpole()
+{
+   #pragma acc parallel loop deviceptr(x,y,z,zaxis,pole)
+   for (int i = 0; i < n; ++i) {
+      int polaxe = zaxis[i].polaxe;
+      bool check =
+         ((polaxe != pole_z_then_x) || (zaxis[i].yaxis) == 0) ? false : true;
+      if (check) {
+         int k = zaxis[i].yaxis;
+         int ia = i;
+         int ib = zaxis[i].zaxis;
+         int ic = zaxis[i].xaxis;
+         int id = INT_ABS(k) - 1;
+
+         // compute the signed parallelpiped volume at chiral site
+
+         real xad = x[ia] - x[id];
+         real yad = y[ia] - y[id];
+         real zad = z[ia] - z[id];
+         real xbd = x[ib] - x[id];
+         real ybd = y[ib] - y[id];
+         real zbd = z[ib] - z[id];
+         real xcd = x[ic] - x[id];
+         real ycd = y[ic] - y[id];
+         real zcd = z[ic] - z[id];
+         real c1 = ybd * zcd - zbd * ycd;
+         real c2 = ycd * zad - zcd * yad;
+         real c3 = yad * zbd - zad * ybd;
+         real vol = xad * c1 + xbd * c2 + xcd * c3;
+
+         // invert atomic multipole components involving the y-axis
+
+         if ((k < 0 && vol > 0) || (k > 0 && vol < 0)) {
+            zaxis[i].yaxis = -k;
+            // y -> -y
+            pole[i][mpl_pme_y] = -pole[i][mpl_pme_y];
+            // xy -> -xy
+            // yz -> -yz
+            pole[i][mpl_pme_xy] = -pole[i][mpl_pme_xy];
+            pole[i][mpl_pme_yz] = -pole[i][mpl_pme_yz];
+         }
+      }
+   }
+}
+
+
 #pragma acc routine seq
 static void rotsite(int isite, const real (*restrict a)[3],
                     real (*restrict rpole)[10], const real (*restrict pole)[10])
@@ -12,8 +59,11 @@ static void rotsite(int isite, const real (*restrict a)[3],
    // charge
    rpole[isite][0] = pole[isite][0];
    // dipole
+   rpole[isite][1] = 0;
+   rpole[isite][2] = 0;
+   rpole[isite][3] = 0;
+   #pragma acc loop seq collapse(2)
    for (int i = 1; i < 4; ++i) {
-      rpole[isite][i] = 0;
       for (int j = 1; j < 4; ++j)
          rpole[isite][i] += pole[isite][j] * a[j - 1][i - 1];
    }
@@ -29,11 +79,14 @@ static void rotsite(int isite, const real (*restrict a)[3],
    mp[2][0] = pole[isite][mpl_pme_zx];
    mp[2][1] = pole[isite][mpl_pme_zy];
    mp[2][2] = pole[isite][mpl_pme_zz];
+   #pragma acc loop seq
    for (int i = 0; i < 3; ++i) {
-      for (int j = 0; j < 3; ++j) {
+      #pragma acc loop seq
+      for (int j = 0; j <= i; ++j) {
          // if (j < i) {
          //  rp[j][i] = rp[i][j];
          // } else {
+         #pragma acc loop seq collapse(2)
          for (int k = 0; k < 3; ++k)
             for (int m = 0; m < 3; ++m)
                rp[j][i] += a[k][i] * a[m][j] * mp[m][k];
@@ -48,10 +101,39 @@ static void rotsite(int isite, const real (*restrict a)[3],
    rpole[isite][mpl_pme_zz] = rp[2][2];
 }
 
+
+#pragma acc routine seq
+static void rotpole_norm(real* a)
+{
+   real a1 = REAL_RSQRT(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
+   a[0] *= a1;
+   a[1] *= a1;
+   a[2] *= a1;
+}
+
+
+#pragma acc routine seq
+static void rotpole_addto1(real* restrict a, const real* restrict b)
+{
+   a[0] += b[0];
+   a[1] += b[1];
+   a[2] += b[2];
+}
+
+
+#pragma acc routine seq
+static void rotpole_addto2(real* restrict a, const real* restrict b,
+                           const real* restrict c)
+{
+   a[0] += (b[0] + c[0]);
+   a[1] += (b[1] + c[1]);
+   a[2] += (b[2] + c[2]);
+}
+
+
 void rotpole()
 {
-   #pragma acc data deviceptr(x,y,z,zaxis,rpole,pole)
-   #pragma acc parallel loop
+   #pragma acc parallel loop deviceptr(x,y,z,zaxis,rpole,pole)
    for (int i = 0; i < n; ++i) {
       // rotmat routine
       real xi = x[i];
@@ -61,169 +143,79 @@ void rotpole()
       int ix = zaxis[i].xaxis;
       int iy = INT_ABS(zaxis[i].yaxis) - 1;
       int polaxe = zaxis[i].polaxe;
-      real a[3][3] = {{1, 0, 0}, {0, 0, 0}, {0, 0, 1}};
+      // the default identity matrix
+      real a[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 
-      if (polaxe == pole_z_only) {
-         real dx = x[iz] - xi;
-         real dy = y[iz] - yi;
-         real dz = z[iz] - zi;
-         real r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         a[2][0] = dx * r1;
-         a[2][1] = dy * r1;
-         a[2][2] = dz * r1;
 
-         dx = 1;
-         dy = 0;
-         dz = 0;
-         real dot = a[2][0];
-         if (REAL_ABS(dot) > (real)0.866) {
-            dx = 0;
-            dy = 1;
-            dot = a[2][1];
+      if (polaxe != pole_none) {
+         real* restrict xx = &a[0][0];
+         real* restrict yy = &a[1][0];
+         real* restrict zz = &a[2][0];
+
+
+         // STEP 1: PICK Z AND NORM Z
+         // pick z
+         zz[0] = x[iz] - xi;
+         zz[1] = y[iz] - yi;
+         zz[2] = z[iz] - zi;
+         // norm z
+         rotpole_norm(zz);
+
+
+         // STEP 2: PICK X AND NORM X
+         // even if it is not needef for z then x)
+         if (polaxe == pole_z_only) {
+            // pick x
+            int okay = !(REAL_ABS(zz[0]) > 0.866f);
+            xx[0] = (okay ? 1 : 0);
+            xx[1] = (okay ? 0 : 1);
+            xx[2] = 0;
+         } else {
+            // pick x
+            xx[0] = x[ix] - xi;
+            xx[1] = y[ix] - yi;
+            xx[2] = z[ix] - zi;
+            rotpole_norm(xx);
          }
-         dx -= dot * a[2][0];
-         dy -= dot * a[2][1];
-         dz -= dot * a[2][2];
-         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         a[0][0] = dx * r1;
-         a[0][1] = dy * r1;
-         a[0][2] = dz * r1;
-      } else if (polaxe == pole_z_then_x) {
-         real dx = x[iz] - xi;
-         real dy = y[iz] - yi;
-         real dz = z[iz] - zi;
-         real r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         a[2][0] = dx * r1;
-         a[2][1] = dy * r1;
-         a[2][2] = dz * r1;
 
-         dx = x[ix] - xi;
-         dy = y[ix] - yi;
-         dz = z[ix] - zi;
-         real dot = dx * a[2][0] + dy * a[2][1] + dz * a[2][2];
-         dx -= dot * a[2][0];
-         dy -= dot * a[2][1];
-         dz -= dot * a[2][2];
-         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         a[0][0] = dx * r1;
-         a[0][1] = dy * r1;
-         a[0][2] = dz * r1;
-      } else if (polaxe == pole_bisector) {
-         real dx = x[iz] - xi;
-         real dy = y[iz] - yi;
-         real dz = z[iz] - zi;
-         real r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         real dx1 = dx * r1;
-         real dy1 = dy * r1;
-         real dz1 = dz * r1;
 
-         dx = x[ix] - xi;
-         dy = y[ix] - yi;
-         dz = z[ix] - zi;
-         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         real dx2 = dx * r1;
-         real dy2 = dy * r1;
-         real dz2 = dz * r1;
+         // STEP 3: PICK Y AND NORM Y
+         // only for z biscector and 3 fold
+         if (polaxe == pole_z_bisect || polaxe == pole_3_fold) {
+            yy[0] = x[iy] - xi;
+            yy[1] = y[iy] - yi;
+            yy[2] = z[iy] - zi;
+            rotpole_norm(yy);
+         }
 
-         dx = dx1 + dx2;
-         dy = dy1 + dy2;
-         dz = dz1 + dz2;
-         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         a[2][0] = dx * r1;
-         a[2][1] = dy * r1;
-         a[2][2] = dz * r1;
 
-         real dot = dx2 * a[2][0] + dy2 * a[2][1] + dz2 * a[2][2];
-         dx = dx2 - dot * a[2][0];
-         dy = dy2 - dot * a[2][1];
-         dz = dz2 - dot * a[2][2];
-         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         a[0][0] = dx * r1;
-         a[0][1] = dy * r1;
-         a[0][2] = dz * r1;
-      } else if (polaxe == pole_z_bisect) {
-         real dx = x[iz] - xi;
-         real dy = y[iz] - yi;
-         real dz = z[iz] - zi;
-         real r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         a[2][0] = dx * r1;
-         a[2][1] = dy * r1;
-         a[2][2] = dz * r1;
+         // STEP 4
+         if (polaxe == pole_bisector) {
+            rotpole_addto1(zz, xx);
+            rotpole_norm(zz);
+         } else if (polaxe == pole_z_bisect) {
+            rotpole_addto1(xx, yy);
+            rotpole_norm(xx);
+         } else if (polaxe == pole_3_fold) {
+            rotpole_addto2(zz, xx, yy);
+            rotpole_norm(zz);
+         }
 
-         dx = x[ix] - xi;
-         dy = y[ix] - yi;
-         dz = z[ix] - zi;
-         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         real dx1 = dx * r1;
-         real dy1 = dy * r1;
-         real dz1 = dz * r1;
-         dx = x[iy] - xi;
-         dy = y[iy] - yi;
-         dz = z[iy] - zi;
-         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         real dx2 = dx * r1;
-         real dy2 = dy * r1;
-         real dz2 = dz * r1;
-         dx = dx1 + dx2;
-         dy = dy1 + dy2;
-         dz = dz1 + dz2;
-         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         dx = dx * r1;
-         dy = dy * r1;
-         dz = dz * r1;
-         real dot = dx * a[2][0] + dy * a[2][1] + dz * a[2][2];
-         dx -= dot * a[2][0];
-         dy -= dot * a[2][1];
-         dz -= dot * a[2][2];
-         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         a[0][0] = dx * r1;
-         a[0][1] = dy * r1;
-         a[0][2] = dz * r1;
-      } else if (polaxe == pole_3_fold) {
-         real dx = x[iz] - xi;
-         real dy = y[iz] - yi;
-         real dz = z[iz] - zi;
-         real r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         real dx1 = dx * r1;
-         real dy1 = dy * r1;
-         real dz1 = dz * r1;
 
-         dx = x[ix] - xi;
-         dy = y[ix] - yi;
-         dz = z[ix] - zi;
-         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         real dx2 = dx * r1;
-         real dy2 = dy * r1;
-         real dz2 = dz * r1;
+         // STEP 5
+         // x -= (x.z) z
+         real dotxz = xx[0] * zz[0] + xx[1] * zz[1] + xx[2] * zz[2];
+         xx[0] -= dotxz * zz[0];
+         xx[1] -= dotxz * zz[1];
+         xx[2] -= dotxz * zz[2];
+         // norm x
+         rotpole_norm(xx);
+         // y = z cross x
+         a[1][0] = a[0][2] * a[2][1] - a[0][1] * a[2][2];
+         a[1][1] = a[0][0] * a[2][2] - a[0][2] * a[2][0];
+         a[1][2] = a[0][1] * a[2][0] - a[0][0] * a[2][1];
+      } // end if (.not. pole_none)
 
-         dx = x[iy] - xi;
-         dy = y[iy] - yi;
-         dz = z[iy] - zi;
-         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         real dx3 = dx * r1;
-         real dy3 = dy * r1;
-         real dz3 = dz * r1;
-
-         dx = dx1 + dx2 + dx3;
-         dy = dy1 + dy2 + dy3;
-         dz = dz1 + dz2 + dz3;
-         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         a[2][0] = dx * r1;
-         a[2][1] = dy * r1;
-         a[2][2] = dz * r1;
-
-         real dot = dx2 * a[2][0] + dy2 * a[2][1] + dz2 * a[2][2];
-         dx = dx2 - dot * a[2][0];
-         dy = dy2 - dot * a[2][1];
-         dz = dz2 - dot * a[2][2];
-         r1 = REAL_RSQRT(dx * dx + dy * dy + dz * dz);
-         a[0][0] = dx * r1;
-         a[0][1] = dy * r1;
-         a[0][2] = dz * r1;
-      }
-      a[1][0] = a[0][2] * a[2][1] - a[0][1] * a[2][2];
-      a[1][1] = a[0][0] * a[2][2] - a[0][2] * a[2][0];
-      a[1][2] = a[0][1] * a[2][0] - a[0][0] * a[2][1];
 
       // rotsite routine
       rotsite(i, a, rpole, pole);

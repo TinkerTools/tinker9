@@ -10,9 +10,6 @@
 
 
 TINKER_NAMESPACE_BEGIN
-#define SHFL_SYMB(s) __shfl_sync(ALL_LANES, sh##s, srclane)
-
-
 #define DFIELD_ARGS                                                            \
    real(*restrict field)[3], real(*restrict fieldp)[3],                        \
       const real *restrict thole, const real *restrict pdamp,                  \
@@ -97,23 +94,23 @@ void dfield_cu1(DFIELD_ARGS, const Spatial* restrict sp, real aewald)
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
-         int atomk = SHFL_SYMB(atomk);
+         int atomk = __shfl_sync(ALL_LANES, shatomk, srclane);
          real xr = __shfl_sync(ALL_LANES, shx, srclane) - xi;
          real yr = __shfl_sync(ALL_LANES, shy, srclane) - yi;
          real zr = __shfl_sync(ALL_LANES, shz, srclane) - zi;
-         int k = SHFL_SYMB(k);
-         real ck = SHFL_SYMB(ck);
-         real dkx = SHFL_SYMB(dkx);
-         real dky = SHFL_SYMB(dky);
-         real dkz = SHFL_SYMB(dkz);
-         real qkxx = SHFL_SYMB(qkxx);
-         real qkxy = SHFL_SYMB(qkxy);
-         real qkxz = SHFL_SYMB(qkxz);
-         real qkyy = SHFL_SYMB(qkyy);
-         real qkyz = SHFL_SYMB(qkyz);
-         real qkzz = SHFL_SYMB(qkzz);
-         real pdk = SHFL_SYMB(pdk);
-         real ptk = SHFL_SYMB(ptk);
+         int k = __shfl_sync(ALL_LANES, shk, srclane);
+         real ck = __shfl_sync(ALL_LANES, shck, srclane);
+         real dkx = __shfl_sync(ALL_LANES, shdkx, srclane);
+         real dky = __shfl_sync(ALL_LANES, shdky, srclane);
+         real dkz = __shfl_sync(ALL_LANES, shdkz, srclane);
+         real qkxx = __shfl_sync(ALL_LANES, shqkxx, srclane);
+         real qkxy = __shfl_sync(ALL_LANES, shqkxy, srclane);
+         real qkxz = __shfl_sync(ALL_LANES, shqkxz, srclane);
+         real qkyy = __shfl_sync(ALL_LANES, shqkyy, srclane);
+         real qkyz = __shfl_sync(ALL_LANES, shqkyz, srclane);
+         real qkzz = __shfl_sync(ALL_LANES, shqkzz, srclane);
+         real pdk = __shfl_sync(ALL_LANES, shpdk, srclane);
+         real ptk = __shfl_sync(ALL_LANES, shptk, srclane);
 
 
          PairField pairf;
@@ -352,19 +349,19 @@ void ufield_cu1(UFIELD_ARGS, const Spatial* restrict sp, real aewald)
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
-         int atomk = SHFL_SYMB(atomk);
+         int atomk = __shfl_sync(ALL_LANES, shatomk, srclane);
          real xr = __shfl_sync(ALL_LANES, shx, srclane) - xi;
          real yr = __shfl_sync(ALL_LANES, shy, srclane) - yi;
          real zr = __shfl_sync(ALL_LANES, shz, srclane) - zi;
-         int k = SHFL_SYMB(k);
-         real uindk0 = SHFL_SYMB(uindk0);
-         real uindk1 = SHFL_SYMB(uindk1);
-         real uindk2 = SHFL_SYMB(uindk2);
-         real uinpk0 = SHFL_SYMB(uinpk0);
-         real uinpk1 = SHFL_SYMB(uinpk1);
-         real uinpk2 = SHFL_SYMB(uinpk2);
-         real pdk = SHFL_SYMB(pdk);
-         real ptk = SHFL_SYMB(ptk);
+         int k = __shfl_sync(ALL_LANES, shk, srclane);
+         real uindk0 = __shfl_sync(ALL_LANES, shuindk0, srclane);
+         real uindk1 = __shfl_sync(ALL_LANES, shuindk1, srclane);
+         real uindk2 = __shfl_sync(ALL_LANES, shuindk2, srclane);
+         real uinpk0 = __shfl_sync(ALL_LANES, shuinpk0, srclane);
+         real uinpk1 = __shfl_sync(ALL_LANES, shuinpk1, srclane);
+         real uinpk2 = __shfl_sync(ALL_LANES, shuinpk2, srclane);
+         real pdk = __shfl_sync(ALL_LANES, shpdk, srclane);
+         real ptk = __shfl_sync(ALL_LANES, shptk, srclane);
 
 
          PairField pairf;
