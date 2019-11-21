@@ -430,13 +430,12 @@ void spatial_data_init_cu(SpatialUnit u)
    thrust::transform_exclusive_scan(policy, xakf, xakf + nak, xakf_scan, POPC(),
                                     0, thrust::plus<int>());
    if (xak_sum > xak_sum_cap) {
-      device_array::deallocate(u->lst); // lst and iak were allocated together
+      device_array::deallocate(u->lst, u->iak);
       xak_sum_cap = xak_sum;
       size_t iak_size = near * xak_sum;            // F.3
       size_t lst_size = iak_size * Spatial::BLOCK; // F.4
-      // allocate iak and lst together
-      device_array::allocate(iak_size + lst_size, &u->lst);
-      u->iak = u->lst + lst_size;
+      device_array::allocate(lst_size, &u->lst);
+      device_array::allocate(iak_size, &u->iak);
    }
    // must update the device pointer to apply the changes in xak_sum
    u.update_deviceptr(*u);
