@@ -634,8 +634,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       const int ntot = nfft1 * nfft2 * nfft3;
       real pterm = REAL_SQ(pi / aewald);
 
-      #pragma acc parallel loop independent\
-                deviceptr(box,d,p,vir_ep)
+      #pragma acc parallel loop independent deviceptr(box,d,p,vir_ep)
       for (int i = 1; i < ntot; ++i) {
          const real volterm = pi * box->volbox;
 
@@ -660,7 +659,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
          if (term > -50) {
             // TODO: if .not. use_bounds; if octahedron; 2/hsq
             real denom =
-               volterm * hsq * d->bsmod1[k1] * d->bsmod1[k2] * d->bsmod1[k3];
+               volterm * hsq * d->bsmod1[k1] * d->bsmod2[k2] * d->bsmod3[k3];
             expterm = REAL_EXP(term) / denom;
 
             real struc2 = d->qgrid[2 * i] * p->qgrid[2 * i] +

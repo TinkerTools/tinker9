@@ -10,7 +10,10 @@ template <int DO_V>
 void pme_conv_tmpl(PMEUnit pme_u, virial_buffer gpu_vir)
 {
    auto& st = *pme_u;
-   auto* dptr = pme_u.deviceptr();
+   real(*restrict qgrid)[2] = reinterpret_cast<real(*)[2]>(st.qgrid);
+   const real* bsmod1 = st.bsmod1;
+   const real* bsmod2 = st.bsmod2;
+   const real* bsmod3 = st.bsmod3;
 
    const int nfft1 = st.nfft1;
    const int nfft2 = st.nfft2;
@@ -24,14 +27,23 @@ void pme_conv_tmpl(PMEUnit pme_u, virial_buffer gpu_vir)
    pterm *= pterm;
 
    auto bufsize = buffer_size();
-
-   #pragma acc parallel loop independent deviceptr(gpu_vir,dptr,box)
+   #pragma acc parallel loop independent\
+               deviceptr(gpu_vir,box,qgrid,bsmod1,bsmod2,bsmod3)
    for (int i = 0; i < ntot; ++i) {
-      const real volterm = pi * box->volbox;
+      real recip[3][3];
+      recip[0][0] = box->recip[0][0];
+      recip[0][1] = box->recip[0][1];
+      recip[0][2] = box->recip[0][2];
+      recip[1][0] = box->recip[1][0];
+      recip[1][1] = box->recip[1][1];
+      recip[1][2] = box->recip[1][2];
+      recip[2][0] = box->recip[2][0];
+      recip[2][1] = box->recip[2][1];
+      recip[2][2] = box->recip[2][2];
 
       if (i == 0) {
-         dptr->qgrid[2 * i] = 0;
-         dptr->qgrid[2 * i + 1] = 0;
+         qgrid[0][0] = 0;
+         qgrid[0][1] = 0;
          continue;
       }
 
@@ -44,25 +56,22 @@ void pme_conv_tmpl(PMEUnit pme_u, virial_buffer gpu_vir)
       int r2 = (k2 < (nfft2 + 1) / 2) ? k2 : (k2 - nfft2);
       int r3 = (k3 < (nfft3 + 1) / 2) ? k3 : (k3 - nfft3);
 
-      real h1 =
-         box->recip[0][0] * r1 + box->recip[1][0] * r2 + box->recip[2][0] * r3;
-      real h2 =
-         box->recip[0][1] * r1 + box->recip[1][1] * r2 + box->recip[2][1] * r3;
-      real h3 =
-         box->recip[0][2] * r1 + box->recip[1][2] * r2 + box->recip[2][2] * r3;
+      real h1 = recip[0][0] * r1 + recip[1][0] * r2 + recip[2][0] * r3;
+      real h2 = recip[0][1] * r1 + recip[1][1] * r2 + recip[2][1] * r3;
+      real h3 = recip[0][2] * r1 + recip[1][2] * r2 + recip[2][2] * r3;
       real hsq = h1 * h1 + h2 * h2 + h3 * h3;
+
+      real gridx = qgrid[i][0];
+      real gridy = qgrid[i][1];
       real term = -pterm * hsq;
       real expterm = 0;
       if (term > -50) {
          // TODO: if .not. use_bounds; if octahedron; 2/hsq
-         real denom = volterm * hsq * dptr->bsmod1[k1] * dptr->bsmod1[k2] *
-            dptr->bsmod1[k3];
+         real denom =
+            hsq * pi * box->volbox * bsmod1[k1] * bsmod2[k2] * bsmod3[k3];
          expterm = REAL_EXP(term) / denom;
 
          if CONSTEXPR (DO_V) {
-            real gridx = dptr->qgrid[2 * i];
-            real gridy = dptr->qgrid[2 * i + 1];
-
             real struc2 = gridx * gridx + gridy * gridy;
             real eterm = 0.5f * f * expterm * struc2;
             real vterm = (2 / hsq) * (1 - term) * eterm;
@@ -80,9 +89,8 @@ void pme_conv_tmpl(PMEUnit pme_u, virial_buffer gpu_vir)
       }
 
       // complete the transformation of the PME grid
-
-      dptr->qgrid[2 * i] *= expterm;
-      dptr->qgrid[2 * i + 1] *= expterm;
+      qgrid[i][0] = gridx * expterm;
+      qgrid[i][1] = gridy * expterm;
    }
 }
 
