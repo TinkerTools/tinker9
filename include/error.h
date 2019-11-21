@@ -1,16 +1,20 @@
-#ifndef TINKER_ERROR_H_
-#define TINKER_ERROR_H_
-
+#pragma once
 #include "io_print.h"
 #include <stdexcept>
 
+
 TINKER_NAMESPACE_BEGIN
-/// @brief
-/// print the call stack
+/**
+ * \ingroup error
+ * \brief Print the call stack.
+ */
 void print_backtrace(std::ostream& out = std::cout);
 
-/// @brief
-/// errors and exceptions that we do not intend to fix or handle
+
+/**
+ * \ingroup error
+ * \brief Errors and exceptions that we do not intend to fix or handle.
+ */
 class FatalError : public std::exception
 {
 private:
@@ -32,6 +36,12 @@ public:
    }
 };
 
+
+/**
+ * \def TINKER_THROW
+ * \ingroup error
+ * Throw a fatal error message as a `FatalError` exception.
+ */
 #define TINKER_THROW(msg)                                                      \
    do {                                                                        \
       print_backtrace();                                                       \
@@ -39,8 +49,8 @@ public:
       throw FatalError(m_);                                                    \
    } while (0)
 
-#define TINKER_GET_3RD_ARG_(arg1, arg2, arg3, ...) arg3
 
+#define TINKER_GET_3RD_ARG_(arg1, arg2, arg3, ...) arg3
 #define TINKER_ALWAYS_CHECK_RT_1_(call)                                        \
    do {                                                                        \
       auto res_ = call;                                                        \
@@ -51,7 +61,6 @@ public:
          throw FatalError(m_);                                                 \
       }                                                                        \
    } while (0)
-
 #define TINKER_ALWAYS_CHECK_RT_2_(call, optmsg)                                \
    do {                                                                        \
       auto res_ = call;                                                        \
@@ -67,16 +76,41 @@ public:
    TINKER_GET_3RD_ARG_(__VA_ARGS__, TINKER_ALWAYS_CHECK_RT_2_,                 \
                        TINKER_ALWAYS_CHECK_RT_1_)
 
-#if TINKER_DEBUG || defined(TINKER_ALWAYS_CHECK_RT)
+
+/**
+ * \def TINKER_ALWAYS_CHECK_RT
+ * \ingroup error
+ * Define it to `true` in the source code to enable `check_rt` with the release
+ * build.
+ * \see check_rt
+ */
+#ifndef TINKER_ALWAYS_CHECK_RT
+#   define TINKER_ALWAYS_CHECK_RT 0
+#endif
+
+
+/**
+ * \def check_rt
+ * \ingroup error
+ * It normally does not do extra work other than the function call it captures,
+ * unless if either `TINKER_DEBUG` or `TINKER_ALWAYS_CHECK_RT` is `true`,
+ * `check_rt()` will check the error code returned by the function call.
+ * \see TINKER_DEBUG
+ * \see TINKER_ALWAYS_CHECK_RT
+ */
+#if TINKER_DEBUG || TINKER_ALWAYS_CHECK_RT
 #   define check_rt(...) TINKER_ALWAYS_CHECK_RT_(__VA_ARGS__)(__VA_ARGS__)
 #else
 #   define check_rt(call, ...) call
 #endif
 
+/**
+ * \def TINKER_DUMMY_FUNCTION
+ * \ingroup error
+ * Throw an exception if the dummy routine is called.
+ */
 #define TINKER_DUMMY_FUNCTION(r)                                               \
    TINKER_THROW(                                                               \
       format("This dummy function, {}(), should not have been called.\n",      \
              TINKER_STR(r)))
 TINKER_NAMESPACE_END
-
-#endif

@@ -1,4 +1,4 @@
-#define TINKER_ALWAYS_CHECK_RT
+#define TINKER_ALWAYS_CHECK_RT 1
 
 #include "error.h"
 #include "test.h"

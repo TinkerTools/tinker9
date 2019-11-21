@@ -3,10 +3,10 @@
  * \defgroup io      Inputs and Outputs
  * \defgroup macro   Macros
  * \defgroup math    Math
- * \defgroup md      MD Configuration
+ * \defgroup md      MD Configurations
  * \defgroup nvidia  Nvidia GPU
  * \defgroup spatial Spatial Decomposition
- * \defgroup test    Unit Test
+ * \defgroup test    Unit Tests
  * \defgroup util    Utilities
  */
 
@@ -26,7 +26,9 @@
  * \ingroup util
  * \defgroup ebuf   Energy Buffer
  * \ingroup util
- * \defgroup mem    Memory and Pointer
+ * \defgroup error  Errors and Exceptions
+ * \ingroup util
+ * \defgroup mem    Memory and Pointers
  * \ingroup util
  */
 
