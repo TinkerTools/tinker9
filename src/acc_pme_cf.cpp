@@ -36,8 +36,7 @@ void cmp_to_fmp(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
    int nfft2 = st.nfft2;
    int nfft3 = st.nfft3;
 
-   #pragma acc parallel loop vector_length(64)\
-               deviceptr(box,cmp,fmp)
+   #pragma acc parallel loop deviceptr(box,cmp,fmp)
    for (int iatom = 0; iatom < n; ++iatom) {
 
       real a[3][3];
@@ -171,18 +170,10 @@ void fphi_to_cphi(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
    int nfft2 = st.nfft2;
    int nfft3 = st.nfft3;
 
-   // data qi1  / 1, 2, 3, 1, 1, 2 /
-   // data qi2  / 1, 2, 3, 2, 3, 3 /
-   constexpr int qi1[] = {0, 1, 2, 0, 0, 1};
-   constexpr int qi2[] = {0, 1, 2, 1, 2, 2};
-
-   real ftc3[3][3];
-   real ftc6[6][6];
-   real a[3][3];
-
-   #pragma acc parallel loop deviceptr(box,fphi,cphi)\
-               private(ftc3[0:3][0:3],ftc6[0:6][0:6],a[0:3][0:3])
+   #pragma acc parallel loop deviceptr(box,fphi,cphi)
    for (int iatom = 0; iatom < n; ++iatom) {
+
+      real a[3][3];
 
       // see also subroutine frac_to_cart in pmestuf.f
       // set the reciprocal vector transformation matrix
@@ -197,23 +188,24 @@ void fphi_to_cphi(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
       a[1][2] = nfft2 * box->recip[1][2];
       a[2][2] = nfft3 * box->recip[2][2];
 
+      // data qi1  / 1, 2, 3, 1, 1, 2 /
+      // data qi2  / 1, 2, 3, 2, 3, 3 /
+      constexpr int qi1[] = {0, 1, 2, 0, 0, 1};
+      constexpr int qi2[] = {0, 1, 2, 1, 2, 2};
+
+      real ftc6[6][6];
+
       // get the fractional to Cartesian conversion matrix
 
-      #pragma acc loop independent collapse(2)
-      for (int i = 0; i < 3; ++i) {
-         for (int j = 0; j < 3; ++j) {
-            ftc3[j][i] = a[j][i];
-         }
-      }
-      #pragma acc loop independent
+      #pragma acc loop seq
       for (int i1 = 0; i1 < 3; ++i1) {
          int k = qi1[i1];
-         #pragma acc loop independent
+         #pragma acc loop seq
          for (int i2 = 0; i2 < 3; ++i2) {
             int i = qi1[i2];
             ftc6[i2][i1] = a[i][k] * a[i][k];
          }
-         #pragma acc loop independent
+         #pragma acc loop seq
          for (int i2 = 3; i2 < 6; ++i2) {
             int i = qi1[i2];
             int j = qi2[i2];
@@ -221,16 +213,16 @@ void fphi_to_cphi(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
          }
       }
 
-      #pragma acc loop independent
+      #pragma acc loop seq
       for (int i1 = 3; i1 < 6; ++i1) {
          int k = qi1[i1];
          int m = qi2[i1];
-         #pragma acc loop independent
+         #pragma acc loop seq
          for (int i2 = 0; i2 < 3; ++i2) {
             int i = qi1[i2];
             ftc6[i2][i1] = a[i][k] * a[i][m];
          }
-         #pragma acc loop independent
+         #pragma acc loop seq
          for (int i2 = 3; i2 < 6; ++i2) {
             int i = qi1[i2];
             int j = qi2[i2];
@@ -240,23 +232,46 @@ void fphi_to_cphi(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
 
       // apply the transformation to get the Cartesian potential
 
-      cphi[iatom][0] = fphi[iatom][0];
-      #pragma acc loop independent
-      for (int j = 1; j < 10; ++j) {
-         cphi[iatom][j] = 0;
-      }
-      #pragma acc loop seq collapse(2)
+      real fphii[10], cphii[10];
+      fphii[0] = fphi[iatom][0];
+      fphii[1] = fphi[iatom][1];
+      fphii[2] = fphi[iatom][2];
+      fphii[3] = fphi[iatom][3];
+      fphii[4] = fphi[iatom][4];
+      fphii[5] = fphi[iatom][5];
+      fphii[6] = fphi[iatom][6];
+      fphii[7] = fphi[iatom][7];
+      fphii[8] = fphi[iatom][8];
+      fphii[9] = fphi[iatom][9];
+
+      cphii[0] = fphii[0];
+      #pragma acc loop seq
       for (int j = 1; j < 4; ++j) {
+         cphii[j] = 0;
+         #pragma acc loop seq
          for (int k = 1; k < 4; ++k) {
-            cphi[iatom][j] += ftc3[k - 1][j - 1] * fphi[iatom][k];
+            cphii[j] += a[k - 1][j - 1] * fphii[k];
          }
       }
-      #pragma acc loop seq collapse(2)
+      #pragma acc loop seq
       for (int j = 4; j < 10; ++j) {
+         cphii[j] = 0;
+         #pragma acc loop seq
          for (int k = 4; k < 10; ++k) {
-            cphi[iatom][j] += ftc6[k - 4][j - 4] * fphi[iatom][k];
+            cphii[j] += ftc6[k - 4][j - 4] * fphii[k];
          }
       }
+
+      cphi[iatom][0] = cphii[0];
+      cphi[iatom][1] = cphii[1];
+      cphi[iatom][2] = cphii[2];
+      cphi[iatom][3] = cphii[3];
+      cphi[iatom][4] = cphii[4];
+      cphi[iatom][5] = cphii[5];
+      cphi[iatom][6] = cphii[6];
+      cphi[iatom][7] = cphii[7];
+      cphi[iatom][8] = cphii[8];
+      cphi[iatom][9] = cphii[9];
    }
 }
 TINKER_NAMESPACE_END
