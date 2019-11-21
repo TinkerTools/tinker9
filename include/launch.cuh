@@ -2,6 +2,7 @@
 #ifndef __CUDACC__
 #   error This header can only be included inside CUDA source files.
 #endif
+#include "error.h"
 #include "gpu_card.h"
 #include <utility>
 
@@ -20,6 +21,9 @@ void launch_kernel2(int block_size, int nparallel, K k, Ts&&... args)
 {
    int gs = (nparallel + block_size - 1) / block_size;
    k<<<gs, block_size, 0, async_acc>>>(std::forward<Ts>(args)...);
+   if (async_acc == nullptr) {
+      check_rt(cudaStreamSynchronize(nullptr));
+   }
 }
 
 
