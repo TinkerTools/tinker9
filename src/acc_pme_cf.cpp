@@ -36,18 +36,11 @@ void cmp_to_fmp(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
    int nfft2 = st.nfft2;
    int nfft3 = st.nfft3;
 
-   // data qi1  / 1, 2, 3, 1, 1, 2 /
-   // data qi2  / 1, 2, 3, 2, 3, 3 /
-   constexpr int qi1[] = {0, 1, 2, 0, 0, 1};
-   constexpr int qi2[] = {0, 1, 2, 1, 2, 2};
-
-   real ctf3[3][3];
-   real ctf6[6][6];
-   real a[3][3];
-
-   #pragma acc parallel loop deviceptr(box,cmp,fmp)\
-               private(ctf3[0:3][0:3],ctf6[0:6][0:6],a[0:3][0:3])
+   #pragma acc parallel loop vector_length(64)\
+               deviceptr(box,cmp,fmp)
    for (int iatom = 0; iatom < n; ++iatom) {
+
+      real a[3][3];
 
       // see also subroutine cart_to_frac in pmestuf.f
       // set the reciprocal vector transformation matrix
@@ -62,29 +55,30 @@ void cmp_to_fmp(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
       a[2][1] = nfft2 * box->recip[1][2];
       a[2][2] = nfft3 * box->recip[2][2];
 
+      // data qi1  / 1, 2, 3, 1, 1, 2 /
+      // data qi2  / 1, 2, 3, 2, 3, 3 /
+      constexpr int qi1[] = {0, 1, 2, 0, 0, 1};
+      constexpr int qi2[] = {0, 1, 2, 1, 2, 2};
+
+      real ctf6[6][6];
+
       // get the Cartesian to fractional conversion matrix
 
-      #pragma acc loop independent collapse(2)
-      for (int i = 0; i < 3; ++i) {
-         for (int j = 0; j < 3; ++j) {
-            ctf3[j][i] = a[j][i];
-         }
-      }
-      #pragma acc loop independent
+      #pragma acc loop seq
       for (int i1 = 0; i1 < 3; ++i1) {
          int k = qi1[i1];
-         #pragma acc loop independent
+         #pragma acc loop seq
          for (int i2 = 0; i2 < 6; ++i2) {
             int i = qi1[i2];
             int j = qi2[i2];
             ctf6[i2][i1] = a[i][k] * a[j][k];
          }
       }
-      #pragma acc loop independent
+      #pragma acc loop seq
       for (int i1 = 3; i1 < 6; ++i1) {
          int k = qi1[i1];
          int m = qi2[i1];
-         #pragma acc loop independent
+         #pragma acc loop seq
          for (int i2 = 0; i2 < 6; ++i2) {
             int i = qi1[i2];
             int j = qi2[i2];
@@ -94,23 +88,46 @@ void cmp_to_fmp(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
 
       // apply the transformation to get the fractional multipoles
 
-      fmp[iatom][0] = cmp[iatom][0];
-      #pragma acc loop independent
-      for (int j = 1; j < 10; ++j) {
-         fmp[iatom][j] = 0;
-      }
-      #pragma acc loop seq collapse(2)
+      real cmpi[10], fmpi[10];
+      cmpi[0] = cmp[iatom][0];
+      cmpi[1] = cmp[iatom][1];
+      cmpi[2] = cmp[iatom][2];
+      cmpi[3] = cmp[iatom][3];
+      cmpi[4] = cmp[iatom][4];
+      cmpi[5] = cmp[iatom][5];
+      cmpi[6] = cmp[iatom][6];
+      cmpi[7] = cmp[iatom][7];
+      cmpi[8] = cmp[iatom][8];
+      cmpi[9] = cmp[iatom][9];
+
+      fmpi[0] = cmpi[0];
+      #pragma acc loop seq
       for (int j = 1; j < 4; ++j) {
+         fmpi[j] = 0;
+         #pragma acc loop seq
          for (int k = 1; k < 4; ++k) {
-            fmp[iatom][j] += ctf3[k - 1][j - 1] * cmp[iatom][k];
+            fmpi[j] += a[k - 1][j - 1] * cmpi[k];
          }
       }
-      #pragma acc loop seq collapse(2)
+      #pragma acc loop seq
       for (int j = 4; j < 10; ++j) {
+         fmpi[j] = 0;
+         #pragma acc loop seq
          for (int k = 4; k < 10; ++k) {
-            fmp[iatom][j] += ctf6[k - 4][j - 4] * cmp[iatom][k];
+            fmpi[j] += ctf6[k - 4][j - 4] * cmpi[k];
          }
       }
+
+      fmp[iatom][0] = fmpi[0];
+      fmp[iatom][1] = fmpi[1];
+      fmp[iatom][2] = fmpi[2];
+      fmp[iatom][3] = fmpi[3];
+      fmp[iatom][4] = fmpi[4];
+      fmp[iatom][5] = fmpi[5];
+      fmp[iatom][6] = fmpi[6];
+      fmp[iatom][7] = fmpi[7];
+      fmp[iatom][8] = fmpi[8];
+      fmp[iatom][9] = fmpi[9];
    }
 }
 
