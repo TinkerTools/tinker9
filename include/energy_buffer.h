@@ -1,6 +1,5 @@
 #pragma once
 #include "dev_array.h"
-#include "mathfunc_pow2.h"
 #include <vector>
 
 

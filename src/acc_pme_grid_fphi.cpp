@@ -1,146 +1,11 @@
+#include "acc_add.h"
 #include "box.h"
 #include "e_mpole.h"
-#include "mathfunc.h"
 #include "md.h"
 #include "pme.h"
+#include "seq_pme.h"
 
 TINKER_NAMESPACE_BEGIN
-static constexpr int MAX_BSORDER = 5;
-
-// see also subroutine bsplgen in pmestuf.f
-#pragma acc routine seq
-template <int LEVEL>
-void bsplgen(real w, real* restrict thetai, int bsorder)
-{
-
-   // e.g. bsorder = 5, theta = T, bsbuild = B
-
-   // LEVEL + 1 <= bsorder
-
-   // LEVEL = 1
-   // T(1,1) = B(5,1)
-   // T(1,2) = B(5,2)
-   // T(1,3) = B(5,3)
-   // T(1,4) = B(5,4)
-   // T(1,5) = B(5,5)
-
-   // LEVEL = 2
-   // T(2,1) = B(4,1)
-   // T(2,2) = B(4,2)
-   // T(2,3) = B(4,3)
-   // T(2,4) = B(4,4)
-   // T(2,5) = B(4,5)
-   // AND ALL LEVEL = 1
-
-   // LEVEL = 3
-   // T(3,1) = B(3,1)
-   // T(3,2) = B(3,2)
-   // T(3,3) = B(3,3)
-   // T(3,4) = B(3,4)
-   // T(3,5) = B(3,5)
-   // AND ALL LEVEL = 2, 1
-
-   // LEVEL = 4
-   // T(4,1) = B(2,1)
-   // T(4,2) = B(2,2)
-   // T(4,3) = B(2,3)
-   // T(4,4) = B(2,4)
-   // T(4,5) = B(2,5)
-   // AND ALL LEVEL = 3, 2, 1
-
-#define bsbuild(j, i) bsbuild_[((i)-1) * bsorder + (j)-1]
-
-   real bsbuild_[MAX_BSORDER * MAX_BSORDER];
-
-   // initialization to get to 2nd order recursion
-
-   bsbuild(2, 2) = w;
-   bsbuild(2, 1) = 1 - w;
-
-   // perform one pass to get to 3rd order recursion
-
-   bsbuild(3, 3) = 0.5f * w * bsbuild(2, 2);
-   bsbuild(3, 2) = 0.5f * ((1 + w) * bsbuild(2, 1) + (2 - w) * bsbuild(2, 2));
-   bsbuild(3, 1) = 0.5f * (1 - w) * bsbuild(2, 1);
-
-   // compute standard B-spline recursion to desired order
-
-   for (int i = 4; i <= bsorder; ++i) {
-      int k = i - 1;
-      real denom = REAL_RECIP(k);
-      bsbuild(i, i) = denom * w * bsbuild(k, k);
-      for (int j = 1; j <= i - 2; j++) {
-         bsbuild(i, i - j) = denom *
-            ((w + j) * bsbuild(k, i - j - 1) + (i - j - w) * bsbuild(k, i - j));
-      }
-      bsbuild(i, 1) = denom * (1 - w) * bsbuild(k, 1);
-   }
-
-   int k;
-
-   if CONSTEXPR (LEVEL >= 2) {
-
-      // get coefficients for the B-spline first derivative
-
-      k = bsorder - 1;
-      bsbuild(k, bsorder) = bsbuild(k, bsorder - 1);
-      for (int i = bsorder - 1; i >= 2; --i) {
-         bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
-      }
-      bsbuild(k, 1) = -bsbuild(k, 1);
-   }
-
-   if CONSTEXPR (LEVEL >= 3) {
-
-      // get coefficients for the B-spline second derivative
-
-      k = bsorder - 2;
-      bsbuild(k, bsorder - 1) = bsbuild(k, bsorder - 2);
-      for (int i = bsorder - 2; i >= 2; --i) {
-         bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
-      }
-      bsbuild(k, 1) = -bsbuild(k, 1);
-      bsbuild(k, bsorder) = bsbuild(k, bsorder - 1);
-      for (int i = bsorder - 1; i >= 2; --i) {
-         bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
-      }
-      bsbuild(k, 1) = -bsbuild(k, 1);
-   }
-
-   if CONSTEXPR (LEVEL == 4) {
-
-      // get coefficients for the B-spline third derivative
-
-      k = bsorder - 3;
-      bsbuild(k, bsorder - 2) = bsbuild(k, bsorder - 3);
-      for (int i = bsorder - 3; i >= 2; --i) {
-         bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
-      }
-      bsbuild(k, 1) = -bsbuild(k, 1);
-      bsbuild(k, bsorder - 1) = bsbuild(k, bsorder - 2);
-      for (int i = bsorder - 2; i >= 2; --i) {
-         bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
-      }
-      bsbuild(k, 1) = -bsbuild(k, 1);
-      bsbuild(k, bsorder) = bsbuild(k, bsorder - 1);
-      for (int i = bsorder - 1; i >= 2; --i)
-         bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
-      bsbuild(k, 1) = -bsbuild(k, 1);
-   }
-
-   // copy coefficients from temporary to permanent storage
-
-   for (int i = 1; i <= bsorder; ++i) {
-      // keep this line to work on Tesla
-      #pragma acc loop seq
-      for (int j = 1; j <= LEVEL; ++j) {
-         thetai[4 * (i - 1) + (j - 1)] = bsbuild(bsorder - j + 1, i);
-      }
-   }
-
-#undef bsbuild
-}
-
 enum
 {
    PCHG_GRID = 1,
@@ -151,7 +16,7 @@ enum
 };
 
 template <int WHAT>
-void grid_tmpl(PMEUnit pme_u, real* optional1, real* optional2)
+void grid_tmpl_acc(PMEUnit pme_u, real* optional1, real* optional2)
 {
    auto& st = *pme_u;
    auto* dptr = pme_u.deviceptr();
@@ -182,10 +47,11 @@ void grid_tmpl(PMEUnit pme_u, real* optional1, real* optional2)
    device_array::zero(2 * nfft1 * nfft2 * nfft3, st.qgrid);
 
    #pragma acc parallel loop independent\
-              deviceptr(pchg,fmp,fuind,fuinp,x,y,z,box,dptr)
+               deviceptr(pchg,fmp,fuind,fuinp,x,y,z,box,dptr)
    for (int i = 0; i < n; ++i) {
-      real thetai1[4 * MAX_BSORDER], thetai2[4 * MAX_BSORDER],
-         thetai3[4 * MAX_BSORDER];
+      real thetai1[4 * MAX_BSORDER];
+      real thetai2[4 * MAX_BSORDER];
+      real thetai3[4 * MAX_BSORDER];
 
       real xi = x[i];
       real yi = y[i];
@@ -216,6 +82,13 @@ void grid_tmpl(PMEUnit pme_u, real* optional1, real* optional2)
       int igrid3 = REAL_FLOOR(fr3);
       w3 = fr3 - igrid3;
 
+      igrid1 = igrid1 - bsorder + 1;
+      igrid2 = igrid2 - bsorder + 1;
+      igrid3 = igrid3 - bsorder + 1;
+      igrid1 += (igrid1 < 0 ? nfft1 : 0);
+      igrid2 += (igrid2 < 0 ? nfft2 : 0);
+      igrid3 += (igrid3 < 0 ? nfft3 : 0);
+
       if CONSTEXPR (WHAT == PCHG_GRID || WHAT == DISP_GRID) {
          bsplgen<1>(w1, thetai1, bsorder);
          bsplgen<1>(w2, thetai2, bsorder);
@@ -234,20 +107,14 @@ void grid_tmpl(PMEUnit pme_u, real* optional1, real* optional2)
          bsplgen<2>(w3, thetai3, bsorder);
       }
 
-      igrid1 = igrid1 - bsorder + 1;
-      igrid2 = igrid2 - bsorder + 1;
-      igrid3 = igrid3 - bsorder + 1;
-      igrid1 += (igrid1 < 0 ? nfft1 : 0);
-      igrid2 += (igrid2 < 0 ? nfft2 : 0);
-      igrid3 += (igrid3 < 0 ? nfft3 : 0);
-
       if CONSTEXPR (WHAT == PCHG_GRID || WHAT == DISP_GRID) {
+         real pchgi = pchg[i];
          #pragma acc loop seq
          for (int iz = 0; iz < bsorder; ++iz) {
             int zbase = igrid3 + iz;
             zbase -= (zbase >= nfft3 ? nfft3 : 0);
             zbase *= (nfft1 * nfft2);
-            real v0 = thetai3[4 * iz] * pchg[i];
+            real v0 = thetai3[4 * iz] * pchgi;
             #pragma acc loop seq
             for (int iy = 0; iy < bsorder; ++iy) {
                int ybase = igrid2 + iy;
@@ -261,14 +128,23 @@ void grid_tmpl(PMEUnit pme_u, real* optional1, real* optional2)
                   xbase -= (xbase >= nfft1 ? nfft1 : 0);
                   int index = xbase + ybase + zbase;
                   real t0 = thetai1[4 * ix];
-                  #pragma acc atomic update
-                  dptr->qgrid[2 * index] += term * t0;
+                  atomic_add(term * t0, dptr->qgrid, 2 * index);
                }
             }
          } // end for (int iz)
       }    // end if (grid_pchg || grid_disp)
 
       if CONSTEXPR (WHAT == MPOLE_GRID) {
+         real fmpi0 = fmp[i][mpl_pme_0];
+         real fmpix = fmp[i][mpl_pme_x];
+         real fmpiy = fmp[i][mpl_pme_y];
+         real fmpiz = fmp[i][mpl_pme_z];
+         real fmpixx = fmp[i][mpl_pme_xx];
+         real fmpiyy = fmp[i][mpl_pme_yy];
+         real fmpizz = fmp[i][mpl_pme_zz];
+         real fmpixy = fmp[i][mpl_pme_xy];
+         real fmpixz = fmp[i][mpl_pme_xz];
+         real fmpiyz = fmp[i][mpl_pme_yz];
          #pragma acc loop seq
          for (int iz = 0; iz < bsorder; ++iz) {
             int zbase = igrid3 + iz;
@@ -287,13 +163,12 @@ void grid_tmpl(PMEUnit pme_u, real* optional1, real* optional2)
                real u2 = thetai2[4 * iy + 2];
                // fmp: 0, x, y, z, xx, yy, zz, xy, xz, yz
                //      1, 2, 3, 4,  5,  6,  7,  8,  9, 10
-               real term0 = fmp[i][mpl_pme_0] * u0 * v0 +
-                  fmp[i][mpl_pme_y] * u1 * v0 + fmp[i][mpl_pme_z] * u0 * v1 +
-                  fmp[i][mpl_pme_yy] * u2 * v0 + fmp[i][mpl_pme_zz] * u0 * v2 +
-                  fmp[i][mpl_pme_yz] * u1 * v1;
-               real term1 = fmp[i][mpl_pme_x] * u0 * v0 +
-                  fmp[i][mpl_pme_xy] * u1 * v0 + fmp[i][mpl_pme_xz] * u0 * v1;
-               real term2 = fmp[i][mpl_pme_xx] * u0 * v0;
+               real term0 = fmpi0 * u0 * v0 + fmpiy * u1 * v0 +
+                  fmpiz * u0 * v1 + fmpiyy * u2 * v0 + fmpizz * u0 * v2 +
+                  fmpiyz * u1 * v1;
+               real term1 =
+                  fmpix * u0 * v0 + fmpixy * u1 * v0 + fmpixz * u0 * v1;
+               real term2 = fmpixx * u0 * v0;
                #pragma acc loop seq
                for (int ix = 0; ix < bsorder; ++ix) {
                   int xbase = igrid1 + ix;
@@ -302,15 +177,20 @@ void grid_tmpl(PMEUnit pme_u, real* optional1, real* optional2)
                   real t0 = thetai1[4 * ix];
                   real t1 = thetai1[4 * ix + 1];
                   real t2 = thetai1[4 * ix + 2];
-                  #pragma acc atomic update
-                  dptr->qgrid[2 * index] +=
-                     term0 * t0 + term1 * t1 + term2 * t2;
+                  atomic_add(term0 * t0 + term1 * t1 + term2 * t2, dptr->qgrid,
+                             2 * index);
                }
             }
          } // end for (int iz)
       }    // end if (grid_mpole)
 
       if CONSTEXPR (WHAT == UIND_GRID) {
+         real fuindi0 = fuind[i][0];
+         real fuindi1 = fuind[i][1];
+         real fuindi2 = fuind[i][2];
+         real fuinpi0 = fuinp[i][0];
+         real fuinpi1 = fuinp[i][1];
+         real fuinpi2 = fuinp[i][2];
          #pragma acc loop seq
          for (int iz = 0; iz < bsorder; ++iz) {
             int zbase = igrid3 + iz;
@@ -325,10 +205,10 @@ void grid_tmpl(PMEUnit pme_u, real* optional1, real* optional2)
                ybase *= nfft1;
                real u0 = thetai2[4 * iy];
                real u1 = thetai2[4 * iy + 1];
-               real term01 = fuind[i][1] * u1 * v0 + fuind[i][2] * u0 * v1;
-               real term11 = fuind[i][0] * u0 * v0;
-               real term02 = fuinp[i][1] * u1 * v0 + fuinp[i][2] * u0 * v1;
-               real term12 = fuinp[i][0] * u0 * v0;
+               real term01 = fuindi1 * u1 * v0 + fuindi2 * u0 * v1;
+               real term11 = fuindi0 * u0 * v0;
+               real term02 = fuinpi1 * u1 * v0 + fuinpi2 * u0 * v1;
+               real term12 = fuinpi0 * u0 * v0;
                #pragma acc loop seq
                for (int ix = 0; ix < bsorder; ++ix) {
                   int xbase = igrid1 + ix;
@@ -336,10 +216,9 @@ void grid_tmpl(PMEUnit pme_u, real* optional1, real* optional2)
                   int index = xbase + ybase + zbase;
                   real t0 = thetai1[4 * ix];
                   real t1 = thetai1[4 * ix + 1];
-                  #pragma acc atomic update
-                  dptr->qgrid[2 * index] += (term01 * t0 + term11 * t1);
-                  #pragma acc atomic update
-                  dptr->qgrid[2 * index + 1] += (term02 * t0 + term12 * t1);
+                  atomic_add(term01 * t0 + term11 * t1, dptr->qgrid, 2 * index);
+                  atomic_add(term02 * t0 + term12 * t1, dptr->qgrid,
+                             2 * index + 1);
                }
             }
          } // end for (int iz)
@@ -349,15 +228,20 @@ void grid_tmpl(PMEUnit pme_u, real* optional1, real* optional2)
 
 void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
 {
+#if TINKER_CUDART
+   extern void grid_mpole_cu(PMEUnit, real(*)[10]);
+   grid_mpole_cu(pme_u, fmp);
+#else
    real* opt1 = reinterpret_cast<real*>(fmp);
-   grid_tmpl<MPOLE_GRID>(pme_u, opt1, nullptr);
+   grid_tmpl_acc<MPOLE_GRID>(pme_u, opt1, nullptr);
+#endif
 }
 
 void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 {
    real* opt1 = reinterpret_cast<real*>(fuind);
    real* opt2 = reinterpret_cast<real*>(fuinp);
-   grid_tmpl<UIND_GRID>(pme_u, opt1, opt2);
+   grid_tmpl_acc<UIND_GRID>(pme_u, opt1, opt2);
 }
 
 template <int WHAT>
