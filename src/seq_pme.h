@@ -4,32 +4,22 @@
 
 
 TINKER_NAMESPACE_BEGIN
-#ifdef __CUDACC__
-#   define DECL_BSPLGEN_TMPL_ARGS template <int LEVEL, int bsorder>
-#   define DECL_BSPLGEN_ARGS real* restrict bsbuild_
-// template <int LEVEL, int bsorder>
-// __device__
-// void bsplgen(real w, real* restrict thetai, real* restrict bsbuild_);
-#else
-#   define DECL_BSPLGEN_TMPL_ARGS template <int LEVEL>
-#   define DECL_BSPLGEN_ARGS int bsorder
-// #pragma acc routine seq
-// template <int LEVEL>
-// void bsplgen(real w, real* restrict thetai, int bsorder);
-#endif
+static constexpr int MAX_BSORDER = 5;
 
 
 #define bsbuild(j, i) bsbuild_[((i)-1) * bsorder + (j)-1]
 
 
-static constexpr int MAX_BSORDER = 5;
-
-
 // see also subroutine bsplgen in pmestuf.f
-#pragma acc routine seq
-DECL_BSPLGEN_TMPL_ARGS
+#ifdef __CUDACC__
+template <int LEVEL, int bsorder>
 __device__
-static void bsplgen(real w, real* restrict thetai, DECL_BSPLGEN_ARGS)
+void bsplgen(real w, real* restrict thetai, real* restrict bsbuild_)
+#else
+#pragma acc routine seq
+template <int LEVEL>
+void bsplgen(real w, real* restrict thetai, int bsorder)
+#endif
 {
    // e.g. bsorder = 5, theta = T, bsbuild = B
 
@@ -158,7 +148,5 @@ static void bsplgen(real w, real* restrict thetai, DECL_BSPLGEN_ARGS)
 }
 
 
-#undef DECL_BSPLGEN_TMPL_ARGS
-#undef DECL_BSPLGEN_ARGS
 #undef bsbuild
 TINKER_NAMESPACE_END

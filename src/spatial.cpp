@@ -68,17 +68,5 @@ void spatial_data_init_cu(SpatialUnit)
 {
    TINKER_DUMMY_FUNCTION(spatial_data_init_cu);
 }
-
-
-void thrust_cache_dealloc()
-{
-   TINKER_DUMMY_FUNCTION(thrust_cache_dealloc);
-}
-
-
-void thrust_cache_alloc()
-{
-   TINKER_DUMMY_FUNCTION(thrust_cache_alloc);
-}
 #endif
 TINKER_NAMESPACE_END

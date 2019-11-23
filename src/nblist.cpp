@@ -168,13 +168,12 @@ static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
    nblu.update_deviceptr(st);
 }
 
-extern void nblist_build_acc_impl_(NBListUnit);
-extern void nblist_update_acc_impl_(NBListUnit);
-extern void spatial_data_init_cu(SpatialUnit);
-extern void thrust_cache_dealloc();
-extern void thrust_cache_alloc();
 void nblist_data(rc_op op)
 {
+   extern void nblist_build_acc(NBListUnit);
+   extern void nblist_update_acc(NBListUnit);
+   extern void spatial_data_init_cu(SpatialUnit);
+
    if (op & rc_dealloc) {
       NBListUnit::clear();
       vlist_unit.close();
@@ -186,6 +185,7 @@ void nblist_data(rc_op op)
       always_use_nblist = 0;
 
 #if TINKER_CUDART
+      extern void thrust_cache_dealloc();
       SpatialUnit::clear();
       thrust_cache_dealloc();
       vspatial_unit.close();
@@ -221,12 +221,12 @@ void nblist_data(rc_op op)
 
       if (op & rc_init) {
          evdw_reduce_xyz();
-         nblist_build_acc_impl_(vlist_unit);
+         nblist_build_acc(vlist_unit);
       }
 
       if (op & rc_evolve) {
          evdw_reduce_xyz();
-         nblist_update_acc_impl_(vlist_unit);
+         nblist_update_acc(vlist_unit);
       }
    } else if (u & NBList::spatial) {
       if (op & rc_alloc) {
@@ -268,7 +268,7 @@ void nblist_data(rc_op op)
       }
 
       if (op & rc_init)
-         nblist_build_acc_impl_(mlist_unit);
+         nblist_build_acc(mlist_unit);
 
       if (op & rc_evolve) {
          if (rc_flag & calc::traj) {
@@ -277,7 +277,7 @@ void nblist_data(rc_op op)
             mlist_unit->z = z;
             mlist_unit.update_deviceptr(*mlist_unit);
          }
-         nblist_update_acc_impl_(mlist_unit);
+         nblist_update_acc(mlist_unit);
       }
    }
    // else if (u & NBList::spatial) {
@@ -324,7 +324,7 @@ void nblist_data(rc_op op)
       }
 
       if (op & rc_init)
-         nblist_build_acc_impl_(ulist_unit);
+         nblist_build_acc(ulist_unit);
 
       if (op & rc_evolve) {
          if (rc_flag & calc::traj) {
@@ -333,12 +333,15 @@ void nblist_data(rc_op op)
             ulist_unit->z = z;
             ulist_unit.update_deviceptr(*mlist_unit);
          }
-         nblist_update_acc_impl_(ulist_unit);
+         nblist_update_acc(ulist_unit);
       }
    }
 
 
+#if TINKER_CUDART
+   extern void thrust_cache_alloc();
    if (alloc_thrust_cache)
       thrust_cache_alloc();
+#endif
 }
 TINKER_NAMESPACE_END

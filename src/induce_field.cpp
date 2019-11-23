@@ -4,13 +4,13 @@
 
 
 TINKER_NAMESPACE_BEGIN
-extern void dfield_ewald_real_acc(real (*)[3], real (*)[3]);
-extern void dfield_ewald_real_cu(real (*)[3], real (*)[3]);
 void dfield_ewald_real(real (*field)[3], real (*fieldp)[3])
 {
 #if TINKER_CUDART
+   extern void dfield_ewald_real_cu(real(*)[3], real(*)[3]);
    dfield_ewald_real_cu(field, fieldp);
 #else
+   extern void dfield_ewald_real_acc(real(*)[3], real(*)[3]);
    dfield_ewald_real_acc(field, fieldp);
 #endif
 }
@@ -25,11 +25,11 @@ void dfield_ewald(real (*field)[3], real (*fieldp)[3])
 }
 
 
-extern void dfield_coulomb_acc(real (*)[3], real (*)[3]);
-extern void dfield_coulomb_cu(real (*)[3], real (*)[3]);
 void dfield_coulomb(real (*field)[3], real (*fieldp)[3])
 {
+   extern void dfield_coulomb_acc(real(*)[3], real(*)[3]);
 #if TINKER_CUDART
+   extern void dfield_coulomb_cu(real(*)[3], real(*)[3]);
    if (bound::use_bounds)
       dfield_coulomb_cu(field, fieldp);
    else
@@ -47,16 +47,16 @@ void dfield(real (*field)[3], real (*fieldp)[3])
 }
 
 
-extern void ufield_ewald_real_acc(const real (*)[3], const real (*)[3],
-                                  real (*)[3], real (*)[3]);
-extern void ufield_ewald_real_cu(const real (*)[3], const real (*)[3],
-                                 real (*)[3], real (*)[3]);
 void ufield_ewald_real(const real (*uind)[3], const real (*uinp)[3],
                        real (*field)[3], real (*fieldp)[3])
 {
 #if TINKER_CUDART
+   extern void ufield_ewald_real_cu(const real(*)[3], const real(*)[3],
+                                    real(*)[3], real(*)[3]);
    ufield_ewald_real_cu(uind, uinp, field, fieldp);
 #else
+   extern void ufield_ewald_real_acc(const real(*)[3], const real(*)[3],
+                                     real(*)[3], real(*)[3]);
    ufield_ewald_real_acc(uind, uinp, field, fieldp);
 #endif
 }
@@ -71,14 +71,14 @@ void ufield_ewald(const real (*uind)[3], const real (*uinp)[3],
 }
 
 
-extern void ufield_coulomb_acc(const real (*)[3], const real (*)[3],
-                               real (*)[3], real (*)[3]);
-extern void ufield_coulomb_cu(const real (*)[3], const real (*)[3], real (*)[3],
-                              real (*)[3]);
 void ufield_coulomb(const real (*uind)[3], const real (*uinp)[3],
                     real (*field)[3], real (*fieldp)[3])
 {
+   extern void ufield_coulomb_acc(const real(*)[3], const real(*)[3],
+                                  real(*)[3], real(*)[3]);
 #if TINKER_CUDART
+   extern void ufield_coulomb_cu(const real(*)[3], const real(*)[3], real(*)[3],
+                                 real(*)[3]);
    if (bound::use_bounds)
       ufield_coulomb_cu(uind, uinp, field, fieldp);
    else

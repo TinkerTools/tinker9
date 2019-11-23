@@ -214,36 +214,36 @@ void evdw_data(rc_op op)
    }
 }
 
-extern void evdw_lj_acc_impl_(int vers);
-extern void evdw_buck_acc_impl_(int vers);
-extern void evdw_mm3hb_acc_impl_(int vers);
-extern void evdw_hal_acc_impl_(int vers);
-extern void evdw_hal_cu(int vers);
-extern void evdw_gauss_acc_impl_(int vers);
 void evdw_lj(int vers)
 {
-   evdw_lj_acc_impl_(vers);
+   extern void evdw_lj_acc(int vers);
+   evdw_lj_acc(vers);
 }
 void evdw_buck(int vers)
 {
-   evdw_buck_acc_impl_(vers);
+   extern void evdw_buck_acc(int vers);
+   evdw_buck_acc(vers);
 }
 void evdw_mm3hb(int vers)
 {
-   evdw_mm3hb_acc_impl_(vers);
+   extern void evdw_mm3hb_acc(int vers);
+   evdw_mm3hb_acc(vers);
 }
 void evdw_hal(int vers)
 {
 #if TINKER_CUDART
+   extern void evdw_hal_cu(int vers);
    evdw_hal_cu(vers);
 #else
    // the default implementation
-   evdw_hal_acc_impl_(vers);
+   extern void evdw_hal_acc(int vers);
+   evdw_hal_acc(vers);
 #endif
 }
 void evdw_gauss(int vers)
 {
-   evdw_gauss_acc_impl_(vers);
+   extern void evdw_gauss_acc(int vers);
+   evdw_gauss_acc(vers);
 }
 
 void evdw(int vers)

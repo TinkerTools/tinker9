@@ -249,8 +249,8 @@ void evdw_tmpl()
       evdw_resolve_gradient();
 }
 
-#define TINKER_EVDW_IMPL_(typ)                                                 \
-   void evdw_##typ##_acc_impl_(int vers)                                       \
+#define TINKER_EVDW_ACC(typ)                                                   \
+   void evdw_##typ##_acc(int vers)                                             \
    {                                                                           \
       if (vers == calc::v0)                                                    \
          evdw_tmpl<calc::v0, evdw_t::typ>();                                   \
@@ -265,10 +265,9 @@ void evdw_tmpl()
       else if (vers == calc::v6)                                               \
          evdw_tmpl<calc::v6, evdw_t::typ>();                                   \
    }
-TINKER_EVDW_IMPL_(lj);
-TINKER_EVDW_IMPL_(buck);
-TINKER_EVDW_IMPL_(mm3hb);
-TINKER_EVDW_IMPL_(hal);
-TINKER_EVDW_IMPL_(gauss);
-
+TINKER_EVDW_ACC(lj);
+TINKER_EVDW_ACC(buck);
+TINKER_EVDW_ACC(mm3hb);
+TINKER_EVDW_ACC(hal);
+TINKER_EVDW_ACC(gauss);
 TINKER_NAMESPACE_END
