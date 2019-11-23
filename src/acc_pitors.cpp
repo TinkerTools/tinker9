@@ -205,7 +205,7 @@ void epitors_tmpl()
    } // end for (int i)
 }
 
-void epitors_acc_impl_(int vers)
+void epitors_acc(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
       epitors_tmpl<calc::v0>();

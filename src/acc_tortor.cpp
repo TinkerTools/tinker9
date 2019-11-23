@@ -393,7 +393,7 @@ void etortor_tmpl()
    } // end for (int itortor)
 }
 
-void etortor_acc_impl_(int vers)
+void etortor_acc(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
       etortor_tmpl<calc::v0>();

@@ -48,9 +48,9 @@ void eopbend_data(rc_op op)
    }
 }
 
-extern void eopbend_acc_impl_(int vers);
 void eopbend(int vers)
 {
-   eopbend_acc_impl_(vers);
+   extern void eopbend_acc(int);
+   eopbend_acc(vers);
 }
 TINKER_NAMESPACE_END

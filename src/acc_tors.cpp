@@ -187,7 +187,7 @@ void etors_tmpl()
    } // end for (int i)
 }
 
-void etors_acc_impl_(int vers)
+void etors_acc(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
       etors_tmpl<calc::v0>();

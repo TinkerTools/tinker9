@@ -66,7 +66,7 @@ void eurey_tmpl()
    } // end for (int i)
 }
 
-void eurey_acc_impl_(int vers)
+void eurey_acc(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
       eurey_tmpl<calc::v0>();

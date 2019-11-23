@@ -117,9 +117,9 @@ void etortor_data(rc_op op)
    }
 }
 
-extern void etortor_acc_impl_(int vers);
 void etortor(int vers)
 {
-   etortor_acc_impl_(vers);
+   extern void etortor_acc(int);
+   etortor_acc(vers);
 }
 TINKER_NAMESPACE_END

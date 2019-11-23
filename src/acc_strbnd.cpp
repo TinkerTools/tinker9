@@ -131,7 +131,7 @@ void estrbnd_tmpl()
    }
 }
 
-void estrbnd_acc_impl_(int vers)
+void estrbnd_acc(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
       estrbnd_tmpl<calc::v0>();

@@ -81,7 +81,7 @@ void ebond_tmpl()
    } // end for (int i)
 }
 
-void ebond_acc_impl_(int vers)
+void ebond_acc(int vers)
 {
    if (bndtyp == ebond_t::harmonic)
       if (vers == calc::v0 || vers == calc::v3)

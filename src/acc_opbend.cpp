@@ -204,7 +204,7 @@ void eopbend_tmpl()
    } // end for (int iopbend)
 }
 
-void eopbend_acc_impl_(int vers)
+void eopbend_acc(int vers)
 {
    if (opbtyp == eopbend_t::w_d_c) {
       if (vers == calc::v0 || vers == calc::v3)

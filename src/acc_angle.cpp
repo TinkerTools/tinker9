@@ -273,7 +273,7 @@ void eangle_tmpl()
    } // end for (int i)
 }
 
-void eangle_acc_impl_(int vers)
+void eangle_acc(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
       eangle_tmpl<calc::v0>();
