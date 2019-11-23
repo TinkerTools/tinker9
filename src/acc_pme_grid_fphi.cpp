@@ -130,9 +130,9 @@ void grid_tmpl_acc(PMEUnit pme_u, real* optional1, real* optional2)
                   real t0 = thetai1[4 * ix];
                   atomic_add(term * t0, dptr->qgrid, 2 * index);
                }
-            }
-         } // end for (int iz)
-      }    // end if (grid_pchg || grid_disp)
+            } // end for (int iy)
+         }
+      } // end if (grid_pchg || grid_disp)
 
       if CONSTEXPR (WHAT == MPOLE_GRID) {
          real fmpi0 = fmp[i][mpl_pme_0];
@@ -180,9 +180,9 @@ void grid_tmpl_acc(PMEUnit pme_u, real* optional1, real* optional2)
                   atomic_add(term0 * t0 + term1 * t1 + term2 * t2, dptr->qgrid,
                              2 * index);
                }
-            }
-         } // end for (int iz)
-      }    // end if (grid_mpole)
+            } // end for (int iy)
+         }
+      } // end if (grid_mpole)
 
       if CONSTEXPR (WHAT == UIND_GRID) {
          real fuindi0 = fuind[i][0];
@@ -220,10 +220,10 @@ void grid_tmpl_acc(PMEUnit pme_u, real* optional1, real* optional2)
                   atomic_add(term02 * t0 + term12 * t1, dptr->qgrid,
                              2 * index + 1);
                }
-            }
-         } // end for (int iz)
-      }    // end if (grid_uind)
-   }       // for (int i)
+            } // end for (int iy)
+         }
+      } // end if (grid_uind)
+   }    // for (int i)
 }
 
 void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
@@ -239,9 +239,14 @@ void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
 
 void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 {
+#if TINKER_CUDART
+   extern void grid_uind_cu(PMEUnit pme_u, real(*)[3], real(*)[3]);
+   grid_uind_cu(pme_u, fuind, fuinp);
+#else
    real* opt1 = reinterpret_cast<real*>(fuind);
    real* opt2 = reinterpret_cast<real*>(fuinp);
    grid_tmpl_acc<UIND_GRID>(pme_u, opt1, opt2);
+#endif
 }
 
 template <int WHAT>
@@ -275,11 +280,12 @@ void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
    assert(bsorder <= MAX_BSORDER);
 
    #pragma acc parallel loop independent\
-              deviceptr(fphi,fdip_phi1,fdip_phi2,fdip_sum_phi,\
-              x,y,z,box,dptr)
+               deviceptr(fphi,fdip_phi1,fdip_phi2,fdip_sum_phi,\
+               x,y,z,box,dptr)
    for (int i = 0; i < n; ++i) {
-      real thetai1[4 * MAX_BSORDER], thetai2[4 * MAX_BSORDER],
-         thetai3[4 * MAX_BSORDER];
+      real thetai1[4 * MAX_BSORDER];
+      real thetai2[4 * MAX_BSORDER];
+      real thetai3[4 * MAX_BSORDER];
 
       real xi = x[i];
       real yi = y[i];

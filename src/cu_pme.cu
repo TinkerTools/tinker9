@@ -26,7 +26,8 @@ template <int WHAT, int bsorder>
 __global__
 void grid_tmpl_cu(const real* restrict x, const real* restrict y,
                   const real* restrict z, int n, int nfft1, int nfft2,
-                  int nfft3, const real (*fmp)[10], real* restrict qgrid,
+                  int nfft3, const real* restrict ptr1,
+                  const real* restrict ptr2, real* restrict qgrid,
                   const Box* box)
 {
    real thetai1[4 * MAX_BSORDER];
@@ -34,6 +35,11 @@ void grid_tmpl_cu(const real* restrict x, const real* restrict y,
    real thetai3[4 * MAX_BSORDER];
    __shared__ real sharedarray[MAX_BSORDER * MAX_BSORDER * PME_BLOCKDIM];
    real* restrict array = &sharedarray[MAX_BSORDER * MAX_BSORDER * threadIdx.x];
+
+
+   MAYBE_UNUSED const real(*fmp)[10] = (real(*)[10])ptr1;
+   MAYBE_UNUSED const real(*fuind)[3] = (real(*)[3])ptr1;
+   MAYBE_UNUSED const real(*fuinp)[3] = (real(*)[3])ptr2;
 
 
    for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
@@ -79,6 +85,13 @@ void grid_tmpl_cu(const real* restrict x, const real* restrict y,
          bsplgen<3, bsorder>(w1, thetai1, array);
          bsplgen<3, bsorder>(w2, thetai2, array);
          bsplgen<3, bsorder>(w3, thetai3, array);
+      }
+
+
+      if CONSTEXPR (WHAT == UIND_GRID) {
+         bsplgen<2, bsorder>(w1, thetai1, array);
+         bsplgen<2, bsorder>(w2, thetai2, array);
+         bsplgen<2, bsorder>(w3, thetai3, array);
       }
 
 
@@ -128,6 +141,43 @@ void grid_tmpl_cu(const real* restrict x, const real* restrict y,
             } // end for (int iy)
          }
       } // end if (WHAT == MPOLE_GRID)
+
+
+      if CONSTEXPR (WHAT == UIND_GRID) {
+         real fuindi0 = fuind[i][0];
+         real fuindi1 = fuind[i][1];
+         real fuindi2 = fuind[i][2];
+         real fuinpi0 = fuinp[i][0];
+         real fuinpi1 = fuinp[i][1];
+         real fuinpi2 = fuinp[i][2];
+         for (int iz = 0; iz < bsorder; ++iz) {
+            int zbase = igrid3 + iz;
+            zbase -= (zbase >= nfft3 ? nfft3 : 0);
+            zbase *= (nfft1 * nfft2);
+            real v0 = thetai3[4 * iz];
+            real v1 = thetai3[4 * iz + 1];
+            for (int iy = 0; iy < bsorder; ++iy) {
+               int ybase = igrid2 + iy;
+               ybase -= (ybase >= nfft2 ? nfft2 : 0);
+               ybase *= nfft1;
+               real u0 = thetai2[4 * iy];
+               real u1 = thetai2[4 * iy + 1];
+               real term01 = fuindi1 * u1 * v0 + fuindi2 * u0 * v1;
+               real term11 = fuindi0 * u0 * v0;
+               real term02 = fuinpi1 * u1 * v0 + fuinpi2 * u0 * v1;
+               real term12 = fuinpi0 * u0 * v0;
+               for (int ix = 0; ix < bsorder; ++ix) {
+                  int xbase = igrid1 + ix;
+                  xbase -= (xbase >= nfft1 ? nfft1 : 0);
+                  int index = xbase + ybase + zbase;
+                  real t0 = thetai1[4 * ix];
+                  real t1 = thetai1[4 * ix + 1];
+                  atomic_add(term01 * t0 + term11 * t1, qgrid, 2 * index);
+                  atomic_add(term02 * t0 + term12 * t1, qgrid, 2 * index + 1);
+               }
+            } // end for (int iy)
+         }
+      } // end if (WHAT == UIND_GRID)
    }
 }
 
@@ -148,7 +198,28 @@ void grid_mpole_cu(PMEUnit pme_u, real (*fmp)[10])
 
    device_array::zero(2 * nt, st.qgrid);
    auto ker = grid_tmpl_cu<MPOLE_GRID, 5>;
-   launch_kernel2(PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, fmp, st.qgrid,
-                  box);
+   launch_kernel2(PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
+                  (const real*)fmp, nullptr, st.qgrid, box);
+}
+
+
+void grid_uind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
+{
+   auto& st = *pme_u;
+   int n1 = st.nfft1;
+   int n2 = st.nfft2;
+   int n3 = st.nfft3;
+   int nt = n1 * n2 * n3;
+
+
+   if (st.bsorder != 5)
+      TINKER_THROW(
+         format("grid_uind_cu(): bsorder is {}; must be 5.\n", st.bsorder));
+
+
+   device_array::zero(2 * nt, st.qgrid);
+   auto ker = grid_tmpl_cu<UIND_GRID, 5>;
+   launch_kernel2(PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
+                  (const real*)fuind, (const real*)fuinp, st.qgrid, box);
 }
 TINKER_NAMESPACE_END
