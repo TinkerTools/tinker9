@@ -1,6 +1,7 @@
 #include "acc_add.h"
 #include "box.h"
 #include "e_mpole.h"
+#include "error.h"
 #include "md.h"
 #include "pme.h"
 #include "seq_pme.h"
@@ -228,6 +229,9 @@ void grid_tmpl_acc(PMEUnit pme_u, real* optional1, real* optional2)
 
 void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
 {
+   int bso = pme_u->bsorder;
+   if (bso != 5)
+      TINKER_THROW(format("grid_mpole(): bsorder is {}; must be 5.\n", bso));
 #if TINKER_CUDART
    extern void grid_mpole_cu(PMEUnit, real(*)[10]);
    grid_mpole_cu(pme_u, fmp);
@@ -239,6 +243,9 @@ void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
 
 void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 {
+   int bso = pme_u->bsorder;
+   if (bso != 5)
+      TINKER_THROW(format("grid_uind(): bsorder is {}; must be 5.\n", bso));
 #if TINKER_CUDART
    extern void grid_uind_cu(PMEUnit pme_u, real(*)[3], real(*)[3]);
    grid_uind_cu(pme_u, fuind, fuinp);

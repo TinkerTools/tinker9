@@ -1,7 +1,6 @@
 #include "add.cuh"
 #include "box.h"
 #include "e_mpole.h"
-#include "error.h"
 #include "launch.cuh"
 #include "md.h"
 #include "pme.h"
@@ -191,11 +190,6 @@ void grid_mpole_cu(PMEUnit pme_u, real (*fmp)[10])
    int nt = n1 * n2 * n3;
 
 
-   if (st.bsorder != 5)
-      TINKER_THROW(
-         format("grid_mpole_cu(): bsorder is {}; must be 5.\n", st.bsorder));
-
-
    device_array::zero(2 * nt, st.qgrid);
    auto ker = grid_tmpl_cu<MPOLE_GRID, 5>;
    launch_kernel2(PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
@@ -210,11 +204,6 @@ void grid_uind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
    int n2 = st.nfft2;
    int n3 = st.nfft3;
    int nt = n1 * n2 * n3;
-
-
-   if (st.bsorder != 5)
-      TINKER_THROW(
-         format("grid_uind_cu(): bsorder is {}; must be 5.\n", st.bsorder));
 
 
    device_array::zero(2 * nt, st.qgrid);
