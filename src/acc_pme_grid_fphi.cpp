@@ -323,19 +323,19 @@ void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
       int igrid3 = REAL_FLOOR(fr3);
       w3 = fr3 - igrid3;
 
-      if CONSTEXPR (WHAT == MPOLE_GRID || WHAT == UIND_GRID ||
-                    WHAT == UIND_GRID_FPHI2) {
-         bsplgen<4>(w1, thetai1, bsorder);
-         bsplgen<4>(w2, thetai2, bsorder);
-         bsplgen<4>(w3, thetai3, bsorder);
-      }
-
       igrid1 = igrid1 - bsorder + 1;
       igrid2 = igrid2 - bsorder + 1;
       igrid3 = igrid3 - bsorder + 1;
       igrid1 += (igrid1 < 0 ? nfft1 : 0);
       igrid2 += (igrid2 < 0 ? nfft2 : 0);
       igrid3 += (igrid3 < 0 ? nfft3 : 0);
+
+      if CONSTEXPR (WHAT == MPOLE_GRID || WHAT == UIND_GRID ||
+                    WHAT == UIND_GRID_FPHI2) {
+         bsplgen<4>(w1, thetai1, bsorder);
+         bsplgen<4>(w2, thetai2, bsorder);
+         bsplgen<4>(w3, thetai3, bsorder);
+      }
 
       if CONSTEXPR (WHAT == MPOLE_GRID) {
          real tuv000 = 0;
@@ -669,8 +669,16 @@ void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
 
 void fphi_mpole(PMEUnit pme_u, real (*fphi)[20])
 {
+   int bso = pme_u->bsorder;
+   if (bso != 5)
+      TINKER_THROW(format("fphi_mpole(): bsorder is {}; must be 5.\n", bso));
+   // #if TINKER_CUDART
+   // extern void fphi_mpole_cu(PMEUnit, real(*)[20]);
+   // fphi_mpole_cu(pme_u, fphi);
+   // #else
    real* opt1 = reinterpret_cast<real*>(fphi);
    fphi_tmpl<MPOLE_GRID>(pme_u, opt1, nullptr, nullptr);
+   // #endif
 }
 
 void fphi_uind(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10],

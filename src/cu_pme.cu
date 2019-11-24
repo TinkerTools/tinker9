@@ -27,7 +27,7 @@ void grid_tmpl_cu(const real* restrict x, const real* restrict y,
                   const real* restrict z, int n, int nfft1, int nfft2,
                   int nfft3, const real* restrict ptr1,
                   const real* restrict ptr2, real* restrict qgrid,
-                  const Box* box)
+                  const Box* restrict box)
 {
    real thetai1[4 * MAX_BSORDER];
    real thetai2[4 * MAX_BSORDER];
