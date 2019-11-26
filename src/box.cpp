@@ -6,6 +6,7 @@
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/boxes.hh>
 
+
 TINKER_NAMESPACE_BEGIN
 void box_data(rc_op op)
 {
@@ -19,6 +20,7 @@ void box_data(rc_op op)
       }
    }
 
+
    if (op & rc_alloc) {
       if (calc::traj & rc_flag) {
          device_array::allocate(trajn, &trajbox);
@@ -27,6 +29,7 @@ void box_data(rc_op op)
          device_array::allocate(1, &box);
       }
    }
+
 
    if (op & rc_init) {
       Box::Shape shape = Box::null;
@@ -39,6 +42,15 @@ void box_data(rc_op op)
       else if (boxes::octahedron)
          shape = Box::oct;
 
+
+      recip_a =
+         make_real3(boxes::recip[0][0], boxes::recip[0][1], boxes::recip[0][2]);
+      recip_b =
+         make_real3(boxes::recip[1][0], boxes::recip[1][1], boxes::recip[1][2]);
+      recip_c =
+         make_real3(boxes::recip[2][0], boxes::recip[2][1], boxes::recip[2][2]);
+
+
       device_array::copyin(3, box->lvec, boxes::lvec);
       device_array::copyin(3, box->recip, boxes::recip);
       device_array::copyin(1, &box->volbox, &boxes::volbox);
@@ -46,15 +58,18 @@ void box_data(rc_op op)
    }
 }
 
+
 void copyout_box_data(const Box* pb)
 {
    Box b;
    device_array::copyout(1, &b, pb);
 
+
    if (bound::use_bounds) {
       double ax[3] = {b.lvec[0][0], b.lvec[1][0], b.lvec[2][0]};
       double bx[3] = {b.lvec[0][1], b.lvec[1][1], b.lvec[2][1]};
       double cx[3] = {b.lvec[0][2], b.lvec[1][2], b.lvec[2][2]};
+
 
 #define DOT3(a, b) (a[0] * b[0] + a[1] * b[1] + a[2] * b[2])
       double xbox = std::sqrt(DOT3(ax, ax));
@@ -67,6 +82,7 @@ void copyout_box_data(const Box* pb)
       double b_deg = radian_dp * std::acos(cos_b);
       double c_deg = radian_dp * std::acos(cos_c);
 
+
       boxes::xbox = xbox;
       boxes::ybox = ybox;
       boxes::zbox = zbox;
@@ -74,6 +90,14 @@ void copyout_box_data(const Box* pb)
       boxes::beta = b_deg;
       boxes::gamma = c_deg;
       TINKER_RT(lattice)();
+
+
+      recip_a =
+         make_real3(boxes::recip[0][0], boxes::recip[0][1], boxes::recip[0][2]);
+      recip_b =
+         make_real3(boxes::recip[1][0], boxes::recip[1][1], boxes::recip[1][2]);
+      recip_c =
+         make_real3(boxes::recip[2][0], boxes::recip[2][1], boxes::recip[2][2]);
    }
 }
 TINKER_NAMESPACE_END

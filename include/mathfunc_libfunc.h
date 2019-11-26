@@ -92,25 +92,56 @@
 #endif
 
 
-#ifdef __CUDACC__
 TINKER_NAMESPACE_BEGIN
-#   if TINKER_SINGLE_PRECISION
-using real2 = float2;
-using real3 = float3;
-using real4 = float4;
-#      define make_real2(x, y) make_float2((x), (y))
-#      define make_real3(x, y, z) make_float3((x), (y), (z))
-#      define make_real4(x, y, z, w) make_float4((x), (y), (z), (w))
-#   endif
+#ifndef __CUDACC__
+inline float2 make_float2(float x, float y)
+{
+   float2 f{.x = x, .y = y};
+   return f;
+}
 
+inline float3 make_float3(float x, float y, float z)
+{
+   float3 f{.x = x, .y = y, .z = z};
+   return f;
+}
 
-#   if TINKER_DOUBLE_PRECISION
-using real2 = double2;
-using real3 = double3;
-using real4 = double4;
-#      define make_real2(x, y) make_double2((x), (y))
-#      define make_real3(x, y, z) make_double3((x), (y), (z))
-#      define make_real4(x, y, z, w) make_double4((x), (y), (z), (w))
-#   endif
-TINKER_NAMESPACE_END
+inline float4 make_float4(float x, float y, float z, float w)
+{
+   float4 f{.x = x, .y = y, .z = z, .w = w};
+   return f;
+}
+
+inline double2 make_double2(double x, double y)
+{
+   double2 f{.x = x, .y = y};
+   return f;
+}
+
+inline double3 make_double3(double x, double y, double z)
+{
+   double3 f{.x = x, .y = y, .z = z};
+   return f;
+}
+
+inline double4 make_double4(double x, double y, double z, double w)
+{
+   double4 f{.x = x, .y = y, .z = z, .w = w};
+   return f;
+}
 #endif
+
+
+#if TINKER_SINGLE_PRECISION
+#   define make_real2(x, y) make_float2((x), (y))
+#   define make_real3(x, y, z) make_float3((x), (y), (z))
+#   define make_real4(x, y, z, w) make_float4((x), (y), (z), (w))
+#endif
+
+
+#if TINKER_DOUBLE_PRECISION
+#   define make_real2(x, y) make_double2((x), (y))
+#   define make_real3(x, y, z) make_double3((x), (y), (z))
+#   define make_real4(x, y, z, w) make_double4((x), (y), (z), (w))
+#endif
+TINKER_NAMESPACE_END

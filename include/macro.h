@@ -137,6 +137,39 @@ whenever you see an "unknown fortran compiler error".
 
 
 TINKER_NAMESPACE_BEGIN
+#ifndef __CUDACC__
+struct alignas(8) float2
+{
+   float x, y;
+};
+
+struct float3
+{
+   float x, y, z;
+};
+
+struct alignas(16) float4
+{
+   float x, y, z, w;
+};
+
+struct alignas(16) double2
+{
+   double x, y;
+};
+
+struct double3
+{
+   double x, y, z;
+};
+
+struct alignas(16) double4
+{
+   double x, y, z, w;
+};
+#endif
+
+
 /**
  * \ingroup mem
  * \brief
@@ -148,9 +181,15 @@ TINKER_NAMESPACE_BEGIN
  */
 #if TINKER_DOUBLE_PRECISION
 using real = double;
+using real2 = double2;
+using real3 = double3;
+using real4 = double4;
 #endif
 #if TINKER_SINGLE_PRECISION
 using real = float;
+using real2 = float2;
+using real3 = float3;
+using real4 = float4;
 #endif
 TINKER_NAMESPACE_END
 
