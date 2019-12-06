@@ -125,6 +125,7 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
 }
 
 
+static unsigned int cuda_device_flags = 0;
 void gpu_card_data(rc_op op)
 {
    if (op & rc_dealloc) {
@@ -136,6 +137,12 @@ void gpu_card_data(rc_op op)
    }
 
    if (op & rc_init) {
+      if (cuda_device_flags == 0) {
+         cuda_device_flags = cudaDeviceMapHost;
+         cuda_device_flags |= cudaDeviceScheduleBlockingSync;
+         check_rt(cudaSetDeviceFlags(cuda_device_flags));
+      }
+
       check_rt(cudaGetDeviceCount(&ndevice));
 
       auto& all = get_device_attributes();
@@ -144,6 +151,7 @@ void gpu_card_data(rc_op op)
          get_device_attribute(all[i], i);
 
       idevice = 0;
+      check_rt(cudaSetDevice(idevice));
    }
 }
 

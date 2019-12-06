@@ -672,13 +672,14 @@ void fphi_mpole(PMEUnit pme_u, real (*fphi)[20])
    int bso = pme_u->bsorder;
    if (bso != 5)
       TINKER_THROW(format("fphi_mpole(): bsorder is {}; must be 5.\n", bso));
-   // #if TINKER_CUDART
-   // extern void fphi_mpole_cu(PMEUnit, real(*)[20]);
-   // fphi_mpole_cu(pme_u, fphi);
-   // #else
    real* opt1 = reinterpret_cast<real*>(fphi);
+
+#if TINKER_CUDART
+   extern void fphi_mpole_cu(PMEUnit, real*);
+   fphi_mpole_cu(pme_u, opt1);
+#else
    fphi_tmpl<MPOLE_GRID>(pme_u, opt1, nullptr, nullptr);
-   // #endif
+#endif
 }
 
 void fphi_uind(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10],
