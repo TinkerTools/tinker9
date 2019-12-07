@@ -103,14 +103,4 @@ public:
 #else
 #   define check_rt(call, ...) call
 #endif
-
-/**
- * \def TINKER_DUMMY_FUNCTION
- * \ingroup error
- * Throw an exception if the dummy routine is called.
- */
-#define TINKER_DUMMY_FUNCTION(r)                                               \
-   TINKER_THROW(                                                               \
-      format("This dummy function, {}(), should not have been called.\n",      \
-             TINKER_STR(r)))
 TINKER_NAMESPACE_END

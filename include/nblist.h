@@ -58,4 +58,9 @@ TINKER_EXTERN device_pointer<real> minv;
 TINKER_EXTERN device_pointer<real> minv_exclude_;
 
 void nblist_data(rc_op op);
+int& nblist_get_unit(int version, int& nb_unit, int& sp_unit);
+void nblist_data_alloc(int version, int& unt, int maxn, real cut, real buf,
+                       const real* x, const real* y, const real* z);
+void nblist_data_init(int version, int unt);
+void nblist_data_evolve(int version, int unt);
 TINKER_NAMESPACE_END

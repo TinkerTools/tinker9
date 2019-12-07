@@ -168,12 +168,14 @@ static void nblist_op_alloc_(NBListUnit& nblu, int maxn, double cutoff,
    nblu.update_deviceptr(st);
 }
 
+
+extern void nblist_build_acc(NBListUnit);
+extern void nblist_update_acc(NBListUnit);
+extern void spatial_data_init_cu(SpatialUnit);
+
+
 void nblist_data(rc_op op)
 {
-   extern void nblist_build_acc(NBListUnit);
-   extern void nblist_update_acc(NBListUnit);
-   extern void spatial_data_init_cu(SpatialUnit);
-
    if (op & rc_dealloc) {
       NBListUnit::clear();
       vlist_unit.close();
@@ -209,44 +211,21 @@ void nblist_data(rc_op op)
 
    // vlist
    u = vlist_version();
+   int& vunt = nblist_get_unit(u, (int&)vlist_unit, (int&)vspatial_unit);
    cut = limits::vdwcut;
    buf = neigh::lbuffer;
-   if (u & (NBList::nblist | NBList::double_loop)) {
-      if (op & rc_alloc) {
-         maxnlst = 2500;
-         if (u == NBList::double_loop)
-            maxnlst = 1;
-         nblist_op_alloc_(vlist_unit, maxnlst, cut, buf, xred, yred, zred);
-      }
-
-      if (op & rc_init) {
-         evdw_reduce_xyz();
-         nblist_build_acc(vlist_unit);
-      }
-
-      if (op & rc_evolve) {
-         evdw_reduce_xyz();
-         nblist_update_acc(vlist_unit);
-      }
-   } else if (u & NBList::spatial) {
-      if (op & rc_alloc) {
-         spatial_data_alloc(vspatial_unit, n, cut, buf, xred, yred, zred);
+   if (u && (op & rc_alloc)) {
+      nblist_data_alloc(u, vunt, 2500, cut, buf, xred, yred, zred);
+      if (u & NBList::spatial)
          alloc_thrust_cache = true;
-      }
-
-      if (op & rc_init) {
-         evdw_reduce_xyz();
-         spatial_data_init_cu(vspatial_unit);
-      }
-
-      if (op & rc_evolve) {
-         evdw_reduce_xyz();
-         auto& st = *vspatial_unit;
-         st.rebuild = check_spatial_acc(st.n, st.buffer, box, st.update, st.x,
-                                        st.y, st.z, st.xold, st.yold, st.zold);
-         if (st.rebuild)
-            spatial_data_init_cu(vspatial_unit);
-      }
+   }
+   if (u && (op & rc_init)) {
+      evdw_reduce_xyz();
+      nblist_data_init(u, vunt);
+   }
+   if (u && (op & rc_evolve)) {
+      evdw_reduce_xyz();
+      nblist_data_evolve(u, vunt);
    }
 
    // dlist
@@ -255,52 +234,41 @@ void nblist_data(rc_op op)
 
    // mlist
    u = mlist_version();
+   int& munt = nblist_get_unit(u, (int&)mlist_unit, (int&)mspatial_unit);
    cut = limits::mpolecut;
    buf = neigh::lbuffer;
-   // if (u & (NBList::nblist | NBList::double_loop)) {
-   if (u) {
-      if (op & rc_alloc) {
-         maxnlst = 2500;
-         if (u == NBList::double_loop)
-            maxnlst = 1;
-         nblist_op_alloc_(mlist_unit, maxnlst, limits::mpolecut, neigh::lbuffer,
-                          x, y, z);
-      }
-
-      if (op & rc_init)
-         nblist_build_acc(mlist_unit);
-
-      if (op & rc_evolve) {
-         if (rc_flag & calc::traj) {
-            mlist_unit->x = x;
-            mlist_unit->y = y;
-            mlist_unit->z = z;
-            mlist_unit.update_deviceptr(*mlist_unit);
-         }
-         nblist_update_acc(mlist_unit);
-      }
-   }
-   // else if (u & NBList::spatial) {
-#if TINKER_CUDART
-   if (u) {
-      if (op & rc_alloc) {
-         spatial_data_alloc(mspatial_unit, n, cut, buf, x, y, z);
+   if (u && (op & rc_alloc)) {
+      if (u == NBList::spatial)
+         nblist_data_alloc(NBList::nblist, (int&)mlist_unit, 2500, cut, buf, x,
+                           y, z);
+      nblist_data_alloc(u, munt, 2500, cut, buf, x, y, z);
+      if (u & NBList::spatial)
          alloc_thrust_cache = true;
-      }
-
-      if (op & rc_init) {
-         spatial_data_init_cu(mspatial_unit);
-      }
-
-      if (op & rc_evolve) {
-         auto& st = *mspatial_unit;
-         st.rebuild = check_spatial_acc(st.n, st.buffer, box, st.update, st.x,
-                                        st.y, st.z, st.xold, st.yold, st.zold);
-         if (st.rebuild)
-            spatial_data_init_cu(mspatial_unit);
-      }
    }
-#endif
+   if (u && (op & rc_init)) {
+      if (u == NBList::spatial)
+         nblist_data_init(NBList::nblist, (int&)mlist_unit);
+      nblist_data_init(u, munt);
+   }
+   if (u && (op & rc_evolve)) {
+      if (rc_flag & calc::traj) {
+         mlist_unit->x = x;
+         mlist_unit->y = y;
+         mlist_unit->z = z;
+         mlist_unit.update_deviceptr(*mlist_unit);
+
+         if (u == NBList::spatial) {
+            mspatial_unit->x = x;
+            mspatial_unit->y = y;
+            mspatial_unit->z = z;
+            mspatial_unit.update_deviceptr(*mspatial_unit);
+         }
+      }
+
+      if (u == NBList::spatial)
+         nblist_data_evolve(NBList::nblist, (int&)mlist_unit);
+      nblist_data_evolve(u, munt);
+   }
 
    // ulist
    u = ulist_version();
@@ -342,6 +310,67 @@ void nblist_data(rc_op op)
    extern void thrust_cache_alloc();
    if (alloc_thrust_cache)
       thrust_cache_alloc();
+#endif
+}
+
+
+int& nblist_get_unit(int version, int& nb, int& sp)
+{
+   if (version & (NBList::nblist | NBList::double_loop)) {
+      return nb;
+   }
+#if TINKER_CUDART
+   else if (version & NBList::spatial) {
+      return sp;
+   }
+#endif
+}
+
+
+void nblist_data_alloc(int version, int& unt, int maxn, real cut, real buf,
+                       const real* x, const real* y, const real* z)
+{
+   if (version & (NBList::nblist | NBList::double_loop)) {
+      int maxnlst = maxn;
+      if (version == NBList::double_loop)
+         maxnlst = 1;
+      nblist_op_alloc_((NBListUnit&)unt, maxnlst, cut, buf, x, y, z);
+   }
+#if TINKER_CUDART
+   else if (version & NBList::spatial) {
+      spatial_data_alloc((SpatialUnit&)unt, n, cut, buf, x, y, z);
+   }
+#endif
+}
+
+
+void nblist_data_init(int version, int unt)
+{
+   if (version & (NBList::nblist | NBList::double_loop)) {
+      nblist_build_acc((NBListUnit)unt);
+   }
+#if TINKER_CUDART
+   else if (version & NBList::spatial) {
+      spatial_data_init_cu((SpatialUnit)unt);
+   }
+#endif
+}
+
+
+void nblist_data_evolve(int version, int unt)
+{
+   if (version & (NBList::nblist | NBList::double_loop)) {
+      nblist_update_acc((NBListUnit)unt);
+   }
+#if TINKER_CUDART
+   else if (version & NBList::spatial) {
+      SpatialUnit sunt = unt;
+      auto& st = *sunt;
+      st.rebuild = check_spatial_acc(st.n, st.buffer, box, st.update, st.x,
+                                     st.y, st.z, st.xold, st.yold, st.zold);
+      if (st.rebuild)
+         spatial_data_init_cu((SpatialUnit)unt);
+   }
 #endif
 }
 TINKER_NAMESPACE_END

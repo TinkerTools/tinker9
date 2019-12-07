@@ -61,12 +61,4 @@ void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer,
 
    u.update_deviceptr(st);
 }
-
-
-#if TINKER_HOST
-void spatial_data_init_cu(SpatialUnit)
-{
-   TINKER_DUMMY_FUNCTION(spatial_data_init_cu);
-}
-#endif
 TINKER_NAMESPACE_END
