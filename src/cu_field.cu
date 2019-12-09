@@ -237,8 +237,8 @@ void dfield_cu2(DFIELD_ARGS, const real* restrict x, const real* restrict y,
 
 void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
 {
-   const real off = switch_off(switch_ewald);
    const auto& st = *mspatial_unit;
+   const real off = st.cutoff;
    const auto* sp = mspatial_unit.deviceptr();
 
 
@@ -257,8 +257,8 @@ void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
 
 void dfield_coulomb_cu(real (*field)[3], real (*fieldp)[3])
 {
-   const real off = switch_off(switch_mpole);
    const auto& st = *mspatial_unit;
+   const real off = st.cutoff;
    const auto* sp = mspatial_unit.deviceptr();
 
 
@@ -481,8 +481,8 @@ void ufield_cu2(UFIELD_ARGS, const real* restrict x, const real* restrict y,
 void ufield_ewald_real_cu(const real (*uind)[3], const real (*uinp)[3],
                           real (*field)[3], real (*fieldp)[3])
 {
-   const real off = switch_off(switch_ewald);
    const auto& st = *mspatial_unit;
+   const real off = st.cutoff;
    const auto* sp = mspatial_unit.deviceptr();
 
 
@@ -503,8 +503,8 @@ void ufield_ewald_real_cu(const real (*uind)[3], const real (*uinp)[3],
 void ufield_coulomb_cu(float const (*uind)[3], float const (*uinp)[3],
                        float (*field)[3], float (*fieldp)[3])
 {
-   const real off = switch_off(switch_mpole);
    const auto& st = *mspatial_unit;
+   const real off = st.cutoff;
    const auto* sp = mspatial_unit.deviceptr();
 
 

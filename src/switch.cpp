@@ -3,6 +3,7 @@
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/nonpol.hh>
 
+
 TINKER_NAMESPACE_BEGIN
 real switch_cut(switch_t mode)
 {
@@ -19,7 +20,6 @@ real switch_cut(switch_t mode)
       cut = disptaper;
       break;
    case switch_charge:
-
       cut = chgtaper;
       break;
    case switch_chgdpl:
@@ -56,6 +56,7 @@ real switch_cut(switch_t mode)
    }
    return cut;
 }
+
 
 real switch_off(switch_t mode)
 {

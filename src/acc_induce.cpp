@@ -1,12 +1,8 @@
 #include "acc_add.h"
-#include "e_polar.h"
 #include "error.h"
 #include "gpu_card.h"
+#include "induce.h"
 #include "io_print.h"
-#include "md.h"
-#include "nblist.h"
-#include "seq_damp.h"
-#include "seq_image.h"
 #include "tinker_rt.h"
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/polpcg.hh>
@@ -14,13 +10,11 @@
 #include <tinker/detail/units.hh>
 
 TINKER_NAMESPACE_BEGIN
-// similar to uscale0a/uscale0b routines
-// the preconditioner is the diagnoal matrix
-inline void diag_precond(const real (*rsd)[3], const real (*rsdp)[3],
-                         real (*zrsd)[3], real (*zrsdp)[3])
+void diag_precond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3],
+                  real (*zrsdp)[3])
 {
    #pragma acc parallel loop independent\
-              deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
+               deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
    for (int i = 0; i < n; ++i) {
       real poli = polarity[i];
       #pragma acc loop seq
@@ -31,14 +25,11 @@ inline void diag_precond(const real (*rsd)[3], const real (*rsdp)[3],
    }
 }
 
-// similar to uscale0a/uscale0b routines
-// the preconditioner is the sparse diagnoal matrix
-inline void sparse_diag_precond_apply(const real (*rsd)[3],
-                                      const real (*rsdp)[3], real (*zrsd)[3],
-                                      real (*zrsdp)[3])
+void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
+                              real (*zrsd)[3], real (*zrsdp)[3])
 {
    #pragma acc parallel loop independent\
-              deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
+               deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
    for (int i = 0; i < n; ++i) {
       real poli = udiag * polarity[i];
       #pragma acc loop seq
@@ -143,12 +134,10 @@ inline void sparse_diag_precond_apply(const real (*rsd)[3],
    }
 }
 
-inline void sparse_diag_precond_build(const real (*rsd)[3],
-                                      const real (*rsdp)[3], real (*zrsd)[3],
-                                      real (*zrsdp)[3])
+void sparse_precond_build_acc()
 {
    const auto* nulst = ulist_unit->nlst;
-   #pragma acc serial deviceptr(mindex, nulst)
+   #pragma acc serial deviceptr(mindex,nulst)
    {
       int m = 0;
       for (int i = 0; i < n; ++i) {
@@ -204,8 +193,8 @@ inline void sparse_diag_precond_build(const real (*rsd)[3],
       } // end for (int kk)
    }
 
-   #pragma acc parallel deviceptr(BUILD_DPTRS_,minv_exclude_,\
-              uexclude_,uexclude_scale_)
+   #pragma acc parallel deviceptr(BUILD_DPTRS_,\
+               minv_exclude_,uexclude_,uexclude_scale_)
    #pragma acc loop independent
    for (int ii = 0; ii < nuexclude_; ++ii) {
       int i = uexclude_[ii][0];
@@ -297,7 +286,7 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
    // direct induced dipoles
 
    #pragma acc parallel loop independent\
-              deviceptr(polarity,udir,udirp,field,fieldp)
+               deviceptr(polarity,udir,udirp,field,fieldp)
    for (int i = 0; i < n; ++i) {
       real poli = polarity[i];
       #pragma acc loop seq
@@ -329,8 +318,8 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
    // initial M r(0) and p(0)
 
    if (sparse_prec) {
-      sparse_diag_precond_build(rsd, rsdp, zrsd, zrsdp);
-      sparse_diag_precond_apply(rsd, rsdp, zrsd, zrsdp);
+      sparse_precond_build();
+      sparse_precond_apply(rsd, rsdp, zrsd, zrsdp);
    } else {
       diag_precond(rsd, rsdp, zrsd, zrsdp);
    }
@@ -364,7 +353,7 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
       // vec = inv_alpha * conj - field
       ufield(conj, conjp, field, fieldp);
       #pragma acc parallel loop independent\
-                deviceptr(polarity_inv,vec,vecp,conj,conjp,field,fieldp)
+                  deviceptr(polarity_inv,vec,vecp,conj,conjp,field,fieldp)
       for (int i = 0; i < n; ++i) {
          real poli_inv = polarity_inv[i];
          #pragma acc loop seq
@@ -387,7 +376,7 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
       // u <- u + a p
       // r <- r - a T p
       #pragma acc parallel loop independent\
-                deviceptr(uind,uinp,conj,conjp,rsd,rsdp,vec,vecp)
+                  deviceptr(uind,uinp,conj,conjp,rsd,rsdp,vec,vecp)
       for (int i = 0; i < n; ++i) {
          #pragma acc loop seq
          for (int j = 0; j < 3; ++j) {
@@ -400,7 +389,7 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
 
       // calculate/update M r
       if (sparse_prec)
-         sparse_diag_precond_apply(rsd, rsdp, zrsd, zrsdp);
+         sparse_precond_apply(rsd, rsdp, zrsd, zrsdp);
       else
          diag_precond(rsd, rsdp, zrsd, zrsdp);
 
@@ -455,7 +444,7 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
 
       if (done) {
          #pragma acc parallel loop independent\
-                  deviceptr(polarity,uind,uinp,rsd,rsdp)
+                     deviceptr(polarity,uind,uinp,rsd,rsdp)
          for (int i = 0; i < n; ++i) {
             real term = pcgpeek * polarity[i];
             #pragma acc loop seq

@@ -55,11 +55,10 @@ TINKER_NAMESPACE_END
 #endif
 
 TINKER_NAMESPACE_BEGIN
-void check_nblist_acc(int n, real lbuf, const Box* restrict box,
-                      int* restrict update, const real* restrict x,
-                      const real* restrict y, const real* restrict z,
-                      real* restrict xold, real* restrict yold,
-                      real* restrict zold)
+void check_nblist(int n, real lbuf, const Box* restrict box,
+                  int* restrict update, const real* restrict x,
+                  const real* restrict y, const real* restrict z,
+                  real* restrict xold, real* restrict yold, real* restrict zold)
 {
    const real lbuf2 = REAL_SQ(0.5f * lbuf);
    #pragma acc parallel loop independent\
@@ -83,11 +82,10 @@ void check_nblist_acc(int n, real lbuf, const Box* restrict box,
    }
 }
 
-int check_spatial_acc(int n, real lbuf, const Box* restrict box,
-                      int* restrict update, const real* restrict x,
-                      const real* restrict y, const real* restrict z,
-                      real* restrict xold, real* restrict yold,
-                      real* restrict zold)
+int check_spatial(int n, real lbuf, const Box* restrict box,
+                  int* restrict update, const real* restrict x,
+                  const real* restrict y, const real* restrict z,
+                  real* restrict xold, real* restrict yold, real* restrict zold)
 {
    if (lbuf == 0)
       return 1;
@@ -194,8 +192,8 @@ inline void update_v1_(NBListUnit nu)
    // test sites for displacement exceeding half the buffer
 
    auto& st = *nu;
-   check_nblist_acc(n, st.buffer, box, st.update, st.x, st.y, st.z, st.xold,
-                    st.yold, st.zold);
+   check_nblist(n, st.buffer, box, st.update, st.x, st.y, st.z, st.xold,
+                st.yold, st.zold);
 
    // rebuild the higher numbered neighbors for updated sites
 
@@ -272,7 +270,7 @@ inline void update_v1_(NBListUnit nu)
 
 //====================================================================//
 
-void nblist_build_acc(NBListUnit nu)
+void nblist_build(NBListUnit nu)
 {
    if (nu->maxnlst == 1) {
       build_double_loop_(nu);
@@ -283,7 +281,7 @@ void nblist_build_acc(NBListUnit nu)
 
 // #define TINKER_DEFAULT_NBLIST_UPDATE_(nu) build_v1_(nu)
 #define TINKER_DEFAULT_NBLIST_UPDATE_(nu) update_v1_(nu)
-void nblist_update_acc(NBListUnit nu)
+void nblist_update(NBListUnit nu)
 {
    if (nu->maxnlst == 1) {
       // update_double_loop_();

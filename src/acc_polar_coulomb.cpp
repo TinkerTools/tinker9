@@ -26,7 +26,7 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
    static_assert(do_g || do_a,
                  "Do not use this template for the energy-only version.");
 
-   const real off = switch_off(switch_mpole);
+   const real off = mlist_unit->cutoff;
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();

@@ -13,7 +13,7 @@ void dfield_coulomb_acc(real (*field)[3], real (*fieldp)[3])
 {
    device_array::zero(n, field, fieldp);
 
-   const real off = switch_off(switch_mpole);
+   const real off = mlist_unit->cutoff;
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
@@ -153,7 +153,7 @@ void ufield_coulomb_acc(const real (*uind)[3], const real (*uinp)[3],
 {
    device_array::zero(n, field, fieldp);
 
-   const real off = switch_off(switch_mpole);
+   const real off = mlist_unit->cutoff;
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();

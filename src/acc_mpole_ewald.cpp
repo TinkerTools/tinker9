@@ -21,7 +21,7 @@ void empole_real_self_tmpl()
 
    const real f = electric / dielec;
 
-   const real off = switch_off(switch_ewald);
+   const real off = mlist_unit->cutoff;
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();

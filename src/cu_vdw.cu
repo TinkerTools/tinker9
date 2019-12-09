@@ -310,9 +310,9 @@ void evdw_cu()
    static_assert(do_v ? do_g : true, "");
    static_assert(do_a ? do_e : true, "");
 
-   const real cut = switch_cut(switch_vdw);
-   const real off = switch_off(switch_vdw);
    const auto& st = *vspatial_unit;
+   const real cut = switch_cut(switch_vdw);
+   const real off = st.cutoff;
    const auto* sp = vspatial_unit.deviceptr();
 
    auto bufsize = buffer_size();

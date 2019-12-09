@@ -21,7 +21,7 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
    if CONSTEXPR (do_g)
       device_array::zero(n, ufld, dufld);
 
-   const real off = switch_off(switch_ewald);
+   const real off = mlist_unit->cutoff;
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();

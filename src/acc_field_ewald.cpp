@@ -43,7 +43,7 @@ void dfield_ewald_recip_self(real (*field)[3])
 // see also subroutine udirect2b / dfield0c in induce.f
 void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
 {
-   const real off = switch_off(switch_ewald);
+   const real off = mlist_unit->cutoff;
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
@@ -231,7 +231,7 @@ void ufield_ewald_recip_self(const real (*uind)[3], const real (*uinp)[3],
 void ufield_ewald_real_acc(const real (*uind)[3], const real (*uinp)[3],
                            real (*field)[3], real (*fieldp)[3])
 {
-   const real off = switch_off(switch_ewald);
+   const real off = mlist_unit->cutoff;
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
