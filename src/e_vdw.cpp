@@ -1,6 +1,7 @@
 #include "e_vdw.h"
 #include "io_fort_str.h"
 #include "md.h"
+#include "nblist.h"
 #include "potent.h"
 #include <cassert>
 #include <map>
@@ -231,14 +232,15 @@ void evdw_mm3hb(int vers)
 }
 void evdw_hal(int vers)
 {
-#if TINKER_CUDART
-   extern void evdw_hal_cu(int vers);
-   evdw_hal_cu(vers);
-#else
    // the default implementation
    extern void evdw_hal_acc(int vers);
-   evdw_hal_acc(vers);
+#if TINKER_CUDART
+   if (vlist_version() == NBList::spatial) {
+      extern void evdw_hal_cu(int vers);
+      evdw_hal_cu(vers);
+   } else
 #endif
+      evdw_hal_acc(vers);
 }
 void evdw_gauss(int vers)
 {

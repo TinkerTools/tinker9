@@ -1,10 +1,11 @@
 #include "e_mpole.h"
-#include "io_fort_str.h"
 #include "md.h"
+#include "nblist.h"
 #include "potent.h"
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/sizes.hh>
+
 
 TINKER_NAMESPACE_BEGIN
 void empole_data(rc_op op)
@@ -106,6 +107,20 @@ void empole_data(rc_op op)
       }
    }
 }
+
+
+void empole_coulomb(int vers)
+{
+   extern void empole_coulomb_acc(int);
+#if TINKER_CUDART
+   if (mlist_version() == NBList::spatial) {
+      extern void empole_coulomb_cu(int);
+      empole_coulomb_cu(vers);
+   } else
+#endif
+      empole_coulomb_acc(vers);
+}
+
 
 void empole(int vers)
 {

@@ -198,7 +198,7 @@ void empole_coulomb_tmpl()
    }
 }
 
-void empole_coulomb(int vers)
+void empole_coulomb_acc(int vers)
 {
    if (vers == calc::v0)
       empole_coulomb_tmpl<calc::v0>();
