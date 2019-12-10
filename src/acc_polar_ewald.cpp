@@ -28,7 +28,7 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
 
    auto bufsize = buffer_size();
 
-   const real f = 0.5 * electric / dielec;
+   const real f = 0.5f * electric / dielec;
 
    const PMEUnit pu = ppme_unit;
    const real aewald = pu->aewald;
@@ -73,7 +73,7 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
       int nmlsti = mlst->nlst[i];
       int base = i * maxnlst;
       #pragma acc loop vector independent\
-                reduction(+:gxi,gyi,gzi,txi,tyi,tzi,du0,du1,du2,du3,du4,du5)
+                  reduction(+:gxi,gyi,gzi,txi,tyi,tzi,du0,du1,du2,du3,du4,du5)
       for (int kk = 0; kk < nmlsti; ++kk) {
          int offset = kk & (bufsize - 1);
          int k = mlst->lst[base + kk];
@@ -304,7 +304,7 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
 
    if CONSTEXPR (do_g) {
       #pragma acc parallel loop independent\
-                deviceptr(rpole,trqx,trqy,trqz,ufld,dufld)
+                  deviceptr(rpole,trqx,trqy,trqz,ufld,dufld)
       for (int i = 0; i < n; ++i) {
          real dix = rpole[i][mpl_pme_x];
          real diy = rpole[i][mpl_pme_y];
@@ -379,20 +379,20 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 
    // increment the dipole polarization gradient contributions
 
-   // data deriv1  / 2, 5,  8,  9, 11, 16, 18, 14, 15, 20 /
-   // data deriv2  / 3, 8,  6, 10, 14, 12, 19, 16, 20, 17 /
-   // data deriv3  / 4, 9, 10,  7, 15, 17, 13, 20, 18, 19 /
-   constexpr int deriv1[10] = {1, 4, 7, 8, 10, 15, 17, 13, 14, 19};
-   constexpr int deriv2[10] = {2, 7, 5, 9, 13, 11, 18, 15, 19, 16};
-   constexpr int deriv3[10] = {3, 8, 9, 6, 14, 16, 12, 19, 17, 18};
-
    #pragma acc parallel loop independent deviceptr(box,gx,gy,gz,\
-              fmp,fphi,fuind,fuinp,fphid,fphip,fphidp)
+               fmp,fphi,fuind,fuinp,fphid,fphip,fphidp)
    for (int i = 0; i < n; ++i) {
+      // data deriv1  / 2, 5,  8,  9, 11, 16, 18, 14, 15, 20 /
+      // data deriv2  / 3, 8,  6, 10, 14, 12, 19, 16, 20, 17 /
+      // data deriv3  / 4, 9, 10,  7, 15, 17, 13, 20, 18, 19 /
+      constexpr int deriv1[10] = {1, 4, 7, 8, 10, 15, 17, 13, 14, 19};
+      constexpr int deriv2[10] = {2, 7, 5, 9, 13, 11, 18, 15, 19, 16};
+      constexpr int deriv3[10] = {3, 8, 9, 6, 14, 16, 12, 19, 17, 18};
+
       real f1 = 0;
       real f2 = 0;
       real f3 = 0;
-      #pragma acc loop independent reduction(+:f1,f2,f3)
+      #pragma acc loop seq
       for (int k = 0; k < 3; ++k) {
          int j1 = deriv1[k + 1];
          int j2 = deriv2[k + 1];
@@ -406,7 +406,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
          f3 += fuind[i][k] * fphip[i][j3] + fuinp[i][k] * fphid[i][j3];
          // end if
       }
-      #pragma acc loop independent reduction(+:f1,f2,f3)
+      #pragma acc loop seq
       for (int k = 0; k < 10; ++k) {
          f1 += fmp[i][k] * fphidp[i][deriv1[k]];
          f2 += fmp[i][k] * fphidp[i][deriv2[k]];
@@ -445,8 +445,8 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
    real term = f * REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
    real fterm_term = -2 * f * REAL_CUBE(aewald) / 3 / sqrtpi;
    #pragma acc parallel loop independent\
-              deviceptr(ep,nep,trqx,trqy,trqz,\
-              rpole,cmp,gpu_uind,gpu_uinp,cphidp)
+               deviceptr(ep,nep,trqx,trqy,trqz,\
+               rpole,cmp,gpu_uind,gpu_uinp,cphidp)
    for (int i = 0; i < n; ++i) {
       int offset = i & (bufsize - 1);
       real dix = rpole[i][mpl_pme_x];
@@ -505,8 +505,8 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       device_array::scale(n, f, cphi, fphid, fphip);
 
       #pragma acc parallel loop independent\
-                deviceptr(vir_ep,box,cmp,\
-                gpu_uind,gpu_uinp,fphid,fphip,cphi,cphidp)
+                  deviceptr(vir_ep,box,cmp,\
+                  gpu_uind,gpu_uinp,fphid,fphip,cphi,cphidp)
       for (int i = 0; i < n; ++i) {
          real cphid[4], cphip[4];
          real ftc[3][3];
@@ -680,6 +680,10 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
    }
 }
 
+#if TINKER_CUDART
+template <int>
+void epolar_real_cu(const real (*)[3], const real (*)[3]);
+#endif
 template <int USE>
 void epolar_ewald_tmpl(const real (*uind)[3], const real (*uinp)[3])
 {
@@ -693,30 +697,30 @@ void epolar_ewald_tmpl(const real (*uind)[3], const real (*uinp)[3])
    static_assert(do_g || do_a,
                  "Do not use this template for the energy-only version.");
 
-   epolar_real_tmpl<USE>(uind, uinp);
+#if TINKER_CUDART
+   if (mlist_version() == NBList::spatial) {
+      epolar_real_cu<USE>(uind, uinp);
+   } else
+#endif
+      epolar_real_tmpl<USE>(uind, uinp);
 
    epolar_recip_self_tmpl<USE>(uind, uinp);
 }
 
 void epolar_ewald(int vers)
 {
+   induce(uind, uinp);
    if (vers == calc::v0) {
-      induce(uind, uinp);
       epolar0_dotprod(uind, udirp);
    } else if (vers == calc::v1) {
-      induce(uind, uinp);
       epolar_ewald_tmpl<calc::v1>(uind, uinp);
    } else if (vers == calc::v3) {
-      induce(uind, uinp);
       epolar_ewald_tmpl<calc::v3>(uind, uinp);
    } else if (vers == calc::v4) {
-      induce(uind, uinp);
       epolar_ewald_tmpl<calc::v4>(uind, uinp);
    } else if (vers == calc::v5) {
-      induce(uind, uinp);
       epolar_ewald_tmpl<calc::v5>(uind, uinp);
    } else if (vers == calc::v6) {
-      induce(uind, uinp);
       epolar_ewald_tmpl<calc::v6>(uind, uinp);
    }
 }

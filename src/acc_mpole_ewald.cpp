@@ -363,6 +363,10 @@ void empole_recip_tmpl()
    }       // end for (int i)
 }
 
+#if TINKER_CUDART
+template <int>
+void empole_real_self_cu();
+#endif
 template <int USE>
 void empole_ewald_tmpl()
 {
@@ -375,8 +379,7 @@ void empole_ewald_tmpl()
 
 #if TINKER_CUDART
    if (mlist_version() == NBList::spatial) {
-      extern void empole_real_self_cu(int);
-      empole_real_self_cu(USE);
+      empole_real_self_cu<USE>();
    } else
 #endif
       empole_real_self_tmpl<USE>();

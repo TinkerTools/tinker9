@@ -14,6 +14,31 @@ struct PairPolarGrad
 };
 
 
+__device__
+inline void zero(PairPolarGrad& pgrad)
+{
+   pgrad.frcx = 0;
+   pgrad.frcy = 0;
+   pgrad.frcz = 0;
+   #pragma unroll
+   for (int i = 0; i < 3; ++i) {
+      pgrad.ufldi[i] = 0;
+   }
+   #pragma unroll
+   for (int i = 0; i < 3; ++i) {
+      pgrad.ufldk[i] = 0;
+   }
+   #pragma unroll
+   for (int i = 0; i < 6; ++i) {
+      pgrad.dufldi[i] = 0;
+   }
+   #pragma unroll
+   for (int i = 0; i < 6; ++i) {
+      pgrad.dufldk[i] = 0;
+   }
+}
+
+
 #pragma acc routine seq
 template <int USE, elec_t ETYP>
 __device__

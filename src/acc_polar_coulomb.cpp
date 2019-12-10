@@ -75,7 +75,7 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
       int nmlsti = mlst->nlst[i];
       int base = i * maxnlst;
       #pragma acc loop vector independent\
-                reduction(+:gxi,gyi,gzi,txi,tyi,tzi,du0,du1,du2,du3,du4,du5)
+                  reduction(+:gxi,gyi,gzi,txi,tyi,tzi,du0,du1,du2,du3,du4,du5)
       for (int kk = 0; kk < nmlsti; ++kk) {
          int offset = kk & (bufsize - 1);
          int k = mlst->lst[base + kk];
@@ -304,7 +304,7 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
 
    if CONSTEXPR (do_g) {
       #pragma acc parallel loop independent\
-                deviceptr(rpole,trqx,trqy,trqz,ufld,dufld)
+                  deviceptr(rpole,trqx,trqy,trqz,ufld,dufld)
       for (int i = 0; i < n; ++i) {
          real dix = rpole[i][mpl_pme_x];
          real diy = rpole[i][mpl_pme_y];
@@ -333,25 +333,19 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
    }
 }
 
-void epolar_coulomb(int vers)
+void epolar_coulomb_acc(int vers, const real (*uind)[3], const real (*uinp)[3])
 {
    if (vers == calc::v0) {
-      induce(uind, uinp);
       epolar0_dotprod(uind, udirp);
    } else if (vers == calc::v1) {
-      induce(uind, uinp);
       epolar_coulomb_tmpl<calc::v1>(uind, uinp);
    } else if (vers == calc::v3) {
-      induce(uind, uinp);
       epolar_coulomb_tmpl<calc::v3>(uind, uinp);
    } else if (vers == calc::v4) {
-      induce(uind, uinp);
       epolar_coulomb_tmpl<calc::v4>(uind, uinp);
    } else if (vers == calc::v5) {
-      induce(uind, uinp);
       epolar_coulomb_tmpl<calc::v5>(uind, uinp);
    } else if (vers == calc::v6) {
-      induce(uind, uinp);
       epolar_coulomb_tmpl<calc::v6>(uind, uinp);
    }
 }

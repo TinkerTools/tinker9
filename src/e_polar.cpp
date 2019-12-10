@@ -1,7 +1,7 @@
 #include "e_polar.h"
-#include "io_fort_str.h"
 #include "io_print.h"
 #include "md.h"
+#include "nblist.h"
 #include "pme.h"
 #include "potent.h"
 #include <map>
@@ -12,6 +12,7 @@
 #include <tinker/detail/polpot.hh>
 #include <tinker/detail/sizes.hh>
 #include <tinker/detail/units.hh>
+
 
 TINKER_NAMESPACE_BEGIN
 void epolar_data(rc_op op)
@@ -378,6 +379,7 @@ void epolar_data(rc_op op)
    }
 }
 
+
 void induce(real (*ud)[3], real (*up)[3])
 {
    induce_mutual_pcg1(ud, up);
@@ -410,6 +412,23 @@ void induce(real (*ud)[3], real (*up)[3])
       }
    }
 }
+
+
+void epolar_coulomb(int vers)
+{
+   extern void epolar_coulomb_acc(int, const real(*)[3], const real(*)[3]);
+
+
+   induce(uind, uinp);
+#if TINKER_CUDART
+   if (mlist_version() == NBList::spatial) {
+      extern void epolar_coulomb_cu(int, const real(*)[3], const real(*)[3]);
+      epolar_coulomb_cu(vers, uind, uinp);
+   } else
+#endif
+      epolar_coulomb_acc(vers, uind, uinp);
+}
+
 
 void epolar(int vers)
 {

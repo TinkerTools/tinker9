@@ -393,22 +393,17 @@ void empole_tmpl_cu()
 }
 
 
-void empole_real_self_cu(int vers)
+template <int USE>
+void empole_real_self_cu()
 {
-   if (vers == calc::v0) {
-      empole_tmpl_cu<calc::v0, elec_t::ewald>();
-   } else if (vers == calc::v1) {
-      empole_tmpl_cu<calc::v1, elec_t::ewald>();
-   } else if (vers == calc::v3) {
-      empole_tmpl_cu<calc::v3, elec_t::ewald>();
-   } else if (vers == calc::v4) {
-      empole_tmpl_cu<calc::v4, elec_t::ewald>();
-   } else if (vers == calc::v5) {
-      empole_tmpl_cu<calc::v5, elec_t::ewald>();
-   } else if (vers == calc::v6) {
-      empole_tmpl_cu<calc::v6, elec_t::ewald>();
-   }
+   empole_tmpl_cu<USE, elec_t::ewald>();
 }
+template void empole_real_self_cu<calc::v0>();
+template void empole_real_self_cu<calc::v1>();
+template void empole_real_self_cu<calc::v3>();
+template void empole_real_self_cu<calc::v4>();
+template void empole_real_self_cu<calc::v5>();
+template void empole_real_self_cu<calc::v6>();
 
 
 void empole_coulomb_cu(int vers)
