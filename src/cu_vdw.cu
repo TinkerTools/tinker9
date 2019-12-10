@@ -20,9 +20,9 @@
 TINKER_NAMESPACE_BEGIN
 #define HAL_ARGS                                                               \
    size_t bufsize, count_buffer restrict nev, energy_buffer restrict ev,       \
-      virial_buffer vir_ev, real *restrict gxred, real *restrict gyred,        \
-      real *restrict gzred, const Box *restrict box, int njvdw,                \
-      const int *restrict jvdw, const real *restrict radmin,                   \
+      virial_buffer restrict vir_ev, real *restrict gxred,                     \
+      real *restrict gyred, real *restrict gzred, const Box *restrict box,     \
+      int njvdw, const int *restrict jvdw, const real *restrict radmin,        \
       const real *restrict epsilon, const real *vlam, evdw_t vcouple,          \
       real cut, real off
 #if 1

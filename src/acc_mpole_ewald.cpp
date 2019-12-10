@@ -6,7 +6,6 @@
 #include "pme.h"
 #include "seq_image.h"
 #include "seq_pair_mpole.h"
-#include "seq_switch.h"
 
 TINKER_NAMESPACE_BEGIN
 template <int USE>
@@ -31,7 +30,7 @@ void empole_real_self_tmpl()
    const PMEUnit pu = epme_unit;
    const real aewald = pu->aewald;
    const real aewald_sq_2 = 2 * aewald * aewald;
-   const real fterm = -f * aewald * 0.5 * M_2_SQRTPI;
+   const real fterm = -f * aewald * 0.5f * (real)(M_2_SQRTPI);
 
 #define DEVICE_PTRS_                                                           \
    x, y, z, gx, gy, gz, box, rpole, nem, em, vir_em, trqx, trqy, trqz
@@ -255,10 +254,6 @@ void empole_recip_tmpl()
    fphi_mpole(pu, fphi);
    fphi_to_cphi(pu, fphi, cphi);
 
-   constexpr int deriv1[] = {2, 5, 8, 9, 11, 16, 18, 14, 15, 20};
-   constexpr int deriv2[] = {3, 8, 6, 10, 14, 12, 19, 16, 20, 17};
-   constexpr int deriv3[] = {4, 9, 10, 7, 15, 17, 13, 20, 18, 19};
-
    auto& st = *pu;
    const int nfft1 = st.nfft1;
    const int nfft2 = st.nfft2;
@@ -266,9 +261,13 @@ void empole_recip_tmpl()
    const real f = electric / dielec;
 
    #pragma acc parallel loop independent\
-              deviceptr(gx,gy,gz,box,\
-              cmp,fmp,cphi,fphi,em,vir_em,trqx,trqy,trqz)
+               deviceptr(gx,gy,gz,box,\
+               cmp,fmp,cphi,fphi,em,vir_em,trqx,trqy,trqz)
    for (int i = 0; i < n; ++i) {
+      constexpr int deriv1[] = {2, 5, 8, 9, 11, 16, 18, 14, 15, 20};
+      constexpr int deriv2[] = {3, 8, 6, 10, 14, 12, 19, 16, 20, 17};
+      constexpr int deriv3[] = {4, 9, 10, 7, 15, 17, 13, 20, 18, 19};
+
       int offset = i & (bufsize - 1);
       real e = 0;
       real f1 = 0;
@@ -374,7 +373,13 @@ void empole_ewald_tmpl()
    static_assert(do_v ? do_g : true, "");
    static_assert(do_a ? do_e : true, "");
 
-   empole_real_self_tmpl<USE>();
+#if TINKER_CUDART
+   if (mlist_version() == NBList::spatial) {
+      extern void empole_real_self_cu(int);
+      empole_real_self_cu(USE);
+   } else
+#endif
+      empole_real_self_tmpl<USE>();
 
    empole_recip_tmpl<USE>();
 }
@@ -394,5 +399,4 @@ void empole_ewald(int vers)
    else if (vers == calc::v6)
       empole_ewald_tmpl<calc::v6>();
 }
-
 TINKER_NAMESPACE_END

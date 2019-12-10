@@ -26,9 +26,7 @@ __global__
 void sparse_precond_cu1(const real (*restrict rsd)[3],
                         const real (*restrict rsdp)[3],
                         real (*restrict zrsd)[3], real (*restrict zrsdp)[3],
-                        const real* restrict x, const real* restrict y,
-                        const real* restrict z, const real* restrict pdamp,
-                        const real* restrict thole,
+                        const real* restrict pdamp, const real* restrict thole,
                         const real* restrict polarity, const Box* restrict box,
                         real cutbuf2, int n,
                         const Spatial::SortedAtom* restrict sorted, int niak,
@@ -159,13 +157,15 @@ void sparse_precond_cu1(const real (*restrict rsd)[3],
 
 
 __global__
-void sparse_precond_cu2(
-   const real (*restrict rsd)[3], const real (*restrict rsdp)[3],
-   real (*restrict zrsd)[3], real (*restrict zrsdp)[3], const real* restrict x,
-   const real* restrict y, const real* restrict z, const real* restrict pdamp,
-   const real* restrict thole, const real* restrict polarity,
-   const Box* restrict box, real cutbuf2, int nuexclude_,
-   const int (*restrict uexclude_)[2], const real* restrict uexclude_scale_)
+void sparse_precond_cu2(const real (*restrict rsd)[3],
+                        const real (*restrict rsdp)[3],
+                        real (*restrict zrsd)[3], real (*restrict zrsdp)[3],
+                        const real* restrict pdamp, const real* restrict thole,
+                        const real* restrict polarity, const Box* restrict box,
+                        real cutbuf2, const real* restrict x,
+                        const real* restrict y, const real* restrict z,
+                        int nuexclude_, const int (*restrict uexclude_)[2],
+                        const real* restrict uexclude_scale_)
 {
    for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < nuexclude_;
         ii += blockDim.x * gridDim.x) {
@@ -243,13 +243,13 @@ void sparse_precond_apply_cu(const real (*rsd)[3], const real (*rsdp)[3],
                   rsd, rsdp, zrsd, zrsdp, polarity, n, udiag);
    if (st.niak > 0)
       launch_kernel1(WARP_SIZE * st.niak, sparse_precond_cu1, //
-                     rsd, rsdp, zrsd, zrsdp, x, y, z, pdamp, thole, polarity,
-                     box, cutbuf2, //
+                     rsd, rsdp, zrsd, zrsdp, pdamp, thole, polarity, box,
+                     cutbuf2, //
                      n, st.sorted, st.niak, st.iak, st.lst);
    if (nuexclude_ > 0)
       launch_kernel1(nuexclude_, sparse_precond_cu2, //
-                     rsd, rsdp, zrsd, zrsdp, x, y, z, pdamp, thole, polarity,
-                     box, cutbuf2, //
-                     nuexclude_, uexclude_, uexclude_scale_);
+                     rsd, rsdp, zrsd, zrsdp, pdamp, thole, polarity, box,
+                     cutbuf2, //
+                     x, y, z, nuexclude_, uexclude_, uexclude_scale_);
 }
 TINKER_NAMESPACE_END

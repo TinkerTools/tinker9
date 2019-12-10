@@ -26,6 +26,21 @@ struct PairMPoleGrad
 };
 
 
+__device__
+inline void zero(PairMPoleGrad& pgrad)
+{
+   pgrad.frcx = 0;
+   pgrad.frcy = 0;
+   pgrad.frcz = 0;
+   pgrad.ttmi[0] = 0;
+   pgrad.ttmi[1] = 0;
+   pgrad.ttmi[2] = 0;
+   pgrad.ttmk[0] = 0;
+   pgrad.ttmk[1] = 0;
+   pgrad.ttmk[2] = 0;
+}
+
+
 /**
  * \ingroup mpole
  * \brief OpenACC pairwise multipole electrostatic energy.
