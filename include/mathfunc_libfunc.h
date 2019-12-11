@@ -41,7 +41,9 @@
 #   define REAL_ASIN asinf
 #   define REAL_ERF erff
 // #   define REAL_ERFC erfcf
-#   define REAL_ERFC(x) (1 - erff(x))
+// #   define REAL_ERFC(x) (1 - erff(x))
+#   include "mathfunc_erfc.h"
+#   define REAL_ERFC erfcf_hastings
 #   define REAL_MIN fminf
 #   define REAL_MAX fmaxf
 #   define REAL_SIGN copysignf
