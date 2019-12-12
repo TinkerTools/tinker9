@@ -101,4 +101,21 @@ inline void operator-=(real3& a, real3 b)
    a.y -= b.y;
    a.z -= b.z;
 }
+
+
+// dot
+#pragma acc routine seq
+__device__
+inline real dot3(real3 a, real3 b)
+{
+   return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+
+#pragma acc routine seq
+__device__
+inline real dot3(real ax, real ay, real az, real bx, real by, real bz)
+{
+   return ax * bx + ay * by + az * bz;
+}
 TINKER_NAMESPACE_END

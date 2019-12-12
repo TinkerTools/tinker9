@@ -2,6 +2,7 @@
 #include "box.h"
 #include "macro_void_cuda_def.h"
 #include "mathfunc.h"
+#include "seq_image2.h"
 
 
 TINKER_NAMESPACE_BEGIN
