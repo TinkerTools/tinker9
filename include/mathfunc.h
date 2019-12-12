@@ -4,3 +4,4 @@
 #include "mathfunc_maxmin.h"
 #include "mathfunc_parallel.h"
 #include "mathfunc_pow2.h"
+#include "mathfunc_vecn.h"

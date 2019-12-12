@@ -42,14 +42,14 @@ void box_data(rc_op op)
       else if (boxes::octahedron)
          shape = Box::oct;
 
-
-      recip_a =
-         make_real3(boxes::recip[0][0], boxes::recip[0][1], boxes::recip[0][2]);
-      recip_b =
-         make_real3(boxes::recip[1][0], boxes::recip[1][1], boxes::recip[1][2]);
-      recip_c =
-         make_real3(boxes::recip[2][0], boxes::recip[2][1], boxes::recip[2][2]);
-
+      const auto& r = boxes::recip;
+      const auto& l = boxes::lvec;
+      recipa = make_real3(r[0][0], r[0][1], r[0][2]);
+      recipb = make_real3(r[1][0], r[1][1], r[1][2]);
+      recipc = make_real3(r[2][0], r[2][1], r[2][2]);
+      lvec1 = make_real3(l[0][0], l[0][1], l[0][2]);
+      lvec2 = make_real3(l[1][0], l[1][1], l[1][2]);
+      lvec3 = make_real3(l[2][0], l[2][1], l[2][2]);
 
       device_array::copyin(3, box->lvec, boxes::lvec);
       device_array::copyin(3, box->recip, boxes::recip);
@@ -92,12 +92,14 @@ void copyout_box_data(const Box* pb)
       TINKER_RT(lattice)();
 
 
-      recip_a =
-         make_real3(boxes::recip[0][0], boxes::recip[0][1], boxes::recip[0][2]);
-      recip_b =
-         make_real3(boxes::recip[1][0], boxes::recip[1][1], boxes::recip[1][2]);
-      recip_c =
-         make_real3(boxes::recip[2][0], boxes::recip[2][1], boxes::recip[2][2]);
+      const auto& r = boxes::recip;
+      const auto& l = boxes::lvec;
+      recipa = make_real3(r[0][0], r[0][1], r[0][2]);
+      recipb = make_real3(r[1][0], r[1][1], r[1][2]);
+      recipc = make_real3(r[2][0], r[2][1], r[2][2]);
+      lvec1 = make_real3(l[0][0], l[0][1], l[0][2]);
+      lvec2 = make_real3(l[1][0], l[1][1], l[1][2]);
+      lvec3 = make_real3(l[2][0], l[2][1], l[2][2]);
    }
 }
 TINKER_NAMESPACE_END

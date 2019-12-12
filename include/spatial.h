@@ -206,7 +206,7 @@ struct Spatial
     * \brief Sorted atoms, containing the x, y, and z coordinates,
     * and the unsorted atom number.
     */
-   struct SortedAtom
+   struct alignas(16) SortedAtom
    {
       real x, y, z;
       int unsorted;
