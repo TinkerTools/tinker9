@@ -50,7 +50,7 @@ void pair_dfield(                                                //
 
    MAYBE_UNUSED real bn[4];
    if CONSTEXPR (ETYP == elec_t::ewald)
-      damp_ewald(bn, 4, r, invr1, rr2, aewald);
+      damp_ewald<4>(bn, r, invr1, rr2, aewald);
    real rr1 = invr1;
    real rr3 = rr1 * rr2;
    real rr5 = 3 * rr1 * rr2 * rr2;
@@ -131,7 +131,8 @@ void pair_ufield(                                   //
    real pdi, real pti, //
    real uindk0, real uindk1, real uindk2, real uinpk0, real uinpk1, real uinpk2,
    real pdk, real ptk, //
-   real aewald, PairField& restrict pairf)
+   real aewald, real3& restrict fid, real3& restrict fip, real3& restrict fkd,
+   real3& restrict fkp)
 {
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
@@ -140,41 +141,38 @@ void pair_ufield(                                   //
    real scale3, scale5;
    damp_thole2(r, pdi, pti, pdk, ptk, scale3, scale5);
 
-   MAYBE_UNUSED real bn[3];
+   real bn[3];
    if CONSTEXPR (ETYP == elec_t::ewald)
-      damp_ewald(bn, 3, r, invr1, rr2, aewald);
+      damp_ewald<3>(bn, r, invr1, rr2, aewald);
    real rr1 = invr1;
    real rr3 = rr1 * rr2;
    real rr5 = 3 * rr1 * rr2 * rr2;
 
-   real bcn1, bcn2;
    if CONSTEXPR (ETYP == elec_t::ewald) {
-      bcn1 = bn[1] - (1 - scale3) * rr3;
-      bcn2 = bn[2] - (1 - scale5) * rr5;
+      bn[1] -= (1 - scale3) * rr3;
+      bn[2] -= (1 - scale5) * rr5;
    } else if CONSTEXPR (ETYP == elec_t::coulomb) {
-      bcn1 = uscale * scale3 * rr3;
-      bcn2 = uscale * scale5 * rr5;
+      bn[1] = uscale * scale3 * rr3;
+      bn[2] = uscale * scale5 * rr5;
    }
 
-   real dlocal1 = bcn2 * xr * xr - bcn1;
-   real dlocal2 = bcn2 * xr * yr;
-   real dlocal3 = bcn2 * xr * zr;
-   real dlocal4 = bcn2 * yr * yr - bcn1;
-   real dlocal5 = bcn2 * yr * zr;
-   real dlocal6 = bcn2 * zr * zr - bcn1;
+   real coef;
+   real3 dr = make_real3(xr, yr, zr);
+   real3 uid = make_real3(uindi0, uindi1, uindi2);
+   real3 uip = make_real3(uinpi0, uinpi1, uinpi2);
+   real3 ukd = make_real3(uindk0, uindk1, uindk2);
+   real3 ukp = make_real3(uinpk0, uinpk1, uinpk2);
 
-   pairf.fid[0] = dlocal1 * uindk0 + dlocal2 * uindk1 + dlocal3 * uindk2;
-   pairf.fid[1] = dlocal2 * uindk0 + dlocal4 * uindk1 + dlocal5 * uindk2;
-   pairf.fid[2] = dlocal3 * uindk0 + dlocal5 * uindk1 + dlocal6 * uindk2;
-   pairf.fkd[0] = dlocal1 * uindi0 + dlocal2 * uindi1 + dlocal3 * uindi2;
-   pairf.fkd[1] = dlocal2 * uindi0 + dlocal4 * uindi1 + dlocal5 * uindi2;
-   pairf.fkd[2] = dlocal3 * uindi0 + dlocal5 * uindi1 + dlocal6 * uindi2;
+   coef = bn[2] * dot3(dr, ukd);
+   fid += coef * dr - bn[1] * ukd;
 
-   pairf.fip[0] = dlocal1 * uinpk0 + dlocal2 * uinpk1 + dlocal3 * uinpk2;
-   pairf.fip[1] = dlocal2 * uinpk0 + dlocal4 * uinpk1 + dlocal5 * uinpk2;
-   pairf.fip[2] = dlocal3 * uinpk0 + dlocal5 * uinpk1 + dlocal6 * uinpk2;
-   pairf.fkp[0] = dlocal1 * uinpi0 + dlocal2 * uinpi1 + dlocal3 * uinpi2;
-   pairf.fkp[1] = dlocal2 * uinpi0 + dlocal4 * uinpi1 + dlocal5 * uinpi2;
-   pairf.fkp[2] = dlocal3 * uinpi0 + dlocal5 * uinpi1 + dlocal6 * uinpi2;
+   coef = bn[2] * dot3(dr, ukp);
+   fip += coef * dr - bn[1] * ukp;
+
+   coef = bn[2] * dot3(dr, uid);
+   fkd += coef * dr - bn[1] * uid;
+
+   coef = bn[2] * dot3(dr, uip);
+   fkp += coef * dr - bn[1] * uip;
 }
 TINKER_NAMESPACE_END

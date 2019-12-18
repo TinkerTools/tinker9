@@ -89,9 +89,9 @@ void pair_polar(                                                              //
    real bn[5];
    if CONSTEXPR (ETYP == elec_t::ewald) {
       if CONSTEXPR (!do_g)
-         damp_ewald(bn, 4, r, invr1, rr2, aewald);
+         damp_ewald<4>(bn, r, invr1, rr2, aewald);
       else
-         damp_ewald(bn, 5, r, invr1, rr2, aewald);
+         damp_ewald<5>(bn, r, invr1, rr2, aewald);
    } else if CONSTEXPR (ETYP == elec_t::coulomb) {
       bn[1] = rr3;
       bn[2] = rr5;

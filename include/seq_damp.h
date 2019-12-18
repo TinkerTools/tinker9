@@ -9,18 +9,17 @@ __device__
 inline void damp_thole2(real r, real pdi, real pti, real pdk, real ptk,
                         real& restrict scale3, real& restrict scale5)
 {
-   scale3 = 1;
-   scale5 = 1;
+   // scale3 = 1;
+   // scale5 = 1;
+   real pgamma = REAL_MIN(pti, ptk);
    real damp = pdi * pdk;
-   if (damp != 0) {
-      real pgamma = REAL_MIN(pti, ptk);
-      damp = -pgamma * REAL_CUBE(r * REAL_RECIP(damp));
-      if (damp > -50) {
-         real expdamp = REAL_EXP(damp);
-         scale3 = 1 - expdamp;
-         scale5 = 1 - expdamp * (1 - damp);
-      }
-   }
+   real ratio = r * REAL_RECIP(damp);
+   damp = (damp == 0 ? 0 : -pgamma * ratio * ratio * ratio);
+   // if (damp > -50) {
+   real expdamp = REAL_EXP(damp);
+   scale3 = 1 - expdamp;
+   scale5 = 1 - expdamp * (1 - damp);
+   // }
 }
 
 
@@ -96,15 +95,17 @@ inline void damp_thole3g(real r, real rr2, real xr, real yr, real zr, real pdi,
 
 
 #pragma acc routine seq
+template <int order>
 __device__
-inline void damp_ewald(real* restrict bn, int order, real r, real rinv,
-                       real rr2, real aewald)
+inline void damp_ewald(real* restrict bn, real r, real rinv, real rr2,
+                       real aewald)
 {
    real ralpha = aewald * r;
    bn[0] = REAL_ERFC(ralpha) * rinv;
-   real alsq2 = 2 * REAL_SQ(aewald);
-   real alsq2n = (aewald > 0 ? REAL_RECIP(sqrtpi * aewald) : 0);
-   real exp2a = REAL_EXP(-REAL_SQ(ralpha));
+   real alsq2 = 2 * aewald * aewald;
+   real alsq2n = REAL_RECIP(sqrtpi * aewald);
+   real exp2a = REAL_EXP(-ralpha * ralpha);
+   #pragma unroll
    for (int j = 1; j < order; ++j) {
       alsq2n *= alsq2;
       bn[j] = ((j + j - 1) * bn[j - 1] + alsq2n * exp2a) * rr2;

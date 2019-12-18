@@ -191,27 +191,30 @@ void ufield_coulomb_acc(const real (*uind)[3], const real (*uinp)[3],
          image(xr, yr, zr, box);
          real r2 = xr * xr + yr * yr + zr * zr;
          if (r2 <= off2) {
-            PairField pairf;
+            real3 fid = make_real3(0, 0, 0);
+            real3 fip = make_real3(0, 0, 0);
+            real3 fkd = make_real3(0, 0, 0);
+            real3 fkp = make_real3(0, 0, 0);
             pair_ufield<elec_t::coulomb>(                                //
                r2, xr, yr, zr, 1,                                        //
                uindi0, uindi1, uindi2, uinpi0, uinpi1, uinpi2, pdi, pti, //
                uind[k][0], uind[k][1], uind[k][2], uinp[k][0], uinp[k][1],
                uinp[k][2], pdamp[k], thole[k], //
-               0, pairf);
+               0, fid, fip, fkd, fkp);
 
-            gxi += pairf.fid[0];
-            gyi += pairf.fid[1];
-            gzi += pairf.fid[2];
-            txi += pairf.fip[0];
-            tyi += pairf.fip[1];
-            tzi += pairf.fip[2];
+            gxi += fid.x;
+            gyi += fid.y;
+            gzi += fid.z;
+            txi += fip.x;
+            tyi += fip.y;
+            tzi += fip.z;
 
-            atomic_add(pairf.fkd[0], &field[k][0]);
-            atomic_add(pairf.fkd[1], &field[k][1]);
-            atomic_add(pairf.fkd[2], &field[k][2]);
-            atomic_add(pairf.fkp[0], &fieldp[k][0]);
-            atomic_add(pairf.fkp[1], &fieldp[k][1]);
-            atomic_add(pairf.fkp[2], &fieldp[k][2]);
+            atomic_add(fkd.x, &field[k][0]);
+            atomic_add(fkd.y, &field[k][1]);
+            atomic_add(fkd.z, &field[k][2]);
+            atomic_add(fkp.x, &fieldp[k][0]);
+            atomic_add(fkp.y, &fieldp[k][1]);
+            atomic_add(fkp.z, &fieldp[k][2]);
          }
       } // end for (int kk)
 
@@ -249,27 +252,30 @@ void ufield_coulomb_acc(const real (*uind)[3], const real (*uinp)[3],
       image(xr, yr, zr, box);
       real r2 = xr * xr + yr * yr + zr * zr;
       if (r2 <= off2) {
-         PairField pairf;
+         real3 fid = make_real3(0, 0, 0);
+         real3 fip = make_real3(0, 0, 0);
+         real3 fkd = make_real3(0, 0, 0);
+         real3 fkp = make_real3(0, 0, 0);
          pair_ufield<elec_t::coulomb>(                                //
             r2, xr, yr, zr, uscale,                                   //
             uindi0, uindi1, uindi2, uinpi0, uinpi1, uinpi2, pdi, pti, //
             uind[k][0], uind[k][1], uind[k][2], uinp[k][0], uinp[k][1],
             uinp[k][2], pdamp[k], thole[k], //
-            0, pairf);
+            0, fid, fip, fkd, fkp);
 
-         atomic_add(pairf.fid[0], &field[i][0]);
-         atomic_add(pairf.fid[1], &field[i][1]);
-         atomic_add(pairf.fid[2], &field[i][2]);
-         atomic_add(pairf.fip[0], &fieldp[i][0]);
-         atomic_add(pairf.fip[1], &fieldp[i][1]);
-         atomic_add(pairf.fip[2], &fieldp[i][2]);
+         atomic_add(fid.x, &field[i][0]);
+         atomic_add(fid.y, &field[i][1]);
+         atomic_add(fid.z, &field[i][2]);
+         atomic_add(fip.x, &fieldp[i][0]);
+         atomic_add(fip.y, &fieldp[i][1]);
+         atomic_add(fip.z, &fieldp[i][2]);
 
-         atomic_add(pairf.fkd[0], &field[k][0]);
-         atomic_add(pairf.fkd[1], &field[k][1]);
-         atomic_add(pairf.fkd[2], &field[k][2]);
-         atomic_add(pairf.fkp[0], &fieldp[k][0]);
-         atomic_add(pairf.fkp[1], &fieldp[k][1]);
-         atomic_add(pairf.fkp[2], &fieldp[k][2]);
+         atomic_add(fkd.x, &field[k][0]);
+         atomic_add(fkd.y, &field[k][1]);
+         atomic_add(fkd.z, &field[k][2]);
+         atomic_add(fkp.x, &fieldp[k][0]);
+         atomic_add(fkp.y, &fieldp[k][1]);
+         atomic_add(fkp.z, &fieldp[k][2]);
       }
    }
 }

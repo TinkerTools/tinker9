@@ -92,9 +92,9 @@ void pair_mpole(                                    //
 
    if CONSTEXPR (ETYP == elec_t::ewald) {
       if CONSTEXPR (!do_g)
-         damp_ewald(bn, 5, r, invr1, rr2, aewald);
+         damp_ewald<5>(bn, r, invr1, rr2, aewald);
       else
-         damp_ewald(bn, 6, r, invr1, rr2, aewald);
+         damp_ewald<6>(bn, r, invr1, rr2, aewald);
       bn[0] *= f;
       bn[1] *= f;
       bn[2] *= f;
