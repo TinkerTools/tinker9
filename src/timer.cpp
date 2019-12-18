@@ -4,12 +4,14 @@
 #include <chrono>
 #include <vector>
 
+
 TINKER_NAMESPACE_BEGIN
 class Stopwatch
 {
 private:
    typedef std::chrono::steady_clock ClockType;
    std::vector<ClockType::time_point> s_;
+
 
 public:
    void start();
@@ -18,11 +20,13 @@ public:
    void reset();
 };
 
+
 void Stopwatch::start()
 {
    assert(s_.size() == 0);
    s_.emplace_back(ClockType::now());
 }
+
 
 void Stopwatch::lap(std::string log)
 {
@@ -70,29 +74,36 @@ void Stopwatch::lap(std::string log)
    }
 }
 
+
 void Stopwatch::stop() {}
+
 
 void Stopwatch::reset()
 {
    s_.clear();
 }
 
+
 static Stopwatch sw_;
+
 
 void stopwatch_start()
 {
    sw_.start();
 }
 
+
 void stopwatch_lap(std::string log)
 {
    sw_.lap(log);
 }
 
+
 void stopwatch_stop()
 {
    sw_.stop();
 }
+
 
 void stopwatch_reset()
 {

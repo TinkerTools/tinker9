@@ -16,6 +16,135 @@
 
 
 TINKER_NAMESPACE_BEGIN
+namespace pbc {
+#pragma acc routine seq
+__device__
+inline real3 c0_f0_triclinic(real xr, real yr, real zr, real3 ra, real3 rb,
+                             real3 rc)
+{
+   real3 f;
+   f.x = zr * ra.z + yr * ra.y + xr * ra.x;
+   f.y = zr * rb.z + yr * rb.y;
+   f.z = zr * rc.z;
+   return f;
+}
+
+
+#pragma acc routine seq
+__device__
+inline real3 c0_f0_monoclinic(real xr, real yr, real zr, real3 ra, real3 rb,
+                              real3 rc)
+{
+   real3 f;
+   f.x = zr * ra.z + xr * ra.x;
+   f.y = yr * rb.y;
+   f.z = zr * rc.z;
+   return f;
+}
+
+
+#pragma acc routine seq
+__device__
+inline real3 c0_f0_orthogonal(real xr, real yr, real zr, real3 ra, real3 rb,
+                              real3 rc)
+{
+   real3 f;
+   f.x = xr * ra.x;
+   f.y = yr * rb.y;
+   f.z = zr * rc.z;
+   return f;
+}
+
+
+#pragma acc routine seq
+__device__
+inline real3 f0_f1(real3 f)
+{
+   f.x -= REAL_FLOOR(0.5f + f.x);
+   f.y -= REAL_FLOOR(0.5f + f.y);
+   f.z -= REAL_FLOOR(0.5f + f.z);
+   return f;
+}
+
+
+#pragma acc routine seq
+__device__
+inline real3 f1_c1_triclinic(real3 f, real3 l1, real3 l2, real3 l3)
+{
+   f.x = f.z * l1.z + f.y * l1.y + f.x * l1.x;
+   f.y = f.z * l2.z + f.y * l2.y;
+   f.z = f.z * l3.z;
+   return f;
+}
+
+#pragma acc routine seq
+__device__
+inline real3 f1_c1_monoclinic(real3 f, real3 l1, real3 l2, real3 l3)
+{
+   f.x = f.z * l1.z + f.x * l1.x;
+   f.y = f.y * l2.y;
+   f.z = f.z * l3.z;
+   return f;
+}
+
+#pragma acc routine seq
+__device__
+inline real3 f1_c1_orthogonal(real3 f, real3 l1, real3 l2, real3 l3)
+{
+   f.x = f.x * l1.x;
+   f.y = f.y * l2.y;
+   f.z = f.z * l3.z;
+   return f;
+}
+}
+
+__device__
+static inline real3 frac_general(real xr, real yr, real zr, real3 ra, real3 rb,
+                                 real3 rc)
+{
+   using namespace pbc;
+   if (ra.z == 0) {
+      return f0_f1(c0_f0_orthogonal(xr, yr, zr, ra, rb, rc));
+   } else if (ra.y == 0) {
+      return f0_f1(c0_f0_monoclinic(xr, yr, zr, ra, rb, rc));
+   } else {
+      return f0_f1(c0_f0_triclinic(xr, yr, zr, ra, rb, rc));
+   }
+}
+
+
+__device__
+static inline real3 frac_image_general(real3 f, real3 l1, real3 l2, real3 l3)
+{
+   using namespace pbc;
+   if (l1.z == 0) {
+      return f1_c1_orthogonal(f, l1, l2, l3);
+   } else if (l1.y == 0) {
+      return f1_c1_monoclinic(f, l1, l2, l3);
+   } else {
+      return f1_c1_triclinic(f, l1, l2, l3);
+   }
+}
+
+
+/**
+ * \def frac
+ * \ingroup macro
+ * Calculate the fractional coordinates of (`xr, yr, zr`). The range of the
+ * fractional coordinate is `[-1/2, 1/2)`.
+ */
+#ifndef frac
+#   define frac(xr, yr, zr) frac_general(xr, yr, zr, recipa, recipb, recipc)
+#endif
+/**
+ * \def frac_image
+ * \ingroup macro
+ */
+#ifndef frac_image
+#   define frac_image(f) frac_image_general(f, lvec1, lvec2, lvec3)
+#endif
+
+
 struct POPC
 {
    __device__
@@ -61,8 +190,8 @@ struct IntInt32Pair
 
 
 __device__
-bool nearby_box0(int boxj, int px, int py, int pz, const Box* restrict box,
-                 real cutbuf)
+bool nearby_box0(int boxj, int px, int py, int pz, real3 lvec1, real3 lvec2,
+                 real3 lvec3, real cutbuf2)
 {
    int dimx = 1 << px;
    int dimy = 1 << py;
@@ -74,37 +203,32 @@ bool nearby_box0(int boxj, int px, int py, int pz, const Box* restrict box,
    // (c, d): (a+ix/dim, c+1/dim)
    // da = a+(ix+1)/dim - a = (ix+1)/dim
    // cb = a+ix/dim - a-1/dim = (ix-1)/dim
-   // min(imagen(da), imagen(cb))
-   real rx = 0;
-   real ry = 0;
-   real rz = 0;
+   // min(image(da), image(cb))
+   real3 r = make_real3(0, 0, 0);
    if (2 <= ix && ix <= dimx - 2) {
       real da = ((real)ix + 1) / dimx;
       real cb = ((real)ix - 1) / dimx;
       da -= REAL_FLOOR(da + 0.5f);
       cb -= REAL_FLOOR(cb + 0.5f);
-      rx = REAL_MIN(REAL_ABS(da), REAL_ABS(cb));
+      r.x = REAL_MIN(REAL_ABS(da), REAL_ABS(cb));
    }
    if (2 <= iy && iy <= dimy - 2) {
       real da = ((real)iy + 1) / dimy;
       real cb = ((real)iy - 1) / dimy;
       da -= REAL_FLOOR(da + 0.5f);
       cb -= REAL_FLOOR(cb + 0.5f);
-      ry = REAL_MIN(REAL_ABS(da), REAL_ABS(cb));
+      r.y = REAL_MIN(REAL_ABS(da), REAL_ABS(cb));
    }
    if (2 <= iz && iz <= dimz - 2) {
       real da = ((real)iz + 1) / dimz;
       real cb = ((real)iz - 1) / dimz;
       da -= REAL_FLOOR(da + 0.5f);
       cb -= REAL_FLOOR(cb + 0.5f);
-      rz = REAL_MIN(REAL_ABS(da), REAL_ABS(cb));
+      r.z = REAL_MIN(REAL_ABS(da), REAL_ABS(cb));
    }
-   frac_image(rx, ry, rz, box);
-   real r2 = rx * rx + ry * ry + rz * rz;
-   if (r2 <= cutbuf * cutbuf)
-      return true;
-   else
-      return false;
+   r = frac_image(r);
+   real r2 = r.x * r.x + r.y * r.y + r.z * r.z;
+   return r2 <= cutbuf2;
 }
 
 
@@ -125,46 +249,41 @@ inline int offset_box(int nx, int ny, int nz, int ix1, int iy1, int iz1,
 }
 
 
-template <bool ZERO_LBUF>
-__global__
-void spatial_bc(Spatial* restrict sp, const real* restrict x,
-                const real* restrict y, const real* restrict z,
-                const Box* restrict box, real cutbuf)
+extern "C" __global__
+void spatial_bc(int n, int px, int py, int pz,
+                Spatial::SortedAtom* restrict sorted, int* restrict boxnum,
+                int* restrict nax, //
+                const real* restrict x, const real* restrict y,
+                const real* restrict z, TINKER_IMAGE_PARAMS, real cutbuf2,
+                int ZERO_LBUF, real* restrict xold, real* restrict yold,
+                real* restrict zold, //
+                int nx, int* restrict nearby)
 {
-   int n = sp->n;
-   int px = sp->px;
-   int py = sp->py;
-   int pz = sp->pz;
-   auto* restrict sorted = sp->sorted;
-   auto* restrict boxnum = sp->boxnum;
-   auto* restrict nax = sp->ax_scan + 1; // D.2
    for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
         i += blockDim.x * gridDim.x) {
       real xr = x[i];
       real yr = y[i];
       real zr = z[i];
-      if CONSTEXPR (!ZERO_LBUF) {
-         sp->xold[i] = xr;
-         sp->yold[i] = yr;
-         sp->zold[i] = zr;
+      image(xr, yr, zr);
+      if (!ZERO_LBUF) {
+         xold[i] = xr;
+         yold[i] = yr;
+         zold[i] = zr;
       }
-      real fx, fy, fz;
-      frac(fx, fy, fz, xr, yr, zr, box);
+      real3 f = frac(xr, yr, zr);
       sorted[i].x = xr;       // B.2
       sorted[i].y = yr;       // B.2
       sorted[i].z = zr;       // B.2
       sorted[i].unsorted = i; // B.2
-      int id = frac_to_box(px, py, pz, fx, fy, fz);
+      int id = frac_to_box(px, py, pz, f.x, f.y, f.z);
       boxnum[i] = id;         // B.3
       atomicAdd(&nax[id], 1); // B.4
    }
 
 
-   int nx = sp->nx;
-   auto* restrict nearby = sp->nearby;
    for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < nx;
         i += blockDim.x * gridDim.x) {
-      if (nearby_box0(i, px, py, pz, box, cutbuf))
+      if (nearby_box0(i, px, py, pz, lvec1, lvec2, lvec3, cutbuf2))
          nearby[i] = i; // C.1 (close enough)
       else
          nearby[i] = -1; // C.1 (otherwise)
@@ -172,8 +291,10 @@ void spatial_bc(Spatial* restrict sp, const real* restrict x,
 }
 
 
-__global__
-void spatial_e(Spatial* restrict sp)
+extern "C" __global__
+void spatial_e(int n, int nak, const int* restrict boxnum, int* xakf,
+               const Spatial::SortedAtom* restrict sorted, real4* restrict kc,
+               real4* restrict krad, TINKER_IMAGE_PARAMS)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
@@ -182,10 +303,6 @@ void spatial_e(Spatial* restrict sp)
    const int prevlane = (ilane + WARP_SIZE - 1) & (WARP_SIZE - 1); // E.2
 
 
-   const int n = sp->n;
-   const int nak = sp->nak;
-   const auto* restrict boxnum = sp->boxnum;
-   auto* restrict xakf = sp->xakf;
    for (int iw = iwarp; iw < nak; iw += nwarp) {
       int atomi = iw * WARP_SIZE + ilane;
       int id1 = ((atomi < n) ? boxnum[atomi] : boxnum[n - 1]); // E.3
@@ -195,11 +312,42 @@ void spatial_e(Spatial* restrict sp)
       if (ilane == 0)
          xakf[iw] = (flag == 0 ? 1 : flag); // E.4
    }
+
+
+   for (int idx = ithread, atom0 = idx * WARP_SIZE; atom0 < n;
+        idx += blockDim.x * gridDim.x, atom0 = idx * WARP_SIZE) {
+      real xi = sorted[atom0].x;
+      real yi = sorted[atom0].y;
+      real zi = sorted[atom0].z;
+      real3 minp = make_real3(xi, yi, zi);
+      real3 maxp = make_real3(xi, yi, zi);
+      real xm, ym, zm;
+      int last = min(atom0 + WARP_SIZE, n);
+      for (int i = atom0 + 1; i < last; ++i) {
+         xm = 0.5f * (minp.x + maxp.x);
+         ym = 0.5f * (minp.y + maxp.y);
+         zm = 0.5f * (minp.z + maxp.z);
+         xi = sorted[i].x;
+         yi = sorted[i].y;
+         zi = sorted[i].z;
+         imagec(xi, yi, zi, xm, ym, zm);
+         minp = make_real3(min(minp.x, xi), min(minp.y, yi), min(minp.z, zi));
+         maxp = make_real3(max(maxp.x, xi), max(maxp.y, yi), max(maxp.z, zi));
+      }
+      xm = 0.5f * (maxp.x + minp.x);
+      ym = 0.5f * (maxp.y + minp.y);
+      zm = 0.5f * (maxp.z + minp.z);
+      kc[idx] = make_real4(xm, ym, zm, 0);
+      xm = 0.5f * (maxp.x - minp.x);
+      ym = 0.5f * (maxp.y - minp.y);
+      zm = 0.5f * (maxp.z - minp.z);
+      krad[idx] = make_real4(xm, ym, zm, 0);
+   }
 }
 
 
-__global__
-void spatial_ghi(Spatial* restrict sp, const Box* restrict box, real cutbuf)
+extern "C" __global__
+void spatial_ghi(Spatial* restrict sp, int n, TINKER_IMAGE_PARAMS, real cutbuf2)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
@@ -266,8 +414,6 @@ void spatial_ghi(Spatial* restrict sp, const Box* restrict box, real cutbuf)
    }
 
 
-   real off2 = cutbuf * cutbuf;
-   const int n = sp->n;
    const auto* restrict sorted = sp->sorted;
    for (int iw = iwarp; iw < nak; iw += nwarp) {
       int offset = xakf_scan[iw];
@@ -301,9 +447,9 @@ void spatial_ghi(Spatial* restrict sp, const Box* restrict box, real cutbuf)
             real xr = xi - __shfl_sync(ALL_LANES, shx, srclane);
             real yr = yi - __shfl_sync(ALL_LANES, shy, srclane);
             real zr = zi - __shfl_sync(ALL_LANES, shz, srclane);
-            imagen(xr, yr, zr, box);
-            real rik2 = xr * xr + yr * yr + zr * zr;
-            int ilane_incl_j = (atomi < atomk && rik2 <= off2) ? 1 : 0; // I.5
+            real rik2 = imagen2(xr, yr, zr);
+            int ilane_incl_j =
+               (atomi < atomk && rik2 <= cutbuf2) ? 1 : 0; // I.5
             int incl_j = __ballot_sync(ALL_LANES, ilane_incl_j);
             if (incl_j)
                jflag |= (1 << j); // I.5
@@ -328,6 +474,7 @@ void spatial_data_init_cu(SpatialUnit u)
    assert(u->rebuild == 1);
    u->rebuild = 0;
    const real cutbuf = u->cutoff + u->buffer;
+   const real cutbuf2 = cutbuf * cutbuf;
    const real lbuf = u->buffer;
    const int& nak = u->nak;
    const int padded = nak * Spatial::BLOCK;
@@ -342,6 +489,8 @@ void spatial_data_init_cu(SpatialUnit u)
    int& niak = u->niak;
 
 
+   auto*& kc = u->kc;
+   auto*& krad = u->krad;
    auto*& sorted = u->sorted;
    auto*& boxnum = u->boxnum;
    auto*& naak = u->naak;
@@ -363,12 +512,12 @@ void spatial_data_init_cu(SpatialUnit u)
    const auto* lx = u->x;
    const auto* ly = u->y;
    const auto* lz = u->z;
-   if (lbuf > 0)
-      launch_kernel1(n, spatial_bc<false>, u.deviceptr(), lx, ly, lz, box,
-                     cutbuf);
-   else if (lbuf == 0)
-      launch_kernel1(n, spatial_bc<true>, u.deviceptr(), lx, ly, lz, box,
-                     cutbuf);
+   int ZERO_LBUF = (lbuf <= 0 ? 1 : 0);
+   launch_kernel1(n, spatial_bc,                              //
+                  n, px, py, pz, sorted, boxnum, ax_scan + 1, //
+                  lx, ly, lz, TINKER_IMAGE_ARGS, cutbuf2, ZERO_LBUF, u->xold,
+                  u->yold, u->zold, //
+                  nx, nearby);
    // find max(nax) and compare to Spatial::BLOCK
    // ax_scan[0] == 0 can never be the maximum
    int level = 1 + floor_log2(nak - 1);
@@ -387,9 +536,9 @@ void spatial_data_init_cu(SpatialUnit u)
       // 129  / 128    / 4     / 8   / 3
       int p = 1 + floor_log2(scale);
       level += p;
-      px = (level + 2) / 3;
+      px = (level + 0) / 3;
       py = (level + 1) / 3;
-      pz = (level + 0) / 3;
+      pz = (level + 2) / 3;
       nx = ct::pow2(px + py + pz);
       nxk = (nx + Spatial::BLOCK - 1) / Spatial::BLOCK;
 
@@ -400,12 +549,12 @@ void spatial_data_init_cu(SpatialUnit u)
       u.update_deviceptr(*u);
 
       device_array::zero_async(ay, nx + 1, ax_scan);
-      if (lbuf > 0)
-         launch_kernel1(n, spatial_bc<false>, u.deviceptr(), lx, ly, lz, box,
-                        cutbuf);
-      else if (lbuf == 0)
-         launch_kernel1(n, spatial_bc<true>, u.deviceptr(), lx, ly, lz, box,
-                        cutbuf);
+      int ZERO_LBUF = (lbuf <= 0 ? 1 : 0);
+      launch_kernel1(n, spatial_bc,                              //
+                     n, px, py, pz, sorted, boxnum, ax_scan + 1, //
+                     lx, ly, lz, TINKER_IMAGE_ARGS, cutbuf2, ZERO_LBUF, u->xold,
+                     u->yold, u->zold, //
+                     nx, nearby);
       mnaxptr = thrust::max_element(policy, ax_scan, ax_scan + 1 + nx);
       device_array::copyout(1, &mnax, mnaxptr);
    }
@@ -422,7 +571,8 @@ void spatial_data_init_cu(SpatialUnit u)
 
 
    // E
-   launch_kernel1(padded, spatial_e, u.deviceptr());
+   launch_kernel1(padded, spatial_e, n, nak, boxnum, xakf, sorted, kc, krad,
+                  TINKER_IMAGE_ARGS);
    // F.1
    xak_sum = thrust::transform_reduce(policy, xakf, xakf + nak, POPC(), 0,
                                       thrust::plus<int>());
@@ -445,7 +595,8 @@ void spatial_data_init_cu(SpatialUnit u)
                             u->lst);             // G.6
    device_array::zero_async(ay, nak, naak);      // H.1
    device_array::zero_async(ay, nak * nxk, xkf); // H.1
-   launch_kernel1(padded, spatial_ghi, u.deviceptr(), box, cutbuf);
+   launch_kernel1(padded, spatial_ghi, u.deviceptr(), n, TINKER_IMAGE_ARGS,
+                  cutbuf2);
 
 
    Int32* lst32 = (Int32*)u->lst;

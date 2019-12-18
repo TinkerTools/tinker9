@@ -373,7 +373,7 @@ all_cu_objs__ := $(all_cu_objs__:%.cu=%.o)
 
 NVCC := nvcc
 ifeq ($(opt),debug)
-   cuda_opt_flags__ += -O0 -g -lineinfo
+   cuda_opt_flags__ += -O0 -g -G
 else ifeq ($(opt),release)
    cuda_opt_flags__ += -O3 --use_fast_math
 else ifeq ($(opt),profile)

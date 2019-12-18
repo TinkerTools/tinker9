@@ -19,6 +19,13 @@ whenever you see an "unknown fortran compiler error".
 #define TINKER_STR1_(s) #s
 
 
+#define TINKER_GET_2ND_ARG(a1, a2, ...) a2
+#define TINKER_GET_3RD_ARG(a1, a2, a3, ...) a3
+#define TINKER_GET_4TH_ARG(a1, a2, a3, a4, ...) a4
+#define TINKER_GET_5TH_ARG(a1, a2, a3, a4, a5, ...) a5
+#define TINKER_GET_6TH_ARG(a1, a2, a3, a4, a5, a6, ...) a6
+#define TINKER_GET_7TH_ARG(a1, a2, a3, a4, a5, a6, a7, ...) a7
+
 /**
  * \def TINKER_EXTERN_DEFINITION_FILE
  * \ingroup macro

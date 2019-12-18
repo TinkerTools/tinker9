@@ -307,10 +307,6 @@ void nblist_data(rc_op op)
 
    // mlist
    u = mlist_version();
-   //*
-   if (u & NBList::spatial)
-      u |= NBList::nblist;
-   //*/
    cut = use_ewald() ? switch_off(switch_ewald) : switch_off(switch_mpole);
    buf = neigh::lbuffer;
    if (u & (NBList::double_loop | NBList::nblist)) {

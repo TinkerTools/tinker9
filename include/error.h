@@ -50,7 +50,6 @@ public:
    } while (0)
 
 
-#define TINKER_GET_3RD_ARG_(arg1, arg2, arg3, ...) arg3
 #define TINKER_ALWAYS_CHECK_RT_1_(call)                                        \
    do {                                                                        \
       auto res_ = call;                                                        \
@@ -73,8 +72,8 @@ public:
    } while (0)
 
 #define TINKER_ALWAYS_CHECK_RT_(...)                                           \
-   TINKER_GET_3RD_ARG_(__VA_ARGS__, TINKER_ALWAYS_CHECK_RT_2_,                 \
-                       TINKER_ALWAYS_CHECK_RT_1_)
+   TINKER_GET_3RD_ARG(__VA_ARGS__, TINKER_ALWAYS_CHECK_RT_2_,                  \
+                      TINKER_ALWAYS_CHECK_RT_1_)
 
 
 /**

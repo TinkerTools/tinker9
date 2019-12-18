@@ -10,6 +10,7 @@ Spatial::~Spatial()
 {
    // output
    device_array::deallocate(lst, iak);
+   device_array::deallocate(kc, krad);
    // internal
    device_array::deallocate(sorted, boxnum);
    device_array::deallocate(naak, xakf, xakf_scan);
@@ -32,9 +33,9 @@ void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer,
    st.n = n;
    st.nak = (n + Spatial::BLOCK - 1) / Spatial::BLOCK;
    int level = 1 + floor_log2(st.nak - 1);
-   st.px = (level + 2) / 3;
+   st.px = (level + 0) / 3;
    st.py = (level + 1) / 3;
-   st.pz = (level + 0) / 3;
+   st.pz = (level + 2) / 3;
    st.nx = ct::pow2(st.px + st.py + st.pz);
    st.nxk = (st.nx + Spatial::BLOCK - 1) / Spatial::BLOCK;
    st.near = 0;
@@ -44,6 +45,7 @@ void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer,
    // output
    st.iak = nullptr;
    st.lst = nullptr;
+   device_array::allocate(st.nak, &st.kc, &st.krad);
    // internal
    device_array::allocate(st.n, &st.sorted, &st.boxnum);
    device_array::allocate(st.nak, &st.naak, &st.xakf, &st.xakf_scan);
