@@ -29,20 +29,19 @@ inline void damp_thole3(real r, real pdi, real pti, real pdk, real ptk,
                         real& restrict scale3, real& restrict scale5,
                         real& restrict scale7)
 {
-   scale3 = 1;
-   scale5 = 1;
-   scale7 = 1;
+   // scale3 = 1;
+   // scale5 = 1;
+   // scale7 = 1;
+   real pgamma = REAL_MIN(pti, ptk);
    real damp = pdi * pdk;
-   if (damp != 0) {
-      real pgamma = REAL_MIN(pti, ptk);
-      damp = -pgamma * REAL_CUBE(r * REAL_RECIP(damp));
-      if (damp > -50) {
-         real expdamp = REAL_EXP(damp);
-         scale3 = 1 - expdamp;
-         scale5 = 1 - expdamp * (1 - damp);
-         scale7 = 1 - expdamp * (1 - damp + (real)0.6 * REAL_SQ(damp));
-      }
-   }
+   real ratio = r * REAL_RECIP(damp);
+   damp = (damp == 0 ? 0 : -pgamma * ratio * ratio * ratio);
+   // if (damp > -50) {
+   real expdamp = REAL_EXP(damp);
+   scale3 = 1 - expdamp;
+   scale5 = 1 - expdamp * (1 - damp);
+   scale7 = 1 - expdamp * (1 - damp + (real)0.6 * REAL_SQ(damp));
+   // }
 }
 
 
