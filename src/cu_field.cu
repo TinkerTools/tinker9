@@ -6,7 +6,6 @@
 #include "seq_image.h"
 #include "seq_pair_field.h"
 #include "spatial.h"
-#include "switch.h"
 
 
 TINKER_NAMESPACE_BEGIN
