@@ -1,41 +1,28 @@
 #include "energy.h"
 #include "io_text.h"
-#include "timer.h"
 #include "tinker_rt.h"
 
 TINKER_NAMESPACE_BEGIN
-static bool timing = true;
-// static bool timing = false;
-
 void x_testgrad(int argc, char** argv)
 {
-   if (timing)
-      stopwatch_start();
-
    TINKER_RT(initial)();
    TINKER_RT(getxyz)();
    TINKER_RT(mechanic)();
-   if (timing)
-      stopwatch_lap("initialized libtinker");
 
    int flags = calc::xyz;
    flags += (calc::energy + calc::grad);
 
    rc_flag = flags;
    initialize();
-   if (timing)
-      stopwatch_lap("initialized libtinkergpu");
-
    energy_potential(rc_flag & calc::vmask);
-   if (timing)
-      stopwatch_lap("gradient evaluation");
 
    std::vector<real> gdx(n), gdy(n), gdz(n);
    device_array::copyout(n, gdx.data(), gx);
    device_array::copyout(n, gdy.data(), gy);
    device_array::copyout(n, gdz.data(), gz);
-   if (timing)
-      stopwatch_lap("gradient copied out");
+
+   const char* fmt_eng = "\n Total Potential Energy :{:24.4f} Kcal/mole\n\n";
+   print(stdout, fmt_eng, esum);
 
    const char* fmt = " Anlyt{:>10d}       {:12.4f}{:12.4f}{:12.4f}{:14.4f}\n";
    auto do_print = [](int i, int n) {
@@ -61,12 +48,6 @@ void x_testgrad(int argc, char** argv)
    }
 
    finish();
-
-   if (timing) {
-      stopwatch_stop();
-      stopwatch_reset();
-   }
-
    TINKER_RT(final)();
 }
 TINKER_NAMESPACE_END

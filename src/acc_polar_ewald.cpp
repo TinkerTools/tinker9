@@ -679,6 +679,8 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       }
    }
 }
+template void epolar_recip_self_tmpl<calc::v0>(const real (*)[3],
+                                               const real (*)[3]);
 
 #if TINKER_CUDART
 template <int>

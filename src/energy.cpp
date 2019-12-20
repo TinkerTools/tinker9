@@ -36,6 +36,10 @@ void potential_data(rc_op op)
 
    rc_man empole42_{empole_data, op};
    rc_man epolar42_{epolar_data, op};
+#if TINKER_CUDART
+   // Must follow empole_data() and epolar_data().
+   rc_man emplar42_{emplar_data, op};
+#endif
 }
 
 void energy_potential(int vers)
@@ -73,10 +77,18 @@ void energy_potential(int vers)
       evdw(vers);
 
    elec_init(vers);
+#if TINKER_CUDART
+   if (use_potent(mpole_term) && use_potent(polar_term) &&
+       !(vers & calc::analyz) && mlist_version() == NBList::spatial) {
+      emplar_cu(vers);
+      goto skip_mpole_polar;
+   }
+#endif
    if (use_potent(mpole_term))
       empole(vers);
    if (use_potent(polar_term))
       epolar(vers);
+skip_mpole_polar:
    torque(vers);
 
    sum_energies(vers);
