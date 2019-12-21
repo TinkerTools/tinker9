@@ -264,7 +264,6 @@ void spatial_bc(int n, int px, int py, int pz,
       real xr = x[i];
       real yr = y[i];
       real zr = z[i];
-      image(xr, yr, zr);
       if (!ZERO_LBUF) {
          xold[i] = xr;
          yold[i] = yr;
@@ -293,8 +292,7 @@ void spatial_bc(int n, int px, int py, int pz,
 
 extern "C" __global__
 void spatial_e(int n, int nak, const int* restrict boxnum, int* xakf,
-               const Spatial::SortedAtom* restrict sorted, real4* restrict kc,
-               real4* restrict krad, TINKER_IMAGE_PARAMS)
+               const Spatial::SortedAtom* restrict sorted, TINKER_IMAGE_PARAMS)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
@@ -311,37 +309,6 @@ void spatial_e(int n, int nak, const int* restrict boxnum, int* xakf,
       int flag = __ballot_sync(ALL_LANES, diff);               // E.6
       if (ilane == 0)
          xakf[iw] = (flag == 0 ? 1 : flag); // E.4
-   }
-
-
-   for (int idx = ithread, atom0 = idx * WARP_SIZE; atom0 < n;
-        idx += blockDim.x * gridDim.x, atom0 = idx * WARP_SIZE) {
-      real xi = sorted[atom0].x;
-      real yi = sorted[atom0].y;
-      real zi = sorted[atom0].z;
-      real3 minp = make_real3(xi, yi, zi);
-      real3 maxp = make_real3(xi, yi, zi);
-      real xm, ym, zm;
-      int last = min(atom0 + WARP_SIZE, n);
-      for (int i = atom0 + 1; i < last; ++i) {
-         xm = 0.5f * (minp.x + maxp.x);
-         ym = 0.5f * (minp.y + maxp.y);
-         zm = 0.5f * (minp.z + maxp.z);
-         xi = sorted[i].x;
-         yi = sorted[i].y;
-         zi = sorted[i].z;
-         imagec(xi, yi, zi, xm, ym, zm);
-         minp = make_real3(min(minp.x, xi), min(minp.y, yi), min(minp.z, zi));
-         maxp = make_real3(max(maxp.x, xi), max(maxp.y, yi), max(maxp.z, zi));
-      }
-      xm = 0.5f * (maxp.x + minp.x);
-      ym = 0.5f * (maxp.y + minp.y);
-      zm = 0.5f * (maxp.z + minp.z);
-      kc[idx] = make_real4(xm, ym, zm, 0);
-      xm = 0.5f * (maxp.x - minp.x);
-      ym = 0.5f * (maxp.y - minp.y);
-      zm = 0.5f * (maxp.z - minp.z);
-      krad[idx] = make_real4(xm, ym, zm, 0);
    }
 }
 
@@ -465,10 +432,37 @@ void spatial_ghi(Spatial* restrict sp, int n, TINKER_IMAGE_PARAMS, real cutbuf2)
       }
    }
 }
+
+
+extern "C" __global__
+void spatial_update_sorted(int n, Spatial::SortedAtom* restrict sorted,
+                           const real* restrict x, const real* restrict y,
+                           const real* restrict z, TINKER_IMAGE_PARAMS)
+{
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
+        i += blockDim.x * gridDim.x) {
+      int ia = sorted[i].unsorted;
+      real xr = x[ia];
+      real yr = y[ia];
+      real zr = z[ia];
+      image(xr, yr, zr);
+      sorted[i].x = xr;
+      sorted[i].y = yr;
+      sorted[i].z = zr;
+   }
+}
 TINKER_NAMESPACE_END
 
 
 TINKER_NAMESPACE_BEGIN
+void spatial_data_update_sorted(SpatialUnit u)
+{
+   auto& st = *u;
+   launch_kernel1(n, spatial_update_sorted, n, st.sorted, st.x, st.y, st.z,
+                  TINKER_IMAGE_ARGS);
+}
+
+
 void spatial_data_init_cu(SpatialUnit u)
 {
    assert(u->rebuild == 1);
@@ -489,8 +483,6 @@ void spatial_data_init_cu(SpatialUnit u)
    int& niak = u->niak;
 
 
-   auto*& kc = u->kc;
-   auto*& krad = u->krad;
    auto*& sorted = u->sorted;
    auto*& boxnum = u->boxnum;
    auto*& naak = u->naak;
@@ -571,7 +563,7 @@ void spatial_data_init_cu(SpatialUnit u)
 
 
    // E
-   launch_kernel1(padded, spatial_e, n, nak, boxnum, xakf, sorted, kc, krad,
+   launch_kernel1(padded, spatial_e, n, nak, boxnum, xakf, sorted,
                   TINKER_IMAGE_ARGS);
    // F.1
    xak_sum = thrust::transform_reduce(policy, xakf, xakf + nak, POPC(), 0,

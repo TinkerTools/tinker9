@@ -28,7 +28,12 @@ int main(int argc, char** argv)
       goto help_message;
    } else {
       fortran_runtime_initialize(argc, argv);
-      launcher().at(argv[0])(argc, argv);
+      try {
+         launcher().at(argv[0])(argc, argv);
+      } catch (const std::exception& err) {
+         fprintf(stdout, " Terminating with uncaught exception: %s\n",
+                 err.what());
+      }
       fortran_runtime_finish();
       return 0;
    }

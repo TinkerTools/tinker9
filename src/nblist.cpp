@@ -216,8 +216,12 @@ static void spatial_update(SpatialUnit unt)
    auto& st = *unt;
    st.rebuild = check_spatial(st.n, st.buffer, box, st.update, st.x, st.y, st.z,
                               st.xold, st.yold, st.zold);
-   if (st.rebuild)
+   if (st.rebuild) {
       spatial_data_init_cu(unt);
+   } else {
+      extern void spatial_data_update_sorted(SpatialUnit);
+      spatial_data_update_sorted(unt);
+   }
 }
 #else
 static void spatial_alloc(SpatialUnit& unt, int n, real cutoff, real buffer,

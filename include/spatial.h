@@ -227,7 +227,6 @@ struct Spatial
 
    // output
    int *iak, *lst;
-   real4 *kc, *krad;
    // internal
    SortedAtom* sorted;           // n
    int* boxnum;                  // n

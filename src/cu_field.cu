@@ -416,8 +416,8 @@ void ufield_ewald_real_cu(const real (*uind)[3], const real (*uinp)[3],
 }
 
 
-void ufield_coulomb_cu(float const (*uind)[3], float const (*uinp)[3],
-                       float (*field)[3], float (*fieldp)[3])
+void ufield_coulomb_cu(const real (*uind)[3], const real (*uinp)[3],
+                       real (*field)[3], real (*fieldp)[3])
 {
    const auto& st = *mspatial_unit;
    const real off2 = st.cutoff * st.cutoff;

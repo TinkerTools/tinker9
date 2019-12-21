@@ -39,8 +39,7 @@ TINKER_NAMESPACE_BEGIN
 template <int USE>
 __launch_bounds__(BLOCK_DIM) __global__
 void evdw_hal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
-                  int niak, const int* restrict iak, const int* restrict lst,
-                  const real4* restrict kc, const real4* restrict krad)
+                  int niak, const int* restrict iak, const int* restrict lst)
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_a = USE & calc::analyz;
@@ -87,8 +86,7 @@ void evdw_hal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
       }
 
 
-      int iblk = iak[iw];
-      int atomi = min(iblk * WARP_SIZE + ilane, n - 1);
+      int atomi = min(iak[iw] * WARP_SIZE + ilane, n - 1);
       real xi = sorted[atomi].x;
       real yi = sorted[atomi].y;
       real zi = sorted[atomi].z;
@@ -106,18 +104,6 @@ void evdw_hal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
       real shlam = vlam[shk];
 
 
-      bool iblocal = (0.5f * lvec1.x >= (krad[iblk].x + off)) &&
-         (0.5f * lvec2.y >= (krad[iblk].y + off)) &&
-         (0.5f * lvec3.z >= (krad[iblk].z + off));
-      if (iblocal) {
-         real rcx = kc[iblk].x;
-         real rcy = kc[iblk].y;
-         real rcz = kc[iblk].z;
-         imagec(xi, yi, zi, rcx, rcy, rcz);
-         imagec(shx, shy, shz, rcx, rcy, rcz);
-      }
-
-
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
          int atomk = __shfl_sync(ALL_LANES, shatomk, srclane);
@@ -129,11 +115,7 @@ void evdw_hal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
 
          MAYBE_UNUSED real dedx = 0, dedy = 0, dedz = 0;
-         real rik2;
-         if (iblocal)
-            rik2 = xr * xr + yr * yr + zr * zr;
-         else
-            rik2 = image2(xr, yr, zr);
+         real rik2 = image2(xr, yr, zr);
 
 
          if (atomi < atomk && rik2 <= off2) {
@@ -332,7 +314,7 @@ void evdw_cu()
          launch_kernel1(WARP_SIZE * st.niak, evdw_hal_cu1<USE>, bufsize, nev,
                         ev, vir_ev, gxred, gyred, gzred, TINKER_IMAGE_ARGS,
                         njvdw, jvdw, radmin, epsilon, vlam, vcouple, cut, off,
-                        n, st.sorted, st.niak, st.iak, st.lst, st.kc, st.krad);
+                        n, st.sorted, st.niak, st.iak, st.lst);
       if (nvexclude_ > 0)
          launch_kernel1(nvexclude_, evdw_hal_cu2<USE>, bufsize, nev, ev, vir_ev,
                         gxred, gyred, gzred, TINKER_IMAGE_ARGS, njvdw, jvdw,
