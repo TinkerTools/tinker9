@@ -1,4 +1,5 @@
 #include "tinker_rt.h"
+#include <chrono>
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/inform.hh>
@@ -167,7 +168,26 @@ void x_dynamic(int argc, char** argv)
 
    rc_flag = flags;
    initialize();
+
+   auto t_start = std::chrono::steady_clock::now();
    propagate(nstep, dt, nullptr);
+   auto t_end = std::chrono::steady_clock::now();
+
+   auto d_us =
+      std::chrono::duration_cast<std::chrono::microseconds>(t_end - t_start)
+         .count();
+   double us1 = (dt * 1000.) * nstep * 86400;
+
+   const char* fmt_flt = " {:<14s}{:<9s}{:>18.4f}\n";
+   const char* fmt_int = " {:<14s}{:<9s}{:>18d}\n";
+   print(stdout, "\n");
+   print(stdout, fmt_flt, "Performance:", "ns/day", us1 / d_us);
+   print(stdout, fmt_flt, "", "Wall Time", d_us / 1000000.);
+   print(stdout, fmt_int, "", "Steps", nstep);
+   print(stdout, fmt_int, "", "Updates", nstep / inform::iwrite);
+   print(stdout, fmt_flt, "", "Time Step", dt * 1000);
+   print(stdout, fmt_int, "", "Atoms", n);
+
    finish();
 
    // perform any final tasks before program exit
