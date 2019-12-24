@@ -7,7 +7,7 @@ template <class T>
 T reduce_sum(const T* gpu_a, size_t cpu_n)
 {
    T val = 0;
-   #pragma acc parallel loop deviceptr(gpu_a) reduction(+:val)
+   #pragma acc parallel loop independent deviceptr(gpu_a) reduction(+:val)
    for (size_t i = 0; i < cpu_n; ++i)
       val += gpu_a[i];
    return val;
@@ -30,7 +30,7 @@ void reduce_sum2(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem)
 
    for (size_t iv = 0; iv < HN; ++iv) {
       HT ans = 0;
-      #pragma acc parallel loop deviceptr(v) reduction(+:ans)
+      #pragma acc parallel loop independent deviceptr(v) reduction(+:ans)
       for (size_t ig = 0; ig < nelem; ++ig)
          ans += v[ig][iv];
       h_ans[iv] = ans;
@@ -47,7 +47,7 @@ template <class T>
 T dotprod(const T* restrict gpu_a, const T* restrict gpu_b, size_t cpu_n)
 {
    T val = 0;
-   #pragma acc parallel loop deviceptr(gpu_a,gpu_b) reduction(+:val)
+   #pragma acc parallel loop independent deviceptr(gpu_a,gpu_b) reduction(+:val)
    for (size_t i = 0; i < cpu_n; ++i)
       val += gpu_a[i] * gpu_b[i];
    return val;
@@ -58,14 +58,21 @@ template double dotprod(const double*, const double*, size_t);
 
 
 template <class T>
-void scale_array(T* gpu_dst, T scal, size_t nelem)
+void scale_array(T* gpu_dst, T scal, size_t nelem, int sync)
 {
-   #pragma acc parallel loop deviceptr(gpu_dst)
-   for (size_t i = 0; i < nelem; ++i) {
-      gpu_dst[i] *= scal;
+   if (sync) {
+      #pragma acc parallel loop independent deviceptr(gpu_dst)
+      for (size_t i = 0; i < nelem; ++i) {
+         gpu_dst[i] *= scal;
+      }
+   } else {
+      #pragma acc parallel loop independent async deviceptr(gpu_dst)
+      for (size_t i = 0; i < nelem; ++i) {
+         gpu_dst[i] *= scal;
+      }
    }
 }
-template void scale_array(float*, float, size_t);
-template void scale_array(double*, double, size_t);
+template void scale_array(float*, float, size_t, int);
+template void scale_array(double*, double, size_t, int);
 }
 TINKER_NAMESPACE_END

@@ -1,6 +1,7 @@
 #include "acc_add.h"
 #include "e_angle.h"
 #include "e_opbend.h"
+#include "mathfunc_const.h"
 #include "md.h"
 #include <cassert>
 
@@ -31,7 +32,7 @@ void eopbend_tmpl()
 
    auto bufsize = buffer_size();
 
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(x,y,z,gx,gy,gz,\
                iopb,opbk,iang,\
                eopb,vir_eopb)

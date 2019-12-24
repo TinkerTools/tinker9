@@ -1,4 +1,5 @@
 #include "add.cuh"
+#include "cudalib.h"
 #include "induce.h"
 #include "launch.cuh"
 #include "spatial.h"
@@ -14,6 +15,7 @@ void sparse_precond_cu0(const real (*restrict rsd)[3],
    for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
         i += blockDim.x * gridDim.x) {
       real poli = udiag * polarity[i];
+      #pragma unroll
       for (int j = 0; j < 3; ++j) {
          zrsd[i][j] = poli * rsd[i][j];
          zrsdp[i][j] = poli * rsdp[i][j];
@@ -206,17 +208,17 @@ void sparse_precond_apply_cu(const real (*rsd)[3], const real (*rsdp)[3],
    const real cutbuf2 = (st.cutoff + st.buffer) * (st.cutoff + st.buffer);
 
 
-   launch_kernel1(n, sparse_precond_cu0, //
-                  rsd, rsdp, zrsd, zrsdp, polarity, n, udiag);
+   launch_k1s(nonblk, n, sparse_precond_cu0, //
+              rsd, rsdp, zrsd, zrsdp, polarity, n, udiag);
    if (st.niak > 0)
-      launch_kernel1(WARP_SIZE * st.niak, sparse_precond_cu1, //
-                     rsd, rsdp, zrsd, zrsdp, pdamp, thole, polarity,
-                     TINKER_IMAGE_ARGS, cutbuf2, //
-                     n, st.sorted, st.niak, st.iak, st.lst);
+      launch_k1s(nonblk, WARP_SIZE * st.niak, sparse_precond_cu1, //
+                 rsd, rsdp, zrsd, zrsdp, pdamp, thole, polarity,
+                 TINKER_IMAGE_ARGS, cutbuf2, //
+                 n, st.sorted, st.niak, st.iak, st.lst);
    if (nuexclude_ > 0)
-      launch_kernel1(nuexclude_, sparse_precond_cu2, //
-                     rsd, rsdp, zrsd, zrsdp, pdamp, thole, polarity,
-                     TINKER_IMAGE_ARGS, cutbuf2, //
-                     x, y, z, nuexclude_, uexclude_, uexclude_scale_);
+      launch_k1s(nonblk, nuexclude_, sparse_precond_cu2, //
+                 rsd, rsdp, zrsd, zrsdp, pdamp, thole, polarity,
+                 TINKER_IMAGE_ARGS, cutbuf2, //
+                 x, y, z, nuexclude_, uexclude_, uexclude_scale_);
 }
 TINKER_NAMESPACE_END

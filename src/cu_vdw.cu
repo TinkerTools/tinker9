@@ -311,15 +311,15 @@ void evdw_cu()
 
    if CONSTEXPR (VDWTYP == evdw_t::hal) {
       if (st.niak > 0)
-         launch_kernel1(WARP_SIZE * st.niak, evdw_hal_cu1<USE>, bufsize, nev,
-                        ev, vir_ev, gxred, gyred, gzred, TINKER_IMAGE_ARGS,
-                        njvdw, jvdw, radmin, epsilon, vlam, vcouple, cut, off,
-                        n, st.sorted, st.niak, st.iak, st.lst);
+         launch_k1s(nonblk, WARP_SIZE * st.niak, evdw_hal_cu1<USE>, bufsize,
+                    nev, ev, vir_ev, gxred, gyred, gzred, TINKER_IMAGE_ARGS,
+                    njvdw, jvdw, radmin, epsilon, vlam, vcouple, cut, off, n,
+                    st.sorted, st.niak, st.iak, st.lst);
       if (nvexclude_ > 0)
-         launch_kernel1(nvexclude_, evdw_hal_cu2<USE>, bufsize, nev, ev, vir_ev,
-                        gxred, gyred, gzred, TINKER_IMAGE_ARGS, njvdw, jvdw,
-                        radmin, epsilon, vlam, vcouple, cut, off, xred, yred,
-                        zred, nvexclude_, vexclude_, vexclude_scale_);
+         launch_k1s(nonblk, nvexclude_, evdw_hal_cu2<USE>, bufsize, nev, ev,
+                    vir_ev, gxred, gyred, gzred, TINKER_IMAGE_ARGS, njvdw, jvdw,
+                    radmin, epsilon, vlam, vcouple, cut, off, xred, yred, zred,
+                    nvexclude_, vexclude_, vexclude_scale_);
    }
 
    if CONSTEXPR (do_g) {

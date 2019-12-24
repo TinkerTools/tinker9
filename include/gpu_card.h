@@ -1,5 +1,5 @@
 #pragma once
-#include "async.h"
+#include "rc_man.h"
 #if TINKER_CUDART
 #   include "gpu_card_cudart.h"
 #endif

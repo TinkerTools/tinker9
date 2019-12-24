@@ -160,6 +160,7 @@ void zero_egv(int vers);
 void zero_egv();
 /// @}
 
+void zero_gradient(int nelem, real* gx, real* gy, real* gz);
 void zero_gradient_async(int nelem, real* gx, real* gy, real* gz);
 
 /// @brief
@@ -190,4 +191,7 @@ void propagate_velocity(real dt);
 void propagate(int nsteps, real dt_ps, void (*itg)(int, real) = nullptr);
 
 void velocity_verlet(int istep, real dt_ps);
+
+
+void wait_async();
 TINKER_NAMESPACE_END

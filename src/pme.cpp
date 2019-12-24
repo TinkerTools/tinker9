@@ -113,7 +113,7 @@ void pme_init(int vers)
    rpole_to_cmp();
 
    if (vir_m)
-      device_array::zero(buffer_size(), vir_m);
+      device_array::zero_async(buffer_size(), vir_m);
 }
 
 static void pme_data1_(rc_op op)

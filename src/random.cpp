@@ -1,37 +1,17 @@
 #include "random.h"
-#include "io_fort_str.h"
-#include "io_text.h"
 #include "rc_man.h"
+#include "tinker_rt.h"
 #include <chrono>
 #include <random>
-#include <tinker/detail/keys.hh>
 
 TINKER_NAMESPACE_BEGIN
-/// @return
-/// Zero if Tinker key file does not contain a RANDOMSEED keyword
-static int read_tinker_randomseed_()
-{
-   int seed = 0;
-   for (int i = 0; i < keys::nkey; ++i) {
-      fstr_view record = keys::keyline[i];
-      auto vs = Text::split(record.trim());
-      if (vs.size()) {
-         std::string keyword = vs.at(0);
-         Text::upcase(keyword);
-         if (keyword == "RANDOMSEED" && vs.size() > 1) {
-            seed = std::stoi(vs.at(1));
-            seed = std::max(1, seed);
-         }
-      }
-   }
-   return seed;
-}
-
 static std::default_random_engine generator_;
 void random_data(rc_op op)
 {
    if (op & rc_init) {
-      int seed = read_tinker_randomseed_();
+      int seed;
+      get_kv_pair("RANDOMSEED", seed, 0);
+      seed = std::max(1, seed);
       if (seed == 0) {
          auto now = std::chrono::system_clock::now();
          auto tt = std::chrono::system_clock::to_time_t(now);

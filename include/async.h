@@ -4,10 +4,6 @@
 
 
 TINKER_NAMESPACE_BEGIN
-void async_acc_queue_data(rc_op);
-extern void* async_acc;
-
-
 /// \brief Deallocate the asynchronous stream.
 void deallocate_stream(void*);
 /// \brief Allocate the asynchronous stream.

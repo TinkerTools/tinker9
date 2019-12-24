@@ -1,4 +1,5 @@
 #include "add.cuh"
+#include "cudalib.h"
 #include "e_polar.h"
 #include "launch.cuh"
 #include "md.h"
@@ -206,14 +207,14 @@ void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
    const PMEUnit pu = ppme_unit;
    const real aewald = pu->aewald;
    if (st.niak > 0) {
-      launch_kernel1(WARP_SIZE * st.niak, dfield_cu1<elec_t::ewald>, field,
-                     fieldp, thole, pdamp, rpole, TINKER_IMAGE_ARGS, off2, n,
-                     st.sorted, st.niak, st.iak, st.lst, aewald);
+      launch_k1s(nonblk, WARP_SIZE * st.niak, dfield_cu1<elec_t::ewald>, field,
+                 fieldp, thole, pdamp, rpole, TINKER_IMAGE_ARGS, off2, n,
+                 st.sorted, st.niak, st.iak, st.lst, aewald);
    }
    if (ndpexclude_ > 0) {
-      launch_kernel1(ndpexclude_, dfield_cu2, field, fieldp, thole, pdamp,
-                     rpole, TINKER_IMAGE_ARGS, off2, x, y, z, ndpexclude_,
-                     dpexclude_, dpexclude_scale_);
+      launch_k1s(nonblk, ndpexclude_, dfield_cu2, field, fieldp, thole, pdamp,
+                 rpole, TINKER_IMAGE_ARGS, off2, x, y, z, ndpexclude_,
+                 dpexclude_, dpexclude_scale_);
    }
 }
 
@@ -403,15 +404,16 @@ void ufield_ewald_real_cu(const real (*uind)[3], const real (*uinp)[3],
    const PMEUnit pu = ppme_unit;
    const real aewald = pu->aewald;
 
+
    if (st.niak > 0) {
-      launch_kernel1(WARP_SIZE * st.niak, ufield_cu1<elec_t::ewald>, uind, uinp,
-                     field, fieldp, thole, pdamp, TINKER_IMAGE_ARGS, off2, n,
-                     st.sorted, st.niak, st.iak, st.lst, aewald);
+      launch_k1s(nonblk, WARP_SIZE * st.niak, ufield_cu1<elec_t::ewald>, uind,
+                 uinp, field, fieldp, thole, pdamp, TINKER_IMAGE_ARGS, off2, n,
+                 st.sorted, st.niak, st.iak, st.lst, aewald);
    }
    if (nuexclude_) {
-      launch_kernel1(nuexclude_, ufield_cu2, uind, uinp, field, fieldp, thole,
-                     pdamp, TINKER_IMAGE_ARGS, off2, x, y, z, nuexclude_,
-                     uexclude_, uexclude_scale_);
+      launch_k1s(nonblk, nuexclude_, ufield_cu2, uind, uinp, field, fieldp,
+                 thole, pdamp, TINKER_IMAGE_ARGS, off2, x, y, z, nuexclude_,
+                 uexclude_, uexclude_scale_);
    }
 }
 

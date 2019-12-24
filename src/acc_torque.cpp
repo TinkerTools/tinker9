@@ -35,7 +35,7 @@ template <int DO_V>
 void torque_tmpl(virial_buffer gpu_vir)
 {
    auto bufsize = buffer_size();
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(x,y,z,gx,gy,gz,zaxis,trqx,trqy,trqz,gpu_vir)
    for (int i = 0; i < n; ++i) {
       const int axetyp = zaxis[i].polaxe;

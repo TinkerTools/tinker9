@@ -912,25 +912,25 @@ void emplar_tmpl_cu(const real (*uind)[3], const real (*uinp)[3])
 
       if CONSTEXPR (USE & calc::energy) {
          auto ker0 = empole_self_cu<calc::energy>;
-         launch_kernel1(n, ker0, //
-                        bufsize, nullptr, em, rpole, n, f, aewald);
+         launch_k1s(nonblk, n, ker0, //
+                    bufsize, nullptr, em, rpole, n, f, aewald);
       }
    }
    if (st.niak > 0) {
       auto ker1 = emplar_cu1<USE, ETYP>;
-      launch_kernel1(WARP_SIZE * st.niak, ker1, //
-                     bufsize, em, vir_em, gx, gy, gz, trqx, trqy, trqz,
-                     TINKER_IMAGE_ARGS, off, f, rpole, pdamp, thole, uind, uinp,
-                     ufld, dufld, //
-                     n, st.sorted, st.niak, st.iak, st.lst, aewald);
+      launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
+                 bufsize, em, vir_em, gx, gy, gz, trqx, trqy, trqz,
+                 TINKER_IMAGE_ARGS, off, f, rpole, pdamp, thole, uind, uinp,
+                 ufld, dufld, //
+                 n, st.sorted, st.niak, st.iak, st.lst, aewald);
    }
    if (nmdpuexclude > 0) {
       auto ker2 = emplar_cu2<USE>;
-      launch_kernel1(nmdpuexclude, ker2, //
-                     bufsize, em, vir_em, gx, gy, gz, trqx, trqy, trqz,
-                     TINKER_IMAGE_ARGS, off, f, rpole, pdamp, thole, uind, uinp,
-                     ufld, dufld, //
-                     x, y, z, nmdpuexclude, mdpuexclude, mdpuexclude_scale);
+      launch_k1s(nonblk, nmdpuexclude, ker2, //
+                 bufsize, em, vir_em, gx, gy, gz, trqx, trqy, trqz,
+                 TINKER_IMAGE_ARGS, off, f, rpole, pdamp, thole, uind, uinp,
+                 ufld, dufld, //
+                 x, y, z, nmdpuexclude, mdpuexclude, mdpuexclude_scale);
    }
 }
 
@@ -977,7 +977,7 @@ void emplar_ewald_tmpl()
 
 
    if CONSTEXPR (do_g) {
-      device_array::zero(n, ufld, dufld);
+      device_array::zero_async(n, ufld, dufld);
    }
 
 
@@ -986,8 +986,8 @@ void emplar_ewald_tmpl()
    emplar_tmpl_cu<USE, elec_t::ewald>(uind, uinp);
    // epolar torque
    if CONSTEXPR (USE & calc::grad) {
-      launch_kernel1(n, epolar_trq_cu, //
-                     trqx, trqy, trqz, n, rpole, ufld, dufld);
+      launch_k1s(nonblk, n, epolar_trq_cu, //
+                 trqx, trqy, trqz, n, rpole, ufld, dufld);
    }
    if CONSTEXPR (do_e) {
       epolar0_dotprod(uind, udirp);

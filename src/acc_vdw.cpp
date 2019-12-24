@@ -10,8 +10,8 @@
 TINKER_NAMESPACE_BEGIN
 void evdw_reduce_xyz()
 {
-   #pragma acc parallel deviceptr(x,y,z,ired,kred,xred,yred,zred)
-   #pragma acc loop independent
+   #pragma acc parallel loop independent\
+               deviceptr(x,y,z,ired,kred,xred,yred,zred)
    for (int i = 0; i < n; ++i) {
       int iv = ired[i];
       real rdn = kred[i];
@@ -23,8 +23,8 @@ void evdw_reduce_xyz()
 
 void evdw_resolve_gradient()
 {
-   #pragma acc parallel deviceptr(ired,kred,gxred,gyred,gzred,gx,gy,gz)
-   #pragma acc loop independent
+   #pragma acc parallel loop independent async\
+               deviceptr(ired,kred,gxred,gyred,gzred,gx,gy,gz)
    for (int ii = 0; ii < n; ++ii) {
       int iv = ired[ii];
       real fx = gxred[ii];
@@ -67,7 +67,7 @@ void evdw_tmpl()
    auto bufsize = buffer_size();
 
    if CONSTEXPR (do_g)
-      zero_gradient_async(n, gxred, gyred, gzred);
+      zero_gradient(n, gxred, gyred, gzred);
 
 #define DEVICE_PTRS_                                                           \
    xred, yred, zred, gxred, gyred, gzred, box, jvdw, radmin, epsilon, vlam,    \

@@ -13,7 +13,7 @@ TINKER_NAMESPACE_BEGIN
 void diag_precond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3],
                   real (*zrsdp)[3])
 {
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
    for (int i = 0; i < n; ++i) {
       real poli = polarity[i];
@@ -257,7 +257,7 @@ void sparse_precond_build_acc()
  * conj = p
  * vec = T P
  */
-void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
+void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 {
    auto* field = work01_;
    auto* fieldp = work02_;
@@ -401,8 +401,7 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
          b = sum1 / sum;
       if (sump != 0)
          bp = sump1 / sump;
-      sum = sum1;
-      sump = sump1;
+
 
       // calculate/update p
       #pragma acc parallel loop independent deviceptr(conj,conjp,zrsd,zrsdp)
@@ -413,6 +412,10 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
             conjp[i][j] = zrsdp[i][j] + bp * conjp[i][j];
          }
       }
+
+
+      sum = sum1;
+      sump = sump1;
 
       real epsd;
       real epsp;
@@ -471,5 +474,15 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
       TINKER_RT(prterr)();
       TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
    }
+}
+
+
+void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
+{
+#if TINKER_CUDART
+   induce_mutual_pcg1_cu(uind, uinp);
+#else
+   induce_mutual_pcg1_acc(uind, uinp);
+#endif
 }
 TINKER_NAMESPACE_END

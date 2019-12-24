@@ -46,6 +46,6 @@ T dotprod(const T* a, const T* b, size_t nelem);
  * \f[ a_i = c \cdot a_i \f]
  */
 template <class T>
-void scale_array(T* dst, T scal, size_t nelem);
+void scale_array(T* dst, T scal, size_t nelem, int sync);
 }
 TINKER_NAMESPACE_END

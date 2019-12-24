@@ -9,8 +9,8 @@ void epolar0_dotprod(const real (*gpu_uind)[3], const real (*gpu_udirp)[3])
 
    auto bufsize = buffer_size();
 
-   #pragma acc parallel loop independent\
-              deviceptr(ep,gpu_uind,gpu_udirp,polarity_inv)
+   #pragma acc parallel loop independent async\
+               deviceptr(ep,gpu_uind,gpu_udirp,polarity_inv)
    for (int i = 0; i < n; ++i) {
       int offset = i & (bufsize - 1);
       real e = polarity_inv[i] *

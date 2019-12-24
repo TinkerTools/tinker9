@@ -223,7 +223,8 @@ void propagate_velocity_acc(real dt)
    }
 }
 
-void zero_gradient_async(int nelem, real* gx, real* gy, real* gz)
+
+void zero_gradient(int nelem, real* gx, real* gy, real* gz)
 {
    #pragma acc parallel loop independent deviceptr(gx,gy,gz)
    for (int i = 0; i < nelem; ++i) {
@@ -231,5 +232,21 @@ void zero_gradient_async(int nelem, real* gx, real* gy, real* gz)
       gy[i] = 0;
       gz[i] = 0;
    }
+}
+
+
+void zero_gradient_async(int nelem, real* gx, real* gy, real* gz)
+{
+   #pragma acc parallel loop independent async deviceptr(gx,gy,gz)
+   for (int i = 0; i < nelem; ++i) {
+      gx[i] = 0;
+      gy[i] = 0;
+      gz[i] = 0;
+   }
+}
+
+void wait_async()
+{
+   #pragma acc wait async
 }
 TINKER_NAMESPACE_END

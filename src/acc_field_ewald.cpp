@@ -28,7 +28,7 @@ void dfield_ewald_recip_self(real (*field)[3])
    fphi_mpole(pu, fphi);
    fphi_to_cphi(pu, fphi, cphi);
 
-   #pragma acc parallel loop independent deviceptr(field,cphi,rpole)
+   #pragma acc parallel loop independent async deviceptr(field,cphi,rpole)
    for (int i = 0; i < n; ++i) {
       real dix = rpole[i][mpl_pme_x];
       real diy = rpole[i][mpl_pme_y];
@@ -207,8 +207,8 @@ void ufield_ewald_recip_self(const real (*uind)[3], const real (*uinp)[3],
 
    const real term = REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
 
-   #pragma acc parallel loop independent\
-              deviceptr(box,field,fieldp,uind,uinp,fdip_phi1,fdip_phi2)
+   #pragma acc parallel loop independent async\
+               deviceptr(box,field,fieldp,uind,uinp,fdip_phi1,fdip_phi2)
    for (int i = 0; i < n; ++i) {
       real a[3][3];
       a[0][0] = nfft1 * box->recip[0][0];

@@ -187,10 +187,10 @@ void grid_mpole_cu(PMEUnit pme_u, real (*fmp)[10])
    int nt = n1 * n2 * n3;
 
 
-   device_array::zero(2 * nt, st.qgrid);
+   device_array::zero_async(2 * nt, st.qgrid);
    auto ker = grid_tmpl_cu<MPOLE_GRID, 5>;
-   launch_kernel2(PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
-                  (const real*)fmp, nullptr, st.qgrid, recipa, recipb, recipc);
+   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
+              (const real*)fmp, nullptr, st.qgrid, recipa, recipb, recipc);
 }
 
 
@@ -203,11 +203,11 @@ void grid_uind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
    int nt = n1 * n2 * n3;
 
 
-   device_array::zero(2 * nt, st.qgrid);
+   device_array::zero_async(2 * nt, st.qgrid);
    auto ker = grid_tmpl_cu<UIND_GRID, 5>;
-   launch_kernel2(PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
-                  (const real*)fuind, (const real*)fuinp, st.qgrid, recipa,
-                  recipb, recipc);
+   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
+              (const real*)fuind, (const real*)fuinp, st.qgrid, recipa, recipb,
+              recipc);
 }
 
 
@@ -724,8 +724,8 @@ void fphi_mpole_cu(PMEUnit pme_u, real* fphi)
 
 
    auto ker = fphi_tmpl_cu<MPOLE_GRID, 5>;
-   launch_kernel2(PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, fphi, nullptr,
-                  nullptr, st.qgrid, recipa, recipb, recipc);
+   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, fphi,
+              nullptr, nullptr, st.qgrid, recipa, recipb, recipc);
 }
 
 
@@ -739,8 +739,8 @@ void fphi_uind_cu(PMEUnit pme_u, real* fdip_phi1, real* fdip_phi2,
 
 
    auto ker = fphi_tmpl_cu<UIND_GRID, 5>;
-   launch_kernel2(PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, fdip_phi1,
-                  fdip_phi2, fdip_sum_phi, st.qgrid, recipa, recipb, recipc);
+   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, fdip_phi1,
+              fdip_phi2, fdip_sum_phi, st.qgrid, recipa, recipb, recipc);
 }
 
 
@@ -753,8 +753,8 @@ void fphi_uind2_cu(PMEUnit pme_u, real* fdip_phi1, real* fdip_phi2)
 
 
    auto ker = fphi_tmpl_cu<UIND_GRID_FPHI2, 5>;
-   launch_kernel2(PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, fdip_phi1,
-                  fdip_phi2, nullptr, st.qgrid, recipa, recipb, recipc);
+   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, fdip_phi1,
+              fdip_phi2, nullptr, st.qgrid, recipa, recipb, recipc);
 }
 
 

@@ -126,9 +126,9 @@ void elec_init(int vers)
       return;
 
    if (vers & calc::grad)
-      device_array::zero(n, trqx, trqy, trqz);
+      device_array::zero_async(n, trqx, trqy, trqz);
    if (vers & calc::virial)
-      device_array::zero(buffer_size(), vir_trq);
+      device_array::zero_async(buffer_size(), vir_trq);
 
    chkpole();
    rotpole();

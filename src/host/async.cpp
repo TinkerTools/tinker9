@@ -78,9 +78,6 @@ StreamSt::StreamSt()
 {}
 
 
-void* async_acc;
-
-
 void deallocate_stream(void* ss)
 {
    auto s = reinterpret_cast<Stream>(ss);

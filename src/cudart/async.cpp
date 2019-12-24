@@ -4,9 +4,6 @@
 
 
 TINKER_NAMESPACE_BEGIN
-void* async_acc;
-
-
 void deallocate_stream(void* s)
 {
    auto ss = reinterpret_cast<cudaStream_t>(s);

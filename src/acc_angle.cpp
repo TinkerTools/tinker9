@@ -1,5 +1,6 @@
 #include "acc_add.h"
 #include "e_angle.h"
+#include "mathfunc_const.h"
 #include "md.h"
 
 // TODO: test linear and fourier angles
@@ -34,7 +35,7 @@ void eangle_tmpl()
 
    auto bufsize = buffer_size();
 
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(x,y,z,gx,gy,gz,\
                iang,anat,ak,angtyp,\
                ea,vir_ea)

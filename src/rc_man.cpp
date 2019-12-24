@@ -56,8 +56,6 @@ void host_data(rc_op op)
    rc_man gpu_card42_{gpu_card_data, op};
 }
 
-extern void async_acc_queue_data(rc_op);
-
 extern void n_data(rc_op);
 
 extern void xyz_data(rc_op);
@@ -75,7 +73,10 @@ extern void md_data(rc_op);
 
 void device_data(rc_op op)
 {
-   rc_man aaq42_{async_acc_queue_data, op};
+#if TINKER_CUDART
+   extern void cudalib_data(rc_op);
+   rc_man cl42_{cudalib_data, op};
+#endif
 
    rc_man n42_{n_data, op};
 

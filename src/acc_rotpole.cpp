@@ -6,7 +6,7 @@
 TINKER_NAMESPACE_BEGIN
 void chkpole()
 {
-   #pragma acc parallel loop deviceptr(x,y,z,zaxis,pole)
+   #pragma acc parallel loop independent async deviceptr(x,y,z,zaxis,pole)
    for (int i = 0; i < n; ++i) {
       int polaxe = zaxis[i].polaxe;
       bool check =
@@ -133,7 +133,7 @@ static void rotpole_addto2(real* restrict a, const real* restrict b,
 
 void rotpole()
 {
-   #pragma acc parallel loop deviceptr(x,y,z,zaxis,rpole,pole)
+   #pragma acc parallel loop independent async deviceptr(x,y,z,zaxis,rpole,pole)
    for (int i = 0; i < n; ++i) {
       // rotmat routine
       real xi = x[i];
