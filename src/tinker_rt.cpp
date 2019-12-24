@@ -23,6 +23,7 @@ void nextarg(size_t len, char* str, int& exist)
 }
 
 
+namespace detail {
 template <class T>
 void vstr_to_val(T&, std::string);
 
@@ -32,12 +33,12 @@ void vstr_to_val<int>(int& v, std::string vstr)
 {
    v = std::stoi(vstr);
 }
+}
 
 
 template <class T>
 void get_kv_pair(std::string k, T& v, T vdefault)
 {
-   v = vdefault;
    std::string value_str = "";
    for (int i = 0; i < keys::nkey; ++i) {
       fstr_view record = keys::keyline[i];
@@ -50,7 +51,11 @@ void get_kv_pair(std::string k, T& v, T vdefault)
          }
       }
    }
-   vstr_to_val(v, value_str);
+   if (value_str != "") {
+      detail::vstr_to_val(v, value_str);
+   } else {
+      v = vdefault;
+   }
 }
 template void get_kv_pair<int>(std::string, int&, int);
 TINKER_NAMESPACE_END

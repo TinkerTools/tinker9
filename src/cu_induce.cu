@@ -1,4 +1,4 @@
-#include "add.cuh"
+#include "add.h"
 #include "cudalib.h"
 #include "induce.h"
 #include "launch.cuh"

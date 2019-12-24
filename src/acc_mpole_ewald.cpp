@@ -1,4 +1,4 @@
-#include "acc_add.h"
+#include "add.h"
 #include "e_mpole.h"
 #include "gpu_card.h"
 #include "md.h"

@@ -1,5 +1,5 @@
 #pragma once
-#include "mathfunc_libfunc.h"
+#include "macro.h"
 #include <cstring>
 #include <type_traits>
 

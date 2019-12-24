@@ -1,4 +1,4 @@
-#include "add.cuh"
+#include "add.h"
 #include "e_vdw.h"
 #include "launch.cuh"
 #include "md.h"

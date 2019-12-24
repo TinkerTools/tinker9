@@ -34,7 +34,7 @@ void switch_taper5(real rik, real cut, real off, real& restrict taper,
    real x3 = x2 * x;
    taper = x3 * (6 * x2 - 15 * x + 10);
    if CONSTEXPR (DO_DTAPER) {
-      dtaper = 30 * REAL_SQ(x * (1 - x)) * rinv;
+      dtaper = 30 * (x * (1 - x)) * (x * (1 - x)) * rinv;
    }
 }
 TINKER_NAMESPACE_END

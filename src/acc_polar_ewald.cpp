@@ -1,4 +1,4 @@
-#include "acc_add.h"
+#include "add.h"
 #include "e_polar.h"
 #include "gpu_card.h"
 #include "md.h"
@@ -442,8 +442,8 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 
    // recip and self torques
 
-   real term = f * REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
-   real fterm_term = -2 * f * REAL_CUBE(aewald) / 3 / sqrtpi;
+   real term = f * aewald * aewald * aewald * 4 / 3 / sqrtpi;
+   real fterm_term = -2 * f * aewald * aewald * aewald / 3 / sqrtpi;
    #pragma acc parallel loop independent async\
                deviceptr(ep,nep,trqx,trqy,trqz,\
                rpole,cmp,gpu_uind,gpu_uinp,cphidp)
@@ -633,7 +633,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       const auto* p = pvu.deviceptr();
       const int nff = nfft1 * nfft2;
       const int ntot = nfft1 * nfft2 * nfft3;
-      real pterm = REAL_SQ(pi / aewald);
+      real pterm = (pi / aewald) * (pi / aewald);
 
       #pragma acc parallel loop independent async deviceptr(box,d,p,vir_ep)
       for (int i = 1; i < ntot; ++i) {

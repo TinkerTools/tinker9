@@ -1,4 +1,4 @@
-#include "add.cuh"
+#include "add.h"
 #include "e_mplar.h"
 #include "e_mpole.h"
 #include "e_polar.h"

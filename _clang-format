@@ -38,3 +38,4 @@ StatementMacros:
     - __global__
     - __host__
     - __device__
+    - ROUTINE_SEQ

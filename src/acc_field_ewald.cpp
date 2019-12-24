@@ -1,4 +1,4 @@
-#include "acc_add.h"
+#include "add.h"
 #include "e_mpole.h"
 #include "e_polar.h"
 #include "gpu_card.h"
@@ -15,7 +15,7 @@ void dfield_ewald_recip_self(real (*field)[3])
 {
    const PMEUnit pu = ppme_unit;
    const real aewald = pu->aewald;
-   const real term = REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
+   const real term = aewald * aewald * aewald * 4 / 3 / sqrtpi;
 
    cmp_to_fmp(pu, cmp, fmp);
    grid_mpole(pu, fmp);
@@ -205,7 +205,7 @@ void ufield_ewald_recip_self(const real (*uind)[3], const real (*uinp)[3],
    fftback(pu);
    fphi_uind2(pu, fdip_phi1, fdip_phi2);
 
-   const real term = REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
+   const real term = aewald * aewald * aewald * 4 / 3 / sqrtpi;
 
    #pragma acc parallel loop independent async\
                deviceptr(box,field,fieldp,uind,uinp,fdip_phi1,fdip_phi2)

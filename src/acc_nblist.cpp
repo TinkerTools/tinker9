@@ -60,7 +60,7 @@ void check_nblist(int n, real lbuf, const Box* restrict box,
                   const real* restrict y, const real* restrict z,
                   real* restrict xold, real* restrict yold, real* restrict zold)
 {
-   const real lbuf2 = REAL_SQ(0.5f * lbuf);
+   const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
    #pragma acc parallel loop independent\
                deviceptr(box,update,x,y,z,xold,yold,zold)
    for (int i = 0; i < n; ++i) {
@@ -92,7 +92,7 @@ int check_spatial(int n, real lbuf, const Box* restrict box,
 
 
    int ans = 0; // 0: do not rebuild; 1: rebuild
-   const real lbuf2 = REAL_SQ(0.5f * lbuf);
+   const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
    #pragma acc kernels deviceptr(box,update,x,y,z,xold,yold,zold)\
                copy(ans)
    {
@@ -141,7 +141,7 @@ inline void build_v1_(NBListUnit nu)
 {
    auto& st = *nu;
    const int maxnlst = st.maxnlst;
-   const real buf2 = REAL_SQ(st.cutoff + st.buffer);
+   const real buf2 = (st.cutoff + st.buffer) * (st.cutoff + st.buffer);
 
    const auto* restrict lx = st.x;
    const auto* restrict ly = st.y;
@@ -199,8 +199,8 @@ inline void update_v1_(NBListUnit nu)
 
    auto* lst = nu.deviceptr();
    const int maxnlst = st.maxnlst;
-   const real buf2 = REAL_SQ(st.cutoff + st.buffer);
-   const real bufx = REAL_SQ(st.cutoff + 2 * st.buffer);
+   const real buf2 = (st.cutoff + st.buffer) * (st.cutoff + st.buffer);
+   const real bufx = (st.cutoff + 2 * st.buffer) * (st.cutoff + 2 * st.buffer);
 
    #pragma acc kernels deviceptr(lst,box)
    {

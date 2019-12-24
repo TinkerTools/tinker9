@@ -100,7 +100,11 @@ TINKER_NAMESPACE_END
 
 
 #if defined(TINKER_GFORTRAN)
+
+
 // GNU Fortran
+
+
 extern "C" void _gfortran_set_args(int, char**);
 
 
@@ -116,7 +120,11 @@ TINKER_NAMESPACE_END
 
 
 #elif defined(TINKER_IFORT)
+
+
 // Intel
+
+
 extern "C" void for_rtl_init_(int*, char**);
 extern "C" void for_rtl_finish_();
 
@@ -132,14 +140,5 @@ void fortran_runtime_finish()
 {
    for_rtl_finish_();
 }
-TINKER_NAMESPACE_END
-
-
-#else
-#   error "unknown fortran compiler error"
-#   error see also "macro.h"
-
-
-TINKER_NAMESPACE_BEGIN
 TINKER_NAMESPACE_END
 #endif

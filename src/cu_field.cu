@@ -1,4 +1,4 @@
-#include "add.cuh"
+#include "add.h"
 #include "cudalib.h"
 #include "e_polar.h"
 #include "launch.cuh"

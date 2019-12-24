@@ -1,5 +1,5 @@
 #pragma once
-#include "add.cuh"
+#include "add.h"
 #include "md.h"
 
 

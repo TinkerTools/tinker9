@@ -1,5 +1,6 @@
 #pragma once
 #include "rc_man.h"
+#include "realn.h"
 
 
 TINKER_NAMESPACE_BEGIN

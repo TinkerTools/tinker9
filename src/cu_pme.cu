@@ -1,4 +1,4 @@
-#include "add.cuh"
+#include "add.h"
 #include "box.h"
 #include "e_mpole.h"
 #include "launch.cuh"

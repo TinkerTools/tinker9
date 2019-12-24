@@ -1,4 +1,4 @@
-#include "acc_add.h"
+#include "add.h"
 #include "error.h"
 #include "gpu_card.h"
 #include "induce.h"

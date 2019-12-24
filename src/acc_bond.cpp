@@ -1,4 +1,4 @@
-#include "acc_add.h"
+#include "add.h"
 #include "e_bond.h"
 #include "md.h"
 #include <cassert>
