@@ -1,15 +1,14 @@
 #pragma once
 #include "box.h"
-#include "macro_void_cuda_def.h"
 #include "mathfunc.h"
+#include "seq_def.h"
 
 
 TINKER_NAMESPACE_BEGIN
 // image
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void image_triclinic(real& restrict xr, real& restrict yr,
                             real& restrict zr, real3 l1, real3 l2, real3 l3,
                             real3 ra, real3 rb, real3 rc)
@@ -23,8 +22,7 @@ inline void image_triclinic(real& restrict xr, real& restrict yr,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void image_monoclinic(real& restrict xr, real& restrict yr,
                              real& restrict zr, real3 l1, real3 l2, real3 l3,
                              real3 ra, real3 rb, real3 rc)
@@ -38,8 +36,7 @@ inline void image_monoclinic(real& restrict xr, real& restrict yr,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void image_orthogonal(real& restrict xr, real& restrict yr,
                              real& restrict zr, real3 l1, real3 l2, real3 l3,
                              real3 ra, real3 rb, real3 rc)
@@ -53,8 +50,7 @@ inline void image_orthogonal(real& restrict xr, real& restrict yr,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void image_general(real& restrict xr, real& restrict yr,
                           real& restrict zr, real3 l1, real3 l2, real3 l3,
                           real3 ra, real3 rb, real3 rc)
@@ -72,8 +68,7 @@ inline void image_general(real& restrict xr, real& restrict yr,
 // imagen
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void imagen_orthogonal(real& xr, real& yr, real& zr, real3 l1, real3 l2,
                               real3 l3)
 {
@@ -102,8 +97,7 @@ TINKER_NAMESPACE_BEGIN
 #endif
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline real image2_general(real& restrict xr, real& restrict yr,
                            real& restrict zr, real3 l1, real3 l2, real3 l3,
                            real3 ra, real3 rb, real3 rc)
@@ -127,8 +121,7 @@ inline real image2_general(real& restrict xr, real& restrict yr,
 #endif
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline real imagen2_general(real xr, real yr, real zr, real3 l1, real3 l2,
                             real3 l3, real3 ra, real3 rb, real3 rc)
 {
@@ -152,8 +145,7 @@ inline real imagen2_general(real xr, real yr, real zr, real3 l1, real3 l2,
 #endif
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void imagec_triclinic(real& restrict x0, real& restrict y0,
                              real& restrict z0, real xc, real yc, real zc,
                              real3 l1, real3 l2, real3 l3, real3 ra, real3 rb,
@@ -171,8 +163,7 @@ inline void imagec_triclinic(real& restrict x0, real& restrict y0,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void imagec_monoclinic(real& restrict x0, real& restrict y0,
                               real& restrict z0, real xc, real yc, real zc,
                               real3 l1, real3 l2, real3 l3, real3 ra, real3 rb,
@@ -190,8 +181,7 @@ inline void imagec_monoclinic(real& restrict x0, real& restrict y0,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void imagec_orthogonal(real& restrict x0, real& restrict y0,
                               real& restrict z0, real xc, real yc, real zc,
                               real3 l1, real3 l2, real3 l3, real3 ra, real3 rb,
@@ -203,8 +193,7 @@ inline void imagec_orthogonal(real& restrict x0, real& restrict y0,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void imagec_general(real& restrict x0, real& restrict y0,
                            real& restrict z0, real xc, real yc, real zc,
                            real3 l1, real3 l2, real3 l3, real3 ra, real3 rb,

@@ -2,7 +2,7 @@
 #include "e_angle.h"
 #include "e_bond.h"
 #include "e_strbnd.h"
-#include "mathfunc_const.h"
+#include "mathfunc.h"
 #include "md.h"
 
 TINKER_NAMESPACE_BEGIN

@@ -1,7 +1,5 @@
 #pragma once
-#include "add.h"
 #include "macro.h"
-#include "macro_void_cuda_def.h"
 
 
 TINKER_NAMESPACE_BEGIN

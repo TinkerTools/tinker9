@@ -1,6 +1,6 @@
 #pragma once
 #include "macro.h"
-#include <cstddef>
+#include <cstring>
 
 
 TINKER_NAMESPACE_BEGIN

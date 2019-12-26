@@ -26,21 +26,21 @@ using real4 = float4;
 
 
 // + - *
-ROUTINE_SEQ
+SEQ_ROUTINE
 inline real3 operator+(real3 a, real3 b)
 {
    return make_real3(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
 
-ROUTINE_SEQ
+SEQ_ROUTINE
 inline real3 operator-(real3 a, real3 b)
 {
    return make_real3(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
 
-ROUTINE_SEQ
+SEQ_ROUTINE
 inline real3 operator*(real a, real3 b)
 {
    return make_real3(a * b.x, a * b.y, a * b.z);
@@ -48,7 +48,7 @@ inline real3 operator*(real a, real3 b)
 
 
 // += -=
-ROUTINE_SEQ
+SEQ_ROUTINE
 inline void operator+=(real3& a, real3 b)
 {
    a.x += b.x;
@@ -57,7 +57,7 @@ inline void operator+=(real3& a, real3 b)
 }
 
 
-ROUTINE_SEQ
+SEQ_ROUTINE
 inline void operator-=(real3& a, real3 b)
 {
    a.x -= b.x;
@@ -67,14 +67,14 @@ inline void operator-=(real3& a, real3 b)
 
 
 // dot
-ROUTINE_SEQ
+SEQ_ROUTINE
 inline real dot3(real3 a, real3 b)
 {
    return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
 
-ROUTINE_SEQ
+SEQ_ROUTINE
 inline real dot3(real ax, real ay, real az, real bx, real by, real bz)
 {
    return ax * bx + ay * by + az * bz;

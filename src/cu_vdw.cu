@@ -1,11 +1,12 @@
 #include "add.h"
 #include "e_vdw.h"
-#include "launch.cuh"
+#include "launch.h"
 #include "md.h"
 #include "seq_image.h"
 #include "seq_pair_hal.h"
 #include "seq_switch.h"
 #include "spatial.h"
+#include "switch.h"
 
 
 /**

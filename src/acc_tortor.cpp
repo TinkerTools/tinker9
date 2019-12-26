@@ -1,6 +1,6 @@
 #include "add.h"
 #include "e_tortor.h"
-#include "mathfunc_const.h"
+#include "mathfunc.h"
 #include "md.h"
 
 // TODO: test chiral center

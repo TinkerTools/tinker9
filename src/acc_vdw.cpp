@@ -6,6 +6,8 @@
 #include "seq_image.h"
 #include "seq_pair_hal.h"
 #include "seq_switch.h"
+#include "switch.h"
+
 
 TINKER_NAMESPACE_BEGIN
 void evdw_reduce_xyz()

@@ -1,5 +1,5 @@
 #include "box.h"
-#include "mathfunc_const.h"
+#include "mathfunc.h"
 #include "seq_image.h"
 #include "test.h"
 #include "tinker_rt.h"

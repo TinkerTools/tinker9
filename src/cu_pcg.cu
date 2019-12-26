@@ -1,8 +1,8 @@
-#include "cudalib2.h"
+#include "cudalib.h"
 #include "e_polar.h"
 #include "induce.h"
 #include "io_print.h"
-#include "launch.cuh"
+#include "launch.h"
 #include "tinker_rt.h"
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/polpcg.hh>
@@ -168,8 +168,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
    // initial r(0) M r(0)
    real* sum = &dptr_real64[0];
    real* sump = &dptr_real64[1];
-   dotprod(nonblk, sum, rsd, zrsd, 3 * n);
-   dotprod(nonblk, sump, rsdp, zrsdp, 3 * n);
+   device_array::dot(false, n, sum, rsd, zrsd);
+   device_array::dot(false, n, sump, rsdp, zrsdp);
 
 
    // conjugate gradient iteration of the mutual induced dipoles
@@ -203,8 +203,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       real* a = &dptr_real64[2];
       real* ap = &dptr_real64[3];
       // a <- r M r / p T p; a = sum / a; ap = sump / ap
-      dotprod(nonblk, a, conj, vec, 3 * n);
-      dotprod(nonblk, ap, conjp, vecp, 3 * n);
+      device_array::dot(false, n, a, conj, vec);
+      device_array::dot(false, n, ap, conjp, vecp);
 
 
       // u <- u + a p
@@ -223,8 +223,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       // b = sum1 / sum; bp = sump1 / sump
       real* sum1 = &dptr_real64[4];
       real* sump1 = &dptr_real64[5];
-      dotprod(nonblk, sum1, rsd, zrsd, 3 * n);
-      dotprod(nonblk, sump1, rsdp, zrsdp, 3 * n);
+      device_array::dot(false, n, sum1, rsd, zrsd);
+      device_array::dot(false, n, sump1, rsdp, zrsdp);
 
 
       // calculate/update p
@@ -238,8 +238,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
 
       real* epsd = &dptr_real64[6];
       real* epsp = &dptr_real64[7];
-      dotprod(nonblk, epsd, rsd, rsd, 3 * n);
-      dotprod(nonblk, epsp, rsdp, rsdp, 3 * n);
+      device_array::dot(false, n, epsd, rsd, rsd);
+      device_array::dot(false, n, epsp, rsdp, rsdp);
       check_rt(cudaMemcpyAsync(pinned_real64, epsd, 2 * sizeof(real),
                                cudaMemcpyDeviceToHost, nonblk));
       check_rt(cudaStreamSynchronize(nonblk));

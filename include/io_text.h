@@ -1,53 +1,53 @@
-#ifndef TINKER_IO_TEXT_H_
-#define TINKER_IO_TEXT_H_
-
+#pragma once
 #include "macro.h"
 #include <string>
 #include <vector>
 
+
 TINKER_NAMESPACE_BEGIN
-/// @brief
-/// plain ascii text stored by lines
+/**
+ * \ingroup io
+ * \brief Plain ascii text stored by lines.
+ */
 class Text : public std::vector<std::string>
 {
 public:
-   /// @brief
-   /// white space characters
+   /// \brief White space characters.
    static constexpr const char* whitespaces = " \t\n\v\f\r";
 
-   /// @return
-   /// @c true if @c ch is one of the white space characters
+
+   /// \return True if `ch` is one of the white space characters.
    static bool is_ws(char ch);
 
-   /// @return
-   /// an @c std::string object from a c-style @c char array
+
+   /// \return An `std::string` object from a c-style `char` array.
    template <size_t Len>
    static std::string string(const char (&src)[Len])
    {
       return std::string(&src[0], &src[0] + Len);
    }
 
-   /// @brief
-   /// in string @c src, replace any characters appeared in @c old to char @c r
+
+   /// \brief In string `src`, replace any characters appeared in `old` to `r`.
    static void replace(std::string& src, std::string old, char r);
 
-   /// @brief
-   /// in string @c src, replace any string @c key to string @c value
+
+   /// \brief In string `src`, replace any string `key` to string `value`.
    static void replace_by_kv(std::string& src, std::string key,
                              std::string value);
 
-   /// @brief
-   /// split a string @c str to a vector of strings by @c delimiters
+
+   /// \brief
+   /// Split a string `str` by `delimiters` and return a vector of strings.
    static std::vector<std::string> split(std::string str,
                                          std::string delimiters = whitespaces);
 
-   /// @brief
-   /// transform a string to upper or lower case
-   /// @{
+
+   /// \brief Transform a string to upper case.
    static void upcase(std::string&);
+
+
+   /// \brief Transform a string to lower case.
    static void lowcase(std::string&);
-   /// @}
 };
 TINKER_NAMESPACE_END
-
-#endif

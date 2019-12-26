@@ -5,8 +5,7 @@
 TINKER_NAMESPACE_BEGIN
 /**
  * \ingroup mem
- * \brief
- * Resource management.
+ * \brief Resource management.
  *
  * To deallocate resource in reverse order of allocation, use named objects.
  * \code

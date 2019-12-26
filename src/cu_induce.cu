@@ -1,7 +1,7 @@
 #include "add.h"
 #include "cudalib.h"
 #include "induce.h"
-#include "launch.cuh"
+#include "launch.h"
 #include "spatial.h"
 
 

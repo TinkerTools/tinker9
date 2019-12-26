@@ -1,17 +1,18 @@
-#ifndef TINKER_IO_FORT_STR_H_
-#define TINKER_IO_FORT_STR_H_
-
+#pragma once
 #include "macro.h"
 #include <string>
 
+
 TINKER_NAMESPACE_BEGIN
 class FortranStringView;
-typedef FortranStringView fstr_view;
+using fstr_view = FortranStringView;
+
 
 /**
- * @brief
- * references to the non-NULL-terminated fortran strings that provides a few
- * @c std::string -like methods to handle the fortran strings in C++ programs
+ * \ingroup io
+ * \brief Reference to the non-NULL-terminated fortran strings,
+ * which provides a few `std::string`-style methods to handle
+ * the fortran strings in C++ programs.
  */
 class FortranStringView
 {
@@ -20,21 +21,23 @@ private:
    char* const e_; ///< end in [begin, end)
    FortranStringView() = delete;
 
+
    /**
-    * @brief
-    * if @c dst != @c src, copy the @c first_n characters from @c src to @c dst;
-    * fill @c dst with blanks if @c first_n is less than @c dstlen;
-    * @c dst is NOT NULL-terminated NULL.
+    * \brief
+    * If `dst != src`, copy the `first_n` characters from `src` to `dst`;
+    * fill `dst` with blanks if `first_n` is less than `dstlen`;
+    * `dst` is NOT NULL-terminated.
     */
    static void copy_with_blank_(char* dst, size_t dstlen, const char* src,
                                 size_t first_n);
 
+
    /**
-    * @brief
-    * compare to string @c src of @c len;
-    * the shorter string is filled by blanks prior to comparison
+    * \brief Compare to a string `src` of `len`.
+    * The shorter string is filled by blanks prior to comparison
     */
    bool if_eq_(const char* src, size_t len) const;
+
 
 public:
    template <size_t Len>
@@ -45,6 +48,7 @@ public:
    FortranStringView(const char* src, size_t len);
    FortranStringView(const char* src);
    FortranStringView(const std::string& src);
+
 
    // assignment
    template <size_t Len>
@@ -57,6 +61,7 @@ public:
    FortranStringView& operator=(const std::string& src);
    FortranStringView& operator=(const FortranStringView& src);
 
+
    // comparison
    template <size_t Len>
    bool operator==(const char (&src)[Len]) const
@@ -67,45 +72,33 @@ public:
    bool operator==(const std::string& src) const;
    bool operator==(const FortranStringView& src) const;
 
-   /// @return
-   /// max number of characters in the string
+
+   /// \return Max number of characters in the string.
    size_t size() const;
 
-   /// @return
-   /// length of string, ignoring any trailing blanks
+
+   /// \return Length of string, ignoring the trailing blanks.
    size_t len_trim() const;
 
-   /// @return
-   /// trimmed result in std::string.
+
+   /// \return A string ignoring the trailing blanks.
    std::string trim() const;
 
+
    /**
-    * @brief
-    * analogous to fortran str(x:y) syntax
-    *
-    * @param begin1
-    * one-based index for the beginning index
-    *
-    * @param back1
-    * one-based index for the inclusive ending index
-    *
-    * @return
-    * a new FortranStringView object
+    * \brief Analogous to Fortran str(x:y) syntax.
+    * \param begin1 One-based index for the beginning index.
+    * \param back1  One-based index for the inclusive ending index.
+    * \return       A new FortranStringView object.
     */
    FortranStringView operator()(int begin1, int back1) const;
 
+
    /**
-    * @brief
-    * analogous to fortran str(x:) syntax
-    *
-    * @param begin1
-    * one-based index for the beginning index
-    *
-    * @return
-    * a new FortranStringView object
+    * \brief Analogous to Fortran str(x:) syntax.
+    * \param begin1 One-based index for the beginning index.
+    * \return       A new FortranStringView object
     */
    FortranStringView operator()(int begin1) const;
 };
 TINKER_NAMESPACE_END
-
-#endif

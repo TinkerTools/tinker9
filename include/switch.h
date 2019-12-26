@@ -1,9 +1,9 @@
 #pragma once
-
 #include "macro.h"
 
+
 TINKER_NAMESPACE_BEGIN
-typedef enum
+enum switch_t
 {
    switch_default,
    switch_vdw,
@@ -19,10 +19,13 @@ typedef enum
    switch_usolve,
    switch_gkv,
    switch_gksa,
-} switch_t;
+};
+
 
 /// \return Distance at which switching of the potential begins.
 real switch_cut(switch_t mode);
+
+
 /// \return Distance at which the potential energy goes to zero.
 real switch_off(switch_t mode);
 TINKER_NAMESPACE_END

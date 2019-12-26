@@ -16,8 +16,7 @@ TINKER_NAMESPACE_BEGIN
  * | float*     | float  | 1   |
  * | int (*)[3] | int    | 3   |
  *
- * \tparam PTR
- * Must be a pointer type.
+ * \tparam PTR Must be a pointer type.
  */
 template <class PTR>
 struct deduce_ptr;

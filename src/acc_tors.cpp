@@ -1,5 +1,6 @@
 #include "add.h"
 #include "e_tors.h"
+#include "mathfunc.h"
 #include "md.h"
 
 // TOOD: use_smooth version

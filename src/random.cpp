@@ -4,6 +4,7 @@
 #include <chrono>
 #include <random>
 
+
 TINKER_NAMESPACE_BEGIN
 static std::default_random_engine generator_;
 void random_data(rc_op op)
@@ -30,38 +31,35 @@ void random_data(rc_op op)
    }
 }
 
-static std::uniform_real_distribution<double> uniformd_(0, 1);
-static std::uniform_real_distribution<float> uniformf_(0, 1);
-double random_double()
-{
-   return uniformd_(generator_);
-}
-float random_float()
-{
-   return uniformf_(generator_);
-}
 
-static std::normal_distribution<double> normald_(0, 1);
-static std::normal_distribution<float> normalf_(0, 1);
-double normal_double()
+template <class T>
+T random()
 {
-   return normald_(generator_);
+   static std::uniform_real_distribution<T> unif(0, 1);
+   return unif(generator_);
 }
-float normal_float()
-{
-   return normalf_(generator_);
-}
+template float random<float>();
+template double random<double>();
 
-static std::gamma_distribution<double> gammad_(1, 1);
-static std::gamma_distribution<float> gammaf_(1, 1);
-double chi_squared_double(int k)
+
+template <class T>
+T normal()
 {
-   gammad_.param(std::gamma_distribution<double>::param_type(0.5 * k, 2));
-   return gammad_(generator_);
+   static std::normal_distribution<T> norm(0, 1);
+   return norm(generator_);
 }
-float chi_squared_float(int k)
+template float normal<float>();
+template double normal<double>();
+
+
+template <class T>
+T chi_squared(int k)
 {
-   gammaf_.param(std::gamma_distribution<float>::param_type(0.5f * k, 2));
-   return gammaf_(generator_);
+   static std::gamma_distribution<T> gam(1, 1);
+   using param_type = typename std::gamma_distribution<T>::param_type;
+   gam.param(param_type((T)0.5 * k, 2));
+   return gam(generator_);
 }
+template float chi_squared<float>(int);
+template double chi_squared<double>(int);
 TINKER_NAMESPACE_END

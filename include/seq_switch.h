@@ -1,14 +1,11 @@
 #pragma once
-#include "macro_void_cuda_def.h"
-#include "mathfunc.h"
-#include "switch.h"
+#include "seq_def.h"
 
 
 TINKER_NAMESPACE_BEGIN
 /**
  * \ingroup ff
- * \brief Smooth function
- * `F: [cut,off]->[1,0]`.
+ * \brief Smooth function `F: [cut,off]->[1,0]`.
  *
  * Derived from the second order smooth step function
  * \f[ S_2: [0,1]\rightarrow[0,1] \f]
@@ -19,16 +16,16 @@ TINKER_NAMESPACE_BEGIN
  * \param[out] off    Distance at which the potential energy goes to zero.
  * \param[out] taper  F value.
  * \param[out] dtaper dF/dx value.
- * \tparam DO_DTAPER  If false, `dtaper` will not be calculated and its
+ * \tparam DO_DTAPER  If `false`, `dtaper` will not be calculated and its
  *                    original value will not be altered.
  */
 #pragma acc routine seq
 template <int DO_DTAPER>
-__device__
+SEQ_CUDA
 void switch_taper5(real rik, real cut, real off, real& restrict taper,
                    real& restrict dtaper)
 {
-   real rinv = REAL_RECIP(cut - off);
+   real rinv = 1.0f / (cut - off);
    real x = (rik - off) * rinv;
    real x2 = x * x;
    real x3 = x2 * x;

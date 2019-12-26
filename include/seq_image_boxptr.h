@@ -1,15 +1,14 @@
 #pragma once
 #include "box.h"
-#include "macro_void_cuda_def.h"
 #include "mathfunc.h"
+#include "seq_def.h"
 
 
 TINKER_NAMESPACE_BEGIN
 // image
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void image_triclinic(real& restrict xr, real& restrict yr,
                             real& restrict zr, const Box* restrict pb)
 {
@@ -25,8 +24,7 @@ inline void image_triclinic(real& restrict xr, real& restrict yr,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void image_monoclinic(real& restrict xr, real& restrict yr,
                              real& restrict zr, const Box* restrict pb)
 {
@@ -42,8 +40,7 @@ inline void image_monoclinic(real& restrict xr, real& restrict yr,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void image_orthogonal(real& restrict xr, real& restrict yr,
                              real& restrict zr, const Box* restrict pb)
 {
@@ -59,15 +56,13 @@ inline void image_orthogonal(real& restrict xr, real& restrict yr,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void image_null(real& restrict, real& restrict, real& restrict,
                        const Box* restrict)
 {}
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void image_general(real& restrict xr, real& restrict yr,
                           real& restrict zr, const Box* restrict pb)
 {
@@ -103,8 +98,7 @@ inline void image_general(real& restrict xr, real& restrict yr,
 #endif
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void imagen_triclinic(real& restrict xr, real& restrict yr,
                              real& restrict zr, const Box* restrict pb)
 {
@@ -112,8 +106,7 @@ inline void imagen_triclinic(real& restrict xr, real& restrict yr,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void imagen_monoclinic(real& restrict xr, real& restrict yr,
                               real& restrict zr, const Box* restrict pb)
 {
@@ -121,8 +114,7 @@ inline void imagen_monoclinic(real& restrict xr, real& restrict yr,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void imagen_orthogonal(real& restrict xr, real& restrict yr,
                               real& restrict zr, const Box* restrict pb)
 {
@@ -143,15 +135,13 @@ inline void imagen_orthogonal(real& restrict xr, real& restrict yr,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void imagen_null(real& restrict, real& restrict, real& restrict,
                         const Box* restrict)
 {}
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void imagen_general(real& restrict xr, real& restrict yr,
                            real& restrict zr, const Box* restrict pb)
 {

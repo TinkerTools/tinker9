@@ -3,6 +3,48 @@
 
 
 TINKER_NAMESPACE_BEGIN
+struct alignas(8) int2
+{
+   int x, y;
+};
+
+
+struct int3
+{
+   int x, y, z;
+};
+
+
+struct alignas(16) int4
+{
+   int x, y, z, w;
+};
+
+
+#pragma acc routine seq
+inline int2 make_int2(int x, int y)
+{
+   int2 f{.x = x, .y = y};
+   return f;
+}
+
+
+#pragma acc routine seq
+inline int3 make_int3(int x, int y, int z)
+{
+   int3 f{.x = x, .y = y, .z = z};
+   return f;
+}
+
+
+#pragma acc routine seq
+inline int4 make_int4(int x, int y, int z, int w)
+{
+   int4 f{.x = x, .y = y, .z = z, .w = w};
+   return f;
+}
+
+
 struct alignas(8) float2
 {
    float x, y;

@@ -20,8 +20,8 @@ void thermo_bussi_acc(real dt_real, real temp_real)
 
    double c = std::exp(-dt / tautemp);
    double d = (1 - c) * (kelvin / temp) / nfree;
-   double r = normal_double();
-   double s = chi_squared_double(nfree - 1);
+   double r = normal<double>();
+   double s = chi_squared<double>(nfree - 1);
    double scale = c + (s + r * r) * d + 2 * r * std::sqrt(c * d);
    scale = std::sqrt(scale);
    if (r + std::sqrt(c / d) < 0)

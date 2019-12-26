@@ -1,13 +1,12 @@
 #pragma once
 #include "macro.h"
-#include "macro_void_cuda_def.h"
 #include "mathfunc.h"
+#include "seq_def.h"
 
 
 TINKER_NAMESPACE_BEGIN
 namespace spatial_v1 {
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void box_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
                         int px, int py, int pz, int boxid)
 {
@@ -18,8 +17,7 @@ inline void box_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline int ixyz_to_box(int px, int py, int pz, int ix, int iy, int iz)
 {
    int id = (ix << (pz + py)) + (iy << pz) + iz;
@@ -29,8 +27,7 @@ inline int ixyz_to_box(int px, int py, int pz, int ix, int iy, int iz)
 
 
 namespace spatial_v2 {
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void box_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
                         int px, int py, int pz, int boxid)
 {
@@ -58,8 +55,7 @@ inline void box_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline int ixyz_to_box(int px, int py, int pz, int ix, int iy, int iz)
 {
    int id = 0;
@@ -87,8 +83,7 @@ using namespace spatial_v1;
 // using namespace spatial_v2;
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void frac_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
                          int px, int py, int pz, real fx, real fy, real fz)
 {
@@ -98,8 +93,7 @@ inline void frac_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline int frac_to_box(int px, int py, int pz, real fx, real fy, real fz)
 {
    int ix, iy, iz;

@@ -1,6 +1,5 @@
 /**
  * \defgroup ff      Force Field Terms
- * \defgroup io      Inputs and Outputs
  * \defgroup macro   Macros
  * \defgroup math    Math
  * \defgroup md      MD Configurations
@@ -30,6 +29,8 @@
  * \ingroup util
  * \defgroup error  Errors and Exceptions
  * \ingroup util
+ * \defgroup io     I/O and Text
+ * \ingroup util
  * \defgroup mem    Memory and Pointers
  * \ingroup util
  */
@@ -47,12 +48,6 @@ namespace builtin {}
  * \brief Integer flags for different kinds of atom data and energy routines.
  */
 namespace calc {}
-
-
-/**
- * \brief Compile-time math functions. Some of them are also run-time functions.
- */
-namespace ct {}
 
 
 /**

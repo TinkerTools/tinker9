@@ -2,9 +2,9 @@
 #include "e_mplar.h"
 #include "e_mpole.h"
 #include "e_polar.h"
-#include "empole_self.cuh"
-#include "epolar_trq.cuh"
-#include "launch.cuh"
+#include "empole_self.h"
+#include "epolar_trq.h"
+#include "launch.h"
 #include "md.h"
 #include "pme.h"
 #include "seq_damp.h"
@@ -1025,8 +1025,8 @@ void emplar_coulomb_tmpl()
    emplar_tmpl_cu<USE, elec_t::coulomb>(uind, uinp);
    // epolar torque
    if CONSTEXPR (USE & calc::grad) {
-      launch_kernel1(n, epolar_trq_cu, //
-                     trqx, trqy, trqz, n, rpole, ufld, dufld);
+      launch_k1(n, epolar_trq_cu, //
+                trqx, trqy, trqz, n, rpole, ufld, dufld);
    }
    if CONSTEXPR (do_e) {
       epolar0_dotprod(uind, uinp);

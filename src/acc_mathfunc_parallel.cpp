@@ -1,8 +1,10 @@
-#include "mathfunc_parallel.h"
+#include "deduce_ptr.h"
+#include "mathfunc_parallel_acc.h"
 
 
 TINKER_NAMESPACE_BEGIN
-namespace parallel {
+namespace platform {
+namespace acc {
 template <class T>
 T reduce_sum(const T* gpu_a, size_t cpu_n)
 {
@@ -52,9 +54,25 @@ T dotprod(const T* restrict gpu_a, const T* restrict gpu_b, size_t cpu_n)
       val += gpu_a[i] * gpu_b[i];
    return val;
 }
-template int dotprod(const int*, const int*, size_t);
 template float dotprod(const float*, const float*, size_t);
 template double dotprod(const double*, const double*, size_t);
+
+
+template <class T>
+void dotprod(T* ans, const T* a, const T* b, int nelem, int /* sync */)
+{
+   T val = 0;
+   #pragma acc parallel loop independent deviceptr(ans,a,b) reduction(+:val)
+   for (size_t i = 0; i < nelem; ++i) {
+      *ans += a[i] * b[i];
+   }
+   #pragma acc serial deviceptr(ans)
+   {
+      *ans = val;
+   }
+}
+template void dotprod(float*, const float*, const float*, int, int);
+template void dotprod(double*, const double*, const double*, int, int);
 
 
 template <class T>
@@ -74,5 +92,6 @@ void scale_array(T* gpu_dst, T scal, size_t nelem, int sync)
 }
 template void scale_array(float*, float, size_t, int);
 template void scale_array(double*, double, size_t, int);
+}
 }
 TINKER_NAMESPACE_END

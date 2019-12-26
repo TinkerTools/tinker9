@@ -1,7 +1,7 @@
 #include "add.h"
 #include "e_angle.h"
 #include "e_opbend.h"
-#include "mathfunc_const.h"
+#include "mathfunc.h"
 #include "md.h"
 #include <cassert>
 

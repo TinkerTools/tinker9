@@ -7,7 +7,7 @@ TEST_CASE("MathFuncPow2", "[util]")
 {
    SECTION("IsPow2")
    {
-      auto f = ct::is_pow2;
+      auto f = is_pow2;
 
       REQUIRE(f(0) == false);
       REQUIRE(f(1) == true);
@@ -23,8 +23,8 @@ TEST_CASE("MathFuncPow2", "[util]")
 
    SECTION("Pow2")
    {
-      auto f = ct::pow2;
-      auto g = ct::pow2ll;
+      auto f = pow2;
+      auto g = pow2ll;
 
       REQUIRE(f(0) == 0x00000001);
       REQUIRE(f(1) == 0x00000002);
@@ -45,7 +45,7 @@ TEST_CASE("MathFuncPow2", "[util]")
 
    SECTION("FloorLog2")
    {
-      auto f = ct::floor_log2;
+      auto f = floor_log2_constexpr;
       int (*g)(int) = floor_log2;
       int (*k)(long long) = floor_log2;
 
@@ -112,7 +112,7 @@ TEST_CASE("MathFuncPow2", "[util]")
 
    SECTION("Pow2LessOrEqual")
    {
-      auto f = ct::pow2_le;
+      auto f = pow2_le;
 
       REQUIRE(f(1) == 1);
       REQUIRE(f(2) == 2);
@@ -131,7 +131,7 @@ TEST_CASE("MathFuncPow2", "[util]")
 
    SECTION("Pow2GreaterOrEqual")
    {
-      auto f = ct::pow2_ge;
+      auto f = pow2_ge;
 
       REQUIRE(f(0) == 1);
       REQUIRE(f(1) == 1);

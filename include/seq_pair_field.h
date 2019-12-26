@@ -1,6 +1,5 @@
 #pragma once
 #include "elec.h"
-#include "macro_void_cuda_def.h"
 #include "md.h"
 #include "seq_damp.h"
 
@@ -8,7 +7,7 @@
 TINKER_NAMESPACE_BEGIN
 #pragma acc routine seq
 template <elec_t ETYP>
-__device__
+SEQ_CUDA
 void pair_dfield(real r2, real xr, real yr, real zr, real dscale,
                  real pscale, //
                  real ci, real dix, real diy, real diz, real qixx, real qixy,
@@ -99,7 +98,7 @@ void pair_dfield(real r2, real xr, real yr, real zr, real dscale,
 
 
 template <elec_t ETYP>
-__device__
+SEQ_CUDA
 void pair_ufield(real r2, real xr, real yr, real zr, real uscale, //
                  real uindi0, real uindi1, real uindi2, real uinpi0,
                  real uinpi1, real uinpi2, real pdi, real pti, //

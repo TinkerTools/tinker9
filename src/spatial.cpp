@@ -35,7 +35,7 @@ void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer,
    st.px = (level + 0) / 3;
    st.py = (level + 1) / 3;
    st.pz = (level + 2) / 3;
-   st.nx = ct::pow2(st.px + st.py + st.pz);
+   st.nx = pow2(st.px + st.py + st.pz);
    st.nxk = (st.nx + Spatial::BLOCK - 1) / Spatial::BLOCK;
    st.near = 0;
    st.xak_sum = 0;

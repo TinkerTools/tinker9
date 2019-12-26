@@ -282,7 +282,7 @@ ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
-INCLUDE_PATH           =
+INCLUDE_PATH           = include include/syntax/acc include/syntax/cu
 INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = NDEBUG \
                          TINKER_SINGLE_PRECISION \

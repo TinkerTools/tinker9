@@ -1,6 +1,6 @@
 #include "add.h"
 #include "e_angle.h"
-#include "mathfunc_const.h"
+#include "mathfunc.h"
 #include "md.h"
 
 // TODO: test linear and fourier angles

@@ -1,4 +1,3 @@
-#include "async.h"
 #include "energy_buffer.h"
 #include "md.h"
 

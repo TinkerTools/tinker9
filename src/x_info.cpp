@@ -1,8 +1,5 @@
+#include "gpu_card.h"
 #include "tinker_rt.h"
-#if TINKER_CUDART
-#   include "gpu_card.h"
-#   include "gpu_card_cudart.h"
-#endif
 
 
 TINKER_NAMESPACE_BEGIN

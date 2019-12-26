@@ -1,5 +1,5 @@
 #include "energy_buffer.h"
-#include "mathfunc_parallel.h"
+#include "mathfunc.h"
 #include "md.h"
 #include <cassert>
 
@@ -21,7 +21,7 @@ size_t buffer_size()
    if (nhint <= 512)
       max_bytes /= 2; // 32 KB 8192 words
 
-   assert(ct::is_pow2(max_bytes) && "new_size must be power of 2");
+   assert(is_pow2(max_bytes) && "new_size must be power of 2");
    return max_bytes;
 }
 

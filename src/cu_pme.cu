@@ -1,7 +1,7 @@
 #include "add.h"
 #include "box.h"
 #include "e_mpole.h"
-#include "launch.cuh"
+#include "launch.h"
 #include "md.h"
 #include "pme.h"
 #include "seq_pme.h"

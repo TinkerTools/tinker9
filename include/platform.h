@@ -4,13 +4,17 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace platform {
-constexpr int cpu = 0x0001;
-constexpr int gpu = 0x0100;
-constexpr int acc = 0x0200;
-constexpr int cuda = 0x0400;
+constexpr int acc_pltfm = 0x001;
+constexpr int cu_pltfm = 0x002;
 
 
-extern int config;
+#if TINKER_HOST
+constexpr int config = acc_pltfm;
+#endif
+
+
+#if TINKER_CUDART
+constexpr int config = acc_pltfm + cu_pltfm;
+#endif
 }
-namespace p = platform;
 TINKER_NAMESPACE_END
