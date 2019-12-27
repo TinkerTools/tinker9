@@ -1,3 +1,4 @@
+#include "acclib.h"
 #include "deduce_ptr.h"
 #include "mathfunc_parallel_acc.h"
 
@@ -59,16 +60,27 @@ template double dotprod(const double*, const double*, size_t);
 
 
 template <class T>
-void dotprod(T* ans, const T* a, const T* b, int nelem, int /* sync */)
+void dotprod(T* ans, const T* a, const T* b, int nelem, int sync)
 {
-   T val = 0;
-   #pragma acc parallel loop independent deviceptr(ans,a,b) reduction(+:val)
-   for (size_t i = 0; i < nelem; ++i) {
-      *ans += a[i] * b[i];
-   }
-   #pragma acc serial deviceptr(ans)
-   {
-      *ans = val;
+   T v = 0;
+   if (sync) {
+      #pragma acc parallel loop independent deviceptr(a,b) reduction(+:v)
+      for (size_t i = 0; i < nelem; ++i) {
+         v += a[i] * b[i];
+      }
+      #pragma acc serial deviceptr(ans)
+      {
+         *ans = v;
+      }
+   } else {
+      #pragma acc parallel loop independent async deviceptr(a,b) reduction(+:v)
+      for (size_t i = 0; i < nelem; ++i) {
+         v += a[i] * b[i];
+      }
+      #pragma acc serial async deviceptr(ans)
+      {
+         *ans = v;
+      }
    }
 }
 template void dotprod(float*, const float*, const float*, int, int);

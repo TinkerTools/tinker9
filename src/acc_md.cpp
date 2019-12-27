@@ -244,9 +244,4 @@ void zero_gradient_async(int nelem, real* gx, real* gy, real* gz)
       gz[i] = 0;
    }
 }
-
-void wait_async()
-{
-   #pragma acc wait async
-}
 TINKER_NAMESPACE_END

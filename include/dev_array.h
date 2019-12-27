@@ -259,7 +259,7 @@ struct device_array
       static_assert(std::is_same<T, T2>::value, "");
       typedef typename deduce_ptr<ANS>::type TA;
       static_assert(std::is_same<T, TA>::value, "");
-      parallel::dotprod(ans, flatten(ptr), flatten(ptr2), nelem, sync);
+      parallel::dotprod(ans, flatten(ptr), flatten(ptr2), nelem * N, sync);
    }
 
 

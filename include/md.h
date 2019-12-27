@@ -193,5 +193,5 @@ void propagate(int nsteps, real dt_ps, void (*itg)(int, real) = nullptr);
 void velocity_verlet(int istep, real dt_ps);
 
 
-void wait_async();
+void wait_queue();
 TINKER_NAMESPACE_END

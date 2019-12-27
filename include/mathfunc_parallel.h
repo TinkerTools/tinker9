@@ -60,13 +60,8 @@ T dotprod(const T* a, const T* b, size_t nelem)
 template <class T>
 void dotprod(T* ans, const T* a, const T* b, int nelem, int sync)
 {
-   if (platform::config & platform::cu_pltfm) {
-      namespace nsp = platform::cu;
-      nsp::dotprod(ans, a, b, nelem, sync);
-   } else {
-      namespace nsp = platform::acc;
-      nsp::dotprod(ans, a, b, nelem, sync);
-   }
+   namespace nsp = platform::cu;
+   nsp::dotprod(ans, a, b, nelem, sync);
 }
 
 

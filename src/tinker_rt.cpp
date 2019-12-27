@@ -33,11 +33,26 @@ void vstr_to_val<int>(int& v, std::string vstr)
 {
    v = std::stoi(vstr);
 }
+
+
+template <>
+void vstr_to_val<double>(double& v, std::string vstr)
+{
+   v = std::stod(vstr);
 }
 
 
-template <class T>
-void get_kv_pair(std::string k, T& v, T vdefault)
+template <>
+void vstr_to_val<std::string>(std::string& v, std::string vstr)
+{
+   v = vstr;
+   Text::upcase(v);
+}
+}
+
+
+template <class T1, class T2>
+void get_kv_pair(std::string k, T1& v, T2 vdefault)
 {
    std::string value_str = "";
    for (int i = 0; i < keys::nkey; ++i) {
@@ -57,5 +72,8 @@ void get_kv_pair(std::string k, T& v, T vdefault)
       v = vdefault;
    }
 }
-template void get_kv_pair<int>(std::string, int&, int);
+template void get_kv_pair(std::string, int&, int);
+template void get_kv_pair(std::string, double&, double);
+template void get_kv_pair(std::string, std::string&, std::string);
+template void get_kv_pair(std::string, std::string&, const char*);
 TINKER_NAMESPACE_END

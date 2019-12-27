@@ -19,8 +19,8 @@ void nextarg(char (&str)[Len], int& exist)
 }
 
 
-template <class T>
-void get_kv_pair(std::string k, T& v, T vdefault);
+template <class T1, class T2>
+void get_kv_pair(std::string k, T1& v, T2 vdefault);
 TINKER_NAMESPACE_END
 
 

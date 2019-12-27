@@ -47,7 +47,7 @@ void energy_potential(int vers)
 
    zero_egv(vers);
 
-   wait_async();
+   wait_queue();
 
    // bonded terms
 
@@ -92,7 +92,7 @@ void energy_potential(int vers)
       epolar(vers);
 skip_mpole_polar:
    torque(vers);
-   wait_async();
+   wait_queue();
 
    sum_energies(vers);
 }

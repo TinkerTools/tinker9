@@ -1,3 +1,4 @@
+#include "acclib.h"
 #include "cudalib.h"
 #if TINKER_CUDART
 #   include "error.h"
@@ -15,10 +16,12 @@ real* dptr_real64;
 #endif
 
 
+int async_queue;
 void cudalib_data(rc_op op)
 {
 #if TINKER_CUDART
    if (op & rc_dealloc) {
+      async_queue = -42;
       nonblk = nullptr;
       check_rt(cublasDestroy(h_cublas));
       check_rt(cublasDestroy(h_cublas_nonblk));
@@ -28,15 +31,22 @@ void cudalib_data(rc_op op)
 
 
    if (op & rc_alloc) {
-      int handle = acc_get_default_async();
-      nonblk = (cudaStream_t)acc_get_cuda_stream(handle);
-
+      async_queue = acc_get_default_async();
+      nonblk = (cudaStream_t)acc_get_cuda_stream(async_queue);
       check_rt(cublasCreate(&h_cublas));
       check_rt(cublasCreate(&h_cublas_nonblk));
       check_rt(cublasSetStream(h_cublas_nonblk, nonblk));
       check_rt(cudaMallocHost(&pinned_real64, 64 * sizeof(real)));
       check_rt(cudaMalloc(&dptr_real64, 64 * sizeof(real)));
    }
+#endif
+}
+
+
+void wait_queue()
+{
+#if TINKER_CUDART
+#pragma acc wait(async_queue)
 #endif
 }
 TINKER_NAMESPACE_END

@@ -51,8 +51,10 @@ void finish()
 void host_data(rc_op op)
 {
    extern void random_data(rc_op);
+   extern void platform_data(rc_op);
    extern void gpu_card_data(rc_op);
    rc_man rand42_{random_data, op};
+   rc_man pf42_{platform_data, op};
    rc_man gpu_card42_{gpu_card_data, op};
 }
 
