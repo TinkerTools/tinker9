@@ -56,7 +56,6 @@ void reduce_sum2(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem,
       h_ans[iv] = ans;
    }
 }
-template void reduce_sum2(int (&)[6], int (*)[8], size_t, int);
 template void reduce_sum2(float (&)[6], float (*)[8], size_t, int);
 template void reduce_sum2(double (&)[6], double (*)[8], size_t, int);
 template void reduce_sum2(unsigned long long (&)[6], unsigned long long (*)[8],

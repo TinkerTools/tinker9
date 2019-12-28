@@ -20,17 +20,16 @@ void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
 }
 
 
-void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
-                                 int sync)
+void device_memory_copyout_bytes_sync(void* dst, const void* src, size_t nbytes,
+                                      int use_sync_queue)
 {
    cudaStream_t s;
-   if (sync)
+   if (use_sync_queue)
       s = nullptr;
    else
       s = nonblk;
    check_rt(cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyDeviceToHost, s));
-   if (sync)
-      check_rt(cudaStreamSynchronize(nullptr));
+   check_rt(cudaStreamSynchronize(s));
 }
 
 

@@ -7,8 +7,8 @@
 TINKER_NAMESPACE_BEGIN
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
                                 int sync);
-void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
-                                 int sync);
+void device_memory_copyout_bytes_sync(void* dst, const void* src, size_t nbytes,
+                                      int use_sync_queue);
 void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
                               int sync);
 void device_memory_zero_bytes(void* dst, size_t nbytes, int sync);
@@ -49,7 +49,8 @@ void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem)
 
 
 template <class DT, class ST>
-void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem)
+void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem,
+                                    int use_sync_queue)
 {
    device_memory_check_type<DT>();
    device_memory_check_type<ST>();
@@ -58,10 +59,10 @@ void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem)
 
    size_t size = ss * nelem;
    if (ds == ss) {
-      device_memory_copyout_bytes(dst, src, size, true);
+      device_memory_copyout_bytes_sync(dst, src, size, use_sync_queue);
    } else {
       std::vector<ST> buf(nelem);
-      device_memory_copyout_bytes(buf.data(), src, size, true);
+      device_memory_copyout_bytes_sync(buf.data(), src, size, use_sync_queue);
       for (size_t i = 0; i < nelem; ++i)
          dst[i] = buf[i];
    }
@@ -169,10 +170,12 @@ struct device_array
 
 
    template <class U, class PTR>
-   static void copyout(size_t nelem, U* dst, const PTR src)
+   static void copyout(size_t nelem, U* dst, const PTR src,
+                       int use_sync_queue = true)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_copyout_1d_array(flatten(dst), flatten(src), nelem * N);
+      device_memory_copyout_1d_array(flatten(dst), flatten(src), nelem * N,
+                                     use_sync_queue);
    }
 
 
@@ -199,14 +202,14 @@ struct device_array
 
 
    template <class DT, class ST>
-   static void copyout2(size_t idx0, size_t ndim, size_t nelem, DT dst,
-                        const ST src)
+   static void copyout2(int use_sync_queue, size_t idx0, size_t ndim,
+                        size_t nelem, DT dst, const ST src)
    {
       static_assert(deduce_ptr<DT>::n == 1, "");
       static_assert(deduce_ptr<ST>::n == 1, "");
       typedef typename deduce_ptr<ST>::type T;
       std::vector<T> buf(nelem);
-      copyout(nelem, buf.data(), src);
+      copyout(nelem, buf.data(), src, use_sync_queue);
       for (size_t i = 0; i < nelem; ++i)
          dst[ndim * i + idx0] = buf[i];
    }
