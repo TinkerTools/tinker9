@@ -21,7 +21,7 @@ struct GenericUnitAlloc<GenericUnitVersion::DisableOnDevice>
 {
    static void deallocate(void*) {}
    static void allocate(void**, size_t) {}
-   static void copyin(void*, const void*, size_t) {}
+   static void copyin(void*, const void*, size_t, int) {}
 };
 
 
@@ -38,9 +38,9 @@ struct GenericUnitAlloc<GenericUnitVersion::EnableOnDevice>
       device_memory_allocate_bytes(pp, nb);
    }
 
-   static void copyin(void* d, const void* s, size_t nb)
+   static void copyin(void* d, const void* s, size_t nb, int sync)
    {
-      device_memory_copyin_bytes(d, s, nb, true);
+      device_memory_copyin_bytes(d, s, nb, sync);
    }
 };
 
@@ -233,10 +233,10 @@ public:
    /// \param hobj
    /// The reference to the same object on host that can be accessed by the same
    /// unit number.
-   void update_deviceptr(const T& hobj)
+   void update_deviceptr(const T& hobj, int sync = 1)
    {
       assert(&hobj == &this->obj());
-      mem_op::copyin(this->deviceptr(), &this->obj(), sizeof(T));
+      mem_op::copyin(this->deviceptr(), &this->obj(), sizeof(T), sync);
    }
 };
 TINKER_NAMESPACE_END
