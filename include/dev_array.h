@@ -6,12 +6,12 @@
 
 TINKER_NAMESPACE_BEGIN
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
-                                int sync = 1);
+                                int sync);
 void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
-                                 int sync = 1);
+                                 int sync);
 void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
-                              int sync = 1);
-void device_memory_zero_bytes(void* dst, size_t nbytes, int sync = 1);
+                              int sync);
+void device_memory_zero_bytes(void* dst, size_t nbytes, int sync);
 void device_memory_deallocate_bytes(void* ptr);
 void device_memory_allocate_bytes(void** pptr, size_t nbytes);
 TINKER_NAMESPACE_END
@@ -38,12 +38,12 @@ void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem)
 
    size_t size = ds * nelem;
    if (ds == ss) {
-      device_memory_copyin_bytes(dst, src, size);
+      device_memory_copyin_bytes(dst, src, size, true);
    } else {
       std::vector<DT> buf(nelem);
       for (size_t i = 0; i < nelem; ++i)
          buf[i] = src[i];
-      device_memory_copyin_bytes(dst, buf.data(), size);
+      device_memory_copyin_bytes(dst, buf.data(), size, true);
    }
 }
 
@@ -58,10 +58,10 @@ void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem)
 
    size_t size = ss * nelem;
    if (ds == ss) {
-      device_memory_copyout_bytes(dst, src, size);
+      device_memory_copyout_bytes(dst, src, size, true);
    } else {
       std::vector<ST> buf(nelem);
-      device_memory_copyout_bytes(buf.data(), src, size);
+      device_memory_copyout_bytes(buf.data(), src, size, true);
       for (size_t i = 0; i < nelem; ++i)
          dst[i] = buf[i];
    }
@@ -144,36 +144,19 @@ struct device_array
 
 
    template <class PTR>
-   static void zero(size_t nelem, PTR p)
+   static void zero(int sync, size_t nelem, PTR p)
    {
       typedef typename deduce_ptr<PTR>::type T;
       constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_zero_bytes(flatten(p), sizeof(T) * nelem * N);
+      device_memory_zero_bytes(flatten(p), sizeof(T) * nelem * N, sync);
    }
 
 
    template <class PTR, class... PTRS>
-   static void zero(size_t nelem, PTR p, PTRS... ps)
+   static void zero(int sync, size_t nelem, PTR p, PTRS... ps)
    {
-      zero(nelem, p);
-      zero(nelem, ps...);
-   }
-
-
-   template <class PTR>
-   static void zero_async(size_t nelem, PTR p)
-   {
-      typedef typename deduce_ptr<PTR>::type T;
-      constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_zero_bytes(flatten(p), sizeof(T) * nelem * N, false);
-   }
-
-
-   template <class PTR, class... PTRS>
-   static void zero_async(size_t nelem, PTR p, PTRS... ps)
-   {
-      zero_async(nelem, p);
-      zero_async(nelem, ps...);
+      zero(sync, nelem, p);
+      zero(sync, nelem, ps...);
    }
 
 
@@ -194,18 +177,10 @@ struct device_array
 
 
    template <class PTR, class U>
-   static void copy(size_t nelem, PTR dst, const U* src)
+   static void copy(int sync, size_t nelem, PTR dst, const U* src)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_copy_1d_array(flatten(dst), flatten(src), nelem * N, true);
-   }
-
-
-   template <class PTR, class U>
-   static void copy_async(size_t nelem, PTR dst, const U* src)
-   {
-      constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_copy_1d_array(flatten(dst), flatten(src), nelem * N, false);
+      device_memory_copy_1d_array(flatten(dst), flatten(src), nelem * N, sync);
    }
 
 
@@ -264,36 +239,19 @@ struct device_array
 
 
    template <class FLT, class PTR>
-   static void scale(size_t nelem, FLT scal, PTR ptr)
+   static void scale(int sync, size_t nelem, FLT scal, PTR ptr)
    {
       typedef typename deduce_ptr<PTR>::type T;
       constexpr size_t N = deduce_ptr<PTR>::n;
-      parallel::scale_array(flatten(ptr), scal, nelem * N, true);
+      parallel::scale_array(flatten(ptr), scal, nelem * N, sync);
    }
 
 
    template <class FLT, class PTR, class... PTRS>
-   static void scale(size_t nelem, FLT scal, PTR ptr, PTRS... ptrs)
+   static void scale(int sync, size_t nelem, FLT scal, PTR ptr, PTRS... ptrs)
    {
-      scale(nelem, scal, ptr);
-      scale(nelem, scal, ptrs...);
-   }
-
-
-   template <class FLT, class PTR>
-   static void scale_async(size_t nelem, FLT scal, PTR ptr)
-   {
-      typedef typename deduce_ptr<PTR>::type T;
-      constexpr size_t N = deduce_ptr<PTR>::n;
-      parallel::scale_array(flatten(ptr), scal, nelem * N, false);
-   }
-
-
-   template <class FLT, class PTR, class... PTRS>
-   static void scale_async(size_t nelem, FLT scal, PTR ptr, PTRS... ptrs)
-   {
-      scale_async(nelem, scal, ptr);
-      scale_async(nelem, scal, ptrs...);
+      scale(sync, nelem, scal, ptr);
+      scale(sync, nelem, scal, ptrs...);
    }
 };
 

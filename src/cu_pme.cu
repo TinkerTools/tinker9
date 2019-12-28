@@ -187,7 +187,7 @@ void grid_mpole_cu(PMEUnit pme_u, real (*fmp)[10])
    int nt = n1 * n2 * n3;
 
 
-   device_array::zero_async(2 * nt, st.qgrid);
+   device_array::zero(false, 2 * nt, st.qgrid);
    auto ker = grid_tmpl_cu<MPOLE_GRID, 5>;
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
               (const real*)fmp, nullptr, st.qgrid, recipa, recipb, recipc);
@@ -203,7 +203,7 @@ void grid_uind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
    int nt = n1 * n2 * n3;
 
 
-   device_array::zero_async(2 * nt, st.qgrid);
+   device_array::zero(false, 2 * nt, st.qgrid);
    auto ker = grid_tmpl_cu<UIND_GRID, 5>;
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
               (const real*)fuind, (const real*)fuinp, st.qgrid, recipa, recipb,

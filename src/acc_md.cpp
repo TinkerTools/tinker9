@@ -203,7 +203,8 @@ void mdrest_acc(int istep)
 
 void propagate_xyz_acc(real dt)
 {
-   #pragma acc parallel loop independent deviceptr(x,y,z,vx,vy,vz)
+   #pragma acc parallel loop independent async\
+               deviceptr(x,y,z,vx,vy,vz)
    for (int i = 0; i < n; ++i) {
       x[i] += dt * vx[i];
       y[i] += dt * vy[i];
@@ -214,7 +215,8 @@ void propagate_xyz_acc(real dt)
 void propagate_velocity_acc(real dt)
 {
    const real ekcal = units::ekcal;
-   #pragma acc parallel loop independent deviceptr(vx,vy,vz,gx,gy,gz,massinv)
+   #pragma acc parallel loop independent async\
+               deviceptr(vx,vy,vz,gx,gy,gz,massinv)
    for (int i = 0; i < n; ++i) {
       real coef = -ekcal * massinv[i] * dt;
       vx[i] += coef * gx[i];
@@ -224,24 +226,22 @@ void propagate_velocity_acc(real dt)
 }
 
 
-void zero_gradient(int nelem, real* gx, real* gy, real* gz)
+void zero_gradient(int sync, size_t nelem, real* gx, real* gy, real* gz)
 {
-   #pragma acc parallel loop independent deviceptr(gx,gy,gz)
-   for (int i = 0; i < nelem; ++i) {
-      gx[i] = 0;
-      gy[i] = 0;
-      gz[i] = 0;
-   }
-}
-
-
-void zero_gradient_async(int nelem, real* gx, real* gy, real* gz)
-{
-   #pragma acc parallel loop independent async deviceptr(gx,gy,gz)
-   for (int i = 0; i < nelem; ++i) {
-      gx[i] = 0;
-      gy[i] = 0;
-      gz[i] = 0;
+   if (sync) {
+      #pragma acc parallel loop independent deviceptr(gx,gy,gz)
+      for (int i = 0; i < nelem; ++i) {
+         gx[i] = 0;
+         gy[i] = 0;
+         gz[i] = 0;
+      }
+   } else {
+      #pragma acc parallel loop independent async deviceptr(gx,gy,gz)
+      for (int i = 0; i < nelem; ++i) {
+         gx[i] = 0;
+         gy[i] = 0;
+         gz[i] = 0;
+      }
    }
 }
 TINKER_NAMESPACE_END

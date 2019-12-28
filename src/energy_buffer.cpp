@@ -72,14 +72,14 @@ void buffer_deallocate(count_buffer c, energy_buffer e, virial_buffer v)
 
 int get_count(const count_buffer ne)
 {
-   int c = parallel::reduce_sum(ne, buffer_size());
+   int c = parallel::reduce_sum(ne, buffer_size(), false);
    return c;
 }
 
 
 real get_energy(const energy_buffer e)
 {
-   auto b = parallel::reduce_sum(e, buffer_size());
+   auto b = parallel::reduce_sum(e, buffer_size(), false);
    real real_out = energy_buffer_traits::cast(b);
    return real_out;
 }
@@ -88,7 +88,7 @@ real get_energy(const energy_buffer e)
 void get_virial(real (&v1)[virial_buffer_traits::n], const virial_buffer v)
 {
    virial_buffer_traits::type b[virial_buffer_traits::n];
-   parallel::reduce_sum2(b, v, buffer_size());
+   parallel::reduce_sum2(b, v, buffer_size(), false);
    for (size_t i = 0; i < virial_buffer_traits::n; ++i)
       v1[i] = virial_buffer_traits::cast(b[i]);
 }

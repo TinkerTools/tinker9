@@ -7,22 +7,31 @@ TINKER_NAMESPACE_BEGIN
 namespace platform {
 namespace acc {
 template <class T>
-T reduce_sum(const T* gpu_a, size_t cpu_n)
+T reduce_sum(const T* gpu_a, size_t cpu_n, int sync)
 {
    T val = 0;
-   #pragma acc parallel loop independent deviceptr(gpu_a) reduction(+:val)
-   for (size_t i = 0; i < cpu_n; ++i)
-      val += gpu_a[i];
+   if (sync) {
+      #pragma acc parallel loop independent\
+                  deviceptr(gpu_a) reduction(+:val)
+      for (size_t i = 0; i < cpu_n; ++i)
+         val += gpu_a[i];
+   } else {
+      #pragma acc parallel loop independent async\
+                  deviceptr(gpu_a) reduction(+:val)
+      for (size_t i = 0; i < cpu_n; ++i)
+         val += gpu_a[i];
+   }
    return val;
 }
-template int reduce_sum(const int*, size_t);
-template float reduce_sum(const float*, size_t);
-template double reduce_sum(const double*, size_t);
-template unsigned long long reduce_sum(const unsigned long long*, size_t);
+template int reduce_sum(const int*, size_t, int);
+template float reduce_sum(const float*, size_t, int);
+template double reduce_sum(const double*, size_t, int);
+template unsigned long long reduce_sum(const unsigned long long*, size_t, int);
 
 
 template <class HT, size_t HN, class DPTR>
-void reduce_sum2(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem)
+void reduce_sum2(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem,
+                 int sync)
 {
    typedef typename deduce_ptr<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type DT;
@@ -33,17 +42,45 @@ void reduce_sum2(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem)
 
    for (size_t iv = 0; iv < HN; ++iv) {
       HT ans = 0;
-      #pragma acc parallel loop independent deviceptr(v) reduction(+:ans)
-      for (size_t ig = 0; ig < nelem; ++ig)
-         ans += v[ig][iv];
+      if (sync) {
+         #pragma acc parallel loop independent\
+                     deviceptr(v) reduction(+:ans)
+         for (size_t ig = 0; ig < nelem; ++ig)
+            ans += v[ig][iv];
+      } else {
+         #pragma acc parallel loop independent async\
+                     deviceptr(v) reduction(+:ans)
+         for (size_t ig = 0; ig < nelem; ++ig)
+            ans += v[ig][iv];
+      }
       h_ans[iv] = ans;
    }
 }
-template void reduce_sum2(int (&)[6], int (*)[8], size_t);
-template void reduce_sum2(float (&)[6], float (*)[8], size_t);
-template void reduce_sum2(double (&)[6], double (*)[8], size_t);
+template void reduce_sum2(int (&)[6], int (*)[8], size_t, int);
+template void reduce_sum2(float (&)[6], float (*)[8], size_t, int);
+template void reduce_sum2(double (&)[6], double (*)[8], size_t, int);
 template void reduce_sum2(unsigned long long (&)[6], unsigned long long (*)[8],
-                          size_t);
+                          size_t, int);
+
+
+template <class T>
+T reduce_logic_or(const T* gpu_a, size_t cpu_n, int sync)
+{
+   T val = false;
+   if (sync) {
+      #pragma acc parallel loop independent\
+                  deviceptr(gpu_a) reduction(||:val)
+      for (size_t i = 0; i < cpu_n; ++i)
+         val = (val || gpu_a[i]);
+   } else {
+      #pragma acc parallel loop independent async\
+                  deviceptr(gpu_a) reduction(||:val)
+      for (size_t i = 0; i < cpu_n; ++i)
+         val = (val || gpu_a[i]);
+   }
+   return val;
+}
+template int reduce_logic_or(const int*, size_t, int);
 
 
 template <class T>

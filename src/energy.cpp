@@ -47,8 +47,6 @@ void energy_potential(int vers)
 
    zero_egv(vers);
 
-   wait_queue();
-
    // bonded terms
 
    if (use_potent(bond_term))

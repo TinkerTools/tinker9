@@ -10,7 +10,7 @@ TINKER_NAMESPACE_BEGIN
 // see also subroutine dfield0b in induce.f
 void dfield_coulomb_acc(real (*field)[3], real (*fieldp)[3])
 {
-   device_array::zero(n, field, fieldp);
+   device_array::zero(true, n, field, fieldp);
 
    const real off = mlist_unit->cutoff;
    const real off2 = off * off;
@@ -158,7 +158,7 @@ void dfield_coulomb_acc(real (*field)[3], real (*fieldp)[3])
 void ufield_coulomb_acc(const real (*uind)[3], const real (*uinp)[3],
                         real (*field)[3], real (*fieldp)[3])
 {
-   device_array::zero(n, field, fieldp);
+   device_array::zero(true, n, field, fieldp);
 
    const real off = mlist_unit->cutoff;
    const real off2 = off * off;

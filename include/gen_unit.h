@@ -40,7 +40,7 @@ struct GenericUnitAlloc<GenericUnitVersion::EnableOnDevice>
 
    static void copyin(void* d, const void* s, size_t nb)
    {
-      device_memory_copyin_bytes(d, s, nb);
+      device_memory_copyin_bytes(d, s, nb, true);
    }
 };
 

@@ -277,7 +277,7 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 
    // zero out the induced dipoles at each site
 
-   device_array::zero(n, uind, uinp);
+   device_array::zero(true, n, uind, uinp);
 
    // get the electrostatic field due to permanent multipoles
 
@@ -297,8 +297,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
    }
 
    if (dirguess) {
-      device_array::copy(n, uind, udir);
-      device_array::copy(n, uinp, udirp);
+      device_array::copy(true, n, uind, udir);
+      device_array::copy(true, n, uinp, udirp);
    }
 
    // initial residual r(0)
@@ -311,8 +311,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
    if (dirguess) {
       ufield(udir, udirp, rsd, rsdp);
    } else {
-      device_array::copy(n, rsd, field);
-      device_array::copy(n, rsdp, fieldp);
+      device_array::copy(true, n, rsd, field);
+      device_array::copy(true, n, rsdp, fieldp);
    }
 
    // initial M r(0) and p(0)
@@ -323,8 +323,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
    } else {
       diag_precond(rsd, rsdp, zrsd, zrsdp);
    }
-   device_array::copy(n, conj, zrsd);
-   device_array::copy(n, conjp, zrsdp);
+   device_array::copy(true, n, conj, zrsd);
+   device_array::copy(true, n, conjp, zrsdp);
 
    // initial r(0) M r(0)
 

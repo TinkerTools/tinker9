@@ -458,8 +458,8 @@ TINKER_NAMESPACE_BEGIN
 void spatial_data_update_sorted(SpatialUnit u)
 {
    auto& st = *u;
-   launch_k1(n, spatial_update_sorted, n, st.sorted, st.x, st.y, st.z,
-             TINKER_IMAGE_ARGS);
+   launch_k1s(nonblk, n, spatial_update_sorted, n, st.sorted, st.x, st.y, st.z,
+              TINKER_IMAGE_ARGS);
 }
 
 
@@ -498,7 +498,7 @@ void spatial_data_init_cu(SpatialUnit u)
 
 
    // B.1 D.1
-   device_array::zero(nx + 1, ax_scan);
+   device_array::zero(true, nx + 1, ax_scan);
    // B.2 B.3 B.4 C.1
    const auto* lx = u->x;
    const auto* ly = u->y;
@@ -539,7 +539,7 @@ void spatial_data_init_cu(SpatialUnit u)
 
       u.update_deviceptr(*u);
 
-      device_array::zero(nx + 1, ax_scan);
+      device_array::zero(true, nx + 1, ax_scan);
       int ZERO_LBUF = (lbuf <= 0 ? 1 : 0);
       launch_k1(n, spatial_bc,                              //
                 n, px, py, pz, sorted, boxnum, ax_scan + 1, //
@@ -582,10 +582,10 @@ void spatial_data_init_cu(SpatialUnit u)
    u.update_deviceptr(*u);
 
 
-   device_array::zero(near * xak_sum * Spatial::BLOCK,
-                      u->lst);         // G.6
-   device_array::zero(nak, naak);      // H.1
-   device_array::zero(nak * nxk, xkf); // H.1
+   device_array::zero(true, near * xak_sum * Spatial::BLOCK,
+                      u->lst);               // G.6
+   device_array::zero(true, nak, naak);      // H.1
+   device_array::zero(true, nak * nxk, xkf); // H.1
    launch_k1(padded, spatial_ghi, u.deviceptr(), n, TINKER_IMAGE_ARGS, cutbuf2);
 
 

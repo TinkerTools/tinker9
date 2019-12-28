@@ -2,6 +2,7 @@
 #include "cudalib.h"
 #if TINKER_CUDART
 #   include "error.h"
+#   include "gpu_card.h"
 #   include <openacc.h>
 #endif
 
@@ -36,8 +37,9 @@ void cudalib_data(rc_op op)
       check_rt(cublasCreate(&h_cublas));
       check_rt(cublasCreate(&h_cublas_nonblk));
       check_rt(cublasSetStream(h_cublas_nonblk, nonblk));
-      check_rt(cudaMallocHost(&pinned_real64, 64 * sizeof(real)));
-      check_rt(cudaMalloc(&dptr_real64, 64 * sizeof(real)));
+      int nblock = get_grid_size(BLOCK_DIM);
+      check_rt(cudaMallocHost(&pinned_real64, nblock * sizeof(double)));
+      check_rt(cudaMalloc(&dptr_real64, nblock * sizeof(double)));
    }
 #endif
 }

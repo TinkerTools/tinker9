@@ -977,7 +977,7 @@ void emplar_ewald_tmpl()
 
 
    if CONSTEXPR (do_g) {
-      device_array::zero_async(n, ufld, dufld);
+      device_array::zero(false, n, ufld, dufld);
    }
 
 
@@ -1017,7 +1017,7 @@ void emplar_coulomb_tmpl()
 
 
    if CONSTEXPR (do_g) {
-      device_array::zero(n, ufld, dufld);
+      device_array::zero(true, n, ufld, dufld);
    }
 
 

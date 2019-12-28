@@ -45,7 +45,7 @@ void grid_tmpl_acc(PMEUnit pme_u, real* optional1, real* optional2)
    const int bsorder = st.bsorder;
    assert(bsorder <= MAX_BSORDER);
 
-   device_array::zero(2 * nfft1 * nfft2 * nfft3, st.qgrid);
+   device_array::zero(true, 2 * nfft1 * nfft2 * nfft3, st.qgrid);
 
    #pragma acc parallel loop independent\
                deviceptr(pchg,fmp,fuind,fuinp,x,y,z,box,dptr)

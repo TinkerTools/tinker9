@@ -160,8 +160,7 @@ void zero_egv(int vers);
 void zero_egv();
 /// @}
 
-void zero_gradient(int nelem, real* gx, real* gy, real* gz);
-void zero_gradient_async(int nelem, real* gx, real* gy, real* gz);
+void zero_gradient(int sync, size_t nelem, real* gx, real* gy, real* gz);
 
 /// @brief
 /// sum up potential energies and virials on device

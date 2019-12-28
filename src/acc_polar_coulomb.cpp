@@ -19,7 +19,7 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
    static_assert(do_a ? do_e : true, "");
 
    if CONSTEXPR (do_g)
-      device_array::zero(n, ufld, dufld);
+      device_array::zero(true, n, ufld, dufld);
 
    if CONSTEXPR (do_e && !do_a)
       epolar0_dotprod(uind, udirp);
