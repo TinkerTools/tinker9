@@ -10,6 +10,10 @@ template <class T>
 T reduce_sum(const T* a, size_t nelem, int sync);
 
 
+template <class HT, size_t HN, class DPTR>
+void reduce_sum2(HT (&h_ans)[HN], DPTR v, size_t nelem, int sync);
+
+
 template <class T>
 T reduce_logic_or(const T* a, size_t nelem, int sync);
 

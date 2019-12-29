@@ -3,7 +3,7 @@
 using namespace TINKER_NAMESPACE;
 
 
-TEST_CASE("MathFuncPow2", "[util]")
+TEST_CASE("MathFuncPow2", "[util][math]")
 {
    SECTION("IsPow2")
    {

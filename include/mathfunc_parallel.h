@@ -38,8 +38,13 @@ T reduce_sum(const T* gpu_a, size_t nelem, int sync)
 template <class HT, size_t HN, class DPTR>
 void reduce_sum2(HT (&h_ans)[HN], DPTR v, size_t nelem, int sync)
 {
-   namespace nsp = platform::acc;
-   return nsp::reduce_sum2(h_ans, v, nelem, sync);
+   if (platform::config & platform::cu_pltfm) {
+      namespace nsp = platform::cu;
+      nsp::reduce_sum2(h_ans, v, nelem, sync);
+   } else {
+      namespace nsp = platform::acc;
+      nsp::reduce_sum2(h_ans, v, nelem, sync);
+   }
 }
 
 
