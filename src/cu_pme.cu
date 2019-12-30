@@ -19,9 +19,37 @@ enum
    UIND_GRID_FPHI2,
    DISP_GRID
 };
+TINKER_NAMESPACE_END
 
 
-template <int WHAT, int bsorder>
+using namespace TINKER_NAMESPACE;
+extern "C"
+{
+   struct PCHG
+   {
+      static constexpr int N = PCHG_GRID;
+   };
+   struct MPOLE
+   {
+      static constexpr int N = MPOLE_GRID;
+   };
+   struct UIND
+   {
+      static constexpr int N = UIND_GRID;
+   };
+   struct UIND2
+   {
+      static constexpr int N = UIND_GRID_FPHI2;
+   };
+   struct DISP
+   {
+      static constexpr int N = DISP_GRID;
+   };
+}
+
+
+TINKER_NAMESPACE_BEGIN
+template <class T, int bsorder>
 __global__
 void grid_tmpl_cu(const real* restrict x, const real* restrict y,
                   const real* restrict z, int n, int nfft1, int nfft2,
@@ -29,11 +57,11 @@ void grid_tmpl_cu(const real* restrict x, const real* restrict y,
                   const real* restrict ptr2, real* restrict qgrid,
                   real3 recip_a, real3 recip_b, real3 recip_c)
 {
-   real thetai1[4 * MAX_BSORDER];
-   real thetai2[4 * MAX_BSORDER];
-   real thetai3[4 * MAX_BSORDER];
-   __shared__ real sharedarray[MAX_BSORDER * MAX_BSORDER * PME_BLOCKDIM];
-   real* restrict array = &sharedarray[MAX_BSORDER * MAX_BSORDER * threadIdx.x];
+   real thetai1[4 * 5];
+   real thetai2[4 * 5];
+   real thetai3[4 * 5];
+   __shared__ real sharedarray[5 * 5 * PME_BLOCKDIM];
+   real* restrict array = &sharedarray[5 * 5 * threadIdx.x];
 
 
    MAYBE_UNUSED const real(*fmp)[10] = (real(*)[10])ptr1;
@@ -77,21 +105,21 @@ void grid_tmpl_cu(const real* restrict x, const real* restrict y,
       igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
 
-      if CONSTEXPR (WHAT == MPOLE_GRID) {
+      if CONSTEXPR (T::N == MPOLE_GRID) {
          bsplgen<3, bsorder>(w1, thetai1, array);
          bsplgen<3, bsorder>(w2, thetai2, array);
          bsplgen<3, bsorder>(w3, thetai3, array);
       }
 
 
-      if CONSTEXPR (WHAT == UIND_GRID) {
+      if CONSTEXPR (T::N == UIND_GRID) {
          bsplgen<2, bsorder>(w1, thetai1, array);
          bsplgen<2, bsorder>(w2, thetai2, array);
          bsplgen<2, bsorder>(w3, thetai3, array);
       }
 
 
-      if CONSTEXPR (WHAT == MPOLE_GRID) {
+      if CONSTEXPR (T::N == MPOLE_GRID) {
          real fmpi0 = fmp[i][mpl_pme_0];
          real fmpix = fmp[i][mpl_pme_x];
          real fmpiy = fmp[i][mpl_pme_y];
@@ -136,22 +164,24 @@ void grid_tmpl_cu(const real* restrict x, const real* restrict y,
                }
             } // end for (int iy)
          }
-      } // end if (WHAT == MPOLE_GRID)
+      } // end if (T::N == MPOLE_GRID)
 
 
-      if CONSTEXPR (WHAT == UIND_GRID) {
+      if CONSTEXPR (T::N == UIND_GRID) {
          real fuindi0 = fuind[i][0];
          real fuindi1 = fuind[i][1];
          real fuindi2 = fuind[i][2];
          real fuinpi0 = fuinp[i][0];
          real fuinpi1 = fuinp[i][1];
          real fuinpi2 = fuinp[i][2];
+         #pragma unroll
          for (int iz = 0; iz < bsorder; ++iz) {
             int zbase = igrid3 + iz;
             zbase -= (zbase >= nfft3 ? nfft3 : 0);
             zbase *= (nfft1 * nfft2);
             real v0 = thetai3[4 * iz];
             real v1 = thetai3[4 * iz + 1];
+            #pragma unroll
             for (int iy = 0; iy < bsorder; ++iy) {
                int ybase = igrid2 + iy;
                ybase -= (ybase >= nfft2 ? nfft2 : 0);
@@ -162,6 +192,7 @@ void grid_tmpl_cu(const real* restrict x, const real* restrict y,
                real term11 = fuindi0 * u0 * v0;
                real term02 = fuinpi1 * u1 * v0 + fuinpi2 * u0 * v1;
                real term12 = fuinpi0 * u0 * v0;
+               #pragma unroll
                for (int ix = 0; ix < bsorder; ++ix) {
                   int xbase = igrid1 + ix;
                   xbase -= (xbase >= nfft1 ? nfft1 : 0);
@@ -173,7 +204,7 @@ void grid_tmpl_cu(const real* restrict x, const real* restrict y,
                }
             } // end for (int iy)
          }
-      } // end if (WHAT == UIND_GRID)
+      } // end if (T::N == UIND_GRID)
    }
 }
 
@@ -188,7 +219,7 @@ void grid_mpole_cu(PMEUnit pme_u, real (*fmp)[10])
 
 
    device_array::zero(false, 2 * nt, st.qgrid);
-   auto ker = grid_tmpl_cu<MPOLE_GRID, 5>;
+   auto ker = grid_tmpl_cu<MPOLE, 5>;
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
               (const real*)fmp, nullptr, st.qgrid, recipa, recipb, recipc);
 }
@@ -204,14 +235,14 @@ void grid_uind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 
 
    device_array::zero(false, 2 * nt, st.qgrid);
-   auto ker = grid_tmpl_cu<UIND_GRID, 5>;
+   auto ker = grid_tmpl_cu<UIND, 5>;
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
               (const real*)fuind, (const real*)fuinp, st.qgrid, recipa, recipb,
               recipc);
 }
 
 
-template <int WHAT, int bsorder>
+template <class T, int bsorder>
 __global__
 void fphi_tmpl_cu(int n, int nfft1, int nfft2, int nfft3,
                   const real* restrict x, const real* restrict y,
@@ -220,10 +251,10 @@ void fphi_tmpl_cu(int n, int nfft1, int nfft2, int nfft3,
                   const real* restrict qgrid, real3 recip_a, real3 recip_b,
                   real3 recip_c)
 {
-   real thetai1[4 * MAX_BSORDER];
-   real thetai2[4 * MAX_BSORDER];
-   real thetai3[4 * MAX_BSORDER];
-   real array[MAX_BSORDER * MAX_BSORDER];
+   real thetai1[4 * 5];
+   real thetai2[4 * 5];
+   real thetai3[4 * 5];
+   real array[5 * 5];
 
 
    MAYBE_UNUSED real(*restrict fphi)[20] = (real(*)[20])opt1;
@@ -267,15 +298,15 @@ void fphi_tmpl_cu(int n, int nfft1, int nfft2, int nfft3,
       igrid2 += (igrid2 < 0 ? nfft2 : 0);
       igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
-      if CONSTEXPR (WHAT == MPOLE_GRID || WHAT == UIND_GRID ||
-                    WHAT == UIND_GRID_FPHI2) {
+      if CONSTEXPR (T::N == MPOLE_GRID || T::N == UIND_GRID ||
+                    T::N == UIND_GRID_FPHI2) {
          bsplgen<4, bsorder>(w1, thetai1, array);
          bsplgen<4, bsorder>(w2, thetai2, array);
          bsplgen<4, bsorder>(w3, thetai3, array);
       }
 
 
-      if CONSTEXPR (WHAT == MPOLE_GRID) {
+      if CONSTEXPR (T::N == MPOLE_GRID) {
          real tuv000 = 0;
          real tuv001 = 0;
          real tuv010 = 0;
@@ -390,7 +421,7 @@ void fphi_tmpl_cu(int n, int nfft1, int nfft2, int nfft3,
       }
 
 
-      if CONSTEXPR (WHAT == UIND_GRID) {
+      if CONSTEXPR (T::N == UIND_GRID) {
          real tuv100_1 = 0;
          real tuv010_1 = 0;
          real tuv001_1 = 0;
@@ -595,7 +626,7 @@ void fphi_tmpl_cu(int n, int nfft1, int nfft2, int nfft3,
       }
 
 
-      if CONSTEXPR (WHAT == UIND_GRID_FPHI2) {
+      if CONSTEXPR (T::N == UIND_GRID_FPHI2) {
          real tuv100_1 = 0;
          real tuv010_1 = 0;
          real tuv001_1 = 0;
@@ -723,7 +754,7 @@ void fphi_mpole_cu(PMEUnit pme_u, real* fphi)
    int n3 = st.nfft3;
 
 
-   auto ker = fphi_tmpl_cu<MPOLE_GRID, 5>;
+   auto ker = fphi_tmpl_cu<MPOLE, 5>;
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, fphi,
               nullptr, nullptr, st.qgrid, recipa, recipb, recipc);
 }
@@ -738,7 +769,7 @@ void fphi_uind_cu(PMEUnit pme_u, real* fdip_phi1, real* fdip_phi2,
    int n3 = st.nfft3;
 
 
-   auto ker = fphi_tmpl_cu<UIND_GRID, 5>;
+   auto ker = fphi_tmpl_cu<UIND, 5>;
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, fdip_phi1,
               fdip_phi2, fdip_sum_phi, st.qgrid, recipa, recipb, recipc);
 }
@@ -752,7 +783,7 @@ void fphi_uind2_cu(PMEUnit pme_u, real* fdip_phi1, real* fdip_phi2)
    int n3 = st.nfft3;
 
 
-   auto ker = fphi_tmpl_cu<UIND_GRID_FPHI2, 5>;
+   auto ker = fphi_tmpl_cu<UIND2, 5>;
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, fdip_phi1,
               fdip_phi2, nullptr, st.qgrid, recipa, recipb, recipc);
 }
@@ -762,21 +793,21 @@ void pme_cuda_func_config()
 {
    // grid
 
-   auto grid_mpole = grid_tmpl_cu<MPOLE_GRID, 5>;
+   auto grid_mpole = grid_tmpl_cu<MPOLE, 5>;
    check_rt(cudaFuncSetCacheConfig(grid_mpole, cudaFuncCachePreferNone));
 
-   auto grid_uind = grid_tmpl_cu<UIND_GRID, 5>;
+   auto grid_uind = grid_tmpl_cu<UIND, 5>;
    check_rt(cudaFuncSetCacheConfig(grid_uind, cudaFuncCachePreferNone));
 
    // fphi
 
-   auto fphi_mpole = fphi_tmpl_cu<MPOLE_GRID, 5>;
+   auto fphi_mpole = fphi_tmpl_cu<MPOLE, 5>;
    check_rt(cudaFuncSetCacheConfig(fphi_mpole, cudaFuncCachePreferL1));
 
-   auto fphi_uind = fphi_tmpl_cu<UIND_GRID, 5>;
+   auto fphi_uind = fphi_tmpl_cu<UIND, 5>;
    check_rt(cudaFuncSetCacheConfig(fphi_uind, cudaFuncCachePreferL1));
 
-   auto fphi_uind2 = fphi_tmpl_cu<UIND_GRID_FPHI2, 5>;
+   auto fphi_uind2 = fphi_tmpl_cu<UIND2, 5>;
    check_rt(cudaFuncSetCacheConfig(fphi_uind2, cudaFuncCachePreferL1));
 }
 TINKER_NAMESPACE_END

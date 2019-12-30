@@ -3,13 +3,27 @@
 
 
 TINKER_NAMESPACE_BEGIN
-static constexpr int MAX_BSORDER = 5;
-
-
-#define bsbuild(j, i) bsbuild_[((i)-1) * bsorder + (j)-1]
-
-
-// see also subroutine bsplgen in pmestuf.f
+/**
+ * \ingroup pme
+ * \brief B-spline coefficients and derivatives for a single %PME atomic site
+ * along a particular direction. See also subroutine `bsplgen` in `pmestuf.f`
+ * file.
+ *
+ * \param bsorder  Desired B-spline order; `MAX_BSORDER` is hard-coded to 5.
+ * \param LEVEL    Flag to control the results in `thetai`, and must be:
+ *                    - greater than 0.
+ *                    - less than `bsorder`.
+ * \param w        Fractional distance to the reference %PME grid point along
+ *                 a particular direction.
+ * \param thetai   Output array of size `thetai[bsorder][MAX_BSORDER-1]` in C
+ *                 or `thetai(MAX_BSORDER-1,bsorder)` in Fortran. Based on the
+ *                 value of `LEVEL`, the output is as follows,
+ *                    - `LEVEL=1`, B-spline coefficients are in `thetai(1,:)`;
+ *                    - `LEVEL=2`, first derivatives are in `thetai(2,:)`;
+ *                    - `LEVEL=3`, second derivatives are in `thetai(3,:)`;
+ *                    - `LEVEL=4`, third derivatives are in `thetai(4,:)`.
+ * \param bsbuild_ A CUDA working array of size `MAX_BSORDER*MAX_BSORDER`.
+ */
 #ifdef __CUDACC__
 template <int LEVEL, int bsorder>
 __device__
@@ -20,58 +34,27 @@ template <int LEVEL>
 void bsplgen(real w, real* restrict thetai, int bsorder)
 #endif
 {
-   // e.g. bsorder = 5, theta = T, bsbuild = B
-
-   // LEVEL + 1 <= bsorder
-
-   // LEVEL = 1
-   // T(1,1) = B(5,1)
-   // T(1,2) = B(5,2)
-   // T(1,3) = B(5,3)
-   // T(1,4) = B(5,4)
-   // T(1,5) = B(5,5)
-
-   // LEVEL = 2
-   // T(2,1) = B(4,1)
-   // T(2,2) = B(4,2)
-   // T(2,3) = B(4,3)
-   // T(2,4) = B(4,4)
-   // T(2,5) = B(4,5)
-   // AND ALL LEVEL = 1
-
-   // LEVEL = 3
-   // T(3,1) = B(3,1)
-   // T(3,2) = B(3,2)
-   // T(3,3) = B(3,3)
-   // T(3,4) = B(3,4)
-   // T(3,5) = B(3,5)
-   // AND ALL LEVEL = 2, 1
-
-   // LEVEL = 4
-   // T(4,1) = B(2,1)
-   // T(4,2) = B(2,2)
-   // T(4,3) = B(2,3)
-   // T(4,4) = B(2,4)
-   // T(4,5) = B(2,5)
-   // AND ALL LEVEL = 3, 2, 1
-
 #ifndef __CUDACC__
-   real bsbuild_[MAX_BSORDER * MAX_BSORDER];
+   real bsbuild_[5 * 5];
 #endif
 
-   // initialization to get to 2nd order recursion
 
+// Fortran 2D array syntax
+#define bsbuild(j, i) bsbuild_[((i)-1) * bsorder + (j)-1]
+
+
+   // initialization to get to 2nd order recursion
    bsbuild(2, 2) = w;
    bsbuild(2, 1) = 1 - w;
 
-   // perform one pass to get to 3rd order recursion
 
+   // perform one pass to get to 3rd order recursion
    bsbuild(3, 3) = 0.5f * w * bsbuild(2, 2);
    bsbuild(3, 2) = 0.5f * ((1 + w) * bsbuild(2, 1) + (2 - w) * bsbuild(2, 2));
    bsbuild(3, 1) = 0.5f * (1 - w) * bsbuild(2, 1);
 
-   // compute standard B-spline recursion to desired order
 
+   // compute standard B-spline recursion to desired order
    for (int i = 4; i <= bsorder; ++i) {
       int k = i - 1;
       real denom = REAL_RECIP(k);
@@ -83,13 +66,10 @@ void bsplgen(real w, real* restrict thetai, int bsorder)
       bsbuild(i, 1) = denom * (1 - w) * bsbuild(k, 1);
    }
 
-   int k;
 
+   // get coefficients for the B-spline first derivative
    if CONSTEXPR (LEVEL >= 2) {
-
-      // get coefficients for the B-spline first derivative
-
-      k = bsorder - 1;
+      int k = bsorder - 1;
       bsbuild(k, bsorder) = bsbuild(k, bsorder - 1);
       for (int i = bsorder - 1; i >= 2; --i) {
          bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
@@ -97,11 +77,10 @@ void bsplgen(real w, real* restrict thetai, int bsorder)
       bsbuild(k, 1) = -bsbuild(k, 1);
    }
 
+
+   // get coefficients for the B-spline second derivative
    if CONSTEXPR (LEVEL >= 3) {
-
-      // get coefficients for the B-spline second derivative
-
-      k = bsorder - 2;
+      int k = bsorder - 2;
       bsbuild(k, bsorder - 1) = bsbuild(k, bsorder - 2);
       for (int i = bsorder - 2; i >= 2; --i) {
          bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
@@ -114,11 +93,10 @@ void bsplgen(real w, real* restrict thetai, int bsorder)
       bsbuild(k, 1) = -bsbuild(k, 1);
    }
 
+
+   // get coefficients for the B-spline third derivative
    if CONSTEXPR (LEVEL == 4) {
-
-      // get coefficients for the B-spline third derivative
-
-      k = bsorder - 3;
+      int k = bsorder - 3;
       bsbuild(k, bsorder - 2) = bsbuild(k, bsorder - 3);
       for (int i = bsorder - 3; i >= 2; --i) {
          bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
@@ -135,8 +113,8 @@ void bsplgen(real w, real* restrict thetai, int bsorder)
       bsbuild(k, 1) = -bsbuild(k, 1);
    }
 
-   // copy coefficients from temporary to permanent storage
 
+   // copy coefficients from temporary to permanent storage
    for (int i = 1; i <= bsorder; ++i) {
       // keep this line to work on Tesla
       #pragma acc loop seq
@@ -144,8 +122,6 @@ void bsplgen(real w, real* restrict thetai, int bsorder)
          thetai[4 * (i - 1) + (j - 1)] = bsbuild(bsorder - j + 1, i);
       }
    }
-}
-
-
 #undef bsbuild
+}
 TINKER_NAMESPACE_END

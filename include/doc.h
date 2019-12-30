@@ -11,6 +11,8 @@
 
 
 /**
+ * \defgroup pme   Particle Mesh Ewald
+ * \ingroup ff
  * \defgroup geom  Geometrical Restraints
  * \ingroup ff
  * \defgroup mpole Multipole Electrostatics
