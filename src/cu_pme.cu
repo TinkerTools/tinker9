@@ -4,6 +4,7 @@
 #include "launch.h"
 #include "md.h"
 #include "pme.h"
+#include "pme_grid_def.h"
 #include "seq_pme.h"
 
 
@@ -11,44 +12,6 @@ TINKER_NAMESPACE_BEGIN
 static constexpr int PME_BLOCKDIM = 64;
 
 
-enum
-{
-   PCHG_GRID = 1,
-   MPOLE_GRID,
-   UIND_GRID,
-   UIND_GRID_FPHI2,
-   DISP_GRID
-};
-TINKER_NAMESPACE_END
-
-
-using namespace TINKER_NAMESPACE;
-extern "C"
-{
-   struct PCHG
-   {
-      static constexpr int N = PCHG_GRID;
-   };
-   struct MPOLE
-   {
-      static constexpr int N = MPOLE_GRID;
-   };
-   struct UIND
-   {
-      static constexpr int N = UIND_GRID;
-   };
-   struct UIND2
-   {
-      static constexpr int N = UIND_GRID_FPHI2;
-   };
-   struct DISP
-   {
-      static constexpr int N = DISP_GRID;
-   };
-}
-
-
-TINKER_NAMESPACE_BEGIN
 template <class T, int bsorder>
 __global__
 void grid_tmpl_cu(const real* restrict x, const real* restrict y,
@@ -208,24 +171,162 @@ void grid_tmpl_cu(const real* restrict x, const real* restrict y,
    }
 }
 
-
-void grid_mpole_cu(PMEUnit pme_u, real (*fmp)[10])
+namespace platform {
+namespace cu {
+template <class T, int bsorder>
+__global__
+void grid_put(const real* restrict x, const real* restrict y,
+              const real* restrict z, int n, int nfft1, int nfft2, int nfft3,
+              const real* restrict ptr1, const real* ptr2, real* restrict qgrid,
+              real3 recip_a, real3 recip_b, real3 recip_c)
 {
-   auto& st = *pme_u;
-   int n1 = st.nfft1;
-   int n2 = st.nfft2;
-   int n3 = st.nfft3;
-   int nt = n1 * n2 * n3;
+   constexpr int bso2 = bsorder * bsorder;
+   constexpr int bso3 = bsorder * bso2;
 
 
-   device_array::zero(false, 2 * nt, st.qgrid);
-   auto ker = grid_tmpl_cu<MPOLE, 5>;
-   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
-              (const real*)fmp, nullptr, st.qgrid, recipa, recipb, recipc);
+   __shared__ real thetai1[4 * 5];
+   __shared__ real thetai2[4 * 5];
+   __shared__ real thetai3[4 * 5];
+   __shared__ real array[3][5 * 5];
+   __shared__ int igrid1, igrid2, igrid3;
+   struct DatM
+   {
+      real cc;
+      real3 dd, qxxyyzz, qxyxzyz;
+   };
+   MAYBE_UNUSED __shared__ DatM datm;
+   struct DatU
+   {
+      real3 fd, fp;
+   };
+   MAYBE_UNUSED __shared__ DatU datu;
+
+
+   for (int i = blockIdx.x; i < n; i += gridDim.x) {
+      real xi = x[i];
+      real yi = y[i];
+      real zi = z[i];
+
+
+      if (threadIdx.x == 0) {
+         if CONSTEXPR (T::N == MPOLE_GRID) {
+            datm.cc = ptr1[10 * i + mpl_pme_0];
+            datm.dd =
+               make_real3(ptr1[10 * i + mpl_pme_x], ptr1[10 * i + mpl_pme_y],
+                          ptr1[10 * i + mpl_pme_z]);
+            datm.qxxyyzz =
+               make_real3(ptr1[10 * i + mpl_pme_xx], ptr1[10 * i + mpl_pme_yy],
+                          ptr1[10 * i + mpl_pme_zz]);
+            datm.qxyxzyz =
+               make_real3(ptr1[10 * i + mpl_pme_xy], ptr1[10 * i + mpl_pme_xz],
+                          ptr1[10 * i + mpl_pme_yz]);
+         }
+
+
+         if CONSTEXPR (T::N == UIND_GRID) {
+            datu.fd =
+               make_real3(ptr1[3 * i + 0], ptr1[3 * i + 1], ptr1[3 * i + 2]);
+            datu.fp =
+               make_real3(ptr2[3 * i + 0], ptr2[3 * i + 1], ptr2[3 * i + 2]);
+         }
+
+
+         real w1 = xi * recip_a.x + yi * recip_a.y + zi * recip_a.z;
+         w1 = w1 + 0.5f - REAL_FLOOR(w1 + 0.5f);
+         real fr1 = nfft1 * w1;
+         igrid1 = REAL_FLOOR(fr1);
+         w1 = fr1 - igrid1;
+         igrid1 = igrid1 - bsorder + 1;
+         igrid1 += (igrid1 < 0 ? nfft1 : 0);
+         if CONSTEXPR (T::N == MPOLE_GRID) {
+            bsplgen<3, bsorder>(w1, thetai1, array[0]);
+         }
+         if CONSTEXPR (T::N == UIND_GRID) {
+            bsplgen<2, bsorder>(w1, thetai1, array[0]);
+         }
+      } else if (threadIdx.x == 32) {
+         real w2 = xi * recip_b.x + yi * recip_b.y + zi * recip_b.z;
+         w2 = w2 + 0.5f - REAL_FLOOR(w2 + 0.5f);
+         real fr2 = nfft2 * w2;
+         igrid2 = REAL_FLOOR(fr2);
+         w2 = fr2 - igrid2;
+         igrid2 = igrid2 - bsorder + 1;
+         igrid2 += (igrid2 < 0 ? nfft2 : 0);
+         if CONSTEXPR (T::N == MPOLE_GRID) {
+            bsplgen<3, bsorder>(w2, thetai2, array[1]);
+         }
+         if CONSTEXPR (T::N == UIND_GRID) {
+            bsplgen<2, bsorder>(w2, thetai2, array[1]);
+         }
+      } else if (threadIdx.x == 64) {
+         real w3 = xi * recip_c.x + yi * recip_c.y + zi * recip_c.z;
+         w3 = w3 + 0.5f - REAL_FLOOR(w3 + 0.5f);
+         real fr3 = nfft3 * w3;
+         igrid3 = REAL_FLOOR(fr3);
+         w3 = fr3 - igrid3;
+         igrid3 = igrid3 - bsorder + 1;
+         igrid3 += (igrid3 < 0 ? nfft3 : 0);
+         if CONSTEXPR (T::N == MPOLE_GRID) {
+            bsplgen<3, bsorder>(w3, thetai3, array[2]);
+         }
+         if CONSTEXPR (T::N == UIND_GRID) {
+            bsplgen<2, bsorder>(w3, thetai3, array[2]);
+         }
+      }
+      __syncthreads();
+
+
+      for (int j = threadIdx.x; j < bso3; j += blockDim.x) {
+         int iz = j / bso2;
+         j -= iz * bso2;
+         int iy = j / bsorder;
+         int ix = j - (j / bsorder) * bsorder;
+
+
+         int zbase = igrid3 + iz;
+         zbase -= (zbase >= nfft3 ? nfft3 : 0);
+         zbase *= (nfft1 * nfft2);
+         int ybase = igrid2 + iy;
+         ybase -= (ybase >= nfft2 ? nfft2 : 0);
+         ybase *= nfft1;
+         int xbase = igrid1 + ix;
+         xbase -= (xbase >= nfft1 ? nfft1 : 0);
+         int index = xbase + ybase + zbase;
+
+
+         real v0 = thetai3[4 * iz];
+         real v1 = thetai3[4 * iz + 1];
+         real u0 = thetai2[4 * iy];
+         real u1 = thetai2[4 * iy + 1];
+         real t0 = thetai1[4 * ix];
+         real t1 = thetai1[4 * ix + 1];
+
+
+         if CONSTEXPR (T::N == MPOLE_GRID) {
+            real v2 = thetai3[4 * iz + 2];
+            real u2 = thetai2[4 * iy + 2];
+            real t2 = thetai1[4 * ix + 2];
+
+            real3 t100 = make_real3(t1 * u0 * v0, t0 * u1 * v0, t0 * u0 * v1);
+            real3 t200 = make_real3(t2 * u0 * v0, t0 * u2 * v0, t0 * u0 * v2);
+            real3 t110 = make_real3(t1 * u1 * v0, t1 * u0 * v1, t0 * u1 * v1);
+            real add = datm.cc * t0 * u0 * v0 + dot3(datm.dd, t100) +
+               dot3(datm.qxxyyzz, t200) + dot3(datm.qxyxzyz, t110);
+            atomic_add(add, qgrid, 2 * index);
+         }
+
+
+         if CONSTEXPR (T::N == UIND_GRID) {
+            real3 tuv = make_real3(t1 * u0 * v0, t0 * u1 * v0, t0 * u0 * v1);
+            atomic_add(dot3(datu.fd, tuv), qgrid, 2 * index);
+            atomic_add(dot3(datu.fp, tuv), qgrid, 2 * index + 1);
+         }
+      }
+   }
 }
 
 
-void grid_uind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
+void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
 {
    auto& st = *pme_u;
    int n1 = st.nfft1;
@@ -235,10 +336,38 @@ void grid_uind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 
 
    device_array::zero(false, 2 * nt, st.qgrid);
+   /*/
+   auto ker = grid_tmpl_cu<MPOLE, 5>;
+   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
+              (const real*)fmp, nullptr, st.qgrid, recipa, recipb, recipc);
+   //*/
+   auto ker = grid_put<MPOLE, 5>;
+   launch_k1s(nonblk, n, ker, x, y, z, n, n1, n2, n3, (const real*)fmp, nullptr,
+              st.qgrid, recipa, recipb, recipc);
+}
+
+
+void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
+{
+   auto& st = *pme_u;
+   int n1 = st.nfft1;
+   int n2 = st.nfft2;
+   int n3 = st.nfft3;
+   int nt = n1 * n2 * n3;
+
+
+   device_array::zero(false, 2 * nt, st.qgrid);
+   /*/
    auto ker = grid_tmpl_cu<UIND, 5>;
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
               (const real*)fuind, (const real*)fuinp, st.qgrid, recipa, recipb,
               recipc);
+   //*/
+   auto ker = grid_put<UIND, 5>;
+   launch_k1s(nonblk, n, ker, x, y, z, n, n1, n2, n3, (const real*)fuind,
+              (const real*)fuinp, st.qgrid, recipa, recipb, recipc);
+}
+}
 }
 
 
@@ -793,11 +922,11 @@ void pme_cuda_func_config()
 {
    // grid
 
-   auto grid_mpole = grid_tmpl_cu<MPOLE, 5>;
-   check_rt(cudaFuncSetCacheConfig(grid_mpole, cudaFuncCachePreferNone));
+   auto grid_mpolek = grid_tmpl_cu<MPOLE, 5>;
+   check_rt(cudaFuncSetCacheConfig(grid_mpolek, cudaFuncCachePreferNone));
 
-   auto grid_uind = grid_tmpl_cu<UIND, 5>;
-   check_rt(cudaFuncSetCacheConfig(grid_uind, cudaFuncCachePreferNone));
+   auto grid_uindk = grid_tmpl_cu<UIND, 5>;
+   check_rt(cudaFuncSetCacheConfig(grid_uindk, cudaFuncCachePreferNone));
 
    // fphi
 

@@ -3,38 +3,34 @@
 #include "e_mpole.h"
 #include "error.h"
 #include "md.h"
+#include "platform.h"
 #include "pme.h"
+#include "pme_grid_def.h"
 #include "seq_pme.h"
 
-TINKER_NAMESPACE_BEGIN
-enum
-{
-   PCHG_GRID = 1,
-   MPOLE_GRID,
-   UIND_GRID,
-   UIND_GRID_FPHI2,
-   DISP_GRID
-};
 
-template <int WHAT>
-void grid_tmpl_acc(PMEUnit pme_u, real* optional1, real* optional2)
+TINKER_NAMESPACE_BEGIN
+namespace platform {
+namespace acc {
+template <class T>
+void grid_put(PMEUnit pme_u, real* optional1, real* optional2)
 {
    auto& st = *pme_u;
    auto* dptr = pme_u.deviceptr();
 
    MAYBE_UNUSED real* pchg;
-   if CONSTEXPR (WHAT == PCHG_GRID || WHAT == DISP_GRID) {
+   if CONSTEXPR (T::N == PCHG_GRID || T::N == DISP_GRID) {
       pchg = optional1;
    }
 
    MAYBE_UNUSED real(*fmp)[10];
-   if CONSTEXPR (WHAT == MPOLE_GRID) {
+   if CONSTEXPR (T::N == MPOLE_GRID) {
       fmp = reinterpret_cast<real(*)[10]>(optional1);
    }
 
    MAYBE_UNUSED real(*fuind)[3];
    MAYBE_UNUSED real(*fuinp)[3];
-   if CONSTEXPR (WHAT == UIND_GRID) {
+   if CONSTEXPR (T::N == UIND_GRID) {
       fuind = reinterpret_cast<real(*)[3]>(optional1);
       fuinp = reinterpret_cast<real(*)[3]>(optional2);
    }
@@ -43,16 +39,16 @@ void grid_tmpl_acc(PMEUnit pme_u, real* optional1, real* optional2)
    const int nfft2 = st.nfft2;
    const int nfft3 = st.nfft3;
    const int bsorder = st.bsorder;
-   assert(bsorder <= MAX_BSORDER);
+   assert(bsorder <= 5);
 
    device_array::zero(true, 2 * nfft1 * nfft2 * nfft3, st.qgrid);
 
    #pragma acc parallel loop independent\
                deviceptr(pchg,fmp,fuind,fuinp,x,y,z,box,dptr)
    for (int i = 0; i < n; ++i) {
-      real thetai1[4 * MAX_BSORDER];
-      real thetai2[4 * MAX_BSORDER];
-      real thetai3[4 * MAX_BSORDER];
+      real thetai1[4 * 5];
+      real thetai2[4 * 5];
+      real thetai3[4 * 5];
 
       real xi = x[i];
       real yi = y[i];
@@ -90,25 +86,25 @@ void grid_tmpl_acc(PMEUnit pme_u, real* optional1, real* optional2)
       igrid2 += (igrid2 < 0 ? nfft2 : 0);
       igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
-      if CONSTEXPR (WHAT == PCHG_GRID || WHAT == DISP_GRID) {
+      if CONSTEXPR (T::N == PCHG_GRID || T::N == DISP_GRID) {
          bsplgen<1>(w1, thetai1, bsorder);
          bsplgen<1>(w2, thetai2, bsorder);
          bsplgen<1>(w3, thetai3, bsorder);
       }
 
-      if CONSTEXPR (WHAT == MPOLE_GRID) {
+      if CONSTEXPR (T::N == MPOLE_GRID) {
          bsplgen<3>(w1, thetai1, bsorder);
          bsplgen<3>(w2, thetai2, bsorder);
          bsplgen<3>(w3, thetai3, bsorder);
       }
 
-      if CONSTEXPR (WHAT == UIND_GRID) {
+      if CONSTEXPR (T::N == UIND_GRID) {
          bsplgen<2>(w1, thetai1, bsorder);
          bsplgen<2>(w2, thetai2, bsorder);
          bsplgen<2>(w3, thetai3, bsorder);
       }
 
-      if CONSTEXPR (WHAT == PCHG_GRID || WHAT == DISP_GRID) {
+      if CONSTEXPR (T::N == PCHG_GRID || T::N == DISP_GRID) {
          real pchgi = pchg[i];
          #pragma acc loop seq
          for (int iz = 0; iz < bsorder; ++iz) {
@@ -135,7 +131,7 @@ void grid_tmpl_acc(PMEUnit pme_u, real* optional1, real* optional2)
          }
       } // end if (grid_pchg || grid_disp)
 
-      if CONSTEXPR (WHAT == MPOLE_GRID) {
+      if CONSTEXPR (T::N == MPOLE_GRID) {
          real fmpi0 = fmp[i][mpl_pme_0];
          real fmpix = fmp[i][mpl_pme_x];
          real fmpiy = fmp[i][mpl_pme_y];
@@ -185,7 +181,7 @@ void grid_tmpl_acc(PMEUnit pme_u, real* optional1, real* optional2)
          }
       } // end if (grid_mpole)
 
-      if CONSTEXPR (WHAT == UIND_GRID) {
+      if CONSTEXPR (T::N == UIND_GRID) {
          real fuindi0 = fuind[i][0];
          real fuindi1 = fuind[i][1];
          real fuindi2 = fuind[i][2];
@@ -227,55 +223,33 @@ void grid_tmpl_acc(PMEUnit pme_u, real* optional1, real* optional2)
    }    // for (int i)
 }
 
-void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
-{
-   int bso = pme_u->bsorder;
-   if (bso != 5)
-      TINKER_THROW(format("grid_mpole(): bsorder is {}; must be 5.\n", bso));
-#if TINKER_CUDART
-   extern void grid_mpole_cu(PMEUnit, real(*)[10]);
-   grid_mpole_cu(pme_u, fmp);
-#else
-   real* opt1 = reinterpret_cast<real*>(fmp);
-   grid_tmpl_acc<MPOLE_GRID>(pme_u, opt1, nullptr);
-#endif
+
+template void grid_put<MPOLE>(PMEUnit, real*, real*);
+template void grid_put<UIND>(PMEUnit, real*, real*);
+}
 }
 
-void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
-{
-   int bso = pme_u->bsorder;
-   if (bso != 5)
-      TINKER_THROW(format("grid_uind(): bsorder is {}; must be 5.\n", bso));
-#if TINKER_CUDART
-   extern void grid_uind_cu(PMEUnit pme_u, real(*)[3], real(*)[3]);
-   grid_uind_cu(pme_u, fuind, fuinp);
-#else
-   real* opt1 = reinterpret_cast<real*>(fuind);
-   real* opt2 = reinterpret_cast<real*>(fuinp);
-   grid_tmpl_acc<UIND_GRID>(pme_u, opt1, opt2);
-#endif
-}
 
-template <int WHAT>
+template <class T>
 void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
 {
    auto& st = *pme_u;
    auto* dptr = pme_u.deviceptr();
 
    MAYBE_UNUSED real(*fphi)[20];
-   if CONSTEXPR (WHAT == MPOLE_GRID) {
+   if CONSTEXPR (T::N == MPOLE_GRID) {
       fphi = reinterpret_cast<real(*)[20]>(opt1);
    }
 
    MAYBE_UNUSED real(*fdip_phi1)[10];
    MAYBE_UNUSED real(*fdip_phi2)[10];
    MAYBE_UNUSED real(*fdip_sum_phi)[20];
-   if CONSTEXPR (WHAT == UIND_GRID) {
+   if CONSTEXPR (T::N == UIND_GRID) {
       fdip_phi1 = reinterpret_cast<real(*)[10]>(opt1);
       fdip_phi2 = reinterpret_cast<real(*)[10]>(opt2);
       fdip_sum_phi = reinterpret_cast<real(*)[20]>(opt3);
    }
-   if CONSTEXPR (WHAT == UIND_GRID_FPHI2) {
+   if CONSTEXPR (T::N == UIND_GRID_FPHI2) {
       fdip_phi1 = reinterpret_cast<real(*)[10]>(opt1);
       fdip_phi2 = reinterpret_cast<real(*)[10]>(opt2);
    }
@@ -284,15 +258,15 @@ void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
    const int nfft2 = st.nfft2;
    const int nfft3 = st.nfft3;
    const int bsorder = st.bsorder;
-   assert(bsorder <= MAX_BSORDER);
+   assert(bsorder <= 5);
 
    #pragma acc parallel loop independent\
                deviceptr(fphi,fdip_phi1,fdip_phi2,fdip_sum_phi,\
                x,y,z,box,dptr)
    for (int i = 0; i < n; ++i) {
-      real thetai1[4 * MAX_BSORDER];
-      real thetai2[4 * MAX_BSORDER];
-      real thetai3[4 * MAX_BSORDER];
+      real thetai1[4 * 5];
+      real thetai2[4 * 5];
+      real thetai3[4 * 5];
 
       real xi = x[i];
       real yi = y[i];
@@ -330,14 +304,14 @@ void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
       igrid2 += (igrid2 < 0 ? nfft2 : 0);
       igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
-      if CONSTEXPR (WHAT == MPOLE_GRID || WHAT == UIND_GRID ||
-                    WHAT == UIND_GRID_FPHI2) {
+      if CONSTEXPR (T::N == MPOLE_GRID || T::N == UIND_GRID ||
+                    T::N == UIND_GRID_FPHI2) {
          bsplgen<4>(w1, thetai1, bsorder);
          bsplgen<4>(w2, thetai2, bsorder);
          bsplgen<4>(w3, thetai3, bsorder);
       }
 
-      if CONSTEXPR (WHAT == MPOLE_GRID) {
+      if CONSTEXPR (T::N == MPOLE_GRID) {
          real tuv000 = 0;
          real tuv001 = 0;
          real tuv010 = 0;
@@ -454,7 +428,7 @@ void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
          fphi[i][19] = tuv111;
       } // end if (fphi_mpole)
 
-      if CONSTEXPR (WHAT == UIND_GRID || WHAT == UIND_GRID_FPHI2) {
+      if CONSTEXPR (T::N == UIND_GRID || T::N == UIND_GRID_FPHI2) {
          real tuv100_1 = 0;
          real tuv010_1 = 0;
          real tuv001_1 = 0;
@@ -641,7 +615,7 @@ void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
          fdip_phi2[i][8] = tuv101_2;
          fdip_phi2[i][9] = tuv011_2;
 
-         if CONSTEXPR (WHAT == UIND_GRID) {
+         if CONSTEXPR (T::N == UIND_GRID) {
             fdip_sum_phi[i][0] = tuv000;
             fdip_sum_phi[i][1] = tuv100;
             fdip_sum_phi[i][2] = tuv010;
@@ -680,7 +654,7 @@ void fphi_mpole(PMEUnit pme_u, real (*fphi)[20])
    extern void fphi_mpole_cu(PMEUnit, real*);
    fphi_mpole_cu(pme_u, opt1);
 #else
-   fphi_tmpl<MPOLE_GRID>(pme_u, opt1, nullptr, nullptr);
+   fphi_tmpl<MPOLE>(pme_u, opt1, nullptr, nullptr);
 #endif
 }
 
@@ -700,7 +674,7 @@ void fphi_uind(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10],
    extern void fphi_uind_cu(PMEUnit, real*, real*, real*);
    fphi_uind_cu(pme_u, opt1, opt2, opt3);
 #else
-   fphi_tmpl<UIND_GRID>(pme_u, opt1, opt2, opt3);
+   fphi_tmpl<UIND>(pme_u, opt1, opt2, opt3);
 #endif
 }
 
@@ -718,7 +692,7 @@ void fphi_uind2(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10])
    extern void fphi_uind2_cu(PMEUnit, real*, real*);
    fphi_uind2_cu(pme_u, opt1, opt2);
 #else
-   fphi_tmpl<UIND_GRID_FPHI2>(pme_u, opt1, opt2, nullptr);
+   fphi_tmpl<UIND2>(pme_u, opt1, opt2, nullptr);
 #endif
 }
 TINKER_NAMESPACE_END
