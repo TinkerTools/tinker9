@@ -6,6 +6,7 @@
 #include "pme.h"
 #include "pme_grid_def.h"
 #include "seq_pme.h"
+#include "spatial.h"
 
 
 TINKER_NAMESPACE_BEGIN
@@ -175,152 +176,84 @@ namespace platform {
 namespace cu {
 template <class T, int bsorder>
 __global__
-void grid_put(const real* restrict x, const real* restrict y,
-              const real* restrict z, int n, int nfft1, int nfft2, int nfft3,
-              const real* restrict ptr1, const real* ptr2, real* restrict qgrid,
-              real3 recip_a, real3 recip_b, real3 recip_c)
+void grid_put(const int* restrict igrid, const real* restrict thetai1,
+              const real* restrict thetai2, const real* restrict thetai3,
+              const Spatial::SortedAtom* restrict sorted, int n, int padded_n,
+              int nfft1, int nfft2, int nfft3, const real* restrict ptr1,
+              const real* ptr2, real* restrict qgrid)
 {
    constexpr int bso2 = bsorder * bsorder;
    constexpr int bso3 = bsorder * bso2;
+   for (int m = threadIdx.x + blockIdx.x * blockDim.x; m < n * bso3;
+        m += blockDim.x * gridDim.x) {
+      // m = i0 * bso3 + j;
+      int i0 = m / bso3;
+      int j = m - i0 * bso3;
 
 
-   __shared__ real thetai1[4 * 5];
-   __shared__ real thetai2[4 * 5];
-   __shared__ real thetai3[4 * 5];
-   __shared__ real array[3][5 * 5];
-   __shared__ int igrid1, igrid2, igrid3;
-   struct DatM
-   {
-      real cc;
-      real3 dd, qxxyyzz, qxyxzyz;
-   };
-   MAYBE_UNUSED __shared__ DatM datm;
-   struct DatU
-   {
-      real3 fd, fp;
-   };
-   MAYBE_UNUSED __shared__ DatU datu;
+      int i = sorted[i0].unsorted;
+      int igrid1 = igrid[3 * i + 0];
+      int igrid2 = igrid[3 * i + 1];
+      int igrid3 = igrid[3 * i + 2];
 
 
-   for (int i = blockIdx.x; i < n; i += gridDim.x) {
-      real xi = x[i];
-      real yi = y[i];
-      real zi = z[i];
+      int iz = j / bso2;
+      j -= iz * bso2;
+      int iy = j / bsorder;
+      int ix = j - (j / bsorder) * bsorder;
 
 
-      if (threadIdx.x == 0) {
-         if CONSTEXPR (T::N == MPOLE_GRID) {
-            datm.cc = ptr1[10 * i + mpl_pme_0];
-            datm.dd =
-               make_real3(ptr1[10 * i + mpl_pme_x], ptr1[10 * i + mpl_pme_y],
-                          ptr1[10 * i + mpl_pme_z]);
-            datm.qxxyyzz =
-               make_real3(ptr1[10 * i + mpl_pme_xx], ptr1[10 * i + mpl_pme_yy],
-                          ptr1[10 * i + mpl_pme_zz]);
-            datm.qxyxzyz =
-               make_real3(ptr1[10 * i + mpl_pme_xy], ptr1[10 * i + mpl_pme_xz],
-                          ptr1[10 * i + mpl_pme_yz]);
-         }
+      real v0 = thetai3[(4 * iz + 0) * padded_n + i];
+      real v1 = thetai3[(4 * iz + 1) * padded_n + i];
+      int zbase = igrid3 + iz;
+      zbase -= (zbase >= nfft3 ? nfft3 : 0);
+      zbase *= (nfft1 * nfft2);
 
 
-         if CONSTEXPR (T::N == UIND_GRID) {
-            datu.fd =
-               make_real3(ptr1[3 * i + 0], ptr1[3 * i + 1], ptr1[3 * i + 2]);
-            datu.fp =
-               make_real3(ptr2[3 * i + 0], ptr2[3 * i + 1], ptr2[3 * i + 2]);
-         }
+      real u0 = thetai2[(4 * iy + 0) * padded_n + i];
+      real u1 = thetai2[(4 * iy + 1) * padded_n + i];
+      int ybase = igrid2 + iy;
+      ybase -= (ybase >= nfft2 ? nfft2 : 0);
+      ybase *= nfft1;
 
 
-         real w1 = xi * recip_a.x + yi * recip_a.y + zi * recip_a.z;
-         w1 = w1 + 0.5f - REAL_FLOOR(w1 + 0.5f);
-         real fr1 = nfft1 * w1;
-         igrid1 = REAL_FLOOR(fr1);
-         w1 = fr1 - igrid1;
-         igrid1 = igrid1 - bsorder + 1;
-         igrid1 += (igrid1 < 0 ? nfft1 : 0);
-         if CONSTEXPR (T::N == MPOLE_GRID) {
-            bsplgen<3, bsorder>(w1, thetai1, array[0]);
-         }
-         if CONSTEXPR (T::N == UIND_GRID) {
-            bsplgen<2, bsorder>(w1, thetai1, array[0]);
-         }
-      } else if (threadIdx.x == 32) {
-         real w2 = xi * recip_b.x + yi * recip_b.y + zi * recip_b.z;
-         w2 = w2 + 0.5f - REAL_FLOOR(w2 + 0.5f);
-         real fr2 = nfft2 * w2;
-         igrid2 = REAL_FLOOR(fr2);
-         w2 = fr2 - igrid2;
-         igrid2 = igrid2 - bsorder + 1;
-         igrid2 += (igrid2 < 0 ? nfft2 : 0);
-         if CONSTEXPR (T::N == MPOLE_GRID) {
-            bsplgen<3, bsorder>(w2, thetai2, array[1]);
-         }
-         if CONSTEXPR (T::N == UIND_GRID) {
-            bsplgen<2, bsorder>(w2, thetai2, array[1]);
-         }
-      } else if (threadIdx.x == 64) {
-         real w3 = xi * recip_c.x + yi * recip_c.y + zi * recip_c.z;
-         w3 = w3 + 0.5f - REAL_FLOOR(w3 + 0.5f);
-         real fr3 = nfft3 * w3;
-         igrid3 = REAL_FLOOR(fr3);
-         w3 = fr3 - igrid3;
-         igrid3 = igrid3 - bsorder + 1;
-         igrid3 += (igrid3 < 0 ? nfft3 : 0);
-         if CONSTEXPR (T::N == MPOLE_GRID) {
-            bsplgen<3, bsorder>(w3, thetai3, array[2]);
-         }
-         if CONSTEXPR (T::N == UIND_GRID) {
-            bsplgen<2, bsorder>(w3, thetai3, array[2]);
-         }
+      real t0 = thetai1[(4 * ix + 0) * padded_n + i];
+      real t1 = thetai1[(4 * ix + 1) * padded_n + i];
+      int xbase = igrid1 + ix;
+      xbase -= (xbase >= nfft1 ? nfft1 : 0);
+      int index = xbase + ybase + zbase;
+
+
+      if CONSTEXPR (T::N == MPOLE_GRID) {
+         real v2 = thetai3[(4 * iz + 2) * padded_n + i];
+         real u2 = thetai2[(4 * iy + 2) * padded_n + i];
+         real t2 = thetai1[(4 * ix + 2) * padded_n + i];
+         real fmpi0 = ptr1[i * 10 + mpl_pme_0];
+         real fmpix = ptr1[i * 10 + mpl_pme_x];
+         real fmpiy = ptr1[i * 10 + mpl_pme_y];
+         real fmpiz = ptr1[i * 10 + mpl_pme_z];
+         real fmpixx = ptr1[i * 10 + mpl_pme_xx];
+         real fmpiyy = ptr1[i * 10 + mpl_pme_yy];
+         real fmpizz = ptr1[i * 10 + mpl_pme_zz];
+         real fmpixy = ptr1[i * 10 + mpl_pme_xy];
+         real fmpixz = ptr1[i * 10 + mpl_pme_xz];
+         real fmpiyz = ptr1[i * 10 + mpl_pme_yz];
+         real term0 = fmpi0 * u0 * v0 + fmpiy * u1 * v0 + fmpiz * u0 * v1 +
+            fmpiyy * u2 * v0 + fmpizz * u0 * v2 + fmpiyz * u1 * v1;
+         real term1 = fmpix * u0 * v0 + fmpixy * u1 * v0 + fmpixz * u0 * v1;
+         real term2 = fmpixx * u0 * v0;
+         atomic_add(term0 * t0 + term1 * t1 + term2 * t2, qgrid, 2 * index);
       }
-      __syncthreads();
 
 
-      for (int j = threadIdx.x; j < bso3; j += blockDim.x) {
-         int iz = j / bso2;
-         j -= iz * bso2;
-         int iy = j / bsorder;
-         int ix = j - (j / bsorder) * bsorder;
-
-
-         int zbase = igrid3 + iz;
-         zbase -= (zbase >= nfft3 ? nfft3 : 0);
-         zbase *= (nfft1 * nfft2);
-         int ybase = igrid2 + iy;
-         ybase -= (ybase >= nfft2 ? nfft2 : 0);
-         ybase *= nfft1;
-         int xbase = igrid1 + ix;
-         xbase -= (xbase >= nfft1 ? nfft1 : 0);
-         int index = xbase + ybase + zbase;
-
-
-         real v0 = thetai3[4 * iz];
-         real v1 = thetai3[4 * iz + 1];
-         real u0 = thetai2[4 * iy];
-         real u1 = thetai2[4 * iy + 1];
-         real t0 = thetai1[4 * ix];
-         real t1 = thetai1[4 * ix + 1];
-
-
-         if CONSTEXPR (T::N == MPOLE_GRID) {
-            real v2 = thetai3[4 * iz + 2];
-            real u2 = thetai2[4 * iy + 2];
-            real t2 = thetai1[4 * ix + 2];
-
-            real3 t100 = make_real3(t1 * u0 * v0, t0 * u1 * v0, t0 * u0 * v1);
-            real3 t200 = make_real3(t2 * u0 * v0, t0 * u2 * v0, t0 * u0 * v2);
-            real3 t110 = make_real3(t1 * u1 * v0, t1 * u0 * v1, t0 * u1 * v1);
-            real add = datm.cc * t0 * u0 * v0 + dot3(datm.dd, t100) +
-               dot3(datm.qxxyyzz, t200) + dot3(datm.qxyxzyz, t110);
-            atomic_add(add, qgrid, 2 * index);
-         }
-
-
-         if CONSTEXPR (T::N == UIND_GRID) {
-            real3 tuv = make_real3(t1 * u0 * v0, t0 * u1 * v0, t0 * u0 * v1);
-            atomic_add(dot3(datu.fd, tuv), qgrid, 2 * index);
-            atomic_add(dot3(datu.fp, tuv), qgrid, 2 * index + 1);
-         }
+      if CONSTEXPR (T::N == UIND_GRID) {
+         real3 fd =
+            make_real3(ptr1[3 * i + 0], ptr1[3 * i + 1], ptr1[3 * i + 2]);
+         real3 fp =
+            make_real3(ptr2[3 * i + 0], ptr2[3 * i + 1], ptr2[3 * i + 2]);
+         real3 tuv = make_real3(t1 * u0 * v0, t0 * u1 * v0, t0 * u0 * v1);
+         atomic_add(dot3(fd, tuv), qgrid, 2 * index);
+         atomic_add(dot3(fp, tuv), qgrid, 2 * index + 1);
       }
    }
 }
@@ -336,14 +269,17 @@ void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
 
 
    device_array::zero(false, 2 * nt, st.qgrid);
-   /*/
+#if 1
    auto ker = grid_tmpl_cu<MPOLE, 5>;
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
               (const real*)fmp, nullptr, st.qgrid, recipa, recipb, recipc);
-   //*/
+#elif 0
    auto ker = grid_put<MPOLE, 5>;
-   launch_k1s(nonblk, n, ker, x, y, z, n, n1, n2, n3, (const real*)fmp, nullptr,
-              st.qgrid, recipa, recipb, recipc);
+   int npa = 5 * 5 * 5 * n;
+   launch_k1s(nonblk, npa, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
+              mspatial_unit->sorted, n, padded_n, n1, n2, n3, (const real*)fmp,
+              nullptr, st.qgrid);
+#endif
 }
 
 
@@ -357,17 +293,77 @@ void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 
 
    device_array::zero(false, 2 * nt, st.qgrid);
-   /*/
+#if 0
    auto ker = grid_tmpl_cu<UIND, 5>;
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
               (const real*)fuind, (const real*)fuinp, st.qgrid, recipa, recipb,
               recipc);
-   //*/
+#elif 1
    auto ker = grid_put<UIND, 5>;
-   launch_k1s(nonblk, n, ker, x, y, z, n, n1, n2, n3, (const real*)fuind,
-              (const real*)fuinp, st.qgrid, recipa, recipb, recipc);
+   int npa = 5 * 5 * 5 * n;
+   launch_k1s(nonblk, npa, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
+              mspatial_unit->sorted, n, padded_n, n1, n2, n3,
+              (const real*)fuind, (const real*)fuinp, st.qgrid);
+#endif
+}
+
+
+template <int LEVEL, int bsorder>
+__global__
+void bspline_fill(int* restrict igrid, real* restrict thetai1,
+                  real* restrict thetai2, real* restrict thetai3,
+                  const real* restrict x, const real* restrict y,
+                  const real* restrict z, int n, int padded_n, int nfft1,
+                  int nfft2, int nfft3, real3 recip_a, real3 recip_b,
+                  real3 recip_c)
+{
+   const int nfft4[3] = {nfft1, nfft2, nfft3};
+   const real3 recip4[3] = {recip_a, recip_b, recip_c};
+   real* const thetai[3] = {thetai1, thetai2, thetai3};
+   real array[5 * 5];
+
+
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
+        i += blockDim.x * gridDim.x) {
+      real xi = x[i];
+      real yi = y[i];
+      real zi = z[i];
+      int igridi[3];
+      for (int j = 0; j < 3; ++j) {
+         real w4 = xi * recip4[j].x + yi * recip4[j].y + zi * recip4[j].z;
+         w4 = w4 + 0.5f - REAL_FLOOR(w4 + 0.5f);
+         real fr4 = nfft4[j] * w4;
+         int igrid4 = REAL_FLOOR(fr4);
+         w4 = fr4 - igrid4;
+         igrid4 = igrid4 - bsorder + 1;
+         igrid4 += (igrid4 < 0 ? nfft4[j] : 0);
+         // write output
+         igridi[j] = igrid4;
+         bsplgen2<LEVEL, bsorder>(w4, thetai[j], i, padded_n, array);
+      }
+      igrid[3 * i + 0] = igridi[0];
+      igrid[3 * i + 1] = igridi[1];
+      igrid[3 * i + 2] = igridi[2];
+   }
 }
 }
+}
+
+
+void bspline_fill(PMEUnit u, int level)
+{
+   auto& st = *u;
+   if (level == 2) {
+      auto ker = platform::cu::bspline_fill<2, 5>;
+      launch_k1s(nonblk, n, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
+                 x, y, z, n, padded_n, st.nfft1, st.nfft2, st.nfft3, recipa,
+                 recipb, recipc);
+   } else if (level == 3) {
+      auto ker = platform::cu::bspline_fill<3, 5>;
+      launch_k1s(nonblk, n, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
+                 x, y, z, n, padded_n, st.nfft1, st.nfft2, st.nfft3, recipa,
+                 recipb, recipc);
+   }
 }
 
 

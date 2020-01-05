@@ -27,7 +27,7 @@ TINKER_NAMESPACE_BEGIN
 #ifdef __CUDACC__
 template <int LEVEL, int bsorder>
 __device__
-void bsplgen(real w, real* restrict thetai, real* restrict bsbuild_)
+void bsplgen(real w, real* restrict thetai, volatile real* restrict bsbuild_)
 #else
 #pragma acc routine seq
 template <int LEVEL>
@@ -124,4 +124,97 @@ void bsplgen(real w, real* restrict thetai, int bsorder)
    }
 #undef bsbuild
 }
+
+
+#ifdef __CUDACC__
+template <int LEVEL, int bsorder>
+__device__
+void bsplgen2(real w, real* restrict thetai, int k, int padded_n,
+              volatile real* restrict bsbuild_)
+{
+// Fortran 2D array syntax
+#   define bsbuild(j, i) bsbuild_[((i)-1) * bsorder + (j)-1]
+
+
+   // initialization to get to 2nd order recursion
+   bsbuild(2, 2) = w;
+   bsbuild(2, 1) = 1 - w;
+
+
+   // perform one pass to get to 3rd order recursion
+   bsbuild(3, 3) = 0.5f * w * bsbuild(2, 2);
+   bsbuild(3, 2) = 0.5f * ((1 + w) * bsbuild(2, 1) + (2 - w) * bsbuild(2, 2));
+   bsbuild(3, 1) = 0.5f * (1 - w) * bsbuild(2, 1);
+
+
+   // compute standard B-spline recursion to desired order
+   for (int i = 4; i <= bsorder; ++i) {
+      int k = i - 1;
+      real denom = REAL_RECIP(k);
+      bsbuild(i, i) = denom * w * bsbuild(k, k);
+      for (int j = 1; j <= i - 2; j++) {
+         bsbuild(i, i - j) = denom *
+            ((w + j) * bsbuild(k, i - j - 1) + (i - j - w) * bsbuild(k, i - j));
+      }
+      bsbuild(i, 1) = denom * (1 - w) * bsbuild(k, 1);
+   }
+
+
+   // get coefficients for the B-spline first derivative
+   if CONSTEXPR (LEVEL >= 2) {
+      int k = bsorder - 1;
+      bsbuild(k, bsorder) = bsbuild(k, bsorder - 1);
+      for (int i = bsorder - 1; i >= 2; --i) {
+         bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
+      }
+      bsbuild(k, 1) = -bsbuild(k, 1);
+   }
+
+
+   // get coefficients for the B-spline second derivative
+   if CONSTEXPR (LEVEL >= 3) {
+      int k = bsorder - 2;
+      bsbuild(k, bsorder - 1) = bsbuild(k, bsorder - 2);
+      for (int i = bsorder - 2; i >= 2; --i) {
+         bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
+      }
+      bsbuild(k, 1) = -bsbuild(k, 1);
+      bsbuild(k, bsorder) = bsbuild(k, bsorder - 1);
+      for (int i = bsorder - 1; i >= 2; --i) {
+         bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
+      }
+      bsbuild(k, 1) = -bsbuild(k, 1);
+   }
+
+
+   // get coefficients for the B-spline third derivative
+   if CONSTEXPR (LEVEL == 4) {
+      int k = bsorder - 3;
+      bsbuild(k, bsorder - 2) = bsbuild(k, bsorder - 3);
+      for (int i = bsorder - 3; i >= 2; --i) {
+         bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
+      }
+      bsbuild(k, 1) = -bsbuild(k, 1);
+      bsbuild(k, bsorder - 1) = bsbuild(k, bsorder - 2);
+      for (int i = bsorder - 2; i >= 2; --i) {
+         bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
+      }
+      bsbuild(k, 1) = -bsbuild(k, 1);
+      bsbuild(k, bsorder) = bsbuild(k, bsorder - 1);
+      for (int i = bsorder - 1; i >= 2; --i)
+         bsbuild(k, i) = bsbuild(k, i - 1) - bsbuild(k, i);
+      bsbuild(k, 1) = -bsbuild(k, 1);
+   }
+
+
+   // copy coefficients from temporary to permanent storage
+   for (int i = 1; i <= bsorder; ++i) {
+      for (int j = 1; j <= LEVEL; ++j) {
+         int offset = (4 * (i - 1) + (j - 1)) * padded_n + k;
+         thetai[offset] = bsbuild(bsorder - j + 1, i);
+      }
+   }
+#   undef bsbuild
+}
+#endif
 TINKER_NAMESPACE_END

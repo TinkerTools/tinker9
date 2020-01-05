@@ -17,6 +17,7 @@ TINKER_EXTERN int trajn;
 /// \ingroup md
 /// Number of atoms.
 TINKER_EXTERN int n;
+TINKER_EXTERN int padded_n;
 
 /// \ingroup md
 /// \{

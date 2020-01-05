@@ -133,7 +133,23 @@ void elec_init(int vers)
    chkpole();
    rotpole();
 
-   if (use_ewald())
+   if (use_ewald()) {
       pme_init(vers);
+#if TINKER_CUDART
+      if (epme_unit.valid()) {
+         bspline_fill(epme_unit, 3);
+      }
+
+
+      if (ppme_unit.valid() && (ppme_unit != epme_unit)) {
+         bspline_fill(ppme_unit, 2);
+      }
+
+
+      if (pvpme_unit.valid()) {
+         bspline_fill(pvpme_unit, 2);
+      }
+#endif
+   }
 }
 TINKER_NAMESPACE_END

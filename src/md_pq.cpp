@@ -13,10 +13,13 @@ void n_data(rc_op op)
    if (op & rc_dealloc) {
       trajn = -1;
       n = 0;
+      padded_n = 0;
    }
 
    if (op & rc_alloc) {
       n = atoms::n;
+      padded_n = (n + WARP_SIZE - 1) / WARP_SIZE;
+      padded_n *= WARP_SIZE;
 
       if (calc::traj & rc_flag) {
          // trajn must have been initialized by this point
