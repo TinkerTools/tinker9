@@ -90,7 +90,6 @@ void energy_potential(int vers)
       epolar(vers);
 skip_mpole_polar:
    torque(vers);
-   wait_queue();
 
    sum_energies(vers);
 }

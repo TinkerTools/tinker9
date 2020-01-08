@@ -29,7 +29,7 @@ void thermo_bussi_acc(real dt_real, real temp_real)
    eta *= scale;
 
    real sc = scale;
-   #pragma acc parallel loop independent deviceptr(vx,vy,vz)
+   #pragma acc parallel loop independent async deviceptr(vx,vy,vz)
    for (int i = 0; i < n; ++i) {
       vx[i] *= sc;
       vy[i] *= sc;
