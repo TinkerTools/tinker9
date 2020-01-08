@@ -444,22 +444,22 @@ void epolar_tmpl_cu(const real (*uind)[3], const real (*uinp)[3])
    }
    if (st.niak > 0) {
       auto ker1 = epolar_cu1<USE, ETYP>;
-      launch_k1(WARP_SIZE * st.niak, ker1, //
-                bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld, box, off2, f,
-                rpole, pdamp, thole, uind, uinp, //
-                st.sorted, st.niak, st.iak, st.lst, n, aewald);
+      launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
+                 bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld, box, off2,
+                 f, rpole, pdamp, thole, uind, uinp, //
+                 st.sorted, st.niak, st.iak, st.lst, n, aewald);
    }
    if (ndpuexclude_ > 0) {
       auto ker2 = epolar_cu2<USE>;
-      launch_k1(ndpuexclude_, ker2, //
-                bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld, box, off2, f,
-                rpole, pdamp, thole, uind, uinp, //
-                x, y, z, ndpuexclude_, dpuexclude_, dpuexclude_scale_);
+      launch_k1s(nonblk, ndpuexclude_, ker2, //
+                 bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld, box, off2,
+                 f, rpole, pdamp, thole, uind, uinp, //
+                 x, y, z, ndpuexclude_, dpuexclude_, dpuexclude_scale_);
    }
    // torque
    if CONSTEXPR (do_g) {
-      launch_k1(n, epolar_trq_cu, //
-                trqx, trqy, trqz, n, rpole, ufld, dufld);
+      launch_k1s(nonblk, n, epolar_trq_cu, //
+                 trqx, trqy, trqz, n, rpole, ufld, dufld);
    }
 }
 
