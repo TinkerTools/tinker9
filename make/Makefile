@@ -381,7 +381,8 @@ endif
 cuda_flags__ := -std=c++11 $(shared_flags__) $(cuda_opt_flags__)
 cuda_flags__ += -I$(top_dir__)/include/syntax/cu \
 -gencode arch=compute_35,code=sm_35 \
--gencode arch=compute_60,code=compute_60
+-gencode arch=compute_60,code=sm_60 \
+-gencode arch=compute_70,code=sm_70
 $(all_cu_objs__): %.o: $(top_dir__)/%.cu
 	$(NVCC) $< -c $(cuda_flags__) -o $@
 endif
