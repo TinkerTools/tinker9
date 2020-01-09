@@ -1,6 +1,7 @@
 #include "io_fort_str.h"
 #include "md.h"
 #include "nblist.h"
+#include "platform.h"
 #include "spatial.h"
 #include <cassert>
 #include <tinker/detail/bath.hh>
@@ -71,10 +72,16 @@ void integrate_data(rc_op op)
    }
 }
 
-extern void kinetic_acc(real& temp);
 void kinetic(real& temp)
 {
-   kinetic_acc(temp);
+   extern void kinetic_acc(real&);
+#if TINKER_CUDART
+   if (platform::config & platform::cu_pltfm) {
+      extern void kinetic_cu(real&);
+      kinetic_cu(temp);
+   } else
+#endif
+      kinetic_acc(temp);
 }
 
 extern void thermo_bussi_acc(real dt, real temp);
