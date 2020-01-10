@@ -139,7 +139,13 @@ void gpu_card_data(rc_op op)
    if (op & rc_init) {
       if (cuda_device_flags == 0) {
          cuda_device_flags = cudaDeviceMapHost;
+#if 1
          cuda_device_flags |= cudaDeviceScheduleBlockingSync;
+#elif 0
+         // Using this flag may reduce the latency
+         // for cudaStreamSynchronize() calls.
+         cuda_device_flags |= cudaDeviceScheduleSpin;
+#endif
          check_rt(cudaSetDeviceFlags(cuda_device_flags));
       }
 
