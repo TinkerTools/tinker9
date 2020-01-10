@@ -4,10 +4,22 @@ Tinker GPU: Software Tools for Molecular Design
 [![Build Status](https://travis-ci.com/zhi-wang/tinker.gpu.svg?branch=master)](https://travis-ci.com/zhi-wang/tinker.gpu)
 
 
+# Getting Started with Tinker GPU
+   - Overview
+   - Installation Guide
+   - Directory Layout
+
+
+## Overview
+
+
 ## Installation Guide
    - [Prerequisites](doc/prerequisites.md)
    - [Build the Canonical Tinker](doc/build1.md)
    - [Build Tinker GPU](doc/build2.md)
+
+
+## Directory Layout
 
 
 ## Documentation

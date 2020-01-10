@@ -45,7 +45,7 @@ makelocalrc $PGI/linux86-64-llvm/2019 \
 -g77 /usr/local/gcc-7.4.0/bin/gfortran \
 -o -net > /path/to/new_config
 ```
-Then added `export PGI_LOCALRC=/path/to/new_config` in my bash resource file.
+then added `export PGI_LOCALRC=/path/to/new_config` in my bash resource file.
 
 
 ## Other Nonmandatory Utilities
