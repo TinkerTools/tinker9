@@ -35,7 +35,7 @@ void x_info(int argc, char** argv)
 
 #if TINKER_CUDART
    print(out, fmt, "Platform:", "CUDA and OpenACC");
-   print(out, fmt, "Latest CUDA by the driver:", get_cuda_driver_version_string());
+   print(out, fmt, "Latest CUDA supported by driver:", get_cuda_driver_version_string());
    print(out, fmt, "CUDA runtime version:", get_cuda_runtime_version_string());
    print(out, fmt, "Thrust version:", get_thrust_version_string());
    gpu_card_data(rc_init);

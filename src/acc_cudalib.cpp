@@ -37,6 +37,12 @@ void cudalib_data(rc_op op)
       check_rt(cublasCreate(&h_cublas));
       check_rt(cublasCreate(&h_cublas_nonblk));
       check_rt(cublasSetStream(h_cublas_nonblk, nonblk));
+      // set pointer mode for cublas dot kernels
+      cublasPointerMode_t ptrflag = CUBLAS_POINTER_MODE_DEVICE;
+      check_rt(cublasSetPointerMode(h_cublas, ptrflag));
+      check_rt(cublasSetPointerMode(h_cublas_nonblk, ptrflag));
+
+
       int nblock = get_grid_size(BLOCK_DIM);
       check_rt(cudaMallocHost(&pinned_real64, nblock * sizeof(double)));
       check_rt(cudaMalloc(&dptr_real64, nblock * sizeof(double)));
