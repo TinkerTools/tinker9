@@ -71,6 +71,7 @@ public:
       }                                                                        \
    } while (0)
 
+
 #define TINKER_ALWAYS_CHECK_RT_(...)                                           \
    TINKER_GET_3RD_ARG(__VA_ARGS__, TINKER_ALWAYS_CHECK_RT_2_,                  \
                       TINKER_ALWAYS_CHECK_RT_1_)
@@ -102,4 +103,7 @@ public:
 #else
 #   define check_rt(call, ...) call
 #endif
+
+
+#define always_check_rt(...) TINKER_ALWAYS_CHECK_RT_(__VA_ARGS__)(__VA_ARGS__)
 TINKER_NAMESPACE_END

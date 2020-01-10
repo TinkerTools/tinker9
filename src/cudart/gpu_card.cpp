@@ -143,7 +143,7 @@ void gpu_card_data(rc_op op)
          check_rt(cudaSetDeviceFlags(cuda_device_flags));
       }
 
-      check_rt(cudaGetDeviceCount(&ndevice));
+      always_check_rt(cudaGetDeviceCount(&ndevice));
 
       auto& all = get_device_attributes();
       all.resize(ndevice);

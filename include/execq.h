@@ -1,6 +1,6 @@
 #pragma once
 #include "rc_man.h"
-#include <cstring>
+#include <cstddef>
 
 
 TINKER_NAMESPACE_BEGIN
