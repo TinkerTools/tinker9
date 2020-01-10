@@ -1,4 +1,4 @@
-#include "acc_add.h"
+#include "add.h"
 #include "e_mpole.h"
 #include "gpu_card.h"
 #include "md.h"
@@ -240,7 +240,7 @@ void empole_recip_tmpl()
       if (vir_m) {
          pme_conv1(pu, vir_m);
          auto size = buffer_size() * virial_buffer_traits::value;
-         #pragma acc parallel loop independent deviceptr(vir_m,vir_em)
+         #pragma acc parallel loop independent async deviceptr(vir_m,vir_em)
          for (int i = 0; i < size; ++i) {
             vir_em[0][i] += vir_m[0][i];
          }
@@ -260,7 +260,7 @@ void empole_recip_tmpl()
    const int nfft3 = st.nfft3;
    const real f = electric / dielec;
 
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(gx,gy,gz,box,\
                cmp,fmp,cphi,fphi,em,vir_em,trqx,trqy,trqz)
    for (int i = 0; i < n; ++i) {

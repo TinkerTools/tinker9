@@ -238,12 +238,11 @@ cuda_dir := /usr/local/cuda
 include_flags__ := -I$(top_dir__)/include
 include_flags__ += -I$(top_dir__)/ext/ext
 ifeq ($(host_only__),false)
-   include_flags__ += -I$(top_dir__)/include/cudart
    include_flags__ += -I$(cuda_dir)/include
 else
-   include_flags__ += -I$(top_dir__)/include/host
    include_flags__ += -I$(fftw_include__)
 endif
+include_default_platform__ := -I$(top_dir__)/include/syntax/acc
 shared_flags__ += $(include_flags__)
 
 
@@ -380,9 +379,10 @@ else ifeq ($(opt),profile)
    cuda_opt_flags__ += -O3 --use_fast_math -g -lineinfo
 endif
 cuda_flags__ := -std=c++11 $(shared_flags__) $(cuda_opt_flags__)
-cuda_flags__ += -rdc=true \
+cuda_flags__ += -I$(top_dir__)/include/syntax/cu \
 -gencode arch=compute_35,code=sm_35 \
--gencode arch=compute_60,code=sm_60
+-gencode arch=compute_60,code=sm_60 \
+-gencode arch=compute_70,code=sm_70
 $(all_cu_objs__): %.o: $(top_dir__)/%.cu
 	$(NVCC) $< -c $(cuda_flags__) -o $@
 endif

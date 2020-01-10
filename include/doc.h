@@ -1,6 +1,5 @@
 /**
  * \defgroup ff      Force Field Terms
- * \defgroup io      Inputs and Outputs
  * \defgroup macro   Macros
  * \defgroup math    Math
  * \defgroup md      MD Configurations
@@ -12,6 +11,8 @@
 
 
 /**
+ * \defgroup pme   Particle Mesh Ewald
+ * \ingroup ff
  * \defgroup geom  Geometrical Restraints
  * \ingroup ff
  * \defgroup mpole Multipole Electrostatics
@@ -29,6 +30,8 @@
  * \defgroup ebuf   Energy Buffer
  * \ingroup util
  * \defgroup error  Errors and Exceptions
+ * \ingroup util
+ * \defgroup io     I/O and Text
  * \ingroup util
  * \defgroup mem    Memory and Pointers
  * \ingroup util
@@ -50,15 +53,26 @@ namespace calc {}
 
 
 /**
- * \brief Compile-time math functions. Some of them are also run-time functions.
- */
-namespace ct {}
-
-
-/**
  * \brief Math functions running in parallel.
  */
 namespace parallel {}
+
+
+/**
+ * \brief Parallel computing platforms.
+ */
+namespace platform {
+/**
+ * \brief OpenACC.
+ */
+namespace acc {}
+
+
+/**
+ * \brief CUDA.
+ */
+namespace cu {}
+}
 
 
 /**

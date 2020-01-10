@@ -1,5 +1,6 @@
-#include "acc_add.h"
+#include "add.h"
 #include "e_tors.h"
+#include "mathfunc.h"
 #include "md.h"
 
 // TOOD: use_smooth version
@@ -15,7 +16,7 @@ void etors_tmpl()
 
    auto bufsize = buffer_size();
 
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(x,y,z,gx,gy,gz,\
                itors,tors1,tors2,tors3,tors4,tors5,tors6,\
                et,vir_et)

@@ -20,10 +20,4 @@ int get_grid_size(int)
 {
    return 1;
 }
-
-
-int get_block_size(int)
-{
-   return 1;
-}
 TINKER_NAMESPACE_END

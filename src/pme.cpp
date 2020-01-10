@@ -47,6 +47,7 @@ bool PME::operator==(const Params& p) const
 PME::~PME()
 {
    device_array::deallocate(bsmod1, bsmod2, bsmod3, qgrid);
+   device_array::deallocate(igrid, thetai1, thetai2, thetai3);
 }
 
 static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique)
@@ -66,6 +67,9 @@ static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique)
       device_array::allocate(p.nfft2, &st.bsmod2);
       device_array::allocate(p.nfft3, &st.bsmod3);
       device_array::allocate(2 * p.nfft1 * p.nfft2 * p.nfft3, &st.qgrid);
+      device_array::allocate(3 * n, &st.igrid);
+      device_array::allocate(padded_n * p.bsorder * 4, &st.thetai1, &st.thetai2,
+                             &st.thetai3);
 
       st.set_params(p);
    }
@@ -113,7 +117,7 @@ void pme_init(int vers)
    rpole_to_cmp();
 
    if (vir_m)
-      device_array::zero(buffer_size(), vir_m);
+      device_array::zero(false, buffer_size(), vir_m);
 }
 
 static void pme_data1_(rc_op op)

@@ -1,4 +1,4 @@
-#include "acc_add.h"
+#include "add.h"
 #include "box.h"
 #include "e_geom.h"
 #include "group.h"
@@ -24,7 +24,7 @@ void egeom_acc_tmpl()
    const auto* kgrp = grp.kgrp;
    const auto* grpmass = grp.grpmass;
 
-   #pragma acc kernels deviceptr(x,y,z,gx,gy,gz,box,mass,molec,\
+   #pragma acc kernels async deviceptr(x,y,z,gx,gy,gz,box,mass,molec,\
                igrp,kgrp,grpmass,igfix,gfix,\
                eg,vir_eg)
    {

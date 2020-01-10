@@ -4,28 +4,26 @@
 
 
 TINKER_NAMESPACE_BEGIN
-void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
-                                void*, int)
+void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes, int)
 {
    std::memcpy(dst, src, nbytes);
 }
 
 
-void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
-                                 void*, int)
+void device_memory_copyout_bytes_sync(void* dst, const void* src, size_t nbytes,
+                                      int)
 {
    std::memcpy(dst, src, nbytes);
 }
 
 
-void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes, void*,
-                              int)
+void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes, int)
 {
    std::memcpy(dst, src, nbytes);
 }
 
 
-void device_memory_zero_bytes(void* dst, size_t nbytes, void*, int)
+void device_memory_zero_bytes(void* dst, size_t nbytes, int)
 {
    std::memset(dst, 0, nbytes);
 }

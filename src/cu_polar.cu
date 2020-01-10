@@ -1,7 +1,7 @@
-#include "add.cuh"
+#include "add.h"
 #include "e_polar.h"
-#include "epolar_trq.cuh"
-#include "launch.cuh"
+#include "epolar_trq.h"
+#include "launch.h"
 #include "md.h"
 #include "pme.h"
 #include "seq_image.h"
@@ -440,26 +440,26 @@ void epolar_tmpl_cu(const real (*uind)[3], const real (*uinp)[3])
 
 
    if CONSTEXPR (do_g) {
-      device_array::zero(n, ufld, dufld);
+      device_array::zero(true, n, ufld, dufld);
    }
    if (st.niak > 0) {
       auto ker1 = epolar_cu1<USE, ETYP>;
-      launch_kernel1(WARP_SIZE * st.niak, ker1, //
-                     bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld, box,
-                     off2, f, rpole, pdamp, thole, uind, uinp, //
-                     st.sorted, st.niak, st.iak, st.lst, n, aewald);
+      launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
+                 bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld, box, off2,
+                 f, rpole, pdamp, thole, uind, uinp, //
+                 st.sorted, st.niak, st.iak, st.lst, n, aewald);
    }
    if (ndpuexclude_ > 0) {
       auto ker2 = epolar_cu2<USE>;
-      launch_kernel1(ndpuexclude_, ker2, //
-                     bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld, box,
-                     off2, f, rpole, pdamp, thole, uind, uinp, //
-                     x, y, z, ndpuexclude_, dpuexclude_, dpuexclude_scale_);
+      launch_k1s(nonblk, ndpuexclude_, ker2, //
+                 bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld, box, off2,
+                 f, rpole, pdamp, thole, uind, uinp, //
+                 x, y, z, ndpuexclude_, dpuexclude_, dpuexclude_scale_);
    }
    // torque
    if CONSTEXPR (do_g) {
-      launch_kernel1(n, epolar_trq_cu, //
-                     trqx, trqy, trqz, n, rpole, ufld, dufld);
+      launch_k1s(nonblk, n, epolar_trq_cu, //
+                 trqx, trqy, trqz, n, rpole, ufld, dufld);
    }
 }
 

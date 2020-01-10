@@ -1,7 +1,8 @@
-#include "acc_add.h"
+#include "add.h"
 #include "e_angle.h"
 #include "e_bond.h"
 #include "e_strbnd.h"
+#include "mathfunc.h"
 #include "md.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -15,7 +16,7 @@ void estrbnd_tmpl()
 
    auto bufsize = buffer_size();
 
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(x,y,z,gx,gy,gz,\
                isb,sbk,iang,anat,bl,\
                eba,vir_eba)

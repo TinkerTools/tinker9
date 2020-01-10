@@ -1,37 +1,18 @@
 #include "random.h"
-#include "io_fort_str.h"
-#include "io_text.h"
 #include "rc_man.h"
+#include "tinker_rt.h"
 #include <chrono>
 #include <random>
-#include <tinker/detail/keys.hh>
+
 
 TINKER_NAMESPACE_BEGIN
-/// @return
-/// Zero if Tinker key file does not contain a RANDOMSEED keyword
-static int read_tinker_randomseed_()
-{
-   int seed = 0;
-   for (int i = 0; i < keys::nkey; ++i) {
-      fstr_view record = keys::keyline[i];
-      auto vs = Text::split(record.trim());
-      if (vs.size()) {
-         std::string keyword = vs.at(0);
-         Text::upcase(keyword);
-         if (keyword == "RANDOMSEED" && vs.size() > 1) {
-            seed = std::stoi(vs.at(1));
-            seed = std::max(1, seed);
-         }
-      }
-   }
-   return seed;
-}
-
 static std::default_random_engine generator_;
 void random_data(rc_op op)
 {
    if (op & rc_init) {
-      int seed = read_tinker_randomseed_();
+      int seed;
+      get_kv_pair("RANDOMSEED", seed, 0);
+      seed = std::max(1, seed);
       if (seed == 0) {
          auto now = std::chrono::system_clock::now();
          auto tt = std::chrono::system_clock::to_time_t(now);
@@ -50,38 +31,35 @@ void random_data(rc_op op)
    }
 }
 
-static std::uniform_real_distribution<double> uniformd_(0, 1);
-static std::uniform_real_distribution<float> uniformf_(0, 1);
-double random_double()
-{
-   return uniformd_(generator_);
-}
-float random_float()
-{
-   return uniformf_(generator_);
-}
 
-static std::normal_distribution<double> normald_(0, 1);
-static std::normal_distribution<float> normalf_(0, 1);
-double normal_double()
+template <class T>
+T random()
 {
-   return normald_(generator_);
+   static std::uniform_real_distribution<T> unif(0, 1);
+   return unif(generator_);
 }
-float normal_float()
-{
-   return normalf_(generator_);
-}
+template float random<float>();
+template double random<double>();
 
-static std::gamma_distribution<double> gammad_(1, 1);
-static std::gamma_distribution<float> gammaf_(1, 1);
-double chi_squared_double(int k)
+
+template <class T>
+T normal()
 {
-   gammad_.param(std::gamma_distribution<double>::param_type(0.5 * k, 2));
-   return gammad_(generator_);
+   static std::normal_distribution<T> norm(0, 1);
+   return norm(generator_);
 }
-float chi_squared_float(int k)
+template float normal<float>();
+template double normal<double>();
+
+
+template <class T>
+T chi_squared(int k)
 {
-   gammaf_.param(std::gamma_distribution<float>::param_type(0.5f * k, 2));
-   return gammaf_(generator_);
+   static std::gamma_distribution<T> gam(1, 1);
+   using param_type = typename std::gamma_distribution<T>::param_type;
+   gam.param(param_type((T)0.5 * k, 2));
+   return gam(generator_);
 }
+template float chi_squared<float>(int);
+template double chi_squared<double>(int);
 TINKER_NAMESPACE_END

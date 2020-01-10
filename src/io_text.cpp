@@ -5,6 +5,7 @@
 #include <regex>
 #include <sstream>
 
+
 TINKER_NAMESPACE_BEGIN
 bool Text::is_ws(char ch)
 {
@@ -12,9 +13,10 @@ bool Text::is_ws(char ch)
    return ws.find(ch) != std::string::npos;
 }
 
+
 void Text::replace(std::string& src, std::string old, char r)
 {
-   std::bitset<128> alphabets;
+   std::bitset<256> alphabets;
    for (char c : old) {
       alphabets[c] = 1;
    }
@@ -25,11 +27,13 @@ void Text::replace(std::string& src, std::string old, char r)
    }
 }
 
+
 void Text::replace_by_kv(std::string& src, std::string key, std::string value)
 {
    std::regex rpl(key);
    src = std::regex_replace(src, rpl, value);
 }
+
 
 std::vector<std::string> Text::split(std::string str, std::string delimiters)
 {
@@ -40,20 +44,20 @@ std::vector<std::string> Text::split(std::string str, std::string delimiters)
    std::istringstream ssin(str);
    std::vector<std::string> vs;
    std::string line;
-
    while (std::getline(ssin, line, dlm)) {
       if (line != "") {
          vs.push_back(line);
       }
    }
-
    return vs;
 }
+
 
 void Text::upcase(std::string& s)
 {
    std::transform(s.begin(), s.end(), s.begin(), ::toupper);
 }
+
 
 void Text::lowcase(std::string& s)
 {

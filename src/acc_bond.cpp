@@ -1,4 +1,4 @@
-#include "acc_add.h"
+#include "add.h"
 #include "e_bond.h"
 #include "md.h"
 #include <cassert>
@@ -15,7 +15,7 @@ void ebond_tmpl()
 
    auto bufsize = buffer_size();
 
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(x,y,z,gx,gy,gz,\
                ibnd,bl,bk,\
                eb,vir_eb)

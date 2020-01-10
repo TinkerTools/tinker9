@@ -1,6 +1,6 @@
-#include "async.h"
 #include "box.h"
 #include "energy.h"
+#include "execq.h"
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"
@@ -27,7 +27,7 @@ static bool mdsave_use_uind_()
 {
    return output::uindsave && use_potent(polar_term);
 }
-static void* dup_stream_uind_;
+static ExecQ dup_stream_;
 static real (*dup_buf_uind_)[3];
 static void *dup_stream_bxyz_, *dup_stream_v_, *dup_stream_g_;
 static real dup_buf_esum_;
@@ -39,14 +39,11 @@ static real *dup_buf_gx_, *dup_buf_gy_, *dup_buf_gz_;
 void mdsave_data(rc_op op)
 {
    if (op & rc_dealloc) {
+      dup_stream_.deallocate();
+
       if (mdsave_use_uind_()) {
-         deallocate_stream(dup_stream_uind_);
          device_array::deallocate(dup_buf_uind_);
       }
-
-      deallocate_stream(dup_stream_bxyz_);
-      deallocate_stream(dup_stream_v_);
-      deallocate_stream(dup_stream_g_);
 
       device_array::deallocate(dup_buf_box_);
       device_array::deallocate(dup_buf_x_, dup_buf_y_, dup_buf_z_);
@@ -55,17 +52,13 @@ void mdsave_data(rc_op op)
    }
 
    if (op & rc_alloc) {
+      dup_stream_.allocate();
+
       if (mdsave_use_uind_()) {
-         allocate_stream(&dup_stream_uind_);
          device_array::allocate(n, &dup_buf_uind_);
       } else {
-         dup_stream_uind_ = nullptr;
          dup_buf_uind_ = nullptr;
       }
-
-      allocate_stream(&dup_stream_bxyz_);
-      allocate_stream(&dup_stream_v_);
-      allocate_stream(&dup_stream_g_);
 
       device_array::allocate(1, &dup_buf_box_);
       device_array::allocate(n, &dup_buf_x_, &dup_buf_y_, &dup_buf_z_);
@@ -108,29 +101,24 @@ static void mdsave_dup_then_write_(int istep, real dt)
    const size_t rs = sizeof(real);
 
    dup_buf_esum_ = esum;
-   copy_bytes_async(dup_buf_box_, box, sizeof(Box), dup_stream_bxyz_);
-   copy_bytes_async(dup_buf_x_, x, rs * n, dup_stream_bxyz_);
-   copy_bytes_async(dup_buf_y_, y, rs * n, dup_stream_bxyz_);
-   copy_bytes_async(dup_buf_z_, z, rs * n, dup_stream_bxyz_);
+   dup_stream_.copy_bytes(dup_buf_box_, box, sizeof(Box));
+   dup_stream_.copy_bytes(dup_buf_x_, x, rs * n);
+   dup_stream_.copy_bytes(dup_buf_y_, y, rs * n);
+   dup_stream_.copy_bytes(dup_buf_z_, z, rs * n);
 
-   copy_bytes_async(dup_buf_vx_, vx, rs * n, dup_stream_v_);
-   copy_bytes_async(dup_buf_vy_, vy, rs * n, dup_stream_v_);
-   copy_bytes_async(dup_buf_vz_, vz, rs * n, dup_stream_v_);
+   dup_stream_.copy_bytes(dup_buf_vx_, vx, rs * n);
+   dup_stream_.copy_bytes(dup_buf_vy_, vy, rs * n);
+   dup_stream_.copy_bytes(dup_buf_vz_, vz, rs * n);
 
-   copy_bytes_async(dup_buf_gx_, gx, rs * n, dup_stream_g_);
-   copy_bytes_async(dup_buf_gy_, gy, rs * n, dup_stream_g_);
-   copy_bytes_async(dup_buf_gz_, gz, rs * n, dup_stream_g_);
+   dup_stream_.copy_bytes(dup_buf_gx_, gx, rs * n);
+   dup_stream_.copy_bytes(dup_buf_gy_, gy, rs * n);
+   dup_stream_.copy_bytes(dup_buf_gz_, gz, rs * n);
 
    if (mdsave_use_uind_()) {
-      copy_bytes_async(&dup_buf_uind_[0][0], &uind[0][0], rs * 3 * n,
-                       dup_stream_uind_);
+      dup_stream_.copy_bytes(&dup_buf_uind_[0][0], &uind[0][0], rs * 3 * n);
    }
 
-   synchronize_stream(dup_stream_bxyz_);
-   synchronize_stream(dup_stream_g_);
-   synchronize_stream(dup_stream_v_);
-   if (mdsave_use_uind_())
-      synchronize_stream(dup_stream_uind_);
+   dup_stream_.synchronize();
 
    mtx_dup.lock();
    idle_dup = true;

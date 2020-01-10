@@ -1,4 +1,4 @@
-#include "acc_add.h"
+#include "add.h"
 #include "e_urey.h"
 #include "md.h"
 
@@ -13,7 +13,7 @@ void eurey_tmpl()
 
    auto bufsize = buffer_size();
 
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(x,y,z,gx,gy,gz,\
                iury,uk,ul,\
                eub,vir_eub)

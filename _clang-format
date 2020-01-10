@@ -38,3 +38,5 @@ StatementMacros:
     - __global__
     - __host__
     - __device__
+    - SEQ_ROUTINE
+    - SEQ_CUDA

@@ -1,10 +1,12 @@
 #pragma once
-#include "builtin.h"
-#include <cstring>
+#include "macro.h"
+#include <cstddef>
 
 
 TINKER_NAMESPACE_BEGIN
-namespace ct {
+// constexpr functions
+
+
 /**
  * \ingroup math
  * \brief Return true if and only if `val` is a power of 2.
@@ -41,9 +43,9 @@ constexpr long long pow2ll(int val)
  * \param val Must be greater than 0.
  * \note Should return 0 if `val` is 0.
  */
-constexpr int floor_log2(size_t val)
+constexpr int floor_log2_constexpr(size_t val)
 {
-   return val < 2 ? 0 : 1 + floor_log2(val >> 1);
+   return val < 2 ? 0 : 1 + floor_log2_constexpr(val >> 1);
 }
 
 
@@ -54,7 +56,7 @@ constexpr int floor_log2(size_t val)
  */
 constexpr size_t pow2_le(size_t val)
 {
-   return 1ull << floor_log2(val);
+   return 1ull << floor_log2_constexpr(val);
 }
 
 
@@ -64,9 +66,11 @@ constexpr size_t pow2_le(size_t val)
  */
 constexpr size_t pow2_ge(size_t val)
 {
-   return val <= 1 ? 1 : (1ull << (1 + floor_log2(val - 1)));
+   return val <= 1 ? 1 : (1ull << (1 + floor_log2_constexpr(val - 1)));
 }
-}
+
+
+// inline functions
 
 
 /**
@@ -77,7 +81,7 @@ inline int floor_log2(int val)
 {
    if (val == 0)
       return 0;
-   int c = builtin::clz(val);
+   int c = __builtin_clz(val);
    return 8 * sizeof(int) - 1 - c;
 }
 
@@ -90,7 +94,7 @@ inline int floor_log2(long long val)
 {
    if (val == 0)
       return 0;
-   int c = builtin::clz(val);
+   int c = __builtin_clzll(val);
    return 8 * sizeof(long long) - 1 - c;
 }
 

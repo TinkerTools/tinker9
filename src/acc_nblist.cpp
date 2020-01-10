@@ -60,7 +60,7 @@ void check_nblist(int n, real lbuf, const Box* restrict box,
                   const real* restrict y, const real* restrict z,
                   real* restrict xold, real* restrict yold, real* restrict zold)
 {
-   const real lbuf2 = REAL_SQ(0.5f * lbuf);
+   const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
    #pragma acc parallel loop independent\
                deviceptr(box,update,x,y,z,xold,yold,zold)
    for (int i = 0; i < n; ++i) {
@@ -91,30 +91,19 @@ int check_spatial(int n, real lbuf, const Box* restrict box,
       return 1;
 
 
-   int ans = 0; // 0: do not rebuild; 1: rebuild
-   const real lbuf2 = REAL_SQ(0.5f * lbuf);
-   #pragma acc kernels deviceptr(box,update,x,y,z,xold,yold,zold)\
-               copy(ans)
-   {
-      #pragma acc loop independent
-      for (int i = 0; i < n; ++i) {
-         real xr = x[i] - xold[i];
-         real yr = y[i] - yold[i];
-         real zr = z[i] - zold[i];
-         imagen(xr, yr, zr, box);
-         real r2 = xr * xr + yr * yr + zr * zr;
-         update[i] = (r2 >= lbuf2 ? 1 : 0);
-      }
-
-
-      #pragma acc loop independent reduction(max:ans)
-      for (int i = 0; i < n; ++i) {
-         int upi = update[i];
-         ans = (ans > upi ? ans : upi);
-      }
+   // 0: do not rebuild; 1: rebuild
+   const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
+   #pragma acc parallel loop independent async\
+               deviceptr(box,update,x,y,z,xold,yold,zold)
+   for (int i = 0; i < n; ++i) {
+      real xr = x[i] - xold[i];
+      real yr = y[i] - yold[i];
+      real zr = z[i] - zold[i];
+      imagen(xr, yr, zr, box);
+      real r2 = xr * xr + yr * yr + zr * zr;
+      update[i] = (r2 >= lbuf2 ? 1 : 0);
    }
-
-
+   int ans = parallel::reduce_logic_or(update, n, false);
    return ans;
 }
 
@@ -141,7 +130,7 @@ inline void build_v1_(NBListUnit nu)
 {
    auto& st = *nu;
    const int maxnlst = st.maxnlst;
-   const real buf2 = REAL_SQ(st.cutoff + st.buffer);
+   const real buf2 = (st.cutoff + st.buffer) * (st.cutoff + st.buffer);
 
    const auto* restrict lx = st.x;
    const auto* restrict ly = st.y;
@@ -199,8 +188,8 @@ inline void update_v1_(NBListUnit nu)
 
    auto* lst = nu.deviceptr();
    const int maxnlst = st.maxnlst;
-   const real buf2 = REAL_SQ(st.cutoff + st.buffer);
-   const real bufx = REAL_SQ(st.cutoff + 2 * st.buffer);
+   const real buf2 = (st.cutoff + st.buffer) * (st.cutoff + st.buffer);
+   const real bufx = (st.cutoff + 2 * st.buffer) * (st.cutoff + 2 * st.buffer);
 
    #pragma acc kernels deviceptr(lst,box)
    {

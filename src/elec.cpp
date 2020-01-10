@@ -126,14 +126,30 @@ void elec_init(int vers)
       return;
 
    if (vers & calc::grad)
-      device_array::zero(n, trqx, trqy, trqz);
+      device_array::zero(false, n, trqx, trqy, trqz);
    if (vers & calc::virial)
-      device_array::zero(buffer_size(), vir_trq);
+      device_array::zero(false, buffer_size(), vir_trq);
 
    chkpole();
    rotpole();
 
-   if (use_ewald())
+   if (use_ewald()) {
       pme_init(vers);
+#if TINKER_CUDART
+      if (epme_unit.valid()) {
+         bspline_fill(epme_unit, 3);
+      }
+
+
+      if (ppme_unit.valid() && (ppme_unit != epme_unit)) {
+         bspline_fill(ppme_unit, 2);
+      }
+
+
+      if (pvpme_unit.valid()) {
+         bspline_fill(pvpme_unit, 2);
+      }
+#endif
+   }
 }
 TINKER_NAMESPACE_END

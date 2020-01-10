@@ -1,6 +1,6 @@
 #pragma once
 #include "macro.h"
-#include <cstring>
+#include <cstddef>
 #include <type_traits>
 
 
@@ -38,7 +38,7 @@ inline void atomic_add(T value, unsigned long long* buffer, size_t offset = 0)
 {
    static_assert(
       std::is_same<T, float>::value || std::is_same<T, double>::value, "");
-   // float -> (signed) long long (int) -> unsigned long long (int)
+   // float -> (signed) long long -> unsigned long long
    atomicAdd(&buffer[offset],
              static_cast<unsigned long long>(
                 static_cast<long long>(value * 0x100000000ull)));

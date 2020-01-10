@@ -10,15 +10,20 @@
 #else
 #   error We do not know what Fortran compiler you used to compile the Tinker  \
 library. You should implement these two macros (TINKER_MOD and TINKER_RT) here \
-to mimic its name mangling. Similarly, you should implement other functions    \
-whenever you see an "unknown fortran compiler error".
+to mimic its name mangling.
 #endif
 
 
+/**
+ * \def TINKER_STR
+ * \ingroup macro
+ * Convert a predefined macro `s` into a string `"s"`.
+ */
 #define TINKER_STR(s) TINKER_STR1_(s)
 #define TINKER_STR1_(s) #s
 
 
+#define TINKER_GET_1ST_ARG(a1, ...) a1
 #define TINKER_GET_2ND_ARG(a1, a2, ...) a2
 #define TINKER_GET_3RD_ARG(a1, a2, a3, ...) a3
 #define TINKER_GET_4TH_ARG(a1, a2, a3, a4, ...) a4
@@ -26,14 +31,14 @@ whenever you see an "unknown fortran compiler error".
 #define TINKER_GET_6TH_ARG(a1, a2, a3, a4, a5, a6, ...) a6
 #define TINKER_GET_7TH_ARG(a1, a2, a3, a4, a5, a6, a7, ...) a7
 
+
 /**
  * \def TINKER_EXTERN_DEFINITION_FILE
  * \ingroup macro
  * Define this macro to true before this header file being included so that
- * external variable declarations would become variable definitions in the
+ * the declarations of the "extern" variables will become definitions in the
  * current compilation unit.
- */
-/**
+ *
  * \def TINKER_EXTERN
  * \ingroup macro
  * In general, macro `TINKER_EXTERN` expands to `extern`, unless macro
@@ -52,16 +57,14 @@ whenever you see an "unknown fortran compiler error".
 
 
 /**
- * \{
  * \def TINKER_NAMESPACE
  * \ingroup macro
+ *
  * \def TINKER_NAMESPACE_BEGIN
  * \ingroup macro
+ *
  * \def TINKER_NAMESPACE_END
  * \ingroup macro
- * These namespace macros would possibly improve the source code indentation and
- * make the curly braces less confusing.
- * \}
  */
 #define TINKER_NAMESPACE tinker
 #define TINKER_NAMESPACE_BEGIN namespace TINKER_NAMESPACE {
@@ -74,8 +77,8 @@ whenever you see an "unknown fortran compiler error".
  * `TINKER_DEBUG` either expands to 0 or 1. It expands to 1 if and only if
  * `DEBUG` is defined and is not defined to 0.
  * `NDEBUG` is the default and it supersedes `DEBUG` should both of them
- * appear together. If `DEBUG` is defined to 0, it is equivalent to having
- * `NDEBUG` defined.
+ * appear. If `DEBUG` is defined to 0, it is equivalent to having `NDEBUG`
+ * defined.
  */
 #if defined(_DEBUG) && !defined(DEBUG)
 #   define DEBUG _DEBUG
@@ -89,10 +92,9 @@ whenever you see an "unknown fortran compiler error".
 #elif defined(NDEBUG)
 #   define TINKER_DEBUG 0
 #elif defined(DEBUG)
-#   define TINKER_DEBUG_DO_EXPAND_(VAL) VAL##1
-#   define TINKER_DEBUG_EXPAND_(VAL) TINKER_DEBUG_DO_EXPAND_(VAL)
-
-#   if TINKER_DEBUG_EXPAND_(DEBUG) == 1
+#   define TINKER_DEBUG1_(VAL) VAL##1
+#   define TINKER_DEBUG2_(VAL) TINKER_DEBUG1_(VAL)
+#   if TINKER_DEBUG2_(DEBUG) == 1
 // DEBUG is defined to empty
 #      define TINKER_DEBUG 1
 #   elif DEBUG != 0
@@ -102,9 +104,6 @@ whenever you see an "unknown fortran compiler error".
 // DEBUG == 0
 #      define TINKER_DEBUG 0
 #   endif
-
-#   undef TINKER_DEBUG_DO_EXPAND_
-#   undef TINKER_DEBUG_EXPAND_
 #else
 #   define TINKER_DEBUG 0
 #endif
@@ -117,7 +116,7 @@ whenever you see an "unknown fortran compiler error".
  * \def TINKER_SINGLE_PRECISION
  * \ingroup macro
  * Based on whether `TINKER_DOUBLE_PRECISION` and `TINKER_SINGLE_PRECISION`
- * being pre-defined, these two macros are set to either 0 or 1 as follows
+ * being predefined, these two macros are set to either 0 or 1 as follows
  *
  * | ifdef D | ifdef S |  D  |  S  |
  * |:-------:|:-------:|:---:|:---:|
@@ -143,73 +142,15 @@ whenever you see an "unknown fortran compiler error".
 #endif
 
 
-TINKER_NAMESPACE_BEGIN
-#ifndef __CUDACC__
-struct alignas(8) float2
-{
-   float x, y;
-};
-
-struct float3
-{
-   float x, y, z;
-};
-
-struct alignas(16) float4
-{
-   float x, y, z, w;
-};
-
-struct alignas(16) double2
-{
-   double x, y;
-};
-
-struct double3
-{
-   double x, y, z;
-};
-
-struct alignas(16) double4
-{
-   double x, y, z, w;
-};
-#endif
-
-
-/**
- * \ingroup mem
- * \brief
- * The default floating point type based on the precision macros. Either defined
- * to `float` or `double`.
- *
- * \see TINKER_DOUBLE_PRECISION
- * \see TINKER_SINGLE_PRECISION
- */
-#if TINKER_DOUBLE_PRECISION
-using real = double;
-using real2 = double2;
-using real3 = double3;
-using real4 = double4;
-#endif
-#if TINKER_SINGLE_PRECISION
-using real = float;
-using real2 = float2;
-using real3 = float3;
-using real4 = float4;
-#endif
-TINKER_NAMESPACE_END
-
-
 /**
  * \def TINKER_HOST
  * \ingroup macro
- * If true, use standard C++ runtime library on CPU.
+ * Flag for the CPU-only code.
  * \see TINKER_CUDART
  *
  * \def TINKER_CUDART
  * \ingroup macro
- * If true, use CUDA runtime library on GPU.
+ * Flag for the GPU-enabled code.
  * \see TINKER_HOST
  */
 #ifndef TINKER_HOST
@@ -231,6 +172,14 @@ TINKER_NAMESPACE_END
 
 
 /**
+ * \def restrict
+ * \ingroup macro
+ * Expand to `__restrict__` in the source code.
+ */
+#define restrict __restrict__
+
+
+/**
  * \def CONSTEXPR
  * \ingroup macro
  * If possible, use `if CONSTEXPR` to hint at the chances of optimizations.
@@ -243,14 +192,6 @@ TINKER_NAMESPACE_END
 
 
 /**
- * \def restrict
- * \ingroup macro
- * Expand to `__restrict__` in the source code.
- */
-#define restrict __restrict__
-
-
-/**
  * \def MAYBE_UNUSED
  * \ingroup macro
  * Reduce the "unused variable" warnings from the compiler.
@@ -260,4 +201,13 @@ TINKER_NAMESPACE_END
 #else
 #   define MAYBE_UNUSED __attribute__((unused))
 #endif
-// end of file
+
+
+TINKER_NAMESPACE_BEGIN
+#if TINKER_DOUBLE_PRECISION
+using real = double;
+#endif
+#if TINKER_SINGLE_PRECISION
+using real = float;
+#endif
+TINKER_NAMESPACE_END

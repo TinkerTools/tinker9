@@ -1,7 +1,6 @@
 #pragma once
-#include "macro.h"
-#include "macro_void_cuda_def.h"
 #include "mathfunc.h"
+#include "seq_def.h"
 
 
 TINKER_NAMESPACE_BEGIN
@@ -10,7 +9,7 @@ TINKER_NAMESPACE_BEGIN
  */
 #pragma acc routine seq
 template <int DO_G>
-__device__
+SEQ_CUDA
 void pair_hal(real rik, real rv, real eps, real vscalek, real vlambda, //
               real ghal, real dhal, real scexp, real scalpha,          //
               real& restrict e, real& restrict de)

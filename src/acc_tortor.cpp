@@ -1,5 +1,6 @@
-#include "acc_add.h"
+#include "add.h"
 #include "e_tortor.h"
+#include "mathfunc.h"
 #include "md.h"
 
 // TODO: test chiral center
@@ -117,7 +118,7 @@ void etortor_tmpl()
 
    auto bufsize = buffer_size();
 
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(x,y,z,gx,gy,gz,\
                ibitor,itt,chkttor_ia_,\
                tnx,tny,ttx,tty,tbf,tbx,tby,tbxy,\

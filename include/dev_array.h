@@ -1,5 +1,4 @@
 #pragma once
-#include "async.h"
 #include "deduce_ptr.h"
 #include "mathfunc.h"
 #include <vector>
@@ -7,13 +6,12 @@
 
 TINKER_NAMESPACE_BEGIN
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
-                                void* s = 0, int sync = 1);
-void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
-                                 void* s = 0, int sync = 1);
+                                int sync);
+void device_memory_copyout_bytes_sync(void* dst, const void* src, size_t nbytes,
+                                      int use_sync_queue);
 void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
-                              void* s = 0, int sync = 1);
-void device_memory_zero_bytes(void* dst, size_t nbytes, void* s = 0,
-                              int sync = 1);
+                              int sync);
+void device_memory_zero_bytes(void* dst, size_t nbytes, int sync);
 void device_memory_deallocate_bytes(void* ptr);
 void device_memory_allocate_bytes(void** pptr, size_t nbytes);
 TINKER_NAMESPACE_END
@@ -40,18 +38,19 @@ void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem)
 
    size_t size = ds * nelem;
    if (ds == ss) {
-      device_memory_copyin_bytes(dst, src, size);
+      device_memory_copyin_bytes(dst, src, size, true);
    } else {
       std::vector<DT> buf(nelem);
       for (size_t i = 0; i < nelem; ++i)
          buf[i] = src[i];
-      device_memory_copyin_bytes(dst, buf.data(), size);
+      device_memory_copyin_bytes(dst, buf.data(), size, true);
    }
 }
 
 
 template <class DT, class ST>
-void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem)
+void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem,
+                                    int use_sync_queue)
 {
    device_memory_check_type<DT>();
    device_memory_check_type<ST>();
@@ -60,10 +59,10 @@ void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem)
 
    size_t size = ss * nelem;
    if (ds == ss) {
-      device_memory_copyout_bytes(dst, src, size);
+      device_memory_copyout_bytes_sync(dst, src, size, use_sync_queue);
    } else {
       std::vector<ST> buf(nelem);
-      device_memory_copyout_bytes(buf.data(), src, size);
+      device_memory_copyout_bytes_sync(buf.data(), src, size, use_sync_queue);
       for (size_t i = 0; i < nelem; ++i)
          dst[i] = buf[i];
    }
@@ -71,13 +70,13 @@ void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem)
 
 
 template <class DT, class ST>
-void device_memory_copy_1d_array(DT* dst, const ST* src, size_t nelem)
+void device_memory_copy_1d_array(DT* dst, const ST* src, size_t nelem, int sync)
 {
    device_memory_check_type<DT>();
    device_memory_check_type<ST>();
    static_assert(std::is_same<DT, ST>::value, "");
    size_t size = sizeof(ST) * nelem;
-   device_memory_copy_bytes(dst, src, size);
+   device_memory_copy_bytes(dst, src, size, sync);
 }
 TINKER_NAMESPACE_END
 
@@ -146,36 +145,19 @@ struct device_array
 
 
    template <class PTR>
-   static void zero(size_t nelem, PTR p)
+   static void zero(int sync, size_t nelem, PTR p)
    {
       typedef typename deduce_ptr<PTR>::type T;
       constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_zero_bytes(flatten(p), sizeof(T) * nelem * N);
+      device_memory_zero_bytes(flatten(p), sizeof(T) * nelem * N, sync);
    }
 
 
    template <class PTR, class... PTRS>
-   static void zero(size_t nelem, PTR p, PTRS... ps)
+   static void zero(int sync, size_t nelem, PTR p, PTRS... ps)
    {
-      zero(nelem, p);
-      zero(nelem, ps...);
-   }
-
-
-   template <class PTR>
-   static void zero_async(void* stream, size_t nelem, PTR p)
-   {
-      typedef typename deduce_ptr<PTR>::type T;
-      constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_zero_bytes(flatten(p), sizeof(T) * nelem * N, stream, 0);
-   }
-
-
-   template <class PTR, class... PTRS>
-   static void zero_async(void* stream, size_t nelem, PTR p, PTRS... ps)
-   {
-      zero_async(stream, nelem, p);
-      zero_async(stream, nelem, ps...);
+      zero(sync, nelem, p);
+      zero(sync, nelem, ps...);
    }
 
 
@@ -188,18 +170,20 @@ struct device_array
 
 
    template <class U, class PTR>
-   static void copyout(size_t nelem, U* dst, const PTR src)
+   static void copyout(size_t nelem, U* dst, const PTR src,
+                       int use_sync_queue = true)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_copyout_1d_array(flatten(dst), flatten(src), nelem * N);
+      device_memory_copyout_1d_array(flatten(dst), flatten(src), nelem * N,
+                                     use_sync_queue);
    }
 
 
    template <class PTR, class U>
-   static void copy(size_t nelem, PTR dst, const U* src)
+   static void copy(int sync, size_t nelem, PTR dst, const U* src)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_copy_1d_array(flatten(dst), flatten(src), nelem * N);
+      device_memory_copy_1d_array(flatten(dst), flatten(src), nelem * N, sync);
    }
 
 
@@ -218,14 +202,14 @@ struct device_array
 
 
    template <class DT, class ST>
-   static void copyout2(size_t idx0, size_t ndim, size_t nelem, DT dst,
-                        const ST src)
+   static void copyout2(int use_sync_queue, size_t idx0, size_t ndim,
+                        size_t nelem, DT dst, const ST src)
    {
       static_assert(deduce_ptr<DT>::n == 1, "");
       static_assert(deduce_ptr<ST>::n == 1, "");
       typedef typename deduce_ptr<ST>::type T;
       std::vector<T> buf(nelem);
-      copyout(nelem, buf.data(), src);
+      copyout(nelem, buf.data(), src, use_sync_queue);
       for (size_t i = 0; i < nelem; ++i)
          dst[ndim * i + idx0] = buf[i];
    }
@@ -243,20 +227,34 @@ struct device_array
    }
 
 
+   template <class ANS, class PTR, class PTR2>
+   static void dot(int sync, int nelem, ANS ans, const PTR ptr, const PTR2 ptr2)
+   {
+
+      typedef typename deduce_ptr<PTR>::type T;
+      constexpr size_t N = deduce_ptr<PTR>::n;
+      typedef typename deduce_ptr<PTR2>::type T2;
+      static_assert(std::is_same<T, T2>::value, "");
+      typedef typename deduce_ptr<ANS>::type TA;
+      static_assert(std::is_same<T, TA>::value, "");
+      parallel::dotprod(ans, flatten(ptr), flatten(ptr2), nelem * N, sync);
+   }
+
+
    template <class FLT, class PTR>
-   static void scale(size_t nelem, FLT scal, PTR ptr)
+   static void scale(int sync, size_t nelem, FLT scal, PTR ptr)
    {
       typedef typename deduce_ptr<PTR>::type T;
       constexpr size_t N = deduce_ptr<PTR>::n;
-      parallel::scale_array(flatten(ptr), scal, nelem * N);
+      parallel::scale_array(flatten(ptr), scal, nelem * N, sync);
    }
 
 
    template <class FLT, class PTR, class... PTRS>
-   static void scale(size_t nelem, FLT scal, PTR ptr, PTRS... ptrs)
+   static void scale(int sync, size_t nelem, FLT scal, PTR ptr, PTRS... ptrs)
    {
-      scale(nelem, scal, ptr);
-      scale(nelem, scal, ptrs...);
+      scale(sync, nelem, scal, ptr);
+      scale(sync, nelem, scal, ptrs...);
    }
 };
 

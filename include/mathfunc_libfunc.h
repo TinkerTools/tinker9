@@ -1,5 +1,5 @@
 #pragma once
-#include "macro.h"
+#include "mathfunc_erfc.h"
 #include <cmath>
 
 
@@ -42,16 +42,11 @@
 #   define REAL_ERF erff
 // #   define REAL_ERFC erfcf
 // #   define REAL_ERFC(x) (1 - erff(x))
-#   include "mathfunc_erfc.h"
 #   define REAL_ERFC erfcf_hastings
 #   define REAL_MIN fminf
 #   define REAL_MAX fmaxf
 #   define REAL_SIGN copysignf
 #endif
-
-
-#define REAL_SQ(x) ((x) * (x))
-#define REAL_CUBE(x) ((x) * (x) * (x))
 
 
 #ifdef _OPENACC

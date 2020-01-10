@@ -17,6 +17,7 @@ TINKER_EXTERN int trajn;
 /// \ingroup md
 /// Number of atoms.
 TINKER_EXTERN int n;
+TINKER_EXTERN int padded_n;
 
 /// \ingroup md
 /// \{
@@ -160,7 +161,7 @@ void zero_egv(int vers);
 void zero_egv();
 /// @}
 
-void zero_gradient_async(int nelem, real* gx, real* gy, real* gz);
+void zero_gradient(int sync, size_t nelem, real* gx, real* gy, real* gz);
 
 /// @brief
 /// sum up potential energies and virials on device
@@ -190,4 +191,7 @@ void propagate_velocity(real dt);
 void propagate(int nsteps, real dt_ps, void (*itg)(int, real) = nullptr);
 
 void velocity_verlet(int istep, real dt_ps);
+
+
+void wait_queue();
 TINKER_NAMESPACE_END

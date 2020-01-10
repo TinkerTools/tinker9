@@ -1,7 +1,7 @@
-#include "add.cuh"
+#include "add.h"
 #include "e_mpole.h"
-#include "empole_self.cuh"
-#include "launch.cuh"
+#include "empole_self.h"
+#include "launch.h"
 #include "md.h"
 #include "pme.h"
 #include "seq_image.h"
@@ -324,27 +324,27 @@ void empole_tmpl_cu()
 
       if (do_e && !do_a) {
          auto ker0e = empole_self_cu<calc::energy>;
-         launch_kernel1(n, ker0e, //
-                        bufsize, nem, em, rpole, n, f, aewald);
+         launch_k1s(nonblk, n, ker0e, //
+                    bufsize, nem, em, rpole, n, f, aewald);
       } else if (do_e && do_a) {
          auto ker0a = empole_self_cu<calc::energy | calc::analyz>;
-         launch_kernel1(n, ker0a, //
-                        bufsize, nem, em, rpole, n, f, aewald);
+         launch_k1s(nonblk, n, ker0a, //
+                    bufsize, nem, em, rpole, n, f, aewald);
       }
    }
    if (st.niak > 0) {
       auto ker1 = empole_cu1<USE, ETYP>;
-      launch_kernel1(WARP_SIZE * st.niak, ker1, //
-                     bufsize, nem, em, vir_em, gx, gy, gz, trqx, trqy, trqz,
-                     box, off2, f, rpole, //
-                     st.sorted, st.niak, st.iak, st.lst, n, aewald);
+      launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
+                 bufsize, nem, em, vir_em, gx, gy, gz, trqx, trqy, trqz, box,
+                 off2, f, rpole, //
+                 st.sorted, st.niak, st.iak, st.lst, n, aewald);
    }
    if (nmexclude_ > 0) {
       auto ker2 = empole_cu2<USE>;
-      launch_kernel1(nmexclude_, ker2, //
-                     bufsize, nem, em, vir_em, gx, gy, gz, trqx, trqy, trqz,
-                     box, off2, f, rpole, //
-                     x, y, z, nmexclude_, mexclude_, mexclude_scale_);
+      launch_k1s(nonblk, nmexclude_, ker2, //
+                 bufsize, nem, em, vir_em, gx, gy, gz, trqx, trqy, trqz, box,
+                 off2, f, rpole, //
+                 x, y, z, nmexclude_, mexclude_, mexclude_scale_);
    }
 }
 

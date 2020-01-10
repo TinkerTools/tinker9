@@ -1,4 +1,4 @@
-#include "acc_add.h"
+#include "add.h"
 #include "e_polar.h"
 #include "gpu_card.h"
 #include "md.h"
@@ -19,7 +19,7 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
    sanity_check<USE>();
 
    if CONSTEXPR (do_g)
-      device_array::zero(n, ufld, dufld);
+      device_array::zero(true, n, ufld, dufld);
 
    const real off = mlist_unit->cutoff;
    const real off2 = off * off;
@@ -360,7 +360,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
    cuind_to_fuind(pu, gpu_uind, gpu_uinp, fuind, fuinp);
    if CONSTEXPR (do_e && do_a) {
       // if (pairwise .eq. .true.)
-      #pragma acc parallel loop independent deviceptr(fuind,fphi,ep)
+      #pragma acc parallel loop independent async deviceptr(fuind,fphi,ep)
       for (int i = 0; i < n; ++i) {
          int offset = i & (bufsize - 1);
          real e = 0.5f * f *
@@ -379,7 +379,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 
    // increment the dipole polarization gradient contributions
 
-   #pragma acc parallel loop independent deviceptr(box,gx,gy,gz,\
+   #pragma acc parallel loop independent async deviceptr(box,gx,gy,gz,\
                fmp,fphi,fuind,fuinp,fphid,fphip,fphidp)
    for (int i = 0; i < n; ++i) {
       // data deriv1  / 2, 5,  8,  9, 11, 16, 18, 14, 15, 20 /
@@ -437,14 +437,14 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
    //    end do
    // end do
    // Notice that only 10 * n elements were scaled in the original code.
-   device_array::scale(n, 0.5f * f, fphidp);
+   device_array::scale(false, n, 0.5f * f, fphidp);
    fphi_to_cphi(pu, fphidp, cphidp);
 
    // recip and self torques
 
-   real term = f * REAL_CUBE(aewald) * 4 / 3 / sqrtpi;
-   real fterm_term = -2 * f * REAL_CUBE(aewald) / 3 / sqrtpi;
-   #pragma acc parallel loop independent\
+   real term = f * aewald * aewald * aewald * 4 / 3 / sqrtpi;
+   real fterm_term = -2 * f * aewald * aewald * aewald / 3 / sqrtpi;
+   #pragma acc parallel loop independent async\
                deviceptr(ep,nep,trqx,trqy,trqz,\
                rpole,cmp,gpu_uind,gpu_uinp,cphidp)
    for (int i = 0; i < n; ++i) {
@@ -497,14 +497,14 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 
    if CONSTEXPR (do_v) {
       auto size = buffer_size() * virial_buffer_traits::value;
-      #pragma acc parallel loop independent deviceptr(vir_ep,vir_m)
+      #pragma acc parallel loop independent async deviceptr(vir_ep,vir_m)
       for (int i = 0; i < size; ++i) {
          vir_ep[0][i] -= vir_m[0][i];
       }
 
-      device_array::scale(n, f, cphi, fphid, fphip);
+      device_array::scale(false, n, f, cphi, fphid, fphip);
 
-      #pragma acc parallel loop independent\
+      #pragma acc parallel loop independent async\
                   deviceptr(vir_ep,box,cmp,\
                   gpu_uind,gpu_uinp,fphid,fphip,cphi,cphidp)
       for (int i = 0; i < n; ++i) {
@@ -607,7 +607,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
 
       // qgrip: pvu_qgrid
       const PMEUnit pvu = pvpme_unit;
-      #pragma acc parallel loop independent deviceptr(cmp,gpu_uinp)
+      #pragma acc parallel loop independent async deviceptr(cmp,gpu_uinp)
       for (int i = 0; i < n; ++i) {
          cmp[i][1] += gpu_uinp[i][0];
          cmp[i][2] += gpu_uinp[i][1];
@@ -618,7 +618,8 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       fftfront(pvu);
 
       // qgrid: pu_qgrid
-      #pragma acc parallel loop independent deviceptr(cmp,gpu_uind,gpu_uinp)
+      #pragma acc parallel loop independent async\
+                  deviceptr(cmp,gpu_uind,gpu_uinp)
       for (int i = 0; i < n; ++i) {
          cmp[i][1] += (gpu_uind[i][0] - gpu_uinp[i][0]);
          cmp[i][2] += (gpu_uind[i][1] - gpu_uinp[i][1]);
@@ -632,9 +633,9 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       const auto* p = pvu.deviceptr();
       const int nff = nfft1 * nfft2;
       const int ntot = nfft1 * nfft2 * nfft3;
-      real pterm = REAL_SQ(pi / aewald);
+      real pterm = (pi / aewald) * (pi / aewald);
 
-      #pragma acc parallel loop independent deviceptr(box,d,p,vir_ep)
+      #pragma acc parallel loop independent async deviceptr(box,d,p,vir_ep)
       for (int i = 1; i < ntot; ++i) {
          const real volterm = pi * box->volbox;
 

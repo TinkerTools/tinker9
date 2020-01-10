@@ -1,11 +1,10 @@
 #pragma once
-#include "macro_void_cuda_def.h"
 #include "mathfunc.h"
+#include "seq_def.h"
 
 
 TINKER_NAMESPACE_BEGIN
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void damp_thole2(real r, real pdi, real pti, real pdk, real ptk,
                         real& restrict scale3, real& restrict scale5)
 {
@@ -19,8 +18,7 @@ inline void damp_thole2(real r, real pdi, real pti, real pdk, real ptk,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void damp_thole3(real r, real pdi, real pti, real pdk, real ptk,
                         real& restrict scale3, real& restrict scale5,
                         real& restrict scale7)
@@ -36,8 +34,7 @@ inline void damp_thole3(real r, real pdi, real pti, real pdk, real ptk,
 }
 
 
-#pragma acc routine seq
-__device__
+SEQ_ROUTINE
 inline void damp_thole3g(real r, real rr2, real xr, real yr, real zr, real pdi,
                          real pti, real pdk, real ptk, real& restrict scale31,
                          real& restrict scale51, real& restrict scale71,
@@ -71,7 +68,7 @@ inline void damp_thole3g(real r, real rr2, real xr, real yr, real zr, real pdi,
 
 #pragma acc routine seq
 template <int order>
-__device__
+SEQ_CUDA
 inline void damp_ewald(real* restrict bn, real r, real rinv, real rr2,
                        real aewald)
 {

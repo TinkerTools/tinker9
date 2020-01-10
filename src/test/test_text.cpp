@@ -3,7 +3,7 @@
 
 using namespace TINKER_NAMESPACE;
 
-TEST_CASE("Text", "[util]")
+TEST_CASE("Text", "[util][text]")
 {
    SECTION("Replace")
    {

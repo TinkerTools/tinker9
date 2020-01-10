@@ -1,6 +1,7 @@
-#include "acc_add.h"
+#include "add.h"
 #include "e_angle.h"
 #include "e_opbend.h"
+#include "mathfunc.h"
 #include "md.h"
 #include <cassert>
 
@@ -31,7 +32,7 @@ void eopbend_tmpl()
 
    auto bufsize = buffer_size();
 
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(x,y,z,gx,gy,gz,\
                iopb,opbk,iang,\
                eopb,vir_eopb)
@@ -83,7 +84,9 @@ void eopbend_tmpl()
 
          rab2 = xab * xab + yab * yab + zab * zab;
          rcb2 = xcb * xcb + ycb * ycb + zcb * zcb;
-         cc = rab2 * rcb2 - REAL_SQ(xab * xcb + yab * ycb + zab * zcb);
+         cc = rab2 * rcb2 -
+            (xab * xcb + yab * ycb + zab * zcb) *
+               (xab * xcb + yab * ycb + zab * zcb);
          if CONSTEXPR (do_g)
             dot = xab * xcb + yab * ycb + zab * zcb;
       } else if CONSTEXPR (TYP == eopbend_t::allinger) {
@@ -92,7 +95,9 @@ void eopbend_tmpl()
 
          rad2 = xad * xad + yad * yad + zad * zad;
          rcd2 = xcd * xcd + ycd * ycd + zcd * zcd;
-         cc = rad2 * rcd2 - REAL_SQ(xad * xcd + yad * ycd + zad * zcd);
+         cc = rad2 * rcd2 -
+            (xad * xcd + yad * ycd + zad * zcd) *
+               (xad * xcd + yad * ycd + zad * zcd);
          if CONSTEXPR (do_g)
             dot = xad * xcd + yad * ycd + zad * zcd;
       }

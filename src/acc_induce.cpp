@@ -1,4 +1,4 @@
-#include "acc_add.h"
+#include "add.h"
 #include "error.h"
 #include "gpu_card.h"
 #include "induce.h"
@@ -13,7 +13,7 @@ TINKER_NAMESPACE_BEGIN
 void diag_precond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3],
                   real (*zrsdp)[3])
 {
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
    for (int i = 0; i < n; ++i) {
       real poli = polarity[i];
@@ -257,7 +257,7 @@ void sparse_precond_build_acc()
  * conj = p
  * vec = T P
  */
-void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
+void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 {
    auto* field = work01_;
    auto* fieldp = work02_;
@@ -277,7 +277,7 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
 
    // zero out the induced dipoles at each site
 
-   device_array::zero(n, uind, uinp);
+   device_array::zero(true, n, uind, uinp);
 
    // get the electrostatic field due to permanent multipoles
 
@@ -297,8 +297,8 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
    }
 
    if (dirguess) {
-      device_array::copy(n, uind, udir);
-      device_array::copy(n, uinp, udirp);
+      device_array::copy(true, n, uind, udir);
+      device_array::copy(true, n, uinp, udirp);
    }
 
    // initial residual r(0)
@@ -311,8 +311,8 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
    if (dirguess) {
       ufield(udir, udirp, rsd, rsdp);
    } else {
-      device_array::copy(n, rsd, field);
-      device_array::copy(n, rsdp, fieldp);
+      device_array::copy(true, n, rsd, field);
+      device_array::copy(true, n, rsdp, fieldp);
    }
 
    // initial M r(0) and p(0)
@@ -323,8 +323,8 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
    } else {
       diag_precond(rsd, rsdp, zrsd, zrsdp);
    }
-   device_array::copy(n, conj, zrsd);
-   device_array::copy(n, conjp, zrsdp);
+   device_array::copy(true, n, conj, zrsd);
+   device_array::copy(true, n, conjp, zrsdp);
 
    // initial r(0) M r(0)
 
@@ -401,8 +401,7 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
          b = sum1 / sum;
       if (sump != 0)
          bp = sump1 / sump;
-      sum = sum1;
-      sump = sump1;
+
 
       // calculate/update p
       #pragma acc parallel loop independent deviceptr(conj,conjp,zrsd,zrsdp)
@@ -413,6 +412,10 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
             conjp[i][j] = zrsdp[i][j] + bp * conjp[i][j];
          }
       }
+
+
+      sum = sum1;
+      sump = sump1;
 
       real epsd;
       real epsp;
@@ -471,5 +474,15 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
       TINKER_RT(prterr)();
       TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
    }
+}
+
+
+void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
+{
+#if TINKER_CUDART
+   induce_mutual_pcg1_cu(uind, uinp);
+#else
+   induce_mutual_pcg1_acc(uind, uinp);
+#endif
 }
 TINKER_NAMESPACE_END

@@ -1,10 +1,11 @@
 #pragma once
-#include "macro_void_cuda_def.h"
+#include "macro.h"
+#include "seq_def.h"
 #include <cmath>
 
 
-#pragma acc routine seq
-__device__
+TINKER_NAMESPACE_BEGIN
+SEQ_ROUTINE
 inline float erfcf_hastings(float x)
 {
    float exp2a = expf(-x * x);
@@ -15,3 +16,4 @@ inline float erfcf_hastings(float x)
               t) *
       t * exp2a;
 }
+TINKER_NAMESPACE_END

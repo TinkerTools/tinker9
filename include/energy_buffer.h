@@ -1,5 +1,6 @@
 #pragma once
 #include "dev_array.h"
+#include "mathfunc.h"
 #include <vector>
 
 
@@ -35,7 +36,7 @@ template <class T, size_t N>
 struct buffer_traits
 {
    static constexpr size_t n = N;
-   static constexpr size_t value = ct::pow2_ge(N);
+   static constexpr size_t value = pow2_ge(N);
    typedef T type;
    static T cast(type val)
    {
@@ -48,7 +49,7 @@ template <size_t N>
 struct buffer_traits<float, N>
 {
    static constexpr size_t n = N;
-   static constexpr size_t value = ct::pow2_ge(N);
+   static constexpr size_t value = pow2_ge(N);
    typedef unsigned long long type;
    static float cast(type val)
    {

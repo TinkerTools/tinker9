@@ -66,6 +66,7 @@ void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3],
 
 // different induction algorithms
 void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]);
+void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3]);
 void induce(real (*uind)[3], real (*uinp)[3]);
 
 void epolar_coulomb(int vers);

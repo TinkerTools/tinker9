@@ -1,6 +1,5 @@
 #pragma once
 #include "elec.h"
-#include "macro_void_cuda_def.h"
 #include "md.h"
 #include "seq_damp.h"
 
@@ -26,7 +25,7 @@ struct PairMPoleGrad
 };
 
 
-__device__
+SEQ_ROUTINE
 inline void zero(PairMPoleGrad& pgrad)
 {
    pgrad.frcx = 0;
@@ -66,7 +65,7 @@ inline void zero(PairMPoleGrad& pgrad)
  */
 #pragma acc routine seq
 template <int USE, elec_t ETYP>
-__device__
+SEQ_CUDA
 void pair_mpole(                                    //
    real r2, real xr, real yr, real zr, real mscale, //
    real ci, real dix, real diy, real diz, real qixx, real qixy, real qixz,

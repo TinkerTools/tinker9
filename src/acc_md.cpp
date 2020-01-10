@@ -16,8 +16,9 @@ void kinetic_acc(real& temp)
    real exy = 0;
    real eyz = 0;
    real ezx = 0;
-   #pragma acc parallel loop independent deviceptr(mass,vx,vy,vz)\
-           reduction(+:exx,eyy,ezz,exy,eyz,ezx)
+   #pragma acc parallel loop independent async\
+               deviceptr(mass,vx,vy,vz)\
+               reduction(+:exx,eyy,ezz,exy,eyz,ezx)
    for (int i = 0; i < n; ++i) {
       real term = 0.5f * mass[i] * ekcal_inv;
       exx += term * vx[i] * vx[i];
@@ -58,7 +59,8 @@ void mdrest_acc(int istep)
 
    // compute linear velocity of the system center of mass
 
-   #pragma acc parallel loop independent deviceptr(mass,vx,vy,vz)\
+   #pragma acc parallel loop independent async\
+               deviceptr(mass,vx,vy,vz)\
                reduction(+:totmass,vtot1,vtot2,vtot3)
    for (int i = 0; i < n; ++i) {
       real weigh = mass[i];
@@ -91,7 +93,8 @@ void mdrest_acc(int istep)
       real mang2 = 0;
       real mang3 = 0;
 
-      #pragma acc parallel loop independent deviceptr(mass,x,y,z,vx,vy,vz)\
+      #pragma acc parallel loop independent async\
+                  deviceptr(mass,x,y,z,vx,vy,vz)\
                   reduction(+:xtot,ytot,ztot,mang1,mang2,mang3)
       for (int i = 0; i < n; ++i) {
          real weigh = mass[i];
@@ -118,7 +121,8 @@ void mdrest_acc(int istep)
       real yz = 0;
       real zz = 0;
 
-      #pragma acc parallel loop independent deviceptr(mass,x,y,z)\
+      #pragma acc parallel loop independent async\
+                  deviceptr(mass,x,y,z)\
                   reduction(+:xx,xy,xz,yy,yz,zz)
       for (int i = 0; i < n; ++i) {
          real weigh = mass[i];
@@ -160,7 +164,7 @@ void mdrest_acc(int istep)
 
    // eliminate any translation of the overall system
 
-   #pragma acc parallel loop independent deviceptr(vx,vy,vz)
+   #pragma acc parallel loop independent async deviceptr(vx,vy,vz)
    for (int i = 0; i < n; ++i) {
       vx[i] -= vtot1;
       vy[i] -= vtot2;
@@ -180,7 +184,7 @@ void mdrest_acc(int istep)
    // eliminate any rotation about the system center of mass
 
    if (!bound::use_bounds) {
-      #pragma acc parallel loop independent deviceptr(x,y,z,vx,vy,vz)
+      #pragma acc parallel loop independent async deviceptr(x,y,z,vx,vy,vz)
       for (int i = 0; i < n; ++i) {
          real xdel = x[i] - xtot;
          real ydel = y[i] - ytot;
@@ -203,7 +207,8 @@ void mdrest_acc(int istep)
 
 void propagate_xyz_acc(real dt)
 {
-   #pragma acc parallel loop independent deviceptr(x,y,z,vx,vy,vz)
+   #pragma acc parallel loop independent async\
+               deviceptr(x,y,z,vx,vy,vz)
    for (int i = 0; i < n; ++i) {
       x[i] += dt * vx[i];
       y[i] += dt * vy[i];
@@ -214,7 +219,8 @@ void propagate_xyz_acc(real dt)
 void propagate_velocity_acc(real dt)
 {
    const real ekcal = units::ekcal;
-   #pragma acc parallel loop independent deviceptr(vx,vy,vz,gx,gy,gz,massinv)
+   #pragma acc parallel loop independent async\
+               deviceptr(vx,vy,vz,gx,gy,gz,massinv)
    for (int i = 0; i < n; ++i) {
       real coef = -ekcal * massinv[i] * dt;
       vx[i] += coef * gx[i];
@@ -223,13 +229,23 @@ void propagate_velocity_acc(real dt)
    }
 }
 
-void zero_gradient_async(int nelem, real* gx, real* gy, real* gz)
+
+void zero_gradient(int sync, size_t nelem, real* gx, real* gy, real* gz)
 {
-   #pragma acc parallel loop independent deviceptr(gx,gy,gz)
-   for (int i = 0; i < nelem; ++i) {
-      gx[i] = 0;
-      gy[i] = 0;
-      gz[i] = 0;
+   if (sync) {
+      #pragma acc parallel loop independent deviceptr(gx,gy,gz)
+      for (int i = 0; i < nelem; ++i) {
+         gx[i] = 0;
+         gy[i] = 0;
+         gz[i] = 0;
+      }
+   } else {
+      #pragma acc parallel loop independent async deviceptr(gx,gy,gz)
+      for (int i = 0; i < nelem; ++i) {
+         gx[i] = 0;
+         gy[i] = 0;
+         gz[i] = 0;
+      }
    }
 }
 TINKER_NAMESPACE_END

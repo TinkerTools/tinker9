@@ -5,6 +5,7 @@
 #include "io_text.h"
 #include "mathfunc.h"
 #include "md.h"
+#include <tinker/detail/keys.hh>
 
 
 TINKER_NAMESPACE_BEGIN
@@ -16,6 +17,10 @@ void nextarg(char (&str)[Len], int& exist)
 {
    nextarg(Len, str, exist);
 }
+
+
+template <class T1, class T2>
+void get_kv_pair(std::string k, T1& v, T2 vdefault);
 TINKER_NAMESPACE_END
 
 

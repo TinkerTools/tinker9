@@ -1,4 +1,4 @@
-#include "acc_add.h"
+#include "add.h"
 #include "box.h"
 #include "elec.h"
 #include "mathfunc.h"
@@ -27,7 +27,7 @@ void pme_conv_tmpl(PMEUnit pme_u, virial_buffer gpu_vir)
    pterm *= pterm;
 
    auto bufsize = buffer_size();
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(gpu_vir,box,qgrid,bsmod1,bsmod2,bsmod3)
    for (int i = 0; i < ntot; ++i) {
       real recip[3][3];

@@ -28,8 +28,10 @@ struct PME
 {
    real aewald;
    int nfft1, nfft2, nfft3, bsorder;
-   real *bsmod1, *bsmod2, *bsmod3; // deviceptr
-   real* qgrid;                    // deviceptr
+   real *bsmod1, *bsmod2, *bsmod3;
+   real* qgrid;
+   int* igrid;
+   real *thetai1, *thetai2, *thetai3;
 
    struct Params
    {
@@ -81,6 +83,7 @@ void pme_conv0(PMEUnit pme_u);                  // without virial
 void pme_conv1(PMEUnit pme_u, virial_buffer v); // with virial
 
 void rpole_to_cmp();
+void bspline_fill(PMEUnit, int level);
 /**
  * @brief
  * Input: cmp, cartesian rotated mpole.

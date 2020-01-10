@@ -493,8 +493,8 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
       std::vector<std::array<double, 3>> fieldd, fieldp;
       fieldd.resize(n);
       fieldp.resize(n);
-      device_array::copyout(n, &fieldd[0][0], udir);
-      device_array::copyout(n, &fieldp[0][0], udirp);
+      device_array::copyout(n, &fieldd[0][0], udir, false);
+      device_array::copyout(n, &fieldp[0][0], udirp, false);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(fieldd[i][j] ==
@@ -548,8 +548,8 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
       ufield_ewald(uind, uinp, udir, udirp);
       ud.resize(n);
       up.resize(n);
-      device_array::copyout(n, &ud[0][0], udir);
-      device_array::copyout(n, &up[0][0], udirp);
+      device_array::copyout(n, &ud[0][0], udir, false);
+      device_array::copyout(n, &up[0][0], udirp, false);
 
       const double debye = units::debye;
       for (int i = 0; i < n; ++i) {

@@ -1,4 +1,4 @@
-#include "acc_add.h"
+#include "add.h"
 #include "e_pitors.h"
 #include "md.h"
 
@@ -13,7 +13,7 @@ void epitors_tmpl()
 
    auto bufsize = buffer_size();
 
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(x,y,z,gx,gy,gz,\
                ipit,kpit,\
                ept,vir_ept)

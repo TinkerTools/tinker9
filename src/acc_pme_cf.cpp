@@ -14,7 +14,7 @@ TINKER_NAMESPACE_BEGIN
 void rpole_to_cmp()
 {
    // copy multipole moments and coordinates to local storage
-   #pragma acc parallel loop independent deviceptr(rpole,cmp)
+   #pragma acc parallel loop independent async deviceptr(rpole,cmp)
    for (int i = 0; i < n; ++i) {
       cmp[i][0] = rpole[i][mpl_pme_0];
       cmp[i][1] = rpole[i][mpl_pme_x];
@@ -37,7 +37,7 @@ void cmp_to_fmp(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
    int nfft2 = st.nfft2;
    int nfft3 = st.nfft3;
 
-   #pragma acc parallel loop deviceptr(box,cmp,fmp)
+   #pragma acc parallel loop independent async deviceptr(box,cmp,fmp)
    for (int iatom = 0; iatom < n; ++iatom) {
       real a[3][3];
       // see also subroutine cart_to_frac in pmestuf.f
@@ -137,7 +137,7 @@ void cuind_to_fuind(PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3],
    int nfft3 = st.nfft3;
 
 
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(box,cind,cinp,fuind,fuinp)
    for (int i = 0; i < n; ++i) {
       real a[3][3];
@@ -171,7 +171,7 @@ void fphi_to_cphi(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
    int nfft3 = st.nfft3;
 
 
-   #pragma acc parallel loop deviceptr(box,fphi,cphi)
+   #pragma acc parallel loop async deviceptr(box,fphi,cphi)
    for (int iatom = 0; iatom < n; ++iatom) {
       real a[3][3];
       // see also subroutine frac_to_cart in pmestuf.f
