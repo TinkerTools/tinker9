@@ -239,12 +239,12 @@ static int recommend_device(int ndev)
       idev = usp;
    } else {
       print(stdout,
-            " \nCUDA-DEVICE Warning,"
+            "\n CUDA-DEVICE Warning,"
             " Program recommended Device {} but Device {} was set from {}\n",
             prcd[0], usp, usp_str, usp);
       idev = usp;
    }
-   print(stdout, " \nPlatform CUDA :  Setting Device ID to {} from {}\n", idev,
+   print(stdout, "\n Platform CUDA :  Setting Device ID to {} from {}\n", idev,
          usp_str);
 }
 
