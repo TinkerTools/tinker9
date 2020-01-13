@@ -8,6 +8,8 @@
 #include <tinker/detail/moldyn.hh>
 
 TINKER_NAMESPACE_BEGIN
+int rc_flag = 0;
+
 void n_data(rc_op op)
 {
    if (op & rc_dealloc) {

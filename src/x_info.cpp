@@ -11,12 +11,15 @@ std::string get_version_string();
 void x_info(int argc, char** argv)
 {
    auto out = stdout;
-   print(out, " {}\n\n", "Program Information");
    auto fmt = "    {:36s} {}\n";
    auto fm1 = "    {:36s}\n";
    auto fm2 = "       {:33s} {}\n";
 
 
+   gpu_card_data(rc_init);
+
+
+   print(out, "\n\n Program Information\n\n");
    print(out, fmt, "Version:", get_version_string());
    print(out, fmt, "Synchronized with Tinker commit:", get_SHA1());
    print(out, fmt, "Size of real (bytes):", sizeof(real));
@@ -35,10 +38,10 @@ void x_info(int argc, char** argv)
 
 #if TINKER_CUDART
    print(out, fmt, "Platform:", "CUDA and OpenACC");
-   print(out, fmt, "Latest CUDA supported by driver:", get_cuda_driver_version_string());
+   print(out, fmt,
+         "Latest CUDA supported by driver:", get_cuda_driver_version_string());
    print(out, fmt, "CUDA runtime version:", get_cuda_runtime_version_string());
    print(out, fmt, "Thrust version:", get_thrust_version_string());
-   gpu_card_data(rc_init);
    if (ndevice > 0) {
       print(out, fmt, "GPU detected:", ndevice);
       const auto& attribs = get_device_attributes();
@@ -51,14 +54,21 @@ void x_info(int argc, char** argv)
          print(out, fm2, "Single double perf. ratio:", a.single_double_ratio);
          print(out, fm2, "Compute mode:", a.compute_mode_string);
          print(out, fm2, "Error-correcting code (ECC):", a.ecc_string);
+         print(out, fm2, "Clock rate (kHz):", a.clock_rate_kHz);
+         print(out, fm2, "Number of Multiprocessors:", a.multiprocessor_count);
+         print(out, fm2, "Number of CUDA cores:",
+               a.cores_per_multiprocessor * a.multiprocessor_count);
          const double B_to_GB = 1024. * 1024. * 1024.;
-         print(out, fm2, "Used/Total memory:",
+         print(out, fm2, "Used/Total GPU memory:",
                format("{:.2f} % / {:.2f} GB",
                       100.0 - 100.0 * a.free_mem_bytes / a.total_mem_bytes,
                       a.total_mem_bytes / B_to_GB));
       }
    }
 #endif
+
+
+   gpu_card_data(rc_dealloc);
 }
 TINKER_NAMESPACE_END
 

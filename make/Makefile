@@ -388,6 +388,9 @@ cuda_flags__ += -I$(top_dir__)/include/syntax/cu \
 $(all_cu_objs__): %.o: $(top_dir__)/%.cu
 	$(NVCC) $< -c $(cuda_flags__) -o $@
 endif
+ifeq ($(host_only__),false)
+   link_flags__ += -L$(cuda_dir)/lib64/stubs -lnvidia-ml
+endif
 
 
 ##/ ### dirs

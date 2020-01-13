@@ -38,6 +38,10 @@ struct DeviceAttribute
    int max_threads_per_multiprocessor;
    int max_shared_bytes_per_multiprocessor;
    int max_blocks_per_multiprocessor;
+   int cores_per_multiprocessor;
+
+
+   int clock_rate_kHz; // not memory clock rate
 };
 
 

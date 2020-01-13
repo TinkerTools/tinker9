@@ -1,9 +1,9 @@
 #include "gpu_card.h"
 #include "error.h"
-#include "mathfunc.h"
+#include "md.h"
+#include "tinker_rt.h"
 #include <cuda_runtime.h>
-#include <limits>
-#include <map>
+#include <nvml.h>
 #include <thrust/version.h>
 
 
@@ -50,11 +50,14 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
    cudaDeviceProp prop;
    check_rt(cudaGetDeviceProperties(&prop, device));
 
+
    a.device = device;
    a.name = prop.name;
 
-   a.pci_string = format("{:02x}:{:02x}.{}", prop.pciBusID, prop.pciDeviceID,
-                         prop.pciDomainID);
+
+   char pciBusID[16];
+   check_rt(cudaDeviceGetPCIBusId(pciBusID, 13, device));
+   a.pci_string = pciBusID;
 
 
    a.cc_major = prop.major;
@@ -87,41 +90,162 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
    a.max_threads_per_multiprocessor = prop.maxThreadsPerMultiProcessor;
    a.max_shared_bytes_per_multiprocessor = prop.sharedMemPerMultiprocessor;
 
-   // nvida cuda-c-programming-guide compute-capabilities
 
-   int value;
+   // nvidia cuda-c-programming-guide compute-capabilities
+   bool found_cc = true;
 
-   value = 0;
-   switch (a.cc) {
-   case 30:
-   case 32:
-   case 35:
-   case 37:
+
+   // Maximum number of resident blocks per multiprocessor
+   if (a.cc > 75)
+      found_cc = false;
+   else if (a.cc >= 75)
       a.max_blocks_per_multiprocessor = 16;
-      break;
-   case 50:
-   case 52:
-   case 53:
-   case 60:
-   case 61:
-   case 62:
-   case 70:
+   else if (a.cc >= 50)
       a.max_blocks_per_multiprocessor = 32;
-      break;
-   case 75:
+   else if (a.cc >= 30)
       a.max_blocks_per_multiprocessor = 16;
-      break;
-   default:
-      a.max_blocks_per_multiprocessor = value;
-      break;
-   }
-   if (a.max_blocks_per_multiprocessor <= 0) {
+   else
+      found_cc = false;
+
+
+   // Number of CUDA cores per multiprocessor, not tabulated in
+   // cuda-c-programming-guide;
+   // documented in "Compute Capability - architecture"
+   // 7.0 7.2 7.5: 64
+   // 6.1 6.2: 128
+   // 6.0: 64
+   // 5.0 5.2: 128
+   // 3.0 3.5 3.7: 192
+   if (a.cc > 75)
+      found_cc = false;
+   else if (a.cc >= 70)
+      a.cores_per_multiprocessor = 64;
+   else if (a.cc >= 61)
+      a.cores_per_multiprocessor = 128;
+   else if (a.cc >= 60)
+      a.cores_per_multiprocessor = 64;
+   else if (a.cc >= 50)
+      a.cores_per_multiprocessor = 128;
+   else if (a.cc >= 30)
+      a.cores_per_multiprocessor = 192;
+   else
+      found_cc = false;
+
+
+   a.clock_rate_kHz = prop.clockRate;
+
+
+   if (!found_cc) {
       TINKER_THROW(
-         format("Cannot get maximum number of resident blocks per "
-                "multiprocessor for the undocumented compute capability {}; "
-                "Please refer to the Nvida Cuda-C Programming Guide",
+         format("The code base should be updated for compute capability {}; "
+                "Please refer to the Nvidia Cuda-C Programming Guide",
                 a.cc));
    }
+}
+
+
+static int recommend_device(int ndev)
+{
+   int usp = -1; // user-specified cuda device; -1 for not set
+   const char* usp_str = nullptr;
+
+
+   // if do not use xyz file, then there is no key file
+   if (usp < 0 && (rc_flag & calc::xyz)) {
+      usp_str = "CUDA-DEVICE keyword";
+      get_kv_pair("CUDA-DEVICE", usp, -1);
+   }
+   // check environment variable "CUDA_DEVICE"
+   if (usp < 0) {
+      usp_str = "CUDA_DEVICE environment variable";
+      if (const char* str = std::getenv("CUDA_DEVICE"))
+         usp = std::stoi(str);
+   }
+   // check environment variable "cuda_device"
+   if (usp < 0) {
+      usp_str = "cuda_device environment variable";
+      if (const char* str = std::getenv("cuda_device"))
+         usp = std::stoi(str);
+   }
+
+
+   std::vector<int> gpercent, mempercent, prcd; // precedence
+   std::vector<double> gflops;
+   check_rt(nvmlInit());
+   for (int i = 0; i < ndev; ++i) {
+      nvmlDevice_t hd;
+      nvmlUtilization_t util;
+      check_rt(nvmlDeviceGetHandleByIndex(i, &hd));
+      check_rt(nvmlDeviceGetUtilizationRates(hd, &util));
+      prcd.push_back(i);
+      gpercent.push_back(util.gpu);
+      mempercent.push_back(util.memory);
+      const auto& a = get_device_attributes()[i];
+      double gf = a.clock_rate_kHz;
+      gf *= a.cores_per_multiprocessor * a.multiprocessor_count;
+      gflops.push_back(gf);
+   }
+   check_rt(nvmlShutdown());
+
+
+   auto strictly_prefer = [&](int idev, int jdev) {
+      // If idev is preferred return true.
+      // If idev and jdev are considered equivalent return false.
+      // If jdev is preferred return false.
+      const int SIGNIFICANT_DIFFERENCE = 5;
+
+
+      int igpuutil = gpercent[idev];
+      int jgpuutil = gpercent[jdev];
+      // choose the idle device
+      // if the difference is significant, stop here
+      if (igpuutil < jgpuutil + SIGNIFICANT_DIFFERENCE)
+         return true;
+      else if (jgpuutil < igpuutil + SIGNIFICANT_DIFFERENCE)
+         return false;
+
+
+      double igflp = gflops[idev];
+      double jgflp = gflops[jdev];
+      // choose the faster device
+      // if the difference is significant, stop here
+      if (igflp > jgflp * (1.0 + SIGNIFICANT_DIFFERENCE / 100.0))
+         return true;
+      else if (jgflp > igflp * (1.0 + SIGNIFICANT_DIFFERENCE / 100.0))
+         return false;
+
+
+      int imemutil = mempercent[idev];
+      int jmemutil = mempercent[jdev];
+      // choose the device with more available GPU memory
+      // if the difference is significant, stop here
+      if (imemutil < jmemutil + SIGNIFICANT_DIFFERENCE)
+         return true;
+      else if (jmemutil < imemutil + SIGNIFICANT_DIFFERENCE)
+         return false;
+
+
+      // If idev is preferred, the program would never reach this line.
+      return false;
+   };
+   std::stable_sort(prcd.begin(), prcd.end(), strictly_prefer);
+
+
+   int idev;
+   if (usp < 0) {
+      usp_str = "GPU utilization";
+      idev = prcd[0];
+   } else if (usp == prcd[0]) {
+      idev = usp;
+   } else {
+      print(stdout,
+            " \nCUDA-DEVICE Warning,"
+            " Program recommended Device {} but Device {} was set from {}\n",
+            prcd[0], usp, usp_str, usp);
+      idev = usp;
+   }
+   print(stdout, " \nPlatform CUDA :  Setting Device ID to {} from {}\n", idev,
+         usp_str);
 }
 
 
@@ -156,7 +280,8 @@ void gpu_card_data(rc_op op)
       for (int i = 0; i < ndevice; ++i)
          get_device_attribute(all[i], i);
 
-      idevice = 0;
+      idevice = recommend_device(ndevice);
+
       check_rt(cudaSetDevice(idevice));
    }
 }

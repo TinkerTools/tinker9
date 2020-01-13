@@ -8,7 +8,7 @@ TINKER_NAMESPACE_BEGIN
 /**
  * \ingroup md
  */
-TINKER_EXTERN int rc_flag;
+extern int rc_flag;
 
 /// \ingroup md
 /// Number of the trajectory frames.
