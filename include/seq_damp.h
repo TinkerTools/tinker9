@@ -66,6 +66,25 @@ inline void damp_thole3g(real r, real rr2, real xr, real yr, real zr, real pdi,
 }
 
 
+SEQ_ROUTINE
+inline void damp_thole4(real r, real rr2, real xr, real yr, real zr, real pdi,
+                        real pti, real pdk, real ptk, real& restrict ex3,
+                        real& restrict ex5, real& restrict ex7,
+                        real& restrict ex9)
+{
+   real pgamma = REAL_MIN(pti, ptk);
+   real damp = pdi * pdk;
+   real ratio = r * REAL_RECIP(damp);
+   damp = (damp == 0 ? 0 : pgamma * ratio * ratio * ratio);
+   ex3 = REAL_EXP(-damp);
+   ex5 = ex3 * (1 + damp);
+   ex7 = ex3 * (1 + damp + (real)0.6 * damp * damp);
+   constexpr real coef1 = ((real)18) / ((real)35);
+   constexpr real coef2 = ((real)9) / ((real)35);
+   ex9 = ex3 * (1 + damp * (1 + damp * (coef1 + coef2 * damp)));
+}
+
+
 #pragma acc routine seq
 template <int order>
 SEQ_CUDA

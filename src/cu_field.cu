@@ -227,14 +227,14 @@ void dfield_coulomb_cu(real (*field)[3], real (*fieldp)[3])
 
    device_array::zero(true, n, field, fieldp);
    if (st.niak > 0) {
-      launch_k1(WARP_SIZE * st.niak, dfield_cu1<elec_t::coulomb>, field, fieldp,
-                thole, pdamp, rpole, TINKER_IMAGE_ARGS, off2, n, st.sorted,
-                st.niak, st.iak, st.lst, 0);
+      launch_k1s(nonblk, WARP_SIZE * st.niak, dfield_cu1<elec_t::coulomb>,
+                 field, fieldp, thole, pdamp, rpole, TINKER_IMAGE_ARGS, off2, n,
+                 st.sorted, st.niak, st.iak, st.lst, 0);
    }
    if (ndpexclude_ > 0) {
-      launch_k1(ndpexclude_, dfield_cu2, field, fieldp, thole, pdamp, rpole,
-                TINKER_IMAGE_ARGS, off2, x, y, z, ndpexclude_, dpexclude_,
-                dpexclude_scale_);
+      launch_k1s(nonblk, ndpexclude_, dfield_cu2, field, fieldp, thole, pdamp,
+                 rpole, TINKER_IMAGE_ARGS, off2, x, y, z, ndpexclude_,
+                 dpexclude_, dpexclude_scale_);
    }
 }
 
@@ -427,14 +427,14 @@ void ufield_coulomb_cu(const real (*uind)[3], const real (*uinp)[3],
 
    device_array::zero(true, n, field, fieldp);
    if (st.niak > 0) {
-      launch_k1(WARP_SIZE * st.niak, ufield_cu1<elec_t::coulomb>, uind, uinp,
-                field, fieldp, thole, pdamp, TINKER_IMAGE_ARGS, off2, n,
-                st.sorted, st.niak, st.iak, st.lst, 0);
+      launch_k1s(nonblk, WARP_SIZE * st.niak, ufield_cu1<elec_t::coulomb>, uind,
+                 uinp, field, fieldp, thole, pdamp, TINKER_IMAGE_ARGS, off2, n,
+                 st.sorted, st.niak, st.iak, st.lst, 0);
    }
    if (nuexclude_) {
-      launch_k1(nuexclude_, ufield_cu2, uind, uinp, field, fieldp, thole, pdamp,
-                TINKER_IMAGE_ARGS, off2, x, y, z, nuexclude_, uexclude_,
-                uexclude_scale_);
+      launch_k1s(nonblk, nuexclude_, ufield_cu2, uind, uinp, field, fieldp,
+                 thole, pdamp, TINKER_IMAGE_ARGS, off2, x, y, z, nuexclude_,
+                 uexclude_, uexclude_scale_);
    }
 }
 TINKER_NAMESPACE_END

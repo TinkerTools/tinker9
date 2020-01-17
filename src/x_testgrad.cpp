@@ -25,18 +25,19 @@ void x_testgrad(int argc, char** argv)
    print(stdout, fmt_eng, esum);
 
    const char* fmt = " Anlyt{:>10d}       {:12.4f}{:12.4f}{:12.4f}{:14.4f}\n";
-   auto do_print = [](int i, int n) {
-      if (n <= 10)
+   auto do_print = [](int i, int n, int top_m) {
+      if (n <= 2 * top_m)
          return true;
-      else if (i < 5)
+      else if (i < top_m)
          return true;
-      else if (i >= n - 5)
+      else if (i >= n - top_m)
          return true;
       else
          return false;
    };
+   int print_top_n = 15;
    for (int i = 0; i < n; ++i) {
-      if (!do_print(i, n))
+      if (!do_print(i, n, print_top_n))
          continue;
 
       real x1 = gdx[i];
