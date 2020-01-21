@@ -23,10 +23,9 @@ void pair_mplar(                                                          //
    real qkzz, real3 ukd, real3 ukp, real pdk, real ptk, //
    real f, real aewald,                                 //
    real3& restrict frci, real3& restrict frck, real3& restrict trqi,
-   real3& restrict trqk, //
-   real& restrict etl, real& restrict vtlxx, real& restrict vtlxy,
-   real& restrict vtlxz, real& restrict vtlyy, real& restrict vtlyz,
-   real& restrict vtlzz)
+   real3& restrict trqk, real& restrict etl, real& restrict vtlxx,
+   real& restrict vtlxy, real& restrict vtlxz, real& restrict vtlyy,
+   real& restrict vtlyz, real& restrict vtlzz)
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_g = USE & calc::grad;
@@ -76,9 +75,12 @@ void pair_mplar(                                                          //
       // end if use_thole
    }
 
-   real3 frc;
-   if CONSTEXPR (do_g)
+   real3 frc, trq1, trq2;
+   if CONSTEXPR (do_g) {
       frc = make_real3(0, 0, 0);
+      trq1 = make_real3(0, 0, 0);
+      trq2 = make_real3(0, 0, 0);
+   }
 
    real dir = dot3(di, dr);
    real3 qi_dr = matvec(qixx, qixy, qixz, qiyy, qiyz, qizz, dr);
@@ -209,14 +211,14 @@ void pair_mplar(                                                          //
          term4 * qiry - term6 * (qikry + qiky);
       trq0.z = -bn[1] * dikz + term1 * dirz + term3 * (dqikz + dkqirz) -
          term4 * qirz - term6 * (qikrz + qikz);
-      trqi += (mscale * f) * trq0;
+      trq1 += (mscale * f) * trq0;
       trq0.x = bn[1] * dikx + term2 * dkrx - term3 * (dqikx + diqkrx) -
          term5 * qkrx - term6 * (qkirx - qikx);
       trq0.y = bn[1] * diky + term2 * dkry - term3 * (dqiky + diqkry) -
          term5 * qkry - term6 * (qkiry - qiky);
       trq0.z = bn[1] * dikz + term2 * dkrz - term3 * (dqikz + diqkrz) -
          term5 * qkrz - term6 * (qkirz - qikz);
-      trqk += (mscale * f) * trq0;
+      trq2 += (mscale * f) * trq0;
    }
 
    // epolar
@@ -287,7 +289,7 @@ void pair_mplar(                                                          //
       trq0.z = di.y * ufldi.x - di.x * ufldi.y + qiyz * dufldi[3] -
          qixz * dufldi[4] + 2 * qixy * (dufldi[0] - dufldi[2]) +
          (qiyy - qixx) * dufldi[1];
-      trqi += trq0;
+      trq1 += trq0;
       trq0.x = dk.z * ufldk.y - dk.y * ufldk.z + qkxz * dufldk[1] -
          qkxy * dufldk[3] + 2 * qkyz * (dufldk[2] - dufldk[5]) +
          (qkzz - qkyy) * dufldk[4];
@@ -297,7 +299,7 @@ void pair_mplar(                                                          //
       trq0.z = dk.y * ufldk.x - dk.x * ufldk.y + qkyz * dufldk[3] -
          qkxz * dufldk[4] + 2 * qkxy * (dufldk[0] - dufldk[2]) +
          (qkyy - qkxx) * dufldk[1];
-      trqk += trq0;
+      trq2 += trq0;
 
       // get the field gradient for direct polarization force
       real3 frcd = make_real3(0, 0, 0);
@@ -332,6 +334,8 @@ void pair_mplar(                                                          //
    if CONSTEXPR (do_g) {
       frci += frc;
       frck -= frc;
+      trqi += trq1;
+      trqk += trq2;
    }
    if CONSTEXPR (do_v) {
       vtlxx -= dr.x * frc.x;
