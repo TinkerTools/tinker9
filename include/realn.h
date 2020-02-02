@@ -25,6 +25,14 @@ using real4 = float4;
 #endif
 
 
+// -
+SEQ_ROUTINE
+inline real3 operator-(real3 a)
+{
+   return make_real3(-a.x, -a.y, -a.z);
+}
+
+
 // + - *
 SEQ_ROUTINE
 inline real3 operator+(real3 a, real3 b)
@@ -54,7 +62,7 @@ inline real3 operator*(real3 b, real a)
 }
 
 
-// += -=
+// += -= *=
 SEQ_ROUTINE
 inline void operator+=(real3& a, real3 b)
 {
@@ -70,6 +78,15 @@ inline void operator-=(real3& a, real3 b)
    a.x -= b.x;
    a.y -= b.y;
    a.z -= b.z;
+}
+
+
+SEQ_ROUTINE
+inline void operator*=(real3& a, real b)
+{
+   a.x *= b;
+   a.y *= b;
+   a.z *= b;
 }
 
 

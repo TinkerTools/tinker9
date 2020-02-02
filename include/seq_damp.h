@@ -67,10 +67,9 @@ inline void damp_thole3g(real r, real rr2, real xr, real yr, real zr, real pdi,
 
 
 SEQ_ROUTINE
-inline void damp_thole4(real r, real rr2, real xr, real yr, real zr, real pdi,
-                        real pti, real pdk, real ptk, real& restrict ex3,
-                        real& restrict ex5, real& restrict ex7,
-                        real& restrict ex9)
+inline void damp_thole4(real r, real pdi, real pti, real pdk, real ptk,
+                        real& restrict ex3, real& restrict ex5,
+                        real& restrict ex7, real& restrict ex9)
 {
    real pgamma = REAL_MIN(pti, ptk);
    real damp = pdi * pdk;
