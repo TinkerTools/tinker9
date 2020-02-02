@@ -18,6 +18,25 @@
  */
 
 
+ /**
+  * Kernel evdw_hal_cu1 on GTX 1070 for DHFR2
+  * 7 angstroms cutoff and 10 % buffer
+  *
+  * unsorted (a) | generic image (b) | decouple vlambda (c) | 1e-6 s
+  * --------------------------------------------------------------------
+  * -            | -                 | -                    | 342
+  * +            | -                 | -                    | 348
+  * +            | -                 | +                    | 366
+  * +            | +                 | -                    | 373
+  * +            | +                 | +                    | 382
+  * --------------------------------------------------------------------
+  * (a) - assuming sorted[i].unsorted == i, no random memory access for the "i"
+  *     parameters and gradients; + the original code.
+  * (b) - hard-coded orthogonal image routine; + generic image routine.
+  * (c) - hard-coded decouple method; + generic vlambda method.
+  */
+
+
 TINKER_NAMESPACE_BEGIN
 #define HAL_ARGS                                                               \
    size_t bufsize, count_buffer restrict nev, energy_buffer restrict ev,       \

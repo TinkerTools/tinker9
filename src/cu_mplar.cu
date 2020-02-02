@@ -15,131 +15,125 @@
 TINKER_NAMESPACE_BEGIN
 template <int USE, elec_t ETYP>
 __device__
-void pair_mplar(
-   real r2, real xr, real yr, real zr, real mscale, real dscale, real pscale,
-   real uscale, //
-   real ci, real dix, real diy, real diz, real qixx, real qixy, real qixz,
-   real qiyy, real qiyz, real qizz, real uix, real uiy, real uiz, real uixp,
-   real uiyp, real uizp, real pdi, real pti, //
-   real ck, real dkx, real dky, real dkz, real qkxx, real qkxy, real qkxz,
-   real qkyy, real qkyz, real qkzz, real ukx, real uky, real ukz, real ukxp,
-   real ukyp, real ukzp, real pdk, real ptk, //
-   real f, real aewald,                      //
+void pair_mplar_v1(                                                       //
+   real r2, real3 dr, real mscale, real dscale, real pscale, real uscale, //
+   real ci, real3 di, real qixx, real qixy, real qixz, real qiyy, real qiyz,
+   real qizz, real3 uid, real3 uip, real pdi, real pti, //
+   real ck, real3 dk, real qkxx, real qkxy, real qkxz, real qkyy, real qkyz,
+   real qkzz, real3 ukd, real3 ukp, real pdk, real ptk, //
+   real f, real aewald,                                 //
    real3& restrict frci, real3& restrict frck, real3& restrict trqi,
-   real3& restrict trqk, real3& restrict ufldi, real3& restrict ufldk,
-   real (&restrict dufldi)[6], real (&restrict dufldk)[6], //
-   real& restrict etl, real& restrict vtlxx, real& restrict vtlxy,
-   real& restrict vtlxz, real& restrict vtlyy, real& restrict vtlyz,
-   real& restrict vtlzz)
+   real3& restrict trqk, real& restrict etl, real& restrict vtlxx,
+   real& restrict vtlxy, real& restrict vtlxz, real& restrict vtlyy,
+   real& restrict vtlyz, real& restrict vtlzz)
 {
    constexpr int do_e = USE & calc::energy;
    constexpr int do_g = USE & calc::grad;
    constexpr int do_v = USE & calc::virial;
 
-
-   real r = REAL_SQRT(r2);
-   real invr1 = REAL_RECIP(r);
-   real rr2 = invr1 * invr1;
-   real rr1 = invr1;
-   real rr3 = rr1 * rr2;
-   real rr5 = 3 * rr3 * rr2;
-   real rr7 = 5 * rr5 * rr2;
-   real rr9 = 7 * rr7 * rr2;
-   real rr11;
-   if CONSTEXPR (do_g) {
-      rr11 = 9 * rr9 * rr2;
-   }
    real bn[6];
-   if CONSTEXPR (ETYP == elec_t::ewald) {
-      if CONSTEXPR (!do_g) {
-         damp_ewald<5>(bn, r, invr1, rr2, aewald);
-      } else {
-         damp_ewald<6>(bn, r, invr1, rr2, aewald);
-      }
-   } else if CONSTEXPR (ETYP == elec_t::coulomb) {
-      bn[0] = rr1;
-      bn[1] = rr3;
-      bn[2] = rr5;
-      bn[3] = rr7;
-      bn[4] = rr9;
+   real sr3, sr5, sr7, sr9;
+   {
+      real r = REAL_SQRT(r2);
+      real invr1 = REAL_RECIP(r);
+      real rr2 = invr1 * invr1;
+      real rr1 = invr1;
+      real rr3 = rr1 * rr2;
+      real rr5 = 3 * rr3 * rr2;
+      real rr7 = 5 * rr5 * rr2;
+      real rr9 = 7 * rr7 * rr2;
+      real rr11;
       if CONSTEXPR (do_g) {
-         bn[5] = rr11;
+         rr11 = 9 * rr9 * rr2;
       }
+
+      if CONSTEXPR (ETYP == elec_t::ewald) {
+         if CONSTEXPR (!do_g) {
+            damp_ewald<5>(bn, r, invr1, rr2, aewald);
+         } else {
+            damp_ewald<6>(bn, r, invr1, rr2, aewald);
+         }
+      } else if CONSTEXPR (ETYP == elec_t::coulomb) {
+         bn[0] = rr1;
+         bn[1] = rr3;
+         bn[2] = rr5;
+         bn[3] = rr7;
+         bn[4] = rr9;
+         if CONSTEXPR (do_g) {
+            bn[5] = rr11;
+         }
+      }
+
+      // if use_thole
+      real ex3, ex5, ex7, ex9;
+      damp_thole4(r, pdi, pti, pdk, ptk, ex3, ex5, ex7, ex9);
+      sr3 = bn[1] - ex3 * rr3;
+      sr5 = bn[2] - ex5 * rr5;
+      sr7 = bn[3] - ex7 * rr7;
+      sr9 = bn[4] - ex9 * rr9;
+      // end if use_thole
    }
 
-
-   real e;
-   real3 frc;
-   if CONSTEXPR (do_e)
-      e = 0;
-   if CONSTEXPR (do_g)
+   real3 frc, trq1, trq2;
+   if CONSTEXPR (do_g) {
       frc = make_real3(0, 0, 0);
+      trq1 = make_real3(0, 0, 0);
+      trq2 = make_real3(0, 0, 0);
+   }
 
+   real dir = dot3(di, dr);
+   real3 qi_dr = matvec(qixx, qixy, qixz, qiyy, qiyz, qizz, dr);
+   real qir = dot3(dr, qi_dr);
+   real dkr = dot3(dk, dr);
+   real3 qk_dr = matvec(qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, dr);
+   real qkr = dot3(dr, qk_dr);
 
    // empole
+   {
+      real dik = dot3(di, dk);
+      real qik = dot3(qi_dr, qk_dr);
+      real diqk = dot3(di, qk_dr);
+      real dkqi = dot3(dk, qi_dr);
+      real qiqk = dot3(qixx, qiyy, qizz, qkxx, qkyy, qkzz) +
+         2 * dot3(qixy, qixz, qiyz, qkxy, qkxz, qkyz);
 
+      real term1 = ci * ck;
+      real term2 = ck * dir - ci * dkr + dik;
+      real term3 = ci * qkr + ck * qir - dir * dkr + 2 * (dkqi - diqk + qiqk);
+      real term4 = dir * qkr - dkr * qir - 4 * qik;
+      real term5 = qir * qkr;
 
-   if CONSTEXPR (ETYP == elec_t::ewald) {
-      mscale = 1;
-   }
-
-
-   real dir = dix * xr + diy * yr + diz * zr;
-   real qix = qixx * xr + qixy * yr + qixz * zr;
-   real qiy = qixy * xr + qiyy * yr + qiyz * zr;
-   real qiz = qixz * xr + qiyz * yr + qizz * zr;
-   real qir = qix * xr + qiy * yr + qiz * zr;
-   real dkr = dkx * xr + dky * yr + dkz * zr;
-   real qkx = qkxx * xr + qkxy * yr + qkxz * zr;
-   real qky = qkxy * xr + qkyy * yr + qkyz * zr;
-   real qkz = qkxz * xr + qkyz * yr + qkzz * zr;
-   real qkr = qkx * xr + qky * yr + qkz * zr;
-   real dik = dix * dkx + diy * dky + diz * dkz;
-   real qik = qix * qkx + qiy * qky + qiz * qkz;
-   real diqk = dix * qkx + diy * qky + diz * qkz;
-   real dkqi = dkx * qix + dky * qiy + dkz * qiz;
-   real qiqk = 2 * (qixy * qkxy + qixz * qkxz + qiyz * qkyz) + qixx * qkxx +
-      qiyy * qkyy + qizz * qkzz;
-
-
-   real term1 = ci * ck;
-   real term2 = ck * dir - ci * dkr + dik;
-   real term3 = ci * qkr + ck * qir - dir * dkr + 2 * (dkqi - diqk + qiqk);
-   real term4 = dir * qkr - dkr * qir - 4 * qik;
-   real term5 = qir * qkr;
-
-
-   if CONSTEXPR (do_e) {
-      e += mscale * f *
-         (term1 * bn[0] + term2 * bn[1] + term3 * bn[2] + term4 * bn[3] +
-          term5 * bn[4]);
-   }
-
-
-   if CONSTEXPR (do_g) {
-
+      // energy
+      if CONSTEXPR (do_e) {
+         real e = term1 * bn[0] + term2 * bn[1] + term3 * bn[2] +
+            term4 * bn[3] + term5 * bn[4];
+         etl += f * mscale * e;
+      }
 
       // gradient
+      real qix = qi_dr.x;
+      real qiy = qi_dr.y;
+      real qiz = qi_dr.z;
+      real qkx = qk_dr.x;
+      real qky = qk_dr.y;
+      real qkz = qk_dr.z;
 
-
-      real qixk = qixx * qkx + qixy * qky + qixz * qkz;
+      real qixk = qixx * qkx + qixy * qky + qixz * qkz; // |Qi Qk r>
       real qiyk = qixy * qkx + qiyy * qky + qiyz * qkz;
       real qizk = qixz * qkx + qiyz * qky + qizz * qkz;
-      real qkxi = qkxx * qix + qkxy * qiy + qkxz * qiz;
+      real qkxi = qkxx * qix + qkxy * qiy + qkxz * qiz; // |Qk Qi r>
       real qkyi = qkxy * qix + qkyy * qiy + qkyz * qiz;
       real qkzi = qkxz * qix + qkyz * qiy + qkzz * qiz;
 
-      real diqkx = dix * qkxx + diy * qkxy + diz * qkxz;
-      real diqky = dix * qkxy + diy * qkyy + diz * qkyz;
-      real diqkz = dix * qkxz + diy * qkyz + diz * qkzz;
-      real dkqix = dkx * qixx + dky * qixy + dkz * qixz;
-      real dkqiy = dkx * qixy + dky * qiyy + dkz * qiyz;
-      real dkqiz = dkx * qixz + dky * qiyz + dkz * qizz;
-
+      real diqkx = di.x * qkxx + di.y * qkxy + di.z * qkxz; // |Qk Di>
+      real diqky = di.x * qkxy + di.y * qkyy + di.z * qkyz;
+      real diqkz = di.x * qkxz + di.y * qkyz + di.z * qkzz;
+      real dkqix = dk.x * qixx + dk.y * qixy + dk.z * qixz; // |Qi Dk>
+      real dkqiy = dk.x * qixy + dk.y * qiyy + dk.z * qiyz;
+      real dkqiz = dk.x * qixz + dk.y * qiyz + dk.z * qizz;
 
       real de = term1 * bn[1] + term2 * bn[2] + term3 * bn[3] + term4 * bn[4] +
          term5 * bn[5];
-
 
       term1 = -ck * bn[1] + dkr * bn[2] - qkr * bn[3];
       term2 = ci * bn[1] + dir * bn[2] + qir * bn[3];
@@ -150,66 +144,64 @@ void pair_mplar(
 
 
       real3 frc0;
-      frc0.x = de * xr + term1 * dix + term2 * dkx + term3 * (diqkx - dkqix) +
-         term4 * qix + term5 * qkx + term6 * (qixk + qkxi);
-      frc0.y = de * yr + term1 * diy + term2 * dky + term3 * (diqky - dkqiy) +
-         term4 * qiy + term5 * qky + term6 * (qiyk + qkyi);
-      frc0.z = de * zr + term1 * diz + term2 * dkz + term3 * (diqkz - dkqiz) +
-         term4 * qiz + term5 * qkz + term6 * (qizk + qkzi);
+      frc0.x = de * dr.x + term1 * di.x + term2 * dk.x +
+         term3 * (diqkx - dkqix) + term4 * qix + term5 * qkx +
+         term6 * (qixk + qkxi);
+      frc0.y = de * dr.y + term1 * di.y + term2 * dk.y +
+         term3 * (diqky - dkqiy) + term4 * qiy + term5 * qky +
+         term6 * (qiyk + qkyi);
+      frc0.z = de * dr.z + term1 * di.z + term2 * dk.z +
+         term3 * (diqkz - dkqiz) + term4 * qiz + term5 * qkz +
+         term6 * (qizk + qkzi);
       frc += (mscale * f) * frc0;
 
-
       // torque
+      real dirx = di.y * dr.z - di.z * dr.y; // Di x r
+      real diry = di.z * dr.x - di.x * dr.z;
+      real dirz = di.x * dr.y - di.y * dr.x;
+      real dkrx = dk.y * dr.z - dk.z * dr.y; // Dk x r
+      real dkry = dk.z * dr.x - dk.x * dr.z;
+      real dkrz = dk.x * dr.y - dk.y * dr.x;
+      real dikx = di.y * dk.z - di.z * dk.y; // Di x Dk
+      real diky = di.z * dk.x - di.x * dk.z;
+      real dikz = di.x * dk.y - di.y * dk.x;
 
-
-      real dirx = diy * zr - diz * yr;
-      real diry = diz * xr - dix * zr;
-      real dirz = dix * yr - diy * xr;
-      real dkrx = dky * zr - dkz * yr;
-      real dkry = dkz * xr - dkx * zr;
-      real dkrz = dkx * yr - dky * xr;
-      real dikx = diy * dkz - diz * dky;
-      real diky = diz * dkx - dix * dkz;
-      real dikz = dix * dky - diy * dkx;
-
-      real qirx = qiz * yr - qiy * zr;
-      real qiry = qix * zr - qiz * xr;
-      real qirz = qiy * xr - qix * yr;
-      real qkrx = qkz * yr - qky * zr;
-      real qkry = qkx * zr - qkz * xr;
-      real qkrz = qky * xr - qkx * yr;
-      real qikx = qky * qiz - qkz * qiy;
+      real qirx = qiz * dr.y - qiy * dr.z; // r x (Qi r)
+      real qiry = qix * dr.z - qiz * dr.x;
+      real qirz = qiy * dr.x - qix * dr.y;
+      real qkrx = qkz * dr.y - qky * dr.z; // r x (Qk r)
+      real qkry = qkx * dr.z - qkz * dr.x;
+      real qkrz = qky * dr.x - qkx * dr.y;
+      real qikx = qky * qiz - qkz * qiy; // (Qk r) x (Qi r)
       real qiky = qkz * qix - qkx * qiz;
       real qikz = qkx * qiy - qky * qix;
 
-      real qikrx = qizk * yr - qiyk * zr;
-      real qikry = qixk * zr - qizk * xr;
-      real qikrz = qiyk * xr - qixk * yr;
-      real qkirx = qkzi * yr - qkyi * zr;
-      real qkiry = qkxi * zr - qkzi * xr;
-      real qkirz = qkyi * xr - qkxi * yr;
+      real qikrx = qizk * dr.y - qiyk * dr.z;
+      real qikry = qixk * dr.z - qizk * dr.x;
+      real qikrz = qiyk * dr.x - qixk * dr.y;
+      real qkirx = qkzi * dr.y - qkyi * dr.z;
+      real qkiry = qkxi * dr.z - qkzi * dr.x;
+      real qkirz = qkyi * dr.x - qkxi * dr.y;
 
-      real diqkrx = diqkz * yr - diqky * zr;
-      real diqkry = diqkx * zr - diqkz * xr;
-      real diqkrz = diqky * xr - diqkx * yr;
-      real dkqirx = dkqiz * yr - dkqiy * zr;
-      real dkqiry = dkqix * zr - dkqiz * xr;
-      real dkqirz = dkqiy * xr - dkqix * yr;
+      real diqkrx = diqkz * dr.y - diqky * dr.z;
+      real diqkry = diqkx * dr.z - diqkz * dr.x;
+      real diqkrz = diqky * dr.x - diqkx * dr.y;
+      real dkqirx = dkqiz * dr.y - dkqiy * dr.z;
+      real dkqiry = dkqix * dr.z - dkqiz * dr.x;
+      real dkqirz = dkqiy * dr.x - dkqix * dr.y;
 
-
-      real dqikx = diy * qkz - diz * qky + dky * qiz - dkz * qiy -
+      real dqikx = di.y * qkz - di.z * qky + dk.y * qiz - dk.z * qiy -
          2 *
             (qixy * qkxz + qiyy * qkyz + qiyz * qkzz - qixz * qkxy -
              qiyz * qkyy - qizz * qkyz);
-      real dqiky = diz * qkx - dix * qkz + dkz * qix - dkx * qiz -
+      real dqiky = di.z * qkx - di.x * qkz + dk.z * qix - dk.x * qiz -
          2 *
             (qixz * qkxx + qiyz * qkxy + qizz * qkxz - qixx * qkxz -
              qixy * qkyz - qixz * qkzz);
-      real dqikz = dix * qky - diy * qkx + dkx * qiy - dky * qix -
+      real dqikz = di.x * qky - di.y * qkx + dk.x * qiy - dk.y * qix -
          2 *
             (qixx * qkxy + qixy * qkyy + qixz * qkyz - qixy * qkxx -
              qiyy * qkxy - qiyz * qkxz);
-
 
       real3 trq0;
       trq0.x = -bn[1] * dikx + term1 * dirx + term3 * (dqikx + dkqirx) -
@@ -218,314 +210,701 @@ void pair_mplar(
          term4 * qiry - term6 * (qikry + qiky);
       trq0.z = -bn[1] * dikz + term1 * dirz + term3 * (dqikz + dkqirz) -
          term4 * qirz - term6 * (qikrz + qikz);
-      trqi += (mscale * f) * trq0;
+      trq1 += (mscale * f) * trq0;
       trq0.x = bn[1] * dikx + term2 * dkrx - term3 * (dqikx + diqkrx) -
          term5 * qkrx - term6 * (qkirx - qikx);
       trq0.y = bn[1] * diky + term2 * dkry - term3 * (dqiky + diqkry) -
          term5 * qkry - term6 * (qkiry - qiky);
       trq0.z = bn[1] * dikz + term2 * dkrz - term3 * (dqikz + diqkrz) -
          term5 * qkrz - term6 * (qkirz - qikz);
-      trqk += (mscale * f) * trq0;
+      trq2 += (mscale * f) * trq0;
    }
-
 
    // epolar
-
-
-   if CONSTEXPR (ETYP == elec_t::ewald) {
-      dscale = 1;
-      pscale = 1;
-      uscale = 1;
-   }
-
-
-   f *= 0.5f;
-   real uir = uix * xr + uiy * yr + uiz * zr;
-   real ukr = ukx * xr + uky * yr + ukz * zr;
-
-
-   // if use_thole
-   real ex3, ex5, ex7;
-   real rc31, rc32, rc33, rc51, rc52, rc53, rc71, rc72, rc73;
-   if CONSTEXPR (!do_g) {
-      damp_thole3(r, pdi, pti, pdk, ptk, ex3, ex5, ex7);
-      ex3 = 1 - ex3;
-      ex5 = 1 - ex5;
-      ex7 = 1 - ex7;
-   } else {
-      damp_thole3g(r, rr2, xr, yr, zr, pdi, pti, pdk, ptk, ex3, ex5, ex7, rc31,
-                   rc32, rc33, rc51, rc52, rc53, rc71, rc72, rc73);
-      rc31 *= rr3;
-      rc32 *= rr3;
-      rc33 *= rr3;
-      rc51 *= rr5;
-      rc52 *= rr5;
-      rc53 *= rr5;
-      rc71 *= rr7;
-      rc72 *= rr7;
-      rc73 *= rr7;
-   }
-   // end if use_thole
-
-
    if CONSTEXPR (do_g) {
-      real uirp = uixp * xr + uiyp * yr + uizp * zr;
-      real ukrp = ukxp * xr + ukyp * yr + ukzp * zr;
+      f *= 0.5f;
+
+      real uird = dot3(uid, dr);
+      real ukrd = dot3(ukd, dr);
+      real uirp = dot3(uip, dr);
+      real ukrp = dot3(ukp, dr);
+
+      real di_ukd = dot3(di, ukd);
+      real di_ukp = dot3(di, ukp);
+      real dk_uid = dot3(dk, uid);
+      real dk_uip = dot3(dk, uip);
+
+      real uid_qkr = dot3(uid, qk_dr); // <uid Qk r>
+      real uip_qkr = dot3(uip, qk_dr); // <uip Qk r>
+      real ukd_qir = dot3(ukd, qi_dr); // <ukd Qi r>
+      real ukp_qir = dot3(ukp, qi_dr); // <ukp Qi r>
+
+      // |Qi ukd>, |Qk uid>, |Qi ukp>, |Qk uip>
+      real3 qi_ukd = matvec(qixx, qixy, qixz, qiyy, qiyz, qizz, ukd);
+      real3 qk_uid = matvec(qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, uid);
+      real3 qi_ukp = matvec(qixx, qixy, qixz, qiyy, qiyz, qizz, ukp);
+      real3 qk_uip = matvec(qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, uip);
 
 
-      real sr3 = bn[1] - ex3 * rr3;
-      real sr5 = bn[2] - ex5 * rr5;
-      real sr7 = bn[3] - ex7 * rr7;
-
+      real3 ufldi, ufldk;
+      real dufldi[6], dufldk[6];
 
       // get the induced dipole field used for dipole torques
-
-
-      real tuir, tukr;
-
-
-      real tix3 = pscale * sr3 * ukx + dscale * sr3 * ukxp;
-      real tiy3 = pscale * sr3 * uky + dscale * sr3 * ukyp;
-      real tiz3 = pscale * sr3 * ukz + dscale * sr3 * ukzp;
-      real tkx3 = pscale * sr3 * uix + dscale * sr3 * uixp;
-      real tky3 = pscale * sr3 * uiy + dscale * sr3 * uiyp;
-      real tkz3 = pscale * sr3 * uiz + dscale * sr3 * uizp;
-      tuir = -pscale * sr5 * ukr - dscale * sr5 * ukrp;
-      tukr = -pscale * sr5 * uir - dscale * sr5 * uirp;
-
-
-      ufldi.x += f * (tix3 + xr * tuir);
-      ufldi.y += f * (tiy3 + yr * tuir);
-      ufldi.z += f * (tiz3 + zr * tuir);
-      ufldk.x += f * (tkx3 + xr * tukr);
-      ufldk.y += f * (tky3 + yr * tukr);
-      ufldk.z += f * (tkz3 + zr * tukr);
+      ufldi = f * sr3 * (pscale * ukd + dscale * ukp) -
+         f * sr5 * (pscale * ukrd + dscale * ukrp) * dr;
+      ufldk = f * sr3 * (pscale * uid + dscale * uip) -
+         f * sr5 * (pscale * uird + dscale * uirp) * dr;
 
 
       // get induced dipole field gradient used for quadrupole torques
+      real tix5, tiy5, tiz5, tkx5, tky5, tkz5, tuir, tukr;
+      tix5 = 2 * f * sr5 * (pscale * ukd.x + dscale * ukp.x);
+      tiy5 = 2 * f * sr5 * (pscale * ukd.y + dscale * ukp.y);
+      tiz5 = 2 * f * sr5 * (pscale * ukd.z + dscale * ukp.z);
+      tkx5 = 2 * f * sr5 * (pscale * uid.x + dscale * uip.x);
+      tky5 = 2 * f * sr5 * (pscale * uid.y + dscale * uip.y);
+      tkz5 = 2 * f * sr5 * (pscale * uid.z + dscale * uip.z);
+      tuir = -f * sr7 * (pscale * ukrd + dscale * ukrp);
+      tukr = -f * sr7 * (pscale * uird + dscale * uirp);
+      dufldi[0] = (dr.x * tix5 + dr.x * dr.x * tuir);
+      dufldi[1] = (dr.x * tiy5 + dr.y * tix5 + 2 * dr.x * dr.y * tuir);
+      dufldi[2] = (dr.y * tiy5 + dr.y * dr.y * tuir);
+      dufldi[3] = (dr.x * tiz5 + dr.z * tix5 + 2 * dr.x * dr.z * tuir);
+      dufldi[4] = (dr.y * tiz5 + dr.z * tiy5 + 2 * dr.y * dr.z * tuir);
+      dufldi[5] = (dr.z * tiz5 + dr.z * dr.z * tuir);
+      dufldk[0] = (-dr.x * tkx5 - dr.x * dr.x * tukr);
+      dufldk[1] = (-dr.x * tky5 - dr.y * tkx5 - 2 * dr.x * dr.y * tukr);
+      dufldk[2] = (-dr.y * tky5 - dr.y * dr.y * tukr);
+      dufldk[3] = (-dr.x * tkz5 - dr.z * tkx5 - 2 * dr.x * dr.z * tukr);
+      dufldk[4] = (-dr.y * tkz5 - dr.z * tky5 - 2 * dr.y * dr.z * tukr);
+      dufldk[5] = (-dr.z * tkz5 - dr.z * dr.z * tukr);
 
-
-      real tix5 = 2 * (pscale * sr5 * ukx + dscale * sr5 * ukxp);
-      real tiy5 = 2 * (pscale * sr5 * uky + dscale * sr5 * ukyp);
-      real tiz5 = 2 * (pscale * sr5 * ukz + dscale * sr5 * ukzp);
-      real tkx5 = 2 * (pscale * sr5 * uix + dscale * sr5 * uixp);
-      real tky5 = 2 * (pscale * sr5 * uiy + dscale * sr5 * uiyp);
-      real tkz5 = 2 * (pscale * sr5 * uiz + dscale * sr5 * uizp);
-      tuir = -pscale * sr7 * ukr - dscale * sr7 * ukrp;
-      tukr = -pscale * sr7 * uir - dscale * sr7 * uirp;
-
-
-      dufldi[0] += f * (xr * tix5 + xr * xr * tuir);
-      dufldi[1] += f * (xr * tiy5 + yr * tix5 + 2 * xr * yr * tuir);
-      dufldi[2] += f * (yr * tiy5 + yr * yr * tuir);
-      dufldi[3] += f * (xr * tiz5 + zr * tix5 + 2 * xr * zr * tuir);
-      dufldi[4] += f * (yr * tiz5 + zr * tiy5 + 2 * yr * zr * tuir);
-      dufldi[5] += f * (zr * tiz5 + zr * zr * tuir);
-      dufldk[0] += f * (-xr * tkx5 - xr * xr * tukr);
-      dufldk[1] += f * (-xr * tky5 - yr * tkx5 - 2 * xr * yr * tukr);
-      dufldk[2] += f * (-yr * tky5 - yr * yr * tukr);
-      dufldk[3] += f * (-xr * tkz5 - zr * tkx5 - 2 * xr * zr * tukr);
-      dufldk[4] += f * (-yr * tkz5 - zr * tky5 - 2 * yr * zr * tukr);
-      dufldk[5] += f * (-zr * tkz5 - zr * zr * tukr);
-
+      real3 trq0;
+      trq0.x = di.z * ufldi.y - di.y * ufldi.z + qixz * dufldi[1] -
+         qixy * dufldi[3] + 2 * qiyz * (dufldi[2] - dufldi[5]) +
+         (qizz - qiyy) * dufldi[4];
+      trq0.y = di.x * ufldi.z - di.z * ufldi.x - qiyz * dufldi[1] +
+         qixy * dufldi[4] + 2 * qixz * (dufldi[5] - dufldi[0]) +
+         (qixx - qizz) * dufldi[3];
+      trq0.z = di.y * ufldi.x - di.x * ufldi.y + qiyz * dufldi[3] -
+         qixz * dufldi[4] + 2 * qixy * (dufldi[0] - dufldi[2]) +
+         (qiyy - qixx) * dufldi[1];
+      trq1 += trq0;
+      trq0.x = dk.z * ufldk.y - dk.y * ufldk.z + qkxz * dufldk[1] -
+         qkxy * dufldk[3] + 2 * qkyz * (dufldk[2] - dufldk[5]) +
+         (qkzz - qkyy) * dufldk[4];
+      trq0.y = dk.x * ufldk.z - dk.z * ufldk.x - qkyz * dufldk[1] +
+         qkxy * dufldk[4] + 2 * qkxz * (dufldk[5] - dufldk[0]) +
+         (qkxx - qkzz) * dufldk[3];
+      trq0.z = dk.y * ufldk.x - dk.x * ufldk.y + qkyz * dufldk[3] -
+         qkxz * dufldk[4] + 2 * qkxy * (dufldk[0] - dufldk[2]) +
+         (qkyy - qkxx) * dufldk[1];
+      trq2 += trq0;
 
       // get the field gradient for direct polarization force
-
-
-      real term1, term2, term3, term4, term5, term6, term7;
-
-
-      term1 = bn[2] - ex3 * rr5;
-      term2 = bn[3] - ex5 * rr7;
-      term3 = -sr3 + term1 * xr * xr - xr * rc31;
-      term4 = rc31 - term1 * xr - sr5 * xr;
-      term5 = term2 * xr * xr - sr5 - xr * rc51;
-      term6 = (bn[4] - ex7 * rr9) * xr * xr - bn[3] - xr * rc71;
-      term7 = rc51 - 2 * bn[3] * xr + (ex5 + 1.5f * ex7) * rr7 * xr;
-      real tixx = ci * term3 + dix * term4 + dir * term5 + 2 * sr5 * qixx +
-         (qiy * yr + qiz * zr) * ex7 * rr7 + 2 * qix * term7 + qir * term6;
-      real tkxx = ck * term3 - dkx * term4 - dkr * term5 + 2 * sr5 * qkxx +
-         (qky * yr + qkz * zr) * ex7 * rr7 + 2 * qkx * term7 + qkr * term6;
-
-
-      term3 = -sr3 + term1 * yr * yr - yr * rc32;
-      term4 = rc32 - term1 * yr - sr5 * yr;
-      term5 = term2 * yr * yr - sr5 - yr * rc52;
-      term6 = (bn[4] - ex7 * rr9) * yr * yr - bn[3] - yr * rc72;
-      term7 = rc52 - 2 * bn[3] * yr + (ex5 + 1.5f * ex7) * rr7 * yr;
-      real tiyy = ci * term3 + diy * term4 + dir * term5 + 2 * sr5 * qiyy +
-         (qix * xr + qiz * zr) * ex7 * rr7 + 2 * qiy * term7 + qir * term6;
-      real tkyy = ck * term3 - dky * term4 - dkr * term5 + 2 * sr5 * qkyy +
-         (qkx * xr + qkz * zr) * ex7 * rr7 + 2 * qky * term7 + qkr * term6;
-
-
-      term3 = -sr3 + term1 * zr * zr - zr * rc33;
-      term4 = rc33 - term1 * zr - sr5 * zr;
-      term5 = term2 * zr * zr - sr5 - zr * rc53;
-      term6 = (bn[4] - ex7 * rr9) * zr * zr - bn[3] - zr * rc73;
-      term7 = rc53 - 2 * bn[3] * zr + (ex5 + 1.5f * ex7) * rr7 * zr;
-      real tizz = ci * term3 + diz * term4 + dir * term5 + 2 * sr5 * qizz +
-         (qix * xr + qiy * yr) * ex7 * rr7 + 2 * qiz * term7 + qir * term6;
-      real tkzz = ck * term3 - dkz * term4 - dkr * term5 + 2 * sr5 * qkzz +
-         (qkx * xr + qky * yr) * ex7 * rr7 + 2 * qkz * term7 + qkr * term6;
-
-
-      term3 = term1 * xr * yr - yr * rc31;
-      term4 = rc31 - term1 * xr;
-      term5 = term2 * xr * yr - yr * rc51;
-      term6 = (bn[4] - ex7 * rr9) * xr * yr - yr * rc71;
-      term7 = rc51 - term2 * xr;
-      real tixy = ci * term3 - sr5 * dix * yr + diy * term4 + dir * term5 +
-         2 * sr5 * qixy - 2 * sr7 * yr * qix + 2 * qiy * term7 + qir * term6;
-      real tkxy = ck * term3 + sr5 * dkx * yr - dky * term4 - dkr * term5 +
-         2 * sr5 * qkxy - 2 * sr7 * yr * qkx + 2 * qky * term7 + qkr * term6;
-
-
-      term3 = term1 * xr * zr - zr * rc31;
-      term5 = term2 * xr * zr - zr * rc51;
-      term6 = (bn[4] - ex7 * rr9) * xr * zr - zr * rc71;
-      real tixz = ci * term3 - sr5 * dix * zr + diz * term4 + dir * term5 +
-         2 * sr5 * qixz - 2 * sr7 * zr * qix + 2 * qiz * term7 + qir * term6;
-      real tkxz = ck * term3 + sr5 * dkx * zr - dkz * term4 - dkr * term5 +
-         2 * sr5 * qkxz - 2 * sr7 * zr * qkx + 2 * qkz * term7 + qkr * term6;
-
-
-      term3 = term1 * yr * zr - zr * rc32;
-      term4 = rc32 - term1 * yr;
-      term5 = term2 * yr * zr - zr * rc52;
-      term6 = (bn[4] - ex7 * rr9) * yr * zr - zr * rc72;
-      term7 = rc52 - term2 * yr;
-      real tiyz = ci * term3 - sr5 * diy * zr + diz * term4 + dir * term5 +
-         2 * sr5 * qiyz - 2 * sr7 * zr * qiy + 2 * qiz * term7 + qir * term6;
-      real tkyz = ck * term3 + sr5 * dky * zr - dkz * term4 - dkr * term5 +
-         2 * sr5 * qkyz - 2 * sr7 * zr * qky + 2 * qkz * term7 + qkr * term6;
-
-
-      // get the dEd/dR terms for Thole direct polarization force
-
-
-      real depx, depy, depz;
-
-
-      depx = tixx * ukxp + tixy * ukyp + tixz * ukzp - tkxx * uixp -
-         tkxy * uiyp - tkxz * uizp;
-      depy = tixy * ukxp + tiyy * ukyp + tiyz * ukzp - tkxy * uixp -
-         tkyy * uiyp - tkyz * uizp;
-      depz = tixz * ukxp + tiyz * ukyp + tizz * ukzp - tkxz * uixp -
-         tkyz * uiyp - tkzz * uizp;
-      if CONSTEXPR (ETYP == elec_t::ewald) {
-         frc.x += f * -depx;
-         frc.y += f * -depy;
-         frc.z += f * -depz;
-      } else if CONSTEXPR (ETYP == elec_t::coulomb) {
-         frc.x += f * -depx * dscale;
-         frc.y += f * -depy * dscale;
-         frc.z += f * -depz * dscale;
-      }
-
-
-      // get the dEp/dR terms for Thole direct polarization force
-
-
-      depx = tixx * ukx + tixy * uky + tixz * ukz - tkxx * uix - tkxy * uiy -
-         tkxz * uiz;
-      depy = tixy * ukx + tiyy * uky + tiyz * ukz - tkxy * uix - tkyy * uiy -
-         tkyz * uiz;
-      depz = tixz * ukx + tiyz * uky + tizz * ukz - tkxz * uix - tkyz * uiy -
-         tkzz * uiz;
-      if CONSTEXPR (ETYP == elec_t::ewald) {
-         frc.x -= f * depx;
-         frc.y -= f * depy;
-         frc.z -= f * depz;
-      } else if CONSTEXPR (ETYP == elec_t::coulomb) {
-         frc.x -= f * pscale * depx;
-         frc.y -= f * pscale * depy;
-         frc.z -= f * pscale * depz;
-      }
-
+      real3 frcd = make_real3(0, 0, 0);
+      real3 frcp = make_real3(0, 0, 0);
+      // uind/p - charge
+      frcd += sr3 * (ck * uip - ci * ukp) - sr5 * (ck * uirp - ci * ukrp) * dr;
+      frcp += sr3 * (ck * uid - ci * ukd) - sr5 * (ck * uird - ci * ukrd) * dr;
+      // uind/p - dipole
+      frcd -= sr5 *
+         (uirp * dk + ukrp * di + dir * ukp + dkr * uip +
+          (di_ukp + dk_uip) * dr);
+      frcp -= sr5 *
+         (uird * dk + ukrd * di + dir * ukd + dkr * uid +
+          (di_ukd + dk_uid) * dr);
+      frcd += sr7 * (dir * ukrp + dkr * uirp) * dr;
+      frcp += sr7 * (dir * ukrd + dkr * uird) * dr;
+      // uind/p - quadrupole
+      frcd +=
+         2 * sr5 * (qi_ukp - qk_uip) + sr9 * (qir * ukrp - qkr * uirp) * dr;
+      frcp +=
+         2 * sr5 * (qi_ukd - qk_uid) + sr9 * (qir * ukrd - qkr * uird) * dr;
+      frcd += 2 * sr7 * (uirp * qk_dr - ukrp * qi_dr) +
+         2 * sr7 * (uip_qkr - ukp_qir) * dr + sr7 * (qkr * uip - qir * ukp);
+      frcp += 2 * sr7 * (uird * qk_dr - ukrd * qi_dr) +
+         2 * sr7 * (uid_qkr - ukd_qir) * dr + sr7 * (qkr * uid - qir * ukd);
+      frc -= f * (dscale * frcd + pscale * frcp);
 
       // get the dtau/dr terms used for mutual polarization force
-
-
-      term1 = bn[2] - ex3 * rr5;
-      term2 = bn[3] - ex5 * rr7;
-      term3 = sr5 + term1;
-
-
-      term5 = -xr * term3 + rc31;
-      term6 = -sr5 + xr * xr * term2 - xr * rc51;
-      tixx = uix * term5 + uir * term6;
-      tkxx = ukx * term5 + ukr * term6;
-
-
-      term5 = -yr * term3 + rc32;
-      term6 = -sr5 + yr * yr * term2 - yr * rc52;
-      tiyy = uiy * term5 + uir * term6;
-      tkyy = uky * term5 + ukr * term6;
-
-
-      term5 = -zr * term3 + rc33;
-      term6 = -sr5 + zr * zr * term2 - zr * rc53;
-      tizz = uiz * term5 + uir * term6;
-      tkzz = ukz * term5 + ukr * term6;
-
-
-      term4 = -sr5 * yr;
-      term5 = -xr * term1 + rc31;
-      term6 = xr * yr * term2 - yr * rc51;
-      tixy = uix * term4 + uiy * term5 + uir * term6;
-      tkxy = ukx * term4 + uky * term5 + ukr * term6;
-
-
-      term4 = -sr5 * zr;
-      term6 = xr * zr * term2 - zr * rc51;
-      tixz = uix * term4 + uiz * term5 + uir * term6;
-      tkxz = ukx * term4 + ukz * term5 + ukr * term6;
-
-
-      term5 = -yr * term1 + rc32;
-      term6 = yr * zr * term2 - zr * rc52;
-      tiyz = uiy * term4 + uiz * term5 + uir * term6;
-      tkyz = uky * term4 + ukz * term5 + ukr * term6;
-
-
-      depx = tixx * ukxp + tixy * ukyp + tixz * ukzp + tkxx * uixp +
-         tkxy * uiyp + tkxz * uizp;
-      depy = tixy * ukxp + tiyy * ukyp + tiyz * ukzp + tkxy * uixp +
-         tkyy * uiyp + tkyz * uizp;
-      depz = tixz * ukxp + tiyz * ukyp + tizz * ukzp + tkxz * uixp +
-         tkyz * uiyp + tkzz * uizp;
-      if CONSTEXPR (ETYP == elec_t::ewald) {
-         frc.x -= f * depx;
-         frc.y -= f * depy;
-         frc.z -= f * depz;
-      } else if CONSTEXPR (ETYP == elec_t::coulomb) {
-         frc.x -= f * uscale * depx;
-         frc.y -= f * uscale * depy;
-         frc.z -= f * uscale * depz;
-      }
+      real uid_ukp = dot3(uid, ukp);
+      real uip_ukd = dot3(uip, ukd);
+      frcd = sr5 * (uird * ukp + ukrd * uip + uirp * ukd + ukrp * uid);
+      frcd += sr5 * (uid_ukp + uip_ukd) * dr;
+      frcd -= sr7 * (uird * ukrp + ukrd * uirp) * dr;
+      frc += f * uscale * frcd;
    }
 
-
-   // save results
-
-
-   if CONSTEXPR (do_e) {
-      etl += e;
-   }
+   // save the results
    if CONSTEXPR (do_g) {
       frci += frc;
       frck -= frc;
+      trqi += trq1;
+      trqk += trq2;
    }
    if CONSTEXPR (do_v) {
-      vtlxx += -xr * frc.x;
-      vtlxy += -0.5f * (yr * frc.x + xr * frc.y);
-      vtlxz += -0.5f * (zr * frc.x + xr * frc.z);
-      vtlyy += -yr * frc.y;
-      vtlyz += -0.5f * (zr * frc.y + yr * frc.z);
-      vtlzz += -zr * frc.z;
+      vtlxx -= dr.x * frc.x;
+      vtlxy -= 0.5f * (dr.y * frc.x + dr.x * frc.y);
+      vtlxz -= 0.5f * (dr.z * frc.x + dr.x * frc.z);
+      vtlyy -= dr.y * frc.y;
+      vtlyz -= 0.5f * (dr.z * frc.y + dr.y * frc.z);
+      vtlzz -= dr.z * frc.z;
    }
 }
+
+
+// Rt Q = G
+__device__
+void rotQI2GVector(const real (&restrict rot)[3][3], real3 qif,
+                   real3& restrict glf)
+{
+   glf = make_real3(dot3(rot[0][0], rot[1][0], rot[2][0], qif),
+                    dot3(rot[0][1], rot[1][1], rot[2][1], qif),
+                    dot3(rot[0][2], rot[1][2], rot[2][2], qif));
+}
+
+
+// R G = Q
+__device__
+void rotG2QIVector(const real (&restrict rot)[3][3], real3 glf,
+                   real3& restrict qif)
+{
+   qif = make_real3(dot3(rot[0][0], rot[0][1], rot[0][2], glf),
+                    dot3(rot[1][0], rot[1][1], rot[1][2], glf),
+                    dot3(rot[2][0], rot[2][1], rot[2][2], glf));
+}
+
+
+// R G Rt = Q
+__device__
+void rotG2QIMat_v1(const real (&restrict rot)[3][3], //
+                   real glxx, real glxy, real glxz,  //
+                   real glyy, real glyz, real glzz,  //
+                   real& restrict qixx, real& restrict qixy,
+                   real& restrict qixz, real& restrict qiyy,
+                   real& restrict qiyz, real& restrict qizz)
+{
+   real gl[3][3] = {{glxx, glxy, glxz}, {glxy, glyy, glyz}, {glxz, glyz, glzz}};
+   real out[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+   // out[i][j] = sum(k,m) R[i][k] gl[k][m] Rt[m][j]
+   //           = sum(k,m) R[i][k] gl[k][m] R[j][m]
+   for (int i = 0; i < 2; ++i)
+      for (int j = i; j < 3; ++j)
+         for (int k = 0; k < 3; ++k)
+            for (int m = 0; m < 3; ++m)
+               out[i][j] += rot[i][k] * gl[k][m] * rot[j][m];
+   qixx = out[0][0];
+   qixy = out[0][1];
+   qixz = out[0][2];
+   qiyy = out[1][1];
+   qiyz = out[1][2];
+   // qizz = out[2][2];
+   qizz = -(out[0][0] + out[1][1]);
+}
+
+
+// R G Rt = Q
+__device__
+void rotG2QIMat_v2(const real (&restrict r)[3][3],  //
+                   real glxx, real glxy, real glxz, //
+                   real glyy, real glyz, real glzz, //
+                   real& restrict qixx, real& restrict qixy,
+                   real& restrict qixz, real& restrict qiyy,
+                   real& restrict qiyz, real& restrict qizz)
+{
+   // clang-format off
+   qixx=r[0][0]*(r[0][0]*glxx+2*r[0][1]*glxy) + r[0][1]*(r[0][1]*glyy+2*r[0][2]*glyz) + r[0][2]*(r[0][2]*glzz+2*r[0][0]*glxz);
+   qiyy=r[1][0]*(r[1][0]*glxx+2*r[1][1]*glxy) + r[1][1]*(r[1][1]*glyy+2*r[1][2]*glyz) + r[1][2]*(r[1][2]*glzz+2*r[1][0]*glxz);
+   qixy=r[0][0]*(r[1][0]*glxx+r[1][1]*glxy+r[1][2]*glxz) + r[0][1]*(r[1][0]*glxy+r[1][1]*glyy+r[1][2]*glyz) + r[0][2]*(r[1][0]*glxz+r[1][1]*glyz+r[1][2]*glzz);
+   qixz=r[0][0]*(r[2][0]*glxx+r[2][1]*glxy+r[2][2]*glxz) + r[0][1]*(r[2][0]*glxy+r[2][1]*glyy+r[2][2]*glyz) + r[0][2]*(r[2][0]*glxz+r[2][1]*glyz+r[2][2]*glzz);
+   qiyz=r[1][0]*(r[2][0]*glxx+r[2][1]*glxy+r[2][2]*glxz) + r[1][1]*(r[2][0]*glxy+r[2][1]*glyy+r[2][2]*glyz) + r[1][2]*(r[2][0]*glxz+r[2][1]*glyz+r[2][2]*glzz);
+   // clang-format on
+   qizz = -(qixx + qiyy);
+}
+
+
+#define rotG2QIMatrix rotG2QIMat_v2
+
+
+template <int USE, elec_t ETYP>
+__device__
+void pair_mplar_v2(                                                       //
+   real r2, real3 dR, real mscale, real dscale, real pscale, real uscale, //
+   real ci, real3 Id, real Iqxx, real Iqxy, real Iqxz, real Iqyy, real Iqyz,
+   real Iqzz, real3 Iud, real3 Iup, real pdi, real pti, //
+   real ck, real3 Kd, real Kqxx, real Kqxy, real Kqxz, real Kqyy, real Kqyz,
+   real Kqzz, real3 Kud, real3 Kup, real pdk, real ptk, //
+   real f, real aewald,                                 //
+   real3& restrict frci, real3& restrict frck, real3& restrict trqi,
+   real3& restrict trqk, real& restrict etl, real& restrict vtlxx,
+   real& restrict vtlxy, real& restrict vtlxz, real& restrict vtlyy,
+   real& restrict vtlyz, real& restrict vtlzz)
+{
+   constexpr int do_e = USE & calc::energy;
+   constexpr int do_g = USE & calc::grad;
+   constexpr int do_v = USE & calc::virial;
+
+
+   // a rotation matrix that rotates (xr,yr,zr) to (0,0,r); R G = Q
+   real rot[3][3];
+   real bn[6];
+   real sr3, sr5, sr7, sr9;
+   real r = REAL_SQRT(r2);
+   real invr1 = REAL_RECIP(r);
+   {
+      real rr2 = invr1 * invr1;
+      real rr1 = invr1;
+      real rr3 = rr1 * rr2;
+      real rr5 = 3 * rr3 * rr2;
+      real rr7 = 5 * rr5 * rr2;
+      real rr9 = 7 * rr7 * rr2;
+      real rr11;
+      if CONSTEXPR (do_g) {
+         rr11 = 9 * rr9 * rr2;
+      }
+
+
+      if CONSTEXPR (ETYP == elec_t::ewald) {
+         if CONSTEXPR (!do_g) {
+            damp_ewald<5>(bn, r, invr1, rr2, aewald);
+         } else {
+            damp_ewald<6>(bn, r, invr1, rr2, aewald);
+         }
+      } else if CONSTEXPR (ETYP == elec_t::coulomb) {
+         bn[0] = rr1;
+         bn[1] = rr3;
+         bn[2] = rr5;
+         bn[3] = rr7;
+         bn[4] = rr9;
+         if CONSTEXPR (do_g) {
+            bn[5] = rr11;
+         }
+      }
+
+
+      // if use_thole
+      real ex3, ex5, ex7, ex9;
+      damp_thole4(r, pdi, pti, pdk, ptk, ex3, ex5, ex7, ex9);
+      sr3 = bn[1] - ex3 * rr3;
+      sr5 = bn[2] - ex5 * rr5;
+      sr7 = bn[3] - ex7 * rr7;
+      sr9 = bn[4] - ex9 * rr9;
+      // end if use_thole
+
+
+      real3 rotz = invr1 * dR;
+      // pick a random vector as rotx; rotx and rotz cannot be parallel
+      real3 rotx = rotz;
+      if (dR.y != 0 || dR.z != 0)
+         rotx.x += 1;
+      else
+         rotx.y += 1;
+      // Gram–Schmidt process for rotx with respect to rotz
+      rotx -= dot3(rotx, rotz) * rotz;
+      // normalize rotx
+      real invxlen = REAL_RSQRT(dot3(rotx, rotx));
+      rotx = invxlen * rotx;
+      real3 roty = cross(rotz, rotx);
+      rot[0][0] = rotx.x;
+      rot[0][1] = rotx.y;
+      rot[0][2] = rotx.z;
+      rot[1][0] = roty.x;
+      rot[1][1] = roty.y;
+      rot[1][2] = roty.z;
+      rot[2][0] = rotz.x;
+      rot[2][1] = rotz.y;
+      rot[2][2] = rotz.z;
+   }
+
+
+   real3 di, dk;
+   rotG2QIVector(rot, Id, di);
+   rotG2QIVector(rot, Kd, dk);
+   real qixx, qixy, qixz, qiyy, qiyz, qizz;
+   real qkxx, qkxy, qkxz, qkyy, qkyz, qkzz;
+   rotG2QIMatrix(rot, Iqxx, Iqxy, Iqxz, Iqyy, Iqyz, Iqzz, qixx, qixy, qixz,
+                 qiyy, qiyz, qizz);
+   rotG2QIMatrix(rot, Kqxx, Kqxy, Kqxz, Kqyy, Kqyz, Kqzz, qkxx, qkxy, qkxz,
+                 qkyy, qkyz, qkzz);
+   real3 uid, uip;
+   rotG2QIVector(rot, Iud, uid);
+   rotG2QIVector(rot, Iup, uip);
+   real3 ukd, ukp;
+   rotG2QIVector(rot, Kud, ukd);
+   rotG2QIVector(rot, Kup, ukp);
+
+
+   // phi,dphi/d(x,y,z),d2phi/dd(xx,yy,zz,xy,xz,yz)
+   //   0        1 2 3            4  5  6  7  8  9
+   real phi1[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+   real phi2[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+   real phi1z[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+
+   if CONSTEXPR (ETYP == elec_t::ewald) {
+      mscale = 1;
+      dscale = 0.5f;
+      pscale = 0.5f;
+      uscale = 0.5f;
+   } else {
+      dscale *= 0.5f;
+      pscale *= 0.5f;
+      uscale *= 0.5f;
+   }
+
+
+   // C-C
+   {
+      real coef1 = bn[0];
+      real coef3 = bn[1] * r;
+      // phi_c c
+      phi1[0] += coef1 * ck;
+      phi2[0] += coef1 * ci;
+      phi1z[0] += coef3 * ck;
+   }
+
+
+   // D-C and C-D
+   {
+      real coef3 = bn[1] * r;
+      real coef5 = (bn[1] - bn[2] * r2);
+      // phi_d c
+      phi1[0] += -coef3 * dk.z;
+      phi2[0] += coef3 * di.z;
+      phi1z[0] += coef5 * dk.z;
+      // dphi_c d
+      // phi1[1]; phi1[2];
+      phi1[3] += coef3 * ck;
+      // phi2[1]; phi2[2];
+      phi2[3] += -coef3 * ci;
+      // phi1z[1]; phi1z[2];
+      phi1z[3] += -coef5 * ck;
+   }
+
+
+   // D-D
+   {
+      real coef3 = bn[1];
+      real coef5 = (bn[1] - bn[2] * r2);
+      real coez5 = bn[2] * r;
+      real coez7 = (3 * bn[2] - bn[3] * r2) * r;
+      // dphi_d d
+      phi1[1] += coef3 * dk.x;
+      phi1[2] += coef3 * dk.y;
+      phi1[3] += coef5 * dk.z;
+      phi2[1] += coef3 * di.x;
+      phi2[2] += coef3 * di.y;
+      phi2[3] += coef5 * di.z;
+      phi1z[1] += coez5 * dk.x;
+      phi1z[2] += coez5 * dk.y;
+      phi1z[3] += coez7 * dk.z;
+   }
+
+
+   // Q-C and C-Q
+   {
+      real coef3 = bn[1];
+      real coef5 = bn[2] * r2;
+      real coez5 = bn[2] * r;
+      real coez7 = bn[3] * r2 * r;
+      // phi_q c
+      phi1[0] += coef5 * qkzz;
+      phi2[0] += coef5 * qizz;
+      phi1z[0] += -(2 * coez5 - coez7) * qkzz;
+      // d2phi_c q
+      phi1[4] += -coef3 * ck;
+      phi1[5] += -coef3 * ck;
+      phi1[6] += -(coef3 - coef5) * ck;
+      // phi1[7]; phi1[8]; phi1[9];
+      phi2[4] += -coef3 * ci;
+      phi2[5] += -coef3 * ci;
+      phi2[6] += -(coef3 - coef5) * ci;
+      // phi2[7]; phi2[8]; phi2[9];
+      phi1z[4] += -coez5 * ck;
+      phi1z[5] += -coez5 * ck;
+      phi1z[6] += -(3 * coez5 - coez7) * ck;
+      // phi1z[7]; phi1z[8]; phi1z[9];
+   }
+
+
+   // Q-D and D-Q
+   {
+      real coef5 = bn[2] * r;
+      real coef7 = bn[3] * r2 * r;
+      real coez7 = (bn[2] - bn[3] * r2);
+      real coez9 = (3 * bn[3] - bn[4] * r2) * r2;
+      // dphi_q d
+      phi1[1] += -2 * coef5 * qkxz;
+      phi1[2] += -2 * coef5 * qkyz;
+      phi1[3] += -(2 * coef5 - coef7) * qkzz;
+      phi2[1] += 2 * coef5 * qixz;
+      phi2[2] += 2 * coef5 * qiyz;
+      phi2[3] += (2 * coef5 - coef7) * qizz;
+      phi1z[1] += 2 * coez7 * qkxz;
+      phi1z[2] += 2 * coez7 * qkyz;
+      phi1z[3] += (2 * coez7 - coez9) * qkzz;
+      // d2phi_d q
+      phi1[4] += coef5 * dk.z;
+      phi1[5] += coef5 * dk.z;
+      phi1[6] += (3 * coef5 - coef7) * dk.z;
+      // phi1[7];
+      phi1[8] += 2 * coef5 * dk.x;
+      phi1[9] += 2 * coef5 * dk.y;
+      //
+      phi2[4] += -coef5 * di.z;
+      phi2[5] += -coef5 * di.z;
+      phi2[6] += -(3 * coef5 - coef7) * di.z;
+      // phi2[7];
+      phi2[8] += -2 * coef5 * di.x;
+      phi2[9] += -2 * coef5 * di.y;
+      //
+      phi1z[4] += -coez7 * dk.z;
+      phi1z[5] += -coez7 * dk.z;
+      phi1z[6] += -(3 * coez7 - coez9) * dk.z;
+      // phi1z[7];
+      phi1z[8] += -2 * coez7 * dk.x;
+      phi1z[9] += -2 * coez7 * dk.y;
+   }
+
+
+   // Q-Q
+   {
+      // d2phi_q q
+      real coef5 = bn[2];
+      real coef7 = bn[3] * r2;
+      real coef9 = bn[4] * r2 * r2;
+      real coez7 = bn[3] * r;
+      real coez9 = bn[4] * r2 * r;
+      real coez11 = bn[5] * r2 * r2 * r;
+      //
+      phi1[4] += 2 * coef5 * qkxx - coef7 * qkzz;
+      phi1[5] += 2 * coef5 * qkyy - coef7 * qkzz;
+      phi1[6] += (2 * coef5 - 5 * coef7 + coef9) * qkzz;
+      phi1[7] += 4 * coef5 * qkxy;
+      phi1[8] += 4 * (coef5 - coef7) * qkxz;
+      phi1[9] += 4 * (coef5 - coef7) * qkyz;
+      //
+      phi2[4] += 2 * coef5 * qixx - coef7 * qizz;
+      phi2[5] += 2 * coef5 * qiyy - coef7 * qizz;
+      phi2[6] += (2 * coef5 - 5 * coef7 + coef9) * qizz;
+      phi2[7] += 4 * coef5 * qixy;
+      phi2[8] += 4 * (coef5 - coef7) * qixz;
+      phi2[9] += 4 * (coef5 - coef7) * qiyz;
+      //
+      phi1z[4] += 2 * coez7 * qkxx + (2 * coez7 - coez9) * qkzz;
+      phi1z[5] += 2 * coez7 * qkyy + (2 * coez7 - coez9) * qkzz;
+      phi1z[6] += (12 * coez7 - 9 * coez9 + coez11) * qkzz;
+      phi1z[7] += 4 * coez7 * qkxy;
+      phi1z[8] += 4 * (3 * coez7 - coez9) * qkxz;
+      phi1z[9] += 4 * (3 * coez7 - coez9) * qkyz;
+   }
+
+
+   #pragma unroll
+   for (int i = 0; i < 10; ++i) {
+      phi1[i] *= mscale;
+      phi2[i] *= mscale;
+      phi1z[i] *= mscale;
+   }
+
+
+   if CONSTEXPR (do_e) {
+      real e = phi1[0] * ci + phi1[1] * di.x + phi1[2] * di.y + phi1[3] * di.z +
+         phi1[4] * qixx + phi1[5] * qiyy + phi1[6] * qizz + phi1[7] * qixy +
+         phi1[8] * qixz + phi1[9] * qiyz;
+      etl += f * e;
+   }
+
+
+   real phi1d[3] = {0, 0, 0};
+   real phi2d[3] = {0, 0, 0};
+   real phi1dz[3] = {0, 0, 0};
+
+
+   // U-C and C-U
+   {
+      real coe3 = sr3 * r;
+      real coe5 = sr3 - sr5 * r2;
+      real coed3 = dscale * coe3;
+      real coed5 = dscale * coe5;
+      real coep3 = pscale * coe3;
+      real coep5 = pscale * coe5;
+      // phi_u c
+      phi1[0] += -(coed3 * ukp.z + coep3 * ukd.z);
+      phi2[0] += coed3 * uip.z + coep3 * uid.z;
+      phi1z[0] += coed5 * ukp.z + coep5 * ukd.z;
+      // dphi_c u
+      phi1d[2] += coe3 * ck;
+      phi2d[2] += -coe3 * ci;
+      phi1dz[2] += -coe5 * ck;
+   }
+
+
+   // U-D and D-U
+   {
+      real coe3 = sr3;
+      real coe5 = sr5 * r2;
+      real coez5 = sr5 * r;
+      real coez7 = sr7 * r2 * r;
+      real coed3 = dscale * coe3;
+      real coed5 = dscale * coe5;
+      real coedz5 = dscale * coez5;
+      real coedz7 = dscale * coez7;
+      real coep3 = pscale * coe3;
+      real coep5 = pscale * coe5;
+      real coepz5 = pscale * coez5;
+      real coepz7 = pscale * coez7;
+      // dphi_u d
+      phi1[1] += coed3 * ukp.x + coep3 * ukd.x;
+      phi1[2] += coed3 * ukp.y + coep3 * ukd.y;
+      phi1[3] += (coed3 - coed5) * ukp.z + (coep3 - coep5) * ukd.z;
+      phi2[1] += coed3 * uip.x + coep3 * uid.x;
+      phi2[2] += coed3 * uip.y + coep3 * uid.y;
+      phi2[3] += (coed3 - coed5) * uip.z + (coep3 - coep5) * uid.z;
+      phi1z[1] += coedz5 * ukp.x + coepz5 * ukd.x;
+      phi1z[2] += coedz5 * ukp.y + coepz5 * ukd.y;
+      phi1z[3] += (3 * coedz5 - coedz7) * ukp.z + (3 * coepz5 - coepz7) * ukd.z;
+      // dphi_d u
+      phi1d[0] += coe3 * dk.x;
+      phi1d[1] += coe3 * dk.y;
+      phi1d[2] += (coe3 - coe5) * dk.z;
+      phi2d[0] += coe3 * di.x;
+      phi2d[1] += coe3 * di.y;
+      phi2d[2] += (coe3 - coe5) * di.z;
+      phi1dz[0] += coez5 * dk.x;
+      phi1dz[1] += coez5 * dk.y;
+      phi1dz[2] += (3 * coez5 - coez7) * dk.z;
+   }
+
+
+   // U-Q and Q-U
+   {
+      real coe5 = sr5 * r;
+      real coe7 = sr7 * r2 * r;
+      real coez7 = sr5 - sr7 * r2;
+      real coez9 = (3 * sr7 - sr9 * r2) * r2;
+      real coed5 = dscale * coe5;
+      real coed7 = dscale * coe7;
+      real coedz7 = dscale * coez7;
+      real coedz9 = dscale * coez9;
+      real coep5 = pscale * coe5;
+      real coep7 = pscale * coe7;
+      real coepz7 = pscale * coez7;
+      real coepz9 = pscale * coez9;
+      // d2phi_u q
+      phi1[4] += coed5 * ukp.z + coep5 * ukd.z;
+      phi1[5] += coed5 * ukp.z + coep5 * ukd.z;
+      phi1[6] += (3 * coed5 - coed7) * ukp.z + (3 * coep5 - coep7) * ukd.z;
+      // phi1[7];
+      phi1[8] += 2 * (coed5 * ukp.x + coep5 * ukd.x);
+      phi1[9] += 2 * (coed5 * ukp.y + coep5 * ukd.y);
+      //
+      phi2[4] += -(coed5 * uip.z + coep5 * uid.z);
+      phi2[5] += -(coed5 * uip.z + coep5 * uid.z);
+      phi2[6] += -(3 * coed5 - coed7) * uip.z - (3 * coep5 - coep7) * uid.z;
+      // phi2[7];
+      phi2[8] += -2 * (coed5 * uip.x + coep5 * uid.x);
+      phi2[9] += -2 * (coed5 * uip.y + coep5 * uid.y);
+      //
+      phi1z[4] += -(coedz7 * ukp.z + coepz7 * ukd.z);
+      phi1z[5] += -(coedz7 * ukp.z + coepz7 * ukd.z);
+      phi1z[6] +=
+         -(3 * coedz7 - coedz9) * ukp.z - (3 * coepz7 - coepz9) * ukd.z;
+      // phi1z[7];
+      phi1z[8] += -2 * (coedz7 * ukp.x + coepz7 * ukd.x);
+      phi1z[9] += -2 * (coedz7 * ukp.y + coepz7 * ukd.y);
+      // dphi_q u
+      phi1d[0] += -2 * coe5 * qkxz;
+      phi1d[1] += -2 * coe5 * qkyz;
+      phi1d[2] += -(2 * coe5 - coe7) * qkzz;
+      phi2d[0] += 2 * coe5 * qixz;
+      phi2d[1] += 2 * coe5 * qiyz;
+      phi2d[2] += (2 * coe5 - coe7) * qizz;
+      phi1dz[0] += 2 * coez7 * qkxz;
+      phi1dz[1] += 2 * coez7 * qkyz;
+      phi1dz[2] += (2 * coez7 - coez9) * qkzz;
+   }
+
+
+   real3 frc, trq1, trq2;
+   if CONSTEXPR (do_g) {
+      // torque
+      real3 trqa = cross(phi1[1], phi1[2], phi1[3], di);
+      trqa.x += phi1[9] * (qizz - qiyy) + 2 * (phi1[5] - phi1[6]) * qiyz +
+         phi1[7] * qixz - phi1[8] * qixy;
+      trqa.y += phi1[8] * (qixx - qizz) + 2 * (phi1[6] - phi1[4]) * qixz +
+         phi1[9] * qixy - phi1[7] * qiyz;
+      trqa.z += phi1[7] * (qiyy - qixx) + 2 * (phi1[4] - phi1[5]) * qixy +
+         phi1[8] * qiyz - phi1[9] * qixz;
+      real3 trqb = cross(phi2[1], phi2[2], phi2[3], dk);
+      trqb.x += phi2[9] * (qkzz - qkyy) + 2 * (phi2[5] - phi2[6]) * qkyz +
+         phi2[7] * qkxz - phi2[8] * qkxy;
+      trqb.y += phi2[8] * (qkxx - qkzz) + 2 * (phi2[6] - phi2[4]) * qkxz +
+         phi2[9] * qkxy - phi2[7] * qkyz;
+      trqb.z += phi2[7] * (qkyy - qkxx) + 2 * (phi2[4] - phi2[5]) * qkxy +
+         phi2[8] * qkyz - phi2[9] * qkxz;
+      trq1 = trqa;
+      trq2 = trqb;
+
+
+      real3 trqau =
+         cross(phi1d[0], phi1d[1], phi1d[2], (dscale * uip + pscale * uid));
+      real3 trqbu =
+         cross(phi2d[0], phi2d[1], phi2d[2], (dscale * ukp + pscale * ukd));
+
+
+      // gradient
+      real frc1z = phi1z[0] * ci + phi1z[1] * di.x + phi1z[2] * di.y +
+         phi1z[3] * di.z + phi1z[4] * qixx + phi1z[5] * qiyy + phi1z[6] * qizz +
+         phi1z[7] * qixy + phi1z[8] * qixz + phi1z[9] * qiyz;
+      frc1z +=
+         dot3(phi1dz[0], phi1dz[1], phi1dz[2], (dscale * uip + pscale * uid));
+      frc.x = -invr1 * (trqa.y + trqb.y + trqau.y + trqbu.y);
+      frc.y = invr1 * (trqa.x + trqb.x + trqau.x + trqbu.x);
+      frc.z = frc1z;
+   }
+
+
+   // U-U
+   {
+      real coeu5 = uscale * sr5 * r;
+      real coeu7 = uscale * sr7 * r2 * r;
+      frc.x += coeu5 *
+         (uid.x * ukp.z + uid.z * ukp.x + uip.x * ukd.z + uip.z * ukd.x);
+      frc.y += coeu5 *
+         (uid.y * ukp.z + uid.z * ukp.y + uip.y * ukd.z + uip.z * ukd.y);
+      frc.z += coeu5 *
+            (uid.x * ukp.x + uid.y * ukp.y + uip.x * ukd.x + uip.y * ukd.y) +
+         (3 * coeu5 - coeu7) * (uid.z * ukp.z + uip.z * ukd.z);
+   }
+
+
+   if CONSTEXPR (do_g) {
+      real3 glfrc;
+      rotQI2GVector(rot, frc, glfrc);
+      frc = f * glfrc;
+      frci += frc;
+      frck -= frc;
+      real3 gltrq1;
+      rotQI2GVector(rot, trq1, gltrq1);
+      trqi += f * gltrq1;
+      real3 gltrq2;
+      rotQI2GVector(rot, trq2, gltrq2);
+      trqk += f * gltrq2;
+   }
+   if CONSTEXPR (do_v) {
+      vtlxx -= dR.x * frc.x;
+      vtlxy -= 0.5f * (dR.y * frc.x + dR.x * frc.y);
+      vtlxz -= 0.5f * (dR.z * frc.x + dR.x * frc.z);
+      vtlyy -= dR.y * frc.y;
+      vtlyz -= 0.5f * (dR.z * frc.y + dR.y * frc.z);
+      vtlzz -= dR.z * frc.z;
+   }
+}
+
+
+#define pair_mplar pair_mplar_v2
 
 
 #define EMPLAR_ARGS                                                            \
@@ -540,7 +919,7 @@ void pair_mplar(
 
 
 template <int USE, elec_t ETYP>
-__launch_bounds__(BLOCK_DIM) __global__
+__global__
 void emplar_cu1(EMPLAR_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
                 int niak, const int* restrict iak, const int* restrict lst,
                 real aewald)
@@ -558,12 +937,10 @@ void emplar_cu1(EMPLAR_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
    struct Data
    {
-      real3 frc, trq; // force and torque
-      real3 ufld;
-      real dufld[6];
       real3 pos;
-      real c;  // charge
-      real3 d; // dipole
+      real3 frc, trq; // force and torque
+      real c;         // charge
+      real3 d;        // dipole
       real qxx, qxy, qxz, qyy, qyz, qzz;
       real3 ud, up;
       real damp, thole;
@@ -592,11 +969,6 @@ void emplar_cu1(EMPLAR_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
       if CONSTEXPR (do_g) {
          idat.frc = make_real3(0, 0, 0);
          idat.trq = make_real3(0, 0, 0);
-         idat.ufld = make_real3(0, 0, 0);
-         #pragma unroll
-         for (int i = 0; i < 6; ++i) {
-            idat.dufld[i] = 0;
-         }
       }
       int atomi = min(iak[iw] * WARP_SIZE + ilane, n - 1);
       idat.pos = make_real3(sorted[atomi].x, sorted[atomi].y, sorted[atomi].z);
@@ -619,11 +991,6 @@ void emplar_cu1(EMPLAR_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
       if CONSTEXPR (do_g) {
          data[threadIdx.x].frc = make_real3(0, 0, 0);
          data[threadIdx.x].trq = make_real3(0, 0, 0);
-         data[threadIdx.x].ufld = make_real3(0, 0, 0);
-         #pragma unroll
-         for (int i = 0; i < 6; ++i) {
-            data[threadIdx.x].dufld[i] = 0;
-         }
       }
       int shatomk = lst[iw * WARP_SIZE + ilane];
       data[threadIdx.x].pos =
@@ -657,39 +1024,32 @@ void emplar_cu1(EMPLAR_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
          if (atomi < atomk && r2 <= off2) {
             if CONSTEXPR (ETYP == elec_t::ewald) {
                pair_mplar<USE, elec_t::ewald>(
-                  r2, dr.x, dr.y, dr.z, 1, 1, 1, 1, //
-                  idat.c, idat.d.x, idat.d.y, idat.d.z, idat.qxx, idat.qxy,
-                  idat.qxz, idat.qyy, idat.qyz, idat.qzz, idat.ud.x, idat.ud.y,
-                  idat.ud.z, idat.up.x, idat.up.y, idat.up.z, idat.damp,
+                  r2, dr, 1, 1, 1, 1, //
+                  idat.c, idat.d, idat.qxx, idat.qxy, idat.qxz, idat.qyy,
+                  idat.qyz, idat.qzz, idat.ud, idat.up, idat.damp,
                   idat.thole, //
-                  data[klane].c, data[klane].d.x, data[klane].d.y,
-                  data[klane].d.z, data[klane].qxx, data[klane].qxy,
-                  data[klane].qxz, data[klane].qyy, data[klane].qyz,
-                  data[klane].qzz, data[klane].ud.x, data[klane].ud.y,
-                  data[klane].ud.z, data[klane].up.x, data[klane].up.y,
-                  data[klane].up.z, data[klane].damp, data[klane].thole, //
-                  f, aewald,                                             //
-                  idat.frc, data[klane].frc, idat.trq, data[klane].trq,
-                  idat.ufld, data[klane].ufld, idat.dufld, data[klane].dufld,
-                  etl, vtlxx, vtlxy, vtlxz, vtlyy, vtlyz, vtlzz);
+                  data[klane].c, data[klane].d, data[klane].qxx,
+                  data[klane].qxy, data[klane].qxz, data[klane].qyy,
+                  data[klane].qyz, data[klane].qzz, data[klane].ud,
+                  data[klane].up, data[klane].damp, data[klane].thole, //
+                  f, aewald,                                           //
+                  idat.frc, data[klane].frc, idat.trq, data[klane].trq, etl,
+                  vtlxx, vtlxy, vtlxz, vtlyy, vtlyz, vtlzz);
             }
             if CONSTEXPR (ETYP == elec_t::coulomb) {
                pair_mplar<USE, elec_t::coulomb>(
-                  r2, dr.x, dr.y, dr.z, 1, 1, 1, 1, //
-                  idat.c, idat.d.x, idat.d.y, idat.d.z, idat.qxx, idat.qxy,
-                  idat.qxz, idat.qyy, idat.qyz, idat.qzz, idat.ud.x, idat.ud.y,
-                  idat.ud.z, idat.up.x, idat.up.y, idat.up.z, idat.damp,
+                  r2, dr, 1, 1, 1, 1, //
+                  idat.c, idat.d, idat.qxx, idat.qxy, idat.qxz, idat.qyy,
+                  idat.qyz, idat.qzz, idat.ud, idat.up, idat.damp,
                   idat.thole, //
-                  data[klane].c, data[klane].d.x, data[klane].d.y,
-                  data[klane].d.z, data[klane].qxx, data[klane].qxy,
-                  data[klane].qxz, data[klane].qyy, data[klane].qyz,
-                  data[klane].qzz, data[klane].ud.x, data[klane].ud.y,
-                  data[klane].ud.z, data[klane].up.x, data[klane].up.y,
-                  data[klane].up.z, data[klane].damp, data[klane].thole, //
-                  f, 0,                                                  //
-                  idat.frc, data[klane].frc, idat.trq, data[klane].trq,
-                  idat.ufld, data[klane].ufld, idat.dufld, data[klane].dufld,
-                  etl, vtlxx, vtlxy, vtlxz, vtlyy, vtlyz, vtlzz);
+                  data[klane].c, data[klane].d, data[klane].qxx,
+                  data[klane].qxy, data[klane].qxz, data[klane].qyy,
+                  data[klane].qyz, data[klane].qzz, data[klane].ud,
+                  data[klane].up, data[klane].damp,
+                  data[klane].thole, //
+                  f, 0,              //
+                  idat.frc, data[klane].frc, idat.trq, data[klane].trq, etl,
+                  vtlxx, vtlxy, vtlxz, vtlyy, vtlyz, vtlzz);
             }
          } // end if (include)
       }
@@ -710,24 +1070,6 @@ void emplar_cu1(EMPLAR_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
          atomic_add(data[threadIdx.x].trq.x, &trqx[shk]);
          atomic_add(data[threadIdx.x].trq.y, &trqy[shk]);
          atomic_add(data[threadIdx.x].trq.z, &trqz[shk]);
-         atomic_add(idat.ufld.x, &ufld[i][0]);
-         atomic_add(idat.ufld.y, &ufld[i][1]);
-         atomic_add(idat.ufld.z, &ufld[i][2]);
-         atomic_add(data[threadIdx.x].ufld.x, &ufld[shk][0]);
-         atomic_add(data[threadIdx.x].ufld.y, &ufld[shk][1]);
-         atomic_add(data[threadIdx.x].ufld.z, &ufld[shk][2]);
-         atomic_add(idat.dufld[0], &dufld[i][0]);
-         atomic_add(idat.dufld[1], &dufld[i][1]);
-         atomic_add(idat.dufld[2], &dufld[i][2]);
-         atomic_add(idat.dufld[3], &dufld[i][3]);
-         atomic_add(idat.dufld[4], &dufld[i][4]);
-         atomic_add(idat.dufld[5], &dufld[i][5]);
-         atomic_add(data[threadIdx.x].dufld[0], &dufld[shk][0]);
-         atomic_add(data[threadIdx.x].dufld[1], &dufld[shk][1]);
-         atomic_add(data[threadIdx.x].dufld[2], &dufld[shk][2]);
-         atomic_add(data[threadIdx.x].dufld[3], &dufld[shk][3]);
-         atomic_add(data[threadIdx.x].dufld[4], &dufld[shk][4]);
-         atomic_add(data[threadIdx.x].dufld[5], &dufld[shk][5]);
       }
       if CONSTEXPR (do_v)
          atomic_add(vtlxx, vtlxy, vtlxz, vtlyy, vtlyz, vtlzz, vir_ebuf, offset);
@@ -802,23 +1144,12 @@ void emplar_cu2(EMPLAR_ARGS, const real* restrict x, const real* restrict y,
             vyz = 0;
             vzz = 0;
          }
-         real3 frci, frck, trqi, trqk, ufldi, ufldk;
-         real dufldi[6], dufldk[6];
+         real3 frci, frck, trqi, trqk;
          if CONSTEXPR (do_g) {
             frci = make_real3(0, 0, 0);
             frck = make_real3(0, 0, 0);
             trqi = make_real3(0, 0, 0);
             trqk = make_real3(0, 0, 0);
-            ufldi = make_real3(0, 0, 0);
-            ufldk = make_real3(0, 0, 0);
-            #pragma unroll
-            for (int ia = 0; ia < 6; ++ia) {
-               dufldi[ia] = 0;
-            }
-            #pragma unroll
-            for (int ia = 0; ia < 6; ++ia) {
-               dufldk[ia] = 0;
-            }
          }
 
 
@@ -843,14 +1174,15 @@ void emplar_cu2(EMPLAR_ARGS, const real* restrict x, const real* restrict y,
 
 
          pair_mplar<USE, elec_t::coulomb>(
-            r2, xr, yr, zr, mscale, dscale, pscale, uscale, //
-            ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
-            uiz, uixp, uiyp, uizp, pdi, pti, //
-            ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
-            ukz, ukxp, ukyp, ukzp, pdk, ptk,                      //
-            f, 0,                                                 //
-            frci, frck, trqi, trqk, ufldi, ufldk, dufldi, dufldk, //
-            e, vxx, vxy, vxz, vyy, vyz, vzz);
+            r2, make_real3(xr, yr, zr), mscale, dscale, pscale, uscale, //
+            ci, make_real3(dix, diy, diz), qixx, qixy, qixz, qiyy, qiyz, qizz,
+            make_real3(uix, uiy, uiz), make_real3(uixp, uiyp, uizp), pdi,
+            pti, //
+            ck, make_real3(dkx, dky, dkz), qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
+            make_real3(ukx, uky, ukz), make_real3(ukxp, ukyp, ukzp), pdk,
+            ptk,  //
+            f, 0, //
+            frci, frck, trqi, trqk, e, vxx, vxy, vxz, vyy, vyz, vzz);
 
 
          if CONSTEXPR (do_e)
@@ -868,24 +1200,6 @@ void emplar_cu2(EMPLAR_ARGS, const real* restrict x, const real* restrict y,
             atomic_add(trqk.x, &trqx[k]);
             atomic_add(trqk.y, &trqy[k]);
             atomic_add(trqk.z, &trqz[k]);
-            atomic_add(ufldi.x, &ufld[i][0]);
-            atomic_add(ufldi.y, &ufld[i][1]);
-            atomic_add(ufldi.z, &ufld[i][2]);
-            atomic_add(ufldk.x, &ufld[k][0]);
-            atomic_add(ufldk.y, &ufld[k][1]);
-            atomic_add(ufldk.z, &ufld[k][2]);
-            atomic_add(dufldi[0], &dufld[i][0]);
-            atomic_add(dufldi[1], &dufld[i][1]);
-            atomic_add(dufldi[2], &dufld[i][2]);
-            atomic_add(dufldi[3], &dufld[i][3]);
-            atomic_add(dufldi[4], &dufld[i][4]);
-            atomic_add(dufldi[5], &dufld[i][5]);
-            atomic_add(dufldk[0], &dufld[k][0]);
-            atomic_add(dufldk[1], &dufld[k][1]);
-            atomic_add(dufldk[2], &dufld[k][2]);
-            atomic_add(dufldk[3], &dufld[k][3]);
-            atomic_add(dufldk[4], &dufld[k][4]);
-            atomic_add(dufldk[5], &dufld[k][5]);
          }
          if CONSTEXPR (do_v)
             atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ebuf, offset);
@@ -976,19 +1290,10 @@ void emplar_ewald_tmpl()
    induce(uind, uinp);
 
 
-   if CONSTEXPR (do_g) {
-      device_array::zero(false, n, ufld, dufld);
-   }
-
-
    // empole real self
    // epolar real gradient
    emplar_tmpl_cu<USE, elec_t::ewald>(uind, uinp);
    // epolar torque
-   if CONSTEXPR (USE & calc::grad) {
-      launch_k1s(nonblk, n, epolar_trq_cu, //
-                 trqx, trqy, trqz, n, rpole, ufld, dufld);
-   }
    if CONSTEXPR (do_e) {
       epolar0_dotprod(uind, udirp);
    }
@@ -1016,20 +1321,10 @@ void emplar_coulomb_tmpl()
    induce(uind, uinp);
 
 
-   if CONSTEXPR (do_g) {
-      device_array::zero(true, n, ufld, dufld);
-   }
-
-
    // empole and epolar
    emplar_tmpl_cu<USE, elec_t::coulomb>(uind, uinp);
-   // epolar torque
-   if CONSTEXPR (USE & calc::grad) {
-      launch_k1(n, epolar_trq_cu, //
-                trqx, trqy, trqz, n, rpole, ufld, dufld);
-   }
    if CONSTEXPR (do_e) {
-      epolar0_dotprod(uind, uinp);
+      epolar0_dotprod(uind, udirp);
    }
 }
 
