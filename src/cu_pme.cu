@@ -3,8 +3,8 @@
 #include "e_mpole.h"
 #include "launch.h"
 #include "md.h"
+#include "named_struct.h"
 #include "pme.h"
-#include "pme_grid_def.h"
 #include "seq_pme.h"
 #include "spatial.h"
 
@@ -69,21 +69,21 @@ void grid_tmpl_cu(const real* restrict x, const real* restrict y,
       igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
 
-      if CONSTEXPR (T::N == MPOLE_GRID) {
+      if CONSTEXPR (eq<T, MPOLE>()) {
          bsplgen<3, bsorder>(w1, thetai1, array);
          bsplgen<3, bsorder>(w2, thetai2, array);
          bsplgen<3, bsorder>(w3, thetai3, array);
       }
 
 
-      if CONSTEXPR (T::N == UIND_GRID) {
+      if CONSTEXPR (eq<T, UIND>()) {
          bsplgen<2, bsorder>(w1, thetai1, array);
          bsplgen<2, bsorder>(w2, thetai2, array);
          bsplgen<2, bsorder>(w3, thetai3, array);
       }
 
 
-      if CONSTEXPR (T::N == MPOLE_GRID) {
+      if CONSTEXPR (eq<T, MPOLE>()) {
          real fmpi0 = fmp[i][mpl_pme_0];
          real fmpix = fmp[i][mpl_pme_x];
          real fmpiy = fmp[i][mpl_pme_y];
@@ -128,10 +128,10 @@ void grid_tmpl_cu(const real* restrict x, const real* restrict y,
                }
             } // end for (int iy)
          }
-      } // end if (T::N == MPOLE_GRID)
+      } // end if (MPOLE)
 
 
-      if CONSTEXPR (T::N == UIND_GRID) {
+      if CONSTEXPR (eq<T, UIND>()) {
          real fuindi0 = fuind[i][0];
          real fuindi1 = fuind[i][1];
          real fuindi2 = fuind[i][2];
@@ -168,7 +168,7 @@ void grid_tmpl_cu(const real* restrict x, const real* restrict y,
                }
             } // end for (int iy)
          }
-      } // end if (T::N == UIND_GRID)
+      } // end if (UIND)
    }
 }
 
@@ -224,7 +224,7 @@ void grid_put(const int* restrict igrid, const real* restrict thetai1,
       int index = xbase + ybase + zbase;
 
 
-      if CONSTEXPR (T::N == MPOLE_GRID) {
+      if CONSTEXPR (eq<T, MPOLE>()) {
          real v2 = thetai3[(4 * iz + 2) * padded_n + i];
          real u2 = thetai2[(4 * iy + 2) * padded_n + i];
          real t2 = thetai1[(4 * ix + 2) * padded_n + i];
@@ -246,7 +246,7 @@ void grid_put(const int* restrict igrid, const real* restrict thetai1,
       }
 
 
-      if CONSTEXPR (T::N == UIND_GRID) {
+      if CONSTEXPR (eq<T, UIND>()) {
          real3 fd =
             make_real3(ptr1[3 * i + 0], ptr1[3 * i + 1], ptr1[3 * i + 2]);
          real3 fp =
@@ -423,15 +423,14 @@ void fphi_tmpl_cu(int n, int nfft1, int nfft2, int nfft3,
       igrid2 += (igrid2 < 0 ? nfft2 : 0);
       igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
-      if CONSTEXPR (T::N == MPOLE_GRID || T::N == UIND_GRID ||
-                    T::N == UIND_GRID_FPHI2) {
+      if CONSTEXPR (eq<T, MPOLE>() || eq<T, UIND>() || eq<T, UIND2>()) {
          bsplgen<4, bsorder>(w1, thetai1, array);
          bsplgen<4, bsorder>(w2, thetai2, array);
          bsplgen<4, bsorder>(w3, thetai3, array);
       }
 
 
-      if CONSTEXPR (T::N == MPOLE_GRID) {
+      if CONSTEXPR (eq<T, MPOLE>()) {
          real tuv000 = 0;
          real tuv001 = 0;
          real tuv010 = 0;
@@ -546,7 +545,7 @@ void fphi_tmpl_cu(int n, int nfft1, int nfft2, int nfft3,
       }
 
 
-      if CONSTEXPR (T::N == UIND_GRID) {
+      if CONSTEXPR (eq<T, UIND>()) {
          real tuv100_1 = 0;
          real tuv010_1 = 0;
          real tuv001_1 = 0;
@@ -751,7 +750,7 @@ void fphi_tmpl_cu(int n, int nfft1, int nfft2, int nfft3,
       }
 
 
-      if CONSTEXPR (T::N == UIND_GRID_FPHI2) {
+      if CONSTEXPR (eq<T, UIND2>()) {
          real tuv100_1 = 0;
          real tuv010_1 = 0;
          real tuv001_1 = 0;

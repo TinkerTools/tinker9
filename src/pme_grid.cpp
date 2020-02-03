@@ -1,7 +1,7 @@
 #include "error.h"
+#include "named_struct.h"
 #include "platform.h"
 #include "pme.h"
-#include "pme_grid_def.h"
 
 
 TINKER_NAMESPACE_BEGIN
