@@ -1,17 +1,16 @@
 #include "add.h"
 #include "e_bond.h"
 #include "md.h"
+#include "named_struct.h"
 #include <cassert>
 
-
 TINKER_NAMESPACE_BEGIN
-template <int USE, ebond_t BNDTYP>
-void ebond_tmpl()
+template <class Ver, class BNDTYP>
+void ebond_acc1()
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
-   sanity_check<USE>();
+   constexpr int do_e = Ver::e;
+   constexpr int do_g = Ver::g;
+   constexpr int do_v = Ver::v;
 
    auto bufsize = buffer_size();
 
@@ -35,14 +34,14 @@ void ebond_tmpl()
 
       MAYBE_UNUSED real e;
       MAYBE_UNUSED real deddt;
-      if CONSTEXPR (BNDTYP == ebond_t::harmonic) {
+      if CONSTEXPR (eq<BNDTYP, HARMONIC>()) {
          real dt2 = dt * dt;
          if CONSTEXPR (do_e)
             e = bndunit * force * dt2 * (1 + cbnd * dt + qbnd * dt2);
          if CONSTEXPR (do_g)
             deddt = 2 * bndunit * force * dt *
                (1 + 1.5f * cbnd * dt + 2 * qbnd * dt2);
-      } else if CONSTEXPR (BNDTYP == ebond_t::morse) {
+      } else if CONSTEXPR (eq<BNDTYP, MORSE>()) {
          real expterm = REAL_EXP(-2 * dt);
          real bde = 0.25f * bndunit * force;
          if CONSTEXPR (do_e)
@@ -85,28 +84,28 @@ void ebond_acc(int vers)
 {
    if (bndtyp == ebond_t::harmonic)
       if (vers == calc::v0 || vers == calc::v3)
-         ebond_tmpl<calc::v0, ebond_t::harmonic>();
+         ebond_acc1<Eng, HARMONIC>();
       else if (vers == calc::v1)
-         ebond_tmpl<calc::v1, ebond_t::harmonic>();
+         ebond_acc1<EngGradVir, HARMONIC>();
       else if (vers == calc::v4)
-         ebond_tmpl<calc::v4, ebond_t::harmonic>();
+         ebond_acc1<EngGrad, HARMONIC>();
       else if (vers == calc::v5)
-         ebond_tmpl<calc::v5, ebond_t::harmonic>();
+         ebond_acc1<Grad, HARMONIC>();
       else if (vers == calc::v6)
-         ebond_tmpl<calc::v6, ebond_t::harmonic>();
+         ebond_acc1<GradVir, HARMONIC>();
       else
          assert(false);
    else if (bndtyp == ebond_t::morse)
       if (vers == calc::v0 || vers == calc::v3)
-         ebond_tmpl<calc::v0, ebond_t::morse>();
+         ebond_acc1<Eng, MORSE>();
       else if (vers == calc::v1)
-         ebond_tmpl<calc::v1, ebond_t::morse>();
+         ebond_acc1<EngGradVir, MORSE>();
       else if (vers == calc::v4)
-         ebond_tmpl<calc::v4, ebond_t::morse>();
+         ebond_acc1<EngGrad, MORSE>();
       else if (vers == calc::v5)
-         ebond_tmpl<calc::v5, ebond_t::morse>();
+         ebond_acc1<Grad, MORSE>();
       else if (vers == calc::v6)
-         ebond_tmpl<calc::v6, ebond_t::morse>();
+         ebond_acc1<GradVir, MORSE>();
       else
          assert(false);
    else

@@ -1,7 +1,9 @@
 #include "energy.h"
+#include "error.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
+
 
 TINKER_NAMESPACE_BEGIN
 void potential_data(rc_op op)
@@ -42,15 +44,41 @@ void potential_data(rc_op op)
 #endif
 }
 
-void energy_potential(int vers)
+
+const TimeScaleConfig& default_tsconfig()
 {
+   static TimeScaleConfig tsconfig;
+   static bool init = false;
+   if (!init) {
+      tsconfig["ebond"] = 0;
+
+
+      init = true;
+   }
+   return tsconfig;
+}
+
+
+void energy_potential(int vers, int time_scale, const TimeScaleConfig& tsconfig)
+{
+   auto TSCONFIG = [&](const char* eng) {
+      try {
+         return tsconfig.at(eng);
+      } catch (const std::out_of_range&) {
+         TINKER_THROW(format("Time scale of the {} term is unknown.\n", eng));
+      }
+   };
+
 
    zero_egv(vers);
 
+
    // bonded terms
 
+
    if (use_potent(bond_term))
-      ebond(vers);
+      if (time_scale & (1 << TSCONFIG("ebond")))
+         ebond(vers);
    if (use_potent(angle_term))
       eangle(vers);
    if (use_potent(strbnd_term))
@@ -66,15 +94,20 @@ void energy_potential(int vers)
    if (use_potent(tortor_term))
       etortor(vers);
 
+
    // misc. terms
+
 
    if (use_potent(geom_term))
       egeom(vers);
 
+
    // non-bonded terms
+
 
    if (use_potent(vdw_term))
       evdw(vers);
+
 
    elec_init(vers);
 #if TINKER_CUDART
@@ -90,6 +123,7 @@ void energy_potential(int vers)
       epolar(vers);
 skip_mpole_polar:
    torque(vers);
+
 
    sum_energies(vers);
 }
