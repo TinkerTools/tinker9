@@ -1,6 +1,4 @@
-#ifndef TINKER_E_ANGLE_H_
-#define TINKER_E_ANGLE_H_
-
+#pragma once
 #include "dev_array.h"
 #include "energy_buffer.h"
 #include "rc_man.h"
@@ -31,5 +29,3 @@ void eangle_data(rc_op op);
 
 void eangle(int vers);
 TINKER_NAMESPACE_END
-
-#endif

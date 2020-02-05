@@ -4,15 +4,15 @@
 #include "e_strbnd.h"
 #include "mathfunc.h"
 #include "md.h"
+#include "named_struct.h"
 
 TINKER_NAMESPACE_BEGIN
-template <int USE>
-void estrbnd_tmpl()
+template <class Ver>
+void estrbnd_acc1()
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
-   sanity_check<USE>();
+   constexpr int do_e = Ver::e;
+   constexpr int do_g = Ver::g;
+   constexpr int do_v = Ver::v;
 
    auto bufsize = buffer_size();
 
@@ -135,14 +135,14 @@ void estrbnd_tmpl()
 void estrbnd_acc(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
-      estrbnd_tmpl<calc::v0>();
+      estrbnd_acc1<EnergyVersion0>();
    else if (vers == calc::v1)
-      estrbnd_tmpl<calc::v1>();
+      estrbnd_acc1<EnergyVersion1>();
    else if (vers == calc::v4)
-      estrbnd_tmpl<calc::v4>();
+      estrbnd_acc1<EnergyVersion4>();
    else if (vers == calc::v5)
-      estrbnd_tmpl<calc::v5>();
+      estrbnd_acc1<EnergyVersion5>();
    else if (vers == calc::v6)
-      estrbnd_tmpl<calc::v6>();
+      estrbnd_acc1<EnergyVersion6>();
 }
 TINKER_NAMESPACE_END

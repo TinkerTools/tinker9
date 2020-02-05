@@ -84,28 +84,28 @@ void ebond_acc(int vers)
 {
    if (bndtyp == ebond_t::harmonic)
       if (vers == calc::v0 || vers == calc::v3)
-         ebond_acc1<Eng, HARMONIC>();
+         ebond_acc1<EnergyVersion0, HARMONIC>();
       else if (vers == calc::v1)
-         ebond_acc1<EngGradVir, HARMONIC>();
+         ebond_acc1<EnergyVersion1, HARMONIC>();
       else if (vers == calc::v4)
-         ebond_acc1<EngGrad, HARMONIC>();
+         ebond_acc1<EnergyVersion4, HARMONIC>();
       else if (vers == calc::v5)
-         ebond_acc1<Grad, HARMONIC>();
+         ebond_acc1<EnergyVersion5, HARMONIC>();
       else if (vers == calc::v6)
-         ebond_acc1<GradVir, HARMONIC>();
+         ebond_acc1<EnergyVersion6, HARMONIC>();
       else
          assert(false);
    else if (bndtyp == ebond_t::morse)
       if (vers == calc::v0 || vers == calc::v3)
-         ebond_acc1<Eng, MORSE>();
+         ebond_acc1<EnergyVersion0, MORSE>();
       else if (vers == calc::v1)
-         ebond_acc1<EngGradVir, MORSE>();
+         ebond_acc1<EnergyVersion1, MORSE>();
       else if (vers == calc::v4)
-         ebond_acc1<EngGrad, MORSE>();
+         ebond_acc1<EnergyVersion4, MORSE>();
       else if (vers == calc::v5)
-         ebond_acc1<Grad, MORSE>();
+         ebond_acc1<EnergyVersion5, MORSE>();
       else if (vers == calc::v6)
-         ebond_acc1<GradVir, MORSE>();
+         ebond_acc1<EnergyVersion6, MORSE>();
       else
          assert(false);
    else

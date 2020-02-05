@@ -2,6 +2,7 @@
 #include "e_angle.h"
 #include "mathfunc.h"
 #include "md.h"
+#include "named_struct.h"
 
 // TODO: test linear and fourier angles
 // TODO: merge the branching
@@ -25,13 +26,12 @@
  */
 
 TINKER_NAMESPACE_BEGIN
-template <int USE>
-void eangle_tmpl()
+template <class Ver>
+void eangle_acc1()
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
-   sanity_check<USE>();
+   constexpr int do_e = Ver::e;
+   constexpr int do_g = Ver::g;
+   constexpr int do_v = Ver::v;
 
    auto bufsize = buffer_size();
 
@@ -277,14 +277,14 @@ void eangle_tmpl()
 void eangle_acc(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
-      eangle_tmpl<calc::v0>();
+      eangle_acc1<EnergyVersion0>();
    else if (vers == calc::v1)
-      eangle_tmpl<calc::v1>();
+      eangle_acc1<EnergyVersion1>();
    else if (vers == calc::v4)
-      eangle_tmpl<calc::v4>();
+      eangle_acc1<EnergyVersion4>();
    else if (vers == calc::v5)
-      eangle_tmpl<calc::v5>();
+      eangle_acc1<EnergyVersion5>();
    else if (vers == calc::v6)
-      eangle_tmpl<calc::v6>();
+      eangle_acc1<EnergyVersion6>();
 }
 TINKER_NAMESPACE_END

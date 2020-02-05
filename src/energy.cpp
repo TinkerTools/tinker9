@@ -51,6 +51,9 @@ const TimeScaleConfig& default_tsconfig()
    static bool init = false;
    if (!init) {
       tsconfig["ebond"] = 0;
+      tsconfig["eangle"] = 0;
+      tsconfig["estrbnd"] = 0;
+      tsconfig["eurey"] = 0;
 
 
       init = true;
@@ -80,11 +83,14 @@ void energy_potential(int vers, int time_scale, const TimeScaleConfig& tsconfig)
       if (time_scale & (1 << TSCONFIG("ebond")))
          ebond(vers);
    if (use_potent(angle_term))
-      eangle(vers);
+      if (time_scale & (1 << TSCONFIG("eangle")))
+         eangle(vers);
    if (use_potent(strbnd_term))
-      estrbnd(vers);
+      if (time_scale & (1 << TSCONFIG("estrbnd")))
+         estrbnd(vers);
    if (use_potent(urey_term))
-      eurey(vers);
+      if (time_scale & (1 << TSCONFIG("eurey")))
+         eurey(vers);
    if (use_potent(opbend_term))
       eopbend(vers);
    if (use_potent(torsion_term))
