@@ -2,17 +2,17 @@
 #include "e_tors.h"
 #include "mathfunc.h"
 #include "md.h"
+#include "named_struct.h"
 
 // TOOD: use_smooth version
 
 TINKER_NAMESPACE_BEGIN
-template <int USE>
-void etors_tmpl()
+template <class Ver>
+void etors_acc1()
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
-   sanity_check<USE>();
+   constexpr int do_e = Ver::e;
+   constexpr int do_g = Ver::g;
+   constexpr int do_v = Ver::v;
 
    auto bufsize = buffer_size();
 
@@ -191,14 +191,14 @@ void etors_tmpl()
 void etors_acc(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
-      etors_tmpl<calc::v0>();
+      etors_acc1<EnergyVersion0>();
    else if (vers == calc::v1)
-      etors_tmpl<calc::v1>();
+      etors_acc1<EnergyVersion1>();
    else if (vers == calc::v4)
-      etors_tmpl<calc::v4>();
+      etors_acc1<EnergyVersion4>();
    else if (vers == calc::v5)
-      etors_tmpl<calc::v5>();
+      etors_acc1<EnergyVersion5>();
    else if (vers == calc::v6)
-      etors_tmpl<calc::v6>();
+      etors_acc1<EnergyVersion6>();
 }
 TINKER_NAMESPACE_END

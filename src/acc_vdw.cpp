@@ -2,6 +2,7 @@
 #include "e_vdw.h"
 #include "gpu_card.h"
 #include "md.h"
+#include "named_struct.h"
 #include "nblist.h"
 #include "seq_image.h"
 #include "seq_pair_hal.h"
@@ -49,15 +50,13 @@ void evdw_resolve_gradient()
    }
 }
 
-template <int USE, evdw_t VDWTYP>
-void evdw_tmpl()
+template <class Ver, class VDWTYP>
+void evdw_acc1()
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_a = USE & calc::analyz;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
-   static_assert(do_v ? do_g : true, "");
-   static_assert(do_a ? do_e : true, "");
+   constexpr int do_e = Ver::e;
+   constexpr int do_a = Ver::a;
+   constexpr int do_g = Ver::g;
+   constexpr int do_v = Ver::v;
 
    const real cut = switch_cut(switch_vdw);
    const real off = vlist_unit->cutoff;
@@ -112,7 +111,7 @@ void evdw_tmpl()
             real eps = epsilon[it * njvdw + kt];
 
             MAYBE_UNUSED real e, de;
-            if CONSTEXPR (VDWTYP == evdw_t::hal)
+            if CONSTEXPR (eq<VDWTYP, HAL>())
                pair_hal<do_g>(rik, rv, eps, 1, vlambda,   //
                               ghal, dhal, scexp, scalpha, //
                               e, de);
@@ -201,7 +200,7 @@ void evdw_tmpl()
          real eps = epsilon[it * njvdw + kt];
 
          MAYBE_UNUSED real e, de;
-         if CONSTEXPR (VDWTYP == evdw_t::hal)
+         if CONSTEXPR (eq<VDWTYP, HAL>())
             pair_hal<do_g>(rik, rv, eps, vscale, vlambda, //
                            ghal, dhal, scexp, scalpha,    //
                            e, de);
@@ -251,25 +250,25 @@ void evdw_tmpl()
       evdw_resolve_gradient();
 }
 
-#define TINKER_EVDW_ACC(typ)                                                   \
+#define TINKER_EVDW_ACC(typ, TYP)                                              \
    void evdw_##typ##_acc(int vers)                                             \
    {                                                                           \
       if (vers == calc::v0)                                                    \
-         evdw_tmpl<calc::v0, evdw_t::typ>();                                   \
+         evdw_acc1<EnergyVersion0, TYP>();                                     \
       else if (vers == calc::v1)                                               \
-         evdw_tmpl<calc::v1, evdw_t::typ>();                                   \
+         evdw_acc1<EnergyVersion1, TYP>();                                     \
       else if (vers == calc::v3)                                               \
-         evdw_tmpl<calc::v3, evdw_t::typ>();                                   \
+         evdw_acc1<EnergyVersion3, TYP>();                                     \
       else if (vers == calc::v4)                                               \
-         evdw_tmpl<calc::v4, evdw_t::typ>();                                   \
+         evdw_acc1<EnergyVersion4, TYP>();                                     \
       else if (vers == calc::v5)                                               \
-         evdw_tmpl<calc::v5, evdw_t::typ>();                                   \
+         evdw_acc1<EnergyVersion5, TYP>();                                     \
       else if (vers == calc::v6)                                               \
-         evdw_tmpl<calc::v6, evdw_t::typ>();                                   \
+         evdw_acc1<EnergyVersion6, TYP>();                                     \
    }
-TINKER_EVDW_ACC(lj);
-TINKER_EVDW_ACC(buck);
-TINKER_EVDW_ACC(mm3hb);
-TINKER_EVDW_ACC(hal);
-TINKER_EVDW_ACC(gauss);
+TINKER_EVDW_ACC(lj, LJ);
+TINKER_EVDW_ACC(buck, BUCK);
+TINKER_EVDW_ACC(mm3hb, MM3HB);
+TINKER_EVDW_ACC(hal, HAL);
+TINKER_EVDW_ACC(gauss, GAUSS);
 TINKER_NAMESPACE_END

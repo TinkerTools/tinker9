@@ -2,6 +2,7 @@
 #include "e_vdw.h"
 #include "launch.h"
 #include "md.h"
+#include "named_struct.h"
 #include "seq_image.h"
 #include "seq_pair_hal.h"
 #include "seq_switch.h"
@@ -18,23 +19,23 @@
  */
 
 
- /**
-  * Kernel evdw_hal_cu1 on GTX 1070 for DHFR2
-  * 7 angstroms cutoff and 10 % buffer
-  *
-  * unsorted (a) | generic image (b) | decouple vlambda (c) | 1e-6 s
-  * --------------------------------------------------------------------
-  * -            | -                 | -                    | 342
-  * +            | -                 | -                    | 348
-  * +            | -                 | +                    | 366
-  * +            | +                 | -                    | 373
-  * +            | +                 | +                    | 382
-  * --------------------------------------------------------------------
-  * (a) - assuming sorted[i].unsorted == i, no random memory access for the "i"
-  *     parameters and gradients; + the original code.
-  * (b) - hard-coded orthogonal image routine; + generic image routine.
-  * (c) - hard-coded decouple method; + generic vlambda method.
-  */
+/**
+ * Kernel evdw_hal_cu1 on GTX 1070 for DHFR2
+ * 7 angstroms cutoff and 10 % buffer
+ *
+ * unsorted (a) | generic image (b) | decouple vlambda (c) | 1e-6 s
+ * --------------------------------------------------------------------
+ * -            | -                 | -                    | 342
+ * +            | -                 | -                    | 348
+ * +            | -                 | +                    | 366
+ * +            | +                 | -                    | 373
+ * +            | +                 | +                    | 382
+ * --------------------------------------------------------------------
+ * (a) - assuming sorted[i].unsorted == i, no random memory access for the "i"
+ *     parameters and gradients; + the original code.
+ * (b) - hard-coded orthogonal image routine; + generic image routine.
+ * (c) - hard-coded decouple method; + generic vlambda method.
+ */
 
 
 TINKER_NAMESPACE_BEGIN
@@ -56,15 +57,15 @@ TINKER_NAMESPACE_BEGIN
 #   define SCEXP scexp
 #   define SCALPHA scalpha
 #endif
-template <int USE>
+template <class Ver>
 __launch_bounds__(BLOCK_DIM) __global__
 void evdw_hal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
                   int niak, const int* restrict iak, const int* restrict lst)
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_a = USE & calc::analyz;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
+   constexpr int do_e = Ver::e;
+   constexpr int do_a = Ver::a;
+   constexpr int do_g = Ver::g;
+   constexpr int do_v = Ver::v;
 
 
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
@@ -213,17 +214,17 @@ void evdw_hal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 }
 
 
-template <int USE>
+template <class Ver>
 __global__
 void evdw_hal_cu2(HAL_ARGS, const real* restrict xred,
                   const real* restrict yred, const real* restrict zred,
                   int nvexclude_, int (*restrict vexclude_)[2],
                   real* restrict vexclude_scale_)
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_a = USE & calc::analyz;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
+   constexpr int do_e = Ver::e;
+   constexpr int do_a = Ver::a;
+   constexpr int do_g = Ver::g;
+   constexpr int do_v = Ver::v;
 
 
    const real cut2 = cut * cut;
@@ -308,15 +309,10 @@ void evdw_hal_cu2(HAL_ARGS, const real* restrict xred,
 }
 
 
-template <int USE, evdw_t VDWTYP>
+template <class Ver, class VDWTYP>
 void evdw_cu()
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_a = USE & calc::analyz;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
-   static_assert(do_v ? do_g : true, "");
-   static_assert(do_a ? do_e : true, "");
+   constexpr int do_g = Ver::g;
 
    const auto& st = *vspatial_unit;
    const real cut = switch_cut(switch_vdw);
@@ -329,14 +325,14 @@ void evdw_cu()
       zero_gradient(false, n, gxred, gyred, gzred);
    }
 
-   if CONSTEXPR (VDWTYP == evdw_t::hal) {
+   if CONSTEXPR (eq<VDWTYP, HAL>()) {
       if (st.niak > 0)
-         launch_k1s(nonblk, WARP_SIZE * st.niak, evdw_hal_cu1<USE>, bufsize,
+         launch_k1s(nonblk, WARP_SIZE * st.niak, evdw_hal_cu1<Ver>, bufsize,
                     nev, ev, vir_ev, gxred, gyred, gzred, TINKER_IMAGE_ARGS,
                     njvdw, jvdw, radmin, epsilon, vlam, vcouple, cut, off, n,
                     st.sorted, st.niak, st.iak, st.lst);
       if (nvexclude_ > 0)
-         launch_k1s(nonblk, nvexclude_, evdw_hal_cu2<USE>, bufsize, nev, ev,
+         launch_k1s(nonblk, nvexclude_, evdw_hal_cu2<Ver>, bufsize, nev, ev,
                     vir_ev, gxred, gyred, gzred, TINKER_IMAGE_ARGS, njvdw, jvdw,
                     radmin, epsilon, vlam, vcouple, cut, off, xred, yred, zred,
                     nvexclude_, vexclude_, vexclude_scale_);
@@ -351,16 +347,16 @@ void evdw_cu()
 void evdw_hal_cu(int vers)
 {
    if (vers == calc::v0)
-      evdw_cu<calc::v0, evdw_t::hal>();
+      evdw_cu<EnergyVersion0, HAL>();
    else if (vers == calc::v1)
-      evdw_cu<calc::v1, evdw_t::hal>();
+      evdw_cu<EnergyVersion1, HAL>();
    else if (vers == calc::v3)
-      evdw_cu<calc::v3, evdw_t::hal>();
+      evdw_cu<EnergyVersion3, HAL>();
    else if (vers == calc::v4)
-      evdw_cu<calc::v4, evdw_t::hal>();
+      evdw_cu<EnergyVersion4, HAL>();
    else if (vers == calc::v5)
-      evdw_cu<calc::v5, evdw_t::hal>();
+      evdw_cu<EnergyVersion5, HAL>();
    else if (vers == calc::v6)
-      evdw_cu<calc::v6, evdw_t::hal>();
+      evdw_cu<EnergyVersion6, HAL>();
 }
 TINKER_NAMESPACE_END

@@ -1,5 +1,4 @@
 #pragma once
-
 #include "dev_array.h"
 #include "energy_buffer.h"
 #include "rc_man.h"

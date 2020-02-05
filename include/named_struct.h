@@ -50,4 +50,24 @@ extern "C"
    {};
    struct MORSE
    {};
+
+
+   // Opbend terms.
+   struct WDC
+   {};
+   struct ALLINGER
+   {};
+
+
+   // VDW terms.
+   struct LJ
+   {};
+   struct BUCK
+   {};
+   struct MM3HB
+   {};
+   struct HAL
+   {};
+   struct GAUSS
+   {};
 }

@@ -54,6 +54,23 @@ const TimeScaleConfig& default_tsconfig()
       tsconfig["eangle"] = 0;
       tsconfig["estrbnd"] = 0;
       tsconfig["eurey"] = 0;
+      tsconfig["eopbend"] = 0;
+      tsconfig["etors"] = 0;
+      tsconfig["epitors"] = 0;
+      tsconfig["etortor"] = 0;
+
+
+      tsconfig["egeom"] = 0;
+
+
+      tsconfig["evdw"] = 0;
+
+
+      tsconfig["elec_init"] = 0;
+      tsconfig["torque"] = 0;
+      tsconfig["emplar"] = 0;
+      tsconfig["empole"] = 0;
+      tsconfig["epolar"] = 0;
 
 
       init = true;
@@ -92,41 +109,50 @@ void energy_potential(int vers, int time_scale, const TimeScaleConfig& tsconfig)
       if (time_scale & (1 << TSCONFIG("eurey")))
          eurey(vers);
    if (use_potent(opbend_term))
-      eopbend(vers);
+      if (time_scale & (1 << TSCONFIG("eopbend")))
+         eopbend(vers);
    if (use_potent(torsion_term))
-      etors(vers);
+      if (time_scale & (1 << TSCONFIG("etors")))
+         etors(vers);
    if (use_potent(pitors_term))
-      epitors(vers);
+      if (time_scale & (1 << TSCONFIG("epitors")))
+         epitors(vers);
    if (use_potent(tortor_term))
-      etortor(vers);
+      if (time_scale & (1 << TSCONFIG("etortor")))
+         etortor(vers);
 
 
    // misc. terms
 
 
    if (use_potent(geom_term))
-      egeom(vers);
+      if (time_scale & (1 << TSCONFIG("egeom")))
+         egeom(vers);
 
 
    // non-bonded terms
 
 
    if (use_potent(vdw_term))
-      evdw(vers);
+      if (time_scale & (1 << TSCONFIG("evdw")))
+         evdw(vers);
 
 
    elec_init(vers);
 #if TINKER_CUDART
    if (use_potent(mpole_term) && use_potent(polar_term) &&
        !(vers & calc::analyz) && mlist_version() == NBList::spatial) {
-      emplar_cu(vers);
+      if (time_scale & (1 << TSCONFIG("emplar")))
+         emplar_cu(vers);
       goto skip_mpole_polar;
    }
 #endif
    if (use_potent(mpole_term))
-      empole(vers);
+      if (time_scale & (1 << TSCONFIG("empole")))
+         empole(vers);
    if (use_potent(polar_term))
-      epolar(vers);
+      if (time_scale & (1 << TSCONFIG("epolar")))
+         epolar(vers);
 skip_mpole_polar:
    torque(vers);
 

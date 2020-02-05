@@ -1,6 +1,4 @@
-#ifndef TINKER_E_OPBEND_H_
-#define TINKER_E_OPBEND_H_
-
+#pragma once
 #include "dev_array.h"
 #include "energy_buffer.h"
 #include "rc_man.h"
@@ -26,5 +24,3 @@ void eopbend_data(rc_op op);
 
 void eopbend(int vers);
 TINKER_NAMESPACE_END
-
-#endif

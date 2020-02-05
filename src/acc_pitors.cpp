@@ -1,15 +1,15 @@
 #include "add.h"
 #include "e_pitors.h"
 #include "md.h"
+#include "named_struct.h"
 
 TINKER_NAMESPACE_BEGIN
-template <int USE>
-void epitors_tmpl()
+template <class Ver>
+void epitors_acc1()
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
-   sanity_check<USE>();
+   constexpr int do_e = Ver::e;
+   constexpr int do_g = Ver::g;
+   constexpr int do_v = Ver::v;
 
    auto bufsize = buffer_size();
 
@@ -208,14 +208,14 @@ void epitors_tmpl()
 void epitors_acc(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
-      epitors_tmpl<calc::v0>();
+      epitors_acc1<EnergyVersion0>();
    else if (vers == calc::v1)
-      epitors_tmpl<calc::v1>();
+      epitors_acc1<EnergyVersion1>();
    else if (vers == calc::v4)
-      epitors_tmpl<calc::v4>();
+      epitors_acc1<EnergyVersion4>();
    else if (vers == calc::v5)
-      epitors_tmpl<calc::v5>();
+      epitors_acc1<EnergyVersion5>();
    else if (vers == calc::v6)
-      epitors_tmpl<calc::v6>();
+      epitors_acc1<EnergyVersion6>();
 }
 TINKER_NAMESPACE_END
