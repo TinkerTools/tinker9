@@ -3,6 +3,7 @@
 #include "energy_buffer.h"
 #include "md_calc.h"
 #include "rc_man.h"
+#include "time_scale.h"
 #include <string>
 
 TINKER_NAMESPACE_BEGIN
@@ -130,12 +131,28 @@ void kinetic(real& temp);
 void temper(real dt, real& temp);
 void mdrest(int istep);
 
-void propagate_xyz(real dt);
-void propagate_velocity(real dt);
-void propagate(int nsteps, real dt_ps, void (*itg)(int, real) = nullptr);
+void propagate_xyz(real dt, int check_nblist);
+/**
+ * \brief v += -g/m dt
+ */
+void propagate_velocity(real dt, const real* grx, const real* gry,
+                        const real* grz);
+/**
+ * \brief v += -g/m dt -g2/m dt2
+ */
+void propagate_velocity2(real dt, const real* grx, const real* gry,
+                         const real* grz, real dt2, const real* grx2,
+                         const real* gry2, const real* grz2);
+void propagate(int nsteps, real dt_ps);
 
 void velocity_verlet(int istep, real dt_ps);
 
+void respa_fast_slow(int istep, real dt_ps);
+const TimeScaleConfig& respa_tsconfig();
+constexpr int RESPA_FAST = 1; // 2**0, fast group shall be 0.
+constexpr int RESPA_SLOW = 2; // 2**1, slow group shall be 1.
+TINKER_EXTERN real *gx1, *gy1, *gz1;
+TINKER_EXTERN real *gx2, *gy2, *gz2;
 
 void wait_queue();
 TINKER_NAMESPACE_END

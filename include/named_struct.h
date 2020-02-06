@@ -26,11 +26,11 @@ extern "C"
    struct EngGradVir
       : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v1>
    {};
-   typedef Eng EnergyVersion1;
+   typedef EngGradVir EnergyVersion1;
    struct EngAlyz
       : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v3>
    {};
-   typedef Eng EnergyVersion3;
+   typedef EngAlyz EnergyVersion3;
    struct EngGrad
       : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v4>
    {};
@@ -38,11 +38,11 @@ extern "C"
    struct Grad
       : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v5>
    {};
-   typedef Eng EnergyVersion5;
+   typedef Grad EnergyVersion5;
    struct GradVir
       : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v6>
    {};
-   typedef Eng EnergyVersion6;
+   typedef GradVir EnergyVersion6;
 
 
    // Bond terms.
