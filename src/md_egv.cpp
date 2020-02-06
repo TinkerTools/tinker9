@@ -31,7 +31,7 @@ static void grad_data_(rc_op op)
 
 void zero_egv()
 {
-   zero_egv(rc_flag & calc::vmask);
+   zero_egv(rc_flag);
 }
 TINKER_NAMESPACE_END
 

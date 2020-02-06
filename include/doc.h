@@ -22,6 +22,16 @@
  */
 
 
+
+
+/**
+ * \defgroup egv        Energies, Gradients, Virials, and Counts
+ * \ingroup md
+ * \defgroup integrate  Integrators
+ * \ingroup md
+ */
+
+
 /**
  * \defgroup atomic Atomic Operations
  * \ingroup util
@@ -40,12 +50,6 @@
 
 #include "macro.h"
 TINKER_NAMESPACE_BEGIN
-/**
- * \brief Wrappers for the compiler builtins.
- */
-namespace builtin {}
-
-
 /**
  * \brief Integer flags for different kinds of atom data and energy routines.
  */

@@ -149,8 +149,8 @@ void velocity_verlet(int istep, real dt_ps);
 
 void respa_fast_slow(int istep, real dt_ps);
 const TimeScaleConfig& respa_tsconfig();
-constexpr int RESPA_FAST = 1; // 2**0, fast group shall be 0.
-constexpr int RESPA_SLOW = 2; // 2**1, slow group shall be 1.
+constexpr unsigned RESPA_FAST = 1; // 2**0, fast group shall be 0.
+constexpr unsigned RESPA_SLOW = 2; // 2**1, slow group shall be 1.
 TINKER_EXTERN real *gx1, *gy1, *gz1;
 TINKER_EXTERN real *gx2, *gy2, *gz2;
 

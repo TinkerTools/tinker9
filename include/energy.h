@@ -23,50 +23,37 @@
 
 TINKER_NAMESPACE_BEGIN
 /**
+ * \ingroup egv
  * \brief Evaluate the energy potential.
  *
- * First, energy buffers, virial buffers, and gx, gy, gz arrays are set to 0.
- * Then, evaluate energies, gradients, and virials.
- * Last, update the global variables esum and vir[9].
- * May skip some calculations based on the version parameter.
+ * First, energy buffers, virial buffers, #gx, #gy, #gz arrays, and count
+ * buffers are set to 0.
+ * Then, evaluate energies, gradients, virials, and count interactions.
+ * Last, update the global variables #esum and #vir[9]; counts are not updated
+ * until #get_count() is explicitly called.
+ * May skip some steps based on the version parameter.
  *
  * \param vers      Flag to select the version of energy routines.
- *
  * \param tsflag    Time scale flag, a 32-bit encrypted integer.
- * The integrator will assign a "group number" ranging from 0 to 31 to every
- * energy term. If the i-th bit of `tsflag` is set, all of the energy terms
- * in the i-th group will be calculated.
- *
- * For instance, 4 (0b0100, 2**2) will only calculate group 2; 0x05 (0b0101,
- * 2**2 + 2**0) will calculate both group 2 and group 0.
- *
  * \param tsconfig  Constant reference to a TimeScaleConfig object.
- * This object must implement a C++ style `.at(arg)` member function and throw
- * an exception if `arg` is an invalid name of the energy term.
  *
- * For instance, every term in the Verlet integrator is computed at every
- * time-step, therefore, all of the terms have the same group value (G). If G is
- * 0, the 0-th bit `tsflag` must be set; if G is 3, the 3-th bit of `tsflag`
- * must be set; etc.
- *
- * Another example is the RESPA integrator where there are often two groups for
- * "high frequency" (fast) and "low frequency" (slow) terms. If one decides to
- * assign 3 and 5 to these two groups, respectively, `tsconfig.at("ebond")` must
- * return 3 and `tsconfig.at("evdw")` must return 5; to calculate the fast
- * terms, `tsflag` should be 8 (2**3); to calculate the slow terms, `tsflag`
- * should be 32 (2**5); to calculate both groups, `tsflag` should be 40 (2**3 +
- * 2**5).
- *
- * \note To use a new energy term in an old integrator, the force field
- * developers are responsible to update the time scale configuration of this
- * integrator.
+ * \see TimeScaleConfig
  */
-void energy_potential(int vers, int tsflag = 1,
+void energy_potential(int vers, unsigned tsflag = 1,
                       const TimeScaleConfig& tsconfig = default_tsconfig());
+
+
 /**
- * \brief If used and output pointer are not null: copy esum to eng;
- * copy gx, gy, gz to grdx, grdy, grdz, respectively;
- * copy vir[9] to virial.
+ * \ingroup egv
+ * \brief Copy energy, gradients, and/or virials to other variables.
+ *
+ * If the output pointers are not null and are different from the sources:
+ *    - copy #esum to `eng`;
+ *    - non-blockingly copy #gx, #gy, #gz to `grdx`, `grdy`, and `grdz`,
+ *      respectively;
+ *    - copy #vir[9] to `virial[9]`.
+ *
+ * \param vers  Energy version flag to select data to be copied.
  */
 void copy_energy(int vers, real* eng, real* grdx, real* grdy, real* grdz,
                  real* virial);

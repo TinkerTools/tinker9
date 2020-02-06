@@ -14,7 +14,7 @@ void x_testgrad(int argc, char** argv)
 
    rc_flag = flags;
    initialize();
-   energy_potential(rc_flag & calc::vmask);
+   energy_potential(rc_flag);
 
    std::vector<real> gdx(n), gdy(n), gdz(n);
    device_array::copyout(n, gdx.data(), gx);

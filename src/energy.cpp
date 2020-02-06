@@ -60,7 +60,8 @@ const TimeScaleConfig& default_tsconfig()
 }
 
 
-void energy_potential(int vers, int tsflag, const TimeScaleConfig& tsconfig)
+void energy_potential(int vers, unsigned tsflag,
+                      const TimeScaleConfig& tsconfig)
 {
    auto TSCONFIG = [](std::string eng, int tsflag,
                       const TimeScaleConfig& tsconfig) {
@@ -72,6 +73,7 @@ void energy_potential(int vers, int tsflag, const TimeScaleConfig& tsconfig)
    };
 
 
+   vers = vers & calc::vmask;
    zero_egv(vers);
 
 
@@ -149,16 +151,16 @@ void copy_energy(int vers, real* restrict eng, real* restrict grdx,
                  real* restrict virial)
 {
    if (eng && vers & calc::energy && eng != &esum) {
-      *eng = esum;
+      eng[0] = esum;
    }
 
 
-   if (grdx && grdy && grdz && vers & calc::grad) {
-      if (grdx != gx)
+   if (vers & calc::grad) {
+      if (grdx && grdx != gx)
          device_array::copy(false, n, grdx, gx);
-      if (grdy != gy)
+      if (grdy && grdy != gy)
          device_array::copy(false, n, grdy, gy);
-      if (grdz != gz)
+      if (grdz && grdz != gz)
          device_array::copy(false, n, grdz, gz);
    }
 

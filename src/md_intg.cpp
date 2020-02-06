@@ -19,17 +19,15 @@ void md_data(rc_op op)
    rc_man save42_{mdsave_data, op};
 }
 
-static void (*integrator_)(int, real);
+static void (*intg)(int, real);
 
 void integrate_data(rc_op op)
 {
    if (op & rc_dealloc) {
-      integrator_ = nullptr;
-      device_array::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
-   }
+      if (intg == respa_fast_slow)
+         device_array::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
 
-   if (op & rc_alloc) {
-      device_array::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
+      intg = nullptr;
    }
 
    if (op & rc_init) {
@@ -66,11 +64,11 @@ void integrate_data(rc_op op)
       }
 
       fstr_view itg = mdstuf::integrate;
-      integrator_ = nullptr;
+      intg = nullptr;
       if (itg == "VERLET") {
-         integrator_ = velocity_verlet;
+         intg = velocity_verlet;
          // need full gradient to start/restart the simulation
-         energy_potential(rc_flag & calc::vmask);
+         energy_potential(rc_flag);
       } else if (itg == "STOCHASTIC") {
       } else if (itg == "BAOAB") {
       } else if (itg == "BUSSI") {
@@ -78,14 +76,15 @@ void integrate_data(rc_op op)
       } else if (itg == "GHMC") {
       } else if (itg == "RIGIDBODY") {
       } else if (itg == "RESPA") {
-         integrator_ = respa_fast_slow;
+         intg = respa_fast_slow;
          // need fast and slow gradients to start/restart the simulation
+         device_array::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
          // save fast gradients to gx1 etc.
-         energy_potential(rc_flag & calc::vmask, RESPA_FAST, respa_tsconfig());
-         copy_energy(rc_flag & calc::vmask, nullptr, gx1, gy1, gz1, nullptr);
+         energy_potential(rc_flag, RESPA_FAST, respa_tsconfig());
+         copy_energy(rc_flag, nullptr, gx1, gy1, gz1, nullptr);
          // save slow gradients to gx2 etc.
-         energy_potential(rc_flag & calc::vmask, RESPA_SLOW, respa_tsconfig());
-         copy_energy(rc_flag & calc::vmask, nullptr, gx2, gy2, gz2, nullptr);
+         energy_potential(rc_flag, RESPA_SLOW, respa_tsconfig());
+         copy_energy(rc_flag, nullptr, gx2, gy2, gz2, nullptr);
       } else {
          // beeman
          assert(false);
@@ -153,7 +152,7 @@ void propagate_velocity2(real dt, const real* grx, const real* gry,
 void propagate(int nsteps, real dt_ps)
 {
    for (int istep = 1; istep <= nsteps; ++istep) {
-      integrator_(istep, dt_ps);
+      intg(istep, dt_ps);
 
       // mdstat
       if (istep % inform::iwrite == 0) {
