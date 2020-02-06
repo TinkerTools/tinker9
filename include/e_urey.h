@@ -1,6 +1,4 @@
-#ifndef TINKER_E_UREY_H_
-#define TINKER_E_UREY_H_
-
+#pragma once
 #include "dev_array.h"
 #include "energy_buffer.h"
 #include "rc_man.h"
@@ -21,5 +19,3 @@ void eurey_data(rc_op op);
 
 void eurey(int vers);
 TINKER_NAMESPACE_END
-
-#endif

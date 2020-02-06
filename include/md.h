@@ -1,7 +1,9 @@
 #pragma once
 #include "dev_array.h"
 #include "energy_buffer.h"
+#include "md_calc.h"
 #include "rc_man.h"
+#include "time_scale.h"
 #include <string>
 
 TINKER_NAMESPACE_BEGIN
@@ -80,63 +82,6 @@ typedef enum
 /// barostat
 TINKER_EXTERN barostat_t barostat;
 
-namespace calc {
-/// \ingroup md
-/// Use coordinates.
-constexpr int xyz = 0x001;
-/// \ingroup md
-/// Use velocities.
-constexpr int vel = 0x002;
-/// \ingroup md
-/// Use mass.
-constexpr int mass = 0x004;
-/// \ingroup md
-/// Use multi-frame trajectory.
-constexpr int traj = 0x008;
-
-/// \ingroup md
-/// Evaluate energy.
-constexpr int energy = 0x010;
-/// \ingroup md
-/// Evaluate energy gradient.
-constexpr int grad = 0x020;
-/// \ingroup md
-/// Evaluate virial tensor.
-constexpr int virial = 0x040;
-/// \ingroup md
-/// Evaluate number of interactions.
-constexpr int analyz = 0x080;
-
-/// \ingroup md
-/// Bits mask to clear energy-irrelevant flags.
-constexpr int vmask = energy + grad + virial + analyz;
-/// \ingroup md
-/// Similar to basic Tinker energy routines.
-/// Energy only.
-constexpr int v0 = energy;
-/// \ingroup md
-/// Similar to version 1 Tinker energy routines.
-/// Energy, gradient, and virial.
-constexpr int v1 = energy + grad + virial;
-/// \ingroup md
-/// Similar to version 3 Tinker energy routines.
-/// Energy and number of interactions.
-constexpr int v3 = energy + analyz;
-/// \ingroup md
-/// Energy and gradient.
-constexpr int v4 = energy + grad;
-/// \ingroup md
-/// Gradient only.
-constexpr int v5 = grad;
-/// \ingroup md
-/// Gradient and virial.
-constexpr int v6 = grad + virial;
-
-/// \ingroup md
-/// Run MD simulation.
-constexpr int md = 0x100;
-}
-
 template <int USE>
 void sanity_check()
 {
@@ -186,12 +131,28 @@ void kinetic(real& temp);
 void temper(real dt, real& temp);
 void mdrest(int istep);
 
-void propagate_xyz(real dt);
-void propagate_velocity(real dt);
-void propagate(int nsteps, real dt_ps, void (*itg)(int, real) = nullptr);
+void propagate_xyz(real dt, int check_nblist);
+/**
+ * \brief v += -g/m dt
+ */
+void propagate_velocity(real dt, const real* grx, const real* gry,
+                        const real* grz);
+/**
+ * \brief v += -g/m dt -g2/m dt2
+ */
+void propagate_velocity2(real dt, const real* grx, const real* gry,
+                         const real* grz, real dt2, const real* grx2,
+                         const real* gry2, const real* grz2);
+void propagate(int nsteps, real dt_ps);
 
 void velocity_verlet(int istep, real dt_ps);
 
+void respa_fast_slow(int istep, real dt_ps);
+const TimeScaleConfig& respa_tsconfig();
+constexpr int RESPA_FAST = 1; // 2**0, fast group shall be 0.
+constexpr int RESPA_SLOW = 2; // 2**1, slow group shall be 1.
+TINKER_EXTERN real *gx1, *gy1, *gz1;
+TINKER_EXTERN real *gx2, *gy2, *gz2;
 
 void wait_queue();
 TINKER_NAMESPACE_END

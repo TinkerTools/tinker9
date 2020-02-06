@@ -1,3 +1,4 @@
+#include "energy.h"
 #include "io_fort_str.h"
 #include "md.h"
 #include "nblist.h"
@@ -22,6 +23,15 @@ static void (*integrator_)(int, real);
 
 void integrate_data(rc_op op)
 {
+   if (op & rc_dealloc) {
+      integrator_ = nullptr;
+      device_array::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
+   }
+
+   if (op & rc_alloc) {
+      device_array::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
+   }
+
    if (op & rc_init) {
       if (bath::isothermal) {
          fstr_view th = bath::thermostat;
@@ -59,6 +69,8 @@ void integrate_data(rc_op op)
       integrator_ = nullptr;
       if (itg == "VERLET") {
          integrator_ = velocity_verlet;
+         // need full gradient to start/restart the simulation
+         energy_potential(rc_flag & calc::vmask);
       } else if (itg == "STOCHASTIC") {
       } else if (itg == "BAOAB") {
       } else if (itg == "BUSSI") {
@@ -66,8 +78,17 @@ void integrate_data(rc_op op)
       } else if (itg == "GHMC") {
       } else if (itg == "RIGIDBODY") {
       } else if (itg == "RESPA") {
+         integrator_ = respa_fast_slow;
+         // need fast and slow gradients to start/restart the simulation
+         // save fast gradients to gx1 etc.
+         energy_potential(rc_flag & calc::vmask, RESPA_FAST, respa_tsconfig());
+         copy_energy(rc_flag & calc::vmask, nullptr, gx1, gy1, gz1, nullptr);
+         // save slow gradients to gx2 etc.
+         energy_potential(rc_flag & calc::vmask, RESPA_SLOW, respa_tsconfig());
+         copy_energy(rc_flag & calc::vmask, nullptr, gx2, gy2, gz2, nullptr);
       } else {
          // beeman
+         assert(false);
       }
    }
 }
@@ -103,26 +124,36 @@ void mdrest(int istep)
    mdrest_acc(istep);
 }
 
-extern void propagate_xyz_acc(real dt);
-void propagate_xyz(real dt)
+void propagate_xyz(real dt, int check_nblist)
 {
+   extern void propagate_xyz_acc(real);
    propagate_xyz_acc(dt);
-   nblist_data(rc_evolve);
+   if (check_nblist)
+      nblist_data(rc_evolve);
 }
 
-extern void propagate_velocity_acc(real dt);
-void propagate_velocity(real dt)
+void propagate_velocity(real dt, const real* grx, const real* gry,
+                        const real* grz)
 {
-   propagate_velocity_acc(dt);
+   extern void propagate_velocity_acc(real, const real*, const real*,
+                                      const real*);
+   propagate_velocity_acc(dt, grx, gry, grz);
 }
 
-void propagate(int nsteps, real dt_ps, void (*itg)(int, real))
+void propagate_velocity2(real dt, const real* grx, const real* gry,
+                         const real* grz, real dt2, const real* grx2,
+                         const real* gry2, const real* grz2)
 {
-   if (itg == nullptr)
-      itg = integrator_;
+   extern void propagate_velocity2_acc(real, const real*, const real*,
+                                       const real*, real, const real*,
+                                       const real*, const real*);
+   propagate_velocity2_acc(dt, grx, gry, grz, dt2, grx2, gry2, grz2);
+}
 
+void propagate(int nsteps, real dt_ps)
+{
    for (int istep = 1; istep <= nsteps; ++istep) {
-      itg(istep, dt_ps);
+      integrator_(istep, dt_ps);
 
       // mdstat
       if (istep % inform::iwrite == 0) {

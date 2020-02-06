@@ -169,8 +169,17 @@ void x_dynamic(int argc, char** argv)
    rc_flag = flags;
    initialize();
 
+   if (integrate == "VERLET")
+      print(stdout,
+            " Molecular Dynamics Trajectory via"
+            " Velocity Verlet Algorithm\n");
+   else if (integrate == "RESPA")
+      print(stdout,
+            " Molecular Dynamics Trajectory via"
+            " r-RESPA MTS Algorithm\n");
+
    auto t_start = std::chrono::steady_clock::now();
-   propagate(nstep, dt, nullptr);
+   propagate(nstep, dt);
    auto t_end = std::chrono::steady_clock::now();
 
    auto d_us =

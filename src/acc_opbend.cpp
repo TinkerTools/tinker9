@@ -3,6 +3,7 @@
 #include "e_opbend.h"
 #include "mathfunc.h"
 #include "md.h"
+#include "named_struct.h"
 #include <cassert>
 
 // TODO: test W-D-C
@@ -22,13 +23,12 @@
  */
 
 TINKER_NAMESPACE_BEGIN
-template <int USE, eopbend_t TYP>
-void eopbend_tmpl()
+template <class Ver, class TYP>
+void eopbend_acc1()
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
-   sanity_check<USE>();
+   constexpr int do_e = Ver::e;
+   constexpr int do_g = Ver::g;
+   constexpr int do_v = Ver::v;
 
    auto bufsize = buffer_size();
 
@@ -78,7 +78,7 @@ void eopbend_tmpl()
       MAYBE_UNUSED real rcb2, rcd2;
       MAYBE_UNUSED real dot;
       real cc;
-      if CONSTEXPR (TYP == eopbend_t::w_d_c) {
+      if CONSTEXPR (eq<TYP, WDC>()) {
 
          // W-D-C angle between A-B-C plane and B-D vector for D-B<AC
 
@@ -89,7 +89,7 @@ void eopbend_tmpl()
                (xab * xcb + yab * ycb + zab * zcb);
          if CONSTEXPR (do_g)
             dot = xab * xcb + yab * ycb + zab * zcb;
-      } else if CONSTEXPR (TYP == eopbend_t::allinger) {
+      } else if CONSTEXPR (eq<TYP, ALLINGER>()) {
 
          // Allinger angle between A-C-D plane and D-B vector for D-B<AC
 
@@ -133,7 +133,7 @@ void eopbend_tmpl()
             real dccdxia, dccdyia, dccdzia;
             real dccdxic, dccdyic, dccdzic;
             real dccdxid, dccdyid, dccdzid;
-            if CONSTEXPR (TYP == eopbend_t::w_d_c) {
+            if CONSTEXPR (eq<TYP, WDC>()) {
                dccdxia = (xab * rcb2 - xcb * dot) * term;
                dccdyia = (yab * rcb2 - ycb * dot) * term;
                dccdzia = (zab * rcb2 - zcb * dot) * term;
@@ -143,7 +143,7 @@ void eopbend_tmpl()
                dccdxid = 0;
                dccdyid = 0;
                dccdzid = 0;
-            } else if CONSTEXPR (TYP == eopbend_t::allinger) {
+            } else if CONSTEXPR (eq<TYP, ALLINGER>()) {
                dccdxia = (xad * rcd2 - xcd * dot) * term;
                dccdyia = (yad * rcd2 - ycd * dot) * term;
                dccdzia = (zad * rcd2 - zcd * dot) * term;
@@ -213,26 +213,26 @@ void eopbend_acc(int vers)
 {
    if (opbtyp == eopbend_t::w_d_c) {
       if (vers == calc::v0 || vers == calc::v3)
-         eopbend_tmpl<calc::v0, eopbend_t::w_d_c>();
+         eopbend_acc1<EnergyVersion0, WDC>();
       else if (vers == calc::v1)
-         eopbend_tmpl<calc::v1, eopbend_t::w_d_c>();
+         eopbend_acc1<EnergyVersion1, WDC>();
       else if (vers == calc::v4)
-         eopbend_tmpl<calc::v4, eopbend_t::w_d_c>();
+         eopbend_acc1<EnergyVersion4, WDC>();
       else if (vers == calc::v5)
-         eopbend_tmpl<calc::v5, eopbend_t::w_d_c>();
+         eopbend_acc1<EnergyVersion5, WDC>();
       else if (vers == calc::v6)
-         eopbend_tmpl<calc::v6, eopbend_t::w_d_c>();
+         eopbend_acc1<EnergyVersion6, WDC>();
    } else if (opbtyp == eopbend_t::allinger) {
       if (vers == calc::v0 || vers == calc::v3)
-         eopbend_tmpl<calc::v0, eopbend_t::allinger>();
+         eopbend_acc1<EnergyVersion0, ALLINGER>();
       else if (vers == calc::v1)
-         eopbend_tmpl<calc::v1, eopbend_t::allinger>();
+         eopbend_acc1<EnergyVersion1, ALLINGER>();
       else if (vers == calc::v4)
-         eopbend_tmpl<calc::v4, eopbend_t::allinger>();
+         eopbend_acc1<EnergyVersion4, ALLINGER>();
       else if (vers == calc::v5)
-         eopbend_tmpl<calc::v5, eopbend_t::allinger>();
+         eopbend_acc1<EnergyVersion5, ALLINGER>();
       else if (vers == calc::v6)
-         eopbend_tmpl<calc::v6, eopbend_t::allinger>();
+         eopbend_acc1<EnergyVersion6, ALLINGER>();
    } else {
       assert(false);
    }

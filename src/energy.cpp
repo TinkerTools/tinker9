@@ -1,7 +1,9 @@
 #include "energy.h"
+#include "error.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
+
 
 TINKER_NAMESPACE_BEGIN
 void potential_data(rc_op op)
@@ -42,55 +44,128 @@ void potential_data(rc_op op)
 #endif
 }
 
-void energy_potential(int vers)
+
+const TimeScaleConfig& default_tsconfig()
 {
+   static TimeScaleConfig tsconfig{
+      {"ebond", 0},   {"eangle", 0},    {"estrbnd", 0},
+      {"eurey", 0},   {"eopbend", 0},   {"etors", 0},
+      {"epitors", 0}, {"etortor", 0},   {"egeom", 0},
+
+
+      {"evdw", 0},    {"elec_init", 0}, {"torque", 0},
+      {"emplar", 0},  {"empole", 0},    {"epolar", 0},
+   };
+   return tsconfig;
+}
+
+
+void energy_potential(int vers, int tsflag, const TimeScaleConfig& tsconfig)
+{
+   auto TSCONFIG = [](std::string eng, int tsflag,
+                      const TimeScaleConfig& tsconfig) {
+      try {
+         return tsflag & (1 << tsconfig.at(eng));
+      } catch (const std::out_of_range&) {
+         TINKER_THROW(format("Time scale of the {} term is unknown.\n", eng));
+      }
+   };
+
 
    zero_egv(vers);
 
+
    // bonded terms
 
+
    if (use_potent(bond_term))
-      ebond(vers);
+      if (TSCONFIG("ebond", tsflag, tsconfig))
+         ebond(vers);
    if (use_potent(angle_term))
-      eangle(vers);
+      if (TSCONFIG("eangle", tsflag, tsconfig))
+         eangle(vers);
    if (use_potent(strbnd_term))
-      estrbnd(vers);
+      if (TSCONFIG("estrbnd", tsflag, tsconfig))
+         estrbnd(vers);
    if (use_potent(urey_term))
-      eurey(vers);
+      if (TSCONFIG("eurey", tsflag, tsconfig))
+         eurey(vers);
    if (use_potent(opbend_term))
-      eopbend(vers);
+      if (TSCONFIG("eopbend", tsflag, tsconfig))
+         eopbend(vers);
    if (use_potent(torsion_term))
-      etors(vers);
+      if (TSCONFIG("etors", tsflag, tsconfig))
+         etors(vers);
    if (use_potent(pitors_term))
-      epitors(vers);
+      if (TSCONFIG("epitors", tsflag, tsconfig))
+         epitors(vers);
    if (use_potent(tortor_term))
-      etortor(vers);
+      if (TSCONFIG("etortor", tsflag, tsconfig))
+         etortor(vers);
+
 
    // misc. terms
 
+
    if (use_potent(geom_term))
-      egeom(vers);
+      if (TSCONFIG("egeom", tsflag, tsconfig))
+         egeom(vers);
+
 
    // non-bonded terms
 
-   if (use_potent(vdw_term))
-      evdw(vers);
 
-   elec_init(vers);
+   if (use_potent(vdw_term))
+      if (TSCONFIG("evdw", tsflag, tsconfig))
+         evdw(vers);
+
+   if (TSCONFIG("elec_init", tsflag, tsconfig))
+      elec_init(vers);
 #if TINKER_CUDART
    if (use_potent(mpole_term) && use_potent(polar_term) &&
        !(vers & calc::analyz) && mlist_version() == NBList::spatial) {
-      emplar_cu(vers);
+      if (TSCONFIG("emplar", tsflag, tsconfig))
+         emplar_cu(vers);
       goto skip_mpole_polar;
    }
 #endif
    if (use_potent(mpole_term))
-      empole(vers);
+      if (TSCONFIG("empole", tsflag, tsconfig))
+         empole(vers);
    if (use_potent(polar_term))
-      epolar(vers);
+      if (TSCONFIG("epolar", tsflag, tsconfig))
+         epolar(vers);
 skip_mpole_polar:
-   torque(vers);
+   if (TSCONFIG("torque", tsflag, tsconfig))
+      torque(vers);
+
 
    sum_energies(vers);
+}
+
+
+void copy_energy(int vers, real* restrict eng, real* restrict grdx,
+                 real* restrict grdy, real* restrict grdz,
+                 real* restrict virial)
+{
+   if (eng && vers & calc::energy && eng != &esum) {
+      *eng = esum;
+   }
+
+
+   if (grdx && grdy && grdz && vers & calc::grad) {
+      if (grdx != gx)
+         device_array::copy(false, n, grdx, gx);
+      if (grdy != gy)
+         device_array::copy(false, n, grdy, gy);
+      if (grdz != gz)
+         device_array::copy(false, n, grdz, gz);
+   }
+
+
+   if (virial && vers & calc::virial && virial != &vir[0]) {
+      for (int i = 0; i < 9; ++i)
+         virial[i] = vir[i];
+   }
 }
 TINKER_NAMESPACE_END

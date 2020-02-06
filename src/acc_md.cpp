@@ -216,19 +216,34 @@ void propagate_xyz_acc(real dt)
    }
 }
 
-void propagate_velocity_acc(real dt)
+void propagate_velocity_acc(real dt, const real* grx, const real* gry,
+                            const real* grz)
 {
    const real ekcal = units::ekcal;
    #pragma acc parallel loop independent async\
-               deviceptr(vx,vy,vz,gx,gy,gz,massinv)
+               deviceptr(massinv,vx,vy,vz,grx,gry,grz)
    for (int i = 0; i < n; ++i) {
       real coef = -ekcal * massinv[i] * dt;
-      vx[i] += coef * gx[i];
-      vy[i] += coef * gy[i];
-      vz[i] += coef * gz[i];
+      vx[i] += coef * grx[i];
+      vy[i] += coef * gry[i];
+      vz[i] += coef * grz[i];
    }
 }
 
+void propagate_velocity2_acc(real dt, const real* grx, const real* gry,
+                             const real* grz, real dt2, const real* grx2,
+                             const real* gry2, const real* grz2)
+{
+   const real ekcal = units::ekcal;
+   #pragma acc parallel loop independent async\
+               deviceptr(massinv,vx,vy,vz,grx,gry,grz,grx2,gry2,grz2)
+   for (int i = 0; i < n; ++i) {
+      real coef = -ekcal * massinv[i];
+      vx[i] += coef * (grx[i] * dt + grx2[i] * dt2);
+      vy[i] += coef * (gry[i] * dt + gry2[i] * dt2);
+      vz[i] += coef * (grz[i] * dt + grz2[i] * dt2);
+   }
+}
 
 void zero_gradient(int sync, size_t nelem, real* gx, real* gy, real* gz)
 {

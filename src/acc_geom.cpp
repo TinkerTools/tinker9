@@ -4,18 +4,18 @@
 #include "group.h"
 #include "md.h"
 #include "molecule.h"
+#include "named_struct.h"
 #include "seq_image.h"
 #include <cassert>
 
 
 TINKER_NAMESPACE_BEGIN
-template <int USE>
-void egeom_acc_tmpl()
+template <class Ver>
+void egeom_acc1()
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
-   sanity_check<USE>();
+   constexpr int do_e = Ver::e;
+   constexpr int do_g = Ver::g;
+   constexpr int do_v = Ver::v;
 
    auto bufsize = buffer_size();
 
@@ -131,15 +131,15 @@ void egeom_acc_tmpl()
 void egeom_acc(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
-      egeom_acc_tmpl<calc::v0>();
+      egeom_acc1<EnergyVersion0>();
    else if (vers == calc::v1)
-      egeom_acc_tmpl<calc::v1>();
+      egeom_acc1<EnergyVersion1>();
    else if (vers == calc::v4)
-      egeom_acc_tmpl<calc::v4>();
+      egeom_acc1<EnergyVersion4>();
    else if (vers == calc::v5)
-      egeom_acc_tmpl<calc::v5>();
+      egeom_acc1<EnergyVersion5>();
    else if (vers == calc::v6)
-      egeom_acc_tmpl<calc::v6>();
+      egeom_acc1<EnergyVersion6>();
    else
       assert(false);
 }
