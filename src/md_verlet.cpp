@@ -19,9 +19,9 @@ void velocity_verlet(int istep, real dt_ps)
    propagate_xyz(dt_ps, true);
    // update gradient
    if (save)
-      energy_potential(vers0);
+      energy(vers0);
    else
-      energy_potential(vers1);
+      energy(vers1);
 
    // v += a * dt/2
    propagate_velocity(dt_2, gx, gy, gz);

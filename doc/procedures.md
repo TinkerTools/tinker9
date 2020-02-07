@@ -8,7 +8,7 @@
    - Initialize `tinker.gpu`.
       - Assign/hard code the global flag `rc_flag`.
       - `initialize()`, for details see [**Initialize**](#ctor).
-   - MM/MD calculation, often involves with `energy_potential()`.
+   - MM/MD calculation, often needs `energy()`.
      For details, see [**Evaluate**](#evaleng).
    - Stop `tinker.gpu`.
       - `finish()`: recursively unset the data structures
@@ -23,12 +23,12 @@
    - `host_data()`: random seed; GPU info.
    - `device_data()`:
       - `n_data()`: set number of atoms.
+      - `box_data()`: set the shape of the periodic boundary condition (PBC),
+         including non-PBC.
       - `xyz_data()`, `vel_data()`, `mass_data()`: set coordinates,
          velocity, and mass data.
       - `potential_data()`: for details see
          [**Create Energy Terms**](#ctoreng).
-      - `box_data()`: set the shape of the periodic boundary condition (PBC),
-         including non-PBC.
       - `nblist_data()`: set the neighbor list, which must be set after
          the energy terms.
          - The vdw list needs `xred`, `yred`, and `zred`, which are set

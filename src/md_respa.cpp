@@ -91,7 +91,7 @@ void respa_fast_slow(int istep, real dt_ps)
       // s += v dt
       propagate_xyz(dta, false);
       // update a_fast
-      energy_potential(vers1, RESPA_FAST, respa_tsconfig());
+      energy(vers1, RESPA_FAST, respa_tsconfig());
       copy_energy(vers1, nullptr, nullptr, nullptr, nullptr, vir_f);
       if (vers1 & calc::virial) {
          for (int i = 0; i < 9; ++i)
@@ -106,10 +106,10 @@ void respa_fast_slow(int istep, real dt_ps)
    propagate_xyz(dta, true);
    // update a_fast
    if (save) {
-      energy_potential(vers0, RESPA_FAST, respa_tsconfig());
+      energy(vers0, RESPA_FAST, respa_tsconfig());
       copy_energy(vers0, &esum_f, gx1, gy1, gz1, vir_f);
    } else {
-      energy_potential(vers1, RESPA_FAST, respa_tsconfig());
+      energy(vers1, RESPA_FAST, respa_tsconfig());
       copy_energy(vers1, nullptr, gx1, gy1, gz1, vir_f);
    }
    if (rc_flag & calc::virial) {
@@ -118,12 +118,12 @@ void respa_fast_slow(int istep, real dt_ps)
    }
    // update a_slow
    if (save) {
-      energy_potential(vers0, RESPA_SLOW, respa_tsconfig());
+      energy(vers0, RESPA_SLOW, respa_tsconfig());
       copy_energy(vers0, nullptr, gx2, gy2, gz2, nullptr);
       if (rc_flag & calc::energy)
          esum += esum_f;
    } else {
-      energy_potential(vers1, RESPA_SLOW, respa_tsconfig());
+      energy(vers1, RESPA_SLOW, respa_tsconfig());
       copy_energy(vers1, nullptr, gx2, gy2, gz2, nullptr);
    }
    if (rc_flag & calc::virial) {

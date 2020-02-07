@@ -3,6 +3,7 @@
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
+#include "tinker_rt.h"
 #include <cassert>
 #include <map>
 #include <tinker/detail/couple.hh>
@@ -38,6 +39,9 @@ void evdw_data(rc_op op)
       device_array::deallocate(vexclude_, vexclude_scale_);
 
       buffer_deallocate(nev, ev, vir_ev);
+
+      elrc_vol = 0;
+      vlrc_vol = 0;
    }
 
    if (op & rc_alloc) {
@@ -212,6 +216,19 @@ void evdw_data(rc_op op)
          }
       }
       device_array::copyin(n, vlam, vlamvec.data());
+
+      // Initialize elrc and vlrc.
+      const int mode_len = 6;
+      char mode[mode_len + 1] = "VDW   ";
+      double elrc = 0, vlrc = 0;
+      if (vdwpot::use_vcorr) {
+         evcorr1(mode, &elrc, &vlrc, mode_len);
+         elrc_vol = elrc * volbox();
+         vlrc_vol = vlrc * volbox();
+      } else {
+         elrc_vol = 0;
+         vlrc_vol = 0;
+      }
    }
 }
 

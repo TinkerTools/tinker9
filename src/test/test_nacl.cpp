@@ -36,22 +36,21 @@ using namespace TINKER_NAMESPACE;
       COMPARE_VIR_(vir_ev, ref_v, eps);                                        \
    }
 
-TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]")
+TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
 {
    TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
 
-   std::string key = nacl_key;
-   key += "vdwterm    only\n";
-   TestFile fke("test_nacl.key", key);
+   const std::string key = std::string(nacl_key) + "vdwterm    only\n";
 
    int usage = 0;
    usage |= calc::xyz;
    usage |= calc::vmask;
 
-   const double eps = 1.0e-5;
+   const double eps = 1.0e-3;
 
-   SECTION("ehal -- no switch")
+   SECTION("  - ehal -- no switch")
    {
+      TestFile fke("test_nacl.key", key);
       const char* x1 = "test_nacl.xyz";
       TestFile fx1(x1, nacl_xyz1);
 
@@ -75,8 +74,9 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]")
       test_end();
    }
 
-   SECTION("ehal -- switch, near cut")
+   SECTION("  - ehal -- switch, near cut")
    {
+      TestFile fke("test_nacl.key", key);
       const char* x2 = "test_nacl.xyz_2";
       TestFile fx2(x2, nacl_xyz2);
       const char* argv[] = {"dummy", x2};
@@ -99,8 +99,9 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]")
       test_end();
    }
 
-   SECTION("ehal -- switch, near off")
+   SECTION("  - ehal -- switch, near off")
    {
+      TestFile fke("test_nacl.key", key);
       const char* x3 = "test_nacl.xyz_3";
       TestFile fx3(x3, nacl_xyz3);
 
@@ -113,6 +114,71 @@ TEST_CASE("NaCl-1", "[ff][evdw][hal][switch][nacl]")
                                     {-127.6639, 0.0, 0.0}};
       const double ref_v[][3] = {
          {-319.160, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
+
+      test_begin_with_args(argc, argv);
+      rc_flag = usage;
+      initialize();
+
+      COMPARE_CODE_BLOCK1_;
+
+      finish();
+      test_end();
+   }
+
+   SECTION("  - ehal -- evcorr vlambda = 1.0")
+   {
+      std::string key4 = key;
+      // overwrite the default box size
+      key4 += "b-axis            10.0\n";
+      key4 += "c-axis            10.0\n";
+      key4 += "vdw-correction\n";
+
+      TestFile fke("test_nacl.key", key4);
+      const char* x4 = "test_nacl.xyz_4";
+      TestFile fx4(x4, nacl_xyz1);
+
+      const char* argv[] = {"dummy", x4};
+      int argc = 2;
+
+      const double ref_eng = 52.0802;
+      const int ref_count = 1;
+      const double ref_grad[][3] = {{184.4899, 0.0, 0.0},
+                                    {-184.4899, 0.0, 0.0}};
+      const double ref_v[][3] = {
+         {-408.398, 0.0, 0.0}, {0.0, -2.521, 0.0}, {0.0, 0.0, -2.521}};
+
+      test_begin_with_args(argc, argv);
+      rc_flag = usage;
+      initialize();
+
+      COMPARE_CODE_BLOCK1_;
+
+      finish();
+      test_end();
+   }
+
+   SECTION("  - ehal -- evcorr vlambda = 0.9")
+   {
+      std::string key5 = key;
+      // overwrite the default box size
+      key5 += "b-axis            10.0\n";
+      key5 += "c-axis            10.0\n";
+      key5 += "vdw-correction\n";
+      key5 += "ligand 2\n";
+      key5 += "vdw-lambda 0.9\n";
+
+      TestFile fke("test_nacl.key", key5);
+      const char* x5 = "test_nacl.xyz_5";
+      TestFile fx4(x5, nacl_xyz1);
+
+      const char* argv[] = {"dummy", x5};
+      int argc = 2;
+
+      const double ref_eng = 25.8947;
+      const int ref_count = 1;
+      const double ref_grad[][3] = {{81.9570, 0.0, 0.0}, {-81.9570, 0.0, 0.0}};
+      const double ref_v[][3] = {
+         {-182.721, 0.0, 0.0}, {0.0, -2.415, 0.0}, {0.0, 0.0, -2.415}};
 
       test_begin_with_args(argc, argv);
       rc_flag = usage;

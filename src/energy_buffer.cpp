@@ -1,4 +1,6 @@
 #include "energy_buffer.h"
+#include "box.h"
+#include "e_vdw.h"
 #include "mathfunc.h"
 #include "md.h"
 #include <cassert>
@@ -81,6 +83,15 @@ real get_energy(const energy_buffer e)
 {
    auto b = parallel::reduce_sum(e, buffer_size(), false);
    real real_out = energy_buffer_traits::cast(b);
+
+
+   // vdw long-range correction
+   // check != 0 for non-PBC
+   if (e == ev && elrc_vol != 0) {
+      real_out += elrc_vol / volbox();
+   }
+
+
    return real_out;
 }
 
@@ -109,6 +120,16 @@ void get_virial(real (&v_out)[9], const virial_buffer v)
    v_out[6] = v1[2]; // zx
    v_out[7] = v1[4]; // zy
    v_out[8] = v1[5]; // zz
+
+
+   // vdw long-range correction
+   // check != 0 for non-PBC
+   if (v == vir_ev && vlrc_vol != 0) {
+      real term = vlrc_vol / volbox();
+      v_out[0] += term; // xx
+      v_out[4] += term; // yy
+      v_out[8] += term; // zz
+   }
 }
 
 

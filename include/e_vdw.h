@@ -50,7 +50,7 @@ TINKER_EXTERN device_pointer<int> ired;
 TINKER_EXTERN device_pointer<real> kred;
 
 /// \ingroup vdw
-/// Reduced x, y, z coordinates for each atom or the vdw gradients on each
+/// Reduced x, y, z coordinates for each atom and the vdw gradients on each
 /// reduced site.
 /// \{
 TINKER_EXTERN device_pointer<real> xred, yred, zred;
@@ -88,6 +88,14 @@ TINKER_EXTERN device_pointer<real> vexclude_scale_;
 TINKER_EXTERN count_buffer nev;
 TINKER_EXTERN energy_buffer ev;
 TINKER_EXTERN virial_buffer vir_ev;
+
+/// \ingroup vdw
+/// \brief Long-range energy correction (lrc), used as `e += lrc/pbc_volume`.
+TINKER_EXTERN real elrc_vol;
+/// \ingroup vdw
+/// \brief
+/// Long-range virial correction (lrc), used as `v(i,i) += lrc/pbc_volume`.
+TINKER_EXTERN real vlrc_vol;
 
 void evdw_data(rc_op op);
 

@@ -60,8 +60,7 @@ const TimeScaleConfig& default_tsconfig()
 }
 
 
-void energy_potential(int vers, unsigned tsflag,
-                      const TimeScaleConfig& tsconfig)
+void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 {
    auto TSCONFIG = [](std::string eng, int tsflag,
                       const TimeScaleConfig& tsconfig) {
@@ -143,6 +142,12 @@ skip_mpole_polar:
 
 
    sum_energies(vers);
+}
+
+
+void energy(int vers)
+{
+   energy(vers, 1, default_tsconfig());
 }
 
 

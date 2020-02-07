@@ -73,7 +73,7 @@ void x_analyze(int argc, char** argv)
 
 void x_analyze_e()
 {
-   energy_potential(calc::energy + calc::analyz);
+   energy(calc::energy + calc::analyz);
 
    auto& out = stdout;
    print(out, "\n Total Potential Energy :        {:16.4f} Kcal/mole\n", esum);
@@ -132,7 +132,7 @@ void x_analyze_e()
 
 void x_analyze_v()
 {
-   energy_potential(calc::grad + calc::virial);
+   energy(calc::grad + calc::virial);
    auto& out = stdout;
 
    const char* fmt = " {:36s} {:12.3f} {:12.3f} {:12.3f}\n";

@@ -68,7 +68,7 @@ void integrate_data(rc_op op)
       if (itg == "VERLET") {
          intg = velocity_verlet;
          // need full gradient to start/restart the simulation
-         energy_potential(rc_flag);
+         energy(rc_flag);
       } else if (itg == "STOCHASTIC") {
       } else if (itg == "BAOAB") {
       } else if (itg == "BUSSI") {
@@ -80,10 +80,10 @@ void integrate_data(rc_op op)
          // need fast and slow gradients to start/restart the simulation
          device_array::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
          // save fast gradients to gx1 etc.
-         energy_potential(rc_flag, RESPA_FAST, respa_tsconfig());
+         energy(rc_flag, RESPA_FAST, respa_tsconfig());
          copy_energy(rc_flag, nullptr, gx1, gy1, gz1, nullptr);
          // save slow gradients to gx2 etc.
-         energy_potential(rc_flag, RESPA_SLOW, respa_tsconfig());
+         energy(rc_flag, RESPA_SLOW, respa_tsconfig());
          copy_energy(rc_flag, nullptr, gx2, gy2, gz2, nullptr);
       } else {
          // beeman

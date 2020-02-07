@@ -59,6 +59,7 @@ void box_data(rc_op op)
 }
 
 
+#define DOT3(a, b) (a[0] * b[0] + a[1] * b[1] + a[2] * b[2])
 void copyout_box_data(const Box* pb)
 {
    Box b;
@@ -71,7 +72,6 @@ void copyout_box_data(const Box* pb)
       double cx[3] = {b.lvec[0][2], b.lvec[1][2], b.lvec[2][2]};
 
 
-#define DOT3(a, b) (a[0] * b[0] + a[1] * b[1] + a[2] * b[2])
       double xbox = std::sqrt(DOT3(ax, ax));
       double ybox = std::sqrt(DOT3(bx, bx));
       double zbox = std::sqrt(DOT3(cx, cx));
@@ -101,5 +101,11 @@ void copyout_box_data(const Box* pb)
       lvec2 = make_real3(l[1][0], l[1][1], l[1][2]);
       lvec3 = make_real3(l[2][0], l[2][1], l[2][2]);
    }
+}
+
+
+real volbox()
+{
+   return lvec1.x * lvec2.y * lvec3.z;
 }
 TINKER_NAMESPACE_END

@@ -71,6 +71,8 @@ void device_data(rc_op op)
    extern void n_data(rc_op);
    rc_man n42_{n_data, op};
 
+   extern void box_data(rc_op);
+   rc_man box42_{box_data, op};
 
    extern void xyz_data(rc_op);
    extern void vel_data(rc_op);
@@ -90,10 +92,7 @@ void device_data(rc_op op)
    // Neighbor lists must be initialized after potential initialization.
    // xred, yred, and zred need to be initialized in vdw routines and will be
    // used in nblist setups.
-   extern void box_data(rc_op);
    extern void nblist_data(rc_op);
-
-   rc_man box42_{box_data, op};
    rc_man nbl42_{nblist_data, op};
 
 

@@ -24,7 +24,7 @@
 TINKER_NAMESPACE_BEGIN
 /**
  * \ingroup egv
- * \brief Evaluate the energy potential.
+ * \brief Evaluate the potential energy.
  *
  * First, energy buffers, virial buffers, #gx, #gy, #gz arrays, and count
  * buffers are set to 0.
@@ -39,9 +39,8 @@ TINKER_NAMESPACE_BEGIN
  *
  * \see TimeScaleConfig
  */
-void energy_potential(int vers, unsigned tsflag = 1,
-                      const TimeScaleConfig& tsconfig = default_tsconfig());
-
+void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig);
+void energy(int vers);
 
 /**
  * \ingroup egv

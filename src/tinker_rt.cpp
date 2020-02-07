@@ -2,6 +2,19 @@
 #include <algorithm>
 #include <tinker/detail/argue.hh>
 
+
+// For the hidden string length argument:
+// GNU Fortran
+// https://gcc.gnu.org/onlinedocs/gfortran/Argument-passing-conventions.html
+// Intel Fortran
+// https://software.intel.com/en-us/forums/intel-fortran-compiler/topic/637855
+#if defined(TINKER_GFORTRAN) && (__GNUC__ <= 7)
+extern "C" void TINKER_RT(evcorr1)(char*, double*, double*, int);
+#else
+extern "C" void TINKER_RT(evcorr1)(char*, double*, double*, size_t);
+#endif
+
+
 TINKER_NAMESPACE_BEGIN
 void nextarg(size_t len, char* str, int& exist)
 {
@@ -20,6 +33,13 @@ void nextarg(size_t len, char* str, int& exist)
          }
       }
    }
+}
+
+
+// evcorr.f
+void evcorr1(char* mode, double* elrc, double* vlrc, int modelen)
+{
+   TINKER_RT(evcorr1)(mode, elrc, vlrc, modelen);
 }
 
 

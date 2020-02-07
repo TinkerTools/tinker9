@@ -114,4 +114,12 @@ TINKER_EXTERN real3 lvec1, lvec2, lvec3;
 
 void box_data(rc_op);
 void copyout_box_data(const Box*);
+/**
+ * \ingroup box
+ * \brief Get the volume of the PBC box.
+ * \note This function may calculate the volume on-the-fly if there is not an
+ * internal variable to save the volume, so the calculation must be cheap.
+ * \note The volume is undefined for the non-PBC situation.
+ */
+real volbox();
 TINKER_NAMESPACE_END
