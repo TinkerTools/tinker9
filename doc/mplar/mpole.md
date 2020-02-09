@@ -4,21 +4,102 @@ This file documented the pairwise quardupole interactions between atoms `i` and
 respectively.
 
 
+## Units and Multipole Moments
+The electrostatic potential at $\bm{r}$ due to the charge distribution nearby is
+
+$$
+\varphi(\bm{r}) = \frac{1}{4\pi\epsilon_0}
+                  \int d\bm{s} \frac{\rho(\bm{s})}{|\bm{r}-\bm{s}|}.
+$$
+
+Tinker uses a variable `electric` (of the `chgpot` module) to represent the
+factor $(4\pi\epsilon_0)^{-1}$.
+Its unit is (\AA/e\textsuperscript{2})(kcal/mol), and its current default
+magnitude is 332.063713, which is a constant defined by `coulomb` of the `units`
+module. The default value is editable by the `ELECTRIC` keyword.
+
+Expanding $|\bm{r}-\bm{s}|^{-1}$ by Taylor series, the potential can be
+rewritten as
+
+$$
+\frac{1}{4\pi\epsilon_0}
+\left(
+             \left[             \int d\bm{s} \rho(\bm{s})        \right]
+             \frac{1}{r}
+- \sum_i     \left[             \int d\bm{s} \rho(\bm{s})s_i     \right]
+             \nabla_i \frac{1}{r}
++ \sum_{i,j} \left[ \frac{1}{2} \int d\bm{s} \rho(\bm{s})s_i s_j \right]
+             \nabla_i \nabla_j \frac{1}{r}
+- \cdots
+\right),
+$$
+where three pairs of square brackets define monopole ($C$, charge), dipole
+($D_i$), and quadrupole ($Q_{ij}^*$) moments, respectively.
+
+
+Tinker parameters use slightly different definitions though.
+The parameters directly came from quantum packages, which for historical
+reasons, *traceless quadrupoles* and atomic units were widely used,
+so Bohr must be converted to \AA. Moreover, Tinker will scale the
+*traceless quadrupoles* by 1/3 before energy evaluation.
+The reason is as follows.
+
+Potential due to the quadrupole is
+
+$$
+\frac{1}{4\pi\epsilon_0} \sum_{i,j} \left[
+\frac{1}{2} \int d\bm{s} \rho(\bm{s})s_i s_j\right]
+\frac{3r_i r_j - r^2\delta_{ij}}{r^5},
+$$
+which can be rewritten as
+
+$$
+\frac{1}{4\pi\epsilon_0} \sum_{i,j} \left[
+\frac{1}{2} \int d\bm{s} \rho(\bm{s})(3s_i s_j - s^2\delta_{ij})\right]
+\frac{r_i r_j}{r^5}.
+$$
+
+So the traceless quadrupole tensor can be defined based on the equation above as
+
+$$
+\Theta_{ij} = \frac{1}{2} \int d\bm{s} \rho(\bm{s})(3s_i s_j - s^2\delta_{ij}). 
+$$
+We can easily confirm that $\sum_i^{x,y,z}(3s_i s_i-s^2) = 0$, therefore
+
+$$
+\Theta_{ij} = 3Q_{ij}^* - \delta_{i,j}\sum_k^{x,y,z}Q_{kk}^*.
+$$
+Tinker defines and uses $Q_{ij} = \Theta_{ij}/3$ in the energy evaluation, thus
+the energy expression is the same as the non-traceless quadrupoles, but still
+has the advantage to optimize the express because the quadrupoles are traceless. 
+
+
 ## Rotation Matrix
 Rotation matrix $R$ maps a vector (1D tensor) $\bm{x}$ from frame a to b,
 $R\bm{x}_a = \bm{x}_b$. To preserve the dot product of any two vectors $\bm{x}$
-and $\bm{y}$ in either frame, $\bm{x}_b^T \bm{y}_b = \bm{x}_a^T \bm{y}_a$, the
-rotation matrix must be orthogonal, i.e., $R^T R = I$.
+and $\bm{y}$ in either frame, $\bm{x}_b^t \bm{y}_b = \bm{x}_a^t \bm{y}_a$, the
+rotation matrix must be orthogonal, i.e., $R^t R = I$.
 
 Rotating a 2D tensor (matrix) $Q_a$ from frame a to b, we have $Q_b$, and the
 quadratic form must be preserved in both frames.
-From $\bm{x}_b^T Q_b \bm{y}_b = \bm{x}_a^T Q_a \bm{y}_a$, we get
+From $\bm{x}_b^t Q_b \bm{y}_b = \bm{x}_a^t Q_a \bm{y}_a$, we get
 
 $$
-Q_b = R Q_a R^T.
+Q_b = R Q_a R^t.
 $$
 
 Rotation matrix does not change the trace of matrix $Q$.
+
+
+## Energy and Gradient
+For each atom, $M$ denotes its charge ($C$), dipole ($D$), traceless quadrupole
+($Q$), and induced dipole ($\mu$) in the **global** frame. $\bm{r}$ denotes the
+displacement of atom 1 and 2, $\bm{r} = \bm{r}_2 - \bm{r}_1$, which has 3
+components $xr$, $yr$, and $zr$ in 3 directions. The energy $U$ is
+$$
+U = M_2 T(\bm{r}) M_1,
+$$
+where the $T$ matrix is only a function of $\bm{r}$.
 
 
 ## About This File
@@ -28,3 +109,9 @@ pandoc mpole.md -o mpole.pdf \
 -Vfontfamily=fouriernc \
 -Vheader-includes='\usepackage{bm}'
 ```
+
+
+Zhi Wang
+
+
+Feb 9, 2020.
