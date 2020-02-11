@@ -8,8 +8,8 @@ respectively.
 The electrostatic potential at $\bm{r}$ due to the charge distribution nearby is
 
 $$
-\varphi(\bm{r}) = \frac{1}{4\pi\epsilon_0}
-                  \int d\bm{s} \frac{\rho(\bm{s})}{|\bm{r}-\bm{s}|}.
+\phi(\bm{r}) = \frac{1}{4\pi\epsilon_0}
+               \int d\bm{s} \frac{\rho(\bm{s})}{|\bm{r}-\bm{s}|}.
 $$
 
 Tinker uses a variable `electric` (of the `chgpot` module) to represent the
@@ -64,7 +64,7 @@ So the traceless quadrupole tensor can be defined based on the equation above as
 $$
 \Theta_{ij} = \frac{1}{2} \int d\bm{s} \rho(\bm{s})(3s_i s_j - s^2\delta_{ij}). 
 $$
-We can easily confirm that $\sum_i^{x,y,z}(3s_i s_i-s^2) = 0$, therefore
+We can easily confirm that $\sum_k^{x,y,z}(3s_k s_k-s^2) = 0$, therefore
 
 $$
 \Theta_{ij} = 3Q_{ij}^* - \delta_{ij}\sum_k^{x,y,z}Q_{kk}^*.
@@ -85,26 +85,26 @@ $$
 \frac{\partial f}{\partial \bm{r}} =  \frac{\partial f}{\partial \bm{r}_2}
                                    = -\frac{\partial f}{\partial \bm{r}_1},
 $$
-and for $f(r,r_x,r_y,r_z)$ where $r$ is a function of $r_x,r_y,r_z$,
+and for $f(r,r_x,r_y,r_z)$,
 
 $$
 \nabla f(r,r_x,r_y,r_z) = \frac{\partial f(r)}{\partial r}\nabla r +
 \sum_j\frac{\partial f(r_j)}{\partial r_j}\nabla r_j =
 \frac{\partial f(r)}{\partial r}\frac{\bm{r}}{r} +
 \nabla f(r_x,r_y,r_z).
-$$
+$$ (1)
 
 So the derivatives of $1/r$ with respect to $a$, $b$, $c$, etc., which are
 one of the x, y, z directions, are
 
 | Terms | Expressions |
 |-------|-------------|
-| $T_0$ | $\lambda_1/r$ |
-| $T_1$ | $-\lambda_3 r_a/r^3$ |
-| $T_2$ | $\lambda_5 3r_a r_b/r^5 -\lambda_3\delta_{ab}/r^3$ |
-| $T_3$ | $-\lambda_7 15 r_a r_b r_c/r^7 +\lambda_5 3\Sigma r_a\delta_{bc}/r^5$ |
-| $T_4$ | $\lambda_9 105 r_a r_b r_c r_d/r^9 -\lambda_7 15\Sigma r_a r_b\delta_{cd}/r^7 +\lambda_5 3\Sigma\delta_{ab}\delta_{cd}/r^5$ |
-| $T_5$ | $-\lambda_{11}945 r_a r_b r_c r_d r_e/r^{11} +\lambda_9 105\Sigma r_a r_b r_c\delta_{de}/r^9 -\lambda_7 15\Sigma r_a\delta_{bc}\delta_{de}/r^7$ |
+|  T0   | $\lambda_1/r$ |
+|  T1   | $-\lambda_3 r_a/r^3$ |
+|  T2   | $\lambda_5 3r_a r_b/r^5 -\lambda_3\delta_{ab}/r^3$ |
+|  T3   | $-\lambda_7 15 r_a r_b r_c/r^7 +\lambda_5 3\Sigma r_a\delta_{bc}/r^5$ |
+|  T4   | $\lambda_9 105 r_a r_b r_c r_d/r^9 -\lambda_7 15\Sigma r_a r_b\delta_{cd}/r^7 +\lambda_5 3\Sigma\delta_{ab}\delta_{cd}/r^5$ |
+|  T5   | $-\lambda_{11}945 r_a r_b r_c r_d r_e/r^{11} +\lambda_9 105\Sigma r_a r_b r_c\delta_{de}/r^9 -\lambda_7 15\Sigma r_a\delta_{bc}\delta_{de}/r^7$ |
 
 where
 
@@ -117,7 +117,7 @@ where
 In the following sections, $\lambda_k (k-2)!! / r^k$ will be denoted by $R_k$.
 
 
-## Rotation Matrix
+## Rotation Matrix and Quasi-Internal (QI) Frame
 Rotation matrix $R$ maps a vector (1D tensor) $\bm{x}$ from frame a to b,
 $R\bm{x}_a = \bm{x}_b$. To preserve the dot product of any two vectors $\bm{x}$
 and $\bm{y}$ in either frame, $\bm{x}_b^t \bm{y}_b = \bm{x}_a^t \bm{y}_a$, the
@@ -133,15 +133,19 @@ $$
 
 Rotation matrix also preserves the trace of matrix $Q$.
 
+QI frame is defined between atoms i and k. While the details of implementation
+details may be different in other code bases, we pick a matrix $R$ to rotate
+the vector $(r_x,r_y,r_z)$ in global frame to $(0,0,r)$ in QI frame.
 
-## Pairwise Energy, Torque, and Force
+
+## Pairwise Energy, Forces, and Torques
 For each atom, $M$ denotes its charge ($C$), dipole ($D$), traceless quadrupole
 ($Q$), and induced dipole ($\mu$) in the *global* or *quasi-internal (QI)*
 frame, depending on the context. The electrostatic energy of atom 1 due to atom
 2 is given by
 
 $$
-U_1 = \varphi_1(2) C_1 + \varphi_1'(2) D_1 + \varphi_1''(2) Q_1 + \cdots,
+U_1 = \phi_1(2) C_1 + \phi_1'(2) D_1 + \phi_1''(2) Q_1 + \cdots,
 $$
 and must be equal to $U_2$. Therefore, the pairwise energy of atoms 1 and 2 can
 alternatively be defined as
@@ -149,7 +153,44 @@ alternatively be defined as
 $$
 U = M_2 T(\bm{r}) M_1,
 $$
-where the $T$ matrix is only a function of $\bm{r}$.
+where the $T$ matrix is only a function of $\bm{r}$ and the transpose symbols
+has been dropped.
+
+If $M$ does not depend on the positions of other atoms, e.g. charge and induced
+dipoles, $\nabla U$ is as simple as $M_2 \nabla T(\bm{r}) M_1$, which is
+referred to as the *force* term in the code, but technically should have been
+called the *incomplete negative force*. The force term is incomplete because
+the multipole parameters are defined in the *local* frame coordinate, thus $M$
+usually does rely on the positions of other atoms and the $\nabla M(\bm{r})$
+terms are non-zero. Terms related to $\nabla M(\bm{r})$ are treated as *torque*
+terms.
+
+If using QI frame, all of the dipoles, quadrupoles, and induced dipoles of the
+atoms pairs must be rotated from global frame to QI frame, and the forces and
+torques must be rotated back from QI frame to global frame.
+
+| Terms | Energy | Torque | Force |
+|-------|--------|--------|-------|
+| M-C     | $\phi C$    | N/A               | $\phi' C$    |
+| M-D     | $\phi' D$   | $\phi' \times D$  | $\phi'' D$   |
+| M-Q     | $\phi'' Q$  | $\phi'' \times Q$ | $\phi''' Q$  |
+| M-$\mu$ | $\phi' \mu$ | N/A               | $\phi'' \mu$ |
+
+
+## Torques and Forces in QI Frame
+Let us revisit Eq.(1) for electrostatic potential in QI frame.
+$\phi$ no longer has explicit dependency on $r_x,r_y,r_z$,
+thus $\nabla \phi(r_x,r_y,r_z) = 0$,
+and $\nabla \phi(r,r_x,r_y,r_z) = \phi_r' \bm{r}/r$.
+Some terms are tabulated as follows.
+
+| Terms | Expressions |
+|-------|-------------|
+| $d\phi/dr_x$ | $r_x \phi_r'/r = 0$       |
+| $\frac{\partial}{\partial r}d\phi/dr_x$   | $r_x (\phi_r'/r)' = 0$ |
+| $\frac{\partial}{\partial r_j}d\phi/dr_x$ | $\phi_r'/r$ if $j=x$, otherwise 0 |
+| $\frac{d}{dr_j}d\phi/dr_x$                | $\phi_r'/r$ if $j=x$, otherwise 0 |
+| $d\phi/dr_z$ | $r_z \phi_r'/r = \phi_r'$ |
 
 
 ## About This File
