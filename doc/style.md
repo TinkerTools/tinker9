@@ -28,7 +28,7 @@ project. But how many of you (and me) know how to let it:
 Because of the flexibility and complexity of the language, restrictions on the
 coding style are necessary. This style guide will follow the structure of the
 [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html),
-and a lot of words were directly copied from the Google C++ Style Guide,
+and many words were directly adopted from the Google C++ Style Guide,
 but it never means all of these rules apply to this Tinker project.
 
 
@@ -47,9 +47,10 @@ but it never means all of these rules apply to this Tinker project.
 ## C++ Version
 Currently, code should target C++11.
 
-C++14 and C++17 are good, But the support to the newer standards
-may be restricted by the toolchain, or by the combination of the hardware
-and toolchain, e.g. CUDA 10.0 only supports C++14 but not C++17.
+C++14 and C++17 are good, but the support of the toolchain to the newer standards may be limited, and more likely, be limited by the combination
+several problems, e.g., the Nvidia driver is old and cannot be updated because
+the GPU is old or it is difficult to update cluster's OS, so CUDA is limited
+to 10.0, which only supports C++14 but not C++17.
 
 
 <!--  -->
