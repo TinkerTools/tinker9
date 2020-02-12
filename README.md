@@ -7,7 +7,7 @@ Tinker GPU: Software Tools for Molecular Design
 # Getting Started with Tinker GPU
    - Overview
    - Installation Guide
-   - Directory Layout
+   - Source Code
 
 
 ## Overview
@@ -19,7 +19,9 @@ Tinker GPU: Software Tools for Molecular Design
    - [Build Tinker GPU](doc/build2.md)
 
 
-## Directory Layout
+## Source Code
+   - Directory Layout
+   - [Style Guide](doc/style.md)
 
 
 ## Documentation
