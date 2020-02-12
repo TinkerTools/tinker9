@@ -41,9 +41,9 @@ void grid_put(PMEUnit pme_u, real* optional1, real* optional2)
    const int bsorder = st.bsorder;
    assert(bsorder <= 5);
 
-   device_array::zero(true, 2 * nfft1 * nfft2 * nfft3, st.qgrid);
+   device_array::zero(false, 2 * nfft1 * nfft2 * nfft3, st.qgrid);
 
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(pchg,fmp,fuind,fuinp,x,y,z,box,dptr)
    for (int i = 0; i < n; ++i) {
       real thetai1[4 * 5];
