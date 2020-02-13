@@ -75,7 +75,7 @@ void evdw_acc1()
       nev, ev, vir_ev
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
-   #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+   #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                deviceptr(DEVICE_PTRS_,vlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -165,7 +165,7 @@ void evdw_acc1()
       }
    } // end for (int i)
 
-   #pragma acc parallel deviceptr(DEVICE_PTRS_,vexclude_,vexclude_scale_)
+   #pragma acc parallel async deviceptr(DEVICE_PTRS_,vexclude_,vexclude_scale_)
    #pragma acc loop independent
    for (int ii = 0; ii < nvexclude_; ++ii) {
       int offset = ii & (bufsize - 1);

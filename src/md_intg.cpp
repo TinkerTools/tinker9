@@ -96,7 +96,7 @@ void kinetic(real& temp)
 {
    extern void kinetic_acc(real&);
 #if TINKER_CUDART
-   if (platform::config & platform::cu_pltfm) {
+   if (platform::config & platform::CU_PLTFM) {
       extern void kinetic_cu(real&);
       kinetic_cu(temp);
    } else

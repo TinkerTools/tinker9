@@ -28,7 +28,7 @@ void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
 
    real* opt1 = reinterpret_cast<real*>(fmp);
 #if TINKER_CUDART
-   if (platform::config & platform::cu_pltfm) {
+   if (platform::config & platform::CU_PLTFM) {
       platform::cu::grid_mpole(pme_u, fmp);
    } else
 #endif
@@ -46,7 +46,7 @@ void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
    real* opt1 = reinterpret_cast<real*>(fuind);
    real* opt2 = reinterpret_cast<real*>(fuinp);
 #if TINKER_CUDART
-   if (platform::config & platform::cu_pltfm) {
+   if (platform::config & platform::CU_PLTFM) {
       platform::cu::grid_uind(pme_u, fuind, fuinp);
    } else
 #endif

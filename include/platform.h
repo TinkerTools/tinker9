@@ -4,8 +4,9 @@
 
 TINKER_NAMESPACE_BEGIN
 namespace platform {
-constexpr int acc_pltfm = 0x001;
-constexpr int cu_pltfm = 0x002;
+constexpr int NOT_SET = 0x000;
+constexpr int ACC_PLTFM = 0x001;
+constexpr int CU_PLTFM = 0x002;
 
 
 TINKER_EXTERN int config;

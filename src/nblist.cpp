@@ -4,6 +4,7 @@
 #include "e_vdw.h"
 #include "elec.h"
 #include "md.h"
+#include "platform.h"
 #include "potent.h"
 #include "spatial.h"
 #include "switch.h"
@@ -13,9 +14,6 @@
 
 
 TINKER_NAMESPACE_BEGIN
-int always_use_nblist;
-
-
 NBList::~NBList()
 {
    device_array::deallocate(nlst, lst, update, xold, yold, zold);
@@ -34,10 +32,10 @@ int vlist_version()
    if (!bound::use_bounds)
       return NBList::nblist;
 #if TINKER_CUDART
-   if (always_use_nblist)
-      return NBList::nblist;
-   else
+   if (platform::config & platform::CU_PLTFM)
       return NBList::spatial;
+   else
+      return NBList::nblist;
 #else
    return NBList::nblist;
 #endif
@@ -53,7 +51,10 @@ int dlist_version()
    if (!bound::use_bounds)
       return NBList::nblist;
 #if TINKER_CUDART
-   return NBList::spatial;
+   if (platform::config & platform::CU_PLTFM)
+      return NBList::spatial;
+   else
+      return NBList::nblist;
 #else
    return NBList::nblist;
 #endif
@@ -69,7 +70,10 @@ int clist_version()
    if (!bound::use_bounds)
       return NBList::nblist;
 #if TINKER_CUDART
-   return NBList::spatial;
+   if (platform::config & platform::CU_PLTFM)
+      return NBList::spatial;
+   else
+      return NBList::nblist;
 #else
    return NBList::nblist;
 #endif
@@ -86,7 +90,10 @@ int mlist_version()
    if (!bound::use_bounds)
       return NBList::nblist;
 #if TINKER_CUDART
-   return NBList::spatial;
+   if (platform::config & platform::CU_PLTFM)
+      return NBList::spatial;
+   else
+      return NBList::nblist;
 #else
    return NBList::nblist;
 #endif
@@ -102,7 +109,10 @@ int ulist_version()
    if (!bound::use_bounds)
       return NBList::nblist;
 #if TINKER_CUDART
-   return NBList::spatial;
+   if (platform::config & platform::CU_PLTFM)
+      return NBList::spatial;
+   else
+      return NBList::nblist;
 #else
    return NBList::nblist;
 #endif
@@ -177,7 +187,7 @@ static void nblist_alloc(int version, NBListUnit& nblu, int maxn, real cutoff,
    st.cutoff = cutoff;
    st.buffer = buffer;
 
-   nblu.update_deviceptr(st);
+   nblu.update_deviceptr(st, false);
 }
 
 
@@ -245,7 +255,6 @@ void nblist_data(rc_op op)
       mlist_unit.close();
       ulist_unit.close();
 
-      always_use_nblist = 0;
 
 #if TINKER_CUDART
       extern void thrust_cache_dealloc();
@@ -253,6 +262,7 @@ void nblist_data(rc_op op)
       thrust_cache_dealloc();
       vspatial_unit.close();
       mspatial_unit.close();
+      uspatial_unit.close();
 #endif
    }
 
@@ -326,7 +336,7 @@ void nblist_data(rc_op op)
             unt->x = x;
             unt->y = y;
             unt->z = z;
-            unt.update_deviceptr(*unt);
+            unt.update_deviceptr(*unt, false);
          }
          nblist_update(unt);
       }
@@ -344,7 +354,7 @@ void nblist_data(rc_op op)
             unt->x = x;
             unt->y = y;
             unt->z = z;
-            unt.update_deviceptr(*unt);
+            unt.update_deviceptr(*unt, false);
          }
          spatial_update(unt);
       }
@@ -373,7 +383,7 @@ void nblist_data(rc_op op)
             unt->x = x;
             unt->y = y;
             unt->z = z;
-            unt.update_deviceptr(*unt);
+            unt.update_deviceptr(*unt, false);
          }
          nblist_update(unt);
       }
@@ -394,7 +404,7 @@ void nblist_data(rc_op op)
             unt->x = x;
             unt->y = y;
             unt->z = z;
-            unt.update_deviceptr(*unt);
+            unt.update_deviceptr(*unt, false);
          }
          spatial_update(unt);
       }

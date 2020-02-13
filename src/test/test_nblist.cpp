@@ -2,6 +2,7 @@
 #include "files.h"
 #include "md.h"
 #include "nblist.h"
+#include "platform.h"
 #include "rc_man.h"
 #include "test.h"
 #include "test_rt.h"
@@ -34,7 +35,7 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]")
    test_begin_with_args(argc, argv);
 
    rc_flag = usage_;
-   always_use_nblist = 1;
+   platform::config = platform::ACC_PLTFM; // to always use nblist
    trajn = 5;
    initialize();
 

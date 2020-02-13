@@ -45,7 +45,6 @@ int dlist_version();
 int clist_version();
 int mlist_version();
 int ulist_version();
-extern int always_use_nblist;
 
 
 // size cannot be determined in @c epolar_data(...)

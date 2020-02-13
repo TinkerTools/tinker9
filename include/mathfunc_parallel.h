@@ -17,7 +17,7 @@ template <class T>
 T reduce_sum(const T* gpu_a, size_t nelem, int sync)
 {
 #if TINKER_CUDART
-   if (platform::config & platform::cu_pltfm) {
+   if (platform::config & platform::CU_PLTFM) {
       namespace nsp = platform::cu;
       return nsp::reduce_sum(gpu_a, nelem, sync);
    } else
@@ -39,7 +39,7 @@ template <class HT, size_t HN, class DPTR>
 void reduce_sum2(HT (&h_ans)[HN], DPTR v, size_t nelem, int sync)
 {
 #if TINKER_CUDART
-   if (platform::config & platform::cu_pltfm) {
+   if (platform::config & platform::CU_PLTFM) {
       namespace nsp = platform::cu;
       nsp::reduce_sum2(h_ans, v, nelem, sync);
    } else
@@ -52,7 +52,7 @@ template <class T>
 T reduce_logic_or(const T* a, size_t nelem, int sync)
 {
 #if TINKER_CUDART
-   if (platform::config & platform::cu_pltfm) {
+   if (platform::config & platform::CU_PLTFM) {
       namespace nsp = platform::cu;
       return nsp::reduce_logic_or(a, nelem, sync);
    } else
@@ -83,7 +83,7 @@ T dotprod(const T* a, const T* b, size_t nelem)
 template <class T>
 void dotprod(T* ans, const T* a, const T* b, int nelem, int sync)
 {
-   if (platform::config & platform::cu_pltfm) {
+   if (platform::config & platform::CU_PLTFM) {
       namespace nsp = platform::cu;
       nsp::dotprod(ans, a, b, nelem, sync);
    } else {

@@ -26,6 +26,7 @@ void empole_real_self_tmpl()
    const auto* mlst = mlist_unit.deviceptr();
 
    auto bufsize = buffer_size();
+   PairMPoleGrad pgrad;
 
    const PMEUnit pu = epme_unit;
    const real aewald = pu->aewald;
@@ -58,7 +59,8 @@ void empole_real_self_tmpl()
 
       int nmlsti = mlst->nlst[i];
       int base = i * maxnlst;
-      #pragma acc loop vector independent reduction(+:gxi,gyi,gzi,txi,tyi,tzi)
+      #pragma acc loop vector independent private(pgrad)\
+                  reduction(+:gxi,gyi,gzi,txi,tyi,tzi)
       for (int kk = 0; kk < nmlsti; ++kk) {
          int offset = (kk + i * n) & (bufsize - 1);
          int k = mlst->lst[base + kk];
@@ -70,7 +72,6 @@ void empole_real_self_tmpl()
          real r2 = xr * xr + yr * yr + zr * zr;
          if (r2 <= off2) {
             MAYBE_UNUSED real e;
-            MAYBE_UNUSED PairMPoleGrad pgrad;
             pair_mpole<USE, elec_t::ewald>(
                r2, xr, yr, zr, 1,                                     //
                ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, //
@@ -142,7 +143,7 @@ void empole_real_self_tmpl()
    }    // end for (int i)
 
    #pragma acc parallel deviceptr(DEVICE_PTRS_,mexclude_,mexclude_scale_)
-   #pragma acc loop independent
+   #pragma acc loop independent private(pgrad)
    for (int ii = 0; ii < nmexclude_; ++ii) {
       int offset = ii & (bufsize - 1);
 
@@ -172,7 +173,6 @@ void empole_real_self_tmpl()
       real r2 = xr * xr + yr * yr + zr * zr;
       if (r2 <= off2) {
          MAYBE_UNUSED real e;
-         MAYBE_UNUSED PairMPoleGrad pgrad;
          pair_mpole<USE, elec_t::coulomb>(                         //
             r2, xr, yr, zr, mscale,                                //
             ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, //
