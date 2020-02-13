@@ -30,7 +30,7 @@ void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
 void device_memory_copyout_bytes_sync(void* dst, const void* src, size_t nbytes,
                                       int use_sync_queue);
 void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
-                              int sync);
+                              DMFlag flag);
 void device_memory_zero_bytes(void* dst, size_t nbytes, DMFlag flag);
 void device_memory_deallocate_bytes(void* ptr);
 void device_memory_allocate_bytes(void** pptr, size_t nbytes);
@@ -86,17 +86,6 @@ void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem,
       for (size_t i = 0; i < nelem; ++i)
          dst[i] = buf[i];
    }
-}
-
-
-template <class DT, class ST>
-void device_memory_copy_1d_array(DT* dst, const ST* src, size_t nelem, int sync)
-{
-   device_memory_check_type<DT>();
-   device_memory_check_type<ST>();
-   static_assert(std::is_same<DT, ST>::value, "");
-   size_t size = sizeof(ST) * nelem;
-   device_memory_copy_bytes(dst, src, size, sync);
 }
 TINKER_NAMESPACE_END
 
@@ -200,10 +189,14 @@ struct device_array
 
 
    template <class PTR, class U>
-   static void copy(int sync, size_t nelem, PTR dst, const U* src)
+   static void copy(DMFlag flag, size_t nelem, PTR dst, const U* src)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_copy_1d_array(flatten(dst), flatten(src), nelem * N, sync);
+      using DT = typename deduce_ptr<PTR>::type;
+      using ST = typename deduce_ptr<U*>::type;
+      static_assert(std::is_same<DT, ST>::value, "");
+      size_t size = N * sizeof(ST) * nelem;
+      device_memory_copy_bytes(flatten(dst), flatten(src), size, flag);
    }
 
 

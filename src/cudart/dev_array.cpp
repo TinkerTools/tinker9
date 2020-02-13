@@ -34,16 +34,16 @@ void device_memory_copyout_bytes_sync(void* dst, const void* src, size_t nbytes,
 
 
 void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
-                              int sync)
+                              DMFlag flag)
 {
    cudaStream_t s;
-   if (sync)
+   if (flag & DM_DEFAULT_Q)
       s = nullptr;
    else
       s = nonblk;
    check_rt(cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyDeviceToDevice, s));
-   if (sync)
-      check_rt(cudaStreamSynchronize(nullptr));
+   if (flag & DM_WAIT)
+      check_rt(cudaStreamSynchronize(s));
 }
 
 

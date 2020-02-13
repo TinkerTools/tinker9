@@ -20,7 +20,7 @@ void dfield_ewald(real (*field)[3], real (*fieldp)[3])
 {
    device_array::zero(DM_NEW_Q_PROCEED, n, field, fieldp);
    dfield_ewald_recip_self(field);
-   device_array::copy(false, n, fieldp, field);
+   device_array::copy(DM_NEW_Q_PROCEED, n, fieldp, field);
    dfield_ewald_real(field, fieldp);
 }
 

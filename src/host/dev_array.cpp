@@ -17,7 +17,7 @@ void device_memory_copyout_bytes_sync(void* dst, const void* src, size_t nbytes,
 }
 
 
-void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes, int)
+void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes, DMFlag)
 {
    std::memcpy(dst, src, nbytes);
 }
