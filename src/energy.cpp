@@ -162,11 +162,11 @@ void copy_energy(int vers, real* restrict eng, real* restrict grdx,
 
    if (vers & calc::grad) {
       if (grdx && grdx != gx)
-         device_array::copy(DM_NEW_Q_PROCEED, n, grdx, gx);
+         device_array::copy(PROCEED_NEW_Q, n, grdx, gx);
       if (grdy && grdy != gy)
-         device_array::copy(DM_NEW_Q_PROCEED, n, grdy, gy);
+         device_array::copy(PROCEED_NEW_Q, n, grdy, gy);
       if (grdz && grdz != gz)
-         device_array::copy(DM_NEW_Q_PROCEED, n, grdz, gz);
+         device_array::copy(PROCEED_NEW_Q, n, grdz, gz);
    }
 
 

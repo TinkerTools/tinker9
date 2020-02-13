@@ -17,12 +17,10 @@ enum class DMFlag
 TINKER_ENABLE_ENUM_BITMASK(DMFlag);
 
 
-constexpr DMFlag DM_DEFAULT_Q = DMFlag::DEFAULT_Q;
-constexpr DMFlag DM_WAIT = DMFlag::WAIT;
-constexpr DMFlag DM_DEFAULT_Q_PROCEED = (DMFlag::DEFAULT_Q | DMFlag::PROCEED);
-constexpr DMFlag DM_DEFAULT_Q_WAIT = (DMFlag::DEFAULT_Q | DMFlag::WAIT);
-constexpr DMFlag DM_NEW_Q_PROCEED = (DMFlag::NEW_Q | DMFlag::PROCEED);
-constexpr DMFlag DM_NEW_Q_WAIT = (DMFlag::NEW_Q | DMFlag::WAIT);
+constexpr DMFlag PROCEED_DEFAULT_Q = (DMFlag::PROCEED | DMFlag::DEFAULT_Q);
+constexpr DMFlag PROCEED_NEW_Q = (DMFlag::PROCEED | DMFlag::NEW_Q);
+constexpr DMFlag WAIT_DEFAULT_Q = (DMFlag::WAIT | DMFlag::DEFAULT_Q);
+constexpr DMFlag WAIT_NEW_Q = (DMFlag::WAIT | DMFlag::NEW_Q);
 
 
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
