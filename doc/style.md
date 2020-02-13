@@ -47,7 +47,8 @@ but it never means all of these rules apply to this Tinker project.
 ## C++ Version
 Currently, code should target C++11.
 
-C++14 and C++17 are good, but the support of the toolchain to the newer standards may be limited, and more likely, be limited by the combination
+C++14 and C++17 are good, but the support of the toolchain to the newer
+standards may be limited, and more likely, be limited by the combination
 several problems, e.g., the Nvidia driver is old and cannot be updated because
 the GPU is old or it is difficult to update cluster's OS, so CUDA is limited
 to 10.0, which only supports C++14 but not C++17.
@@ -61,6 +62,42 @@ to 10.0, which only supports C++14 but not C++17.
 
 <a name='hd.selfcontained'></a>
 ### Self-contained Headers
+Header files should be self-contained (compile on their own) and end in `.h`.
+Non-header files that are meant for inclusion should end in `.hh` and be used
+sparingly.
+
+**Bad Example**
+```c++
+```c++
+// a.h: self-contained.
+struct A {};
+
+// b.h: not self-contained; a.h should have been included.
+int b(const A&);
+
+// c.cpp: compiles; won't compile if a.h is not included.
+#include "a.h"
+#include "b.h"
+int use_b(const A& a) {
+   return b(a);
+}
+```
+
+**Good Example**
+```c++
+// a.h: self-contained.
+struct A {};
+
+// b.h: self-contained.
+#include "a.h"
+int b(const A&);
+
+// c.cpp: good.
+#include "b.h"
+int use_b(const A& a) {
+   return b(a);
+}
+```
 
 <a name='hd.guard'></a>
 ### Header Guard
