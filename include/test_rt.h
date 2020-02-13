@@ -90,9 +90,9 @@ TINKER_NAMESPACE_END
    {                                                                           \
       std::vector<std::array<double, 3>> grad(n);                              \
       double* dst = &grad[0][0];                                               \
-      device_array::copyout2(false, 0, 3, n, dst, gx);                         \
-      device_array::copyout2(false, 1, 3, n, dst, gy);                         \
-      device_array::copyout2(false, 2, 3, n, dst, gz);                         \
+      device_array::copyout2(PROCEED_NEW_Q, 0, 3, n, dst, gx);                 \
+      device_array::copyout2(PROCEED_NEW_Q, 1, 3, n, dst, gy);                 \
+      device_array::copyout2(WAIT_NEW_Q, 2, 3, n, dst, gz);                    \
       for (int i = 0; i < n; ++i) {                                            \
          for (int j = 0; j < 3; ++j) {                                         \
             if (check_ij(i, j))                                                \

@@ -48,8 +48,9 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]")
    lst.resize(n * maxnlst);
 
    for (int ifr = 0;;) {
-      device_array::copyout(n, nlst.data(), vlist_unit->nlst);
-      device_array::copyout(n * maxnlst, lst.data(), vlist_unit->lst);
+      device_array::copyout(PROCEED_NEW_Q, n, nlst.data(), vlist_unit->nlst);
+      device_array::copyout(WAIT_NEW_Q, n * maxnlst, lst.data(),
+                            vlist_unit->lst);
 
       for (int iatom = 0; iatom < n; ++iatom)
          REQUIRE(find_match(&lst[iatom * maxnlst], nlst[iatom], ifr, iatom));

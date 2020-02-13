@@ -17,9 +17,9 @@ void x_testgrad(int argc, char** argv)
    energy(rc_flag);
 
    std::vector<real> gdx(n), gdy(n), gdz(n);
-   device_array::copyout(n, gdx.data(), gx);
-   device_array::copyout(n, gdy.data(), gy);
-   device_array::copyout(n, gdz.data(), gz);
+   device_array::copyout(PROCEED_NEW_Q, n, gdx.data(), gx);
+   device_array::copyout(PROCEED_NEW_Q, n, gdy.data(), gy);
+   device_array::copyout(WAIT_NEW_Q, n, gdz.data(), gz);
 
    const char* fmt_eng = "\n Total Potential Energy :{:24.4f} Kcal/mole\n\n";
    print(stdout, fmt_eng, esum);

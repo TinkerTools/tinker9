@@ -128,18 +128,18 @@ static void mdsave_dup_then_write_(int istep, real dt)
 
    epot = dup_buf_esum_;
    copyout_box_data(dup_buf_box_);
-   device_array::copyout(n, arrx.data(), dup_buf_x_);
-   device_array::copyout(n, arry.data(), dup_buf_y_);
-   device_array::copyout(n, arrz.data(), dup_buf_z_);
+   device_array::copyout(PROCEED_NEW_Q, n, arrx.data(), dup_buf_x_);
+   device_array::copyout(PROCEED_NEW_Q, n, arry.data(), dup_buf_y_);
+   device_array::copyout(WAIT_NEW_Q, n, arrz.data(), dup_buf_z_);
    for (int i = 0; i < n; ++i) {
       atoms::x[i] = arrx[i];
       atoms::y[i] = arry[i];
       atoms::z[i] = arrz[i];
    }
 
-   device_array::copyout(n, arrx.data(), dup_buf_vx_);
-   device_array::copyout(n, arry.data(), dup_buf_vy_);
-   device_array::copyout(n, arrz.data(), dup_buf_vz_);
+   device_array::copyout(PROCEED_NEW_Q, n, arrx.data(), dup_buf_vx_);
+   device_array::copyout(PROCEED_NEW_Q, n, arry.data(), dup_buf_vy_);
+   device_array::copyout(WAIT_NEW_Q, n, arrz.data(), dup_buf_vz_);
    for (int i = 0; i < n; ++i) {
       int j = 3 * i;
       moldyn::v[j] = arrx[i];
@@ -147,9 +147,9 @@ static void mdsave_dup_then_write_(int istep, real dt)
       moldyn::v[j + 2] = arrz[i];
    }
 
-   device_array::copyout(n, arrx.data(), dup_buf_gx_);
-   device_array::copyout(n, arry.data(), dup_buf_gy_);
-   device_array::copyout(n, arrz.data(), dup_buf_gz_);
+   device_array::copyout(PROCEED_NEW_Q, n, arrx.data(), dup_buf_gx_);
+   device_array::copyout(PROCEED_NEW_Q, n, arry.data(), dup_buf_gy_);
+   device_array::copyout(WAIT_NEW_Q, n, arrz.data(), dup_buf_gz_);
    // convert gradient to acceleration
    const double ekcal = units::ekcal;
    for (int i = 0; i < n; ++i) {
@@ -161,7 +161,7 @@ static void mdsave_dup_then_write_(int istep, real dt)
    }
 
    if (mdsave_use_uind_()) {
-      device_array::copyout(n, polar::uind, dup_buf_uind_);
+      device_array::copyout(WAIT_NEW_Q, n, polar::uind, dup_buf_uind_);
    }
 
    double dt1 = dt;

@@ -63,7 +63,7 @@ void box_data(rc_op op)
 void copyout_box_data(const Box* pb)
 {
    Box b;
-   device_array::copyout(1, &b, pb);
+   device_array::copyout(WAIT_NEW_Q, 1, &b, pb);
 
 
    if (bound::use_bounds) {

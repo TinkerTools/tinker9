@@ -514,7 +514,7 @@ void spatial_data_init_cu(SpatialUnit u)
    int level = 1 + floor_log2(nak - 1);
    int mnax;
    const int* mnaxptr = thrust::max_element(policy, ax_scan, ax_scan + 1 + nx);
-   device_array::copyout(1, &mnax, mnaxptr, false);
+   device_array::copyout(WAIT_NEW_Q, 1, &mnax, mnaxptr);
    while (mnax > Spatial::BLOCK) {
       device_array::deallocate(nearby, ax_scan, xkf);
 
@@ -547,7 +547,7 @@ void spatial_data_init_cu(SpatialUnit u)
                  u->yold, u->zold, //
                  nx, nearby);
       mnaxptr = thrust::max_element(policy, ax_scan, ax_scan + 1 + nx);
-      device_array::copyout(1, &mnax, mnaxptr, false);
+      device_array::copyout(WAIT_NEW_Q, 1, &mnax, mnaxptr);
    }
    // B.5
    thrust::stable_sort_by_key(policy, boxnum, boxnum + n, sorted);
