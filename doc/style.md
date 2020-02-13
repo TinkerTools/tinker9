@@ -102,9 +102,9 @@ int use_b(const A& a) {
 ### Header Guard
 All header files should have `#pragma once` guards to prevent multiple
 inclusion. Your compiler and/or machine must be **very** old if they don't
-support this feature, and Tinker won't be able to run on that machine anyway.
+support this feature, and Tinker won't be able to run on your machine anyway.
 
-Don't do this:
+Don't do this, unless you have to:
 ```cpp
 #ifndef TINKER_UNIQUE_HEADER_GUARD_WITH_FILENAME_LIKE_THIS_H
 #define TINKER_UNIQUE_HEADER_GUARD_WITH_FILENAME_LIKE_THIS_H
@@ -112,7 +112,7 @@ Don't do this:
 // Do we add underbar after the HEADER_GUARD, like HEADER_GUARD_?
 // How many _s? ZERO? ONE_? TWO__? THREE___?
 // ...
-// And they will become black holes if you update the file names.
+// And they will become black holes if you update the filenames.
 #endif
 ```
 
