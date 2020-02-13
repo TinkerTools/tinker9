@@ -99,15 +99,15 @@ static void pme_op_copyin_(PMEUnit unit)
    std::vector<double> bsmodbuf(maxfft);
    TINKER_RT(dftmod)
    (bsmodbuf.data(), bsarray.data(), &st.nfft1, &st.bsorder);
-   device_array::copyin(st.nfft1, st.bsmod1, bsmodbuf.data());
+   device_array::copyin(WAIT_NEW_Q, st.nfft1, st.bsmod1, bsmodbuf.data());
    TINKER_RT(dftmod)
    (bsmodbuf.data(), bsarray.data(), &st.nfft2, &st.bsorder);
-   device_array::copyin(st.nfft2, st.bsmod2, bsmodbuf.data());
+   device_array::copyin(WAIT_NEW_Q, st.nfft2, st.bsmod2, bsmodbuf.data());
    TINKER_RT(dftmod)
    (bsmodbuf.data(), bsarray.data(), &st.nfft3, &st.bsorder);
-   device_array::copyin(st.nfft3, st.bsmod3, bsmodbuf.data());
+   device_array::copyin(WAIT_NEW_Q, st.nfft3, st.bsmod3, bsmodbuf.data());
 
-   unit.update_deviceptr(st);
+   unit.update_deviceptr(st, WAIT_NEW_Q);
 }
 TINKER_NAMESPACE_END
 

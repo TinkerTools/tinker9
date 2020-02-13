@@ -78,13 +78,13 @@ void mdsave_data(rc_op op)
          std::vector<double> gbuf(n);
          for (int i = 0; i < n; ++i)
             gbuf[i] = -moldyn::a[3 * i] * atomid::mass[i] / units::ekcal;
-         device_array::copyin(n, gx, gbuf.data());
+         device_array::copyin(WAIT_NEW_Q, n, gx, gbuf.data());
          for (int i = 0; i < n; ++i)
             gbuf[i] = -moldyn::a[3 * i + 1] * atomid::mass[i] / units::ekcal;
-         device_array::copyin(n, gy, gbuf.data());
+         device_array::copyin(WAIT_NEW_Q, n, gy, gbuf.data());
          for (int i = 0; i < n; ++i)
             gbuf[i] = -moldyn::a[3 * i + 2] * atomid::mass[i] / units::ekcal;
-         device_array::copyin(n, gz, gbuf.data());
+         device_array::copyin(WAIT_NEW_Q, n, gz, gbuf.data());
       }
       //*/
    }

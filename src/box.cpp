@@ -51,10 +51,10 @@ void box_data(rc_op op)
       lvec2 = make_real3(l[1][0], l[1][1], l[1][2]);
       lvec3 = make_real3(l[2][0], l[2][1], l[2][2]);
 
-      device_array::copyin(3, box->lvec, boxes::lvec);
-      device_array::copyin(3, box->recip, boxes::recip);
-      device_array::copyin(1, &box->volbox, &boxes::volbox);
-      device_array::copyin(1, &box->shape, &shape);
+      device_array::copyin(WAIT_NEW_Q, 3, box->lvec, boxes::lvec);
+      device_array::copyin(WAIT_NEW_Q, 3, box->recip, boxes::recip);
+      device_array::copyin(WAIT_NEW_Q, 1, &box->volbox, &boxes::volbox);
+      device_array::copyin(WAIT_NEW_Q, 1, &box->shape, &shape);
    }
 }
 

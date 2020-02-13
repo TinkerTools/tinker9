@@ -149,8 +149,9 @@ void evdw_data(rc_op op)
       }
       nvexclude_ = excls.size();
       device_array::allocate(nvexclude_, &vexclude_, &vexclude_scale_);
-      device_array::copyin(nvexclude_, vexclude_, exclik.data());
-      device_array::copyin(nvexclude_, vexclude_scale_, excls.data());
+      device_array::copyin(WAIT_NEW_Q, nvexclude_, vexclude_, exclik.data());
+      device_array::copyin(WAIT_NEW_Q, nvexclude_, vexclude_scale_,
+                           excls.data());
 
       buffer_allocate(&nev, &ev, &vir_ev);
    }
@@ -186,10 +187,10 @@ void evdw_data(rc_op op)
          iredbuf[i] = jt;
          kredbuf[i] = vdw::kred[i];
       }
-      device_array::copyin(n, ired, iredbuf.data());
-      device_array::copyin(n, kred, kredbuf.data());
+      device_array::copyin(WAIT_NEW_Q, n, ired, iredbuf.data());
+      device_array::copyin(WAIT_NEW_Q, n, kred, kredbuf.data());
 
-      device_array::copyin(n, jvdw, jvdwbuf.data());
+      device_array::copyin(WAIT_NEW_Q, n, jvdw, jvdwbuf.data());
       njvdw = jcount;
 
       // see also kvdw.f
@@ -204,8 +205,8 @@ void evdw_data(rc_op op)
             epsvec.push_back(vdw::epsilon[offset]);
          }
       }
-      device_array::copyin(jcount * jcount, radmin, radvec.data());
-      device_array::copyin(jcount * jcount, epsilon, epsvec.data());
+      device_array::copyin(WAIT_NEW_Q, jcount * jcount, radmin, radvec.data());
+      device_array::copyin(WAIT_NEW_Q, jcount * jcount, epsilon, epsvec.data());
 
       std::vector<real> vlamvec(n);
       for (int i = 0; i < n; ++i) {
@@ -215,7 +216,7 @@ void evdw_data(rc_op op)
             vlamvec[i] = 1;
          }
       }
-      device_array::copyin(n, vlam, vlamvec.data());
+      device_array::copyin(WAIT_NEW_Q, n, vlam, vlamvec.data());
 
       // Initialize elrc and vlrc.
       const int mode_len = 6;

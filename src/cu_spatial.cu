@@ -537,7 +537,7 @@ void spatial_data_init_cu(SpatialUnit u)
       device_array::allocate(nx + 1, &ax_scan);
       device_array::allocate(nak * nxk, &xkf);
 
-      u.update_deviceptr(*u, false);
+      u.update_deviceptr(*u, PROCEED_NEW_Q);
 
       device_array::zero(PROCEED_NEW_Q, nx + 1, ax_scan);
       int ZERO_LBUF = (lbuf <= 0 ? 1 : 0);
@@ -579,7 +579,7 @@ void spatial_data_init_cu(SpatialUnit u)
       device_array::allocate(iak_size, &u->iak);
    }
    // must update the device pointer to apply the changes in xak_sum
-   u.update_deviceptr(*u, false);
+   u.update_deviceptr(*u, PROCEED_NEW_Q);
 
 
    device_array::zero(PROCEED_NEW_Q, near * xak_sum * Spatial::BLOCK,
@@ -599,6 +599,6 @@ void spatial_data_init_cu(SpatialUnit u)
                                  IntInt32Pair::Int32IsZero());  // G.7
    u->niak = thrust::get<1>(end2.get_iterator_tuple()) - lst32; // G.7
    assert((thrust::get<0>(end2.get_iterator_tuple()) - u->iak) == u->niak);
-   u.update_deviceptr(*u, false);
+   u.update_deviceptr(*u, PROCEED_NEW_Q);
 }
 TINKER_NAMESPACE_END

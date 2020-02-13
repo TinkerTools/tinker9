@@ -93,8 +93,9 @@ void empole_data(rc_op op)
       }
       nmexclude_ = excls.size();
       device_array::allocate(nmexclude_, &mexclude_, &mexclude_scale_);
-      device_array::copyin(nmexclude_, mexclude_, exclik.data());
-      device_array::copyin(nmexclude_, mexclude_scale_, excls.data());
+      device_array::copyin(WAIT_NEW_Q, nmexclude_, mexclude_, exclik.data());
+      device_array::copyin(WAIT_NEW_Q, nmexclude_, mexclude_scale_,
+                           excls.data());
 
       buffer_allocate(&nem, &em, &vir_em);
    }

@@ -7,7 +7,7 @@
 
 TINKER_NAMESPACE_BEGIN
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
-                                int sync);
+                                DMFlag flag);
 void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
                                  DMFlag flag);
 void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
@@ -30,7 +30,8 @@ void device_memory_check_type()
 
 
 template <class DT, class ST>
-void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem)
+void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem,
+                                   DMFlag flag)
 {
    device_memory_check_type<DT>();
    device_memory_check_type<ST>();
@@ -39,12 +40,12 @@ void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem)
 
    size_t size = ds * nelem;
    if (ds == ss) {
-      device_memory_copyin_bytes(dst, src, size, true);
+      device_memory_copyin_bytes(dst, src, size, flag);
    } else {
       std::vector<DT> buf(nelem);
       for (size_t i = 0; i < nelem; ++i)
          buf[i] = src[i];
-      device_memory_copyin_bytes(dst, buf.data(), size, true);
+      device_memory_copyin_bytes(dst, buf.data(), size, flag);
    }
 }
 
@@ -152,10 +153,11 @@ struct device_array
 
 
    template <class PTR, class U>
-   static void copyin(size_t nelem, PTR dst, const U* src)
+   static void copyin(DMFlag flag, size_t nelem, PTR dst, const U* src)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_copyin_1d_array(flatten(dst), flatten(src), nelem * N);
+      device_memory_copyin_1d_array(flatten(dst), flatten(src), nelem * N,
+                                    flag);
    }
 
 
@@ -181,8 +183,8 @@ struct device_array
 
 
    template <class DT, class ST>
-   static void copyin2(size_t idx0, size_t ndim, size_t nelem, DT dst,
-                       const ST src)
+   static void copyin2(DMFlag flag, size_t idx0, size_t ndim, size_t nelem,
+                       DT dst, const ST src)
    {
       static_assert(deduce_ptr<DT>::n == 1, "");
       static_assert(deduce_ptr<ST>::n == 1, "");
@@ -190,7 +192,7 @@ struct device_array
       std::vector<T> buf(nelem);
       for (size_t i = 0; i < nelem; ++i)
          buf[i] = src[ndim * i + idx0];
-      copyin(nelem, dst, buf.data());
+      copyin(flag, nelem, dst, buf.data());
    }
 
 

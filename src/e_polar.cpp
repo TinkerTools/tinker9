@@ -150,8 +150,9 @@ void epolar_data(rc_op op)
       }
       nuexclude_ = excls.size();
       device_array::allocate(nuexclude_, &uexclude_, &uexclude_scale_);
-      device_array::copyin(nuexclude_, uexclude_, exclik.data());
-      device_array::copyin(nuexclude_, uexclude_scale_, excls.data());
+      device_array::copyin(WAIT_NEW_Q, nuexclude_, uexclude_, exclik.data());
+      device_array::copyin(WAIT_NEW_Q, nuexclude_, uexclude_scale_,
+                           excls.data());
 
       d1scale = polpot::d1scale;
       d2scale = polpot::d2scale;
@@ -333,13 +334,16 @@ void epolar_data(rc_op op)
       }
       ndpuexclude_ = ik_dpu.size();
       device_array::allocate(ndpuexclude_, &dpuexclude_, &dpuexclude_scale_);
-      device_array::copyin(ndpuexclude_, dpuexclude_, dpu_ik_vec.data());
-      device_array::copyin(ndpuexclude_, dpuexclude_scale_, dpu_sc_vec.data());
+      device_array::copyin(WAIT_NEW_Q, ndpuexclude_, dpuexclude_,
+                           dpu_ik_vec.data());
+      device_array::copyin(WAIT_NEW_Q, ndpuexclude_, dpuexclude_scale_,
+                           dpu_sc_vec.data());
 
       ndpexclude_ = excls.size() / 2;
       device_array::allocate(ndpexclude_, &dpexclude_, &dpexclude_scale_);
-      device_array::copyin(ndpexclude_, dpexclude_, exclik.data());
-      device_array::copyin(ndpexclude_, dpexclude_scale_, excls.data());
+      device_array::copyin(WAIT_NEW_Q, ndpexclude_, dpexclude_, exclik.data());
+      device_array::copyin(WAIT_NEW_Q, ndpexclude_, dpexclude_scale_,
+                           excls.data());
 
       device_array::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
 
@@ -372,10 +376,10 @@ void epolar_data(rc_op op)
       for (int i = 0; i < n; ++i) {
          pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
       }
-      device_array::copyin(n, polarity, polar::polarity);
-      device_array::copyin(n, thole, polar::thole);
-      device_array::copyin(n, pdamp, polar::pdamp);
-      device_array::copyin(n, polarity_inv, pinvbuf.data());
+      device_array::copyin(WAIT_NEW_Q, n, polarity, polar::polarity);
+      device_array::copyin(WAIT_NEW_Q, n, thole, polar::thole);
+      device_array::copyin(WAIT_NEW_Q, n, pdamp, polar::pdamp);
+      device_array::copyin(WAIT_NEW_Q, n, polarity_inv, pinvbuf.data());
    }
 }
 

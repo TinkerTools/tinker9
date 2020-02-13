@@ -346,8 +346,10 @@ void emplar_data(rc_op op)
       }
       nmdpuexclude = ik_scale.size();
       device_array::allocate(nmdpuexclude, &mdpuexclude, &mdpuexclude_scale);
-      device_array::copyin(nmdpuexclude, mdpuexclude, ik_vec.data());
-      device_array::copyin(nmdpuexclude, mdpuexclude_scale, scal_vec.data());
+      device_array::copyin(WAIT_NEW_Q, nmdpuexclude, mdpuexclude,
+                           ik_vec.data());
+      device_array::copyin(WAIT_NEW_Q, nmdpuexclude, mdpuexclude_scale,
+                           scal_vec.data());
    }
 }
 TINKER_NAMESPACE_END

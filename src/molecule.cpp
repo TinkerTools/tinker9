@@ -29,17 +29,17 @@ void molecule_data(rc_op op)
          buf[j] = molcul::imol[j] - 1;
          buf[j + 1] = molcul::imol[j + 1];
       }
-      device_array::copyin(st.nmol, st.imol, buf.data());
+      device_array::copyin(WAIT_NEW_Q, st.nmol, st.imol, buf.data());
       for (int i = 0; i < n; ++i) {
          buf[i] = molcul::kmol[i] - 1;
       }
-      device_array::copyin(n, st.kmol, buf.data());
+      device_array::copyin(WAIT_NEW_Q, n, st.kmol, buf.data());
       for (int i = 0; i < n; ++i) {
          buf[i] = molcul::molcule[i] - 1;
       }
-      device_array::copyin(n, st.molecule, buf.data());
+      device_array::copyin(WAIT_NEW_Q, n, st.molecule, buf.data());
       st.totmass = molcul::totmass;
-      device_array::copyin(st.nmol, st.molmass, molcul::molmass);
+      device_array::copyin(WAIT_NEW_Q, st.nmol, st.molmass, molcul::molmass);
    }
 }
 TINKER_NAMESPACE_END

@@ -187,7 +187,7 @@ static void nblist_alloc(int version, NBListUnit& nblu, int maxn, real cutoff,
    st.cutoff = cutoff;
    st.buffer = buffer;
 
-   nblu.update_deviceptr(st, false);
+   nblu.update_deviceptr(st, WAIT_NEW_Q);
 }
 
 
@@ -336,7 +336,7 @@ void nblist_data(rc_op op)
             unt->x = x;
             unt->y = y;
             unt->z = z;
-            unt.update_deviceptr(*unt, false);
+            unt.update_deviceptr(*unt, PROCEED_NEW_Q);
          }
          nblist_update(unt);
       }
@@ -354,7 +354,7 @@ void nblist_data(rc_op op)
             unt->x = x;
             unt->y = y;
             unt->z = z;
-            unt.update_deviceptr(*unt, false);
+            unt.update_deviceptr(*unt, PROCEED_NEW_Q);
          }
          spatial_update(unt);
       }
@@ -383,7 +383,7 @@ void nblist_data(rc_op op)
             unt->x = x;
             unt->y = y;
             unt->z = z;
-            unt.update_deviceptr(*unt, false);
+            unt.update_deviceptr(*unt, PROCEED_NEW_Q);
          }
          nblist_update(unt);
       }
@@ -404,7 +404,7 @@ void nblist_data(rc_op op)
             unt->x = x;
             unt->y = y;
             unt->z = z;
-            unt.update_deviceptr(*unt, false);
+            unt.update_deviceptr(*unt, PROCEED_NEW_Q);
          }
          spatial_update(unt);
       }

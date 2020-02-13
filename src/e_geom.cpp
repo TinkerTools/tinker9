@@ -27,8 +27,8 @@ void egeom_data(rc_op op)
 
 
    if (op & rc_init) {
-      device_array::copyin(ngfix, igfix, restrn::igfix);
-      device_array::copyin(ngfix, gfix, restrn::gfix);
+      device_array::copyin(WAIT_NEW_Q, ngfix, igfix, restrn::igfix);
+      device_array::copyin(WAIT_NEW_Q, ngfix, gfix, restrn::gfix);
    }
 }
 

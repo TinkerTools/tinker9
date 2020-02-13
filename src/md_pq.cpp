@@ -61,9 +61,9 @@ void xyz_data(rc_op op)
    }
 
    if (op & rc_init) {
-      device_array::copyin(n, x, atoms::x);
-      device_array::copyin(n, y, atoms::y);
-      device_array::copyin(n, z, atoms::z);
+      device_array::copyin(PROCEED_NEW_Q, n, x, atoms::x);
+      device_array::copyin(PROCEED_NEW_Q, n, y, atoms::y);
+      device_array::copyin(WAIT_NEW_Q, n, z, atoms::z);
    }
 }
 
@@ -81,9 +81,9 @@ void vel_data(rc_op op)
    }
 
    if (op & rc_init) {
-      device_array::copyin2(0, 3, n, vx, moldyn::v);
-      device_array::copyin2(1, 3, n, vy, moldyn::v);
-      device_array::copyin2(2, 3, n, vz, moldyn::v);
+      device_array::copyin2(PROCEED_NEW_Q, 0, 3, n, vx, moldyn::v);
+      device_array::copyin2(PROCEED_NEW_Q, 1, 3, n, vy, moldyn::v);
+      device_array::copyin2(WAIT_NEW_Q, 2, 3, n, vz, moldyn::v);
    }
 }
 
@@ -101,11 +101,11 @@ void mass_data(rc_op op)
    }
 
    if (op & rc_init) {
-      device_array::copyin(n, mass, atomid::mass);
       std::vector<double> mbuf(n);
       for (int i = 0; i < n; ++i)
          mbuf[i] = 1 / atomid::mass[i];
-      device_array::copyin(n, massinv, mbuf.data());
+      device_array::copyin(PROCEED_NEW_Q, n, massinv, mbuf.data());
+      device_array::copyin(WAIT_NEW_Q, n, mass, atomid::mass);
    }
 }
 
@@ -245,11 +245,11 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
                shape = Box::oct;
             bbuf2[i].shape = shape;
          }
-         device_array::copyin(tn, trajbox, bbuf2.data());
+         device_array::copyin(WAIT_NEW_Q, tn, trajbox, bbuf2.data());
       }
-      device_array::copyin(n * tn, trajx, xbuf.data());
-      device_array::copyin(n * tn, trajy, ybuf.data());
-      device_array::copyin(n * tn, trajz, zbuf.data());
+      device_array::copyin(PROCEED_NEW_Q, n * tn, trajx, xbuf.data());
+      device_array::copyin(PROCEED_NEW_Q, n * tn, trajy, ybuf.data());
+      device_array::copyin(WAIT_NEW_Q, n * tn, trajz, zbuf.data());
    } else {
       std::string msg = "Cannot Open File ";
       msg += arcfile;

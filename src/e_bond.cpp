@@ -39,9 +39,9 @@ void ebond_data(rc_op op)
       for (size_t i = 0; i < ibndvec.size(); ++i) {
          ibndvec[i] = bndstr::ibnd[i] - 1;
       }
-      device_array::copyin(nbond, ibnd, ibndvec.data());
-      device_array::copyin(nbond, bl, bndstr::bl);
-      device_array::copyin(nbond, bk, bndstr::bk);
+      device_array::copyin(WAIT_NEW_Q, nbond, ibnd, ibndvec.data());
+      device_array::copyin(WAIT_NEW_Q, nbond, bl, bndstr::bl);
+      device_array::copyin(WAIT_NEW_Q, nbond, bk, bndstr::bk);
    }
 }
 

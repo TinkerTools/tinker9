@@ -38,8 +38,6 @@ void initialize()
    rc_op op = static_cast<rc_op>(rc_alloc | rc_init);
    host_data(op);
    device_data(op);
-
-   wait_queue();
 }
 
 

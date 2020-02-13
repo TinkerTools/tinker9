@@ -30,8 +30,8 @@ void estrbnd_data(rc_op op)
       for (int i = 0; i < 3 * nangle; ++i) {
          ibuf[i] = strbnd::isb[i] - 1;
       }
-      device_array::copyin(nangle, isb, ibuf.data());
-      device_array::copyin(nangle, sbk, strbnd::sbk);
+      device_array::copyin(WAIT_NEW_Q, nangle, isb, ibuf.data());
+      device_array::copyin(WAIT_NEW_Q, nangle, sbk, strbnd::sbk);
 
       stbnunit = angpot::stbnunit;
    }

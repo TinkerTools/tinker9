@@ -29,13 +29,13 @@ void etors_data(rc_op op)
       for (int i = 0; i < 4 * ntors; ++i) {
          ibuf[i] = tors::itors[i] - 1;
       }
-      device_array::copyin(ntors, itors, ibuf.data());
-      device_array::copyin(ntors, tors1, tors::tors1);
-      device_array::copyin(ntors, tors2, tors::tors2);
-      device_array::copyin(ntors, tors3, tors::tors3);
-      device_array::copyin(ntors, tors4, tors::tors4);
-      device_array::copyin(ntors, tors5, tors::tors5);
-      device_array::copyin(ntors, tors6, tors::tors6);
+      device_array::copyin(WAIT_NEW_Q, ntors, itors, ibuf.data());
+      device_array::copyin(WAIT_NEW_Q, ntors, tors1, tors::tors1);
+      device_array::copyin(WAIT_NEW_Q, ntors, tors2, tors::tors2);
+      device_array::copyin(WAIT_NEW_Q, ntors, tors3, tors::tors3);
+      device_array::copyin(WAIT_NEW_Q, ntors, tors4, tors::tors4);
+      device_array::copyin(WAIT_NEW_Q, ntors, tors5, tors::tors5);
+      device_array::copyin(WAIT_NEW_Q, ntors, tors6, tors::tors6);
       torsunit = torpot::torsunit;
    }
 }

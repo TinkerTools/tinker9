@@ -42,21 +42,21 @@ void group_data(rc_op op)
       for (int i = 0; i < n; ++i) {
          buf[i] = group::kgrp[i] - 1;
       }
-      device_array::copyin(n, st.kgrp, buf.data());
+      device_array::copyin(WAIT_NEW_Q, n, st.kgrp, buf.data());
 
       for (int i = 0; i < n; ++i) {
          buf[i] = group::grplist[i];
       }
-      device_array::copyin(n, st.grplist, buf.data());
+      device_array::copyin(WAIT_NEW_Q, n, st.grplist, buf.data());
 
       for (int i = 0; i <= st.ngrp; ++i) {
          int j = 2 * i;
          buf[j] = group::igrp[j] - 1;
          buf[j + 1] = group::igrp[j + 1];
       }
-      device_array::copyin(st.ngrp + 1, st.igrp, buf.data());
+      device_array::copyin(WAIT_NEW_Q, st.ngrp + 1, st.igrp, buf.data());
 
-      device_array::copyin(st.ngrp + 1, st.grpmass, group::grpmass);
+      device_array::copyin(WAIT_NEW_Q, st.ngrp + 1, st.grpmass, group::grpmass);
 
       std::vector<real> wgrpv((1 + st.ngrp) * (1 + st.ngrp));
       for (int i = 0; i <= st.ngrp; ++i) {
@@ -66,7 +66,7 @@ void group_data(rc_op op)
             wgrpv[i + j * (1 + st.ngrp)] = wg;
          }
       }
-      device_array::copyin(wgrpv.size(), st.wgrp, wgrpv.data());
+      device_array::copyin(WAIT_NEW_Q, wgrpv.size(), st.wgrp, wgrpv.data());
    }
 }
 TINKER_NAMESPACE_END

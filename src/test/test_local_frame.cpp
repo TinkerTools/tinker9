@@ -326,8 +326,8 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]")
             up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
          }
       }
-      device_array::copyin(n, uind, &ud[0][0]);
-      device_array::copyin(n, uinp, &up[0][0]);
+      device_array::copyin(PROCEED_NEW_Q, n, uind, &ud[0][0]);
+      device_array::copyin(WAIT_NEW_Q, n, uinp, &up[0][0]);
       ufield_coulomb(uind, uinp, udir, udirp);
       ud.resize(n);
       up.resize(n);
@@ -543,8 +543,8 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
             up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
          }
       }
-      device_array::copyin(n, uind, &ud[0][0]);
-      device_array::copyin(n, uinp, &up[0][0]);
+      device_array::copyin(PROCEED_NEW_Q, n, uind, &ud[0][0]);
+      device_array::copyin(WAIT_NEW_Q, n, uinp, &up[0][0]);
       ufield_ewald(uind, uinp, udir, udirp);
       ud.resize(n);
       up.resize(n);

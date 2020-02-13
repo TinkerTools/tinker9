@@ -7,16 +7,16 @@
 
 TINKER_NAMESPACE_BEGIN
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
-                                int sync)
+                                DMFlag flag)
 {
    cudaStream_t s;
-   if (sync)
+   if (flag & DMFlag::DEFAULT_Q)
       s = nullptr;
    else
       s = nonblk;
    check_rt(cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyHostToDevice, s));
-   if (sync)
-      check_rt(cudaStreamSynchronize(nullptr));
+   if (flag & DMFlag::WAIT)
+      check_rt(cudaStreamSynchronize(s));
 }
 
 

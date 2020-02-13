@@ -4,7 +4,8 @@
 
 
 TINKER_NAMESPACE_BEGIN
-void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes, int)
+void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
+                                DMFlag)
 {
    std::memcpy(dst, src, nbytes);
 }

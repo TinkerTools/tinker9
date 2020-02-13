@@ -35,8 +35,8 @@ void cudalib_data(rc_op op)
    if (op & rc_alloc) {
       async_queue = acc_get_default_async();
       nonblk = (cudaStream_t)acc_get_cuda_stream(async_queue);
-      check_rt(cublasCreate(&h_cublas));
-      check_rt(cublasCreate(&h_cublas_nonblk));
+      check_rt(cublasCreate(&h_cublas));        // calls cudaMemcpy [sync] here
+      check_rt(cublasCreate(&h_cublas_nonblk)); // calls cudaMemcpy [sync] here
       check_rt(cublasSetStream(h_cublas_nonblk, nonblk));
       // set pointer mode for cublas dot kernels
       cublasPointerMode_t ptrflag = CUBLAS_POINTER_MODE_DEVICE;
@@ -52,17 +52,12 @@ void cudalib_data(rc_op op)
 }
 
 
-void wait_queue()
-{
-#if TINKER_CUDART
-#pragma acc wait(async_queue)
-#endif
-}
-
-
 void wait_queue(DMFlag flag)
 {
-   if ((flag & DMFlag::WAIT) && !(flag & DMFlag::DEFAULT_Q))
-      wait_queue();
+#if TINKER_CUDART
+   if ((flag & DMFlag::WAIT) && !(flag & DMFlag::DEFAULT_Q)) {
+      #pragma acc wait(async_queue)
+   }
+#endif
 }
 TINKER_NAMESPACE_END

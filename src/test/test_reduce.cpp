@@ -78,13 +78,13 @@ TEST_CASE("CUDAReduce", "[util][math][reduce]")
 
    device_array::allocate(N, &di, &df, &dd, &du);
    device_array::allocate(N, &df2, &dd2, &du2);
-   device_array::copyin(N, di, vi.data());
-   device_array::copyin(N, df, vf.data());
-   device_array::copyin(N, dd, vd.data());
-   device_array::copyin(N, du, vu.data());
-   device_array::copyin(N, df2, vf2.data());
-   device_array::copyin(N, dd2, vd2.data());
-   device_array::copyin(N, du2, vu2.data());
+   device_array::copyin(PROCEED_NEW_Q, N, di, vi.data());
+   device_array::copyin(PROCEED_NEW_Q, N, df, vf.data());
+   device_array::copyin(PROCEED_NEW_Q, N, dd, vd.data());
+   device_array::copyin(PROCEED_NEW_Q, N, du, vu.data());
+   device_array::copyin(PROCEED_NEW_Q, N, df2, vf2.data());
+   device_array::copyin(PROCEED_NEW_Q, N, dd2, vd2.data());
+   device_array::copyin(WAIT_NEW_Q, N, du2, vu2.data());
 
 
    ai = parallel::reduce_sum(di, N, false);

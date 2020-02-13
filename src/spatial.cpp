@@ -59,6 +59,6 @@ void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer,
    st.y = y;
    st.z = z;
 
-   u.update_deviceptr(st, false);
+   u.update_deviceptr(st, WAIT_NEW_Q);
 }
 TINKER_NAMESPACE_END
