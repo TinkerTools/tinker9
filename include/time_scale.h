@@ -31,7 +31,7 @@ TINKER_NAMESPACE_BEGIN
  * (slow), of energy terms in the RESPA integrator. If one decides to assign 3
  * and 5 to these two groups, respectively, `tsconfig.at("ebond")` must return 3
  * and `tsconfig.at("evdw")` must return 5.
- * 
+ *
  * The value of `tsflag` shall be:
  *    - 8 (\f$ 2^3 \f$) for only the fast terms;
  *    - 32 (\f$ 2^5 \f$) for only the slow terms;
@@ -40,7 +40,7 @@ TINKER_NAMESPACE_BEGIN
  * \note To use a new energy term in an existing integrator, the force field
  * developers are responsible to update the time scale configuration of this
  * integrator.
- * 
+ *
  * \todo Add or modify time scale configurations by keywords, e.g.
  * `"TIME-SCALE respa vdwterm 0"`.
  */

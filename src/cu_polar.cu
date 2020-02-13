@@ -440,7 +440,7 @@ void epolar_tmpl_cu(const real (*uind)[3], const real (*uinp)[3])
 
 
    if CONSTEXPR (do_g) {
-      device_array::zero(false, n, ufld, dufld);
+      device_array::zero(DM_NEW_Q_PROCEED, n, ufld, dufld);
    }
    if (st.niak > 0) {
       auto ker1 = epolar_cu1<USE, ETYP>;

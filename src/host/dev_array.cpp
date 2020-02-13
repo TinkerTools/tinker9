@@ -23,7 +23,7 @@ void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes, int)
 }
 
 
-void device_memory_zero_bytes(void* dst, size_t nbytes, int)
+void device_memory_zero_bytes(void* dst, size_t nbytes, DMFlag)
 {
    std::memset(dst, 0, nbytes);
 }

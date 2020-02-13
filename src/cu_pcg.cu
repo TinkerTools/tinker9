@@ -123,7 +123,7 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
 
 
    // zero out the induced dipoles at each site
-   device_array::zero(false, n, uind, uinp);
+   device_array::zero(DM_NEW_Q_PROCEED, n, uind, uinp);
 
 
    // get the electrostatic field due to permanent multipoles

@@ -1,17 +1,37 @@
 #pragma once
 #include "deduce_ptr.h"
+#include "enum_op.h"
 #include "mathfunc.h"
 #include <vector>
 
 
 TINKER_NAMESPACE_BEGIN
+enum class DMFlag
+{
+   DEFAULT_Q = 0x01, // vs. NEW_Q
+   NEW_Q = 0x00,
+
+   WAIT = 0x02, // vs. PROCEED
+   PROCEED = 0x00,
+};
+TINKER_ENABLE_ENUM_BITMASK(DMFlag);
+
+
+constexpr DMFlag DM_DEFAULT_Q = DMFlag::DEFAULT_Q;
+constexpr DMFlag DM_WAIT = DMFlag::WAIT;
+constexpr DMFlag DM_DEFAULT_Q_PROCEED = (DMFlag::DEFAULT_Q | DMFlag::PROCEED);
+constexpr DMFlag DM_DEFAULT_Q_WAIT = (DMFlag::DEFAULT_Q | DMFlag::WAIT);
+constexpr DMFlag DM_NEW_Q_PROCEED = (DMFlag::NEW_Q | DMFlag::PROCEED);
+constexpr DMFlag DM_NEW_Q_WAIT = (DMFlag::NEW_Q | DMFlag::WAIT);
+
+
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
                                 int sync);
 void device_memory_copyout_bytes_sync(void* dst, const void* src, size_t nbytes,
                                       int use_sync_queue);
 void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
                               int sync);
-void device_memory_zero_bytes(void* dst, size_t nbytes, int sync);
+void device_memory_zero_bytes(void* dst, size_t nbytes, DMFlag flag);
 void device_memory_deallocate_bytes(void* ptr);
 void device_memory_allocate_bytes(void** pptr, size_t nbytes);
 TINKER_NAMESPACE_END
@@ -145,19 +165,19 @@ struct device_array
 
 
    template <class PTR>
-   static void zero(int sync, size_t nelem, PTR p)
+   static void zero(DMFlag flag, size_t nelem, PTR p)
    {
       typedef typename deduce_ptr<PTR>::type T;
       constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_zero_bytes(flatten(p), sizeof(T) * nelem * N, sync);
+      device_memory_zero_bytes(flatten(p), sizeof(T) * nelem * N, flag);
    }
 
 
    template <class PTR, class... PTRS>
-   static void zero(int sync, size_t nelem, PTR p, PTRS... ps)
+   static void zero(DMFlag flag, size_t nelem, PTR p, PTRS... ps)
    {
-      zero(sync, nelem, p);
-      zero(sync, nelem, ps...);
+      zero(flag, nelem, p);
+      zero(flag, nelem, ps...);
    }
 
 

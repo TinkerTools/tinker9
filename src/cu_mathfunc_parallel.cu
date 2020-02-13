@@ -103,7 +103,7 @@ void dotprod<float>(float* ans, const float* a, const float* b, int nelem,
                         &alpha, a, 1, b, 1,                        //
                         &beta, ans, 1));
 #else
-   check_rt(cublasSdot(hd, nelem, a, 1, b, 1, ans)); 
+   check_rt(cublasSdot(hd, nelem, a, 1, b, 1, ans));
 #endif
    if (sync)
       check_rt(cudaStreamSynchronize(nullptr));
@@ -121,7 +121,7 @@ void dotprod<double>(double* ans, const double* a, const double* b, int nelem,
                         &alpha, a, 1, b, 1,                        //
                         &beta, ans, 1));
 #else
-   check_rt(cublasDdot(hd, nelem, a, 1, b, 1, ans)); 
+   check_rt(cublasDdot(hd, nelem, a, 1, b, 1, ans));
 #endif
    if (sync)
       check_rt(cudaStreamSynchronize(nullptr));

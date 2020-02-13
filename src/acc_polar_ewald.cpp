@@ -19,7 +19,7 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
    sanity_check<USE>();
 
    if CONSTEXPR (do_g)
-      device_array::zero(false, n, ufld, dufld);
+      device_array::zero(DM_NEW_Q_PROCEED, n, ufld, dufld);
 
    const real off = mlist_unit->cutoff;
    const real off2 = off * off;

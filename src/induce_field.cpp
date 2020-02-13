@@ -18,7 +18,7 @@ void dfield_ewald_real(real (*field)[3], real (*fieldp)[3])
 
 void dfield_ewald(real (*field)[3], real (*fieldp)[3])
 {
-   device_array::zero(false, n, field, fieldp);
+   device_array::zero(DM_NEW_Q_PROCEED, n, field, fieldp);
    dfield_ewald_recip_self(field);
    device_array::copy(false, n, fieldp, field);
    dfield_ewald_real(field, fieldp);
@@ -65,7 +65,7 @@ void ufield_ewald_real(const real (*uind)[3], const real (*uinp)[3],
 void ufield_ewald(const real (*uind)[3], const real (*uinp)[3],
                   real (*field)[3], real (*fieldp)[3])
 {
-   device_array::zero(false, n, field, fieldp);
+   device_array::zero(DM_NEW_Q_PROCEED, n, field, fieldp);
    ufield_ewald_recip_self(uind, uinp, field, fieldp);
    ufield_ewald_real(uind, uinp, field, fieldp);
 }

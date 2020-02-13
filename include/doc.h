@@ -22,8 +22,6 @@
  */
 
 
-
-
 /**
  * \defgroup egv        Energies, Gradients, Virials, and Counts
  * \ingroup md

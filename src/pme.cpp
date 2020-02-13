@@ -117,7 +117,7 @@ void pme_init(int vers)
    rpole_to_cmp();
 
    if (vir_m)
-      device_array::zero(false, buffer_size(), vir_m);
+      device_array::zero(DM_NEW_Q_PROCEED, buffer_size(), vir_m);
 }
 
 static void pme_data1_(rc_op op)
