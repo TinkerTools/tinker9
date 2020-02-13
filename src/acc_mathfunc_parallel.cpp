@@ -1,6 +1,7 @@
 #include "acclib.h"
 #include "deduce_ptr.h"
 #include "mathfunc_parallel_acc.h"
+#include "wait_queue.h"
 
 
 TINKER_NAMESPACE_BEGIN
@@ -124,9 +125,9 @@ template void dotprod(double*, const double*, const double*, int, int);
 
 
 template <class T>
-void scale_array(T* gpu_dst, T scal, size_t nelem, int sync)
+void scale_array(T* gpu_dst, T scal, size_t nelem, DMFlag flag)
 {
-   if (sync) {
+   if (flag & DMFlag::DEFAULT_Q) {
       #pragma acc parallel loop independent deviceptr(gpu_dst)
       for (size_t i = 0; i < nelem; ++i) {
          gpu_dst[i] *= scal;
@@ -137,9 +138,12 @@ void scale_array(T* gpu_dst, T scal, size_t nelem, int sync)
          gpu_dst[i] *= scal;
       }
    }
+   // if (flag & DMFlag::WAIT) {
+   wait_queue(flag);
+   // }
 }
-template void scale_array(float*, float, size_t, int);
-template void scale_array(double*, double, size_t, int);
+template void scale_array(float*, float, size_t, DMFlag);
+template void scale_array(double*, double, size_t, DMFlag);
 }
 }
 TINKER_NAMESPACE_END

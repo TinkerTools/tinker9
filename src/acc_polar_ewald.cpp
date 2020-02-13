@@ -437,7 +437,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
    //    end do
    // end do
    // Notice that only 10 * n elements were scaled in the original code.
-   device_array::scale(false, n, 0.5f * f, fphidp);
+   device_array::scale(PROCEED_NEW_Q, n, 0.5f * f, fphidp);
    fphi_to_cphi(pu, fphidp, cphidp);
 
    // recip and self torques
@@ -502,7 +502,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
          vir_ep[0][i] -= vir_m[0][i];
       }
 
-      device_array::scale(false, n, f, cphi, fphid, fphip);
+      device_array::scale(PROCEED_NEW_Q, n, f, cphi, fphid, fphip);
 
       #pragma acc parallel loop independent async\
                   deviceptr(vir_ep,box,cmp,\

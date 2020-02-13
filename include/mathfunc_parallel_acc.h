@@ -1,4 +1,5 @@
 #pragma once
+#include "dmflag.h"
 #include "macro.h"
 #include <cstddef>
 
@@ -27,7 +28,7 @@ void dotprod(T* ans, const T* a, const T* b, int nelem, int sync);
 
 
 template <class T>
-void scale_array(T* dst, T scal, size_t nelem, int sync);
+void scale_array(T* dst, T scal, size_t nelem, DMFlag flag);
 }
 }
 TINKER_NAMESPACE_END

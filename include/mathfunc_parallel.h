@@ -100,10 +100,10 @@ void dotprod(T* ans, const T* a, const T* b, int nelem, int sync)
  * \f[ a_i = c \cdot a_i \f]
  */
 template <class T>
-void scale_array(T* dst, T scal, size_t nelem, int sync)
+void scale_array(T* dst, T scal, size_t nelem, DMFlag flag)
 {
    namespace nsp = platform::acc;
-   return nsp::scale_array(dst, scal, nelem, sync);
+   return nsp::scale_array(dst, scal, nelem, flag);
 }
 }
 TINKER_NAMESPACE_END

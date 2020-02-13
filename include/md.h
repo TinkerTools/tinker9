@@ -153,6 +153,4 @@ constexpr unsigned RESPA_FAST = 1; // 2**0, fast group shall be 0.
 constexpr unsigned RESPA_SLOW = 2; // 2**1, slow group shall be 1.
 TINKER_EXTERN real *gx1, *gy1, *gz1;
 TINKER_EXTERN real *gx2, *gy2, *gz2;
-
-void wait_queue();
 TINKER_NAMESPACE_END

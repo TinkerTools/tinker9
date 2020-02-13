@@ -1,5 +1,6 @@
 #include "acclib.h"
 #include "cudalib.h"
+#include "wait_queue.h"
 #if TINKER_CUDART
 #   include "error.h"
 #   include "gpu_card.h"
@@ -56,5 +57,12 @@ void wait_queue()
 #if TINKER_CUDART
 #pragma acc wait(async_queue)
 #endif
+}
+
+
+void wait_queue(DMFlag flag)
+{
+   if ((flag & DMFlag::WAIT) && !(flag & DMFlag::DEFAULT_Q))
+      wait_queue();
 }
 TINKER_NAMESPACE_END

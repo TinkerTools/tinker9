@@ -1,28 +1,11 @@
 #pragma once
 #include "deduce_ptr.h"
-#include "enum_op.h"
+#include "dmflag.h"
 #include "mathfunc.h"
 #include <vector>
 
 
 TINKER_NAMESPACE_BEGIN
-enum class DMFlag
-{
-   DEFAULT_Q = 0x01, // vs. NEW_Q
-   NEW_Q = 0x00,
-
-   WAIT = 0x02, // vs. PROCEED
-   PROCEED = 0x00,
-};
-TINKER_ENABLE_ENUM_BITMASK(DMFlag);
-
-
-constexpr DMFlag PROCEED_DEFAULT_Q = (DMFlag::PROCEED | DMFlag::DEFAULT_Q);
-constexpr DMFlag PROCEED_NEW_Q = (DMFlag::PROCEED | DMFlag::NEW_Q);
-constexpr DMFlag WAIT_DEFAULT_Q = (DMFlag::WAIT | DMFlag::DEFAULT_Q);
-constexpr DMFlag WAIT_NEW_Q = (DMFlag::WAIT | DMFlag::NEW_Q);
-
-
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
                                 int sync);
 void device_memory_copyout_bytes_sync(void* dst, const void* src, size_t nbytes,
@@ -253,19 +236,19 @@ struct device_array
 
 
    template <class FLT, class PTR>
-   static void scale(int sync, size_t nelem, FLT scal, PTR ptr)
+   static void scale(DMFlag flag, size_t nelem, FLT scal, PTR ptr)
    {
       typedef typename deduce_ptr<PTR>::type T;
       constexpr size_t N = deduce_ptr<PTR>::n;
-      parallel::scale_array(flatten(ptr), scal, nelem * N, sync);
+      parallel::scale_array(flatten(ptr), scal, nelem * N, flag);
    }
 
 
    template <class FLT, class PTR, class... PTRS>
-   static void scale(int sync, size_t nelem, FLT scal, PTR ptr, PTRS... ptrs)
+   static void scale(DMFlag flag, size_t nelem, FLT scal, PTR ptr, PTRS... ptrs)
    {
-      scale(sync, nelem, scal, ptr);
-      scale(sync, nelem, scal, ptrs...);
+      scale(flag, nelem, scal, ptr);
+      scale(flag, nelem, scal, ptrs...);
    }
 };
 

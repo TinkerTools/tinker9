@@ -1,4 +1,5 @@
 #include "rc_man.h"
+#include "wait_queue.h"
 
 
 TINKER_NAMESPACE_BEGIN
@@ -38,7 +39,6 @@ void initialize()
    host_data(op);
    device_data(op);
 
-   extern void wait_queue();
    wait_queue();
 }
 
