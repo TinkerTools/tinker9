@@ -13,7 +13,7 @@ TINKER_NAMESPACE_BEGIN
 namespace platform {
 namespace cu {
 template <class T, class Op>
-void reduce_to_dptr(const T* a, size_t nelem, int sync)
+void reduce_to_dptr(const T* a, size_t nelem, bool sync)
 {
    cudaStream_t st = (sync ? nullptr : nonblk);
    T* dptr = (T*)dptr_real64;
@@ -26,27 +26,31 @@ void reduce_to_dptr(const T* a, size_t nelem, int sync)
 
 
 template <class T, class Op>
-T reduce_general(const T* a, size_t nelem, int sync)
+T reduce_general(const T* a, size_t nelem, DMFlag flag)
 {
+   bool sync = flag & DMFlag::DEFAULT_Q;
    cudaStream_t st = (sync ? nullptr : nonblk);
    T* dptr = (T*)dptr_real64;
    T* hptr = (T*)pinned_real64;
    reduce_to_dptr<T, Op>(a, nelem, sync);
    check_rt(cudaMemcpyAsync(hptr, dptr, sizeof(T), cudaMemcpyDeviceToHost, st));
+   // always wait
+   assert(flag & DMFlag::WAIT);
    check_rt(cudaStreamSynchronize(st));
    return *hptr;
 }
 
 
 template <class T>
-T reduce_sum(const T* a, size_t nelem, int sync)
+T reduce_sum(const T* a, size_t nelem, DMFlag flag)
 {
-   return reduce_general<T, OpPlus<T>>(a, nelem, sync);
+   return reduce_general<T, OpPlus<T>>(a, nelem, flag);
 }
-template int reduce_sum(const int*, size_t, int);
-template float reduce_sum(const float*, size_t, int);
-template double reduce_sum(const double*, size_t, int);
-template unsigned long long reduce_sum(const unsigned long long*, size_t, int);
+template int reduce_sum(const int*, size_t, DMFlag);
+template float reduce_sum(const float*, size_t, DMFlag);
+template double reduce_sum(const double*, size_t, DMFlag);
+template unsigned long long reduce_sum(const unsigned long long*, size_t,
+                                       DMFlag);
 
 
 template <class HT, size_t HN, class DPTR>
@@ -85,11 +89,11 @@ template void reduce_sum2(unsigned long long (&)[6], unsigned long long (*)[8],
 
 
 template <class T>
-T reduce_logic_or(const T* a, size_t nelem, int sync)
+T reduce_logic_or(const T* a, size_t nelem, DMFlag flag)
 {
-   return reduce_general<T, OpLogicOr<T>>(a, nelem, sync);
+   return reduce_general<T, OpLogicOr<T>>(a, nelem, flag);
 }
-template int reduce_logic_or(const int*, size_t, int);
+template int reduce_logic_or(const int*, size_t, DMFlag);
 
 
 template <>

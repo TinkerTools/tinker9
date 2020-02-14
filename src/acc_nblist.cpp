@@ -61,7 +61,7 @@ void check_nblist(int n, real lbuf, const Box* restrict box,
                   real* restrict xold, real* restrict yold, real* restrict zold)
 {
    const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(box,update,x,y,z,xold,yold,zold)
    for (int i = 0; i < n; ++i) {
       real xi = x[i];
@@ -103,7 +103,7 @@ int check_spatial(int n, real lbuf, const Box* restrict box,
       real r2 = xr * xr + yr * yr + zr * zr;
       update[i] = (r2 >= lbuf2 ? 1 : 0);
    }
-   int ans = parallel::reduce_logic_or(update, n, false);
+   int ans = parallel::reduce_logic_or(update, n, WAIT_NEW_Q);
    return ans;
 }
 
@@ -113,7 +113,7 @@ int check_spatial(int n, real lbuf, const Box* restrict box,
 inline void build_double_loop_(NBListUnit nu)
 {
    auto* lst = nu.deviceptr();
-   #pragma acc parallel loop independent deviceptr(lst)
+   #pragma acc parallel loop independent async deviceptr(lst)
    for (int i = 0; i < n; ++i) {
       lst->nlst[i] = n - i - 1;
       lst->lst[i] = i + 1;
@@ -142,7 +142,7 @@ inline void build_v1_(NBListUnit nu)
    auto* restrict lst = st.lst;
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
-   #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+   #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                deviceptr(box,lx,ly,lz,xo,yo,zo,nlst,lst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -191,7 +191,7 @@ inline void update_v1_(NBListUnit nu)
    const real buf2 = (st.cutoff + st.buffer) * (st.cutoff + st.buffer);
    const real bufx = (st.cutoff + 2 * st.buffer) * (st.cutoff + 2 * st.buffer);
 
-   #pragma acc kernels deviceptr(lst,box)
+   #pragma acc kernels async deviceptr(lst,box)
    {
       #pragma acc loop independent
       for (int i = 0; i < n; ++i) {

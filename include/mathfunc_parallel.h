@@ -14,15 +14,15 @@ namespace parallel {
  * \return The sum.
  */
 template <class T>
-T reduce_sum(const T* gpu_a, size_t nelem, int sync)
+T reduce_sum(const T* gpu_a, size_t nelem, DMFlag flag)
 {
 #if TINKER_CUDART
    if (platform::config & platform::CU_PLTFM) {
       namespace nsp = platform::cu;
-      return nsp::reduce_sum(gpu_a, nelem, sync);
+      return nsp::reduce_sum(gpu_a, nelem, flag);
    } else
 #endif
-      return platform::acc::reduce_sum(gpu_a, nelem, sync);
+      return platform::acc::reduce_sum(gpu_a, nelem, flag);
 }
 
 
@@ -49,15 +49,15 @@ void reduce_sum2(HT (&h_ans)[HN], DPTR v, size_t nelem, int sync)
 
 
 template <class T>
-T reduce_logic_or(const T* a, size_t nelem, int sync)
+T reduce_logic_or(const T* a, size_t nelem, DMFlag flag)
 {
 #if TINKER_CUDART
    if (platform::config & platform::CU_PLTFM) {
       namespace nsp = platform::cu;
-      return nsp::reduce_logic_or(a, nelem, sync);
+      return nsp::reduce_logic_or(a, nelem, flag);
    } else
 #endif
-      return platform::acc::reduce_logic_or(a, nelem, sync);
+      return platform::acc::reduce_logic_or(a, nelem, flag);
 }
 
 

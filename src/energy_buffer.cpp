@@ -74,14 +74,14 @@ void buffer_deallocate(count_buffer c, energy_buffer e, virial_buffer v)
 
 int get_count(const count_buffer ne)
 {
-   int c = parallel::reduce_sum(ne, buffer_size(), false);
+   int c = parallel::reduce_sum(ne, buffer_size(), WAIT_NEW_Q);
    return c;
 }
 
 
 real get_energy(const energy_buffer e)
 {
-   auto b = parallel::reduce_sum(e, buffer_size(), false);
+   auto b = parallel::reduce_sum(e, buffer_size(), WAIT_NEW_Q);
    real real_out = energy_buffer_traits::cast(b);
 
 

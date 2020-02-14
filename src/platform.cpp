@@ -17,11 +17,25 @@ void platform_data(rc_op op)
 #if TINKER_CUDART
       // Feature: If the platform has been hard-coded, do not change it.
       if (platform::config == platform::NOT_SET) {
-         platform::config = platform::CU_PLTFM;
-         std::string gpu_package;
-         get_kv_pair("GPU-PACKAGE", gpu_package, "CUDA");
-         if (gpu_package == "OPENACC")
+         std::string gpu_package = "";
+         if (const char* str = std::getenv("gpu_package")) {
+            gpu_package = str;
+            Text::upcase(gpu_package);
+         }
+         if (const char* str = std::getenv("GPU_PACKAGE")) {
+            gpu_package = str;
+            Text::upcase(gpu_package);
+         }
+         if (gpu_package == "") {
+            get_kv_pair("GPU-PACKAGE", gpu_package, "CUDA");
+         }
+         if (gpu_package == "CUDA") {
+            platform::config = platform::CU_PLTFM;
+            print(stdout, " Use the CUDA Platform\n");
+         } else if (gpu_package == "OPENACC") {
             platform::config = platform::ACC_PLTFM;
+            print(stdout, " Use the OpenACC Platform\n");
+         }
       }
 #endif
    }

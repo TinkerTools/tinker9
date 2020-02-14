@@ -87,18 +87,18 @@ TEST_CASE("CUDAReduce", "[util][math][reduce]")
    device_array::copyin(WAIT_NEW_Q, N, du2, vu2.data());
 
 
-   ai = parallel::reduce_sum(di, N, false);
+   ai = parallel::reduce_sum(di, N, WAIT_NEW_Q);
    REQUIRE(ai == refi);
 
-   af = parallel::reduce_sum(df, N, false);
+   af = parallel::reduce_sum(df, N, WAIT_NEW_Q);
    REQUIRE(af == reff);
 
 
-   ad = parallel::reduce_sum(dd, N, false);
+   ad = parallel::reduce_sum(dd, N, WAIT_NEW_Q);
    REQUIRE(ad == refd);
 
 
-   au = parallel::reduce_sum(du, N, false);
+   au = parallel::reduce_sum(du, N, WAIT_NEW_Q);
    REQUIRE(au == refu);
 
 

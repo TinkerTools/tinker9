@@ -2,32 +2,39 @@
 #include "deduce_ptr.h"
 #include "mathfunc_parallel_acc.h"
 #include "wait_queue.h"
+#include <cassert>
 
 
 TINKER_NAMESPACE_BEGIN
 namespace platform {
 namespace acc {
 template <class T>
-T reduce_sum(const T* gpu_a, size_t cpu_n, int sync)
+T reduce_sum(const T* gpu_a, size_t cpu_n, DMFlag flag)
 {
    T val = 0;
-   if (sync) {
+   if (flag & DMFlag::DEFAULT_Q) {
       #pragma acc parallel loop independent\
                   deviceptr(gpu_a) reduction(+:val)
       for (size_t i = 0; i < cpu_n; ++i)
          val += gpu_a[i];
    } else {
-      #pragma acc parallel loop independent async\
-                  deviceptr(gpu_a) reduction(+:val)
+      // This OpenACC directive was
+      // acc parallel loop independent async deviceptr(gpu_a) reduction(+:val)
+      // but keep receiving segmentation fault. Luckily, this code is easy
+      // enough for compiler to recognize it is reduction.
+      #pragma acc parallel loop async deviceptr(gpu_a)
       for (size_t i = 0; i < cpu_n; ++i)
          val += gpu_a[i];
    }
+   // implicit OpenACC wait
+   assert(flag & DMFlag::WAIT);
    return val;
 }
-template int reduce_sum(const int*, size_t, int);
-template float reduce_sum(const float*, size_t, int);
-template double reduce_sum(const double*, size_t, int);
-template unsigned long long reduce_sum(const unsigned long long*, size_t, int);
+template int reduce_sum(const int*, size_t, DMFlag);
+template float reduce_sum(const float*, size_t, DMFlag);
+template double reduce_sum(const double*, size_t, DMFlag);
+template unsigned long long reduce_sum(const unsigned long long*, size_t,
+                                       DMFlag);
 
 
 template <class HT, size_t HN, class DPTR>
@@ -64,23 +71,25 @@ template void reduce_sum2(unsigned long long (&)[6], unsigned long long (*)[8],
 
 
 template <class T>
-T reduce_logic_or(const T* gpu_a, size_t cpu_n, int sync)
+T reduce_logic_or(const T* gpu_a, size_t cpu_n, DMFlag flag)
 {
    T val = false;
-   if (sync) {
+   if (flag & DMFlag::DEFAULT_Q) {
       #pragma acc parallel loop independent\
                   deviceptr(gpu_a) reduction(||:val)
       for (size_t i = 0; i < cpu_n; ++i)
          val = (val || gpu_a[i]);
    } else {
-      #pragma acc parallel loop independent async\
-                  deviceptr(gpu_a) reduction(||:val)
+      // see reduce_sum()
+      #pragma acc parallel loop async deviceptr(gpu_a)
       for (size_t i = 0; i < cpu_n; ++i)
          val = (val || gpu_a[i]);
    }
+   // implicit OpenACC wait
+   assert(flag & DMFlag::WAIT);
    return val;
 }
-template int reduce_logic_or(const int*, size_t, int);
+template int reduce_logic_or(const int*, size_t, DMFlag);
 
 
 template <class T>
