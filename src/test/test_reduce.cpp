@@ -102,17 +102,17 @@ TEST_CASE("CUDAReduce", "[util][math][reduce]")
    REQUIRE(au == refu);
 
 
-   parallel::reduce_sum2(af2, df2, N, false);
+   parallel::reduce_sum2(af2, df2, N, WAIT_NEW_Q);
    for (int j = 0; j < H; ++j)
       REQUIRE(af2[j] == reff2[j]);
 
 
-   parallel::reduce_sum2(ad2, dd2, N, false);
+   parallel::reduce_sum2(ad2, dd2, N, WAIT_NEW_Q);
    for (int j = 0; j < H; ++j)
       REQUIRE(ad2[j] == refd2[j]);
 
 
-   parallel::reduce_sum2(au2, du2, N, false);
+   parallel::reduce_sum2(au2, du2, N, WAIT_NEW_Q);
    for (int j = 0; j < H; ++j)
       REQUIRE(au2[j] == refu2[j]);
 

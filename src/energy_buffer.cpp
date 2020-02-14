@@ -99,7 +99,7 @@ real get_energy(const energy_buffer e)
 void get_virial(real (&v1)[virial_buffer_traits::n], const virial_buffer v)
 {
    virial_buffer_traits::type b[virial_buffer_traits::n];
-   parallel::reduce_sum2(b, v, buffer_size(), false);
+   parallel::reduce_sum2(b, v, buffer_size(), WAIT_NEW_Q);
    for (size_t i = 0; i < virial_buffer_traits::n; ++i)
       v1[i] = virial_buffer_traits::cast(b[i]);
 }

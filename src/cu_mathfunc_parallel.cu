@@ -55,7 +55,7 @@ template unsigned long long reduce_sum(const unsigned long long*, size_t,
 
 template <class HT, size_t HN, class DPTR>
 void reduce_sum2(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem,
-                 int sync)
+                 DMFlag flag)
 {
    typedef typename deduce_ptr<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type T;
@@ -63,7 +63,7 @@ void reduce_sum2(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem,
    constexpr size_t N = deduce_ptr<DPTR>::n;
    static_assert(HN <= N, "");
 
-
+   bool sync = flag & DMFlag::DEFAULT_Q;
    cudaStream_t st = (sync ? nullptr : nonblk);
    T(*dptr)[HN] = (T(*)[HN])dptr_real64;
    T* hptr = (T*)pinned_real64;
@@ -77,15 +77,17 @@ void reduce_sum2(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem,
       <<<1, BLOCK_DIM, 0, st>>>(dptr, dptr, grid_size);
    check_rt(cudaMemcpyAsync(hptr, (T*)dptr, HN * sizeof(HN),
                             cudaMemcpyDeviceToHost, st));
+   // always wait
+   assert(flag & DMFlag::WAIT);
    check_rt(cudaStreamSynchronize(st));
    #pragma unroll
    for (int j = 0; j < HN; ++j)
       h_ans[j] = hptr[j];
 }
-template void reduce_sum2(float (&)[6], float (*)[8], size_t, int);
-template void reduce_sum2(double (&)[6], double (*)[8], size_t, int);
+template void reduce_sum2(float (&)[6], float (*)[8], size_t, DMFlag);
+template void reduce_sum2(double (&)[6], double (*)[8], size_t, DMFlag);
 template void reduce_sum2(unsigned long long (&)[6], unsigned long long (*)[8],
-                          size_t, int);
+                          size_t, DMFlag);
 
 
 template <class T>

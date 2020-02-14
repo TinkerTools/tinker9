@@ -18,8 +18,7 @@ T reduce_sum(const T* gpu_a, size_t nelem, DMFlag flag)
 {
 #if TINKER_CUDART
    if (platform::config & platform::CU_PLTFM) {
-      namespace nsp = platform::cu;
-      return nsp::reduce_sum(gpu_a, nelem, flag);
+      return platform::cu::reduce_sum(gpu_a, nelem, flag);
    } else
 #endif
       return platform::acc::reduce_sum(gpu_a, nelem, flag);
@@ -36,15 +35,14 @@ T reduce_sum(const T* gpu_a, size_t nelem, DMFlag flag)
  * \f[ Ans[k] = \sum_i^n v[i][k], 0 \le k < HN \f]
  */
 template <class HT, size_t HN, class DPTR>
-void reduce_sum2(HT (&h_ans)[HN], DPTR v, size_t nelem, int sync)
+void reduce_sum2(HT (&h_ans)[HN], DPTR v, size_t nelem, DMFlag flag)
 {
 #if TINKER_CUDART
    if (platform::config & platform::CU_PLTFM) {
-      namespace nsp = platform::cu;
-      nsp::reduce_sum2(h_ans, v, nelem, sync);
+      platform::cu::reduce_sum2(h_ans, v, nelem, flag);
    } else
 #endif
-      platform::acc::reduce_sum2(h_ans, v, nelem, sync);
+      platform::acc::reduce_sum2(h_ans, v, nelem, flag);
 }
 
 

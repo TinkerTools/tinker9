@@ -20,7 +20,7 @@ T reduce_sum(const T* gpu_a, size_t cpu_n, DMFlag flag)
    } else {
       // This OpenACC directive was
       // acc parallel loop independent async deviceptr(gpu_a) reduction(+:val)
-      // but keep receiving segmentation fault. Luckily, this code is easy
+      // but kept receiving segmentation fault. Luckily, this code is easy
       // enough for compiler to recognize it is reduction.
       #pragma acc parallel loop async deviceptr(gpu_a)
       for (size_t i = 0; i < cpu_n; ++i)
@@ -39,7 +39,7 @@ template unsigned long long reduce_sum(const unsigned long long*, size_t,
 
 template <class HT, size_t HN, class DPTR>
 void reduce_sum2(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem,
-                 int sync)
+                 DMFlag flag)
 {
    typedef typename deduce_ptr<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type DT;
@@ -48,6 +48,7 @@ void reduce_sum2(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem,
    constexpr size_t neach = deduce_ptr<DPTR>::n;
    static_assert(HN <= neach, "");
 
+   bool sync = flag & DMFlag::DEFAULT_Q;
    for (size_t iv = 0; iv < HN; ++iv) {
       HT ans = 0;
       if (sync) {
@@ -56,18 +57,20 @@ void reduce_sum2(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem,
          for (size_t ig = 0; ig < nelem; ++ig)
             ans += v[ig][iv];
       } else {
-         #pragma acc parallel loop independent async\
-                     deviceptr(v) reduction(+:ans)
+         // see reduce_sum()
+         #pragma acc parallel loop async deviceptr(v)
          for (size_t ig = 0; ig < nelem; ++ig)
             ans += v[ig][iv];
       }
+      // implicit OpenACC wait
+      assert(flag & DMFlag::WAIT);
       h_ans[iv] = ans;
    }
 }
-template void reduce_sum2(float (&)[6], float (*)[8], size_t, int);
-template void reduce_sum2(double (&)[6], double (*)[8], size_t, int);
+template void reduce_sum2(float (&)[6], float (*)[8], size_t, DMFlag);
+template void reduce_sum2(double (&)[6], double (*)[8], size_t, DMFlag);
 template void reduce_sum2(unsigned long long (&)[6], unsigned long long (*)[8],
-                          size_t, int);
+                          size_t, DMFlag);
 
 
 template <class T>
