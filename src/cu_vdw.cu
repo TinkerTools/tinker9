@@ -322,7 +322,7 @@ void evdw_cu()
    auto bufsize = buffer_size();
 
    if CONSTEXPR (do_g) {
-      zero_gradient(false, n, gxred, gyred, gzred);
+      zero_gradient(PROCEED_NEW_Q, n, gxred, gyred, gzred);
    }
 
    if CONSTEXPR (eq<VDWTYP, HAL>()) {

@@ -100,38 +100,39 @@ template int reduce_logic_or(const int*, size_t, DMFlag);
 
 template <>
 void dotprod<float>(float* ans, const float* a, const float* b, int nelem,
-                    int sync)
+                    DMFlag flag)
 {
+   bool sync = flag & DMFlag::DEFAULT_Q;
    cublasHandle_t hd = (sync ? h_cublas : h_cublas_nonblk);
-#if CUDART_VERSION >= 10100 // >= 10.1
-   float alpha = 1, beta = 0;
-   check_rt(cublasSgemm(hd, CUBLAS_OP_N, CUBLAS_OP_T, 1, 1, nelem, //
-                        &alpha, a, 1, b, 1,                        //
-                        &beta, ans, 1));
-#else
    check_rt(cublasSdot(hd, nelem, a, 1, b, 1, ans));
-#endif
-   if (sync)
+   if (flag & DMFlag::WAIT)
       check_rt(cudaStreamSynchronize(nullptr));
 }
 
 
 template <>
 void dotprod<double>(double* ans, const double* a, const double* b, int nelem,
-                     int sync)
+                     DMFlag flag)
 {
+   bool sync = flag & DMFlag::DEFAULT_Q;
    cublasHandle_t hd = (sync ? h_cublas : h_cublas_nonblk);
-#if CUDART_VERSION >= 10100 // >= 10.1
-   double alpha = 1, beta = 0;
-   check_rt(cublasDgemm(hd, CUBLAS_OP_N, CUBLAS_OP_T, 1, 1, nelem, //
-                        &alpha, a, 1, b, 1,                        //
-                        &beta, ans, 1));
-#else
    check_rt(cublasDdot(hd, nelem, a, 1, b, 1, ans));
-#endif
-   if (sync)
+   if (flag & DMFlag::WAIT)
       check_rt(cudaStreamSynchronize(nullptr));
 }
+
+
+// cublas gemm does not here prior to cuda 10.1.
+// Old code:
+//
+// #if CUDART_VERSION >= 10100 // >= 10.1
+//    float alpha = 1, beta = 0;
+//    check_rt(cublasSgemm(hd, CUBLAS_OP_N, CUBLAS_OP_T, 1, 1, nelem, //
+//                         &alpha, a, 1, b, 1,                        //
+//                         &beta, ans, 1));
+// #else
+//    check_rt(cublasSdot(hd, nelem, a, 1, b, 1, ans));
+// #endif
 }
 }
 TINKER_NAMESPACE_END

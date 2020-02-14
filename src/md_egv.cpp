@@ -96,7 +96,7 @@ void zero_egv(int vers)
    }
 
    if (vers & calc::grad) {
-      zero_gradient(false, n, gx, gy, gz);
+      zero_gradient(PROCEED_NEW_Q, n, gx, gy, gz);
    }
 }
 

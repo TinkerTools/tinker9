@@ -1,6 +1,7 @@
 #include "io_print.h"
 #include "md.h"
 #include "tinker_rt.h"
+#include "wait_queue.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
@@ -245,8 +246,9 @@ void propagate_velocity2_acc(real dt, const real* grx, const real* gry,
    }
 }
 
-void zero_gradient(int sync, size_t nelem, real* gx, real* gy, real* gz)
+void zero_gradient(DMFlag flag, size_t nelem, real* gx, real* gy, real* gz)
 {
+   bool sync = flag & DMFlag::DEFAULT_Q;
    if (sync) {
       #pragma acc parallel loop independent deviceptr(gx,gy,gz)
       for (int i = 0; i < nelem; ++i) {
@@ -262,5 +264,8 @@ void zero_gradient(int sync, size_t nelem, real* gx, real* gy, real* gz)
          gz[i] = 0;
       }
    }
+   // if (flag & DMFlag::WAIT) {
+   wait_queue(flag);
+   // }
 }
 TINKER_NAMESPACE_END

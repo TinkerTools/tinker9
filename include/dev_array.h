@@ -211,28 +211,28 @@ struct device_array
 
 
    template <class PTR, class PTR2>
-   static typename deduce_ptr<PTR>::type dot(size_t nelem, const PTR ptr,
-                                             const PTR2 b)
+   static typename deduce_ptr<PTR>::type dot(DMFlag flag, size_t nelem,
+                                             const PTR ptr, const PTR2 b)
    {
       typedef typename deduce_ptr<PTR>::type T;
       constexpr size_t N = deduce_ptr<PTR>::n;
       typedef typename deduce_ptr<PTR2>::type T2;
       static_assert(std::is_same<T, T2>::value, "");
-      return parallel::dotprod(flatten(ptr), flatten(b), nelem * N);
+      return parallel::dotprod(flatten(ptr), flatten(b), nelem * N, flag);
    }
 
 
    template <class ANS, class PTR, class PTR2>
-   static void dot(int sync, int nelem, ANS ans, const PTR ptr, const PTR2 ptr2)
+   static void dot(DMFlag flag, int nelem, ANS ans, const PTR ptr,
+                   const PTR2 ptr2)
    {
-
       typedef typename deduce_ptr<PTR>::type T;
       constexpr size_t N = deduce_ptr<PTR>::n;
       typedef typename deduce_ptr<PTR2>::type T2;
       static_assert(std::is_same<T, T2>::value, "");
       typedef typename deduce_ptr<ANS>::type TA;
       static_assert(std::is_same<T, TA>::value, "");
-      parallel::dotprod(ans, flatten(ptr), flatten(ptr2), nelem * N, sync);
+      parallel::dotprod(ans, flatten(ptr), flatten(ptr2), nelem * N, flag);
    }
 
 

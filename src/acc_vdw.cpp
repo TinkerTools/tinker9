@@ -68,7 +68,7 @@ void evdw_acc1()
    auto bufsize = buffer_size();
 
    if CONSTEXPR (do_g)
-      zero_gradient(false, n, gxred, gyred, gzred);
+      zero_gradient(PROCEED_NEW_Q, n, gxred, gyred, gzred);
 
 #define DEVICE_PTRS_                                                           \
    xred, yred, zred, gxred, gyred, gzred, box, jvdw, radmin, epsilon, vlam,    \

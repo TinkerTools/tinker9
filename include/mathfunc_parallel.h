@@ -51,8 +51,7 @@ T reduce_logic_or(const T* a, size_t nelem, DMFlag flag)
 {
 #if TINKER_CUDART
    if (platform::config & platform::CU_PLTFM) {
-      namespace nsp = platform::cu;
-      return nsp::reduce_logic_or(a, nelem, flag);
+      return platform::cu::reduce_logic_or(a, nelem, flag);
    } else
 #endif
       return platform::acc::reduce_logic_or(a, nelem, flag);
@@ -67,10 +66,9 @@ T reduce_logic_or(const T* a, size_t nelem, DMFlag flag)
  * \return The dot product to the host thread.
  */
 template <class T>
-T dotprod(const T* a, const T* b, size_t nelem)
+T dotprod(const T* a, const T* b, size_t nelem, DMFlag flag)
 {
-   namespace nsp = platform::acc;
-   return nsp::dotprod(a, b, nelem);
+   return platform::acc::dotprod(a, b, nelem, flag);
 }
 
 
@@ -79,14 +77,12 @@ T dotprod(const T* a, const T* b, size_t nelem)
  * \brief Dot product of two linear arrays.
  */
 template <class T>
-void dotprod(T* ans, const T* a, const T* b, int nelem, int sync)
+void dotprod(T* ans, const T* a, const T* b, int nelem, DMFlag flag)
 {
    if (platform::config & platform::CU_PLTFM) {
-      namespace nsp = platform::cu;
-      nsp::dotprod(ans, a, b, nelem, sync);
+      platform::cu::dotprod(ans, a, b, nelem, flag);
    } else {
-      namespace nsp = platform::acc;
-      nsp::dotprod(ans, a, b, nelem, sync);
+      platform::acc::dotprod(ans, a, b, nelem, flag);
    }
 }
 
@@ -100,8 +96,7 @@ void dotprod(T* ans, const T* a, const T* b, int nelem, int sync)
 template <class T>
 void scale_array(T* dst, T scal, size_t nelem, DMFlag flag)
 {
-   namespace nsp = platform::acc;
-   return nsp::scale_array(dst, scal, nelem, flag);
+   return platform::acc::scale_array(dst, scal, nelem, flag);
 }
 }
 TINKER_NAMESPACE_END

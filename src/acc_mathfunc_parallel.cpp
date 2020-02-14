@@ -96,44 +96,59 @@ template int reduce_logic_or(const int*, size_t, DMFlag);
 
 
 template <class T>
-T dotprod(const T* restrict gpu_a, const T* restrict gpu_b, size_t cpu_n)
+T dotprod(const T* restrict gpu_a, const T* restrict gpu_b, size_t cpu_n,
+          DMFlag flag)
 {
    T val = 0;
-   #pragma acc parallel loop independent deviceptr(gpu_a,gpu_b) reduction(+:val)
-   for (size_t i = 0; i < cpu_n; ++i)
-      val += gpu_a[i] * gpu_b[i];
+   if (flag & DMFlag::DEFAULT_Q) {
+      #pragma acc parallel loop independent\
+                  deviceptr(gpu_a,gpu_b) reduction(+:val)
+      for (size_t i = 0; i < cpu_n; ++i)
+         val += gpu_a[i] * gpu_b[i];
+   } else {
+      // see reduce_sum()
+      #pragma acc parallel loop async deviceptr(gpu_a,gpu_b)
+      for (size_t i = 0; i < cpu_n; ++i)
+         val += gpu_a[i] * gpu_b[i];
+   }
+   // implicit OpenACC wait
+   assert(flag & DMFlag::WAIT);
    return val;
 }
-template float dotprod(const float*, const float*, size_t);
-template double dotprod(const double*, const double*, size_t);
+template float dotprod(const float*, const float*, size_t, DMFlag);
+template double dotprod(const double*, const double*, size_t, DMFlag);
 
 
 template <class T>
-void dotprod(T* ans, const T* a, const T* b, int nelem, int sync)
+void dotprod(T* ans, const T* a, const T* b, int nelem, DMFlag flag)
 {
-   T v = 0;
+   bool sync = flag & DMFlag::DEFAULT_Q;
+   // T v = 0;
    if (sync) {
-      #pragma acc parallel loop independent deviceptr(a,b) reduction(+:v)
-      for (size_t i = 0; i < nelem; ++i) {
-         v += a[i] * b[i];
-      }
       #pragma acc serial deviceptr(ans)
       {
-         *ans = v;
+         *ans = 0;
+      }
+      #pragma acc parallel loop deviceptr(ans,a,b)
+      for (size_t i = 0; i < nelem; ++i) {
+         *ans += a[i] * b[i];
       }
    } else {
-      #pragma acc parallel loop independent async deviceptr(a,b) reduction(+:v)
-      for (size_t i = 0; i < nelem; ++i) {
-         v += a[i] * b[i];
-      }
       #pragma acc serial async deviceptr(ans)
       {
-         *ans = v;
+         *ans = 0;
+      }
+      #pragma acc parallel loop async deviceptr(ans,a,b)
+      for (size_t i = 0; i < nelem; ++i) {
+         *ans += a[i] * b[i];
       }
    }
+   // if (flag & DMFlag::WAIT) {
+   wait_queue(flag);
+   // }
 }
-template void dotprod(float*, const float*, const float*, int, int);
-template void dotprod(double*, const double*, const double*, int, int);
+template void dotprod(float*, const float*, const float*, int, DMFlag);
+template void dotprod(double*, const double*, const double*, int, DMFlag);
 
 
 template <class T>
