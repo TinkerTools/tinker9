@@ -116,9 +116,58 @@ Don't do this, unless you have to:
 #endif
 ```
 
-
 <a name='hd.inlfunc'></a>
 ### Inlined Functions
+Yes, `inline` is a keyword in C/C++, but what it mainly does is to please the
+linker, not even the compiler. If you really want to put a function
+implementation into a header file, fine, use this keyword, or the linker will
+be confused by several copies of the machine code of this function in different
+object files. On the other hand, inlining a function doesn't always improve
+the CPU performance, so there is no guarantee that the compiler will do so.
+If you find inlining a CPU function is critical to the performance of the code,
+there are other ways to force the compilers to do that.
+
+**Definition**
+You can declare functions in a way that allows the compiler to expand them
+inline rather than calling them through the usual function call mechanism.
+
+**Pros**
+Inlining a function can generate more efficient object code, as long as the
+inlined function is small.
+
+**Cons**
+Overuse of inlining can actually make programs slower. Depending on a function's
+size, inlining it can cause the code size to increase (for long functions) or
+decrease (for very short functions). Time to compile the code can be very
+different.
+
+As for CUDA, things are a bit different, where the compiler has promised to
+aggressively inline every `__device__` kernel. One evidence is you don't get
+to see these `__device__` kernels when you profile the CUDA code. But you don't
+always have to use `inline` for the `__device__` kernel either. Two examples
+are as follows.
+
+**Need to Inline**
+```cpp
+// cu_a.h: used by other CUDA kernels in different files.
+__device__ inline int a() { return 1; }
+
+// b.cu
+#include "cu_a.h"
+__global__ void b(int* t) { *t += a(); }
+
+// c.cu
+#include "cu_a.h"
+__global__ void c(int* t) { *t += a(); }
+```
+
+**No Need to Inline**
+```cpp
+// d.cu: or put all of the kernels in the same file.
+__device__ int a() { return 1; }
+__global__ void b(int* t) { *t += a(); }
+__global__ void c(int* t) { *t += a(); }
+```
 
 <a name='hd.inlord'></a>
 ### Names and Order of Includes
