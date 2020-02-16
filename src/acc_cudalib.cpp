@@ -4,6 +4,7 @@
 #if TINKER_CUDART
 #   include "error.h"
 #   include "gpu_card.h"
+#   include <cuda_profiler_api.h>
 #   include <openacc.h>
 #endif
 
@@ -23,6 +24,9 @@ void cudalib_data(rc_op op)
 {
 #if TINKER_CUDART
    if (op & rc_dealloc) {
+      check_rt(cudaProfilerStop());
+
+
       async_queue = -42;
       nonblk = nullptr;
       check_rt(cublasDestroy(h_cublas));
@@ -47,6 +51,9 @@ void cudalib_data(rc_op op)
       int nblock = get_grid_size(BLOCK_DIM);
       check_rt(cudaMallocHost(&pinned_real64, nblock * sizeof(double)));
       check_rt(cudaMalloc(&dptr_real64, nblock * sizeof(double)));
+
+
+      check_rt(cudaProfilerStart());
    }
 #endif
 }

@@ -27,6 +27,7 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
    const auto* mlst = mlist_unit.deviceptr();
 
    auto bufsize = buffer_size();
+   PairPolarGrad pgrad;
 
    const real f = 0.5f * electric / dielec;
 
@@ -38,7 +39,7 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
       ufld, dufld
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
-   #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+   #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                deviceptr(POLAR_DPTRS_,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -72,7 +73,7 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
 
       int nmlsti = mlst->nlst[i];
       int base = i * maxnlst;
-      #pragma acc loop vector independent\
+      #pragma acc loop vector independent private(pgrad)\
                   reduction(+:gxi,gyi,gzi,txi,tyi,tzi,du0,du1,du2,du3,du4,du5)
       for (int kk = 0; kk < nmlsti; ++kk) {
          int offset = kk & (bufsize - 1);
@@ -105,7 +106,6 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
             }
 
             MAYBE_UNUSED real e;
-            MAYBE_UNUSED PairPolarGrad pgrad;
             pair_polar<USE, elec_t::ewald>( //
                r2, xr, yr, zr, 1, 1, 1,     //
                ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
@@ -179,8 +179,9 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
       }
    } // end for (int i)
 
-   #pragma acc parallel deviceptr(POLAR_DPTRS_,dpuexclude_,dpuexclude_scale_)
-   #pragma acc loop independent
+   #pragma acc parallel async\
+               deviceptr(POLAR_DPTRS_,dpuexclude_,dpuexclude_scale_)
+   #pragma acc loop independent private(pgrad)
    for (int ii = 0; ii < ndpuexclude_; ++ii) {
       int offset = ii & (bufsize - 1);
 
@@ -243,7 +244,6 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
          }
 
          MAYBE_UNUSED real e;
-         MAYBE_UNUSED PairPolarGrad pgrad;
          pair_polar<USE, elec_t::coulomb>(          //
             r2, xr, yr, zr, dscale, pscale, uscale, //
             ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
@@ -303,7 +303,7 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
    // torque
 
    if CONSTEXPR (do_g) {
-      #pragma acc parallel loop independent\
+      #pragma acc parallel loop independent async\
                   deviceptr(rpole,trqx,trqy,trqz,ufld,dufld)
       for (int i = 0; i < n; ++i) {
          real dix = rpole[i][mpl_pme_x];

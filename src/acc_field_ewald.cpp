@@ -53,7 +53,7 @@ void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
 #define DFIELD_DPTRS_ x, y, z, box, thole, pdamp, field, fieldp, rpole
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
-   #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+   #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                deviceptr(DFIELD_DPTRS_,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -125,7 +125,8 @@ void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
       atomic_add(tzi, &fieldp[i][2]);
    } // end for (int i)
 
-   #pragma acc parallel deviceptr(DFIELD_DPTRS_,dpexclude_,dpexclude_scale_)
+   #pragma acc parallel async\
+               deviceptr(DFIELD_DPTRS_,dpexclude_,dpexclude_scale_)
    #pragma acc loop independent
    for (int ii = 0; ii < ndpexclude_; ++ii) {
       int i = dpexclude_[ii][0];

@@ -28,7 +28,7 @@ void diag_precond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3],
 void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
                               real (*zrsd)[3], real (*zrsdp)[3])
 {
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
    for (int i = 0; i < n; ++i) {
       real poli = udiag * polarity[i];
@@ -45,7 +45,7 @@ void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
 #define APPLY_DPTRS_ rsd, rsdp, zrsd, zrsdp, mindex, minv
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
-   #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+   #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                deviceptr(APPLY_DPTRS_,ulst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -98,7 +98,8 @@ void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
       atomic_add(tzi, &zrsdp[i][2]);
    }
 
-   #pragma acc parallel loop deviceptr(APPLY_DPTRS_,uexclude_,minv_exclude_)
+   #pragma acc parallel loop async\
+               deviceptr(APPLY_DPTRS_,uexclude_,minv_exclude_)
    for (int ii = 0; ii < nuexclude_; ++ii) {
       int i = uexclude_[ii][0];
       int k = uexclude_[ii][1];
@@ -137,7 +138,7 @@ void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
 void sparse_precond_build_acc()
 {
    const auto* nulst = ulist_unit->nlst;
-   #pragma acc serial deviceptr(mindex,nulst)
+   #pragma acc serial async deviceptr(mindex,nulst)
    {
       int m = 0;
       for (int i = 0; i < n; ++i) {
@@ -152,7 +153,7 @@ void sparse_precond_build_acc()
 #define BUILD_DPTRS_ mindex, minv, box, x, y, z, polarity, pdamp, thole
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
-   #pragma acc parallel num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+   #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                deviceptr(BUILD_DPTRS_,ulst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -193,7 +194,7 @@ void sparse_precond_build_acc()
       } // end for (int kk)
    }
 
-   #pragma acc parallel deviceptr(BUILD_DPTRS_,\
+   #pragma acc parallel async deviceptr(BUILD_DPTRS_,\
                minv_exclude_,uexclude_,uexclude_scale_)
    #pragma acc loop independent
    for (int ii = 0; ii < nuexclude_; ++ii) {
@@ -285,7 +286,7 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 
    // direct induced dipoles
 
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(polarity,udir,udirp,field,fieldp)
    for (int i = 0; i < n; ++i) {
       real poli = polarity[i];
@@ -352,7 +353,7 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
       // vec = (inv_alpha + Tu) conj, field = -Tu conj
       // vec = inv_alpha * conj - field
       ufield(conj, conjp, field, fieldp);
-      #pragma acc parallel loop independent\
+      #pragma acc parallel loop independent async\
                   deviceptr(polarity_inv,vec,vecp,conj,conjp,field,fieldp)
       for (int i = 0; i < n; ++i) {
          real poli_inv = polarity_inv[i];
@@ -375,7 +376,7 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 
       // u <- u + a p
       // r <- r - a T p
-      #pragma acc parallel loop independent\
+      #pragma acc parallel loop independent async\
                   deviceptr(uind,uinp,conj,conjp,rsd,rsdp,vec,vecp)
       for (int i = 0; i < n; ++i) {
          #pragma acc loop seq
@@ -404,7 +405,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 
 
       // calculate/update p
-      #pragma acc parallel loop independent deviceptr(conj,conjp,zrsd,zrsdp)
+      #pragma acc parallel loop independent async\
+                  deviceptr(conj,conjp,zrsd,zrsdp)
       for (int i = 0; i < n; ++i) {
          #pragma acc loop seq
          for (int j = 0; j < 3; ++j) {
@@ -446,7 +448,7 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
       // apply a "peek" iteration to the mutual induced dipoles
 
       if (done) {
-         #pragma acc parallel loop independent\
+         #pragma acc parallel loop independent async\
                      deviceptr(polarity,uind,uinp,rsd,rsdp)
          for (int i = 0; i < n; ++i) {
             real term = pcgpeek * polarity[i];
@@ -480,7 +482,10 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
 {
 #if TINKER_CUDART
-   induce_mutual_pcg1_cu(uind, uinp);
+   if (platform::config & platform::CU_PLTFM)
+      induce_mutual_pcg1_cu(uind, uinp);
+   else
+      induce_mutual_pcg1_acc(uind, uinp);
 #else
    induce_mutual_pcg1_acc(uind, uinp);
 #endif

@@ -6,7 +6,7 @@
 using namespace TINKER_NAMESPACE;
 
 
-TEST_CASE("CUDAReduce", "[util][math][reduce]")
+TEST_CASE("Reduce", "[util][math][reduce]")
 {
    rc_flag = calc::xyz | calc::vmask;
 

@@ -6,7 +6,7 @@
 using namespace TINKER_NAMESPACE;
 
 /**
- * @brief
+ * \brief
  * The last molecule in the local-frame test case is a NH3, where all of its 4
  * atoms are in the xy-plane. Therefore the z-gradient components of this
  * molecule are not included in the test.
