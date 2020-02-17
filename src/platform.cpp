@@ -31,10 +31,10 @@ void platform_data(rc_op op)
          }
          if (gpu_package == "CUDA") {
             platform::config = platform::CU_PLTFM;
-            print(stdout, " Use the CUDA Platform\n");
+            print(stdout, " Platform :  CUDA\n");
          } else if (gpu_package == "OPENACC") {
             platform::config = platform::ACC_PLTFM;
-            print(stdout, " Use the OpenACC Platform\n");
+            print(stdout, " Platform :  OpenACC\n");
          }
       }
 #endif

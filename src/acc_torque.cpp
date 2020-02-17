@@ -5,16 +5,17 @@
 
 
 TINKER_NAMESPACE_BEGIN
+namespace {
 #pragma acc routine seq
-static real torque_dot(const real* restrict a, const real* restrict b)
+real torque_dot(const real* restrict a, const real* restrict b)
 {
    return (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]);
 }
 
 
 #pragma acc routine seq
-static void torque_cross(real* restrict ans, const real* restrict u,
-                         const real* restrict v)
+void torque_cross(real* restrict ans, const real* restrict u,
+                  const real* restrict v)
 {
    ans[0] = u[1] * v[2] - u[2] * v[1];
    ans[1] = u[2] * v[0] - u[0] * v[2];
@@ -23,25 +24,59 @@ static void torque_cross(real* restrict ans, const real* restrict u,
 
 
 #pragma acc routine seq
-static void torque_normal(real* restrict a, real _1_na)
+void torque_normal(real* restrict a, real _1_na)
 {
    a[0] *= _1_na;
    a[1] *= _1_na;
    a[2] *= _1_na;
 }
+}
 
 
+/**
+ * This commit `09beaa8b0215913c1b658b0b2d8ecdf97bda8c15` had a weird problem
+ * in the OpenACC torque kernel. It had a strange segfault when calling torque
+ * in test "NaCl-2" after "Local-Frame-3" having been called. I think the
+ * problem might be on PGI's side, especially when I don't see any problems
+ * reported by `cuda-memcheck`. Run this command will see the segfault
+ * \code
+ * GPU_PACKAGE=OPENACC PGI_ACC_NOTIFY=31 PGI_ACC_DEBUG=1 \
+ * ./all.tests local-frame-3,nacl-2 \
+ * -d yes -a
+ * \endcode
+ *
+ * This kernel has a lot of float[3] arrays private to each thread, and the PGI
+ * compiler decided not to use the "local memory" for two of them, ws[3] and
+ * vs[3], which resulted in 24 bytes memory copyin at the beginning and copyout
+ * at the end of the routine. When I have rewritten the torque kernel to force
+ * everything in the "local memory", the segfault would disappear.
+ */
 template <int DO_V>
-void torque_tmpl(virial_buffer gpu_vir)
+void torque_acc1(virial_buffer gpu_vir)
 {
    auto bufsize = buffer_size();
-   #pragma acc parallel loop independent async\
+
+   real trq[3], frcz[3], frcx[3], frcy[3];
+   real deia[3], deib[3], deic[3], deid[3];
+   real u[3], v[3], w[3];
+   // uv uw: z only, z then x
+   // vw:    z only, z then x, bisector
+   real uv[3], uw[3], vw[3];
+   // z bisector
+   real r[3], s[3], ur[3], us[3], vs[3], ws[3], t1[3], t2[3];
+   // 3 fold
+   real p[3], del[3], eps[3];
+   #pragma acc parallel loop independent async private(\
+               trq[3],frcz[3],frcx[3],frcy[3],\
+               deia[3],deib[3],deic[3],deid[3],\
+               u[3],v[3],w[3],uv[3],uw[3],vw[3],\
+               r[3],s[3],ur[3],us[3],vs[3],ws[3],t1[3],t2[3],\
+               p[3],del[3],eps[3])\
                deviceptr(x,y,z,gx,gy,gz,zaxis,trqx,trqy,trqz,gpu_vir)
    for (int i = 0; i < n; ++i) {
       const int axetyp = zaxis[i].polaxe;
       if (axetyp == pole_none)
          continue;
-
 
       // get the local frame type and the frame-defining atoms
       const int ia = zaxis[i].zaxis;
@@ -49,19 +84,17 @@ void torque_tmpl(virial_buffer gpu_vir)
       const int ic = zaxis[i].xaxis;
       const int id = INT_ABS(zaxis[i].yaxis) - 1;
 
-
       // construct the three rotation axes for the local frame
       // u
-      real u[3], usiz1;
+      real usiz1;
       u[0] = x[ia] - x[ib];
       u[1] = y[ia] - y[ib];
       u[2] = z[ia] - z[ib];
       usiz1 = REAL_RSQRT(torque_dot(u, u));
       torque_normal(u, usiz1);
 
-
       // v
-      real v[3], vsiz1;
+      real vsiz1;
       if (axetyp != pole_z_only) {
          v[0] = x[ic] - x[ib];
          v[1] = y[ic] - y[ib];
@@ -76,9 +109,8 @@ void torque_tmpl(virial_buffer gpu_vir)
       }
       torque_normal(v, vsiz1);
 
-
       // w = u cross v
-      real w[3], wsiz1;
+      real wsiz1;
       if (axetyp == pole_z_bisect || axetyp == pole_3_fold) {
          w[0] = x[id] - x[ib];
          w[1] = y[id] - y[ib];
@@ -89,135 +121,141 @@ void torque_tmpl(virial_buffer gpu_vir)
       wsiz1 = REAL_RSQRT(torque_dot(w, w));
       torque_normal(w, wsiz1);
 
-
-      // find the perpendicular and angle for each pair of axes
-      // v cross u
-      real uv[3], uvsiz1;
-      torque_cross(uv, v, u);
-      uvsiz1 = REAL_RSQRT(torque_dot(uv, uv));
-      torque_normal(uv, uvsiz1);
-
-
-      // w cross u
-      real uw[3], uwsiz1;
-      torque_cross(uw, w, u);
-      uwsiz1 = REAL_RSQRT(torque_dot(uw, uw));
-      torque_normal(uw, uwsiz1);
-
-
-      // w cross v
-      real vw[3], vwsiz1;
-      torque_cross(vw, w, v);
-      vwsiz1 = REAL_RSQRT(torque_dot(vw, vw));
-      torque_normal(vw, vwsiz1);
-
-
-      // get sine and cosine of angles between the rotation axes
-      real uvcos = torque_dot(u, v);
-      real uvsin1 = REAL_RSQRT(1 - uvcos * uvcos);
-
-
       // negative of dot product of torque with unit vectors gives result of
       // infinitesimal rotation along these vectors
-      const real trq[3] = {trqx[i], trqy[i], trqz[i]};
+      trq[0] = trqx[i];
+      trq[1] = trqy[i];
+      trq[2] = trqz[i];
       real dphidu = -torque_dot(trq, u);
       real dphidv = -torque_dot(trq, v);
       real dphidw = -torque_dot(trq, w);
 
-
       // force distribution
-      real deia[3] = {0, 0, 0};
-      real deib[3] = {0, 0, 0};
-      real deic[3] = {0, 0, 0};
-      real deid[3] = {0, 0, 0};
-
+      deia[0] = 0;
+      deia[1] = 0;
+      deia[2] = 0;
+      deib[0] = 0;
+      deib[1] = 0;
+      deib[2] = 0;
+      deic[0] = 0;
+      deic[1] = 0;
+      deic[2] = 0;
+      deid[0] = 0;
+      deid[1] = 0;
+      deid[2] = 0;
 
       // zero out force components on local frame-defining atoms
-      real frcz[3] = {0, 0, 0};
-      real frcx[3] = {0, 0, 0};
-      real frcy[3] = {0, 0, 0};
+      frcz[0] = 0;
+      frcz[1] = 0;
+      frcz[2] = 0;
+      frcx[0] = 0;
+      frcx[1] = 0;
+      frcx[2] = 0;
+      frcy[0] = 0;
+      frcy[1] = 0;
+      frcy[2] = 0;
 
+      if (axetyp == pole_z_only || axetyp == pole_z_then_x ||
+          axetyp == pole_bisector) {
+         // find the perpendicular and angle for each pair of axes
+         // v cross u
+         real uvsiz1;
+         torque_cross(uv, v, u);
+         uvsiz1 = REAL_RSQRT(torque_dot(uv, uv));
+         torque_normal(uv, uvsiz1);
 
-      if (axetyp == pole_z_only) {
-         #pragma acc loop seq
-         for (int j = 0; j < 3; ++j) {
-            real du = uv[j] * dphidv * usiz1 * uvsin1 + uw[j] * dphidw * usiz1;
-            deia[j] += du;
-            deib[j] -= du;
-            if CONSTEXPR (DO_V) {
-               frcz[j] += du;
+         // w cross u
+         real uwsiz1;
+         torque_cross(uw, w, u);
+         uwsiz1 = REAL_RSQRT(torque_dot(uw, uw));
+         torque_normal(uw, uwsiz1);
+
+         // get sine and cosine of angles between the rotation axes
+         real uvcos = torque_dot(u, v);
+         real uvsin1 = REAL_RSQRT(1 - uvcos * uvcos);
+
+         if (axetyp == pole_z_only) {
+            #pragma acc loop seq
+            for (int j = 0; j < 3; ++j) {
+               real du =
+                  uv[j] * dphidv * usiz1 * uvsin1 + uw[j] * dphidw * usiz1;
+               deia[j] += du;
+               deib[j] -= du;
+               if CONSTEXPR (DO_V) {
+                  frcz[j] += du;
+               }
             }
-         }
-      } else if (axetyp == pole_z_then_x) {
-         #pragma acc loop seq
-         for (int j = 0; j < 3; ++j) {
-            real du = uv[j] * dphidv * usiz1 * uvsin1 + uw[j] * dphidw * usiz1;
-            real dv = -uv[j] * dphidu * vsiz1 * uvsin1;
-            deia[j] += du;
-            deic[j] += dv;
-            deib[j] -= (du + dv);
-            if CONSTEXPR (DO_V) {
-               frcz[j] += du;
-               frcx[j] += dv;
+         } else if (axetyp == pole_z_then_x) {
+            #pragma acc loop seq
+            for (int j = 0; j < 3; ++j) {
+               real du =
+                  uv[j] * dphidv * usiz1 * uvsin1 + uw[j] * dphidw * usiz1;
+               real dv = -uv[j] * dphidu * vsiz1 * uvsin1;
+               deia[j] += du;
+               deic[j] += dv;
+               deib[j] -= (du + dv);
+               if CONSTEXPR (DO_V) {
+                  frcz[j] += du;
+                  frcx[j] += dv;
+               }
             }
-         }
-      } else if (axetyp == pole_bisector) {
-         #pragma acc loop seq
-         for (int j = 0; j < 3; ++j) {
-            real du =
-               uv[j] * dphidv * usiz1 * uvsin1 + 0.5f * uw[j] * dphidw * usiz1;
-            real dv =
-               -uv[j] * dphidu * vsiz1 * uvsin1 + 0.5f * vw[j] * dphidw * vsiz1;
-            deia[j] += du;
-            deic[j] += dv;
-            deib[j] -= (du + dv);
-            if CONSTEXPR (DO_V) {
-               frcz[j] += du;
-               frcx[j] += dv;
+         } else /* if (axetyp == pole_bisector) */ {
+            // w cross v
+            real vwsiz1;
+            torque_cross(vw, w, v);
+            vwsiz1 = REAL_RSQRT(torque_dot(vw, vw));
+            torque_normal(vw, vwsiz1);
+
+            #pragma acc loop seq
+            for (int j = 0; j < 3; ++j) {
+               real du = uv[j] * dphidv * usiz1 * uvsin1 +
+                  0.5f * uw[j] * dphidw * usiz1;
+               real dv = -uv[j] * dphidu * vsiz1 * uvsin1 +
+                  0.5f * vw[j] * dphidw * vsiz1;
+               deia[j] += du;
+               deic[j] += dv;
+               deib[j] -= (du + dv);
+               if CONSTEXPR (DO_V) {
+                  frcz[j] += du;
+                  frcx[j] += dv;
+               }
             }
          }
       } else if (axetyp == pole_z_bisect) {
          // build some additional axes needed for the Z-Bisect method
-         real r[3], rsiz1;
+         real rsiz1;
          r[0] = v[0] + w[0];
          r[1] = v[1] + w[1];
          r[2] = v[2] + w[2];
          rsiz1 = REAL_RSQRT(torque_dot(r, r));
 
-
-         real s[3], ssiz1;
+         real ssiz1;
          torque_cross(s, u, r);
          ssiz1 = REAL_RSQRT(torque_dot(s, s));
-
 
          torque_normal(r, rsiz1);
          torque_normal(s, ssiz1);
 
-
          // find the perpendicular and angle for each pair of axes
-         real ur[3], ursiz1;
+         real ursiz1;
          torque_cross(ur, r, u);
          ursiz1 = REAL_RSQRT(torque_dot(ur, ur));
          torque_normal(ur, ursiz1);
 
-
-         real us[3], ussiz1;
+         real ussiz1;
          torque_cross(us, s, u);
          ussiz1 = REAL_RSQRT(torque_dot(us, us));
          torque_normal(us, ussiz1);
 
-
-         real vs[3], vssiz1;
+         real vssiz1;
          torque_cross(vs, s, v);
          vssiz1 = REAL_RSQRT(torque_dot(vs, vs));
          torque_normal(vs, vssiz1);
 
-
-         real ws[3], wssiz1;
+         real wssiz1;
          torque_cross(ws, s, w);
          wssiz1 = REAL_RSQRT(torque_dot(ws, ws));
          torque_normal(ws, wssiz1);
-
 
          // get sine and cosine of angles between the rotation axes
          real urcos = torque_dot(u, r);
@@ -227,30 +265,26 @@ void torque_tmpl(virial_buffer gpu_vir)
          real wscos = torque_dot(w, s);
          real wssin = REAL_SQRT(1 - wscos * wscos);
 
-
          // compute the projection of v and w onto the ru-plane
-         real t1[3], t1siz1;
+         real t1siz1;
          t1[0] = v[0] - s[0] * vscos;
          t1[1] = v[1] - s[1] * vscos;
          t1[2] = v[2] - s[2] * vscos;
          t1siz1 = REAL_RSQRT(torque_dot(t1, t1));
          torque_normal(t1, t1siz1);
 
-
-         real t2[3], t2siz1;
+         real t2siz1;
          t2[0] = w[0] - s[0] * wscos;
          t2[1] = w[1] - s[1] * wscos;
          t2[2] = w[2] - s[2] * wscos;
          t2siz1 = REAL_RSQRT(torque_dot(t2, t2));
          torque_normal(t2, t2siz1);
 
-
          real ut1cos = torque_dot(u, t1);
          real ut1sin = REAL_SQRT(1 - ut1cos * ut1cos);
          real ut2cos = torque_dot(u, t2);
          real ut2sin = REAL_SQRT(1 - ut2cos * ut2cos);
          real _1_ut1sin_ut2sin = REAL_RECIP(ut1sin + ut2sin);
-
 
          // negative of dot product of torque with unit vectors gives result of
          // infinitesimal rotation along these vectors
@@ -275,23 +309,20 @@ void torque_tmpl(virial_buffer gpu_vir)
             }
          }
       } else if (axetyp == pole_3_fold) {
-         real p[3], psiz1;
+         real psiz1;
          p[0] = u[0] + v[0] + w[0];
          p[1] = u[1] + v[1] + w[1];
          p[2] = u[2] + v[2] + w[2];
          psiz1 = REAL_RSQRT(torque_dot(p, p));
          torque_normal(p, psiz1);
 
-
          real wpcos = torque_dot(w, p);
          real upcos = torque_dot(u, p);
          real vpcos = torque_dot(v, p);
 
-
-         real r[3], rsiz1;
-         real del[3], delsiz1;
-         real eps[3], dphidr, dphiddel;
-
+         real rsiz1;
+         real delsiz1;
+         real dphidr, dphiddel;
 
          r[0] = u[0] + v[0];
          r[1] = u[1] + v[1];
@@ -317,7 +348,6 @@ void torque_tmpl(virial_buffer gpu_vir)
             }
          }
 
-
          r[0] = v[0] + w[0];
          r[1] = v[1] + w[1];
          r[2] = v[2] + w[2];
@@ -341,7 +371,6 @@ void torque_tmpl(virial_buffer gpu_vir)
                frcz[j] += du;
             }
          }
-
 
          r[0] = u[0] + w[0];
          r[1] = u[1] + w[1];
@@ -368,7 +397,6 @@ void torque_tmpl(virial_buffer gpu_vir)
          }
       }
 
-
       atomic_add(deia[0], gx, ia);
       atomic_add(deia[1], gy, ia);
       atomic_add(deia[2], gz, ia);
@@ -386,27 +414,22 @@ void torque_tmpl(virial_buffer gpu_vir)
          atomic_add(deid[2], gz, id);
       }
 
-
       if CONSTEXPR (DO_V) {
          const int iaz = (ia == -1) ? i : ia;
          const int iax = (ic == -1) ? i : ic;
          const int iay = (id == -1) ? i : id;
 
-
          real xiz = x[iaz] - x[i];
          real yiz = y[iaz] - y[i];
          real ziz = z[iaz] - z[i];
-
 
          real xix = x[iax] - x[i];
          real yix = y[iax] - y[i];
          real zix = z[iax] - z[i];
 
-
          real xiy = x[iay] - x[i];
          real yiy = y[iay] - y[i];
          real ziy = z[iay] - z[i];
-
 
          real vxx = xix * frcx[0] + xiy * frcy[0] + xiz * frcz[0];
          real vxy = 0.5f *
@@ -421,10 +444,18 @@ void torque_tmpl(virial_buffer gpu_vir)
              yiy * frcy[2] + yiz * frcz[2]);
          real vzz = zix * frcx[2] + ziy * frcy[2] + ziz * frcz[2];
 
-
          atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir, i & (bufsize - 1));
       } // end if CONSTEXPR (DO_V)
    }    // end for (int i)
+}
+
+
+void torque_acc(int vers)
+{
+   if (vers & calc::virial)
+      torque_acc1<1>(vir_trq);
+   else if (vers & calc::grad)
+      torque_acc1<0>(nullptr);
 }
 
 
@@ -434,9 +465,10 @@ void torque(int vers)
       return;
 
 
-   if (vers & calc::virial)
-      torque_tmpl<1>(vir_trq);
-   else if (vers & calc::grad)
-      torque_tmpl<0>(nullptr);
+#if TINKER_CUDART
+      // if (platform::config & platform::CU_PLTFM) {
+      // } else
+#endif
+   torque_acc(vers);
 }
 TINKER_NAMESPACE_END

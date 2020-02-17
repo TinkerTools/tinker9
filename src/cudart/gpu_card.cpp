@@ -244,7 +244,7 @@ static int recommend_device(int ndev)
             prcd[0], usp, usp_str, usp);
       idev = usp;
    }
-   print(stdout, "\n Platform CUDA :  Setting Device ID to {} from {}\n", idev,
+   print(stdout, "\n GPU Device :  Setting Device ID to {} from {}\n", idev,
          usp_str);
    return idev;
 }
