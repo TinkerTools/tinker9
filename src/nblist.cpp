@@ -32,7 +32,7 @@ int vlist_version()
    if (!bound::use_bounds)
       return NBList::nblist;
 #if TINKER_CUDART
-   if (platform::config & platform::CU_PLTFM)
+   if (pltfm_config & CU_PLTFM)
       return NBList::spatial;
    else
       return NBList::nblist;
@@ -51,7 +51,7 @@ int dlist_version()
    if (!bound::use_bounds)
       return NBList::nblist;
 #if TINKER_CUDART
-   if (platform::config & platform::CU_PLTFM)
+   if (pltfm_config & CU_PLTFM)
       return NBList::spatial;
    else
       return NBList::nblist;
@@ -70,7 +70,7 @@ int clist_version()
    if (!bound::use_bounds)
       return NBList::nblist;
 #if TINKER_CUDART
-   if (platform::config & platform::CU_PLTFM)
+   if (pltfm_config & CU_PLTFM)
       return NBList::spatial;
    else
       return NBList::nblist;
@@ -90,7 +90,7 @@ int mlist_version()
    if (!bound::use_bounds)
       return NBList::nblist;
 #if TINKER_CUDART
-   if (platform::config & platform::CU_PLTFM)
+   if (pltfm_config & CU_PLTFM)
       return NBList::spatial;
    else
       return NBList::nblist;
@@ -109,7 +109,7 @@ int ulist_version()
    if (!bound::use_bounds)
       return NBList::nblist;
 #if TINKER_CUDART
-   if (platform::config & platform::CU_PLTFM)
+   if (pltfm_config & CU_PLTFM)
       return NBList::spatial;
    else
       return NBList::nblist;

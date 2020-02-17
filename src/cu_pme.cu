@@ -172,8 +172,7 @@ void grid_tmpl_cu(const real* restrict x, const real* restrict y,
    }
 }
 
-namespace platform {
-namespace cu {
+namespace pltfm_cu {
 template <class T, int bsorder>
 __global__
 void grid_put(const int* restrict igrid, const real* restrict thetai1,
@@ -347,19 +346,18 @@ void bspline_fill(int* restrict igrid, real* restrict thetai1,
    }
 }
 }
-}
 
 
 void bspline_fill(PMEUnit u, int level)
 {
    auto& st = *u;
    if (level == 2) {
-      auto ker = platform::cu::bspline_fill<2, 5>;
+      auto ker = pltfm_cu::bspline_fill<2, 5>;
       launch_k1s(nonblk, n, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
                  x, y, z, n, padded_n, st.nfft1, st.nfft2, st.nfft3, recipa,
                  recipb, recipc);
    } else if (level == 3) {
-      auto ker = platform::cu::bspline_fill<3, 5>;
+      auto ker = pltfm_cu::bspline_fill<3, 5>;
       launch_k1s(nonblk, n, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
                  x, y, z, n, padded_n, st.nfft1, st.nfft2, st.nfft3, recipa,
                  recipb, recipc);

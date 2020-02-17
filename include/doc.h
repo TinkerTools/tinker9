@@ -61,20 +61,15 @@ namespace parallel {}
 
 
 /**
- * \brief Parallel computing platforms.
+ * \brief OpenACC parallel computing platform.
  */
-namespace platform {
-/**
- * \brief OpenACC.
- */
-namespace acc {}
+namespace pltfm_acc {}
 
 
 /**
- * \brief CUDA.
+ * \brief CUDA parallel computing platform.
  */
-namespace cu {}
-}
+namespace pltfm_cu {}
 
 
 /**

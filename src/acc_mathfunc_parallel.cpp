@@ -6,8 +6,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-namespace platform {
-namespace acc {
+namespace pltfm_acc {
 template <class T>
 T reduce_sum(const T* gpu_a, size_t cpu_n, DMFlag flag)
 {
@@ -171,6 +170,5 @@ void scale_array(T* gpu_dst, T scal, size_t nelem, DMFlag flag)
 }
 template void scale_array(float*, float, size_t, DMFlag);
 template void scale_array(double*, double, size_t, DMFlag);
-}
 }
 TINKER_NAMESPACE_END

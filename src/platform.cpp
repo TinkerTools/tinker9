@@ -6,17 +6,17 @@ TINKER_NAMESPACE_BEGIN
 void platform_data(rc_op op)
 {
    if (op & rc_dealloc) {
-      platform::config = platform::NOT_SET;
+      pltfm_config = UNSET_PLTFM;
    }
 
 
    if (op & rc_init) {
 #if TINKER_HOST
-      platform::config = platform::ACC_PLTFM;
+      pltfm_config = ACC_PLTFM;
 #endif
 #if TINKER_CUDART
       // Feature: If the platform has been hard-coded, do not change it.
-      if (platform::config == platform::NOT_SET) {
+      if (pltfm_config == UNSET_PLTFM) {
          std::string gpu_package = "";
          if (const char* str = std::getenv("gpu_package")) {
             gpu_package = str;
@@ -30,10 +30,10 @@ void platform_data(rc_op op)
             get_kv_pair("GPU-PACKAGE", gpu_package, "CUDA");
          }
          if (gpu_package == "CUDA") {
-            platform::config = platform::CU_PLTFM;
+            pltfm_config = CU_PLTFM;
             print(stdout, " Platform :  CUDA\n");
          } else if (gpu_package == "OPENACC") {
-            platform::config = platform::ACC_PLTFM;
+            pltfm_config = ACC_PLTFM;
             print(stdout, " Platform :  OpenACC\n");
          }
       }

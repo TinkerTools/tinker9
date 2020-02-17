@@ -10,8 +10,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-namespace platform {
-namespace acc {
+namespace pltfm_acc {
 template <class T>
 void grid_put(PMEUnit pme_u, real* optional1, real* optional2)
 {
@@ -226,7 +225,6 @@ void grid_put(PMEUnit pme_u, real* optional1, real* optional2)
 
 template void grid_put<MPOLE>(PMEUnit, real*, real*);
 template void grid_put<UIND>(PMEUnit, real*, real*);
-}
 }
 
 

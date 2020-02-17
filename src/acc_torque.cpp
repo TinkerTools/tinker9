@@ -466,7 +466,7 @@ void torque(int vers)
 
 
 #if TINKER_CUDART
-      // if (platform::config & platform::CU_PLTFM) {
+      // if (pltfm_config & CU_PLTFM) {
       // } else
 #endif
    torque_acc(vers);

@@ -10,8 +10,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-namespace platform {
-namespace cu {
+namespace pltfm_cu {
 template <class T, class Op>
 void reduce_to_dptr(const T* a, size_t nelem, bool sync)
 {
@@ -133,6 +132,5 @@ void dotprod<double>(double* ans, const double* a, const double* b, int nelem,
 // #else
 //    check_rt(cublasSdot(hd, nelem, a, 1, b, 1, ans));
 // #endif
-}
 }
 TINKER_NAMESPACE_END
