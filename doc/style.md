@@ -38,7 +38,7 @@ but it never means all of these rules apply to this Tinker project.
 |----------|:-------------|
 | [C++ Version](#cppvers) | |
 | [Header Files](#head)   | [Self-contained Headers](#hd.selfcontained) &emsp; [Header Guard](#hd.guard) &emsp; [Inlined Functions](#hd.inlfunc) &emsp; [Names and Order of Includes](#hd.inlord) |
-| [Naming](#naming)       | |
+| [Naming](#naming)       | [Constant Names](#nm.const) &emsp; [Namespace Names](#nm.namespace) &emsp; [Enumerator Names](#nm.enum) &emsp; [Macro Names](#nm.macro) |
 | [Comments](#comment)    | |
 | [Formatting](#format)   | |
 
@@ -179,6 +179,74 @@ __global__ void c(int* t) { *t += a(); }
 <a name='naming'></a>
 ## Naming
 
+Rule of thumb:
+  - readability first,
+  - names should not be too long, so abbreviations are acceptable, as long as
+    they are:
+      - widely used (`PBC`),
+      - or straightforward with no ambiguity (`config` for configuration),
+      - otherwise, document it first before use (`GK` for AMOEBA
+        Generalized Kirkwood Model)
+  - type names should use either `snake_case` or `UpperCamelCase`,
+      - light-weighted types prefer `snake_case`, e.g. `real` is a redefined
+        type of `double` or `float`,
+      - heavy-weighted types (e.g. complicated classes) should always use
+        `UpperCamelCase`, 
+  - constant flags should look like `CONSTANT_FLAGS`,
+  - no requirements for local variables except for readability.
+
+<a name='nm.const'></a>
+### Constant Names
+
+`constexpr` and `const` can decorate more than just variables. I will not
+explain the differences if they are used with functions, parameters, etc. Just
+never take them for granted. `constexpr` *usually* means a variable can be
+determined/evaluated at compile-time, whereas `const` variable only guarantees
+a variable won't change its value after initialization, although compilers
+usually are clever enough to know whether or not a `const` variable is also
+`constexpr`. But still, use `constexpr` whenever it is possible. 
+
+Constant variables can either be declared globally or within the scope of a
+function and they either look like constant flags or local variables, choose
+their forms based on the use.
+
+**Examples**
+```cpp
+constexpr int CU_PLTFM = 0x002; // used as a constant flag.
+
+double kcal_to_kJ(double kcal) {
+   constexpr double kJ_per_kcal = 4.184; // used as a local variable.
+   return kcal * kJ_per_kcal;
+}
+```
+
+<a name='nm.namespace'></a>
+### Namespace Names
+
+<a name='nm.enum'></a>
+### Enumerator Names
+
+They are `CONSTANT_FLAGS` to improve the readability of the code.
+
+Their types and underlying types are usually unspecified. When the type needs
+specified, use `UpperCamelCase`.
+
+<a name='nm.macro'></a>
+### Macro Names
+
+Don't use macros unless you have to.
+
+Most macros should look like a `CONSTANT_FLAG`, even if they work like
+functions. Only few macros can look like `regular_functions` if everyone loves
+how they look.
+
+**Examples**
+```cpp
+// just an example; it should have been used as a constexpr variable
+#define ROUNDED_PI 3.0
+// single precision square root
+#define REAL_SQRT(x) sqrtf(x)
+```
 
 <!--  -->
 
