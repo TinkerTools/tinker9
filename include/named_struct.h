@@ -18,6 +18,13 @@ extern "C"
    {};
 
 
+   // Ewald vs. Non-Ewald
+   struct EWALD
+   {};
+   struct NON_EWALD
+   {};
+
+
    // Energy versions.
    struct Eng
       : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v0>

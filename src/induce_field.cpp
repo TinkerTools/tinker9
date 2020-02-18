@@ -4,88 +4,48 @@
 
 
 TINKER_NAMESPACE_BEGIN
-void dfield_ewald_real(real (*field)[3], real (*fieldp)[3])
+void dfield(real (*field)[3], real (*fieldp)[3])
 {
-   extern void dfield_ewald_real_acc(real(*)[3], real(*)[3]);
+   if (epolar_electyp == elec_t::ewald)
+      dfield_ewald(field, fieldp);
+   else if (epolar_electyp == elec_t::coulomb)
+      dfield_nonewald(field, fieldp);
+}
+
+
+void dfield_nonewald(real (*field)[3], real (*fieldp)[3])
+{
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM && mlist_version() == NBList::spatial) {
-      extern void dfield_ewald_real_cu(real(*)[3], real(*)[3]);
-      dfield_ewald_real_cu(field, fieldp);
-   } else
+   if (mlist_version() == NBList::spatial)
+      dfield_nonewald_cu(field, fieldp);
+   else
 #endif
-      dfield_ewald_real_acc(field, fieldp);
+      dfield_nonewald_acc(field, fieldp);
 }
 
 
 void dfield_ewald(real (*field)[3], real (*fieldp)[3])
 {
-   device_array::zero(PROCEED_NEW_Q, n, field, fieldp);
-   dfield_ewald_recip_self(field);
-   device_array::copy(PROCEED_NEW_Q, n, fieldp, field);
+   dfield_ewald_recip_self(field, fieldp);
    dfield_ewald_real(field, fieldp);
 }
 
 
-void dfield_coulomb(real (*field)[3], real (*fieldp)[3])
+void dfield_ewald_recip_self(real (*field)[3], real (*fieldp)[3])
 {
-   extern void dfield_coulomb_acc(real(*)[3], real(*)[3]);
-#if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM && mlist_version() == NBList::spatial) {
-      extern void dfield_coulomb_cu(real(*)[3], real(*)[3]);
-      dfield_coulomb_cu(field, fieldp);
-   } else
-#endif
-      dfield_coulomb_acc(field, fieldp);
+   dfield_ewald_recip_self_acc(field);
+   device_array::copy(PROCEED_NEW_Q, n, fieldp, field);
 }
 
 
-void dfield(real (*field)[3], real (*fieldp)[3])
+void dfield_ewald_real(real (*field)[3], real (*fieldp)[3])
 {
-   if (epolar_electyp == elec_t::ewald)
-      dfield_ewald(field, fieldp);
+#if TINKER_CUDART
+   if (mlist_version() == NBList::spatial)
+      dfield_ewald_real_cu(field, fieldp);
    else
-      dfield_coulomb(field, fieldp);
-}
-
-
-void ufield_ewald_real(const real (*uind)[3], const real (*uinp)[3],
-                       real (*field)[3], real (*fieldp)[3])
-{
-   extern void ufield_ewald_real_acc(const real(*)[3], const real(*)[3],
-                                     real(*)[3], real(*)[3]);
-#if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM && mlist_version() == NBList::spatial) {
-      extern void ufield_ewald_real_cu(const real(*)[3], const real(*)[3],
-                                       real(*)[3], real(*)[3]);
-      ufield_ewald_real_cu(uind, uinp, field, fieldp);
-   } else
 #endif
-      ufield_ewald_real_acc(uind, uinp, field, fieldp);
-}
-
-
-void ufield_ewald(const real (*uind)[3], const real (*uinp)[3],
-                  real (*field)[3], real (*fieldp)[3])
-{
-   device_array::zero(PROCEED_NEW_Q, n, field, fieldp);
-   ufield_ewald_recip_self(uind, uinp, field, fieldp);
-   ufield_ewald_real(uind, uinp, field, fieldp);
-}
-
-
-void ufield_coulomb(const real (*uind)[3], const real (*uinp)[3],
-                    real (*field)[3], real (*fieldp)[3])
-{
-   extern void ufield_coulomb_acc(const real(*)[3], const real(*)[3],
-                                  real(*)[3], real(*)[3]);
-#if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM && mlist_version() == NBList::spatial) {
-      extern void ufield_coulomb_cu(const real(*)[3], const real(*)[3],
-                                    real(*)[3], real(*)[3]);
-      ufield_coulomb_cu(uind, uinp, field, fieldp);
-   } else
-#endif
-      ufield_coulomb_acc(uind, uinp, field, fieldp);
+      dfield_ewald_real_acc(field, fieldp);
 }
 
 
@@ -95,6 +55,45 @@ void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3],
    if (epolar_electyp == elec_t::ewald)
       ufield_ewald(uind, uinp, field, fieldp);
    else
-      ufield_coulomb(uind, uinp, field, fieldp);
+      ufield_nonewald(uind, uinp, field, fieldp);
+}
+
+
+void ufield_nonewald(const real (*uind)[3], const real (*uinp)[3],
+                     real (*field)[3], real (*fieldp)[3])
+{
+#if TINKER_CUDART
+   if (mlist_version() == NBList::spatial)
+      ufield_nonewald_cu(uind, uinp, field, fieldp);
+   else
+#endif
+      ufield_nonewald_acc(uind, uinp, field, fieldp);
+}
+
+
+void ufield_ewald(const real (*uind)[3], const real (*uinp)[3],
+                  real (*field)[3], real (*fieldp)[3])
+{
+   ufield_ewald_recip_self(uind, uinp, field, fieldp);
+   ufield_ewald_real(uind, uinp, field, fieldp);
+}
+
+
+void ufield_ewald_recip_self(const real (*uind)[3], const real (*uinp)[3],
+                             real (*field)[3], real (*fieldp)[3])
+{
+   ufield_ewald_recip_self_acc(uind, uinp, field, fieldp);
+}
+
+
+void ufield_ewald_real(const real (*uind)[3], const real (*uinp)[3],
+                       real (*field)[3], real (*fieldp)[3])
+{
+#if TINKER_CUDART
+   if (mlist_version() == NBList::spatial)
+      ufield_ewald_real_cu(uind, uinp, field, fieldp);
+   else
+#endif
+      ufield_ewald_real_acc(uind, uinp, field, fieldp);
 }
 TINKER_NAMESPACE_END

@@ -219,7 +219,7 @@ void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
 }
 
 
-void dfield_coulomb_cu(real (*field)[3], real (*fieldp)[3])
+void dfield_nonewald_cu(real (*field)[3], real (*fieldp)[3])
 {
    const auto& st = *mspatial_unit;
    const real off2 = st.cutoff * st.cutoff;
@@ -418,8 +418,8 @@ void ufield_ewald_real_cu(const real (*uind)[3], const real (*uinp)[3],
 }
 
 
-void ufield_coulomb_cu(const real (*uind)[3], const real (*uinp)[3],
-                       real (*field)[3], real (*fieldp)[3])
+void ufield_nonewald_cu(const real (*uind)[3], const real (*uinp)[3],
+                        real (*field)[3], real (*fieldp)[3])
 {
    const auto& st = *mspatial_unit;
    const real off2 = st.cutoff * st.cutoff;

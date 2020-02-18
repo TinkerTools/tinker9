@@ -272,7 +272,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]")
 
       zero_egv();
       elec_init(calc::v0);
-      dfield_coulomb(udir, udirp);
+      dfield_nonewald(udir, udirp);
       std::vector<std::array<double, 3>> fieldd, fieldp;
       fieldd.resize(n);
       fieldp.resize(n);
@@ -328,7 +328,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]")
       }
       device_array::copyin(PROCEED_NEW_Q, n, uind, &ud[0][0]);
       device_array::copyin(WAIT_NEW_Q, n, uinp, &up[0][0]);
-      ufield_coulomb(uind, uinp, udir, udirp);
+      ufield_nonewald(uind, uinp, udir, udirp);
       ud.resize(n);
       up.resize(n);
       device_array::copyout(PROCEED_NEW_Q, n, &ud[0][0], udir);
