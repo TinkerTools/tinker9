@@ -2,29 +2,26 @@
 #include "e_polar.h"
 #include "gpu_card.h"
 #include "md.h"
+#include "named_struct.h"
 #include "nblist.h"
 #include "seq_image.h"
 #include "seq_pair_polar.h"
 #include "seq_switch.h"
 
 TINKER_NAMESPACE_BEGIN
-template <int USE>
-void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
+#define POLAR_DPTRS_                                                           \
+   x, y, z, gx, gy, gz, box, rpole, thole, pdamp, uind, uinp, nep, ep, vir_ep, \
+      ufld, dufld
+template <class Ver>
+void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_a = USE & calc::analyz;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
-   static_assert(do_v ? do_g : true, "");
-   static_assert(do_a ? do_e : true, "");
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_a = Ver::a;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
    if CONSTEXPR (do_g)
       device_array::zero(PROCEED_NEW_Q, n, ufld, dufld);
-
-   if CONSTEXPR (do_e && !do_a)
-      epolar0_dotprod(uind, udirp);
-   static_assert(do_g || do_a,
-                 "Do not use this template for the energy-only version.");
 
    const real off = mlist_unit->cutoff;
    const real off2 = off * off;
@@ -35,10 +32,6 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
    PairPolarGrad pgrad;
 
    const real f = 0.5 * electric / dielec;
-
-#define POLAR_DPTRS_                                                           \
-   x, y, z, gx, gy, gz, box, rpole, thole, pdamp, uind, uinp, nep, ep, vir_ep, \
-      ufld, dufld
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
@@ -108,19 +101,18 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
             }
 
             MAYBE_UNUSED real e;
-            pair_polar<USE, elec_t::coulomb>( //
-               r2, xr, yr, zr, 1, 1, 1,       //
+            pair_polar<do_e, do_g, NON_EWALD>( //
+               r2, xr, yr, zr, 1, 1, 1,        //
                ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
                uiz, uixp, uiyp, uizp, pdi, pti, //
                ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
                ukz, ukxp, ukyp, ukzp, pdamp[k], thole[k], //
                f, 0, e, pgrad);
 
-            if CONSTEXPR (do_a && do_e) {
+            if CONSTEXPR (do_a)
                atomic_add(1, nep, offset);
+            if CONSTEXPR (do_e)
                atomic_add(e, ep, offset);
-            }
-
             if CONSTEXPR (do_g) {
                gxi += pgrad.frcx;
                gyi += pgrad.frcy;
@@ -244,7 +236,7 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
          }
 
          MAYBE_UNUSED real e;
-         pair_polar<USE, elec_t::coulomb>(          //
+         pair_polar<do_e, do_g, NON_EWALD>(         //
             r2, xr, yr, zr, dscale, pscale, uscale, //
             ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
             uiz, uixp, uiyp, uizp, pdi, pti, //
@@ -252,11 +244,11 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
             ukz, ukxp, ukyp, ukzp, pdamp[k], thole[k], //
             f, 0, e, pgrad);
 
-         if CONSTEXPR (do_a && do_e) {
+         if CONSTEXPR (do_a)
             if (pscale == -1)
                atomic_add(-1, nep, offset);
+         if CONSTEXPR (do_e)
             atomic_add(e, ep, offset);
-         }
 
          if CONSTEXPR (do_g) {
             atomic_add(pgrad.frcx, gx, i);
@@ -333,20 +325,20 @@ void epolar_coulomb_tmpl(const real (*uind)[3], const real (*uinp)[3])
    }
 }
 
-void epolar_coulomb_acc(int vers, const real (*uind)[3], const real (*uinp)[3])
+void epolar_nonewald_acc(int vers, const real (*uind)[3], const real (*uinp)[3])
 {
    if (vers == calc::v0) {
-      epolar0_dotprod(uind, udirp);
+      epolar_nonewald_acc1<calc::V0>(uind, uinp);
    } else if (vers == calc::v1) {
-      epolar_coulomb_tmpl<calc::v1>(uind, uinp);
+      epolar_nonewald_acc1<calc::V1>(uind, uinp);
    } else if (vers == calc::v3) {
-      epolar_coulomb_tmpl<calc::v3>(uind, uinp);
+      epolar_nonewald_acc1<calc::V3>(uind, uinp);
    } else if (vers == calc::v4) {
-      epolar_coulomb_tmpl<calc::v4>(uind, uinp);
+      epolar_nonewald_acc1<calc::V4>(uind, uinp);
    } else if (vers == calc::v5) {
-      epolar_coulomb_tmpl<calc::v5>(uind, uinp);
+      epolar_nonewald_acc1<calc::V5>(uind, uinp);
    } else if (vers == calc::v6) {
-      epolar_coulomb_tmpl<calc::v6>(uind, uinp);
+      epolar_nonewald_acc1<calc::V6>(uind, uinp);
    }
 }
 TINKER_NAMESPACE_END

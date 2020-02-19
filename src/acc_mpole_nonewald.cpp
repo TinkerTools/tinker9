@@ -2,21 +2,20 @@
 #include "e_mpole.h"
 #include "gpu_card.h"
 #include "md.h"
+#include "named_struct.h"
 #include "nblist.h"
 #include "seq_image.h"
 #include "seq_pair_mpole.h"
 #include "seq_switch.h"
 
 TINKER_NAMESPACE_BEGIN
-template <int USE>
-void empole_coulomb_tmpl()
+template <class Ver>
+void empole_nonewald_acc1()
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_a = USE & calc::analyz;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
-   static_assert(do_v ? do_g : true, "");
-   static_assert(do_a ? do_e : true, "");
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_a = Ver::a;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
    const real f = electric / dielec;
 
@@ -67,7 +66,7 @@ void empole_coulomb_tmpl()
          real r2 = xr * xr + yr * yr + zr * zr;
          if (r2 <= off2) {
             MAYBE_UNUSED real e;
-            pair_mpole<USE, elec_t::coulomb>(                         //
+            pair_mpole<do_e, do_g, NON_EWALD>(                        //
                r2, xr, yr, zr, 1,                                     //
                ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, //
                rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
@@ -152,7 +151,7 @@ void empole_coulomb_tmpl()
       real r2 = xr * xr + yr * yr + zr * zr;
       if (r2 <= off2) {
          MAYBE_UNUSED real e;
-         pair_mpole<USE, elec_t::coulomb>(                         //
+         pair_mpole<do_e, do_g, NON_EWALD>(                        //
             r2, xr, yr, zr, mscale,                                //
             ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, //
             rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
@@ -198,19 +197,19 @@ void empole_coulomb_tmpl()
    }
 }
 
-void empole_coulomb_acc(int vers)
+void empole_nonewald_acc(int vers)
 {
    if (vers == calc::v0)
-      empole_coulomb_tmpl<calc::v0>();
+      empole_nonewald_acc1<calc::V0>();
    else if (vers == calc::v1)
-      empole_coulomb_tmpl<calc::v1>();
+      empole_nonewald_acc1<calc::V1>();
    else if (vers == calc::v3)
-      empole_coulomb_tmpl<calc::v3>();
+      empole_nonewald_acc1<calc::V3>();
    else if (vers == calc::v4)
-      empole_coulomb_tmpl<calc::v4>();
+      empole_nonewald_acc1<calc::V4>();
    else if (vers == calc::v5)
-      empole_coulomb_tmpl<calc::v5>();
+      empole_nonewald_acc1<calc::V5>();
    else if (vers == calc::v6)
-      empole_coulomb_tmpl<calc::v6>();
+      empole_nonewald_acc1<calc::V6>();
 }
 TINKER_NAMESPACE_END
