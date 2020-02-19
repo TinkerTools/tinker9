@@ -53,10 +53,10 @@ void evdw_resolve_gradient()
 template <class Ver, class VDWTYP>
 void evdw_acc1()
 {
-   constexpr int do_e = Ver::e;
-   constexpr int do_a = Ver::a;
-   constexpr int do_g = Ver::g;
-   constexpr int do_v = Ver::v;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_a = Ver::a;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
    const real cut = switch_cut(switch_vdw);
    const real off = vlist_unit->cutoff;
@@ -254,17 +254,17 @@ void evdw_acc1()
    void evdw_##typ##_acc(int vers)                                             \
    {                                                                           \
       if (vers == calc::v0)                                                    \
-         evdw_acc1<EnergyVersion0, TYP>();                                     \
+         evdw_acc1<calc::V0, TYP>();                                           \
       else if (vers == calc::v1)                                               \
-         evdw_acc1<EnergyVersion1, TYP>();                                     \
+         evdw_acc1<calc::V1, TYP>();                                           \
       else if (vers == calc::v3)                                               \
-         evdw_acc1<EnergyVersion3, TYP>();                                     \
+         evdw_acc1<calc::V3, TYP>();                                           \
       else if (vers == calc::v4)                                               \
-         evdw_acc1<EnergyVersion4, TYP>();                                     \
+         evdw_acc1<calc::V4, TYP>();                                           \
       else if (vers == calc::v5)                                               \
-         evdw_acc1<EnergyVersion5, TYP>();                                     \
+         evdw_acc1<calc::V5, TYP>();                                           \
       else if (vers == calc::v6)                                               \
-         evdw_acc1<EnergyVersion6, TYP>();                                     \
+         evdw_acc1<calc::V6, TYP>();                                           \
    }
 TINKER_EVDW_ACC(lj, LJ);
 TINKER_EVDW_ACC(buck, BUCK);

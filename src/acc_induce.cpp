@@ -25,6 +25,7 @@ void diag_precond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3],
    }
 }
 
+#define APPLY_DPTRS_ rsd, rsdp, zrsd, zrsdp, mindex, minv
 void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
                               real (*zrsd)[3], real (*zrsdp)[3])
 {
@@ -41,8 +42,6 @@ void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
 
    const int maxnlst = ulist_unit->maxnlst;
    const auto* ulst = ulist_unit.deviceptr();
-
-#define APPLY_DPTRS_ rsd, rsdp, zrsd, zrsdp, mindex, minv
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
@@ -135,6 +134,7 @@ void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
    }
 }
 
+#define BUILD_DPTRS_ mindex, minv, box, x, y, z, polarity, pdamp, thole
 void sparse_precond_build_acc()
 {
    const auto* nulst = ulist_unit->nlst;
@@ -149,8 +149,6 @@ void sparse_precond_build_acc()
 
    const int maxnlst = ulist_unit->maxnlst;
    const auto* ulst = ulist_unit.deviceptr();
-
-#define BUILD_DPTRS_ mindex, minv, box, x, y, z, polarity, pdamp, thole
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\

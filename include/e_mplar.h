@@ -9,6 +9,6 @@ TINKER_EXTERN device_pointer<int, 2> mdpuexclude;
 TINKER_EXTERN device_pointer<real, 4> mdpuexclude_scale;
 
 
-void emplar_cu(int vers);
 void emplar_data(rc_op op);
+void emplar_cu(int vers);
 TINKER_NAMESPACE_END

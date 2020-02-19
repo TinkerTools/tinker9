@@ -26,9 +26,9 @@ TINKER_NAMESPACE_BEGIN
 template <class Ver, class TYP>
 void eopbend_acc1()
 {
-   constexpr int do_e = Ver::e;
-   constexpr int do_g = Ver::g;
-   constexpr int do_v = Ver::v;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
    auto bufsize = buffer_size();
 
@@ -213,26 +213,26 @@ void eopbend_acc(int vers)
 {
    if (opbtyp == eopbend_t::w_d_c) {
       if (vers == calc::v0 || vers == calc::v3)
-         eopbend_acc1<EnergyVersion0, WDC>();
+         eopbend_acc1<calc::V0, WDC>();
       else if (vers == calc::v1)
-         eopbend_acc1<EnergyVersion1, WDC>();
+         eopbend_acc1<calc::V1, WDC>();
       else if (vers == calc::v4)
-         eopbend_acc1<EnergyVersion4, WDC>();
+         eopbend_acc1<calc::V4, WDC>();
       else if (vers == calc::v5)
-         eopbend_acc1<EnergyVersion5, WDC>();
+         eopbend_acc1<calc::V5, WDC>();
       else if (vers == calc::v6)
-         eopbend_acc1<EnergyVersion6, WDC>();
+         eopbend_acc1<calc::V6, WDC>();
    } else if (opbtyp == eopbend_t::allinger) {
       if (vers == calc::v0 || vers == calc::v3)
-         eopbend_acc1<EnergyVersion0, ALLINGER>();
+         eopbend_acc1<calc::V0, ALLINGER>();
       else if (vers == calc::v1)
-         eopbend_acc1<EnergyVersion1, ALLINGER>();
+         eopbend_acc1<calc::V1, ALLINGER>();
       else if (vers == calc::v4)
-         eopbend_acc1<EnergyVersion4, ALLINGER>();
+         eopbend_acc1<calc::V4, ALLINGER>();
       else if (vers == calc::v5)
-         eopbend_acc1<EnergyVersion5, ALLINGER>();
+         eopbend_acc1<calc::V5, ALLINGER>();
       else if (vers == calc::v6)
-         eopbend_acc1<EnergyVersion6, ALLINGER>();
+         eopbend_acc1<calc::V6, ALLINGER>();
    } else {
       assert(false);
    }

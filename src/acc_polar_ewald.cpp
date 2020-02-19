@@ -2,6 +2,7 @@
 #include "e_polar.h"
 #include "gpu_card.h"
 #include "md.h"
+#include "named_struct.h"
 #include "nblist.h"
 #include "pme.h"
 #include "seq_image.h"
@@ -9,14 +10,16 @@
 #include "seq_switch.h"
 
 TINKER_NAMESPACE_BEGIN
-template <int USE>
-void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
+#define POLAR_DPTRS_                                                           \
+   x, y, z, gx, gy, gz, box, rpole, thole, pdamp, uind, uinp, nep, ep, vir_ep, \
+      ufld, dufld
+template <class Ver>
+void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_a = USE & calc::analyz;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
-   sanity_check<USE>();
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_a = Ver::a;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
    if CONSTEXPR (do_g)
       device_array::zero(PROCEED_NEW_Q, n, ufld, dufld);
@@ -33,10 +36,6 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
 
    const PMEUnit pu = ppme_unit;
    const real aewald = pu->aewald;
-
-#define POLAR_DPTRS_                                                           \
-   x, y, z, gx, gy, gz, box, rpole, thole, pdamp, uind, uinp, nep, ep, vir_ep, \
-      ufld, dufld
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
@@ -106,18 +105,18 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
             }
 
             MAYBE_UNUSED real e;
-            pair_polar<USE, elec_t::ewald>( //
-               r2, xr, yr, zr, 1, 1, 1,     //
+            pair_polar<do_e, do_g, EWALD>( //
+               r2, xr, yr, zr, 1, 1, 1,    //
                ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
                uiz, uixp, uiyp, uizp, pdi, pti, //
                ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
                ukz, ukxp, ukyp, ukzp, pdamp[k], thole[k], //
                f, aewald, e, pgrad);
 
-            if CONSTEXPR (do_a && do_e) {
+            if CONSTEXPR (do_a)
                atomic_add(1, nep, offset);
+            if CONSTEXPR (do_e)
                atomic_add(e, ep, offset);
-            }
 
             if CONSTEXPR (do_g) {
                gxi += pgrad.frcx;
@@ -244,7 +243,7 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
          }
 
          MAYBE_UNUSED real e;
-         pair_polar<USE, elec_t::coulomb>(          //
+         pair_polar<do_e, do_g, NON_EWALD>(         //
             r2, xr, yr, zr, dscale, pscale, uscale, //
             ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
             uiz, uixp, uiyp, uizp, pdi, pti, //
@@ -252,11 +251,11 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
             ukz, ukxp, ukyp, ukzp, pdamp[k], thole[k], //
             f, 0, e, pgrad);
 
-         if CONSTEXPR (do_a && do_e) {
+         if CONSTEXPR (do_a)
             if (pscale == -1)
                atomic_add(-1, nep, offset);
+         if CONSTEXPR (do_e)
             atomic_add(e, ep, offset);
-         }
 
          if CONSTEXPR (do_g) {
             atomic_add(pgrad.frcx, gx, i);
@@ -333,15 +332,14 @@ void epolar_real_tmpl(const real (*uind)[3], const real (*uinp)[3])
    }
 }
 
-template <int USE>
-void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
-                            const real (*gpu_uinp)[3])
+template <class Ver>
+void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
+                                  const real (*gpu_uinp)[3])
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_a = USE & calc::analyz;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
-   sanity_check<USE>();
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_a = Ver::a;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
    const PMEUnit pu = ppme_unit;
    const auto& st = *pu;
@@ -358,8 +356,7 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
    auto* fphip = fdip_phi2;
 
    cuind_to_fuind(pu, gpu_uind, gpu_uinp, fuind, fuinp);
-   if CONSTEXPR (do_e && do_a) {
-      // if (pairwise .eq. .true.)
+   if CONSTEXPR (do_e) {
       #pragma acc parallel loop independent async deviceptr(fuind,fphi,ep)
       for (int i = 0; i < n; ++i) {
          int offset = i & (bufsize - 1);
@@ -368,7 +365,6 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
              fuind[i][2] * fphi[i][3]);
          atomic_add(e, ep, offset);
       }
-      // end if
    }
    grid_uind(pu, fuind, fuinp);
    fftfront(pu);
@@ -481,16 +477,15 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
          trqz[i] += tep3;
       }
 
-      if CONSTEXPR (do_e && do_a) {
-         // if (pairwise .eq. .true.)
+      if CONSTEXPR (do_e) {
          uix = gpu_uind[i][0];
          uiy = gpu_uind[i][1];
          uiz = gpu_uind[i][2];
          real uii = dix * uix + diy * uiy + diz * uiz;
          atomic_add(fterm_term * uii, ep, offset);
-         atomic_add(1, nep, offset);
-         // end if
       }
+      if CONSTEXPR (do_a)
+         atomic_add(1, nep, offset);
    }
 
    // recip virial
@@ -680,51 +675,41 @@ void epolar_recip_self_tmpl(const real (*gpu_uind)[3],
       }
    }
 }
-template void epolar_recip_self_tmpl<calc::v0>(const real (*)[3],
-                                               const real (*)[3]);
 
-#if TINKER_CUDART
-template <int>
-void epolar_real_cu(const real (*)[3], const real (*)[3]);
-#endif
-template <int USE>
-void epolar_ewald_tmpl(const real (*uind)[3], const real (*uinp)[3])
+
+void epolar_ewald_real_acc(int vers, const real (*uind)[3],
+                           const real (*uinp)[3])
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_a = USE & calc::analyz;
-   constexpr int do_g = USE & calc::grad;
-   sanity_check<USE>();
-
-   if CONSTEXPR (do_e && !do_a)
-      epolar0_dotprod(uind, udirp);
-   static_assert(do_g || do_a,
-                 "Do not use this template for the energy-only version.");
-
-#if TINKER_CUDART
-   if (mlist_version() == NBList::spatial) {
-      epolar_real_cu<USE>(uind, uinp);
-   } else
-#endif
-      epolar_real_tmpl<USE>(uind, uinp);
-
-   epolar_recip_self_tmpl<USE>(uind, uinp);
+   if (vers == calc::v0) {
+      epolar_ewald_real_acc1<calc::V0>(uind, uinp);
+   } else if (vers == calc::v1) {
+      epolar_ewald_real_acc1<calc::V1>(uind, uinp);
+   } else if (vers == calc::v3) {
+      epolar_ewald_real_acc1<calc::V3>(uind, uinp);
+   } else if (vers == calc::v4) {
+      epolar_ewald_real_acc1<calc::V4>(uind, uinp);
+   } else if (vers == calc::v5) {
+      epolar_ewald_real_acc1<calc::V5>(uind, uinp);
+   } else if (vers == calc::v6) {
+      epolar_ewald_real_acc1<calc::V6>(uind, uinp);
+   }
 }
 
-void epolar_ewald(int vers)
+void epolar_ewald_recip_self_acc(int vers, const real (*uind)[3],
+                                 const real (*uinp)[3])
 {
-   induce(uind, uinp);
    if (vers == calc::v0) {
-      epolar0_dotprod(uind, udirp);
+      epolar_ewald_recip_self_acc1<calc::V0>(uind, uinp);
    } else if (vers == calc::v1) {
-      epolar_ewald_tmpl<calc::v1>(uind, uinp);
+      epolar_ewald_recip_self_acc1<calc::V1>(uind, uinp);
    } else if (vers == calc::v3) {
-      epolar_ewald_tmpl<calc::v3>(uind, uinp);
+      epolar_ewald_recip_self_acc1<calc::V3>(uind, uinp);
    } else if (vers == calc::v4) {
-      epolar_ewald_tmpl<calc::v4>(uind, uinp);
+      epolar_ewald_recip_self_acc1<calc::V4>(uind, uinp);
    } else if (vers == calc::v5) {
-      epolar_ewald_tmpl<calc::v5>(uind, uinp);
+      epolar_ewald_recip_self_acc1<calc::V5>(uind, uinp);
    } else if (vers == calc::v6) {
-      epolar_ewald_tmpl<calc::v6>(uind, uinp);
+      epolar_ewald_recip_self_acc1<calc::V6>(uind, uinp);
    }
 }
 TINKER_NAMESPACE_END

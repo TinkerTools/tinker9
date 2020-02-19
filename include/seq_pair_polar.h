@@ -39,7 +39,7 @@ inline void zero(PairPolarGrad& pgrad)
 
 
 #pragma acc routine seq
-template <int USE, elec_t ETYP>
+template <bool do_e, bool do_g, class ETYP>
 SEQ_CUDA
 void pair_polar(                                                              //
    real r2, real xr, real yr, real zr, real dscale, real pscale, real uscale, //
@@ -51,11 +51,7 @@ void pair_polar(                                                              //
    real ukyp, real ukzp, real pdk, real ptk, //
    real f, real aewald, real& restrict e, PairPolarGrad& restrict pgrad)
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_a = USE & calc::analyz;
-
-   if CONSTEXPR (ETYP == elec_t::ewald) {
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
       dscale = 1;
       pscale = 1;
       uscale = 1;
@@ -86,12 +82,12 @@ void pair_polar(                                                              //
    if CONSTEXPR (do_g)
       rr9 = 7 * rr7 * rr2;
    real bn[5];
-   if CONSTEXPR (ETYP == elec_t::ewald) {
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
       if CONSTEXPR (!do_g)
          damp_ewald<4>(bn, r, invr1, rr2, aewald);
       else
          damp_ewald<5>(bn, r, invr1, rr2, aewald);
-   } else if CONSTEXPR (ETYP == elec_t::coulomb) {
+   } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
       bn[1] = rr3;
       bn[2] = rr5;
       bn[3] = rr7;
@@ -132,7 +128,7 @@ void pair_polar(                                                              //
    real sr5 = bn[2] - ex5 * rr5;
    real sr7 = bn[3] - ex7 * rr7;
 
-   if CONSTEXPR (do_e && do_a) {
+   if CONSTEXPR (do_e) {
       real diu = dix * ukx + diy * uky + diz * ukz;
       real qiu = qix * ukx + qiy * uky + qiz * ukz;
       real dku = dkx * uix + dky * uiy + dkz * uiz;
@@ -265,11 +261,11 @@ void pair_polar(                                                              //
          tkyy * uiyp - tkyz * uizp;
       depz = tixz * ukxp + tiyz * ukyp + tizz * ukzp - tkxz * uixp -
          tkyz * uiyp - tkzz * uizp;
-      if CONSTEXPR (ETYP == elec_t::ewald) {
+      if CONSTEXPR (eq<ETYP, EWALD>()) {
          pgrad.frcx = -depx;
          pgrad.frcy = -depy;
          pgrad.frcz = -depz;
-      } else if CONSTEXPR (ETYP == elec_t::coulomb) {
+      } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
          pgrad.frcx = -depx * dscale;
          pgrad.frcy = -depy * dscale;
          pgrad.frcz = -depz * dscale;
@@ -283,11 +279,11 @@ void pair_polar(                                                              //
          tkyz * uiz;
       depz = tixz * ukx + tiyz * uky + tizz * ukz - tkxz * uix - tkyz * uiy -
          tkzz * uiz;
-      if CONSTEXPR (ETYP == elec_t::ewald) {
+      if CONSTEXPR (eq<ETYP, EWALD>()) {
          pgrad.frcx -= depx;
          pgrad.frcy -= depy;
          pgrad.frcz -= depz;
-      } else if CONSTEXPR (ETYP == elec_t::coulomb) {
+      } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
          pgrad.frcx -= pscale * depx;
          pgrad.frcy -= pscale * depy;
          pgrad.frcz -= pscale * depz;
@@ -336,11 +332,11 @@ void pair_polar(                                                              //
          tkyy * uiyp + tkyz * uizp;
       depz = tixz * ukxp + tiyz * ukyp + tizz * ukzp + tkxz * uixp +
          tkyz * uiyp + tkzz * uizp;
-      if CONSTEXPR (ETYP == elec_t::ewald) {
+      if CONSTEXPR (eq<ETYP, EWALD>()) {
          pgrad.frcx -= depx;
          pgrad.frcy -= depy;
          pgrad.frcz -= depz;
-      } else if CONSTEXPR (ETYP == elec_t::coulomb) {
+      } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
          pgrad.frcx -= uscale * depx;
          pgrad.frcy -= uscale * depy;
          pgrad.frcz -= uscale * depz;

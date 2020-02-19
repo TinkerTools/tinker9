@@ -40,22 +40,25 @@ TINKER_EXTERN device_pointer<real, 3> work01_, work02_, work03_, work04_,
 
 void epolar_data(rc_op op);
 
-// see also subroutine epolar0e in epolar.f
-void epolar0_dotprod(const real (*uind)[3], const real (*udirp)[3]);
+
+// different induction algorithms
+void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]);
+void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3]);
+void induce(real (*uind)[3], real (*uinp)[3]);
 
 
 // electrostatic field due to permanent multipoles
 // clang-format off
 void dfield                  (real (*field)[3], real (*fieldp)[3]);
-void dfield_nonewald         (real (*field)[3], real (*fieldp)[3]); // zero; calc. fields
+void dfield_nonewald         (real (*field)[3], real (*fieldp)[3]);
 void dfield_ewald            (real (*field)[3], real (*fieldp)[3]);
-void dfield_ewald_recip_self (real (*field)[3], real (*fieldp)[3]); // zero; calc. fields
-void dfield_ewald_real       (real (*field)[3], real (*fieldp)[3]); // calc. fields
+void dfield_ewald_recip_self (real (*field)[3], real (*fieldp)[3]);
+void dfield_ewald_real       (real (*field)[3], real (*fieldp)[3]);
 
 void dfield_nonewald_acc         (real (*field)[3], real (*fieldp)[3]);
-void dfield_nonewald_cu          (real (*field)[3], real (*fieldp)[3]);
 void dfield_ewald_recip_self_acc (real (*field)[3]);
 void dfield_ewald_real_acc       (real (*field)[3], real (*fieldp)[3]);
+void dfield_nonewald_cu          (real (*field)[3], real (*fieldp)[3]);
 void dfield_ewald_real_cu        (real (*field)[3], real (*fieldp)[3]);
 // clang-format on
 
@@ -70,19 +73,26 @@ void ufield_ewald_recip_self (const real (*uind)[3], const real (*uinp)[3], real
 void ufield_ewald_real       (const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
 
 void ufield_nonewald_acc         (const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
-void ufield_nonewald_cu          (const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
 void ufield_ewald_recip_self_acc (const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
 void ufield_ewald_real_acc       (const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
+void ufield_nonewald_cu          (const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
 void ufield_ewald_real_cu        (const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
 // clang-format on
 
 
-// different induction algorithms
-void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]);
-void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3]);
-void induce(real (*uind)[3], real (*uinp)[3]);
-
-void epolar_coulomb(int vers);
-void epolar_ewald(int vers);
 void epolar(int vers);
+void epolar_nonewald(int vers);
+void epolar_ewald(int vers);
+void epolar_ewald_real(int vers);
+void epolar_ewald_recip_self(int vers);
+// see also subroutine epolar0e in epolar.f
+void epolar0_dotprod(const real (*uind)[3], const real (*udirp)[3]);
+
+void epolar_nonewald_acc(int vers, const real (*d)[3], const real (*p)[3]);
+void epolar_ewald_real_acc(int vers, const real (*d)[3], const real (*p)[3]);
+void epolar_ewald_recip_self_acc(int vers, const real (*d)[3],
+                                 const real (*p)[3]);
+void epolar0_dotprod_acc(const real (*uind)[3], const real (*udirp)[3]);
+void epolar_nonewald_cu(int vers, const real (*d)[3], const real (*p)[3]);
+void epolar_ewald_real_cu(int vers, const real (*d)[3], const real (*p)[3]);
 TINKER_NAMESPACE_END

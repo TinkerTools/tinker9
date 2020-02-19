@@ -3,7 +3,7 @@
 #include "md.h"
 
 TINKER_NAMESPACE_BEGIN
-void epolar0_dotprod(const real (*gpu_uind)[3], const real (*gpu_udirp)[3])
+void epolar0_dotprod_acc(const real (*gpu_uind)[3], const real (*gpu_udirp)[3])
 {
    const real f = -0.5 * electric / dielec;
 

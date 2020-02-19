@@ -82,19 +82,6 @@ typedef enum
 /// barostat
 TINKER_EXTERN barostat_t barostat;
 
-template <int USE>
-void sanity_check()
-{
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_a = USE & calc::analyz;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
-   // if calc::virial, must calc::grad
-   static_assert(do_v ? do_g : true, "");
-   // if calc::analyz, must calc::energy
-   static_assert(do_a ? do_e : true, "");
-}
-
 void egv_data(rc_op op);
 TINKER_NAMESPACE_END
 

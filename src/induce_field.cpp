@@ -54,7 +54,7 @@ void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3],
 {
    if (epolar_electyp == elec_t::ewald)
       ufield_ewald(uind, uinp, field, fieldp);
-   else
+   else if (epolar_electyp == elec_t::coulomb)
       ufield_nonewald(uind, uinp, field, fieldp);
 }
 

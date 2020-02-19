@@ -339,6 +339,3 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]")
       test_end();
    }
 }
-
-#undef COMPARE_CODE_BLOCK1_
-#undef COMPARE_CODE_BLOCK2_

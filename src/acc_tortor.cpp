@@ -100,9 +100,6 @@ static void bcuint1(const real (&restrict y)[4], const real (&restrict y1i)[4],
    ansy2 = day2;
 }
 
-#undef BCUCOF_
-#undef BCUCOF_ANSY_
-
 /**
  * Comments
  *
@@ -112,9 +109,9 @@ static void bcuint1(const real (&restrict y)[4], const real (&restrict y1i)[4],
 template <class Ver>
 void etortor_acc1()
 {
-   constexpr int do_e = Ver::e;
-   constexpr int do_g = Ver::g;
-   constexpr int do_v = Ver::v;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
    auto bufsize = buffer_size();
 
@@ -397,14 +394,14 @@ void etortor_acc1()
 void etortor_acc(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
-      etortor_acc1<EnergyVersion0>();
+      etortor_acc1<calc::V0>();
    else if (vers == calc::v1)
-      etortor_acc1<EnergyVersion1>();
+      etortor_acc1<calc::V1>();
    else if (vers == calc::v4)
-      etortor_acc1<EnergyVersion4>();
+      etortor_acc1<calc::V4>();
    else if (vers == calc::v5)
-      etortor_acc1<EnergyVersion5>();
+      etortor_acc1<calc::V5>();
    else if (vers == calc::v6)
-      etortor_acc1<EnergyVersion6>();
+      etortor_acc1<calc::V6>();
 }
 TINKER_NAMESPACE_END

@@ -4,17 +4,12 @@
 
 
 TINKER_NAMESPACE_BEGIN
-template <int USE>
+template <bool do_a>
 __global__
 void empole_self_cu(size_t bufsize, count_buffer restrict nem,
                     energy_buffer restrict em, const real (*restrict rpole)[10],
                     int n, real f, real aewald)
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_a = USE & calc::analyz;
-   static_assert(do_e, "");
-
-
    real aewald_sq_2 = 2 * aewald * aewald;
    real fterm = -f * aewald * 0.5f * (real)(M_2_SQRTPI);
 

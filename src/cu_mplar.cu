@@ -6,6 +6,7 @@
 #include "epolar_trq.h"
 #include "launch.h"
 #include "md.h"
+#include "named_struct.h"
 #include "pme.h"
 #include "seq_damp.h"
 #include "seq_image.h"
@@ -13,7 +14,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-template <int USE, elec_t ETYP>
+template <class Ver, class ETYP>
 __device__
 void pair_mplar_v1(                                                       //
    real r2, real3 dr, real mscale, real dscale, real pscale, real uscale, //
@@ -27,9 +28,9 @@ void pair_mplar_v1(                                                       //
    real& restrict vtlxy, real& restrict vtlxz, real& restrict vtlyy,
    real& restrict vtlyz, real& restrict vtlzz)
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
    real bn[6];
    real sr3, sr5, sr7, sr9;
@@ -47,13 +48,13 @@ void pair_mplar_v1(                                                       //
          rr11 = 9 * rr9 * rr2;
       }
 
-      if CONSTEXPR (ETYP == elec_t::ewald) {
+      if CONSTEXPR (eq<ETYP, EWALD>()) {
          if CONSTEXPR (!do_g) {
             damp_ewald<5>(bn, r, invr1, rr2, aewald);
          } else {
             damp_ewald<6>(bn, r, invr1, rr2, aewald);
          }
-      } else if CONSTEXPR (ETYP == elec_t::coulomb) {
+      } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
          bn[0] = rr1;
          bn[1] = rr3;
          bn[2] = rr5;
@@ -427,7 +428,7 @@ void rotG2QIMat_v2(const real (&restrict r)[3][3],  //
 #define rotG2QIMatrix rotG2QIMat_v2
 
 
-template <int USE, elec_t ETYP>
+template <class Ver, class ETYP>
 __device__
 void pair_mplar_v2(                                                       //
    real r2, real3 dR, real mscale, real dscale, real pscale, real uscale, //
@@ -441,9 +442,9 @@ void pair_mplar_v2(                                                       //
    real& restrict vtlxy, real& restrict vtlxz, real& restrict vtlyy,
    real& restrict vtlyz, real& restrict vtlzz)
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
 
    // a rotation matrix that rotates (xr,yr,zr) to (0,0,r); R G = Q
@@ -465,13 +466,13 @@ void pair_mplar_v2(                                                       //
       }
 
 
-      if CONSTEXPR (ETYP == elec_t::ewald) {
+      if CONSTEXPR (eq<ETYP, EWALD>()) {
          if CONSTEXPR (!do_g) {
             damp_ewald<5>(bn, r, invr1, rr2, aewald);
          } else {
             damp_ewald<6>(bn, r, invr1, rr2, aewald);
          }
-      } else if CONSTEXPR (ETYP == elec_t::coulomb) {
+      } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
          bn[0] = rr1;
          bn[1] = rr3;
          bn[2] = rr5;
@@ -542,7 +543,7 @@ void pair_mplar_v2(                                                       //
    real phi1z[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 
-   if CONSTEXPR (ETYP == elec_t::ewald) {
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
       mscale = 1;
       dscale = 0.5f;
       pscale = 0.5f;
@@ -918,15 +919,16 @@ void pair_mplar_v2(                                                       //
       real(*restrict dufld)[6]
 
 
-template <int USE, elec_t ETYP>
+template <class Ver, class ETYP>
 __global__
 void emplar_cu1(EMPLAR_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
                 int niak, const int* restrict iak, const int* restrict lst,
                 real aewald)
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
+   static_assert(!Ver::a, "");
 
 
    const int iwarp = (threadIdx.x + blockIdx.x * blockDim.x) / WARP_SIZE;
@@ -1022,8 +1024,8 @@ void emplar_cu1(EMPLAR_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
          real r2 = image2(dr.x, dr.y, dr.z);
          if (atomi < atomk && r2 <= off2) {
-            if CONSTEXPR (ETYP == elec_t::ewald) {
-               pair_mplar<USE, elec_t::ewald>(
+            if CONSTEXPR (eq<ETYP, EWALD>()) {
+               pair_mplar<Ver, EWALD>(
                   r2, dr, 1, 1, 1, 1, //
                   idat.c, idat.d, idat.qxx, idat.qxy, idat.qxz, idat.qyy,
                   idat.qyz, idat.qzz, idat.ud, idat.up, idat.damp,
@@ -1036,8 +1038,8 @@ void emplar_cu1(EMPLAR_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
                   idat.frc, data[klane].frc, idat.trq, data[klane].trq, etl,
                   vtlxx, vtlxy, vtlxz, vtlyy, vtlyz, vtlzz);
             }
-            if CONSTEXPR (ETYP == elec_t::coulomb) {
-               pair_mplar<USE, elec_t::coulomb>(
+            if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
+               pair_mplar<Ver, NON_EWALD>(
                   r2, dr, 1, 1, 1, 1, //
                   idat.c, idat.d, idat.qxx, idat.qxy, idat.qxz, idat.qyy,
                   idat.qyz, idat.qzz, idat.ud, idat.up, idat.damp,
@@ -1077,16 +1079,17 @@ void emplar_cu1(EMPLAR_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 }
 
 
-template <int USE>
+template <class Ver>
 __global__
 void emplar_cu2(EMPLAR_ARGS, const real* restrict x, const real* restrict y,
                 const real* restrict z, int nmdpuexclude,
                 const int (*restrict mdpuexclude)[2],
                 const real (*restrict mdpuexclude_scale)[4])
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
+   static_assert(!Ver::a, "");
 
 
    const real off2 = off * off;
@@ -1173,7 +1176,7 @@ void emplar_cu2(EMPLAR_ARGS, const real* restrict x, const real* restrict y,
          real ptk = thole[k];
 
 
-         pair_mplar<USE, elec_t::coulomb>(
+         pair_mplar<Ver, NON_EWALD>(
             r2, make_real3(xr, yr, zr), mscale, dscale, pscale, uscale, //
             ci, make_real3(dix, diy, diz), qixx, qixy, qixz, qiyy, qiyz, qizz,
             make_real3(uix, uiy, uiz), make_real3(uixp, uiyp, uizp), pdi,
@@ -1208,8 +1211,8 @@ void emplar_cu2(EMPLAR_ARGS, const real* restrict x, const real* restrict y,
 }
 
 
-template <int USE, elec_t ETYP>
-void emplar_tmpl_cu(const real (*uind)[3], const real (*uinp)[3])
+template <class Ver, class ETYP>
+void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
 {
    const auto& st = *mspatial_unit;
    const real off = st.cutoff;
@@ -1218,20 +1221,20 @@ void emplar_tmpl_cu(const real (*uind)[3], const real (*uinp)[3])
 
    const real f = electric / dielec;
    real aewald = 0;
-   if CONSTEXPR (ETYP == elec_t::ewald) {
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
       assert(epme_unit == ppme_unit);
       PMEUnit pu = epme_unit;
       aewald = pu->aewald;
 
 
-      if CONSTEXPR (USE & calc::energy) {
-         auto ker0 = empole_self_cu<calc::energy>;
+      if CONSTEXPR (Ver::e) {
+         auto ker0 = empole_self_cu<Ver::a>;
          launch_k1s(nonblk, n, ker0, //
                     bufsize, nullptr, em, rpole, n, f, aewald);
       }
    }
    if (st.niak > 0) {
-      auto ker1 = emplar_cu1<USE, ETYP>;
+      auto ker1 = emplar_cu1<Ver, ETYP>;
       launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
                  bufsize, em, vir_em, gx, gy, gz, trqx, trqy, trqz,
                  TINKER_IMAGE_ARGS, off, f, rpole, pdamp, thole, uind, uinp,
@@ -1239,7 +1242,7 @@ void emplar_tmpl_cu(const real (*uind)[3], const real (*uinp)[3])
                  n, st.sorted, st.niak, st.iak, st.lst, aewald);
    }
    if (nmdpuexclude > 0) {
-      auto ker2 = emplar_cu2<USE>;
+      auto ker2 = emplar_cu2<Ver>;
       launch_k1s(nonblk, nmdpuexclude, ker2, //
                  bufsize, em, vir_em, gx, gy, gz, trqx, trqy, trqz,
                  TINKER_IMAGE_ARGS, off, f, rpole, pdamp, thole, uind, uinp,
@@ -1249,115 +1252,73 @@ void emplar_tmpl_cu(const real (*uind)[3], const real (*uinp)[3])
 }
 
 
-template <int USE>
-void empole_recip_tmpl();
-extern template void empole_recip_tmpl<calc::v0>();
-extern template void empole_recip_tmpl<calc::v1>();
-extern template void empole_recip_tmpl<calc::v3>();
-extern template void empole_recip_tmpl<calc::v4>();
-extern template void empole_recip_tmpl<calc::v5>();
-extern template void empole_recip_tmpl<calc::v6>();
-
-
-template <int USE>
-void epolar_recip_self_tmpl(const real (*)[3], const real (*)[3]);
-extern template void epolar_recip_self_tmpl<calc::v0>(const real (*)[3],
-                                                      const real (*)[3]);
-extern template void epolar_recip_self_tmpl<calc::v1>(const real (*)[3],
-                                                      const real (*)[3]);
-extern template void epolar_recip_self_tmpl<calc::v3>(const real (*)[3],
-                                                      const real (*)[3]);
-extern template void epolar_recip_self_tmpl<calc::v4>(const real (*)[3],
-                                                      const real (*)[3]);
-extern template void epolar_recip_self_tmpl<calc::v5>(const real (*)[3],
-                                                      const real (*)[3]);
-extern template void epolar_recip_self_tmpl<calc::v6>(const real (*)[3],
-                                                      const real (*)[3]);
-
-
-template <int USE>
-void emplar_ewald_tmpl()
+template <class Ver>
+void emplar_ewald_cu()
 {
-   constexpr int do_a = USE & calc::analyz;
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
-   static_assert(do_v ? do_g : true, "");
-   static_assert(!do_a, "");
-
+   constexpr bool do_e = Ver::e;
 
    // induce
    induce(uind, uinp);
 
-
    // empole real self
-   // epolar real gradient
-   emplar_tmpl_cu<USE, elec_t::ewald>(uind, uinp);
-   // epolar torque
-   if CONSTEXPR (do_e) {
+   // epolar real
+   emplar_cu<Ver, EWALD>(uind, uinp);
+   if CONSTEXPR (do_e)
       epolar0_dotprod(uind, udirp);
-   }
 
 
    // empole recip
-   empole_recip_tmpl<USE>();
+   empole_ewald_recip(Ver::value);
    // epolar recip self
-   epolar_recip_self_tmpl<USE>(uind, uinp);
+   epolar_ewald_recip_self(Ver::value);
 }
 
 
-template <int USE>
-void emplar_coulomb_tmpl()
+template <class Ver>
+void emplar_nonewald_cu()
 {
-   constexpr int do_a = USE & calc::analyz;
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
-   static_assert(do_v ? do_g : true, "");
-   static_assert(!do_a, "");
-
+   constexpr bool do_e = Ver::e;
 
    // induce
    induce(uind, uinp);
 
-
    // empole and epolar
-   emplar_tmpl_cu<USE, elec_t::coulomb>(uind, uinp);
-   if CONSTEXPR (do_e) {
+   emplar_cu<Ver, NON_EWALD>(uind, uinp);
+   if CONSTEXPR (do_e)
       epolar0_dotprod(uind, udirp);
-   }
 }
 
 
 void emplar_cu(int vers)
 {
    assert(empole_electyp == epolar_electyp);
+   assert(vers != calc::v3);
    if (empole_electyp == elec_t::coulomb) {
       if (vers == calc::v0)
-         emplar_coulomb_tmpl<calc::v0>();
+         emplar_nonewald_cu<calc::V0>();
       else if (vers == calc::v1)
-         emplar_coulomb_tmpl<calc::v1>();
+         emplar_nonewald_cu<calc::V1>();
       // else if (vers == calc::v3)
-      //    emplar_coulomb_tmpl<calc::v3>();
+      //    emplar_nonewald_cu<calc::V3>();
       else if (vers == calc::v4)
-         emplar_coulomb_tmpl<calc::v4>();
+         emplar_nonewald_cu<calc::V4>();
       else if (vers == calc::v5)
-         emplar_coulomb_tmpl<calc::v5>();
+         emplar_nonewald_cu<calc::V5>();
       else if (vers == calc::v6)
-         emplar_coulomb_tmpl<calc::v6>();
+         emplar_nonewald_cu<calc::V6>();
    } else if (empole_electyp == elec_t::ewald) {
       if (vers == calc::v0)
-         emplar_ewald_tmpl<calc::v0>();
+         emplar_ewald_cu<calc::V0>();
       else if (vers == calc::v1)
-         emplar_ewald_tmpl<calc::v1>();
+         emplar_ewald_cu<calc::V1>();
       // else if (vers == calc::v3)
-      //    emplar_ewald_tmpl<calc::v3>();
+      //    emplar_ewald_cu<calc::V3>();
       else if (vers == calc::v4)
-         emplar_ewald_tmpl<calc::v4>();
+         emplar_ewald_cu<calc::V4>();
       else if (vers == calc::v5)
-         emplar_ewald_tmpl<calc::v5>();
+         emplar_ewald_cu<calc::V5>();
       else if (vers == calc::v6)
-         emplar_ewald_tmpl<calc::v6>();
+         emplar_ewald_cu<calc::V6>();
    }
 }
 TINKER_NAMESPACE_END

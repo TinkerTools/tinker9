@@ -3,6 +3,7 @@
 #include "empole_self.h"
 #include "launch.h"
 #include "md.h"
+#include "named_struct.h"
 #include "pme.h"
 #include "seq_image.h"
 #include "seq_pair_mpole.h"
@@ -18,16 +19,16 @@ TINKER_NAMESPACE_BEGIN
       const real(*restrict rpole)[10]
 
 
-template <int USE, elec_t ETYP>
+template <class Ver, class ETYP>
 __global__
 void empole_cu1(EMPOLE_ARGS, const Spatial::SortedAtom* restrict sorted,
                 int niak, const int* restrict iak, const int* restrict lst,
                 int n, real aewald)
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_a = USE & calc::analyz;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_a = Ver::a;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
 
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
@@ -129,7 +130,6 @@ void empole_cu1(EMPOLE_ARGS, const Spatial::SortedAtom* restrict sorted,
          real qkzz = __shfl_sync(ALL_LANES, shqkzz, srclane);
 
 
-         real e = 0;
          PairMPoleGrad pgrad;
          zero(pgrad);
 
@@ -137,15 +137,16 @@ void empole_cu1(EMPOLE_ARGS, const Spatial::SortedAtom* restrict sorted,
          image(xr, yr, zr, box);
          real r2 = xr * xr + yr * yr + zr * zr;
          if (atomi < atomk && r2 <= off2) {
-            if CONSTEXPR (ETYP == elec_t::ewald) {
-               pair_mpole<USE, elec_t::ewald>(
+            real e = 0;
+            if CONSTEXPR (eq<ETYP, EWALD>()) {
+               pair_mpole<do_e, do_g, EWALD>(
                   r2, xr, yr, zr, 1,                                     //
                   ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, //
                   ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, //
                   f, aewald, e, pgrad);
             }
-            if CONSTEXPR (ETYP == elec_t::coulomb) {
-               pair_mpole<USE, elec_t::coulomb>(
+            if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
+               pair_mpole<do_e, do_g, NON_EWALD>(
                   r2, xr, yr, zr, 1,                                     //
                   ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, //
                   ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, //
@@ -211,17 +212,17 @@ void empole_cu1(EMPOLE_ARGS, const Spatial::SortedAtom* restrict sorted,
 }
 
 
-template <int USE>
+template <class Ver>
 __global__
 void empole_cu2(EMPOLE_ARGS, const real* restrict x, const real* restrict y,
                 const real* restrict z, int nmexclude_,
                 const int (*restrict mexclude_)[2],
                 const real* restrict mexclude_scale_)
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_a = USE & calc::analyz;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_a = Ver::a;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
 
    for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < nmexclude_;
@@ -257,7 +258,7 @@ void empole_cu2(EMPOLE_ARGS, const real* restrict x, const real* restrict y,
       if (r2 <= off2) {
          real e;
          PairMPoleGrad pgrad;
-         pair_mpole<USE, elec_t::coulomb>(
+         pair_mpole<do_e, do_g, NON_EWALD>(
             r2, xr, yr, zr, mscale, ci, dix, diy, diz, qixx, qixy, qixz, qiyy,
             qiyz, qizz, rpole[k][mpl_pme_0], rpole[k][mpl_pme_x],
             rpole[k][mpl_pme_y], rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx],
@@ -302,11 +303,11 @@ void empole_cu2(EMPOLE_ARGS, const real* restrict x, const real* restrict y,
 }
 
 
-template <int USE, elec_t ETYP>
-void empole_tmpl_cu()
+template <class Ver, class ETYP>
+void empole_cu()
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_a = USE & calc::analyz;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_a = Ver::a;
 
 
    const auto& st = *mspatial_unit;
@@ -317,30 +318,25 @@ void empole_tmpl_cu()
 
    const real f = electric / dielec;
    real aewald = 0;
-   if CONSTEXPR (ETYP == elec_t::ewald) {
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
       PMEUnit pu = epme_unit;
       aewald = pu->aewald;
 
 
-      if (do_e && !do_a) {
-         auto ker0e = empole_self_cu<calc::energy>;
-         launch_k1s(nonblk, n, ker0e, //
-                    bufsize, nem, em, rpole, n, f, aewald);
-      } else if (do_e && do_a) {
-         auto ker0a = empole_self_cu<calc::energy | calc::analyz>;
-         launch_k1s(nonblk, n, ker0a, //
+      if CONSTEXPR (do_e) {
+         launch_k1s(nonblk, n, empole_self_cu<do_a>, //
                     bufsize, nem, em, rpole, n, f, aewald);
       }
    }
    if (st.niak > 0) {
-      auto ker1 = empole_cu1<USE, ETYP>;
+      auto ker1 = empole_cu1<Ver, ETYP>;
       launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
                  bufsize, nem, em, vir_em, gx, gy, gz, trqx, trqy, trqz, box,
                  off2, f, rpole, //
                  st.sorted, st.niak, st.iak, st.lst, n, aewald);
    }
    if (nmexclude_ > 0) {
-      auto ker2 = empole_cu2<USE>;
+      auto ker2 = empole_cu2<Ver>;
       launch_k1s(nonblk, nmexclude_, ker2, //
                  bufsize, nem, em, vir_em, gx, gy, gz, trqx, trqy, trqz, box,
                  off2, f, rpole, //
@@ -349,33 +345,38 @@ void empole_tmpl_cu()
 }
 
 
-template <int USE>
-void empole_real_self_cu()
-{
-   empole_tmpl_cu<USE, elec_t::ewald>();
-}
-template void empole_real_self_cu<calc::v0>();
-template void empole_real_self_cu<calc::v1>();
-template void empole_real_self_cu<calc::v3>();
-template void empole_real_self_cu<calc::v4>();
-template void empole_real_self_cu<calc::v5>();
-template void empole_real_self_cu<calc::v6>();
-
-
-void empole_coulomb_cu(int vers)
+void empole_nonewald_cu(int vers)
 {
    if (vers == calc::v0) {
-      empole_tmpl_cu<calc::v0, elec_t::coulomb>();
+      empole_cu<calc::V0, NON_EWALD>();
    } else if (vers == calc::v1) {
-      empole_tmpl_cu<calc::v1, elec_t::coulomb>();
+      empole_cu<calc::V1, NON_EWALD>();
    } else if (vers == calc::v3) {
-      empole_tmpl_cu<calc::v3, elec_t::coulomb>();
+      empole_cu<calc::V3, NON_EWALD>();
    } else if (vers == calc::v4) {
-      empole_tmpl_cu<calc::v4, elec_t::coulomb>();
+      empole_cu<calc::V4, NON_EWALD>();
    } else if (vers == calc::v5) {
-      empole_tmpl_cu<calc::v5, elec_t::coulomb>();
+      empole_cu<calc::V5, NON_EWALD>();
    } else if (vers == calc::v6) {
-      empole_tmpl_cu<calc::v6, elec_t::coulomb>();
+      empole_cu<calc::V6, NON_EWALD>();
+   }
+}
+
+
+void empole_ewald_real_self_cu(int vers)
+{
+   if (vers == calc::v0) {
+      empole_cu<calc::V0, EWALD>();
+   } else if (vers == calc::v1) {
+      empole_cu<calc::V1, EWALD>();
+   } else if (vers == calc::v3) {
+      empole_cu<calc::V3, EWALD>();
+   } else if (vers == calc::v4) {
+      empole_cu<calc::V4, EWALD>();
+   } else if (vers == calc::v5) {
+      empole_cu<calc::V5, EWALD>();
+   } else if (vers == calc::v6) {
+      empole_cu<calc::V6, EWALD>();
    }
 }
 TINKER_NAMESPACE_END

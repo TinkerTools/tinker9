@@ -1,6 +1,4 @@
-#ifndef TINKER_E_MPOLE_H_
-#define TINKER_E_MPOLE_H_
-
+#pragma once
 #include "elec.h"
 #include "energy_buffer.h"
 
@@ -19,9 +17,16 @@ TINKER_EXTERN virial_buffer vir_em;
 
 void empole_data(rc_op op);
 
-void empole_coulomb(int vers);
-void empole_ewald(int vers);
-void empole(int vers);
-TINKER_NAMESPACE_END
 
-#endif
+void empole(int vers);
+void empole_nonewald(int vers);
+void empole_ewald(int vers);
+void empole_ewald_real_self(int vers);
+void empole_ewald_recip(int vers);
+
+void empole_nonewald_acc(int vers);
+void empole_ewald_recip_acc(int vers);
+void empole_ewald_real_self_acc(int vers);
+void empole_nonewald_cu(int vers);
+void empole_ewald_real_self_cu(int vers);
+TINKER_NAMESPACE_END

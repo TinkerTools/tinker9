@@ -3,6 +3,7 @@
 #include "e_polar.h"
 #include "gpu_card.h"
 #include "md.h"
+#include "named_struct.h"
 #include "nblist.h"
 #include "pme.h"
 #include "potent.h"
@@ -42,6 +43,7 @@ void dfield_ewald_recip_self_acc(real (*field)[3])
 }
 
 // see also subroutine udirect2b / dfield0c in induce.f
+#define DFIELD_DPTRS_ x, y, z, box, thole, pdamp, field, fieldp, rpole
 void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
 {
    const real off = mlist_unit->cutoff;
@@ -51,8 +53,6 @@ void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
 
    const PMEUnit pu = ppme_unit;
    const real aewald = pu->aewald;
-
-#define DFIELD_DPTRS_ x, y, z, box, thole, pdamp, field, fieldp, rpole
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
@@ -93,8 +93,8 @@ void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
             real3 fip = make_real3(0, 0, 0);
             real3 fkd = make_real3(0, 0, 0);
             real3 fkp = make_real3(0, 0, 0);
-            pair_dfield<elec_t::ewald>( //
-               r2, xr, yr, zr, 1, 1,    //
+            pair_dfield<EWALD>(      //
+               r2, xr, yr, zr, 1, 1, //
                ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, pdi,
                pti, //
                rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
@@ -163,7 +163,7 @@ void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
          real3 fip = make_real3(0, 0, 0);
          real3 fkd = make_real3(0, 0, 0);
          real3 fkp = make_real3(0, 0, 0);
-         pair_dfield<elec_t::coulomb>(                                       //
+         pair_dfield<NON_EWALD>(                                             //
             r2, xr, yr, zr, dscale, pscale,                                  //
             ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, pdi, pti, //
             rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
@@ -238,6 +238,7 @@ void ufield_ewald_recip_self_acc(const real (*uind)[3], const real (*uinp)[3],
    }
 }
 
+#define UFIELD_DPTRS_ x, y, z, box, thole, pdamp, field, fieldp, uind, uinp
 void ufield_ewald_real_acc(const real (*uind)[3], const real (*uinp)[3],
                            real (*field)[3], real (*fieldp)[3])
 {
@@ -248,8 +249,6 @@ void ufield_ewald_real_acc(const real (*uind)[3], const real (*uinp)[3],
 
    const PMEUnit pu = ppme_unit;
    const real aewald = pu->aewald;
-
-#define UFIELD_DPTRS_ x, y, z, box, thole, pdamp, field, fieldp, uind, uinp
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
@@ -286,7 +285,7 @@ void ufield_ewald_real_acc(const real (*uind)[3], const real (*uinp)[3],
             real3 fip = make_real3(0, 0, 0);
             real3 fkd = make_real3(0, 0, 0);
             real3 fkp = make_real3(0, 0, 0);
-            pair_ufield<elec_t::ewald>(                                  //
+            pair_ufield<EWALD>(                                          //
                r2, xr, yr, zr, 1,                                        //
                uindi0, uindi1, uindi2, uinpi0, uinpi1, uinpi2, pdi, pti, //
                uind[k][0], uind[k][1], uind[k][2], uinp[k][0], uinp[k][1],
@@ -348,7 +347,7 @@ void ufield_ewald_real_acc(const real (*uind)[3], const real (*uinp)[3],
          real3 fip = make_real3(0, 0, 0);
          real3 fkd = make_real3(0, 0, 0);
          real3 fkp = make_real3(0, 0, 0);
-         pair_ufield<elec_t::coulomb>(
+         pair_ufield<NON_EWALD>(                                      //
             r2, xr, yr, zr, uscale,                                   //
             uindi0, uindi1, uindi2, uinpi0, uinpi1, uinpi2, pdi, pti, //
             uind[k][0], uind[k][1], uind[k][2], uinp[k][0], uinp[k][1],

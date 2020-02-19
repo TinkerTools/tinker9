@@ -645,5 +645,3 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
    finish();
    test_end();
 }
-
-#undef COMPARE_CODE_BLOCK2_

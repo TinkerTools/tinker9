@@ -62,10 +62,10 @@ __launch_bounds__(BLOCK_DIM) __global__
 void evdw_hal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
                   int niak, const int* restrict iak, const int* restrict lst)
 {
-   constexpr int do_e = Ver::e;
-   constexpr int do_a = Ver::a;
-   constexpr int do_g = Ver::g;
-   constexpr int do_v = Ver::v;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_a = Ver::a;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
 
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
@@ -221,10 +221,10 @@ void evdw_hal_cu2(HAL_ARGS, const real* restrict xred,
                   int nvexclude_, int (*restrict vexclude_)[2],
                   real* restrict vexclude_scale_)
 {
-   constexpr int do_e = Ver::e;
-   constexpr int do_a = Ver::a;
-   constexpr int do_g = Ver::g;
-   constexpr int do_v = Ver::v;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_a = Ver::a;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
 
    const real cut2 = cut * cut;
@@ -312,7 +312,7 @@ void evdw_hal_cu2(HAL_ARGS, const real* restrict xred,
 template <class Ver, class VDWTYP>
 void evdw_cu()
 {
-   constexpr int do_g = Ver::g;
+   constexpr bool do_g = Ver::g;
 
    const auto& st = *vspatial_unit;
    const real cut = switch_cut(switch_vdw);
@@ -347,16 +347,16 @@ void evdw_cu()
 void evdw_hal_cu(int vers)
 {
    if (vers == calc::v0)
-      evdw_cu<EnergyVersion0, HAL>();
+      evdw_cu<calc::V0, HAL>();
    else if (vers == calc::v1)
-      evdw_cu<EnergyVersion1, HAL>();
+      evdw_cu<calc::V1, HAL>();
    else if (vers == calc::v3)
-      evdw_cu<EnergyVersion3, HAL>();
+      evdw_cu<calc::V3, HAL>();
    else if (vers == calc::v4)
-      evdw_cu<EnergyVersion4, HAL>();
+      evdw_cu<calc::V4, HAL>();
    else if (vers == calc::v5)
-      evdw_cu<EnergyVersion5, HAL>();
+      evdw_cu<calc::V5, HAL>();
    else if (vers == calc::v6)
-      evdw_cu<EnergyVersion6, HAL>();
+      evdw_cu<calc::V6, HAL>();
 }
 TINKER_NAMESPACE_END

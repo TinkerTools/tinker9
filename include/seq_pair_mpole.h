@@ -64,7 +64,7 @@ inline void zero(PairMPoleGrad& pgrad)
  * \see PairMPoleGrad
  */
 #pragma acc routine seq
-template <int USE, elec_t ETYP>
+template <bool do_e, bool do_g, class ETYP>
 SEQ_CUDA
 void pair_mpole(                                    //
    real r2, real xr, real yr, real zr, real mscale, //
@@ -74,9 +74,6 @@ void pair_mpole(                                    //
    real qkyy, real qkyz, real qkzz, //
    real f, real aewald, real& restrict e, PairMPoleGrad& restrict pgrad)
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_g = USE & calc::grad;
-
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
    real rr2 = invr1 * invr1;
@@ -89,7 +86,7 @@ void pair_mpole(                                    //
    real& rr9 = bn[4];
    real& rr11 = bn[5];
 
-   if CONSTEXPR (ETYP == elec_t::ewald) {
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
       if CONSTEXPR (!do_g)
          damp_ewald<5>(bn, r, invr1, rr2, aewald);
       else
@@ -101,7 +98,7 @@ void pair_mpole(                                    //
       bn[4] *= f;
       if CONSTEXPR (do_g)
          bn[5] *= f;
-   } else if CONSTEXPR (ETYP == elec_t::coulomb) {
+   } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
       rr1 = mscale * f * invr1;
       rr3 = rr1 * rr2;
       rr5 = 3 * rr3 * rr2;

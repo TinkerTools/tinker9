@@ -29,9 +29,9 @@ TINKER_NAMESPACE_BEGIN
 template <class Ver>
 void eangle_acc1()
 {
-   constexpr int do_e = Ver::e;
-   constexpr int do_g = Ver::g;
-   constexpr int do_v = Ver::v;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
    auto bufsize = buffer_size();
 
@@ -277,14 +277,14 @@ void eangle_acc1()
 void eangle_acc(int vers)
 {
    if (vers == calc::v0 || vers == calc::v3)
-      eangle_acc1<EnergyVersion0>();
+      eangle_acc1<calc::V0>();
    else if (vers == calc::v1)
-      eangle_acc1<EnergyVersion1>();
+      eangle_acc1<calc::V1>();
    else if (vers == calc::v4)
-      eangle_acc1<EnergyVersion4>();
+      eangle_acc1<calc::V4>();
    else if (vers == calc::v5)
-      eangle_acc1<EnergyVersion5>();
+      eangle_acc1<calc::V5>();
    else if (vers == calc::v6)
-      eangle_acc1<EnergyVersion6>();
+      eangle_acc1<calc::V6>();
 }
 TINKER_NAMESPACE_END

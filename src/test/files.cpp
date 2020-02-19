@@ -31,5 +31,3 @@ TINKER_NAMESPACE_BEGIN
 // 216 argon box test set
 #include "file/arbox.hh"
 TINKER_NAMESPACE_END
-
-#undef FILE_DEF_

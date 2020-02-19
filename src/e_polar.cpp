@@ -418,27 +418,106 @@ void induce(real (*ud)[3], real (*up)[3])
 }
 
 
-void epolar_coulomb(int vers)
-{
-   extern void epolar_coulomb_acc(int, const real(*)[3], const real(*)[3]);
-
-
-   induce(uind, uinp);
-#if TINKER_CUDART
-   if (mlist_version() == NBList::spatial) {
-      extern void epolar_coulomb_cu(int, const real(*)[3], const real(*)[3]);
-      epolar_coulomb_cu(vers, uind, uinp);
-   } else
-#endif
-      epolar_coulomb_acc(vers, uind, uinp);
-}
-
-
 void epolar(int vers)
 {
    if (epolar_electyp == elec_t::coulomb)
-      epolar_coulomb(vers);
+      epolar_nonewald(vers);
    else if (epolar_electyp == elec_t::ewald)
       epolar_ewald(vers);
+}
+
+
+void epolar_nonewald(int vers)
+{
+   // v0: E
+   // v1: EGV = E + GV = v0 + V6
+   // v3: EA
+   // v4: EG = E + G = v0 + v5
+   // v5: G
+   // v6: GV
+   bool pair;
+   int ver2;
+   if (vers == calc::v0) {
+      pair = true;
+      ver2 = vers;
+   } else if (vers == calc::v1) {
+      pair = true;
+      ver2 = calc::v6;
+   } else if (vers == calc::v4) {
+      pair = true;
+      ver2 = calc::v5;
+   } else {
+      pair = false;
+      ver2 = vers;
+   }
+
+   induce(uind, uinp);
+   if (pair)
+      epolar0_dotprod(uind, udirp);
+   if (vers != calc::v0) {
+#if TINKER_CUDART
+      if (mlist_version() == NBList::spatial)
+         epolar_nonewald_cu(ver2, uind, uinp);
+      else
+#endif
+         epolar_nonewald_acc(ver2, uind, uinp);
+   }
+}
+
+
+void epolar_ewald(int vers)
+{
+   // v0: E
+   // v1: EGV = E + GV = v0 + V6
+   // v3: EA
+   // v4: EG = E + G = v0 + v5
+   // v5: G
+   // v6: GV
+   bool pair;
+   int ver2;
+   if (vers == calc::v0) {
+      pair = true;
+      ver2 = vers;
+   } else if (vers == calc::v1) {
+      pair = true;
+      ver2 = calc::v6;
+   } else if (vers == calc::v4) {
+      pair = true;
+      ver2 = calc::v5;
+   } else {
+      pair = false;
+      ver2 = vers;
+   }
+
+   induce(uind, uinp);
+   if (pair)
+      epolar0_dotprod(uind, udirp);
+   if (vers != calc::v0) {
+      epolar_ewald_real(ver2);
+      epolar_ewald_recip_self(ver2);
+   }
+}
+
+
+void epolar_ewald_real(int vers)
+{
+#if TINKER_CUDART
+   if (mlist_version() == NBList::spatial)
+      epolar_ewald_real_cu(vers, uind, uinp);
+   else
+#endif
+      epolar_ewald_real_acc(vers, uind, uinp);
+}
+
+
+void epolar_ewald_recip_self(int vers)
+{
+   epolar_ewald_recip_self_acc(vers, uind, uinp);
+}
+
+
+void epolar0_dotprod(const real (*uind)[3], const real (*udirp)[3])
+{
+   return epolar0_dotprod_acc(uind, udirp);
 }
 TINKER_NAMESPACE_END

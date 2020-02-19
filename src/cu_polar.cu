@@ -3,6 +3,7 @@
 #include "epolar_trq.h"
 #include "launch.h"
 #include "md.h"
+#include "named_struct.h"
 #include "pme.h"
 #include "seq_image.h"
 #include "seq_pair_polar.h"
@@ -20,16 +21,16 @@ TINKER_NAMESPACE_BEGIN
       const real(*restrict uinp)[3]
 
 
-template <int USE, elec_t ETYP>
+template <class Ver, class ETYP>
 __global__
 void epolar_cu1(POLAR_ARGS, const Spatial::SortedAtom* restrict sorted,
                 int niak, const int* restrict iak, const int* restrict lst,
                 int n, real aewald)
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_a = USE & calc::analyz;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_a = Ver::a;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
 
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
@@ -48,10 +49,11 @@ void epolar_cu1(POLAR_ARGS, const Spatial::SortedAtom* restrict sorted,
 
 
    for (int iw = iwarp; iw < niak; iw += nwarp) {
-      if CONSTEXPR (do_a && do_e) {
+      if CONSTEXPR (do_a)
          ctl = 0;
+      if CONSTEXPR (do_e)
          etl = 0;
-      }
+
       if CONSTEXPR (do_v) {
          vtlxx = 0;
          vtlxy = 0;
@@ -171,18 +173,18 @@ void epolar_cu1(POLAR_ARGS, const Spatial::SortedAtom* restrict sorted,
          image(xr, yr, zr, box);
          real r2 = xr * xr + yr * yr + zr * zr;
          if (atomi < atomk && r2 <= off2) {
-            if CONSTEXPR (ETYP == elec_t::ewald) {
-               pair_polar<USE, elec_t::ewald>( //
-                  r2, xr, yr, zr, 1, 1, 1,     //
+            if CONSTEXPR (eq<ETYP, EWALD>()) {
+               pair_polar<do_e, do_g, EWALD>( //
+                  r2, xr, yr, zr, 1, 1, 1,    //
                   ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix,
                   uiy, uiz, uixp, uiyp, uizp, pdi, pti, //
                   ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,
                   uky, ukz, ukxp, ukyp, ukzp, pdk, ptk, //
                   f, aewald, e, pgrad);
             }
-            if CONSTEXPR (ETYP == elec_t::coulomb) {
-               pair_polar<USE, elec_t::coulomb>( //
-                  r2, xr, yr, zr, 1, 1, 1,       //
+            if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
+               pair_polar<do_e, do_g, NON_EWALD>( //
+                  r2, xr, yr, zr, 1, 1, 1,        //
                   ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix,
                   uiy, uiz, uixp, uiyp, uizp, pdi, pti, //
                   ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,
@@ -191,10 +193,10 @@ void epolar_cu1(POLAR_ARGS, const Spatial::SortedAtom* restrict sorted,
             }
 
 
-            if CONSTEXPR (do_a && do_e) {
+            if CONSTEXPR (do_a)
                ctl += 1;
+            if CONSTEXPR (do_e)
                etl += e;
-            }
             if CONSTEXPR (do_v) {
                vtlxx += -xr * pgrad.frcx;
                vtlxy += -0.5f * (yr * pgrad.frcx + xr * pgrad.frcy);
@@ -239,10 +241,10 @@ void epolar_cu1(POLAR_ARGS, const Spatial::SortedAtom* restrict sorted,
       } // end for (j)
 
 
-      if CONSTEXPR (do_a && do_e) {
+      if CONSTEXPR (do_a)
          atomic_add(ctl, nep, offset);
+      if CONSTEXPR (do_e)
          atomic_add(etl, ep, offset);
-      }
       if CONSTEXPR (do_g) {
          atomic_add(gxi, gx, i);
          atomic_add(gyi, gy, i);
@@ -277,17 +279,17 @@ void epolar_cu1(POLAR_ARGS, const Spatial::SortedAtom* restrict sorted,
 }
 
 
-template <int USE>
+template <class Ver>
 __global__
 void epolar_cu2(POLAR_ARGS, const real* restrict x, const real* restrict y,
                 const real* restrict z, int ndpuexclude_,
                 const int (*restrict dpuexclude_)[2],
                 const real (*restrict dpuexclude_scale_)[3])
 {
-   constexpr int do_e = USE & calc::energy;
-   constexpr int do_a = USE & calc::analyz;
-   constexpr int do_g = USE & calc::grad;
-   constexpr int do_v = USE & calc::virial;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_a = Ver::a;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
 
    for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < ndpuexclude_;
@@ -359,7 +361,7 @@ void epolar_cu2(POLAR_ARGS, const real* restrict x, const real* restrict y,
 
          real e;
          PairPolarGrad pgrad;
-         pair_polar<USE, elec_t::coulomb>(          //
+         pair_polar<do_e, do_g, NON_EWALD>(         //
             r2, xr, yr, zr, dscale, pscale, uscale, //
             ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
             uiz, uixp, uiyp, uizp, pdi, pti, //
@@ -368,11 +370,11 @@ void epolar_cu2(POLAR_ARGS, const real* restrict x, const real* restrict y,
             f, 0, e, pgrad);
 
 
-         if CONSTEXPR (do_a && do_e) {
+         if CONSTEXPR (do_a)
             if (pscale == -1)
                atomic_add(-1, nep, offset);
+         if CONSTEXPR (do_e)
             atomic_add(e, ep, offset);
-         }
          if CONSTEXPR (do_g) {
             atomic_add(pgrad.frcx, gx, i);
             atomic_add(pgrad.frcy, gy, i);
@@ -419,10 +421,10 @@ void epolar_cu2(POLAR_ARGS, const real* restrict x, const real* restrict y,
 }
 
 
-template <int USE, elec_t ETYP>
-void epolar_tmpl_cu(const real (*uind)[3], const real (*uinp)[3])
+template <class Ver, class ETYP>
+void epolar_cu(const real (*uind)[3], const real (*uinp)[3])
 {
-   constexpr int do_g = USE & calc::grad;
+   constexpr bool do_g = Ver::g;
 
 
    const auto& st = *mspatial_unit;
@@ -433,7 +435,7 @@ void epolar_tmpl_cu(const real (*uind)[3], const real (*uinp)[3])
 
    const real f = 0.5f * electric / dielec;
    real aewald = 0;
-   if CONSTEXPR (ETYP == elec_t::ewald) {
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
       PMEUnit pu = ppme_unit;
       aewald = pu->aewald;
    }
@@ -443,14 +445,14 @@ void epolar_tmpl_cu(const real (*uind)[3], const real (*uinp)[3])
       device_array::zero(PROCEED_NEW_Q, n, ufld, dufld);
    }
    if (st.niak > 0) {
-      auto ker1 = epolar_cu1<USE, ETYP>;
+      auto ker1 = epolar_cu1<Ver, ETYP>;
       launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
                  bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld, box, off2,
                  f, rpole, pdamp, thole, uind, uinp, //
                  st.sorted, st.niak, st.iak, st.lst, n, aewald);
    }
    if (ndpuexclude_ > 0) {
-      auto ker2 = epolar_cu2<USE>;
+      auto ker2 = epolar_cu2<Ver>;
       launch_k1s(nonblk, ndpuexclude_, ker2, //
                  bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld, box, off2,
                  f, rpole, pdamp, thole, uind, uinp, //
@@ -464,37 +466,39 @@ void epolar_tmpl_cu(const real (*uind)[3], const real (*uinp)[3])
 }
 
 
-template <int USE>
-void epolar_real_cu(const real (*uind)[3], const real (*uinp)[3])
-{
-   epolar_tmpl_cu<USE, elec_t::ewald>(uind, uinp);
-}
-template <>
-void epolar_real_cu<calc::v0>(const real (*uind)[3], const real (*)[3])
-{
-   epolar0_dotprod(uind, udirp);
-}
-template void epolar_real_cu<calc::v1>(const real (*)[3], const real (*)[3]);
-template void epolar_real_cu<calc::v3>(const real (*)[3], const real (*)[3]);
-template void epolar_real_cu<calc::v4>(const real (*)[3], const real (*)[3]);
-template void epolar_real_cu<calc::v5>(const real (*)[3], const real (*)[3]);
-template void epolar_real_cu<calc::v6>(const real (*)[3], const real (*)[3]);
-
-
-void epolar_coulomb_cu(int vers, const real (*uind)[3], const real (*uinp)[3])
+void epolar_nonewald_cu(int vers, const real (*uind)[3], const real (*uinp)[3])
 {
    if (vers == calc::v0) {
-      epolar0_dotprod(uind, udirp);
+      epolar_cu<calc::V0, NON_EWALD>(uind, uinp);
    } else if (vers == calc::v1) {
-      epolar_tmpl_cu<calc::v1, elec_t::coulomb>(uind, uinp);
+      epolar_cu<calc::V1, NON_EWALD>(uind, uinp);
    } else if (vers == calc::v3) {
-      epolar_tmpl_cu<calc::v3, elec_t::coulomb>(uind, uinp);
+      epolar_cu<calc::V3, NON_EWALD>(uind, uinp);
    } else if (vers == calc::v4) {
-      epolar_tmpl_cu<calc::v4, elec_t::coulomb>(uind, uinp);
+      epolar_cu<calc::V4, NON_EWALD>(uind, uinp);
    } else if (vers == calc::v5) {
-      epolar_tmpl_cu<calc::v5, elec_t::coulomb>(uind, uinp);
+      epolar_cu<calc::V5, NON_EWALD>(uind, uinp);
    } else if (vers == calc::v6) {
-      epolar_tmpl_cu<calc::v6, elec_t::coulomb>(uind, uinp);
+      epolar_cu<calc::V6, NON_EWALD>(uind, uinp);
+   }
+}
+
+
+void epolar_ewald_real_cu(int vers, const real (*uind)[3],
+                          const real (*uinp)[3])
+{
+   if (vers == calc::v0) {
+      epolar_cu<calc::V0, EWALD>(uind, udirp);
+   } else if (vers == calc::v1) {
+      epolar_cu<calc::V1, EWALD>(uind, uinp);
+   } else if (vers == calc::v3) {
+      epolar_cu<calc::V3, EWALD>(uind, uinp);
+   } else if (vers == calc::v4) {
+      epolar_cu<calc::V4, EWALD>(uind, uinp);
+   } else if (vers == calc::v5) {
+      epolar_cu<calc::V5, EWALD>(uind, uinp);
+   } else if (vers == calc::v6) {
+      epolar_cu<calc::V6, EWALD>(uind, uinp);
    }
 }
 TINKER_NAMESPACE_END

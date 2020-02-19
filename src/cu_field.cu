@@ -3,6 +3,7 @@
 #include "e_polar.h"
 #include "launch.h"
 #include "md.h"
+#include "named_struct.h"
 #include "pme.h"
 #include "seq_image.h"
 #include "seq_pair_field.h"
@@ -89,7 +90,7 @@ void dfield_cu1(DFIELD_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
          real r2 = image2(dr.x, dr.y, dr.z);
          if (atomi < atomk && r2 <= off2) {
             if CONSTEXPR (ETYP == elec_t::ewald) {
-               pair_dfield<elec_t::ewald>(
+               pair_dfield<EWALD>(
                   r2, dr.x, dr.y, dr.z, 1, 1, ci, dix, diy, diz, qixx, qixy,
                   qixz, qiyy, qiyz, qizz, pdi, pti, data[klane].ck,
                   data[klane].dkx, data[klane].dky, data[klane].dkz,
@@ -99,7 +100,7 @@ void dfield_cu1(DFIELD_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
                   data[klane].fkd, data[klane].fkp);
             }
             if CONSTEXPR (ETYP == elec_t::coulomb) {
-               pair_dfield<elec_t::coulomb>(
+               pair_dfield<NON_EWALD>(
                   r2, dr.x, dr.y, dr.z, 1, 1, ci, dix, diy, diz, qixx, qixy,
                   qixz, qiyy, qiyz, qizz, pdi, pti, data[klane].ck,
                   data[klane].dkx, data[klane].dky, data[klane].dkz,
@@ -170,7 +171,7 @@ void dfield_cu2(DFIELD_ARGS, const real* restrict x, const real* restrict y,
          real3 fip = make_real3(0, 0, 0);
          real3 fkd = make_real3(0, 0, 0);
          real3 fkp = make_real3(0, 0, 0);
-         pair_dfield<elec_t::coulomb>(
+         pair_dfield<NON_EWALD>(
             r2, xr, yr, zr, dscale, pscale, ci, dix, diy, diz, qixx, qixy, qixz,
             qiyy, qiyz, qizz, pdi, pti, rpole[k][mpl_pme_0],
             rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
@@ -301,7 +302,7 @@ void ufield_cu1(UFIELD_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
          real r2 = image2(dr.x, dr.y, dr.z);
          if (atomi < atomk && r2 <= off2) {
             if CONSTEXPR (ETYP == elec_t::ewald) {
-               pair_ufield<elec_t::ewald>(
+               pair_ufield<EWALD>(
                   r2, dr.x, dr.y, dr.z, 1, uid.x, uid.y, uid.z, uip.x, uip.y,
                   uip.z, pdi, pti, data[klane].ukd.x, data[klane].ukd.y,
                   data[klane].ukd.z, data[klane].ukp.x, data[klane].ukp.y,
@@ -309,7 +310,7 @@ void ufield_cu1(UFIELD_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
                   fid, fip, data[klane].fkd, data[klane].fkp);
             }
             if CONSTEXPR (ETYP == elec_t::coulomb) {
-               pair_ufield<elec_t::coulomb>(
+               pair_ufield<NON_EWALD>(
                   r2, dr.x, dr.y, dr.z, 1, uid.x, uid.y, uid.z, uip.x, uip.y,
                   uip.z, pdi, pti, data[klane].ukd.x, data[klane].ukd.y,
                   data[klane].ukd.z, data[klane].ukp.x, data[klane].ukp.y,
@@ -369,7 +370,7 @@ void ufield_cu2(UFIELD_ARGS, const real* restrict x, const real* restrict y,
          real3 fip = make_real3(0, 0, 0);
          real3 fkd = make_real3(0, 0, 0);
          real3 fkp = make_real3(0, 0, 0);
-         pair_ufield<elec_t::coulomb>(
+         pair_ufield<NON_EWALD>(
             r2, xr, yr, zr, uscale, uid.x, uid.y, uid.z, uip.x, uip.y, uip.z,
             pdi, pti, uind[k][0], uind[k][1], uind[k][2], uinp[k][0],
             uinp[k][1], uinp[k][2], pdamp[k], thole[k], 0, fid, fip, fkd, fkp);

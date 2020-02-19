@@ -110,24 +110,46 @@ void empole_data(rc_op op)
 }
 
 
-void empole_coulomb(int vers)
-{
-   extern void empole_coulomb_acc(int);
-#if TINKER_CUDART
-   if (mlist_version() == NBList::spatial) {
-      extern void empole_coulomb_cu(int);
-      empole_coulomb_cu(vers);
-   } else
-#endif
-      empole_coulomb_acc(vers);
-}
-
-
 void empole(int vers)
 {
    if (empole_electyp == elec_t::coulomb)
-      empole_coulomb(vers);
+      empole_nonewald(vers);
    else if (empole_electyp == elec_t::ewald)
       empole_ewald(vers);
+}
+
+
+void empole_nonewald(int vers)
+{
+#if TINKER_CUDART
+   if (mlist_version() == NBList::spatial)
+      empole_nonewald_cu(vers);
+   else
+#endif
+      empole_nonewald_acc(vers);
+}
+
+
+void empole_ewald(int vers)
+{
+   empole_ewald_real_self(vers);
+   empole_ewald_recip(vers);
+}
+
+
+void empole_ewald_real_self(int vers)
+{
+#if TINKER_CUDART
+   if (mlist_version() == NBList::spatial)
+      empole_ewald_real_self_cu(vers);
+   else
+#endif
+      empole_ewald_real_self_acc(vers);
+}
+
+
+void empole_ewald_recip(int vers)
+{
+   empole_ewald_recip_acc(vers);
 }
 TINKER_NAMESPACE_END

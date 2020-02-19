@@ -16,6 +16,7 @@ void x_info(int argc, char** argv)
    auto fm2 = "       {:33s} {}\n";
 
 
+   platform_data(rc_init);
    gpu_card_data(rc_init);
 
 
@@ -69,6 +70,7 @@ void x_info(int argc, char** argv)
 
 
    gpu_card_data(rc_dealloc);
+   platform_data(rc_dealloc);
 }
 TINKER_NAMESPACE_END
 

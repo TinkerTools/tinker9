@@ -6,7 +6,7 @@
 
 TINKER_NAMESPACE_BEGIN
 #pragma acc routine seq
-template <elec_t ETYP>
+template <class ETYP>
 SEQ_CUDA
 void pair_dfield(real r2, real xr, real yr, real zr, real dscale,
                  real pscale, //
@@ -27,7 +27,7 @@ void pair_dfield(real r2, real xr, real yr, real zr, real dscale,
    damp_thole3(r, pdi, pti, pdk, ptk, scale3, scale5, scale7);
 
    real bn[4];
-   if CONSTEXPR (ETYP == elec_t::ewald)
+   if CONSTEXPR (eq<ETYP, EWALD>())
       damp_ewald<4>(bn, r, invr1, rr2, aewald);
    real rr1 = invr1;
    real rr3 = rr1 * rr2;
@@ -55,11 +55,11 @@ void pair_dfield(real r2, real xr, real yr, real zr, real dscale,
 
    // d-field
 
-   if CONSTEXPR (ETYP == elec_t::ewald) {
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
       bn[1] -= (1 - scale3) * rr3;
       bn[2] -= (1 - scale5) * rr5;
       bn[3] -= (1 - scale7) * rr7;
-   } else if CONSTEXPR (ETYP == elec_t::coulomb) {
+   } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
       bn[1] = dscale * scale3 * rr3;
       bn[2] = dscale * scale5 * rr5;
       bn[3] = dscale * scale7 * rr7;
@@ -75,10 +75,10 @@ void pair_dfield(real r2, real xr, real yr, real zr, real dscale,
 
    // p-field
 
-   if CONSTEXPR (ETYP == elec_t::ewald) {
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
       fip += inci;
       fkp += inck;
-   } else if CONSTEXPR (ETYP == elec_t::coulomb) {
+   } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
       if (pscale == dscale) {
          fip += inci;
          fkp += inck;
@@ -97,7 +97,7 @@ void pair_dfield(real r2, real xr, real yr, real zr, real dscale,
 }
 
 
-template <elec_t ETYP>
+template <class ETYP>
 SEQ_CUDA
 void pair_ufield(real r2, real xr, real yr, real zr, real uscale, //
                  real uindi0, real uindi1, real uindi2, real uinpi0,
@@ -115,16 +115,16 @@ void pair_ufield(real r2, real xr, real yr, real zr, real uscale, //
    damp_thole2(r, pdi, pti, pdk, ptk, scale3, scale5);
 
    real bn[3];
-   if CONSTEXPR (ETYP == elec_t::ewald)
+   if CONSTEXPR (eq<ETYP, EWALD>())
       damp_ewald<3>(bn, r, invr1, rr2, aewald);
    real rr1 = invr1;
    real rr3 = rr1 * rr2;
    real rr5 = 3 * rr1 * rr2 * rr2;
 
-   if CONSTEXPR (ETYP == elec_t::ewald) {
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
       bn[1] -= (1 - scale3) * rr3;
       bn[2] -= (1 - scale5) * rr5;
-   } else if CONSTEXPR (ETYP == elec_t::coulomb) {
+   } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
       bn[1] = uscale * scale3 * rr3;
       bn[2] = uscale * scale5 * rr5;
    }

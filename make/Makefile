@@ -355,7 +355,7 @@ all: default unittest copy_gpu_scripts__
 .PHONY: test
 test: all.tests
 	$(PWD)/$^ info
-	$(PWD)/$^ [ff],[util] --durations yes --order rand --rng-seed time
+	$(PWD)/$^ [ff],[util] -a --durations yes --order rand --rng-seed time
 
 
 git_head__ := $(shell git log -1 --format="%h (%cd)")

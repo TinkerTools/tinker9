@@ -8,9 +8,9 @@ TINKER_NAMESPACE_BEGIN
 template <class Ver, class BNDTYP>
 void ebond_acc1()
 {
-   constexpr int do_e = Ver::e;
-   constexpr int do_g = Ver::g;
-   constexpr int do_v = Ver::v;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
 
    auto bufsize = buffer_size();
 
@@ -84,28 +84,28 @@ void ebond_acc(int vers)
 {
    if (bndtyp == ebond_t::harmonic)
       if (vers == calc::v0 || vers == calc::v3)
-         ebond_acc1<EnergyVersion0, HARMONIC>();
+         ebond_acc1<calc::V0, HARMONIC>();
       else if (vers == calc::v1)
-         ebond_acc1<EnergyVersion1, HARMONIC>();
+         ebond_acc1<calc::V1, HARMONIC>();
       else if (vers == calc::v4)
-         ebond_acc1<EnergyVersion4, HARMONIC>();
+         ebond_acc1<calc::V4, HARMONIC>();
       else if (vers == calc::v5)
-         ebond_acc1<EnergyVersion5, HARMONIC>();
+         ebond_acc1<calc::V5, HARMONIC>();
       else if (vers == calc::v6)
-         ebond_acc1<EnergyVersion6, HARMONIC>();
+         ebond_acc1<calc::V6, HARMONIC>();
       else
          assert(false);
    else if (bndtyp == ebond_t::morse)
       if (vers == calc::v0 || vers == calc::v3)
-         ebond_acc1<EnergyVersion0, MORSE>();
+         ebond_acc1<calc::V0, MORSE>();
       else if (vers == calc::v1)
-         ebond_acc1<EnergyVersion1, MORSE>();
+         ebond_acc1<calc::V1, MORSE>();
       else if (vers == calc::v4)
-         ebond_acc1<EnergyVersion4, MORSE>();
+         ebond_acc1<calc::V4, MORSE>();
       else if (vers == calc::v5)
-         ebond_acc1<EnergyVersion5, MORSE>();
+         ebond_acc1<calc::V5, MORSE>();
       else if (vers == calc::v6)
-         ebond_acc1<EnergyVersion6, MORSE>();
+         ebond_acc1<calc::V6, MORSE>();
       else
          assert(false);
    else

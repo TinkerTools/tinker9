@@ -29,27 +29,21 @@ extern "C"
    struct Eng
       : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v0>
    {};
-   typedef Eng EnergyVersion0;
    struct EngGradVir
       : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v1>
    {};
-   typedef EngGradVir EnergyVersion1;
    struct EngAlyz
       : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v3>
    {};
-   typedef EngAlyz EnergyVersion3;
    struct EngGrad
       : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v4>
    {};
-   typedef EngGrad EnergyVersion4;
    struct Grad
       : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v5>
    {};
-   typedef Grad EnergyVersion5;
    struct GradVir
       : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v6>
    {};
-   typedef GradVir EnergyVersion6;
 
 
    // Bond terms.
@@ -78,3 +72,15 @@ extern "C"
    struct GAUSS
    {};
 }
+
+
+TINKER_NAMESPACE_BEGIN
+namespace calc {
+using V0 = Eng;
+using V1 = EngGradVir;
+using V3 = EngAlyz;
+using V4 = EngGrad;
+using V5 = Grad;
+using V6 = GradVir;
+}
+TINKER_NAMESPACE_END
