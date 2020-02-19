@@ -1293,7 +1293,7 @@ void emplar_cu(int vers)
 {
    assert(empole_electyp == epolar_electyp);
    assert(vers != calc::v3);
-   if (empole_electyp == elec_t::coulomb) {
+   if (empole_electyp == elec_t::NON_EWALD) {
       if (vers == calc::v0)
          emplar_nonewald_cu<calc::V0>();
       else if (vers == calc::v1)
@@ -1306,7 +1306,7 @@ void emplar_cu(int vers)
          emplar_nonewald_cu<calc::V5>();
       else if (vers == calc::v6)
          emplar_nonewald_cu<calc::V6>();
-   } else if (empole_electyp == elec_t::ewald) {
+   } else if (empole_electyp == elec_t::EWALD) {
       if (vers == calc::v0)
          emplar_ewald_cu<calc::V0>();
       else if (vers == calc::v1)

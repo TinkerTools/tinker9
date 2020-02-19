@@ -6,9 +6,9 @@
 TINKER_NAMESPACE_BEGIN
 void dfield(real (*field)[3], real (*fieldp)[3])
 {
-   if (epolar_electyp == elec_t::ewald)
+   if (epolar_electyp == elec_t::EWALD)
       dfield_ewald(field, fieldp);
-   else if (epolar_electyp == elec_t::coulomb)
+   else if (epolar_electyp == elec_t::NON_EWALD)
       dfield_nonewald(field, fieldp);
 }
 
@@ -52,9 +52,9 @@ void dfield_ewald_real(real (*field)[3], real (*fieldp)[3])
 void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3],
             real (*fieldp)[3])
 {
-   if (epolar_electyp == elec_t::ewald)
+   if (epolar_electyp == elec_t::EWALD)
       ufield_ewald(uind, uinp, field, fieldp);
-   else if (epolar_electyp == elec_t::coulomb)
+   else if (epolar_electyp == elec_t::NON_EWALD)
       ufield_nonewald(uind, uinp, field, fieldp);
 }
 

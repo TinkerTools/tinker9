@@ -89,7 +89,7 @@ void dfield_cu1(DFIELD_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
          real r2 = image2(dr.x, dr.y, dr.z);
          if (atomi < atomk && r2 <= off2) {
-            if CONSTEXPR (ETYP == elec_t::ewald) {
+            if CONSTEXPR (ETYP == elec_t::EWALD) {
                pair_dfield<EWALD>(
                   r2, dr.x, dr.y, dr.z, 1, 1, ci, dix, diy, diz, qixx, qixy,
                   qixz, qiyy, qiyz, qizz, pdi, pti, data[klane].ck,
@@ -99,7 +99,7 @@ void dfield_cu1(DFIELD_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
                   data[klane].pdk, data[klane].ptk, aewald, fid, fip,
                   data[klane].fkd, data[klane].fkp);
             }
-            if CONSTEXPR (ETYP == elec_t::coulomb) {
+            if CONSTEXPR (ETYP == elec_t::NON_EWALD) {
                pair_dfield<NON_EWALD>(
                   r2, dr.x, dr.y, dr.z, 1, 1, ci, dix, diy, diz, qixx, qixy,
                   qixz, qiyy, qiyz, qizz, pdi, pti, data[klane].ck,
@@ -208,7 +208,7 @@ void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
    const PMEUnit pu = ppme_unit;
    const real aewald = pu->aewald;
    if (st.niak > 0) {
-      launch_k1s(nonblk, WARP_SIZE * st.niak, dfield_cu1<elec_t::ewald>, field,
+      launch_k1s(nonblk, WARP_SIZE * st.niak, dfield_cu1<elec_t::EWALD>, field,
                  fieldp, thole, pdamp, rpole, TINKER_IMAGE_ARGS, off2, n,
                  st.sorted, st.niak, st.iak, st.lst, aewald);
    }
@@ -228,7 +228,7 @@ void dfield_nonewald_cu(real (*field)[3], real (*fieldp)[3])
 
    device_array::zero(PROCEED_NEW_Q, n, field, fieldp);
    if (st.niak > 0) {
-      launch_k1s(nonblk, WARP_SIZE * st.niak, dfield_cu1<elec_t::coulomb>,
+      launch_k1s(nonblk, WARP_SIZE * st.niak, dfield_cu1<elec_t::NON_EWALD>,
                  field, fieldp, thole, pdamp, rpole, TINKER_IMAGE_ARGS, off2, n,
                  st.sorted, st.niak, st.iak, st.lst, 0);
    }
@@ -301,7 +301,7 @@ void ufield_cu1(UFIELD_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
          real r2 = image2(dr.x, dr.y, dr.z);
          if (atomi < atomk && r2 <= off2) {
-            if CONSTEXPR (ETYP == elec_t::ewald) {
+            if CONSTEXPR (ETYP == elec_t::EWALD) {
                pair_ufield<EWALD>(
                   r2, dr.x, dr.y, dr.z, 1, uid.x, uid.y, uid.z, uip.x, uip.y,
                   uip.z, pdi, pti, data[klane].ukd.x, data[klane].ukd.y,
@@ -309,7 +309,7 @@ void ufield_cu1(UFIELD_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
                   data[klane].ukp.z, data[klane].pdk, data[klane].ptk, aewald,
                   fid, fip, data[klane].fkd, data[klane].fkp);
             }
-            if CONSTEXPR (ETYP == elec_t::coulomb) {
+            if CONSTEXPR (ETYP == elec_t::NON_EWALD) {
                pair_ufield<NON_EWALD>(
                   r2, dr.x, dr.y, dr.z, 1, uid.x, uid.y, uid.z, uip.x, uip.y,
                   uip.z, pdi, pti, data[klane].ukd.x, data[klane].ukd.y,
@@ -407,7 +407,7 @@ void ufield_ewald_real_cu(const real (*uind)[3], const real (*uinp)[3],
 
 
    if (st.niak > 0) {
-      launch_k1s(nonblk, WARP_SIZE * st.niak, ufield_cu1<elec_t::ewald>, uind,
+      launch_k1s(nonblk, WARP_SIZE * st.niak, ufield_cu1<elec_t::EWALD>, uind,
                  uinp, field, fieldp, thole, pdamp, TINKER_IMAGE_ARGS, off2, n,
                  st.sorted, st.niak, st.iak, st.lst, aewald);
    }
@@ -428,9 +428,9 @@ void ufield_nonewald_cu(const real (*uind)[3], const real (*uinp)[3],
 
    device_array::zero(PROCEED_NEW_Q, n, field, fieldp);
    if (st.niak > 0) {
-      launch_k1s(nonblk, WARP_SIZE * st.niak, ufield_cu1<elec_t::coulomb>, uind,
-                 uinp, field, fieldp, thole, pdamp, TINKER_IMAGE_ARGS, off2, n,
-                 st.sorted, st.niak, st.iak, st.lst, 0);
+      launch_k1s(nonblk, WARP_SIZE * st.niak, ufield_cu1<elec_t::NON_EWALD>,
+                 uind, uinp, field, fieldp, thole, pdamp, TINKER_IMAGE_ARGS,
+                 off2, n, st.sorted, st.niak, st.iak, st.lst, 0);
    }
    if (nuexclude_) {
       launch_k1s(nonblk, nuexclude_, ufield_cu2, uind, uinp, field, fieldp,

@@ -363,9 +363,9 @@ void epolar_data(rc_op op)
 
    if (op & rc_init) {
       if (use_ewald()) {
-         epolar_electyp = elec_t::ewald;
+         epolar_electyp = elec_t::EWALD;
       } else {
-         epolar_electyp = elec_t::coulomb;
+         epolar_electyp = elec_t::NON_EWALD;
       }
 
       udiag = polpot::udiag;
@@ -420,9 +420,9 @@ void induce(real (*ud)[3], real (*up)[3])
 
 void epolar(int vers)
 {
-   if (epolar_electyp == elec_t::coulomb)
+   if (epolar_electyp == elec_t::NON_EWALD)
       epolar_nonewald(vers);
-   else if (epolar_electyp == elec_t::ewald)
+   else if (epolar_electyp == elec_t::EWALD)
       epolar_ewald(vers);
 }
 

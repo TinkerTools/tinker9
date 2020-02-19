@@ -11,12 +11,18 @@
 
 
 /**
- * \defgroup pme   Particle Mesh Ewald
+ * \defgroup elec  Electrostatics
  * \ingroup ff
+ *    \defgroup mpole  Multipole Electrostatics
+ *    \ingroup elec
+ *    \defgroup polar  AMOEBA Polarization Electrostatics
+ *    \ingroup elec
+ *    \defgroup pme    Particle Mesh Ewald
+ *    \ingroup elec
+ *
  * \defgroup geom  Geometrical Restraints
  * \ingroup ff
- * \defgroup mpole Multipole Electrostatics
- * \ingroup ff
+ *
  * \defgroup vdw   Van der Waals (VDW)
  * \ingroup ff
  */

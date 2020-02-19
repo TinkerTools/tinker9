@@ -1,15 +1,17 @@
 #pragma once
-
 #include "dev_array.h"
 #include "energy_buffer.h"
 #include "rc_man.h"
 
+
 TINKER_NAMESPACE_BEGIN
+/// \ingroup elec
 enum class elec_t
 {
-   coulomb, ///< coulomb interaction
-   ewald    ///< particle mesh ewald summation
+   NON_EWALD, ///< Non-EWALD interaction.
+   EWALD      ///< Particle mesh ewald summation.
 };
+
 
 /// local frame definitions
 enum
