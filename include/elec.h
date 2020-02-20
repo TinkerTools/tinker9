@@ -2,6 +2,7 @@
 #include "dev_array.h"
 #include "energy_buffer.h"
 #include "rc_man.h"
+#include "torque.h"
 
 
 TINKER_NAMESPACE_BEGIN
@@ -82,5 +83,4 @@ void elec_data(rc_op op);
 int use_elec();
 int use_ewald();
 void elec_init(int vers);
-void torque(int vers);
 TINKER_NAMESPACE_END

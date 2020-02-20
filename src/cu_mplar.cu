@@ -1274,14 +1274,12 @@ void emplar_ewald_cu()
 template <class Ver>
 void emplar_nonewald_cu()
 {
-   constexpr bool do_e = Ver::e;
-
    // induce
    induce(uind, uinp);
 
    // empole and epolar
    emplar_cu<Ver, NON_EWALD>(uind, uinp);
-   if CONSTEXPR (do_e)
+   if CONSTEXPR (Ver::e)
       epolar0_dotprod(uind, udirp);
 }
 
@@ -1289,7 +1287,6 @@ void emplar_nonewald_cu()
 void emplar_cu(int vers)
 {
    assert(empole_electyp == epolar_electyp);
-   assert(vers != calc::v3);
    if (empole_electyp == elec_t::NON_EWALD) {
       if (vers == calc::v0)
          emplar_nonewald_cu<calc::V0>();

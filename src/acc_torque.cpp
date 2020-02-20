@@ -457,18 +457,4 @@ void torque_acc(int vers)
    else if (vers & calc::grad)
       torque_acc1<0>(nullptr);
 }
-
-
-void torque(int vers)
-{
-   if (!use_elec())
-      return;
-
-
-#if TINKER_CUDART
-      // if (pltfm_config & CU_PLTFM) {
-      // } else
-#endif
-   torque_acc(vers);
-}
 TINKER_NAMESPACE_END
