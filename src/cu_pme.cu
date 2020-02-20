@@ -367,12 +367,11 @@ void bspline_fill_cu(PMEUnit u, int level)
 
 template <class T, int bsorder>
 __global__
-void fphi_tmpl_cu(int n, int nfft1, int nfft2, int nfft3,
-                  const real* restrict x, const real* restrict y,
-                  const real* restrict z, real* restrict opt1,
-                  real* restrict opt2, real* restrict opt3,
-                  const real* restrict qgrid, real3 recip_a, real3 recip_b,
-                  real3 recip_c)
+void fphi_get_cu(int n, int nfft1, int nfft2, int nfft3, const real* restrict x,
+                 const real* restrict y, const real* restrict z,
+                 real* restrict opt1, real* restrict opt2, real* restrict opt3,
+                 const real* restrict qgrid, real3 recip_a, real3 recip_b,
+                 real3 recip_c)
 {
    real thetai1[4 * 5];
    real thetai2[4 * 5];
@@ -868,7 +867,7 @@ void fphi_tmpl_cu(int n, int nfft1, int nfft2, int nfft3,
 }
 
 
-void fphi_mpole_cu(PMEUnit pme_u, real* fphi)
+void fphi_mpole_cu(PMEUnit pme_u, real (*fphi)[20])
 {
    auto& st = *pme_u;
    int n1 = st.nfft1;
@@ -876,14 +875,14 @@ void fphi_mpole_cu(PMEUnit pme_u, real* fphi)
    int n3 = st.nfft3;
 
 
-   auto ker = fphi_tmpl_cu<MPOLE, 5>;
-   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, fphi,
+   auto ker = fphi_get_cu<MPOLE, 5>;
+   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, (real*)fphi,
               nullptr, nullptr, st.qgrid, recipa, recipb, recipc);
 }
 
 
-void fphi_uind_cu(PMEUnit pme_u, real* fdip_phi1, real* fdip_phi2,
-                  real* fdip_sum_phi)
+void fphi_uind_cu(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10],
+                  real (*fdip_sum_phi)[20])
 {
    auto& st = *pme_u;
    int n1 = st.nfft1;
@@ -891,13 +890,14 @@ void fphi_uind_cu(PMEUnit pme_u, real* fdip_phi1, real* fdip_phi2,
    int n3 = st.nfft3;
 
 
-   auto ker = fphi_tmpl_cu<UIND, 5>;
-   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, fdip_phi1,
-              fdip_phi2, fdip_sum_phi, st.qgrid, recipa, recipb, recipc);
+   auto ker = fphi_get_cu<UIND, 5>;
+   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z,
+              (real*)fdip_phi1, (real*)fdip_phi2, (real*)fdip_sum_phi, st.qgrid,
+              recipa, recipb, recipc);
 }
 
 
-void fphi_uind2_cu(PMEUnit pme_u, real* fdip_phi1, real* fdip_phi2)
+void fphi_uind2_cu(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10])
 {
    auto& st = *pme_u;
    int n1 = st.nfft1;
@@ -905,9 +905,10 @@ void fphi_uind2_cu(PMEUnit pme_u, real* fdip_phi1, real* fdip_phi2)
    int n3 = st.nfft3;
 
 
-   auto ker = fphi_tmpl_cu<UIND2, 5>;
-   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, fdip_phi1,
-              fdip_phi2, nullptr, st.qgrid, recipa, recipb, recipc);
+   auto ker = fphi_get_cu<UIND2, 5>;
+   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z,
+              (real*)fdip_phi1, (real*)fdip_phi2, nullptr, st.qgrid, recipa,
+              recipb, recipc);
 }
 
 
@@ -923,13 +924,13 @@ void pme_cuda_func_config()
 
    // fphi
 
-   auto fphi_mpole = fphi_tmpl_cu<MPOLE, 5>;
+   auto fphi_mpole = fphi_get_cu<MPOLE, 5>;
    check_rt(cudaFuncSetCacheConfig(fphi_mpole, cudaFuncCachePreferL1));
 
-   auto fphi_uind = fphi_tmpl_cu<UIND, 5>;
+   auto fphi_uind = fphi_get_cu<UIND, 5>;
    check_rt(cudaFuncSetCacheConfig(fphi_uind, cudaFuncCachePreferL1));
 
-   auto fphi_uind2 = fphi_tmpl_cu<UIND2, 5>;
+   auto fphi_uind2 = fphi_get_cu<UIND2, 5>;
    check_rt(cudaFuncSetCacheConfig(fphi_uind2, cudaFuncCachePreferL1));
 }
 TINKER_NAMESPACE_END

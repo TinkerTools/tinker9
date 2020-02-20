@@ -285,4 +285,53 @@ void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 #endif
       grid_uind_acc(pme_u, fuind, fuinp);
 }
+
+
+void fphi_mpole(PMEUnit pme_u, real (*fphi)[20])
+{
+   int bso = pme_u->bsorder;
+   if (bso != 5)
+      TINKER_THROW(format("fphi_mpole(): bsorder is {}; must be 5.\n", bso));
+
+
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      fphi_mpole_cu(pme_u, fphi);
+   else
+#endif
+      fphi_mpole_acc(pme_u, fphi);
+}
+
+
+void fphi_uind(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10],
+               real (*fdip_sum_phi)[20])
+{
+   int bso = pme_u->bsorder;
+   if (bso != 5)
+      TINKER_THROW(format("fphi_uind(): bsorder is {}; must be 5.\n", bso));
+
+
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      fphi_uind_cu(pme_u, fdip_phi1, fdip_phi2, fdip_sum_phi);
+   else
+#endif
+      fphi_uind_acc(pme_u, fdip_phi1, fdip_phi2, fdip_sum_phi);
+}
+
+
+void fphi_uind2(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10])
+{
+   int bso = pme_u->bsorder;
+   if (bso != 5)
+      TINKER_THROW(format("fphi_uind2(): bsorder is {}; must be 5.\n", bso));
+
+
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      fphi_uind2_cu(pme_u, fdip_phi1, fdip_phi2);
+   else
+#endif
+      fphi_uind2_acc(pme_u, fdip_phi1, fdip_phi2);
+}
 TINKER_NAMESPACE_END

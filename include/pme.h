@@ -132,6 +132,7 @@ void fphi_to_cphi_acc(PMEUnit, const real (*)[20], real (*)[10]);
 void grid_mpole(PMEUnit pme_u, real (*gpu_fmp)[10]);
 /// \ingroup pme
 void grid_uind(PMEUnit pme_u, real (*gpu_find)[3], real (*gpu_finp)[3]);
+
 void grid_mpole_acc(PMEUnit, real (*)[10]);
 void grid_uind_acc(PMEUnit, real (*)[3], real (*)[3]);
 void grid_mpole_cu(PMEUnit, real (*)[10]);
@@ -146,4 +147,11 @@ void fphi_uind(PMEUnit pme_u, real (*gpu_fdip_phi1)[10],
 /// \ingroup pme
 void fphi_uind2(PMEUnit pme_u, real (*gpu_fdip_phi1)[10],
                 real (*gpu_fdip_phi2)[10]);
+
+void fphi_mpole_acc(PMEUnit, real (*)[20]);
+void fphi_uind_acc(PMEUnit, real (*)[10], real (*)[10], real (*)[20]);
+void fphi_uind2_acc(PMEUnit pme_u, real (*)[10], real (*)[10]);
+void fphi_mpole_cu(PMEUnit, real (*)[20]);
+void fphi_uind_cu(PMEUnit, real (*)[10], real (*)[10], real (*)[20]);
+void fphi_uind2_cu(PMEUnit pme_u, real (*)[10], real (*)[10]);
 TINKER_NAMESPACE_END

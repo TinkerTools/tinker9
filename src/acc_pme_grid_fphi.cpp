@@ -235,7 +235,7 @@ void grid_uind_acc(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 
 
 template <class T>
-void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
+void fphi_get_acc(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
 {
    auto& st = *pme_u;
    auto* dptr = pme_u.deviceptr();
@@ -264,7 +264,7 @@ void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
    const int bsorder = st.bsorder;
    assert(bsorder <= 5);
 
-   #pragma acc parallel loop independent\
+   #pragma acc parallel loop independent async\
                deviceptr(fphi,fdip_phi1,fdip_phi2,fdip_sum_phi,\
                x,y,z,box,dptr)
    for (int i = 0; i < n; ++i) {
@@ -645,57 +645,24 @@ void fphi_tmpl(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
 }
 
 
-void fphi_mpole(PMEUnit pme_u, real (*fphi)[20])
+void fphi_mpole_acc(PMEUnit pme_u, real (*gpu_fphi)[20])
 {
-   int bso = pme_u->bsorder;
-   if (bso != 5)
-      TINKER_THROW(format("fphi_mpole(): bsorder is {}; must be 5.\n", bso));
-   real* opt1 = reinterpret_cast<real*>(fphi);
-
-
-#if TINKER_CUDART
-   extern void fphi_mpole_cu(PMEUnit, real*);
-   fphi_mpole_cu(pme_u, opt1);
-#else
-   fphi_tmpl<MPOLE>(pme_u, opt1, nullptr, nullptr);
-#endif
+   fphi_get_acc<MPOLE>(pme_u, (real*)gpu_fphi, nullptr, nullptr);
 }
 
 
-void fphi_uind(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10],
-               real (*fdip_sum_phi)[20])
+void fphi_uind_acc(PMEUnit pme_u, real (*gpu_fdip_phi1)[10],
+                   real (*gpu_fdip_phi2)[10], real (*gpu_fdip_sum_phi)[20])
 {
-   int bso = pme_u->bsorder;
-   if (bso != 5)
-      TINKER_THROW(format("fphi_uind(): bsorder is {}; must be 5.\n", bso));
-   real* opt1 = reinterpret_cast<real*>(fdip_phi1);
-   real* opt2 = reinterpret_cast<real*>(fdip_phi2);
-   real* opt3 = reinterpret_cast<real*>(fdip_sum_phi);
-
-
-#if TINKER_CUDART
-   extern void fphi_uind_cu(PMEUnit, real*, real*, real*);
-   fphi_uind_cu(pme_u, opt1, opt2, opt3);
-#else
-   fphi_tmpl<UIND>(pme_u, opt1, opt2, opt3);
-#endif
+   fphi_get_acc<UIND>(pme_u, (real*)gpu_fdip_phi1, (real*)gpu_fdip_phi2,
+                      (real*)gpu_fdip_sum_phi);
 }
 
 
-void fphi_uind2(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10])
+void fphi_uind2_acc(PMEUnit pme_u, real (*gpu_fdip_phi1)[10],
+                    real (*gpu_fdip_phi2)[10])
 {
-   int bso = pme_u->bsorder;
-   if (bso != 5)
-      TINKER_THROW(format("fphi_uind2(): bsorder is {}; must be 5.\n", bso));
-   real* opt1 = reinterpret_cast<real*>(fdip_phi1);
-   real* opt2 = reinterpret_cast<real*>(fdip_phi2);
-
-
-#if TINKER_CUDART
-   extern void fphi_uind2_cu(PMEUnit, real*, real*);
-   fphi_uind2_cu(pme_u, opt1, opt2);
-#else
-   fphi_tmpl<UIND2>(pme_u, opt1, opt2, nullptr);
-#endif
+   fphi_get_acc<UIND2>(pme_u, (real*)gpu_fdip_phi1, (real*)gpu_fdip_phi2,
+                       nullptr);
 }
 TINKER_NAMESPACE_END
