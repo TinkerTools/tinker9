@@ -213,18 +213,18 @@ void ufield_ewald_recip_self_acc(const real (*uind)[3], const real (*uinp)[3],
    const real term = aewald * aewald * aewald * 4 / 3 / sqrtpi;
 
    #pragma acc parallel loop independent async\
-               deviceptr(box,field,fieldp,uind,uinp,fdip_phi1,fdip_phi2)
+               deviceptr(field,fieldp,uind,uinp,fdip_phi1,fdip_phi2)
    for (int i = 0; i < n; ++i) {
       real a[3][3];
-      a[0][0] = nfft1 * box->recip[0][0];
-      a[1][0] = nfft2 * box->recip[1][0];
-      a[2][0] = nfft3 * box->recip[2][0];
-      a[0][1] = nfft1 * box->recip[0][1];
-      a[1][1] = nfft2 * box->recip[1][1];
-      a[2][1] = nfft3 * box->recip[2][1];
-      a[0][2] = nfft1 * box->recip[0][2];
-      a[1][2] = nfft2 * box->recip[1][2];
-      a[2][2] = nfft3 * box->recip[2][2];
+      a[0][0] = nfft1 * recipa.x;
+      a[1][0] = nfft2 * recipb.x;
+      a[2][0] = nfft3 * recipc.x;
+      a[0][1] = nfft1 * recipa.y;
+      a[1][1] = nfft2 * recipb.y;
+      a[2][1] = nfft3 * recipc.y;
+      a[0][2] = nfft1 * recipa.z;
+      a[1][2] = nfft2 * recipb.z;
+      a[2][2] = nfft3 * recipc.z;
 
       #pragma acc loop seq
       for (int j = 0; j < 3; ++j) {

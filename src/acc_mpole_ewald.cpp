@@ -258,7 +258,7 @@ void empole_ewald_recip_acc1()
    const real f = electric / dielec;
 
    #pragma acc parallel loop independent async\
-               deviceptr(gx,gy,gz,box,\
+               deviceptr(gx,gy,gz,\
                cmp,fmp,cphi,fphi,em,vir_em,trqx,trqy,trqz)
    for (int i = 0; i < n; ++i) {
       constexpr int deriv1[] = {2, 5, 8, 9, 11, 16, 18, 14, 15, 20};
@@ -292,12 +292,9 @@ void empole_ewald_recip_acc1()
          f2 *= nfft2;
          f3 *= nfft3;
 
-         real h1 = box->recip[0][0] * f1 + box->recip[1][0] * f2 +
-            box->recip[2][0] * f3;
-         real h2 = box->recip[0][1] * f1 + box->recip[1][1] * f2 +
-            box->recip[2][1] * f3;
-         real h3 = box->recip[0][2] * f1 + box->recip[1][2] * f2 +
-            box->recip[2][2] * f3;
+         real h1 = recipa.x * f1 + recipb.x * f2 + recipc.x * f3;
+         real h2 = recipa.y * f1 + recipb.y * f2 + recipc.y * f3;
+         real h3 = recipa.z * f1 + recipb.z * f2 + recipc.z * f3;
 
          atomic_add(h1 * f, gx, i);
          atomic_add(h2 * f, gy, i);

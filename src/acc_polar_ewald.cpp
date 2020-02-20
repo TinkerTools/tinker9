@@ -375,7 +375,7 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
 
    // increment the dipole polarization gradient contributions
 
-   #pragma acc parallel loop independent async deviceptr(box,gx,gy,gz,\
+   #pragma acc parallel loop independent async deviceptr(gx,gy,gz,\
                fmp,fphi,fuind,fuinp,fphid,fphip,fphidp)
    for (int i = 0; i < n; ++i) {
       // data deriv1  / 2, 5,  8,  9, 11, 16, 18, 14, 15, 20 /
@@ -412,12 +412,9 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
          f1 *= 0.5f * nfft1;
          f2 *= 0.5f * nfft2;
          f3 *= 0.5f * nfft3;
-         real h1 = box->recip[0][0] * f1 + box->recip[1][0] * f2 +
-            box->recip[2][0] * f3;
-         real h2 = box->recip[0][1] * f1 + box->recip[1][1] * f2 +
-            box->recip[2][1] * f3;
-         real h3 = box->recip[0][2] * f1 + box->recip[1][2] * f2 +
-            box->recip[2][2] * f3;
+         real h1 = recipa.x * f1 + recipb.x * f2 + recipc.x * f3;
+         real h2 = recipa.y * f1 + recipb.y * f2 + recipc.y * f3;
+         real h3 = recipa.z * f1 + recipb.z * f2 + recipc.z * f3;
          gx[i] += h1 * f;
          gy[i] += h2 * f;
          gz[i] += h3 * f;
@@ -500,7 +497,7 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
       device_array::scale(PROCEED_NEW_Q, n, f, cphi, fphid, fphip);
 
       #pragma acc parallel loop independent async\
-                  deviceptr(vir_ep,box,cmp,\
+                  deviceptr(vir_ep,cmp,\
                   gpu_uind,gpu_uinp,fphid,fphip,cphi,cphidp)
       for (int i = 0; i < n; ++i) {
          real cphid[4], cphip[4];
@@ -508,15 +505,15 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
 
          // frac_to_cart
 
-         ftc[0][0] = nfft1 * box->recip[0][0];
-         ftc[1][0] = nfft2 * box->recip[1][0];
-         ftc[2][0] = nfft3 * box->recip[2][0];
-         ftc[0][1] = nfft1 * box->recip[0][1];
-         ftc[1][1] = nfft2 * box->recip[1][1];
-         ftc[2][1] = nfft3 * box->recip[2][1];
-         ftc[0][2] = nfft1 * box->recip[0][2];
-         ftc[1][2] = nfft2 * box->recip[1][2];
-         ftc[2][2] = nfft3 * box->recip[2][2];
+         ftc[0][0] = nfft1 * recipa.x;
+         ftc[1][0] = nfft2 * recipb.x;
+         ftc[2][0] = nfft3 * recipc.x;
+         ftc[0][1] = nfft1 * recipa.y;
+         ftc[1][1] = nfft2 * recipb.y;
+         ftc[2][1] = nfft3 * recipc.y;
+         ftc[0][2] = nfft1 * recipa.z;
+         ftc[1][2] = nfft2 * recipb.z;
+         ftc[2][2] = nfft3 * recipc.z;
 
          #pragma acc loop independent
          for (int j = 0; j < 3; ++j) {
@@ -643,12 +640,9 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
          int r2 = (k2 < (nfft2 + 1) / 2) ? k2 : (k2 - nfft2);
          int r3 = (k3 < (nfft3 + 1) / 2) ? k3 : (k3 - nfft3);
 
-         real h1 = box->recip[0][0] * r1 + box->recip[1][0] * r2 +
-            box->recip[2][0] * r3;
-         real h2 = box->recip[0][1] * r1 + box->recip[1][1] * r2 +
-            box->recip[2][1] * r3;
-         real h3 = box->recip[0][2] * r1 + box->recip[1][2] * r2 +
-            box->recip[2][2] * r3;
+         real h1 = recipa.x * r1 + recipb.x * r2 + recipc.x * r3;
+         real h2 = recipa.y * r1 + recipb.y * r2 + recipc.y * r3;
+         real h3 = recipa.z * r1 + recipb.z * r2 + recipc.z * r3;
          real hsq = h1 * h1 + h2 * h2 + h3 * h3;
          real term = -pterm * hsq;
          real expterm = 0;

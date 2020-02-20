@@ -42,7 +42,7 @@ void grid_put_acc(PMEUnit pme_u, real* optional1, real* optional2)
    device_array::zero(PROCEED_NEW_Q, 2 * nfft1 * nfft2 * nfft3, st.qgrid);
 
    #pragma acc parallel loop independent async\
-               deviceptr(pchg,fmp,fuind,fuinp,x,y,z,box,dptr)
+               deviceptr(pchg,fmp,fuind,fuinp,x,y,z,dptr)
    for (int i = 0; i < n; ++i) {
       real thetai1[4 * 5];
       real thetai2[4 * 5];
@@ -56,22 +56,20 @@ void grid_put_acc(PMEUnit pme_u, real* optional1, real* optional2)
       // w -> (w + 0.5) - FLOOR(w + 0.5)
       // see also subroutine bspline_fill in pmestuf.f
 
-      real w1 =
-         xi * box->recip[0][0] + yi * box->recip[0][1] + zi * box->recip[0][2];
+      real w1 = xi * recipa.x + yi * recipa.y + zi * recipa.z;
+
       w1 = w1 + 0.5f - REAL_FLOOR(w1 + 0.5f);
       real fr1 = nfft1 * w1;
       int igrid1 = REAL_FLOOR(fr1);
       w1 = fr1 - igrid1;
 
-      real w2 =
-         xi * box->recip[1][0] + yi * box->recip[1][1] + zi * box->recip[1][2];
+      real w2 = xi * recipb.x + yi * recipb.y + zi * recipb.z;
       w2 = w2 + 0.5f - REAL_FLOOR(w2 + 0.5f);
       real fr2 = nfft2 * w2;
       int igrid2 = REAL_FLOOR(fr2);
       w2 = fr2 - igrid2;
 
-      real w3 =
-         xi * box->recip[2][0] + yi * box->recip[2][1] + zi * box->recip[2][2];
+      real w3 = xi * recipc.x + yi * recipc.y + zi * recipc.z;
       w3 = w3 + 0.5f - REAL_FLOOR(w3 + 0.5f);
       real fr3 = nfft3 * w3;
       int igrid3 = REAL_FLOOR(fr3);
@@ -266,7 +264,7 @@ void fphi_get_acc(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
 
    #pragma acc parallel loop independent async\
                deviceptr(fphi,fdip_phi1,fdip_phi2,fdip_sum_phi,\
-               x,y,z,box,dptr)
+               x,y,z,dptr)
    for (int i = 0; i < n; ++i) {
       real thetai1[4 * 5];
       real thetai2[4 * 5];
@@ -280,22 +278,19 @@ void fphi_get_acc(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
       // w -> (w + 0.5) - FLOOR(w + 0.5)
       // see also subroutine bspline_fill in pmestuf.f
 
-      real w1 =
-         xi * box->recip[0][0] + yi * box->recip[0][1] + zi * box->recip[0][2];
+      real w1 = xi * recipa.x + yi * recipa.y + zi * recipa.z;
       w1 = w1 + 0.5f - REAL_FLOOR(w1 + 0.5f);
       real fr1 = nfft1 * w1;
       int igrid1 = REAL_FLOOR(fr1);
       w1 = fr1 - igrid1;
 
-      real w2 =
-         xi * box->recip[1][0] + yi * box->recip[1][1] + zi * box->recip[1][2];
+      real w2 = xi * recipb.x + yi * recipb.y + zi * recipb.z;
       w2 = w2 + 0.5f - REAL_FLOOR(w2 + 0.5f);
       real fr2 = nfft2 * w2;
       int igrid2 = REAL_FLOOR(fr2);
       w2 = fr2 - igrid2;
 
-      real w3 =
-         xi * box->recip[2][0] + yi * box->recip[2][1] + zi * box->recip[2][2];
+      real w3 = xi * recipc.x + yi * recipc.y + zi * recipc.z;
       w3 = w3 + 0.5f - REAL_FLOOR(w3 + 0.5f);
       real fr3 = nfft3 * w3;
       int igrid3 = REAL_FLOOR(fr3);

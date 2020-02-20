@@ -31,20 +31,20 @@ void cmp_to_fmp_acc(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
    int nfft2 = st.nfft2;
    int nfft3 = st.nfft3;
 
-   #pragma acc parallel loop independent async deviceptr(box,cmp,fmp)
+   #pragma acc parallel loop independent async deviceptr(cmp,fmp)
    for (int iatom = 0; iatom < n; ++iatom) {
       real a[3][3];
       // see also subroutine cart_to_frac in pmestuf.f
       // set the reciprocal vector transformation matrix
-      a[0][0] = nfft1 * box->recip[0][0];
-      a[0][1] = nfft2 * box->recip[1][0];
-      a[0][2] = nfft3 * box->recip[2][0];
-      a[1][0] = nfft1 * box->recip[0][1];
-      a[1][1] = nfft2 * box->recip[1][1];
-      a[1][2] = nfft3 * box->recip[2][1];
-      a[2][0] = nfft1 * box->recip[0][2];
-      a[2][1] = nfft2 * box->recip[1][2];
-      a[2][2] = nfft3 * box->recip[2][2];
+      a[0][0] = nfft1 * recipa.x;
+      a[0][1] = nfft2 * recipb.x;
+      a[0][2] = nfft3 * recipc.x;
+      a[1][0] = nfft1 * recipa.y;
+      a[1][1] = nfft2 * recipb.y;
+      a[1][2] = nfft3 * recipc.y;
+      a[2][0] = nfft1 * recipa.z;
+      a[2][1] = nfft2 * recipb.z;
+      a[2][2] = nfft3 * recipc.z;
 
 
       // data qi1  / 1, 2, 3, 1, 1, 2 /
@@ -133,18 +133,18 @@ void cuind_to_fuind_acc(PMEUnit pme_u, const real (*cind)[3],
 
 
    #pragma acc parallel loop independent async\
-               deviceptr(box,cind,cinp,fuind,fuinp)
+               deviceptr(cind,cinp,fuind,fuinp)
    for (int i = 0; i < n; ++i) {
       real a[3][3];
-      a[0][0] = nfft1 * box->recip[0][0];
-      a[0][1] = nfft2 * box->recip[1][0];
-      a[0][2] = nfft3 * box->recip[2][0];
-      a[1][0] = nfft1 * box->recip[0][1];
-      a[1][1] = nfft2 * box->recip[1][1];
-      a[1][2] = nfft3 * box->recip[2][1];
-      a[2][0] = nfft1 * box->recip[0][2];
-      a[2][1] = nfft2 * box->recip[1][2];
-      a[2][2] = nfft3 * box->recip[2][2];
+      a[0][0] = nfft1 * recipa.x;
+      a[0][1] = nfft2 * recipb.x;
+      a[0][2] = nfft3 * recipc.x;
+      a[1][0] = nfft1 * recipa.y;
+      a[1][1] = nfft2 * recipb.y;
+      a[1][2] = nfft3 * recipc.y;
+      a[2][0] = nfft1 * recipa.z;
+      a[2][1] = nfft2 * recipb.z;
+      a[2][2] = nfft3 * recipc.z;
 
 
       #pragma acc loop seq
@@ -166,20 +166,20 @@ void fphi_to_cphi_acc(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
    int nfft3 = st.nfft3;
 
 
-   #pragma acc parallel loop async deviceptr(box,fphi,cphi)
+   #pragma acc parallel loop async deviceptr(fphi,cphi)
    for (int iatom = 0; iatom < n; ++iatom) {
       real a[3][3];
       // see also subroutine frac_to_cart in pmestuf.f
       // set the reciprocal vector transformation matrix
-      a[0][0] = nfft1 * box->recip[0][0];
-      a[1][0] = nfft2 * box->recip[1][0];
-      a[2][0] = nfft3 * box->recip[2][0];
-      a[0][1] = nfft1 * box->recip[0][1];
-      a[1][1] = nfft2 * box->recip[1][1];
-      a[2][1] = nfft3 * box->recip[2][1];
-      a[0][2] = nfft1 * box->recip[0][2];
-      a[1][2] = nfft2 * box->recip[1][2];
-      a[2][2] = nfft3 * box->recip[2][2];
+      a[0][0] = nfft1 * recipa.x;
+      a[1][0] = nfft2 * recipb.x;
+      a[2][0] = nfft3 * recipc.x;
+      a[0][1] = nfft1 * recipa.y;
+      a[1][1] = nfft2 * recipb.y;
+      a[2][1] = nfft3 * recipc.y;
+      a[0][2] = nfft1 * recipa.z;
+      a[1][2] = nfft2 * recipb.z;
+      a[2][2] = nfft3 * recipc.z;
 
 
       // data qi1  / 1, 2, 3, 1, 1, 2 /

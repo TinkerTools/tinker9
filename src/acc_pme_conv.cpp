@@ -26,21 +26,12 @@ void pme_conv_acc1(PMEUnit pme_u, virial_buffer gpu_vir)
    real pterm = pi / aewald;
    pterm *= pterm;
 
+   real box_volume = volbox();
+
    auto bufsize = buffer_size();
    #pragma acc parallel loop independent async\
-               deviceptr(gpu_vir,box,qgrid,bsmod1,bsmod2,bsmod3)
+               deviceptr(gpu_vir,qgrid,bsmod1,bsmod2,bsmod3)
    for (int i = 0; i < ntot; ++i) {
-      real recip[3][3];
-      recip[0][0] = box->recip[0][0];
-      recip[0][1] = box->recip[0][1];
-      recip[0][2] = box->recip[0][2];
-      recip[1][0] = box->recip[1][0];
-      recip[1][1] = box->recip[1][1];
-      recip[1][2] = box->recip[1][2];
-      recip[2][0] = box->recip[2][0];
-      recip[2][1] = box->recip[2][1];
-      recip[2][2] = box->recip[2][2];
-
       if (i == 0) {
          qgrid[0][0] = 0;
          qgrid[0][1] = 0;
@@ -56,9 +47,9 @@ void pme_conv_acc1(PMEUnit pme_u, virial_buffer gpu_vir)
       int r2 = (k2 < (nfft2 + 1) / 2) ? k2 : (k2 - nfft2);
       int r3 = (k3 < (nfft3 + 1) / 2) ? k3 : (k3 - nfft3);
 
-      real h1 = recip[0][0] * r1 + recip[1][0] * r2 + recip[2][0] * r3;
-      real h2 = recip[0][1] * r1 + recip[1][1] * r2 + recip[2][1] * r3;
-      real h3 = recip[0][2] * r1 + recip[1][2] * r2 + recip[2][2] * r3;
+      real h1 = recipa.x * r1 + recipb.x * r2 + recipc.x * r3;
+      real h2 = recipa.y * r1 + recipb.y * r2 + recipc.y * r3;
+      real h3 = recipa.z * r1 + recipb.z * r2 + recipc.z * r3;
       real hsq = h1 * h1 + h2 * h2 + h3 * h3;
 
       real gridx = qgrid[i][0];
@@ -68,7 +59,7 @@ void pme_conv_acc1(PMEUnit pme_u, virial_buffer gpu_vir)
       if (term > -50) {
          // TODO: if .not. use_bounds; if octahedron; 2/hsq
          real denom =
-            hsq * pi * box->volbox * bsmod1[k1] * bsmod2[k2] * bsmod3[k3];
+            hsq * pi * box_volume * bsmod1[k1] * bsmod2[k2] * bsmod3[k3];
          expterm = REAL_EXP(term) / denom;
 
          if CONSTEXPR (DO_V) {
