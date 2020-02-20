@@ -11,7 +11,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-void rpole_to_cmp()
+void rpole_to_cmp_acc()
 {
    // copy multipole moments and coordinates to local storage
    #pragma acc parallel loop independent async deviceptr(rpole,cmp)

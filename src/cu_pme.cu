@@ -305,16 +305,17 @@ void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
               (const real*)fuind, (const real*)fuinp, st.qgrid);
 #endif
 }
+}
 
 
 template <int LEVEL, int bsorder>
 __global__
-void bspline_fill(int* restrict igrid, real* restrict thetai1,
-                  real* restrict thetai2, real* restrict thetai3,
-                  const real* restrict x, const real* restrict y,
-                  const real* restrict z, int n, int padded_n, int nfft1,
-                  int nfft2, int nfft3, real3 recip_a, real3 recip_b,
-                  real3 recip_c)
+void bspline_fill_cu1(int* restrict igrid, real* restrict thetai1,
+                      real* restrict thetai2, real* restrict thetai3,
+                      const real* restrict x, const real* restrict y,
+                      const real* restrict z, int n, int padded_n, int nfft1,
+                      int nfft2, int nfft3, real3 recip_a, real3 recip_b,
+                      real3 recip_c)
 {
    const int nfft4[3] = {nfft1, nfft2, nfft3};
    const real3 recip4[3] = {recip_a, recip_b, recip_c};
@@ -345,19 +346,18 @@ void bspline_fill(int* restrict igrid, real* restrict thetai1,
       igrid[3 * i + 2] = igridi[2];
    }
 }
-}
 
 
-void bspline_fill(PMEUnit u, int level)
+void bspline_fill_cu(PMEUnit u, int level)
 {
    auto& st = *u;
    if (level == 2) {
-      auto ker = pltfm_cu::bspline_fill<2, 5>;
+      auto ker = bspline_fill_cu1<2, 5>;
       launch_k1s(nonblk, n, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
                  x, y, z, n, padded_n, st.nfft1, st.nfft2, st.nfft3, recipa,
                  recipb, recipc);
    } else if (level == 3) {
-      auto ker = pltfm_cu::bspline_fill<3, 5>;
+      auto ker = bspline_fill_cu1<3, 5>;
       launch_k1s(nonblk, n, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
                  x, y, z, n, padded_n, st.nfft1, st.nfft2, st.nfft3, recipa,
                  recipb, recipc);

@@ -227,4 +227,10 @@ void pme_conv(PMEUnit pme_u, virial_buffer gpu_vir)
 {
    pme_conv_acc(pme_u, gpu_vir);
 }
+
+
+void rpole_to_cmp()
+{
+   rpole_to_cmp_acc();
+}
 TINKER_NAMESPACE_END

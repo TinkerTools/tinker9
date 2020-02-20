@@ -85,8 +85,22 @@ void pme_conv(PMEUnit pme_u, virial_buffer v);
 void pme_conv_acc(PMEUnit, virial_buffer);
 
 
+/// \ingroup pme
 void rpole_to_cmp();
-void bspline_fill(PMEUnit, int level);
+/// \ingroup pme
+void rpole_to_cmp_acc();
+
+
+/**
+ * \ingroup pme
+ * \brief Get PME B-spline coefficients.
+ *
+ * Input: x, y, z, recip box
+ * Output: igrid, thetai1, thetai2, thetai3
+ */
+void bspline_fill_cu(PMEUnit, int level);
+
+
 /**
  * @brief
  * Input: cmp, cartesian rotated mpole.
