@@ -67,18 +67,6 @@ namespace parallel {}
 
 
 /**
- * \brief OpenACC parallel computing platform.
- */
-namespace pltfm_acc {}
-
-
-/**
- * \brief CUDA parallel computing platform.
- */
-namespace pltfm_cu {}
-
-
-/**
  * \brief Starting from 0 (which must be the `(0,0,0)` box), number the spatial
  * decomposition boxes as if they are stored in the `c[nx][ny][nz]` (or
  * `f(nz,ny,nx)`) array.

@@ -30,7 +30,6 @@ void velocity_to_temperature(T* out, const T* restrict vx, const T* restrict vy,
    __syncthreads();
 
 
-   using namespace pltfm_cu;
    using Op = OpPlus<T>;
    Op op;
    // clang-format off
@@ -60,7 +59,6 @@ void kinetic_cu(real& temp)
    const real ekcal_inv = 1.0 / units::ekcal;
    velocity_to_temperature<real, BLOCK_DIM>
       <<<grid_size, BLOCK_DIM, 0, st>>>(dptr, vx, vy, vz, mass, n, ekcal_inv);
-   using namespace pltfm_cu;
    reduce2<real, BLOCK_DIM, HN, HN, OpPlus<real>>
       <<<1, BLOCK_DIM, 0, st>>>(dptr6, dptr6, grid_size);
    check_rt(cudaMemcpyAsync(hptr, dptr, HN * sizeof(real),

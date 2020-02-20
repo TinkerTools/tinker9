@@ -214,3 +214,17 @@ void pme_data(rc_op op)
    rc_man fft42_{fft_data, op};
 }
 TINKER_NAMESPACE_END
+
+
+TINKER_NAMESPACE_BEGIN
+void pme_conv(PMEUnit pme_u)
+{
+   pme_conv_acc(pme_u, nullptr);
+}
+
+
+void pme_conv(PMEUnit pme_u, virial_buffer gpu_vir)
+{
+   pme_conv_acc(pme_u, gpu_vir);
+}
+TINKER_NAMESPACE_END

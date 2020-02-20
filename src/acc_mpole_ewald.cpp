@@ -235,17 +235,17 @@ void empole_ewald_recip_acc1()
    fftfront(pu);
    if CONSTEXPR (do_v) {
       if (vir_m) {
-         pme_conv1(pu, vir_m);
+         pme_conv(pu, vir_m);
          auto size = buffer_size() * virial_buffer_traits::value;
          #pragma acc parallel loop independent async deviceptr(vir_m,vir_em)
          for (int i = 0; i < size; ++i) {
             vir_em[0][i] += vir_m[0][i];
          }
       } else {
-         pme_conv1(pu, vir_em);
+         pme_conv(pu, vir_em);
       }
    } else {
-      pme_conv0(pu);
+      pme_conv(pu);
    }
    fftback(pu);
    fphi_mpole(pu, fphi);

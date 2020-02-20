@@ -369,7 +369,7 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
    grid_uind(pu, fuind, fuinp);
    fftfront(pu);
    // TODO: store vs. recompute qfac
-   pme_conv0(pu);
+   pme_conv(pu);
    fftback(pu);
    fphi_uind(pu, fphid, fphip, fphidp);
 

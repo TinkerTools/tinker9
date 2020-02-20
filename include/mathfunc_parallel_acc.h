@@ -5,28 +5,26 @@
 
 
 TINKER_NAMESPACE_BEGIN
-namespace pltfm_acc {
 template <class T>
-T reduce_sum(const T* gpu_a, size_t nelem, DMFlag flag);
+T reduce_sum_acc(const T* gpu_a, size_t nelem, DMFlag flag);
 
 
 template <class HT, size_t HN, class DPTR>
-void reduce_sum2(HT (&h_ans)[HN], DPTR v, size_t nelem, DMFlag flag);
+void reduce_sum2_acc(HT (&h_ans)[HN], DPTR v, size_t nelem, DMFlag flag);
 
 
 template <class T>
-T reduce_logic_or(const T* a, size_t nelem, DMFlag flag);
+T reduce_logic_or_acc(const T* a, size_t nelem, DMFlag flag);
 
 
 template <class T>
-T dotprod(const T* a, const T* b, size_t nelem, DMFlag flag);
+T dotprod_acc(const T* a, const T* b, size_t nelem, DMFlag flag);
 
 
 template <class T>
-void dotprod(T* ans, const T* a, const T* b, int nelem, DMFlag flag);
+void dotprod_acc(T* ans, const T* a, const T* b, int nelem, DMFlag flag);
 
 
 template <class T>
-void scale_array(T* dst, T scal, size_t nelem, DMFlag flag);
-}
+void scale_array_acc(T* dst, T scal, size_t nelem, DMFlag flag);
 TINKER_NAMESPACE_END

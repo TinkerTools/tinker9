@@ -3,7 +3,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-namespace pltfm_cu {
+namespace {
 template <class T>
 struct OpPlus
 {

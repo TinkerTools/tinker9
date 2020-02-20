@@ -1,28 +1,29 @@
 #pragma once
-
 #include "dev_array.h"
 #include "energy_buffer.h"
 #include "fft.h"
 #include "gen_unit.h"
 #include "rc_man.h"
 
+
 TINKER_NAMESPACE_BEGIN
 /**
- * @brief
- * particle mesh ewald girds and parameters
+ * \ingroup pme
+ * \brief Particle mesh ewald girds and parameters.
  *
- * @code{.f}
- * !! allocate igrid(3,n)
- * !! allocate (bsbuild(bsorder,bsorder))
- * !! allocate (thetai1(4,bsorder,n))
- * !! allocate (thetai2(4,bsorder,n))
- * !! allocate (thetai3(4,bsorder,n))
- * !! allocate (qfac(nfft1,nfft2,nfft3))
+ * \code{.f}
+ * !! In Tinker:
+ * allocate igrid(3,n)
+ * allocate (bsbuild(bsorder,bsorder))
+ * allocate (thetai1(4,bsorder,n))
+ * allocate (thetai2(4,bsorder,n))
+ * allocate (thetai3(4,bsorder,n))
+ * allocate (qfac(nfft1,nfft2,nfft3))
  * allocate (bsmod1(nfft1))
  * allocate (bsmod2(nfft2))
  * allocate (bsmod3(nfft3))
  * allocate (qgrid(2,nfft1,nfft2,nfft3))
- * @endcode
+ * \endcode
  */
 struct PME
 {
@@ -46,8 +47,7 @@ struct PME
 
    ~PME();
 };
-
-typedef GenericUnit<PME, GenericUnitVersion::EnableOnDevice> PMEUnit;
+using PMEUnit = GenericUnit<PME, GenericUnitVersion::EnableOnDevice>;
 TINKER_EXTERN PMEUnit epme_unit;  // electrostatic
 TINKER_EXTERN PMEUnit ppme_unit;  // polarization
 TINKER_EXTERN PMEUnit dpme_unit;  // dispersion
@@ -63,24 +63,27 @@ TINKER_EXTERN device_pointer<real, 20> fphidp;
 TINKER_EXTERN virial_buffer vir_m;
 
 void pme_data(rc_op op);
-
-/// This function must be called after pme_data has been called because it
-/// needs to know the number of pme objects created.
+// This function must be called after pme_data has been called because it
+// needs to know the number of pme objects created.
 void fft_data(rc_op op);
+
 void fftfront(PMEUnit pme_u);
 void fftback(PMEUnit pme_u);
-typedef GenericUnit<FFTPlan, GenericUnitVersion::DisableOnDevice> FFTPlanUnit;
+using FFTPlanUnit = GenericUnit<FFTPlan, GenericUnitVersion::DisableOnDevice>;
 
 void pme_init(int vers);
 TINKER_NAMESPACE_END
 
+
 TINKER_NAMESPACE_BEGIN
-/**
- * @brief
- * make the scalar summation over reciprocal lattice
- */
-void pme_conv0(PMEUnit pme_u);                  // without virial
-void pme_conv1(PMEUnit pme_u, virial_buffer v); // with virial
+/// \ingroup pme
+/// \brief Make the scalar summation over reciprocal lattice without virial.
+void pme_conv(PMEUnit pme_u);
+/// \ingroup pme
+/// \brief Make the scalar summation over reciprocal lattice with virial.
+void pme_conv(PMEUnit pme_u, virial_buffer v);
+void pme_conv_acc(PMEUnit, virial_buffer);
+
 
 void rpole_to_cmp();
 void bspline_fill(PMEUnit, int level);

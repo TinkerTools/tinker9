@@ -6,9 +6,8 @@
 
 
 TINKER_NAMESPACE_BEGIN
-namespace pltfm_acc {
 template <class T>
-T reduce_sum(const T* gpu_a, size_t cpu_n, DMFlag flag)
+T reduce_sum_acc(const T* gpu_a, size_t cpu_n, DMFlag flag)
 {
    T val = 0;
    if (flag & DMFlag::DEFAULT_Q) {
@@ -29,16 +28,16 @@ T reduce_sum(const T* gpu_a, size_t cpu_n, DMFlag flag)
    assert(flag & DMFlag::WAIT);
    return val;
 }
-template int reduce_sum(const int*, size_t, DMFlag);
-template float reduce_sum(const float*, size_t, DMFlag);
-template double reduce_sum(const double*, size_t, DMFlag);
-template unsigned long long reduce_sum(const unsigned long long*, size_t,
-                                       DMFlag);
+template int reduce_sum_acc(const int*, size_t, DMFlag);
+template float reduce_sum_acc(const float*, size_t, DMFlag);
+template double reduce_sum_acc(const double*, size_t, DMFlag);
+template unsigned long long reduce_sum_acc(const unsigned long long*, size_t,
+                                           DMFlag);
 
 
 template <class HT, size_t HN, class DPTR>
-void reduce_sum2(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem,
-                 DMFlag flag)
+void reduce_sum2_acc(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem,
+                     DMFlag flag)
 {
    typedef typename deduce_ptr<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type DT;
@@ -66,14 +65,14 @@ void reduce_sum2(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem,
       h_ans[iv] = ans;
    }
 }
-template void reduce_sum2(float (&)[6], float (*)[8], size_t, DMFlag);
-template void reduce_sum2(double (&)[6], double (*)[8], size_t, DMFlag);
-template void reduce_sum2(unsigned long long (&)[6], unsigned long long (*)[8],
-                          size_t, DMFlag);
+template void reduce_sum2_acc(float (&)[6], float (*)[8], size_t, DMFlag);
+template void reduce_sum2_acc(double (&)[6], double (*)[8], size_t, DMFlag);
+template void reduce_sum2_acc(unsigned long long (&)[6],
+                              unsigned long long (*)[8], size_t, DMFlag);
 
 
 template <class T>
-T reduce_logic_or(const T* gpu_a, size_t cpu_n, DMFlag flag)
+T reduce_logic_or_acc(const T* gpu_a, size_t cpu_n, DMFlag flag)
 {
    T val = false;
    if (flag & DMFlag::DEFAULT_Q) {
@@ -91,12 +90,12 @@ T reduce_logic_or(const T* gpu_a, size_t cpu_n, DMFlag flag)
    assert(flag & DMFlag::WAIT);
    return val;
 }
-template int reduce_logic_or(const int*, size_t, DMFlag);
+template int reduce_logic_or_acc(const int*, size_t, DMFlag);
 
 
 template <class T>
-T dotprod(const T* restrict gpu_a, const T* restrict gpu_b, size_t cpu_n,
-          DMFlag flag)
+T dotprod_acc(const T* restrict gpu_a, const T* restrict gpu_b, size_t cpu_n,
+              DMFlag flag)
 {
    T val = 0;
    if (flag & DMFlag::DEFAULT_Q) {
@@ -114,12 +113,12 @@ T dotprod(const T* restrict gpu_a, const T* restrict gpu_b, size_t cpu_n,
    assert(flag & DMFlag::WAIT);
    return val;
 }
-template float dotprod(const float*, const float*, size_t, DMFlag);
-template double dotprod(const double*, const double*, size_t, DMFlag);
+template float dotprod_acc(const float*, const float*, size_t, DMFlag);
+template double dotprod_acc(const double*, const double*, size_t, DMFlag);
 
 
 template <class T>
-void dotprod(T* ans, const T* a, const T* b, int nelem, DMFlag flag)
+void dotprod_acc(T* ans, const T* a, const T* b, int nelem, DMFlag flag)
 {
    bool sync = flag & DMFlag::DEFAULT_Q;
    // T v = 0;
@@ -146,12 +145,12 @@ void dotprod(T* ans, const T* a, const T* b, int nelem, DMFlag flag)
    wait_queue(flag);
    // }
 }
-template void dotprod(float*, const float*, const float*, int, DMFlag);
-template void dotprod(double*, const double*, const double*, int, DMFlag);
+template void dotprod_acc(float*, const float*, const float*, int, DMFlag);
+template void dotprod_acc(double*, const double*, const double*, int, DMFlag);
 
 
 template <class T>
-void scale_array(T* gpu_dst, T scal, size_t nelem, DMFlag flag)
+void scale_array_acc(T* gpu_dst, T scal, size_t nelem, DMFlag flag)
 {
    if (flag & DMFlag::DEFAULT_Q) {
       #pragma acc parallel loop independent deviceptr(gpu_dst)
@@ -168,7 +167,6 @@ void scale_array(T* gpu_dst, T scal, size_t nelem, DMFlag flag)
    wait_queue(flag);
    // }
 }
-template void scale_array(float*, float, size_t, DMFlag);
-template void scale_array(double*, double, size_t, DMFlag);
-}
+template void scale_array_acc(float*, float, size_t, DMFlag);
+template void scale_array_acc(double*, double, size_t, DMFlag);
 TINKER_NAMESPACE_END

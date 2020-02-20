@@ -6,8 +6,8 @@
 #include "pme.h"
 
 TINKER_NAMESPACE_BEGIN
-template <int DO_V>
-void pme_conv_tmpl(PMEUnit pme_u, virial_buffer gpu_vir)
+template <bool DO_V>
+void pme_conv_acc1(PMEUnit pme_u, virial_buffer gpu_vir)
 {
    auto& st = *pme_u;
    real(*restrict qgrid)[2] = reinterpret_cast<real(*)[2]>(st.qgrid);
@@ -94,13 +94,12 @@ void pme_conv_tmpl(PMEUnit pme_u, virial_buffer gpu_vir)
    }
 }
 
-void pme_conv0(PMEUnit pme_u)
+void pme_conv_acc(PMEUnit pme_u, virial_buffer gpu_vir)
 {
-   pme_conv_tmpl<0>(pme_u, nullptr);
-}
-
-void pme_conv1(PMEUnit pme_u, virial_buffer gpu_vir)
-{
-   pme_conv_tmpl<1>(pme_u, gpu_vir);
+   if (gpu_vir == nullptr) {
+      pme_conv_acc1<false>(pme_u, nullptr);
+   } else {
+      pme_conv_acc1<true>(pme_u, gpu_vir);
+   }
 }
 TINKER_NAMESPACE_END

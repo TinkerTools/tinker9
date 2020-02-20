@@ -24,9 +24,9 @@ void dfield_ewald_recip_self_acc(real (*field)[3])
    grid_mpole(pu, fmp);
    fftfront(pu);
    if (vir_m && !use_potent(mpole_term))
-      pme_conv1(pu, vir_m);
+      pme_conv(pu, vir_m);
    else
-      pme_conv0(pu);
+      pme_conv(pu);
    fftback(pu);
    fphi_mpole(pu, fphi);
    fphi_to_cphi(pu, fphi, cphi);
@@ -206,7 +206,7 @@ void ufield_ewald_recip_self_acc(const real (*uind)[3], const real (*uinp)[3],
    grid_uind(pu, fuind, fuinp);
    fftfront(pu);
    // TODO: store vs. recompute qfac
-   pme_conv0(pu);
+   pme_conv(pu);
    fftback(pu);
    fphi_uind2(pu, fdip_phi1, fdip_phi2);
 
