@@ -21,10 +21,9 @@ int use_ewald()
 static void pole_data_(rc_op op)
 {
    if (op & rc_dealloc) {
-      device_array::deallocate(zaxis, pole, rpole, trqx, trqy, trqz, udir,
-                               udirp, uind, uinp);
+      device_array::deallocate(zaxis, pole, rpole, udir, udirp, uind, uinp);
 
-      device_array::deallocate(vir_trq);
+      device_array::deallocate(trqx, trqy, trqz, vir_trq);
    }
 
    if (op & rc_alloc) {
@@ -47,7 +46,12 @@ static void pole_data_(rc_op op)
          trqz = nullptr;
       }
 
-      device_array::allocate(buffer_size(), &vir_trq);
+      if (rc_flag & calc::virial) {
+         device_array::allocate(buffer_size(), &vir_trq);
+         virial_buffers.push_back(vir_trq);
+      } else {
+         vir_trq = nullptr;
+      }
    }
 
    if (op & rc_init) {

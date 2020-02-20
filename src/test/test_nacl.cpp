@@ -235,7 +235,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
       COMPARE_VIR2_(vir_em, vir_trq, ref_v, eps_v);                            \
    }
 
-TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]")
+TEST_CASE("NaCl-2", "[ff][empole][nonewald][nacl]")
 {
    TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
 
@@ -249,7 +249,7 @@ TEST_CASE("NaCl-2", "[ff][empole][coulomb][nacl]")
 
    const double eps = 1.0e-5;
 
-   SECTION("empole -- coulomb, pbc")
+   SECTION("empole -- non-ewald, pbc")
    {
       const char* x1 = "test_nacl.xyz";
       TestFile fx1(x1, nacl_xyz1);

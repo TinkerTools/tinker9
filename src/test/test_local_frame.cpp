@@ -16,7 +16,7 @@ static bool do_ij(int i, int /* j */)
    return i < n - 4;
 }
 
-TEST_CASE("Local-Frame-1", "[ff][empole][coulomb][local-frame]")
+TEST_CASE("Local-Frame-1", "[ff][empole][nonewald][local-frame]")
 {
    TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
 
@@ -216,7 +216,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]")
       COMPARE_VIR2_(vir_ep, vir_trq, ref_v, eps_v);                            \
    }
 
-TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]")
+TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
 {
    TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
 
@@ -243,7 +243,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]")
    rc_flag = usage;
    initialize();
 
-   SECTION("dfield -- coulomb no cutoff")
+   SECTION("dfield -- non-ewald no cutoff")
    {
       const double ref_dir_field_d[][3] = {
          {0.0632, -0.0886, -0.0018}, {0.0332, -0.0268, 0.0058},
@@ -288,7 +288,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]")
       }
    }
 
-   SECTION("ufield -- coulomb no cutoff")
+   SECTION("ufield -- non-ewald no cutoff")
    {
       const double ref_ufield_d[][3] = {
          {0.2171, 1.7393, 0.3937},    {-0.0768, -0.7185, 0.1626},
@@ -342,7 +342,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]")
       }
    }
 
-   SECTION("default induce routine -- coulomb no cutoff")
+   SECTION("default induce routine -- non-ewald no cutoff")
    {
       const double ref_ud_debye[][3] = {
          {0.0256, -0.0849, -0.0107}, {1.3172, -0.8359, 0.5512},
@@ -398,7 +398,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][coulomb][local-frame]")
       COMPARE_ENERGY_(ep, ref_eng, eps_f);
    }
 
-   SECTION("various epolar versions -- coulomb no cutoff")
+   SECTION("various epolar versions -- non-ewald no cutoff")
    {
       const double eps_e = eps_f;
       const double ref_eng = -37.7476;
