@@ -233,4 +233,23 @@ void rpole_to_cmp()
 {
    rpole_to_cmp_acc();
 }
+
+
+void cmp_to_fmp(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
+{
+   cmp_to_fmp_acc(pme_u, cmp, fmp);
+}
+
+
+void cuind_to_fuind(PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3],
+                    real (*fuind)[3], real (*fuinp)[3])
+{
+   cuind_to_fuind_acc(pme_u, cind, cinp, fuind, fuinp);
+}
+
+
+void fphi_to_cphi(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
+{
+   fphi_to_cphi_acc(pme_u, fphi, cphi);
+}
 TINKER_NAMESPACE_END

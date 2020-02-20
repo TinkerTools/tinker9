@@ -102,19 +102,29 @@ void bspline_fill_cu(PMEUnit, int level);
 
 
 /**
- * @brief
+ * \ingroup pme
+ *
  * Input: cmp, cartesian rotated mpole.
  * Output: fmp, fractional rotated mpole.
  */
 void cmp_to_fmp(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10]);
+/**
+ * \ingroup pme
+ */
 void cuind_to_fuind(PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3],
                     real (*fuind)[3], real (*fuinp)[3]);
 /**
- * @brief
+ * \ingroup pme
  * Input: fphi.
  * Output: cphi.
  */
 void fphi_to_cphi(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10]);
+void cmp_to_fmp_acc(PMEUnit, const real (*)[10], real (*)[10]);
+void cuind_to_fuind_acc(PMEUnit, const real (*)[3], const real (*)[3],
+                        real (*)[3], real (*)[3]);
+void fphi_to_cphi_acc(PMEUnit, const real (*)[20], real (*)[10]);
+
+
 /**
  * @brief
  * Input: fmp.

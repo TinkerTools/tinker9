@@ -4,12 +4,6 @@
 #include "pme.h"
 
 
-/**
- * \file
- * Conversion between Cartesian and fractional coordinates.
- */
-
-
 TINKER_NAMESPACE_BEGIN
 void rpole_to_cmp_acc()
 {
@@ -30,7 +24,7 @@ void rpole_to_cmp_acc()
 }
 
 
-void cmp_to_fmp(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
+void cmp_to_fmp_acc(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
 {
    auto& st = *pme_u;
    int nfft1 = st.nfft1;
@@ -128,8 +122,9 @@ void cmp_to_fmp(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
    }
 }
 
-void cuind_to_fuind(PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3],
-                    real (*fuind)[3], real (*fuinp)[3])
+void cuind_to_fuind_acc(PMEUnit pme_u, const real (*cind)[3],
+                        const real (*cinp)[3], real (*fuind)[3],
+                        real (*fuinp)[3])
 {
    auto& st = *pme_u;
    int nfft1 = st.nfft1;
@@ -163,7 +158,7 @@ void cuind_to_fuind(PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3],
 }
 
 
-void fphi_to_cphi(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
+void fphi_to_cphi_acc(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
 {
    auto& st = *pme_u;
    int nfft1 = st.nfft1;
