@@ -125,22 +125,25 @@ void cuind_to_fuind_acc(PMEUnit, const real (*)[3], const real (*)[3],
 void fphi_to_cphi_acc(PMEUnit, const real (*)[20], real (*)[10]);
 
 
-/**
- * @brief
- * Input: fmp.
- * Output: qgrid.
- */
-void grid_mpole(PMEUnit pme_u, real (*gpu_fmp)[10]);
-/**
- * @brief
- * Input: qgrid.
- * Output: fphi.
- */
-void fphi_mpole(PMEUnit pme_u, real (*gpu_fphi)[20]);
+// grid_*: input: fmp; output: qgrid.
+// fphi_*: input: qgrid; output: fphi.
 
+/// \ingroup pme
+void grid_mpole(PMEUnit pme_u, real (*gpu_fmp)[10]);
+/// \ingroup pme
 void grid_uind(PMEUnit pme_u, real (*gpu_find)[3], real (*gpu_finp)[3]);
+void grid_mpole_acc(PMEUnit, real (*)[10]);
+void grid_uind_acc(PMEUnit, real (*)[3], real (*)[3]);
+void grid_mpole_cu(PMEUnit, real (*)[10]);
+void grid_uind_cu(PMEUnit, real (*)[3], real (*)[3]);
+
+
+/// \ingroup pme
+void fphi_mpole(PMEUnit pme_u, real (*gpu_fphi)[20]);
+/// \ingroup pme
 void fphi_uind(PMEUnit pme_u, real (*gpu_fdip_phi1)[10],
                real (*gpu_fdip_phi2)[10], real (*gpu_fdip_sum_phi)[20]);
+/// \ingroup pme
 void fphi_uind2(PMEUnit pme_u, real (*gpu_fdip_phi1)[10],
                 real (*gpu_fdip_phi2)[10]);
 TINKER_NAMESPACE_END

@@ -15,7 +15,7 @@ static constexpr int PME_BLOCKDIM = 64;
 
 template <class T, int bsorder>
 __global__
-void grid_tmpl_cu(const real* restrict x, const real* restrict y,
+void grid_put_cu1(const real* restrict x, const real* restrict y,
                   const real* restrict z, int n, int nfft1, int nfft2,
                   int nfft3, const real* restrict ptr1,
                   const real* restrict ptr2, real* restrict qgrid,
@@ -172,14 +172,15 @@ void grid_tmpl_cu(const real* restrict x, const real* restrict y,
    }
 }
 
-namespace pltfm_cu {
+
 template <class T, int bsorder>
 __global__
-void grid_put(const int* restrict igrid, const real* restrict thetai1,
-              const real* restrict thetai2, const real* restrict thetai3,
-              const Spatial::SortedAtom* restrict sorted, int n, int padded_n,
-              int nfft1, int nfft2, int nfft3, const real* restrict ptr1,
-              const real* ptr2, real* restrict qgrid)
+void grid_put_cu2(const int* restrict igrid, const real* restrict thetai1,
+                  const real* restrict thetai2, const real* restrict thetai3,
+                  const Spatial::SortedAtom* restrict sorted, int n,
+                  int padded_n, int nfft1, int nfft2, int nfft3,
+                  const real* restrict ptr1, const real* ptr2,
+                  real* restrict qgrid)
 {
    constexpr int bso2 = bsorder * bsorder;
    constexpr int bso3 = bsorder * bso2;
@@ -258,7 +259,7 @@ void grid_put(const int* restrict igrid, const real* restrict thetai1,
 }
 
 
-void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
+void grid_mpole_cu(PMEUnit pme_u, real (*fmp)[10])
 {
    auto& st = *pme_u;
    int n1 = st.nfft1;
@@ -269,11 +270,11 @@ void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
 
    device_array::zero(PROCEED_NEW_Q, 2 * nt, st.qgrid);
 #if 1
-   auto ker = grid_tmpl_cu<MPOLE, 5>;
+   auto ker = grid_put_cu1<MPOLE, 5>;
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
               (const real*)fmp, nullptr, st.qgrid, recipa, recipb, recipc);
 #elif 0
-   auto ker = grid_put<MPOLE, 5>;
+   auto ker = grid_put_cu2<MPOLE, 5>;
    int npa = 5 * 5 * 5 * n;
    launch_k1s(nonblk, npa, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
               mspatial_unit->sorted, n, padded_n, n1, n2, n3, (const real*)fmp,
@@ -282,7 +283,7 @@ void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
 }
 
 
-void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
+void grid_uind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 {
    auto& st = *pme_u;
    int n1 = st.nfft1;
@@ -293,18 +294,17 @@ void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 
    device_array::zero(PROCEED_NEW_Q, 2 * nt, st.qgrid);
 #if 0
-   auto ker = grid_tmpl_cu<UIND, 5>;
+   auto ker = grid_put_cu1<UIND, 5>;
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
               (const real*)fuind, (const real*)fuinp, st.qgrid, recipa, recipb,
               recipc);
 #elif 1
-   auto ker = grid_put<UIND, 5>;
+   auto ker = grid_put_cu2<UIND, 5>;
    int npa = 5 * 5 * 5 * n;
    launch_k1s(nonblk, npa, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
               mspatial_unit->sorted, n, padded_n, n1, n2, n3,
               (const real*)fuind, (const real*)fuinp, st.qgrid);
 #endif
-}
 }
 
 
@@ -915,10 +915,10 @@ void pme_cuda_func_config()
 {
    // grid
 
-   auto grid_mpolek = grid_tmpl_cu<MPOLE, 5>;
+   auto grid_mpolek = grid_put_cu1<MPOLE, 5>;
    check_rt(cudaFuncSetCacheConfig(grid_mpolek, cudaFuncCachePreferNone));
 
-   auto grid_uindk = grid_tmpl_cu<UIND, 5>;
+   auto grid_uindk = grid_put_cu1<UIND, 5>;
    check_rt(cudaFuncSetCacheConfig(grid_uindk, cudaFuncCachePreferNone));
 
    // fphi

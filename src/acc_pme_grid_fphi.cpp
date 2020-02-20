@@ -10,9 +10,8 @@
 
 
 TINKER_NAMESPACE_BEGIN
-namespace pltfm_acc {
 template <class T>
-void grid_put(PMEUnit pme_u, real* optional1, real* optional2)
+void grid_put_acc(PMEUnit pme_u, real* optional1, real* optional2)
 {
    auto& st = *pme_u;
    auto* dptr = pme_u.deviceptr();
@@ -223,8 +222,15 @@ void grid_put(PMEUnit pme_u, real* optional1, real* optional2)
 }
 
 
-template void grid_put<MPOLE>(PMEUnit, real*, real*);
-template void grid_put<UIND>(PMEUnit, real*, real*);
+void grid_mpole_acc(PMEUnit pme_u, real (*fmp)[10])
+{
+   grid_put_acc<MPOLE>(pme_u, (real*)fmp, nullptr);
+}
+
+
+void grid_uind_acc(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
+{
+   grid_put_acc<UIND>(pme_u, (real*)fuind, (real*)fuinp);
 }
 
 

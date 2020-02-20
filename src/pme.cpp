@@ -1,5 +1,6 @@
 #include "pme.h"
 #include "elec.h"
+#include "error.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "potent.h"
@@ -251,5 +252,37 @@ void cuind_to_fuind(PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3],
 void fphi_to_cphi(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
 {
    fphi_to_cphi_acc(pme_u, fphi, cphi);
+}
+
+
+void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
+{
+   int bso = pme_u->bsorder;
+   if (bso != 5)
+      TINKER_THROW(format("grid_mpole(): bsorder is {}; must be 5.\n", bso));
+
+
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      grid_mpole_cu(pme_u, fmp);
+   else
+#endif
+      grid_mpole_acc(pme_u, fmp);
+}
+
+
+void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
+{
+   int bso = pme_u->bsorder;
+   if (bso != 5)
+      TINKER_THROW(format("grid_uind(): bsorder is {}; must be 5.\n", bso));
+
+
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      grid_uind_cu(pme_u, fuind, fuinp);
+   else
+#endif
+      grid_uind_acc(pme_u, fuind, fuinp);
 }
 TINKER_NAMESPACE_END
