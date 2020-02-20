@@ -121,7 +121,57 @@ TEST_CASE("Local-Frame3-2", "[ff][empole][epolar][emplar][ewald][local-frame3]")
    rc_flag = usage;
    initialize();
 
-   SECTION("  - emplar -- ewald pbc") {}
+   SECTION("  - emplar -- ewald pbc")
+   {
+      const int ref_count = 138;
+      // empole  -92.5088 count 138
+      // epolar  -17.3296 count 138
+      const double ref_eng = -109.8384;
+      const double ref_v[][3] = {{102.470, 6.200, -20.734},
+                                 {6.200, 6.392, -17.112},
+                                 {-20.734, -17.112, 52.162}};
+      const double ref_g[][3] = {
+         {19.9369, 3.0207, -5.0886},  {3.4854, -11.3956, 17.6976},
+         {7.2089, 2.3667, -1.3915},   {-2.9905, -1.1704, 0.6131},
+         {-3.2875, -1.7351, -0.2953}, {16.7804, -14.8546, 3.3768},
+         {-4.8524, 5.7678, 2.6657},   {-25.8810, 12.0574, -4.3136},
+         {1.4852, -0.6003, 9.1247},   {-0.7483, -0.0195, -3.9075},
+         {2.2061, -0.6409, 2.2389},   {-0.9777, 0.3695, -0.9381},
+         {-2.0167, 0.2311, -1.1756},  {-1.3661, 0.8324, -1.4142},
+         {-27.9560, -5.3807, 3.5241}, {2.0808, 2.9524, -1.3329},
+         {8.6643, -0.3029, -2.2751},  {8.3116, 8.4359, -17.2765}};
+      const double eps_e = 0.0001;
+      const double eps_g = 0.0001;
+      const double eps_v = 0.001;
+
+      energy(calc::v0);
+      COMPARE_REALS(esum, ref_eng, eps_e);
+
+      energy(calc::v1);
+      COMPARE_REALS(esum, ref_eng, eps_e);
+      COMPARE_GRADIENT_(ref_g, eps_g);
+      for (int i = 0; i < 3; ++i)
+         for (int j = 0; j < 3; ++j)
+            COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
+
+      energy(calc::v3);
+      COMPARE_REALS(esum, ref_eng, eps_e);
+      COMPARE_INTS(get_count(nem), ref_count);
+      COMPARE_INTS(get_count(nep), ref_count);
+
+      energy(calc::v4);
+      COMPARE_REALS(esum, ref_eng, eps_e);
+      COMPARE_GRADIENT_(ref_g, eps_g);
+
+      energy(calc::v5);
+      COMPARE_GRADIENT_(ref_g, eps_g);
+
+      energy(calc::v6);
+      COMPARE_GRADIENT_(ref_g, eps_g);
+      for (int i = 0; i < 3; ++i)
+         for (int j = 0; j < 3; ++j)
+            COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
+   }
 
    finish();
    test_end();

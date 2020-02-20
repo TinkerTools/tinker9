@@ -1255,22 +1255,19 @@ void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
 template <class Ver>
 void emplar_ewald_cu()
 {
-   constexpr bool do_e = Ver::e;
-
    // induce
    induce(uind, uinp);
 
-   // empole real self
-   // epolar real
+   // empole real self; epolar real without epolar energy
    emplar_cu<Ver, EWALD>(uind, uinp);
-   if CONSTEXPR (do_e)
-      epolar0_dotprod(uind, udirp);
-
-
    // empole recip
    empole_ewald_recip(Ver::value);
-   // epolar recip self
-   epolar_ewald_recip_self(Ver::value);
+   // epolar recip self; must toggle off the calc::energy flag
+   epolar_ewald_recip_self(Ver::value & ~calc::energy);
+
+   // epolar energy
+   if CONSTEXPR (Ver::e)
+      epolar0_dotprod(uind, udirp);
 }
 
 

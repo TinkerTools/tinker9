@@ -429,30 +429,21 @@ void epolar(int vers)
 
 void epolar_nonewald(int vers)
 {
-   // v0: E
-   // v1: EGV = E + GV = v0 + V6
-   // v3: EA
-   // v4: EG = E + G = v0 + v5
+   // v0: E_dot
+   // v1: EGV = E_dot + GV
+   // v3: EA = E_pair + A
+   // v4: EG = E_dot + G
    // v5: G
    // v6: GV
-   bool pair;
-   int ver2;
-   if (vers == calc::v0) {
-      pair = true;
-      ver2 = vers;
-   } else if (vers == calc::v1) {
-      pair = true;
-      ver2 = calc::v6;
-   } else if (vers == calc::v4) {
-      pair = true;
-      ver2 = calc::v5;
-   } else {
-      pair = false;
-      ver2 = vers;
-   }
+   bool edot = vers & calc::energy; // if not do_e, edot = false
+   if (vers & calc::energy && vers & calc::analyz)
+      edot = false; // if do_e and do_a, edot = false
+   int ver2 = vers;
+   if (edot)
+      ver2 &= ~calc::energy; // toggle off the calc::energy flag
 
    induce(uind, uinp);
-   if (pair)
+   if (edot)
       epolar0_dotprod(uind, udirp);
    if (vers != calc::v0) {
 #if TINKER_CUDART
@@ -467,30 +458,21 @@ void epolar_nonewald(int vers)
 
 void epolar_ewald(int vers)
 {
-   // v0: E
-   // v1: EGV = E + GV = v0 + V6
-   // v3: EA
-   // v4: EG = E + G = v0 + v5
+   // v0: E_dot
+   // v1: EGV = E_dot + GV
+   // v3: EA = E_pair + A
+   // v4: EG = E_dot + G
    // v5: G
    // v6: GV
-   bool pair;
-   int ver2;
-   if (vers == calc::v0) {
-      pair = true;
-      ver2 = vers;
-   } else if (vers == calc::v1) {
-      pair = true;
-      ver2 = calc::v6;
-   } else if (vers == calc::v4) {
-      pair = true;
-      ver2 = calc::v5;
-   } else {
-      pair = false;
-      ver2 = vers;
-   }
+   bool edot = vers & calc::energy; // if not do_e, edot = false
+   if (vers & calc::energy && vers & calc::analyz)
+      edot = false; // if do_e and do_a, edot = false
+   int ver2 = vers;
+   if (edot)
+      ver2 &= ~calc::energy; // toggle off the calc::energy flag
 
    induce(uind, uinp);
-   if (pair)
+   if (edot)
       epolar0_dotprod(uind, udirp);
    if (vers != calc::v0) {
       epolar_ewald_real(ver2);
