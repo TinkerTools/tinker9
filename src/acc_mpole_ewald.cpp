@@ -9,6 +9,8 @@
 #include "seq_pair_mpole.h"
 
 TINKER_NAMESPACE_BEGIN
+#define DEVICE_PTRS_                                                           \
+   x, y, z, gx, gy, gz, rpole, nem, em, vir_em, trqx, trqy, trqz
 template <class Ver>
 void empole_ewald_real_self_acc1()
 {
@@ -31,9 +33,6 @@ void empole_ewald_real_self_acc1()
    const real aewald = pu->aewald;
    const real aewald_sq_2 = 2 * aewald * aewald;
    const real fterm = -f * aewald * 0.5f * (real)(M_2_SQRTPI);
-
-#define DEVICE_PTRS_                                                           \
-   x, y, z, gx, gy, gz, box, rpole, nem, em, vir_em, trqx, trqy, trqz
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
@@ -67,8 +66,7 @@ void empole_ewald_real_self_acc1()
          real yr = y[k] - yi;
          real zr = z[k] - zi;
 
-         image(xr, yr, zr, box);
-         real r2 = xr * xr + yr * yr + zr * zr;
+         real r2 = image2(xr, yr, zr);
          if (r2 <= off2) {
             MAYBE_UNUSED real e;
             pair_mpole<do_e, do_g, EWALD>(
@@ -169,8 +167,7 @@ void empole_ewald_real_self_acc1()
       real yr = y[k] - yi;
       real zr = z[k] - zi;
 
-      image(xr, yr, zr, box);
-      real r2 = xr * xr + yr * yr + zr * zr;
+      real r2 = image2(xr, yr, zr);
       if (r2 <= off2) {
          MAYBE_UNUSED real e;
          pair_mpole<do_e, do_g, NON_EWALD>(                        //

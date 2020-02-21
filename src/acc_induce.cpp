@@ -134,7 +134,7 @@ void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
    }
 }
 
-#define BUILD_DPTRS_ mindex, minv, box, x, y, z, polarity, pdamp, thole
+#define BUILD_DPTRS_ mindex, minv, x, y, z, polarity, pdamp, thole
 void sparse_precond_build_acc()
 {
    const auto* nulst = ulist_unit->nlst;
@@ -171,8 +171,8 @@ void sparse_precond_build_acc()
          real yr = y[k] - yi;
          real zr = z[k] - zi;
 
-         image(xr, yr, zr, box);
-         real r2 = xr * xr + yr * yr + zr * zr;
+
+         real r2 = image2(xr, yr, zr);
          real r = REAL_SQRT(r2);
 
          real scale3, scale5;
@@ -211,8 +211,7 @@ void sparse_precond_build_acc()
       real yr = y[k] - yi;
       real zr = z[k] - zi;
 
-      image(xr, yr, zr, box);
-      real r2 = xr * xr + yr * yr + zr * zr;
+      real r2 = image2(xr, yr, zr);
       real r = REAL_SQRT(r2);
 
       real scale3, scale5;

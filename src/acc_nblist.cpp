@@ -55,14 +55,14 @@ TINKER_NAMESPACE_END
 #endif
 
 TINKER_NAMESPACE_BEGIN
-void check_nblist(int n, real lbuf, const Box* restrict box,
-                  int* restrict update, const real* restrict x,
-                  const real* restrict y, const real* restrict z,
-                  real* restrict xold, real* restrict yold, real* restrict zold)
+void check_nblist(int n, real lbuf, int* restrict update,
+                  const real* restrict x, const real* restrict y,
+                  const real* restrict z, real* restrict xold,
+                  real* restrict yold, real* restrict zold)
 {
    const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
    #pragma acc parallel loop independent async\
-               deviceptr(box,update,x,y,z,xold,yold,zold)
+               deviceptr(update,x,y,z,xold,yold,zold)
    for (int i = 0; i < n; ++i) {
       real xi = x[i];
       real yi = y[i];
@@ -70,8 +70,7 @@ void check_nblist(int n, real lbuf, const Box* restrict box,
       real xr = xi - xold[i];
       real yr = yi - yold[i];
       real zr = zi - zold[i];
-      imagen(xr, yr, zr, box);
-      real r2 = xr * xr + yr * yr + zr * zr;
+      real r2 = imagen2(xr, yr, zr);
       update[i] = 0;
       if (r2 >= lbuf2) {
          update[i] = 1;
@@ -82,10 +81,10 @@ void check_nblist(int n, real lbuf, const Box* restrict box,
    }
 }
 
-int check_spatial(int n, real lbuf, const Box* restrict box,
-                  int* restrict update, const real* restrict x,
-                  const real* restrict y, const real* restrict z,
-                  real* restrict xold, real* restrict yold, real* restrict zold)
+int check_spatial(int n, real lbuf, int* restrict update,
+                  const real* restrict x, const real* restrict y,
+                  const real* restrict z, real* restrict xold,
+                  real* restrict yold, real* restrict zold)
 {
    if (lbuf == 0)
       return 1;
@@ -94,13 +93,12 @@ int check_spatial(int n, real lbuf, const Box* restrict box,
    // 0: do not rebuild; 1: rebuild
    const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
    #pragma acc parallel loop independent async\
-               deviceptr(box,update,x,y,z,xold,yold,zold)
+               deviceptr(update,x,y,z,xold,yold,zold)
    for (int i = 0; i < n; ++i) {
       real xr = x[i] - xold[i];
       real yr = y[i] - yold[i];
       real zr = z[i] - zold[i];
-      imagen(xr, yr, zr, box);
-      real r2 = xr * xr + yr * yr + zr * zr;
+      real r2 = imagen2(xr, yr, zr);
       update[i] = (r2 >= lbuf2 ? 1 : 0);
    }
    int ans = parallel::reduce_logic_or(update, n, WAIT_NEW_Q);
@@ -143,7 +141,7 @@ inline void build_v1_(NBListUnit nu)
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
-               deviceptr(box,lx,ly,lz,xo,yo,zo,nlst,lst)
+               deviceptr(lx,ly,lz,xo,yo,zo,nlst,lst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
       real xi = lx[i];
@@ -159,8 +157,7 @@ inline void build_v1_(NBListUnit nu)
          real xr = xi - lx[k];
          real yr = yi - ly[k];
          real zr = zi - lz[k];
-         imagen(xr, yr, zr, box);
-         real r2 = xr * xr + yr * yr + zr * zr;
+         real r2 = imagen2(xr, yr, zr);
          if (r2 <= buf2) {
             int j;
             #pragma acc atomic capture
@@ -181,8 +178,8 @@ inline void update_v1_(NBListUnit nu)
    // test sites for displacement exceeding half the buffer
 
    auto& st = *nu;
-   check_nblist(n, st.buffer, box, st.update, st.x, st.y, st.z, st.xold,
-                st.yold, st.zold);
+   check_nblist(n, st.buffer, st.update, st.x, st.y, st.z, st.xold, st.yold,
+                st.zold);
 
    // rebuild the higher numbered neighbors for updated sites
 
@@ -191,7 +188,7 @@ inline void update_v1_(NBListUnit nu)
    const real buf2 = (st.cutoff + st.buffer) * (st.cutoff + st.buffer);
    const real bufx = (st.cutoff + 2 * st.buffer) * (st.cutoff + 2 * st.buffer);
 
-   #pragma acc kernels async deviceptr(lst,box)
+   #pragma acc kernels async deviceptr(lst)
    {
       #pragma acc loop independent
       for (int i = 0; i < n; ++i) {
@@ -205,8 +202,7 @@ inline void update_v1_(NBListUnit nu)
                real xr = xi - lst->xold[k];
                real yr = yi - lst->yold[k];
                real zr = zi - lst->zold[k];
-               imagen(xr, yr, zr, box);
-               real r2 = xr * xr + yr * yr + zr * zr;
+               real r2 = imagen2(xr, yr, zr);
                if (r2 <= buf2) {
                   int current = lst->nlst[i];
                   lst->lst[i * maxnlst + current] = k;
@@ -228,8 +224,7 @@ inline void update_v1_(NBListUnit nu)
                   real xr = xi - lst->xold[k];
                   real yr = yi - lst->yold[k];
                   real zr = zi - lst->zold[k];
-                  imagen(xr, yr, zr, box);
-                  real r2 = xr * xr + yr * yr + zr * zr;
+                  real r2 = imagen2(xr, yr, zr);
                   if (r2 <= buf2) {
                      for (int j = 0; j < lst->nlst[k]; ++j) {
                         if (lst->lst[k * maxnlst + j] == i)

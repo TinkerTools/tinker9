@@ -221,10 +221,10 @@ static void spatial_build(SpatialUnit unt)
 // rc_evolve
 static void spatial_update(SpatialUnit unt)
 {
-   extern int check_spatial(int, real, const Box*, int*, const real*,
-                            const real*, const real*, real*, real*, real*);
+   extern int check_spatial(int, real, int*, const real*, const real*,
+                            const real*, real*, real*, real*);
    auto& st = *unt;
-   st.rebuild = check_spatial(st.n, st.buffer, box, st.update, st.x, st.y, st.z,
+   st.rebuild = check_spatial(st.n, st.buffer, st.update, st.x, st.y, st.z,
                               st.xold, st.yold, st.zold);
    if (st.rebuild) {
       spatial_data_init_cu(unt);

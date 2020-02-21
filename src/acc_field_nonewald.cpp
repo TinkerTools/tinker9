@@ -9,7 +9,7 @@
 
 TINKER_NAMESPACE_BEGIN
 // see also subroutine dfield0b in induce.f
-#define DFIELD_DPTRS_ x, y, z, box, thole, pdamp, field, fieldp, rpole
+#define DFIELD_DPTRS_ x, y, z, thole, pdamp, field, fieldp, rpole
 void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
 {
    device_array::zero(PROCEED_NEW_Q, n, field, fieldp);
@@ -51,8 +51,7 @@ void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
          real yr = y[k] - yi;
          real zr = z[k] - zi;
 
-         image(xr, yr, zr, box);
-         real r2 = xr * xr + yr * yr + zr * zr;
+         real r2 = image2(xr, yr, zr);
          if (r2 <= off2) {
             real3 fid = make_real3(0, 0, 0);
             real3 fip = make_real3(0, 0, 0);
@@ -121,9 +120,7 @@ void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
       real yr = y[k] - yi;
       real zr = z[k] - zi;
 
-      image(xr, yr, zr, box);
-      real r2 = xr * xr + yr * yr + zr * zr;
-
+      real r2 = image2(xr, yr, zr);
       if (r2 <= off2) {
          real3 fid = make_real3(0, 0, 0);
          real3 fip = make_real3(0, 0, 0);
@@ -156,7 +153,7 @@ void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
 }
 
 // see also subroutine ufield0b in induce.f
-#define UFIELD_DPTRS_ x, y, z, box, thole, pdamp, field, fieldp, uind, uinp
+#define UFIELD_DPTRS_ x, y, z, thole, pdamp, field, fieldp, uind, uinp
 void ufield_nonewald_acc(const real (*uind)[3], const real (*uinp)[3],
                          real (*field)[3], real (*fieldp)[3])
 {
@@ -195,8 +192,7 @@ void ufield_nonewald_acc(const real (*uind)[3], const real (*uinp)[3],
          real yr = y[k] - yi;
          real zr = z[k] - zi;
 
-         image(xr, yr, zr, box);
-         real r2 = xr * xr + yr * yr + zr * zr;
+         real r2 = image2(xr, yr, zr);
          if (r2 <= off2) {
             real3 fid = make_real3(0, 0, 0);
             real3 fip = make_real3(0, 0, 0);
@@ -257,8 +253,7 @@ void ufield_nonewald_acc(const real (*uind)[3], const real (*uinp)[3],
       real yr = y[k] - yi;
       real zr = z[k] - zi;
 
-      image(xr, yr, zr, box);
-      real r2 = xr * xr + yr * yr + zr * zr;
+      real r2 = image2(xr, yr, zr);
       if (r2 <= off2) {
          real3 fid = make_real3(0, 0, 0);
          real3 fip = make_real3(0, 0, 0);

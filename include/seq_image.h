@@ -1,5 +1,4 @@
 #pragma once
-#include "seq_image_boxptr.h"
 #include "seq_image_real3.h"
 
 

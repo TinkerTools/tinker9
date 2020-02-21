@@ -31,7 +31,7 @@ static ExecQ dup_stream_;
 static real (*dup_buf_uind_)[3];
 static void *dup_stream_bxyz_, *dup_stream_v_, *dup_stream_g_;
 static real dup_buf_esum_;
-static Box* dup_buf_box_;
+static Box dup_buf_box_;
 static real *dup_buf_x_, *dup_buf_y_, *dup_buf_z_;
 static real *dup_buf_vx_, *dup_buf_vy_, *dup_buf_vz_;
 static real *dup_buf_gx_, *dup_buf_gy_, *dup_buf_gz_;
@@ -45,7 +45,6 @@ void mdsave_data(rc_op op)
          device_array::deallocate(dup_buf_uind_);
       }
 
-      device_array::deallocate(dup_buf_box_);
       device_array::deallocate(dup_buf_x_, dup_buf_y_, dup_buf_z_);
       device_array::deallocate(dup_buf_vx_, dup_buf_vy_, dup_buf_vz_);
       device_array::deallocate(dup_buf_gx_, dup_buf_gy_, dup_buf_gz_);
@@ -60,7 +59,6 @@ void mdsave_data(rc_op op)
          dup_buf_uind_ = nullptr;
       }
 
-      device_array::allocate(1, &dup_buf_box_);
       device_array::allocate(n, &dup_buf_x_, &dup_buf_y_, &dup_buf_z_);
       device_array::allocate(n, &dup_buf_vx_, &dup_buf_vy_, &dup_buf_vz_);
       device_array::allocate(n, &dup_buf_gx_, &dup_buf_gy_, &dup_buf_gz_);
@@ -98,7 +96,7 @@ static void mdsave_dup_then_write_(int istep, real dt)
    const size_t rs = sizeof(real);
 
    dup_buf_esum_ = esum;
-   dup_stream_.copy_bytes(dup_buf_box_, box, sizeof(Box));
+   get_default_box(dup_buf_box_);
    dup_stream_.copy_bytes(dup_buf_x_, x, rs * n);
    dup_stream_.copy_bytes(dup_buf_y_, y, rs * n);
    dup_stream_.copy_bytes(dup_buf_z_, z, rs * n);
@@ -127,7 +125,7 @@ static void mdsave_dup_then_write_(int istep, real dt)
    std::vector<real> arrx(n), arry(n), arrz(n);
 
    epot = dup_buf_esum_;
-   copyout_box_data(dup_buf_box_);
+   set_tinker_box_module(dup_buf_box_);
    device_array::copyout(PROCEED_NEW_Q, n, arrx.data(), dup_buf_x_);
    device_array::copyout(PROCEED_NEW_Q, n, arry.data(), dup_buf_y_);
    device_array::copyout(WAIT_NEW_Q, n, arrz.data(), dup_buf_z_);

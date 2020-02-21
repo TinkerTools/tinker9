@@ -115,7 +115,8 @@ void goto_frame(int idx0)
    x = trajx + n * idx0;
    y = trajy + n * idx0;
    z = trajz + n * idx0;
-   box = trajbox + idx0;
+   const Box& b = trajbox[idx0];
+   set_default_box(b);
 }
 TINKER_NAMESPACE_END
 
@@ -214,9 +215,7 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
       }
 
       // copyin
-      std::vector<Box> bbuf2;
       if (has_boxsize) {
-         bbuf2.resize(tn);
          for (int i = 0; i < tn; ++i) {
             int c = i * 6;
             boxes::xbox = bbuf[c];
@@ -226,26 +225,8 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
             boxes::beta = bbuf[c + 4];
             boxes::gamma = bbuf[c + 5];
             TINKER_RT(lattice)();
-
-            for (int j = 0; j < 3; ++j)
-               for (int k = 0; k < 3; ++k) {
-                  bbuf2[i].lvec[j][k] = boxes::lvec[j][k];
-                  bbuf2[i].recip[j][k] = boxes::recip[j][k];
-               }
-
-            bbuf2[i].volbox = boxes::volbox;
-            Box::Shape shape = Box::null;
-            if (boxes::orthogonal)
-               shape = Box::ortho;
-            else if (boxes::monoclinic)
-               shape = Box::mono;
-            else if (boxes::triclinic)
-               shape = Box::tri;
-            else if (boxes::octahedron)
-               shape = Box::oct;
-            bbuf2[i].shape = shape;
+            get_tinker_box_module(trajbox[i]);
          }
-         device_array::copyin(WAIT_NEW_Q, tn, trajbox, bbuf2.data());
       }
       device_array::copyin(PROCEED_NEW_Q, n * tn, trajx, xbuf.data());
       device_array::copyin(PROCEED_NEW_Q, n * tn, trajy, ybuf.data());

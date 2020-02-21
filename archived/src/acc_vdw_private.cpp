@@ -185,7 +185,7 @@ void evdw_tmpl()
 
    //*
    #pragma acc parallel async deviceptr(xred,yred,zred,gxred,gyred,gzred,\
-               box,jvdw,radmin,epsilon,vlam,\
+               jvdw,radmin,epsilon,vlam,\
                nev,ev,vir_ev,vexclude_,vexclude_scale_) 
    #pragma acc loop independent
    for (int ii = 0; ii < nvexclude_; ++ii) {
@@ -213,8 +213,7 @@ void evdw_tmpl()
          vlambda = (lam1 < vlambda ? lam1 : vlambda);
       }
 
-      image(xr, yr, zr, box);
-      real rik2 = xr * xr + yr * yr + zr * zr;
+      real rik2 = image2(xr, yr, zr);
       if (rik2 <= off2) {
          real rik = REAL_SQRT(rik2);
          real rv = radmin[it * njvdw + kt];

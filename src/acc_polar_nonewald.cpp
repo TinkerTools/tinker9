@@ -10,7 +10,7 @@
 
 TINKER_NAMESPACE_BEGIN
 #define POLAR_DPTRS_                                                           \
-   x, y, z, gx, gy, gz, box, rpole, thole, pdamp, uind, uinp, nep, ep, vir_ep, \
+   x, y, z, gx, gy, gz, rpole, thole, pdamp, uind, uinp, nep, ep, vir_ep,      \
       ufld, dufld
 template <class Ver>
 void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
@@ -77,8 +77,7 @@ void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
          real yr = y[k] - yi;
          real zr = z[k] - zi;
 
-         image(xr, yr, zr, box);
-         real r2 = xr * xr + yr * yr + zr * zr;
+         real r2 = image2(xr, yr, zr);
          if (r2 <= off2) {
             real ck = rpole[k][mpl_pme_0];
             real dkx = rpole[k][mpl_pme_x];
@@ -212,8 +211,7 @@ void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
       real yr = y[k] - yi;
       real zr = z[k] - zi;
 
-      image(xr, yr, zr, box);
-      real r2 = xr * xr + yr * yr + zr * zr;
+      real r2 = image2(xr, yr, zr);
       if (r2 <= off2) {
          real ck = rpole[k][mpl_pme_0];
          real dkx = rpole[k][mpl_pme_x];

@@ -11,7 +11,7 @@
 
 TINKER_NAMESPACE_BEGIN
 #define POLAR_DPTRS_                                                           \
-   x, y, z, gx, gy, gz, box, rpole, thole, pdamp, uind, uinp, nep, ep, vir_ep, \
+   x, y, z, gx, gy, gz, rpole, thole, pdamp, uind, uinp, nep, ep, vir_ep,      \
       ufld, dufld
 template <class Ver>
 void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
@@ -81,8 +81,7 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
          real yr = y[k] - yi;
          real zr = z[k] - zi;
 
-         image(xr, yr, zr, box);
-         real r2 = xr * xr + yr * yr + zr * zr;
+         real r2 = image2(xr, yr, zr);
          if (r2 <= off2) {
             real ck = rpole[k][mpl_pme_0];
             real dkx = rpole[k][mpl_pme_x];
@@ -219,8 +218,7 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
       real yr = y[k] - yi;
       real zr = z[k] - zi;
 
-      image(xr, yr, zr, box);
-      real r2 = xr * xr + yr * yr + zr * zr;
+      real r2 = image2(xr, yr, zr);
       if (r2 <= off2) {
          real ck = rpole[k][mpl_pme_0];
          real dkx = rpole[k][mpl_pme_x];
@@ -626,10 +624,11 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
       const int nff = nfft1 * nfft2;
       const int ntot = nfft1 * nfft2 * nfft3;
       real pterm = (pi / aewald) * (pi / aewald);
+      real box_volume = volbox();
 
-      #pragma acc parallel loop independent async deviceptr(box,d,p,vir_ep)
+      #pragma acc parallel loop independent async deviceptr(d,p,vir_ep)
       for (int i = 1; i < ntot; ++i) {
-         const real volterm = pi * box->volbox;
+         const real volterm = pi * box_volume;
 
          int k3 = i / nff;
          int j = i - k3 * nff;

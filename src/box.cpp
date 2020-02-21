@@ -8,68 +8,35 @@
 
 
 TINKER_NAMESPACE_BEGIN
-void box_data(rc_op op)
+void set_default_box(const Box& p)
 {
-   if (op & rc_dealloc) {
-      if (calc::traj & rc_flag) {
-         box = nullptr;
-         device_array::deallocate(trajbox);
-      } else {
-         device_array::deallocate(box);
-         trajbox = nullptr;
-      }
-   }
+   lvec1 = p.lvec1;
+   lvec2 = p.lvec2;
+   lvec3 = p.lvec3;
+   recipa = p.recipa;
+   recipb = p.recipb;
+   recipc = p.recipc;
+}
 
 
-   if (op & rc_alloc) {
-      if (calc::traj & rc_flag) {
-         device_array::allocate(trajn, &trajbox);
-         box = trajbox;
-      } else {
-         device_array::allocate(1, &box);
-      }
-   }
-
-
-   if (op & rc_init) {
-      Box::Shape shape = Box::null;
-      if (boxes::orthogonal)
-         shape = Box::ortho;
-      else if (boxes::monoclinic)
-         shape = Box::mono;
-      else if (boxes::triclinic)
-         shape = Box::tri;
-      else if (boxes::octahedron)
-         shape = Box::oct;
-
-      const auto& r = boxes::recip;
-      const auto& l = boxes::lvec;
-      recipa = make_real3(r[0][0], r[0][1], r[0][2]);
-      recipb = make_real3(r[1][0], r[1][1], r[1][2]);
-      recipc = make_real3(r[2][0], r[2][1], r[2][2]);
-      lvec1 = make_real3(l[0][0], l[0][1], l[0][2]);
-      lvec2 = make_real3(l[1][0], l[1][1], l[1][2]);
-      lvec3 = make_real3(l[2][0], l[2][1], l[2][2]);
-
-      device_array::copyin(WAIT_NEW_Q, 3, box->lvec, boxes::lvec);
-      device_array::copyin(WAIT_NEW_Q, 3, box->recip, boxes::recip);
-      device_array::copyin(WAIT_NEW_Q, 1, &box->volbox, &boxes::volbox);
-      device_array::copyin(WAIT_NEW_Q, 1, &box->shape, &shape);
-   }
+void get_default_box(Box& p)
+{
+   p.lvec1 = lvec1;
+   p.lvec2 = lvec2;
+   p.lvec3 = lvec3;
+   p.recipa = recipa;
+   p.recipb = recipb;
+   p.recipc = recipc;
 }
 
 
 #define DOT3(a, b) (a[0] * b[0] + a[1] * b[1] + a[2] * b[2])
-void copyout_box_data(const Box* pb)
+void set_tinker_box_module(const Box& p)
 {
-   Box b;
-   device_array::copyout(WAIT_NEW_Q, 1, &b, pb);
-
-
    if (bound::use_bounds) {
-      double ax[3] = {b.lvec[0][0], b.lvec[1][0], b.lvec[2][0]};
-      double bx[3] = {b.lvec[0][1], b.lvec[1][1], b.lvec[2][1]};
-      double cx[3] = {b.lvec[0][2], b.lvec[1][2], b.lvec[2][2]};
+      double ax[3] = {p.lvec1.x, p.lvec2.x, p.lvec3.x};
+      double bx[3] = {p.lvec1.y, p.lvec2.y, p.lvec3.y};
+      double cx[3] = {p.lvec1.z, p.lvec2.z, p.lvec3.z};
 
 
       double xbox = std::sqrt(DOT3(ax, ax));
@@ -90,16 +57,55 @@ void copyout_box_data(const Box* pb)
       boxes::beta = b_deg;
       boxes::gamma = c_deg;
       TINKER_RT(lattice)();
+   }
+}
 
 
-      const auto& r = boxes::recip;
-      const auto& l = boxes::lvec;
-      recipa = make_real3(r[0][0], r[0][1], r[0][2]);
-      recipb = make_real3(r[1][0], r[1][1], r[1][2]);
-      recipc = make_real3(r[2][0], r[2][1], r[2][2]);
-      lvec1 = make_real3(l[0][0], l[0][1], l[0][2]);
-      lvec2 = make_real3(l[1][0], l[1][1], l[1][2]);
-      lvec3 = make_real3(l[2][0], l[2][1], l[2][2]);
+void get_tinker_box_module(Box& p)
+{
+   const auto& r = boxes::recip;
+   const auto& l = boxes::lvec;
+   p.recipa = make_real3(r[0][0], r[0][1], r[0][2]);
+   p.recipb = make_real3(r[1][0], r[1][1], r[1][2]);
+   p.recipc = make_real3(r[2][0], r[2][1], r[2][2]);
+   p.lvec1 = make_real3(l[0][0], l[0][1], l[0][2]);
+   p.lvec2 = make_real3(l[1][0], l[1][1], l[1][2]);
+   p.lvec3 = make_real3(l[2][0], l[2][1], l[2][2]);
+}
+
+
+void box_data(rc_op op)
+{
+   if (op & rc_dealloc) {
+      if (calc::traj & rc_flag) {
+         std::free(trajbox);
+      } else {
+         trajbox = nullptr;
+      }
+   }
+
+
+   if (op & rc_alloc) {
+      if (calc::traj & rc_flag) {
+         trajbox = (Box*)std::malloc(sizeof(Box) * trajn);
+      }
+   }
+
+
+   if (op & rc_init) {
+      box_shape = UNBOUND_BOX;
+      if (boxes::orthogonal)
+         box_shape = ORTHO_BOX;
+      else if (boxes::monoclinic)
+         box_shape = MONO_BOX;
+      else if (boxes::triclinic)
+         box_shape = TRI_BOX;
+      else if (boxes::octahedron)
+         box_shape = OCT_BOX;
+
+      Box p;
+      get_tinker_box_module(p);
+      set_default_box(p);
    }
 }
 

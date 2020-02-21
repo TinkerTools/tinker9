@@ -15,7 +15,7 @@ TINKER_NAMESPACE_BEGIN
    size_t bufsize, count_buffer restrict nem, energy_buffer restrict em,       \
       virial_buffer restrict vir_em, real *restrict gx, real *restrict gy,     \
       real *restrict gz, real *restrict trqx, real *restrict trqy,             \
-      real *restrict trqz, const Box *restrict box, real off2, real f,         \
+      real *restrict trqz, TINKER_IMAGE_PARAMS, real off2, real f,             \
       const real(*restrict rpole)[10]
 
 
@@ -134,8 +134,7 @@ void empole_cu1(EMPOLE_ARGS, const Spatial::SortedAtom* restrict sorted,
          zero(pgrad);
 
 
-         image(xr, yr, zr, box);
-         real r2 = xr * xr + yr * yr + zr * zr;
+         real r2 = image2(xr, yr, zr);
          if (atomi < atomk && r2 <= off2) {
             real e = 0;
             if CONSTEXPR (eq<ETYP, EWALD>()) {
@@ -253,8 +252,7 @@ void empole_cu2(EMPOLE_ARGS, const real* restrict x, const real* restrict y,
       real xr = x[k] - xi;
       real yr = y[k] - yi;
       real zr = z[k] - zi;
-      image(xr, yr, zr, box);
-      real r2 = xr * xr + yr * yr + zr * zr;
+      real r2 = image2(xr, yr, zr);
       if (r2 <= off2) {
          real e;
          PairMPoleGrad pgrad;
@@ -331,15 +329,15 @@ void empole_cu()
    if (st.niak > 0) {
       auto ker1 = empole_cu1<Ver, ETYP>;
       launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
-                 bufsize, nem, em, vir_em, gx, gy, gz, trqx, trqy, trqz, box,
-                 off2, f, rpole, //
+                 bufsize, nem, em, vir_em, gx, gy, gz, trqx, trqy, trqz,
+                 TINKER_IMAGE_ARGS, off2, f, rpole, //
                  st.sorted, st.niak, st.iak, st.lst, n, aewald);
    }
    if (nmexclude_ > 0) {
       auto ker2 = empole_cu2<Ver>;
       launch_k1s(nonblk, nmexclude_, ker2, //
-                 bufsize, nem, em, vir_em, gx, gy, gz, trqx, trqy, trqz, box,
-                 off2, f, rpole, //
+                 bufsize, nem, em, vir_em, gx, gy, gz, trqx, trqy, trqz,
+                 TINKER_IMAGE_ARGS, off2, f, rpole, //
                  x, y, z, nmexclude_, mexclude_, mexclude_scale_);
    }
 }

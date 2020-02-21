@@ -50,6 +50,9 @@ void evdw_resolve_gradient()
    }
 }
 
+#define DEVICE_PTRS_                                                           \
+   xred, yred, zred, gxred, gyred, gzred, jvdw, radmin, epsilon, vlam, nev,    \
+      ev, vir_ev
 template <class Ver, class VDWTYP>
 void evdw_acc1()
 {
@@ -69,10 +72,6 @@ void evdw_acc1()
 
    if CONSTEXPR (do_g)
       zero_gradient(PROCEED_NEW_Q, n, gxred, gyred, gzred);
-
-#define DEVICE_PTRS_                                                           \
-   xred, yred, zred, gxred, gyred, gzred, box, jvdw, radmin, epsilon, vlam,    \
-      nev, ev, vir_ev
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
@@ -103,8 +102,7 @@ void evdw_acc1()
             vlambda = (lam1 < vlambda ? lam1 : vlambda);
          }
 
-         image(xr, yr, zr, box);
-         real rik2 = xr * xr + yr * yr + zr * zr;
+         real rik2 = image2(xr, yr, zr);
          if (rik2 <= off2) {
             real rik = REAL_SQRT(rik2);
             real rv = radmin[it * njvdw + kt];
@@ -192,8 +190,7 @@ void evdw_acc1()
          vlambda = (lam1 < vlambda ? lam1 : vlambda);
       }
 
-      image(xr, yr, zr, box);
-      real rik2 = xr * xr + yr * yr + zr * zr;
+      real rik2 = image2(xr, yr, zr);
       if (rik2 <= off2) {
          real rik = REAL_SQRT(rik2);
          real rv = radmin[it * njvdw + kt];

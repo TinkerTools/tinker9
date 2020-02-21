@@ -8,17 +8,18 @@
 using namespace TINKER_NAMESPACE;
 
 
-static void set_box(Box& b, const double* p)
+namespace {
+void set_box(BoxShape shape, const double* p)
 {
    boxes::orthogonal = 0;
    boxes::monoclinic = 0;
    boxes::triclinic = 0;
    boxes::octahedron = 0;
-   if (b.shape == Box::ortho)
+   if (shape == ORTHO_BOX)
       boxes::orthogonal = 1;
-   else if (b.shape == Box::mono)
+   else if (shape == MONO_BOX)
       boxes::monoclinic = 1;
-   else if (b.shape == Box::tri)
+   else if (shape == TRI_BOX)
       boxes::triclinic = 1;
 
    boxes::xbox = p[0];
@@ -29,23 +30,23 @@ static void set_box(Box& b, const double* p)
    boxes::gamma = p[5];
    TINKER_RT(lattice)();
 
-   b.volbox = boxes::volbox;
-   real t[3][3], u[3][3];
-   for (int i = 0; i < 3; ++i) {
-      for (int j = 0; j < 3; ++j) {
-         t[i][j] = boxes::lvec[i][j];
-         u[i][j] = boxes::recip[i][j];
-      }
-   }
-   std::memcpy(&b.lvec[0][0], &t[0][0], sizeof(real) * 9);
-   std::memcpy(&b.recip[0][0], &u[0][0], sizeof(real) * 9);
+   recipa =
+      make_real3(boxes::recip[0][0], boxes::recip[0][1], boxes::recip[0][2]);
+   recipb =
+      make_real3(boxes::recip[1][0], boxes::recip[1][1], boxes::recip[1][2]);
+   recipc =
+      make_real3(boxes::recip[2][0], boxes::recip[2][1], boxes::recip[2][2]);
+   lvec1 = make_real3(boxes::lvec[0][0], boxes::lvec[0][1], boxes::lvec[0][2]);
+   lvec2 = make_real3(boxes::lvec[1][0], boxes::lvec[1][1], boxes::lvec[1][2]);
+   lvec3 = make_real3(boxes::lvec[2][0], boxes::lvec[2][1], boxes::lvec[2][2]);
+}
 }
 
 
 #define compare_im()                                                           \
    {                                                                           \
       real xx = xr, yy = yr, zz = zr;                                          \
-      image_general(xx, yy, zz, &b);                                           \
+      image(xx, yy, zz);                                                       \
       REQUIRE(xx == Approx(xa).margin(eps));                                   \
       REQUIRE(yy == Approx(ya).margin(eps));                                   \
       REQUIRE(zz == Approx(za).margin(eps));                                   \
@@ -53,7 +54,7 @@ static void set_box(Box& b, const double* p)
 #define compare_in()                                                           \
    {                                                                           \
       real xx = xr, yy = yr, zz = zr;                                          \
-      imagen_general(xx, yy, zz, &b);                                          \
+      imagen2(xx, yy, zz);                                                     \
       REQUIRE(REAL_ABS(xx) == Approx(std::fabs(xa)).margin(eps));              \
       REQUIRE(REAL_ABS(yy) == Approx(std::fabs(ya)).margin(eps));              \
       REQUIRE(REAL_ABS(zz) == Approx(std::fabs(za)).margin(eps));              \
@@ -65,13 +66,11 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
 {
    const char* argv[] = {"dummy"};
    int argc = 1;
-   Box b;
    real xr, yr, zr;
 
    double eps = 1.0e-6;
-   b.shape = Box::ortho;
    double p[] = {16, 16, 16, 90, 90, 90};
-   set_box(b, p);
+   set_box(ORTHO_BOX, p);
 
    fortran_runtime_initialize(argc, (char**)argv);
    TINKER_RT(initial)();
@@ -79,7 +78,7 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
    SECTION("  - volume")
    {
       double vol = p[0] * p[1] * p[2];
-      REQUIRE(b.volbox == Approx(vol).margin(eps));
+      REQUIRE(volbox() == Approx(vol).margin(eps));
    }
 
    // image and imagen
@@ -120,32 +119,31 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
    real xr, yr, zr;
 
    double eps = 1.0e-6;
-   b.shape = Box::mono;
    double p[] = {32, 24, 20, 90, 30, 90};
-   set_box(b, p);
+   set_box(MONO_BOX, p);
 
    fortran_runtime_initialize(argc, (char**)argv);
    TINKER_RT(initial)();
 
    SECTION(" -- lvec")
    {
-      REQUIRE(b.lvec[0][0] == Approx(p[0]).margin(eps));
-      REQUIRE(b.lvec[1][0] == Approx(0).margin(eps));
-      REQUIRE(b.lvec[2][0] == Approx(0).margin(eps));
+      REQUIRE(lvec1.x == Approx(p[0]).margin(eps));
+      REQUIRE(lvec2.x == Approx(0).margin(eps));
+      REQUIRE(lvec3.x == Approx(0).margin(eps));
 
-      REQUIRE(b.lvec[0][1] == Approx(0).margin(eps));
-      REQUIRE(b.lvec[1][1] == Approx(p[1]).margin(eps));
-      REQUIRE(b.lvec[2][1] == Approx(0).margin(eps));
+      REQUIRE(lvec1.y == Approx(0).margin(eps));
+      REQUIRE(lvec2.y == Approx(p[1]).margin(eps));
+      REQUIRE(lvec3.y == Approx(0).margin(eps));
 
-      REQUIRE(b.lvec[0][2] == Approx(p[2] * COS(p[4])).margin(eps));
-      REQUIRE(b.lvec[1][2] == Approx(0).margin(eps));
-      REQUIRE(b.lvec[2][2] == Approx(p[2] * SIN(p[4])).margin(eps));
+      REQUIRE(lvec1.z == Approx(p[2] * COS(p[4])).margin(eps));
+      REQUIRE(lvec2.z == Approx(0).margin(eps));
+      REQUIRE(lvec3.z == Approx(p[2] * SIN(p[4])).margin(eps));
    }
 
    SECTION("  - volume")
    {
       double vol = p[0] * p[1] * p[2] * SIN(p[4]);
-      REQUIRE(b.volbox == Approx(vol).margin(eps));
+      REQUIRE(volbox() == Approx(vol).margin(eps));
    }
 
    // image and imagen
@@ -204,9 +202,8 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
    double xa, ya, za;
 
    double eps = 1.0e-6;
-   b.shape = Box::tri;
    double p[] = {32, 24, 20, 75, 60, 45};
-   set_box(b, p);
+   set_box(TRI_BOX, p);
 
    fortran_runtime_initialize(argc, (char**)argv);
    TINKER_RT(initial)();
@@ -217,7 +214,7 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
    double ga = COS(p[5]);
    double sq = 1.0 - al * al - be * be - ga * ga + 2 * al * be * ga;
    double vol = p[0] * p[1] * p[2] * std::sqrt(sq);
-   REQUIRE(b.volbox == Approx(vol).margin(eps));
+   REQUIRE(volbox() == Approx(vol).margin(eps));
 
    // image and imagen
    SECTION(" -- origin")

@@ -15,10 +15,9 @@ TINKER_NAMESPACE_BEGIN
    size_t bufsize, count_buffer restrict nep, energy_buffer restrict ep,       \
       virial_buffer restrict vir_ep, real *restrict gx, real *restrict gy,     \
       real *restrict gz, real(*restrict ufld)[3], real(*restrict dufld)[6],    \
-      const Box *restrict box, real off2, real f,                              \
-      const real(*restrict rpole)[10], const real *restrict pdamp,             \
-      const real *restrict thole, const real(*restrict uind)[3],               \
-      const real(*restrict uinp)[3]
+      TINKER_IMAGE_PARAMS, real off2, real f, const real(*restrict rpole)[10], \
+      const real *restrict pdamp, const real *restrict thole,                  \
+      const real(*restrict uind)[3], const real(*restrict uinp)[3]
 
 
 template <class Ver, class ETYP>
@@ -170,8 +169,7 @@ void epolar_cu1(POLAR_ARGS, const Spatial::SortedAtom* restrict sorted,
          zero(pgrad);
 
 
-         image(xr, yr, zr, box);
-         real r2 = xr * xr + yr * yr + zr * zr;
+         real r2 = image2(xr, yr, zr);
          if (atomi < atomk && r2 <= off2) {
             if CONSTEXPR (eq<ETYP, EWALD>()) {
                pair_polar<do_e, do_g, EWALD>( //
@@ -335,8 +333,7 @@ void epolar_cu2(POLAR_ARGS, const real* restrict x, const real* restrict y,
       real zr = z[k] - zi;
 
 
-      image(xr, yr, zr, box);
-      real r2 = xr * xr + yr * yr + zr * zr;
+      real r2 = image2(xr, yr, zr);
       if (r2 <= off2) {
          real ck = rpole[k][mpl_pme_0];
          real dkx = rpole[k][mpl_pme_x];
@@ -447,15 +444,15 @@ void epolar_cu(const real (*uind)[3], const real (*uinp)[3])
    if (st.niak > 0) {
       auto ker1 = epolar_cu1<Ver, ETYP>;
       launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
-                 bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld, box, off2,
-                 f, rpole, pdamp, thole, uind, uinp, //
+                 bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld,
+                 TINKER_IMAGE_ARGS, off2, f, rpole, pdamp, thole, uind, uinp, //
                  st.sorted, st.niak, st.iak, st.lst, n, aewald);
    }
    if (ndpuexclude_ > 0) {
       auto ker2 = epolar_cu2<Ver>;
       launch_k1s(nonblk, ndpuexclude_, ker2, //
-                 bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld, box, off2,
-                 f, rpole, pdamp, thole, uind, uinp, //
+                 bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld,
+                 TINKER_IMAGE_ARGS, off2, f, rpole, pdamp, thole, uind, uinp, //
                  x, y, z, ndpuexclude_, dpuexclude_, dpuexclude_scale_);
    }
    // torque

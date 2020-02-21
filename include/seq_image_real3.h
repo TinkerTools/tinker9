@@ -122,7 +122,7 @@ inline real image2_general(real& restrict xr, real& restrict yr,
 
 
 SEQ_ROUTINE
-inline real imagen2_general(real xr, real yr, real zr, real3 l1, real3 l2,
+inline real imagen2_general(real& xr, real& yr, real& zr, real3 l1, real3 l2,
                             real3 l3, real3 ra, real3 rb, real3 rc)
 {
    if (l1.z == 0) {

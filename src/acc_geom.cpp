@@ -24,7 +24,7 @@ void egeom_acc1()
    const auto* kgrp = grp.kgrp;
    const auto* grpmass = grp.grpmass;
 
-   #pragma acc kernels async deviceptr(x,y,z,gx,gy,gz,box,mass,molec,\
+   #pragma acc kernels async deviceptr(x,y,z,gx,gy,gz,mass,molec,\
                igrp,kgrp,grpmass,igfix,gfix,\
                eg,vir_eg)
    {
@@ -73,7 +73,7 @@ void egeom_acc1()
 
          bool intermol = molec[kgrp[ja1]] != molec[kgrp[jb1]];
          if (intermol)
-            image(xr, yr, zr, box);
+            image(xr, yr, zr);
 
          real r = REAL_SQRT(xr * xr + yr * yr + zr * zr);
          real force = gfix[i][0];

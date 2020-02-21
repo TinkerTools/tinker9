@@ -43,7 +43,7 @@ void dfield_ewald_recip_self_acc(real (*field)[3])
 }
 
 // see also subroutine udirect2b / dfield0c in induce.f
-#define DFIELD_DPTRS_ x, y, z, box, thole, pdamp, field, fieldp, rpole
+#define DFIELD_DPTRS_ x, y, z, thole, pdamp, field, fieldp, rpole
 void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
 {
    const real off = mlist_unit->cutoff;
@@ -86,8 +86,7 @@ void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
          real yr = y[k] - yi;
          real zr = z[k] - zi;
 
-         image(xr, yr, zr, box);
-         real r2 = xr * xr + yr * yr + zr * zr;
+         real r2 = image2(xr, yr, zr);
          if (r2 <= off2) {
             real3 fid = make_real3(0, 0, 0);
             real3 fip = make_real3(0, 0, 0);
@@ -156,8 +155,7 @@ void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
       real yr = y[k] - yi;
       real zr = z[k] - zi;
 
-      image(xr, yr, zr, box);
-      real r2 = xr * xr + yr * yr + zr * zr;
+      real r2 = image2(xr, yr, zr);
       if (r2 <= off2) {
          real3 fid = make_real3(0, 0, 0);
          real3 fip = make_real3(0, 0, 0);
@@ -238,7 +236,7 @@ void ufield_ewald_recip_self_acc(const real (*uind)[3], const real (*uinp)[3],
    }
 }
 
-#define UFIELD_DPTRS_ x, y, z, box, thole, pdamp, field, fieldp, uind, uinp
+#define UFIELD_DPTRS_ x, y, z, thole, pdamp, field, fieldp, uind, uinp
 void ufield_ewald_real_acc(const real (*uind)[3], const real (*uinp)[3],
                            real (*field)[3], real (*fieldp)[3])
 {
@@ -278,8 +276,7 @@ void ufield_ewald_real_acc(const real (*uind)[3], const real (*uinp)[3],
          real yr = y[k] - yi;
          real zr = z[k] - zi;
 
-         image(xr, yr, zr, box);
-         real r2 = xr * xr + yr * yr + zr * zr;
+         real r2 = image2(xr, yr, zr);
          if (r2 <= off2) {
             real3 fid = make_real3(0, 0, 0);
             real3 fip = make_real3(0, 0, 0);
@@ -340,8 +337,7 @@ void ufield_ewald_real_acc(const real (*uind)[3], const real (*uinp)[3],
       real yr = y[k] - yi;
       real zr = z[k] - zi;
 
-      image(xr, yr, zr, box);
-      real r2 = xr * xr + yr * yr + zr * zr;
+      real r2 = image2(xr, yr, zr);
       if (r2 <= off2) {
          real3 fid = make_real3(0, 0, 0);
          real3 fip = make_real3(0, 0, 0);
