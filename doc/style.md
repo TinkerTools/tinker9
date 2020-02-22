@@ -2,28 +2,29 @@
 
 Tinker is now offloading part of future developments to C++.
 Some of the signature features of C++ include:
-   - most of the C features and procedural programming,
+   - procedural programming, most of the C features, and improved C++ features,
    - object-oriented programming,
    - generic programming (template),
    - the standard template library (STL),
 
 which in my opinion, are only coarsely related,
-and are in fact 4 different yet similar domain-specific languages.
+and are in fact four different yet similar domain-specific languages.
 I've heard about a comment on Fortran,
 "New Fortran is great but no one uses it."
 Similarly, C++ is great but no one can master all of it, and more
 importantly, it doesn't mean we should abuse its features in a project.
 
 Even the use of some of the popular and well-supported "good" features
-should be limited. Everyone (and I) loves `std::unique_ptr` because
-it is *almost* equivalent to raw pointer with (usually) unchangeable ownership,
-and it will automatically deallocate the memory at the end of its lifecycle.
-It is therefore very appealing to use it to manage the global arrays in this
+should be limited. Everyone (and I) loves `std::unique_ptr` (available since
+C++11) because it is *almost* equivalent to raw pointer with (usually)
+unchangeable ownership, and it will automatically deallocate the memory at
+the end of its life cycle.
+It is therefore very appealing to use it to manage the global GPU arrays in this
 project. But how many of you (and me) know how to let it:
    - cooperate with `cudaFree(void*)` function to auto-deallocate GPU memory
    (which is less commonly seen but still straightforward),
    - cooperate with `cudaMalloc(void**, size_t)` nice and cleanly,
-   - be passed to `OpenACC` and `CUDA` kernals elegantly as raw pointer?
+   - be passed to `OpenACC` and `CUDA` kernels elegantly as a raw pointer?
 
 Because of the flexibility and complexity of the language, restrictions on the
 coding style are necessary. This style guide will follow the structure of the
@@ -36,22 +37,37 @@ but it never means all of these rules apply to this Tinker project.
 
 | Sections |              |
 |----------|:-------------|
-| [C++ Version](#cppvers) | |
-| [Header Files](#head)   | [Self-contained Headers](#hd.selfcontained) &emsp; [Header Guard](#hd.guard) &emsp; [Inlined Functions](#hd.inlfunc) &emsp; [Names and Order of Includes](#hd.inlord) |
-| [Naming](#naming)       | [Constant Names](#nm.const) &emsp; [Namespace Names](#nm.namespace) &emsp; [Enumerator Names](#nm.enum) &emsp; [Macro Names](#nm.macro) |
-| [Comments](#comment)    | |
-| [Formatting](#format)   | |
+| [C++ Version](#cpp.vers) | |
+| [Header Files](#head)    | [Self-contained Headers](#hd.self.contained) &emsp; [Header Guard](#hd.guard) &emsp; [Inlined Functions](#hd.inl.func) &emsp; [Names and Order of Includes](#hd.inl.ord) |
+| [Naming](#naming)        | [Constant Names](#nm.const) &emsp; [Namespace Names](#nm.namespace) &emsp; [Enumerator Names](#nm.enum) &emsp; [Macro Names](#nm.macro) |
+| [Comments](#comment)     | |
+| [Formatting](#format)    | |
 
 
-<a name='cppvers'></a>
+<a name='cpp.vers'></a>
 ## C++ Version
-Currently, code should target C++11.
+Currently, code (syntax) should target C++11. Yes, I know C++20 is coming.
 
 C++14 and C++17 are good, but the support of the toolchain to the newer
 standards may be limited, and more likely, be limited by the combination
 several problems, e.g., the Nvidia driver is old and cannot be updated because
 the GPU is old or it is difficult to update cluster's OS, so CUDA is limited
 to 10.0, which only supports C++14 but not C++17.
+
+However, I don't oppose to using some of the features from the newer standards,
+if they don't cause syntax problems. With the help of macros, I am able to use
+some features from the future standards because
+   - they have been available as non-standard extensions for a long time:
+   define `MAYBE_UNUSED` to ` __attribute__((unused))` instead of
+   `[[maybe_unused]]` prior to C++17;
+   - they don't change the de facto behavior of compilers: define
+   `if CONSTEXPR` to be `if` prior to C++17, and to `if constexpr` since C++17;
+   either way, the code is likely to be optimized at compile-time;
+   - they are available as standalone external libraries: `fmtlib` is a nice
+   and clean modern C++ formatting library, and has been accepted as
+   the `std::format` library in C++20; however `boost::filesystem`, which
+   became `std::filesystem` in C++17, is not used here because of the
+   complexity of its depending `boost` library.
 
 
 <!--  -->
@@ -60,7 +76,7 @@ to 10.0, which only supports C++14 but not C++17.
 <a name='header'></a>
 ## Header Files
 
-<a name='hd.selfcontained'></a>
+<a name='hd.self.contained'></a>
 ### Self-contained Headers
 Header files should be self-contained (compile on their own) and end in `.h`.
 Non-header files that are meant for inclusion should end in `.hh` and be used
@@ -116,7 +132,7 @@ Don't do this, unless you have to:
 #endif
 ```
 
-<a name='hd.inlfunc'></a>
+<a name='hd.inl.func'></a>
 ### Inlined Functions
 Yes, `inline` is a keyword in C/C++, but what it mainly does is to please the
 linker, not even the compiler. If you really want to put a function
@@ -169,7 +185,7 @@ __global__ void b(int* t) { *t += a(); }
 __global__ void c(int* t) { *t += a(); }
 ```
 
-<a name='hd.inlord'></a>
+<a name='hd.inl.ord'></a>
 ### Names and Order of Includes
 
 
