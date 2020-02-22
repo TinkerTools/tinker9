@@ -68,6 +68,7 @@ void warp_reduce2(volatile T (*sd)[B], unsigned int t, Op op)
    if (B >= 2)  _Pragma("unroll") for (int j = 0; j < HN; ++j) sd[j][t] = op(sd[j][t], sd[j][t + 1 ]);
    // clang-format on
 }
+}
 
 
 template <class T, unsigned int B, class Op>
@@ -121,6 +122,5 @@ void reduce2(T (*g_odata)[HN], const T (*g_idata)[N], size_t n, Op op = Op())
       #pragma unroll
       for (int j = 0; j < HN; ++j)
          g_odata[blockIdx.x][j] = sd[j][0];
-}
 }
 TINKER_NAMESPACE_END

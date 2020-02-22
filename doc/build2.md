@@ -104,6 +104,10 @@ Fatal errors will be emitted if `fftw_x` (`x = include/lib`) is neither set
 by `fftw_x` nor `fftw_dir`. No check will be performed on either one of the
 explicitly set `fftw_x` in the command line.
 
+### compute_capability=60
+CUDA Compute Capability
+  - 35, 60, 70, 75, etc.
+
 ### cuda_dir=/usr/local/cuda
 Top-level `CUDA` installation directory, under which `include` and `lib`
 directories are expected to be found.

@@ -223,6 +223,15 @@ ifeq ($(prec__),real4__)
 endif
 
 
+##/ ### compute_capability=60
+##/ CUDA Compute Capability
+##/   - 35, 60, 70, 75, etc.
+##/
+compute_capability := 60
+acc_cc_flag__ := cc$(compute_capability)
+cuda_cc_flag__ := arch=compute_$(compute_capability),code=sm_$(compute_capability)
+
+
 ##/ ### cuda_dir=/usr/local/cuda
 ##/ Top-level `CUDA` installation directory, under which `include` and `lib`
 ##/ directories are expected to be found.
@@ -382,9 +391,7 @@ else ifeq ($(opt),profile)
 endif
 cuda_flags__ := -std=c++11 $(shared_flags__) $(cuda_opt_flags__)
 cuda_flags__ += -I$(top_dir__)/include/syntax/cu \
--gencode arch=compute_35,code=sm_35 \
--gencode arch=compute_60,code=sm_60 \
--gencode arch=compute_70,code=sm_70
+-gencode $(cuda_cc_flag__)
 $(all_cu_objs__): %.o: $(top_dir__)/%.cu
 	$(NVCC) $< -c $(cuda_flags__) -o $@
 endif
