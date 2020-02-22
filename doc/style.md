@@ -41,7 +41,7 @@ but it never means all of these rules apply to this Tinker project.
 | [Header Files](#head)    | [Self-contained Headers](#hd.self.contained) &emsp; [Header Guard](#hd.guard) &emsp; [Inlined Functions](#hd.inl.func) &emsp; [Names and Order of Includes](#hd.inl.ord) |
 | [Naming](#naming)        | [Constant Names](#nm.const) &emsp; [Namespace Names](#nm.namespace) &emsp; [Enumerator Names](#nm.enum) &emsp; [Macro Names](#nm.macro) |
 | [Comments](#comment)     | |
-| [Formatting](#format)    | |
+| [Formatting](#format)    | [Floating-point Literals](#fmt.float) |
 
 
 <a name='cpp.vers'></a>
@@ -276,3 +276,70 @@ how they look.
 
 <a name='format'></a>
 ## Formatting
+
+Let `clang-format` do the job. A style file `_clang-format` has been added to
+the repository.
+
+The version of `clang-format` cannot be older than 10.0 because
+older `clang-format` cannot parse `if CONSTEXPR` correctly. If the prebuilt
+executable of version 10 is not available from the official website, its
+nightly build version is available for different Linux systems.
+
+<a name='fmt.float'></a>
+### Floating-point Literals
+
+A lot of math expressions were compiled to `real`, which would very likely
+be single precision floating-point numbers for the GPU code and double
+precision floating-point numbers for the CPU code. Hard-coding everything
+in single precision is a bad idea because we will loose precision for the
+CPU code. Here are several things you need to take care of.
+```cpp
+// 1. CPP and Fortran types
+// CPP: int     Fortran: integer*4
+// CPP: float   Fortran: real*4
+// CPP: double  Fortran: real*8
+
+// 2. Do NOT cast small integers to double or float
+// like some people may do in Fortran.
+double t1 = (double)1; // Bad. Fortran: t1 = dble(1);
+float t2 = 42; // OK. Small integers like 42 are accurate with single precision.
+
+// 3. Be careful with the default type of the numbers.
+int a = 1;  // OK. 1 is int by default.
+auto b = 1; // OK. 1 is int by default, so b is of type int.
+double c = 0.23; // OK. 0.23 is of type double by default.
+float d = 0.23f; // OK. 0.23f is of type float.
+auto e = 0.23;  // OK. e is of type double.
+auto f = 0.23f; // OK. f is of type float.
+
+// 4. When real is double.
+#if REAL_EQUALS_DOUBLE
+real x1 = 0.125f; // OK. Both 0.125f and 0.125 are accurate for 1/8.
+real x2 = 1.375f; // OK. Both 1.375f and 1.375 are accurate for 11/8.
+real x3 = 0.23f; // Bad. Because none of 0.23f or 0.23 are accurate for 23/100.
+                 // 0.23f is not as accurate as 0.23 in double precision.
+real x4 = (real)0.23;  // Recommended.
+real x5 = (real)0.125; // Correct but unnecessary.
+#endif
+
+// 5. When real is float.
+#if REAL_EQUALS_FLOAT
+real y1 = 0.23; // Correct but not commended because of the implicit cast.
+                // The cast should be explicit like x4.
+#endif
+
+real div_by_23_percent(real val) {
+   // real ans = val / 0.23; // Not commended for REAL_EQUALS_FLOAT.
+   // Because 0.23 is of type double, compiler will promote val to double first.
+   // So it will be equivalent to
+   // double v2 = val; double ans2 = v2 / 0.23; float ans = ans2; return ans;
+   
+   // real ans = val / 0.23f;   // Bad for REAL_EQUALS_DOUBLE.
+   real ans = val / (real)0.23; // Recommended.
+   return ans;
+}
+
+real div_by_p375_add(real val) {
+   return val / 0.375f; // OK, because 0.375f is accurate for 3/8.
+}
+```
