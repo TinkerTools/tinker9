@@ -2,28 +2,29 @@
 
 Tinker is now offloading part of future developments to C++.
 Some of the signature features of C++ include:
-   - most of the C features and procedural programming,
+   - procedural programming, most of the C features, and improved C++ features,
    - object-oriented programming,
    - generic programming (template),
    - the standard template library (STL),
 
 which in my opinion, are only coarsely related,
-and are in fact 4 different yet similar domain-specific languages.
+and are in fact four different yet similar domain-specific languages.
 I've heard about a comment on Fortran,
 "New Fortran is great but no one uses it."
 Similarly, C++ is great but no one can master all of it, and more
 importantly, it doesn't mean we should abuse its features in a project.
 
 Even the use of some of the popular and well-supported "good" features
-should be limited. Everyone (and I) loves `std::unique_ptr` because
-it is *almost* equivalent to raw pointer with (usually) unchangeable ownership,
-and it will automatically deallocate the memory at the end of its lifecycle.
-It is therefore very appealing to use it to manage the global arrays in this
+should be limited. Everyone (and I) loves `std::unique_ptr` (available since
+C++11) because it is *almost* equivalent to raw pointer with (usually)
+unchangeable ownership, and it will automatically deallocate the memory at
+the end of its life cycle.
+It is therefore very appealing to use it to manage the global GPU arrays in this
 project. But how many of you (and me) know how to let it:
    - cooperate with `cudaFree(void*)` function to auto-deallocate GPU memory
    (which is less commonly seen but still straightforward),
    - cooperate with `cudaMalloc(void**, size_t)` nice and cleanly,
-   - be passed to `OpenACC` and `CUDA` kernals elegantly as raw pointer?
+   - be passed to `OpenACC` and `CUDA` kernels elegantly as a raw pointer?
 
 Because of the flexibility and complexity of the language, restrictions on the
 coding style are necessary. This style guide will follow the structure of the
@@ -36,22 +37,37 @@ but it never means all of these rules apply to this Tinker project.
 
 | Sections |              |
 |----------|:-------------|
-| [C++ Version](#cppvers) | |
-| [Header Files](#head)   | [Self-contained Headers](#hd.selfcontained) &emsp; [Header Guard](#hd.guard) &emsp; [Inlined Functions](#hd.inlfunc) &emsp; [Names and Order of Includes](#hd.inlord) |
-| [Naming](#naming)       | [Constant Names](#nm.const) &emsp; [Namespace Names](#nm.namespace) &emsp; [Enumerator Names](#nm.enum) &emsp; [Macro Names](#nm.macro) |
-| [Comments](#comment)    | |
-| [Formatting](#format)   | |
+| [C++ Version](#cpp.vers) | |
+| [Header Files](#head)    | [Self-contained Headers](#hd.self.contained) &emsp; [Header Guard](#hd.guard) &emsp; [Inlined Functions](#hd.inl.func) &emsp; [Names and Order of Includes](#hd.inl.ord) |
+| [Naming](#naming)        | [Constant Names](#nm.const) &emsp; [Namespace Names](#nm.namespace) &emsp; [Enumerator Names](#nm.enum) &emsp; [Macro Names](#nm.macro) |
+| [Comments](#comment)     | |
+| [Formatting](#format)    | [Floating-point Literals](#fmt.float) |
 
 
-<a name='cppvers'></a>
+<a name='cpp.vers'></a>
 ## C++ Version
-Currently, code should target C++11.
+Currently, code (syntax) should target C++11. Yes, I know C++20 is coming.
 
 C++14 and C++17 are good, but the support of the toolchain to the newer
 standards may be limited, and more likely, be limited by the combination
 several problems, e.g., the Nvidia driver is old and cannot be updated because
 the GPU is old or it is difficult to update cluster's OS, so CUDA is limited
 to 10.0, which only supports C++14 but not C++17.
+
+However, I don't oppose to using some of the features from the newer standards,
+if they don't cause syntax problems. With the help of macros, I am able to use
+some features from the future standards because
+   - they have been available as non-standard extensions for a long time:
+   define `MAYBE_UNUSED` to ` __attribute__((unused))` instead of
+   `[[maybe_unused]]` prior to C++17;
+   - they don't change the de facto behavior of compilers: define
+   `if CONSTEXPR` to be `if` prior to C++17, and to `if constexpr` since C++17;
+   either way, the code is likely to be optimized at compile-time;
+   - they are available as standalone external libraries: `fmtlib` is a nice
+   and clean modern C++ formatting library, and has been accepted as
+   the `std::format` library in C++20; however `boost::filesystem`, which
+   became `std::filesystem` in C++17, is not used here because of the
+   complexity of its depending `boost` library.
 
 
 <!--  -->
@@ -60,7 +76,7 @@ to 10.0, which only supports C++14 but not C++17.
 <a name='header'></a>
 ## Header Files
 
-<a name='hd.selfcontained'></a>
+<a name='hd.self.contained'></a>
 ### Self-contained Headers
 Header files should be self-contained (compile on their own) and end in `.h`.
 Non-header files that are meant for inclusion should end in `.hh` and be used
@@ -116,7 +132,7 @@ Don't do this, unless you have to:
 #endif
 ```
 
-<a name='hd.inlfunc'></a>
+<a name='hd.inl.func'></a>
 ### Inlined Functions
 Yes, `inline` is a keyword in C/C++, but what it mainly does is to please the
 linker, not even the compiler. If you really want to put a function
@@ -169,7 +185,7 @@ __global__ void b(int* t) { *t += a(); }
 __global__ void c(int* t) { *t += a(); }
 ```
 
-<a name='hd.inlord'></a>
+<a name='hd.inl.ord'></a>
 ### Names and Order of Includes
 
 
@@ -260,3 +276,70 @@ how they look.
 
 <a name='format'></a>
 ## Formatting
+
+Let `clang-format` do the job. A style file `_clang-format` has been added to
+the repository.
+
+The version of `clang-format` cannot be older than 10.0 because
+older `clang-format` cannot parse `if CONSTEXPR` correctly. If the prebuilt
+executable of version 10 is not available from the official website, its
+nightly build version is available for different Linux systems.
+
+<a name='fmt.float'></a>
+### Floating-point Literals
+
+A lot of math expressions were compiled to `real`, which would very likely
+be single precision floating-point numbers for the GPU code and double
+precision floating-point numbers for the CPU code. Hard-coding everything
+in single precision is a bad idea because we will loose precision for the
+CPU code. Here are several things you need to take care of.
+```cpp
+// 1. CPP and Fortran types
+// CPP: int     Fortran: integer*4
+// CPP: float   Fortran: real*4
+// CPP: double  Fortran: real*8
+
+// 2. Do NOT cast small integers to double or float
+// like some people may do in Fortran.
+double t1 = (double)1; // Bad. Fortran: t1 = dble(1);
+float t2 = 42; // OK. Small integers like 42 are accurate with single precision.
+
+// 3. Be careful with the default type of the numbers.
+int a = 1;  // OK. 1 is int by default.
+auto b = 1; // OK. 1 is int by default, so b is of type int.
+double c = 0.23; // OK. 0.23 is of type double by default.
+float d = 0.23f; // OK. 0.23f is of type float.
+auto e = 0.23;  // OK. e is of type double.
+auto f = 0.23f; // OK. f is of type float.
+
+// 4. When real is double.
+#if REAL_EQUALS_DOUBLE
+real x1 = 0.125f; // OK. Both 0.125f and 0.125 are accurate for 1/8.
+real x2 = 1.375f; // OK. Both 1.375f and 1.375 are accurate for 11/8.
+real x3 = 0.23f; // Bad. Because none of 0.23f or 0.23 are accurate for 23/100.
+                 // 0.23f is not as accurate as 0.23 in double precision.
+real x4 = (real)0.23;  // Recommended.
+real x5 = (real)0.125; // Correct but unnecessary.
+#endif
+
+// 5. When real is float.
+#if REAL_EQUALS_FLOAT
+real y1 = 0.23; // Correct but not commended because of the implicit cast.
+                // The cast should be explicit like x4.
+#endif
+
+real div_by_23_percent(real val) {
+   // real ans = val / 0.23; // Not commended for REAL_EQUALS_FLOAT.
+   // Because 0.23 is of type double, compiler will promote val to double first.
+   // So it will be equivalent to
+   // double v2 = val; double ans2 = v2 / 0.23; float ans = ans2; return ans;
+   
+   // real ans = val / 0.23f;   // Bad for REAL_EQUALS_DOUBLE.
+   real ans = val / (real)0.23; // Recommended.
+   return ans;
+}
+
+real div_by_p375_add(real val) {
+   return val / 0.375f; // OK, because 0.375f is accurate for 3/8.
+}
+```
