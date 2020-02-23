@@ -11,6 +11,10 @@ TINKER_NAMESPACE_BEGIN
 void print_backtrace(std::ostream& out = std::cout);
 
 
+template <class T>
+std::string translate_error_message(T error_num);
+
+
 /**
  * \ingroup error
  * \brief Errors and exceptions that we do not intend to fix or handle.
@@ -55,27 +59,18 @@ public:
       auto res_ = call;                                                        \
       if (res_ != 0) {                                                         \
          print_backtrace();                                                    \
-         std::string m_ =                                                      \
-            format(" errno {} at {}:{}", res_, __FILE__, __LINE__);            \
+         std::string m_;                                                       \
+         std::string msg_ = translate_error_message(res_);                     \
+         if (msg_ != "")                                                       \
+            m_ = format("Errno {} ({}) at {}:{}", res_, msg_, __FILE__,        \
+                        __LINE__);                                             \
+         else                                                                  \
+            m_ = format("Errno {} at {}:{}", res_, __FILE__, __LINE__);        \
          throw FatalError(m_);                                                 \
       }                                                                        \
    } while (0)
-#define TINKER_ALWAYS_CHECK_RT_2_(call, optmsg)                                \
-   do {                                                                        \
-      auto res_ = call;                                                        \
-      if (res_ != 0) {                                                         \
-         print_backtrace();                                                    \
-         std::string m_ = format(" errno {} ({}) at {}:{}", res_, optmsg,      \
-                                 __FILE__, __LINE__);                          \
-         throw FatalError(m_);                                                 \
-      }                                                                        \
-   } while (0)
-
-
 #define TINKER_ALWAYS_CHECK_RT_(...)                                           \
-   TINKER_GET_3RD_ARG(__VA_ARGS__, TINKER_ALWAYS_CHECK_RT_2_,                  \
-                      TINKER_ALWAYS_CHECK_RT_1_)
-
+   TINKER_GET_2ND_ARG(__VA_ARGS__, TINKER_ALWAYS_CHECK_RT_1_)
 
 /**
  * \def TINKER_ALWAYS_CHECK_RT

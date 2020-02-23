@@ -271,7 +271,7 @@ void gpu_card_data(rc_op op)
          // for cudaStreamSynchronize() calls.
          cuda_device_flags |= cudaDeviceScheduleSpin;
 #endif
-         check_rt(cudaSetDeviceFlags(cuda_device_flags));
+         always_check_rt(cudaSetDeviceFlags(cuda_device_flags));
       }
 
       always_check_rt(cudaGetDeviceCount(&ndevice));

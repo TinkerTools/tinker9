@@ -31,7 +31,7 @@ int main(int argc, char** argv)
       try {
          launcher().at(argv[0])(argc, argv);
       } catch (const std::exception& err) {
-         fprintf(stdout, " Terminating with uncaught exception: %s\n",
+         fprintf(stdout, " Terminating with uncaught exception :  %s\n",
                  err.what());
       }
       fortran_runtime_finish();
