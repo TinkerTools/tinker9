@@ -60,6 +60,12 @@ define errline
 endef
 
 
+# Comma and space characters
+comma__ := ,
+space__ :=
+space__ +=
+
+
 # top-level directory
 makefile_path__ := $(abspath $(lastword $(MAKEFILE_LIST)))
 makefile_dir__ := $(dir $(makefile_path__))
@@ -223,13 +229,18 @@ ifeq ($(prec__),real4__)
 endif
 
 
-##/ ### compute_capability=60
+##/ ### compute_capability=60,70
 ##/ CUDA Compute Capability
 ##/   - 35, 60, 70, 75, etc.
+##/   - Can be comma-separated, e.g. `35,60`.
 ##/
-compute_capability := 60
-acc_cc_flag__ := cc$(compute_capability)
-cuda_cc_flag__ := arch=compute_$(compute_capability),code=sm_$(compute_capability)
+compute_capability := 60,70
+cc_list__ := $(subst $(comma__), ,$(compute_capability))
+acc_cc_flag__ := $(foreach var,$(cc_list__),cc$(var))
+# 60,70 => cc60,cc70
+acc_cc_flag__ := $(subst $(space__),$(comma__),$(acc_cc_flag__))
+# 60,70 => -gencode arch=compute_60,code=sm_60 -gencode arch=compute_75,code=sm_75
+cuda_cc_flag__ := $(foreach var,$(cc_list__),-gencode arch=compute_$(var)$(comma__)code=sm_$(var))
 
 
 ##/ ### cuda_dir=/usr/local/cuda
@@ -391,7 +402,7 @@ else ifeq ($(opt),profile)
 endif
 cuda_flags__ := -std=c++11 $(shared_flags__) $(cuda_opt_flags__)
 cuda_flags__ += -I$(top_dir__)/include/syntax/cu \
--gencode $(cuda_cc_flag__)
+$(cuda_cc_flag__)
 $(all_cu_objs__): %.o: $(top_dir__)/%.cu
 	$(NVCC) $< -c $(cuda_flags__) -o $@
 endif
