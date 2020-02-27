@@ -23,9 +23,13 @@ void velocity_verlet(int istep, real dt_ps)
    else
       energy(vers1);
 
+   // half-step corrections for certain thermostats and barostats
+   halftime_correction(dt_ps);
+
    // v += a * dt/2
    propagate_velocity(dt_2, gx, gy, gz);
 
+   // full-step corrections
    real temp;
    temper(dt_ps, temp);
 }

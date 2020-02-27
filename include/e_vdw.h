@@ -108,7 +108,7 @@ void evdw_mm3hb(int vers);
 /**
  * \ingroup vdw
  * \brief
- * [Halgren buffered 14-7 potential.](https://dx.doi.org/10.1021/ja00046a032)
+ * [Halgren buffered 14-7 potential.](https://doi.org/10.1021/ja00046a032)
  *
  * \f[
  * U(r|r_m,\epsilon) = \epsilon
@@ -117,7 +117,7 @@ void evdw_mm3hb(int vers);
  * \f]
  * \f[ \rho = r/r_m,\ n=14,\ m=7,\ \gamma=0.12,\ \delta=0.07 \f]
  *
- * [Soft core buffered 14-7 potential.](https://dx.doi.org/10.1002/jcc.21681)
+ * [Soft core buffered 14-7 potential.](https://doi.org/10.1002/jcc.21681)
  *
  * \f[
  * U(r|\lambda) = \lambda^t\epsilon

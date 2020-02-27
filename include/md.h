@@ -58,29 +58,39 @@ TINKER_EXTERN real *gx, *gy, *gz;
 TINKER_EXTERN real vir[9];
 TINKER_EXTERN virial_buffer vir_buf;
 
-typedef enum
+enum class Thermostat
 {
-   thermo_berendsen,
-   thermo_bussi,
-   thermo_andersen,
-   thermo_nose_hoover_chain,
-   thermo_null
-} thermostat_t;
+   BERENDSEN,
+   BUSSI,
+   ANDERSEN,
+   NOSE_HOOVER_CHAIN,
+   NONE
+};
+constexpr auto BERENDSEN_THERMOSTAT = Thermostat::BERENDSEN;
+constexpr auto BUSSI_THERMOSTAT = Thermostat::BUSSI;
+constexpr auto ANDERSEN_THERMOSTAT = Thermostat::ANDERSEN;
+constexpr auto NOSE_HOOVER_CHAIN_THERMOSTAT = Thermostat::NOSE_HOOVER_CHAIN;
+constexpr auto NONE_THERMOSTAT = Thermostat::NONE;
 
 /// thermostat
-TINKER_EXTERN thermostat_t thermostat;
+TINKER_EXTERN Thermostat thermostat;
 
-typedef enum
+enum class Barostat
 {
-   baro_berendsen,
-   baro_bussi,
-   baro_nose_hoover_chain,
-   baro_montecarlo,
-   baro_null
-} barostat_t;
+   BERENDSEN,
+   BUSSI,
+   NOSE_HOOVER_CHAIN,
+   MONTE_CARLO,
+   NONE
+};
+constexpr auto BERENDSEN_BAROSTAT = Barostat::BERENDSEN;
+constexpr auto BUSSI_BAROSTAT = Barostat::BUSSI;
+constexpr auto NOSE_HOOVER_CHAIN_BAROSTAT = Barostat::NOSE_HOOVER_CHAIN;
+constexpr auto MONTE_CARLO_BAROSTAT = Barostat::MONTE_CARLO;
+constexpr auto NONE_BAROSTAT = Barostat::NONE;
 
 /// barostat
-TINKER_EXTERN barostat_t barostat;
+TINKER_EXTERN Barostat barostat;
 
 void egv_data(rc_op op);
 TINKER_NAMESPACE_END
@@ -116,6 +126,23 @@ void integrate_data(rc_op);
 
 void kinetic(real& temp);
 void temper(real dt, real& temp);
+/**
+ * \ingroup md
+ * \brief Applies a velocity correction at the half time step as needed for the
+ * Nose-Hoover thermostat, and a box size and velocity correction at the half
+ * time step as needed for the Monte Carlo barostat.
+ *
+ * Literature references:
+ *    - G. J. Martyna, M. E. Tuckerman, D. J. Tobias and M. L. Klein,
+ *    "Explicit Reversible Integrators for Extended Systems Dynamics",
+ *    Molecular Physics, 87, 1117-1157 (1996).
+ *    [PDF](https://doi.org/10.1080/00268979600100761)
+ *    - R. Eppenga and D. Frenkel, "Monte Carlo study of the isotropic and
+ *    nematic phases of infinitely thin hard platelets",
+ *    Molecular Physics, 52, 1303-1334 (1983).
+ *    [PDF](https://doi.org/10.1080/00268978400101951)
+ */
+void halftime_correction(real dt);
 void mdrest(int istep);
 
 void propagate_xyz(real dt, int check_nblist);
@@ -140,4 +167,12 @@ constexpr unsigned RESPA_FAST = 1; // 2**0, fast group shall be 0.
 constexpr unsigned RESPA_SLOW = 2; // 2**1, slow group shall be 1.
 TINKER_EXTERN real *gx1, *gy1, *gz1;
 TINKER_EXTERN real *gx2, *gy2, *gz2;
+TINKER_NAMESPACE_END
+
+
+TINKER_NAMESPACE_BEGIN
+void bussi_thermostat(real dt, real temp);
+void bussi_thermostat_acc(real dt, real temp);
+
+void monte_carlo_barostat(real epot, real temp);
 TINKER_NAMESPACE_END

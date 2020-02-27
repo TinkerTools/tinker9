@@ -34,33 +34,33 @@ void integrate_data(rc_op op)
       if (bath::isothermal) {
          fstr_view th = bath::thermostat;
          if (th == "BERENDSEN")
-            thermostat = thermo_berendsen;
+            thermostat = BERENDSEN_THERMOSTAT;
          else if (th == "BUSSI")
-            thermostat = thermo_bussi;
+            thermostat = BUSSI_THERMOSTAT;
          else if (th == "ANDERSEN")
-            thermostat = thermo_andersen;
+            thermostat = ANDERSEN_THERMOSTAT;
          else if (th == "NOSE-HOOVER")
-            thermostat = thermo_nose_hoover_chain;
+            thermostat = NOSE_HOOVER_CHAIN_THERMOSTAT;
          else
             assert(false);
       } else {
-         thermostat = thermo_null;
+         thermostat = NONE_THERMOSTAT;
       }
 
       if (bath::isobaric) {
          fstr_view br = bath::barostat;
          if (br == "BERENDSEN")
-            barostat = baro_berendsen;
+            barostat = BERENDSEN_BAROSTAT;
          else if (br == "BUSSI")
-            barostat = baro_bussi;
+            barostat = BUSSI_BAROSTAT;
          else if (br == "NOSE-HOOVER")
-            barostat = baro_nose_hoover_chain;
+            barostat = NOSE_HOOVER_CHAIN_BAROSTAT;
          else if (br == "MONTECARLO")
-            barostat = baro_montecarlo;
+            barostat = MONTE_CARLO_BAROSTAT;
          else
             assert(false);
       } else {
-         barostat = baro_null;
+         barostat = NONE_BAROSTAT;
       }
 
       fstr_view itg = mdstuf::integrate;
@@ -104,18 +104,19 @@ void kinetic(real& temp)
       kinetic_acc(temp);
 }
 
-extern void thermo_bussi_acc(real dt, real temp);
 void temper(real dt, real& temp)
 {
    kinetic(temp);
-   if (thermostat == thermo_null)
+   if (thermostat == NONE_THERMOSTAT)
       return;
 
-   if (thermostat == thermo_bussi)
-      thermo_bussi_acc(dt, temp);
+   if (thermostat == BUSSI_THERMOSTAT)
+      bussi_thermostat(dt, temp);
    else
       assert(false);
 }
+
+void halftime_correction(real dt) {}
 
 extern void mdrest_acc(int istep);
 void mdrest(int istep)
@@ -163,5 +164,10 @@ void propagate(int nsteps, real dt_ps)
       mdrest(istep);
    }
    mdsave_synchronize();
+}
+
+void bussi_thermostat(real dt, real temp)
+{
+   bussi_thermostat_acc(dt, temp);
 }
 TINKER_NAMESPACE_END

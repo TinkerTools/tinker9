@@ -5,7 +5,7 @@
 #include <tinker/detail/mdstuf.hh>
 
 TINKER_NAMESPACE_BEGIN
-void thermo_bussi_acc(real dt_real, real temp_real)
+void bussi_thermostat_acc(real dt_real, real temp_real)
 {
    double dt = dt_real;
    double temp = temp_real;

@@ -112,7 +112,7 @@ where
 |------------|------------------------|
 | non-EWALD  | 1                      |
 | EWALD      | `erfc` damping factors |
-| Thole      | [J.Phys.Chem.B, 107, 5933 (2003)](https://dx.doi.org/10.1021/jp027815+) |
+| Thole      | [J.Phys.Chem.B, 107, 5933 (2003)](https://doi.org/10.1021/jp027815+) |
 
 In the following sections, $\lambda_k (k-2)!! / r^k$ will be denoted by $R_k$.
 

@@ -12,7 +12,7 @@ void print_backtrace(std::ostream& out = std::cout);
 
 
 template <class T>
-std::string translate_error_message(T error_num);
+std::string translate_error_code(T error_num);
 
 
 /**
@@ -60,7 +60,7 @@ public:
       if (res_ != 0) {                                                         \
          print_backtrace();                                                    \
          std::string m_;                                                       \
-         std::string msg_ = translate_error_message(res_);                     \
+         std::string msg_ = translate_error_code(res_);                        \
          if (msg_ != "")                                                       \
             m_ = format("Errno {} ({}) at {}:{}", res_, msg_, __FILE__,        \
                         __LINE__);                                             \
