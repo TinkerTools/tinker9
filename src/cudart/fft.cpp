@@ -32,9 +32,9 @@ void fft_data(rc_op op)
    }
 
    if (op & rc_init) {
-#if TINKER_SINGLE_PRECISION
+#if TINKER_REAL_SIZE == 4
       const cufftType typ = CUFFT_C2C;
-#elif TINKER_DOUBLE_PRECISION
+#elif TINKER_REAL_SIZE == 8
       const cufftType typ = CUFFT_Z2Z;
 #else
       static_assert(false, "");
@@ -61,10 +61,10 @@ void fftfront(PMEUnit pme_u)
    auto& iplan = iplan_u->self<FFTPlanCUFFT>().h;
    auto& st = *pme_u;
 
-#if TINKER_SINGLE_PRECISION
+#if TINKER_REAL_SIZE == 4
    cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),
                 reinterpret_cast<cufftComplex*>(st.qgrid), CUFFT_FORWARD);
-#elif TINKER_DOUBLE_PRECISION
+#elif TINKER_REAL_SIZE == 8
    cufftExecZ2Z(iplan, reinterpret_cast<cufftDoubleComplex*>(st.qgrid),
                 reinterpret_cast<cufftDoubleComplex*>(st.qgrid), CUFFT_FORWARD);
 #else
@@ -79,10 +79,10 @@ void fftback(PMEUnit pme_u)
    auto& iplan = iplan_u->self<FFTPlanCUFFT>().h;
    auto& st = *pme_u;
 
-#if TINKER_SINGLE_PRECISION
+#if TINKER_REAL_SIZE == 4
    cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),
                 reinterpret_cast<cufftComplex*>(st.qgrid), CUFFT_INVERSE);
-#elif TINKER_DOUBLE_PRECISION
+#elif TINKER_REAL_SIZE == 8
    cufftExecZ2Z(iplan, reinterpret_cast<cufftDoubleComplex*>(st.qgrid),
                 reinterpret_cast<cufftDoubleComplex*>(st.qgrid), CUFFT_INVERSE);
 #else

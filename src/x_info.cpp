@@ -24,6 +24,7 @@ void x_info(int argc, char** argv)
    print(out, fmt, "Version:", get_version_string());
    print(out, fmt, "Synchronized with Tinker commit:", get_SHA1());
    print(out, fmt, "Size of real (bytes):", sizeof(real));
+   print(out, fmt, "Size of mixed (bytes):", sizeof(mixed));
 #if TINKER_DEBUG
    const char* dbg = "ON";
 #else

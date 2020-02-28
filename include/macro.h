@@ -113,32 +113,40 @@ to mimic its name mangling.
  * \{
  * \def TINKER_DOUBLE_PRECISION
  * \ingroup macro
+ *  * \def TINKER_MIXED_PRECISION
+ * \ingroup macro
  * \def TINKER_SINGLE_PRECISION
  * \ingroup macro
- * Based on whether `TINKER_DOUBLE_PRECISION` and `TINKER_SINGLE_PRECISION`
- * being predefined, these two macros are set to either 0 or 1 as follows
+ * Only one of the precision macros can be set to 1 and the rest of them will
+ * be set to 0.
  *
- * | ifdef D | ifdef S |  D  |  S  |
- * |:-------:|:-------:|:---:|:---:|
- * | true    | true    | 0   | 1   |
- * | false   | true    | 0   | 1   |
- * | true    | false   | 1   | 0   |
- * | false   | false   | 0   | 1   |
+ * | Macros | real   | mixed  |
+ * | DOUBLE | double | double |
+ * | MIXED  | float  | double |
+ * | SINGLE | float  | float  |
  * \}
  */
-#if defined(TINKER_DOUBLE_PRECISION) && !defined(TINKER_SINGLE_PRECISION)
+#ifdef TINKER_DOUBLE_PRECISION
 #   undef TINKER_DOUBLE_PRECISION
 #   define TINKER_DOUBLE_PRECISION 1
-#   define TINKER_SINGLE_PRECISION 0
 #else
-#   ifdef TINKER_DOUBLE_PRECISION
-#      undef TINKER_DOUBLE_PRECISION
-#   endif
-#   ifdef TINKER_SINGLE_PRECISION
-#      undef TINKER_SINGLE_PRECISION
-#   endif
 #   define TINKER_DOUBLE_PRECISION 0
+#endif
+#ifdef TINKER_MIXED_PRECISION
+#   undef TINKER_MIXED_PRECISION
+#   define TINKER_MIXED_PRECISION 1
+#else
+#   define TINKER_MIXED_PRECISION 0
+#endif
+#ifdef TINKER_SINGLE_PRECISION
+#   undef TINKER_SINGLE_PRECISION
 #   define TINKER_SINGLE_PRECISION 1
+#else
+#   define TINKER_SINGLE_PRECISION 0
+#endif
+#if (TINKER_DOUBLE_PRECISION + TINKER_MIXED_PRECISION +                        \
+     TINKER_SINGLE_PRECISION) != 1
+#   error Error in TINKER_?_PRECISION macros detected.
 #endif
 
 
@@ -205,9 +213,21 @@ to mimic its name mangling.
 
 TINKER_NAMESPACE_BEGIN
 #if TINKER_DOUBLE_PRECISION
+#   define TINKER_REAL_SIZE 8
+#   define TINKER_MIXED_SIZE 8
 using real = double;
+using mixed = double;
+#endif
+#if TINKER_MIXED_PRECISION
+#   define TINKER_REAL_SIZE 4
+#   define TINKER_MIXED_SIZE 8
+using real = float;
+using mixed = double;
 #endif
 #if TINKER_SINGLE_PRECISION
+#   define TINKER_REAL_SIZE 4
+#   define TINKER_MIXED_SIZE 4
 using real = float;
+using mixed = float;
 #endif
 TINKER_NAMESPACE_END

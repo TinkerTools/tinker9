@@ -4,7 +4,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-#if TINKER_DOUBLE_PRECISION
+#if TINKER_REAL_SIZE == 8
 using real2 = double2;
 using real3 = double3;
 using real4 = double4;
@@ -14,7 +14,7 @@ using real4 = double4;
 #endif
 
 
-#if TINKER_SINGLE_PRECISION
+#if TINKER_REAL_SIZE == 4
 using real2 = float2;
 using real3 = float3;
 using real4 = float4;

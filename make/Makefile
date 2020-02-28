@@ -104,6 +104,8 @@ endif
 ##/     `real8`, `8`, `64`, `double`, `d`.
 ##/   - These equivalent values all compile the code to single precision:
 ##/     `real4`, `4`, `32`, `float`, `single`, `s`.
+##/   - These equivalent values all compile the code to mixed precision:
+##/     `mixed`, `m`.
 ##/
 prec := real8
 ifeq ($(prec),$(filter $(prec),real4 4 32 float single s))
@@ -112,6 +114,9 @@ ifeq ($(prec),$(filter $(prec),real4 4 32 float single s))
 else ifeq ($(prec),$(filter $(prec),real8 8 64 double d))
    prec__ := real8__
    shared_flags__ += -DTINKER_DOUBLE_PRECISION
+else ifeq ($(prec),$(filter $(prec),mixed m))
+   prec__ := mixed__
+   shared_flags__ += -DTINKER_MIXED_PRECISION
 else
    $(error Error! Flag prec=$(prec) was set incorrectly)
 endif
@@ -222,7 +227,7 @@ ifndef fftw_lib__
    endif
 endif
 link_flags__ += $(fftw_lib__)/libfftw3.a $(fftw_lib__)/libfftw3_threads.a
-ifeq ($(prec__),real4__)
+ifeq ($(prec__),$(filter $(prec__),mixed__,real4__))
    ifeq ($(host_only__),true)
       link_flags__ += $(fftw_lib__)/libfftw3f.a $(fftw_lib__)/libfftw3f_threads.a
    endif

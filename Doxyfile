@@ -285,7 +285,7 @@ SEARCH_INCLUDES        = YES
 INCLUDE_PATH           = include include/syntax/acc include/syntax/cu
 INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = NDEBUG \
-                         TINKER_SINGLE_PRECISION \
+                         TINKER_MIXED_PRECISION \
                          TINKER_CUDART \
                          TINKER_EXTERN_DEFINITION_FILE
 EXPAND_AS_DEFINED      = YES

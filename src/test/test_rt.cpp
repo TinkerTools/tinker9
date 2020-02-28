@@ -47,9 +47,9 @@ TestFileExpected::~TestFileExpected()
 
 double test_get_eps(double eps_single, double eps_double)
 {
-#if TINKER_SINGLE_PRECISION
+#if TINKER_REAL_SIZE == 4
    return eps_single;
-#elif TINKER_DOUBLE_PRECISION
+#elif TINKER_REAL_SIZE == 8
    return eps_double;
 #else
    static_assert(false, "");

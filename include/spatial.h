@@ -210,7 +210,7 @@ struct Spatial
    {
       real x, y, z;
       int unsorted;
-#if TINKER_DOUBLE_PRECISION
+#if TINKER_REAL_SIZE == 8
       int padding_;
 #endif
    };

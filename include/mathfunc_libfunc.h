@@ -6,7 +6,7 @@
 #define INT_ABS abs
 
 
-#if TINKER_DOUBLE_PRECISION
+#if TINKER_REAL_SIZE == 8
 #   define REAL_SQRT sqrt
 #   define REAL_EXP exp
 #   define REAL_FLOOR floor
@@ -27,7 +27,7 @@
 #endif
 
 
-#if TINKER_SINGLE_PRECISION
+#if TINKRE_REAL_SIZE == 4
 #   define REAL_SQRT sqrtf
 #   define REAL_EXP expf
 #   define REAL_FLOOR floorf
