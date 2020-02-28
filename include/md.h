@@ -114,7 +114,7 @@ TINKER_NAMESPACE_BEGIN
 // mdsave
 void mdsave_data(rc_op);
 
-void mdsave_async(int istep, real dt);
+void mdsave_async(int istep, mixed dt);
 void mdsave_synchronize();
 TINKER_NAMESPACE_END
 
@@ -125,7 +125,7 @@ void md_data(rc_op op);
 void integrate_data(rc_op);
 
 void kinetic(real& temp);
-void temper(real dt, real& temp);
+void temper(mixed dt, real& temp);
 /**
  * \ingroup md
  * \brief Applies a velocity correction as needed for the Nose-Hoover Chains,
@@ -145,23 +145,23 @@ void temper(real dt, real& temp);
 void halftime_correction(bool do_voltrial);
 void mdrest(int istep);
 
-void propagate_xyz(real dt, int check_nblist);
+void propagate_xyz(mixed dt, bool check_nblist);
 /**
  * \brief v += -g/m dt
  */
-void propagate_velocity(real dt, const real* grx, const real* gry,
+void propagate_velocity(mixed dt, const real* grx, const real* gry,
                         const real* grz);
 /**
  * \brief v += -g/m dt -g2/m dt2
  */
-void propagate_velocity2(real dt, const real* grx, const real* gry,
-                         const real* grz, real dt2, const real* grx2,
+void propagate_velocity2(mixed dt, const real* grx, const real* gry,
+                         const real* grz, mixed dt2, const real* grx2,
                          const real* gry2, const real* grz2);
-void propagate(int nsteps, real dt_ps);
+void propagate(int nsteps, mixed dt_ps);
 
-void velocity_verlet(int istep, real dt_ps);
+void velocity_verlet(int istep, mixed dt_ps);
 
-void respa_fast_slow(int istep, real dt_ps);
+void respa_fast_slow(int istep, mixed dt_ps);
 const TimeScaleConfig& respa_tsconfig();
 constexpr unsigned RESPA_FAST = 1; // 2**0, fast group shall be 0.
 constexpr unsigned RESPA_SLOW = 2; // 2**1, slow group shall be 1.
@@ -171,8 +171,14 @@ TINKER_NAMESPACE_END
 
 
 TINKER_NAMESPACE_BEGIN
-void bussi_thermostat(real dt, real temp);
-void bussi_thermostat_acc(real dt, real temp);
+void propagate_xyz_acc(mixed);
+
+void propagate_velocity_acc(mixed, const real*, const real*, const real*);
+void propagate_velocity2_acc(mixed, const real*, const real*, const real*,
+                             mixed, const real*, const real*, const real*);
+
+void bussi_thermostat(mixed dt, real temp);
+void bussi_thermostat_acc(mixed dt, real temp);
 
 void monte_carlo_barostat_update_nb(real epot);
 void monte_carlo_barostat_update_nb_acc(real epot);

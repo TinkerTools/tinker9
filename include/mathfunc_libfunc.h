@@ -27,7 +27,7 @@
 #endif
 
 
-#if TINKRE_REAL_SIZE == 4
+#if TINKER_REAL_SIZE == 4
 #   define REAL_SQRT sqrtf
 #   define REAL_EXP expf
 #   define REAL_FLOOR floorf

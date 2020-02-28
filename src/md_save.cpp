@@ -88,7 +88,7 @@ void mdsave_data(rc_op op)
    }
 }
 
-static void mdsave_dup_then_write_(int istep, real dt)
+static void mdsave_dup_then_write_(int istep, mixed dt)
 {
 
    // duplicate
@@ -173,7 +173,7 @@ static void mdsave_dup_then_write_(int istep, real dt)
    mtx_write.unlock();
 }
 
-void mdsave_async(int istep, real dt)
+void mdsave_async(int istep, mixed dt)
 {
    std::unique_lock<std::mutex> lck_write(mtx_write);
    cv_write.wait(lck_write, [=]() { return idle_write; });

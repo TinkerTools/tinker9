@@ -206,7 +206,7 @@ void mdrest_acc(int istep)
    }
 }
 
-void propagate_xyz_acc(real dt)
+void propagate_xyz_acc(mixed dt)
 {
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,vx,vy,vz)
@@ -217,7 +217,7 @@ void propagate_xyz_acc(real dt)
    }
 }
 
-void propagate_velocity_acc(real dt, const real* grx, const real* gry,
+void propagate_velocity_acc(mixed dt, const real* grx, const real* gry,
                             const real* grz)
 {
    const real ekcal = units::ekcal;
@@ -231,8 +231,8 @@ void propagate_velocity_acc(real dt, const real* grx, const real* gry,
    }
 }
 
-void propagate_velocity2_acc(real dt, const real* grx, const real* gry,
-                             const real* grz, real dt2, const real* grx2,
+void propagate_velocity2_acc(mixed dt, const real* grx, const real* gry,
+                             const real* grz, mixed dt2, const real* grx2,
                              const real* gry2, const real* grz2)
 {
    const real ekcal = units::ekcal;

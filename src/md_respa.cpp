@@ -59,19 +59,19 @@ const TimeScaleConfig& respa_tsconfig()
  * [update a_fast] [update a_slow]
  * [v += a_fast dt/2] [v += a_slow dT/2] ==> [v += (a_fast dt/2 + a_slow dT/2)]
  */
-void respa_fast_slow(int istep, real dt_ps)
+void respa_fast_slow(int istep, mixed dt_ps)
 {
    bool save = !(istep % inform::iwrite);
    int vers0 = rc_flag & (calc::virial | calc::grad | calc::energy);
    int vers1 = rc_flag & (calc::virial | calc::grad);
 
 
-   real arespa = mdstuf::arespa;    // inner time step
-   const real eps = 1.0f / 1048576; // 2**-20
+   mixed arespa = mdstuf::arespa;    // inner time step
+   const mixed eps = 1.0f / 1048576; // 2**-20
    int nalt = (int)(dt_ps / (arespa + eps)) + 1;
-   real dt_2 = 0.5f * dt_ps;
-   real dta = dt_ps / nalt;
-   real dta_2 = 0.5f * dta;
+   mixed dt_2 = 0.5f * dt_ps;
+   mixed dta = dt_ps / nalt;
+   mixed dta_2 = 0.5f * dta;
 
 
    real vir_fast[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};

@@ -19,7 +19,7 @@ void md_data(rc_op op)
    rc_man save42_{mdsave_data, op};
 }
 
-static void (*intg)(int, real);
+static void (*intg)(int, mixed);
 
 void integrate_data(rc_op op)
 {
@@ -108,7 +108,7 @@ void kinetic(real& temp)
       kinetic_acc(temp);
 }
 
-void temper(real dt, real& temp)
+void temper(mixed dt, real& temp)
 {
    kinetic(temp);
    if (thermostat == NONE_THERMOSTAT)
@@ -138,33 +138,27 @@ void mdrest(int istep)
    mdrest_acc(istep);
 }
 
-void propagate_xyz(real dt, int check_nblist)
+void propagate_xyz(mixed dt, bool check_nblist)
 {
-   extern void propagate_xyz_acc(real);
    propagate_xyz_acc(dt);
    if (check_nblist)
       nblist_data(rc_evolve);
 }
 
-void propagate_velocity(real dt, const real* grx, const real* gry,
+void propagate_velocity(mixed dt, const real* grx, const real* gry,
                         const real* grz)
 {
-   extern void propagate_velocity_acc(real, const real*, const real*,
-                                      const real*);
    propagate_velocity_acc(dt, grx, gry, grz);
 }
 
-void propagate_velocity2(real dt, const real* grx, const real* gry,
-                         const real* grz, real dt2, const real* grx2,
+void propagate_velocity2(mixed dt, const real* grx, const real* gry,
+                         const real* grz, mixed dt2, const real* grx2,
                          const real* gry2, const real* grz2)
 {
-   extern void propagate_velocity2_acc(real, const real*, const real*,
-                                       const real*, real, const real*,
-                                       const real*, const real*);
    propagate_velocity2_acc(dt, grx, gry, grz, dt2, grx2, gry2, grz2);
 }
 
-void propagate(int nsteps, real dt_ps)
+void propagate(int nsteps, mixed dt_ps)
 {
    for (int istep = 1; istep <= nsteps; ++istep) {
       intg(istep, dt_ps);
@@ -180,7 +174,7 @@ void propagate(int nsteps, real dt_ps)
    mdsave_synchronize();
 }
 
-void bussi_thermostat(real dt, real temp)
+void bussi_thermostat(mixed dt, real temp)
 {
    bussi_thermostat_acc(dt, temp);
 }

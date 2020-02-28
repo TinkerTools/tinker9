@@ -5,7 +5,7 @@
 #include <tinker/detail/inform.hh>
 
 TINKER_NAMESPACE_BEGIN
-void velocity_verlet(int istep, real dt_ps)
+void velocity_verlet(int istep, mixed dt_ps)
 {
    int vers0 = rc_flag & calc::vmask;
    int vers1 = vers0;
@@ -21,7 +21,7 @@ void velocity_verlet(int istep, real dt_ps)
    if (!save && !mcbaro)
       vers1 &= ~calc::energy;
 
-   real dt_2 = 0.5f * dt_ps;
+   mixed dt_2 = 0.5f * dt_ps;
 
    // gradients were calculated in integrate_data()
    // v += a * dt/2

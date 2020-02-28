@@ -61,6 +61,8 @@ Precision of the floating point numbers.
     `real8`, `8`, `64`, `double`, `d`.
   - These equivalent values all compile the code to single precision:
     `real4`, `4`, `32`, `float`, `single`, `s`.
+  - These equivalent values all compile the code to mixed precision:
+    `mixed`, `m`.
 
 ### host=1
 Flag to compile to GPU version or CPU version.

@@ -4,19 +4,23 @@
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/mdstuf.hh>
 
+
 TINKER_NAMESPACE_BEGIN
-void bussi_thermostat_acc(real dt_real, real temp_real)
+void bussi_thermostat_acc(mixed dt_mixed, real temp_mixed)
 {
-   double dt = dt_real;
-   double temp = temp_real;
+   double dt = dt_mixed;
+   double temp = temp_mixed;
+
 
    double tautemp = bath::tautemp;
    double kelvin = bath::kelvin;
    int nfree = mdstuf::nfree;
    double& eta = bath::eta;
 
+
    if (temp == 0)
       temp = 0.1;
+
 
    double c = std::exp(-dt / tautemp);
    double d = (1 - c) * (kelvin / temp) / nfree;
@@ -28,12 +32,12 @@ void bussi_thermostat_acc(real dt_real, real temp_real)
       scale = -scale;
    eta *= scale;
 
-   real sc = scale;
+
    #pragma acc parallel loop independent async deviceptr(vx,vy,vz)
    for (int i = 0; i < n; ++i) {
-      vx[i] *= sc;
-      vy[i] *= sc;
-      vz[i] *= sc;
+      vx[i] *= scale;
+      vy[i] *= scale;
+      vz[i] *= scale;
    }
 }
 TINKER_NAMESPACE_END

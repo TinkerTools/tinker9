@@ -113,7 +113,7 @@ to mimic its name mangling.
  * \{
  * \def TINKER_DOUBLE_PRECISION
  * \ingroup macro
- *  * \def TINKER_MIXED_PRECISION
+ * \def TINKER_MIXED_PRECISION
  * \ingroup macro
  * \def TINKER_SINGLE_PRECISION
  * \ingroup macro
@@ -121,9 +121,15 @@ to mimic its name mangling.
  * be set to 0.
  *
  * | Macros | real   | mixed  |
+ * |--------|--------|--------|
  * | DOUBLE | double | double |
  * | MIXED  | float  | double |
  * | SINGLE | float  | float  |
+ *
+ * | Properties  | Types |
+ * |-------------|-------|
+ * | Time        | mixed |
+ * | Temperature | mixed |
  * \}
  */
 #ifdef TINKER_DOUBLE_PRECISION
