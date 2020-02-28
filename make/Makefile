@@ -227,7 +227,7 @@ ifndef fftw_lib__
    endif
 endif
 link_flags__ += $(fftw_lib__)/libfftw3.a $(fftw_lib__)/libfftw3_threads.a
-ifeq ($(prec__),$(filter $(prec__),mixed__,real4__))
+ifeq ($(prec__),$(filter $(prec__),mixed__ real4__))
    ifeq ($(host_only__),true)
       link_flags__ += $(fftw_lib__)/libfftw3f.a $(fftw_lib__)/libfftw3f_threads.a
    endif

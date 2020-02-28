@@ -171,6 +171,9 @@ TINKER_NAMESPACE_END
 
 
 TINKER_NAMESPACE_BEGIN
+void kinetic_acc(real&);
+void kinetic_cu(real&);
+
 void propagate_xyz_acc(mixed);
 
 void propagate_velocity_acc(mixed, const real*, const real*, const real*);

@@ -129,7 +129,7 @@ to mimic its name mangling.
  * | Properties  | Types |
  * |-------------|-------|
  * | Time        | mixed |
- * | Temperature | mixed |
+ * | Temperature | real  |
  * \}
  */
 #ifdef TINKER_DOUBLE_PRECISION

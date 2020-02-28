@@ -98,12 +98,10 @@ void integrate_data(rc_op op)
 
 void kinetic(real& temp)
 {
-   extern void kinetic_acc(real&);
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM) {
-      extern void kinetic_cu(real&);
+   if (pltfm_config & CU_PLTFM)
       kinetic_cu(temp);
-   } else
+   else
 #endif
       kinetic_acc(temp);
 }

@@ -6,10 +6,10 @@
 
 
 TINKER_NAMESPACE_BEGIN
-void bussi_thermostat_acc(mixed dt_mixed, real temp_mixed)
+void bussi_thermostat_acc(mixed dt_mixed, real temp_real)
 {
    double dt = dt_mixed;
-   double temp = temp_mixed;
+   double temp = temp_real;
 
 
    double tautemp = bath::tautemp;
