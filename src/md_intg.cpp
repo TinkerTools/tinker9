@@ -27,6 +27,9 @@ void integrate_data(rc_op op)
       if (intg == respa_fast_slow)
          device_array::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
 
+      if (barostat == MONTE_CARLO_BAROSTAT)
+         device_array::deallocate(x_pmonte, y_pmonte, z_pmonte);
+
       intg = nullptr;
    }
 
@@ -55,9 +58,10 @@ void integrate_data(rc_op op)
             barostat = BUSSI_BAROSTAT;
          else if (br == "NOSE-HOOVER")
             barostat = NOSE_HOOVER_CHAIN_BAROSTAT;
-         else if (br == "MONTECARLO")
+         else if (br == "MONTECARLO") {
             barostat = MONTE_CARLO_BAROSTAT;
-         else
+            device_array::allocate(n, &x_pmonte, &y_pmonte, &z_pmonte);
+         } else
             assert(false);
       } else {
          barostat = NONE_BAROSTAT;
@@ -116,7 +120,17 @@ void temper(real dt, real& temp)
       assert(false);
 }
 
-void halftime_correction(real dt) {}
+void halftime_correction(bool do_voltrial)
+{
+   if (thermostat == NOSE_HOOVER_CHAIN_THERMOSTAT &&
+       barostat == MONTE_CARLO_BAROSTAT) {
+   } else if (thermostat == NOSE_HOOVER_CHAIN_THERMOSTAT) {
+   } else if (barostat == MONTE_CARLO_BAROSTAT && do_voltrial) {
+      real epot;
+      copy_energy(calc::energy, &epot, nullptr, nullptr, nullptr, nullptr);
+      monte_carlo_barostat_update_nb(epot);
+   }
+}
 
 extern void mdrest_acc(int istep);
 void mdrest(int istep)
@@ -169,5 +183,10 @@ void propagate(int nsteps, real dt_ps)
 void bussi_thermostat(real dt, real temp)
 {
    bussi_thermostat_acc(dt, temp);
+}
+
+void monte_carlo_barostat_update_nb(real epot)
+{
+   monte_carlo_barostat_update_nb_acc(epot);
 }
 TINKER_NAMESPACE_END

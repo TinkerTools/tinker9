@@ -1,13 +1,25 @@
 #include "energy.h"
 #include "md.h"
+#include "random.h"
+#include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
 
 TINKER_NAMESPACE_BEGIN
 void velocity_verlet(int istep, real dt_ps)
 {
+   int vers0 = rc_flag & calc::vmask;
+   int vers1 = vers0;
+
    bool save = !(istep % inform::iwrite);
-   int vers0 = rc_flag & (calc::virial | calc::grad | calc::energy);
-   int vers1 = rc_flag & (calc::virial | calc::grad);
+   bool mcbaro = false;
+   if (barostat == MONTE_CARLO_BAROSTAT) {
+      double rdm = random<double>();
+      if (rdm < 1.0 / bath::voltrial)
+         mcbaro = true;
+   }
+   // toggle off the calc::energy bit if neither save nor mcbaro
+   if (!save && !mcbaro)
+      vers1 &= ~calc::energy;
 
    real dt_2 = 0.5f * dt_ps;
 
@@ -18,13 +30,10 @@ void velocity_verlet(int istep, real dt_ps)
    // s += v * dt
    propagate_xyz(dt_ps, true);
    // update gradient
-   if (save)
-      energy(vers0);
-   else
-      energy(vers1);
+   energy(vers1);
 
    // half-step corrections for certain thermostats and barostats
-   halftime_correction(dt_ps);
+   halftime_correction(mcbaro);
 
    // v += a * dt/2
    propagate_velocity(dt_2, gx, gy, gz);

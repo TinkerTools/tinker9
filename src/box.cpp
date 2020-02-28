@@ -30,6 +30,24 @@ void get_default_box(Box& p)
 }
 
 
+void set_recip_box(real3 lvec1, real3 lvec2, real3 lvec3, real3& recipa,
+                   real3& recipb, real3& recipc)
+{
+   recipc.x = 0;
+   recipc.y = 0;
+   recipc.z = 1.0 / lvec3.z;
+
+   recipb.x = 0;
+   recipb.y = 1.0 / lvec2.y;
+   recipb.z = -lvec2.z / (lvec2.y * lvec3.z);
+
+   recipa.x = 1.0 / lvec1.x;
+   recipa.y = -lvec1.y / (lvec1.x * lvec2.y);
+   recipa.z = lvec1.y * lvec2.z - lvec1.z * lvec2.y;
+   recipa.z /= (lvec1.x * lvec2.y * lvec3.z);
+}
+
+
 #define DOT3(a, b) (a[0] * b[0] + a[1] * b[1] + a[2] * b[2])
 void set_tinker_box_module(const Box& p)
 {

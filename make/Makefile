@@ -353,7 +353,7 @@ endif
 ##/ The `tinker.gpu` executable.
 ##/
 .PHONY: default
-default: tinker.gpu
+default: tinker.gpu copy_gpu_scripts__
 
 
 ##/ ### unittest
@@ -367,7 +367,7 @@ unittest: all.tests
 ##/ Both `default` and `unittest` targets.
 ##/
 .PHONY: all
-all: default unittest copy_gpu_scripts__
+all: default unittest
 
 
 ##/ ### test

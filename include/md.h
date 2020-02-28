@@ -128,21 +128,21 @@ void kinetic(real& temp);
 void temper(real dt, real& temp);
 /**
  * \ingroup md
- * \brief Applies a velocity correction at the half time step as needed for the
- * Nose-Hoover thermostat, and a box size and velocity correction at the half
- * time step as needed for the Monte Carlo barostat.
+ * \brief Applies a velocity correction as needed for the Nose-Hoover Chains,
+ * and a box size and velocity correction as needed for the Monte Carlo
+ * barostat at the half time step.
  *
  * Literature references:
  *    - G. J. Martyna, M. E. Tuckerman, D. J. Tobias and M. L. Klein,
  *    "Explicit Reversible Integrators for Extended Systems Dynamics",
  *    Molecular Physics, 87, 1117-1157 (1996).
- *    [PDF](https://doi.org/10.1080/00268979600100761)
- *    - R. Eppenga and D. Frenkel, "Monte Carlo study of the isotropic and
- *    nematic phases of infinitely thin hard platelets",
- *    Molecular Physics, 52, 1303-1334 (1983).
- *    [PDF](https://doi.org/10.1080/00268978400101951)
+ *    [URL](https://doi.org/10.1080/00268979600100761)
+ *    - I. R. McDonald,
+ *    "NpT-ensemble Monte Carlo calculations for binary liquid mixtures",
+ *    Molecular Physics, 23, 41-58 (1972).
+ *    [URL](https://doi.org/10.1080/00268977200100031)
  */
-void halftime_correction(real dt);
+void halftime_correction(bool do_voltrial);
 void mdrest(int istep);
 
 void propagate_xyz(real dt, int check_nblist);
@@ -174,5 +174,7 @@ TINKER_NAMESPACE_BEGIN
 void bussi_thermostat(real dt, real temp);
 void bussi_thermostat_acc(real dt, real temp);
 
-void monte_carlo_barostat(real epot, real temp);
+void monte_carlo_barostat_update_nb(real epot);
+void monte_carlo_barostat_update_nb_acc(real epot);
+TINKER_EXTERN real *x_pmonte, *y_pmonte, *z_pmonte;
 TINKER_NAMESPACE_END

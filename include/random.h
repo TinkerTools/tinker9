@@ -7,7 +7,7 @@ TINKER_NAMESPACE_BEGIN
  * \ingroup util
  * \return A random number on `[0,1]` from a uniform distribution.
  */
-template <class T = real>
+template <class T>
 T random();
 
 
@@ -16,7 +16,7 @@ T random();
  * \return A random number from a normal Gaussian distribution
  * with a mean of zero and a variance of one.
  */
-template <class T = real>
+template <class T>
 T normal();
 
 
