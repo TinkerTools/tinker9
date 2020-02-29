@@ -66,24 +66,6 @@ void mdsave_data(rc_op op)
    if (op & rc_init) {
       idle_dup = false;
       idle_write = true;
-      /*
-      fstr_view f1 = files::filename;
-      fstr_view f2 = f1(1, files::leng);
-      std::string dynfile = f2.trim() + ".dyn";
-      if (std::ifstream(dynfile)) {
-         // convert acceleration to gradient
-         std::vector<double> gbuf(n);
-         for (int i = 0; i < n; ++i)
-            gbuf[i] = -moldyn::a[3 * i] * atomid::mass[i] / units::ekcal;
-         device_array::copyin(WAIT_NEW_Q, n, gx, gbuf.data());
-         for (int i = 0; i < n; ++i)
-            gbuf[i] = -moldyn::a[3 * i + 1] * atomid::mass[i] / units::ekcal;
-         device_array::copyin(WAIT_NEW_Q, n, gy, gbuf.data());
-         for (int i = 0; i < n; ++i)
-            gbuf[i] = -moldyn::a[3 * i + 2] * atomid::mass[i] / units::ekcal;
-         device_array::copyin(WAIT_NEW_Q, n, gz, gbuf.data());
-      }
-      //*/
    }
 }
 

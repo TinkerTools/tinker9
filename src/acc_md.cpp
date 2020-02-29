@@ -49,22 +49,19 @@ void mdrest_acc(int istep)
    if ((istep % mdstuf::irest) != 0)
       return;
 
-   const real ekcal = units::ekcal;
+   const energy_prec ekcal = units::ekcal;
 
    // zero out the total mass and overall linear velocity
 
    real totmass = 0;
-   real vtot1 = 0;
-   real vtot2 = 0;
-   real vtot3 = 0;
+   vel_prec vtot1 = 0, vtot2 = 0, vtot3 = 0;
 
    // compute linear velocity of the system center of mass
 
    #pragma acc parallel loop independent async\
-               deviceptr(mass,vx,vy,vz)\
-               reduction(+:totmass,vtot1,vtot2,vtot3)
+               deviceptr(mass,vx,vy,vz)
    for (int i = 0; i < n; ++i) {
-      real weigh = mass[i];
+      mass_prec weigh = mass[i];
       totmass += weigh;
       vtot1 += vx[i] * weigh;
       vtot2 += vy[i] * weigh;
@@ -77,28 +74,23 @@ void mdrest_acc(int istep)
 
    // compute translational kinetic energy of overall system
 
-   real etrans = vtot1 * vtot1 + vtot2 * vtot2 + vtot3 * vtot3;
+   energy_prec etrans = vtot1 * vtot1 + vtot2 * vtot2 + vtot3 * vtot3;
    etrans *= 0.5f * totmass / ekcal;
 
-   real erot, xtot, ytot, ztot, vang[3];
+   energy_prec erot = 0;
+   vel_prec xtot = 0, ytot = 0, ztot = 0; // angular momentum
+   vel_prec vang[3] = {0, 0, 0};
    if (!bound::use_bounds) {
 
       // find the center of mass coordinates of the overall system
       // compute the angular momentum of the overall system
 
-      xtot = 0;
-      ytot = 0;
-      ztot = 0;
-
-      real mang1 = 0;
-      real mang2 = 0;
-      real mang3 = 0;
+      vel_prec mang1 = 0, mang2 = 0, mang3 = 0;
 
       #pragma acc parallel loop independent async\
-                  deviceptr(mass,x,y,z,vx,vy,vz)\
-                  reduction(+:xtot,ytot,ztot,mang1,mang2,mang3)
+                  deviceptr(mass,x,y,z,vx,vy,vz)
       for (int i = 0; i < n; ++i) {
-         real weigh = mass[i];
+         mass_prec weigh = mass[i];
          xtot += x[i] * weigh;
          ytot += y[i] * weigh;
          ztot += z[i] * weigh;
@@ -126,7 +118,7 @@ void mdrest_acc(int istep)
                   deviceptr(mass,x,y,z)\
                   reduction(+:xx,xy,xz,yy,yz,zz)
       for (int i = 0; i < n; ++i) {
-         real weigh = mass[i];
+         mass_prec weigh = mass[i];
          real xdel = x[i] - xtot;
          real ydel = y[i] - ytot;
          real zdel = z[i] - ztot;
@@ -187,9 +179,9 @@ void mdrest_acc(int istep)
    if (!bound::use_bounds) {
       #pragma acc parallel loop independent async deviceptr(x,y,z,vx,vy,vz)
       for (int i = 0; i < n; ++i) {
-         real xdel = x[i] - xtot;
-         real ydel = y[i] - ytot;
-         real zdel = z[i] - ztot;
+         vel_prec xdel = x[i] - xtot;
+         vel_prec ydel = y[i] - ytot;
+         vel_prec zdel = z[i] - ztot;
          vx[i] -= vang[1] * zdel + vang[2] * ydel;
          vy[i] -= vang[2] * xdel + vang[0] * zdel;
          vz[i] -= vang[0] * ydel + vang[1] * xdel;

@@ -132,7 +132,6 @@ void integrate_data(rc_op);
  *    [URL](https://doi.org/10.1080/00268977200100031)
  */
 void halftime_correction(bool do_voltrial);
-void mdrest(int istep);
 
 void propagate(int nsteps, time_prec dt_ps);
 
@@ -154,6 +153,10 @@ void kinetic_cu(T_prec&);
 
 
 void temper(time_prec dt, T_prec& temp);
+
+
+void mdrest(int istep);
+void mdrest_acc(int istep);
 
 
 void propagate_xyz(time_prec dt, bool check_nblist);

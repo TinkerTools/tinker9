@@ -130,7 +130,6 @@ void halftime_correction(bool do_voltrial)
    }
 }
 
-extern void mdrest_acc(int istep);
 void mdrest(int istep)
 {
    mdrest_acc(istep);
