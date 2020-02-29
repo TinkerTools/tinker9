@@ -63,10 +63,10 @@ struct buffer_traits<float, N>
 using count_buffer_traits = buffer_traits<int, 1>;
 /// \ingroup ebuf
 /// \see buffer_traits device_pointer
-using energy_buffer_traits = buffer_traits<real, 1>;
+using energy_buffer_traits = buffer_traits<e_prec, 1>;
 /// \ingroup ebuf
 /// \see buffer_traits device_pointer
-using virial_buffer_traits = buffer_traits<real, 6>;
+using virial_buffer_traits = buffer_traits<v_prec, 6>;
 /// \ingroup ebuf
 /// \see buffer_traits device_pointer
 using count_buffer =
@@ -124,10 +124,11 @@ int get_count(const count_buffer b);
 energy_prec get_energy(const energy_buffer b);
 /// \ingroup ebuf
 /// \see get_count
-void get_virial(real (&)[virial_buffer_traits::n], const virial_buffer b);
+void get_virial(virial_prec (&)[virial_buffer_traits::n],
+                const virial_buffer b);
 /// \ingroup ebuf
 /// \see get_count
-void get_virial(real (&)[9], const virial_buffer b);
+void get_virial(virial_prec (&)[9], const virial_buffer b);
 
 
 /// \ingroup ebuf

@@ -55,5 +55,5 @@ void energy(int vers);
  * \param vers  Energy version flag to select data to be copied.
  */
 void copy_energy(int vers, energy_prec* eng, real* grdx, real* grdy, real* grdz,
-                 real* virial);
+                 virial_prec* virial);
 TINKER_NAMESPACE_END

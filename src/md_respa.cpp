@@ -74,8 +74,8 @@ void respa_fast_slow(int istep, time_prec dt_ps)
    time_prec dta_2 = 0.5f * dta;
 
 
-   real vir_fast[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-   real vir_f[9];
+   virial_prec vir_fast[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+   virial_prec vir_f[9];
    energy_prec esum_f;
 
 

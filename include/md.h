@@ -42,11 +42,12 @@ TINKER_EXTERN energy_prec esum, eksum, ekin[3][3];
 // total potential energy buffer on device
 TINKER_EXTERN energy_buffer esum_buf;
 
-/// total gradients
+// total gradients
 TINKER_EXTERN real *gx, *gy, *gz;
 
-// total virial
-TINKER_EXTERN real vir[9];
+// total virial tensor on host
+TINKER_EXTERN virial_prec vir[9];
+// total virial buffer on device
 TINKER_EXTERN virial_buffer vir_buf;
 
 enum class Thermostat

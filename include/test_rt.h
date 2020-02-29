@@ -61,7 +61,7 @@ TINKER_NAMESPACE_END
    }
 #define COMPARE_VIR_(gpuptr, ref_v, eps)                                       \
    {                                                                           \
-      real vir1[9];                                                            \
+      virial_prec vir1[9];                                                     \
       get_virial(vir1, gpuptr);                                                \
       REQUIRE(vir1[0] == Approx(ref_v[0][0]).margin(eps));                     \
       REQUIRE(vir1[1] == Approx(ref_v[0][1]).margin(eps));                     \
@@ -75,7 +75,7 @@ TINKER_NAMESPACE_END
    }
 #define COMPARE_VIR2_(gpuptr, gpuptr2, ref_v, eps)                             \
    {                                                                           \
-      real vir1[9], vir2[9];                                                   \
+      virial_prec vir1[9], vir2[9];                                            \
       get_virial(vir1, gpuptr);                                                \
       get_virial(vir2, gpuptr2);                                               \
       REQUIRE(vir1[0] + vir2[0] == Approx(ref_v[0][0]).margin(eps));           \

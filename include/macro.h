@@ -134,10 +134,10 @@ to mimic its name mangling.
  * | velocity                   | mixed |
  * | position (for integrators) | mixed |
  * | energy (for integrators)   | mixed |
- * | virial (for integrators)   | mixed | 
+ * | virial (for integrators)   | mixed |
  * | position (for energies)    | real  |
  * | energy (individual terms)  | real  |
- * | virial (individual terms)  | real  | 
+ * | virial (individual terms)  | real  |
  * | energy gradient            | real  |
  * \}
  */
@@ -252,6 +252,10 @@ using T_prec = mixed;
 using mass_prec = real;
 using vel_prec = mixed;
 using pos_prec = mixed;
-using energy_prec = mixed;
-using virial_prec = mixed;
+using energy_prec = mixed; // type of total energies
+using virial_prec = mixed; // type of total virial tensor
+
+
+using e_prec = real; // type of individual energies
+using v_prec = real; // type of individual virials
 TINKER_NAMESPACE_END

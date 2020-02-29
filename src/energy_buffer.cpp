@@ -96,7 +96,8 @@ energy_prec get_energy(const energy_buffer e)
 }
 
 
-void get_virial(real (&v1)[virial_buffer_traits::n], const virial_buffer v)
+void get_virial(virial_prec (&v1)[virial_buffer_traits::n],
+                const virial_buffer v)
 {
    virial_buffer_traits::type b[virial_buffer_traits::n];
    parallel::reduce_sum2(b, v, buffer_size(), WAIT_NEW_Q);
@@ -105,9 +106,9 @@ void get_virial(real (&v1)[virial_buffer_traits::n], const virial_buffer v)
 }
 
 
-void get_virial(real (&v_out)[9], const virial_buffer v)
+void get_virial(virial_prec (&v_out)[9], const virial_buffer v)
 {
-   real v1[virial_buffer_traits::n];
+   virial_prec v1[virial_buffer_traits::n];
    get_virial(v1, v);
    // xx yx zx yy zy zz
    //  0  1  2  3  4  5
@@ -125,7 +126,7 @@ void get_virial(real (&v_out)[9], const virial_buffer v)
    // vdw long-range correction
    // check != 0 for non-PBC
    if (v == vir_ev && vlrc_vol != 0) {
-      real term = vlrc_vol / volbox();
+      virial_prec term = vlrc_vol / volbox();
       v_out[0] += term; // xx
       v_out[4] += term; // yy
       v_out[8] += term; // zz

@@ -121,7 +121,7 @@ void sum_energies(int vers)
             vir[iv] = 0;
          for (size_t i = 0; i < virial_buffers.size(); ++i) {
             virial_buffer u = virial_buffers[i];
-            real v[9];
+            virial_prec v[9];
             get_virial(v, u);
             for (int iv = 0; iv < 9; ++iv)
                vir[iv] += v[iv];
