@@ -151,7 +151,7 @@ void energy(int vers)
 }
 
 
-void copy_energy(int vers, real* restrict eng, real* restrict grdx,
+void copy_energy(int vers, energy_prec* restrict eng, real* restrict grdx,
                  real* restrict grdy, real* restrict grdz,
                  real* restrict virial)
 {

@@ -8,20 +8,20 @@
 #include <tinker/detail/units.hh>
 
 TINKER_NAMESPACE_BEGIN
-void kinetic_acc(real& temp)
+void kinetic_acc(T_prec& temp)
 {
-   const real ekcal_inv = 1.0 / units::ekcal;
-   real exx = 0;
-   real eyy = 0;
-   real ezz = 0;
-   real exy = 0;
-   real eyz = 0;
-   real ezx = 0;
+   const energy_prec ekcal_inv = 1.0 / units::ekcal;
+   energy_prec exx = 0;
+   energy_prec eyy = 0;
+   energy_prec ezz = 0;
+   energy_prec exy = 0;
+   energy_prec eyz = 0;
+   energy_prec ezx = 0;
    #pragma acc parallel loop independent async\
                deviceptr(mass,vx,vy,vz)\
                reduction(+:exx,eyy,ezz,exy,eyz,ezx)
    for (int i = 0; i < n; ++i) {
-      real term = 0.5f * mass[i] * ekcal_inv;
+      energy_prec term = 0.5f * mass[i] * ekcal_inv;
       exx += term * vx[i] * vx[i];
       eyy += term * vy[i] * vy[i];
       ezz += term * vz[i] * vz[i];
@@ -206,7 +206,7 @@ void mdrest_acc(int istep)
    }
 }
 
-void propagate_xyz_acc(mixed dt)
+void propagate_xyz_acc(time_prec dt)
 {
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,vx,vy,vz)
@@ -217,29 +217,29 @@ void propagate_xyz_acc(mixed dt)
    }
 }
 
-void propagate_velocity_acc(mixed dt, const real* grx, const real* gry,
+void propagate_velocity_acc(time_prec dt, const real* grx, const real* gry,
                             const real* grz)
 {
-   const real ekcal = units::ekcal;
+   const vel_prec ekcal = units::ekcal;
    #pragma acc parallel loop independent async\
                deviceptr(massinv,vx,vy,vz,grx,gry,grz)
    for (int i = 0; i < n; ++i) {
-      real coef = -ekcal * massinv[i] * dt;
+      vel_prec coef = -ekcal * massinv[i] * dt;
       vx[i] += coef * grx[i];
       vy[i] += coef * gry[i];
       vz[i] += coef * grz[i];
    }
 }
 
-void propagate_velocity2_acc(mixed dt, const real* grx, const real* gry,
-                             const real* grz, mixed dt2, const real* grx2,
+void propagate_velocity2_acc(time_prec dt, const real* grx, const real* gry,
+                             const real* grz, time_prec dt2, const real* grx2,
                              const real* gry2, const real* grz2)
 {
-   const real ekcal = units::ekcal;
+   const vel_prec ekcal = units::ekcal;
    #pragma acc parallel loop independent async\
                deviceptr(massinv,vx,vy,vz,grx,gry,grz,grx2,gry2,grz2)
    for (int i = 0; i < n; ++i) {
-      real coef = -ekcal * massinv[i];
+      vel_prec coef = -ekcal * massinv[i];
       vx[i] += coef * (grx[i] * dt + grx2[i] * dt2);
       vy[i] += coef * (gry[i] * dt + gry2[i] * dt2);
       vz[i] += coef * (grz[i] * dt + grz2[i] * dt2);

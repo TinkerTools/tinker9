@@ -126,10 +126,19 @@ to mimic its name mangling.
  * | MIXED  | float  | double |
  * | SINGLE | float  | float  |
  *
- * | Properties  | Types |
- * |-------------|-------|
- * | Time        | mixed |
- * | Temperature | real  |
+ * | Properties                 | Types |
+ * |----------------------------|-------|
+ * | time                       | mixed |
+ * | temperature, T             | mixed |
+ * | mass                       | real  |
+ * | velocity                   | mixed |
+ * | position (for integrators) | mixed |
+ * | energy (for integrators)   | mixed |
+ * | virial (for integrators)   | mixed | 
+ * | position (for energies)    | real  |
+ * | energy (individual terms)  | real  |
+ * | virial (individual terms)  | real  | 
+ * | energy gradient            | real  |
  * \}
  */
 #ifdef TINKER_DOUBLE_PRECISION
@@ -236,4 +245,13 @@ using mixed = double;
 using real = float;
 using mixed = float;
 #endif
+
+
+using time_prec = mixed;
+using T_prec = mixed;
+using mass_prec = real;
+using vel_prec = mixed;
+using pos_prec = mixed;
+using energy_prec = mixed;
+using virial_prec = mixed;
 TINKER_NAMESPACE_END

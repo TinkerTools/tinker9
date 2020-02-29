@@ -107,7 +107,7 @@ void sum_energies(int vers)
          esum = 0;
          for (size_t i = 0; i < energy_buffers.size(); ++i) {
             energy_buffer u = energy_buffers[i];
-            real e = get_energy(u);
+            energy_prec e = get_energy(u);
             esum += e;
          }
       } else {

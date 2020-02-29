@@ -163,8 +163,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
 
 
    // initial r(0) M r(0)
-   real* sum = &dptr_real64[0];
-   real* sump = &dptr_real64[1];
+   real* sum = &((real*)dptr_buf)[0];
+   real* sump = &((real*)dptr_buf)[1];
    device_array::dot(PROCEED_NEW_Q, n, sum, rsd, zrsd);
    device_array::dot(PROCEED_NEW_Q, n, sump, rsdp, zrsdp);
 
@@ -197,8 +197,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
 
 
       // a <- p T p
-      real* a = &dptr_real64[2];
-      real* ap = &dptr_real64[3];
+      real* a = &((real*)dptr_buf)[2];
+      real* ap = &((real*)dptr_buf)[3];
       // a <- r M r / p T p; a = sum / a; ap = sump / ap
       device_array::dot(PROCEED_NEW_Q, n, a, conj, vec);
       device_array::dot(PROCEED_NEW_Q, n, ap, conjp, vecp);
@@ -218,8 +218,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
 
 
       // b = sum1 / sum; bp = sump1 / sump
-      real* sum1 = &dptr_real64[4];
-      real* sump1 = &dptr_real64[5];
+      real* sum1 = &((real*)dptr_buf)[4];
+      real* sump1 = &((real*)dptr_buf)[5];
       device_array::dot(PROCEED_NEW_Q, n, sum1, rsd, zrsd);
       device_array::dot(PROCEED_NEW_Q, n, sump1, rsdp, zrsdp);
 
@@ -233,15 +233,15 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       device_array::copy(PROCEED_NEW_Q, 2, sum, sum1);
 
 
-      real* epsd = &dptr_real64[6];
-      real* epsp = &dptr_real64[7];
+      real* epsd = &((real*)dptr_buf)[6];
+      real* epsp = &((real*)dptr_buf)[7];
       device_array::dot(PROCEED_NEW_Q, n, epsd, rsd, rsd);
       device_array::dot(PROCEED_NEW_Q, n, epsp, rsdp, rsdp);
-      check_rt(cudaMemcpyAsync(pinned_real64, epsd, 2 * sizeof(real),
+      check_rt(cudaMemcpyAsync((real*)pinned_buf, epsd, 2 * sizeof(real),
                                cudaMemcpyDeviceToHost, nonblk));
       check_rt(cudaStreamSynchronize(nonblk));
       epsold = eps;
-      eps = REAL_MAX(pinned_real64[0], pinned_real64[1]);
+      eps = REAL_MAX(((real*)pinned_buf)[0], ((real*)pinned_buf)[1]);
       eps = debye * REAL_SQRT(eps / n);
 
 

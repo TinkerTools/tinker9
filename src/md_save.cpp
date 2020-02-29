@@ -29,11 +29,10 @@ static bool mdsave_use_uind_()
 }
 static ExecQ dup_stream_;
 static real (*dup_buf_uind_)[3];
-static void *dup_stream_bxyz_, *dup_stream_v_, *dup_stream_g_;
-static real dup_buf_esum_;
+static energy_prec dup_buf_esum_;
 static Box dup_buf_box_;
 static real *dup_buf_x_, *dup_buf_y_, *dup_buf_z_;
-static real *dup_buf_vx_, *dup_buf_vy_, *dup_buf_vz_;
+static vel_prec *dup_buf_vx_, *dup_buf_vy_, *dup_buf_vz_;
 static real *dup_buf_gx_, *dup_buf_gy_, *dup_buf_gz_;
 
 void mdsave_data(rc_op op)
@@ -88,7 +87,7 @@ void mdsave_data(rc_op op)
    }
 }
 
-static void mdsave_dup_then_write_(int istep, mixed dt)
+static void mdsave_dup_then_write_(int istep, time_prec dt)
 {
 
    // duplicate
@@ -101,9 +100,9 @@ static void mdsave_dup_then_write_(int istep, mixed dt)
    dup_stream_.copy_bytes(dup_buf_y_, y, rs * n);
    dup_stream_.copy_bytes(dup_buf_z_, z, rs * n);
 
-   dup_stream_.copy_bytes(dup_buf_vx_, vx, rs * n);
-   dup_stream_.copy_bytes(dup_buf_vy_, vy, rs * n);
-   dup_stream_.copy_bytes(dup_buf_vz_, vz, rs * n);
+   dup_stream_.copy_bytes(dup_buf_vx_, vx, sizeof(vel_prec) * n);
+   dup_stream_.copy_bytes(dup_buf_vy_, vy, sizeof(vel_prec) * n);
+   dup_stream_.copy_bytes(dup_buf_vz_, vz, sizeof(vel_prec) * n);
 
    dup_stream_.copy_bytes(dup_buf_gx_, gx, rs * n);
    dup_stream_.copy_bytes(dup_buf_gy_, gy, rs * n);
@@ -124,7 +123,7 @@ static void mdsave_dup_then_write_(int istep, mixed dt)
 
    std::vector<real> arrx(n), arry(n), arrz(n);
 
-   epot = dup_buf_esum_;
+   energy_prec epot = dup_buf_esum_;
    set_tinker_box_module(dup_buf_box_);
    device_array::copyout(PROCEED_NEW_Q, n, arrx.data(), dup_buf_x_);
    device_array::copyout(PROCEED_NEW_Q, n, arry.data(), dup_buf_y_);
@@ -173,7 +172,7 @@ static void mdsave_dup_then_write_(int istep, mixed dt)
    mtx_write.unlock();
 }
 
-void mdsave_async(int istep, mixed dt)
+void mdsave_async(int istep, time_prec dt)
 {
    std::unique_lock<std::mutex> lck_write(mtx_write);
    cv_write.wait(lck_write, [=]() { return idle_write; });

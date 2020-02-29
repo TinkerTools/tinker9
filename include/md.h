@@ -31,30 +31,21 @@ void goto_frame(int idx0);
 void copyin_arc_file(const std::string& arcfile, int first1, int last1,
                      int step);
 
-/// velocities
-/// @{
-TINKER_EXTERN real *vx, *vy, *vz;
-/// @}
+// velocities
+TINKER_EXTERN vel_prec *vx, *vy, *vz;
 
-/// atomic mass and inversed mass
-/// @}
-TINKER_EXTERN real *mass, *massinv;
-/// @}
+// atomic mass and inversed mass
+TINKER_EXTERN mass_prec *mass, *massinv;
 
-/// total potential energy on device
-TINKER_EXTERN real esum;
+// total potential energy, kinetic energy on host
+TINKER_EXTERN energy_prec esum, eksum, ekin[3][3];
+// total potential energy buffer on device
 TINKER_EXTERN energy_buffer esum_buf;
 
-/// total potential energy and kinetic energy on host
-/// @{
-TINKER_EXTERN real epot, eksum, ekin[3][3];
-
 /// total gradients
-/// @{
 TINKER_EXTERN real *gx, *gy, *gz;
-/// @}
 
-/// total virial
+// total virial
 TINKER_EXTERN real vir[9];
 TINKER_EXTERN virial_buffer vir_buf;
 
@@ -114,7 +105,7 @@ TINKER_NAMESPACE_BEGIN
 // mdsave
 void mdsave_data(rc_op);
 
-void mdsave_async(int istep, mixed dt);
+void mdsave_async(int istep, time_prec dt);
 void mdsave_synchronize();
 TINKER_NAMESPACE_END
 
@@ -124,8 +115,6 @@ void md_data(rc_op op);
 // integrator
 void integrate_data(rc_op);
 
-void kinetic(real& temp);
-void temper(mixed dt, real& temp);
 /**
  * \ingroup md
  * \brief Applies a velocity correction as needed for the Nose-Hoover Chains,
@@ -145,23 +134,11 @@ void temper(mixed dt, real& temp);
 void halftime_correction(bool do_voltrial);
 void mdrest(int istep);
 
-void propagate_xyz(mixed dt, bool check_nblist);
-/**
- * \brief v += -g/m dt
- */
-void propagate_velocity(mixed dt, const real* grx, const real* gry,
-                        const real* grz);
-/**
- * \brief v += -g/m dt -g2/m dt2
- */
-void propagate_velocity2(mixed dt, const real* grx, const real* gry,
-                         const real* grz, mixed dt2, const real* grx2,
-                         const real* gry2, const real* grz2);
-void propagate(int nsteps, mixed dt_ps);
+void propagate(int nsteps, time_prec dt_ps);
 
-void velocity_verlet(int istep, mixed dt_ps);
+void velocity_verlet(int istep, time_prec dt_ps);
 
-void respa_fast_slow(int istep, mixed dt_ps);
+void respa_fast_slow(int istep, time_prec dt_ps);
 const TimeScaleConfig& respa_tsconfig();
 constexpr unsigned RESPA_FAST = 1; // 2**0, fast group shall be 0.
 constexpr unsigned RESPA_SLOW = 2; // 2**1, slow group shall be 1.
@@ -171,19 +148,39 @@ TINKER_NAMESPACE_END
 
 
 TINKER_NAMESPACE_BEGIN
-void kinetic_acc(real&);
-void kinetic_cu(real&);
+void kinetic(T_prec& temp);
+void kinetic_acc(T_prec&);
+void kinetic_cu(T_prec&);
 
-void propagate_xyz_acc(mixed);
 
-void propagate_velocity_acc(mixed, const real*, const real*, const real*);
-void propagate_velocity2_acc(mixed, const real*, const real*, const real*,
-                             mixed, const real*, const real*, const real*);
+void temper(time_prec dt, T_prec& temp);
 
-void bussi_thermostat(mixed dt, real temp);
-void bussi_thermostat_acc(mixed dt, real temp);
 
-void monte_carlo_barostat_update_nb(real epot);
-void monte_carlo_barostat_update_nb_acc(real epot);
+void propagate_xyz(time_prec dt, bool check_nblist);
+void propagate_xyz_acc(time_prec);
+
+
+/**
+ * \brief v += -g/m dt
+ */
+void propagate_velocity(time_prec dt, const real* grx, const real* gry,
+                        const real* grz);
+/**
+ * \brief v += -g/m dt -g2/m dt2
+ */
+void propagate_velocity2(time_prec dt, const real* grx, const real* gry,
+                         const real* grz, time_prec dt2, const real* grx2,
+                         const real* gry2, const real* grz2);
+void propagate_velocity_acc(time_prec, const real*, const real*, const real*);
+void propagate_velocity2_acc(time_prec, const real*, const real*, const real*,
+                             time_prec, const real*, const real*, const real*);
+
+
+void bussi_thermostat(time_prec dt, T_prec temp);
+void bussi_thermostat_acc(time_prec dt, T_prec temp);
+
+
+void monte_carlo_barostat_update_nb(energy_prec epot);
+void monte_carlo_barostat_update_nb_acc(energy_prec epot);
 TINKER_EXTERN real *x_pmonte, *y_pmonte, *z_pmonte;
 TINKER_NAMESPACE_END

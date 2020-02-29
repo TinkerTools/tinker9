@@ -14,8 +14,8 @@ TINKER_NAMESPACE_BEGIN
 cudaStream_t nonblk;
 cublasHandle_t h_cublas;
 cublasHandle_t h_cublas_nonblk;
-real* pinned_real64;
-real* dptr_real64;
+void* pinned_buf;
+void* dptr_buf;
 #endif
 
 
@@ -31,8 +31,8 @@ void cudalib_data(rc_op op)
       nonblk = nullptr;
       check_rt(cublasDestroy(h_cublas));
       check_rt(cublasDestroy(h_cublas_nonblk));
-      check_rt(cudaFreeHost(pinned_real64));
-      check_rt(cudaFree(dptr_real64));
+      check_rt(cudaFreeHost(pinned_buf));
+      check_rt(cudaFree(dptr_buf));
    }
 
 
@@ -49,8 +49,8 @@ void cudalib_data(rc_op op)
 
 
       int nblock = get_grid_size(BLOCK_DIM);
-      check_rt(cudaMallocHost(&pinned_real64, nblock * sizeof(double)));
-      check_rt(cudaMalloc(&dptr_real64, nblock * sizeof(double)));
+      check_rt(cudaMallocHost(&pinned_buf, nblock * sizeof(double)));
+      check_rt(cudaMalloc(&dptr_buf, nblock * sizeof(double)));
 
 
       check_rt(cudaProfilerStart());

@@ -15,7 +15,7 @@ template <class T, class Op>
 void reduce_to_dptr(const T* a, size_t nelem, bool sync)
 {
    cudaStream_t st = (sync ? nullptr : nonblk);
-   T* dptr = (T*)dptr_real64;
+   T* dptr = (T*)dptr_buf;
    int grid_siz1 = get_grid_size(BLOCK_DIM);
    int grid_siz2 = (nelem + BLOCK_DIM - 1) / BLOCK_DIM;
    int grid_size = std::min(grid_siz1, grid_siz2);
@@ -29,8 +29,8 @@ T reduce_general(const T* a, size_t nelem, DMFlag flag)
 {
    bool sync = flag & DMFlag::DEFAULT_Q;
    cudaStream_t st = (sync ? nullptr : nonblk);
-   T* dptr = (T*)dptr_real64;
-   T* hptr = (T*)pinned_real64;
+   T* dptr = (T*)dptr_buf;
+   T* hptr = (T*)pinned_buf;
    reduce_to_dptr<T, Op>(a, nelem, sync);
    check_rt(cudaMemcpyAsync(hptr, dptr, sizeof(T), cudaMemcpyDeviceToHost, st));
    // always wait
@@ -65,8 +65,8 @@ void reduce_sum2_cu(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem,
 
    bool sync = flag & DMFlag::DEFAULT_Q;
    cudaStream_t st = (sync ? nullptr : nonblk);
-   T(*dptr)[HN] = (T(*)[HN])dptr_real64;
-   T* hptr = (T*)pinned_real64;
+   T(*dptr)[HN] = (T(*)[HN])dptr_buf;
+   T* hptr = (T*)pinned_buf;
    int grid_siz1 = get_grid_size(BLOCK_DIM);
    grid_siz1 = grid_siz1 / HN; // limited by the output buffer
    int grid_siz2 = (nelem + BLOCK_DIM - 1) / BLOCK_DIM;

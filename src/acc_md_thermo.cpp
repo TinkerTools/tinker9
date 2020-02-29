@@ -6,10 +6,10 @@
 
 
 TINKER_NAMESPACE_BEGIN
-void bussi_thermostat_acc(mixed dt_mixed, real temp_real)
+void bussi_thermostat_acc(time_prec dt_prec, T_prec temp_prec)
 {
-   double dt = dt_mixed;
-   double temp = temp_real;
+   double dt = dt_prec;
+   double temp = temp_prec;
 
 
    double tautemp = bath::tautemp;
@@ -33,11 +33,12 @@ void bussi_thermostat_acc(mixed dt_mixed, real temp_real)
    eta *= scale;
 
 
+   vel_prec sc = scale;
    #pragma acc parallel loop independent async deviceptr(vx,vy,vz)
    for (int i = 0; i < n; ++i) {
-      vx[i] *= scale;
-      vy[i] *= scale;
-      vz[i] *= scale;
+      vx[i] *= sc;
+      vy[i] *= sc;
+      vz[i] *= sc;
    }
 }
 TINKER_NAMESPACE_END

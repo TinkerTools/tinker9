@@ -59,24 +59,24 @@ const TimeScaleConfig& respa_tsconfig()
  * [update a_fast] [update a_slow]
  * [v += a_fast dt/2] [v += a_slow dT/2] ==> [v += (a_fast dt/2 + a_slow dT/2)]
  */
-void respa_fast_slow(int istep, mixed dt_ps)
+void respa_fast_slow(int istep, time_prec dt_ps)
 {
    bool save = !(istep % inform::iwrite);
    int vers0 = rc_flag & (calc::virial | calc::grad | calc::energy);
    int vers1 = rc_flag & (calc::virial | calc::grad);
 
 
-   mixed arespa = mdstuf::arespa;    // inner time step
-   const mixed eps = 1.0f / 1048576; // 2**-20
+   time_prec arespa = mdstuf::arespa;    // inner time step
+   const time_prec eps = 1.0f / 1048576; // 2**-20
    int nalt = (int)(dt_ps / (arespa + eps)) + 1;
-   mixed dt_2 = 0.5f * dt_ps;
-   mixed dta = dt_ps / nalt;
-   mixed dta_2 = 0.5f * dta;
+   time_prec dt_2 = 0.5f * dt_ps;
+   time_prec dta = dt_ps / nalt;
+   time_prec dta_2 = 0.5f * dta;
 
 
    real vir_fast[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
    real vir_f[9];
-   real esum_f;
+   energy_prec esum_f;
 
 
    // g1: fast gradients; g2: slow gradients; see integrate_data()
@@ -137,7 +137,7 @@ void respa_fast_slow(int istep, mixed dt_ps)
    propagate_velocity2(dta_2, gx1, gy1, gz1, dt_2, gx2, gy2, gz2);
 
 
-   real temp;
+   T_prec temp;
    temper(dt_ps, temp);
 }
 TINKER_NAMESPACE_END

@@ -11,8 +11,8 @@ TINKER_NAMESPACE_BEGIN
 extern cudaStream_t nonblk;
 extern cublasHandle_t h_cublas;
 extern cublasHandle_t h_cublas_nonblk;
-extern real* pinned_real64;
-extern real* dptr_real64;
+extern void* pinned_buf;
+extern void* dptr_buf;
 #endif
 
 

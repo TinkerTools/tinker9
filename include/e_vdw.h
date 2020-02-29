@@ -91,11 +91,11 @@ TINKER_EXTERN virial_buffer vir_ev;
 
 /// \ingroup vdw
 /// \brief Long-range energy correction (lrc), used as `e += lrc/pbc_volume`.
-TINKER_EXTERN real elrc_vol;
+TINKER_EXTERN energy_prec elrc_vol;
 /// \ingroup vdw
 /// \brief
 /// Long-range virial correction (lrc), used as `v(i,i) += lrc/pbc_volume`.
-TINKER_EXTERN real vlrc_vol;
+TINKER_EXTERN virial_prec vlrc_vol;
 
 void evdw_data(rc_op op);
 

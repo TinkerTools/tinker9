@@ -79,10 +79,10 @@ int get_count(const count_buffer ne)
 }
 
 
-real get_energy(const energy_buffer e)
+energy_prec get_energy(const energy_buffer e)
 {
    auto b = parallel::reduce_sum(e, buffer_size(), WAIT_NEW_Q);
-   real real_out = energy_buffer_traits::cast(b);
+   energy_prec real_out = energy_buffer_traits::cast(b);
 
 
    // vdw long-range correction

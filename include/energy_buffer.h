@@ -20,7 +20,7 @@ size_t buffer_size();
 /**
  * \ingroup ebuf
  * \brief
- * A variable (an energy, a virial, etc.) of type `T[N]` or `T` (if `N`
+ * A variable (an energy, a virial tensor, etc.) of type `T[N]` or `T` (if `N`
  * equals 1) can be stored in a buffer to get better performance and higher
  * accuracy.
  *
@@ -121,7 +121,7 @@ void buffer_deallocate(count_buffer, energy_buffer, virial_buffer);
 int get_count(const count_buffer b);
 /// \ingroup ebuf
 /// \see get_count
-real get_energy(const energy_buffer b);
+energy_prec get_energy(const energy_buffer b);
 /// \ingroup ebuf
 /// \see get_count
 void get_virial(real (&)[virial_buffer_traits::n], const virial_buffer b);

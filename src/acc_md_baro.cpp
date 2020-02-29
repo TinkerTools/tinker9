@@ -14,7 +14,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-void monte_carlo_barostat_update_nb_acc(real epot)
+void monte_carlo_barostat_update_nb_acc(energy_prec epot)
 {
    fstr_view volscale = bath::volscale;
    double third = 1.0 / 3.0;
@@ -91,7 +91,7 @@ void monte_carlo_barostat_update_nb_acc(real epot)
    // get the potential energy and PV work changes for trial move
    nblist_data(rc_evolve);
    energy(calc::energy);
-   real enew;
+   energy_prec enew;
    copy_energy(calc::energy, &enew, nullptr, nullptr, nullptr, nullptr);
    TINKER_LOG("MC Barostat Enew = {:.6f} Eold = {:.6f}", enew, eold);
    double dpot = enew - eold;

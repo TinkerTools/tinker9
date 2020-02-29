@@ -31,7 +31,7 @@ TEST_CASE("Kinetic-ArBox", "[ff][kinetic][arbox]")
    rc_flag = usage_;
    initialize();
 
-   real temp;
+   T_prec temp;
    kinetic(temp);
 
    const double ref_eksum = 100446.40376;

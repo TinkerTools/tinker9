@@ -19,7 +19,7 @@ void md_data(rc_op op)
    rc_man save42_{mdsave_data, op};
 }
 
-static void (*intg)(int, mixed);
+static void (*intg)(int, time_prec);
 
 void integrate_data(rc_op op)
 {
@@ -96,7 +96,7 @@ void integrate_data(rc_op op)
    }
 }
 
-void kinetic(real& temp)
+void kinetic(T_prec& temp)
 {
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
@@ -106,7 +106,7 @@ void kinetic(real& temp)
       kinetic_acc(temp);
 }
 
-void temper(mixed dt, real& temp)
+void temper(time_prec dt, T_prec& temp)
 {
    kinetic(temp);
    if (thermostat == NONE_THERMOSTAT)
@@ -124,7 +124,7 @@ void halftime_correction(bool do_voltrial)
        barostat == MONTE_CARLO_BAROSTAT) {
    } else if (thermostat == NOSE_HOOVER_CHAIN_THERMOSTAT) {
    } else if (barostat == MONTE_CARLO_BAROSTAT && do_voltrial) {
-      real epot;
+      energy_prec epot;
       copy_energy(calc::energy, &epot, nullptr, nullptr, nullptr, nullptr);
       monte_carlo_barostat_update_nb(epot);
    }
@@ -136,34 +136,34 @@ void mdrest(int istep)
    mdrest_acc(istep);
 }
 
-void propagate_xyz(mixed dt, bool check_nblist)
+void propagate_xyz(time_prec dt, bool check_nblist)
 {
    propagate_xyz_acc(dt);
    if (check_nblist)
       nblist_data(rc_evolve);
 }
 
-void propagate_velocity(mixed dt, const real* grx, const real* gry,
+void propagate_velocity(time_prec dt, const real* grx, const real* gry,
                         const real* grz)
 {
    propagate_velocity_acc(dt, grx, gry, grz);
 }
 
-void propagate_velocity2(mixed dt, const real* grx, const real* gry,
-                         const real* grz, mixed dt2, const real* grx2,
+void propagate_velocity2(time_prec dt, const real* grx, const real* gry,
+                         const real* grz, time_prec dt2, const real* grx2,
                          const real* gry2, const real* grz2)
 {
    propagate_velocity2_acc(dt, grx, gry, grz, dt2, grx2, gry2, grz2);
 }
 
-void propagate(int nsteps, mixed dt_ps)
+void propagate(int nsteps, time_prec dt_ps)
 {
    for (int istep = 1; istep <= nsteps; ++istep) {
       intg(istep, dt_ps);
 
       // mdstat
       if (istep % inform::iwrite == 0) {
-         real temp;
+         T_prec temp;
          kinetic(temp);
          mdsave_async(istep, dt_ps);
       }
@@ -172,12 +172,12 @@ void propagate(int nsteps, mixed dt_ps)
    mdsave_synchronize();
 }
 
-void bussi_thermostat(mixed dt, real temp)
+void bussi_thermostat(time_prec dt, T_prec temp)
 {
    bussi_thermostat_acc(dt, temp);
 }
 
-void monte_carlo_barostat_update_nb(real epot)
+void monte_carlo_barostat_update_nb(energy_prec epot)
 {
    monte_carlo_barostat_update_nb_acc(epot);
 }
