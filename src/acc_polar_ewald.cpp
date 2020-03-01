@@ -413,9 +413,9 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
          real h1 = recipa.x * f1 + recipb.x * f2 + recipc.x * f3;
          real h2 = recipa.y * f1 + recipb.y * f2 + recipc.y * f3;
          real h3 = recipa.z * f1 + recipb.z * f2 + recipc.z * f3;
-         gx[i] += h1 * f;
-         gy[i] += h2 * f;
-         gz[i] += h3 * f;
+         atomic_add(h1 * f, gx, i);
+         atomic_add(h2 * f, gy, i);
+         atomic_add(h3 * f, gz, i);
       }
    } // end for (int i)
 

@@ -1,5 +1,6 @@
 #include "box.h"
 #include "e_polar.h"
+#include "energy.h"
 #include "execq.h"
 #include "io_fort_str.h"
 #include "md.h"
@@ -33,7 +34,7 @@ static energy_prec dup_buf_esum_;
 static Box dup_buf_box_;
 static pos_prec *dup_buf_x_, *dup_buf_y_, *dup_buf_z_;
 static vel_prec *dup_buf_vx_, *dup_buf_vy_, *dup_buf_vz_;
-static real *dup_buf_gx_, *dup_buf_gy_, *dup_buf_gz_;
+static grad_prec *dup_buf_gx_, *dup_buf_gy_, *dup_buf_gz_;
 
 void mdsave_data(rc_op op)
 {
@@ -84,9 +85,9 @@ static void mdsave_dup_then_write_(int istep, time_prec dt)
    dup_stream_.copy_bytes(dup_buf_vy_, vy, sizeof(vel_prec) * n);
    dup_stream_.copy_bytes(dup_buf_vz_, vz, sizeof(vel_prec) * n);
 
-   dup_stream_.copy_bytes(dup_buf_gx_, gx, sizeof(real) * n);
-   dup_stream_.copy_bytes(dup_buf_gy_, gy, sizeof(real) * n);
-   dup_stream_.copy_bytes(dup_buf_gz_, gz, sizeof(real) * n);
+   dup_stream_.copy_bytes(dup_buf_gx_, gx, sizeof(grad_prec) * n);
+   dup_stream_.copy_bytes(dup_buf_gy_, gy, sizeof(grad_prec) * n);
+   dup_stream_.copy_bytes(dup_buf_gz_, gz, sizeof(grad_prec) * n);
 
    if (mdsave_use_uind_()) {
       dup_stream_.copy_bytes(&dup_buf_uind_[0][0], &uind[0][0],
@@ -135,10 +136,9 @@ static void mdsave_dup_then_write_(int istep, time_prec dt)
    }
 
    {
-      std::vector<real> arrx(n), arry(n), arrz(n);
-      device_array::copyout(PROCEED_NEW_Q, n, arrx.data(), dup_buf_gx_);
-      device_array::copyout(PROCEED_NEW_Q, n, arry.data(), dup_buf_gy_);
-      device_array::copyout(WAIT_NEW_Q, n, arrz.data(), dup_buf_gz_);
+      std::vector<double> arrx(n), arry(n), arrz(n);
+      copy_energy(calc::grad, nullptr, arrx.data(), arry.data(), arrz.data(),
+                  nullptr, dup_buf_gx_, dup_buf_gy_, dup_buf_gz_);
       // convert gradient to acceleration
       const double ekcal = units::ekcal;
       for (int i = 0; i < n; ++i) {

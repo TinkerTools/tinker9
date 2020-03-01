@@ -11,7 +11,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-void evdw_reduce_xyz()
+void evdw_reduce_xyz_acc()
 {
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,ired,kred,xred,yred,zred)
@@ -24,15 +24,15 @@ void evdw_reduce_xyz()
    }
 }
 
-void evdw_resolve_gradient()
+void evdw_resolve_gradient_acc()
 {
    #pragma acc parallel loop independent async\
                deviceptr(ired,kred,gxred,gyred,gzred,gx,gy,gz)
    for (int ii = 0; ii < n; ++ii) {
       int iv = ired[ii];
-      real fx = gxred[ii];
-      real fy = gyred[ii];
-      real fz = gzred[ii];
+      real fx = to_flt_acc<real>(gxred[ii]);
+      real fy = to_flt_acc<real>(gyred[ii]);
+      real fz = to_flt_acc<real>(gzred[ii]);
       if (ii == iv) {
          atomic_add(fx, gx, ii);
          atomic_add(fy, gy, ii);

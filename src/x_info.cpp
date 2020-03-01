@@ -25,6 +25,8 @@ void x_info(int argc, char** argv)
    print(out, fmt, "Synchronized with Tinker commit:", get_SHA1());
    print(out, fmt, "Size of real (bytes):", sizeof(real));
    print(out, fmt, "Size of mixed (bytes):", sizeof(mixed));
+   print(out, fmt,
+         "Using deterministic force:", (bool)TINKER_DETERMINISTIC_FORCE);
 #if TINKER_DEBUG
    const char* dbg = "ON";
 #else

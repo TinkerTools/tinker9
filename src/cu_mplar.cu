@@ -910,10 +910,10 @@ void pair_mplar_v2(                                                       //
 
 #define EMPLAR_ARGS                                                            \
    size_t bufsize, energy_buffer restrict ebuf,                                \
-      virial_buffer restrict vir_ebuf, real *restrict gx, real *restrict gy,   \
-      real *restrict gz, real *restrict trqx, real *restrict trqy,             \
-      real *restrict trqz, TINKER_IMAGE_PARAMS, real off, real f,              \
-      const real(*restrict rpole)[10], const real *restrict pdamp,             \
+      virial_buffer restrict vir_ebuf, grad_prec *restrict gx,                 \
+      grad_prec *restrict gy, grad_prec *restrict gz, real *restrict trqx,     \
+      real *restrict trqy, real *restrict trqz, TINKER_IMAGE_PARAMS, real off, \
+      real f, const real(*restrict rpole)[10], const real *restrict pdamp,     \
       const real *restrict thole, const real(*restrict uind)[3],               \
       const real(*restrict uinp)[3], real(*restrict ufld)[3],                  \
       real(*restrict dufld)[6]

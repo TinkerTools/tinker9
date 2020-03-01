@@ -62,8 +62,11 @@ const TimeScaleConfig& respa_tsconfig()
 void respa_fast_slow(int istep, time_prec dt_ps)
 {
    bool save = !(istep % inform::iwrite);
-   int vers0 = rc_flag & (calc::virial | calc::grad | calc::energy);
-   int vers1 = rc_flag & (calc::virial | calc::grad);
+   int vers0 = rc_flag & calc::vmask;
+   int vers1 = vers0;
+   // toggle off the calc::energy bit if !save
+   if (!save)
+      vers1 &= ~calc::energy;
 
 
    time_prec arespa = mdstuf::arespa;    // inner time step
@@ -90,6 +93,8 @@ void respa_fast_slow(int istep, time_prec dt_ps)
    for (int ifast = 1; ifast < nalt; ++ifast) {
       // s += v dt
       propagate_xyz(dta, false);
+
+
       // update a_fast
       energy(vers1, RESPA_FAST, respa_tsconfig());
       copy_energy(vers1, nullptr, nullptr, nullptr, nullptr, vir_f);
@@ -97,6 +102,8 @@ void respa_fast_slow(int istep, time_prec dt_ps)
          for (int i = 0; i < 9; ++i)
             vir_fast[i] += vir_f[i];
       }
+
+
       // v += a_fast dt
       propagate_velocity(dta, gx, gy, gz);
    }
@@ -104,32 +111,37 @@ void respa_fast_slow(int istep, time_prec dt_ps)
 
    // s += v dt
    propagate_xyz(dta, true);
+
+
    // update a_fast
-   if (save) {
-      energy(vers0, RESPA_FAST, respa_tsconfig());
-      copy_energy(vers0, &esum_f, gx1, gy1, gz1, vir_f);
-   } else {
-      energy(vers1, RESPA_FAST, respa_tsconfig());
-      copy_energy(vers1, nullptr, gx1, gy1, gz1, vir_f);
-   }
-   if (rc_flag & calc::virial) {
+   energy(vers1, RESPA_FAST, respa_tsconfig());
+   copy_energy(vers1, &esum_f, nullptr, nullptr, nullptr, vir_f);
+   device_array::copy(PROCEED_NEW_Q, n, gx1, gx);
+   device_array::copy(PROCEED_NEW_Q, n, gy1, gy);
+   device_array::copy(PROCEED_NEW_Q, n, gz1, gz);
+   if (vers1 & calc::virial) {
       for (int i = 0; i < 9; ++i)
          vir_fast[i] += vir_f[i];
    }
+
+
    // update a_slow
-   if (save) {
-      energy(vers0, RESPA_SLOW, respa_tsconfig());
-      copy_energy(vers0, nullptr, gx2, gy2, gz2, nullptr);
-      if (rc_flag & calc::energy)
-         esum += esum_f;
-   } else {
-      energy(vers1, RESPA_SLOW, respa_tsconfig());
-      copy_energy(vers1, nullptr, gx2, gy2, gz2, nullptr);
-   }
-   if (rc_flag & calc::virial) {
+   energy(vers1, RESPA_SLOW, respa_tsconfig());
+   device_array::copy(PROCEED_NEW_Q, n, gx2, gx);
+   device_array::copy(PROCEED_NEW_Q, n, gy2, gy);
+   device_array::copy(PROCEED_NEW_Q, n, gz2, gz);
+   // esum: e slow
+   // vir: v slow
+   // esum_f: e fast
+   // vir_fast: nalt total v fast
+   if (vers1 & calc::energy)
+      esum += esum_f;
+   if (vers1 & calc::virial) {
       for (int i = 0; i < 9; ++i)
          vir[i] += vir_fast[i] / nalt;
    }
+
+
    // v += a_fast dt/2
    // propagate_velocity(dta_2, gx1, gy1, gz1);
    // v += a_slow dT/2

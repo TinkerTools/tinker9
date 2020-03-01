@@ -151,9 +151,11 @@ void energy(int vers)
 }
 
 
-void copy_energy(int vers, energy_prec* restrict eng, real* restrict grdx,
-                 real* restrict grdy, real* restrict grdz,
-                 virial_prec* restrict virial)
+void copy_energy(int vers, energy_prec* restrict eng, double* restrict grdx,
+                 double* restrict grdy, double* restrict grdz,
+                 virial_prec* restrict virial, const grad_prec* restrict gx_src,
+                 const grad_prec* restrict gy_src,
+                 const grad_prec* restrict gz_src)
 {
    if (eng && vers & calc::energy && eng != &esum) {
       eng[0] = esum;
@@ -161,12 +163,35 @@ void copy_energy(int vers, energy_prec* restrict eng, real* restrict grdx,
 
 
    if (vers & calc::grad) {
-      if (grdx && grdx != gx)
-         device_array::copy(PROCEED_NEW_Q, n, grdx, gx);
-      if (grdy && grdy != gy)
-         device_array::copy(PROCEED_NEW_Q, n, grdy, gy);
-      if (grdz && grdz != gz)
-         device_array::copy(PROCEED_NEW_Q, n, grdz, gz);
+      if (grdx && grdy && grdz) {
+#if TINKER_DETERMINISTIC_FORCE
+         std::vector<grad_prec> hgx(n), hgy(n), hgz(n);
+         device_array::copyout(PROCEED_NEW_Q, n, hgx.data(), gx_src);
+         device_array::copyout(PROCEED_NEW_Q, n, hgy.data(), gy_src);
+         device_array::copyout(WAIT_NEW_Q, n, hgz.data(), gz_src);
+         for (int i = 0; i < n; ++i) {
+            grdx[i] = to_flt_host<double>(hgx[i]);
+            grdy[i] = to_flt_host<double>(hgy[i]);
+            grdz[i] = to_flt_host<double>(hgz[i]);
+         }
+#else
+         if (sizeof(grad_prec) < sizeof(double)) {
+            std::vector<grad_prec> hgx(n), hgy(n), hgz(n);
+            device_array::copyout(PROCEED_NEW_Q, n, hgx.data(), gx_src);
+            device_array::copyout(PROCEED_NEW_Q, n, hgy.data(), gy_src);
+            device_array::copyout(WAIT_NEW_Q, n, hgz.data(), gz_src);
+            for (int i = 0; i < n; ++i) {
+               grdx[i] = hgx[i];
+               grdy[i] = hgy[i];
+               grdz[i] = hgz[i];
+            }
+         } else {
+            device_array::copyout(PROCEED_NEW_Q, n, grdx, (double*)gx_src);
+            device_array::copyout(PROCEED_NEW_Q, n, grdy, (double*)gy_src);
+            device_array::copyout(WAIT_NEW_Q, n, grdz, (double*)gz_src);
+         }
+#endif
+      }
    }
 
 
@@ -174,5 +199,13 @@ void copy_energy(int vers, energy_prec* restrict eng, real* restrict grdx,
       for (int i = 0; i < 9; ++i)
          virial[i] = vir[i];
    }
+}
+
+
+void copy_energy(int vers, energy_prec* restrict eng, double* restrict grdx,
+                 double* restrict grdy, double* restrict grdz,
+                 virial_prec* restrict virial)
+{
+   copy_energy(vers, eng, grdx, grdy, grdz, virial, gx, gy, gz);
 }
 TINKER_NAMESPACE_END

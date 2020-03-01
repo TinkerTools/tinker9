@@ -258,4 +258,20 @@ using virial_prec = mixed; // type of total virial tensor
 
 using e_prec = real; // type of individual energies
 using v_prec = real; // type of individual virials
+
+
+// #define TINKER_DETERMINISTIC_FORCE 0
+#define TINKER_DETERMINISTIC_FORCE 1
+
+
+#ifndef TINKER_DETERMINISTIC_FORCE
+#   define TINKER_DETERMINISTIC_FORCE 1
+#endif
+
+
+#if TINKER_DETERMINISTIC_FORCE
+using grad_prec = unsigned long long;
+#else
+using grad_prec = real;
+#endif
 TINKER_NAMESPACE_END

@@ -13,11 +13,12 @@
 TINKER_NAMESPACE_BEGIN
 #define POLAR_ARGS                                                             \
    size_t bufsize, count_buffer restrict nep, energy_buffer restrict ep,       \
-      virial_buffer restrict vir_ep, real *restrict gx, real *restrict gy,     \
-      real *restrict gz, real(*restrict ufld)[3], real(*restrict dufld)[6],    \
-      TINKER_IMAGE_PARAMS, real off2, real f, const real(*restrict rpole)[10], \
-      const real *restrict pdamp, const real *restrict thole,                  \
-      const real(*restrict uind)[3], const real(*restrict uinp)[3]
+      virial_buffer restrict vir_ep, grad_prec *restrict gx,                   \
+      grad_prec *restrict gy, grad_prec *restrict gz, real(*restrict ufld)[3], \
+      real(*restrict dufld)[6], TINKER_IMAGE_PARAMS, real off2, real f,        \
+      const real(*restrict rpole)[10], const real *restrict pdamp,             \
+      const real *restrict thole, const real(*restrict uind)[3],               \
+      const real(*restrict uinp)[3]
 
 
 template <class Ver, class ETYP>

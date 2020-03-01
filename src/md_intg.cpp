@@ -88,10 +88,15 @@ void integrate_data(rc_op op)
          device_array::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
          // save fast gradients to gx1 etc.
          energy(rc_flag, RESPA_FAST, respa_tsconfig());
-         copy_energy(rc_flag, nullptr, gx1, gy1, gz1, nullptr);
+         device_array::copy(PROCEED_NEW_Q, n, gx1, gx);
+         device_array::copy(PROCEED_NEW_Q, n, gy1, gy);
+         device_array::copy(PROCEED_NEW_Q, n, gz1, gz);
+
          // save slow gradients to gx2 etc.
          energy(rc_flag, RESPA_SLOW, respa_tsconfig());
-         copy_energy(rc_flag, nullptr, gx2, gy2, gz2, nullptr);
+         device_array::copy(PROCEED_NEW_Q, n, gx2, gx);
+         device_array::copy(PROCEED_NEW_Q, n, gy2, gy);
+         device_array::copy(PROCEED_NEW_Q, n, gz2, gz);
       } else {
          // beeman
          assert(false);
@@ -152,9 +157,26 @@ void propagate_velocity(time_prec dt, const real* grx, const real* gry,
    propagate_velocity_acc(dt, grx, gry, grz);
 }
 
+void propagate_velocity(time_prec dt, const unsigned long long* grx,
+                        const unsigned long long* gry,
+                        const unsigned long long* grz)
+{
+   propagate_velocity_acc(dt, grx, gry, grz);
+}
+
 void propagate_velocity2(time_prec dt, const real* grx, const real* gry,
                          const real* grz, time_prec dt2, const real* grx2,
                          const real* gry2, const real* grz2)
+{
+   propagate_velocity2_acc(dt, grx, gry, grz, dt2, grx2, gry2, grz2);
+}
+
+void propagate_velocity2(time_prec dt, const unsigned long long* grx,
+                         const unsigned long long* gry,
+                         const unsigned long long* grz, time_prec dt2,
+                         const unsigned long long* grx2,
+                         const unsigned long long* gry2,
+                         const unsigned long long* grz2)
 {
    propagate_velocity2_acc(dt, grx, gry, grz, dt2, grx2, gry2, grz2);
 }

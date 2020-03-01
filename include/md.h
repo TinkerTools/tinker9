@@ -41,7 +41,7 @@ TINKER_EXTERN energy_prec esum, eksum, ekin[3][3];
 TINKER_EXTERN energy_buffer esum_buf;
 
 // total gradients
-TINKER_EXTERN real *gx, *gy, *gz;
+TINKER_EXTERN grad_prec *gx, *gy, *gz;
 
 // total virial tensor on host
 TINKER_EXTERN virial_prec vir[9];
@@ -94,6 +94,8 @@ void zero_egv();
 /// @}
 
 void zero_gradient(DMFlag flag, size_t nelem, real* gx, real* gy, real* gz);
+void zero_gradient(DMFlag flag, size_t nelem, unsigned long long* gx,
+                   unsigned long long* gy, unsigned long long* gz);
 
 /// @brief
 /// sum up potential energies and virials on device
@@ -140,8 +142,8 @@ void respa_fast_slow(int istep, time_prec dt_ps);
 const TimeScaleConfig& respa_tsconfig();
 constexpr unsigned RESPA_FAST = 1; // 2**0, fast group shall be 0.
 constexpr unsigned RESPA_SLOW = 2; // 2**1, slow group shall be 1.
-TINKER_EXTERN real *gx1, *gy1, *gz1;
-TINKER_EXTERN real *gx2, *gy2, *gz2;
+TINKER_EXTERN grad_prec *gx1, *gy1, *gz1;
+TINKER_EXTERN grad_prec *gx2, *gy2, *gz2;
 TINKER_NAMESPACE_END
 
 
@@ -167,15 +169,33 @@ void propagate_pos_acc(time_prec);
  */
 void propagate_velocity(time_prec dt, const real* grx, const real* gry,
                         const real* grz);
+void propagate_velocity(time_prec dt, const unsigned long long* grx,
+                        const unsigned long long* gry,
+                        const unsigned long long* grz);
 /**
  * \brief v += -g/m dt -g2/m dt2
  */
 void propagate_velocity2(time_prec dt, const real* grx, const real* gry,
                          const real* grz, time_prec dt2, const real* grx2,
                          const real* gry2, const real* grz2);
+void propagate_velocity2(time_prec dt, const unsigned long long* grx,
+                         const unsigned long long* gry,
+                         const unsigned long long* grz, time_prec dt2,
+                         const unsigned long long* grx2,
+                         const unsigned long long* gry2,
+                         const unsigned long long* grz2);
 void propagate_velocity_acc(time_prec, const real*, const real*, const real*);
+void propagate_velocity_acc(time_prec, const unsigned long long*,
+                            const unsigned long long*,
+                            const unsigned long long*);
 void propagate_velocity2_acc(time_prec, const real*, const real*, const real*,
                              time_prec, const real*, const real*, const real*);
+void propagate_velocity2_acc(time_prec, const unsigned long long*,
+                             const unsigned long long*,
+                             const unsigned long long*, time_prec,
+                             const unsigned long long*,
+                             const unsigned long long*,
+                             const unsigned long long*);
 
 
 void bussi_thermostat(time_prec dt, T_prec temp);

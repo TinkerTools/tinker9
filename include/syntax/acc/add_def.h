@@ -73,4 +73,12 @@ void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz,
    atomic_add(vzy, buffer[offset], 4);
    atomic_add(vzz, buffer[offset], 5);
 }
+
+
+#pragma acc routine seq
+template <class T>
+T to_flt_acc(unsigned long long val)
+{
+   return static_cast<T>(static_cast<long long>(val)) / 0x100000000ull;
+}
 TINKER_NAMESPACE_END

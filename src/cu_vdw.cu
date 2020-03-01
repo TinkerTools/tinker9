@@ -41,11 +41,11 @@
 TINKER_NAMESPACE_BEGIN
 #define HAL_ARGS                                                               \
    size_t bufsize, count_buffer restrict nev, energy_buffer restrict ev,       \
-      virial_buffer restrict vir_ev, real *restrict gxred,                     \
-      real *restrict gyred, real *restrict gzred, TINKER_IMAGE_PARAMS,         \
-      int njvdw, const int *restrict jvdw, const real *restrict radmin,        \
-      const real *restrict epsilon, const real *vlam, evdw_t vcouple,          \
-      real cut, real off
+      virial_buffer restrict vir_ev, grad_prec *restrict gxred,                \
+      grad_prec *restrict gyred, grad_prec *restrict gzred,                    \
+      TINKER_IMAGE_PARAMS, int njvdw, const int *restrict jvdw,                \
+      const real *restrict radmin, const real *restrict epsilon,               \
+      const real *vlam, evdw_t vcouple, real cut, real off
 #if 1
 #   define GHAL (real)0.12
 #   define DHAL (real)0.07

@@ -54,7 +54,7 @@ TINKER_EXTERN device_pointer<real> kred;
 /// reduced site.
 /// \{
 TINKER_EXTERN device_pointer<real> xred, yred, zred;
-TINKER_EXTERN device_pointer<real> gxred, gyred, gzred;
+TINKER_EXTERN device_pointer<grad_prec> gxred, gyred, gzred;
 /// \}
 
 /**
@@ -100,7 +100,10 @@ TINKER_EXTERN virial_prec vlrc_vol;
 void evdw_data(rc_op op);
 
 void evdw_reduce_xyz();
+void evdw_reduce_xyz_acc();
+
 void evdw_resolve_gradient();
+void evdw_resolve_gradient_acc();
 
 void evdw_lj(int vers);
 void evdw_buck(int vers);

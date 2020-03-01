@@ -90,16 +90,16 @@ TINKER_NAMESPACE_END
    }
 #define COMPARE_GRADIENT3_(gx, gy, gz, ref_grad, eps, check_ij)                \
    {                                                                           \
-      std::vector<std::array<double, 3>> grad(n);                              \
-      double* dst = &grad[0][0];                                               \
-      device_array::copyout2(PROCEED_NEW_Q, 0, 3, n, dst, gx);                 \
-      device_array::copyout2(PROCEED_NEW_Q, 1, 3, n, dst, gy);                 \
-      device_array::copyout2(WAIT_NEW_Q, 2, 3, n, dst, gz);                    \
+      std::vector<double> gradx(n), grady(n), gradz(n);                        \
+      copy_energy(calc::grad, nullptr, gradx.data(), grady.data(),             \
+                  gradz.data(), nullptr);                                      \
       for (int i = 0; i < n; ++i) {                                            \
-         for (int j = 0; j < 3; ++j) {                                         \
-            if (check_ij(i, j))                                                \
-               REQUIRE(grad[i][j] == Approx(ref_grad[i][j]).margin(eps));      \
-         }                                                                     \
+         if (check_ij(i, 0))                                                   \
+            REQUIRE(gradx[i] == Approx(ref_grad[i][0]).margin(eps));           \
+         if (check_ij(i, 1))                                                   \
+            REQUIRE(grady[i] == Approx(ref_grad[i][1]).margin(eps));           \
+         if (check_ij(i, 2))                                                   \
+            REQUIRE(gradz[i] == Approx(ref_grad[i][2]).margin(eps));           \
       }                                                                        \
    }
 #define COMPARE_GRADIENT2_(ref_grad, eps, check_ij)                            \

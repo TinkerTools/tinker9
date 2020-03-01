@@ -17,6 +17,13 @@ TINKER_NAMESPACE_BEGIN
 size_t buffer_size();
 
 
+template <class T>
+inline T to_flt_host(unsigned long long val)
+{
+   return static_cast<T>(static_cast<long long>(val)) / 0x100000000ull;
+}
+
+
 /**
  * \ingroup ebuf
  * \brief
@@ -53,7 +60,7 @@ struct buffer_traits<float, N>
    typedef unsigned long long type;
    static float cast(type val)
    {
-      return static_cast<float>(static_cast<long long>(val)) / 0x100000000ull;
+      return to_flt_host<float>(val);
    }
 };
 

@@ -13,10 +13,10 @@
 TINKER_NAMESPACE_BEGIN
 #define EMPOLE_ARGS                                                            \
    size_t bufsize, count_buffer restrict nem, energy_buffer restrict em,       \
-      virial_buffer restrict vir_em, real *restrict gx, real *restrict gy,     \
-      real *restrict gz, real *restrict trqx, real *restrict trqy,             \
-      real *restrict trqz, TINKER_IMAGE_PARAMS, real off2, real f,             \
-      const real(*restrict rpole)[10]
+      virial_buffer restrict vir_em, grad_prec *restrict gx,                   \
+      grad_prec *restrict gy, grad_prec *restrict gz, real *restrict trqx,     \
+      real *restrict trqy, real *restrict trqz, TINKER_IMAGE_PARAMS,           \
+      real off2, real f, const real(*restrict rpole)[10]
 
 
 template <class Ver, class ETYP>

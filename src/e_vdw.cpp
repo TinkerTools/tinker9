@@ -233,6 +233,16 @@ void evdw_data(rc_op op)
    }
 }
 
+void evdw_reduce_xyz()
+{
+   evdw_reduce_xyz_acc();
+}
+
+void evdw_resolve_gradient()
+{
+   evdw_resolve_gradient_acc();
+}
+
 void evdw_lj(int vers)
 {
    extern void evdw_lj_acc(int vers);
