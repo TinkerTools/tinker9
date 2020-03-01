@@ -13,6 +13,8 @@ void velocity_verlet(int istep, time_prec dt_ps)
    bool save = !(istep % inform::iwrite);
    bool mcbaro = false;
    if (barostat == MONTE_CARLO_BAROSTAT) {
+      // toggle off the calc::virial bit if Monte Carlo Barostat is in use
+      vers1 &= ~calc::virial;
       double rdm = random<double>();
       if (rdm < 1.0 / bath::voltrial)
          mcbaro = true;

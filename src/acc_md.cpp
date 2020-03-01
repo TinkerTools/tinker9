@@ -18,8 +18,7 @@ void kinetic_acc(T_prec& temp)
    energy_prec eyz = 0;
    energy_prec ezx = 0;
    #pragma acc parallel loop independent async\
-               deviceptr(mass,vx,vy,vz)\
-               reduction(+:exx,eyy,ezz,exy,eyz,ezx)
+               deviceptr(mass,vx,vy,vz)
    for (int i = 0; i < n; ++i) {
       energy_prec term = 0.5f * mass[i] * ekcal_inv;
       exx += term * vx[i] * vx[i];
@@ -53,7 +52,7 @@ void mdrest_acc(int istep)
 
    // zero out the total mass and overall linear velocity
 
-   real totmass = 0;
+   mass_prec totmass = 0;
    vel_prec vtot1 = 0, vtot2 = 0, vtot3 = 0;
 
    // compute linear velocity of the system center of mass
@@ -78,8 +77,8 @@ void mdrest_acc(int istep)
    etrans *= 0.5f * totmass / ekcal;
 
    energy_prec erot = 0;
-   vel_prec xtot = 0, ytot = 0, ztot = 0; // angular momentum
-   vel_prec vang[3] = {0, 0, 0};
+   pos_prec xtot = 0, ytot = 0, ztot = 0;
+   vel_prec vang[3] = {0, 0, 0}; // angular momentum
    if (!bound::use_bounds) {
 
       // find the center of mass coordinates of the overall system
@@ -88,15 +87,15 @@ void mdrest_acc(int istep)
       vel_prec mang1 = 0, mang2 = 0, mang3 = 0;
 
       #pragma acc parallel loop independent async\
-                  deviceptr(mass,x,y,z,vx,vy,vz)
+                  deviceptr(mass,xpos,ypos,zpos,vx,vy,vz)
       for (int i = 0; i < n; ++i) {
          mass_prec weigh = mass[i];
-         xtot += x[i] * weigh;
-         ytot += y[i] * weigh;
-         ztot += z[i] * weigh;
-         mang1 += (y[i] * vz[i] - z[i] * vy[i]) * weigh;
-         mang2 += (z[i] * vx[i] - x[i] * vz[i]) * weigh;
-         mang3 += (x[i] * vy[i] - y[i] * vx[i]) * weigh;
+         xtot += xpos[i] * weigh;
+         ytot += ypos[i] * weigh;
+         ztot += zpos[i] * weigh;
+         mang1 += (ypos[i] * vz[i] - zpos[i] * vy[i]) * weigh;
+         mang2 += (zpos[i] * vx[i] - xpos[i] * vz[i]) * weigh;
+         mang3 += (xpos[i] * vy[i] - ypos[i] * vx[i]) * weigh;
       }
       xtot /= totmass;
       ytot /= totmass;
@@ -107,21 +106,15 @@ void mdrest_acc(int istep)
 
       // calculate the moment of inertia tensor
 
-      real xx = 0;
-      real xy = 0;
-      real xz = 0;
-      real yy = 0;
-      real yz = 0;
-      real zz = 0;
+      pos_prec xx = 0, xy = 0, xz = 0, yy = 0, yz = 0, zz = 0;
 
       #pragma acc parallel loop independent async\
-                  deviceptr(mass,x,y,z)\
-                  reduction(+:xx,xy,xz,yy,yz,zz)
+                  deviceptr(mass,xpos,ypos,zpos)
       for (int i = 0; i < n; ++i) {
          mass_prec weigh = mass[i];
-         real xdel = x[i] - xtot;
-         real ydel = y[i] - ytot;
-         real zdel = z[i] - ztot;
+         pos_prec xdel = xpos[i] - xtot;
+         pos_prec ydel = ypos[i] - ytot;
+         pos_prec zdel = zpos[i] - ztot;
          xx += xdel * xdel * weigh;
          xy += xdel * ydel * weigh;
          xz += xdel * zdel * weigh;
@@ -177,11 +170,12 @@ void mdrest_acc(int istep)
    // eliminate any rotation about the system center of mass
 
    if (!bound::use_bounds) {
-      #pragma acc parallel loop independent async deviceptr(x,y,z,vx,vy,vz)
+      #pragma acc parallel loop independent async\
+                  deviceptr(xpos,ypos,zpos,vx,vy,vz)
       for (int i = 0; i < n; ++i) {
-         vel_prec xdel = x[i] - xtot;
-         vel_prec ydel = y[i] - ytot;
-         vel_prec zdel = z[i] - ztot;
+         pos_prec xdel = xpos[i] - xtot;
+         pos_prec ydel = ypos[i] - ytot;
+         pos_prec zdel = zpos[i] - ztot;
          vx[i] -= vang[1] * zdel + vang[2] * ydel;
          vy[i] -= vang[2] * xdel + vang[0] * zdel;
          vz[i] -= vang[0] * ydel + vang[1] * xdel;
@@ -198,14 +192,29 @@ void mdrest_acc(int istep)
    }
 }
 
-void propagate_xyz_acc(time_prec dt)
+void copy_pos_to_xyz_acc()
+{
+   if (sizeof(pos_prec) == sizeof(real))
+      return;
+
+
+   #pragma acc parallel loop independent async\
+               deviceptr(x,y,z,xpos,ypos,zpos)
+   for (int i = 0; i < n; ++i) {
+      x[i] = xpos[i];
+      y[i] = ypos[i];
+      z[i] = zpos[i];
+   }
+}
+
+void propagate_pos_acc(time_prec dt)
 {
    #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,vx,vy,vz)
+               deviceptr(xpos,ypos,zpos,vx,vy,vz)
    for (int i = 0; i < n; ++i) {
-      x[i] += dt * vx[i];
-      y[i] += dt * vy[i];
-      z[i] += dt * vz[i];
+      xpos[i] += dt * vx[i];
+      ypos[i] += dt * vy[i];
+      zpos[i] += dt * vz[i];
    }
 }
 

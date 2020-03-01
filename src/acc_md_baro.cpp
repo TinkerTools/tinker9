@@ -32,9 +32,9 @@ void monte_carlo_barostat_update_nb_acc(energy_prec epot)
    double volold = volbox();
    double volnew = 0;
    double eold = epot;
-   device_array::copy(PROCEED_NEW_Q, n, x_pmonte, x);
-   device_array::copy(PROCEED_NEW_Q, n, y_pmonte, y);
-   device_array::copy(PROCEED_NEW_Q, n, z_pmonte, z);
+   device_array::copy(PROCEED_NEW_Q, n, x_pmonte, xpos);
+   device_array::copy(PROCEED_NEW_Q, n, y_pmonte, ypos);
+   device_array::copy(PROCEED_NEW_Q, n, z_pmonte, zpos);
 
 
    if (isotropic) {
@@ -43,7 +43,7 @@ void monte_carlo_barostat_update_nb_acc(energy_prec epot)
       volnew = volold + step;
       double scale = std::pow(volnew / volold, third);
       TINKER_LOG(
-         "MC Barostat Volume: random = {:.6f} dV = {:.6f} scale = {:6f}",
+         "MC Barostat Isotropic: random = {:.6f} dV = {:.6f} scale = {:6f}",
          step_rdm, step, scale);
 
 
@@ -58,33 +58,34 @@ void monte_carlo_barostat_update_nb_acc(energy_prec epot)
          const auto* imol = molecule.imol;
          const auto* kmol = molecule.kmol;
          const auto* molmass = molecule.molmass;
-         real real_scale = scale - 1;
+         pos_prec pos_scale = scale - 1;
          #pragma acc parallel loop independent async\
-                     deviceptr(imol,kmol,mass,molmass,x,y,z)
+                     deviceptr(imol,kmol,mass,molmass,xpos,ypos,zpos)
          for (int i = 0; i < nmol; ++i) {
-            real xcm = 0, ycm = 0, zcm = 0;
+            pos_prec xcm = 0, ycm = 0, zcm = 0;
             int start = imol[i][0];
             int stop = imol[i][1];
             #pragma acc loop seq
             for (int j = start; j < stop; ++j) {
                int k = kmol[j];
-               real weigh = mass[k];
-               xcm += x[k] * weigh;
-               ycm += y[k] * weigh;
-               zcm += z[k] * weigh;
+               mass_prec weigh = mass[k];
+               xcm += xpos[k] * weigh;
+               ycm += ypos[k] * weigh;
+               zcm += zpos[k] * weigh;
             }
-            real term = real_scale / molmass[i];
-            real xmove = term * xcm;
-            real ymove = term * ycm;
-            real zmove = term * zcm;
+            pos_prec term = pos_scale / molmass[i];
+            pos_prec xmove = term * xcm;
+            pos_prec ymove = term * ycm;
+            pos_prec zmove = term * zcm;
             #pragma acc loop seq
             for (int j = start; j < stop; ++j) {
                int k = kmol[j];
-               x[k] += xmove;
-               y[k] += ymove;
-               z[k] += zmove;
+               xpos[k] += xmove;
+               ypos[k] += ymove;
+               zpos[k] += zmove;
             }
          }
+         copy_pos_to_xyz();
       }
    }
 
@@ -121,9 +122,10 @@ void monte_carlo_barostat_update_nb_acc(energy_prec epot)
       TINKER_LOG("MC Barostat Move Rejected");
       esum = eold;
       set_default_box(boxold);
-      device_array::copy(PROCEED_NEW_Q, n, x, x_pmonte);
-      device_array::copy(PROCEED_NEW_Q, n, y, y_pmonte);
-      device_array::copy(PROCEED_NEW_Q, n, z, z_pmonte);
+      device_array::copy(PROCEED_NEW_Q, n, xpos, x_pmonte);
+      device_array::copy(PROCEED_NEW_Q, n, ypos, y_pmonte);
+      device_array::copy(PROCEED_NEW_Q, n, zpos, z_pmonte);
+      copy_pos_to_xyz();
       nblist_data(rc_evolve);
    } else {
       TINKER_LOG("MC Barostat Move Accepted");

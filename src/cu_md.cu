@@ -9,10 +9,11 @@ TINKER_NAMESPACE_BEGIN
 // velocity to ekin[3][3] (actually ekin[6])
 template <unsigned int B>
 __global__
-void velocity_to_ekin(energy_prec* out, const vel_prec* restrict vx,
-                      const vel_prec* restrict vy, const vel_prec* restrict vz,
-                      const mass_prec* restrict mass, int n,
-                      energy_prec ekcal_inv)
+void velocity_to_ekin_cu(energy_prec* out, const vel_prec* restrict vx,
+                         const vel_prec* restrict vy,
+                         const vel_prec* restrict vz,
+                         const mass_prec* restrict mass, int n,
+                         energy_prec ekcal_inv)
 {
    constexpr int HN = 6;
    __shared__ energy_prec sd[HN][B];
@@ -59,7 +60,7 @@ void kinetic_cu(T_prec& temp)
    int grid_siz2 = (n + BLOCK_DIM - 1) / BLOCK_DIM;
    int grid_size = std::min(grid_siz1, grid_siz2);
    const energy_prec ekcal_inv = 1.0 / units::ekcal;
-   velocity_to_ekin<BLOCK_DIM>
+   velocity_to_ekin_cu<BLOCK_DIM>
       <<<grid_size, BLOCK_DIM, 0, st>>>(dptr, vx, vy, vz, mass, n, ekcal_inv);
    reduce2<energy_prec, BLOCK_DIM, HN, HN, OpPlus<energy_prec>>
       <<<1, BLOCK_DIM, 0, st>>>(dptr6, dptr6, grid_size);

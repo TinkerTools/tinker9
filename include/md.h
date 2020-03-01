@@ -21,11 +21,9 @@ TINKER_EXTERN int trajn;
 TINKER_EXTERN int n;
 TINKER_EXTERN int padded_n;
 
-/// \ingroup md
-/// \{
-/// X, Y, Z coordinates of the current frame or of the entire trajectory frames.
+
+// X, Y, Z coordinates of the current frame or of the entire trajectory frames.
 TINKER_EXTERN real *trajx, *trajy, *trajz, *x, *y, *z;
-/// \}
 
 void goto_frame(int idx0);
 void copyin_arc_file(const std::string& arcfile, int first1, int last1,
@@ -161,7 +159,7 @@ void mdrest_acc(int istep);
 
 
 void propagate_xyz(time_prec dt, bool check_nblist);
-void propagate_xyz_acc(time_prec);
+void propagate_pos_acc(time_prec);
 
 
 /**
@@ -186,5 +184,18 @@ void bussi_thermostat_acc(time_prec dt, T_prec temp);
 
 void monte_carlo_barostat_update_nb(energy_prec epot);
 void monte_carlo_barostat_update_nb_acc(energy_prec epot);
-TINKER_EXTERN real *x_pmonte, *y_pmonte, *z_pmonte;
+TINKER_EXTERN pos_prec *x_pmonte, *y_pmonte, *z_pmonte;
+
+
+// x, y, z coordinates used for integrators;
+// sizof(pos_pres) always >= sizeof(real);
+// do not allocate new arrays if sizeof(pos_prec) == sizeof(real);
+// only allocate new arrays if sizeof(pos_prec) > sizeof(real).
+
+// must update x/y/z immediately after x/y/zpos being changed
+// by velocity or barostat
+static_assert(sizeof(pos_prec) >= sizeof(real), "");
+TINKER_EXTERN pos_prec *xpos, *ypos, *zpos;
+void copy_pos_to_xyz();
+void copy_pos_to_xyz_acc();
 TINKER_NAMESPACE_END

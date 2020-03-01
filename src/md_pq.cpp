@@ -46,6 +46,13 @@ void xyz_data(rc_op op)
          trajy = nullptr;
          trajz = nullptr;
          device_array::deallocate(x, y, z);
+         if (sizeof(pos_prec) == sizeof(real)) {
+            xpos = nullptr;
+            ypos = nullptr;
+            zpos = nullptr;
+         } else {
+            device_array::deallocate(xpos, ypos, zpos);
+         }
       }
    }
 
@@ -57,14 +64,27 @@ void xyz_data(rc_op op)
          z = trajz;
       } else {
          device_array::allocate(n, &x, &y, &z);
+         if (sizeof(pos_prec) == sizeof(real)) {
+            xpos = (pos_prec*)x;
+            ypos = (pos_prec*)y;
+            zpos = (pos_prec*)z;
+         } else {
+            device_array::allocate(n, &xpos, &ypos, &zpos);
+         }
       }
    }
 
    if (op & rc_init) {
-      device_array::copyin(PROCEED_NEW_Q, n, x, atoms::x);
-      device_array::copyin(PROCEED_NEW_Q, n, y, atoms::y);
-      device_array::copyin(WAIT_NEW_Q, n, z, atoms::z);
+      device_array::copyin(PROCEED_NEW_Q, n, xpos, atoms::x);
+      device_array::copyin(PROCEED_NEW_Q, n, ypos, atoms::y);
+      device_array::copyin(PROCEED_NEW_Q, n, zpos, atoms::z);
+      copy_pos_to_xyz();
    }
+}
+
+void copy_pos_to_xyz()
+{
+   copy_pos_to_xyz_acc();
 }
 
 void vel_data(rc_op op)

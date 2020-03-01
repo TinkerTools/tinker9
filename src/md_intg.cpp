@@ -1,3 +1,6 @@
+#define TINKER_ENABLE_LOG 0
+#include "log.h"
+
 #include "energy.h"
 #include "io_fort_str.h"
 #include "md.h"
@@ -137,7 +140,8 @@ void mdrest(int istep)
 
 void propagate_xyz(time_prec dt, bool check_nblist)
 {
-   propagate_xyz_acc(dt);
+   propagate_pos_acc(dt);
+   copy_pos_to_xyz();
    if (check_nblist)
       nblist_data(rc_evolve);
 }
@@ -158,6 +162,7 @@ void propagate_velocity2(time_prec dt, const real* grx, const real* gry,
 void propagate(int nsteps, time_prec dt_ps)
 {
    for (int istep = 1; istep <= nsteps; ++istep) {
+      TINKER_LOG("Integrating Step {:10d}", istep);
       intg(istep, dt_ps);
 
       // mdstat
