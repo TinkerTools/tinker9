@@ -75,10 +75,16 @@ void xyz_data(rc_op op)
    }
 
    if (op & rc_init) {
-      device_array::copyin(PROCEED_NEW_Q, n, xpos, atoms::x);
-      device_array::copyin(PROCEED_NEW_Q, n, ypos, atoms::y);
-      device_array::copyin(PROCEED_NEW_Q, n, zpos, atoms::z);
-      copy_pos_to_xyz();
+      if (calc::traj & rc_flag) {
+         device_array::copyin(PROCEED_NEW_Q, n, x, atoms::x);
+         device_array::copyin(PROCEED_NEW_Q, n, y, atoms::y);
+         device_array::copyin(PROCEED_NEW_Q, n, z, atoms::z);
+      } else {
+         device_array::copyin(PROCEED_NEW_Q, n, xpos, atoms::x);
+         device_array::copyin(PROCEED_NEW_Q, n, ypos, atoms::y);
+         device_array::copyin(PROCEED_NEW_Q, n, zpos, atoms::z);
+         copy_pos_to_xyz();
+      }
    }
 }
 

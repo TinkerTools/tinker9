@@ -59,7 +59,6 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]")
       // update nblist
       if (ifr < trajn) {
          goto_frame(ifr);
-         evdw_reduce_xyz();
          nblist_data(rc_evolve);
       } else
          break;
