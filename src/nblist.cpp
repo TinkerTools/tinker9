@@ -1,5 +1,5 @@
 #include "nblist.h"
-#include "dev_array.h"
+#include "darray.h"
 #include "e_polar.h"
 #include "e_vdw.h"
 #include "elec.h"

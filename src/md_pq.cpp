@@ -1,6 +1,6 @@
 
 #include "md_pq.h"
-#include "dev_array.h"
+#include "darray.h"
 #include "gpu_card.h"
 #include "md_calc.h"
 #include "nblist.h"

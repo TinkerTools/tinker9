@@ -1,5 +1,5 @@
 #include "box.h"
-#include "dev_array.h"
+#include "darray.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "tinker_rt.h"

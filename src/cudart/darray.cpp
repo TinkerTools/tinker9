@@ -1,4 +1,4 @@
-#include "dev_array.h"
+#include "darray.h"
 #include "cudalib.h"
 #include "error.h"
 #include <cstring>

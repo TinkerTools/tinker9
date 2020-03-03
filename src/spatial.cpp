@@ -1,5 +1,5 @@
 #include "spatial.h"
-#include "dev_array.h"
+#include "darray.h"
 #include "error.h"
 #include "md.h"
 #include "nblist.h"

@@ -1,5 +1,5 @@
 #include "group.h"
-#include "dev_array.h"
+#include "darray.h"
 #include "md.h"
 #include <tinker/detail/group.hh>
 #include <tinker/detail/sizes.hh>

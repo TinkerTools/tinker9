@@ -1,6 +1,6 @@
-#include "dev_array.h"
-#include "md.h"
 #include "thrust_cache.h"
+#include "darray.h"
+#include "md.h"
 
 
 TINKER_NAMESPACE_BEGIN

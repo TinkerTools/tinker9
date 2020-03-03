@@ -2,7 +2,7 @@
 #include "log.h"
 
 
-#include "dev_array.h"
+#include "darray.h"
 #include "energy.h"
 #include "io_fort_str.h"
 #include "md_calc.h"
