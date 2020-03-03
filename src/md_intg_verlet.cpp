@@ -1,8 +1,13 @@
 #include "energy.h"
-#include "md.h"
+#include "md_calc.h"
+#include "md_egv.h"
+#include "md_intg.h"
+#include "md_pq.h"
+#include "md_pt.h"
 #include "random.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
+
 
 TINKER_NAMESPACE_BEGIN
 void velocity_verlet(int istep, time_prec dt_ps)

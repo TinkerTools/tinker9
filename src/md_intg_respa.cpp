@@ -1,6 +1,12 @@
 #include "energy.h"
 #include "mathfunc_pow2.h"
-#include "md.h"
+#include "md_calc.h"
+#include "md_egv.h"
+#include "md_intg.h"
+#include "md_pq.h"
+#include "md_pt.h"
+#include "random.h"
+#include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
 
@@ -65,11 +71,20 @@ const TimeScaleConfig& respa_tsconfig()
  */
 void respa_fast_slow(int istep, time_prec dt_ps)
 {
-   bool save = !(istep % inform::iwrite);
    int vers0 = rc_flag & calc::vmask;
    int vers1 = vers0;
-   // toggle off the calc::energy bit if !save
-   if (!save)
+
+   bool save = !(istep % inform::iwrite);
+   bool mcbaro = false;
+   if (barostat == MONTE_CARLO_BAROSTAT) {
+      // toggle off the calc::virial bit if Monte Carlo Barostat is in use
+      vers1 &= ~calc::virial;
+      double rdm = random<double>();
+      if (rdm < 1.0 / bath::voltrial)
+         mcbaro = true;
+   }
+   // toggle off the calc::energy bit if neither save nor mcbaro
+   if (!save && !mcbaro)
       vers1 &= ~calc::energy;
 
 
@@ -145,6 +160,10 @@ void respa_fast_slow(int istep, time_prec dt_ps)
       for (int i = 0; i < 9; ++i)
          vir[i] += vir_fast[i] / nalt;
    }
+
+
+   // half-step corrections for certain thermostats and barostats
+   halftime_correction(mcbaro);
 
 
    // v += a_fast dt/2
