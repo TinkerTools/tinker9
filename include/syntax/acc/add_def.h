@@ -26,14 +26,14 @@ void atomic_add(T value, T* buffer, size_t offset = 0)
  */
 #pragma acc routine seq
 template <class T>
-void atomic_add(T value, unsigned long long* buffer, size_t offset = 0)
+void atomic_add(T value, fixed* buffer, size_t offset = 0)
 {
    static_assert(
       std::is_same<T, float>::value || std::is_same<T, double>::value, "");
-   // float -> (signed) long long -> unsigned long long
+   // float -> (signed) long long -> fixed
    #pragma acc atomic update
-   buffer[offset] += static_cast<unsigned long long>(
-      static_cast<long long>(value * 0x100000000ull));
+   buffer[offset] +=
+      static_cast<fixed>(static_cast<long long>(value * 0x100000000ull));
 }
 
 
@@ -63,8 +63,8 @@ void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T (*buffer)[8],
  */
 #pragma acc routine seq
 template <class T>
-void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz,
-                unsigned long long (*buffer)[8], size_t offset = 0)
+void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, fixed (*buffer)[8],
+                size_t offset = 0)
 {
    atomic_add(vxx, buffer[offset], 0);
    atomic_add(vyx, buffer[offset], 1);
@@ -77,7 +77,7 @@ void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz,
 
 #pragma acc routine seq
 template <class T>
-T to_flt_acc(unsigned long long val)
+T to_flt_acc(fixed val)
 {
    return static_cast<T>(static_cast<long long>(val)) / 0x100000000ull;
 }

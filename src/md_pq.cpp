@@ -1,14 +1,26 @@
 
-#include "box.h"
+#include "md_pq.h"
+#include "dev_array.h"
 #include "gpu_card.h"
-#include "md.h"
+#include "md_calc.h"
+#include "nblist.h"
 #include <cassert>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>
 #include <tinker/detail/moldyn.hh>
 
+
 TINKER_NAMESPACE_BEGIN
 int rc_flag = 0;
+
+
+//====================================================================//
+
+
+int n;
+int padded_n;
+int trajn;
+
 
 void n_data(rc_op op)
 {
@@ -29,6 +41,30 @@ void n_data(rc_op op)
       }
    }
 }
+
+
+//====================================================================//
+
+
+real *x, *y, *z;
+real *trajx, *trajy, *trajz;
+pos_prec *xpos, *ypos, *zpos;
+
+
+void copy_pos_to_xyz()
+{
+   copy_pos_to_xyz_acc();
+}
+
+
+void propagate_xyz(time_prec dt, bool check_nblist)
+{
+   propagate_pos_acc(dt);
+   copy_pos_to_xyz();
+   if (check_nblist)
+      nblist_data(rc_evolve);
+}
+
 
 void xyz_data(rc_op op)
 {
@@ -88,30 +124,45 @@ void xyz_data(rc_op op)
    }
 }
 
-void copy_pos_to_xyz()
+
+//====================================================================//
+
+
+mass_prec *mass, *massinv;
+
+
+vel_prec *vx, *vy, *vz;
+
+
+void propagate_velocity(time_prec dt, const real* grx, const real* gry,
+                        const real* grz)
 {
-   copy_pos_to_xyz_acc();
+   propagate_velocity_acc(dt, grx, gry, grz);
 }
 
-void vel_data(rc_op op)
+
+void propagate_velocity(time_prec dt, const fixed* grx, const fixed* gry,
+                        const fixed* grz)
 {
-   if ((calc::vel & rc_flag) == 0)
-      return;
-
-   if (op & rc_dealloc) {
-      device_array::deallocate(vx, vy, vz);
-   }
-
-   if (op & rc_alloc) {
-      device_array::allocate(n, &vx, &vy, &vz);
-   }
-
-   if (op & rc_init) {
-      device_array::copyin2(PROCEED_NEW_Q, 0, 3, n, vx, moldyn::v);
-      device_array::copyin2(PROCEED_NEW_Q, 1, 3, n, vy, moldyn::v);
-      device_array::copyin2(WAIT_NEW_Q, 2, 3, n, vz, moldyn::v);
-   }
+   propagate_velocity_acc(dt, grx, gry, grz);
 }
+
+
+void propagate_velocity2(time_prec dt, const real* grx, const real* gry,
+                         const real* grz, time_prec dt2, const real* grx2,
+                         const real* gry2, const real* grz2)
+{
+   propagate_velocity2_acc(dt, grx, gry, grz, dt2, grx2, gry2, grz2);
+}
+
+
+void propagate_velocity2(time_prec dt, const fixed* grx, const fixed* gry,
+                         const fixed* grz, time_prec dt2, const fixed* grx2,
+                         const fixed* gry2, const fixed* grz2)
+{
+   propagate_velocity2_acc(dt, grx, gry, grz, dt2, grx2, gry2, grz2);
+}
+
 
 void mass_data(rc_op op)
 {
@@ -135,139 +186,24 @@ void mass_data(rc_op op)
    }
 }
 
-void goto_frame(int idx0)
+
+void vel_data(rc_op op)
 {
-   assert(calc::traj & rc_flag);
-   x = trajx + n * idx0;
-   y = trajy + n * idx0;
-   z = trajz + n * idx0;
-   const Box& b = trajbox[idx0];
-   set_default_box(b);
-}
-TINKER_NAMESPACE_END
+   if ((calc::vel & rc_flag) == 0)
+      return;
 
-#include "error.h"
-#include "io_print.h"
-#include "io_text.h"
-#include "tinker_rt.h"
-#include <fstream>
-#include <sstream>
-#include <tinker/detail/boxes.hh>
-
-TINKER_NAMESPACE_BEGIN
-void copyin_arc_file(const std::string& arcfile, int first1, int last1,
-                     int step)
-{
-
-   if (!(first1 >= 1 && last1 >= first1 && step > 0)) {
-      std::string msg =
-         format("Invalid First/Last/Step Values  : {:d}/{:d}/{:d}", first1,
-                last1, step);
-      TINKER_THROW(msg);
+   if (op & rc_dealloc) {
+      device_array::deallocate(vx, vy, vz);
    }
 
-   // (1, 7, 2) -> 4
-   // (1, 8, 2) -> 4
-   int tn = (last1 - first1) / step + 1;
-   assert(tn <= trajn);
-
-   double xyzsave[3], anglesave[3];
-   xyzsave[0] = boxes::xbox;
-   xyzsave[1] = boxes::ybox;
-   xyzsave[2] = boxes::zbox;
-   anglesave[0] = boxes::alpha;
-   anglesave[1] = boxes::beta;
-   anglesave[2] = boxes::gamma;
-
-   std::ifstream iarc(arcfile);
-   if (iarc) {
-      std::string line;
-      std::getline(iarc, line); // n and title
-
-      std::getline(iarc, line); // either box size or first atom
-      bool has_boxsize;
-      try {
-         auto vs = Text::split(line);
-         double baxis =
-            std::stod(vs.at(1)); // will throw an exception here if
-                                 // this file does not include box size
-         has_boxsize = true;
-      } catch (std::invalid_argument&) {
-         has_boxsize = false;
-      }
-      int nlines_to_skip = n + 1;
-      if (has_boxsize)
-         nlines_to_skip += 1;
-
-      std::vector<double> bbuf;
-      if (has_boxsize)
-         bbuf.resize(tn * 6);
-      std::vector<real> xbuf(tn * n), ybuf(tn * n), zbuf(tn * n);
-
-      auto skip = [](std::ifstream& f, int nl) {
-         f.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-      };
-
-      // rewind
-      iarc.clear();
-      iarc.seekg(0);
-
-      int current = 0;
-      int dummy1;
-      char dummy2[8];
-      for (int i = 1; i <= last1; i += step) {
-         bool require1 = (i >= first1);
-         bool require2 = ((i - first1) % step == 0);
-         if (require1 && require2) {
-            skip(iarc, 1); // skip n and title
-            if (has_boxsize) {
-               std::getline(iarc, line);
-               std::istringstream ss(line);
-               int c = 6 * current;
-               ss >> bbuf[c] >> bbuf[c + 1] >> bbuf[c + 2] >> bbuf[c + 3] >>
-                  bbuf[c + 4] >> bbuf[c + 5];
-            }
-            int off = current * n;
-            for (int j = 0; j < n; ++j) {
-               std::getline(iarc, line);
-               std::istringstream ss(line);
-               ss >> dummy1 >> dummy2 >> xbuf[off + j] >> ybuf[off + j] >>
-                  zbuf[off + j];
-            }
-            ++current;
-         } else {
-            skip(iarc, nlines_to_skip);
-         }
-      }
-
-      // copyin
-      if (has_boxsize) {
-         for (int i = 0; i < tn; ++i) {
-            int c = i * 6;
-            boxes::xbox = bbuf[c];
-            boxes::ybox = bbuf[c + 1];
-            boxes::zbox = bbuf[c + 2];
-            boxes::alpha = bbuf[c + 3];
-            boxes::beta = bbuf[c + 4];
-            boxes::gamma = bbuf[c + 5];
-            TINKER_RT(lattice)();
-            get_tinker_box_module(trajbox[i]);
-         }
-      }
-      device_array::copyin(PROCEED_NEW_Q, n * tn, trajx, xbuf.data());
-      device_array::copyin(PROCEED_NEW_Q, n * tn, trajy, ybuf.data());
-      device_array::copyin(WAIT_NEW_Q, n * tn, trajz, zbuf.data());
-   } else {
-      std::string msg = "Cannot Open File ";
-      msg += arcfile;
-      TINKER_THROW(msg);
+   if (op & rc_alloc) {
+      device_array::allocate(n, &vx, &vy, &vz);
    }
 
-   boxes::xbox = xyzsave[0];
-   boxes::ybox = xyzsave[1];
-   boxes::zbox = xyzsave[2];
-   boxes::alpha = anglesave[0];
-   boxes::beta = anglesave[1];
-   boxes::gamma = anglesave[2];
+   if (op & rc_init) {
+      device_array::copyin2(PROCEED_NEW_Q, 0, 3, n, vx, moldyn::v);
+      device_array::copyin2(PROCEED_NEW_Q, 1, 3, n, vy, moldyn::v);
+      device_array::copyin2(WAIT_NEW_Q, 2, 3, n, vz, moldyn::v);
+   }
 }
 TINKER_NAMESPACE_END

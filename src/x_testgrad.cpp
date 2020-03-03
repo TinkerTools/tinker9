@@ -17,8 +17,7 @@ void x_testgrad(int argc, char** argv)
    energy(rc_flag);
 
    std::vector<double> gdx(n), gdy(n), gdz(n);
-   copy_energy(calc::grad, nullptr, gdx.data(), gdy.data(), gdz.data(),
-               nullptr);
+   copy_gradient(calc::grad, gdx.data(), gdy.data(), gdz.data());
 
    const char* fmt_eng = "\n Total Potential Energy :{:24.4f} Kcal/mole\n\n";
    print(stdout, fmt_eng, esum);

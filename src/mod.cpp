@@ -6,7 +6,6 @@
 #include "box.h"
 #include "elec.h"
 #include "group.h"
-#include "md.h"
 #include "molecule.h"
 #include "nblist.h"
 #include "pme.h"

@@ -91,8 +91,7 @@ TINKER_NAMESPACE_END
 #define COMPARE_GRADIENT3_(gx, gy, gz, ref_grad, eps, check_ij)                \
    {                                                                           \
       std::vector<double> gradx(n), grady(n), gradz(n);                        \
-      copy_energy(calc::grad, nullptr, gradx.data(), grady.data(),             \
-                  gradz.data(), nullptr);                                      \
+      copy_gradient(calc::grad, gradx.data(), grady.data(), gradz.data());     \
       for (int i = 0; i < n; ++i) {                                            \
          if (check_ij(i, 0))                                                   \
             REQUIRE(gradx[i] == Approx(ref_grad[i][0]).margin(eps));           \

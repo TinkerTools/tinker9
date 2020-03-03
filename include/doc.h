@@ -29,14 +29,6 @@
 
 
 /**
- * \defgroup egv        Energies, Gradients, Virials, and Counts
- * \ingroup md
- * \defgroup integrate  Integrators
- * \ingroup md
- */
-
-
-/**
  * \defgroup atomic Atomic Operations
  * \ingroup util
  * \defgroup box    Periodic Boundary Box

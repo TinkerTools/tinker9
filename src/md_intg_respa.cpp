@@ -6,6 +6,10 @@
 
 
 TINKER_NAMESPACE_BEGIN
+grad_prec *gx1, *gy1, *gz1;
+grad_prec *gx2, *gy2, *gz2;
+
+
 const TimeScaleConfig& respa_tsconfig()
 {
    constexpr int fast = floor_log2_constexpr(RESPA_FAST); // short-range
@@ -97,7 +101,7 @@ void respa_fast_slow(int istep, time_prec dt_ps)
 
       // update a_fast
       energy(vers1, RESPA_FAST, respa_tsconfig());
-      copy_energy(vers1, nullptr, nullptr, nullptr, nullptr, vir_f);
+      copy_virial(vers1, vir_f);
       if (vers1 & calc::virial) {
          for (int i = 0; i < 9; ++i)
             vir_fast[i] += vir_f[i];
@@ -115,7 +119,8 @@ void respa_fast_slow(int istep, time_prec dt_ps)
 
    // update a_fast
    energy(vers1, RESPA_FAST, respa_tsconfig());
-   copy_energy(vers1, &esum_f, nullptr, nullptr, nullptr, vir_f);
+   copy_energy(vers1, &esum_f);
+   copy_virial(vers1, vir_f);
    device_array::copy(PROCEED_NEW_Q, n, gx1, gx);
    device_array::copy(PROCEED_NEW_Q, n, gy1, gy);
    device_array::copy(PROCEED_NEW_Q, n, gz1, gz);

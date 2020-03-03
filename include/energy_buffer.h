@@ -1,6 +1,7 @@
 #pragma once
 #include "dev_array.h"
 #include "mathfunc.h"
+#include "md_prec.h"
 #include <vector>
 
 
@@ -18,7 +19,7 @@ size_t buffer_size();
 
 
 template <class T>
-inline T to_flt_host(unsigned long long val)
+inline T to_flt_host(fixed val)
 {
    return static_cast<T>(static_cast<long long>(val)) / 0x100000000ull;
 }
@@ -57,7 +58,7 @@ struct buffer_traits<float, N>
 {
    static constexpr size_t n = N;
    static constexpr size_t value = pow2_ge(N);
-   typedef unsigned long long type;
+   using type = fixed;
    static float cast(type val)
    {
       return to_flt_host<float>(val);

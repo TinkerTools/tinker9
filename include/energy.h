@@ -23,7 +23,7 @@
 
 TINKER_NAMESPACE_BEGIN
 /**
- * \ingroup egv
+ * \ingroup md_egv
  * \brief Evaluate the potential energy.
  *
  * First, energy buffers, virial buffers, #gx, #gy, #gz arrays, and count
@@ -41,22 +41,4 @@ TINKER_NAMESPACE_BEGIN
  */
 void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig);
 void energy(int vers);
-
-/**
- * \ingroup egv
- * \brief Copy energy, gradients, and/or virials to other variables.
- *
- * If the output pointers are not null and are different from the sources:
- *    - copy #esum to `eng`;
- *    - non-blockingly copy #gx, #gy, #gz to `grdx`, `grdy`, and `grdz`,
- *      respectively;
- *    - copy #vir[9] to `virial[9]`.
- *
- * \param vers  Energy version flag to select data to be copied.
- */
-void copy_energy(int vers, energy_prec* eng, double* grdx, double* grdy,
-                 double* grdz, virial_prec* virial, const grad_prec* gx_src,
-                 const grad_prec* gy_src, const grad_prec* gz_src);
-void copy_energy(int vers, energy_prec* eng, double* grdx, double* grdy,
-                 double* grdz, virial_prec* virial);
 TINKER_NAMESPACE_END

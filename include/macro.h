@@ -17,7 +17,7 @@ to mimic its name mangling.
 /**
  * \def TINKER_STR
  * \ingroup macro
- * Convert a predefined macro `s` into a string `"s"`.
+ * Convert a predefined macro `s` to a string `"s"`.
  */
 #define TINKER_STR(s) TINKER_STR1_(s)
 #define TINKER_STR1_(s) #s
@@ -125,20 +125,6 @@ to mimic its name mangling.
  * | DOUBLE | double | double |
  * | MIXED  | float  | double |
  * | SINGLE | float  | float  |
- *
- * | Properties                 | Types |
- * |----------------------------|-------|
- * | time                       | mixed |
- * | temperature, T             | mixed |
- * | mass                       | real  |
- * | velocity                   | mixed |
- * | position (for integrators) | mixed |
- * | energy (for integrators)   | mixed |
- * | virial (for integrators)   | mixed |
- * | position (for energies)    | real  |
- * | energy (individual terms)  | real  |
- * | virial (individual terms)  | real  |
- * | energy gradient            | real  |
  * \}
  */
 #ifdef TINKER_DOUBLE_PRECISION
@@ -247,31 +233,5 @@ using mixed = float;
 #endif
 
 
-using time_prec = mixed;
-using T_prec = mixed;
-using mass_prec = real;
-using vel_prec = mixed;
-using pos_prec = mixed;
-using energy_prec = mixed; // type of total energies
-using virial_prec = mixed; // type of total virial tensor
-
-
-using e_prec = real; // type of individual energies
-using v_prec = real; // type of individual virials
-
-
-// #define TINKER_DETERMINISTIC_FORCE 0
-#define TINKER_DETERMINISTIC_FORCE 1
-
-
-#ifndef TINKER_DETERMINISTIC_FORCE
-#   define TINKER_DETERMINISTIC_FORCE 1
-#endif
-
-
-#if TINKER_DETERMINISTIC_FORCE
-using grad_prec = unsigned long long;
-#else
-using grad_prec = real;
-#endif
+using fixed = unsigned long long;
 TINKER_NAMESPACE_END

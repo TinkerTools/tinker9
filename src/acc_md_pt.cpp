@@ -5,16 +5,98 @@
 #include "box.h"
 #include "energy.h"
 #include "io_fort_str.h"
-#include "md.h"
+#include "mathfunc.h"
+#include "md_calc.h"
+#include "md_egv.h"
+#include "md_pq.h"
+#include "md_pt.h"
 #include "molecule.h"
 #include "nblist.h"
 #include "random.h"
 #include <tinker/detail/bath.hh>
+#include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>
 
 
 TINKER_NAMESPACE_BEGIN
-void monte_carlo_barostat_update_nb_acc(energy_prec epot)
+void kinetic_acc(T_prec& temp)
+{
+   const energy_prec ekcal_inv = 1.0 / units::ekcal;
+   energy_prec exx = 0;
+   energy_prec eyy = 0;
+   energy_prec ezz = 0;
+   energy_prec exy = 0;
+   energy_prec eyz = 0;
+   energy_prec ezx = 0;
+   #pragma acc parallel loop independent async\
+               deviceptr(mass,vx,vy,vz)
+   for (int i = 0; i < n; ++i) {
+      energy_prec term = 0.5f * mass[i] * ekcal_inv;
+      exx += term * vx[i] * vx[i];
+      eyy += term * vy[i] * vy[i];
+      ezz += term * vz[i] * vz[i];
+      exy += term * vx[i] * vy[i];
+      eyz += term * vy[i] * vz[i];
+      ezx += term * vz[i] * vx[i];
+   }
+   ekin[0][0] = exx;
+   ekin[0][1] = exy;
+   ekin[0][2] = ezx;
+   ekin[1][0] = exy;
+   ekin[1][1] = eyy;
+   ekin[1][2] = eyz;
+   ekin[2][0] = ezx;
+   ekin[2][1] = eyz;
+   ekin[2][2] = ezz;
+   eksum = exx + eyy + ezz;
+   temp = 2 * eksum / (mdstuf::nfree * units::gasconst);
+}
+
+
+//====================================================================//
+
+
+void bussi_thermostat_acc(time_prec dt_prec, T_prec temp_prec)
+{
+   double dt = dt_prec;
+   double temp = temp_prec;
+
+
+   double tautemp = bath::tautemp;
+   double kelvin = bath::kelvin;
+   int nfree = mdstuf::nfree;
+   double& eta = bath::eta;
+
+
+   if (temp == 0)
+      temp = 0.1;
+
+
+   double c = std::exp(-dt / tautemp);
+   double d = (1 - c) * (kelvin / temp) / nfree;
+   double r = normal<double>();
+   double s = chi_squared<double>(nfree - 1);
+   double scale = c + (s + r * r) * d + 2 * r * std::sqrt(c * d);
+   scale = std::sqrt(scale);
+   if (r + std::sqrt(c / d) < 0)
+      scale = -scale;
+   eta *= scale;
+
+
+   vel_prec sc = scale;
+   #pragma acc parallel loop independent async deviceptr(vx,vy,vz)
+   for (int i = 0; i < n; ++i) {
+      vx[i] *= sc;
+      vy[i] *= sc;
+      vz[i] *= sc;
+   }
+}
+
+
+//====================================================================//
+
+
+void monte_carlo_barostat_acc(energy_prec epot)
 {
    fstr_view volscale = bath::volscale;
    double third = 1.0 / 3.0;
@@ -93,7 +175,7 @@ void monte_carlo_barostat_update_nb_acc(energy_prec epot)
    nblist_data(rc_evolve);
    energy(calc::energy);
    energy_prec enew;
-   copy_energy(calc::energy, &enew, nullptr, nullptr, nullptr, nullptr);
+   copy_energy(calc::energy, &enew);
    TINKER_LOG("MC Barostat Enew = {:.6f} Eold = {:.6f}", enew, eold);
    double dpot = enew - eold;
    double dpv = bath::atmsph * (volnew - volold) / units::prescon;

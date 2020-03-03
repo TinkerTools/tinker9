@@ -83,7 +83,7 @@
          - Return if `!use_elec()`.
          - If `calc::virial`, convert torques to gradients and virials;
            Else if `calc::grad`, only convert torques to gradients.
-   - `sum_energies()`:
+   - `sum_energy()`:
       - If `calc::energy`, `calc::virial`, iterate and sum over all of the
         energy and virial buffers, respectively.
       - Of course, if `!calc::analyz`, there is only one buffer each for

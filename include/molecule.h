@@ -1,9 +1,9 @@
 #pragma once
+#include "md_prec.h"
 #include "rc_man.h"
 
 
 TINKER_NAMESPACE_BEGIN
-/// \ingroup md
 /// \brief Individual molecules in current system.
 struct Molecule
 {

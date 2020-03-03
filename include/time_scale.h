@@ -6,8 +6,8 @@
 
 TINKER_NAMESPACE_BEGIN
 /**
- * \ingroup integrate
- * \brief Time scale configurations that assigns a group number to every energy
+ * \ingroup md_intg
+ * \brief Time scale configuration that assigns a group number to every energy
  * term, often used as a parameter in function calls, e.g.,
  * `void func(int tsflag, const TimeScaleConfig& tsconfig);`.
  * Up to 32 different group numbers are supported, from 0 to 31.
@@ -48,7 +48,7 @@ using TimeScaleConfig = std::map<std::string, int>;
 
 
 /**
- * \ingroup integrate
+ * \ingroup md_intg
  * \brief The default #TimeScaleConfig object. All of the energy terms are in
  * group 0, and can only be used via flag 1.
  */
