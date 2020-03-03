@@ -8,20 +8,20 @@
 TINKER_NAMESPACE_BEGIN
 // module bitor
 TINKER_EXTERN int nbitor;
-TINKER_EXTERN device_pointer<int, 5> ibitor;
+TINKER_EXTERN pointer<int, 5> ibitor;
 
 // module tortor
 TINKER_EXTERN int ntortor;
-TINKER_EXTERN device_pointer<int, 3> itt;
+TINKER_EXTERN pointer<int, 3> itt;
 
 // module ktrtor
-TINKER_EXTERN device_pointer<int> tnx, tny; // of size maxntt
+TINKER_EXTERN pointer<int> tnx, tny; // of size maxntt
 // of size (maxtgrd,maxntt) i.e. [maxntt][maxtgrd]
-TINKER_EXTERN device_pointer<real, ktrtor::maxtgrd> ttx, tty;
+TINKER_EXTERN pointer<real, ktrtor::maxtgrd> ttx, tty;
 // of size (maxtgrd2,maxntt) i.e. [maxntt][maxtgrd2]
-TINKER_EXTERN device_pointer<real, ktrtor::maxtgrd2> tbf, tbx, tby, tbxy;
+TINKER_EXTERN pointer<real, ktrtor::maxtgrd2> tbf, tbx, tby, tbxy;
 
-TINKER_EXTERN device_pointer<int> chkttor_ia_; // of size ntortor
+TINKER_EXTERN pointer<int> chkttor_ia_; // of size ntortor
 
 TINKER_EXTERN real ttorunit;
 

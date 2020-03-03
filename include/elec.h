@@ -56,28 +56,28 @@ enum
 
 TINKER_EXTERN real electric, dielec;
 
-TINKER_EXTERN device_pointer<LocalFrame> zaxis;
+TINKER_EXTERN pointer<LocalFrame> zaxis;
 
 /// traceless Cartesian multipoles in the local frame
-TINKER_EXTERN device_pointer<real, mpl_total> pole;
+TINKER_EXTERN pointer<real, mpl_total> pole;
 /// traceless Cartesian multipoles in the global frame
-TINKER_EXTERN device_pointer<real, mpl_total> rpole;
+TINKER_EXTERN pointer<real, mpl_total> rpole;
 
 /// x, y, and z components of torques on multipole site
 /// @{
-TINKER_EXTERN device_pointer<real> trqx, trqy, trqz;
+TINKER_EXTERN pointer<real> trqx, trqy, trqz;
 /// @}
 /// internal virial Cartesian tensor due to the torques
 TINKER_EXTERN virial_buffer vir_trq;
 
 /// direct induced dipole components at each multipole site
-TINKER_EXTERN device_pointer<real, 3> udir;
+TINKER_EXTERN pointer<real, 3> udir;
 /// direct induced dipoles in field used for energy terms
-TINKER_EXTERN device_pointer<real, 3> udirp;
+TINKER_EXTERN pointer<real, 3> udirp;
 /// mutual induced dipole components at each multipole site
-TINKER_EXTERN device_pointer<real, 3> uind;
+TINKER_EXTERN pointer<real, 3> uind;
 /// mutual induced dipoles in field used for energy terms
-TINKER_EXTERN device_pointer<real, 3> uinp;
+TINKER_EXTERN pointer<real, 3> uinp;
 
 void elec_data(rc_op op);
 int use_elec();

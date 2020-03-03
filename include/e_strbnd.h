@@ -5,8 +5,8 @@
 
 TINKER_NAMESPACE_BEGIN
 TINKER_EXTERN int nstrbnd;
-TINKER_EXTERN device_pointer<int, 3> isb;
-TINKER_EXTERN device_pointer<real, 2> sbk;
+TINKER_EXTERN pointer<int, 3> isb;
+TINKER_EXTERN pointer<real, 2> sbk;
 TINKER_EXTERN real stbnunit;
 
 TINKER_EXTERN energy_buffer eba;

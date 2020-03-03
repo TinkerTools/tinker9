@@ -46,15 +46,15 @@ TINKER_EXTERN real scalpha;
 TINKER_EXTERN evdw_t vcouple;
 TINKER_EXTERN real v2scale, v3scale, v4scale, v5scale;
 
-TINKER_EXTERN device_pointer<int> ired;
-TINKER_EXTERN device_pointer<real> kred;
+TINKER_EXTERN pointer<int> ired;
+TINKER_EXTERN pointer<real> kred;
 
 /// \ingroup vdw
 /// Reduced x, y, z coordinates for each atom and the vdw gradients on each
 /// reduced site.
 /// \{
-TINKER_EXTERN device_pointer<real> xred, yred, zred;
-TINKER_EXTERN device_pointer<grad_prec> gxred, gyred, gzred;
+TINKER_EXTERN pointer<real> xred, yred, zred;
+TINKER_EXTERN pointer<grad_prec> gxred, gyred, gzred;
 /// \}
 
 /**
@@ -67,23 +67,23 @@ TINKER_EXTERN int njvdw;
  * Type or class index into vdw parameters for each atom.
  * The indices have been sorted and start from 0.
  */
-TINKER_EXTERN device_pointer<int> jvdw;
+TINKER_EXTERN pointer<int> jvdw;
 /// \ingroup vdw
 /// \{
 /// Minimum energy distance or well depth parameter for each \c jvdw pair.
 /// Element `[j1][j2]` is accessed by `[njvdw*j1 + j2]`.
 /// \see njvdw
-TINKER_EXTERN device_pointer<real> radmin, epsilon;
+TINKER_EXTERN pointer<real> radmin, epsilon;
 /// \}
 
 /// \ingroup vdw
 /// State weighting values \f$ \lambda \f$ of all atoms for van der Waals
 /// potentials.
-TINKER_EXTERN device_pointer<real> vlam;
+TINKER_EXTERN pointer<real> vlam;
 
 TINKER_EXTERN int nvexclude_;
-TINKER_EXTERN device_pointer<int, 2> vexclude_;
-TINKER_EXTERN device_pointer<real> vexclude_scale_;
+TINKER_EXTERN pointer<int, 2> vexclude_;
+TINKER_EXTERN pointer<real> vexclude_scale_;
 
 TINKER_EXTERN count_buffer nev;
 TINKER_EXTERN energy_buffer ev;

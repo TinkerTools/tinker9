@@ -14,13 +14,13 @@ enum class eangle_t : int
 
 // module angbnd
 TINKER_EXTERN int nangle;
-TINKER_EXTERN device_pointer<int, 4> iang;
-TINKER_EXTERN device_pointer<real> ak, anat;
+TINKER_EXTERN pointer<int, 4> iang;
+TINKER_EXTERN pointer<real> ak, anat;
 
 // module angpot
 TINKER_EXTERN real angunit;
 TINKER_EXTERN real cang, qang, pang, sang;
-TINKER_EXTERN device_pointer<eangle_t> angtyp;
+TINKER_EXTERN pointer<eangle_t> angtyp;
 
 TINKER_EXTERN energy_buffer ea;
 TINKER_EXTERN virial_buffer vir_ea;

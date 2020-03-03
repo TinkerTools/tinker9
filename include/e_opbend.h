@@ -12,8 +12,8 @@ enum class eopbend_t
 TINKER_EXTERN eopbend_t opbtyp;
 
 TINKER_EXTERN int nopbend;
-TINKER_EXTERN device_pointer<int> iopb;
-TINKER_EXTERN device_pointer<real> opbk;
+TINKER_EXTERN pointer<int> iopb;
+TINKER_EXTERN pointer<real> opbk;
 TINKER_EXTERN real opbunit;
 TINKER_EXTERN real copb, qopb, popb, sopb;
 

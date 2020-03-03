@@ -97,11 +97,11 @@ using virial_buffer_traits = buffer_traits<v_prec, 6>;
 
 
 using count_buffer =
-   device_pointer<count_buffer_traits::type, count_buffer_traits::value>;
+   pointer<count_buffer_traits::type, count_buffer_traits::value>;
 using energy_buffer =
-   device_pointer<energy_buffer_traits::type, energy_buffer_traits::value>;
+   pointer<energy_buffer_traits::type, energy_buffer_traits::value>;
 using virial_buffer =
-   device_pointer<virial_buffer_traits::type, virial_buffer_traits::value>;
+   pointer<virial_buffer_traits::type, virial_buffer_traits::value>;
 
 
 /**

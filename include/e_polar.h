@@ -13,30 +13,30 @@ TINKER_EXTERN real p2scale, p3scale, p4scale, p5scale;
 TINKER_EXTERN real p2iscale, p3iscale, p4iscale, p5iscale;
 
 TINKER_EXTERN int nuexclude_;
-TINKER_EXTERN device_pointer<int, 2> uexclude_;
-TINKER_EXTERN device_pointer<real> uexclude_scale_;
+TINKER_EXTERN pointer<int, 2> uexclude_;
+TINKER_EXTERN pointer<real> uexclude_scale_;
 
 TINKER_EXTERN int ndpexclude_;
-TINKER_EXTERN device_pointer<int, 2> dpexclude_;
-TINKER_EXTERN device_pointer<real, 2> dpexclude_scale_;
+TINKER_EXTERN pointer<int, 2> dpexclude_;
+TINKER_EXTERN pointer<real, 2> dpexclude_scale_;
 
 TINKER_EXTERN int ndpuexclude_;
-TINKER_EXTERN device_pointer<int, 2> dpuexclude_;
-TINKER_EXTERN device_pointer<real, 3> dpuexclude_scale_;
+TINKER_EXTERN pointer<int, 2> dpuexclude_;
+TINKER_EXTERN pointer<real, 3> dpuexclude_scale_;
 
 TINKER_EXTERN real udiag;
 
-TINKER_EXTERN device_pointer<real> polarity, thole, pdamp, polarity_inv;
+TINKER_EXTERN pointer<real> polarity, thole, pdamp, polarity_inv;
 
 TINKER_EXTERN count_buffer nep;
 TINKER_EXTERN energy_buffer ep;
 TINKER_EXTERN virial_buffer vir_ep;
 
-TINKER_EXTERN device_pointer<real, 3> ufld;
-TINKER_EXTERN device_pointer<real, 6> dufld;
+TINKER_EXTERN pointer<real, 3> ufld;
+TINKER_EXTERN pointer<real, 6> dufld;
 
-TINKER_EXTERN device_pointer<real, 3> work01_, work02_, work03_, work04_,
-   work05_, work06_, work07_, work08_, work09_, work10_;
+TINKER_EXTERN pointer<real, 3> work01_, work02_, work03_, work04_, work05_,
+   work06_, work07_, work08_, work09_, work10_;
 
 void epolar_data(rc_op op);
 

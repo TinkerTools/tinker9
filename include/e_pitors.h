@@ -5,8 +5,8 @@
 
 TINKER_NAMESPACE_BEGIN
 TINKER_EXTERN int npitors;
-TINKER_EXTERN device_pointer<int, 6> ipit;
-TINKER_EXTERN device_pointer<real> kpit;
+TINKER_EXTERN pointer<int, 6> ipit;
+TINKER_EXTERN pointer<real> kpit;
 TINKER_EXTERN real ptorunit;
 
 TINKER_EXTERN energy_buffer ept;

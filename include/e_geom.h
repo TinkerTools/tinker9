@@ -11,10 +11,10 @@ TINKER_NAMESPACE_BEGIN
 TINKER_EXTERN int ngfix;
 /// \ingroup geom
 /// \brief Group numbers defining each group distance restraint.
-TINKER_EXTERN device_pointer<int, 2> igfix;
+TINKER_EXTERN pointer<int, 2> igfix;
 /// \ingroup geom
 /// \brief Force constant and target range for each group distance.
-TINKER_EXTERN device_pointer<real, 3> gfix;
+TINKER_EXTERN pointer<real, 3> gfix;
 
 
 TINKER_EXTERN energy_buffer eg;

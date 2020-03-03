@@ -261,5 +261,5 @@ struct device_array
  * `N` is set to 1 by default.
  */
 template <class T, size_t N = 1>
-using device_pointer = typename device_array::pointer<T, N>::type;
+using pointer = typename device_array::pointer<T, N>::type;
 TINKER_NAMESPACE_END

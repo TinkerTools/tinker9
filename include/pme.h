@@ -53,12 +53,12 @@ TINKER_EXTERN PMEUnit ppme_unit;  // polarization
 TINKER_EXTERN PMEUnit dpme_unit;  // dispersion
 TINKER_EXTERN PMEUnit pvpme_unit; // polarization virial
 
-TINKER_EXTERN device_pointer<real, 10> cmp, fmp, cphi;
-TINKER_EXTERN device_pointer<real, 20> fphi;
+TINKER_EXTERN pointer<real, 10> cmp, fmp, cphi;
+TINKER_EXTERN pointer<real, 20> fphi;
 
-TINKER_EXTERN device_pointer<real, 3> fuind, fuinp;
-TINKER_EXTERN device_pointer<real, 10> fdip_phi1, fdip_phi2, cphidp;
-TINKER_EXTERN device_pointer<real, 20> fphidp;
+TINKER_EXTERN pointer<real, 3> fuind, fuinp;
+TINKER_EXTERN pointer<real, 10> fdip_phi1, fdip_phi2, cphidp;
+TINKER_EXTERN pointer<real, 20> fphidp;
 
 TINKER_EXTERN virial_buffer vir_m;
 

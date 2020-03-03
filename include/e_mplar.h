@@ -5,8 +5,8 @@
 
 TINKER_NAMESPACE_BEGIN
 TINKER_EXTERN int nmdpuexclude;
-TINKER_EXTERN device_pointer<int, 2> mdpuexclude;
-TINKER_EXTERN device_pointer<real, 4> mdpuexclude_scale;
+TINKER_EXTERN pointer<int, 2> mdpuexclude;
+TINKER_EXTERN pointer<real, 4> mdpuexclude_scale;
 
 
 void emplar_data(rc_op op);

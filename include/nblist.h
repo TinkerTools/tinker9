@@ -51,10 +51,10 @@ int ulist_version();
 // when neighbor lists are not set up, so these variables
 // are declared here
 /// index into preconditioner inverse for PCG solver
-TINKER_EXTERN device_pointer<int> mindex;
+TINKER_EXTERN pointer<int> mindex;
 /// preconditioner inverse for induced dipole PCG solver
-TINKER_EXTERN device_pointer<real> minv;
-TINKER_EXTERN device_pointer<real> minv_exclude_;
+TINKER_EXTERN pointer<real> minv;
+TINKER_EXTERN pointer<real> minv_exclude_;
 
 void nblist_data(rc_op op);
 TINKER_NAMESPACE_END
