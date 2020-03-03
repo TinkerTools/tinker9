@@ -84,48 +84,49 @@ void x_analyze_e()
    const char* fmt = " {:<29s}{:19.4f}{:17d}\n";
 
    if (use_potent(bond_term))
-      print(out, fmt, "Bond Stretching", get_energy(eb),
+      print(out, fmt, "Bond Stretching", energy_reduce(eb),
             count_bonded_term(bond_term));
 
    if (use_potent(angle_term))
-      print(out, fmt, "Angle Bending", get_energy(ea),
+      print(out, fmt, "Angle Bending", energy_reduce(ea),
             count_bonded_term(angle_term));
 
    if (use_potent(strbnd_term))
-      print(out, fmt, "Stretch-Bend", get_energy(eba),
+      print(out, fmt, "Stretch-Bend", energy_reduce(eba),
             count_bonded_term(strbnd_term));
 
    if (use_potent(urey_term))
-      print(out, fmt, "Urey-Bradley", get_energy(eub),
+      print(out, fmt, "Urey-Bradley", energy_reduce(eub),
             count_bonded_term(urey_term));
 
    if (use_potent(opbend_term))
-      print(out, fmt, "Out-of-Plane Bend", get_energy(eopb),
+      print(out, fmt, "Out-of-Plane Bend", energy_reduce(eopb),
             count_bonded_term(opbend_term));
 
    if (use_potent(torsion_term))
-      print(out, fmt, "Torsional Angle", get_energy(et),
+      print(out, fmt, "Torsional Angle", energy_reduce(et),
             count_bonded_term(torsion_term));
 
    if (use_potent(pitors_term))
-      print(out, fmt, "Pi-Orbital Torsion", get_energy(ept),
+      print(out, fmt, "Pi-Orbital Torsion", energy_reduce(ept),
             count_bonded_term(pitors_term));
 
    if (use_potent(tortor_term))
-      print(out, fmt, "Torsion-Torsion", get_energy(ett),
+      print(out, fmt, "Torsion-Torsion", energy_reduce(ett),
             count_bonded_term(tortor_term));
 
    if (use_potent(vdw_term))
-      print(out, fmt, "Van der Waals", get_energy(ev), get_count(nev));
+      print(out, fmt, "Van der Waals", energy_reduce(ev), count_reduce(nev));
 
    if (use_potent(mpole_term))
-      print(out, fmt, "Atomic Multipoles", get_energy(em), get_count(nem));
+      print(out, fmt, "Atomic Multipoles", energy_reduce(em),
+            count_reduce(nem));
 
    if (use_potent(polar_term))
-      print(out, fmt, "Polarization", get_energy(ep), get_count(nep));
+      print(out, fmt, "Polarization", energy_reduce(ep), count_reduce(nep));
 
    if (use_potent(geom_term))
-      print(out, fmt, "Geometric Restraints", get_energy(eg),
+      print(out, fmt, "Geometric Restraints", energy_reduce(eg),
             count_bonded_term(geom_term));
 }
 

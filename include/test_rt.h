@@ -51,18 +51,18 @@ TINKER_NAMESPACE_END
 #define COMPARE_REALS(v1, refv, eps) REQUIRE(v1 == Approx(refv).margin(eps))
 #define COMPARE_ENERGY_(gpuptr, ref_eng, eps)                                  \
    {                                                                           \
-      double eng = get_energy(gpuptr);                                         \
+      double eng = energy_reduce(gpuptr);                                      \
       REQUIRE(eng == Approx(ref_eng).margin(eps));                             \
    }
 #define COMPARE_COUNT_(gpuptr, ref_count)                                      \
    {                                                                           \
-      int count = get_count(gpuptr);                                           \
+      int count = count_reduce(gpuptr);                                        \
       REQUIRE(count == ref_count);                                             \
    }
 #define COMPARE_VIR_(gpuptr, ref_v, eps)                                       \
    {                                                                           \
       virial_prec vir1[9];                                                     \
-      get_virial(vir1, gpuptr);                                                \
+      virial_reduce(vir1, gpuptr);                                             \
       REQUIRE(vir1[0] == Approx(ref_v[0][0]).margin(eps));                     \
       REQUIRE(vir1[1] == Approx(ref_v[0][1]).margin(eps));                     \
       REQUIRE(vir1[2] == Approx(ref_v[0][2]).margin(eps));                     \
@@ -76,8 +76,8 @@ TINKER_NAMESPACE_END
 #define COMPARE_VIR2_(gpuptr, gpuptr2, ref_v, eps)                             \
    {                                                                           \
       virial_prec vir1[9], vir2[9];                                            \
-      get_virial(vir1, gpuptr);                                                \
-      get_virial(vir2, gpuptr2);                                               \
+      virial_reduce(vir1, gpuptr);                                             \
+      virial_reduce(vir2, gpuptr2);                                            \
       REQUIRE(vir1[0] + vir2[0] == Approx(ref_v[0][0]).margin(eps));           \
       REQUIRE(vir1[1] + vir2[1] == Approx(ref_v[0][1]).margin(eps));           \
       REQUIRE(vir1[2] + vir2[2] == Approx(ref_v[0][2]).margin(eps));           \

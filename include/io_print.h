@@ -2,6 +2,7 @@
 #include "macro.h"
 #include <fmt/ostream.h>
 #include <iostream>
+#include <sstream>
 #include <string>
 
 
@@ -32,5 +33,27 @@ template <class Fmt, class... Ts>
 std::string format(const Fmt& fmtstr, const Ts&... args)
 {
    return fmt::format(fmtstr, args...);
+}
+
+
+inline std::string operator*(size_t k, std::string str)
+{
+   std::ostringstream oss;
+   for (size_t i = 0; i < k; ++i) {
+      oss << str;
+   }
+   return oss.str();
+}
+
+
+inline std::string operator*(std::string str, size_t k)
+{
+   return k * str;
+}
+
+
+inline std::string operator""_s(const char* s, size_t len)
+{
+   return std::string(s, len);
 }
 TINKER_NAMESPACE_END

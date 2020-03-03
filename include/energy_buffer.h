@@ -7,17 +7,9 @@
 
 TINKER_NAMESPACE_BEGIN
 /**
- * \ingroup ebuf
- * \brief
- * The lengths of all of the energy buffers are the same and are implicitly
- * dependent on the number of atoms in the system. Depending on the template
- * parameter `N`, the underlying buffer is either equivalent to
- * `type[buffer_size()]` if `N=1`, or `type[value][buffer_size()]` if `N>1`.
- * \see buffer_traits::n buffer_traits::value buffer_traits::type
+ * \ingroup md_egv
+ * \brief Convert a fixed-point value to floating-point value on host.
  */
-size_t buffer_size();
-
-
 template <class T>
 inline T to_flt_host(fixed val)
 {
@@ -26,26 +18,52 @@ inline T to_flt_host(fixed val)
 
 
 /**
- * \ingroup ebuf
+ * \ingroup md_egv
  * \brief
- * A variable (an energy, a virial tensor, etc.) of type `T[N]` or `T` (if `N`
- * equals 1) can be stored in a buffer to get better performance and higher
- * accuracy.
- *
- * Value `N` is also used as `n` inside the class. The type of the underlying
- * buffer elements is `type[value]`, which may or may not be the same as `T[N]`.
- * If the types are different, this class provides a cast function to convert
- * `type` back to `T`, otherwise, this cast function does nothing. `value` is a
- * power of 2 and is not less than `n`.
- *
- * This class provides access to the properties described above.
+ * The lengths of all of the energy buffers are the same and are implicitly
+ * dependent on the number of atoms in the system.
+ * \note
+ * Must a power of 2.
  */
-template <class T, size_t N>
+size_t buffer_size();
+
+
+/**
+ * \ingroup md_egv
+ * \brief
+ * Poor man's buffer array for energy, virial tensor, etc. accumulation.
+ * In fact, the buffer itself is not fancy. It is just a raw pointer to a
+ * pre-allocated array on device. This class defines some properties that
+ * cannot easily be stored by or fetched from the raw pointers.
+ *
+ * This table shows a few possible definitions of the buffers (which may or
+ * may not be the definitions actually used).
+ *
+ * |                | `T[N]`         | `type (*)[value]` | `type[value]`       |
+ * |----------------|----------------|-------------------|---------------------|
+ * | **Properties** | **Increments** | **Pointer Types** | **Buffer Elements** |
+ * | Counts         | int            | int*              | int                 |
+ * | Virial         | double[9]      | double (*)[16]    | double[16]          |
+ * | Virial (symm.) | float[6]       | fixed (*)[8]      | fixed[8]            |
+ * | Energy         | float          | fixed*            | fixed               |
+ *
+ * \tparam T      Type of energy increments.
+ * \tparam Nincr  Number of elements per increment; 1 in general;
+ *                6 for symmetric virial tensor; 9 for general virial tensor.
+ *
+ * The class (at least) consists of following members:
+ *    - type[value]: Type of underlying buffer elements; `value` must be
+ *    a power of 2 and must not be not less than Nincr; by default, `T` and
+ *    `type` are the same.
+ *    - N: Must be equal to Nicr.
+ *    - T cast(type): Function to cast `type` to `T`.
+ */
+template <class T, size_t Nincr>
 struct buffer_traits
 {
-   static constexpr size_t n = N;
-   static constexpr size_t value = pow2_ge(N);
-   typedef T type;
+   static constexpr size_t N = Nincr;
+   static constexpr size_t value = pow2_ge(Nincr);
+   using type = T;
    static T cast(type val)
    {
       return val;
@@ -53,11 +71,15 @@ struct buffer_traits
 };
 
 
-template <size_t N>
-struct buffer_traits<float, N>
+/**
+ * \ingroup md_egv
+ * \brief Special rules for `float` increments where fixed-point buffer is used.
+ */
+template <size_t Nincr>
+struct buffer_traits<float, Nincr>
 {
-   static constexpr size_t n = N;
-   static constexpr size_t value = pow2_ge(N);
+   static constexpr size_t N = Nincr;
+   static constexpr size_t value = pow2_ge(Nincr);
    using type = fixed;
    static float cast(type val)
    {
@@ -66,31 +88,24 @@ struct buffer_traits<float, N>
 };
 
 
-/// \ingroup ebuf
-/// \see buffer_traits device_pointer
 using count_buffer_traits = buffer_traits<int, 1>;
-/// \ingroup ebuf
-/// \see buffer_traits device_pointer
 using energy_buffer_traits = buffer_traits<e_prec, 1>;
-/// \ingroup ebuf
-/// \see buffer_traits device_pointer
 using virial_buffer_traits = buffer_traits<v_prec, 6>;
-/// \ingroup ebuf
-/// \see buffer_traits device_pointer
+
+
+//====================================================================//
+
+
 using count_buffer =
    device_pointer<count_buffer_traits::type, count_buffer_traits::value>;
-/// \ingroup ebuf
-/// \see buffer_traits device_pointer
 using energy_buffer =
    device_pointer<energy_buffer_traits::type, energy_buffer_traits::value>;
-/// \ingroup ebuf
-/// \see buffer_traits device_pointer
 using virial_buffer =
    device_pointer<virial_buffer_traits::type, virial_buffer_traits::value>;
 
 
 /**
- * \ingroup ebuf
+ * \ingroup md_egv
  * \brief
  * Allocate or deallocate device memory for the buffers.
  * \note
@@ -108,44 +123,62 @@ using virial_buffer =
  * \see calc::analyz
  */
 void buffer_allocate(energy_buffer*, virial_buffer*);
-/// \ingroup ebuf
-/// \see buffer_allocate
+/**
+ * \ingroup md_egv
+ * \see buffer_allocate
+ */
 void buffer_deallocate(energy_buffer, virial_buffer);
-/// \ingroup ebuf
-/// \see buffer_allocate
+/**
+ * \ingroup md_egv
+ * \see buffer_allocate
+ */
 void buffer_allocate(count_buffer*, energy_buffer*, virial_buffer*);
-/// \ingroup ebuf
-/// \see buffer_allocate
+/**
+ * \ingroup md_egv
+ * \see buffer_allocate
+ */
 void buffer_deallocate(count_buffer, energy_buffer, virial_buffer);
 
 
 /**
- * \ingroup ebuf
+ * \ingroup md_egv
  * \brief
  * Get the number of the non-bonded interactions, energy, or virial from the
  * corresponding buffer. These operations unnecessarily finish within `O(1)`
  * time complexity.
  */
-int get_count(const count_buffer b);
-/// \ingroup ebuf
-/// \see get_count
-energy_prec get_energy(const energy_buffer b);
-/// \ingroup ebuf
-/// \see get_count
-void get_virial(virial_prec (&)[virial_buffer_traits::n],
-                const virial_buffer b);
-/// \ingroup ebuf
-/// \see get_count
-void get_virial(virial_prec (&)[9], const virial_buffer b);
+int count_reduce(const count_buffer b);
+/**
+ * \ingroup md_egv
+ * \see count_reduce
+ */
+energy_prec energy_reduce(const energy_buffer b);
+/**
+ * \ingroup md_egv
+ * \see count_reduce
+ */
+void virial_reduce(virial_prec (&)[virial_buffer_traits::N],
+                   const virial_buffer b);
+/**
+ * \ingroup md_egv
+ * \see count_reduce
+ */
+void virial_reduce(virial_prec (&)[9], const virial_buffer b);
 
 
-/// \ingroup ebuf
-/// \brief Bookkeeping list for the count buffers.
+/**
+ * \ingroup md_egv
+ * \brief Bookkeeping list for the count buffers.
+ */
 extern std::vector<count_buffer> count_buffers;
-/// \ingroup ebuf
-/// \brief Bookkeeping list for the energy buffers.
+/**
+ * \ingroup md_egv
+ * \brief Bookkeeping list for the energy buffers.
+ */
 extern std::vector<energy_buffer> energy_buffers;
-/// \ingroup ebuf
-/// \brief Bookkeeping list for the virial buffers.
+/**
+ * \ingroup md_egv
+ * \brief Bookkeeping list for the virial buffers.
+ */
 extern std::vector<virial_buffer> virial_buffers;
 TINKER_NAMESPACE_END

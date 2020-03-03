@@ -77,11 +77,11 @@ void sum_energy(int vers)
          esum = 0;
          for (size_t i = 0; i < energy_buffers.size(); ++i) {
             energy_buffer u = energy_buffers[i];
-            energy_prec e = get_energy(u);
+            energy_prec e = energy_reduce(u);
             esum += e;
          }
       } else {
-         esum = get_energy(esum_buf);
+         esum = energy_reduce(esum_buf);
       }
    }
 
@@ -92,12 +92,12 @@ void sum_energy(int vers)
          for (size_t i = 0; i < virial_buffers.size(); ++i) {
             virial_buffer u = virial_buffers[i];
             virial_prec v[9];
-            get_virial(v, u);
+            virial_reduce(v, u);
             for (int iv = 0; iv < 9; ++iv)
                vir[iv] += v[iv];
          }
       } else {
-         get_virial(vir, vir_buf);
+         virial_reduce(vir, vir_buf);
       }
    }
 }

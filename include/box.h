@@ -77,6 +77,8 @@ void set_default_box(const Box&);
 void get_default_box(Box&);
 void set_recip_box(real3 lvec1, real3 lvec2, real3 lvec3, real3& recipa,
                    real3& recipb, real3& recipc);
+void get_box_axes_angles(const Box&, double& a, double& b, double& c,
+                         double& alpha, double& beta, double& gamma);
 void set_tinker_box_module(const Box&);
 void get_tinker_box_module(Box&);
 

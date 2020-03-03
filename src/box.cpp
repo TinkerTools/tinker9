@@ -48,24 +48,44 @@ void set_recip_box(real3 lvec1, real3 lvec2, real3 lvec3, real3& recipa,
 }
 
 
-#define DOT3(a, b) (a[0] * b[0] + a[1] * b[1] + a[2] * b[2])
+void get_box_axes_angles(const Box& p, double& a, double& b, double& c,
+                         double& alpha, double& beta, double& gamma)
+{
+   auto DOT3 = [](const double* a, const double* b) -> double {
+      return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+   };
+
+
+   double ax[3] = {p.lvec1.x, p.lvec2.x, p.lvec3.x};
+   double bx[3] = {p.lvec1.y, p.lvec2.y, p.lvec3.y};
+   double cx[3] = {p.lvec1.z, p.lvec2.z, p.lvec3.z};
+
+
+   double xbox = std::sqrt(DOT3(ax, ax));
+   double ybox = std::sqrt(DOT3(bx, bx));
+   double zbox = std::sqrt(DOT3(cx, cx));
+   double cos_a = DOT3(bx, cx) / (ybox * zbox);
+   double cos_b = DOT3(cx, ax) / (zbox * xbox);
+   double cos_c = DOT3(ax, bx) / (xbox * ybox);
+   double a_deg = radian_dp * std::acos(cos_a);
+   double b_deg = radian_dp * std::acos(cos_b);
+   double c_deg = radian_dp * std::acos(cos_c);
+
+
+   a = xbox;
+   b = ybox;
+   c = zbox;
+   alpha = a_deg;
+   beta = b_deg;
+   gamma = c_deg;
+}
+
+
 void set_tinker_box_module(const Box& p)
 {
    if (bound::use_bounds) {
-      double ax[3] = {p.lvec1.x, p.lvec2.x, p.lvec3.x};
-      double bx[3] = {p.lvec1.y, p.lvec2.y, p.lvec3.y};
-      double cx[3] = {p.lvec1.z, p.lvec2.z, p.lvec3.z};
-
-
-      double xbox = std::sqrt(DOT3(ax, ax));
-      double ybox = std::sqrt(DOT3(bx, bx));
-      double zbox = std::sqrt(DOT3(cx, cx));
-      double cos_a = DOT3(bx, cx) / (ybox * zbox);
-      double cos_b = DOT3(cx, ax) / (zbox * xbox);
-      double cos_c = DOT3(ax, bx) / (xbox * ybox);
-      double a_deg = radian_dp * std::acos(cos_a);
-      double b_deg = radian_dp * std::acos(cos_b);
-      double c_deg = radian_dp * std::acos(cos_c);
+      double xbox, ybox, zbox, a_deg, b_deg, c_deg;
+      get_box_axes_angles(p, xbox, ybox, zbox, a_deg, b_deg, c_deg);
 
 
       boxes::xbox = xbox;

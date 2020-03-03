@@ -33,8 +33,6 @@
  * \ingroup util
  * \defgroup box    Periodic Boundary Box
  * \ingroup util
- * \defgroup ebuf   Energy Buffer
- * \ingroup util
  * \defgroup error  Errors and Exceptions
  * \ingroup util
  * \defgroup io     I/O and Text

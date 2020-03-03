@@ -30,7 +30,7 @@ TINKER_NAMESPACE_BEGIN
  * buffers are set to 0.
  * Then, evaluate energies, gradients, virials, and count interactions.
  * Last, update the global variables #esum and #vir[9]; counts are not updated
- * until #get_count() is explicitly called.
+ * until #count_reduce() is explicitly called.
  * May skip some steps based on the version parameter.
  *
  * \param vers      Flag to select the version of energy routines.

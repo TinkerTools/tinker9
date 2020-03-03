@@ -4,7 +4,7 @@
 
 
 /**
- * \defgroup md_pq  Atom Number, Coordinates (p), and Momentum (q)
+ * \defgroup md_pq  Atom Number, Momentum (p), and Coordinates (q)
  * \ingroup md
  */
 

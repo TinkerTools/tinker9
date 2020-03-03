@@ -210,7 +210,14 @@ void monte_carlo_barostat_acc(energy_prec epot)
       copy_pos_to_xyz();
       nblist_data(rc_evolve);
    } else {
-      TINKER_LOG("MC Barostat Move Accepted");
+#if TINKER_ENABLE_LOG
+      Box p;
+      get_default_box(p);
+      double xbox, ybox, zbox, a_deg, b_deg, c_deg;
+      get_box_axes_angles(p, xbox, ybox, zbox, a_deg, b_deg, c_deg);
+      TINKER_LOG("MC Barostat Move Accepted; New box"_s + 6 * "{:12.6f}"_s,
+                 xbox, ybox, zbox, a_deg, b_deg, c_deg);
+#endif
    }
 }
 TINKER_NAMESPACE_END

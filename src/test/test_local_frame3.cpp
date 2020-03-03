@@ -86,8 +86,8 @@ TEST_CASE("Local-Frame3-1",
 
       energy(calc::v3);
       COMPARE_REALS(esum, ref_eng, eps_e);
-      COMPARE_INTS(get_count(nem), ref_count);
-      COMPARE_INTS(get_count(nep), ref_count);
+      COMPARE_INTS(count_reduce(nem), ref_count);
+      COMPARE_INTS(count_reduce(nep), ref_count);
 
       energy(calc::v4);
       COMPARE_REALS(esum, ref_eng, eps_e);
@@ -156,8 +156,8 @@ TEST_CASE("Local-Frame3-2", "[ff][empole][epolar][emplar][ewald][local-frame3]")
 
       energy(calc::v3);
       COMPARE_REALS(esum, ref_eng, eps_e);
-      COMPARE_INTS(get_count(nem), ref_count);
-      COMPARE_INTS(get_count(nep), ref_count);
+      COMPARE_INTS(count_reduce(nem), ref_count);
+      COMPARE_INTS(count_reduce(nep), ref_count);
 
       energy(calc::v4);
       COMPARE_REALS(esum, ref_eng, eps_e);

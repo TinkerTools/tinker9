@@ -47,8 +47,17 @@ void finish()
    device_data(op);
    host_data(op);
 }
+TINKER_NAMESPACE_END
 
 
+#include "box.h"
+#include "group.h"
+#include "md_intg.h"
+#include "md_pq.h"
+#include "molecule.h"
+
+
+TINKER_NAMESPACE_BEGIN
 void host_data(rc_op op)
 {
    extern void random_data(rc_op);
@@ -66,17 +75,10 @@ void device_data(rc_op op)
    rc_man cl42_{cudalib_data, op};
 
 
-   extern void n_data(rc_op);
    rc_man n42_{n_data, op};
 
-   extern void box_data(rc_op);
    rc_man box42_{box_data, op};
 
-   extern void xyz_data(rc_op);
-   extern void vel_data(rc_op);
-   extern void mass_data(rc_op);
-   extern void molecule_data(rc_op);
-   extern void group_data(rc_op);
    rc_man xyz42_{xyz_data, op};
    rc_man vel42_{vel_data, op};
    rc_man mass42_{mass_data, op};
@@ -94,7 +96,6 @@ void device_data(rc_op op)
    rc_man nbl42_{nblist_data, op};
 
 
-   extern void md_data(rc_op);
    rc_man md42_{md_data, op};
 }
 TINKER_NAMESPACE_END
