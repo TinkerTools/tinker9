@@ -14,14 +14,14 @@ void eangle_data(rc_op op)
       return;
 
    if (op & rc_dealloc) {
-      device_array::deallocate(iang, ak, anat, angtyp);
+      darray::deallocate(iang, ak, anat, angtyp);
 
       buffer_deallocate(ea, vir_ea);
    }
 
    if (op & rc_alloc) {
       nangle = count_bonded_term(angle_term);
-      device_array::allocate(nangle, &iang, &ak, &anat, &angtyp);
+      darray::allocate(nangle, &iang, &ak, &anat, &angtyp);
 
       buffer_allocate(&ea, &vir_ea);
    }
@@ -31,9 +31,9 @@ void eangle_data(rc_op op)
       for (size_t i = 0; i < iangvec.size(); ++i) {
          iangvec[i] = angbnd::iang[i] - 1;
       }
-      device_array::copyin(WAIT_NEW_Q, nangle, iang, iangvec.data());
-      device_array::copyin(WAIT_NEW_Q, nangle, ak, angbnd::ak);
-      device_array::copyin(WAIT_NEW_Q, nangle, anat, angbnd::anat);
+      darray::copyin(WAIT_NEW_Q, nangle, iang, iangvec.data());
+      darray::copyin(WAIT_NEW_Q, nangle, ak, angbnd::ak);
+      darray::copyin(WAIT_NEW_Q, nangle, anat, angbnd::anat);
 
       angunit = angpot::angunit;
       cang = angpot::cang;
@@ -55,7 +55,7 @@ void eangle_data(rc_op op)
             assert(false);
          }
       }
-      device_array::copyin(WAIT_NEW_Q, nangle, angtyp, angtypvec.data());
+      darray::copyin(WAIT_NEW_Q, nangle, angtyp, angtypvec.data());
    }
 }
 

@@ -13,14 +13,14 @@ void eopbend_data(rc_op op)
       return;
 
    if (op & rc_dealloc) {
-      device_array::deallocate(iopb, opbk);
+      darray::deallocate(iopb, opbk);
 
       buffer_deallocate(eopb, vir_eopb);
    }
 
    if (op & rc_alloc) {
       int nangle = count_bonded_term(angle_term);
-      device_array::allocate(nangle, &iopb, &opbk);
+      darray::allocate(nangle, &iopb, &opbk);
 
       nopbend = count_bonded_term(opbend_term);
       buffer_allocate(&eopb, &vir_eopb);
@@ -38,8 +38,8 @@ void eopbend_data(rc_op op)
       std::vector<int> ibuf(nangle);
       for (int i = 0; i < nangle; ++i)
          ibuf[i] = opbend::iopb[i] - 1;
-      device_array::copyin(WAIT_NEW_Q, nangle, iopb, ibuf.data());
-      device_array::copyin(WAIT_NEW_Q, nangle, opbk, opbend::opbk);
+      darray::copyin(WAIT_NEW_Q, nangle, iopb, ibuf.data());
+      darray::copyin(WAIT_NEW_Q, nangle, opbk, opbend::opbk);
       opbunit = angpot::opbunit;
       copb = angpot::copb;
       qopb = angpot::qopb;

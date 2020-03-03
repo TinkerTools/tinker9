@@ -11,15 +11,15 @@ void etors_data(rc_op op)
       return;
 
    if (op & rc_dealloc) {
-      device_array::deallocate(itors, tors1, tors2, tors3, tors4, tors5, tors6);
+      darray::deallocate(itors, tors1, tors2, tors3, tors4, tors5, tors6);
 
       buffer_deallocate(et, vir_et);
    }
 
    if (op & rc_alloc) {
       ntors = count_bonded_term(torsion_term);
-      device_array::allocate(ntors, &itors, &tors1, &tors2, &tors3, &tors4,
-                             &tors5, &tors6);
+      darray::allocate(ntors, &itors, &tors1, &tors2, &tors3, &tors4, &tors5,
+                       &tors6);
 
       buffer_allocate(&et, &vir_et);
    }
@@ -29,13 +29,13 @@ void etors_data(rc_op op)
       for (int i = 0; i < 4 * ntors; ++i) {
          ibuf[i] = tors::itors[i] - 1;
       }
-      device_array::copyin(WAIT_NEW_Q, ntors, itors, ibuf.data());
-      device_array::copyin(WAIT_NEW_Q, ntors, tors1, tors::tors1);
-      device_array::copyin(WAIT_NEW_Q, ntors, tors2, tors::tors2);
-      device_array::copyin(WAIT_NEW_Q, ntors, tors3, tors::tors3);
-      device_array::copyin(WAIT_NEW_Q, ntors, tors4, tors::tors4);
-      device_array::copyin(WAIT_NEW_Q, ntors, tors5, tors::tors5);
-      device_array::copyin(WAIT_NEW_Q, ntors, tors6, tors::tors6);
+      darray::copyin(WAIT_NEW_Q, ntors, itors, ibuf.data());
+      darray::copyin(WAIT_NEW_Q, ntors, tors1, tors::tors1);
+      darray::copyin(WAIT_NEW_Q, ntors, tors2, tors::tors2);
+      darray::copyin(WAIT_NEW_Q, ntors, tors3, tors::tors3);
+      darray::copyin(WAIT_NEW_Q, ntors, tors4, tors::tors4);
+      darray::copyin(WAIT_NEW_Q, ntors, tors5, tors::tors5);
+      darray::copyin(WAIT_NEW_Q, ntors, tors6, tors::tors6);
       torsunit = torpot::torsunit;
    }
 }

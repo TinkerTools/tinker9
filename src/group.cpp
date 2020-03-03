@@ -10,8 +10,7 @@ void group_data(rc_op op)
 {
    if (op & rc_dealloc) {
       auto& st = grp;
-      device_array::deallocate(st.kgrp, st.grplist, st.igrp, st.grpmass,
-                               st.wgrp);
+      darray::deallocate(st.kgrp, st.grplist, st.igrp, st.grpmass, st.wgrp);
    }
 
 
@@ -24,9 +23,9 @@ void group_data(rc_op op)
       // allocate (igrp(2,0:maxgrp))
       // allocate (grpmass(0:maxgrp))
       // allocate (wgrp(0:maxgrp,0:maxgrp))
-      device_array::allocate(n, &st.kgrp, &st.grplist);
-      device_array::allocate(1 + st.ngrp, &st.igrp, &st.grpmass);
-      device_array::allocate((1 + st.ngrp) * (1 + st.ngrp), &st.wgrp);
+      darray::allocate(n, &st.kgrp, &st.grplist);
+      darray::allocate(1 + st.ngrp, &st.igrp, &st.grpmass);
+      darray::allocate((1 + st.ngrp) * (1 + st.ngrp), &st.wgrp);
    }
 
 
@@ -42,21 +41,21 @@ void group_data(rc_op op)
       for (int i = 0; i < n; ++i) {
          buf[i] = group::kgrp[i] - 1;
       }
-      device_array::copyin(WAIT_NEW_Q, n, st.kgrp, buf.data());
+      darray::copyin(WAIT_NEW_Q, n, st.kgrp, buf.data());
 
       for (int i = 0; i < n; ++i) {
          buf[i] = group::grplist[i];
       }
-      device_array::copyin(WAIT_NEW_Q, n, st.grplist, buf.data());
+      darray::copyin(WAIT_NEW_Q, n, st.grplist, buf.data());
 
       for (int i = 0; i <= st.ngrp; ++i) {
          int j = 2 * i;
          buf[j] = group::igrp[j] - 1;
          buf[j + 1] = group::igrp[j + 1];
       }
-      device_array::copyin(WAIT_NEW_Q, st.ngrp + 1, st.igrp, buf.data());
+      darray::copyin(WAIT_NEW_Q, st.ngrp + 1, st.igrp, buf.data());
 
-      device_array::copyin(WAIT_NEW_Q, st.ngrp + 1, st.grpmass, group::grpmass);
+      darray::copyin(WAIT_NEW_Q, st.ngrp + 1, st.grpmass, group::grpmass);
 
       std::vector<real> wgrpv((1 + st.ngrp) * (1 + st.ngrp));
       for (int i = 0; i <= st.ngrp; ++i) {
@@ -66,7 +65,7 @@ void group_data(rc_op op)
             wgrpv[i + j * (1 + st.ngrp)] = wg;
          }
       }
-      device_array::copyin(WAIT_NEW_Q, wgrpv.size(), st.wgrp, wgrpv.data());
+      darray::copyin(WAIT_NEW_Q, wgrpv.size(), st.wgrp, wgrpv.data());
    }
 }
 TINKER_NAMESPACE_END

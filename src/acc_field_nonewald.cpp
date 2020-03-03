@@ -12,7 +12,7 @@ TINKER_NAMESPACE_BEGIN
 #define DFIELD_DPTRS_ x, y, z, thole, pdamp, field, fieldp, rpole
 void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
 {
-   device_array::zero(PROCEED_NEW_Q, n, field, fieldp);
+   darray::zero(PROCEED_NEW_Q, n, field, fieldp);
 
    const real off = mlist_unit->cutoff;
    const real off2 = off * off;
@@ -157,7 +157,7 @@ void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
 void ufield_nonewald_acc(const real (*uind)[3], const real (*uinp)[3],
                          real (*field)[3], real (*fieldp)[3])
 {
-   device_array::zero(PROCEED_NEW_Q, n, field, fieldp);
+   darray::zero(PROCEED_NEW_Q, n, field, fieldp);
 
    const real off = mlist_unit->cutoff;
    const real off2 = off * off;

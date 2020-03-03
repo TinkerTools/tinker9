@@ -11,14 +11,14 @@ void estrbnd_data(rc_op op)
       return;
 
    if (op & rc_dealloc) {
-      device_array::deallocate(isb, sbk);
+      darray::deallocate(isb, sbk);
 
       buffer_deallocate(eba, vir_eba);
    }
 
    if (op & rc_alloc) {
       int nangle = count_bonded_term(angle_term);
-      device_array::allocate(nangle, &isb, &sbk);
+      darray::allocate(nangle, &isb, &sbk);
 
       nstrbnd = count_bonded_term(strbnd_term);
       buffer_allocate(&eba, &vir_eba);
@@ -30,8 +30,8 @@ void estrbnd_data(rc_op op)
       for (int i = 0; i < 3 * nangle; ++i) {
          ibuf[i] = strbnd::isb[i] - 1;
       }
-      device_array::copyin(WAIT_NEW_Q, nangle, isb, ibuf.data());
-      device_array::copyin(WAIT_NEW_Q, nangle, sbk, strbnd::sbk);
+      darray::copyin(WAIT_NEW_Q, nangle, isb, ibuf.data());
+      darray::copyin(WAIT_NEW_Q, nangle, sbk, strbnd::sbk);
 
       stbnunit = angpot::stbnunit;
    }

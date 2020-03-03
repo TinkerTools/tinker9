@@ -123,7 +123,7 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
 
 
    // zero out the induced dipoles at each site
-   device_array::zero(PROCEED_NEW_Q, n, uind, uinp);
+   darray::zero(PROCEED_NEW_Q, n, uind, uinp);
 
 
    // get the electrostatic field due to permanent multipoles
@@ -133,8 +133,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
    // direct induced dipoles
    launch_k1s(nonblk, n, pcg_udir, n, polarity, udir, udirp, field, fieldp);
    if (dirguess) {
-      device_array::copy(PROCEED_NEW_Q, n, uind, udir);
-      device_array::copy(PROCEED_NEW_Q, n, uinp, udirp);
+      darray::copy(PROCEED_NEW_Q, n, uind, udir);
+      darray::copy(PROCEED_NEW_Q, n, uinp, udirp);
    }
 
 
@@ -146,8 +146,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
    if (dirguess) {
       ufield(udir, udirp, rsd, rsdp);
    } else {
-      device_array::copy(PROCEED_NEW_Q, n, rsd, field);
-      device_array::copy(PROCEED_NEW_Q, n, rsdp, fieldp);
+      darray::copy(PROCEED_NEW_Q, n, rsd, field);
+      darray::copy(PROCEED_NEW_Q, n, rsdp, fieldp);
    }
 
 
@@ -158,15 +158,15 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
    } else {
       diag_precond(rsd, rsdp, zrsd, zrsdp);
    }
-   device_array::copy(PROCEED_NEW_Q, n, conj, zrsd);
-   device_array::copy(PROCEED_NEW_Q, n, conjp, zrsdp);
+   darray::copy(PROCEED_NEW_Q, n, conj, zrsd);
+   darray::copy(PROCEED_NEW_Q, n, conjp, zrsdp);
 
 
    // initial r(0) M r(0)
    real* sum = &((real*)dptr_buf)[0];
    real* sump = &((real*)dptr_buf)[1];
-   device_array::dot(PROCEED_NEW_Q, n, sum, rsd, zrsd);
-   device_array::dot(PROCEED_NEW_Q, n, sump, rsdp, zrsdp);
+   darray::dot(PROCEED_NEW_Q, n, sum, rsd, zrsd);
+   darray::dot(PROCEED_NEW_Q, n, sump, rsdp, zrsdp);
 
 
    // conjugate gradient iteration of the mutual induced dipoles
@@ -200,8 +200,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       real* a = &((real*)dptr_buf)[2];
       real* ap = &((real*)dptr_buf)[3];
       // a <- r M r / p T p; a = sum / a; ap = sump / ap
-      device_array::dot(PROCEED_NEW_Q, n, a, conj, vec);
-      device_array::dot(PROCEED_NEW_Q, n, ap, conjp, vecp);
+      darray::dot(PROCEED_NEW_Q, n, a, conj, vec);
+      darray::dot(PROCEED_NEW_Q, n, ap, conjp, vecp);
 
 
       // u <- u + a p
@@ -220,8 +220,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       // b = sum1 / sum; bp = sump1 / sump
       real* sum1 = &((real*)dptr_buf)[4];
       real* sump1 = &((real*)dptr_buf)[5];
-      device_array::dot(PROCEED_NEW_Q, n, sum1, rsd, zrsd);
-      device_array::dot(PROCEED_NEW_Q, n, sump1, rsdp, zrsdp);
+      darray::dot(PROCEED_NEW_Q, n, sum1, rsd, zrsd);
+      darray::dot(PROCEED_NEW_Q, n, sump1, rsdp, zrsdp);
 
 
       // calculate/update p
@@ -230,13 +230,13 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
 
 
       // copy sum1/p to sum/p
-      device_array::copy(PROCEED_NEW_Q, 2, sum, sum1);
+      darray::copy(PROCEED_NEW_Q, 2, sum, sum1);
 
 
       real* epsd = &((real*)dptr_buf)[6];
       real* epsp = &((real*)dptr_buf)[7];
-      device_array::dot(PROCEED_NEW_Q, n, epsd, rsd, rsd);
-      device_array::dot(PROCEED_NEW_Q, n, epsp, rsdp, rsdp);
+      darray::dot(PROCEED_NEW_Q, n, epsd, rsd, rsd);
+      darray::dot(PROCEED_NEW_Q, n, epsp, rsdp, rsdp);
       check_rt(cudaMemcpyAsync((real*)pinned_buf, epsd, 2 * sizeof(real),
                                cudaMemcpyDeviceToHost, nonblk));
       check_rt(cudaStreamSynchronize(nonblk));

@@ -16,7 +16,7 @@
 TINKER_NAMESPACE_BEGIN
 NBList::~NBList()
 {
-   device_array::deallocate(nlst, lst, update, xold, yold, zold);
+   darray::deallocate(nlst, lst, update, xold, yold, zold);
 }
 
 
@@ -165,10 +165,10 @@ static void nblist_alloc(int version, NBListUnit& nblu, int maxn, real cutoff,
    nblu = NBListUnit::open();
    auto& st = *nblu;
 
-   device_array::allocate(n, &st.nlst);
+   darray::allocate(n, &st.nlst);
 
    int maxlst = nblist_maxlst(maxn, cutoff, buffer);
-   device_array::allocate(maxlst * n, &st.lst);
+   darray::allocate(maxlst * n, &st.lst);
 
    if (maxlst == 1) {
       st.update = nullptr;
@@ -176,7 +176,7 @@ static void nblist_alloc(int version, NBListUnit& nblu, int maxn, real cutoff,
       st.yold = nullptr;
       st.zold = nullptr;
    } else {
-      device_array::allocate(n, &st.update, &st.xold, &st.yold, &st.zold);
+      darray::allocate(n, &st.update, &st.xold, &st.yold, &st.zold);
    }
 
    st.x = x;
@@ -370,10 +370,10 @@ void nblist_data(rc_op op)
       if (op & rc_alloc) {
          const int maxnlst = 500;
          nblist_alloc(u, unt, maxnlst, cut, buf, x, y, z);
-         device_array::allocate(n, &mindex);
+         darray::allocate(n, &mindex);
          int minv_size = nblist_maxlst(maxnlst, cut, buf);
-         device_array::allocate(3 * minv_size * n, &minv);
-         device_array::allocate(6 * nuexclude_, &minv_exclude_);
+         darray::allocate(3 * minv_size * n, &minv);
+         darray::allocate(6 * nuexclude_, &minv_exclude_);
       }
       if (op & rc_init) {
          nblist_build(unt);
@@ -388,7 +388,7 @@ void nblist_data(rc_op op)
          nblist_update(unt);
       }
       if (op & rc_dealloc) {
-         device_array::deallocate(mindex, minv, minv_exclude_);
+         darray::deallocate(mindex, minv, minv_exclude_);
       }
    }
    if (u & NBList::spatial) {

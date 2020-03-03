@@ -15,7 +15,7 @@ void empole_data(rc_op op)
 
    if (op & rc_dealloc) {
       nmexclude_ = 0;
-      device_array::deallocate(mexclude_, mexclude_scale_);
+      darray::deallocate(mexclude_, mexclude_scale_);
 
       buffer_deallocate(nem, em, vir_em);
    }
@@ -92,10 +92,9 @@ void empole_data(rc_op op)
          }
       }
       nmexclude_ = excls.size();
-      device_array::allocate(nmexclude_, &mexclude_, &mexclude_scale_);
-      device_array::copyin(WAIT_NEW_Q, nmexclude_, mexclude_, exclik.data());
-      device_array::copyin(WAIT_NEW_Q, nmexclude_, mexclude_scale_,
-                           excls.data());
+      darray::allocate(nmexclude_, &mexclude_, &mexclude_scale_);
+      darray::copyin(WAIT_NEW_Q, nmexclude_, mexclude_, exclik.data());
+      darray::copyin(WAIT_NEW_Q, nmexclude_, mexclude_scale_, excls.data());
 
       buffer_allocate(&nem, &em, &vir_em);
    }

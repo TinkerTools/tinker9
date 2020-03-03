@@ -12,7 +12,7 @@ void egeom_data(rc_op op)
 
 
    if (op & rc_dealloc) {
-      device_array::deallocate(igfix, gfix);
+      darray::deallocate(igfix, gfix);
 
       buffer_deallocate(eg, vir_eg);
    }
@@ -20,15 +20,15 @@ void egeom_data(rc_op op)
 
    if (op & rc_alloc) {
       ngfix = restrn::ngfix;
-      device_array::allocate(ngfix, &igfix, &gfix);
+      darray::allocate(ngfix, &igfix, &gfix);
 
       buffer_allocate(&eg, &vir_eg);
    }
 
 
    if (op & rc_init) {
-      device_array::copyin(WAIT_NEW_Q, ngfix, igfix, restrn::igfix);
-      device_array::copyin(WAIT_NEW_Q, ngfix, gfix, restrn::gfix);
+      darray::copyin(WAIT_NEW_Q, ngfix, igfix, restrn::igfix);
+      darray::copyin(WAIT_NEW_Q, ngfix, gfix, restrn::gfix);
    }
 }
 

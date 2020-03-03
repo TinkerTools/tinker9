@@ -47,8 +47,8 @@ bool PME::operator==(const Params& p) const
 
 PME::~PME()
 {
-   device_array::deallocate(bsmod1, bsmod2, bsmod3, qgrid);
-   device_array::deallocate(igrid, thetai1, thetai2, thetai3);
+   darray::deallocate(bsmod1, bsmod2, bsmod3, qgrid);
+   darray::deallocate(igrid, thetai1, thetai2, thetai3);
 }
 
 static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique)
@@ -64,13 +64,13 @@ static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique)
       auto& st = *unit;
 
       // see also subroutine moduli in pmestuf.f
-      device_array::allocate(p.nfft1, &st.bsmod1);
-      device_array::allocate(p.nfft2, &st.bsmod2);
-      device_array::allocate(p.nfft3, &st.bsmod3);
-      device_array::allocate(2 * p.nfft1 * p.nfft2 * p.nfft3, &st.qgrid);
-      device_array::allocate(3 * n, &st.igrid);
-      device_array::allocate(padded_n * p.bsorder * 4, &st.thetai1, &st.thetai2,
-                             &st.thetai3);
+      darray::allocate(p.nfft1, &st.bsmod1);
+      darray::allocate(p.nfft2, &st.bsmod2);
+      darray::allocate(p.nfft3, &st.bsmod3);
+      darray::allocate(2 * p.nfft1 * p.nfft2 * p.nfft3, &st.qgrid);
+      darray::allocate(3 * n, &st.igrid);
+      darray::allocate(padded_n * p.bsorder * 4, &st.thetai1, &st.thetai2,
+                       &st.thetai3);
 
       st.set_params(p);
    }
@@ -100,13 +100,13 @@ static void pme_op_copyin_(PMEUnit unit)
    std::vector<double> bsmodbuf(maxfft);
    TINKER_RT(dftmod)
    (bsmodbuf.data(), bsarray.data(), &st.nfft1, &st.bsorder);
-   device_array::copyin(WAIT_NEW_Q, st.nfft1, st.bsmod1, bsmodbuf.data());
+   darray::copyin(WAIT_NEW_Q, st.nfft1, st.bsmod1, bsmodbuf.data());
    TINKER_RT(dftmod)
    (bsmodbuf.data(), bsarray.data(), &st.nfft2, &st.bsorder);
-   device_array::copyin(WAIT_NEW_Q, st.nfft2, st.bsmod2, bsmodbuf.data());
+   darray::copyin(WAIT_NEW_Q, st.nfft2, st.bsmod2, bsmodbuf.data());
    TINKER_RT(dftmod)
    (bsmodbuf.data(), bsarray.data(), &st.nfft3, &st.bsorder);
-   device_array::copyin(WAIT_NEW_Q, st.nfft3, st.bsmod3, bsmodbuf.data());
+   darray::copyin(WAIT_NEW_Q, st.nfft3, st.bsmod3, bsmodbuf.data());
 
    unit.update_deviceptr(st, WAIT_NEW_Q);
 }
@@ -118,7 +118,7 @@ void pme_init(int vers)
    rpole_to_cmp();
 
    if (vir_m)
-      device_array::zero(PROCEED_NEW_Q, buffer_size(), vir_m);
+      darray::zero(PROCEED_NEW_Q, buffer_size(), vir_m);
 }
 
 static void pme_data1_(rc_op op)
@@ -126,13 +126,12 @@ static void pme_data1_(rc_op op)
    if (op & rc_dealloc) {
       PMEUnit::clear();
 
-      device_array::deallocate(cmp, fmp, cphi, fphi);
+      darray::deallocate(cmp, fmp, cphi, fphi);
 
       if (use_potent(polar_term)) {
-         device_array::deallocate(fuind, fuinp, fdip_phi1, fdip_phi2, cphidp,
-                                  fphidp);
+         darray::deallocate(fuind, fuinp, fdip_phi1, fdip_phi2, cphidp, fphidp);
 
-         device_array::deallocate(vir_m);
+         darray::deallocate(vir_m);
       }
 
       epme_unit.close();
@@ -144,14 +143,14 @@ static void pme_data1_(rc_op op)
    if (op & rc_alloc) {
       assert(PMEUnit::size() == 0);
 
-      device_array::allocate(n, &cmp, &fmp, &cphi, &fphi);
+      darray::allocate(n, &cmp, &fmp, &cphi, &fphi);
 
       if (use_potent(polar_term)) {
-         device_array::allocate(n, &fuind, &fuinp, &fdip_phi1, &fdip_phi2,
-                                &cphidp, &fphidp);
+         darray::allocate(n, &fuind, &fuinp, &fdip_phi1, &fdip_phi2, &cphidp,
+                          &fphidp);
 
          if (rc_flag & calc::virial) {
-            device_array::allocate(buffer_size(), &vir_m);
+            darray::allocate(buffer_size(), &vir_m);
          } else {
             vir_m = nullptr;
          }

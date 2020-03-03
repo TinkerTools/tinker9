@@ -22,19 +22,19 @@ void epolar_data(rc_op op)
 
    if (op & rc_dealloc) {
       nuexclude_ = 0;
-      device_array::deallocate(uexclude_, uexclude_scale_);
+      darray::deallocate(uexclude_, uexclude_scale_);
       ndpexclude_ = 0;
-      device_array::deallocate(dpexclude_, dpexclude_scale_);
+      darray::deallocate(dpexclude_, dpexclude_scale_);
       ndpuexclude_ = 0;
-      device_array::deallocate(dpuexclude_, dpuexclude_scale_);
+      darray::deallocate(dpuexclude_, dpuexclude_scale_);
 
-      device_array::deallocate(polarity, thole, pdamp, polarity_inv);
+      darray::deallocate(polarity, thole, pdamp, polarity_inv);
 
       buffer_deallocate(nep, ep, vir_ep);
 
-      device_array::deallocate(ufld, dufld);
-      device_array::deallocate(work01_, work02_, work03_, work04_, work05_,
-                               work06_, work07_, work08_, work09_, work10_);
+      darray::deallocate(ufld, dufld);
+      darray::deallocate(work01_, work02_, work03_, work04_, work05_, work06_,
+                         work07_, work08_, work09_, work10_);
    }
 
    if (op & rc_alloc) {
@@ -149,10 +149,9 @@ void epolar_data(rc_op op)
          }
       }
       nuexclude_ = excls.size();
-      device_array::allocate(nuexclude_, &uexclude_, &uexclude_scale_);
-      device_array::copyin(WAIT_NEW_Q, nuexclude_, uexclude_, exclik.data());
-      device_array::copyin(WAIT_NEW_Q, nuexclude_, uexclude_scale_,
-                           excls.data());
+      darray::allocate(nuexclude_, &uexclude_, &uexclude_scale_);
+      darray::copyin(WAIT_NEW_Q, nuexclude_, uexclude_, exclik.data());
+      darray::copyin(WAIT_NEW_Q, nuexclude_, uexclude_scale_, excls.data());
 
       d1scale = polpot::d1scale;
       d2scale = polpot::d2scale;
@@ -333,32 +332,29 @@ void epolar_data(rc_op op)
          dpu_sc_vec.push_back(it.second.u);
       }
       ndpuexclude_ = ik_dpu.size();
-      device_array::allocate(ndpuexclude_, &dpuexclude_, &dpuexclude_scale_);
-      device_array::copyin(WAIT_NEW_Q, ndpuexclude_, dpuexclude_,
-                           dpu_ik_vec.data());
-      device_array::copyin(WAIT_NEW_Q, ndpuexclude_, dpuexclude_scale_,
-                           dpu_sc_vec.data());
+      darray::allocate(ndpuexclude_, &dpuexclude_, &dpuexclude_scale_);
+      darray::copyin(WAIT_NEW_Q, ndpuexclude_, dpuexclude_, dpu_ik_vec.data());
+      darray::copyin(WAIT_NEW_Q, ndpuexclude_, dpuexclude_scale_,
+                     dpu_sc_vec.data());
 
       ndpexclude_ = excls.size() / 2;
-      device_array::allocate(ndpexclude_, &dpexclude_, &dpexclude_scale_);
-      device_array::copyin(WAIT_NEW_Q, ndpexclude_, dpexclude_, exclik.data());
-      device_array::copyin(WAIT_NEW_Q, ndpexclude_, dpexclude_scale_,
-                           excls.data());
+      darray::allocate(ndpexclude_, &dpexclude_, &dpexclude_scale_);
+      darray::copyin(WAIT_NEW_Q, ndpexclude_, dpexclude_, exclik.data());
+      darray::copyin(WAIT_NEW_Q, ndpexclude_, dpexclude_scale_, excls.data());
 
-      device_array::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
+      darray::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
 
       buffer_allocate(&nep, &ep, &vir_ep);
 
       if (rc_flag & calc::grad) {
-         device_array::allocate(n, &ufld, &dufld);
+         darray::allocate(n, &ufld, &dufld);
       } else {
          ufld = nullptr;
          dufld = nullptr;
       }
 
-      device_array::allocate(n, &work01_, &work02_, &work03_, &work04_,
-                             &work05_, &work06_, &work07_, &work08_, &work09_,
-                             &work10_);
+      darray::allocate(n, &work01_, &work02_, &work03_, &work04_, &work05_,
+                       &work06_, &work07_, &work08_, &work09_, &work10_);
    }
 
    if (op & rc_init) {
@@ -376,10 +372,10 @@ void epolar_data(rc_op op)
       for (int i = 0; i < n; ++i) {
          pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
       }
-      device_array::copyin(WAIT_NEW_Q, n, polarity, polar::polarity);
-      device_array::copyin(WAIT_NEW_Q, n, thole, polar::thole);
-      device_array::copyin(WAIT_NEW_Q, n, pdamp, polar::pdamp);
-      device_array::copyin(WAIT_NEW_Q, n, polarity_inv, pinvbuf.data());
+      darray::copyin(WAIT_NEW_Q, n, polarity, polar::polarity);
+      darray::copyin(WAIT_NEW_Q, n, thole, polar::thole);
+      darray::copyin(WAIT_NEW_Q, n, pdamp, polar::pdamp);
+      darray::copyin(WAIT_NEW_Q, n, polarity_inv, pinvbuf.data());
    }
 }
 
@@ -391,7 +387,7 @@ void induce(real (*ud)[3], real (*up)[3])
    if (inform::debug && use_potent(polar_term)) {
       std::vector<double> uindbuf;
       uindbuf.resize(3 * n);
-      device_array::copyout(WAIT_NEW_Q, n, uindbuf.data(), ud);
+      darray::copyout(WAIT_NEW_Q, n, uindbuf.data(), ud);
       bool header = true;
       for (int i = 0; i < n; ++i) {
          if (polar::polarity[i] != 0) {

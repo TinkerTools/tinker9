@@ -114,9 +114,9 @@ void monte_carlo_barostat_acc(energy_prec epot)
    double volold = volbox();
    double volnew = 0;
    double eold = epot;
-   device_array::copy(PROCEED_NEW_Q, n, x_pmonte, xpos);
-   device_array::copy(PROCEED_NEW_Q, n, y_pmonte, ypos);
-   device_array::copy(PROCEED_NEW_Q, n, z_pmonte, zpos);
+   darray::copy(PROCEED_NEW_Q, n, x_pmonte, xpos);
+   darray::copy(PROCEED_NEW_Q, n, y_pmonte, ypos);
+   darray::copy(PROCEED_NEW_Q, n, z_pmonte, zpos);
 
 
    if (isotropic) {
@@ -204,9 +204,9 @@ void monte_carlo_barostat_acc(energy_prec epot)
       TINKER_LOG("MC Barostat Move Rejected");
       esum = eold;
       set_default_box(boxold);
-      device_array::copy(PROCEED_NEW_Q, n, xpos, x_pmonte);
-      device_array::copy(PROCEED_NEW_Q, n, ypos, y_pmonte);
-      device_array::copy(PROCEED_NEW_Q, n, zpos, z_pmonte);
+      darray::copy(PROCEED_NEW_Q, n, xpos, x_pmonte);
+      darray::copy(PROCEED_NEW_Q, n, ypos, y_pmonte);
+      darray::copy(PROCEED_NEW_Q, n, zpos, z_pmonte);
       copy_pos_to_xyz();
       nblist_data(rc_evolve);
    } else {

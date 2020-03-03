@@ -9,14 +9,14 @@ TINKER_NAMESPACE_BEGIN
 Spatial::~Spatial()
 {
    // output
-   device_array::deallocate(lst, iak);
+   darray::deallocate(lst, iak);
    // internal
-   device_array::deallocate(sorted, boxnum);
-   device_array::deallocate(naak, xakf, xakf_scan);
-   device_array::deallocate(nearby);
-   device_array::deallocate(ax_scan);
-   device_array::deallocate(xkf);
-   device_array::deallocate(update, xold, yold, zold);
+   darray::deallocate(sorted, boxnum);
+   darray::deallocate(naak, xakf, xakf_scan);
+   darray::deallocate(nearby);
+   darray::deallocate(ax_scan);
+   darray::deallocate(xkf);
+   darray::deallocate(update, xold, yold, zold);
 }
 
 
@@ -45,12 +45,12 @@ void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer,
    st.iak = nullptr;
    st.lst = nullptr;
    // internal
-   device_array::allocate(st.n, &st.sorted, &st.boxnum);
-   device_array::allocate(st.nak, &st.naak, &st.xakf, &st.xakf_scan);
-   device_array::allocate(st.nx, &st.nearby);
-   device_array::allocate(st.nx + 1, &st.ax_scan);
-   device_array::allocate(st.nak * st.nxk, &st.xkf);
-   device_array::allocate(st.n, &st.update, &st.xold, &st.yold, &st.zold);
+   darray::allocate(st.n, &st.sorted, &st.boxnum);
+   darray::allocate(st.nak, &st.naak, &st.xakf, &st.xakf_scan);
+   darray::allocate(st.nx, &st.nearby);
+   darray::allocate(st.nx + 1, &st.ax_scan);
+   darray::allocate(st.nak * st.nxk, &st.xkf);
+   darray::allocate(st.n, &st.update, &st.xold, &st.yold, &st.zold);
 
    st.rebuild = 1;
    st.cutoff = cutoff;

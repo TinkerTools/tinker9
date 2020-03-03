@@ -12,14 +12,14 @@ void ebond_data(rc_op op)
       return;
 
    if (op & rc_dealloc) {
-      device_array::deallocate(ibnd, bl, bk);
+      darray::deallocate(ibnd, bl, bk);
 
       buffer_deallocate(eb, vir_eb);
    }
 
    if (op & rc_alloc) {
       nbond = count_bonded_term(bond_term);
-      device_array::allocate(nbond, &ibnd, &bl, &bk);
+      darray::allocate(nbond, &ibnd, &bl, &bk);
 
       buffer_allocate(&eb, &vir_eb);
    }
@@ -39,9 +39,9 @@ void ebond_data(rc_op op)
       for (size_t i = 0; i < ibndvec.size(); ++i) {
          ibndvec[i] = bndstr::ibnd[i] - 1;
       }
-      device_array::copyin(WAIT_NEW_Q, nbond, ibnd, ibndvec.data());
-      device_array::copyin(WAIT_NEW_Q, nbond, bl, bndstr::bl);
-      device_array::copyin(WAIT_NEW_Q, nbond, bk, bndstr::bk);
+      darray::copyin(WAIT_NEW_Q, nbond, ibnd, ibndvec.data());
+      darray::copyin(WAIT_NEW_Q, nbond, bl, bndstr::bl);
+      darray::copyin(WAIT_NEW_Q, nbond, bk, bndstr::bk);
    }
 }
 

@@ -11,14 +11,14 @@ void epitors_data(rc_op op)
       return;
 
    if (op & rc_dealloc) {
-      device_array::deallocate(ipit, kpit);
+      darray::deallocate(ipit, kpit);
 
       buffer_deallocate(ept, vir_ept);
    }
 
    if (op & rc_alloc) {
       int ntors = count_bonded_term(torsion_term);
-      device_array::allocate(ntors, &ipit, &kpit);
+      darray::allocate(ntors, &ipit, &kpit);
 
       npitors = count_bonded_term(pitors_term);
       buffer_allocate(&ept, &vir_ept);
@@ -29,8 +29,8 @@ void epitors_data(rc_op op)
       std::vector<int> ibuf(6 * ntors);
       for (int i = 0; i < 6 * ntors; ++i)
          ibuf[i] = pitors::ipit[i] - 1;
-      device_array::copyin(WAIT_NEW_Q, ntors, ipit, ibuf.data());
-      device_array::copyin(WAIT_NEW_Q, ntors, kpit, pitors::kpit);
+      darray::copyin(WAIT_NEW_Q, ntors, ipit, ibuf.data());
+      darray::copyin(WAIT_NEW_Q, ntors, kpit, pitors::kpit);
       ptorunit = torpot::ptorunit;
    }
 }

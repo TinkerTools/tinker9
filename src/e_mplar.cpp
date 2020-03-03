@@ -18,7 +18,7 @@ void emplar_data(rc_op op)
 
    if (op & rc_dealloc) {
       nmdpuexclude = 0;
-      device_array::deallocate(mdpuexclude, mdpuexclude_scale);
+      darray::deallocate(mdpuexclude, mdpuexclude_scale);
    }
 
 
@@ -345,11 +345,10 @@ void emplar_data(rc_op op)
          scal_vec.push_back(it.second.u);
       }
       nmdpuexclude = ik_scale.size();
-      device_array::allocate(nmdpuexclude, &mdpuexclude, &mdpuexclude_scale);
-      device_array::copyin(WAIT_NEW_Q, nmdpuexclude, mdpuexclude,
-                           ik_vec.data());
-      device_array::copyin(WAIT_NEW_Q, nmdpuexclude, mdpuexclude_scale,
-                           scal_vec.data());
+      darray::allocate(nmdpuexclude, &mdpuexclude, &mdpuexclude_scale);
+      darray::copyin(WAIT_NEW_Q, nmdpuexclude, mdpuexclude, ik_vec.data());
+      darray::copyin(WAIT_NEW_Q, nmdpuexclude, mdpuexclude_scale,
+                     scal_vec.data());
    }
 }
 TINKER_NAMESPACE_END

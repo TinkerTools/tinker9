@@ -32,11 +32,11 @@ void evdw_data(rc_op op)
       jvdwbuf.clear();
       jcount = 0;
 
-      device_array::deallocate(ired, kred, xred, yred, zred, gxred, gyred,
-                               gzred, jvdw, radmin, epsilon, vlam);
+      darray::deallocate(ired, kred, xred, yred, zred, gxred, gyred, gzred,
+                         jvdw, radmin, epsilon, vlam);
 
       nvexclude_ = 0;
-      device_array::deallocate(vexclude_, vexclude_scale_);
+      darray::deallocate(vexclude_, vexclude_scale_);
 
       buffer_deallocate(nev, ev, vir_ev);
 
@@ -45,16 +45,16 @@ void evdw_data(rc_op op)
    }
 
    if (op & rc_alloc) {
-      device_array::allocate(n, &ired, &kred, &xred, &yred, &zred);
+      darray::allocate(n, &ired, &kred, &xred, &yred, &zred);
       if (rc_flag & calc::grad) {
-         device_array::allocate(n, &gxred, &gyred, &gzred);
+         darray::allocate(n, &gxred, &gyred, &gzred);
       } else {
          gxred = nullptr;
          gyred = nullptr;
          gzred = nullptr;
       }
 
-      device_array::allocate(n, &jvdw);
+      darray::allocate(n, &jvdw);
 
       jvdwbuf.resize(n);
       assert(jmap.size() == 0);
@@ -73,9 +73,9 @@ void evdw_data(rc_op op)
          }
       }
 
-      device_array::allocate(jcount * jcount, &radmin, &epsilon);
+      darray::allocate(jcount * jcount, &radmin, &epsilon);
 
-      device_array::allocate(n, &vlam);
+      darray::allocate(n, &vlam);
 
       v2scale = vdwpot::v2scale;
       v3scale = vdwpot::v3scale;
@@ -148,10 +148,9 @@ void evdw_data(rc_op op)
          }
       }
       nvexclude_ = excls.size();
-      device_array::allocate(nvexclude_, &vexclude_, &vexclude_scale_);
-      device_array::copyin(WAIT_NEW_Q, nvexclude_, vexclude_, exclik.data());
-      device_array::copyin(WAIT_NEW_Q, nvexclude_, vexclude_scale_,
-                           excls.data());
+      darray::allocate(nvexclude_, &vexclude_, &vexclude_scale_);
+      darray::copyin(WAIT_NEW_Q, nvexclude_, vexclude_, exclik.data());
+      darray::copyin(WAIT_NEW_Q, nvexclude_, vexclude_scale_, excls.data());
 
       buffer_allocate(&nev, &ev, &vir_ev);
    }
@@ -187,10 +186,10 @@ void evdw_data(rc_op op)
          iredbuf[i] = jt;
          kredbuf[i] = vdw::kred[i];
       }
-      device_array::copyin(WAIT_NEW_Q, n, ired, iredbuf.data());
-      device_array::copyin(WAIT_NEW_Q, n, kred, kredbuf.data());
+      darray::copyin(WAIT_NEW_Q, n, ired, iredbuf.data());
+      darray::copyin(WAIT_NEW_Q, n, kred, kredbuf.data());
 
-      device_array::copyin(WAIT_NEW_Q, n, jvdw, jvdwbuf.data());
+      darray::copyin(WAIT_NEW_Q, n, jvdw, jvdwbuf.data());
       njvdw = jcount;
 
       // see also kvdw.f
@@ -205,8 +204,8 @@ void evdw_data(rc_op op)
             epsvec.push_back(vdw::epsilon[offset]);
          }
       }
-      device_array::copyin(WAIT_NEW_Q, jcount * jcount, radmin, radvec.data());
-      device_array::copyin(WAIT_NEW_Q, jcount * jcount, epsilon, epsvec.data());
+      darray::copyin(WAIT_NEW_Q, jcount * jcount, radmin, radvec.data());
+      darray::copyin(WAIT_NEW_Q, jcount * jcount, epsilon, epsvec.data());
 
       std::vector<real> vlamvec(n);
       for (int i = 0; i < n; ++i) {
@@ -216,7 +215,7 @@ void evdw_data(rc_op op)
             vlamvec[i] = 1;
          }
       }
-      device_array::copyin(WAIT_NEW_Q, n, vlam, vlamvec.data());
+      darray::copyin(WAIT_NEW_Q, n, vlam, vlamvec.data());
 
       // Initialize elrc and vlrc.
       const int mode_len = 6;

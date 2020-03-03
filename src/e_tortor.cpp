@@ -15,21 +15,21 @@ void etortor_data(rc_op op)
       return;
 
    if (op & rc_dealloc) {
-      device_array::deallocate(ibitor, itt, tnx, tny, ttx, tty, tbf, tbx, tby,
-                               tbxy, chkttor_ia_);
+      darray::deallocate(ibitor, itt, tnx, tny, ttx, tty, tbf, tbx, tby, tbxy,
+                         chkttor_ia_);
 
       buffer_deallocate(ett, vir_ett);
    }
 
    if (op & rc_alloc) {
       nbitor = bitor_::nbitor;
-      device_array::allocate(nbitor, &ibitor, &itt);
+      darray::allocate(nbitor, &ibitor, &itt);
 
-      device_array::allocate(ktrtor::maxntt, &tnx, &tny, &ttx, &tty, &tbf, &tbx,
-                             &tby, &tbxy);
+      darray::allocate(ktrtor::maxntt, &tnx, &tny, &ttx, &tty, &tbf, &tbx, &tby,
+                       &tbxy);
 
       ntortor = count_bonded_term(tortor_term);
-      device_array::allocate(ntortor, &chkttor_ia_);
+      darray::allocate(ntortor, &chkttor_ia_);
 
       buffer_allocate(&ett, &vir_ett);
    }
@@ -40,27 +40,26 @@ void etortor_data(rc_op op)
       ibuf.resize(5 * nbitor);
       for (int i = 0; i < 5 * nbitor; ++i)
          ibuf[i] = bitor_::ibitor[i] - 1;
-      device_array::copyin(WAIT_NEW_Q, nbitor, ibitor, ibuf.data());
+      darray::copyin(WAIT_NEW_Q, nbitor, ibitor, ibuf.data());
 
       ibuf.resize(3 * nbitor);
       for (int i = 0; i < 3 * nbitor; ++i)
          ibuf[i] = tortor::itt[i] - 1;
-      device_array::copyin(WAIT_NEW_Q, nbitor, itt, ibuf.data());
+      darray::copyin(WAIT_NEW_Q, nbitor, itt, ibuf.data());
 
       ibuf.resize(ktrtor::maxntt);
       for (int i = 0; i < ktrtor::maxntt; ++i)
          ibuf[i] = ktrtor::tnx[i];
-      device_array::copyin(WAIT_NEW_Q, ktrtor::maxntt, tnx, ibuf.data());
+      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tnx, ibuf.data());
       for (int i = 0; i < ktrtor::maxntt; ++i)
          ibuf[i] = ktrtor::tny[i];
-      device_array::copyin(WAIT_NEW_Q, ktrtor::maxntt, tny, ibuf.data());
-      device_array::copyin(WAIT_NEW_Q, ktrtor::maxntt, ttx, &ktrtor::ttx[0][0]);
-      device_array::copyin(WAIT_NEW_Q, ktrtor::maxntt, tty, &ktrtor::tty[0][0]);
-      device_array::copyin(WAIT_NEW_Q, ktrtor::maxntt, tbf, &ktrtor::tbf[0][0]);
-      device_array::copyin(WAIT_NEW_Q, ktrtor::maxntt, tbx, &ktrtor::tbx[0][0]);
-      device_array::copyin(WAIT_NEW_Q, ktrtor::maxntt, tby, &ktrtor::tby[0][0]);
-      device_array::copyin(WAIT_NEW_Q, ktrtor::maxntt, tbxy,
-                           &ktrtor::tbxy[0][0]);
+      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tny, ibuf.data());
+      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, ttx, &ktrtor::ttx[0][0]);
+      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tty, &ktrtor::tty[0][0]);
+      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tbf, &ktrtor::tbf[0][0]);
+      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tbx, &ktrtor::tbx[0][0]);
+      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tby, &ktrtor::tby[0][0]);
+      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tbxy, &ktrtor::tbxy[0][0]);
 
       ttorunit = torpot::ttorunit;
 
@@ -114,7 +113,7 @@ void etortor_data(rc_op op)
          }
          ibuf[itortor] = ia;
       }
-      device_array::copyin(WAIT_NEW_Q, ntortor, chkttor_ia_, ibuf.data());
+      darray::copyin(WAIT_NEW_Q, ntortor, chkttor_ia_, ibuf.data());
    }
 }
 

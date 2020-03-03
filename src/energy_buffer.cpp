@@ -32,7 +32,7 @@ void buffer_allocate(energy_buffer* pe, virial_buffer* pv)
 {
    if (rc_flag & calc::analyz) {
       auto len = buffer_size();
-      device_array::allocate(len, pe, pv);
+      darray::allocate(len, pe, pv);
       energy_buffers.push_back(*pe);
       virial_buffers.push_back(*pv);
    } else {
@@ -45,7 +45,7 @@ void buffer_allocate(energy_buffer* pe, virial_buffer* pv)
 void buffer_deallocate(energy_buffer e, virial_buffer v)
 {
    if (rc_flag & calc::analyz)
-      device_array::deallocate(e, v);
+      darray::deallocate(e, v);
 }
 
 
@@ -53,7 +53,7 @@ void buffer_allocate(count_buffer* pc, energy_buffer* pe, virial_buffer* pv)
 {
    if (rc_flag & calc::analyz) {
       auto len = buffer_size();
-      device_array::allocate(len, pc, pe, pv);
+      darray::allocate(len, pc, pe, pv);
       count_buffers.push_back(*pc);
       energy_buffers.push_back(*pe);
       virial_buffers.push_back(*pv);
@@ -68,7 +68,7 @@ void buffer_allocate(count_buffer* pc, energy_buffer* pe, virial_buffer* pv)
 void buffer_deallocate(count_buffer c, energy_buffer e, virial_buffer v)
 {
    if (rc_flag & calc::analyz)
-      device_array::deallocate(c, e, v);
+      darray::deallocate(c, e, v);
 }
 
 

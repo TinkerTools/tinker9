@@ -226,7 +226,7 @@ void dfield_nonewald_cu(real (*field)[3], real (*fieldp)[3])
    const real off2 = st.cutoff * st.cutoff;
 
 
-   device_array::zero(PROCEED_NEW_Q, n, field, fieldp);
+   darray::zero(PROCEED_NEW_Q, n, field, fieldp);
    if (st.niak > 0) {
       launch_k1s(nonblk, WARP_SIZE * st.niak, dfield_cu1<NON_EWALD>, field,
                  fieldp, thole, pdamp, rpole, TINKER_IMAGE_ARGS, off2, n,
@@ -426,7 +426,7 @@ void ufield_nonewald_cu(const real (*uind)[3], const real (*uinp)[3],
    const real off2 = st.cutoff * st.cutoff;
 
 
-   device_array::zero(PROCEED_NEW_Q, n, field, fieldp);
+   darray::zero(PROCEED_NEW_Q, n, field, fieldp);
    if (st.niak > 0) {
       launch_k1s(nonblk, WARP_SIZE * st.niak, ufield_cu1<NON_EWALD>, uind, uinp,
                  field, fieldp, thole, pdamp, TINKER_IMAGE_ARGS, off2, n,

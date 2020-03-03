@@ -164,9 +164,9 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
             get_tinker_box_module(trajbox[i]);
          }
       }
-      device_array::copyin(PROCEED_NEW_Q, n * tn, trajx, xbuf.data());
-      device_array::copyin(PROCEED_NEW_Q, n * tn, trajy, ybuf.data());
-      device_array::copyin(WAIT_NEW_Q, n * tn, trajz, zbuf.data());
+      darray::copyin(PROCEED_NEW_Q, n * tn, trajx, xbuf.data());
+      darray::copyin(PROCEED_NEW_Q, n * tn, trajy, ybuf.data());
+      darray::copyin(WAIT_NEW_Q, n * tn, trajz, zbuf.data());
    } else {
       std::string msg = "Cannot Open File ";
       msg += arcfile;
@@ -215,9 +215,8 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]")
    lst.resize(n * maxnlst);
 
    for (int ifr = 0;;) {
-      device_array::copyout(PROCEED_NEW_Q, n, nlst.data(), vlist_unit->nlst);
-      device_array::copyout(WAIT_NEW_Q, n * maxnlst, lst.data(),
-                            vlist_unit->lst);
+      darray::copyout(PROCEED_NEW_Q, n, nlst.data(), vlist_unit->nlst);
+      darray::copyout(WAIT_NEW_Q, n * maxnlst, lst.data(), vlist_unit->lst);
 
       for (int iatom = 0; iatom < n; ++iatom)
          REQUIRE(find_match(&lst[iatom * maxnlst], nlst[iatom], ifr, iatom));

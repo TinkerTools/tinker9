@@ -21,16 +21,16 @@ int use_ewald()
 static void pole_data_(rc_op op)
 {
    if (op & rc_dealloc) {
-      device_array::deallocate(zaxis, pole, rpole, udir, udirp, uind, uinp);
+      darray::deallocate(zaxis, pole, rpole, udir, udirp, uind, uinp);
 
-      device_array::deallocate(trqx, trqy, trqz, vir_trq);
+      darray::deallocate(trqx, trqy, trqz, vir_trq);
    }
 
    if (op & rc_alloc) {
-      device_array::allocate(n, &zaxis, &pole, &rpole);
+      darray::allocate(n, &zaxis, &pole, &rpole);
 
       if (use_potent(polar_term)) {
-         device_array::allocate(n, &uind, &uinp, &udir, &udirp);
+         darray::allocate(n, &uind, &uinp, &udir, &udirp);
       } else {
          uind = nullptr;
          uinp = nullptr;
@@ -39,7 +39,7 @@ static void pole_data_(rc_op op)
       }
 
       if (rc_flag & calc::grad) {
-         device_array::allocate(n, &trqx, &trqy, &trqz);
+         darray::allocate(n, &trqx, &trqy, &trqz);
       } else {
          trqx = nullptr;
          trqy = nullptr;
@@ -47,7 +47,7 @@ static void pole_data_(rc_op op)
       }
 
       if (rc_flag & calc::virial) {
-         device_array::allocate(buffer_size(), &vir_trq);
+         darray::allocate(buffer_size(), &vir_trq);
          virial_buffers.push_back(vir_trq);
       } else {
          vir_trq = nullptr;
@@ -88,7 +88,7 @@ static void pole_data_(rc_op op)
             val = pole_none;
          zaxisbuf[i].polaxe = val;
       }
-      device_array::copyin(WAIT_NEW_Q, n, zaxis, zaxisbuf.data());
+      darray::copyin(WAIT_NEW_Q, n, zaxis, zaxisbuf.data());
 
       std::vector<double> polebuf(mpl_total * n);
       for (int i = 0; i < n; ++i) {
@@ -109,7 +109,7 @@ static void pole_data_(rc_op op)
          polebuf[b1 + mpl_pme_yz] = mpole::pole[b2 + 9];
          polebuf[b1 + mpl_pme_zz] = mpole::pole[b2 + 12];
       }
-      device_array::copyin(WAIT_NEW_Q, n, pole, polebuf.data());
+      darray::copyin(WAIT_NEW_Q, n, pole, polebuf.data());
    }
 }
 
@@ -130,9 +130,9 @@ void elec_init(int vers)
       return;
 
    if (vers & calc::grad)
-      device_array::zero(PROCEED_NEW_Q, n, trqx, trqy, trqz);
+      darray::zero(PROCEED_NEW_Q, n, trqx, trqy, trqz);
    if (vers & calc::virial)
-      device_array::zero(PROCEED_NEW_Q, buffer_size(), vir_trq);
+      darray::zero(PROCEED_NEW_Q, buffer_size(), vir_trq);
 
    chkpole();
    rotpole();

@@ -76,15 +76,15 @@ TEST_CASE("Reduce", "[util][math][reduce]")
    initialize();
 
 
-   device_array::allocate(N, &di, &df, &dd, &du);
-   device_array::allocate(N, &df2, &dd2, &du2);
-   device_array::copyin(PROCEED_NEW_Q, N, di, vi.data());
-   device_array::copyin(PROCEED_NEW_Q, N, df, vf.data());
-   device_array::copyin(PROCEED_NEW_Q, N, dd, vd.data());
-   device_array::copyin(PROCEED_NEW_Q, N, du, vu.data());
-   device_array::copyin(PROCEED_NEW_Q, N, df2, vf2.data());
-   device_array::copyin(PROCEED_NEW_Q, N, dd2, vd2.data());
-   device_array::copyin(WAIT_NEW_Q, N, du2, vu2.data());
+   darray::allocate(N, &di, &df, &dd, &du);
+   darray::allocate(N, &df2, &dd2, &du2);
+   darray::copyin(PROCEED_NEW_Q, N, di, vi.data());
+   darray::copyin(PROCEED_NEW_Q, N, df, vf.data());
+   darray::copyin(PROCEED_NEW_Q, N, dd, vd.data());
+   darray::copyin(PROCEED_NEW_Q, N, du, vu.data());
+   darray::copyin(PROCEED_NEW_Q, N, df2, vf2.data());
+   darray::copyin(PROCEED_NEW_Q, N, dd2, vd2.data());
+   darray::copyin(WAIT_NEW_Q, N, du2, vu2.data());
 
 
    ai = parallel::reduce_sum(di, N, WAIT_NEW_Q);
@@ -117,8 +117,8 @@ TEST_CASE("Reduce", "[util][math][reduce]")
       REQUIRE(au2[j] == refu2[j]);
 
 
-   device_array::deallocate(di, df, dd, du);
-   device_array::deallocate(df2, dd2, du2);
+   darray::deallocate(di, df, dd, du);
+   darray::deallocate(df2, dd2, du2);
 
 
    finish();

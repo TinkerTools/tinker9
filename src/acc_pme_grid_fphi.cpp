@@ -39,7 +39,7 @@ void grid_put_acc(PMEUnit pme_u, real* optional1, real* optional2)
    const int bsorder = st.bsorder;
    assert(bsorder <= 5);
 
-   device_array::zero(PROCEED_NEW_Q, 2 * nfft1 * nfft2 * nfft3, st.qgrid);
+   darray::zero(PROCEED_NEW_Q, 2 * nfft1 * nfft2 * nfft3, st.qgrid);
 
    #pragma acc parallel loop independent async\
                deviceptr(pchg,fmp,fuind,fuinp,x,y,z,dptr)

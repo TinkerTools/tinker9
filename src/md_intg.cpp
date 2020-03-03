@@ -64,10 +64,10 @@ void integrate_data(rc_op op)
 {
    if (op & rc_dealloc) {
       if (intg == respa_fast_slow)
-         device_array::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
+         darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
 
       if (barostat == MONTE_CARLO_BAROSTAT)
-         device_array::deallocate(x_pmonte, y_pmonte, z_pmonte);
+         darray::deallocate(x_pmonte, y_pmonte, z_pmonte);
 
       intg = nullptr;
    }
@@ -99,7 +99,7 @@ void integrate_data(rc_op op)
             barostat = NOSE_HOOVER_CHAIN_BAROSTAT;
          else if (br == "MONTECARLO") {
             barostat = MONTE_CARLO_BAROSTAT;
-            device_array::allocate(n, &x_pmonte, &y_pmonte, &z_pmonte);
+            darray::allocate(n, &x_pmonte, &y_pmonte, &z_pmonte);
          } else
             assert(false);
       } else {
@@ -121,18 +121,18 @@ void integrate_data(rc_op op)
       } else if (itg == "RESPA") {
          intg = respa_fast_slow;
          // need fast and slow gradients to start/restart the simulation
-         device_array::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
+         darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
          // save fast gradients to gx1 etc.
          energy(rc_flag, RESPA_FAST, respa_tsconfig());
-         device_array::copy(PROCEED_NEW_Q, n, gx1, gx);
-         device_array::copy(PROCEED_NEW_Q, n, gy1, gy);
-         device_array::copy(PROCEED_NEW_Q, n, gz1, gz);
+         darray::copy(PROCEED_NEW_Q, n, gx1, gx);
+         darray::copy(PROCEED_NEW_Q, n, gy1, gy);
+         darray::copy(PROCEED_NEW_Q, n, gz1, gz);
 
          // save slow gradients to gx2 etc.
          energy(rc_flag, RESPA_SLOW, respa_tsconfig());
-         device_array::copy(PROCEED_NEW_Q, n, gx2, gx);
-         device_array::copy(PROCEED_NEW_Q, n, gy2, gy);
-         device_array::copy(PROCEED_NEW_Q, n, gz2, gz);
+         darray::copy(PROCEED_NEW_Q, n, gx2, gx);
+         darray::copy(PROCEED_NEW_Q, n, gy2, gy);
+         darray::copy(PROCEED_NEW_Q, n, gz2, gz);
       } else {
          // beeman
       }

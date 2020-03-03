@@ -74,14 +74,14 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    energy_prec epot = dup_buf_esum;
    set_tinker_box_module(dup_buf_box);
    if (sizeof(pos_prec) == sizeof(double)) {
-      device_array::copyout(PROCEED_NEW_Q, n, atoms::x, dup_buf_x);
-      device_array::copyout(PROCEED_NEW_Q, n, atoms::y, dup_buf_y);
-      device_array::copyout(WAIT_NEW_Q, n, atoms::z, dup_buf_z);
+      darray::copyout(PROCEED_NEW_Q, n, atoms::x, dup_buf_x);
+      darray::copyout(PROCEED_NEW_Q, n, atoms::y, dup_buf_y);
+      darray::copyout(WAIT_NEW_Q, n, atoms::z, dup_buf_z);
    } else {
       std::vector<pos_prec> arrx(n), arry(n), arrz(n);
-      device_array::copyout(PROCEED_NEW_Q, n, arrx.data(), dup_buf_x);
-      device_array::copyout(PROCEED_NEW_Q, n, arry.data(), dup_buf_y);
-      device_array::copyout(WAIT_NEW_Q, n, arrz.data(), dup_buf_z);
+      darray::copyout(PROCEED_NEW_Q, n, arrx.data(), dup_buf_x);
+      darray::copyout(PROCEED_NEW_Q, n, arry.data(), dup_buf_y);
+      darray::copyout(WAIT_NEW_Q, n, arrz.data(), dup_buf_z);
       for (int i = 0; i < n; ++i) {
          atoms::x[i] = arrx[i];
          atoms::y[i] = arry[i];
@@ -91,9 +91,9 @@ void mdsave_dup_then_write(int istep, time_prec dt)
 
    {
       std::vector<vel_prec> arrx(n), arry(n), arrz(n);
-      device_array::copyout(PROCEED_NEW_Q, n, arrx.data(), dup_buf_vx);
-      device_array::copyout(PROCEED_NEW_Q, n, arry.data(), dup_buf_vy);
-      device_array::copyout(WAIT_NEW_Q, n, arrz.data(), dup_buf_vz);
+      darray::copyout(PROCEED_NEW_Q, n, arrx.data(), dup_buf_vx);
+      darray::copyout(PROCEED_NEW_Q, n, arry.data(), dup_buf_vy);
+      darray::copyout(WAIT_NEW_Q, n, arrz.data(), dup_buf_vz);
       for (int i = 0; i < n; ++i) {
          int j = 3 * i;
          moldyn::v[j] = arrx[i];
@@ -118,7 +118,7 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    }
 
    if (mdsave_use_uind()) {
-      device_array::copyout(WAIT_NEW_Q, n, polar::uind, dup_buf_uind);
+      darray::copyout(WAIT_NEW_Q, n, polar::uind, dup_buf_uind);
    }
 
    double dt1 = dt;
@@ -164,26 +164,26 @@ void mdsave_data(rc_op op)
       dup_stream.deallocate();
 
       if (mdsave_use_uind()) {
-         device_array::deallocate(dup_buf_uind);
+         darray::deallocate(dup_buf_uind);
       }
 
-      device_array::deallocate(dup_buf_x, dup_buf_y, dup_buf_z);
-      device_array::deallocate(dup_buf_vx, dup_buf_vy, dup_buf_vz);
-      device_array::deallocate(dup_buf_gx, dup_buf_gy, dup_buf_gz);
+      darray::deallocate(dup_buf_x, dup_buf_y, dup_buf_z);
+      darray::deallocate(dup_buf_vx, dup_buf_vy, dup_buf_vz);
+      darray::deallocate(dup_buf_gx, dup_buf_gy, dup_buf_gz);
    }
 
    if (op & rc_alloc) {
       dup_stream.allocate();
 
       if (mdsave_use_uind()) {
-         device_array::allocate(n, &dup_buf_uind);
+         darray::allocate(n, &dup_buf_uind);
       } else {
          dup_buf_uind = nullptr;
       }
 
-      device_array::allocate(n, &dup_buf_x, &dup_buf_y, &dup_buf_z);
-      device_array::allocate(n, &dup_buf_vx, &dup_buf_vy, &dup_buf_vz);
-      device_array::allocate(n, &dup_buf_gx, &dup_buf_gy, &dup_buf_gz);
+      darray::allocate(n, &dup_buf_x, &dup_buf_y, &dup_buf_z);
+      darray::allocate(n, &dup_buf_vx, &dup_buf_vy, &dup_buf_vz);
+      darray::allocate(n, &dup_buf_gx, &dup_buf_gy, &dup_buf_gz);
    }
 
    if (op & rc_init) {

@@ -136,9 +136,9 @@ void respa_fast_slow(int istep, time_prec dt_ps)
    energy(vers1, RESPA_FAST, respa_tsconfig());
    copy_energy(vers1, &esum_f);
    copy_virial(vers1, vir_f);
-   device_array::copy(PROCEED_NEW_Q, n, gx1, gx);
-   device_array::copy(PROCEED_NEW_Q, n, gy1, gy);
-   device_array::copy(PROCEED_NEW_Q, n, gz1, gz);
+   darray::copy(PROCEED_NEW_Q, n, gx1, gx);
+   darray::copy(PROCEED_NEW_Q, n, gy1, gy);
+   darray::copy(PROCEED_NEW_Q, n, gz1, gz);
    if (vers1 & calc::virial) {
       for (int i = 0; i < 9; ++i)
          vir_fast[i] += vir_f[i];
@@ -147,9 +147,9 @@ void respa_fast_slow(int istep, time_prec dt_ps)
 
    // update a_slow
    energy(vers1, RESPA_SLOW, respa_tsconfig());
-   device_array::copy(PROCEED_NEW_Q, n, gx2, gx);
-   device_array::copy(PROCEED_NEW_Q, n, gy2, gy);
-   device_array::copy(PROCEED_NEW_Q, n, gz2, gz);
+   darray::copy(PROCEED_NEW_Q, n, gx2, gx);
+   darray::copy(PROCEED_NEW_Q, n, gy2, gy);
+   darray::copy(PROCEED_NEW_Q, n, gz2, gz);
    // esum: e slow
    // vir: v slow
    // esum_f: e fast

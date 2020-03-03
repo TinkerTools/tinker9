@@ -268,7 +268,7 @@ void grid_mpole_cu(PMEUnit pme_u, real (*fmp)[10])
    int nt = n1 * n2 * n3;
 
 
-   device_array::zero(PROCEED_NEW_Q, 2 * nt, st.qgrid);
+   darray::zero(PROCEED_NEW_Q, 2 * nt, st.qgrid);
 #if 1
    auto ker = grid_put_cu1<MPOLE, 5>;
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
@@ -292,7 +292,7 @@ void grid_uind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
    int nt = n1 * n2 * n3;
 
 
-   device_array::zero(PROCEED_NEW_Q, 2 * nt, st.qgrid);
+   darray::zero(PROCEED_NEW_Q, 2 * nt, st.qgrid);
 #if 0
    auto ker = grid_put_cu1<UIND, 5>;
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
