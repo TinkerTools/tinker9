@@ -124,7 +124,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       elec_init(vers);
 #if TINKER_CUDART
    if (use_potent(mpole_term) && use_potent(polar_term) &&
-       !(vers & calc::analyz) && mlist_version() == NBList::spatial) {
+       !(vers & calc::analyz) && mlist_version() == NBL_SPATIAL) {
       if (TSCONFIG("emplar", tsflag, tsconfig))
          emplar_cu(vers);
       goto skip_mpole_polar;

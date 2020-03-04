@@ -260,7 +260,7 @@ void evdw_mm3hb(int vers)
 void evdw_hal(int vers)
 {
 #if TINKER_CUDART
-   if (vlist_version() == NBList::spatial)
+   if (vlist_version() == NBL_SPATIAL)
       evdw_hal_cu(vers);
    else
 #endif

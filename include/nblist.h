@@ -6,17 +6,24 @@
 
 
 TINKER_NAMESPACE_BEGIN
+enum class nblist_t
+{
+   UNDEFINED = 0x00,   ///< Undefined.
+   DOUBLE_LOOP = 0x01, ///< Double loop.
+   VERLET = 0x02,      ///< Verlet neighbor list.
+   SPATIAL = 0x04      ///< Spatial decomposition.
+};
+TINKER_ENABLE_ENUM_BITMASK(nblist_t);
+constexpr nblist_t NBL_UNDEFINED = nblist_t::UNDEFINED;
+constexpr nblist_t NBL_DOUBLE_LOOP = nblist_t::DOUBLE_LOOP;
+constexpr nblist_t NBL_VERLET = nblist_t::VERLET;
+constexpr nblist_t NBL_SPATIAL = nblist_t::SPATIAL;
+
+
 /// \brief
 /// Verlet list: pairwise neighbor list indices and storage.
 struct NBList
 {
-   enum
-   {
-      double_loop = 0x1, ///< Double loop version.
-      nblist = 0x2,      ///< Neighbor list version.
-      spatial = 0x4      ///< Spatial decomposition version.
-   };
-
    int* nlst;     ///< number of sites in list for each atom
    int* lst;      ///< all of the sites in list
    int* update;   ///< update flag for each atom
@@ -40,11 +47,11 @@ TINKER_EXTERN NBListUnit mlist_unit;
 TINKER_EXTERN NBListUnit ulist_unit;
 
 
-int vlist_version();
-int dlist_version();
-int clist_version();
-int mlist_version();
-int ulist_version();
+nblist_t vlist_version();
+nblist_t dlist_version();
+nblist_t clist_version();
+nblist_t mlist_version();
+nblist_t ulist_version();
 
 
 void nblist_data(rc_op op);
