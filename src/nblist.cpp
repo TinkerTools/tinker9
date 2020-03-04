@@ -210,7 +210,6 @@ static void spatial_build(SpatialUnit unt)
 }
 
 
-// rc_evolve
 static void spatial_update(SpatialUnit unt)
 {
    extern int check_spatial(int, real, int*, const real*, const real*,
@@ -282,10 +281,6 @@ void nblist_data(rc_op op)
          evdw_reduce_xyz();
          nblist_build_acc(unt);
       }
-      if (op & rc_evolve) {
-         evdw_reduce_xyz();
-         nblist_update_acc(unt);
-      }
    }
    if (u & NBList::spatial) {
       auto& unt = vspatial_unit;
@@ -295,10 +290,6 @@ void nblist_data(rc_op op)
       if (op & rc_init) {
          evdw_reduce_xyz();
          spatial_build(unt);
-      }
-      if (op & rc_evolve) {
-         evdw_reduce_xyz();
-         spatial_update(unt);
       }
    }
 
@@ -321,15 +312,6 @@ void nblist_data(rc_op op)
       if (op & rc_init) {
          nblist_build_acc(unt);
       }
-      if (op & rc_evolve) {
-         if (rc_flag & calc::traj) {
-            unt->x = x;
-            unt->y = y;
-            unt->z = z;
-            unt.update_deviceptr(*unt, PROCEED_NEW_Q);
-         }
-         nblist_update_acc(unt);
-      }
    }
    if (u & NBList::spatial) {
       auto& unt = mspatial_unit;
@@ -338,15 +320,6 @@ void nblist_data(rc_op op)
       }
       if (op & rc_init) {
          spatial_build(unt);
-      }
-      if (op & rc_evolve) {
-         if (rc_flag & calc::traj) {
-            unt->x = x;
-            unt->y = y;
-            unt->z = z;
-            unt.update_deviceptr(*unt, PROCEED_NEW_Q);
-         }
-         spatial_update(unt);
       }
    }
 
@@ -364,15 +337,6 @@ void nblist_data(rc_op op)
       if (op & rc_init) {
          nblist_build_acc(unt);
       }
-      if (op & rc_evolve) {
-         if (rc_flag & calc::traj) {
-            unt->x = x;
-            unt->y = y;
-            unt->z = z;
-            unt.update_deviceptr(*unt, PROCEED_NEW_Q);
-         }
-         nblist_update_acc(unt);
-      }
    }
    if (u & NBList::spatial) {
       auto& unt = uspatial_unit;
@@ -382,15 +346,6 @@ void nblist_data(rc_op op)
       if (op & rc_init) {
          spatial_build(unt);
       }
-      if (op & rc_evolve) {
-         if (rc_flag & calc::traj) {
-            unt->x = x;
-            unt->y = y;
-            unt->z = z;
-            unt.update_deviceptr(*unt, PROCEED_NEW_Q);
-         }
-         spatial_update(unt);
-      }
    }
 
 
@@ -398,5 +353,79 @@ void nblist_data(rc_op op)
    if (alloc_thrust_cache)
       thrust_cache_alloc();
 #endif
+}
+
+
+void refresh_neighbors()
+{
+   int u = 0;
+
+
+   // vlist
+   u = vlist_version();
+   if (u & (NBList::double_loop | NBList::nblist)) {
+      auto& unt = vlist_unit;
+      evdw_reduce_xyz();
+      nblist_update_acc(unt);
+   }
+   if (u & NBList::spatial) {
+      auto& unt = vspatial_unit;
+      evdw_reduce_xyz();
+      spatial_update(unt);
+   }
+
+
+   // dlist
+
+
+   // clist
+
+
+   // mlist
+   u = mlist_version();
+   if (u & (NBList::double_loop | NBList::nblist)) {
+      auto& unt = mlist_unit;
+      if (rc_flag & calc::traj) {
+         unt->x = x;
+         unt->y = y;
+         unt->z = z;
+         unt.update_deviceptr(*unt, PROCEED_NEW_Q);
+      }
+      nblist_update_acc(unt);
+   }
+   if (u & NBList::spatial) {
+      auto& unt = mspatial_unit;
+      if (rc_flag & calc::traj) {
+         unt->x = x;
+         unt->y = y;
+         unt->z = z;
+         unt.update_deviceptr(*unt, PROCEED_NEW_Q);
+      }
+      spatial_update(unt);
+   }
+
+
+   // ulist
+   u = ulist_version();
+   if (u & (NBList::double_loop | NBList::nblist)) {
+      auto& unt = ulist_unit;
+      if (rc_flag & calc::traj) {
+         unt->x = x;
+         unt->y = y;
+         unt->z = z;
+         unt.update_deviceptr(*unt, PROCEED_NEW_Q);
+      }
+      nblist_update_acc(unt);
+   }
+   if (u & NBList::spatial) {
+      auto& unt = uspatial_unit;
+      if (rc_flag & calc::traj) {
+         unt->x = x;
+         unt->y = y;
+         unt->z = z;
+         unt.update_deviceptr(*unt, PROCEED_NEW_Q);
+      }
+      spatial_update(unt);
+   }
 }
 TINKER_NAMESPACE_END

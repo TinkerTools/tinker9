@@ -62,7 +62,7 @@ void propagate_xyz(time_prec dt, bool check_nblist)
    propagate_pos_acc(dt);
    copy_pos_to_xyz();
    if (check_nblist)
-      nblist_data(rc_evolve);
+      refresh_neighbors();
 }
 
 

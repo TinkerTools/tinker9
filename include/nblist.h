@@ -32,7 +32,7 @@ struct NBList
 
    ~NBList();
 };
-typedef GenericUnit<NBList, GenericUnitVersion::EnableOnDevice> NBListUnit;
+using NBListUnit = GenericUnit<NBList, GenericUnitVersion::EnableOnDevice>;
 TINKER_EXTERN NBListUnit vlist_unit;
 TINKER_EXTERN NBListUnit dlist_unit;
 TINKER_EXTERN NBListUnit clist_unit;
@@ -50,6 +50,9 @@ int ulist_version();
 void nblist_data(rc_op op);
 
 
-void nblist_build_acc(NBListUnit);  // rc_init
-void nblist_update_acc(NBListUnit); // rc_evolve
+void nblist_build_acc(NBListUnit); // rc_init
+void nblist_update_acc(NBListUnit);
+
+
+void refresh_neighbors();
 TINKER_NAMESPACE_END

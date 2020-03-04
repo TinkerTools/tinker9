@@ -5,13 +5,13 @@
 TINKER_NAMESPACE_BEGIN
 bool ResourceManagement::will_dealloc_() const
 {
-   return op_ & rc_op::dealloc;
+   return op_ & rc_dealloc;
 }
 
 
 bool ResourceManagement::only_dealloc_() const
 {
-   return op_ == rc_op::dealloc;
+   return op_ == rc_dealloc;
 }
 
 
@@ -35,7 +35,7 @@ ResourceManagement::~ResourceManagement()
 
 void initialize()
 {
-   rc_op op = static_cast<rc_op>(rc_alloc | rc_init);
+   rc_op op = rc_alloc | rc_init;
    host_data(op);
    device_data(op);
 }

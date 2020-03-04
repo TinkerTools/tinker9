@@ -172,7 +172,7 @@ void monte_carlo_barostat_acc(energy_prec epot)
    }
 
    // get the potential energy and PV work changes for trial move
-   nblist_data(rc_evolve);
+   refresh_neighbors();
    energy(calc::energy);
    energy_prec enew;
    copy_energy(calc::energy, &enew);
@@ -208,7 +208,7 @@ void monte_carlo_barostat_acc(energy_prec epot)
       darray::copy(PROCEED_NEW_Q, n, ypos, y_pmonte);
       darray::copy(PROCEED_NEW_Q, n, zpos, z_pmonte);
       copy_pos_to_xyz();
-      nblist_data(rc_evolve);
+      refresh_neighbors();
    } else {
 #if TINKER_ENABLE_LOG
       Box p;
