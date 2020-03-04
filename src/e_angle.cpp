@@ -61,7 +61,6 @@ void eangle_data(rc_op op)
 
 void eangle(int vers)
 {
-   extern void eangle_acc(int);
    eangle_acc(vers);
 }
 TINKER_NAMESPACE_END

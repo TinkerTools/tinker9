@@ -254,7 +254,7 @@ inline void update_v1_(NBListUnit nu)
 
 //====================================================================//
 
-void nblist_build(NBListUnit nu)
+void nblist_build_acc(NBListUnit nu)
 {
    if (nu->maxnlst == 1) {
       build_double_loop_(nu);
@@ -265,7 +265,7 @@ void nblist_build(NBListUnit nu)
 
 // #define TINKER_DEFAULT_NBLIST_UPDATE_(nu) build_v1_(nu)
 #define TINKER_DEFAULT_NBLIST_UPDATE_(nu) update_v1_(nu)
-void nblist_update(NBListUnit nu)
+void nblist_update_acc(NBListUnit nu)
 {
    if (nu->maxnlst == 1) {
       // update_double_loop_();

@@ -15,4 +15,5 @@ TINKER_EXTERN virial_buffer vir_ept;
 void epitors_data(rc_op op);
 
 void epitors(int vers);
+void epitors_acc(int);
 TINKER_NAMESPACE_END

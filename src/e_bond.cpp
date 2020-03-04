@@ -47,7 +47,6 @@ void ebond_data(rc_op op)
 
 void ebond(int vers)
 {
-   extern void ebond_acc(int);
    ebond_acc(vers);
 }
 TINKER_NAMESPACE_END

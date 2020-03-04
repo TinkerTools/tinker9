@@ -22,5 +22,7 @@ TINKER_EXTERN virial_buffer vir_eg;
 
 
 void egeom_data(rc_op);
+
 void egeom(int vers);
+void egeom_acc(int);
 TINKER_NAMESPACE_END

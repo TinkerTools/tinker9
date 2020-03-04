@@ -1,5 +1,5 @@
 #pragma once
-#include "macro.h"
+#include "rc_man.h"
 
 
 TINKER_NAMESPACE_BEGIN
@@ -36,4 +36,7 @@ T normal();
  */
 template <class T = real>
 T chi_squared(int k);
+
+
+void random_data(rc_op);
 TINKER_NAMESPACE_END

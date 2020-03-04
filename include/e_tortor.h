@@ -31,4 +31,5 @@ TINKER_EXTERN virial_buffer vir_ett;
 void etortor_data(rc_op op);
 
 void etortor(int vers);
+void etortor_acc(int);
 TINKER_NAMESPACE_END

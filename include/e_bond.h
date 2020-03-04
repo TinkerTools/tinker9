@@ -24,5 +24,8 @@ TINKER_EXTERN virial_buffer vir_eb;
 
 
 void ebond_data(rc_op op);
+
+
 void ebond(int vers);
+void ebond_acc(int);
 TINKER_NAMESPACE_END

@@ -23,4 +23,5 @@ TINKER_EXTERN virial_buffer vir_eopb;
 void eopbend_data(rc_op op);
 
 void eopbend(int vers);
+void eopbend_acc(int);
 TINKER_NAMESPACE_END

@@ -244,34 +244,31 @@ void evdw_resolve_gradient()
 
 void evdw_lj(int vers)
 {
-   extern void evdw_lj_acc(int vers);
    evdw_lj_acc(vers);
 }
+
 void evdw_buck(int vers)
 {
-   extern void evdw_buck_acc(int vers);
    evdw_buck_acc(vers);
 }
+
 void evdw_mm3hb(int vers)
 {
-   extern void evdw_mm3hb_acc(int vers);
    evdw_mm3hb_acc(vers);
 }
+
 void evdw_hal(int vers)
 {
-   // the default implementation
-   extern void evdw_hal_acc(int vers);
 #if TINKER_CUDART
-   if (vlist_version() == NBList::spatial) {
-      extern void evdw_hal_cu(int vers);
+   if (vlist_version() == NBList::spatial)
       evdw_hal_cu(vers);
-   } else
+   else
 #endif
       evdw_hal_acc(vers);
 }
+
 void evdw_gauss(int vers)
 {
-   extern void evdw_gauss_acc(int vers);
    evdw_gauss_acc(vers);
 }
 

@@ -8,7 +8,7 @@ constexpr int ACC_PLTFM = 0x001;
 constexpr int CU_PLTFM = 0x002;
 
 
-TINKER_EXTERN int pltfm_config;
+extern int pltfm_config;
 
 
 void platform_data(rc_op);

@@ -37,7 +37,6 @@ void epitors_data(rc_op op)
 
 void epitors(int vers)
 {
-   extern void epitors_acc(int);
    epitors_acc(vers);
 }
 TINKER_NAMESPACE_END

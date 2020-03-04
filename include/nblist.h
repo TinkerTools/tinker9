@@ -47,14 +47,9 @@ int mlist_version();
 int ulist_version();
 
 
-// size cannot be determined in @c epolar_data(...)
-// when neighbor lists are not set up, so these variables
-// are declared here
-/// index into preconditioner inverse for PCG solver
-TINKER_EXTERN pointer<int> mindex;
-/// preconditioner inverse for induced dipole PCG solver
-TINKER_EXTERN pointer<real> minv;
-TINKER_EXTERN pointer<real> minv_exclude_;
-
 void nblist_data(rc_op op);
+
+
+void nblist_build_acc(NBListUnit);  // rc_init
+void nblist_update_acc(NBListUnit); // rc_evolve
 TINKER_NAMESPACE_END

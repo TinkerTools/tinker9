@@ -41,7 +41,6 @@ void eurey_data(rc_op op)
 
 void eurey(int vers)
 {
-   extern void eurey_acc(int);
    eurey_acc(vers);
 }
 TINKER_NAMESPACE_END

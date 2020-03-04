@@ -15,4 +15,5 @@ TINKER_EXTERN virial_buffer vir_eba;
 void estrbnd_data(rc_op op);
 
 void estrbnd(int vers);
+void estrbnd_acc(int);
 TINKER_NAMESPACE_END

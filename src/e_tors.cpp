@@ -42,7 +42,6 @@ void etors_data(rc_op op)
 
 void etors(int vers)
 {
-   extern void etors_acc(int);
    etors_acc(vers);
 }
 TINKER_NAMESPACE_END

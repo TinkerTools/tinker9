@@ -18,4 +18,5 @@ TINKER_EXTERN virial_buffer vir_eub;
 void eurey_data(rc_op op);
 
 void eurey(int vers);
+void eurey_acc(int);
 TINKER_NAMESPACE_END

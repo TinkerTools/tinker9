@@ -154,4 +154,7 @@ void fphi_uind2_acc(PMEUnit pme_u, real (*)[10], real (*)[10]);
 void fphi_mpole_cu(PMEUnit, real (*)[20]);
 void fphi_uind_cu(PMEUnit, real (*)[10], real (*)[10], real (*)[20]);
 void fphi_uind2_cu(PMEUnit pme_u, real (*)[10], real (*)[10]);
+
+
+void pme_cuda_func_config();
 TINKER_NAMESPACE_END

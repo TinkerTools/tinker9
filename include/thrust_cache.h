@@ -18,5 +18,9 @@ private:
    size_t nbytes;
    value_type* ptr;
 };
-TINKER_EXTERN ThrustCache thrust_cache;
+extern ThrustCache thrust_cache;
+
+
+void thrust_cache_alloc();
+void thrust_cache_dealloc();
 TINKER_NAMESPACE_END

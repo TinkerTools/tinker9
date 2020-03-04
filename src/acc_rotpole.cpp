@@ -4,7 +4,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-void chkpole()
+void chkpole_acc()
 {
    #pragma acc parallel loop independent async deviceptr(x,y,z,zaxis,pole)
    for (int i = 0; i < n; ++i) {
@@ -131,7 +131,7 @@ static void rotpole_addto2(real* restrict a, const real* restrict b,
 }
 
 
-void rotpole()
+void rotpole_acc()
 {
    #pragma acc parallel loop independent async deviceptr(x,y,z,zaxis,rpole,pole)
    for (int i = 0; i < n; ++i) {

@@ -83,4 +83,10 @@ void elec_data(rc_op op);
 int use_elec();
 int use_ewald();
 void elec_init(int vers);
+
+
+void chkpole();
+void rotpole();
+void chkpole_acc();
+void rotpole_acc();
 TINKER_NAMESPACE_END

@@ -1,12 +1,47 @@
 #include "random.h"
-#include "rc_man.h"
 #include "tinker_rt.h"
 #include <chrono>
 #include <random>
 
 
 TINKER_NAMESPACE_BEGIN
-static std::default_random_engine generator_;
+namespace {
+std::default_random_engine generator;
+}
+
+
+template <class T>
+T random()
+{
+   static std::uniform_real_distribution<T> unif(0, 1);
+   return unif(generator);
+}
+template float random<float>();
+template double random<double>();
+
+
+template <class T>
+T normal()
+{
+   static std::normal_distribution<T> norm(0, 1);
+   return norm(generator);
+}
+template float normal<float>();
+template double normal<double>();
+
+
+template <class T>
+T chi_squared(int k)
+{
+   static std::gamma_distribution<T> gam(1, 1);
+   using param_type = typename std::gamma_distribution<T>::param_type;
+   gam.param(param_type((T)0.5 * k, 2));
+   return gam(generator);
+}
+template float chi_squared<float>(int);
+template double chi_squared<double>(int);
+
+
 void random_data(rc_op op)
 {
    if (op & rc_init) {
@@ -27,39 +62,7 @@ void random_data(rc_op op)
          seed += 86400 * (day - 1) + 3600 * hour;
          seed += 60 * minute + second;
       }
-      generator_.seed(seed);
+      generator.seed(seed);
    }
 }
-
-
-template <class T>
-T random()
-{
-   static std::uniform_real_distribution<T> unif(0, 1);
-   return unif(generator_);
-}
-template float random<float>();
-template double random<double>();
-
-
-template <class T>
-T normal()
-{
-   static std::normal_distribution<T> norm(0, 1);
-   return norm(generator_);
-}
-template float normal<float>();
-template double normal<double>();
-
-
-template <class T>
-T chi_squared(int k)
-{
-   static std::gamma_distribution<T> gam(1, 1);
-   using param_type = typename std::gamma_distribution<T>::param_type;
-   gam.param(param_type((T)0.5 * k, 2));
-   return gam(generator_);
-}
-template float chi_squared<float>(int);
-template double chi_squared<double>(int);
 TINKER_NAMESPACE_END

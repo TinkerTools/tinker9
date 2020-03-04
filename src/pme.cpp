@@ -199,7 +199,6 @@ static void pme_data1_(rc_op op)
       pme_op_copyin_(dpme_unit);
 
 #if TINKER_CUDART
-      extern void pme_cuda_func_config();
       pme_cuda_func_config();
 #endif
    }

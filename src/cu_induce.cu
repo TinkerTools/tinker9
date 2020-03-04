@@ -1,7 +1,10 @@
 #include "add.h"
-#include "cudalib.h"
+#include "e_polar.h"
 #include "induce.h"
 #include "launch.h"
+#include "md_pq.h"
+#include "seq_damp.h"
+#include "seq_image.h"
 #include "spatial.h"
 
 

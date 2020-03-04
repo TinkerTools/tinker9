@@ -8,6 +8,7 @@
 #include "potent.h"
 #include "spatial.h"
 #include "switch.h"
+#include "thrust_cache.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/neigh.hh>
@@ -191,16 +192,7 @@ static void nblist_alloc(int version, NBListUnit& nblu, int maxn, real cutoff,
 }
 
 
-// rc_init
-extern void nblist_build(NBListUnit);
-
-
-// rc_evolve
-extern void nblist_update(NBListUnit);
-
-
 static bool alloc_thrust_cache;
-extern void spatial_data_init_cu(SpatialUnit);
 #if TINKER_CUDART
 // rc_alloc
 static void spatial_alloc(SpatialUnit& unt, int n, real cut, real buf,
@@ -229,7 +221,6 @@ static void spatial_update(SpatialUnit unt)
    if (st.rebuild) {
       spatial_data_init_cu(unt);
    } else {
-      extern void spatial_data_update_sorted(SpatialUnit);
       spatial_data_update_sorted(unt);
    }
 }
@@ -257,7 +248,6 @@ void nblist_data(rc_op op)
 
 
 #if TINKER_CUDART
-      extern void thrust_cache_dealloc();
       SpatialUnit::clear();
       thrust_cache_dealloc();
       vspatial_unit.close();
@@ -290,11 +280,11 @@ void nblist_data(rc_op op)
       }
       if (op & rc_init) {
          evdw_reduce_xyz();
-         nblist_build(unt);
+         nblist_build_acc(unt);
       }
       if (op & rc_evolve) {
          evdw_reduce_xyz();
-         nblist_update(unt);
+         nblist_update_acc(unt);
       }
    }
    if (u & NBList::spatial) {
@@ -329,7 +319,7 @@ void nblist_data(rc_op op)
          nblist_alloc(u, unt, 2500, cut, buf, x, y, z);
       }
       if (op & rc_init) {
-         nblist_build(unt);
+         nblist_build_acc(unt);
       }
       if (op & rc_evolve) {
          if (rc_flag & calc::traj) {
@@ -338,7 +328,7 @@ void nblist_data(rc_op op)
             unt->z = z;
             unt.update_deviceptr(*unt, PROCEED_NEW_Q);
          }
-         nblist_update(unt);
+         nblist_update_acc(unt);
       }
    }
    if (u & NBList::spatial) {
@@ -370,13 +360,9 @@ void nblist_data(rc_op op)
       if (op & rc_alloc) {
          const int maxnlst = 500;
          nblist_alloc(u, unt, maxnlst, cut, buf, x, y, z);
-         darray::allocate(n, &mindex);
-         int minv_size = nblist_maxlst(maxnlst, cut, buf);
-         darray::allocate(3 * minv_size * n, &minv);
-         darray::allocate(6 * nuexclude_, &minv_exclude_);
       }
       if (op & rc_init) {
-         nblist_build(unt);
+         nblist_build_acc(unt);
       }
       if (op & rc_evolve) {
          if (rc_flag & calc::traj) {
@@ -385,10 +371,7 @@ void nblist_data(rc_op op)
             unt->z = z;
             unt.update_deviceptr(*unt, PROCEED_NEW_Q);
          }
-         nblist_update(unt);
-      }
-      if (op & rc_dealloc) {
-         darray::deallocate(mindex, minv, minv_exclude_);
+         nblist_update_acc(unt);
       }
    }
    if (u & NBList::spatial) {
@@ -412,7 +395,6 @@ void nblist_data(rc_op op)
 
 
 #if TINKER_CUDART
-   extern void thrust_cache_alloc();
    if (alloc_thrust_cache)
       thrust_cache_alloc();
 #endif

@@ -1,7 +1,6 @@
 #define TINKER_EXTERN_DEFINITION_FILE 1
 
 #include "gpu_card.h"
-#include "platform.h"
 
 #include "box.h"
 #include "elec.h"

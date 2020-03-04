@@ -6,7 +6,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-void potential_data(rc_op op)
+void energy_data(rc_op op)
 {
    if ((rc_flag & calc::vmask) == 0)
       return;

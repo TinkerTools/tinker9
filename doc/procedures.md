@@ -27,7 +27,7 @@
          including non-PBC.
       - `xyz_data()`, `vel_data()`, `mass_data()`: set coordinates,
          velocity, and mass data.
-      - `potential_data()`: for details see
+      - `energy_data()`: for details see
          [**Create Energy Terms**](#ctoreng).
       - `nblist_data()`: set the neighbor list, which must be set after
          the energy terms.

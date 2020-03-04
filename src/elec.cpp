@@ -122,8 +122,6 @@ void elec_data(rc_op op)
    rc_man pme42_{pme_data, op};
 }
 
-extern void chkpole();
-extern void rotpole();
 void elec_init(int vers)
 {
    if (!use_elec())
@@ -157,5 +155,17 @@ void elec_init(int vers)
       }
 #endif
    }
+}
+
+
+void chkpole()
+{
+   chkpole_acc();
+}
+
+
+void rotpole()
+{
+   rotpole_acc();
 }
 TINKER_NAMESPACE_END

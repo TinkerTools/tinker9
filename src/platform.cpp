@@ -3,6 +3,9 @@
 
 
 TINKER_NAMESPACE_BEGIN
+int pltfm_config;
+
+
 void platform_data(rc_op op)
 {
    if (op & rc_dealloc) {

@@ -1,8 +1,12 @@
 #include "add.h"
+#include "e_polar.h"
 #include "error.h"
 #include "gpu_card.h"
 #include "induce.h"
 #include "io_print.h"
+#include "nblist.h"
+#include "seq_damp.h"
+#include "seq_image.h"
 #include "tinker_rt.h"
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/polpcg.hh>
@@ -25,7 +29,7 @@ void diag_precond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3],
    }
 }
 
-#define APPLY_DPTRS_ rsd, rsdp, zrsd, zrsdp, mindex, minv
+#define APPLY_DPTRS rsd, rsdp, zrsd, zrsdp, x, y, z, polarity, pdamp, thole
 void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
                               real (*zrsd)[3], real (*zrsdp)[3])
 {
@@ -45,10 +49,16 @@ void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
-               deviceptr(APPLY_DPTRS_,ulst)
+               deviceptr(APPLY_DPTRS,ulst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
-      int m00 = mindex[i];
+      real xi = x[i];
+      real yi = y[i];
+      real zi = z[i];
+      real pdi = pdamp[i];
+      real pti = thole[i];
+      real poli = polarity[i];
+
       int nulsti = ulst->nlst[i];
       int base = i * maxnlst;
       real gxi = 0, gyi = 0, gzi = 0;
@@ -56,14 +66,27 @@ void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
 
       #pragma acc loop vector independent reduction(+:gxi,gyi,gzi,txi,tyi,tzi)
       for (int kk = 0; kk < nulsti; ++kk) {
-         int m = m00 + kk * 6;
          int k = ulst->lst[base + kk];
-         real m0 = minv[m];
-         real m1 = minv[m + 1];
-         real m2 = minv[m + 2];
-         real m3 = minv[m + 3];
-         real m4 = minv[m + 4];
-         real m5 = minv[m + 5];
+         real xr = x[k] - xi;
+         real yr = y[k] - yi;
+         real zr = z[k] - zi;
+
+         real r2 = image2(xr, yr, zr);
+         real r = REAL_SQRT(r2);
+
+         real scale3, scale5;
+         damp_thole2(r, pdi, pti, pdamp[k], thole[k], scale3, scale5);
+
+         real polik = poli * polarity[k];
+         real rr3 = scale3 * polik * REAL_RECIP(r * r2);
+         real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
+
+         real m0 = rr5 * xr * xr - rr3;
+         real m1 = rr5 * xr * yr;
+         real m2 = rr5 * xr * zr;
+         real m3 = rr5 * yr * yr - rr3;
+         real m4 = rr5 * yr * zr;
+         real m5 = rr5 * zr * zr - rr3;
 
          gxi += m0 * rsd[k][0] + m1 * rsd[k][1] + m2 * rsd[k][2];
          gyi += m1 * rsd[k][0] + m3 * rsd[k][1] + m4 * rsd[k][2];
@@ -98,103 +121,7 @@ void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
    }
 
    #pragma acc parallel loop async\
-               deviceptr(APPLY_DPTRS_,uexclude_,minv_exclude_)
-   for (int ii = 0; ii < nuexclude_; ++ii) {
-      int i = uexclude_[ii][0];
-      int k = uexclude_[ii][1];
-      int m = ii * 6;
-      real m0 = minv_exclude_[m];
-      real m1 = minv_exclude_[m + 1];
-      real m2 = minv_exclude_[m + 2];
-      real m3 = minv_exclude_[m + 3];
-      real m4 = minv_exclude_[m + 4];
-      real m5 = minv_exclude_[m + 5];
-
-      atomic_add(m0 * rsd[k][0] + m1 * rsd[k][1] + m2 * rsd[k][2], &zrsd[i][0]);
-      atomic_add(m1 * rsd[k][0] + m3 * rsd[k][1] + m4 * rsd[k][2], &zrsd[i][1]);
-      atomic_add(m2 * rsd[k][0] + m4 * rsd[k][1] + m5 * rsd[k][2], &zrsd[i][2]);
-
-      atomic_add(m0 * rsd[i][0] + m1 * rsd[i][1] + m2 * rsd[i][2], &zrsd[k][0]);
-      atomic_add(m1 * rsd[i][0] + m3 * rsd[i][1] + m4 * rsd[i][2], &zrsd[k][1]);
-      atomic_add(m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2], &zrsd[k][2]);
-
-      atomic_add(m0 * rsdp[k][0] + m1 * rsdp[k][1] + m2 * rsdp[k][2],
-                 &zrsdp[i][0]);
-      atomic_add(m1 * rsdp[k][0] + m3 * rsdp[k][1] + m4 * rsdp[k][2],
-                 &zrsdp[i][1]);
-      atomic_add(m2 * rsdp[k][0] + m4 * rsdp[k][1] + m5 * rsdp[k][2],
-                 &zrsdp[i][2]);
-
-      atomic_add(m0 * rsdp[i][0] + m1 * rsdp[i][1] + m2 * rsdp[i][2],
-                 &zrsdp[k][0]);
-      atomic_add(m1 * rsdp[i][0] + m3 * rsdp[i][1] + m4 * rsdp[i][2],
-                 &zrsdp[k][1]);
-      atomic_add(m2 * rsdp[i][0] + m4 * rsdp[i][1] + m5 * rsdp[i][2],
-                 &zrsdp[k][2]);
-   }
-}
-
-#define BUILD_DPTRS_ mindex, minv, x, y, z, polarity, pdamp, thole
-void sparse_precond_build_acc()
-{
-   const auto* nulst = ulist_unit->nlst;
-   #pragma acc serial async deviceptr(mindex,nulst)
-   {
-      int m = 0;
-      for (int i = 0; i < n; ++i) {
-         mindex[i] = m;
-         m += 6 * nulst[i];
-      }
-   }
-
-   const int maxnlst = ulist_unit->maxnlst;
-   const auto* ulst = ulist_unit.deviceptr();
-
-   MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
-   #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
-               deviceptr(BUILD_DPTRS_,ulst)
-   #pragma acc loop gang independent
-   for (int i = 0; i < n; ++i) {
-      real xi = x[i];
-      real yi = y[i];
-      real zi = z[i];
-      real pdi = pdamp[i];
-      real pti = thole[i];
-      real poli = polarity[i];
-
-      int nulsti = ulst->nlst[i];
-      int base = i * maxnlst;
-      #pragma acc loop vector independent
-      for (int kk = 0; kk < nulsti; ++kk) {
-         int k = ulst->lst[base + kk];
-         real xr = x[k] - xi;
-         real yr = y[k] - yi;
-         real zr = z[k] - zi;
-
-
-         real r2 = image2(xr, yr, zr);
-         real r = REAL_SQRT(r2);
-
-         real scale3, scale5;
-         damp_thole2(r, pdi, pti, pdamp[k], thole[k], scale3, scale5);
-
-         real polik = poli * polarity[k];
-         real rr3 = scale3 * polik * REAL_RECIP(r * r2);
-         real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
-
-         int m = mindex[i] + 6 * kk;
-         minv[m] = rr5 * xr * xr - rr3;
-         minv[m + 1] = rr5 * xr * yr;
-         minv[m + 2] = rr5 * xr * zr;
-         minv[m + 3] = rr5 * yr * yr - rr3;
-         minv[m + 4] = rr5 * yr * zr;
-         minv[m + 5] = rr5 * zr * zr - rr3;
-      } // end for (int kk)
-   }
-
-   #pragma acc parallel async deviceptr(BUILD_DPTRS_,\
-               minv_exclude_,uexclude_,uexclude_scale_)
-   #pragma acc loop independent
+               deviceptr(APPLY_DPTRS,uexclude_,uexclude_scale_)
    for (int ii = 0; ii < nuexclude_; ++ii) {
       int i = uexclude_[ii][0];
       int k = uexclude_[ii][1];
@@ -223,13 +150,34 @@ void sparse_precond_build_acc()
       real rr3 = scale3 * polik * REAL_RECIP(r * r2);
       real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
 
-      int m = 6 * ii;
-      minv_exclude_[m] = rr5 * xr * xr - rr3;
-      minv_exclude_[m + 1] = rr5 * xr * yr;
-      minv_exclude_[m + 2] = rr5 * xr * zr;
-      minv_exclude_[m + 3] = rr5 * yr * yr - rr3;
-      minv_exclude_[m + 4] = rr5 * yr * zr;
-      minv_exclude_[m + 5] = rr5 * zr * zr - rr3;
+      real m0 = rr5 * xr * xr - rr3;
+      real m1 = rr5 * xr * yr;
+      real m2 = rr5 * xr * zr;
+      real m3 = rr5 * yr * yr - rr3;
+      real m4 = rr5 * yr * zr;
+      real m5 = rr5 * zr * zr - rr3;
+
+      atomic_add(m0 * rsd[k][0] + m1 * rsd[k][1] + m2 * rsd[k][2], &zrsd[i][0]);
+      atomic_add(m1 * rsd[k][0] + m3 * rsd[k][1] + m4 * rsd[k][2], &zrsd[i][1]);
+      atomic_add(m2 * rsd[k][0] + m4 * rsd[k][1] + m5 * rsd[k][2], &zrsd[i][2]);
+
+      atomic_add(m0 * rsd[i][0] + m1 * rsd[i][1] + m2 * rsd[i][2], &zrsd[k][0]);
+      atomic_add(m1 * rsd[i][0] + m3 * rsd[i][1] + m4 * rsd[i][2], &zrsd[k][1]);
+      atomic_add(m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2], &zrsd[k][2]);
+
+      atomic_add(m0 * rsdp[k][0] + m1 * rsdp[k][1] + m2 * rsdp[k][2],
+                 &zrsdp[i][0]);
+      atomic_add(m1 * rsdp[k][0] + m3 * rsdp[k][1] + m4 * rsdp[k][2],
+                 &zrsdp[i][1]);
+      atomic_add(m2 * rsdp[k][0] + m4 * rsdp[k][1] + m5 * rsdp[k][2],
+                 &zrsdp[i][2]);
+
+      atomic_add(m0 * rsdp[i][0] + m1 * rsdp[i][1] + m2 * rsdp[i][2],
+                 &zrsdp[k][0]);
+      atomic_add(m1 * rsdp[i][0] + m3 * rsdp[i][1] + m4 * rsdp[i][2],
+                 &zrsdp[k][1]);
+      atomic_add(m2 * rsdp[i][0] + m4 * rsdp[i][1] + m5 * rsdp[i][2],
+                 &zrsdp[k][2]);
    }
 }
 

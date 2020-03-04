@@ -28,4 +28,5 @@ TINKER_EXTERN virial_buffer vir_ea;
 void eangle_data(rc_op op);
 
 void eangle(int vers);
+void eangle_acc(int);
 TINKER_NAMESPACE_END

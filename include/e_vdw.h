@@ -106,8 +106,17 @@ void evdw_resolve_gradient();
 void evdw_resolve_gradient_acc();
 
 void evdw_lj(int vers);
+void evdw_lj_acc(int);
+
+
 void evdw_buck(int vers);
+void evdw_buck_acc(int);
+
+
 void evdw_mm3hb(int vers);
+void evdw_mm3hb_acc(int);
+
+
 /**
  * \ingroup vdw
  * \brief
@@ -130,6 +139,13 @@ void evdw_mm3hb(int vers);
  * \f[ t=5,\ \alpha=0.7 \f]
  */
 void evdw_hal(int vers);
+void evdw_hal_acc(int);
+void evdw_hal_cu(int);
+
+
 void evdw_gauss(int vers);
+void evdw_gauss_acc(int);
+
+
 void evdw(int vers);
 TINKER_NAMESPACE_END

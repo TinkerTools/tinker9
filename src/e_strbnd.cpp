@@ -40,7 +40,6 @@ void estrbnd_data(rc_op op)
 
 void estrbnd(int vers)
 {
-   extern void estrbnd_acc(int);
    estrbnd_acc(vers);
 }
 TINKER_NAMESPACE_END

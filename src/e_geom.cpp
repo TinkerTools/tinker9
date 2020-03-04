@@ -33,7 +33,6 @@ void egeom_data(rc_op op)
 }
 
 
-extern void egeom_acc(int vers);
 void egeom(int vers)
 {
    egeom_acc(vers);

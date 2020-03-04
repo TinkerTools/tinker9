@@ -50,19 +50,24 @@ void finish()
 TINKER_NAMESPACE_END
 
 
+#include "gpu_card.h"
+#include "platform.h"
+#include "random.h"
+
+
 #include "box.h"
+#include "cudalib.h"
+#include "energy.h"
 #include "group.h"
 #include "md_intg.h"
 #include "md_pq.h"
 #include "molecule.h"
+#include "nblist.h"
 
 
 TINKER_NAMESPACE_BEGIN
 void host_data(rc_op op)
 {
-   extern void random_data(rc_op);
-   extern void platform_data(rc_op);
-   extern void gpu_card_data(rc_op);
    rc_man rand42_{random_data, op};
    rc_man pf42_{platform_data, op};
    rc_man gpu_card42_{gpu_card_data, op};
@@ -71,9 +76,7 @@ void host_data(rc_op op)
 
 void device_data(rc_op op)
 {
-   extern void cudalib_data(rc_op);
    rc_man cl42_{cudalib_data, op};
-
 
    rc_man n42_{n_data, op};
 
@@ -85,16 +88,12 @@ void device_data(rc_op op)
    rc_man molecule42_{molecule_data, op};
    rc_man group42_{group_data, op};
 
-
-   extern void potential_data(rc_op);
-   rc_man pd42_{potential_data, op};
+   rc_man energy42_{energy_data, op};
 
    // Neighbor lists must be initialized after potential initialization.
    // xred, yred, and zred need to be initialized in vdw routines and will be
    // used in nblist setups.
-   extern void nblist_data(rc_op);
    rc_man nbl42_{nblist_data, op};
-
 
    rc_man md42_{md_data, op};
 }
