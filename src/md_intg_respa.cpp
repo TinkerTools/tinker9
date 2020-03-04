@@ -21,12 +21,13 @@ const TimeScaleConfig& respa_tsconfig()
    constexpr int fast = floor_log2_constexpr(RESPA_FAST); // short-range
    constexpr int slow = floor_log2_constexpr(RESPA_SLOW); // long-range
    static TimeScaleConfig tsconfig{
-      {"ebond", fast},   {"eangle", fast},    {"estrbnd", fast},
-      {"eurey", fast},   {"eopbend", fast},   {"etors", fast},
-      {"epitors", fast}, {"etortor", fast},   {"egeom", fast},
+      {"ebond", fast},   {"eangle", fast},  {"estrbnd", fast},
+      {"eurey", fast},   {"eopbend", fast}, {"etors", fast},
+      {"epitors", fast}, {"etortor", fast}, {"egeom", fast},
 
-      {"evdw", slow},    {"elec_init", slow}, {"torque", slow},
-      {"emplar", slow},  {"empole", slow},    {"epolar", slow},
+      {"evdw", slow},
+
+      {"emplar", slow},  {"empole", slow},  {"epolar", slow},
    };
    return tsconfig;
 }

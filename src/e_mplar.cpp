@@ -1,5 +1,7 @@
 #include "e_mplar.h"
+#include "error.h"
 #include "md.h"
+#include "nblist.h"
 #include "potent.h"
 #include <map>
 #include <tinker/detail/couple.hh>
@@ -12,6 +14,11 @@
 TINKER_NAMESPACE_BEGIN
 void emplar_data(rc_op op)
 {
+   // implies must use cuda and PBC
+   if (mlist_version() != NBL_SPATIAL)
+      return;
+
+
    if (!use_potent(mpole_term) || !use_potent(polar_term))
       return;
 
@@ -350,5 +357,17 @@ void emplar_data(rc_op op)
       darray::copyin(WAIT_NEW_Q, nmdpuexclude, mdpuexclude_scale,
                      scal_vec.data());
    }
+}
+
+
+void emplar(int vers)
+{
+#if TINKER_CUDART
+   if (mlist_version() == NBL_SPATIAL && !(vers & calc::analyz)) {
+      emplar_cu(vers);
+      return;
+   }
+#endif
+   TINKER_THROW("EMPLAR is only available for PBC systems in CUDA.\n");
 }
 TINKER_NAMESPACE_END

@@ -38,23 +38,23 @@ void energy_data(rc_op op)
 
    rc_man empole42_{empole_data, op};
    rc_man epolar42_{epolar_data, op};
-#if TINKER_CUDART
    // Must follow empole_data() and epolar_data().
    rc_man emplar42_{emplar_data, op};
-#endif
 }
 
 
 const TimeScaleConfig& default_tsconfig()
 {
    static TimeScaleConfig tsconfig{
-      {"ebond", 0},   {"eangle", 0},    {"estrbnd", 0},
-      {"eurey", 0},   {"eopbend", 0},   {"etors", 0},
-      {"epitors", 0}, {"etortor", 0},   {"egeom", 0},
+      {"ebond", 0},   {"eangle", 0},  {"estrbnd", 0},
+      {"eurey", 0},   {"eopbend", 0}, {"etors", 0},
+      {"epitors", 0}, {"etortor", 0}, {"egeom", 0},
 
 
-      {"evdw", 0},    {"elec_init", 0}, {"torque", 0},
-      {"emplar", 0},  {"empole", 0},    {"epolar", 0},
+      {"evdw", 0},
+
+
+      {"emplar", 0},  {"empole", 0},  {"epolar", 0},
    };
    return tsconfig;
 }
@@ -62,10 +62,11 @@ const TimeScaleConfig& default_tsconfig()
 
 void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 {
-   auto TSCONFIG = [](std::string eng, int tsflag,
-                      const TimeScaleConfig& tsconfig) {
+   auto tscfg = [&](std::string eng) {
+      auto local_flag = tsflag;
+      const auto& local_cfg = tsconfig;
       try {
-         return tsflag & (1 << tsconfig.at(eng));
+         return local_flag & (1 << local_cfg.at(eng));
       } catch (const std::out_of_range&) {
          TINKER_THROW(format("Time scale of the {} term is unknown.\n", eng));
       }
@@ -80,28 +81,28 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 
    if (use_potent(bond_term))
-      if (TSCONFIG("ebond", tsflag, tsconfig))
+      if (tscfg("ebond"))
          ebond(vers);
    if (use_potent(angle_term))
-      if (TSCONFIG("eangle", tsflag, tsconfig))
+      if (tscfg("eangle"))
          eangle(vers);
    if (use_potent(strbnd_term))
-      if (TSCONFIG("estrbnd", tsflag, tsconfig))
+      if (tscfg("estrbnd"))
          estrbnd(vers);
    if (use_potent(urey_term))
-      if (TSCONFIG("eurey", tsflag, tsconfig))
+      if (tscfg("eurey"))
          eurey(vers);
    if (use_potent(opbend_term))
-      if (TSCONFIG("eopbend", tsflag, tsconfig))
+      if (tscfg("eopbend"))
          eopbend(vers);
    if (use_potent(torsion_term))
-      if (TSCONFIG("etors", tsflag, tsconfig))
+      if (tscfg("etors"))
          etors(vers);
    if (use_potent(pitors_term))
-      if (TSCONFIG("epitors", tsflag, tsconfig))
+      if (tscfg("epitors"))
          epitors(vers);
    if (use_potent(tortor_term))
-      if (TSCONFIG("etortor", tsflag, tsconfig))
+      if (tscfg("etortor"))
          etortor(vers);
 
 
@@ -109,7 +110,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 
    if (use_potent(geom_term))
-      if (TSCONFIG("egeom", tsflag, tsconfig))
+      if (tscfg("egeom"))
          egeom(vers);
 
 
@@ -117,28 +118,34 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 
    if (use_potent(vdw_term))
-      if (TSCONFIG("evdw", tsflag, tsconfig))
+      if (tscfg("evdw"))
          evdw(vers);
 
-   if (TSCONFIG("elec_init", tsflag, tsconfig))
-      elec_init(vers);
-#if TINKER_CUDART
-   if (use_potent(mpole_term) && use_potent(polar_term) &&
-       !(vers & calc::analyz) && mlist_version() == NBL_SPATIAL) {
-      if (TSCONFIG("emplar", tsflag, tsconfig))
-         emplar_cu(vers);
-      goto skip_mpole_polar;
+
+   bool calc_mpole = use_potent(mpole_term); // quadrupole
+   bool calc_polar = use_potent(polar_term); // AMOEBA polarization (Thole)
+   bool calc_mplar = calc_mpole && calc_polar;
+   calc_mplar = calc_mplar && !(vers & calc::analyz);
+   calc_mplar = calc_mplar && (mlist_version() == NBL_SPATIAL);
+   if (calc_mplar) {
+      if (tscfg("emplar")) {
+         elec_init(vers);
+         emplar(vers);
+         torque(vers);
+      }
+   } else {
+      // update logical flags by time-scale configurations
+      calc_mpole = calc_mpole && tscfg("empole");
+      calc_polar = calc_polar && tscfg("epolar");
+      if (calc_mpole || calc_polar) {
+         elec_init(vers);
+         if (calc_mpole)
+            empole(vers);
+         if (calc_polar)
+            epolar(vers);
+         torque(vers);
+      }
    }
-#endif
-   if (use_potent(mpole_term))
-      if (TSCONFIG("empole", tsflag, tsconfig))
-         empole(vers);
-   if (use_potent(polar_term))
-      if (TSCONFIG("epolar", tsflag, tsconfig))
-         epolar(vers);
-skip_mpole_polar:
-   if (TSCONFIG("torque", tsflag, tsconfig))
-      torque(vers);
 
 
    sum_energy(vers);
