@@ -15,7 +15,7 @@ TINKER_NAMESPACE_BEGIN
 #define STRIDE blockDim.x* gridDim.x
 
 
-extern "C" __global__
+__global__
 void pcg_udir(int n, const real* restrict polarity, real (*restrict udir)[3],
               real (*restrict udirp)[3], const real (*restrict field)[3],
               const real (*restrict fieldp)[3])
@@ -31,7 +31,7 @@ void pcg_udir(int n, const real* restrict polarity, real (*restrict udir)[3],
 }
 
 
-extern "C" __global__
+__global__
 void pcg_p1(int n, const real* restrict polarity_inv, real (*restrict vec)[3],
             real (*restrict vecp)[3], const real (*restrict conj)[3],
             const real (*restrict conjp)[3], const real (*restrict field)[3],
@@ -48,7 +48,7 @@ void pcg_p1(int n, const real* restrict polarity_inv, real (*restrict vec)[3],
 }
 
 
-extern "C" __global__
+__global__
 void pcg_p2(int n, const real* restrict ka, const real* restrict kap,
             const real* restrict ksum, const real* restrict ksump,
             real (*restrict uind)[3], real (*restrict uinp)[3],
@@ -70,7 +70,7 @@ void pcg_p2(int n, const real* restrict ka, const real* restrict kap,
 }
 
 
-extern "C" __global__
+__global__
 void pcg_p3(int n, const real* restrict ksum, const real* restrict ksump,
             const real* restrict ksum1, const real* restrict ksump1,
             real (*restrict conj)[3], real (*restrict conjp)[3],
@@ -88,7 +88,7 @@ void pcg_p3(int n, const real* restrict ksum, const real* restrict ksump,
 }
 
 
-extern "C" __global__
+__global__
 void pcg_peek(int n, float pcgpeek, const real* restrict polarity,
               real (*restrict uind)[3], real (*restrict uinp)[3],
               const real (*restrict rsd)[3], const real (*restrict rsdp)[3])

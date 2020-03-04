@@ -249,7 +249,7 @@ inline int offset_box(int nx, int ny, int nz, int ix1, int iy1, int iz1,
 }
 
 
-extern "C" __global__
+__global__
 void spatial_bc(int n, int px, int py, int pz,
                 Spatial::SortedAtom* restrict sorted, int* restrict boxnum,
                 int* restrict nax, //
@@ -290,7 +290,7 @@ void spatial_bc(int n, int px, int py, int pz,
 }
 
 
-extern "C" __global__
+__global__
 void spatial_e(int n, int nak, const int* restrict boxnum, int* xakf,
                const Spatial::SortedAtom* restrict sorted, TINKER_IMAGE_PARAMS)
 {
@@ -313,7 +313,7 @@ void spatial_e(int n, int nak, const int* restrict boxnum, int* xakf,
 }
 
 
-extern "C" __global__
+__global__
 void spatial_ghi(Spatial* restrict sp, int n, TINKER_IMAGE_PARAMS, real cutbuf2)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
@@ -434,7 +434,7 @@ void spatial_ghi(Spatial* restrict sp, int n, TINKER_IMAGE_PARAMS, real cutbuf2)
 }
 
 
-extern "C" __global__
+__global__
 void spatial_update_sorted(int n, Spatial::SortedAtom* restrict sorted,
                            const real* restrict x, const real* restrict y,
                            const real* restrict z, TINKER_IMAGE_PARAMS)

@@ -9,7 +9,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-extern "C" __global__
+__global__
 void sparse_precond_cu0(const real (*restrict rsd)[3],
                         const real (*restrict rsdp)[3],
                         real (*restrict zrsd)[3], real (*restrict zrsdp)[3],
@@ -27,7 +27,7 @@ void sparse_precond_cu0(const real (*restrict rsd)[3],
 }
 
 
-extern "C" __launch_bounds__(BLOCK_DIM) __global__
+__launch_bounds__(BLOCK_DIM) __global__
 void sparse_precond_cu1(const real (*restrict rsd)[3],
                         const real (*restrict rsdp)[3],
                         real (*restrict zrsd)[3], real (*restrict zrsdp)[3],
@@ -128,7 +128,7 @@ void sparse_precond_cu1(const real (*restrict rsd)[3],
 }
 
 
-extern "C" __global__
+__global__
 void sparse_precond_cu2(const real (*restrict rsd)[3],
                         const real (*restrict rsdp)[3],
                         real (*restrict zrsd)[3], real (*restrict zrsdp)[3],

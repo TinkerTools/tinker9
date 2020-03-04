@@ -4,6 +4,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
+// ufield, PCG
 SEQ_ROUTINE
 inline void damp_thole2(real r, real pdi, real pti, real pdk, real ptk,
                         real& restrict scale3, real& restrict scale5)
@@ -18,6 +19,7 @@ inline void damp_thole2(real r, real pdi, real pti, real pdk, real ptk,
 }
 
 
+// dfield
 SEQ_ROUTINE
 inline void damp_thole3(real r, real pdi, real pti, real pdk, real ptk,
                         real& restrict scale3, real& restrict scale5,
