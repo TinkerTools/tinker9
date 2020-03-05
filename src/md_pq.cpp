@@ -1,12 +1,15 @@
 
 #include "md_pq.h"
+#include "box.h"
 #include "darray.h"
 #include "gpu_card.h"
 #include "md_calc.h"
 #include "nblist.h"
+#include "tinker_rt.h"
 #include <cassert>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>
+#include <tinker/detail/boxes.hh>
 #include <tinker/detail/moldyn.hh>
 
 
@@ -63,6 +66,64 @@ void propagate_xyz(time_prec dt, bool check_nblist)
    copy_pos_to_xyz();
    if (check_nblist)
       refresh_neighbors();
+}
+
+
+void read_frame_copyin_to_xyz(std::istream& ipt, int& done)
+{
+   if (done)
+      return;
+
+
+   if (ipt) {
+      std::string line;
+      std::getline(ipt, line); // n and title
+      std::getline(ipt, line); // either box size or first atom
+      // 18.643000   18.643000   18.643000   90.000000   90.000000   90.000000
+      //  1  O      8.733783    7.084710   -0.688468     1     2     3
+      double l1, l2, l3, a1, a2, a3;
+      int matched = std::sscanf(line.data(), "%lf%lf%lf%lf%lf%lf", &l1, &l2,
+                                &l3, &a1, &a2, &a3);
+      int row = 0;
+      int index;
+      char name[32];
+      double xr, yr, zr;
+      if (matched == 6) {
+         boxes::xbox = l1;
+         boxes::ybox = l2;
+         boxes::zbox = l3;
+         boxes::alpha = a1;
+         boxes::beta = a2;
+         boxes::gamma = a3;
+         TINKER_RT(lattice)();
+
+         Box p;
+         get_tinker_box_module(p);
+         set_default_box(p);
+      } else {
+         std::sscanf(line.data(), "%d%s%lf%lf%lf", &index, name, &xr, &yr, &zr);
+         index -= 1;
+         atoms::x[index] = xr;
+         atoms::y[index] = yr;
+         atoms::z[index] = zr;
+         row = 1;
+      }
+
+      for (int ir = row; ir < n; ++ir) {
+         std::getline(ipt, line);
+         std::sscanf(line.data(), "%d%s%lf%lf%lf", &index, name, &xr, &yr, &zr);
+         index -= 1;
+         atoms::x[index] = xr;
+         atoms::y[index] = yr;
+         atoms::z[index] = zr;
+      }
+
+      xyz_data(rc_init);
+   }
+
+
+   if (ipt.peek() == EOF)
+      done = true;
 }
 
 

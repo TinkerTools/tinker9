@@ -2,8 +2,11 @@
 #include "io_print.h"
 #include "io_read.h"
 #include "md.h"
+#include "nblist.h"
 #include "potent.h"
 #include "tinker_rt.h"
+#include <fstream>
+#include <tinker/detail/files.hh>
 
 TINKER_NAMESPACE_BEGIN
 void x_analyze_e();
@@ -61,10 +64,31 @@ void x_analyze(int argc, char** argv)
 
    auto failed = std::string::npos;
    Text::upcase(opt);
+
+
+   auto out = stdout;
+   fstr_view fsw = files::filename;
+   std::string fname = fsw.trim();
+   std::ifstream ipt(fname);
+   int done = false;
+   read_frame_copyin_to_xyz(ipt, done);
+   refresh_neighbors();
+   int nframe_processed = 1;
    if (opt.find("E") != failed)
       x_analyze_e();
    if (opt.find("V") != failed)
       x_analyze_v();
+   while (!done) {
+      read_frame_copyin_to_xyz(ipt, done);
+      refresh_neighbors();
+      nframe_processed++;
+      print(out, "\n Analysis for Archive Structure :{:16d}\n",
+            nframe_processed);
+      if (opt.find("E") != failed)
+         x_analyze_e();
+      if (opt.find("V") != failed)
+         x_analyze_v();
+   }
 
 
    finish();

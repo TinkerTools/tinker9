@@ -1,6 +1,7 @@
 #pragma once
 #include "md_prec.h"
 #include "rc_man.h"
+#include <istream>
 
 
 /**
@@ -83,6 +84,9 @@ void copy_pos_to_xyz_acc();
  */
 void propagate_xyz(time_prec dt, bool check_nblist);
 void propagate_pos_acc(time_prec);
+
+
+void read_frame_copyin_to_xyz(std::istream& input, int& done);
 
 
 void xyz_data(rc_op);
