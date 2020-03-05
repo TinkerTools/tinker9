@@ -28,6 +28,8 @@ nblist_t vlist_version()
 {
    if (!use_potent(vdw_term))
       return NBL_UNDEFINED;
+   if (vdwtyp != evdw_t::hal)
+      return NBL_UNDEFINED;
    if (!limits::use_vlist)
       return NBL_DOUBLE_LOOP;
    if (!bound::use_bounds)

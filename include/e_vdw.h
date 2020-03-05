@@ -3,10 +3,11 @@
 #include "energy_buffer.h"
 #include "rc_man.h"
 
+
 /**
- * \todo Test lj, buck, mm3hb, gauss, and mutant.
- * \todo Add vdw correction.
+ * \todo Test lj, buck, mm3hb, gauss.
  */
+
 
 TINKER_NAMESPACE_BEGIN
 /**
@@ -15,96 +16,124 @@ TINKER_NAMESPACE_BEGIN
  */
 enum class evdw_t
 {
-   lj,
-   buck,
-   mm3hb,
-   /// Halgren buffered 14-7 potential.
-   hal,
-   gauss,
+   lj,    ///< Lennard-Jones 12-6 potential.
+   buck,  ///< Buckingham potential.
+   mm3hb, ///< MM3 exp-6 potential.
+   hal,   ///< Halgren buffered 14-7 potential.
+   gauss, ///< Gaussian expansion VDW potential.
 
-   decouple = 0,
-   annihilate = 1,
+
+   decouple = 0,   ///< VDW lambda type: decouple.
+   annihilate = 1, ///< VDW lambda type: annihilate.
 };
 TINKER_EXTERN evdw_t vdwtyp;
-
-/// \ingroup vdw
-/// Value of \f$ \gamma \f$ in buffered 14-7 vdw potential.
-TINKER_EXTERN real ghal;
-/// \ingroup vdw
-/// Value of \f$ \delta \f$ in buffered 14-7 vdw potential.
-TINKER_EXTERN real dhal;
-/// \ingroup vdw
-/// Exponential factor for soft core buffered 14-7 potential.
-TINKER_EXTERN real scexp;
-/// \ingroup vdw
-/// Scale factor \f$ \alpha \f$ for soft core buffered 14-7 potential.
-TINKER_EXTERN real scalpha;
-/// \ingroup vdw
-/// Van der Waals lambda type.
-/// \see evdw_t::decouple
-/// \see evdw_t::annihilate
 TINKER_EXTERN evdw_t vcouple;
+
+
+/**
+ * \ingroup vdw
+ * \brief Value of \f$ \gamma \f$ in buffered 14-7 vdw potential.
+ */
+TINKER_EXTERN real ghal;
+/**
+ * \ingroup vdw
+ * \brief Value of \f$ \delta \f$ in buffered 14-7 vdw potential.
+ */
+TINKER_EXTERN real dhal;
+/**
+ * \ingroup vdw
+ * \brief Exponential factor for soft core buffered 14-7 potential.
+ */
+TINKER_EXTERN real scexp;
+/**
+ * \ingroup vdw
+ * \brief Scale factor \f$ \alpha \f$ for soft core buffered 14-7 potential.
+ */
+TINKER_EXTERN real scalpha;
+
+
 TINKER_EXTERN real v2scale, v3scale, v4scale, v5scale;
+
 
 TINKER_EXTERN pointer<int> ired;
 TINKER_EXTERN pointer<real> kred;
 
-/// \ingroup vdw
-/// Reduced x, y, z coordinates for each atom and the vdw gradients on each
-/// reduced site.
-/// \{
-TINKER_EXTERN pointer<real> xred, yred, zred;
-TINKER_EXTERN pointer<grad_prec> gxred, gyred, gzred;
-/// \}
 
 /**
  * \ingroup vdw
- * Number of unique values in the \c jvdw array.
- * \see jvdw
+ * \brief Halgren buffered 14-7 reduced x, y, z coordinates for each atom.
+ */
+TINKER_EXTERN pointer<real> xred, yred, zred;
+/**
+ * \ingroup vdw
+ * \brief Halgren buffered 14-7 reduced vdw gradients for each atom.
+ */
+TINKER_EXTERN pointer<grad_prec> gxred, gyred, gzred;
+
+
+/**
+ * \ingroup vdw
+ * \brief Number of unique values in the #jvdw array.
  */
 TINKER_EXTERN int njvdw;
-/** \ingroup vdw
- * Type or class index into vdw parameters for each atom.
+/**
+ * \ingroup vdw
+ * \brief Type or class index into vdw parameters for each atom.
  * The indices have been sorted and start from 0.
  */
 TINKER_EXTERN pointer<int> jvdw;
-/// \ingroup vdw
-/// \{
-/// Minimum energy distance or well depth parameter for each \c jvdw pair.
-/// Element `[j1][j2]` is accessed by `[njvdw*j1 + j2]`.
-/// \see njvdw
-TINKER_EXTERN pointer<real> radmin, epsilon;
-/// \}
 
-/// \ingroup vdw
-/// State weighting values \f$ \lambda \f$ of all atoms for van der Waals
-/// potentials.
+
+/**
+ * \ingroup vdw
+ * \brief Minimum energy distance (#radmin) or well depth parameter (#epsilon)
+ * for each #jvdw pair. Element `[j1][j2]` is accessed by `[njvdw*j1 + j2]`.
+ * \see njvdw
+ */
+TINKER_EXTERN pointer<real> radmin, epsilon;
+
+
+/**
+ * \ingroup vdw
+ * \brief
+ * State weighting values (lambda) of all atoms for van der Waals potentials.
+ */
 TINKER_EXTERN pointer<real> vlam;
+
 
 TINKER_EXTERN int nvexclude_;
 TINKER_EXTERN pointer<int, 2> vexclude_;
 TINKER_EXTERN pointer<real> vexclude_scale_;
 
+
 TINKER_EXTERN count_buffer nev;
 TINKER_EXTERN energy_buffer ev;
 TINKER_EXTERN virial_buffer vir_ev;
 
-/// \ingroup vdw
-/// \brief Long-range energy correction (lrc), used as `e += lrc/pbc_volume`.
+
+/**
+ * \ingroup vdw
+ * \brief Long-range energy correction (lrc), used as `e += lrc/volume`.
+ * \note Must be 0 if system is unbound.
+ */
 TINKER_EXTERN energy_prec elrc_vol;
-/// \ingroup vdw
-/// \brief
-/// Long-range virial correction (lrc), used as `v(i,i) += lrc/pbc_volume`.
+/**
+ * \ingroup vdw
+ * \brief Long-range virial correction (lrc), used as `v(i,i) += lrc/volume`.
+ * \note Must be 0 if system is unbound.
+ */
 TINKER_EXTERN virial_prec vlrc_vol;
+
 
 void evdw_data(rc_op op);
 
-void evdw_reduce_xyz();
-void evdw_reduce_xyz_acc();
 
-void evdw_resolve_gradient();
-void evdw_resolve_gradient_acc();
-
+/**
+ * \ingroup vdw
+ * \brief Lennard-Jones 12-6 potential.
+ * 
+ * \f[ U(r|r_m,\epsilon) = \epsilon [(r_m/r)^{12} - 2(r_m/r)^6] \f]
+ */
 void evdw_lj(int vers);
 void evdw_lj_acc(int);
 
@@ -141,6 +170,10 @@ void evdw_mm3hb_acc(int);
 void evdw_hal(int vers);
 void evdw_hal_acc(int);
 void evdw_hal_cu(int);
+void evdw_reduce_xyz();
+void evdw_resolve_gradient();
+void evdw_reduce_xyz_acc();
+void evdw_resolve_gradient_acc();
 
 
 void evdw_gauss(int vers);

@@ -91,8 +91,8 @@ void device_data(rc_op op)
    rc_man energy42_{energy_data, op};
 
    // Neighbor lists must be initialized after potential initialization.
-   // xred, yred, and zred need to be initialized in vdw routines and will be
-   // used in nblist setups.
+   // xred, yred, and zred need to be initialized in vdw (Halgren 14-7)
+   // and will be used in nblist setups.
    rc_man nbl42_{nblist_data, op};
 
    rc_man md42_{md_data, op};
