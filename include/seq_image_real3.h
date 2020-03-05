@@ -65,9 +65,16 @@ inline void image_general(real& restrict xr, real& restrict yr,
 }
 
 
-// imagen
-
-
+#if 0
+/**
+ * This imagen routine is very cunning: it is faster than the orthogonal image
+ * routine but only works if two atom images are not terribly far so that their
+ * distance can be corrected by 1x box size. Therefore, if we have to use this
+ * routine, we either have to:
+ *    - call bounds() (which has not been implemented on GPU) for every step;
+ *    - or call bounds() on GPU on a regular basis and keep our fingers crossed
+ *    that atoms don't diffuse too far from the PBC box.
+ */
 SEQ_ROUTINE
 inline void imagen_orthogonal(real& xr, real& yr, real& zr, real3 l1, real3 l2,
                               real3 l3)
@@ -87,6 +94,7 @@ inline void imagen_orthogonal(real& xr, real& yr, real& zr, real3 l1, real3 l2,
    real c = REAL_ABS(zr);
    zr = (c > lz2 ? c - lz : c);
 }
+#endif
 TINKER_NAMESPACE_END
 
 
@@ -126,7 +134,7 @@ inline real imagen2_general(real& xr, real& yr, real& zr, real3 l1, real3 l2,
                             real3 l3, real3 ra, real3 rb, real3 rc)
 {
    if (l1.z == 0) {
-      imagen_orthogonal(xr, yr, zr, l1, l2, l3);
+      image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc);
       return xr * xr + yr * yr + zr * zr;
    } else if (l1.y == 0) {
       image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);

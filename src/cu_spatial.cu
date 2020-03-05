@@ -274,6 +274,10 @@ void spatial_bc(int n, int px, int py, int pz,
       sorted[i].y = yr;       // B.2
       sorted[i].z = zr;       // B.2
       sorted[i].unsorted = i; // B.2
+
+      // f.x, f.y, f.z coordinates have been "wrapped" into the PBC box,
+      // but sorted[i] coordinates were not.
+
       int id = frac_to_box(px, py, pz, f.x, f.y, f.z);
       boxnum[i] = id;         // B.3
       atomicAdd(&nax[id], 1); // B.4
