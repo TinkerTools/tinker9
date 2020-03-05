@@ -106,6 +106,14 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
       compare_in();
    }
 
+   SECTION("  - far")
+   {
+      xr = 51, yr = -83, zr = 164;
+      double xa = 3, ya = -3, za = 4;
+      compare_im();
+      compare_in();
+   }
+
    TINKER_RT(final)();
    fortran_runtime_finish();
 }
@@ -125,7 +133,7 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
    fortran_runtime_initialize(argc, (char**)argv);
    TINKER_RT(initial)();
 
-   SECTION(" -- lvec")
+   SECTION(" - lvec")
    {
       REQUIRE(lvec1.x == Approx(p[0]).margin(eps));
       REQUIRE(lvec2.x == Approx(0).margin(eps));
@@ -155,7 +163,7 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
       compare_in();
    }
 
-   SECTION(" -- xy-plane")
+   SECTION("  - xy-plane")
    {
       xr = -8, yr = -6, zr = 0;
       double xa = -8, ya = -6, za = 0;
@@ -163,7 +171,7 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
       compare_in();
    }
 
-   SECTION(" -- general")
+   SECTION("  - general")
    {
       double xa, ya, za;
 
@@ -217,7 +225,7 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
    REQUIRE(volbox() == Approx(vol).margin(eps));
 
    // image and imagen
-   SECTION(" -- origin")
+   SECTION("  - origin")
    {
       xr = 0, yr = 0, zr = 0;
       xa = 0, ya = 0, za = 0;
@@ -225,7 +233,7 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
       compare_in();
    }
 
-   SECTION(" -- general")
+   SECTION("  - general")
    {
       double xa, ya, za;
 
