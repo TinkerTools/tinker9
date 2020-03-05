@@ -274,6 +274,25 @@ void evdw_gauss(int vers)
 
 void evdw(int vers)
 {
+   // vdw long-range correction
+   // check lrc_vol != 0 for non-PBC
+   // update the global variables if !calc::analyz
+   // if calc::analyz, update in energy_reduce() / virial_reduce()
+   if (!(vers & calc::analyz)) {
+      if ((vers & calc::energy) && elrc_vol != 0) {
+         esum += elrc_vol / volbox();
+      }
+
+
+      if ((vers & calc::virial) && vlrc_vol != 0) {
+         virial_prec term = vlrc_vol / volbox();
+         vir[0] += term; // xx
+         vir[4] += term; // yy
+         vir[8] += term; // zz
+      }
+   }
+
+
    if (vdwtyp == evdw_t::lj)
       evdw_lj(vers);
    else if (vdwtyp == evdw_t::buck)

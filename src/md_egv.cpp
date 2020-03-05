@@ -25,6 +25,7 @@ void zero_egv(int vers)
    }
 
    if (vers & calc::energy) {
+      esum = 0;
       size_t size = energy_buffers.size();
       for (size_t i = 0; i < size; ++i) {
          energy_buffer u = energy_buffers[i];
@@ -33,6 +34,8 @@ void zero_egv(int vers)
    }
 
    if (vers & calc::virial) {
+      for (int i = 0; i < 9; ++i)
+         vir[i] = 0;
       size_t size = virial_buffers.size();
       for (size_t i = 0; i < size; ++i) {
          virial_buffer u = virial_buffers[i];

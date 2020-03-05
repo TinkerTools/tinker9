@@ -87,7 +87,8 @@ energy_prec energy_reduce(const energy_buffer e)
 
    // vdw long-range correction
    // check != 0 for non-PBC
-   if (e == ev && elrc_vol != 0) {
+   // if !calc::analyz, update in evdw()
+   if ((rc_flag & calc::analyz) && e == ev && elrc_vol != 0) {
       real_out += elrc_vol / volbox();
    }
 
@@ -125,7 +126,8 @@ void virial_reduce(virial_prec (&v_out)[9], const virial_buffer v)
 
    // vdw long-range correction
    // check != 0 for non-PBC
-   if (v == vir_ev && vlrc_vol != 0) {
+   // if !calc::analyz, update in evdw()
+   if ((rc_flag & calc::analyz) && v == vir_ev && vlrc_vol != 0) {
       virial_prec term = vlrc_vol / volbox();
       v_out[0] += term; // xx
       v_out[4] += term; // yy
