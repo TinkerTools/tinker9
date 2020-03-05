@@ -106,12 +106,13 @@ void integrate_data(rc_op op)
          barostat = NONE_BAROSTAT;
       }
 
+      // Only gradient is necessary to start a simulation.
       fstr_view itg = mdstuf::integrate;
       intg = nullptr;
       if (itg == "VERLET") {
          intg = velocity_verlet;
          // need full gradient to start/restart the simulation
-         energy(rc_flag);
+         energy(calc::grad);
       } else if (itg == "STOCHASTIC") {
       } else if (itg == "BAOAB") {
       } else if (itg == "BUSSI") {
@@ -123,13 +124,13 @@ void integrate_data(rc_op op)
          // need fast and slow gradients to start/restart the simulation
          darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
          // save fast gradients to gx1 etc.
-         energy(rc_flag, RESPA_FAST, respa_tsconfig());
+         energy(calc::grad, RESPA_FAST, respa_tsconfig());
          darray::copy(PROCEED_NEW_Q, n, gx1, gx);
          darray::copy(PROCEED_NEW_Q, n, gy1, gy);
          darray::copy(PROCEED_NEW_Q, n, gz1, gz);
 
          // save slow gradients to gx2 etc.
-         energy(rc_flag, RESPA_SLOW, respa_tsconfig());
+         energy(calc::grad, RESPA_SLOW, respa_tsconfig());
          darray::copy(PROCEED_NEW_Q, n, gx2, gx);
          darray::copy(PROCEED_NEW_Q, n, gy2, gy);
          darray::copy(PROCEED_NEW_Q, n, gz2, gz);
