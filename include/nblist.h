@@ -50,7 +50,7 @@ TINKER_EXTERN NBListUnit ulist_unit;
 /**
  * \brief
  * For Halgren Buffered 14-7 potential only, otherwise returns NBL_UNDEFINED.
- * 
+ *
  */
 nblist_t vlist_version();
 nblist_t dlist_version();

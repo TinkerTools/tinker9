@@ -55,10 +55,6 @@ TINKER_EXTERN real scalpha;
 TINKER_EXTERN real v2scale, v3scale, v4scale, v5scale;
 
 
-TINKER_EXTERN pointer<int> ired;
-TINKER_EXTERN pointer<real> kred;
-
-
 /**
  * \ingroup vdw
  * \brief Halgren buffered 14-7 reduced x, y, z coordinates for each atom.
@@ -69,6 +65,8 @@ TINKER_EXTERN pointer<real> xred, yred, zred;
  * \brief Halgren buffered 14-7 reduced vdw gradients for each atom.
  */
 TINKER_EXTERN pointer<grad_prec> gxred, gyred, gzred;
+TINKER_EXTERN pointer<int> ired;
+TINKER_EXTERN pointer<real> kred;
 
 
 /**
