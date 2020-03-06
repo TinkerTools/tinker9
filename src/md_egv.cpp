@@ -1,6 +1,6 @@
 #include "md_egv.h"
 #include "md_calc.h"
-#include "md_pq.h"
+#include "mdpq.h"
 
 
 TINKER_NAMESPACE_BEGIN

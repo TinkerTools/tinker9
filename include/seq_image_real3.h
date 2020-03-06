@@ -8,46 +8,49 @@ TINKER_NAMESPACE_BEGIN
 // image
 
 
-SEQ_ROUTINE
-inline void image_triclinic(real& restrict xr, real& restrict yr,
-                            real& restrict zr, real3 l1, real3 l2, real3 l3,
-                            real3 ra, real3 rb, real3 rc)
-{
-   real fx = REAL_FLOOR(0.5f + zr * ra.z + yr * ra.y + xr * ra.x);
-   real fy = REAL_FLOOR(0.5f + zr * rb.z + yr * rb.y);
-   real fz = REAL_FLOOR(0.5f + zr * rc.z);
-   xr -= (fz * l1.z + fy * l1.y + fx * l1.x);
-   yr -= (fz * l2.z + fy * l2.y);
-   zr -= (fz * l3.z);
-}
+// SEQ_ROUTINE
+// inline void image_triclinic(real& restrict xr, real& restrict yr,
+//                             real& restrict zr, real3 l1, real3 l2, real3 l3,
+//                             real3 ra, real3 rb, real3 rc)
+#define image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc)                    \
+   {                                                                           \
+      real fx = REAL_FLOOR(0.5f + zr * ra.z + yr * ra.y + xr * ra.x);          \
+      real fy = REAL_FLOOR(0.5f + zr * rb.z + yr * rb.y);                      \
+      real fz = REAL_FLOOR(0.5f + zr * rc.z);                                  \
+      xr -= (fz * l1.z + fy * l1.y + fx * l1.x);                               \
+      yr -= (fz * l2.z + fy * l2.y);                                           \
+      zr -= (fz * l3.z);                                                       \
+   }
 
 
-SEQ_ROUTINE
-inline void image_monoclinic(real& restrict xr, real& restrict yr,
-                             real& restrict zr, real3 l1, real3 l2, real3 l3,
-                             real3 ra, real3 rb, real3 rc)
-{
-   real fx = REAL_FLOOR(0.5f + zr * ra.z + xr * ra.x);
-   real fy = REAL_FLOOR(0.5f + yr * rb.y);
-   real fz = REAL_FLOOR(0.5f + zr * rc.z);
-   xr -= (fz * l1.z + fx * l1.x);
-   yr -= (fy * l2.y);
-   zr -= (fz * l3.z);
-}
+// SEQ_ROUTINE
+// inline void image_monoclinic(real& restrict xr, real& restrict yr,
+//                              real& restrict zr, real3 l1, real3 l2, real3 l3,
+//                              real3 ra, real3 rb, real3 rc)
+#define image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc)                   \
+   {                                                                           \
+      real fx = REAL_FLOOR(0.5f + zr * ra.z + xr * ra.x);                      \
+      real fy = REAL_FLOOR(0.5f + yr * rb.y);                                  \
+      real fz = REAL_FLOOR(0.5f + zr * rc.z);                                  \
+      xr -= (fz * l1.z + fx * l1.x);                                           \
+      yr -= (fy * l2.y);                                                       \
+      zr -= (fz * l3.z);                                                       \
+   }
 
 
-SEQ_ROUTINE
-inline void image_orthogonal(real& restrict xr, real& restrict yr,
-                             real& restrict zr, real3 l1, real3 l2, real3 l3,
-                             real3 ra, real3 rb, real3 rc)
-{
-   real fx = REAL_FLOOR(0.5f + xr * ra.x);
-   real fy = REAL_FLOOR(0.5f + yr * rb.y);
-   real fz = REAL_FLOOR(0.5f + zr * rc.z);
-   xr -= (fx * l1.x);
-   yr -= (fy * l2.y);
-   zr -= (fz * l3.z);
-}
+// SEQ_ROUTINE
+// inline void image_orthogonal(real& restrict xr, real& restrict yr,
+//                              real& restrict zr, real3 l1, real3 l2, real3 l3,
+//                              real3 ra, real3 rb, real3 rc)
+#define image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc)                   \
+   {                                                                           \
+      real fx = REAL_FLOOR(0.5f + xr * ra.x);                                  \
+      real fy = REAL_FLOOR(0.5f + yr * rb.y);                                  \
+      real fz = REAL_FLOOR(0.5f + zr * rc.z);                                  \
+      xr -= (fx * l1.x);                                                       \
+      yr -= (fy * l2.y);                                                       \
+      zr -= (fz * l3.z);                                                       \
+   }
 
 
 SEQ_ROUTINE
@@ -153,6 +156,7 @@ inline real imagen2_general(real& xr, real& yr, real& zr, real3 l1, real3 l2,
 #endif
 
 
+#if 0
 SEQ_ROUTINE
 inline void imagec_triclinic(real& restrict x0, real& restrict y0,
                              real& restrict z0, real xc, real yc, real zc,
@@ -215,4 +219,5 @@ inline void imagec_general(real& restrict x0, real& restrict y0,
       imagec_triclinic(x0, y0, z0, xc, yc, zc, l1, l2, l3, ra, rb, rc);
    }
 }
+#endif
 TINKER_NAMESPACE_END

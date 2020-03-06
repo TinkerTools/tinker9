@@ -59,8 +59,8 @@ TINKER_NAMESPACE_END
 #include "cudalib.h"
 #include "energy.h"
 #include "group.h"
-#include "md_intg.h"
-#include "md_pq.h"
+#include "mdintg.h"
+#include "mdpq.h"
 #include "molecule.h"
 #include "nblist.h"
 

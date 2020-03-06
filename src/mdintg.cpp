@@ -7,10 +7,10 @@
 #include "io_fort_str.h"
 #include "md_calc.h"
 #include "md_egv.h"
-#include "md_intg.h"
-#include "md_pq.h"
 #include "md_pt.h"
 #include "md_save.h"
+#include "mdintg.h"
+#include "mdpq.h"
 #include <cassert>
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
@@ -49,7 +49,10 @@ void propagate(int nsteps, time_prec dt_ps)
       intg(istep, dt_ps);
 
       // mdstat
-      if (istep % inform::iwrite == 0) {
+      bool save = (istep % inform::iwrite == 0);
+      if (save || (istep % BOUNDS_EVERY_X_STEPS) == 0)
+         bounds();
+      if (save) {
          T_prec temp;
          kinetic(temp);
          mdsave_async(istep, dt_ps);

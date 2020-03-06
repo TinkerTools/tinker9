@@ -1,5 +1,5 @@
 
-#include "md_pq.h"
+#include "mdpq.h"
 #include "box.h"
 #include "darray.h"
 #include "gpu_card.h"
@@ -9,6 +9,7 @@
 #include <cassert>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>
+#include <tinker/detail/bound.hh>
 #include <tinker/detail/boxes.hh>
 #include <tinker/detail/moldyn.hh>
 
@@ -66,6 +67,17 @@ void propagate_xyz(time_prec dt, bool check_nblist)
    copy_pos_to_xyz();
    if (check_nblist)
       refresh_neighbors();
+}
+
+
+void bounds()
+{
+   if (!bound::use_bounds)
+      return;
+
+
+   bounds_pos_acc();
+   copy_pos_to_xyz();
 }
 
 
