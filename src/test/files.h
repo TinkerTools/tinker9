@@ -16,6 +16,10 @@ namespace commit_291a85c1 {
 extern const char* amoebapro13_prm;
 }
 
+namespace commit_11e84c69 {
+extern const char* charmm19_prm;
+}
+
 // xyz files
 extern const char* watersmall_xyz;
 
@@ -39,6 +43,8 @@ extern const char* crambin3_key;
 // trpcage test set
 extern const char* trpcage_xyz;
 extern const char* trpcage_key;
+extern const char* trpcage_charmm19_xyz;
+extern const char* trpcage_charmm19_key;
 
 // ten water molecules test set
 extern const char* h2o10_xyz;

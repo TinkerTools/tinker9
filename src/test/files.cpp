@@ -7,6 +7,8 @@ TINKER_NAMESPACE_BEGIN
 #include "file/amoebapro13.hh"
 #include "file/water03.hh"
 
+#include "file/charmm19.hh"
+
 // xyz files
 #include "file/watersmall.hh"
 
