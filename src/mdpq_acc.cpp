@@ -1,4 +1,6 @@
-#include "md_pq.h"
+#include "mdpq.h"
+#include "molecule.h"
+#include "seq_image.h"
 #include "syntax/acc/add_def.h"
 #include <tinker/detail/units.hh>
 
@@ -30,6 +32,55 @@ void propagate_pos_acc(time_prec dt)
       zpos[i] += dt * vz[i];
    }
 }
+
+
+void bounds_pos_acc()
+{
+   auto nmol = molecule.nmol;
+   const auto* imol = molecule.imol;
+   const auto* kmol = molecule.kmol;
+
+
+   #pragma acc parallel loop independent async\
+               deviceptr(imol,kmol,xpos,ypos,zpos)
+   for (int i = 0; i < nmol; ++i) {
+      // locate the center of each molecule
+      pos_prec xmid = 0, ymid = 0, zmid = 0;
+      int start = imol[i][0];
+      int stop = imol[i][1];
+      #pragma acc loop seq
+      for (int j = start; j < stop; ++j) {
+         int k = kmol[j];
+         xmid += xpos[k];
+         ymid += ypos[k];
+         zmid += zpos[k];
+      }
+      int weigh = stop - start;
+      xmid /= weigh;
+      ymid /= weigh;
+      zmid /= weigh;
+
+
+      // locate the image of the center inside PBC box
+      real xc, yc, zc;
+      xc = xmid;
+      yc = ymid;
+      zc = zmid;
+      image(xc, yc, zc);
+
+
+      #pragma acc loop seq
+      for (int j = start; j < stop; ++j) {
+         int k = kmol[j];
+         xpos[k] += xc - xmid;
+         ypos[k] += yc - ymid;
+         zpos[k] += zc - zmid;
+      }
+   }
+}
+
+
+//====================================================================//
 
 
 void propagate_velocity_acc(time_prec dt, const real* grx, const real* gry,

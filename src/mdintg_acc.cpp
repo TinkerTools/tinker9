@@ -1,6 +1,6 @@
 #include "io_print.h"
-#include "md_intg.h"
-#include "md_pq.h"
+#include "mdintg.h"
+#include "mdpq.h"
 #include "tinker_rt.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/inform.hh>

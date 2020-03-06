@@ -51,10 +51,11 @@ extern real *trajx, *trajy, *trajz;
  * \ingroup md_pq
  * \brief Coordinates used in integrators.
  *
- * \note New arrays will be allocated only if `sizeof(pos_prec) > sizeof(real)`,
- * otherwise, they will be aliases of #x, #y, and #z.
- * \note Whenever #xpos, #ypos, #zpos get updated by integrators or barostats,
- * #x, #y, #z must be updated immediately.
+ * \note
+ *    - New arrays will be allocated only if `sizeof(pos_prec) > sizeof(real)`,
+ *    otherwise, they will be aliases of #x, #y, and #z.
+ *    - Whenever #xpos, #ypos, #zpos get updated by integrators or barostats,
+ *    #x, #y, #z must be updated immediately.
  *
  * \see pos_prec
  * \see real
@@ -85,6 +86,24 @@ void copy_pos_to_xyz_acc();
 void propagate_xyz(time_prec dt, bool check_nblist);
 void propagate_pos_acc(time_prec);
 
+
+/**
+ * \ingroup md_pq
+ * \brief Finds the geometric center of each molecule and translate any stray
+ * molecules back into the periodic box on GPU.
+ * \note
+ *    - Updating #x, #y, #z is the goal.
+ *    - Checks whether PBC is in use inside the this function.
+ *    - Will not perturb the neighbor lists so no need to update them.
+ *    - Tinker uses center of mass.
+ */
+void bounds();
+void bounds_pos_acc();
+/**
+ * \ingroup md_pq
+ * \brief Call bounds() at least every x steps in MD.
+ */
+constexpr int BOUNDS_EVERY_X_STEPS = 500;
 
 void read_frame_copyin_to_xyz(std::istream& input, int& done);
 

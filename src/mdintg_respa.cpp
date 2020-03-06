@@ -2,9 +2,9 @@
 #include "mathfunc_pow2.h"
 #include "md_calc.h"
 #include "md_egv.h"
-#include "md_intg.h"
-#include "md_pq.h"
 #include "md_pt.h"
+#include "mdintg.h"
+#include "mdpq.h"
 #include "random.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>

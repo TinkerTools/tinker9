@@ -2,7 +2,7 @@
 #include "e_polar.h"
 #include "induce.h"
 #include "launch.h"
-#include "md_pq.h"
+#include "mdpq.h"
 #include "seq_damp.h"
 #include "seq_image.h"
 #include "spatial.h"
