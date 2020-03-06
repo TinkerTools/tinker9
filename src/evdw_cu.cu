@@ -1,5 +1,5 @@
 #include "add.h"
-#include "e_vdw.h"
+#include "evdw.h"
 #include "launch.h"
 #include "md.h"
 #include "named_struct.h"
@@ -218,8 +218,8 @@ template <class Ver>
 __global__
 void evdw_hal_cu2(HAL_ARGS, const real* restrict xred,
                   const real* restrict yred, const real* restrict zred,
-                  int nvexclude_, int (*restrict vexclude_)[2],
-                  real* restrict vexclude_scale_)
+                  int nvexclude, int (*restrict vexclude)[2],
+                  real* restrict vexclude_scale)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -229,14 +229,14 @@ void evdw_hal_cu2(HAL_ARGS, const real* restrict xred,
 
    const real cut2 = cut * cut;
    const real off2 = off * off;
-   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < nvexclude_;
+   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < nvexclude;
         ii += blockDim.x * gridDim.x) {
       int offset = ii & (bufsize - 1);
 
 
-      int i = vexclude_[ii][0];
-      int k = vexclude_[ii][1];
-      real vscale = vexclude_scale_[ii];
+      int i = vexclude[ii][0];
+      int k = vexclude[ii][1];
+      real vscale = vexclude_scale[ii];
 
 
       int it = jvdw[i];
@@ -331,11 +331,11 @@ void evdw_cu()
                     nev, ev, vir_ev, gxred, gyred, gzred, TINKER_IMAGE_ARGS,
                     njvdw, jvdw, radmin, epsilon, vlam, vcouple, cut, off, n,
                     st.sorted, st.niak, st.iak, st.lst);
-      if (nvexclude_ > 0)
-         launch_k1s(nonblk, nvexclude_, evdw_hal_cu2<Ver>, bufsize, nev, ev,
+      if (nvexclude > 0)
+         launch_k1s(nonblk, nvexclude, evdw_hal_cu2<Ver>, bufsize, nev, ev,
                     vir_ev, gxred, gyred, gzred, TINKER_IMAGE_ARGS, njvdw, jvdw,
                     radmin, epsilon, vlam, vcouple, cut, off, xred, yred, zred,
-                    nvexclude_, vexclude_, vexclude_scale_);
+                    nvexclude, vexclude, vexclude_scale);
    }
 
    if CONSTEXPR (do_g) {

@@ -1,4 +1,4 @@
-#include "e_vdw.h"
+#include "evdw.h"
 #include "io_fort_str.h"
 #include "md.h"
 #include "nblist.h"
@@ -35,8 +35,8 @@ void evdw_data(rc_op op)
       darray::deallocate(ired, kred, xred, yred, zred, gxred, gyred, gzred,
                          jvdw, radmin, epsilon, vlam);
 
-      nvexclude_ = 0;
-      darray::deallocate(vexclude_, vexclude_scale_);
+      nvexclude = 0;
+      darray::deallocate(vexclude, vexclude_scale);
 
       buffer_deallocate(nev, ev, vir_ev);
 
@@ -147,10 +147,10 @@ void evdw_data(rc_op op)
             }
          }
       }
-      nvexclude_ = excls.size();
-      darray::allocate(nvexclude_, &vexclude_, &vexclude_scale_);
-      darray::copyin(WAIT_NEW_Q, nvexclude_, vexclude_, exclik.data());
-      darray::copyin(WAIT_NEW_Q, nvexclude_, vexclude_scale_, excls.data());
+      nvexclude = excls.size();
+      darray::allocate(nvexclude, &vexclude, &vexclude_scale);
+      darray::copyin(WAIT_NEW_Q, nvexclude, vexclude, exclik.data());
+      darray::copyin(WAIT_NEW_Q, nvexclude, vexclude_scale, excls.data());
 
       buffer_allocate(&nev, &ev, &vir_ev);
    }

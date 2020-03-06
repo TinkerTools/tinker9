@@ -18,7 +18,7 @@
 #include "e_mplar.h"
 #include "e_mpole.h"
 #include "e_polar.h"
-#include "e_vdw.h"
+#include "evdw.h"
 
 
 TINKER_NAMESPACE_BEGIN

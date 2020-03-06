@@ -1,5 +1,5 @@
 #include "add.h"
-#include "e_vdw.h"
+#include "evdw.h"
 #include "gpu_card.h"
 #include "md.h"
 #include "named_struct.h"
@@ -163,14 +163,14 @@ void evdw_acc1()
       }
    } // end for (int i)
 
-   #pragma acc parallel async deviceptr(DEVICE_PTRS_,vexclude_,vexclude_scale_)
+   #pragma acc parallel async deviceptr(DEVICE_PTRS_,vexclude,vexclude_scale)
    #pragma acc loop independent
-   for (int ii = 0; ii < nvexclude_; ++ii) {
+   for (int ii = 0; ii < nvexclude; ++ii) {
       int offset = ii & (bufsize - 1);
 
-      int i = vexclude_[ii][0];
-      int k = vexclude_[ii][1];
-      real vscale = vexclude_scale_[ii];
+      int i = vexclude[ii][0];
+      int k = vexclude[ii][1];
+      real vscale = vexclude_scale[ii];
 
       int it = jvdw[i];
       real xi = xred[i];

@@ -95,15 +95,25 @@ TINKER_EXTERN pointer<real> radmin, epsilon;
 
 /**
  * \ingroup vdw
+ * \brief VDW 1-4 parameters: minimum energy distance and well depth.
+ * \see radmin epsilon
+ */
+TINKER_EXTERN pointer<real> radmin4, epsilon4;
+TINKER_EXTERN int nvdw14;
+TINKER_EXTERN pointer<int, 2> vdw14ik;
+
+
+/**
+ * \ingroup vdw
  * \brief
  * State weighting values (lambda) of all atoms for van der Waals potentials.
  */
 TINKER_EXTERN pointer<real> vlam;
 
 
-TINKER_EXTERN int nvexclude_;
-TINKER_EXTERN pointer<int, 2> vexclude_;
-TINKER_EXTERN pointer<real> vexclude_scale_;
+TINKER_EXTERN int nvexclude;
+TINKER_EXTERN pointer<int, 2> vexclude;
+TINKER_EXTERN pointer<real> vexclude_scale;
 
 
 TINKER_EXTERN count_buffer nev;
@@ -131,7 +141,7 @@ void evdw_data(rc_op op);
 /**
  * \ingroup vdw
  * \brief Lennard-Jones 12-6 potential.
- * 
+ *
  * \f[ U(r|r_m,\epsilon) = \epsilon [(r_m/r)^{12} - 2(r_m/r)^6] \f]
  */
 void evdw_lj(int vers);
