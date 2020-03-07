@@ -26,99 +26,114 @@ NBList::~NBList()
 
 nblist_t vlist_version()
 {
-   if (!use_potent(vdw_term))
-      return NBL_UNDEFINED;
-   if (vdwtyp != evdw_t::hal)
-      return NBL_UNDEFINED;
-   if (!limits::use_vlist)
-      return NBL_DOUBLE_LOOP;
-   if (!bound::use_bounds)
-      return NBL_VERLET;
+   nblist_t u;
+   if (!use_potent(vdw_term)) {
+      u = NBL_UNDEFINED;
+   } else if (vdwtyp != evdw_t::hal) {
+      u = NBL_UNDEFINED;
+   } else if (!limits::use_vlist) {
+      u = NBL_DOUBLE_LOOP;
+   } else if (!bound::use_bounds) {
+      u = NBL_VERLET;
+   } else {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
-      return NBL_SPATIAL;
-   else
-      return NBL_VERLET;
-#else
-   return NBL_VERLET;
+      if (pltfm_config & CU_PLTFM)
+         u = NBL_SPATIAL;
+      else
 #endif
+         u = NBL_VERLET;
+   }
+   return u;
 }
 
 
 nblist_t dlist_version()
 {
-   if (!use_potent(disp_term))
-      return NBL_UNDEFINED;
-   if (!limits::use_dlist)
-      return NBL_DOUBLE_LOOP;
-   if (!bound::use_bounds)
-      return NBL_VERLET;
-#if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
-      return NBL_SPATIAL;
-   else
-      return NBL_VERLET;
-#else
-   return NBL_VERLET;
-#endif
+   return NBL_UNDEFINED;
 }
 
 
 nblist_t clist_version()
 {
-   if (!use_potent(charge_term) /* && !use_potent(solv_term) */)
-      return NBL_UNDEFINED;
-   if (!limits::use_clist)
-      return NBL_DOUBLE_LOOP;
-   if (!bound::use_bounds)
-      return NBL_VERLET;
+   nblist_t u;
+   // First, forget about VDW, only check partial charge models.
+   if (!use_potent(charge_term) /* && !use_potent(solv_term) */) {
+      u = NBL_UNDEFINED;
+   } else if (!limits::use_clist) {
+      u = NBL_DOUBLE_LOOP;
+   } else if (!bound::use_bounds) {
+      u = NBL_VERLET;
+   } else {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
-      return NBL_SPATIAL;
-   else
-      return NBL_VERLET;
-#else
-   return NBL_VERLET;
+      if (pltfm_config & CU_PLTFM)
+         u = NBL_SPATIAL;
+      else
 #endif
+         u = NBL_VERLET;
+   }
+   if (u != NBL_UNDEFINED)
+      return u;
+   // Then, check VDW if no partial charge term is in use.
+   if (!use_potent(vdw_term)) {
+      u = NBL_UNDEFINED;
+   } else if (vdwtyp == evdw_t::hal) {
+      u = NBL_UNDEFINED;
+   } else if (!limits::use_vlist) {
+      u = NBL_DOUBLE_LOOP;
+   } else if (!bound::use_bounds) {
+      u = NBL_VERLET;
+   } else {
+#if TINKER_CUDART
+      if (pltfm_config & CU_PLTFM)
+         u = NBL_SPATIAL;
+      else
+#endif
+         u = NBL_VERLET;
+   }
+   return u;
 }
 
 
 nblist_t mlist_version()
 {
+   nblist_t u;
    if (!use_potent(mpole_term) && !use_potent(polar_term)
-       /* && !use_potent(chgtrn_term) && !use_potent(solv_term) */)
-      return NBL_UNDEFINED;
-   if (!limits::use_mlist)
-      return NBL_DOUBLE_LOOP;
-   if (!bound::use_bounds)
-      return NBL_VERLET;
+       /* && !use_potent(chgtrn_term) && !use_potent(solv_term) */) {
+      u = NBL_UNDEFINED;
+   } else if (!limits::use_mlist) {
+      u = NBL_DOUBLE_LOOP;
+   } else if (!bound::use_bounds) {
+      u = NBL_VERLET;
+   } else {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
-      return NBL_SPATIAL;
-   else
-      return NBL_VERLET;
-#else
-   return NBL_VERLET;
+      if (pltfm_config & CU_PLTFM)
+         u = NBL_SPATIAL;
+      else
 #endif
+         u = NBL_VERLET;
+   }
+   return u;
 }
 
 
 nblist_t ulist_version()
 {
-   if (!use_potent(polar_term))
-      return NBL_UNDEFINED;
-   if (!limits::use_ulist)
-      return NBL_DOUBLE_LOOP;
-   if (!bound::use_bounds)
-      return NBL_VERLET;
+   nblist_t u;
+   if (!use_potent(polar_term)) {
+      u = NBL_UNDEFINED;
+   } else if (!limits::use_ulist) {
+      u = NBL_DOUBLE_LOOP;
+   } else if (!bound::use_bounds) {
+      u = NBL_VERLET;
+   } else {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
-      return NBL_SPATIAL;
-   else
-      return NBL_VERLET;
-#else
-   return NBL_VERLET;
+      if (pltfm_config & CU_PLTFM)
+         u = NBL_SPATIAL;
+      else
 #endif
+         u = NBL_VERLET;
+   }
+   return u;
 }
 
 

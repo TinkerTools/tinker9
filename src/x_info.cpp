@@ -42,6 +42,10 @@ void x_info(int argc, char** argv)
 
 #if TINKER_CUDART
    print(out, fmt, "Platform:", "CUDA and OpenACC");
+   if (pltfm_config & CU_PLTFM)
+      print(out, fmt, "Primary GPU package:", "CUDA");
+   else if (pltfm_config & ACC_PLTFM)
+      print(out, fmt, "Primary GPU package:", "OpenACC");
    print(out, fmt,
          "Latest CUDA supported by driver:", get_cuda_driver_version_string());
    print(out, fmt, "CUDA runtime version:", get_cuda_runtime_version_string());
