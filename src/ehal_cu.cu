@@ -20,7 +20,7 @@
 
 
 /**
- * Kernel evdw_hal_cu1 on GTX 1070 for DHFR2
+ * Kernel ehal_cu1 on GTX 1070 for DHFR2
  * 7 angstroms cutoff and 10 % buffer
  *
  * unsorted (a) | generic image (b) | decouple vlambda (c) | 1e-6 s
@@ -59,8 +59,8 @@ TINKER_NAMESPACE_BEGIN
 #endif
 template <class Ver>
 __launch_bounds__(BLOCK_DIM) __global__
-void evdw_hal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
-                  int niak, const int* restrict iak, const int* restrict lst)
+void ehal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
+              int niak, const int* restrict iak, const int* restrict lst)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -216,10 +216,9 @@ void evdw_hal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
 template <class Ver>
 __global__
-void evdw_hal_cu2(HAL_ARGS, const real* restrict xred,
-                  const real* restrict yred, const real* restrict zred,
-                  int nvexclude, int (*restrict vexclude)[2],
-                  real* restrict vexclude_scale)
+void ehal_cu2(HAL_ARGS, const real* restrict xred, const real* restrict yred,
+              const real* restrict zred, int nvexclude,
+              int (*restrict vexclude)[2], real* restrict vexclude_scale)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -309,8 +308,8 @@ void evdw_hal_cu2(HAL_ARGS, const real* restrict xred,
 }
 
 
-template <class Ver, class VDWTYP>
-void evdw_cu()
+template <class Ver>
+void ehal_cu3()
 {
    constexpr bool do_g = Ver::g;
 
@@ -325,38 +324,36 @@ void evdw_cu()
       zero_gradient(PROCEED_NEW_Q, n, gxred, gyred, gzred);
    }
 
-   if CONSTEXPR (eq<VDWTYP, HAL>()) {
-      if (st.niak > 0)
-         launch_k1s(nonblk, WARP_SIZE * st.niak, evdw_hal_cu1<Ver>, bufsize,
-                    nev, ev, vir_ev, gxred, gyred, gzred, TINKER_IMAGE_ARGS,
-                    njvdw, jvdw, radmin, epsilon, vlam, vcouple, cut, off, n,
-                    st.sorted, st.niak, st.iak, st.lst);
-      if (nvexclude > 0)
-         launch_k1s(nonblk, nvexclude, evdw_hal_cu2<Ver>, bufsize, nev, ev,
-                    vir_ev, gxred, gyred, gzred, TINKER_IMAGE_ARGS, njvdw, jvdw,
-                    radmin, epsilon, vlam, vcouple, cut, off, xred, yred, zred,
-                    nvexclude, vexclude, vexclude_scale);
-   }
+   if (st.niak > 0)
+      launch_k1s(nonblk, WARP_SIZE * st.niak, ehal_cu1<Ver>, bufsize, nev, ev,
+                 vir_ev, gxred, gyred, gzred, TINKER_IMAGE_ARGS, njvdw, jvdw,
+                 radmin, epsilon, vlam, vcouple, cut, off, n, st.sorted,
+                 st.niak, st.iak, st.lst);
+   if (nvexclude > 0)
+      launch_k1s(nonblk, nvexclude, ehal_cu2<Ver>, bufsize, nev, ev, vir_ev,
+                 gxred, gyred, gzred, TINKER_IMAGE_ARGS, njvdw, jvdw, radmin,
+                 epsilon, vlam, vcouple, cut, off, xred, yred, zred, nvexclude,
+                 vexclude, vexclude_scale);
 
    if CONSTEXPR (do_g) {
-      evdw_resolve_gradient();
+      ehal_resolve_gradient();
    }
 }
 
 
-void evdw_hal_cu(int vers)
+void ehal_cu(int vers)
 {
    if (vers == calc::v0)
-      evdw_cu<calc::V0, HAL>();
+      ehal_cu3<calc::V0>();
    else if (vers == calc::v1)
-      evdw_cu<calc::V1, HAL>();
+      ehal_cu3<calc::V1>();
    else if (vers == calc::v3)
-      evdw_cu<calc::V3, HAL>();
+      ehal_cu3<calc::V3>();
    else if (vers == calc::v4)
-      evdw_cu<calc::V4, HAL>();
+      ehal_cu3<calc::V4>();
    else if (vers == calc::v5)
-      evdw_cu<calc::V5, HAL>();
+      ehal_cu3<calc::V5>();
    else if (vers == calc::v6)
-      evdw_cu<calc::V6, HAL>();
+      ehal_cu3<calc::V6>();
 }
 TINKER_NAMESPACE_END

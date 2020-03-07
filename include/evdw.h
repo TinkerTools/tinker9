@@ -175,13 +175,13 @@ void evdw_mm3hb_acc(int);
  * \f]
  * \f[ t=5,\ \alpha=0.7 \f]
  */
-void evdw_hal(int vers);
-void evdw_hal_acc(int);
-void evdw_hal_cu(int);
-void evdw_reduce_xyz();
-void evdw_resolve_gradient();
-void evdw_reduce_xyz_acc();
-void evdw_resolve_gradient_acc();
+void ehal(int vers);
+void ehal_acc(int);
+void ehal_cu(int);
+void ehal_reduce_xyz();
+void ehal_resolve_gradient();
+void ehal_reduce_xyz_acc();
+void ehal_resolve_gradient_acc();
 
 
 void evdw_gauss(int vers);

@@ -379,15 +379,15 @@ void evdw_data(rc_op op)
 }
 
 
-void evdw_reduce_xyz()
+void ehal_reduce_xyz()
 {
-   evdw_reduce_xyz_acc();
+   ehal_reduce_xyz_acc();
 }
 
 
-void evdw_resolve_gradient()
+void ehal_resolve_gradient()
 {
-   evdw_resolve_gradient_acc();
+   ehal_resolve_gradient_acc();
 }
 
 
@@ -409,14 +409,14 @@ void evdw_mm3hb(int vers)
 }
 
 
-void evdw_hal(int vers)
+void ehal(int vers)
 {
 #if TINKER_CUDART
    if (vlist_version() == NBL_SPATIAL)
-      evdw_hal_cu(vers);
+      ehal_cu(vers);
    else
 #endif
-      evdw_hal_acc(vers);
+      ehal_acc(vers);
 }
 
 
@@ -454,7 +454,7 @@ void evdw(int vers)
    else if (vdwtyp == evdw_t::mm3hb)
       evdw_mm3hb(vers);
    else if (vdwtyp == evdw_t::hal)
-      evdw_hal(vers);
+      ehal(vers);
    else if (vdwtyp == evdw_t::gauss)
       evdw_gauss(vers);
    else

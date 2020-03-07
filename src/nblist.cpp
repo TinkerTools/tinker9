@@ -280,7 +280,7 @@ void nblist_data(rc_op op)
          nblist_alloc(u, unt, 2500, cut, buf, xred, yred, zred);
       }
       if (op & rc_init) {
-         evdw_reduce_xyz();
+         ehal_reduce_xyz();
          nblist_build_acc(unt);
       }
    }
@@ -290,7 +290,7 @@ void nblist_data(rc_op op)
          spatial_alloc(unt, n, cut, buf, xred, yred, zred);
       }
       if (op & rc_init) {
-         evdw_reduce_xyz();
+         ehal_reduce_xyz();
          spatial_build(unt);
       }
    }
@@ -367,12 +367,12 @@ void refresh_neighbors()
    u = vlist_version();
    if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
       auto& unt = vlist_unit;
-      evdw_reduce_xyz();
+      ehal_reduce_xyz();
       nblist_update_acc(unt);
    }
    if (u & NBL_SPATIAL) {
       auto& unt = vspatial_unit;
-      evdw_reduce_xyz();
+      ehal_reduce_xyz();
       spatial_update(unt);
    }
 

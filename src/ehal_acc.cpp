@@ -11,7 +11,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-void evdw_reduce_xyz_acc()
+void ehal_reduce_xyz_acc()
 {
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,ired,kred,xred,yred,zred)
@@ -24,7 +24,7 @@ void evdw_reduce_xyz_acc()
    }
 }
 
-void evdw_resolve_gradient_acc()
+void ehal_resolve_gradient_acc()
 {
    #pragma acc parallel loop independent async\
                deviceptr(ired,kred,gxred,gyred,gzred,gx,gy,gz)
@@ -50,11 +50,11 @@ void evdw_resolve_gradient_acc()
    }
 }
 
-#define DEVICE_PTRS_                                                           \
+#define DEVICE_PTRS                                                            \
    xred, yred, zred, gxred, gyred, gzred, jvdw, radmin, epsilon, vlam, nev,    \
       ev, vir_ev
-template <class Ver, class VDWTYP>
-void evdw_acc1()
+template <class Ver>
+void ehal_acc1()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -75,7 +75,7 @@ void evdw_acc1()
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
-               deviceptr(DEVICE_PTRS_,vlst)
+               deviceptr(DEVICE_PTRS,vlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
       int it = jvdw[i];
@@ -109,10 +109,9 @@ void evdw_acc1()
             real eps = epsilon[it * njvdw + kt];
 
             MAYBE_UNUSED real e, de;
-            if CONSTEXPR (eq<VDWTYP, HAL>())
-               pair_hal<do_g>(rik, rv, eps, 1, vlambda,   //
-                              ghal, dhal, scexp, scalpha, //
-                              e, de);
+            pair_hal<do_g>(rik, rv, eps, 1, vlambda,   //
+                           ghal, dhal, scexp, scalpha, //
+                           e, de);
 
             if (rik2 > cut2) {
                real taper, dtaper;
@@ -163,7 +162,7 @@ void evdw_acc1()
       }
    } // end for (int i)
 
-   #pragma acc parallel async deviceptr(DEVICE_PTRS_,vexclude,vexclude_scale)
+   #pragma acc parallel async deviceptr(DEVICE_PTRS,vexclude,vexclude_scale)
    #pragma acc loop independent
    for (int ii = 0; ii < nvexclude; ++ii) {
       int offset = ii & (bufsize - 1);
@@ -197,10 +196,9 @@ void evdw_acc1()
          real eps = epsilon[it * njvdw + kt];
 
          MAYBE_UNUSED real e, de;
-         if CONSTEXPR (eq<VDWTYP, HAL>())
-            pair_hal<do_g>(rik, rv, eps, vscale, vlambda, //
-                           ghal, dhal, scexp, scalpha,    //
-                           e, de);
+         pair_hal<do_g>(rik, rv, eps, vscale, vlambda, //
+                        ghal, dhal, scexp, scalpha,    //
+                        e, de);
 
          if (rik2 > cut2) {
             real taper, dtaper;
@@ -244,28 +242,28 @@ void evdw_acc1()
    } // end for (int ii)
 
    if CONSTEXPR (do_g)
-      evdw_resolve_gradient();
+      ehal_resolve_gradient();
 }
 
-#define TINKER_EVDW_ACC(typ, TYP)                                              \
-   void evdw_##typ##_acc(int vers)                                             \
-   {                                                                           \
-      if (vers == calc::v0)                                                    \
-         evdw_acc1<calc::V0, TYP>();                                           \
-      else if (vers == calc::v1)                                               \
-         evdw_acc1<calc::V1, TYP>();                                           \
-      else if (vers == calc::v3)                                               \
-         evdw_acc1<calc::V3, TYP>();                                           \
-      else if (vers == calc::v4)                                               \
-         evdw_acc1<calc::V4, TYP>();                                           \
-      else if (vers == calc::v5)                                               \
-         evdw_acc1<calc::V5, TYP>();                                           \
-      else if (vers == calc::v6)                                               \
-         evdw_acc1<calc::V6, TYP>();                                           \
-   }
-TINKER_EVDW_ACC(lj, LJ);
-TINKER_EVDW_ACC(buck, BUCK);
-TINKER_EVDW_ACC(mm3hb, MM3HB);
-TINKER_EVDW_ACC(hal, HAL);
-TINKER_EVDW_ACC(gauss, GAUSS);
+void ehal_acc(int vers)
+{
+   if (vers == calc::v0)
+      ehal_acc1<calc::V0>();
+   else if (vers == calc::v1)
+      ehal_acc1<calc::V1>();
+   else if (vers == calc::v3)
+      ehal_acc1<calc::V3>();
+   else if (vers == calc::v4)
+      ehal_acc1<calc::V4>();
+   else if (vers == calc::v5)
+      ehal_acc1<calc::V5>();
+   else if (vers == calc::v6)
+      ehal_acc1<calc::V6>();
+}
+
+
+void evdw_lj_acc(int) {}
+void evdw_buck_acc(int) {}
+void evdw_mm3hb_acc(int) {}
+void evdw_gauss_acc(int) {}
 TINKER_NAMESPACE_END

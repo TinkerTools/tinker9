@@ -7,31 +7,31 @@ using namespace TINKER_NAMESPACE;
 #define COMPARE_CODE_BLOCK1_                                                   \
    {                                                                           \
       zero_egv();                                                              \
-      evdw_hal(calc::v0);                                                      \
+      ehal(calc::v0);                                                          \
       COMPARE_ENERGY_(ev, ref_eng, eps);                                       \
                                                                                \
       zero_egv();                                                              \
-      evdw_hal(calc::v1);                                                      \
+      ehal(calc::v1);                                                          \
       COMPARE_ENERGY_(ev, ref_eng, eps);                                       \
       COMPARE_GRADIENT_(ref_grad, eps);                                        \
       COMPARE_VIR_(vir_ev, ref_v, eps);                                        \
                                                                                \
       zero_egv();                                                              \
-      evdw_hal(calc::v3);                                                      \
+      ehal(calc::v3);                                                          \
       COMPARE_ENERGY_(ev, ref_eng, eps);                                       \
       COMPARE_COUNT_(nev, ref_count);                                          \
                                                                                \
       zero_egv();                                                              \
-      evdw_hal(calc::v4);                                                      \
+      ehal(calc::v4);                                                          \
       COMPARE_ENERGY_(ev, ref_eng, eps);                                       \
       COMPARE_GRADIENT_(ref_grad, eps);                                        \
                                                                                \
       zero_egv();                                                              \
-      evdw_hal(calc::v5);                                                      \
+      ehal(calc::v5);                                                          \
       COMPARE_GRADIENT_(ref_grad, eps);                                        \
                                                                                \
       zero_egv();                                                              \
-      evdw_hal(calc::v6);                                                      \
+      ehal(calc::v6);                                                          \
       COMPARE_GRADIENT_(ref_grad, eps);                                        \
       COMPARE_VIR_(vir_ev, ref_v, eps);                                        \
    }
