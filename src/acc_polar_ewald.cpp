@@ -8,9 +8,10 @@
 #include "seq_image.h"
 #include "seq_pair_polar.h"
 #include "seq_switch.h"
+#include "switch.h"
 
 TINKER_NAMESPACE_BEGIN
-#define POLAR_DPTRS_                                                           \
+#define POLAR_DPTRS                                                            \
    x, y, z, gx, gy, gz, rpole, thole, pdamp, uind, uinp, nep, ep, vir_ep,      \
       ufld, dufld
 template <class Ver>
@@ -24,7 +25,7 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
    if CONSTEXPR (do_g)
       darray::zero(PROCEED_NEW_Q, n, ufld, dufld);
 
-   const real off = mlist_unit->cutoff;
+   const real off = switch_off(switch_ewald);
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
@@ -39,7 +40,7 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
-               deviceptr(POLAR_DPTRS_,mlst)
+               deviceptr(POLAR_DPTRS,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
       real xi = x[i];
@@ -178,16 +179,16 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
    } // end for (int i)
 
    #pragma acc parallel async\
-               deviceptr(POLAR_DPTRS_,dpuexclude_,dpuexclude_scale_)
+               deviceptr(POLAR_DPTRS,dpuexclude,dpuexclude_scale)
    #pragma acc loop independent private(pgrad)
-   for (int ii = 0; ii < ndpuexclude_; ++ii) {
+   for (int ii = 0; ii < ndpuexclude; ++ii) {
       int offset = ii & (bufsize - 1);
 
-      int i = dpuexclude_[ii][0];
-      int k = dpuexclude_[ii][1];
-      real dscale = dpuexclude_scale_[ii][0];
-      real pscale = dpuexclude_scale_[ii][1];
-      real uscale = dpuexclude_scale_[ii][2];
+      int i = dpuexclude[ii][0];
+      int k = dpuexclude[ii][1];
+      real dscale = dpuexclude_scale[ii][0];
+      real pscale = dpuexclude_scale[ii][1];
+      real uscale = dpuexclude_scale[ii][2];
 
       real xi = x[i];
       real yi = y[i];

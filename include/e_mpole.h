@@ -7,9 +7,9 @@ TINKER_EXTERN elec_t empole_electyp;
 
 TINKER_EXTERN real m2scale, m3scale, m4scale, m5scale;
 
-TINKER_EXTERN int nmexclude_;
-TINKER_EXTERN pointer<int, 2> mexclude_;
-TINKER_EXTERN pointer<real> mexclude_scale_;
+TINKER_EXTERN int nmexclude;
+TINKER_EXTERN pointer<int, 2> mexclude;
+TINKER_EXTERN pointer<real> mexclude_scale;
 
 TINKER_EXTERN count_buffer nem;
 TINKER_EXTERN energy_buffer em;

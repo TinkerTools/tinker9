@@ -267,6 +267,7 @@ void nblist_data(rc_op op)
       SpatialUnit::clear();
       thrust_cache_dealloc();
       vspatial_unit.close();
+      cspatial_unit.close();
       mspatial_unit.close();
       uspatial_unit.close();
 #endif
@@ -315,6 +316,35 @@ void nblist_data(rc_op op)
 
 
    // clist
+   u = clist_version();
+   cut = -1;
+   if (use_potent(charge_term)) {
+      cut = use_ewald() ? switch_off(switch_ewald) : switch_off(switch_charge);
+   }
+   if (use_potent(vdw_term)) {
+      double vdw_cut = switch_off(switch_vdw);
+      if (vdwtyp != evdw_t::hal)
+         cut = std::max(cut, vdw_cut);
+   }
+   buf = neigh::lbuffer;
+   if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
+      auto& unt = clist_unit;
+      if (op & rc_alloc) {
+         nblist_alloc(u, unt, 2500, cut, buf, x, y, z);
+      }
+      if (op & rc_init) {
+         nblist_build_acc(unt);
+      }
+   }
+   if (u & NBL_SPATIAL) {
+      auto& unt = cspatial_unit;
+      if (op & rc_alloc) {
+         spatial_alloc(unt, n, cut, buf, x, y, z);
+      }
+      if (op & rc_init) {
+         spatial_build(unt);
+      }
+   }
 
 
    // mlist
@@ -396,6 +426,27 @@ void refresh_neighbors()
 
 
    // clist
+   u = clist_version();
+   if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
+      auto& unt = clist_unit;
+      if (rc_flag & calc::traj) {
+         unt->x = x;
+         unt->y = y;
+         unt->z = z;
+         unt.update_deviceptr(*unt, PROCEED_NEW_Q);
+      }
+      nblist_update_acc(unt);
+   }
+   if (u & NBL_SPATIAL) {
+      auto& unt = cspatial_unit;
+      if (rc_flag & calc::traj) {
+         unt->x = x;
+         unt->y = y;
+         unt->z = z;
+         unt.update_deviceptr(*unt, PROCEED_NEW_Q);
+      }
+      spatial_update(unt);
+   }
 
 
    // mlist

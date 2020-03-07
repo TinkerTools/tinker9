@@ -8,6 +8,7 @@
 #include "seq_image.h"
 #include "seq_pair_mpole.h"
 #include "spatial.h"
+#include "switch.h"
 
 
 TINKER_NAMESPACE_BEGIN
@@ -214,9 +215,9 @@ void empole_cu1(EMPOLE_ARGS, const Spatial::SortedAtom* restrict sorted,
 template <class Ver>
 __global__
 void empole_cu2(EMPOLE_ARGS, const real* restrict x, const real* restrict y,
-                const real* restrict z, int nmexclude_,
-                const int (*restrict mexclude_)[2],
-                const real* restrict mexclude_scale_)
+                const real* restrict z, int nmexclude,
+                const int (*restrict mexclude)[2],
+                const real* restrict mexclude_scale)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -224,14 +225,14 @@ void empole_cu2(EMPOLE_ARGS, const real* restrict x, const real* restrict y,
    constexpr bool do_v = Ver::v;
 
 
-   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < nmexclude_;
+   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < nmexclude;
         ii += blockDim.x * gridDim.x) {
       int offset = ii & (bufsize - 1);
 
 
-      int i = mexclude_[ii][0];
-      int k = mexclude_[ii][1];
-      real mscale = mexclude_scale_[ii];
+      int i = mexclude[ii][0];
+      int k = mexclude[ii][1];
+      real mscale = mexclude_scale[ii];
 
 
       real xi = x[i];
@@ -309,7 +310,11 @@ void empole_cu()
 
 
    const auto& st = *mspatial_unit;
-   const real off = st.cutoff;
+   real off;
+   if CONSTEXPR (eq<ETYP, EWALD>())
+      off = switch_off(switch_ewald);
+   else
+      off = switch_off(switch_mpole);
    const real off2 = off * off;
    auto bufsize = buffer_size();
 
@@ -333,12 +338,12 @@ void empole_cu()
                  TINKER_IMAGE_ARGS, off2, f, rpole, //
                  st.sorted, st.niak, st.iak, st.lst, n, aewald);
    }
-   if (nmexclude_ > 0) {
+   if (nmexclude > 0) {
       auto ker2 = empole_cu2<Ver>;
-      launch_k1s(nonblk, nmexclude_, ker2, //
+      launch_k1s(nonblk, nmexclude, ker2, //
                  bufsize, nem, em, vir_em, gx, gy, gz, trqx, trqy, trqz,
                  TINKER_IMAGE_ARGS, off2, f, rpole, //
-                 x, y, z, nmexclude_, mexclude_, mexclude_scale_);
+                 x, y, z, nmexclude, mexclude, mexclude_scale);
    }
 }
 

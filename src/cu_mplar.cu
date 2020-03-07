@@ -11,6 +11,7 @@
 #include "seq_damp.h"
 #include "seq_image.h"
 #include "spatial.h"
+#include "switch.h"
 
 
 TINKER_NAMESPACE_BEGIN
@@ -1215,7 +1216,11 @@ template <class Ver, class ETYP>
 void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
 {
    const auto& st = *mspatial_unit;
-   const real off = st.cutoff;
+   real off;
+   if CONSTEXPR (eq<ETYP, EWALD>())
+      off = switch_off(switch_ewald);
+   else
+      off = switch_off(switch_mpole);
    auto bufsize = buffer_size();
 
 

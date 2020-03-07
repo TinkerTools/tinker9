@@ -6,22 +6,23 @@
 #include "nblist.h"
 #include "seq_image.h"
 #include "seq_pair_field.h"
+#include "switch.h"
 
 TINKER_NAMESPACE_BEGIN
 // see also subroutine dfield0b in induce.f
-#define DFIELD_DPTRS_ x, y, z, thole, pdamp, field, fieldp, rpole
+#define DFIELD_DPTRS x, y, z, thole, pdamp, field, fieldp, rpole
 void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
 {
    darray::zero(PROCEED_NEW_Q, n, field, fieldp);
 
-   const real off = mlist_unit->cutoff;
+   const real off = switch_off(switch_mpole);
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
-               deviceptr(DFIELD_DPTRS_,mlst)
+               deviceptr(DFIELD_DPTRS,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
       real xi = x[i];
@@ -92,13 +93,13 @@ void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
    } // end for (int i)
 
    #pragma acc parallel async\
-               deviceptr(DFIELD_DPTRS_,dpexclude_,dpexclude_scale_)
+               deviceptr(DFIELD_DPTRS,dpexclude,dpexclude_scale)
    #pragma acc loop independent
-   for (int ii = 0; ii < ndpexclude_; ++ii) {
-      int i = dpexclude_[ii][0];
-      int k = dpexclude_[ii][1];
-      real dscale = dpexclude_scale_[ii][0];
-      real pscale = dpexclude_scale_[ii][1];
+   for (int ii = 0; ii < ndpexclude; ++ii) {
+      int i = dpexclude[ii][0];
+      int k = dpexclude[ii][1];
+      real dscale = dpexclude_scale[ii][0];
+      real pscale = dpexclude_scale[ii][1];
 
       real xi = x[i];
       real yi = y[i];
@@ -153,20 +154,20 @@ void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
 }
 
 // see also subroutine ufield0b in induce.f
-#define UFIELD_DPTRS_ x, y, z, thole, pdamp, field, fieldp, uind, uinp
+#define UFIELD_DPTRS x, y, z, thole, pdamp, field, fieldp, uind, uinp
 void ufield_nonewald_acc(const real (*uind)[3], const real (*uinp)[3],
                          real (*field)[3], real (*fieldp)[3])
 {
    darray::zero(PROCEED_NEW_Q, n, field, fieldp);
 
-   const real off = mlist_unit->cutoff;
+   const real off = switch_off(switch_mpole);
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
-               deviceptr(UFIELD_DPTRS_,mlst)
+               deviceptr(UFIELD_DPTRS,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
       real xi = x[i];
@@ -230,12 +231,12 @@ void ufield_nonewald_acc(const real (*uind)[3], const real (*uinp)[3],
    } // end for (int i)
 
    #pragma acc parallel async\
-               deviceptr(UFIELD_DPTRS_,uexclude_,uexclude_scale_)
+               deviceptr(UFIELD_DPTRS,uexclude,uexclude_scale)
    #pragma acc loop independent
-   for (int ii = 0; ii < nuexclude_; ++ii) {
-      int i = uexclude_[ii][0];
-      int k = uexclude_[ii][1];
-      real uscale = uexclude_scale_[ii];
+   for (int ii = 0; ii < nuexclude; ++ii) {
+      int i = uexclude[ii][0];
+      int k = uexclude[ii][1];
+      real uscale = uexclude_scale[ii];
 
       real xi = x[i];
       real yi = y[i];

@@ -57,6 +57,9 @@ int use_potent(potent_t term)
    case vdw_term:
       val = potent::use_vdw;
       break;
+   case charge_term:
+      val = potent::use_charge;
+      break;
    case mpole_term:
       val = potent::use_mpole;
       break;

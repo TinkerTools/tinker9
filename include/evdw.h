@@ -142,16 +142,17 @@ void evdw_data(rc_op op);
  *
  * \f[ U(r|r_m,\epsilon) = \epsilon [(r_m/r)^{12} - 2(r_m/r)^6] \f]
  */
-void evdw_lj(int vers);
-void evdw_lj_acc(int);
+void elj(int vers);
+void elj_acc(int);
+void elj_cu(int);
 
 
-void evdw_buck(int vers);
-void evdw_buck_acc(int);
+void ebuck(int vers);
+void ebuck_acc(int);
 
 
-void evdw_mm3hb(int vers);
-void evdw_mm3hb_acc(int);
+void emm3hb(int vers);
+void emm3hb_acc(int);
 
 
 /**
@@ -184,8 +185,8 @@ void ehal_reduce_xyz_acc();
 void ehal_resolve_gradient_acc();
 
 
-void evdw_gauss(int vers);
-void evdw_gauss_acc(int);
+void egauss(int vers);
+void egauss_acc(int);
 
 
 void evdw(int vers);

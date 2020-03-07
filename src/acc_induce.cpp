@@ -121,11 +121,11 @@ void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
    }
 
    #pragma acc parallel loop async\
-               deviceptr(APPLY_DPTRS,uexclude_,uexclude_scale_)
-   for (int ii = 0; ii < nuexclude_; ++ii) {
-      int i = uexclude_[ii][0];
-      int k = uexclude_[ii][1];
-      real uscale = uexclude_scale_[ii];
+               deviceptr(APPLY_DPTRS,uexclude,uexclude_scale)
+   for (int ii = 0; ii < nuexclude; ++ii) {
+      int i = uexclude[ii][0];
+      int k = uexclude[ii][1];
+      real uscale = uexclude_scale[ii];
 
       real xi = x[i];
       real yi = y[i];

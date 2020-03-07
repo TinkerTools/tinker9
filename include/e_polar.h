@@ -12,17 +12,17 @@ TINKER_EXTERN real d1scale, d2scale, d3scale, d4scale;
 TINKER_EXTERN real p2scale, p3scale, p4scale, p5scale;
 TINKER_EXTERN real p2iscale, p3iscale, p4iscale, p5iscale;
 
-TINKER_EXTERN int nuexclude_;
-TINKER_EXTERN pointer<int, 2> uexclude_;
-TINKER_EXTERN pointer<real> uexclude_scale_;
+TINKER_EXTERN int nuexclude;
+TINKER_EXTERN pointer<int, 2> uexclude;
+TINKER_EXTERN pointer<real> uexclude_scale;
 
-TINKER_EXTERN int ndpexclude_;
-TINKER_EXTERN pointer<int, 2> dpexclude_;
-TINKER_EXTERN pointer<real, 2> dpexclude_scale_;
+TINKER_EXTERN int ndpexclude;
+TINKER_EXTERN pointer<int, 2> dpexclude;
+TINKER_EXTERN pointer<real, 2> dpexclude_scale;
 
-TINKER_EXTERN int ndpuexclude_;
-TINKER_EXTERN pointer<int, 2> dpuexclude_;
-TINKER_EXTERN pointer<real, 3> dpuexclude_scale_;
+TINKER_EXTERN int ndpuexclude;
+TINKER_EXTERN pointer<int, 2> dpuexclude;
+TINKER_EXTERN pointer<real, 3> dpuexclude_scale;
 
 TINKER_EXTERN real udiag;
 

@@ -6,6 +6,7 @@
 #include "seq_damp.h"
 #include "seq_image.h"
 #include "spatial.h"
+#include "switch.h"
 
 
 TINKER_NAMESPACE_BEGIN
@@ -136,14 +137,14 @@ void sparse_precond_cu2(const real (*restrict rsd)[3],
                         const real* restrict polarity, TINKER_IMAGE_PARAMS,
                         real cutbuf2, const real* restrict x,
                         const real* restrict y, const real* restrict z,
-                        int nuexclude_, const int (*restrict uexclude_)[2],
-                        const real* restrict uexclude_scale_)
+                        int nuexclude, const int (*restrict uexclude)[2],
+                        const real* restrict uexclude_scale)
 {
-   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < nuexclude_;
+   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < nuexclude;
         ii += blockDim.x * gridDim.x) {
-      int i = uexclude_[ii][0];
-      int k = uexclude_[ii][1];
-      real uscale = uexclude_scale_[ii];
+      int i = uexclude[ii][0];
+      int k = uexclude[ii][1];
+      real uscale = uexclude_scale[ii];
 
 
       real xi = x[i];
@@ -208,7 +209,8 @@ void sparse_precond_apply_cu(const real (*rsd)[3], const real (*rsdp)[3],
                              real (*zrsd)[3], real (*zrsdp)[3])
 {
    const auto& st = *uspatial_unit;
-   const real cutbuf2 = (st.cutoff + st.buffer) * (st.cutoff + st.buffer);
+   const real off = switch_off(switch_usolve);
+   const real cutbuf2 = (off + st.buffer) * (off + st.buffer);
 
 
    launch_k1s(nonblk, n, sparse_precond_cu0, //
@@ -218,10 +220,10 @@ void sparse_precond_apply_cu(const real (*rsd)[3], const real (*rsdp)[3],
                  rsd, rsdp, zrsd, zrsdp, pdamp, thole, polarity,
                  TINKER_IMAGE_ARGS, cutbuf2, //
                  n, st.sorted, st.niak, st.iak, st.lst);
-   if (nuexclude_ > 0)
-      launch_k1s(nonblk, nuexclude_, sparse_precond_cu2, //
+   if (nuexclude > 0)
+      launch_k1s(nonblk, nuexclude, sparse_precond_cu2, //
                  rsd, rsdp, zrsd, zrsdp, pdamp, thole, polarity,
                  TINKER_IMAGE_ARGS, cutbuf2, //
-                 x, y, z, nuexclude_, uexclude_, uexclude_scale_);
+                 x, y, z, nuexclude, uexclude, uexclude_scale);
 }
 TINKER_NAMESPACE_END

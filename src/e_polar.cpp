@@ -21,12 +21,12 @@ void epolar_data(rc_op op)
       return;
 
    if (op & rc_dealloc) {
-      nuexclude_ = 0;
-      darray::deallocate(uexclude_, uexclude_scale_);
-      ndpexclude_ = 0;
-      darray::deallocate(dpexclude_, dpexclude_scale_);
-      ndpuexclude_ = 0;
-      darray::deallocate(dpuexclude_, dpuexclude_scale_);
+      nuexclude = 0;
+      darray::deallocate(uexclude, uexclude_scale);
+      ndpexclude = 0;
+      darray::deallocate(dpexclude, dpexclude_scale);
+      ndpuexclude = 0;
+      darray::deallocate(dpuexclude, dpuexclude_scale);
 
       darray::deallocate(polarity, thole, pdamp, polarity_inv);
 
@@ -148,10 +148,10 @@ void epolar_data(rc_op op)
             }
          }
       }
-      nuexclude_ = excls.size();
-      darray::allocate(nuexclude_, &uexclude_, &uexclude_scale_);
-      darray::copyin(WAIT_NEW_Q, nuexclude_, uexclude_, exclik.data());
-      darray::copyin(WAIT_NEW_Q, nuexclude_, uexclude_scale_, excls.data());
+      nuexclude = excls.size();
+      darray::allocate(nuexclude, &uexclude, &uexclude_scale);
+      darray::copyin(WAIT_NEW_Q, nuexclude, uexclude, exclik.data());
+      darray::copyin(WAIT_NEW_Q, nuexclude, uexclude_scale, excls.data());
 
       d1scale = polpot::d1scale;
       d2scale = polpot::d2scale;
@@ -331,16 +331,16 @@ void epolar_data(rc_op op)
          dpu_sc_vec.push_back(it.second.p);
          dpu_sc_vec.push_back(it.second.u);
       }
-      ndpuexclude_ = ik_dpu.size();
-      darray::allocate(ndpuexclude_, &dpuexclude_, &dpuexclude_scale_);
-      darray::copyin(WAIT_NEW_Q, ndpuexclude_, dpuexclude_, dpu_ik_vec.data());
-      darray::copyin(WAIT_NEW_Q, ndpuexclude_, dpuexclude_scale_,
+      ndpuexclude = ik_dpu.size();
+      darray::allocate(ndpuexclude, &dpuexclude, &dpuexclude_scale);
+      darray::copyin(WAIT_NEW_Q, ndpuexclude, dpuexclude, dpu_ik_vec.data());
+      darray::copyin(WAIT_NEW_Q, ndpuexclude, dpuexclude_scale,
                      dpu_sc_vec.data());
 
-      ndpexclude_ = excls.size() / 2;
-      darray::allocate(ndpexclude_, &dpexclude_, &dpexclude_scale_);
-      darray::copyin(WAIT_NEW_Q, ndpexclude_, dpexclude_, exclik.data());
-      darray::copyin(WAIT_NEW_Q, ndpexclude_, dpexclude_scale_, excls.data());
+      ndpexclude = excls.size() / 2;
+      darray::allocate(ndpexclude, &dpexclude, &dpexclude_scale);
+      darray::copyin(WAIT_NEW_Q, ndpexclude, dpexclude, exclik.data());
+      darray::copyin(WAIT_NEW_Q, ndpexclude, dpexclude_scale, excls.data());
 
       darray::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
 

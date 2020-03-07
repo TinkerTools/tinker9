@@ -379,33 +379,26 @@ void evdw_data(rc_op op)
 }
 
 
-void ehal_reduce_xyz()
+void elj(int vers)
 {
-   ehal_reduce_xyz_acc();
+#if TINKER_CUDART
+   if (clist_version() == NBL_SPATIAL)
+      elj_cu(vers);
+   else
+#endif
+      elj_acc(vers);
 }
 
 
-void ehal_resolve_gradient()
+void ebuck(int vers)
 {
-   ehal_resolve_gradient_acc();
+   ebuck_acc(vers);
 }
 
 
-void evdw_lj(int vers)
+void emm3hb(int vers)
 {
-   evdw_lj_acc(vers);
-}
-
-
-void evdw_buck(int vers)
-{
-   evdw_buck_acc(vers);
-}
-
-
-void evdw_mm3hb(int vers)
-{
-   evdw_mm3hb_acc(vers);
+   emm3hb_acc(vers);
 }
 
 
@@ -420,9 +413,21 @@ void ehal(int vers)
 }
 
 
-void evdw_gauss(int vers)
+void ehal_reduce_xyz()
 {
-   evdw_gauss_acc(vers);
+   ehal_reduce_xyz_acc();
+}
+
+
+void ehal_resolve_gradient()
+{
+   ehal_resolve_gradient_acc();
+}
+
+
+void egauss(int vers)
+{
+   egauss_acc(vers);
 }
 
 
@@ -448,15 +453,15 @@ void evdw(int vers)
 
 
    if (vdwtyp == evdw_t::lj)
-      evdw_lj(vers);
+      elj(vers);
    else if (vdwtyp == evdw_t::buck)
-      evdw_buck(vers);
+      ebuck(vers);
    else if (vdwtyp == evdw_t::mm3hb)
-      evdw_mm3hb(vers);
+      emm3hb(vers);
    else if (vdwtyp == evdw_t::hal)
       ehal(vers);
    else if (vdwtyp == evdw_t::gauss)
-      evdw_gauss(vers);
+      egauss(vers);
    else
       assert(false);
 }

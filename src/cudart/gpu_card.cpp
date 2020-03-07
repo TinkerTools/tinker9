@@ -67,17 +67,17 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
 
 
    if (prop.computeMode == cudaComputeModeExclusive)
-      a.compute_mode_string = "Exclusive Thread";
+      a.compute_mode_string = "exclusive thread";
    else if (prop.computeMode == cudaComputeModeProhibited)
-      a.compute_mode_string = "Prohibited";
+      a.compute_mode_string = "prohibited";
    else if (prop.computeMode == cudaComputeModeExclusiveProcess)
-      a.compute_mode_string = "Exclusive Process";
+      a.compute_mode_string = "exclusive process";
    else
-      a.compute_mode_string = "Default";
+      a.compute_mode_string = "default";
    if (prop.ECCEnabled)
-      a.ecc_string = "ON";
+      a.ecc_string = "on";
    else
-      a.ecc_string = "OFF";
+      a.ecc_string = "off";
 
 
    check_rt(cudaMemGetInfo(&a.free_mem_bytes, &a.total_mem_bytes));

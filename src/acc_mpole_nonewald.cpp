@@ -7,9 +7,10 @@
 #include "seq_image.h"
 #include "seq_pair_mpole.h"
 #include "seq_switch.h"
+#include "switch.h"
 
 TINKER_NAMESPACE_BEGIN
-#define DEVICE_PTRS_                                                           \
+#define DEVICE_PTRS                                                            \
    x, y, z, gx, gy, gz, rpole, nem, em, vir_em, trqx, trqy, trqz
 template <class Ver>
 void empole_nonewald_acc1()
@@ -21,7 +22,7 @@ void empole_nonewald_acc1()
 
    const real f = electric / dielec;
 
-   const real off = mlist_unit->cutoff;
+   const real off = switch_off(switch_mpole);
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
@@ -31,7 +32,7 @@ void empole_nonewald_acc1()
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
-               deviceptr(DEVICE_PTRS_,mlst)
+               deviceptr(DEVICE_PTRS,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
       real xi = x[i];
@@ -118,14 +119,14 @@ void empole_nonewald_acc1()
       }
    } // end for (int i)
 
-   #pragma acc parallel async deviceptr(DEVICE_PTRS_,mexclude_,mexclude_scale_)
+   #pragma acc parallel async deviceptr(DEVICE_PTRS,mexclude,mexclude_scale)
    #pragma acc loop independent private(pgrad)
-   for (int ii = 0; ii < nmexclude_; ++ii) {
+   for (int ii = 0; ii < nmexclude; ++ii) {
       int offset = ii & (bufsize - 1);
 
-      int i = mexclude_[ii][0];
-      int k = mexclude_[ii][1];
-      real mscale = mexclude_scale_[ii];
+      int i = mexclude[ii][0];
+      int k = mexclude[ii][1];
+      real mscale = mexclude_scale[ii];
 
       real xi = x[i];
       real yi = y[i];

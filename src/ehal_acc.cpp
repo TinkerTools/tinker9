@@ -68,7 +68,7 @@ void ehal_acc1()
    constexpr bool do_v = Ver::v;
 
    const real cut = switch_cut(switch_vdw);
-   const real off = vlist_unit->cutoff;
+   const real off = switch_off(switch_vdw);
    const real cut2 = cut * cut;
    const real off2 = off * off;
    const int maxnlst = vlist_unit->maxnlst;
@@ -266,10 +266,4 @@ void ehal_acc(int vers)
    else if (vers == calc::v6)
       ehal_acc1<calc::V6>();
 }
-
-
-void evdw_lj_acc(int) {}
-void evdw_buck_acc(int) {}
-void evdw_mm3hb_acc(int) {}
-void evdw_gauss_acc(int) {}
 TINKER_NAMESPACE_END

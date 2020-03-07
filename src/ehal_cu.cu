@@ -315,7 +315,7 @@ void ehal_cu3()
 
    const auto& st = *vspatial_unit;
    const real cut = switch_cut(switch_vdw);
-   const real off = st.cutoff;
+   const real off = switch_off(switch_vdw);
    const auto* sp = vspatial_unit.deviceptr();
 
    auto bufsize = buffer_size();

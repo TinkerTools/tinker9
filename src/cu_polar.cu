@@ -8,6 +8,7 @@
 #include "seq_image.h"
 #include "seq_pair_polar.h"
 #include "spatial.h"
+#include "switch.h"
 
 
 TINKER_NAMESPACE_BEGIN
@@ -281,9 +282,9 @@ void epolar_cu1(POLAR_ARGS, const Spatial::SortedAtom* restrict sorted,
 template <class Ver>
 __global__
 void epolar_cu2(POLAR_ARGS, const real* restrict x, const real* restrict y,
-                const real* restrict z, int ndpuexclude_,
-                const int (*restrict dpuexclude_)[2],
-                const real (*restrict dpuexclude_scale_)[3])
+                const real* restrict z, int ndpuexclude,
+                const int (*restrict dpuexclude)[2],
+                const real (*restrict dpuexclude_scale)[3])
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -291,16 +292,16 @@ void epolar_cu2(POLAR_ARGS, const real* restrict x, const real* restrict y,
    constexpr bool do_v = Ver::v;
 
 
-   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < ndpuexclude_;
+   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < ndpuexclude;
         ii += blockDim.x * gridDim.x) {
       int offset = ii & (bufsize - 1);
 
 
-      int i = dpuexclude_[ii][0];
-      int k = dpuexclude_[ii][1];
-      real dscale = dpuexclude_scale_[ii][0];
-      real pscale = dpuexclude_scale_[ii][1];
-      real uscale = dpuexclude_scale_[ii][2];
+      int i = dpuexclude[ii][0];
+      int k = dpuexclude[ii][1];
+      real dscale = dpuexclude_scale[ii][0];
+      real pscale = dpuexclude_scale[ii][1];
+      real uscale = dpuexclude_scale[ii][2];
 
 
       real xi = x[i];
@@ -426,7 +427,11 @@ void epolar_cu(const real (*uind)[3], const real (*uinp)[3])
 
 
    const auto& st = *mspatial_unit;
-   const real off = st.cutoff;
+   real off;
+   if CONSTEXPR (eq<ETYP, EWALD>())
+      off = switch_off(switch_ewald);
+   else
+      off = switch_off(switch_mpole);
    const real off2 = off * off;
    auto bufsize = buffer_size();
 
@@ -449,12 +454,12 @@ void epolar_cu(const real (*uind)[3], const real (*uinp)[3])
                  TINKER_IMAGE_ARGS, off2, f, rpole, pdamp, thole, uind, uinp, //
                  st.sorted, st.niak, st.iak, st.lst, n, aewald);
    }
-   if (ndpuexclude_ > 0) {
+   if (ndpuexclude > 0) {
       auto ker2 = epolar_cu2<Ver>;
-      launch_k1s(nonblk, ndpuexclude_, ker2, //
+      launch_k1s(nonblk, ndpuexclude, ker2, //
                  bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld,
                  TINKER_IMAGE_ARGS, off2, f, rpole, pdamp, thole, uind, uinp, //
-                 x, y, z, ndpuexclude_, dpuexclude_, dpuexclude_scale_);
+                 x, y, z, ndpuexclude, dpuexclude, dpuexclude_scale);
    }
    // torque
    if CONSTEXPR (do_g) {

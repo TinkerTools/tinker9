@@ -8,6 +8,7 @@
 #include "seq_image.h"
 #include "seq_pair_field.h"
 #include "spatial.h"
+#include "switch.h"
 
 
 TINKER_NAMESPACE_BEGIN
@@ -131,16 +132,16 @@ void dfield_cu1(DFIELD_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
 __global__
 void dfield_cu2(DFIELD_ARGS, const real* restrict x, const real* restrict y,
-                const real* restrict z, int ndpexclude_,
-                const int (*restrict dpexclude_)[2],
-                const real (*restrict dpexclude_scale_)[2])
+                const real* restrict z, int ndpexclude,
+                const int (*restrict dpexclude)[2],
+                const real (*restrict dpexclude_scale)[2])
 {
-   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < ndpexclude_;
+   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < ndpexclude;
         ii += blockDim.x * gridDim.x) {
-      int i = dpexclude_[ii][0];
-      int k = dpexclude_[ii][1];
-      real dscale = dpexclude_scale_[ii][0];
-      real pscale = dpexclude_scale_[ii][1];
+      int i = dpexclude[ii][0];
+      int k = dpexclude[ii][1];
+      real dscale = dpexclude_scale[ii][0];
+      real pscale = dpexclude_scale[ii][1];
 
 
       real xi = x[i];
@@ -202,7 +203,8 @@ void dfield_cu2(DFIELD_ARGS, const real* restrict x, const real* restrict y,
 void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
 {
    const auto& st = *mspatial_unit;
-   const real off2 = st.cutoff * st.cutoff;
+   const real off = switch_off(switch_ewald);
+   const real off2 = off * off;
 
 
    const PMEUnit pu = ppme_unit;
@@ -212,10 +214,10 @@ void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
                  thole, pdamp, rpole, TINKER_IMAGE_ARGS, off2, n, st.sorted,
                  st.niak, st.iak, st.lst, aewald);
    }
-   if (ndpexclude_ > 0) {
-      launch_k1s(nonblk, ndpexclude_, dfield_cu2, field, fieldp, thole, pdamp,
-                 rpole, TINKER_IMAGE_ARGS, off2, x, y, z, ndpexclude_,
-                 dpexclude_, dpexclude_scale_);
+   if (ndpexclude > 0) {
+      launch_k1s(nonblk, ndpexclude, dfield_cu2, field, fieldp, thole, pdamp,
+                 rpole, TINKER_IMAGE_ARGS, off2, x, y, z, ndpexclude, dpexclude,
+                 dpexclude_scale);
    }
 }
 
@@ -223,7 +225,8 @@ void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
 void dfield_nonewald_cu(real (*field)[3], real (*fieldp)[3])
 {
    const auto& st = *mspatial_unit;
-   const real off2 = st.cutoff * st.cutoff;
+   const real off = switch_off(switch_mpole);
+   const real off2 = off * off;
 
 
    darray::zero(PROCEED_NEW_Q, n, field, fieldp);
@@ -232,10 +235,10 @@ void dfield_nonewald_cu(real (*field)[3], real (*fieldp)[3])
                  fieldp, thole, pdamp, rpole, TINKER_IMAGE_ARGS, off2, n,
                  st.sorted, st.niak, st.iak, st.lst, 0);
    }
-   if (ndpexclude_ > 0) {
-      launch_k1s(nonblk, ndpexclude_, dfield_cu2, field, fieldp, thole, pdamp,
-                 rpole, TINKER_IMAGE_ARGS, off2, x, y, z, ndpexclude_,
-                 dpexclude_, dpexclude_scale_);
+   if (ndpexclude > 0) {
+      launch_k1s(nonblk, ndpexclude, dfield_cu2, field, fieldp, thole, pdamp,
+                 rpole, TINKER_IMAGE_ARGS, off2, x, y, z, ndpexclude, dpexclude,
+                 dpexclude_scale);
    }
 }
 
@@ -339,15 +342,15 @@ void ufield_cu1(UFIELD_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
 __global__
 void ufield_cu2(UFIELD_ARGS, const real* restrict x, const real* restrict y,
-                const real* restrict z, int nuexclude_,
-                const int (*restrict uexclude_)[2],
-                const real* restrict uexclude_scale_)
+                const real* restrict z, int nuexclude,
+                const int (*restrict uexclude)[2],
+                const real* restrict uexclude_scale)
 {
-   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < nuexclude_;
+   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < nuexclude;
         ii += blockDim.x * gridDim.x) {
-      int i = uexclude_[ii][0];
-      int k = uexclude_[ii][1];
-      real uscale = uexclude_scale_[ii];
+      int i = uexclude[ii][0];
+      int k = uexclude[ii][1];
+      real uscale = uexclude_scale[ii];
 
 
       real xi = x[i];
@@ -399,7 +402,8 @@ void ufield_ewald_real_cu(const real (*uind)[3], const real (*uinp)[3],
                           real (*field)[3], real (*fieldp)[3])
 {
    const auto& st = *mspatial_unit;
-   const real off2 = st.cutoff * st.cutoff;
+   const real off = switch_off(switch_ewald);
+   const real off2 = off * off;
 
 
    const PMEUnit pu = ppme_unit;
@@ -411,10 +415,10 @@ void ufield_ewald_real_cu(const real (*uind)[3], const real (*uinp)[3],
                  field, fieldp, thole, pdamp, TINKER_IMAGE_ARGS, off2, n,
                  st.sorted, st.niak, st.iak, st.lst, aewald);
    }
-   if (nuexclude_) {
-      launch_k1s(nonblk, nuexclude_, ufield_cu2, uind, uinp, field, fieldp,
-                 thole, pdamp, TINKER_IMAGE_ARGS, off2, x, y, z, nuexclude_,
-                 uexclude_, uexclude_scale_);
+   if (nuexclude) {
+      launch_k1s(nonblk, nuexclude, ufield_cu2, uind, uinp, field, fieldp,
+                 thole, pdamp, TINKER_IMAGE_ARGS, off2, x, y, z, nuexclude,
+                 uexclude, uexclude_scale);
    }
 }
 
@@ -423,7 +427,8 @@ void ufield_nonewald_cu(const real (*uind)[3], const real (*uinp)[3],
                         real (*field)[3], real (*fieldp)[3])
 {
    const auto& st = *mspatial_unit;
-   const real off2 = st.cutoff * st.cutoff;
+   const real off = switch_off(switch_mpole);
+   const real off2 = off * off;
 
 
    darray::zero(PROCEED_NEW_Q, n, field, fieldp);
@@ -432,10 +437,10 @@ void ufield_nonewald_cu(const real (*uind)[3], const real (*uinp)[3],
                  field, fieldp, thole, pdamp, TINKER_IMAGE_ARGS, off2, n,
                  st.sorted, st.niak, st.iak, st.lst, 0);
    }
-   if (nuexclude_) {
-      launch_k1s(nonblk, nuexclude_, ufield_cu2, uind, uinp, field, fieldp,
-                 thole, pdamp, TINKER_IMAGE_ARGS, off2, x, y, z, nuexclude_,
-                 uexclude_, uexclude_scale_);
+   if (nuexclude) {
+      launch_k1s(nonblk, nuexclude, ufield_cu2, uind, uinp, field, fieldp,
+                 thole, pdamp, TINKER_IMAGE_ARGS, off2, x, y, z, nuexclude,
+                 uexclude, uexclude_scale);
    }
 }
 TINKER_NAMESPACE_END

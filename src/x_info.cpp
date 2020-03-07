@@ -1,11 +1,31 @@
 #include "gpu_card.h"
 #include "tinker_rt.h"
+#include "version.h"
 
 
 TINKER_NAMESPACE_BEGIN
-inline namespace detail {
-const char* get_SHA1();
-std::string get_version_string();
+namespace {
+const char* get_SHA1()
+{
+   return         //
+      "11e84c69"; // Tue Nov 12 14:56:12 2019 -0600
+   // "291a85c1"; // Fri Jul 19 16:21:27 2019 +0200
+   // "6fe8e913"; // Sun Apr 21 13:34:28 2019 -0500
+   // "904bc012";
+   // "ddfb803a";
+   // "36063480";
+}
+
+
+std::string get_version_string()
+{
+   std::string r = format("{}.{}.{}", TINKER_GPU_VERSION_MAJOR,
+                          TINKER_GPU_VERSION_MINOR, TINKER_GPU_VERSION_PATCH);
+#ifdef TINKER_GPU_GIT_SHORT_HASH
+   r += format(" GIT {}", TINKER_STR(TINKER_GPU_GIT_SHORT_HASH));
+#endif
+   return r;
+}
 }
 
 void x_info(int argc, char** argv)
@@ -28,9 +48,9 @@ void x_info(int argc, char** argv)
    print(out, fmt,
          "Using deterministic force:", (bool)TINKER_DETERMINISTIC_FORCE);
 #if TINKER_DEBUG
-   const char* dbg = "ON";
+   const char* dbg = "on";
 #else
-   const char* dbg = "OFF";
+   const char* dbg = "off";
 #endif
    print(out, fmt, "Debug mode:", dbg);
 
@@ -78,33 +98,5 @@ void x_info(int argc, char** argv)
 
    gpu_card_data(rc_dealloc);
    platform_data(rc_dealloc);
-}
-TINKER_NAMESPACE_END
-
-
-#include "version.h"
-TINKER_NAMESPACE_BEGIN
-namespace detail {
-const char* get_SHA1()
-{
-   return         //
-      "11e84c69"; // Tue Nov 12 14:56:12 2019 -0600
-   // "291a85c1"; // Fri Jul 19 16:21:27 2019 +0200
-   // "6fe8e913"; // Sun Apr 21 13:34:28 2019 -0500
-   // "904bc012";
-   // "ddfb803a";
-   // "36063480";
-}
-
-
-std::string get_version_string()
-{
-   std::string r = format("{}.{}.{}", TINKER_GPU_VERSION_MAJOR,
-                          TINKER_GPU_VERSION_MINOR, TINKER_GPU_VERSION_PATCH);
-#ifdef TINKER_GPU_GIT_SHORT_HASH
-   r += format(" GIT {}", TINKER_STR(TINKER_GPU_GIT_SHORT_HASH));
-#endif
-   return r;
-}
 }
 TINKER_NAMESPACE_END
