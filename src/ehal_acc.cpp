@@ -30,9 +30,15 @@ void ehal_resolve_gradient_acc()
                deviceptr(ired,kred,gxred,gyred,gzred,gx,gy,gz)
    for (int ii = 0; ii < n; ++ii) {
       int iv = ired[ii];
+#if TINKER_DETERMINISTIC_FORCE
       real fx = to_flt_acc<real>(gxred[ii]);
       real fy = to_flt_acc<real>(gyred[ii]);
       real fz = to_flt_acc<real>(gzred[ii]);
+#else
+      real fx = gxred[ii];
+      real fy = gyred[ii];
+      real fz = gzred[ii];
+#endif
       if (ii == iv) {
          atomic_add(fx, gx, ii);
          atomic_add(fy, gy, ii);
