@@ -140,6 +140,21 @@ else
 endif
 
 
+##/ ### deterministic_force (NO DEFAULT)
+##/ Flag to use deterministic force. By default this flag is not set, and will
+##/ be enabled implicitly only by the debug build. This feature can be explcitly
+##/ disabled by setting the flag to `false`, `off`, or `0`, and can be enabled
+##/ by `true`, `on`, or `1`.
+##/
+ifdef deterministic_force
+   ifeq ($(deterministic_force),$(filter $(deterministic_force),false off 0))
+      shared_flags__ += -DTINKER_DETERMINISTIC_FORCE=0
+   else ifeq ($(deterministic_force),$(filter $(deterministic_force),true on 1))
+      shared_flags__ += -DTINKER_DETERMINISTIC_FORCE=1
+   endif
+endif
+
+
 ##/ ### build=build
 ##/ By default, Makefile can create a `build` directory in the current
 ##/ working directory. To create a build directory with another name,

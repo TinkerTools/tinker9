@@ -62,8 +62,13 @@
  * FLT answer = val2 / 0x100000000ull;
  * \endcode
  */
-#define TINKER_DETERMINISTIC_FORCE 1
-// #define TINKER_DETERMINISTIC_FORCE 0
+#ifndef TINKER_DETERMINISTIC_FORCE
+#   if TINKER_DEBUG
+#      define TINKER_DETERMINISTIC_FORCE 1
+#   else
+#      define TINKER_DETERMINISTIC_FORCE 0
+#   endif
+#endif
 
 
 TINKER_NAMESPACE_BEGIN
@@ -76,9 +81,6 @@ using energy_prec = mixed; // total energies
 using virial_prec = mixed; // total virial tensor
 using e_prec = real;       // individual energy
 using v_prec = real;       // individual virial
-#ifndef TINKER_DETERMINISTIC_FORCE
-#   define TINKER_DETERMINISTIC_FORCE 0
-#endif
 #if TINKER_DETERMINISTIC_FORCE
 using grad_prec = fixed;
 #else

@@ -71,6 +71,12 @@ Flag to compile to GPU version or CPU version.
   - These equivalent values all compile the code to CPU version:
     `true`, `on`, `1`.
 
+### deterministic_force (NO DEFAULT)
+Flag to use deterministic force. By default this flag is not set, and will
+be enabled implicitly only by the debug build. This feature can be explcitly
+disabled by setting the flag to `false`, `off`, or `0`, and can be enabled
+by `true`, `on`, or `1`.
+
 ### build=build
 By default, Makefile can create a `build` directory in the current
 working directory. To create a build directory with another name,
