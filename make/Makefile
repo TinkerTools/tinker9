@@ -157,8 +157,8 @@ endif
 
 ##/ ### build=build
 ##/ By default, Makefile can create a `build` directory in the current
-##/ working directory. To create a build directory with another name,
-##/ change its default value by running
+##/ working directory. This option allows you to use another name for
+##/ the build directory.
 ##/
 ##/ For more information, see `create_build`.
 ##/
