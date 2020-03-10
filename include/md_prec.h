@@ -63,10 +63,10 @@
  * \endcode
  */
 #ifndef TINKER_DETERMINISTIC_FORCE
-#   if TINKER_DEBUG
-#      define TINKER_DETERMINISTIC_FORCE 1
-#   else
+#   if TINKER_DOUBLE_PRECISION
 #      define TINKER_DETERMINISTIC_FORCE 0
+#   else
+#      define TINKER_DETERMINISTIC_FORCE 1
 #   endif
 #endif
 

@@ -141,10 +141,10 @@ endif
 
 
 ##/ ### deterministic_force (NO DEFAULT)
-##/ Flag to use deterministic force. By default this flag is not set, and will
-##/ be enabled implicitly only by the debug build. This feature can be explcitly
-##/ disabled by setting the flag to `false`, `off`, or `0`, and can be enabled
-##/ by `true`, `on`, or `1`.
+##/ Flag to use deterministic force. There is no default value for this flag.
+##/ This feature will be implicitly enabled by mixed and single precisions, but
+##/ can be explicitly disabled by setting the flag to `false`, `off`, or `0`,
+##/ and can be explicitly enabled by `true`, `on`, or `1`.
 ##/
 ifdef deterministic_force
    ifeq ($(deterministic_force),$(filter $(deterministic_force),false off 0))
