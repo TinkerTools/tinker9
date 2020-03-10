@@ -91,8 +91,6 @@ void elj_acc1()
                atomic_add(-dedx, gx, k);
                atomic_add(-dedy, gy, k);
                atomic_add(-dedz, gz, k);
-
-
                if CONSTEXPR (do_v) {
                   real vxx = xr * dedx;
                   real vyx = yr * dedx;
@@ -175,8 +173,6 @@ void elj_acc1()
             atomic_add(-dedx, gx, k);
             atomic_add(-dedy, gy, k);
             atomic_add(-dedz, gz, k);
-
-
             if CONSTEXPR (do_v) {
                real vxx = xr * dedx;
                real vyx = yr * dedx;
@@ -231,6 +227,12 @@ void elj_acc1()
 
 
          if (rik2 > cut2) {
+            real taper, dtaper;
+            switch_taper5<do_g>(rik, cut, off, taper, dtaper);
+            if CONSTEXPR (do_g)
+               de = e * dtaper + de * taper;
+            if CONSTEXPR (do_e)
+               e = e * taper;
          }
 
 
@@ -248,8 +250,6 @@ void elj_acc1()
             atomic_add(-dedx, gx, k);
             atomic_add(-dedy, gy, k);
             atomic_add(-dedz, gz, k);
-
-
             if CONSTEXPR (do_v) {
                real vxx = xr * dedx;
                real vyx = yr * dedx;

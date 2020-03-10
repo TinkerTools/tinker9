@@ -136,9 +136,9 @@ void ehal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
 
          MAYBE_UNUSED real dedx = 0, dedy = 0, dedz = 0;
+
+
          real rik2 = image2(xr, yr, zr);
-
-
          if (atomi < atomk && rik2 <= off2) {
             real rik = REAL_SQRT(rik2);
             real rv = radmin[it * njvdw + kt];
@@ -218,7 +218,8 @@ template <class Ver>
 __global__
 void ehal_cu2(HAL_ARGS, const real* restrict xred, const real* restrict yred,
               const real* restrict zred, int nvexclude,
-              int (*restrict vexclude)[2], real* restrict vexclude_scale)
+              const int (*restrict vexclude)[2],
+              const real* restrict vexclude_scale)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;

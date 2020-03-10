@@ -45,6 +45,13 @@ inline void atomic_add(T value, fixed* buffer, size_t offset = 0)
 }
 
 
+__device__
+inline void atomic_add(fixed value, fixed* buffer, size_t offset = 0)
+{
+   atomicAdd(&buffer[offset], value);
+}
+
+
 template <class T>
 __device__
 inline void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T (*buffer)[8],
@@ -70,5 +77,16 @@ inline void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz,
    atomic_add(vyy, buffer[offset], 3);
    atomic_add(vzy, buffer[offset], 4);
    atomic_add(vzz, buffer[offset], 5);
+}
+
+
+template <class G, class T>
+__device__
+inline G to_grad_prec_cu(T val)
+{
+   if CONSTEXPR (std::is_same<G, fixed>::value)
+      return static_cast<G>(static_cast<long long>(val * 0x100000000ull));
+   else
+      return static_cast<G>(val);
 }
 TINKER_NAMESPACE_END
