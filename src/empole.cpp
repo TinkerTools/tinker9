@@ -1,4 +1,4 @@
-#include "e_mpole.h"
+#include "empole.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"

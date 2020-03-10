@@ -1,6 +1,6 @@
 #include "add.h"
 #include "cudalib.h"
-#include "e_polar.h"
+#include "epolar.h"
 #include "launch.h"
 #include "md.h"
 #include "named_struct.h"

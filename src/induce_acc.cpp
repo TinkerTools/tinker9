@@ -1,5 +1,5 @@
 #include "add.h"
-#include "e_polar.h"
+#include "epolar.h"
 #include "error.h"
 #include "gpu_card.h"
 #include "induce.h"

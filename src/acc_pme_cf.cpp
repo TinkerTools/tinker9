@@ -1,5 +1,5 @@
 #include "box.h"
-#include "e_mpole.h"
+#include "empole.h"
 #include "md.h"
 #include "pme.h"
 

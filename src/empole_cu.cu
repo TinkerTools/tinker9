@@ -1,5 +1,5 @@
 #include "add.h"
-#include "e_mpole.h"
+#include "empole.h"
 #include "empole_self.h"
 #include "launch.h"
 #include "md.h"

@@ -1,6 +1,6 @@
 #include "nblist.h"
 #include "darray.h"
-#include "e_polar.h"
+#include "epolar.h"
 #include "elec.h"
 #include "evdw.h"
 #include "md.h"

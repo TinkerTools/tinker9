@@ -21,7 +21,7 @@
 
 #include "e_geom.h"
 
-#include "e_mplar.h"
-#include "e_mpole.h"
-#include "e_polar.h"
+#include "emplar.h"
+#include "empole.h"
+#include "epolar.h"
 #include "evdw.h"

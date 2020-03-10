@@ -1,4 +1,4 @@
-#include "e_polar.h"
+#include "epolar.h"
 #include "io_print.h"
 #include "md.h"
 #include "nblist.h"

@@ -1,5 +1,5 @@
 #include "add.h"
-#include "e_polar.h"
+#include "epolar.h"
 #include "md.h"
 
 TINKER_NAMESPACE_BEGIN

@@ -1,4 +1,5 @@
-#include "e_polar.h"
+#include "field.h"
+#include "elec.h"
 #include "md.h"
 #include "nblist.h"
 

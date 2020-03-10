@@ -1,6 +1,6 @@
 #include "md_save.h"
 #include "box.h"
-#include "e_polar.h"
+#include "epolar.h"
 #include "execq.h"
 #include "potent.h"
 #include "tinker_rt.h"

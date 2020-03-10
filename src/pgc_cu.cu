@@ -1,5 +1,5 @@
 #include "cudalib.h"
-#include "e_polar.h"
+#include "epolar.h"
 #include "induce.h"
 #include "io_print.h"
 #include "launch.h"
