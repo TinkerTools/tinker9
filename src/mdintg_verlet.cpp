@@ -1,9 +1,9 @@
 #include "energy.h"
-#include "md_calc.h"
-#include "md_egv.h"
-#include "md_pt.h"
+#include "mdcalc.h"
+#include "mdegv.h"
 #include "mdintg.h"
 #include "mdpq.h"
+#include "mdpt.h"
 #include "random.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>

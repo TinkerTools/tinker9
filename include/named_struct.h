@@ -1,6 +1,6 @@
 #pragma once
 #include "compare_types.h"
-#include "md_calc.h"
+#include "mdcalc.h"
 
 
 extern "C"

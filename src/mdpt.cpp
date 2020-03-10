@@ -1,6 +1,6 @@
-#include "md_pt.h"
-#include "md_calc.h"
-#include "md_egv.h"
+#include "mdpt.h"
+#include "mdcalc.h"
+#include "mdegv.h"
 #include "platform.h"
 #include <cassert>
 

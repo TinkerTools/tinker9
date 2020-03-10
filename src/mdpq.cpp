@@ -3,7 +3,7 @@
 #include "box.h"
 #include "darray.h"
 #include "gpu_card.h"
-#include "md_calc.h"
+#include "mdcalc.h"
 #include "nblist.h"
 #include "tinker_rt.h"
 #include <cassert>

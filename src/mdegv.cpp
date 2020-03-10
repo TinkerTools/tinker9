@@ -1,5 +1,5 @@
-#include "md_egv.h"
-#include "md_calc.h"
+#include "mdegv.h"
+#include "mdcalc.h"
 #include "mdpq.h"
 
 

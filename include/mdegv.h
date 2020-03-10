@@ -1,6 +1,6 @@
 #pragma once
 #include "energy_buffer.h"
-#include "md_prec.h"
+#include "mdprec.h"
 
 
 /**

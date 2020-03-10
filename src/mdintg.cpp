@@ -5,12 +5,12 @@
 #include "darray.h"
 #include "energy.h"
 #include "io_fort_str.h"
-#include "md_calc.h"
-#include "md_egv.h"
-#include "md_pt.h"
-#include "md_save.h"
+#include "mdcalc.h"
+#include "mdegv.h"
 #include "mdintg.h"
 #include "mdpq.h"
+#include "mdpt.h"
+#include "mdsave.h"
 #include <cassert>
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
