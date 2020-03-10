@@ -1,4 +1,4 @@
-#include "e_tortor.h"
+#include "etortor.h"
 #include "md.h"
 #include "potent.h"
 #include <tinker/detail/atomid.hh>

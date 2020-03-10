@@ -1,4 +1,4 @@
-#include "e_geom.h"
+#include "egeom.h"
 #include "potent.h"
 #include <tinker/detail/restrn.hh>
 #include <tinker/detail/sizes.hh>

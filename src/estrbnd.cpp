@@ -1,4 +1,4 @@
-#include "e_strbnd.h"
+#include "estrbnd.h"
 #include "md.h"
 #include "potent.h"
 #include <tinker/detail/angpot.hh>

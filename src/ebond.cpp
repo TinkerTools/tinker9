@@ -1,4 +1,4 @@
-#include "e_bond.h"
+#include "ebond.h"
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"

@@ -1,5 +1,5 @@
 #include "add.h"
-#include "e_bond.h"
+#include "ebond.h"
 #include "md.h"
 #include "named_struct.h"
 #include <cassert>

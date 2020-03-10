@@ -1,6 +1,6 @@
 #include "add.h"
 #include "box.h"
-#include "e_geom.h"
+#include "egeom.h"
 #include "group.h"
 #include "md.h"
 #include "molecule.h"

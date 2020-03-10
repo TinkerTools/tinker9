@@ -1,4 +1,4 @@
-#include "e_urey.h"
+#include "eurey.h"
 #include "md.h"
 #include "potent.h"
 #include <tinker/detail/urey.hh>

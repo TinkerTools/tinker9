@@ -1,4 +1,4 @@
-#include "e_opbend.h"
+#include "eopbend.h"
 #include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"

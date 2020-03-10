@@ -2,17 +2,17 @@
 #include "time_scale.h"
 
 
-#include "e_angle.h"
-#include "e_bond.h"
-#include "e_opbend.h"
-#include "e_pitors.h"
-#include "e_strbnd.h"
-#include "e_tors.h"
-#include "e_tortor.h"
-#include "e_urey.h"
+#include "eangle.h"
+#include "ebond.h"
+#include "eopbend.h"
+#include "epitors.h"
+#include "estrbnd.h"
+#include "etors.h"
+#include "etortor.h"
+#include "eurey.h"
 
 
-#include "e_geom.h"
+#include "egeom.h"
 
 
 #include "emplar.h"

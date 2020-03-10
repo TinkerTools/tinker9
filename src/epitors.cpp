@@ -1,4 +1,4 @@
-#include "e_pitors.h"
+#include "epitors.h"
 #include "md.h"
 #include "potent.h"
 #include <tinker/detail/pitors.hh>

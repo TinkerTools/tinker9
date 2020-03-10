@@ -314,7 +314,6 @@ cpp_runtime_objs__ := $(cpp_runtime_objs__:%.cpp=%.o)
 # $(top_dir__)/src/foo.cpp -> src/foo.o
 cpp_objs__ := $(shell find $(top_dir__)/src -type f -name '*.cpp' \
 -not -path '$(top_dir__)/src/main_*.cpp' \
--not -path '$(top_dir__)/src/acc_*.cpp' \
 -not -path '$(top_dir__)/src/*_acc.cpp' \
 -not -path '$(top_dir__)/src/host/*.cpp' \
 -not -path '$(top_dir__)/src/cudart/*.cpp' \
@@ -324,8 +323,7 @@ cpp_objs__ := $(cpp_objs__:%.cpp=%.o)
 cpp_objs__ += $(cpp_runtime_objs__)
 # acc
 # $(top_dir__)/src/acc_foo.cpp -> src/acc_foo.o
-acc_objs__ := $(wildcard $(top_dir__)/src/acc_*.cpp)
-acc_objs__ += $(wildcard $(top_dir__)/src/*_acc.cpp)
+acc_objs__ := $(wildcard $(top_dir__)/src/*_acc.cpp)
 acc_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(acc_objs__))
 acc_objs__ := $(acc_objs__:%.cpp=%.o)
 # all cpp acc

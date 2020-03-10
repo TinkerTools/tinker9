@@ -1,4 +1,4 @@
-#include "e_tors.h"
+#include "etors.h"
 #include "md.h"
 #include "potent.h"
 #include <tinker/detail/torpot.hh>

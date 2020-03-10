@@ -1,6 +1,6 @@
 #include "add.h"
-#include "e_angle.h"
-#include "e_opbend.h"
+#include "eangle.h"
+#include "eopbend.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "named_struct.h"
