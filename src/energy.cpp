@@ -11,35 +11,37 @@ void energy_data(rc_op op)
    if ((rc_flag & calc::vmask) == 0)
       return;
 
-   rc_man egv42_{egv_data, op};
+   rc_man egv42{egv_data, op};
 
    // bonded terms
 
-   rc_man ebond42_{ebond_data, op};
-   rc_man eangle42_{eangle_data, op};
-   rc_man estrbnd42_{estrbnd_data, op};
-   rc_man eurey42_{eurey_data, op};
-   rc_man eopbend42_{eopbend_data, op};
-   rc_man etors42_{etors_data, op};
-   rc_man epitors42_{epitors_data, op};
-   rc_man etortor42_{etortor_data, op};
+   rc_man ebond42{ebond_data, op};
+   rc_man eangle42{eangle_data, op};
+   rc_man estrbnd42{estrbnd_data, op};
+   rc_man eurey42{eurey_data, op};
+   rc_man eopbend42{eopbend_data, op};
+   rc_man etors42{etors_data, op};
+   rc_man epitors42{epitors_data, op};
+   rc_man etortor42{etortor_data, op};
 
    // misc. terms
 
-   rc_man egeom42_{egeom_data, op};
+   rc_man egeom42{egeom_data, op};
 
    // non-bonded terms
 
-   rc_man evdw42_{evdw_data, op};
+   rc_man evdw42{evdw_data, op};
+
+   rc_man echarge42{echarge_data, op};
 
    // Must call elec_data() before any electrostatics routine.
 
-   rc_man elec42_{elec_data, op};
+   rc_man elec42{elec_data, op};
 
-   rc_man empole42_{empole_data, op};
-   rc_man epolar42_{epolar_data, op};
+   rc_man empole42{empole_data, op};
+   rc_man epolar42{epolar_data, op};
    // Must follow empole_data() and epolar_data().
-   rc_man emplar42_{emplar_data, op};
+   rc_man emplar42{emplar_data, op};
 }
 
 
@@ -50,9 +52,9 @@ const TimeScaleConfig& default_tsconfig()
       {"eurey", 0},   {"eopbend", 0}, {"etors", 0},
       {"epitors", 0}, {"etortor", 0}, {"egeom", 0},
 
-
       {"evdw", 0},
 
+      {"echarge", 0},
 
       {"emplar", 0},  {"empole", 0},  {"epolar", 0},
    };
@@ -120,6 +122,11 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (use_potent(vdw_term))
       if (tscfg("evdw"))
          evdw(vers);
+
+
+   if (use_potent(charge_term))
+      if (tscfg("echarge"))
+         echarge(vers);
 
 
    bool calc_mpole = use_potent(mpole_term); // quadrupole

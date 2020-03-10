@@ -142,6 +142,9 @@ void x_analyze_e()
    if (use_potent(vdw_term))
       print(out, fmt, "Van der Waals", energy_reduce(ev), count_reduce(nev));
 
+   if (use_potent(charge_term))
+      print(out, fmt, "Charge-Charge", energy_reduce(ec), count_reduce(nec));
+
    if (use_potent(mpole_term))
       print(out, fmt, "Atomic Multipoles", energy_reduce(em),
             count_reduce(nem));

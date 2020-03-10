@@ -15,6 +15,7 @@
 #include "egeom.h"
 
 
+#include "echarge.h"
 #include "emplar.h"
 #include "empole.h"
 #include "epolar.h"
