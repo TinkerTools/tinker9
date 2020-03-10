@@ -6,14 +6,6 @@
 
 
 TINKER_NAMESPACE_BEGIN
-/// \ingroup elec
-enum class elec_t
-{
-   NON_EWALD, ///< Non-EWALD interaction.
-   EWALD      ///< Particle mesh ewald summation.
-};
-
-
 /// local frame definitions
 enum
 {
@@ -81,7 +73,7 @@ TINKER_EXTERN pointer<real, 3> uinp;
 
 void elec_data(rc_op op);
 int use_elec();
-int use_ewald();
+bool use_ewald();
 void elec_init(int vers);
 
 

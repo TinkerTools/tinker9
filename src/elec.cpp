@@ -13,7 +13,7 @@ int use_elec()
    return use_potent(mpole_term) || use_potent(polar_term);
 }
 
-int use_ewald()
+bool use_ewald()
 {
    return limits::use_ewald;
 }

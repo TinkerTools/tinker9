@@ -5,8 +5,6 @@
 #include "rc_man.h"
 
 TINKER_NAMESPACE_BEGIN
-TINKER_EXTERN elec_t epolar_electyp;
-
 TINKER_EXTERN real u1scale, u2scale, u3scale, u4scale;
 TINKER_EXTERN real d1scale, d2scale, d3scale, d4scale;
 TINKER_EXTERN real p2scale, p3scale, p4scale, p5scale;

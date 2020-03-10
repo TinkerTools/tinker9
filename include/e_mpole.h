@@ -3,8 +3,6 @@
 #include "energy_buffer.h"
 
 TINKER_NAMESPACE_BEGIN
-TINKER_EXTERN elec_t empole_electyp;
-
 TINKER_EXTERN real m2scale, m3scale, m4scale, m5scale;
 
 TINKER_EXTERN int nmexclude;

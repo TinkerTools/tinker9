@@ -100,21 +100,16 @@ void empole_data(rc_op op)
    }
 
    if (op & rc_init) {
-      if (use_ewald()) {
-         empole_electyp = elec_t::EWALD;
-      } else {
-         empole_electyp = elec_t::NON_EWALD;
-      }
    }
 }
 
 
 void empole(int vers)
 {
-   if (empole_electyp == elec_t::NON_EWALD)
-      empole_nonewald(vers);
-   else if (empole_electyp == elec_t::EWALD)
+   if (use_ewald())
       empole_ewald(vers);
+   else
+      empole_nonewald(vers);
 }
 
 

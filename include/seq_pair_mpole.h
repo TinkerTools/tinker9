@@ -49,7 +49,6 @@ inline void zero(PairMPoleGrad& pgrad)
  * \see calc
  * \tparam ETYP
  * Type of the interaction.
- * \see elec_t
  *
  * \param[in] r2,xr,yr,zr
  * \param[in] f

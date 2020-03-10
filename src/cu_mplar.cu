@@ -1291,21 +1291,7 @@ void emplar_nonewald_cu()
 
 void emplar_cu(int vers)
 {
-   assert(empole_electyp == epolar_electyp);
-   if (empole_electyp == elec_t::NON_EWALD) {
-      if (vers == calc::v0)
-         emplar_nonewald_cu<calc::V0>();
-      else if (vers == calc::v1)
-         emplar_nonewald_cu<calc::V1>();
-      // else if (vers == calc::v3)
-      //    emplar_nonewald_cu<calc::V3>();
-      else if (vers == calc::v4)
-         emplar_nonewald_cu<calc::V4>();
-      else if (vers == calc::v5)
-         emplar_nonewald_cu<calc::V5>();
-      else if (vers == calc::v6)
-         emplar_nonewald_cu<calc::V6>();
-   } else if (empole_electyp == elec_t::EWALD) {
+   if (use_ewald()) {
       if (vers == calc::v0)
          emplar_ewald_cu<calc::V0>();
       else if (vers == calc::v1)
@@ -1318,6 +1304,19 @@ void emplar_cu(int vers)
          emplar_ewald_cu<calc::V5>();
       else if (vers == calc::v6)
          emplar_ewald_cu<calc::V6>();
+   } else {
+      if (vers == calc::v0)
+         emplar_nonewald_cu<calc::V0>();
+      else if (vers == calc::v1)
+         emplar_nonewald_cu<calc::V1>();
+      // else if (vers == calc::v3)
+      //    emplar_nonewald_cu<calc::V3>();
+      else if (vers == calc::v4)
+         emplar_nonewald_cu<calc::V4>();
+      else if (vers == calc::v5)
+         emplar_nonewald_cu<calc::V5>();
+      else if (vers == calc::v6)
+         emplar_nonewald_cu<calc::V6>();
    }
 }
 TINKER_NAMESPACE_END
