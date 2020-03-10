@@ -80,9 +80,22 @@ inline void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz,
 }
 
 
+__device__
+inline void atomic_add(fixed vxx, fixed vyx, fixed vzx, fixed vyy, fixed vzy,
+                       fixed vzz, fixed (*buffer)[8], size_t offset = 0)
+{
+   atomic_add(vxx, buffer[offset], 0);
+   atomic_add(vyx, buffer[offset], 1);
+   atomic_add(vzx, buffer[offset], 2);
+   atomic_add(vyy, buffer[offset], 3);
+   atomic_add(vzy, buffer[offset], 4);
+   atomic_add(vzz, buffer[offset], 5);
+}
+
+
 template <class G, class T>
 __device__
-inline G to_grad_prec_cu(T val)
+inline G to_cu(T val)
 {
    if CONSTEXPR (std::is_same<G, fixed>::value)
       return static_cast<G>(static_cast<long long>(val * 0x100000000ull));

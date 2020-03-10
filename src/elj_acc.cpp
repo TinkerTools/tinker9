@@ -41,7 +41,7 @@ void elj_acc1()
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
-      MAYBE_UNUSED real gxi = 0, gyi = 0, gzi = 0;
+      MAYBE_UNUSED grad_prec gxi = 0, gyi = 0, gzi = 0;
 
 
       int nvlsti = vlst->nlst[i];
@@ -85,9 +85,9 @@ void elj_acc1()
                real dedx = de * xr;
                real dedy = de * yr;
                real dedz = de * zr;
-               gxi += dedx;
-               gyi += dedy;
-               gzi += dedz;
+               gxi += to_acc<grad_prec>(dedx);
+               gyi += to_acc<grad_prec>(dedy);
+               gzi += to_acc<grad_prec>(dedz);
                atomic_add(-dedx, gx, k);
                atomic_add(-dedy, gy, k);
                atomic_add(-dedz, gz, k);

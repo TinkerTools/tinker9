@@ -37,6 +37,14 @@ void atomic_add(T value, fixed* buffer, size_t offset = 0)
 }
 
 
+#pragma acc routine seq
+inline void atomic_add(fixed value, fixed* buffer, size_t offset = 0)
+{
+   #pragma acc atomic update
+   buffer[offset] += value;
+}
+
+
 /**
  * \ingroup atomic
  * \brief Add virial to the virial buffer.
@@ -80,5 +88,16 @@ template <class T>
 T to_flt_acc(fixed val)
 {
    return static_cast<T>(static_cast<long long>(val)) / 0x100000000ull;
+}
+
+
+#pragma acc routine seq
+template <class G, class T>
+G to_acc(T val)
+{
+   if CONSTEXPR (std::is_same<G, fixed>::value)
+      return static_cast<G>(static_cast<long long>(val * 0x100000000ull));
+   else
+      return static_cast<G>(val);
 }
 TINKER_NAMESPACE_END
