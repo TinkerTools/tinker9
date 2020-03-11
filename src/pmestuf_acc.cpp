@@ -1,0 +1,5 @@
+#include "pmestuf.h"
+
+
+TINKER_NAMESPACE_BEGIN
+TINKER_NAMESPACE_END

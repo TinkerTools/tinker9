@@ -1,7 +1,7 @@
 #include "elec.h"
 #include "io_fort_str.h"
 #include "md.h"
-#include "pme.h"
+#include "pmestuf.h"
 #include "potent.h"
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/limits.hh>
@@ -18,8 +18,12 @@ bool use_ewald()
    return limits::use_ewald;
 }
 
-static void pole_data_(rc_op op)
+namespace {
+void pole_data(rc_op op)
 {
+   if (!use_potent(mpole_term) && !use_potent(polar_term))
+      return;
+
    if (op & rc_dealloc) {
       darray::deallocate(zaxis, pole, rpole, udir, udirp, uind, uinp);
 
@@ -112,14 +116,15 @@ static void pole_data_(rc_op op)
       darray::copyin(WAIT_NEW_Q, n, pole, polebuf.data());
    }
 }
+}
 
 void elec_data(rc_op op)
 {
    if (!use_elec())
       return;
 
-   rc_man pole42_{pole_data_, op};
-   rc_man pme42_{pme_data, op};
+   rc_man pole42{pole_data, op};
+   rc_man pme42{pme_data, op};
 }
 
 void elec_init(int vers)
@@ -140,17 +145,17 @@ void elec_init(int vers)
 #if TINKER_CUDART
       if (pltfm_config & CU_PLTFM) {
          if (epme_unit.valid()) {
-            bspline_fill_cu(epme_unit, 3);
+            bspline_fill(epme_unit, 3);
          }
 
 
          if (ppme_unit.valid() && (ppme_unit != epme_unit)) {
-            bspline_fill_cu(ppme_unit, 2);
+            bspline_fill(ppme_unit, 2);
          }
 
 
          if (pvpme_unit.valid()) {
-            bspline_fill_cu(pvpme_unit, 2);
+            bspline_fill(pvpme_unit, 2);
          }
       }
 #endif

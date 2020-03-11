@@ -5,7 +5,7 @@
 #include "md.h"
 #include "named_struct.h"
 #include "nblist.h"
-#include "pme.h"
+#include "pmestuf.h"
 #include "potent.h"
 #include "seq_image.h"
 #include "seq_pair_field.h"
@@ -29,7 +29,7 @@ void dfield_ewald_recip_self_acc(real (*field)[3])
    else
       pme_conv(pu);
    fftback(pu);
-   fphi_mpole(pu, fphi);
+   fphi_mpole(pu);
    fphi_to_cphi(pu, fphi, cphi);
 
    #pragma acc parallel loop independent async deviceptr(field,cphi,rpole)

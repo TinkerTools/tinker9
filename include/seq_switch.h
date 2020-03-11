@@ -7,7 +7,7 @@ TINKER_NAMESPACE_BEGIN
  * \ingroup ff
  * \brief Smooth function `F: [cut,off]->[1,0]`.
  *
- * Derived from the second order smooth step function
+ * Derived from the 5th order `smoothstep` function (-S2(x) + 1)
  * \f[ S_2: [0,1]\rightarrow[0,1] \f]
  * \f[ S_2(x) = 6 x^5 - 15 x^4 + 10 x^3 \f]
  *

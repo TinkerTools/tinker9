@@ -137,7 +137,10 @@ void echarge_ewald(int vers)
 }
 
 
-void echarge_ewald_recip_self(int vers) {}
+void echarge_ewald_recip_self(int vers)
+{
+   echarge_ewald_recip_self_acc(vers);
+}
 
 
 void echarge_ewald_real(int vers)

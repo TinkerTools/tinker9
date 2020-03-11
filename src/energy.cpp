@@ -32,11 +32,11 @@ void energy_data(rc_op op)
 
    rc_man evdw42{evdw_data, op};
 
-   rc_man echarge42{echarge_data, op};
-
    // Must call elec_data() before any electrostatics routine.
 
    rc_man elec42{elec_data, op};
+
+   rc_man echarge42{echarge_data, op};
 
    rc_man empole42{empole_data, op};
    rc_man epolar42{epolar_data, op};

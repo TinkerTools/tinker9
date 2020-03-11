@@ -4,7 +4,7 @@
 #include "md.h"
 #include "named_struct.h"
 #include "nblist.h"
-#include "pme.h"
+#include "pmestuf.h"
 #include "seq_image.h"
 #include "seq_pair_mpole.h"
 #include "switch.h"
@@ -246,7 +246,7 @@ void empole_ewald_recip_acc1()
       pme_conv(pu);
    }
    fftback(pu);
-   fphi_mpole(pu, fphi);
+   fphi_mpole(pu);
    fphi_to_cphi(pu, fphi, cphi);
 
    auto& st = *pu;

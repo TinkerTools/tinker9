@@ -3,6 +3,7 @@
 #include "error.h"
 #include "mathfunc.h"
 #include "md.h"
+#include "pmestuf.h"
 #include "potent.h"
 #include "tinker_rt.h"
 #include <tinker/detail/ewald.hh>
@@ -121,7 +122,8 @@ void pme_init(int vers)
       darray::zero(PROCEED_NEW_Q, buffer_size(), vir_m);
 }
 
-static void pme_data1_(rc_op op)
+namespace {
+void pme_data1(rc_op op)
 {
    if (op & rc_dealloc) {
       PMEUnit::clear();
@@ -203,133 +205,14 @@ static void pme_data1_(rc_op op)
 #endif
    }
 }
+}
 
 void pme_data(rc_op op)
 {
    if (!use_ewald())
       return;
 
-   rc_man pme42_{pme_data1_, op};
-   rc_man fft42_{fft_data, op};
-}
-TINKER_NAMESPACE_END
-
-
-TINKER_NAMESPACE_BEGIN
-void pme_conv(PMEUnit pme_u)
-{
-   pme_conv_acc(pme_u, nullptr);
-}
-
-
-void pme_conv(PMEUnit pme_u, virial_buffer gpu_vir)
-{
-   pme_conv_acc(pme_u, gpu_vir);
-}
-
-
-void rpole_to_cmp()
-{
-   rpole_to_cmp_acc();
-}
-
-
-void cmp_to_fmp(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
-{
-   cmp_to_fmp_acc(pme_u, cmp, fmp);
-}
-
-
-void cuind_to_fuind(PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3],
-                    real (*fuind)[3], real (*fuinp)[3])
-{
-   cuind_to_fuind_acc(pme_u, cind, cinp, fuind, fuinp);
-}
-
-
-void fphi_to_cphi(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
-{
-   fphi_to_cphi_acc(pme_u, fphi, cphi);
-}
-
-
-void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
-{
-   int bso = pme_u->bsorder;
-   if (bso != 5)
-      TINKER_THROW(format("grid_mpole(): bsorder is {}; must be 5.\n", bso));
-
-
-#if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
-      grid_mpole_cu(pme_u, fmp);
-   else
-#endif
-      grid_mpole_acc(pme_u, fmp);
-}
-
-
-void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
-{
-   int bso = pme_u->bsorder;
-   if (bso != 5)
-      TINKER_THROW(format("grid_uind(): bsorder is {}; must be 5.\n", bso));
-
-
-#if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
-      grid_uind_cu(pme_u, fuind, fuinp);
-   else
-#endif
-      grid_uind_acc(pme_u, fuind, fuinp);
-}
-
-
-void fphi_mpole(PMEUnit pme_u, real (*fphi)[20])
-{
-   int bso = pme_u->bsorder;
-   if (bso != 5)
-      TINKER_THROW(format("fphi_mpole(): bsorder is {}; must be 5.\n", bso));
-
-
-#if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
-      fphi_mpole_cu(pme_u, fphi);
-   else
-#endif
-      fphi_mpole_acc(pme_u, fphi);
-}
-
-
-void fphi_uind(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10],
-               real (*fdip_sum_phi)[20])
-{
-   int bso = pme_u->bsorder;
-   if (bso != 5)
-      TINKER_THROW(format("fphi_uind(): bsorder is {}; must be 5.\n", bso));
-
-
-#if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
-      fphi_uind_cu(pme_u, fdip_phi1, fdip_phi2, fdip_sum_phi);
-   else
-#endif
-      fphi_uind_acc(pme_u, fdip_phi1, fdip_phi2, fdip_sum_phi);
-}
-
-
-void fphi_uind2(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10])
-{
-   int bso = pme_u->bsorder;
-   if (bso != 5)
-      TINKER_THROW(format("fphi_uind2(): bsorder is {}; must be 5.\n", bso));
-
-
-#if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
-      fphi_uind2_cu(pme_u, fdip_phi1, fdip_phi2);
-   else
-#endif
-      fphi_uind2_acc(pme_u, fdip_phi1, fdip_phi2);
+   rc_man pme42{pme_data1, op};
+   rc_man fft42{fft_data, op};
 }
 TINKER_NAMESPACE_END
