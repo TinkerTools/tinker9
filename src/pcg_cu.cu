@@ -1,5 +1,6 @@
 #include "cudalib.h"
 #include "epolar.h"
+#include "field.h"
 #include "induce.h"
 #include "io_print.h"
 #include "launch.h"

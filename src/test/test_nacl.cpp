@@ -194,13 +194,13 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
 #define COMPARE_CODE_BLOCK2_                                                   \
    {                                                                           \
       zero_egv();                                                              \
-      elec_init(calc::v0);                                                     \
+      mpole_init(calc::v0);                                                    \
       empole(calc::v0);                                                        \
       torque(calc::v0);                                                        \
       COMPARE_ENERGY_(em, ref_eng, eps);                                       \
                                                                                \
       zero_egv();                                                              \
-      elec_init(calc::v1);                                                     \
+      mpole_init(calc::v1);                                                    \
       empole(calc::v1);                                                        \
       torque(calc::v1);                                                        \
       COMPARE_ENERGY_(em, ref_eng, eps);                                       \
@@ -208,27 +208,27 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
       COMPARE_VIR2_(vir_em, vir_trq, ref_v, eps_v);                            \
                                                                                \
       zero_egv();                                                              \
-      elec_init(calc::v3);                                                     \
+      mpole_init(calc::v3);                                                    \
       empole(calc::v3);                                                        \
       torque(calc::v3);                                                        \
       COMPARE_ENERGY_(em, ref_eng, eps);                                       \
       COMPARE_COUNT_(nem, ref_count);                                          \
                                                                                \
       zero_egv();                                                              \
-      elec_init(calc::v4);                                                     \
+      mpole_init(calc::v4);                                                    \
       empole(calc::v4);                                                        \
       torque(calc::v4);                                                        \
       COMPARE_ENERGY_(em, ref_eng, eps);                                       \
       COMPARE_GRADIENT_(ref_grad, eps_g);                                      \
                                                                                \
       zero_egv();                                                              \
-      elec_init(calc::v5);                                                     \
+      mpole_init(calc::v5);                                                    \
       empole(calc::v5);                                                        \
       torque(calc::v5);                                                        \
       COMPARE_GRADIENT_(ref_grad, eps_g);                                      \
                                                                                \
       zero_egv();                                                              \
-      elec_init(calc::v6);                                                     \
+      mpole_init(calc::v6);                                                    \
       empole(calc::v6);                                                        \
       torque(calc::v6);                                                        \
       COMPARE_GRADIENT_(ref_grad, eps_g);                                      \

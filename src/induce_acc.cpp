@@ -1,6 +1,7 @@
 #include "add.h"
 #include "epolar.h"
 #include "error.h"
+#include "field.h"
 #include "gpu_card.h"
 #include "induce.h"
 #include "io_print.h"

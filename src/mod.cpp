@@ -3,7 +3,6 @@
 #include "gpu_card.h"
 
 #include "box.h"
-#include "elec.h"
 #include "group.h"
 #include "molecule.h"
 #include "nblist.h"

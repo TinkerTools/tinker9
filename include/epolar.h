@@ -1,9 +1,7 @@
 #pragma once
-#include "darray.h"
 #include "elec.h"
 #include "energy_buffer.h"
-#include "field.h"
-#include "rc_man.h"
+#include "pmestuf.h"
 
 TINKER_NAMESPACE_BEGIN
 TINKER_EXTERN real u1scale, u2scale, u3scale, u4scale;

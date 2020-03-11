@@ -136,7 +136,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    calc_mplar = calc_mplar && (mlist_version() == NBL_SPATIAL);
    if (calc_mplar) {
       if (tscfg("emplar")) {
-         elec_init(vers);
+         mpole_init(vers);
          emplar(vers);
          torque(vers);
       }
@@ -145,7 +145,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       calc_mpole = calc_mpole && tscfg("empole");
       calc_polar = calc_polar && tscfg("epolar");
       if (calc_mpole || calc_polar) {
-         elec_init(vers);
+         mpole_init(vers);
          if (calc_mpole)
             empole(vers);
          if (calc_polar)

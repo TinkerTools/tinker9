@@ -6,7 +6,6 @@
 
 TINKER_NAMESPACE_BEGIN
 extern real c2scale, c3scale, c4scale, c5scale;
-extern real* pchg;
 extern int ncexclude;
 extern int (*cexclude)[2];
 extern real* cexclude_scale;

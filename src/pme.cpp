@@ -9,6 +9,7 @@
 #include <tinker/detail/ewald.hh>
 #include <tinker/detail/pme.hh>
 
+
 TINKER_NAMESPACE_BEGIN
 bool PME::Params::operator==(const Params& st) const
 {
@@ -18,6 +19,7 @@ bool PME::Params::operator==(const Params& st) const
    return ans;
 }
 
+
 PME::Params::Params(real a, int n1, int n2, int n3, int o)
    : aewald(a)
    , nfft1(n1)
@@ -25,6 +27,7 @@ PME::Params::Params(real a, int n1, int n2, int n3, int o)
    , nfft3(n3)
    , bsorder(o)
 {}
+
 
 void PME::set_params(const PME::Params& p)
 {
@@ -35,16 +38,19 @@ void PME::set_params(const PME::Params& p)
    bsorder = p.bsorder;
 }
 
+
 PME::Params PME::get_params() const
 {
    Params p0(aewald, nfft1, nfft2, nfft3, bsorder);
    return p0;
 }
 
+
 bool PME::operator==(const Params& p) const
 {
    return get_params() == p;
 }
+
 
 PME::~PME()
 {
@@ -52,7 +58,8 @@ PME::~PME()
    darray::deallocate(igrid, thetai1, thetai2, thetai3);
 }
 
-static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique)
+namespace {
+void pme_op_alloc(PMEUnit& unit, const PME::Params& p, bool unique)
 {
    unit.close();
    for (PMEUnit idx = 0; idx < PMEUnit::size(); idx = idx + 1) {
@@ -77,7 +84,8 @@ static void pme_op_alloc_(PMEUnit& unit, const PME::Params& p, bool unique)
    }
 }
 
-static void pme_op_copyin_(PMEUnit unit)
+
+void pme_op_copyin(PMEUnit unit)
 {
    if (!unit.valid())
       return;
@@ -111,108 +119,95 @@ static void pme_op_copyin_(PMEUnit unit)
 
    unit.update_deviceptr(st, WAIT_NEW_Q);
 }
+}
 TINKER_NAMESPACE_END
 
+
 TINKER_NAMESPACE_BEGIN
-void pme_init(int vers)
-{
-   rpole_to_cmp();
-
-   if (vir_m)
-      darray::zero(PROCEED_NEW_Q, buffer_size(), vir_m);
-}
-
-namespace {
-void pme_data1(rc_op op)
-{
-   if (op & rc_dealloc) {
-      PMEUnit::clear();
-
-      darray::deallocate(cmp, fmp, cphi, fphi);
-
-      if (use_potent(polar_term)) {
-         darray::deallocate(fuind, fuinp, fdip_phi1, fdip_phi2, cphidp, fphidp);
-
-         darray::deallocate(vir_m);
-      }
-
-      epme_unit.close();
-      ppme_unit.close();
-      pvpme_unit.close();
-      dpme_unit.close();
-   }
-
-   if (op & rc_alloc) {
-      assert(PMEUnit::size() == 0);
-
-      darray::allocate(n, &cmp, &fmp, &cphi, &fphi);
-
-      if (use_potent(polar_term)) {
-         darray::allocate(n, &fuind, &fuinp, &fdip_phi1, &fdip_phi2, &cphidp,
-                          &fphidp);
-
-         if (rc_flag & calc::virial) {
-            darray::allocate(buffer_size(), &vir_m);
-         } else {
-            vir_m = nullptr;
-         }
-      } else {
-         vir_m = nullptr;
-      }
-
-      bool unique_grids = false;
-
-      // electrostatics
-      epme_unit.close();
-      if (use_potent(mpole_term)) {
-         unique_grids = false;
-         PME::Params p(ewald::aeewald, pme::nefft1, pme::nefft2, pme::nefft3,
-                       pme::bseorder);
-         pme_op_alloc_(epme_unit, p, unique_grids);
-      }
-
-      // polarization
-      ppme_unit.close();
-      pvpme_unit.close();
-      if (use_potent(polar_term)) {
-         PME::Params p(ewald::apewald, pme::nefft1, pme::nefft2, pme::nefft3,
-                       pme::bsporder);
-         pme_op_alloc_(ppme_unit, p, unique_grids);
-         if (rc_flag & calc::virial) {
-            unique_grids = true;
-            pme_op_alloc_(pvpme_unit, p, unique_grids);
-         }
-      }
-
-      // dispersion
-      dpme_unit.close();
-      if (false) {
-         unique_grids = false;
-         PME::Params p(ewald::adewald, pme::ndfft1, pme::ndfft2, pme::ndfft3,
-                       pme::bsdorder);
-         pme_op_alloc_(dpme_unit, p, unique_grids);
-      }
-   }
-
-   if (op & rc_init) {
-      pme_op_copyin_(epme_unit);
-      pme_op_copyin_(ppme_unit);
-      pme_op_copyin_(pvpme_unit);
-      pme_op_copyin_(dpme_unit);
-
-#if TINKER_CUDART
-      pme_cuda_func_config();
-#endif
-   }
-}
-}
-
 void pme_data(rc_op op)
 {
    if (!use_ewald())
       return;
 
-   rc_man pme42{pme_data1, op};
+
+   if (use_potent(charge_term)) {
+   }
+
+
+   if (use_potent(mpole_term) || use_potent(polar_term)) {
+      if (op & rc_dealloc) {
+         PMEUnit::clear();
+         darray::deallocate(cmp, fmp, cphi, fphi);
+         if (use_potent(polar_term)) {
+            darray::deallocate(fuind, fuinp, fdip_phi1, fdip_phi2, cphidp,
+                               fphidp);
+
+            darray::deallocate(vir_m);
+         }
+         epme_unit.close();
+         ppme_unit.close();
+         pvpme_unit.close();
+      }
+
+
+      if (op & rc_alloc) {
+         assert(PMEUnit::size() == 0);
+         darray::allocate(n, &cmp, &fmp, &cphi, &fphi);
+         if (use_potent(polar_term)) {
+            darray::allocate(n, &fuind, &fuinp, &fdip_phi1, &fdip_phi2, &cphidp,
+                             &fphidp);
+            if (rc_flag & calc::virial)
+               darray::allocate(buffer_size(), &vir_m);
+            else
+               vir_m = nullptr;
+         } else {
+            vir_m = nullptr;
+         }
+
+
+         bool unique_grids = false;
+
+
+         // electrostatics
+         epme_unit.close();
+         if (use_potent(mpole_term)) {
+            unique_grids = false;
+            PME::Params p(ewald::aeewald, pme::nefft1, pme::nefft2, pme::nefft3,
+                          pme::bseorder);
+            pme_op_alloc(epme_unit, p, unique_grids);
+         }
+
+
+         // polarization
+         ppme_unit.close();
+         pvpme_unit.close();
+         if (use_potent(polar_term)) {
+            PME::Params p(ewald::apewald, pme::nefft1, pme::nefft2, pme::nefft3,
+                          pme::bsporder);
+            pme_op_alloc(ppme_unit, p, unique_grids);
+            if (rc_flag & calc::virial) {
+               unique_grids = true;
+               pme_op_alloc(pvpme_unit, p, unique_grids);
+            }
+         }
+      }
+
+
+      if (op & rc_init) {
+         pme_op_copyin(epme_unit);
+         pme_op_copyin(ppme_unit);
+         pme_op_copyin(pvpme_unit);
+      }
+   }
+
+
+#if TINKER_CUDART
+   if (op & rc_init) {
+      pme_cuda_func_config();
+   }
+#endif
+
+
    rc_man fft42{fft_data, op};
 }
 TINKER_NAMESPACE_END

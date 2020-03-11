@@ -69,7 +69,7 @@
    - Evaluate bonded terms.
    - Evaluate nonbonded terms.
       - `evdw()`.
-      - `elec_init()`:
+      - `mpole_init()`:
          - Return if `!use_elec()`.
          - If `calc::grad`, zero out torques.
          - If `calc::virial`, zero out torque virial buffer.

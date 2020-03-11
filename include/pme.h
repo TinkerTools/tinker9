@@ -50,7 +50,6 @@ struct PME
 using PMEUnit = GenericUnit<PME, GenericUnitVersion::EnableOnDevice>;
 TINKER_EXTERN PMEUnit epme_unit;  // electrostatic
 TINKER_EXTERN PMEUnit ppme_unit;  // polarization
-TINKER_EXTERN PMEUnit dpme_unit;  // dispersion
 TINKER_EXTERN PMEUnit pvpme_unit; // polarization virial
 
 TINKER_EXTERN pointer<real, 10> cmp, fmp, cphi;
@@ -70,6 +69,4 @@ void fft_data(rc_op op);
 void fftfront(PMEUnit pme_u);
 void fftback(PMEUnit pme_u);
 using FFTPlanUnit = GenericUnit<FFTPlan, GenericUnitVersion::DisableOnDevice>;
-
-void pme_init(int vers);
 TINKER_NAMESPACE_END

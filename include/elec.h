@@ -1,33 +1,23 @@
 #pragma once
-#include "darray.h"
 #include "energy_buffer.h"
 #include "rc_man.h"
-#include "torque.h"
 
 
 TINKER_NAMESPACE_BEGIN
-/// local frame definitions
-enum
-{
-   pole_none = 0,
-   pole_z_only = 1,
-   pole_z_then_x = 2,
-   pole_bisector = 3,
-   pole_z_bisect = 4,
-   pole_3_fold = 5
-};
+extern real electric, dielec;
+bool use_ewald();
 
-/// @brief
-/// local axis type and x,y,z-axis defining atoms for each multipole site
-struct LocalFrame
-{
-   int zaxis;  ///< z-axis defining atom, starting from 0
-   int xaxis;  ///< x-axis defining atom, starting from 0
-   int yaxis;  ///< y-axis defining atom, starting from ONE
-   int polaxe; ///< local frame definition
-};
 
-// PME: 0, x, y, z, xx, yy, zz, xy, xz, yz
+//====================================================================//
+
+
+extern real* pchg;
+void pchg_data(rc_op);
+
+
+//====================================================================//
+
+
 enum
 {
    mpl_pme_0 = 0,
@@ -43,42 +33,60 @@ enum
    mpl_total = 10,
    mpl_pme_yx = mpl_pme_xy,
    mpl_pme_zx = mpl_pme_xz,
-   mpl_pme_zy = mpl_pme_yz
+   mpl_pme_zy = mpl_pme_yz,
+
+
+   pole_none = 0,
+   pole_z_only = 1,
+   pole_z_then_x = 2,
+   pole_bisector = 3,
+   pole_z_bisect = 4,
+   pole_3_fold = 5
 };
 
-TINKER_EXTERN real electric, dielec;
 
-TINKER_EXTERN pointer<LocalFrame> zaxis;
+/**
+ * \brief
+ * Local axis type and x,y,z-axis defining atoms for each multipole site.
+ */
+struct LocalFrame
+{
+   int zaxis;  ///< Z-axis defining atom, starting from 0.
+   int xaxis;  ///< X-axis defining atom, starting from 0.
+   int yaxis;  ///< Y-axis defining atom, starting from ONE.
+   int polaxe; ///< Local frame definition.
+};
+extern LocalFrame* zaxis;
+extern real (*pole)[mpl_total];
+extern real (*rpole)[mpl_total];
+extern real *trqx, *trqy, *trqz;
+extern virial_buffer vir_trq;
+extern real (*udir)[3];
+extern real (*udirp)[3];
+extern real (*uind)[3];
+extern real (*uinp)[3];
 
-/// traceless Cartesian multipoles in the local frame
-TINKER_EXTERN pointer<real, mpl_total> pole;
-/// traceless Cartesian multipoles in the global frame
-TINKER_EXTERN pointer<real, mpl_total> rpole;
 
-/// x, y, and z components of torques on multipole site
-/// @{
-TINKER_EXTERN pointer<real> trqx, trqy, trqz;
-/// @}
-/// internal virial Cartesian tensor due to the torques
-TINKER_EXTERN virial_buffer vir_trq;
+void pole_data(rc_op);
 
-/// direct induced dipole components at each multipole site
-TINKER_EXTERN pointer<real, 3> udir;
-/// direct induced dipoles in field used for energy terms
-TINKER_EXTERN pointer<real, 3> udirp;
-/// mutual induced dipole components at each multipole site
-TINKER_EXTERN pointer<real, 3> uind;
-/// mutual induced dipoles in field used for energy terms
-TINKER_EXTERN pointer<real, 3> uinp;
+
+//====================================================================//
+
 
 void elec_data(rc_op op);
-int use_elec();
-bool use_ewald();
-void elec_init(int vers);
 
 
+//====================================================================//
+
+
+void mpole_init(int vers);
 void chkpole();
 void rotpole();
+void torque(int vers);
+
+
 void chkpole_acc();
 void rotpole_acc();
+void torque_acc(int vers);
+// void torque_cu(int vers);
 TINKER_NAMESPACE_END

@@ -8,7 +8,6 @@
 
 TINKER_NAMESPACE_BEGIN
 real c2scale, c3scale, c4scale, c5scale;
-real* pchg;
 int ncexclude;
 int (*cexclude)[2];
 real* cexclude_scale;

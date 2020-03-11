@@ -7,31 +7,59 @@
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/mpole.hh>
 
+
 TINKER_NAMESPACE_BEGIN
-int use_elec()
-{
-   return use_potent(mpole_term) || use_potent(polar_term);
-}
+real electric, dielec;
+
 
 bool use_ewald()
 {
    return limits::use_ewald;
 }
 
-namespace {
+
+//====================================================================//
+
+
+real* pchg;
+
+
+void pchg_data(rc_op op)
+{
+   if (!use_potent(charge_term))
+      return;
+}
+
+
+//====================================================================//
+
+
+LocalFrame* zaxis;
+real (*pole)[mpl_total];
+real (*rpole)[mpl_total];
+real *trqx, *trqy, *trqz;
+virial_buffer vir_trq;
+real (*udir)[3];
+real (*udirp)[3];
+real (*uind)[3];
+real (*uinp)[3];
+
+
 void pole_data(rc_op op)
 {
    if (!use_potent(mpole_term) && !use_potent(polar_term))
       return;
 
+
    if (op & rc_dealloc) {
       darray::deallocate(zaxis, pole, rpole, udir, udirp, uind, uinp);
-
       darray::deallocate(trqx, trqy, trqz, vir_trq);
    }
 
+
    if (op & rc_alloc) {
       darray::allocate(n, &zaxis, &pole, &rpole);
+
 
       if (use_potent(polar_term)) {
          darray::allocate(n, &uind, &uinp, &udir, &udirp);
@@ -42,6 +70,7 @@ void pole_data(rc_op op)
          udirp = nullptr;
       }
 
+
       if (rc_flag & calc::grad) {
          darray::allocate(n, &trqx, &trqy, &trqz);
       } else {
@@ -49,7 +78,6 @@ void pole_data(rc_op op)
          trqy = nullptr;
          trqz = nullptr;
       }
-
       if (rc_flag & calc::virial) {
          darray::allocate(buffer_size(), &vir_trq);
          virial_buffers.push_back(vir_trq);
@@ -58,18 +86,13 @@ void pole_data(rc_op op)
       }
    }
 
-   if (op & rc_init) {
-      electric = chgpot::electric;
-      dielec = chgpot::dielec;
 
+   if (op & rc_init) {
       // Regarding chkpole routine:
-      // 1. The chiralities of the atoms will not change in the simulations;
-      // 2. chkpole routine has been called in mechanic routine so that the
-      // values in mpole::pole are correct;
-      // 3. yaxis values are directly copied from Tinker, and are NOT
-      // subtracted by 1 becasue of the checks in chkpole;
-      // 4. GPU chkpole kernel is necessary when unexpected changes of
-      // charalities may happen, e.g. in Monte Carlo simulations.
+      // 1. The chiralities of the atoms are unlikely to change in MD; but
+      // still possible in Monte Carlo;
+      // 2. yaxis values are directly copied from Tinker, and are NOT
+      // subtracted by 1 becasue of the checks in chkpole.
       static_assert(sizeof(LocalFrame) == 4 * sizeof(int), "");
       std::vector<LocalFrame> zaxisbuf(n);
       for (int i = 0; i < n; ++i) {
@@ -94,6 +117,7 @@ void pole_data(rc_op op)
       }
       darray::copyin(WAIT_NEW_Q, n, zaxis, zaxisbuf.data());
 
+
       std::vector<double> polebuf(mpl_total * n);
       for (int i = 0; i < n; ++i) {
          int b1 = mpl_total * i;
@@ -116,49 +140,54 @@ void pole_data(rc_op op)
       darray::copyin(WAIT_NEW_Q, n, pole, polebuf.data());
    }
 }
-}
+
+
+//====================================================================//
+
 
 void elec_data(rc_op op)
 {
-   if (!use_elec())
-      return;
-
+   if (op & rc_init) {
+      electric = chgpot::electric;
+      dielec = chgpot::dielec;
+   }
+   rc_man pchg42{pchg_data, op};
    rc_man pole42{pole_data, op};
    rc_man pme42{pme_data, op};
 }
 
-void elec_init(int vers)
+
+//====================================================================//
+
+
+void mpole_init(int vers)
 {
-   if (!use_elec())
+   if (!use_potent(mpole_term) && !use_potent(polar_term))
       return;
+
 
    if (vers & calc::grad)
       darray::zero(PROCEED_NEW_Q, n, trqx, trqy, trqz);
    if (vers & calc::virial)
       darray::zero(PROCEED_NEW_Q, buffer_size(), vir_trq);
 
+
    chkpole();
    rotpole();
 
+
    if (use_ewald()) {
-      pme_init(vers);
-#if TINKER_CUDART
+      rpole_to_cmp();
+      if (vir_m)
+         darray::zero(PROCEED_NEW_Q, buffer_size(), vir_m);
       if (pltfm_config & CU_PLTFM) {
-         if (epme_unit.valid()) {
+         if (epme_unit.valid())
             bspline_fill(epme_unit, 3);
-         }
-
-
-         if (ppme_unit.valid() && (ppme_unit != epme_unit)) {
+         if (ppme_unit.valid() && (ppme_unit != epme_unit))
             bspline_fill(ppme_unit, 2);
-         }
-
-
-         if (pvpme_unit.valid()) {
+         if (pvpme_unit.valid())
             bspline_fill(pvpme_unit, 2);
-         }
       }
-#endif
    }
 }
 
@@ -172,5 +201,16 @@ void chkpole()
 void rotpole()
 {
    rotpole_acc();
+}
+
+
+void torque(int vers)
+{
+   // #if TINKER_CUDART
+   //    if (pltfm_config & CU_PLTFM)
+   //       torque_cu(vers);
+   //    else
+   // #endif
+   torque_acc(vers);
 }
 TINKER_NAMESPACE_END
