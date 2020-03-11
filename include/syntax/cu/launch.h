@@ -1,7 +1,7 @@
 #pragma once
 #include "cudalib.h"
-#include "gpu_card.h"
 #include "error.h"
+#include "gpu_card.h"
 
 
 TINKER_NAMESPACE_BEGIN
@@ -19,7 +19,7 @@ TINKER_NAMESPACE_BEGIN
 template <class K, class... Ts>
 void launch_k4(cudaStream_t st, size_t sh, int bs, int np, K k, Ts&&... a)
 {
-   int gs = (np + bs - 1) / bs;;
+   int gs = (np + bs - 1) / bs;
    k<<<gs, bs, sh, st>>>(std::forward<Ts>(a)...);
    if (st == nullptr) {
       check_rt(cudaStreamSynchronize(nullptr));

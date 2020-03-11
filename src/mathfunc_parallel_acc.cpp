@@ -1,6 +1,6 @@
+#include "mathfunc_parallel_acc.h"
 #include "acclib.h"
 #include "deduce_ptr.h"
-#include "mathfunc_parallel_acc.h"
 #include "wait_queue.h"
 #include <cassert>
 

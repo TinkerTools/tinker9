@@ -1,7 +1,7 @@
 #include "nblist.h"
 #include "darray.h"
-#include "epolar.h"
 #include "elec.h"
+#include "epolar.h"
 #include "evdw.h"
 #include "md.h"
 #include "platform.h"

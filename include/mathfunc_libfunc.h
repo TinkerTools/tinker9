@@ -7,45 +7,45 @@
 
 
 #if TINKER_REAL_SIZE == 8
-#   define REAL_SQRT sqrt
-#   define REAL_EXP exp
-#   define REAL_FLOOR floor
-#   define REAL_ABS fabs
-#   define REAL_POW pow
+#   define REAL_SQRT     sqrt
+#   define REAL_EXP      exp
+#   define REAL_FLOOR    floor
+#   define REAL_ABS      fabs
+#   define REAL_POW      pow
 #   define REAL_RECIP(x) (1 / static_cast<double>(x))
 #   define REAL_RSQRT(x) (1 / sqrt(x))
-#   define REAL_COS cos
-#   define REAL_SIN sin
-#   define REAL_ACOS acos
-#   define REAL_ASIN asin
-#   define REAL_ERF erf
-// #   define REAL_ERFC erfc
-#   define REAL_ERFC(x) (1 - erf(x))
-#   define REAL_MIN fmin
-#   define REAL_MAX fmax
-#   define REAL_SIGN copysign
+#   define REAL_COS      cos
+#   define REAL_SIN      sin
+#   define REAL_ACOS     acos
+#   define REAL_ASIN     asin
+#   define REAL_ERF      erf
+#   define REAL_ERFC(x)  (1 - erf(x))
+#   define REAL_MIN      fmin
+#   define REAL_MAX      fmax
+#   define REAL_SIGN     copysign
+// #   define REAL_ERFC     erfc
 #endif
 
 
 #if TINKER_REAL_SIZE == 4
-#   define REAL_SQRT sqrtf
-#   define REAL_EXP expf
-#   define REAL_FLOOR floorf
-#   define REAL_ABS fabsf
-#   define REAL_POW powf
+#   define REAL_SQRT     sqrtf
+#   define REAL_EXP      expf
+#   define REAL_FLOOR    floorf
+#   define REAL_ABS      fabsf
+#   define REAL_POW      powf
 #   define REAL_RECIP(x) (1 / static_cast<float>(x))
 #   define REAL_RSQRT(x) (1 / sqrtf(x))
-#   define REAL_COS cosf
-#   define REAL_SIN sinf
-#   define REAL_ACOS acosf
-#   define REAL_ASIN asinf
-#   define REAL_ERF erff
-// #   define REAL_ERFC erfcf
-// #   define REAL_ERFC(x) (1 - erff(x))
-#   define REAL_ERFC erfcf_hastings
-#   define REAL_MIN fminf
-#   define REAL_MAX fmaxf
-#   define REAL_SIGN copysignf
+#   define REAL_COS      cosf
+#   define REAL_SIN      sinf
+#   define REAL_ACOS     acosf
+#   define REAL_ASIN     asinf
+#   define REAL_ERF      erff
+#   define REAL_ERFC     erfcf_hastings
+#   define REAL_MIN      fminf
+#   define REAL_MAX      fmaxf
+#   define REAL_SIGN     copysignf
+// #   define REAL_ERFC     erfcf
+// #   define REAL_ERFC(x)  (1 - erff(x))
 #endif
 
 

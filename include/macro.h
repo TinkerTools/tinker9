@@ -3,10 +3,10 @@
 
 #if defined(TINKER_GFORTRAN)
 #   define TINKER_MOD(mod, var) __##mod##_MOD_##var
-#   define TINKER_RT(rt) rt##_
+#   define TINKER_RT(rt)        rt##_
 #elif defined(TINKER_IFORT)
 #   define TINKER_MOD(mod, var) mod##_mp_##var##_
-#   define TINKER_RT(rt) rt##_
+#   define TINKER_RT(rt)        rt##_
 #else
 #   error We do not know what Fortran compiler you used to compile the Tinker  \
 library. You should implement these two macros (TINKER_MOD and TINKER_RT) here \
@@ -19,16 +19,16 @@ to mimic its name mangling.
  * \ingroup macro
  * Convert a predefined macro `s` to a string `"s"`.
  */
-#define TINKER_STR(s) TINKER_STR1_(s)
+#define TINKER_STR(s)   TINKER_STR1_(s)
 #define TINKER_STR1_(s) #s
 
 
-#define TINKER_GET_1ST_ARG(a1, ...) a1
-#define TINKER_GET_2ND_ARG(a1, a2, ...) a2
-#define TINKER_GET_3RD_ARG(a1, a2, a3, ...) a3
-#define TINKER_GET_4TH_ARG(a1, a2, a3, a4, ...) a4
-#define TINKER_GET_5TH_ARG(a1, a2, a3, a4, a5, ...) a5
-#define TINKER_GET_6TH_ARG(a1, a2, a3, a4, a5, a6, ...) a6
+#define TINKER_GET_1ST_ARG(a1, ...)                         a1
+#define TINKER_GET_2ND_ARG(a1, a2, ...)                     a2
+#define TINKER_GET_3RD_ARG(a1, a2, a3, ...)                 a3
+#define TINKER_GET_4TH_ARG(a1, a2, a3, a4, ...)             a4
+#define TINKER_GET_5TH_ARG(a1, a2, a3, a4, a5, ...)         a5
+#define TINKER_GET_6TH_ARG(a1, a2, a3, a4, a5, a6, ...)     a6
 #define TINKER_GET_7TH_ARG(a1, a2, a3, a4, a5, a6, a7, ...) a7
 
 
@@ -66,9 +66,9 @@ to mimic its name mangling.
  * \def TINKER_NAMESPACE_END
  * \ingroup macro
  */
-#define TINKER_NAMESPACE tinker
+#define TINKER_NAMESPACE       tinker
 #define TINKER_NAMESPACE_BEGIN namespace TINKER_NAMESPACE {
-#define TINKER_NAMESPACE_END }
+#define TINKER_NAMESPACE_END   }
 
 
 /**
@@ -163,11 +163,11 @@ to mimic its name mangling.
  * \see TINKER_HOST
  */
 #ifndef TINKER_HOST
-#   define TINKER_HOST 0
+#   define TINKER_HOST   0
 #   define TINKER_CUDART 1
 #else
 #   undef TINKER_HOST
-#   define TINKER_HOST 1
+#   define TINKER_HOST   1
 #   define TINKER_CUDART 0
 #endif
 
@@ -214,19 +214,19 @@ to mimic its name mangling.
 
 TINKER_NAMESPACE_BEGIN
 #if TINKER_DOUBLE_PRECISION
-#   define TINKER_REAL_SIZE 8
+#   define TINKER_REAL_SIZE  8
 #   define TINKER_MIXED_SIZE 8
 using real = double;
 using mixed = double;
 #endif
 #if TINKER_MIXED_PRECISION
-#   define TINKER_REAL_SIZE 4
+#   define TINKER_REAL_SIZE  4
 #   define TINKER_MIXED_SIZE 8
 using real = float;
 using mixed = double;
 #endif
 #if TINKER_SINGLE_PRECISION
-#   define TINKER_REAL_SIZE 4
+#   define TINKER_REAL_SIZE  4
 #   define TINKER_MIXED_SIZE 4
 using real = float;
 using mixed = float;

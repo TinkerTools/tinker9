@@ -47,7 +47,7 @@ void test_end();
 void test_mdinit(double t = 0, double atm = 0);
 TINKER_NAMESPACE_END
 
-#define COMPARE_INTS(i1, refi) REQUIRE(i1 == refi)
+#define COMPARE_INTS(i1, refi)       REQUIRE(i1 == refi)
 #define COMPARE_REALS(v1, refv, eps) REQUIRE(v1 == Approx(refv).margin(eps))
 #define COMPARE_ENERGY_(gpuptr, ref_eng, eps)                                  \
    {                                                                           \
