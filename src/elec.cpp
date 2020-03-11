@@ -181,12 +181,20 @@ void mpole_init(int vers)
       if (vir_m)
          darray::zero(PROCEED_NEW_Q, buffer_size(), vir_m);
       if (pltfm_config & CU_PLTFM) {
-         if (epme_unit.valid())
-            bspline_fill(epme_unit, 3);
-         if (ppme_unit.valid() && (ppme_unit != epme_unit))
-            bspline_fill(ppme_unit, 2);
-         if (pvpme_unit.valid())
-            bspline_fill(pvpme_unit, 2);
+         bool precompute_theta = (!TINKER_CU_THETA_ON_THE_FLY_GRID_MPOLE) ||
+            (!TINKER_CU_THETA_ON_THE_FLY_GRID_UIND);
+         if (epme_unit.valid()) {
+            if (precompute_theta)
+               bspline_fill(epme_unit, 3);
+         }
+         if (ppme_unit.valid() && (ppme_unit != epme_unit)) {
+            if (precompute_theta)
+               bspline_fill(ppme_unit, 2);
+         }
+         if (pvpme_unit.valid()) {
+            if (precompute_theta)
+               bspline_fill(pvpme_unit, 2);
+         }
       }
    }
 }

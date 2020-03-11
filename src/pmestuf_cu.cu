@@ -4,15 +4,18 @@
 #include "launch.h"
 #include "md.h"
 #include "named_struct.h"
-#include "pme.h"
+#include "pmestuf.h"
 #include "seq_pme.h"
 #include "spatial.h"
 
 
 TINKER_NAMESPACE_BEGIN
-static constexpr int PME_BLOCKDIM = 64;
+namespace {
+constexpr int PME_BLOCKDIM = 64;
+}
 
 
+// compute theta values on the fly
 template <class T, int bsorder>
 __global__
 void grid_put_cu1(const real* restrict x, const real* restrict y,
@@ -173,6 +176,7 @@ void grid_put_cu1(const real* restrict x, const real* restrict y,
 }
 
 
+// use pre-computed theta values
 template <class T, int bsorder>
 __global__
 void grid_put_cu2(const int* restrict igrid, const real* restrict thetai1,
@@ -269,17 +273,17 @@ void grid_mpole_cu(PMEUnit pme_u, real (*fmp)[10])
 
 
    darray::zero(PROCEED_NEW_Q, 2 * nt, st.qgrid);
-#if 1
-   auto ker = grid_put_cu1<MPOLE, 5>;
-   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
-              (const real*)fmp, nullptr, st.qgrid, recipa, recipb, recipc);
-#elif 0
-   auto ker = grid_put_cu2<MPOLE, 5>;
-   int npa = 5 * 5 * 5 * n;
-   launch_k1s(nonblk, npa, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
-              mspatial_unit->sorted, n, padded_n, n1, n2, n3, (const real*)fmp,
-              nullptr, st.qgrid);
-#endif
+   if (TINKER_CU_THETA_ON_THE_FLY_GRID_MPOLE) {
+      auto ker = grid_put_cu1<MPOLE, 5>;
+      launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
+                 (const real*)fmp, nullptr, st.qgrid, recipa, recipb, recipc);
+   } else {
+      auto ker = grid_put_cu2<MPOLE, 5>;
+      int npa = 5 * 5 * 5 * n;
+      launch_k1s(nonblk, npa, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
+                 mspatial_unit->sorted, n, padded_n, n1, n2, n3,
+                 (const real*)fmp, nullptr, st.qgrid);
+   }
 }
 
 
@@ -293,18 +297,18 @@ void grid_uind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 
 
    darray::zero(PROCEED_NEW_Q, 2 * nt, st.qgrid);
-#if 0
-   auto ker = grid_put_cu1<UIND, 5>;
-   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
-              (const real*)fuind, (const real*)fuinp, st.qgrid, recipa, recipb,
-              recipc);
-#elif 1
-   auto ker = grid_put_cu2<UIND, 5>;
-   int npa = 5 * 5 * 5 * n;
-   launch_k1s(nonblk, npa, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
-              mspatial_unit->sorted, n, padded_n, n1, n2, n3,
-              (const real*)fuind, (const real*)fuinp, st.qgrid);
-#endif
+   if (TINKER_CU_THETA_ON_THE_FLY_GRID_UIND) {
+      auto ker = grid_put_cu1<UIND, 5>;
+      launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
+                 (const real*)fuind, (const real*)fuinp, st.qgrid, recipa,
+                 recipb, recipc);
+   } else {
+      auto ker = grid_put_cu2<UIND, 5>;
+      int npa = 5 * 5 * 5 * n;
+      launch_k1s(nonblk, npa, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
+                 mspatial_unit->sorted, n, padded_n, n1, n2, n3,
+                 (const real*)fuind, (const real*)fuinp, st.qgrid);
+   }
 }
 
 
@@ -365,6 +369,7 @@ void bspline_fill_cu(PMEUnit u, int level)
 }
 
 
+// compute theta values on the fly
 template <class T, int bsorder>
 __global__
 void fphi_get_cu(int n, int nfft1, int nfft2, int nfft3, const real* restrict x,

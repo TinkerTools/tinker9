@@ -36,6 +36,10 @@ void pme_cuda_func_config();
 void bspline_fill_cu(PMEUnit, int level);
 
 
+#define TINKER_CU_THETA_ON_THE_FLY_GRID_MPOLE 1
+#define TINKER_CU_THETA_ON_THE_FLY_GRID_UIND  0
+
+
 void grid_mpole_acc(PMEUnit, real (*)[10]);
 void grid_mpole_cu(PMEUnit, real (*)[10]);
 void grid_uind_acc(PMEUnit, real (*)[3], real (*)[3]);

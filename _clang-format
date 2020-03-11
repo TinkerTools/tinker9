@@ -1,5 +1,6 @@
 BasedOnStyle:                          LLVM
 AlignOperands:                         false
+AlignConsecutiveMacros:                true
 AlwaysBreakTemplateDeclarations:       true
 ColumnLimit:                           80
 IndentPPDirectives:                    AfterHash
