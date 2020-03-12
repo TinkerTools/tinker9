@@ -5,6 +5,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
+extern real ebuffer;
 extern real c2scale, c3scale, c4scale, c5scale;
 extern int ncexclude;
 extern int (*cexclude)[2];
@@ -24,5 +25,5 @@ void echarge_ewald_recip_self(int vers);
 void echarge_ewald_real(int vers);
 
 
-void echarge_ewald_recip_self_acc(int);
+void echarge_ewald_real_cu(int);
 TINKER_NAMESPACE_END

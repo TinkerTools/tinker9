@@ -13,11 +13,13 @@
 /**
  * \defgroup elec  Electrostatics
  * \ingroup ff
- *    \defgroup mpole  Multipole Electrostatics
+ *    \defgroup charge  Partial Charge Electrostatics
  *    \ingroup elec
- *    \defgroup polar  AMOEBA Polarization Electrostatics
+ *    \defgroup mpole   Multipole Electrostatics
  *    \ingroup elec
- *    \defgroup pme    Particle Mesh Ewald
+ *    \defgroup polar   AMOEBA Polarization Electrostatics
+ *    \ingroup elec
+ *    \defgroup pme     Particle Mesh Ewald
  *    \ingroup elec
  *
  * \defgroup geom  Geometrical Restraints

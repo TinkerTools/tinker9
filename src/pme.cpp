@@ -130,23 +130,39 @@ void pme_data(rc_op op)
       return;
 
 
+   if (op & rc_dealloc) {
+      PMEUnit::clear();
+      epme_unit.close();
+      ppme_unit.close();
+      pvpme_unit.close();
+   }
+
+
    if (use_potent(charge_term)) {
+      if (op & rc_alloc) {
+         assert(PMEUnit::size() == 0);
+         // partial charge
+         epme_unit.close();
+         PME::Params p(ewald::aeewald, pme::nefft1, pme::nefft2, pme::nefft3,
+                       pme::bseorder);
+         pme_op_alloc(epme_unit, p, false);
+      }
+
+
+      if (op & rc_init) {
+         pme_op_copyin(epme_unit);
+      }
    }
 
 
    if (use_potent(mpole_term) || use_potent(polar_term)) {
       if (op & rc_dealloc) {
-         PMEUnit::clear();
          darray::deallocate(cmp, fmp, cphi, fphi);
          if (use_potent(polar_term)) {
             darray::deallocate(fuind, fuinp, fdip_phi1, fdip_phi2, cphidp,
                                fphidp);
-
             darray::deallocate(vir_m);
          }
-         epme_unit.close();
-         ppme_unit.close();
-         pvpme_unit.close();
       }
 
 

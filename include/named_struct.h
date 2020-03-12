@@ -23,6 +23,8 @@ extern "C"
    {};
    struct NON_EWALD
    {};
+   struct NON_EWALD_TAPER
+   {}; // Non-EWALD partial charge also uses switching functions.
 
 
    // Energy versions.

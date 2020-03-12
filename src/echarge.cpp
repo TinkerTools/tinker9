@@ -1,5 +1,6 @@
 #include "echarge.h"
 #include "mdpq.h"
+#include "nblist.h"
 #include "potent.h"
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/couple.hh>
@@ -7,6 +8,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
+real ebuffer;
 real c2scale, c3scale, c4scale, c5scale;
 int ncexclude;
 int (*cexclude)[2];
@@ -31,6 +33,9 @@ void echarge_data(rc_op op)
 
 
    if (op & rc_alloc) {
+      ebuffer = chgpot::ebuffer;
+
+
       c2scale = chgpot::c2scale;
       c3scale = chgpot::c3scale;
       c4scale = chgpot::c4scale;
@@ -136,15 +141,16 @@ void echarge_ewald(int vers)
 }
 
 
-void echarge_ewald_recip_self(int vers)
-{
-   echarge_ewald_recip_self_acc(vers);
-}
+void echarge_ewald_recip_self(int vers) {}
 
 
 void echarge_ewald_real(int vers)
 {
 #if TINKER_CUDART
+   if (clist_version() == NBL_SPATIAL)
+      echarge_ewald_real_cu(vers);
+   else
 #endif
+      ;
 }
 TINKER_NAMESPACE_END

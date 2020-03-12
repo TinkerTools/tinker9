@@ -3,7 +3,9 @@
 #include "md.h"
 #include "pmestuf.h"
 #include "potent.h"
+#include <tinker/detail/atoms.hh>
 #include <tinker/detail/chgpot.hh>
+#include <tinker/detail/kchrge.hh>
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/mpole.hh>
 
@@ -28,6 +30,26 @@ void pchg_data(rc_op op)
 {
    if (!use_potent(charge_term))
       return;
+
+
+   if (op & rc_dealloc) {
+      darray::deallocate(pchg);
+   }
+
+
+   if (op & rc_alloc) {
+      darray::allocate(n, &pchg);
+   }
+
+
+   if (op & rc_init) {
+      std::vector<real> pchgbuf(n);
+      for (int i = 0; i < n; ++i) {
+         int itype = atoms::type[i] - 1;
+         pchgbuf[i] = kchrge::chg[itype];
+      }
+      darray::copyin(WAIT_NEW_Q, n, pchg, pchgbuf.data());
+   }
 }
 
 
