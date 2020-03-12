@@ -10,11 +10,6 @@
 
 
 TINKER_NAMESPACE_BEGIN
-namespace {
-constexpr int PME_BLOCKDIM = 64;
-}
-
-
 // compute theta values on the fly
 template <class T, int bsorder>
 __global__
@@ -31,6 +26,7 @@ void grid_put_cu1(const real* restrict x, const real* restrict y,
    real* restrict array = &sharedarray[5 * 5 * threadIdx.x];
 
 
+   MAYBE_UNUSED const real* pchg = ptr1;
    MAYBE_UNUSED const real(*fmp)[10] = (real(*)[10])ptr1;
    MAYBE_UNUSED const real(*fuind)[3] = (real(*)[3])ptr1;
    MAYBE_UNUSED const real(*fuinp)[3] = (real(*)[3])ptr2;
@@ -72,21 +68,45 @@ void grid_put_cu1(const real* restrict x, const real* restrict y,
       igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
 
+      if CONSTEXPR (eq<T, PCHG>()) {
+         real chgi = pchg[i];
+         if (chgi == 0)
+            continue;
+
+
+         bsplgen<1, bsorder>(w1, thetai1, array);
+         bsplgen<1, bsorder>(w2, thetai2, array);
+         bsplgen<1, bsorder>(w3, thetai3, array);
+
+
+         for (int iz = 0; iz < bsorder; ++iz) {
+            int zbase = igrid3 + iz;
+            zbase -= (zbase >= nfft3 ? nfft3 : 0);
+            zbase *= (nfft1 * nfft2);
+            real v0 = thetai3[4 * iz] * chgi;
+            for (int iy = 0; iy < bsorder; ++iy) {
+               int ybase = igrid2 + iy;
+               ybase -= (ybase >= nfft2 ? nfft2 : 0);
+               ybase *= nfft1;
+               real u0 = thetai2[4 * iy] * v0;
+               for (int ix = 0; ix < bsorder; ++ix) {
+                  int xbase = igrid1 + ix;
+                  xbase -= (xbase >= nfft1 ? nfft1 : 0);
+                  int index = xbase + ybase + zbase;
+                  real term = thetai1[4 * ix] * u0;
+                  atomic_add(term, qgrid, 2 * index);
+               }
+            }
+         }
+      } // end if (PCHG)
+
+
       if CONSTEXPR (eq<T, MPOLE>()) {
          bsplgen<3, bsorder>(w1, thetai1, array);
          bsplgen<3, bsorder>(w2, thetai2, array);
          bsplgen<3, bsorder>(w3, thetai3, array);
-      }
 
 
-      if CONSTEXPR (eq<T, UIND>()) {
-         bsplgen<2, bsorder>(w1, thetai1, array);
-         bsplgen<2, bsorder>(w2, thetai2, array);
-         bsplgen<2, bsorder>(w3, thetai3, array);
-      }
-
-
-      if CONSTEXPR (eq<T, MPOLE>()) {
          real fmpi0 = fmp[i][mpl_pme_0];
          real fmpix = fmp[i][mpl_pme_x];
          real fmpiy = fmp[i][mpl_pme_y];
@@ -135,6 +155,11 @@ void grid_put_cu1(const real* restrict x, const real* restrict y,
 
 
       if CONSTEXPR (eq<T, UIND>()) {
+         bsplgen<2, bsorder>(w1, thetai1, array);
+         bsplgen<2, bsorder>(w2, thetai2, array);
+         bsplgen<2, bsorder>(w3, thetai3, array);
+
+
          real fuindi0 = fuind[i][0];
          real fuindi1 = fuind[i][1];
          real fuindi2 = fuind[i][2];
@@ -260,6 +285,22 @@ void grid_put_cu2(const int* restrict igrid, const real* restrict thetai1,
          atomic_add(dot3(fp, tuv), qgrid, 2 * index + 1);
       }
    }
+}
+
+
+void grid_pchg_cu(PMEUnit pme_u, real* pchg)
+{
+   auto& st = *pme_u;
+   int n1 = st.nfft1;
+   int n2 = st.nfft2;
+   int n3 = st.nfft3;
+   int nt = n1 * n2 * n3;
+
+
+   darray::zero(PROCEED_NEW_Q, 2 * nt, st.qgrid);
+   auto ker = grid_put_cu1<PCHG, 5>;
+   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, pchg,
+              nullptr, st.qgrid, recipa, recipb, recipc);
 }
 
 

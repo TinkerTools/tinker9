@@ -68,6 +68,9 @@ constexpr unsigned BLOCK_DIM = 128;
 // constexpr unsigned BLOCK_DIM = 256;
 
 
+constexpr int PME_BLOCKDIM = 64;
+
+
 TINKER_EXTERN int ndevice, idevice;
 
 

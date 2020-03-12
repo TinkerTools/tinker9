@@ -295,4 +295,75 @@ void echarge_ewald_real_cu(int vers)
    else if (vers == calc::v6)
       echarge_cu<calc::V6, EWALD>();
 }
+
+
+//====================================================================//
+
+
+template <class Ver>
+__global__
+void echarge_cu3(size_t bufsize, count_buffer restrict nec,
+                 energy_buffer restrict ec, const real* restrict pchg, real f,
+                 real aewald, int n)
+{
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_a = Ver::a;
+   constexpr bool do_g = Ver::g;
+
+
+   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < n;
+        ii += blockDim.x * gridDim.x) {
+      int offset = ii & (bufsize - 1);
+      real chgi = pchg[ii];
+      if (chgi == 0)
+         continue;
+
+
+      // self energy, tinfoil
+      if CONSTEXPR (do_e) {
+         real fs = -f * aewald * REAL_RECIP(sqrtpi);
+         real e = fs * chgi * chgi;
+         atomic_add(e, ec, offset);
+         if (do_a) {
+            atomic_add(1, nec, offset);
+         }
+      }
+
+
+      if CONSTEXPR (do_g) {
+      }
+   }
+}
+
+
+template <class Ver>
+void echarge_fphi_self_cu()
+{
+   auto bufsize = buffer_size();
+   real f = electric / dielec;
+   real aewald = epme_unit->aewald;
+
+
+   auto ker = echarge_cu3<Ver>;
+   launch_k2s(nonblk, PME_BLOCKDIM, n,
+              ker, //
+              bufsize, nec, ec, pchg, f, aewald, n);
+}
+
+
+void echarge_ewald_fphi_self_cu(int vers)
+{
+   if (vers == calc::v0)
+      echarge_fphi_self_cu<calc::V0>();
+   else if (vers == calc::v1)
+      echarge_fphi_self_cu<calc::V1>();
+   else if (vers == calc::v3)
+      echarge_fphi_self_cu<calc::V3>();
+   else if (vers == calc::v4)
+      echarge_fphi_self_cu<calc::V4>();
+   else if (vers == calc::v5)
+      echarge_fphi_self_cu<calc::V5>();
+   else if (vers == calc::v6)
+      echarge_fphi_self_cu<calc::V6>();
+}
 TINKER_NAMESPACE_END

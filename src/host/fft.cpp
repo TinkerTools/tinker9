@@ -56,26 +56,26 @@ void fft_data(rc_op op)
          auto& iplan = plan_u->self<FFTPlanFFTW>();
          auto& st = *pme_u;
 
-         const int nfft1 = st.nfft1;
+         const int nfast = st.nfft1;
          const int nfft2 = st.nfft2;
-         const int nfft3 = st.nfft3;
+         const int nslow = st.nfft3;
          const int ifront = -1;
          const int iback = 1;
          const unsigned int iguess = 0;
-
+         // different from FFTW Fortran API
 #if TINKER_REAL_SIZE == 4
          iplan.planf = fftwf_plan_dft_3d(
-            nfft1, nfft2, nfft3, reinterpret_cast<fftwf_complex*>(st.qgrid),
+            nslow, nfft2, nfast, reinterpret_cast<fftwf_complex*>(st.qgrid),
             reinterpret_cast<fftwf_complex*>(st.qgrid), ifront, iguess);
          iplan.planb = fftwf_plan_dft_3d(
-            nfft1, nfft2, nfft3, reinterpret_cast<fftwf_complex*>(st.qgrid),
+            nslow, nfft2, nfast, reinterpret_cast<fftwf_complex*>(st.qgrid),
             reinterpret_cast<fftwf_complex*>(st.qgrid), iback, iguess);
 #elif TINKER_REAL_SIZE == 8
          iplan.planf = fftw_plan_dft_3d(
-            nfft1, nfft2, nfft3, reinterpret_cast<fftw_complex*>(st.qgrid),
+            nslow, nfft2, nfast, reinterpret_cast<fftw_complex*>(st.qgrid),
             reinterpret_cast<fftw_complex*>(st.qgrid), ifront, iguess);
          iplan.planb = fftw_plan_dft_3d(
-            nfft1, nfft2, nfft3, reinterpret_cast<fftw_complex*>(st.qgrid),
+            nslow, nfft2, nfast, reinterpret_cast<fftw_complex*>(st.qgrid),
             reinterpret_cast<fftw_complex*>(st.qgrid), iback, iguess);
 #else
          static_assert(false, "");

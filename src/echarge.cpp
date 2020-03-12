@@ -1,6 +1,8 @@
 #include "echarge.h"
+#include "mdcalc.h"
 #include "mdpq.h"
 #include "nblist.h"
+#include "pmestuf.h"
 #include "potent.h"
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/couple.hh>
@@ -141,7 +143,37 @@ void echarge_ewald(int vers)
 }
 
 
-void echarge_ewald_recip_self(int vers) {}
+void echarge_ewald_recip_self(int vers)
+{
+   const PMEUnit pu = epme_unit;
+
+
+   grid_pchg(pu, pchg);
+   fftfront(pu);
+   if (vers & calc::virial) {
+      if (vers & calc::energy) {
+         pme_conv(pu, ec, vir_ec);
+      } else {
+         pme_conv(pu, vir_ec);
+      }
+   } else {
+      if (vers & calc::energy) {
+         pme_conv(pu, ec);
+      } else {
+         pme_conv(pu);
+      }
+   }
+   fftback(pu);
+
+   // fphi_pchg, recip, self
+
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      echarge_ewald_fphi_self_cu(vers);
+   else
+#endif
+      ;
+}
 
 
 void echarge_ewald_real(int vers)

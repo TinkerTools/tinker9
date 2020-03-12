@@ -14,6 +14,22 @@ void bspline_fill(PMEUnit pme_u, int level)
 //====================================================================//
 
 
+void grid_pchg(PMEUnit pme_u, real* pchg)
+{
+   int bso = pme_u->bsorder;
+   if (bso != 5)
+      TINKER_THROW(format("grid_pchg(): bsorder is {}; must be 5.\n", bso));
+
+
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      grid_pchg_cu(pme_u, pchg);
+   else
+#endif
+      ;
+}
+
+
 void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
 {
    int bso = pme_u->bsorder;
@@ -51,13 +67,25 @@ void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 
 void pme_conv(PMEUnit pme_u)
 {
-   pme_conv_acc(pme_u, nullptr);
+   pme_conv_acc(pme_u, nullptr, nullptr);
 }
 
 
 void pme_conv(PMEUnit pme_u, virial_buffer gpu_vir)
 {
-   pme_conv_acc(pme_u, gpu_vir);
+   pme_conv_acc(pme_u, nullptr, gpu_vir);
+}
+
+
+void pme_conv(PMEUnit pme_u, energy_buffer gpu_e)
+{
+   pme_conv_acc(pme_u, gpu_e, nullptr);
+}
+
+
+void pme_conv(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
+{
+   pme_conv_acc(pme_u, gpu_e, gpu_vir);
 }
 
 

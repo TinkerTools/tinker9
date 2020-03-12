@@ -47,7 +47,10 @@ void fft_data(rc_op op)
          auto& iplan = plan_u->self<FFTPlanCUFFT>().h;
          auto& st = *pme_u;
 
-         check_rt(cufftPlan3d(&iplan, st.nfft1, st.nfft2, st.nfft3, typ));
+         int nfast = st.nfft1;
+         int nslow = st.nfft3;
+         // different from FFTW Fortran API
+         check_rt(cufftPlan3d(&iplan, nslow, st.nfft2, nfast, typ));
          check_rt(cufftSetStream(iplan, nonblk));
          ++idx;
       }
