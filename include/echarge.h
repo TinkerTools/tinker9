@@ -21,8 +21,6 @@ void echarge_data(rc_op);
 void echarge(int vers);
 void echarge_nonewald(int vers);
 void echarge_ewald(int vers);
-void echarge_ewald_recip_self(int vers);
-void echarge_ewald_real(int vers);
 
 
 void echarge_ewald_real_cu(int);

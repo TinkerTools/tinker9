@@ -7,6 +7,7 @@
 #include "pme.h"
 #include "seq_image.h"
 #include "seq_pair_charge.h"
+#include "seq_pme.h"
 #include "spatial.h"
 #include "switch.h"
 
@@ -109,8 +110,11 @@ void echarge_cu1(ECHARGE_ARGS, const Spatial::SortedAtom* restrict sorted,
 
 
             MAYBE_UNUSED real grdx, grdy, grdz;
-            if CONSTEXPR (do_g)
-               grdx = grdy = grdz = 0;
+            if CONSTEXPR (do_g) {
+               grdx = 0;
+               grdy = 0;
+               grdz = 0;
+            }
 
 
             if CONSTEXPR (eq<ETYP, EWALD>()) {
@@ -223,17 +227,17 @@ void echarge_cu2(ECHARGE_ARGS, const real* restrict x, const real* restrict y,
             if CONSTEXPR (do_e) {
                atomic_add(e, ec, offset);
             }
-            if CONSTEXPR (do_g) {
-               atomic_add(grdx, gx, i);
-               atomic_add(grdy, gy, i);
-               atomic_add(grdz, gz, i);
-               atomic_add(-grdx, gx, k);
-               atomic_add(-grdy, gy, k);
-               atomic_add(-grdz, gz, k);
-            }
-            if CONSTEXPR (do_v) {
-               atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ec, offset);
-            }
+         }
+         if CONSTEXPR (do_g) {
+            atomic_add(grdx, gx, i);
+            atomic_add(grdy, gy, i);
+            atomic_add(grdz, gz, i);
+            atomic_add(-grdx, gx, k);
+            atomic_add(-grdy, gy, k);
+            atomic_add(-grdz, gz, k);
+         }
+         if CONSTEXPR (do_v) {
+            atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ec, offset);
          }
       } // end if (include)
    }
@@ -300,20 +304,30 @@ void echarge_ewald_real_cu(int vers)
 //====================================================================//
 
 
-template <class Ver>
+template <class Ver, int bsorder>
 __global__
 void echarge_cu3(size_t bufsize, count_buffer restrict nec,
                  energy_buffer restrict ec, const real* restrict pchg, real f,
-                 real aewald, int n)
+                 real aewald, int n, int nfft1, int nfft2, int nfft3,
+                 const real* restrict x, const real* restrict y,
+                 const real* restrict z, const real* restrict qgrid, real3 reca,
+                 real3 recb, real3 recc, grad_prec* restrict gx,
+                 grad_prec* restrict gy, grad_prec* restrict gz)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
    constexpr bool do_g = Ver::g;
 
 
+   real thetai1[4 * 5];
+   real thetai2[4 * 5];
+   real thetai3[4 * 5];
+   __shared__ real sharedarray[5 * 5 * PME_BLOCKDIM];
+   real* restrict array = &sharedarray[5 * 5 * threadIdx.x];
+
+
    for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < n;
         ii += blockDim.x * gridDim.x) {
-      int offset = ii & (bufsize - 1);
       real chgi = pchg[ii];
       if (chgi == 0)
          continue;
@@ -321,6 +335,7 @@ void echarge_cu3(size_t bufsize, count_buffer restrict nec,
 
       // self energy, tinfoil
       if CONSTEXPR (do_e) {
+         int offset = ii & (bufsize - 1);
          real fs = -f * aewald * REAL_RECIP(sqrtpi);
          real e = fs * chgi * chgi;
          atomic_add(e, ec, offset);
@@ -330,7 +345,82 @@ void echarge_cu3(size_t bufsize, count_buffer restrict nec,
       }
 
 
+      // recip gradient
       if CONSTEXPR (do_g) {
+         real xi = x[ii];
+         real yi = y[ii];
+         real zi = z[ii];
+
+
+         real w1 = xi * reca.x + yi * reca.y + zi * reca.z;
+         w1 = w1 + 0.5f - REAL_FLOOR(w1 + 0.5f);
+         real fr1 = nfft1 * w1;
+         int igrid1 = REAL_FLOOR(fr1);
+         w1 = fr1 - igrid1;
+
+
+         real w2 = xi * recb.x + yi * recb.y + zi * recb.z;
+         w2 = w2 + 0.5f - REAL_FLOOR(w2 + 0.5f);
+         real fr2 = nfft2 * w2;
+         int igrid2 = REAL_FLOOR(fr2);
+         w2 = fr2 - igrid2;
+
+
+         real w3 = xi * recc.x + yi * recc.y + zi * recc.z;
+         w3 = w3 + 0.5f - REAL_FLOOR(w3 + 0.5f);
+         real fr3 = nfft3 * w3;
+         int igrid3 = REAL_FLOOR(fr3);
+         w3 = fr3 - igrid3;
+
+
+         igrid1 = igrid1 - bsorder + 1;
+         igrid2 = igrid2 - bsorder + 1;
+         igrid3 = igrid3 - bsorder + 1;
+         igrid1 += (igrid1 < 0 ? nfft1 : 0);
+         igrid2 += (igrid2 < 0 ? nfft2 : 0);
+         igrid3 += (igrid3 < 0 ? nfft3 : 0);
+
+
+         bsplgen<2, bsorder>(w1, thetai1, array);
+         bsplgen<2, bsorder>(w2, thetai2, array);
+         bsplgen<2, bsorder>(w3, thetai3, array);
+
+
+         real fi = f * chgi;
+         real de1 = 0, de2 = 0, de3 = 0;
+         for (int iz = 0; iz < bsorder; ++iz) {
+            int zbase = igrid3 + iz;
+            zbase -= (zbase >= nfft3 ? nfft3 : 0);
+            zbase *= (nfft1 * nfft2);
+            real t3 = thetai3[4 * iz];
+            real dt3 = nfft3 * thetai3[1 + 4 * iz];
+            for (int iy = 0; iy < bsorder; ++iy) {
+               int ybase = igrid2 + iy;
+               ybase -= (ybase >= nfft2 ? nfft2 : 0);
+               ybase *= nfft1;
+               real t2 = thetai2[4 * iy];
+               real dt2 = nfft2 * thetai2[1 + 4 * iy];
+               for (int ix = 0; ix < bsorder; ++ix) {
+                  int xbase = igrid1 + ix;
+                  xbase -= (xbase >= nfft1 ? nfft1 : 0);
+                  int index = xbase + ybase + zbase;
+                  real term = qgrid[2 * index];
+                  real t1 = thetai1[4 * ix];
+                  real dt1 = nfft1 * thetai1[1 + 4 * ix];
+                  de1 += term * dt1 * t2 * t3;
+                  de2 += term * dt2 * t1 * t3;
+                  de3 += term * dt3 * t1 * t2;
+               }
+            }
+         } // end for (iz)
+
+
+         real frcx = fi * (reca.x * de1 + recb.x * de2 + recc.x * de3);
+         real frcy = fi * (reca.y * de1 + recb.y * de2 + recc.y * de3);
+         real frcz = fi * (reca.z * de1 + recb.z * de2 + recc.z * de3);
+         atomic_add(frcx, gx, ii);
+         atomic_add(frcy, gy, ii);
+         atomic_add(frcz, gz, ii);
       }
    }
 }
@@ -341,13 +431,18 @@ void echarge_fphi_self_cu()
 {
    auto bufsize = buffer_size();
    real f = electric / dielec;
-   real aewald = epme_unit->aewald;
+   const auto& st = *epme_unit;
+   real aewald = st.aewald;
+   int nfft1 = st.nfft1;
+   int nfft2 = st.nfft2;
+   int nfft3 = st.nfft3;
 
 
-   auto ker = echarge_cu3<Ver>;
-   launch_k2s(nonblk, PME_BLOCKDIM, n,
-              ker, //
-              bufsize, nec, ec, pchg, f, aewald, n);
+   auto ker = echarge_cu3<Ver, 5>;
+   launch_k2s(nonblk, PME_BLOCKDIM, n, ker,         //
+              bufsize, nec, ec, pchg, f, aewald, n, //
+              nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc,
+              gx, gy, gz);
 }
 
 

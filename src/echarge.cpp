@@ -138,16 +138,11 @@ void echarge_nonewald(int vers)
 
 void echarge_ewald(int vers)
 {
-   echarge_ewald_recip_self(vers);
-   echarge_ewald_real(vers);
-}
+   // ewald recip space, self term
+   // ewald real space
 
 
-void echarge_ewald_recip_self(int vers)
-{
    const PMEUnit pu = epme_unit;
-
-
    grid_pchg(pu, pchg);
    fftfront(pu);
    if (vers & calc::virial) {
@@ -173,11 +168,8 @@ void echarge_ewald_recip_self(int vers)
    else
 #endif
       ;
-}
 
 
-void echarge_ewald_real(int vers)
-{
 #if TINKER_CUDART
    if (clist_version() == NBL_SPATIAL)
       echarge_ewald_real_cu(vers);
