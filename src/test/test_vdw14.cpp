@@ -182,8 +182,9 @@ TEST_CASE("Vdw14-Trpcage", "[ff][evdw][lj][trpcage]")
    SECTION("  - elj -- pbc, cutoff")
    {
       std::string k1 = k0 +
-         "\nNEIGHBOR-LIST    0.5"
-         "\nLIST-BUFFER      9.0"
+         "\nNEIGHBOR-LIST"
+         "\nLIST-BUFFER      0.5"
+         "\nCUTOFF           9.0"
          "\nA-AXIS            30"
          "\nB-AXIS            25"
          "\nC-AXIS            20"
