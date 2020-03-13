@@ -5,7 +5,7 @@
 #include "md.h"
 #include "named_struct.h"
 #include "pmestuf.h"
-#include "seq_pme.h"
+#include "seq_bsplgen.h"
 #include "spatial.h"
 
 

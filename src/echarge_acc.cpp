@@ -6,9 +6,9 @@
 #include "named_struct.h"
 #include "nblist.h"
 #include "pmestuf.h"
+#include "seq_bsplgen.h"
 #include "seq_image.h"
 #include "seq_pair_charge.h"
-#include "seq_pme.h"
 #include "seq_switch.h"
 #include "switch.h"
 

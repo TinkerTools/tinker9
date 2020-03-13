@@ -5,9 +5,9 @@
 #include "mdpq.h"
 #include "named_struct.h"
 #include "pmestuf.h"
+#include "seq_bsplgen.h"
 #include "seq_image.h"
 #include "seq_pair_charge.h"
-#include "seq_pme.h"
 #include "spatial.h"
 #include "switch.h"
 
