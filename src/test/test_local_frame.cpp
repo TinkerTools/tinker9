@@ -70,20 +70,20 @@ TEST_CASE("Local-Frame-1", "[ff][empole][nonewald][local-frame]")
       mpole_init(calc::v0);
       empole(calc::v0);
       torque(calc::v0);
-      COMPARE_ENERGY_(em, ref_eng, eps_e);
+      COMPARE_ENERGY(em, ref_eng, eps_e);
 
       zero_egv();
       mpole_init(calc::v1);
       empole(calc::v1);
       torque(calc::v1);
-      COMPARE_ENERGY_(em, ref_eng, eps_e);
-      COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);
-      COMPARE_VIR2_(vir_em, vir_trq, ref_v, eps_v);
+      COMPARE_ENERGY(em, ref_eng, eps_e);
+      COMPARE_GRADIENT2(ref_grad, eps_g, do_ij);
+      COMPARE_VIR2(vir_em, vir_trq, ref_v, eps_v);
 
       zero_egv();
       empole(calc::v3);
-      COMPARE_ENERGY_(em, ref_eng, eps_e);
-      COMPARE_COUNT_(nem, ref_count);
+      COMPARE_ENERGY(em, ref_eng, eps_e);
+      COMPARE_COUNT(nem, ref_count);
 
       finish();
       test_end();
@@ -153,20 +153,20 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]")
       mpole_init(calc::v0);
       empole(calc::v0);
       torque(calc::v0);
-      COMPARE_ENERGY_(em, ref_eng, eps_e);
+      COMPARE_ENERGY(em, ref_eng, eps_e);
 
       zero_egv();
       mpole_init(calc::v1);
       empole(calc::v1);
       torque(calc::v1);
-      COMPARE_ENERGY_(em, ref_eng, eps_e);
-      COMPARE_GRADIENT_(ref_grad, eps_g);
-      COMPARE_VIR2_(vir_em, vir_trq, ref_v, eps_v);
+      COMPARE_ENERGY(em, ref_eng, eps_e);
+      COMPARE_GRADIENT(ref_grad, eps_g);
+      COMPARE_VIR2(vir_em, vir_trq, ref_v, eps_v);
 
       zero_egv();
       empole(calc::v3);
-      COMPARE_ENERGY_(em, ref_eng, eps_e);
-      COMPARE_COUNT_(nem, ref_count);
+      COMPARE_ENERGY(em, ref_eng, eps_e);
+      COMPARE_COUNT(nem, ref_count);
 
       finish();
       test_end();
@@ -179,42 +179,42 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]")
       mpole_init(calc::v0);                                                    \
       epolar(calc::v0);                                                        \
       torque(calc::v0);                                                        \
-      COMPARE_ENERGY_(ep, ref_eng, eps_e);                                     \
+      COMPARE_ENERGY(ep, ref_eng, eps_e);                                      \
                                                                                \
       zero_egv();                                                              \
       mpole_init(calc::v1);                                                    \
       epolar(calc::v1);                                                        \
       torque(calc::v1);                                                        \
-      COMPARE_ENERGY_(ep, ref_eng, eps_e);                                     \
-      COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                              \
-      COMPARE_VIR2_(vir_ep, vir_trq, ref_v, eps_v);                            \
+      COMPARE_ENERGY(ep, ref_eng, eps_e);                                      \
+      COMPARE_GRADIENT2(ref_grad, eps_g, do_ij);                               \
+      COMPARE_VIR2(vir_ep, vir_trq, ref_v, eps_v);                             \
                                                                                \
       zero_egv();                                                              \
       mpole_init(calc::v3);                                                    \
       epolar(calc::v3);                                                        \
       torque(calc::v3);                                                        \
-      COMPARE_ENERGY_(ep, ref_eng, eps_e);                                     \
-      COMPARE_COUNT_(nep, ref_count);                                          \
+      COMPARE_ENERGY(ep, ref_eng, eps_e);                                      \
+      COMPARE_COUNT(nep, ref_count);                                           \
                                                                                \
       zero_egv();                                                              \
       mpole_init(calc::v4);                                                    \
       epolar(calc::v4);                                                        \
       torque(calc::v4);                                                        \
-      COMPARE_ENERGY_(ep, ref_eng, eps_e);                                     \
-      COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                              \
+      COMPARE_ENERGY(ep, ref_eng, eps_e);                                      \
+      COMPARE_GRADIENT2(ref_grad, eps_g, do_ij);                               \
                                                                                \
       zero_egv();                                                              \
       mpole_init(calc::v5);                                                    \
       epolar(calc::v5);                                                        \
       torque(calc::v5);                                                        \
-      COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                              \
+      COMPARE_GRADIENT2(ref_grad, eps_g, do_ij);                               \
                                                                                \
       zero_egv();                                                              \
       mpole_init(calc::v6);                                                    \
       epolar(calc::v6);                                                        \
       torque(calc::v6);                                                        \
-      COMPARE_GRADIENT2_(ref_grad, eps_g, do_ij);                              \
-      COMPARE_VIR2_(vir_ep, vir_trq, ref_v, eps_v);                            \
+      COMPARE_GRADIENT2(ref_grad, eps_g, do_ij);                               \
+      COMPARE_VIR2(vir_ep, vir_trq, ref_v, eps_v);                             \
    }
 
 TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
@@ -396,7 +396,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
       mpole_init(calc::v0);
       epolar(calc::v0);
       torque(calc::v0);
-      COMPARE_ENERGY_(ep, ref_eng, eps_f);
+      COMPARE_ENERGY(ep, ref_eng, eps_f);
    }
 
    SECTION("various epolar versions -- non-ewald no cutoff")
@@ -614,7 +614,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
       mpole_init(calc::v0);
       epolar(calc::v0);
       torque(calc::v0);
-      COMPARE_ENERGY_(ep, ref_eng, eps_f);
+      COMPARE_ENERGY(ep, ref_eng, eps_f);
    }
 
    SECTION("various epolar versions -- pme")

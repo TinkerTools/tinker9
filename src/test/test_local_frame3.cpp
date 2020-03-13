@@ -79,7 +79,7 @@ TEST_CASE("Local-Frame3-1",
 
       energy(calc::v1);
       COMPARE_REALS(esum, ref_eng, eps_e);
-      COMPARE_GRADIENT_(ref_g, eps_g);
+      COMPARE_GRADIENT(ref_g, eps_g);
       for (int i = 0; i < 3; ++i)
          for (int j = 0; j < 3; ++j)
             COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
@@ -91,13 +91,13 @@ TEST_CASE("Local-Frame3-1",
 
       energy(calc::v4);
       COMPARE_REALS(esum, ref_eng, eps_e);
-      COMPARE_GRADIENT_(ref_g, eps_g);
+      COMPARE_GRADIENT(ref_g, eps_g);
 
       energy(calc::v5);
-      COMPARE_GRADIENT_(ref_g, eps_g);
+      COMPARE_GRADIENT(ref_g, eps_g);
 
       energy(calc::v6);
-      COMPARE_GRADIENT_(ref_g, eps_g);
+      COMPARE_GRADIENT(ref_g, eps_g);
       for (int i = 0; i < 3; ++i)
          for (int j = 0; j < 3; ++j)
             COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
@@ -149,7 +149,7 @@ TEST_CASE("Local-Frame3-2", "[ff][empole][epolar][emplar][ewald][local-frame3]")
 
       energy(calc::v1);
       COMPARE_REALS(esum, ref_eng, eps_e);
-      COMPARE_GRADIENT_(ref_g, eps_g);
+      COMPARE_GRADIENT(ref_g, eps_g);
       for (int i = 0; i < 3; ++i)
          for (int j = 0; j < 3; ++j)
             COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
@@ -161,13 +161,13 @@ TEST_CASE("Local-Frame3-2", "[ff][empole][epolar][emplar][ewald][local-frame3]")
 
       energy(calc::v4);
       COMPARE_REALS(esum, ref_eng, eps_e);
-      COMPARE_GRADIENT_(ref_g, eps_g);
+      COMPARE_GRADIENT(ref_g, eps_g);
 
       energy(calc::v5);
-      COMPARE_GRADIENT_(ref_g, eps_g);
+      COMPARE_GRADIENT(ref_g, eps_g);
 
       energy(calc::v6);
-      COMPARE_GRADIENT_(ref_g, eps_g);
+      COMPARE_GRADIENT(ref_g, eps_g);
       for (int i = 0; i < 3; ++i)
          for (int j = 0; j < 3; ++j)
             COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
