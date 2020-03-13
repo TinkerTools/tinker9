@@ -175,6 +175,6 @@ void echarge_ewald(int vers)
       echarge_ewald_real_cu(vers);
    else
 #endif
-      ;
+      echarge_ewald_real_acc(vers);
 }
 TINKER_NAMESPACE_END

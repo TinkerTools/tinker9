@@ -4,7 +4,7 @@
 #include "mdegv.h"
 #include "mdpq.h"
 #include "named_struct.h"
-#include "pme.h"
+#include "pmestuf.h"
 #include "seq_image.h"
 #include "seq_pair_charge.h"
 #include "seq_pme.h"
@@ -221,12 +221,10 @@ void echarge_cu2(ECHARGE_ARGS, const real* restrict x, const real* restrict y,
                                 grdx, grdy, grdz, ctl, e, vxx, vxy, vxz, vyy,
                                 vyz, vzz);
          if (e != 0) {
-            if CONSTEXPR (do_a) {
+            if CONSTEXPR (do_a)
                atomic_add(ctl, nec, offset);
-            }
-            if CONSTEXPR (do_e) {
+            if CONSTEXPR (do_e)
                atomic_add(e, ec, offset);
-            }
          }
          if CONSTEXPR (do_g) {
             atomic_add(grdx, gx, i);
@@ -236,9 +234,8 @@ void echarge_cu2(ECHARGE_ARGS, const real* restrict x, const real* restrict y,
             atomic_add(-grdy, gy, k);
             atomic_add(-grdz, gz, k);
          }
-         if CONSTEXPR (do_v) {
+         if CONSTEXPR (do_v)
             atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ec, offset);
-         }
       } // end if (include)
    }
 }

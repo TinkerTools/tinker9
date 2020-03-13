@@ -26,7 +26,8 @@ void elj_acc1()
    const real cut2 = cut * cut;
    const real off2 = off * off;
    const int maxnlist = clist_unit->maxnlst;
-   const auto* vlst = clist_unit.deviceptr();
+   const auto* nlst = clist_unit->nlst;
+   const auto* lst = clist_unit->lst;
 
 
    auto bufsize = buffer_size();
@@ -34,7 +35,7 @@ void elj_acc1()
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
-               deviceptr(DEVICE_PTRS,vlst)
+               deviceptr(DEVICE_PTRS,nlst,lst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
       int it = jvdw[i];
@@ -44,11 +45,11 @@ void elj_acc1()
       MAYBE_UNUSED grad_prec gxi = 0, gyi = 0, gzi = 0;
 
 
-      int nvlsti = vlst->nlst[i];
+      int nvlsti = nlst[i];
       #pragma acc loop vector independent reduction(+:gxi,gyi,gzi)
       for (int kk = 0; kk < nvlsti; ++kk) {
          int offset = (kk + i * n) & (bufsize - 1);
-         int k = vlst->lst[i * maxnlist + kk];
+         int k = lst[i * maxnlist + kk];
          int kt = jvdw[k];
          real xr = xi - x[k];
          real yr = yi - y[k];
