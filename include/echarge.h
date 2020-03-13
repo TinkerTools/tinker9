@@ -25,5 +25,6 @@ void echarge_ewald(int vers);
 
 void echarge_ewald_real_acc(int);
 void echarge_ewald_real_cu(int);
+void echarge_ewald_fphi_self_acc(int);
 void echarge_ewald_fphi_self_cu(int);
 TINKER_NAMESPACE_END

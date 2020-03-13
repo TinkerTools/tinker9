@@ -34,10 +34,10 @@ void platform_data(rc_op op)
          }
          if (gpu_package == "CUDA") {
             pltfm_config = CU_PLTFM;
-            print(stdout, " Platform :  CUDA\n");
+            print(stdout, " Primary GPU package :  CUDA\n");
          } else if (gpu_package == "OPENACC") {
             pltfm_config = ACC_PLTFM;
-            print(stdout, " Platform :  OpenACC\n");
+            print(stdout, " Primary GPU package :  OpenACC\n");
          }
       }
 #endif

@@ -132,7 +132,11 @@ void echarge(int vers)
 void echarge_nonewald(int vers)
 {
 #if TINKER_CUDART
+   if (clist_version() == NBL_SPATIAL)
+      ;
+   else
 #endif
+      ;
 }
 
 
@@ -167,7 +171,7 @@ void echarge_ewald(int vers)
       echarge_ewald_fphi_self_cu(vers);
    else
 #endif
-      ;
+      echarge_ewald_fphi_self_acc(vers);
 
 
 #if TINKER_CUDART
