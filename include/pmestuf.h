@@ -43,6 +43,7 @@ void bspline_fill_cu(PMEUnit, int level);
 #define TINKER_CU_THETA_ON_THE_FLY_GRID_UIND  0
 
 
+void grid_pchg_acc(PMEUnit, real*);
 void grid_pchg_cu(PMEUnit, real*);
 void grid_mpole_acc(PMEUnit, real (*)[10]);
 void grid_mpole_cu(PMEUnit, real (*)[10]);

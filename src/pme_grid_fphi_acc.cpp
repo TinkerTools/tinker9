@@ -11,27 +11,17 @@
 
 TINKER_NAMESPACE_BEGIN
 template <class T>
-void grid_put_acc(PMEUnit pme_u, real* optional1, real* optional2)
+void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
 {
    auto& st = *pme_u;
-   auto* dptr = pme_u.deviceptr();
+   auto* qgrid = st.qgrid;
 
-   MAYBE_UNUSED real* pchg;
-   if CONSTEXPR (eq<T, PCHG>() || eq<T, DISP>()) {
-      pchg = optional1;
-   }
 
-   MAYBE_UNUSED real(*fmp)[10];
-   if CONSTEXPR (eq<T, MPOLE>()) {
-      fmp = reinterpret_cast<real(*)[10]>(optional1);
-   }
+   MAYBE_UNUSED const real* pchg = ptr1;
+   MAYBE_UNUSED const real(*fmp)[10] = (real(*)[10])ptr1;
+   MAYBE_UNUSED const real(*fuind)[3] = (real(*)[3])ptr1;
+   MAYBE_UNUSED const real(*fuinp)[3] = (real(*)[3])ptr2;
 
-   MAYBE_UNUSED real(*fuind)[3];
-   MAYBE_UNUSED real(*fuinp)[3];
-   if CONSTEXPR (eq<T, UIND>()) {
-      fuind = reinterpret_cast<real(*)[3]>(optional1);
-      fuinp = reinterpret_cast<real(*)[3]>(optional2);
-   }
 
    const int nfft1 = st.nfft1;
    const int nfft2 = st.nfft2;
@@ -39,29 +29,34 @@ void grid_put_acc(PMEUnit pme_u, real* optional1, real* optional2)
    const int bsorder = st.bsorder;
    assert(bsorder <= 5);
 
+
    darray::zero(PROCEED_NEW_Q, 2 * nfft1 * nfft2 * nfft3, st.qgrid);
 
+
    #pragma acc parallel loop independent async\
-               deviceptr(pchg,fmp,fuind,fuinp,x,y,z,dptr)
+               deviceptr(pchg,fmp,fuind,fuinp,x,y,z,qgrid)
    for (int i = 0; i < n; ++i) {
       real thetai1[4 * 5];
       real thetai2[4 * 5];
       real thetai3[4 * 5];
 
+
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
+
 
       // map fractional coordinate w from [-0.5 + k, 0.5 + k) to [0, 1)
       // w -> (w + 0.5) - FLOOR(w + 0.5)
       // see also subroutine bspline_fill in pmestuf.f
 
-      real w1 = xi * recipa.x + yi * recipa.y + zi * recipa.z;
 
+      real w1 = xi * recipa.x + yi * recipa.y + zi * recipa.z;
       w1 = w1 + 0.5f - REAL_FLOOR(w1 + 0.5f);
       real fr1 = nfft1 * w1;
       int igrid1 = REAL_FLOOR(fr1);
       w1 = fr1 - igrid1;
+
 
       real w2 = xi * recipb.x + yi * recipb.y + zi * recipb.z;
       w2 = w2 + 0.5f - REAL_FLOOR(w2 + 0.5f);
@@ -69,11 +64,13 @@ void grid_put_acc(PMEUnit pme_u, real* optional1, real* optional2)
       int igrid2 = REAL_FLOOR(fr2);
       w2 = fr2 - igrid2;
 
+
       real w3 = xi * recipc.x + yi * recipc.y + zi * recipc.z;
       w3 = w3 + 0.5f - REAL_FLOOR(w3 + 0.5f);
       real fr3 = nfft3 * w3;
       int igrid3 = REAL_FLOOR(fr3);
       w3 = fr3 - igrid3;
+
 
       igrid1 = igrid1 - bsorder + 1;
       igrid2 = igrid2 - bsorder + 1;
@@ -82,26 +79,18 @@ void grid_put_acc(PMEUnit pme_u, real* optional1, real* optional2)
       igrid2 += (igrid2 < 0 ? nfft2 : 0);
       igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
-      if CONSTEXPR (eq<T, PCHG>() || eq<T, DISP>()) {
+
+      if CONSTEXPR (eq<T, PCHG>()) {
+         real pchgi = pchg[i];
+         if (pchgi == 0)
+            continue;
+
+
          bsplgen<1>(w1, thetai1, bsorder);
          bsplgen<1>(w2, thetai2, bsorder);
          bsplgen<1>(w3, thetai3, bsorder);
-      }
 
-      if CONSTEXPR (eq<T, MPOLE>()) {
-         bsplgen<3>(w1, thetai1, bsorder);
-         bsplgen<3>(w2, thetai2, bsorder);
-         bsplgen<3>(w3, thetai3, bsorder);
-      }
 
-      if CONSTEXPR (eq<T, UIND>()) {
-         bsplgen<2>(w1, thetai1, bsorder);
-         bsplgen<2>(w2, thetai2, bsorder);
-         bsplgen<2>(w3, thetai3, bsorder);
-      }
-
-      if CONSTEXPR (eq<T, PCHG>() || eq<T, DISP>()) {
-         real pchgi = pchg[i];
          #pragma acc loop seq
          for (int iz = 0; iz < bsorder; ++iz) {
             int zbase = igrid3 + iz;
@@ -113,21 +102,26 @@ void grid_put_acc(PMEUnit pme_u, real* optional1, real* optional2)
                int ybase = igrid2 + iy;
                ybase -= (ybase >= nfft2 ? nfft2 : 0);
                ybase *= nfft1;
-               real u0 = thetai2[4 * iy];
-               real term = v0 * u0;
+               real u0 = thetai2[4 * iy] * v0;
                #pragma acc loop seq
                for (int ix = 0; ix < bsorder; ++ix) {
                   int xbase = igrid1 + ix;
                   xbase -= (xbase >= nfft1 ? nfft1 : 0);
                   int index = xbase + ybase + zbase;
-                  real t0 = thetai1[4 * ix];
-                  atomic_add(term * t0, dptr->qgrid, 2 * index);
+                  real term = thetai1[4 * ix] * u0;
+                  atomic_add(term, qgrid, 2 * index);
                }
             } // end for (int iy)
          }
-      } // end if (grid_pchg || grid_disp)
+      } // end if (grid_pchg)
+
 
       if CONSTEXPR (eq<T, MPOLE>()) {
+         bsplgen<3>(w1, thetai1, bsorder);
+         bsplgen<3>(w2, thetai2, bsorder);
+         bsplgen<3>(w3, thetai3, bsorder);
+
+
          real fmpi0 = fmp[i][mpl_pme_0];
          real fmpix = fmp[i][mpl_pme_x];
          real fmpiy = fmp[i][mpl_pme_y];
@@ -170,14 +164,20 @@ void grid_put_acc(PMEUnit pme_u, real* optional1, real* optional2)
                   real t0 = thetai1[4 * ix];
                   real t1 = thetai1[4 * ix + 1];
                   real t2 = thetai1[4 * ix + 2];
-                  atomic_add(term0 * t0 + term1 * t1 + term2 * t2, dptr->qgrid,
+                  atomic_add(term0 * t0 + term1 * t1 + term2 * t2, qgrid,
                              2 * index);
                }
             } // end for (int iy)
          }
       } // end if (grid_mpole)
 
+
       if CONSTEXPR (eq<T, UIND>()) {
+         bsplgen<2>(w1, thetai1, bsorder);
+         bsplgen<2>(w2, thetai2, bsorder);
+         bsplgen<2>(w3, thetai3, bsorder);
+
+
          real fuindi0 = fuind[i][0];
          real fuindi1 = fuind[i][1];
          real fuindi2 = fuind[i][2];
@@ -209,14 +209,19 @@ void grid_put_acc(PMEUnit pme_u, real* optional1, real* optional2)
                   int index = xbase + ybase + zbase;
                   real t0 = thetai1[4 * ix];
                   real t1 = thetai1[4 * ix + 1];
-                  atomic_add(term01 * t0 + term11 * t1, dptr->qgrid, 2 * index);
-                  atomic_add(term02 * t0 + term12 * t1, dptr->qgrid,
-                             2 * index + 1);
+                  atomic_add(term01 * t0 + term11 * t1, qgrid, 2 * index);
+                  atomic_add(term02 * t0 + term12 * t1, qgrid, 2 * index + 1);
                }
             } // end for (int iy)
          }
       } // end if (grid_uind)
-   }    // for (int i)
+   }
+}
+
+
+void grid_pchg_acc(PMEUnit pme_u, real* pchg)
+{
+   grid_put_acc<PCHG>(pme_u, pchg, nullptr);
 }
 
 

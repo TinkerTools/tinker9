@@ -26,7 +26,7 @@ void grid_pchg(PMEUnit pme_u, real* pchg)
       grid_pchg_cu(pme_u, pchg);
    else
 #endif
-      ;
+      grid_pchg_acc(pme_u, pchg);
 }
 
 
