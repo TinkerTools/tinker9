@@ -531,9 +531,7 @@ void spatial_data_init_cu(SpatialUnit u)
       // 129  / 128    / 4     / 8   / 3
       int p = 1 + floor_log2(scale);
       level += p;
-      px = (level + 0) / 3;
-      py = (level + 1) / 3;
-      pz = (level + 2) / 3;
+      spatial_cut(px, py, pz, level);
       nx = pow2(px + py + pz);
       nxk = (nx + Spatial::BLOCK - 1) / Spatial::BLOCK;
 

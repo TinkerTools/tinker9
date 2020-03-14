@@ -1,4 +1,6 @@
+#include "box.h"
 #include "seq_spatial_box.h"
+#include "spatial.h"
 #include "test.h"
 using namespace TINKER_NAMESPACE;
 
@@ -91,5 +93,42 @@ TEST_CASE("Spatial-V2", "[ff][spatial]")
       REQUIRE(ix == 11);
       REQUIRE(iy == 13);
       REQUIRE(iz == 5);
+   }
+}
+
+
+TEST_CASE("Spatial-Cut", "[ff][spatial]")
+{
+   lvec1 = make_real3(40, 0, .0);
+   lvec2 = make_real3(0, 160, 0);
+   lvec3 = make_real3(0, 0, 40);
+   const int level = 4;
+   int px, py, pz;
+
+
+   SECTION("   - spatial_cut_v1")
+   {
+      spatial_cut_v1(px, py, pz, level);
+      REQUIRE(px == 2);
+      REQUIRE(py == 1);
+      REQUIRE(pz == 1);
+   }
+
+
+   SECTION("   - spatial_cut_v2")
+   {
+      spatial_cut_v2(px, py, pz, level);
+      REQUIRE(px == 1);
+      REQUIRE(py == 1);
+      REQUIRE(pz == 2);
+   }
+
+
+   SECTION("   - spatial_cut_v3")
+   {
+      spatial_cut_v3(px, py, pz, level);
+      REQUIRE(px == 0);
+      REQUIRE(py == 3);
+      REQUIRE(pz == 1);
    }
 }
