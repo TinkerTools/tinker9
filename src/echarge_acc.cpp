@@ -25,16 +25,15 @@ void echarge_acc1()
 
 
    real f = electric / dielec;
-   // real cut;
-   real off, aewald;
+   real cut, off, aewald;
    if CONSTEXPR (eq<ETYP, EWALD>()) {
       off = switch_off(switch_ewald);
-      // cut = off;
+      // cut = off; // not used
       const auto& st = *epme_unit;
       aewald = st.aewald;
    } else if CONSTEXPR (eq<ETYP, NON_EWALD_TAPER>()) {
       off = switch_off(switch_charge);
-      // cut = switch_cut(switch_charge);
+      cut = switch_cut(switch_charge);
    }
    const real off2 = off * off;
    const int maxnlist = clist_unit->maxnlst;
@@ -94,12 +93,11 @@ void echarge_acc1()
             }
 
 
-            if CONSTEXPR (eq<ETYP, EWALD>()) {
-               pair_charge<Ver, EWALD>(r, xr, yr, zr, 1, ci, ck, ebuffer, f,
-                                       aewald, //
-                                       frcx, frcy, frcz, ctl, e, vxx, vxy, vxz,
-                                       vyy, vyz, vzz);
-            }
+            // EWALD           -> EWALD
+            // NON_EWALD_TAPER -> NON_EWALD_TAPER
+            pair_charge<Ver, ETYP>(
+               r, xr, yr, zr, 1, ci, ck, ebuffer, f, aewald, cut, off, //
+               frcx, frcy, frcz, ctl, e, vxx, vxy, vxz, vyy, vyz, vzz);
 
 
             if CONSTEXPR (do_a)
@@ -176,10 +174,16 @@ void echarge_acc1()
          }
 
 
+         // EWALD           -> NON_EWALD
+         // NON_EWALD_TAPER -> NON_EWALD_TAPER
          real r = REAL_SQRT(r2);
          if CONSTEXPR (eq<ETYP, EWALD>()) {
             pair_charge<Ver, NON_EWALD>(
-               r, xr, yr, zr, cscale, ci, ck, ebuffer, f, 0, //
+               r, xr, yr, zr, cscale, ci, ck, ebuffer, f, 0, 0, 0, //
+               frcx, frcy, frcz, ctl, e, vxx, vxy, vxz, vyy, vyz, vzz);
+         } else if CONSTEXPR (eq<ETYP, NON_EWALD_TAPER>()) {
+            pair_charge<Ver, NON_EWALD_TAPER>(
+               r, xr, yr, zr, cscale, ci, ck, ebuffer, f, 0, cut, off, //
                frcx, frcy, frcz, ctl, e, vxx, vxy, vxz, vyy, vyz, vzz);
          }
 
@@ -202,6 +206,23 @@ void echarge_acc1()
             atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ec, offset);
       } // end if (include)
    }
+}
+
+
+void echarge_nonewald_acc(int vers)
+{
+   if (vers == calc::v0)
+      echarge_acc1<calc::V0, NON_EWALD_TAPER>();
+   else if (vers == calc::v1)
+      echarge_acc1<calc::V1, NON_EWALD_TAPER>();
+   else if (vers == calc::v3)
+      echarge_acc1<calc::V3, NON_EWALD_TAPER>();
+   else if (vers == calc::v4)
+      echarge_acc1<calc::V4, NON_EWALD_TAPER>();
+   else if (vers == calc::v5)
+      echarge_acc1<calc::V5, NON_EWALD_TAPER>();
+   else if (vers == calc::v6)
+      echarge_acc1<calc::V6, NON_EWALD_TAPER>();
 }
 
 

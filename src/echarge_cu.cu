@@ -17,7 +17,7 @@ TINKER_NAMESPACE_BEGIN
    size_t bufsize, count_buffer restrict nec, energy_buffer restrict ec,       \
       virial_buffer restrict vir_ec, grad_prec *restrict gx,                   \
       grad_prec *restrict gy, grad_prec *restrict gz, TINKER_IMAGE_PARAMS,     \
-      real off, real ebuffer, real f, const real *restrict pchg
+      real cut, real off, real ebuffer, real f, const real *restrict pchg
 
 
 template <class Ver, class ETYP>
@@ -26,6 +26,7 @@ void echarge_cu1(ECHARGE_ARGS, const Spatial::SortedAtom* restrict sorted,
                  int niak, const int* restrict iak, const int* restrict lst,
                  int n, real aewald)
 {
+   static_assert(eq<ETYP, EWALD>() || eq<ETYP, NON_EWALD_TAPER>(), "");
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
    constexpr bool do_g = Ver::g;
@@ -117,12 +118,10 @@ void echarge_cu1(ECHARGE_ARGS, const Spatial::SortedAtom* restrict sorted,
             }
 
 
-            if CONSTEXPR (eq<ETYP, EWALD>()) {
-               pair_charge<Ver, EWALD>(r, xr, yr, zr, 1, idat.chg,
-                                       data[klane].chg, ebuffer, f, aewald, //
-                                       grdx, grdy, grdz, ctl, etl, vtlxx, vtlxy,
-                                       vtlxz, vtlyy, vtlyz, vtlzz);
-            }
+            pair_charge<Ver, ETYP>(r, xr, yr, zr, 1, idat.chg, data[klane].chg,
+                                   ebuffer, f, aewald, cut, off, //
+                                   grdx, grdy, grdz, ctl, etl, vtlxx, vtlxy,
+                                   vtlxz, vtlyy, vtlyz, vtlzz);
 
 
             if CONSTEXPR (do_g) {
@@ -162,6 +161,7 @@ void echarge_cu2(ECHARGE_ARGS, const real* restrict x, const real* restrict y,
                  const int (*restrict cexclude)[2],
                  const real* restrict cexclude_scale)
 {
+   static_assert(eq<ETYP, NON_EWALD>() || eq<ETYP, NON_EWALD_TAPER>(), "");
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
    constexpr bool do_g = Ver::g;
@@ -217,9 +217,9 @@ void echarge_cu2(ECHARGE_ARGS, const real* restrict x, const real* restrict y,
 
 
          real r = REAL_SQRT(r2);
-         pair_charge<Ver, ETYP>(r, xr, yr, zr, cscale, ci, ck, ebuffer, f, 0, //
-                                grdx, grdy, grdz, ctl, e, vxx, vxy, vxz, vyy,
-                                vyz, vzz);
+         pair_charge<Ver, ETYP>(
+            r, xr, yr, zr, cscale, ci, ck, ebuffer, f, 0, cut, off, //
+            grdx, grdy, grdz, ctl, e, vxx, vxy, vxz, vyy, vyz, vzz);
          if (e != 0) {
             if CONSTEXPR (do_a)
                atomic_add(ctl, nec, offset);
@@ -245,11 +245,14 @@ template <class Ver, class ETYP>
 void echarge_cu()
 {
    const auto& st = *cspatial_unit;
-   real off;
-   if CONSTEXPR (eq<ETYP, EWALD>())
+   real cut, off;
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
       off = switch_off(switch_ewald);
-   else
+      // cut = off; // not used
+   } else {
       off = switch_off(switch_charge);
+      cut = switch_cut(switch_charge);
+   }
    auto bufsize = buffer_size();
 
 
@@ -265,19 +268,50 @@ void echarge_cu()
       if (st.niak > 0) {
          auto ker1 = echarge_cu1<Ver, EWALD>;
          launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
-                    bufsize, nec, ec, vir_ec, gx, gy, gz, TINKER_IMAGE_ARGS,
+                    bufsize, nec, ec, vir_ec, gx, gy, gz, TINKER_IMAGE_ARGS, 0,
                     off, ebuffer, f, pchg, //
                     st.sorted, st.niak, st.iak, st.lst, n, aewald);
       }
       if (ncexclude > 0) {
          auto ker2 = echarge_cu2<Ver, NON_EWALD>;
          launch_k1s(nonblk, ncexclude, ker2, //
-                    bufsize, nec, ec, vir_ec, gx, gy, gz, TINKER_IMAGE_ARGS,
+                    bufsize, nec, ec, vir_ec, gx, gy, gz, TINKER_IMAGE_ARGS, 0,
                     off, ebuffer, f, pchg, //
                     x, y, z, ncexclude, cexclude, cexclude_scale);
       }
    } else if CONSTEXPR (eq<ETYP, NON_EWALD_TAPER>()) {
+      if (st.niak > 0) {
+         auto ker1 = echarge_cu1<Ver, NON_EWALD_TAPER>;
+         launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
+                    bufsize, nec, ec, vir_ec, gx, gy, gz, TINKER_IMAGE_ARGS,
+                    cut, off, ebuffer, f, pchg, //
+                    st.sorted, st.niak, st.iak, st.lst, n, 0);
+      }
+      if (ncexclude > 0) {
+         auto ker2 = echarge_cu2<Ver, NON_EWALD_TAPER>;
+         launch_k1s(nonblk, ncexclude, ker2, //
+                    bufsize, nec, ec, vir_ec, gx, gy, gz, TINKER_IMAGE_ARGS,
+                    cut, off, ebuffer, f, pchg, //
+                    x, y, z, ncexclude, cexclude, cexclude_scale);
+      }
    }
+}
+
+
+void echarge_nonewald_cu(int vers)
+{
+   if (vers == calc::v0)
+      echarge_cu<calc::V0, NON_EWALD_TAPER>();
+   else if (vers == calc::v1)
+      echarge_cu<calc::V1, NON_EWALD_TAPER>();
+   else if (vers == calc::v3)
+      echarge_cu<calc::V3, NON_EWALD_TAPER>();
+   else if (vers == calc::v4)
+      echarge_cu<calc::V4, NON_EWALD_TAPER>();
+   else if (vers == calc::v5)
+      echarge_cu<calc::V5, NON_EWALD_TAPER>();
+   else if (vers == calc::v6)
+      echarge_cu<calc::V6, NON_EWALD_TAPER>();
 }
 
 

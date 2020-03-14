@@ -23,6 +23,8 @@ void echarge_nonewald(int vers);
 void echarge_ewald(int vers);
 
 
+void echarge_nonewald_acc(int);
+void echarge_nonewald_cu(int);
 void echarge_ewald_real_acc(int);
 void echarge_ewald_real_cu(int);
 void echarge_ewald_fphi_self_acc(int);

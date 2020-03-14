@@ -133,10 +133,10 @@ void echarge_nonewald(int vers)
 {
 #if TINKER_CUDART
    if (clist_version() == NBL_SPATIAL)
-      ;
+      echarge_nonewald_cu(vers);
    else
 #endif
-      ;
+      echarge_nonewald_acc(vers);
 }
 
 
