@@ -2,11 +2,11 @@
 ##/
 ##/ ## Introduction
 ##/ This is a self-documenting Makefile. After being processed by `doxygen`,
-##/ the documentation will appear in the `Related Pages`. Simply run
+##/ this file will appear in the `Related Pages`. Simply run
 ##/ ```
 ##/ $> make help
 ##/ ```
-##/ can also print the documentation in terminal window.
+##/ can also print this document in the terminal window.
 ##/
 ##/ Every option usually has a default value and is documented as
 ##/ `option=default_value`. In order to override the defaults, set
@@ -20,9 +20,14 @@
 ##/
 ##/ ------
 ##/
+##/ ## Create Build Directory
+##/ In order to create a build directory and automatically generate mandatory
+##/ files inside the build directory, please refer to the `create_build`
+##/ section.
+##/
 ##/ ## Maintaining Multiple Build Directories
 ##/
-##/ The design of this Makefile strongly discourages compiling the object files
+##/ The design of this Makefile strongly discourages compiling object files
 ##/ inside the source code directory, where the situation becomes extreamely
 ##/ messy if you want to switch back and forth among different configurations.
 ##/ And as you will see later, quite a few arguments are necessary to be passed
