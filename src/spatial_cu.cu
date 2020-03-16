@@ -1,4 +1,5 @@
 #include "box.h"
+#include "imagefc_cu.h"
 #include "launch.h"
 #include "md.h"
 #include "nblist.h"
@@ -16,129 +17,6 @@
 
 
 TINKER_NAMESPACE_BEGIN
-namespace {
-__device__
-inline real3 c0_f0_triclinic(real xr, real yr, real zr, real3 ra, real3 rb,
-                             real3 rc)
-{
-   real3 f;
-   f.x = zr * ra.z + yr * ra.y + xr * ra.x;
-   f.y = zr * rb.z + yr * rb.y;
-   f.z = zr * rc.z;
-   return f;
-}
-
-
-__device__
-inline real3 c0_f0_monoclinic(real xr, real yr, real zr, real3 ra, real3 rb,
-                              real3 rc)
-{
-   real3 f;
-   f.x = zr * ra.z + xr * ra.x;
-   f.y = yr * rb.y;
-   f.z = zr * rc.z;
-   return f;
-}
-
-
-__device__
-inline real3 c0_f0_orthogonal(real xr, real yr, real zr, real3 ra, real3 rb,
-                              real3 rc)
-{
-   real3 f;
-   f.x = xr * ra.x;
-   f.y = yr * rb.y;
-   f.z = zr * rc.z;
-   return f;
-}
-
-
-__device__
-inline real3 f0_f1(real3 f)
-{
-   f.x -= REAL_FLOOR(0.5f + f.x);
-   f.y -= REAL_FLOOR(0.5f + f.y);
-   f.z -= REAL_FLOOR(0.5f + f.z);
-   return f;
-}
-
-
-__device__
-inline real3 f1_c1_triclinic(real3 f, real3 l1, real3 l2, real3 l3)
-{
-   f.x = f.z * l1.z + f.y * l1.y + f.x * l1.x;
-   f.y = f.z * l2.z + f.y * l2.y;
-   f.z = f.z * l3.z;
-   return f;
-}
-
-
-__device__
-inline real3 f1_c1_monoclinic(real3 f, real3 l1, real3 l2, real3 l3)
-{
-   f.x = f.z * l1.z + f.x * l1.x;
-   f.y = f.y * l2.y;
-   f.z = f.z * l3.z;
-   return f;
-}
-
-
-__device__
-inline real3 f1_c1_orthogonal(real3 f, real3 l1, real3 l2, real3 l3)
-{
-   f.x = f.x * l1.x;
-   f.y = f.y * l2.y;
-   f.z = f.z * l3.z;
-   return f;
-}
-
-
-__device__
-inline real3 frac_general(real xr, real yr, real zr, real3 ra, real3 rb,
-                          real3 rc)
-{
-   if (ra.z == 0) {
-      return f0_f1(c0_f0_orthogonal(xr, yr, zr, ra, rb, rc));
-   } else if (ra.y == 0) {
-      return f0_f1(c0_f0_monoclinic(xr, yr, zr, ra, rb, rc));
-   } else {
-      return f0_f1(c0_f0_triclinic(xr, yr, zr, ra, rb, rc));
-   }
-}
-
-
-__device__
-inline real3 frac_image_general(real3 f, real3 l1, real3 l2, real3 l3)
-{
-   if (l1.z == 0) {
-      return f1_c1_orthogonal(f, l1, l2, l3);
-   } else if (l1.y == 0) {
-      return f1_c1_monoclinic(f, l1, l2, l3);
-   } else {
-      return f1_c1_triclinic(f, l1, l2, l3);
-   }
-}
-}
-
-
-/**
- * \def frac
- * \ingroup macro
- * Calculate the fractional coordinates of (`xr, yr, zr`). The range of the
- * fractional coordinate is `[-1/2, 1/2)`.
- */
-#ifndef frac
-#   define frac(xr, yr, zr) frac_general(xr, yr, zr, recipa, recipb, recipc)
-#endif
-/**
- * \def frac_image
- * \ingroup macro
- */
-#ifndef frac_image
-#   define frac_image(f) frac_image_general(f, lvec1, lvec2, lvec3)
-#endif
-
-
 struct POPC
 {
    __device__
@@ -220,7 +98,7 @@ bool nearby_box0(int boxj, int px, int py, int pz, real3 lvec1, real3 lvec2,
       cb -= REAL_FLOOR(cb + 0.5f);
       r.z = REAL_MIN(REAL_ABS(da), REAL_ABS(cb));
    }
-   r = frac_image(r);
+   r = ftoc(r);
    real r2 = r.x * r.x + r.y * r.y + r.z * r.z;
    return r2 <= cutbuf2;
 }
@@ -263,7 +141,7 @@ void spatial_bc(int n, int px, int py, int pz,
          yold[i] = yr;
          zold[i] = zr;
       }
-      real3 f = frac(xr, yr, zr);
+      real3 f = imagectof(xr, yr, zr);
       sorted[i].x = xr;       // B.2
       sorted[i].y = yr;       // B.2
       sorted[i].z = zr;       // B.2
