@@ -10,6 +10,7 @@
 TINKER_NAMESPACE_BEGIN
 void set_default_box(const Box& p)
 {
+   box_shape = p.box_shape;
    lvec1 = p.lvec1;
    lvec2 = p.lvec2;
    lvec3 = p.lvec3;
@@ -21,6 +22,7 @@ void set_default_box(const Box& p)
 
 void get_default_box(Box& p)
 {
+   p.box_shape = box_shape;
    p.lvec1 = lvec1;
    p.lvec2 = lvec2;
    p.lvec3 = lvec3;
@@ -30,21 +32,46 @@ void get_default_box(Box& p)
 }
 
 
-void set_recip_box(real3 lvec1, real3 lvec2, real3 lvec3, real3& recipa,
-                   real3& recipb, real3& recipc)
+void set_default_recip_box()
 {
-   recipc.x = 0;
-   recipc.y = 0;
-   recipc.z = 1.0 / lvec3.z;
+   if (box_shape == ORTHO_BOX || box_shape == OCT_BOX) {
+      recipc.x = 0;
+      recipc.y = 0;
+      recipc.z = 1.0 / lvec3.z;
 
-   recipb.x = 0;
-   recipb.y = 1.0 / lvec2.y;
-   recipb.z = -lvec2.z / (lvec2.y * lvec3.z);
+      recipb.x = 0;
+      recipb.y = 1.0 / lvec2.y;
+      recipb.z = 0;
 
-   recipa.x = 1.0 / lvec1.x;
-   recipa.y = -lvec1.y / (lvec1.x * lvec2.y);
-   recipa.z = lvec1.y * lvec2.z - lvec1.z * lvec2.y;
-   recipa.z /= (lvec1.x * lvec2.y * lvec3.z);
+      recipa.x = 1.0 / lvec1.x;
+      recipa.y = 0;
+      recipa.z = 0;
+   } else if (box_shape == MONO_BOX) {
+      recipc.x = 0;
+      recipc.y = 0;
+      recipc.z = 1.0 / lvec3.z;
+
+      recipb.x = 0;
+      recipb.y = 1.0 / lvec2.y;
+      recipb.z = 0;
+
+      recipa.x = 1.0 / lvec1.x;
+      recipa.y = 0;
+      recipa.z = -lvec1.z / (lvec1.x * lvec3.z);
+   } else if (box_shape == TRI_BOX) {
+      recipc.x = 0;
+      recipc.y = 0;
+      recipc.z = 1.0 / lvec3.z;
+
+      recipb.x = 0;
+      recipb.y = 1.0 / lvec2.y;
+      recipb.z = -lvec2.z / (lvec2.y * lvec3.z);
+
+      recipa.x = 1.0 / lvec1.x;
+      recipa.y = -lvec1.y / (lvec1.x * lvec2.y);
+      recipa.z = lvec1.y * lvec2.z - lvec1.z * lvec2.y;
+      recipa.z /= (lvec1.x * lvec2.y * lvec3.z);
+   }
 }
 
 
@@ -83,32 +110,82 @@ void get_box_axes_angles(const Box& p, double& a, double& b, double& c,
 
 void set_tinker_box_module(const Box& p)
 {
-   if (bound::use_bounds) {
-      double xbox, ybox, zbox, a_deg, b_deg, c_deg;
-      get_box_axes_angles(p, xbox, ybox, zbox, a_deg, b_deg, c_deg);
+   if (p.box_shape == UNBOUND_BOX)
+      return;
 
 
-      boxes::xbox = xbox;
-      boxes::ybox = ybox;
-      boxes::zbox = zbox;
-      boxes::alpha = a_deg;
-      boxes::beta = b_deg;
-      boxes::gamma = c_deg;
-      TINKER_RT(lattice)();
-   }
+   boxes::orthogonal = 0;
+   boxes::monoclinic = 0;
+   boxes::triclinic = 0;
+   boxes::octahedron = 0;
+   if (box_shape == ORTHO_BOX)
+      boxes::orthogonal = 1;
+   else if (box_shape == MONO_BOX)
+      boxes::monoclinic = 1;
+   else if (box_shape == TRI_BOX)
+      boxes::triclinic = 1;
+   else if (box_shape == OCT_BOX)
+      boxes::octahedron = 1;
+
+
+   double xbox, ybox, zbox, a_deg, b_deg, c_deg;
+   get_box_axes_angles(p, xbox, ybox, zbox, a_deg, b_deg, c_deg);
+
+
+   boxes::xbox = xbox;
+   boxes::ybox = ybox;
+   boxes::zbox = zbox;
+   boxes::alpha = a_deg;
+   boxes::beta = b_deg;
+   boxes::gamma = c_deg;
+   TINKER_RT(lattice)();
 }
 
 
 void get_tinker_box_module(Box& p)
 {
+   if (!bound::use_bounds) {
+      p.box_shape = UNBOUND_BOX;
+      p.lvec1 = make_real3(0, 0, 0);
+      p.lvec2 = make_real3(0, 0, 0);
+      p.lvec3 = make_real3(0, 0, 0);
+      p.recipa = make_real3(0, 0, 0);
+      p.recipb = make_real3(0, 0, 0);
+      p.recipc = make_real3(0, 0, 0);
+      return;
+   }
+
+
+   if (boxes::orthogonal)
+      p.box_shape = ORTHO_BOX;
+   else if (boxes::monoclinic)
+      p.box_shape = MONO_BOX;
+   else if (boxes::triclinic)
+      p.box_shape = TRI_BOX;
+   else if (boxes::octahedron)
+      p.box_shape = OCT_BOX;
+
+
    const auto& r = boxes::recip;
    const auto& l = boxes::lvec;
-   p.recipa = make_real3(r[0][0], r[0][1], r[0][2]);
-   p.recipb = make_real3(r[1][0], r[1][1], r[1][2]);
-   p.recipc = make_real3(r[2][0], r[2][1], r[2][2]);
-   p.lvec1 = make_real3(l[0][0], l[0][1], l[0][2]);
-   p.lvec2 = make_real3(l[1][0], l[1][1], l[1][2]);
-   p.lvec3 = make_real3(l[2][0], l[2][1], l[2][2]);
+   p.recipa.x = r[0][0];
+   p.recipa.y = r[0][1];
+   p.recipa.z = r[0][2];
+   p.recipb.x = 0; // r[1][0];
+   p.recipb.y = r[1][1];
+   p.recipb.z = r[1][2];
+   p.recipc.x = 0; // r[2][0];
+   p.recipc.y = 0; // r[2][1];
+   p.recipc.z = r[2][2];
+   p.lvec1.x = l[0][0];
+   p.lvec1.y = l[0][1];
+   p.lvec1.z = l[0][2];
+   p.lvec2.x = 0; // l[1][0];
+   p.lvec2.y = l[1][1];
+   p.lvec2.z = l[1][2];
+   p.lvec3.x = 0; // l[1][1];
+   p.lvec3.y = 0; // l[1][2];
+   p.lvec3.z = l[2][2];
 }
 
 
@@ -120,6 +197,7 @@ void box_data(rc_op op)
       } else {
          trajbox = nullptr;
       }
+      box_shape = UNBOUND_BOX;
    }
 
 
@@ -131,16 +209,6 @@ void box_data(rc_op op)
 
 
    if (op & rc_init) {
-      box_shape = UNBOUND_BOX;
-      if (boxes::orthogonal)
-         box_shape = ORTHO_BOX;
-      else if (boxes::monoclinic)
-         box_shape = MONO_BOX;
-      else if (boxes::triclinic)
-         box_shape = TRI_BOX;
-      else if (boxes::octahedron)
-         box_shape = OCT_BOX;
-
       Box p;
       get_tinker_box_module(p);
       set_default_box(p);
@@ -150,6 +218,9 @@ void box_data(rc_op op)
 
 real volbox()
 {
-   return lvec1.x * lvec2.y * lvec3.z;
+   real ans = lvec1.x * lvec2.y * lvec3.z;
+   if (box_shape == OCT_BOX)
+      ans *= 0.5f;
+   return ans;
 }
 TINKER_NAMESPACE_END

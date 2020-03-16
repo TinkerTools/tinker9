@@ -132,7 +132,7 @@ void monte_carlo_barostat_acc(energy_prec epot)
       lvec1 *= scale;
       lvec2 *= scale;
       lvec3 *= scale;
-      set_recip_box(lvec1, lvec2, lvec3, recipa, recipb, recipc);
+      set_default_recip_box();
 
 
       if (volscale == "MOLECULAR") {

@@ -21,6 +21,8 @@ constexpr BoxShape MONO_BOX = BoxShape::MONO;
 constexpr BoxShape TRI_BOX = BoxShape::TRI;
 constexpr BoxShape OCT_BOX = BoxShape::OCT;
 TINKER_EXTERN BoxShape box_shape;
+TINKER_EXTERN real3 lvec1, lvec2, lvec3;
+TINKER_EXTERN real3 recipa, recipb, recipc;
 
 
 /**
@@ -68,15 +70,13 @@ TINKER_EXTERN BoxShape box_shape;
  */
 struct Box
 {
+   BoxShape box_shape;
    real3 lvec1, lvec2, lvec3;
    real3 recipa, recipb, recipc;
 };
-TINKER_EXTERN real3 lvec1, lvec2, lvec3;
-TINKER_EXTERN real3 recipa, recipb, recipc;
 void set_default_box(const Box&);
 void get_default_box(Box&);
-void set_recip_box(real3 lvec1, real3 lvec2, real3 lvec3, real3& recipa,
-                   real3& recipb, real3& recipc);
+void set_default_recip_box();
 void get_box_axes_angles(const Box&, double& a, double& b, double& c,
                          double& alpha, double& beta, double& gamma);
 void set_tinker_box_module(const Box&);

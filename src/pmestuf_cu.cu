@@ -445,7 +445,7 @@ void fphi_get_cu(int n, int nfft1, int nfft2, int nfft3, const real* restrict x,
       w1 = fr1 - igrid1;
 
 
-      real w2 = xi * xi * recip_b.x + yi * recip_b.y + zi * recip_b.z;
+      real w2 = xi * recip_b.x + yi * recip_b.y + zi * recip_b.z;
       w2 = w2 + 0.5f - REAL_FLOOR(w2 + 0.5f);
       real fr2 = nfft2 * w2;
       int igrid2 = REAL_FLOOR(fr2);

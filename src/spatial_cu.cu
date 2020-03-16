@@ -16,8 +16,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-namespace pbc {
-#pragma acc routine seq
+namespace {
 __device__
 inline real3 c0_f0_triclinic(real xr, real yr, real zr, real3 ra, real3 rb,
                              real3 rc)
@@ -30,7 +29,6 @@ inline real3 c0_f0_triclinic(real xr, real yr, real zr, real3 ra, real3 rb,
 }
 
 
-#pragma acc routine seq
 __device__
 inline real3 c0_f0_monoclinic(real xr, real yr, real zr, real3 ra, real3 rb,
                               real3 rc)
@@ -43,7 +41,6 @@ inline real3 c0_f0_monoclinic(real xr, real yr, real zr, real3 ra, real3 rb,
 }
 
 
-#pragma acc routine seq
 __device__
 inline real3 c0_f0_orthogonal(real xr, real yr, real zr, real3 ra, real3 rb,
                               real3 rc)
@@ -56,7 +53,6 @@ inline real3 c0_f0_orthogonal(real xr, real yr, real zr, real3 ra, real3 rb,
 }
 
 
-#pragma acc routine seq
 __device__
 inline real3 f0_f1(real3 f)
 {
@@ -67,7 +63,6 @@ inline real3 f0_f1(real3 f)
 }
 
 
-#pragma acc routine seq
 __device__
 inline real3 f1_c1_triclinic(real3 f, real3 l1, real3 l2, real3 l3)
 {
@@ -77,7 +72,7 @@ inline real3 f1_c1_triclinic(real3 f, real3 l1, real3 l2, real3 l3)
    return f;
 }
 
-#pragma acc routine seq
+
 __device__
 inline real3 f1_c1_monoclinic(real3 f, real3 l1, real3 l2, real3 l3)
 {
@@ -87,7 +82,7 @@ inline real3 f1_c1_monoclinic(real3 f, real3 l1, real3 l2, real3 l3)
    return f;
 }
 
-#pragma acc routine seq
+
 __device__
 inline real3 f1_c1_orthogonal(real3 f, real3 l1, real3 l2, real3 l3)
 {
@@ -96,13 +91,12 @@ inline real3 f1_c1_orthogonal(real3 f, real3 l1, real3 l2, real3 l3)
    f.z = f.z * l3.z;
    return f;
 }
-}
+
 
 __device__
-static inline real3 frac_general(real xr, real yr, real zr, real3 ra, real3 rb,
-                                 real3 rc)
+inline real3 frac_general(real xr, real yr, real zr, real3 ra, real3 rb,
+                          real3 rc)
 {
-   using namespace pbc;
    if (ra.z == 0) {
       return f0_f1(c0_f0_orthogonal(xr, yr, zr, ra, rb, rc));
    } else if (ra.y == 0) {
@@ -114,9 +108,8 @@ static inline real3 frac_general(real xr, real yr, real zr, real3 ra, real3 rb,
 
 
 __device__
-static inline real3 frac_image_general(real3 f, real3 l1, real3 l2, real3 l3)
+inline real3 frac_image_general(real3 f, real3 l1, real3 l2, real3 l3)
 {
-   using namespace pbc;
    if (l1.z == 0) {
       return f1_c1_orthogonal(f, l1, l2, l3);
    } else if (l1.y == 0) {
@@ -124,6 +117,7 @@ static inline real3 frac_image_general(real3 f, real3 l1, real3 l2, real3 l3)
    } else {
       return f1_c1_triclinic(f, l1, l2, l3);
    }
+}
 }
 
 

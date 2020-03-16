@@ -4,6 +4,7 @@
 #include "test.h"
 #include "tinker_rt.h"
 #include <cmath>
+#include <tinker/detail/bound.hh>
 #include <tinker/detail/boxes.hh>
 using namespace TINKER_NAMESPACE;
 
@@ -11,6 +12,11 @@ using namespace TINKER_NAMESPACE;
 namespace {
 void set_box(BoxShape shape, const double* p)
 {
+   if (shape == UNBOUND_BOX)
+      return;
+
+
+   bound::use_bounds = 1;
    boxes::orthogonal = 0;
    boxes::monoclinic = 0;
    boxes::triclinic = 0;
@@ -21,6 +27,8 @@ void set_box(BoxShape shape, const double* p)
       boxes::monoclinic = 1;
    else if (shape == TRI_BOX)
       boxes::triclinic = 1;
+   else if (shape == OCT_BOX)
+      boxes::octahedron = 1;
 
    boxes::xbox = p[0];
    boxes::ybox = p[1];
@@ -30,15 +38,10 @@ void set_box(BoxShape shape, const double* p)
    boxes::gamma = p[5];
    TINKER_RT(lattice)();
 
-   recipa =
-      make_real3(boxes::recip[0][0], boxes::recip[0][1], boxes::recip[0][2]);
-   recipb =
-      make_real3(boxes::recip[1][0], boxes::recip[1][1], boxes::recip[1][2]);
-   recipc =
-      make_real3(boxes::recip[2][0], boxes::recip[2][1], boxes::recip[2][2]);
-   lvec1 = make_real3(boxes::lvec[0][0], boxes::lvec[0][1], boxes::lvec[0][2]);
-   lvec2 = make_real3(boxes::lvec[1][0], boxes::lvec[1][1], boxes::lvec[1][2]);
-   lvec3 = make_real3(boxes::lvec[2][0], boxes::lvec[2][1], boxes::lvec[2][2]);
+
+   Box bo;
+   get_tinker_box_module(bo);
+   set_default_box(bo);
 }
 }
 
