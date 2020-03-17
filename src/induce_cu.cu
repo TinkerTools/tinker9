@@ -1,10 +1,10 @@
 #include "add.h"
 #include "epolar.h"
+#include "image.h"
 #include "induce.h"
 #include "launch.h"
 #include "mdpq.h"
 #include "seq_damp.h"
-#include "seq_image.h"
 #include "spatial.h"
 #include "switch.h"
 

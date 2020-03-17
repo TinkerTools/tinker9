@@ -1,7 +1,7 @@
 #include "gpu_card.h"
+#include "image.h"
 #include "md.h"
 #include "nblist.h"
-#include "seq_image.h"
 
 #if TINKER_CUDART
 TINKER_NAMESPACE_BEGIN

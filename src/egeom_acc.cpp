@@ -2,10 +2,10 @@
 #include "box.h"
 #include "egeom.h"
 #include "group.h"
+#include "image.h"
 #include "md.h"
 #include "molecule.h"
 #include "named_struct.h"
-#include "seq_image.h"
 #include <cassert>
 
 

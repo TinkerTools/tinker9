@@ -1,6 +1,6 @@
+#include "image.h"
 #include "mdpq.h"
 #include "molecule.h"
-#include "seq_image.h"
 #include "syntax/acc/add_def.h"
 #include <tinker/detail/units.hh>
 

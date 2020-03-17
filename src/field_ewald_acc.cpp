@@ -7,7 +7,7 @@
 #include "nblist.h"
 #include "pmestuf.h"
 #include "potent.h"
-#include "seq_image.h"
+#include "image.h"
 #include "seq_pair_field.h"
 #include "switch.h"
 

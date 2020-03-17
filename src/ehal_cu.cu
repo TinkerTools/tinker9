@@ -1,9 +1,9 @@
 #include "add.h"
 #include "evdw.h"
+#include "image.h"
 #include "launch.h"
 #include "md.h"
 #include "named_struct.h"
-#include "seq_image.h"
 #include "seq_pair_hal.h"
 #include "seq_switch.h"
 #include "spatial.h"
@@ -47,14 +47,14 @@ TINKER_NAMESPACE_BEGIN
       const real *restrict radmin, const real *restrict epsilon,               \
       const real *vlam, evdw_t vcouple, real cut, real off
 #if 1
-#   define GHAL (real)0.12
-#   define DHAL (real)0.07
-#   define SCEXP 5
+#   define GHAL    (real)0.12
+#   define DHAL    (real)0.07
+#   define SCEXP   5
 #   define SCALPHA (real)0.7
 #elif 0
-#   define GHAL ghal
-#   define DHAL dhal
-#   define SCEXP scexp
+#   define GHAL    ghal
+#   define DHAL    dhal
+#   define SCEXP   scexp
 #   define SCALPHA scalpha
 #endif
 template <class Ver>

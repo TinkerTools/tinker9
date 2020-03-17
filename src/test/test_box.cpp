@@ -1,6 +1,6 @@
 #include "box.h"
+#include "image.h"
 #include "mathfunc.h"
-#include "seq_image.h"
 #include "test.h"
 #include "tinker_rt.h"
 #include <cmath>
