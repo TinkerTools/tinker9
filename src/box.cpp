@@ -34,7 +34,7 @@ void get_default_box(Box& p)
 
 void set_default_recip_box()
 {
-   if (box_shape == ORTHO_BOX || box_shape == OCT_BOX) {
+   if (box_shape == ORTHO_BOX) {
       recipc.x = 0;
       recipc.y = 0;
       recipc.z = 1.0 / lvec3.z;
@@ -71,6 +71,18 @@ void set_default_recip_box()
       recipa.y = -lvec1.y / (lvec1.x * lvec2.y);
       recipa.z = lvec1.y * lvec2.z - lvec1.z * lvec2.y;
       recipa.z /= (lvec1.x * lvec2.y * lvec3.z);
+   } else if (box_shape == OCT_BOX) {
+      recipc.x = 0;
+      recipc.y = 0;
+      recipc.z = 1.0 / lvec1.x;
+
+      recipb.x = 0;
+      recipb.y = 1.0 / lvec1.x;
+      recipb.z = 0;
+
+      recipa.x = 1.0 / lvec1.x;
+      recipa.y = 0;
+      recipa.z = 0;
    }
 }
 

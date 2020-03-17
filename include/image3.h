@@ -50,6 +50,28 @@ TINKER_NAMESPACE_BEGIN
    }
 
 
+#define image_oct_macro(xr, yr, zr, l1x, rax)                                  \
+   {                                                                           \
+      real fx = REAL_FLOOR(0.5f + xr * rax);                                   \
+      real fy = REAL_FLOOR(0.5f + yr * rax);                                   \
+      real fz = REAL_FLOOR(0.5f + zr * rax);                                   \
+      if (REAL_ABS(fx) + REAL_ABS(fy) + REAL_ABS(fz) > 0.75f) {                \
+         fx -= REAL_SIGN(0.5, fx);                                             \
+         fy -= REAL_SIGN(0.5, fy);                                             \
+         fz -= REAL_SIGN(0.5, fz);                                             \
+      }                                                                        \
+      xr -= (fx * l1x);                                                        \
+      yr -= (fy * l1x);                                                        \
+      zr -= (fz * l1x);                                                        \
+   }
+SEQ_ROUTINE
+inline void image_oct_devker(real& restrict xr, real& restrict yr,
+                             real& restrict zr, real l1x, real rax)
+{
+   image_oct_macro(xr, yr, zr, l1x, rax);
+}
+
+
 SEQ_ROUTINE
 inline void image_general(real& restrict xr, real& restrict yr,
                           real& restrict zr, real3 l1, real3 l2, real3 l3,
@@ -77,6 +99,8 @@ inline void image_general(real& restrict xr, real& restrict yr,
       image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else if (sh == TRI_BOX) {
       image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+   } else if (sh == OCT_BOX) {
+      image_oct_macro(xr, yr, zr, l1.x, ra.x);
    } else {
    }
 }
@@ -89,16 +113,13 @@ inline real image2_general(real& restrict xr, real& restrict yr,
 {
    if (l1.z == 0) {
       image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-      return xr * xr + yr * yr + zr * zr;
    } else if (l1.y == 0) {
       image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-      return xr * xr + yr * yr + zr * zr;
    } else if (l1.x != 0) {
       image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-      return xr * xr + yr * yr + zr * zr;
    } else {
-      return xr * xr + yr * yr + zr * zr;
    }
+   return xr * xr + yr * yr + zr * zr;
 }
 
 
@@ -109,16 +130,15 @@ inline real image2_general(real& restrict xr, real& restrict yr,
 {
    if (sh == ORTHO_BOX) {
       image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-      return xr * xr + yr * yr + zr * zr;
    } else if (sh == MONO_BOX) {
       image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-      return xr * xr + yr * yr + zr * zr;
    } else if (sh == TRI_BOX) {
       image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-      return xr * xr + yr * yr + zr * zr;
+   } else if (sh == OCT_BOX) {
+      image_oct_macro(xr, yr, zr, l1.x, ra.x);
    } else {
-      return xr * xr + yr * yr + zr * zr;
    }
+   return xr * xr + yr * yr + zr * zr;
 }
 
 
@@ -128,16 +148,13 @@ inline real imagen2_general(real& xr, real& yr, real& zr, real3 l1, real3 l2,
 {
    if (l1.z == 0) {
       image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-      return xr * xr + yr * yr + zr * zr;
    } else if (l1.y == 0) {
       image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-      return xr * xr + yr * yr + zr * zr;
    } else if (l1.x != 0) {
       image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-      return xr * xr + yr * yr + zr * zr;
    } else {
-      return xr * xr + yr * yr + zr * zr;
    }
+   return xr * xr + yr * yr + zr * zr;
 }
 
 
@@ -147,15 +164,14 @@ inline real imagen2_general(real& xr, real& yr, real& zr, BoxShape sh, real3 l1,
 {
    if (sh == ORTHO_BOX) {
       image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-      return xr * xr + yr * yr + zr * zr;
    } else if (sh == MONO_BOX) {
       image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-      return xr * xr + yr * yr + zr * zr;
    } else if (sh == TRI_BOX) {
       image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-      return xr * xr + yr * yr + zr * zr;
+   } else if (sh == OCT_BOX) {
+      image_oct_macro(xr, yr, zr, l1.x, ra.x);
    } else {
-      return xr * xr + yr * yr + zr * zr;
    }
+   return xr * xr + yr * yr + zr * zr;
 }
 TINKER_NAMESPACE_END
