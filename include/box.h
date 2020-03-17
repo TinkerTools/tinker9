@@ -90,11 +90,20 @@ void get_tinker_box_module(Box&);
 TINKER_EXTERN Box* trajbox;
 
 
-#define TINKER_IMAGE_PARAMS                                                    \
-   real3 lvec1, real3 lvec2, real3 lvec3, real3 recipa, real3 recipb,          \
-      real3 recipc
-#define TINKER_IMAGE_ARGS lvec1, lvec2, lvec3, recipa, recipb, recipc
-
+#define TINKER_IMAGE_LVEC_PARAMS  real3 lvec1, real3 lvec2, real3 lvec3
+#define TINKER_IMAGE_LVEC_ARGS    lvec1, lvec2, lvec3
+#define TINKER_IMAGE_RECIP_PARAMS real3 recipa, real3 recipb, real3 recipc
+#define TINKER_IMAGE_RECIP_ARGS   recipa, recipb, recipc
+#if 1
+#   define TINKER_IMAGE_PARAMS                                                 \
+      BoxShape box_shape, TINKER_IMAGE_LVEC_PARAMS, TINKER_IMAGE_RECIP_PARAMS
+#   define TINKER_IMAGE_ARGS                                                   \
+      box_shape, TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS
+#else
+#   define TINKER_IMAGE_PARAMS                                                 \
+      TINKER_IMAGE_LVEC_PARAMS, TINKER_IMAGE_RECIP_PARAMS
+#   define TINKER_IMAGE_ARGS TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS
+#endif
 
 void box_data(rc_op);
 

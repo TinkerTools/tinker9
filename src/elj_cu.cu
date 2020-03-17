@@ -150,6 +150,7 @@ void elj_cu1(LJ_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
             gyk -= to_cu<grad_prec>(__shfl_sync(ALL_LANES, dedy, dstlane));
             gzk -= to_cu<grad_prec>(__shfl_sync(ALL_LANES, dedz, dstlane));
          }
+         __syncwarp();
       }
 
 
@@ -254,6 +255,7 @@ void elj_cu2(LJ_ARGS, const real* restrict x, const real* restrict y,
             }
          }
       } // end if (include)
+      __syncwarp();
    }
 }
 
@@ -345,6 +347,7 @@ void elj_cu3(LJ_ARGS, const real* restrict x, const real* restrict y,
             }
          }
       } // end if (include)
+      __syncwarp();
    }
 }
 
@@ -355,7 +358,6 @@ void elj_cu4()
    const auto& st = *cspatial_unit;
    const real cut = switch_cut(switch_vdw);
    const real off = switch_off(switch_vdw);
-   const auto* sp = vspatial_unit.deviceptr();
 
 
    auto bufsize = buffer_size();

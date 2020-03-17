@@ -17,6 +17,13 @@ inline T to_flt_host(fixed val)
 }
 
 
+template <class F, class T>
+inline F to_flt_host(T val)
+{
+   return val;
+}
+
+
 /**
  * \ingroup md_egv
  * \brief
@@ -56,7 +63,6 @@ size_t buffer_size();
  *    a power of 2 and must not be not less than Nincr; by default, `T` and
  *    `type` are the same.
  *    - N: Must be equal to Nicr.
- *    - T cast(type): Function to cast `type` to `T`.
  */
 template <class T, size_t Nincr>
 struct buffer_traits
@@ -64,10 +70,6 @@ struct buffer_traits
    static constexpr size_t N = Nincr;
    static constexpr size_t value = pow2_ge(Nincr);
    using type = T;
-   static T cast(type val)
-   {
-      return val;
-   }
 };
 
 
@@ -81,10 +83,6 @@ struct buffer_traits<float, Nincr>
    static constexpr size_t N = Nincr;
    static constexpr size_t value = pow2_ge(Nincr);
    using type = fixed;
-   static float cast(type val)
-   {
-      return to_flt_host<float>(val);
-   }
 };
 
 

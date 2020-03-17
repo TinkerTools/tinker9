@@ -5,9 +5,6 @@
 
 
 TINKER_NAMESPACE_BEGIN
-// image
-
-
 // SEQ_ROUTINE
 // inline void image_triclinic(real& restrict xr, real& restrict yr,
 //                             real& restrict zr, real3 l1, real3 l2, real3 l3,
@@ -70,6 +67,22 @@ inline void image_general(real& restrict xr, real& restrict yr,
 
 
 SEQ_ROUTINE
+inline void image_general(real& restrict xr, real& restrict yr,
+                          real& restrict zr, BoxShape sh, real3 l1, real3 l2,
+                          real3 l3, real3 ra, real3 rb, real3 rc)
+{
+   if (sh == ORTHO_BOX) {
+      image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+   } else if (sh == MONO_BOX) {
+      image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+   } else if (sh == TRI_BOX) {
+      image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+   } else {
+   }
+}
+
+
+SEQ_ROUTINE
 inline real image2_general(real& restrict xr, real& restrict yr,
                            real& restrict zr, real3 l1, real3 l2, real3 l3,
                            real3 ra, real3 rb, real3 rc)
@@ -90,6 +103,26 @@ inline real image2_general(real& restrict xr, real& restrict yr,
 
 
 SEQ_ROUTINE
+inline real image2_general(real& restrict xr, real& restrict yr,
+                           real& restrict zr, BoxShape sh, real3 l1, real3 l2,
+                           real3 l3, real3 ra, real3 rb, real3 rc)
+{
+   if (sh == ORTHO_BOX) {
+      image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      return xr * xr + yr * yr + zr * zr;
+   } else if (sh == MONO_BOX) {
+      image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      return xr * xr + yr * yr + zr * zr;
+   } else if (sh == TRI_BOX) {
+      image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      return xr * xr + yr * yr + zr * zr;
+   } else {
+      return xr * xr + yr * yr + zr * zr;
+   }
+}
+
+
+SEQ_ROUTINE
 inline real imagen2_general(real& xr, real& yr, real& zr, real3 l1, real3 l2,
                             real3 l3, real3 ra, real3 rb, real3 rc)
 {
@@ -100,6 +133,25 @@ inline real imagen2_general(real& xr, real& yr, real& zr, real3 l1, real3 l2,
       image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
       return xr * xr + yr * yr + zr * zr;
    } else if (l1.x != 0) {
+      image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      return xr * xr + yr * yr + zr * zr;
+   } else {
+      return xr * xr + yr * yr + zr * zr;
+   }
+}
+
+
+SEQ_ROUTINE
+inline real imagen2_general(real& xr, real& yr, real& zr, BoxShape sh, real3 l1,
+                            real3 l2, real3 l3, real3 ra, real3 rb, real3 rc)
+{
+   if (sh == ORTHO_BOX) {
+      image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      return xr * xr + yr * yr + zr * zr;
+   } else if (sh == MONO_BOX) {
+      image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      return xr * xr + yr * yr + zr * zr;
+   } else if (sh == TRI_BOX) {
       image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
       return xr * xr + yr * yr + zr * zr;
    } else {
