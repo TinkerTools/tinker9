@@ -52,17 +52,20 @@ TINKER_NAMESPACE_BEGIN
 
 #define image_oct_macro(xr, yr, zr, l1x, rax)                                  \
    {                                                                           \
-      real fx = REAL_FLOOR(0.5f + xr * rax);                                   \
-      real fy = REAL_FLOOR(0.5f + yr * rax);                                   \
-      real fz = REAL_FLOOR(0.5f + zr * rax);                                   \
+      real fx = xr * rax;                                                      \
+      real fy = yr * rax;                                                      \
+      real fz = zr * rax;                                                      \
+      fx -= REAL_FLOOR(0.5f + fx);                                             \
+      fy -= REAL_FLOOR(0.5f + fy);                                             \
+      fz -= REAL_FLOOR(0.5f + fz);                                             \
       if (REAL_ABS(fx) + REAL_ABS(fy) + REAL_ABS(fz) > 0.75f) {                \
-         fx -= REAL_SIGN(0.5, fx);                                             \
-         fy -= REAL_SIGN(0.5, fy);                                             \
-         fz -= REAL_SIGN(0.5, fz);                                             \
+         fx -= REAL_SIGN(0.5f, fx);                                            \
+         fy -= REAL_SIGN(0.5f, fy);                                            \
+         fz -= REAL_SIGN(0.5f, fz);                                            \
       }                                                                        \
-      xr -= (fx * l1x);                                                        \
-      yr -= (fy * l1x);                                                        \
-      zr -= (fz * l1x);                                                        \
+      xr = fx * l1x;                                                           \
+      yr = fy * l1x;                                                           \
+      zr = fz * l1x;                                                           \
    }
 SEQ_ROUTINE
 inline void image_oct_devker(real& restrict xr, real& restrict yr,
