@@ -4,7 +4,6 @@
 #include "launch.h"
 #include "md.h"
 #include "nblist.h"
-#include "seq_spatial_box.h"
 #include "spatial.h"
 #include "syntax/cu/copysign.h"
 #include "syntax/cu/ffsn.h"
@@ -73,6 +72,41 @@ inline int min_by_abs(int a, int b)
 }
 
 
+__device__
+inline int ixyz_to_box(int ix, int iy, int iz, int px, int py, int pz)
+{
+   int id = (ix << (pz + py)) + (iy << pz) + iz;
+   return id;
+}
+
+
+__device__
+inline void box_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
+                        int px, int py, int pz, int boxid)
+{
+   ix = boxid >> (pz + py);         // ix = boxid / (dimz*dimy)
+   boxid &= ((1 << (pz + py)) - 1); // boxid = boxid % (dimz*dimy)
+   iy = boxid >> pz;                // iy = boxid / dimz
+   iz = boxid & ((1 << pz) - 1);    // iz = boxid % dimz
+}
+
+
+/**
+ * \note
+ * Fractional coordinates have to be taken care of by the image routine first.
+ */
+__device__
+inline void frac_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
+                         int px, int py, int pz, real fx, real fy, real fz)
+{
+   ix = fx * (1 << px) + (1 << px) / 2; // ix = (fx+half) * 2^px;
+   iy = fy * (1 << py) + (1 << py) / 2;
+   iz = fz * (1 << pz) + (1 << pz) / 2;
+   // cannot use iw = fw * (1 << pw) + (1 << (pw - 1));
+   // because pw may be 0, and 1 << -1 is undefined.
+}
+
+
 /**
  * \brief
  * Check the `ix, iy, iz` parameters of a given spatial box used for truncated
@@ -84,8 +118,8 @@ inline int min_by_abs(int a, int b)
  * `|x| + |y| + |z| = 3/4`, it is considered to be outside and needs updating.
  */
 __device__
-inline void ixyz_octahedron(int px, int py, int pz, int& restrict ix,
-                            int& restrict iy, int& restrict iz)
+inline void ixyz_octahedron(int& restrict ix, int& restrict iy,
+                            int& restrict iz, int px, int py, int pz)
 {
    int qx = (1 << px);
    int qy = (1 << py);
@@ -132,8 +166,8 @@ inline void ixyz_octahedron(int px, int py, int pz, int& restrict ix,
 
 
 __device__
-bool nearby_box0(int boxj, int px, int py, int pz, real3 lvec1, real3 lvec2,
-                 real3 lvec3, real cutbuf2)
+inline bool nearby_box0(int px, int py, int pz, real3 lvec1, real3 lvec2,
+                        real3 lvec3, int boxj, real cutbuf2)
 {
    int dimx = 1 << px;
    int dimy = 1 << py;
@@ -175,20 +209,20 @@ bool nearby_box0(int boxj, int px, int py, int pz, real3 lvec1, real3 lvec2,
 
 
 __device__
-inline int offset_box(int nx, int ny, int nz, int ix1, int iy1, int iz1,
+inline int offset_box(int ix1, int iy1, int iz1, int px, int py, int pz,
                       int offset, BoxShape box_shape)
 {
-   int dimx = (1 << nx);
-   int dimy = (1 << ny);
-   int dimz = (1 << nz);
+   int dimx = (1 << px);
+   int dimy = (1 << py);
+   int dimz = (1 << pz);
    int ix, iy, iz;
-   box_to_ixyz(ix, iy, iz, nx, ny, nz, offset);
+   box_to_ixyz(ix, iy, iz, px, py, pz, offset);
    ix = (ix + ix1) & (dimx - 1);
    iy = (iy + iy1) & (dimy - 1);
    iz = (iz + iz1) & (dimz - 1);
    if (box_shape == OCT_BOX)
-      ixyz_octahedron(nx, ny, nz, ix, iy, iz);
-   int id = ixyz_to_box(nx, ny, nz, ix, iy, iz);
+      ixyz_octahedron(ix, iy, iz, px, py, pz);
+   int id = ixyz_to_box(ix, iy, iz, px, py, pz);
    return id;
 }
 
@@ -226,8 +260,8 @@ void spatial_bc(int n, int px, int py, int pz,
       int ix, iy, iz;
       frac_to_ixyz(ix, iy, iz, px, py, pz, f.x, f.y, f.z);
       if (box_shape == OCT_BOX)
-         ixyz_octahedron(px, py, pz, ix, iy, iz);
-      int id = ixyz_to_box(px, py, pz, ix, iy, iz);
+         ixyz_octahedron(ix, iy, iz, px, py, pz);
+      int id = ixyz_to_box(ix, iy, iz, px, py, pz);
       boxnum[i] = id;         // B.3
       atomicAdd(&nax[id], 1); // B.4
    }
@@ -235,7 +269,7 @@ void spatial_bc(int n, int px, int py, int pz,
 
    for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < nx;
         i += blockDim.x * gridDim.x) {
-      if (nearby_box0(i, px, py, pz, lvec1, lvec2, lvec3, cutbuf2))
+      if (nearby_box0(px, py, pz, lvec1, lvec2, lvec3, i, cutbuf2))
          nearby[i] = i; // C.1 (close enough)
       else
          nearby[i] = -1; // C.1 (otherwise)
@@ -310,7 +344,7 @@ void spatial_ghi(Spatial* restrict sp, int n, TINKER_IMAGE_PARAMS, real cutbuf2)
          int ix1, iy1, iz1;
          box_to_ixyz(ix1, iy1, iz1, px, py, pz, ibox);
          int j0 = nearby[j - i0 * near];
-         int jbox = offset_box(px, py, pz, ix1, iy1, iz1, j0, box_shape);
+         int jbox = offset_box(ix1, iy1, iz1, px, py, pz, j0, box_shape);
          // the (jbox%32)-th bit of the (jbox/32) flag will be set to 1
          int ii = jbox / WARP_SIZE;
          int jj = jbox & (WARP_SIZE - 1);
@@ -553,3 +587,60 @@ void spatial_data_init_cu(SpatialUnit u)
    u.update_deviceptr(*u, PROCEED_NEW_Q);
 }
 TINKER_NAMESPACE_END
+
+
+#if 0
+TINKER_NAMESPACE_BEGIN
+namespace spatial_v2 {
+__device__
+inline void box_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
+                        int px, int py, int pz, int boxid)
+{
+   ix = 0;
+   iy = 0;
+   iz = 0;
+   for (int i = 0; i < pz; ++i) {
+      int zid = (boxid >> (2 * i + 0)) & (1 << i);
+      int yid = (boxid >> (2 * i + 1)) & (1 << i);
+      int xid = (boxid >> (2 * i + 2)) & (1 << i);
+      iz += zid;
+      iy += yid;
+      ix += xid;
+   }
+   for (int i = pz; i < py; ++i) {
+      int yid = (boxid >> (2 * i + 0)) & (1 << i);
+      int xid = (boxid >> (2 * i + 1)) & (1 << i);
+      iy += yid;
+      ix += xid;
+   }
+   for (int i = py; i < px; ++i) {
+      int xid = (boxid >> (2 * i + 0)) & (1 << i);
+      ix += xid;
+   }
+}
+
+
+__device__
+inline int ixyz_to_box(int ix, int iy, int iz, int px, int py, int pz)
+{
+   int id = 0;
+   for (int i = 0; i < pz; ++i) {
+      int zid = (iz & (1 << i)) << (2 * i + 0);
+      int yid = (iy & (1 << i)) << (2 * i + 1);
+      int xid = (ix & (1 << i)) << (2 * i + 2);
+      id += (zid + yid + xid);
+   }
+   for (int i = pz; i < py; ++i) {
+      int yid = (iy & (1 << i)) << (2 * i + 0);
+      int xid = (ix & (1 << i)) << (2 * i + 1);
+      id += (yid + xid);
+   }
+   for (int i = py; i < px; ++i) {
+      int xid = (ix & (1 << i)) << (2 * i + 0);
+      id += xid;
+   }
+   return id;
+}
+}
+TINKER_NAMESPACE_END
+#endif
