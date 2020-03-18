@@ -1,0 +1,3 @@
+[submodule "ext/tinker"]
+	path = ext/tinker
+	url = https://github.com/TinkerTools/Tinker
