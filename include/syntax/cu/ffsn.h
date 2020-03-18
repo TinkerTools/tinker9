@@ -8,8 +8,8 @@ TINKER_NAMESPACE_BEGIN
  * \brief
  * Find the position of the n-th least significant bit set in a 32-bit integer.
  *
- * \param c1 A 32-bit integer.
- * \param n Ranges from 1 to 32.
+ * \param c1  A 32-bit integer.
+ * \param n   Ranges from 1 to 32.
  * \return
  * A value from 0 to 32.
  *    - If `c1` equals 0, always returns 0.

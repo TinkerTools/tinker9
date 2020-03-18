@@ -5,7 +5,6 @@
 
 
 TINKER_NAMESPACE_BEGIN
-namespace spatial_v1 {
 SEQ_ROUTINE
 inline void box_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
                         int px, int py, int pz, int boxid)
@@ -23,9 +22,9 @@ inline int ixyz_to_box(int px, int py, int pz, int ix, int iy, int iz)
    int id = (ix << (pz + py)) + (iy << pz) + iz;
    return id;
 }
-}
 
 
+#if 0
 namespace spatial_v2 {
 SEQ_ROUTINE
 inline void box_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
@@ -77,30 +76,15 @@ inline int ixyz_to_box(int px, int py, int pz, int ix, int iy, int iz)
    return id;
 }
 }
-
-
-using namespace spatial_v1;
-// using namespace spatial_v2;
+#endif
 
 
 SEQ_ROUTINE
 inline void frac_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
                          int px, int py, int pz, real fx, real fy, real fz)
 {
-   ix = fx * (1 << px) + (1 << (px - 1)); // ix = (fx+half) * 2^px;
-   iy = fy * (1 << py) + (1 << (py - 1));
-   iz = fz * (1 << pz) + (1 << (pz - 1));
-}
-
-
-SEQ_ROUTINE
-inline int frac_to_box(int px, int py, int pz, real fx, real fy, real fz)
-{
-   int ix, iy, iz;
-   fx -= REAL_FLOOR(fx + 0.5f);
-   fy -= REAL_FLOOR(fy + 0.5f);
-   fz -= REAL_FLOOR(fz + 0.5f);
-   frac_to_ixyz(ix, iy, iz, px, py, pz, fx, fy, fz);
-   return ixyz_to_box(px, py, pz, ix, iy, iz);
+   ix = fx * (1 << px) + (1 << px) / 2; // ix = (fx+half) * 2^px;
+   iy = fy * (1 << py) + (1 << py) / 2;
+   iz = fz * (1 << pz) + (1 << pz) / 2;
 }
 TINKER_NAMESPACE_END

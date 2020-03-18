@@ -56,19 +56,4 @@ namespace calc {}
  * \brief Math functions running in parallel.
  */
 namespace parallel {}
-
-
-/**
- * \brief Starting from 0 (which must be the `(0,0,0)` box), number the spatial
- * decomposition boxes as if they are stored in the `c[nx][ny][nz]` (or
- * `f(nz,ny,nx)`) array.
- */
-namespace spatial_v1 {}
-
-
-/**
- * \brief Starting from 0 (which must be the `(0,0,0)` box), number the spatial
- * decomposition boxes in a "binary tree" way.
- */
-namespace spatial_v2 {}
 TINKER_NAMESPACE_END

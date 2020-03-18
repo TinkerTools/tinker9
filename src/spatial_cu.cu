@@ -6,6 +6,7 @@
 #include "nblist.h"
 #include "seq_spatial_box.h"
 #include "spatial.h"
+#include "syntax/cu/copysign.h"
 #include "syntax/cu/ffsn.h"
 #include "thrust_cache.h"
 #include <thrust/extrema.h>
@@ -61,6 +62,75 @@ struct IntInt32Pair
 };
 
 
+/**
+ * \return
+ * The original integer which has the smaller absolute value.
+ */
+__device__
+inline int min_by_abs(int a, int b)
+{
+   return (abs(b) < abs(a)) ? b : a;
+}
+
+
+/**
+ * \brief
+ * Check the `ix, iy, iz` parameters of a given spatial box used for truncated
+ * octahedron periodic boundaries. Update them with `ix', iy', iz'` of the box
+ * image that is (at least partially) inside the truncated octahedron.
+ *
+ * The predicate is, if the fractional coordinate (from -0.5 to 0.5) of its
+ * innear-most vertex is outside of the space defined by surfaces
+ * `|x| + |y| + |z| = 3/4`, it is considered to be outside and needs updating.
+ */
+__device__
+inline void ixyz_octahedron(int px, int py, int pz, int& restrict ix,
+                            int& restrict iy, int& restrict iz)
+{
+   int qx = (1 << px);
+   int qy = (1 << py);
+   int qz = (1 << pz);
+   int qx2 = qx / 2;
+   int qy2 = qy / 2;
+   int qz2 = qz / 2;
+
+
+   // Translate by half box size so fractional coordinate can start from -0.5.
+   int ix1 = ix - qx2;
+   int iy1 = iy - qy2;
+   int iz1 = iz - qz2;
+
+
+   // The innear-most vertex.
+   int ix2 = min_by_abs(ix1, ix1 + 1);
+   int iy2 = min_by_abs(iy1, iy1 + 1);
+   int iz2 = min_by_abs(iz1, iz1 + 1);
+   // Fractional coordinate of the inner-most vertex; Range: [-0.5 to 0.5).
+   real hx = (real)ix2 / qx;
+   real hy = (real)iy2 / qy;
+   real hz = (real)iz2 / qz;
+   if (REAL_ABS(hx) + REAL_ABS(hy) + REAL_ABS(hz) > 0.75f) {
+      // If iw2 == iw1+1, iw1-iw2 < 0, box is on (-0.5, 0)
+      //    should move to right
+      //    iw1 += qw2; iw1 -= -qw2; iw1 -= SIGN(qw2, iw1-iw2)
+      // If iw2 == iw, iw1-iw2 == 0, box is on (0, 0.5)
+      //    should move to left
+      //    iw1 -= qw2; iw1 -= SIGN(qw2, 0); iw1 -= SIGN(qw2, iw1-iw2)
+      //
+      //    iw1 -= SIGN(qw2, iw1-iw2)
+      ix1 -= int_copysign(qx2, ix1 - ix2);
+      iy1 -= int_copysign(qy2, iy1 - iy2);
+      iz1 -= int_copysign(qz2, iz1 - iz2);
+   }
+
+
+   // Translate by half box size again.
+   ix = ix1 + qx2;
+   iy = iy1 + qy2;
+   iz = iz1 + qz2;
+}
+
+
 __device__
 bool nearby_box0(int boxj, int px, int py, int pz, real3 lvec1, real3 lvec2,
                  real3 lvec3, real cutbuf2)
@@ -106,7 +176,7 @@ bool nearby_box0(int boxj, int px, int py, int pz, real3 lvec1, real3 lvec2,
 
 __device__
 inline int offset_box(int nx, int ny, int nz, int ix1, int iy1, int iz1,
-                      int offset)
+                      int offset, BoxShape box_shape)
 {
    int dimx = (1 << nx);
    int dimy = (1 << ny);
@@ -116,6 +186,8 @@ inline int offset_box(int nx, int ny, int nz, int ix1, int iy1, int iz1,
    ix = (ix + ix1) & (dimx - 1);
    iy = (iy + iy1) & (dimy - 1);
    iz = (iz + iz1) & (dimz - 1);
+   if (box_shape == OCT_BOX)
+      ixyz_octahedron(nx, ny, nz, ix, iy, iz);
    int id = ixyz_to_box(nx, ny, nz, ix, iy, iz);
    return id;
 }
@@ -141,16 +213,21 @@ void spatial_bc(int n, int px, int py, int pz,
          yold[i] = yr;
          zold[i] = zr;
       }
-      real3 f = imagectof(xr, yr, zr);
       sorted[i].x = xr;       // B.2
       sorted[i].y = yr;       // B.2
       sorted[i].z = zr;       // B.2
       sorted[i].unsorted = i; // B.2
 
+      real3 f = imagectof(xr, yr, zr);
+
       // f.x, f.y, f.z coordinates have been "wrapped" into the PBC box,
       // but sorted[i] coordinates were not.
 
-      int id = frac_to_box(px, py, pz, f.x, f.y, f.z);
+      int ix, iy, iz;
+      frac_to_ixyz(ix, iy, iz, px, py, pz, f.x, f.y, f.z);
+      if (box_shape == OCT_BOX)
+         ixyz_octahedron(px, py, pz, ix, iy, iz);
+      int id = ixyz_to_box(px, py, pz, ix, iy, iz);
       boxnum[i] = id;         // B.3
       atomicAdd(&nax[id], 1); // B.4
    }
@@ -233,7 +310,7 @@ void spatial_ghi(Spatial* restrict sp, int n, TINKER_IMAGE_PARAMS, real cutbuf2)
          int ix1, iy1, iz1;
          box_to_ixyz(ix1, iy1, iz1, px, py, pz, ibox);
          int j0 = nearby[j - i0 * near];
-         int jbox = offset_box(px, py, pz, ix1, iy1, iz1, j0);
+         int jbox = offset_box(px, py, pz, ix1, iy1, iz1, j0, box_shape);
          // the (jbox%32)-th bit of the (jbox/32) flag will be set to 1
          int ii = jbox / WARP_SIZE;
          int jj = jbox & (WARP_SIZE - 1);
