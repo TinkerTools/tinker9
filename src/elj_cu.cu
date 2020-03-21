@@ -43,7 +43,7 @@ void elj_cu1(LJ_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
    MAYBE_UNUSED int ctl;
    MAYBE_UNUSED ebuf_prec etl;
    MAYBE_UNUSED grad_prec gxi, gyi, gzi, gxk, gyk, gzk;
-   MAYBE_UNUSED ebuf_prec vtlxx, vtlyx, vtlzx, vtlyy, vtlzy, vtlzz;
+   MAYBE_UNUSED vbuf_prec vtlxx, vtlyx, vtlzx, vtlyy, vtlzy, vtlzz;
 
 
    const real cut2 = cut * cut;
