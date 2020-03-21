@@ -295,10 +295,13 @@ void pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
       real term = -pterm * hsq;
       real expterm = 0;
       if (term > -50) {
-         // TODO: if .not. use_bounds; if octahedron; 2/hsq
+         // TODO: if .not. use_bounds
          real denom =
             hsq * pi * box_volume * bsmod1[k1] * bsmod2[k2] * bsmod3[k3];
          expterm = REAL_EXP(term) / denom;
+         if (box_shape == OCT_BOX)
+            if ((k1 + k2 + k3) & 1)
+               expterm = 0; // end if ((k1 + k2 + k3) % 2 != 0)
 
 
          if CONSTEXPR (DO_E || DO_V) {

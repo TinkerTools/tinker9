@@ -107,67 +107,9 @@ inline void frac_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
 }
 
 
-/**
- * \brief
- * Check the `ix, iy, iz` parameters of a given spatial box used for truncated
- * octahedron periodic boundaries. Update them with `ix', iy', iz'` of the box
- * image that is (at least partially) inside the truncated octahedron.
- *
- * The predicate is, if the fractional coordinate (from -0.5 to 0.5) of its
- * innear-most vertex is outside of the space defined by surfaces
- * `|x| + |y| + |z| = 3/4`, it is considered to be outside and needs updating.
- */
 __device__
-inline void ixyz_octahedron(int& restrict ix, int& restrict iy,
-                            int& restrict iz, int px, int py, int pz)
-{
-   int qx = (1 << px);
-   int qy = (1 << py);
-   int qz = (1 << pz);
-   int qx2 = qx / 2;
-   int qy2 = qy / 2;
-   int qz2 = qz / 2;
-
-
-   // Translate by half box size so fractional coordinate can start from -0.5.
-   int ix1 = ix - qx2;
-   int iy1 = iy - qy2;
-   int iz1 = iz - qz2;
-
-
-   // The innear-most vertex.
-   int ix2 = min_by_abs(ix1, ix1 + 1);
-   int iy2 = min_by_abs(iy1, iy1 + 1);
-   int iz2 = min_by_abs(iz1, iz1 + 1);
-   // Fractional coordinate of the inner-most vertex; Range: [-0.5 to 0.5).
-   real hx = (real)ix2 / qx;
-   real hy = (real)iy2 / qy;
-   real hz = (real)iz2 / qz;
-   if (REAL_ABS(hx) + REAL_ABS(hy) + REAL_ABS(hz) > 0.75f) {
-      // If iw2 == iw1+1, iw1-iw2 < 0, box is on (-0.5, 0)
-      //    should move to right
-      //    iw1 += qw2; iw1 -= -qw2; iw1 -= SIGN(qw2, iw1-iw2)
-      // If iw2 == iw, iw1-iw2 == 0, box is on (0, 0.5)
-      //    should move to left
-      //    iw1 -= qw2; iw1 -= SIGN(qw2, 0); iw1 -= SIGN(qw2, iw1-iw2)
-      //
-      //    iw1 -= SIGN(qw2, iw1-iw2)
-      ix1 -= int_copysign(qx2, ix1 - ix2);
-      iy1 -= int_copysign(qy2, iy1 - iy2);
-      iz1 -= int_copysign(qz2, iz1 - iz2);
-   }
-
-
-   // Translate by half box size again.
-   ix = ix1 + qx2;
-   iy = iy1 + qy2;
-   iz = iz1 + qz2;
-}
-
-
-__device__
-inline bool nearby_box0(int px, int py, int pz, real3 lvec1, real3 lvec2,
-                        real3 lvec3, int boxj, real cutbuf2)
+inline bool nearby_box0(int px, int py, int pz, BoxShape box_shape, real3 lvec1,
+                        real3 lvec2, real3 lvec3, int boxj, real cutbuf2)
 {
    int dimx = 1 << px;
    int dimy = 1 << py;
@@ -202,6 +144,51 @@ inline bool nearby_box0(int px, int py, int pz, real3 lvec1, real3 lvec2,
       cb -= REAL_FLOOR(cb + 0.5f);
       r.z = REAL_MIN(REAL_ABS(da), REAL_ABS(cb));
    }
+   if (box_shape == OCT_BOX) {
+      // I dunno how to calculate the shortest distance between two boxes with
+      // truncated octahedron periodic boundary, so I just calculate all of the
+      // 27 possible distances and pick the shortest one.
+      // "waterglobe" with 19200 atoms is a good test for this PBC. Small
+      // systems can only validate the image kernels, not spatial decomposition.
+      r = make_real3(1, 1, 1);
+      real r2 = 3;
+      real rxs[3], rys[3], rzs[3];
+      rxs[0] = (real)(ix - 1) / dimx;
+      rxs[1] = (real)(ix) / dimx;
+      rxs[2] = (real)(ix + 1) / dimx;
+      rys[0] = (real)(iy - 1) / dimy;
+      rys[1] = (real)(iy) / dimy;
+      rys[2] = (real)(iy + 1) / dimy;
+      rzs[0] = (real)(iz - 1) / dimz;
+      rzs[1] = (real)(iz) / dimz;
+      rzs[2] = (real)(iz + 1) / dimz;
+      for (int i = 0; i < 3; ++i) {
+         rxs[i] -= REAL_FLOOR(rxs[i] + 0.5f);
+         rys[i] -= REAL_FLOOR(rys[i] + 0.5f);
+         rzs[i] -= REAL_FLOOR(rzs[i] + 0.5f);
+      }
+      for (int xx = 0; xx < 3; ++xx) {
+         for (int yy = 0; yy < 3; ++yy) {
+            for (int zz = 0; zz < 3; ++zz) {
+               real tx = rxs[xx];
+               real ty = rys[yy];
+               real tz = rzs[zz];
+               if (REAL_ABS(tx) + REAL_ABS(ty) + REAL_ABS(tz) > 0.75f) {
+                  tx -= REAL_SIGN(0.5f, tx);
+                  ty -= REAL_SIGN(0.5f, ty);
+                  tz -= REAL_SIGN(0.5f, tz);
+               }
+               real t2 = tx * tx + ty * ty + tz * tz;
+               if (t2 < r2) {
+                  r.x = tx;
+                  r.y = ty;
+                  r.z = tz;
+                  r2 = t2;
+               }
+            }
+         }
+      }
+   }
    r = ftoc(r);
    real r2 = r.x * r.x + r.y * r.y + r.z * r.z;
    return r2 <= cutbuf2;
@@ -220,8 +207,6 @@ inline int offset_box(int ix1, int iy1, int iz1, int px, int py, int pz,
    ix = (ix + ix1) & (dimx - 1);
    iy = (iy + iy1) & (dimy - 1);
    iz = (iz + iz1) & (dimz - 1);
-   if (box_shape == OCT_BOX)
-      ixyz_octahedron(ix, iy, iz, px, py, pz);
    int id = ixyz_to_box(ix, iy, iz, px, py, pz);
    return id;
 }
@@ -259,8 +244,6 @@ void spatial_bc(int n, int px, int py, int pz,
 
       int ix, iy, iz;
       frac_to_ixyz(ix, iy, iz, px, py, pz, f.x, f.y, f.z);
-      if (box_shape == OCT_BOX)
-         ixyz_octahedron(ix, iy, iz, px, py, pz);
       int id = ixyz_to_box(ix, iy, iz, px, py, pz);
       boxnum[i] = id;         // B.3
       atomicAdd(&nax[id], 1); // B.4
@@ -269,7 +252,9 @@ void spatial_bc(int n, int px, int py, int pz,
 
    for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < nx;
         i += blockDim.x * gridDim.x) {
-      if (nearby_box0(px, py, pz, lvec1, lvec2, lvec3, i, cutbuf2))
+      bool is_nearby0 =
+         nearby_box0(px, py, pz, box_shape, lvec1, lvec2, lvec3, i, cutbuf2);
+      if (is_nearby0)
          nearby[i] = i; // C.1 (close enough)
       else
          nearby[i] = -1; // C.1 (otherwise)
@@ -349,8 +334,8 @@ void spatial_ghi(Spatial* restrict sp, int n, TINKER_IMAGE_PARAMS, real cutbuf2)
          int ii = jbox / WARP_SIZE;
          int jj = jbox & (WARP_SIZE - 1);
          int oldflag = atomicOr(&ixkf[ii], 1 << jj); // H.3
-         // the atomicOr() will return the old value;
-         // code in the following if body will only run
+         // atomicOr() will return the old value;
+         // code in the following if block will only run
          // when the bit(ii,jj) gets set for the first time
          if ((oldflag & (1 << jj)) == 0) {
             // copy atoms in jbox to lstbuf
@@ -498,7 +483,7 @@ void spatial_data_init_cu(SpatialUnit u)
               nx, nearby);
    // find max(nax) and compare to Spatial::BLOCK
    // ax_scan[0] == 0 can never be the maximum
-   int level = 1 + floor_log2(nak - 1);
+   int level = px + py + pz;
    int mnax;
    const int* mnaxptr = thrust::max_element(policy, ax_scan, ax_scan + 1 + nx);
    darray::copyout(WAIT_NEW_Q, 1, &mnax, mnaxptr);

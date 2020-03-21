@@ -78,7 +78,9 @@ void elj_acc1()
 
 
             if CONSTEXPR (do_a)
-               atomic_add(1, nev, offset);
+               // vscale is always 1, exclude e == 0
+               if (e != 0)
+                  atomic_add(1, nev, offset);
             if CONSTEXPR (do_e)
                atomic_add(e, ev, offset);
             if CONSTEXPR (do_g) {
@@ -159,7 +161,7 @@ void elj_acc1()
 
 
          if CONSTEXPR (do_a)
-            if (vscale == -1)
+            if (vscale == -1 && e != 0)
                atomic_add(-1, nev, offset);
          if CONSTEXPR (do_e)
             atomic_add(e, ev, offset);

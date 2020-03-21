@@ -121,7 +121,8 @@ void elj_cu1(LJ_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
 
             if CONSTEXPR (do_a)
-               ctl += 1;
+               if (e != 0)
+                  ctl += 1;
             if CONSTEXPR (do_e)
                etl += to_cu<ebuf_prec>(e);
             if CONSTEXPR (do_g) {
@@ -229,7 +230,7 @@ void elj_cu2(LJ_ARGS, const real* restrict x, const real* restrict y,
 
 
          if CONSTEXPR (do_a)
-            if (vscale == -1)
+            if (vscale == -1 && e != 0)
                atomic_add(-1, nev, offset);
          if CONSTEXPR (do_e)
             atomic_add(e, ev, offset);

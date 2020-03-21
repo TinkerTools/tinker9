@@ -647,10 +647,13 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
          real term = -pterm * hsq;
          real expterm = 0;
          if (term > -50) {
-            // TODO: if .not. use_bounds; if octahedron; 2/hsq
+            // TODO: if .not. use_bounds
             real denom =
                volterm * hsq * d->bsmod1[k1] * d->bsmod2[k2] * d->bsmod3[k3];
             expterm = REAL_EXP(term) / denom;
+            if (box_shape == OCT_BOX)
+               if ((k1 + k2 + k3) & 1)
+                  expterm = 0; // end if ((k1 + k2 + k3) % 2 != 0)
 
             real struc2 = d->qgrid[2 * i] * p->qgrid[2 * i] +
                d->qgrid[2 * i + 1] * p->qgrid[2 * i + 1];
