@@ -53,6 +53,7 @@ TINKER_EXTERN real scalpha;
 
 
 TINKER_EXTERN real v2scale, v3scale, v4scale, v5scale;
+extern bool vdw_exclude_bond;
 
 
 /**

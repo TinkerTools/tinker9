@@ -1,4 +1,5 @@
 #include "add.h"
+#include "couple.h"
 #include "evdw.h"
 #include "image.h"
 #include "launch.h"
@@ -60,7 +61,8 @@ TINKER_NAMESPACE_BEGIN
 template <class Ver>
 __launch_bounds__(BLOCK_DIM) __global__
 void ehal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
-              int niak, const int* restrict iak, const int* restrict lst)
+              int niak, const int* restrict iak, const int* restrict lst,
+              const int (*restrict i12)[couple_maxn12])
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -76,10 +78,12 @@ void ehal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
 
    // thread local variables
+   using ebuf_prec = energy_buffer_traits::type;
+   using vbuf_prec = virial_buffer_traits::type;
    MAYBE_UNUSED int ctl;
-   MAYBE_UNUSED real etl;
-   MAYBE_UNUSED real gxi, gyi, gzi, gxk, gyk, gzk;
-   MAYBE_UNUSED real vtlxx, vtlyx, vtlzx, vtlyy, vtlzy, vtlzz;
+   MAYBE_UNUSED ebuf_prec etl;
+   MAYBE_UNUSED grad_prec gxi, gyi, gzi, gxk, gyk, gzk;
+   MAYBE_UNUSED vbuf_prec vtlxx, vtlyx, vtlzx, vtlyy, vtlzy, vtlzz;
 
 
    const real cut2 = cut * cut;
@@ -125,6 +129,15 @@ void ehal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
       real shlam = vlam[shk];
 
 
+      int cpli[couple_maxn12];
+      if (i12) {
+         #pragma unroll
+         for (int ic = 0; ic < couple_maxn12; ++ic) {
+            cpli[ic] = i12[i][ic];
+         }
+      }
+
+
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
          int atomk = __shfl_sync(ALL_LANES, shatomk, srclane);
@@ -135,11 +148,21 @@ void ehal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
          real vlambda = __shfl_sync(ALL_LANES, shlam, srclane);
 
 
+         int ik_bond = false;
+         if (i12) {
+            int k = __shfl_sync(ALL_LANES, shk, srclane);
+            #pragma unroll
+            for (int ic = 0; ic < couple_maxn12; ++ic) {
+               ik_bond = ik_bond || (cpli[ic] == k);
+            }
+         }
+
+
          MAYBE_UNUSED real dedx = 0, dedy = 0, dedz = 0;
 
 
          real rik2 = image2(xr, yr, zr);
-         if (atomi < atomk && rik2 <= off2) {
+         if (atomi < atomk && rik2 <= off2 && !ik_bond) {
             real rik = REAL_SQRT(rik2);
             real rv = radmin[it * njvdw + kt];
             real eps = epsilon[it * njvdw + kt];
@@ -166,19 +189,19 @@ void ehal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
             if CONSTEXPR (do_a)
                ctl += 1;
             if CONSTEXPR (do_e)
-               etl += e;
+               etl += to_cu<ebuf_prec>(e);
             if CONSTEXPR (do_g) {
                de *= REAL_RECIP(rik);
                dedx = de * xr;
                dedy = de * yr;
                dedz = de * zr;
                if CONSTEXPR (do_v) {
-                  vtlxx += xr * dedx;
-                  vtlyx += yr * dedx;
-                  vtlzx += zr * dedx;
-                  vtlyy += yr * dedy;
-                  vtlzy += zr * dedy;
-                  vtlzz += zr * dedz;
+                  vtlxx += to_cu<vbuf_prec>(xr * dedx);
+                  vtlyx += to_cu<vbuf_prec>(yr * dedx);
+                  vtlzx += to_cu<vbuf_prec>(zr * dedx);
+                  vtlyy += to_cu<vbuf_prec>(yr * dedy);
+                  vtlzy += to_cu<vbuf_prec>(zr * dedy);
+                  vtlzz += to_cu<vbuf_prec>(zr * dedz);
                }
             }
          } // end if (include)
@@ -186,12 +209,12 @@ void ehal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
          if CONSTEXPR (do_g) {
             int dstlane = (ilane + WARP_SIZE - j) & (WARP_SIZE - 1);
-            gxi += dedx;
-            gyi += dedy;
-            gzi += dedz;
-            gxk -= __shfl_sync(ALL_LANES, dedx, dstlane);
-            gyk -= __shfl_sync(ALL_LANES, dedy, dstlane);
-            gzk -= __shfl_sync(ALL_LANES, dedz, dstlane);
+            gxi += to_cu<grad_prec>(dedx);
+            gyi += to_cu<grad_prec>(dedy);
+            gzi += to_cu<grad_prec>(dedz);
+            gxk -= to_cu<grad_prec>(__shfl_sync(ALL_LANES, dedx, dstlane));
+            gyk -= to_cu<grad_prec>(__shfl_sync(ALL_LANES, dedy, dstlane));
+            gzk -= to_cu<grad_prec>(__shfl_sync(ALL_LANES, dedz, dstlane));
          }
       }
 
@@ -325,11 +348,14 @@ void ehal_cu3()
       zero_gradient(PROCEED_NEW_Q, n, gxred, gyred, gzred);
    }
 
+   auto i12 = couple_i12;
+   if (vdw_exclude_bond == false)
+      i12 = nullptr;
    if (st.niak > 0)
       launch_k1s(nonblk, WARP_SIZE * st.niak, ehal_cu1<Ver>, bufsize, nev, ev,
                  vir_ev, gxred, gyred, gzred, TINKER_IMAGE_ARGS, njvdw, jvdw,
                  radmin, epsilon, vlam, vcouple, cut, off, n, st.sorted,
-                 st.niak, st.iak, st.lst);
+                 st.niak, st.iak, st.lst, i12);
    if (nvexclude > 0)
       launch_k1s(nonblk, nvexclude, ehal_cu2<Ver>, bufsize, nev, ev, vir_ev,
                  gxred, gyred, gzred, TINKER_IMAGE_ARGS, njvdw, jvdw, radmin,

@@ -1,4 +1,5 @@
 #include "add.h"
+#include "couple.h"
 #include "evdw.h"
 #include "image.h"
 #include "launch.h"
@@ -22,7 +23,8 @@ TINKER_NAMESPACE_BEGIN
 template <class Ver>
 __global__
 void elj_cu1(LJ_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
-             int niak, const int* restrict iak, const int* restrict lst)
+             int niak, const int* restrict iak, const int* restrict lst,
+             const int (*restrict i12)[couple_maxn12])
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -87,6 +89,15 @@ void elj_cu1(LJ_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
       int shkt = jvdw[shk];
 
 
+      int cpli[couple_maxn12];
+      if (i12) {
+         #pragma unroll
+         for (int ic = 0; ic < couple_maxn12; ++ic) {
+            cpli[ic] = i12[i][ic];
+         }
+      }
+
+
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
          int atomk = __shfl_sync(ALL_LANES, shatomk, srclane);
@@ -96,11 +107,21 @@ void elj_cu1(LJ_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
          int kt = __shfl_sync(ALL_LANES, shkt, srclane);
 
 
+         int ik_bond = false;
+         if (i12) {
+            int k = __shfl_sync(ALL_LANES, shk, srclane);
+            #pragma unroll
+            for (int ic = 0; ic < couple_maxn12; ++ic) {
+               ik_bond = ik_bond || (cpli[ic] == k);
+            }
+         }
+
+
          MAYBE_UNUSED real dedx = 0, dedy = 0, dedz = 0;
 
 
          real rik2 = image2(xr, yr, zr);
-         if (atomi < atomk && rik2 <= off2) {
+         if (atomi < atomk && rik2 <= off2 && !ik_bond) {
             real rik = REAL_SQRT(rik2);
             real rv = radmin[it * njvdw + kt];
             real eps = epsilon[it * njvdw + kt];
@@ -151,7 +172,6 @@ void elj_cu1(LJ_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
             gyk -= to_cu<grad_prec>(__shfl_sync(ALL_LANES, dedy, dstlane));
             gzk -= to_cu<grad_prec>(__shfl_sync(ALL_LANES, dedz, dstlane));
          }
-         __syncwarp();
       }
 
 
@@ -256,7 +276,6 @@ void elj_cu2(LJ_ARGS, const real* restrict x, const real* restrict y,
             }
          }
       } // end if (include)
-      __syncwarp();
    }
 }
 
@@ -348,7 +367,6 @@ void elj_cu3(LJ_ARGS, const real* restrict x, const real* restrict y,
             }
          }
       } // end if (include)
-      __syncwarp();
    }
 }
 
@@ -364,10 +382,13 @@ void elj_cu4()
    auto bufsize = buffer_size();
 
 
+   auto i12 = couple_i12;
+   if (vdw_exclude_bond == false)
+      i12 = nullptr;
    if (st.niak > 0)
       launch_k1s(nonblk, WARP_SIZE * st.niak, elj_cu1<Ver>, bufsize, nev, ev,
                  vir_ev, gx, gy, gz, TINKER_IMAGE_ARGS, njvdw, jvdw, radmin,
-                 epsilon, cut, off, n, st.sorted, st.niak, st.iak, st.lst);
+                 epsilon, cut, off, n, st.sorted, st.niak, st.iak, st.lst, i12);
 
 
    if (nvexclude > 0)

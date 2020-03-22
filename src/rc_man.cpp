@@ -56,6 +56,7 @@ TINKER_NAMESPACE_END
 
 
 #include "box.h"
+#include "couple.h"
 #include "cudalib.h"
 #include "energy.h"
 #include "group.h"
@@ -68,34 +69,35 @@ TINKER_NAMESPACE_END
 TINKER_NAMESPACE_BEGIN
 void host_data(rc_op op)
 {
-   rc_man rand42_{random_data, op};
-   rc_man pf42_{platform_data, op};
-   rc_man gpu_card42_{gpu_card_data, op};
+   rc_man rand42{random_data, op};
+   rc_man pf42{platform_data, op};
+   rc_man gpu_card42{gpu_card_data, op};
 }
 
 
 void device_data(rc_op op)
 {
-   rc_man cl42_{cudalib_data, op};
+   rc_man cl42{cudalib_data, op};
 
-   rc_man n42_{n_data, op};
+   rc_man n42{n_data, op};
+   rc_man cpl42{couple_data, op};
 
-   rc_man box42_{box_data, op};
+   rc_man box42{box_data, op};
 
-   rc_man xyz42_{xyz_data, op};
-   rc_man vel42_{vel_data, op};
-   rc_man mass42_{mass_data, op};
-   rc_man molecule42_{molecule_data, op};
-   rc_man group42_{group_data, op};
+   rc_man xyz42{xyz_data, op};
+   rc_man vel42{vel_data, op};
+   rc_man mass42{mass_data, op};
+   rc_man molecule42{molecule_data, op};
+   rc_man group42{group_data, op};
 
-   rc_man energy42_{energy_data, op};
+   rc_man energy42{energy_data, op};
 
    // Neighbor lists must be initialized after potential initialization.
    // xred, yred, and zred need to be initialized in vdw (Halgren 14-7)
    // and will be used in nblist setups.
-   rc_man nbl42_{nblist_data, op};
+   rc_man nbl42{nblist_data, op};
 
-   rc_man md42_{md_data, op};
+   rc_man md42{md_data, op};
 }
 TINKER_NAMESPACE_END
 

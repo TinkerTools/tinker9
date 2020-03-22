@@ -27,6 +27,9 @@ int jcount;
 }
 
 
+bool vdw_exclude_bond;
+
+
 void evdw_data(rc_op op)
 {
    if (!use_potent(vdw_term))
@@ -39,6 +42,9 @@ void evdw_data(rc_op op)
       jvec.clear();
       jvdwbuf.clear();
       jcount = 0;
+
+
+      vdw_exclude_bond = false;
 
 
       if (vdwtyp == evdw_t::hal)
@@ -121,6 +127,16 @@ void evdw_data(rc_op op)
       darray::allocate(n, &vlam);
 
 
+      vdw_exclude_bond = false;
+      if (vdwtyp == evdw_t::hal) {
+         vdw_exclude_bond =
+            (vdwpot::v2scale == 0) && (vlist_version() == NBL_SPATIAL);
+      } else {
+         vdw_exclude_bond =
+            (vdwpot::v2scale == 0) && (clist_version() == NBL_SPATIAL);
+      }
+
+
       v2scale = vdwpot::v2scale;
       v3scale = vdwpot::v3scale;
       v4scale = vdwpot::v4scale;
@@ -137,7 +153,7 @@ void evdw_data(rc_op op)
          int nn;
          int bask;
 
-         if (v2scale != 1) {
+         if (v2scale != 1 && vdw_exclude_bond == false) {
             nn = couple::n12[i];
             for (int j = 0; j < nn; ++j) {
                int k = couple::i12[i][j];
