@@ -14,13 +14,14 @@ const std::string analyze_name = "analyze";
 const std::string dynamic_name = "dynamic";
 const std::string helper_name = "help";
 const std::string info_name = "info";
+const std::string minimize_name = "minimize";
 const std::string testgrad_name = "testgrad";
 const std::map<std::string, std::function<void(int, char**)>>& launcher()
 {
    static std::map<std::string, std::function<void(int, char**)>> x = {
       {analyze_name, x_analyze},   {dynamic_name, x_dynamic},
       {helper_name, x_help},       {info_name, x_info},
-      {testgrad_name, x_testgrad},
+      {minimize_name, x_minimize}, {testgrad_name, x_testgrad},
    };
    return x;
 }

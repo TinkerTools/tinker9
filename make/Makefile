@@ -281,6 +281,12 @@ cuda_cc_flag__ := $(foreach var,$(cc_list__),-gencode arch=compute_$(var)$(comma
 cuda_dir := /usr/local/cuda
 
 
+##/ ### fortran_compiler=gfortran
+##/ Path to the Fortran compiler that compiled `libtinker.a`.
+##/
+fortran_compiler := gfortran
+
+
 # include directories
 include_flags__ := -I$(top_dir__)/include
 include_flags__ += -I$(top_dir__)/ext/ext
@@ -435,6 +441,13 @@ ifeq ($(host_only__),false)
    link_flags__ += -L$(cuda_dir)/lib64/stubs -lnvidia-ml
 endif
 
+# fortran
+all_f_objs__ :=
+all_f_objs__ += $(wildcard $(top_dir__)/src/*.f)
+all_f_objs__ := $(subst $(top_dir__)/src,$(src_obj_dir__),$(all_f_objs__))
+all_f_objs__ := $(all_f_objs__:%.f=%.o)
+$(all_f_objs__): %.o: $(top_dir__)/%.f
+	$(fortran_compiler) $< -c -O2 -o $@
 
 ##/ ### dirs
 ##/ Create sub-directories inside the `$build` directory.
@@ -532,12 +545,12 @@ clean:
 
 
 tinker.gpu: $(src_obj_dir__)/main_tinker_gpu.o $(all_acc_objs__) \
-$(all_cu_objs__) \
+$(all_cu_objs__) $(all_f_objs__) \
 $(lib_cpp_objs__) $(tinker_dir__)/libtinker.a
 	$(LINK) $^ $(link_flags__) -o $@
 all.tests: $(src_obj_dir__)/test/main_all_tests.o \
 $(test_cpp_objs__) $(all_acc_objs__) \
-$(all_cu_objs__) \
+$(all_cu_objs__) $(all_f_objs__) \
 $(lib_cpp_objs__) $(tinker_dir__)/libtinker.a
 	$(LINK) $^ $(link_flags__) -o $@
 

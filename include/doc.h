@@ -1,12 +1,13 @@
 /**
- * \defgroup ff      Force Field Terms
- * \defgroup macro   Macros
- * \defgroup math    Math
- * \defgroup md      MD Configurations
- * \defgroup nvidia  Nvidia GPU
- * \defgroup spatial Spatial Decomposition
- * \defgroup test    Unit Tests
- * \defgroup util    Utilities
+ * \defgroup bindc    Fortran Tinker to C Interface
+ * \defgroup ff       Force Field Terms
+ * \defgroup macro    Macros
+ * \defgroup math     Math
+ * \defgroup md       MD Configurations
+ * \defgroup nvidia   Nvidia GPU
+ * \defgroup spatial  Spatial Decomposition
+ * \defgroup test     Unit Tests
+ * \defgroup util     Utilities
  */
 
 

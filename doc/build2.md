@@ -132,6 +132,9 @@ version used in PGI 19.4 may be 9.2 and the external NVCC version is 10.1.
 One solution is to pass `CUDA_HOME=${cuda_dir}` to the PGI compiler, in
 which case, `cuda_dir` should be set to "/usr/local/cuda-10.1".
 
+### fortran_compiler=gfortran
+Path to the Fortran compiler that compiled `libtinker.a`.
+
 ### fortran_config / cxx_config / acc_config / link_config (UNSPECIFIED)
 Addtional files that contain Fortran/C++/OpenAcc/linker related flags.
 This is the mechanism we adopt to extend the multi-compiler support.
