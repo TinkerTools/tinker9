@@ -5,7 +5,7 @@
 namespace {
 constexpr int MAX_NCHAR = 240;
 char out[2048];
-static_assert(2048 >= MAX_NCHAR + 5);
+static_assert(2048 >= MAX_NCHAR + 5, "");
 }
 
 
