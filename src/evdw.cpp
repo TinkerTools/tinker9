@@ -1,4 +1,5 @@
 #include "evdw.h"
+#include "fc.h"
 #include "io_fort_str.h"
 #include "io_text.h"
 #include "md.h"
@@ -380,11 +381,9 @@ void evdw_data(rc_op op)
 
 
       // Initialize elrc and vlrc.
-      const int mode_len = 6;
-      char mode[mode_len + 1] = "VDW   ";
       double elrc = 0, vlrc = 0;
       if (vdwpot::use_vcorr) {
-         evcorr1(mode, &elrc, &vlrc, mode_len);
+         t_evcorr1("VDW", &elrc, &vlrc);
          elrc_vol = elrc * volbox();
          vlrc_vol = vlrc * volbox();
       } else {

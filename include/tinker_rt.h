@@ -19,10 +19,6 @@ void nextarg(char (&str)[Len], int& exist)
 }
 
 
-// evcorr.f
-void evcorr1(char* mode, double* elrc, double* vlrc, int modelen);
-
-
 template <class T1, class T2>
 void get_kv_pair(std::string k, T1& v, T2 vdefault);
 TINKER_NAMESPACE_END

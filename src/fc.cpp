@@ -100,6 +100,17 @@ void t_lbfgs(int nvar, double* x0, double grdmin, void* fgvalue)
    void* opts = (void*)TINKER_RT(optsave);
    TINKER_RT(lbfgs)(&nvar, x0, &minimum, &grdmin, fgvalue, opts);
 }
+
+
+//====================================================================//
+
+
+void fc_evcorr1(const char* mode, int mlen, double* elrc, double* vlrc);
+void t_evcorr1(const char* mode, double* elrc, double* vlrc)
+{
+   int mlen = strlen(mode);
+   fc_evcorr1(mode, mlen, elrc, vlrc);
+}
 TINKER_EXTERN_C_END
 
 

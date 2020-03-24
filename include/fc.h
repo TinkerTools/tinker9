@@ -101,4 +101,14 @@ void t_optinit();
  * \note minimum and optsave are dropped from parameters.
  */
 void t_lbfgs(int nvar, double* x0, double grdmin, void* fgvalue);
+
+
+//====================================================================//
+
+
+/**
+ * \ingroup bindc
+ * \brief Tinker subroutine: evcorr1 (mode,elrc,vlrc)
+ */
+void t_evcorr1(const char* mode, double* elrc, double* vlrc);
 TINKER_EXTERN_C_END
