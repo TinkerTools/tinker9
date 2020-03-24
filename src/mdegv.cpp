@@ -84,7 +84,10 @@ void sum_energy(int vers)
             esum += e;
          }
       } else {
-         esum = energy_reduce(esum_buf);
+         // total energy in esum_buf
+         energy_prec e = energy_reduce(esum_buf);
+         // esum may have added elrc, which is not accumulated in esum_buf
+         esum += e;
       }
    }
 
@@ -100,7 +103,12 @@ void sum_energy(int vers)
                vir[iv] += v[iv];
          }
       } else {
-         virial_reduce(vir, vir_buf);
+         // total virial in vir_buf
+         virial_prec v[9];
+         virial_reduce(v, vir_buf);
+         // vir may have added vlrc, which is not accumulated in vir_buf
+         for (int iv = 0; iv < 9; ++iv)
+            vir[iv] += v[iv];
       }
    }
 }

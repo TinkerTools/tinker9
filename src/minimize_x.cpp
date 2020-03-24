@@ -43,8 +43,8 @@ void x_minimize(int argc, char** argv)
    if (exist) {
       read_string(grdmin, string);
    }
-   std::string prompt = R"(
-Enter RMS Gradient per Atom Criterion [0.01] :  )";
+   std::string prompt = "\n"
+                        " Enter RMS Gradient per Atom Criterion [0.01] :  ";
    read_stream(grdmin, prompt, 0.01, [](double val) { return val < 0; });
 
 
