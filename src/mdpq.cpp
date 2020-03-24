@@ -2,6 +2,7 @@
 #include "mdpq.h"
 #include "box.h"
 #include "darray.h"
+#include "error.h"
 #include "gpu_card.h"
 #include "mdcalc.h"
 #include "nblist.h"
@@ -12,6 +13,7 @@
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/boxes.hh>
 #include <tinker/detail/moldyn.hh>
+#include <tinker/detail/usage.hh>
 
 
 TINKER_NAMESPACE_BEGIN
@@ -42,6 +44,11 @@ void n_data(rc_op op)
       if (calc::traj & rc_flag) {
          // trajn must have been initialized by this point
          assert(trajn >= 0);
+      }
+
+
+      if (usage::nuse != n) {
+         TINKER_THROW("All atoms must be active.");
       }
    }
 }

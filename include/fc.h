@@ -26,6 +26,13 @@ int t_freeunit();
 
 /**
  * \ingroup bindc
+ * \brief Fortran statement: rewind (unit=iunit).
+ */
+void t_rewind(int unit);
+
+
+/**
+ * \ingroup bindc
  * \brief Fortran statement: close (unit=iunit).
  */
 void t_close(int unit);

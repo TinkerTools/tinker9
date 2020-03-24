@@ -4,6 +4,8 @@
 
 namespace {
 constexpr int MAX_NCHAR = 240;
+char out[2048];
+static_assert(2048 >= MAX_NCHAR + 5);
 }
 
 
@@ -12,6 +14,13 @@ int TINKER_RT(freeunit)();
 int t_freeunit()
 {
    return TINKER_RT(freeunit)();
+}
+
+
+void fc_rewind(int);
+void t_rewind(int unit)
+{
+   fc_rewind(unit);
 }
 
 
@@ -64,9 +73,6 @@ extern "C" void fc_version(char* outfile, const char* file, int flen,
                            const char* status, int slen);
 const char* t_version(const char* file, const char* status)
 {
-   static char out[2048];
-   static_assert(2048 >= MAX_NCHAR + 5);
-
    int flen = strlen(file);
    int slen = strlen(status);
    fc_version(out, file, flen, status, slen);
@@ -125,6 +131,9 @@ void t_open(int unit, std::string file, std::string status)
 
 std::string t_version(std::string file, std::string status)
 {
-   return std::string(t_version(file.c_str(), status.c_str()));
+   int flen = file.size();
+   int slen = status.size();
+   fc_version(out, file.c_str(), flen, status.c_str(), slen);
+   return std::string(out);
 }
 TINKER_NAMESPACE_END

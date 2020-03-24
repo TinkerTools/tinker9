@@ -10,6 +10,16 @@ c
 c
 c
 c
+      subroutine fc_rewind (unit)  bind(c)
+      use iso_c_binding
+      implicit none
+      integer(c_int), value :: unit
+      rewind (unit=unit)
+      return
+      end
+c
+c
+c
       subroutine fc_close (unit)  bind(c)
       use iso_c_binding
       implicit none
