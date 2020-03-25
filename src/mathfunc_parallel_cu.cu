@@ -4,6 +4,7 @@
 #include "gpu_card.h"
 #include "mathfunc_parallel_cu.h"
 #include "syntax/cu/reduce.h"
+#include <cassert>
 #include <cublas_v2.h>
 #include <cuda_runtime.h>
 #include <numeric>

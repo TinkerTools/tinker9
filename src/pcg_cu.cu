@@ -13,7 +13,7 @@
 
 TINKER_NAMESPACE_BEGIN
 #define ITHREAD threadIdx.x + blockIdx.x* blockDim.x
-#define STRIDE blockDim.x* gridDim.x
+#define STRIDE  blockDim.x* gridDim.x
 
 
 __global__
