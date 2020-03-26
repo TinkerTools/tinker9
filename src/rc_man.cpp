@@ -122,7 +122,7 @@ TINKER_NAMESPACE_END
 #elif defined(TINKER_IFORT)
 // Intel
 extern "C" void for_rtl_init_(int*, char**);
-extern "C" void for_rtl_finish_();
+extern "C" int for_rtl_finish_();
 
 
 TINKER_NAMESPACE_BEGIN

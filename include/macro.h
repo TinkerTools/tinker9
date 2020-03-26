@@ -193,7 +193,7 @@ to mimic its name mangling.
  * \ingroup macro
  * If possible, use `if CONSTEXPR` to hint at the chances of optimizations.
  */
-#ifdef __cpp_if_constexpr
+#if __cplusplus >= 201703L && defined(__cpp_if_constexpr)
 #   define CONSTEXPR constexpr
 #else
 #   define CONSTEXPR
