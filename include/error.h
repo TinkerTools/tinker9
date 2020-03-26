@@ -8,7 +8,7 @@ TINKER_NAMESPACE_BEGIN
  * \ingroup error
  * \brief Print the call stack.
  */
-void print_backtrace(std::ostream& out = std::cout);
+void print_backtrace(std::FILE* out = stderr);
 
 
 template <class T>

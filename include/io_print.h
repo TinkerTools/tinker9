@@ -29,14 +29,19 @@ inline const char* fmtcvt(const std::string& s)
  * \param args   Values to be printed out.
  */
 template <class Out, class Fmt, class... Ts>
-void print(Out& out, const Fmt& fmtstr, const Ts&... args)
+void PRINT(Out& out, const Fmt& fmtstr, const Ts&... args)
 {
    fmt::print(out, fmtstr, args...);
 }
 template <class F, class... Ts>
-void PRINT(std::FILE* out, const F& f, Ts&&... args)
+void print(std::FILE* out, const F& f, Ts&&... args)
 {
    std::fprintf(out, fmtcvt(f), fmtcvt(args)...);
+}
+template <class F>
+void print(std::FILE* out, const F& f)
+{
+   std::fprintf(out, "%s", fmtcvt(f));
 }
 
 
@@ -64,8 +69,8 @@ std::string format(const F& f, Ts&&... args)
       std::snprintf(buf, sz, fmt, fmtcvt(args)...);
       return std::string(buf, buf + l);
    } else {
-      std::unique_ptr<char[]> ptr(new char[sz]);
-      char* buf = ptr.get();
+      std::vector<char> ptr(sz);
+      char* buf = ptr.data();
       std::snprintf(buf, sz, fmt, fmtcvt(args)...);
       return std::string(buf, buf + l);
    }

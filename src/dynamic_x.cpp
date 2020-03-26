@@ -187,8 +187,8 @@ void x_dynamic(int argc, char** argv)
          .count();
    double us1 = (dt * 1000.) * nstep * 86400;
 
-   const char* fmt_flt = " {:<14s}{:<9s}{:>18.4f}\n";
-   const char* fmt_int = " {:<14s}{:<9s}{:>18d}\n";
+   const char* fmt_flt = " %-14s%-9s%18.4f\n";
+   const char* fmt_int = " %-14s%-9s%18d\n";
    print(stdout, "\n");
    print(stdout, fmt_flt, "Performance:", "ns/day", us1 / d_us);
    print(stdout, fmt_flt, "", "Wall Time", d_us / 1000000.);

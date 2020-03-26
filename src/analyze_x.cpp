@@ -82,8 +82,7 @@ void x_analyze(int argc, char** argv)
       read_frame_copyin_to_xyz(ipt, done);
       refresh_neighbors();
       nframe_processed++;
-      print(out, "\n Analysis for Archive Structure :{:16d}\n",
-            nframe_processed);
+      print(out, "\n Analysis for Archive Structure :%16d\n", nframe_processed);
       if (opt.find("E") != failed)
          x_analyze_e();
       if (opt.find("V") != failed)
@@ -100,12 +99,12 @@ void x_analyze_e()
    energy(calc::energy + calc::analyz);
 
    auto& out = stdout;
-   print(out, "\n Total Potential Energy :        {:16.4f} Kcal/mole\n", esum);
+   print(out, "\n Total Potential Energy :        %16.4 Kcal/mole\n", esum);
    print(out,
          "\n Energy Component Breakdown :           Kcal/mole        "
          "Interactions\n\n");
 
-   const char* fmt = " {:<29s}{:19.4f}{:17d}\n";
+   const char* fmt = " %-29s %18.4f %16d\n";
 
    if (use_potent(bond_term))
       print(out, fmt, "Bond Stretching", energy_reduce(eb),
@@ -163,7 +162,7 @@ void x_analyze_v()
    energy(calc::grad + calc::virial);
    auto& out = stdout;
 
-   const char* fmt = " {:36s} {:12.3f} {:12.3f} {:12.3f}\n";
+   const char* fmt = " %-36s%12.3f %12.3f %12.3f\n";
    print(out, "\n");
    print(out, fmt, "Internal Virial Tensor :", vir[0], vir[1], vir[2]);
    print(out, fmt, "", vir[3], vir[4], vir[5]);

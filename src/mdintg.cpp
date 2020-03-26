@@ -45,7 +45,7 @@ void (*intg)(int, time_prec);
 void propagate(int nsteps, time_prec dt_ps)
 {
    for (int istep = 1; istep <= nsteps; ++istep) {
-      TINKER_LOG("Integrating Step {:10d}", istep);
+      TINKER_LOG("Integrating Step %10d", istep);
       intg(istep, dt_ps);
 
       // mdstat

@@ -250,10 +250,9 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
          if (iter == 1) {
             print(stdout,
                   "\n Determination of SCF Induced Dipole Moments\n\n"
-                  "{0:4s}Iter{0:4s}RMS Residual (Debye)\n\n",
-                  "");
+                  "    Iter    RMS Residual (Debye)\n\n");
          }
-         print(stdout, "{0:>8d}{2:8s}{1:<16.10f}\n", iter, eps, "");
+         print(stdout, " %8d       %-16.10f\n", iter, eps);
       }
 
 
@@ -276,9 +275,9 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
    // print the results from the conjugate gradient iteration
    if (debug) {
       print(stdout,
-            " Induced Dipoles :{2:4s}Iterations{0:>5d}{2:6s}RMS "
-            "Residual{1:>15.10f}\n",
-            iter, eps, "");
+            " Induced Dipoles :    Iterations %4d      RMS "
+            "Residual %14.10f\n",
+            iter, eps);
    }
 
 

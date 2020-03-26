@@ -128,11 +128,10 @@ void mdrest_acc(int istep)
    // print the translational velocity of the overall system
 
    if (inform::debug) {
-      print(
-         stdout,
-         " System Linear Velocity :  {:12.2f}{:12.2f}{:12.2f}\n Translational "
-         "Kinetic Energy :{:10s}{:12.4f} Kcal/mole\n",
-         vtot1, vtot2, vtot3, "", etrans);
+      print(stdout,
+            " System Linear Velocity :  %12.2f%12.2f%12.2f\n Translational "
+            "Kinetic Energy :%10s%12.4f Kcal/mole\n",
+            vtot1, vtot2, vtot3, "", etrans);
    }
 
    // eliminate any rotation about the system center of mass
@@ -154,8 +153,8 @@ void mdrest_acc(int istep)
 
    if (inform::debug) {
       print(stdout,
-            " System Angular Velocity : {:12.2f}{:12.2f}{:12.2f}\n Rotational "
-            "Kinetic Energy :{:13s}{:12.4f} Kcal/mole\n",
+            " System Angular Velocity : %12.2f%12.2f%12.2f\n Rotational "
+            "Kinetic Energy :%13s%12.4f Kcal/mole\n",
             vang[0], vang[1], vang[2], "", erot);
    }
 }

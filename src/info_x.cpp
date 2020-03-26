@@ -31,9 +31,12 @@ std::string get_version_string()
 void x_info(int argc, char** argv)
 {
    auto out = stdout;
-   auto fmt = "    {:36s} {}\n";
-   auto fm1 = "    {:36s}\n";
-   auto fm2 = "       {:33s} {}\n";
+   auto fmt = "    %-36s %s\n";
+   auto fmz = "    %-36s %zu\n";
+   auto fmd = "    %-36s %d\n";
+   auto fm1 = "    %-36s\n";
+   auto fm2 = "       %-33s %s\n";
+   auto f2d = "       %-33s %d\n";
 
 
    platform_data(rc_init);
@@ -43,10 +46,10 @@ void x_info(int argc, char** argv)
    print(out, "\n\n Program Information\n\n");
    print(out, fmt, "Version:", get_version_string());
    print(out, fmt, "Synchronized with Tinker commit:", get_SHA1());
-   print(out, fmt, "Size of real (bytes):", sizeof(real));
-   print(out, fmt, "Size of mixed (bytes):", sizeof(mixed));
-   print(out, fmt,
-         "Using deterministic force:", (bool)TINKER_DETERMINISTIC_FORCE);
+   print(out, fmz, "Size of real (bytes):", sizeof(real));
+   print(out, fmz, "Size of mixed (bytes):", sizeof(mixed));
+   print(out, fmt, "Using deterministic force:",
+         TINKER_DETERMINISTIC_FORCE ? "true" : "false");
 #if TINKER_DEBUG
    const char* dbg = "on";
 #else
@@ -71,7 +74,7 @@ void x_info(int argc, char** argv)
    print(out, fmt, "CUDA runtime version:", get_cuda_runtime_version_string());
    print(out, fmt, "Thrust version:", get_thrust_version_string());
    if (ndevice > 0) {
-      print(out, fmt, "GPU detected:", ndevice);
+      print(out, fmd, "GPU detected:", ndevice);
       const auto& attribs = get_device_attributes();
       for (const auto& a : attribs) {
          print(out, fm1, format("GPU %d:", a.device));
@@ -79,12 +82,12 @@ void x_info(int argc, char** argv)
          print(out, fm2, "Name:", a.name);
          print(out, fm2, "Maximum compute capability:",
                format("%d.%d", a.cc_major, a.cc_minor));
-         print(out, fm2, "Single double perf. ratio:", a.single_double_ratio);
+         print(out, f2d, "Single double perf. ratio:", a.single_double_ratio);
          print(out, fm2, "Compute mode:", a.compute_mode_string);
          print(out, fm2, "Error-correcting code (ECC):", a.ecc_string);
-         print(out, fm2, "Clock rate (kHz):", a.clock_rate_kHz);
-         print(out, fm2, "Number of Multiprocessors:", a.multiprocessor_count);
-         print(out, fm2, "Number of CUDA cores:",
+         print(out, f2d, "Clock rate (kHz):", a.clock_rate_kHz);
+         print(out, f2d, "Number of Multiprocessors:", a.multiprocessor_count);
+         print(out, f2d, "Number of CUDA cores:",
                a.cores_per_multiprocessor * a.multiprocessor_count);
          const double B_to_GB = 1024. * 1024. * 1024.;
          print(out, fm2, "Used/Total GPU memory:",

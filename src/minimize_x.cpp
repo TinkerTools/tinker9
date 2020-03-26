@@ -127,10 +127,10 @@ void x_minimize(int argc, char** argv)
    auto o = stdout;
    const int d1 = inform::digits;
    int l1 = 12 + d1;
-   auto fstr = "{0:{1}.{2}f}"_s;
+   auto fstr = "%1$*2$.*3$f"_s;
    auto estr = fstr;
    if (grms <= std::pow(10, -d1))
-      estr = "{0:{1}.{2}E}"_s;
+      estr = "%1$*2$.*3$E"_s;
    print(o, "\n Final Function Value :  "_s + fstr, minimum, l1, d1);
    print(o, "\n Final RMS Gradient :    "_s + estr, grms, l1, d1);
    print(o, "\n Final Gradient Norm :   "_s + estr, gnorm, l1, d1);

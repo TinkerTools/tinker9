@@ -12,7 +12,7 @@ enum class BackTraceOS
 };
 
 template <BackTraceOS os>
-void print_backtrace_tmpl(std::ostream& fp)
+void print_backtrace_tmpl(std::FILE* fp)
 {
    const int max_frames = 128;
    void* callstack[max_frames];
@@ -23,7 +23,7 @@ void print_backtrace_tmpl(std::ostream& fp)
    int status;
    std::string num, caller, callee;
    const char* f1 = " Backtrace\n";
-   const char* f2 = " {:>4s}  {:60.60s}  {:s}\n";
+   const char* f2 = " %4s  %-60s  %s\n";
    const int tolerance = 20;
    print(fp, f1);
 
@@ -67,14 +67,14 @@ void print_backtrace_tmpl(std::ostream& fp)
    free(strs);
 }
 
-void print_backtrace(std::ostream& out)
+void print_backtrace(std::FILE* out)
 {
 #   if defined(__APPLE__)
    print_backtrace_tmpl<BackTraceOS::macOS>(out);
 #   elif defined(__linux__)
    print_backtrace_tmpl<BackTraceOS::Linux>(out);
 #   endif
-   out << std::flush;
+   std::fflush(out);
 }
 TINKER_NAMESPACE_END
 

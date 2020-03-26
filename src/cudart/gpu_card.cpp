@@ -240,11 +240,11 @@ static int recommend_device(int ndev)
    } else {
       print(stdout,
             "\n CUDA-DEVICE Warning,"
-            " Program recommended Device {} but Device {} was set from {}\n",
-            prcd[0], usp, usp_str, usp);
+            " Program recommended Device %d but Device %d was set from %s\n",
+            prcd[0], usp, usp_str);
       idev = usp;
    }
-   print(stdout, "\n GPU Device :  Setting Device ID to {} from {}\n", idev,
+   print(stdout, "\n GPU Device :  Setting Device ID to %d from %s\n", idev,
          usp_str);
    return idev;
 }
