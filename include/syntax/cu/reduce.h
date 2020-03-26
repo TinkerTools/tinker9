@@ -3,7 +3,6 @@
 
 
 TINKER_NAMESPACE_BEGIN
-namespace {
 template <class T>
 struct OpPlus
 {
@@ -18,6 +17,13 @@ struct OpPlus
    T operator()(T a, T b) const
    {
       return a + b;
+   }
+
+
+   __device__
+   void x(volatile T& a, T b) const
+   {
+      a += b;
    }
 };
 
@@ -37,37 +43,65 @@ struct OpLogicOr
    {
       return a || b;
    }
+
+
+   __device__
+   void x(volatile T& a, T b) const
+   {
+      a |= b;
+   }
 };
 
 
 template <class T, unsigned int B, class Op>
 __device__
-void warp_reduce(volatile T* sd, unsigned int t, Op op)
+inline void warp_reduce(volatile T* sd, unsigned int t, Op op)
 {
    // clang-format off
+#if 0
+   // code was correct, but should be updated with __syncwarp()
    if (B >= 64) sd[t] = op(sd[t], sd[t + 32]);
    if (B >= 32) sd[t] = op(sd[t], sd[t + 16]);
    if (B >= 16) sd[t] = op(sd[t], sd[t + 8 ]);
    if (B >= 8)  sd[t] = op(sd[t], sd[t + 4 ]);
    if (B >= 4)  sd[t] = op(sd[t], sd[t + 2 ]);
    if (B >= 2)  sd[t] = op(sd[t], sd[t + 1 ]);
+#else
+   T var;
+   if (B >= 64) { var=sd[t+32];__syncwarp(); op.x(sd[t],var);__syncwarp(); }
+   if (B >= 32) { var=sd[t+16];__syncwarp(); op.x(sd[t],var);__syncwarp(); }
+   if (B >= 16) { var=sd[t+8 ];__syncwarp(); op.x(sd[t],var);__syncwarp(); }
+   if (B >= 8)  { var=sd[t+4 ];__syncwarp(); op.x(sd[t],var);__syncwarp(); }
+   if (B >= 4)  { var=sd[t+2 ];__syncwarp(); op.x(sd[t],var);__syncwarp(); }
+   if (B >= 2)  { var=sd[t+1 ];__syncwarp(); op.x(sd[t],var);__syncwarp(); }
+#endif
    // clang-format on
 }
 
 
 template <class T, unsigned int HN, unsigned int B, class Op>
 __device__
-void warp_reduce2(volatile T (*sd)[B], unsigned int t, Op op)
+inline void warp_reduce2(volatile T (*sd)[B], unsigned int t, Op op)
 {
    // clang-format off
+#if 0
+   // code was correct, but should be updated with __syncwarp()
    if (B >= 64) _Pragma("unroll") for (int j = 0; j < HN; ++j) sd[j][t] = op(sd[j][t], sd[j][t + 32]);
    if (B >= 32) _Pragma("unroll") for (int j = 0; j < HN; ++j) sd[j][t] = op(sd[j][t], sd[j][t + 16]);
    if (B >= 16) _Pragma("unroll") for (int j = 0; j < HN; ++j) sd[j][t] = op(sd[j][t], sd[j][t + 8 ]);
    if (B >= 8)  _Pragma("unroll") for (int j = 0; j < HN; ++j) sd[j][t] = op(sd[j][t], sd[j][t + 4 ]);
    if (B >= 4)  _Pragma("unroll") for (int j = 0; j < HN; ++j) sd[j][t] = op(sd[j][t], sd[j][t + 2 ]);
    if (B >= 2)  _Pragma("unroll") for (int j = 0; j < HN; ++j) sd[j][t] = op(sd[j][t], sd[j][t + 1 ]);
+#else
+   T var;
+   if (B >= 64) _Pragma("unroll") for (int j = 0; j < HN; ++j) { var=sd[j][t+32];__syncwarp(); op.x(sd[j][t],var);__syncwarp(); }
+   if (B >= 32) _Pragma("unroll") for (int j = 0; j < HN; ++j) { var=sd[j][t+16];__syncwarp(); op.x(sd[j][t],var);__syncwarp(); }
+   if (B >= 16) _Pragma("unroll") for (int j = 0; j < HN; ++j) { var=sd[j][t+8 ];__syncwarp(); op.x(sd[j][t],var);__syncwarp(); }
+   if (B >= 8)  _Pragma("unroll") for (int j = 0; j < HN; ++j) { var=sd[j][t+4 ];__syncwarp(); op.x(sd[j][t],var);__syncwarp(); }
+   if (B >= 4)  _Pragma("unroll") for (int j = 0; j < HN; ++j) { var=sd[j][t+2 ];__syncwarp(); op.x(sd[j][t],var);__syncwarp(); }
+   if (B >= 2)  _Pragma("unroll") for (int j = 0; j < HN; ++j) { var=sd[j][t+1 ];__syncwarp(); op.x(sd[j][t],var);__syncwarp(); }
+#endif
    // clang-format on
-}
 }
 
 
