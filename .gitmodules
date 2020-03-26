@@ -1,6 +1,3 @@
 [submodule "ext/tinker"]
 	path = tinker
 	url = https://github.com/TinkerTools/Tinker
-[submodule "ext/ext/fmt"]
-	path = ext/ext/fmtlib
-	url = https://github.com/fmtlib/fmt

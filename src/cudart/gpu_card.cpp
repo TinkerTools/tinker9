@@ -1,4 +1,5 @@
 #include "gpu_card.h"
+#include "algorithm"
 #include "error.h"
 #include "md.h"
 #include "tinker_rt.h"
