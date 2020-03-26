@@ -7,6 +7,19 @@
 
 
 TINKER_NAMESPACE_BEGIN
+template <class T>
+const T& fmtcvt(const T& t)
+{
+   return t;
+}
+
+
+inline const char* fmtcvt(const std::string& s)
+{
+   return s.c_str();
+}
+
+
 /**
  * \ingroup io
  * \brief
@@ -20,6 +33,11 @@ void print(Out& out, const Fmt& fmtstr, const Ts&... args)
 {
    fmt::print(out, fmtstr, args...);
 }
+template <class F, class... Ts>
+void PRINT(std::FILE* out, const F& f, Ts&&... args)
+{
+   std::fprintf(out, fmtcvt(f), fmtcvt(args)...);
+}
 
 
 /**
@@ -30,9 +48,27 @@ void print(Out& out, const Fmt& fmtstr, const Ts&... args)
  * \return       The formatted `std::string` output.
  */
 template <class Fmt, class... Ts>
-std::string format(const Fmt& fmtstr, const Ts&... args)
+std::string FORMAT(const Fmt& fmtstr, const Ts&... args)
 {
    return fmt::format(fmtstr, args...);
+}
+template <class F, class... Ts>
+std::string format(const F& f, Ts&&... args)
+{
+   const char* fmt = fmtcvt(f);
+   size_t l = std::snprintf(nullptr, 0, fmt, fmtcvt(args)...);
+   size_t sz = l + 1;
+   const int len = 64;
+   if (sz <= len) {
+      char buf[len];
+      std::snprintf(buf, sz, fmt, fmtcvt(args)...);
+      return std::string(buf, buf + l);
+   } else {
+      std::unique_ptr<char[]> ptr(new char[sz]);
+      char* buf = ptr.get();
+      std::snprintf(buf, sz, fmt, fmtcvt(args)...);
+      return std::string(buf, buf + l);
+   }
 }
 
 

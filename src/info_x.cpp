@@ -19,10 +19,10 @@ const char* get_SHA1()
 
 std::string get_version_string()
 {
-   std::string r = format("{}.{}.{}", TINKER_GPU_VERSION_MAJOR,
+   std::string r = format("%d.%d.%d", TINKER_GPU_VERSION_MAJOR,
                           TINKER_GPU_VERSION_MINOR, TINKER_GPU_VERSION_PATCH);
 #ifdef TINKER_GPU_GIT_SHORT_HASH
-   r += format(" GIT {}", TINKER_STR(TINKER_GPU_GIT_SHORT_HASH));
+   r += format(" GIT %s", TINKER_STR(TINKER_GPU_GIT_SHORT_HASH));
 #endif
    return r;
 }
@@ -74,11 +74,11 @@ void x_info(int argc, char** argv)
       print(out, fmt, "GPU detected:", ndevice);
       const auto& attribs = get_device_attributes();
       for (const auto& a : attribs) {
-         print(out, fm1, format("GPU {}:", a.device));
+         print(out, fm1, format("GPU %d:", a.device));
          print(out, fm2, "PCI:", a.pci_string);
          print(out, fm2, "Name:", a.name);
          print(out, fm2, "Maximum compute capability:",
-               format("{}.{}", a.cc_major, a.cc_minor));
+               format("%d.%d", a.cc_major, a.cc_minor));
          print(out, fm2, "Single double perf. ratio:", a.single_double_ratio);
          print(out, fm2, "Compute mode:", a.compute_mode_string);
          print(out, fm2, "Error-correcting code (ECC):", a.ecc_string);
@@ -88,7 +88,7 @@ void x_info(int argc, char** argv)
                a.cores_per_multiprocessor * a.multiprocessor_count);
          const double B_to_GB = 1024. * 1024. * 1024.;
          print(out, fm2, "Used/Total GPU memory:",
-               format("{:.2f} % / {:.2f} GB",
+               format("%.2f % / %.2f GB",
                       100.0 - 100.0 * a.free_mem_bytes / a.total_mem_bytes,
                       a.total_mem_bytes / B_to_GB));
       }

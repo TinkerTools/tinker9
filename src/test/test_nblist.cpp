@@ -41,11 +41,11 @@ bool find_match(const int* array, int na, int iframe, int iatom)
    if (missing.size() == 0) {
       return true;
    } else {
-      std::string line = format(
-         "The following neighbors of atom {:3d} in frame {:d} are missing:",
-         iatom + 1, iframe + 1);
+      std::string line =
+         format("The following neighbors of atom %3d in frame %d are missing:",
+                iatom + 1, iframe + 1);
       for (auto i : missing) {
-         line += format(" {:3d}", i + 1);
+         line += format(" %3d", i + 1);
       }
       line += "\n";
       print(stdout, line);
@@ -70,9 +70,8 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
 {
 
    if (!(first1 >= 1 && last1 >= first1 && step > 0)) {
-      std::string msg =
-         format("Invalid First/Last/Step Values  : {:d}/{:d}/{:d}", first1,
-                last1, step);
+      std::string msg = format("Invalid First/Last/Step Values  : %d/%d/%d",
+                               first1, last1, step);
       TINKER_THROW(msg);
    }
 

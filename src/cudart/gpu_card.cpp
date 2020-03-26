@@ -15,7 +15,7 @@ std::string get_cuda_runtime_version_string()
    // ver = 1000*major + 10*minor
    major = ver / 1000;
    minor = (ver - major * 1000) / 10;
-   return format("{}.{}", major, minor);
+   return format("%d.%d", major, minor);
 }
 
 
@@ -26,13 +26,13 @@ std::string get_cuda_driver_version_string()
    // ver = 1000*major + 10*minor
    major = ver / 1000;
    minor = (ver - major * 1000) / 10;
-   return format("{}.{}", major, minor);
+   return format("%d.%d", major, minor);
 }
 
 
 std::string get_thrust_version_string()
 {
-   return format("{}.{}.{} patch {}", THRUST_MAJOR_VERSION,
+   return format("%d.%d.%d patch %d", THRUST_MAJOR_VERSION,
                  THRUST_MINOR_VERSION, THRUST_SUBMINOR_VERSION,
                  THRUST_PATCH_NUMBER);
 }
@@ -137,7 +137,7 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
 
    if (!found_cc) {
       TINKER_THROW(
-         format("The code base should be updated for compute capability {}; "
+         format("The code base should be updated for compute capability %d; "
                 "Please refer to the Nvidia Cuda-C Programming Guide",
                 a.cc));
    }

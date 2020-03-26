@@ -18,7 +18,7 @@ void grid_pchg(PMEUnit pme_u, real* pchg)
 {
    int bso = pme_u->bsorder;
    if (bso != 5)
-      TINKER_THROW(format("grid_pchg(): bsorder is {}; must be 5.\n", bso));
+      TINKER_THROW(format("grid_pchg(): bsorder is %d; must be 5.\n", bso));
 
 
 #if TINKER_CUDART
@@ -34,7 +34,7 @@ void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
 {
    int bso = pme_u->bsorder;
    if (bso != 5)
-      TINKER_THROW(format("grid_mpole(): bsorder is {}; must be 5.\n", bso));
+      TINKER_THROW(format("grid_mpole(): bsorder is %d; must be 5.\n", bso));
 
 
 #if TINKER_CUDART
@@ -50,7 +50,7 @@ void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 {
    int bso = pme_u->bsorder;
    if (bso != 5)
-      TINKER_THROW(format("grid_uind(): bsorder is {}; must be 5.\n", bso));
+      TINKER_THROW(format("grid_uind(): bsorder is %d; must be 5.\n", bso));
 
 
 #if TINKER_CUDART
@@ -96,7 +96,7 @@ void fphi_mpole(PMEUnit pme_u)
 {
    int bso = pme_u->bsorder;
    if (bso != 5)
-      TINKER_THROW(format("fphi_mpole(): bsorder is {}; must be 5.\n", bso));
+      TINKER_THROW(format("fphi_mpole(): bsorder is %d; must be 5.\n", bso));
 
 
 #if TINKER_CUDART
@@ -113,7 +113,7 @@ void fphi_uind(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10],
 {
    int bso = pme_u->bsorder;
    if (bso != 5)
-      TINKER_THROW(format("fphi_uind(): bsorder is {}; must be 5.\n", bso));
+      TINKER_THROW(format("fphi_uind(): bsorder is %d; must be 5.\n", bso));
 
 
 #if TINKER_CUDART
@@ -129,7 +129,7 @@ void fphi_uind2(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10])
 {
    int bso = pme_u->bsorder;
    if (bso != 5)
-      TINKER_THROW(format("fphi_uind2(): bsorder is {}; must be 5.\n", bso));
+      TINKER_THROW(format("fphi_uind2(): bsorder is %d; must be 5.\n", bso));
 
 
 #if TINKER_CUDART

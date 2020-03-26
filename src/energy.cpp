@@ -70,7 +70,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       try {
          return local_flag & (1 << local_cfg.at(eng));
       } catch (const std::out_of_range&) {
-         TINKER_THROW(format("Time scale of the {} term is unknown.\n", eng));
+         TINKER_THROW(format("Time scale of the %s term is unknown.\n", eng));
       }
    };
 

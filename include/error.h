@@ -49,7 +49,7 @@ public:
 #define TINKER_THROW(msg)                                                      \
    do {                                                                        \
       print_backtrace();                                                       \
-      std::string m_ = format("{} at {}:{}", msg, __FILE__, __LINE__);         \
+      std::string m_ = format("%s at %s:%d", msg, __FILE__, __LINE__);         \
       throw FatalError(m_);                                                    \
    } while (0)
 
@@ -62,10 +62,10 @@ public:
          std::string m_;                                                       \
          std::string msg_ = translate_error_code(res_);                        \
          if (msg_ != "")                                                       \
-            m_ = format("Errno {} ({}) at {}:{}", res_, msg_, __FILE__,        \
+            m_ = format("Errno %d (%s) at %s:%d", res_, msg_, __FILE__,        \
                         __LINE__);                                             \
          else                                                                  \
-            m_ = format("Errno {} at {}:{}", res_, __FILE__, __LINE__);        \
+            m_ = format("Errno %d at %s:%d", res_, __FILE__, __LINE__);        \
          throw FatalError(m_);                                                 \
       }                                                                        \
    } while (0)
