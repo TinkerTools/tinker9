@@ -99,7 +99,7 @@ void x_analyze_e()
    energy(calc::energy + calc::analyz);
 
    auto& out = stdout;
-   print(out, "\n Total Potential Energy :        %16.4 Kcal/mole\n", esum);
+   print(out, "\n Total Potential Energy :        %16.4f Kcal/mole\n", esum);
    print(out,
          "\n Energy Component Breakdown :           Kcal/mole        "
          "Interactions\n\n");
