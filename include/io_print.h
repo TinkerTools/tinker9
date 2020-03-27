@@ -21,7 +21,7 @@ const T& fmt_fwd(const T& t)
 
 /**
  * \ingroup io
- * \brief Forward the const char* of a const std::string reference argument.
+ * \brief Forward a `const std::string` reference argument to a `const char*`.
  */
 inline const char* fmt_fwd(const std::string& s)
 {
@@ -86,6 +86,7 @@ std::string format(const F& f, Ts&&... args)
 
 /**
  * \ingroup io
+ * \brief Duplicate then concatenate multiple copies of string.
  */
 inline std::string operator*(size_t k, std::string str)
 {
@@ -99,6 +100,7 @@ inline std::string operator*(size_t k, std::string str)
 
 /**
  * \ingroup io
+ * \brief Duplicate then concatenate multiple copies of string.
  */
 inline std::string operator*(std::string str, size_t k)
 {
@@ -108,6 +110,7 @@ inline std::string operator*(std::string str, size_t k)
 
 /**
  * \ingroup io
+ * \brief Use `_s` suffix to convert a `const char*` to `std::string`.
  */
 inline std::string operator""_s(const char* s, size_t len)
 {
