@@ -350,27 +350,29 @@ all_acc_objs__ := $(acc_objs__)
 ##/ different and there is **NO GUARANTEE** that the defaults will not change.
 ##/ Tested compilers are tabulated below.
 ##/
-##/ | OS    | Fortran                 | C++                | OpenACC         | Linker          |
-##/ |:-----:|:-----------------------:|:------------------:|:---------------:|:---------------:|
-##/ | Linux | gfortran 5.4.0          | g++                | pgc++ -ta=telsa | pgc++ -ta=telsa |
-##/ | Linux | gfortran 5.4.0          | g++                | g++             | g++             |
-##/ | macOS | gfortran 8.3.0 homebrew | clang++ xcode 10.1 | clang++         | clang++         |
+##/ | OS    | Fortran           | C++                | OpenACC         | Linker          |
+##/ |:-----:|:-----------------:|:------------------:|:---------------:|:---------------:|
+##/ | Linux | gfortran          | g++                | pgc++ -ta=telsa | pgc++ -ta=telsa |
+##/ | Linux | gfortran          | g++                | g++             | g++             |
+##/ | Linux | ifort             | icpc               | pgc++ -ta=telsa | pgc++ -ta=telsa |
+##/ | Linux | ifort             | icpc               | icpc            | icpc            |
+##/ | macOS | gfortran homebrew | clang++ xcode 10.1 | clang++         | clang++         |
 ##/
 ifeq ($(os__),linux)
-   fortran_config := linux.fort.gfortran.5.4.0.mk
+   fortran_config := gfortran.mk
    cxx_config := linux.cxx.g++.mk
    ifeq ($(host_only__),false)
-      acc_config := linux.acc.device.pgc++.mk
-      link_config := linux.link.device.pgc++.mk
+      acc_config := acc.device.linux.pgc++.mk
+      link_config := link.linux.device.pgc++.mk
    else ifeq ($(host_only__),true)
-      acc_config := linux.acc.g++.mk
-      link_config := linux.link.g++.mk
+      acc_config := acc.host.mk
+      link_config := link.linux.host.mk
    endif
 else ifeq ($(os__),darwin)
-   fortran_config := macos.fort.gfortran.8.3.0.brew.mk
-   cxx_config := macos.cxx.clang++.xcode.10.1.mk
-   acc_config := macos.acc.clang++.xcode.10.1.mk
-   link_config := macos.link.clang++.xcode.10.1.mk
+   fortran_config := gfortran.mk
+   cxx_config := macos.cxx.xcode.mk
+   acc_config := acc.host.mk
+   link_config := link.macos.xcode.mk
 endif
 
 
