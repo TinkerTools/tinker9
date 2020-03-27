@@ -430,9 +430,7 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
    if (pltfm_config & CU_PLTFM)
       induce_mutual_pcg1_cu(uind, uinp);
    else
-      induce_mutual_pcg1_acc(uind, uinp);
-#else
-   induce_mutual_pcg1_acc(uind, uinp);
 #endif
+      induce_mutual_pcg1_acc(uind, uinp);
 }
 TINKER_NAMESPACE_END

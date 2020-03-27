@@ -40,6 +40,7 @@ void epolar_data(rc_op op);
 
 // different induction algorithms
 void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]);
+void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3]);
 void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3]);
 void induce(real (*uind)[3], real (*uinp)[3]);
 

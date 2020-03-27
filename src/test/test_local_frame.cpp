@@ -334,7 +334,6 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
       up.resize(n);
       darray::copyout(PROCEED_NEW_Q, n, &ud[0][0], udir);
       darray::copyout(WAIT_NEW_Q, n, &up[0][0], udirp);
-      const double debye = units::debye;
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(ud[i][j] == Approx(ref_ufield_d[i][j]).margin(eps_f));
@@ -552,7 +551,6 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
       darray::copyout(PROCEED_NEW_Q, n, &ud[0][0], udir);
       darray::copyout(WAIT_NEW_Q, n, &up[0][0], udirp);
 
-      const double debye = units::debye;
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(ud[i][j] == Approx(ref_ufield_d[i][j]).margin(eps_f));

@@ -1,3 +1,4 @@
+#include "compilers.h"
 #include "gpu_card.h"
 #include "tinker_rt.h"
 #include "version.h"
@@ -46,6 +47,7 @@ void x_info(int argc, char** argv)
    print(out, "\n\n Program Information\n\n");
    print(out, fmt, "Version:", get_version_string());
    print(out, fmt, "Synchronized with Tinker commit:", get_SHA1());
+   print(out, fmt, "C++ compiler:", cxx_compiler_name());
    print(out, fmz, "Size of real (bytes):", sizeof(real));
    print(out, fmz, "Size of mixed (bytes):", sizeof(mixed));
    print(out, fmt, "Using deterministic force:",
@@ -73,6 +75,8 @@ void x_info(int argc, char** argv)
          "Latest CUDA supported by driver:", get_cuda_driver_version_string());
    print(out, fmt, "CUDA runtime version:", get_cuda_runtime_version_string());
    print(out, fmt, "Thrust version:", get_thrust_version_string());
+   print(out, fmt, "CUDA compiler:", cuda_compiler_name());
+   print(out, fmt, "OpenACC compiler:", acc_compiler_name());
    if (ndevice > 0) {
       print(out, fmd, "GPU detected:", ndevice);
       const auto& attribs = get_device_attributes();

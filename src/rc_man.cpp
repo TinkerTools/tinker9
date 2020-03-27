@@ -123,11 +123,16 @@ TINKER_NAMESPACE_END
 // Intel
 extern "C" void for_rtl_init_(int*, char**);
 extern "C" int for_rtl_finish_();
+extern "C" int for__l_argc;
+extern "C" char** for__a_argv;
 
 
 TINKER_NAMESPACE_BEGIN
 void fortran_runtime_initialize(int argc, char** argv)
 {
+   // what a surprise I had to use these undocumented variables here
+   for__l_argc = argc;
+   for__a_argv = argv;
    for_rtl_init_(&argc, argv);
 }
 
