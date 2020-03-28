@@ -142,11 +142,13 @@ The default file of each category on different operating systems are
 different and there is **NO GUARANTEE** that the defaults will not change.
 Tested compilers are tabulated below.
 
-| OS    | Fortran                 | C++                | OpenACC         | Linker          |
-|:-----:|:-----------------------:|:------------------:|:---------------:|:---------------:|
-| Linux | gfortran 5.4.0          | g++                | pgc++ -ta=telsa | pgc++ -ta=telsa |
-| Linux | gfortran 5.4.0          | g++                | g++             | g++             |
-| macOS | gfortran 8.3.0 homebrew | clang++ xcode 10.1 | clang++         | clang++         |
+| OS    | Fortran           | C++                | OpenACC         | Linker          |
+|:-----:|:-----------------:|:------------------:|:---------------:|:---------------:|
+| Linux | gfortran          | g++                | pgc++ -ta=telsa | pgc++ -ta=telsa |
+| Linux | gfortran          | g++                | g++             | g++             |
+| Linux | ifort             | icpc               | pgc++ -ta=telsa | pgc++ -ta=telsa |
+| Linux | ifort             | icpc               | icpc            | icpc            |
+| macOS | gfortran homebrew | clang++ xcode 10.1 | clang++         | clang++         |
 
 ------
 

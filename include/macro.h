@@ -235,3 +235,14 @@ using mixed = float;
 
 using fixed = unsigned long long;
 TINKER_NAMESPACE_END
+
+
+// Suppress Warnings
+#if defined(__INTEL_COMPILER)
+// #161: unrecognized #pragma
+#pragma warning disable 161
+
+#elif defined(__clang__)
+#pragma clang diagnostic ignored "-Wextern-c-compat"
+
+#endif
