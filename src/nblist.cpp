@@ -24,6 +24,12 @@ NBList::~NBList()
 //====================================================================//
 
 
+namespace {
+// in cutoffs.f, big = 1.0d12
+const double BIG = 1.0e11;
+}
+
+
 nblist_t vlist_version()
 {
    nblist_t u;

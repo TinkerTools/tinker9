@@ -23,6 +23,8 @@ constexpr BoxShape OCT_BOX = BoxShape::OCT;
 TINKER_EXTERN BoxShape box_shape;
 TINKER_EXTERN real3 lvec1, lvec2, lvec3;
 TINKER_EXTERN real3 recipa, recipb, recipc;
+TINKER_EXTERN double box_extent;
+void box_set_extent(double new_extent);
 
 
 /**

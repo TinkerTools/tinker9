@@ -15,7 +15,7 @@ TINKER_NAMESPACE_BEGIN
 void emplar_data(rc_op op)
 {
    // implies must use cuda and PBC
-   if (mlist_version() != NBL_SPATIAL)
+   if (!(mlist_version() & NBL_SPATIAL))
       return;
 
 
@@ -363,7 +363,7 @@ void emplar_data(rc_op op)
 void emplar(int vers)
 {
 #if TINKER_CUDART
-   if (mlist_version() == NBL_SPATIAL && !(vers & calc::analyz)) {
+   if ((mlist_version() & NBL_SPATIAL) && !(vers & calc::analyz)) {
       emplar_cu(vers);
       return;
    }

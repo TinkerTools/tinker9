@@ -131,10 +131,10 @@ void evdw_data(rc_op op)
       vdw_exclude_bond = false;
       if (vdwtyp == evdw_t::hal) {
          vdw_exclude_bond =
-            (vdwpot::v2scale == 0) && (vlist_version() == NBL_SPATIAL);
+            (vdwpot::v2scale == 0) && (vlist_version() & NBL_SPATIAL);
       } else {
          vdw_exclude_bond =
-            (vdwpot::v2scale == 0) && (clist_version() == NBL_SPATIAL);
+            (vdwpot::v2scale == 0) && (clist_version() & NBL_SPATIAL);
       }
 
 
@@ -397,7 +397,7 @@ void evdw_data(rc_op op)
 void elj(int vers)
 {
 #if TINKER_CUDART
-   if (clist_version() == NBL_SPATIAL)
+   if (clist_version() & NBL_SPATIAL)
       elj_cu(vers);
    else
 #endif
@@ -420,7 +420,7 @@ void emm3hb(int vers)
 void ehal(int vers)
 {
 #if TINKER_CUDART
-   if (vlist_version() == NBL_SPATIAL)
+   if (vlist_version() & NBL_SPATIAL)
       ehal_cu(vers);
    else
 #endif

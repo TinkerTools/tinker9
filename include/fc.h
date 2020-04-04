@@ -118,4 +118,14 @@ void t_lbfgs(int nvar, double* x0, double grdmin, void* fgvalue);
  * \brief Tinker subroutine: evcorr1 (mode,elrc,vlrc)
  */
 void t_evcorr1(const char* mode, double* elrc, double* vlrc);
+
+
+//====================================================================//
+
+
+/**
+ * \ingroup binc
+ * \brief Tinker subroutine: extent (rmax)
+ */
+void t_extent(double& rmax);
 TINKER_EXTERN_C_END

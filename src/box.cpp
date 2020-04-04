@@ -1,5 +1,6 @@
 #include "box.h"
 #include "darray.h"
+#include "fc.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "tinker_rt.h"
@@ -8,6 +9,24 @@
 
 
 TINKER_NAMESPACE_BEGIN
+void box_set_extent(double new_extent)
+{
+   if (box_shape != UNBOUND_BOX)
+      return;
+   if (lvec1.x >= new_extent)
+      return;
+
+
+   double w1x = 1.0 / new_extent;
+   lvec1.x = new_extent;
+   lvec2.y = new_extent;
+   lvec3.z = new_extent;
+   recipa.x = w1x;
+   recipb.y = w1x;
+   recipc.z = w1x;
+}
+
+
 void set_default_box(const Box& p)
 {
    box_shape = p.box_shape;
@@ -210,6 +229,7 @@ void box_data(rc_op op)
          trajbox = nullptr;
       }
       box_shape = UNBOUND_BOX;
+      box_extent = 0;
    }
 
 
@@ -224,6 +244,11 @@ void box_data(rc_op op)
       Box p;
       get_tinker_box_module(p);
       set_default_box(p);
+      if (p.box_shape == UNBOUND_BOX) {
+         t_extent(box_extent);
+      } else {
+         box_extent = 0;
+      }
    }
 }
 

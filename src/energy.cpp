@@ -133,7 +133,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    bool calc_polar = use_potent(polar_term); // AMOEBA polarization (Thole)
    bool calc_mplar = calc_mpole && calc_polar;
    calc_mplar = calc_mplar && !(vers & calc::analyz);
-   calc_mplar = calc_mplar && (mlist_version() == NBL_SPATIAL);
+   calc_mplar = calc_mplar && (mlist_version() & NBL_SPATIAL);
    if (calc_mplar) {
       if (tscfg("emplar")) {
          mpole_init(vers);

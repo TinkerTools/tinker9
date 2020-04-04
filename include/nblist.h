@@ -50,6 +50,17 @@ TINKER_EXTERN NBListUnit ulist_unit;
 /**
  * \brief
  * For Halgren Buffered 14-7 potential only, otherwise returns NBL_UNDEFINED.
+ *
+ * |                  | PBC                            | Unbound         |
+ * |------------------|--------------------------------|-----------------|
+ * | Inf. Cutoff      | N/A                            | double loop     |
+ * | Cutoff + No List | double loop                    | double loop     |
+ * | Cutoff + List    | verlet list or sptaial decomp. | verlet list (a) |
+ *
+ * (a) We cannot use spatial decomposition because Tinker only set up a cubic
+ *     box for nonperiodic PME once. There is no guarantee that all of the atoms
+ *     will stay within the cubic box even if we moved the center of mass to
+ *     origin.
  */
 nblist_t vlist_version();
 nblist_t dlist_version();

@@ -116,7 +116,7 @@ void empole(int vers)
 void empole_nonewald(int vers)
 {
 #if TINKER_CUDART
-   if (mlist_version() == NBL_SPATIAL)
+   if (mlist_version() & NBL_SPATIAL)
       empole_nonewald_cu(vers);
    else
 #endif
@@ -134,7 +134,7 @@ void empole_ewald(int vers)
 void empole_ewald_real_self(int vers)
 {
 #if TINKER_CUDART
-   if (mlist_version() == NBL_SPATIAL)
+   if (mlist_version() & NBL_SPATIAL)
       empole_ewald_real_self_cu(vers);
    else
 #endif

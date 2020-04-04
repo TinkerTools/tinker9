@@ -110,7 +110,6 @@ extern "C" void _gfortran_set_args(int, char**);
 TINKER_NAMESPACE_BEGIN
 void fortran_runtime_initialize(int argc, char** argv)
 {
-
    _gfortran_set_args(argc, argv);
 }
 

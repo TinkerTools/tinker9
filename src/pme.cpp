@@ -1,11 +1,14 @@
 #include "pme.h"
+#include "box.h"
 #include "elec.h"
 #include "error.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "pmestuf.h"
 #include "potent.h"
+#include "switch.h"
 #include "tinker_rt.h"
+#include <tinker/detail/bound.hh>
 #include <tinker/detail/ewald.hh>
 #include <tinker/detail/pme.hh>
 
@@ -135,6 +138,16 @@ void pme_data(rc_op op)
       epme_unit.close();
       ppme_unit.close();
       pvpme_unit.close();
+   }
+
+
+   if (op & rc_init) {
+      if (!bound::use_bounds) {
+         double ecut = switch_off(switch_ewald);
+         double dcut = switch_off(switch_dewald);
+         double wbox = 2 * (box_extent + std::fmax(ecut, dcut));
+         box_set_extent(wbox);
+      }
    }
 
 

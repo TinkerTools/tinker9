@@ -117,6 +117,16 @@ void t_evcorr1(const char* mode, double* elrc, double* vlrc)
    int mlen = strlen(mode);
    fc_evcorr1(mode, mlen, elrc, vlrc);
 }
+
+
+//====================================================================//
+
+
+void TINKER_RT(extent)(double*);
+void t_extent(double& rmax)
+{
+   TINKER_RT(extent)(&rmax);
+}
 TINKER_EXTERN_C_END
 
 
