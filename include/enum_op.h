@@ -16,7 +16,7 @@ struct EnableEnumBitMask
    struct EnableEnumBitMask<x>                                                 \
    {                                                                           \
       static constexpr bool value = true;                                      \
-   };
+   }
 
 
 template <class E>

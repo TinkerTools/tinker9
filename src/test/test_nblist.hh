@@ -1,7 +1,7 @@
-static int nframe = 5;
+static const int nframe = 5;
 static const int natoms = 216;
 static const int nmax = 70;
-static const int ans[5][216][70] = {
+static const int ans[nframe][216][70] = {
     {
         {1,   2,   3,   4,   5,   6,   7,   8,   9,   10,  11,  18,  33,  43,
          44,  48,  49,  50,  51,  60,  61,  62,  63,  64,  65,  67,  68,  88,

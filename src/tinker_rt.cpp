@@ -12,7 +12,7 @@ void nextarg(size_t len, char* str, int& exist)
 
    if (argue::narg != 0) {
       size_t length = std::min(len, sizeof(argue::arg[argue::maxarg]));
-      for (size_t i = 1; i <= argue::narg; ++i) {
+      for (int i = 1; i <= argue::narg; ++i) {
          if (argue::listarg[i]) {
             argue::listarg[i] = false;
             std::strncpy(str, argue::arg[i], length);

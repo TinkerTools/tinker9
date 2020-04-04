@@ -55,6 +55,8 @@ void cudalib_data(rc_op op)
 
       check_rt(cudaProfilerStart());
    }
+#else
+   (void)op;
 #endif
 }
 
@@ -65,6 +67,8 @@ void wait_queue(DMFlag flag)
    if ((flag & DMFlag::WAIT) && !(flag & DMFlag::DEFAULT_Q)) {
       #pragma acc wait(async_queue)
    }
+#else
+   (void)flag;
 #endif
 }
 TINKER_NAMESPACE_END

@@ -7,6 +7,9 @@ void bspline_fill(PMEUnit pme_u, int level)
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
       bspline_fill_cu(pme_u, level);
+#else
+   (void)pme_u;
+   (void)level;
 #endif
 }
 

@@ -24,7 +24,7 @@ void minimize_set_xx_by_pos_acc(int, double*, const double*);
 void minimize_set_pos_acc(int, const double*, const double*);
 
 
-void x_minimize(int argc, char** argv)
+void x_minimize(int, char**)
 {
    TINKER_RT(initial)();
    TINKER_RT(getxyz)();

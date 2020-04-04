@@ -87,6 +87,10 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
 
    TestFileExpected("test_arbox.arc");
 #else
+   (void)arbox_pot;
+   (void)arbox_kin;
+   (void)verlet_intg;
+   (void)usage_;
    REQUIRE(true);
 #endif
 }

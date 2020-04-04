@@ -247,8 +247,8 @@ static void spatial_update(SpatialUnit unt)
    }
 }
 #else
-static void spatial_alloc(SpatialUnit& unt, int n, real cutoff, real buffer,
-                          const real* x, const real* y, const real* z)
+static void spatial_alloc(SpatialUnit&, int, real, real, const real*,
+                          const real*, const real*)
 {}
 static void spatial_build(SpatialUnit) {}
 static void spatial_update(SpatialUnit) {}

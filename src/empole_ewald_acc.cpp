@@ -236,7 +236,7 @@ void empole_ewald_recip_acc1()
          pme_conv(pu, vir_m);
          auto size = buffer_size() * virial_buffer_traits::value;
          #pragma acc parallel loop independent async deviceptr(vir_m,vir_em)
-         for (int i = 0; i < size; ++i) {
+         for (size_t i = 0; i < size; ++i) {
             vir_em[0][i] += vir_m[0][i];
          }
       } else {

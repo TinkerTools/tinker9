@@ -29,15 +29,11 @@ std::string get_version_string()
 }
 }
 
-void x_info(int argc, char** argv)
+void x_info(int, char**)
 {
    auto out = stdout;
    auto fmt = "    %-36s %s\n";
    auto fmz = "    %-36s %zu\n";
-   auto fmd = "    %-36s %d\n";
-   auto fm1 = "    %-36s\n";
-   auto fm2 = "       %-33s %s\n";
-   auto f2d = "       %-33s %d\n";
 
 
    platform_data(rc_init);
@@ -66,6 +62,12 @@ void x_info(int argc, char** argv)
 
 
 #if TINKER_CUDART
+   auto fmd = "    %-36s %d\n";
+   auto fm1 = "    %-36s\n";
+   auto fm2 = "       %-33s %s\n";
+   auto f2d = "       %-33s %d\n";
+
+
    print(out, fmt, "Platform:", "CUDA and OpenACC");
    if (pltfm_config & CU_PLTFM)
       print(out, fmt, "Primary GPU package:", "CUDA");

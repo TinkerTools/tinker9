@@ -239,7 +239,6 @@ struct darray
    template <class FLT, class PTR>
    static void scale(DMFlag flag, size_t nelem, FLT scal, PTR ptr)
    {
-      typedef typename deduce_ptr<PTR>::type T;
       constexpr size_t N = deduce_ptr<PTR>::n;
       parallel::scale_array(flatten(ptr), scal, nelem * N, flag);
    }

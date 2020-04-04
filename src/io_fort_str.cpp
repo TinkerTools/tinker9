@@ -120,7 +120,7 @@ std::string FortranStringView::trim() const
 
 FortranStringView FortranStringView::operator()(int begin1, int back1) const
 {
-   assert(1 <= begin1 && begin1 <= back1 && back1 <= size());
+   assert(1 <= begin1 && begin1 <= back1 && back1 <= (int)size());
    return FortranStringView(b_ + (begin1 - 1), back1 - begin1 + 1);
 }
 

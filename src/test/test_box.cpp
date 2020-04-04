@@ -126,7 +126,6 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
 {
    const char* argv[] = {"dummy"};
    int argc = 1;
-   Box b;
    real xr, yr, zr;
 
    double eps = 1.0e-6;
@@ -208,7 +207,6 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
 {
    const char* argv[] = {"dummy"};
    int argc = 1;
-   Box b;
    real xr, yr, zr;
    double xa, ya, za;
 

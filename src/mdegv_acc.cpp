@@ -8,14 +8,14 @@ void zero_gradient_acc(DMFlag flag, size_t nelem, real* gx, real* gy, real* gz)
    bool sync = flag & DMFlag::DEFAULT_Q;
    if (sync) {
       #pragma acc parallel loop independent deviceptr(gx,gy,gz)
-      for (int i = 0; i < nelem; ++i) {
+      for (size_t i = 0; i < nelem; ++i) {
          gx[i] = 0;
          gy[i] = 0;
          gz[i] = 0;
       }
    } else {
       #pragma acc parallel loop independent async deviceptr(gx,gy,gz)
-      for (int i = 0; i < nelem; ++i) {
+      for (size_t i = 0; i < nelem; ++i) {
          gx[i] = 0;
          gy[i] = 0;
          gz[i] = 0;
@@ -33,14 +33,14 @@ void zero_gradient_acc(DMFlag flag, size_t nelem, fixed* gx, fixed* gy,
    bool sync = flag & DMFlag::DEFAULT_Q;
    if (sync) {
       #pragma acc parallel loop independent deviceptr(gx,gy,gz)
-      for (int i = 0; i < nelem; ++i) {
+      for (size_t i = 0; i < nelem; ++i) {
          gx[i] = 0;
          gy[i] = 0;
          gz[i] = 0;
       }
    } else {
       #pragma acc parallel loop independent async deviceptr(gx,gy,gz)
-      for (int i = 0; i < nelem; ++i) {
+      for (size_t i = 0; i < nelem; ++i) {
          gx[i] = 0;
          gy[i] = 0;
          gz[i] = 0;

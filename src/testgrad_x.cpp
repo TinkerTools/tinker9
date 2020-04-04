@@ -5,7 +5,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-void x_testgrad(int argc, char** argv)
+void x_testgrad(int, char**)
 {
    TINKER_RT(initial)();
    TINKER_RT(getxyz)();

@@ -77,8 +77,8 @@ struct EnergyVersion
    static constexpr int a = USE & calc::analyz;
    static constexpr int g = USE & calc::grad;
    static constexpr int v = USE & calc::virial;
-   static_assert(v ? g : true, "If calc::virial, must calc::grad.");
-   static_assert(a ? e : true, "If calc::analyz, must calc::energy.");
+   static_assert(v ? (bool)g : true, "If calc::virial, must calc::grad.");
+   static_assert(a ? (bool)e : true, "If calc::analyz, must calc::energy.");
    static constexpr int value = USE;
 };
 TINKER_NAMESPACE_END

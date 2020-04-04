@@ -97,9 +97,8 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
       bool has_boxsize;
       try {
          auto vs = Text::split(line);
-         double baxis =
-            std::stod(vs.at(1)); // will throw an exception here if
-                                 // this file does not include box size
+         std::stod(vs.at(1)); // will throw an exception here if
+                              // this file does not include box size
          has_boxsize = true;
       } catch (std::invalid_argument&) {
          has_boxsize = false;
@@ -114,7 +113,8 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
       std::vector<real> xbuf(tn * n), ybuf(tn * n), zbuf(tn * n);
 
       auto skip = [](std::ifstream& f, int nl) {
-         f.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+         for (int i = 0; i < nl; ++i)
+            f.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       };
 
       // rewind

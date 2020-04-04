@@ -95,7 +95,7 @@ private:
 
    const T& obj() const
    {
-      assert(0 <= unit && unit < hostptrs().size() &&
+      assert(0 <= unit && unit < (int)hostptrs().size() &&
              "const T& GenericUnit::obj() const");
       return *hostptrs()[unit];
    }
@@ -103,7 +103,8 @@ private:
 
    T& obj()
    {
-      assert(0 <= unit && unit < hostptrs().size() && "T& GenericUnit::obj()");
+      assert(0 <= unit && unit < (int)hostptrs().size() &&
+             "T& GenericUnit::obj()");
       return *hostptrs()[unit];
    }
 
@@ -222,7 +223,7 @@ public:
    }
    T* deviceptr()
    {
-      assert(0 <= unit && unit < deviceptrs().size() &&
+      assert(0 <= unit && unit < (int)deviceptrs().size() &&
              "T* GenericUnit::deviceptr()");
       return deviceptrs()[unit].get();
    }
@@ -236,7 +237,7 @@ public:
    void update_deviceptr(const T& hobj, DMFlag flag)
    {
       assert(&hobj == &this->obj());
-      mem_op::copyin(this->deviceptr(), &this->obj(), sizeof(T), flag);
+      mem_op::copyin(this->deviceptr(), &hobj, sizeof(T), flag);
    }
 };
 TINKER_NAMESPACE_END

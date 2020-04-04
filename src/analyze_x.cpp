@@ -12,7 +12,7 @@ TINKER_NAMESPACE_BEGIN
 void x_analyze_e();
 void x_analyze_v();
 
-void x_analyze(int argc, char** argv)
+void x_analyze(int, char**)
 {
    TINKER_RT(initial)();
    TINKER_RT(getxyz)();

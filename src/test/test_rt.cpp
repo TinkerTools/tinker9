@@ -48,8 +48,10 @@ TestFileExpected::~TestFileExpected()
 double test_get_eps(double eps_single, double eps_double)
 {
 #if TINKER_REAL_SIZE == 4
+   (void)eps_double;
    return eps_single;
 #elif TINKER_REAL_SIZE == 8
+   (void)eps_single;
    return eps_double;
 #else
    static_assert(false, "");

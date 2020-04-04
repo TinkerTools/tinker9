@@ -367,7 +367,9 @@ void emplar(int vers)
       emplar_cu(vers);
       return;
    }
-#endif
+#else
+   (void)vers;
    TINKER_THROW("EMPLAR is only available for PBC systems in CUDA.\n");
+#endif
 }
 TINKER_NAMESPACE_END

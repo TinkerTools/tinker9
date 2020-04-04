@@ -489,7 +489,7 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
    if CONSTEXPR (do_v) {
       auto size = buffer_size() * virial_buffer_traits::value;
       #pragma acc parallel loop independent async deviceptr(vir_ep,vir_m)
-      for (int i = 0; i < size; ++i) {
+      for (int i = 0; i < (int)size; ++i) {
          vir_ep[0][i] -= vir_m[0][i];
       }
 

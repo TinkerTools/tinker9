@@ -128,7 +128,7 @@ void dotprod_acc(T* ans, const T* a, const T* b, int nelem, DMFlag flag)
          *ans = 0;
       }
       #pragma acc parallel loop deviceptr(ans,a,b)
-      for (size_t i = 0; i < nelem; ++i) {
+      for (int i = 0; i < nelem; ++i) {
          *ans += a[i] * b[i];
       }
    } else {
@@ -137,7 +137,7 @@ void dotprod_acc(T* ans, const T* a, const T* b, int nelem, DMFlag flag)
          *ans = 0;
       }
       #pragma acc parallel loop async deviceptr(ans,a,b)
-      for (size_t i = 0; i < nelem; ++i) {
+      for (int i = 0; i < nelem; ++i) {
          *ans += a[i] * b[i];
       }
    }

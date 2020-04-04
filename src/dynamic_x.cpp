@@ -7,7 +7,7 @@
 #include <tinker/detail/mdstuf.hh>
 
 TINKER_NAMESPACE_BEGIN
-void x_dynamic(int argc, char** argv)
+void x_dynamic(int, char**)
 {
    char string[240];
    int exist = false;

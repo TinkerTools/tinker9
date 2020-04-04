@@ -34,7 +34,7 @@ template <class Arg, size_t Len>
 int read_string(Arg& arg, const char (&src)[Len])
 {
    return read_string(arg, src, Len);
-};
+}
 /// \}
 
 
