@@ -105,6 +105,7 @@ inline void image_general(real& restrict xr, real& restrict yr,
    } else if (sh == OCT_BOX) {
       image_oct_macro(xr, yr, zr, l1.x, ra.x);
    } else {
+      // UNBOND_BOX
    }
 }
 
@@ -140,6 +141,7 @@ inline real image2_general(real& restrict xr, real& restrict yr,
    } else if (sh == OCT_BOX) {
       image_oct_macro(xr, yr, zr, l1.x, ra.x);
    } else {
+      // UNBOUND_BOX
    }
    return xr * xr + yr * yr + zr * zr;
 }
@@ -174,6 +176,7 @@ inline real imagen2_general(real& xr, real& yr, real& zr, BoxShape sh, real3 l1,
    } else if (sh == OCT_BOX) {
       image_oct_macro(xr, yr, zr, l1.x, ra.x);
    } else {
+      // UNBOUND_BOX
    }
    return xr * xr + yr * yr + zr * zr;
 }

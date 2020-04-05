@@ -2,6 +2,7 @@
 #include "box.h"
 #include "elec.h"
 #include "error.h"
+#include "fc.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "pmestuf.h"
@@ -145,8 +146,10 @@ void pme_data(rc_op op)
       if (!bound::use_bounds) {
          double ecut = switch_off(switch_ewald);
          double dcut = switch_off(switch_dewald);
-         double wbox = 2 * (box_extent + std::fmax(ecut, dcut));
-         box_set_extent(wbox);
+         double ext;
+         t_extent(ext);
+         double wbox = 2 * (ext + std::fmax(ecut, dcut));
+         box_extent(wbox);
       }
    }
 
