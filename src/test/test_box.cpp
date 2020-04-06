@@ -16,31 +16,8 @@ void set_box(BoxShape shape, const double* p)
       return;
 
 
-   bound::use_bounds = 1;
-   boxes::orthogonal = 0;
-   boxes::monoclinic = 0;
-   boxes::triclinic = 0;
-   boxes::octahedron = 0;
-   if (shape == ORTHO_BOX)
-      boxes::orthogonal = 1;
-   else if (shape == MONO_BOX)
-      boxes::monoclinic = 1;
-   else if (shape == TRI_BOX)
-      boxes::triclinic = 1;
-   else if (shape == OCT_BOX)
-      boxes::octahedron = 1;
-
-   boxes::xbox = p[0];
-   boxes::ybox = p[1];
-   boxes::zbox = p[2];
-   boxes::alpha = p[3];
-   boxes::beta = p[4];
-   boxes::gamma = p[5];
-   TINKER_RT(lattice)();
-
-
    Box bo;
-   get_tinker_box_module(bo);
+   box_lattice(bo, shape, p[0], p[1], p[2], p[3], p[4], p[5]);
    set_default_box(bo);
 }
 }

@@ -1,8 +1,8 @@
 #include "box.h"
 #include "darray.h"
+#include "fc.h"
 #include "mathfunc.h"
 #include "md.h"
-#include "tinker_rt.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/boxes.hh>
 
@@ -50,7 +50,9 @@ void get_default_box(Box& p)
 }
 
 
-void set_default_recip_box()
+void set_recip_box(real3& recipa, real3& recipb, real3& recipc,
+                   BoxShape box_shape, const real3& lvec1, const real3& lvec2,
+                   const real3& lvec3)
 {
    if (box_shape == ORTHO_BOX) {
       recipc.x = 0;
@@ -102,6 +104,12 @@ void set_default_recip_box()
       recipa.y = 0;
       recipa.z = 0;
    }
+}
+
+
+void set_default_recip_box()
+{
+   set_recip_box(recipa, recipb, recipc, box_shape, lvec1, lvec2, lvec3);
 }
 
 
@@ -168,7 +176,7 @@ void set_tinker_box_module(const Box& p)
    boxes::alpha = a_deg;
    boxes::beta = b_deg;
    boxes::gamma = c_deg;
-   TINKER_RT(lattice)();
+   t_lattice();
 }
 
 
@@ -216,6 +224,52 @@ void get_tinker_box_module(Box& p)
    p.lvec3.x = 0; // l[1][1];
    p.lvec3.y = 0; // l[1][2];
    p.lvec3.z = l[2][2];
+}
+
+
+void box_lattice(Box& p, BoxShape sh, double a, double b, double c,
+                 double alpha_deg, double beta_deg, double gamma_deg)
+{
+   p.box_shape = sh;
+   if (sh == TRI_BOX) {
+      double alpha = alpha_deg * M_PI / 180;
+      double beta = beta_deg * M_PI / 180;
+      double gamma = gamma_deg * M_PI / 180;
+      double cos_alpha = std::cos(alpha);
+      double cos_beta = std::cos(beta);
+      double cos_gamma = std::cos(gamma);
+      double sin_gamma = std::sin(gamma);
+      double bx = b * cos_gamma;
+      double by = b * sin_gamma;
+      double cx = c * cos_beta;
+      double cy = c * (cos_alpha - cos_beta * cos_gamma) / sin_gamma;
+      double cz = c / sin_gamma *
+         std::sqrt(2 * cos_alpha * cos_beta * cos_gamma +
+                   sin_gamma * sin_gamma - cos_alpha * cos_alpha -
+                   cos_beta * cos_beta);
+      p.lvec1 = make_real3(a, bx, cx);
+      p.lvec2 = make_real3(0, by, cy);
+      p.lvec3 = make_real3(0, 0, cz);
+   } else if (sh == MONO_BOX) {
+      double beta = beta_deg * M_PI / 180;
+      double cos_beta = std::cos(beta);
+      double sin_beta = std::sin(beta);
+      double cx = c * cos_beta;
+      double cz = c * sin_beta;
+      p.lvec1 = make_real3(a, 0, cx);
+      p.lvec2 = make_real3(0, b, 0);
+      p.lvec3 = make_real3(0, 0, cz);
+   } else if (sh == ORTHO_BOX) {
+      p.lvec1 = make_real3(a, 0, 0);
+      p.lvec2 = make_real3(0, b, 0);
+      p.lvec3 = make_real3(0, 0, c);
+   } else if (sh == OCT_BOX) {
+      p.lvec1 = make_real3(a, 0, 0);
+      p.lvec2 = make_real3(0, a, 0);
+      p.lvec3 = make_real3(0, 0, a);
+   }
+   set_recip_box(p.recipa, p.recipb, p.recipc, p.box_shape, p.lvec1, p.lvec2,
+                 p.lvec3);
 }
 
 

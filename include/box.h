@@ -77,11 +77,21 @@ struct Box
 };
 void set_default_box(const Box&);
 void get_default_box(Box&);
+void set_recip_box(real3&, real3&, real3&, BoxShape, const real3&, const real3&,
+                   const real3&);
 void set_default_recip_box();
 void get_box_axes_angles(const Box&, double& a, double& b, double& c,
                          double& alpha, double& beta, double& gamma);
 void set_tinker_box_module(const Box&);
 void get_tinker_box_module(Box&);
+/**
+ * \ingroup
+ * \brief Similar to Tinker `lattice` subroutine.
+ *
+ * See doc/box/box.pdf for details.
+ */
+void box_lattice(Box& p, BoxShape sh, double a, double b, double c,
+                 double alpha_deg, double beta_deg, double gamma_deg);
 
 
 /**

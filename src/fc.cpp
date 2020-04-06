@@ -127,7 +127,20 @@ void t_extent(double& rmax)
 {
    TINKER_RT(extent)(&rmax);
 }
+
+
+//====================================================================//
+
+
+void TINKER_RT(lattice)();
+void t_lattice()
+{
+   TINKER_RT(lattice)();
+}
 TINKER_EXTERN_C_END
+
+
+//====================================================================//
 
 
 TINKER_NAMESPACE_BEGIN

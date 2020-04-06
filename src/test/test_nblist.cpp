@@ -8,11 +8,9 @@
 #include "rc_man.h"
 #include "test.h"
 #include "test_rt.h"
-#include "tinker_rt.h"
 #include <fstream>
 #include <set>
 #include <sstream>
-#include <tinker/detail/boxes.hh>
 
 
 using namespace TINKER_NAMESPACE;
@@ -80,13 +78,6 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
    int tn = (last1 - first1) / step + 1;
    assert(tn <= trajn);
 
-   double xyzsave[3], anglesave[3];
-   xyzsave[0] = boxes::xbox;
-   xyzsave[1] = boxes::ybox;
-   xyzsave[2] = boxes::zbox;
-   anglesave[0] = boxes::alpha;
-   anglesave[1] = boxes::beta;
-   anglesave[2] = boxes::gamma;
 
    std::ifstream iarc(arcfile);
    if (iarc) {
@@ -153,14 +144,8 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
       if (has_boxsize) {
          for (int i = 0; i < tn; ++i) {
             int c = i * 6;
-            boxes::xbox = bbuf[c];
-            boxes::ybox = bbuf[c + 1];
-            boxes::zbox = bbuf[c + 2];
-            boxes::alpha = bbuf[c + 3];
-            boxes::beta = bbuf[c + 4];
-            boxes::gamma = bbuf[c + 5];
-            TINKER_RT(lattice)();
-            get_tinker_box_module(trajbox[i]);
+            box_lattice(trajbox[i], box_shape, bbuf[c], bbuf[c + 1],
+                        bbuf[c + 2], bbuf[c + 3], bbuf[c + 4], bbuf[c + 5]);
          }
       }
       darray::copyin(PROCEED_NEW_Q, n * tn, trajx, xbuf.data());
@@ -171,13 +156,6 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
       msg += arcfile;
       TINKER_THROW(msg);
    }
-
-   boxes::xbox = xyzsave[0];
-   boxes::ybox = xyzsave[1];
-   boxes::zbox = xyzsave[2];
-   boxes::alpha = anglesave[0];
-   boxes::beta = anglesave[1];
-   boxes::gamma = anglesave[2];
 }
 }
 

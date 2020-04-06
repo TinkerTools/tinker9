@@ -6,7 +6,6 @@
 #include "gpu_card.h"
 #include "mdcalc.h"
 #include "nblist.h"
-#include "tinker_rt.h"
 #include <cassert>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>
@@ -108,16 +107,8 @@ void read_frame_copyin_to_xyz(std::istream& ipt, int& done)
       char name[32];
       double xr, yr, zr;
       if (matched == 6) {
-         boxes::xbox = l1;
-         boxes::ybox = l2;
-         boxes::zbox = l3;
-         boxes::alpha = a1;
-         boxes::beta = a2;
-         boxes::gamma = a3;
-         TINKER_RT(lattice)();
-
          Box p;
-         get_tinker_box_module(p);
+         box_lattice(p, box_shape, l1, l2, l3, a1, a2, a3);
          set_default_box(p);
       } else {
          std::sscanf(line.data(), "%d%s%lf%lf%lf", &index, name, &xr, &yr, &zr);
