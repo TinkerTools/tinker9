@@ -28,7 +28,7 @@ void x_minimize(int, char**)
 {
    TINKER_RT(initial)();
    TINKER_RT(getxyz)();
-   TINKER_RT(mechanic)();
+   mechanic();
 
 
    // perform the setup functions needed for optimization

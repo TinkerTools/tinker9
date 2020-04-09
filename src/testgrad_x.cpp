@@ -9,7 +9,7 @@ void x_testgrad(int, char**)
 {
    TINKER_RT(initial)();
    TINKER_RT(getxyz)();
-   TINKER_RT(mechanic)();
+   mechanic();
 
 
    auto out = stdout;

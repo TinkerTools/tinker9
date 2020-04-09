@@ -16,7 +16,7 @@ void x_analyze(int, char**)
 {
    TINKER_RT(initial)();
    TINKER_RT(getxyz)();
-   TINKER_RT(mechanic)();
+   mechanic();
 
    char string[240];
    int exist = false;

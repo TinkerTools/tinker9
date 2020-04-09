@@ -66,7 +66,7 @@ void test_begin_with_args(int argc, const char** argv)
    TINKER_RT(initial)();
    TINKER_RT(command)();
    TINKER_RT(getxyz)();
-   TINKER_RT(mechanic)();
+   mechanic();
 }
 
 

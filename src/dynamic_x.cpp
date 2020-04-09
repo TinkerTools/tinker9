@@ -14,7 +14,7 @@ void x_dynamic(int, char**)
 
    TINKER_RT(initial)();
    TINKER_RT(getxyz)();
-   TINKER_RT(mechanic)();
+   mechanic();
 
    bath::kelvin = 0;
    bath::atmsph = 0;
