@@ -53,7 +53,7 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
    set_box(ORTHO_BOX, p);
 
    fortran_runtime_initialize(argc, (char**)argv);
-   TINKER_RT(initial)();
+   initial();
 
    SECTION("  - volume")
    {
@@ -110,7 +110,7 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
    set_box(MONO_BOX, p);
 
    fortran_runtime_initialize(argc, (char**)argv);
-   TINKER_RT(initial)();
+   initial();
 
    SECTION(" - lvec")
    {
@@ -192,7 +192,7 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
    set_box(TRI_BOX, p);
 
    fortran_runtime_initialize(argc, (char**)argv);
-   TINKER_RT(initial)();
+   initial();
 
    // volume
    double al = COS(p[3]);

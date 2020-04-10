@@ -7,7 +7,7 @@
 TINKER_NAMESPACE_BEGIN
 void x_testgrad(int, char**)
 {
-   TINKER_RT(initial)();
+   initial();
    TINKER_RT(getxyz)();
    mechanic();
 

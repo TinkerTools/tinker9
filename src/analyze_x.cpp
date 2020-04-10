@@ -14,7 +14,7 @@ void x_analyze_v();
 
 void x_analyze(int, char**)
 {
-   TINKER_RT(initial)();
+   initial();
    TINKER_RT(getxyz)();
    mechanic();
 

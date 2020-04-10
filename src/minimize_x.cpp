@@ -26,7 +26,7 @@ void minimize_set_pos_acc(int, const double*, const double*);
 
 void x_minimize(int, char**)
 {
-   TINKER_RT(initial)();
+   initial();
    TINKER_RT(getxyz)();
    mechanic();
 

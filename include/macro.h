@@ -237,12 +237,29 @@ using fixed = unsigned long long;
 TINKER_NAMESPACE_END
 
 
-// Suppress Warnings
 #if defined(__INTEL_COMPILER)
-// #161: unrecognized #pragma
-#pragma warning disable 161
+#   define TINKER_ICPC
 
 #elif defined(__clang__)
-#pragma clang diagnostic ignored "-Wextern-c-compat"
+#   define TINKER_CLANG
+// xcode clang is different from llvm clang
+#   ifdef __apple_build_version__
+#      define TINKER_APPLE_CLANG
+#   else
+#      define TINKER_LLVM_CLANG
+#   endif
 
+#elif defined(__GNUC__)
+#   define TINKER_GCC
+
+#endif
+
+
+// Suppress Warnings
+#ifdef TINKER_ICPC
+// #161: unrecognized #pragma
+#pragma warning disable 161
+#endif
+#ifdef TINKER_CLANG
+#pragma clang diagnostic ignored "-Wextern-c-compat"
 #endif

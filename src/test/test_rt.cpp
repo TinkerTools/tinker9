@@ -63,7 +63,7 @@ void test_begin_with_args(int argc, const char** argv)
 {
    fortran_runtime_initialize(argc, const_cast<char**>(argv));
 
-   TINKER_RT(initial)();
+   initial();
    TINKER_RT(command)();
    TINKER_RT(getxyz)();
    mechanic();

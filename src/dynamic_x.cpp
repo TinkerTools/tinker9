@@ -12,7 +12,7 @@ void x_dynamic(int, char**)
    char string[240];
    int exist = false;
 
-   TINKER_RT(initial)();
+   initial();
    TINKER_RT(getxyz)();
    mechanic();
 
