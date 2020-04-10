@@ -428,14 +428,15 @@ def print_file_contents():
 
 
 def print_fpp():
-    guard = 'TINKER_MOD_%s_HH_' % _FilenameStem.upper()
-    print('#ifndef %s' % guard)
-    print('#define %s' % guard)
+    # guard = 'TINKER_MOD_%s_HH_' % _FilenameStem.upper()
+    # print('#ifndef %s' % guard)
+    # print('#define %s' % guard)
+    print('#pragma once')
     print('\n#include %s' % _SharedHeader)
     for k in _ModuleKeys:
         m = _Modulus[k]
         m.print_fpp()
-    print('\n#endif')
+    # print('\n#endif')
     return
 
 

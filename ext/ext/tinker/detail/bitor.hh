@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_BITOR_HH_
-#define TINKER_MOD_BITOR_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -15,5 +14,3 @@ int& nbitor = TINKER_MOD(bitor, nbitor);
 int*& ibitor = TINKER_MOD(bitor, ibitor);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

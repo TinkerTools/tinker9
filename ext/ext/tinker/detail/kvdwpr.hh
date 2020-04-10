@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KVDWPR_HH_
-#define TINKER_MOD_KVDWPR_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -19,5 +18,3 @@ double (&epspr)[maxnvp] = TINKER_MOD(kvdwpr, epspr);
 char (&kvpr)[maxnvp][8] = TINKER_MOD(kvdwpr, kvpr);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

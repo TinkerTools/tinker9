@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_VIRIAL_HH_
-#define TINKER_MOD_VIRIAL_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -15,5 +14,3 @@ double (&vir)[3][3] = TINKER_MOD(virial, vir);
 int& use_virial = TINKER_MOD(virial, use_virial);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

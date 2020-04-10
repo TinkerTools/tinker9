@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_OPBEND_HH_
-#define TINKER_MOD_OPBEND_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ int*& iopb = TINKER_MOD(opbend, iopb);
 double*& opbk = TINKER_MOD(opbend, opbk);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

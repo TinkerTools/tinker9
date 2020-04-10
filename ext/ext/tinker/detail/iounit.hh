@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_IOUNIT_HH_
-#define TINKER_MOD_IOUNIT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -15,5 +14,3 @@ int& input = TINKER_MOD(iounit, input);
 int& iout = TINKER_MOD(iounit, iout);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

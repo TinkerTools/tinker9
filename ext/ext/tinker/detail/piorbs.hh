@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_PIORBS_HH_
-#define TINKER_MOD_PIORBS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -51,5 +50,3 @@ double*& pnpl = TINKER_MOD(piorbs, pnpl);
 int*& listpi = TINKER_MOD(piorbs, listpi);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

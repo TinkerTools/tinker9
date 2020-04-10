@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_CHGTRN_HH_
-#define TINKER_MOD_CHGTRN_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ double*& chgct = TINKER_MOD(chgtrn, chgct);
 double*& dmpct = TINKER_MOD(chgtrn, dmpct);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

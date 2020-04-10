@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_CELL_HH_
-#define TINKER_MOD_CELL_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -33,5 +32,3 @@ double& ycell2 = TINKER_MOD(cell, ycell2);
 double& zcell2 = TINKER_MOD(cell, zcell2);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

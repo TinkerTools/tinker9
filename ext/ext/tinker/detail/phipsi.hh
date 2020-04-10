@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_PHIPSI_HH_
-#define TINKER_MOD_PHIPSI_HH_
+#pragma once
 
 #include "macro.h"
 #include "sizes.hh"
@@ -30,5 +29,3 @@ double (&omg)[maxres] = TINKER_MOD(phipsi, omg);
 double (&chi)[maxres][4] = TINKER_MOD(phipsi, chi);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

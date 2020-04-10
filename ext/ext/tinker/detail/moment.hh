@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_MOMENT_HH_
-#define TINKER_MOD_MOMENT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -54,5 +53,3 @@ double& zyqdp = TINKER_MOD(moment, zyqdp);
 double& zzqdp = TINKER_MOD(moment, zzqdp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

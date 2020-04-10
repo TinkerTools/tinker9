@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_ROTBND_HH_
-#define TINKER_MOD_ROTBND_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ int*& rot = TINKER_MOD(rotbnd, rot);
 int& use_short = TINKER_MOD(rotbnd, use_short);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

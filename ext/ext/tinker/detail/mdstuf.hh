@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_MDSTUF_HH_
-#define TINKER_MOD_MDSTUF_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -27,5 +26,3 @@ int& dorest = TINKER_MOD(mdstuf, dorest);
 char (&integrate)[11] = TINKER_MOD(mdstuf, integrate);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

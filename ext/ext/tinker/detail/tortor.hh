@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_TORTOR_HH_
-#define TINKER_MOD_TORTOR_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -15,5 +14,3 @@ int& ntortor = TINKER_MOD(tortor, ntortor);
 int*& itt = TINKER_MOD(tortor, itt);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

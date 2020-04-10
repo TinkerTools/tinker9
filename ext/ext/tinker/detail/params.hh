@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_PARAMS_HH_
-#define TINKER_MOD_PARAMS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -16,5 +15,3 @@ int& nprm = TINKER_MOD(params, nprm);
 char (&prmline)[maxprm][240] = TINKER_MOD(params, prmline);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

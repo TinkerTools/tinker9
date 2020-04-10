@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_CHGPEN_HH_
-#define TINKER_MOD_CHGPEN_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -21,5 +20,3 @@ double*& pval = TINKER_MOD(chgpen, pval);
 double*& palpha = TINKER_MOD(chgpen, palpha);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

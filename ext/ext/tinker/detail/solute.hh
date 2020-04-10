@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_SOLUTE_HH_
-#define TINKER_MOD_SOLUTE_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -78,5 +77,3 @@ char (&solvtyp)[8] = TINKER_MOD(solute, solvtyp);
 char (&borntyp)[8] = TINKER_MOD(solute, borntyp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

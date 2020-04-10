@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KDSP_HH_
-#define TINKER_MOD_KDSP_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -15,5 +14,3 @@ double*& dspsix = TINKER_MOD(kdsp, dspsix);
 double*& dspdmp = TINKER_MOD(kdsp, dspdmp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

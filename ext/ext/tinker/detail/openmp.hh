@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_OPENMP_HH_
-#define TINKER_MOD_OPENMP_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -15,5 +14,3 @@ int& nproc = TINKER_MOD(openmp, nproc);
 int& nthread = TINKER_MOD(openmp, nthread);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

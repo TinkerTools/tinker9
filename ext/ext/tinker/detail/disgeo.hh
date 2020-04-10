@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_DISGEO_HH_
-#define TINKER_MOD_DISGEO_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -30,5 +29,3 @@ int& use_invert = TINKER_MOD(disgeo, use_invert);
 int& use_anneal = TINKER_MOD(disgeo, use_anneal);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

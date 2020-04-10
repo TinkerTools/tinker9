@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KVDWS_HH_
-#define TINKER_MOD_KVDWS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -24,5 +23,3 @@ double*& eps4 = TINKER_MOD(kvdws, eps4);
 double*& reduct = TINKER_MOD(kvdws, reduct);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_CHUNKS_HH_
-#define TINKER_MOD_CHUNKS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -42,5 +41,3 @@ int& grdoff = TINKER_MOD(chunks, grdoff);
 int*& pmetable = TINKER_MOD(chunks, pmetable);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

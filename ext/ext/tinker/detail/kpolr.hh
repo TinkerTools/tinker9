@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KPOLR_HH_
-#define TINKER_MOD_KPOLR_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -21,5 +20,3 @@ double*& athl = TINKER_MOD(kpolr, athl);
 double*& ddir = TINKER_MOD(kpolr, ddir);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

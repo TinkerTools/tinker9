@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_MOLCUL_HH_
-#define TINKER_MOD_MOLCUL_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -27,5 +26,3 @@ double& totmass = TINKER_MOD(molcul, totmass);
 double*& molmass = TINKER_MOD(molcul, molmass);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

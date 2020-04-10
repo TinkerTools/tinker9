@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_ANGPOT_HH_
-#define TINKER_MOD_ANGPOT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -66,5 +65,3 @@ char (&opbtyp)[8] = TINKER_MOD(angpot, opbtyp);
 char (*&angtyp)[8] = TINKER_MOD(angpot, angtyp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

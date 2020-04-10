@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_NEIGH_HH_
-#define TINKER_MOD_NEIGH_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -120,5 +119,3 @@ int& domlst = TINKER_MOD(neigh, domlst);
 int& doulst = TINKER_MOD(neigh, doulst);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

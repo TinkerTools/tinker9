@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_SEQUEN_HH_
-#define TINKER_MOD_SEQUEN_HH_
+#pragma once
 
 #include "macro.h"
 #include "sizes.hh"
@@ -33,5 +32,3 @@ char (&seq)[maxres][3] = TINKER_MOD(sequen, seq);
 char (&chntyp)[maxres][7] = TINKER_MOD(sequen, chntyp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_BATH_HH_
-#define TINKER_MOD_BATH_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -73,5 +72,3 @@ char (&barostat)[11] = TINKER_MOD(bath, barostat);
 char (&thermostat)[11] = TINKER_MOD(bath, thermostat);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

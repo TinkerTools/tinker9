@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_POTFIT_HH_
-#define TINKER_MOD_POTFIT_HH_
+#pragma once
 
 #include "macro.h"
 #include "sizes.hh"
@@ -102,5 +101,3 @@ int*& gatm = TINKER_MOD(potfit, gatm);
 int*& fatm = TINKER_MOD(potfit, fatm);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

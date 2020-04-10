@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_QMSTUF_HH_
-#define TINKER_MOD_QMSTUF_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -33,5 +32,3 @@ double*& gforce = TINKER_MOD(qmstuf, gforce);
 double*& gh = TINKER_MOD(qmstuf, gh);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

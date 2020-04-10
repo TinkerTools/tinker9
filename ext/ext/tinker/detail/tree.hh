@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_TREE_HH_
-#define TINKER_MOD_TREE_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -19,5 +18,3 @@ double& etree = TINKER_MOD(tree, etree);
 double (&ilevel)[maxpss+1] = TINKER_MOD(tree, ilevel);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

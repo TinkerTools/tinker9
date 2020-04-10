@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_MINIMA_HH_
-#define TINKER_MOD_MINIMA_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -21,5 +20,3 @@ double& fctmin = TINKER_MOD(minima, fctmin);
 double& hguess = TINKER_MOD(minima, hguess);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

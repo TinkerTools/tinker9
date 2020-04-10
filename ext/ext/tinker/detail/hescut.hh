@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_HESCUT_HH_
-#define TINKER_MOD_HESCUT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -12,5 +11,3 @@ extern "C" double TINKER_MOD(hescut, hesscut);
 double& hesscut = TINKER_MOD(hescut, hesscut);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

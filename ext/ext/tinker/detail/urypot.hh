@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_URYPOT_HH_
-#define TINKER_MOD_URYPOT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ double& qury = TINKER_MOD(urypot, qury);
 double& ureyunit = TINKER_MOD(urypot, ureyunit);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

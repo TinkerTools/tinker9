@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_ASCII_HH_
-#define TINKER_MOD_ASCII_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -35,5 +34,3 @@ const int underbar = 95;
 const int vertical = 124;
 const int tilde = 126;
 } TINKER_NAMESPACE_END
-
-#endif

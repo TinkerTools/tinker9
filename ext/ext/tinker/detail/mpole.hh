@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_MPOLE_HH_
-#define TINKER_MOD_MPOLE_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -46,5 +45,3 @@ double*& srpole = TINKER_MOD(mpole, srpole);
 char (*&polaxe)[8] = TINKER_MOD(mpole, polaxe);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

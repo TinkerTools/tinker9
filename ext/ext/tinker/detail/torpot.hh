@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_TORPOT_HH_
-#define TINKER_MOD_TORPOT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -30,5 +29,3 @@ double& atorunit = TINKER_MOD(torpot, atorunit);
 double& ttorunit = TINKER_MOD(torpot, ttorunit);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

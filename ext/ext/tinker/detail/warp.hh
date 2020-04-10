@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_WARP_HH_
-#define TINKER_MOD_WARP_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -39,5 +38,3 @@ int& use_tophat = TINKER_MOD(warp, use_tophat);
 int& use_stophat = TINKER_MOD(warp, use_stophat);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

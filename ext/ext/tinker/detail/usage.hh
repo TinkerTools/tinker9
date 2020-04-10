@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_USAGE_HH_
-#define TINKER_MOD_USAGE_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ int*& iuse = TINKER_MOD(usage, iuse);
 int*& use = TINKER_MOD(usage, use);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

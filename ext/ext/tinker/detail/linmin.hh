@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_LINMIN_HH_
-#define TINKER_MOD_LINMIN_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -27,5 +26,3 @@ double& slpmax = TINKER_MOD(linmin, slpmax);
 double& angmax = TINKER_MOD(linmin, angmax);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_TITLES_HH_
-#define TINKER_MOD_TITLES_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -15,5 +14,3 @@ int& ltitle = TINKER_MOD(titles, ltitle);
 char (&title)[240] = TINKER_MOD(titles, title);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_H_
-#define TINKER_MOD_H_
+#pragma once
 
 #include "detail/action.hh"
 #include "detail/align.hh"
@@ -165,5 +164,3 @@
 #include "detail/xtals.hh"
 #include "detail/zclose.hh"
 #include "detail/zcoord.hh"
-
-#endif

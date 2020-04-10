@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_VDW_HH_
-#define TINKER_MOD_VDW_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -51,5 +50,3 @@ double*& radhbnd = TINKER_MOD(vdw, radhbnd);
 double*& epshbnd = TINKER_MOD(vdw, epshbnd);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

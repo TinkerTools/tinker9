@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_GKSTUF_HH_
-#define TINKER_MOD_GKSTUF_HH_
+#pragma once
 
 #include "macro.h"
 #include "sizes.hh"
@@ -18,5 +17,3 @@ double& gkc = TINKER_MOD(gkstuf, gkc);
 double (&gkr)[maxtyp] = TINKER_MOD(gkstuf, gkr);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

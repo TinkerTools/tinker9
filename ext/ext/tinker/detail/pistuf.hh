@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_PISTUF_HH_
-#define TINKER_MOD_PISTUF_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -24,5 +23,3 @@ double*& lslope = TINKER_MOD(pistuf, lslope);
 double*& torsp2 = TINKER_MOD(pistuf, torsp2);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

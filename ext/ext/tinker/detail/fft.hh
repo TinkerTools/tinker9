@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_FFT_HH_
-#define TINKER_MOD_FFT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -25,5 +24,3 @@ double*& ffttable = TINKER_MOD(fft, ffttable);
 char (&ffttyp)[7] = TINKER_MOD(fft, ffttyp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

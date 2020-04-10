@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_EWALD_HH_
-#define TINKER_MOD_EWALD_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -24,5 +23,3 @@ double& adewald = TINKER_MOD(ewald, adewald);
 char (&boundary)[7] = TINKER_MOD(ewald, boundary);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_FACES_HH_
-#define TINKER_MOD_FACES_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -222,5 +221,3 @@ int*& fqncy = TINKER_MOD(faces, fqncy);
 int*& fqcy = TINKER_MOD(faces, fqcy);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

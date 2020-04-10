@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_SHUNT_HH_
-#define TINKER_MOD_SHUNT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -63,5 +62,3 @@ double& f6 = TINKER_MOD(shunt, f6);
 double& f7 = TINKER_MOD(shunt, f7);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

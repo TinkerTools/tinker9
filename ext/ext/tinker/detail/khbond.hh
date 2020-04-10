@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KHBOND_HH_
-#define TINKER_MOD_KHBOND_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -19,5 +18,3 @@ double (&epshb)[maxnhb] = TINKER_MOD(khbond, epshb);
 char (&khb)[maxnhb][8] = TINKER_MOD(khbond, khb);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

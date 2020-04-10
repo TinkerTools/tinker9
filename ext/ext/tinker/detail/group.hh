@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_GROUP_HH_
-#define TINKER_MOD_GROUP_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -36,5 +35,3 @@ int& use_intra = TINKER_MOD(group, use_intra);
 int& use_inter = TINKER_MOD(group, use_inter);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

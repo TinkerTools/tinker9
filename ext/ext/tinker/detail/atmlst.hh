@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_ATMLST_HH_
-#define TINKER_MOD_ATMLST_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -15,5 +14,3 @@ int*& bndlist = TINKER_MOD(atmlst, bndlist);
 int*& anglist = TINKER_MOD(atmlst, anglist);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

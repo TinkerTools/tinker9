@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_ARGUE_HH_
-#define TINKER_MOD_ARGUE_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -19,5 +18,3 @@ int (&listarg)[maxarg+1] = TINKER_MOD(argue, listarg);
 char (&arg)[maxarg+1][240] = TINKER_MOD(argue, arg);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

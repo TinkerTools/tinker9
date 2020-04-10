@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_RESDUE_HH_
-#define TINKER_MOD_RESDUE_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -140,5 +139,3 @@ char (&amino)[maxamino][3] = TINKER_MOD(resdue, amino);
 char (&nuclz)[maxnuc][3] = TINKER_MOD(resdue, nuclz);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

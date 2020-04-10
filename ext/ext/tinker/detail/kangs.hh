@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KANGS_HH_
-#define TINKER_MOD_KANGS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -69,5 +68,3 @@ char (&kap)[maxnap][12] = TINKER_MOD(kangs, kap);
 char (&kaf)[maxnaf][12] = TINKER_MOD(kangs, kaf);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_ANGANG_HH_
-#define TINKER_MOD_ANGANG_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ int*& iaa = TINKER_MOD(angang, iaa);
 double*& kaa = TINKER_MOD(angang, kaa);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KATOMS_HH_
-#define TINKER_MOD_KATOMS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -27,5 +26,3 @@ char (*&symbol)[3] = TINKER_MOD(katoms, symbol);
 char (*&describe)[24] = TINKER_MOD(katoms, describe);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

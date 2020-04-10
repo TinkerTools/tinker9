@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_MERCK_HH_
-#define TINKER_MOD_MERCK_HH_
+#pragma once
 
 #include "macro.h"
 #include "sizes.hh"
@@ -255,5 +254,3 @@ double (&pbci)[maxclass] = TINKER_MOD(merck, pbci);
 double (&fcadj)[maxclass] = TINKER_MOD(merck, fcadj);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

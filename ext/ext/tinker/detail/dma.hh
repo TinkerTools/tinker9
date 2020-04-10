@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_DMA_HH_
-#define TINKER_MOD_DMA_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -36,5 +35,3 @@ double*& q22c = TINKER_MOD(dma, q22c);
 double*& q22s = TINKER_MOD(dma, q22s);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

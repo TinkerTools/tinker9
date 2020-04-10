@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_MRECIP_HH_
-#define TINKER_MOD_MRECIP_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -39,5 +38,3 @@ double*& cphi = TINKER_MOD(mrecip, cphi);
 double*& fphi = TINKER_MOD(mrecip, fphi);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

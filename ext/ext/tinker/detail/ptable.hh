@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_PTABLE_HH_
-#define TINKER_MOD_PTABLE_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -22,5 +21,3 @@ double (&covrad)[maxele] = TINKER_MOD(ptable, covrad);
 char (&elemnt)[maxele][3] = TINKER_MOD(ptable, elemnt);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

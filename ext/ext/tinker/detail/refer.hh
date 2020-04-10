@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_REFER_HH_
-#define TINKER_MOD_REFER_HH_
+#pragma once
 
 #include "macro.h"
 #include "sizes.hh"
@@ -66,5 +65,3 @@ char (&reffile)[maxref][240] = TINKER_MOD(refer, reffile);
 char (&reftitle)[maxref][240] = TINKER_MOD(refer, reftitle);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

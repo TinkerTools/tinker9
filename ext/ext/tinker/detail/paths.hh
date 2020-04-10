@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_PATHS_HH_
-#define TINKER_MOD_PATHS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -33,5 +32,3 @@ double*& pzet = TINKER_MOD(paths, pzet);
 double*& gc = TINKER_MOD(paths, gc);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

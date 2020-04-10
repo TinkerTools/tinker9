@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_STRBND_HH_
-#define TINKER_MOD_STRBND_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ int*& isb = TINKER_MOD(strbnd, isb);
 double*& sbk = TINKER_MOD(strbnd, sbk);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

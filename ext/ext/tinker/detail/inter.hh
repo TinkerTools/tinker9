@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_INTER_HH_
-#define TINKER_MOD_INTER_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -12,5 +11,3 @@ extern "C" double TINKER_MOD(inter, einter);
 double& einter = TINKER_MOD(inter, einter);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

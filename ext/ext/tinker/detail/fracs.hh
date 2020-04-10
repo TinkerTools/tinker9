@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_FRACS_HH_
-#define TINKER_MOD_FRACS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ double*& yfrac = TINKER_MOD(fracs, yfrac);
 double*& zfrac = TINKER_MOD(fracs, zfrac);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

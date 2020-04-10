@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_RGDDYN_HH_
-#define TINKER_MOD_RGDDYN_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -36,5 +35,3 @@ double*& wc = TINKER_MOD(rgddyn, wc);
 int*& linear = TINKER_MOD(rgddyn, linear);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

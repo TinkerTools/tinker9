@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_POLOPT_HH_
-#define TINKER_MOD_POLOPT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -40,5 +39,3 @@ double*& fopt = TINKER_MOD(polopt, fopt);
 double*& foptp = TINKER_MOD(polopt, foptp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

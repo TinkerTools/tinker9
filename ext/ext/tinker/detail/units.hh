@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_UNITS_HH_
-#define TINKER_MOD_UNITS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -22,5 +21,3 @@ const double coulomb = 332.063713e0;
 const double debye = 4.80321e0;
 const double prescon = 6.85684112e+4;
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KPITOR_HH_
-#define TINKER_MOD_KPITOR_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -16,5 +15,3 @@ double (&ptcon)[maxnpt] = TINKER_MOD(kpitor, ptcon);
 char (&kpt)[maxnpt][8] = TINKER_MOD(kpitor, kpt);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

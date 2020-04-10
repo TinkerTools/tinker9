@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_OMEGA_HH_
-#define TINKER_MOD_OMEGA_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -21,5 +20,3 @@ int*& zline = TINKER_MOD(omega, zline);
 double*& dihed = TINKER_MOD(omega, dihed);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

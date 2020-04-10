@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_BNDSTR_HH_
-#define TINKER_MOD_BNDSTR_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -21,5 +20,3 @@ double*& bk = TINKER_MOD(bndstr, bk);
 double*& bl = TINKER_MOD(bndstr, bl);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

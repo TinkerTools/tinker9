@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_ACTION_HH_
-#define TINKER_MOD_ACTION_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -96,5 +95,3 @@ int& neg = TINKER_MOD(action, neg);
 int& nex = TINKER_MOD(action, nex);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

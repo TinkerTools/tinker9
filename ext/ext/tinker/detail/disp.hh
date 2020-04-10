@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_DISP_HH_
-#define TINKER_MOD_DISP_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -24,5 +23,3 @@ double*& csix = TINKER_MOD(disp, csix);
 double*& adisp = TINKER_MOD(disp, adisp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

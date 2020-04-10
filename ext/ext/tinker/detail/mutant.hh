@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_MUTANT_HH_
-#define TINKER_MOD_MUTANT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -51,5 +50,3 @@ double& scalpha = TINKER_MOD(mutant, scalpha);
 int*& mut = TINKER_MOD(mutant, mut);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

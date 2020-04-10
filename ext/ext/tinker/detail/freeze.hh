@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_FREEZE_HH_
-#define TINKER_MOD_FREEZE_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -36,5 +35,3 @@ int& use_rattle = TINKER_MOD(freeze, use_rattle);
 int*& ratimage = TINKER_MOD(freeze, ratimage);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

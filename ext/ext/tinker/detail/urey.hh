@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_UREY_HH_
-#define TINKER_MOD_UREY_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -21,5 +20,3 @@ double*& uk = TINKER_MOD(urey, uk);
 double*& ul = TINKER_MOD(urey, ul);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

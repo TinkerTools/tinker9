@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_NONPOL_HH_
-#define TINKER_MOD_NONPOL_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -42,5 +41,3 @@ double*& rdisp = TINKER_MOD(nonpol, rdisp);
 double*& cdisp = TINKER_MOD(nonpol, cdisp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

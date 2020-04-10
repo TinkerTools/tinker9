@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_LIGHT_HH_
-#define TINKER_MOD_LIGHT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -48,5 +47,3 @@ int*& rgy = TINKER_MOD(light, rgy);
 int*& rgz = TINKER_MOD(light, rgz);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

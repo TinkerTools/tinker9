@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KITORS_HH_
-#define TINKER_MOD_KITORS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -22,5 +21,3 @@ double (&ti3)[maxnti][2] = TINKER_MOD(kitors, ti3);
 char (&kti)[maxnti][16] = TINKER_MOD(kitors, kti);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

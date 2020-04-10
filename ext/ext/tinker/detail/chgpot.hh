@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_CHGPOT_HH_
-#define TINKER_MOD_CHGPOT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -39,5 +38,3 @@ int& neutnbr = TINKER_MOD(chgpot, neutnbr);
 int& neutcut = TINKER_MOD(chgpot, neutcut);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

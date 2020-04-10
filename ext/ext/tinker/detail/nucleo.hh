@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_NUCLEO_HH_
-#define TINKER_MOD_NUCLEO_HH_
+#pragma once
 
 #include "macro.h"
 #include "sizes.hh"
@@ -30,5 +29,3 @@ int (&deoxy)[maxres] = TINKER_MOD(nucleo, deoxy);
 char (&hlxform)[1] = TINKER_MOD(nucleo, hlxform);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

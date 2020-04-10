@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KEYS_HH_
-#define TINKER_MOD_KEYS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -16,5 +15,3 @@ int& nkey = TINKER_MOD(keys, nkey);
 char (&keyline)[maxkey][240] = TINKER_MOD(keys, keyline);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

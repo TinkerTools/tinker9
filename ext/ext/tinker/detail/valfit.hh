@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_VALFIT_HH_
-#define TINKER_MOD_VALFIT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -33,5 +32,3 @@ int& fit_struct = TINKER_MOD(valfit, fit_struct);
 int& fit_force = TINKER_MOD(valfit, fit_force);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

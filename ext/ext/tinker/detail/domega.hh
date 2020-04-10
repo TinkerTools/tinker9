@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_DOMEGA_HH_
-#define TINKER_MOD_DOMEGA_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -96,5 +95,3 @@ double*& teg = TINKER_MOD(domega, teg);
 double*& tex = TINKER_MOD(domega, tex);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

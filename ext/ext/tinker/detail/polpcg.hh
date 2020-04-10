@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_POLPCG_HH_
-#define TINKER_MOD_POLPCG_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -24,5 +23,3 @@ int& pcgprec = TINKER_MOD(polpcg, pcgprec);
 int& pcgguess = TINKER_MOD(polpcg, pcgguess);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

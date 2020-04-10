@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_POLAR_HH_
-#define TINKER_MOD_POLAR_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -57,5 +56,3 @@ double*& uexact = TINKER_MOD(polar, uexact);
 int*& douind = TINKER_MOD(polar, douind);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

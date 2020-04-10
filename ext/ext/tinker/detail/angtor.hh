@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_ANGTOR_HH_
-#define TINKER_MOD_ANGTOR_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ int*& iat = TINKER_MOD(angtor, iat);
 double*& kant = TINKER_MOD(angtor, kant);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

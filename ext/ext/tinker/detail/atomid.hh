@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_ATOMID_HH_
-#define TINKER_MOD_ATOMID_HH_
+#pragma once
 
 #include "macro.h"
 #include "sizes.hh"
@@ -33,5 +32,3 @@ char (&name)[maxatm][3] = TINKER_MOD(atomid, name);
 char (&story)[maxatm][24] = TINKER_MOD(atomid, story);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

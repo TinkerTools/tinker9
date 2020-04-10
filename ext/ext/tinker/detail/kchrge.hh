@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KCHRGE_HH_
-#define TINKER_MOD_KCHRGE_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -12,5 +11,3 @@ extern "C" double* TINKER_MOD(kchrge, chg);
 double*& chg = TINKER_MOD(kchrge, chg);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

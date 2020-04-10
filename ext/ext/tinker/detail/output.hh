@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_OUTPUT_HH_
-#define TINKER_MOD_OUTPUT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -33,5 +32,3 @@ int& uindsave = TINKER_MOD(output, uindsave);
 char (&coordtype)[9] = TINKER_MOD(output, coordtype);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

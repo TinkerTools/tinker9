@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_HESSN_HH_
-#define TINKER_MOD_HESSN_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ double*& hessy = TINKER_MOD(hessn, hessy);
 double*& hessz = TINKER_MOD(hessn, hessz);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_DERIV_HH_
-#define TINKER_MOD_DERIV_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -96,5 +95,3 @@ double*& deg = TINKER_MOD(deriv, deg);
 double*& dex = TINKER_MOD(deriv, dex);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

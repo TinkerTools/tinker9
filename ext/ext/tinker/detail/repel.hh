@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_REPEL_HH_
-#define TINKER_MOD_REPEL_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -21,5 +20,3 @@ double*& dmppr = TINKER_MOD(repel, dmppr);
 double*& elepr = TINKER_MOD(repel, elepr);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

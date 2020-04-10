@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_CHRONO_HH_
-#define TINKER_MOD_CHRONO_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -15,5 +14,3 @@ double& twall = TINKER_MOD(chrono, twall);
 double& tcpu = TINKER_MOD(chrono, tcpu);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

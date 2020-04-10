@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_FIELDS_HH_
-#define TINKER_MOD_FIELDS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -16,5 +15,3 @@ int (&biotyp)[maxbio] = TINKER_MOD(fields, biotyp);
 char (&forcefield)[20] = TINKER_MOD(fields, forcefield);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

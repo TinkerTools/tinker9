@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KSTBND_HH_
-#define TINKER_MOD_KSTBND_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -16,5 +15,3 @@ double (&stbn)[maxnsb][2] = TINKER_MOD(kstbnd, stbn);
 char (&ksb)[maxnsb][12] = TINKER_MOD(kstbnd, ksb);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

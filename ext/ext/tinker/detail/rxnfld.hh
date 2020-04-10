@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_RXNFLD_HH_
-#define TINKER_MOD_RXNFLD_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ double (&b1)[13][40] = TINKER_MOD(rxnfld, b1);
 double (&b2)[13][40] = TINKER_MOD(rxnfld, b2);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

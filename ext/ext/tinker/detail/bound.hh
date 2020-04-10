@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_BOUND_HH_
-#define TINKER_MOD_BOUND_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -24,5 +23,3 @@ int& use_replica = TINKER_MOD(bound, use_replica);
 int& use_polymer = TINKER_MOD(bound, use_polymer);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

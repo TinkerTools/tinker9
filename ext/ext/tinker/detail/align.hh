@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_ALIGN_HH_
-#define TINKER_MOD_ALIGN_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ int*& ifit = TINKER_MOD(align, ifit);
 double*& wfit = TINKER_MOD(align, wfit);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_INFORM_HH_
-#define TINKER_MOD_INFORM_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -37,5 +36,3 @@ int& holdup = TINKER_MOD(inform, holdup);
 int& abort = TINKER_MOD(inform, abort);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

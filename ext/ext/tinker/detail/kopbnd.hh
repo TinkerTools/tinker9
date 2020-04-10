@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KOPBND_HH_
-#define TINKER_MOD_KOPBND_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -16,5 +15,3 @@ double (&opbn)[maxnopb] = TINKER_MOD(kopbnd, opbn);
 char (&kopb)[maxnopb][16] = TINKER_MOD(kopbnd, kopb);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

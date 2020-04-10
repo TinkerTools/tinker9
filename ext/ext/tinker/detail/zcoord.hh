@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_ZCOORD_HH_
-#define TINKER_MOD_ZCOORD_HH_
+#pragma once
 
 #include "macro.h"
 #include "sizes.hh"
@@ -24,5 +23,3 @@ double (&zang)[maxatm] = TINKER_MOD(zcoord, zang);
 double (&ztors)[maxatm] = TINKER_MOD(zcoord, ztors);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_BNDPOT_HH_
-#define TINKER_MOD_BNDPOT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -21,5 +20,3 @@ double& bndunit = TINKER_MOD(bndpot, bndunit);
 char (&bndtyp)[8] = TINKER_MOD(bndpot, bndtyp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

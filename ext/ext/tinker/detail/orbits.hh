@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_ORBITS_HH_
-#define TINKER_MOD_ORBITS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ double*& worb = TINKER_MOD(orbits, worb);
 double*& emorb = TINKER_MOD(orbits, emorb);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

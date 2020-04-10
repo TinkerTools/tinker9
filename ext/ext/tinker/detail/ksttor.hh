@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KSTTOR_HH_
-#define TINKER_MOD_KSTTOR_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -16,5 +15,3 @@ double (&btcon)[maxnbt][9] = TINKER_MOD(ksttor, btcon);
 char (&kbt)[maxnbt][16] = TINKER_MOD(ksttor, kbt);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

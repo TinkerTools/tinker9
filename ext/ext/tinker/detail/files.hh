@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_FILES_HH_
-#define TINKER_MOD_FILES_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -24,5 +23,3 @@ char (&filename)[240] = TINKER_MOD(files, filename);
 char (&outfile)[240] = TINKER_MOD(files, outfile);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

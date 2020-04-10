@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_POTENT_HH_
-#define TINKER_MOD_POTENT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -99,5 +98,3 @@ int& use_born = TINKER_MOD(potent, use_born);
 int& use_orbit = TINKER_MOD(potent, use_orbit);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

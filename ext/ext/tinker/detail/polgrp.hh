@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_POLGRP_HH_
-#define TINKER_MOD_POLGRP_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -37,5 +36,3 @@ int*& ip13 = TINKER_MOD(polgrp, ip13);
 int*& ip14 = TINKER_MOD(polgrp, ip14);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

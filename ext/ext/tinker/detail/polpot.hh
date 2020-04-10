@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_POLPOT_HH_
-#define TINKER_MOD_POLPOT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -90,5 +89,3 @@ int& use_dirdamp = TINKER_MOD(polpot, use_dirdamp);
 char (&poltyp)[6] = TINKER_MOD(polpot, poltyp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

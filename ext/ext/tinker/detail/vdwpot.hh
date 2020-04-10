@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_VDWPOT_HH_
-#define TINKER_MOD_VDWPOT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -67,5 +66,3 @@ char (&epsrule)[10] = TINKER_MOD(vdwpot, epsrule);
 char (&vdwtyp)[13] = TINKER_MOD(vdwpot, vdwtyp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

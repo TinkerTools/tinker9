@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KORBS_HH_
-#define TINKER_MOD_KORBS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -48,5 +47,3 @@ char (&kpi5)[maxnpi5][8] = TINKER_MOD(korbs, kpi5);
 char (&kpi4)[maxnpi4][8] = TINKER_MOD(korbs, kpi4);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

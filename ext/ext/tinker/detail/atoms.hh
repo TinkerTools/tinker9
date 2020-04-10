@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_ATOMS_HH_
-#define TINKER_MOD_ATOMS_HH_
+#pragma once
 
 #include "macro.h"
 #include "sizes.hh"
@@ -27,5 +26,3 @@ double (&y)[maxatm] = TINKER_MOD(atoms, y);
 double (&z)[maxatm] = TINKER_MOD(atoms, z);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_MPLPOT_HH_
-#define TINKER_MOD_MPLPOT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -27,5 +26,3 @@ int& use_chgpen = TINKER_MOD(mplpot, use_chgpen);
 char (&pentyp)[7] = TINKER_MOD(mplpot, pentyp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

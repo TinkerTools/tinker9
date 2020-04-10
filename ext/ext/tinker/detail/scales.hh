@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_SCALES_HH_
-#define TINKER_MOD_SCALES_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -15,5 +14,3 @@ double*& scale = TINKER_MOD(scales, scale);
 int& set_scale = TINKER_MOD(scales, set_scale);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_PITORS_HH_
-#define TINKER_MOD_PITORS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ int*& ipit = TINKER_MOD(pitors, ipit);
 double*& kpit = TINKER_MOD(pitors, kpit);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

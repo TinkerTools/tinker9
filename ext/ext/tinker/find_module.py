@@ -91,8 +91,7 @@ rm -f $DIR/*.hh
 ##########
 
 cat << ENDOFFILE >> $HEADER
-#ifndef TINKER_MOD_H_
-#define TINKER_MOD_H_
+#pragma once
 
 ENDOFFILE
 '''
@@ -101,8 +100,6 @@ ENDOFFILE
 ##########
 
 cat << ENDOFFILE >> $HEADER
-
-#endif
 ENDOFFILE
 '''
     print(text1)

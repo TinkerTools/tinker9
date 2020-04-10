@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_RXNPOT_HH_
-#define TINKER_MOD_RXNPOT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ double& rfsize = TINKER_MOD(rxnpot, rfsize);
 double& rfbulkd = TINKER_MOD(rxnpot, rfbulkd);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

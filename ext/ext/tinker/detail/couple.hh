@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_COUPLE_HH_
-#define TINKER_MOD_COUPLE_HH_
+#pragma once
 
 #include "macro.h"
 #include "sizes.hh"
@@ -36,5 +35,3 @@ int*& i14 = TINKER_MOD(couple, i14);
 int*& i15 = TINKER_MOD(couple, i15);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

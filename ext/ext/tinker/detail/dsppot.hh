@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_DSPPOT_HH_
-#define TINKER_MOD_DSPPOT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -24,5 +23,3 @@ double& dsp5scale = TINKER_MOD(dsppot, dsp5scale);
 int& use_dcorr = TINKER_MOD(dsppot, use_dcorr);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

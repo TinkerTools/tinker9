@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KTORSN_HH_
-#define TINKER_MOD_KTORSN_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -75,5 +74,3 @@ char (&kt5)[maxnt5][16] = TINKER_MOD(ktorsn, kt5);
 char (&kt4)[maxnt4][16] = TINKER_MOD(ktorsn, kt4);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

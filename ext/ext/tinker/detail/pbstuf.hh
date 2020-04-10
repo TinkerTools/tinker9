@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_PBSTUF_HH_
-#define TINKER_MOD_PBSTUF_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -100,5 +99,3 @@ char (&chgm)[20] = TINKER_MOD(pbstuf, chgm);
 char (&srfm)[20] = TINKER_MOD(pbstuf, srfm);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

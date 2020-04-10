@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_RIGID_HH_
-#define TINKER_MOD_RIGID_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -24,5 +23,3 @@ double*& rbc = TINKER_MOD(rigid, rbc);
 int& use_rigid = TINKER_MOD(rigid, use_rigid);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

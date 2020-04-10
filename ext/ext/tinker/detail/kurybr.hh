@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KURYBR_HH_
-#define TINKER_MOD_KURYBR_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -19,5 +18,3 @@ double (&dst13)[maxnu] = TINKER_MOD(kurybr, dst13);
 char (&ku)[maxnu][12] = TINKER_MOD(kurybr, ku);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

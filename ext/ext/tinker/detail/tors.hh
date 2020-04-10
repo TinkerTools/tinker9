@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_TORS_HH_
-#define TINKER_MOD_TORS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -33,5 +32,3 @@ double*& tors5 = TINKER_MOD(tors, tors5);
 double*& tors6 = TINKER_MOD(tors, tors6);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_PDB_HH_
-#define TINKER_MOD_PDB_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -57,5 +56,3 @@ char (&chnsym)[20] = TINKER_MOD(pdb, chnsym);
 char (&instyp)[20] = TINKER_MOD(pdb, instyp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

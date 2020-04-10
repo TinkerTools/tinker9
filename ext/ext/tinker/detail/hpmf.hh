@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_HPMF_HH_
-#define TINKER_MOD_HPMF_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -37,5 +36,3 @@ double*& rpmf = TINKER_MOD(hpmf, rpmf);
 double*& acsa = TINKER_MOD(hpmf, acsa);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

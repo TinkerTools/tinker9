@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_REPPOT_HH_
-#define TINKER_MOD_REPPOT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -21,5 +20,3 @@ double& r4scale = TINKER_MOD(reppot, r4scale);
 double& r5scale = TINKER_MOD(reppot, r5scale);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

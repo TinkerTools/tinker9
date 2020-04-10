@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KCPEN_HH_
-#define TINKER_MOD_KCPEN_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -15,5 +14,3 @@ double*& cpele = TINKER_MOD(kcpen, cpele);
 double*& cpalp = TINKER_MOD(kcpen, cpalp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

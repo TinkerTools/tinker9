@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_SOCKET_HH_
-#define TINKER_MOD_SOCKET_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -30,5 +29,3 @@ int& sktstop = TINKER_MOD(socket, sktstop);
 int& use_socket = TINKER_MOD(socket, use_socket);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_STODYN_HH_
-#define TINKER_MOD_STODYN_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ double*& fgamma = TINKER_MOD(stodyn, fgamma);
 int& use_sdarea = TINKER_MOD(stodyn, use_sdarea);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KIPROP_HH_
-#define TINKER_MOD_KIPROP_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -19,5 +18,3 @@ double (&tdi)[maxndi] = TINKER_MOD(kiprop, tdi);
 char (&kdi)[maxndi][16] = TINKER_MOD(kiprop, kdi);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

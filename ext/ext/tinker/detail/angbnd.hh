@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_ANGBND_HH_
-#define TINKER_MOD_ANGBND_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -24,5 +23,3 @@ double*& anat = TINKER_MOD(angbnd, anat);
 double*& afld = TINKER_MOD(angbnd, afld);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

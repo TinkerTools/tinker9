@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_IMPTOR_HH_
-#define TINKER_MOD_IMPTOR_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -24,5 +23,3 @@ double*& itors2 = TINKER_MOD(imptor, itors2);
 double*& itors3 = TINKER_MOD(imptor, itors3);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

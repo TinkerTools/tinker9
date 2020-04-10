@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_CTRPOT_HH_
-#define TINKER_MOD_CTRPOT_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -12,5 +11,3 @@ extern "C" char TINKER_MOD(ctrpot, ctrntyp)[8];
 char (&ctrntyp)[8] = TINKER_MOD(ctrpot, ctrntyp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

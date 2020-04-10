@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KANTOR_HH_
-#define TINKER_MOD_KANTOR_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -16,5 +15,3 @@ double (&atcon)[maxnat][6] = TINKER_MOD(kantor, atcon);
 char (&kat)[maxnat][16] = TINKER_MOD(kantor, kat);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_IMPROP_HH_
-#define TINKER_MOD_IMPROP_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -21,5 +20,3 @@ double*& kprop = TINKER_MOD(improp, kprop);
 double*& vprop = TINKER_MOD(improp, vprop);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

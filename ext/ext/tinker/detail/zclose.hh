@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_ZCLOSE_HH_
-#define TINKER_MOD_ZCLOSE_HH_
+#pragma once
 
 #include "macro.h"
 #include "sizes.hh"
@@ -24,5 +23,3 @@ int (&iadd)[maxatm][2] = TINKER_MOD(zclose, iadd);
 int (&idel)[maxatm][2] = TINKER_MOD(zclose, idel);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

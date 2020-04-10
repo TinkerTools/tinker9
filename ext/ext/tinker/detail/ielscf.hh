@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_IELSCF_HH_
-#define TINKER_MOD_IELSCF_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -39,5 +38,3 @@ double*& apaux = TINKER_MOD(ielscf, apaux);
 int& use_ielscf = TINKER_MOD(ielscf, use_ielscf);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_MATH_HH_
-#define TINKER_MOD_MATH_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -13,5 +12,3 @@ const double sqrtpi = 1.772453850905516027e0;
 const double sqrttwo = 1.414213562373095049e0;
 const double sqrtthree = 1.732050807568877294e0;
 } TINKER_NAMESPACE_END
-
-#endif

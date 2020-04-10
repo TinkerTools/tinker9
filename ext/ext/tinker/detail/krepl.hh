@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KREPL_HH_
-#define TINKER_MOD_KREPL_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ double*& prdmp = TINKER_MOD(krepl, prdmp);
 double*& prele = TINKER_MOD(krepl, prele);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

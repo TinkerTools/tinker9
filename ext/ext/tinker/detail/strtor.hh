@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_STRTOR_HH_
-#define TINKER_MOD_STRTOR_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ int*& ist = TINKER_MOD(strtor, ist);
 double*& kst = TINKER_MOD(strtor, kst);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

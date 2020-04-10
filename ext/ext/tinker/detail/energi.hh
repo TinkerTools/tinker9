@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_ENERGI_HH_
-#define TINKER_MOD_ENERGI_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -96,5 +95,3 @@ double& eg = TINKER_MOD(energi, eg);
 double& ex = TINKER_MOD(energi, ex);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

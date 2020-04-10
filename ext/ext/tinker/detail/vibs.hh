@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_VIBS_HH_
-#define TINKER_MOD_VIBS_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -18,5 +17,3 @@ double*& rhok = TINKER_MOD(vibs, rhok);
 double*& rwork = TINKER_MOD(vibs, rwork);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

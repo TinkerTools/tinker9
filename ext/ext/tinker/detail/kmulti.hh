@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_KMULTI_HH_
-#define TINKER_MOD_KMULTI_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -19,5 +18,3 @@ char (&mpaxis)[maxnmp][8] = TINKER_MOD(kmulti, mpaxis);
 char (&kmp)[maxnmp][16] = TINKER_MOD(kmulti, kmp);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif

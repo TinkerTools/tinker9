@@ -1,5 +1,4 @@
-#ifndef TINKER_MOD_RESTRN_HH_
-#define TINKER_MOD_RESTRN_HH_
+#pragma once
 
 #include "macro.h"
 
@@ -90,5 +89,3 @@ int& use_basin = TINKER_MOD(restrn, use_basin);
 int& use_wall = TINKER_MOD(restrn, use_wall);
 #endif
 } TINKER_NAMESPACE_END
-
-#endif
