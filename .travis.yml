@@ -22,7 +22,7 @@ before_install:
 
 script:
   - mkdir -p tinker/source
-  - curl $CI_DEPEND_DIR/tinker-11e84c69/libtinker.a -o tinker/source/libtinker.a
+  - curl $CI_DEPEND_DIR/tinker-350df099/libtinker.a -o tinker/source/libtinker.a
 
   - mkdir -p fftw/include
   - curl $CI_DEPEND_DIR/fftw/include/fftw3.h -o fftw/include/fftw3.h

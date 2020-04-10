@@ -20,7 +20,7 @@ Nothing special is needed for the CPU code.
       - Tinker: `libfftw3` and `libfftw3_threads`.
       - Tinker GPU (single precision CPU version): `libfftw3f`, `libfftw3f_threads`.
    - Tinker
-      - Tinker GPU is in sync with [Tinker](https://github.com/TinkerTools/Tinker) of commit `11e84c69`.
+      - Tinker GPU is in sync with [Tinker](https://github.com/TinkerTools/Tinker) of commit `350df099`.
       For details, see `Build the Canonical Tinker`.
    - CUDA
       - Recent `CUDA` libraries are required by the GPU code,

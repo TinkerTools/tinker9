@@ -4,18 +4,18 @@
 #include "macro.h"
 
 TINKER_NAMESPACE_BEGIN namespace vibs {
-extern double*& phi;
-extern double*& phik;
-extern double*& pwork;
+extern double*& rho;
+extern double*& rhok;
+extern double*& rwork;
 
 #ifdef TINKER_MOD_CPP_
-extern "C" double* TINKER_MOD(vibs, phi);
-extern "C" double* TINKER_MOD(vibs, phik);
-extern "C" double* TINKER_MOD(vibs, pwork);
+extern "C" double* TINKER_MOD(vibs, rho);
+extern "C" double* TINKER_MOD(vibs, rhok);
+extern "C" double* TINKER_MOD(vibs, rwork);
 
-double*& phi = TINKER_MOD(vibs, phi);
-double*& phik = TINKER_MOD(vibs, phik);
-double*& pwork = TINKER_MOD(vibs, pwork);
+double*& rho = TINKER_MOD(vibs, rho);
+double*& rhok = TINKER_MOD(vibs, rhok);
+double*& rwork = TINKER_MOD(vibs, rwork);
 #endif
 } TINKER_NAMESPACE_END
 
