@@ -261,6 +261,17 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
       darray::copy(PROCEED_NEW_Q, n, rsd, field);
       darray::copy(PROCEED_NEW_Q, n, rsdp, fieldp);
    }
+   #pragma acc parallel loop independent async deviceptr(polarity,rsd,rsdp)
+   for (int i = 0; i < n; ++i) {
+      if (polarity[i] == 0) {
+         rsd[i][0] = 0;
+         rsd[i][1] = 0;
+         rsd[i][2] = 0;
+         rsdp[i][0] = 0;
+         rsdp[i][1] = 0;
+         rsdp[i][2] = 0;
+      }
+   }
 
    // initial M r(0) and p(0)
 
@@ -323,7 +334,7 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
       // u <- u + a p
       // r <- r - a T p
       #pragma acc parallel loop independent async\
-                  deviceptr(uind,uinp,conj,conjp,rsd,rsdp,vec,vecp)
+                  deviceptr(polarity,uind,uinp,conj,conjp,rsd,rsdp,vec,vecp)
       for (int i = 0; i < n; ++i) {
          #pragma acc loop seq
          for (int j = 0; j < 3; ++j) {
@@ -331,6 +342,14 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
             uinp[i][j] += ap * conjp[i][j];
             rsd[i][j] -= a * vec[i][j];
             rsdp[i][j] -= ap * vecp[i][j];
+         }
+         if (polarity[i] == 0) {
+            rsd[i][0] = 0;
+            rsd[i][1] = 0;
+            rsd[i][2] = 0;
+            rsdp[i][0] = 0;
+            rsdp[i][1] = 0;
+            rsdp[i][2] = 0;
          }
       }
 

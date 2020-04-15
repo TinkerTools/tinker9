@@ -33,6 +33,23 @@ void pcg_udir(int n, const real* restrict polarity, real (*restrict udir)[3],
 
 
 __global__
+void pcg_rsd0(int n, const real* restrict polarity, real (*restrict rsd)[3],
+              real (*restrict rsdp)[3])
+{
+   for (int i = ITHREAD; i < n; i += STRIDE) {
+      if (polarity[i] == 0) {
+         rsd[i][0] = 0;
+         rsd[i][1] = 0;
+         rsd[i][2] = 0;
+         rsdp[i][0] = 0;
+         rsdp[i][1] = 0;
+         rsdp[i][2] = 0;
+      }
+   }
+}
+
+
+__global__
 void pcg_p1(int n, const real* restrict polarity_inv, real (*restrict vec)[3],
             real (*restrict vecp)[3], const real (*restrict conj)[3],
             const real (*restrict conjp)[3], const real (*restrict field)[3],
@@ -50,7 +67,8 @@ void pcg_p1(int n, const real* restrict polarity_inv, real (*restrict vec)[3],
 
 
 __global__
-void pcg_p2(int n, const real* restrict ka, const real* restrict kap,
+void pcg_p2(int n, const real* restrict polarity,              //
+            const real* restrict ka, const real* restrict kap, //
             const real* restrict ksum, const real* restrict ksump,
             real (*restrict uind)[3], real (*restrict uinp)[3],
             const real (*restrict conj)[3], const real (*restrict conjp)[3],
@@ -66,6 +84,14 @@ void pcg_p2(int n, const real* restrict ka, const real* restrict kap,
          uinp[i][j] += ap * conjp[i][j];
          rsd[i][j] -= a * vec[i][j];
          rsdp[i][j] -= ap * vecp[i][j];
+      }
+      if (polarity[i] == 0) {
+         rsd[i][0] = 0;
+         rsd[i][1] = 0;
+         rsd[i][2] = 0;
+         rsdp[i][0] = 0;
+         rsdp[i][1] = 0;
+         rsdp[i][2] = 0;
       }
    }
 }
@@ -150,6 +176,7 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       darray::copy(PROCEED_NEW_Q, n, rsd, field);
       darray::copy(PROCEED_NEW_Q, n, rsdp, fieldp);
    }
+   launch_k1s(nonblk, n, pcg_rsd0, n, polarity, rsd, rsdp);
 
 
    // initial M r(0) and p(0)
@@ -207,8 +234,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
 
       // u <- u + a p
       // r <- r - a T p
-      launch_k1s(nonblk, n, pcg_p2, n, a, ap, sum, sump, uind, uinp, conj,
-                 conjp, rsd, rsdp, vec, vecp);
+      launch_k1s(nonblk, n, pcg_p2, n, polarity, a, ap, sum, sump, uind, uinp,
+                 conj, conjp, rsd, rsdp, vec, vecp);
 
 
       // calculate/update M r

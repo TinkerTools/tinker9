@@ -360,8 +360,7 @@ void epolar_data(rc_op op)
    if (op & rc_init) {
       udiag = polpot::udiag;
 
-      // see also polmin in induce.f
-      const double polmin = 0.00000001;
+      const double polmin = 1.0e-16;
       std::vector<double> pinvbuf(n);
       for (int i = 0; i < n; ++i) {
          pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
