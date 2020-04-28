@@ -32,13 +32,9 @@ void echarge_data(rc_op op)
       darray::deallocate(cexclude, cexclude_scale);
 
       if (rc_flag & calc::analyz) {
-         buffer_deallocate(nec);
-         buffer_deallocate(ec, decx, decy, decz, vir_ec);
-      } else {
-         rc_flag |= calc::analyz;
-         buffer_deallocate(ec, decx, decy, decz, vir_ec);
-         rc_flag &= ~calc::analyz;
+         buffer_deallocate(calc::analyz, nec);
       }
+      buffer_deallocate(rc_flag | calc::analyz, ec, decx, decy, decz, vir_ec);
    }
 
 
@@ -120,13 +116,10 @@ void echarge_data(rc_op op)
 
 
       if (rc_flag & calc::analyz) {
-         buffer_allocate(&nec);
-         buffer_allocate(&ec, &decx, &decy, &decz, &vir_ec);
-      } else {
-         rc_flag |= calc::analyz;
-         buffer_allocate(&ec, &decx, &decy, &decz, &vir_ec);
-         rc_flag &= ~calc::analyz;
+         buffer_allocate(calc::analyz, &nec);
       }
+      buffer_allocate(rc_flag | calc::analyz, &ec, &decx, &decy, &decz,
+                      &vir_ec);
    }
 
 

@@ -32,8 +32,9 @@ void epolar_data(rc_op op)
       darray::deallocate(polarity, thole, pdamp, polarity_inv);
 
       if (rc_flag & calc::analyz) {
-         buffer_deallocate(nep);
-         buffer_deallocate(ep, depx, depy, depz, vir_ep);
+         buffer_deallocate(calc::analyz, nep);
+         buffer_deallocate(rc_flag | calc::analyz, ep, depx, depy, depz,
+                           vir_ep);
       } else if (use_potent(mpole_term)) {
          ep = nullptr;
          depx = nullptr;
@@ -41,9 +42,8 @@ void epolar_data(rc_op op)
          depz = nullptr;
          vir_ep = nullptr;
       } else {
-         rc_flag |= calc::analyz;
-         buffer_deallocate(ep, depx, depy, depz, vir_ep);
-         rc_flag &= ~calc::analyz;
+         buffer_deallocate(rc_flag | calc::analyz, ep, depx, depy, depz,
+                           vir_ep);
       }
 
       darray::deallocate(ufld, dufld);
@@ -359,8 +359,9 @@ void epolar_data(rc_op op)
       darray::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
 
       if (rc_flag & calc::analyz) {
-         buffer_allocate(&nep);
-         buffer_allocate(&ep, &depx, &depy, &depz, &vir_ep);
+         buffer_allocate(calc::analyz, &nep);
+         buffer_allocate(rc_flag | calc::analyz, &ep, &depx, &depy, &depz,
+                         &vir_ep);
       } else if (use_potent(mpole_term)) {
          ep = em;
          depx = demx;
@@ -368,9 +369,8 @@ void epolar_data(rc_op op)
          depz = demz;
          vir_ep = vir_em;
       } else {
-         rc_flag |= calc::analyz;
-         buffer_allocate(&ep, &depx, &depy, &depz, &vir_ep);
-         rc_flag &= ~calc::analyz;
+         buffer_allocate(rc_flag | calc::analyz, &ep, &depx, &depy, &depz,
+                         &vir_ep);
       }
 
       if (rc_flag & calc::grad) {

@@ -120,24 +120,24 @@ using virial_buffer =
  * \see esum_buf vir_buf
  * \see calc::analyz
  */
-void buffer_allocate(energy_buffer*, grad_prec**, grad_prec**, grad_prec**,
+void buffer_allocate(int, energy_buffer*, grad_prec**, grad_prec**, grad_prec**,
                      virial_buffer*);
 /**
  * \ingroup md_egv
  * \see buffer_allocate
  */
-void buffer_deallocate(energy_buffer, grad_prec*, grad_prec*, grad_prec*,
+void buffer_deallocate(int, energy_buffer, grad_prec*, grad_prec*, grad_prec*,
                        virial_buffer);
 /**
  * \ingroup md_egv
  * \see buffer_allocate
  */
-void buffer_allocate(count_buffer*);
+void buffer_allocate(int, count_buffer*);
 /**
  * \ingroup md_egv
  * \see buffer_allocate
  */
-void buffer_deallocate(count_buffer);
+void buffer_deallocate(int, count_buffer);
 
 
 /**

@@ -66,13 +66,9 @@ void evdw_data(rc_op op)
 
 
       if (rc_flag & calc::analyz) {
-         buffer_deallocate(nev);
-         buffer_deallocate(ev, devx, devy, devz, vir_ev);
-      } else {
-         rc_flag |= calc::analyz;
-         buffer_deallocate(ev, devx, devy, devz, vir_ev);
-         rc_flag &= ~calc::analyz;
+         buffer_deallocate(calc::analyz, nev);
       }
+      buffer_deallocate(rc_flag | calc::analyz, ev, devx, devy, devz, vir_ev);
 
 
       elrc_vol = 0;
@@ -311,13 +307,10 @@ void evdw_data(rc_op op)
 
 
       if (rc_flag & calc::analyz) {
-         buffer_allocate(&nev);
-         buffer_allocate(&ev, &devx, &devy, &devz, &vir_ev);
-      } else {
-         rc_flag |= calc::analyz;
-         buffer_allocate(&ev, &devx, &devy, &devz, &vir_ev);
-         rc_flag &= ~calc::analyz;
+         buffer_allocate(calc::analyz, &nev);
       }
+      buffer_allocate(rc_flag | calc::analyz, &ev, &devx, &devy, &devz,
+                      &vir_ev);
    }
 
 

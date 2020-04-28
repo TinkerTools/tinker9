@@ -1,4 +1,5 @@
 #include "egeom.h"
+#include "mdpq.h"
 #include "potent.h"
 #include <tinker/detail/restrn.hh>
 #include <tinker/detail/sizes.hh>
@@ -14,7 +15,7 @@ void egeom_data(rc_op op)
    if (op & rc_dealloc) {
       darray::deallocate(igfix, gfix);
 
-      buffer_deallocate(eg, degx, degy, degz, vir_eg);
+      buffer_deallocate(rc_flag, eg, degx, degy, degz, vir_eg);
    }
 
 
@@ -22,7 +23,7 @@ void egeom_data(rc_op op)
       ngfix = restrn::ngfix;
       darray::allocate(ngfix, &igfix, &gfix);
 
-      buffer_allocate(&eg, &degx, &degy, &degz, &vir_eg);
+      buffer_allocate(rc_flag, &eg, &degx, &degy, &degz, &vir_eg);
    }
 
 

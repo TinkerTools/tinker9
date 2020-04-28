@@ -28,61 +28,61 @@ size_t buffer_size()
 }
 
 
-void buffer_allocate(energy_buffer* pe, grad_prec** px, grad_prec** py,
-                     grad_prec** pz, virial_buffer* pv)
+void buffer_allocate(int flag, energy_buffer* pe, grad_prec** px,
+                     grad_prec** py, grad_prec** pz, virial_buffer* pv)
 {
-   if (rc_flag & calc::analyz) {
+   if (flag & calc::analyz) {
       auto len = buffer_size();
-      if (rc_flag & calc::energy) {
+      if (flag & calc::energy) {
          darray::allocate(len, pe);
          energy_buffers.push_back(*pe);
       }
-      if (rc_flag & calc::grad) {
+      if (flag & calc::grad) {
          darray::allocate(n, px, py, pz);
          x_grads.push_back(*px);
          y_grads.push_back(*py);
          z_grads.push_back(*pz);
       }
-      if (rc_flag & calc::virial) {
+      if (flag & calc::virial) {
          darray::allocate(len, pv);
          virial_buffers.push_back(*pv);
       }
    } else {
-      if (rc_flag & calc::energy) {
+      if (flag & calc::energy) {
          *pe = eng_buf;
       }
-      if (rc_flag & calc::grad) {
+      if (flag & calc::grad) {
          *px = gx;
          *py = gy;
          *pz = gz;
       }
-      if (rc_flag & calc::virial) {
+      if (flag & calc::virial) {
          *pv = vir_buf;
       }
    }
 }
 
 
-void buffer_deallocate(energy_buffer e, grad_prec* gx, grad_prec* gy,
+void buffer_deallocate(int flag, energy_buffer e, grad_prec* gx, grad_prec* gy,
                        grad_prec* gz, virial_buffer v)
 {
-   if (rc_flag & calc::analyz) {
-      if (rc_flag & calc::energy) {
+   if (flag & calc::analyz) {
+      if (flag & calc::energy) {
          darray::deallocate(e);
       }
-      if (rc_flag & calc::grad) {
+      if (flag & calc::grad) {
          darray::deallocate(gx, gy, gz);
       }
-      if (rc_flag & calc::virial) {
+      if (flag & calc::virial) {
          darray::deallocate(v);
       }
    }
 }
 
 
-void buffer_allocate(count_buffer* pc)
+void buffer_allocate(int flag, count_buffer* pc)
 {
-   if (rc_flag & calc::analyz) {
+   if (flag & calc::analyz) {
       auto len = buffer_size();
       darray::allocate(len, pc);
       count_buffers.push_back(*pc);
@@ -92,9 +92,9 @@ void buffer_allocate(count_buffer* pc)
 }
 
 
-void buffer_deallocate(count_buffer c)
+void buffer_deallocate(int flag, count_buffer c)
 {
-   if (rc_flag & calc::analyz)
+   if (flag & calc::analyz)
       darray::deallocate(c);
 }
 

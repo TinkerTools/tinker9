@@ -15,7 +15,7 @@ void eopbend_data(rc_op op)
    if (op & rc_dealloc) {
       darray::deallocate(iopb, opbk);
 
-      buffer_deallocate(eopb, deopbx, deopby, deopbz, vir_eopb);
+      buffer_deallocate(rc_flag, eopb, deopbx, deopby, deopbz, vir_eopb);
    }
 
    if (op & rc_alloc) {
@@ -23,7 +23,7 @@ void eopbend_data(rc_op op)
       darray::allocate(nangle, &iopb, &opbk);
 
       nopbend = count_bonded_term(opbend_term);
-      buffer_allocate(&eopb, &deopbx, &deopby, &deopbz, &vir_eopb);
+      buffer_allocate(rc_flag, &eopb, &deopbx, &deopby, &deopbz, &vir_eopb);
    }
 
    if (op & rc_init) {

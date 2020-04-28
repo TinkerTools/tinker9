@@ -13,7 +13,7 @@ void etors_data(rc_op op)
    if (op & rc_dealloc) {
       darray::deallocate(itors, tors1, tors2, tors3, tors4, tors5, tors6);
 
-      buffer_deallocate(et, detx, dety, detz, vir_et);
+      buffer_deallocate(rc_flag, et, detx, dety, detz, vir_et);
    }
 
    if (op & rc_alloc) {
@@ -21,7 +21,7 @@ void etors_data(rc_op op)
       darray::allocate(ntors, &itors, &tors1, &tors2, &tors3, &tors4, &tors5,
                        &tors6);
 
-      buffer_allocate(&et, &detx, &dety, &detz, &vir_et);
+      buffer_allocate(rc_flag, &et, &detx, &dety, &detz, &vir_et);
    }
 
    if (op & rc_init) {
