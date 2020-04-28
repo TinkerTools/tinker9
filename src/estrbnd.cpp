@@ -13,7 +13,7 @@ void estrbnd_data(rc_op op)
    if (op & rc_dealloc) {
       darray::deallocate(isb, sbk);
 
-      buffer_deallocate(eba, vir_eba);
+      buffer_deallocate(eba, debax, debay, debaz, vir_eba);
    }
 
    if (op & rc_alloc) {
@@ -21,7 +21,7 @@ void estrbnd_data(rc_op op)
       darray::allocate(nangle, &isb, &sbk);
 
       nstrbnd = count_bonded_term(strbnd_term);
-      buffer_allocate(&eba, &vir_eba);
+      buffer_allocate(&eba, &debax, &debay, &debaz, &vir_eba);
    }
 
    if (op & rc_init) {

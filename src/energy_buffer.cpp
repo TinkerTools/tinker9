@@ -28,47 +28,74 @@ size_t buffer_size()
 }
 
 
-void buffer_allocate(energy_buffer* pe, virial_buffer* pv)
+void buffer_allocate(energy_buffer* pe, grad_prec** px, grad_prec** py,
+                     grad_prec** pz, virial_buffer* pv)
 {
    if (rc_flag & calc::analyz) {
       auto len = buffer_size();
-      darray::allocate(len, pe, pv);
-      energy_buffers.push_back(*pe);
-      virial_buffers.push_back(*pv);
+      if (rc_flag & calc::energy) {
+         darray::allocate(len, pe);
+         energy_buffers.push_back(*pe);
+      }
+      if (rc_flag & calc::grad) {
+         darray::allocate(n, px, py, pz);
+         x_grads.push_back(*px);
+         y_grads.push_back(*py);
+         z_grads.push_back(*pz);
+      }
+      if (rc_flag & calc::virial) {
+         darray::allocate(len, pv);
+         virial_buffers.push_back(*pv);
+      }
    } else {
-      *pe = esum_buf;
-      *pv = vir_buf;
+      if (rc_flag & calc::energy) {
+         *pe = eng_buf;
+      }
+      if (rc_flag & calc::grad) {
+         *px = gx;
+         *py = gy;
+         *pz = gz;
+      }
+      if (rc_flag & calc::virial) {
+         *pv = vir_buf;
+      }
    }
 }
 
 
-void buffer_deallocate(energy_buffer e, virial_buffer v)
+void buffer_deallocate(energy_buffer e, grad_prec* gx, grad_prec* gy,
+                       grad_prec* gz, virial_buffer v)
 {
-   if (rc_flag & calc::analyz)
-      darray::deallocate(e, v);
+   if (rc_flag & calc::analyz) {
+      if (rc_flag & calc::energy) {
+         darray::deallocate(e);
+      }
+      if (rc_flag & calc::grad) {
+         darray::deallocate(gx, gy, gz);
+      }
+      if (rc_flag & calc::virial) {
+         darray::deallocate(v);
+      }
+   }
 }
 
 
-void buffer_allocate(count_buffer* pc, energy_buffer* pe, virial_buffer* pv)
+void buffer_allocate(count_buffer* pc)
 {
    if (rc_flag & calc::analyz) {
       auto len = buffer_size();
-      darray::allocate(len, pc, pe, pv);
+      darray::allocate(len, pc);
       count_buffers.push_back(*pc);
-      energy_buffers.push_back(*pe);
-      virial_buffers.push_back(*pv);
    } else {
       *pc = nullptr;
-      *pe = esum_buf;
-      *pv = vir_buf;
    }
 }
 
 
-void buffer_deallocate(count_buffer c, energy_buffer e, virial_buffer v)
+void buffer_deallocate(count_buffer c)
 {
    if (rc_flag & calc::analyz)
-      darray::deallocate(c, e, v);
+      darray::deallocate(c);
 }
 
 
@@ -87,8 +114,7 @@ energy_prec energy_reduce(const energy_buffer e)
 
    // vdw long-range correction
    // check != 0 for non-PBC
-   // if !calc::analyz, update in evdw()
-   if ((rc_flag & calc::analyz) && e == ev && elrc_vol != 0) {
+   if (e == ev && elrc_vol != 0) {
       real_out += elrc_vol / volbox();
    }
 
@@ -126,8 +152,7 @@ void virial_reduce(virial_prec (&v_out)[9], const virial_buffer v)
 
    // vdw long-range correction
    // check != 0 for non-PBC
-   // if !calc::analyz, update in evdw()
-   if ((rc_flag & calc::analyz) && v == vir_ev && vlrc_vol != 0) {
+   if (v == vir_ev && vlrc_vol != 0) {
       virial_prec term = vlrc_vol / volbox();
       v_out[0] += term; // xx
       v_out[4] += term; // yy
@@ -139,4 +164,5 @@ void virial_reduce(virial_prec (&v_out)[9], const virial_buffer v)
 std::vector<count_buffer> count_buffers;
 std::vector<energy_buffer> energy_buffers;
 std::vector<virial_buffer> virial_buffers;
+std::vector<grad_prec*> x_grads, y_grads, z_grads;
 TINKER_NAMESPACE_END

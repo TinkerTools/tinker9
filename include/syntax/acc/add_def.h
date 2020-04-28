@@ -93,7 +93,7 @@ T to_flt_acc(fixed val)
 
 #pragma acc routine seq
 template <class G, class T>
-G to_acc(T val)
+G acc_to(T val)
 {
    if CONSTEXPR (std::is_same<G, fixed>::value)
       return static_cast<G>(static_cast<long long>(val * 0x100000000ull));

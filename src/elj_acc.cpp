@@ -11,7 +11,8 @@
 
 
 TINKER_NAMESPACE_BEGIN
-#define DEVICE_PTRS x, y, z, gx, gy, gz, jvdw, radmin, epsilon, nev, ev, vir_ev
+#define DEVICE_PTRS                                                            \
+   x, y, z, devx, devy, devz, jvdw, radmin, epsilon, nev, ev, vir_ev
 template <class Ver>
 void elj_acc1()
 {
@@ -88,12 +89,12 @@ void elj_acc1()
                real dedx = de * xr;
                real dedy = de * yr;
                real dedz = de * zr;
-               gxi += to_acc<grad_prec>(dedx);
-               gyi += to_acc<grad_prec>(dedy);
-               gzi += to_acc<grad_prec>(dedz);
-               atomic_add(-dedx, gx, k);
-               atomic_add(-dedy, gy, k);
-               atomic_add(-dedz, gz, k);
+               gxi += acc_to<grad_prec>(dedx);
+               gyi += acc_to<grad_prec>(dedy);
+               gzi += acc_to<grad_prec>(dedz);
+               atomic_add(-dedx, devx, k);
+               atomic_add(-dedy, devy, k);
+               atomic_add(-dedz, devz, k);
                if CONSTEXPR (do_v) {
                   real vxx = xr * dedx;
                   real vyx = yr * dedx;
@@ -109,9 +110,9 @@ void elj_acc1()
 
 
       if CONSTEXPR (do_g) {
-         atomic_add(gxi, gx, i);
-         atomic_add(gyi, gy, i);
-         atomic_add(gzi, gz, i);
+         atomic_add(gxi, devx, i);
+         atomic_add(gyi, devy, i);
+         atomic_add(gzi, devz, i);
       }
    } // enf for (int i)
 
@@ -170,12 +171,12 @@ void elj_acc1()
             real dedx = de * xr;
             real dedy = de * yr;
             real dedz = de * zr;
-            atomic_add(dedx, gx, i);
-            atomic_add(dedy, gy, i);
-            atomic_add(dedz, gz, i);
-            atomic_add(-dedx, gx, k);
-            atomic_add(-dedy, gy, k);
-            atomic_add(-dedz, gz, k);
+            atomic_add(dedx, devx, i);
+            atomic_add(dedy, devy, i);
+            atomic_add(dedz, devz, i);
+            atomic_add(-dedx, devx, k);
+            atomic_add(-dedy, devy, k);
+            atomic_add(-dedz, devz, k);
             if CONSTEXPR (do_v) {
                real vxx = xr * dedx;
                real vyx = yr * dedx;
@@ -247,12 +248,12 @@ void elj_acc1()
             real dedx = de * xr;
             real dedy = de * yr;
             real dedz = de * zr;
-            atomic_add(dedx, gx, i);
-            atomic_add(dedy, gy, i);
-            atomic_add(dedz, gz, i);
-            atomic_add(-dedx, gx, k);
-            atomic_add(-dedy, gy, k);
-            atomic_add(-dedz, gz, k);
+            atomic_add(dedx, devx, i);
+            atomic_add(dedy, devy, i);
+            atomic_add(dedz, devz, i);
+            atomic_add(-dedx, devx, k);
+            atomic_add(-dedy, devy, k);
+            atomic_add(-dedz, devz, k);
             if CONSTEXPR (do_v) {
                real vxx = xr * dedx;
                real vyx = yr * dedx;

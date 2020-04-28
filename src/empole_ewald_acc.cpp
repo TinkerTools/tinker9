@@ -11,7 +11,7 @@
 
 TINKER_NAMESPACE_BEGIN
 #define DEVICE_PTRS                                                            \
-   x, y, z, gx, gy, gz, rpole, nem, em, vir_em, trqx, trqy, trqz
+   x, y, z, demx, demy, demz, rpole, nem, em, vir_em, trqx, trqy, trqz
 template <class Ver>
 void empole_ewald_real_self_acc1()
 {
@@ -87,9 +87,9 @@ void empole_ewald_real_self_acc1()
                gxi += pgrad.frcx;
                gyi += pgrad.frcy;
                gzi += pgrad.frcz;
-               atomic_add(-pgrad.frcx, gx, k);
-               atomic_add(-pgrad.frcy, gy, k);
-               atomic_add(-pgrad.frcz, gz, k);
+               atomic_add(-pgrad.frcx, demx, k);
+               atomic_add(-pgrad.frcy, demy, k);
+               atomic_add(-pgrad.frcz, demz, k);
 
                txi += pgrad.ttmi[0];
                tyi += pgrad.ttmi[1];
@@ -115,9 +115,9 @@ void empole_ewald_real_self_acc1()
       }          // end for (int kk)
 
       if CONSTEXPR (do_g) {
-         atomic_add(gxi, gx, i);
-         atomic_add(gyi, gy, i);
-         atomic_add(gzi, gz, i);
+         atomic_add(gxi, demx, i);
+         atomic_add(gyi, demy, i);
+         atomic_add(gzi, demz, i);
          atomic_add(txi, trqx, i);
          atomic_add(tyi, trqy, i);
          atomic_add(tzi, trqz, i);
@@ -187,12 +187,12 @@ void empole_ewald_real_self_acc1()
          if CONSTEXPR (do_e)
             atomic_add(e, em, offset);
          if CONSTEXPR (do_g) {
-            atomic_add(pgrad.frcx, gx, i);
-            atomic_add(pgrad.frcy, gy, i);
-            atomic_add(pgrad.frcz, gz, i);
-            atomic_add(-pgrad.frcx, gx, k);
-            atomic_add(-pgrad.frcy, gy, k);
-            atomic_add(-pgrad.frcz, gz, k);
+            atomic_add(pgrad.frcx, demx, i);
+            atomic_add(pgrad.frcy, demy, i);
+            atomic_add(pgrad.frcz, demz, i);
+            atomic_add(-pgrad.frcx, demx, k);
+            atomic_add(-pgrad.frcy, demy, k);
+            atomic_add(-pgrad.frcz, demz, k);
 
             atomic_add(pgrad.ttmi[0], trqx, i);
             atomic_add(pgrad.ttmi[1], trqy, i);
@@ -256,7 +256,7 @@ void empole_ewald_recip_acc1()
    const real f = electric / dielec;
 
    #pragma acc parallel loop independent async\
-               deviceptr(gx,gy,gz,\
+               deviceptr(demx,demy,demz,\
                cmp,fmp,cphi,fphi,em,vir_em,trqx,trqy,trqz)
    for (int i = 0; i < n; ++i) {
       constexpr int deriv1[] = {2, 5, 8, 9, 11, 16, 18, 14, 15, 20};
@@ -294,9 +294,9 @@ void empole_ewald_recip_acc1()
          real h2 = recipa.y * f1 + recipb.y * f2 + recipc.y * f3;
          real h3 = recipa.z * f1 + recipb.z * f2 + recipc.z * f3;
 
-         atomic_add(h1 * f, gx, i);
-         atomic_add(h2 * f, gy, i);
-         atomic_add(h3 * f, gz, i);
+         atomic_add(h1 * f, demx, i);
+         atomic_add(h2 * f, demy, i);
+         atomic_add(h3 * f, demz, i);
 
          // resolve site torques then increment forces and virial
 

@@ -16,14 +16,14 @@ void eangle_data(rc_op op)
    if (op & rc_dealloc) {
       darray::deallocate(iang, ak, anat, angtyp);
 
-      buffer_deallocate(ea, vir_ea);
+      buffer_deallocate(ea, deax, deay, deaz, vir_ea);
    }
 
    if (op & rc_alloc) {
       nangle = count_bonded_term(angle_term);
       darray::allocate(nangle, &iang, &ak, &anat, &angtyp);
 
-      buffer_allocate(&ea, &vir_ea);
+      buffer_allocate(&ea, &deax, &deay, &deaz, &vir_ea);
    }
 
    if (op & rc_init) {

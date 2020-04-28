@@ -52,7 +52,8 @@ void torque_normal(real* restrict a, real _1_na)
  * everything in the "local memory", the segfault would disappear.
  */
 template <int DO_V>
-void torque_acc1(virial_buffer gpu_vir)
+void torque_acc1(virial_buffer gpu_vir, grad_prec* gx, grad_prec* gy,
+                 grad_prec* gz)
 {
    auto bufsize = buffer_size();
 
@@ -450,11 +451,11 @@ void torque_acc1(virial_buffer gpu_vir)
 }
 
 
-void torque_acc(int vers)
+void torque_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz)
 {
    if (vers & calc::virial)
-      torque_acc1<1>(vir_trq);
+      torque_acc1<1>(vir_trq, gx, gy, gz);
    else if (vers & calc::grad)
-      torque_acc1<0>(nullptr);
+      torque_acc1<0>(nullptr, gx, gy, gz);
 }
 TINKER_NAMESPACE_END

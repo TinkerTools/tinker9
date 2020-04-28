@@ -116,7 +116,7 @@ void etortor_acc1()
    auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,gx,gy,gz,\
+               deviceptr(x,y,z,dettx,detty,dettz,\
                ibitor,itt,chkttor_ia_,\
                tnx,tny,ttx,tty,tbf,tbx,tby,tbxy,\
                ett,vir_ett)
@@ -347,21 +347,21 @@ void etortor_acc1()
             real dedyie2 = xdc * dedzv2 - zdc * dedxv2;
             real dedzie2 = ydc * dedxv2 - xdc * dedyv2;
 
-            atomic_add(dedxia, gx, ia);
-            atomic_add(dedyia, gy, ia);
-            atomic_add(dedzia, gz, ia);
-            atomic_add(dedxib + dedxib2, gx, ib);
-            atomic_add(dedyib + dedyib2, gy, ib);
-            atomic_add(dedzib + dedzib2, gz, ib);
-            atomic_add(dedxic + dedxic2, gx, ic);
-            atomic_add(dedyic + dedyic2, gy, ic);
-            atomic_add(dedzic + dedzic2, gz, ic);
-            atomic_add(dedxid + dedxid2, gx, id);
-            atomic_add(dedyid + dedyid2, gy, id);
-            atomic_add(dedzid + dedzid2, gz, id);
-            atomic_add(dedxie2, gx, ie);
-            atomic_add(dedyie2, gy, ie);
-            atomic_add(dedzie2, gz, ie);
+            atomic_add(dedxia, dettx, ia);
+            atomic_add(dedyia, detty, ia);
+            atomic_add(dedzia, dettz, ia);
+            atomic_add(dedxib + dedxib2, dettx, ib);
+            atomic_add(dedyib + dedyib2, detty, ib);
+            atomic_add(dedzib + dedzib2, dettz, ib);
+            atomic_add(dedxic + dedxic2, dettx, ic);
+            atomic_add(dedyic + dedyic2, detty, ic);
+            atomic_add(dedzic + dedzic2, dettz, ic);
+            atomic_add(dedxid + dedxid2, dettx, id);
+            atomic_add(dedyid + dedyid2, detty, id);
+            atomic_add(dedzid + dedzid2, dettz, id);
+            atomic_add(dedxie2, dettx, ie);
+            atomic_add(dedyie2, detty, ie);
+            atomic_add(dedzie2, dettz, ie);
 
             if CONSTEXPR (do_v) {
                real vxx = xcb * (dedxic + dedxid) - xba * dedxia + xdc * dedxid;

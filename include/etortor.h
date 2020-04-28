@@ -27,6 +27,7 @@ TINKER_EXTERN real ttorunit;
 
 TINKER_EXTERN energy_buffer ett;
 TINKER_EXTERN virial_buffer vir_ett;
+TINKER_EXTERN grad_prec *dettx, *detty, *dettz;
 
 void etortor_data(rc_op op);
 

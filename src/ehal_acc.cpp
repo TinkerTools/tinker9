@@ -27,7 +27,7 @@ void ehal_reduce_xyz_acc()
 void ehal_resolve_gradient_acc()
 {
    #pragma acc parallel loop independent async\
-               deviceptr(ired,kred,gxred,gyred,gzred,gx,gy,gz)
+               deviceptr(ired,kred,gxred,gyred,gzred,devx,devy,devz)
    for (int ii = 0; ii < n; ++ii) {
       int iv = ired[ii];
 #if TINKER_DETERMINISTIC_FORCE
@@ -40,18 +40,18 @@ void ehal_resolve_gradient_acc()
       real fz = gzred[ii];
 #endif
       if (ii == iv) {
-         atomic_add(fx, gx, ii);
-         atomic_add(fy, gy, ii);
-         atomic_add(fz, gz, ii);
+         atomic_add(fx, devx, ii);
+         atomic_add(fy, devy, ii);
+         atomic_add(fz, devz, ii);
       } else {
          real redii = kred[ii];
          real rediv = 1 - redii;
-         atomic_add(fx * redii, gx, ii);
-         atomic_add(fy * redii, gy, ii);
-         atomic_add(fz * redii, gz, ii);
-         atomic_add(fx * rediv, gx, iv);
-         atomic_add(fy * rediv, gy, iv);
-         atomic_add(fz * rediv, gz, iv);
+         atomic_add(fx * redii, devx, ii);
+         atomic_add(fy * redii, devy, ii);
+         atomic_add(fz * redii, devz, ii);
+         atomic_add(fx * rediv, devx, iv);
+         atomic_add(fy * rediv, devy, iv);
+         atomic_add(fz * rediv, devz, iv);
       }
    }
 }

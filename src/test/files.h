@@ -1,6 +1,4 @@
-#ifndef TINKER_SRC_FILES_H_
-#define TINKER_SRC_FILES_H_
-
+#pragma once
 #include "macro.h"
 
 TINKER_NAMESPACE_BEGIN
@@ -62,5 +60,3 @@ extern const char* arbox_dyn;
 extern const char* arbox_dyn2;
 extern const char* arbox_arc;
 TINKER_NAMESPACE_END
-
-#endif

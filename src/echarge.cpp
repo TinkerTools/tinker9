@@ -18,6 +18,7 @@ real* cexclude_scale;
 count_buffer nec;
 energy_buffer ec;
 virial_buffer vir_ec;
+grad_prec *decx, *decy, *decz;
 
 
 void echarge_data(rc_op op)
@@ -30,7 +31,14 @@ void echarge_data(rc_op op)
       ncexclude = 0;
       darray::deallocate(cexclude, cexclude_scale);
 
-      buffer_deallocate(nec, ec, vir_ec);
+      if (rc_flag & calc::analyz) {
+         buffer_deallocate(nec);
+         buffer_deallocate(ec, decx, decy, decz, vir_ec);
+      } else {
+         rc_flag |= calc::analyz;
+         buffer_deallocate(ec, decx, decy, decz, vir_ec);
+         rc_flag &= ~calc::analyz;
+      }
    }
 
 
@@ -111,7 +119,14 @@ void echarge_data(rc_op op)
       darray::copyin(WAIT_NEW_Q, ncexclude, cexclude_scale, excl.data());
 
 
-      buffer_allocate(&nec, &ec, &vir_ec);
+      if (rc_flag & calc::analyz) {
+         buffer_allocate(&nec);
+         buffer_allocate(&ec, &decx, &decy, &decz, &vir_ec);
+      } else {
+         rc_flag |= calc::analyz;
+         buffer_allocate(&ec, &decx, &decy, &decz, &vir_ec);
+         rc_flag &= ~calc::analyz;
+      }
    }
 
 

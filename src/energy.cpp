@@ -38,6 +38,7 @@ void energy_data(rc_op op)
 
    rc_man echarge42{echarge_data, op};
 
+   // empole_data() must be in front of epolar_data().
    rc_man empole42{empole_data, op};
    rc_man epolar42{epolar_data, op};
    // Must follow empole_data() and epolar_data().
@@ -138,7 +139,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       if (tscfg("emplar")) {
          mpole_init(vers);
          emplar(vers);
-         torque(vers);
+         torque_em(vers);
       }
    } else {
       // update logical flags by time-scale configurations
@@ -146,11 +147,17 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       calc_polar = calc_polar && tscfg("epolar");
       if (calc_mpole || calc_polar) {
          mpole_init(vers);
-         if (calc_mpole)
+         if (calc_mpole) {
             empole(vers);
-         if (calc_polar)
+            torque_em(vers);
+         }
+         if (calc_polar) {
+            if (calc_mpole && (vers & calc::grad)) {
+               darray::zero(PROCEED_NEW_Q, n, trqx, trqy, trqz);
+            }
             epolar(vers);
-         torque(vers);
+            torque_ep(vers);
+         }
       }
    }
 

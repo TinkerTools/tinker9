@@ -14,14 +14,14 @@ void ebond_data(rc_op op)
    if (op & rc_dealloc) {
       darray::deallocate(ibnd, bl, bk);
 
-      buffer_deallocate(eb, vir_eb);
+      buffer_deallocate(eb, debx, deby, debz, vir_eb);
    }
 
    if (op & rc_alloc) {
       nbond = count_bonded_term(bond_term);
       darray::allocate(nbond, &ibnd, &bl, &bk);
 
-      buffer_allocate(&eb, &vir_eb);
+      buffer_allocate(&eb, &debx, &deby, &debz, &vir_eb);
    }
 
    if (op & rc_init) {

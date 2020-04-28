@@ -13,7 +13,7 @@ void epitors_data(rc_op op)
    if (op & rc_dealloc) {
       darray::deallocate(ipit, kpit);
 
-      buffer_deallocate(ept, vir_ept);
+      buffer_deallocate(ept, deptx, depty, deptz, vir_ept);
    }
 
    if (op & rc_alloc) {
@@ -21,7 +21,7 @@ void epitors_data(rc_op op)
       darray::allocate(ntors, &ipit, &kpit);
 
       npitors = count_bonded_term(pitors_term);
-      buffer_allocate(&ept, &vir_ept);
+      buffer_allocate(&ept, &deptx, &depty, &deptz, &vir_ept);
    }
 
    if (op & rc_init) {

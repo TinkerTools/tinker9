@@ -24,7 +24,7 @@ void egeom_acc1()
    const auto* kgrp = grp.kgrp;
    const auto* grpmass = grp.grpmass;
 
-   #pragma acc kernels async deviceptr(x,y,z,gx,gy,gz,mass,molec,\
+   #pragma acc kernels async deviceptr(x,y,z,degx,degy,degz,mass,molec,\
                igrp,kgrp,grpmass,igfix,gfix,\
                eg,vir_eg)
    {
@@ -98,18 +98,18 @@ void egeom_acc1()
             for (int j = ja1; j < ja2; ++j) {
                int k = kgrp[j];
                real ratio = mass[k] * weigha;
-               atomic_add(dedx * ratio, gx, k);
-               atomic_add(dedy * ratio, gy, k);
-               atomic_add(dedz * ratio, gz, k);
+               atomic_add(dedx * ratio, degx, k);
+               atomic_add(dedy * ratio, degy, k);
+               atomic_add(dedz * ratio, degz, k);
             }
 
             #pragma acc loop independent
             for (int j = jb1; j < jb2; ++j) {
                int k = kgrp[j];
                real ratio = mass[k] * weighb;
-               atomic_add(-dedx * ratio, gx, k);
-               atomic_add(-dedy * ratio, gy, k);
-               atomic_add(-dedz * ratio, gz, k);
+               atomic_add(-dedx * ratio, degx, k);
+               atomic_add(-dedy * ratio, degy, k);
+               atomic_add(-dedz * ratio, degz, k);
             }
 
             if CONSTEXPR (do_v) {

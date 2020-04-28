@@ -36,7 +36,7 @@ void eangle_acc1()
    auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,gx,gy,gz,\
+               deviceptr(x,y,z,deax,deay,deaz,\
                iang,anat,ak,angtyp,\
                ea,vir_ea)
    for (int i = 0; i < nangle; ++i) {
@@ -114,15 +114,15 @@ void eangle_acc1()
                real dedyib = -dedyia - dedyic;
                real dedzib = -dedzia - dedzic;
 
-               atomic_add(dedxia, gx, ia);
-               atomic_add(dedyia, gy, ia);
-               atomic_add(dedzia, gz, ia);
-               atomic_add(dedxib, gx, ib);
-               atomic_add(dedyib, gy, ib);
-               atomic_add(dedzib, gz, ib);
-               atomic_add(dedxic, gx, ic);
-               atomic_add(dedyic, gy, ic);
-               atomic_add(dedzic, gz, ic);
+               atomic_add(dedxia, deax, ia);
+               atomic_add(dedyia, deay, ia);
+               atomic_add(dedzia, deaz, ia);
+               atomic_add(dedxib, deax, ib);
+               atomic_add(dedyib, deay, ib);
+               atomic_add(dedzib, deaz, ib);
+               atomic_add(dedxic, deax, ic);
+               atomic_add(dedyic, deay, ic);
+               atomic_add(dedzic, deaz, ic);
 
                if CONSTEXPR (do_v) {
                   real vxx = xab * dedxia + xcb * dedxic;
@@ -245,18 +245,18 @@ void eangle_acc1()
                real dedyid = -dedyia - dedyib - dedyic;
                real dedzid = -dedzia - dedzib - dedzic;
 
-               atomic_add(dedxia, gx, ia);
-               atomic_add(dedyia, gy, ia);
-               atomic_add(dedzia, gz, ia);
-               atomic_add(dedxib, gx, ib);
-               atomic_add(dedyib, gy, ib);
-               atomic_add(dedzib, gz, ib);
-               atomic_add(dedxic, gx, ic);
-               atomic_add(dedyic, gy, ic);
-               atomic_add(dedzic, gz, ic);
-               atomic_add(dedxid, gx, id);
-               atomic_add(dedyid, gy, id);
-               atomic_add(dedzid, gz, id);
+               atomic_add(dedxia, deax, ia);
+               atomic_add(dedyia, deay, ia);
+               atomic_add(dedzia, deaz, ia);
+               atomic_add(dedxib, deax, ib);
+               atomic_add(dedyib, deay, ib);
+               atomic_add(dedzib, deaz, ib);
+               atomic_add(dedxic, deax, ic);
+               atomic_add(dedyic, deay, ic);
+               atomic_add(dedzic, deaz, ic);
+               atomic_add(dedxid, deax, id);
+               atomic_add(dedyid, deay, id);
+               atomic_add(dedzid, deaz, id);
 
                if CONSTEXPR (do_v) {
                   real vxx = xad * dedxia + xbd * dedxib + xcd * dedxic;

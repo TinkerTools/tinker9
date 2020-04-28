@@ -11,7 +11,7 @@
 
 TINKER_NAMESPACE_BEGIN
 #define DEVICE_PTRS                                                            \
-   x, y, z, gx, gy, gz, rpole, nem, em, vir_em, trqx, trqy, trqz
+   x, y, z, demx, demy, demz, rpole, nem, em, vir_em, trqx, trqy, trqz
 template <class Ver>
 void empole_nonewald_acc1()
 {
@@ -82,9 +82,9 @@ void empole_nonewald_acc1()
                gxi += pgrad.frcx;
                gyi += pgrad.frcy;
                gzi += pgrad.frcz;
-               atomic_add(-pgrad.frcx, gx, k);
-               atomic_add(-pgrad.frcy, gy, k);
-               atomic_add(-pgrad.frcz, gz, k);
+               atomic_add(-pgrad.frcx, demx, k);
+               atomic_add(-pgrad.frcy, demy, k);
+               atomic_add(-pgrad.frcz, demz, k);
 
                txi += pgrad.ttmi[0];
                tyi += pgrad.ttmi[1];
@@ -110,9 +110,9 @@ void empole_nonewald_acc1()
       }          // end for (int kk)
 
       if CONSTEXPR (do_g) {
-         atomic_add(gxi, gx, i);
-         atomic_add(gyi, gy, i);
-         atomic_add(gzi, gz, i);
+         atomic_add(gxi, demx, i);
+         atomic_add(gyi, demy, i);
+         atomic_add(gzi, demz, i);
          atomic_add(txi, trqx, i);
          atomic_add(tyi, trqy, i);
          atomic_add(tzi, trqz, i);
@@ -164,12 +164,12 @@ void empole_nonewald_acc1()
          if CONSTEXPR (do_e)
             atomic_add(e, em, offset);
          if CONSTEXPR (do_g) {
-            atomic_add(pgrad.frcx, gx, i);
-            atomic_add(pgrad.frcy, gy, i);
-            atomic_add(pgrad.frcz, gz, i);
-            atomic_add(-pgrad.frcx, gx, k);
-            atomic_add(-pgrad.frcy, gy, k);
-            atomic_add(-pgrad.frcz, gz, k);
+            atomic_add(pgrad.frcx, demx, i);
+            atomic_add(pgrad.frcy, demy, i);
+            atomic_add(pgrad.frcz, demz, i);
+            atomic_add(-pgrad.frcx, demx, k);
+            atomic_add(-pgrad.frcy, demy, k);
+            atomic_add(-pgrad.frcz, demz, k);
 
             atomic_add(pgrad.ttmi[0], trqx, i);
             atomic_add(pgrad.ttmi[1], trqy, i);

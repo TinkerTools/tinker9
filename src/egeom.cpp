@@ -14,7 +14,7 @@ void egeom_data(rc_op op)
    if (op & rc_dealloc) {
       darray::deallocate(igfix, gfix);
 
-      buffer_deallocate(eg, vir_eg);
+      buffer_deallocate(eg, degx, degy, degz, vir_eg);
    }
 
 
@@ -22,7 +22,7 @@ void egeom_data(rc_op op)
       ngfix = restrn::ngfix;
       darray::allocate(ngfix, &igfix, &gfix);
 
-      buffer_allocate(&eg, &vir_eg);
+      buffer_allocate(&eg, &degx, &degy, &degz, &vir_eg);
    }
 
 

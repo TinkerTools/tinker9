@@ -1241,7 +1241,7 @@ void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
    if (st.niak > 0) {
       auto ker1 = emplar_cu1<Ver, ETYP>;
       launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
-                 bufsize, em, vir_em, gx, gy, gz, trqx, trqy, trqz,
+                 bufsize, em, vir_em, demx, demy, demz, trqx, trqy, trqz,
                  TINKER_IMAGE_ARGS, off, f, rpole, pdamp, thole, uind, uinp,
                  ufld, dufld, //
                  n, st.sorted, st.niak, st.iak, st.lst, aewald);
@@ -1249,7 +1249,7 @@ void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
    if (nmdpuexclude > 0) {
       auto ker2 = emplar_cu2<Ver>;
       launch_k1s(nonblk, nmdpuexclude, ker2, //
-                 bufsize, em, vir_em, gx, gy, gz, trqx, trqy, trqz,
+                 bufsize, em, vir_em, demx, demy, demz, trqx, trqy, trqz,
                  TINKER_IMAGE_ARGS, off, f, rpole, pdamp, thole, uind, uinp,
                  ufld, dufld, //
                  x, y, z, nmdpuexclude, mdpuexclude, mdpuexclude_scale);

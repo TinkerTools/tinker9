@@ -11,6 +11,7 @@ TINKER_EXTERN real stbnunit;
 
 TINKER_EXTERN energy_buffer eba;
 TINKER_EXTERN virial_buffer vir_eba;
+TINKER_EXTERN grad_prec *debax, *debay, *debaz;
 
 void estrbnd_data(rc_op op);
 

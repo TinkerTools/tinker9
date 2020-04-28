@@ -17,7 +17,7 @@ void estrbnd_acc1()
    auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,gx,gy,gz,\
+               deviceptr(x,y,z,debax,debay,debaz,\
                isb,sbk,iang,anat,bl,\
                eba,vir_eba)
    for (int istrbnd = 0; istrbnd < nstrbnd; ++istrbnd) {
@@ -107,15 +107,15 @@ void estrbnd_acc1()
             real dedyib = -dedyia - dedyic;
             real dedzib = -dedzia - dedzic;
 
-            atomic_add(dedxia, gx, ia);
-            atomic_add(dedyia, gy, ia);
-            atomic_add(dedzia, gz, ia);
-            atomic_add(dedxib, gx, ib);
-            atomic_add(dedyib, gy, ib);
-            atomic_add(dedzib, gz, ib);
-            atomic_add(dedxic, gx, ic);
-            atomic_add(dedyic, gy, ic);
-            atomic_add(dedzic, gz, ic);
+            atomic_add(dedxia, debax, ia);
+            atomic_add(dedyia, debay, ia);
+            atomic_add(dedzia, debaz, ia);
+            atomic_add(dedxib, debax, ib);
+            atomic_add(dedyib, debay, ib);
+            atomic_add(dedzib, debaz, ib);
+            atomic_add(dedxic, debax, ic);
+            atomic_add(dedyic, debay, ic);
+            atomic_add(dedzic, debaz, ic);
 
             if CONSTEXPR (do_v) {
                real vxx = xab * dedxia + xcb * dedxic;

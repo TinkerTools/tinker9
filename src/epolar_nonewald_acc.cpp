@@ -11,8 +11,8 @@
 
 TINKER_NAMESPACE_BEGIN
 #define POLAR_DPTRS                                                            \
-   x, y, z, gx, gy, gz, rpole, thole, pdamp, uind, uinp, nep, ep, vir_ep,      \
-      ufld, dufld
+   x, y, z, depx, depy, depz, rpole, thole, pdamp, uind, uinp, nep, ep,        \
+      vir_ep, ufld, dufld
 template <class Ver>
 void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
 {
@@ -117,9 +117,9 @@ void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
                gxi += pgrad.frcx;
                gyi += pgrad.frcy;
                gzi += pgrad.frcz;
-               atomic_add(-pgrad.frcx, gx, k);
-               atomic_add(-pgrad.frcy, gy, k);
-               atomic_add(-pgrad.frcz, gz, k);
+               atomic_add(-pgrad.frcx, depx, k);
+               atomic_add(-pgrad.frcy, depy, k);
+               atomic_add(-pgrad.frcz, depz, k);
 
                txi += pgrad.ufldi[0];
                tyi += pgrad.ufldi[1];
@@ -156,9 +156,9 @@ void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
       } // end for (int kk)
 
       if CONSTEXPR (do_g) {
-         atomic_add(gxi, gx, i);
-         atomic_add(gyi, gy, i);
-         atomic_add(gzi, gz, i);
+         atomic_add(gxi, depx, i);
+         atomic_add(gyi, depy, i);
+         atomic_add(gzi, depz, i);
          atomic_add(txi, &ufld[i][0]);
          atomic_add(tyi, &ufld[i][1]);
          atomic_add(tzi, &ufld[i][2]);
@@ -250,12 +250,12 @@ void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
             atomic_add(e, ep, offset);
 
          if CONSTEXPR (do_g) {
-            atomic_add(pgrad.frcx, gx, i);
-            atomic_add(pgrad.frcy, gy, i);
-            atomic_add(pgrad.frcz, gz, i);
-            atomic_add(-pgrad.frcx, gx, k);
-            atomic_add(-pgrad.frcy, gy, k);
-            atomic_add(-pgrad.frcz, gz, k);
+            atomic_add(pgrad.frcx, depx, i);
+            atomic_add(pgrad.frcy, depy, i);
+            atomic_add(pgrad.frcz, depz, i);
+            atomic_add(-pgrad.frcx, depx, k);
+            atomic_add(-pgrad.frcy, depy, k);
+            atomic_add(-pgrad.frcz, depz, k);
 
             atomic_add(pgrad.ufldi[0], &ufld[i][0]);
             atomic_add(pgrad.ufldi[1], &ufld[i][1]);

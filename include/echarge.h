@@ -13,6 +13,7 @@ extern real* cexclude_scale;
 extern count_buffer nec;
 extern energy_buffer ec;
 extern virial_buffer vir_ec;
+extern grad_prec *decx, *decy, *decz;
 
 
 void echarge_data(rc_op);

@@ -87,11 +87,12 @@ void elec_data(rc_op op);
 void mpole_init(int vers);
 void chkpole();
 void rotpole();
-void torque(int vers);
+void torque_em(int vers);
+void torque_ep(int vers);
 
 
 void chkpole_acc();
 void rotpole_acc();
-void torque_acc(int vers);
+void torque_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz);
 // void torque_cu(int vers);
 TINKER_NAMESPACE_END

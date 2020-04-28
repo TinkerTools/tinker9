@@ -1,4 +1,6 @@
 #include "elec.h"
+#include "empole.h"
+#include "epolar.h"
 #include "io_fort_str.h"
 #include "md.h"
 #include "pmestuf.h"
@@ -234,13 +236,22 @@ void rotpole()
 }
 
 
-void torque(int vers)
+void torque_em(int vers)
 {
    // #if TINKER_CUDART
    //    if (pltfm_config & CU_PLTFM)
-   //       torque_cu(vers);
    //    else
    // #endif
-   torque_acc(vers);
+   torque_acc(vers, demx, demy, demz);
+}
+
+
+void torque_ep(int vers)
+{
+   // #if TINKER_CUDART
+   //    if (pltfm_config & CU_PLTFM)
+   //    else
+   // #endif
+   torque_acc(vers, depx, depy, depz);
 }
 TINKER_NAMESPACE_END

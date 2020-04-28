@@ -191,7 +191,7 @@ TEST_CASE("Tortor-Trpcage", "[ff][etortor][trpcage]")
       {0.384, -0.444, 0.347}, {-0.444, 1.642, 0.528}, {0.347, 0.528, -2.027}};
 
    COMPARE_BONDED_FORCE(etortor, ntortor, ett, vir_ett, ref_e, eps_e, ref_count,
-                        gx, gy, gz, ref_g_tortor_trpcage, eps_g, ref_v, eps_v);
+                        ref_g_tortor_trpcage, eps_g, ref_v, eps_v);
 
    finish();
    test_end();

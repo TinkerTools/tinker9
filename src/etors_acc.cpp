@@ -17,7 +17,7 @@ void etors_acc1()
    auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,gx,gy,gz,\
+               deviceptr(x,y,z,detx,dety,detz,\
                itors,tors1,tors2,tors3,tors4,tors5,tors6,\
                et,vir_et)
    for (int i = 0; i < ntors; ++i) {
@@ -160,18 +160,18 @@ void etors_acc1()
             real dedyid = xcb * dedzu - zcb * dedxu;
             real dedzid = ycb * dedxu - xcb * dedyu;
 
-            atomic_add(dedxia, gx, ia);
-            atomic_add(dedyia, gy, ia);
-            atomic_add(dedzia, gz, ia);
-            atomic_add(dedxib, gx, ib);
-            atomic_add(dedyib, gy, ib);
-            atomic_add(dedzib, gz, ib);
-            atomic_add(dedxic, gx, ic);
-            atomic_add(dedyic, gy, ic);
-            atomic_add(dedzic, gz, ic);
-            atomic_add(dedxid, gx, id);
-            atomic_add(dedyid, gy, id);
-            atomic_add(dedzid, gz, id);
+            atomic_add(dedxia, detx, ia);
+            atomic_add(dedyia, dety, ia);
+            atomic_add(dedzia, detz, ia);
+            atomic_add(dedxib, detx, ib);
+            atomic_add(dedyib, dety, ib);
+            atomic_add(dedzib, detz, ib);
+            atomic_add(dedxic, detx, ic);
+            atomic_add(dedyic, dety, ic);
+            atomic_add(dedzic, detz, ic);
+            atomic_add(dedxid, detx, id);
+            atomic_add(dedyid, dety, id);
+            atomic_add(dedzid, detz, id);
 
             if CONSTEXPR (do_v) {
                real vxx = xcb * (dedxic + dedxid) - xba * dedxia + xdc * dedxid;

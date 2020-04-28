@@ -450,14 +450,14 @@ void epolar_cu(const real (*uind)[3], const real (*uinp)[3])
    if (st.niak > 0) {
       auto ker1 = epolar_cu1<Ver, ETYP>;
       launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
-                 bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld,
+                 bufsize, nep, ep, vir_ep, depx, depy, depz, ufld, dufld,
                  TINKER_IMAGE_ARGS, off2, f, rpole, pdamp, thole, uind, uinp, //
                  st.sorted, st.niak, st.iak, st.lst, n, aewald);
    }
    if (ndpuexclude > 0) {
       auto ker2 = epolar_cu2<Ver>;
       launch_k1s(nonblk, ndpuexclude, ker2, //
-                 bufsize, nep, ep, vir_ep, gx, gy, gz, ufld, dufld,
+                 bufsize, nep, ep, vir_ep, depx, depy, depz, ufld, dufld,
                  TINKER_IMAGE_ARGS, off2, f, rpole, pdamp, thole, uind, uinp, //
                  x, y, z, ndpuexclude, dpuexclude, dpuexclude_scale);
    }

@@ -14,7 +14,7 @@ void eurey_acc1()
    auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,gx,gy,gz,\
+               deviceptr(x,y,z,deubx,deuby,deubz,\
                iury,uk,ul,\
                eub,vir_eub)
    for (int i = 0; i < nurey; ++i) {
@@ -45,12 +45,12 @@ void eurey_acc1()
          real dedy = de * yac;
          real dedz = de * zac;
 
-         atomic_add(dedx, gx, ia);
-         atomic_add(dedy, gy, ia);
-         atomic_add(dedz, gz, ia);
-         atomic_add(-dedx, gx, ic);
-         atomic_add(-dedy, gy, ic);
-         atomic_add(-dedz, gz, ic);
+         atomic_add(dedx, deubx, ia);
+         atomic_add(dedy, deuby, ia);
+         atomic_add(dedz, deubz, ia);
+         atomic_add(-dedx, deubx, ic);
+         atomic_add(-dedy, deuby, ic);
+         atomic_add(-dedz, deubz, ic);
 
          if CONSTEXPR (do_v) {
             real vxx = xac * dedx;

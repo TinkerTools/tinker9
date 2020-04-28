@@ -12,7 +12,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-#define LJ_ARGS                                                                \
+#define LJ_PARA                                                                \
    size_t bufsize, count_buffer restrict nev, energy_buffer restrict ev,       \
       virial_buffer restrict vir_ev, grad_prec *restrict gx,                   \
       grad_prec *restrict gy, grad_prec *restrict gz, TINKER_IMAGE_PARAMS,     \
@@ -22,7 +22,7 @@ TINKER_NAMESPACE_BEGIN
 
 template <class Ver>
 __global__
-void elj_cu1(LJ_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
+void elj_cu1(LJ_PARA, int n, const Spatial::SortedAtom* restrict sorted,
              int niak, const int* restrict iak, const int* restrict lst,
              const int (*restrict i12)[couple_maxn12])
 {
@@ -145,19 +145,19 @@ void elj_cu1(LJ_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
                if (e != 0)
                   ctl += 1;
             if CONSTEXPR (do_e)
-               etl += to_cu<ebuf_prec>(e);
+               etl += cu_to<ebuf_prec>(e);
             if CONSTEXPR (do_g) {
                de *= REAL_RECIP(rik);
                dedx = de * xr;
                dedy = de * yr;
                dedz = de * zr;
                if CONSTEXPR (do_v) {
-                  vtlxx += to_cu<vbuf_prec>(xr * dedx);
-                  vtlyx += to_cu<vbuf_prec>(yr * dedx);
-                  vtlzx += to_cu<vbuf_prec>(zr * dedx);
-                  vtlyy += to_cu<vbuf_prec>(yr * dedy);
-                  vtlzy += to_cu<vbuf_prec>(zr * dedy);
-                  vtlzz += to_cu<vbuf_prec>(zr * dedz);
+                  vtlxx += cu_to<vbuf_prec>(xr * dedx);
+                  vtlyx += cu_to<vbuf_prec>(yr * dedx);
+                  vtlzx += cu_to<vbuf_prec>(zr * dedx);
+                  vtlyy += cu_to<vbuf_prec>(yr * dedy);
+                  vtlzy += cu_to<vbuf_prec>(zr * dedy);
+                  vtlzz += cu_to<vbuf_prec>(zr * dedz);
                }
             }
          } // end if (include)
@@ -165,12 +165,12 @@ void elj_cu1(LJ_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
          if CONSTEXPR (do_g) {
             int dstlane = (ilane + WARP_SIZE - j) & (WARP_SIZE - 1);
-            gxi += to_cu<grad_prec>(dedx);
-            gyi += to_cu<grad_prec>(dedy);
-            gzi += to_cu<grad_prec>(dedz);
-            gxk -= to_cu<grad_prec>(__shfl_sync(ALL_LANES, dedx, dstlane));
-            gyk -= to_cu<grad_prec>(__shfl_sync(ALL_LANES, dedy, dstlane));
-            gzk -= to_cu<grad_prec>(__shfl_sync(ALL_LANES, dedz, dstlane));
+            gxi += cu_to<grad_prec>(dedx);
+            gyi += cu_to<grad_prec>(dedy);
+            gzi += cu_to<grad_prec>(dedz);
+            gxk -= cu_to<grad_prec>(__shfl_sync(ALL_LANES, dedx, dstlane));
+            gyk -= cu_to<grad_prec>(__shfl_sync(ALL_LANES, dedy, dstlane));
+            gzk -= cu_to<grad_prec>(__shfl_sync(ALL_LANES, dedz, dstlane));
          }
       }
 
@@ -195,7 +195,7 @@ void elj_cu1(LJ_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
 template <class Ver>
 __global__
-void elj_cu2(LJ_ARGS, const real* restrict x, const real* restrict y,
+void elj_cu2(LJ_PARA, const real* restrict x, const real* restrict y,
              const real* restrict z, int nvexclude,
              const int (*restrict vexclude)[2],
              const real* restrict vexclude_scale)
@@ -282,7 +282,7 @@ void elj_cu2(LJ_ARGS, const real* restrict x, const real* restrict y,
 
 template <class Ver>
 __global__
-void elj_cu3(LJ_ARGS, const real* restrict x, const real* restrict y,
+void elj_cu3(LJ_PARA, const real* restrict x, const real* restrict y,
              const real* restrict z, real v4scale, int nvdw14,
              const int (*restrict vdw14ik)[2], const real* restrict radmin4,
              const real* restrict epsilon4)
@@ -387,20 +387,23 @@ void elj_cu4()
       i12 = nullptr;
    if (st.niak > 0)
       launch_k1s(nonblk, WARP_SIZE * st.niak, elj_cu1<Ver>, bufsize, nev, ev,
-                 vir_ev, gx, gy, gz, TINKER_IMAGE_ARGS, njvdw, jvdw, radmin,
-                 epsilon, cut, off, n, st.sorted, st.niak, st.iak, st.lst, i12);
+                 vir_ev, devx, devy, devz, TINKER_IMAGE_ARGS, njvdw, jvdw,
+                 radmin, epsilon, cut, off, n, st.sorted, st.niak, st.iak,
+                 st.lst, i12);
 
 
    if (nvexclude > 0)
-      launch_k1s(nonblk, nvexclude, elj_cu2<Ver>, bufsize, nev, ev, vir_ev, gx,
-                 gy, gz, TINKER_IMAGE_ARGS, njvdw, jvdw, radmin, epsilon, cut,
-                 off, x, y, z, nvexclude, vexclude, vexclude_scale);
+      launch_k1s(nonblk, nvexclude, elj_cu2<Ver>, bufsize, nev, ev, vir_ev,
+                 devx, devy, devz, TINKER_IMAGE_ARGS, njvdw, jvdw, radmin,
+                 epsilon, cut, off, x, y, z, nvexclude, vexclude,
+                 vexclude_scale);
 
 
    if (nvdw14 > 0)
-      launch_k1s(nonblk, nvdw14, elj_cu3<Ver>, bufsize, nev, ev, vir_ev, gx, gy,
-                 gz, TINKER_IMAGE_ARGS, njvdw, jvdw, radmin, epsilon, cut, off,
-                 x, y, z, v4scale, nvdw14, vdw14ik, radmin4, epsilon4);
+      launch_k1s(nonblk, nvdw14, elj_cu3<Ver>, bufsize, nev, ev, vir_ev, devx,
+                 devy, devz, TINKER_IMAGE_ARGS, njvdw, jvdw, radmin, epsilon,
+                 cut, off, x, y, z, v4scale, nvdw14, vdw14ik, radmin4,
+                 epsilon4);
 }
 
 

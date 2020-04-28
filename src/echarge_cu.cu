@@ -268,30 +268,30 @@ void echarge_cu()
       if (st.niak > 0) {
          auto ker1 = echarge_cu1<Ver, EWALD>;
          launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
-                    bufsize, nec, ec, vir_ec, gx, gy, gz, TINKER_IMAGE_ARGS, 0,
-                    off, ebuffer, f, pchg, //
+                    bufsize, nec, ec, vir_ec, decx, decy, decz,
+                    TINKER_IMAGE_ARGS, 0, off, ebuffer, f, pchg, //
                     st.sorted, st.niak, st.iak, st.lst, n, aewald);
       }
       if (ncexclude > 0) {
          auto ker2 = echarge_cu2<Ver, NON_EWALD>;
          launch_k1s(nonblk, ncexclude, ker2, //
-                    bufsize, nec, ec, vir_ec, gx, gy, gz, TINKER_IMAGE_ARGS, 0,
-                    off, ebuffer, f, pchg, //
+                    bufsize, nec, ec, vir_ec, decx, decy, decz,
+                    TINKER_IMAGE_ARGS, 0, off, ebuffer, f, pchg, //
                     x, y, z, ncexclude, cexclude, cexclude_scale);
       }
    } else if CONSTEXPR (eq<ETYP, NON_EWALD_TAPER>()) {
       if (st.niak > 0) {
          auto ker1 = echarge_cu1<Ver, NON_EWALD_TAPER>;
          launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
-                    bufsize, nec, ec, vir_ec, gx, gy, gz, TINKER_IMAGE_ARGS,
-                    cut, off, ebuffer, f, pchg, //
+                    bufsize, nec, ec, vir_ec, decx, decy, decz,
+                    TINKER_IMAGE_ARGS, cut, off, ebuffer, f, pchg, //
                     st.sorted, st.niak, st.iak, st.lst, n, 0);
       }
       if (ncexclude > 0) {
          auto ker2 = echarge_cu2<Ver, NON_EWALD_TAPER>;
          launch_k1s(nonblk, ncexclude, ker2, //
-                    bufsize, nec, ec, vir_ec, gx, gy, gz, TINKER_IMAGE_ARGS,
-                    cut, off, ebuffer, f, pchg, //
+                    bufsize, nec, ec, vir_ec, decx, decy, decz,
+                    TINKER_IMAGE_ARGS, cut, off, ebuffer, f, pchg, //
                     x, y, z, ncexclude, cexclude, cexclude_scale);
       }
    }
@@ -473,7 +473,7 @@ void echarge_fphi_self_cu()
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker,         //
               bufsize, nec, ec, pchg, f, aewald, n, //
               nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc,
-              gx, gy, gz);
+              decx, decy, decz);
 }
 
 

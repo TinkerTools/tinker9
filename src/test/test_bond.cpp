@@ -192,8 +192,8 @@ TEST_CASE("Bond-Trpcage", "[ff][ebond][harmonic][trpcage]")
                               {47.686, 792.043, 59.777},
                               {44.572, 59.777, 1049.659}};
 
-   COMPARE_BONDED_FORCE(ebond, nbond, eb, vir_eb, ref_e, eps_e, ref_count, gx,
-                        gy, gz, ref_g_bond_trpcage, eps_g, ref_v, eps_v);
+   COMPARE_BONDED_FORCE(ebond, nbond, eb, vir_eb, ref_e, eps_e, ref_count,
+                        ref_g_bond_trpcage, eps_g, ref_v, eps_v);
 
    finish();
    test_end();

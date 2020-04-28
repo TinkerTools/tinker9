@@ -118,6 +118,7 @@ TINKER_EXTERN pointer<real> vexclude_scale;
 TINKER_EXTERN count_buffer nev;
 TINKER_EXTERN energy_buffer ev;
 TINKER_EXTERN virial_buffer vir_ev;
+TINKER_EXTERN grad_prec *devx, *devy, *devz;
 
 
 /**

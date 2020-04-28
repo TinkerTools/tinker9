@@ -120,22 +120,24 @@ using virial_buffer =
  * \see esum_buf vir_buf
  * \see calc::analyz
  */
-void buffer_allocate(energy_buffer*, virial_buffer*);
+void buffer_allocate(energy_buffer*, grad_prec**, grad_prec**, grad_prec**,
+                     virial_buffer*);
 /**
  * \ingroup md_egv
  * \see buffer_allocate
  */
-void buffer_deallocate(energy_buffer, virial_buffer);
+void buffer_deallocate(energy_buffer, grad_prec*, grad_prec*, grad_prec*,
+                       virial_buffer);
 /**
  * \ingroup md_egv
  * \see buffer_allocate
  */
-void buffer_allocate(count_buffer*, energy_buffer*, virial_buffer*);
+void buffer_allocate(count_buffer*);
 /**
  * \ingroup md_egv
  * \see buffer_allocate
  */
-void buffer_deallocate(count_buffer, energy_buffer, virial_buffer);
+void buffer_deallocate(count_buffer);
 
 
 /**
@@ -179,4 +181,8 @@ extern std::vector<energy_buffer> energy_buffers;
  * \brief Bookkeeping list for the virial buffers.
  */
 extern std::vector<virial_buffer> virial_buffers;
+/**
+ * \ingroup md_egv
+ */
+extern std::vector<grad_prec*> x_grads, y_grads, z_grads;
 TINKER_NAMESPACE_END

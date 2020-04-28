@@ -334,14 +334,14 @@ void empole_cu()
    if (st.niak > 0) {
       auto ker1 = empole_cu1<Ver, ETYP>;
       launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
-                 bufsize, nem, em, vir_em, gx, gy, gz, trqx, trqy, trqz,
+                 bufsize, nem, em, vir_em, demx, demy, demz, trqx, trqy, trqz,
                  TINKER_IMAGE_ARGS, off2, f, rpole, //
                  st.sorted, st.niak, st.iak, st.lst, n, aewald);
    }
    if (nmexclude > 0) {
       auto ker2 = empole_cu2<Ver>;
       launch_k1s(nonblk, nmexclude, ker2, //
-                 bufsize, nem, em, vir_em, gx, gy, gz, trqx, trqy, trqz,
+                 bufsize, nem, em, vir_em, demx, demy, demz, trqx, trqy, trqz,
                  TINKER_IMAGE_ARGS, off2, f, rpole, //
                  x, y, z, nmexclude, mexclude, mexclude_scale);
    }

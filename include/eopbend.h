@@ -19,6 +19,7 @@ TINKER_EXTERN real copb, qopb, popb, sopb;
 
 TINKER_EXTERN energy_buffer eopb;
 TINKER_EXTERN virial_buffer vir_eopb;
+TINKER_EXTERN grad_prec *deopbx, *deopby, *deopbz;
 
 void eopbend_data(rc_op op);
 

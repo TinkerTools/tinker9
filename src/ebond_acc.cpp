@@ -15,7 +15,7 @@ void ebond_acc1()
    auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,gx,gy,gz,\
+               deviceptr(x,y,z,debx,deby,debz,\
                ibnd,bl,bk,\
                eb,vir_eb)
    for (int i = 0; i < nbond; ++i) {
@@ -59,12 +59,12 @@ void ebond_acc1()
          real dedx = de * xab;
          real dedy = de * yab;
          real dedz = de * zab;
-         atomic_add(dedx, gx, ia);
-         atomic_add(dedy, gy, ia);
-         atomic_add(dedz, gz, ia);
-         atomic_add(-dedx, gx, ib);
-         atomic_add(-dedy, gy, ib);
-         atomic_add(-dedz, gz, ib);
+         atomic_add(dedx, debx, ia);
+         atomic_add(dedy, deby, ia);
+         atomic_add(dedz, debz, ia);
+         atomic_add(-dedx, debx, ib);
+         atomic_add(-dedy, deby, ib);
+         atomic_add(-dedz, debz, ib);
 
          if CONSTEXPR (do_v) {
             real vxx = xab * dedx;

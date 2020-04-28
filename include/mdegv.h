@@ -29,7 +29,7 @@ extern energy_prec ekin[3][3];
  * \ingroup md_egv
  * \brief Total potential energy buffer on device.
  */
-extern energy_buffer esum_buf;
+extern energy_buffer eng_buf;
 
 
 /**
@@ -84,6 +84,19 @@ void zero_gradient(DMFlag flag, size_t nelem, real* gx, real* gy, real* gz);
 void zero_gradient(DMFlag flag, size_t nelem, fixed* gx, fixed* gy, fixed* gz);
 void zero_gradient_acc(DMFlag, size_t, real*, real*, real*);
 void zero_gradient_acc(DMFlag, size_t, fixed*, fixed*, fixed*);
+
+
+//====================================================================//
+
+
+/**
+ * \ingroup md_egv
+ */
+void sum_gradient(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, double scale,
+                  const grad_prec* g1x, const grad_prec* g1y,
+                  const grad_prec* g1z);
+void sum_gradient_acc(grad_prec*, grad_prec*, grad_prec*, double,
+                      const grad_prec*, const grad_prec*, const grad_prec*);
 
 
 //====================================================================//

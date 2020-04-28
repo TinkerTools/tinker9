@@ -33,7 +33,7 @@ void eopbend_acc1()
    auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,gx,gy,gz,\
+               deviceptr(x,y,z,deopbx,deopby,deopbz,\
                iopb,opbk,iang,\
                eopb,vir_eopb)
    for (int iopbend = 0; iopbend < nopbend; ++iopbend) {
@@ -181,18 +181,18 @@ void eopbend_acc1()
             real dedyib = -dedyia - dedyic - dedyid;
             real dedzib = -dedzia - dedzic - dedzid;
 
-            atomic_add(dedxia, gx, ia);
-            atomic_add(dedyia, gy, ia);
-            atomic_add(dedzia, gz, ia);
-            atomic_add(dedxib, gx, ib);
-            atomic_add(dedyib, gy, ib);
-            atomic_add(dedzib, gz, ib);
-            atomic_add(dedxic, gx, ic);
-            atomic_add(dedyic, gy, ic);
-            atomic_add(dedzic, gz, ic);
-            atomic_add(dedxid, gx, id);
-            atomic_add(dedyid, gy, id);
-            atomic_add(dedzid, gz, id);
+            atomic_add(dedxia, deopbx, ia);
+            atomic_add(dedyia, deopby, ia);
+            atomic_add(dedzia, deopbz, ia);
+            atomic_add(dedxib, deopbx, ib);
+            atomic_add(dedyib, deopby, ib);
+            atomic_add(dedzib, deopbz, ib);
+            atomic_add(dedxic, deopbx, ic);
+            atomic_add(dedyic, deopby, ic);
+            atomic_add(dedzic, deopbz, ic);
+            atomic_add(dedxid, deopbx, id);
+            atomic_add(dedyid, deopby, id);
+            atomic_add(dedzid, deopbz, id);
 
             if CONSTEXPR (do_v) {
                real vxx = xab * dedxia + xcb * dedxic + xdb * dedxid;

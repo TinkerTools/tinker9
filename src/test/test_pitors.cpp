@@ -191,7 +191,7 @@ TEST_CASE("Pitors-Trpcage", "[ff][epitors][trpcage]")
       {-3.014, -1.132, 2.354}, {-1.132, 1.167, -0.679}, {2.354, -0.679, 1.847}};
 
    COMPARE_BONDED_FORCE(epitors, npitors, ept, vir_ept, ref_e, eps_e, ref_count,
-                        gx, gy, gz, ref_g_pitors_trpcage, eps_g, ref_v, eps_v);
+                        ref_g_pitors_trpcage, eps_g, ref_v, eps_v);
 
    finish();
    test_end();

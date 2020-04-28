@@ -5,7 +5,7 @@
 
 TINKER_NAMESPACE_BEGIN
 energy_prec esum, eksum, ekin[3][3];
-energy_buffer esum_buf;
+energy_buffer eng_buf;
 grad_prec *gx, *gy, *gz;
 virial_prec vir[9];
 virial_buffer vir_buf;
@@ -33,9 +33,17 @@ void zero_egv(int vers)
       }
    }
 
+   if (vers & calc::grad) {
+      size_t size = x_grads.size();
+      for (size_t i = 0; i < size; ++i) {
+         darray::zero(PROCEED_NEW_Q, n, x_grads[i], y_grads[i], z_grads[i]);
+      }
+   }
+
    if (vers & calc::virial) {
-      for (int i = 0; i < 9; ++i)
+      for (int i = 0; i < 9; ++i) {
          vir[i] = 0;
+      }
       size_t size = virial_buffers.size();
       for (size_t i = 0; i < size; ++i) {
          virial_buffer u = virial_buffers[i];
@@ -73,42 +81,43 @@ void zero_gradient(DMFlag flag, size_t nelem, fixed* gx, fixed* gy, fixed* gz)
 //====================================================================//
 
 
+void sum_gradient(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, double scale,
+                  const grad_prec* g1x, const grad_prec* g1y,
+                  const grad_prec* g1z)
+{
+   sum_gradient_acc(g0x, g0y, g0z, scale, g1x, g1y, g1z);
+}
+
+
+//====================================================================//
+
+
 void sum_energy(int vers)
 {
    if (vers & calc::energy) {
-      if (rc_flag & calc::analyz) {
-         esum = 0;
-         for (size_t i = 0; i < energy_buffers.size(); ++i) {
-            energy_buffer u = energy_buffers[i];
-            energy_prec e = energy_reduce(u);
-            esum += e;
-         }
-      } else {
-         // total energy in esum_buf
-         energy_prec e = energy_reduce(esum_buf);
-         // esum may have added elrc, which is not accumulated in esum_buf
+      for (size_t i = 0; i < energy_buffers.size(); ++i) {
+         energy_buffer u = energy_buffers[i];
+         energy_prec e = energy_reduce(u);
          esum += e;
       }
    }
 
    if (vers & calc::virial) {
-      if (rc_flag & calc::analyz) {
-         for (int iv = 0; iv < 9; ++iv)
-            vir[iv] = 0;
-         for (size_t i = 0; i < virial_buffers.size(); ++i) {
-            virial_buffer u = virial_buffers[i];
-            virial_prec v[9];
-            virial_reduce(v, u);
-            for (int iv = 0; iv < 9; ++iv)
-               vir[iv] += v[iv];
-         }
-      } else {
-         // total virial in vir_buf
+      for (int iv = 0; iv < 9; ++iv)
+         vir[iv] = 0;
+      for (size_t i = 0; i < virial_buffers.size(); ++i) {
+         virial_buffer u = virial_buffers[i];
          virial_prec v[9];
-         virial_reduce(v, vir_buf);
-         // vir may have added vlrc, which is not accumulated in vir_buf
+         virial_reduce(v, u);
          for (int iv = 0; iv < 9; ++iv)
             vir[iv] += v[iv];
+      }
+   }
+
+   if (vers & calc::grad) {
+      size_t ngrad = x_grads.size();
+      for (size_t i = 1; i < ngrad; ++i) {
+         sum_gradient(gx, gy, gz, 1.0, x_grads[i], y_grads[i], z_grads[i]);
       }
    }
 }
@@ -181,66 +190,71 @@ void copy_virial(int vers, virial_prec* virial)
 //====================================================================//
 
 
-namespace {
-bool use_ev()
-{
-   return rc_flag & (calc::analyz | calc::energy | calc::virial);
-}
-
-
-void grad_data(rc_op op)
-{
-   if (!(rc_flag & calc::grad))
-      return;
-
-   if (op & rc_dealloc) {
-      darray::deallocate(gx, gy, gz);
-   }
-
-   if (op & rc_alloc) {
-      darray::allocate(n, &gx, &gy, &gz);
-   }
-
-   // we can never assume whether or not deriv::desum was allocated, because it
-   // was allocated inside subroutine gradient(...), which would be skipped in
-   // subroutine mdinit() if a dyn file existed to restart a simulation.
-
-   // if (op & rc_init) {
-   // copy in deriv::sum to gx, gy, and gz
-   // }
-}
-
-
-void ev_data(rc_op op)
-{
-   if (!use_ev())
-      return;
-
-   if (op & rc_dealloc) {
-      if (!(rc_flag & calc::analyz))
-         darray::deallocate(esum_buf, vir_buf);
-   }
-
-   if (op & rc_alloc) {
-      count_buffers.clear();
-      energy_buffers.clear();
-      virial_buffers.clear();
-      if (rc_flag & calc::analyz) {
-         esum_buf = nullptr;
-         vir_buf = nullptr;
-      } else {
-         darray::allocate(buffer_size(), &esum_buf, &vir_buf);
-         energy_buffers.push_back(esum_buf);
-         virial_buffers.push_back(vir_buf);
-      }
-   }
-}
-}
-
-
 void egv_data(rc_op op)
 {
-   rc_man ev42_{ev_data, op};
-   rc_man grad42_{grad_data, op};
+   if (rc_flag & calc::energy) {
+      if (op & rc_dealloc) {
+         if (rc_flag & calc::analyz) {
+         } else {
+            darray::deallocate(eng_buf);
+         }
+      }
+
+
+      if (op & rc_alloc) {
+         count_buffers.clear();
+         energy_buffers.clear();
+         if (rc_flag & calc::analyz) {
+            eng_buf = nullptr;
+         } else {
+            auto sz = buffer_size();
+            darray::allocate(sz, &eng_buf);
+            energy_buffers.push_back(eng_buf);
+         }
+      }
+   }
+
+
+   if (rc_flag & calc::virial) {
+      if (op & rc_dealloc) {
+         if (rc_flag & calc::analyz) {
+         } else {
+            darray::deallocate(vir_buf);
+         }
+      }
+
+
+      if (op & rc_alloc) {
+         virial_buffers.clear();
+         if (rc_flag & calc::analyz) {
+            vir_buf = nullptr;
+         } else {
+            auto sz = buffer_size();
+            darray::allocate(sz, &vir_buf);
+            virial_buffers.push_back(vir_buf);
+         }
+      }
+   }
+
+
+   if (rc_flag & calc::grad) {
+      if (op & rc_dealloc) {
+         // Always deallocate gx, gy, gz.
+         // Other gradients are deallocated elsewhere.
+         darray::deallocate(gx, gy, gz);
+      }
+
+
+      if (op & rc_alloc) {
+         // Always allocate gx, gy, gz as the first gradient.
+         x_grads.clear();
+         y_grads.clear();
+         z_grads.clear();
+         darray::allocate(n, &gx, &gy, &gz);
+         x_grads.push_back(gx);
+         y_grads.push_back(gy);
+         z_grads.push_back(gz);
+      }
+   }
 }
 TINKER_NAMESPACE_END

@@ -14,7 +14,7 @@ void epitors_acc1()
    auto bufsize = buffer_size();
 
    #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,gx,gy,gz,\
+               deviceptr(x,y,z,deptx,depty,deptz,\
                ipit,kpit,\
                ept,vir_ept)
    for (int i = 0; i < npitors; ++i) {
@@ -168,24 +168,24 @@ void epitors_acc1()
             dedyid += (dedyiq - dedyia - dedyib);
             dedzid += (dedziq - dedzia - dedzib);
 
-            atomic_add(dedxia, gx, ia);
-            atomic_add(dedyia, gy, ia);
-            atomic_add(dedzia, gz, ia);
-            atomic_add(dedxib, gx, ib);
-            atomic_add(dedyib, gy, ib);
-            atomic_add(dedzib, gz, ib);
-            atomic_add(dedxic, gx, ic);
-            atomic_add(dedyic, gy, ic);
-            atomic_add(dedzic, gz, ic);
-            atomic_add(dedxid, gx, id);
-            atomic_add(dedyid, gy, id);
-            atomic_add(dedzid, gz, id);
-            atomic_add(dedxie, gx, ie);
-            atomic_add(dedyie, gy, ie);
-            atomic_add(dedzie, gz, ie);
-            atomic_add(dedxig, gx, ig);
-            atomic_add(dedyig, gy, ig);
-            atomic_add(dedzig, gz, ig);
+            atomic_add(dedxia, deptx, ia);
+            atomic_add(dedyia, depty, ia);
+            atomic_add(dedzia, deptz, ia);
+            atomic_add(dedxib, deptx, ib);
+            atomic_add(dedyib, depty, ib);
+            atomic_add(dedzib, deptz, ib);
+            atomic_add(dedxic, deptx, ic);
+            atomic_add(dedyic, depty, ic);
+            atomic_add(dedzic, deptz, ic);
+            atomic_add(dedxid, deptx, id);
+            atomic_add(dedyid, depty, id);
+            atomic_add(dedzid, deptz, id);
+            atomic_add(dedxie, deptx, ie);
+            atomic_add(dedyie, depty, ie);
+            atomic_add(dedzie, deptz, ie);
+            atomic_add(dedxig, deptx, ig);
+            atomic_add(dedyig, depty, ig);
+            atomic_add(dedzig, deptz, ig);
 
             if CONSTEXPR (do_v) {
                real vxterm = dedxid + dedxia + dedxib;

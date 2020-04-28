@@ -65,7 +65,14 @@ void evdw_data(rc_op op)
       }
 
 
-      buffer_deallocate(nev, ev, vir_ev);
+      if (rc_flag & calc::analyz) {
+         buffer_deallocate(nev);
+         buffer_deallocate(ev, devx, devy, devz, vir_ev);
+      } else {
+         rc_flag |= calc::analyz;
+         buffer_deallocate(ev, devx, devy, devz, vir_ev);
+         rc_flag &= ~calc::analyz;
+      }
 
 
       elrc_vol = 0;
@@ -303,7 +310,14 @@ void evdw_data(rc_op op)
       }
 
 
-      buffer_allocate(&nev, &ev, &vir_ev);
+      if (rc_flag & calc::analyz) {
+         buffer_allocate(&nev);
+         buffer_allocate(&ev, &devx, &devy, &devz, &vir_ev);
+      } else {
+         rc_flag |= calc::analyz;
+         buffer_allocate(&ev, &devx, &devy, &devz, &vir_ev);
+         rc_flag &= ~calc::analyz;
+      }
    }
 
 
@@ -448,25 +462,6 @@ void egauss(int vers)
 
 void evdw(int vers)
 {
-   // vdw long-range correction
-   // check lrc_vol != 0 for non-PBC
-   // update the global variables if !calc::analyz
-   // if calc::analyz, update in energy_reduce() / virial_reduce()
-   if (!(vers & calc::analyz)) {
-      if ((vers & calc::energy) && elrc_vol != 0) {
-         esum += elrc_vol / volbox();
-      }
-
-
-      if ((vers & calc::virial) && vlrc_vol != 0) {
-         virial_prec term = vlrc_vol / volbox();
-         vir[0] += term; // xx
-         vir[4] += term; // yy
-         vir[8] += term; // zz
-      }
-   }
-
-
    if (vdwtyp == evdw_t::lj)
       elj(vers);
    else if (vdwtyp == evdw_t::buck)

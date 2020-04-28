@@ -18,7 +18,7 @@ void etortor_data(rc_op op)
       darray::deallocate(ibitor, itt, tnx, tny, ttx, tty, tbf, tbx, tby, tbxy,
                          chkttor_ia_);
 
-      buffer_deallocate(ett, vir_ett);
+      buffer_deallocate(ett, dettx, detty, dettz, vir_ett);
    }
 
    if (op & rc_alloc) {
@@ -31,7 +31,7 @@ void etortor_data(rc_op op)
       ntortor = count_bonded_term(tortor_term);
       darray::allocate(ntortor, &chkttor_ia_);
 
-      buffer_allocate(&ett, &vir_ett);
+      buffer_allocate(&ett, &dettx, &detty, &dettz, &vir_ett);
    }
 
    if (op & rc_init) {

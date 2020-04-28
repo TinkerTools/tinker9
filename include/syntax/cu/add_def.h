@@ -95,7 +95,7 @@ inline void atomic_add(fixed vxx, fixed vyx, fixed vzx, fixed vyy, fixed vzy,
 
 template <class G, class T>
 __device__
-inline G to_cu(T val)
+inline G cu_to(T val)
 {
    if CONSTEXPR (std::is_same<G, fixed>::value)
       return static_cast<G>(static_cast<long long>(val * 0x100000000ull));

@@ -28,6 +28,7 @@ TINKER_EXTERN pointer<real> polarity, thole, pdamp, polarity_inv;
 TINKER_EXTERN count_buffer nep;
 TINKER_EXTERN energy_buffer ep;
 TINKER_EXTERN virial_buffer vir_ep;
+TINKER_EXTERN grad_prec *depx, *depy, *depz;
 
 TINKER_EXTERN pointer<real, 3> ufld;
 TINKER_EXTERN pointer<real, 6> dufld;

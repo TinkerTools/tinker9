@@ -14,7 +14,7 @@
 
 
 TINKER_NAMESPACE_BEGIN
-#define DEVICE_PTRS x, y, z, gx, gy, gz, pchg, nec, ec, vir_ec
+#define DEVICE_PTRS x, y, z, decx, decy, decz, pchg, nec, ec, vir_ec
 template <class Ver, class ETYP>
 void echarge_acc1()
 {
@@ -108,9 +108,9 @@ void echarge_acc1()
                gxi += frcx;
                gyi += frcy;
                gzi += frcz;
-               atomic_add(-frcx, gx, k);
-               atomic_add(-frcy, gy, k);
-               atomic_add(-frcz, gz, k);
+               atomic_add(-frcx, decx, k);
+               atomic_add(-frcy, decy, k);
+               atomic_add(-frcz, decz, k);
             }
             if CONSTEXPR (do_v)
                atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ec, offset);
@@ -119,9 +119,9 @@ void echarge_acc1()
 
 
       if CONSTEXPR (do_g) {
-         atomic_add(gxi, gx, i);
-         atomic_add(gyi, gy, i);
-         atomic_add(gzi, gz, i);
+         atomic_add(gxi, decx, i);
+         atomic_add(gyi, decy, i);
+         atomic_add(gzi, decz, i);
       }
    } // end for (int i)
 
@@ -195,12 +195,12 @@ void echarge_acc1()
                atomic_add(e, ec, offset);
          }
          if CONSTEXPR (do_g) {
-            atomic_add(frcx, gx, i);
-            atomic_add(frcy, gy, i);
-            atomic_add(frcz, gz, i);
-            atomic_add(-frcx, gx, k);
-            atomic_add(-frcy, gy, k);
-            atomic_add(-frcz, gz, k);
+            atomic_add(frcx, decx, i);
+            atomic_add(frcy, decy, i);
+            atomic_add(frcz, decz, i);
+            atomic_add(-frcx, decx, k);
+            atomic_add(-frcy, decy, k);
+            atomic_add(-frcz, decz, k);
          }
          if CONSTEXPR (do_v)
             atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ec, offset);
@@ -264,7 +264,7 @@ void echarge_acc3()
    auto bufsize = buffer_size();
 
 
-   #pragma acc parallel async deviceptr(pchg,qgrid,nec,ec,x,y,z,gx,gy,gz)
+   #pragma acc parallel async deviceptr(pchg,qgrid,nec,ec,x,y,z,decx,decy,decz)
    #pragma acc loop independent
    for (int ii = 0; ii < n; ++ii) {
       real chgi = pchg[ii];
@@ -363,9 +363,9 @@ void echarge_acc3()
          real frcx = fi * (recipa.x * de1 + recipb.x * de2 + recipc.x * de3);
          real frcy = fi * (recipa.y * de1 + recipb.y * de2 + recipc.y * de3);
          real frcz = fi * (recipa.z * de1 + recipb.z * de2 + recipc.z * de3);
-         atomic_add(frcx, gx, ii);
-         atomic_add(frcy, gy, ii);
-         atomic_add(frcz, gz, ii);
+         atomic_add(frcx, decx, ii);
+         atomic_add(frcy, decy, ii);
+         atomic_add(frcz, decz, ii);
       }
    }
 }

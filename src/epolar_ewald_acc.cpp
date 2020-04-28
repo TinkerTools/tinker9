@@ -12,8 +12,8 @@
 
 TINKER_NAMESPACE_BEGIN
 #define POLAR_DPTRS                                                            \
-   x, y, z, gx, gy, gz, rpole, thole, pdamp, uind, uinp, nep, ep, vir_ep,      \
-      ufld, dufld
+   x, y, z, depx, depy, depz, rpole, thole, pdamp, uind, uinp, nep, ep,        \
+      vir_ep, ufld, dufld
 template <class Ver>
 void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
 {
@@ -122,9 +122,9 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
                gxi += pgrad.frcx;
                gyi += pgrad.frcy;
                gzi += pgrad.frcz;
-               atomic_add(-pgrad.frcx, gx, k);
-               atomic_add(-pgrad.frcy, gy, k);
-               atomic_add(-pgrad.frcz, gz, k);
+               atomic_add(-pgrad.frcx, depx, k);
+               atomic_add(-pgrad.frcy, depy, k);
+               atomic_add(-pgrad.frcz, depz, k);
 
                txi += pgrad.ufldi[0];
                tyi += pgrad.ufldi[1];
@@ -163,9 +163,9 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
       } // end for (int kk)
 
       if CONSTEXPR (do_g) {
-         atomic_add(gxi, gx, i);
-         atomic_add(gyi, gy, i);
-         atomic_add(gzi, gz, i);
+         atomic_add(gxi, depx, i);
+         atomic_add(gyi, depy, i);
+         atomic_add(gzi, depz, i);
          atomic_add(txi, &ufld[i][0]);
          atomic_add(tyi, &ufld[i][1]);
          atomic_add(tzi, &ufld[i][2]);
@@ -257,12 +257,12 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
             atomic_add(e, ep, offset);
 
          if CONSTEXPR (do_g) {
-            atomic_add(pgrad.frcx, gx, i);
-            atomic_add(pgrad.frcy, gy, i);
-            atomic_add(pgrad.frcz, gz, i);
-            atomic_add(-pgrad.frcx, gx, k);
-            atomic_add(-pgrad.frcy, gy, k);
-            atomic_add(-pgrad.frcz, gz, k);
+            atomic_add(pgrad.frcx, depx, i);
+            atomic_add(pgrad.frcy, depy, i);
+            atomic_add(pgrad.frcz, depz, i);
+            atomic_add(-pgrad.frcx, depx, k);
+            atomic_add(-pgrad.frcy, depy, k);
+            atomic_add(-pgrad.frcz, depz, k);
 
             atomic_add(pgrad.ufldi[0], &ufld[i][0]);
             atomic_add(pgrad.ufldi[1], &ufld[i][1]);
@@ -374,7 +374,7 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
 
    // increment the dipole polarization gradient contributions
 
-   #pragma acc parallel loop independent async deviceptr(gx,gy,gz,\
+   #pragma acc parallel loop independent async deviceptr(depx,depy,depz,\
                fmp,fphi,fuind,fuinp,fphid,fphip,fphidp)
    for (int i = 0; i < n; ++i) {
       // data deriv1  / 2, 5,  8,  9, 11, 16, 18, 14, 15, 20 /
@@ -414,9 +414,9 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
          real h1 = recipa.x * f1 + recipb.x * f2 + recipc.x * f3;
          real h2 = recipa.y * f1 + recipb.y * f2 + recipc.y * f3;
          real h3 = recipa.z * f1 + recipb.z * f2 + recipc.z * f3;
-         atomic_add(h1 * f, gx, i);
-         atomic_add(h2 * f, gy, i);
-         atomic_add(h3 * f, gz, i);
+         atomic_add(h1 * f, depx, i);
+         atomic_add(h2 * f, depy, i);
+         atomic_add(h3 * f, depz, i);
       }
    } // end for (int i)
 
