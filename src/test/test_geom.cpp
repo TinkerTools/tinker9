@@ -3,7 +3,7 @@
 #include "test_rt.h"
 
 
-using namespace TINKER_NAMESPACE;
+using namespace tinker;
 
 
 static const char* ortho_box = R"**(

@@ -9,7 +9,7 @@
 #include "spatial.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 // compute theta values on the fly
 template <class T, int bsorder>
 __global__
@@ -979,4 +979,4 @@ void pme_cuda_func_config()
    auto fphi_uind2 = fphi_get_cu<UIND2, 5>;
    check_rt(cudaFuncSetCacheConfig(fphi_uind2, cudaFuncCachePreferL1));
 }
-TINKER_NAMESPACE_END
+}

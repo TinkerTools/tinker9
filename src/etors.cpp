@@ -4,7 +4,7 @@
 #include <tinker/detail/torpot.hh>
 #include <tinker/detail/tors.hh>
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void etors_data(rc_op op)
 {
    if (!use_potent(torsion_term))
@@ -44,4 +44,4 @@ void etors(int vers)
 {
    etors_acc(vers);
 }
-TINKER_NAMESPACE_END
+}

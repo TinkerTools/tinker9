@@ -5,7 +5,7 @@
 #include <tinker/detail/bath.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 TestFile::TestFile(const std::string& name, const std::string& content)
    : good_(false)
    , name_(name)
@@ -94,4 +94,4 @@ void test_mdinit(double t, double atm)
 
    TINKER_RT(mdinit)();
 }
-TINKER_NAMESPACE_END
+}

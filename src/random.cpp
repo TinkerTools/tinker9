@@ -4,7 +4,7 @@
 #include <random>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 namespace {
 std::default_random_engine generator;
 }
@@ -65,4 +65,4 @@ void random_data(rc_op op)
       generator.seed(seed);
    }
 }
-TINKER_NAMESPACE_END
+}

@@ -3,7 +3,7 @@
 #include <cstring>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
                                 DMFlag)
 {
@@ -40,4 +40,4 @@ void device_memory_allocate_bytes(void** pptr, size_t nbytes)
 {
    *pptr = std::malloc(nbytes);
 }
-TINKER_NAMESPACE_END
+}

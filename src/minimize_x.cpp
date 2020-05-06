@@ -9,7 +9,7 @@
 #include <tinker/detail/scales.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 namespace {
 std::vector<double> grx, gry, grz;
 }
@@ -190,4 +190,4 @@ void minimize_set_xyz(int n, const double* xx, const double* scale)
    copy_pos_to_xyz();
    refresh_neighbors();
 }
-TINKER_NAMESPACE_END
+}

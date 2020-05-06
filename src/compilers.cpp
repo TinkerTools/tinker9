@@ -2,7 +2,7 @@
 #include "io_print.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 std::string cxx_compiler_name()
 {
    std::string n = "unknown";
@@ -23,4 +23,4 @@ std::string cxx_compiler_name()
 #endif
    return n;
 }
-TINKER_NAMESPACE_END
+}

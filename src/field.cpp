@@ -4,7 +4,7 @@
 #include "nblist.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void dfield(real (*field)[3], real (*fieldp)[3])
 {
    if (use_ewald())
@@ -97,4 +97,4 @@ void ufield_ewald_real(const real (*uind)[3], const real (*uinp)[3],
 #endif
       ufield_ewald_real_acc(uind, uinp, field, fieldp);
 }
-TINKER_NAMESPACE_END
+}

@@ -5,7 +5,7 @@
 #include <tinker/detail/units.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 // velocity to ekin[3][3] (actually ekin[6])
 template <unsigned int B>
 __global__
@@ -87,4 +87,4 @@ void kinetic_cu(T_prec& temp)
    eksum = exx + eyy + ezz;
    temp = 2 * eksum / (mdstuf::nfree * units::gasconst);
 }
-TINKER_NAMESPACE_END
+}

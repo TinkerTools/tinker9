@@ -4,7 +4,7 @@
 #include "named_struct.h"
 #include <cassert>
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <class Ver, class BNDTYP>
 void ebond_acc1()
 {
@@ -111,4 +111,4 @@ void ebond_acc(int vers)
    else
       assert(false);
 }
-TINKER_NAMESPACE_END
+}

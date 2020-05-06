@@ -2,7 +2,7 @@
 #include "nblist.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void sparse_precond_build() {}
 
 
@@ -16,4 +16,4 @@ void sparse_precond_apply(const real (*rsd)[3], const real (*rsdp)[3],
 #endif
       sparse_precond_apply_acc(rsd, rsdp, zrsd, zrsdp);
 }
-TINKER_NAMESPACE_END
+}

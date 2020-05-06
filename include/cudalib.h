@@ -6,7 +6,7 @@
 #endif
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #if TINKER_CUDART
 extern cudaStream_t nonblk;
 extern cublasHandle_t h_cublas;
@@ -17,4 +17,4 @@ extern void* dptr_buf;
 
 
 void cudalib_data(rc_op);
-TINKER_NAMESPACE_END
+}

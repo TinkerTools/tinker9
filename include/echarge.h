@@ -4,7 +4,7 @@
 #include "rc_man.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 extern real ebuffer;
 extern real c2scale, c3scale, c4scale, c5scale;
 extern int ncexclude;
@@ -31,4 +31,4 @@ void echarge_ewald_real_acc(int);
 void echarge_ewald_real_cu(int);
 void echarge_ewald_fphi_self_acc(int);
 void echarge_ewald_fphi_self_cu(int);
-TINKER_NAMESPACE_END
+}

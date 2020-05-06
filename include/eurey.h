@@ -3,7 +3,7 @@
 #include "energy_buffer.h"
 #include "rc_man.h"
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 // module urey
 TINKER_EXTERN int nurey;
 TINKER_EXTERN pointer<int, 3> iury;
@@ -21,4 +21,4 @@ void eurey_data(rc_op op);
 
 void eurey(int vers);
 void eurey_acc(int);
-TINKER_NAMESPACE_END
+}

@@ -2,7 +2,7 @@
 #include "macro.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup math
  * \brief
@@ -51,4 +51,4 @@ inline int ffsn_loop(int c1, int n)
    }
    return ans;
 }
-TINKER_NAMESPACE_END
+}

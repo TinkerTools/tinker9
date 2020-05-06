@@ -3,7 +3,7 @@
 #include "md.h"
 #include "named_struct.h"
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <class Ver>
 void eurey_acc1()
 {
@@ -79,4 +79,4 @@ void eurey_acc(int vers)
    else if (vers == calc::v6)
       eurey_acc1<calc::V6>();
 }
-TINKER_NAMESPACE_END
+}

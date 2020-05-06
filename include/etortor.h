@@ -5,7 +5,7 @@
 #include <tinker/detail/ktrtor.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 // module bitor
 TINKER_EXTERN int nbitor;
 TINKER_EXTERN pointer<int, 5> ibitor;
@@ -34,4 +34,4 @@ void etortor_data(rc_op op);
 
 void etortor(int vers);
 void etortor_acc(int);
-TINKER_NAMESPACE_END
+}

@@ -10,7 +10,7 @@
 #include <numeric>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 namespace {
 template <class T, class Op>
 void reduce_to_dptr(const T* a, size_t nelem, bool sync)
@@ -134,4 +134,4 @@ void dotprod_cu<double>(double* ans, const double* a, const double* b,
 // #else
 //    check_rt(cublasSdot(hd, nelem, a, 1, b, 1, ans));
 // #endif
-TINKER_NAMESPACE_END
+}

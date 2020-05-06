@@ -5,7 +5,7 @@
 #include "rc_man.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 enum class nblist_t
 {
    UNDEFINED = 0x00,   ///< Undefined.
@@ -82,4 +82,4 @@ void nblist_update_acc(NBListUnit);
 
 
 void refresh_neighbors();
-TINKER_NAMESPACE_END
+}

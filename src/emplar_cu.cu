@@ -14,7 +14,7 @@
 #include "switch.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <class Ver, class ETYP>
 __device__
 void pair_mplar_v1(                                                       //
@@ -1319,4 +1319,4 @@ void emplar_cu(int vers)
          emplar_nonewald_cu<calc::V6>();
    }
 }
-TINKER_NAMESPACE_END
+}

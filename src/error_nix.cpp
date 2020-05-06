@@ -4,7 +4,7 @@
 #   include <cxxabi.h>
 #   include <execinfo.h>
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 enum class BackTraceOS
 {
    macOS,
@@ -76,6 +76,6 @@ void print_backtrace(std::FILE* out)
 #   endif
    std::fflush(out);
 }
-TINKER_NAMESPACE_END
+}
 
 #endif

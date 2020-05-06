@@ -23,7 +23,7 @@ inline double atomicAdd(double* ptr, double v)
 #endif
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <class T>
 __device__
 inline void atomic_add(T value, T* buffer, size_t offset = 0)
@@ -102,4 +102,4 @@ inline G cu_to(T val)
    else
       return static_cast<G>(val);
 }
-TINKER_NAMESPACE_END
+}

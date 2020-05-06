@@ -4,7 +4,7 @@
 #include <tinker/detail/nonpol.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 real switch_cut(switch_t mode)
 {
    real cut;
@@ -108,4 +108,4 @@ real switch_off(switch_t mode)
    }
    return off;
 }
-TINKER_NAMESPACE_END
+}

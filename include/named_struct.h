@@ -28,23 +28,17 @@ extern "C"
 
 
    // Energy versions.
-   struct Eng
-      : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v0>
+   struct Eng : public tinker::EnergyVersion<tinker::calc::v0>
    {};
-   struct EngGradVir
-      : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v1>
+   struct EngGradVir : public tinker::EnergyVersion<tinker::calc::v1>
    {};
-   struct EngAlyz
-      : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v3>
+   struct EngAlyz : public tinker::EnergyVersion<tinker::calc::v3>
    {};
-   struct EngGrad
-      : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v4>
+   struct EngGrad : public tinker::EnergyVersion<tinker::calc::v4>
    {};
-   struct Grad
-      : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v5>
+   struct Grad : public tinker::EnergyVersion<tinker::calc::v5>
    {};
-   struct GradVir
-      : public TINKER_NAMESPACE::EnergyVersion<TINKER_NAMESPACE::calc::v6>
+   struct GradVir : public tinker::EnergyVersion<tinker::calc::v6>
    {};
 
 
@@ -76,7 +70,7 @@ extern "C"
 }
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 namespace calc {
 using V0 = Eng;
 using V1 = EngGradVir;
@@ -85,4 +79,4 @@ using V4 = EngGrad;
 using V5 = Grad;
 using V6 = GradVir;
 }
-TINKER_NAMESPACE_END
+}

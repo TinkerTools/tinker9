@@ -3,7 +3,7 @@
 #include <cstddef>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 // constexpr functions
 
 
@@ -117,4 +117,4 @@ inline int ceil_log2(long long val)
 {
    return floor_log2(val) + (val & (val - 1) ? 1 : 0);
 }
-TINKER_NAMESPACE_END
+}

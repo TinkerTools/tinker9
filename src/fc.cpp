@@ -143,7 +143,7 @@ TINKER_EXTERN_C_END
 //====================================================================//
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void t_open(int unit, std::string file, std::string status)
 {
    int fl = file.size();
@@ -159,4 +159,4 @@ std::string t_version(std::string file, std::string status)
    fc_version(out, file.c_str(), flen, status.c_str(), slen);
    return std::string(out);
 }
-TINKER_NAMESPACE_END
+}

@@ -13,7 +13,7 @@
 #include <sstream>
 
 
-using namespace TINKER_NAMESPACE;
+using namespace tinker;
 
 
 // static const int ans[5][216][70];

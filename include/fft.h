@@ -3,7 +3,7 @@
 #include <type_traits>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 struct FFTPlan
 {
    template <class T>
@@ -15,4 +15,4 @@ struct FFTPlan
 
    virtual ~FFTPlan() {}
 };
-TINKER_NAMESPACE_END
+}

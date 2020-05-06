@@ -2,7 +2,7 @@
 #include "macro.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /// \ingroup math
 /// \see max_of(T, T2, Ts...)
 template <class T, class T2>
@@ -37,4 +37,4 @@ T min_of(T a, T2 b, Ts... cs)
 {
    return min_of(min_of(a, b), cs...);
 }
-TINKER_NAMESPACE_END
+}

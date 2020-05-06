@@ -5,7 +5,7 @@
 #include <cassert>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <class T>
 T reduce_sum_acc(const T* gpu_a, size_t cpu_n, DMFlag flag)
 {
@@ -169,4 +169,4 @@ void scale_array_acc(T* gpu_dst, T scal, size_t nelem, DMFlag flag)
 }
 template void scale_array_acc(float*, float, size_t, DMFlag);
 template void scale_array_acc(double*, double, size_t, DMFlag);
-TINKER_NAMESPACE_END
+}

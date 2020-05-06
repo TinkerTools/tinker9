@@ -9,7 +9,7 @@
 #include "seq_switch.h"
 #include "switch.h"
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #define DEVICE_PTRS                                                            \
    x, y, z, demx, demy, demz, rpole, nem, em, vir_em, trqx, trqy, trqz
 template <class Ver>
@@ -210,4 +210,4 @@ void empole_nonewald_acc(int vers)
    else if (vers == calc::v6)
       empole_nonewald_acc1<calc::V6>();
 }
-TINKER_NAMESPACE_END
+}

@@ -5,7 +5,7 @@
 #include <tinker/detail/units.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void copy_pos_to_xyz_acc()
 {
    if (sizeof(pos_prec) == sizeof(real))
@@ -145,4 +145,4 @@ void propagate_velocity2_acc(time_prec dt, const fixed* grx, const fixed* gry,
       // clang-format on
    }
 }
-TINKER_NAMESPACE_END
+}

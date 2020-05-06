@@ -7,7 +7,7 @@
 #include <vector>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup test
  * \brief Write a file to the disk in its constructor and remove this file in
@@ -45,7 +45,7 @@ double test_get_eps(double eps_single, double eps_double);
 void test_begin_with_args(int argc, const char** argv);
 void test_end();
 void test_mdinit(double t = 0, double atm = 0);
-TINKER_NAMESPACE_END
+}
 
 #define COMPARE_INTS(i1, refi)       REQUIRE(i1 == refi)
 #define COMPARE_REALS(v1, refv, eps) REQUIRE(v1 == Approx(refv).margin(eps))

@@ -8,7 +8,7 @@
 #include <thread>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 class ExecQ::Impl
 {
 private:
@@ -94,4 +94,4 @@ void ExecQ::copy_bytes(void* dst, const void* src, size_t nbytes)
 {
    ptr->add_async_call(std::memcpy, dst, src, nbytes);
 }
-TINKER_NAMESPACE_END
+}

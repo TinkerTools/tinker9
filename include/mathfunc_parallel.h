@@ -4,7 +4,7 @@
 #include "platform.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 namespace parallel {
 /**
  * \ingroup math
@@ -100,4 +100,4 @@ void scale_array(T* dst, T scal, size_t nelem, DMFlag flag)
    return scale_array_acc(dst, scal, nelem, flag);
 }
 }
-TINKER_NAMESPACE_END
+}

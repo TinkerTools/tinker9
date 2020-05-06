@@ -2,7 +2,7 @@
 #include "macro.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 enum switch_t
 {
    switch_default,
@@ -28,4 +28,4 @@ real switch_cut(switch_t mode);
 
 /// \return Distance at which the potential energy goes to zero.
 real switch_off(switch_t mode);
-TINKER_NAMESPACE_END
+}

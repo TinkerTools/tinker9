@@ -4,7 +4,7 @@
 #include "seq_damp.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #pragma acc routine seq
 template <class ETYP>
 SEQ_CUDA
@@ -148,4 +148,4 @@ void pair_ufield(real r2, real xr, real yr, real zr, real uscale, //
    coef = bn[2] * dot3(dr, uip);
    fkp += coef * dr - bn[1] * uip;
 }
-TINKER_NAMESPACE_END
+}

@@ -7,7 +7,7 @@
 #include <tinker/detail/boxes.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void box_extent(double new_extent)
 {
    if (box_shape != UNBOUND_BOX)
@@ -307,4 +307,4 @@ real volbox()
       ans *= 0.5f;
    return ans;
 }
-TINKER_NAMESPACE_END
+}

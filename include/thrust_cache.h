@@ -3,7 +3,7 @@
 #include <cstddef>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 class ThrustCache
 {
 public:
@@ -23,4 +23,4 @@ extern ThrustCache thrust_cache;
 
 void thrust_cache_alloc();
 void thrust_cache_dealloc();
-TINKER_NAMESPACE_END
+}

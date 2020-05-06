@@ -9,7 +9,7 @@
 #include <tinker/detail/inform.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void velocity_verlet(int istep, time_prec dt_ps)
 {
    int vers0 = rc_flag & calc::vmask;
@@ -49,4 +49,4 @@ void velocity_verlet(int istep, time_prec dt_ps)
    T_prec temp;
    temper(dt_ps, temp);
 }
-TINKER_NAMESPACE_END
+}

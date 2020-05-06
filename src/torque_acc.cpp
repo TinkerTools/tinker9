@@ -4,7 +4,7 @@
 #include "md.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 namespace {
 #pragma acc routine seq
 real torque_dot(const real* restrict a, const real* restrict b)
@@ -458,4 +458,4 @@ void torque_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz)
    else if (vers & calc::grad)
       torque_acc1<0>(nullptr, gx, gy, gz);
 }
-TINKER_NAMESPACE_END
+}

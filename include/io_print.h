@@ -6,7 +6,7 @@
 #include <vector>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 namespace {
 /**
  * \ingroup io
@@ -116,4 +116,4 @@ inline std::string operator""_s(const char* s, size_t len)
 {
    return std::string(s, len);
 }
-TINKER_NAMESPACE_END
+}

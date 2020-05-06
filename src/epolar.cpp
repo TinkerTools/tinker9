@@ -15,7 +15,7 @@
 #include <tinker/detail/units.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void epolar_data(rc_op op)
 {
    if (!use_potent(polar_term))
@@ -524,4 +524,4 @@ void epolar0_dotprod(const real (*uind)[3], const real (*udirp)[3])
 {
    return epolar0_dotprod_acc(uind, udirp);
 }
-TINKER_NAMESPACE_END
+}

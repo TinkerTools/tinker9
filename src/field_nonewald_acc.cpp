@@ -8,7 +8,7 @@
 #include "seq_pair_field.h"
 #include "switch.h"
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 // see also subroutine dfield0b in induce.f
 #define DFIELD_DPTRS x, y, z, thole, pdamp, field, fieldp, rpole
 void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
@@ -283,4 +283,4 @@ void ufield_nonewald_acc(const real (*uind)[3], const real (*uinp)[3],
       }
    }
 }
-TINKER_NAMESPACE_END
+}

@@ -9,7 +9,7 @@
 #include <tinker/detail/sizes.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 real ebuffer;
 real c2scale, c3scale, c4scale, c5scale;
 int ncexclude;
@@ -190,4 +190,4 @@ void echarge_ewald(int vers)
 #endif
       echarge_ewald_real_acc(vers);
 }
-TINKER_NAMESPACE_END
+}

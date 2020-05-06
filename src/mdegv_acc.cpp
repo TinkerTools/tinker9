@@ -4,7 +4,7 @@
 #include "wait_queue.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void zero_gradient_acc(DMFlag flag, size_t nelem, real* gx, real* gy, real* gz)
 {
    bool sync = flag & DMFlag::DEFAULT_Q;
@@ -121,4 +121,4 @@ void sum_gradient_acc(double ss, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
    }
 #endif
 }
-TINKER_NAMESPACE_END
+}

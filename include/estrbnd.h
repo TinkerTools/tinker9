@@ -3,7 +3,7 @@
 #include "energy_buffer.h"
 #include "rc_man.h"
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 TINKER_EXTERN int nstrbnd;
 TINKER_EXTERN pointer<int, 3> isb;
 TINKER_EXTERN pointer<real, 2> sbk;
@@ -18,4 +18,4 @@ void estrbnd_data(rc_op op);
 
 void estrbnd(int vers);
 void estrbnd_acc(int);
-TINKER_NAMESPACE_END
+}

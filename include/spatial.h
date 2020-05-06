@@ -3,7 +3,7 @@
 #include "rc_man.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup spatial
  * \brief
@@ -264,4 +264,4 @@ void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer,
                         const real* x, const real* y, const real* z);
 void spatial_data_init_cu(SpatialUnit);
 void spatial_data_update_sorted(SpatialUnit);
-TINKER_NAMESPACE_END
+}

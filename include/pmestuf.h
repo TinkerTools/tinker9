@@ -2,7 +2,7 @@
 #include "pme.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void bspline_fill(PMEUnit, int level);
 
 
@@ -67,4 +67,4 @@ void cmp_to_fmp_acc(PMEUnit, const real (*)[10], real (*)[10]);
 void cuind_to_fuind_acc(PMEUnit, const real (*)[3], const real (*)[3],
                         real (*)[3], real (*)[3]);
 void fphi_to_cphi_acc(PMEUnit, const real (*)[20], real (*)[10]);
-TINKER_NAMESPACE_END
+}

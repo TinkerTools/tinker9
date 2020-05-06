@@ -5,7 +5,7 @@
 #include <cstring>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void FortranStringView::copy_with_blank_(char* dst, size_t dstlen,
                                          const char* src, size_t first_n)
 {
@@ -130,4 +130,4 @@ FortranStringView FortranStringView::operator()(int begin1) const
    assert(1 <= begin1 && begin1 <= (e_ - b_));
    return FortranStringView(b_ + (begin1 - 1), e_ - b_);
 }
-TINKER_NAMESPACE_END
+}

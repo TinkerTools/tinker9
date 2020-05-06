@@ -4,7 +4,7 @@
 #include "nblist.h"
 
 #if TINKER_CUDART
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #   define m_swap_(a, b)                                                       \
       {                                                                        \
          auto tmp = b;                                                         \
@@ -43,18 +43,18 @@ inline void sort_v1_(int* arr, int len)
 }
 #   undef m_swap_
 #   undef m_max_heap_
-TINKER_NAMESPACE_END
+}
 #else
 #   include <algorithm>
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 inline void sort_v1_(int* arr, int len)
 {
    std::sort(arr, arr + len);
 }
-TINKER_NAMESPACE_END
+}
 #endif
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void check_nblist(int n, real lbuf, int* restrict update,
                   const real* restrict x, const real* restrict y,
                   const real* restrict z, real* restrict xold,
@@ -273,4 +273,4 @@ void nblist_update_acc(NBListUnit nu)
       TINKER_DEFAULT_NBLIST_UPDATE_(nu);
    }
 }
-TINKER_NAMESPACE_END
+}

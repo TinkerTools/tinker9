@@ -11,7 +11,7 @@
 #include "switch.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #define POLAR_ARGS                                                             \
    size_t bufsize, count_buffer restrict nep, energy_buffer restrict ep,       \
       virial_buffer restrict vir_ep, grad_prec *restrict gx,                   \
@@ -504,4 +504,4 @@ void epolar_ewald_real_cu(int vers, const real (*uind)[3],
       epolar_cu<calc::V6, EWALD>(uind, uinp);
    }
 }
-TINKER_NAMESPACE_END
+}

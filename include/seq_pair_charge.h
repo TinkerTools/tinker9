@@ -5,7 +5,7 @@
 #include "seq_switch.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #pragma acc routine seq
 template <class Ver, class ETYP>
 SEQ_CUDA
@@ -157,4 +157,4 @@ void pair_charge(real r, real xr, real yr, real zr, real cscale, real chgi,
       vtlzz += vzz;
    }
 }
-TINKER_NAMESPACE_END
+}

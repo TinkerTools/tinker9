@@ -14,7 +14,7 @@
 #include <tinker/detail/pme.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 bool PME::Params::operator==(const Params& st) const
 {
    const double eps = 1.0e-6;
@@ -124,10 +124,10 @@ void pme_op_copyin(PMEUnit unit)
    unit.update_deviceptr(st, WAIT_NEW_Q);
 }
 }
-TINKER_NAMESPACE_END
+}
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void pme_data(rc_op op)
 {
    if (!use_ewald())
@@ -242,4 +242,4 @@ void pme_data(rc_op op)
 
    rc_man fft42{fft_data, op};
 }
-TINKER_NAMESPACE_END
+}

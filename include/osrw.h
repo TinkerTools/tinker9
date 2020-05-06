@@ -4,7 +4,7 @@
 #include "rc_man.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup kosrw
  * \page kosrw
@@ -67,4 +67,4 @@ void osrw_energy(int vers);
 
 void osrw_altele_acc(double);
 void osrw_alttor_acc(double);
-TINKER_NAMESPACE_END
+}

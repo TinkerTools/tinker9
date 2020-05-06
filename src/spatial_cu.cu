@@ -16,7 +16,7 @@
 #include <thrust/transform_scan.h>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 struct POPC
 {
    __device__
@@ -485,10 +485,10 @@ void spatial_update_sorted(int n, Spatial::SortedAtom* restrict sorted,
       sorted[i].z = zr;
    }
 }
-TINKER_NAMESPACE_END
+}
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void spatial_data_update_sorted(SpatialUnit u)
 {
    auto& st = *u;
@@ -633,11 +633,11 @@ void spatial_data_init_cu(SpatialUnit u)
    assert((thrust::get<0>(end2.get_iterator_tuple()) - u->iak) == u->niak);
    u.update_deviceptr(*u, PROCEED_NEW_Q);
 }
-TINKER_NAMESPACE_END
+}
 
 
 #if 0
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 namespace spatial_v2 {
 __device__
 inline void box_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
@@ -689,5 +689,5 @@ inline int ixyz_to_box(int ix, int iy, int iz, int px, int py, int pz)
    return id;
 }
 }
-TINKER_NAMESPACE_END
+}
 #endif

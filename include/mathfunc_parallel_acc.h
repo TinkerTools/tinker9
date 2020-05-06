@@ -4,7 +4,7 @@
 #include <cstddef>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <class T>
 T reduce_sum_acc(const T* gpu_a, size_t nelem, DMFlag flag);
 
@@ -27,4 +27,4 @@ void dotprod_acc(T* ans, const T* a, const T* b, int nelem, DMFlag flag);
 
 template <class T>
 void scale_array_acc(T* dst, T scal, size_t nelem, DMFlag flag);
-TINKER_NAMESPACE_END
+}

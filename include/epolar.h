@@ -3,7 +3,7 @@
 #include "energy_buffer.h"
 #include "pmestuf.h"
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 TINKER_EXTERN real u1scale, u2scale, u3scale, u4scale;
 TINKER_EXTERN real d1scale, d2scale, d3scale, d4scale;
 TINKER_EXTERN real p2scale, p3scale, p4scale, p5scale;
@@ -62,4 +62,4 @@ void epolar_ewald_recip_self_acc(int vers, const real (*d)[3],
 void epolar0_dotprod_acc(const real (*uind)[3], const real (*udirp)[3]);
 void epolar_nonewald_cu(int vers, const real (*d)[3], const real (*p)[3]);
 void epolar_ewald_real_cu(int vers, const real (*d)[3], const real (*p)[3]);
-TINKER_NAMESPACE_END
+}

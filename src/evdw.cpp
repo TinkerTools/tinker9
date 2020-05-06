@@ -17,7 +17,7 @@
 #include <tinker/detail/vdwpot.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 namespace {
 using new_type = int; // new vdw class/type
 using old_type = int; // old vdw class/type
@@ -469,4 +469,4 @@ void evdw(int vers)
    else
       assert(false);
 }
-TINKER_NAMESPACE_END
+}

@@ -15,7 +15,7 @@ extern "C"
 }
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void initial()
 {
    static bool first = true;
@@ -218,4 +218,4 @@ void initial()
    iwrite = -1;
    stpmax = 0;
 }
-TINKER_NAMESPACE_END
+}

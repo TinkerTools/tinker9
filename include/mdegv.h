@@ -9,7 +9,7 @@
  */
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup md_egv
  * \brief Total potential energy on host.
@@ -167,4 +167,4 @@ void copy_virial(int vers, virial_prec* virial);
 
 
 void egv_data(rc_op op);
-TINKER_NAMESPACE_END
+}

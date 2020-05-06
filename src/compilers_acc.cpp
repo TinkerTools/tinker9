@@ -2,7 +2,7 @@
 #include "io_print.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #if TINKER_CUDART
 std::string acc_compiler_name()
 {
@@ -10,4 +10,4 @@ std::string acc_compiler_name()
                  __PGIC_PATCHLEVEL__);
 }
 #endif
-TINKER_NAMESPACE_END
+}

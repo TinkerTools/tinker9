@@ -6,7 +6,7 @@
 #include <tinker/detail/angpot.hh>
 #include <tinker/detail/opbend.hh>
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void eopbend_data(rc_op op)
 {
    if (!use_potent(opbend_term))
@@ -53,4 +53,4 @@ void eopbend(int vers)
 {
    eopbend_acc(vers);
 }
-TINKER_NAMESPACE_END
+}

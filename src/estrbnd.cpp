@@ -4,7 +4,7 @@
 #include <tinker/detail/angpot.hh>
 #include <tinker/detail/strbnd.hh>
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void estrbnd_data(rc_op op)
 {
    if (!use_potent(strbnd_term))
@@ -43,4 +43,4 @@ void estrbnd(int vers)
 {
    estrbnd_acc(vers);
 }
-TINKER_NAMESPACE_END
+}

@@ -4,7 +4,7 @@
 #include "gpu_card.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup nvidia
  * \brief Launch a CUDA kernel. The launching is non-blocking if not using the
@@ -80,4 +80,4 @@ void launch_k1(int np, K k, Ts&&... a)
    const int bs = BLOCK_DIM;
    launch_k2(bs, np, k, std::forward<Ts>(a)...);
 }
-TINKER_NAMESPACE_END
+}

@@ -4,7 +4,7 @@
 #include <tinker/detail/pitors.hh>
 #include <tinker/detail/torpot.hh>
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void epitors_data(rc_op op)
 {
    if (!use_potent(pitors_term))
@@ -40,4 +40,4 @@ void epitors(int vers)
 {
    epitors_acc(vers);
 }
-TINKER_NAMESPACE_END
+}

@@ -6,7 +6,7 @@
 #include "md.h"
 #include "named_struct.h"
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <class Ver>
 void estrbnd_acc1()
 {
@@ -145,4 +145,4 @@ void estrbnd_acc(int vers)
    else if (vers == calc::v6)
       estrbnd_acc1<calc::V6>();
 }
-TINKER_NAMESPACE_END
+}

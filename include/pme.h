@@ -6,7 +6,7 @@
 #include "rc_man.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup pme
  * \brief Particle mesh ewald girds and parameters.
@@ -69,4 +69,4 @@ void fft_data(rc_op op);
 void fftfront(PMEUnit pme_u);
 void fftback(PMEUnit pme_u);
 using FFTPlanUnit = GenericUnit<FFTPlan, GenericUnitVersion::DisableOnDevice>;
-TINKER_NAMESPACE_END
+}

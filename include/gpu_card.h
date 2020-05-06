@@ -5,7 +5,7 @@
 
 
 #if TINKER_CUDART
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 std::string get_cuda_runtime_version_string();
 std::string get_cuda_driver_version_string();
 std::string get_thrust_version_string();
@@ -46,11 +46,11 @@ struct DeviceAttribute
 
 
 std::vector<DeviceAttribute>& get_device_attributes();
-TINKER_NAMESPACE_END
+}
 #endif
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /// \ingroup nvidia
 /// \brief Number of threads in a warp.
 constexpr unsigned WARP_SIZE = 32;
@@ -76,4 +76,4 @@ TINKER_EXTERN int ndevice, idevice;
 
 void gpu_card_data(rc_op op);
 int get_grid_size(int nthreads_per_block);
-TINKER_NAMESPACE_END
+}

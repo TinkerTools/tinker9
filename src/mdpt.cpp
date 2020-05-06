@@ -5,7 +5,7 @@
 #include <cassert>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void kinetic(T_prec& temp)
 {
 #if TINKER_CUDART
@@ -68,4 +68,4 @@ void halftime_correction(bool do_voltrial)
       monte_carlo_barostat(epot);
    }
 }
-TINKER_NAMESPACE_END
+}

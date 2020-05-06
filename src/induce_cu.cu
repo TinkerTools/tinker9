@@ -9,7 +9,7 @@
 #include "switch.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 __global__
 void sparse_precond_cu0(const real (*restrict rsd)[3],
                         const real (*restrict rsdp)[3],
@@ -226,4 +226,4 @@ void sparse_precond_apply_cu(const real (*rsd)[3], const real (*rsdp)[3],
                  TINKER_IMAGE_ARGS, cutbuf2, //
                  x, y, z, nuexclude, uexclude, uexclude_scale);
 }
-TINKER_NAMESPACE_END
+}

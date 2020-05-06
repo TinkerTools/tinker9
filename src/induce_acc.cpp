@@ -14,7 +14,7 @@
 #include <tinker/detail/polpot.hh>
 #include <tinker/detail/units.hh>
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void diag_precond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3],
                   real (*zrsdp)[3])
 {
@@ -452,4 +452,4 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
 #endif
       induce_mutual_pcg1_acc(uind, uinp);
 }
-TINKER_NAMESPACE_END
+}

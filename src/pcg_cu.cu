@@ -11,7 +11,7 @@
 #include <tinker/detail/units.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #define ITHREAD threadIdx.x + blockIdx.x* blockDim.x
 #define STRIDE  blockDim.x* gridDim.x
 
@@ -314,4 +314,4 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
    }
 }
-TINKER_NAMESPACE_END
+}

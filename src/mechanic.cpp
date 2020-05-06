@@ -73,7 +73,7 @@ extern "C"
 }
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void mechanic()
 {
    // set the bonded connectivity lists and active atoms
@@ -182,4 +182,4 @@ void mechanic()
       fatal_();
    }
 }
-TINKER_NAMESPACE_END
+}

@@ -5,7 +5,7 @@
 #include <tinker/detail/sizes.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void egeom_data(rc_op op)
 {
    if (!use_potent(geom_term))
@@ -38,4 +38,4 @@ void egeom(int vers)
 {
    egeom_acc(vers);
 }
-TINKER_NAMESPACE_END
+}

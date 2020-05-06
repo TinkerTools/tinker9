@@ -13,7 +13,7 @@
 #include "switch.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #define DEVICE_PTRS x, y, z, decx, decy, decz, pchg, nec, ec, vir_ec
 template <class Ver, class ETYP>
 void echarge_acc1()
@@ -386,4 +386,4 @@ void echarge_ewald_fphi_self_acc(int vers)
    else if (vers == calc::v6)
       echarge_acc3<calc::V6, 5>();
 }
-TINKER_NAMESPACE_END
+}

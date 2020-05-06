@@ -2,7 +2,7 @@
 #include "dmflag.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \brief
  * If PROCEED, directly return.
@@ -11,4 +11,4 @@ TINKER_NAMESPACE_BEGIN
  * If NEW_Q, synchronize the non-default OpenACC queue with the current thread.
  */
 void wait_queue(DMFlag flag);
-TINKER_NAMESPACE_END
+}

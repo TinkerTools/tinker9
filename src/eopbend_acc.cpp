@@ -22,7 +22,7 @@
  * ACOS(cosine) to calculate the angles.
  */
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <class Ver, class TYP>
 void eopbend_acc1()
 {
@@ -237,4 +237,4 @@ void eopbend_acc(int vers)
       assert(false);
    }
 }
-TINKER_NAMESPACE_END
+}

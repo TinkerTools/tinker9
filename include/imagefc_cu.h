@@ -2,7 +2,7 @@
 #include "mathfunc.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 __device__
 inline real3 ftoc_triclinic(real3 f, real3 l1, real3 l2, real3 l3)
 {
@@ -121,4 +121,4 @@ inline real3 imagectof_general(real xr, real yr, real zr, real3 ra, real3 rb,
 #   define imagectof(xr, yr, zr)                                               \
       imagectof_general(xr, yr, zr, recipa, recipb, recipc)
 #endif
-TINKER_NAMESPACE_END
+}

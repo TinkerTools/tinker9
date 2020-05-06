@@ -2,7 +2,7 @@
 #include "test.h"
 
 
-using namespace TINKER_NAMESPACE;
+using namespace tinker;
 
 
 TEST_CASE("Info", "[noassert][info]")

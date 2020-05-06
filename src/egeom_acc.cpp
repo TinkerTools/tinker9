@@ -9,7 +9,7 @@
 #include <cassert>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <class Ver>
 void egeom_acc1()
 {
@@ -143,4 +143,4 @@ void egeom_acc(int vers)
    else
       assert(false);
 }
-TINKER_NAMESPACE_END
+}

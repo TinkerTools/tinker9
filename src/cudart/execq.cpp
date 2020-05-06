@@ -3,7 +3,7 @@
 #include <cuda_runtime.h>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 class ExecQ::Impl
 {
 public:
@@ -36,4 +36,4 @@ void ExecQ::copy_bytes(void* dst, const void* src, size_t nbytes)
    check_rt(
       cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyDeviceToDevice, ptr->ss));
 }
-TINKER_NAMESPACE_END
+}

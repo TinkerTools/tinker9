@@ -2,7 +2,7 @@
 #include "macro.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 // electrostatic field due to permanent multipoles
 // clang-format off
 void dfield                  (real (*field)[3], real (*fieldp)[3]);
@@ -34,4 +34,4 @@ void ufield_ewald_real_acc       (const real (*uind)[3], const real (*uinp)[3], 
 void ufield_nonewald_cu          (const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
 void ufield_ewald_real_cu        (const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
 // clang-format on
-TINKER_NAMESPACE_END
+}

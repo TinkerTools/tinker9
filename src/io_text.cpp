@@ -6,7 +6,7 @@
 #include <sstream>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 bool Text::is_ws(char ch)
 {
    static std::string ws = whitespaces;
@@ -63,4 +63,4 @@ void Text::lowcase(std::string& s)
 {
    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
 }
-TINKER_NAMESPACE_END
+}

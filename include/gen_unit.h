@@ -4,7 +4,7 @@
 #include <memory>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 enum class GenericUnitVersion
 {
    DisableOnDevice,
@@ -240,4 +240,4 @@ public:
       mem_op::copyin(this->deviceptr(), &hobj, sizeof(T), flag);
    }
 };
-TINKER_NAMESPACE_END
+}

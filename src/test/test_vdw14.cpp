@@ -3,7 +3,7 @@
 #include "test_rt.h"
 
 
-using namespace TINKER_NAMESPACE;
+using namespace tinker;
 
 
 TEST_CASE("Vdw14-Trpcage", "[ff][evdw][lj][trpcage]")

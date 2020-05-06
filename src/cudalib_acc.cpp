@@ -9,7 +9,7 @@
 #endif
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #if TINKER_CUDART
 cudaStream_t nonblk;
 cublasHandle_t h_cublas;
@@ -71,4 +71,4 @@ void wait_queue(DMFlag flag)
    (void)flag;
 #endif
 }
-TINKER_NAMESPACE_END
+}

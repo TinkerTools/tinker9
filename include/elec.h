@@ -3,7 +3,7 @@
 #include "rc_man.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 extern real electric, dielec;
 bool use_ewald();
 
@@ -94,4 +94,4 @@ void chkpole_acc();
 void rotpole_acc();
 void torque_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz);
 // void torque_cu(int vers);
-TINKER_NAMESPACE_END
+}

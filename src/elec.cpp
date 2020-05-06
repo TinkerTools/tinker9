@@ -12,7 +12,7 @@
 #include <tinker/detail/mpole.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 real electric, dielec;
 
 
@@ -247,4 +247,4 @@ void torque(int vers)
    else if (use_potent(polar_term))
       torque_acc(vers, depx, depy, depz);
 }
-TINKER_NAMESPACE_END
+}

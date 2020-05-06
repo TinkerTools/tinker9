@@ -2,7 +2,7 @@
 #include "macro.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 typedef enum
 {
    bond_term,    // eb
@@ -38,4 +38,4 @@ typedef enum
 
 int use_potent(potent_t term);
 int count_bonded_term(potent_t term);
-TINKER_NAMESPACE_END
+}

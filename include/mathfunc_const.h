@@ -3,7 +3,7 @@
 #include <cmath>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /// \ingroup math
 /// \f$ \sqrt[6]{2} \f$
 constexpr real twosix = 1.12246204830937298143;
@@ -37,4 +37,4 @@ constexpr double radian_dp = (180 / M_PI);
 /// \f$ \pi/180 \f$
 constexpr real _1radian = 0.01745329251994329576924;
 constexpr double _1radian_dp = (M_PI / 180);
-TINKER_NAMESPACE_END
+}

@@ -1,7 +1,7 @@
 #include "io_text.h"
 #include "test.h"
 
-using namespace TINKER_NAMESPACE;
+using namespace tinker;
 
 TEST_CASE("Text", "[util][text]")
 {

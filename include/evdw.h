@@ -9,7 +9,7 @@
  */
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup vdw
  * \brief Constant flags for the VDW energy functions.
@@ -194,4 +194,4 @@ void egauss_acc(int);
 
 
 void evdw(int vers);
-TINKER_NAMESPACE_END
+}

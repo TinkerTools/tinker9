@@ -12,7 +12,7 @@
 #include "switch.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #define ECHARGE_ARGS                                                           \
    size_t bufsize, count_buffer restrict nec, energy_buffer restrict ec,       \
       virial_buffer restrict vir_ec, grad_prec *restrict gx,                   \
@@ -492,4 +492,4 @@ void echarge_ewald_fphi_self_cu(int vers)
    else if (vers == calc::v6)
       echarge_fphi_self_cu<calc::V6>();
 }
-TINKER_NAMESPACE_END
+}

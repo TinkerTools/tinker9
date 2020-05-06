@@ -5,7 +5,7 @@
 #include <tinker/detail/sizes.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void group_data(rc_op op)
 {
    if (op & rc_dealloc) {
@@ -68,4 +68,4 @@ void group_data(rc_op op)
       darray::copyin(WAIT_NEW_Q, wgrpv.size(), st.wgrp, wgrpv.data());
    }
 }
-TINKER_NAMESPACE_END
+}

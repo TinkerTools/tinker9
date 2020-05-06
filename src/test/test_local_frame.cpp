@@ -4,7 +4,7 @@
 #include "test_rt.h"
 #include <tinker/detail/units.hh>
 
-using namespace TINKER_NAMESPACE;
+using namespace tinker;
 
 /**
  * \brief

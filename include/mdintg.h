@@ -10,7 +10,7 @@
  */
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void mdrest(int istep);
 void mdrest_acc(int istep);
 
@@ -25,10 +25,10 @@ void propagate(int nsteps, time_prec dt_ps);
 
 
 void integrate_data(rc_op);
-TINKER_NAMESPACE_END
+}
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void velocity_verlet(int istep, time_prec dt_ps);
 
 
@@ -38,4 +38,4 @@ constexpr unsigned RESPA_FAST = 1; // 2**0, fast group shall be 0.
 constexpr unsigned RESPA_SLOW = 2; // 2**1, slow group shall be 1.
 const TimeScaleConfig& respa_tsconfig();
 void respa_fast_slow(int istep, time_prec dt_ps);
-TINKER_NAMESPACE_END
+}

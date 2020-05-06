@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup error
  * \brief Print the call stack.
@@ -101,4 +101,4 @@ public:
 
 
 #define always_check_rt(...) TINKER_ALWAYS_CHECK_RT_(__VA_ARGS__)(__VA_ARGS__)
-TINKER_NAMESPACE_END
+}

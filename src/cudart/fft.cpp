@@ -5,7 +5,7 @@
 #include <cufft.h>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 struct FFTPlanCUFFT : public FFTPlan
 {
    cufftHandle h;
@@ -92,4 +92,4 @@ void fftback(PMEUnit pme_u)
    static_assert(false, "");
 #endif
 }
-TINKER_NAMESPACE_END
+}

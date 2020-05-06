@@ -4,7 +4,7 @@
 #include <tinker/detail/inform.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void x_testgrad(int, char**)
 {
    initial();
@@ -90,4 +90,4 @@ void x_testgrad(int, char**)
    finish();
    TINKER_RT(final)();
 }
-TINKER_NAMESPACE_END
+}

@@ -71,7 +71,7 @@
 #endif
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 using time_prec = mixed;
 using T_prec = mixed;
 using mass_prec = real;
@@ -86,4 +86,4 @@ using grad_prec = fixed;
 #else
 using grad_prec = real;
 #endif
-TINKER_NAMESPACE_END
+}

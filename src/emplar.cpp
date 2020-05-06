@@ -11,7 +11,7 @@
 #include <tinker/detail/sizes.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void emplar_data(rc_op op)
 {
    // implies must use cuda and PBC
@@ -372,4 +372,4 @@ void emplar(int vers)
    TINKER_THROW("EMPLAR is only available for PBC systems in CUDA.\n");
 #endif
 }
-TINKER_NAMESPACE_END
+}

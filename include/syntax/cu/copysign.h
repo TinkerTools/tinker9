@@ -2,7 +2,7 @@
 #include "macro.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup math
  * \brief
@@ -27,4 +27,4 @@ inline int int_copysign_if(int a, int b)
       ans = -ans;
    return ans;
 }
-TINKER_NAMESPACE_END
+}

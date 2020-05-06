@@ -4,7 +4,7 @@
 #include <type_traits>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup mem
  * \brief
@@ -36,4 +36,4 @@ struct deduce_ptr<T (*)[N]>
    typedef T type;
    static constexpr size_t n = N;
 };
-TINKER_NAMESPACE_END
+}

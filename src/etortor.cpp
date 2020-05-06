@@ -8,7 +8,7 @@
 #include <tinker/detail/torpot.hh>
 #include <tinker/detail/tortor.hh>
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void etortor_data(rc_op op)
 {
    if (!use_potent(tortor_term))
@@ -122,4 +122,4 @@ void etortor(int vers)
 {
    etortor_acc(vers);
 }
-TINKER_NAMESPACE_END
+}

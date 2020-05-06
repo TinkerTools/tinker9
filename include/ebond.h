@@ -4,7 +4,7 @@
 #include "rc_man.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 enum class ebond_t
 {
    harmonic,
@@ -30,4 +30,4 @@ void ebond_data(rc_op op);
 
 void ebond(int vers);
 void ebond_acc(int);
-TINKER_NAMESPACE_END
+}

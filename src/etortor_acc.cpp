@@ -6,7 +6,7 @@
 
 // TODO: test chiral center
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 // see also bicubic.f
 #define BCUCOF_                                                                \
    real c[4][4];                                                               \
@@ -404,4 +404,4 @@ void etortor_acc(int vers)
    else if (vers == calc::v6)
       etortor_acc1<calc::V6>();
 }
-TINKER_NAMESPACE_END
+}

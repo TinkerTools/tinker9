@@ -10,7 +10,7 @@
 #include "switch.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void ehal_reduce_xyz_acc()
 {
    #pragma acc parallel loop independent async\
@@ -270,4 +270,4 @@ void ehal_acc(int vers)
    else if (vers == calc::v6)
       ehal_acc1<calc::V6>();
 }
-TINKER_NAMESPACE_END
+}

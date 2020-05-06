@@ -15,7 +15,7 @@
 #include <tinker/detail/usage.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 int rc_flag = 0;
 
 
@@ -277,4 +277,4 @@ void vel_data(rc_op op)
       darray::copyin2(WAIT_NEW_Q, 2, 3, n, vz, moldyn::v);
    }
 }
-TINKER_NAMESPACE_END
+}

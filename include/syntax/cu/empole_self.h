@@ -3,7 +3,7 @@
 #include "md.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <bool do_a>
 __global__
 void empole_self_cu(size_t bufsize, count_buffer restrict nem,
@@ -42,4 +42,4 @@ void empole_self_cu(size_t bufsize, count_buffer restrict nem,
          atomic_add(1, nem, offset);
    }
 }
-TINKER_NAMESPACE_END
+}

@@ -2,7 +2,7 @@
 #include "macro.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <class T>
 struct OpPlus
 {
@@ -157,4 +157,4 @@ void reduce2(T (*g_odata)[HN], const T (*g_idata)[N], size_t n, Op op = Op())
       for (int j = 0; j < HN; ++j)
          g_odata[blockIdx.x][j] = sd[j][0];
 }
-TINKER_NAMESPACE_END
+}

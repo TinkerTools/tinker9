@@ -5,7 +5,7 @@
 #include "potent.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void energy_data(rc_op op)
 {
    if ((rc_flag & calc::vmask) == 0)
@@ -168,4 +168,4 @@ void energy(int vers)
 {
    energy(vers, 1, default_tsconfig());
 }
-TINKER_NAMESPACE_END
+}

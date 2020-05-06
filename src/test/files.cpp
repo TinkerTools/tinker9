@@ -1,6 +1,6 @@
 #include "files.h"
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 // prm files
 #include "file/amoeba09.hh"
 #include "file/amoebabio09.hh"
@@ -35,4 +35,4 @@ TINKER_NAMESPACE_BEGIN
 
 // potassium ion and water
 #include "file/potassium.hh"
-TINKER_NAMESPACE_END
+}

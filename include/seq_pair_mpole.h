@@ -4,7 +4,7 @@
 #include "seq_damp.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup mpole
  * \brief
@@ -235,4 +235,4 @@ void pair_mpole(                                    //
          term5 * qkrz - term6 * (qkirz - qikz);
    } // end if (do_g)
 }
-TINKER_NAMESPACE_END
+}

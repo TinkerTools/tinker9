@@ -4,7 +4,7 @@
 #include <tinker/detail/molcul.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void molecule_data(rc_op op)
 {
    if (op & rc_dealloc) {
@@ -42,4 +42,4 @@ void molecule_data(rc_op op)
       darray::copyin(WAIT_NEW_Q, st.nmol, st.molmass, molcul::molmass);
    }
 }
-TINKER_NAMESPACE_END
+}

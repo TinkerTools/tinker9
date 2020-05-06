@@ -2,7 +2,7 @@
 #include "macro.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup pme
  * \brief B-spline coefficients and derivatives for a single %PME atomic site
@@ -217,4 +217,4 @@ void bsplgen2(real w, real* restrict thetai, int k, int padded_n,
 #   undef bsbuild
 }
 #endif
-TINKER_NAMESPACE_END
+}

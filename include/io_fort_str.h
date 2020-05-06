@@ -3,7 +3,7 @@
 #include <string>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 class FortranStringView;
 using fstr_view = FortranStringView;
 
@@ -101,4 +101,4 @@ public:
     */
    FortranStringView operator()(int begin1) const;
 };
-TINKER_NAMESPACE_END
+}

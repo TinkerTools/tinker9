@@ -4,7 +4,7 @@
 #include <vector>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup io
  * \brief Plain ascii text stored by lines.
@@ -50,4 +50,4 @@ public:
    /// \brief Transform a string to lower case.
    static void lowcase(std::string&);
 };
-TINKER_NAMESPACE_END
+}

@@ -1,7 +1,7 @@
 #pragma once
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 // prm files
 namespace commit_6fe8e913 {
 extern const char* water03_prm;
@@ -63,4 +63,4 @@ extern const char* arbox_arc;
 // potassium ion and water
 extern const char* kwater_key;
 extern const char* kwater_xyz;
-TINKER_NAMESPACE_END
+}

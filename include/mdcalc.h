@@ -8,7 +8,7 @@
  */
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 namespace calc {
 /// \ingroup md_calc
 /// Use coordinates.
@@ -81,4 +81,4 @@ struct EnergyVersion
    static_assert(a ? (bool)e : true, "If calc::analyz, must calc::energy.");
    static constexpr int value = USE;
 };
-TINKER_NAMESPACE_END
+}

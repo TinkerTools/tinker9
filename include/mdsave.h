@@ -9,10 +9,10 @@
  */
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void mdsave_async(int istep, time_prec dt);
 void mdsave_synchronize();
 
 
 void mdsave_data(rc_op);
-TINKER_NAMESPACE_END
+}

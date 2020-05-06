@@ -4,7 +4,7 @@
 #include <cmath>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 SEQ_ROUTINE
 inline float erfcf_hastings(float x)
 {
@@ -16,4 +16,4 @@ inline float erfcf_hastings(float x)
               t) *
       t * exp2a;
 }
-TINKER_NAMESPACE_END
+}

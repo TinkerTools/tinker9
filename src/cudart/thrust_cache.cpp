@@ -3,7 +3,7 @@
 #include "md.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 ThrustCache::ThrustCache()
    : nbytes(0)
    , ptr(nullptr)
@@ -50,4 +50,4 @@ void thrust_cache_alloc()
    const size_t numbyte = 10 * n * sizeof(real);
    thrust_cache.allocate(numbyte);
 }
-TINKER_NAMESPACE_END
+}

@@ -13,7 +13,7 @@ extern "C"
 }
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <>
 std::string translate_error_code<cudaError_t>(cudaError_t error_num)
 {
@@ -40,4 +40,4 @@ std::string translate_error_code<nvmlReturn_enum>(nvmlReturn_enum error_num)
 {
    return "";
 }
-TINKER_NAMESPACE_END
+}

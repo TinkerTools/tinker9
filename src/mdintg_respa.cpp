@@ -11,7 +11,7 @@
 #include <tinker/detail/mdstuf.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 grad_prec *gx1, *gy1, *gz1;
 grad_prec *gx2, *gy2, *gz2;
 
@@ -179,4 +179,4 @@ void respa_fast_slow(int istep, time_prec dt_ps)
    T_prec temp;
    temper(dt_ps, temp);
 }
-TINKER_NAMESPACE_END
+}

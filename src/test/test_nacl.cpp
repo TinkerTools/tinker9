@@ -2,7 +2,7 @@
 #include "test.h"
 #include "test_rt.h"
 
-using namespace TINKER_NAMESPACE;
+using namespace tinker;
 
 #define COMPARE_CODE_BLOCK1_                                                   \
    {                                                                           \

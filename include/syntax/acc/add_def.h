@@ -4,7 +4,7 @@
 #include <type_traits>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup atomic
  * \brief Add `value` to `buffer[offset]`.
@@ -100,4 +100,4 @@ G acc_to(T val)
    else
       return static_cast<G>(val);
 }
-TINKER_NAMESPACE_END
+}

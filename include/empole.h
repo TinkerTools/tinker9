@@ -2,7 +2,7 @@
 #include "elec.h"
 #include "energy_buffer.h"
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 TINKER_EXTERN real m2scale, m3scale, m4scale, m5scale;
 
 TINKER_EXTERN int nmexclude;
@@ -29,4 +29,4 @@ void empole_ewald_recip_acc(int vers);
 void empole_ewald_real_self_acc(int vers);
 void empole_nonewald_cu(int vers);
 void empole_ewald_real_self_cu(int vers);
-TINKER_NAMESPACE_END
+}

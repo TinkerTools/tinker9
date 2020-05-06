@@ -2,7 +2,7 @@
 #include "tinker_rt.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 int pltfm_config;
 
 
@@ -43,4 +43,4 @@ void platform_data(rc_op op)
 #endif
    }
 }
-TINKER_NAMESPACE_END
+}

@@ -2,7 +2,7 @@
 #include "seq_def.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup ff
  * \brief Smooth function `F: [cut,off]->[1,0]`.
@@ -34,4 +34,4 @@ void switch_taper5(real rik, real cut, real off, real& restrict taper,
       dtaper = 30 * (x * (1 - x)) * (x * (1 - x)) * rinv;
    }
 }
-TINKER_NAMESPACE_END
+}

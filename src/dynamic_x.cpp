@@ -6,7 +6,7 @@
 #include <tinker/detail/keys.hh>
 #include <tinker/detail/mdstuf.hh>
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void x_dynamic(int, char**)
 {
    char string[240];
@@ -203,4 +203,4 @@ void x_dynamic(int, char**)
 
    TINKER_RT(final)();
 }
-TINKER_NAMESPACE_END
+}

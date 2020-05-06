@@ -1,12 +1,12 @@
 #include "macro.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void initial();
 void mechanic();
-TINKER_NAMESPACE_END
+}
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void mechanic2();
-TINKER_NAMESPACE_END
+}

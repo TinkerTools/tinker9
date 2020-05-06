@@ -57,21 +57,6 @@ to mimic its name mangling.
 
 
 /**
- * \def TINKER_NAMESPACE
- * \ingroup macro
- *
- * \def TINKER_NAMESPACE_BEGIN
- * \ingroup macro
- *
- * \def TINKER_NAMESPACE_END
- * \ingroup macro
- */
-#define TINKER_NAMESPACE       tinker
-#define TINKER_NAMESPACE_BEGIN namespace TINKER_NAMESPACE {
-#define TINKER_NAMESPACE_END   }
-
-
-/**
  * \def TINKER_DEBUG
  * \ingroup macro
  * `TINKER_DEBUG` either expands to 0 or 1. It expands to 1 if and only if
@@ -212,7 +197,7 @@ to mimic its name mangling.
 #endif
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #if TINKER_DOUBLE_PRECISION
 #   define TINKER_REAL_SIZE  8
 #   define TINKER_MIXED_SIZE 8
@@ -234,7 +219,7 @@ using mixed = float;
 
 
 using fixed = unsigned long long;
-TINKER_NAMESPACE_END
+}
 
 
 #if defined(__INTEL_COMPILER)

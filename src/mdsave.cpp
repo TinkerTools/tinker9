@@ -15,7 +15,7 @@
 #include <tinker/detail/units.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 namespace {
 std::mutex mtx_dup, mtx_write;
 std::condition_variable cv_dup, cv_write;
@@ -191,4 +191,4 @@ void mdsave_data(rc_op op)
       idle_write = true;
    }
 }
-TINKER_NAMESPACE_END
+}

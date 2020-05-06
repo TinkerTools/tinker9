@@ -2,7 +2,7 @@
 #include "wait_queue.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 bool ResourceManagement::will_dealloc_() const
 {
    return op_ & rc_dealloc;
@@ -47,7 +47,7 @@ void finish()
    device_data(op);
    host_data(op);
 }
-TINKER_NAMESPACE_END
+}
 
 
 #include "gpu_card.h"
@@ -67,7 +67,7 @@ TINKER_NAMESPACE_END
 #include "osrw.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void host_data(rc_op op)
 {
    rc_man rand42{random_data, op};
@@ -101,7 +101,7 @@ void device_data(rc_op op)
 
    rc_man md42{md_data, op};
 }
-TINKER_NAMESPACE_END
+}
 
 
 #if defined(TINKER_GFORTRAN)
@@ -109,7 +109,7 @@ TINKER_NAMESPACE_END
 extern "C" void _gfortran_set_args(int, char**);
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void fortran_runtime_initialize(int argc, char** argv)
 {
    _gfortran_set_args(argc, argv);
@@ -117,7 +117,7 @@ void fortran_runtime_initialize(int argc, char** argv)
 
 
 void fortran_runtime_finish() {}
-TINKER_NAMESPACE_END
+}
 
 
 #elif defined(TINKER_IFORT)
@@ -128,7 +128,7 @@ extern "C" int for__l_argc;
 extern "C" char** for__a_argv;
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void fortran_runtime_initialize(int argc, char** argv)
 {
    // what a surprise I had to use these undocumented variables here
@@ -142,5 +142,5 @@ void fortran_runtime_finish()
 {
    for_rtl_finish_();
 }
-TINKER_NAMESPACE_END
+}
 #endif

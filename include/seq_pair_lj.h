@@ -3,7 +3,7 @@
 #include "seq_def.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup vdw
  */
@@ -21,4 +21,4 @@ void pair_lj(real rik, real rik2, real rv, real eps, real vscalek,
       de = eps * p6 * (p6 - 1) * (-12 * REAL_RECIP(rik));
    }
 }
-TINKER_NAMESPACE_END
+}

@@ -6,7 +6,7 @@
 #include <tinker/detail/angbnd.hh>
 #include <tinker/detail/angpot.hh>
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void eangle_data(rc_op op)
 {
    if (!use_potent(angle_term) && !use_potent(strbnd_term) &&
@@ -63,4 +63,4 @@ void eangle(int vers)
 {
    eangle_acc(vers);
 }
-TINKER_NAMESPACE_END
+}

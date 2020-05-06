@@ -2,6 +2,6 @@
 #include "macro.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 extern int async_queue;
-TINKER_NAMESPACE_END
+}

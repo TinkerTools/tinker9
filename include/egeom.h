@@ -4,7 +4,7 @@
 #include "rc_man.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 // group distance restraints
 /// \ingroup geom
 /// \brief Number of group distance restraints to be applied.
@@ -27,4 +27,4 @@ void egeom_data(rc_op);
 
 void egeom(int vers);
 void egeom_acc(int);
-TINKER_NAMESPACE_END
+}

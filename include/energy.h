@@ -22,7 +22,7 @@
 #include "evdw.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig);
 
 
@@ -48,4 +48,4 @@ void energy(int vers);
 
 
 void energy_data(rc_op);
-TINKER_NAMESPACE_END
+}

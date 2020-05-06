@@ -7,7 +7,7 @@
 #include "seq_bsplgen.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <class T>
 void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
 {
@@ -1051,4 +1051,4 @@ void fphi_to_cphi_acc(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
       cphi[iatom][9] = cphii[9];
    }
 }
-TINKER_NAMESPACE_END
+}

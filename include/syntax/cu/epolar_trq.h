@@ -2,7 +2,7 @@
 #include "macro.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 __global__
 static void epolar_trq_cu(real* restrict trqx, real* restrict trqy,
                           real* restrict trqz, int n,
@@ -39,4 +39,4 @@ static void epolar_trq_cu(real* restrict trqx, real* restrict trqy,
       trqz[i] += tep3;
    }
 }
-TINKER_NAMESPACE_END
+}

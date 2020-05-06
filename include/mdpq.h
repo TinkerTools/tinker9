@@ -10,7 +10,7 @@
  */
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 extern int rc_flag;
 
 
@@ -171,4 +171,4 @@ void propagate_velocity2_acc(time_prec, const fixed*, const fixed*,
 
 void mass_data(rc_op);
 void vel_data(rc_op);
-TINKER_NAMESPACE_END
+}

@@ -4,7 +4,7 @@
 #include "version.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 namespace {
 const char* get_SHA1()
 {
@@ -109,4 +109,4 @@ void x_info(int, char**)
    gpu_card_data(rc_dealloc);
    platform_data(rc_dealloc);
 }
-TINKER_NAMESPACE_END
+}

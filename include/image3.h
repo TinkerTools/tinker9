@@ -4,7 +4,7 @@
 #include "seq_def.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 // SEQ_ROUTINE
 // inline void image_triclinic(real& restrict xr, real& restrict yr,
 //                             real& restrict zr, real3 l1, real3 l2, real3 l3,
@@ -180,4 +180,4 @@ inline real imagen2_general(real& xr, real& yr, real& zr, BoxShape sh, real3 l1,
    }
    return xr * xr + yr * yr + zr * zr;
 }
-TINKER_NAMESPACE_END
+}

@@ -8,7 +8,7 @@
 #include <tinker/detail/units.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void mdrest_acc(int istep)
 {
    if (!mdstuf::dorest)
@@ -158,4 +158,4 @@ void mdrest_acc(int istep)
             vang[0], vang[1], vang[2], "", erot);
    }
 }
-TINKER_NAMESPACE_END
+}

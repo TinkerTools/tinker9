@@ -7,7 +7,7 @@
 #include <vector>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 namespace {
 const char* main_name = "tinker.gpu";
 const std::string analyze_name = "analyze";
@@ -50,14 +50,13 @@ void x_help(int, char**)
       fprintf(stdout, "       %s\n", k.c_str());
    }
 }
-TINKER_NAMESPACE_END
-
-
-using namespace TINKER_NAMESPACE;
+}
 
 
 int main(int argc, char** argv)
 {
+   using namespace tinker;
+
    if (argc < 2) {
       goto help_message;
    }

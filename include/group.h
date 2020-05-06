@@ -3,7 +3,7 @@
 #include "rc_man.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /// \brief Partitioning of system into atom groups.
 struct Group
 {
@@ -24,4 +24,4 @@ TINKER_EXTERN Group grp;
 
 
 void group_data(rc_op);
-TINKER_NAMESPACE_END
+}

@@ -11,7 +11,7 @@
 #include "switch.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #define DFIELD_ARGS                                                            \
    real(*restrict field)[3], real(*restrict fieldp)[3],                        \
       const real *restrict thole, const real *restrict pdamp,                  \
@@ -443,4 +443,4 @@ void ufield_nonewald_cu(const real (*uind)[3], const real (*uinp)[3],
                  uexclude, uexclude_scale);
    }
 }
-TINKER_NAMESPACE_END
+}

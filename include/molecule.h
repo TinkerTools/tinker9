@@ -3,7 +3,7 @@
 #include "rc_man.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /// \brief Individual molecules in current system.
 struct Molecule
 {
@@ -24,4 +24,4 @@ TINKER_EXTERN Molecule molecule;
 
 
 void molecule_data(rc_op);
-TINKER_NAMESPACE_END
+}

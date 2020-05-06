@@ -39,7 +39,7 @@
  */
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #define HAL_ARGS                                                               \
    size_t bufsize, count_buffer restrict nev, energy_buffer restrict ev,       \
       virial_buffer restrict vir_ev, grad_prec *restrict gxred,                \
@@ -385,4 +385,4 @@ void ehal_cu(int vers)
    else if (vers == calc::v6)
       ehal_cu3<calc::V6>();
 }
-TINKER_NAMESPACE_END
+}

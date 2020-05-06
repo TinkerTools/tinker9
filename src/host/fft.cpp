@@ -3,7 +3,7 @@
 #include <fftw3.h>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 struct FFTPlanFFTW : public FFTPlan
 {
 #if TINKER_REAL_SIZE == 4
@@ -120,4 +120,4 @@ void fftback(PMEUnit pme_u)
    static_assert(false, "");
 #endif
 }
-TINKER_NAMESPACE_END
+}

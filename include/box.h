@@ -3,7 +3,7 @@
 #include "realn.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup box
  */
@@ -127,4 +127,4 @@ void box_data(rc_op);
  * \note The volume is undefined for the non-PBC situation.
  */
 real volbox();
-TINKER_NAMESPACE_END
+}

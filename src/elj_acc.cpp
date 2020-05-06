@@ -10,7 +10,7 @@
 #include "switch.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #define DEVICE_PTRS                                                            \
    x, y, z, devx, devy, devz, jvdw, radmin, epsilon, nev, ev, vir_ev
 template <class Ver>
@@ -289,4 +289,4 @@ void elj_acc(int vers)
 void ebuck_acc(int) {}
 void emm3hb_acc(int) {}
 void egauss_acc(int) {}
-TINKER_NAMESPACE_END
+}

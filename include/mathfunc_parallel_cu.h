@@ -3,7 +3,7 @@
 #include <cstddef>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <class T>
 T reduce_sum_cu(const T* a, size_t nelem, DMFlag flag);
 
@@ -18,4 +18,4 @@ T reduce_logic_or_cu(const T* a, size_t nelem, DMFlag flag);
 
 template <class T>
 void dotprod_cu(T* ans, const T* a, const T* b, int nelem, DMFlag flag);
-TINKER_NAMESPACE_END
+}

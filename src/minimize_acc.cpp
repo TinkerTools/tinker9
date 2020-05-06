@@ -2,7 +2,7 @@
 #include "wait_queue.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void minimize_set_xx_by_pos_acc(int n, double* xx, const double* scale)
 {
    #pragma acc parallel loop independent async deviceptr(xpos,ypos,zpos)\
@@ -29,4 +29,4 @@ void minimize_set_pos_acc(int n, const double* xx, const double* scale)
    }
    wait_queue(WAIT_NEW_Q);
 }
-TINKER_NAMESPACE_END
+}

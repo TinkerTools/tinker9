@@ -5,7 +5,7 @@
 #include "nblist.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 Spatial::~Spatial()
 {
    // output
@@ -119,4 +119,4 @@ void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer,
 
    u.update_deviceptr(st, WAIT_NEW_Q);
 }
-TINKER_NAMESPACE_END
+}

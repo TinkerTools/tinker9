@@ -3,7 +3,7 @@
 #include <tinker/detail/argue.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void nextarg(size_t len, char* str, int& exist)
 {
    const char blank = ' ';
@@ -122,4 +122,4 @@ void get_kbool(std::string k, T& v, bool v_if_k_not_found)
 }
 template void get_kbool(std::string k, bool& v, bool vdefault);
 template void get_kbool(std::string k, int& v, bool vdefault);
-TINKER_NAMESPACE_END
+}

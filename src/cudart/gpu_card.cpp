@@ -8,7 +8,7 @@
 #include <thrust/version.h>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 std::string get_cuda_runtime_version_string()
 {
    int ver, major, minor;
@@ -301,4 +301,4 @@ int get_grid_size(int nthreads_per_block)
 
    return a.multiprocessor_count * max_nblocks_per_MP;
 }
-TINKER_NAMESPACE_END
+}

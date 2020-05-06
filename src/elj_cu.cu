@@ -11,7 +11,7 @@
 #include "switch.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #define LJ_PARA                                                                \
    size_t bufsize, count_buffer restrict nev, energy_buffer restrict ev,       \
       virial_buffer restrict vir_ev, grad_prec *restrict gx,                   \
@@ -422,4 +422,4 @@ void elj_cu(int vers)
    else if (vers == calc::v6)
       elj_cu4<calc::V6>();
 }
-TINKER_NAMESPACE_END
+}

@@ -4,7 +4,7 @@
 #include <string>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup md_intg
  * \brief Time scale configuration that assigns a group number to every energy
@@ -53,4 +53,4 @@ using TimeScaleConfig = std::map<std::string, int>;
  * group 0, and can only be used via flag 1.
  */
 const TimeScaleConfig& default_tsconfig();
-TINKER_NAMESPACE_END
+}

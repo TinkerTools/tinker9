@@ -4,7 +4,7 @@
 #include <sstream>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup io
  * \brief Read ONE value from a string or an array and save to `arg`;
@@ -81,4 +81,4 @@ void read_stream(Arg& arg, std::string prompt, Arg auto_fill, Invalid&& invalid,
       (void)0;
    }
 }
-TINKER_NAMESPACE_END
+}

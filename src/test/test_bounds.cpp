@@ -23,7 +23,7 @@ bondterm                       only
 }
 
 
-using namespace TINKER_NAMESPACE;
+using namespace tinker;
 
 
 TEST_CASE("Bounds", "[ff][box]")

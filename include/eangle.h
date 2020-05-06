@@ -3,7 +3,7 @@
 #include "energy_buffer.h"
 #include "rc_man.h"
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 enum class eangle_t : int
 {
    in_plane,
@@ -31,4 +31,4 @@ void eangle_data(rc_op op);
 
 void eangle(int vers);
 void eangle_acc(int);
-TINKER_NAMESPACE_END
+}

@@ -25,7 +25,7 @@
  * the later expression gives a better numerical result.
  */
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <class Ver>
 void eangle_acc1()
 {
@@ -287,4 +287,4 @@ void eangle_acc(int vers)
    else if (vers == calc::v6)
       eangle_acc1<calc::V6>();
 }
-TINKER_NAMESPACE_END
+}

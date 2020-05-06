@@ -4,7 +4,7 @@
 #include "seq_damp.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 struct PairPolarGrad
 {
    real frcx, frcy, frcz;
@@ -347,4 +347,4 @@ void pair_polar(                                                              //
       pgrad.frcz *= f;
    }
 }
-TINKER_NAMESPACE_END
+}

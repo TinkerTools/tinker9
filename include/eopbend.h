@@ -3,7 +3,7 @@
 #include "energy_buffer.h"
 #include "rc_man.h"
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 enum class eopbend_t
 {
    w_d_c,
@@ -26,4 +26,4 @@ void eopbend_data(rc_op op);
 
 void eopbend(int vers);
 void eopbend_acc(int);
-TINKER_NAMESPACE_END
+}

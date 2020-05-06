@@ -3,7 +3,7 @@
 #include "seq_def.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 // ufield, PCG
 SEQ_ROUTINE
 inline void damp_thole2(real r, real pdi, real pti, real pdk, real ptk,
@@ -103,4 +103,4 @@ inline void damp_ewald(real* restrict bn, real r, real rinv, real rr2,
       bn[j] = ((j + j - 1) * bn[j - 1] + alsq2n * exp2a) * rr2;
    }
 }
-TINKER_NAMESPACE_END
+}

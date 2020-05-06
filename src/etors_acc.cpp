@@ -6,7 +6,7 @@
 
 // TOOD: use_smooth version
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <class Ver>
 void etors_acc1()
 {
@@ -201,4 +201,4 @@ void etors_acc(int vers)
    else if (vers == calc::v6)
       etors_acc1<calc::V6>();
 }
-TINKER_NAMESPACE_END
+}

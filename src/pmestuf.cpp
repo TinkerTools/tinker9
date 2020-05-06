@@ -1,7 +1,7 @@
 #include "pmestuf.h"
 #include "error.h"
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void bspline_fill(PMEUnit pme_u, int level)
 {
 #if TINKER_CUDART
@@ -170,4 +170,4 @@ void fphi_to_cphi(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
 {
    fphi_to_cphi_acc(pme_u, fphi, cphi);
 }
-TINKER_NAMESPACE_END
+}

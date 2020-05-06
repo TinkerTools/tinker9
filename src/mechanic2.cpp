@@ -2,9 +2,9 @@
 #include "subroutine.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void mechanic2()
 {
    osrw_mech();
 }
-TINKER_NAMESPACE_END
+}

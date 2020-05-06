@@ -4,7 +4,7 @@
 #include <tinker/detail/urey.hh>
 #include <tinker/detail/urypot.hh>
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void eurey_data(rc_op op)
 {
    if (!use_potent(urey_term))
@@ -44,4 +44,4 @@ void eurey(int vers)
 {
    eurey_acc(vers);
 }
-TINKER_NAMESPACE_END
+}

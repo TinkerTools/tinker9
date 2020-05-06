@@ -2,7 +2,7 @@
 #include "epolar.h"
 #include "md.h"
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void epolar0_dotprod_acc(const real (*gpu_uind)[3], const real (*gpu_udirp)[3])
 {
    const real f = -0.5 * electric / dielec;
@@ -19,4 +19,4 @@ void epolar0_dotprod_acc(const real (*gpu_uind)[3], const real (*gpu_udirp)[3])
       atomic_add(f * e, ep, offset);
    }
 }
-TINKER_NAMESPACE_END
+}

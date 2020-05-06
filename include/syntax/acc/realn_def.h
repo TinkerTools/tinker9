@@ -2,7 +2,7 @@
 #include "macro.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 struct alignas(8) int2
 {
    int x, y;
@@ -127,4 +127,4 @@ inline double4 make_double4(double x, double y, double z, double w)
    double4 f{x, y, z, w};
    return f;
 }
-TINKER_NAMESPACE_END
+}

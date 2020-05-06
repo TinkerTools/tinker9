@@ -3,7 +3,7 @@
 #include "potent.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void osrw_altele_acc(double el)
 {
    bool use_ec = use_potent(charge_term);
@@ -114,4 +114,4 @@ void osrw_alttor_acc(double tl)
       }
    }
 }
-TINKER_NAMESPACE_END
+}

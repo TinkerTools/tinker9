@@ -8,7 +8,7 @@
  */
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void kinetic(T_prec& temp);
 void kinetic_acc(T_prec&);
 void kinetic_cu(T_prec&);
@@ -81,4 +81,4 @@ void monte_carlo_barostat_acc(energy_prec epot);
  *    [URL](https://doi.org/10.1080/00268977200100031)
  */
 void halftime_correction(bool do_voltrial);
-TINKER_NAMESPACE_END
+}

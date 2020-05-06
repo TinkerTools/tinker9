@@ -11,7 +11,7 @@
 #include "switch.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #define EMPOLE_ARGS                                                            \
    size_t bufsize, count_buffer restrict nem, energy_buffer restrict em,       \
       virial_buffer restrict vir_em, grad_prec *restrict gx,                   \
@@ -382,4 +382,4 @@ void empole_ewald_real_self_cu(int vers)
       empole_cu<calc::V6, EWALD>();
    }
 }
-TINKER_NAMESPACE_END
+}

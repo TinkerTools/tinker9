@@ -6,7 +6,7 @@
 #include <cmath>
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/boxes.hh>
-using namespace TINKER_NAMESPACE;
+using namespace tinker;
 
 
 namespace {

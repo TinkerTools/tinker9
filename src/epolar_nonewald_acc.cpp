@@ -9,7 +9,7 @@
 #include "seq_switch.h"
 #include "switch.h"
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 #define POLAR_DPTRS                                                            \
    x, y, z, depx, depy, depz, rpole, thole, pdamp, uind, uinp, nep, ep,        \
       vir_ep, ufld, dufld
@@ -340,4 +340,4 @@ void epolar_nonewald_acc(int vers, const real (*uind)[3], const real (*uinp)[3])
       epolar_nonewald_acc1<calc::V6>(uind, uinp);
    }
 }
-TINKER_NAMESPACE_END
+}

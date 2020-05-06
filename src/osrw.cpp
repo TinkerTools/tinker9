@@ -7,7 +7,7 @@
 #include "tinker_rt.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 bool use_osrw;
 double osrw_lambda;
 int osrw_vdw;
@@ -449,4 +449,4 @@ void osrw_energy(int vers)
 {
    osrw_energy(vers, 1, default_tsconfig());
 }
-TINKER_NAMESPACE_END
+}

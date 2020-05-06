@@ -5,7 +5,7 @@
 #include <vector>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup md_egv
  * \brief Convert a fixed-point value to floating-point value on host.
@@ -199,4 +199,4 @@ extern std::vector<virial_buffer> virial_buffers;
  * \ingroup md_egv
  */
 extern std::vector<grad_prec*> x_grads, y_grads, z_grads;
-TINKER_NAMESPACE_END
+}

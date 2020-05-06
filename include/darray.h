@@ -5,7 +5,7 @@
 #include <vector>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
                                 DMFlag flag);
 void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
@@ -15,10 +15,10 @@ void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
 void device_memory_zero_bytes(void* dst, size_t nbytes, DMFlag flag);
 void device_memory_deallocate_bytes(void* ptr);
 void device_memory_allocate_bytes(void** pptr, size_t nbytes);
-TINKER_NAMESPACE_END
+}
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <class T>
 void device_memory_check_type()
 {
@@ -69,10 +69,10 @@ void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem,
          dst[i] = buf[i];
    }
 }
-TINKER_NAMESPACE_END
+}
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 struct darray
 {
    template <class T, size_t N>
@@ -261,4 +261,4 @@ struct darray
  */
 template <class T, size_t N = 1>
 using pointer = typename darray::pointer<T, N>::type;
-TINKER_NAMESPACE_END
+}

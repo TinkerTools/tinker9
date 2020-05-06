@@ -2,7 +2,7 @@
 #include "test.h"
 #include "test_rt.h"
 
-using namespace TINKER_NAMESPACE;
+using namespace tinker;
 
 static const char* strbndterm_only = R"**(
 strbndterm  only

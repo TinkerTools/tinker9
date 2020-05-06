@@ -3,7 +3,7 @@
 #include "md.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void chkpole_acc()
 {
    #pragma acc parallel loop independent async deviceptr(x,y,z,zaxis,pole)
@@ -221,4 +221,4 @@ void rotpole_acc()
       rotsite(i, a, rpole, pole);
    }
 }
-TINKER_NAMESPACE_END
+}

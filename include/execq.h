@@ -3,7 +3,7 @@
 #include <cstddef>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 class ExecQ
 {
 private:
@@ -17,4 +17,4 @@ public:
    void synchronize();
    void copy_bytes(void* dst, const void* src, size_t nbytes);
 };
-TINKER_NAMESPACE_END
+}

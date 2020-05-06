@@ -4,7 +4,7 @@
 #include <string>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup bindc
  * \brief Fortran statement: open (unit=iunit,file=ifile,status=istatus).
@@ -32,4 +32,4 @@ void t_allocate_d1(T** pp, int dim1)
  * \note This C++ interface does not change the input file string.
  */
 std::string t_version(std::string infile, std::string status);
-TINKER_NAMESPACE_END
+}

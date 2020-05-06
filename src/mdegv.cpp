@@ -3,7 +3,7 @@
 #include "mdpq.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 energy_prec esum, eksum, ekin[3][3];
 energy_buffer eng_buf;
 grad_prec *gx, *gy, *gz;
@@ -280,4 +280,4 @@ void egv_data(rc_op op)
       }
    }
 }
-TINKER_NAMESPACE_END
+}

@@ -5,7 +5,7 @@
 #include <tinker/detail/bndpot.hh>
 #include <tinker/detail/bndstr.hh>
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void ebond_data(rc_op op)
 {
    if (!use_potent(bond_term) && !use_potent(strbnd_term))
@@ -49,4 +49,4 @@ void ebond(int vers)
 {
    ebond_acc(vers);
 }
-TINKER_NAMESPACE_END
+}

@@ -2,7 +2,7 @@
 #include "enum_op.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 enum class rc_op
 {
    DEALLOC = 0x001,
@@ -76,4 +76,4 @@ void fortran_runtime_initialize(int, char**);
  * or of other Fortran runtime functions.
  */
 void fortran_runtime_finish();
-TINKER_NAMESPACE_END
+}

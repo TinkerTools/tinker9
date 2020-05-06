@@ -1,7 +1,7 @@
 #include "gpu_card.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void gpu_card_data(rc_op op)
 {
    if (op & rc_dealloc) {
@@ -20,4 +20,4 @@ int get_grid_size(int)
 {
    return 1;
 }
-TINKER_NAMESPACE_END
+}

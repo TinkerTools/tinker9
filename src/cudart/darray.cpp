@@ -5,7 +5,7 @@
 #include <cuda_runtime.h>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
                                 DMFlag flag)
 {
@@ -72,4 +72,4 @@ void device_memory_allocate_bytes(void** pptr, size_t nbytes)
    *pptr = nullptr;
    check_rt(cudaMalloc(pptr, nbytes));
 }
-TINKER_NAMESPACE_END
+}

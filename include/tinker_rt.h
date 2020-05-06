@@ -9,7 +9,7 @@
 #include <tinker/detail/keys.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void nextarg(size_t len, char* str, int& exist);
 
 
@@ -26,7 +26,7 @@ void get_kv(std::string k, T1& v, T2 vdefault);
 
 template <class T>
 void get_kbool(std::string k, T& v, bool v_if_k_not_found);
-TINKER_NAMESPACE_END
+}
 
 
 extern "C"

@@ -13,7 +13,7 @@
 #include <tinker/detail/urey.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 int use_potent(potent_t term)
 {
    int val = 0;
@@ -128,4 +128,4 @@ int count_bonded_term(potent_t term)
    }
    return val;
 }
-TINKER_NAMESPACE_END
+}

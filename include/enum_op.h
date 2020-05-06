@@ -3,7 +3,7 @@
 #include <type_traits>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 template <class E>
 struct EnableEnumBitMask
 {
@@ -34,4 +34,4 @@ constexpr bool operator&(E lhs, E rhs)
    using ut = typename std::underlying_type<E>::type;
    return static_cast<bool>(static_cast<ut>(lhs) & static_cast<ut>(rhs));
 }
-TINKER_NAMESPACE_END
+}

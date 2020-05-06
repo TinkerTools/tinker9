@@ -9,7 +9,7 @@
 #include <fstream>
 #include <tinker/detail/files.hh>
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void x_analyze_e();
 void x_analyze_v();
 
@@ -174,4 +174,4 @@ void x_analyze_v()
    print(out, fmt, "", vir[3], vir[4], vir[5]);
    print(out, fmt, "", vir[6], vir[7], vir[8]);
 }
-TINKER_NAMESPACE_END
+}

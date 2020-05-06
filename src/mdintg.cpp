@@ -17,7 +17,7 @@
 #include <tinker/detail/mdstuf.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void mdrest(int istep)
 {
    mdrest_acc(istep);
@@ -143,4 +143,4 @@ void integrate_data(rc_op op)
       assert(intg);
    }
 }
-TINKER_NAMESPACE_END
+}

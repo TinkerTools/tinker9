@@ -5,7 +5,7 @@
 #include "md.h"
 #include <cassert>
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 size_t buffer_size()
 {
    size_t nhint = n;
@@ -190,4 +190,4 @@ std::vector<count_buffer> count_buffers;
 std::vector<energy_buffer> energy_buffers;
 std::vector<virial_buffer> virial_buffers;
 std::vector<grad_prec*> x_grads, y_grads, z_grads;
-TINKER_NAMESPACE_END
+}

@@ -3,7 +3,7 @@
 #include "seq_def.h"
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \ingroup vdw
  */
@@ -31,4 +31,4 @@ void pair_hal(real rik, real rv, real eps, real vscalek, real vlambda, //
       de = eps * (dt1drho * (t2 - 2) + t1 * dt2drho) * REAL_RECIP(rv);
    }
 }
-TINKER_NAMESPACE_END
+}

@@ -7,7 +7,7 @@
 #include <tinker/detail/sizes.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void empole_data(rc_op op)
 {
    if (!use_potent(mpole_term))
@@ -153,4 +153,4 @@ void empole_ewald_recip(int vers)
 {
    empole_ewald_recip_acc(vers);
 }
-TINKER_NAMESPACE_END
+}

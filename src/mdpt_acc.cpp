@@ -18,7 +18,7 @@
 #include <tinker/detail/units.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 void kinetic_acc(T_prec& temp)
 {
    const energy_prec ekcal_inv = 1.0 / units::ekcal;
@@ -219,4 +219,4 @@ void monte_carlo_barostat_acc(energy_prec epot)
 #endif
    }
 }
-TINKER_NAMESPACE_END
+}

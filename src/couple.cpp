@@ -6,7 +6,7 @@
 #include <vector>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 static_assert(couple_maxn12 >= sizes::maxval, "");
 
 
@@ -42,4 +42,4 @@ void couple_data(rc_op op)
       darray::copyin(WAIT_NEW_Q, n, couple_i12, ibuf.data());
    }
 }
-TINKER_NAMESPACE_END
+}

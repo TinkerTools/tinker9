@@ -14,7 +14,7 @@
 #include <tinker/detail/neigh.hh>
 
 
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 NBList::~NBList()
 {
    darray::deallocate(nlst, lst, update, xold, yold, zold);
@@ -496,4 +496,4 @@ void refresh_neighbors()
       spatial_update(unt);
    }
 }
-TINKER_NAMESPACE_END
+}
