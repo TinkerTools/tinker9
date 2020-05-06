@@ -236,22 +236,15 @@ void rotpole()
 }
 
 
-void torque_em(int vers)
+void torque(int vers)
 {
    // #if TINKER_CUDART
    //    if (pltfm_config & CU_PLTFM)
    //    else
    // #endif
-   torque_acc(vers, demx, demy, demz);
-}
-
-
-void torque_ep(int vers)
-{
-   // #if TINKER_CUDART
-   //    if (pltfm_config & CU_PLTFM)
-   //    else
-   // #endif
-   torque_acc(vers, depx, depy, depz);
+   if (use_potent(mpole_term))
+      torque_acc(vers, demx, demy, demz);
+   else if (use_potent(polar_term))
+      torque_acc(vers, depx, depy, depz);
 }
 TINKER_NAMESPACE_END

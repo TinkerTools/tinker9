@@ -87,8 +87,7 @@ void elec_data(rc_op op);
 void mpole_init(int vers);
 void chkpole();
 void rotpole();
-void torque_em(int vers);
-void torque_ep(int vers);
+void torque(int vers);
 
 
 void chkpole_acc();

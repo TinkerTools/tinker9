@@ -107,7 +107,8 @@ TINKER_EXTERN pointer<int, 2> vdw14ik;
  * \brief
  * State weighting values (lambda) of all atoms for van der Waals potentials.
  */
-TINKER_EXTERN pointer<real> vlam;
+TINKER_EXTERN pointer<int> mut;
+TINKER_EXTERN real vlam;
 
 
 TINKER_EXTERN int nvexclude;
@@ -119,6 +120,7 @@ TINKER_EXTERN count_buffer nev;
 TINKER_EXTERN energy_buffer ev;
 TINKER_EXTERN virial_buffer vir_ev;
 TINKER_EXTERN grad_prec *devx, *devy, *devz;
+TINKER_EXTERN energy_prec energy_ev;
 
 
 /**

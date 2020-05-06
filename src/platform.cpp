@@ -30,7 +30,7 @@ void platform_data(rc_op op)
             Text::upcase(gpu_package);
          }
          if (gpu_package == "") {
-            get_kv_pair("GPU-PACKAGE", gpu_package, "CUDA");
+            get_kv("GPU-PACKAGE", gpu_package, "CUDA");
          }
          if (gpu_package == "CUDA") {
             pltfm_config = CU_PLTFM;

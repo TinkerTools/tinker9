@@ -57,8 +57,8 @@ void ehal_resolve_gradient_acc()
 }
 
 #define DEVICE_PTRS                                                            \
-   xred, yred, zred, gxred, gyred, gzred, jvdw, radmin, epsilon, vlam, nev,    \
-      ev, vir_ev
+   xred, yred, zred, gxred, gyred, gzred, jvdw, radmin, epsilon, mut, nev, ev, \
+      vir_ev
 template <class Ver>
 void ehal_acc1()
 {
@@ -88,7 +88,7 @@ void ehal_acc1()
       real xi = xred[i];
       real yi = yred[i];
       real zi = zred[i];
-      real lam1 = vlam[i];
+      int mut1 = mut[i];
       MAYBE_UNUSED real gxi = 0, gyi = 0, gzi = 0;
 
       int nvlsti = vlst->nlst[i];
@@ -100,12 +100,14 @@ void ehal_acc1()
          real xr = xi - xred[k];
          real yr = yi - yred[k];
          real zr = zi - zred[k];
-         real vlambda = vlam[k];
+         int mut2 = mut[k];
 
+         real vlambda = 1;
          if (vcouple == evdw_t::decouple) {
-            vlambda = (lam1 == vlambda ? 1 : (lam1 < vlambda ? lam1 : vlambda));
-         } else if (vcouple == evdw_t::annihilate) {
-            vlambda = (lam1 < vlambda ? lam1 : vlambda);
+            vlambda = (mut1 == mut2 ? 1 : vlam);
+         }
+         if (vcouple == evdw_t::annihilate) {
+            vlambda = (mut1 || mut2 ? vlam : 1);
          }
 
          real rik2 = image2(xr, yr, zr);
@@ -181,18 +183,20 @@ void ehal_acc1()
       real xi = xred[i];
       real yi = yred[i];
       real zi = zred[i];
-      real lam1 = vlam[i];
+      int mut1 = mut[i];
 
       int kt = jvdw[k];
       real xr = xi - xred[k];
       real yr = yi - yred[k];
       real zr = zi - zred[k];
-      real vlambda = vlam[k];
+      int mut2 = mut[k];
 
+      real vlambda = 1;
       if (vcouple == evdw_t::decouple) {
-         vlambda = (lam1 == vlambda ? 1 : (lam1 < vlambda ? lam1 : vlambda));
-      } else if (vcouple == evdw_t::annihilate) {
-         vlambda = (lam1 < vlambda ? lam1 : vlambda);
+         vlambda = (mut1 == mut2 ? 1 : vlam);
+      }
+      if (vcouple == evdw_t::annihilate) {
+         vlambda = (mut1 || mut2 ? vlam : 1);
       }
 
       real rik2 = image2(xr, yr, zr);

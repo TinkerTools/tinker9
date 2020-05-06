@@ -64,6 +64,7 @@ TINKER_NAMESPACE_END
 #include "mdpq.h"
 #include "molecule.h"
 #include "nblist.h"
+#include "osrw.h"
 
 
 TINKER_NAMESPACE_BEGIN
@@ -91,6 +92,7 @@ void device_data(rc_op op)
    rc_man group42{group_data, op};
 
    rc_man energy42{energy_data, op};
+   rc_man osrw42{osrw_data, op};
 
    // Neighbor lists must be initialized after potential initialization.
    // xred, yred, and zred need to be initialized in vdw (Halgren 14-7)

@@ -12,6 +12,7 @@ TINKER_EXTERN real torsunit;
 TINKER_EXTERN energy_buffer et;
 TINKER_EXTERN virial_buffer vir_et;
 TINKER_EXTERN grad_prec *detx, *dety, *detz;
+TINKER_EXTERN energy_prec energy_et;
 
 void etors_data(rc_op op);
 

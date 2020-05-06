@@ -23,7 +23,7 @@ void egeom_data(rc_op op)
       ngfix = restrn::ngfix;
       darray::allocate(ngfix, &igfix, &gfix);
 
-      buffer_allocate(rc_flag, &eg, &degx, &degy, &degz, &vir_eg);
+      buffer_allocate(rc_flag, &eg, &degx, &degy, &degz, &vir_eg, &energy_eg);
    }
 
 

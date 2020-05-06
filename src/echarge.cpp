@@ -19,6 +19,7 @@ count_buffer nec;
 energy_buffer ec;
 virial_buffer vir_ec;
 grad_prec *decx, *decy, *decz;
+energy_prec energy_ec;
 
 
 void echarge_data(rc_op op)
@@ -118,8 +119,8 @@ void echarge_data(rc_op op)
       if (rc_flag & calc::analyz) {
          buffer_allocate(calc::analyz, &nec);
       }
-      buffer_allocate(rc_flag | calc::analyz, &ec, &decx, &decy, &decz,
-                      &vir_ec);
+      buffer_allocate(rc_flag | calc::analyz, &ec, &decx, &decy, &decz, &vir_ec,
+                      &energy_ec);
    }
 
 

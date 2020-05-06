@@ -21,7 +21,11 @@ void nextarg(char (&str)[Len], int& exist)
 
 
 template <class T1, class T2>
-void get_kv_pair(std::string k, T1& v, T2 vdefault);
+void get_kv(std::string k, T1& v, T2 vdefault);
+
+
+template <class T>
+void get_kbool(std::string k, T& v, bool v_if_k_not_found);
 TINKER_NAMESPACE_END
 
 

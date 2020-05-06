@@ -21,7 +21,8 @@ void eurey_data(rc_op op)
       darray::allocate(nangle, &iury, &uk, &ul);
 
       nurey = count_bonded_term(urey_term);
-      buffer_allocate(rc_flag, &eub, &deubx, &deuby, &deubz, &vir_eub);
+      buffer_allocate(rc_flag, &eub, &deubx, &deuby, &deubz, &vir_eub,
+                      &energy_eub);
    }
 
    if (op & rc_init) {

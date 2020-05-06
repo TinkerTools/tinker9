@@ -21,7 +21,7 @@ void etors_data(rc_op op)
       darray::allocate(ntors, &itors, &tors1, &tors2, &tors3, &tors4, &tors5,
                        &tors6);
 
-      buffer_allocate(rc_flag, &et, &detx, &dety, &detz, &vir_et);
+      buffer_allocate(rc_flag, &et, &detx, &dety, &detz, &vir_et, &energy_et);
    }
 
    if (op & rc_init) {

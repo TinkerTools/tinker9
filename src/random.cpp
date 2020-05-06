@@ -46,7 +46,7 @@ void random_data(rc_op op)
 {
    if (op & rc_init) {
       int seed;
-      get_kv_pair("RANDOMSEED", seed, 0);
+      get_kv("RANDOMSEED", seed, 0);
       seed = std::max(1, seed);
       if (seed == 0) {
          auto now = std::chrono::system_clock::now();

@@ -23,7 +23,8 @@ void eopbend_data(rc_op op)
       darray::allocate(nangle, &iopb, &opbk);
 
       nopbend = count_bonded_term(opbend_term);
-      buffer_allocate(rc_flag, &eopb, &deopbx, &deopby, &deopbz, &vir_eopb);
+      buffer_allocate(rc_flag, &eopb, &deopbx, &deopby, &deopbz, &vir_eopb,
+                      &energy_eopb);
    }
 
    if (op & rc_init) {

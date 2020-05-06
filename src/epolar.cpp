@@ -33,9 +33,12 @@ void epolar_data(rc_op op)
 
       if (rc_flag & calc::analyz) {
          buffer_deallocate(calc::analyz, nep);
-         buffer_deallocate(rc_flag | calc::analyz, ep, depx, depy, depz,
-                           vir_ep);
-      } else if (use_potent(mpole_term)) {
+      }
+      if (use_potent(mpole_term)) {
+         if (rc_flag & calc::analyz) {
+            buffer_deallocate(rc_flag & (calc::analyz | calc::energy), ep,
+                              nullptr, nullptr, nullptr, nullptr);
+         }
          ep = nullptr;
          depx = nullptr;
          depy = nullptr;
@@ -360,17 +363,20 @@ void epolar_data(rc_op op)
 
       if (rc_flag & calc::analyz) {
          buffer_allocate(calc::analyz, &nep);
-         buffer_allocate(rc_flag | calc::analyz, &ep, &depx, &depy, &depz,
-                         &vir_ep);
-      } else if (use_potent(mpole_term)) {
+      }
+      if (use_potent(mpole_term)) {
          ep = em;
          depx = demx;
          depy = demy;
          depz = demz;
          vir_ep = vir_em;
+         if (rc_flag & calc::analyz) {
+            buffer_allocate(rc_flag & (calc::analyz | calc::energy), &ep,
+                            nullptr, nullptr, nullptr, nullptr, &energy_ep);
+         }
       } else {
          buffer_allocate(rc_flag | calc::analyz, &ep, &depx, &depy, &depz,
-                         &vir_ep);
+                         &vir_ep, &energy_ep);
       }
 
       if (rc_flag & calc::grad) {

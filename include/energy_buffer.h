@@ -121,7 +121,7 @@ using virial_buffer =
  * \see calc::analyz
  */
 void buffer_allocate(int, energy_buffer*, grad_prec**, grad_prec**, grad_prec**,
-                     virial_buffer*);
+                     virial_buffer*, energy_prec*);
 /**
  * \ingroup md_egv
  * \see buffer_allocate
@@ -164,6 +164,20 @@ void virial_reduce(virial_prec (&)[virial_buffer_traits::N],
  * \see count_reduce
  */
 void virial_reduce(virial_prec (&)[9], const virial_buffer b);
+
+
+/**
+ * \ingroup md_egv
+ */
+void set_energy_reduce_dst(energy_buffer, energy_prec*);
+/**
+ * \ingroup md_egv
+ */
+energy_prec* get_energy_reduce_dst(energy_buffer);
+/**
+ * \ingroup md_egv
+ */
+void clear_energy_reduce_dst();
 
 
 /**

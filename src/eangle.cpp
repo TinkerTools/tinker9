@@ -23,7 +23,7 @@ void eangle_data(rc_op op)
       nangle = count_bonded_term(angle_term);
       darray::allocate(nangle, &iang, &ak, &anat, &angtyp);
 
-      buffer_allocate(rc_flag, &ea, &deax, &deay, &deaz, &vir_ea);
+      buffer_allocate(rc_flag, &ea, &deax, &deay, &deaz, &vir_ea, &energy_ea);
    }
 
    if (op & rc_init) {

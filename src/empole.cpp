@@ -102,8 +102,8 @@ void empole_data(rc_op op)
       if (rc_flag & calc::analyz) {
          buffer_allocate(calc::analyz, &nem);
       }
-      buffer_allocate(rc_flag | calc::analyz, &em, &demx, &demy, &demz,
-                      &vir_em);
+      buffer_allocate(rc_flag | calc::analyz, &em, &demx, &demy, &demz, &vir_em,
+                      &energy_em);
    }
 
    if (op & rc_init) {

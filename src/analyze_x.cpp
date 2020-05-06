@@ -3,6 +3,7 @@
 #include "io_read.h"
 #include "md.h"
 #include "nblist.h"
+#include "osrw.h"
 #include "potent.h"
 #include "tinker_rt.h"
 #include <fstream>
@@ -17,6 +18,7 @@ void x_analyze(int, char**)
    initial();
    TINKER_RT(getxyz)();
    mechanic();
+   mechanic2();
 
    char string[240];
    int exist = false;
@@ -96,7 +98,10 @@ void x_analyze(int, char**)
 
 void x_analyze_e()
 {
-   energy(calc::energy + calc::analyz);
+   if (use_osrw)
+      osrw_energy(calc::energy + calc::analyz);
+   else
+      energy(calc::energy + calc::analyz);
 
    auto& out = stdout;
    print(out, "\n Total Potential Energy :        %16.4f Kcal/mole\n", esum);
@@ -107,59 +112,60 @@ void x_analyze_e()
    const char* fmt = " %-29s %18.4f %16d\n";
 
    if (use_potent(bond_term))
-      print(out, fmt, "Bond Stretching", energy_reduce(eb),
+      print(out, fmt, "Bond Stretching", energy_eb,
             count_bonded_term(bond_term));
 
    if (use_potent(angle_term))
-      print(out, fmt, "Angle Bending", energy_reduce(ea),
+      print(out, fmt, "Angle Bending", energy_ea,
             count_bonded_term(angle_term));
 
    if (use_potent(strbnd_term))
-      print(out, fmt, "Stretch-Bend", energy_reduce(eba),
+      print(out, fmt, "Stretch-Bend", energy_eba,
             count_bonded_term(strbnd_term));
 
    if (use_potent(urey_term))
-      print(out, fmt, "Urey-Bradley", energy_reduce(eub),
-            count_bonded_term(urey_term));
+      print(out, fmt, "Urey-Bradley", energy_eub, count_bonded_term(urey_term));
 
    if (use_potent(opbend_term))
-      print(out, fmt, "Out-of-Plane Bend", energy_reduce(eopb),
+      print(out, fmt, "Out-of-Plane Bend", energy_eopb,
             count_bonded_term(opbend_term));
 
    if (use_potent(torsion_term))
-      print(out, fmt, "Torsional Angle", energy_reduce(et),
+      print(out, fmt, "Torsional Angle", energy_et,
             count_bonded_term(torsion_term));
 
    if (use_potent(pitors_term))
-      print(out, fmt, "Pi-Orbital Torsion", energy_reduce(ept),
+      print(out, fmt, "Pi-Orbital Torsion", energy_ept,
             count_bonded_term(pitors_term));
 
    if (use_potent(tortor_term))
-      print(out, fmt, "Torsion-Torsion", energy_reduce(ett),
+      print(out, fmt, "Torsion-Torsion", energy_ett,
             count_bonded_term(tortor_term));
 
    if (use_potent(vdw_term))
-      print(out, fmt, "Van der Waals", energy_reduce(ev), count_reduce(nev));
+      print(out, fmt, "Van der Waals", energy_ev, count_reduce(nev));
 
    if (use_potent(charge_term))
-      print(out, fmt, "Charge-Charge", energy_reduce(ec), count_reduce(nec));
+      print(out, fmt, "Charge-Charge", energy_ec, count_reduce(nec));
 
    if (use_potent(mpole_term))
-      print(out, fmt, "Atomic Multipoles", energy_reduce(em),
-            count_reduce(nem));
+      print(out, fmt, "Atomic Multipoles", energy_em, count_reduce(nem));
 
    if (use_potent(polar_term))
-      print(out, fmt, "Polarization", energy_reduce(ep), count_reduce(nep));
+      print(out, fmt, "Polarization", energy_ep, count_reduce(nep));
 
    if (use_potent(geom_term))
-      print(out, fmt, "Geometric Restraints", energy_reduce(eg),
+      print(out, fmt, "Geometric Restraints", energy_eg,
             count_bonded_term(geom_term));
 }
 
 
 void x_analyze_v()
 {
-   energy(calc::grad + calc::virial);
+   if (use_osrw)
+      osrw_energy(calc::grad + calc::virial);
+   else
+      energy(calc::grad + calc::virial);
    auto& out = stdout;
 
    const char* fmt = " %-36s%12.3f %12.3f %12.3f\n";

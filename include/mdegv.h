@@ -92,10 +92,18 @@ void zero_gradient_acc(DMFlag, size_t, fixed*, fixed*, fixed*);
 /**
  * \ingroup md_egv
  */
-void sum_gradient(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, double scale,
+void scale_gradient(double scale, grad_prec* g0x, grad_prec* g0y,
+                    grad_prec* g0z);
+void sum_gradient(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
                   const grad_prec* g1x, const grad_prec* g1y,
                   const grad_prec* g1z);
-void sum_gradient_acc(grad_prec*, grad_prec*, grad_prec*, double,
+void sum_gradient(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
+                  const grad_prec* g1x, const grad_prec* g1y,
+                  const grad_prec* g1z);
+void scale_gradient_acc(double, grad_prec*, grad_prec*, grad_prec*);
+void sum_gradient_acc(grad_prec*, grad_prec*, grad_prec*, const grad_prec*,
+                      const grad_prec*, const grad_prec*);
+void sum_gradient_acc(double, grad_prec*, grad_prec*, grad_prec*,
                       const grad_prec*, const grad_prec*, const grad_prec*);
 
 

@@ -12,6 +12,7 @@ TINKER_EXTERN real ptorunit;
 TINKER_EXTERN energy_buffer ept;
 TINKER_EXTERN virial_buffer vir_ept;
 TINKER_EXTERN grad_prec *deptx, *depty, *deptz;
+TINKER_EXTERN energy_prec energy_ept;
 
 void epitors_data(rc_op op);
 

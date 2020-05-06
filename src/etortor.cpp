@@ -31,7 +31,8 @@ void etortor_data(rc_op op)
       ntortor = count_bonded_term(tortor_term);
       darray::allocate(ntortor, &chkttor_ia_);
 
-      buffer_allocate(rc_flag, &ett, &dettx, &detty, &dettz, &vir_ett);
+      buffer_allocate(rc_flag, &ett, &dettx, &detty, &dettz, &vir_ett,
+                      &energy_ett);
    }
 
    if (op & rc_init) {

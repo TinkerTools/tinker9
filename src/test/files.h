@@ -59,4 +59,8 @@ extern const char* arbox_xyz;
 extern const char* arbox_dyn;
 extern const char* arbox_dyn2;
 extern const char* arbox_arc;
+
+// potassium ion and water
+extern const char* kwater_key;
+extern const char* kwater_xyz;
 TINKER_NAMESPACE_END

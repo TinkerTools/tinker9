@@ -202,14 +202,14 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
       zero_egv();                                                              \
       mpole_init(calc::v0);                                                    \
       empole(calc::v0);                                                        \
-      torque_em(calc::v0);                                                     \
+      torque(calc::v0);                                                        \
       sum_energy(calc::v0);                                                    \
       COMPARE_ENERGY(em, ref_eng, eps);                                        \
                                                                                \
       zero_egv();                                                              \
       mpole_init(calc::v1);                                                    \
       empole(calc::v1);                                                        \
-      torque_em(calc::v1);                                                     \
+      torque(calc::v1);                                                        \
       sum_energy(calc::v1);                                                    \
       COMPARE_ENERGY(em, ref_eng, eps);                                        \
       COMPARE_GRADIENT(ref_grad, eps_g);                                       \
@@ -218,7 +218,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
       zero_egv();                                                              \
       mpole_init(calc::v3);                                                    \
       empole(calc::v3);                                                        \
-      torque_em(calc::v3);                                                     \
+      torque(calc::v3);                                                        \
       sum_energy(calc::v3);                                                    \
       COMPARE_ENERGY(em, ref_eng, eps);                                        \
       COMPARE_COUNT(nem, ref_count);                                           \
@@ -226,7 +226,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
       zero_egv();                                                              \
       mpole_init(calc::v4);                                                    \
       empole(calc::v4);                                                        \
-      torque_em(calc::v4);                                                     \
+      torque(calc::v4);                                                        \
       sum_energy(calc::v4);                                                    \
       COMPARE_ENERGY(em, ref_eng, eps);                                        \
       COMPARE_GRADIENT(ref_grad, eps_g);                                       \
@@ -234,14 +234,14 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
       zero_egv();                                                              \
       mpole_init(calc::v5);                                                    \
       empole(calc::v5);                                                        \
-      torque_em(calc::v5);                                                     \
+      torque(calc::v5);                                                        \
       sum_energy(calc::v5);                                                    \
       COMPARE_GRADIENT(ref_grad, eps_g);                                       \
                                                                                \
       zero_egv();                                                              \
       mpole_init(calc::v6);                                                    \
       empole(calc::v6);                                                        \
-      torque_em(calc::v6);                                                     \
+      torque(calc::v6);                                                        \
       sum_energy(calc::v6);                                                    \
       COMPARE_GRADIENT(ref_grad, eps_g);                                       \
       COMPARE_VIR2(vir_em, vir_trq, ref_v, eps_v);                             \

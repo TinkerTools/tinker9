@@ -13,6 +13,7 @@ TINKER_EXTERN count_buffer nem;
 TINKER_EXTERN energy_buffer em;
 TINKER_EXTERN virial_buffer vir_em;
 TINKER_EXTERN grad_prec *demx, *demy, *demz;
+TINKER_EXTERN energy_prec energy_em;
 
 void empole_data(rc_op op);
 

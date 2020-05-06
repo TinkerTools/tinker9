@@ -63,7 +63,7 @@ const TimeScaleConfig& default_tsconfig()
 }
 
 
-void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
+void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 {
    auto tscfg = [&](std::string eng) {
       auto local_flag = tsflag;
@@ -77,7 +77,6 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 
    vers = vers & calc::vmask;
-   zero_egv(vers);
 
 
    // bonded terms
@@ -139,7 +138,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       if (tscfg("emplar")) {
          mpole_init(vers);
          emplar(vers);
-         torque_em(vers);
+         torque(vers);
       }
    } else {
       // update logical flags by time-scale configurations
@@ -147,21 +146,20 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       calc_polar = calc_polar && tscfg("epolar");
       if (calc_mpole || calc_polar) {
          mpole_init(vers);
-         if (calc_mpole) {
+         if (calc_mpole)
             empole(vers);
-            torque_em(vers);
-         }
-         if (calc_polar) {
-            if (calc_mpole && (vers & calc::grad)) {
-               darray::zero(PROCEED_NEW_Q, n, trqx, trqy, trqz);
-            }
+         if (calc_polar)
             epolar(vers);
-            torque_ep(vers);
-         }
+         torque(vers);
       }
    }
+}
 
 
+void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
+{
+   zero_egv(vers);
+   energy_core(vers, tsflag, tsconfig);
    sum_energy(vers);
 }
 

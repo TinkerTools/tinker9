@@ -21,7 +21,8 @@ void estrbnd_data(rc_op op)
       darray::allocate(nangle, &isb, &sbk);
 
       nstrbnd = count_bonded_term(strbnd_term);
-      buffer_allocate(rc_flag, &eba, &debax, &debay, &debaz, &vir_eba);
+      buffer_allocate(rc_flag, &eba, &debax, &debay, &debaz, &vir_eba,
+                      &energy_eba);
    }
 
    if (op & rc_init) {

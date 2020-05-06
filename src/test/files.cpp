@@ -32,4 +32,7 @@ TINKER_NAMESPACE_BEGIN
 
 // 216 argon box test set
 #include "file/arbox.hh"
+
+// potassium ion and water
+#include "file/potassium.hh"
 TINKER_NAMESPACE_END

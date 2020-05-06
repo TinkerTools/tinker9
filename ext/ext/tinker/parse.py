@@ -179,7 +179,7 @@ class module:
         if len(self.depends_on):
             for h in self.depends_on:
                 print('#include "%s.hh"' % h)
-        print('\nTINKER_NAMESPACE_BEGIN namespace %s {' % local_symbol)
+        print('\nnamespace tinker { namespace %s {' % local_symbol)
         if len(self.depends_on):
             for h in self.depends_on:
                 print('using namespace %s;' % h)
@@ -198,7 +198,7 @@ class module:
             for x in self.entries:
                 x.print_fpp(op='define')
             print('#endif')
-        print('} TINKER_NAMESPACE_END')
+        print('} }')
 
 
 def parse_ampersand(raw_file):

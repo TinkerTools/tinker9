@@ -52,7 +52,7 @@ void evdw_data(rc_op op)
          darray::deallocate(ired, kred, xred, yred, zred, gxred, gyred, gzred);
 
 
-      darray::deallocate(jvdw, radmin, epsilon, vlam);
+      darray::deallocate(jvdw, radmin, epsilon, mut);
 
 
       nvexclude = 0;
@@ -128,7 +128,7 @@ void evdw_data(rc_op op)
       darray::allocate(jcount * jcount, &radmin, &epsilon);
 
 
-      darray::allocate(n, &vlam);
+      darray::allocate(n, &mut);
 
 
       vdw_exclude_bond = false;
@@ -309,8 +309,8 @@ void evdw_data(rc_op op)
       if (rc_flag & calc::analyz) {
          buffer_allocate(calc::analyz, &nev);
       }
-      buffer_allocate(rc_flag | calc::analyz, &ev, &devx, &devy, &devz,
-                      &vir_ev);
+      buffer_allocate(rc_flag | calc::analyz, &ev, &devx, &devy, &devz, &vir_ev,
+                      &energy_ev);
    }
 
 
@@ -376,15 +376,16 @@ void evdw_data(rc_op op)
          vcouple = evdw_t::decouple;
       else if (static_cast<int>(evdw_t::annihilate) == mutant::vcouple)
          vcouple = evdw_t::annihilate;
-      std::vector<real> vlamvec(n);
+      std::vector<int> mutvec(n);
       for (int i = 0; i < n; ++i) {
          if (mutant::mut[i]) {
-            vlamvec[i] = mutant::vlambda;
+            mutvec[i] = 1;
          } else {
-            vlamvec[i] = 1;
+            mutvec[i] = 0;
          }
       }
-      darray::copyin(WAIT_NEW_Q, n, vlam, vlamvec.data());
+      darray::copyin(WAIT_NEW_Q, n, mut, mutvec.data());
+      vlam = mutant::vlambda;
 
 
       // Initialize elrc and vlrc.

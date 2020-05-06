@@ -21,7 +21,7 @@ void ebond_data(rc_op op)
       nbond = count_bonded_term(bond_term);
       darray::allocate(nbond, &ibnd, &bl, &bk);
 
-      buffer_allocate(rc_flag, &eb, &debx, &deby, &debz, &vir_eb);
+      buffer_allocate(rc_flag, &eb, &debx, &deby, &debz, &vir_eb, &energy_eb);
    }
 
    if (op & rc_init) {

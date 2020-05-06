@@ -21,7 +21,8 @@ void epitors_data(rc_op op)
       darray::allocate(ntors, &ipit, &kpit);
 
       npitors = count_bonded_term(pitors_term);
-      buffer_allocate(rc_flag, &ept, &deptx, &depty, &deptz, &vir_ept);
+      buffer_allocate(rc_flag, &ept, &deptx, &depty, &deptz, &vir_ept,
+                      &energy_ept);
    }
 
    if (op & rc_init) {

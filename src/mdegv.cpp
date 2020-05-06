@@ -81,11 +81,31 @@ void zero_gradient(DMFlag flag, size_t nelem, fixed* gx, fixed* gy, fixed* gz)
 //====================================================================//
 
 
-void sum_gradient(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, double scale,
+void scale_gradient(double scale, grad_prec* g0x, grad_prec* g0y,
+                    grad_prec* g0z)
+{
+   if (scale == 1)
+      return;
+   else if (scale == 0) {
+      zero_gradient(PROCEED_NEW_Q, n, g0x, g0y, g0z);
+   } else
+      scale_gradient_acc(scale, g0x, g0y, g0z);
+}
+
+
+void sum_gradient(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
                   const grad_prec* g1x, const grad_prec* g1y,
                   const grad_prec* g1z)
 {
-   sum_gradient_acc(g0x, g0y, g0z, scale, g1x, g1y, g1z);
+   sum_gradient_acc(g0x, g0y, g0z, g1x, g1y, g1z);
+}
+
+
+void sum_gradient(double s, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
+                  const grad_prec* g1x, const grad_prec* g1y,
+                  const grad_prec* g1z)
+{
+   sum_gradient_acc(s, g0x, g0y, g0z, g1x, g1y, g1z);
 }
 
 
@@ -98,13 +118,14 @@ void sum_energy(int vers)
       for (size_t i = 0; i < energy_buffers.size(); ++i) {
          energy_buffer u = energy_buffers[i];
          energy_prec e = energy_reduce(u);
-         esum += e;
+         energy_prec* eptr = get_energy_reduce_dst(u);
+         *eptr = e;
+         if (eptr != &esum)
+            esum += e;
       }
    }
 
    if (vers & calc::virial) {
-      for (int iv = 0; iv < 9; ++iv)
-         vir[iv] = 0;
       for (size_t i = 0; i < virial_buffers.size(); ++i) {
          virial_buffer u = virial_buffers[i];
          virial_prec v[9];
@@ -117,7 +138,7 @@ void sum_energy(int vers)
    if (vers & calc::grad) {
       size_t ngrad = x_grads.size();
       for (size_t i = 1; i < ngrad; ++i) {
-         sum_gradient(gx, gy, gz, 1.0, x_grads[i], y_grads[i], z_grads[i]);
+         sum_gradient(gx, gy, gz, x_grads[i], y_grads[i], z_grads[i]);
       }
    }
 }
@@ -204,12 +225,14 @@ void egv_data(rc_op op)
       if (op & rc_alloc) {
          count_buffers.clear();
          energy_buffers.clear();
+         clear_energy_reduce_dst();
          if (rc_flag & calc::analyz) {
             eng_buf = nullptr;
          } else {
             auto sz = buffer_size();
             darray::allocate(sz, &eng_buf);
             energy_buffers.push_back(eng_buf);
+            set_energy_reduce_dst(eng_buf, &esum);
          }
       }
    }

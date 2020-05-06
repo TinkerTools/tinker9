@@ -23,6 +23,9 @@
 
 
 TINKER_NAMESPACE_BEGIN
+void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig);
+
+
 /**
  * \ingroup md_egv
  * \brief Evaluate the potential energy.

@@ -29,13 +29,15 @@ size_t buffer_size()
 
 
 void buffer_allocate(int flag, energy_buffer* pe, grad_prec** px,
-                     grad_prec** py, grad_prec** pz, virial_buffer* pv)
+                     grad_prec** py, grad_prec** pz, virial_buffer* pv,
+                     energy_prec* eptr)
 {
    if (flag & calc::analyz) {
       auto len = buffer_size();
       if (flag & calc::energy) {
          darray::allocate(len, pe);
          energy_buffers.push_back(*pe);
+         set_energy_reduce_dst(*pe, eptr);
       }
       if (flag & calc::grad) {
          darray::allocate(n, px, py, pz);
@@ -158,6 +160,29 @@ void virial_reduce(virial_prec (&v_out)[9], const virial_buffer v)
       v_out[4] += term; // yy
       v_out[8] += term; // zz
    }
+}
+
+
+namespace {
+std::map<energy_buffer, energy_prec*> edst;
+}
+
+
+void set_energy_reduce_dst(energy_buffer b, energy_prec* d)
+{
+   edst[b] = d;
+}
+
+
+energy_prec* get_energy_reduce_dst(energy_buffer b)
+{
+   return edst.at(b);
+}
+
+
+void clear_energy_reduce_dst()
+{
+   edst.clear();
 }
 
 

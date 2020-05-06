@@ -53,7 +53,7 @@ void vstr_to_val<std::string>(std::string& v, std::string vstr)
 
 
 template <class T1, class T2>
-void get_kv_pair(std::string k, T1& v, T2 vdefault)
+void get_kv(std::string k, T1& v, T2 vdefault)
 {
    std::string value_str = "";
    for (int i = 0; i < keys::nkey; ++i) {
@@ -73,8 +73,53 @@ void get_kv_pair(std::string k, T1& v, T2 vdefault)
       v = vdefault;
    }
 }
-template void get_kv_pair(std::string, int&, int);
-template void get_kv_pair(std::string, double&, double);
-template void get_kv_pair(std::string, std::string&, std::string);
-template void get_kv_pair(std::string, std::string&, const char*);
+template void get_kv(std::string, int&, int);
+template void get_kv(std::string, double&, double);
+template void get_kv(std::string, std::string&, std::string);
+template void get_kv(std::string, std::string&, const char*);
+template <>
+void get_kv<std::vector<std::string>, const char*>(std::string k,
+                                                   std::vector<std::string>& v,
+                                                   const char*)
+{
+   for (int i = 0; i < keys::nkey; ++i) {
+      fstr_view record = keys::keyline[i];
+      auto vs = Text::split(record.trim());
+      if (vs.size()) {
+         std::string keyword = vs.at(0);
+         Text::upcase(keyword);
+         if (keyword == k && vs.size() > 1) {
+            v.clear();
+            for (size_t j = 1; j < vs.size(); ++j) {
+               v.push_back(vs[j]);
+               Text::upcase(v[j - 1]);
+            }
+         }
+      }
+   }
+}
+
+
+template <class T>
+void get_kbool(std::string k, T& v, bool v_if_k_not_found)
+{
+   bool found = false;
+   for (int i = 0; i < keys::nkey; ++i) {
+      fstr_view record = keys::keyline[i];
+      auto vs = Text::split(record.trim());
+      if (vs.size()) {
+         std::string keyword = vs.at(0);
+         Text::upcase(keyword);
+         if (keyword == k) {
+            found = true;
+         }
+      }
+   }
+   if (found)
+      v = !v_if_k_not_found;
+   else
+      v = v_if_k_not_found;
+}
+template void get_kbool(std::string k, bool& v, bool vdefault);
+template void get_kbool(std::string k, int& v, bool vdefault);
 TINKER_NAMESPACE_END

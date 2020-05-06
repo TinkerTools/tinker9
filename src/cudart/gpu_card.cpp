@@ -154,7 +154,7 @@ static int recommend_device(int ndev)
    // if do not use xyz file, then there is no key file
    if (usp < 0 && (rc_flag & calc::xyz)) {
       usp_str = "CUDA-DEVICE keyword";
-      get_kv_pair("CUDA-DEVICE", usp, -1);
+      get_kv("CUDA-DEVICE", usp, -1);
    }
    // check environment variable "CUDA_DEVICE"
    if (usp < 0) {

@@ -45,8 +45,8 @@ TINKER_NAMESPACE_BEGIN
       virial_buffer restrict vir_ev, grad_prec *restrict gxred,                \
       grad_prec *restrict gyred, grad_prec *restrict gzred,                    \
       TINKER_IMAGE_PARAMS, int njvdw, const int *restrict jvdw,                \
-      const real *restrict radmin, const real *restrict epsilon,               \
-      const real *vlam, evdw_t vcouple, real cut, real off
+      const real *restrict radmin, const real *restrict epsilon, real vlam,    \
+      const int *mut, evdw_t vcouple, real cut, real off
 #if 1
 #   define GHAL    (real)0.12
 #   define DHAL    (real)0.07
@@ -117,7 +117,7 @@ void ehal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
       real zi = sorted[atomi].z;
       int i = sorted[atomi].unsorted;
       int it = jvdw[i];
-      real lam1 = vlam[i];
+      int mut1 = mut[i];
 
 
       int shatomk = lst[iw * WARP_SIZE + ilane];
@@ -126,7 +126,7 @@ void ehal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
       real shz = sorted[shatomk].z;
       int shk = sorted[shatomk].unsorted;
       int shkt = jvdw[shk];
-      real shlam = vlam[shk];
+      int shmut2 = mut[shk];
 
 
       int cpli[couple_maxn12];
@@ -145,7 +145,7 @@ void ehal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
          real yr = yi - __shfl_sync(ALL_LANES, shy, srclane);
          real zr = zi - __shfl_sync(ALL_LANES, shz, srclane);
          int kt = __shfl_sync(ALL_LANES, shkt, srclane);
-         real vlambda = __shfl_sync(ALL_LANES, shlam, srclane);
+         int mut2 = __shfl_sync(ALL_LANES, shmut2, srclane);
 
 
          int ik_bond = false;
@@ -166,10 +166,11 @@ void ehal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
             real rik = REAL_SQRT(rik2);
             real rv = radmin[it * njvdw + kt];
             real eps = epsilon[it * njvdw + kt];
+            real vlambda = 1;
             if (vcouple == evdw_t::decouple) {
-               vlambda = (lam1 == vlambda ? 1 : REAL_MIN(lam1, vlambda));
+               vlambda = (mut1 == mut2 ? 1 : vlam);
             } else if (vcouple == evdw_t::annihilate) {
-               vlambda = REAL_MIN(lam1, vlambda);
+               vlambda = (mut1 || mut2 ? vlam : 1);
             }
 
 
@@ -266,14 +267,14 @@ void ehal_cu2(HAL_ARGS, const real* restrict xred, const real* restrict yred,
       real xi = xred[i];
       real yi = yred[i];
       real zi = zred[i];
-      real lam1 = vlam[i];
+      int mut1 = mut[i];
 
 
       int kt = jvdw[k];
       real xr = xi - xred[k];
       real yr = yi - yred[k];
       real zr = zi - zred[k];
-      real vlambda = vlam[k];
+      int mut2 = mut[k];
 
 
       real rik2 = image2(xr, yr, zr);
@@ -281,10 +282,11 @@ void ehal_cu2(HAL_ARGS, const real* restrict xred, const real* restrict yred,
          real rik = REAL_SQRT(rik2);
          real rv = radmin[it * njvdw + kt];
          real eps = epsilon[it * njvdw + kt];
+         real vlambda = 1;
          if (vcouple == evdw_t::decouple) {
-            vlambda = (lam1 == vlambda ? 1 : REAL_MIN(lam1, vlambda));
+            vlambda = (mut1 == mut2 ? 1 : vlam);
          } else if (vcouple == evdw_t::annihilate) {
-            vlambda = REAL_MIN(lam1, vlambda);
+            vlambda = (mut1 || mut2 ? vlam : 1);
          }
 
 
@@ -354,13 +356,13 @@ void ehal_cu3()
    if (st.niak > 0)
       launch_k1s(nonblk, WARP_SIZE * st.niak, ehal_cu1<Ver>, bufsize, nev, ev,
                  vir_ev, gxred, gyred, gzred, TINKER_IMAGE_ARGS, njvdw, jvdw,
-                 radmin, epsilon, vlam, vcouple, cut, off, n, st.sorted,
+                 radmin, epsilon, vlam, mut, vcouple, cut, off, n, st.sorted,
                  st.niak, st.iak, st.lst, i12);
    if (nvexclude > 0)
       launch_k1s(nonblk, nvexclude, ehal_cu2<Ver>, bufsize, nev, ev, vir_ev,
                  gxred, gyred, gzred, TINKER_IMAGE_ARGS, njvdw, jvdw, radmin,
-                 epsilon, vlam, vcouple, cut, off, xred, yred, zred, nvexclude,
-                 vexclude, vexclude_scale);
+                 epsilon, vlam, mut, vcouple, cut, off, xred, yred, zred,
+                 nvexclude, vexclude, vexclude_scale);
 
    if CONSTEXPR (do_g) {
       ehal_resolve_gradient();

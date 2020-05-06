@@ -15,6 +15,7 @@ TINKER_EXTERN real cury, qury, ureyunit;
 TINKER_EXTERN energy_buffer eub;
 TINKER_EXTERN virial_buffer vir_eub;
 TINKER_EXTERN grad_prec *deubx, *deuby, *deubz;
+TINKER_EXTERN energy_prec energy_eub;
 
 void eurey_data(rc_op op);
 

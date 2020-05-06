@@ -1,6 +1,7 @@
 /**
  * \defgroup bindc    Fortran Tinker to C Interface
  * \defgroup ff       Force Field Terms
+ * \defgroup k        Keywords
  * \defgroup macro    Macros
  * \defgroup math     Math
  * \defgroup md       MD Configurations
@@ -32,6 +33,14 @@
 
 
 /**
+ * \defgroup kmath  Mathematical Algorithm Keywords
+ * \ingroup k
+ * \defgroup kosrw  OSRW Keywords
+ * \ingroup k
+ */
+
+
+/**
  * \defgroup atomic Atomic Operations
  * \ingroup util
  * \defgroup box    Periodic Boundary Box
@@ -45,8 +54,7 @@
  */
 
 
-#include "macro.h"
-TINKER_NAMESPACE_BEGIN
+namespace tinker {
 /**
  * \brief Integer flags for different kinds of atom data and energy routines.
  */
@@ -57,4 +65,4 @@ namespace calc {}
  * \brief Math functions running in parallel.
  */
 namespace parallel {}
-TINKER_NAMESPACE_END
+}
