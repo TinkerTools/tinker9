@@ -3,7 +3,7 @@
 #include "macro.h"
 #include "sizes.hh"
 
-TINKER_NAMESPACE_BEGIN namespace sequen {
+namespace tinker { namespace sequen {
 using namespace sizes;
 
 extern int& nseq;
@@ -14,7 +14,7 @@ extern char (&chnnam)[maxres][1];
 extern char (&seq)[maxres][3];
 extern char (&chntyp)[maxres][7];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(sequen, nseq);
 extern "C" int TINKER_MOD(sequen, nchain);
 extern "C" int TINKER_MOD(sequen, ichain)[maxres][2];
@@ -31,4 +31,4 @@ char (&chnnam)[maxres][1] = TINKER_MOD(sequen, chnnam);
 char (&seq)[maxres][3] = TINKER_MOD(sequen, seq);
 char (&chntyp)[maxres][7] = TINKER_MOD(sequen, chntyp);
 #endif
-} TINKER_NAMESPACE_END
+} }

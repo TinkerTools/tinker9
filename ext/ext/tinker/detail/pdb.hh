@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace pdb {
+namespace tinker { namespace pdb {
 extern int& npdb;
 extern int& nres;
 extern int*& resnum;
@@ -20,7 +20,7 @@ extern char (*&pdbtyp)[6];
 extern char (&chnsym)[20];
 extern char (&instyp)[20];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(pdb, npdb);
 extern "C" int TINKER_MOD(pdb, nres);
 extern "C" int* TINKER_MOD(pdb, resnum);
@@ -55,4 +55,4 @@ char (*&pdbtyp)[6] = TINKER_MOD(pdb, pdbtyp);
 char (&chnsym)[20] = TINKER_MOD(pdb, chnsym);
 char (&instyp)[20] = TINKER_MOD(pdb, instyp);
 #endif
-} TINKER_NAMESPACE_END
+} }

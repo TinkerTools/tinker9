@@ -3,7 +3,7 @@
 #include "macro.h"
 #include "sizes.hh"
 
-TINKER_NAMESPACE_BEGIN namespace couple {
+namespace tinker { namespace couple {
 using namespace sizes;
 
 extern int (&n12)[maxatm];
@@ -15,7 +15,7 @@ extern int*& i13;
 extern int*& i14;
 extern int*& i15;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(couple, n12)[maxatm];
 extern "C" int* TINKER_MOD(couple, n13);
 extern "C" int* TINKER_MOD(couple, n14);
@@ -34,4 +34,4 @@ int*& i13 = TINKER_MOD(couple, i13);
 int*& i14 = TINKER_MOD(couple, i14);
 int*& i15 = TINKER_MOD(couple, i15);
 #endif
-} TINKER_NAMESPACE_END
+} }

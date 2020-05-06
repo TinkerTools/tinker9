@@ -2,13 +2,13 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace omega {
+namespace tinker { namespace omega {
 extern int& nomega;
 extern int*& iomega;
 extern int*& zline;
 extern double*& dihed;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(omega, nomega);
 extern "C" int* TINKER_MOD(omega, iomega);
 extern "C" int* TINKER_MOD(omega, zline);
@@ -19,4 +19,4 @@ int*& iomega = TINKER_MOD(omega, iomega);
 int*& zline = TINKER_MOD(omega, zline);
 double*& dihed = TINKER_MOD(omega, dihed);
 #endif
-} TINKER_NAMESPACE_END
+} }

@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace chunks {
+namespace tinker { namespace chunks {
 extern int& nchunk;
 extern int& nchk1;
 extern int& nchk2;
@@ -15,7 +15,7 @@ extern int& nrpts;
 extern int& grdoff;
 extern int*& pmetable;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(chunks, nchunk);
 extern "C" int TINKER_MOD(chunks, nchk1);
 extern "C" int TINKER_MOD(chunks, nchk2);
@@ -40,4 +40,4 @@ int& nrpts = TINKER_MOD(chunks, nrpts);
 int& grdoff = TINKER_MOD(chunks, grdoff);
 int*& pmetable = TINKER_MOD(chunks, pmetable);
 #endif
-} TINKER_NAMESPACE_END
+} }

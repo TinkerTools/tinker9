@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace mutant {
+namespace tinker { namespace mutant {
 extern int& nmut;
 extern int& vcouple;
 extern int*& imut;
@@ -18,7 +18,7 @@ extern double& scexp;
 extern double& scalpha;
 extern int*& mut;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(mutant, nmut);
 extern "C" int TINKER_MOD(mutant, vcouple);
 extern "C" int* TINKER_MOD(mutant, imut);
@@ -49,4 +49,4 @@ double& scexp = TINKER_MOD(mutant, scexp);
 double& scalpha = TINKER_MOD(mutant, scalpha);
 int*& mut = TINKER_MOD(mutant, mut);
 #endif
-} TINKER_NAMESPACE_END
+} }

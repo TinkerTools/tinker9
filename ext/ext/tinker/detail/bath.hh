@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace bath {
+namespace tinker { namespace bath {
 const int maxnose = 4;
 extern int& voltrial;
 extern double& kelvin;
@@ -26,7 +26,7 @@ extern char (&volscale)[9];
 extern char (&barostat)[11];
 extern char (&thermostat)[11];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(bath, voltrial);
 extern "C" double TINKER_MOD(bath, kelvin);
 extern "C" double TINKER_MOD(bath, atmsph);
@@ -71,4 +71,4 @@ char (&volscale)[9] = TINKER_MOD(bath, volscale);
 char (&barostat)[11] = TINKER_MOD(bath, barostat);
 char (&thermostat)[11] = TINKER_MOD(bath, thermostat);
 #endif
-} TINKER_NAMESPACE_END
+} }

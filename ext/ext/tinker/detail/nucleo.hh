@@ -3,7 +3,7 @@
 #include "macro.h"
 #include "sizes.hh"
 
-TINKER_NAMESPACE_BEGIN namespace nucleo {
+namespace tinker { namespace nucleo {
 using namespace sizes;
 
 extern int (&pucker)[maxres];
@@ -13,7 +13,7 @@ extern int& dblhlx;
 extern int (&deoxy)[maxres];
 extern char (&hlxform)[1];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(nucleo, pucker)[maxres];
 extern "C" double TINKER_MOD(nucleo, glyco)[maxres];
 extern "C" double TINKER_MOD(nucleo, bkbone)[maxres][6];
@@ -28,4 +28,4 @@ int& dblhlx = TINKER_MOD(nucleo, dblhlx);
 int (&deoxy)[maxres] = TINKER_MOD(nucleo, deoxy);
 char (&hlxform)[1] = TINKER_MOD(nucleo, hlxform);
 #endif
-} TINKER_NAMESPACE_END
+} }

@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace polpot {
+namespace tinker { namespace polpot {
 extern int& politer;
 extern double& poleps;
 extern double& p2scale;
@@ -31,7 +31,7 @@ extern int& use_thole;
 extern int& use_dirdamp;
 extern char (&poltyp)[6];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(polpot, politer);
 extern "C" double TINKER_MOD(polpot, poleps);
 extern "C" double TINKER_MOD(polpot, p2scale);
@@ -88,4 +88,4 @@ int& use_thole = TINKER_MOD(polpot, use_thole);
 int& use_dirdamp = TINKER_MOD(polpot, use_dirdamp);
 char (&poltyp)[6] = TINKER_MOD(polpot, poltyp);
 #endif
-} TINKER_NAMESPACE_END
+} }

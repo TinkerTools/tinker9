@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace kbonds {
+namespace tinker { namespace kbonds {
 const int maxnb = 2000;
 const int maxnb5 = 500;
 const int maxnb4 = 500;
@@ -23,7 +23,7 @@ extern char (&kb4)[maxnb4][8];
 extern char (&kb3)[maxnb3][8];
 extern char (&kel)[maxnel][12];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(kbonds, bcon)[maxnb];
 extern "C" double TINKER_MOD(kbonds, bcon5)[maxnb5];
 extern "C" double TINKER_MOD(kbonds, bcon4)[maxnb4];
@@ -54,4 +54,4 @@ char (&kb4)[maxnb4][8] = TINKER_MOD(kbonds, kb4);
 char (&kb3)[maxnb3][8] = TINKER_MOD(kbonds, kb3);
 char (&kel)[maxnel][12] = TINKER_MOD(kbonds, kel);
 #endif
-} TINKER_NAMESPACE_END
+} }

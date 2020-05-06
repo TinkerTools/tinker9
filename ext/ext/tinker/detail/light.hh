@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace light {
+namespace tinker { namespace light {
 extern int& nlight;
 extern int*& kbx;
 extern int*& kby;
@@ -17,7 +17,7 @@ extern int*& rgx;
 extern int*& rgy;
 extern int*& rgz;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(light, nlight);
 extern "C" int* TINKER_MOD(light, kbx);
 extern "C" int* TINKER_MOD(light, kby);
@@ -46,4 +46,4 @@ int*& rgx = TINKER_MOD(light, rgx);
 int*& rgy = TINKER_MOD(light, rgy);
 int*& rgz = TINKER_MOD(light, rgz);
 #endif
-} TINKER_NAMESPACE_END
+} }

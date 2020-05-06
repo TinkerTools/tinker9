@@ -2,14 +2,14 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace rigid {
+namespace tinker { namespace rigid {
 extern double*& xrb;
 extern double*& yrb;
 extern double*& zrb;
 extern double*& rbc;
 extern int& use_rigid;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double* TINKER_MOD(rigid, xrb);
 extern "C" double* TINKER_MOD(rigid, yrb);
 extern "C" double* TINKER_MOD(rigid, zrb);
@@ -22,4 +22,4 @@ double*& zrb = TINKER_MOD(rigid, zrb);
 double*& rbc = TINKER_MOD(rigid, rbc);
 int& use_rigid = TINKER_MOD(rigid, use_rigid);
 #endif
-} TINKER_NAMESPACE_END
+} }

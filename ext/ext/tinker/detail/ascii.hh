@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace ascii {
+namespace tinker { namespace ascii {
 const int null = 0;
 const int tab = 9;
 const int linefeed = 10;
@@ -33,4 +33,4 @@ const int caret = 94;
 const int underbar = 95;
 const int vertical = 124;
 const int tilde = 126;
-} TINKER_NAMESPACE_END
+} }

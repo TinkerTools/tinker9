@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace freeze {
+namespace tinker { namespace freeze {
 extern int& nrat;
 extern int& nratx;
 extern int*& iratx;
@@ -13,7 +13,7 @@ extern double*& krat;
 extern int& use_rattle;
 extern int*& ratimage;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(freeze, nrat);
 extern "C" int TINKER_MOD(freeze, nratx);
 extern "C" int* TINKER_MOD(freeze, iratx);
@@ -34,4 +34,4 @@ double*& krat = TINKER_MOD(freeze, krat);
 int& use_rattle = TINKER_MOD(freeze, use_rattle);
 int*& ratimage = TINKER_MOD(freeze, ratimage);
 #endif
-} TINKER_NAMESPACE_END
+} }

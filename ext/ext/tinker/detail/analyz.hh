@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace analyz {
+namespace tinker { namespace analyz {
 extern double*& aesum;
 extern double*& aeb;
 extern double*& aea;
@@ -33,7 +33,7 @@ extern double*& aelf;
 extern double*& aeg;
 extern double*& aex;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double* TINKER_MOD(analyz, aesum);
 extern "C" double* TINKER_MOD(analyz, aeb);
 extern "C" double* TINKER_MOD(analyz, aea);
@@ -94,4 +94,4 @@ double*& aelf = TINKER_MOD(analyz, aelf);
 double*& aeg = TINKER_MOD(analyz, aeg);
 double*& aex = TINKER_MOD(analyz, aex);
 #endif
-} TINKER_NAMESPACE_END
+} }

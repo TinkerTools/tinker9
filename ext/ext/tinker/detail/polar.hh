@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace polar {
+namespace tinker { namespace polar {
 extern int& npolar;
 extern int*& ipolar;
 extern double*& polarity;
@@ -20,7 +20,7 @@ extern double*& uinps;
 extern double*& uexact;
 extern int*& douind;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(polar, npolar);
 extern "C" int* TINKER_MOD(polar, ipolar);
 extern "C" double* TINKER_MOD(polar, polarity);
@@ -55,4 +55,4 @@ double*& uinps = TINKER_MOD(polar, uinps);
 double*& uexact = TINKER_MOD(polar, uexact);
 int*& douind = TINKER_MOD(polar, douind);
 #endif
-} TINKER_NAMESPACE_END
+} }

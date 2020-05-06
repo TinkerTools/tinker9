@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace mrecip {
+namespace tinker { namespace mrecip {
 extern double& vmxx;
 extern double& vmyy;
 extern double& vmzz;
@@ -14,7 +14,7 @@ extern double*& fmp;
 extern double*& cphi;
 extern double*& fphi;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(mrecip, vmxx);
 extern "C" double TINKER_MOD(mrecip, vmyy);
 extern "C" double TINKER_MOD(mrecip, vmzz);
@@ -37,4 +37,4 @@ double*& fmp = TINKER_MOD(mrecip, fmp);
 double*& cphi = TINKER_MOD(mrecip, cphi);
 double*& fphi = TINKER_MOD(mrecip, fphi);
 #endif
-} TINKER_NAMESPACE_END
+} }

@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace group {
+namespace tinker { namespace group {
 extern int& ngrp;
 extern int*& kgrp;
 extern int*& grplist;
@@ -13,7 +13,7 @@ extern int& use_group;
 extern int& use_intra;
 extern int& use_inter;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(group, ngrp);
 extern "C" int* TINKER_MOD(group, kgrp);
 extern "C" int* TINKER_MOD(group, grplist);
@@ -34,4 +34,4 @@ int& use_group = TINKER_MOD(group, use_group);
 int& use_intra = TINKER_MOD(group, use_intra);
 int& use_inter = TINKER_MOD(group, use_inter);
 #endif
-} TINKER_NAMESPACE_END
+} }

@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace vdw {
+namespace tinker { namespace vdw {
 extern int& nvdw;
 extern int*& ivdw;
 extern int*& jvdw;
@@ -18,7 +18,7 @@ extern double*& epsilon4;
 extern double*& radhbnd;
 extern double*& epshbnd;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(vdw, nvdw);
 extern "C" int* TINKER_MOD(vdw, ivdw);
 extern "C" int* TINKER_MOD(vdw, jvdw);
@@ -49,4 +49,4 @@ double*& epsilon4 = TINKER_MOD(vdw, epsilon4);
 double*& radhbnd = TINKER_MOD(vdw, radhbnd);
 double*& epshbnd = TINKER_MOD(vdw, epshbnd);
 #endif
-} TINKER_NAMESPACE_END
+} }

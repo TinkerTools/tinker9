@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace rgddyn {
+namespace tinker { namespace rgddyn {
 extern double*& xcmo;
 extern double*& ycmo;
 extern double*& zcmo;
@@ -13,7 +13,7 @@ extern double*& vc;
 extern double*& wc;
 extern int*& linear;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double* TINKER_MOD(rgddyn, xcmo);
 extern "C" double* TINKER_MOD(rgddyn, ycmo);
 extern "C" double* TINKER_MOD(rgddyn, zcmo);
@@ -34,4 +34,4 @@ double*& vc = TINKER_MOD(rgddyn, vc);
 double*& wc = TINKER_MOD(rgddyn, wc);
 int*& linear = TINKER_MOD(rgddyn, linear);
 #endif
-} TINKER_NAMESPACE_END
+} }

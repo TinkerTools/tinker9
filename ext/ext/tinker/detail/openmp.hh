@@ -2,15 +2,15 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace openmp {
+namespace tinker { namespace openmp {
 extern int& nproc;
 extern int& nthread;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(openmp, nproc);
 extern "C" int TINKER_MOD(openmp, nthread);
 
 int& nproc = TINKER_MOD(openmp, nproc);
 int& nthread = TINKER_MOD(openmp, nthread);
 #endif
-} TINKER_NAMESPACE_END
+} }

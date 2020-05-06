@@ -2,14 +2,14 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace ewald {
+namespace tinker { namespace ewald {
 extern double& aewald;
 extern double& aeewald;
 extern double& apewald;
 extern double& adewald;
 extern char (&boundary)[7];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(ewald, aewald);
 extern "C" double TINKER_MOD(ewald, aeewald);
 extern "C" double TINKER_MOD(ewald, apewald);
@@ -22,4 +22,4 @@ double& apewald = TINKER_MOD(ewald, apewald);
 double& adewald = TINKER_MOD(ewald, adewald);
 char (&boundary)[7] = TINKER_MOD(ewald, boundary);
 #endif
-} TINKER_NAMESPACE_END
+} }

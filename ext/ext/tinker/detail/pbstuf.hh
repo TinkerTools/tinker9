@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace pbstuf {
+namespace tinker { namespace pbstuf {
 const int maxion = 10;
 extern int& ionn;
 extern int (&dime)[3];
@@ -35,7 +35,7 @@ extern char (&bcfl)[20];
 extern char (&chgm)[20];
 extern char (&srfm)[20];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(pbstuf, ionn);
 extern "C" int TINKER_MOD(pbstuf, dime)[3];
 extern "C" int TINKER_MOD(pbstuf, ionq)[maxion];
@@ -98,4 +98,4 @@ char (&bcfl)[20] = TINKER_MOD(pbstuf, bcfl);
 char (&chgm)[20] = TINKER_MOD(pbstuf, chgm);
 char (&srfm)[20] = TINKER_MOD(pbstuf, srfm);
 #endif
-} TINKER_NAMESPACE_END
+} }

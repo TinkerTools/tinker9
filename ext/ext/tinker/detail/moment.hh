@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace moment {
+namespace tinker { namespace moment {
 extern double& netchg;
 extern double& netdpl;
 extern double (&netqdp)[3];
@@ -19,7 +19,7 @@ extern double& zxqdp;
 extern double& zyqdp;
 extern double& zzqdp;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(moment, netchg);
 extern "C" double TINKER_MOD(moment, netdpl);
 extern "C" double TINKER_MOD(moment, netqdp)[3];
@@ -52,4 +52,4 @@ double& zxqdp = TINKER_MOD(moment, zxqdp);
 double& zyqdp = TINKER_MOD(moment, zyqdp);
 double& zzqdp = TINKER_MOD(moment, zzqdp);
 #endif
-} TINKER_NAMESPACE_END
+} }

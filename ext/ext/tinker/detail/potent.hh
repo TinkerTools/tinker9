@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace potent {
+namespace tinker { namespace potent {
 extern int& use_bond;
 extern int& use_angle;
 extern int& use_strbnd;
@@ -34,7 +34,7 @@ extern int& use_extra;
 extern int& use_born;
 extern int& use_orbit;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(potent, use_bond);
 extern "C" int TINKER_MOD(potent, use_angle);
 extern "C" int TINKER_MOD(potent, use_strbnd);
@@ -97,4 +97,4 @@ int& use_extra = TINKER_MOD(potent, use_extra);
 int& use_born = TINKER_MOD(potent, use_born);
 int& use_orbit = TINKER_MOD(potent, use_orbit);
 #endif
-} TINKER_NAMESPACE_END
+} }

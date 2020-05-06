@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace limits {
+namespace tinker { namespace limits {
 extern double& vdwcut;
 extern double& repcut;
 extern double& dispcut;
@@ -30,7 +30,7 @@ extern int& use_clist;
 extern int& use_mlist;
 extern int& use_ulist;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(limits, vdwcut);
 extern "C" double TINKER_MOD(limits, repcut);
 extern "C" double TINKER_MOD(limits, dispcut);
@@ -85,4 +85,4 @@ int& use_clist = TINKER_MOD(limits, use_clist);
 int& use_mlist = TINKER_MOD(limits, use_mlist);
 int& use_ulist = TINKER_MOD(limits, use_ulist);
 #endif
-} TINKER_NAMESPACE_END
+} }

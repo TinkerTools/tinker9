@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace polopt {
+namespace tinker { namespace polopt {
 const int maxopt = 6;
 extern int& optorder;
 extern int& optlevel;
@@ -15,7 +15,7 @@ extern double*& uoptps;
 extern double*& fopt;
 extern double*& foptp;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(polopt, optorder);
 extern "C" int TINKER_MOD(polopt, optlevel);
 extern "C" double* TINKER_MOD(polopt, copt);
@@ -38,4 +38,4 @@ double*& uoptps = TINKER_MOD(polopt, uoptps);
 double*& fopt = TINKER_MOD(polopt, fopt);
 double*& foptp = TINKER_MOD(polopt, foptp);
 #endif
-} TINKER_NAMESPACE_END
+} }

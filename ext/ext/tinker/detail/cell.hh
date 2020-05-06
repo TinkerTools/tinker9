@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace cell {
+namespace tinker { namespace cell {
 extern int& ncell;
 extern int*& icell;
 extern double& xcell;
@@ -12,7 +12,7 @@ extern double& xcell2;
 extern double& ycell2;
 extern double& zcell2;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(cell, ncell);
 extern "C" int* TINKER_MOD(cell, icell);
 extern "C" double TINKER_MOD(cell, xcell);
@@ -31,4 +31,4 @@ double& xcell2 = TINKER_MOD(cell, xcell2);
 double& ycell2 = TINKER_MOD(cell, ycell2);
 double& zcell2 = TINKER_MOD(cell, zcell2);
 #endif
-} TINKER_NAMESPACE_END
+} }

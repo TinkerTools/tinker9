@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace neigh {
+namespace tinker { namespace neigh {
 extern int& maxvlst;
 extern int& maxelst;
 extern int& maxulst;
@@ -41,7 +41,7 @@ extern int& doclst;
 extern int& domlst;
 extern int& doulst;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(neigh, maxvlst);
 extern "C" int TINKER_MOD(neigh, maxelst);
 extern "C" int TINKER_MOD(neigh, maxulst);
@@ -118,4 +118,4 @@ int& doclst = TINKER_MOD(neigh, doclst);
 int& domlst = TINKER_MOD(neigh, domlst);
 int& doulst = TINKER_MOD(neigh, doulst);
 #endif
-} TINKER_NAMESPACE_END
+} }

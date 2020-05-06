@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace ielscf {
+namespace tinker { namespace ielscf {
 extern int& nfree_aux;
 extern double& tautemp_aux;
 extern double& kelvin_aux;
@@ -14,7 +14,7 @@ extern double*& aaux;
 extern double*& apaux;
 extern int& use_ielscf;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(ielscf, nfree_aux);
 extern "C" double TINKER_MOD(ielscf, tautemp_aux);
 extern "C" double TINKER_MOD(ielscf, kelvin_aux);
@@ -37,4 +37,4 @@ double*& aaux = TINKER_MOD(ielscf, aaux);
 double*& apaux = TINKER_MOD(ielscf, apaux);
 int& use_ielscf = TINKER_MOD(ielscf, use_ielscf);
 #endif
-} TINKER_NAMESPACE_END
+} }

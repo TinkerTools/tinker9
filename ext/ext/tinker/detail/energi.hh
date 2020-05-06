@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace energi {
+namespace tinker { namespace energi {
 extern double& esum;
 extern double& eb;
 extern double& ea;
@@ -33,7 +33,7 @@ extern double& elf;
 extern double& eg;
 extern double& ex;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(energi, esum);
 extern "C" double TINKER_MOD(energi, eb);
 extern "C" double TINKER_MOD(energi, ea);
@@ -94,4 +94,4 @@ double& elf = TINKER_MOD(energi, elf);
 double& eg = TINKER_MOD(energi, eg);
 double& ex = TINKER_MOD(energi, ex);
 #endif
-} TINKER_NAMESPACE_END
+} }

@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace torpot {
+namespace tinker { namespace torpot {
 extern double& idihunit;
 extern double& itorunit;
 extern double& torsunit;
@@ -11,7 +11,7 @@ extern double& storunit;
 extern double& atorunit;
 extern double& ttorunit;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(torpot, idihunit);
 extern "C" double TINKER_MOD(torpot, itorunit);
 extern "C" double TINKER_MOD(torpot, torsunit);
@@ -28,4 +28,4 @@ double& storunit = TINKER_MOD(torpot, storunit);
 double& atorunit = TINKER_MOD(torpot, atorunit);
 double& ttorunit = TINKER_MOD(torpot, ttorunit);
 #endif
-} TINKER_NAMESPACE_END
+} }

@@ -2,13 +2,13 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace bndpot {
+namespace tinker { namespace bndpot {
 extern double& cbnd;
 extern double& qbnd;
 extern double& bndunit;
 extern char (&bndtyp)[8];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(bndpot, cbnd);
 extern "C" double TINKER_MOD(bndpot, qbnd);
 extern "C" double TINKER_MOD(bndpot, bndunit);
@@ -19,4 +19,4 @@ double& qbnd = TINKER_MOD(bndpot, qbnd);
 double& bndunit = TINKER_MOD(bndpot, bndunit);
 char (&bndtyp)[8] = TINKER_MOD(bndpot, bndtyp);
 #endif
-} TINKER_NAMESPACE_END
+} }

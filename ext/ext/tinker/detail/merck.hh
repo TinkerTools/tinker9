@@ -3,7 +3,7 @@
 #include "macro.h"
 #include "sizes.hh"
 
-TINKER_NAMESPACE_BEGIN namespace merck {
+namespace tinker { namespace merck {
 using namespace sizes;
 
 extern int& nlignes;
@@ -88,7 +88,7 @@ extern double (&bci_1)[100][100];
 extern double (&pbci)[maxclass];
 extern double (&fcadj)[maxclass];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(merck, nlignes);
 extern "C" int TINKER_MOD(merck, bt_1)[2][500];
 extern "C" int TINKER_MOD(merck, eqclass)[5][500];
@@ -253,4 +253,4 @@ double (&bci_1)[100][100] = TINKER_MOD(merck, bci_1);
 double (&pbci)[maxclass] = TINKER_MOD(merck, pbci);
 double (&fcadj)[maxclass] = TINKER_MOD(merck, fcadj);
 #endif
-} TINKER_NAMESPACE_END
+} }

@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace korbs {
+namespace tinker { namespace korbs {
 const int maxnpi = 500;
 const int maxnpi5 = 200;
 const int maxnpi4 = 200;
@@ -19,7 +19,7 @@ extern char (&kpi)[maxnpi][8];
 extern char (&kpi5)[maxnpi5][8];
 extern char (&kpi4)[maxnpi4][8];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(korbs, sslope)[maxnpi];
 extern "C" double TINKER_MOD(korbs, sslope5)[maxnpi5];
 extern "C" double TINKER_MOD(korbs, sslope4)[maxnpi4];
@@ -46,4 +46,4 @@ char (&kpi)[maxnpi][8] = TINKER_MOD(korbs, kpi);
 char (&kpi5)[maxnpi5][8] = TINKER_MOD(korbs, kpi5);
 char (&kpi4)[maxnpi4][8] = TINKER_MOD(korbs, kpi4);
 #endif
-} TINKER_NAMESPACE_END
+} }

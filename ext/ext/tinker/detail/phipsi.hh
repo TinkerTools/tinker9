@@ -3,7 +3,7 @@
 #include "macro.h"
 #include "sizes.hh"
 
-TINKER_NAMESPACE_BEGIN namespace phipsi {
+namespace tinker { namespace phipsi {
 using namespace sizes;
 
 extern int (&chiral)[maxres];
@@ -13,7 +13,7 @@ extern double (&psi)[maxres];
 extern double (&omg)[maxres];
 extern double (&chi)[maxres][4];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(phipsi, chiral)[maxres];
 extern "C" int TINKER_MOD(phipsi, disulf)[maxres];
 extern "C" double TINKER_MOD(phipsi, phi)[maxres];
@@ -28,4 +28,4 @@ double (&psi)[maxres] = TINKER_MOD(phipsi, psi);
 double (&omg)[maxres] = TINKER_MOD(phipsi, omg);
 double (&chi)[maxres][4] = TINKER_MOD(phipsi, chi);
 #endif
-} TINKER_NAMESPACE_END
+} }

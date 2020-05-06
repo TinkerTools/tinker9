@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace poltcg {
+namespace tinker { namespace poltcg {
 extern int& tcgorder;
 extern int& tcgnab;
 extern double& tcgpeek;
@@ -12,7 +12,7 @@ extern double*& ubd;
 extern double*& ubp;
 extern int& tcgguess;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(poltcg, tcgorder);
 extern "C" int TINKER_MOD(poltcg, tcgnab);
 extern "C" double TINKER_MOD(poltcg, tcgpeek);
@@ -31,4 +31,4 @@ double*& ubd = TINKER_MOD(poltcg, ubd);
 double*& ubp = TINKER_MOD(poltcg, ubp);
 int& tcgguess = TINKER_MOD(poltcg, tcgguess);
 #endif
-} TINKER_NAMESPACE_END
+} }

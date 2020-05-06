@@ -2,14 +2,14 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace files {
+namespace tinker { namespace files {
 extern int& nprior;
 extern int& ldir;
 extern int& leng;
 extern char (&filename)[240];
 extern char (&outfile)[240];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(files, nprior);
 extern "C" int TINKER_MOD(files, ldir);
 extern "C" int TINKER_MOD(files, leng);
@@ -22,4 +22,4 @@ int& leng = TINKER_MOD(files, leng);
 char (&filename)[240] = TINKER_MOD(files, filename);
 char (&outfile)[240] = TINKER_MOD(files, outfile);
 #endif
-} TINKER_NAMESPACE_END
+} }

@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace piorbs {
+namespace tinker { namespace piorbs {
 extern int& norbit;
 extern int& nconj;
 extern int& reorbit;
@@ -18,7 +18,7 @@ extern double*& pbpl;
 extern double*& pnpl;
 extern int*& listpi;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(piorbs, norbit);
 extern "C" int TINKER_MOD(piorbs, nconj);
 extern "C" int TINKER_MOD(piorbs, reorbit);
@@ -49,4 +49,4 @@ double*& pbpl = TINKER_MOD(piorbs, pbpl);
 double*& pnpl = TINKER_MOD(piorbs, pnpl);
 int*& listpi = TINKER_MOD(piorbs, listpi);
 #endif
-} TINKER_NAMESPACE_END
+} }

@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace inform {
+namespace tinker { namespace inform {
 const int maxask = 5;
 extern int& digits;
 extern int& iprint;
@@ -14,7 +14,7 @@ extern int& debug;
 extern int& holdup;
 extern int& abort;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(inform, digits);
 extern "C" int TINKER_MOD(inform, iprint);
 extern "C" int TINKER_MOD(inform, iwrite);
@@ -35,4 +35,4 @@ int& debug = TINKER_MOD(inform, debug);
 int& holdup = TINKER_MOD(inform, holdup);
 int& abort = TINKER_MOD(inform, abort);
 #endif
-} TINKER_NAMESPACE_END
+} }

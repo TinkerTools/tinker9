@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace vdwpot {
+namespace tinker { namespace vdwpot {
 const int maxgauss = 10;
 extern int& ngauss;
 extern double (&igauss)[maxgauss][2];
@@ -24,7 +24,7 @@ extern char (&radrule)[10];
 extern char (&epsrule)[10];
 extern char (&vdwtyp)[13];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(vdwpot, ngauss);
 extern "C" double TINKER_MOD(vdwpot, igauss)[maxgauss][2];
 extern "C" double TINKER_MOD(vdwpot, abuck);
@@ -65,4 +65,4 @@ char (&radrule)[10] = TINKER_MOD(vdwpot, radrule);
 char (&epsrule)[10] = TINKER_MOD(vdwpot, epsrule);
 char (&vdwtyp)[13] = TINKER_MOD(vdwpot, vdwtyp);
 #endif
-} TINKER_NAMESPACE_END
+} }

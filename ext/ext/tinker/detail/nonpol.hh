@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace nonpol {
+namespace tinker { namespace nonpol {
 const double epso = 0.1100e0;
 const double epsh = 0.0135e0;
 const double rmino = 1.7025e0;
@@ -19,7 +19,7 @@ extern double*& rcav;
 extern double*& rdisp;
 extern double*& cdisp;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(nonpol, solvprs);
 extern "C" double TINKER_MOD(nonpol, surften);
 extern "C" double TINKER_MOD(nonpol, spcut);
@@ -40,4 +40,4 @@ double*& rcav = TINKER_MOD(nonpol, rcav);
 double*& rdisp = TINKER_MOD(nonpol, rdisp);
 double*& cdisp = TINKER_MOD(nonpol, cdisp);
 #endif
-} TINKER_NAMESPACE_END
+} }

@@ -3,7 +3,7 @@
 #include "macro.h"
 #include "sizes.hh"
 
-TINKER_NAMESPACE_BEGIN namespace refer {
+namespace tinker { namespace refer {
 using namespace sizes;
 
 extern int (&nref)[maxref];
@@ -25,7 +25,7 @@ extern char (*&refnam)[3];
 extern char (&reffile)[maxref][240];
 extern char (&reftitle)[maxref][240];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(refer, nref)[maxref];
 extern "C" int TINKER_MOD(refer, refltitle)[maxref];
 extern "C" int TINKER_MOD(refer, refleng)[maxref];
@@ -64,4 +64,4 @@ char (*&refnam)[3] = TINKER_MOD(refer, refnam);
 char (&reffile)[maxref][240] = TINKER_MOD(refer, reffile);
 char (&reftitle)[maxref][240] = TINKER_MOD(refer, reftitle);
 #endif
-} TINKER_NAMESPACE_END
+} }

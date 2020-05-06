@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace xtals {
+namespace tinker { namespace xtals {
 const int maxlsq = 1000;
 const int maxrsd = 1000;
 extern int& nxtal;
@@ -14,7 +14,7 @@ extern double& e0_lattice;
 extern char (&vartyp)[maxlsq][16];
 extern char (&rsdtyp)[maxrsd][16];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(xtals, nxtal);
 extern "C" int TINKER_MOD(xtals, nvary);
 extern "C" int TINKER_MOD(xtals, ivary)[maxlsq];
@@ -33,4 +33,4 @@ double& e0_lattice = TINKER_MOD(xtals, e0_lattice);
 char (&vartyp)[maxlsq][16] = TINKER_MOD(xtals, vartyp);
 char (&rsdtyp)[maxrsd][16] = TINKER_MOD(xtals, rsdtyp);
 #endif
-} TINKER_NAMESPACE_END
+} }

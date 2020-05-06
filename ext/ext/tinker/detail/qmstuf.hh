@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace qmstuf {
+namespace tinker { namespace qmstuf {
 extern int& ngatom;
 extern double& egau;
 extern double*& gx;
@@ -12,7 +12,7 @@ extern double*& gfreq;
 extern double*& gforce;
 extern double*& gh;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(qmstuf, ngatom);
 extern "C" double TINKER_MOD(qmstuf, egau);
 extern "C" double* TINKER_MOD(qmstuf, gx);
@@ -31,4 +31,4 @@ double*& gfreq = TINKER_MOD(qmstuf, gfreq);
 double*& gforce = TINKER_MOD(qmstuf, gforce);
 double*& gh = TINKER_MOD(qmstuf, gh);
 #endif
-} TINKER_NAMESPACE_END
+} }

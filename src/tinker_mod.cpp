@@ -1,2 +1,2 @@
-#define TINKER_MOD_CPP_
+#define TINKER_FORTRAN_MODULE_CPP
 #include <tinker/tinker_mod.h>

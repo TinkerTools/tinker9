@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace action {
+namespace tinker { namespace action {
 extern int& neb;
 extern int& nea;
 extern int& neba;
@@ -33,7 +33,7 @@ extern int& nelf;
 extern int& neg;
 extern int& nex;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(action, neb);
 extern "C" int TINKER_MOD(action, nea);
 extern "C" int TINKER_MOD(action, neba);
@@ -94,4 +94,4 @@ int& nelf = TINKER_MOD(action, nelf);
 int& neg = TINKER_MOD(action, neg);
 int& nex = TINKER_MOD(action, nex);
 #endif
-} TINKER_NAMESPACE_END
+} }

@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace mpole {
+namespace tinker { namespace mpole {
 const int maxpole = 13;
 extern int& npole;
 extern int*& ipole;
@@ -17,7 +17,7 @@ extern double*& spole;
 extern double*& srpole;
 extern char (*&polaxe)[8];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(mpole, npole);
 extern "C" int* TINKER_MOD(mpole, ipole);
 extern "C" int* TINKER_MOD(mpole, polsiz);
@@ -44,4 +44,4 @@ double*& spole = TINKER_MOD(mpole, spole);
 double*& srpole = TINKER_MOD(mpole, srpole);
 char (*&polaxe)[8] = TINKER_MOD(mpole, polaxe);
 #endif
-} TINKER_NAMESPACE_END
+} }

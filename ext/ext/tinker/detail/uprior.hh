@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace uprior {
+namespace tinker { namespace uprior {
 const int maxpred = 17;
 extern int& nualt;
 extern int& maxualt;
@@ -19,7 +19,7 @@ extern double*& upsalt;
 extern int& use_pred;
 extern char (&polpred)[4];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(uprior, nualt);
 extern "C" int TINKER_MOD(uprior, maxualt);
 extern "C" double TINKER_MOD(uprior, gear)[maxpred];
@@ -50,4 +50,4 @@ double*& upsalt = TINKER_MOD(uprior, upsalt);
 int& use_pred = TINKER_MOD(uprior, use_pred);
 char (&polpred)[4] = TINKER_MOD(uprior, polpred);
 #endif
-} TINKER_NAMESPACE_END
+} }

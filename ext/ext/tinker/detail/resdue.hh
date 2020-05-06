@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace resdue {
+namespace tinker { namespace resdue {
 const int maxamino = 38;
 const int maxnuc = 12;
 extern int (&ntyp)[maxamino];
@@ -49,7 +49,7 @@ extern char (&nuclz1)[maxnuc][1];
 extern char (&amino)[maxamino][3];
 extern char (&nuclz)[maxnuc][3];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(resdue, ntyp)[maxamino];
 extern "C" int TINKER_MOD(resdue, catyp)[maxamino];
 extern "C" int TINKER_MOD(resdue, ctyp)[maxamino];
@@ -138,4 +138,4 @@ char (&nuclz1)[maxnuc][1] = TINKER_MOD(resdue, nuclz1);
 char (&amino)[maxamino][3] = TINKER_MOD(resdue, amino);
 char (&nuclz)[maxnuc][3] = TINKER_MOD(resdue, nuclz);
 #endif
-} TINKER_NAMESPACE_END
+} }

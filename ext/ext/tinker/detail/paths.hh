@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace paths {
+namespace tinker { namespace paths {
 extern double& pnorm;
 extern double (&acoeff)[7][7];
 extern double*& pc0;
@@ -12,7 +12,7 @@ extern double*& pstep;
 extern double*& pzet;
 extern double*& gc;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(paths, pnorm);
 extern "C" double TINKER_MOD(paths, acoeff)[7][7];
 extern "C" double* TINKER_MOD(paths, pc0);
@@ -31,4 +31,4 @@ double*& pstep = TINKER_MOD(paths, pstep);
 double*& pzet = TINKER_MOD(paths, pzet);
 double*& gc = TINKER_MOD(paths, gc);
 #endif
-} TINKER_NAMESPACE_END
+} }

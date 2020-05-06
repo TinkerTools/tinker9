@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace warp {
+namespace tinker { namespace warp {
 extern double& deform;
 extern double& difft;
 extern double& diffv;
@@ -14,7 +14,7 @@ extern int& use_gda;
 extern int& use_tophat;
 extern int& use_stophat;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(warp, deform);
 extern "C" double TINKER_MOD(warp, difft);
 extern "C" double TINKER_MOD(warp, diffv);
@@ -37,4 +37,4 @@ int& use_gda = TINKER_MOD(warp, use_gda);
 int& use_tophat = TINKER_MOD(warp, use_tophat);
 int& use_stophat = TINKER_MOD(warp, use_stophat);
 #endif
-} TINKER_NAMESPACE_END
+} }

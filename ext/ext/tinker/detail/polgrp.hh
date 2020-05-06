@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace polgrp {
+namespace tinker { namespace polgrp {
 const int maxp11 = 120;
 const int maxp12 = 120;
 const int maxp13 = 120;
@@ -16,7 +16,7 @@ extern int*& ip12;
 extern int*& ip13;
 extern int*& ip14;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int* TINKER_MOD(polgrp, np11);
 extern "C" int* TINKER_MOD(polgrp, np12);
 extern "C" int* TINKER_MOD(polgrp, np13);
@@ -35,4 +35,4 @@ int*& ip12 = TINKER_MOD(polgrp, ip12);
 int*& ip13 = TINKER_MOD(polgrp, ip13);
 int*& ip14 = TINKER_MOD(polgrp, ip14);
 #endif
-} TINKER_NAMESPACE_END
+} }

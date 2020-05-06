@@ -191,7 +191,7 @@ class module:
             if not x.is_const:
                 non_const += 1
         if non_const:
-            print('\n#ifdef TINKER_MOD_CPP_')
+            print('\n#ifdef TINKER_FORTRAN_MODULE_CPP')
             for x in self.entries:
                 x.print_fpp(op='extern_c')
             print('')

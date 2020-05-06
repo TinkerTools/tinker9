@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace shunt {
+namespace tinker { namespace shunt {
 extern double& off;
 extern double& off2;
 extern double& cut;
@@ -22,7 +22,7 @@ extern double& f5;
 extern double& f6;
 extern double& f7;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(shunt, off);
 extern "C" double TINKER_MOD(shunt, off2);
 extern "C" double TINKER_MOD(shunt, cut);
@@ -61,4 +61,4 @@ double& f5 = TINKER_MOD(shunt, f5);
 double& f6 = TINKER_MOD(shunt, f6);
 double& f7 = TINKER_MOD(shunt, f7);
 #endif
-} TINKER_NAMESPACE_END
+} }

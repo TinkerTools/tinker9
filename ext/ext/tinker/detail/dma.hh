@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace dma {
+namespace tinker { namespace dma {
 extern double*& mp;
 extern double*& dpx;
 extern double*& dpy;
@@ -13,7 +13,7 @@ extern double*& q21s;
 extern double*& q22c;
 extern double*& q22s;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double* TINKER_MOD(dma, mp);
 extern "C" double* TINKER_MOD(dma, dpx);
 extern "C" double* TINKER_MOD(dma, dpy);
@@ -34,4 +34,4 @@ double*& q21s = TINKER_MOD(dma, q21s);
 double*& q22c = TINKER_MOD(dma, q22c);
 double*& q22s = TINKER_MOD(dma, q22s);
 #endif
-} TINKER_NAMESPACE_END
+} }

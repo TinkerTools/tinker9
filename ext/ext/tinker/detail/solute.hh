@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace solute {
+namespace tinker { namespace solute {
 extern double& doffset;
 extern double& p1;
 extern double& p2;
@@ -27,7 +27,7 @@ extern double*& uace;
 extern char (&solvtyp)[8];
 extern char (&borntyp)[8];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(solute, doffset);
 extern "C" double TINKER_MOD(solute, p1);
 extern "C" double TINKER_MOD(solute, p2);
@@ -76,4 +76,4 @@ double*& uace = TINKER_MOD(solute, uace);
 char (&solvtyp)[8] = TINKER_MOD(solute, solvtyp);
 char (&borntyp)[8] = TINKER_MOD(solute, borntyp);
 #endif
-} TINKER_NAMESPACE_END
+} }

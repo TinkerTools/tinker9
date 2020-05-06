@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace domega {
+namespace tinker { namespace domega {
 extern double*& tesum;
 extern double*& teb;
 extern double*& tea;
@@ -33,7 +33,7 @@ extern double*& telf;
 extern double*& teg;
 extern double*& tex;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double* TINKER_MOD(domega, tesum);
 extern "C" double* TINKER_MOD(domega, teb);
 extern "C" double* TINKER_MOD(domega, tea);
@@ -94,4 +94,4 @@ double*& telf = TINKER_MOD(domega, telf);
 double*& teg = TINKER_MOD(domega, teg);
 double*& tex = TINKER_MOD(domega, tex);
 #endif
-} TINKER_NAMESPACE_END
+} }

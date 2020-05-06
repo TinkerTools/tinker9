@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace boxes {
+namespace tinker { namespace boxes {
 extern double& xbox;
 extern double& ybox;
 extern double& zbox;
@@ -28,7 +28,7 @@ extern int& triclinic;
 extern int& octahedron;
 extern char (&spacegrp)[10];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(boxes, xbox);
 extern "C" double TINKER_MOD(boxes, ybox);
 extern "C" double TINKER_MOD(boxes, zbox);
@@ -79,4 +79,4 @@ int& triclinic = TINKER_MOD(boxes, triclinic);
 int& octahedron = TINKER_MOD(boxes, octahedron);
 char (&spacegrp)[10] = TINKER_MOD(boxes, spacegrp);
 #endif
-} TINKER_NAMESPACE_END
+} }

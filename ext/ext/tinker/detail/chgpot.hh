@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace chgpot {
+namespace tinker { namespace chgpot {
 extern double& electric;
 extern double& dielec;
 extern double& ebuffer;
@@ -14,7 +14,7 @@ extern double& c5scale;
 extern int& neutnbr;
 extern int& neutcut;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(chgpot, electric);
 extern "C" double TINKER_MOD(chgpot, dielec);
 extern "C" double TINKER_MOD(chgpot, ebuffer);
@@ -37,4 +37,4 @@ double& c5scale = TINKER_MOD(chgpot, c5scale);
 int& neutnbr = TINKER_MOD(chgpot, neutnbr);
 int& neutcut = TINKER_MOD(chgpot, neutcut);
 #endif
-} TINKER_NAMESPACE_END
+} }

@@ -3,7 +3,7 @@
 #include "macro.h"
 #include "sizes.hh"
 
-TINKER_NAMESPACE_BEGIN namespace potfit {
+namespace tinker { namespace potfit {
 using namespace sizes;
 
 extern int& nconf;
@@ -37,7 +37,7 @@ extern int*& fitpol;
 extern int*& gatm;
 extern int*& fatm;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(potfit, nconf);
 extern "C" int TINKER_MOD(potfit, namax);
 extern "C" int TINKER_MOD(potfit, ngatm);
@@ -100,4 +100,4 @@ int*& fitpol = TINKER_MOD(potfit, fitpol);
 int*& gatm = TINKER_MOD(potfit, gatm);
 int*& fatm = TINKER_MOD(potfit, fatm);
 #endif
-} TINKER_NAMESPACE_END
+} }

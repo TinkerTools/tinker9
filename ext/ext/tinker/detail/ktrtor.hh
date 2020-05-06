@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace ktrtor {
+namespace tinker { namespace ktrtor {
 const int maxntt = 100;
 const int maxtgrd = 30;
 const int maxtgrd2 = maxtgrd*maxtgrd;
@@ -16,7 +16,7 @@ extern double (&tby)[maxntt][maxtgrd2];
 extern double (&tbxy)[maxntt][maxtgrd2];
 extern char (&ktt)[maxntt][20];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(ktrtor, tnx)[maxntt];
 extern "C" int TINKER_MOD(ktrtor, tny)[maxntt];
 extern "C" double TINKER_MOD(ktrtor, ttx)[maxntt][maxtgrd];
@@ -37,4 +37,4 @@ double (&tby)[maxntt][maxtgrd2] = TINKER_MOD(ktrtor, tby);
 double (&tbxy)[maxntt][maxtgrd2] = TINKER_MOD(ktrtor, tbxy);
 char (&ktt)[maxntt][20] = TINKER_MOD(ktrtor, ktt);
 #endif
-} TINKER_NAMESPACE_END
+} }

@@ -2,13 +2,13 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace bndstr {
+namespace tinker { namespace bndstr {
 extern int& nbond;
 extern int*& ibnd;
 extern double*& bk;
 extern double*& bl;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(bndstr, nbond);
 extern "C" int* TINKER_MOD(bndstr, ibnd);
 extern "C" double* TINKER_MOD(bndstr, bk);
@@ -19,4 +19,4 @@ int*& ibnd = TINKER_MOD(bndstr, ibnd);
 double*& bk = TINKER_MOD(bndstr, bk);
 double*& bl = TINKER_MOD(bndstr, bl);
 #endif
-} TINKER_NAMESPACE_END
+} }

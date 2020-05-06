@@ -2,13 +2,13 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace kpolr {
+namespace tinker { namespace kpolr {
 extern int*& pgrp;
 extern double*& polr;
 extern double*& athl;
 extern double*& ddir;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int* TINKER_MOD(kpolr, pgrp);
 extern "C" double* TINKER_MOD(kpolr, polr);
 extern "C" double* TINKER_MOD(kpolr, athl);
@@ -19,4 +19,4 @@ double*& polr = TINKER_MOD(kpolr, polr);
 double*& athl = TINKER_MOD(kpolr, athl);
 double*& ddir = TINKER_MOD(kpolr, ddir);
 #endif
-} TINKER_NAMESPACE_END
+} }

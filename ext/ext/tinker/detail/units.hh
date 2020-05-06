@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace units {
+namespace tinker { namespace units {
 const double avogadro = 6.02214076e+23;
 const double lightspd = 2.99792458e-2;
 const double boltzmann = 0.831446262e0;
@@ -20,4 +20,4 @@ const double efreq = 2.194746314e+5;
 const double coulomb = 332.063713e0;
 const double debye = 4.80321e0;
 const double prescon = 6.85684112e+4;
-} TINKER_NAMESPACE_END
+} }

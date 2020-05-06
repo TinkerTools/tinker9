@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace ring {
+namespace tinker { namespace ring {
 extern int& nring3;
 extern int& nring4;
 extern int& nring5;
@@ -14,7 +14,7 @@ extern int*& iring5;
 extern int*& iring6;
 extern int*& iring7;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(ring, nring3);
 extern "C" int TINKER_MOD(ring, nring4);
 extern "C" int TINKER_MOD(ring, nring5);
@@ -37,4 +37,4 @@ int*& iring5 = TINKER_MOD(ring, iring5);
 int*& iring6 = TINKER_MOD(ring, iring6);
 int*& iring7 = TINKER_MOD(ring, iring7);
 #endif
-} TINKER_NAMESPACE_END
+} }

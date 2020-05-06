@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace disgeo {
+namespace tinker { namespace disgeo {
 extern double& vdwmax;
 extern double& compact;
 extern double& pathmax;
@@ -11,7 +11,7 @@ extern double*& georad;
 extern int& use_invert;
 extern int& use_anneal;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(disgeo, vdwmax);
 extern "C" double TINKER_MOD(disgeo, compact);
 extern "C" double TINKER_MOD(disgeo, pathmax);
@@ -28,4 +28,4 @@ double*& georad = TINKER_MOD(disgeo, georad);
 int& use_invert = TINKER_MOD(disgeo, use_invert);
 int& use_anneal = TINKER_MOD(disgeo, use_anneal);
 #endif
-} TINKER_NAMESPACE_END
+} }

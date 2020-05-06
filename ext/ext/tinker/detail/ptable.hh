@@ -2,14 +2,14 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace ptable {
+namespace tinker { namespace ptable {
 const int maxele = 112;
 extern double (&atmass)[maxele];
 extern double (&vdwrad)[maxele];
 extern double (&covrad)[maxele];
 extern char (&elemnt)[maxele][3];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(ptable, atmass)[maxele];
 extern "C" double TINKER_MOD(ptable, vdwrad)[maxele];
 extern "C" double TINKER_MOD(ptable, covrad)[maxele];
@@ -20,4 +20,4 @@ double (&vdwrad)[maxele] = TINKER_MOD(ptable, vdwrad);
 double (&covrad)[maxele] = TINKER_MOD(ptable, covrad);
 char (&elemnt)[maxele][3] = TINKER_MOD(ptable, elemnt);
 #endif
-} TINKER_NAMESPACE_END
+} }

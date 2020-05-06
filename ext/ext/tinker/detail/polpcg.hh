@@ -2,14 +2,14 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace polpcg {
+namespace tinker { namespace polpcg {
 extern int*& mindex;
 extern double& pcgpeek;
 extern double*& minv;
 extern int& pcgprec;
 extern int& pcgguess;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int* TINKER_MOD(polpcg, mindex);
 extern "C" double TINKER_MOD(polpcg, pcgpeek);
 extern "C" double* TINKER_MOD(polpcg, minv);
@@ -22,4 +22,4 @@ double*& minv = TINKER_MOD(polpcg, minv);
 int& pcgprec = TINKER_MOD(polpcg, pcgprec);
 int& pcgguess = TINKER_MOD(polpcg, pcgguess);
 #endif
-} TINKER_NAMESPACE_END
+} }

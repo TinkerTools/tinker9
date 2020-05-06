@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace ktorsn {
+namespace tinker { namespace ktorsn {
 const int maxnt = 2000;
 const int maxnt5 = 500;
 const int maxnt4 = 500;
@@ -28,7 +28,7 @@ extern char (&kt)[maxnt][16];
 extern char (&kt5)[maxnt5][16];
 extern char (&kt4)[maxnt4][16];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(ktorsn, t1)[maxnt][2];
 extern "C" double TINKER_MOD(ktorsn, t2)[maxnt][2];
 extern "C" double TINKER_MOD(ktorsn, t3)[maxnt][2];
@@ -73,4 +73,4 @@ char (&kt)[maxnt][16] = TINKER_MOD(ktorsn, kt);
 char (&kt5)[maxnt5][16] = TINKER_MOD(ktorsn, kt5);
 char (&kt4)[maxnt4][16] = TINKER_MOD(ktorsn, kt4);
 #endif
-} TINKER_NAMESPACE_END
+} }

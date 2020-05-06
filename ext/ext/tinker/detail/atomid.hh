@@ -3,7 +3,7 @@
 #include "macro.h"
 #include "sizes.hh"
 
-TINKER_NAMESPACE_BEGIN namespace atomid {
+namespace tinker { namespace atomid {
 using namespace sizes;
 
 extern int (&tag)[maxatm];
@@ -14,7 +14,7 @@ extern double (&mass)[maxatm];
 extern char (&name)[maxatm][3];
 extern char (&story)[maxatm][24];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(atomid, tag)[maxatm];
 extern "C" int TINKER_MOD(atomid, class)[maxatm];
 extern "C" int TINKER_MOD(atomid, atomic)[maxatm];
@@ -31,4 +31,4 @@ double (&mass)[maxatm] = TINKER_MOD(atomid, mass);
 char (&name)[maxatm][3] = TINKER_MOD(atomid, name);
 char (&story)[maxatm][24] = TINKER_MOD(atomid, story);
 #endif
-} TINKER_NAMESPACE_END
+} }

@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace faces {
+namespace tinker { namespace faces {
 extern int& maxcls;
 extern int& maxtt;
 extern int& maxt;
@@ -75,7 +75,7 @@ extern int*& fqa;
 extern int*& fqncy;
 extern int*& fqcy;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(faces, maxcls);
 extern "C" int TINKER_MOD(faces, maxtt);
 extern "C" int TINKER_MOD(faces, maxt);
@@ -220,4 +220,4 @@ int*& fqa = TINKER_MOD(faces, fqa);
 int*& fqncy = TINKER_MOD(faces, fqncy);
 int*& fqcy = TINKER_MOD(faces, fqcy);
 #endif
-} TINKER_NAMESPACE_END
+} }

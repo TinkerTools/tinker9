@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace kangs {
+namespace tinker { namespace kangs {
 const int maxna = 2000;
 const int maxna5 = 500;
 const int maxna4 = 500;
@@ -28,7 +28,7 @@ extern char (&ka3)[maxna3][12];
 extern char (&kap)[maxnap][12];
 extern char (&kaf)[maxnaf][12];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(kangs, acon)[maxna];
 extern "C" double TINKER_MOD(kangs, acon5)[maxna5];
 extern "C" double TINKER_MOD(kangs, acon4)[maxna4];
@@ -67,4 +67,4 @@ char (&ka3)[maxna3][12] = TINKER_MOD(kangs, ka3);
 char (&kap)[maxnap][12] = TINKER_MOD(kangs, kap);
 char (&kaf)[maxnaf][12] = TINKER_MOD(kangs, kaf);
 #endif
-} TINKER_NAMESPACE_END
+} }

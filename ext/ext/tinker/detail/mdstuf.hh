@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace mdstuf {
+namespace tinker { namespace mdstuf {
 extern int& nfree;
 extern int& irest;
 extern int& bmnmix;
@@ -10,7 +10,7 @@ extern double& arespa;
 extern int& dorest;
 extern char (&integrate)[11];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(mdstuf, nfree);
 extern "C" int TINKER_MOD(mdstuf, irest);
 extern "C" int TINKER_MOD(mdstuf, bmnmix);
@@ -25,4 +25,4 @@ double& arespa = TINKER_MOD(mdstuf, arespa);
 int& dorest = TINKER_MOD(mdstuf, dorest);
 char (&integrate)[11] = TINKER_MOD(mdstuf, integrate);
 #endif
-} TINKER_NAMESPACE_END
+} }

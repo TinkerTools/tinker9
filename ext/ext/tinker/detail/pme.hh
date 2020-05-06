@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace pme {
+namespace tinker { namespace pme {
 extern int& nfft1;
 extern int& nfft2;
 extern int& nfft3;
@@ -27,7 +27,7 @@ extern double*& thetai3;
 extern double*& qgrid;
 extern double*& qfac;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(pme, nfft1);
 extern "C" int TINKER_MOD(pme, nfft2);
 extern "C" int TINKER_MOD(pme, nfft3);
@@ -76,4 +76,4 @@ double*& thetai3 = TINKER_MOD(pme, thetai3);
 double*& qgrid = TINKER_MOD(pme, qgrid);
 double*& qfac = TINKER_MOD(pme, qfac);
 #endif
-} TINKER_NAMESPACE_END
+} }

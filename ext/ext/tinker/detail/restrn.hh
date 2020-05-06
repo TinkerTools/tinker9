@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace restrn {
+namespace tinker { namespace restrn {
 extern int& npfix;
 extern int& ndfix;
 extern int& nafix;
@@ -31,7 +31,7 @@ extern double*& chir;
 extern int& use_basin;
 extern int& use_wall;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(restrn, npfix);
 extern "C" int TINKER_MOD(restrn, ndfix);
 extern "C" int TINKER_MOD(restrn, nafix);
@@ -88,4 +88,4 @@ double*& chir = TINKER_MOD(restrn, chir);
 int& use_basin = TINKER_MOD(restrn, use_basin);
 int& use_wall = TINKER_MOD(restrn, use_wall);
 #endif
-} TINKER_NAMESPACE_END
+} }

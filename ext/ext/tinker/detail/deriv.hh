@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace deriv {
+namespace tinker { namespace deriv {
 extern double*& desum;
 extern double*& deb;
 extern double*& dea;
@@ -33,7 +33,7 @@ extern double*& delf;
 extern double*& deg;
 extern double*& dex;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double* TINKER_MOD(deriv, desum);
 extern "C" double* TINKER_MOD(deriv, deb);
 extern "C" double* TINKER_MOD(deriv, dea);
@@ -94,4 +94,4 @@ double*& delf = TINKER_MOD(deriv, delf);
 double*& deg = TINKER_MOD(deriv, deg);
 double*& dex = TINKER_MOD(deriv, dex);
 #endif
-} TINKER_NAMESPACE_END
+} }

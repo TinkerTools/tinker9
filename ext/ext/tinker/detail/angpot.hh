@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace angpot {
+namespace tinker { namespace angpot {
 extern double& angunit;
 extern double& stbnunit;
 extern double& aaunit;
@@ -23,7 +23,7 @@ extern double& sopd;
 extern char (&opbtyp)[8];
 extern char (*&angtyp)[8];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(angpot, angunit);
 extern "C" double TINKER_MOD(angpot, stbnunit);
 extern "C" double TINKER_MOD(angpot, aaunit);
@@ -64,4 +64,4 @@ double& sopd = TINKER_MOD(angpot, sopd);
 char (&opbtyp)[8] = TINKER_MOD(angpot, opbtyp);
 char (*&angtyp)[8] = TINKER_MOD(angpot, angtyp);
 #endif
-} TINKER_NAMESPACE_END
+} }

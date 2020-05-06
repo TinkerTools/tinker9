@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace hpmf {
+namespace tinker { namespace hpmf {
 const double rcarbon = 1.7e0;
 const double rwater = 1.4e0;
 const double acsurf = 120.7628e0;
@@ -24,7 +24,7 @@ extern int*& ipmf;
 extern double*& rpmf;
 extern double*& acsa;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(hpmf, npmf);
 extern "C" int* TINKER_MOD(hpmf, ipmf);
 extern "C" double* TINKER_MOD(hpmf, rpmf);
@@ -35,4 +35,4 @@ int*& ipmf = TINKER_MOD(hpmf, ipmf);
 double*& rpmf = TINKER_MOD(hpmf, rpmf);
 double*& acsa = TINKER_MOD(hpmf, acsa);
 #endif
-} TINKER_NAMESPACE_END
+} }

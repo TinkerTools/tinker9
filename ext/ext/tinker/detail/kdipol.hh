@@ -2,7 +2,7 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace kdipol {
+namespace tinker { namespace kdipol {
 const int maxnd = 1000;
 const int maxnd5 = 500;
 const int maxnd4 = 500;
@@ -20,7 +20,7 @@ extern char (&kd5)[maxnd5][8];
 extern char (&kd4)[maxnd4][8];
 extern char (&kd3)[maxnd3][8];
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(kdipol, dpl)[maxnd];
 extern "C" double TINKER_MOD(kdipol, dpl5)[maxnd5];
 extern "C" double TINKER_MOD(kdipol, dpl4)[maxnd4];
@@ -47,4 +47,4 @@ char (&kd5)[maxnd5][8] = TINKER_MOD(kdipol, kd5);
 char (&kd4)[maxnd4][8] = TINKER_MOD(kdipol, kd4);
 char (&kd3)[maxnd3][8] = TINKER_MOD(kdipol, kd3);
 #endif
-} TINKER_NAMESPACE_END
+} }

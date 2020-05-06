@@ -2,14 +2,14 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace angbnd {
+namespace tinker { namespace angbnd {
 extern int& nangle;
 extern int*& iang;
 extern double*& ak;
 extern double*& anat;
 extern double*& afld;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(angbnd, nangle);
 extern "C" int* TINKER_MOD(angbnd, iang);
 extern "C" double* TINKER_MOD(angbnd, ak);
@@ -22,4 +22,4 @@ double*& ak = TINKER_MOD(angbnd, ak);
 double*& anat = TINKER_MOD(angbnd, anat);
 double*& afld = TINKER_MOD(angbnd, afld);
 #endif
-} TINKER_NAMESPACE_END
+} }

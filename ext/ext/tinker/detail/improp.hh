@@ -2,13 +2,13 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace improp {
+namespace tinker { namespace improp {
 extern int& niprop;
 extern int*& iiprop;
 extern double*& kprop;
 extern double*& vprop;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(improp, niprop);
 extern "C" int* TINKER_MOD(improp, iiprop);
 extern "C" double* TINKER_MOD(improp, kprop);
@@ -19,4 +19,4 @@ int*& iiprop = TINKER_MOD(improp, iiprop);
 double*& kprop = TINKER_MOD(improp, kprop);
 double*& vprop = TINKER_MOD(improp, vprop);
 #endif
-} TINKER_NAMESPACE_END
+} }

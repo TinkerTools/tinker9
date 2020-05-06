@@ -2,12 +2,12 @@
 
 #include "macro.h"
 
-TINKER_NAMESPACE_BEGIN namespace inter {
+namespace tinker { namespace inter {
 extern double& einter;
 
-#ifdef TINKER_MOD_CPP_
+#ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(inter, einter);
 
 double& einter = TINKER_MOD(inter, einter);
 #endif
-} TINKER_NAMESPACE_END
+} }
