@@ -85,7 +85,7 @@ void get_box_axes_angles(const Box&, double& a, double& b, double& c,
 void set_tinker_box_module(const Box&);
 void get_tinker_box_module(Box&);
 /**
- * \ingroup
+ * \ingroup box
  * \brief Similar to Tinker `lattice` subroutine.
  *
  * See doc/box/box.pdf for details.

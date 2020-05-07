@@ -6,8 +6,7 @@
 
 namespace tinker {
 /**
- * \ingroup kosrw
- * \page kosrw
+ * \page kosrw  OSRW Keywords
  *
  * ### OSRW-ELE [LINEAR/QUADRATIC]
  *
@@ -15,11 +14,11 @@ namespace tinker {
  * This keyword sets the internal logical flag for OSRW to `true` and provides
  * the initial value of lambda.
  *
- * ### OSRW-TOR [LINEAR/QUADRATIC]
+ * ### OSRW-TORS [LINEAR/QUADRATIC]
  *
  * ### OSRW-VDW [LINEAR/QUADRATIC]
  *
- * ### ROTATABLE-BOND
+ * ### ROTATABLE-BOND [integer list]
  */
 
 

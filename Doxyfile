@@ -55,7 +55,7 @@ IDL_PROPERTY_SUPPORT   = YES
 DISTRIBUTE_GROUP_DOC   = YES
 GROUP_NESTED_COMPOUNDS = NO
 SUBGROUPING            = YES
-INLINE_GROUPED_CLASSES = NO
+INLINE_GROUPED_CLASSES = YES
 INLINE_SIMPLE_STRUCTS  = NO
 TYPEDEF_HIDES_STRUCT   = NO
 LOOKUP_CACHE_SIZE      = 0
@@ -94,8 +94,8 @@ GENERATE_DEPRECATEDLIST= YES
 ENABLED_SECTIONS       =
 MAX_INITIALIZER_LINES  = 30
 SHOW_USED_FILES        = YES
-SHOW_FILES             = YES
-SHOW_NAMESPACES        = YES
+SHOW_FILES             = NO
+SHOW_NAMESPACES        = NO
 FILE_VERSION_FILTER    =
 LAYOUT_FILE            =
 CITE_BIB_FILES         =
@@ -213,12 +213,12 @@ EXTRA_SEARCH_MAPPINGS  =
 #---------------------------------------------------------------------------
 # Configuration options related to the LaTeX output
 #---------------------------------------------------------------------------
-GENERATE_LATEX         = NO
+GENERATE_LATEX         = YES
 LATEX_OUTPUT           = latex
 LATEX_CMD_NAME         = latex
 MAKEINDEX_CMD_NAME     = makeindex
-COMPACT_LATEX          = NO
-PAPER_TYPE             = a4
+COMPACT_LATEX          = YES
+PAPER_TYPE             = letter
 EXTRA_PACKAGES         =
 LATEX_HEADER           =
 LATEX_FOOTER           =
@@ -298,7 +298,7 @@ EXTERNAL_PAGES         = YES
 #---------------------------------------------------------------------------
 # Configuration options related to the dot tool
 #---------------------------------------------------------------------------
-CLASS_DIAGRAMS         = YES
+CLASS_DIAGRAMS         = NO
 DIA_PATH               =
 HIDE_UNDOC_RELATIONS   = YES
 HAVE_DOT               = NO
@@ -306,7 +306,7 @@ DOT_NUM_THREADS        = 0
 DOT_FONTNAME           = Helvetica
 DOT_FONTSIZE           = 10
 DOT_FONTPATH           =
-CLASS_GRAPH            = YES
+CLASS_GRAPH            = NO
 COLLABORATION_GRAPH    = YES
 GROUP_GRAPHS           = NO
 UML_LOOK               = NO
