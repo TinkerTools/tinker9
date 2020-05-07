@@ -83,66 +83,48 @@ void bounds_pos_acc()
 //====================================================================//
 
 
-void propagate_velocity_acc(time_prec dt, const real* grx, const real* gry,
-                            const real* grz)
+void propagate_velocity_acc(time_prec dt, const grad_prec* grx,
+                            const grad_prec* gry, const grad_prec* grz)
 {
    const vel_prec ekcal = units::ekcal;
    #pragma acc parallel loop independent async\
                deviceptr(massinv,vx,vy,vz,grx,gry,grz)
    for (int i = 0; i < n; ++i) {
       vel_prec coef = -ekcal * massinv[i] * dt;
-      vx[i] += coef * grx[i];
-      vy[i] += coef * gry[i];
-      vz[i] += coef * grz[i];
-   }
-}
-
-
-void propagate_velocity_acc(time_prec dt, const fixed* grx, const fixed* gry,
-                            const fixed* grz)
-{
-   const vel_prec ekcal = units::ekcal;
-   #pragma acc parallel loop independent async\
-               deviceptr(massinv,vx,vy,vz,grx,gry,grz)
-   for (int i = 0; i < n; ++i) {
-      vel_prec coef = -ekcal * massinv[i] * dt;
+#if TINKER_DETERMINISTIC_FORCE
       vx[i] += coef * to_flt_acc<vel_prec>(grx[i]);
       vy[i] += coef * to_flt_acc<vel_prec>(gry[i]);
       vz[i] += coef * to_flt_acc<vel_prec>(grz[i]);
+#else
+      vx[i] += coef * grx[i];
+      vy[i] += coef * gry[i];
+      vz[i] += coef * grz[i];
+#endif
    }
 }
 
 
-void propagate_velocity2_acc(time_prec dt, const real* grx, const real* gry,
-                             const real* grz, time_prec dt2, const real* grx2,
-                             const real* gry2, const real* grz2)
+void propagate_velocity2_acc(time_prec dt, const grad_prec* grx,
+                             const grad_prec* gry, const grad_prec* grz,
+                             time_prec dt2, const grad_prec* grx2,
+                             const grad_prec* gry2, const grad_prec* grz2)
 {
    const vel_prec ekcal = units::ekcal;
    #pragma acc parallel loop independent async\
                deviceptr(massinv,vx,vy,vz,grx,gry,grz,grx2,gry2,grz2)
    for (int i = 0; i < n; ++i) {
       vel_prec coef = -ekcal * massinv[i];
-      vx[i] += coef * (grx[i] * dt + grx2[i] * dt2);
-      vy[i] += coef * (gry[i] * dt + gry2[i] * dt2);
-      vz[i] += coef * (grz[i] * dt + grz2[i] * dt2);
-   }
-}
-
-
-void propagate_velocity2_acc(time_prec dt, const fixed* grx, const fixed* gry,
-                             const fixed* grz, time_prec dt2, const fixed* grx2,
-                             const fixed* gry2, const fixed* grz2)
-{
-   const vel_prec ekcal = units::ekcal;
-   #pragma acc parallel loop independent async\
-               deviceptr(massinv,vx,vy,vz,grx,gry,grz,grx2,gry2,grz2)
-   for (int i = 0; i < n; ++i) {
-      vel_prec coef = -ekcal * massinv[i];
+#if TINKER_DETERMINISTIC_FORCE
       // clang-format off
       vx[i] += coef*(to_flt_acc<vel_prec>(grx[i])*dt+to_flt_acc<vel_prec>(grx2[i])*dt2);
       vy[i] += coef*(to_flt_acc<vel_prec>(gry[i])*dt+to_flt_acc<vel_prec>(gry2[i])*dt2);
       vz[i] += coef*(to_flt_acc<vel_prec>(grz[i])*dt+to_flt_acc<vel_prec>(grz2[i])*dt2);
       // clang-format on
+#else
+      vx[i] += coef * (grx[i] * dt + grx2[i] * dt2);
+      vy[i] += coef * (gry[i] * dt + gry2[i] * dt2);
+      vz[i] += coef * (grz[i] * dt + grz2[i] * dt2);
+#endif
    }
 }
 }

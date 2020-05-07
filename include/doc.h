@@ -21,6 +21,11 @@
 /**
  * \defgroup md  Molecular Dynamics Simulation
  *
+ *    \defgroup mdcalc  Control Bits for MM and MD Calculations
+ *    \ingroup md
+ *    \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)
+ *    \ingroup md
+ *
  *    \defgroup box  Periodic Boundary Box
  *    \ingroup md
  *    \defgroup spatial  Spatial Decomposition

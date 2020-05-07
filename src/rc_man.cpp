@@ -36,7 +36,6 @@ ResourceManagement::~ResourceManagement()
 void initialize()
 {
    rc_op op = rc_alloc | rc_init;
-   host_data(op);
    device_data(op);
 }
 
@@ -45,7 +44,6 @@ void finish()
 {
    rc_op op = rc_dealloc;
    device_data(op);
-   host_data(op);
 }
 }
 
@@ -68,16 +66,15 @@ void finish()
 
 
 namespace tinker {
-void host_data(rc_op op)
+void device_data(rc_op op)
 {
+   // host
    rc_man rand42{random_data, op};
    rc_man pf42{platform_data, op};
    rc_man gpu_card42{gpu_card_data, op};
-}
 
 
-void device_data(rc_op op)
-{
+   // device
    rc_man cl42{cudalib_data, op};
 
    rc_man n42{n_data, op};

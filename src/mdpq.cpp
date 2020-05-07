@@ -200,36 +200,20 @@ void xyz_data(rc_op op)
 
 
 mass_prec *mass, *massinv;
-
-
 vel_prec *vx, *vy, *vz;
 
 
-void propagate_velocity(time_prec dt, const real* grx, const real* gry,
-                        const real* grz)
+void propagate_velocity(time_prec dt, const grad_prec* grx,
+                        const grad_prec* gry, const grad_prec* grz)
 {
    propagate_velocity_acc(dt, grx, gry, grz);
 }
 
 
-void propagate_velocity(time_prec dt, const fixed* grx, const fixed* gry,
-                        const fixed* grz)
-{
-   propagate_velocity_acc(dt, grx, gry, grz);
-}
-
-
-void propagate_velocity2(time_prec dt, const real* grx, const real* gry,
-                         const real* grz, time_prec dt2, const real* grx2,
-                         const real* gry2, const real* grz2)
-{
-   propagate_velocity2_acc(dt, grx, gry, grz, dt2, grx2, gry2, grz2);
-}
-
-
-void propagate_velocity2(time_prec dt, const fixed* grx, const fixed* gry,
-                         const fixed* grz, time_prec dt2, const fixed* grx2,
-                         const fixed* gry2, const fixed* grz2)
+void propagate_velocity2(time_prec dt, const grad_prec* grx,
+                         const grad_prec* gry, const grad_prec* grz,
+                         time_prec dt2, const grad_prec* grx2,
+                         const grad_prec* gry2, const grad_prec* grz2)
 {
    propagate_velocity2_acc(dt, grx, gry, grz, dt2, grx2, gry2, grz2);
 }

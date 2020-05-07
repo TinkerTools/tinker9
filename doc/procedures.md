@@ -1,4 +1,4 @@
-# Procedures
+#Procedures
 
 
 ## Main Program
@@ -20,7 +20,6 @@
 
 <a name='ctor'></a>
 ## Initialize
-   - `host_data()`: random seed; GPU info.
    - `device_data()`:
       - `n_data()`: set number of atoms.
       - `box_data()`: set the shape of the periodic boundary condition (PBC),

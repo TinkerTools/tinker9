@@ -54,9 +54,6 @@ void initialize();
 /// \ingroup mem
 /// \brief Clean up host and device environment.
 void finish();
-/// \ingroup mem
-/// \brief Set up and clean up host environment.
-void host_data(rc_op);
 /// \brief Set up and clean up device environment.
 void device_data(rc_op);
 

@@ -4,30 +4,34 @@
 #include <istream>
 
 
-/**
- * \defgroup md_pq  Atom Number, Momentum (p), and Coordinates (q)
- * \ingroup md
- */
-
-
 namespace tinker {
+/**
+ * \ingroup mdcalc
+ * \var rc_flag
+ * \brief Global bitmask.
+ */
 extern int rc_flag;
 
 
 //====================================================================//
 
 
-extern int n;
 /**
- * \ingroup md_pq
+ * \ingroup mdpq
+ * \{
+ * \var n
+ * \brief Number of atoms.
+ *
+ * \var padded_n
  * \brief Number of atoms padded by #WARP_SIZE.
  * \see WARP_SIZE
- */
-extern int padded_n;
-/**
- * \ingroup md_pq
+ *
+ * \var trajn
  * \brief Number of the trajectory frames.
+ * \}
  */
+extern int n;
+extern int padded_n;
 extern int trajn;
 
 
@@ -38,49 +42,60 @@ void n_data(rc_op);
 
 
 /**
- * \ingroup md_pq
+ * \ingroup mdpq
+ * \{
+ * \var x
  * \brief Current coordinates used in energy evaluation and neighbor lists.
- */
-extern real *x, *y, *z;
-/**
- * \ingroup md_pq
- * \brief Entire trajectory frames.
- */
-extern real *trajx, *trajy, *trajz;
-/**
- * \ingroup md_pq
- * \brief Coordinates used in integrators.
+ * \var y
+ * \copydoc x
+ * \var z
+ * \copydoc x
  *
+ * \var trajx
+ * \brief Coordinates of all the trajectory frames.
+ * \var trajy
+ * \copydoc trajx
+ * \var trajz
+ * \copydoc trajx
+ *
+ * \var xpos
+ * \brief Coordinates used in integrators.
  * \note
  *    - New arrays will be allocated only if `sizeof(pos_prec) > sizeof(real)`,
  *    otherwise, they will be aliases of #x, #y, and #z.
- *    - Whenever #xpos, #ypos, #zpos get updated by integrators or barostats,
+ *    - Whenever #xpos, #ypos, #zpos get updated by integrators, barostats etc.,
  *    #x, #y, #z must be updated immediately.
- *
  * \see pos_prec
  * \see real
+ * \var ypos
+ * \copydoc xpos
+ * \var zpos
+ * \copydoc xpos
+ * \}
  */
+extern real *x, *y, *z;
+extern real *trajx, *trajy, *trajz;
 extern pos_prec *xpos, *ypos, *zpos;
 static_assert(sizeof(pos_prec) >= sizeof(real),
               "Type pos_prec cannot be shorter than type real.");
+
+
 /**
- * \ingroup md_pq
+ * \ingroup mdpq
  * \brief Update #x, #y, #z by #xpos, #ypos, and #zpos.
- * If #xpos etc. are only aliaes, return directly.
+ * If #xpos etc. are only aliases, return directly.
  */
 void copy_pos_to_xyz();
 void copy_pos_to_xyz_acc();
 
 
 /**
- * \ingroup md_pq
- * \brief Update #x, #y, #z via x += v * dt.
- * Currently #xpos, #ypos, and #zpos are integrated first, then call
- * #copy_pos_to_xyz() to update #x, #y, #z. In the end, neighbor lists may or
- * may not get updated.
- *
+ * \ingroup mdpq
+ * \brief Updates #x, #y, #z via `x += v * dt`.
+ * Currently #xpos, #ypos, and #zpos are integrated first, then uses
+ * #copy_pos_to_xyz() to update #x, #y, #z.
  * \param dt            Time-step for this update.
- * \param check_nblist  If `ture`, update the neighbor lists after updating the
+ * \param check_nblist  If `ture`, check the neighbor lists after updating the
  *                      coordinates.
  */
 void propagate_xyz(time_prec dt, bool check_nblist);
@@ -88,26 +103,25 @@ void propagate_pos_acc(time_prec);
 
 
 /**
- * \ingroup md_pq
+ * \ingroup mdpq
+ * \brief Call #bounds() at least every x steps in MD.
+ */
+constexpr int BOUNDS_EVERY_X_STEPS = 500;
+/**
+ * \ingroup mdpq
  * \brief Finds the geometric center of each molecule and translate any stray
  * molecules back into the periodic box on GPU.
  * \note
  *    - Updating #x, #y, #z is the goal.
- *    - Checks whether PBC is in use inside the this function.
+ *    - Checks whether PBC is in use inside this function.
  *    - Will not perturb the neighbor lists so no need to update them.
- *    - Tinker uses center of mass.
+ *    - Tinker uses centers of mass.
  */
 void bounds();
 void bounds_pos_acc();
-/**
- * \ingroup md_pq
- * \brief Call bounds() at least every x steps in MD.
- */
-constexpr int BOUNDS_EVERY_X_STEPS = 500;
+
 
 void read_frame_copyin_to_xyz(std::istream& input, int& done);
-
-
 void xyz_data(rc_op);
 
 
@@ -115,58 +129,45 @@ void xyz_data(rc_op);
 
 
 /**
- * \ingroup md_pq
+ * \ingroup mdpq
+ * \{
+ * \var mass
  * \brief Atomic mass.
+ * \var massinv
+ * \brief Inversed atomic mass.
+ *
+ * \var vx
+ * \brief Velocities.
+ * \var vy
+ * \copydoc vx
+ * \var vz
+ * \copydoc vx
+ * \}
  */
 extern mass_prec* mass;
-/**
- * \ingroup md_pq
- * \brief Inversed atomic mass.
- */
 extern mass_prec* massinv;
-
-
-/**
- * \ingroup md_pq
- * \brief Velocities.
- */
 extern vel_prec *vx, *vy, *vz;
 
 
 /**
- * \ingroup md_pq
- * \brief Update velocities via v += -g/m dt.
+ * \ingroup mdpq
+ * \brief Update velocities via `v += -g/m dt`.
  */
-void propagate_velocity(time_prec dt, const real* grx, const real* gry,
-                        const real* grz);
+void propagate_velocity(time_prec dt, const grad_prec* grx,
+                        const grad_prec* gry, const grad_prec* grz);
 /**
- * \ingroup md_pq
- * \brief Update velocities via v += -g/m dt.
+ * \ingroup mdpq
+ * \brief Update velocities via `v += (-g/m dt -g2/m dt2)`.
  */
-void propagate_velocity(time_prec dt, const fixed* grx, const fixed* gry,
-                        const fixed* grz);
-/**
- * \ingroup md_pq
- * \brief Update velocities via v += (-g/m dt -g2/m dt2).
- */
-void propagate_velocity2(time_prec dt, const real* grx, const real* gry,
-                         const real* grz, time_prec dt2, const real* grx2,
-                         const real* gry2, const real* grz2);
-/**
- * \ingroup md_pq
- * \brief Update velocities via v += (-g/m dt -g2/m dt2).
- */
-void propagate_velocity2(time_prec dt, const fixed* grx, const fixed* gry,
-                         const fixed* grz, time_prec dt2, const fixed* grx2,
-                         const fixed* gry2, const fixed* grz2);
-void propagate_velocity_acc(time_prec, const real*, const real*, const real*);
-void propagate_velocity_acc(time_prec, const fixed*, const fixed*,
-                            const fixed*);
-void propagate_velocity2_acc(time_prec, const real*, const real*, const real*,
-                             time_prec, const real*, const real*, const real*);
-void propagate_velocity2_acc(time_prec, const fixed*, const fixed*,
-                             const fixed*, time_prec, const fixed*,
-                             const fixed*, const fixed*);
+void propagate_velocity2(time_prec dt, const grad_prec* grx,
+                         const grad_prec* gry, const grad_prec* grz,
+                         time_prec dt2, const grad_prec* grx2,
+                         const grad_prec* gry2, const grad_prec* grz2);
+void propagate_velocity_acc(time_prec, const grad_prec*, const grad_prec*,
+                            const grad_prec*);
+void propagate_velocity2_acc(time_prec, const grad_prec*, const grad_prec*,
+                             const grad_prec*, time_prec, const grad_prec*,
+                             const grad_prec*, const grad_prec*);
 
 
 void mass_data(rc_op);

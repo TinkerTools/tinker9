@@ -28,17 +28,17 @@ extern "C"
 
 
    // Energy versions.
-   struct Eng : public tinker::EnergyVersion<tinker::calc::v0>
+   struct Eng : public tinker::calc::__Vers<tinker::calc::v0>
    {};
-   struct EngGradVir : public tinker::EnergyVersion<tinker::calc::v1>
+   struct EngGradVir : public tinker::calc::__Vers<tinker::calc::v1>
    {};
-   struct EngAlyz : public tinker::EnergyVersion<tinker::calc::v3>
+   struct EngAlyz : public tinker::calc::__Vers<tinker::calc::v3>
    {};
-   struct EngGrad : public tinker::EnergyVersion<tinker::calc::v4>
+   struct EngGrad : public tinker::calc::__Vers<tinker::calc::v4>
    {};
-   struct Grad : public tinker::EnergyVersion<tinker::calc::v5>
+   struct Grad : public tinker::calc::__Vers<tinker::calc::v5>
    {};
-   struct GradVir : public tinker::EnergyVersion<tinker::calc::v6>
+   struct GradVir : public tinker::calc::__Vers<tinker::calc::v6>
    {};
 
 
