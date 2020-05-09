@@ -33,10 +33,26 @@ extern int osrw_ele;
 extern int osrw_tor;
 
 
+/**
+ * \ingroup osrw
+ * \{
+ * \var osrw_du1
+ * \brief Partial derivative of potential energy w.r.t. lambda.
+ * \var osrw_dv1
+ * \brief Partial derivative of virial tensor w.r.t. lambda.
+ * \var osrw_dgx
+ * \brief Partial derivative of energy gradient w.r.t. lambda.
+ * \var osrw_dgy
+ * \copydoc osrw_dgx
+ * \var osrw_dgz
+ * \copydoc osrw_dgx
+ * \}
+ */
 extern energy_prec osrw_du1;
 extern virial_prec osrw_dv1[9];
 extern grad_prec *osrw_dgx, *osrw_dgy, *osrw_dgz;
-extern grad_prec *osrw_gx, *osrw_gy, *osrw_gz;
+
+
 extern real* osrw_pchg;
 extern real (*osrw_pole)[mpl_total];
 extern real* osrw_polarity;
@@ -58,12 +74,8 @@ double osrw_lam_expr2(int form, double lam);
 void osrw_altele(double);
 void osrw_alttor(double);
 void osrw_altvdw(double);
-// U(L) = [1-h(L)] U0 + h(L) U1
-// U' = -h'(L) U0 + h'(L) U1
-void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig);
-void osrw_energy(int vers);
-
-
 void osrw_altele_acc(double);
 void osrw_alttor_acc(double);
+void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig);
+void osrw_energy(int vers);
 }

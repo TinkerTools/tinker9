@@ -3,8 +3,8 @@
 
 
 /**
- * \defgroup md_prec  Fine-Grained Definitions of MM and MD Types
- * \ingroup md
+ * \ingroup mdprec
+ * \page mdprec
  *
  * | Properties                  | Types       | Underlying Types |
  * |----------------------------:|------------:|-----------------:|
@@ -25,7 +25,7 @@
 
 
 /**
- * \ingroup md_prec
+ * \ingroup mdprec
  * \def TINKER_DETERMINISTIC_FORCE
  * Logical macro for the underlying type of energy gradients.
  *    - If `true`, always use fixed-point arithmetic to accumulate energy
@@ -44,8 +44,8 @@
  * Whereas in MD, two simulations with the same initial configurations can
  * easily diverge due to the accumulated difference. If, for whatever reason,
  * you are willing to elongate the process of the inevitable divergence at the
- * cost of slower code speed, a more "deterministic" force (using fixed-point
- * arithmetic) can help.
+ * cost of slightly slower simulation speed, a more "deterministic" force (using
+ * fixed-point arithmetic) can help.
  *
  * To accumulate floating-point values via fixed-point arithmetic, we first
  * scale the values by a large integer then sum only the integer part.

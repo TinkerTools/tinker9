@@ -7,7 +7,7 @@
 
 namespace tinker {
 /**
- * \ingroup md_egv
+ * \ingroup mdegv
  * \brief Convert a fixed-point value to floating-point value on host.
  */
 template <class T>
@@ -25,23 +25,22 @@ inline F to_flt_host(T val)
 
 
 /**
- * \ingroup md_egv
+ * \ingroup mdegv
  * \brief
  * The lengths of all of the energy buffers are the same and are implicitly
  * dependent on the number of atoms in the system.
- * \note
- * Must a power of 2.
+ * \note Must be a power of 2.
  */
 size_t buffer_size();
 
 
 /**
- * \ingroup md_egv
+ * \ingroup mdegv
  * \brief
  * Poor man's buffer array for energy, virial tensor, etc. accumulation.
  * In fact, the buffer itself is not fancy. It is just a raw pointer to a
- * pre-allocated array on device. This class defines some properties that
- * cannot easily be stored by or fetched from the raw pointers.
+ * pre-allocated array on device. This class stores some properties that
+ * cannot easily be fetched from the raw pointers.
  *
  * This table shows a few possible definitions of the buffers (which may or
  * may not be the definitions actually used).
@@ -74,7 +73,7 @@ struct buffer_traits
 
 
 /**
- * \ingroup md_egv
+ * \ingroup mdegv
  * \brief Special rules for `float` increments where fixed-point buffer is used.
  */
 template <size_t Nincr>
@@ -103,45 +102,60 @@ using virial_buffer =
 
 
 /**
- * \ingroup md_egv
+ * \ingroup mdegv
  * \brief
  * Allocate or deallocate device memory for the buffers.
+ *
+ * ### Count Buffers
+ * Only be allocated only if #calc::analyz flag is used.
+ *
+ *
+ * ### Energy
+ *
+ *
+ * ### Virial
+ *
+ *
+ * ### Gradients
+ *
+ *
+ * Using bond and VDW terms as examples:
+ *
+ * |                 | if analyz  | if .not. analyz |
+ * |-----------------|------------|-----------------|
+ * | total potential | #esum      | #esum           |
+ * | total gx        | #gx        | #gx             |
+ * | total virial    | #vir       | #vir            |
+ * |                 |            |                 |
+ * | ebond buffer    | #eb        | #eng_buf        |
+ * | ebond           | #energy_eb | #esum           |
+ * | ebond gx        | #debx      | #gx             |
+ * | vir_eb buffer   | #vir_buf   | #vir_buf        |
+ * | vir_eb          | #vir       | #vir            |
+ * |                 |            |                 |
+ * | evdw buffer     | #ev        | #ev             |
+ * | evdw            | #energy_ev | #energy_ev      |
+ * | evdw gx         | #devx      | #devx           |
+ * | vir_ev buffer   | #vir_buf   | #vir_buf        |
+ * | vir_ev          | #vir       | #vir            |
+ *
  * \note
  * There is a global list to bookkeep all of the allocated buffers of its own
  * kind, so that all of the buffers can be iterated.
  * \note
- * These functions cannot be used on `esum_buf` and `vir_buf`.
- * \note
- * If `calc::analyz` is not used, the allocate functions only point the energy
- * buffer and virial buffer to `esum_buf` and `vir_buf`, respectively, and point
- * the count buffer to `nullptr`. If `calc::analyz` is used, `esm_buf` and
- * `vir_buf` are all set to `nullptr`.
- * \see count_buffers energy_buffers virial_buffers
- * \see esum_buf vir_buf
- * \see calc::analyz
+ * These functions cannot be used on #eng_buf and #vir_buf.
  */
-void buffer_allocate(int, energy_buffer*, grad_prec**, grad_prec**, grad_prec**,
-                     virial_buffer*, energy_prec*);
-/**
- * \ingroup md_egv
- * \see buffer_allocate
- */
+void buffer_allocate(int rcflag, energy_buffer* ebuf, grad_prec** gx,
+                     grad_prec** gy, grad_prec** gz, virial_buffer* vbuf,
+                     energy_prec* eout);
 void buffer_deallocate(int, energy_buffer, grad_prec*, grad_prec*, grad_prec*,
                        virial_buffer);
-/**
- * \ingroup md_egv
- * \see buffer_allocate
- */
 void buffer_allocate(int, count_buffer*);
-/**
- * \ingroup md_egv
- * \see buffer_allocate
- */
 void buffer_deallocate(int, count_buffer);
 
 
 /**
- * \ingroup md_egv
+ * \ingroup mdegv
  * \brief
  * Get the number of the non-bonded interactions, energy, or virial from the
  * corresponding buffer. These operations unnecessarily finish within `O(1)`
@@ -149,54 +163,65 @@ void buffer_deallocate(int, count_buffer);
  */
 int count_reduce(const count_buffer b);
 /**
- * \ingroup md_egv
+ * \ingroup mdegv
  * \see count_reduce
  */
 energy_prec energy_reduce(const energy_buffer b);
 /**
- * \ingroup md_egv
+ * \ingroup mdegv
  * \see count_reduce
  */
 void virial_reduce(virial_prec (&)[virial_buffer_traits::N],
                    const virial_buffer b);
 /**
- * \ingroup md_egv
+ * \ingroup mdegv
  * \see count_reduce
  */
 void virial_reduce(virial_prec (&)[9], const virial_buffer b);
 
 
 /**
- * \ingroup md_egv
+ * \ingroup mdegv
  */
 void set_energy_reduce_dst(energy_buffer, energy_prec*);
 /**
- * \ingroup md_egv
+ * \ingroup mdegv
  */
 energy_prec* get_energy_reduce_dst(energy_buffer);
 /**
- * \ingroup md_egv
+ * \ingroup mdegv
  */
 void clear_energy_reduce_dst();
 
 
 /**
- * \ingroup md_egv
+ * \ingroup mdegv
  * \brief Bookkeeping list for the count buffers.
  */
 extern std::vector<count_buffer> count_buffers;
 /**
- * \ingroup md_egv
+ * \ingroup mdegv
  * \brief Bookkeeping list for the energy buffers.
  */
 extern std::vector<energy_buffer> energy_buffers;
 /**
- * \ingroup md_egv
+ * \ingroup mdegv
  * \brief Bookkeeping list for the virial buffers.
  */
 extern std::vector<virial_buffer> virial_buffers;
 /**
- * \ingroup md_egv
+ * \ingroup mdegv
+ * \brief Bookkeeping list for the gradients.
  */
-extern std::vector<grad_prec*> x_grads, y_grads, z_grads;
+extern std::vector<grad_prec*> x_grads;
+/**
+ * \ingroup mdegv
+ * \copydoc x_grads
+ */
+extern std::vector<grad_prec*> y_grads;
+/**
+ * \ingroup mdegv
+ * \copydoc x_grads
+ */
+extern std::vector<grad_prec*> z_grads;
 }

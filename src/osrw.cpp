@@ -18,7 +18,8 @@ int osrw_tor;
 energy_prec osrw_du1;
 virial_prec osrw_dv1[9];
 grad_prec *osrw_dgx, *osrw_dgy, *osrw_dgz;
-grad_prec *osrw_gx, *osrw_gy, *osrw_gz;
+
+
 real* osrw_pchg;
 real (*osrw_pole)[mpl_total];
 real* osrw_polarity;
@@ -30,6 +31,11 @@ real (*osrw_tors3)[4];
 real (*osrw_tors4)[4];
 real (*osrw_tors5)[4];
 real (*osrw_tors6)[4];
+
+
+namespace {
+grad_prec *osrw_gx, *osrw_gy, *osrw_gz;
+}
 
 
 void osrw_mech()
@@ -47,9 +53,8 @@ void osrw_mech()
    osrw_dgx = nullptr;
    osrw_dgy = nullptr;
    osrw_dgz = nullptr;
-   osrw_gx = nullptr;
-   osrw_gy = nullptr;
-   osrw_gz = nullptr;
+
+
    osrw_pchg = nullptr;
    osrw_pole = nullptr;
    osrw_polarity = nullptr;
@@ -61,6 +66,11 @@ void osrw_mech()
    osrw_tors4 = nullptr;
    osrw_tors5 = nullptr;
    osrw_tors6 = nullptr;
+
+
+   osrw_gx = nullptr;
+   osrw_gy = nullptr;
+   osrw_gz = nullptr;
 
 
    // OSRW keywords.
