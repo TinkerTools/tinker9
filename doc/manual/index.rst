@@ -16,6 +16,12 @@ Tinker GPU Users Manual
 
 .. only:: html
 
+   GitHub Repository
+   =================
+
+   `Click here. <https://github.com/zhi-wang/tinker.gpu>`_
+
+
    Index and Search
    ================
 
