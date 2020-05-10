@@ -4,28 +4,10 @@ Tinker GPU: Software Tools for Molecular Design
 [![Build Status](https://travis-ci.com/zhi-wang/tinker.gpu.svg?branch=master)](https://travis-ci.com/zhi-wang/tinker.gpu)
 
 
-# Getting Started with Tinker GPU
-   - Overview
-   - Installation Guide
-   - Source Code
-
-
-## Overview
-
-
 ## Installation Guide
-   - [Prerequisites](doc/prerequisites.md)
-   - [Build the Canonical Tinker](doc/build1.md)
-   - [Build Tinker GPU](doc/build2.md)
-
-
-## Source Code
-   - Directory Layout
-   - [Style Guide](doc/style.md)
-
-
-## Documentation
-   - [Procedures](doc/procedures.md)
+   - [Prerequisites](doc/manual/m/install/preq.rst)
+   - [Build the Canonical Tinker](doc/manual/m/install/tinker.rst)
+   - [Build Tinker GPU](doc/manual/m/install/tinkergpu.rst)
 
 
 ## Repository
@@ -35,5 +17,5 @@ Tinker GPU: Software Tools for Molecular Design
 </a>
 
 
-For more information, visit the doxygen-generated documentation
+For more information, visit the user manual
 hosted on [github.io](https://zhi-wang.github.io/tinker.gpu).

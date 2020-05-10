@@ -5,23 +5,6 @@
 
 
 namespace tinker {
-/**
- * \page kosrw  OSRW Keywords
- *
- * ### OSRW-ELE [LINEAR/QUADRATIC]
- *
- * ### OSRW-LAMBDA [real]
- * This keyword sets the internal logical flag for OSRW to `true` and provides
- * the initial value of lambda.
- *
- * ### OSRW-TORS [LINEAR/QUADRATIC]
- *
- * ### OSRW-VDW [LINEAR/QUADRATIC]
- *
- * ### ROTATABLE-BOND [integer list]
- */
-
-
 constexpr int OSRW_LAM_LINEAR = 0;
 constexpr int OSRW_LAM_QUADRATIC = 1;
 

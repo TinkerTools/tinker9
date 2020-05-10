@@ -517,9 +517,7 @@ info:
 ##/
 .PHONY: doc
 doc:
-	cp -r $(top_dir__)/README.md $(top_dir__)/doc $(top_dir__)/include .
-	grep '^\##/' $(top_dir__)/make/Makefile | sed -e 's|##/ ||' | sed -e 's|##/||' > doc/build2.md
-	cp doc/build2.md $(top_dir__)/doc/build2.md
+	cp -r $(top_dir__)/doc $(top_dir__)/include .
 	doxygen -w html doc/header.html doc/footer.html doc/customdoxygen.css-orig
 	sed -e "s|Roboto,sans-serif|'Lucida Grande',Geneva,Helvetica,Arial,sans-serif|" doc/customdoxygen.css-orig > doc/customdoxygen.css
 	ENV_GIT_HEAD="$(git_head__)" doxygen $(top_dir__)/Doxyfile
