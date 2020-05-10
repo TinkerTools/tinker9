@@ -1,3 +1,6 @@
+# Manual
+doc/manual/_build/*
+
 # Nsight
 Debug/*
 Release/*
