@@ -3,15 +3,20 @@ Build the Canonical Tinker
 
 **Checkout the Required Version of Tinker**
 
-Build Tinker from the git submodule inside this repository.
+Checkout Tinker from the `tinker` git submodule inside this repository:
+
+.. code-block:: bash
+
+   $> cd tinker.gpu/tinker
+   $> git submodule update --init
 
 Alternatively, clone
 `Tinker from GitHub <https://github.com/tinkertools/tinker>`_,
-checkout the required version 350df099,
-and copy Makefile to the `source` directory.
+then checkout the required version 350df099.
 
 **Make libtinker**
 
+- Copy Makefile to the `source` directory.
 - Change the value of variable `FFTWDIR` to the top-level FFTW installation.
 - Locate the correct flags in the Makefile for your compiler and operating
   system, uncomment them, and comment out the others.

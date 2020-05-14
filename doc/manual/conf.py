@@ -20,6 +20,7 @@
 project = 'Tinker GPU User Manual'
 copyright = '2020, Zhi Wang'
 author = 'Zhi Wang'
+master_doc = 'index'
 
 
 # -- General configuration ---------------------------------------------------
