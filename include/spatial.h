@@ -222,7 +222,7 @@ struct Spatial
    // internal
    int n, nak;
    int px, py, pz, nx, nxk;
-   int near, xak_sum, xak_sum_cap;
+   int near, xak_sum, iak_cap;
 
 
    // output

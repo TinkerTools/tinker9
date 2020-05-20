@@ -97,7 +97,7 @@ void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer,
    st.nxk = (st.nx + Spatial::BLOCK - 1) / Spatial::BLOCK;
    st.near = 0;
    st.xak_sum = 0;
-   st.xak_sum_cap = 0;
+   st.iak_cap = 0;
 
    // output
    st.iak = nullptr;

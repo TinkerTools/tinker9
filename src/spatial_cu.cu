@@ -513,7 +513,7 @@ void spatial_data_init_cu(SpatialUnit u)
    int& nxk = u->nxk;
    int& near = u->near;
    int& xak_sum = u->xak_sum;
-   int& xak_sum_cap = u->xak_sum_cap;
+   int& iak_cap = u->iak_cap;
    int& niak = u->niak;
 
 
@@ -602,11 +602,11 @@ void spatial_data_init_cu(SpatialUnit u)
    // F.2
    thrust::transform_exclusive_scan(policy, xakf, xakf + nak, xakf_scan, POPC(),
                                     0, thrust::plus<int>());
-   if (xak_sum > xak_sum_cap) {
+   size_t iak_size = near * xak_sum;            // F.3
+   size_t lst_size = iak_size * Spatial::BLOCK; // F.4
+   if (iak_size > iak_cap) {
+      iak_cap = iak_size;
       darray::deallocate(u->lst, u->iak);
-      xak_sum_cap = xak_sum;
-      size_t iak_size = near * xak_sum;            // F.3
-      size_t lst_size = iak_size * Spatial::BLOCK; // F.4
       darray::allocate(lst_size, &u->lst);
       darray::allocate(iak_size, &u->iak);
    }
