@@ -3,14 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Tinker GPU User Manual
-======================
+Tinker GPU User's Manual
+========================
 
 .. toctree::
    :maxdepth: 2
 
    m/intro
    m/install/index
+   m/feat/index
    m/key/index
 
 
@@ -27,4 +28,3 @@ Tinker GPU User Manual
 
    * :ref:`genindex`
    * :ref:`search`
-

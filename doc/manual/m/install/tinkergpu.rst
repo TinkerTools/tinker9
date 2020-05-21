@@ -14,8 +14,8 @@ Maintaining Multiple Build Directories
 Please refer to **create_build** for creating build directories.
 
 We strongly discourage compiling Tinker GPU object files within the source
-code directory. A few options are necessary to be passed
-to the `make` command, therefore, we recommend you write and keep a shell
+code directory. A few options are necessary for
+the `make` command, therefore, we recommend you write and keep a shell
 script in every build directory to replace the general `make` command.
 
 Some examples are given below.
