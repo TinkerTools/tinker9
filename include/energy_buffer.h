@@ -148,10 +148,10 @@ using virial_buffer =
 void buffer_allocate(int rcflag, energy_buffer* ebuf, grad_prec** gx,
                      grad_prec** gy, grad_prec** gz, virial_buffer* vbuf,
                      energy_prec* eout);
-void buffer_deallocate(int, energy_buffer, grad_prec*, grad_prec*, grad_prec*,
-                       virial_buffer);
+void buffer_deallocate(int, energy_buffer&, grad_prec*&, grad_prec*&,
+                       grad_prec*&, virial_buffer&);
 void buffer_allocate(int, count_buffer*);
-void buffer_deallocate(int, count_buffer);
+void buffer_deallocate(int, count_buffer&);
 
 
 /**

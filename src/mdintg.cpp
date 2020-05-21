@@ -11,10 +11,12 @@
 #include "mdpq.h"
 #include "mdpt.h"
 #include "mdsave.h"
+#include "nose.h"
 #include <cassert>
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
+#include <tinker/detail/units.hh>
 
 
 namespace tinker {
@@ -66,6 +68,9 @@ void propagate(int nsteps, time_prec dt_ps)
 void integrate_data(rc_op op)
 {
    if (op & rc_dealloc) {
+      if (intg == nhc_npt_xo_respa)
+         darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
+
       if (intg == respa_fast_slow)
          darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
 
@@ -120,12 +125,39 @@ void integrate_data(rc_op op)
       } else if (itg == "BAOAB") {
       } else if (itg == "BUSSI") {
       } else if (itg == "NOSE-HOOVER") {
+         double ekt = units::gasconst * bath::kelvin;
+         intg = nhc_npt_xo_respa;
+         vbar = 0;
+         qbar = (mdstuf::nfree + 1) * ekt * bath::taupres * bath::taupres;
+         gbar = 0;
+         for (int i = 0; i < maxnose; ++i) {
+            vnh[i] = 0;
+            qnh[i] = ekt * bath::tautemp * bath::tautemp;
+            gnh[i] = 0;
+         }
+         qnh[0] *= mdstuf::nfree;
+
+         // need fast and slow gradients to start/restart the simulation
+         darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
+
+         // save fast gradients to gx1 etc.
+         energy(calc::grad, RESPA_FAST, respa_tsconfig());
+         darray::copy(PROCEED_NEW_Q, n, gx1, gx);
+         darray::copy(PROCEED_NEW_Q, n, gy1, gy);
+         darray::copy(PROCEED_NEW_Q, n, gz1, gz);
+
+         // save slow gradients to gx2 etc.
+         energy(calc::grad, RESPA_SLOW, respa_tsconfig());
+         darray::copy(PROCEED_NEW_Q, n, gx2, gx);
+         darray::copy(PROCEED_NEW_Q, n, gy2, gy);
+         darray::copy(PROCEED_NEW_Q, n, gz2, gz);
       } else if (itg == "GHMC") {
       } else if (itg == "RIGIDBODY") {
       } else if (itg == "RESPA") {
          intg = respa_fast_slow;
          // need fast and slow gradients to start/restart the simulation
          darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
+
          // save fast gradients to gx1 etc.
          energy(calc::grad, RESPA_FAST, respa_tsconfig());
          darray::copy(PROCEED_NEW_Q, n, gx1, gx);

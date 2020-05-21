@@ -7,8 +7,8 @@ Checkout Tinker from the `tinker` git submodule inside this repository:
 
 .. code-block:: bash
 
-   $> cd tinker.gpu/tinker
-   $> git submodule update --init
+   cd tinker.gpu/tinker
+   git submodule update --init
 
 Alternatively, clone
 `Tinker from GitHub <https://github.com/tinkertools/tinker>`_,

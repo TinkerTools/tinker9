@@ -101,9 +101,6 @@ void respa_fast_slow(int istep, time_prec dt_ps)
 
    virial_prec vir_fast[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
    virial_prec vir_f[9];
-#ifdef TINKER_RESPA_AVERAGE_ENERGY
-   energy_prec esum_fast = 0;
-#endif
    energy_prec esum_f;
 
 
@@ -122,11 +119,6 @@ void respa_fast_slow(int istep, time_prec dt_ps)
 
       // update a_fast
       energy(vers1, RESPA_FAST, respa_tsconfig());
-#ifdef TINKER_RESPA_AVERAGE_ENERGY
-      copy_energy(vers1, &esum_f);
-      if (vers1 & calc::energy)
-         esum_fast += esum_f;
-#endif
       copy_virial(vers1, vir_f);
       if (vers1 & calc::virial) {
          for (int i = 0; i < 9; ++i)
@@ -149,10 +141,6 @@ void respa_fast_slow(int istep, time_prec dt_ps)
    darray::copy(PROCEED_NEW_Q, n, gy1, gy);
    darray::copy(PROCEED_NEW_Q, n, gz1, gz);
    copy_energy(vers1, &esum_f);
-#ifdef TINKER_RESPA_AVERAGE_ENERGY
-   if (vers1 & calc::energy)
-      esum_fast += esum_f;
-#endif
    copy_virial(vers1, vir_f);
    if (vers1 & calc::virial) {
       for (int i = 0; i < 9; ++i)
@@ -170,11 +158,7 @@ void respa_fast_slow(int istep, time_prec dt_ps)
    // esum_f: e fast
    // vir_fast: nalt total v fast
    if (vers1 & calc::energy)
-#ifdef TINKER_RESPA_AVERAGE_ENERGY
-      esum += esum_fast / nalt;
-#else
       esum += esum_f;
-#endif
    if (vers1 & calc::virial) {
       for (int i = 0; i < 9; ++i)
          vir[i] += vir_fast[i] / nalt;

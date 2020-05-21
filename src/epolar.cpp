@@ -36,8 +36,10 @@ void epolar_data(rc_op op)
       }
       if (use_potent(mpole_term)) {
          if (rc_flag & calc::analyz) {
-            buffer_deallocate(rc_flag & (calc::analyz | calc::energy), ep,
-                              nullptr, nullptr, nullptr, nullptr);
+            grad_prec* nulg = nullptr;
+            virial_buffer nulv = nullptr;
+            buffer_deallocate(rc_flag & (calc::analyz | calc::energy), ep, nulg,
+                              nulg, nulg, nulv);
          }
          ep = nullptr;
          depx = nullptr;

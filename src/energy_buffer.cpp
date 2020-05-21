@@ -65,18 +65,23 @@ void buffer_allocate(int flag, energy_buffer* pe, grad_prec** px,
 }
 
 
-void buffer_deallocate(int flag, energy_buffer e, grad_prec* gx, grad_prec* gy,
-                       grad_prec* gz, virial_buffer v)
+void buffer_deallocate(int flag, energy_buffer& e, grad_prec*& gx,
+                       grad_prec*& gy, grad_prec*& gz, virial_buffer& v)
 {
    if (flag & calc::analyz) {
       if (flag & calc::energy) {
          darray::deallocate(e);
+         e = nullptr;
       }
       if (flag & calc::grad) {
          darray::deallocate(gx, gy, gz);
+         gx = nullptr;
+         gy = nullptr;
+         gz = nullptr;
       }
       if (flag & calc::virial) {
          darray::deallocate(v);
+         v = nullptr;
       }
    }
 }
@@ -94,10 +99,12 @@ void buffer_allocate(int flag, count_buffer* pc)
 }
 
 
-void buffer_deallocate(int flag, count_buffer c)
+void buffer_deallocate(int flag, count_buffer& c)
 {
-   if (flag & calc::analyz)
+   if (flag & calc::analyz) {
       darray::deallocate(c);
+      c = nullptr;
+   }
 }
 
 

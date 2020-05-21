@@ -102,6 +102,15 @@ void propagate_xyz(time_prec dt, bool check_nblist);
 void propagate_pos_acc(time_prec);
 
 
+
+/**
+ * \ingroup mdpq
+ * x = a x + b v
+ */
+void propagate_xyz_axbv(double a, double b, bool check_nblist);
+void propagate_pos_axbv_acc(double a, double b);
+
+
 /**
  * \ingroup mdpq
  * \brief Call #bounds() at least every x steps in MD.

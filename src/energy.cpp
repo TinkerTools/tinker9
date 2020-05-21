@@ -63,19 +63,23 @@ const TimeScaleConfig& default_tsconfig()
 }
 
 
+namespace {
+auto tscfg__ = [&](std::string eng, unsigned tsflag,
+                   const TimeScaleConfig& tsconfig) {
+   auto local_flag = tsflag;
+   const auto& local_cfg = tsconfig;
+   try {
+      return local_flag & (1 << local_cfg.at(eng));
+   } catch (const std::out_of_range&) {
+      TINKER_THROW(format("Time scale of the %s term is unknown.\n", eng));
+   }
+};
+#define tscfg(x) tscfg__(x, tsflag, tsconfig)
+}
+
+
 void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 {
-   auto tscfg = [&](std::string eng) {
-      auto local_flag = tsflag;
-      const auto& local_cfg = tsconfig;
-      try {
-         return local_flag & (1 << local_cfg.at(eng));
-      } catch (const std::out_of_range&) {
-         TINKER_THROW(format("Time scale of the %s term is unknown.\n", eng));
-      }
-   };
-
-
    vers = vers & calc::vmask;
 
 
@@ -160,7 +164,44 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 {
    zero_egv(vers);
    energy_core(vers, tsflag, tsconfig);
-   sum_energy(vers);
+
+
+   if (vers & calc::energy) {
+      for (size_t i = 0; i < energy_buffers.size(); ++i) {
+         energy_buffer u = energy_buffers[i];
+         energy_prec e = energy_reduce(u);
+         energy_prec* eptr = get_energy_reduce_dst(u);
+         if (u == ev) {
+            if (!use_potent(vdw_term) || !tscfg("evdw"))
+               e = 0;
+         }
+         *eptr = e;
+         if (eptr != &esum)
+            esum += e;
+      }
+   }
+
+   if (vers & calc::virial) {
+      for (size_t i = 0; i < virial_buffers.size(); ++i) {
+         virial_buffer u = virial_buffers[i];
+         virial_prec v[9];
+         virial_reduce(v, u);
+         if (u == vir_ev) {
+            if (!use_potent(vdw_term) || !tscfg("evdw"))
+               for (int iv = 0; iv < 9; ++iv)
+                  v[iv] = 0;
+         }
+         for (int iv = 0; iv < 9; ++iv)
+            vir[iv] += v[iv];
+      }
+   }
+
+   if (vers & calc::grad) {
+      size_t ngrad = x_grads.size();
+      for (size_t i = 1; i < ngrad; ++i) {
+         sum_gradient(gx, gy, gz, x_grads[i], y_grads[i], z_grads[i]);
+      }
+   }
 }
 
 

@@ -34,6 +34,19 @@ void propagate_pos_acc(time_prec dt)
 }
 
 
+void propagate_pos_axbv_acc(double a, double b)
+{
+   pos_prec sa = a, sb = b;
+   #pragma acc parallel loop independent async\
+               deviceptr(xpos,ypos,zpos,vx,vy,vz)
+   for (int i = 0; i < n; ++i) {
+      xpos[i] = sa * xpos[i] + sb * vx[i];
+      ypos[i] = sa * ypos[i] + sb * vy[i];
+      zpos[i] = sa * zpos[i] + sb * vz[i];
+   }
+}
+
+
 void bounds_pos_acc()
 {
    auto nmol = molecule.nmol;

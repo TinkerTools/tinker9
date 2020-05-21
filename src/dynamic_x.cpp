@@ -173,6 +173,10 @@ void x_dynamic(int, char**)
       print(stdout,
             " Molecular Dynamics Trajectory via"
             " Velocity Verlet Algorithm\n");
+   else if (integrate == "NOSE-HOOVER")
+      print(stdout,
+            " Molecular Dynamics Trajectory via"
+            " Nose-Hoover NPT Algorithm\n");
    else if (integrate == "RESPA")
       print(stdout,
             " Molecular Dynamics Trajectory via"

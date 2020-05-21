@@ -76,6 +76,15 @@ void propagate_xyz(time_prec dt, bool check_nblist)
 }
 
 
+void propagate_xyz_axbv(double a, double b, bool check_nblist)
+{
+   propagate_pos_axbv_acc(a, b);
+   copy_pos_to_xyz();
+   if (check_nblist)
+      refresh_neighbors();
+}
+
+
 void bounds()
 {
    if (!bound::use_bounds)
