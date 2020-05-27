@@ -20,7 +20,8 @@ void empole_data(rc_op op)
       if (rc_flag & calc::analyz) {
          buffer_deallocate(calc::analyz, nem);
       }
-      buffer_deallocate(rc_flag | calc::analyz, em, demx, demy, demz, vir_em);
+      buffer_deallocate(rc_flag | calc::analyz, em, vir_em);
+      buffer_deallocate(rc_flag | calc::analyz, demx, demy, demz);
    }
 
    if (op & rc_alloc) {
@@ -102,8 +103,8 @@ void empole_data(rc_op op)
       if (rc_flag & calc::analyz) {
          buffer_allocate(calc::analyz, &nem);
       }
-      buffer_allocate(rc_flag | calc::analyz, &em, &demx, &demy, &demz, &vir_em,
-                      &energy_em);
+      buffer_allocate(rc_flag | calc::analyz, &em, &vir_em);
+      buffer_allocate(rc_flag | calc::analyz, &demx, &demy, &demz);
    }
 
    if (op & rc_init) {
@@ -113,10 +114,43 @@ void empole_data(rc_op op)
 
 void empole(int vers)
 {
+   mpole_init(vers);
+
+
    if (use_ewald())
       empole_ewald(vers);
    else
       empole_nonewald(vers);
+
+
+   bool calc_polar = use_potent(polar_term);
+   if (!calc_polar)
+      torque(vers);
+
+
+   if (vers & calc::energy) {
+      if ((!calc_polar) || (rc_flag & calc::analyz)) {
+         energy_buffer u = em;
+         energy_em = energy_reduce(u);
+         energy_elec += energy_em;
+      }
+   }
+   if (vers & calc::virial) {
+      if ((!calc_polar) || (vers & calc::analyz)) {
+         virial_buffer u1 = vir_em;
+         virial_prec v1[9];
+         virial_reduce(v1, u1);
+         for (int iv = 0; iv < 9; ++iv)
+            virial_elec[iv] += v1[iv];
+      }
+      if (!calc_polar) {
+         virial_buffer u2 = vir_trq;
+         virial_prec v2[9];
+         virial_reduce(v2, u2);
+         for (int iv = 0; iv < 9; ++iv)
+            virial_elec[iv] += v2[iv];
+      }
+   }
 }
 
 

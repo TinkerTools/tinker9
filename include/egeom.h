@@ -17,12 +17,6 @@ TINKER_EXTERN pointer<int, 2> igfix;
 TINKER_EXTERN pointer<real, 3> gfix;
 
 
-TINKER_EXTERN energy_buffer eg;
-TINKER_EXTERN virial_buffer vir_eg;
-TINKER_EXTERN grad_prec *degx, *degy, *degz;
-TINKER_EXTERN energy_prec energy_eg;
-
-
 void egeom_data(rc_op);
 
 void egeom(int vers);

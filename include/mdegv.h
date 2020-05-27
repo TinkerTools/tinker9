@@ -6,11 +6,6 @@
 namespace tinker {
 /**
  * \ingroup mdegv
- * \brief Total potential energy on host.
- */
-extern energy_prec esum;
-/**
- * \ingroup mdegv
  * \brief Kinetic energy on host.
  */
 extern energy_prec eksum;
@@ -19,30 +14,6 @@ extern energy_prec eksum;
  * \brief Kinetic energy tensor on host.
  */
 extern energy_prec ekin[3][3];
-/**
- * \ingroup mdegv
- * \brief Total potential energy buffer on device.
- */
-extern energy_buffer eng_buf;
-
-
-/**
- * \ingroup mdegv
- * \brief Total potential energy gradients on device.
- */
-extern grad_prec *gx, *gy, *gz;
-
-
-/**
- * \ingroup mdegv
- * \brief Total virial tensor on host.
- */
-extern virial_prec vir[9];
-/**
- * \ingroup mdegv
- * \brief Total virial tensor buffer on device.
- */
-extern virial_buffer vir_buf;
 
 
 //====================================================================//
@@ -66,20 +37,6 @@ void zero_egv(int vers);
 void zero_egv();
 
 
-/**
- * \ingroup mdegv
- * \brief Zero out the non-default gradients.
- */
-void zero_gradient(DMFlag flag, size_t nelem, real* gx, real* gy, real* gz);
-/**
- * \ingroup mdegv
- * \brief Zero out the non-default deterministic gradients.
- */
-void zero_gradient(DMFlag flag, size_t nelem, fixed* gx, fixed* gy, fixed* gz);
-void zero_gradient_acc(DMFlag, size_t, real*, real*, real*);
-void zero_gradient_acc(DMFlag, size_t, fixed*, fixed*, fixed*);
-
-
 //====================================================================//
 
 
@@ -99,23 +56,6 @@ void sum_gradient_acc(grad_prec*, grad_prec*, grad_prec*, const grad_prec*,
                       const grad_prec*, const grad_prec*);
 void sum_gradient_acc(double, grad_prec*, grad_prec*, grad_prec*,
                       const grad_prec*, const grad_prec*, const grad_prec*);
-
-
-//====================================================================//
-
-
-// sum up potential energies and virials on device and save on host
-/**
- * \ingroup mdegv
- * \brief Sum the potential energies, virial tensors from device buffers and
- * save the results to host variables.
- *
- * \note The interactions counts are not summed by this function.
- *
- * \see esum
- * \see vir
- */
-void sum_energy(int vers);
 
 
 //====================================================================//

@@ -1,6 +1,7 @@
 #include "add.h"
 #include "ebond.h"
 #include "md.h"
+#include "mod.energi.h"
 #include "named_struct.h"
 #include <cassert>
 

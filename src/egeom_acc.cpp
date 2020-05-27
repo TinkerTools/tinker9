@@ -4,6 +4,7 @@
 #include "group.h"
 #include "image.h"
 #include "md.h"
+#include "mod.energi.h"
 #include "molecule.h"
 #include "named_struct.h"
 #include <cassert>

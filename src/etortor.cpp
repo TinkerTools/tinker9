@@ -1,5 +1,6 @@
 #include "etortor.h"
 #include "md.h"
+#include "mod.energi.h"
 #include "potent.h"
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>
@@ -18,7 +19,8 @@ void etortor_data(rc_op op)
       darray::deallocate(ibitor, itt, tnx, tny, ttx, tty, tbf, tbx, tby, tbxy,
                          chkttor_ia_);
 
-      buffer_deallocate(rc_flag, ett, dettx, detty, dettz, vir_ett);
+      buffer_deallocate(rc_flag, ett, vir_ett);
+      buffer_deallocate(rc_flag & ~calc::analyz, dettx, detty, dettz);
    }
 
    if (op & rc_alloc) {
@@ -31,8 +33,8 @@ void etortor_data(rc_op op)
       ntortor = count_bonded_term(tortor_term);
       darray::allocate(ntortor, &chkttor_ia_);
 
-      buffer_allocate(rc_flag, &ett, &dettx, &detty, &dettz, &vir_ett,
-                      &energy_ett);
+      buffer_allocate(rc_flag, &ett, &vir_ett);
+      buffer_allocate(rc_flag & ~calc::analyz, &dettx, &detty, &dettz);
    }
 
    if (op & rc_init) {
@@ -121,5 +123,21 @@ void etortor_data(rc_op op)
 void etortor(int vers)
 {
    etortor_acc(vers);
+
+
+   if (rc_flag & calc::analyz) {
+      if (vers & calc::energy) {
+         energy_ett = energy_reduce(ett);
+         energy_valence += energy_ett;
+      }
+      if (vers & calc::virial) {
+         virial_reduce(virial_ett, vir_ett);
+         for (int iv = 0; iv < 9; ++iv)
+            virial_valence[iv] += virial_ett[iv];
+      }
+   }
+   if (vers & calc::analyz)
+      if (vers & calc::grad)
+         sum_gradient(gx, gy, gz, dettx, detty, dettz);
 }
 }

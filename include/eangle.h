@@ -22,11 +22,6 @@ TINKER_EXTERN real angunit;
 TINKER_EXTERN real cang, qang, pang, sang;
 TINKER_EXTERN pointer<eangle_t> angtyp;
 
-TINKER_EXTERN energy_buffer ea;
-TINKER_EXTERN virial_buffer vir_ea;
-TINKER_EXTERN grad_prec *deax, *deay, *deaz;
-TINKER_EXTERN energy_prec energy_ea;
-
 void eangle_data(rc_op op);
 
 void eangle(int vers);

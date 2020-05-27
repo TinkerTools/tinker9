@@ -1,5 +1,6 @@
 #include "epitors.h"
 #include "md.h"
+#include "mod.energi.h"
 #include "potent.h"
 #include <tinker/detail/pitors.hh>
 #include <tinker/detail/torpot.hh>
@@ -13,7 +14,8 @@ void epitors_data(rc_op op)
    if (op & rc_dealloc) {
       darray::deallocate(ipit, kpit);
 
-      buffer_deallocate(rc_flag, ept, deptx, depty, deptz, vir_ept);
+      buffer_deallocate(rc_flag, ept, vir_ept);
+      buffer_deallocate(rc_flag & ~calc::analyz, deptx, depty, deptz);
    }
 
    if (op & rc_alloc) {
@@ -21,8 +23,8 @@ void epitors_data(rc_op op)
       darray::allocate(ntors, &ipit, &kpit);
 
       npitors = count_bonded_term(pitors_term);
-      buffer_allocate(rc_flag, &ept, &deptx, &depty, &deptz, &vir_ept,
-                      &energy_ept);
+      buffer_allocate(rc_flag, &ept, &vir_ept);
+      buffer_allocate(rc_flag & ~calc::analyz, &deptx, &depty, &deptz);
    }
 
    if (op & rc_init) {
@@ -39,5 +41,21 @@ void epitors_data(rc_op op)
 void epitors(int vers)
 {
    epitors_acc(vers);
+
+
+   if (rc_flag & calc::analyz) {
+      if (vers & calc::energy) {
+         energy_ept = energy_reduce(ept);
+         energy_valence += energy_ept;
+      }
+      if (vers & calc::virial) {
+         virial_reduce(virial_ept, vir_ept);
+         for (int iv = 0; iv < 9; ++iv)
+            virial_valence[iv] += virial_ept[iv];
+      }
+   }
+   if (vers & calc::analyz)
+      if (vers & calc::grad)
+         sum_gradient(gx, gy, gz, deptx, depty, deptz);
 }
 }

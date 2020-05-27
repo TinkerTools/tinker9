@@ -24,3 +24,5 @@
 #include "empole.h"
 #include "epolar.h"
 #include "evdw.h"
+
+#include "mod.energi.h"

@@ -50,6 +50,10 @@ void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
 
 void device_memory_zero_bytes(void* dst, size_t nbytes, DMFlag flag)
 {
+   if (dst == nullptr)
+      return;
+
+
    cudaStream_t s;
    if (flag & DMFlag::DEFAULT_Q)
       s = nullptr;

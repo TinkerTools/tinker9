@@ -1,6 +1,8 @@
 #include "emplar.h"
+#include "elec.h"
 #include "error.h"
 #include "md.h"
+#include "mod.energi.h"
 #include "nblist.h"
 #include "potent.h"
 #include <map>
@@ -364,7 +366,27 @@ void emplar(int vers)
 {
 #if TINKER_CUDART
    if ((mlist_version() & NBL_SPATIAL) && !(vers & calc::analyz)) {
+      mpole_init(vers);
       emplar_cu(vers);
+      torque(vers);
+
+
+      if (vers & calc::energy) {
+         energy_prec e1 = energy_reduce(em);
+         energy_prec e2 = 0;
+         if (ep && ep != em)
+            e2 = energy_reduce(ep);
+         energy_elec = e1 + e2;
+      }
+      if (vers & calc::virial) {
+         virial_buffer u1 = vir_em;
+         virial_buffer u2 = vir_trq;
+         virial_prec v1[9], v2[9];
+         virial_reduce(v1, u1);
+         virial_reduce(v2, u2);
+         for (int iv = 0; iv < 9; ++iv)
+            virial_elec[iv] = v1[iv] + v2[iv];
+      }
       return;
    }
 #else

@@ -36,10 +36,7 @@ void epolar_data(rc_op op)
       }
       if (use_potent(mpole_term)) {
          if (rc_flag & calc::analyz) {
-            grad_prec* nulg = nullptr;
-            virial_buffer nulv = nullptr;
-            buffer_deallocate(rc_flag & (calc::analyz | calc::energy), ep, nulg,
-                              nulg, nulg, nulv);
+            buffer_deallocate(rc_flag & ~calc::virial, ep, nullptr);
          }
          ep = nullptr;
          depx = nullptr;
@@ -47,8 +44,8 @@ void epolar_data(rc_op op)
          depz = nullptr;
          vir_ep = nullptr;
       } else {
-         buffer_deallocate(rc_flag | calc::analyz, ep, depx, depy, depz,
-                           vir_ep);
+         buffer_deallocate(rc_flag | calc::analyz, ep, vir_ep);
+         buffer_deallocate(rc_flag | calc::analyz, depx, depy, depz);
       }
 
       darray::deallocate(ufld, dufld);
@@ -373,12 +370,11 @@ void epolar_data(rc_op op)
          depz = demz;
          vir_ep = vir_em;
          if (rc_flag & calc::analyz) {
-            buffer_allocate(rc_flag & (calc::analyz | calc::energy), &ep,
-                            nullptr, nullptr, nullptr, nullptr, &energy_ep);
+            buffer_allocate(rc_flag & ~calc::virial, &ep, nullptr);
          }
       } else {
-         buffer_allocate(rc_flag | calc::analyz, &ep, &depx, &depy, &depz,
-                         &vir_ep, &energy_ep);
+         buffer_allocate(rc_flag | calc::analyz, &ep, &vir_ep);
+         buffer_allocate(rc_flag | calc::analyz, &depx, &depy, &depz);
       }
 
       if (rc_flag & calc::grad) {
@@ -444,10 +440,38 @@ void induce(real (*ud)[3], real (*up)[3])
 
 void epolar(int vers)
 {
+   bool calc_mpole = use_potent(mpole_term);
+   if (!calc_mpole)
+      mpole_init(vers);
+
+
    if (use_ewald())
       epolar_ewald(vers);
    else
       epolar_nonewald(vers);
+
+
+   torque(vers);
+
+
+   if (vers & calc::energy) {
+      energy_buffer u = ep;
+      energy_prec e = energy_reduce(u);
+      energy_elec += e;
+      if (vers & calc::analyz) {
+         energy_ep = e;
+      }
+   }
+   if (vers & calc::virial) {
+      virial_buffer u1 = vir_ep;
+      virial_buffer u2 = vir_trq;
+      virial_prec v1[9];
+      virial_prec v2[9];
+      virial_reduce(v1, u1);
+      virial_reduce(v2, u2);
+      for (int iv = 0; iv < 9; ++iv)
+         virial_elec[iv] += v1[iv] + v2[iv];
+   }
 }
 
 

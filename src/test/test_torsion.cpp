@@ -191,7 +191,7 @@ TEST_CASE("Torsion-Trpcage", "[ff][etors][trpcage]")
                               {2.350, -0.934, -2.815},
                               {-4.405, -2.815, 1.456}};
 
-   COMPARE_BONDED_FORCE(etors, ntors, et, vir_et, ref_e, eps_e, ref_count,
+   COMPARE_BONDED_FORCE(ntors, et, vir_et, ref_e, eps_e, ref_count,
                         ref_g_tors_trpcage, eps_g, ref_v, eps_v);
 
    finish();

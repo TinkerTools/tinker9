@@ -59,6 +59,18 @@ void test_mdinit(double t = 0, double atm = 0);
       int count = count_reduce(gpuptr);                                        \
       REQUIRE(count == ref_count);                                             \
    }
+#define COMPARE_VIR9(vir1, ref_v, eps)                                         \
+   {                                                                           \
+      REQUIRE(vir1[0] == Approx(ref_v[0][0]).margin(eps));                     \
+      REQUIRE(vir1[1] == Approx(ref_v[0][1]).margin(eps));                     \
+      REQUIRE(vir1[2] == Approx(ref_v[0][2]).margin(eps));                     \
+      REQUIRE(vir1[3] == Approx(ref_v[1][0]).margin(eps));                     \
+      REQUIRE(vir1[4] == Approx(ref_v[1][1]).margin(eps));                     \
+      REQUIRE(vir1[5] == Approx(ref_v[1][2]).margin(eps));                     \
+      REQUIRE(vir1[6] == Approx(ref_v[2][0]).margin(eps));                     \
+      REQUIRE(vir1[7] == Approx(ref_v[2][1]).margin(eps));                     \
+      REQUIRE(vir1[8] == Approx(ref_v[2][2]).margin(eps));                     \
+   }
 #define COMPARE_VIR(gpuptr, ref_v, eps)                                        \
    {                                                                           \
       virial_prec vir1[9];                                                     \
@@ -103,37 +115,27 @@ void test_mdinit(double t = 0, double atm = 0);
    }
 #define COMPARE_GRADIENT(ref_grad, eps)                                        \
    COMPARE_GRADIENT2(ref_grad, eps, [](int, int) { return true; })
-#define COMPARE_BONDED_FORCE(routine, cpu_count, gpu_e, gpu_v, ref_e, eps_e,   \
-                             ref_count, ref_g, eps_g, ref_v, eps_v)            \
+#define COMPARE_BONDED_FORCE(cpu_count, gpu_e, gpu_v, ref_e, eps_e, ref_count, \
+                             ref_g, eps_g, ref_v, eps_v)                       \
    {                                                                           \
       auto do_ij_ = [](int, int) { return true; };                             \
-      zero_egv();                                                              \
-      routine(calc::v3);                                                       \
-      sum_energy(calc::v3);                                                    \
+      energy(calc::v3);                                                        \
       COMPARE_ENERGY(gpu_e, ref_e, eps_e);                                     \
       REQUIRE(cpu_count == ref_count);                                         \
                                                                                \
-      zero_egv();                                                              \
-      routine(calc::v1);                                                       \
-      sum_energy(calc::v1);                                                    \
+      energy(calc::v1);                                                        \
       COMPARE_ENERGY(gpu_e, ref_e, eps_e);                                     \
       COMPARE_GRADIENT2(ref_g, eps_g, do_ij_);                                 \
       COMPARE_VIR(gpu_v, ref_v, eps_v);                                        \
                                                                                \
-      zero_egv();                                                              \
-      routine(calc::v4);                                                       \
-      sum_energy(calc::v4);                                                    \
+      energy(calc::v4);                                                        \
       COMPARE_ENERGY(gpu_e, ref_e, eps_e);                                     \
       COMPARE_GRADIENT2(ref_g, eps_g, do_ij_);                                 \
                                                                                \
-      zero_egv();                                                              \
-      routine(calc::v5);                                                       \
-      sum_energy(calc::v5);                                                    \
+      energy(calc::v5);                                                        \
       COMPARE_GRADIENT2(ref_g, eps_g, do_ij_);                                 \
                                                                                \
-      zero_egv();                                                              \
-      routine(calc::v6);                                                       \
-      sum_energy(calc::v6);                                                    \
+      energy(calc::v6);                                                        \
       COMPARE_GRADIENT2(ref_g, eps_g, do_ij_);                                 \
       COMPARE_VIR(gpu_v, ref_v, eps_v);                                        \
    }

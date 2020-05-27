@@ -26,6 +26,10 @@ void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes, DMFlag)
 
 void device_memory_zero_bytes(void* dst, size_t nbytes, DMFlag)
 {
+   if (dst == nullptr)
+      return;
+
+
    std::memset(dst, 0, nbytes);
 }
 

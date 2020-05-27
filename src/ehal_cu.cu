@@ -346,9 +346,9 @@ void ehal_cu3()
 
    auto bufsize = buffer_size();
 
-   if CONSTEXPR (do_g) {
-      zero_gradient(PROCEED_NEW_Q, n, gxred, gyred, gzred);
-   }
+   if CONSTEXPR (do_g)
+      darray::zero(PROCEED_NEW_Q, n, gxred, gyred, gzred);
+
 
    auto i12 = couple_i12;
    if (vdw_exclude_bond == false)

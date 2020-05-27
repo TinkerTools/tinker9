@@ -71,8 +71,8 @@ TEST_CASE("Geom-Local-Frame2-1", "[ff][egeom][local-frame2]")
          {0.0000, 0.0000, 0.0000},    {0.0000, 0.0000, 0.0000}};
 
 
-      COMPARE_BONDED_FORCE(egeom, ngfix, eg, vir_eg, ref_e, eps_e, ref_count,
-                           ref_g, eps_g, ref_v, eps_v);
+      COMPARE_BONDED_FORCE(ngfix, eg, vir_eg, ref_e, eps_e, ref_count, ref_g,
+                           eps_g, ref_v, eps_v);
 
 
       finish();

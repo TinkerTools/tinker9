@@ -1,5 +1,6 @@
 #pragma once
 #include "energy_buffer.h"
+#include "mod.energi.h"
 #include "rc_man.h"
 
 
@@ -65,7 +66,6 @@ extern LocalFrame* zaxis;
 extern real (*pole)[mpl_total];
 extern real (*rpole)[mpl_total];
 extern real *trqx, *trqy, *trqz;
-extern virial_buffer vir_trq;
 extern real (*udir)[3];
 extern real (*udirp)[3];
 extern real (*uind)[3];

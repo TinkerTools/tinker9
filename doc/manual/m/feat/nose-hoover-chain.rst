@@ -1,8 +1,7 @@
 Extended Nosé-Hoover Chain by MTK
 =================================
 
-An isothermal-isobaric integrator described by MTK [#Martyna1996]_ was implemented.
-In this paper, different methods for NVT and NPT ensembles were discussed.
+Several methods for NVT and NPT ensembles were discussed in MTK [#Martyna1996]_.
 
 ======  ===============  ======
 Number  Sections in MTK  Method
@@ -17,9 +16,9 @@ Number  Sections in MTK  Method
 3b      5.4              RESPA 3a
 ======  ===============  ======
 
-Unlike the canonical Tinker where #2a has been implemented, the integrator
-was implemented as the combination of NPT and XO-RESPA (#4a and #2b).
+The isothermal-isobaric integrator implemented here is NPT-XO-RESPA (#2b-4a).
+The canonical Tinker has #2.
 
 .. [#Martyna1996]
    Martyna, G. J.; Tuckerman, M. E.; Tobias, D. J. and Klein, M. L.
-   `Mol. Phys., 87, 1117-1157 (1996) <https://doi.org/10.1080/00268979600100761>`_
+   `Mol. Phys., 87, 1117 (1996) <https://doi.org/10.1080/00268979600100761>`_

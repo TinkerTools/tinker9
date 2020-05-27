@@ -15,11 +15,6 @@ real c2scale, c3scale, c4scale, c5scale;
 int ncexclude;
 int (*cexclude)[2];
 real* cexclude_scale;
-count_buffer nec;
-energy_buffer ec;
-virial_buffer vir_ec;
-grad_prec *decx, *decy, *decz;
-energy_prec energy_ec;
 
 
 void echarge_data(rc_op op)
@@ -35,7 +30,8 @@ void echarge_data(rc_op op)
       if (rc_flag & calc::analyz) {
          buffer_deallocate(calc::analyz, nec);
       }
-      buffer_deallocate(rc_flag | calc::analyz, ec, decx, decy, decz, vir_ec);
+      buffer_deallocate(rc_flag | calc::analyz, ec, vir_ec);
+      buffer_deallocate(rc_flag | calc::analyz, decx, decy, decz);
    }
 
 
@@ -119,8 +115,8 @@ void echarge_data(rc_op op)
       if (rc_flag & calc::analyz) {
          buffer_allocate(calc::analyz, &nec);
       }
-      buffer_allocate(rc_flag | calc::analyz, &ec, &decx, &decy, &decz, &vir_ec,
-                      &energy_ec);
+      buffer_allocate(rc_flag | calc::analyz, &ec, &vir_ec);
+      buffer_allocate(rc_flag | calc::analyz, &decx, &decy, &decz);
    }
 
 
@@ -135,6 +131,17 @@ void echarge(int vers)
       echarge_ewald(vers);
    else
       echarge_nonewald(vers);
+
+
+   if (vers & calc::energy) {
+      energy_buffer u = ec;
+      energy_ec = energy_reduce(u);
+      energy_elec = energy_ec;
+   }
+   if (vers & calc::virial) {
+      virial_buffer u = vir_ec;
+      virial_reduce(virial_elec, u);
+   }
 }
 
 

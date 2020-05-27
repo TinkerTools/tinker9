@@ -1,6 +1,7 @@
 #include "add.h"
 #include "epitors.h"
 #include "md.h"
+#include "mod.energi.h"
 #include "named_struct.h"
 
 namespace tinker {

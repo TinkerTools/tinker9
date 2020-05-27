@@ -28,35 +28,19 @@ size_t buffer_size()
 }
 
 
-void buffer_allocate(int flag, energy_buffer* pe, grad_prec** px,
-                     grad_prec** py, grad_prec** pz, virial_buffer* pv,
-                     energy_prec* eptr)
+void buffer_allocate(int flag, energy_buffer* pe, virial_buffer* pv)
 {
    if (flag & calc::analyz) {
       auto len = buffer_size();
       if (flag & calc::energy) {
          darray::allocate(len, pe);
-         energy_buffers.push_back(*pe);
-         set_energy_reduce_dst(*pe, eptr);
-      }
-      if (flag & calc::grad) {
-         darray::allocate(n, px, py, pz);
-         x_grads.push_back(*px);
-         y_grads.push_back(*py);
-         z_grads.push_back(*pz);
       }
       if (flag & calc::virial) {
          darray::allocate(len, pv);
-         virial_buffers.push_back(*pv);
       }
    } else {
       if (flag & calc::energy) {
          *pe = eng_buf;
-      }
-      if (flag & calc::grad) {
-         *px = gx;
-         *py = gy;
-         *pz = gz;
       }
       if (flag & calc::virial) {
          *pv = vir_buf;
@@ -65,23 +49,14 @@ void buffer_allocate(int flag, energy_buffer* pe, grad_prec** px,
 }
 
 
-void buffer_deallocate(int flag, energy_buffer& e, grad_prec*& gx,
-                       grad_prec*& gy, grad_prec*& gz, virial_buffer& v)
+void buffer_deallocate(int flag, energy_buffer e, virial_buffer v)
 {
    if (flag & calc::analyz) {
       if (flag & calc::energy) {
          darray::deallocate(e);
-         e = nullptr;
-      }
-      if (flag & calc::grad) {
-         darray::deallocate(gx, gy, gz);
-         gx = nullptr;
-         gy = nullptr;
-         gz = nullptr;
       }
       if (flag & calc::virial) {
          darray::deallocate(v);
-         v = nullptr;
       }
    }
 }
@@ -92,21 +67,42 @@ void buffer_allocate(int flag, count_buffer* pc)
    if (flag & calc::analyz) {
       auto len = buffer_size();
       darray::allocate(len, pc);
-      count_buffers.push_back(*pc);
    } else {
       *pc = nullptr;
    }
 }
 
 
-void buffer_deallocate(int flag, count_buffer& c)
+void buffer_deallocate(int flag, count_buffer c)
 {
    if (flag & calc::analyz) {
       darray::deallocate(c);
-      c = nullptr;
    }
 }
 
+
+void buffer_allocate(int flag, grad_prec** px, grad_prec** py, grad_prec** pz)
+{
+   if (flag & calc::grad) {
+      if (flag & calc::analyz) {
+         darray::allocate(n, px, py, pz);
+      } else {
+         *px = gx;
+         *py = gy;
+         *pz = gz;
+      }
+   }
+}
+
+
+void buffer_deallocate(int flag, grad_prec* gx, grad_prec* gy, grad_prec* gz)
+{
+   if (flag & calc::grad) {
+      if (flag & calc::analyz) {
+         darray::deallocate(gx, gy, gz);
+      }
+   }
+}
 
 int count_reduce(const count_buffer ne)
 {
@@ -119,15 +115,6 @@ energy_prec energy_reduce(const energy_buffer e)
 {
    auto b = parallel::reduce_sum(e, buffer_size(), WAIT_NEW_Q);
    energy_prec real_out = to_flt_host<energy_prec>(b);
-
-
-   // vdw long-range correction
-   // check != 0 for non-PBC
-   if (e == ev && elrc_vol != 0) {
-      real_out += elrc_vol / volbox();
-   }
-
-
    return real_out;
 }
 
@@ -157,44 +144,5 @@ void virial_reduce(virial_prec (&v_out)[9], const virial_buffer v)
    v_out[6] = v1[2]; // zx
    v_out[7] = v1[4]; // zy
    v_out[8] = v1[5]; // zz
-
-
-   // vdw long-range correction
-   // check != 0 for non-PBC
-   if (v == vir_ev && vlrc_vol != 0) {
-      virial_prec term = vlrc_vol / volbox();
-      v_out[0] += term; // xx
-      v_out[4] += term; // yy
-      v_out[8] += term; // zz
-   }
 }
-
-
-namespace {
-std::map<energy_buffer, energy_prec*> edst;
-}
-
-
-void set_energy_reduce_dst(energy_buffer b, energy_prec* d)
-{
-   edst[b] = d;
-}
-
-
-energy_prec* get_energy_reduce_dst(energy_buffer b)
-{
-   return edst.at(b);
-}
-
-
-void clear_energy_reduce_dst()
-{
-   edst.clear();
-}
-
-
-std::vector<count_buffer> count_buffers;
-std::vector<energy_buffer> energy_buffers;
-std::vector<virial_buffer> virial_buffers;
-std::vector<grad_prec*> x_grads, y_grads, z_grads;
 }

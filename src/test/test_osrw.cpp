@@ -126,7 +126,7 @@ TEST_CASE("K-Water-Analyze", "[ff][osrw]")
    initialize();
 
 
-   osrw_energy(calc::v0);
+   osrw_energy(calc::v3);
    double refev = s1 * refev_1 + s0 * refev_0;
    REQUIRE(energy_ev == Approx(refev).margin(eps));
    double refem = s1 * refem_1 + s0 * refem_0;

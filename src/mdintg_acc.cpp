@@ -46,7 +46,7 @@ void mdrest_acc(int istep)
 
    energy_prec erot = 0;
    pos_prec xtot = 0, ytot = 0, ztot = 0;
-   vel_prec vang[3] = {0, 0, 0}; // angular momentum
+   vel_prec vang[3] = {0}; // angular momentum
    if (!bound::use_bounds) {
 
       // find the center of mass coordinates of the overall system

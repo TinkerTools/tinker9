@@ -539,9 +539,9 @@ void pair_mplar_v2(                                                       //
 
    // phi,dphi/d(x,y,z),d2phi/dd(xx,yy,zz,xy,xz,yz)
    //   0        1 2 3            4  5  6  7  8  9
-   real phi1[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-   real phi2[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-   real phi1z[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+   real phi1[10] = {0};
+   real phi2[10] = {0};
+   real phi1z[10] = {0};
 
 
    if CONSTEXPR (eq<ETYP, EWALD>()) {
@@ -719,9 +719,9 @@ void pair_mplar_v2(                                                       //
    }
 
 
-   real phi1d[3] = {0, 0, 0};
-   real phi2d[3] = {0, 0, 0};
-   real phi1dz[3] = {0, 0, 0};
+   real phi1d[3] = {0};
+   real phi2d[3] = {0};
+   real phi1dz[3] = {0};
 
 
    // U-C and C-U

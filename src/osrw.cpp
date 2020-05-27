@@ -3,6 +3,7 @@
 #include "energy.h"
 #include "evdw.h"
 #include "fc.h"
+#include "host_zero.h"
 #include "potent.h"
 #include "tinker_rt.h"
 
@@ -266,6 +267,13 @@ void osrw_altvdw(double vl)
 
 void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 {
+   bool do_e = vers & calc::energy;
+   bool do_v = vers & calc::virial;
+   bool do_g = vers & calc::grad;
+   bool do_a = vers & calc::analyz;
+   bool rc_a = rc_flag & calc::analyz;
+
+
    double sele1 = osrw_lam_expr1(osrw_ele, osrw_lambda);
    double svdw1 = osrw_lam_expr1(osrw_vdw, osrw_lambda);
    double stor1 = osrw_lam_expr1(osrw_tor, osrw_lambda);
@@ -273,15 +281,15 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
    energy_prec osrw_du0 = 0;
    osrw_du1 = 0;
-   virial_prec osrw_dv0[9];
-   for (int iv = 0; iv < 9; ++iv) {
-      osrw_dv0[iv] = 0;
-      osrw_dv1[iv] = 0;
-   }
-   if (vers & calc::grad) {
-      darray::zero(PROCEED_NEW_Q, n, osrw_gx, osrw_gy, osrw_gz);
+   virial_prec osrw_dv0[9] = {0};
+   host_zero(osrw_dv1);
+   if (vers & calc::grad)
       darray::zero(PROCEED_NEW_Q, n, osrw_dgx, osrw_dgy, osrw_dgz);
-   }
+
+
+   energy_prec aec = 0, aem = 0, aep = 0;
+   energy_prec aevdw = 0;
+   energy_prec aetor = 0;
 
 
    double sele0;
@@ -299,72 +307,52 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
    zero_egv(vers);
    energy_core(vers, tsflag, tsconfig);
-   if (vers & calc::energy) {
-      for (size_t i = 0; i < energy_buffers.size(); ++i) {
-         energy_buffer u = energy_buffers[i];
-         energy_prec e = energy_reduce(u);
-         energy_prec* eptr = get_energy_reduce_dst(u);
-         double scal0 = stor0;
-         double scal1 = stor1;
-         if (eptr == &energy_ev) {
-            scal0 = svdw0;
-            scal1 = svdw1;
-         } else if (eptr == &energy_ec || eptr == &energy_em ||
-                    eptr == &energy_ep) {
-            scal0 = sele0;
-            scal1 = sele1;
-         }
-         osrw_du0 += scal0 * e;
-         osrw_du1 -= scal1 * e;
-
-
-         e *= scal0;
-         *eptr = e;
+   if (do_e) {
+      if (!rc_a) {
+         energy_valence = energy_reduce(eng_buf);
+      }
+      osrw_du0 +=
+         (stor0 * energy_valence + svdw0 * energy_ev + sele0 * energy_elec);
+      osrw_du1 -=
+         (stor1 * energy_valence + svdw1 * energy_ev + sele1 * energy_elec);
+      if (do_a) {
+         aetor += stor0 * energy_et;
+         aevdw += svdw0 * energy_ev;
+         aec += sele0 * energy_ec;
+         aem += sele0 * energy_em;
+         aep += sele0 * energy_ep;
       }
    }
-   if (vers & calc::virial) {
-      for (size_t i = 0; i < virial_buffers.size(); ++i) {
-         virial_buffer u = virial_buffers[i];
-         virial_prec v[9];
-         virial_reduce(v, u);
-         double scal0 = stor0;
-         double scal1 = stor1;
-         if (u == vir_ev) {
-            scal0 = svdw0;
-            scal1 = svdw1;
-         } else if (u == vir_ec || u == vir_em || u == vir_ep) {
-            scal0 = sele0;
-            scal1 = sele1;
-         }
-         for (int iv = 0; iv < 9; ++iv) {
-            osrw_dv0[iv] += scal0 * v[iv];
-            osrw_dv1[iv] -= scal1 * v[iv];
-         }
+   if (do_v) {
+      if (!rc_a) {
+         virial_reduce(virial_valence, vir_buf);
       }
       for (int iv = 0; iv < 9; ++iv) {
-         vir[iv] = osrw_dv0[iv];
+         osrw_dv0[iv] += (stor0 * virial_valence[iv] + svdw0 * virial_ev[iv] +
+                          sele0 * virial_elec[iv]);
+         osrw_dv1[iv] -= (stor1 * virial_valence[iv] + svdw1 * virial_ev[iv] +
+                          sele1 * virial_elec[iv]);
       }
    }
-   if (vers & calc::grad) {
-      double scale = stor0;
-      scale_gradient(scale, gx, gy, gz);
-      size_t ngrad = x_grads.size();
-      for (size_t i = 1; i < ngrad; ++i) {
-         grad_prec* gx1 = x_grads[i];
-         grad_prec* gy1 = y_grads[i];
-         grad_prec* gz1 = z_grads[i];
-         double scal0 = stor0;
-         double scal1 = stor1;
-         if (gx1 == devx) {
-            scal0 = svdw0;
-            scal1 = svdw1;
-         } else if (gx1 == decx || gx1 == demx || gx1 == depx) {
-            scal0 = sele0;
-            scal1 = sele1;
-         }
-         sum_gradient(-scal1, osrw_dgx, osrw_dgy, osrw_dgz, gx1, gy1, gz1);
-         scale_gradient(scal0, gx1, gy1, gz1);
-         sum_gradient(gx, gy, gz, gx1, gy1, gz1);
+   if (do_g) {
+      sum_gradient(-stor1, osrw_dgx, osrw_dgy, osrw_dgz, gx, gy, gz);
+      scale_gradient(stor0, gx, gy, gz);
+      if (devx && devy && devz) {
+         sum_gradient(-svdw1, osrw_dgx, osrw_dgy, osrw_dgz, devx, devy, devz);
+         sum_gradient(svdw0, gx, gy, gz, devx, devy, devz);
+      }
+      if (decx && decy && decz) {
+         sum_gradient(-sele1, osrw_dgx, osrw_dgy, osrw_dgz, decx, decy, decz);
+         sum_gradient(sele0, gx, gy, gz, decx, decy, decz);
+      }
+      if (demx && demy && demz) {
+         sum_gradient(-sele1, osrw_dgx, osrw_dgy, osrw_dgz, demx, demy, demz);
+         sum_gradient(sele0, gx, gy, gz, demx, demy, demz);
+      }
+      if (depx && depy && depz && (depx != demx) && (depy != demy) &&
+          (depz != demz)) {
+         sum_gradient(-sele1, osrw_dgx, osrw_dgy, osrw_dgz, depx, depy, depz);
+         sum_gradient(sele0, gx, gy, gz, depx, depy, depz);
       }
       darray::copy(PROCEED_NEW_Q, n, osrw_gx, gx);
       darray::copy(PROCEED_NEW_Q, n, osrw_gy, gy);
@@ -382,73 +370,61 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
    zero_egv(vers);
    energy_core(vers, tsflag, tsconfig);
-   if (vers & calc::energy) {
-      for (size_t i = 0; i < energy_buffers.size(); ++i) {
-         energy_buffer u = energy_buffers[i];
-         energy_prec e = energy_reduce(u);
-         energy_prec* eptr = get_energy_reduce_dst(u);
-         double scal0 = stor0;
-         double scal1 = stor1;
-         if (eptr == &energy_ev) {
-            scal0 = svdw0;
-            scal1 = svdw1;
-         } else if (eptr == &energy_ec || eptr == &energy_em ||
-                    eptr == &energy_ep) {
-            scal0 = sele0;
-            scal1 = sele1;
-         }
-         osrw_du0 += scal0 * e;
-         osrw_du1 += scal1 * e;
-
-
-         e *= scal0;
-         *eptr += e;
+   if (do_e) {
+      if (!rc_a) {
+         energy_valence = energy_reduce(eng_buf);
       }
+      osrw_du0 +=
+         (stor0 * energy_valence + svdw0 * energy_ev + sele0 * energy_elec);
+      osrw_du1 +=
+         (stor1 * energy_valence + svdw1 * energy_ev + sele1 * energy_elec);
       esum = osrw_du0;
+      if (do_a) {
+         aetor += stor0 * energy_et;
+         aevdw += svdw0 * energy_ev;
+         aec += sele0 * energy_ec;
+         aem += sele0 * energy_em;
+         aep += sele0 * energy_ep;
+         energy_et = aetor;
+         energy_ev = aevdw;
+         energy_ec = aec;
+         energy_em = aem;
+         energy_ep = aep;
+      }
    }
-   if (vers & calc::virial) {
-      for (size_t i = 0; i < virial_buffers.size(); ++i) {
-         virial_buffer u = virial_buffers[i];
-         virial_prec v[9];
-         virial_reduce(v, u);
-         double scal0 = stor0;
-         double scal1 = stor1;
-         if (u == vir_ev) {
-            scal0 = svdw0;
-            stor1 = svdw1;
-         } else if (u == vir_ec || u == vir_em || u == vir_ep) {
-            scal0 = sele0;
-            scal1 = sele1;
-         }
-         for (int iv = 0; iv < 9; ++iv) {
-            osrw_dv0[iv] += scal0 * v[iv];
-            osrw_dv1[iv] += scal1 * v[iv];
-         }
+   if (do_v) {
+      if (!rc_a) {
+         virial_reduce(virial_valence, vir_buf);
       }
       for (int iv = 0; iv < 9; ++iv) {
-         vir[iv] += osrw_dv0[iv];
+         osrw_dv0[iv] += (stor0 * virial_valence[iv] + svdw0 * virial_ev[iv] +
+                          sele0 * virial_elec[iv]);
+         osrw_dv1[iv] += (stor1 * virial_valence[iv] + svdw1 * virial_ev[iv] +
+                          sele1 * virial_elec[iv]);
+      }
+      for (int iv = 0; iv < 9; ++iv) {
+         vir[iv] = osrw_dv0[iv];
       }
    }
    if (vers & calc::grad) {
-      double scale = stor0;
-      scale_gradient(scale, gx, gy, gz);
-      size_t ngrad = x_grads.size();
-      for (size_t i = 1; i < ngrad; ++i) {
-         grad_prec* gx1 = x_grads[i];
-         grad_prec* gy1 = y_grads[i];
-         grad_prec* gz1 = z_grads[i];
-         double scal0 = stor0;
-         double scal1 = stor1;
-         if (gx1 == devx) {
-            scal0 = svdw0;
-            scal1 = svdw1;
-         } else if (gx1 == decx || gx1 == demx || gx1 == depx) {
-            scal0 = sele0;
-            scal1 = sele1;
-         }
-         sum_gradient(scal1, osrw_dgx, osrw_dgy, osrw_dgz, gx1, gy1, gz1);
-         scale_gradient(scal0, gx1, gy1, gz1);
-         sum_gradient(gx, gy, gz, gx1, gy1, gz1);
+      sum_gradient(stor1, osrw_dgx, osrw_dgy, osrw_dgz, gx, gy, gz);
+      scale_gradient(stor0, gx, gy, gz);
+      if (devx && devy && devz) {
+         sum_gradient(svdw1, osrw_dgx, osrw_dgy, osrw_dgz, devx, devy, devz);
+         sum_gradient(svdw0, gx, gy, gz, devx, devy, devz);
+      }
+      if (decx && decy && decz) {
+         sum_gradient(sele1, osrw_dgx, osrw_dgy, osrw_dgz, decx, decy, decz);
+         sum_gradient(sele0, gx, gy, gz, decx, decy, decz);
+      }
+      if (demx && demy && demz) {
+         sum_gradient(sele1, osrw_dgx, osrw_dgy, osrw_dgz, demx, demy, demz);
+         sum_gradient(sele0, gx, gy, gz, demx, demy, demz);
+      }
+      if (depx && depy && depz && (depx != demx) && (depy != demy) &&
+          (depz != demz)) {
+         sum_gradient(sele1, osrw_dgx, osrw_dgy, osrw_dgz, depx, depy, depz);
+         sum_gradient(sele0, gx, gy, gz, depx, depy, depz);
       }
       sum_gradient(gx, gy, gz, osrw_gx, osrw_gy, osrw_gz);
    }

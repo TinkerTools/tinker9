@@ -191,8 +191,8 @@ TEST_CASE("Opbend-Trpcage", "[ff][eopbend][allinger][trpcage]")
                               {0.890, 3.006, -1.049},
                               {-0.224, -1.049, -1.359}};
 
-   COMPARE_BONDED_FORCE(eopbend, nopbend, eopb, vir_eopb, ref_e, eps_e,
-                        ref_count, ref_g_opbend_trpcage, eps_g, ref_v, eps_v);
+   COMPARE_BONDED_FORCE(nopbend, eopb, vir_eopb, ref_e, eps_e, ref_count,
+                        ref_g_opbend_trpcage, eps_g, ref_v, eps_v);
 
    finish();
    test_end();

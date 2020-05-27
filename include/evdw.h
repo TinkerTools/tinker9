@@ -1,6 +1,7 @@
 #pragma once
 #include "darray.h"
 #include "energy_buffer.h"
+#include "mod.energi.h"
 #include "rc_man.h"
 
 
@@ -114,13 +115,6 @@ TINKER_EXTERN real vlam;
 TINKER_EXTERN int nvexclude;
 TINKER_EXTERN pointer<int, 2> vexclude;
 TINKER_EXTERN pointer<real> vexclude_scale;
-
-
-TINKER_EXTERN count_buffer nev;
-TINKER_EXTERN energy_buffer ev;
-TINKER_EXTERN virial_buffer vir_ev;
-TINKER_EXTERN grad_prec *devx, *devy, *devz;
-TINKER_EXTERN energy_prec energy_ev;
 
 
 /**

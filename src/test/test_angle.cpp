@@ -191,7 +191,7 @@ TEST_CASE("Angle-Trpcage", "[ff][eangle][trpcage]")
                               {37.932, -71.780, -18.911},
                               {190.883, -18.911, 72.244}};
 
-   COMPARE_BONDED_FORCE(eangle, nangle, ea, vir_ea, ref_e, eps_e, ref_count,
+   COMPARE_BONDED_FORCE(nangle, ea, vir_ea, ref_e, eps_e, ref_count,
                         ref_g_angle_trpcage, eps_g, ref_v, eps_v);
 
    finish();

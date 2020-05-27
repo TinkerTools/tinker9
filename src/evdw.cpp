@@ -68,7 +68,8 @@ void evdw_data(rc_op op)
       if (rc_flag & calc::analyz) {
          buffer_deallocate(calc::analyz, nev);
       }
-      buffer_deallocate(rc_flag | calc::analyz, ev, devx, devy, devz, vir_ev);
+      buffer_deallocate(rc_flag | calc::analyz, ev, vir_ev);
+      buffer_deallocate(rc_flag | calc::analyz, devx, devy, devz);
 
 
       elrc_vol = 0;
@@ -309,8 +310,8 @@ void evdw_data(rc_op op)
       if (rc_flag & calc::analyz) {
          buffer_allocate(calc::analyz, &nev);
       }
-      buffer_allocate(rc_flag | calc::analyz, &ev, &devx, &devy, &devz, &vir_ev,
-                      &energy_ev);
+      buffer_allocate(rc_flag | calc::analyz, &ev, &vir_ev);
+      buffer_allocate(rc_flag | calc::analyz, &devx, &devy, &devz);
    }
 
 
@@ -468,5 +469,23 @@ void evdw(int vers)
       egauss(vers);
    else
       assert(false);
+
+
+   if (vers & calc::energy) {
+      energy_buffer u = ev;
+      energy_ev = energy_reduce(u);
+      if (elrc_vol != 0)
+         energy_ev += elrc_vol / volbox();
+   }
+   if (vers & calc::virial) {
+      virial_buffer u = vir_ev;
+      virial_reduce(virial_ev, u);
+      if (vlrc_vol != 0) {
+         virial_prec term = vlrc_vol / volbox();
+         virial_ev[0] += term; // xx
+         virial_ev[4] += term; // yy
+         virial_ev[8] += term; // zz
+      }
+   }
 }
 }

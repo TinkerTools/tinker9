@@ -139,23 +139,16 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    calc_mplar = calc_mplar && !(vers & calc::analyz);
    calc_mplar = calc_mplar && (mlist_version() & NBL_SPATIAL);
    if (calc_mplar) {
-      if (tscfg("emplar")) {
-         mpole_init(vers);
+      if (tscfg("emplar"))
          emplar(vers);
-         torque(vers);
-      }
    } else {
       // update logical flags by time-scale configurations
       calc_mpole = calc_mpole && tscfg("empole");
       calc_polar = calc_polar && tscfg("epolar");
-      if (calc_mpole || calc_polar) {
-         mpole_init(vers);
-         if (calc_mpole)
-            empole(vers);
-         if (calc_polar)
-            epolar(vers);
-         torque(vers);
-      }
+      if (calc_mpole)
+         empole(vers);
+      if (calc_polar)
+         epolar(vers);
    }
 }
 
@@ -166,41 +159,34 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    energy_core(vers, tsflag, tsconfig);
 
 
+   bool rc_a = rc_flag & calc::analyz;
    if (vers & calc::energy) {
-      for (size_t i = 0; i < energy_buffers.size(); ++i) {
-         energy_buffer u = energy_buffers[i];
-         energy_prec e = energy_reduce(u);
-         energy_prec* eptr = get_energy_reduce_dst(u);
-         if (u == ev) {
-            if (!use_potent(vdw_term) || !tscfg("evdw"))
-               e = 0;
-         }
-         *eptr = e;
-         if (eptr != &esum)
-            esum += e;
+      if (!rc_a) {
+         energy_valence = energy_reduce(eng_buf);
       }
+      esum = energy_valence + energy_ev + energy_elec;
    }
+
 
    if (vers & calc::virial) {
-      for (size_t i = 0; i < virial_buffers.size(); ++i) {
-         virial_buffer u = virial_buffers[i];
-         virial_prec v[9];
-         virial_reduce(v, u);
-         if (u == vir_ev) {
-            if (!use_potent(vdw_term) || !tscfg("evdw"))
-               for (int iv = 0; iv < 9; ++iv)
-                  v[iv] = 0;
-         }
-         for (int iv = 0; iv < 9; ++iv)
-            vir[iv] += v[iv];
+      if (!rc_a) {
+         virial_reduce(virial_valence, vir_buf);
       }
+      for (int iv = 0; iv < 9; ++iv)
+         vir[iv] = virial_valence[iv] + virial_ev[iv] + virial_elec[iv];
    }
 
+
    if (vers & calc::grad) {
-      size_t ngrad = x_grads.size();
-      for (size_t i = 1; i < ngrad; ++i) {
-         sum_gradient(gx, gy, gz, x_grads[i], y_grads[i], z_grads[i]);
-      }
+      if (devx && devy && devz)
+         sum_gradient(gx, gy, gz, devx, devy, devz);
+      if (decx && decy && decz)
+         sum_gradient(gx, gy, gz, decx, decy, decz);
+      if (demx && demy && demz)
+         sum_gradient(gx, gy, gz, demx, demy, demz);
+      if (depx && depy && depz && (depx != demx) && (depy != demy) &&
+          (depz != demz))
+         sum_gradient(gx, gy, gz, depx, depy, depz);
    }
 }
 

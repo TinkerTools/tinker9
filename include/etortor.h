@@ -25,11 +25,6 @@ TINKER_EXTERN pointer<int> chkttor_ia_; // of size ntortor
 
 TINKER_EXTERN real ttorunit;
 
-TINKER_EXTERN energy_buffer ett;
-TINKER_EXTERN virial_buffer vir_ett;
-TINKER_EXTERN grad_prec *dettx, *detty, *dettz;
-TINKER_EXTERN energy_prec energy_ett;
-
 void etortor_data(rc_op op);
 
 void etortor(int vers);

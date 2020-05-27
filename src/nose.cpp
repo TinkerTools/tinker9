@@ -138,7 +138,7 @@ void nhc_npt_xo_respa(int istep, time_prec dt)
    const time_prec dta_2 = 0.5f * dta;
 
 
-   virial_prec vir_fast[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+   virial_prec vir_fast[9] = {0};
    virial_prec vir_f[9];
    energy_prec esum_f;
 

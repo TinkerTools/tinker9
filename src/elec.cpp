@@ -62,7 +62,6 @@ LocalFrame* zaxis;
 real (*pole)[mpl_total];
 real (*rpole)[mpl_total];
 real *trqx, *trqy, *trqz;
-virial_buffer vir_trq;
 real (*udir)[3];
 real (*udirp)[3];
 real (*uind)[3];
@@ -104,7 +103,6 @@ void pole_data(rc_op op)
       }
       if (rc_flag & calc::virial) {
          darray::allocate(buffer_size(), &vir_trq);
-         virial_buffers.push_back(vir_trq);
       } else {
          vir_trq = nullptr;
       }

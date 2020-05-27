@@ -1,6 +1,7 @@
 #include "ebond.h"
 #include "io_fort_str.h"
 #include "md.h"
+#include "mod.energi.h"
 #include "potent.h"
 #include <tinker/detail/bndpot.hh>
 #include <tinker/detail/bndstr.hh>
@@ -14,14 +15,16 @@ void ebond_data(rc_op op)
    if (op & rc_dealloc) {
       darray::deallocate(ibnd, bl, bk);
 
-      buffer_deallocate(rc_flag, eb, debx, deby, debz, vir_eb);
+      buffer_deallocate(rc_flag, eb, vir_eb);
+      buffer_deallocate(rc_flag & ~calc::analyz, debx, deby, debz);
    }
 
    if (op & rc_alloc) {
       nbond = count_bonded_term(bond_term);
       darray::allocate(nbond, &ibnd, &bl, &bk);
 
-      buffer_allocate(rc_flag, &eb, &debx, &deby, &debz, &vir_eb, &energy_eb);
+      buffer_allocate(rc_flag, &eb, &vir_eb);
+      buffer_allocate(rc_flag & ~calc::analyz, &debx, &deby, &debz);
    }
 
    if (op & rc_init) {
@@ -48,5 +51,21 @@ void ebond_data(rc_op op)
 void ebond(int vers)
 {
    ebond_acc(vers);
+
+
+   if (rc_flag & calc::analyz) {
+      if (vers & calc::energy) {
+         energy_eb = energy_reduce(eb);
+         energy_valence += energy_eb;
+      }
+      if (vers & calc::virial) {
+         virial_reduce(virial_eb, vir_eb);
+         for (int iv = 0; iv < 9; ++iv)
+            virial_valence[iv] += virial_eb[iv];
+      }
+   }
+   if (vers & calc::analyz)
+      if (vers & calc::grad)
+         sum_gradient(gx, gy, gz, debx, deby, debz);
 }
 }

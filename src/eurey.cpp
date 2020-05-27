@@ -1,5 +1,6 @@
 #include "eurey.h"
 #include "md.h"
+#include "mod.energi.h"
 #include "potent.h"
 #include <tinker/detail/urey.hh>
 #include <tinker/detail/urypot.hh>
@@ -13,7 +14,8 @@ void eurey_data(rc_op op)
    if (op & rc_dealloc) {
       darray::deallocate(iury, uk, ul);
 
-      buffer_deallocate(rc_flag, eub, deubx, deuby, deubz, vir_eub);
+      buffer_deallocate(rc_flag, eub, vir_eub);
+      buffer_deallocate(rc_flag & ~calc::analyz, deubx, deuby, deubz);
    }
 
    if (op & rc_alloc) {
@@ -21,8 +23,8 @@ void eurey_data(rc_op op)
       darray::allocate(nangle, &iury, &uk, &ul);
 
       nurey = count_bonded_term(urey_term);
-      buffer_allocate(rc_flag, &eub, &deubx, &deuby, &deubz, &vir_eub,
-                      &energy_eub);
+      buffer_allocate(rc_flag, &eub, &vir_eub);
+      buffer_allocate(rc_flag & ~calc::analyz, &deubx, &deuby, &deubz);
    }
 
    if (op & rc_init) {
@@ -43,5 +45,21 @@ void eurey_data(rc_op op)
 void eurey(int vers)
 {
    eurey_acc(vers);
+
+
+   if (rc_flag & calc::analyz) {
+      if (vers & calc::energy) {
+         energy_eub = energy_reduce(eub);
+         energy_valence += energy_eub;
+      }
+      if (vers & calc::virial) {
+         virial_reduce(virial_eub, vir_eub);
+         for (int iv = 0; iv < 9; ++iv)
+            virial_valence[iv] += virial_eub[iv];
+      }
+   }
+   if (vers & calc::analyz)
+      if (vers & calc::grad)
+         sum_gradient(gx, gy, gz, deubx, deuby, deubz);
 }
 }

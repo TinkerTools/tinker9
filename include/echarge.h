@@ -1,6 +1,7 @@
 #pragma once
 #include "elec.h"
 #include "energy_buffer.h"
+#include "mod.energi.h"
 #include "rc_man.h"
 
 
@@ -10,11 +11,6 @@ extern real c2scale, c3scale, c4scale, c5scale;
 extern int ncexclude;
 extern int (*cexclude)[2];
 extern real* cexclude_scale;
-extern count_buffer nec;
-extern energy_buffer ec;
-extern virial_buffer vir_ec;
-extern grad_prec *decx, *decy, *decz;
-extern energy_prec energy_ec;
 
 
 void echarge_data(rc_op);

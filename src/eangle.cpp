@@ -1,6 +1,7 @@
 #include "eangle.h"
 #include "io_fort_str.h"
 #include "md.h"
+#include "mod.energi.h"
 #include "potent.h"
 #include <cassert>
 #include <tinker/detail/angbnd.hh>
@@ -16,14 +17,16 @@ void eangle_data(rc_op op)
    if (op & rc_dealloc) {
       darray::deallocate(iang, ak, anat, angtyp);
 
-      buffer_deallocate(rc_flag, ea, deax, deay, deaz, vir_ea);
+      buffer_deallocate(rc_flag, ea, vir_ea);
+      buffer_deallocate(rc_flag & ~calc::analyz, deax, deay, deaz);
    }
 
    if (op & rc_alloc) {
       nangle = count_bonded_term(angle_term);
       darray::allocate(nangle, &iang, &ak, &anat, &angtyp);
 
-      buffer_allocate(rc_flag, &ea, &deax, &deay, &deaz, &vir_ea, &energy_ea);
+      buffer_allocate(rc_flag, &ea, &vir_ea);
+      buffer_allocate(rc_flag & ~calc::analyz, &deax, &deay, &deaz);
    }
 
    if (op & rc_init) {
@@ -62,5 +65,21 @@ void eangle_data(rc_op op)
 void eangle(int vers)
 {
    eangle_acc(vers);
+
+
+   if (rc_flag & calc::analyz) {
+      if (vers & calc::energy) {
+         energy_ea = energy_reduce(ea);
+         energy_valence += energy_ea;
+      }
+      if (vers & calc::virial) {
+         virial_reduce(virial_ea, vir_ea);
+         for (int iv = 0; iv < 9; ++iv)
+            virial_valence[iv] += virial_ea[iv];
+      }
+   }
+   if (vers & calc::analyz)
+      if (vers & calc::grad)
+         sum_gradient(gx, gy, gz, deax, deay, deaz);
 }
 }

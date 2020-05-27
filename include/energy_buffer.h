@@ -101,57 +101,12 @@ using virial_buffer =
    pointer<virial_buffer_traits::type, virial_buffer_traits::value>;
 
 
-/**
- * \ingroup mdegv
- * \brief
- * Allocate or deallocate device memory for the buffers.
- *
- * ### Count Buffers
- * Only be allocated only if #calc::analyz flag is used.
- *
- *
- * ### Energy
- *
- *
- * ### Virial
- *
- *
- * ### Gradients
- *
- *
- * Using bond and VDW terms as examples:
- *
- * |                 | if analyz  | if .not. analyz |
- * |-----------------|------------|-----------------|
- * | total potential | #esum      | #esum           |
- * | total gx        | #gx        | #gx             |
- * | total virial    | #vir       | #vir            |
- * |                 |            |                 |
- * | ebond buffer    | #eb        | #eng_buf        |
- * | ebond           | #energy_eb | #esum           |
- * | ebond gx        | #debx      | #gx             |
- * | vir_eb buffer   | #vir_buf   | #vir_buf        |
- * | vir_eb          | #vir       | #vir            |
- * |                 |            |                 |
- * | evdw buffer     | #ev        | #ev             |
- * | evdw            | #energy_ev | #energy_ev      |
- * | evdw gx         | #devx      | #devx           |
- * | vir_ev buffer   | #vir_buf   | #vir_buf        |
- * | vir_ev          | #vir       | #vir            |
- *
- * \note
- * There is a global list to bookkeep all of the allocated buffers of its own
- * kind, so that all of the buffers can be iterated.
- * \note
- * These functions cannot be used on #eng_buf and #vir_buf.
- */
-void buffer_allocate(int rcflag, energy_buffer* ebuf, grad_prec** gx,
-                     grad_prec** gy, grad_prec** gz, virial_buffer* vbuf,
-                     energy_prec* eout);
-void buffer_deallocate(int, energy_buffer&, grad_prec*&, grad_prec*&,
-                       grad_prec*&, virial_buffer&);
+void buffer_allocate(int flag, energy_buffer* ebuf, virial_buffer* vbuf);
+void buffer_deallocate(int, energy_buffer, virial_buffer);
 void buffer_allocate(int, count_buffer*);
-void buffer_deallocate(int, count_buffer&);
+void buffer_deallocate(int, count_buffer);
+void buffer_allocate(int, grad_prec** gx, grad_prec** gy, grad_prec** gz);
+void buffer_deallocate(int, grad_prec*, grad_prec*, grad_prec*);
 
 
 /**
@@ -178,50 +133,4 @@ void virial_reduce(virial_prec (&)[virial_buffer_traits::N],
  * \see count_reduce
  */
 void virial_reduce(virial_prec (&)[9], const virial_buffer b);
-
-
-/**
- * \ingroup mdegv
- */
-void set_energy_reduce_dst(energy_buffer, energy_prec*);
-/**
- * \ingroup mdegv
- */
-energy_prec* get_energy_reduce_dst(energy_buffer);
-/**
- * \ingroup mdegv
- */
-void clear_energy_reduce_dst();
-
-
-/**
- * \ingroup mdegv
- * \brief Bookkeeping list for the count buffers.
- */
-extern std::vector<count_buffer> count_buffers;
-/**
- * \ingroup mdegv
- * \brief Bookkeeping list for the energy buffers.
- */
-extern std::vector<energy_buffer> energy_buffers;
-/**
- * \ingroup mdegv
- * \brief Bookkeeping list for the virial buffers.
- */
-extern std::vector<virial_buffer> virial_buffers;
-/**
- * \ingroup mdegv
- * \brief Bookkeeping list for the gradients.
- */
-extern std::vector<grad_prec*> x_grads;
-/**
- * \ingroup mdegv
- * \copydoc x_grads
- */
-extern std::vector<grad_prec*> y_grads;
-/**
- * \ingroup mdegv
- * \copydoc x_grads
- */
-extern std::vector<grad_prec*> z_grads;
 }
