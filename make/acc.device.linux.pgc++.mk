@@ -1,5 +1,5 @@
 ACC := pgc++ CUDA_HOME=$(cuda_dir)
-acc_opt_flags__ := -Mcuda=$(acc_cc_flag__)
+acc_opt_flags__ :=
 ifeq ($(opt),debug)
    acc_opt_flags__ += -O0 -g -traceback -ta=tesla:$(acc_cc_flag__),lineinfo
 else ifeq ($(opt),release)

@@ -5,6 +5,7 @@
 
 using namespace tinker;
 
+#if TINKER_REAL_SIZE == 8
 static const char* verlet_intg = "integrator  verlet\n";
 static int usage_ =
    calc::xyz | calc::vel | calc::mass | calc::energy | calc::grad | calc::md;
@@ -43,6 +44,8 @@ static double arbox_pot[] = {
    -278.566484, -278.575517, -278.584139, -278.592350, -278.600148, -278.607530,
    -278.614496, -278.621043, -278.627171, -278.632877, -278.638159, -278.643017,
    -278.647447, -278.651448, -278.655017, -278.658152};
+#endif
+
 TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
 {
 #if TINKER_REAL_SIZE == 8
@@ -87,10 +90,6 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
 
    TestFileExpected("test_arbox.arc");
 #else
-   (void)arbox_pot;
-   (void)arbox_kin;
-   (void)verlet_intg;
-   (void)usage_;
    REQUIRE(true);
 #endif
 }

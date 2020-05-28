@@ -1,6 +1,15 @@
 #pragma once
 
 
+#ifdef __GNUC__
+#   if __GNUC__ <= 4
+#      error If you are using GNU compilers, please use version 5 or above.    \
+If you are using other compilers, please make sure they are configured with    \
+GNU version 5 or above.
+#   endif
+#endif
+
+
 #if defined(TINKER_GFORTRAN)
 #   define TINKER_MOD(mod, var) __##mod##_MOD_##var
 #   define TINKER_RT(rt)        rt##_
