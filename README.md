@@ -12,7 +12,7 @@ In the meanwhile, please always run `make -f make/Makefile create_build` to crea
 in order to generate other files in the build directory required by `Makefile`.
 
 ### GNU C++
-The version of `g++` cannot be overly recent, so that `nvcc` will fail to support.
+The version of `g++` cannot be overly recent, in case `nvcc` might fail to support.
 I also believe version `4.x` is outdated for some of the C++11 features used here.
 
 ## Installation Guide
