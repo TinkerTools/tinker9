@@ -1,5 +1,10 @@
-##/
-##/
+#[============================================================[
+!!/ Build Tinker GPU with CMake
+!!/ ===========================
+!!/
+!!/ **Configure CMake**
+!!/
+]============================================================]
 
 
 ########################################################################
@@ -86,11 +91,25 @@ if (GIT_FOUND)
          WORKING_DIRECTORY
             "${PROJECT_SOURCE_DIR}"
          OUTPUT_VARIABLE
-            STRING_SHA1_GIT)
+            STRING_SHA1_GIT
+      )
       string (REPLACE "\"" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
       string (REPLACE "\n" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
       string (REPLACE "\r" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
       add_compile_definitions (TINKER_GPU_GIT_SHORT_HASH=${STRING_SHA1_GIT})
+
+
+      execute_process (
+         COMMAND
+            "${GIT_EXECUTABLE}" log -1 --format="%h \(%cd\)"
+         WORKING_DIRECTORY
+            "${PROJECT_SOURCE_DIR}"
+         OUTPUT_VARIABLE
+            STRING_GIT_HEAD
+      )
+      string (REPLACE "\"" "" STRING_GIT_HEAD ${STRING_GIT_HEAD})
+      string (REPLACE "\n" "" STRING_GIT_HEAD ${STRING_GIT_HEAD})
+      string (REPLACE "\r" "" STRING_GIT_HEAD ${STRING_GIT_HEAD})
    endif ()
 endif ()
 
@@ -134,3 +153,7 @@ add_dependencies (tinker.gpu SHELL_EXE)
 
 ## unit tests
 include (test) # test.cmake
+
+
+## documentations
+include (docs) # docs.cmake
