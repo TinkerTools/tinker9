@@ -513,7 +513,7 @@ info:
 
 
 ##/ **doc**
-##/ Generate developers' manual with `doxygen`.
+##/ Generate developer's manual with `doxygen`.
 ##/
 .PHONY: doc
 doc:
@@ -524,7 +524,7 @@ doc:
 
 
 ##/ **man**
-##/ Generate user manual with `sphinx`.
+##/ Generate user's manual with `sphinx`.
 ##/
 .PHONY: man
 man:

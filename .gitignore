@@ -8,6 +8,10 @@ Release/*
 .project
 .settings/*
 
+# CLion
+.idea
+.idea/*
+
 # VSCode
 .vscode
 .vscode/*

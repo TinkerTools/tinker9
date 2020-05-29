@@ -182,10 +182,10 @@ inside the `tinker.gpu` directory:
 Show some of the compiler and linker flags.
 
 **doc**
-Generate developers' manual with `doxygen`.
+Generate developer's manual with `doxygen`.
 
 **man**
-Generate user manual with `sphinx`.
+Generate user's manual with `sphinx`.
 
 **help**
 Print the Makefile documentation in the terminal window.
