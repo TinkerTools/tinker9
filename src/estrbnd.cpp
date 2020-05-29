@@ -1,6 +1,5 @@
 #include "estrbnd.h"
 #include "md.h"
-#include "mod.energi.h"
 #include "potent.h"
 #include <tinker/detail/angpot.hh>
 #include <tinker/detail/strbnd.hh>

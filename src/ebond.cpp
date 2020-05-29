@@ -1,7 +1,6 @@
 #include "ebond.h"
 #include "io_fort_str.h"
 #include "md.h"
-#include "mod.energi.h"
 #include "potent.h"
 #include <tinker/detail/bndpot.hh>
 #include <tinker/detail/bndstr.hh>

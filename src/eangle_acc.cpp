@@ -2,7 +2,6 @@
 #include "eangle.h"
 #include "mathfunc.h"
 #include "md.h"
-#include "mod.energi.h"
 #include "named_struct.h"
 
 // TODO: test linear and fourier angles

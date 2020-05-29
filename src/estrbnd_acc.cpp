@@ -1,10 +1,7 @@
 #include "add.h"
-#include "eangle.h"
-#include "ebond.h"
 #include "estrbnd.h"
 #include "mathfunc.h"
 #include "md.h"
-#include "mod.energi.h"
 #include "named_struct.h"
 
 namespace tinker {

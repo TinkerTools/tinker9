@@ -9,14 +9,10 @@
 #include "pme.h"
 #include "spatial.h"
 
-#include "eangle.h"
-#include "ebond.h"
 #include "eopbend.h"
 #include "epitors.h"
-#include "estrbnd.h"
 #include "etors.h"
 #include "etortor.h"
-#include "eurey.h"
 
 #include "egeom.h"
 
@@ -25,4 +21,12 @@
 #include "epolar.h"
 #include "evdw.h"
 
+
+#include "mod.angbnd.h"
+#include "mod.angpot.h"
+#include "mod.bndpot.h"
+#include "mod.bndstr.h"
 #include "mod.energi.h"
+#include "mod.strbnd.h"
+#include "mod.urey.h"
+#include "mod.ureypot.h"

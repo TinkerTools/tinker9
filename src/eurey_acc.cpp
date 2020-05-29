@@ -1,7 +1,6 @@
 #include "add.h"
 #include "eurey.h"
 #include "md.h"
-#include "mod.energi.h"
 #include "named_struct.h"
 
 namespace tinker {

@@ -1,6 +1,5 @@
 #include "eurey.h"
 #include "md.h"
-#include "mod.energi.h"
 #include "potent.h"
 #include <tinker/detail/urey.hh>
 #include <tinker/detail/urypot.hh>
