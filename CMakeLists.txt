@@ -6,19 +6,20 @@
 !!/ ---------------
 !!/ This section can be skipped for those who are familar with CMake.
 !!/
-!!/ Suppose the current working directory is /home/tinker.gpu and we
-!!/ will create a build directory called build-cmake in /home/tinker.gpu.
-!!/ We can do "mkdir build-cmake" then "cd build-cmake". Because the top-level
-!!/ CMakeLists.txt file is in the parent directory, if there were nothing to
-!!/ configure, command "cmake .." would generate the Makefile. The alternative
-!!/ way is to specify the build and source directories to CMake, e.g.,
+!!/ Suppose the current working directory is "/home/tinker.gpu" and we
+!!/ want to create a build directory called "build-cmake" in
+!!/ "/home/tinker.gpu". We can do "mkdir build-cmake" then "cd build-cmake".
+!!/ Because the top-level CMakeLists.txt file is in the parent directory,
+!!/ if there were nothing else to configure, command "cmake .." would generate
+!!/ the Makefile. The alternative way is to specify the build and source
+!!/ directories to CMake, e.g.,
 !!/
 !!/ .. code-block:: bash
 !!/
 !!/    cmake -B /home/tinker.gpu/build-cmake -S /home/tinker.gpu
 !!/
 !!/ There is also a command line gui "ccmake" that can replace "cmake" in the
-!!/ commands with more interactive experience.
+!!/ commands above.
 !!/
 !!/ Configure Compilers
 !!/ -------------------
@@ -34,11 +35,11 @@
 !!/ --------------------
 !!/ The following options are always passed to CMake program with their default
 !!/ values, documented as **option=value** if they have one. In order to change
-!!/ the default value of the options, there are two ways to ways to do that.
+!!/ the default value of the options, there are two ways to do that.
 !!/ You can always change their values interactively in the "ccmake" command
 !!/ line gui. You can also pass the new value to "cmake" via command line
 !!/ argument "cmake -Doption=NewValue". Note that values are not environmental
-!!/ variables. If the value is also a path to a file or directory, it must be
+!!/ variables. If a value is also a path to a file or directory, it must be
 !!/ an **"absolute path"**. Relative path will not be expanded.
 !!/
 ]]
@@ -102,7 +103,7 @@ set_target_properties (LIBFFTWF_THREADS PROPERTIES
 
 #[[
 !!/ **host=0**
-!!/ Flag to compile to GPU (with value 0) or CPU version (with value 1).
+!!/ Flag to compile to GPU (with value 0) or CPU (with value 1) version.
 !!/
 ]]
 set (host 0 CACHE STRING "0 (GPU) / 1 (CPU)")
@@ -166,8 +167,8 @@ endif ()
 set (compute_capability "60,70" CACHE STRING "CUDA Compute Capability")
 #[[
 !!/ **cuda_dir=/usr/local/cuda**
-!!/ Top-level CUDA installation directory, under which "include" and "lib"
-!!/ directories are expected to be found.
+!!/ Top-level CUDA installation directory, under which "include"
+!!/ directory can be found.
 !!/
 !!/ Sometimes the PGI compiler and the NVCC compiler are not "compatible". For
 !!/ instance, PGI 19.4 supports CUDA 9.2, 10.0, 10.1, and the default CUDA
