@@ -1,12 +1,12 @@
 #include "add.h"
 #include "box.h"
 #include "empole.h"
+#include "glob.spatial.h"
 #include "launch.h"
 #include "md.h"
 #include "named_struct.h"
 #include "pmestuf.h"
 #include "seq_bsplgen.h"
-#include "spatial.h"
 
 
 namespace tinker {

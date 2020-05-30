@@ -1,5 +1,6 @@
 #include "add.h"
 #include "echarge.h"
+#include "glob.spatial.h"
 #include "image.h"
 #include "launch.h"
 #include "mdegv.h"
@@ -8,7 +9,6 @@
 #include "pmestuf.h"
 #include "seq_bsplgen.h"
 #include "seq_pair_charge.h"
-#include "spatial.h"
 #include "switch.h"
 
 

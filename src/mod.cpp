@@ -7,7 +7,6 @@
 #include "molecule.h"
 #include "nblist.h"
 #include "pme.h"
-#include "spatial.h"
 
 #include "emplar.h"
 #include "empole.h"
@@ -36,3 +35,4 @@
 
 
 #include "glob.accasync.h"
+#include "glob.spatial.h"

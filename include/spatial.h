@@ -248,18 +248,10 @@ struct Spatial
    ~Spatial();
 };
 using SpatialUnit = GenericUnit<Spatial, GenericUnitVersion::EnableOnDevice>;
-TINKER_EXTERN SpatialUnit vspatial_unit;
-TINKER_EXTERN SpatialUnit cspatial_unit;
-TINKER_EXTERN SpatialUnit mspatial_unit;
-TINKER_EXTERN SpatialUnit uspatial_unit;
-
-
 void spatial_cut(int& px, int& py, int& pz, int level); // v3
 void spatial_cut_v1(int& px, int& py, int& pz, int level);
 void spatial_cut_v2(int& px, int& py, int& pz, int level);
 void spatial_cut_v3(int& px, int& py, int& pz, int level);
-
-
 void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer,
                         const real* x, const real* y, const real* z);
 void spatial_data_init_cu(SpatialUnit);

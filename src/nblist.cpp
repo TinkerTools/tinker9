@@ -3,10 +3,10 @@
 #include "elec.h"
 #include "epolar.h"
 #include "evdw.h"
+#include "glob.spatial.h"
 #include "md.h"
 #include "platform.h"
 #include "potent.h"
-#include "spatial.h"
 #include "switch.h"
 #include "thrust_cache.h"
 #include <tinker/detail/bound.hh>

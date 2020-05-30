@@ -1,13 +1,13 @@
 #include "add.h"
 #include "epolar.h"
 #include "epolar_trq.h"
+#include "glob.spatial.h"
 #include "image.h"
 #include "launch.h"
 #include "md.h"
 #include "named_struct.h"
 #include "pme.h"
 #include "seq_pair_polar.h"
-#include "spatial.h"
 #include "switch.h"
 
 

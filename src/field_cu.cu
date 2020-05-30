@@ -1,13 +1,13 @@
 #include "add.h"
 #include "cudalib.h"
 #include "epolar.h"
+#include "glob.spatial.h"
 #include "image.h"
 #include "launch.h"
 #include "md.h"
 #include "named_struct.h"
 #include "pme.h"
 #include "seq_pair_field.h"
-#include "spatial.h"
 #include "switch.h"
 
 

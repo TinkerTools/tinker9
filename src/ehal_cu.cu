@@ -1,13 +1,13 @@
 #include "add.h"
 #include "couple.h"
 #include "evdw.h"
+#include "glob.spatial.h"
 #include "image.h"
 #include "launch.h"
 #include "md.h"
 #include "named_struct.h"
 #include "seq_pair_hal.h"
 #include "seq_switch.h"
-#include "spatial.h"
 #include "switch.h"
 
 
