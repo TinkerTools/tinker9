@@ -1,7 +1,25 @@
 #pragma once
 
 
-#ifdef __GNUC__
+#if defined(__INTEL_COMPILER)
+#   define TINKER_ICPC
+
+#elif defined(__clang__)
+#   define TINKER_CLANG
+// xcode clang is different from llvm clang
+#   ifdef __apple_build_version__
+#      define TINKER_APPLE_CLANG
+#   else
+#      define TINKER_LLVM_CLANG
+#   endif
+
+#elif defined(__GNUC__)
+#   define TINKER_GCC
+
+#endif
+
+
+#ifdef TINKER_GCC
 #   if __GNUC__ <= 4
 #      error If you are using GNU compilers, please use version 5 or above.    \
 If you are using other compilers, please make sure they are configured with    \
@@ -229,24 +247,6 @@ using mixed = float;
 
 using fixed = unsigned long long;
 }
-
-
-#if defined(__INTEL_COMPILER)
-#   define TINKER_ICPC
-
-#elif defined(__clang__)
-#   define TINKER_CLANG
-// xcode clang is different from llvm clang
-#   ifdef __apple_build_version__
-#      define TINKER_APPLE_CLANG
-#   else
-#      define TINKER_LLVM_CLANG
-#   endif
-
-#elif defined(__GNUC__)
-#   define TINKER_GCC
-
-#endif
 
 
 // Suppress Warnings

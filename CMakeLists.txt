@@ -93,12 +93,16 @@ set_target_properties (LIBFFTW PROPERTIES
 add_library (LIBFFTW_THREADS STATIC IMPORTED)
 set_target_properties (LIBFFTW_THREADS PROPERTIES
    IMPORTED_LOCATION "${fftw_dir}/lib/libfftw3_threads.a")
-add_library (LIBFFTWF STATIC IMPORTED)
-set_target_properties (LIBFFTWF PROPERTIES
-   IMPORTED_LOCATION "${fftw_dir}/lib/libfftw3f.a")
-add_library (LIBFFTWF_THREADS STATIC IMPORTED)
-set_target_properties (LIBFFTWF_THREADS PROPERTIES
-   IMPORTED_LOCATION "${fftw_dir}/lib/libfftw3f_threads.a")
+if (EXISTS "${fftw_dir}/lib/libfftw3f.a")
+   add_library (LIBFFTWF STATIC IMPORTED)
+   set_target_properties (LIBFFTWF PROPERTIES
+      IMPORTED_LOCATION "${fftw_dir}/lib/libfftw3f.a")
+endif ()
+if (EXISTS "${fftw_dir}/lib/libfftw3f_threads.a")
+   add_library (LIBFFTWF_THREADS STATIC IMPORTED)
+   set_target_properties (LIBFFTWF_THREADS PROPERTIES
+      IMPORTED_LOCATION "${fftw_dir}/lib/libfftw3f_threads.a")
+endif ()
 
 
 #[[

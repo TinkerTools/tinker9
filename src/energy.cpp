@@ -64,8 +64,8 @@ const TimeScaleConfig& default_tsconfig()
 
 
 namespace {
-auto tscfg__ = [&](std::string eng, unsigned tsflag,
-                   const TimeScaleConfig& tsconfig) {
+auto tscfg__ = [](std::string eng, unsigned tsflag,
+                  const TimeScaleConfig& tsconfig) {
    auto local_flag = tsflag;
    const auto& local_cfg = tsconfig;
    try {
