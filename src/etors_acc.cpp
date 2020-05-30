@@ -2,7 +2,6 @@
 #include "etors.h"
 #include "mathfunc.h"
 #include "md.h"
-#include "mod.energi.h"
 #include "named_struct.h"
 
 // TOOD: use_smooth version

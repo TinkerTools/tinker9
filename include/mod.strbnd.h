@@ -4,6 +4,6 @@
 
 namespace tinker {
 TINKER_EXTERN int nstrbnd;
-TINKER_EXTERN real (*isb)[3];
+TINKER_EXTERN int (*isb)[3];
 TINKER_EXTERN real (*sbk)[2];
 }

@@ -9,10 +9,6 @@
 #include "pme.h"
 #include "spatial.h"
 
-#include "epitors.h"
-#include "etors.h"
-#include "etortor.h"
-
 #include "emplar.h"
 #include "empole.h"
 #include "epolar.h"
@@ -21,11 +17,17 @@
 
 #include "mod.angbnd.h"
 #include "mod.angpot.h"
+#include "mod.bitor.h"
 #include "mod.bndpot.h"
 #include "mod.bndstr.h"
 #include "mod.energi.h"
+#include "mod.ktrtor.h"
 #include "mod.opbend.h"
+#include "mod.pitors.h"
 #include "mod.restrn.h"
 #include "mod.strbnd.h"
+#include "mod.torpot.h"
+#include "mod.tors.h"
+#include "mod.tortor.h"
 #include "mod.urey.h"
 #include "mod.ureypot.h"

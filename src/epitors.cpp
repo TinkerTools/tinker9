@@ -1,6 +1,5 @@
 #include "epitors.h"
 #include "md.h"
-#include "mod.energi.h"
 #include "potent.h"
 #include <tinker/detail/pitors.hh>
 #include <tinker/detail/torpot.hh>

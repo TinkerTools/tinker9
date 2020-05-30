@@ -1,6 +1,5 @@
 #include "etortor.h"
 #include "md.h"
-#include "mod.energi.h"
 #include "potent.h"
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>

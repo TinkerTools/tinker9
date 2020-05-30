@@ -1,6 +1,5 @@
 #include "etors.h"
 #include "md.h"
-#include "mod.energi.h"
 #include "potent.h"
 #include <tinker/detail/torpot.hh>
 #include <tinker/detail/tors.hh>
