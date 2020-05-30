@@ -28,9 +28,6 @@ int jcount;
 }
 
 
-bool vdw_exclude_bond;
-
-
 void evdw_data(rc_op op)
 {
    if (!use_potent(vdw_term))

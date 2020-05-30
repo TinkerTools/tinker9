@@ -3,5 +3,5 @@
 
 
 namespace tinker {
-extern int async_queue;
+TINKER_EXTERN int async_queue;
 }

@@ -1,3 +1,5 @@
+include/h.template
+
 # Manual
 doc/manual/_build/*
 

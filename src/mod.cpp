@@ -12,7 +12,6 @@
 #include "emplar.h"
 #include "empole.h"
 #include "epolar.h"
-#include "evdw.h"
 
 
 #include "mod.angbnd.h"
@@ -22,6 +21,7 @@
 #include "mod.bndstr.h"
 #include "mod.energi.h"
 #include "mod.ktrtor.h"
+#include "mod.mutant.h"
 #include "mod.opbend.h"
 #include "mod.pitors.h"
 #include "mod.restrn.h"
@@ -30,4 +30,9 @@
 #include "mod.tors.h"
 #include "mod.tortor.h"
 #include "mod.urey.h"
-#include "mod.ureypot.h"
+#include "mod.urypot.h"
+#include "mod.vdw.h"
+#include "mod.vdwpot.h"
+
+
+#include "glob.accasync.h"

@@ -1,7 +1,7 @@
 #pragma once
 #include "mod.energi.h"
 #include "mod.urey.h"
-#include "mod.ureypot.h"
+#include "mod.urypot.h"
 #include "rc_man.h"
 
 

@@ -1,5 +1,5 @@
-#include "acclib.h"
 #include "cudalib.h"
+#include "glob.accasync.h"
 #include "wait_queue.h"
 #if TINKER_CUDART
 #   include "error.h"
@@ -19,7 +19,6 @@ void* dptr_buf;
 #endif
 
 
-int async_queue;
 void cudalib_data(rc_op op)
 {
 #if TINKER_CUDART
