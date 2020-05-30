@@ -1,6 +1,5 @@
 #include "egeom.h"
 #include "mdpq.h"
-#include "mod.energi.h"
 #include "potent.h"
 #include <tinker/detail/restrn.hh>
 #include <tinker/detail/sizes.hh>

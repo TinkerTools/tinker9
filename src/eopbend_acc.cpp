@@ -1,9 +1,7 @@
 #include "add.h"
-#include "eangle.h"
 #include "eopbend.h"
 #include "mathfunc.h"
 #include "md.h"
-#include "mod.energi.h"
 #include "named_struct.h"
 #include <cassert>
 
