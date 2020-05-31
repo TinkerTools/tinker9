@@ -1,10 +1,10 @@
 #include "add.h"
 #include "box.h"
 #include "egeom.h"
-#include "group.h"
+#include "glob.group.h"
+#include "glob.molecule.h"
 #include "image.h"
 #include "md.h"
-#include "molecule.h"
 #include "named_struct.h"
 #include <cassert>
 

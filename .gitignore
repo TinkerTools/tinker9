@@ -1,4 +1,4 @@
-include/h.template
+include/*template
 
 # Manual
 doc/manual/_build/*

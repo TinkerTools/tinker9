@@ -15,16 +15,22 @@
 
 #elif defined(__GNUC__)
 #   define TINKER_GCC
-
-#endif
-
-
-#ifdef TINKER_GCC
 #   if __GNUC__ <= 4
 #      error If you are using GNU compilers, please use version 5 or above.    \
 If you are using other compilers, please make sure they are configured with    \
 GNU version 5 or above.
 #   endif
+
+#endif
+
+
+// Suppress Warnings
+#ifdef TINKER_ICPC
+// #161: unrecognized #pragma
+#   pragma warning disable 161
+#endif
+#ifdef TINKER_CLANG
+#   pragma clang diagnostic ignored "-Wextern-c-compat"
 #endif
 
 
@@ -247,13 +253,3 @@ using mixed = float;
 
 using fixed = unsigned long long;
 }
-
-
-// Suppress Warnings
-#ifdef TINKER_ICPC
-// #161: unrecognized #pragma
-#pragma warning disable 161
-#endif
-#ifdef TINKER_CLANG
-#pragma clang diagnostic ignored "-Wextern-c-compat"
-#endif

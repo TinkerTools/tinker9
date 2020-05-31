@@ -3,8 +3,6 @@
 #include "gpu_card.h"
 
 #include "box.h"
-#include "group.h"
-#include "molecule.h"
 #include "nblist.h"
 #include "pme.h"
 
@@ -35,4 +33,6 @@
 
 
 #include "glob.accasync.h"
+#include "glob.group.h"
+#include "glob.molecule.h"
 #include "glob.spatial.h"

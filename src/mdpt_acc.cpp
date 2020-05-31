@@ -4,13 +4,13 @@
 
 #include "box.h"
 #include "energy.h"
+#include "glob.molecule.h"
 #include "io_fort_str.h"
 #include "mathfunc.h"
 #include "mdcalc.h"
 #include "mdegv.h"
 #include "mdpq.h"
 #include "mdpt.h"
-#include "molecule.h"
 #include "nblist.h"
 #include "random.h"
 #include <tinker/detail/bath.hh>
