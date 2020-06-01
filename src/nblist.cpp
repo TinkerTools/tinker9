@@ -209,8 +209,8 @@ static void nblist_alloc(nblist_t version, NBListUnit& nblu, int maxn,
 }
 
 
-static bool alloc_thrust_cache;
 #if TINKER_CUDART
+static bool alloc_thrust_cache;
 // rc_alloc
 static void spatial_alloc(SpatialUnit& unt, int n, real cut, real buf,
                           const real* x, const real* y, const real* z)
@@ -280,7 +280,9 @@ void nblist_data(rc_op op)
    }
 
 
+#if TINKER_CUDART
    alloc_thrust_cache = false;
+#endif
    nblist_t u = NBL_UNDEFINED;
    double cut = 0;
    double buf = 0;

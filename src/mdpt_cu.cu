@@ -1,3 +1,4 @@
+#include "gpu_card.h"
 #include "launch.h"
 #include "md.h"
 #include "syntax/cu/reduce.h"

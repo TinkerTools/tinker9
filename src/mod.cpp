@@ -1,12 +1,11 @@
 #define TINKER_EXTERN_DEFINITION_FILE 1
 
-#include "gpu_card.h"
 
 #include "box.h"
 #include "nblist.h"
 #include "pme.h"
 
-#include "emplar.h"
+
 #include "empole.h"
 #include "epolar.h"
 
@@ -33,6 +32,8 @@
 
 
 #include "glob.accasync.h"
+#include "glob.gpucard.h"
 #include "glob.group.h"
 #include "glob.molecule.h"
+#include "glob.mplar.h"
 #include "glob.spatial.h"

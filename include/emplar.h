@@ -1,14 +1,10 @@
 #pragma once
-#include "darray.h"
+#include "glob.mplar.h"
+#include "mod.energi.h"
 #include "rc_man.h"
 
 
 namespace tinker {
-TINKER_EXTERN int nmdpuexclude;
-TINKER_EXTERN pointer<int, 2> mdpuexclude;
-TINKER_EXTERN pointer<real, 4> mdpuexclude_scale;
-
-
 /**
  * \note Directly return in any of the following situations:
  *    - not using GPU;
@@ -19,8 +15,6 @@ TINKER_EXTERN pointer<real, 4> mdpuexclude_scale;
  * return.
  */
 void emplar_data(rc_op op);
-
-
 /**
  * \brief Multipole and AMOEBA polarization energy.
  * \note Similar to emplar_data() but:
