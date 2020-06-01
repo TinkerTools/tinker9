@@ -1,5 +1,5 @@
 #pragma once
-#include "pme.h"
+#include "glob.pme.h"
 
 
 namespace tinker {

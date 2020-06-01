@@ -102,7 +102,6 @@ void propagate_xyz(time_prec dt, bool check_nblist);
 void propagate_pos_acc(time_prec);
 
 
-
 /**
  * \ingroup mdpq
  * x = a x + b v

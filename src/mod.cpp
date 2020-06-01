@@ -3,7 +3,6 @@
 
 #include "box.h"
 #include "nblist.h"
-#include "pme.h"
 
 
 #include "mod.angbnd.h"
@@ -35,4 +34,5 @@
 #include "glob.group.h"
 #include "glob.molecule.h"
 #include "glob.mplar.h"
+#include "glob.pme.h"
 #include "glob.spatial.h"

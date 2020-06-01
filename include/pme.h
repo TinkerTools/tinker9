@@ -48,24 +48,12 @@ struct PME
    ~PME();
 };
 using PMEUnit = GenericUnit<PME, GenericUnitVersion::EnableOnDevice>;
-TINKER_EXTERN PMEUnit epme_unit;  // electrostatic
-TINKER_EXTERN PMEUnit ppme_unit;  // polarization
-TINKER_EXTERN PMEUnit pvpme_unit; // polarization virial
 
-TINKER_EXTERN pointer<real, 10> cmp, fmp, cphi;
-TINKER_EXTERN pointer<real, 20> fphi;
-
-TINKER_EXTERN pointer<real, 3> fuind, fuinp;
-TINKER_EXTERN pointer<real, 10> fdip_phi1, fdip_phi2, cphidp;
-TINKER_EXTERN pointer<real, 20> fphidp;
-
-TINKER_EXTERN virial_buffer vir_m;
 
 void pme_data(rc_op op);
 // This function must be called after pme_data has been called because it
 // needs to know the number of pme objects created.
 void fft_data(rc_op op);
-
 void fftfront(PMEUnit pme_u);
 void fftback(PMEUnit pme_u);
 using FFTPlanUnit = GenericUnit<FFTPlan, GenericUnitVersion::DisableOnDevice>;
