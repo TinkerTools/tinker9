@@ -1,10 +1,6 @@
 #define TINKER_EXTERN_DEFINITION_FILE 1
 
 
-#include "box.h"
-#include "nblist.h"
-
-
 #include "mod.angbnd.h"
 #include "mod.angpot.h"
 #include "mod.bitor.h"
@@ -30,9 +26,11 @@
 
 
 #include "glob.accasync.h"
+#include "glob.box.h"
 #include "glob.gpucard.h"
 #include "glob.group.h"
 #include "glob.molecule.h"
 #include "glob.mplar.h"
+#include "glob.nblist.h"
 #include "glob.pme.h"
 #include "glob.spatial.h"

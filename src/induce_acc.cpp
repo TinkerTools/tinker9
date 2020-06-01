@@ -2,11 +2,11 @@
 #include "epolar.h"
 #include "error.h"
 #include "field.h"
+#include "glob.nblist.h"
 #include "gpu_card.h"
 #include "image.h"
 #include "induce.h"
 #include "io_print.h"
-#include "nblist.h"
 #include "seq_damp.h"
 #include "tinker_rt.h"
 #include <tinker/detail/inform.hh>

@@ -40,11 +40,6 @@ struct NBList
    ~NBList();
 };
 using NBListUnit = GenericUnit<NBList, GenericUnitVersion::EnableOnDevice>;
-TINKER_EXTERN NBListUnit vlist_unit;
-TINKER_EXTERN NBListUnit dlist_unit;
-TINKER_EXTERN NBListUnit clist_unit;
-TINKER_EXTERN NBListUnit mlist_unit;
-TINKER_EXTERN NBListUnit ulist_unit;
 
 
 /**

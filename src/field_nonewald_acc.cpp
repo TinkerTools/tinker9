@@ -1,10 +1,10 @@
 #include "add.h"
 #include "epolar.h"
+#include "glob.nblist.h"
 #include "gpu_card.h"
 #include "image.h"
 #include "md.h"
 #include "named_struct.h"
-#include "nblist.h"
 #include "seq_pair_field.h"
 #include "switch.h"
 

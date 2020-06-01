@@ -3,6 +3,7 @@
 #include "elec.h"
 #include "epolar.h"
 #include "evdw.h"
+#include "glob.nblist.h"
 #include "glob.spatial.h"
 #include "md.h"
 #include "platform.h"
