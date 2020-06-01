@@ -296,3 +296,15 @@ include (test) # test.cmake
 
 ## documentations
 include (docs) # docs.cmake
+
+
+## more files to clean
+set_property (DIRECTORY
+   PROPERTY
+      ADDITIONAL_MAKE_CLEAN_FILES
+         "${CMAKE_BINARY_DIR}/doc"
+         "${CMAKE_BINARY_DIR}/html"
+         "${CMAKE_BINARY_DIR}/include"
+         "${CMAKE_BINARY_DIR}/latex"
+         "${CMAKE_BINARY_DIR}/manual"
+)

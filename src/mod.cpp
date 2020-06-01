@@ -6,10 +6,6 @@
 #include "pme.h"
 
 
-#include "empole.h"
-#include "epolar.h"
-
-
 #include "mod.angbnd.h"
 #include "mod.angpot.h"
 #include "mod.bitor.h"
@@ -17,9 +13,12 @@
 #include "mod.bndstr.h"
 #include "mod.energi.h"
 #include "mod.ktrtor.h"
+#include "mod.mplpot.h"
 #include "mod.mutant.h"
 #include "mod.opbend.h"
 #include "mod.pitors.h"
+#include "mod.polar.h"
+#include "mod.polpot.h"
 #include "mod.restrn.h"
 #include "mod.strbnd.h"
 #include "mod.torpot.h"
