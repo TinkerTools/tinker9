@@ -26,10 +26,13 @@ add_custom_target (man
 add_custom_target (doc
    COMMAND
       ${CMAKE_COMMAND} -E copy
-         "${PROJECT_SOURCE_DIR}/README.md" "${CMAKE_BINARY_DIR}/README.md"
+         "${PROJECT_SOURCE_DIR}/README.md" "${CMAKE_BINARY_DIR}"
    COMMAND
       ${CMAKE_COMMAND} -E copy_directory
          "${PROJECT_SOURCE_DIR}/doc" "${CMAKE_BINARY_DIR}/doc"
+   COMMAND
+      sed '/page style_md_pasted_here/ r doc/style.md' "${PROJECT_SOURCE_DIR}/doc/doc.h"
+         > "${CMAKE_BINARY_DIR}/doc/doc.h"
    COMMAND
       ${CMAKE_COMMAND} -E copy_directory
          "${PROJECT_SOURCE_DIR}/include" "${CMAKE_BINARY_DIR}/include"

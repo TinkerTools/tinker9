@@ -6,7 +6,6 @@ Tinker GPU: Software Tools for Molecular Design
 
 ## What I Am Up To
 ### Build System
-<del>Converting to cmake is in progress.</del>
 CMake scripts have been added. Tests are ongoing.
 
 **Deprecated:**

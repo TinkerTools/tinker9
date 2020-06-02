@@ -7,7 +7,6 @@
 
 
 namespace tinker {
-namespace {
 /**
  * \ingroup io
  * \brief Forward the const reference argument.
@@ -26,7 +25,6 @@ const T& fmt_fwd(const T& t)
 inline const char* fmt_fwd(const std::string& s)
 {
    return s.c_str();
-}
 }
 
 
