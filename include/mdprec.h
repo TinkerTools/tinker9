@@ -3,8 +3,8 @@
 
 
 /**
- * \ingroup mdprec
- * \page mdprec
+ * \ingroup prec
+ * \page prec
  *
  * | Properties                  | Types       | Underlying Types |
  * |----------------------------:|------------:|-----------------:|
@@ -25,7 +25,7 @@
 
 
 /**
- * \ingroup mdprec
+ * \ingroup prec
  * \def TINKER_DETERMINISTIC_FORCE
  * Logical macro for the underlying type of energy gradients.
  *    - If `true`, always use fixed-point arithmetic to accumulate energy

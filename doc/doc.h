@@ -1,3 +1,6 @@
+#error This header file should never have been included.
+
+
 /// \defgroup style  Style Guide
 
 
@@ -8,7 +11,7 @@
  */
 
 
-/// \defgroup macro  Macros
+/// \defgroup macro  Predefined Macros
 
 
 /// \defgroup geom  Geometrical Restraints
@@ -19,7 +22,7 @@
 /// \defgroup pme  Particle Mesh Ewald
 
 
-/// \defgroup mdprec  Fine-Grained Definitions of MM and MD Types
+/// \defgroup prec  Fine-Grained Definitions of MM and MD Types
 /// \defgroup mdcalc  Control Bits for MM and MD Calculations
 /// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)
 /// \defgroup mdegv  Energy, Gradient, and Virial Tensor
@@ -43,3 +46,30 @@
 /// \defgroup acc_syntax  OpenACC Specific Code
 /// \defgroup cuda_syntax  CUDA Specific Code
 /// \defgroup test  Unit Tests
+
+
+//====================================================================//
+
+
+/// \def TINKER_ICPC
+/// \ingroup macro
+/// Is defined when Intel C++ compiler was detected.
+#define TINKER_ICPC
+/// \def TINKER_GCC
+/// \ingroup macro
+/// Is defined when GNU C++ compiler was detected.
+#define TINKER_GCC
+/// \def TINKER_CLANG
+/// \ingroup macro
+/// Is defined when Clang C++ (either Apple or LLVM) compiler was detected.
+#define TINKER_CLANG
+/// \def TINKER_APPLE_CLANG
+/// \ingroup macro
+/// Is defined when Clang C++ (Apple) compiler was detected.
+#define TINKER_APPLE_CLANG
+/// \def TINKER_LLVM_CLANG
+/// \ingroup macro
+/// Is defined when Clang C++ (LLVM) compiler was detected.
+#define TINKER_LLVM_CLANG
+/* documented in macro.h */
+#define TINKER_EXTERN_DEFINITION_FILE

@@ -4,7 +4,7 @@
 
 /**
  * \def image
- * \ingroup macro
+ * \ingroup math
  * Apply periodic boundary conditions to displacements (`xr, yr, zr`) and
  * preserve the correct signs.
  *

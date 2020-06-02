@@ -1,6 +1,41 @@
 #pragma once
 
 
+//====================================================================//
+
+
+#if defined(TINKER_GFORTRAN)
+#   define TINKER_MOD(mod, var) __##mod##_MOD_##var
+#   define TINKER_RT(rt)        rt##_
+#elif defined(TINKER_IFORT)
+#   define TINKER_MOD(mod, var) mod##_mp_##var##_
+#   define TINKER_RT(rt)        rt##_
+#else
+#   error We do not know what Fortran compiler you used to compile the Tinker  \
+library. You should implement these two macros (TINKER_MOD and TINKER_RT) here \
+to mimic its name mangling.
+#endif
+
+
+//====================================================================//
+
+
+// C++11
+#ifdef __cplusplus
+#   if __cplusplus < 201103L
+#      error Must enable C++11.
+#   endif
+#endif
+
+
+/**
+ * \def restrict
+ * \ingroup macro
+ * Expands to `__restrict__` in the source code.
+ */
+#define restrict __restrict__
+
+
 #if defined(__INTEL_COMPILER)
 #   define TINKER_ICPC
 
@@ -34,26 +69,43 @@ GNU version 5 or above.
 #endif
 
 
-#if defined(TINKER_GFORTRAN)
-#   define TINKER_MOD(mod, var) __##mod##_MOD_##var
-#   define TINKER_RT(rt)        rt##_
-#elif defined(TINKER_IFORT)
-#   define TINKER_MOD(mod, var) mod##_mp_##var##_
-#   define TINKER_RT(rt)        rt##_
+/**
+ * \def CONSTEXPR
+ * \ingroup macro
+ * If possible, use `if CONSTEXPR` to hint at the chances of optimizations.
+ */
+#if __cplusplus >= 201703L && defined(__cpp_if_constexpr)
+#   define CONSTEXPR constexpr
 #else
-#   error We do not know what Fortran compiler you used to compile the Tinker  \
-library. You should implement these two macros (TINKER_MOD and TINKER_RT) here \
-to mimic its name mangling.
+#   define CONSTEXPR
 #endif
+
+
+/**
+ * \def MAYBE_UNUSED
+ * \ingroup macro
+ * Reduce the "unused variable" warnings from the compiler.
+ */
+#if __has_cpp_attribute(maybe_unused)
+#   define MAYBE_UNUSED [[maybe_unused]]
+#else
+#   define MAYBE_UNUSED __attribute__((unused))
+#endif
+
+
+//====================================================================//
 
 
 /**
  * \def TINKER_STR
  * \ingroup macro
- * Convert a predefined macro `s` to a string `"s"`.
+ * Converts a predefined macro `s` to a string `"s"`.
  */
 #define TINKER_STR(s)   TINKER_STR1_(s)
 #define TINKER_STR1_(s) #s
+
+
+//====================================================================//
 
 
 #define TINKER_GET_1ST_ARG(a1, ...)                         a1
@@ -65,10 +117,13 @@ to mimic its name mangling.
 #define TINKER_GET_7TH_ARG(a1, a2, a3, a4, a5, a6, a7, ...) a7
 
 
+//====================================================================//
+
+
 /**
  * \def TINKER_EXTERN_DEFINITION_FILE
  * \ingroup macro
- * Define this macro to true before this header file being included so that
+ * Define this macro to true before this header files being included so that
  * the declarations of the "extern" variables will become definitions in the
  * current compilation unit.
  *
@@ -76,7 +131,7 @@ to mimic its name mangling.
  * \ingroup macro
  * In general, macro `TINKER_EXTERN` expands to `extern`, unless macro
  * `TINKER_EXTERN_DEFINITION_FILE` has been predefined to true.
- * This method is useful to declare and define the global variables.
+ * This is useful to declare and define the global variables.
  * \see TINKER_EXTERN_DEFINITION_FILE
  */
 #ifndef TINKER_EXTERN_DEFINITION_FILE
@@ -89,14 +144,15 @@ to mimic its name mangling.
 #endif
 
 
+//====================================================================//
+
+
 /**
  * \def TINKER_DEBUG
  * \ingroup macro
- * `TINKER_DEBUG` either expands to 0 or 1. It expands to 1 if and only if
- * `DEBUG` is defined and is not defined to 0.
- * `NDEBUG` is the default and it supersedes `DEBUG` should both of them
- * appear. If `DEBUG` is defined to 0, it is equivalent to having `NDEBUG`
- * defined.
+ * - Expands to 1 if and only if `DEBUG` is defined and is not defined to 0.
+ * - `NDEBUG` is the default and supersedes `DEBUG`, should both are defined.
+ * - If `DEBUG` is defined to 0, it is equivalent to having `NDEBUG` defined.
  */
 #if defined(_DEBUG) && !defined(DEBUG)
 #   define DEBUG _DEBUG
@@ -127,46 +183,7 @@ to mimic its name mangling.
 #endif
 
 
-/**
- * \{
- * \def TINKER_DOUBLE_PRECISION
- * \ingroup macro
- * \def TINKER_MIXED_PRECISION
- * \ingroup macro
- * \def TINKER_SINGLE_PRECISION
- * \ingroup macro
- * Only one of the precision macros can be set to 1 and the rest of them will
- * be set to 0.
- *
- * | Macros | real   | mixed  |
- * |--------|--------|--------|
- * | DOUBLE | double | double |
- * | MIXED  | float  | double |
- * | SINGLE | float  | float  |
- * \}
- */
-#ifdef TINKER_DOUBLE_PRECISION
-#   undef TINKER_DOUBLE_PRECISION
-#   define TINKER_DOUBLE_PRECISION 1
-#else
-#   define TINKER_DOUBLE_PRECISION 0
-#endif
-#ifdef TINKER_MIXED_PRECISION
-#   undef TINKER_MIXED_PRECISION
-#   define TINKER_MIXED_PRECISION 1
-#else
-#   define TINKER_MIXED_PRECISION 0
-#endif
-#ifdef TINKER_SINGLE_PRECISION
-#   undef TINKER_SINGLE_PRECISION
-#   define TINKER_SINGLE_PRECISION 1
-#else
-#   define TINKER_SINGLE_PRECISION 0
-#endif
-#if (TINKER_DOUBLE_PRECISION + TINKER_MIXED_PRECISION +                        \
-     TINKER_SINGLE_PRECISION) != 1
-#   error Error in TINKER_?_PRECISION macros detected.
-#endif
+//====================================================================//
 
 
 /**
@@ -190,47 +207,73 @@ to mimic its name mangling.
 #endif
 
 
-// C++11
-#ifdef __cplusplus
-#   if __cplusplus < 201103L
-#      error Must enable C++11.
-#   endif
-#endif
+//====================================================================//
 
 
 /**
- * \def restrict
+ * \def TINKER_DOUBLE_PRECISION
  * \ingroup macro
- * Expand to `__restrict__` in the source code.
- */
-#define restrict __restrict__
-
-
-/**
- * \def CONSTEXPR
+ * Only one of the precision macros can be set to 1 and the others will
+ * be set to 0.
+ *
+ * | Macros | real   | mixed  |
+ * |--------|--------|--------|
+ * | DOUBLE | double | double |
+ * | MIXED  | float  | double |
+ * | SINGLE | float  | float  |
+ *
+ * \def TINKER_MIXED_PRECISION
  * \ingroup macro
- * If possible, use `if CONSTEXPR` to hint at the chances of optimizations.
+ * \copydoc TINKER_DOUBLE_PRECISION
+ *
+ * \def TINKER_SINGLE_PRECISION
+ * \ingroup macro
+ * \copydoc TINKER_DOUBLE_PRECISION
  */
-#if __cplusplus >= 201703L && defined(__cpp_if_constexpr)
-#   define CONSTEXPR constexpr
+#ifdef TINKER_DOUBLE_PRECISION
+#   undef TINKER_DOUBLE_PRECISION
+#   define TINKER_DOUBLE_PRECISION 1
 #else
-#   define CONSTEXPR
+#   define TINKER_DOUBLE_PRECISION 0
 #endif
-
-
-/**
- * \def MAYBE_UNUSED
- * \ingroup macro
- * Reduce the "unused variable" warnings from the compiler.
- */
-#if __has_cpp_attribute(maybe_unused)
-#   define MAYBE_UNUSED [[maybe_unused]]
+#ifdef TINKER_MIXED_PRECISION
+#   undef TINKER_MIXED_PRECISION
+#   define TINKER_MIXED_PRECISION 1
 #else
-#   define MAYBE_UNUSED __attribute__((unused))
+#   define TINKER_MIXED_PRECISION 0
+#endif
+#ifdef TINKER_SINGLE_PRECISION
+#   undef TINKER_SINGLE_PRECISION
+#   define TINKER_SINGLE_PRECISION 1
+#else
+#   define TINKER_SINGLE_PRECISION 0
+#endif
+#if (TINKER_DOUBLE_PRECISION + TINKER_MIXED_PRECISION +                        \
+     TINKER_SINGLE_PRECISION) != 1
+#   error Detected errors in TINKER_?_PRECISION macros.
 #endif
 
 
 namespace tinker {
+/**
+ * \typedef fixed
+ * \ingroup prec
+ * 64-bit unsigned integer type for fixed-point arithmetic.
+ *
+ * \typedef real
+ * \ingroup prec
+ * Floating-point type with lower precision (not higher than #mixed).
+ * \see TINKER_MIXED_PRECISION
+ *
+ * \typedef mixed
+ * \ingroup prec
+ * Floating-point type with higher precision (not lower than #real).
+ * \see TINKER_MIXED_PRECISION
+ */
+using fixed = unsigned long long;
+static_assert(sizeof(fixed) == 8, "");
+
+
 #if TINKER_DOUBLE_PRECISION
 #   define TINKER_REAL_SIZE  8
 #   define TINKER_MIXED_SIZE 8
@@ -249,7 +292,4 @@ using mixed = double;
 using real = float;
 using mixed = float;
 #endif
-
-
-using fixed = unsigned long long;
 }
