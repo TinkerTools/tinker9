@@ -72,7 +72,9 @@ GNU version 5 or above.
 /**
  * \def CONSTEXPR
  * \ingroup macro
- * If possible, use `if CONSTEXPR` to hint at the chances of optimizations.
+ * Since C++17, `if constexpr` is added to C++ syntax.
+ * `if CONSTEXPR` expands to `if constexpr` if this feature is supported.
+ * Otherwise expands to `if`.
  */
 #if __cplusplus >= 201703L && defined(__cpp_if_constexpr)
 #   define CONSTEXPR constexpr
@@ -84,12 +86,18 @@ GNU version 5 or above.
 /**
  * \def MAYBE_UNUSED
  * \ingroup macro
- * Reduce the "unused variable" warnings from the compiler.
+ * Reduces the "unused variable" warnings from the compiler.
  */
-#if __has_cpp_attribute(maybe_unused)
-#   define MAYBE_UNUSED [[maybe_unused]]
-#else
+#ifdef __has_cpp_attribute
+#   if __has_cpp_attribute(maybe_unused)
+#      define MAYBE_UNUSED [[maybe_unused]]
+#   else
+#      define MAYBE_UNUSED
+#   endif
+#elif defined(TINKER_ICPC) || defined(TINKER_CLANG) || defined(TINKER_GCC)
 #   define MAYBE_UNUSED __attribute__((unused))
+#else
+#   define MAYBE_UNUSED
 #endif
 
 
@@ -150,36 +158,12 @@ GNU version 5 or above.
 /**
  * \def TINKER_DEBUG
  * \ingroup macro
- * - Expands to 1 if and only if `DEBUG` is defined and is not defined to 0.
- * - `NDEBUG` is the default and supersedes `DEBUG`, should both are defined.
- * - If `DEBUG` is defined to 0, it is equivalent to having `NDEBUG` defined.
+ * Expands to 0 if macro `NDEBUG` was predefined. Expands to 0 otherwise.
  */
-#if defined(_DEBUG) && !defined(DEBUG)
-#   define DEBUG _DEBUG
-#endif
-#if defined(_NDEBUG) && !defined(NDEBUG)
-#   define NDEBUG _NDEBUG
-#endif
-#if !defined(NDEBUG) && !defined(DEBUG)
-#   define NDEBUG
+#ifdef NDEBUG
 #   define TINKER_DEBUG 0
-#elif defined(NDEBUG)
-#   define TINKER_DEBUG 0
-#elif defined(DEBUG)
-#   define TINKER_DEBUG1_(VAL) VAL##1
-#   define TINKER_DEBUG2_(VAL) TINKER_DEBUG1_(VAL)
-#   if TINKER_DEBUG2_(DEBUG) == 1
-// DEBUG is defined to empty
-#      define TINKER_DEBUG 1
-#   elif DEBUG != 0
-// DEBUG != 0
-#      define TINKER_DEBUG 1
-#   else
-// DEBUG == 0
-#      define TINKER_DEBUG 0
-#   endif
 #else
-#   define TINKER_DEBUG 0
+#   define TINKER_DEBUG 1
 #endif
 
 

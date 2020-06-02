@@ -61,19 +61,23 @@ list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 !!/ Build type is case insensitive and can either be "release" or "debug".
 !!/
 ]]
-set (CMAKE_BUILD_TYPE release CACHE STRING
-   "Choose the type of build, options are: debug release")
+if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+   set (CMAKE_BUILD_TYPE Release CACHE STRING
+      "Choose the type of build. Options: Debug / Release"
+      FORCE
+   )
+endif ()
 
 
 ########################################################################
 
 
 #[[
-!!/ **tinker_dir=${HOME}/tinker/source**
+!!/ **tinker_dir=${CMAKE_BINARY_DIR}/tinker/source**
 !!/ Directory in which user compiled "libtinker.a".
 !!/
 ]]
-set (tinker_dir "$ENV{HOME}/tinker/source" CACHE STRING "Path to libtinker.a")
+set (tinker_dir "${CMAKE_BINARY_DIR}/tinker/source" CACHE STRING "Path to libtinker.a")
 add_library (LIBTINKER STATIC IMPORTED)
 set_target_properties (LIBTINKER PROPERTIES
    IMPORTED_LOCATION "${tinker_dir}/libtinker.a")
@@ -81,12 +85,12 @@ set_target_properties (LIBTINKER PROPERTIES
 
 
 #[[
-!!/ **fftw_dir=/usr/local**
+!!/ **fftw_dir=${CMAKE_BINARY_DIR}/fftw**
 !!/ Top-level FFTW3 installation, under which
 !!/ "include/fftw3.h" and "lib/libfftw3" are expected to be found.
 !!/
 ]]
-set (fftw_dir /usr/local CACHE STRING "FFTW3 Directory")
+set (fftw_dir "${CMAKE_BINARY_DIR}/fftw" CACHE STRING "FFTW3 Directory")
 add_library (LIBFFTW STATIC IMPORTED)
 set_target_properties (LIBFFTW PROPERTIES
    IMPORTED_LOCATION "${fftw_dir}/lib/libfftw3.a")
@@ -106,15 +110,15 @@ endif ()
 
 
 #[[
-!!/ **host=0**
+!!/ **host=1**
 !!/ Flag to compile to GPU (with value 0) or CPU (with value 1) version.
 !!/
 ]]
-set (host 0 CACHE STRING "0 (GPU) / 1 (CPU)")
+set (host 1 CACHE STRING "0 (GPU) / 1 (CPU)")
 
 
 #[[
-!!/ **prec=m**
+!!/ **prec=d**
 !!/ Precision of the floating-point numbers. With flag "d", all of the
 !!/ floating-point numbers are treated as real*8/double values,
 !!/ or real*4/single values if with flag "s". Mixed precision flag "m" will
@@ -122,7 +126,7 @@ set (host 0 CACHE STRING "0 (GPU) / 1 (CPU)")
 !!/ not change the hard-coded types.
 !!/
 ]]
-set (prec m CACHE STRING "d (DOUBLE) / s (SINGLE) / m (MIXED)")
+set (prec d CACHE STRING "d (DOUBLE) / s (SINGLE) / m (MIXED)")
 if (${prec} STREQUAL m)
    add_compile_definitions (TINKER_MIXED_PRECISION)
 elseif (${prec} STREQUAL s)

@@ -44,17 +44,17 @@ an **"absolute path"**. Relative path will not be expanded.
 **CMAKE_BUILD_TYPE=release**
 Build type is case insensitive and can either be "release" or "debug".
 
-**tinker_dir=${HOME}/tinker/source**
+**tinker_dir=${CMAKE_BINARY_DIR}/tinker/source**
 Directory in which user compiled "libtinker.a".
 
-**fftw_dir=/usr/local**
+**fftw_dir=${CMAKE_BINARY_DIR}/fftw**
 Top-level FFTW3 installation, under which
 "include/fftw3.h" and "lib/libfftw3" are expected to be found.
 
-**host=0**
+**host=1**
 Flag to compile to GPU (with value 0) or CPU (with value 1) version.
 
-**prec=m**
+**prec=d**
 Precision of the floating-point numbers. With flag "d", all of the
 floating-point numbers are treated as real*8/double values,
 or real*4/single values if with flag "s". Mixed precision flag "m" will
