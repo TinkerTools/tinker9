@@ -115,8 +115,8 @@ set (host 0 CACHE STRING "0 (GPU) / 1 (CPU)")
 
 #[[
 !!/ **prec=m**
-!!/ Precision of the floating point numbers. With flag "d", all of the
-!!/ floating point numbers are treated as real*8/double values,
+!!/ Precision of the floating-point numbers. With flag "d", all of the
+!!/ floating-point numbers are treated as real*8/double values,
 !!/ or real*4/single values if with flag "s". Mixed precision flag "m" will
 !!/ use real*4 or real*8 numbers in different places. Note that this flag will
 !!/ not change the hard-coded types.
@@ -302,6 +302,7 @@ include (docs) # docs.cmake
 set_property (DIRECTORY
    PROPERTY
       ADDITIONAL_MAKE_CLEAN_FILES
+         "${CMAKE_BINARY_DIR}/README.md"
          "${CMAKE_BINARY_DIR}/doc"
          "${CMAKE_BINARY_DIR}/html"
          "${CMAKE_BINARY_DIR}/include"

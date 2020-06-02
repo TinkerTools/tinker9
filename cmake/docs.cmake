@@ -25,6 +25,9 @@ add_custom_target (man
 ## Developer's Manual
 add_custom_target (doc
    COMMAND
+      ${CMAKE_COMMAND} -E copy
+         "${PROJECT_SOURCE_DIR}/README.md" "${CMAKE_BINARY_DIR}/README.md"
+   COMMAND
       ${CMAKE_COMMAND} -E copy_directory
          "${PROJECT_SOURCE_DIR}/doc" "${CMAKE_BINARY_DIR}/doc"
    COMMAND

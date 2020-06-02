@@ -2,12 +2,6 @@
 #include "mdprec.h"
 
 
-/**
- * \defgroup md_pt  Thermostats (T) and Barostats (P)
- * \ingroup md
- */
-
-
 namespace tinker {
 void kinetic(T_prec& temp);
 void kinetic_acc(T_prec&);
@@ -65,7 +59,7 @@ void monte_carlo_barostat_acc(energy_prec epot);
 
 
 /**
- * \ingroup md_pt
+ * \ingroup mdpt
  * \brief Applies a velocity correction as needed for the Nose-Hoover Chains,
  * and a box size correction as needed for the Monte Carlo barostat at the half
  * time step.

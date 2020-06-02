@@ -55,8 +55,8 @@ Top-level FFTW3 installation, under which
 Flag to compile to GPU (with value 0) or CPU (with value 1) version.
 
 **prec=m**
-Precision of the floating point numbers. With flag "d", all of the
-floating point numbers are treated as real*8/double values,
+Precision of the floating-point numbers. With flag "d", all of the
+floating-point numbers are treated as real*8/double values,
 or real*4/single values if with flag "s". Mixed precision flag "m" will
 use real*4 or real*8 numbers in different places. Note that this flag will
 not change the hard-coded types.

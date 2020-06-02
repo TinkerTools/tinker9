@@ -86,7 +86,7 @@ endif
 
 
 ##/ **prec=real8**
-##/ Precision of the floating point numbers.
+##/ Precision of the floating-point numbers.
 ##/
 ##/ - These equivalent values all compile the code to double precision:
 ##/   `real8`, `8`, `64`, `double`, `d`.

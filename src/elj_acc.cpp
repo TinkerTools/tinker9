@@ -89,9 +89,9 @@ void elj_acc1()
                real dedx = de * xr;
                real dedy = de * yr;
                real dedz = de * zr;
-               gxi += acc_to<grad_prec>(dedx);
-               gyi += acc_to<grad_prec>(dedy);
-               gzi += acc_to<grad_prec>(dedz);
+               gxi += cvt_to<grad_prec>(dedx);
+               gyi += cvt_to<grad_prec>(dedy);
+               gzi += cvt_to<grad_prec>(dedz);
                atomic_add(-dedx, devx, k);
                atomic_add(-dedy, devy, k);
                atomic_add(-dedz, devz, k);

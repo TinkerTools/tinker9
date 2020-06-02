@@ -145,19 +145,19 @@ void elj_cu1(LJ_PARA, int n, const Spatial::SortedAtom* restrict sorted,
                if (e != 0)
                   ctl += 1;
             if CONSTEXPR (do_e)
-               etl += cu_to<ebuf_prec>(e);
+               etl += cvt_to<ebuf_prec>(e);
             if CONSTEXPR (do_g) {
                de *= REAL_RECIP(rik);
                dedx = de * xr;
                dedy = de * yr;
                dedz = de * zr;
                if CONSTEXPR (do_v) {
-                  vtlxx += cu_to<vbuf_prec>(xr * dedx);
-                  vtlyx += cu_to<vbuf_prec>(yr * dedx);
-                  vtlzx += cu_to<vbuf_prec>(zr * dedx);
-                  vtlyy += cu_to<vbuf_prec>(yr * dedy);
-                  vtlzy += cu_to<vbuf_prec>(zr * dedy);
-                  vtlzz += cu_to<vbuf_prec>(zr * dedz);
+                  vtlxx += cvt_to<vbuf_prec>(xr * dedx);
+                  vtlyx += cvt_to<vbuf_prec>(yr * dedx);
+                  vtlzx += cvt_to<vbuf_prec>(zr * dedx);
+                  vtlyy += cvt_to<vbuf_prec>(yr * dedy);
+                  vtlzy += cvt_to<vbuf_prec>(zr * dedy);
+                  vtlzz += cvt_to<vbuf_prec>(zr * dedz);
                }
             }
          } // end if (include)
@@ -165,12 +165,12 @@ void elj_cu1(LJ_PARA, int n, const Spatial::SortedAtom* restrict sorted,
 
          if CONSTEXPR (do_g) {
             int dstlane = (ilane + WARP_SIZE - j) & (WARP_SIZE - 1);
-            gxi += cu_to<grad_prec>(dedx);
-            gyi += cu_to<grad_prec>(dedy);
-            gzi += cu_to<grad_prec>(dedz);
-            gxk -= cu_to<grad_prec>(__shfl_sync(ALL_LANES, dedx, dstlane));
-            gyk -= cu_to<grad_prec>(__shfl_sync(ALL_LANES, dedy, dstlane));
-            gzk -= cu_to<grad_prec>(__shfl_sync(ALL_LANES, dedz, dstlane));
+            gxi += cvt_to<grad_prec>(dedx);
+            gyi += cvt_to<grad_prec>(dedy);
+            gzi += cvt_to<grad_prec>(dedz);
+            gxk -= cvt_to<grad_prec>(__shfl_sync(ALL_LANES, dedx, dstlane));
+            gyk -= cvt_to<grad_prec>(__shfl_sync(ALL_LANES, dedy, dstlane));
+            gzk -= cvt_to<grad_prec>(__shfl_sync(ALL_LANES, dedz, dstlane));
          }
       }
 

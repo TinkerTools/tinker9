@@ -4,12 +4,10 @@
 
 namespace tinker {
 /**
- * \ingroup math
- * \brief
- * If `b < 0`, return `-abs(a)`, otherwise, return `abs(a)`.
- *
- * Reverse-engineered from the 32-bit integer version of Fortran `SIGN(A,B)`.
- * Standard C and CUDA math libraries only have float and double versions.
+ * \ingroup cuda_syntax
+ * If `b < 0`, returns `-abs(a)`, otherwise, returns `abs(a)`.
+ * Similar to the 32-bit integer version of Fortran `SIGN(A,B)`.
+ * \note Standard C and CUDA math libraries only have float and double versions.
  */
 __device__
 inline int int_copysign(int a, int b)
@@ -19,6 +17,10 @@ inline int int_copysign(int a, int b)
 }
 
 
+/**
+ * \ingroup cuda_syntax
+ * If `b < 0`, returns `-abs(a)`, otherwise, returns `abs(a)`.
+ */
 __device__
 inline int int_copysign_if(int a, int b)
 {

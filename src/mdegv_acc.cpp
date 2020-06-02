@@ -16,9 +16,9 @@ void scale_gradient_acc(double scale, grad_prec* g0x, grad_prec* g0y,
       real dx = s * to_flt_acc<real>(g0x[i]);
       real dy = s * to_flt_acc<real>(g0y[i]);
       real dz = s * to_flt_acc<real>(g0z[i]);
-      g0x[i] = acc_to<grad_prec>(dx);
-      g0y[i] = acc_to<grad_prec>(dy);
-      g0z[i] = acc_to<grad_prec>(dz);
+      g0x[i] = cvt_to<grad_prec>(dx);
+      g0y[i] = cvt_to<grad_prec>(dy);
+      g0z[i] = cvt_to<grad_prec>(dz);
    }
 #else
    #pragma acc parallel loop independent async\
@@ -58,9 +58,9 @@ void sum_gradient_acc(double ss, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
       real dx = s * to_flt_acc<real>(g1x[i]);
       real dy = s * to_flt_acc<real>(g1y[i]);
       real dz = s * to_flt_acc<real>(g1z[i]);
-      g0x[i] += acc_to<grad_prec>(dx);
-      g0y[i] += acc_to<grad_prec>(dy);
-      g0z[i] += acc_to<grad_prec>(dz);
+      g0x[i] += cvt_to<grad_prec>(dx);
+      g0y[i] += cvt_to<grad_prec>(dy);
+      g0z[i] += cvt_to<grad_prec>(dz);
    }
 #else
    #pragma acc parallel loop independent async\

@@ -4,12 +4,6 @@
 #include "time_scale.h"
 
 
-/**
- * \defgroup md_intg  Integrators
- * \ingroup md
- */
-
-
 namespace tinker {
 void mdrest(int istep);
 void mdrest_acc(int istep);

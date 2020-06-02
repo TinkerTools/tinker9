@@ -87,7 +87,7 @@ SORT_MEMBERS_CTORS_1ST = NO
 SORT_GROUP_NAMES       = NO
 SORT_BY_SCOPE_NAME     = NO
 STRICT_PROTO_MATCHING  = NO
-GENERATE_TODOLIST      = YES
+GENERATE_TODOLIST      = NO
 GENERATE_TESTLIST      = YES
 GENERATE_BUGLIST       = YES
 GENERATE_DEPRECATEDLIST= YES
@@ -117,7 +117,6 @@ INPUT                  = README.md include doc
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = \
                          *.h \
-                         *.md \
                          *.svg
 RECURSIVE              = YES
 EXCLUDE                = src/ext
@@ -132,7 +131,7 @@ INPUT_FILTER           =
 FILTER_PATTERNS        =
 FILTER_SOURCE_FILES    = YES
 FILTER_SOURCE_PATTERNS =
-USE_MDFILE_AS_MAINPAGE =
+USE_MDFILE_AS_MAINPAGE = README.md
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing
 #---------------------------------------------------------------------------

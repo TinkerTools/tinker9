@@ -4,7 +4,7 @@
 
 namespace tinker {
 /**
- * \ingroup ff
+ * \ingroup math
  * \brief Smooth function `F: [cut,off]->[1,0]`.
  *
  * Derived from the 5th order `smoothstep` function (-S2(x) + 1)

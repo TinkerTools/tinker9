@@ -5,11 +5,7 @@
 
 
 namespace tinker {
-/**
- * \ingroup atomic
- * \brief Add `value` to `buffer[offset]`.
- * \note `value` and `buffer` elements are of the same type.
- */
+/// \ingroup acc_syntax
 #pragma acc routine seq
 template <class T>
 void atomic_add(T value, T* buffer, size_t offset = 0)
@@ -19,17 +15,13 @@ void atomic_add(T value, T* buffer, size_t offset = 0)
 }
 
 
-/**
- * \ingroup atomic
- * \brief Add `value` to `buffer[offset]` via fixed-point arithmetic.
- * \tparam T Must be a floating point type.
- */
+/// \ingroup acc_syntax
 #pragma acc routine seq
-template <class T>
+template <class T,
+          class = typename std::enable_if<std::is_same<T, float>::value ||
+                                          std::is_same<T, double>::value>::type>
 void atomic_add(T value, fixed* buffer, size_t offset = 0)
 {
-   static_assert(
-      std::is_same<T, float>::value || std::is_same<T, double>::value, "");
    // float -> (signed) long long -> fixed
    #pragma acc atomic update
    buffer[offset] +=
@@ -37,19 +29,7 @@ void atomic_add(T value, fixed* buffer, size_t offset = 0)
 }
 
 
-#pragma acc routine seq
-inline void atomic_add(fixed value, fixed* buffer, size_t offset = 0)
-{
-   #pragma acc atomic update
-   buffer[offset] += value;
-}
-
-
-/**
- * \ingroup atomic
- * \brief Add virial to the virial buffer.
- * \note Virial and virial buffer are of the same type.
- */
+/// \ingroup acc_syntax
 #pragma acc routine seq
 template <class T>
 void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T (*buffer)[8],
@@ -64,13 +44,11 @@ void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T (*buffer)[8],
 }
 
 
-/**
- * \ingroup atomic
- * \brief Add virial to the virial buffer via fixed-point arithmetic.
- * \tparam T Must be a floating point type.
- */
+/// \ingroup acc_syntax
 #pragma acc routine seq
-template <class T>
+template <class T,
+          class = typename std::enable_if<std::is_same<T, float>::value ||
+                                          std::is_same<T, double>::value>::type>
 void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, fixed (*buffer)[8],
                 size_t offset = 0)
 {
@@ -83,21 +61,28 @@ void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, fixed (*buffer)[8],
 }
 
 
+/// \ingroup acc_syntax
+#pragma acc routine seq
+template <class G, class T>
+G cvt_to(T val)
+{
+   static_assert(
+      std::is_same<T, float>::value || std::is_same<T, double>::value, "");
+   if CONSTEXPR (std::is_same<G, fixed>::value)
+      return static_cast<G>(static_cast<long long>(val * 0x100000000ull));
+   else
+      return static_cast<G>(val);
+}
+
+
+/**
+ * \ingroup acc_syntax
+ * Converts fixed-point `val` to floating-point.
+ */
 #pragma acc routine seq
 template <class T>
 T to_flt_acc(fixed val)
 {
    return static_cast<T>(static_cast<long long>(val)) / 0x100000000ull;
-}
-
-
-#pragma acc routine seq
-template <class G, class T>
-G acc_to(T val)
-{
-   if CONSTEXPR (std::is_same<G, fixed>::value)
-      return static_cast<G>(static_cast<long long>(val * 0x100000000ull));
-   else
-      return static_cast<G>(val);
 }
 }

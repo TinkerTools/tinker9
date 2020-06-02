@@ -3,12 +3,6 @@
 #include "rc_man.h"
 
 
-/**
- * \defgroup md_save  Saving MD Trajectory Snapshots
- * \ingroup md
- */
-
-
 namespace tinker {
 void mdsave_async(int istep, time_prec dt);
 void mdsave_synchronize();

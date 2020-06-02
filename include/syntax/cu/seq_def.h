@@ -3,16 +3,16 @@
 
 /**
  * \def SEQ_ROUTINE
- * \ingroup macro
- * Expands to `__device__` in the CUDA source file.
+ * \ingroup cuda_syntax
+ * Expands to `__device__` in CUDA source files.
  */
 #define SEQ_ROUTINE __device__
 
 
 /**
  * \def SEQ_CUDA
- * \ingroup macro
- * Expands to `__device__` in the CUDA source file.
- * Used in the CUDA kernel templates.
+ * \ingroup cuda_syntax
+ * Expands to `__device__` in CUDA source files.
+ * Used in CUDA kernel templates.
  */
 #define SEQ_CUDA __device__
