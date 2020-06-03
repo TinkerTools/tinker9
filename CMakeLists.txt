@@ -38,13 +38,45 @@
 !!/ the default value of the options, there are two ways.
 !!/ You can always change their values interactively in the "ccmake" command
 !!/ line gui. You can also pass the new value to "cmake" via command line
-!!/ argument "cmake -DOPTION=NewValue". Note that values are not environmental
-!!/ variables. If a value is also a path to a file or directory, it must be
-!!/ an **"absolute path"**. Relative path will not be expanded.
+!!/ argument "cmake -DOPTION=NewValue". If a value is also a path to a file or
+!!/ directory, it must be an **"absolute path"**. Relative path will not be
+!!/ expanded.
 !!/
 !!/ In addition to these two canonical methods, default values can also be set
 !!/ by the corresponding environmental variables, documented as **(env)**.
 !!/ Note that there is no **-D** prefix for the environmental variables.
+!!/
+!!/ Here are two equivalent examples to have Tinker GPU configured as follows
+!!/
+!!/ =======================  ===================
+!!/ Item                     Value
+!!/ =======================  ===================
+!!/ CXX                      pgc++
+!!/ opt                      release
+!!/ host                     0
+!!/ prec                     m
+!!/ cuda_dir                 /usr/local/cuda
+!!/ compute_capability       75
+!!/ tinker_dir               /home/tinker/source
+!!/ fftw_dir                 /usr/local
+!!/ CMakeLists.txt Location  /home/tinker.gpu
+!!/ =======================  ===================
+!!/
+!!/ .. code-block:: bash
+!!/
+!!/    # use environmental variables
+!!/    CXX=pgc++ \
+!!/    opt=release host=0 prec=m \
+!!/    cuda_dir=/usr/local/cuda compute_capability=75 \
+!!/    tinker_dir=/home/tinker/source fftw_dir=/usr/local \
+!!/    cmake /home/tinker.gpu
+!!/
+!!/    # use cmake -D option
+!!/    CXX=pgc++ cmake -S /home/tinker.gpu \
+!!/    -DCMAKE_BUILD_TYPE=Release -DHOST=0 -DPREC=m \
+!!/    -DCUDA_DIR=/usr/local/cuda -DCOMPUTE_CAPABILITY=75 \
+!!/    -DTINKER_DIR=/home/tinker/source -DFFTW_DIR=/usr/local
+!!/
 !!/
 ]]
 

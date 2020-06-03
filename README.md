@@ -8,9 +8,10 @@ Tinker GPU: Software Tools for Molecular Design
 ### Build System
 CMake scripts have been added.
 
-**(Deprecated)**
-In the meanwhile, please always run `make -f make/Makefile create_build` to create a build directory first
-in order to generate other files in the build directory required by `Makefile`.
+**(Deprecated) Makefile**
+Please always run `make -f make/Makefile create_build` to create a build
+directory first in order to generate other files in the build directory
+required by `Makefile`.
 
 ### GNU C++
 The version of `g++` cannot be overly recent, in case `nvcc` might fail to support.
