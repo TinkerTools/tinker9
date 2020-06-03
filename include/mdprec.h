@@ -40,7 +40,8 @@
  * In general, evaluating energy, forces, etc. twice, we don't expect to get
  * two identical answers, but we may not care as much because the difference
  * is usually negligible.
- * [See [Why is cos(x) != cos(y)?](https://isocpp.org/wiki/faq/newbie)]
+ * [See [Why is cos(x) !=
+ * cos(y)?](https://isocpp.org/wiki/faq/newbie#floating-point-arith2)]
  * Whereas in MD, two simulations with the same initial configurations can
  * easily diverge due to the accumulated difference. If, for whatever reason,
  * you are willing to elongate the process of the inevitable divergence at the

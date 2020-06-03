@@ -7,7 +7,7 @@
 namespace tinker {
 /**
  * \ingroup io
- * \brief Read ONE value from a string or an array and save to `arg`;
+ * Reads ONE value from a string and save to `arg`.
  * `arg` will not change until the reading successfully exits.
  *
  * \return Error code: non-zero if any error occurs; otherwise zero.
@@ -40,16 +40,16 @@ int read_string(Arg& arg, const char (&src)[Len])
 
 /**
  * \ingroup io
- * \brief Test the validity of `arg`. If invalid, read ONE value from an
+ * Tests the validity of `arg`. If invalid, read ONE value from an
  * `std::istream` object.
  * `arg` will not change until the reading successfully exits.
  *
- * \param[out] arg      Value to be read.
- * \param[in] prompt    Message to be sent to `stdout` should input be invalid.
- * \param[in] auto_fill Default value to be assigned to `arg`.
- * \param[in] invalid   Function that returns `true` if `arg` is invalid or
- *                      `false` if valid.
- * \param[in] istream   An `std::istream` object; use `std::cin` by default.
+ * \param[out] arg       Variable to store the value read from input.
+ * \param[in] prompt     Message to be sent to `stdout` should input be invalid.
+ * \param[in] auto_fill  Default value to be assigned to `arg`.
+ * \param[in] invalid    Function that returns `true` if `arg` is invalid or
+ *                       `false` if valid.
+ * \param[in] istream    An `std::istream` object; use `std::cin` by default.
  */
 template <class Arg, class Invalid>
 void read_stream(Arg& arg, std::string prompt, Arg auto_fill, Invalid&& invalid,

@@ -7,10 +7,7 @@
 
 
 namespace tinker {
-/**
- * \ingroup io
- * \brief Forward the const reference argument.
- */
+// Forwards the const reference argument.
 template <class T>
 const T& fmt_fwd(const T& t)
 {
@@ -18,10 +15,7 @@ const T& fmt_fwd(const T& t)
 }
 
 
-/**
- * \ingroup io
- * \brief Forward a `const std::string` reference argument to a `const char*`.
- */
+// Forwards a `const std::string` reference argument to a `const char*`.
 inline const char* fmt_fwd(const std::string& s)
 {
    return s.c_str();
@@ -30,8 +24,8 @@ inline const char* fmt_fwd(const std::string& s)
 
 /**
  * \ingroup io
- * \brief Formatted output.
- * \param out   A `FILE*` pointer.
+ * Formatted output.
+ * \param out   A `FILE` pointer.
  * \param f     Format string.
  * \param args  Values to be printed.
  */
@@ -44,8 +38,8 @@ void print(std::FILE* out, const F& f, Ts&&... args)
 
 /**
  * \ingroup io
- * \brief Formatted output.
- * \param out  A `FILE*` pointer.
+ * Formatted output.
+ * \param out  A `FILE` pointer.
  * \param f    Message to be printed.
  */
 template <class F>
@@ -57,7 +51,7 @@ void print(std::FILE* out, const F& f)
 
 /**
  * \ingroup io
- * \brief Write the formatted output to an `std::string` object.
+ * Writes the formatted output to an `std::string` object.
  * \param f     Format string.
  * \param args  Values to be printed out.
  * \return      The formatted `std::string` output.
@@ -84,7 +78,7 @@ std::string format(const F& f, Ts&&... args)
 
 /**
  * \ingroup io
- * \brief Duplicate then concatenate multiple copies of string.
+ * Duplicates then concatenates multiple copies of string.
  */
 inline std::string operator*(size_t k, std::string str)
 {
@@ -98,7 +92,7 @@ inline std::string operator*(size_t k, std::string str)
 
 /**
  * \ingroup io
- * \brief Duplicate then concatenate multiple copies of string.
+ * Duplicates then concatenate multiple copies of string.
  */
 inline std::string operator*(std::string str, size_t k)
 {
@@ -108,7 +102,7 @@ inline std::string operator*(std::string str, size_t k)
 
 /**
  * \ingroup io
- * \brief Use `_s` suffix to convert a `const char*` to `std::string`.
+ * Uses `_s` suffix to convert a `const char*` to `std::string`.
  */
 inline std::string operator""_s(const char* s, size_t len)
 {

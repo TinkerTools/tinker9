@@ -12,10 +12,15 @@
 
 
 /// \defgroup macro  Predefined Macros
+/// \defgroup prec  Precisions of MM and MD Types
 /// \defgroup acc_syntax  OpenACC Specific Code
 /// \defgroup cuda_syntax  CUDA Specific Code
+/// \defgroup io  I/O and Text
+/// \defgroup error  Errors and Exceptions
+/// \defgroup test  Unit Tests
 
 
+/*
 /// \defgroup geom  Geometrical Restraints
 /// \defgroup vdw  Van der Waals (VDW)
 /// \defgroup charge  Partial Charge Electrostatics
@@ -24,7 +29,6 @@
 /// \defgroup pme  Particle Mesh Ewald
 
 
-/// \defgroup prec  Fine-Grained Definitions of MM and MD Types
 /// \defgroup mdcalc  Control Bits for MM and MD Calculations
 /// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)
 /// \defgroup mdegv  Energy, Gradient, and Virial Tensor
@@ -38,14 +42,10 @@
 
 /// \defgroup math  Math
 /// \defgroup rand  Random Number
-/// \defgroup io  I/O and Text
-/// \defgroup error  Errors and Exceptions
 /// \defgroup mem  Memory and Pointers
 /// \defgroup nvidia  Nvidia GPU
 /// \defgroup bindc    Fortran Tinker to C Interface
-
-
-/// \defgroup test  Unit Tests
+*/
 
 
 //====================================================================//

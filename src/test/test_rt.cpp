@@ -1,5 +1,4 @@
 #include "test_rt.h"
-#include "rc_man.h"
 #include "tinker_rt.h"
 #include <fstream>
 #include <tinker/detail/bath.hh>

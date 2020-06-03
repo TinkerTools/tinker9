@@ -10,8 +10,8 @@
 namespace tinker {
 /**
  * \ingroup test
- * \brief Write a file to the disk in its constructor and remove this file in
- * its destructor, unless the file is set to be kept on disk.
+ * Writes a file to disk in its constructor and remove this file in
+ * its destructor, unless the file is set to be kept.
  */
 class TestFile
 {
@@ -19,34 +19,82 @@ private:
    bool good_;
    std::string name_;
 
+
 public:
+   /// Writes `content` to file with `name` to disk.
    TestFile(const std::string& name, const std::string& content);
+   /// Removes the file on disk if possible.
    ~TestFile();
+   /// Prevents file being deleted.
    void keep();
 };
 
 
 /**
- * \ingroup
- * \brief Remove the file with the given name in its destructor if possible.
+ * \ingroup test
+ * Removes the file with the given name in its destructor if possible.
  */
 class TestFileExpected
 {
 private:
    std::string name_;
 
+
 public:
+   /// \param name  Name of the file to delete.
    TestFileExpected(const std::string& name);
    ~TestFileExpected();
 };
 
+
+/**
+ * \ingroup test
+ * Returns tolerance eps depending on the predefined floating-point precision.
+ * \param eps_single  Larger `eps` for lower floating-point precision.
+ * \param eps_double  Smaller `eps` for higher floating-point precision.
+ */
 double test_get_eps(double eps_single, double eps_double);
 
+
+/**
+ * \ingroup test
+ * Initializes the test.
+ */
 void test_begin_with_args(int argc, const char** argv);
+/**
+ * \ingroup test
+ * Ends the test.
+ */
 void test_end();
+/**
+ * \ingroup test
+ * Initializes MD in the test.
+ * \param t    Temperature in Kelvin.
+ * \param atm  Atmosphere in atm.
+ */
 void test_mdinit(double t = 0, double atm = 0);
 }
 
+
+/**
+ * \def COMPARE_INTS
+ * \ingroup test
+ * Compare two integers.
+ *
+ * \def COMPARE_REALS
+ * \ingroup test
+ * Compare two floating-point numbers with a margin of `eps`.
+ *
+ * \def COMPARE_ENERGY
+ * \ingroup test
+ * Reduces the energy from the energy buffer and compares to the reference value
+ * with a margin of `eps`.
+ *
+ * \def COMPARE_COUNT
+ * \ingroup test
+ * Reduces the number of interactions from the count buffer and compares to the
+ * reference value.
+ */
 #define COMPARE_INTS(i1, refi)       REQUIRE(i1 == refi)
 #define COMPARE_REALS(v1, refv, eps) REQUIRE(v1 == Approx(refv).margin(eps))
 #define COMPARE_ENERGY(gpuptr, ref_eng, eps)                                   \
@@ -59,6 +107,23 @@ void test_mdinit(double t = 0, double atm = 0);
       int count = count_reduce(gpuptr);                                        \
       REQUIRE(count == ref_count);                                             \
    }
+
+
+/**
+ * \def COMPARE_VIR9
+ * \ingroup test
+ * Compares a virial tensor to the reference values with a margin of `eps`.
+ *
+ * \def COMPARE_VIR
+ * \ingroup test
+ * Reduces a virial tensor from a virial buffer and compares to the reference
+ * values with a margin of `eps`.
+ *
+ * \def COMPARE_VIR2
+ * \ingroup test
+ * Reduces two virial tensors from two virial buffers and compares the sum to
+ * the reference with a margin of `eps`.
+ */
 #define COMPARE_VIR9(vir1, ref_v, eps)                                         \
    {                                                                           \
       REQUIRE(vir1[0] == Approx(ref_v[0][0]).margin(eps));                     \
@@ -100,6 +165,18 @@ void test_mdinit(double t = 0, double atm = 0);
       REQUIRE(vir1[7] + vir2[7] == Approx(ref_v[2][1]).margin(eps));           \
       REQUIRE(vir1[8] + vir2[8] == Approx(ref_v[2][2]).margin(eps));           \
    }
+
+
+/**
+ * \def COMPARE_GRADIENT
+ * \ingroup test
+ * Copies out gradients from device to host and compares to the reference values
+ * with a margin of `eps`.
+ *
+ * \def COMPARE_GRADIENT2
+ * \ingroup test
+ * Compares the flitered gradients[i][j] components.
+ */
 #define COMPARE_GRADIENT2(ref_grad, eps, check_ij)                             \
    {                                                                           \
       std::vector<double> gradx(n), grady(n), gradz(n);                        \
@@ -115,6 +192,13 @@ void test_mdinit(double t = 0, double atm = 0);
    }
 #define COMPARE_GRADIENT(ref_grad, eps)                                        \
    COMPARE_GRADIENT2(ref_grad, eps, [](int, int) { return true; })
+
+
+/**
+ * \def COMPARE_BONDED_FORCE
+ * \ingroup test
+ * Compares the result of bonded (valence) force term.
+ */
 #define COMPARE_BONDED_FORCE(cpu_count, gpu_e, gpu_v, ref_e, eps_e, ref_count, \
                              ref_g, eps_g, ref_v, eps_v)                       \
    {                                                                           \

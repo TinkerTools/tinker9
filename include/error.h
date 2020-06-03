@@ -6,23 +6,28 @@
 namespace tinker {
 /**
  * \ingroup error
- * \brief Print the call stack.
+ * Prints the call stack to a `FILE` pointer.
  */
 void print_backtrace(std::FILE* out = stderr);
 
 
+/**
+ * \ingroup error
+ * Translates error code to text.
+ */
 template <class T>
 std::string translate_error_code(T error_num);
 
 
 /**
  * \ingroup error
- * \brief Errors and exceptions that we do not intend to fix or handle.
+ * Errors and exceptions that we do not intend to fix or handle.
  */
 class FatalError : public std::exception
 {
 private:
    std::string msg_;
+
 
 public:
    FatalError(const char* msg)
@@ -44,7 +49,7 @@ public:
 /**
  * \def TINKER_THROW
  * \ingroup error
- * Throw a fatal error message as a `FatalError` exception.
+ * Throws a fatal error message as a `FatalError` exception.
  */
 #define TINKER_THROW(msg)                                                      \
    do {                                                                        \
@@ -72,10 +77,11 @@ public:
 #define TINKER_ALWAYS_CHECK_RT_(...)                                           \
    TINKER_GET_2ND_ARG(__VA_ARGS__, TINKER_ALWAYS_CHECK_RT_1_)
 
+
 /**
  * \def TINKER_ALWAYS_CHECK_RT
  * \ingroup error
- * Define it to `true` in the source code to enable `check_rt` with the release
+ * Defined to `true` in the source code to enable `check_rt` for the release
  * build.
  * \see check_rt
  */
@@ -100,5 +106,11 @@ public:
 #endif
 
 
+/**
+ * \def always_check_rt
+ * \ingroup error
+ * Always checks returned error code and neglects the related macros.
+ * \see check_rt
+ */
 #define always_check_rt(...) TINKER_ALWAYS_CHECK_RT_(__VA_ARGS__)(__VA_ARGS__)
 }
