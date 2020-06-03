@@ -14,7 +14,7 @@ target_include_directories (tinkergpu0 PRIVATE ${proj_internal_inc_path})
 
 add_executable (tinker.gpu ${MAIN_CPP})
 set (EXT_LIBS pthread LIBTINKER LIBFFTW LIBFFTW_THREADS)
-if (${prec} STREQUAL m OR ${prec} STREQUAL s)
+if (${PREC} STREQUAL m OR ${PREC} STREQUAL s)
    list (APPEND EXT_LIBS LIBFFTWF LIBFFTWF_THREADS)
 endif ()
 set_target_properties (tinker.gpu PROPERTIES

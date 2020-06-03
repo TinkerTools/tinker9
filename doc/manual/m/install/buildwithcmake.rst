@@ -32,36 +32,40 @@ is to compile the GPU OpenACC code with "pgc++". The command
 
 Configure Tinker GPU
 --------------------
-The following options are always passed to CMake program with their default
-values, documented as **option=value** if they have one. In order to change
-the default value of the options, there are two ways to do that.
+The following options are passed to CMake program with their default
+values if they have one. **-D** is prefixed to the options. To change
+the default value of the options, there are two ways.
 You can always change their values interactively in the "ccmake" command
 line gui. You can also pass the new value to "cmake" via command line
-argument "cmake -Doption=NewValue". Note that values are not environmental
+argument "cmake -DOPTION=NewValue". Note that values are not environmental
 variables. If a value is also a path to a file or directory, it must be
 an **"absolute path"**. Relative path will not be expanded.
 
-**CMAKE_BUILD_TYPE=release**
+In addition to these two canonical methods, default values can also be set
+by the corresponding environmental variables, documented as **(env)**.
+Note that there is no **-D** prefix for the environmental variables.
+
+**-DCMAKE_BUILD_TYPE (opt) = release**
 Build type is case insensitive and can either be "release" or "debug".
 
-**tinker_dir=${CMAKE_BINARY_DIR}/tinker/source**
+**-DTINKER_DIR (tinker_dir) = ${CMAKE_BINARY_DIR}/tinker/source**
 Directory in which user compiled "libtinker.a".
 
-**fftw_dir=${CMAKE_BINARY_DIR}/fftw**
+**-DFFTW_DIR (fftw_dir) = ${CMAKE_BINARY_DIR}/fftw**
 Top-level FFTW3 installation, under which
 "include/fftw3.h" and "lib/libfftw3" are expected to be found.
 
-**host=1**
+**-DHOST (host) = 1**
 Flag to compile to GPU (with value 0) or CPU (with value 1) version.
 
-**prec=d**
+**-DPREC (prec) = d**
 Precision of the floating-point numbers. With flag "d", all of the
 floating-point numbers are treated as real*8/double values,
 or real*4/single values if with flag "s". Mixed precision flag "m" will
 use real*4 or real*8 numbers in different places. Note that this flag will
 not change the hard-coded types.
 
-**deterministic_force=[NOT SET]**
+**-DDETERMINISTIC_FORCE (deterministic_force) = [NOT SET]**
 Flag to use deterministic force. There is no default value for this flag.
 This feature will be implicitly enabled by mixed and single precisions, but
 can be explicitly disabled by setting the flag to 0,
@@ -77,11 +81,11 @@ you are willing to elongate the process of the inevitable divergence at the
 cost of slightly slower simulation speed, a more "deterministic" force
 (using fixed-point arithmetic) can help.
 
-**compute_capability=60,70**
+**-DCOMPUTE_CAPABILITY (compute_capability) = 60,70**
 CUDA compute capability. Valid values are 35, 60, 70, 75 etc., and can be
 comma-separated, e.g. 35,60.
 
-**cuda_dir=/usr/local/cuda**
+**-DCUDA_DIR (cuda_dir) = /usr/local/cuda**
 Top-level CUDA installation directory, under which "include"
 directory can be found.
 

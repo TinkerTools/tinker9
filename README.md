@@ -6,9 +6,9 @@ Tinker GPU: Software Tools for Molecular Design
 
 ## What I Am Up To
 ### Build System
-CMake scripts have been added. Tests are ongoing.
+CMake scripts have been added.
 
-**Deprecated:**
+**(Deprecated)**
 In the meanwhile, please always run `make -f make/Makefile create_build` to create a build directory first
 in order to generate other files in the build directory required by `Makefile`.
 
@@ -19,8 +19,10 @@ I also believe version `4.x` is outdated for some of the C++11 features used her
 ## Installation Guide
    - [Prerequisites](doc/manual/m/install/preq.rst)
    - [Build the Canonical Tinker](doc/manual/m/install/tinker.rst)
+   - [Build Tinker GPU with CMake](doc/manual/m/install/buildwithcmake.rst)
    - [(Deprecated) Build Tinker GPU with Makefile](doc/manual/m/install/tinkergpu.rst)
-   - [(New) Build Tinker GPU with CMake](doc/manual/m/install/buildwithcmake.rst)
+
+Links are only functional on GitHub.
 
 
 ## Repository

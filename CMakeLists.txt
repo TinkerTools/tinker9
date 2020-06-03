@@ -33,14 +33,18 @@
 !!/
 !!/ Configure Tinker GPU
 !!/ --------------------
-!!/ The following options are always passed to CMake program with their default
-!!/ values, documented as **option=value** if they have one. In order to change
-!!/ the default value of the options, there are two ways to do that.
+!!/ The following options are passed to CMake program with their default
+!!/ values if they have one. **-D** is prefixed to the options. To change
+!!/ the default value of the options, there are two ways.
 !!/ You can always change their values interactively in the "ccmake" command
 !!/ line gui. You can also pass the new value to "cmake" via command line
-!!/ argument "cmake -Doption=NewValue". Note that values are not environmental
+!!/ argument "cmake -DOPTION=NewValue". Note that values are not environmental
 !!/ variables. If a value is also a path to a file or directory, it must be
 !!/ an **"absolute path"**. Relative path will not be expanded.
+!!/
+!!/ In addition to these two canonical methods, default values can also be set
+!!/ by the corresponding environmental variables, documented as **(env)**.
+!!/ Note that there is no **-D** prefix for the environmental variables.
 !!/
 ]]
 
@@ -57,12 +61,17 @@ enable_language (CXX)
 enable_language (Fortran)
 list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 #[[
-!!/ **CMAKE_BUILD_TYPE=release**
+!!/ **-DCMAKE_BUILD_TYPE (opt) = release**
 !!/ Build type is case insensitive and can either be "release" or "debug".
 !!/
 ]]
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-   set (CMAKE_BUILD_TYPE Release CACHE STRING
+   if (DEFINED ENV{opt})
+      set (optValue $ENV{opt})
+   else ()
+      set (optValue Release)
+   endif ()
+   set (CMAKE_BUILD_TYPE ${optValue} CACHE STRING
       "Choose the type of build. Options: Debug / Release"
       FORCE
    )
@@ -73,52 +82,69 @@ endif ()
 
 
 #[[
-!!/ **tinker_dir=${CMAKE_BINARY_DIR}/tinker/source**
+!!/ **-DTINKER_DIR (tinker_dir) = ${CMAKE_BINARY_DIR}/tinker/source**
 !!/ Directory in which user compiled "libtinker.a".
 !!/
 ]]
-set (tinker_dir "${CMAKE_BINARY_DIR}/tinker/source" CACHE STRING "Path to libtinker.a")
+if (DEFINED ENV{tinker_dir})
+   set (tinkerDirValue "$ENV{tinker_dir}")
+else ()
+   set (tinkerDirValue "${CMAKE_BINARY_DIR}/tinker/source")
+endif ()
+set (TINKER_DIR ${tinkerDirValue} CACHE STRING "Path to libtinker.a")
+##
 add_library (LIBTINKER STATIC IMPORTED)
 set_target_properties (LIBTINKER PROPERTIES
-   IMPORTED_LOCATION "${tinker_dir}/libtinker.a")
+   IMPORTED_LOCATION "${TINKER_DIR}/libtinker.a")
 
 
 
 #[[
-!!/ **fftw_dir=${CMAKE_BINARY_DIR}/fftw**
+!!/ **-DFFTW_DIR (fftw_dir) = ${CMAKE_BINARY_DIR}/fftw**
 !!/ Top-level FFTW3 installation, under which
 !!/ "include/fftw3.h" and "lib/libfftw3" are expected to be found.
 !!/
 ]]
-set (fftw_dir "${CMAKE_BINARY_DIR}/fftw" CACHE STRING "FFTW3 Directory")
+if (DEFINED ENV{fftw_dir})
+   set (fftwDirValue "$ENV{fftw_dir}")
+else ()
+   set (fftwDirValue "${CMAKE_BINARY_DIR}/fftw")
+endif ()
+set (FFTW_DIR ${fftwDirValue} CACHE STRING "FFTW3 Directory")
+##
 add_library (LIBFFTW STATIC IMPORTED)
 set_target_properties (LIBFFTW PROPERTIES
-   IMPORTED_LOCATION "${fftw_dir}/lib/libfftw3.a")
+   IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3.a")
 add_library (LIBFFTW_THREADS STATIC IMPORTED)
 set_target_properties (LIBFFTW_THREADS PROPERTIES
-   IMPORTED_LOCATION "${fftw_dir}/lib/libfftw3_threads.a")
-if (EXISTS "${fftw_dir}/lib/libfftw3f.a")
+   IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3_threads.a")
+if (EXISTS "${FFTW_DIR}/lib/libfftw3f.a")
    add_library (LIBFFTWF STATIC IMPORTED)
    set_target_properties (LIBFFTWF PROPERTIES
-      IMPORTED_LOCATION "${fftw_dir}/lib/libfftw3f.a")
+      IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f.a")
 endif ()
-if (EXISTS "${fftw_dir}/lib/libfftw3f_threads.a")
+if (EXISTS "${FFTW_DIR}/lib/libfftw3f_threads.a")
    add_library (LIBFFTWF_THREADS STATIC IMPORTED)
    set_target_properties (LIBFFTWF_THREADS PROPERTIES
-      IMPORTED_LOCATION "${fftw_dir}/lib/libfftw3f_threads.a")
+      IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f_threads.a")
 endif ()
 
 
 #[[
-!!/ **host=1**
+!!/ **-DHOST (host) = 1**
 !!/ Flag to compile to GPU (with value 0) or CPU (with value 1) version.
 !!/
 ]]
-set (host 1 CACHE STRING "0 (GPU) / 1 (CPU)")
+if (DEFINED ENV{host})
+   set (hostValue $ENV{host})
+else ()
+   set (hostValue 1)
+endif ()
+set (HOST ${hostValue} CACHE STRING "0 (GPU) / 1 (CPU)")
 
 
 #[[
-!!/ **prec=d**
+!!/ **-DPREC (prec) = d**
 !!/ Precision of the floating-point numbers. With flag "d", all of the
 !!/ floating-point numbers are treated as real*8/double values,
 !!/ or real*4/single values if with flag "s". Mixed precision flag "m" will
@@ -126,18 +152,24 @@ set (host 1 CACHE STRING "0 (GPU) / 1 (CPU)")
 !!/ not change the hard-coded types.
 !!/
 ]]
-set (prec d CACHE STRING "d (DOUBLE) / s (SINGLE) / m (MIXED)")
-if (${prec} STREQUAL m)
+if (DEFINED ENV{prec})
+   set (precValue $ENV{prec})
+else ()
+   set (precValue d)
+endif ()
+set (PREC ${precValue} CACHE STRING "d (DOUBLE) / s (SINGLE) / m (MIXED)")
+##
+if (${PREC} STREQUAL m)
    add_compile_definitions (TINKER_MIXED_PRECISION)
-elseif (${prec} STREQUAL s)
+elseif (${PREC} STREQUAL s)
    add_compile_definitions (TINKER_SINGLE_PRECISION)
-elseif (${prec} STREQUAL d)
+elseif (${PREC} STREQUAL d)
    add_compile_definitions (TINKER_DOUBLE_PRECISION)
 endif ()
 
 
 #[[
-!!/ **deterministic_force=[NOT SET]**
+!!/ **-DDETERMINISTIC_FORCE (deterministic_force) = [NOT SET]**
 !!/ Flag to use deterministic force. There is no default value for this flag.
 !!/ This feature will be implicitly enabled by mixed and single precisions, but
 !!/ can be explicitly disabled by setting the flag to 0,
@@ -154,27 +186,38 @@ endif ()
 !!/ (using fixed-point arithmetic) can help.
 !!/
 ]]
-set (deterministic_force "" CACHE STRING
+if (DEFINED ENV{deterministic_force})
+   set (detForceValue $ENV{deterministic_force})
+else ()
+   set (detForceValue)
+endif ()
+set (DETERMINISTIC_FORCE ${detForceValue} CACHE STRING
    "Deterministic Force: [NOT SET] / 0 (OFF) / 1 (ON)"
 )
-if (deterministic_force STREQUAL "")
+##
+if (DETERMINISTIC_FORCE STREQUAL "")
    # No default behavior for empty value.
-elseif (${deterministic_force} STREQUAL 1)
+elseif (${DETERMINISTIC_FORCE} STREQUAL 1)
    add_compile_definitions (TINKER_DETERMINISTIC_FORCE=1)
-elseif (${deterministic_force} STREQUAL 0)
+elseif (${DETERMINISTIC_FORCE} STREQUAL 0)
    add_compile_definitions (TINKER_DETERMINISTIC_FORCE=0)
 endif ()
 
 
 #[[
-!!/ **compute_capability=60,70**
+!!/ **-DCOMPUTE_CAPABILITY (compute_capability) = 60,70**
 !!/ CUDA compute capability. Valid values are 35, 60, 70, 75 etc., and can be
 !!/ comma-separated, e.g. 35,60.
 !!/
 ]]
-set (compute_capability "60,70" CACHE STRING "CUDA Compute Capability")
+if (DEFINED ENV{compute_capability})
+   set (compCapValue $ENV{compute_capability})
+else ()
+   set (compCapValue 60,70)
+endif ()
+set (COMPUTE_CAPABILITY ${compCapValue} CACHE STRING "CUDA Compute Capability")
 #[[
-!!/ **cuda_dir=/usr/local/cuda**
+!!/ **-DCUDA_DIR (cuda_dir) = /usr/local/cuda**
 !!/ Top-level CUDA installation directory, under which "include"
 !!/ directory can be found.
 !!/
@@ -185,7 +228,12 @@ set (compute_capability "60,70" CACHE STRING "CUDA Compute Capability")
 !!/ which case, **cuda_dir** should be set to "/usr/local/cuda-10.1".
 !!/
 ]]
-set (cuda_dir /usr/local/cuda CACHE STRING "CUDA Directory")
+if (DEFINED ENV{cuda_dir})
+   set (cudaDirValue $ENV{cuda_dir})
+else ()
+   set (cudaDirValue /usr/local/cuda)
+endif ()
+set (CUDA_DIR ${cudaDirValue} CACHE STRING "CUDA Directory")
 
 
 #[[
@@ -262,7 +310,7 @@ endif ()
 
 ## include path
 set (comm_sys_inc_path
-   "${fftw_dir}/include"
+   "${FFTW_DIR}/include"
    "${PROJECT_SOURCE_DIR}/ext/ext")
 set (proj_internal_inc_path "${PROJECT_SOURCE_DIR}/include")
 
@@ -281,9 +329,9 @@ file (GLOB LIB_CU "${PROJECT_SOURCE_DIR}/src/*_cu.cu")
 
 
 ## tinker.gpu
-if (host STREQUAL 1)
+if (${HOST} STREQUAL 1)
    include (host) # host.cmake
-elseif (host STREQUAL 0)
+elseif (${HOST} STREQUAL 0)
    include (device) # device.cmake
 endif ()
 
