@@ -1,7 +1,7 @@
+#include "add.h"
 #include "glob.molecule.h"
 #include "image.h"
 #include "mdpq.h"
-#include "syntax/acc/add_def.h"
 #include <tinker/detail/units.hh>
 
 

@@ -4,18 +4,16 @@
 
 namespace tinker {
 /**
- * \ingroup math
- * \brief
+ * \ingroup cuda_syntax
  * Find the position of the n-th least significant bit set in a 32-bit integer.
- *
- * \param c1  A 32-bit integer.
- * \param n   Ranges from 1 to 32.
- * \return
- * A value from 0 to 32.
+ * Returns a value from 0 to 32.
  *    - If `c1` equals 0, always returns 0.
  *    - If `n` equals 0, always returns 0.
  *    - If `n` is greater than `POPC`, which is the number of bits that are set
  *      to 1 in `c1`, returns an undefined value.
+ *
+ * \param c1  A 32-bit integer.
+ * \param n   Ranges from 1 to 32.
  */
 __device__
 inline int ffsn(int c1, int n)
@@ -39,6 +37,10 @@ inline int ffsn(int c1, int n)
 }
 
 
+/**
+ * \ingroup cuda_syntax
+ * An alternative implementation of #ffsn using loop.
+ */
 __device__
 inline int ffsn_loop(int c1, int n)
 {

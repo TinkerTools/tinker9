@@ -10,7 +10,7 @@ namespace tinker {
  * \note Standard C and CUDA math libraries only have float and double versions.
  */
 __device__
-inline int int_copysign(int a, int b)
+inline int int_copysign_shift(int a, int b)
 {
    int mask = (a ^ b) >> 31;
    return (mask + a) ^ mask;
@@ -29,4 +29,12 @@ inline int int_copysign_if(int a, int b)
       ans = -ans;
    return ans;
 }
+
+
+/**
+ * \def TINKER_COPYSIGN
+ * \ingroup cuda_syntax
+ * Defines the implementation of `int copysign(int,int);` function.
+ */
+#define TINKER_COPYSIGN int_copysign_shift
 }

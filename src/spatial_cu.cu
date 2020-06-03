@@ -152,9 +152,9 @@ inline void ixyz_octahedron(int& restrict ix, int& restrict iy,
       //    iw1 -= qw2; iw1 -= SIGN(qw2, 0); iw1 -= SIGN(qw2, iw1-iw2)
       //
       //    iw1 -= SIGN(qw2, iw1-iw2)
-      ix1 -= int_copysign(qx2, ix1 - ix2);
-      iy1 -= int_copysign(qy2, iy1 - iy2);
-      iz1 -= int_copysign(qz2, iz1 - iz2);
+      ix1 -= TINKER_COPYSIGN(qx2, ix1 - ix2);
+      iy1 -= TINKER_COPYSIGN(qy2, iy1 - iy2);
+      iz1 -= TINKER_COPYSIGN(qz2, iz1 - iz2);
    }
 
 

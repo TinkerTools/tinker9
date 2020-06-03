@@ -12,6 +12,8 @@
 
 
 /// \defgroup macro  Predefined Macros
+/// \defgroup acc_syntax  OpenACC Specific Code
+/// \defgroup cuda_syntax  CUDA Specific Code
 
 
 /// \defgroup geom  Geometrical Restraints
@@ -43,8 +45,6 @@
 /// \defgroup bindc    Fortran Tinker to C Interface
 
 
-/// \defgroup acc_syntax  OpenACC Specific Code
-/// \defgroup cuda_syntax  CUDA Specific Code
 /// \defgroup test  Unit Tests
 
 

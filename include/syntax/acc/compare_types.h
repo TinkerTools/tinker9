@@ -4,10 +4,7 @@
 
 
 namespace tinker {
-/**
- * \ingroup acc_syntax
- * Used as `eq<T1,T2>()` for two type identifiers.
- */
+/// \ingroup acc_syntax
 template <class T, class U>
 constexpr bool eq()
 {
