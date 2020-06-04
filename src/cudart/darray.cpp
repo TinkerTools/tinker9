@@ -7,60 +7,60 @@
 
 namespace tinker {
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
-                                DMFlag flag)
+                                LPFlag flag)
 {
    cudaStream_t s;
-   if (flag & DMFlag::DEFAULT_Q)
+   if (flag & LPFlag::DEFAULT_Q)
       s = nullptr;
    else
       s = nonblk;
    check_rt(cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyHostToDevice, s));
-   if (flag & DMFlag::WAIT)
+   if (flag & LPFlag::WAIT)
       check_rt(cudaStreamSynchronize(s));
 }
 
 
 void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
-                                 DMFlag flag)
+                                 LPFlag flag)
 {
    cudaStream_t s;
-   if (flag & DMFlag::DEFAULT_Q)
+   if (flag & LPFlag::DEFAULT_Q)
       s = nullptr;
    else
       s = nonblk;
    check_rt(cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyDeviceToHost, s));
-   if (flag & DMFlag::WAIT)
+   if (flag & LPFlag::WAIT)
       check_rt(cudaStreamSynchronize(s));
 }
 
 
 void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
-                              DMFlag flag)
+                              LPFlag flag)
 {
    cudaStream_t s;
-   if (flag & DMFlag::DEFAULT_Q)
+   if (flag & LPFlag::DEFAULT_Q)
       s = nullptr;
    else
       s = nonblk;
    check_rt(cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyDeviceToDevice, s));
-   if (flag & DMFlag::WAIT)
+   if (flag & LPFlag::WAIT)
       check_rt(cudaStreamSynchronize(s));
 }
 
 
-void device_memory_zero_bytes(void* dst, size_t nbytes, DMFlag flag)
+void device_memory_zero_bytes(void* dst, size_t nbytes, LPFlag flag)
 {
    if (dst == nullptr)
       return;
 
 
    cudaStream_t s;
-   if (flag & DMFlag::DEFAULT_Q)
+   if (flag & LPFlag::DEFAULT_Q)
       s = nullptr;
    else
       s = nonblk;
    check_rt(cudaMemsetAsync(dst, 0, nbytes, s));
-   if (flag & DMFlag::WAIT)
+   if (flag & LPFlag::WAIT)
       check_rt(cudaStreamSynchronize(s));
 }
 

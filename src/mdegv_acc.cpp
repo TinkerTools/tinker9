@@ -1,7 +1,6 @@
 #include "add.h"
 #include "mdegv.h"
 #include "mdpq.h"
-#include "wait_queue.h"
 
 
 namespace tinker {

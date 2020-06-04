@@ -5,26 +5,26 @@
 
 namespace tinker {
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
-                                DMFlag)
+                                LPFlag)
 {
    std::memcpy(dst, src, nbytes);
 }
 
 
 void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
-                                 DMFlag)
+                                 LPFlag)
 {
    std::memcpy(dst, src, nbytes);
 }
 
 
-void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes, DMFlag)
+void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes, LPFlag)
 {
    std::memcpy(dst, src, nbytes);
 }
 
 
-void device_memory_zero_bytes(void* dst, size_t nbytes, DMFlag)
+void device_memory_zero_bytes(void* dst, size_t nbytes, LPFlag)
 {
    if (dst == nullptr)
       return;

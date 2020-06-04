@@ -23,6 +23,9 @@
 /// \defgroup rc  Resource: Pointer, Allocation, Deallocation, Queue
 
 
+/// \defgroup spatial  Spatial Decomposition
+
+
 /*
 /// \defgroup geom  Geometrical Restraints
 /// \defgroup vdw  Van der Waals (VDW)
@@ -39,7 +42,6 @@
 /// \defgroup mdpt  Thermostats (T) and Barostats (P)
 /// \defgroup mdintg  Integrators
 /// \defgroup box  Periodic Boundary Box
-/// \defgroup spatial  Spatial Decomposition
 /// \defgroup osrw  OSRW
 
 

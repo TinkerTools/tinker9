@@ -6,7 +6,8 @@
 namespace tinker {
 /**
  * \ingroup spatial
- * \brief
+ * \page spatial
+ *
  * Data structures and procedures to construct the spatial decomposition
  * in O(N) time complexity.
  *
@@ -200,10 +201,15 @@ namespace tinker {
  *    6. (a) Retrieve the j-th "k atom" from the local variable (see **I.3**).
  *       (b) Write the neighbor atom back to `lst`.
  */
+
+
+/**
+ * \ingroup spatial
+ */
 struct Spatial
 {
    /**
-    * \brief Sorted atoms, containing the x, y, and z coordinates,
+    * Sorted atoms, containing the x, y, and z coordinates,
     * and the unsorted atom number.
     */
    struct alignas(16) SortedAtom
@@ -248,12 +254,43 @@ struct Spatial
    ~Spatial();
 };
 using SpatialUnit = GenericUnit<Spatial, GenericUnitVersion::EnableOnDevice>;
-void spatial_cut(int& px, int& py, int& pz, int level); // v3
+
+
+/**
+ * \ingroup spatial
+ * Currently uses function #spatial_cut_v3.
+ */
+void spatial_cut(int& px, int& py, int& pz, int level);
+/**
+ * \ingroup spatial
+ * Order of "roll-cut": x-y-z-x-...
+ */
 void spatial_cut_v1(int& px, int& py, int& pz, int level);
+/**
+ * \ingroup spatial
+ * Order of "roll-cut": z-y-x-z-...
+ */
 void spatial_cut_v2(int& px, int& py, int& pz, int level);
+/**
+ * \ingroup spatial
+ * Order of "roll-cut": always cuts "the longest axis".
+ */
 void spatial_cut_v3(int& px, int& py, int& pz, int level);
+/**
+ * \ingroup spatial
+ * Allocates internal spatial decomposition arrays.
+ */
 void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer,
                         const real* x, const real* y, const real* z);
+/**
+ * \ingroup spatial
+ * Constructs spatial decomposition.
+ */
 void spatial_data_init_cu(SpatialUnit);
+/**
+ * \ingroup spatial
+ * Updates the `sorted` array once #x, #y, #z changes.
+ * PBC shall be taken care of.
+ */
 void spatial_data_update_sorted(SpatialUnit);
 }

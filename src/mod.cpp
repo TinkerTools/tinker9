@@ -27,6 +27,7 @@
 
 #include "glob.accasync.h"
 #include "glob.box.h"
+#include "glob.cudalib.h"
 #include "glob.gpucard.h"
 #include "glob.group.h"
 #include "glob.molecule.h"

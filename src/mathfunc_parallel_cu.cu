@@ -26,16 +26,16 @@ void reduce_to_dptr(const T* a, size_t nelem, bool sync)
 
 
 template <class T, class Op>
-T reduce_general(const T* a, size_t nelem, DMFlag flag)
+T reduce_general(const T* a, size_t nelem, LPFlag flag)
 {
-   bool sync = flag & DMFlag::DEFAULT_Q;
+   bool sync = flag & LPFlag::DEFAULT_Q;
    cudaStream_t st = (sync ? nullptr : nonblk);
    T* dptr = (T*)dptr_buf;
    T* hptr = (T*)pinned_buf;
    reduce_to_dptr<T, Op>(a, nelem, sync);
    check_rt(cudaMemcpyAsync(hptr, dptr, sizeof(T), cudaMemcpyDeviceToHost, st));
    // always wait
-   assert(flag & DMFlag::WAIT);
+   assert(flag & LPFlag::WAIT);
    check_rt(cudaStreamSynchronize(st));
    return *hptr;
 }
@@ -43,20 +43,20 @@ T reduce_general(const T* a, size_t nelem, DMFlag flag)
 
 
 template <class T>
-T reduce_sum_cu(const T* a, size_t nelem, DMFlag flag)
+T reduce_sum_cu(const T* a, size_t nelem, LPFlag flag)
 {
    return reduce_general<T, OpPlus<T>>(a, nelem, flag);
 }
-template int reduce_sum_cu(const int*, size_t, DMFlag);
-template float reduce_sum_cu(const float*, size_t, DMFlag);
-template double reduce_sum_cu(const double*, size_t, DMFlag);
+template int reduce_sum_cu(const int*, size_t, LPFlag);
+template float reduce_sum_cu(const float*, size_t, LPFlag);
+template double reduce_sum_cu(const double*, size_t, LPFlag);
 template unsigned long long reduce_sum_cu(const unsigned long long*, size_t,
-                                          DMFlag);
+                                          LPFlag);
 
 
 template <class HT, size_t HN, class DPTR>
 void reduce_sum2_cu(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem,
-                    DMFlag flag)
+                    LPFlag flag)
 {
    typedef typename deduce_ptr<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type T;
@@ -64,7 +64,7 @@ void reduce_sum2_cu(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem,
    constexpr size_t N = deduce_ptr<DPTR>::n;
    static_assert(HN <= N, "");
 
-   bool sync = flag & DMFlag::DEFAULT_Q;
+   bool sync = flag & LPFlag::DEFAULT_Q;
    cudaStream_t st = (sync ? nullptr : nonblk);
    T(*dptr)[HN] = (T(*)[HN])dptr_buf;
    T* hptr = (T*)pinned_buf;
@@ -79,46 +79,46 @@ void reduce_sum2_cu(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem,
    check_rt(cudaMemcpyAsync(hptr, (T*)dptr, HN * sizeof(HN),
                             cudaMemcpyDeviceToHost, st));
    // always wait
-   assert(flag & DMFlag::WAIT);
+   assert(flag & LPFlag::WAIT);
    check_rt(cudaStreamSynchronize(st));
    #pragma unroll
    for (int j = 0; j < HN; ++j)
       h_ans[j] = hptr[j];
 }
-template void reduce_sum2_cu(float (&)[6], float (*)[8], size_t, DMFlag);
-template void reduce_sum2_cu(double (&)[6], double (*)[8], size_t, DMFlag);
+template void reduce_sum2_cu(float (&)[6], float (*)[8], size_t, LPFlag);
+template void reduce_sum2_cu(double (&)[6], double (*)[8], size_t, LPFlag);
 template void reduce_sum2_cu(unsigned long long (&)[6],
-                             unsigned long long (*)[8], size_t, DMFlag);
+                             unsigned long long (*)[8], size_t, LPFlag);
 
 
 template <class T>
-T reduce_logic_or_cu(const T* a, size_t nelem, DMFlag flag)
+T reduce_logic_or_cu(const T* a, size_t nelem, LPFlag flag)
 {
    return reduce_general<T, OpLogicOr<T>>(a, nelem, flag);
 }
-template int reduce_logic_or_cu(const int*, size_t, DMFlag);
+template int reduce_logic_or_cu(const int*, size_t, LPFlag);
 
 
 template <>
 void dotprod_cu<float>(float* ans, const float* a, const float* b, int nelem,
-                       DMFlag flag)
+                       LPFlag flag)
 {
-   bool sync = flag & DMFlag::DEFAULT_Q;
+   bool sync = flag & LPFlag::DEFAULT_Q;
    cublasHandle_t hd = (sync ? h_cublas : h_cublas_nonblk);
    check_rt(cublasSdot(hd, nelem, a, 1, b, 1, ans));
-   if (flag & DMFlag::WAIT)
+   if (flag & LPFlag::WAIT)
       check_rt(cudaStreamSynchronize(nullptr));
 }
 
 
 template <>
 void dotprod_cu<double>(double* ans, const double* a, const double* b,
-                        int nelem, DMFlag flag)
+                        int nelem, LPFlag flag)
 {
-   bool sync = flag & DMFlag::DEFAULT_Q;
+   bool sync = flag & LPFlag::DEFAULT_Q;
    cublasHandle_t hd = (sync ? h_cublas : h_cublas_nonblk);
    check_rt(cublasDdot(hd, nelem, a, 1, b, 1, ans));
-   if (flag & DMFlag::WAIT)
+   if (flag & LPFlag::WAIT)
       check_rt(cudaStreamSynchronize(nullptr));
 }
 

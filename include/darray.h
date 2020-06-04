@@ -1,7 +1,7 @@
 #pragma once
 #include "deduce_ptr.h"
-#include "dmflag.h"
 #include "mathfunc.h"
+#include "tool/lpflag.h"
 #include <vector>
 
 
@@ -13,10 +13,10 @@ namespace tinker {
  * \param src     Host pointer.
  * \param nbytes  Number of bytes.
  * \param flag    Kernel policy.
- * \see DMFlag
+ * \see LPFlag
  */
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
-                                DMFlag flag);
+                                LPFlag flag);
 /**
  * \ingroup rc
  * Similar to OpenACC copyout, copies data from device to host.
@@ -24,10 +24,10 @@ void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
  * \param src     Device pointer.
  * \param nbytes  Number of bytes.
  * \param flag    Kernel policy.
- * \see DMFlag
+ * \see LPFlag
  */
 void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
-                                 DMFlag flag);
+                                 LPFlag flag);
 /**
  * \ingroup rc
  * Copies data between two pointers.
@@ -36,19 +36,19 @@ void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
  * \param src     Source device pointer.
  * \param nbytes  Number of bytes.
  * \param flag    Kernel policy.
- * \see DMFlag
+ * \see LPFlag
  */
 void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
-                              DMFlag flag);
+                              LPFlag flag);
 /**
  * \ingroup rc
  * Writes zero bytes on device.
  * \param dst     Device pointer.
  * \param nbytes  Number of bytes.
  * \param flag    Kernel policy.
- * \see DMFlag
+ * \see LPFlag
  */
-void device_memory_zero_bytes(void* dst, size_t nbytes, DMFlag flag);
+void device_memory_zero_bytes(void* dst, size_t nbytes, LPFlag flag);
 /**
  * \ingroup rc
  * Deallocates device pointer.
@@ -83,11 +83,11 @@ void device_memory_check_type()
  * \param src    Source address.
  * \param nelem  Number of elements to copy to the 1D device array.
  * \param flag   Kernel policy.
- * \see DMFlag
+ * \see LPFlag
  */
 template <class DT, class ST>
 void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem,
-                                   DMFlag flag)
+                                   LPFlag flag)
 {
    device_memory_check_type<DT>();
    device_memory_check_type<ST>();
@@ -113,11 +113,11 @@ void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem,
  * \param src    Source address.
  * \param nelem  Number of elements to copy to the 1D host array.
  * \param flag   Kernel policy.
- * \see DMFlag
+ * \see LPFlag
  */
 template <class DT, class ST>
 void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem,
-                                    DMFlag flag)
+                                    LPFlag flag)
 {
    device_memory_check_type<DT>();
    device_memory_check_type<ST>();
@@ -205,7 +205,7 @@ struct darray
 
 
    template <class PTR>
-   static void zero(DMFlag flag, size_t nelem, PTR p)
+   static void zero(LPFlag flag, size_t nelem, PTR p)
    {
       typedef typename deduce_ptr<PTR>::type T;
       constexpr size_t N = deduce_ptr<PTR>::n;
@@ -214,7 +214,7 @@ struct darray
 
 
    template <class PTR, class... PTRS>
-   static void zero(DMFlag flag, size_t nelem, PTR p, PTRS... ps)
+   static void zero(LPFlag flag, size_t nelem, PTR p, PTRS... ps)
    {
       zero(flag, nelem, p);
       zero(flag, nelem, ps...);
@@ -222,7 +222,7 @@ struct darray
 
 
    template <class PTR, class U>
-   static void copyin(DMFlag flag, size_t nelem, PTR dst, const U* src)
+   static void copyin(LPFlag flag, size_t nelem, PTR dst, const U* src)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
       device_memory_copyin_1d_array(flatten(dst), flatten(src), nelem * N,
@@ -231,7 +231,7 @@ struct darray
 
 
    template <class U, class PTR>
-   static void copyout(DMFlag flag, size_t nelem, U* dst, const PTR src)
+   static void copyout(LPFlag flag, size_t nelem, U* dst, const PTR src)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
       device_memory_copyout_1d_array(flatten(dst), flatten(src), nelem * N,
@@ -240,7 +240,7 @@ struct darray
 
 
    template <class PTR, class U>
-   static void copy(DMFlag flag, size_t nelem, PTR dst, const U* src)
+   static void copy(LPFlag flag, size_t nelem, PTR dst, const U* src)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
       using DT = typename deduce_ptr<PTR>::type;
@@ -252,7 +252,7 @@ struct darray
 
 
    template <class DT, class ST>
-   static void copyin2(DMFlag flag, size_t idx0, size_t ndim, size_t nelem,
+   static void copyin2(LPFlag flag, size_t idx0, size_t ndim, size_t nelem,
                        DT dst, const ST src)
    {
       static_assert(deduce_ptr<DT>::n == 1, "");
@@ -266,7 +266,7 @@ struct darray
 
 
    template <class DT, class ST>
-   static void copyout2(DMFlag flag, size_t idx0, size_t ndim, size_t nelem,
+   static void copyout2(LPFlag flag, size_t idx0, size_t ndim, size_t nelem,
                         DT dst, const ST src)
    {
       static_assert(deduce_ptr<DT>::n == 1, "");
@@ -280,7 +280,7 @@ struct darray
 
 
    template <class PTR, class PTR2>
-   static typename deduce_ptr<PTR>::type dot(DMFlag flag, size_t nelem,
+   static typename deduce_ptr<PTR>::type dot(LPFlag flag, size_t nelem,
                                              const PTR ptr, const PTR2 b)
    {
       typedef typename deduce_ptr<PTR>::type T;
@@ -292,7 +292,7 @@ struct darray
 
 
    template <class ANS, class PTR, class PTR2>
-   static void dot(DMFlag flag, int nelem, ANS ans, const PTR ptr,
+   static void dot(LPFlag flag, int nelem, ANS ans, const PTR ptr,
                    const PTR2 ptr2)
    {
       typedef typename deduce_ptr<PTR>::type T;
@@ -306,7 +306,7 @@ struct darray
 
 
    template <class FLT, class PTR>
-   static void scale(DMFlag flag, size_t nelem, FLT scal, PTR ptr)
+   static void scale(LPFlag flag, size_t nelem, FLT scal, PTR ptr)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
       parallel::scale_array(flatten(ptr), scal, nelem * N, flag);
@@ -314,7 +314,7 @@ struct darray
 
 
    template <class FLT, class PTR, class... PTRS>
-   static void scale(DMFlag flag, size_t nelem, FLT scal, PTR ptr, PTRS... ptrs)
+   static void scale(LPFlag flag, size_t nelem, FLT scal, PTR ptr, PTRS... ptrs)
    {
       scale(flag, nelem, scal, ptr);
       scale(flag, nelem, scal, ptrs...);

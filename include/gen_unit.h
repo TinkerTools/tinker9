@@ -21,7 +21,7 @@ struct GenericUnitAlloc<GenericUnitVersion::DisableOnDevice>
 {
    static void deallocate(void*) {}
    static void allocate(void**, size_t) {}
-   static void copyin(void*, const void*, size_t, DMFlag) {}
+   static void copyin(void*, const void*, size_t, LPFlag) {}
 };
 
 
@@ -38,7 +38,7 @@ struct GenericUnitAlloc<GenericUnitVersion::EnableOnDevice>
       device_memory_allocate_bytes(pp, nb);
    }
 
-   static void copyin(void* d, const void* s, size_t nb, DMFlag flag)
+   static void copyin(void* d, const void* s, size_t nb, LPFlag flag)
    {
       device_memory_copyin_bytes(d, s, nb, flag);
    }
@@ -226,7 +226,7 @@ public:
    /// \param hobj
    /// The reference to the same object on host that can be accessed by the same
    /// unit number.
-   void update_deviceptr(const T& hobj, DMFlag flag)
+   void update_deviceptr(const T& hobj, LPFlag flag)
    {
       assert(&hobj == &this->obj());
       mem_op::copyin(this->deviceptr(), &hobj, sizeof(T), flag);

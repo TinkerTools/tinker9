@@ -1,6 +1,5 @@
 #include "cudalib.h"
 #include "glob.accasync.h"
-#include "wait_queue.h"
 #if TINKER_CUDART
 #   include "error.h"
 #   include "gpu_card.h"
@@ -10,15 +9,6 @@
 
 
 namespace tinker {
-#if TINKER_CUDART
-cudaStream_t nonblk;
-cublasHandle_t h_cublas;
-cublasHandle_t h_cublas_nonblk;
-void* pinned_buf;
-void* dptr_buf;
-#endif
-
-
 void cudalib_data(rc_op op)
 {
 #if TINKER_CUDART
@@ -56,18 +46,6 @@ void cudalib_data(rc_op op)
    }
 #else
    (void)op;
-#endif
-}
-
-
-void wait_queue(DMFlag flag)
-{
-#if TINKER_CUDART
-   if ((flag & DMFlag::WAIT) && !(flag & DMFlag::DEFAULT_Q)) {
-      #pragma acc wait(async_queue)
-   }
-#else
-   (void)flag;
 #endif
 }
 }

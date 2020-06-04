@@ -1,5 +1,4 @@
 #include "rc_man.h"
-#include "wait_queue.h"
 
 
 namespace tinker {

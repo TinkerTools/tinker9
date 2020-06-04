@@ -14,7 +14,7 @@ namespace parallel {
  * \return The sum.
  */
 template <class T>
-T reduce_sum(const T* gpu_a, size_t nelem, DMFlag flag)
+T reduce_sum(const T* gpu_a, size_t nelem, LPFlag flag)
 {
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
@@ -35,7 +35,7 @@ T reduce_sum(const T* gpu_a, size_t nelem, DMFlag flag)
  * \f[ Ans[k] = \sum_i^n v[i][k], 0 \le k < HN \f]
  */
 template <class HT, size_t HN, class DPTR>
-void reduce_sum2(HT (&h_ans)[HN], DPTR v, size_t nelem, DMFlag flag)
+void reduce_sum2(HT (&h_ans)[HN], DPTR v, size_t nelem, LPFlag flag)
 {
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
@@ -47,7 +47,7 @@ void reduce_sum2(HT (&h_ans)[HN], DPTR v, size_t nelem, DMFlag flag)
 
 
 template <class T>
-T reduce_logic_or(const T* a, size_t nelem, DMFlag flag)
+T reduce_logic_or(const T* a, size_t nelem, LPFlag flag)
 {
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
@@ -66,7 +66,7 @@ T reduce_logic_or(const T* a, size_t nelem, DMFlag flag)
  * \return The dot product to the host thread.
  */
 template <class T>
-T dotprod(const T* a, const T* b, size_t nelem, DMFlag flag)
+T dotprod(const T* a, const T* b, size_t nelem, LPFlag flag)
 {
    return dotprod_acc(a, b, nelem, flag);
 }
@@ -77,7 +77,7 @@ T dotprod(const T* a, const T* b, size_t nelem, DMFlag flag)
  * \brief Dot product of two linear arrays.
  */
 template <class T>
-void dotprod(T* ans, const T* a, const T* b, int nelem, DMFlag flag)
+void dotprod(T* ans, const T* a, const T* b, int nelem, LPFlag flag)
 {
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
@@ -95,7 +95,7 @@ void dotprod(T* ans, const T* a, const T* b, int nelem, DMFlag flag)
  * \f[ a_i = c \cdot a_i \f]
  */
 template <class T>
-void scale_array(T* dst, T scal, size_t nelem, DMFlag flag)
+void scale_array(T* dst, T scal, size_t nelem, LPFlag flag)
 {
    return scale_array_acc(dst, scal, nelem, flag);
 }

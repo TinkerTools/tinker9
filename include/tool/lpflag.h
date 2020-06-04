@@ -5,36 +5,36 @@
 namespace tinker {
 /**
  * \ingroup rc
- * Policy of launching kernels.
+ * Launching policies.
  */
-enum class DMFlag
+enum class LPFlag
 {
    DEFAULT_Q = 0x01, ///< Default CUDA stream / OpenACC queue.
    NEW_Q = 0x00,     ///< Non-default CUDA stream / OpenACC queue.
    WAIT = 0x02,      ///< Synchronous / Blocking.
    PROCEED = 0x00,   ///< Asynchronous / Non-Blocking.
 };
-TINKER_ENABLE_ENUM_BITMASK(DMFlag);
+TINKER_ENABLE_ENUM_BITMASK(LPFlag);
 
 
 /**
  * \ingroup rc
  * Executes kernel on the default CUDA stream / OpenACC queue. Non-blocking.
  */
-constexpr DMFlag PROCEED_DEFAULT_Q = (DMFlag::PROCEED | DMFlag::DEFAULT_Q);
+constexpr LPFlag PROCEED_DEFAULT_Q = (LPFlag::PROCEED | LPFlag::DEFAULT_Q);
 /**
  * \ingroup rc
  * Executes kernel on the non-default CUDA stream / OpenACC queue. Non-blocking.
  */
-constexpr DMFlag PROCEED_NEW_Q = (DMFlag::PROCEED | DMFlag::NEW_Q);
+constexpr LPFlag PROCEED_NEW_Q = (LPFlag::PROCEED | LPFlag::NEW_Q);
 /**
  * \ingroup rc
  * Executes kernel on the default CUDA stream / OpenACC queue. Blocking.
  */
-constexpr DMFlag WAIT_DEFAULT_Q = (DMFlag::WAIT | DMFlag::DEFAULT_Q);
+constexpr LPFlag WAIT_DEFAULT_Q = (LPFlag::WAIT | LPFlag::DEFAULT_Q);
 /**
  * \ingroup rc
  * Executes kernel on the non-default CUDA stream / OpenACC queue. Blocking.
  */
-constexpr DMFlag WAIT_NEW_Q = (DMFlag::WAIT | DMFlag::NEW_Q);
+constexpr LPFlag WAIT_NEW_Q = (LPFlag::WAIT | LPFlag::NEW_Q);
 }
