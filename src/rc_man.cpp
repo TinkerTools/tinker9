@@ -3,13 +3,13 @@
 
 
 namespace tinker {
-bool ResourceManagement::will_dealloc_() const
+bool ResourceManagement::will_dealloc() const
 {
    return op_ & rc_dealloc;
 }
 
 
-bool ResourceManagement::only_dealloc_() const
+bool ResourceManagement::only_dealloc() const
 {
    return op_ == rc_dealloc;
 }
@@ -19,7 +19,7 @@ ResourceManagement::ResourceManagement(void (*f)(rc_op), rc_op op)
    : f_(f)
    , op_(op)
 {
-   if (!will_dealloc_()) {
+   if (!will_dealloc()) {
       f_(op_);
    }
 }
@@ -27,7 +27,7 @@ ResourceManagement::ResourceManagement(void (*f)(rc_op), rc_op op)
 
 ResourceManagement::~ResourceManagement()
 {
-   if (only_dealloc_()) {
+   if (only_dealloc()) {
       f_(op_);
    }
 }
@@ -128,7 +128,7 @@ extern "C" char** for__a_argv;
 namespace tinker {
 void fortran_runtime_initialize(int argc, char** argv)
 {
-   // what a surprise I had to use these undocumented variables here
+   // what a surprise that I had to use these undocumented variables here
    for__l_argc = argc;
    for__a_argv = argv;
    for_rtl_init_(&argc, argv);

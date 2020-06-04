@@ -6,8 +6,7 @@
 
 namespace tinker {
 /**
- * \ingroup mem
- * \brief
+ * \ingroup rc
  * A helper class to get the traits of the given 1D or 2D pointer type.
  *
  * Example:

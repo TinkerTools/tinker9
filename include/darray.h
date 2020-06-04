@@ -6,14 +6,61 @@
 
 
 namespace tinker {
+/**
+ * \ingroup rc
+ * Similar to OpenACC copyin, copies data from host to device.
+ * \param dst     Device pointer.
+ * \param src     Host pointer.
+ * \param nbytes  Number of bytes.
+ * \param flag    Kernel policy.
+ * \see DMFlag
+ */
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
                                 DMFlag flag);
+/**
+ * \ingroup rc
+ * Similar to OpenACC copyout, copies data from device to host.
+ * \param dst     Host pointer.
+ * \param src     Device pointer.
+ * \param nbytes  Number of bytes.
+ * \param flag    Kernel policy.
+ * \see DMFlag
+ */
 void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
                                  DMFlag flag);
+/**
+ * \ingroup rc
+ * Copies data between two pointers.
+ * \note Different from OpenACC copy.
+ * \param dst     Destination device pointer.
+ * \param src     Source device pointer.
+ * \param nbytes  Number of bytes.
+ * \param flag    Kernel policy.
+ * \see DMFlag
+ */
 void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
                               DMFlag flag);
+/**
+ * \ingroup rc
+ * Writes zero bytes on device.
+ * \param dst     Device pointer.
+ * \param nbytes  Number of bytes.
+ * \param flag    Kernel policy.
+ * \see DMFlag
+ */
 void device_memory_zero_bytes(void* dst, size_t nbytes, DMFlag flag);
+/**
+ * \ingroup rc
+ * Deallocates device pointer.
+ * \param ptr  Device pointer.
+ */
 void device_memory_deallocate_bytes(void* ptr);
+/**
+ * \ingroup rc
+ * Allocates device pointer.
+ * \param pptr    Pointer to the device pointer.
+ * \param nbytes  Number of bytes.
+ */
 void device_memory_allocate_bytes(void** pptr, size_t nbytes);
 }
 
@@ -29,6 +76,15 @@ void device_memory_check_type()
 }
 
 
+/**
+ * \ingroup rc
+ * Copies data to 1D array from host to device.
+ * \param dst    Destination address.
+ * \param src    Source address.
+ * \param nelem  Number of elements to copy to the 1D device array.
+ * \param flag   Kernel policy.
+ * \see DMFlag
+ */
 template <class DT, class ST>
 void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem,
                                    DMFlag flag)
@@ -50,6 +106,15 @@ void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem,
 }
 
 
+/**
+ * \ingroup rc
+ * Copies data to 1D array from device to host.
+ * \param dst    Destination address.
+ * \param src    Source address.
+ * \param nelem  Number of elements to copy to the 1D host array.
+ * \param flag   Kernel policy.
+ * \see DMFlag
+ */
 template <class DT, class ST>
 void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem,
                                     DMFlag flag)
@@ -73,6 +138,10 @@ void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem,
 
 
 namespace tinker {
+/**
+ * \ingroup rc
+ * Device array.
+ */
 struct darray
 {
    template <class T, size_t N>
@@ -254,7 +323,7 @@ struct darray
 
 
 /**
- * \ingroup mem
+ * \ingroup rc
  * Based on the template parameters `T` and `N`, this type is either
  * defined to `T*` or `T(*)[N]` when `N` is greater than 1.
  * `N` is set to 1 by default.

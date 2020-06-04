@@ -20,6 +20,9 @@
 /// \defgroup test  Unit Tests
 
 
+/// \defgroup rc  Resource: Pointer, Allocation, Deallocation, Queue
+
+
 /*
 /// \defgroup geom  Geometrical Restraints
 /// \defgroup vdw  Van der Waals (VDW)
@@ -42,7 +45,6 @@
 
 /// \defgroup math  Math
 /// \defgroup rand  Random Number
-/// \defgroup mem  Memory and Pointers
 /// \defgroup nvidia  Nvidia GPU
 /// \defgroup bindc    Fortran Tinker to C Interface
 */

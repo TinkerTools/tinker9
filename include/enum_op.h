@@ -4,6 +4,10 @@
 
 
 namespace tinker {
+/**
+ * \ingroup rc
+ * Direct mathematical calculation of enum class is prohibited in C++ syntax.
+ */
 template <class E>
 struct EnableEnumBitMask
 {
@@ -11,6 +15,11 @@ struct EnableEnumBitMask
 };
 
 
+/**
+ * \def TINKER_ENABLE_ENUM_BITMASK
+ * \ingroup rc
+ * Explicitly enables mathematical calculation by casting enum class to integer.
+ */
 #define TINKER_ENABLE_ENUM_BITMASK(x)                                          \
    template <>                                                                 \
    struct EnableEnumBitMask<x>                                                 \

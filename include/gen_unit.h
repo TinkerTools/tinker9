@@ -46,14 +46,9 @@ struct GenericUnitAlloc<GenericUnitVersion::EnableOnDevice>
 
 
 /**
- * \ingroup mem
- * \brief
- * Resource handle analogous to Fortran i/o unit represented by a signed
+ * \ingroup rc
+ * Resource handle. Analogous to Fortran i/o unit represented by a signed
  * integer.
- * \tparam VERSION
- * Mainly to allow allocate memory on device and store the device pointer that
- * corresponds to the host object. Can be extended to specify different
- * de/allocation methods.
  */
 template <class T,
           GenericUnitVersion VERSION = GenericUnitVersion::DisableOnDevice>
@@ -70,7 +65,7 @@ private:
     * \note
     * The host vector will almost definitely expand its capacity, so if you
     * don't want to implement the move constructors and/or the copy constructors
-    * of all the possible type T, don't change vector of host pointers to vector
+    * of every possible type T, don't change vector of host pointers to vector
     * of host objects.
     */
    using hostptr_vec = std::vector<std::unique_ptr<T>>;
@@ -110,7 +105,7 @@ private:
 
 
 public:
-   /// \brief Get the number of open units.
+   /// Gets the number of open units.
    static int size()
    {
       if CONSTEXPR (USE_DPTR)
@@ -119,7 +114,7 @@ public:
    }
 
 
-   /// \brief Release all of the resources and reset `size()` to 0.
+   /// Releases all of the resources and reset `size()` to 0.
    static void clear()
    {
       // call ~T() on host here
@@ -130,7 +125,7 @@ public:
    }
 
 
-   /// \brief Resize the capacity for the objects on host.
+   /// Resizes the capacity for the objects on host.
    /// \note Cannot be called if device pointers are used.
    template <class DT = T>
    static void resize(int s)
@@ -142,7 +137,6 @@ public:
    }
 
 
-   /// \brief
    /// Similar to opening a new Fortran i/o unit.
    /// \return The new unit.
    static GenericUnit open()
@@ -173,64 +167,62 @@ public:
    }
 
 
-   /// \brief Whether or not the current unit is open.
+   /// Whether or not the current unit is open.
    bool valid() const
    {
       return unit >= 0;
    }
 
 
-   /// \brief Close the current unit.
+   /// Closes the current unit.
    /// \note The resource will not be released until `clear()` is called.
    void close()
    {
       unit = -1;
    }
 
-   /// \brief Get the (const) reference to the object on host.
-   /// \{
+
+   /// Gets the (const) reference to the object on host.
    const T& operator*() const
    {
       return obj();
    }
+   /// Gets the (const) reference to the object on host.
    T& operator*()
    {
       return obj();
    }
-   /// \}
 
 
-   /// \brief Get the (const) pointer to the object on host.
-   /// \{
+   /// Gets the (const) pointer to the object on host.
    const T* operator->() const
    {
       return &obj();
    }
+   /// Gets the (const) pointer to the object on host.
    T* operator->()
    {
       return &obj();
    }
-   /// \}
 
 
-   /// \brief Get device pointer to the object.
-   /// \{
+   /// Gets device pointer to the object.
    const T* deviceptr() const
    {
       assert(0 <= unit && unit < deviceptrs().size() &&
              "const T* GenericUnit::deviceptr() const");
       return deviceptrs()[unit].get();
    }
+   /// Gets device pointer to the object.
    T* deviceptr()
    {
       assert(0 <= unit && unit < (int)deviceptrs().size() &&
              "T* GenericUnit::deviceptr()");
       return deviceptrs()[unit].get();
    }
-   /// \}
 
 
-   /// \brief Update the object on device by an object on host.
+   /// Updates the object on device by an object on host.
    /// \param hobj
    /// The reference to the same object on host that can be accessed by the same
    /// unit number.
