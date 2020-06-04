@@ -1,10 +1,10 @@
-#include "cudalib.h"
 #include "epolar.h"
 #include "field.h"
 #include "induce.h"
-#include "io_print.h"
 #include "launch.h"
 #include "tinker_rt.h"
+#include "tool/cudalib.h"
+#include "tool/io_print.h"
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/polpcg.hh>
 #include <tinker/detail/polpot.hh>

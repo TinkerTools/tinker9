@@ -1,11 +1,11 @@
 #include "evdw.h"
 #include "fc.h"
-#include "io_fort_str.h"
-#include "io_text.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
 #include "tinker_rt.h"
+#include "tool/io_fort_str.h"
+#include "tool/io_text.h"
 #include <cassert>
 #include <map>
 #include <tinker/detail/couple.hh>

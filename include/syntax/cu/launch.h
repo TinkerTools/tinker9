@@ -1,6 +1,6 @@
 #pragma once
-#include "cudalib.h"
-#include "error.h"
+#include "tool/cudalib.h"
+#include "tool/error.h"
 #include "glob.gpucard.h"
 
 

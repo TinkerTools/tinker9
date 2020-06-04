@@ -2,9 +2,7 @@
 #include "log.h"
 
 
-#include "darray.h"
 #include "energy.h"
-#include "io_fort_str.h"
 #include "mdcalc.h"
 #include "mdegv.h"
 #include "mdintg.h"
@@ -12,6 +10,8 @@
 #include "mdpt.h"
 #include "mdsave.h"
 #include "nose.h"
+#include "tool/darray.h"
+#include "tool/io_fort_str.h"
 #include <cassert>
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>

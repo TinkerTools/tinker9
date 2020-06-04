@@ -1,7 +1,7 @@
 #include "eangle.h"
-#include "io_fort_str.h"
 #include "md.h"
 #include "potent.h"
+#include "tool/io_fort_str.h"
 #include <cassert>
 #include <tinker/detail/angbnd.hh>
 #include <tinker/detail/angpot.hh>

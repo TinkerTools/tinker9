@@ -1,5 +1,4 @@
 #include "nblist.h"
-#include "darray.h"
 #include "elec.h"
 #include "epolar.h"
 #include "evdw.h"
@@ -10,6 +9,7 @@
 #include "potent.h"
 #include "switch.h"
 #include "thrust_cache.h"
+#include "tool/darray.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/neigh.hh>

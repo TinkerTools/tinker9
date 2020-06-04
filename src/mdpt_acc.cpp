@@ -5,7 +5,6 @@
 #include "box.h"
 #include "energy.h"
 #include "glob.molecule.h"
-#include "io_fort_str.h"
 #include "mathfunc.h"
 #include "mdcalc.h"
 #include "mdegv.h"
@@ -13,6 +12,7 @@
 #include "mdpt.h"
 #include "nblist.h"
 #include "random.h"
+#include "tool/io_fort_str.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>

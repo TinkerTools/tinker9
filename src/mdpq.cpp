@@ -1,11 +1,11 @@
 
 #include "mdpq.h"
 #include "box.h"
-#include "darray.h"
-#include "error.h"
 #include "glob.gpucard.h"
 #include "mdcalc.h"
 #include "nblist.h"
+#include "tool/darray.h"
+#include "tool/error.h"
 #include <cassert>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>

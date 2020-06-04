@@ -1,10 +1,10 @@
 #include "emplar.h"
 #include "elec.h"
-#include "error.h"
 #include "md.h"
 #include "mod.energi.h"
 #include "nblist.h"
 #include "potent.h"
+#include "tool/error.h"
 #include <map>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/mplpot.hh>

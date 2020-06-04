@@ -1,8 +1,8 @@
-#include "cudalib.h"
 #include "glob.accasync.h"
+#include "tool/cudalib.h"
 #if TINKER_CUDART
-#   include "error.h"
 #   include "gpu_card.h"
+#   include "tool/error.h"
 #   include <cuda_profiler_api.h>
 #   include <openacc.h>
 #endif

@@ -2,7 +2,7 @@
 #include "eangle.h"
 #include "mod.energi.h"
 #include "mod.opbend.h"
-#include "rc_man.h"
+#include "tool/rc_man.h"
 
 
 namespace tinker {

@@ -1,7 +1,7 @@
 #pragma once
-#include "darray.h"
 #include "mathfunc.h"
 #include "mdprec.h"
+#include "tool/darray.h"
 #include <vector>
 
 

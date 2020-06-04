@@ -2,7 +2,7 @@
 #include "mod.energi.h"
 #include "mod.torpot.h"
 #include "mod.tors.h"
-#include "rc_man.h"
+#include "tool/rc_man.h"
 
 
 namespace tinker {

@@ -1,6 +1,6 @@
 #pragma once
 #include "glob.box.h"
-#include "rc_man.h"
+#include "tool/rc_man.h"
 
 
 namespace tinker {

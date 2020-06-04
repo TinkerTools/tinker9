@@ -3,7 +3,7 @@
 #include "mod.mutant.h"
 #include "mod.vdw.h"
 #include "mod.vdwpot.h"
-#include "rc_man.h"
+#include "tool/rc_man.h"
 
 
 /**

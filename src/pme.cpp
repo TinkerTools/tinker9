@@ -1,7 +1,6 @@
 #include "pme.h"
 #include "box.h"
 #include "elec.h"
-#include "error.h"
 #include "fc.h"
 #include "mathfunc.h"
 #include "md.h"
@@ -9,6 +8,7 @@
 #include "potent.h"
 #include "switch.h"
 #include "tinker_rt.h"
+#include "tool/error.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/ewald.hh>
 #include <tinker/detail/pme.hh>

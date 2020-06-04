@@ -2,7 +2,7 @@
 #include "mod.bndpot.h"
 #include "mod.bndstr.h"
 #include "mod.energi.h"
-#include "rc_man.h"
+#include "tool/rc_man.h"
 
 
 namespace tinker {

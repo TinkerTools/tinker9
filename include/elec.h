@@ -1,7 +1,7 @@
 #pragma once
 #include "energy_buffer.h"
 #include "mod.energi.h"
-#include "rc_man.h"
+#include "tool/rc_man.h"
 
 
 namespace tinker {

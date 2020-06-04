@@ -1,9 +1,9 @@
-#include "cudalib.h"
-#include "deduce_ptr.h"
-#include "error.h"
 #include "gpu_card.h"
 #include "mathfunc_parallel_cu.h"
 #include "syntax/cu/reduce.h"
+#include "tool/cudalib.h"
+#include "tool/deduce_ptr.h"
+#include "tool/error.h"
 #include <cassert>
 #include <cublas_v2.h>
 #include <cuda_runtime.h>

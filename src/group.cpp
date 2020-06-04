@@ -1,6 +1,6 @@
 #include "group.h"
-#include "darray.h"
 #include "md.h"
+#include "tool/darray.h"
 #include <tinker/detail/group.hh>
 #include <tinker/detail/sizes.hh>
 

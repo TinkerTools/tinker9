@@ -1,6 +1,6 @@
 #if defined(__APPLE__) || defined(__linux__)
-#   include "error.h"
-#   include "io_text.h"
+#   include "tool/error.h"
+#   include "tool/io_text.h"
 #   include <cxxabi.h>
 #   include <execinfo.h>
 

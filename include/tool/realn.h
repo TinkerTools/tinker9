@@ -21,7 +21,6 @@ using real4 = float4;
 #   define make_real2(x, y)       make_float2((x), (y))
 #   define make_real3(x, y, z)    make_float3((x), (y), (z))
 #   define make_real4(x, y, z, w) make_float4((x), (y), (z), (w))
-
 #endif
 
 

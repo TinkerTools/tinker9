@@ -1,5 +1,4 @@
 #include "add.h"
-#include "cudalib.h"
 #include "epolar.h"
 #include "glob.spatial.h"
 #include "image.h"
@@ -9,6 +8,7 @@
 #include "pme.h"
 #include "seq_pair_field.h"
 #include "switch.h"
+#include "tool/cudalib.h"
 
 
 namespace tinker {

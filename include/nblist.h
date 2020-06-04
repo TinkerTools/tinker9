@@ -1,8 +1,8 @@
 #pragma once
 #include "box.h"
-#include "darray.h"
-#include "gen_unit.h"
-#include "rc_man.h"
+#include "tool/darray.h"
+#include "tool/gen_unit.h"
+#include "tool/rc_man.h"
 
 
 namespace tinker {

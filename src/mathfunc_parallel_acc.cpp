@@ -1,7 +1,7 @@
 #include "mathfunc_parallel_acc.h"
-#include "acclib.h"
-#include "deduce_ptr.h"
 #include "glob.accasync.h"
+#include "tool/acclib.h"
+#include "tool/deduce_ptr.h"
 #include <cassert>
 
 

@@ -1,8 +1,8 @@
 #include "spatial.h"
-#include "darray.h"
-#include "error.h"
 #include "md.h"
 #include "nblist.h"
+#include "tool/darray.h"
+#include "tool/error.h"
 
 
 namespace tinker {

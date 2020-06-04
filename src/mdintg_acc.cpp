@@ -1,7 +1,7 @@
-#include "io_print.h"
 #include "mdintg.h"
 #include "mdpq.h"
 #include "tinker_rt.h"
+#include "tool/io_print.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>

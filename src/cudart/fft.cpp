@@ -1,6 +1,6 @@
 #include "fft.h"
-#include "cudalib.h"
-#include "error.h"
+#include "tool/cudalib.h"
+#include "tool/error.h"
 #include "pme.h"
 #include <cufft.h>
 

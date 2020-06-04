@@ -1,5 +1,5 @@
 #include "main_tinker_gpu.h"
-#include "rc_man.h"
+#include "tool/rc_man.h"
 #include <algorithm>
 #include <functional>
 #include <map>

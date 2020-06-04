@@ -1,11 +1,11 @@
 #include "energy.h"
-#include "io_print.h"
-#include "io_read.h"
 #include "md.h"
 #include "nblist.h"
 #include "osrw.h"
 #include "potent.h"
 #include "tinker_rt.h"
+#include "tool/io_print.h"
+#include "tool/io_read.h"
 #include <fstream>
 #include <tinker/detail/files.hh>
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "error.h"
+#include "tool/error.h"
 
 
 #ifndef TINKER_ENABLE_LOG

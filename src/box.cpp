@@ -1,8 +1,8 @@
 #include "box.h"
-#include "darray.h"
 #include "fc.h"
 #include "mathfunc.h"
 #include "md.h"
+#include "tool/darray.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/boxes.hh>
 

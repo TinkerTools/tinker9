@@ -1,10 +1,10 @@
 #include "elec.h"
 #include "empole.h"
 #include "epolar.h"
-#include "io_fort_str.h"
 #include "md.h"
 #include "pmestuf.h"
 #include "potent.h"
+#include "tool/io_fort_str.h"
 #include <tinker/detail/atoms.hh>
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/kchrge.hh>

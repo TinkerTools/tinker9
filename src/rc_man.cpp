@@ -1,4 +1,4 @@
-#include "rc_man.h"
+#include "tool/rc_man.h"
 
 
 namespace tinker {
@@ -54,7 +54,6 @@ void finish()
 
 #include "box.h"
 #include "couple.h"
-#include "cudalib.h"
 #include "energy.h"
 #include "group.h"
 #include "mdintg.h"
@@ -62,6 +61,7 @@ void finish()
 #include "molecule.h"
 #include "nblist.h"
 #include "osrw.h"
+#include "tool/cudalib.h"
 
 
 namespace tinker {

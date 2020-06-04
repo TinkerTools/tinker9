@@ -1,4 +1,4 @@
-#include "acclib.h"
+#include "tool/acclib.h"
 
 
 namespace tinker {

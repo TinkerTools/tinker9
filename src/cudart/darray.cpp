@@ -1,6 +1,6 @@
-#include "darray.h"
-#include "cudalib.h"
-#include "error.h"
+#include "tool/darray.h"
+#include "tool/cudalib.h"
+#include "tool/error.h"
 #include <cstring>
 #include <cuda_runtime.h>
 

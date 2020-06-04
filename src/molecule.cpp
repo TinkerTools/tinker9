@@ -1,6 +1,6 @@
 #include "molecule.h"
-#include "darray.h"
 #include "md.h"
+#include "tool/darray.h"
 #include <tinker/detail/molcul.hh>
 
 

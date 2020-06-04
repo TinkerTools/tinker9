@@ -4,7 +4,7 @@
 #include "mod.ktrtor.h"
 #include "mod.torpot.h"
 #include "mod.tortor.h"
-#include "rc_man.h"
+#include "tool/rc_man.h"
 
 
 namespace tinker {

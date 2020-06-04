@@ -1,8 +1,8 @@
 #include "energy.h"
-#include "error.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
+#include "tool/error.h"
 
 
 namespace tinker {

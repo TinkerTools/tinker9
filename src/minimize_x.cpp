@@ -1,9 +1,9 @@
 #include "energy.h"
 #include "fcxx.h"
-#include "io_fort_str.h"
-#include "io_print.h"
 #include "nblist.h"
 #include "tinker_rt.h"
+#include "tool/io_fort_str.h"
+#include "tool/io_print.h"
 #include <tinker/detail/files.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/scales.hh>

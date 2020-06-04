@@ -1,5 +1,5 @@
-#include "acclib.h"
 #include "md.h"
+#include "tool/acclib.h"
 
 
 namespace tinker {

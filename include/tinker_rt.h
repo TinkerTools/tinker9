@@ -1,11 +1,11 @@
 #pragma once
-#include "io_fort_str.h"
-#include "io_print.h"
-#include "io_read.h"
-#include "io_text.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "subroutine.h"
+#include "tool/io_fort_str.h"
+#include "tool/io_print.h"
+#include "tool/io_read.h"
+#include "tool/io_text.h"
 #include <tinker/detail/keys.hh>
 
 

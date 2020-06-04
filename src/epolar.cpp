@@ -1,10 +1,10 @@
 #include "epolar.h"
 #include "empole.h"
-#include "io_print.h"
 #include "md.h"
 #include "nblist.h"
 #include "pme.h"
 #include "potent.h"
+#include "tool/io_print.h"
 #include <map>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/inform.hh>

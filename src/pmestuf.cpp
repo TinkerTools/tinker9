@@ -1,5 +1,5 @@
 #include "pmestuf.h"
-#include "error.h"
+#include "tool/error.h"
 
 namespace tinker {
 void bspline_fill(PMEUnit pme_u, int level)

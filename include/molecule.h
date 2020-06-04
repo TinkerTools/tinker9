@@ -1,6 +1,6 @@
 #pragma once
 #include "glob.molecule.h"
-#include "rc_man.h"
+#include "tool/rc_man.h"
 
 
 namespace tinker {

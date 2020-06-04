@@ -1,5 +1,5 @@
-#include "io_fort_str.h"
-#include "io_text.h"
+#include "tool/io_fort_str.h"
+#include "tool/io_text.h"
 #include <algorithm>
 #include <cassert>
 #include <cstring>

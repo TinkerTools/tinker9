@@ -1,6 +1,6 @@
 #pragma once
 #include "macro.h"
-#include "realn.h"
+#include "tool/realn.h"
 
 
 namespace tinker {

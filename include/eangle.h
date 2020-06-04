@@ -2,7 +2,7 @@
 #include "mod.angbnd.h"
 #include "mod.angpot.h"
 #include "mod.energi.h"
-#include "rc_man.h"
+#include "tool/rc_man.h"
 
 
 namespace tinker {
