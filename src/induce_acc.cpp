@@ -2,7 +2,7 @@
 #include "epolar.h"
 #include "field.h"
 #include "glob.nblist.h"
-#include "gpu_card.h"
+#include "tool/gpu_card.h"
 #include "image.h"
 #include "induce.h"
 #include "seq_damp.h"

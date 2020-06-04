@@ -1,5 +1,5 @@
 #pragma once
-#include "energy_buffer.h"
+#include "tool/energy_buffer.h"
 #include "macro.h"
 #include "pme.h"
 

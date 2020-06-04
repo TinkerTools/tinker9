@@ -1,5 +1,5 @@
 #define TINKER_ENABLE_LOG 0
-#include "log.h"
+#include "tool/log.h"
 
 
 #include "box.h"

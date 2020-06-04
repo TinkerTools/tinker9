@@ -1,5 +1,5 @@
 #include "energy.h"
-#include "fcxx.h"
+#include "tool/fcxx.h"
 #include "nblist.h"
 #include "tinker_rt.h"
 #include "tool/io_fort_str.h"

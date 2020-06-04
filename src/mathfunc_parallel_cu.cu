@@ -1,4 +1,4 @@
-#include "gpu_card.h"
+#include "tool/gpu_card.h"
 #include "mathfunc_parallel_cu.h"
 #include "syntax/cu/reduce.h"
 #include "tool/cudalib.h"

@@ -1,5 +1,5 @@
 #pragma once
-#include "enum_op.h"
+#include "tool/enum_op.h"
 
 
 namespace tinker {

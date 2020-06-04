@@ -1,7 +1,7 @@
 #include "pme.h"
 #include "box.h"
 #include "elec.h"
-#include "fc.h"
+#include "tool/fc.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "pmestuf.h"

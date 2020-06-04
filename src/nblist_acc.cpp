@@ -1,4 +1,4 @@
-#include "gpu_card.h"
+#include "tool/gpu_card.h"
 #include "image.h"
 #include "md.h"
 #include "nblist.h"

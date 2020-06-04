@@ -1,7 +1,7 @@
 #include "add.h"
 #include "echarge.h"
 #include "glob.nblist.h"
-#include "gpu_card.h"
+#include "tool/gpu_card.h"
 #include "image.h"
 #include "mdegv.h"
 #include "mdpq.h"

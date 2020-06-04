@@ -1,7 +1,7 @@
 #include "add.h"
 #include "empole.h"
 #include "glob.nblist.h"
-#include "gpu_card.h"
+#include "tool/gpu_card.h"
 #include "image.h"
 #include "md.h"
 #include "named_struct.h"

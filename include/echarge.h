@@ -1,6 +1,6 @@
 #pragma once
 #include "elec.h"
-#include "energy_buffer.h"
+#include "tool/energy_buffer.h"
 #include "mod.energi.h"
 #include "tool/rc_man.h"
 

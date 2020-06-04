@@ -2,8 +2,8 @@
 #include "box.h"
 #include "energy.h"
 #include "evdw.h"
-#include "fc.h"
-#include "host_zero.h"
+#include "tool/fc.h"
+#include "tool/host_zero.h"
 #include "potent.h"
 #include "tinker_rt.h"
 

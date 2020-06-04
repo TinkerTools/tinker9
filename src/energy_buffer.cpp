@@ -1,4 +1,4 @@
-#include "energy_buffer.h"
+#include "tool/energy_buffer.h"
 #include "box.h"
 #include "evdw.h"
 #include "mathfunc.h"

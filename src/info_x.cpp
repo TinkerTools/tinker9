@@ -1,5 +1,5 @@
-#include "compilers.h"
-#include "gpu_card.h"
+#include "tool/compilers.h"
+#include "tool/gpu_card.h"
 #include "tinker_rt.h"
 #include "version.h"
 

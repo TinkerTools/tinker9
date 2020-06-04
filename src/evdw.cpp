@@ -1,5 +1,5 @@
 #include "evdw.h"
-#include "fc.h"
+#include "tool/fc.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"

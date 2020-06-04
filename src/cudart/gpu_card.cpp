@@ -1,4 +1,4 @@
-#include "gpu_card.h"
+#include "tool/gpu_card.h"
 #include "algorithm"
 #include "tool/error.h"
 #include "md.h"

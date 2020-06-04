@@ -1,5 +1,5 @@
 #include "mdegv.h"
-#include "host_zero.h"
+#include "tool/host_zero.h"
 #include "mdcalc.h"
 #include "mdpq.h"
 #include "mod.energi.h"

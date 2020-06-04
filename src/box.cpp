@@ -1,5 +1,5 @@
 #include "box.h"
-#include "fc.h"
+#include "tool/fc.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "tool/darray.h"
