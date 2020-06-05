@@ -1,7 +1,7 @@
-#include "tool/gpu_card.h"
 #include "launch.h"
 #include "md.h"
 #include "syntax/cu/reduce.h"
+#include "tool/gpu_card.h"
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>
 

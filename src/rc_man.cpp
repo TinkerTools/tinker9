@@ -47,9 +47,9 @@ void finish()
 }
 
 
-#include "tool/gpu_card.h"
 #include "platform.h"
 #include "random.h"
+#include "tool/gpu_card.h"
 
 
 #include "box.h"

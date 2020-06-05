@@ -1,7 +1,6 @@
 #include "add.h"
 #include "echarge.h"
 #include "glob.nblist.h"
-#include "tool/gpu_card.h"
 #include "image.h"
 #include "mdegv.h"
 #include "mdpq.h"
@@ -11,6 +10,7 @@
 #include "seq_pair_charge.h"
 #include "seq_switch.h"
 #include "switch.h"
+#include "tool/gpu_card.h"
 
 
 namespace tinker {

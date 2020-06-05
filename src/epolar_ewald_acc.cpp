@@ -1,7 +1,6 @@
 #include "add.h"
 #include "epolar.h"
 #include "glob.nblist.h"
-#include "tool/gpu_card.h"
 #include "image.h"
 #include "md.h"
 #include "named_struct.h"
@@ -9,6 +8,7 @@
 #include "seq_pair_polar.h"
 #include "seq_switch.h"
 #include "switch.h"
+#include "tool/gpu_card.h"
 
 namespace tinker {
 #define POLAR_DPTRS                                                            \

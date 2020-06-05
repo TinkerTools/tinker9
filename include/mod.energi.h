@@ -1,8 +1,8 @@
 #pragma once
-#include "tool/energy_buffer.h"
 #include "mdcalc.h"
 #include "mdegv.h"
 #include "mdprec.h"
+#include "tool/energy_buffer.h"
 
 
 namespace tinker {

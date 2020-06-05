@@ -8,6 +8,12 @@ TINKER_EXTERN real* thole;
 TINKER_EXTERN real* pdamp;
 
 
+TINKER_EXTERN real (*udir)[3];
+TINKER_EXTERN real (*udirp)[3];
+TINKER_EXTERN real (*uind)[3];
+TINKER_EXTERN real (*uinp)[3];
+
+
 //====================================================================//
 
 

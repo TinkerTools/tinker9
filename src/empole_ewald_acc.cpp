@@ -1,13 +1,13 @@
 #include "add.h"
 #include "empole.h"
 #include "glob.nblist.h"
-#include "tool/gpu_card.h"
 #include "image.h"
 #include "md.h"
 #include "named_struct.h"
 #include "pmestuf.h"
 #include "seq_pair_mpole.h"
 #include "switch.h"
+#include "tool/gpu_card.h"
 
 namespace tinker {
 #define DEVICE_PTRS                                                            \

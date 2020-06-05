@@ -1,9 +1,9 @@
 #include "evdw.h"
-#include "tool/fc.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
 #include "tinker_rt.h"
+#include "tool/fc.h"
 #include "tool/io_fort_str.h"
 #include "tool/io_text.h"
 #include <cassert>

@@ -1,7 +1,7 @@
 #pragma once
+#include "glob.gpucard.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
-#include "glob.gpucard.h"
 
 
 namespace tinker {

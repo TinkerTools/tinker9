@@ -1,12 +1,12 @@
 #include "add.h"
 #include "epolar.h"
 #include "glob.nblist.h"
-#include "tool/gpu_card.h"
 #include "image.h"
 #include "md.h"
 #include "named_struct.h"
 #include "seq_pair_field.h"
 #include "switch.h"
+#include "tool/gpu_card.h"
 
 namespace tinker {
 // see also subroutine dfield0b in induce.f

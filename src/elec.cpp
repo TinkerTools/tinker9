@@ -13,9 +13,6 @@
 
 
 namespace tinker {
-real electric, dielec;
-
-
 bool use_ewald()
 {
    return limits::use_ewald;
@@ -23,9 +20,6 @@ bool use_ewald()
 
 
 //====================================================================//
-
-
-real* pchg;
 
 
 void pchg_data(rc_op op)
@@ -56,16 +50,6 @@ void pchg_data(rc_op op)
 
 
 //====================================================================//
-
-
-LocalFrame* zaxis;
-real (*pole)[mpl_total];
-real (*rpole)[mpl_total];
-real *trqx, *trqy, *trqz;
-real (*udir)[3];
-real (*udirp)[3];
-real (*uind)[3];
-real (*uinp)[3];
 
 
 void pole_data(rc_op op)

@@ -1,8 +1,8 @@
 #include "mdegv.h"
-#include "tool/host_zero.h"
 #include "mdcalc.h"
 #include "mdpq.h"
 #include "mod.energi.h"
+#include "tool/host_zero.h"
 
 
 namespace tinker {
