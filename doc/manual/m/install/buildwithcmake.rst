@@ -97,7 +97,7 @@ or real*4/single values if with flag "s". Mixed precision flag "m" will
 use real*4 or real*8 numbers in different places. Note that this flag will
 not change the hard-coded types.
 
-**-DDETERMINISTIC_FORCE (deterministic_force) = [NOT SET]**
+**-DDETERMINISTIC_FORCE (deterministic_force) = [NO DEFAULT]**
 Flag to use deterministic force. There is no default value for this flag.
 This feature will be implicitly enabled by mixed and single precisions, but
 can be explicitly disabled by setting the flag to 0,

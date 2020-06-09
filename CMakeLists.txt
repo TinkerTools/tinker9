@@ -201,7 +201,7 @@ endif ()
 
 
 #[[
-!!/ **-DDETERMINISTIC_FORCE (deterministic_force) = [NOT SET]**
+!!/ **-DDETERMINISTIC_FORCE (deterministic_force) = [NO DEFAULT]**
 !!/ Flag to use deterministic force. There is no default value for this flag.
 !!/ This feature will be implicitly enabled by mixed and single precisions, but
 !!/ can be explicitly disabled by setting the flag to 0,
@@ -224,7 +224,7 @@ else ()
    set (detForceValue)
 endif ()
 set (DETERMINISTIC_FORCE ${detForceValue} CACHE STRING
-   "Deterministic Force: [NOT SET] / 0 (OFF) / 1 (ON)"
+   "Deterministic Force: [NO DEFAULT] / 0 (OFF) / 1 (ON)"
 )
 ##
 if (DETERMINISTIC_FORCE STREQUAL "")

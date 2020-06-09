@@ -1,8 +1,8 @@
 #include "tool/gpu_card.h"
 #include "algorithm"
-#include "tool/error.h"
 #include "md.h"
 #include "tinker_rt.h"
+#include "tool/error.h"
 #include <cuda_runtime.h>
 #include <nvml.h>
 #include <thrust/version.h>
@@ -81,6 +81,7 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
       a.ecc_string = "off";
 
 
+   check_rt(cudaSetDevice(device));
    check_rt(cudaMemGetInfo(&a.free_mem_bytes, &a.total_mem_bytes));
 
 
@@ -151,7 +152,7 @@ static int recommend_device(int ndev)
    const char* usp_str = nullptr;
 
 
-   // if do not use xyz file, then there is no key file
+   // if do not use xyz file, there is no key file
    if (usp < 0 && (rc_flag & calc::xyz)) {
       usp_str = "CUDA-DEVICE keyword";
       get_kv("CUDA-DEVICE", usp, -1);
@@ -170,7 +171,7 @@ static int recommend_device(int ndev)
    }
 
 
-   std::vector<int> gpercent, mempercent, prcd; // precedence
+   std::vector<int> gpercent, prcd; // precedence
    std::vector<double> gflops;
    check_rt(nvmlInit());
    for (int i = 0; i < ndev; ++i) {
@@ -180,7 +181,6 @@ static int recommend_device(int ndev)
       check_rt(nvmlDeviceGetUtilizationRates(hd, &util));
       prcd.push_back(i);
       gpercent.push_back(util.gpu);
-      mempercent.push_back(util.memory);
       const auto& a = get_device_attributes()[i];
       double gf = a.clock_rate_kHz;
       gf *= a.cores_per_multiprocessor * a.multiprocessor_count;
@@ -193,16 +193,16 @@ static int recommend_device(int ndev)
       // If idev is preferred return true.
       // If idev and jdev are considered equivalent return false.
       // If jdev is preferred return false.
-      const int SIGNIFICANT_DIFFERENCE = 5;
+      const int SIGNIFICANT_DIFFERENCE = 8;
 
 
       int igpuutil = gpercent[idev];
       int jgpuutil = gpercent[jdev];
       // choose the idle device
       // if the difference is significant, stop here
-      if (igpuutil < jgpuutil + SIGNIFICANT_DIFFERENCE)
+      if (igpuutil + SIGNIFICANT_DIFFERENCE < jgpuutil)
          return true;
-      else if (jgpuutil < igpuutil + SIGNIFICANT_DIFFERENCE)
+      else if (jgpuutil + SIGNIFICANT_DIFFERENCE < igpuutil)
          return false;
 
 
@@ -213,16 +213,6 @@ static int recommend_device(int ndev)
       if (igflp > jgflp * (1.0 + SIGNIFICANT_DIFFERENCE / 100.0))
          return true;
       else if (jgflp > igflp * (1.0 + SIGNIFICANT_DIFFERENCE / 100.0))
-         return false;
-
-
-      int imemutil = mempercent[idev];
-      int jmemutil = mempercent[jdev];
-      // choose the device with more available GPU memory
-      // if the difference is significant, stop here
-      if (imemutil < jmemutil + SIGNIFICANT_DIFFERENCE)
-         return true;
-      else if (jmemutil < imemutil + SIGNIFICANT_DIFFERENCE)
          return false;
 
 
@@ -255,11 +245,15 @@ static unsigned int cuda_device_flags = 0;
 void gpu_card_data(rc_op op)
 {
    if (op & rc_dealloc) {
+      /*
+      // should not reset these variables for the unit tests, if there are
+      // multiple GPUs available
       ndevice = 0;
 
       get_device_attributes().clear();
 
       idevice = -1;
+      */
    }
 
    if (op & rc_init) {
@@ -273,6 +267,8 @@ void gpu_card_data(rc_op op)
          cuda_device_flags |= cudaDeviceScheduleSpin;
 #endif
          always_check_rt(cudaSetDeviceFlags(cuda_device_flags));
+      } else {
+         return;
       }
 
       always_check_rt(cudaGetDeviceCount(&ndevice));
