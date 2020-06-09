@@ -8,6 +8,8 @@
 #include "mod.bndstr.h"
 #include "mod.charge.h"
 #include "mod.chgpot.h"
+#include "mod.chgtrn.h"
+#include "mod.ctrpot.h"
 #include "mod.energi.h"
 #include "mod.ktrtor.h"
 #include "mod.mplpot.h"

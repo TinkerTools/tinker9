@@ -66,6 +66,11 @@ int use_potent(potent_t term)
    case polar_term:
       val = potent::use_polar;
       break;
+
+   case chgtrn_term:
+      val = potent::use_chgtrn;
+      break;
+
    default:
       assert(false);
       break;

@@ -43,6 +43,9 @@ void energy_data(rc_op op)
    rc_man epolar42{epolar_data, op};
    // Must follow empole_data() and epolar_data().
    rc_man emplar42{emplar_data, op};
+
+   // HIPPO charge transfer
+   rc_man echgtrn{echgtrn_data, op};
 }
 
 
@@ -58,6 +61,9 @@ const TimeScaleConfig& default_tsconfig()
       {"echarge", 0},
 
       {"emplar", 0},  {"empole", 0},  {"epolar", 0},
+
+
+      {"echgtrn", 0}, {"ehippo", 0},
    };
    return tsconfig;
 }
@@ -150,6 +156,11 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       if (calc_polar)
          epolar(vers);
    }
+
+
+   if (use_potent(chgtrn_term))
+      if (tscfg("ehippo"))
+         ehippo(vers);
 }
 
 

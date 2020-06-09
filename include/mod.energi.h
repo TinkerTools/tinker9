@@ -9,7 +9,8 @@ namespace tinker {
 // clang-format off
 #define TINKER_COUNT_BUFFERS \
    nev, \
-   nec, nem, nep
+   nec, nem, nep, \
+   nct
 #define TINKER_ENERGY_BUFFERS \
    eb, ea, eba, eub, \
    eopb, et, ept, ett, \
@@ -17,6 +18,7 @@ namespace tinker {
    \
    ev, \
    ec, em, ep, \
+   ect, \
    \
    eng_buf
 #define TINKER_VIRIAL_BUFFERS \
@@ -26,6 +28,7 @@ namespace tinker {
    \
    vir_ev, \
    vir_ec, vir_em, vir_ep, vir_trq, \
+   vir_ect, \
    \
    vir_buf
 #define TINKER_GRADIENTS \
@@ -44,6 +47,8 @@ namespace tinker {
    demx, demy, demz, \
    depx, depy, depz, \
    \
+   dectx, decty, dectz, \
+   \
    gx, gy, gz
 
 
@@ -54,6 +59,7 @@ namespace tinker {
    \
    energy_ev, \
    energy_ec, energy_em, energy_ep, \
+   energy_ect, \
    \
    esum, \
    energy_valence, energy_elec

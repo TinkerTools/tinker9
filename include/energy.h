@@ -22,6 +22,10 @@
 #include "evdw.h"
 
 
+#include "echgtrn.h"
+#include "ehippo.h"
+
+
 namespace tinker {
 /**
  * \ingroup mdegv
