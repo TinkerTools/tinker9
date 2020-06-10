@@ -1,3 +1,6 @@
+cmake_minimum_required (VERSION 3.12)
+
+
 #[[
 !!/ Build Tinker GPU with CMake
 !!/ ===========================
@@ -82,9 +85,6 @@
 
 
 ########################################################################
-
-
-cmake_minimum_required (VERSION 3.12)
 
 
 project (TinkerGPU LANGUAGES NONE)
