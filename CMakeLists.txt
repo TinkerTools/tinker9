@@ -1,3 +1,6 @@
+cmake_minimum_required (VERSION 3.1)
+
+
 #[[
 !!/ Build Tinker GPU with CMake
 !!/ ===========================
@@ -84,12 +87,10 @@
 ########################################################################
 
 
-cmake_minimum_required (VERSION 3.12)
-
-
 project (TinkerGPU LANGUAGES NONE)
 enable_language (C)
 enable_language (CXX)
+set (macro_defs)
 enable_language (Fortran)
 list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 #[[
@@ -192,11 +193,11 @@ endif ()
 set (PREC ${precValue} CACHE STRING "d (DOUBLE) / s (SINGLE) / m (MIXED)")
 ##
 if (${PREC} STREQUAL m)
-   add_compile_definitions (TINKER_MIXED_PRECISION)
+   list (APPEND macro_defs TINKER_MIXED_PRECISION)
 elseif (${PREC} STREQUAL s)
-   add_compile_definitions (TINKER_SINGLE_PRECISION)
+   list (APPEND macro_defs TINKER_SINGLE_PRECISION)
 elseif (${PREC} STREQUAL d)
-   add_compile_definitions (TINKER_DOUBLE_PRECISION)
+   list (APPEND macro_defs TINKER_DOUBLE_PRECISION)
 endif ()
 
 
@@ -230,9 +231,9 @@ set (DETERMINISTIC_FORCE ${detForceValue} CACHE STRING
 if (DETERMINISTIC_FORCE STREQUAL "")
    # No default behavior for empty value.
 elseif (${DETERMINISTIC_FORCE} STREQUAL 1)
-   add_compile_definitions (TINKER_DETERMINISTIC_FORCE=1)
+   list (APPEND macro_defs TINKER_DETERMINISTIC_FORCE=1)
 elseif (${DETERMINISTIC_FORCE} STREQUAL 0)
-   add_compile_definitions (TINKER_DETERMINISTIC_FORCE=0)
+   list (APPEND macro_defs TINKER_DETERMINISTIC_FORCE=0)
 endif ()
 
 
@@ -299,9 +300,9 @@ set (CUDA_DIR ${cudaDirValue} CACHE STRING "CUDA Directory")
 
 
 if (${CMAKE_Fortran_COMPILER_ID} STREQUAL GNU)
-   add_compile_definitions (TINKER_GFORTRAN)
+   list (APPEND macro_defs TINKER_GFORTRAN)
 elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL Intel)
-   add_compile_definitions (TINKER_IFORT)
+   list (APPEND macro_defs TINKER_IFORT)
 endif ()
 
 
@@ -319,7 +320,7 @@ if (GIT_FOUND)
       string (REPLACE "\"" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
       string (REPLACE "\n" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
       string (REPLACE "\r" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
-      add_compile_definitions (TINKER_GPU_GIT_SHORT_HASH=${STRING_SHA1_GIT})
+      list (APPEND macro_defs TINKER_GPU_GIT_SHORT_HASH=${STRING_SHA1_GIT})
 
 
       execute_process (

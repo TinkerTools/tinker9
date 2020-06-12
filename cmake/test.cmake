@@ -3,6 +3,7 @@ file (GLOB TEST_CPP "${PROJECT_SOURCE_DIR}/src/test/*.cpp")
 
 
 add_library (all_tests_o OBJECT ${MAINTEST_CPP} ${TEST_CPP})
+target_compile_definitions (all_tests_o PRIVATE ${macro_defs})
 set_target_properties (all_tests_o PROPERTIES
    CXX_STANDARD 11
    CXX_EXTENSIONS OFF
@@ -28,7 +29,8 @@ add_custom_target (all.tests ALL
       all_tests_o
       tinkergpu_acc
       tinkergpu_cu
-      tinkergpu_host
+      tinkergpu_f
+      tinkergpu_cpp
       LIBTINKER
       LIBFFTW
       LIBFFTW_THREADS
@@ -40,7 +42,8 @@ add_custom_target (all.tests ALL
       $<TARGET_OBJECTS:all_tests_o>
       $<TARGET_OBJECTS:tinkergpu_acc>
       $<TARGET_OBJECTS:tinkergpu_cu>
-      $<TARGET_OBJECTS:tinkergpu_host>
+      $<TARGET_OBJECTS:tinkergpu_f>
+      $<TARGET_OBJECTS:tinkergpu_cpp>
       $<TARGET_FILE:LIBTINKER>
       $<TARGET_FILE:LIBFFTW>
       $<TARGET_FILE:LIBFFTW_THREADS>

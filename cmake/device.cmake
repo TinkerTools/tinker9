@@ -1,4 +1,4 @@
-add_compile_definitions (TINKER_CUDART)
+list (APPEND macro_defs TINKER_CUDART)
 list (APPEND comm_sys_inc_path "${CUDA_DIR}/include")
 file (GLOB PLATFORM_CPP "${PROJECT_SOURCE_DIR}/src/cudart/*.cpp")
 list (APPEND LIB_CPP ${PLATFORM_CPP})
@@ -6,6 +6,7 @@ list (APPEND LIB_CPP ${PLATFORM_CPP})
 
 ## CUDA
 add_library (tinkergpu_cu OBJECT ${LIB_CU})
+target_compile_definitions (tinkergpu_cu PRIVATE ${macro_defs})
 enable_language (CUDA)
 set_target_properties (tinkergpu_cu PROPERTIES
    CUDA_STANDARD 11
@@ -23,9 +24,9 @@ string (REPLACE "," ";" CCLIST2 ${CCLIST2}) # 60;70
 set (GENCODE_CC) # ""
 foreach (var ${CCLIST2})
    # available since cmake 3.12
-   # target_compile_options (tinkergpu_cu PRIVATE
-   #   "SHELL:-gencode arch=compute_${var},code=sm_${var}")
-   set (CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode arch=compute_${var},code=sm_${var}")
+   target_compile_options (tinkergpu_cu PRIVATE
+     "SHELL:-gencode arch=compute_${var},code=sm_${var}"
+   )
 endforeach () # -gencode arch=compute_60,code=sm_60 -gencode arch=compute_70,code=sm_70
 ## Debug add flag: -lineinfo
 ## Release add flag: --use_fast_math
@@ -41,6 +42,7 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL PGI)
 else ()
    message (FATAL_ERROR "CXX was not set to PGI compiler.")
 endif ()
+target_compile_definitions (tinkergpu_acc PRIVATE ${macro_defs})
 set_target_properties (tinkergpu_acc PROPERTIES
    CXX_STANDARD 11
    CXX_EXTENSIONS OFF
@@ -66,19 +68,22 @@ target_compile_options (tinkergpu_acc PRIVATE
 )
 
 
-add_library (tinkergpu_host OBJECT ${LIB_F} ${LIB_CPP})
-set_target_properties (tinkergpu_host PROPERTIES
+add_library (tinkergpu_f OBJECT ${LIB_F})
+add_library (tinkergpu_cpp OBJECT ${LIB_CPP})
+target_compile_definitions (tinkergpu_cpp PRIVATE ${macro_defs})
+set_target_properties (tinkergpu_cpp PROPERTIES
    CXX_STANDARD 11
    CXX_EXTENSIONS OFF
 )
-target_include_directories (tinkergpu_host SYSTEM PRIVATE ${comm_sys_inc_path})
-target_include_directories (tinkergpu_host PRIVATE
+target_include_directories (tinkergpu_cpp SYSTEM PRIVATE ${comm_sys_inc_path})
+target_include_directories (tinkergpu_cpp PRIVATE
    ${proj_internal_inc_path}
    "${PROJECT_SOURCE_DIR}/include/syntax/acc"
 )
 
 
 add_library (tinkergpu_main OBJECT ${MAIN_CPP})
+target_compile_definitions (tinkergpu_main PRIVATE ${macro_defs})
 set_target_properties (tinkergpu_main PROPERTIES
    CXX_STANDARD 11
    CXX_EXTENSIONS OFF
@@ -102,7 +107,8 @@ add_custom_target (tinker.gpu ALL
       tinkergpu_main
       tinkergpu_acc
       tinkergpu_cu
-      tinkergpu_host
+      tinkergpu_f
+      tinkergpu_cpp
       LIBTINKER
       LIBFFTW
       LIBFFTW_THREADS
@@ -114,7 +120,8 @@ add_custom_target (tinker.gpu ALL
       $<TARGET_OBJECTS:tinkergpu_main>
       $<TARGET_OBJECTS:tinkergpu_acc>
       $<TARGET_OBJECTS:tinkergpu_cu>
-      $<TARGET_OBJECTS:tinkergpu_host>
+      $<TARGET_OBJECTS:tinkergpu_f>
+      $<TARGET_OBJECTS:tinkergpu_cpp>
       $<TARGET_FILE:LIBTINKER>
       $<TARGET_FILE:LIBFFTW>
       $<TARGET_FILE:LIBFFTW_THREADS>
