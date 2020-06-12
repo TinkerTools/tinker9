@@ -43,26 +43,26 @@ void t_open(int unit, const char* file, const char* status)
 //====================================================================//
 
 
-extern "C" void fc_allocated(void** p, int* ans);
+extern "C" void TINKER_RT(fc_allocated)(void** p, int* ans);
 int t_allocated(void* p)
 {
    int ans;
-   fc_allocated(&p, &ans);
+   TINKER_RT(fc_allocated)(&p, &ans);
    return ans;
 }
 
 
-extern "C" void fc_deallocate(void**);
+extern "C" void TINKER_RT(fc_deallocate)(void**);
 void t_deallocate(void* p)
 {
-   fc_deallocate(&p);
+   TINKER_RT(fc_deallocate)(&p);
 }
 
 
-extern "C" void fc_allocate_char1(void**, size_t);
+extern "C" void TINKER_RT(fc_allocate_char1)(void**, size_t);
 void t_allocate_char1(void** pp, size_t bytes1)
 {
-   fc_allocate_char1(pp, bytes1);
+   TINKER_RT(fc_allocate_char1)(pp, bytes1);
 }
 
 

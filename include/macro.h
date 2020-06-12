@@ -50,10 +50,8 @@ to mimic its name mangling.
 
 #elif defined(__GNUC__)
 #   define TINKER_GCC
-#   if __GNUC__ <= 4
-#      error If you are using GNU compilers, please use version 5 or above.    \
-If you are using other compilers, please make sure they are configured with    \
-GNU version 5 or above.
+#   if __GNUC__ <= 4 && __GNUC_MINOR__ <= 8
+#      warning Your default GNU version is 4.8 where C++11 is incomplete.
 #   endif
 
 #endif
