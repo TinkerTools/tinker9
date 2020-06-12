@@ -2,6 +2,7 @@
 #include "empole.h"
 #include "epolar.h"
 #include "md.h"
+#include "nblist.h"
 #include "pmestuf.h"
 #include "potent.h"
 #include "tool/io_fort_str.h"
@@ -9,6 +10,7 @@
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/kchrge.hh>
 #include <tinker/detail/limits.hh>
+#include <tinker/detail/mplpot.hh>
 #include <tinker/detail/mpole.hh>
 
 
@@ -54,7 +56,8 @@ void pchg_data(rc_op op)
 
 void pole_data(rc_op op)
 {
-   if (!use_potent(mpole_term) && !use_potent(polar_term))
+   if (!use_potent(mpole_term) && !use_potent(polar_term) &&
+       !use_potent(repuls_term))
       return;
 
 
@@ -168,10 +171,6 @@ void elec_data(rc_op op)
 
 void mpole_init(int vers)
 {
-   if (!use_potent(mpole_term) && !use_potent(polar_term))
-      return;
-
-
    if (vers & calc::grad)
       darray::zero(PROCEED_NEW_Q, n, trqx, trqy, trqz);
    if (vers & calc::virial)
@@ -218,15 +217,51 @@ void rotpole()
 }
 
 
-void torque(int vers)
+void torque(int vers, grad_prec* dx, grad_prec* dy, grad_prec* dz)
 {
    // #if TINKER_CUDART
    //    if (pltfm_config & CU_PLTFM)
    //    else
    // #endif
-   if (use_potent(mpole_term))
-      torque_acc(vers, demx, demy, demz);
-   else if (use_potent(polar_term))
-      torque_acc(vers, depx, depy, depz);
+   torque_acc(vers, dx, dy, dz);
+}
+
+
+bool amoeba_emplar(int vers)
+{
+   if (mplpot::use_chgpen)
+      return false;
+   if (rc_flag & calc::analyz)
+      return false;
+   if (vers & calc::analyz)
+      return false;
+
+
+   return use_potent(mpole_term) && use_potent(polar_term) &&
+      (mlist_version() & NBL_SPATIAL);
+}
+
+
+bool amoeba_empole(int vers)
+{
+   if (mplpot::use_chgpen)
+      return false;
+
+
+   if (amoeba_emplar(vers))
+      return false;
+   return use_potent(mpole_term);
+}
+
+
+bool amoeba_epolar(int vers)
+{
+   if (mplpot::use_chgpen)
+      return false;
+
+
+   if (amoeba_emplar(vers))
+      return false;
+   return use_potent(polar_term);
 }
 }

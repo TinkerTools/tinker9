@@ -4,6 +4,7 @@
 #include "nblist.h"
 #include "pmestuf.h"
 #include "potent.h"
+#include "tool/host_zero.h"
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/sizes.hh>
@@ -127,20 +128,40 @@ void echarge_data(rc_op op)
 
 void echarge(int vers)
 {
+   bool do_a = vers & calc::analyz;
+   bool do_e = vers & calc::energy;
+   bool do_v = vers & calc::virial;
+   bool do_g = vers & calc::grad;
+
+
+   host_zero(energy_ec, virial_ec);
+   auto bsize = buffer_size();
+   if (do_a)
+      darray::zero(PROCEED_NEW_Q, bsize, nec);
+   if (do_e)
+      darray::zero(PROCEED_NEW_Q, bsize, ec);
+   if (do_v)
+      darray::zero(PROCEED_NEW_Q, bsize, vir_ec);
+   if (do_g)
+      darray::zero(PROCEED_NEW_Q, n, decx, decy, decz);
+
+
    if (use_ewald())
       echarge_ewald(vers);
    else
       echarge_nonewald(vers);
 
 
-   if (vers & calc::energy) {
+   if (do_e) {
       energy_buffer u = ec;
       energy_ec = energy_reduce(u);
       energy_elec = energy_ec;
    }
-   if (vers & calc::virial) {
+   if (do_v) {
       virial_buffer u = vir_ec;
-      virial_reduce(virial_elec, u);
+      virial_reduce(virial_ec, u);
+      for (int iv = 0; iv < 9; ++iv)
+         virial_elec[iv] = virial_ec[iv];
    }
 }
 

@@ -4,6 +4,7 @@
 #include "nblist.h"
 #include "pme.h"
 #include "potent.h"
+#include "tool/host_zero.h"
 #include "tool/io_print.h"
 #include <map>
 #include <tinker/detail/couple.hh>
@@ -16,6 +17,9 @@
 
 
 namespace tinker {
+namespace {
+bool unique_ep;
+}
 void epolar_data(rc_op op)
 {
    if (!use_potent(polar_term))
@@ -34,19 +38,17 @@ void epolar_data(rc_op op)
       if (rc_flag & calc::analyz) {
          buffer_deallocate(calc::analyz, nep);
       }
-      if (use_potent(mpole_term)) {
-         if (rc_flag & calc::analyz) {
-            buffer_deallocate(rc_flag & ~calc::virial, ep, nullptr);
-         }
+      if (unique_ep) {
+         buffer_deallocate(rc_flag | calc::analyz, ep, vir_ep);
+         buffer_deallocate(rc_flag | calc::analyz, depx, depy, depz);
+      } else {
          ep = nullptr;
+         vir_ep = nullptr;
          depx = nullptr;
          depy = nullptr;
          depz = nullptr;
-         vir_ep = nullptr;
-      } else {
-         buffer_deallocate(rc_flag | calc::analyz, ep, vir_ep);
-         buffer_deallocate(rc_flag | calc::analyz, depx, depy, depz);
       }
+      unique_ep = false;
 
       darray::deallocate(ufld, dufld);
       darray::deallocate(work01_, work02_, work03_, work04_, work05_, work06_,
@@ -363,18 +365,17 @@ void epolar_data(rc_op op)
       if (rc_flag & calc::analyz) {
          buffer_allocate(calc::analyz, &nep);
       }
-      if (use_potent(mpole_term)) {
+      unique_ep = (!amoeba_emplar(rc_flag)) &&
+         (!use_potent(mpole_term) || (rc_flag & calc::analyz));
+      if (unique_ep) {
+         buffer_allocate(rc_flag | calc::analyz, &ep, &vir_ep);
+         buffer_allocate(rc_flag | calc::analyz, &depx, &depy, &depz);
+      } else {
          ep = em;
+         vir_ep = vir_em;
          depx = demx;
          depy = demy;
          depz = demz;
-         vir_ep = vir_em;
-         if (rc_flag & calc::analyz) {
-            buffer_allocate(rc_flag & ~calc::virial, &ep, nullptr);
-         }
-      } else {
-         buffer_allocate(rc_flag | calc::analyz, &ep, &vir_ep);
-         buffer_allocate(rc_flag | calc::analyz, &depx, &depy, &depz);
       }
 
       if (rc_flag & calc::grad) {
@@ -440,37 +441,53 @@ void induce(real (*ud)[3], real (*up)[3])
 
 void epolar(int vers)
 {
-   bool calc_mpole = use_potent(mpole_term);
-   if (!calc_mpole)
-      mpole_init(vers);
+   bool do_a = vers & calc::analyz;
+   bool do_e = vers & calc::energy;
+   bool do_v = vers & calc::virial;
+   bool do_g = vers & calc::grad;
 
 
+   host_zero(energy_ep, virial_ep);
+   size_t bsize = buffer_size();
+   if (do_a)
+      darray::zero(PROCEED_NEW_Q, bsize, nep);
+   if (do_e)
+      darray::zero(PROCEED_NEW_Q, bsize, ep);
+   if (do_v) {
+      darray::zero(PROCEED_NEW_Q, bsize, vir_ep);
+   }
+   if (do_g && unique_ep) {
+      darray::zero(PROCEED_NEW_Q, n, depx, depy, depz);
+   }
+
+
+   mpole_init(vers);
    if (use_ewald())
       epolar_ewald(vers);
    else
       epolar_nonewald(vers);
+   torque(vers, depx, depy, depz);
 
 
-   torque(vers);
-
-
-   if (vers & calc::energy) {
+   if (do_e) {
       energy_buffer u = ep;
       energy_prec e = energy_reduce(u);
       energy_elec += e;
-      if (vers & calc::analyz) {
+      if (do_a) {
          energy_ep = e;
       }
    }
-   if (vers & calc::virial) {
+   if (do_v) {
       virial_buffer u1 = vir_ep;
       virial_buffer u2 = vir_trq;
       virial_prec v1[9];
       virial_prec v2[9];
       virial_reduce(v1, u1);
       virial_reduce(v2, u2);
-      for (int iv = 0; iv < 9; ++iv)
-         virial_elec[iv] += v1[iv] + v2[iv];
+      for (int iv = 0; iv < 9; ++iv) {
+         virial_ep[iv] = v1[iv] + v2[iv];
+         virial_elec[iv] += virial_ep[iv];
+      }
    }
 }
 

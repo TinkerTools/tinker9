@@ -52,18 +52,18 @@ void energy_data(rc_op op)
 const TimeScaleConfig& default_tsconfig()
 {
    static TimeScaleConfig tsconfig{
-      {"ebond", 0},   {"eangle", 0},  {"estrbnd", 0},
-      {"eurey", 0},   {"eopbend", 0}, {"etors", 0},
-      {"epitors", 0}, {"etortor", 0}, {"egeom", 0},
+      {"ebond", 0},   {"eangle", 0}, {"estrbnd", 0}, {"eurey", 0},
+      {"eopbend", 0}, {"etors", 0},  {"epitors", 0}, {"etortor", 0},
+      {"egeom", 0},
 
       {"evdw", 0},
 
       {"echarge", 0},
 
-      {"emplar", 0},  {"empole", 0},  {"epolar", 0},
+      {"emplar", 0},  {"empole", 0}, {"epolar", 0},
 
 
-      {"echgtrn", 0}, {"ehippo", 0},
+      {"echgtrn", 0}, {"edisp", 0},  {"erepel", 0},  {"ehippo", 0},
    };
    return tsconfig;
 }
@@ -139,23 +139,15 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          echarge(vers);
 
 
-   bool calc_mpole = use_potent(mpole_term); // quadrupole
-   bool calc_polar = use_potent(polar_term); // AMOEBA polarization (Thole)
-   bool calc_mplar = calc_mpole && calc_polar;
-   calc_mplar = calc_mplar && !(vers & calc::analyz);
-   calc_mplar = calc_mplar && (mlist_version() & NBL_SPATIAL);
-   if (calc_mplar) {
+   if (amoeba_empole(vers))
+      if (tscfg("empole"))
+         empole(vers);
+   if (amoeba_epolar(vers))
+      if (tscfg("epolar"))
+         epolar(vers);
+   if (amoeba_emplar(vers))
       if (tscfg("emplar"))
          emplar(vers);
-   } else {
-      // update logical flags by time-scale configurations
-      calc_mpole = calc_mpole && tscfg("empole");
-      calc_polar = calc_polar && tscfg("epolar");
-      if (calc_mpole)
-         empole(vers);
-      if (calc_polar)
-         epolar(vers);
-   }
 
 
    if (use_potent(chgtrn_term))

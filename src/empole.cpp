@@ -2,6 +2,7 @@
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
+#include "tool/host_zero.h"
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/sizes.hh>
@@ -114,41 +115,50 @@ void empole_data(rc_op op)
 
 void empole(int vers)
 {
+   bool do_a = vers & calc::analyz;
+   bool do_e = vers & calc::energy;
+   bool do_v = vers & calc::virial;
+   bool do_g = vers & calc::grad;
+
+
+   host_zero(energy_em, virial_em);
+   auto bsize = buffer_size();
+   if (do_a)
+      darray::zero(PROCEED_NEW_Q, bsize, nem);
+   if (do_e)
+      darray::zero(PROCEED_NEW_Q, bsize, em);
+   if (do_v)
+      darray::zero(PROCEED_NEW_Q, bsize, vir_em);
+   if (do_g)
+      darray::zero(PROCEED_NEW_Q, n, demx, demy, demz);
+
+
    mpole_init(vers);
-
-
    if (use_ewald())
       empole_ewald(vers);
    else
       empole_nonewald(vers);
+   torque(vers, demx, demy, demz);
 
 
-   bool calc_polar = use_potent(polar_term);
-   if (!calc_polar)
-      torque(vers);
-
-
-   if (vers & calc::energy) {
-      if ((!calc_polar) || (rc_flag & calc::analyz)) {
-         energy_buffer u = em;
-         energy_em = energy_reduce(u);
-         energy_elec += energy_em;
+   if (do_e) {
+      energy_buffer u = em;
+      energy_prec e = energy_reduce(u);
+      energy_elec += e;
+      if (do_a) {
+         energy_em = e;
       }
    }
-   if (vers & calc::virial) {
-      if ((!calc_polar) || (vers & calc::analyz)) {
-         virial_buffer u1 = vir_em;
-         virial_prec v1[9];
-         virial_reduce(v1, u1);
-         for (int iv = 0; iv < 9; ++iv)
-            virial_elec[iv] += v1[iv];
-      }
-      if (!calc_polar) {
-         virial_buffer u2 = vir_trq;
-         virial_prec v2[9];
-         virial_reduce(v2, u2);
-         for (int iv = 0; iv < 9; ++iv)
-            virial_elec[iv] += v2[iv];
+   if (do_v) {
+      virial_buffer u1 = vir_em;
+      virial_buffer u2 = vir_trq;
+      virial_prec v1[9];
+      virial_prec v2[9];
+      virial_reduce(v1, u1);
+      virial_reduce(v2, u2);
+      for (int iv = 0; iv < 9; ++iv) {
+         virial_em[iv] = v1[iv] + v2[iv];
+         virial_elec[iv] += virial_em[iv];
       }
    }
 }

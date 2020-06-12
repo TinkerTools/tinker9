@@ -360,9 +360,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
       const double ref_eng = -37.7476;
 
       zero_egv();
-      mpole_init(calc::v0);
       epolar(calc::v0);
-      torque(calc::v0);
       COMPARE_ENERGY(ep, ref_eng, eps_f);
    }
 
@@ -577,9 +575,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
       const double ref_eng = -36.5477;
 
       zero_egv();
-      mpole_init(calc::v0);
       epolar(calc::v0);
-      torque(calc::v0);
       COMPARE_ENERGY(ep, ref_eng, eps_f);
    }
 

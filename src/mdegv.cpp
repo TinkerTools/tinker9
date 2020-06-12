@@ -19,17 +19,17 @@ void zero_egv(int vers)
    }
 
    if (vers & calc::energy) {
-      host_zero(TINKER_ENERGY_VARIABLES);
-      darray::zero(PROCEED_NEW_Q, buffer_size(), TINKER_ENERGY_BUFFERS);
+      host_zero(esum, energy_valence, energy_elec, energy_ev);
+      darray::zero(PROCEED_NEW_Q, buffer_size(), eng_buf);
    }
 
    if (vers & calc::virial) {
-      host_zero(TINKER_VIRIAL_TENSORS);
-      darray::zero(PROCEED_NEW_Q, buffer_size(), TINKER_VIRIAL_BUFFERS);
+      host_zero(vir, virial_valence, virial_elec, virial_ev);
+      darray::zero(PROCEED_NEW_Q, buffer_size(), vir_buf);
    }
 
    if (vers & calc::grad) {
-      darray::zero(PROCEED_NEW_Q, n, TINKER_GRADIENTS);
+      darray::zero(PROCEED_NEW_Q, n, gx, gy, gz);
    }
 }
 
@@ -185,14 +185,12 @@ void egv_data(rc_op op)
 
    if (rc_flag & calc::grad) {
       if (op & rc_dealloc) {
-         // Always deallocate gx, gy, gz.
          // Other gradients are deallocated elsewhere.
          darray::deallocate(gx, gy, gz);
       }
 
 
       if (op & rc_alloc) {
-         // Always allocate gx, gy, gz as the first gradient.
          host_zero(TINKER_GRADIENTS);
          darray::allocate(n, &gx, &gy, &gz);
       }

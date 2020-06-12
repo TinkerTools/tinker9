@@ -24,7 +24,7 @@ void dfield_ewald_recip_self_acc(real (*field)[3])
    cmp_to_fmp(pu, cmp, fmp);
    grid_mpole(pu, fmp);
    fftfront(pu);
-   if (vir_m && !use_potent(mpole_term))
+   if (vir_m)
       pme_conv(pu, vir_m);
    else
       pme_conv(pu);

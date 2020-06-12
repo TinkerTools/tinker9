@@ -1,6 +1,7 @@
 #include "ebond.h"
 #include "md.h"
 #include "potent.h"
+#include "tool/host_zero.h"
 #include "tool/io_fort_str.h"
 #include <tinker/detail/bndpot.hh>
 #include <tinker/detail/bndstr.hh>
@@ -15,7 +16,7 @@ void ebond_data(rc_op op)
       darray::deallocate(ibnd, bl, bk);
 
       buffer_deallocate(rc_flag, eb, vir_eb);
-      buffer_deallocate(rc_flag & ~calc::analyz, debx, deby, debz);
+      buffer_deallocate(rc_flag, debx, deby, debz);
    }
 
    if (op & rc_alloc) {
@@ -23,7 +24,7 @@ void ebond_data(rc_op op)
       darray::allocate(nbond, &ibnd, &bl, &bk);
 
       buffer_allocate(rc_flag, &eb, &vir_eb);
-      buffer_allocate(rc_flag & ~calc::analyz, &debx, &deby, &debz);
+      buffer_allocate(rc_flag, &debx, &deby, &debz);
    }
 
    if (op & rc_init) {
@@ -49,22 +50,39 @@ void ebond_data(rc_op op)
 
 void ebond(int vers)
 {
+   bool rc_a = rc_flag & calc::analyz;
+   bool do_e = vers & calc::energy;
+   bool do_v = vers & calc::virial;
+   bool do_g = vers & calc::grad;
+
+
+   if (rc_a) {
+      host_zero(energy_eb, virial_eb);
+      auto bsize = buffer_size();
+      if (do_e)
+         darray::zero(PROCEED_NEW_Q, bsize, eb);
+      if (do_v)
+         darray::zero(PROCEED_NEW_Q, bsize, vir_eb);
+      if (do_g)
+         darray::zero(PROCEED_NEW_Q, n, debx, deby, debz);
+   }
+
+
    ebond_acc(vers);
 
 
-   if (rc_flag & calc::analyz) {
-      if (vers & calc::energy) {
+   if (rc_a) {
+      if (do_e) {
          energy_eb = energy_reduce(eb);
          energy_valence += energy_eb;
       }
-      if (vers & calc::virial) {
+      if (do_v) {
          virial_reduce(virial_eb, vir_eb);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eb[iv];
       }
-   }
-   if (vers & calc::analyz)
-      if (vers & calc::grad)
+      if (do_g)
          sum_gradient(gx, gy, gz, debx, deby, debz);
+   }
 }
 }

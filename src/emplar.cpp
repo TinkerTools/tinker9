@@ -5,6 +5,7 @@
 #include "nblist.h"
 #include "potent.h"
 #include "tool/error.h"
+#include "tool/host_zero.h"
 #include <map>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/mplpot.hh>
@@ -365,29 +366,38 @@ void emplar_data(rc_op op)
 void emplar(int vers)
 {
 #if TINKER_CUDART
-   if ((mlist_version() & NBL_SPATIAL) && !(vers & calc::analyz)) {
-      mpole_init(vers);
-      emplar_cu(vers);
-      torque(vers);
+   bool do_e = vers & calc::energy;
+   bool do_v = vers & calc::virial;
+   bool do_g = vers & calc::grad;
 
 
-      if (vers & calc::energy) {
-         energy_prec e1 = energy_reduce(em);
-         energy_prec e2 = 0;
-         if (ep && ep != em)
-            e2 = energy_reduce(ep);
-         energy_elec = e1 + e2;
-      }
-      if (vers & calc::virial) {
-         virial_buffer u1 = vir_em;
-         virial_buffer u2 = vir_trq;
-         virial_prec v1[9], v2[9];
-         virial_reduce(v1, u1);
-         virial_reduce(v2, u2);
-         for (int iv = 0; iv < 9; ++iv)
-            virial_elec[iv] = v1[iv] + v2[iv];
-      }
-      return;
+   host_zero(energy_em, virial_em);
+   auto bsize = buffer_size();
+   if (do_e)
+      darray::zero(PROCEED_NEW_Q, bsize, em);
+   if (do_v)
+      darray::zero(PROCEED_NEW_Q, bsize, vir_em);
+   if (do_g)
+      darray::zero(PROCEED_NEW_Q, n, demx, demy, demz);
+
+
+   mpole_init(vers);
+   emplar_cu(vers);
+   torque(vers, demx, demy, demz);
+
+
+   if (do_e) {
+      energy_prec e = energy_reduce(em);
+      energy_elec = e;
+   }
+   if (do_v) {
+      virial_buffer u1 = vir_em;
+      virial_buffer u2 = vir_trq;
+      virial_prec v1[9], v2[9];
+      virial_reduce(v1, u1);
+      virial_reduce(v2, u2);
+      for (int iv = 0; iv < 9; ++iv)
+         virial_elec[iv] = v1[iv] + v2[iv];
    }
 #else
    (void)vers;

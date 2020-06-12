@@ -70,6 +70,12 @@ int use_potent(potent_t term)
    case chgtrn_term:
       val = potent::use_chgtrn;
       break;
+   case disp_term:
+      val = potent::use_disp;
+      break;
+   case repuls_term:
+      val = potent::use_repuls;
+      break;
 
    default:
       assert(false);
@@ -124,8 +130,7 @@ int count_bonded_term(potent_t term)
       if (restrn::use_wall) { // droplet boundary
          val += atoms::n;
       }
-      break;
-   }
+   } break;
 
    default:
       assert(false);

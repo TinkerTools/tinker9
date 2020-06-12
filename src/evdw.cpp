@@ -4,6 +4,7 @@
 #include "potent.h"
 #include "tinker_rt.h"
 #include "tool/fc.h"
+#include "tool/host_zero.h"
 #include "tool/io_fort_str.h"
 #include "tool/io_text.h"
 #include <cassert>
@@ -454,6 +455,24 @@ void egauss(int vers)
 
 void evdw(int vers)
 {
+   bool do_a = vers & calc::analyz;
+   bool do_e = vers & calc::energy;
+   bool do_v = vers & calc::virial;
+   bool do_g = vers & calc::grad;
+
+
+   host_zero(energy_ev, virial_ev);
+   auto bsize = buffer_size();
+   if (do_a)
+      darray::zero(PROCEED_NEW_Q, bsize, nev);
+   if (do_e)
+      darray::zero(PROCEED_NEW_Q, bsize, ev);
+   if (do_v)
+      darray::zero(PROCEED_NEW_Q, bsize, vir_ev);
+   if (do_g)
+      darray::zero(PROCEED_NEW_Q, n, devx, devy, devz);
+
+
    if (vdwtyp == evdw_t::lj)
       elj(vers);
    else if (vdwtyp == evdw_t::buck)
@@ -468,13 +487,13 @@ void evdw(int vers)
       assert(false);
 
 
-   if (vers & calc::energy) {
+   if (do_e) {
       energy_buffer u = ev;
       energy_ev = energy_reduce(u);
       if (elrc_vol != 0)
          energy_ev += elrc_vol / volbox();
    }
-   if (vers & calc::virial) {
+   if (do_v) {
       virial_buffer u = vir_ev;
       virial_reduce(virial_ev, u);
       if (vlrc_vol != 0) {

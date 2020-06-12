@@ -1,6 +1,7 @@
 #include "eopbend.h"
 #include "md.h"
 #include "potent.h"
+#include "tool/host_zero.h"
 #include "tool/io_fort_str.h"
 #include <cassert>
 #include <tinker/detail/angpot.hh>
@@ -16,7 +17,7 @@ void eopbend_data(rc_op op)
       darray::deallocate(iopb, opbk);
 
       buffer_deallocate(rc_flag, eopb, vir_eopb);
-      buffer_deallocate(rc_flag & ~calc::analyz, deopbx, deopby, deopbz);
+      buffer_deallocate(rc_flag, deopbx, deopby, deopbz);
    }
 
    if (op & rc_alloc) {
@@ -25,7 +26,7 @@ void eopbend_data(rc_op op)
 
       nopbend = count_bonded_term(opbend_term);
       buffer_allocate(rc_flag, &eopb, &vir_eopb);
-      buffer_allocate(rc_flag & ~calc::analyz, &deopbx, &deopby, &deopbz);
+      buffer_allocate(rc_flag, &deopbx, &deopby, &deopbz);
    }
 
    if (op & rc_init) {
@@ -52,22 +53,39 @@ void eopbend_data(rc_op op)
 
 void eopbend(int vers)
 {
+   bool rc_a = rc_flag & calc::analyz;
+   bool do_e = vers & calc::energy;
+   bool do_v = vers & calc::virial;
+   bool do_g = vers & calc::grad;
+
+
+   if (rc_a) {
+      host_zero(energy_eopb, virial_eopb);
+      auto bsize = buffer_size();
+      if (do_e)
+         darray::zero(PROCEED_NEW_Q, bsize, eopb);
+      if (do_v)
+         darray::zero(PROCEED_NEW_Q, bsize, vir_eopb);
+      if (do_g)
+         darray::zero(PROCEED_NEW_Q, n, deopbx, deopby, deopbz);
+   }
+
+
    eopbend_acc(vers);
 
 
-   if (rc_flag & calc::analyz) {
-      if (vers & calc::energy) {
+   if (rc_a) {
+      if (do_e) {
          energy_eopb = energy_reduce(eopb);
          energy_valence += energy_eopb;
       }
-      if (vers & calc::virial) {
+      if (do_v) {
          virial_reduce(virial_eopb, vir_eopb);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eopb[iv];
       }
-   }
-   if (vers & calc::analyz)
-      if (vers & calc::grad)
+      if (do_g)
          sum_gradient(gx, gy, gz, deopbx, deopby, deopbz);
+   }
 }
 }

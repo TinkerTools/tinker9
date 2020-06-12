@@ -1,6 +1,7 @@
 #include "etors.h"
 #include "md.h"
 #include "potent.h"
+#include "tool/host_zero.h"
 #include <tinker/detail/torpot.hh>
 #include <tinker/detail/tors.hh>
 
@@ -14,7 +15,7 @@ void etors_data(rc_op op)
       darray::deallocate(itors, tors1, tors2, tors3, tors4, tors5, tors6);
 
       buffer_deallocate(rc_flag, et, vir_et);
-      buffer_deallocate(rc_flag & ~calc::analyz, detx, dety, detz);
+      buffer_deallocate(rc_flag, detx, dety, detz);
    }
 
    if (op & rc_alloc) {
@@ -23,7 +24,7 @@ void etors_data(rc_op op)
                        &tors6);
 
       buffer_allocate(rc_flag, &et, &vir_et);
-      buffer_allocate(rc_flag & ~calc::analyz, &detx, &dety, &detz);
+      buffer_allocate(rc_flag, &detx, &dety, &detz);
    }
 
    if (op & rc_init) {
@@ -44,22 +45,39 @@ void etors_data(rc_op op)
 
 void etors(int vers)
 {
+   bool rc_a = rc_flag & calc::analyz;
+   bool do_e = vers & calc::energy;
+   bool do_v = vers & calc::virial;
+   bool do_g = vers & calc::grad;
+
+
+   if (rc_a) {
+      host_zero(energy_et, virial_et);
+      auto bsize = buffer_size();
+      if (do_e)
+         darray::zero(PROCEED_NEW_Q, bsize, et);
+      if (do_v)
+         darray::zero(PROCEED_NEW_Q, bsize, vir_et);
+      if (do_g)
+         darray::zero(PROCEED_NEW_Q, n, detx, dety, detz);
+   }
+
+
    etors_acc(vers);
 
 
-   if (rc_flag & calc::analyz) {
-      if (vers & calc::energy) {
+   if (rc_a) {
+      if (do_e) {
          energy_et = energy_reduce(et);
          energy_valence += energy_et;
       }
-      if (vers & calc::virial) {
+      if (do_v) {
          virial_reduce(virial_et, vir_et);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_et[iv];
       }
-   }
-   if (vers & calc::analyz)
-      if (vers & calc::grad)
+      if (do_g)
          sum_gradient(gx, gy, gz, detx, dety, detz);
+   }
 }
 }
