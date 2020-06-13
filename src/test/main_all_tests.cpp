@@ -1,3 +1,3 @@
-// Catch2 version 2.3.0
+#warning This file may take a couple of minutes to compile.
 #define CATCH_CONFIG_MAIN
 #include "test.h"

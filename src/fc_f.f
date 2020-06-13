@@ -45,7 +45,7 @@ c
 c
 c
 c
-      subroutine fc_allocated (p,ans)  bind(c)
+      subroutine fc_allocated (p,ans)
       use iso_c_binding
       implicit none
       character, allocatable :: p(:)
@@ -60,7 +60,7 @@ c
 c
 c
 c
-      subroutine fc_deallocate (p)  bind(c)
+      subroutine fc_deallocate (p)
       implicit none
       character, allocatable :: p(:)
       deallocate (p)
@@ -69,7 +69,7 @@ c
 c
 c
 c
-      subroutine fc_allocate_char1 (p,bytes1)  bind(c)
+      subroutine fc_allocate_char1 (p,bytes1)
       implicit none
       integer*8, value :: bytes1
       character, allocatable :: p(:)
