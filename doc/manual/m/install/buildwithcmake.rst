@@ -114,8 +114,13 @@ cost of slightly slower simulation speed, a more "deterministic" force
 (using fixed-point arithmetic) can help.
 
 **-DCOMPUTE_CAPABILITY (compute_capability) = 60,70**
-CUDA compute capability. Valid values are 35, 60, 70, 75 etc., and can be
+CUDA compute capability (multiplied by 10) of GPU.
+Valid values (noninclusive) are 35, 50, 60, 70, 75 etc., and can be
 comma-separated, e.g. 35,60.
+Multiple compute capabilites will increase the size of executables.
+
+The full list of compute capabilities can be found on the
+`Nvidia website. <https://developer.nvidia.com/cuda-gpus>`_
 
 **-DCUDA_DIR (cuda_dir) = /usr/local/cuda**
 Top-level CUDA installation directory, under which "include"
