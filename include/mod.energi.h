@@ -72,6 +72,7 @@ namespace tinker {
    \
    virial_ec, virial_em, virial_ep,\
    \
+   virial_ect, \
    vir, \
    virial_valence, virial_elec
 // clang-format on

@@ -155,7 +155,7 @@ void x_analyze_e()
       print(out, fmt, "Polarization", energy_ep, count_reduce(nep));
 
    if (use_potent(chgtrn_term))
-      print(out, fmt, "Charge Transfer", energy_ect, 42);
+      print(out, fmt, "Charge Transfer", energy_ect, count_reduce(nct));
 
    if (use_potent(geom_term))
       print(out, fmt, "Geometric Restraints", energy_eg,
