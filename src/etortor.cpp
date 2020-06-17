@@ -1,4 +1,5 @@
 #include "etortor.h"
+#include "glob.energi.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/host_zero.h"
@@ -15,12 +16,19 @@ void etortor_data(rc_op op)
    if (!use_potent(tortor_term))
       return;
 
+   bool rc_a = rc_flag & calc::analyz;
+
    if (op & rc_dealloc) {
       darray::deallocate(ibitor, itt, tnx, tny, ttx, tty, tbf, tbx, tby, tbxy,
                          chkttor_ia_);
 
-      buffer_deallocate(rc_flag, ett, vir_ett);
-      buffer_deallocate(rc_flag, dettx, detty, dettz);
+      if (rc_a)
+         buffer_deallocate(rc_flag, ett, vir_ett, dettx, detty, dettz);
+      ett = nullptr;
+      vir_ett = nullptr;
+      dettx = nullptr;
+      detty = nullptr;
+      dettz = nullptr;
    }
 
    if (op & rc_alloc) {
@@ -33,8 +41,13 @@ void etortor_data(rc_op op)
       ntortor = count_bonded_term(tortor_term);
       darray::allocate(ntortor, &chkttor_ia_);
 
-      buffer_allocate(rc_flag, &ett, &vir_ett);
-      buffer_allocate(rc_flag, &dettx, &detty, &dettz);
+      ett = eng_buf;
+      vir_ett = vir_buf;
+      dettx = gx;
+      detty = gy;
+      dettz = gz;
+      if (rc_a)
+         buffer_allocate(rc_flag, &ett, &vir_ett, &dettx, &detty, &dettz);
    }
 
    if (op & rc_init) {

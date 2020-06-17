@@ -1,4 +1,5 @@
 #include "epitors.h"
+#include "glob.energi.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/host_zero.h"
@@ -11,20 +12,32 @@ void epitors_data(rc_op op)
    if (!use_potent(pitors_term))
       return;
 
+   bool rc_a = rc_flag & calc::analyz;
+
    if (op & rc_dealloc) {
       darray::deallocate(ipit, kpit);
 
-      buffer_deallocate(rc_flag, ept, vir_ept);
-      buffer_deallocate(rc_flag, deptx, depty, deptz);
+      if (rc_a)
+         buffer_deallocate(rc_flag, ept, vir_ept, deptx, depty, deptz);
+      ept = nullptr;
+      vir_ept = nullptr;
+      deptx = nullptr;
+      depty = nullptr;
+      deptz = nullptr;
    }
 
    if (op & rc_alloc) {
       int ntors = count_bonded_term(torsion_term);
       darray::allocate(ntors, &ipit, &kpit);
-
       npitors = count_bonded_term(pitors_term);
-      buffer_allocate(rc_flag, &ept, &vir_ept);
-      buffer_allocate(rc_flag, &deptx, &depty, &deptz);
+
+      ept = eng_buf;
+      vir_ept = vir_buf;
+      deptx = gx;
+      depty = gy;
+      deptz = gz;
+      if (rc_a)
+         buffer_allocate(rc_flag, &ept, &vir_ept, &deptx, &depty, &deptz);
    }
 
    if (op & rc_init) {

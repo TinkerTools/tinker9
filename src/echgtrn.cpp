@@ -1,7 +1,10 @@
 #include "echgtrn.h"
-#include "mdpq.h"
+#include "glob.energi.h"
+#include "md.h"
+#include "nblist.h"
 #include "potent.h"
 #include "tool/darray.h"
+#include "tool/host_zero.h"
 #include <tinker/detail/chgtrn.hh>
 #include <tinker/detail/ctrpot.hh>
 
@@ -13,13 +16,22 @@ void echgtrn_data(rc_op op)
       return;
 
 
+   bool rc_a = rc_flag & calc::analyz;
+
+
    if (op & rc_dealloc) {
       darray::deallocate(chgct, dmpct);
 
-      if (rc_flag & calc::analyz)
+      if (rc_a) {
          buffer_deallocate(calc::analyz, nct);
-      buffer_deallocate(rc_flag, ect, vir_ect);
-      buffer_deallocate(rc_flag, dectx, decty, dectz);
+         buffer_deallocate(rc_flag, ect, vir_ect, dectx, decty, dectz);
+      }
+      nct = nullptr;
+      ect = nullptr;
+      vir_ect = nullptr;
+      dectx = nullptr;
+      decty = nullptr;
+      dectz = nullptr;
    }
 
 
@@ -27,10 +39,16 @@ void echgtrn_data(rc_op op)
       darray::allocate(n, &chgct, &dmpct);
 
 
-      if (rc_flag & calc::analyz)
-         buffer_allocate(calc::analyz, &nct);
-      buffer_allocate(rc_flag, &ect, &vir_ect);
-      buffer_allocate(rc_flag, &dectx, &decty, &dectz);
+      nct = nullptr;
+      ect = eng_buf_elec;
+      vir_ect = vir_buf_elec;
+      dectx = gx_elec;
+      decty = gy_elec;
+      dectz = gz_elec;
+      if (rc_a) {
+         buffer_allocate(rc_flag, &nct);
+         buffer_allocate(rc_flag, &ect, &vir_ect, &dectx, &decty, &dectz);
+      }
    }
 
 
@@ -48,5 +66,55 @@ void echgtrn_data(rc_op op)
 }
 
 
-void echgtrn(int vers) {}
+void echgtrn(int vers)
+{
+   bool rc_a = rc_flag & calc::analyz;
+   bool do_a = vers & calc::analyz;
+   bool do_e = vers & calc::energy;
+   bool do_v = vers & calc::virial;
+   bool do_g = vers & calc::grad;
+
+
+   host_zero(energy_ect, virial_ect);
+   size_t bsize = buffer_size();
+   if (rc_a) {
+      if (do_a)
+         darray::zero(PROCEED_NEW_Q, bsize, nct);
+      if (do_e)
+         darray::zero(PROCEED_NEW_Q, bsize, ect);
+      if (do_v)
+         darray::zero(PROCEED_NEW_Q, bsize, vir_ect);
+      if (do_g)
+         darray::zero(PROCEED_NEW_Q, n, dectx, decty, dectz);
+   }
+
+
+#if TINKER_CUDART
+   if (mlist_version() & NBL_SPATIAL)
+      echgtrn_cu(vers);
+   else
+      ;
+#endif
+
+
+   if (rc_a) {
+      if (do_e) {
+         energy_buffer u = ect;
+         energy_prec e = energy_reduce(u);
+         energy_ect += e;
+         energy_elec += e;
+      }
+      if (do_v) {
+         virial_buffer u = vir_ect;
+         virial_prec v[9];
+         virial_reduce(v, u);
+         for (int iv = 0; iv < 9; ++iv) {
+            virial_ect[iv] += v[iv];
+            virial_elec[iv] += v[iv];
+         }
+      }
+      if (do_g)
+         sum_gradient(gx_elec, gy_elec, gz_elec, dectx, decty, dectz);
+   }
+}
 }

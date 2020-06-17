@@ -1,4 +1,5 @@
 #include "energy.h"
+#include "glob.energi.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
@@ -46,6 +47,37 @@ void energy_data(rc_op op)
 
    // HIPPO charge transfer
    rc_man echgtrn{echgtrn_data, op};
+}
+
+
+bool use_energi_vdw()
+{
+   bool ans = false;
+
+   // AMOEBA
+   ans = ans || use_potent(vdw_term);
+
+   // HIPPO
+   ans = ans || use_potent(disp_term);
+   ans = ans || use_potent(repuls_term);
+
+   return ans;
+}
+
+
+bool use_energi_elec()
+{
+   bool ans = false;
+
+   // AMOEBA
+   ans = ans || use_potent(charge_term);
+   ans = ans || use_potent(mpole_term);
+   ans = ans || use_potent(polar_term);
+
+   // HIPPO
+   ans = ans || use_potent(chgtrn_term);
+
+   return ans;
 }
 
 
@@ -151,8 +183,8 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 
    if (use_potent(chgtrn_term))
-      if (tscfg("ehippo"))
-         ehippo(vers);
+      if (tscfg("echgtrn"))
+         echgtrn(vers);
 }
 
 
@@ -163,33 +195,55 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 
    bool rc_a = rc_flag & calc::analyz;
-   if (vers & calc::energy) {
+   bool do_e = vers & calc::energy;
+   bool do_v = vers & calc::virial;
+   bool do_g = vers & calc::grad;
+
+   if (do_e) {
       if (!rc_a) {
-         energy_valence = energy_reduce(eng_buf);
+         energy_prec e;
+         e = energy_reduce(eng_buf);
+         energy_valence += e;
+         if (eng_buf_vdw) {
+            e = energy_reduce(eng_buf_vdw);
+            energy_vdw += e;
+         }
+         if (eng_buf_elec) {
+            e = energy_reduce(eng_buf_elec);
+            energy_elec += e;
+         }
       }
-      esum = energy_valence + energy_ev + energy_elec;
+      esum = energy_valence + energy_vdw + energy_elec;
    }
 
 
-   if (vers & calc::virial) {
+   if (do_v) {
       if (!rc_a) {
-         virial_reduce(virial_valence, vir_buf);
+         virial_prec v[9];
+         virial_reduce(v, vir_buf);
+         for (int iv = 0; iv < 9; ++iv)
+            virial_valence[iv] += v[iv];
+         if (vir_buf_vdw) {
+            virial_reduce(v, vir_buf_vdw);
+            for (int iv = 0; iv < 9; ++iv)
+               virial_vdw[iv] += v[iv];
+         }
+         if (vir_buf_elec) {
+            virial_reduce(v, vir_buf_elec);
+            for (int iv = 0; iv < 9; ++iv)
+               virial_elec[iv] += v[iv];
+         }
       }
       for (int iv = 0; iv < 9; ++iv)
-         vir[iv] = virial_valence[iv] + virial_ev[iv] + virial_elec[iv];
+         vir[iv] = virial_valence[iv] + virial_vdw[iv] + virial_elec[iv];
    }
 
 
-   if (vers & calc::grad) {
-      if (devx && devy && devz)
-         sum_gradient(gx, gy, gz, devx, devy, devz);
-      if (decx && decy && decz)
-         sum_gradient(gx, gy, gz, decx, decy, decz);
-      if (demx && demy && demz)
-         sum_gradient(gx, gy, gz, demx, demy, demz);
-      if (depx && depy && depz && (depx != demx) && (depy != demy) &&
-          (depz != demz))
-         sum_gradient(gx, gy, gz, depx, depy, depz);
+   if (do_g) {
+      if (gx_vdw)
+         sum_gradient(gx, gy, gz, gx_vdw, gy_vdw, gz_vdw);
+      if (gx_elec)
+         sum_gradient(gx, gy, gz, gx_elec, gy_elec, gz_elec);
    }
 }
 

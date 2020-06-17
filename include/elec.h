@@ -1,7 +1,6 @@
 #pragma once
 #include "mod.charge.h"
 #include "mod.chgpot.h"
-#include "mod.energi.h"
 #include "mod.mpole.h"
 #include "mod.polar.h"
 #include "tool/rc_man.h"
@@ -23,6 +22,8 @@ void pchg_data(rc_op);
 // AMOBEA: multipole, polarization
 // HIPPO: repulsion
 void pole_data(rc_op);
+
+void mscale_data(rc_op);
 
 
 //====================================================================//

@@ -1,7 +1,6 @@
 #pragma once
 #include "mod.angbnd.h"
 #include "mod.angpot.h"
-#include "mod.energi.h"
 #include "tool/rc_man.h"
 
 

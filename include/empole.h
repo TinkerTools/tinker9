@@ -1,6 +1,5 @@
 #pragma once
 #include "elec.h"
-#include "mod.energi.h"
 #include "mod.mplpot.h"
 
 

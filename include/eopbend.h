@@ -1,6 +1,5 @@
 #pragma once
 #include "eangle.h"
-#include "mod.energi.h"
 #include "mod.opbend.h"
 #include "tool/rc_man.h"
 

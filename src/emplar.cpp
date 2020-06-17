@@ -1,7 +1,7 @@
 #include "emplar.h"
 #include "elec.h"
+#include "glob.energi.h"
 #include "md.h"
-#include "mod.energi.h"
 #include "nblist.h"
 #include "potent.h"
 #include "tool/error.h"
@@ -384,20 +384,12 @@ void emplar(int vers)
    mpole_init(vers);
    emplar_cu(vers);
    torque(vers, demx, demy, demz);
-
-
-   if (do_e) {
-      energy_prec e = energy_reduce(em);
-      energy_elec = e;
-   }
    if (do_v) {
-      virial_buffer u1 = vir_em;
       virial_buffer u2 = vir_trq;
-      virial_prec v1[9], v2[9];
-      virial_reduce(v1, u1);
+      virial_prec v2[9];
       virial_reduce(v2, u2);
       for (int iv = 0; iv < 9; ++iv)
-         virial_elec[iv] = v1[iv] + v2[iv];
+         virial_elec[iv] += v2[iv];
    }
 #else
    (void)vers;

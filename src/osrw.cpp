@@ -1,7 +1,7 @@
 #include "osrw.h"
 #include "box.h"
 #include "energy.h"
-#include "evdw.h"
+#include "glob.energi.h"
 #include "potent.h"
 #include "tinker_rt.h"
 #include "tool/fc.h"
@@ -288,6 +288,7 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 
    energy_prec aec = 0, aem = 0, aep = 0;
+   energy_prec aect = 0;
    energy_prec aevdw = 0;
    energy_prec aetor = 0;
 
@@ -309,50 +310,67 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    energy_core(vers, tsflag, tsconfig);
    if (do_e) {
       if (!rc_a) {
-         energy_valence = energy_reduce(eng_buf);
+         energy_prec e;
+         e = energy_reduce(eng_buf);
+         energy_valence += e;
+         if (eng_buf_vdw) {
+            e = energy_reduce(eng_buf_vdw);
+            energy_vdw += e;
+         }
+         if (eng_buf_elec) {
+            e = energy_reduce(eng_buf_elec);
+            energy_elec += e;
+         }
       }
       osrw_du0 +=
-         (stor0 * energy_valence + svdw0 * energy_ev + sele0 * energy_elec);
+         (stor0 * energy_valence + svdw0 * energy_vdw + sele0 * energy_elec);
       osrw_du1 -=
-         (stor1 * energy_valence + svdw1 * energy_ev + sele1 * energy_elec);
+         (stor1 * energy_valence + svdw1 * energy_vdw + sele1 * energy_elec);
       if (do_a) {
          aetor += stor0 * energy_et;
          aevdw += svdw0 * energy_ev;
          aec += sele0 * energy_ec;
          aem += sele0 * energy_em;
          aep += sele0 * energy_ep;
+         aect += sele0 * energy_ect;
       }
    }
    if (do_v) {
       if (!rc_a) {
-         virial_reduce(virial_valence, vir_buf);
+         virial_prec v[9];
+         virial_reduce(v, vir_buf);
+         for (int iv = 0; iv < 9; ++iv)
+            virial_valence[iv] += v[iv];
+         if (vir_buf_vdw) {
+            virial_reduce(v, vir_buf_vdw);
+            for (int iv = 0; iv < 9; ++iv)
+               virial_vdw[iv] += v[iv];
+         }
+         if (vir_buf_elec) {
+            virial_reduce(v, vir_buf_elec);
+            for (int iv = 0; iv < 9; ++iv)
+               virial_elec[iv] += v[iv];
+         }
       }
       for (int iv = 0; iv < 9; ++iv) {
-         osrw_dv0[iv] += (stor0 * virial_valence[iv] + svdw0 * virial_ev[iv] +
+         osrw_dv0[iv] += (stor0 * virial_valence[iv] + svdw0 * virial_vdw[iv] +
                           sele0 * virial_elec[iv]);
-         osrw_dv1[iv] -= (stor1 * virial_valence[iv] + svdw1 * virial_ev[iv] +
+         osrw_dv1[iv] -= (stor1 * virial_valence[iv] + svdw1 * virial_vdw[iv] +
                           sele1 * virial_elec[iv]);
       }
    }
    if (do_g) {
       sum_gradient(-stor1, osrw_dgx, osrw_dgy, osrw_dgz, gx, gy, gz);
       scale_gradient(stor0, gx, gy, gz);
-      if (devx && devy && devz) {
-         sum_gradient(-svdw1, osrw_dgx, osrw_dgy, osrw_dgz, devx, devy, devz);
-         sum_gradient(svdw0, gx, gy, gz, devx, devy, devz);
+      if (gx_vdw) {
+         sum_gradient(-svdw1, osrw_dgx, osrw_dgy, osrw_dgz, gx_vdw, gy_vdw,
+                      gz_vdw);
+         sum_gradient(svdw0, gx, gy, gz, gx_vdw, gy_vdw, gz_vdw);
       }
-      if (decx && decy && decz) {
-         sum_gradient(-sele1, osrw_dgx, osrw_dgy, osrw_dgz, decx, decy, decz);
-         sum_gradient(sele0, gx, gy, gz, decx, decy, decz);
-      }
-      if (demx && demy && demz) {
-         sum_gradient(-sele1, osrw_dgx, osrw_dgy, osrw_dgz, demx, demy, demz);
-         sum_gradient(sele0, gx, gy, gz, demx, demy, demz);
-      }
-      if (depx && depy && depz && (depx != demx) && (depy != demy) &&
-          (depz != demz)) {
-         sum_gradient(-sele1, osrw_dgx, osrw_dgy, osrw_dgz, depx, depy, depz);
-         sum_gradient(sele0, gx, gy, gz, depx, depy, depz);
+      if (gx_elec) {
+         sum_gradient(-sele1, osrw_dgx, osrw_dgy, osrw_dgz, gx_elec, gy_elec,
+                      gz_elec);
+         sum_gradient(sele0, gx, gy, gz, gx_elec, gy_elec, gz_elec);
       }
       darray::copy(PROCEED_NEW_Q, n, osrw_gx, gx);
       darray::copy(PROCEED_NEW_Q, n, osrw_gy, gy);
@@ -372,12 +390,22 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    energy_core(vers, tsflag, tsconfig);
    if (do_e) {
       if (!rc_a) {
-         energy_valence = energy_reduce(eng_buf);
+         energy_prec e;
+         e = energy_reduce(eng_buf);
+         energy_valence += e;
+         if (eng_buf_vdw) {
+            e = energy_reduce(eng_buf_vdw);
+            energy_vdw += e;
+         }
+         if (eng_buf_elec) {
+            e = energy_reduce(eng_buf_elec);
+            energy_elec += e;
+         }
       }
       osrw_du0 +=
-         (stor0 * energy_valence + svdw0 * energy_ev + sele0 * energy_elec);
+         (stor0 * energy_valence + svdw0 * energy_vdw + sele0 * energy_elec);
       osrw_du1 +=
-         (stor1 * energy_valence + svdw1 * energy_ev + sele1 * energy_elec);
+         (stor1 * energy_valence + svdw1 * energy_vdw + sele1 * energy_elec);
       esum = osrw_du0;
       if (do_a) {
          aetor += stor0 * energy_et;
@@ -385,46 +413,54 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          aec += sele0 * energy_ec;
          aem += sele0 * energy_em;
          aep += sele0 * energy_ep;
+         aect += sele0 * energy_ect;
          energy_et = aetor;
          energy_ev = aevdw;
          energy_ec = aec;
          energy_em = aem;
          energy_ep = aep;
+         energy_ect = aect;
       }
    }
    if (do_v) {
       if (!rc_a) {
-         virial_reduce(virial_valence, vir_buf);
+         virial_prec v[9];
+         virial_reduce(v, vir_buf);
+         for (int iv = 0; iv < 9; ++iv)
+            virial_valence[iv] += v[iv];
+         if (vir_buf_vdw) {
+            virial_reduce(v, vir_buf_vdw);
+            for (int iv = 0; iv < 9; ++iv)
+               virial_vdw[iv] += v[iv];
+         }
+         if (vir_buf_elec) {
+            virial_reduce(v, vir_buf_elec);
+            for (int iv = 0; iv < 9; ++iv)
+               virial_elec[iv] += v[iv];
+         }
       }
       for (int iv = 0; iv < 9; ++iv) {
-         osrw_dv0[iv] += (stor0 * virial_valence[iv] + svdw0 * virial_ev[iv] +
+         osrw_dv0[iv] += (stor0 * virial_valence[iv] + svdw0 * virial_vdw[iv] +
                           sele0 * virial_elec[iv]);
-         osrw_dv1[iv] += (stor1 * virial_valence[iv] + svdw1 * virial_ev[iv] +
+         osrw_dv1[iv] += (stor1 * virial_valence[iv] + svdw1 * virial_vdw[iv] +
                           sele1 * virial_elec[iv]);
       }
       for (int iv = 0; iv < 9; ++iv) {
          vir[iv] = osrw_dv0[iv];
       }
    }
-   if (vers & calc::grad) {
+   if (do_g) {
       sum_gradient(stor1, osrw_dgx, osrw_dgy, osrw_dgz, gx, gy, gz);
       scale_gradient(stor0, gx, gy, gz);
-      if (devx && devy && devz) {
-         sum_gradient(svdw1, osrw_dgx, osrw_dgy, osrw_dgz, devx, devy, devz);
-         sum_gradient(svdw0, gx, gy, gz, devx, devy, devz);
+      if (gx_vdw) {
+         sum_gradient(svdw1, osrw_dgx, osrw_dgy, osrw_dgz, gx_vdw, gy_vdw,
+                      gz_vdw);
+         sum_gradient(svdw0, gx, gy, gz, gx_vdw, gy_vdw, gz_vdw);
       }
-      if (decx && decy && decz) {
-         sum_gradient(sele1, osrw_dgx, osrw_dgy, osrw_dgz, decx, decy, decz);
-         sum_gradient(sele0, gx, gy, gz, decx, decy, decz);
-      }
-      if (demx && demy && demz) {
-         sum_gradient(sele1, osrw_dgx, osrw_dgy, osrw_dgz, demx, demy, demz);
-         sum_gradient(sele0, gx, gy, gz, demx, demy, demz);
-      }
-      if (depx && depy && depz && (depx != demx) && (depy != demy) &&
-          (depz != demz)) {
-         sum_gradient(sele1, osrw_dgx, osrw_dgy, osrw_dgz, depx, depy, depz);
-         sum_gradient(sele0, gx, gy, gz, depx, depy, depz);
+      if (gx_elec) {
+         sum_gradient(sele1, osrw_dgx, osrw_dgy, osrw_dgz, gx_elec, gy_elec,
+                      gz_elec);
+         sum_gradient(sele0, gx, gy, gz, gx_elec, gy_elec, gz_elec);
       }
       sum_gradient(gx, gy, gz, osrw_gx, osrw_gy, osrw_gz);
    }

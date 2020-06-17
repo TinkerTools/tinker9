@@ -1,4 +1,5 @@
 #include "ebond.h"
+#include "glob.energi.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/host_zero.h"
@@ -12,19 +13,31 @@ void ebond_data(rc_op op)
    if (!use_potent(bond_term) && !use_potent(strbnd_term))
       return;
 
+   bool rc_a = rc_flag & calc::analyz;
+
    if (op & rc_dealloc) {
       darray::deallocate(ibnd, bl, bk);
 
-      buffer_deallocate(rc_flag, eb, vir_eb);
-      buffer_deallocate(rc_flag, debx, deby, debz);
+      if (rc_a)
+         buffer_deallocate(rc_flag, eb, vir_eb, debx, deby, debz);
+      eb = nullptr;
+      vir_eb = nullptr;
+      debx = nullptr;
+      deby = nullptr;
+      debz = nullptr;
    }
 
    if (op & rc_alloc) {
       nbond = count_bonded_term(bond_term);
       darray::allocate(nbond, &ibnd, &bl, &bk);
 
-      buffer_allocate(rc_flag, &eb, &vir_eb);
-      buffer_allocate(rc_flag, &debx, &deby, &debz);
+      eb = eng_buf;
+      vir_eb = vir_buf;
+      debx = gx;
+      deby = gy;
+      debz = gz;
+      if (rc_a)
+         buffer_allocate(rc_flag, &eb, &vir_eb, &debx, &deby, &debz);
    }
 
    if (op & rc_init) {

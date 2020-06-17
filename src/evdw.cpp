@@ -1,4 +1,5 @@
 #include "evdw.h"
+#include "glob.energi.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
@@ -35,6 +36,9 @@ void evdw_data(rc_op op)
       return;
 
 
+   bool rc_a = rc_flag & calc::analyz;
+
+
    if (op & rc_dealloc) {
       // local static variables
       jmap.clear();
@@ -63,11 +67,16 @@ void evdw_data(rc_op op)
       }
 
 
-      if (rc_flag & calc::analyz) {
-         buffer_deallocate(calc::analyz, nev);
+      if (rc_a) {
+         buffer_deallocate(rc_flag, nev);
+         buffer_deallocate(rc_flag, ev, vir_ev, devx, devy, devz);
       }
-      buffer_deallocate(rc_flag | calc::analyz, ev, vir_ev);
-      buffer_deallocate(rc_flag | calc::analyz, devx, devy, devz);
+      nev = nullptr;
+      ev = nullptr;
+      vir_ev = nullptr;
+      devx = nullptr;
+      devy = nullptr;
+      devz = nullptr;
 
 
       elrc_vol = 0;
@@ -305,11 +314,16 @@ void evdw_data(rc_op op)
       }
 
 
-      if (rc_flag & calc::analyz) {
-         buffer_allocate(calc::analyz, &nev);
+      nev = nullptr;
+      ev = eng_buf_vdw;
+      vir_ev = vir_buf_vdw;
+      devx = gx_vdw;
+      devy = gy_vdw;
+      devz = gz_vdw;
+      if (rc_a) {
+         buffer_allocate(rc_flag, &nev);
+         buffer_allocate(rc_flag, &ev, &vir_ev, &devx, &devy, &devz);
       }
-      buffer_allocate(rc_flag | calc::analyz, &ev, &vir_ev);
-      buffer_allocate(rc_flag | calc::analyz, &devx, &devy, &devz);
    }
 
 
@@ -455,6 +469,7 @@ void egauss(int vers)
 
 void evdw(int vers)
 {
+   bool rc_a = rc_flag & calc::analyz;
    bool do_a = vers & calc::analyz;
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
@@ -462,15 +477,17 @@ void evdw(int vers)
 
 
    host_zero(energy_ev, virial_ev);
-   auto bsize = buffer_size();
-   if (do_a)
-      darray::zero(PROCEED_NEW_Q, bsize, nev);
-   if (do_e)
-      darray::zero(PROCEED_NEW_Q, bsize, ev);
-   if (do_v)
-      darray::zero(PROCEED_NEW_Q, bsize, vir_ev);
-   if (do_g)
-      darray::zero(PROCEED_NEW_Q, n, devx, devy, devz);
+   size_t bsize = buffer_size();
+   if (rc_a) {
+      if (do_a)
+         darray::zero(PROCEED_NEW_Q, bsize, nev);
+      if (do_e)
+         darray::zero(PROCEED_NEW_Q, bsize, ev);
+      if (do_v)
+         darray::zero(PROCEED_NEW_Q, bsize, vir_ev);
+      if (do_g)
+         darray::zero(PROCEED_NEW_Q, n, devx, devy, devz);
+   }
 
 
    if (vdwtyp == evdw_t::lj)
@@ -488,20 +505,41 @@ void evdw(int vers)
 
 
    if (do_e) {
-      energy_buffer u = ev;
-      energy_ev = energy_reduce(u);
-      if (elrc_vol != 0)
-         energy_ev += elrc_vol / volbox();
+      if (elrc_vol != 0) {
+         energy_prec corr = elrc_vol / volbox();
+         energy_ev += corr;
+         energy_vdw += corr;
+      }
    }
    if (do_v) {
-      virial_buffer u = vir_ev;
-      virial_reduce(virial_ev, u);
       if (vlrc_vol != 0) {
          virial_prec term = vlrc_vol / volbox();
          virial_ev[0] += term; // xx
          virial_ev[4] += term; // yy
          virial_ev[8] += term; // zz
+         virial_vdw[0] += term;
+         virial_vdw[4] += term;
+         virial_vdw[8] += term;
       }
+   }
+   if (rc_a) {
+      if (do_e) {
+         energy_buffer u = ev;
+         energy_prec e = energy_reduce(u);
+         energy_ev += e;
+         energy_vdw += e;
+      }
+      if (do_v) {
+         virial_buffer u = vir_ev;
+         virial_prec v[9];
+         virial_reduce(v, u);
+         for (int iv = 0; iv < 9; ++iv) {
+            virial_ev[iv] += v[iv];
+            virial_vdw[iv] += v[iv];
+         }
+      }
+      if (do_g)
+         sum_gradient(gx_vdw, gy_vdw, gz_vdw, devx, devy, devz);
    }
 }
 }

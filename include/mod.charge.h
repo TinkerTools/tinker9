@@ -1,5 +1,6 @@
 #pragma once
 #include "macro.h"
+#include "tool/energy_buffer.h"
 
 
 namespace tinker {
@@ -10,4 +11,14 @@ namespace tinker {
  * array also includes zero charges.
  */
 TINKER_EXTERN real* pchg;
+
+
+TINKER_EXTERN count_buffer nec;
+TINKER_EXTERN energy_buffer ec;
+TINKER_EXTERN virial_buffer vir_ec;
+TINKER_EXTERN grad_prec* decx;
+TINKER_EXTERN grad_prec* decy;
+TINKER_EXTERN grad_prec* decz;
+TINKER_EXTERN energy_prec energy_ec;
+TINKER_EXTERN virial_prec virial_ec[9];
 }

@@ -98,8 +98,8 @@ nblist_t clist_version()
 nblist_t mlist_version()
 {
    nblist_t u;
-   if (!use_potent(mpole_term) && !use_potent(polar_term)
-       /* && !use_potent(chgtrn_term) && !use_potent(solv_term) */) {
+   if (!use_potent(mpole_term) && !use_potent(polar_term) &&
+       !use_potent(chgtrn_term) /* && !use_potent(solv_term) */) {
       u = NBL_UNDEFINED;
    } else if (!limits::use_mlist) {
       u = NBL_DOUBLE_LOOP;

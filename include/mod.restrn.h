@@ -1,5 +1,6 @@
 #pragma once
 #include "macro.h"
+#include "tool/energy_buffer.h"
 
 
 namespace tinker {
@@ -12,4 +13,13 @@ TINKER_EXTERN int (*igfix)[2];
 /// \ingroup geom
 /// \brief Force constant and target range for each group distance.
 TINKER_EXTERN real (*gfix)[3];
+
+
+TINKER_EXTERN energy_buffer eg;
+TINKER_EXTERN virial_buffer vir_eg;
+TINKER_EXTERN grad_prec* degx;
+TINKER_EXTERN grad_prec* degy;
+TINKER_EXTERN grad_prec* degz;
+TINKER_EXTERN energy_prec energy_eg;
+TINKER_EXTERN virial_prec virial_eg[9];
 }

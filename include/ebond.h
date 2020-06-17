@@ -1,7 +1,6 @@
 #pragma once
 #include "mod.bndpot.h"
 #include "mod.bndstr.h"
-#include "mod.energi.h"
 #include "tool/rc_man.h"
 
 

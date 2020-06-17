@@ -1,7 +1,8 @@
 #include "mdegv.h"
+#include "energy.h"
+#include "glob.energi.h"
 #include "mdcalc.h"
 #include "mdpq.h"
-#include "mod.energi.h"
 #include "tool/host_zero.h"
 
 
@@ -14,22 +15,31 @@ energy_prec eksum, ekin[3][3];
 
 void zero_egv(int vers)
 {
-   if (vers & calc::analyz) {
-      darray::zero(PROCEED_NEW_Q, buffer_size(), TINKER_COUNT_BUFFERS);
-   }
-
+   size_t bsize = buffer_size();
    if (vers & calc::energy) {
-      host_zero(esum, energy_valence, energy_elec, energy_ev);
-      darray::zero(PROCEED_NEW_Q, buffer_size(), eng_buf);
+      host_zero(esum, energy_valence, energy_vdw, energy_elec);
+      darray::zero(PROCEED_NEW_Q, bsize, eng_buf);
+      if (use_energi_vdw())
+         darray::zero(PROCEED_NEW_Q, bsize, eng_buf_vdw);
+      if (use_energi_elec())
+         darray::zero(PROCEED_NEW_Q, bsize, eng_buf_elec);
    }
 
    if (vers & calc::virial) {
-      host_zero(vir, virial_valence, virial_elec, virial_ev);
+      host_zero(vir, virial_valence, virial_vdw, virial_elec);
       darray::zero(PROCEED_NEW_Q, buffer_size(), vir_buf);
+      if (use_energi_vdw())
+         darray::zero(PROCEED_NEW_Q, bsize, vir_buf_vdw);
+      if (use_energi_elec())
+         darray::zero(PROCEED_NEW_Q, bsize, vir_buf_elec);
    }
 
    if (vers & calc::grad) {
       darray::zero(PROCEED_NEW_Q, n, gx, gy, gz);
+      if (use_energi_vdw())
+         darray::zero(PROCEED_NEW_Q, n, gx_vdw, gy_vdw, gz_vdw);
+      if (use_energi_elec())
+         darray::zero(PROCEED_NEW_Q, n, gx_elec, gy_elec, gz_elec);
    }
 }
 
@@ -140,23 +150,30 @@ void copy_virial(int vers, virial_prec* virial)
 
 void egv_data(rc_op op)
 {
+   bool rc_a = rc_flag & calc::analyz;
+
+
    if (rc_flag & calc::energy) {
       if (op & rc_dealloc) {
-         if (rc_flag & calc::analyz) {
-         } else {
+         if (!rc_a) {
             darray::deallocate(eng_buf);
+            if (use_energi_vdw())
+               darray::deallocate(eng_buf_vdw);
+            if (use_energi_elec())
+               darray::deallocate(eng_buf_elec);
          }
       }
 
 
       if (op & rc_alloc) {
-         host_zero(TINKER_COUNT_BUFFERS);
-         host_zero(TINKER_ENERGY_BUFFERS);
-         if (rc_flag & calc::analyz) {
-            eng_buf = nullptr;
-         } else {
+         host_zero(eng_buf, eng_buf_vdw, eng_buf_elec);
+         if (!rc_a) {
             auto sz = buffer_size();
             darray::allocate(sz, &eng_buf);
+            if (use_energi_vdw())
+               darray::allocate(sz, &eng_buf_vdw);
+            if (use_energi_elec())
+               darray::allocate(sz, &eng_buf_elec);
          }
       }
    }
@@ -164,20 +181,25 @@ void egv_data(rc_op op)
 
    if (rc_flag & calc::virial) {
       if (op & rc_dealloc) {
-         if (rc_flag & calc::analyz) {
-         } else {
+         if (!rc_a) {
             darray::deallocate(vir_buf);
+            if (use_energi_vdw())
+               darray::deallocate(vir_buf_vdw);
+            if (use_energi_elec())
+               darray::deallocate(vir_buf_elec);
          }
       }
 
 
       if (op & rc_alloc) {
-         host_zero(TINKER_VIRIAL_BUFFERS);
-         if (rc_flag & calc::analyz) {
-            vir_buf = nullptr;
-         } else {
+         host_zero(vir_buf, vir_buf_vdw, vir_buf_elec);
+         if (!rc_a) {
             auto sz = buffer_size();
             darray::allocate(sz, &vir_buf);
+            if (use_energi_vdw())
+               darray::allocate(sz, &vir_buf_vdw);
+            if (use_energi_elec())
+               darray::allocate(sz, &vir_buf_elec);
          }
       }
    }
@@ -185,14 +207,24 @@ void egv_data(rc_op op)
 
    if (rc_flag & calc::grad) {
       if (op & rc_dealloc) {
-         // Other gradients are deallocated elsewhere.
          darray::deallocate(gx, gy, gz);
+         if (!rc_a) {
+            if (use_energi_vdw())
+               darray::deallocate(gx_vdw, gy_vdw, gz_vdw);
+            if (use_energi_elec())
+               darray::deallocate(gx_elec, gy_elec, gz_elec);
+         }
       }
 
 
       if (op & rc_alloc) {
-         host_zero(TINKER_GRADIENTS);
+         host_zero(gx, gy, gz, gx_vdw, gy_vdw, gz_vdw, gx_elec, gy_elec,
+                   gz_elec);
          darray::allocate(n, &gx, &gy, &gz);
+         if (use_energi_vdw())
+            darray::allocate(n, &gx_vdw, &gy_vdw, &gz_vdw);
+         if (use_energi_elec())
+            darray::allocate(n, &gx_elec, &gy_elec, &gz_elec);
       }
    }
 }

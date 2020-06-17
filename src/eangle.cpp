@@ -1,4 +1,5 @@
 #include "eangle.h"
+#include "glob.energi.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/host_zero.h"
@@ -14,19 +15,31 @@ void eangle_data(rc_op op)
        !use_potent(opbend_term))
       return;
 
+   bool rc_a = rc_flag & calc::analyz;
+
    if (op & rc_dealloc) {
       darray::deallocate(iang, ak, anat, angtyp);
 
-      buffer_deallocate(rc_flag, ea, vir_ea);
-      buffer_deallocate(rc_flag, deax, deay, deaz);
+      if (rc_a)
+         buffer_deallocate(rc_flag, ea, vir_ea, deax, deay, deaz);
+      ea = nullptr;
+      vir_ea = nullptr;
+      deax = nullptr;
+      deay = nullptr;
+      deaz = nullptr;
    }
 
    if (op & rc_alloc) {
       nangle = count_bonded_term(angle_term);
       darray::allocate(nangle, &iang, &ak, &anat, &angtyp);
 
-      buffer_allocate(rc_flag, &ea, &vir_ea);
-      buffer_allocate(rc_flag, &deax, &deay, &deaz);
+      ea = eng_buf;
+      vir_ea = vir_buf;
+      deax = gx;
+      deay = gy;
+      deaz = gz;
+      if (rc_a)
+         buffer_allocate(rc_flag, &ea, &vir_ea, &deax, &deay, &deaz);
    }
 
    if (op & rc_init) {

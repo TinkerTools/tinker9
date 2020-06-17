@@ -1,6 +1,6 @@
 #include "echarge.h"
-#include "mdcalc.h"
-#include "mdpq.h"
+#include "glob.energi.h"
+#include "md.h"
 #include "nblist.h"
 #include "pmestuf.h"
 #include "potent.h"
@@ -24,15 +24,23 @@ void echarge_data(rc_op op)
       return;
 
 
+   bool rc_a = rc_flag & calc::analyz;
+
+
    if (op & rc_dealloc) {
       ncexclude = 0;
       darray::deallocate(cexclude, cexclude_scale);
 
-      if (rc_flag & calc::analyz) {
-         buffer_deallocate(calc::analyz, nec);
+      if (rc_a) {
+         buffer_deallocate(rc_flag, nec);
+         buffer_deallocate(rc_flag, ec, vir_ec, decx, decy, decz);
       }
-      buffer_deallocate(rc_flag | calc::analyz, ec, vir_ec);
-      buffer_deallocate(rc_flag | calc::analyz, decx, decy, decz);
+      nec = nullptr;
+      ec = nullptr;
+      vir_ec = nullptr;
+      decx = nullptr;
+      decy = nullptr;
+      decz = nullptr;
    }
 
 
@@ -113,11 +121,16 @@ void echarge_data(rc_op op)
       darray::copyin(WAIT_NEW_Q, ncexclude, cexclude_scale, excl.data());
 
 
-      if (rc_flag & calc::analyz) {
-         buffer_allocate(calc::analyz, &nec);
+      nec = nullptr;
+      ec = eng_buf_elec;
+      vir_ec = vir_buf_elec;
+      decx = gx_elec;
+      decy = gy_elec;
+      decz = gz_elec;
+      if (rc_a) {
+         buffer_allocate(rc_flag, &nec);
+         buffer_allocate(rc_flag, &ec, &vir_ec, &decx, &decy, &decz);
       }
-      buffer_allocate(rc_flag | calc::analyz, &ec, &vir_ec);
-      buffer_allocate(rc_flag | calc::analyz, &decx, &decy, &decz);
    }
 
 
@@ -128,6 +141,7 @@ void echarge_data(rc_op op)
 
 void echarge(int vers)
 {
+   bool rc_a = rc_flag & calc::analyz;
    bool do_a = vers & calc::analyz;
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
@@ -135,33 +149,41 @@ void echarge(int vers)
 
 
    host_zero(energy_ec, virial_ec);
-   auto bsize = buffer_size();
-   if (do_a)
-      darray::zero(PROCEED_NEW_Q, bsize, nec);
-   if (do_e)
-      darray::zero(PROCEED_NEW_Q, bsize, ec);
-   if (do_v)
-      darray::zero(PROCEED_NEW_Q, bsize, vir_ec);
-   if (do_g)
-      darray::zero(PROCEED_NEW_Q, n, decx, decy, decz);
-
+   size_t bsize = buffer_size();
+   if (rc_a) {
+      if (do_a)
+         darray::zero(PROCEED_NEW_Q, bsize, nec);
+      if (do_e)
+         darray::zero(PROCEED_NEW_Q, bsize, ec);
+      if (do_v)
+         darray::zero(PROCEED_NEW_Q, bsize, vir_ec);
+      if (do_g)
+         darray::zero(PROCEED_NEW_Q, n, decx, decy, decz);
+   }
 
    if (use_ewald())
       echarge_ewald(vers);
    else
       echarge_nonewald(vers);
 
-
-   if (do_e) {
-      energy_buffer u = ec;
-      energy_ec = energy_reduce(u);
-      energy_elec = energy_ec;
-   }
-   if (do_v) {
-      virial_buffer u = vir_ec;
-      virial_reduce(virial_ec, u);
-      for (int iv = 0; iv < 9; ++iv)
-         virial_elec[iv] = virial_ec[iv];
+   if (rc_a) {
+      if (do_e) {
+         energy_buffer u = ec;
+         energy_prec e = energy_reduce(u);
+         energy_ec += e;
+         energy_elec += e;
+      }
+      if (do_v) {
+         virial_buffer u = vir_ec;
+         virial_prec v[9];
+         virial_reduce(v, u);
+         for (int iv = 0; iv < 9; ++iv) {
+            virial_ec[iv] += v[iv];
+            virial_elec[iv] += v[iv];
+         }
+      }
+      if (do_g)
+         sum_gradient(gx_elec, gy_elec, gz_elec, decx, decy, decz);
    }
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "macro.h"
+#include "tool/energy_buffer.h"
 
 
 namespace tinker {
@@ -15,6 +16,16 @@ TINKER_EXTERN real (*uinp)[3];
 
 
 //====================================================================//
+
+
+TINKER_EXTERN count_buffer nep;
+TINKER_EXTERN energy_buffer ep;
+TINKER_EXTERN virial_buffer vir_ep;
+TINKER_EXTERN grad_prec* depx;
+TINKER_EXTERN grad_prec* depy;
+TINKER_EXTERN grad_prec* depz;
+TINKER_EXTERN energy_prec energy_ep;
+TINKER_EXTERN virial_prec virial_ep[9];
 
 
 TINKER_EXTERN real* polarity_inv;

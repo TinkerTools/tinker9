@@ -1,6 +1,5 @@
 #pragma once
 #include "glob.mplar.h"
-#include "mod.energi.h"
 #include "tool/rc_man.h"
 
 

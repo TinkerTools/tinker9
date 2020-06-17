@@ -1,4 +1,5 @@
 #include "etors.h"
+#include "glob.energi.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/host_zero.h"
@@ -11,11 +12,19 @@ void etors_data(rc_op op)
    if (!use_potent(torsion_term))
       return;
 
+
+   bool rc_a = rc_flag & calc::analyz;
+
    if (op & rc_dealloc) {
       darray::deallocate(itors, tors1, tors2, tors3, tors4, tors5, tors6);
 
-      buffer_deallocate(rc_flag, et, vir_et);
-      buffer_deallocate(rc_flag, detx, dety, detz);
+      if (rc_a)
+         buffer_deallocate(rc_flag, et, vir_et, detx, dety, detz);
+      et = nullptr;
+      vir_et = nullptr;
+      detx = nullptr;
+      dety = nullptr;
+      detz = nullptr;
    }
 
    if (op & rc_alloc) {
@@ -23,8 +32,13 @@ void etors_data(rc_op op)
       darray::allocate(ntors, &itors, &tors1, &tors2, &tors3, &tors4, &tors5,
                        &tors6);
 
-      buffer_allocate(rc_flag, &et, &vir_et);
-      buffer_allocate(rc_flag, &detx, &dety, &detz);
+      et = eng_buf;
+      vir_et = vir_buf;
+      detx = gx;
+      dety = gy;
+      detz = gz;
+      if (rc_a)
+         buffer_allocate(rc_flag, &et, &vir_et, &detx, &dety, &detz);
    }
 
    if (op & rc_init) {

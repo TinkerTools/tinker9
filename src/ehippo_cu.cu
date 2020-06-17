@@ -308,7 +308,7 @@ void echgtrn_cu3()
 }
 
 
-void ehippo_cu(int vers)
+void echgtrn_cu(int vers)
 {
    if (vers == calc::v0)
       echgtrn_cu3<calc::V0>();

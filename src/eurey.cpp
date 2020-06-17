@@ -1,4 +1,5 @@
 #include "eurey.h"
+#include "glob.energi.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/host_zero.h"
@@ -11,11 +12,18 @@ void eurey_data(rc_op op)
    if (!use_potent(urey_term))
       return;
 
+   bool rc_a = rc_flag & calc::analyz;
+
    if (op & rc_dealloc) {
       darray::deallocate(iury, uk, ul);
 
-      buffer_deallocate(rc_flag, eub, vir_eub);
-      buffer_deallocate(rc_flag, deubx, deuby, deubz);
+      if (rc_a)
+         buffer_deallocate(rc_flag, eub, vir_eub, deubx, deuby, deubz);
+      eub = nullptr;
+      vir_eub = nullptr;
+      deubx = nullptr;
+      deuby = nullptr;
+      deubz = nullptr;
    }
 
    if (op & rc_alloc) {
@@ -23,8 +31,14 @@ void eurey_data(rc_op op)
       darray::allocate(nangle, &iury, &uk, &ul);
 
       nurey = count_bonded_term(urey_term);
-      buffer_allocate(rc_flag, &eub, &vir_eub);
-      buffer_allocate(rc_flag, &deubx, &deuby, &deubz);
+
+      eub = eng_buf;
+      vir_eub = vir_buf;
+      deubx = gx;
+      deuby = gy;
+      deubz = gz;
+      if (rc_a)
+         buffer_allocate(rc_flag, &eub, &vir_eub, &deubx, &deuby, &deubz);
    }
 
    if (op & rc_init) {

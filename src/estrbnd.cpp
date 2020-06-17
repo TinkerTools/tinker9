@@ -1,4 +1,5 @@
 #include "estrbnd.h"
+#include "glob.energi.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/host_zero.h"
@@ -11,20 +12,32 @@ void estrbnd_data(rc_op op)
    if (!use_potent(strbnd_term))
       return;
 
+   bool rc_a = rc_flag & calc::analyz;
+
    if (op & rc_dealloc) {
       darray::deallocate(isb, sbk);
 
-      buffer_deallocate(rc_flag, eba, vir_eba);
-      buffer_deallocate(rc_flag, debax, debay, debaz);
+      if (rc_a)
+         buffer_deallocate(rc_flag, eba, vir_eba, debax, debay, debaz);
+      eba = nullptr;
+      vir_eba = nullptr;
+      debax = nullptr;
+      debay = nullptr;
+      debaz = nullptr;
    }
 
    if (op & rc_alloc) {
       int nangle = count_bonded_term(angle_term);
       darray::allocate(nangle, &isb, &sbk);
-
       nstrbnd = count_bonded_term(strbnd_term);
-      buffer_allocate(rc_flag, &eba, &vir_eba);
-      buffer_allocate(rc_flag, &debax, &debay, &debaz);
+
+      eba = eng_buf;
+      vir_eba = vir_buf;
+      debax = gx;
+      debay = gy;
+      debaz = gz;
+      if (rc_a)
+         buffer_allocate(rc_flag, &eba, &vir_eba, &debax, &debay, &debaz);
    }
 
    if (op & rc_init) {

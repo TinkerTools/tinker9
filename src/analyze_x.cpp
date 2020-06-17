@@ -1,4 +1,5 @@
 #include "energy.h"
+#include "glob.energi.h"
 #include "md.h"
 #include "nblist.h"
 #include "osrw.h"

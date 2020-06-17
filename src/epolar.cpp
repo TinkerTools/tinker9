@@ -1,5 +1,6 @@
 #include "epolar.h"
 #include "empole.h"
+#include "glob.energi.h"
 #include "md.h"
 #include "nblist.h"
 #include "pme.h"
@@ -17,13 +18,12 @@
 
 
 namespace tinker {
-namespace {
-bool unique_ep;
-}
 void epolar_data(rc_op op)
 {
    if (!use_potent(polar_term))
       return;
+
+   bool rc_a = rc_flag & calc::analyz;
 
    if (op & rc_dealloc) {
       nuexclude = 0;
@@ -35,20 +35,16 @@ void epolar_data(rc_op op)
 
       darray::deallocate(polarity, thole, pdamp, polarity_inv);
 
-      if (rc_flag & calc::analyz) {
-         buffer_deallocate(calc::analyz, nep);
+      if (rc_a) {
+         buffer_deallocate(rc_flag, nep);
+         buffer_deallocate(rc_flag, ep, vir_ep, depx, depy, depz);
       }
-      if (unique_ep) {
-         buffer_deallocate(rc_flag | calc::analyz, ep, vir_ep);
-         buffer_deallocate(rc_flag | calc::analyz, depx, depy, depz);
-      } else {
-         ep = nullptr;
-         vir_ep = nullptr;
-         depx = nullptr;
-         depy = nullptr;
-         depz = nullptr;
-      }
-      unique_ep = false;
+      nep = nullptr;
+      ep = nullptr;
+      vir_ep = nullptr;
+      depx = nullptr;
+      depy = nullptr;
+      depz = nullptr;
 
       darray::deallocate(ufld, dufld);
       darray::deallocate(work01_, work02_, work03_, work04_, work05_, work06_,
@@ -362,20 +358,15 @@ void epolar_data(rc_op op)
 
       darray::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
 
-      if (rc_flag & calc::analyz) {
-         buffer_allocate(calc::analyz, &nep);
-      }
-      unique_ep = (!amoeba_emplar(rc_flag)) &&
-         (!use_potent(mpole_term) || (rc_flag & calc::analyz));
-      if (unique_ep) {
-         buffer_allocate(rc_flag | calc::analyz, &ep, &vir_ep);
-         buffer_allocate(rc_flag | calc::analyz, &depx, &depy, &depz);
-      } else {
-         ep = em;
-         vir_ep = vir_em;
-         depx = demx;
-         depy = demy;
-         depz = demz;
+      nep = nullptr;
+      ep = eng_buf_elec;
+      vir_ep = vir_buf_elec;
+      depx = gx_elec;
+      depy = gy_elec;
+      depz = gz_elec;
+      if (rc_a) {
+         buffer_allocate(rc_flag, &nep);
+         buffer_allocate(rc_flag, &ep, &vir_ep, &depx, &depy, &depz);
       }
 
       if (rc_flag & calc::grad) {
@@ -441,6 +432,7 @@ void induce(real (*ud)[3], real (*up)[3])
 
 void epolar(int vers)
 {
+   bool rc_a = rc_flag & calc::analyz;
    bool do_a = vers & calc::analyz;
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
@@ -449,15 +441,17 @@ void epolar(int vers)
 
    host_zero(energy_ep, virial_ep);
    size_t bsize = buffer_size();
-   if (do_a)
-      darray::zero(PROCEED_NEW_Q, bsize, nep);
-   if (do_e)
-      darray::zero(PROCEED_NEW_Q, bsize, ep);
-   if (do_v) {
-      darray::zero(PROCEED_NEW_Q, bsize, vir_ep);
-   }
-   if (do_g && unique_ep) {
-      darray::zero(PROCEED_NEW_Q, n, depx, depy, depz);
+   if (rc_a) {
+      if (do_a)
+         darray::zero(PROCEED_NEW_Q, bsize, nep);
+      if (do_e)
+         darray::zero(PROCEED_NEW_Q, bsize, ep);
+      if (do_v) {
+         darray::zero(PROCEED_NEW_Q, bsize, vir_ep);
+      }
+      if (do_g) {
+         darray::zero(PROCEED_NEW_Q, n, depx, depy, depz);
+      }
    }
 
 
@@ -467,27 +461,35 @@ void epolar(int vers)
    else
       epolar_nonewald(vers);
    torque(vers, depx, depy, depz);
-
-
-   if (do_e) {
-      energy_buffer u = ep;
-      energy_prec e = energy_reduce(u);
-      energy_elec += e;
-      if (do_a) {
-         energy_ep = e;
-      }
-   }
    if (do_v) {
-      virial_buffer u1 = vir_ep;
       virial_buffer u2 = vir_trq;
-      virial_prec v1[9];
       virial_prec v2[9];
-      virial_reduce(v1, u1);
       virial_reduce(v2, u2);
       for (int iv = 0; iv < 9; ++iv) {
-         virial_ep[iv] = v1[iv] + v2[iv];
-         virial_elec[iv] += virial_ep[iv];
+         virial_ep[iv] += v2[iv];
+         virial_elec[iv] += v2[iv];
       }
+   }
+
+
+   if (rc_a) {
+      if (do_e) {
+         energy_buffer u = ep;
+         energy_prec e = energy_reduce(u);
+         energy_ep += e;
+         energy_elec += e;
+      }
+      if (do_v) {
+         virial_buffer u1 = vir_ep;
+         virial_prec v1[9];
+         virial_reduce(v1, u1);
+         for (int iv = 0; iv < 9; ++iv) {
+            virial_ep[iv] = v1[iv];
+            virial_elec[iv] += v1[iv];
+         }
+      }
+      if (do_g)
+         sum_gradient(gx_elec, gy_elec, gz_elec, depx, depy, depz);
    }
 }
 

@@ -101,12 +101,12 @@ using virial_buffer =
    pointer<virial_buffer_traits::type, virial_buffer_traits::value>;
 
 
-void buffer_allocate(int flag, energy_buffer* ebuf, virial_buffer* vbuf);
-void buffer_deallocate(int, energy_buffer, virial_buffer);
+void buffer_allocate(int flag, energy_buffer*, virial_buffer*, grad_prec**,
+                     grad_prec**, grad_prec**);
+void buffer_deallocate(int flag, energy_buffer, virial_buffer, grad_prec*,
+                       grad_prec*, grad_prec*);
 void buffer_allocate(int, count_buffer*);
 void buffer_deallocate(int, count_buffer);
-void buffer_allocate(int, grad_prec** gx, grad_prec** gy, grad_prec** gz);
-void buffer_deallocate(int, grad_prec*, grad_prec*, grad_prec*);
 
 
 /**

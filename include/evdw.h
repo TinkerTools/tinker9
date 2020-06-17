@@ -1,5 +1,4 @@
 #pragma once
-#include "mod.energi.h"
 #include "mod.mutant.h"
 #include "mod.vdw.h"
 #include "mod.vdwpot.h"

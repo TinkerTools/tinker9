@@ -1,4 +1,5 @@
 #include "eopbend.h"
+#include "glob.energi.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/host_zero.h"
@@ -13,20 +14,32 @@ void eopbend_data(rc_op op)
    if (!use_potent(opbend_term))
       return;
 
+   bool rc_a = rc_flag & calc::analyz;
+
    if (op & rc_dealloc) {
       darray::deallocate(iopb, opbk);
 
-      buffer_deallocate(rc_flag, eopb, vir_eopb);
-      buffer_deallocate(rc_flag, deopbx, deopby, deopbz);
+      if (rc_a)
+         buffer_deallocate(rc_flag, eopb, vir_eopb, deopbx, deopby, deopbz);
+      eopb = nullptr;
+      vir_eopb = nullptr;
+      deopbx = nullptr;
+      deopby = nullptr;
+      deopbz = nullptr;
    }
 
    if (op & rc_alloc) {
       int nangle = count_bonded_term(angle_term);
       darray::allocate(nangle, &iopb, &opbk);
-
       nopbend = count_bonded_term(opbend_term);
-      buffer_allocate(rc_flag, &eopb, &vir_eopb);
-      buffer_allocate(rc_flag, &deopbx, &deopby, &deopbz);
+
+      eopb = eng_buf;
+      vir_eopb = vir_buf;
+      deopbx = gx;
+      deopby = gy;
+      deopbz = gz;
+      if (rc_a)
+         buffer_allocate(rc_flag, &eopb, &vir_eopb, &deopbx, &deopby, &deopbz);
    }
 
    if (op & rc_init) {

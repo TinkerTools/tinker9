@@ -1,7 +1,6 @@
 #pragma once
 #include "eangle.h"
 #include "ebond.h"
-#include "mod.energi.h"
 #include "mod.strbnd.h"
 #include "tool/rc_man.h"
 

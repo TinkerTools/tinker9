@@ -1,5 +1,6 @@
 #include "egeom.h"
-#include "mdpq.h"
+#include "glob.energi.h"
+#include "md.h"
 #include "potent.h"
 #include "tool/host_zero.h"
 #include <tinker/detail/restrn.hh>
@@ -12,12 +13,18 @@ void egeom_data(rc_op op)
    if (!use_potent(geom_term))
       return;
 
+   bool rc_a = rc_flag & calc::analyz;
 
    if (op & rc_dealloc) {
       darray::deallocate(igfix, gfix);
 
-      buffer_deallocate(rc_flag, eg, vir_eg);
-      buffer_deallocate(rc_flag, degx, degy, degz);
+      if (rc_a)
+         buffer_deallocate(rc_flag, eg, vir_eg, degx, degy, degz);
+      eg = nullptr;
+      vir_eg = nullptr;
+      degx = nullptr;
+      degy = nullptr;
+      degz = nullptr;
    }
 
 
@@ -25,8 +32,13 @@ void egeom_data(rc_op op)
       ngfix = restrn::ngfix;
       darray::allocate(ngfix, &igfix, &gfix);
 
-      buffer_allocate(rc_flag, &eg, &vir_eg);
-      buffer_allocate(rc_flag, &degx, &degy, &degz);
+      eg = eng_buf;
+      vir_eg = vir_buf;
+      degx = gx;
+      degy = gy;
+      degz = gz;
+      if (rc_a)
+         buffer_allocate(rc_flag, &eg, &vir_eg, &degx, &degy, &degz);
    }
 
 
