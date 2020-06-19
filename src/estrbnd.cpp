@@ -1,5 +1,4 @@
 #include "estrbnd.h"
-#include "glob.energi.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/host_zero.h"

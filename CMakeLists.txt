@@ -129,7 +129,8 @@ set (TINKER_DIR ${tinkerDirValue} CACHE STRING "Path to libtinker.a")
 ##
 add_library (LIBTINKER STATIC IMPORTED)
 set_target_properties (LIBTINKER PROPERTIES
-   IMPORTED_LOCATION "${TINKER_DIR}/libtinker.a")
+   IMPORTED_LOCATION "${TINKER_DIR}/libtinker.a"
+)
 
 
 
@@ -151,16 +152,19 @@ set_target_properties (LIBFFTW PROPERTIES
    IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3.a")
 add_library (LIBFFTW_THREADS STATIC IMPORTED)
 set_target_properties (LIBFFTW_THREADS PROPERTIES
-   IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3_threads.a")
+   IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3_threads.a"
+)
 if (EXISTS "${FFTW_DIR}/lib/libfftw3f.a")
    add_library (LIBFFTWF STATIC IMPORTED)
    set_target_properties (LIBFFTWF PROPERTIES
-      IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f.a")
+      IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f.a"
+   )
 endif ()
 if (EXISTS "${FFTW_DIR}/lib/libfftw3f_threads.a")
    add_library (LIBFFTWF_THREADS STATIC IMPORTED)
    set_target_properties (LIBFFTWF_THREADS PROPERTIES
-      IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f_threads.a")
+      IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f_threads.a"
+   )
 endif ()
 
 
@@ -294,7 +298,7 @@ set (CUDA_DIR ${cudaDirValue} CACHE STRING "CUDA Directory")
 !!/ Same as the default target.
 !!/
 !!/ **test**
-!!/ Run the unit tests in a random order. Exit on the first error.
+!!/ Run unit tests in a random order. Exit on the first error.
 !!/
 !!/ **man**
 !!/ Generate user's manual.

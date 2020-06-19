@@ -1,6 +1,5 @@
 #pragma once
 #include "energy.h"
-#include "glob.energi.h"
 #include "md.h"
 #include "tool/rc_man.h"
 #include <array>

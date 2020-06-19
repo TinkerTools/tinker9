@@ -150,7 +150,7 @@ Make two targets: tinker.gpu and all.tests executables.
 Same as the default target.
 
 **test**
-Run the unit tests in a random order. Exit on the first error.
+Run unit tests in a random order. Exit on the first error.
 
 **man**
 Generate user's manual.

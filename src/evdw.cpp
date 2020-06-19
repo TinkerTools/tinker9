@@ -1,5 +1,4 @@
 #include "evdw.h"
-#include "glob.energi.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"

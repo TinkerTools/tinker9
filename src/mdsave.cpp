@@ -2,7 +2,6 @@
 #include "box.h"
 #include "epolar.h"
 #include "execq.h"
-#include "glob.energi.h"
 #include "potent.h"
 #include "tinker_rt.h"
 #include <condition_variable>

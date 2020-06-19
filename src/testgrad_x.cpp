@@ -1,5 +1,4 @@
 #include "energy.h"
-#include "glob.energi.h"
 #include "tinker_rt.h"
 #include "tool/io_text.h"
 #include <tinker/detail/inform.hh>

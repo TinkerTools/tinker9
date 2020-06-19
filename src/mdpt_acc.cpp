@@ -4,7 +4,6 @@
 
 #include "box.h"
 #include "energy.h"
-#include "glob.energi.h"
 #include "glob.molecule.h"
 #include "mathfunc.h"
 #include "mdcalc.h"

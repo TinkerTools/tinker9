@@ -399,7 +399,7 @@ all: default unittest
 
 
 ##/ **test**
-##/ Run the unit tests in a random order. Exit on the first error.
+##/ Run unit tests in a random order. Exit on the first error.
 ##/
 .PHONY: test
 test: all.tests

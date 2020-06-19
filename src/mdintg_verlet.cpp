@@ -1,5 +1,4 @@
 #include "energy.h"
-#include "glob.energi.h"
 #include "mdcalc.h"
 #include "mdegv.h"
 #include "mdintg.h"

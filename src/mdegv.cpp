@@ -1,13 +1,11 @@
 #include "mdegv.h"
 #include "energy.h"
-#include "glob.energi.h"
 #include "mdcalc.h"
 #include "mdpq.h"
 #include "tool/host_zero.h"
 
 
 namespace tinker {
-energy_prec eksum, ekin[3][3];
 
 
 //====================================================================//
@@ -19,27 +17,21 @@ void zero_egv(int vers)
    if (vers & calc::energy) {
       host_zero(esum, energy_valence, energy_vdw, energy_elec);
       darray::zero(PROCEED_NEW_Q, bsize, eng_buf);
-      if (use_energi_vdw())
-         darray::zero(PROCEED_NEW_Q, bsize, eng_buf_vdw);
-      if (use_energi_elec())
-         darray::zero(PROCEED_NEW_Q, bsize, eng_buf_elec);
+      darray::zero(PROCEED_NEW_Q, bsize, eng_buf_vdw);
+      darray::zero(PROCEED_NEW_Q, bsize, eng_buf_elec);
    }
 
    if (vers & calc::virial) {
       host_zero(vir, virial_valence, virial_vdw, virial_elec);
       darray::zero(PROCEED_NEW_Q, buffer_size(), vir_buf);
-      if (use_energi_vdw())
-         darray::zero(PROCEED_NEW_Q, bsize, vir_buf_vdw);
-      if (use_energi_elec())
-         darray::zero(PROCEED_NEW_Q, bsize, vir_buf_elec);
+      darray::zero(PROCEED_NEW_Q, bsize, vir_buf_vdw);
+      darray::zero(PROCEED_NEW_Q, bsize, vir_buf_elec);
    }
 
    if (vers & calc::grad) {
       darray::zero(PROCEED_NEW_Q, n, gx, gy, gz);
-      if (use_energi_vdw())
-         darray::zero(PROCEED_NEW_Q, n, gx_vdw, gy_vdw, gz_vdw);
-      if (use_energi_elec())
-         darray::zero(PROCEED_NEW_Q, n, gx_elec, gy_elec, gz_elec);
+      darray::zero(PROCEED_NEW_Q, n, gx_vdw, gy_vdw, gz_vdw);
+      darray::zero(PROCEED_NEW_Q, n, gx_elec, gy_elec, gz_elec);
    }
 }
 
@@ -208,12 +200,10 @@ void egv_data(rc_op op)
    if (rc_flag & calc::grad) {
       if (op & rc_dealloc) {
          darray::deallocate(gx, gy, gz);
-         if (!rc_a) {
-            if (use_energi_vdw())
-               darray::deallocate(gx_vdw, gy_vdw, gz_vdw);
-            if (use_energi_elec())
-               darray::deallocate(gx_elec, gy_elec, gz_elec);
-         }
+         if (use_energi_vdw())
+            darray::deallocate(gx_vdw, gy_vdw, gz_vdw);
+         if (use_energi_elec())
+            darray::deallocate(gx_elec, gy_elec, gz_elec);
       }
 
 

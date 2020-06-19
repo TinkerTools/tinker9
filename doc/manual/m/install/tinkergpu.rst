@@ -159,7 +159,7 @@ Compile and link the `all.tests` executable.
 Make two targets: `default` and `unittest`.
 
 **test**
-Run the unit tests in a random order. Exit on the first error.
+Run unit tests in a random order. Exit on the first error.
 
 **dirs**
 Create sub-directories inside the build directory.

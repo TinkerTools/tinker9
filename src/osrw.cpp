@@ -1,7 +1,6 @@
 #include "osrw.h"
 #include "box.h"
 #include "energy.h"
-#include "glob.energi.h"
 #include "potent.h"
 #include "tinker_rt.h"
 #include "tool/fc.h"

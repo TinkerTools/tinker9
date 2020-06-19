@@ -26,6 +26,9 @@
 /// \defgroup spatial  Spatial Decomposition
 
 
+/// \defgroup mdegv  Energy, Gradient, and Virial Tensor
+
+
 /*
 /// \defgroup geom  Geometrical Restraints
 /// \defgroup vdw  Van der Waals (VDW)
@@ -37,7 +40,6 @@
 
 /// \defgroup mdcalc  Control Bits for MM and MD Calculations
 /// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)
-/// \defgroup mdegv  Energy, Gradient, and Virial Tensor
 /// \defgroup mdsave  Saving MD Trajectory Snapshots
 /// \defgroup mdpt  Thermostats (T) and Barostats (P)
 /// \defgroup mdintg  Integrators

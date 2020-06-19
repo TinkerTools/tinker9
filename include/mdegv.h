@@ -1,24 +1,8 @@
 #pragma once
-#include "mdprec.h"
-#include "tool/energy_buffer.h"
+#include "glob.energi.h"
 
 
 namespace tinker {
-/**
- * \ingroup mdegv
- * \brief Kinetic energy on host.
- */
-extern energy_prec eksum;
-/**
- * \ingroup mdegv
- * \brief Kinetic energy tensor on host.
- */
-extern energy_prec ekin[3][3];
-
-
-//====================================================================//
-
-
 /**
  * \ingroup mdegv
  * \brief

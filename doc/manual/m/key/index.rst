@@ -19,3 +19,5 @@ modifiers, and usage examples.
 
    fep
    math
+   hippo
+   gpu
