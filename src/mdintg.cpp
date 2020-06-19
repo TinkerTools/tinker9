@@ -171,6 +171,7 @@ void integrate_data(rc_op op)
          darray::copy(PROCEED_NEW_Q, n, gz2, gz);
       } else {
          // beeman
+         TINKER_THROW("Beeman integrator is not available.");
       }
       assert(intg);
    }
