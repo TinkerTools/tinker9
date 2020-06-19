@@ -23,6 +23,7 @@
 
 
 #include "echgtrn.h"
+#include "edisp.h"
 #include "ehippo.h"
 
 

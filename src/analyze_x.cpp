@@ -145,6 +145,9 @@ void x_analyze_e()
    if (use_potent(vdw_term))
       print(out, fmt, "Van der Waals", energy_ev, count_reduce(nev));
 
+   if (use_potent(disp_term))
+      print(out, fmt, "Dispersion", energy_edsp, count_reduce(ndisp));
+
    if (use_potent(charge_term))
       print(out, fmt, "Charge-Charge", energy_ec, count_reduce(nec));
 

@@ -67,6 +67,7 @@ nblist_t dlist_version();
 nblist_t clist_version();
 nblist_t mlist_version();
 nblist_t ulist_version();
+nblist_t dsplist_version();
 
 
 void nblist_data(rc_op op);

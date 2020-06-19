@@ -44,8 +44,9 @@ void energy_data(rc_op op)
    // Must follow empole_data() and epolar_data().
    rc_man emplar42{emplar_data, op};
 
-   // HIPPO charge transfer
-   rc_man echgtrn{echgtrn_data, op};
+   // HIPPO
+   rc_man echgtrn42{echgtrn_data, op};
+   rc_man edisp42{edisp_data, op};
 }
 
 
@@ -184,6 +185,9 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (use_potent(chgtrn_term))
       if (tscfg("echgtrn"))
          echgtrn(vers);
+   if (use_potent(disp_term))
+      if (tscfg("edisp"))
+         edisp(vers);
 }
 
 

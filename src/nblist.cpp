@@ -1,4 +1,5 @@
 #include "nblist.h"
+#include "edisp.h"
 #include "elec.h"
 #include "epolar.h"
 #include "evdw.h"
@@ -138,6 +139,27 @@ nblist_t ulist_version()
 }
 
 
+nblist_t dsplist_version()
+{
+   nblist_t u;
+   if (!use_potent(disp_term)) {
+      u = NBL_UNDEFINED;
+   } else if (!limits::use_dlist) {
+      u = NBL_DOUBLE_LOOP;
+   } else if (!bound::use_bounds) {
+      u = NBL_VERLET;
+   } else {
+#if TINKER_CUDART
+      if (pltfm_config & CU_PLTFM)
+         u = NBL_SPATIAL;
+      else
+#endif
+         u = NBL_VERLET;
+   }
+   return u;
+}
+
+
 //====================================================================//
 
 
@@ -258,10 +280,10 @@ void nblist_data(rc_op op)
    if (op & rc_dealloc) {
       NBListUnit::clear();
       vlist_unit.close();
-      dlist_unit.close();
       clist_unit.close();
       mlist_unit.close();
       ulist_unit.close();
+      dsplist_unit.close();
 
 
 #if TINKER_CUDART
@@ -271,6 +293,7 @@ void nblist_data(rc_op op)
       cspatial_unit.close();
       mspatial_unit.close();
       uspatial_unit.close();
+      dspspatial_unit.close();
 #endif
    }
 
@@ -313,9 +336,6 @@ void nblist_data(rc_op op)
          spatial_build(unt);
       }
    }
-
-
-   // dlist
 
 
    // clist
@@ -399,6 +419,30 @@ void nblist_data(rc_op op)
    }
 
 
+   // dsplist
+   u = dsplist_version();
+   cut = use_dewald() ? switch_off(switch_dewald) : switch_off(switch_disp);
+   buf = neigh::lbuffer;
+   if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
+      auto& unt = dsplist_unit;
+      if (op & rc_alloc) {
+         nblist_alloc(u, unt, 2500, cut, buf, x, y, z);
+      }
+      if (op & rc_init) {
+         nblist_build_acc(unt);
+      }
+   }
+   if (u & NBL_SPATIAL) {
+      auto& unt = dspspatial_unit;
+      if (op & rc_alloc) {
+         spatial_alloc(unt, n, cut, buf, x, y, z);
+      }
+      if (op & rc_init) {
+         spatial_build(unt);
+      }
+   }
+
+
 #if TINKER_CUDART
    if (alloc_thrust_cache)
       thrust_cache_alloc();
@@ -423,9 +467,6 @@ void refresh_neighbors()
       ehal_reduce_xyz();
       spatial_update(unt);
    }
-
-
-   // dlist
 
 
    // clist
@@ -490,6 +531,30 @@ void refresh_neighbors()
    }
    if (u & NBL_SPATIAL) {
       auto& unt = uspatial_unit;
+      if (rc_flag & calc::traj) {
+         unt->x = x;
+         unt->y = y;
+         unt->z = z;
+         unt.update_deviceptr(*unt, PROCEED_NEW_Q);
+      }
+      spatial_update(unt);
+   }
+
+
+   // dsplist
+   u = dsplist_version();
+   if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
+      auto& unt = dsplist_unit;
+      if (rc_flag & calc::traj) {
+         unt->x = x;
+         unt->y = y;
+         unt->z = z;
+         unt.update_deviceptr(*unt, PROCEED_NEW_Q);
+      }
+      nblist_update_acc(unt);
+   }
+   if (u & NBL_SPATIAL) {
+      auto& unt = dspspatial_unit;
       if (rc_flag & calc::traj) {
          unt->x = x;
          unt->y = y;
