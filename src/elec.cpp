@@ -258,7 +258,6 @@ void elec_data(rc_op op)
    }
    rc_man pchg42{pchg_data, op};
    rc_man pole42{pole_data, op};
-   rc_man pme42{pme_data, op};
    rc_man mscale42{mscale_data, op};
 }
 

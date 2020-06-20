@@ -1,5 +1,6 @@
 #include "pme.h"
 #include "box.h"
+#include "edisp.h"
 #include "elec.h"
 #include "mathfunc.h"
 #include "md.h"
@@ -130,7 +131,7 @@ void pme_op_copyin(PMEUnit unit)
 namespace tinker {
 void pme_data(rc_op op)
 {
-   if (!use_ewald())
+   if (!use_ewald() && !use_dewald())
       return;
 
 
@@ -139,6 +140,7 @@ void pme_data(rc_op op)
       epme_unit.close();
       ppme_unit.close();
       pvpme_unit.close();
+      dpme_unit.close();
    }
 
 
@@ -154,10 +156,8 @@ void pme_data(rc_op op)
    }
 
 
-   if (use_potent(charge_term)) {
+   if (use_potent(charge_term) && use_ewald()) {
       if (op & rc_alloc) {
-         assert(PMEUnit::size() == 0);
-         // partial charge
          epme_unit.close();
          PME::Params p(ewald::aeewald, pme::nefft1, pme::nefft2, pme::nefft3,
                        pme::bseorder);
@@ -171,7 +171,7 @@ void pme_data(rc_op op)
    }
 
 
-   if (use_potent(mpole_term) || use_potent(polar_term)) {
+   if ((use_potent(mpole_term) || use_potent(polar_term)) && use_ewald()) {
       if (op & rc_dealloc) {
          darray::deallocate(cmp, fmp, cphi, fphi);
          if (use_potent(polar_term)) {
@@ -183,7 +183,6 @@ void pme_data(rc_op op)
 
 
       if (op & rc_alloc) {
-         assert(PMEUnit::size() == 0);
          darray::allocate(n, &cmp, &fmp, &cphi, &fphi);
          if (use_potent(polar_term)) {
             darray::allocate(n, &fuind, &fuinp, &fdip_phi1, &fdip_phi2, &cphidp,
@@ -233,13 +232,25 @@ void pme_data(rc_op op)
    }
 
 
+   if (use_potent(disp_term) && use_dewald()) {
+      if (op & rc_alloc) {
+         dpme_unit.close();
+         PME::Params p(ewald::adewald, pme::ndfft1, pme::ndfft2, pme::ndfft3,
+                       pme::bsdorder);
+         pme_op_alloc(dpme_unit, p, false);
+      }
+
+
+      if (op & rc_init) {
+         pme_op_copyin(dpme_unit);
+      }
+   }
+
+
 #if TINKER_CUDART
    if (op & rc_init) {
       pme_cuda_func_config();
    }
 #endif
-
-
-   rc_man fft42{fft_data, op};
 }
 }

@@ -7,6 +7,7 @@ namespace tinker {
 TINKER_EXTERN PMEUnit epme_unit;  // electrostatic
 TINKER_EXTERN PMEUnit ppme_unit;  // polarization
 TINKER_EXTERN PMEUnit pvpme_unit; // polarization virial
+TINKER_EXTERN PMEUnit dpme_unit;  // dispersion
 
 
 //====================================================================//

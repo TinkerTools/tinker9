@@ -35,6 +35,8 @@ void energy_data(rc_op op)
    // Must call elec_data() before any electrostatics routine.
 
    rc_man elec42{elec_data, op};
+   rc_man pme42{pme_data, op};
+   rc_man fft42{fft_data, op};
 
    rc_man echarge42{echarge_data, op};
 

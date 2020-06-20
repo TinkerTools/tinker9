@@ -1,4 +1,6 @@
 #include "fft.h"
+#include "edisp.h"
+#include "elec.h"
 #include "pme.h"
 #include <fftw3.h>
 
@@ -22,6 +24,9 @@ struct FFTPlanFFTW : public FFTPlan
 
 void fft_data(rc_op op)
 {
+   if (!use_ewald() && !use_dewald())
+      return;
+
    if (op & rc_dealloc) {
       int idx = 0;
       while (idx < FFTPlanUnit::size()) {

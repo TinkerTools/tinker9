@@ -1,7 +1,9 @@
 #include "fft.h"
+#include "edisp.h"
+#include "elec.h"
+#include "pme.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
-#include "pme.h"
 #include <cufft.h>
 
 
@@ -14,6 +16,9 @@ struct FFTPlanCUFFT : public FFTPlan
 
 void fft_data(rc_op op)
 {
+   if (!use_ewald() && !use_dewald())
+      return;
+
    if (op & rc_dealloc) {
       int idx = 0;
       while (idx < FFTPlanUnit::size()) {
