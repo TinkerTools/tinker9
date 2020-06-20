@@ -1,3 +1,3 @@
 namespace tinker {
-void edisp_cu(int vers) {}
+void edisp_real_cu(int vers) {}
 }

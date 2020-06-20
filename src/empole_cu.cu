@@ -6,7 +6,6 @@
 #include "image.h"
 #include "launch.h"
 #include "md.h"
-#include "named_struct.h"
 #include "seq_pair_mpole.h"
 #include "switch.h"
 

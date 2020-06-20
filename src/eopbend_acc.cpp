@@ -2,7 +2,6 @@
 #include "eopbend.h"
 #include "mathfunc.h"
 #include "md.h"
-#include "named_struct.h"
 #include <cassert>
 
 // TODO: test W-D-C

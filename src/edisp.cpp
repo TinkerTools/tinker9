@@ -185,12 +185,10 @@ void edisp(int vers)
    }
 
 
-#if TINKER_CUDART
-   if (mlist_version() & NBL_SPATIAL)
-      edisp_cu(vers);
+   if (use_dewald())
+      edisp_ewald(vers);
    else
-      ;
-#endif
+      edisp_nonewald(vers);
 
 
    if (do_e) {
@@ -231,4 +229,18 @@ void edisp(int vers)
          sum_gradient(gx_vdw, gy_vdw, gz_vdw, dedspx, dedspy, dedspz);
    }
 }
+
+
+void edisp_ewald(int vers)
+{
+#if TINKER_CUDART
+   if (mlist_version() & NBL_SPATIAL)
+      edisp_real_cu(vers);
+   else
+      ;
+#endif
+}
+
+
+void edisp_nonewald(int vers) {}
 }

@@ -1,6 +1,5 @@
 #pragma once
 #include "mathfunc.h"
-#include "named_struct.h"
 #include "seq_def.h"
 #include "seq_switch.h"
 

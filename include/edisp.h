@@ -8,5 +8,7 @@ namespace tinker {
 bool use_dewald();
 void edisp_data(rc_op);
 void edisp(int vers);
-void edisp_cu(int vers);
+void edisp_ewald(int vers);
+void edisp_nonewald(int vers);
+void edisp_real_cu(int vers);
 }

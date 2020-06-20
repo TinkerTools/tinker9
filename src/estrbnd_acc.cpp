@@ -2,7 +2,6 @@
 #include "estrbnd.h"
 #include "mathfunc.h"
 #include "md.h"
-#include "named_struct.h"
 
 namespace tinker {
 template <class Ver>

@@ -3,9 +3,8 @@
 #include "glob.spatial.h"
 #include "image.h"
 #include "launch.h"
-#include "mdpq.h"
+#include "md.h"
 #include "mod.chgpot.h"
-#include "named_struct.h"
 #include "seq_switch.h"
 #include "switch.h"
 #include <cassert>

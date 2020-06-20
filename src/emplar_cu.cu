@@ -8,7 +8,6 @@
 #include "image.h"
 #include "launch.h"
 #include "md.h"
-#include "named_struct.h"
 #include "pme.h"
 #include "seq_damp.h"
 #include "switch.h"

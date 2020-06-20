@@ -5,7 +5,6 @@
 #include "glob.molecule.h"
 #include "image.h"
 #include "md.h"
-#include "named_struct.h"
 #include <cassert>
 
 

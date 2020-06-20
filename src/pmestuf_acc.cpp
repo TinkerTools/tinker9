@@ -1,8 +1,7 @@
 #include "add.h"
 #include "box.h"
 #include "elec.h"
-#include "mdpq.h"
-#include "named_struct.h"
+#include "md.h"
 #include "pmestuf.h"
 #include "seq_bsplgen.h"
 

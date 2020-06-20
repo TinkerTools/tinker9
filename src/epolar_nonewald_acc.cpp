@@ -3,7 +3,6 @@
 #include "glob.nblist.h"
 #include "image.h"
 #include "md.h"
-#include "named_struct.h"
 #include "seq_pair_polar.h"
 #include "seq_switch.h"
 #include "switch.h"
