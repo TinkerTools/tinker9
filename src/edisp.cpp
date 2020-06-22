@@ -234,13 +234,21 @@ void edisp(int vers)
 void edisp_ewald(int vers)
 {
 #if TINKER_CUDART
-   if (mlist_version() & NBL_SPATIAL)
-      edisp_real_cu(vers);
+   if (dsplist_version() & NBL_SPATIAL)
+      edisp_ewald_real_cu(vers);
    else
       ;
 #endif
 }
 
 
-void edisp_nonewald(int vers) {}
+void edisp_nonewald(int vers)
+{
+#if TINKER_CUDART
+   if (dsplist_version() & NBL_SPATIAL)
+      edisp_nonewald_cu(vers);
+   else
+      ;
+#endif
+}
 }

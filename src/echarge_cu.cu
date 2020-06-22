@@ -251,7 +251,7 @@ void echarge_cu()
       off = switch_off(switch_charge);
       cut = switch_cut(switch_charge);
    }
-   auto bufsize = buffer_size();
+   size_t bufsize = buffer_size();
 
 
    const real f = electric / dielec;

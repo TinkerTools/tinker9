@@ -75,6 +75,8 @@ extern "C"
    // Ewald vs. Non-Ewald
    struct EWALD
    {};
+   struct DEWALD
+   {}; // Dispersion PME
    struct NON_EWALD
    {};
    struct NON_EWALD_TAPER

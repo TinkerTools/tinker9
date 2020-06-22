@@ -118,8 +118,6 @@ void echgtrn_cu1(HIPPO_CHGTRN_PARA, int n,
 
 
          MAYBE_UNUSED real dedx = 0, dedy = 0, dedz = 0;
-
-
          real r2 = image2(xr, yr, zr);
          if (atomi < atomk && r2 <= off2) {
             real r = REAL_SQRT(r2);
@@ -234,7 +232,7 @@ void echgtrn_cu2(HIPPO_CHGTRN_PARA, const real* x, const real* y, const real* z,
          real r = REAL_SQRT(r2);
 
 
-         MAYBE_UNUSED real e, de;
+         MAYBE_UNUSED e_prec e, de;
          pair_chgtrn<do_g>(r, mscale, f, alphai, chgi, alphak, chgk, e, de);
          if (r2 > cut2) {
             real taper, dtaper;
@@ -293,17 +291,19 @@ void echgtrn_cu3()
 
 
    auto ker1 = echgtrn_cu1<Ver>;
-   launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
-              bufsize, nct, ect, vir_ect, dectx, decty, dectz,
-              TINKER_IMAGE_ARGS, chgct, dmpct, f, cut, off, //
-              n, st.sorted, st.niak, st.iak, st.lst);
+   if (st.niak > 0)
+      launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
+                 bufsize, nct, ect, vir_ect, dectx, decty, dectz,
+                 TINKER_IMAGE_ARGS, chgct, dmpct, f, cut, off, //
+                 n, st.sorted, st.niak, st.iak, st.lst);
 
 
    auto ker2 = echgtrn_cu2<Ver>;
-   launch_k1s(nonblk, nmexclude, ker2, //
-              bufsize, nct, ect, vir_ect, dectx, decty, dectz,
-              TINKER_IMAGE_ARGS, chgct, dmpct, f, cut, off, x, y, z, nmexclude,
-              mexclude, mexclude_scale);
+   if (nmexclude > 0)
+      launch_k1s(nonblk, nmexclude, ker2, //
+                 bufsize, nct, ect, vir_ect, dectx, decty, dectz,
+                 TINKER_IMAGE_ARGS, chgct, dmpct, f, cut, off, x, y, z,
+                 nmexclude, mexclude, mexclude_scale);
 }
 
 
