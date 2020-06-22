@@ -165,7 +165,12 @@ double minimiz1(double* xx, double* g)
 
 
    // convert coordinates and gradient to optimization parameters
+
+
+   // Unnecessary if we don't use shake() algorithm that may change xyz.
    minimize_set_xx(n, xx, scales::scale);
+
+
    for (int i = 0; i < n; ++i) {
       int ii = 3 * i;
       g[ii + 0] = grx[i] / scales::scale[ii + 0];

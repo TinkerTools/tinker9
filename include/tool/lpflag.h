@@ -10,9 +10,9 @@ namespace tinker {
 enum class LPFlag
 {
    DEFAULT_Q = 0x01, ///< Default CUDA stream / OpenACC queue.
-   NEW_Q = 0x00,     ///< Non-default CUDA stream / OpenACC queue.
-   WAIT = 0x02,      ///< Synchronous / Blocking.
-   PROCEED = 0x00,   ///< Asynchronous / Non-Blocking.
+   NEW_Q = 0x02,     ///< Non-default CUDA stream / OpenACC queue.
+   WAIT = 0x04,      ///< Synchronous / Blocking.
+   PROCEED = 0x08,   ///< Asynchronous / Non-Blocking.
 };
 TINKER_ENABLE_ENUM_BITMASK(LPFlag);
 
