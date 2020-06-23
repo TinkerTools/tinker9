@@ -7,6 +7,7 @@ void bspline_fill(PMEUnit, int level);
 
 
 void grid_pchg(PMEUnit, real* pchg);
+void grid_disp(PMEUnit, real* csix);
 void grid_mpole(PMEUnit, real (*fmp)[10]);
 void grid_uind(PMEUnit, real (*find)[3], real (*finp)[3]);
 
@@ -45,6 +46,8 @@ void bspline_fill_cu(PMEUnit, int level);
 
 void grid_pchg_acc(PMEUnit, real*);
 void grid_pchg_cu(PMEUnit, real*);
+void grid_disp_acc(PMEUnit, real*);
+void grid_disp_cu(PMEUnit, real*);
 void grid_mpole_acc(PMEUnit, real (*)[10]);
 void grid_mpole_cu(PMEUnit, real (*)[10]);
 void grid_uind_acc(PMEUnit, real (*)[3], real (*)[3]);

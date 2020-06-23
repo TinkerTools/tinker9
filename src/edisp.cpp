@@ -239,6 +239,8 @@ void edisp_ewald(int vers)
    else
       ;
 #endif
+
+   edisp_ewald_recip_self_acc(vers);
 }
 
 

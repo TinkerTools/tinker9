@@ -67,7 +67,7 @@ void grid_put_cu1(const real* restrict x, const real* restrict y,
       igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
 
-      if CONSTEXPR (eq<T, PCHG>()) {
+      if CONSTEXPR (eq<T, PCHG>() || eq<T, DISP>()) {
          real chgi = pchg[i];
          if (chgi == 0)
             continue;
@@ -97,7 +97,7 @@ void grid_put_cu1(const real* restrict x, const real* restrict y,
                }
             }
          }
-      } // end if (PCHG)
+      } // end if (PCHG or DISP)
 
 
       if CONSTEXPR (eq<T, MPOLE>()) {
@@ -299,6 +299,22 @@ void grid_pchg_cu(PMEUnit pme_u, real* pchg)
    darray::zero(PROCEED_NEW_Q, 2 * nt, st.qgrid);
    auto ker = grid_put_cu1<PCHG, 5>;
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, pchg,
+              nullptr, st.qgrid, recipa, recipb, recipc);
+}
+
+
+void grid_disp_cu(PMEUnit pme_u, real* csix)
+{
+   auto& st = *pme_u;
+   int n1 = st.nfft1;
+   int n2 = st.nfft2;
+   int n3 = st.nfft3;
+   int nt = n1 * n2 * n3;
+
+
+   darray::zero(PROCEED_NEW_Q, 2 * nt, st.qgrid);
+   auto ker = grid_put_cu1<DISP, 4>;
+   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, csix,
               nullptr, st.qgrid, recipa, recipb, recipc);
 }
 
