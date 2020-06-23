@@ -28,6 +28,13 @@ void t_allocate_d1(T** pp, int dim1)
 
 /**
  * \ingroup bindc
+ * \brief Fortran statement: read (input,10) line.
+ */
+std::string t_read_stdin_line();
+
+
+/**
+ * \ingroup bindc
  * \brief Tinker subroutine: version (filename,status).
  * \note This C++ interface does not change the input file string.
  */

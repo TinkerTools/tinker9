@@ -69,6 +69,14 @@ void t_allocate_char1(void** pp, size_t bytes1)
 //====================================================================//
 
 
+extern "C" void fc_read_stdin_line(char* outfile);
+const char* t_read_stdin_line()
+{
+   fc_read_stdin_line(out);
+   return out;
+}
+
+
 extern "C" void fc_version(char* outfile, const char* file, int flen,
                            const char* status, int slen);
 const char* t_version(const char* file, const char* status)
@@ -149,6 +157,13 @@ void t_open(int unit, std::string file, std::string status)
    int fl = file.size();
    int sl = status.size();
    fc_open(unit, file.c_str(), fl, status.c_str(), sl);
+}
+
+
+std::string t_read_stdin_line()
+{
+   fc_read_stdin_line(out);
+   return std::string(out);
 }
 
 

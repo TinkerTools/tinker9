@@ -79,6 +79,23 @@ c
 c
 c
 c
+      subroutine fc_read_stdin_line (out)  bind(c)
+      use iso_c_binding
+      use fcsize
+      implicit none
+      integer stdin,klen
+      parameter (stdin=5)
+      character(c_char), target :: out(*)
+      character(MAX_NCHAR,c_char), pointer :: kout
+      call c_f_pointer (c_loc(out),kout)
+      read (stdin,'(a)')  kout
+      klen = len_trim(kout)
+      kout = kout(1:klen)//c_null_char
+      return
+      end
+c
+c
+c
       subroutine fc_version (out,file,flen,status,slen)  bind(c)
       use iso_c_binding
       use fcsize

@@ -1,4 +1,5 @@
 #pragma once
+#include "tool/fcxx.h"
 #include "tool/io_text.h"
 #include <iostream>
 #include <sstream>
@@ -58,8 +59,13 @@ void read_stream(Arg& arg, std::string prompt, Arg auto_fill, Invalid&& invalid,
    int input_fail = false;
    std::string line;
    while (invalid(arg)) {
-      std::cout << prompt;
-      std::getline(istream, line);
+      std::printf("%s", prompt.c_str());
+      std::fflush(stdout);
+      if (&istream == &std::cin) {
+         line = t_read_stdin_line();
+      } else {
+         std::getline(istream, line);
+      }
       auto vs = Text::split(line);
       if (vs.size() == 0) {
          arg = auto_fill;
