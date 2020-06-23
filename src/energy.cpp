@@ -48,6 +48,7 @@ void energy_data(rc_op op)
 
    // HIPPO
    rc_man echgtrn42{echgtrn_data, op};
+   rc_man erepel42{erepel_data, op};
    rc_man edisp42{edisp_data, op};
 }
 
@@ -95,7 +96,6 @@ const TimeScaleConfig& default_tsconfig()
       {"echarge", 0},
 
       {"emplar", 0},  {"empole", 0}, {"epolar", 0},
-
 
       {"echgtrn", 0}, {"edisp", 0},  {"erepel", 0},  {"ehippo", 0},
    };
@@ -186,6 +186,9 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
    if (use_potent(chgtrn_term))
       if (tscfg("echgtrn"))
+         echgtrn(vers);
+   if (use_potent(repuls_term))
+      if (tscfg("erepel"))
          echgtrn(vers);
    if (use_potent(disp_term))
       if (tscfg("edisp"))

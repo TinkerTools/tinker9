@@ -20,6 +20,8 @@
 #include "mod.pitors.h"
 #include "mod.polar.h"
 #include "mod.polpot.h"
+#include "mod.repel.h"
+#include "mod.reppot.h"
 #include "mod.restrn.h"
 #include "mod.strbnd.h"
 #include "mod.torpot.h"
