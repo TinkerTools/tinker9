@@ -79,6 +79,15 @@ void t_allocate_char1(void** pp, size_t bytes1);
 
 /**
  * \ingroup bindc
+ * \brief Fortran statement: read (input,10) line, where input is `stdin`,
+ * format 10 is format of a character string and line is a character string
+ * long enough for format 10.
+ */
+const char* t_read_stdin_line();
+
+
+/**
+ * \ingroup bindc
  * \brief Tinker subroutine: version (filename,status)
  * \note This C interface does not change the input file string.
  */

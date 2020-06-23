@@ -17,11 +17,34 @@ required by `Makefile`.
 The version of `g++` cannot be overly recent, in case `nvcc` might fail to support.
 I also believe version `4.x` is outdated for some of the C++11 features used here.
 
+
+## Getting the Source Code
+If you don't plan to send us pull requests on Github, and you don't want to get
+the entire history of the source code, you can clone a few recent versions by
+```bash
+git clone --depth 5 https://github.com/zhi-wang/tinker.gpu
+```
+
+To get the full git history,
+```bash
+git clone https://github.com/zhi-wang/tinker.gpu
+```
+
+If you are planning to send us pull requests, please fork this project to your
+personal Github account.
+
+Directly downloading zip file from Github webpage would work but is not
+recommended because of the following cons:
+   * No Git commit information to keep track of issues or bugs.
+   * Tinker submodule would not not work.
+   * Has to download zip file in the furture for new commits.
+
+
 ## Installation Guide
-   - [Prerequisites](doc/manual/m/install/preq.rst)
-   - [Build the Canonical Tinker](doc/manual/m/install/tinker.rst)
-   - [Build Tinker GPU with CMake](doc/manual/m/install/buildwithcmake.rst)
-   - [(Deprecated) Build Tinker GPU with Makefile](doc/manual/m/install/tinkergpu.rst)
+   1. [Prerequisites](doc/manual/m/install/preq.rst)
+   2. [Build the Canonical Tinker](doc/manual/m/install/tinker.rst)
+   3. [Build Tinker GPU with CMake](doc/manual/m/install/buildwithcmake.rst)
+   4. [(Deprecated) Build Tinker GPU with Makefile](doc/manual/m/install/tinkergpu.rst)
 
 Links are only functional on GitHub.
 

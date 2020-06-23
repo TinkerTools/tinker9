@@ -1,4 +1,5 @@
 #pragma once
+#include "tool/fcxx.h"
 #include "tool/io_text.h"
 #include <iostream>
 #include <sstream>
@@ -55,30 +56,32 @@ template <class Arg, class Invalid>
 void read_stream(Arg& arg, std::string prompt, Arg auto_fill, Invalid&& invalid,
                  std::istream& istream = std::cin)
 {
-   int input_fail = false;
+   bool is_cin = (&istream == &std::cin);
+   int input_fail = invalid(arg); // True if arg is out of range.
    std::string line;
-   while (invalid(arg)) {
-      std::cout << prompt;
-      std::getline(istream, line);
-      auto vs = Text::split(line);
-      if (vs.size() == 0) {
-         arg = auto_fill;
+   while (input_fail) {
+      std::printf("%s", prompt.c_str());
+      std::fflush(stdout);
+      if (is_cin) {
+         line = t_read_stdin_line();
       } else {
-         input_fail = read_string(arg, line.data(), line.size());
-      }
-      if (input_fail) {
          istream.clear(); // Reset failbit.
          // Expunge the remaining input and invisible '\n',
          // only if using operator<<;
          // unnecessary if std::getline(...) is used instead.
          // istream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-         goto flag_continue;
+         std::getline(istream, line);
       }
-      if (invalid(arg)) {
+      auto vs = Text::split(line);
+      if (vs.size() == 0) {
          arg = auto_fill;
+         input_fail = false;
+      } else {
+         // True if failed to parse input.
+         input_fail = read_string(arg, line.data(), line.size());
       }
-   flag_continue:
-      (void)0;
+      if (!input_fail)
+         input_fail = invalid(arg);
    }
 }
 }

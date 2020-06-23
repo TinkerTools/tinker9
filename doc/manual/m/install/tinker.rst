@@ -3,7 +3,8 @@ Build the Canonical Tinker
 
 **Checkout the Required Version of Tinker**
 
-Checkout Tinker from the `tinker` git submodule
+If source code was `cloned` by `git`, you can
+checkout Tinker from the `tinker` git submodule
 and copy Tinker to the build directory:
 
 .. code-block:: bash
