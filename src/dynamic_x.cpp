@@ -102,7 +102,7 @@ void x_dynamic(int, char**)
     (3) Isoenthalpic-Isobaric (NPH)
     (4) Isothermal-Isobaric (NPT)
  Enter the Number of the Desired Choice  [1] :  )";
-      read_stream(mode, prompt, 1, [](int i) { return i <= 0; });
+      read_stream(mode, prompt, 1, [](int i) { return i <= 0 || i > 4; });
 
       if (integrate == "BUSSI" || integrate == "NOSE-HOOVER" ||
           integrate == "GHMC") {
