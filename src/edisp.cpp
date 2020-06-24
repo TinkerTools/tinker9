@@ -2,6 +2,7 @@
 #include "box.h"
 #include "md.h"
 #include "nblist.h"
+#include "pmestuf.h"
 #include "potent.h"
 #include "tool/fc.h"
 #include "tool/host_zero.h"
@@ -234,13 +235,46 @@ void edisp(int vers)
 void edisp_ewald(int vers)
 {
 #if TINKER_CUDART
-   if (dsplist_version() & NBL_SPATIAL)
+   if (dsplist_version() & NBL_SPATIAL) {
       edisp_ewald_real_cu(vers);
+   } else
+      ;
+#endif
+
+   // recip and self
+   bool do_e = vers & calc::energy;
+   bool do_v = vers & calc::virial;
+   bool do_g = vers & calc::grad;
+   PMEUnit u = dpme_unit;
+
+
+   grid_disp(u, csix);
+   fftfront(u);
+   disp_pme_conv_acc(vers);
+   if (do_g) {
+      fftback(u);
+   }
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      edisp_ewald_recip_self_cu(vers);
    else
       ;
 #endif
 
-   edisp_ewald_recip_self_acc(vers);
+
+   // account for the total energy and virial correction term
+   if CONSTEXPR (do_e || do_v) {
+      const real aewald = u->aewald;
+      const real denom0 = 6 * volbox() / std::pow(M_PI, 1.5);
+      energy_prec term = csixpr * aewald * aewald * aewald / denom0;
+      if CONSTEXPR (do_e)
+         energy_edsp -= term;
+      if CONSTEXPR (do_v) {
+         virial_edsp[0] += term; // xx
+         virial_edsp[4] += term; // yy
+         virial_edsp[8] += term; // zz
+      }
+   }
 }
 
 

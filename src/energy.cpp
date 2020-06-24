@@ -96,7 +96,6 @@ const TimeScaleConfig& default_tsconfig()
 
       {"emplar", 0},  {"empole", 0}, {"epolar", 0},
 
-
       {"echgtrn", 0}, {"edisp", 0},  {"erepel", 0},  {"ehippo", 0},
    };
    return tsconfig;

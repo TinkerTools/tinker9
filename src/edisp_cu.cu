@@ -5,6 +5,7 @@
 #include "launch.h"
 #include "md.h"
 #include "pmestuf.h"
+#include "seq_bsplgen.h"
 #include "seq_switch.h"
 #include "switch.h"
 
@@ -402,6 +403,164 @@ void edisp_ewald_real_cu(int vers)
       edisp_cu<calc::V5, DEWALD>();
    else if (vers == calc::v6)
       edisp_cu<calc::V6, DEWALD>();
+}
+
+
+template <class Ver, int bsorder>
+__global__
+void edisp_cu3(size_t bufsize, count_buffer restrict ndisp,
+               energy_buffer restrict edsp, const real* restrict csix,
+               real aewald, int n, int nfft1, int nfft2, int nfft3,
+               const real* restrict x, const real* restrict y,
+               const real* restrict z, const real* restrict qgrid, real3 reca,
+               real3 recb, real3 recc, grad_prec* restrict gx,
+               grad_prec* restrict gy, grad_prec* restrict gz)
+{
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_a = Ver::a;
+   constexpr bool do_g = Ver::g;
+
+
+   real thetai1[4 * 5];
+   real thetai2[4 * 5];
+   real thetai3[4 * 5];
+   __shared__ real sharedarray[5 * 5 * PME_BLOCKDIM];
+   real* restrict array = &sharedarray[5 * 5 * threadIdx.x];
+
+
+   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < n;
+        ii += blockDim.x * gridDim.x) {
+      real icsix = csix[ii];
+
+
+      // self energy
+      if CONSTEXPR (do_e) {
+         int offset = ii & (bufsize - 1);
+         real fs = aewald * aewald;
+         fs *= fs * fs;
+         fs /= 12;
+         real e = fs * icsix * icsix;
+         atomic_add(e, edsp, offset);
+         if CONSTEXPR (do_a) {
+            atomic_add(1, ndisp, offset);
+         }
+      }
+
+
+      // recip gradient
+      if CONSTEXPR (do_g) {
+         real xi = x[ii];
+         real yi = y[ii];
+         real zi = z[ii];
+
+
+         real w1 = xi * reca.x + yi * reca.y + zi * reca.z;
+         w1 = w1 + 0.5f - REAL_FLOOR(w1 + 0.5f);
+         real fr1 = nfft1 * w1;
+         int igrid1 = REAL_FLOOR(fr1);
+         w1 = fr1 - igrid1;
+
+
+         real w2 = xi * recb.x + yi * recb.y + zi * recb.z;
+         w2 = w2 + 0.5f - REAL_FLOOR(w2 + 0.5f);
+         real fr2 = nfft2 * w2;
+         int igrid2 = REAL_FLOOR(fr2);
+         w2 = fr2 - igrid2;
+
+
+         real w3 = xi * recc.x + yi * recc.y + zi * recc.z;
+         w3 = w3 + 0.5f - REAL_FLOOR(w3 + 0.5f);
+         real fr3 = nfft3 * w3;
+         int igrid3 = REAL_FLOOR(fr3);
+         w3 = fr3 - igrid3;
+
+
+         igrid1 = igrid1 - bsorder + 1;
+         igrid2 = igrid2 - bsorder + 1;
+         igrid3 = igrid3 - bsorder + 1;
+         igrid1 += (igrid1 < 0 ? nfft1 : 0);
+         igrid2 += (igrid2 < 0 ? nfft2 : 0);
+         igrid3 += (igrid3 < 0 ? nfft3 : 0);
+
+
+         bsplgen<2, bsorder>(w1, thetai1, array);
+         bsplgen<2, bsorder>(w2, thetai2, array);
+         bsplgen<2, bsorder>(w3, thetai3, array);
+
+
+         real fi = csix[ii];
+         real de1 = 0, de2 = 0, de3 = 0;
+         for (int iz = 0; iz < bsorder; ++iz) {
+            int zbase = igrid3 + iz;
+            zbase -= (zbase >= nfft3 ? nfft3 : 0);
+            zbase *= (nfft1 * nfft2);
+            real t3 = thetai3[4 * iz];
+            real dt3 = nfft3 * thetai3[1 + 4 * iz];
+            for (int iy = 0; iy < bsorder; ++iy) {
+               int ybase = igrid2 + iy;
+               ybase -= (ybase >= nfft2 ? nfft2 : 0);
+               ybase *= nfft1;
+               real t2 = thetai2[4 * iy];
+               real dt2 = nfft2 * thetai2[1 + 4 * iy];
+               for (int ix = 0; ix < bsorder; ++ix) {
+                  int xbase = igrid1 + ix;
+                  xbase -= (xbase >= nfft1 ? nfft1 : 0);
+                  int index = xbase + ybase + zbase;
+                  real t1 = thetai1[4 * ix];
+                  real dt1 = nfft1 * thetai1[1 + 4 * ix];
+                  real term = qgrid[2 * index];
+                  de1 += 2 * term * dt1 * t2 * t3;
+                  de2 += 2 * term * dt2 * t1 * t3;
+                  de3 += 2 * term * dt3 * t1 * t2;
+               }
+            }
+         } // end for (iz)
+
+
+         real frcx = fi * (reca.x * de1 + recb.x * de2 + recc.x * de3);
+         real frcy = fi * (reca.y * de1 + recb.y * de2 + recc.y * de3);
+         real frcz = fi * (reca.z * de1 + recb.z * de2 + recc.z * de3);
+         atomic_add(frcx, gx, ii);
+         atomic_add(frcy, gy, ii);
+         atomic_add(frcz, gz, ii);
+      }
+   }
+}
+
+
+template <class Ver>
+void edisp_cu4()
+{
+   size_t bufsize = buffer_size();
+   const auto& st = *dpme_unit;
+   real aewald = st.aewald;
+   int nfft1 = st.nfft1;
+   int nfft2 = st.nfft2;
+   int nfft3 = st.nfft3;
+
+
+   assert(st.bsorder == 4);
+   auto ker = edisp_cu3<Ver, 4>;
+   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, //
+              bufsize, ndisp, edsp, csix, aewald, n, nfft1, nfft2, nfft3, x, y,
+              z, st.qgrid, recipa, recipb, recipc, dedspx, dedspy, dedspz);
+}
+
+
+void edisp_ewald_recip_self_cu(int vers)
+{
+   if (vers == calc::v0)
+      edisp_cu4<calc::V0>();
+   else if (vers == calc::v1)
+      edisp_cu4<calc::V1>();
+   else if (vers == calc::v3)
+      edisp_cu4<calc::V3>();
+   else if (vers == calc::v4)
+      edisp_cu4<calc::V4>();
+   else if (vers == calc::v5)
+      edisp_cu4<calc::V5>();
+   else if (vers == calc::v6)
+      edisp_cu4<calc::V6>();
 }
 
 

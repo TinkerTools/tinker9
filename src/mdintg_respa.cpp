@@ -31,7 +31,6 @@ const TimeScaleConfig& respa_tsconfig()
 
       {"emplar", slow},  {"empole", slow}, {"epolar", slow},
 
-
       {"echgtrn", slow}, {"edisp", slow},  {"erepel", slow},  {"ehippo", slow},
    };
    return tsconfig;

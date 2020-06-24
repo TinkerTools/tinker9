@@ -1,12 +1,13 @@
 #include "add.h"
 #include "box.h"
 #include "edisp.h"
+#include "md.h"
 #include "pmestuf.h"
 
 
 namespace tinker {
 template <bool DO_E, bool DO_V>
-void disppme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_v)
+void disp_pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_v)
 {
    auto& st = *pme_u;
    real(*restrict qgrid)[2] = reinterpret_cast<real(*)[2]>(st.qgrid);
@@ -59,49 +60,73 @@ void disppme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_v)
       real hsq = h1 * h1 + h2 * h2 + h3 * h3;
 
 
+      real gridx = qgrid[i][0];
+      real gridy = qgrid[i][1];
       real h = REAL_SQRT(hsq);
       real b = h * bfac;
       real hhh = h * hsq;
       real term = -hsq * bfac * bfac;
-      real expterm = 0;
-      real erfcterm = REAL_ERFC(b);
+      real eterm = 0;
       real denom = denom0 * bsmod1[k1] * bsmod2[k2] * bsmod3[k3];
       if (term > -50) {
+         real expterm = REAL_EXP(term);
+         real erfcterm = REAL_ERFC(b);
+         if (box_shape == UNBOUND_BOX) {
+            real coef = (1 - REAL_COS(pi * lvec1.x * REAL_SQRT(hsq)));
+            expterm *= coef;
+            erfcterm *= coef;
+         } else if (box_shape == OCT_BOX) {
+            if ((k1 + k2 + k3) & 1) {
+               expterm = 0;
+               erfcterm = 0;
+            } // end if ((k1 + k2 + k3) % 2 != 0)
+         }
+
+
+         if CONSTEXPR (DO_E || DO_V) {
+            real struc2 = gridx * gridx + gridy * gridy;
+            eterm = (-fac1 * erfcterm * hhh - expterm * (fac2 + fac3 * hsq)) *
+               REAL_RECIP(denom);
+            real e = eterm * struc2;
+            if CONSTEXPR (DO_E) {
+               atomic_add(e, gpu_e, i & (bufsize - 1));
+            }
+            if CONSTEXPR (DO_V) {
+               real vterm = 3 * (fac1 * erfcterm * h + fac3 * expterm) *
+                  struc2 * REAL_RECIP(denom);
+               real vxx = (h1 * h1 * vterm - e);
+               real vxy = h1 * h2 * vterm;
+               real vxz = h1 * h3 * vterm;
+               real vyy = (h2 * h2 * vterm - e);
+               real vyz = h2 * h3 * vterm;
+               real vzz = (h3 * h3 * vterm - e);
+               atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, gpu_v,
+                          i & (bufsize - 1));
+            }
+         } // end if (e or v)
       }
+
+
+      qgrid[i][0] = eterm * gridx;
+      qgrid[i][1] = eterm * gridy;
    }
 }
 
 
-template <class Ver>
-void edisp_ewald_recip_self_acc1()
+void disp_pme_conv_acc(int vers)
 {
-   constexpr bool do_e = Ver::e;
-   constexpr bool do_a = Ver::a;
-
-
+   bool do_e = vers & calc::energy;
+   bool do_v = vers & calc::virial;
    PMEUnit u = dpme_unit;
-   grid_disp(u, csix);
-   fftfront(u);
 
 
-   if CONSTEXPR (do_e) {
-      const real aewald = u->aewald;
-      real term = aewald * aewald * aewald;
-      term *= term;
-      term /= 12;
-      size_t bufsize = buffer_size();
-      #pragma acc parallel loop independent async\
-                  deviceptr(csix,edsp,ndisp)
-      for (int i = 0; i < n; ++i) {
-         int offset = i & (bufsize - 1);
-         real icsix = csix[i];
-         atomic_add(term * icsix * icsix, edsp, offset);
-         if CONSTEXPR (do_a)
-            atomic_add(1, ndisp, offset);
-      }
-   }
+   if (do_e && do_v)
+      disp_pme_conv_acc1<true, true>(u, edsp, vir_edsp);
+   else if (do_e && !do_v)
+      disp_pme_conv_acc1<true, false>(u, edsp, nullptr);
+   else if (!do_e && do_v)
+      disp_pme_conv_acc1<false, true>(u, nullptr, vir_edsp);
+   else if (!do_e && !do_v)
+      disp_pme_conv_acc1<false, false>(u, nullptr, nullptr);
 }
-
-
-void edisp_ewald_recip_self_acc(int vers) {}
 }
