@@ -40,11 +40,11 @@ recommended because of the following cons:
    * Has to download zip file in the furture for new commits.
 
 
-## Installation Guide
+## Installation Steps
    1. [Prerequisites](doc/manual/m/install/preq.rst)
-   2. [Build the Canonical Tinker](doc/manual/m/install/tinker.rst)
+   2. [Build the Canonical Tinker (important to get THE REQUIRED version of Tinker)](doc/manual/m/install/tinker.rst)
    3. [Build Tinker GPU with CMake](doc/manual/m/install/buildwithcmake.rst)
-   4. [(Deprecated) Build Tinker GPU with Makefile](doc/manual/m/install/tinkergpu.rst)
+      or [(Deprecated) Build Tinker GPU with Makefile](doc/manual/m/install/tinkergpu.rst)
 
 Links are only functional on GitHub.
 
