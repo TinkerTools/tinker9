@@ -21,7 +21,7 @@ add_library (tinkergpu0 STATIC
 add_executable (tinker.gpu ${MAIN_CPP})
 target_compile_definitions (tinker.gpu PRIVATE ${macro_defs})
 set (EXT_LIBS pthread LIBTINKER LIBFFTW LIBFFTW_THREADS)
-if (${PREC} STREQUAL m OR ${PREC} STREQUAL s)
+if (PREC STREQUAL "m" OR PREC STREQUAL "s")
    list (APPEND EXT_LIBS LIBFFTWF LIBFFTWF_THREADS)
 endif ()
 set_target_properties (tinker.gpu PROPERTIES

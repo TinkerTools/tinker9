@@ -38,7 +38,7 @@ target_compile_options (tinkergpu_cu PRIVATE
 
 ## OpenACC
 add_library (tinkergpu_acc OBJECT ${LIB_ACC})
-if (${CMAKE_CXX_COMPILER_ID} STREQUAL PGI)
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "PGI")
    if (CMAKE_CXX11_STANDARD_COMPILE_OPTION)
       # remove the -A flag coded in CMake/Modules/Compiler/PGI-CXX.cmake
       set (CMAKE_CXX11_STANDARD_COMPILE_OPTION -std=c++11)
