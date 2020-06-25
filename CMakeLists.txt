@@ -197,11 +197,11 @@ else ()
 endif ()
 set (PREC ${precValue} CACHE STRING "d (DOUBLE) / s (SINGLE) / m (MIXED)")
 ##
-if (${PREC} STREQUAL m)
+if (PREC STREQUAL "m")
    list (APPEND macro_defs TINKER_MIXED_PRECISION)
-elseif (${PREC} STREQUAL s)
+elseif (PREC STREQUAL "s")
    list (APPEND macro_defs TINKER_SINGLE_PRECISION)
-elseif (${PREC} STREQUAL d)
+elseif (PREC STREQUAL "d")
    list (APPEND macro_defs TINKER_DOUBLE_PRECISION)
 endif ()
 
@@ -235,9 +235,9 @@ set (DETERMINISTIC_FORCE ${detForceValue} CACHE STRING
 ##
 if (DETERMINISTIC_FORCE STREQUAL "")
    # No default behavior for empty value.
-elseif (${DETERMINISTIC_FORCE} STREQUAL 1)
+elseif (DETERMINISTIC_FORCE STREQUAL "1")
    list (APPEND macro_defs TINKER_DETERMINISTIC_FORCE=1)
-elseif (${DETERMINISTIC_FORCE} STREQUAL 0)
+elseif (DETERMINISTIC_FORCE STREQUAL "0")
    list (APPEND macro_defs TINKER_DETERMINISTIC_FORCE=0)
 endif ()
 
@@ -309,9 +309,9 @@ set (CUDA_DIR ${cudaDirValue} CACHE STRING "CUDA Directory")
 ]]
 
 
-if (${CMAKE_Fortran_COMPILER_ID} STREQUAL GNU)
+if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
    list (APPEND macro_defs TINKER_GFORTRAN)
-elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL Intel)
+elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
    list (APPEND macro_defs TINKER_IFORT)
 endif ()
 
@@ -372,9 +372,9 @@ file (GLOB LIB_CU "${PROJECT_SOURCE_DIR}/src/*_cu.cu")
 
 
 ## tinker.gpu
-if (${HOST} STREQUAL 1)
+if (HOST STREQUAL "1")
    include (host) # host.cmake
-elseif (${HOST} STREQUAL 0)
+elseif (HOST STREQUAL "0")
    include (device) # device.cmake
 endif ()
 
