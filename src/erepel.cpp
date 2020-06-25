@@ -1,4 +1,5 @@
 #include "erepel.h"
+#include "elec.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
@@ -164,12 +165,23 @@ void erepel(int vers)
    }
 
 
+   mpole_init(vers);
 #if TINKER_CUDART
    if (mlist_version() & NBL_SPATIAL)
       erepel_cu(vers);
    else
       ;
 #endif
+   torque(vers, derx, dery, derz);
+   if (do_v) {
+      virial_buffer u2 = vir_trq;
+      virial_prec v2[9];
+      virial_reduce(v2, u2);
+      for (int iv = 0; iv < 9; ++iv) {
+         virial_er[iv] += v2[iv];
+         virial_vdw[iv] += v2[iv];
+      }
+   }
 
 
    if (rc_a) {
