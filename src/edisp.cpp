@@ -267,12 +267,17 @@ void edisp_ewald(int vers)
       const real aewald = u->aewald;
       const real denom0 = 6 * volbox() / std::pow(M_PI, 1.5);
       energy_prec term = csixpr * aewald * aewald * aewald / denom0;
-      if CONSTEXPR (do_e)
+      if CONSTEXPR (do_e) {
          energy_edsp -= term;
+         energy_vdw -= term;
+      }
       if CONSTEXPR (do_v) {
          virial_edsp[0] += term; // xx
          virial_edsp[4] += term; // yy
          virial_edsp[8] += term; // zz
+         virial_vdw[0] += term;  // xx
+         virial_vdw[4] += term;  // yy
+         virial_vdw[8] += term;  // zz
       }
    }
 }

@@ -26,37 +26,34 @@ void pair_disp(real r, real r2, real dspscale, real aewald, real ci, real ai,
    real expi = REAL_EXP(-di);
    real expk = REAL_EXP(-dk);
    real di2 = di * di;
-   real di3 = di * di2;
-   real damp3 = 1, damp5 = 1, ddamp = 0;
+   real damp = 1, ddamp = 0;
    if (ai != ak) {
       real ai2 = ai * ai;
       real ak2 = ak * ak;
-      real dk2 = dk * dk;
-      real dk3 = dk * dk2;
       real ti = ak2 * REAL_RECIP(ak2 - ai2);
       real tk = ai2 * REAL_RECIP(ai2 - ak2);
-      real ti2 = ti * ti;
-      real tk2 = tk * tk;
-      damp3 = 1 - ti2 * (1 + di + 0.5f * di2) * expi -
-         tk2 * (1 + dk + 0.5f * dk2) * expk - 2 * ti2 * tk * (1 + di) * expi -
-         2 * tk2 * ti * (1 + dk) * expk;
-      damp5 = 1 - ti2 * (1 + di + 0.5f * di2 + di3 / 6) * expi -
-         tk2 * (1 + dk + 0.5f * dk2 + dk3 / 6) * expk -
-         2 * ti2 * tk * (1 + di + di2 / 3) * expi -
-         2 * tk2 * ti * (1 + dk + dk2 / 3) * expk;
-      if CONSTEXPR (DO_G)
-         ddamp = 0.25f * di2 * ti2 * ai * expi * (r * ai + 4 * tk - 1) +
-            0.25f * dk2 * tk2 * ak * expk * (r * ak + 4 * ti - 1);
+      real a1 = 2 * ti + 1;
+      real b1 = 2 * tk + 1;
+      real termi = ((di / 2 + b1) / 2 * di + b1) * di + b1;
+      real termk = ((dk / 2 + a1) / 2 * dk + a1) * dk + a1;
+      termi *= ti * ti * expi;
+      termk *= tk * tk * expk;
+      damp = 1 - termi - termk;
+      if CONSTEXPR (DO_G) {
+         real dk2 = dk * dk;
+         real a2 = (di - 1) / 4 + tk;
+         real b2 = (dk - 1) / 4 + ti;
+         a2 *= ai * di2 * ti * ti * expi;
+         b2 *= ak * dk2 * tk * tk * expk;
+         ddamp = a2 + b2;
+      }
    }
    if (ai == ak) {
-      real di4 = di2 * di2;
-      real di5 = di2 * di3;
-      damp3 = 1 - (1 + di + 0.5f * di2 + 7 * di3 / 48 + di4 / 48) * expi;
-      damp5 = 1 - (1 + di + 0.5f * di2 + di3 / 6 + di4 / 24 + di5 / 144) * expi;
+      real term = ((((di + 5) * di + 17) * di / 96 + 0.5f) * di + 1) * di + 1;
+      damp = 1 - term * expi;
       if CONSTEXPR (DO_G)
-         ddamp = ai * expi * (di5 - 3 * di3 - 3 * di2) / 96;
+         ddamp = ai * expi * di2 * ((di2 - 3) * di - 3) / 96;
    }
-   real damp = 1.5f * damp5 - 0.5f * damp3;
 
 
    if CONSTEXPR (eq<DTYP, DEWALD>()) {

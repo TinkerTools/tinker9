@@ -13,17 +13,17 @@ target_include_directories (all_tests_o PRIVATE
    ${proj_internal_inc_path}
    "${PROJECT_SOURCE_DIR}/src/test"
 )
-if (${HOST} STREQUAL 0)
+if (HOST STREQUAL "0")
    target_include_directories (all_tests_o PRIVATE
       "${PROJECT_SOURCE_DIR}/include/syntax/acc"
    )
 endif ()
 
 
-if (${HOST} STREQUAL 1)
+if (HOST STREQUAL "1")
 add_executable (all.tests)
 target_link_libraries (all.tests all_tests_o tinkergpu0 ${EXT_LIBS})
-elseif (${HOST} STREQUAL 0)
+elseif (HOST STREQUAL "0")
 add_custom_target (all.tests ALL
    DEPENDS
       all_tests_o
