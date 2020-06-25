@@ -1,37 +1,17 @@
 #include "add.h"
-#include "ehippo.h"
+#include "echgtrn.h"
 #include "glob.spatial.h"
 #include "image.h"
 #include "launch.h"
 #include "md.h"
 #include "mod.chgpot.h"
+#include "seq_pair_chgtrn.h"
 #include "seq_switch.h"
 #include "switch.h"
 #include <cassert>
 
 
 namespace tinker {
-template <bool DO_G>
-__device__
-void pair_chgtrn(real r, real mscale, real f, real alphai, real chgi,
-                 real alphak, real chgk, e_prec& restrict e,
-                 e_prec& restrict de)
-{
-   f *= mscale;
-   real expi = REAL_EXP(-alphai * r);
-   real expk = REAL_EXP(-alphak * r);
-   e = -chgi * expk - chgk * expi;
-   e *= f;
-   if CONSTEXPR (DO_G) {
-      de = chgi * expk * alphak + chgk * expi * alphai;
-      de *= f;
-   }
-}
-
-
-//====================================================================//
-
-
 #define HIPPO_CHGTRN_PARA                                                      \
    size_t bufsize, count_buffer restrict nct, energy_buffer restrict ect,      \
       virial_buffer restrict vir_ect, grad_prec *restrict gx, grad_prec *gy,   \
