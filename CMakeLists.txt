@@ -121,11 +121,13 @@ endif ()
 !!/
 ]]
 if (DEFINED ENV{tinker_dir})
-   set (tinkerDirValue "$ENV{tinker_dir}")
+   get_filename_component (tinkerDirValue "$ENV{tinker_dir}"
+      ABSOLUTE BASE_DIR "${CMAKE_BINARY_DIR}"
+   )
 else ()
    set (tinkerDirValue "${CMAKE_BINARY_DIR}/tinker/source")
 endif ()
-set (TINKER_DIR ${tinkerDirValue} CACHE STRING "Path to libtinker.a")
+set (TINKER_DIR ${tinkerDirValue} CACHE PATH "Path to libtinker.a")
 ##
 add_library (LIBTINKER STATIC IMPORTED)
 set_target_properties (LIBTINKER PROPERTIES
@@ -141,11 +143,13 @@ set_target_properties (LIBTINKER PROPERTIES
 !!/
 ]]
 if (DEFINED ENV{fftw_dir})
-   set (fftwDirValue "$ENV{fftw_dir}")
+   get_filename_component (fftwDirValue "$ENV{fftw_dir}"
+      ABSOLUTE BASE_DIR "${CMAKE_BINARY_DIR}"
+   )
 else ()
    set (fftwDirValue "${CMAKE_BINARY_DIR}/fftw")
 endif ()
-set (FFTW_DIR ${fftwDirValue} CACHE STRING "FFTW3 Directory")
+set (FFTW_DIR ${fftwDirValue} CACHE PATH "FFTW3 Directory")
 ##
 add_library (LIBFFTW STATIC IMPORTED)
 set_target_properties (LIBFFTW PROPERTIES
@@ -272,11 +276,13 @@ set (COMPUTE_CAPABILITY ${compCapValue} CACHE STRING "CUDA Compute Capability")
 !!/
 ]]
 if (DEFINED ENV{cuda_dir})
-   set (cudaDirValue $ENV{cuda_dir})
+   get_filename_component (cudaDirValue "$ENV{cuda_dir}"
+      ABSOLUTE BASE_DIR "${CMAKE_BINARY_DIR}"
+   )
 else ()
    set (cudaDirValue /usr/local/cuda)
 endif ()
-set (CUDA_DIR ${cudaDirValue} CACHE STRING "CUDA Directory")
+set (CUDA_DIR ${cudaDirValue} CACHE PATH "CUDA Directory")
 
 
 #[[
