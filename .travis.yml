@@ -22,7 +22,7 @@ before_install:
 script:
   - gfortran -v
   - g++ -v
-  - cmake -v
+  - cmake --version
   - echo $HOME
   - echo $PWD
 
