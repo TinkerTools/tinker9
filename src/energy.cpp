@@ -20,6 +20,7 @@ void energy_data(rc_op op)
    rc_man estrbnd42{estrbnd_data, op};
    rc_man eurey42{eurey_data, op};
    rc_man eopbend42{eopbend_data, op};
+   rc_man eimptor42{eimptor_data, op};
    rc_man etors42{etors_data, op};
    rc_man epitors42{epitors_data, op};
    rc_man etortor42{etortor_data, op};
@@ -86,17 +87,17 @@ bool use_energi_elec()
 const TimeScaleConfig& default_tsconfig()
 {
    static TimeScaleConfig tsconfig{
-      {"ebond", 0},   {"eangle", 0}, {"estrbnd", 0}, {"eurey", 0},
-      {"eopbend", 0}, {"etors", 0},  {"epitors", 0}, {"etortor", 0},
-      {"egeom", 0},
+      {"ebond", 0},   {"eangle", 0},  {"estrbnd", 0}, {"eurey", 0},
+      {"eopbend", 0}, {"eimptor", 0}, {"etors", 0},   {"epitors", 0},
+      {"etortor", 0}, {"egeom", 0},
 
       {"evdw", 0},
 
       {"echarge", 0},
 
-      {"emplar", 0},  {"empole", 0}, {"epolar", 0},
+      {"emplar", 0},  {"empole", 0},  {"epolar", 0},
 
-      {"echgtrn", 0}, {"edisp", 0},  {"erepel", 0},  {"ehippo", 0},
+      {"echgtrn", 0}, {"edisp", 0},   {"erepel", 0},  {"ehippo", 0},
    };
    return tsconfig;
 }
@@ -140,6 +141,9 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (use_potent(opbend_term))
       if (tscfg("eopbend"))
          eopbend(vers);
+   if (use_potent(imptors_term))
+      if (tscfg("eimptor"))
+         eimptor(vers);
    if (use_potent(torsion_term))
       if (tscfg("etors"))
          etors(vers);

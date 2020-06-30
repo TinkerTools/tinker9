@@ -22,8 +22,8 @@ const TimeScaleConfig& respa_tsconfig()
    constexpr int slow = floor_log2_constexpr(RESPA_SLOW); // long-range
    static TimeScaleConfig tsconfig{
       {"ebond", fast},   {"eangle", fast}, {"estrbnd", fast}, {"eurey", fast},
-      {"eopbend", fast}, {"etors", fast},  {"epitors", fast}, {"etortor", fast},
-      {"egeom", fast},
+      {"eopbend", fast}, {"etors", fast},  {"eimptor", fast}, {"epitors", fast},
+      {"etortor", fast}, {"egeom", fast},
 
       {"evdw", slow},
 

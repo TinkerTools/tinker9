@@ -12,6 +12,7 @@
 #include "mod.ctrpot.h"
 #include "mod.disp.h"
 #include "mod.dsppot.h"
+#include "mod.imptor.h"
 #include "mod.ktrtor.h"
 #include "mod.mplpot.h"
 #include "mod.mpole.h"

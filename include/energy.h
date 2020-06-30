@@ -4,6 +4,7 @@
 
 #include "eangle.h"
 #include "ebond.h"
+#include "eimptor.h"
 #include "eopbend.h"
 #include "epitors.h"
 #include "estrbnd.h"

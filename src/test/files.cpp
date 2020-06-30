@@ -9,6 +9,8 @@ namespace tinker {
 
 #include "file/charmm19.hh"
 
+#include "file/amber99sb.hh"
+
 // xyz files
 #include "file/watersmall.hh"
 
@@ -35,4 +37,7 @@ namespace tinker {
 
 // potassium ion and water
 #include "file/potassium.hh"
+
+// alanine dipeptide test set
+#include "file/ala.hh"
 }
