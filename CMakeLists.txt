@@ -41,9 +41,7 @@ cmake_minimum_required (VERSION 3.11)
 !!/ the default value of the options, there are two ways.
 !!/ You can always change their values interactively in the "ccmake" command
 !!/ line gui. You can also pass the new value to "cmake" via command line
-!!/ argument "cmake -DOPTION=NewValue". If a value is also a path to a file or
-!!/ directory, it must be an **"absolute path"**. Relative path will not be
-!!/ expanded.
+!!/ argument "cmake -DOPTION=NewValue".
 !!/
 !!/ In addition to these two canonical methods, default values can also be set
 !!/ by the corresponding environmental variables, documented as **(env)**.

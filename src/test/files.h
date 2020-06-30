@@ -18,6 +18,10 @@ namespace commit_11e84c69 {
 extern const char* charmm19_prm;
 }
 
+namespace commit_350df099 {
+extern const char* amber99sb_prm;
+}
+
 // xyz files
 extern const char* watersmall_xyz;
 

@@ -9,6 +9,8 @@ namespace tinker {
 
 #include "file/charmm19.hh"
 
+#include "file/amber99sb.hh"
+
 // xyz files
 #include "file/watersmall.hh"
 
