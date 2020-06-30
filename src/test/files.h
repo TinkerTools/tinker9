@@ -67,4 +67,8 @@ extern const char* arbox_arc;
 // potassium ion and water
 extern const char* kwater_key;
 extern const char* kwater_xyz;
+
+// alanine dipeptide test set
+extern const char* ala_amber99sb_key;
+extern const char* ala_amber99sb_xyz;
 }
