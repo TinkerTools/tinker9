@@ -3,6 +3,7 @@
 #include <tinker/detail/angbnd.hh>
 #include <tinker/detail/atoms.hh>
 #include <tinker/detail/bndstr.hh>
+#include <tinker/detail/imptor.hh>
 #include <tinker/detail/opbend.hh>
 #include <tinker/detail/pitors.hh>
 #include <tinker/detail/potent.hh>
@@ -35,6 +36,9 @@ int use_potent(potent_t term)
       break;
    case opbend_term:
       val = potent::use_opbend;
+      break;
+   case imptors_term:
+      val = potent::use_imptor;
       break;
    case torsion_term:
       val = potent::use_tors;
@@ -103,6 +107,9 @@ int count_bonded_term(potent_t term)
       break;
    case opbend_term:
       val = opbend::nopbend;
+      break;
+   case imptors_term:
+      val = imptor::nitors;
       break;
    case torsion_term:
       val = tors::ntors;

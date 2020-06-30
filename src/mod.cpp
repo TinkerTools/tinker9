@@ -10,6 +10,7 @@
 #include "mod.chgpot.h"
 #include "mod.chgtrn.h"
 #include "mod.ctrpot.h"
+#include "mod.imptor.h"
 #include "mod.ktrtor.h"
 #include "mod.mplpot.h"
 #include "mod.mpole.h"
