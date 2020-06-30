@@ -1,7 +1,6 @@
 #include "add.h"
 #include "eimptor.h"
 #include "md.h"
-#include "named_struct.h"
 
 
 namespace tinker {
