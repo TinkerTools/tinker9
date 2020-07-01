@@ -39,6 +39,9 @@ namespace tinker {
  * \see TimeScaleConfig
  */
 void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig);
+extern bool ecore_val;
+extern bool ecore_vdw;
+extern bool ecore_ele;
 
 
 /**
