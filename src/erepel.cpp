@@ -164,8 +164,6 @@ void erepel(int vers)
          darray::zero(PROCEED_NEW_Q, n, derx, dery, derz);
    }
 
-   // printf("in erepel %d %d %d\n",(int) mlist_version() ,(int) NBL_SPATIAL, mlist_version()&NBL_SPATIAL);
-
 
    mpole_init(vers);
 #if TINKER_CUDART

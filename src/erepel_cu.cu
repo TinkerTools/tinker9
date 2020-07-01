@@ -137,8 +137,6 @@ void pair_repel(real r2, real rscale, real cut, real off, real3 dr, real sizi,
    frc0.z = de * dr.z + term1 * di.z + term2 * dk.z + term3 * (diqkz - dkqiz) +
       term4 * qiz + term5 * qkz + term6 * (qizk + qkzi);
 
-   // frc += frc0 * rr1 + eterm * rr3 * dr;
-   // frc *= sizik;
 
    frc.x = frc0.x * rr1 + eterm * rr3 * dr.x;
    frc.y = frc0.y * rr1 + eterm * rr3 * dr.y;
@@ -213,7 +211,6 @@ void pair_repel(real r2, real rscale, real cut, real off, real3 dr, real sizi,
       term5 * qkrz - term6 * (qkirz - qikz);
    trq2 += sizik * rr1 * trq0;
 
-   // no scaling based on group membership ?
    if (r2 > cut2) {
       real taper, dtaper;
       real cut = REAL_SQRT(cut2);
@@ -364,7 +361,6 @@ void erepel_cu1(HIPPO_REPEL_PARA, int n,
 
          real r2 = image2(dr.x, dr.y, dr.z);
          if (atomi < atomk && r2 <= off2) {
-
             pair_repel<Ver>(
                r2, 1, cut, off, dr, idat.siz, idat.dmp, idat.val, idat.c,
                idat.d, idat.qxx, idat.qxy, idat.qxz, idat.qyy, idat.qyz,

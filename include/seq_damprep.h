@@ -15,6 +15,13 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
    real r4 = r2 * r2;
    real r5 = r3 * r2;
 
+   // This makes sure that dmpi > dmpk, which solves numerical issues
+   // with atomi,atomk vs. atomk,atomi.
+   real dmpsmall = REAL_MIN(dmpi, dmpk);
+   real dmpbig = REAL_MAX(dmpi, dmpk);
+   dmpi = dmpsmall;
+   dmpk = dmpbig;
+
    real dmpi2 = 0.5f * dmpi;
    real dampi = dmpi2 * r;
    real expi = REAL_EXP(-dampi);
@@ -49,11 +56,11 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
       if CONSTEXPR (order > 9) {
          real r8 = r4 * r4;
          real dmpi27 = dmpi24 * dmpi23;
-         d5s =
-            (dmpi25 * r6 + dmpi26 * r7 + dmpi27 * r8 * div3) * expi * div945;
+         d5s = (dmpi25 * r6 + dmpi26 * r7 + dmpi27 * r8 * div3) * expi * div945;
       }
    } else {
       // treat the case where alpha damping exponents are unequal
+
 
       // divisions
       real div5 = 1 / ((real)5);
@@ -85,18 +92,17 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
          (term * dmpi2 * r2 + 4 * (dmpi22 * r + dmpi2)) * dmpk2 * expi / term;
 
       d2s = (dmpk2 * r2 * div3 + dmpk22 * r3 * div3 -
-                  4 * div3 * dmpk23 * r2 / term - 4 * dmpk22 * r / term -
-                  4 * dmpk2 / term) *
+             4 * div3 * dmpk23 * r2 / term - 4 * dmpk22 * r / term -
+             4 * dmpk2 / term) *
             dmpi2 * expk +
          ((dmpi2 * r2 + dmpi22 * r3) * div3 +
           coef1 * (dmpi23 * r2 * div3 + dmpi22 * r + dmpi2)) *
             dmpk2 * expi;
 
-      d3s =
-         ((dmpk23 * r4 * div3 + dmpk22 * r3 + dmpk2 * r2) * div5 +
-          coef1 *
-             (-dmpk24 * r3 * div15 - (2 * div5) * dmpk23 * r2 - dmpk22 * r) -
-          coef1 * dmpk2) *
+      d3s = ((dmpk23 * r4 * div3 + dmpk22 * r3 + dmpk2 * r2) * div5 +
+             coef1 *
+                (-dmpk24 * r3 * div15 - (2 * div5) * dmpk23 * r2 - dmpk22 * r) -
+             coef1 * dmpk2) *
             dmpi2 * expk +
          ((dmpi23 * r4 * div3 + dmpi22 * r3 + dmpi2 * r2) * div5 +
           coef1 *
@@ -105,11 +111,11 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
             dmpk2 * expi;
 
       d4s = ((dmpk24 * r5 * div15 + 2 * div5 * dmpk23 * r4 + dmpk22 * r3 +
-                   dmpk2 * r2) *
-                     div7 +
-                  coef1 *
-                     (-dmpk25 * r4 * div105 - 2 * div21 * dmpk24 * r3 -
-                      3 * div7 * dmpk23 * r2 - dmpk22 * r - dmpk2)) *
+              dmpk2 * r2) *
+                div7 +
+             coef1 *
+                (-dmpk25 * r4 * div105 - 2 * div21 * dmpk24 * r3 -
+                 3 * div7 * dmpk23 * r2 - dmpk22 * r - dmpk2)) *
             dmpi2 * expk +
          ((dmpi24 * r5 * div15 + 2 * div5 * dmpi23 * r4 + dmpi22 * r3 +
            dmpi2 * r2) *
@@ -123,13 +129,12 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
          real r6 = r3 * r3;
          real dmpi26 = dmpi23 * dmpi23;
          real dmpk26 = dmpk23 * dmpk23;
-         d5s =
-            (dmpk25 * r6 * div945 + 2 * div189 * dmpk24 * r5 +
-             dmpk23 * r4 * div21 + dmpk22 * r3 * div9 + dmpk2 * r2 * div9 +
-             coef1 *
-                (-dmpk26 * r5 * div945 - dmpk25 * r4 * div63 -
-                 dmpk24 * r3 * div9 - 4 * div9 * dmpk23 * r2 - dmpk22 * r -
-                 dmpk2)) *
+         d5s = (dmpk25 * r6 * div945 + 2 * div189 * dmpk24 * r5 +
+                dmpk23 * r4 * div21 + dmpk22 * r3 * div9 + dmpk2 * r2 * div9 +
+                coef1 *
+                   (-dmpk26 * r5 * div945 - dmpk25 * r4 * div63 -
+                    dmpk24 * r3 * div9 - 4 * div9 * dmpk23 * r2 - dmpk22 * r -
+                    dmpk2)) *
                dmpi2 * expk +
             (dmpi25 * r6 * div945 + 2 * div189 * dmpi24 * r5 +
              dmpi23 * r4 * div21 + dmpi22 * r3 * div9 + dmpi2 * r2 * div9 +
