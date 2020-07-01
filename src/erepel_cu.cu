@@ -249,9 +249,6 @@ void pair_repel(real r2, real rscale, real cut, real off, real3 dr, real sizi,
       vtlyz -= 0.5f * (dr.z * frc.y + dr.y * frc.z);
       vtlzz -= dr.z * frc.z;
    }
-
-   // // resolve site torques then increment forces and virial
-   // //
 }
 
 
@@ -381,6 +378,7 @@ void erepel_cu1(HIPPO_REPEL_PARA, int n,
             if CONSTEXPR (do_a) {
                ctl += 1;
             }
+
          } // end if include
       }    // end for j loop
       if CONSTEXPR (do_a)
@@ -470,16 +468,16 @@ void erepel_cu2(HIPPO_REPEL_PARA, const real* x, const real* y, const real* z,
             trqi = make_real3(0, 0, 0);
             trqk = make_real3(0, 0, 0);
          }
-         real ck = rpole[i][mpl_pme_0];
-         real dkx = rpole[i][mpl_pme_x];
-         real dky = rpole[i][mpl_pme_y];
-         real dkz = rpole[i][mpl_pme_z];
-         real qkxx = rpole[i][mpl_pme_xx];
-         real qkxy = rpole[i][mpl_pme_xy];
-         real qkxz = rpole[i][mpl_pme_xz];
-         real qkyy = rpole[i][mpl_pme_yy];
-         real qkyz = rpole[i][mpl_pme_yz];
-         real qkzz = rpole[i][mpl_pme_zz];
+         real ck = rpole[k][mpl_pme_0];
+         real dkx = rpole[k][mpl_pme_x];
+         real dky = rpole[k][mpl_pme_y];
+         real dkz = rpole[k][mpl_pme_z];
+         real qkxx = rpole[k][mpl_pme_xx];
+         real qkxy = rpole[k][mpl_pme_xy];
+         real qkxz = rpole[k][mpl_pme_xz];
+         real qkyy = rpole[k][mpl_pme_yy];
+         real qkyz = rpole[k][mpl_pme_yz];
+         real qkzz = rpole[k][mpl_pme_zz];
          real sizk = sizpr[k];
          real dmpk = dmppr[k];
          real valk = elepr[k];
@@ -491,7 +489,6 @@ void erepel_cu2(HIPPO_REPEL_PARA, const real* x, const real* y, const real* z,
                          make_real3(dkx, dky, dkz), qkxx, qkxy, qkxz, qkyy,
                          qkyz, qkzz, frci, frck, trqi, trqk, e, vxx, vxy, vxz,
                          vyy, vyz, vzz);
-
 
          if CONSTEXPR (do_a)
             if (rscale == -1 && e != 0)
