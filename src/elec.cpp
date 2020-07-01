@@ -1,5 +1,6 @@
 #include "elec.h"
 #include "empole.h"
+#include "energy.h"
 #include "epolar.h"
 #include "md.h"
 #include "nblist.h"
@@ -18,7 +19,8 @@
 namespace tinker {
 bool use_ewald()
 {
-   return limits::use_ewald;
+   bool flag = use_energi_elec();
+   return flag && limits::use_ewald;
 }
 
 
