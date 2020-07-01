@@ -65,6 +65,22 @@ void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 }
 
 
+void grid_disp(PMEUnit pme_u, real* csix)
+{
+   int bso = pme_u->bsorder;
+   if (bso != 4)
+      TINKER_THROW(format("grid_disp(): bsorder is %d; must be 4.\n", bso));
+
+
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      grid_disp_cu(pme_u, csix);
+   else
+#endif
+      grid_disp_acc(pme_u, csix);
+}
+
+
 //====================================================================//
 
 

@@ -57,7 +57,7 @@ void echgtrn_data(rc_op op)
       for (int i = 0; i < n; ++i) {
          real idmp = chgtrn::dmpct[i];
          if (idmp == 0)
-            idmp = 100;
+            idmp = 1000;
          dmpctvec[i] = idmp;
       }
       darray::copyin(PROCEED_NEW_Q, n, dmpct, dmpctvec.data());

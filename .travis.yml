@@ -10,41 +10,49 @@ language: generic
 matrix:
   include:
     - os: linux
-      dist: xenial
+      dist: bionic
       env:
         - CI_DEPEND_DIR=https://raw.githubusercontent.com/zhi-wang/ci-depend/master/xenial
-        - ARGS="fftw_dir=../fftw tinker_dir=../tinker/source fortran_config=gfortran.mk"
 
 
 before_install:
-  - sudo apt-get install gfortran
+  - sudo apt-get install gfortran cmake
 
 
 script:
-  - mkdir -p tinker/source
-  - curl $CI_DEPEND_DIR/tinker-350df099/libtinker.a -o tinker/source/libtinker.a
+  - gfortran -v
+  - g++ -v
+  - cmake --version
+  - echo $HOME
+  - echo $PWD
 
+
+# fftw
+  - mkdir build
+  - cd build
   - mkdir -p fftw/include
   - curl $CI_DEPEND_DIR/fftw/include/fftw3.h -o fftw/include/fftw3.h
 
   - mkdir -p fftw/lib
   - cd fftw/lib
-
   - curl $CI_DEPEND_DIR/fftw/lib/libfftw3.a          -o libfftw3.a
   - curl $CI_DEPEND_DIR/fftw/lib/libfftw3_threads.a  -o libfftw3_threads.a
   - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f.a         -o libfftw3f.a
   - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f_threads.a -o libfftw3f_threads.a
+  - cd ../../..
 
-  - ls -l
+
+# libtinker.a
+  - cd tinker
+  - git submodule update --init
+  - cd ..
+  - cp -r tinker build
+  - cd build/tinker/source
+  - curl $CI_DEPEND_DIR/tinker-350df099/Makefile -o Makefile
+  - make libtinker.a -j2
   - cd ../..
 
-  - gfortran -v
-  - g++ -v
-  - echo $HOME
-  - echo $PWD
 
-  - make -f make/Makefile create_build build=build
-  - cd build
-  - make $ARGS all -j2
-  - make $ARGS info
-  - make $ARGS ignore=0 test
+# test tinker.gpu
+  - opt=release host=1 prec=d fftw_dir=fftw tinker_dir=tinker/source cmake ..
+  - make test -j2

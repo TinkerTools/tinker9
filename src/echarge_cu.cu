@@ -368,7 +368,7 @@ void echarge_cu3(size_t bufsize, count_buffer restrict nec,
          real fs = -f * aewald * REAL_RECIP(sqrtpi);
          real e = fs * chgi * chgi;
          atomic_add(e, ec, offset);
-         if (do_a) {
+         if CONSTEXPR (do_a) {
             atomic_add(1, nec, offset);
          }
       }

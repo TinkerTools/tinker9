@@ -77,7 +77,7 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
       igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
 
-      if CONSTEXPR (eq<T, PCHG>()) {
+      if CONSTEXPR (eq<T, PCHG>() || eq<T, DISP>()) {
          real pchgi = pchg[i];
          if (pchgi == 0)
             continue;
@@ -110,7 +110,7 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
                }
             } // end for (int iy)
          }
-      } // end if (grid_pchg)
+      } // end if (PCHG or DISP)
 
 
       if CONSTEXPR (eq<T, MPOLE>()) {
@@ -166,7 +166,7 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
                }
             } // end for (int iy)
          }
-      } // end if (grid_mpole)
+      } // end if (MPOLE)
 
 
       if CONSTEXPR (eq<T, UIND>()) {
@@ -211,7 +211,7 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
                }
             } // end for (int iy)
          }
-      } // end if (grid_uind)
+      } // end if (UIND)
    }
 }
 
@@ -219,6 +219,12 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
 void grid_pchg_acc(PMEUnit pme_u, real* pchg)
 {
    grid_put_acc<PCHG>(pme_u, pchg, nullptr);
+}
+
+
+void grid_disp_acc(PMEUnit pme_u, real* csix)
+{
+   grid_put_acc<DISP>(pme_u, csix, nullptr);
 }
 
 

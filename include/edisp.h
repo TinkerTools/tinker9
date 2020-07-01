@@ -12,6 +12,8 @@ void edisp(int vers);
 
 void edisp_ewald(int vers);
 void edisp_ewald_real_cu(int vers);
+void edisp_ewald_recip_self_cu(int vers);
+void disp_pme_conv_acc(int vers);
 
 
 void edisp_nonewald(int vers);

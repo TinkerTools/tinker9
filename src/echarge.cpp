@@ -220,7 +220,9 @@ void echarge_ewald(int vers)
          pme_conv(pu);
       }
    }
-   fftback(pu);
+   if (vers & calc::grad) {
+      fftback(pu);
+   }
 
    // fphi_pchg, recip, self
 

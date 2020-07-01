@@ -18,6 +18,10 @@ namespace commit_11e84c69 {
 extern const char* charmm19_prm;
 }
 
+namespace commit_350df099 {
+extern const char* amber99sb_prm;
+}
+
 // xyz files
 extern const char* watersmall_xyz;
 
@@ -63,4 +67,8 @@ extern const char* arbox_arc;
 // potassium ion and water
 extern const char* kwater_key;
 extern const char* kwater_xyz;
+
+// alanine dipeptide test set
+extern const char* ala_amber99sb_key;
+extern const char* ala_amber99sb_xyz;
 }
