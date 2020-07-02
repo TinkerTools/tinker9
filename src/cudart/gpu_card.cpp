@@ -297,4 +297,13 @@ int get_grid_size(int nthreads_per_block)
 
    return a.multiprocessor_count * max_nblocks_per_MP;
 }
+
+
+int gpu_max_nparallel(int idev)
+{
+   const auto& a = get_device_attributes().at(idev);
+   int n_sm = a.multiprocessor_count;
+   int n_thread = a.max_threads_per_multiprocessor;
+   return n_sm * n_thread;
+}
 }

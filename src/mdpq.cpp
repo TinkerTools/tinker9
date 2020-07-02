@@ -1,11 +1,11 @@
 
 #include "mdpq.h"
 #include "box.h"
-#include "glob.gpucard.h"
 #include "mdcalc.h"
 #include "nblist.h"
 #include "tool/darray.h"
 #include "tool/error.h"
+#include "tool/gpu_card.h"
 #include <cassert>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>
@@ -25,6 +25,7 @@ int rc_flag = 0;
 int n;
 int padded_n;
 int trajn;
+int nelem_buffer;
 
 
 void n_data(rc_op op)
@@ -33,6 +34,7 @@ void n_data(rc_op op)
       trajn = -1;
       n = 0;
       padded_n = 0;
+      nelem_buffer = 0;
    }
 
    if (op & rc_alloc) {
@@ -45,6 +47,16 @@ void n_data(rc_op op)
          assert(trajn >= 0);
       }
 
+#if TINKER_CUDART
+      nelem_buffer = gpu_max_nparallel(idevice);
+      size_t nelem1 = pow2_ge(nelem_buffer);
+      size_t nelem2 = pow2_ge(n);
+      nelem_buffer = std::min(nelem1, nelem2);
+      int nelem3 = 4 * 1024;
+      nelem_buffer = std::max(nelem_buffer, nelem3);
+#elif TINKER_HOST
+      nelem_buffer = 1;
+#endif
 
       if (usage::nuse != n) {
          TINKER_THROW("All atoms must be active.");

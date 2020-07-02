@@ -6,6 +6,7 @@
 namespace tinker {
 void gpu_card_data(rc_op op);
 int get_grid_size(int nthreads_per_block);
+int gpu_max_nparallel(int idev);
 }
 
 
