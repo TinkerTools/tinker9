@@ -45,6 +45,8 @@ void energy_data(rc_op op)
    rc_man fft42{fft_data, op};
 
    rc_man echarge42{echarge_data, op};
+   // Must follow evdw_data() and echarge_data().
+   rc_man echglj42{echglj_data, op};
 
    // empole_data() must be in front of epolar_data().
    rc_man empole42{empole_data, op};
@@ -98,7 +100,7 @@ const TimeScaleConfig& default_tsconfig()
 
       {"evdw", 0},
 
-      {"echarge", 0},
+      {"echarge", 0}, {"echglj", 0},
 
       {"emplar", 0},  {"empole", 0},  {"epolar", 0},
 
@@ -178,15 +180,19 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    // non-bonded terms
 
 
-   if (use_potent(vdw_term))
+   if (amoeba_evdw(vers))
       if (tscfg("evdw", ecore_vdw))
          evdw(vers);
 
 
-   if (use_potent(charge_term))
+   if (amoeba_echarge(vers))
       if (tscfg("echarge", ecore_ele))
          echarge(vers);
-
+   if (amoeba_echglj(vers))
+      if (tscfg("echglj", ecore_ele)) {
+         ecore_vdw = true;
+         echglj(vers);
+      }
 
    if (amoeba_empole(vers))
       if (tscfg("empole", ecore_ele))

@@ -17,6 +17,7 @@
 
 
 #include "echarge.h"
+#include "echglj.h"
 #include "emplar.h"
 #include "empole.h"
 #include "epolar.h"

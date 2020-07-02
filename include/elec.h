@@ -53,4 +53,8 @@ void torque_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz);
 bool amoeba_emplar(int vers);
 bool amoeba_empole(int vers);
 bool amoeba_epolar(int vers);
+
+bool amoeba_echglj(int vers);
+bool amoeba_echarge(int vers);
+bool amoeba_evdw(int vers);
 }

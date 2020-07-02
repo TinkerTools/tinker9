@@ -36,7 +36,7 @@ personal Github account.
 Directly downloading zip file from Github webpage would work but is not
 recommended because of the following cons:
    * No Git commit information to keep track of issues or bugs.
-   * Tinker submodule would not not work.
+   * Tinker submodule would not work.
    * Has to download zip file in the furture for new commits.
 
 

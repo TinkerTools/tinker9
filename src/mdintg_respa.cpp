@@ -27,7 +27,7 @@ const TimeScaleConfig& respa_tsconfig()
 
       {"evdw", slow},
 
-      {"echarge", slow},
+      {"echarge", slow}, {"echglj", slow},
 
       {"emplar", slow},  {"empole", slow}, {"epolar", slow},
 
