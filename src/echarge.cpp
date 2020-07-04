@@ -160,9 +160,15 @@ void echarge(int vers)
          darray::zero(PROCEED_NEW_Q, n, decx, decy, decz);
    }
 
-   if (use_ewald())
-      echarge_ewald(vers);
-   else
+   if (use_ewald()) {
+      echarge_ewald_recip_self(vers);
+#if TINKER_CUDART
+      if (clist_version() & NBL_SPATIAL)
+         echarge_ewald_real_cu(vers);
+      else
+#endif
+         echarge_ewald_real_acc(vers);
+   } else
       echarge_nonewald(vers);
 
    if (rc_a) {
@@ -198,7 +204,7 @@ void echarge_nonewald(int vers)
 }
 
 
-void echarge_ewald(int vers)
+void echarge_ewald_recip_self(int vers)
 {
    // ewald recip space, self term
    // ewald real space
@@ -232,13 +238,5 @@ void echarge_ewald(int vers)
    else
 #endif
       echarge_ewald_fphi_self_acc(vers);
-
-
-#if TINKER_CUDART
-   if (clist_version() & NBL_SPATIAL)
-      echarge_ewald_real_cu(vers);
-   else
-#endif
-      echarge_ewald_real_acc(vers);
 }
 }

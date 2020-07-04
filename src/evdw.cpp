@@ -98,6 +98,33 @@ void evdw_data(rc_op op)
       else
          assert(false);
 
+      fstr_view str1 = vdwpot::vdwindex;
+      if (str1 == "CLASS")
+         vdwindex = evdw_t::atom_class;
+      else if (str1 == "TYPE")
+         vdwindex = evdw_t::atom_type;
+      else
+         assert(false);
+
+      fstr_view str2 = vdwpot::radrule;
+      if (str2 == "ARITHMETIC")
+         radrule = evdw_t::arithmetic;
+      else if (str2 == "GEOMETRIC")
+         radrule = evdw_t::geometric;
+      else if (str2 == "CUBIC-MEAN")
+         radrule = evdw_t::cubic_mean;
+      else
+         assert(false);
+
+      fstr_view str3 = vdwpot::epsrule;
+      if (str3 == "ARITHMETIC")
+         epsrule = evdw_t::arithmetic;
+      else if (str3 == "GEOMETRIC")
+         epsrule = evdw_t::geometric;
+      else if (str3 == "CUBIC-MEAN")
+         epsrule = evdw_t::cubic_mean;
+      else
+         assert(false);
 
       if (vdwtyp == evdw_t::hal) {
          darray::allocate(n, &ired, &kred, &xred, &yred, &zred);

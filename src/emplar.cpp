@@ -365,19 +365,10 @@ void emplar_data(rc_op op)
 void emplar(int vers)
 {
 #if TINKER_CUDART
-   bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
 
 
    host_zero(energy_em, virial_em);
-   auto bsize = buffer_size();
-   if (do_e)
-      darray::zero(PROCEED_NEW_Q, bsize, em);
-   if (do_v)
-      darray::zero(PROCEED_NEW_Q, bsize, vir_em);
-   if (do_g)
-      darray::zero(PROCEED_NEW_Q, n, demx, demy, demz);
 
 
    mpole_init(vers);
