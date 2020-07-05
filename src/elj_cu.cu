@@ -378,7 +378,7 @@ void elj_cu4()
    const real off = switch_off(switch_vdw);
 
 
-   auto bufsize = buffer_size();
+   size_t bufsize = buffer_size();
 
 
    auto i12 = couple_i12;
@@ -396,13 +396,40 @@ void elj_cu4()
                  devx, devy, devz, TINKER_IMAGE_ARGS, njvdw, jvdw, radmin,
                  epsilon, cut, off, x, y, z, nvexclude, vexclude,
                  vexclude_scale);
+}
 
 
-   if (nvdw14 > 0)
+template <class Ver>
+void elj_cu5()
+{
+   if (nvdw14 > 0) {
+      size_t bufsize = buffer_size();
+      const real cut = switch_cut(switch_vdw);
+      const real off = switch_off(switch_vdw);
+
+
       launch_k1s(nonblk, nvdw14, elj_cu3<Ver>, bufsize, nev, ev, vir_ev, devx,
                  devy, devz, TINKER_IMAGE_ARGS, njvdw, jvdw, radmin, epsilon,
                  cut, off, x, y, z, v4scale, nvdw14, vdw14ik, radmin4,
                  epsilon4);
+   }
+}
+
+
+void elj14_cu(int vers)
+{
+   if (vers == calc::v0)
+      elj_cu5<calc::V0>();
+   else if (vers == calc::v1)
+      elj_cu5<calc::V1>();
+   else if (vers == calc::v3)
+      elj_cu5<calc::V3>();
+   else if (vers == calc::v4)
+      elj_cu5<calc::V4>();
+   else if (vers == calc::v5)
+      elj_cu5<calc::V5>();
+   else if (vers == calc::v6)
+      elj_cu5<calc::V6>();
 }
 
 
@@ -420,5 +447,8 @@ void elj_cu(int vers)
       elj_cu4<calc::V5>();
    else if (vers == calc::v6)
       elj_cu4<calc::V6>();
+
+
+   elj14_cu(vers);
 }
 }

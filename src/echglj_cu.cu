@@ -574,6 +574,9 @@ void echglj_rad_arith_eps_geom_nonewald_cu(int vers)
       echglj_cu3<calc::V5, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM>();
    else if (vers == calc::v6)
       echglj_cu3<calc::V6, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM>();
+
+
+   elj14_cu(vers);
 }
 
 
@@ -591,5 +594,8 @@ void echglj_rad_arith_eps_geom_ewald_real_cu(int vers)
       echglj_cu3<calc::V5, EWALD, RAD_ARITH, EPS_GEOM>();
    else if (vers == calc::v6)
       echglj_cu3<calc::V6, EWALD, RAD_ARITH, EPS_GEOM>();
+
+
+   elj14_cu(vers);
 }
 }
