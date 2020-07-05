@@ -1,6 +1,7 @@
 #include "elec.h"
 #include "empole.h"
 #include "epolar.h"
+#include "glob.chglj.h"
 #include "md.h"
 #include "mod.vdwpot.h"
 #include "nblist.h"
@@ -375,6 +376,8 @@ bool amoeba_echglj(int vers)
    if (!(clist_version() & NBL_SPATIAL))
       return false;
    if (vdwtyp != evdw_t::lj)
+      return false;
+   if (vdwpr_in_use)
       return false;
    return true;
 }

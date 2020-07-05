@@ -4,12 +4,18 @@
 #include "nblist.h"
 #include "potent.h"
 #include "tool/host_zero.h"
+#include "tool/io_fort_str.h"
+#include "tool/io_text.h"
+#include <array>
 #include <map>
+#include <set>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/couple.hh>
+#include <tinker/detail/keys.hh>
 #include <tinker/detail/kvdws.hh>
+#include <tinker/detail/params.hh>
 #include <tinker/detail/sizes.hh>
 #include <tinker/detail/vdwpot.hh>
 
@@ -27,12 +33,70 @@ void echglj_data(rc_op op)
 
    if (op & rc_dealloc) {
       ncvexclude = 0;
+      vdwpr_in_use = false;
       darray::deallocate(cvexclude, cvexclude_scale);
       darray::deallocate(atom_rad, atom_eps);
    }
 
 
    if (op & rc_alloc) {
+      // check "VDWPR" keyword
+      if (!vdwpr_in_use) {
+         auto parse_vdwpr = [](std::string line, int& i, int& k, double& rad,
+                               double& eps) {
+            try {
+               auto vs = Text::split(line);
+               std::string ke = vs.at(0);
+               Text::upcase(ke);
+               if (ke == "VDWPR") {
+                  i = std::stoi(vs.at(1));
+                  k = std::stoi(vs.at(2));
+                  rad = std::stod(vs.at(3));
+                  eps = std::stod(vs.at(4));
+                  return true;
+               }
+               return false;
+            } catch (...) {
+               return false;
+            }
+         };
+         const int* src = atoms::type;
+         if (vdwindex == evdw_t::atom_class)
+            src = atomid::class_;
+         std::set<int> all_tid(src, src + n);
+         auto end = all_tid.end();
+         int i, k;
+         double rad, eps;
+         std::string record;
+         // first prm
+         for (int ii = 0; ii < params::nprm && !vdwpr_in_use; ++ii) {
+            fstr_view fsv = params::prmline[ii];
+            record = fsv.trim();
+            bool okay = parse_vdwpr(record, i, k, rad, eps);
+            if (okay) {
+               auto iit = all_tid.find(i);
+               auto kit = all_tid.find(k);
+               if (iit != end && kit != end) {
+                  vdwpr_in_use = true;
+               }
+            }
+         }
+         // then key
+         for (int ii = 0; ii < keys::nkey && !vdwpr_in_use; ++ii) {
+            fstr_view fsv = keys::keyline[ii];
+            record = fsv.trim();
+            bool okay = parse_vdwpr(record, i, k, rad, eps);
+            if (okay) {
+               auto iit = all_tid.find(i);
+               auto kit = all_tid.find(k);
+               if (iit != end && kit != end) {
+                  vdwpr_in_use = true;
+               }
+            }
+         }
+      }
+
+
       struct cv
       {
          real c, v;
