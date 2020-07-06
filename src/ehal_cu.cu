@@ -39,7 +39,7 @@
 
 
 namespace tinker {
-#define HAL_ARGS                                                               \
+#define HALPARAS                                                               \
    size_t bufsize, count_buffer restrict nev, energy_buffer restrict ev,       \
       virial_buffer restrict vir_ev, grad_prec *restrict gxred,                \
       grad_prec *restrict gyred, grad_prec *restrict gzred,                    \
@@ -59,7 +59,7 @@ namespace tinker {
 #endif
 template <class Ver>
 __launch_bounds__(BLOCK_DIM) __global__
-void ehal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
+void ehal_cu1(HALPARAS, int n, const Spatial::SortedAtom* restrict sorted,
               int niak, const int* restrict iak, const int* restrict lst,
               const int (*restrict i12)[couple_maxn12])
 {
@@ -239,7 +239,7 @@ void ehal_cu1(HAL_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
 template <class Ver>
 __global__
-void ehal_cu2(HAL_ARGS, const real* restrict xred, const real* restrict yred,
+void ehal_cu2(HALPARAS, const real* restrict xred, const real* restrict yred,
               const real* restrict zred, int nvexclude,
               const int (*restrict vexclude)[2],
               const real* restrict vexclude_scale)

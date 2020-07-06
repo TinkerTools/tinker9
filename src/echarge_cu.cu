@@ -11,7 +11,7 @@
 
 
 namespace tinker {
-#define ECHARGE_ARGS                                                           \
+#define ECHARGEPARAS                                                           \
    size_t bufsize, count_buffer restrict nec, energy_buffer restrict ec,       \
       virial_buffer restrict vir_ec, grad_prec *restrict gx,                   \
       grad_prec *restrict gy, grad_prec *restrict gz, TINKER_IMAGE_PARAMS,     \
@@ -20,7 +20,7 @@ namespace tinker {
 
 template <class Ver, class ETYP>
 __global__
-void echarge_cu1(ECHARGE_ARGS, const Spatial::SortedAtom* restrict sorted,
+void echarge_cu1(ECHARGEPARAS, const Spatial::SortedAtom* restrict sorted,
                  int niak, const int* restrict iak, const int* restrict lst,
                  int n, real aewald)
 {
@@ -154,7 +154,7 @@ void echarge_cu1(ECHARGE_ARGS, const Spatial::SortedAtom* restrict sorted,
 
 template <class Ver, class ETYP>
 __global__
-void echarge_cu2(ECHARGE_ARGS, const real* restrict x, const real* restrict y,
+void echarge_cu2(ECHARGEPARAS, const real* restrict x, const real* restrict y,
                  const real* restrict z, int ncexclude,
                  const int (*restrict cexclude)[2],
                  const real* restrict cexclude_scale)

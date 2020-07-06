@@ -908,7 +908,7 @@ void pair_mplar_v2(                                                       //
 #define pair_mplar pair_mplar_v2
 
 
-#define EMPLAR_ARGS                                                            \
+#define EMPLARPARAS                                                            \
    size_t bufsize, energy_buffer restrict ebuf,                                \
       virial_buffer restrict vir_ebuf, grad_prec *restrict gx,                 \
       grad_prec *restrict gy, grad_prec *restrict gz, real *restrict trqx,     \
@@ -921,7 +921,7 @@ void pair_mplar_v2(                                                       //
 
 template <class Ver, class ETYP>
 __global__
-void emplar_cu1(EMPLAR_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
+void emplar_cu1(EMPLARPARAS, int n, const Spatial::SortedAtom* restrict sorted,
                 int niak, const int* restrict iak, const int* restrict lst,
                 real aewald)
 {
@@ -1081,7 +1081,7 @@ void emplar_cu1(EMPLAR_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
 template <class Ver>
 __global__
-void emplar_cu2(EMPLAR_ARGS, const real* restrict x, const real* restrict y,
+void emplar_cu2(EMPLARPARAS, const real* restrict x, const real* restrict y,
                 const real* restrict z, int nmdpuexclude,
                 const int (*restrict mdpuexclude)[2],
                 const real (*restrict mdpuexclude_scale)[4])

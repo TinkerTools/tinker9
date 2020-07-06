@@ -160,7 +160,7 @@ void pair_chglj(real r, real r2, real& restrict invr, //
 //====================================================================//
 
 
-#define ECHGLJ_PARAMS                                                          \
+#define ECHGLJPARAS                                                            \
    size_t bufsize, energy_buffer restrict ec, virial_buffer restrict vir_ec,   \
       grad_prec *restrict decx, grad_prec *restrict decy,                      \
       grad_prec *restrict decz, real eccut, real ecoff, real ebuffer, real f,  \
@@ -172,7 +172,7 @@ void pair_chglj(real r, real r2, real& restrict invr, //
 
 template <class Ver, class ETYP, class RADRULE, class EPSRULE>
 __global__
-void echglj_cu1(ECHGLJ_PARAMS, const Spatial::SortedAtom* restrict sorted,
+void echglj_cu1(ECHGLJPARAS, const Spatial::SortedAtom* restrict sorted,
                 int niak, const int* restrict iak, const int* restrict lst,
                 int n, real aewald, const int (*restrict i12)[couple_maxn12])
 {
@@ -389,7 +389,7 @@ void echglj_cu1(ECHGLJ_PARAMS, const Spatial::SortedAtom* restrict sorted,
 
 template <class Ver, class ETYP, class RADRULE, class EPSRULE>
 __global__
-void echglj_cu2(ECHGLJ_PARAMS, const real* restrict x, const real* restrict y,
+void echglj_cu2(ECHGLJPARAS, const real* restrict x, const real* restrict y,
                 const real* restrict z, int ncvexclude,
                 const int (*restrict cvexclude)[2],
                 const real (*restrict cvexclude_scale)[2])

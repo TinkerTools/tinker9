@@ -11,7 +11,7 @@
 
 
 namespace tinker {
-#define POLAR_ARGS                                                             \
+#define POLARPARAS                                                             \
    size_t bufsize, count_buffer restrict nep, energy_buffer restrict ep,       \
       virial_buffer restrict vir_ep, grad_prec *restrict gx,                   \
       grad_prec *restrict gy, grad_prec *restrict gz, real(*restrict ufld)[3], \
@@ -23,7 +23,7 @@ namespace tinker {
 
 template <class Ver, class ETYP>
 __global__
-void epolar_cu1(POLAR_ARGS, const Spatial::SortedAtom* restrict sorted,
+void epolar_cu1(POLARPARAS, const Spatial::SortedAtom* restrict sorted,
                 int niak, const int* restrict iak, const int* restrict lst,
                 int n, real aewald)
 {
@@ -280,7 +280,7 @@ void epolar_cu1(POLAR_ARGS, const Spatial::SortedAtom* restrict sorted,
 
 template <class Ver>
 __global__
-void epolar_cu2(POLAR_ARGS, const real* restrict x, const real* restrict y,
+void epolar_cu2(POLARPARAS, const real* restrict x, const real* restrict y,
                 const real* restrict z, int ndpuexclude,
                 const int (*restrict dpuexclude)[2],
                 const real (*restrict dpuexclude_scale)[3])
