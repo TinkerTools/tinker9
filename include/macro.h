@@ -275,3 +275,13 @@ using real = float;
 using mixed = float;
 #endif
 }
+
+
+//====================================================================//
+
+
+#ifndef TINKER_GPU_DIR
+#   error TINKER_GPU_DIR is not set.
+#else
+#   define TINKER_GPU_DIRSTR TINKER_STR(TINKER_GPU_DIR)
+#endif

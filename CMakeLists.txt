@@ -320,6 +320,9 @@ elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
 endif ()
 
 
+list (APPEND macro_defs TINKER_GPU_DIR=${CMAKE_SOURCE_DIR})
+
+
 find_package (Git)
 if (GIT_FOUND)
    if (EXISTS "${PROJECT_SOURCE_DIR}/.git")

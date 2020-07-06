@@ -275,6 +275,7 @@ void echglj_data(rc_op op)
 
 void echglj(int vers)
 {
+#if TINKER_CUDART
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
 
@@ -312,5 +313,6 @@ void echglj(int vers)
          virial_vdw[8] += term;
       }
    }
+#endif
 }
 }
