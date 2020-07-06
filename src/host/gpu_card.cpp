@@ -20,4 +20,10 @@ int get_grid_size(int)
 {
    return 1;
 }
+
+
+int gpu_max_nparallel(int)
+{
+   return 1;
+}
 }

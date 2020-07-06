@@ -49,6 +49,27 @@ public:
 
 /**
  * \ingroup test
+ * Read reference values from a text file.
+ */
+class TestReference
+{
+private:
+   int count;
+   double energy;
+   double virial[3][3];
+   std::vector<double> gradient;
+
+public:
+   TestReference(std::string txt_filename);
+   int get_count() const;
+   double get_energy() const;
+   double (*get_virial())[3];
+   double (*get_gradient())[3];
+};
+
+
+/**
+ * \ingroup test
  * Returns tolerance eps depending on the predefined floating-point precision.
  * \param eps_single  Larger `eps` for lower floating-point precision.
  * \param eps_double  Smaller `eps` for higher floating-point precision.

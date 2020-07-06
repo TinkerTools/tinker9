@@ -17,6 +17,7 @@
 
 
 #include "echarge.h"
+#include "echglj.h"
 #include "emplar.h"
 #include "empole.h"
 #include "epolar.h"
@@ -40,6 +41,9 @@ namespace tinker {
  * \see TimeScaleConfig
  */
 void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig);
+extern bool ecore_val;
+extern bool ecore_vdw;
+extern bool ecore_ele;
 
 
 /**

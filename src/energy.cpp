@@ -6,6 +6,11 @@
 
 
 namespace tinker {
+bool ecore_val;
+bool ecore_vdw;
+bool ecore_ele;
+
+
 void energy_data(rc_op op)
 {
    if ((rc_flag & calc::vmask) == 0)
@@ -40,6 +45,8 @@ void energy_data(rc_op op)
    rc_man fft42{fft_data, op};
 
    rc_man echarge42{echarge_data, op};
+   // Must follow evdw_data() and echarge_data().
+   rc_man echglj42{echglj_data, op};
 
    // empole_data() must be in front of epolar_data().
    rc_man empole42{empole_data, op};
@@ -94,7 +101,7 @@ const TimeScaleConfig& default_tsconfig()
 
       {"evdw", 0},
 
-      {"echarge", 0},
+      {"echarge", 0}, {"echglj", 0},
 
       {"emplar", 0},  {"empole", 0},  {"epolar", 0},
 
@@ -105,17 +112,19 @@ const TimeScaleConfig& default_tsconfig()
 
 
 namespace {
-auto tscfg__ = [](std::string eng, unsigned tsflag,
+auto tscfg__ = [](std::string eng, bool& use_flag, unsigned tsflag,
                   const TimeScaleConfig& tsconfig) {
    auto local_flag = tsflag;
    const auto& local_cfg = tsconfig;
    try {
-      return local_flag & (1 << local_cfg.at(eng));
+      bool f = local_flag & (1 << local_cfg.at(eng));
+      use_flag = use_flag || f;
+      return f;
    } catch (const std::out_of_range&) {
       TINKER_THROW(format("Time scale of the %s term is unknown.\n", eng));
    }
 };
-#define tscfg(x) tscfg__(x, tsflag, tsconfig)
+#define tscfg(x, f) tscfg__(x, f, tsflag, tsconfig)
 }
 
 
@@ -124,35 +133,40 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    vers = vers & calc::vmask;
 
 
+   ecore_val = false;
+   ecore_vdw = false;
+   ecore_ele = false;
+
+
    // bonded terms
 
 
    if (use_potent(bond_term))
-      if (tscfg("ebond"))
+      if (tscfg("ebond", ecore_val))
          ebond(vers);
    if (use_potent(angle_term))
-      if (tscfg("eangle"))
+      if (tscfg("eangle", ecore_val))
          eangle(vers);
    if (use_potent(strbnd_term))
-      if (tscfg("estrbnd"))
+      if (tscfg("estrbnd", ecore_val))
          estrbnd(vers);
    if (use_potent(urey_term))
-      if (tscfg("eurey"))
+      if (tscfg("eurey", ecore_val))
          eurey(vers);
    if (use_potent(opbend_term))
-      if (tscfg("eopbend"))
+      if (tscfg("eopbend", ecore_val))
          eopbend(vers);
    if (use_potent(imptors_term))
-      if (tscfg("eimptor"))
+      if (tscfg("eimptor", ecore_val))
          eimptor(vers);
    if (use_potent(torsion_term))
-      if (tscfg("etors"))
+      if (tscfg("etors", ecore_val))
          etors(vers);
    if (use_potent(pitors_term))
-      if (tscfg("epitors"))
+      if (tscfg("epitors", ecore_val))
          epitors(vers);
    if (use_potent(tortor_term))
-      if (tscfg("etortor"))
+      if (tscfg("etortor", ecore_val))
          etortor(vers);
 
 
@@ -160,42 +174,46 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 
    if (use_potent(geom_term))
-      if (tscfg("egeom"))
+      if (tscfg("egeom", ecore_val))
          egeom(vers);
 
 
    // non-bonded terms
 
 
-   if (use_potent(vdw_term))
-      if (tscfg("evdw"))
+   if (amoeba_evdw(vers))
+      if (tscfg("evdw", ecore_vdw))
          evdw(vers);
 
 
-   if (use_potent(charge_term))
-      if (tscfg("echarge"))
+   if (amoeba_echarge(vers))
+      if (tscfg("echarge", ecore_ele))
          echarge(vers);
-
+   if (amoeba_echglj(vers))
+      if (tscfg("echglj", ecore_ele)) {
+         ecore_vdw = true;
+         echglj(vers);
+      }
 
    if (amoeba_empole(vers))
-      if (tscfg("empole"))
+      if (tscfg("empole", ecore_ele))
          empole(vers);
    if (amoeba_epolar(vers))
-      if (tscfg("epolar"))
+      if (tscfg("epolar", ecore_ele))
          epolar(vers);
    if (amoeba_emplar(vers))
-      if (tscfg("emplar"))
+      if (tscfg("emplar", ecore_ele))
          emplar(vers);
 
 
    if (use_potent(chgtrn_term))
-      if (tscfg("echgtrn"))
+      if (tscfg("echgtrn", ecore_ele))
          echgtrn(vers);
    if (use_potent(repuls_term))
       if (tscfg("erepel"))
          erepel(vers);
    if (use_potent(disp_term))
-      if (tscfg("edisp"))
+      if (tscfg("edisp", ecore_vdw))
          edisp(vers);
 }
 
@@ -214,13 +232,15 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (do_e) {
       if (!rc_a) {
          energy_prec e;
-         e = energy_reduce(eng_buf);
-         energy_valence += e;
-         if (eng_buf_vdw) {
+         if (ecore_val) {
+            e = energy_reduce(eng_buf);
+            energy_valence += e;
+         }
+         if (ecore_vdw && eng_buf_vdw) {
             e = energy_reduce(eng_buf_vdw);
             energy_vdw += e;
          }
-         if (eng_buf_elec) {
+         if (ecore_ele && eng_buf_elec) {
             e = energy_reduce(eng_buf_elec);
             energy_elec += e;
          }
@@ -232,15 +252,17 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (do_v) {
       if (!rc_a) {
          virial_prec v[9];
-         virial_reduce(v, vir_buf);
-         for (int iv = 0; iv < 9; ++iv)
-            virial_valence[iv] += v[iv];
-         if (vir_buf_vdw) {
+         if (ecore_val) {
+            virial_reduce(v, vir_buf);
+            for (int iv = 0; iv < 9; ++iv)
+               virial_valence[iv] += v[iv];
+         }
+         if (ecore_vdw && vir_buf_vdw) {
             virial_reduce(v, vir_buf_vdw);
             for (int iv = 0; iv < 9; ++iv)
                virial_vdw[iv] += v[iv];
          }
-         if (vir_buf_elec) {
+         if (ecore_ele && vir_buf_elec) {
             virial_reduce(v, vir_buf_elec);
             for (int iv = 0; iv < 9; ++iv)
                virial_elec[iv] += v[iv];
@@ -252,9 +274,9 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 
    if (do_g) {
-      if (gx_vdw)
+      if (ecore_vdw && gx_vdw)
          sum_gradient(gx, gy, gz, gx_vdw, gy_vdw, gz_vdw);
-      if (gx_elec)
+      if (ecore_ele && gx_elec)
          sum_gradient(gx, gy, gz, gx_elec, gy_elec, gz_elec);
    }
 }

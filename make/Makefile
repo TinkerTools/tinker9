@@ -54,6 +54,10 @@ space__ :=
 space__ +=
 
 
+shared_flags__ :=
+link_flags__ :=
+
+
 # top-level directory
 makefile_path__ := $(abspath $(lastword $(MAKEFILE_LIST)))
 makefile_dir__ := $(dir $(makefile_path__))
@@ -62,14 +66,11 @@ makefile_dir__ := $(dir $(makefile_path__))
 ifeq (,$(top_dir__))
    top_dir__ := $(realpath $(makefile_dir__)/..)
 endif
+shared_flags__ += -DTINKER_GPU_DIR="$(top_dir__)"
 
 
 # linux (Linux) / darwin (macOS)
 os__ := $(shell uname -s 2>/dev/null | tr "[:upper:]" "[:lower:]")
-
-
-shared_flags__ :=
-link_flags__ :=
 
 
 ##/ **opt=release**

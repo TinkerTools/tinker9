@@ -33,6 +33,7 @@ extern int rc_flag;
 extern int n;
 extern int padded_n;
 extern int trajn;
+extern int nelem_buffer;
 
 
 void n_data(rc_op);

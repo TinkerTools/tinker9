@@ -21,6 +21,7 @@ void evdw_data(rc_op op);
 void elj(int vers);
 void elj_acc(int);
 void elj_cu(int);
+void elj14_cu(int);
 void ebuck(int vers);
 void ebuck_acc(int);
 void emm3hb(int vers);

@@ -36,6 +36,7 @@
 
 #include "glob.accasync.h"
 #include "glob.box.h"
+#include "glob.chglj.h"
 #include "glob.cudalib.h"
 #include "glob.energi.h"
 #include "glob.gpucard.h"

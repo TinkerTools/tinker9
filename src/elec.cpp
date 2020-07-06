@@ -2,10 +2,13 @@
 #include "empole.h"
 #include "energy.h"
 #include "epolar.h"
+#include "glob.chglj.h"
 #include "md.h"
+#include "mod.vdwpot.h"
 #include "nblist.h"
 #include "pmestuf.h"
 #include "potent.h"
+#include "switch.h"
 #include "tool/io_fort_str.h"
 #include <tinker/detail/atoms.hh>
 #include <tinker/detail/chgpot.hh>
@@ -361,5 +364,39 @@ bool amoeba_epolar(int vers)
    if (amoeba_emplar(vers))
       return false;
    return use_potent(polar_term);
+}
+
+
+bool amoeba_echglj(int vers)
+{
+   if (rc_flag & calc::analyz)
+      return false;
+   if (vers & calc::analyz)
+      return false;
+   if (!use_potent(charge_term) || !use_potent(vdw_term))
+      return false;
+   if (!(clist_version() & NBL_SPATIAL))
+      return false;
+   if (vdwtyp != evdw_t::lj)
+      return false;
+   if (vdwpr_in_use)
+      return false;
+   return true;
+}
+
+
+bool amoeba_echarge(int vers)
+{
+   if (amoeba_echglj(vers))
+      return false;
+   return use_potent(charge_term);
+}
+
+
+bool amoeba_evdw(int vers)
+{
+   if (amoeba_echglj(vers))
+      return false;
+   return use_potent(vdw_term);
 }
 }

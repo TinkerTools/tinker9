@@ -8,23 +8,9 @@
 namespace tinker {
 size_t buffer_size()
 {
-   size_t nhint = n;
-   size_t max_bytes = 2 * 1024 * 1024ull; // 2 MB for int
-   if (nhint <= 16384)
-      max_bytes /= 2; // 1 MB
-   if (nhint <= 8192)
-      max_bytes /= 2; // 512 KB
-   if (nhint <= 4096)
-      max_bytes /= 2; // 256 KB
-   if (nhint <= 2048)
-      max_bytes /= 2; // 128 KB
-   if (nhint <= 1024)
-      max_bytes /= 2; // 64 KB
-   if (nhint <= 512)
-      max_bytes /= 2; // 32 KB 8192 words
-
-   assert(is_pow2(max_bytes) && "new_size must be power of 2");
-   return max_bytes;
+   size_t bsize = nelem_buffer;
+   assert(is_pow2(bsize) && "buffer size must be power of 2.");
+   return bsize;
 }
 
 
