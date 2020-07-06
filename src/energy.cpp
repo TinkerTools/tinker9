@@ -210,7 +210,7 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       if (tscfg("echgtrn", ecore_ele))
          echgtrn(vers);
    if (use_potent(repuls_term))
-      if (tscfg("erepel"))
+      if (tscfg("erepel", ecore_vdw))
          erepel(vers);
    if (use_potent(disp_term))
       if (tscfg("edisp", ecore_vdw))
