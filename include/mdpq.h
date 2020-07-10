@@ -87,6 +87,7 @@ static_assert(sizeof(pos_prec) >= sizeof(real),
  * If #xpos etc. are only aliases, return directly.
  */
 void copy_pos_to_xyz();
+void copy_pos_to_xyz(bool check_nblist);
 void copy_pos_to_xyz_acc();
 
 
@@ -100,6 +101,7 @@ void copy_pos_to_xyz_acc();
  *                      coordinates.
  */
 void propagate_xyz(time_prec dt, bool check_nblist);
+void propagate_pos(time_prec);
 void propagate_pos_acc(time_prec);
 
 

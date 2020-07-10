@@ -5,6 +5,7 @@
 #include "mdpq.h"
 #include "mdpt.h"
 #include "random.h"
+#include "rattle.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
 
@@ -34,8 +35,18 @@ void velocity_verlet(int istep, time_prec dt_ps)
    // v += a * dt/2
    propagate_velocity(dt_2, gx, gy, gz);
 
+   const bool userat = use_rattle();
+   if (userat) {
+      darray::copy(PROCEED_NEW_Q, n, rattle_xold, xpos);
+      darray::copy(PROCEED_NEW_Q, n, rattle_yold, ypos);
+      darray::copy(PROCEED_NEW_Q, n, rattle_zold, zpos);
+   }
    // s += v * dt
-   propagate_xyz(dt_ps, true);
+   propagate_pos(dt_ps);
+   if (userat)
+      rattle(dt_ps, rattle_xold, rattle_yold, rattle_zold);
+   copy_pos_to_xyz(true);
+
    // update gradient
    energy(vers1);
 
@@ -44,6 +55,8 @@ void velocity_verlet(int istep, time_prec dt_ps)
 
    // v += a * dt/2
    propagate_velocity(dt_2, gx, gy, gz);
+   if (userat)
+      rattle2(dt_ps, vers1 bitand calc::virial);
 
    // full-step corrections
    T_prec temp;
