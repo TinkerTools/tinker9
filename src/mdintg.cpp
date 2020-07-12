@@ -10,6 +10,7 @@
 #include "mdpt.h"
 #include "mdsave.h"
 #include "nose.h"
+#include "rattle.h"
 #include "tool/darray.h"
 #include "tool/io_fort_str.h"
 #include <cassert>
@@ -68,9 +69,6 @@ void propagate(int nsteps, time_prec dt_ps)
 void integrate_data(rc_op op)
 {
    if (op & rc_dealloc) {
-      if (intg == nhc_npt_xo_respa)
-         darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
-
       if (intg == respa_fast_slow)
          darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
 
@@ -125,8 +123,12 @@ void integrate_data(rc_op op)
       } else if (itg == "BAOAB") {
       } else if (itg == "BUSSI") {
       } else if (itg == "NOSE-HOOVER") {
+         if (use_rattle()) {
+            TINKER_THROW(
+               "Constraints under NH-NPT require the ROLL algorithm.");
+         }
          double ekt = units::gasconst * bath::kelvin;
-         intg = nhc_npt_xo_respa;
+         intg = nhc_npt;
          vbar = 0;
          qbar = (mdstuf::nfree + 1) * ekt * bath::taupres * bath::taupres;
          gbar = 0;
@@ -136,21 +138,7 @@ void integrate_data(rc_op op)
             gnh[i] = 0;
          }
          qnh[0] *= mdstuf::nfree;
-
-         // need fast and slow gradients to start/restart the simulation
-         darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
-
-         // save fast gradients to gx1 etc.
-         energy(calc::grad, RESPA_FAST, respa_tsconfig());
-         darray::copy(PROCEED_NEW_Q, n, gx1, gx);
-         darray::copy(PROCEED_NEW_Q, n, gy1, gy);
-         darray::copy(PROCEED_NEW_Q, n, gz1, gz);
-
-         // save slow gradients to gx2 etc.
-         energy(calc::grad, RESPA_SLOW, respa_tsconfig());
-         darray::copy(PROCEED_NEW_Q, n, gx2, gx);
-         darray::copy(PROCEED_NEW_Q, n, gy2, gy);
-         darray::copy(PROCEED_NEW_Q, n, gz2, gz);
+         energy(calc::grad);
       } else if (itg == "GHMC") {
       } else if (itg == "RIGIDBODY") {
       } else if (itg == "RESPA") {

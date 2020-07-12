@@ -122,7 +122,7 @@ double press;
 }
 
 
-void nhc_npt_xo_respa(int istep, time_prec dt)
+void nhc_npt(int istep, time_prec dt)
 {
    int vers1 = rc_flag & calc::vmask;
    bool save = !(!istep % inform::iwrite);
@@ -130,20 +130,8 @@ void nhc_npt_xo_respa(int istep, time_prec dt)
       vers1 &= ~calc::energy;
 
 
-   const time_prec arespa = mdstuf::arespa;  // inner time step
-   constexpr time_prec eps = 1.0f / 1048576; // 2**-20
-   const int nalt = (int)(dt / (arespa + eps)) + 1;
-   const time_prec dt_2 = 0.5f * dt;
-   const time_prec dta = dt / nalt;
-   const time_prec dta_2 = 0.5f * dta;
-
-
-   virial_prec vir_fast[9] = {0};
-   virial_prec vir_f[9];
-   energy_prec esum_f;
-
-
    // set some time values for the dynamics integration
+   const time_prec dt_2 = 0.5f * dt;
    if (istep == 1)
       press = bath::atmsph;
 
@@ -152,79 +140,39 @@ void nhc_npt_xo_respa(int istep, time_prec dt)
    hoover(dt, press);
 
 
-   propagate_velocity2(dta_2, gx1, gy1, gz1, dt_2, gx2, gy2, gz2);
+   propagate_velocity(dt_2, gx, gy, gz);
 
 
-   for (int ifast = 1; ifast <= nalt; ++ifast) {
-      bool ilast = (ifast == nalt);
+   double term = vbar * dt_2;
+   double term2 = term * term;
+   double expterm = std::exp(term);
+   double eterm2 = expterm * expterm;
 
 
-      double term = vbar * dta_2;
-      double term2 = term * term;
-      double expterm = std::exp(term);
-      double eterm2 = expterm * expterm;
+   // update the periodic box size and total volume
+   // eq. 42 volume
+   lvec1 *= eterm2;
+   lvec2 *= eterm2;
+   lvec3 *= eterm2;
+   set_default_recip_box();
 
 
-      // update the periodic box size and total volume
-      // eq. 42 volume
-      lvec1 *= eterm2;
-      lvec2 *= eterm2;
-      lvec3 *= eterm2;
-      set_default_recip_box();
+   // update atomic positions via coupling to barostat
+   // eq. 42 coordinates
+   constexpr double e2 = 1.0 / 6;
+   constexpr double e4 = e2 / 20;
+   constexpr double e6 = e4 / 42;
+   constexpr double e8 = e6 / 72;
+   // sinh(x)/x: Taylor series up to x**10
+   double poly = 1 + term2 * (e2 + term2 * (e4 + term2 * (e6 + term2 * e8)));
+   poly *= expterm * dt;
+   propagate_xyz_axbv(eterm2, poly, true);
 
 
-      // update atomic positions via coupling to barostat
-      // eq. 42 coordinates
-      constexpr double e2 = 1.0 / 6;
-      constexpr double e4 = e2 / 20;
-      constexpr double e6 = e4 / 42;
-      constexpr double e8 = e6 / 72;
-      // sinh(x)/x: Taylor series up to x**10
-      double poly = 1 + term2 * (e2 + term2 * (e4 + term2 * (e6 + term2 * e8)));
-      poly *= expterm * dta;
-      propagate_xyz_axbv(eterm2, poly, ilast); // check nblist if ifast == nalt
+   energy(vers1);
 
 
-      if (!ilast) {
-         // update a_fast
-         energy(vers1, RESPA_FAST, respa_tsconfig());
-         copy_virial(vers1, vir_f);
-         for (int i = 0; i < 9; ++i)
-            vir_fast[i] += vir_f[i];
-
-
-         // v += a_fast dt
-         propagate_velocity(dta, gx, gy, gz);
-      } else {
-         // update a_fast
-         energy(vers1, RESPA_FAST, respa_tsconfig());
-         darray::copy(PROCEED_NEW_Q, n, gx1, gx);
-         darray::copy(PROCEED_NEW_Q, n, gy1, gy);
-         darray::copy(PROCEED_NEW_Q, n, gz1, gz);
-         copy_energy(vers1, &esum_f);
-         copy_virial(vers1, vir_f);
-         for (int i = 0; i < 9; ++i)
-            vir_fast[i] += vir_f[i];
-
-
-         // update a_slow
-         energy(vers1, RESPA_SLOW, respa_tsconfig());
-         darray::copy(PROCEED_NEW_Q, n, gx2, gx);
-         darray::copy(PROCEED_NEW_Q, n, gy2, gy);
-         darray::copy(PROCEED_NEW_Q, n, gz2, gz);
-         // esum: e slow
-         // vir: v slow
-         // esum_f: e fast
-         // vir_fast: nalt total v fast
-         if (vers1 & calc::energy)
-            esum += esum_f;
-         for (int i = 0; i < 9; ++i)
-            vir[i] += vir_fast[i] / nalt;
-      }
-   }
-
-
-   propagate_velocity2(dta_2, gx1, gy1, gz1, dt_2, gx2, gy2, gz2);
+   propagate_velocity(dt_2, gx, gy, gz);
 
 
    // update thermostat and barostat values, scale atomic velocities

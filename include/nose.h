@@ -5,8 +5,7 @@
 
 namespace tinker {
 // Martyna et al. 1996, https://doi.org/10.1080/00268979600100761
-// eq. 63 NPT-XO-RESPA
-void nhc_npt_xo_respa(int istep, time_prec dt_ps);
+void nhc_npt(int istep, time_prec dt_ps);
 // section 4.4: iLnhc + iLp
 void hoover(time_prec dt, virial_prec press);
 
