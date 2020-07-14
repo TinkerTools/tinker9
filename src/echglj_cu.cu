@@ -7,6 +7,7 @@
 #include "launch.h"
 #include "mathfunc.h"
 #include "md.h"
+#include "osrw.h"
 #include "pmestuf.h"
 #include "seq_switch.h"
 #include "switch.h"
@@ -483,7 +484,198 @@ void echglj_cu2(ECHGLJPARAS, const real* restrict x, const real* restrict y,
 }
 
 
+//====================================================================//
+
+
+#define ECHGLJPARAS2                                                           \
+   size_t bufsize, energy_buffer restrict ebuf, virial_buffer restrict vbuf,   \
+      grad_prec *restrict gx, grad_prec *restrict gy, grad_prec *restrict gz,  \
+      real eccut, real ecoff, real ebuffer, real f, const real *restrict pchg, \
+      real *restrict rad, real *restrict eps, real evcut, real evoff,          \
+      TINKER_IMAGE_PARAMS
+
+
+static constexpr int CHGLJ4_BDIM = BLOCK_DIM;
+
+
 template <class Ver, class ETYP, class RADRULE, class EPSRULE>
+__launch_bounds__(CHGLJ4_BDIM) __global__
+void echglj_cu4(ECHGLJPARAS2, const Spatial::SortedAtom* restrict sorted,
+                int niak, const int* restrict iak, const int* restrict lst,
+                int n, real aewald, const int (*restrict i12)[couple_maxn12])
+{
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
+
+
+   const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
+   const int iwarp = ithread / WARP_SIZE;
+   const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
+   const int ilane = threadIdx.x & (WARP_SIZE - 1);
+   const int offset = ithread & (bufsize - 1);
+
+
+   struct Data
+   {
+      real x, y, z, c;
+      real rad, eps;
+      real fcx, fcy, fcz;
+      real padding_;
+   };
+   __shared__ Data data[CHGLJ4_BDIM];
+
+
+   // thread local variables
+   using ebuf_prec = energy_buffer_traits::type;
+   using vbuf_prec = virial_buffer_traits::type;
+   MAYBE_UNUSED ebuf_prec ectl;
+   MAYBE_UNUSED vbuf_prec vctlxx, vctlyx, vctlzx, vctlyy, vctlzy, vctlzz;
+   Data idat;
+
+
+   for (int iw = iwarp; iw < niak; iw += nwarp) {
+      if CONSTEXPR (do_e) {
+         ectl = 0;
+      }
+      if CONSTEXPR (do_g) {
+         idat.fcx = 0;
+         idat.fcy = 0;
+         idat.fcz = 0;
+         data[threadIdx.x].fcx = 0;
+         data[threadIdx.x].fcy = 0;
+         data[threadIdx.x].fcz = 0;
+      }
+      if CONSTEXPR (do_v) {
+         vctlxx = 0;
+         vctlyx = 0;
+         vctlzx = 0;
+         vctlyy = 0;
+         vctlzy = 0;
+         vctlzz = 0;
+      }
+
+
+      int atomi = min(iak[iw] * WARP_SIZE + ilane, n - 1);
+      idat.x = sorted[atomi].x;
+      idat.y = sorted[atomi].y;
+      idat.z = sorted[atomi].z;
+      int i = sorted[atomi].unsorted;
+      idat.c = pchg[i];
+      idat.rad = rad[i];
+      idat.eps = eps[i];
+
+
+      int shatomk = lst[iw * WARP_SIZE + ilane];
+      data[threadIdx.x].x = sorted[shatomk].x;
+      data[threadIdx.x].y = sorted[shatomk].y;
+      data[threadIdx.x].z = sorted[shatomk].z;
+      int shk = sorted[shatomk].unsorted;
+      data[threadIdx.x].c = pchg[shk];
+      data[threadIdx.x].rad = rad[shk];
+      data[threadIdx.x].eps = eps[shk];
+
+
+      int cpli[couple_maxn12];
+      if (i12) {
+         #pragma unroll
+         for (int ic = 0; ic < couple_maxn12; ++ic) {
+            cpli[ic] = i12[i][ic];
+         }
+      }
+
+
+      for (int j = 0; j < WARP_SIZE; ++j) {
+         int srclane = (ilane + j) & (WARP_SIZE - 1);
+         int klane = srclane + threadIdx.x - ilane;
+         int atomk = __shfl_sync(ALL_LANES, shatomk, srclane);
+         int k = __shfl_sync(ALL_LANES, shk, srclane);
+         real xr = idat.x - data[klane].x;
+         real yr = idat.y - data[klane].y;
+         real zr = idat.z - data[klane].z;
+
+
+         real vscale = 1;
+         bool ik_bond = false;
+         if (i12) {
+            #pragma unroll
+            for (int ic = 0; ic < couple_maxn12; ++ic) {
+               ik_bond = ik_bond || (cpli[ic] == k);
+            }
+         }
+         if (ik_bond)
+            vscale = 0;
+
+
+         MAYBE_UNUSED real dedxc = 0, dedyc = 0, dedzc = 0;
+
+
+         real r2 = image2(xr, yr, zr);
+         if (atomi < atomk) {
+            MAYBE_UNUSED real invr;
+            real r = REAL_SQRT(r2);
+            real ecik, decik;
+            real evik, devik;
+            pair_chglj<do_g, ETYP, RADRULE, EPSRULE>(
+               r, r2, invr, //
+               1, idat.c, data[klane].c, ebuffer, f, aewald, eccut, ecoff, ecik,
+               decik, //
+               vscale, idat.rad, idat.eps, data[klane].rad, data[klane].eps,
+               evcut, evoff, evik, devik);
+            if CONSTEXPR (do_e) {
+               ectl += cvt_to<ebuf_prec>(ecik) + cvt_to<ebuf_prec>(evik);
+            }
+            if CONSTEXPR (do_g) {
+               decik = (decik + devik) * invr;
+               dedxc = decik * xr;
+               dedyc = decik * yr;
+               dedzc = decik * zr;
+               if CONSTEXPR (do_v) {
+                  vctlxx += cvt_to<vbuf_prec>(xr * dedxc);
+                  vctlyx += cvt_to<vbuf_prec>(yr * dedxc);
+                  vctlzx += cvt_to<vbuf_prec>(zr * dedxc);
+                  vctlyy += cvt_to<vbuf_prec>(yr * dedyc);
+                  vctlzy += cvt_to<vbuf_prec>(zr * dedyc);
+                  vctlzz += cvt_to<vbuf_prec>(zr * dedzc);
+               }
+            }
+         } // end if (include)
+
+
+         if CONSTEXPR (do_g) {
+            idat.fcx += dedxc;
+            idat.fcy += dedyc;
+            idat.fcz += dedzc;
+            data[klane].fcx -= dedxc;
+            data[klane].fcy -= dedyc;
+            data[klane].fcz -= dedzc;
+         }
+      }
+
+
+      if CONSTEXPR (do_e) {
+         atomic_add(ectl, ebuf, offset);
+      }
+      if CONSTEXPR (do_g) {
+         atomic_add(idat.fcx, gx, i);
+         atomic_add(idat.fcy, gy, i);
+         atomic_add(idat.fcz, gz, i);
+         atomic_add(data[threadIdx.x].fcx, gx, shk);
+         atomic_add(data[threadIdx.x].fcy, gy, shk);
+         atomic_add(data[threadIdx.x].fcz, gz, shk);
+      }
+      if CONSTEXPR (do_v) {
+         atomic_add(vctlxx, vctlyx, vctlzx, vctlyy, vctlzy, vctlzz, vbuf,
+                    offset);
+      }
+   } // end for (iw)
+}
+
+
+//====================================================================//
+
+
+template <class Ver, class ETYP, class RADRULE, class EPSRULE, int NOUT>
 void echglj_cu3()
 {
    const auto& st = *cspatial_unit;
@@ -512,7 +704,7 @@ void echglj_cu3()
 
 
    if CONSTEXPR (eq<ETYP, EWALD>()) {
-      if (st.niak > 0) {
+      if (NOUT == 2 and st.niak > 0) {
          auto ker1 = echglj_cu1<Ver, EWALD, RADRULE, EPSRULE>;
          launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
                     bufsize, ec, vir_ec, decx, decy, decz, eccut, ecoff,
@@ -520,6 +712,14 @@ void echglj_cu3()
                     ev, vir_ev, devx, devy, devz, atom_rad, atom_eps, evcut,
                     evoff,             //
                     TINKER_IMAGE_ARGS, //
+                    st.sorted, st.niak, st.iak, st.lst, n, aewald, i12);
+      } else if (NOUT == 1 and st.niak > 0) {
+         auto ker1 = echglj_cu4<Ver, EWALD, RADRULE, EPSRULE>;
+         launch_k2s(nonblk, CHGLJ4_BDIM, WARP_SIZE * st.niak, ker1, //
+                    bufsize, ec, vir_ec, decx, decy, decz, eccut, ecoff,
+                    ebuffer, f, pchg,                 //
+                    atom_rad, atom_eps, evcut, evoff, //
+                    TINKER_IMAGE_ARGS,                //
                     st.sorted, st.niak, st.iak, st.lst, n, aewald, i12);
       }
       if (ncvexclude > 0) {
@@ -533,7 +733,7 @@ void echglj_cu3()
                     x, y, z, ncvexclude, cvexclude, cvexclude_scale);
       }
    } else if CONSTEXPR (eq<ETYP, NON_EWALD_TAPER>()) {
-      if (st.niak > 0) {
+      if (NOUT == 2 and st.niak > 0) {
          auto ker1 = echglj_cu1<Ver, NON_EWALD_TAPER, RADRULE, EPSRULE>;
          launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
                     bufsize, ec, vir_ec, decx, decy, decz, eccut, ecoff,
@@ -541,6 +741,14 @@ void echglj_cu3()
                     ev, vir_ev, devx, devy, devz, atom_rad, atom_eps, evcut,
                     evoff,             //
                     TINKER_IMAGE_ARGS, //
+                    st.sorted, st.niak, st.iak, st.lst, n, 0, i12);
+      } else if (NOUT == 1 and st.niak > 0) {
+         auto ker1 = echglj_cu4<Ver, NON_EWALD_TAPER, RADRULE, EPSRULE>;
+         launch_k2s(nonblk, CHGLJ4_BDIM, WARP_SIZE * st.niak, ker1, //
+                    bufsize, ec, vir_ec, decx, decy, decz, eccut, ecoff,
+                    ebuffer, f, pchg,                 //
+                    atom_rad, atom_eps, evcut, evoff, //
+                    TINKER_IMAGE_ARGS,                //
                     st.sorted, st.niak, st.iak, st.lst, n, 0, i12);
       }
       if (ncvexclude > 0) {
@@ -562,19 +770,35 @@ void echglj_cu3()
 
 void echglj_rad_arith_eps_geom_nonewald_cu(int vers)
 {
-   if (vers == calc::v0)
-      echglj_cu3<calc::V0, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM>();
-   else if (vers == calc::v1)
-      echglj_cu3<calc::V1, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM>();
-   else if (vers == calc::v3)
-      echglj_cu3<calc::V3, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM>();
-   else if (vers == calc::v4)
-      echglj_cu3<calc::V4, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM>();
-   else if (vers == calc::v5)
-      echglj_cu3<calc::V5, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM>();
-   else if (vers == calc::v6)
-      echglj_cu3<calc::V6, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM>();
-
+   if (use_osrw) {
+      constexpr int N = 2;
+      if (vers == calc::v0)
+         echglj_cu3<calc::V0, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v1)
+         echglj_cu3<calc::V1, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v3)
+         echglj_cu3<calc::V3, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v4)
+         echglj_cu3<calc::V4, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v5)
+         echglj_cu3<calc::V5, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v6)
+         echglj_cu3<calc::V6, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM, N>();
+   } else {
+      constexpr int N = 1;
+      if (vers == calc::v0)
+         echglj_cu3<calc::V0, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v1)
+         echglj_cu3<calc::V1, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v3)
+         echglj_cu3<calc::V3, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v4)
+         echglj_cu3<calc::V4, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v5)
+         echglj_cu3<calc::V5, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v6)
+         echglj_cu3<calc::V6, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM, N>();
+   }
 
    elj14_cu(vers);
 }
@@ -582,18 +806,35 @@ void echglj_rad_arith_eps_geom_nonewald_cu(int vers)
 
 void echglj_rad_arith_eps_geom_ewald_real_cu(int vers)
 {
-   if (vers == calc::v0)
-      echglj_cu3<calc::V0, EWALD, RAD_ARITH, EPS_GEOM>();
-   else if (vers == calc::v1)
-      echglj_cu3<calc::V1, EWALD, RAD_ARITH, EPS_GEOM>();
-   else if (vers == calc::v3)
-      echglj_cu3<calc::V3, EWALD, RAD_ARITH, EPS_GEOM>();
-   else if (vers == calc::v4)
-      echglj_cu3<calc::V4, EWALD, RAD_ARITH, EPS_GEOM>();
-   else if (vers == calc::v5)
-      echglj_cu3<calc::V5, EWALD, RAD_ARITH, EPS_GEOM>();
-   else if (vers == calc::v6)
-      echglj_cu3<calc::V6, EWALD, RAD_ARITH, EPS_GEOM>();
+   if (use_osrw) {
+      constexpr int N = 2;
+      if (vers == calc::v0)
+         echglj_cu3<calc::V0, EWALD, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v1)
+         echglj_cu3<calc::V1, EWALD, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v3)
+         echglj_cu3<calc::V3, EWALD, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v4)
+         echglj_cu3<calc::V4, EWALD, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v5)
+         echglj_cu3<calc::V5, EWALD, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v6)
+         echglj_cu3<calc::V6, EWALD, RAD_ARITH, EPS_GEOM, N>();
+   } else {
+      constexpr int N = 1;
+      if (vers == calc::v0)
+         echglj_cu3<calc::V0, EWALD, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v1)
+         echglj_cu3<calc::V1, EWALD, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v3)
+         echglj_cu3<calc::V3, EWALD, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v4)
+         echglj_cu3<calc::V4, EWALD, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v5)
+         echglj_cu3<calc::V5, EWALD, RAD_ARITH, EPS_GEOM, N>();
+      else if (vers == calc::v6)
+         echglj_cu3<calc::V6, EWALD, RAD_ARITH, EPS_GEOM, N>();
+   }
 
 
    elj14_cu(vers);

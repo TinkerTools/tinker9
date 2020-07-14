@@ -137,6 +137,42 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    ecore_ele = false;
 
 
+   // non-bonded terms
+
+
+   if (amoeba_evdw(vers))
+      if (tscfg("evdw", ecore_vdw))
+         evdw(vers);
+
+
+   if (amoeba_echarge(vers))
+      if (tscfg("echarge", ecore_ele))
+         echarge(vers);
+   if (amoeba_echglj(vers))
+      if (tscfg("echglj", ecore_ele)) {
+         ecore_vdw = true;
+         echglj(vers);
+      }
+
+   if (amoeba_empole(vers))
+      if (tscfg("empole", ecore_ele))
+         empole(vers);
+   if (amoeba_epolar(vers))
+      if (tscfg("epolar", ecore_ele))
+         epolar(vers);
+   if (amoeba_emplar(vers))
+      if (tscfg("emplar", ecore_ele))
+         emplar(vers);
+
+
+   if (use_potent(chgtrn_term))
+      if (tscfg("echgtrn", ecore_ele))
+         echgtrn(vers);
+   if (use_potent(disp_term))
+      if (tscfg("edisp", ecore_vdw))
+         edisp(vers);
+
+
    // bonded terms
 
 
@@ -175,42 +211,6 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (use_potent(geom_term))
       if (tscfg("egeom", ecore_val))
          egeom(vers);
-
-
-   // non-bonded terms
-
-
-   if (amoeba_evdw(vers))
-      if (tscfg("evdw", ecore_vdw))
-         evdw(vers);
-
-
-   if (amoeba_echarge(vers))
-      if (tscfg("echarge", ecore_ele))
-         echarge(vers);
-   if (amoeba_echglj(vers))
-      if (tscfg("echglj", ecore_ele)) {
-         ecore_vdw = true;
-         echglj(vers);
-      }
-
-   if (amoeba_empole(vers))
-      if (tscfg("empole", ecore_ele))
-         empole(vers);
-   if (amoeba_epolar(vers))
-      if (tscfg("epolar", ecore_ele))
-         epolar(vers);
-   if (amoeba_emplar(vers))
-      if (tscfg("emplar", ecore_ele))
-         emplar(vers);
-
-
-   if (use_potent(chgtrn_term))
-      if (tscfg("echgtrn", ecore_ele))
-         echgtrn(vers);
-   if (use_potent(disp_term))
-      if (tscfg("edisp", ecore_vdw))
-         edisp(vers);
 }
 
 

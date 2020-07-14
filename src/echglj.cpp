@@ -288,8 +288,8 @@ void echglj(int vers)
    assert(radrule == evdw_t::arithmetic);
    assert(epsrule == evdw_t::geometric);
    if (use_ewald()) {
-      echarge_ewald_recip_self(vers);
       echglj_rad_arith_eps_geom_ewald_real_cu(vers);
+      echarge_ewald_recip_self(vers);
    } else {
       echglj_rad_arith_eps_geom_nonewald_cu(vers);
    }
