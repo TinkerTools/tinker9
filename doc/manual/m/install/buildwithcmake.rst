@@ -86,7 +86,8 @@ Top-level FFTW3 installation, under which
 "include/fftw3.h" and "lib/libfftw3" are expected to be found.
 
 **-DHOST (host) = 1**
-Flag to compile to GPU (with value 0) or CPU (with value 1) version.
+Flag to compile to GPU (with value 0 or OFF) or CPU (with value 1 or ON)
+version.
 
 **-DPREC (prec) = d**
 Precision of the floating-point numbers. With flag "d", all of the

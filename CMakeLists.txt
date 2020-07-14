@@ -171,7 +171,8 @@ endif ()
 
 #[[
 !!/ **-DHOST (host) = 1**
-!!/ Flag to compile to GPU (with value 0) or CPU (with value 1) version.
+!!/ Flag to compile to GPU (with value 0 or OFF) or CPU (with value 1 or ON)
+!!/ version.
 !!/
 ]]
 if (DEFINED ENV{host})
@@ -179,7 +180,7 @@ if (DEFINED ENV{host})
 else ()
    set (hostValue 1)
 endif ()
-set (HOST ${hostValue} CACHE STRING "0 (GPU) / 1 (CPU)")
+set (HOST ${hostValue} CACHE BOOL "0 or OFF GPU) / 1 or ON (CPU)")
 
 
 #[[
@@ -378,9 +379,9 @@ file (GLOB LIB_CU "${PROJECT_SOURCE_DIR}/src/*_cu.cu")
 
 
 ## tinker.gpu
-if (HOST STREQUAL "1")
+if (HOST)
    include (host) # host.cmake
-elseif (HOST STREQUAL "0")
+else ()
    include (device) # device.cmake
 endif ()
 

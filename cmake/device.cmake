@@ -32,7 +32,7 @@ endforeach () # -gencode arch=compute_60,code=sm_60 -gencode arch=compute_70,cod
 ## Release add flag: --use_fast_math
 target_compile_options (tinkergpu_cu PRIVATE
    $<$<CONFIG:DEBUG>:-lineinfo>
-   $<$<CONFIG:RELEASE>:--use_fast_math>
+   $<$<CONFIG:RELEASE>:--use_fast_math -lineinfo>
 )
 
 
