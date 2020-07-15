@@ -22,12 +22,19 @@ void cudalib_data(rc_op op)
       check_rt(cublasDestroy(h_cublas_nonblk));
       check_rt(cudaFreeHost(pinned_buf));
       check_rt(cudaFree(dptr_buf));
+
+
+      cudaEventDestroy(stream2_begin_event);
+      cudaEventDestroy(stream2_end_event);
+      use_stream2 = false;
    }
 
 
    if (op & rc_alloc) {
       async_queue = acc_get_default_async();
       nonblk = (cudaStream_t)acc_get_cuda_stream(async_queue);
+      Q2 = async_queue + 1;
+      stream2 = (cudaStream_t)acc_get_cuda_stream(Q2);
       check_rt(cublasCreate(&h_cublas));        // calls cudaMemcpy [sync] here
       check_rt(cublasCreate(&h_cublas_nonblk)); // calls cudaMemcpy [sync] here
       check_rt(cublasSetStream(h_cublas_nonblk, nonblk));
@@ -42,6 +49,11 @@ void cudalib_data(rc_op op)
       check_rt(cudaMalloc(&dptr_buf, nblock * sizeof(double)));
 
 
+      cudaEventCreateWithFlags(&stream2_begin_event, cudaEventDisableTiming);
+      cudaEventCreateWithFlags(&stream2_end_event, cudaEventDisableTiming);
+      use_stream2 = false;
+
+
       check_rt(cudaProfilerStart());
    }
 #else
@@ -53,8 +65,10 @@ void cudalib_data(rc_op op)
 void stream2_sync()
 {
 #if TINKER_CUDART
-   if (use_echglj_event)
-      cudaStreamWaitEvent(nonblk, echglj_event, 0);
+   if (use_stream2) {
+      check_rt(cudaEventRecord(stream2_end_event, stream2));
+      check_rt(cudaStreamWaitEvent(nonblk, stream2_end_event, 0));
+   }
 #endif
 }
 
@@ -62,11 +76,11 @@ void stream2_sync()
 void stream2_begin()
 {
 #if TINKER_CUDART
-   if (use_echglj_event) {
-      // Record event `echglj_start` when other kernels on `nonblk` have ended.
-      check_rt(cudaEventRecord(echglj_start, nonblk));
-      // `echglj_stream` will wait until event `echglj_start` is recorded.
-      check_rt(cudaStreamWaitEvent(echglj_stream, echglj_start, 0));
+   if (use_stream2) {
+      // Record `stream2_begin_event` when other kernels on `nonblk` have ended.
+      check_rt(cudaEventRecord(stream2_begin_event, nonblk));
+      // `stream2` will wait until `stream2_begin_event` is recorded.
+      check_rt(cudaStreamWaitEvent(stream2, stream2_begin_event, 0));
    }
 #endif
 }

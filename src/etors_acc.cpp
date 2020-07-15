@@ -15,7 +15,7 @@ void etors_acc1()
 
    auto bufsize = buffer_size();
 
-   #pragma acc parallel loop independent async\
+   #pragma acc parallel loop independent async(Q2)\
                deviceptr(x,y,z,detx,dety,detz,\
                itors,tors1,tors2,tors3,tors4,tors5,tors6,\
                et,vir_et)

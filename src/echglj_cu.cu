@@ -15,22 +15,22 @@
 
 
 namespace tinker {
+namespace {
+cudaStream_t echglj_stream; // stream2
+}
+
+
 void echglj_cu_data(rc_op op)
 {
    if (op bitand rc_dealloc) {
-      cudaEventDestroy(echglj_start);
-      cudaEventDestroy(echglj_event);
-      echglj_event = nullptr;
-      use_echglj_event = false;
+      use_stream2 = false;
       echglj_stream = nullptr;
    }
 
 
    if (op bitand rc_alloc) {
-      cudaEventCreateWithFlags(&echglj_start, cudaEventDisableTiming);
-      cudaEventCreateWithFlags(&echglj_event, cudaEventDisableTiming);
-      use_echglj_event = true;
-      echglj_stream = nullptr; // the default 0 CUDA stream
+      use_stream2 = true;
+      echglj_stream = stream2;
    }
 }
 }
@@ -782,7 +782,6 @@ void echglj_cu3()
             atom_rad, atom_eps, evcut, evoff,      //
             TINKER_IMAGE_ARGS,                     //
             st.sorted, st.niak, st.iak, st.lst, n, 0, i12);
-         check_rt(cudaEventRecord(echglj_event, echglj_stream));
       }
       if (ncvexclude > 0) {
          auto ker2 = echglj_cu2<Ver, NON_EWALD_TAPER, RADRULE, EPSRULE>;
@@ -795,7 +794,6 @@ void echglj_cu3()
                     x, y, z, ncvexclude, cvexclude, cvexclude_scale);
       }
    }
-   check_rt(cudaEventRecord(echglj_event, echglj_stream));
 }
 
 
