@@ -48,4 +48,13 @@ void cudalib_data(rc_op op)
    (void)op;
 #endif
 }
+
+
+void sync_events_with_nonblk()
+{
+#if TINKER_CUDART
+   if (use_echglj_event)
+      cudaStreamWaitEvent(nonblk, echglj_event, 0);
+#endif
+}
 }

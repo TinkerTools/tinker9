@@ -11,5 +11,10 @@ TINKER_EXTERN cublasHandle_t h_cublas;
 TINKER_EXTERN cublasHandle_t h_cublas_nonblk;
 TINKER_EXTERN void* pinned_buf;
 TINKER_EXTERN void* dptr_buf;
+
+
+// echglj_cu.cu
+TINKER_EXTERN bool use_echglj_event;
+TINKER_EXTERN cudaEvent_t echglj_event;
 }
 #endif

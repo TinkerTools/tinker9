@@ -11,6 +11,35 @@
 #include "pmestuf.h"
 #include "seq_switch.h"
 #include "switch.h"
+#include "tool/gpu_card.h"
+
+
+namespace tinker {
+namespace {
+cudaEvent_t echglj_start;
+cudaStream_t echglj_stream;
+}
+
+
+void echglj_cu_data(rc_op op)
+{
+   if (op bitand rc_dealloc) {
+      cudaEventDestroy(echglj_start);
+      cudaEventDestroy(echglj_event);
+      echglj_event = nullptr;
+      use_echglj_event = false;
+      echglj_stream = nullptr;
+   }
+
+
+   if (op bitand rc_alloc) {
+      cudaEventCreateWithFlags(&echglj_start, cudaEventDisableTiming);
+      cudaEventCreateWithFlags(&echglj_event, cudaEventDisableTiming);
+      use_echglj_event = true;
+      echglj_stream = nullptr; // the default 0 CUDA stream
+   }
+}
+}
 
 
 extern "C"
@@ -495,7 +524,7 @@ void echglj_cu2(ECHGLJPARAS, const real* restrict x, const real* restrict y,
       TINKER_IMAGE_PARAMS
 
 
-static constexpr int CHGLJ4_BDIM = BLOCK_DIM;
+static constexpr int CHGLJ4_BDIM = 2 * BLOCK_DIM;
 
 
 template <class Ver, class ETYP, class RADRULE, class EPSRULE>
@@ -703,6 +732,21 @@ void echglj_cu3()
       i12 = nullptr;
 
 
+   // Record event `echglj_start` when other kernels on `nonblk` have ended.
+   check_rt(cudaEventRecord(echglj_start, nonblk));
+   // `echglj_stream` will wait until event `echglj_start` is recorded.
+   check_rt(cudaStreamWaitEvent(echglj_stream, echglj_start, 0));
+
+
+   int nparallel = WARP_SIZE * st.niak;
+   int grid1 = (nparallel + CHGLJ4_BDIM - 1) / CHGLJ4_BDIM;
+   const auto& attr = get_device_attributes()[idevice];
+   int maxthreads = attr.max_threads_per_multiprocessor;
+   int mpcount = attr.multiprocessor_count;
+   int grid2 = maxthreads / CHGLJ4_BDIM * mpcount;
+   int ngrid = std::min(grid1, grid2);
+
+
    if CONSTEXPR (eq<ETYP, EWALD>()) {
       if (NOUT == 2 and st.niak > 0) {
          auto ker1 = echglj_cu1<Ver, EWALD, RADRULE, EPSRULE>;
@@ -715,12 +759,13 @@ void echglj_cu3()
                     st.sorted, st.niak, st.iak, st.lst, n, aewald, i12);
       } else if (NOUT == 1 and st.niak > 0) {
          auto ker1 = echglj_cu4<Ver, EWALD, RADRULE, EPSRULE>;
-         launch_k2s(nonblk, CHGLJ4_BDIM, WARP_SIZE * st.niak, ker1, //
-                    bufsize, ec, vir_ec, decx, decy, decz, eccut, ecoff,
-                    ebuffer, f, pchg,                 //
-                    atom_rad, atom_eps, evcut, evoff, //
-                    TINKER_IMAGE_ARGS,                //
-                    st.sorted, st.niak, st.iak, st.lst, n, aewald, i12);
+         ker1<<<ngrid, CHGLJ4_BDIM, 0, echglj_stream>>>(
+            bufsize, ec, vir_ec, decx, decy, decz, //
+            eccut, ecoff, ebuffer, f, pchg,        //
+            atom_rad, atom_eps, evcut, evoff,      //
+            TINKER_IMAGE_ARGS,                     //
+            st.sorted, st.niak, st.iak, st.lst, n, aewald, i12);
+         check_rt(cudaEventRecord(echglj_event, echglj_stream));
       }
       if (ncvexclude > 0) {
          auto ker2 = echglj_cu2<Ver, NON_EWALD, RADRULE, EPSRULE>;
@@ -744,12 +789,13 @@ void echglj_cu3()
                     st.sorted, st.niak, st.iak, st.lst, n, 0, i12);
       } else if (NOUT == 1 and st.niak > 0) {
          auto ker1 = echglj_cu4<Ver, NON_EWALD_TAPER, RADRULE, EPSRULE>;
-         launch_k2s(nonblk, CHGLJ4_BDIM, WARP_SIZE * st.niak, ker1, //
-                    bufsize, ec, vir_ec, decx, decy, decz, eccut, ecoff,
-                    ebuffer, f, pchg,                 //
-                    atom_rad, atom_eps, evcut, evoff, //
-                    TINKER_IMAGE_ARGS,                //
-                    st.sorted, st.niak, st.iak, st.lst, n, 0, i12);
+         ker1<<<ngrid, CHGLJ4_BDIM, 0, echglj_stream>>>(
+            bufsize, ec, vir_ec, decx, decy, decz, //
+            eccut, ecoff, ebuffer, f, pchg,        //
+            atom_rad, atom_eps, evcut, evoff,      //
+            TINKER_IMAGE_ARGS,                     //
+            st.sorted, st.niak, st.iak, st.lst, n, 0, i12);
+         check_rt(cudaEventRecord(echglj_event, echglj_stream));
       }
       if (ncvexclude > 0) {
          auto ker2 = echglj_cu2<Ver, NON_EWALD_TAPER, RADRULE, EPSRULE>;

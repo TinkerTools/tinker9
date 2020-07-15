@@ -2,6 +2,7 @@
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
+#include "tool/cudalib.h"
 #include "tool/error.h"
 
 
@@ -211,6 +212,9 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (use_potent(geom_term))
       if (tscfg("egeom", ecore_val))
          egeom(vers);
+
+
+   sync_events_with_nonblk();
 }
 
 

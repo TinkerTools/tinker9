@@ -270,6 +270,12 @@ void echglj_data(rc_op op)
       darray::copyin(WAIT_NEW_Q, n, atom_rad, vrad.data());
       darray::copyin(WAIT_NEW_Q, n, atom_eps, veps.data());
    }
+
+
+#if TINKER_CUDART
+   extern void echglj_cu_data(rc_op);
+   echglj_cu_data(op);
+#endif
 }
 
 
