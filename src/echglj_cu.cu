@@ -15,12 +15,6 @@
 
 
 namespace tinker {
-namespace {
-cudaEvent_t echglj_start;
-cudaStream_t echglj_stream;
-}
-
-
 void echglj_cu_data(rc_op op)
 {
    if (op bitand rc_dealloc) {
@@ -732,12 +726,6 @@ void echglj_cu3()
       i12 = nullptr;
 
 
-   // Record event `echglj_start` when other kernels on `nonblk` have ended.
-   check_rt(cudaEventRecord(echglj_start, nonblk));
-   // `echglj_stream` will wait until event `echglj_start` is recorded.
-   check_rt(cudaStreamWaitEvent(echglj_stream, echglj_start, 0));
-
-
    int nparallel = WARP_SIZE * st.niak;
    int grid1 = (nparallel + CHGLJ4_BDIM - 1) / CHGLJ4_BDIM;
    const auto& attr = get_device_attributes()[idevice];
@@ -750,7 +738,7 @@ void echglj_cu3()
    if CONSTEXPR (eq<ETYP, EWALD>()) {
       if (NOUT == 2 and st.niak > 0) {
          auto ker1 = echglj_cu1<Ver, EWALD, RADRULE, EPSRULE>;
-         launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
+         launch_k1a(echglj_stream, WARP_SIZE * st.niak, ker1, //
                     bufsize, ec, vir_ec, decx, decy, decz, eccut, ecoff,
                     ebuffer, f, pchg, //
                     ev, vir_ev, devx, devy, devz, atom_rad, atom_eps, evcut,
@@ -765,11 +753,10 @@ void echglj_cu3()
             atom_rad, atom_eps, evcut, evoff,      //
             TINKER_IMAGE_ARGS,                     //
             st.sorted, st.niak, st.iak, st.lst, n, aewald, i12);
-         check_rt(cudaEventRecord(echglj_event, echglj_stream));
       }
       if (ncvexclude > 0) {
          auto ker2 = echglj_cu2<Ver, NON_EWALD, RADRULE, EPSRULE>;
-         launch_k1s(nonblk, ncvexclude, ker2, //
+         launch_k1a(echglj_stream, ncvexclude, ker2, //
                     bufsize, ec, vir_ec, decx, decy, decz, eccut, ecoff,
                     ebuffer, f, pchg, //
                     ev, vir_ev, devx, devy, devz, atom_rad, atom_eps, evcut,
@@ -780,7 +767,7 @@ void echglj_cu3()
    } else if CONSTEXPR (eq<ETYP, NON_EWALD_TAPER>()) {
       if (NOUT == 2 and st.niak > 0) {
          auto ker1 = echglj_cu1<Ver, NON_EWALD_TAPER, RADRULE, EPSRULE>;
-         launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
+         launch_k1a(echglj_stream, WARP_SIZE * st.niak, ker1, //
                     bufsize, ec, vir_ec, decx, decy, decz, eccut, ecoff,
                     ebuffer, f, pchg, //
                     ev, vir_ev, devx, devy, devz, atom_rad, atom_eps, evcut,
@@ -799,7 +786,7 @@ void echglj_cu3()
       }
       if (ncvexclude > 0) {
          auto ker2 = echglj_cu2<Ver, NON_EWALD_TAPER, RADRULE, EPSRULE>;
-         launch_k1s(nonblk, ncvexclude, ker2, //
+         launch_k1a(echglj_stream, ncvexclude, ker2, //
                     bufsize, ec, vir_ec, decx, decy, decz, eccut, ecoff,
                     ebuffer, f, pchg, //
                     ev, vir_ev, devx, devy, devz, atom_rad, atom_eps, evcut,
@@ -808,6 +795,7 @@ void echglj_cu3()
                     x, y, z, ncvexclude, cvexclude, cvexclude_scale);
       }
    }
+   check_rt(cudaEventRecord(echglj_event, echglj_stream));
 }
 
 

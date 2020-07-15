@@ -138,6 +138,9 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    ecore_ele = false;
 
 
+   stream2_begin();
+
+
    // non-bonded terms
 
 
@@ -214,7 +217,7 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          egeom(vers);
 
 
-   sync_events_with_nonblk();
+   stream2_sync();
 }
 
 

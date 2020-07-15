@@ -50,11 +50,24 @@ void cudalib_data(rc_op op)
 }
 
 
-void sync_events_with_nonblk()
+void stream2_sync()
 {
 #if TINKER_CUDART
    if (use_echglj_event)
       cudaStreamWaitEvent(nonblk, echglj_event, 0);
+#endif
+}
+
+
+void stream2_begin()
+{
+#if TINKER_CUDART
+   if (use_echglj_event) {
+      // Record event `echglj_start` when other kernels on `nonblk` have ended.
+      check_rt(cudaEventRecord(echglj_start, nonblk));
+      // `echglj_stream` will wait until event `echglj_start` is recorded.
+      check_rt(cudaStreamWaitEvent(echglj_stream, echglj_start, 0));
+   }
 #endif
 }
 }

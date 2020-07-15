@@ -15,6 +15,8 @@ TINKER_EXTERN void* dptr_buf;
 
 // echglj_cu.cu
 TINKER_EXTERN bool use_echglj_event;
+TINKER_EXTERN cudaEvent_t echglj_start;
 TINKER_EXTERN cudaEvent_t echglj_event;
+TINKER_EXTERN cudaStream_t echglj_stream;
 }
 #endif
