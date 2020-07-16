@@ -96,7 +96,10 @@ void rattle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
 
    if (niter == maxiter) {
-      TINKER_RT(prterr)();
+      darray::copy(PROCEED_NEW_Q, n, xpos, xold);
+      darray::copy(PROCEED_NEW_Q, n, ypos, yold);
+      darray::copy(PROCEED_NEW_Q, n, zpos, zold);
+      t_prterr();
       TINKER_THROW("RATTLE  --  Warning, Distance Constraints not Satisfied");
    } else if (inform::debug) {
       print(stdout,
@@ -206,7 +209,7 @@ void rattle2_acc1(time_prec dt)
 
 
    if (niter == maxiter) {
-      TINKER_RT(prterr)();
+      t_prterr();
       TINKER_THROW("RATTLE2  --  Warning, Velocity Constraints not Satisfied");
    } else if (inform::debug) {
       print(stdout,
