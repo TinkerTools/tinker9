@@ -11,7 +11,7 @@
 
 
 namespace tinker {
-#define EMPOLE_ARGS                                                            \
+#define EMPOLEPARAS                                                            \
    size_t bufsize, count_buffer restrict nem, energy_buffer restrict em,       \
       virial_buffer restrict vir_em, grad_prec *restrict gx,                   \
       grad_prec *restrict gy, grad_prec *restrict gz, real *restrict trqx,     \
@@ -21,7 +21,7 @@ namespace tinker {
 
 template <class Ver, class ETYP>
 __global__
-void empole_cu1(EMPOLE_ARGS, const Spatial::SortedAtom* restrict sorted,
+void empole_cu1(EMPOLEPARAS, const Spatial::SortedAtom* restrict sorted,
                 int niak, const int* restrict iak, const int* restrict lst,
                 int n, real aewald)
 {
@@ -213,7 +213,7 @@ void empole_cu1(EMPOLE_ARGS, const Spatial::SortedAtom* restrict sorted,
 
 template <class Ver>
 __global__
-void empole_cu2(EMPOLE_ARGS, const real* restrict x, const real* restrict y,
+void empole_cu2(EMPOLEPARAS, const real* restrict x, const real* restrict y,
                 const real* restrict z, int nmexclude,
                 const int (*restrict mexclude)[2],
                 const real* restrict mexclude_scale)

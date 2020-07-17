@@ -101,6 +101,13 @@ const char* t_version(const char* infile, const char* status);
 void t_prtxyz(int ixyz);
 
 
+/**
+ * \ingroup bindc
+ * \brief Tinker subroutine: prterr
+ */
+void t_prterr();
+
+
 //====================================================================//
 
 

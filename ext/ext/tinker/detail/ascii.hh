@@ -33,4 +33,5 @@ const int caret = 94;
 const int underbar = 95;
 const int vertical = 124;
 const int tilde = 126;
+const int nbsp = 255;
 } }

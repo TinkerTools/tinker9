@@ -61,6 +61,7 @@ void finish()
 #include "molecule.h"
 #include "nblist.h"
 #include "osrw.h"
+#include "rattle.h"
 #include "tool/cudalib.h"
 
 
@@ -95,6 +96,7 @@ void device_data(rc_op op)
    // and will be used in nblist setups.
    rc_man nbl42{nblist_data, op};
 
+   rc_man rattle42{rattle_data, op};
    rc_man md42{md_data, op};
 }
 }

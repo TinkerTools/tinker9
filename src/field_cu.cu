@@ -11,7 +11,7 @@
 
 
 namespace tinker {
-#define DFIELD_ARGS                                                            \
+#define DFIELDPARAS                                                            \
    real(*restrict field)[3], real(*restrict fieldp)[3],                        \
       const real *restrict thole, const real *restrict pdamp,                  \
       const real(*restrict rpole)[10], TINKER_IMAGE_PARAMS, real off2
@@ -19,7 +19,7 @@ namespace tinker {
 
 template <class ETYP>
 __launch_bounds__(BLOCK_DIM) __global__
-void dfield_cu1(DFIELD_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
+void dfield_cu1(DFIELDPARAS, int n, const Spatial::SortedAtom* restrict sorted,
                 int niak, const int* restrict iak, const int* restrict lst,
                 real aewald)
 {
@@ -130,7 +130,7 @@ void dfield_cu1(DFIELD_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
 
 __global__
-void dfield_cu2(DFIELD_ARGS, const real* restrict x, const real* restrict y,
+void dfield_cu2(DFIELDPARAS, const real* restrict x, const real* restrict y,
                 const real* restrict z, int ndpexclude,
                 const int (*restrict dpexclude)[2],
                 const real (*restrict dpexclude_scale)[2])
@@ -242,7 +242,7 @@ void dfield_nonewald_cu(real (*field)[3], real (*fieldp)[3])
 }
 
 
-#define UFIELD_ARGS                                                            \
+#define UFIELDPARAS                                                            \
    const real(*restrict uind)[3], const real(*restrict uinp)[3],               \
       real(*restrict field)[3], real(*restrict fieldp)[3],                     \
       const real *restrict thole, const real *restrict pdamp,                  \
@@ -251,7 +251,7 @@ void dfield_nonewald_cu(real (*field)[3], real (*fieldp)[3])
 
 template <class ETYP>
 __launch_bounds__(BLOCK_DIM) __global__
-void ufield_cu1(UFIELD_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
+void ufield_cu1(UFIELDPARAS, int n, const Spatial::SortedAtom* restrict sorted,
                 int niak, const int* restrict iak, const int* restrict lst,
                 real aewald)
 {
@@ -340,7 +340,7 @@ void ufield_cu1(UFIELD_ARGS, int n, const Spatial::SortedAtom* restrict sorted,
 
 
 __global__
-void ufield_cu2(UFIELD_ARGS, const real* restrict x, const real* restrict y,
+void ufield_cu2(UFIELDPARAS, const real* restrict x, const real* restrict y,
                 const real* restrict z, int nuexclude,
                 const int (*restrict uexclude)[2],
                 const real* restrict uexclude_scale)

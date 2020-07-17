@@ -79,12 +79,24 @@ void copy_pos_to_xyz()
 }
 
 
+void copy_pos_to_xyz(bool check_nblist)
+{
+   copy_pos_to_xyz_acc();
+   if (check_nblist)
+      refresh_neighbors();
+}
+
+
 void propagate_xyz(time_prec dt, bool check_nblist)
 {
    propagate_pos_acc(dt);
-   copy_pos_to_xyz();
-   if (check_nblist)
-      refresh_neighbors();
+   copy_pos_to_xyz(check_nblist);
+}
+
+
+void propagate_pos(time_prec dt)
+{
+   propagate_pos_acc(dt);
 }
 
 

@@ -1,5 +1,9 @@
 #include "tool/fc.h"
+#include "box.h"
+#include "mdpq.h"
+#include "tool/darray.h"
 #include "tool/fcxx.h"
+#include <tinker/detail/atoms.hh>
 
 
 namespace {
@@ -92,6 +96,20 @@ extern "C" void TINKER_RT(prtxyz)(int*);
 void t_prtxyz(int ixyz)
 {
    TINKER_RT(prtxyz)(&ixyz);
+}
+
+
+extern "C" void TINKER_RT(prterr)();
+void t_prterr()
+{
+   using namespace tinker;
+   Box p;
+   get_default_box(p);
+   set_tinker_box_module(p);
+   darray::copyout(PROCEED_NEW_Q, n, atoms::x, xpos);
+   darray::copyout(PROCEED_NEW_Q, n, atoms::y, ypos);
+   darray::copyout(WAIT_NEW_Q, n, atoms::z, zpos);
+   TINKER_RT(prterr)();
 }
 
 

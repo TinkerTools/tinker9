@@ -2,6 +2,7 @@
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
+#include "tool/cudalib.h"
 #include "tool/error.h"
 
 
@@ -138,6 +139,45 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    ecore_ele = false;
 
 
+   stream2_begin();
+
+
+   // non-bonded terms
+
+
+   if (amoeba_evdw(vers))
+      if (tscfg("evdw", ecore_vdw))
+         evdw(vers);
+
+
+   if (amoeba_echarge(vers))
+      if (tscfg("echarge", ecore_ele))
+         echarge(vers);
+   if (amoeba_echglj(vers))
+      if (tscfg("echglj", ecore_ele)) {
+         ecore_vdw = true;
+         echglj(vers);
+      }
+
+   if (amoeba_empole(vers))
+      if (tscfg("empole", ecore_ele))
+         empole(vers);
+   if (amoeba_epolar(vers))
+      if (tscfg("epolar", ecore_ele))
+         epolar(vers);
+   if (amoeba_emplar(vers))
+      if (tscfg("emplar", ecore_ele))
+         emplar(vers);
+
+
+   if (use_potent(chgtrn_term))
+      if (tscfg("echgtrn", ecore_ele))
+         echgtrn(vers);
+   if (use_potent(disp_term))
+      if (tscfg("edisp", ecore_vdw))
+         edisp(vers);
+
+
    // bonded terms
 
 
@@ -178,43 +218,7 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          egeom(vers);
 
 
-   // non-bonded terms
-
-
-   if (amoeba_evdw(vers))
-      if (tscfg("evdw", ecore_vdw))
-         evdw(vers);
-
-
-   if (amoeba_echarge(vers))
-      if (tscfg("echarge", ecore_ele))
-         echarge(vers);
-   if (amoeba_echglj(vers))
-      if (tscfg("echglj", ecore_ele)) {
-         ecore_vdw = true;
-         echglj(vers);
-      }
-
-   if (amoeba_empole(vers))
-      if (tscfg("empole", ecore_ele))
-         empole(vers);
-   if (amoeba_epolar(vers))
-      if (tscfg("epolar", ecore_ele))
-         epolar(vers);
-   if (amoeba_emplar(vers))
-      if (tscfg("emplar", ecore_ele))
-         emplar(vers);
-
-
-   if (use_potent(chgtrn_term))
-      if (tscfg("echgtrn", ecore_ele))
-         echgtrn(vers);
-   if (use_potent(repuls_term))
-      if (tscfg("erepel", ecore_vdw))
-         erepel(vers);
-   if (use_potent(disp_term))
-      if (tscfg("edisp", ecore_vdw))
-         edisp(vers);
+   stream2_sync();
 }
 
 

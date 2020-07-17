@@ -12,7 +12,7 @@
 
 
 namespace tinker {
-#define EDISP_ARGS                                                             \
+#define EDISPPARAS                                                             \
    size_t bufsize, count_buffer restrict ndisp, energy_buffer restrict edsp,   \
       virial_buffer restrict vir_edsp, grad_prec *restrict gx,                 \
       grad_prec *restrict gy, grad_prec *restrict gz, TINKER_IMAGE_PARAMS,     \
@@ -22,7 +22,7 @@ namespace tinker {
 
 template <class Ver, class DTYP>
 __global__
-void edisp_cu1(EDISP_ARGS, const Spatial::SortedAtom* restrict sorted, int niak,
+void edisp_cu1(EDISPPARAS, const Spatial::SortedAtom* restrict sorted, int niak,
                const int* restrict iak, const int* restrict lst, int n,
                real aewald)
 {
@@ -175,7 +175,7 @@ void edisp_cu1(EDISP_ARGS, const Spatial::SortedAtom* restrict sorted, int niak,
 
 template <class Ver, class DTYP>
 __global__
-void edisp_cu2(EDISP_ARGS, const real* restrict x, const real* restrict y,
+void edisp_cu2(EDISPPARAS, const real* restrict x, const real* restrict y,
                const real* restrict z, int ndspexclude,
                const int (*restrict dspexclude)[2],
                const real* restrict dspexclude_scale)

@@ -48,7 +48,7 @@ script:
   - cd ..
   - cp -r tinker build
   - cd build/tinker/source
-  - curl $CI_DEPEND_DIR/tinker-350df099/Makefile -o Makefile
+  - curl $CI_DEPEND_DIR/tinker-b606a90b/Makefile -o Makefile
   - make libtinker.a -j2
   - cd ../..
 
