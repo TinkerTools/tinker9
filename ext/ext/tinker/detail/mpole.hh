@@ -15,6 +15,7 @@ extern double*& pole;
 extern double*& rpole;
 extern double*& spole;
 extern double*& srpole;
+extern double*& mono0;
 extern char (*&polaxe)[8];
 
 #ifdef TINKER_FORTRAN_MODULE_CPP
@@ -29,6 +30,7 @@ extern "C" double* TINKER_MOD(mpole, pole);
 extern "C" double* TINKER_MOD(mpole, rpole);
 extern "C" double* TINKER_MOD(mpole, spole);
 extern "C" double* TINKER_MOD(mpole, srpole);
+extern "C" double* TINKER_MOD(mpole, mono0);
 extern "C" char (*TINKER_MOD(mpole, polaxe))[8];
 
 int& npole = TINKER_MOD(mpole, npole);
@@ -42,6 +44,7 @@ double*& pole = TINKER_MOD(mpole, pole);
 double*& rpole = TINKER_MOD(mpole, rpole);
 double*& spole = TINKER_MOD(mpole, spole);
 double*& srpole = TINKER_MOD(mpole, srpole);
+double*& mono0 = TINKER_MOD(mpole, mono0);
 char (*&polaxe)[8] = TINKER_MOD(mpole, polaxe);
 #endif
 } }
