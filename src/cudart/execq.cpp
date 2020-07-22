@@ -1,4 +1,5 @@
 #include "execq.h"
+#include "glob.cudalib.h"
 #include "tool/error.h"
 #include <cuda_runtime.h>
 
@@ -8,12 +9,16 @@ class ExecQ::Impl
 {
 public:
    cudaStream_t ss;
+   cudaEvent_t mdsave_begin_event;
+   cudaEvent_t mdsave_end_event;
 };
 
 
 void ExecQ::deallocate()
 {
-   check_rt(cudaStreamDestroy(ptr->ss));
+   ptr->ss = nullptr;
+   check_rt(cudaEventDestroy(ptr->mdsave_begin_event));
+   check_rt(cudaEventDestroy(ptr->mdsave_end_event));
    delete ptr;
 }
 
@@ -21,19 +26,24 @@ void ExecQ::deallocate()
 void ExecQ::allocate()
 {
    ptr = new ExecQ::Impl;
-   check_rt(cudaStreamCreate(&ptr->ss));
-}
-
-
-void ExecQ::synchronize()
-{
-   check_rt(cudaStreamSynchronize(ptr->ss));
-}
-
-
-void ExecQ::copy_bytes(void* dst, const void* src, size_t nbytes)
-{
+   ptr->ss = nullptr;
+   check_rt(cudaEventCreateWithFlags(&ptr->mdsave_begin_event,
+                                     cudaEventDisableTiming));
    check_rt(
-      cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyDeviceToDevice, ptr->ss));
+      cudaEventCreateWithFlags(&ptr->mdsave_end_event, cudaEventDisableTiming));
+}
+
+
+void ExecQ::begin_copyout()
+{
+   check_rt(cudaEventRecord(ptr->mdsave_begin_event, nonblk));
+   check_rt(cudaStreamWaitEvent(ptr->ss, ptr->mdsave_begin_event, 0));
+}
+
+
+void ExecQ::end_copyout()
+{
+   check_rt(cudaEventRecord(ptr->mdsave_end_event, ptr->ss));
+   check_rt(cudaStreamWaitEvent(nonblk, ptr->mdsave_end_event, 0));
 }
 }
