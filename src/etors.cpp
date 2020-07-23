@@ -42,7 +42,8 @@ void etors_data(rc_op op)
       if (rc_a)
          buffer_allocate(rc_flag, &et, &vir_et, &detx, &dety, &detz);
 
-      use_stream2 = true;
+      if (not rc_a)
+         use_stream2 = true;
    }
 
    if (op & rc_init) {

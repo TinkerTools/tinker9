@@ -1,6 +1,8 @@
 #include "glob.accasync.h"
 #include "tool/cudalib.h"
 #if TINKER_CUDART
+#   include "mdcalc.h"
+#   include "mdpq.h"
 #   include "tool/error.h"
 #   include "tool/gpu_card.h"
 #   include <cuda_profiler_api.h>
@@ -33,7 +35,10 @@ void cudalib_data(rc_op op)
    if (op & rc_alloc) {
       async_queue = acc_get_default_async();
       nonblk = (cudaStream_t)acc_get_cuda_stream(async_queue);
-      Q2 = async_queue + 1;
+      if (rc_flag bitand calc::analyz)
+         Q2 = async_queue;
+      else
+         Q2 = async_queue + 1;
       stream2 = (cudaStream_t)acc_get_cuda_stream(Q2);
       check_rt(cublasCreate(&h_cublas));        // calls cudaMemcpy [sync] here
       check_rt(cublasCreate(&h_cublas_nonblk)); // calls cudaMemcpy [sync] here
