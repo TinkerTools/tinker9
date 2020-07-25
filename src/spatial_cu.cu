@@ -99,11 +99,22 @@ __device__
 inline void frac_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
                          int px, int py, int pz, real fx, real fy, real fz)
 {
-   ix = fx * (1 << px) + (1 << px) / 2; // ix = (fx+half) * 2^px;
-   iy = fy * (1 << py) + (1 << py) / 2;
-   iz = fz * (1 << pz) + (1 << pz) / 2;
+   // cannot use iw = fw * (1 << pw) + (1 << pw) / 2;
+   // with the implicit cast rules of C,
+   // (int iw) <- (float fltw) <- fw * (1 << pw) + (1 << pw) / 2;
+   // e.g., if pw = 3, fw = 0.49999998, fltw = 7.99999984, but 32-bit float
+   // cannot represent this value accurately so that fltw <- 8.0f and will
+   // give a wrong iw value 8 (should have been 7).
+   // ix = fx * (1 << px) + (1 << px) / 2; // ix = (fx+half) * 2^px;
+   // iy = fy * (1 << py) + (1 << py) / 2;
+   // iz = fz * (1 << pz) + (1 << pz) / 2;
+
    // cannot use iw = fw * (1 << pw) + (1 << (pw - 1));
    // because pw may be 0, and 1 << -1 is undefined.
+
+   ix = ((double)fx) * (1 << px) + (1 << px) / 2;
+   iy = ((double)fy) * (1 << py) + (1 << py) / 2;
+   iz = ((double)fz) * (1 << pz) + (1 << pz) / 2;
 }
 
 
