@@ -37,6 +37,7 @@ void rattle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
    while (not done and niter < maxiter) {
       niter += 1;
+      done = true;
       #pragma acc parallel loop independent async\
               deviceptr(mass,xpos,ypos,zpos,vx,vy,vz,irat,krat,iratmol,\
                         moved,update,bigeps,xold,yold,zold)
@@ -134,6 +135,7 @@ void rattle2_acc1(time_prec dt)
    real vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
    while (not done and niter < maxiter) {
       niter += 1;
+      done = true;
       #pragma acc parallel loop independent async\
               deviceptr(mass,xpos,ypos,zpos,vx,vy,vz,\
                         irat,krat,iratmol,moved,update,bigeps)
