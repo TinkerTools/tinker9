@@ -176,6 +176,9 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (use_potent(disp_term))
       if (tscfg("edisp", ecore_vdw))
          edisp(vers);
+   if (use_potent(repuls_term))
+      if (tscfg("erepel", ecore_vdw))
+         erepel(vers);
 
 
    // bonded terms
