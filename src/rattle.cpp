@@ -226,12 +226,14 @@ void rattle_data(rc_op op)
 void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold,
             const pos_prec* zold)
 {
+   rattle_settle_acc(dt, xold, yold, zold);
    rattle_acc(dt, xold, yold, zold);
 }
 
 
 void rattle2(time_prec dt, bool do_v)
 {
+   rattle2_settle_acc();
    rattle2_acc(dt, do_v);
 }
 }
