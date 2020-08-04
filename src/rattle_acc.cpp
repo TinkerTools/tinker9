@@ -19,7 +19,7 @@ void rattle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 {
    int* moved = rattle_moved;
    int* update = rattle_update;
-   int* bigeps = rattle_notdone;
+   int* bigeps = rattle_bigdelta;
 
 
    const double eps = rateps;
@@ -39,7 +39,7 @@ void rattle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
       niter += 1;
       done = true;
       #pragma acc parallel loop independent async\
-              deviceptr(mass,xpos,ypos,zpos,vx,vy,vz,irat,krat,iratmol,\
+              deviceptr(massinv,xpos,ypos,zpos,vx,vy,vz,irat,krat,iratmol,\
                         moved,update,bigeps,xold,yold,zold)
       for (int im = 0; im < nratmol; ++im) {
          int mbegin = iratmol[im][0];
@@ -53,8 +53,9 @@ void rattle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
                pos_prec xr = xpos[ib] - xpos[ia];
                pos_prec yr = ypos[ib] - ypos[ia];
                pos_prec zr = zpos[ib] - zpos[ia];
-               real delta = krat[i] * krat[i] - (xr * xr + yr * yr + zr * zr);
-               if (REAL_ABS(delta) > eps) {
+               pos_prec delta =
+                  krat[i] * krat[i] - (xr * xr + yr * yr + zr * zr);
+               if (fabs(delta) > eps) {
                   bigdelta = true;
                   update[ia] = true;
                   update[ib] = true;
@@ -62,8 +63,8 @@ void rattle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
                   pos_prec yo = yold[ib] - yold[ia];
                   pos_prec zo = zold[ib] - zold[ia];
                   pos_prec dot = xr * xo + yr * yo + zr * zo;
-                  mass_prec rma = 1 / mass[ia];
-                  mass_prec rmb = 1 / mass[ib];
+                  mass_prec rma = massinv[ia];
+                  mass_prec rmb = massinv[ib];
                   pos_prec term = 0.5f * sor * delta / ((rma + rmb) * dot);
                   pos_prec xterm = xo * term;
                   pos_prec yterm = yo * term;
@@ -115,7 +116,7 @@ void rattle2_acc1(time_prec dt)
 {
    int* moved = rattle_moved;
    int* update = rattle_update;
-   int* bigeps = rattle_notdone;
+   int* bigeps = rattle_bigdelta;
 
 
    const double eps = rateps / dt;
@@ -137,7 +138,7 @@ void rattle2_acc1(time_prec dt)
       niter += 1;
       done = true;
       #pragma acc parallel loop independent async\
-              deviceptr(mass,xpos,ypos,zpos,vx,vy,vz,\
+              deviceptr(massinv,xpos,ypos,zpos,vx,vy,vz,\
                         irat,krat,iratmol,moved,update,bigeps)
       for (int im = 0; im < nratmol; ++im) {
          int mbegin = iratmol[im][0];
@@ -155,8 +156,8 @@ void rattle2_acc1(time_prec dt)
                vel_prec yv = vy[ib] - vy[ia];
                vel_prec zv = vz[ib] - vz[ia];
                pos_prec dot = xr * xv + yr * yv + zr * zv;
-               mass_prec rma = 1 / mass[ia];
-               mass_prec rmb = 1 / mass[ib];
+               mass_prec rma = massinv[ia];
+               mass_prec rmb = massinv[ib];
                pos_prec term = -dot / ((rma + rmb) * krat[i] * krat[i]);
                if (fabs(term) > eps) {
                   bigdelta = true;
