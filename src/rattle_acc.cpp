@@ -350,11 +350,12 @@ void rattle_settle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
 
       // local frame vectors DA1, DB1, DC1
-      pos_prec xa1d, ya1d, za1d;
+      // pos_prec xa1d, ya1d;
+      pos_prec za1d;
       pos_prec xb1d, yb1d, zb1d;
       pos_prec xc1d, yc1d, zc1d;
-      xa1d = trns11 * xa1 + trns21 * ya1 + trns31 * za1;
-      ya1d = trns12 * xa1 + trns22 * ya1 + trns32 * za1;
+      // xa1d = trns11 * xa1 + trns21 * ya1 + trns31 * za1;
+      // ya1d = trns12 * xa1 + trns22 * ya1 + trns32 * za1;
       za1d = trns13 * xa1 + trns23 * ya1 + trns33 * za1;
       xb1d = trns11 * xb1 + trns21 * yb1 + trns31 * zb1;
       yb1d = trns12 * xb1 + trns22 * yb1 + trns32 * zb1;
@@ -375,7 +376,7 @@ void rattle_settle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
          // first let A = (0,0), B = (lab,0), C = lac(cosA,sinA)
          // centroid G = (xg,yg)
          pos_prec cosA, sinA, xg, yg;
-         cosA = (lab * lab + lac * lac - lbc * lbc) / (2 * lab * lbc);
+         cosA = (lab * lab + lac * lac - lbc * lbc) / (2 * lab * lac);
          sinA = sqrt(1 - cosA * cosA);
          xg = (m1 * lab + m2 * lac * cosA) * invm;
          yg = m2 * lac * sinA * invm;
@@ -443,15 +444,14 @@ void rattle_settle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
       //====================================================================//
       // Eq.A15
       pos_prec alpa, beta, gama, al2be2, sinthe, costhe;
-      alpa =
-         m1 * (yb2d * yb0d + xb2d * xb0d) + m2 * (yc2d * yc0d + xc2d * xc0d);
-      alpa = -alpa;
-      beta =
-         m1 * (xb2d * yb0d - yb2d * xb0d) + m2 * (xc2d * yc0d - yc2d * xc0d);
-      gama =
-         m1 * (xb1d * yb0d - yb1d * xb0d) + m2 * (xc1d * yc0d - yc1d * xc0d);
+      alpa = m1 * (yb2d * yb0d + xb2d * xb0d);
+      alpa += m2 * (yc2d * yc0d + xc2d * xc0d);
+      beta = m1 * (yb2d * xb0d - xb2d * yb0d);
+      beta += m2 * (yc2d * xc0d - xc2d * yc0d);
+      gama = m1 * (yb1d * xb0d - xb1d * yb0d);
+      gama += m2 * (yc1d * xc0d - xc1d * yc0d);
       al2be2 = alpa * alpa + beta * beta;
-      sinthe = (alpa * gama - fabs(beta) * sqrt(al2be2 - gama * gama)) / al2be2;
+      sinthe = (alpa * gama - beta * sqrt(al2be2 - gama * gama)) / al2be2;
       costhe = sqrt(1 - sinthe * sinthe);
 
 
