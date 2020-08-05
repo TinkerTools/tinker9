@@ -16,5 +16,5 @@ void rattle_settle_acc(time_prec, const pos_prec*, const pos_prec*,
 
 void rattle2(time_prec dt, bool do_v);
 void rattle2_acc(time_prec, bool);
-void rattle2_settle_acc();
+void rattle2_settle_acc(time_prec, bool);
 }

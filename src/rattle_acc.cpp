@@ -1,3 +1,4 @@
+#include "add.h"
 #include "mdpq.h"
 #include "rattle.h"
 #include "tinker_rt.h"
@@ -141,12 +142,12 @@ void rattle2_acc1(time_prec dt)
    }
 
 
-   real vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
+   size_t bufsize = buffer_size();
    while (not done and niter < maxiter) {
       niter += 1;
       done = true;
       #pragma acc parallel loop independent async\
-              deviceptr(massinv,xpos,ypos,zpos,vx,vy,vz,\
+              deviceptr(massinv,xpos,ypos,zpos,vx,vy,vz,vir_buf,\
                         irat,krat,iratmol,moved,update,bigeps)
       for (int im = 0; im < nratmol; ++im) {
          int mbegin = iratmol[im][0];
@@ -182,6 +183,8 @@ void rattle2_acc1(time_prec dt)
                   vy[ib] += yterm * rmb;
                   vz[ib] += zterm * rmb;
                   if CONSTEXPR (DO_V) {
+                     size_t offset = im & (bufsize - 1);
+                     real vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
                      xterm *= vterm;
                      yterm *= vterm;
                      zterm *= vterm;
@@ -191,6 +194,7 @@ void rattle2_acc1(time_prec dt)
                      vyy -= yr * yterm;
                      vzy -= zr * yterm;
                      vzz -= zr * zterm;
+                     atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_buf, offset);
                   }
                } // end if (delta > eps)
             }
@@ -203,19 +207,6 @@ void rattle2_acc1(time_prec dt)
       darray::zero(PROCEED_NEW_Q, n, update);
       int next_iter = parallel::reduce_logic_or(bigeps, nrat, WAIT_NEW_Q);
       done = not next_iter;
-   }
-
-
-   if CONSTEXPR (DO_V) {
-      vir[0] += vxx;
-      vir[1] += vyx;
-      vir[2] += vzx;
-      vir[3] += vyx;
-      vir[4] += vyy;
-      vir[5] += vzy;
-      vir[6] += vzx;
-      vir[7] += vzy;
-      vir[8] += vzz;
    }
 
 
@@ -516,14 +507,19 @@ void rattle_settle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 }
 
 
-void rattle2_settle_acc()
+template <bool DO_V>
+void settle2_acc1(time_prec dt)
 {
    if (nratwt <= 0)
       return;
 
 
+   const double vterm = 2 / (dt * units::ekcal);
+   size_t bufsize = buffer_size();
+
+
    #pragma acc parallel loop independent async\
-           deviceptr(vx,vy,vz,xpos,ypos,zpos,mass,iratwt)
+           deviceptr(vx,vy,vz,xpos,ypos,zpos,mass,vir_buf,iratwt)
    for (int iw = 0; iw < nratwt; ++iw) {
       int ia, ib, ic;
       mass_prec m0, m1, m2;
@@ -632,13 +628,12 @@ void rattle2_settle_acc()
 
 
       // t = inverse(M)*m2v
+      // clang-format off
       pos_prec tabd, tbcd, tcad;
-      tabd =
-         av1 * m0 * m1 * vabab + av2 * m1 * m2 * vbcbc + av3 * m2 * m0 * vcaca;
-      tbcd =
-         bv1 * m0 * m1 * vabab + bv2 * m1 * m2 * vbcbc + bv3 * m2 * m0 * vcaca;
-      tcad =
-         cv1 * m0 * m1 * vabab + cv2 * m1 * m2 * vbcbc + cv3 * m2 * m0 * vcaca;
+      tabd = av1*m0*m1*vabab + av2*m1*m2*vbcbc + av3*m2*m0*vcaca;
+      tbcd = bv1*m0*m1*vabab + bv2*m1*m2*vbcbc + bv3*m2*m0*vcaca;
+      tcad = cv1*m0*m1*vabab + cv2*m1*m2*vbcbc + cv3*m2*m0*vcaca;
+      // clang-format on
 
 
       denom = 1 / denom;
@@ -651,6 +646,53 @@ void rattle2_settle_acc()
       vx[ic] += (xeca * tcad - xebc * tbcd) / m2 * denom;
       vy[ic] += (yeca * tcad - yebc * tbcd) / m2 * denom;
       vz[ic] += (zeca * tcad - zebc * tbcd) / m2 * denom;
+
+
+      if CONSTEXPR (DO_V) {
+         pos_prec xterm, yterm, zterm;
+         pos_prec vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
+         xterm = xeab * tabd * denom * vterm;
+         yterm = yeab * tabd * denom * vterm;
+         zterm = zeab * tabd * denom * vterm;
+         vxx += xab * xterm;
+         vyx += yab * xterm;
+         vzx += zab * xterm;
+         vyy += yab * yterm;
+         vzy += zab * yterm;
+         vzz += zab * zterm;
+         xterm = xebc * tbcd * denom * vterm;
+         yterm = yebc * tbcd * denom * vterm;
+         zterm = zebc * tbcd * denom * vterm;
+         vxx += xbc * xterm;
+         vyx += ybc * xterm;
+         vzx += zbc * xterm;
+         vyy += ybc * yterm;
+         vzy += zbc * yterm;
+         vzz += zbc * zterm;
+         xterm = xeca * tcad * denom * vterm;
+         yterm = yeca * tcad * denom * vterm;
+         zterm = zeca * tcad * denom * vterm;
+         vxx += xca * xterm;
+         vyx += yca * xterm;
+         vzx += zca * xterm;
+         vyy += yca * yterm;
+         vzy += zca * yterm;
+         vzz += zca * zterm;
+
+
+         size_t offset = iw & (bufsize - 1);
+         atomic_add((real)vxx, (real)vyx, (real)vzx, (real)vyy, (real)vzy,
+                    (real)vzz, vir_buf, offset);
+      }
    }
+}
+
+
+void rattle2_settle_acc(time_prec dt, bool do_v)
+{
+   if (do_v)
+      settle2_acc1<true>(dt);
+   else
+      settle2_acc1<false>(dt);
 }
 }

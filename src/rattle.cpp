@@ -1,6 +1,8 @@
 #include "rattle.h"
+#include "mdegv.h"
 #include "mdpq.h"
 #include "tool/darray.h"
+#include "tool/energy_buffer.h"
 #include "tool/io_print.h"
 #include <algorithm>
 #include <cassert>
@@ -233,7 +235,21 @@ void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
 void rattle2(time_prec dt, bool do_v)
 {
-   rattle2_settle_acc();
+   if (do_v) {
+      darray::zero(PROCEED_NEW_Q, buffer_size(), vir_buf);
+   }
+
+
+   rattle2_settle_acc(dt, do_v);
    rattle2_acc(dt, do_v);
+
+
+   if (do_v) {
+      virial_prec v[9];
+      virial_reduce(v, vir_buf);
+      for (int iv = 0; iv < 9; ++iv) {
+         vir[iv] += v[iv];
+      }
+   }
 }
 }
