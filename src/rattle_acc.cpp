@@ -231,8 +231,9 @@ void rattle2_acc(time_prec dt, bool do_v)
 }
 
 
-void rattle_settle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
-                       const pos_prec* zold)
+template <class ITGType>
+void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
+                 const pos_prec* zold)
 {
    if (nratwt <= 0)
       return;
@@ -494,15 +495,17 @@ void rattle_settle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
       // This code is not in the original SETTLE paper, but is necessary for
       // the velocity verlet integrator.
-      vx[ia] += (xa3 - xa1) * invdt;
-      vy[ia] += (ya3 - ya1) * invdt;
-      vz[ia] += (za3 - za1) * invdt;
-      vx[ib] += (xb3 - xb1) * invdt;
-      vy[ib] += (yb3 - yb1) * invdt;
-      vz[ib] += (zb3 - zb1) * invdt;
-      vx[ic] += (xc3 - xc1) * invdt;
-      vy[ic] += (yc3 - yc1) * invdt;
-      vz[ic] += (zc3 - zc1) * invdt;
+      if (eq<ITGType, VelocityVerlet>()) {
+         vx[ia] += (xa3 - xa1) * invdt;
+         vy[ia] += (ya3 - ya1) * invdt;
+         vz[ia] += (za3 - za1) * invdt;
+         vx[ib] += (xb3 - xb1) * invdt;
+         vy[ib] += (yb3 - yb1) * invdt;
+         vz[ib] += (zb3 - zb1) * invdt;
+         vx[ic] += (xc3 - xc1) * invdt;
+         vy[ic] += (yc3 - yc1) * invdt;
+         vz[ic] += (zc3 - zc1) * invdt;
+      }
    }
 }
 
@@ -685,6 +688,13 @@ void settle2_acc1(time_prec dt)
                     (real)vzz, vir_buf, offset);
       }
    }
+}
+
+
+void rattle_settle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
+                       const pos_prec* zold)
+{
+   settle_acc1<VelocityVerlet>(dt, xold, yold, zold);
 }
 
 

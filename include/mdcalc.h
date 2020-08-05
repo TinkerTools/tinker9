@@ -98,6 +98,13 @@ extern "C"
    {};
 
 
+   // Velocity Verlet vs Leap Frog
+   struct VelocityVerlet
+   {};
+   struct LeapFrog
+   {};
+
+
    // Bond terms.
    struct HARMONIC
    {};
