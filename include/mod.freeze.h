@@ -24,6 +24,9 @@ TINKER_EXTERN int (*iratmol)[2];
 TINKER_EXTERN pos_prec* rattle_xold;
 TINKER_EXTERN pos_prec* rattle_yold;
 TINKER_EXTERN pos_prec* rattle_zold;
+
+
+// These three variables are only used for the old rattle subroutines.
 TINKER_EXTERN int* rattle_moved;
 TINKER_EXTERN int* rattle_update;
 TINKER_EXTERN int* rattle_bigdelta;

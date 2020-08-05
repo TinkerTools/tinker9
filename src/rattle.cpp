@@ -98,9 +98,9 @@ void rattle_data(rc_op op)
       nrat = 0;
       nratmol = 0;
       darray::deallocate(irat, krat, iratmol);
-      darray::deallocate(rattle_xold, rattle_yold, rattle_zold, rattle_moved,
-                         rattle_update);
-      darray::deallocate(rattle_bigdelta);
+      darray::deallocate(rattle_xold, rattle_yold, rattle_zold);
+      // darray::deallocate(rattle_moved, rattle_update);
+      // darray::deallocate(rattle_bigdelta);
    }
 
 
@@ -214,9 +214,9 @@ void rattle_data(rc_op op)
       darray::copyin(WAIT_NEW_Q, nratmol, iratmol, iratm.data());
 
 
-      darray::allocate(n, &rattle_xold, &rattle_yold, &rattle_zold,
-                       &rattle_moved, &rattle_update);
-      darray::allocate(nrat, &rattle_bigdelta);
+      darray::allocate(n, &rattle_xold, &rattle_yold, &rattle_zold);
+      // darray::allocate(n, &rattle_moved, &rattle_update);
+      // darray::allocate(nrat, &rattle_bigdelta);
 
 
       hc_mols.clear();
