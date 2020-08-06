@@ -11,27 +11,21 @@
 
 namespace tinker {
 __global__
-void sparse_precond_cu0(const real (*restrict rsd)[3],
-                        const real (*restrict rsdp)[3],
-                        real (*restrict zrsd)[3], real (*restrict zrsdp)[3],
+void sparse_precond_cu3(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
                         const real* restrict polarity, int n, real udiag)
 {
    for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
         i += blockDim.x * gridDim.x) {
       real poli = udiag * polarity[i];
       #pragma unroll
-      for (int j = 0; j < 3; ++j) {
+      for (int j = 0; j < 3; ++j)
          zrsd[i][j] = poli * rsd[i][j];
-         zrsdp[i][j] = poli * rsdp[i][j];
-      }
    }
 }
 
 
 __launch_bounds__(BLOCK_DIM) __global__
-void sparse_precond_cu1(const real (*restrict rsd)[3],
-                        const real (*restrict rsdp)[3],
-                        real (*restrict zrsd)[3], real (*restrict zrsdp)[3],
+void sparse_precond_cu4(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
                         const real* restrict pdamp, const real* restrict thole,
                         const real* restrict polarity, TINKER_IMAGE_PARAMS,
                         real cutbuf2, int n,
@@ -45,8 +39,8 @@ void sparse_precond_cu1(const real (*restrict rsd)[3],
 
    struct Data
    {
-      real3 fkd, fkp;
-      real3 rk, ukd, ukp;
+      real3 fkd;
+      real3 rk, ukd;
       real pdk, ptk, polk;
    };
    __shared__ Data data[BLOCK_DIM];
@@ -54,26 +48,21 @@ void sparse_precond_cu1(const real (*restrict rsd)[3],
 
    for (int iw = iwarp; iw < niak; iw += nwarp) {
       real3 fid = make_real3(0, 0, 0);
-      real3 fip = make_real3(0, 0, 0);
       int atomi = min(iak[iw] * WARP_SIZE + ilane, n - 1);
       real3 ri = make_real3(sorted[atomi].x, sorted[atomi].y, sorted[atomi].z);
       int i = sorted[atomi].unsorted;
       real3 uid = make_real3(rsd[i][0], rsd[i][1], rsd[i][2]);
-      real3 uip = make_real3(rsdp[i][0], rsdp[i][1], rsdp[i][2]);
       real pdi = pdamp[i];
       real pti = thole[i];
       real poli = polarity[i];
 
 
       data[threadIdx.x].fkd = make_real3(0, 0, 0);
-      data[threadIdx.x].fkp = make_real3(0, 0, 0);
       int shatomk = lst[iw * WARP_SIZE + ilane];
       data[threadIdx.x].rk =
          make_real3(sorted[shatomk].x, sorted[shatomk].y, sorted[shatomk].z);
       int shk = sorted[shatomk].unsorted;
       data[threadIdx.x].ukd = make_real3(rsd[shk][0], rsd[shk][1], rsd[shk][2]);
-      data[threadIdx.x].ukp =
-         make_real3(rsdp[shk][0], rsdp[shk][1], rsdp[shk][2]);
       data[threadIdx.x].pdk = pdamp[shk];
       data[threadIdx.x].ptk = thole[shk];
       data[threadIdx.x].polk = polarity[shk];
@@ -101,14 +90,8 @@ void sparse_precond_cu1(const real (*restrict rsd)[3],
             c = rr5 * dot3(dr, data[klane].ukd);
             fid += c * dr - rr3 * data[klane].ukd;
 
-            c = rr5 * dot3(dr, data[klane].ukp);
-            fip += c * dr - rr3 * data[klane].ukp;
-
             c = rr5 * dot3(dr, uid);
             data[klane].fkd += c * dr - rr3 * uid;
-
-            c = rr5 * dot3(dr, uip);
-            data[klane].fkp += c * dr - rr3 * uip;
          } // end if (include)
       }
 
@@ -116,23 +99,15 @@ void sparse_precond_cu1(const real (*restrict rsd)[3],
       atomic_add(fid.x, &zrsd[i][0]);
       atomic_add(fid.y, &zrsd[i][1]);
       atomic_add(fid.z, &zrsd[i][2]);
-      atomic_add(fip.x, &zrsdp[i][0]);
-      atomic_add(fip.y, &zrsdp[i][1]);
-      atomic_add(fip.z, &zrsdp[i][2]);
       atomic_add(data[threadIdx.x].fkd.x, &zrsd[shk][0]);
       atomic_add(data[threadIdx.x].fkd.y, &zrsd[shk][1]);
       atomic_add(data[threadIdx.x].fkd.z, &zrsd[shk][2]);
-      atomic_add(data[threadIdx.x].fkp.x, &zrsdp[shk][0]);
-      atomic_add(data[threadIdx.x].fkp.y, &zrsdp[shk][1]);
-      atomic_add(data[threadIdx.x].fkp.z, &zrsdp[shk][2]);
    } // end for (iw)
 }
 
 
 __global__
-void sparse_precond_cu2(const real (*restrict rsd)[3],
-                        const real (*restrict rsdp)[3],
-                        real (*restrict zrsd)[3], real (*restrict zrsdp)[3],
+void sparse_precond_cu5(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
                         const real* restrict pdamp, const real* restrict thole,
                         const real* restrict polarity, TINKER_IMAGE_PARAMS,
                         real cutbuf2, const real* restrict x,
@@ -174,56 +149,43 @@ void sparse_precond_cu2(const real (*restrict rsd)[3],
          real3 dr = make_real3(xr, yr, zr);
          real3 uid = make_real3(rsd[i][0], rsd[i][1], rsd[i][2]);
          real3 ukd = make_real3(rsd[k][0], rsd[k][1], rsd[k][2]);
-         real3 uip = make_real3(rsdp[i][0], rsdp[i][1], rsdp[i][2]);
-         real3 ukp = make_real3(rsdp[k][0], rsdp[k][1], rsdp[k][2]);
 
 
          c = rr5 * dot3(dr, ukd);
          real3 fid = c * dr - rr3 * ukd;
-         c = rr5 * dot3(dr, ukp);
-         real3 fip = c * dr - rr3 * ukp;
          c = rr5 * dot3(dr, uid);
          real3 fkd = c * dr - rr3 * uid;
-         c = rr5 * dot3(dr, uip);
-         real3 fkp = c * dr - rr3 * uip;
 
 
          atomic_add(fid.x, &zrsd[i][0]);
          atomic_add(fid.y, &zrsd[i][1]);
          atomic_add(fid.z, &zrsd[i][2]);
-         atomic_add(fip.x, &zrsdp[i][0]);
-         atomic_add(fip.y, &zrsdp[i][1]);
-         atomic_add(fip.z, &zrsdp[i][2]);
          atomic_add(fkd.x, &zrsd[k][0]);
          atomic_add(fkd.y, &zrsd[k][1]);
          atomic_add(fkd.z, &zrsd[k][2]);
-         atomic_add(fkp.x, &zrsdp[k][0]);
-         atomic_add(fkp.y, &zrsdp[k][1]);
-         atomic_add(fkp.z, &zrsdp[k][2]);
       }
    }
 }
 
 
-void sparse_precond_apply_cu(const real (*rsd)[3], const real (*rsdp)[3],
-                             real (*zrsd)[3], real (*zrsdp)[3])
+void sparse_precond_apply_cu1(const real (*rsd)[3], real (*zrsd)[3])
 {
    const auto& st = *uspatial_unit;
    const real off = switch_off(switch_usolve);
    const real cutbuf2 = (off + st.buffer) * (off + st.buffer);
 
 
-   launch_k1s(nonblk, n, sparse_precond_cu0, //
-              rsd, rsdp, zrsd, zrsdp, polarity, n, udiag);
+   launch_k1s(nonblk, n, sparse_precond_cu3, //
+              rsd, zrsd, polarity, n, udiag);
    if (st.niak > 0)
-      launch_k1s(nonblk, WARP_SIZE * st.niak, sparse_precond_cu1, //
-                 rsd, rsdp, zrsd, zrsdp, pdamp, thole, polarity,
-                 TINKER_IMAGE_ARGS, cutbuf2, //
+      launch_k1s(nonblk, WARP_SIZE * st.niak, sparse_precond_cu4, //
+                 rsd, zrsd, pdamp, thole, polarity, TINKER_IMAGE_ARGS,
+                 cutbuf2, //
                  n, st.sorted, st.niak, st.iak, st.lst);
    if (nuexclude > 0)
-      launch_k1s(nonblk, nuexclude, sparse_precond_cu2, //
-                 rsd, rsdp, zrsd, zrsdp, pdamp, thole, polarity,
-                 TINKER_IMAGE_ARGS, cutbuf2, //
+      launch_k1s(nonblk, nuexclude, sparse_precond_cu5, //
+                 rsd, zrsd, pdamp, thole, polarity, TINKER_IMAGE_ARGS,
+                 cutbuf2, //
                  x, y, z, nuexclude, uexclude, uexclude_scale);
 }
 }
