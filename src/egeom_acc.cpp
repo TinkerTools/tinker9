@@ -23,7 +23,8 @@ void egeom_acc1()
    const auto* kgrp = grp.kgrp;
    const auto* grpmass = grp.grpmass;
 
-   #pragma acc kernels async deviceptr(x,y,z,degx,degy,degz,mass,molec,\
+   #pragma acc kernels async present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
+               deviceptr(x,y,z,degx,degy,degz,mass,molec,\
                igrp,kgrp,grpmass,igfix,gfix,\
                eg,vir_eg)
    {

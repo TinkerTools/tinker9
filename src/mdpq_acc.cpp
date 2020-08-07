@@ -54,6 +54,7 @@ void bounds_pos_acc()
 
 
    #pragma acc parallel loop independent async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(imol,kmol,xpos,ypos,zpos)
    for (int i = 0; i < nmol; ++i) {
       // locate the center of each molecule

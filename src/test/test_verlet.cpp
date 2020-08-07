@@ -6,7 +6,6 @@
 using namespace tinker;
 
 #if TINKER_REAL_SIZE == 8
-static const char* verlet_intg = "integrator  verlet\n";
 static int usage_ =
    calc::xyz | calc::vel | calc::mass | calc::energy | calc::grad | calc::md;
 

@@ -31,6 +31,7 @@ void empole_nonewald_acc1()
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(DEVICE_PTRS,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -118,7 +119,9 @@ void empole_nonewald_acc1()
       }
    } // end for (int i)
 
-   #pragma acc parallel async deviceptr(DEVICE_PTRS,mexclude,mexclude_scale)
+   #pragma acc parallel async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\ 
+               deviceptr(DEVICE_PTRS,mexclude,mexclude_scale)
    #pragma acc loop independent private(pgrad)
    for (int ii = 0; ii < nmexclude; ++ii) {
       int offset = ii & (bufsize - 1);

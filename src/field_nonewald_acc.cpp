@@ -21,6 +21,7 @@ void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(DFIELD_DPTRS,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -92,6 +93,7 @@ void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
    } // end for (int i)
 
    #pragma acc parallel async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(DFIELD_DPTRS,dpexclude,dpexclude_scale)
    #pragma acc loop independent
    for (int ii = 0; ii < ndpexclude; ++ii) {
@@ -166,6 +168,7 @@ void ufield_nonewald_acc(const real (*uind)[3], const real (*uinp)[3],
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(UFIELD_DPTRS,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -230,6 +233,7 @@ void ufield_nonewald_acc(const real (*uind)[3], const real (*uinp)[3],
    } // end for (int i)
 
    #pragma acc parallel async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(UFIELD_DPTRS,uexclude,uexclude_scale)
    #pragma acc loop independent
    for (int ii = 0; ii < nuexclude; ++ii) {
