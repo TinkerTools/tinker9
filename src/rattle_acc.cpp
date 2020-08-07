@@ -40,22 +40,24 @@ void rattle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
          for (int i = mbegin; i < mend; ++i) {
             int ia = irat[i][0];
             int ib = irat[i][1];
-            pos_prec xr = xpos[ib] - xpos[ia];
-            pos_prec yr = ypos[ib] - ypos[ia];
-            pos_prec zr = zpos[ib] - zpos[ia];
-            pos_prec delta = krat[i] * krat[i] - (xr * xr + yr * yr + zr * zr);
+            double xr, yr, zr, delta;
+            xr = xpos[ib] - xpos[ia];
+            yr = ypos[ib] - ypos[ia];
+            zr = zpos[ib] - zpos[ia];
+            delta = krat[i] * krat[i] - (xr * xr + yr * yr + zr * zr);
             if (fabs(delta) > eps) {
                done = false;
-               pos_prec xo = xold[ib] - xold[ia];
-               pos_prec yo = yold[ib] - yold[ia];
-               pos_prec zo = zold[ib] - zold[ia];
-               pos_prec dot = xr * xo + yr * yo + zr * zo;
-               mass_prec rma = massinv[ia];
-               mass_prec rmb = massinv[ib];
-               pos_prec term = 0.5f * sor * delta / ((rma + rmb) * dot);
-               pos_prec xterm = xo * term;
-               pos_prec yterm = yo * term;
-               pos_prec zterm = zo * term;
+               double xo, yo, zo, dot, rma, rmb, term, xterm, yterm, zterm;
+               xo = xold[ib] - xold[ia];
+               yo = yold[ib] - yold[ia];
+               zo = zold[ib] - zold[ia];
+               dot = xr * xo + yr * yo + zr * zo;
+               rma = massinv[ia];
+               rmb = massinv[ib];
+               term = 0.5f * sor * delta / ((rma + rmb) * dot);
+               xterm = xo * term;
+               yterm = yo * term;
+               zterm = zo * term;
                xpos[ia] -= xterm * rma;
                ypos[ia] -= yterm * rma;
                zpos[ia] -= zterm * rma;
@@ -109,25 +111,26 @@ void rattle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
             int ia = irat[i][0];
             int ib = irat[i][1];
             if (moved[ia] or moved[ib]) {
-               pos_prec xr = xpos[ib] - xpos[ia];
-               pos_prec yr = ypos[ib] - ypos[ia];
-               pos_prec zr = zpos[ib] - zpos[ia];
-               pos_prec delta =
-                  krat[i] * krat[i] - (xr * xr + yr * yr + zr * zr);
+               double xr, yr, zr, delta;
+               xr = xpos[ib] - xpos[ia];
+               yr = ypos[ib] - ypos[ia];
+               zr = zpos[ib] - zpos[ia];
+               delta = krat[i] * krat[i] - (xr * xr + yr * yr + zr * zr);
                if (fabs(delta) > eps) {
                   bigdelta = true;
                   update[ia] = true;
                   update[ib] = true;
-                  pos_prec xo = xold[ib] - xold[ia];
-                  pos_prec yo = yold[ib] - yold[ia];
-                  pos_prec zo = zold[ib] - zold[ia];
-                  pos_prec dot = xr * xo + yr * yo + zr * zo;
-                  mass_prec rma = massinv[ia];
-                  mass_prec rmb = massinv[ib];
-                  pos_prec term = 0.5f * sor * delta / ((rma + rmb) * dot);
-                  pos_prec xterm = xo * term;
-                  pos_prec yterm = yo * term;
-                  pos_prec zterm = zo * term;
+                  double xo, yo, zo, dot, rma, rmb, term, xterm, yterm, zterm;
+                  xo = xold[ib] - xold[ia];
+                  yo = yold[ib] - yold[ia];
+                  zo = zold[ib] - zold[ia];
+                  dot = xr * xo + yr * yo + zr * zo;
+                  rma = massinv[ia];
+                  rmb = massinv[ib];
+                  term = 0.5f * sor * delta / ((rma + rmb) * dot);
+                  xterm = xo * term;
+                  yterm = yo * term;
+                  zterm = zo * term;
                   xpos[ia] -= xterm * rma;
                   ypos[ia] -= yterm * rma;
                   zpos[ia] -= zterm * rma;
@@ -197,22 +200,24 @@ void rattle2_acc1(time_prec dt)
          for (int i = mbegin; i < mend; ++i) {
             int ia = irat[i][0];
             int ib = irat[i][1];
-            pos_prec xr = xpos[ib] - xpos[ia];
-            pos_prec yr = ypos[ib] - ypos[ia];
-            pos_prec zr = zpos[ib] - zpos[ia];
-            vel_prec xv = vx[ib] - vx[ia];
-            vel_prec yv = vy[ib] - vy[ia];
-            vel_prec zv = vz[ib] - vz[ia];
-            pos_prec dot = xr * xv + yr * yv + zr * zv;
-            mass_prec rma = massinv[ia];
-            mass_prec rmb = massinv[ib];
-            pos_prec term = -dot / ((rma + rmb) * krat[i] * krat[i]);
+            double xr, yr, zr, xv, yv, zv, dot, rma, rmb, term;
+            xr = xpos[ib] - xpos[ia];
+            yr = ypos[ib] - ypos[ia];
+            zr = zpos[ib] - zpos[ia];
+            xv = vx[ib] - vx[ia];
+            yv = vy[ib] - vy[ia];
+            zv = vz[ib] - vz[ia];
+            dot = xr * xv + yr * yv + zr * zv;
+            rma = massinv[ia];
+            rmb = massinv[ib];
+            term = -dot / ((rma + rmb) * krat[i] * krat[i]);
             if (fabs(term) > eps) {
                done = false;
                term *= sor;
-               pos_prec xterm = xr * term;
-               pos_prec yterm = yr * term;
-               pos_prec zterm = zr * term;
+               double xterm, yterm, zterm;
+               xterm = xr * term;
+               yterm = yr * term;
+               zterm = zr * term;
                vx[ia] -= xterm * rma;
                vy[ia] -= yterm * rma;
                vz[ia] -= zterm * rma;
@@ -221,8 +226,8 @@ void rattle2_acc1(time_prec dt)
                vz[ib] += zterm * rmb;
                if CONSTEXPR (DO_V) {
                   size_t offset = im & (bufsize - 1);
-                  pos_prec vxx = 0, vyx = 0, vzx = 0;
-                  pos_prec vyy = 0, vzy = 0, vzz = 0;
+                  double vxx = 0, vyx = 0, vzx = 0;
+                  double vyy = 0, vzy = 0, vzz = 0;
                   xterm *= vterm;
                   yterm *= vterm;
                   zterm *= vterm;
@@ -274,24 +279,26 @@ void rattle2_acc1(time_prec dt)
             int ia = irat[i][0];
             int ib = irat[i][1];
             if (moved[ia] or moved[ib]) {
-               pos_prec xr = xpos[ib] - xpos[ia];
-               pos_prec yr = ypos[ib] - ypos[ia];
-               pos_prec zr = zpos[ib] - zpos[ia];
-               vel_prec xv = vx[ib] - vx[ia];
-               vel_prec yv = vy[ib] - vy[ia];
-               vel_prec zv = vz[ib] - vz[ia];
-               pos_prec dot = xr * xv + yr * yv + zr * zv;
-               mass_prec rma = massinv[ia];
-               mass_prec rmb = massinv[ib];
-               pos_prec term = -dot / ((rma + rmb) * krat[i] * krat[i]);
+               double xr, yr, zr, xv, yv, zv, dot, rma, rmb, term;
+               xr = xpos[ib] - xpos[ia];
+               yr = ypos[ib] - ypos[ia];
+               zr = zpos[ib] - zpos[ia];
+               xv = vx[ib] - vx[ia];
+               yv = vy[ib] - vy[ia];
+               zv = vz[ib] - vz[ia];
+               dot = xr * xv + yr * yv + zr * zv;
+               rma = massinv[ia];
+               rmb = massinv[ib];
+               term = -dot / ((rma + rmb) * krat[i] * krat[i]);
                if (fabs(term) > eps) {
                   bigdelta = true;
                   update[ia] = true;
                   update[ib] = true;
                   term *= sor;
-                  pos_prec xterm = xr * term;
-                  pos_prec yterm = yr * term;
-                  pos_prec zterm = zr * term;
+                  double xterm, yterm, zterm;
+                  xterm = xr * term;
+                  yterm = yr * term;
+                  zterm = zr * term;
                   vx[ia] -= xterm * rma;
                   vy[ia] -= yterm * rma;
                   vz[ia] -= zterm * rma;
@@ -300,8 +307,8 @@ void rattle2_acc1(time_prec dt)
                   vz[ib] += zterm * rmb;
                   if CONSTEXPR (DO_V) {
                      size_t offset = im & (bufsize - 1);
-                     pos_prec vxx = 0, vyx = 0, vzx = 0;
-                     pos_prec vyy = 0, vzy = 0, vzz = 0;
+                     double vxx = 0, vyx = 0, vzx = 0;
+                     double vyy = 0, vzy = 0, vzz = 0;
                      xterm *= vterm;
                      yterm *= vterm;
                      zterm *= vterm;
@@ -358,7 +365,7 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
       return;
 
 
-   time_prec invdt = 1 / dt;
+   double invdt = 1 / dt;
 
 
    #pragma acc parallel loop independent async\
@@ -367,8 +374,8 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
    for (int iw = 0; iw < nratwt; ++iw) {
       // atoms a, b, c; lengths ab, ac, bc
       int ia, ib, ic;
-      pos_prec lab, lac, lbc;
-      mass_prec m0, m1, m2, invm;
+      double lab, lac, lbc;
+      double m0, m1, m2, invm;
       ia = iratwt[iw][0];
       ib = iratwt[iw][1];
       ic = iratwt[iw][2];
@@ -387,7 +394,7 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
 
       // global frame vectors AB0 and AC0
-      pos_prec xb0, yb0, zb0, xc0, yc0, zc0;
+      double xb0, yb0, zb0, xc0, yc0, zc0;
       xb0 = xold[ib] - xold[ia];
       yb0 = yold[ib] - yold[ia];
       zb0 = zold[ib] - zold[ia];
@@ -397,14 +404,14 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
 
       // global frame centroid D1
-      pos_prec xcom, ycom, zcom;
+      double xcom, ycom, zcom;
       xcom = (m0 * xpos[ia] + m1 * xpos[ib] + m2 * xpos[ic]) * invm;
       ycom = (m0 * ypos[ia] + m1 * ypos[ib] + m2 * ypos[ic]) * invm;
       zcom = (m0 * zpos[ia] + m1 * zpos[ib] + m2 * zpos[ic]) * invm;
 
 
       // global frame vectors DA1, DB1, DC1
-      pos_prec xa1, ya1, za1, xb1, yb1, zb1, xc1, yc1, zc1;
+      double xa1, ya1, za1, xb1, yb1, zb1, xc1, yc1, zc1;
       xa1 = xpos[ia] - xcom;
       ya1 = ypos[ia] - ycom;
       za1 = zpos[ia] - zcom;
@@ -417,13 +424,13 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
 
       // local frame unit vectors x', y', z' and rotation matrix
-      pos_prec xakszd, yakszd, zakszd;
-      pos_prec xaksxd, yaksxd, zaksxd;
-      pos_prec xaksyd, yaksyd, zaksyd;
-      pos_prec axlng, aylng, azlng;
-      pos_prec trns11, trns21, trns31;
-      pos_prec trns12, trns22, trns32;
-      pos_prec trns13, trns23, trns33;
+      double xakszd, yakszd, zakszd;
+      double xaksxd, yaksxd, zaksxd;
+      double xaksyd, yaksyd, zaksyd;
+      double axlng, aylng, azlng;
+      double trns11, trns21, trns31;
+      double trns12, trns22, trns32;
+      double trns13, trns23, trns33;
       // z' = AB_0 cross AC_0
       xakszd = yb0 * zc0 - zb0 * yc0;
       yakszd = zb0 * xc0 - xb0 * zc0;
@@ -452,8 +459,8 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
 
       // local frame vectors AB0 and AC0
-      pos_prec xb0d, yb0d;
-      pos_prec xc0d, yc0d;
+      double xb0d, yb0d;
+      double xc0d, yc0d;
       xb0d = trns11 * xb0 + trns21 * yb0 + trns31 * zb0;
       yb0d = trns12 * xb0 + trns22 * yb0 + trns32 * zb0;
       xc0d = trns11 * xc0 + trns21 * yc0 + trns31 * zc0;
@@ -461,10 +468,10 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
 
       // local frame vectors DA1, DB1, DC1
-      // pos_prec xa1d, ya1d;
-      pos_prec za1d;
-      pos_prec xb1d, yb1d, zb1d;
-      pos_prec xc1d, yc1d, zc1d;
+      // double xa1d, ya1d;
+      double za1d;
+      double xb1d, yb1d, zb1d;
+      double xc1d, yc1d, zc1d;
       // xa1d = trns11 * xa1 + trns21 * ya1 + trns31 * za1;
       // ya1d = trns12 * xa1 + trns22 * ya1 + trns32 * za1;
       za1d = trns13 * xa1 + trns23 * ya1 + trns33 * za1;
@@ -482,11 +489,11 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
       // a0' = (0,yra,0); b0' = (xrb,yrb,0); c0' = (xrc,yrc,0)
       // In Eq.A1, ra, rb, and rc are lengths.
       // Here we use the SIGNED coordinates.
-      pos_prec yra, xrb, yrb, xrc, yrc;
+      double yra, xrb, yrb, xrc, yrc;
       {
          // first let A = (0,0), B = (lab,0), C = lac(cosA,sinA)
          // centroid G = (xg,yg)
-         pos_prec cosA, sinA, xg, yg;
+         double cosA, sinA, xg, yg;
          cosA = (lab * lab + lac * lac - lbc * lbc) / (2 * lab * lac);
          sinA = sqrt(1 - cosA * cosA);
          xg = (m1 * lab + m2 * lac * cosA) * invm;
@@ -494,9 +501,9 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
 
          // vectors GA, GB, GC
-         pos_prec xga, yga, xgb, ygb, xgc, ygc;
-         pos_prec lga, lgb, lgc;
-         pos_prec cosAGB, cosAGC, sinAGB, sinAGC;
+         double xga, yga, xgb, ygb, xgc, ygc;
+         double lga, lgb, lgc;
+         double cosAGB, cosAGC, sinAGB, sinAGC;
          xga = -xg;
          yga = -yg;
          xgb = lab - xg;
@@ -522,7 +529,7 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
       //====================================================================//
       // Eq.A5
-      pos_prec sinphi, cosphi, sinpsi, cospsi;
+      double sinphi, cosphi, sinpsi, cospsi;
       sinphi = za1d / yra;
       cosphi = sqrt(1 - sinphi * sinphi);
       sinpsi = ((zb1d - zc1d) - (yrb - yrc) * sinphi) / ((xrc - xrb) * cosphi);
@@ -531,9 +538,9 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
       //====================================================================//
       // Eq.A3 local frame vectors da2', db2', dc2'
-      pos_prec ya2d;
-      pos_prec xb2d, yb2d;
-      pos_prec xc2d, yc2d;
+      double ya2d;
+      double xb2d, yb2d;
+      double xc2d, yc2d;
       ya2d = yra * cosphi;
       xb2d = xrb * cospsi;
       yb2d = yrb * cosphi + xrb * sinphi * sinpsi;
@@ -541,7 +548,7 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
       yc2d = yrc * cosphi + xrc * sinphi * sinpsi;
       // adjust numerical error for xb2' and xc2'
       // deltx**2 + ybc**2 + zbc**2 = lbc**2, where ybc**2 + zbc**2 = hh2
-      pos_prec deltx, hh2;
+      double deltx, hh2;
       hh2 = (yc2d - yb2d) * (yc2d - yb2d) + (zc1d - zb1d) * (zc1d - zb1d);
       // adjusted xbc
       deltx = sqrt(lbc * lbc - hh2);
@@ -554,7 +561,7 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
       //====================================================================//
       // Eq.A15
-      pos_prec alpa, beta, gama, al2be2, sinthe, costhe;
+      double alpa, beta, gama, al2be2, sinthe, costhe;
       alpa = m1 * (yb2d * yb0d + xb2d * xb0d);
       alpa += m2 * (yc2d * yc0d + xc2d * xc0d);
       beta = m1 * (yb2d * xb0d - xb2d * yb0d);
@@ -568,9 +575,9 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
       //====================================================================//
       // Eq.A4 local frame vectors da3', db3', dc3'
-      pos_prec xa3d, ya3d, za3d;
-      pos_prec xb3d, yb3d, zb3d;
-      pos_prec xc3d, yc3d, zc3d;
+      double xa3d, ya3d, za3d;
+      double xb3d, yb3d, zb3d;
+      double xc3d, yc3d, zc3d;
       xa3d = -ya2d * sinthe;
       ya3d = ya2d * costhe;
       za3d = za1d;
@@ -583,9 +590,9 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
 
       // global frame coordinates DA3, DB3, DC3
-      pos_prec xa3, ya3, za3;
-      pos_prec xb3, yb3, zb3;
-      pos_prec xc3, yc3, zc3;
+      double xa3, ya3, za3;
+      double xb3, yb3, zb3;
+      double xc3, yc3, zc3;
       xa3 = trns11 * xa3d + trns12 * ya3d + trns13 * za3d;
       ya3 = trns21 * xa3d + trns22 * ya3d + trns23 * za3d;
       za3 = trns31 * xa3d + trns32 * ya3d + trns33 * za3d;
@@ -644,7 +651,7 @@ void settle2_acc1(time_prec dt)
            deviceptr(vx,vy,vz,xpos,ypos,zpos,mass,vir_buf,iratwt)
    for (int iw = 0; iw < nratwt; ++iw) {
       int ia, ib, ic;
-      mass_prec m0, m1, m2;
+      double m0, m1, m2;
       ia = iratwt[iw][0];
       ib = iratwt[iw][1];
       ic = iratwt[iw][2];
@@ -654,9 +661,9 @@ void settle2_acc1(time_prec dt)
 
 
       // vectors AB, BC, CA
-      pos_prec xab, yab, zab;
-      pos_prec xbc, ybc, zbc;
-      pos_prec xca, yca, zca;
+      double xab, yab, zab;
+      double xbc, ybc, zbc;
+      double xca, yca, zca;
       xab = xpos[ib] - xpos[ia];
       yab = ypos[ib] - ypos[ia];
       zab = zpos[ib] - zpos[ia];
@@ -669,10 +676,10 @@ void settle2_acc1(time_prec dt)
 
 
       // unit vectors eAB, eBC, eCA
-      pos_prec ablng, bclng, calng;
-      pos_prec xeab, yeab, zeab;
-      pos_prec xebc, yebc, zebc;
-      pos_prec xeca, yeca, zeca;
+      double ablng, bclng, calng;
+      double xeab, yeab, zeab;
+      double xebc, yebc, zebc;
+      double xeca, yeca, zeca;
       ablng = 1 / sqrt(xab * xab + yab * yab + zab * zab);
       bclng = 1 / sqrt(xbc * xbc + ybc * ybc + zbc * zbc);
       calng = 1 / sqrt(xca * xca + yca * yca + zca * zca);
@@ -688,9 +695,9 @@ void settle2_acc1(time_prec dt)
 
 
       // velocity vectors vAB, vBC, vCA
-      vel_prec xvab, yvab, zvab;
-      vel_prec xvbc, yvbc, zvbc;
-      vel_prec xvca, yvca, zvca;
+      double xvab, yvab, zvab;
+      double xvbc, yvbc, zvbc;
+      double xvca, yvca, zvca;
       xvab = vx[ib] - vx[ia];
       yvab = vy[ib] - vy[ia];
       zvab = vz[ib] - vz[ia];
@@ -702,13 +709,13 @@ void settle2_acc1(time_prec dt)
       zvca = vz[ia] - vz[ic];
 
 
-      vel_prec vabab, vbcbc, vcaca;
+      double vabab, vbcbc, vcaca;
       vabab = xvab * xeab + yvab * yeab + zvab * zeab;
       vbcbc = xvbc * xebc + yvbc * yebc + zvbc * zebc;
       vcaca = xvca * xeca + yvca * yeca + zvca * zeca;
 
 
-      pos_prec cosa, cosb, cosc;
+      double cosa, cosb, cosc;
       cosa = -xeab * xeca - yeab * yeca - zeab * zeca;
       cosb = -xebc * xeab - yebc * yeab - zebc * zeab;
       cosc = -xeca * xebc - yeca * yebc - zeca * zebc;
@@ -721,7 +728,7 @@ void settle2_acc1(time_prec dt)
       //     (a1,a2,a3)
       // M = (b1,b2,b3)
       //     (c1,c2,c3)
-      pos_prec a1, a2, a3, b1, b2, b3, c1, c2, c3, denom;
+      double a1, a2, a3, b1, b2, b3, c1, c2, c3, denom;
       a1 = m0 + m1;
       a2 = m0 * cosb;
       a3 = m1 * cosa;
@@ -737,7 +744,7 @@ void settle2_acc1(time_prec dt)
 
 
       // inverse(M)*det(M)
-      pos_prec av1, av2, av3, bv1, bv2, bv3, cv1, cv2, cv3;
+      double av1, av2, av3, bv1, bv2, bv3, cv1, cv2, cv3;
       av1 = b2 * c3 - b3 * c2;
       av2 = c2 * a3 - c3 * a2;
       av3 = a2 * b3 - a3 * b2;
@@ -751,7 +758,7 @@ void settle2_acc1(time_prec dt)
 
       // t = inverse(M)*m2v
       // clang-format off
-      pos_prec tabd, tbcd, tcad;
+      double tabd, tbcd, tcad;
       tabd = av1*m0*m1*vabab + av2*m1*m2*vbcbc + av3*m2*m0*vcaca;
       tbcd = bv1*m0*m1*vabab + bv2*m1*m2*vbcbc + bv3*m2*m0*vcaca;
       tcad = cv1*m0*m1*vabab + cv2*m1*m2*vbcbc + cv3*m2*m0*vcaca;
@@ -771,8 +778,8 @@ void settle2_acc1(time_prec dt)
 
 
       if CONSTEXPR (DO_V) {
-         pos_prec xterm, yterm, zterm;
-         pos_prec vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
+         double xterm, yterm, zterm;
+         double vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
          xterm = xeab * tabd * denom * vterm;
          yterm = yeab * tabd * denom * vterm;
          zterm = zeab * tabd * denom * vterm;
