@@ -390,7 +390,6 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
       // ABC0 is the triangle at t0.
       // ABC1 is the triangle at t0+dt in the absence of constraints.
-      // D1 is the centroid of ABC_1.
 
 
       // global frame vectors AB0 and AC0
@@ -431,11 +430,11 @@ void settle_acc1(time_prec dt, const pos_prec* xold, const pos_prec* yold,
       double trns11, trns21, trns31;
       double trns12, trns22, trns32;
       double trns13, trns23, trns33;
-      // z' = AB_0 cross AC_0
+      // z' = AB0 cross AC0
       xakszd = yb0 * zc0 - zb0 * yc0;
       yakszd = zb0 * xc0 - xb0 * zc0;
       zakszd = xb0 * yc0 - yb0 * xc0;
-      // x' = DA_1 cross z'
+      // x' = DA1 cross z'
       xaksxd = ya1 * zakszd - za1 * yakszd;
       yaksxd = za1 * xakszd - xa1 * zakszd;
       zaksxd = xa1 * yakszd - ya1 * xakszd;
