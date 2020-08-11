@@ -67,7 +67,7 @@ inline void zero(PairMPoleGrad& pgrad)
 #pragma acc routine seq
 template <bool do_e, bool do_g, class ETYP>
 SEQ_CUDA
-void pair_mpole(                                    //
+void pair_mpole_chgpen(                                    //
    real r2, real xr, real yr, real zr, real mscale, //
    real ci, real dix, real diy, real diz, real corei, real vali, real alphai,
    real qixx, real qixy, real qixz,

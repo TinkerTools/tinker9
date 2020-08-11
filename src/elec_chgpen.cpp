@@ -68,7 +68,7 @@ void pole_data(rc_op op)
 
 
    if (op & rc_dealloc) {
-      darray::deallocate(zaxis, pole, rpole, udir, udirp, uind, uinp);
+      darray::deallocate(zaxis, pole, rpole, udir, uind);
       darray::deallocate(trqx, trqy, trqz, vir_trq);
    }
 
@@ -78,12 +78,10 @@ void pole_data(rc_op op)
 
 
       if (use_potent(polar_term)) {
-         darray::allocate(n, &uind, &uinp, &udir, &udirp);
+         darray::allocate(n, &uind, &udir);
       } else {
          uind = nullptr;
-         uinp = nullptr;
          udir = nullptr;
-         udirp = nullptr;
       }
 
 
@@ -366,37 +364,4 @@ bool amoeba_epolar(int vers)
    return use_potent(polar_term);
 }
 
-
-bool amoeba_echglj(int vers)
-{
-   if (rc_flag & calc::analyz)
-      return false;
-   if (vers & calc::analyz)
-      return false;
-   if (!use_potent(charge_term) || !use_potent(vdw_term))
-      return false;
-   if (!(clist_version() & NBL_SPATIAL))
-      return false;
-   if (vdwtyp != evdw_t::lj)
-      return false;
-   if (vdwpr_in_use)
-      return false;
-   return true;
-}
-
-
-bool amoeba_echarge(int vers)
-{
-   if (amoeba_echglj(vers))
-      return false;
-   return use_potent(charge_term);
-}
-
-
-bool amoeba_evdw(int vers)
-{
-   if (amoeba_echglj(vers))
-      return false;
-   return use_potent(vdw_term);
-}
 }

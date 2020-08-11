@@ -11,6 +11,7 @@ namespace tinker {
  * array also includes zero charges.
  */
 TINKER_EXTERN real* pchg;
+TINKER_EXTERN real* pchg0;
 
 
 TINKER_EXTERN count_buffer nec;

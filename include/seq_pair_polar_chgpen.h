@@ -1,7 +1,7 @@
 #pragma once
 #include "elec.h"
 #include "md.h"
-#include "seq_dampchp.h"
+#include "seq_damp_chgpen.h"
 
 
 namespace tinker {
@@ -41,21 +41,17 @@ inline void zero(PairPolarGrad& pgrad)
 #pragma acc routine seq
 template <bool do_e, bool do_g, class ETYP>
 SEQ_CUDA
-void pair_polar(                                                              //
-   real r2, real xr, real yr, real zr, real dscale, real uscale, real wscale, //
-   real ci, real dix, real diy, real diz, real corei, real vali, real alphai,
-   real qixx, real qixy, real qixz, real qiyy, real qiyz, real qizz, real uix,
-   real uiy, real uiz, real uixp, real uiyp, real uizp, real pdi, real pti, //
-   real ck, real dkx, real dky, real dkz, real corek, real valk, real alphak,
-   real qkxx, real qkxy, real qkxz, real qkyy, real qkyz, real qkzz, real ukx,
-   real uky, real ukz, real ukxp, real ukyp, real ukzp, real pdk, real ptk, //
-   real f, real aewald, real& restrict e, PairPolarGrad& restrict pgrad)
+void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
+                       real wscale, real ci, real dix, real diy, real diz,
+                       real corei, real vali, real alphai, real qixx, real qixy,
+                       real qixz, real qiyy, real qiyz, real qizz, real uix,
+                       real uiy, real uiz, real ck, real dkx, real dky,
+                       real dkz, real corek, real valk, real alphak, real qkxx,
+                       real qkxy, real qkxz, real qkyy, real qkyz, real qkzz,
+                       real ukx, real uky, real ukz, real f, real aewald,
+                       real& restrict e, PairPolarGrad& restrict pgrad)
 {
-   if CONSTEXPR (eq<ETYP, EWALD>()) {
-      dscale = 1;
-      wscale = 1;
-      uscale = 1;
-   }
+   
 
    real dir = dix * xr + diy * yr + diz * zr;
    real qix = qixx * xr + qixy * yr + qixz * zr;
@@ -78,18 +74,18 @@ void pair_polar(                                                              //
    real rr3 = rr1 * rr2;
    real rr5 = 3 * rr3 * rr2;
    real rr7 = 5 * rr5 * rr2;
-   real rr9 = 7 * rr7 * rr2;     
-   
+   real rr9 = 7 * rr7 * rr2;
+
    real bn[5];
 
    real rr3core, rr5core, rr3i, rr5i, rr7i, rr9i;
-   real rr3k, rr5k, rr7k, rr9k,rr5ik, rr7ik;
+   real rr3k, rr5k, rr7k, rr9k, rr5ik, rr7ik;
    real dsr3i, dsr5i, dsr7i, dsr3k, dsr5k, dsr7k;
 
 
    if CONSTEXPR (eq<ETYP, EWALD>()) {
 
-            
+
       if CONSTEXPR (!do_g) {
          damp_ewald<4>(bn, r, invr1, rr2, aewald);
          damp_dir<9, PENTYP>(dmpi, dmpk, r, alphai, alphak);
@@ -118,7 +114,7 @@ void pair_polar(                                                              //
       dsr7i = 2 * rr7i;
       dsr7k = 2 * rr7i;
 
-   } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {      
+   } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
 
       if CONSTEXPR (!do_g)
          damp_dir<9, PENTYP>(dmpi, dmpk, r, alphai, alphak);
@@ -138,7 +134,7 @@ void pair_polar(                                                              //
       rr9k = rr9 * dmpk[4];
       rr5ik = rr5 * dmpik[2];
       rr7ik = rr7 * dmpik[3];
-      
+
 
       dsr3i = 2 * rr3i * dscale;
       dsr5i = 2 * rr5i * dscale;
@@ -340,7 +336,6 @@ void pair_polar(                                                              //
          dkr * term4k - qkyz * term5k + qkz * term6k + qky * term7k -
          qkr * term8k;
 
-      // get the dEp/dR terms for Thole direct polarization force
 
       real depx, depy, depz;
 
@@ -390,12 +385,13 @@ void pair_polar(                                                              //
       tiyz = uiy * term1 + uiz * term2 - uir * term3;
       tkyz = uky * term1 + ukz * term2 - ukr * term3;
 
-      depx = tixx * ukxp + tixy * ukyp + tixz * ukzp + tkxx * uixp +
-         tkxy * uiyp + tkxz * uizp;
-      depy = tixy * ukxp + tiyy * ukyp + tiyz * ukzp + tkxy * uixp +
-         tkyy * uiyp + tkyz * uizp;
-      depz = tixz * ukxp + tiyz * ukyp + tizz * ukzp + tkxz * uixp +
-         tkyz * uiyp + tkzz * uizp;
+
+      depx = tixx * ukx + tixy * uky + tixz * ukz - tkxx * uix - tkxy * uiy -
+         tkxz * uiz;
+      depy = tixy * ukx + tiyy * uky + tiyz * ukz - tkxy * uix - tkyy * uiy -
+         tkyz * uiz;
+      depz = tixz * ukx + tiyz * uky + tizz * ukz - tkxz * uix - tkyz * uiy -
+         tkzz * uiz;
 
       if CONSTEXPR (eq<ETYP, EWALD>()) {
          pgrad.frcx -= depx;

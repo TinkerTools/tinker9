@@ -1,14 +1,14 @@
 #pragma once
 #include "elec.h"
 #include "md.h"
-#include "seq_damp.h"
+#include "seq_damp_chgpen.h"
 
 
 namespace tinker {
 #pragma acc routine seq
 template <class ETYP>
 SEQ_CUDA
-void pair_dfield(real r2, real xr, real yr, real zr, real dscale,
+void pair_dfield_chgpen(real r2, real xr, real yr, real zr, real dscale,
                  real ci, real dix, real diy, real diz, 
                  real corei, real vali, real alphai,
                  real qixx, real qixy,
@@ -86,7 +86,7 @@ void pair_dfield(real r2, real xr, real yr, real zr, real dscale,
 
 template <class ETYP>
 SEQ_CUDA
-void pair_ufield(real r2, real xr, real yr, real zr, real wscale, //
+void pair_ufield_chgpen(real r2, real xr, real yr, real zr, real wscale, //
                  real uindi0, real uindi1, real uindi2, real uinpi0,
                  real uinpi1, real uinpi2, //
                  real corei, real vali, real alphai,

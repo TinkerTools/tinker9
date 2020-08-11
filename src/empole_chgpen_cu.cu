@@ -6,7 +6,7 @@
 #include "image.h"
 #include "launch.h"
 #include "md.h"
-#include "seq_pair_mpole.h"
+#include "seq_pair_mpole_chgpen.h"
 #include "switch.h"
 
 
@@ -16,12 +16,13 @@ namespace tinker {
       virial_buffer restrict vir_em, grad_prec *restrict gx,                   \
       grad_prec *restrict gy, grad_prec *restrict gz, real *restrict trqx,     \
       real *restrict trqy, real *restrict trqz, TINKER_IMAGE_PARAMS,           \
+      real *restrict pcore, real *restrict pval, real *restrict palpha,        \
       real off2, real f, const real(*restrict rpole)[10]
 
 
 template <class Ver, class ETYP>
 __global__
-void empole_cu1(EMPOLEPARAS, const Spatial::SortedAtom* restrict sorted,
+void empole_chgpen_chgpen_cu1(EMPOLEPARAS, const Spatial::SortedAtom* restrict sorted,
                 int niak, const int* restrict iak, const int* restrict lst,
                 int n, real aewald)
 {
@@ -91,6 +92,9 @@ void empole_cu1(EMPOLEPARAS, const Spatial::SortedAtom* restrict sorted,
       real qiyy = rpole[i][mpl_pme_yy];
       real qiyz = rpole[i][mpl_pme_yz];
       real qizz = rpole[i][mpl_pme_zz];
+      real corei = pcore[i];
+      real alphai = palpha[i];
+      real vali = pval[i];
 
 
       int shatomk;
@@ -109,6 +113,9 @@ void empole_cu1(EMPOLEPARAS, const Spatial::SortedAtom* restrict sorted,
       real shqkyy = rpole[shk][mpl_pme_yy];
       real shqkyz = rpole[shk][mpl_pme_yz];
       real shqkzz = rpole[shk][mpl_pme_zz];
+      real shcorek = pcore[shk];
+      real shalphak = palpha[shk];
+      real shvalk = pval[shk];
 
 
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -128,6 +135,9 @@ void empole_cu1(EMPOLEPARAS, const Spatial::SortedAtom* restrict sorted,
          real qkyy = __shfl_sync(ALL_LANES, shqkyy, srclane);
          real qkyz = __shfl_sync(ALL_LANES, shqkyz, srclane);
          real qkzz = __shfl_sync(ALL_LANES, shqkzz, srclane);
+         real corek = __shfl_sync(ALL_LANES, shcorek, srclane);
+         real alphak = __shfl_sync(ALL_LANES, shalphak, srclane);
+         real valk = __shfl_sync(ALL_LANES, shvalk, srclane);
 
 
          PairMPoleGrad pgrad;
@@ -138,17 +148,21 @@ void empole_cu1(EMPOLEPARAS, const Spatial::SortedAtom* restrict sorted,
          if (atomi < atomk && r2 <= off2) {
             real e = 0;
             if CONSTEXPR (eq<ETYP, EWALD>()) {
-               pair_mpole<do_e, do_g, EWALD>(
+               pair_mpole_chgpen<do_e, do_g, EWALD>(
                   r2, xr, yr, zr, 1,                                     //
-                  ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, //
-                  ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, //
+                  ci, dix, diy, diz, corei, vali, alphai, //
+                  qixx, qixy, qixz, qiyy, qiyz, qizz, //
+                  ck, dkx, dky, dkz, corek, valk, alphak, //
+                  qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, //
                   f, aewald, e, pgrad);
             }
             if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
-               pair_mpole<do_e, do_g, NON_EWALD>(
+               pair_mpole_chgpen<do_e, do_g, NON_EWALD>(
                   r2, xr, yr, zr, 1,                                     //
-                  ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, //
-                  ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, //
+                  ci, dix, diy, diz, corei, vali, alphai, //
+                  qixx, qixy, qixz, qiyy, qiyz, qizz, //
+                  ck, dkx, dky, dkz, corek, valk, alphak, //
+                  qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, //
                   f, 0, e, pgrad);
             }
 
@@ -213,7 +227,7 @@ void empole_cu1(EMPOLEPARAS, const Spatial::SortedAtom* restrict sorted,
 
 template <class Ver>
 __global__
-void empole_cu2(EMPOLEPARAS, const real* restrict x, const real* restrict y,
+void empole_chgpen_cu2(EMPOLEPARAS, const real* restrict x, const real* restrict y,
                 const real* restrict z, int nmexclude,
                 const int (*restrict mexclude)[2],
                 const real* restrict mexclude_scale)
@@ -247,7 +261,9 @@ void empole_cu2(EMPOLEPARAS, const real* restrict x, const real* restrict y,
       real qiyy = rpole[i][mpl_pme_yy];
       real qiyz = rpole[i][mpl_pme_yz];
       real qizz = rpole[i][mpl_pme_zz];
-
+      real corei = pcore[i];
+      real alphai = palpha[i];
+      real vali = pval[i];
 
       real xr = x[k] - xi;
       real yr = y[k] - yi;
@@ -256,10 +272,14 @@ void empole_cu2(EMPOLEPARAS, const real* restrict x, const real* restrict y,
       if (r2 <= off2) {
          real e;
          PairMPoleGrad pgrad;
-         pair_mpole<do_e, do_g, NON_EWALD>(
-            r2, xr, yr, zr, mscale, ci, dix, diy, diz, qixx, qixy, qixz, qiyy,
+         pair_mpole_chgpen<do_e, do_g, NON_EWALD>(
+            r2, xr, yr, zr, mscale, ci, dix, diy, diz, 
+            corei, vali, alphai,
+            qixx, qixy, qixz, qiyy,
             qiyz, qizz, rpole[k][mpl_pme_0], rpole[k][mpl_pme_x],
-            rpole[k][mpl_pme_y], rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx],
+            rpole[k][mpl_pme_y], rpole[k][mpl_pme_z], 
+            pcore[k], pval[k], palpha[k],
+            rpole[k][mpl_pme_xx],
             rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
             rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], f, 0, e, pgrad);
 
@@ -302,7 +322,7 @@ void empole_cu2(EMPOLEPARAS, const real* restrict x, const real* restrict y,
 
 
 template <class Ver, class ETYP>
-void empole_cu()
+void empole_chgpen_cu()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -331,54 +351,54 @@ void empole_cu()
       }
    }
    if (st.niak > 0) {
-      auto ker1 = empole_cu1<Ver, ETYP>;
+      auto ker1 = empole_chgpen_cu1<Ver, ETYP>;
       launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
                  bufsize, nem, em, vir_em, demx, demy, demz, trqx, trqy, trqz,
-                 TINKER_IMAGE_ARGS, off2, f, rpole, //
+                 TINKER_IMAGE_ARGS, pcore, pval, palpha, off2, f, rpole, //
                  st.sorted, st.niak, st.iak, st.lst, n, aewald);
    }
    if (nmexclude > 0) {
-      auto ker2 = empole_cu2<Ver>;
+      auto ker2 = empole_chgpen_cu2<Ver>;
       launch_k1s(nonblk, nmexclude, ker2, //
                  bufsize, nem, em, vir_em, demx, demy, demz, trqx, trqy, trqz,
-                 TINKER_IMAGE_ARGS, off2, f, rpole, //
+                 TINKER_IMAGE_ARGS, pcore, pval, palpha, off2, f, rpole, //
                  x, y, z, nmexclude, mexclude, mexclude_scale);
    }
 }
 
 
-void empole_nonewald_cu(int vers)
+void empole_chgpen_nonewald_cu(int vers)
 {
    if (vers == calc::v0) {
-      empole_cu<calc::V0, NON_EWALD>();
+      empole_chgpen_cu<calc::V0, NON_EWALD>();
    } else if (vers == calc::v1) {
-      empole_cu<calc::V1, NON_EWALD>();
+      empole_chgpen_cu<calc::V1, NON_EWALD>();
    } else if (vers == calc::v3) {
-      empole_cu<calc::V3, NON_EWALD>();
+      empole_chgpen_cu<calc::V3, NON_EWALD>();
    } else if (vers == calc::v4) {
-      empole_cu<calc::V4, NON_EWALD>();
+      empole_chgpen_cu<calc::V4, NON_EWALD>();
    } else if (vers == calc::v5) {
-      empole_cu<calc::V5, NON_EWALD>();
+      empole_chgpen_cu<calc::V5, NON_EWALD>();
    } else if (vers == calc::v6) {
-      empole_cu<calc::V6, NON_EWALD>();
+      empole_chgpen_cu<calc::V6, NON_EWALD>();
    }
 }
 
 
-void empole_ewald_real_self_cu(int vers)
+void empole_chgpen_ewald_real_self_cu(int vers)
 {
    if (vers == calc::v0) {
-      empole_cu<calc::V0, EWALD>();
+      empole_chgpen_cu<calc::V0, EWALD>();
    } else if (vers == calc::v1) {
-      empole_cu<calc::V1, EWALD>();
+      empole_chgpen_cu<calc::V1, EWALD>();
    } else if (vers == calc::v3) {
-      empole_cu<calc::V3, EWALD>();
+      empole_chgpen_cu<calc::V3, EWALD>();
    } else if (vers == calc::v4) {
-      empole_cu<calc::V4, EWALD>();
+      empole_chgpen_cu<calc::V4, EWALD>();
    } else if (vers == calc::v5) {
-      empole_cu<calc::V5, EWALD>();
+      empole_chgpen_cu<calc::V5, EWALD>();
    } else if (vers == calc::v6) {
-      empole_cu<calc::V6, EWALD>();
+      empole_chgpen_cu<calc::V6, EWALD>();
    }
 }
 }

@@ -147,10 +147,18 @@ void alterchg() {
 
    for (int i = 0; i < npole; ++i) {
       int k = ipole[i];
-      rpole[i][0] = mono0[i] + pdelta[k];
+      pole[i][0] = mono0[i] + pdelta[k];
 
       // charge penenetration
-      pval[i] = pval0[i] + pdelta[k];
+      if CONSTEXPR (use_chgpen)
+         pval[i] = pval0[i] + pdelta[k];
    }
+
+   
+   for (int i = 0; i < nion; ++i) {
+      k = iion[i];
+      pchg[i] = pchg0[i] + pdelta[k]
+   }
+   
 }
 }
