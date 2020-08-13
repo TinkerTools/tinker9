@@ -89,14 +89,22 @@ void copy_pos_to_xyz(bool check_nblist)
 
 void propagate_xyz(time_prec dt, bool check_nblist)
 {
-   propagate_pos_acc(dt);
+   propagate_pos(dt);
    copy_pos_to_xyz(check_nblist);
+}
+
+
+void propagate_pos(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz,
+                   const vel_prec* vlx, const vel_prec* vly,
+                   const vel_prec* vlz)
+{
+   propagate_pos_acc(dt, qx, qy, qz, vlx, vly, vlz);
 }
 
 
 void propagate_pos(time_prec dt)
 {
-   propagate_pos_acc(dt);
+   propagate_pos_acc(dt, xpos, ypos, zpos, vx, vy, vz);
 }
 
 
@@ -235,11 +243,28 @@ void xyz_data(rc_op op)
 mass_prec *mass, *massinv;
 vel_prec *vx, *vy, *vz;
 
+void propagate_velocity(time_prec dt, vel_prec* vlx, vel_prec* vly,
+                        vel_prec* vlz, const vel_prec* vlx0,
+                        const vel_prec* vly0, const vel_prec* vlz0,
+                        const grad_prec* grx, const grad_prec* gry,
+                        const grad_prec* grz)
+{
+   propagate_velocity_acc(dt, vlx, vly, vlz, vlx0, vly0, vlz0, grx, gry, grz);
+}
+
+
+void propagate_velocity(time_prec dt, vel_prec* vlx, vel_prec* vly,
+                        vel_prec* vlz, const grad_prec* grx,
+                        const grad_prec* gry, const grad_prec* grz)
+{
+   propagate_velocity_acc(dt, vlx, vly, vlz, grx, gry, grz);
+}
+
 
 void propagate_velocity(time_prec dt, const grad_prec* grx,
                         const grad_prec* gry, const grad_prec* grz)
 {
-   propagate_velocity_acc(dt, grx, gry, grz);
+   propagate_velocity(dt, vx, vy, vz, grx, gry, grz);
 }
 
 
