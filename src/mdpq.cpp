@@ -87,13 +87,6 @@ void copy_pos_to_xyz(bool check_nblist)
 }
 
 
-void propagate_xyz(time_prec dt, bool check_nblist)
-{
-   propagate_pos(dt);
-   copy_pos_to_xyz(check_nblist);
-}
-
-
 void propagate_pos(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz,
                    const vel_prec* vlx, const vel_prec* vly,
                    const vel_prec* vlz)
@@ -108,12 +101,9 @@ void propagate_pos(time_prec dt)
 }
 
 
-void propagate_xyz_axbv(double a, double b, bool check_nblist)
+void propagate_pos_axbv(double a, double b)
 {
    propagate_pos_axbv_acc(a, b);
-   copy_pos_to_xyz();
-   if (check_nblist)
-      refresh_neighbors();
 }
 
 

@@ -166,7 +166,8 @@ void nhc_npt(int istep, time_prec dt)
    // sinh(x)/x: Taylor series up to x**10
    double poly = 1 + term2 * (e2 + term2 * (e4 + term2 * (e6 + term2 * e8)));
    poly *= expterm * dt;
-   propagate_xyz_axbv(eterm2, poly, true);
+   propagate_pos_axbv(eterm2, poly);
+   copy_pos_to_xyz(true);
 
 
    energy(vers1);

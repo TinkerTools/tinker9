@@ -100,7 +100,6 @@ void copy_pos_to_xyz_acc();
  * \param check_nblist  If `ture`, check the neighbor lists after updating the
  *                      coordinates.
  */
-void propagate_xyz(time_prec dt, bool check_nblist);
 void propagate_pos(time_prec, pos_prec*, pos_prec*, pos_prec*, const vel_prec*,
                    const vel_prec*, const vel_prec*);
 void propagate_pos(time_prec);
@@ -112,7 +111,7 @@ void propagate_pos_acc(time_prec, pos_prec*, pos_prec*, pos_prec*,
  * \ingroup mdpq
  * x = a x + b v
  */
-void propagate_xyz_axbv(double a, double b, bool check_nblist);
+void propagate_pos_axbv(double a, double b);
 void propagate_pos_axbv_acc(double a, double b);
 
 

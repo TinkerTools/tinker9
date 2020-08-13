@@ -116,7 +116,8 @@ void respa_fast_slow(int istep, time_prec dt_ps)
 
    for (int ifast = 1; ifast < nalt; ++ifast) {
       // s += v dt
-      propagate_xyz(dta, false);
+      propagate_pos(dta);
+      copy_pos_to_xyz(false);
 
 
       // update a_fast
@@ -134,7 +135,8 @@ void respa_fast_slow(int istep, time_prec dt_ps)
 
 
    // s += v dt
-   propagate_xyz(dta, true);
+   propagate_pos(dta);
+   copy_pos_to_xyz(true);
 
 
    // update a_fast
