@@ -9,6 +9,7 @@ void kinetic_cu(T_prec&);
 
 
 void temper(time_prec dt, T_prec& temp);
+inline void pressure() {}
 
 
 enum class Thermostat
@@ -56,8 +57,14 @@ extern Barostat barostat;
 
 extern pos_prec *x_pmonte, *y_pmonte, *z_pmonte;
 extern vel_prec *vx_pmonte, *vy_pmonte, *vz_pmonte;
-void monte_carlo_barostat(energy_prec epot);
-void monte_carlo_barostat_acc(energy_prec epot);
+extern bool do_pmonte;
+/**
+ * \ingroup mdpt
+ * \param temp  Current temperature. If the simulation is also isotermal, this
+ * argument is not in use. In stead, the target temperature will be used.
+ */
+void monte_carlo_barostat(energy_prec epot, T_prec temp);
+void monte_carlo_barostat_acc(energy_prec epot, T_prec temp);
 
 
 //====================================================================//
@@ -65,19 +72,26 @@ void monte_carlo_barostat_acc(energy_prec epot);
 
 /**
  * \ingroup mdpt
- * \brief Applies a velocity correction as needed for the Nose-Hoover Chains,
- * and a box size correction as needed for the Monte Carlo barostat at the half
- * time step.
+ * \brief Applies a velocity correction as needed for the Nose-Hoover Chains
+ * at the half time step. Not implemented yet.
  *
- * Literature references:
+ * Literature reference:
  *    - G. J. Martyna, M. E. Tuckerman, D. J. Tobias and M. L. Klein,
  *    "Explicit Reversible Integrators for Extended Systems Dynamics",
  *    Molecular Physics, 87, 1117-1157 (1996).
  *    [URL](https://doi.org/10.1080/00268979600100761)
+ */
+inline void temper2(time_prec dt, T_prec& temp) {}
+/**
+ * \ingroup mdpt
+ * \brief Applies a box size correction as needed for the Monte Carlo barostat
+ * at the half time step.
+ *
+ * Literature reference:
  *    - I. R. McDonald,
  *    "NpT-ensemble Monte Carlo calculations for binary liquid mixtures",
  *    Molecular Physics, 23, 41-58 (1972).
  *    [URL](https://doi.org/10.1080/00268977200100031)
  */
-void halftime_correction(bool do_voltrial);
+void pressure2(energy_prec epot, T_prec temp);
 }

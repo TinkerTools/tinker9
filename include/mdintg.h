@@ -24,6 +24,7 @@ void integrate_data(rc_op);
 
 namespace tinker {
 void velocity_verlet(int istep, time_prec dt_ps);
+// https://doi.org/10.1063/1.448118
 void leapfrog(int istep, time_prec dt_ps);
 extern pos_prec *leapfrog_x, *leapfrog_y, *leapfrog_z;    // old xyz
 extern vel_prec *leapfrog_vx, *leapfrog_vy, *leapfrog_vz; // halftime velocity

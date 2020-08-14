@@ -1,7 +1,7 @@
 Langevin Piston
 ===============
 
-The Langevin piston method for constant pressure in Feller [#Feller1995]_ is
+The Langevin piston method for constant pressure in [#Feller1995]_ is
 integrated in the velocity Verlet framework.
 
 .. [#Feller1995]

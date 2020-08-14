@@ -14,6 +14,7 @@
 #include "random.h"
 #include "tool/io_fort_str.h"
 #include <tinker/detail/bath.hh>
+#include <tinker/detail/bound.hh>
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>
 
@@ -96,12 +97,18 @@ void bussi_thermostat_acc(time_prec dt_prec, T_prec temp_prec)
 //====================================================================//
 
 
-void monte_carlo_barostat_acc(energy_prec epot)
+void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
 {
+   if (not bound::use_bounds)
+      return;
+   if (thermostat != NONE_THERMOSTAT)
+      temp = bath::kelvin;
+
+
    fstr_view volscale = bath::volscale;
    double third = 1.0 / 3.0;
    double volmove = bath::volmove;
-   double kt = units::gasconst * bath::kelvin;
+   double kt = units::gasconst * temp;
    bool isotropic = true;
    // double aniso_rdm = random<double>();
    // if (bath::anisotrop && aniso_rdm > 0.5)

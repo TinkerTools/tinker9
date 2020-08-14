@@ -4,9 +4,7 @@
 #include "mdintg.h"
 #include "mdpq.h"
 #include "mdpt.h"
-#include "random.h"
 #include "rattle.h"
-#include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
 
 
@@ -17,13 +15,10 @@ void velocity_verlet(int istep, time_prec dt_ps)
    int vers1 = vers0;
 
    bool save = !(istep % inform::iwrite);
-   bool mcbaro = false;
+   bool mcbaro = do_pmonte;
    if (barostat == MONTE_CARLO_BAROSTAT) {
       // toggle off the calc::virial bit if Monte Carlo Barostat is in use
       vers1 &= ~calc::virial;
-      double rdm = random<double>();
-      if (rdm < 1.0 / bath::voltrial)
-         mcbaro = true;
    }
    // toggle off the calc::energy bit if neither save nor mcbaro
    if (!save && !mcbaro)
@@ -51,7 +46,9 @@ void velocity_verlet(int istep, time_prec dt_ps)
    energy(vers1);
 
    // half-step corrections for certain thermostats and barostats
-   halftime_correction(mcbaro);
+   T_prec temp;
+   temper2(dt_ps, temp);
+   pressure2(esum, temp);
 
    // v += a * dt/2
    propagate_velocity(dt_2, gx, gy, gz);
@@ -59,8 +56,8 @@ void velocity_verlet(int istep, time_prec dt_ps)
       rattle2(dt_ps, vers1 bitand calc::virial);
 
    // full-step corrections
-   T_prec temp;
    temper(dt_ps, temp);
+   pressure();
 }
 
 
@@ -75,13 +72,10 @@ void leapfrog(int istep, time_prec dt_ps)
 
 
    bool save = not(istep % inform::iwrite);
-   bool mcbaro = false;
+   bool mcbaro = do_pmonte;
    if (barostat == MONTE_CARLO_BAROSTAT) {
       // toggle off the calc::virial bit if Monte Carlo Barostat is in use
       vers1 &= ~calc::virial;
-      double rdm = random<double>();
-      if (rdm < 1.0 / bath::voltrial)
-         mcbaro = true;
    }
    // toggle off the calc::energy bit if neither save nor mcbaro
    if (not save and not mcbaro)

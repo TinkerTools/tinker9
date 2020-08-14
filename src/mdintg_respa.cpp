@@ -5,8 +5,6 @@
 #include "mdintg.h"
 #include "mdpq.h"
 #include "mdpt.h"
-#include "random.h"
-#include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
 
@@ -80,13 +78,10 @@ void respa_fast_slow(int istep, time_prec dt_ps)
    int vers1 = vers0;
 
    bool save = !(istep % inform::iwrite);
-   bool mcbaro = false;
+   bool mcbaro = do_pmonte;
    if (barostat == MONTE_CARLO_BAROSTAT) {
       // toggle off the calc::virial bit if Monte Carlo Barostat is in use
       vers1 &= ~calc::virial;
-      double rdm = random<double>();
-      if (rdm < 1.0 / bath::voltrial)
-         mcbaro = true;
    }
    // toggle off the calc::energy bit if neither save nor mcbaro
    if (!save && !mcbaro)
@@ -170,7 +165,9 @@ void respa_fast_slow(int istep, time_prec dt_ps)
 
 
    // half-step corrections for certain thermostats and barostats
-   halftime_correction(mcbaro);
+   T_prec temp;
+   temper2(dt_ps, temp);
+   pressure2(esum, temp);
 
 
    // v += a_fast dt/2
@@ -180,7 +177,8 @@ void respa_fast_slow(int istep, time_prec dt_ps)
    propagate_velocity2(dta_2, gx1, gy1, gz1, dt_2, gx2, gy2, gz2);
 
 
-   T_prec temp;
+   // full-step corrections
    temper(dt_ps, temp);
+   pressure();
 }
 }

@@ -10,6 +10,7 @@
 #include "mdpt.h"
 #include "mdsave.h"
 #include "nose.h"
+#include "random.h"
 #include "rattle.h"
 #include "tool/darray.h"
 #include "tool/io_fort_str.h"
@@ -48,6 +49,13 @@ void (*intg)(int, time_prec);
 void propagate(int nsteps, time_prec dt_ps)
 {
    for (int istep = 1; istep <= nsteps; ++istep) {
+      do_pmonte = false;
+      if (barostat == MONTE_CARLO_BAROSTAT) {
+         double rdm = random<double>();
+         if (rdm < 1.0 / bath::voltrial)
+            do_pmonte = true;
+      }
+
       TINKER_LOG("Integrating Step %10d", istep);
       intg(istep, dt_ps);
 
