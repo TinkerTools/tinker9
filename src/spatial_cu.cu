@@ -702,3 +702,176 @@ inline int ixyz_to_box(int ix, int iy, int iz, int px, int py, int pz)
 }
 }
 #endif
+
+
+//====================================================================//
+
+
+#include "spatial2.h"
+
+
+namespace tinker {
+namespace {
+// https://stackoverflow.com/questions/499166
+// https://doi.org/10.1063/1.1751381
+
+
+using coord_t = int;
+
+
+template <size_t n>
+__device__
+inline void AxesToTranspose(coord_t (&x)[n], int b)
+{
+   coord_t M = 1 << (b - 1), t;
+   for (coord_t Q = M; Q > 1; Q >>= 1) {
+      coord_t P = Q - 1;
+      #pragma unroll
+      for (int i = 0; i < n; ++i) {
+         if (x[i] & Q) {
+            x[0] ^= P; // invert
+         } else {
+            t = (x[0] ^ x[i]) & P;
+            x[0] ^= t;
+            x[i] ^= t; // exchange
+         }
+      }
+   }
+
+
+   #pragma unroll
+   for (int i = 1; i < n; ++i)
+      x[i] ^= x[i - 1];
+
+
+   t = 0;
+   for (coord_t Q = M; Q > 1; Q >>= 1)
+      if (x[n - 1] & Q)
+         t ^= Q - 1;
+
+
+   #pragma unroll
+   for (int i = 0; i < n; ++i)
+      x[i] ^= t;
+}
+
+
+template <size_t n>
+__device__
+inline int TransposeToIndex(coord_t (&x)[n], int b)
+{
+   int val = 0;
+   for (int ib = b - 1; ib >= 0; --ib) {
+      #pragma unroll
+      for (int in = 0; in < n; ++in) {
+         val <<= 1;
+         val += (x[in] >> ib & 1);
+      }
+   }
+   return val;
+}
+}
+
+
+__global__
+void spatial2_step1(int n, int pz, int2* restrict b2num, //
+                    const real* restrict x, const real* restrict y,
+                    const real* restrict z, TINKER_IMAGE_PARAMS)
+{
+   // i = unsorted atom number
+   // b2num[i] = [box number][unsorted atom number]
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
+        i += blockDim.x * gridDim.x) {
+      real xr = x[i];
+      real yr = y[i];
+      real zr = z[i];
+
+
+      real3 f = imagectof(xr, yr, zr);
+
+
+      int ix, iy, iz;
+      frac_to_ixyz(ix, iy, iz, pz, pz, pz, f.x, f.y, f.z);
+      if (box_shape == OCT_BOX)
+         ixyz_octahedron(ix, iy, iz, pz, pz, pz);
+      coord_t ixyz[3] = {ix, iy, iz};
+      AxesToTranspose(ixyz, pz);
+      int id = TransposeToIndex(ixyz, pz);
+      b2num[i] = make_int2(id, i);
+   }
+}
+
+
+__global__
+void spatial2_step2(int n, Spatial::SortedAtom* restrict sorted,
+                    int* restrict bnum, const int2* restrict b2num,
+                    const real* restrict x, const real* restrict y,
+                    const real* restrict z, int ZERO_LBUF, real* restrict xold,
+                    real* restrict yold, real* restrict zold)
+{
+   // b2num has been sorted by the box number
+   // i: sorted index
+   // b2num[i] = [box number][unsorted atom number]
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
+        i += blockDim.x * gridDim.x) {
+      int atomi = b2num[i].y;
+      real xr = x[atomi];
+      real yr = y[atomi];
+      real zr = z[atomi];
+      if (!ZERO_LBUF) {
+         xold[atomi] = xr;
+         yold[atomi] = yr;
+         zold[atomi] = zr;
+      }
+      sorted[i].x = xr;
+      sorted[i].y = yr;
+      sorted[i].z = zr;
+      sorted[i].unsorted = atomi;
+      bnum[atomi] = i;
+   }
+}
+
+
+struct spatial2_less
+{
+   __device__
+   bool operator()(int2 a, int2 b)
+   {
+      return a.x < b.x;
+   }
+};
+
+
+void spatial_data_init_cu(Spatial2Unit u)
+{
+   assert(u->rebuild == 1);
+   u->rebuild = 0;
+   const real lbuf = u->buffer;
+   int pz = u->pz;
+
+
+   auto*& sorted = u->sorted;
+
+
+   auto policy = thrust::cuda::par(thrust_cache).on(nonblk);
+
+
+   const auto* lx = u->x;
+   const auto* ly = u->y;
+   const auto* lz = u->z;
+   int ZERO_LBUF = (lbuf <= 0 ? 1 : 0);
+   int2* b2num = (int2*)u->update;
+   launch_k1s(nonblk, n, spatial2_step1, //
+              n, pz, b2num, lx, ly, lz, TINKER_IMAGE_ARGS);
+#define SPT2SORT__ sort
+   // #define SPT2SORT__ stable_sort
+   thrust::SPT2SORT__(policy, b2num, b2num + n, spatial2_less());
+#undef SPT2SORT__
+   launch_k1s(nonblk, n, spatial2_step2, //
+              n, sorted, u->bnum, b2num, lx, ly, lz, ZERO_LBUF, u->xold,
+              u->yold, u->zold);
+}
+
+
+void spatial_data_update_sorted(Spatial2Unit) {}
+}
