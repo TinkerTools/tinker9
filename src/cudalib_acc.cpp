@@ -18,6 +18,7 @@ void cudalib_data(rc_op op)
 
       async_queue = -42;
       nonblk = nullptr;
+      check_rt(cudaStreamDestroy(stream2));
       check_rt(cublasDestroy(h_cublas));
       check_rt(cublasDestroy(h_cublas_nonblk));
       check_rt(cudaFreeHost(pinned_buf));
@@ -33,8 +34,7 @@ void cudalib_data(rc_op op)
    if (op & rc_alloc) {
       async_queue = acc_get_default_async();
       nonblk = (cudaStream_t)acc_get_cuda_stream(async_queue);
-      Q2 = async_queue + 1;
-      stream2 = (cudaStream_t)acc_get_cuda_stream(Q2);
+      check_rt(cudaStreamCreateWithFlags(&stream2, cudaStreamNonBlocking));
       check_rt(cublasCreate(&h_cublas));        // calls cudaMemcpy [sync] here
       check_rt(cublasCreate(&h_cublas_nonblk)); // calls cudaMemcpy [sync] here
       check_rt(cublasSetStream(h_cublas_nonblk, nonblk));

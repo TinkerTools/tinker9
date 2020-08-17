@@ -62,6 +62,7 @@ void check_nblist(int n, real lbuf, int* restrict update,
 {
    const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
    #pragma acc parallel loop independent async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(update,x,y,z,xold,yold,zold)
    for (int i = 0; i < n; ++i) {
       real xi = x[i];
@@ -93,6 +94,7 @@ int check_spatial(int n, real lbuf, int* restrict update,
    // 0: do not rebuild; 1: rebuild
    const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
    #pragma acc parallel loop independent async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(update,x,y,z,xold,yold,zold)
    for (int i = 0; i < n; ++i) {
       real xr = x[i] - xold[i];
@@ -141,6 +143,7 @@ inline void build_v1_(NBListUnit nu)
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(lx,ly,lz,xo,yo,zo,nlst,lst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -188,7 +191,9 @@ inline void update_v1_(NBListUnit nu)
    const real buf2 = (st.cutoff + st.buffer) * (st.cutoff + st.buffer);
    const real bufx = (st.cutoff + 2 * st.buffer) * (st.cutoff + 2 * st.buffer);
 
-   #pragma acc kernels async deviceptr(lst)
+   #pragma acc kernels async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
+               deviceptr(lst)
    {
       #pragma acc loop independent
       for (int i = 0; i < n; ++i) {

@@ -56,6 +56,7 @@ extern "C"
    void kmpole_();
    void kpolar_();
    void kchgtrn_();
+   void kchgflx_();
 
    void ksolv_();
    void kmetal_();
@@ -152,6 +153,7 @@ void mechanic()
    kmpole_();
    kpolar_();
    kchgtrn_();
+   kchgflx_();
 
 
    // assign solvation, metal, pisystem and restraint parameters

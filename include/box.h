@@ -43,6 +43,8 @@ void box_lattice(Box& p, BoxShape sh, double a, double b, double c,
 
 
 void box_data(rc_op);
+void box_data_acc(rc_op);
+void box_copyin_acc();
 
 
 /**

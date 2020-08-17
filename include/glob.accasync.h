@@ -4,6 +4,5 @@
 
 namespace tinker {
 TINKER_EXTERN int async_queue;
-TINKER_EXTERN int Q2;
 TINKER_EXTERN bool use_stream2;
 }

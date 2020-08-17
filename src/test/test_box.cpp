@@ -48,12 +48,13 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
    int argc = 1;
    real xr, yr, zr;
 
+   fortran_runtime_initialize(argc, (char**)argv);
+   initial();
+   box_data_acc(rc_alloc);
+
    double eps = 1.0e-6;
    double p[] = {16, 16, 16, 90, 90, 90};
    set_box(ORTHO_BOX, p);
-
-   fortran_runtime_initialize(argc, (char**)argv);
-   initial();
 
    SECTION("  - volume")
    {
@@ -94,6 +95,7 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
       compare_in();
    }
 
+   box_data_acc(rc_dealloc);
    TINKER_RT(final)();
    fortran_runtime_finish();
 }
@@ -105,12 +107,13 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
    int argc = 1;
    real xr, yr, zr;
 
+   fortran_runtime_initialize(argc, (char**)argv);
+   initial();
+   box_data_acc(rc_alloc);
+
    double eps = 1.0e-6;
    double p[] = {32, 24, 20, 90, 30, 90};
    set_box(MONO_BOX, p);
-
-   fortran_runtime_initialize(argc, (char**)argv);
-   initial();
 
    SECTION(" - lvec")
    {
@@ -175,6 +178,7 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
       compare_in();
    }
 
+   box_data_acc(rc_dealloc);
    TINKER_RT(final)();
    fortran_runtime_finish();
 }
@@ -187,12 +191,13 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
    real xr, yr, zr;
    double xa, ya, za;
 
+   fortran_runtime_initialize(argc, (char**)argv);
+   initial();
+   box_data_acc(rc_alloc);
+
    double eps = 1.0e-6;
    double p[] = {32, 24, 20, 75, 60, 45};
    set_box(TRI_BOX, p);
-
-   fortran_runtime_initialize(argc, (char**)argv);
-   initial();
 
    // volume
    double al = COS(p[3]);
@@ -236,6 +241,7 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
       compare_in();
    }
 
+   box_data_acc(rc_dealloc);
    TINKER_RT(final)();
    fortran_runtime_finish();
 }

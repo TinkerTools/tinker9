@@ -14,7 +14,7 @@ private:
 public:
    void deallocate();
    void allocate();
-   void synchronize();
-   void copy_bytes(void* dst, const void* src, size_t nbytes);
+   void begin_copyout();
+   void end_copyout();
 };
 }

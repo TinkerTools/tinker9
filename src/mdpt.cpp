@@ -46,6 +46,7 @@ Barostat barostat;
 
 
 pos_prec *x_pmonte, *y_pmonte, *z_pmonte;
+vel_prec *vx_pmonte, *vy_pmonte, *vz_pmonte;
 
 
 void monte_carlo_barostat(energy_prec epot)

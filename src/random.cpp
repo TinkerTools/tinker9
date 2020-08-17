@@ -4,6 +4,16 @@
 #include <random>
 
 
+#define USE_TINKER_RANDOM_FUNC 0
+#if USE_TINKER_RANDOM_FUNC
+extern "C"
+{
+   double random_();
+   double normal_();
+}
+#endif
+
+
 namespace tinker {
 namespace {
 std::default_random_engine generator;
@@ -13,8 +23,12 @@ std::default_random_engine generator;
 template <class T>
 T random()
 {
+#if USE_TINKER_RANDOM_FUNC
+   return random_();
+#else
    static std::uniform_real_distribution<T> unif(0, 1);
    return unif(generator);
+#endif
 }
 template float random<float>();
 template double random<double>();
@@ -23,8 +37,12 @@ template double random<double>();
 template <class T>
 T normal()
 {
+#if USE_TINKER_RANDOM_FUNC
+   return normal_();
+#else
    static std::normal_distribution<T> norm(0, 1);
    return norm(generator);
+#endif
 }
 template float normal<float>();
 template double normal<double>();
@@ -33,10 +51,19 @@ template double normal<double>();
 template <class T>
 T chi_squared(int k)
 {
+#if USE_TINKER_RANDOM_FUNC
+   T s = 0;
+   for (int i = 0; i < k; ++i) {
+      double si = normal_();
+      s += si * si;
+   }
+   return s;
+#else
    static std::gamma_distribution<T> gam(1, 1);
    using param_type = typename std::gamma_distribution<T>::param_type;
    gam.param(param_type((T)0.5 * k, 2));
    return gam(generator);
+#endif
 }
 template float chi_squared<float>(int);
 template double chi_squared<double>(int);

@@ -25,8 +25,6 @@ void etors_data(rc_op op)
       detx = nullptr;
       dety = nullptr;
       detz = nullptr;
-
-      use_stream2 = false;
    }
 
    if (op & rc_alloc) {
@@ -41,8 +39,6 @@ void etors_data(rc_op op)
       detz = gz;
       if (rc_a)
          buffer_allocate(rc_flag, &et, &vir_et, &detx, &dety, &detz);
-
-      use_stream2 = true;
    }
 
    if (op & rc_init) {
