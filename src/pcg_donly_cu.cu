@@ -1,6 +1,7 @@
 #include "epolar.h"
-#include "field.h"
-#include "induce.h"
+#include "epolar_chgpen.h"
+#include "field_chgpen.h"
+#include "induce_donly.h"
 #include "launch.h"
 #include "tinker_rt.h"
 #include "tool/cudalib.h"
@@ -107,10 +108,10 @@ void pcg_peek1(int n, float pcgpeek, const real* restrict polarity,
 void induce_mutual_pcg2_cu(real (*uind)[3])
 {
    auto* field = work01_;
-   auto* rsd = work03_;
-   auto* zrsd = work05_;
-   auto* conj = work07_;
-   auto* vec = work09_;
+   auto* rsd = work02_;
+   auto* zrsd = work03_;
+   auto* conj = work04_;
+   auto* vec = work05_;
 
 
    const bool dirguess = polpcg::pcgguess;
@@ -122,7 +123,7 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
 
 
    // get the electrostatic field due to permanent multipoles
-   dfield(field);
+   dfield_chgpen(field);
 
 
    // direct induced dipoles
@@ -137,7 +138,7 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
    //                       = E - E -Tu udir
    //                       = -Tu udir
    if (dirguess)
-      ufield(udir, rsd);
+      ufield_chgpen(udir, rsd);
    else
       darray::copy(PROCEED_NEW_Q, n, rsd, field);
 
@@ -181,7 +182,7 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
       // T p and p
       // vec = (inv_alpha + Tu) conj, field = -Tu conj
       // vec = inv_alpha * conj - field
-      ufield(conj, field);
+      ufield_chgpen(conj, field);
       launch_k1s(nonblk, n, pcg_p4, n, polarity_inv, vec, conj, field);
 
 

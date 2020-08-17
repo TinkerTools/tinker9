@@ -1,5 +1,6 @@
 #include "epolar.h"
-#include "empole.h"
+#include "epolar_chgpen.h"
+#include "empole_chgpen.h"
 #include "md.h"
 #include "nblist.h"
 #include "pme.h"
@@ -7,6 +8,7 @@
 #include "tool/host_zero.h"
 #include "tool/io_print.h"
 #include <map>
+#include <tinker/detail/chgpen.hh>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/polar.hh>
@@ -17,7 +19,7 @@
 
 
 namespace tinker {
-void epolar_data(rc_op op)
+void epolar_chgpen_data(rc_op op)
 {
    if (!use_potent(polar_term))
       return;
@@ -28,7 +30,7 @@ void epolar_data(rc_op op)
       ndwexclude = 0;
       darray::deallocate(dwexclude, dwexclude_scale);
       
-      // darray::deallocate(polarity, thole, pdamp, polarity_inv);
+      darray::deallocate(polarity, pcore, palpha, palpha, polarity_inv);
 
       if (rc_a) {
          buffer_deallocate(rc_flag, nep);
@@ -42,8 +44,7 @@ void epolar_data(rc_op op)
       depz = nullptr;
 
       darray::deallocate(ufld, dufld);
-      darray::deallocate(work01_, work02_, work03_, work04_, work05_, work06_,
-                         work07_, work08_, work09_, work10_);
+      darray::deallocate(work01_, work02_, work03_, work04_, work05_);
    }
 
    if (op & rc_alloc) {
@@ -56,44 +57,48 @@ void epolar_data(rc_op op)
       const int maxp13 = polgrp::maxp13;
       const int maxp14 = polgrp::maxp14;
 
-      
-      d1scale = polpot::d1scale;
-      d2scale = polpot::d2scale;
-      d3scale = polpot::d3scale;
-      d4scale = polpot::d4scale;
-
-      w2scale = polpot::w2scale;
-      w3scale = polpot::w3scale;
-      w4scale = polpot::w4scale;
-      w5scale = polpot::w5scale;
-
-      exclik.clear();
-      excls.clear();
+            
       struct dw_scale
       {
          real d, w;
       };
-      auto insert_dw = [](std::map<int, dw_scale>& m, int k, real val,
-                          char dwchar) {
-         auto it = m.find(k);
+      
+      auto insert_dw = [](std::map<std::pair<int, int>, dw_scale>& m, int i,
+                           int k, real val, char ch) {
+         std::pair<int, int> key;
+         key.first = i;
+         key.second = k;
+         auto it = m.find(key);
          if (it == m.end()) {
             dw_scale dw;
             dw.d = 0;
             dw.w = 0;
-            if (dwchar == 'd')
+            if (ch == 'd')
                dw.d = val;
-            else if (dwchar == 'w')
+            else if (ch == 'w')
                dw.w = val;
-            m[k] = dw;
+            m[key] = dw;
          } else {
-            if (dwchar == 'd')
+            if (ch == 'd')
                it->second.d = val;
-            else if (dwchar == 'w')
+            else if (ch == 'w')
                it->second.p = val;
          }
       };
+
+      std::map<std::pair<int, int>, dw_scale> ik_dw;
+
+      std::vector<int> exclik;
+      std::vector<real> excls;
+
+      d1scale = polpot::d1scale;
+      d2scale = polpot::d2scale;
+      d3scale = polpot::d3scale;
+      d4scale = polpot::d4scale;
+      
+      exclik.clear();
+      excls.clear();
       for (int i = 0; i < n; ++i) {
-         std::map<int, dw_scale> k_dwscale;
          int nn, bask;
 
          if (d1scale != 1) {
@@ -101,8 +106,12 @@ void epolar_data(rc_op op)
             bask = i * maxp11;
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip11[bask + j] - 1;
-               if (k > i) 
-                  insert_dw(k_dwscale, k, d1scale - 1, 'd');
+               if (k > i) {
+                  insert_dw(ik_dw, i, k, d1scale - 1, 'd');
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  excls.push_back(d1scale - 1);
+               }
             }
          }
 
@@ -111,8 +120,13 @@ void epolar_data(rc_op op)
             bask = i * maxp12;
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip12[bask + j] - 1;
-               if (k > i) 
-                  insert_dw(k_dwscale, k, d2scale - 1, 'd');
+               if (k > i) {
+                  insert_dw(ik_dw, i, k, d2scale - 1, 'd');
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  excls.push_back(d2scale - 1);
+               }
+            }
             }
          }
 
@@ -121,8 +135,13 @@ void epolar_data(rc_op op)
             bask = i * maxp13;
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip13[bask + j] - 1;
-               if (k > i) 
-                  insert_dw(k_dwscale, k, d3scale - 1, 'd');
+               if (k > i) {
+                  insert_dw(ik_dw, i, k, d3scale - 1, 'd');
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  excls.push_back(d3scale - 1);
+               }
+            }
             }
          }
 
@@ -131,18 +150,45 @@ void epolar_data(rc_op op)
             bask = i * maxp14;
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip14[bask + j] - 1;
-               if (k > i) 
-                  insert_dw(k_dwscale, k, d4scale - 1, 'd');
+               if (k > i) {
+                  insert_dw(ik_dw, i, k, d4scale - 1, 'd');
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  excls.push_back(d4scale - 1);
+               }
+            }
             }
          }
+
+      }
+
+      ndexclude = excls.size();
+      darray::allocate(ndexclude, &dexclude, &dexclude_scale);
+      darray::copyin(WAIT_NEW_Q, ndexclude, dexclude, exclik.data());
+      darray::copyin(WAIT_NEW_Q, ndexclude, dexclude_scale, excls.data());
+
+      w2scale = polpot::w2scale;
+      w3scale = polpot::w3scale;
+      w4scale = polpot::w4scale;
+      w5scale = polpot::w5scale;
+
+      exclik.clear();
+      excls.clear();
+
+      for (int i = 0; i < n; ++i) {
+         int nn, bask;
 
          if (w2scale != 1) {
             nn = couple::n12[i];
             bask = i * maxp12;
             for (int j = 0; j < nn; ++j) {
                int k = couple::i12[bask + j] - 1;
-               if (k > i) 
-                  insert_dw(k_dwscale, k, w2scale - 1, 'w');
+               if (k > i) {
+                  insert_dw(ik_dw, i, k, w2scale - 1, 'w');
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  excls.push_back(w2scale - 1);
+               }
             }
          }
 
@@ -151,8 +197,12 @@ void epolar_data(rc_op op)
             bask = i * maxp13;
             for (int j = 0; j < nn; ++j) {
                int k = couple::i13[bask + j] - 1;
-               if (k > i) 
-                  insert_dw(k_dwscale, k, w3scale - 1, 'w');
+               if (k > i) {
+                  insert_dw(ik_dw, i, k, w3scale - 1, 'w');
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  excls.push_back(w3scale - 1);
+               }
             }
          }
 
@@ -161,8 +211,12 @@ void epolar_data(rc_op op)
             bask = i * maxp14;
             for (int j = 0; j < nn; ++j) {
                int k = couple::i14[bask + j] - 1;
-               if (k > i) 
-                  insert_dw(k_dwscale, k, w4scale - 1, 'w');
+               if (k > i) {
+                  insert_dw(ik_dw, i, k, w4scale - 1, 'w');
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  excls.push_back(w4scale - 1);
+               }
             }
          }
 
@@ -171,28 +225,37 @@ void epolar_data(rc_op op)
             bask = i * maxn15;
             for (int j = 0; j < nn; ++j) {
                int k = couple::i15[bask + j] - 1;
-               if (k > i) 
-                  insert_dw(k_dwscale, k, w5scale - 1, 'w');
+               if (k > i) {
+                  insert_dw(ik_dw, i, k, w5scale - 1, 'w');
+                  exclik.push_back(i);
+                  exclik.push_back(k);
+                  excls.push_back(w5scale - 1);
+               }
             }
          }
-
-         
-
-         for (auto& it : k_dwscale) {
-            exclik.push_back(i);
-            exclik.push_back(it.first);
-            excls.push_back(it.second.d);
-            excls.push_back(it.second.w);
-         }
       }
+
+      nwexclude = excls.size();
+      darray::allocate(nwexclude, &wexclude, &wexclude_scale);
+      darray::copyin(WAIT_NEW_Q, nwexclude, wexclude, exclik.data());
+      darray::copyin(WAIT_NEW_Q, nwexclude, wexclude_scale, excls.data());
       
 
-      ndwexclude = excls.size() / 2;
+      std::vector<int> dw_ik_vec;
+      std::vector<real> dw_sc_vec;
+      for (auto& it : ik_dw) {
+         dw_ik_vec.push_back(it.first.first);
+         dw_ik_vec.push_back(it.first.second);
+         dw_sc_vec.push_back(it.second.d);
+         dw_sc_vec.push_back(it.second.w);
+      }
+      ndwexclude = ik_dw.size();
       darray::allocate(ndwexclude, &dwexclude, &dwexclude_scale);
-      darray::copyin(WAIT_NEW_Q, ndwexclude, dwexclude, exclik.data());
-      darray::copyin(WAIT_NEW_Q, ndwexclude, dwexclude_scale, excls.data());
+      darray::copyin(WAIT_NEW_Q, ndwexclude, dwexclude, dw_ik_vec.data());
+      darray::copyin(WAIT_NEW_Q, ndwexclude, dwexclude_scale,
+                     dw_sc_vec.data());
 
-      darray::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
+      darray::allocate(n, &polarity, &pcore, &pval, &palpha, &polarity_inv);
 
       nep = nullptr;
       ep = eng_buf_elec;
@@ -212,8 +275,7 @@ void epolar_data(rc_op op)
          dufld = nullptr;
       }
 
-      darray::allocate(n, &work01_, &work02_, &work03_, &work04_, &work05_,
-                       &work06_, &work07_, &work08_, &work09_, &work10_);
+      darray::allocate(n, &work01_, &work02_, &work03_, &work04_, &work05_);
    }
 
    if (op & rc_init) {
@@ -225,16 +287,14 @@ void epolar_data(rc_op op)
          pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
       }
       darray::copyin(WAIT_NEW_Q, n, polarity, polar::polarity);
-      darray::copyin(WAIT_NEW_Q, n, thole, polar::thole);
-      darray::copyin(WAIT_NEW_Q, n, pdamp, polar::pdamp);
       darray::copyin(WAIT_NEW_Q, n, polarity_inv, pinvbuf.data());
    }
 }
 
 
-void induce(real (*ud)[3], real (*up)[3])
+void induce2(real (*ud)[3])
 {
-   induce_mutual_pcg1(ud, up);
+   induce_mutual_pcg2(ud);
 
    if (inform::debug && use_potent(polar_term)) {
       std::vector<double> uindbuf;
@@ -266,7 +326,7 @@ void induce(real (*ud)[3], real (*up)[3])
 }
 
 
-void epolar(int vers)
+void epolar_chgpen(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
    bool do_a = vers & calc::analyz;
@@ -293,9 +353,9 @@ void epolar(int vers)
 
    mpole_init(vers);
    if (use_ewald())
-      epolar_ewald(vers);
+      epolar_chgpen_ewald(vers);
    else
-      epolar_nonewald(vers);
+      epolar_chgpen_nonewald(vers);
    torque(vers, depx, depy, depz);
    if (do_v) {
       virial_buffer u2 = vir_trq;
@@ -330,7 +390,7 @@ void epolar(int vers)
 }
 
 
-void epolar_nonewald(int vers)
+void epolar_chgpen_nonewald(int vers)
 {
    // v0: E_dot
    // v1: EGV = E_dot + GV
@@ -345,21 +405,21 @@ void epolar_nonewald(int vers)
    if (edot)
       ver2 &= ~calc::energy; // toggle off the calc::energy flag
 
-   induce(uind, uinp);
+   induce2(uind);
    if (edot)
-      epolar0_dotprod(uind, udirp);
+      epolar0_dotprod(uind, udir);
    if (vers != calc::v0) {
 #if TINKER_CUDART
       if (mlist_version() & NBL_SPATIAL)
-         epolar_nonewald_cu(ver2, uind, uinp);
+         epolar_chgpen_nonewald_cu(ver2, uind);
       else
 #endif
-         epolar_nonewald_acc(ver2, uind, uinp);
+         epolar_chgpen_nonewald_acc(ver2, uind);
    }
 }
 
 
-void epolar_ewald(int vers)
+void epolar_chgpen_ewald(int vers)
 {
    // v0: E_dot
    // v1: EGV = E_dot + GV
@@ -374,35 +434,30 @@ void epolar_ewald(int vers)
    if (edot)
       ver2 &= ~calc::energy; // toggle off the calc::energy flag
 
-   induce(uind, uinp);
+   induce2(uind);
    if (edot)
-      epolar0_dotprod(uind, udirp);
+      epolar0_dotprod(uind, udir);
    if (vers != calc::v0) {
-      epolar_ewald_real(ver2);
-      epolar_ewald_recip_self(ver2);
+      epolar_chgpen_ewald_real(ver2);
+      epolar_chgpen_ewald_recip_self(ver2);
    }
 }
 
 
-void epolar_ewald_real(int vers)
+void epolar_chgpen_ewald_real(int vers)
 {
 #if TINKER_CUDART
    if (mlist_version() & NBL_SPATIAL)
-      epolar_ewald_real_cu(vers, uind, uinp);
+      epolar_chgpen_ewald_real_cu(vers, uind);
    else
 #endif
-      epolar_ewald_real_acc(vers, uind, uinp);
+      epolar_chgpen_ewald_real_acc(vers, uind);
 }
 
 
-void epolar_ewald_recip_self(int vers)
+void epolar_chgpen_ewald_recip_self(int vers)
 {
-   epolar_ewald_recip_self_acc(vers, uind, uinp);
+   epolar_chgpen_ewald_recip_self_acc(vers, uind);
 }
 
-
-void epolar0_dotprod(const real (*uind)[3], const real (*udirp)[3])
-{
-   return epolar0_dotprod_acc(uind, udirp);
-}
 }

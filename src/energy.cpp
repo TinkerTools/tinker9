@@ -56,6 +56,8 @@ void energy_data(rc_op op)
    rc_man emplar42{emplar_data, op};
 
    // HIPPO
+   rc_man empole42{empole_chgpen_data, op};
+   rc_man epolar42{epolar_chgpen_data, op};
    rc_man echgtrn42{echgtrn_data, op};
    rc_man erepel42{erepel_data, op};
    rc_man edisp42{edisp_data, op};
@@ -170,6 +172,12 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          emplar(vers);
 
 
+   if (hippo_empole(vers))
+      if (tscfg("empole_chgpen", ecore_ele))
+         empole_chgpen(vers);
+   if (hippo_epolar(vers))
+      if (tscfg("epolar_chgpen", ecore_ele))
+         epolar_chgpen(vers);
    if (use_potent(chgtrn_term))
       if (tscfg("echgtrn", ecore_ele))
          echgtrn(vers);

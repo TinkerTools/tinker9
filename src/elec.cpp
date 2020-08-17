@@ -1,7 +1,9 @@
 #include "elec.h"
 #include "empole.h"
+#include "empole_chgpen.h"
 #include "energy.h"
 #include "epolar.h"
+#include "epolar_chgpen.h"
 #include "glob.chglj.h"
 #include "md.h"
 #include "mod.vdwpot.h"
@@ -398,5 +400,29 @@ bool amoeba_evdw(int vers)
    if (amoeba_echglj(vers))
       return false;
    return use_potent(vdw_term);
+}
+
+
+bool hippo_empole(int vers)
+{
+   if (!mplpot::use_chgpen)
+      return false;
+
+
+   if (amoeba_emplar(vers))
+      return false;
+   return use_potent(mpole_term);
+}
+
+
+bool hippo_epolar(int vers)
+{
+   if (!mplpot::use_chgpen)
+      return false;
+
+
+   if (amoeba_emplar(vers))
+      return false;
+   return use_potent(polar_term);
 }
 }

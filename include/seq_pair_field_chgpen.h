@@ -23,10 +23,12 @@ void pair_dfield_chgpen(real r2, real xr, real yr, real zr, real dscale,
    real invr1 = REAL_RECIP(r);
    real rr2 = invr1 * invr1;
 
+   real bn[4];
+   real dmpi[4], dmpk[4];
    
    damp_dir(dmpi,dmpk,r,alphai,alphak);
 
-   real bn[4];
+   
    if CONSTEXPR (eq<ETYP, EWALD>())
       damp_ewald<4>(bn, r, invr1, rr2, aewald);
    real rr1 = invr1;
@@ -87,24 +89,24 @@ void pair_dfield_chgpen(real r2, real xr, real yr, real zr, real dscale,
 template <class ETYP>
 SEQ_CUDA
 void pair_ufield_chgpen(real r2, real xr, real yr, real zr, real wscale, //
-                 real uindi0, real uindi1, real uindi2, real uinpi0,
-                 real uinpi1, real uinpi2, //
-                 real corei, real vali, real alphai,
-                 real uindk0, real uindk1, real uindk2, real uinpk0,
-                 real uinpk1, real uinpk2, //
-                 real corek, real valk, real alphak,
+                 real uindi0, real uindi1, real uindi2, //
+                 real corei, real vali, real alphai,    //
+                 real uindk0, real uindk1, real uindk2, //
+                 real corek, real valk, real alphak,    //
                  real aewald, real3& restrict fid, real3& restrict fkd)
 {
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
    real rr2 = invr1 * invr1;
 
+   real bn[3];
+   real dmpik[3];
    real scale3, scale5;
    damp_mut(dmpik,r,alphai,alphak);
    scale3 = wscale * dmpik[1];
    scale5 = wscale * dmpik[2];
 
-   real bn[3];
+   
    if CONSTEXPR (eq<ETYP, EWALD>())
       damp_ewald<3>(bn, r, invr1, rr2, aewald);
    real rr1 = invr1;

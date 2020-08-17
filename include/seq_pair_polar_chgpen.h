@@ -77,21 +77,22 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
    real rr9 = 7 * rr7 * rr2;
 
    real bn[5];
+   real dmpi[5], dmpk[5];
+   real dmpik[6];
 
    real rr3core, rr5core, rr3i, rr5i, rr7i, rr9i;
    real rr3k, rr5k, rr7k, rr9k, rr5ik, rr7ik;
    real dsr3i, dsr5i, dsr7i, dsr3k, dsr5k, dsr7k;
-
 
    if CONSTEXPR (eq<ETYP, EWALD>()) {
 
 
       if CONSTEXPR (!do_g) {
          damp_ewald<4>(bn, r, invr1, rr2, aewald);
-         damp_dir<9, PENTYP>(dmpi, dmpk, r, alphai, alphak);
+         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
       } else {
          damp_ewald<5>(bn, r, invr1, rr2, aewald);
-         damp_pole<11, PENTYP>(dmpik, dmpi, dmpk, r, alphai, alphak);
+         damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
 
       rr3core = bn[1] - (1 - dscale) * rr3;
@@ -117,9 +118,9 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
    } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
 
       if CONSTEXPR (!do_g)
-         damp_dir<9, PENTYP>(dmpi, dmpk, r, alphai, alphak);
+         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
       else {
-         damp_pole<11, PENTYP>(dmpik, dmpi, dmpk, r, alphai, alphak);
+         damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
 
       rr3core = rr3;
@@ -143,10 +144,10 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       dsr5k = 2 * rr5k * dscale;
       dsr7k = 2 * rr7k * dscale;
    }
-   if CONSTEXPR (use_chgflx) {
-      poti = -ukr * dsr3i;
-      potk = uir * dsr3k;
-   }
+   // if CONSTEXPR (use_chgflx) {
+   //    poti = -ukr * dsr3i;
+   //    potk = uir * dsr3k;
+   // }
 
    if CONSTEXPR (do_e) {
       real diu = dix * ukx + diy * uky + diz * ukz;

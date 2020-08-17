@@ -1,11 +1,12 @@
 #include "add.h"
 #include "epolar.h"
+#include "epolar_chgpen.h"
 #include "glob.spatial.h"
 #include "image.h"
-#include "induce.h"
+#include "induce_donly.h.h"
 #include "launch.h"
 #include "mdpq.h"
-#include "seq_damp.h"
+#include "seq_damp_chgpen.h"
 #include "switch.h"
 
 

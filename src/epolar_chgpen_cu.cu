@@ -1,6 +1,6 @@
 #include "add.h"
-#include "epolar.h"
-#include "epolar_chgpen_trq.h"
+#include "epolar_chgpen.h"
+#include "epolar_trq.h"
 #include "glob.spatial.h"
 #include "image.h"
 #include "launch.h"
@@ -167,7 +167,7 @@ void epolar_chgpen_cu1(POLARPARAS, const Spatial::SortedAtom* restrict sorted,
          real r2 = image2(xr, yr, zr);
          if (atomi < atomk && r2 <= off2) {
             if CONSTEXPR (eq<ETYP, EWALD>()) {
-               pair_polar<do_e, do_g, EWALD>( //
+               pair_polar_chgpen<do_e, do_g, EWALD>( //
                   r2, xr, yr, zr, 1, 1,       //
                   ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix,
                   uiy, uiz, corei, vali, alphai, //
@@ -176,7 +176,7 @@ void epolar_chgpen_cu1(POLARPARAS, const Spatial::SortedAtom* restrict sorted,
                   f, aewald, e, pgrad);
             }
             if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
-               pair_polar<do_e, do_g, NON_EWALD>( //
+               pair_polar_chgpen<do_e, do_g, NON_EWALD>( //
                   r2, xr, yr, zr, 1, 1,           //
                   ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix,
                   uiy, uiz, corei, vali, alphai, //
@@ -276,8 +276,8 @@ template <class Ver>
 __global__
 void epolar_chgpen_cu2(POLARPARAS, const real* restrict x,
                        const real* restrict y, const real* restrict z,
-                       int ndpuexclude, const int (*restrict dpuexclude)[2],
-                       const real (*restrict dpuexclude_scale)[3])
+                       int ndwexclude, const int (*restrict dwexclude)[2],
+                       const real (*restrict dwexclude_scale)[3])
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -285,16 +285,16 @@ void epolar_chgpen_cu2(POLARPARAS, const real* restrict x,
    constexpr bool do_v = Ver::v;
 
 
-   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < ndpuexclude;
+   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < ndwexclude;
         ii += blockDim.x * gridDim.x) {
       int offset = ii & (bufsize - 1);
 
 
-      int i = dpuexclude[ii][0];
-      int k = dpuexclude[ii][1];
-      real dscale = dpuexclude_scale[ii][0];
+      int i = dwexclude[ii][0];
+      int k = dwexclude[ii][1];
+      real dscale = dwexclude_scale[ii][0];
       real wscale =
-         dpuexclude_scale[ii][2]; // change to match definition of wscale
+         dwexclude_scale[ii][2]; // change to match definition of wscale
 
 
       real xi = x[i];
@@ -355,7 +355,7 @@ void epolar_chgpen_cu2(POLARPARAS, const real* restrict x,
 
 
          if CONSTEXPR (do_a)
-            if (pscale == -1)
+            if (dscale == -1)
                atomic_add(-1, nep, offset);
          if CONSTEXPR (do_e)
             atomic_add(e, ep, offset);
@@ -439,17 +439,17 @@ void epolar_chgpen_cu(const real (*uind)[3])
                  TINKER_IMAGE_ARGS, off2, f, rpole, pcore, pval, palpha, uind,
                  st.sorted, st.niak, st.iak, st.lst, n, aewald);
    }
-   if (ndpuexclude > 0) {
+   if (ndwexclude > 0) {
       auto ker2 = epolar_chgpen_cu2<Ver>;
-      launch_k1s(nonblk, ndpuexclude, ker2, //
+      launch_k1s(nonblk, ndwexclude, ker2, //
                  bufsize, nep, ep, vir_ep, depx, depy, depz, ufld, dufld,
                  TINKER_IMAGE_ARGS, off2, f, rpole, pcore, pval, palpha,
                  uind, //
-                 x, y, z, ndpuexclude, dpuexclude, dpuexclude_scale);
+                 x, y, z, ndwexclude, dwexclude, dwexclude_scale);
    }
    // torque
    if CONSTEXPR (do_g) {
-      launch_k1s(nonblk, n, epolar_chgpen_trq_cu, //
+      launch_k1s(nonblk, n, epolar_trq_cu, //
                  trqx, trqy, trqz, n, rpole, ufld, dufld);
    }
 }

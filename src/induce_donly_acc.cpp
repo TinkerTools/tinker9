@@ -1,6 +1,7 @@
 #include "add.h"
 #include "epolar.h"
-#include "field.h"
+#include "epolar_chgpen.h"
+#include "field_chgpen.h"
 #include "glob.nblist.h"
 #include "image.h"
 #include "induce_donly.h"
@@ -183,10 +184,10 @@ void sparse_precond_apply2_acc(const real (*rsd)[3],
 void induce_mutual_pcg2_acc(real (*uind)[3])
 {
    auto* field = work01_;
-   auto* rsd = work03_;
-   auto* zrsd = work05_;
-   auto* conj = work07_;
-   auto* vec = work09_;
+   auto* rsd = work02_;
+   auto* zrsd = work03_;
+   auto* conj = work04_;
+   auto* vec = work05_;
 
    const bool dirguess = polpcg::pcgguess;
    // use sparse matrix preconditioner

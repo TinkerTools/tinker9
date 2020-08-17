@@ -1,5 +1,5 @@
 #include "add.h"
-#include "empole.h"
+#include "empole_chgpen.h"
 #include "empole_self.h"
 #include "glob.pme.h"
 #include "glob.spatial.h"

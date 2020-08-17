@@ -24,6 +24,8 @@
 #include "evdw.h"
 
 
+#include "empole_chgpen.h"
+#include "epolar_chgpen.h"
 #include "echgtrn.h"
 #include "edisp.h"
 #include "ehippo.h"

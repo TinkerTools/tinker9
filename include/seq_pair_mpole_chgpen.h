@@ -1,7 +1,7 @@
 #pragma once
 #include "elec.h"
 #include "md.h"
-#include "seq_dampchgp.h"
+#include "seq_damp_chgpen.h"
 
 
 namespace tinker {
@@ -129,11 +129,11 @@ void pair_mpole_chgpen(                                    //
    if CONSTEXPR (eq<ETYP, EWALD>()) {
       if CONSTEXPR (!do_g) {
          damp_ewald<5>(bn, r, invr1, rr2, aewald);
-         damp_pole<9,PENTYP>(dmpik, dmpi, dmpk, r, alphai, alphak);
+         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
       else {
          damp_ewald<6>(bn, r, invr1, rr2, aewald);
-         damp_pole<11,PENTYP>(dmpik, dmpi, dmpk, r, alphai, alphak);
+         damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
       bn[0] *= f;
       bn[1] *= f;
@@ -156,16 +156,16 @@ void pair_mpole_chgpen(                                    //
       real rr9ik = bn[4] - (1 - mscale * dmpik[4]) * rr9;
       real rr1 = bn[0] - (1 - mscale) * rr1;
 
-      if CONSTEXPR (use_chgflx) {
-         real t1i = corek * rr1i + valk * rr1ik;
-         real t1k = corei * rr1k + vali * rr1ik;
-         real t2i = -dkr * rr3ik;
-         real t2k = dir * rr3ik;
-         real t3i = qkr * rr5ik;
-         real t3k = qir * rr5ik;
-         poti = t1i + t2i + t3i;
-         potk = t1k + t2k + t3k;
-      }
+      // if CONSTEXPR (use_chgflx) {
+      //    real t1i = corek * rr1i + valk * rr1ik;
+      //    real t1k = corei * rr1k + vali * rr1ik;
+      //    real t2i = -dkr * rr3ik;
+      //    real t2k = dir * rr3ik;
+      //    real t3i = qkr * rr5ik;
+      //    real t3k = qir * rr5ik;
+      //    poti = t1i + t2i + t3i;
+      //    potk = t1k + t2k + t3k;
+      // }
       
    } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
       rr1 *= mscale;
@@ -175,10 +175,10 @@ void pair_mpole_chgpen(                                    //
       rr9 *= mscale;        
 
       if CONSTEXPR (!do_g)
-         damp_pole<9,PENTYP>(dmpik, dmpi, dmpk, r, alphai, alphak);
+         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
       else {
          rr11 *= mscale;
-         damp_pole<11,PENTYP>(dmpik, dmpi, dmpk, r, alphai, alphak);
+         damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
 
       real rr1i = dmpi[0] * rr1;
