@@ -1,4 +1,3 @@
-#include "epolar.h"
 #include "epolar_chgpen.h"
 #include "field_chgpen.h"
 #include "induce_donly.h"
@@ -147,10 +146,10 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
 
    // initial M r(0) and p(0)
    if (sparse_prec) {
-      sparse_precond_build();
-      sparse_precond_apply(rsd, zrsd);
+      sparse_precond_build2();
+      sparse_precond_apply2(rsd, zrsd);
    } else
-      diag_precond(rsd, zrsd);
+      diag_precond2(rsd, zrsd);
 
    darray::copy(PROCEED_NEW_Q, n, conj, zrsd);
 
@@ -199,9 +198,9 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
 
       // calculate/update M r
       if (sparse_prec)
-         sparse_precond_apply(rsd, zrsd);
+         sparse_precond_apply2(rsd, zrsd);
       else
-         diag_precond(rsd, zrsd);
+         diag_precond2(rsd, zrsd);
 
 
       // b = sum1 / sum; bp = sump1 / sump
