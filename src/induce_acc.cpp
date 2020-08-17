@@ -50,6 +50,7 @@ void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(APPLY_DPTRS,ulst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -122,6 +123,7 @@ void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
    }
 
    #pragma acc parallel loop async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(APPLY_DPTRS,uexclude,uexclude_scale)
    for (int ii = 0; ii < nuexclude; ++ii) {
       int i = uexclude[ii][0];

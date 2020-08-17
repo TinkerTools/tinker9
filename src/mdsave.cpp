@@ -9,6 +9,7 @@
 #include <mutex>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>
+#include <tinker/detail/deriv.hh>
 #include <tinker/detail/moldyn.hh>
 #include <tinker/detail/output.hh>
 #include <tinker/detail/polar.hh>
@@ -45,24 +46,25 @@ void mdsave_dup_then_write(int istep, time_prec dt)
 
    dup_buf_esum = esum;
    get_default_box(dup_buf_box);
-   dup_stream.copy_bytes(dup_buf_x, xpos, sizeof(vel_prec) * n);
-   dup_stream.copy_bytes(dup_buf_y, ypos, sizeof(vel_prec) * n);
-   dup_stream.copy_bytes(dup_buf_z, zpos, sizeof(vel_prec) * n);
+   darray::copy(PROCEED_NEW_Q, n, dup_buf_x, xpos);
+   darray::copy(PROCEED_NEW_Q, n, dup_buf_y, ypos);
+   darray::copy(PROCEED_NEW_Q, n, dup_buf_z, zpos);
 
-   dup_stream.copy_bytes(dup_buf_vx, vx, sizeof(vel_prec) * n);
-   dup_stream.copy_bytes(dup_buf_vy, vy, sizeof(vel_prec) * n);
-   dup_stream.copy_bytes(dup_buf_vz, vz, sizeof(vel_prec) * n);
+   darray::copy(PROCEED_NEW_Q, n, dup_buf_vx, vx);
+   darray::copy(PROCEED_NEW_Q, n, dup_buf_vy, vy);
+   darray::copy(PROCEED_NEW_Q, n, dup_buf_vz, vz);
 
-   dup_stream.copy_bytes(dup_buf_gx, gx, sizeof(grad_prec) * n);
-   dup_stream.copy_bytes(dup_buf_gy, gy, sizeof(grad_prec) * n);
-   dup_stream.copy_bytes(dup_buf_gz, gz, sizeof(grad_prec) * n);
+   darray::copy(PROCEED_NEW_Q, n, dup_buf_gx, gx);
+   darray::copy(PROCEED_NEW_Q, n, dup_buf_gy, gy);
+   darray::copy(PROCEED_NEW_Q, n, dup_buf_gz, gz);
 
    if (mdsave_use_uind()) {
-      dup_stream.copy_bytes(&dup_buf_uind[0][0], &uind[0][0],
-                            sizeof(real) * 3 * n);
+      darray::copy(PROCEED_NEW_Q, 3 * n, &dup_buf_uind[0][0], &uind[0][0]);
    }
 
-   dup_stream.synchronize();
+   // Record mdsave_begin_event when nonblk is available.
+   // Stream (0) will wait until mdsave_begin_event is recorded.
+   dup_stream.begin_copyout();
 
    mtx_dup.lock();
    idle_dup = true;
@@ -74,14 +76,14 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    energy_prec epot = dup_buf_esum;
    set_tinker_box_module(dup_buf_box);
    if (sizeof(pos_prec) == sizeof(double)) {
-      darray::copyout(PROCEED_NEW_Q, n, atoms::x, dup_buf_x);
-      darray::copyout(PROCEED_NEW_Q, n, atoms::y, dup_buf_y);
-      darray::copyout(WAIT_NEW_Q, n, atoms::z, dup_buf_z);
+      darray::copyout(PROCEED_DEFAULT_Q, n, atoms::x, dup_buf_x);
+      darray::copyout(PROCEED_DEFAULT_Q, n, atoms::y, dup_buf_y);
+      darray::copyout(WAIT_DEFAULT_Q, n, atoms::z, dup_buf_z);
    } else {
       std::vector<pos_prec> arrx(n), arry(n), arrz(n);
-      darray::copyout(PROCEED_NEW_Q, n, arrx.data(), dup_buf_x);
-      darray::copyout(PROCEED_NEW_Q, n, arry.data(), dup_buf_y);
-      darray::copyout(WAIT_NEW_Q, n, arrz.data(), dup_buf_z);
+      darray::copyout(PROCEED_DEFAULT_Q, n, arrx.data(), dup_buf_x);
+      darray::copyout(PROCEED_DEFAULT_Q, n, arry.data(), dup_buf_y);
+      darray::copyout(WAIT_DEFAULT_Q, n, arrz.data(), dup_buf_z);
       for (int i = 0; i < n; ++i) {
          atoms::x[i] = arrx[i];
          atoms::y[i] = arry[i];
@@ -91,9 +93,9 @@ void mdsave_dup_then_write(int istep, time_prec dt)
 
    {
       std::vector<vel_prec> arrx(n), arry(n), arrz(n);
-      darray::copyout(PROCEED_NEW_Q, n, arrx.data(), dup_buf_vx);
-      darray::copyout(PROCEED_NEW_Q, n, arry.data(), dup_buf_vy);
-      darray::copyout(WAIT_NEW_Q, n, arrz.data(), dup_buf_vz);
+      darray::copyout(PROCEED_DEFAULT_Q, n, arrx.data(), dup_buf_vx);
+      darray::copyout(PROCEED_DEFAULT_Q, n, arry.data(), dup_buf_vy);
+      darray::copyout(WAIT_DEFAULT_Q, n, arrz.data(), dup_buf_vz);
       for (int i = 0; i < n; ++i) {
          int j = 3 * i;
          moldyn::v[j] = arrx[i];
@@ -105,21 +107,32 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    {
       std::vector<double> arrx(n), arry(n), arrz(n);
       copy_gradient(calc::grad, arrx.data(), arry.data(), arrz.data(),
-                    dup_buf_gx, dup_buf_gy, dup_buf_gz);
+                    dup_buf_gx, dup_buf_gy, dup_buf_gz, false);
       // convert gradient to acceleration
       const double ekcal = units::ekcal;
       for (int i = 0; i < n; ++i) {
          int j = 3 * i;
+         deriv::desum[j + 0] = arrx[i];
+         deriv::desum[j + 1] = arry[i];
+         deriv::desum[j + 2] = arrz[i];
          double invmass = 1.0 / atomid::mass[i];
-         moldyn::a[j] = -ekcal * arrx[i] * invmass;
+         moldyn::a[j + 0] = -ekcal * arrx[i] * invmass;
          moldyn::a[j + 1] = -ekcal * arry[i] * invmass;
          moldyn::a[j + 2] = -ekcal * arrz[i] * invmass;
+         moldyn::aalt[j + 0] = 0;
+         moldyn::aalt[j + 1] = 0;
+         moldyn::aalt[j + 2] = 0;
       }
    }
 
    if (mdsave_use_uind()) {
-      darray::copyout(WAIT_NEW_Q, n, polar::uind, dup_buf_uind);
+      darray::copyout(WAIT_DEFAULT_Q, n, polar::uind, dup_buf_uind);
    }
+
+   // Record mdsave_end_event when stream (0) is available.
+   // nonblk will wait until mdsave_end_event is recorded, so that the dup_
+   // arrays are idle and ready to be written.
+   dup_stream.end_copyout();
 
    double dt1 = dt;
    double epot1 = epot;

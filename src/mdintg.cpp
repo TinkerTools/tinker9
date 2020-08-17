@@ -72,8 +72,10 @@ void integrate_data(rc_op op)
       if (intg == respa_fast_slow)
          darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
 
-      if (barostat == MONTE_CARLO_BAROSTAT)
+      if (barostat == MONTE_CARLO_BAROSTAT) {
          darray::deallocate(x_pmonte, y_pmonte, z_pmonte);
+         darray::deallocate(vx_pmonte, vy_pmonte, vz_pmonte);
+      }
 
       intg = nullptr;
    }
@@ -106,6 +108,7 @@ void integrate_data(rc_op op)
          else if (br == "MONTECARLO") {
             barostat = MONTE_CARLO_BAROSTAT;
             darray::allocate(n, &x_pmonte, &y_pmonte, &z_pmonte);
+            darray::allocate(n, &vx_pmonte, &vy_pmonte, &vz_pmonte);
          } else
             assert(false);
       } else {

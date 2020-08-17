@@ -35,6 +35,9 @@ void set_default_box(const Box& p)
    recipa = p.recipa;
    recipb = p.recipb;
    recipc = p.recipc;
+
+
+   box_copyin_acc();
 }
 
 
@@ -110,6 +113,9 @@ void set_recip_box(real3& recipa, real3& recipb, real3& recipc,
 void set_default_recip_box()
 {
    set_recip_box(recipa, recipb, recipc, box_shape, lvec1, lvec2, lvec3);
+
+
+   box_copyin_acc();
 }
 
 
@@ -275,6 +281,9 @@ void box_lattice(Box& p, BoxShape sh, double a, double b, double c,
 
 void box_data(rc_op op)
 {
+   box_data_acc(op);
+
+
    if (op & rc_dealloc) {
       if (calc::traj & rc_flag) {
          std::free(trajbox);

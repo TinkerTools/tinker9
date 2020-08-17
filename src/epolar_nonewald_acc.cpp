@@ -35,6 +35,7 @@ void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(POLAR_DPTRS,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -171,6 +172,7 @@ void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
    } // end for (int i)
 
    #pragma acc parallel async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(POLAR_DPTRS,dpuexclude,dpuexclude_scale)
    #pragma acc loop independent private(pgrad)
    for (int ii = 0; ii < ndpuexclude; ++ii) {
