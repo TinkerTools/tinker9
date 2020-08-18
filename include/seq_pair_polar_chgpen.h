@@ -1,6 +1,7 @@
 #pragma once
 #include "elec.h"
 #include "md.h"
+#include "seq_damp.h"
 #include "seq_damp_chgpen.h"
 
 
@@ -223,10 +224,10 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       term4k = 2 * rr5k;
       term5k = 5 * rr7k * xr;
       term6k = rr9k * xr * xr;
-      tixx = vali * term1i + corei * term1core + dix * term2i - dir * term3i -
+      real tixx = vali * term1i + corei * term1core + dix * term2i - dir * term3i -
          qixx * term4i + qix * term5i - qir * term6i +
          (qiy * yr + qiz * zr) * rr7i;
-      tkxx = valk * term1k + corek * term1core - dkx * term2k + dkr * term3k -
+      real tkxx = valk * term1k + corek * term1core - dkx * term2k + dkr * term3k -
          qkxx * term4k + qkx * term5k - qkr * term6k +
          (qky * yr + qkz * zr) * rr7k;
       term1i = rr3i - rr5i * yr * yr;
@@ -242,10 +243,10 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       term4k = 2 * rr5k;
       term5k = 5 * rr7k * yr;
       term6k = rr9k * yr * yr;
-      tiyy = vali * term1i + corei * term1core + diy * term2i - dir * term3i -
+      real tiyy = vali * term1i + corei * term1core + diy * term2i - dir * term3i -
          qiyy * term4i + qiy * term5i - qir * term6i +
          (qix * xr + qiz * zr) * rr7i;
-      tkyy = valk * term1k + corek * term1core - dky * term2k + dkr * term3k -
+      real tkyy = valk * term1k + corek * term1core - dky * term2k + dkr * term3k -
          qkyy * term4k + qky * term5k - qkr * term6k +
          (qkx * xr + qkz * zr) * rr7k;
       term1i = rr3i - rr5i * zr * zr;
@@ -261,10 +262,10 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       term4k = 2 * rr5k;
       term5k = 5 * rr7k * zr;
       term6k = rr9k * zr * zr;
-      tizz = vali * term1i + corei * term1core + diz * term2i - dir * term3i -
+      real tizz = vali * term1i + corei * term1core + diz * term2i - dir * term3i -
          qizz * term4i + qiz * term5i - qir * term6i +
          (qix * xr + qiy * yr) * rr7i;
-      tkzz = valk * term1k + corek * term1core - dkz * term2k + dkr * term3k -
+      real tkzz = valk * term1k + corek * term1core - dkz * term2k + dkr * term3k -
          qkzz * term4k + qkz * term5k - qkr * term6k +
          (qkx * xr + qky * yr) * rr7k;
       term2i = rr5i * xr;
@@ -284,10 +285,10 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       term6k = 2 * rr7k * xr;
       term7k = 2 * rr7k * yr;
       term8k = yr * rr9k * xr;
-      tixy = -vali * term1i - corei * term1core + diy * term2i + dix * term3i -
+      real tixy = -vali * term1i - corei * term1core + diy * term2i + dix * term3i -
          dir * term4i - qixy * term5i + qiy * term6i + qix * term7i -
          qir * term8i;
-      tkxy = -valk * term1k - corek * term1core - dky * term2k - dkx * term3k +
+      real tkxy = -valk * term1k - corek * term1core - dky * term2k - dkx * term3k +
          dkr * term4k - qkxy * term5k + qky * term6k + qkx * term7k -
          qkr * term8k;
       term2i = rr5i * xr;
@@ -307,10 +308,10 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       term6k = 2 * rr7k * xr;
       term7k = 2 * rr7k * zr;
       term8k = zr * rr9k * xr;
-      tixz = -vali * term1i - corei * term1core + diz * term2i + dix * term3i -
+      real tixz = -vali * term1i - corei * term1core + diz * term2i + dix * term3i -
          dir * term4i - qixz * term5i + qiz * term6i + qix * term7i -
          qir * term8i;
-      tkxz = -valk * term1k - corek * term1core - dkz * term2k - dkx * term3k +
+      real tkxz = -valk * term1k - corek * term1core - dkz * term2k - dkx * term3k +
          dkr * term4k - qkxz * term5k + qkz * term6k + qkx * term7k -
          qkr * term8k;
       term2i = rr5i * yr;
@@ -330,10 +331,10 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       term6k = 2 * rr7k * yr;
       term7k = 2 * rr7k * zr;
       term8k = zr * rr9k * yr;
-      tiyz = -vali * term1i - corei * term1core + diz * term2i + diy * term3i -
+      real tiyz = -vali * term1i - corei * term1core + diz * term2i + diy * term3i -
          dir * term4i - qiyz * term5i + qiz * term6i + qiy * term7i -
          qir * term8i;
-      tkyz = -valk * term1k - corek * term1core - dkz * term2k - dky * term3k +
+      real tkyz = -valk * term1k - corek * term1core - dkz * term2k - dky * term3k +
          dkr * term4k - qkyz * term5k + qkz * term6k + qky * term7k -
          qkr * term8k;
 
@@ -359,9 +360,9 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
 
       // get the dtau/dr terms used for mutual polarization force
 
-      term1 = 2 * rr5ik;
-      term2 = term1 * xr;
-      term3 = rr5ik - rr7ik * xr * xr;
+      real term1 = 2 * rr5ik;
+      real term2 = term1 * xr;
+      real term3 = rr5ik - rr7ik * xr * xr;
       tixx = uix * term2 + uir * term3;
       tkxx = ukx * term2 + ukr * term3;
       term2 = term1 * yr;

@@ -56,8 +56,8 @@ void energy_data(rc_op op)
    rc_man emplar42{emplar_data, op};
 
    // HIPPO
-   rc_man empole42{empole_chgpen_data, op};
-   rc_man epolar42{epolar_chgpen_data, op};
+   rc_man empole43{empole_chgpen_data, op};
+   rc_man epolar43{epolar_chgpen_data, op};
    rc_man echgtrn42{echgtrn_data, op};
    rc_man erepel42{erepel_data, op};
    rc_man edisp42{edisp_data, op};
@@ -107,6 +107,8 @@ const TimeScaleConfig& default_tsconfig()
       {"echarge", 0}, {"echglj", 0},
 
       {"emplar", 0},  {"empole", 0},  {"epolar", 0},
+
+      {"empole_chgpen", 0},  {"epolar_chgpen", 0},
 
       {"echgtrn", 0}, {"edisp", 0},   {"erepel", 0},  {"ehippo", 0},
    };

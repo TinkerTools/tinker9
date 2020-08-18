@@ -28,6 +28,7 @@ inline void damp_pole(real* restrict dmpik, real* restrict dmpi,
    const real div15 = 1 / ((real)15);
    const real div30 = 1 / ((real)30);
    const real div105 = 1 / ((real)105);
+   const real div210 = 1 / ((real)210);
 
    // if GORDON1
    // if CONSTEXPR (eq<PENTYP, GORDON1>()) {
@@ -79,12 +80,12 @@ inline void damp_pole(real* restrict dmpik, real* restrict dmpi,
             expi;
 
       if CONSTEXPR (ORDER > 9) {
-         dmpi8 = dampi4 * dampi4;
+         real dampi8 = dampi4 * dampi4;
          dmpik[5] = 1 -
             (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + dampi4 * div24 +
              dampi5 * div120 + dampi6 * div720 + dampi7 * div5040 +
              dampi8 / ((real)45360)) *
-               expi
+               expi;
       }
 
    } else {
@@ -93,7 +94,7 @@ inline void damp_pole(real* restrict dmpik, real* restrict dmpi,
       real dampk4 = dampk2 * dampk2;
       real dampk5 = dampk2 * dampk3;
 
-         const real div5 = 1 / ((real)5;
+         const real div5 = 1 / ((real)5);
          const real div7 = 1 / ((real)7);
          const real div21 = 1 / ((real)21);
          const real div210 = 1 / ((real)210);
@@ -312,6 +313,8 @@ inline void damp_polar(real* restrict dmpik, real* restrict dmpi,
    dmpi[2] = 1 - (1 + dampi + 0.5f * dampi2 + dampi3 * div6) * expi;
 
    if (diff < eps) {
+      real dampi4 = dampi2 * dampi2;
+      real dampi5 = dampi2 * dampi3;
       const real div24 = 1 / ((real)24);
       const real div48 = 1 / ((real)48);
       const real div144 = 1 / ((real)144);

@@ -1,5 +1,6 @@
 #include "add.h"
 #include "epolar.h"
+#include "empole_chgpen.h"
 #include "epolar_chgpen.h"
 #include "field_chgpen.h"
 #include "glob.nblist.h"
@@ -28,8 +29,8 @@ void diag_precond2(const real (*rsd)[3], real (*zrsd)[3])
    }
 }
 
-#define APPLY_DPTRS rsd, zrsd, x, y, z, polarity, pcore, pval, palpha
-void sparse_precond_apply2_acc(const real (*rsd)[3], 
+#define APPLY_DPTRS rsd, zrsd, x, y, z, polarity, palpha
+void sparse_precond_apply_acc2(const real (*rsd)[3], 
                               real (*zrsd)[3])
 {
    #pragma acc parallel loop independent async\
@@ -52,8 +53,6 @@ void sparse_precond_apply2_acc(const real (*rsd)[3],
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
-      real corei = pcore[i];
-      real vali = pval[i];
       real alphai = palpha[i];
       real poli = polarity[i];
 
@@ -65,8 +64,6 @@ void sparse_precond_apply2_acc(const real (*rsd)[3],
       for (int kk = 0; kk < nulsti; ++kk) {
          int k = ulst->lst[base + kk];
 
-         real corek = pcore[k];
-         real valk = pval[k];
          real alphak = palpha[k];
          real xr = x[k] - xi;
          real yr = y[k] - yi;
@@ -119,11 +116,7 @@ void sparse_precond_apply2_acc(const real (*rsd)[3],
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
-      real corei = pcore[i];
-      real vali = pval[i];
       real alphai = palpha[i];
-      real corek = pcore[k];
-      real valk = pval[k];
       real alphak = palpha[k];
 
       real xr = x[k] - xi;
@@ -138,6 +131,7 @@ void sparse_precond_apply2_acc(const real (*rsd)[3],
       real scale3 = wscale * dmpik[1];
       real scale5 = wscale * dmpik[2];
 
+      real poli = polarity[i];
       real polik = poli * polarity[k];
       real rr3 = scale3 * polik * REAL_RECIP(r * r2);
       real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
@@ -163,7 +157,7 @@ void sparse_precond_apply2_acc(const real (*rsd)[3],
  * PCG
  *
  * M = preconditioner
- * T = inv_alpha + Tu, -Tu = ufield
+ * T = inv_alpha + Tu, -Tu = ufield_chgpen
  *
  * r(0) = E - T u(0)
  * p(0) (or conj(0)) = M r(0)
@@ -181,7 +175,7 @@ void sparse_precond_apply2_acc(const real (*rsd)[3],
  * conj = p
  * vec = T P
  */
-void induce_mutual_pcg2_acc(real (*uind)[3])
+void induce_mutual_pcg_acc2(real (*uind)[3])
 {
    auto* field = work01_;
    auto* rsd = work02_;
@@ -200,7 +194,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
 
    // get the electrostatic field due to permanent multipoles
 
-   dfield(field);
+   dfield_chgpen(field);
 
    // direct induced dipoles
 
@@ -224,7 +218,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
    //                       = -Tu udir
 
    if (dirguess) {
-      ufield(udir, rsd);
+      ufield_chgpen(udir, rsd);
    } else {
       darray::copy(PROCEED_NEW_Q, n, rsd, field);
    }
@@ -271,7 +265,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
 
       // vec = (inv_alpha + Tu) conj, field = -Tu conj
       // vec = inv_alpha * conj - field
-      ufield(conj, field);
+      ufield_chgpen(conj, field);
       #pragma acc parallel loop independent async\
                   deviceptr(polarity_inv,vec,conj,field)
       for (int i = 0; i < n; ++i) {
@@ -282,7 +276,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
       }
 
       // a <- p T p
-      real a, ap;
+      real a;
       a = darray::dot(WAIT_NEW_Q, n, conj, vec);
       // a <- r M r / p T p
       if (a != 0)
@@ -334,7 +328,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
       epsd = darray::dot(WAIT_NEW_Q, n, rsd, rsd);
 
       epsold = eps;
-      eps = REAL_MAX(epsd, epsp);
+      eps = epsd;
 
       if (debug) {
          if (iter == 1) {
@@ -388,9 +382,9 @@ void induce_mutual_pcg2(real (*uind)[3])
 {
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
-      induce_mutual_pcg2_cu(uind);
+      induce_mutual_pcg_cu2(uind);
    else
 #endif
-      induce_mutual_pcg2_acc(uind);
+      induce_mutual_pcg_acc2(uind);
 }
 }

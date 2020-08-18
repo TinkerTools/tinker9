@@ -104,7 +104,7 @@ void pcg_peek1(int n, float pcgpeek, const real* restrict polarity,
 }
 
 
-void induce_mutual_pcg2_cu(real (*uind)[3])
+void induce_mutual_pcg_cu2(real (*uind)[3])
 {
    auto* field = work01_;
    auto* rsd = work02_;

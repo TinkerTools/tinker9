@@ -1,7 +1,6 @@
 #pragma once
 #include "elec.h"
 #include "mod.polar.h"
-#include "mod.chgpen.h"
 #include "mod.polpot.h"
 #include "pmestuf.h"
 
@@ -12,8 +11,8 @@ void epolar_chgpen_data(rc_op op);
 
 // different induction algorithms
 void induce_mutual_pcg2(real (*uind)[3]);
-void induce_mutual_pcg2_acc(real (*uind)[3]);
-void induce_mutual_pcg2_cu(real (*uind)[3]);
+void induce_mutual_pcg_acc2(real (*uind)[3]);
+void induce_mutual_pcg_cu2(real (*uind)[3]);
 void induce2(real (*uind)[3]);
 
 

@@ -1,4 +1,5 @@
 #include "add.h"
+#include "empole_chgpen.h"
 #include "epolar_chgpen.h"
 #include "epolar_trq.h"
 #include "glob.spatial.h"
@@ -18,7 +19,7 @@ namespace tinker {
       real(*restrict dufld)[6], TINKER_IMAGE_PARAMS, real off2, real f,        \
       const real(*restrict rpole)[10], real *restrict pcore,                   \
       real *restrict pval, real *restrict palpha,                              \
-      const real(*restrict uind)[3],
+      const real(*restrict uind)[3]
 
 
 template <class Ver, class ETYP>
@@ -277,7 +278,7 @@ __global__
 void epolar_chgpen_cu2(POLARPARAS, const real* restrict x,
                        const real* restrict y, const real* restrict z,
                        int ndwexclude, const int (*restrict dwexclude)[2],
-                       const real (*restrict dwexclude_scale)[3])
+                       const real (*restrict dwexclude_scale)[2])
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -294,7 +295,7 @@ void epolar_chgpen_cu2(POLARPARAS, const real* restrict x,
       int k = dwexclude[ii][1];
       real dscale = dwexclude_scale[ii][0];
       real wscale =
-         dwexclude_scale[ii][2]; // change to match definition of wscale
+         dwexclude_scale[ii][1]; // change to match definition of wscale
 
 
       real xi = x[i];

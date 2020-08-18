@@ -1,6 +1,7 @@
 #pragma once
 #include "elec.h"
 #include "md.h"
+#include "seq_damp.h"
 #include "seq_damp_chgpen.h"
 
 

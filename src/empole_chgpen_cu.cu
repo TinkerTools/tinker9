@@ -22,7 +22,7 @@ namespace tinker {
 
 template <class Ver, class ETYP>
 __global__
-void empole_chgpen_chgpen_cu1(EMPOLEPARAS, const Spatial::SortedAtom* restrict sorted,
+void empole_chgpen_cu1(EMPOLEPARAS, const Spatial::SortedAtom* restrict sorted,
                 int niak, const int* restrict iak, const int* restrict lst,
                 int n, real aewald)
 {

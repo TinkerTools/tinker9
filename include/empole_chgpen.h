@@ -1,8 +1,7 @@
 #pragma once
 #include "elec.h"
-#include "mod.mplpot.h"
 #include "mod.chgpen.h"
-
+#include "mod.mplpot.h"
 
 
 namespace tinker {

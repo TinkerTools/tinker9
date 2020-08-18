@@ -1,9 +1,10 @@
 #include "add.h"
+#include "empole_chgpen.h"
 #include "epolar.h"
 #include "epolar_chgpen.h"
 #include "glob.spatial.h"
 #include "image.h"
-#include "induce_donly.h.h"
+#include "induce_donly.h"
 #include "launch.h"
 #include "mdpq.h"
 #include "seq_damp_chgpen.h"
@@ -27,7 +28,7 @@ void sparse_precond_cu3(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
 
 __launch_bounds__(BLOCK_DIM) __global__
 void sparse_precond_cu4(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
-                        const real* restrict pdamp, const real* restrict thole,
+                        real *restrict palpha,
                         const real* restrict polarity, TINKER_IMAGE_PARAMS,
                         real cutbuf2, int n,
                         const Spatial::SortedAtom* restrict sorted, int niak,
@@ -42,7 +43,7 @@ void sparse_precond_cu4(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
    {
       real3 fkd;
       real3 rk, ukd;
-      real pdk, ptk, polk;
+      real  alpha, polk;
    };
    __shared__ Data data[BLOCK_DIM];
 
@@ -53,8 +54,7 @@ void sparse_precond_cu4(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
       real3 ri = make_real3(sorted[atomi].x, sorted[atomi].y, sorted[atomi].z);
       int i = sorted[atomi].unsorted;
       real3 uid = make_real3(rsd[i][0], rsd[i][1], rsd[i][2]);
-      real pdi = pdamp[i];
-      real pti = thole[i];
+      real alphai = palpha[i];
       real poli = polarity[i];
 
 
@@ -64,8 +64,7 @@ void sparse_precond_cu4(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
          make_real3(sorted[shatomk].x, sorted[shatomk].y, sorted[shatomk].z);
       int shk = sorted[shatomk].unsorted;
       data[threadIdx.x].ukd = make_real3(rsd[shk][0], rsd[shk][1], rsd[shk][2]);
-      data[threadIdx.x].pdk = pdamp[shk];
-      data[threadIdx.x].ptk = thole[shk];
+      data[threadIdx.x].alpha = palpha[shk];
       data[threadIdx.x].polk = polarity[shk];
 
 
@@ -73,15 +72,17 @@ void sparse_precond_cu4(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
          int srclane = (ilane + j) & (WARP_SIZE - 1);
          int klane = srclane + threadIdx.x - ilane;
          int atomk = __shfl_sync(ALL_LANES, shatomk, srclane);
+         real alphak = data[klane].alpha;
          real3 dr = data[klane].rk - ri;
 
 
          real r2 = image2(dr.x, dr.y, dr.z);
          if (atomi < atomk && r2 <= cutbuf2) {
             real r = REAL_SQRT(r2);
-            real scale3, scale5;
-            damp_thole2(r, pdi, pti, data[klane].pdk, data[klane].ptk, scale3,
-                        scale5);
+            real dmpik[3];
+            damp_mut(dmpik,r,alphai,alphak);
+            real scale3 = dmpik[1];
+            real scale5 = dmpik[2];
             real polik = poli * data[klane].polk;
             real rr3 = scale3 * polik * REAL_RECIP(r * r2);
             real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
@@ -109,38 +110,38 @@ void sparse_precond_cu4(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
 
 __global__
 void sparse_precond_cu5(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
-                        const real* restrict pdamp, const real* restrict thole,
+                        real *restrict palpha,
                         const real* restrict polarity, TINKER_IMAGE_PARAMS,
                         real cutbuf2, const real* restrict x,
                         const real* restrict y, const real* restrict z,
-                        int nuexclude, const int (*restrict uexclude)[2],
-                        const real* restrict uexclude_scale)
+                        int nwexclude, const int (*restrict wexclude)[2],
+                        const real* restrict wexclude_scale)
 {
-   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < nuexclude;
+   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < nwexclude;
         ii += blockDim.x * gridDim.x) {
-      int i = uexclude[ii][0];
-      int k = uexclude[ii][1];
-      real uscale = uexclude_scale[ii];
+      int i = wexclude[ii][0];
+      int k = wexclude[ii][1];
+      real wscale = wexclude_scale[ii];
 
 
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
-      real pdi = pdamp[i];
-      real pti = thole[i];
+      real alphai = palpha[i];
       real poli = polarity[i];
 
-
+      real alphak = palpha[k];
       real xr = x[k] - xi;
       real yr = y[k] - yi;
       real zr = z[k] - zi;
       real r2 = image2(xr, yr, zr);
       if (r2 <= cutbuf2) {
          real r = REAL_SQRT(r2);
-         real scale3, scale5;
-         damp_thole2(r, pdi, pti, pdamp[k], thole[k], scale3, scale5);
-         scale3 *= uscale;
-         scale5 *= uscale;
+         real dmpik[3];
+         damp_mut(dmpik,r,alphai,alphak);
+         real scale3 = wscale * dmpik[1];
+         real scale5 = wscale * dmpik[2];
+
          real polik = poli * polarity[k];
          real rr3 = scale3 * polik * REAL_RECIP(r * r2);
          real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
@@ -169,7 +170,7 @@ void sparse_precond_cu5(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
 }
 
 
-void sparse_precond_apply_cu1(const real (*rsd)[3], real (*zrsd)[3])
+void sparse_precond_apply_cu2(const real (*rsd)[3], real (*zrsd)[3])
 {
    const auto& st = *uspatial_unit;
    const real off = switch_off(switch_usolve);
@@ -180,13 +181,13 @@ void sparse_precond_apply_cu1(const real (*rsd)[3], real (*zrsd)[3])
               rsd, zrsd, polarity, n, udiag);
    if (st.niak > 0)
       launch_k1s(nonblk, WARP_SIZE * st.niak, sparse_precond_cu4, //
-                 rsd, zrsd, pdamp, thole, polarity, TINKER_IMAGE_ARGS,
+                 rsd, zrsd, palpha, polarity, TINKER_IMAGE_ARGS,
                  cutbuf2, //
                  n, st.sorted, st.niak, st.iak, st.lst);
-   if (nuexclude > 0)
-      launch_k1s(nonblk, nuexclude, sparse_precond_cu5, //
-                 rsd, zrsd, pdamp, thole, polarity, TINKER_IMAGE_ARGS,
+   if (nwexclude > 0)
+      launch_k1s(nonblk, nwexclude, sparse_precond_cu5, //
+                 rsd, zrsd, palpha, polarity, TINKER_IMAGE_ARGS,
                  cutbuf2, //
-                 x, y, z, nuexclude, uexclude, uexclude_scale);
+                 x, y, z, nwexclude, wexclude, wexclude_scale);
 }
 }

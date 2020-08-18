@@ -1,6 +1,7 @@
 #pragma once
 #include "elec.h"
 #include "md.h"
+#include "seq_damp.h"
 #include "seq_damp_chgpen.h"
 
 
@@ -67,14 +68,12 @@ inline void zero(PairMPoleGrad& pgrad)
 #pragma acc routine seq
 template <bool do_e, bool do_g, class ETYP>
 SEQ_CUDA
-void pair_mpole_chgpen(                                    //
+void pair_mpole_chgpen(                             //
    real r2, real xr, real yr, real zr, real mscale, //
    real ci, real dix, real diy, real diz, real corei, real vali, real alphai,
-   real qixx, real qixy, real qixz,
-   real qiyy, real qiyz, real qizz, //
+   real qixx, real qixy, real qixz, real qiyy, real qiyz, real qizz, //
    real ck, real dkx, real dky, real dkz, real corek, real valk, real alphak,
-   real qkxx, real qkxy, real qkxz,
-   real qkyy, real qkyz, real qkzz, //
+   real qkxx, real qkxy, real qkxz, real qkyy, real qkyz, real qkzz, //
    real f, real aewald, real& restrict e, PairMPoleGrad& restrict pgrad)
 {
    real r = REAL_SQRT(r2);
@@ -91,8 +90,9 @@ void pair_mpole_chgpen(                                    //
    real rr5 = 3 * rr3 * rr2;
    real rr7 = 5 * rr5 * rr2;
    real rr9 = 7 * rr7 * rr2;
+   real rr11;
    if CONSTEXPR (do_g)
-      real rr11 = 9 * rr9 * rr2;
+      rr11 = 9 * rr9 * rr2;
 
    real dir = dix * xr + diy * yr + diz * zr;
    real qix = qixx * xr + qixy * yr + qixz * zr;
@@ -121,17 +121,18 @@ void pair_mpole_chgpen(                                    //
    real term3k = corei * qkr;
    real term1ik = vali * valk;
    real term2ik = valk * dir - vali * dkr + dik;
-   real term3ik = vali * qkr + valk * qir - dir * dkr
-                  + 2 * (dkqi - diqk + qiqk);
+   real term3ik =
+      vali * qkr + valk * qir - dir * dkr + 2 * (dkqi - diqk + qiqk);
    real term4ik = dir * qkr - dkr * qir - 4 * qik;
    real term5ik = qir * qkr;
+
+   real rr1i, rr3i, rr5i, rr7i, rr1k, rr3k, rr5k, rr7k, rr1ik, rr3ik, rr5ik, rr7ik, rr9ik, rr11ik;
 
    if CONSTEXPR (eq<ETYP, EWALD>()) {
       if CONSTEXPR (!do_g) {
          damp_ewald<5>(bn, r, invr1, rr2, aewald);
          damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
-      }
-      else {
+      } else {
          damp_ewald<6>(bn, r, invr1, rr2, aewald);
          damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
@@ -143,18 +144,23 @@ void pair_mpole_chgpen(                                    //
       if CONSTEXPR (do_g)
          bn[5] *= f;
 
-      real rr1i = bn[0] - (1 - mscale * dmpi[0]) * rr1;
-      real rr3i = bn[1] - (1 - mscale * dmpi[1]) * rr3;
-      real rr5i = bn[2] - (1 - mscale * dmpi[2]) * rr5;
-      real rr1k = bn[0] - (1 - mscale * dmpk[0]) * rr1;
-      real rr3k = bn[1] - (1 - mscale * dmpk[1]) * rr3;
-      real rr5k = bn[2] - (1 - mscale * dmpk[2]) * rr5;
-      real rr1ik = bn[0] - (1 - mscale * dmpik[0]) * rr1;
-      real rr3ik = bn[1] - (1 - mscale * dmpik[1]) * rr3;
-      real rr5ik = bn[2] - (1 - mscale * dmpik[2]) * rr5;
-      real rr7ik = bn[3] - (1 - mscale * dmpik[3]) * rr7;
-      real rr9ik = bn[4] - (1 - mscale * dmpik[4]) * rr9;
-      real rr1 = bn[0] - (1 - mscale) * rr1;
+      rr1i = bn[0] - (1 - mscale * dmpi[0]) * rr1;
+      rr3i = bn[1] - (1 - mscale * dmpi[1]) * rr3;
+      rr5i = bn[2] - (1 - mscale * dmpi[2]) * rr5;
+      rr7i = bn[3] - (1 - mscale * dmpi[3]) * rr7;
+      rr1k = bn[0] - (1 - mscale * dmpk[0]) * rr1;
+      rr3k = bn[1] - (1 - mscale * dmpk[1]) * rr3;
+      rr5k = bn[2] - (1 - mscale * dmpk[2]) * rr5;
+      rr7k = bn[3] - (1 - mscale * dmpk[3]) * rr7;
+      rr1ik = bn[0] - (1 - mscale * dmpik[0]) * rr1;
+      rr3ik = bn[1] - (1 - mscale * dmpik[1]) * rr3;
+      rr5ik = bn[2] - (1 - mscale * dmpik[2]) * rr5;
+      rr7ik = bn[3] - (1 - mscale * dmpik[3]) * rr7;
+      rr9ik = bn[4] - (1 - mscale * dmpik[4]) * rr9;
+      rr1 = bn[0] - (1 - mscale) * rr1;
+
+      if CONSTEXPR (do_g)
+         rr11ik = bn[5] - (1 - mscale * dmpik[5]) * rr11;
 
       // if CONSTEXPR (use_chgflx) {
       //    real t1i = corek * rr1i + valk * rr1ik;
@@ -166,50 +172,54 @@ void pair_mpole_chgpen(                                    //
       //    poti = t1i + t2i + t3i;
       //    potk = t1k + t2k + t3k;
       // }
-      
+
    } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
       rr1 *= mscale;
       rr3 *= mscale;
       rr5 *= mscale;
       rr7 *= mscale;
-      rr9 *= mscale;        
+      rr9 *= mscale;
 
-      if CONSTEXPR (!do_g)
-         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
-      else {
+      if CONSTEXPR (do_g) {
          rr11 *= mscale;
+         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
+      } else
          damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
-      }
 
-      real rr1i = dmpi[0] * rr1;
-      real rr3i = dmpi[1] * rr3;
-      real rr5i = dmpi[2] * rr5;
-      real rr1k = dmpk[0] * rr1;
-      real rr3k = dmpk[1] * rr3;
-      real rr5k = dmpk[2] * rr5;
-      real rr1ik = dmpik[0] * rr1;
-      real rr3ik = dmpik[1] * rr3;
-      real rr5ik = dmpik[2] * rr5;
-      real rr7ik = dmpik[3] * rr7;
-      real rr9ik = dmpik[4] * rr9;
 
-      if CONSTEXPR (use_chgflx) {
-         real t1i = corek * dmpi[0] + valk * dmpik[0];
-         real t1k = corei * dmpk[0] + vali * dmpik[0];
-         real t2i = -dkr * dmpik[1];
-         real t2k = dir * dmpik[1];
-         real t3i = qkr * dmpik[2];
-         real t3k = qir * dmpik[2];
-         poti = t1i + t2i + t3i;
-         potk = t1k + t2k + t3k;
-      }
+      rr1i = dmpi[0] * rr1;
+      rr3i = dmpi[1] * rr3;
+      rr5i = dmpi[2] * rr5;
+      rr7i = dmpi[3] * rr7;
+      rr1k = dmpk[0] * rr1;
+      rr3k = dmpk[1] * rr3;
+      rr5k = dmpk[2] * rr5;
+      rr7k = dmpk[3] * rr7;
+      rr1ik = dmpik[0] * rr1;
+      rr3ik = dmpik[1] * rr3;
+      rr5ik = dmpik[2] * rr5;
+      rr7ik = dmpik[3] * rr7;
+      rr9ik = dmpik[4] * rr9;
+
+      if CONSTEXPR (do_g)
+         rr11ik = dmpik[5] * rr11;
+
+      // if CONSTEXPR (use_chgflx) {
+      //    real t1i = corek * dmpi[0] + valk * dmpik[0];
+      //    real t1k = corei * dmpk[0] + vali * dmpik[0];
+      //    real t2i = -dkr * dmpik[1];
+      //    real t2k = dir * dmpik[1];
+      //    real t3i = qkr * dmpik[2];
+      //    real t3k = qir * dmpik[2];
+      //    poti = t1i + t2i + t3i;
+      //    potk = t1k + t2k + t3k;
+      // }
    } // endif NON_EWALD
 
    if CONSTEXPR (do_e) {
-      e = term1 * rr1 + term4ik * rr7ik + term5ik * rr9ik
-             + term1i * rr1i + term1k * rr1k + term1ik * rr1ik
-             + term2i * rr3i + term2k * rr3k + term2ik * rr3ik
-             + term3i * rr5i + term3k * rr5k + term3ik * rr5ik;        
+      e = term1 * rr1 + term4ik * rr7ik + term5ik * rr9ik + term1i * rr1i +
+         term1k * rr1k + term1ik * rr1ik + term2i * rr3i + term2k * rr3k +
+         term2ik * rr3ik + term3i * rr5i + term3k * rr5k + term3ik * rr5ik;
    } // end if (do_e)
 
    if CONSTEXPR (do_g) {
@@ -230,20 +240,16 @@ void pair_mpole_chgpen(                                    //
       real dkqiy = dkx * qixy + dky * qiyy + dkz * qiyz;
       real dkqiz = dkx * qixz + dky * qiyz + dkz * qizz;
 
-      real de = term1 * rr3 + term4ik * rr9ik + term5ik * rr11ik
-            + term1i * rr3i + term1k * rr3k + term1ik * rr3ik
-            + term2i * rr5i + term2k * rr5k + term2ik * rr5ik
-            + term3i * rr7i + term3k * rr7k + term3ik * rr7ik;
-      term1 = - corek * rr3i - valk * rr3ik;
-             + dkr * rr5ik - qkr * rr7ik;
-      term2 = corei * rr3k + vali * rr3ik
-            + dir * rr5ik + qir * rr7ik;
-      term3 = 2 * rr5ik;
-      term4 = - 2 * (corek * rr5i + valk * rr5ik
-                     - dkr * rr7ik + qkr * rr9ik);
-      term5 = - 2 * (corei * rr5k + vali * rr5ik
-                       + dir * rr7ik+qir * rr9ik);
-      term6 = 4 * rr7ik;
+      real de = term1 * rr3 + term4ik * rr9ik + term5ik * rr11ik +
+         term1i * rr3i + term1k * rr3k + term1ik * rr3ik + term2i * rr5i +
+         term2k * rr5k + term2ik * rr5ik + term3i * rr7i + term3k * rr7k +
+         term3ik * rr7ik;
+      term1 = -corek * rr3i - valk * rr3ik + dkr * rr5ik - qkr * rr7ik;
+      real term2 = corei * rr3k + vali * rr3ik + dir * rr5ik + qir * rr7ik;
+      real term3 = 2 * rr5ik;
+      real term4 = -2 * (corek * rr5i + valk * rr5ik - dkr * rr7ik + qkr * rr9ik);
+      real term5 = -2 * (corei * rr5k + vali * rr5ik + dir * rr7ik + qir * rr9ik);
+      real term6 = 4 * rr7ik;
 
       pgrad.frcx = de * xr + term1 * dix + term2 * dkx +
          term3 * (diqkx - dkqix) + term4 * qix + term5 * qkx +
