@@ -128,6 +128,46 @@ inline real image2_general(real& restrict xr, real& restrict yr,
 
 
 SEQ_ROUTINE
+inline real image2_orthogonal(real& restrict xr, real& restrict yr,
+                              real& restrict zr, real3 l1, real3 l2, real3 l3,
+                              real3 ra, real3 rb, real3 rc)
+{
+   image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+   return xr * xr + yr * yr + zr * zr;
+}
+
+
+SEQ_ROUTINE
+inline real image2_monoclinic(real& restrict xr, real& restrict yr,
+                              real& restrict zr, real3 l1, real3 l2, real3 l3,
+                              real3 ra, real3 rb, real3 rc)
+{
+   image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+   return xr * xr + yr * yr + zr * zr;
+}
+
+
+SEQ_ROUTINE
+inline real image2_triclinic(real& restrict xr, real& restrict yr,
+                             real& restrict zr, real3 l1, real3 l2, real3 l3,
+                             real3 ra, real3 rb, real3 rc)
+{
+   image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+   return xr * xr + yr * yr + zr * zr;
+}
+
+
+SEQ_ROUTINE
+inline real image2_oct(real& restrict xr, real& restrict yr, real& restrict zr,
+                       real3 l1, real3 l2, real3 l3, real3 ra, real3 rb,
+                       real3 rc)
+{
+   image_oct_macro(xr, yr, zr, l1.x, ra.x);
+   return xr * xr + yr * yr + zr * zr;
+}
+
+
+SEQ_ROUTINE
 inline real image2_general(real& restrict xr, real& restrict yr,
                            real& restrict zr, BoxShape sh, real3 l1, real3 l2,
                            real3 l3, real3 ra, real3 rb, real3 rc)

@@ -1,4 +1,5 @@
 #include "nblist.h"
+#include "echarge.h"
 #include "edisp.h"
 #include "elec.h"
 #include "epolar.h"
@@ -14,8 +15,10 @@
 #include "thrust_cache.h"
 #include "tool/darray.h"
 #include <tinker/detail/bound.hh>
+#include <tinker/detail/chgpot.hh>
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/neigh.hh>
+#include <tinker/detail/vdwpot.hh>
 
 
 namespace tinker {
@@ -245,15 +248,6 @@ static void spatial_alloc(SpatialUnit& unt, int n, real cut, real buf,
 }
 
 
-static void spatial_alloc(Spatial2Unit& unt, int n, real cut, real buf,
-                          const real* x, const real* y, const real* z,
-                          int nexcl, int (*excl)[2], void* excl_scale, int NS)
-{
-   spatial2_data_alloc(unt, n, cut, buf, x, y, z, nexcl, excl, excl_scale, NS);
-   alloc_thrust_cache = true;
-}
-
-
 // rc_init
 template <class SPT>
 static void spatial_build(SPT unt)
@@ -280,10 +274,6 @@ static void spatial_update(SPT unt)
 static void spatial_alloc(SpatialUnit&, int, real, real, const real*,
                           const real*, const real*)
 {}
-static void spatial_alloc(Spatial2Unit&, int, real, real, const real*,
-                          const real*, const real*, int nexcl, int (*excl)[2],
-                          void* excl_scale, int NS)
-{}
 template <class SPT>
 static void spatial_build(SPT)
 {}
@@ -291,6 +281,30 @@ template <class SPT>
 static void spatial_update(SPT)
 {}
 #endif
+static void
+spatial_alloc(Spatial2Unit& unt, int n, real cut, real buf, const real* x,
+              const real* y, const real* z, //
+              int nstype,                   //
+              int ns1 = 0, int (*js1)[2] = nullptr, real* ks1 = nullptr,
+              const std::vector<double>& vs1 = std::vector<double>(),
+              int ns2 = 0, int (*js2)[2] = nullptr, real* ks2 = nullptr,
+              const std::vector<double>& vs2 = std::vector<double>(),
+              int ns3 = 0, int (*js3)[2] = nullptr, real* ks3 = nullptr,
+              const std::vector<double>& vs3 = std::vector<double>(),
+              int ns4 = 0, int (*js4)[2] = nullptr, real* ks4 = nullptr,
+              const std::vector<double>& vs4 = std::vector<double>())
+{
+#if TINKER_CUDART
+   spatial2_data_alloc(unt, n, cut, buf, x, y, z, //
+                       nstype,                    //
+                       ns1, js1, ks1, vs1,        //
+                       ns2, js2, ks2, vs2,        //
+                       ns3, js3, ks3, vs3,        //
+                       ns4, js4, ks4, vs4);
+   alloc_thrust_cache = true;
+#else
+#endif
+}
 
 
 //====================================================================//
@@ -389,8 +403,21 @@ void nblist_data(rc_op op)
       auto& un2 = cspatial_v2_unit;
       if (op & rc_alloc) {
          spatial_alloc(unt, n, cut, buf, x, y, z);
-         spatial_alloc(un2, n, cut, buf, x, y, z, ncvexclude, cvexclude,
-                       (void*)cvexclude_scale, 2);
+         std::vector<double> cs1;
+         cs1.push_back(chgpot::c1scale);
+         cs1.push_back(chgpot::c2scale);
+         cs1.push_back(chgpot::c3scale);
+         cs1.push_back(chgpot::c4scale);
+         cs1.push_back(chgpot::c5scale);
+         std::vector<double> vs2;
+         vs2.push_back(vdwpot::v2scale);
+         vs2.push_back(vdwpot::v3scale);
+         vs2.push_back(vdwpot::v4scale);
+         vs2.push_back(vdwpot::v5scale);
+         spatial_alloc(un2, n, cut, buf, x, y, z,                //
+                       2,                                        //
+                       ncexclude, cexclude, cexclude_scale, cs1, //
+                       nvexclude, vexclude, vexclude_scale, vs2);
       }
       if (op & rc_init) {
          spatial_build(unt);

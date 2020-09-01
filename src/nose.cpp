@@ -132,6 +132,10 @@ void nhc_npt(int istep, time_prec dt)
 
    // set some time values for the dynamics integration
    const time_prec dt_2 = 0.5f * dt;
+   // This initialization is intentially kept the same as the Fortran code.
+   // Yes, the real press is available here, but when the Fortran code was
+   // written, virial may not be available if simulation was restarted from
+   // a ".dyn" file.
    if (istep == 1)
       press = bath::atmsph;
 

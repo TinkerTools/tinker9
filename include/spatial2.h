@@ -1,79 +1,119 @@
 #pragma once
 #include "spatial.h"
-#include <map>
 
 
 namespace tinker {
-template <class T>
-class Exclusion
-{
-private:
-   static constexpr int MUL = 1000000;
-   std::map<int, int> scale_to_enum;
-   std::map<int, double> enum_to_scale;
+/**
+ * \ingroup spatial2
+ * \page spatial2
+ *
+ * %Spatial Decomposition Version 2.
+ *
+ * ### A. Concepts
+ *    - Number of atoms (`n`).
+ *    - Number of atom blocks (`nak`), (n+32-1)/32.
+ *    - Number of atom block pairs (`nakp`), nak*(nak+1)/2.
+ *    - SortedAtomBlockPairs (`akp`).
+ *       - For any two atom blocks `(x,y)`, where
+ *       `0 <= y <= x < nak`, we can map them to `(row,column)` of a triangle
+ *       to obtain a unique number `f(x,y)`.
+ *    ```
+ *    0
+ *    1 2
+ *    3 4 5
+ *    6 7 8 9
+ *    ...
+ *    ```
+ *       - It is obvious that \f$ x(x+1)/2 \le f(x,y) < (x+1)(x+2)/2 \f$.
+ *       `f` is represented by a signed 32-bit integer in the program, thus its
+ *       upper limit is \f$ 2^{32}-1 \f$, and the upper limit of `x` is 65535.
+ *       The number of atoms should then not exceed 32*(65535+1), i.e. 2097152.
+ *       Using the left side of the inequality, we have
+ *       \f$ x = \lfloor( \sqrt{8f+1} - 1)/2 \rfloor \f$, where double precision
+ *       floating-point arithmetic will be sufficient.
+ *    - AtomBlockPairFlags (`akpf`): 32-bit integer array of length `nakpk`,
+ *    which equals (nakp+32-1)/32. The i-th bit is set if the i-th
+ *    SortedAtomBlockPair is recorded in the neighbor list.
+ *    - Boxes: The periodic boundary box ("the big box") is partitioned
+ *    into smaller boxes.
+ *       - The ranges of the fractional coordinates are all `[-0.5, 0.5)`.
+ *       Along x, y, and z axes, each direction is equally split into
+ *       \f$ 2^p \f$, \f$ 2^p \f$, and \f$ 2^p \f$ parts, respectively.
+ *       - Every box can be accessed by 3 integers `(ix,iy,iz)`, all of which
+ *       have range \f$ [0,2^p) \f$. These boxes are placed on a 3-D Hilbert
+ *       curve so that we can map `(ix,iy,iz)` to a unique integer value
+ *       `BoxID`, which has the range \f$ [0,2^{3p}) \f$. Since `BoxID` is
+ *       a signed integer in the program, \f$ p \le 10 \f$.
+ *       - <a href="https://doi.org/10.1063/1.1751381">
+ *       John Skilling, "Programming the Hilbert curve",
+ *       AIP Conf. Proc., 707, (2004).
+ *       </a>
+ *       - <a href="https://stackoverflow.com/a/10384110">
+ *       Paul Chernoch (stackoverflow question 499166, answer 10384110)
+ *       </a>
+ *       corrected the typo in `TransposetoAxes()`, which should have been
+ *    ```
+ *    for(i=n-1; i>0; i--) X[i] ^= X[i-1];
+ *    ```
+ *
+ * ### B. Step 1
+ *    1. Based on the fractional coordinates, assign every atom to a box,
+ *    save `(BoxID,AtomNum)` in a temporary array (`b2num`) of size `(2,n)`.
+ *    2. Zero out `akpf`.
+ *    3. Sort `b2num` by `BoxID`.
+ *
+ * ### C. Step 2
+ *    1. For every sorted atom, save `SortedAtomNum` in `bnum[AtomNum]`.
+ *    2. Save sorted coordinates.
+ *    3. Zero out `b2num`.
+ *    4. For each atom block, compute mid point, radius, half size, and the
+ *    "local flag".
+ * 
+ * 
+ * ### D. Step 3
+ *    1. For every atom block, set bit in `akpf` for block pair `(i,i)`.
+ */
 
-public:
-   enum : int
-   {
-      a = 0,
-      b = 1,
-      c = 2,
-      d = 3,
-      e = 4,
-      f = 5,
-      g = 6,
-      h = 7,
-   };
 
-
-   void add_scale_factor(double s)
-   {
-      if (s < 0 or s > 1)
-         return;
-
-
-      int si = MUL * s;
-      auto it = scale_to_enum.find(si);
-      if (it == scale_to_enum.end()) {
-         // s is a new scale factor
-         int sz = scale_to_enum.size();
-         scale_to_enum[si] = sz;
-         enum_to_scale[sz] = s;
-      }
-   }
-
-
-   void clear()
-   {
-      scale_to_enum.clear();
-      enum_to_scale.clear();
-   }
-
-
-   void init()
-   {
-      add_scale_factor(0.0);
-      add_scale_factor(1.0);
-   }
-};
-
-
+/**
+ * \ingroup spatial2
+ */
 struct Spatial2
 {
+   static constexpr int LSTCAP = 32;
    // output
+   int nakpl;  // Length of iakpl.
+   int niak;   // Length of iak. Not greater than LSTCAP*nak.
+   int* iakpl; // List of recorded block pairs. Length nakpl.
+   int* iak;   // List of blocks in "block-atoms".
+   int* lst;   // List of atoms in "block-atoms".
 
 
    // internal
-   int n, nak;
+   int n;     // Number of atoms.
+   int nak;   // Number of blocks.
+   int nakp;  // Number of block pairs. (nak+1)*nak/2.
+   int nakpk; // Length of 32-bit integer array to store atom block pairs.
    int px, py, pz;
-
-
-   // output
+   int cap_nakpl; // Capacity of iakpl. Initial value 8*nak.
 
 
    // internal
-   Spatial::SortedAtom* sorted; // n
-   int* bnum;                   // n
+   int* iakpl_rev; // Length nakp. array[pair] == location in iakpl.
+   int* akpf;      // Length nakpk. Block pair bit flags.
+   int* iakbuf;    // Length length of iak.
+
+
+   Spatial::SortedAtom* sorted; // Length n.
+   int* bnum;                   // Length n. array[unsorted] == sorted.
+
+
+   struct alignas(16) Center
+   {
+      real x, y, z, w;
+   };
+   Center* akc;  // Length nak. Block center and radius.
+   Center* half; // Length nak. Half box size and the "local flag".
 
 
    int rebuild;
@@ -81,20 +121,48 @@ struct Spatial2
    const real* x;
    const real* y;
    const real* z;
-   int* update;              // 2*n
-   real *xold, *yold, *zold; // n
+   int* update;              // Length max(2*n,128).
+   real *xold, *yold, *zold; // Length n.
+
+
+   struct ScaleInfo
+   {
+      int (*js)[2];       // Length ns. Atom pairs.
+      real* ks;           // Length ns. Scale coefficients.
+      unsigned int* bit0; // Length 32*cap_nakpl.
+      unsigned int* bit1; // Length 32*cap_nakpl.
+      real sc0, sc1, sc2, sc3;
+      int ns;
+
+      static constexpr int MULT = 100000;
+      static constexpr int CAPACITY = 4; // Max number of scale coefficients
+
+
+      void init();
+      void set(int nns, int (*jjs)[2], real* kks,
+               const std::vector<double>& vs);
+   };
+   int nstype; // number of ScaleInfo objects in-use
+   ScaleInfo si1;
+   ScaleInfo si2;
+   ScaleInfo si3;
+   ScaleInfo si4;
 
 
    ~Spatial2();
 };
-using Spatial2Unit = GenericUnit<Spatial2, GenericUnitVersion::EnableOnDevice>;
+using Spatial2Unit = GenericUnit<Spatial2, GenericUnitVersion::DisableOnDevice>;
 
 
+void spatial2_data_alloc(
+   Spatial2Unit& u, int n, double cutoff, double buffer, const real* x,
+   const real* y, const real* z,                                      //
+   int nstype,                                                        //
+   int ns1, int (*js1)[2], real* ks1, const std::vector<double>& vs1, //
+   int ns2, int (*js2)[2], real* ks2, const std::vector<double>& vs2, //
+   int ns3, int (*js3)[2], real* ks3, const std::vector<double>& vs3, //
+   int ns4, int (*js4)[2], real* ks4, const std::vector<double>& vs4);
 void spatial2_cut(int& px, int& py, int& pz, int level);
-// void* excl_scale ==> real (*excl_scale)[NS]
-void spatial2_data_alloc(Spatial2Unit& u, int n, double cutoff, double buffer,
-                         const real* x, const real* y, const real* z, int nexcl,
-                         int (*excl)[2], void* excl_scale, int NS);
 void spatial_data_init_cu(Spatial2Unit);
 void spatial_data_update_sorted(Spatial2Unit);
 

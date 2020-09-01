@@ -101,9 +101,14 @@ int check_spatial(int n, real lbuf, int* restrict update,
       real yr = y[i] - yold[i];
       real zr = z[i] - zold[i];
       real r2 = imagen2(xr, yr, zr);
-      update[i] = (r2 >= lbuf2 ? 1 : 0);
+      int rebuild = (r2 >= lbuf2 ? 1 : 0);
+      update[i] = rebuild;
+      if (rebuild) {
+         update[0] = 1;
+      }
    }
-   int ans = parallel::reduce_logic_or(update, n, WAIT_NEW_Q);
+   int ans;
+   darray::copy(WAIT_NEW_Q, 1, &ans, &update[0]);
    return ans;
 }
 

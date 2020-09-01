@@ -24,6 +24,7 @@
 
 
 /// \defgroup spatial  Spatial Decomposition
+/// \defgroup spatial2  Spatial Decomposition Version 2
 
 
 /// \defgroup mdegv  Energy, Gradient, and Virial Tensor

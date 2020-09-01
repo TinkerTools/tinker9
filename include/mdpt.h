@@ -76,10 +76,11 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp);
  * at the half time step. Not implemented yet.
  *
  * Literature reference:
- *    - G. J. Martyna, M. E. Tuckerman, D. J. Tobias and M. L. Klein,
+ *    - <a href="https://doi.org/10.1080/00268979600100761">
+ *    G. J. Martyna, M. E. Tuckerman, D. J. Tobias and M. L. Klein,
  *    "Explicit Reversible Integrators for Extended Systems Dynamics",
  *    Molecular Physics, 87, 1117-1157 (1996).
- *    [URL](https://doi.org/10.1080/00268979600100761)
+ *    </a>
  */
 inline void temper2(time_prec dt, T_prec& temp) {}
 /**
@@ -88,10 +89,11 @@ inline void temper2(time_prec dt, T_prec& temp) {}
  * at the half time step.
  *
  * Literature reference:
- *    - I. R. McDonald,
+ *    - <a href="https://doi.org/10.1080/00268977200100031">
+ *    I. R. McDonald,
  *    "NpT-ensemble Monte Carlo calculations for binary liquid mixtures",
  *    Molecular Physics, 23, 41-58 (1972).
- *    [URL](https://doi.org/10.1080/00268977200100031)
+ *    </a>
  */
 void pressure2(energy_prec epot, T_prec temp);
 }
