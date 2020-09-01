@@ -1167,6 +1167,7 @@ void spatial2_step5_bits(int x0, int y0, real sreal, real sc0, real sc1,
 }
 
 
+template <class IMG>
 __global__
 void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
                     Spatial2::ScaleInfo si1, Spatial2::ScaleInfo si2,
@@ -1254,7 +1255,7 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
          xr = xi - cxi;
          yr = yi - cyi;
          zr = zi - czi;
-         image2(xr, yr, zr);
+         IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS);
          xi = xr + cxi;
          yi = yr + cyi;
          zi = zr + czi;
@@ -1293,7 +1294,8 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
             xr = cxk - cxi;
             yr = cyk - cyi;
             zr = czk - czi;
-            r2 = image2(xr, yr, zr);
+            r2 = IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS,
+                           TINKER_IMAGE_RECIP_ARGS);
             if (r2 > rlimit2)
                calcwx = false;
          }
@@ -1337,7 +1339,8 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
                xr = xk - cxi;
                yr = yk - cyi;
                zr = zk - czi;
-               image2(xr, yr, zr);
+               IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS,
+                         TINKER_IMAGE_RECIP_ARGS);
                xk = xr + cxi;
                yk = yr + cyi;
                zk = zr + czi;
@@ -1350,7 +1353,8 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
             xr = cxk - xi;
             yr = cyk - yi;
             zr = czk - zi;
-            r2 = image2(xr, yr, zr);
+            r2 = IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS,
+                           TINKER_IMAGE_RECIP_ARGS);
             // Only inlcude the "i-atoms" that are close to k-center.
             int iflag = __ballot_sync(ALL_LANES, r2 <= rlimit2);
 
@@ -1375,7 +1379,8 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
                      xr = __shfl_sync(ALL_LANES, xi, j) - xk;
                      yr = __shfl_sync(ALL_LANES, yi, j) - yk;
                      zr = __shfl_sync(ALL_LANES, zi, j) - zk;
-                     r2 = image2(xr, yr, zr);
+                     r2 = IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS,
+                                    TINKER_IMAGE_RECIP_ARGS);
                      if (r2 <= cutbuf2)
                         includek = 1;
                   }
@@ -1444,6 +1449,23 @@ struct spatial2_less
       return a.x < b.x;
    }
 };
+
+
+template <class IMG>
+void run_spatial2_step5(Spatial2Unit u)
+{
+   u->niak = 0;
+   int* dev_niak = &u->update[2];
+   real cutbuf = u->cutoff + u->buffer;
+   launch_k1s(nonblk, u->nakp, spatial2_step5<IMG>, //
+              u->bnum, u->iakpl_rev, u->nstype, u->si1, u->si2, u->si3,
+              u->si4,                               //
+              dev_niak, u->iak, u->lst,             //
+              n, u->nak, cutbuf, TINKER_IMAGE_ARGS, //
+              u->akpf, u->sorted, u->akc, u->half);
+   darray::copyout(WAIT_NEW_Q, 1, &u->niak, dev_niak);
+   printf(" NList niak %d\n", u->niak);
+}
 
 
 void spatial_data_init_cu(Spatial2Unit u)
@@ -1523,15 +1545,17 @@ void spatial_data_init_cu(Spatial2Unit u)
               si4.bit0, si4.bit1);
 
 
-   u->niak = 0;
-   int* dev_niak = &u->update[2];
-   launch_k1s(nonblk, u->nakp, spatial2_step5,                      //
-              u->bnum, u->iakpl_rev, u->nstype, si1, si2, si3, si4, //
-              dev_niak, u->iak, u->lst,                             //
-              n, u->nak, cutbuf, TINKER_IMAGE_ARGS,                 //
-              u->akpf, u->sorted, u->akc, u->half);
-   darray::copyout(WAIT_NEW_Q, 1, &u->niak, dev_niak);
-   printf(" NList niak %d\n", u->niak);
+   if (box_shape == ORTHO_BOX) {
+      run_spatial2_step5<IMG_ORTHO>(u);
+   } else if (box_shape == MONO_BOX) {
+      run_spatial2_step5<IMG_MONO>(u);
+   } else if (box_shape == TRI_BOX) {
+      run_spatial2_step5<IMG_TRI>(u);
+   } else if (box_shape == OCT_BOX) {
+      run_spatial2_step5<IMG_OCT>(u);
+   } else {
+      assert(false);
+   }
 }
 
 
