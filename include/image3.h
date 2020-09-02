@@ -5,11 +5,7 @@
 
 
 namespace tinker {
-// SEQ_ROUTINE
-// inline void image_triclinic(real& restrict xr, real& restrict yr,
-//                             real& restrict zr, real3 l1, real3 l2, real3 l3,
-//                             real3 ra, real3 rb, real3 rc)
-#define image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc)                    \
+#define IMAGE_TRI__(xr, yr, zr, l1, l2, l3, ra, rb, rc)                        \
    {                                                                           \
       real fx = REAL_FLOOR(0.5f + zr * ra.z + yr * ra.y + xr * ra.x);          \
       real fy = REAL_FLOOR(0.5f + zr * rb.z + yr * rb.y);                      \
@@ -18,13 +14,7 @@ namespace tinker {
       yr -= (fz * l2.z + fy * l2.y);                                           \
       zr -= (fz * l3.z);                                                       \
    }
-
-
-// SEQ_ROUTINE
-// inline void image_monoclinic(real& restrict xr, real& restrict yr,
-//                              real& restrict zr, real3 l1, real3 l2, real3 l3,
-//                              real3 ra, real3 rb, real3 rc)
-#define image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc)                   \
+#define IMAGE_MONO__(xr, yr, zr, l1, l2, l3, ra, rb, rc)                       \
    {                                                                           \
       real fx = REAL_FLOOR(0.5f + zr * ra.z + xr * ra.x);                      \
       real fy = REAL_FLOOR(0.5f + yr * rb.y);                                  \
@@ -33,13 +23,7 @@ namespace tinker {
       yr -= (fy * l2.y);                                                       \
       zr -= (fz * l3.z);                                                       \
    }
-
-
-// SEQ_ROUTINE
-// inline void image_orthogonal(real& restrict xr, real& restrict yr,
-//                              real& restrict zr, real3 l1, real3 l2, real3 l3,
-//                              real3 ra, real3 rb, real3 rc)
-#define image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc)                   \
+#define IMAGE_ORTHO__(xr, yr, zr, l1, l2, l3, ra, rb, rc)                      \
    {                                                                           \
       real fx = REAL_FLOOR(0.5f + xr * ra.x);                                  \
       real fy = REAL_FLOOR(0.5f + yr * rb.y);                                  \
@@ -48,9 +32,7 @@ namespace tinker {
       yr -= (fy * l2.y);                                                       \
       zr -= (fz * l3.z);                                                       \
    }
-
-
-#define image_oct_macro(xr, yr, zr, l1x, rax)                                  \
+#define IMAGE_OCT__(xr, yr, zr, l1x, rax)                                      \
    {                                                                           \
       real fx = xr * rax;                                                      \
       real fy = yr * rax;                                                      \
@@ -67,28 +49,89 @@ namespace tinker {
       yr = fy * l1x;                                                           \
       zr = fz * l1x;                                                           \
    }
-SEQ_ROUTINE
-inline void image_oct_devker(real& restrict xr, real& restrict yr,
-                             real& restrict zr, real l1x, real rax)
-{
-   image_oct_macro(xr, yr, zr, l1x, rax);
-}
 
 
-SEQ_ROUTINE
-inline void image_general(real& restrict xr, real& restrict yr,
-                          real& restrict zr, real3 l1, real3 l2, real3 l3,
-                          real3 ra, real3 rb, real3 rc)
+struct PBC_ORTHO
 {
-   if (l1.z == 0) {
-      image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else if (l1.y == 0) {
-      image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else if (l1.x != 0) {
-      image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else {
+   SEQ_ROUTINE
+   static void img(real& restrict xr, real& restrict yr, real& restrict zr,
+                   real3 l1, real3 l2, real3 l3, real3 ra, real3 rb, real3 rc)
+   {
+      IMAGE_ORTHO__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    }
-}
+
+
+   SEQ_ROUTINE
+   static real img2(real& restrict xr, real& restrict yr, real& restrict zr,
+                    real3 l1, real3 l2, real3 l3, real3 ra, real3 rb, real3 rc)
+   {
+      img(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      return xr * xr + yr * yr + zr * zr;
+   }
+};
+
+
+struct PBC_MONO
+{
+   SEQ_ROUTINE
+   static void img(real& restrict xr, real& restrict yr, real& restrict zr,
+                   real3 l1, real3 l2, real3 l3, real3 ra, real3 rb, real3 rc)
+   {
+      IMAGE_MONO__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+   }
+
+
+   SEQ_ROUTINE
+   static real img2(real& restrict xr, real& restrict yr, real& restrict zr,
+                    real3 l1, real3 l2, real3 l3, real3 ra, real3 rb, real3 rc)
+   {
+      img(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      return xr * xr + yr * yr + zr * zr;
+   }
+};
+
+
+struct PBC_TRI
+{
+   SEQ_ROUTINE
+   static void img(real& restrict xr, real& restrict yr, real& restrict zr,
+                   real3 l1, real3 l2, real3 l3, real3 ra, real3 rb, real3 rc)
+   {
+      IMAGE_TRI__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+   }
+
+
+   SEQ_ROUTINE
+   static real img2(real& restrict xr, real& restrict yr, real& restrict zr,
+                    real3 l1, real3 l2, real3 l3, real3 ra, real3 rb, real3 rc)
+   {
+      img(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      return xr * xr + yr * yr + zr * zr;
+   }
+};
+
+
+struct PBC_OCT
+{
+   SEQ_ROUTINE
+   static void img(real& restrict xr, real& restrict yr, real& restrict zr,
+                   real3 l1, real3 l2, real3 l3, real3 ra, real3 rb, real3 rc)
+   {
+      IMAGE_OCT__(xr, yr, zr, l1.x, ra.x);
+   }
+
+
+   SEQ_ROUTINE
+   static real img2(real& restrict xr, real& restrict yr, real& restrict zr,
+                    real3 l1, real3 l2, real3 l3, real3 ra, real3 rb, real3 rc)
+   {
+      img(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      return xr * xr + yr * yr + zr * zr;
+   }
+};
+
+
+//====================================================================//
 
 
 SEQ_ROUTINE
@@ -97,13 +140,13 @@ inline void image_general(real& restrict xr, real& restrict yr,
                           real3 l3, real3 ra, real3 rb, real3 rc)
 {
    if (sh == ORTHO_BOX) {
-      image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      PBC_ORTHO::img(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else if (sh == MONO_BOX) {
-      image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      PBC_MONO::img(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else if (sh == TRI_BOX) {
-      image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      PBC_TRI::img(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else if (sh == OCT_BOX) {
-      image_oct_macro(xr, yr, zr, l1.x, ra.x);
+      PBC_OCT::img(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else {
       // UNBOND_BOX
    }
@@ -112,93 +155,10 @@ inline void image_general(real& restrict xr, real& restrict yr,
 
 SEQ_ROUTINE
 inline real image2_general(real& restrict xr, real& restrict yr,
-                           real& restrict zr, real3 l1, real3 l2, real3 l3,
-                           real3 ra, real3 rb, real3 rc)
-{
-   if (l1.z == 0) {
-      image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else if (l1.y == 0) {
-      image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else if (l1.x != 0) {
-      image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else {
-   }
-   return xr * xr + yr * yr + zr * zr;
-}
-
-
-SEQ_ROUTINE
-inline real image2_orthogonal(real& restrict xr, real& restrict yr,
-                              real& restrict zr, real3 l1, real3 l2, real3 l3,
-                              real3 ra, real3 rb, real3 rc)
-{
-   image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   return xr * xr + yr * yr + zr * zr;
-}
-
-
-SEQ_ROUTINE
-inline real image2_monoclinic(real& restrict xr, real& restrict yr,
-                              real& restrict zr, real3 l1, real3 l2, real3 l3,
-                              real3 ra, real3 rb, real3 rc)
-{
-   image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   return xr * xr + yr * yr + zr * zr;
-}
-
-
-SEQ_ROUTINE
-inline real image2_triclinic(real& restrict xr, real& restrict yr,
-                             real& restrict zr, real3 l1, real3 l2, real3 l3,
-                             real3 ra, real3 rb, real3 rc)
-{
-   image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   return xr * xr + yr * yr + zr * zr;
-}
-
-
-SEQ_ROUTINE
-inline real image2_oct(real& restrict xr, real& restrict yr, real& restrict zr,
-                       real3 l1, real3 l2, real3 l3, real3 ra, real3 rb,
-                       real3 rc)
-{
-   image_oct_macro(xr, yr, zr, l1.x, ra.x);
-   return xr * xr + yr * yr + zr * zr;
-}
-
-
-SEQ_ROUTINE
-inline real image2_general(real& restrict xr, real& restrict yr,
                            real& restrict zr, BoxShape sh, real3 l1, real3 l2,
                            real3 l3, real3 ra, real3 rb, real3 rc)
 {
-   if (sh == ORTHO_BOX) {
-      image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else if (sh == MONO_BOX) {
-      image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else if (sh == TRI_BOX) {
-      image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else if (sh == OCT_BOX) {
-      image_oct_macro(xr, yr, zr, l1.x, ra.x);
-   } else {
-      // UNBOUND_BOX
-   }
-   return xr * xr + yr * yr + zr * zr;
-}
-
-
-SEQ_ROUTINE
-inline real imagen2_general(real& xr, real& yr, real& zr, real3 l1, real3 l2,
-                            real3 l3, real3 ra, real3 rb, real3 rc)
-{
-   if (l1.z == 0) {
-      image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else if (l1.y == 0) {
-      image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else if (l1.x != 0) {
-      image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else {
-   }
+   image_general(xr, yr, zr, sh, l1, l2, l3, ra, rb, rc);
    return xr * xr + yr * yr + zr * zr;
 }
 
@@ -208,16 +168,16 @@ inline real imagen2_general(real& xr, real& yr, real& zr, BoxShape sh, real3 l1,
                             real3 l2, real3 l3, real3 ra, real3 rb, real3 rc)
 {
    if (sh == ORTHO_BOX) {
-      image_orthogonal(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      return PBC_ORTHO::img2(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else if (sh == MONO_BOX) {
-      image_monoclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      return PBC_MONO::img2(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else if (sh == TRI_BOX) {
-      image_triclinic(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      return PBC_TRI::img2(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else if (sh == OCT_BOX) {
-      image_oct_macro(xr, yr, zr, l1.x, ra.x);
+      return PBC_OCT::img2(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else {
-      // UNBOUND_BOX
+      // UNBOND_BOX
+      return xr * xr + yr * yr + zr * zr;
    }
-   return xr * xr + yr * yr + zr * zr;
 }
 }

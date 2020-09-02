@@ -1546,13 +1546,13 @@ void spatial_data_init_cu(Spatial2Unit u)
 
 
    if (box_shape == ORTHO_BOX) {
-      run_spatial2_step5<IMG_ORTHO>(u);
+      run_spatial2_step5<PBC_ORTHO>(u);
    } else if (box_shape == MONO_BOX) {
-      run_spatial2_step5<IMG_MONO>(u);
+      run_spatial2_step5<PBC_MONO>(u);
    } else if (box_shape == TRI_BOX) {
-      run_spatial2_step5<IMG_TRI>(u);
+      run_spatial2_step5<PBC_TRI>(u);
    } else if (box_shape == OCT_BOX) {
-      run_spatial2_step5<IMG_OCT>(u);
+      run_spatial2_step5<PBC_OCT>(u);
    } else {
       assert(false);
    }

@@ -30,16 +30,10 @@ void box_lattice(Box& p, BoxShape sh, double a, double b, double c,
 #define TINKER_IMAGE_LVEC_ARGS    lvec1, lvec2, lvec3
 #define TINKER_IMAGE_RECIP_PARAMS real3 recipa, real3 recipb, real3 recipc
 #define TINKER_IMAGE_RECIP_ARGS   recipa, recipb, recipc
-#if 1
-#   define TINKER_IMAGE_PARAMS                                                 \
-      BoxShape box_shape, TINKER_IMAGE_LVEC_PARAMS, TINKER_IMAGE_RECIP_PARAMS
-#   define TINKER_IMAGE_ARGS                                                   \
-      box_shape, TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS
-#else
-#   define TINKER_IMAGE_PARAMS                                                 \
-      TINKER_IMAGE_LVEC_PARAMS, TINKER_IMAGE_RECIP_PARAMS
-#   define TINKER_IMAGE_ARGS TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS
-#endif
+#define TINKER_IMAGE_PARAMS                                                    \
+   BoxShape box_shape, TINKER_IMAGE_LVEC_PARAMS, TINKER_IMAGE_RECIP_PARAMS
+#define TINKER_IMAGE_ARGS                                                      \
+   box_shape, TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS
 
 
 void box_data(rc_op);
