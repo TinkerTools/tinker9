@@ -1130,6 +1130,7 @@ void spatial2_step5_bits(int x0, int y0, real sreal, real sc0, real sc1,
                          unsigned int* bit1, const int* iakpl_rev)
 {
    int sint = sreal * Spatial2::ScaleInfo::MULT;
+   sint += Spatial2::ScaleInfo::MULT;
    int b0 = 0, b1 = 0;
    // if (sint == sc0 * Spatial2::ScaleInfo::MULT) {
    //   b1 = 0;

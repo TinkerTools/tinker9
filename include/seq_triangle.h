@@ -4,7 +4,7 @@
 
 namespace tinker {
 __device__
-int xy_to_tri(int x, int y)
+inline int xy_to_tri(int x, int y)
 {
    long long lx = x;
    int base = (lx + 1) * lx / 2;
@@ -13,7 +13,7 @@ int xy_to_tri(int x, int y)
 
 
 __device__
-void tri_to_xy(int f, int& x, int& y)
+inline void tri_to_xy(int f, int& x, int& y)
 {
    long long lf = 8ll * f + 1;
    double ff = lf;
