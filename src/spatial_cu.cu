@@ -1102,8 +1102,8 @@ void spatial2_step4(int nakpk, int* restrict nakpl_ptr1,
 
 
    // zero out bit0 and bit1
-   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < 32 * cap_nakpl;
-        i += blockDim.x * gridDim.x) {
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x;
+        i < WARP_SIZE * cap_nakpl; i += blockDim.x * gridDim.x) {
       if (nstype >= 1) {
          s1b0[i] = 0;
          s1b1[i] = 0;
@@ -1129,20 +1129,23 @@ void spatial2_step5_bits(int x0, int y0, real sreal, real sc0, real sc1,
                          real sc2, real sc3, unsigned int* bit0,
                          unsigned int* bit1, const int* iakpl_rev)
 {
-   int sint = sreal * Spatial2::ScaleInfo::MULT;
-   sint += Spatial2::ScaleInfo::MULT;
+   int sint = (1 + sreal) * Spatial2::ScaleInfo::MULT;
+   // int sint0 = (int)(sc0 * Spatial2::ScaleInfo::MULT);
+   int sint1 = (int)(sc1 * Spatial2::ScaleInfo::MULT);
+   int sint2 = (int)(sc2 * Spatial2::ScaleInfo::MULT);
+   int sint3 = (int)(sc3 * Spatial2::ScaleInfo::MULT);
    int b0 = 0, b1 = 0;
-   // if (sint == sc0 * Spatial2::ScaleInfo::MULT) {
+   // if (sint == sint0) {
    //   b1 = 0;
    //   b0 = 0;
    // } else
-   if (sint == sc1 * Spatial2::ScaleInfo::MULT) {
+   if (sint == sint1) {
       b1 = 0;
       b0 = 1;
-   } else if (sint == sc2 * Spatial2::ScaleInfo::MULT) {
+   } else if (sint == sint2) {
       b1 = 1;
       b0 = 0;
-   } else if (sint == sc3 * Spatial2::ScaleInfo::MULT) {
+   } else if (sint == sint3) {
       b1 = 1;
       b0 = 1;
    }
@@ -1157,11 +1160,11 @@ void spatial2_step5_bits(int x0, int y0, real sreal, real sc0, real sc1,
    ay = y & (WARP_SIZE - 1);
    f = xy_to_tri(bx, by);
    fshort = iakpl_rev[f];
-   pos = 32 * fshort + ax;
+   pos = WARP_SIZE * fshort + ax;
    atomicOr(&bit0[pos], b0 << ay);
    atomicOr(&bit1[pos], b1 << ay);
    if (bx == by) {
-      pos = 32 * fshort + ay;
+      pos = WARP_SIZE * fshort + ay;
       atomicOr(&bit0[pos], b0 << ax);
       atomicOr(&bit1[pos], b1 << ax);
    }
@@ -1190,30 +1193,30 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
         i += blockDim.x * gridDim.x) {
       int x0, y0;
       if (nstype >= 1 and i < si1.ns) {
-         x0 = bnum[si1.js[i][0]];
-         y0 = bnum[si1.js[i][1]];
          auto& si = si1;
+         x0 = bnum[si.js[i][0]];
+         y0 = bnum[si.js[i][1]];
          spatial2_step5_bits(x0, y0, si.ks[i], si.sc0, si.sc1, si.sc2, si.sc3,
                              si.bit0, si.bit1, iakpl_rev);
       }
       if (nstype >= 2 and i < si2.ns) {
-         x0 = bnum[si2.js[i][0]];
-         y0 = bnum[si2.js[i][1]];
          auto& si = si2;
+         x0 = bnum[si.js[i][0]];
+         y0 = bnum[si.js[i][1]];
          spatial2_step5_bits(x0, y0, si.ks[i], si.sc0, si.sc1, si.sc2, si.sc3,
                              si.bit0, si.bit1, iakpl_rev);
       }
       if (nstype >= 3 and i < si3.ns) {
-         x0 = bnum[si3.js[i][0]];
-         y0 = bnum[si3.js[i][1]];
          auto& si = si3;
+         x0 = bnum[si.js[i][0]];
+         y0 = bnum[si.js[i][1]];
          spatial2_step5_bits(x0, y0, si.ks[i], si.sc0, si.sc1, si.sc2, si.sc3,
                              si.bit0, si.bit1, iakpl_rev);
       }
       if (nstype >= 4 and i < si4.ns) {
-         x0 = bnum[si4.js[i][0]];
-         y0 = bnum[si4.js[i][1]];
          auto& si = si4;
+         x0 = bnum[si.js[i][0]];
+         y0 = bnum[si.js[i][1]];
          spatial2_step5_bits(x0, y0, si.ks[i], si.sc0, si.sc1, si.sc2, si.sc3,
                              si.bit0, si.bit1, iakpl_rev);
       }

@@ -106,10 +106,10 @@ void Spatial2::ScaleInfo::init()
    ks = nullptr;
    bit0 = nullptr;
    bit1 = nullptr;
-   sc0 = 0;
-   sc1 = 0;
-   sc2 = 0;
-   sc3 = 0;
+   sc0 = 1;
+   sc1 = 1;
+   sc2 = 1;
+   sc3 = 1;
    ns = 0;
 }
 
@@ -147,13 +147,13 @@ void Spatial2::ScaleInfo::set(int nns, int (*jjs)[2], real* kks,
    std::vector<real> v2(sfloat.begin(), sfloat.end());
    std::reverse(v2.begin(), v2.end());
    if (v2.size() > 0)
-      sc0 = vs[0];
+      sc0 = v2[0];
    if (v2.size() > 1)
-      sc1 = vs[1];
+      sc1 = v2[1];
    if (v2.size() > 2)
-      sc2 = vs[2];
+      sc2 = v2[2];
    if (v2.size() > 3)
-      sc3 = vs[3];
+      sc3 = v2[3];
 }
 
 

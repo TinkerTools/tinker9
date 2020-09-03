@@ -173,6 +173,7 @@ void evdw_data(rc_op op)
          vdw_exclude_bond =
             (vdwpot::v2scale == 0) && (clist_version() & NBL_SPATIAL);
       }
+      vdw_exclude_bond = false; // for Spatial2
 
 
       v2scale = vdwpot::v2scale;
