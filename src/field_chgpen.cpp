@@ -35,7 +35,6 @@ void dfield_chgpen_ewald(real (*field)[3])
 void dfield_chgpen_ewald_recip_self(real (*field)[3])
 {
    dfield_chgpen_ewald_recip_self_acc(field);
-   darray::copy(PROCEED_NEW_Q, n, field);
 }
 
 

@@ -1,4 +1,5 @@
 #include "add.h"
+#include "empole_chgpen.h"
 #include "epolar_chgpen.h"
 #include "glob.spatial.h"
 #include "image.h"
@@ -12,14 +13,13 @@
 
 namespace tinker {
 #define DFIELDPARAS                                                            \
-   real(*restrict field)[3], const real *restrict pcore,                       \
-      const real *restrict pval, const real *restrict palpha,
-const real (*restrict rpole)[10], TINKER_IMAGE_PARAMS,
-   real off2
+   real(*restrict field)[3], real *restrict pcore, real *restrict pval,        \
+      real *restrict palpha, const real(*restrict rpole)[10],                  \
+      TINKER_IMAGE_PARAMS, real off2
 
 
-   template <class ETYP>
-   __launch_bounds__(BLOCK_DIM) __global__
+template <class ETYP>
+__launch_bounds__(BLOCK_DIM) __global__
 void dfield_chgpen_cu1(DFIELDPARAS, int n,
                        const Spatial::SortedAtom* restrict sorted, int niak,
                        const int* restrict iak, const int* restrict lst,
@@ -63,7 +63,6 @@ void dfield_chgpen_cu1(DFIELDPARAS, int n,
 
 
       data[threadIdx.x].fkd = make_real3(0, 0, 0);
-      data[threadIdx.x].fkp = make_real3(0, 0, 0);
       int shatomk = lst[iw * WARP_SIZE + ilane];
       data[threadIdx.x].rk =
          make_real3(sorted[shatomk].x, sorted[shatomk].y, sorted[shatomk].z);
@@ -100,8 +99,8 @@ void dfield_chgpen_cu1(DFIELDPARAS, int n,
                   data[klane].core, data[klane].val, data[klane].alpha,
                   data[klane].qkxx, data[klane].qkxy, data[klane].qkxz,
                   data[klane].qkyy, data[klane].qkyz, data[klane].qkzz,
-                  data[klane].pdk, data[klane].ptk, aewald, fid,
-                  data[klane].fkd);
+                  aewald, fid, data[klane].fkd);
+                  
             }
             if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
                pair_dfield_chgpen<NON_EWALD>(
@@ -111,8 +110,7 @@ void dfield_chgpen_cu1(DFIELDPARAS, int n,
                   data[klane].core, data[klane].val, data[klane].alpha,
                   data[klane].qkxx, data[klane].qkxy, data[klane].qkxz,
                   data[klane].qkyy, data[klane].qkyz, data[klane].qkzz,
-                  data[klane].pdk, data[klane].ptk, 0, fid,
-                  data[klane].fkd);
+                  0, fid, data[klane].fkd);
             }
          } // end if (include)
       }
@@ -132,7 +130,7 @@ __global__
 void dfield_chgpen_cu2(DFIELDPARAS, const real* restrict x,
                        const real* restrict y, const real* restrict z,
                        int ndexclude, const int (*restrict dexclude)[2],
-                       const real (*restrict dexclude_scale)[2])
+                       const real(*restrict dexclude_scale))
 {
    for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < ndexclude;
         ii += blockDim.x * gridDim.x) {
@@ -169,7 +167,7 @@ void dfield_chgpen_cu2(DFIELDPARAS, const real* restrict x,
          real3 fid = make_real3(0, 0, 0);
          real3 fkd = make_real3(0, 0, 0);
          pair_dfield_chgpen<NON_EWALD>(
-            r2, dr.x, dr.y, dr.z, dscale, ci, dix, diy, diz, corei, vali,
+            r2, xr, yr, zr, dscale, ci, dix, diy, diz, corei, vali,
             alphai, qixx, qixy, qixz, qiyy, qiyz, qizz, rpole[k][mpl_pme_0],
             rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
             pcore[k], pval[k], palpha[k], rpole[k][mpl_pme_xx],
@@ -235,14 +233,12 @@ void dfield_chgpen_nonewald_cu(real (*field)[3])
 
 #define UFIELDPARAS                                                            \
    const real(*restrict uind)[3], real(*restrict field)[3],                    \
-      const real *restrict pcore, const real *restrict pval,                   \
-      const real *restrict palpha,
-TINKER_IMAGE_PARAMS,
-   real off2
+      real *restrict pcore, real *restrict pval, real *restrict palpha,        \
+      TINKER_IMAGE_PARAMS, real off2
 
 
-   template <class ETYP>
-   __launch_bounds__(BLOCK_DIM) __global__
+template <class ETYP>
+__launch_bounds__(BLOCK_DIM) __global__
 void ufield_chgpen_cu1(UFIELDPARAS, int n,
                        const Spatial::SortedAtom* restrict sorted, int niak,
                        const int* restrict iak, const int* restrict lst,
@@ -310,7 +306,7 @@ void ufield_chgpen_cu1(UFIELDPARAS, int n,
          } // end if (include)
       }
 
-
+      
       atomic_add(fid.x, &field[i][0]);
       atomic_add(fid.y, &field[i][1]);
       atomic_add(fid.z, &field[i][2]);
@@ -352,10 +348,10 @@ void ufield_chgpen_cu2(UFIELDPARAS, const real* restrict x,
       if (r2 <= off2) {
          real3 fid = make_real3(0, 0, 0);
          real3 fkd = make_real3(0, 0, 0);
-         pair_ufield_chgpen<NON_EWALD>(
-            r2, xr, yr, zr, wscale, uid.x, uid.y, uid.z, corei, vali,
-            alphai, uind[k][0], uind[k][1], uind[k][2],
-            pcore[k], pval[k], palpha[k], 0, fid, fkd);
+         pair_ufield_chgpen<NON_EWALD>(r2, xr, yr, zr, wscale, uid.x, uid.y,
+                                       uid.z, corei, vali, alphai, uind[k][0],
+                                       uind[k][1], uind[k][2], pcore[k],
+                                       pval[k], palpha[k], 0, fid, fkd);
 
 
          atomic_add(fid.x, &field[i][0]);

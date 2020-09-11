@@ -15,13 +15,13 @@ void empole_chgpen_data(rc_op op)
       return;
 
    if (!mplpot::use_chgpen)
-      return
+      return;
    
 
    bool rc_a = rc_flag & calc::analyz;
 
    if (op & rc_dealloc) {
-      darray::deallocate(pcore, palpha, palpha);
+      darray::deallocate(pcore, pval, palpha);
       if (rc_a) {
          buffer_deallocate(rc_flag, nem);
          buffer_deallocate(rc_flag, em, vir_em, demx, demy, demz);

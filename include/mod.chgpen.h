@@ -4,18 +4,10 @@
 
 
 namespace tinker {
-// enum class chpdamp_t
-// {
-//    gordon1,    
-//    gordon2  
-// };
-// TINKER_EXTERN chpdamp_t pentyp;
 TINKER_EXTERN real* pcore;
 TINKER_EXTERN real* pval;
 TINKER_EXTERN real* pval0;
-TINKER_EXTERN real* palplha;
-// TINKER_EXTERN count_buffer ncp;
-
+TINKER_EXTERN real* palpha;
 
 //====================================================================//
 
@@ -38,5 +30,11 @@ TINKER_EXTERN real* dexclude_scale;
 TINKER_EXTERN int nwexclude;
 TINKER_EXTERN int (*wexclude)[2];
 TINKER_EXTERN real* wexclude_scale;
+
+TINKER_EXTERN real (*work11_)[3];
+TINKER_EXTERN real (*work12_)[3];
+TINKER_EXTERN real (*work13_)[3];
+TINKER_EXTERN real (*work14_)[3];
+TINKER_EXTERN real (*work15_)[3];
 
 }

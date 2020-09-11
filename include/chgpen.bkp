@@ -1,0 +1,9 @@
+#pragma once
+#include "elec.h"
+#include "mod.chgpen.h"
+#include "mod.polpot.h"
+#include "tool/rc_man.h"
+
+namespace tinker {
+void chgpen_data(rc_op op);
+}

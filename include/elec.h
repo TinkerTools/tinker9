@@ -25,7 +25,7 @@ void pole_data(rc_op);
 
 void mscale_data(rc_op);
 
-
+void chgpen_data(rc_op op);
 //====================================================================//
 
 

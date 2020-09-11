@@ -7,6 +7,7 @@
 #include "mod.bndpot.h"
 #include "mod.bndstr.h"
 #include "mod.charge.h"
+#include "mod.chgpen.h"
 #include "mod.chgpot.h"
 #include "mod.chgtrn.h"
 #include "mod.ctrpot.h"

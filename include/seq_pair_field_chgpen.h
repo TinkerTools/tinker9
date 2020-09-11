@@ -1,6 +1,7 @@
 #pragma once
 #include "elec.h"
 #include "md.h"
+#include "seq_damp.h"
 #include "seq_damp_chgpen.h"
 
 
@@ -81,8 +82,8 @@ void pair_dfield_chgpen(real r2, real xr, real yr, real zr, real dscale,
 
    c1 = -(rr3 * corei + rr3i * vali - rr5i * dir + rr7i * qir);
    inck = c1 * dr - rr3i * dixyz + 2 * rr5i * qixyz;
-   fkd += inci;
-   
+   fkd -= inck;
+
 }
 
 
@@ -106,15 +107,14 @@ void pair_ufield_chgpen(real r2, real xr, real yr, real zr, real wscale, //
    scale3 = wscale * dmpik[1];
    scale5 = wscale * dmpik[2];
 
-   
    if CONSTEXPR (eq<ETYP, EWALD>())
       damp_ewald<3>(bn, r, invr1, rr2, aewald);
    real rr1 = invr1;
    real rr3 = rr1 * rr2;
-   real rr5 = 3 * rr1 * rr2 * rr2;
+   real rr5 = rr1 * rr2 * rr2;
 
    if CONSTEXPR (eq<ETYP, EWALD>()) {
-      bn[1] = -(bn[1] - (1 - scale3) * rr3);
+      bn[1] -= (bn[1] - (1 - scale3) * rr3);
       bn[2] -=  3 * (1 - scale5) * rr5;
    } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
       bn[1] = -scale3 * rr3;
@@ -122,14 +122,19 @@ void pair_ufield_chgpen(real r2, real xr, real yr, real zr, real wscale, //
    }
 
    real coef;
+   real3 inci, inck;
    real3 dr = make_real3(xr, yr, zr);
    real3 uid = make_real3(uindi0, uindi1, uindi2);
    real3 ukd = make_real3(uindk0, uindk1, uindk2);
 
    coef = bn[2] * dot3(dr, ukd);
-   fid += coef * dr - bn[1] * ukd;
+   inci = coef * dr + bn[1] * ukd;
+   fid += inci;
 
    coef = bn[2] * dot3(dr, uid);
-   fkd += coef * dr - bn[1] * uid;
+   inck = coef * dr + bn[1] * uid;
+   fkd += inck;   
+
+   // printf("zrsd %14.6e %14.6e\n", fid.x, fkd.x);
 }
 }

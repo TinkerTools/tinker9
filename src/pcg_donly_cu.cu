@@ -22,9 +22,13 @@ void pcg_udir_donly(int n, const real* restrict polarity, real (*restrict udir)[
 {
    for (int i = ITHREAD; i < n; i += STRIDE) {
       real poli = polarity[i];
+      real test;
       #pragma unroll
-      for (int j = 0; j < 3; ++j)
+      for (int j = 0; j < 3; ++j) {
          udir[i][j] = poli * field[i][j];
+         test = udir[i][j];
+         // printf("udir %14.6e\n", test);
+      }
    }
 }
 
@@ -37,6 +41,9 @@ void pcg_rsd1(int n, const real* restrict polarity, real (*restrict rsd)[3])
          rsd[i][0] = 0;
          rsd[i][1] = 0;
          rsd[i][2] = 0;
+      } else {
+         real test = rsd[i][0];
+         // printf("rsd %16.8e\n", test);
       }
    }
 }
@@ -48,9 +55,20 @@ void pcg_p4(int n, const real* restrict polarity_inv, real (*restrict vec)[3],
 {
    for (int i = ITHREAD; i < n; i += STRIDE) {
       real poli_inv = polarity_inv[i];
+      real test;
+      real test2;
       #pragma unroll
-      for (int j = 0; j < 3; ++j)
+      for (int j = 0; j < 3; ++j) {
          vec[i][j] = poli_inv * conj[i][j] - field[i][j];
+         test = poli_inv * conj[i][j];
+         test2 = field[i][j];
+      }
+      // test = poli_inv * conj[0][0];
+      // test2 = vec[0][0];
+      // printf("conj/poli  %16.8e vec  %16.8e\n", test, test2);
+      // test = poli_inv * conj[1][0];
+      // test2 = vec[1][0];
+      // printf("conj/poli2 %16.8e vec %16.8e\n", test, test2);
    }
 }
 
@@ -69,6 +87,15 @@ void pcg_p5(int n, const real* restrict polarity, //
          uind[i][j] += a * conj[i][j];
          rsd[i][j] -= a * vec[i][j];
       }
+      real test = uind[0][0];
+      real test2 = conj[0][0];
+      // printf("uind %16.8e a %16.8e conj %16.8e\n", test,a,test2);
+      // test = uind[1][0];
+      // test2 = conj[1][0];
+      // printf("uind2 %16.8e a %16.8e conj %16.8e\n", test,a,test2);
+      // test = *ksum;
+      // test2 = *ka;
+      // printf("sum %16.8e a %16.8e \n", test,test2);
       if (polarity[i] == 0) {
          rsd[i][0] = 0;
          rsd[i][1] = 0;
@@ -97,20 +124,25 @@ void pcg_peek1(int n, float pcgpeek, const real* restrict polarity,
 {
    for (int i = ITHREAD; i < n; i += STRIDE) {
       real term = pcgpeek * polarity[i];
+      real test;
       #pragma unroll
-      for (int j = 0; j < 3; ++j)
+      for (int j = 0; j < 3; ++j) {
          uind[i][j] += term * rsd[i][j];
+         test = rsd[i][j];
+         // printf("peek %14.6e\n", test);
+
+      }
    }
 }
 
 
-void induce_mutual_pcg2_cu(real (*uind)[3])
+void induce_mutual_pcg_cu2(real (*uind)[3])
 {
-   auto* field = work01_;
-   auto* rsd = work02_;
-   auto* zrsd = work03_;
-   auto* conj = work04_;
-   auto* vec = work05_;
+   auto* field = work11_;
+   auto* rsd = work12_;
+   auto* zrsd = work13_;
+   auto* conj = work14_;
+   auto* vec = work15_;
 
 
    const bool dirguess = polpcg::pcgguess;
@@ -119,7 +151,6 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
 
    // zero out the induced dipoles at each site
    darray::zero(PROCEED_NEW_Q, n, uind);
-
 
    // get the electrostatic field due to permanent multipoles
    dfield_chgpen(field);
@@ -136,9 +167,9 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
    // if use pcgguess, r(0) = E - (inv_alpha + Tu) alpha E
    //                       = E - E -Tu udir
    //                       = -Tu udir
-   if (dirguess)
+   if (dirguess) 
       ufield_chgpen(udir, rsd);
-   else
+   else 
       darray::copy(PROCEED_NEW_Q, n, rsd, field);
 
    launch_k1s(nonblk, n, pcg_rsd1, n, polarity, rsd);
@@ -148,16 +179,15 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
    if (sparse_prec) {
       sparse_precond_build2();
       sparse_precond_apply2(rsd, zrsd);
-   } else
+   } else 
       diag_precond2(rsd, zrsd);
-
+   
    darray::copy(PROCEED_NEW_Q, n, conj, zrsd);
 
 
    // initial r(0) M r(0)
    real* sum = &((real*)dptr_buf)[0];
    darray::dot(PROCEED_NEW_Q, n, sum, rsd, zrsd);
-
 
    // conjugate gradient iteration of the mutual induced dipoles
    const bool debug = inform::debug;
@@ -173,14 +203,14 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
    real eps = 100;
    real epsold;
 
-
    while (!done) {
       ++iter;
 
-
+      printf("%d\n", iter);
       // T p and p
       // vec = (inv_alpha + Tu) conj, field = -Tu conj
       // vec = inv_alpha * conj - field
+
       ufield_chgpen(conj, field);
       launch_k1s(nonblk, n, pcg_p4, n, polarity_inv, vec, conj, field);
 

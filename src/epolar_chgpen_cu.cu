@@ -1,4 +1,5 @@
 #include "add.h"
+#include "empole_chgpen.h"
 #include "epolar_chgpen.h"
 #include "epolar_trq.h"
 #include "glob.spatial.h"
@@ -18,7 +19,7 @@ namespace tinker {
       real(*restrict dufld)[6], TINKER_IMAGE_PARAMS, real off2, real f,        \
       const real(*restrict rpole)[10], real *restrict pcore,                   \
       real *restrict pval, real *restrict palpha,                              \
-      const real(*restrict uind)[3],
+      const real(*restrict uind)[3]
 
 
 template <class Ver, class ETYP>
@@ -134,6 +135,7 @@ void epolar_chgpen_cu1(POLARPARAS, const Spatial::SortedAtom* restrict sorted,
       real shvalk = pval[shk];
 
 
+
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
          int atomk = __shfl_sync(ALL_LANES, shatomk, srclane);
@@ -163,25 +165,31 @@ void epolar_chgpen_cu1(POLARPARAS, const Spatial::SortedAtom* restrict sorted,
          PairPolarGrad pgrad;
          zero(pgrad);
 
-
          real r2 = image2(xr, yr, zr);
          if (atomi < atomk && r2 <= off2) {
             if CONSTEXPR (eq<ETYP, EWALD>()) {
                pair_polar_chgpen<do_e, do_g, EWALD>( //
                   r2, xr, yr, zr, 1, 1,       //
-                  ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix,
-                  uiy, uiz, corei, vali, alphai, //
-                  ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,
-                  uky, ukz, corek, valk, alphak, //
+                  ci, dix, diy, diz, corei, vali, alphai,
+                  qixx, qixy, qixz, qiyy, qiyz, qizz, uix,
+                  uiy, uiz,  //
+                  ck, dkx, dky, dkz, corek, valk, alphak,
+                  qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,
+                  uky, ukz,  //
                   f, aewald, e, pgrad);
+
+               // printf("%5.2f %5.2f %14.8f\n", alphai, alphak, r2);
+
             }
             if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
                pair_polar_chgpen<do_e, do_g, NON_EWALD>( //
                   r2, xr, yr, zr, 1, 1,           //
-                  ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix,
-                  uiy, uiz, corei, vali, alphai, //
-                  ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,
-                  uky, ukz, corek, valk, alphak, //
+                  ci, dix, diy, diz, corei, vali, alphai,
+                  qixx, qixy, qixz, qiyy, qiyz, qizz, uix,
+                  uiy, uiz,  //
+                  ck, dkx, dky, dkz, corek, valk, alphak,
+                  qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,
+                  uky, ukz,  //
                   f, 0, e, pgrad);
             }
 
@@ -277,7 +285,7 @@ __global__
 void epolar_chgpen_cu2(POLARPARAS, const real* restrict x,
                        const real* restrict y, const real* restrict z,
                        int ndwexclude, const int (*restrict dwexclude)[2],
-                       const real (*restrict dwexclude_scale)[3])
+                       const real (*restrict dwexclude_scale)[2])
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -294,7 +302,7 @@ void epolar_chgpen_cu2(POLARPARAS, const real* restrict x,
       int k = dwexclude[ii][1];
       real dscale = dwexclude_scale[ii][0];
       real wscale =
-         dwexclude_scale[ii][2]; // change to match definition of wscale
+         dwexclude_scale[ii][1]; // change to match definition of wscale
 
 
       real xi = x[i];
@@ -347,12 +355,15 @@ void epolar_chgpen_cu2(POLARPARAS, const real* restrict x,
          PairPolarGrad pgrad;
          pair_polar_chgpen<do_e, do_g, NON_EWALD>( //
             r2, xr, yr, zr, dscale, wscale,        //
-            ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
-            uiz, corei, vali, alphai, //
-            ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
-            ukz, corek, valk, alphak, //
+            ci, dix, diy, diz, corei, vali, alphai,
+            qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
+            uiz,  //
+            ck, dkx, dky, dkz, corek, valk, alphak,
+            qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
+            ukz,  //
             f, 0, e, pgrad);
 
+         // printf("%5.2f %5.2f %14.8f\n", alphai, alphak, r2);
 
          if CONSTEXPR (do_a)
             if (dscale == -1)
