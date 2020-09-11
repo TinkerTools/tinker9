@@ -986,12 +986,21 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
          real dedxc = decik * xr;
          real dedyc = decik * yr;
          real dedzc = decik * zr;
+#if TINKER_ECHGLJ_USE_COALESCED_GRAD == 0
          atomic_add(dedxc, gx, i);
          atomic_add(dedyc, gy, i);
          atomic_add(dedzc, gz, i);
          atomic_add(-dedxc, gx, k);
          atomic_add(-dedyc, gy, k);
          atomic_add(-dedzc, gz, k);
+#else
+         atomic_add(dedxc, gx, atomi);
+         atomic_add(dedyc, gy, atomi);
+         atomic_add(dedzc, gz, atomi);
+         atomic_add(-dedxc, gx, atomk);
+         atomic_add(-dedyc, gy, atomk);
+         atomic_add(-dedzc, gz, atomk);
+#endif
          if CONSTEXPR (do_v) {
             real vxxc = xr * dedxc;
             real vyxc = yr * dedxc;
@@ -1011,7 +1020,9 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
    // */
 
 
+#if TINKER_ECHGLJ_USE_COALESCED_GRAD == 0
    __shared__ int atomid[BLOCK_DIM];
+#endif
    __shared__ real chgarr[BLOCK_DIM], radarr[BLOCK_DIM], epsarr[BLOCK_DIM];
 
 
@@ -1040,7 +1051,6 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
       real shxi = sorted[shatomi].x;
       real shyi = sorted[shatomi].y;
       real shzi = sorted[shatomi].z;
-      atomid[threadIdx.x] = sorted[shatomi].unsorted;
       chgarr[threadIdx.x] = chg[shatomi];
       radarr[threadIdx.x] = radeps[shatomi].x;
       epsarr[threadIdx.x] = radeps[shatomi].y;
@@ -1051,10 +1061,15 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
       real xk = sorted[atomk].x;
       real yk = sorted[atomk].y;
       real zk = sorted[atomk].z;
-      int k = sorted[atomk].unsorted;
       real chgk = chg[atomk];
       real radk = radeps[atomk].x;
       real epsk = radeps[atomk].y;
+
+
+#if TINKER_ECHGLJ_USE_COALESCED_GRAD == 0
+      atomid[threadIdx.x] = sorted[shatomi].unsorted;
+      int k = sorted[atomk].unsorted;
+#endif
 
 
       real xc = akc[ty].x;
@@ -1230,6 +1245,7 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
 
 
       if CONSTEXPR (do_g) {
+#if TINKER_ECHGLJ_USE_COALESCED_GRAD == 0
          int shi = atomid[threadIdx.x];
          atomic_add(ifx, gx, shi);
          atomic_add(ify, gy, shi);
@@ -1237,6 +1253,14 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
          atomic_add(kfx, gx, k);
          atomic_add(kfy, gy, k);
          atomic_add(kfz, gz, k);
+#else
+         atomic_add(ifx, gx, shatomi);
+         atomic_add(ify, gy, shatomi);
+         atomic_add(ifz, gz, shatomi);
+         atomic_add(kfx, gx, atomk);
+         atomic_add(kfy, gy, atomk);
+         atomic_add(kfz, gz, atomk);
+#endif
       }
    } // end loop block pairs
    // */
@@ -1262,7 +1286,6 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
       real shxi = sorted[shatomi].x;
       real shyi = sorted[shatomi].y;
       real shzi = sorted[shatomi].z;
-      atomid[threadIdx.x] = sorted[shatomi].unsorted;
       chgarr[threadIdx.x] = chg[shatomi];
       radarr[threadIdx.x] = radeps[shatomi].x;
       epsarr[threadIdx.x] = radeps[shatomi].y;
@@ -1272,10 +1295,15 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
       real xk = sorted[atomk].x;
       real yk = sorted[atomk].y;
       real zk = sorted[atomk].z;
-      int k = sorted[atomk].unsorted;
       real chgk = chg[atomk];
       real radk = radeps[atomk].x;
       real epsk = radeps[atomk].y;
+
+
+#if TINKER_ECHGLJ_USE_COALESCED_GRAD == 0
+      atomid[threadIdx.x] = sorted[shatomi].unsorted;
+      int k = sorted[atomk].unsorted;
+#endif
 
 
       real xc = akc[ty].x;
@@ -1429,6 +1457,7 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
 
 
       if CONSTEXPR (do_g) {
+#if TINKER_ECHGLJ_USE_COALESCED_GRAD == 0
          int shi = atomid[threadIdx.x];
          atomic_add(ifx, gx, shi);
          atomic_add(ify, gy, shi);
@@ -1436,6 +1465,14 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
          atomic_add(kfx, gx, k);
          atomic_add(kfy, gy, k);
          atomic_add(kfz, gz, k);
+#else
+         atomic_add(ifx, gx, shatomi);
+         atomic_add(ify, gy, shatomi);
+         atomic_add(ifz, gz, shatomi);
+         atomic_add(kfx, gx, atomk);
+         atomic_add(kfy, gy, atomk);
+         atomic_add(kfz, gz, atomk);
+#endif
       }
    } // end loop block-atoms
    // */
@@ -1468,6 +1505,37 @@ void echglj_coalesce(int n, real* restrict schg, real2* restrict svdw, //
       }
       if CONSTEXPR (eq<EPSRULE, EPS_GEOM>()) {
          svdw[i].y = REAL_SQRT(epsold);
+      }
+   }
+}
+
+
+template <int ACT>
+__global__
+void echglj_grad_coalesce(int n, grad_prec* restrict gxc,
+                          grad_prec* restrict gyc, grad_prec* restrict gzc,
+                          const int* restrict bnum, grad_prec* restrict gx,
+                          grad_prec* restrict gy, grad_prec* restrict gz)
+{
+   if CONSTEXPR (ACT == 0) {
+      // zero out the coalesced gradients
+      for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
+           i += blockDim.x * gridDim.x) {
+         gxc[i] = 0;
+         gyc[i] = 0;
+         gzc[i] = 0;
+      }
+   }
+
+
+   if CONSTEXPR (ACT == 1) {
+      // add to the global gradients
+      for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
+           i += blockDim.x * gridDim.x) {
+         int sorted = bnum[i];
+         atomic_add(gxc[sorted], gx, i);
+         atomic_add(gyc[sorted], gy, i);
+         atomic_add(gzc[sorted], gz, i);
       }
    }
 }
@@ -1516,11 +1584,24 @@ void echglj_cu3_spatial_ver2()
    int ngrid = std::min(grid1, grid2);
 
 
+#if TINKER_ECHGLJ_USE_COALESCED_GRAD
+   if CONSTEXPR (Ver::g) {
+      launch_k1s(nonblk, st.n, echglj_grad_coalesce<0>,          //
+                 st.n, gx_coalesced, gy_coalesced, gz_coalesced, //
+                 st.bnum, decx, decy, decz);
+   }
+#   define TINKER_ECHGLJ_COALESCED_GRAD gx_coalesced, gy_coalesced, gz_coalesced
+#else
+#   define TINKER_ECHGLJ_COALESCED_GRAD decx, decy, decz
+#endif
+
+
 #define ECHGLJ_CU3_V2_ARGS                                                     \
-   ec, vir_ec, decx, decy, decz, eccut, ecoff, f, aewald, chg_coalesced,       \
-      st.si1, (const real2*)radeps_coalesced, evcut, evoff, st.si2,            \
-      TINKER_IMAGE_ARGS, st.n, st.sorted, st.nak, st.akc, st.nakpl, st.iakpl,  \
-      st.niak, st.iak, st.lst, ncvexclude, cvexclude, cvexclude_scale, st.bnum
+   ec, vir_ec, TINKER_ECHGLJ_COALESCED_GRAD, eccut, ecoff, f, aewald,          \
+      chg_coalesced, st.si1, (const real2*)radeps_coalesced, evcut, evoff,     \
+      st.si2, TINKER_IMAGE_ARGS, st.n, st.sorted, st.nak, st.akc, st.nakpl,    \
+      st.iakpl, st.niak, st.iak, st.lst, ncvexclude, cvexclude,                \
+      cvexclude_scale, st.bnum
 
 
    if (box_shape == ORTHO_BOX) {
@@ -1538,6 +1619,14 @@ void echglj_cu3_spatial_ver2()
    } else {
       assert(false);
    }
+#if TINKER_ECHGLJ_USE_COALESCED_GRAD
+   if CONSTEXPR (Ver::g) {
+      launch_k1s(nonblk, st.n, echglj_grad_coalesce<1>,          //
+                 st.n, gx_coalesced, gy_coalesced, gz_coalesced, //
+                 st.bnum, decx, decy, decz);
+   }
+#endif
+#undef TINKER_ECHGLJ_COALESCED_GRAD
 #undef ECHGLJ_CU3_V2_ARGS
 }
 

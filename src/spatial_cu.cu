@@ -1438,7 +1438,6 @@ void run_spatial2_step5(Spatial2Unit u)
               n, u->nak, cutbuf, TINKER_IMAGE_ARGS, //
               u->akpf, u->sorted, u->akc, u->half);
    darray::copyout(WAIT_NEW_Q, 1, &u->niak, dev_niak);
-   printf(" NList niak %d\n", u->niak);
 }
 
 
@@ -1481,7 +1480,6 @@ void spatial_data_init_cu(Spatial2Unit u)
               si1.ns, si1.js, si2.ns, si2.js, //
               si3.ns, si3.js, si4.ns, si4.js);
    darray::copyout(WAIT_NEW_Q, 1, &u->nakpl, nakpl_ptr0);
-   printf(" NList atom block pair %d capacity %d\n", u->nakpl, u->cap_nakpl);
    if (WARP_SIZE + u->nakpl > u->cap_nakpl) {
       u->cap_nakpl = WARP_SIZE + u->nakpl;
       darray::deallocate(u->iakpl);
