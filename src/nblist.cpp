@@ -262,9 +262,9 @@ static void spatial_update(SPT unt)
    extern int check_spatial(int, real, int*, const real*, const real*,
                             const real*, real*, real*, real*);
    auto& st = *unt;
-   st.rebuild = check_spatial(st.n, st.buffer, st.update, st.x, st.y, st.z,
+   int answer = check_spatial(st.n, st.buffer, st.update, st.x, st.y, st.z,
                               st.xold, st.yold, st.zold);
-   if (st.rebuild) {
+   if (answer) {
       spatial_data_init_cu(unt);
    } else {
       spatial_data_update_sorted(unt);
@@ -281,26 +281,17 @@ template <class SPT>
 static void spatial_update(SPT)
 {}
 #endif
-static void
-spatial_alloc(Spatial2Unit& unt, int n, real cut, real buf, const real* x,
-              const real* y, const real* z, //
-              int nstype,                   //
-              int ns1 = 0, int (*js1)[2] = nullptr, real* ks1 = nullptr,
-              const std::vector<double>& vs1 = std::vector<double>(),
-              int ns2 = 0, int (*js2)[2] = nullptr, real* ks2 = nullptr,
-              const std::vector<double>& vs2 = std::vector<double>(),
-              int ns3 = 0, int (*js3)[2] = nullptr, real* ks3 = nullptr,
-              const std::vector<double>& vs3 = std::vector<double>(),
-              int ns4 = 0, int (*js4)[2] = nullptr, real* ks4 = nullptr,
-              const std::vector<double>& vs4 = std::vector<double>())
+static void spatial_alloc( //
+   Spatial2Unit& unt, int n, real cut, real buf, const real* x, const real* y,
+   const real* z, int nstype,            //
+   int ns1 = 0, int (*js1)[2] = nullptr, //
+   int ns2 = 0, int (*js2)[2] = nullptr, //
+   int ns3 = 0, int (*js3)[2] = nullptr, //
+   int ns4 = 0, int (*js4)[2] = nullptr)
 {
 #if TINKER_CUDART
-   spatial2_data_alloc(unt, n, cut, buf, x, y, z, //
-                       nstype,                    //
-                       ns1, js1, ks1, vs1,        //
-                       ns2, js2, ks2, vs2,        //
-                       ns3, js3, ks3, vs3,        //
-                       ns4, js4, ks4, vs4);
+   spatial2_data_alloc(unt, n, cut, buf, x, y, z, nstype, //
+                       ns1, js1, ns2, js2, ns3, js3, ns4, js4);
    alloc_thrust_cache = true;
 #else
 #endif
@@ -403,21 +394,8 @@ void nblist_data(rc_op op)
       auto& un2 = cspatial_v2_unit;
       if (op & rc_alloc) {
          spatial_alloc(unt, n, cut, buf, x, y, z);
-         std::vector<double> cs1;
-         cs1.push_back(chgpot::c1scale);
-         cs1.push_back(chgpot::c2scale);
-         cs1.push_back(chgpot::c3scale);
-         cs1.push_back(chgpot::c4scale);
-         cs1.push_back(chgpot::c5scale);
-         std::vector<double> vs2;
-         vs2.push_back(vdwpot::v2scale);
-         vs2.push_back(vdwpot::v3scale);
-         vs2.push_back(vdwpot::v4scale);
-         vs2.push_back(vdwpot::v5scale);
-         spatial_alloc(un2, n, cut, buf, x, y, z,                //
-                       2,                                        //
-                       ncexclude, cexclude, cexclude_scale, cs1, //
-                       nvexclude, vexclude, vexclude_scale, vs2);
+         spatial_alloc(un2, n, cut, buf, x, y, z, 2, //
+                       ncexclude, cexclude, nvexclude, vexclude);
       }
       if (op & rc_init) {
          spatial_build(unt);

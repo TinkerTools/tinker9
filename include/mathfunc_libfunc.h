@@ -24,6 +24,7 @@
 #   define REAL_MAX      fmax
 #   define REAL_SIGN     copysign
 // #   define REAL_ERFC     erfc
+#   define REAL_ERFC_V2(x, expterm) (1 - erf(x))
 #endif
 
 
@@ -46,6 +47,7 @@
 #   define REAL_SIGN     copysignf
 // #   define REAL_ERFC     erfcf
 // #   define REAL_ERFC(x)  (1 - erff(x))
+#   define REAL_ERFC_V2(x, expterm) erfcf_hastings((x), (expterm))
 #endif
 
 

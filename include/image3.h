@@ -32,11 +32,11 @@ namespace tinker {
       yr -= (fy * l2.y);                                                       \
       zr -= (fz * l3.z);                                                       \
    }
-#define IMAGE_OCT__(xr, yr, zr, l1x, rax)                                      \
+#define IMAGE_OCT__(xr, yr, zr, l1, l2, l3, ra, rb, rc)                        \
    {                                                                           \
-      real fx = xr * rax;                                                      \
-      real fy = yr * rax;                                                      \
-      real fz = zr * rax;                                                      \
+      real fx = xr * ra.x;                                                     \
+      real fy = yr * ra.x;                                                     \
+      real fz = zr * ra.x;                                                     \
       fx -= REAL_FLOOR(0.5f + fx);                                             \
       fy -= REAL_FLOOR(0.5f + fy);                                             \
       fz -= REAL_FLOOR(0.5f + fz);                                             \
@@ -45,9 +45,9 @@ namespace tinker {
          fy -= REAL_SIGN(0.5f, fy);                                            \
          fz -= REAL_SIGN(0.5f, fz);                                            \
       }                                                                        \
-      xr = fx * l1x;                                                           \
-      yr = fy * l1x;                                                           \
-      zr = fz * l1x;                                                           \
+      xr = fx * l1.x;                                                          \
+      yr = fy * l1.x;                                                          \
+      zr = fz * l1.x;                                                          \
    }
 
 
@@ -117,7 +117,7 @@ struct PBC_OCT
    static void img(real& restrict xr, real& restrict yr, real& restrict zr,
                    real3 l1, real3 l2, real3 l3, real3 ra, real3 rb, real3 rc)
    {
-      IMAGE_OCT__(xr, yr, zr, l1.x, ra.x);
+      IMAGE_OCT__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    }
 
 
@@ -140,13 +140,13 @@ inline void image_general(real& restrict xr, real& restrict yr,
                           real3 l3, real3 ra, real3 rb, real3 rc)
 {
    if (sh == ORTHO_BOX) {
-      PBC_ORTHO::img(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      IMAGE_ORTHO__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else if (sh == MONO_BOX) {
-      PBC_MONO::img(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      IMAGE_MONO__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else if (sh == TRI_BOX) {
-      PBC_TRI::img(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      IMAGE_TRI__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else if (sh == OCT_BOX) {
-      PBC_OCT::img(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      IMAGE_OCT__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else {
       // UNBOND_BOX
    }
@@ -168,16 +168,16 @@ inline real imagen2_general(real& xr, real& yr, real& zr, BoxShape sh, real3 l1,
                             real3 l2, real3 l3, real3 ra, real3 rb, real3 rc)
 {
    if (sh == ORTHO_BOX) {
-      return PBC_ORTHO::img2(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      IMAGE_ORTHO__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else if (sh == MONO_BOX) {
-      return PBC_MONO::img2(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      IMAGE_MONO__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else if (sh == TRI_BOX) {
-      return PBC_TRI::img2(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      IMAGE_TRI__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else if (sh == OCT_BOX) {
-      return PBC_OCT::img2(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      IMAGE_OCT__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else {
       // UNBOND_BOX
-      return xr * xr + yr * yr + zr * zr;
    }
+   return xr * xr + yr * yr + zr * zr;
 }
 }

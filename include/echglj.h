@@ -12,4 +12,8 @@ void echglj(int vers);
 
 void echglj_rad_arith_eps_geom_nonewald_cu(int);
 void echglj_rad_arith_eps_geom_ewald_real_cu(int);
+
+
+extern real* chg_coalesced;    // n
+extern real* radeps_coalesced; // 2*n
 }

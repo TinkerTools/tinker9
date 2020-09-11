@@ -49,11 +49,7 @@ void n_data(rc_op op)
 
 #if TINKER_CUDART
       nelem_buffer = gpu_max_nparallel(idevice);
-      size_t nelem1 = pow2_ge(nelem_buffer);
-      size_t nelem2 = pow2_ge(n);
-      nelem_buffer = std::min(nelem1, nelem2);
-      int nelem3 = 4 * 1024;
-      nelem_buffer = std::max(nelem_buffer, nelem3);
+      nelem_buffer = pow2_ge(nelem_buffer);
 #elif TINKER_HOST
       nelem_buffer = 1;
 #endif

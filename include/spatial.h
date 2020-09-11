@@ -242,7 +242,7 @@ struct Spatial
    int* xkf;                     // nax * nxk
 
 
-   int rebuild;
+   int fresh;
    real cutoff, buffer;
    const real* x;
    const real* y;

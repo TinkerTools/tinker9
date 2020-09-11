@@ -503,6 +503,7 @@ namespace tinker {
 void spatial_data_update_sorted(SpatialUnit u)
 {
    auto& st = *u;
+   st.fresh = 0;
    launch_k1s(nonblk, n, spatial_update_sorted, n, st.sorted, st.x, st.y, st.z,
               TINKER_IMAGE_ARGS);
 }
@@ -510,8 +511,8 @@ void spatial_data_update_sorted(SpatialUnit u)
 
 void spatial_data_init_cu(SpatialUnit u)
 {
-   assert(u->rebuild == 1);
-   u->rebuild = 0;
+   assert(u->fresh == 0);
+   u->fresh = 1;
    const real cutbuf = u->cutoff + u->buffer;
    const real cutbuf2 = cutbuf * cutbuf;
    const real lbuf = u->buffer;
@@ -808,7 +809,7 @@ __global__
 void spatial2_update_sorted(int n, Spatial::SortedAtom* restrict sorted,
                             const real* restrict x, const real* restrict y,
                             const real* restrict z, //
-                            TINKER_IMAGE_PARAMS, real cutbuf,
+                            TINKER_IMAGE_PARAMS, real cut,
                             Spatial2::Center* restrict akc,
                             Spatial2::Center* restrict half)
 {
@@ -877,11 +878,13 @@ void spatial2_update_sorted(int n, Spatial::SortedAtom* restrict sorted,
       real yh = (ymax - ymin) / 2;
       real zh = (zmax - zmin) / 2;
       // C.4 local flag
+      // Different from list construction: instead of `cutoff+buffer`,
+      // only `cutoff` is needed.
       // if i-block has a small distribution in space:
-      // xbox / 2 - xhalf > cutbuf ==> xbox > 2*(xhalf+cutbuf)
-      bool ilocal = xbox > 2 * (xh + cutbuf) //
-         and ybox > 2 * (yh + cutbuf)        //
-         and zbox > 2 * (zh + cutbuf);
+      // xbox / 2 - xhalf > cut ==> xbox > 2*(xhalf+cut)
+      bool ilocal = xbox > 2 * (xh + cut) //
+         and ybox > 2 * (yh + cut)        //
+         and zbox > 2 * (zh + cut);
 
 
       int iblock = i / WARP_SIZE;
@@ -890,11 +893,11 @@ void spatial2_update_sorted(int n, Spatial::SortedAtom* restrict sorted,
          akc[iblock].x = xc + x0;
          akc[iblock].y = yc + y0;
          akc[iblock].z = zc + z0;
-         akc[iblock].w = r;
+         akc[iblock].w = ilocal;
          half[iblock].x = xh;
          half[iblock].y = yh;
          half[iblock].z = zh;
-         half[iblock].w = ilocal;
+         half[iblock].w = r;
       }
    }
 }
@@ -999,11 +1002,11 @@ void spatial2_step2(int n, Spatial::SortedAtom* restrict sorted,
          akc[iblock].x = xc + x0;
          akc[iblock].y = yc + y0;
          akc[iblock].z = zc + z0;
-         akc[iblock].w = r;
+         akc[iblock].w = ilocal;
          half[iblock].x = xh;
          half[iblock].y = yh;
          half[iblock].z = zh;
-         half[iblock].w = ilocal;
+         half[iblock].w = r;
       }
    }
 }
@@ -1077,12 +1080,10 @@ void spatial2_step3(int nak, int* restrict akpf, int* nakpl_ptr0, //
 __global__
 void spatial2_step4(int nakpk, int* restrict nakpl_ptr1,
                     const int* restrict akpf, int* restrict iakpl,
-                    int* restrict iakpl_rev,                                  //
-                    int cap_nakpl, int nstype,                                //
-                    unsigned int* restrict s1b0, unsigned int* restrict s1b1, //
-                    unsigned int* restrict s2b0, unsigned int* restrict s2b1, //
-                    unsigned int* restrict s3b0, unsigned int* restrict s3b1, //
-                    unsigned int* restrict s4b0, unsigned int* restrict s4b1)
+                    int* restrict iakpl_rev,   //
+                    int cap_nakpl, int nstype, //
+                    unsigned int* restrict s1b0, unsigned int* restrict s2b0,
+                    unsigned int* restrict s3b0, unsigned int* restrict s4b0)
 {
    for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < nakpk;
         i += blockDim.x * gridDim.x) {
@@ -1106,49 +1107,24 @@ void spatial2_step4(int nakpk, int* restrict nakpl_ptr1,
         i < WARP_SIZE * cap_nakpl; i += blockDim.x * gridDim.x) {
       if (nstype >= 1) {
          s1b0[i] = 0;
-         s1b1[i] = 0;
       }
       if (nstype >= 2) {
          s2b0[i] = 0;
-         s2b1[i] = 0;
       }
       if (nstype >= 3) {
          s3b0[i] = 0;
-         s3b1[i] = 0;
       }
       if (nstype >= 4) {
          s4b0[i] = 0;
-         s4b1[i] = 0;
       }
    }
 }
 
 
 __device__
-void spatial2_step5_bits(int x0, int y0, real sreal, real sc0, real sc1,
-                         real sc2, real sc3, unsigned int* bit0,
-                         unsigned int* bit1, const int* iakpl_rev)
+void spatial2_step5_bits(int x0, int y0, unsigned int* bit0,
+                         const int* iakpl_rev)
 {
-   int sint = (1 + sreal) * Spatial2::ScaleInfo::MULT;
-   // int sint0 = (int)(sc0 * Spatial2::ScaleInfo::MULT);
-   int sint1 = (int)(sc1 * Spatial2::ScaleInfo::MULT);
-   int sint2 = (int)(sc2 * Spatial2::ScaleInfo::MULT);
-   int sint3 = (int)(sc3 * Spatial2::ScaleInfo::MULT);
-   int b0 = 0, b1 = 0;
-   // if (sint == sint0) {
-   //   b1 = 0;
-   //   b0 = 0;
-   // } else
-   if (sint == sint1) {
-      b1 = 0;
-      b0 = 1;
-   } else if (sint == sint2) {
-      b1 = 1;
-      b0 = 0;
-   } else if (sint == sint3) {
-      b1 = 1;
-      b0 = 1;
-   }
    int x, y;
    int bx, by, ax, ay;
    int f, fshort, pos;
@@ -1161,12 +1137,10 @@ void spatial2_step5_bits(int x0, int y0, real sreal, real sc0, real sc1,
    f = xy_to_tri(bx, by);
    fshort = iakpl_rev[f];
    pos = WARP_SIZE * fshort + ax;
-   atomicOr(&bit0[pos], b0 << ay);
-   atomicOr(&bit1[pos], b1 << ay);
+   atomicOr(&bit0[pos], 1 << ay);
    if (bx == by) {
       pos = WARP_SIZE * fshort + ay;
-      atomicOr(&bit0[pos], b0 << ax);
-      atomicOr(&bit1[pos], b1 << ax);
+      atomicOr(&bit0[pos], 1 << ax);
    }
 }
 
@@ -1196,29 +1170,25 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
          auto& si = si1;
          x0 = bnum[si.js[i][0]];
          y0 = bnum[si.js[i][1]];
-         spatial2_step5_bits(x0, y0, si.ks[i], si.sc0, si.sc1, si.sc2, si.sc3,
-                             si.bit0, si.bit1, iakpl_rev);
+         spatial2_step5_bits(x0, y0, si.bit0, iakpl_rev);
       }
       if (nstype >= 2 and i < si2.ns) {
          auto& si = si2;
          x0 = bnum[si.js[i][0]];
          y0 = bnum[si.js[i][1]];
-         spatial2_step5_bits(x0, y0, si.ks[i], si.sc0, si.sc1, si.sc2, si.sc3,
-                             si.bit0, si.bit1, iakpl_rev);
+         spatial2_step5_bits(x0, y0, si.bit0, iakpl_rev);
       }
       if (nstype >= 3 and i < si3.ns) {
          auto& si = si3;
          x0 = bnum[si.js[i][0]];
          y0 = bnum[si.js[i][1]];
-         spatial2_step5_bits(x0, y0, si.ks[i], si.sc0, si.sc1, si.sc2, si.sc3,
-                             si.bit0, si.bit1, iakpl_rev);
+         spatial2_step5_bits(x0, y0, si.bit0, iakpl_rev);
       }
       if (nstype >= 4 and i < si4.ns) {
          auto& si = si4;
          x0 = bnum[si.js[i][0]];
          y0 = bnum[si.js[i][1]];
-         spatial2_step5_bits(x0, y0, si.ks[i], si.sc0, si.sc1, si.sc2, si.sc3,
-                             si.bit0, si.bit1, iakpl_rev);
+         spatial2_step5_bits(x0, y0, si.bit0, iakpl_rev);
       }
    }
 
@@ -1250,11 +1220,11 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
       real hxi = half[wy].x;
       real hyi = half[wy].y;
       real hzi = half[wy].z;
-      bool ilocal = half[wy].w != 0;
+      real rad2 = half[wy].w;
       real cxi = akc[wy].x;
       real cyi = akc[wy].y;
       real czi = akc[wy].z;
-      real rad2 = akc[wy].w;
+      bool ilocal = akc[wy].w != 0;
       if (ilocal) {
          xr = xi - cxi;
          yr = yi - cyi;
@@ -1292,7 +1262,7 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
             real cxk = akc[wx].x;
             real cyk = akc[wx].y;
             real czk = akc[wx].z;
-            real rad1 = akc[wx].w;
+            real rad1 = half[wx].w;
             rlimit = cutbuf + rad1 + rad2;
             rlimit2 = rlimit * rlimit;
             xr = cxk - cxi;
@@ -1333,7 +1303,7 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
             real cxk = akc[wx].x;
             real cyk = akc[wx].y;
             real czk = akc[wx].z;
-            real rad1 = akc[wx].w;
+            real rad1 = half[wx].w;
             int k = wx * WARP_SIZE + ilane;
             int atomk = min(k, n - 1);
             real xk = sorted[atomk].x;
@@ -1474,8 +1444,8 @@ void run_spatial2_step5(Spatial2Unit u)
 
 void spatial_data_init_cu(Spatial2Unit u)
 {
-   assert(u->rebuild == 1);
-   u->rebuild = 0;
+   assert(u->fresh == 0);
+   u->fresh = 1;
    const real lbuf = u->buffer;
    const int n = u->n;
 
@@ -1512,29 +1482,29 @@ void spatial_data_init_cu(Spatial2Unit u)
               si3.ns, si3.js, si4.ns, si4.js);
    darray::copyout(WAIT_NEW_Q, 1, &u->nakpl, nakpl_ptr0);
    printf(" NList atom block pair %d capacity %d\n", u->nakpl, u->cap_nakpl);
-   if (u->nakpl > u->cap_nakpl) {
-      u->cap_nakpl = u->nakpl;
+   if (WARP_SIZE + u->nakpl > u->cap_nakpl) {
+      u->cap_nakpl = WARP_SIZE + u->nakpl;
       darray::deallocate(u->iakpl);
       darray::allocate(u->cap_nakpl, &u->iakpl);
       if (u->nstype >= 1) {
          auto& si = si1;
-         darray::deallocate(si.bit0, si.bit1);
-         darray::allocate(32 * u->cap_nakpl, &si.bit0, &si.bit1);
+         darray::deallocate(si.bit0);
+         darray::allocate(32 * u->cap_nakpl, &si.bit0);
       }
       if (u->nstype >= 2) {
          auto& si = si2;
-         darray::deallocate(si.bit0, si.bit1);
-         darray::allocate(32 * u->cap_nakpl, &si.bit0, &si.bit1);
+         darray::deallocate(si.bit0);
+         darray::allocate(32 * u->cap_nakpl, &si.bit0);
       }
       if (u->nstype >= 3) {
          auto& si = si3;
-         darray::deallocate(si.bit0, si.bit1);
-         darray::allocate(32 * u->cap_nakpl, &si.bit0, &si.bit1);
+         darray::deallocate(si.bit0);
+         darray::allocate(32 * u->cap_nakpl, &si.bit0);
       }
       if (u->nstype >= 4) {
          auto& si = si4;
-         darray::deallocate(si.bit0, si.bit1);
-         darray::allocate(32 * u->cap_nakpl, &si.bit0, &si.bit1);
+         darray::deallocate(si.bit0);
+         darray::allocate(32 * u->cap_nakpl, &si.bit0);
       }
    }
 
@@ -1543,10 +1513,7 @@ void spatial_data_init_cu(Spatial2Unit u)
    launch_k1s(nonblk, u->nakp, spatial2_step4,                       //
               u->nakpk, nakpl_ptr1, u->akpf, u->iakpl, u->iakpl_rev, //
               u->cap_nakpl, u->nstype,                               //
-              si1.bit0, si1.bit1,                                    //
-              si2.bit0, si2.bit1,                                    //
-              si3.bit0, si3.bit1,                                    //
-              si4.bit0, si4.bit1);
+              si1.bit0, si2.bit0, si3.bit0, si4.bit0);
 
 
    if (box_shape == ORTHO_BOX) {
@@ -1565,8 +1532,9 @@ void spatial_data_init_cu(Spatial2Unit u)
 
 void spatial_data_update_sorted(Spatial2Unit u)
 {
+   u->fresh = 0;
    launch_k1s(nonblk, u->n, spatial2_update_sorted, //
               u->n, u->sorted, u->x, u->y, u->z,    //
-              TINKER_IMAGE_ARGS, u->cutoff + u->buffer, u->akc, u->half);
+              TINKER_IMAGE_ARGS, u->cutoff, u->akc, u->half);
 }
 }

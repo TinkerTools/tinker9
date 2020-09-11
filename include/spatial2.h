@@ -68,8 +68,8 @@ namespace tinker {
  *    3. Zero out `b2num`.
  *    4. For each atom block, compute mid point, radius, half size, and the
  *    "local flag".
- * 
- * 
+ *
+ *
  * ### D. Step 3
  *    1. For every atom block, set bit in `akpf` for block pair `(i,i)`.
  */
@@ -95,7 +95,7 @@ struct Spatial2
    int nakp;  // Number of block pairs. (nak+1)*nak/2.
    int nakpk; // Length of 32-bit integer array to store atom block pairs.
    int px, py, pz;
-   int cap_nakpl; // Capacity of iakpl. Initial value 8*nak.
+   int cap_nakpl; // Capacity of iakpl. Initial value (32+8*nak).
 
 
    // internal
@@ -112,11 +112,11 @@ struct Spatial2
    {
       real x, y, z, w;
    };
-   Center* akc;  // Length nak. Block center and radius.
-   Center* half; // Length nak. Half box size and the "local flag".
+   Center* akc;  // Length nak. Block center and the "local flag".
+   Center* half; // Length nak. Half box size and radius.
 
 
-   int rebuild;
+   int fresh;
    real cutoff, buffer;
    const real* x;
    const real* y;
@@ -128,19 +128,11 @@ struct Spatial2
    struct ScaleInfo
    {
       int (*js)[2];       // Length ns. Atom pairs.
-      real* ks;           // Length ns. Scale coefficients.
       unsigned int* bit0; // Length 32*cap_nakpl.
-      unsigned int* bit1; // Length 32*cap_nakpl.
-      real sc0, sc1, sc2, sc3;
       int ns;
 
-      static constexpr int MULT = 100000;
-      static constexpr int CAPACITY = 4; // Max number of scale coefficients
-
-
       void init();
-      void set(int nns, int (*jjs)[2], real* kks,
-               const std::vector<double>& vs);
+      void set(int nns, int (*jjs)[2]);
    };
    int nstype; // number of ScaleInfo objects in-use
    ScaleInfo si1;
@@ -154,14 +146,11 @@ struct Spatial2
 using Spatial2Unit = GenericUnit<Spatial2, GenericUnitVersion::DisableOnDevice>;
 
 
-void spatial2_data_alloc(
-   Spatial2Unit& u, int n, double cutoff, double buffer, const real* x,
-   const real* y, const real* z,                                      //
-   int nstype,                                                        //
-   int ns1, int (*js1)[2], real* ks1, const std::vector<double>& vs1, //
-   int ns2, int (*js2)[2], real* ks2, const std::vector<double>& vs2, //
-   int ns3, int (*js3)[2], real* ks3, const std::vector<double>& vs3, //
-   int ns4, int (*js4)[2], real* ks4, const std::vector<double>& vs4);
+void spatial2_data_alloc(Spatial2Unit& u, int n, double cutoff, double buffer,
+                         const real* x, const real* y, const real* z,
+                         int nstype,                                     //
+                         int ns1, int (*js1)[2], int ns2, int (*js2)[2], //
+                         int ns3, int (*js3)[2], int ns4, int (*js4)[2]);
 void spatial2_cut(int& px, int& py, int& pz, int level);
 void spatial_data_init_cu(Spatial2Unit);
 void spatial_data_update_sorted(Spatial2Unit);

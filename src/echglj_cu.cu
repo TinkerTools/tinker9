@@ -14,26 +14,8 @@
 #include "tool/gpu_card.h"
 
 
-namespace tinker {
-namespace {
-cudaStream_t echglj_stream; // stream2
-}
-
-
-void echglj_cu_data(rc_op op)
-{
-   if (op bitand rc_dealloc) {
-      use_stream2 = false;
-      echglj_stream = nullptr;
-   }
-
-
-   if (op bitand rc_alloc) {
-      use_stream2 = true;
-      echglj_stream = stream2;
-   }
-}
-}
+#include "seq_triangle.h"
+#include "spatial2.h"
 
 
 extern "C"
@@ -67,6 +49,13 @@ extern "C"
       static real avg(real a, real b)
       {
          return REAL_SQRT(a * b);
+      }
+
+
+      __device__
+      static real savg(real a, real b)
+      {
+         return a * b;
       }
    };
 
@@ -430,8 +419,8 @@ void echglj_cu2(ECHGLJPARAS, const real* restrict x, const real* restrict y,
 
       int i = cvexclude[ii][0];
       int k = cvexclude[ii][1];
-      real cscale = cvexclude_scale[ii][0];
-      real vscale = cvexclude_scale[ii][1];
+      real cscale = cvexclude_scale[ii][0] - 1;
+      real vscale = cvexclude_scale[ii][1] - 1;
 
 
       real xi = x[i];
@@ -699,7 +688,7 @@ void echglj_cu4(ECHGLJPARAS2, const Spatial::SortedAtom* restrict sorted,
 
 
 template <class Ver, class ETYP, class RADRULE, class EPSRULE, int NOUT>
-void echglj_cu3()
+void echglj_cu3_spatial_ver1()
 {
    const auto& st = *cspatial_unit;
    size_t bufsize = buffer_size();
@@ -738,7 +727,7 @@ void echglj_cu3()
    if CONSTEXPR (eq<ETYP, EWALD>()) {
       if (NOUT == 2 and st.niak > 0) {
          auto ker1 = echglj_cu1<Ver, EWALD, RADRULE, EPSRULE>;
-         launch_k1a(echglj_stream, WARP_SIZE * st.niak, ker1, //
+         launch_k1a(nonblk, WARP_SIZE * st.niak, ker1, //
                     bufsize, ec, vir_ec, decx, decy, decz, eccut, ecoff,
                     ebuffer, f, pchg, //
                     ev, vir_ev, devx, devy, devz, atom_rad, atom_eps, evcut,
@@ -747,7 +736,7 @@ void echglj_cu3()
                     st.sorted, st.niak, st.iak, st.lst, n, aewald, i12);
       } else if (NOUT == 1 and st.niak > 0) {
          auto ker1 = echglj_cu4<Ver, EWALD, RADRULE, EPSRULE>;
-         ker1<<<ngrid, CHGLJ4_BDIM, 0, echglj_stream>>>(
+         ker1<<<ngrid, CHGLJ4_BDIM, 0, nonblk>>>(
             bufsize, ec, vir_ec, decx, decy, decz, //
             eccut, ecoff, ebuffer, f, pchg,        //
             atom_rad, atom_eps, evcut, evoff,      //
@@ -756,7 +745,7 @@ void echglj_cu3()
       }
       if (ncvexclude > 0) {
          auto ker2 = echglj_cu2<Ver, NON_EWALD, RADRULE, EPSRULE>;
-         launch_k1a(echglj_stream, ncvexclude, ker2, //
+         launch_k1a(nonblk, ncvexclude, ker2, //
                     bufsize, ec, vir_ec, decx, decy, decz, eccut, ecoff,
                     ebuffer, f, pchg, //
                     ev, vir_ev, devx, devy, devz, atom_rad, atom_eps, evcut,
@@ -767,7 +756,7 @@ void echglj_cu3()
    } else if CONSTEXPR (eq<ETYP, NON_EWALD_TAPER>()) {
       if (NOUT == 2 and st.niak > 0) {
          auto ker1 = echglj_cu1<Ver, NON_EWALD_TAPER, RADRULE, EPSRULE>;
-         launch_k1a(echglj_stream, WARP_SIZE * st.niak, ker1, //
+         launch_k1a(nonblk, WARP_SIZE * st.niak, ker1, //
                     bufsize, ec, vir_ec, decx, decy, decz, eccut, ecoff,
                     ebuffer, f, pchg, //
                     ev, vir_ev, devx, devy, devz, atom_rad, atom_eps, evcut,
@@ -776,7 +765,7 @@ void echglj_cu3()
                     st.sorted, st.niak, st.iak, st.lst, n, 0, i12);
       } else if (NOUT == 1 and st.niak > 0) {
          auto ker1 = echglj_cu4<Ver, NON_EWALD_TAPER, RADRULE, EPSRULE>;
-         ker1<<<ngrid, CHGLJ4_BDIM, 0, echglj_stream>>>(
+         ker1<<<ngrid, CHGLJ4_BDIM, 0, nonblk>>>(
             bufsize, ec, vir_ec, decx, decy, decz, //
             eccut, ecoff, ebuffer, f, pchg,        //
             atom_rad, atom_eps, evcut, evoff,      //
@@ -785,7 +774,7 @@ void echglj_cu3()
       }
       if (ncvexclude > 0) {
          auto ker2 = echglj_cu2<Ver, NON_EWALD_TAPER, RADRULE, EPSRULE>;
-         launch_k1a(echglj_stream, ncvexclude, ker2, //
+         launch_k1a(nonblk, ncvexclude, ker2, //
                     bufsize, ec, vir_ec, decx, decy, decz, eccut, ecoff,
                     ebuffer, f, pchg, //
                     ev, vir_ev, devx, devy, devz, atom_rad, atom_eps, evcut,
@@ -795,6 +784,765 @@ void echglj_cu3()
       }
    }
 }
+
+
+//====================================================================//
+// Use Spatial2.
+
+
+template <bool DO_G, class ETYP, int SCALE>
+__device__
+void pair_chg_v2(real r, real invr, //
+                 real cscale, real chgi, real chgk, real f, real aewald,
+                 real eccut, real ecoff, //
+                 real& restrict ec, real& restrict dec)
+{
+   // charge
+   bool incl = r <= ecoff;
+   real fik = f * chgi * chgk;
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
+      const real rew = aewald * r;
+      const real expterm = REAL_EXP(-rew * rew);
+      real erfterm = REAL_ERFC_V2(rew, expterm);
+      if CONSTEXPR (SCALE != 1) {
+         erfterm += cscale - 1;
+      }
+      ec = fik * invr * erfterm;
+      if CONSTEXPR (DO_G) {
+         constexpr real two = 2.0f / sqrtpi;
+         dec = erfterm * invr + two * aewald * expterm;
+         dec *= -fik * invr;
+      }
+   } else if CONSTEXPR (eq<ETYP, NON_EWALD_TAPER>()) {
+      if CONSTEXPR (SCALE != 1) {
+         fik *= cscale;
+      }
+      ec = fik * invr;
+      if CONSTEXPR (DO_G) {
+         dec = -fik * invr * invr;
+      }
+
+
+      // shift energy
+      real shift = fik * 2 * REAL_RECIP(eccut + ecoff);
+      ec -= shift;
+      if (r > eccut) {
+         real taper, dtaper;
+         switch_taper5<DO_G>(r, eccut, ecoff, taper, dtaper);
+
+
+         real trans, dtrans;
+         real coef = fik * (REAL_RECIP(eccut) - REAL_RECIP(ecoff)) *
+            REAL_RECIP((real)9.3);
+         real invs = REAL_RECIP(ecoff - eccut);
+         real x = (r - eccut) * invs;
+         real y = (1 - x) * x;
+         trans = coef * y * y * y * (64 - 25 * x);
+         if CONSTEXPR (DO_G) {
+            dtrans = y * y * (25 * x - 12) * (7 * x - 16);
+            dtrans *= coef * invs;
+            dec = ec * dtaper + dec * taper + dtrans;
+         }
+         ec = ec * taper + trans;
+      }
+   }
+   ec = incl ? ec : 0;
+   if CONSTEXPR (DO_G)
+      dec = incl ? dec : 0;
+}
+
+
+template <bool DO_G, class RADRULE, class EPSRULE, int SCALE>
+__device__
+void pair_lj_v2(real r, real invr, //
+                real vscale, real radi, real epsi, real radk, real epsk,
+                real evcut, real evoff, real& restrict ev, real& restrict dev)
+{
+   // vdw
+   bool incl = r <= evoff;
+   real rad = RADRULE::avg(radi, radk);
+   real eps = EPSRULE::savg(epsi, epsk);
+   if (SCALE != 1)
+      eps *= vscale;
+   real sig = invr * rad;
+   real sig2 = sig * sig;
+   real p6 = sig2 * sig2 * sig2;
+   real ep6 = eps * p6;
+   ev = ep6 * (p6 - 2);
+   if CONSTEXPR (DO_G) {
+      dev = ep6 * (p6 - 1) * (-12 * invr);
+   }
+   // taper
+   if (r > evcut) {
+      real taper, dtaper;
+      switch_taper5<DO_G>(r, evcut, evoff, taper, dtaper);
+      if CONSTEXPR (DO_G)
+         dev = ev * dtaper + dev * taper;
+      ev = ev * taper;
+   }
+   ev = incl ? ev : 0;
+   if CONSTEXPR (DO_G)
+      dev = incl ? dev : 0;
+}
+
+
+template <class Ver, class IMG, class ETYP, class RADRULE, class EPSRULE>
+__global__
+void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
+                grad_prec* restrict gx, grad_prec* restrict gy,
+                grad_prec* restrict gz, //
+                real eccut, real ecoff, real f, real aewald,
+                const real* restrict chg, Spatial2::ScaleInfo cinfo, //
+                const real2* restrict radeps, real evcut, real evoff,
+                Spatial2::ScaleInfo vinfo, //
+                TINKER_IMAGE_PARAMS, int n,
+                const Spatial::SortedAtom* restrict sorted, int nak,
+                const Spatial2::Center* restrict akc, int nakpl,
+                const int* restrict iakpl, int niak, const int* restrict iak,
+                const int* restrict lst, //
+                int ncvexclude, const int (*restrict cvexclude)[2],
+                const real (*restrict cvexclude_scale)[2],
+                const int* restrict bnum)
+{
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
+
+
+   const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
+   const int iwarp = ithread / WARP_SIZE;
+   const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
+   const int ilane = threadIdx.x & (WARP_SIZE - 1);
+
+
+   using ebuf_prec = energy_buffer_traits::type;
+   using vbuf_prec = virial_buffer_traits::type;
+   MAYBE_UNUSED ebuf_prec ectl;
+   MAYBE_UNUSED vbuf_prec vctlxx, vctlyx, vctlzx, vctlyy, vctlzy, vctlzz;
+
+
+   if CONSTEXPR (do_e) {
+      ectl = 0;
+   }
+   if CONSTEXPR (do_v) {
+      vctlxx = 0;
+      vctlyx = 0;
+      vctlzx = 0;
+      vctlyy = 0;
+      vctlzy = 0;
+      vctlzz = 0;
+   }
+
+
+   //* //
+   // cvexclude
+   for (int ii = ithread; ii < ncvexclude; ii += blockDim.x * gridDim.x) {
+      int i = cvexclude[ii][0];
+      int k = cvexclude[ii][1];
+      int atomi = bnum[i];
+      int atomk = bnum[k];
+      real cscale = cvexclude_scale[ii][0];
+      real vscale = cvexclude_scale[ii][1];
+
+
+      real xi = sorted[atomi].x;
+      real yi = sorted[atomi].y;
+      real zi = sorted[atomi].z;
+      real chgi = chg[atomi];
+      real radi = radeps[atomi].x;
+      real epsi = radeps[atomi].y;
+
+
+      real xr = xi - sorted[atomk].x;
+      real yr = yi - sorted[atomk].y;
+      real zr = zi - sorted[atomk].z;
+      real chgk = chg[atomk];
+      real radk = radeps[atomk].x;
+      real epsk = radeps[atomk].y;
+
+
+      real r2 =
+         IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS);
+      real r = REAL_SQRT(r2);
+      real invr = REAL_RECIP(r);
+
+
+      real ecik, decik;
+      real evik, devik;
+      pair_chg_v2<do_g, ETYP, 0>(                     //
+         r, invr,                                     //
+         cscale, chgi, chgk, f, aewald, eccut, ecoff, //
+         ecik, decik);
+      pair_lj_v2<do_g, RADRULE, EPSRULE, 0>(           //
+         r, invr,                                      //
+         vscale, radi, epsi, radk, epsk, evcut, evoff, //
+         evik, devik);
+      if CONSTEXPR (do_e) {
+         ectl += cvt_to<ebuf_prec>(ecik + evik);
+      }
+      if CONSTEXPR (do_g) {
+         decik += devik;
+         decik *= invr;
+         real dedxc = decik * xr;
+         real dedyc = decik * yr;
+         real dedzc = decik * zr;
+         atomic_add(dedxc, gx, i);
+         atomic_add(dedyc, gy, i);
+         atomic_add(dedzc, gz, i);
+         atomic_add(-dedxc, gx, k);
+         atomic_add(-dedyc, gy, k);
+         atomic_add(-dedzc, gz, k);
+         if CONSTEXPR (do_v) {
+            real vxxc = xr * dedxc;
+            real vyxc = yr * dedxc;
+            real vzxc = zr * dedxc;
+            real vyyc = yr * dedyc;
+            real vzyc = zr * dedyc;
+            real vzzc = zr * dedzc;
+            vctlxx += cvt_to<vbuf_prec>(vxxc);
+            vctlyx += cvt_to<vbuf_prec>(vyxc);
+            vctlzx += cvt_to<vbuf_prec>(vzxc);
+            vctlyy += cvt_to<vbuf_prec>(vyyc);
+            vctlzy += cvt_to<vbuf_prec>(vzyc);
+            vctlzz += cvt_to<vbuf_prec>(vzzc);
+         }
+      }
+   }
+   // */
+
+
+   __shared__ int atomid[BLOCK_DIM];
+   __shared__ real chgarr[BLOCK_DIM], radarr[BLOCK_DIM], epsarr[BLOCK_DIM];
+
+
+   //* //
+   // block pairs that have scale factors
+   for (int iw = iwarp; iw < nakpl; iw += nwarp) {
+      real ifx, ify, ifz;
+      real kfx, kfy, kfz;
+      if CONSTEXPR (do_g) {
+         ifx = 0;
+         ify = 0;
+         ifz = 0;
+         kfx = 0;
+         kfy = 0;
+         kfz = 0;
+      }
+
+
+      int tri, tx, ty;
+      tri = iakpl[iw];
+      tri_to_xy(tri, tx, ty);
+
+
+      int shiid = ty * WARP_SIZE + ilane;
+      int shatomi = min(shiid, n - 1);
+      real shxi = sorted[shatomi].x;
+      real shyi = sorted[shatomi].y;
+      real shzi = sorted[shatomi].z;
+      atomid[threadIdx.x] = sorted[shatomi].unsorted;
+      chgarr[threadIdx.x] = chg[shatomi];
+      radarr[threadIdx.x] = radeps[shatomi].x;
+      epsarr[threadIdx.x] = radeps[shatomi].y;
+
+
+      int kid = tx * WARP_SIZE + ilane;
+      int atomk = min(kid, n - 1);
+      real xk = sorted[atomk].x;
+      real yk = sorted[atomk].y;
+      real zk = sorted[atomk].z;
+      int k = sorted[atomk].unsorted;
+      real chgk = chg[atomk];
+      real radk = radeps[atomk].x;
+      real epsk = radeps[atomk].y;
+
+
+      real xc = akc[ty].x;
+      real yc = akc[ty].y;
+      real zc = akc[ty].z;
+      const bool ilocal = akc[ty].w != 0;
+      if (ilocal) {
+         real xr, yr, zr;
+         xr = shxi - xc;
+         yr = shyi - yc;
+         zr = shzi - zc;
+         IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS);
+         shxi = xr + xc;
+         shyi = yr + yc;
+         shzi = zr + zc;
+         xr = xk - xc;
+         yr = yk - yc;
+         zr = zk - zc;
+         IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS);
+         xk = xr + xc;
+         yk = yr + yc;
+         zk = zr + zc;
+      }
+
+
+      int pos = WARP_SIZE * iw + ilane;
+      int cbit0 = cinfo.bit0[pos];
+      int vbit0 = vinfo.bit0[pos];
+
+
+      if (ilocal) {
+         for (int j = 0; j < WARP_SIZE; ++j) {
+            int srclane = (ilane + j) & (WARP_SIZE - 1);
+            int srcmask = 1 << srclane;
+            int klane = srclane + threadIdx.x - ilane;
+            int iid = shiid;
+            real chgi = chgarr[klane];
+            real radi = radarr[klane];
+            real epsi = epsarr[klane];
+            real xr = shxi - xk;
+            real yr = shyi - yk;
+            real zr = shzi - zk;
+            real r2 = xr * xr + yr * yr + zr * zr;
+
+
+            int cbit = cbit0 & srcmask;
+            int vbit = vbit0 & srcmask;
+
+
+            bool incl = iid < kid and kid < n and cbit == 0 and vbit == 0;
+            real r = REAL_SQRT(r2);
+            real invr = REAL_RECIP(r);
+            real ecik, decik;
+            real evik, devik;
+            pair_chg_v2<do_g, ETYP, 1>(                //
+               r, invr,                                //
+               1, chgi, chgk, f, aewald, eccut, ecoff, //
+               ecik, decik);
+            pair_lj_v2<do_g, RADRULE, EPSRULE, 1>(      //
+               r, invr,                                 //
+               1, radi, epsi, radk, epsk, evcut, evoff, //
+               evik, devik);
+
+
+            if CONSTEXPR (do_e) {
+               ectl += incl ? cvt_to<ebuf_prec>(ecik + evik) : 0;
+            }
+
+
+            if CONSTEXPR (do_g) {
+               real dedx, dedy, dedz;
+               decik = incl ? (decik + devik) * invr : 0;
+               dedx = decik * xr;
+               dedy = decik * yr;
+               dedz = decik * zr;
+               if CONSTEXPR (do_v) {
+                  vctlxx += cvt_to<vbuf_prec>(xr * dedx);
+                  vctlyx += cvt_to<vbuf_prec>(yr * dedx);
+                  vctlzx += cvt_to<vbuf_prec>(zr * dedx);
+                  vctlyy += cvt_to<vbuf_prec>(yr * dedy);
+                  vctlzy += cvt_to<vbuf_prec>(zr * dedy);
+                  vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+               }
+               ifx += dedx;
+               ify += dedy;
+               ifz += dedz;
+               kfx -= dedx;
+               kfy -= dedy;
+               kfz -= dedz;
+            }
+
+
+            shiid = __shfl_sync(ALL_LANES, shiid, ilane + 1);
+            shxi = __shfl_sync(ALL_LANES, shxi, ilane + 1);
+            shyi = __shfl_sync(ALL_LANES, shyi, ilane + 1);
+            shzi = __shfl_sync(ALL_LANES, shzi, ilane + 1);
+            ifx = __shfl_sync(ALL_LANES, ifx, ilane + 1);
+            ify = __shfl_sync(ALL_LANES, ify, ilane + 1);
+            ifz = __shfl_sync(ALL_LANES, ifz, ilane + 1);
+         }
+      } else {
+         for (int j = 0; j < WARP_SIZE; ++j) {
+            int srclane = (ilane + j) & (WARP_SIZE - 1);
+            int srcmask = 1 << srclane;
+            int klane = srclane + threadIdx.x - ilane;
+            int iid = shiid;
+            real chgi = chgarr[klane];
+            real radi = radarr[klane];
+            real epsi = epsarr[klane];
+            real xr = shxi - xk;
+            real yr = shyi - yk;
+            real zr = shzi - zk;
+            real r2 = IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS,
+                                TINKER_IMAGE_RECIP_ARGS);
+
+
+            int cbit = cbit0 & srcmask;
+            int vbit = vbit0 & srcmask;
+
+
+            bool incl = iid < kid and kid < n and cbit == 0 and vbit == 0;
+            real r = REAL_SQRT(r2);
+            real invr = REAL_RECIP(r);
+            real ecik, decik;
+            real evik, devik;
+            pair_chg_v2<do_g, ETYP, 1>(                //
+               r, invr,                                //
+               1, chgi, chgk, f, aewald, eccut, ecoff, //
+               ecik, decik);
+            pair_lj_v2<do_g, RADRULE, EPSRULE, 1>(      //
+               r, invr,                                 //
+               1, radi, epsi, radk, epsk, evcut, evoff, //
+               evik, devik);
+
+
+            if CONSTEXPR (do_e) {
+               ectl += incl ? cvt_to<ebuf_prec>(ecik + evik) : 0;
+            }
+
+
+            if CONSTEXPR (do_g) {
+               real dedx, dedy, dedz;
+               decik = incl ? (decik + devik) * invr : 0;
+               dedx = decik * xr;
+               dedy = decik * yr;
+               dedz = decik * zr;
+               if CONSTEXPR (do_v) {
+                  vctlxx += cvt_to<vbuf_prec>(xr * dedx);
+                  vctlyx += cvt_to<vbuf_prec>(yr * dedx);
+                  vctlzx += cvt_to<vbuf_prec>(zr * dedx);
+                  vctlyy += cvt_to<vbuf_prec>(yr * dedy);
+                  vctlzy += cvt_to<vbuf_prec>(zr * dedy);
+                  vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+               }
+               ifx += dedx;
+               ify += dedy;
+               ifz += dedz;
+               kfx -= dedx;
+               kfy -= dedy;
+               kfz -= dedz;
+            }
+
+
+            shiid = __shfl_sync(ALL_LANES, shiid, ilane + 1);
+            shxi = __shfl_sync(ALL_LANES, shxi, ilane + 1);
+            shyi = __shfl_sync(ALL_LANES, shyi, ilane + 1);
+            shzi = __shfl_sync(ALL_LANES, shzi, ilane + 1);
+            ifx = __shfl_sync(ALL_LANES, ifx, ilane + 1);
+            ify = __shfl_sync(ALL_LANES, ify, ilane + 1);
+            ifz = __shfl_sync(ALL_LANES, ifz, ilane + 1);
+         }
+      } // end if ilocal
+
+
+      if CONSTEXPR (do_g) {
+         int shi = atomid[threadIdx.x];
+         atomic_add(ifx, gx, shi);
+         atomic_add(ify, gy, shi);
+         atomic_add(ifz, gz, shi);
+         atomic_add(kfx, gx, k);
+         atomic_add(kfy, gy, k);
+         atomic_add(kfz, gz, k);
+      }
+   } // end loop block pairs
+   // */
+
+
+   //* //
+   // block-atoms
+   for (int iw = iwarp; iw < niak; iw += nwarp) {
+      real ifx, ify, ifz;
+      real kfx, kfy, kfz;
+      if CONSTEXPR (do_g) {
+         ifx = 0;
+         ify = 0;
+         ifz = 0;
+         kfx = 0;
+         kfy = 0;
+         kfz = 0;
+      }
+
+
+      int ty = iak[iw];
+      int shatomi = ty * WARP_SIZE + ilane;
+      real shxi = sorted[shatomi].x;
+      real shyi = sorted[shatomi].y;
+      real shzi = sorted[shatomi].z;
+      atomid[threadIdx.x] = sorted[shatomi].unsorted;
+      chgarr[threadIdx.x] = chg[shatomi];
+      radarr[threadIdx.x] = radeps[shatomi].x;
+      epsarr[threadIdx.x] = radeps[shatomi].y;
+
+
+      int atomk = lst[iw * WARP_SIZE + ilane];
+      real xk = sorted[atomk].x;
+      real yk = sorted[atomk].y;
+      real zk = sorted[atomk].z;
+      int k = sorted[atomk].unsorted;
+      real chgk = chg[atomk];
+      real radk = radeps[atomk].x;
+      real epsk = radeps[atomk].y;
+
+
+      real xc = akc[ty].x;
+      real yc = akc[ty].y;
+      real zc = akc[ty].z;
+      const bool ilocal = akc[ty].w != 0;
+      if (ilocal) {
+         real xr, yr, zr;
+         xr = shxi - xc;
+         yr = shyi - yc;
+         zr = shzi - zc;
+         IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS);
+         shxi = xr + xc;
+         shyi = yr + yc;
+         shzi = zr + zc;
+         xr = xk - xc;
+         yr = yk - yc;
+         zr = zk - zc;
+         IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS);
+         xk = xr + xc;
+         yk = yr + yc;
+         zk = zr + zc;
+      }
+
+
+      if (ilocal) {
+         for (int j = 0; j < WARP_SIZE; ++j) {
+            int srclane = (ilane + j) & (WARP_SIZE - 1);
+            int klane = srclane + threadIdx.x - ilane;
+            real chgi = chgarr[klane];
+            real radi = radarr[klane];
+            real epsi = epsarr[klane];
+            real xr = shxi - xk;
+            real yr = shyi - yk;
+            real zr = shzi - zk;
+            real r2 = xr * xr + yr * yr + zr * zr;
+
+
+            bool incl = atomk > 0;
+            real r = REAL_SQRT(r2);
+            real invr = REAL_RECIP(r);
+            real ecik, decik;
+            real evik, devik;
+            pair_chg_v2<do_g, ETYP, 1>(                //
+               r, invr,                                //
+               1, chgi, chgk, f, aewald, eccut, ecoff, //
+               ecik, decik);
+            pair_lj_v2<do_g, RADRULE, EPSRULE, 1>(      //
+               r, invr,                                 //
+               1, radi, epsi, radk, epsk, evcut, evoff, //
+               evik, devik);
+
+
+            if CONSTEXPR (do_e) {
+               ectl += incl ? cvt_to<ebuf_prec>(ecik + evik) : 0;
+            }
+
+
+            if CONSTEXPR (do_g) {
+               decik = incl ? (decik + devik) * invr : 0;
+               real dedx = decik * xr;
+               real dedy = decik * yr;
+               real dedz = decik * zr;
+               if CONSTEXPR (do_v) {
+                  vctlxx += cvt_to<vbuf_prec>(xr * dedx);
+                  vctlyx += cvt_to<vbuf_prec>(yr * dedx);
+                  vctlzx += cvt_to<vbuf_prec>(zr * dedx);
+                  vctlyy += cvt_to<vbuf_prec>(yr * dedy);
+                  vctlzy += cvt_to<vbuf_prec>(zr * dedy);
+                  vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+               }
+               ifx += dedx;
+               ify += dedy;
+               ifz += dedz;
+               kfx -= dedx;
+               kfy -= dedy;
+               kfz -= dedz;
+            }
+
+
+            shxi = __shfl_sync(ALL_LANES, shxi, ilane + 1);
+            shyi = __shfl_sync(ALL_LANES, shyi, ilane + 1);
+            shzi = __shfl_sync(ALL_LANES, shzi, ilane + 1);
+            ifx = __shfl_sync(ALL_LANES, ifx, ilane + 1);
+            ify = __shfl_sync(ALL_LANES, ify, ilane + 1);
+            ifz = __shfl_sync(ALL_LANES, ifz, ilane + 1);
+         }
+      } else {
+         for (int j = 0; j < WARP_SIZE; ++j) {
+            int srclane = (ilane + j) & (WARP_SIZE - 1);
+            int klane = srclane + threadIdx.x - ilane;
+            real chgi = chgarr[klane];
+            real radi = radarr[klane];
+            real epsi = epsarr[klane];
+            real xr = shxi - xk;
+            real yr = shyi - yk;
+            real zr = shzi - zk;
+            real r2 = IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS,
+                                TINKER_IMAGE_RECIP_ARGS);
+
+            bool incl = atomk > 0;
+            real r = REAL_SQRT(r2);
+            real invr = REAL_RECIP(r);
+            real ecik, decik;
+            real evik, devik;
+            pair_chg_v2<do_g, ETYP, 1>(                //
+               r, invr,                                //
+               1, chgi, chgk, f, aewald, eccut, ecoff, //
+               ecik, decik);
+            pair_lj_v2<do_g, RADRULE, EPSRULE, 1>(      //
+               r, invr,                                 //
+               1, radi, epsi, radk, epsk, evcut, evoff, //
+               evik, devik);
+
+
+            if CONSTEXPR (do_e) {
+               ectl += incl ? cvt_to<ebuf_prec>(ecik + evik) : 0;
+            }
+
+
+            if CONSTEXPR (do_g) {
+               decik = incl ? (decik + devik) * invr : 0;
+               real dedx = decik * xr;
+               real dedy = decik * yr;
+               real dedz = decik * zr;
+               if CONSTEXPR (do_v) {
+                  vctlxx += cvt_to<vbuf_prec>(xr * dedx);
+                  vctlyx += cvt_to<vbuf_prec>(yr * dedx);
+                  vctlzx += cvt_to<vbuf_prec>(zr * dedx);
+                  vctlyy += cvt_to<vbuf_prec>(yr * dedy);
+                  vctlzy += cvt_to<vbuf_prec>(zr * dedy);
+                  vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+               }
+               ifx += dedx;
+               ify += dedy;
+               ifz += dedz;
+               kfx -= dedx;
+               kfy -= dedy;
+               kfz -= dedz;
+            }
+
+
+            shxi = __shfl_sync(ALL_LANES, shxi, ilane + 1);
+            shyi = __shfl_sync(ALL_LANES, shyi, ilane + 1);
+            shzi = __shfl_sync(ALL_LANES, shzi, ilane + 1);
+            ifx = __shfl_sync(ALL_LANES, ifx, ilane + 1);
+            ify = __shfl_sync(ALL_LANES, ify, ilane + 1);
+            ifz = __shfl_sync(ALL_LANES, ifz, ilane + 1);
+         }
+      } // end if ilocal
+
+
+      if CONSTEXPR (do_g) {
+         int shi = atomid[threadIdx.x];
+         atomic_add(ifx, gx, shi);
+         atomic_add(ify, gy, shi);
+         atomic_add(ifz, gz, shi);
+         atomic_add(kfx, gx, k);
+         atomic_add(kfy, gy, k);
+         atomic_add(kfz, gz, k);
+      }
+   } // end loop block-atoms
+   // */
+
+
+   if CONSTEXPR (do_e) {
+      atomic_add(ectl, ebuf, ithread);
+   }
+   if CONSTEXPR (do_v) {
+      atomic_add(vctlxx, vctlyx, vctlzx, vctlyy, vctlzy, vctlzz, vbuf, ithread);
+   }
+}
+
+
+template <class RADRULE, class EPSRULE>
+__global__
+void echglj_coalesce(int n, real* restrict schg, real2* restrict svdw, //
+                     const Spatial::SortedAtom* restrict sorted,
+                     const real* restrict chg, const real* restrict rad,
+                     const real* restrict eps)
+{
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
+        i += blockDim.x * gridDim.x) {
+      int iold = sorted[i].unsorted;
+      schg[i] = chg[iold];
+      real radold = rad[iold];
+      real epsold = eps[iold];
+      if CONSTEXPR (eq<RADRULE, RAD_ARITH>()) {
+         svdw[i].x = radold;
+      }
+      if CONSTEXPR (eq<EPSRULE, EPS_GEOM>()) {
+         svdw[i].y = REAL_SQRT(epsold);
+      }
+   }
+}
+
+
+template <class Ver, class ETYP, class RADRULE, class EPSRULE, int NOUT>
+void echglj_cu3_spatial_ver2()
+{
+   const auto& st = *cspatial_v2_unit;
+
+
+   if (st.fresh) {
+      auto ker = echglj_coalesce<RADRULE, EPSRULE>;
+      launch_k1s(nonblk, st.n, ker,                             //
+                 st.n, chg_coalesced, (real2*)radeps_coalesced, //
+                 st.sorted, pchg, atom_rad, atom_eps);
+   }
+
+
+   real eccut, ecoff;
+   real aewald = 0;
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
+      ecoff = switch_off(switch_ewald);
+      // eccut = ecoff; // not used
+      PMEUnit pu = epme_unit;
+      aewald = pu->aewald;
+   } else {
+      ecoff = switch_off(switch_charge);
+      eccut = switch_cut(switch_charge);
+   }
+   real f = electric / dielec;
+   assert(ebuffer == 0);
+
+
+   real evoff, evcut;
+   evoff = switch_off(switch_vdw);
+   evcut = switch_cut(switch_vdw);
+
+
+   int nparallel = WARP_SIZE * std::max(st.niak, st.nakpl);
+   int grid1 = (nparallel + BLOCK_DIM - 1) / BLOCK_DIM;
+   const auto& attr = get_device_attributes()[idevice];
+   int maxthreads = attr.max_threads_per_multiprocessor;
+   int mpcount = attr.multiprocessor_count;
+   int grid2 = maxthreads / BLOCK_DIM * mpcount;
+   int ngrid = std::min(grid1, grid2);
+
+
+#define ECHGLJ_CU3_V2_ARGS                                                     \
+   ec, vir_ec, decx, decy, decz, eccut, ecoff, f, aewald, chg_coalesced,       \
+      st.si1, (const real2*)radeps_coalesced, evcut, evoff, st.si2,            \
+      TINKER_IMAGE_ARGS, st.n, st.sorted, st.nak, st.akc, st.nakpl, st.iakpl,  \
+      st.niak, st.iak, st.lst, ncvexclude, cvexclude, cvexclude_scale, st.bnum
+
+
+   if (box_shape == ORTHO_BOX) {
+      auto ker1 = echglj_cu5<Ver, PBC_ORTHO, ETYP, RADRULE, EPSRULE>;
+      ker1<<<ngrid, BLOCK_DIM, 0, nonblk>>>(ECHGLJ_CU3_V2_ARGS);
+   } else if (box_shape == MONO_BOX) {
+      auto ker1 = echglj_cu5<Ver, PBC_MONO, ETYP, RADRULE, EPSRULE>;
+      ker1<<<ngrid, BLOCK_DIM, 0, nonblk>>>(ECHGLJ_CU3_V2_ARGS);
+   } else if (box_shape == TRI_BOX) {
+      auto ker1 = echglj_cu5<Ver, PBC_TRI, ETYP, RADRULE, EPSRULE>;
+      ker1<<<ngrid, BLOCK_DIM, 0, nonblk>>>(ECHGLJ_CU3_V2_ARGS);
+   } else if (box_shape == OCT_BOX) {
+      auto ker1 = echglj_cu5<Ver, PBC_OCT, ETYP, RADRULE, EPSRULE>;
+      ker1<<<ngrid, BLOCK_DIM, 0, nonblk>>>(ECHGLJ_CU3_V2_ARGS);
+   } else {
+      assert(false);
+   }
+#undef ECHGLJ_CU3_V2_ARGS
+}
+
+
+#define echglj_cu3 echglj_cu3_spatial_ver2
 
 
 //====================================================================//
@@ -831,6 +1579,7 @@ void echglj_rad_arith_eps_geom_nonewald_cu(int vers)
       else if (vers == calc::v6)
          echglj_cu3<calc::V6, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM, N>();
    }
+
 
    elj14_cu(vers);
 }
