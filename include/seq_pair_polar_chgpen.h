@@ -67,11 +67,12 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
    real uir = uix * xr + uiy * yr + uiz * zr;
    real ukr = ukx * xr + uky * yr + ukz * zr;
 
+
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
    real rr2 = invr1 * invr1;
 
-   real rr1 = invr1;
+   real rr1 = f * invr1;
    real rr3 = rr1 * rr2;
    real rr5 = 3 * rr3 * rr2;
    real rr7 = 5 * rr5 * rr2;
@@ -84,6 +85,8 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
    real rr3core, rr5core, rr3i, rr5i, rr7i, rr9i;
    real rr3k, rr5k, rr7k, rr9k, rr5ik, rr7ik;
    real dsr3i, dsr5i, dsr7i, dsr3k, dsr5k, dsr7k;
+
+
 
    if CONSTEXPR (eq<ETYP, EWALD>()) {
 
@@ -124,6 +127,7 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
          damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
 
+
       rr3core = rr3;
       rr5core = rr5;
       rr3i = rr3 * dmpi[1];
@@ -144,6 +148,7 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       dsr3k = 2 * rr3k * dscale;
       dsr5k = 2 * rr5k * dscale;
       dsr7k = 2 * rr7k * dscale;
+
    }
    // if CONSTEXPR (use_chgflx) {
    //    poti = -ukr * dsr3i;
@@ -159,6 +164,9 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
          ukr * (corei * rr3core + vali * rr3i) + diu * rr3i + dku * rr3k +
          2 * (qiu * rr5i - qku * rr5k) - dkr * uir * rr5k - dir * ukr * rr5i +
          qkr * uir * rr7k - qir * ukr * rr7i;
+
+      printf("\nEpolar");
+      printf("%5.2f %5.2f %14.8f %16.8e %16.8e %16.8e\n", alphai, alphak, e, uix, ukr, uiz);
    }
 
 
@@ -405,9 +413,11 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
          pgrad.frcz -= wscale * depz;
       }
 
-      pgrad.frcx *= f;
-      pgrad.frcy *= f;
-      pgrad.frcz *= f;
+      // pgrad.frcx *= f;
+      // pgrad.frcy *= f;
+      // pgrad.frcz *= f;
+
+      //printf("%5.2f %5.2f %14.8f %14.8f %14.8f %14.8f\n", alphai, alphak, r, rr7ik, rr9ik, rr11ik);
    }
 }
 }

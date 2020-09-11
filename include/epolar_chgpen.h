@@ -1,6 +1,7 @@
 #pragma once
 #include "elec.h"
 #include "mod.polar.h"
+#include "mod.chgpen.h"
 #include "mod.polpot.h"
 #include "pmestuf.h"
 

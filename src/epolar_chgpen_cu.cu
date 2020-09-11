@@ -135,6 +135,7 @@ void epolar_chgpen_cu1(POLARPARAS, const Spatial::SortedAtom* restrict sorted,
       real shvalk = pval[shk];
 
 
+
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
          int atomk = __shfl_sync(ALL_LANES, shatomk, srclane);
@@ -164,25 +165,31 @@ void epolar_chgpen_cu1(POLARPARAS, const Spatial::SortedAtom* restrict sorted,
          PairPolarGrad pgrad;
          zero(pgrad);
 
-
          real r2 = image2(xr, yr, zr);
          if (atomi < atomk && r2 <= off2) {
             if CONSTEXPR (eq<ETYP, EWALD>()) {
                pair_polar_chgpen<do_e, do_g, EWALD>( //
                   r2, xr, yr, zr, 1, 1,       //
-                  ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix,
-                  uiy, uiz, corei, vali, alphai, //
-                  ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,
-                  uky, ukz, corek, valk, alphak, //
+                  ci, dix, diy, diz, corei, vali, alphai,
+                  qixx, qixy, qixz, qiyy, qiyz, qizz, uix,
+                  uiy, uiz,  //
+                  ck, dkx, dky, dkz, corek, valk, alphak,
+                  qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,
+                  uky, ukz,  //
                   f, aewald, e, pgrad);
+
+               // printf("%5.2f %5.2f %14.8f\n", alphai, alphak, r2);
+
             }
             if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
                pair_polar_chgpen<do_e, do_g, NON_EWALD>( //
                   r2, xr, yr, zr, 1, 1,           //
-                  ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix,
-                  uiy, uiz, corei, vali, alphai, //
-                  ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,
-                  uky, ukz, corek, valk, alphak, //
+                  ci, dix, diy, diz, corei, vali, alphai,
+                  qixx, qixy, qixz, qiyy, qiyz, qizz, uix,
+                  uiy, uiz,  //
+                  ck, dkx, dky, dkz, corek, valk, alphak,
+                  qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,
+                  uky, ukz,  //
                   f, 0, e, pgrad);
             }
 
@@ -348,12 +355,15 @@ void epolar_chgpen_cu2(POLARPARAS, const real* restrict x,
          PairPolarGrad pgrad;
          pair_polar_chgpen<do_e, do_g, NON_EWALD>( //
             r2, xr, yr, zr, dscale, wscale,        //
-            ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
-            uiz, corei, vali, alphai, //
-            ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
-            ukz, corek, valk, alphak, //
+            ci, dix, diy, diz, corei, vali, alphai,
+            qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
+            uiz,  //
+            ck, dkx, dky, dkz, corek, valk, alphak,
+            qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
+            ukz,  //
             f, 0, e, pgrad);
 
+         // printf("%5.2f %5.2f %14.8f\n", alphai, alphak, r2);
 
          if CONSTEXPR (do_a)
             if (dscale == -1)

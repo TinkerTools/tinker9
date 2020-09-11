@@ -140,6 +140,10 @@ void empole_chgpen_cu1(EMPOLEPARAS, const Spatial::SortedAtom* restrict sorted,
          real valk = __shfl_sync(ALL_LANES, shvalk, srclane);
 
 
+
+         int tinkeri = min(i,k)+1;
+         int tinkerk = max(i,k)+1;
+
          PairMPoleGrad pgrad;
          zero(pgrad);
 
@@ -200,7 +204,6 @@ void empole_chgpen_cu1(EMPOLEPARAS, const Spatial::SortedAtom* restrict sorted,
          }
       } // end for (j)
 
-
       if CONSTEXPR (do_a)
          atomic_add(ctl, nem, offset);
       if CONSTEXPR (do_e)
@@ -247,7 +250,6 @@ void empole_chgpen_cu2(EMPOLEPARAS, const real* restrict x, const real* restrict
       int k = mexclude[ii][1];
       real mscale = mexclude_scale[ii];
 
-
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
@@ -284,6 +286,7 @@ void empole_chgpen_cu2(EMPOLEPARAS, const real* restrict x, const real* restrict
             rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], f, 0, e, pgrad);
 
 
+
          if CONSTEXPR (do_a) {
             if (mscale == -1)
                atomic_add(-1, nem, offset);
@@ -298,6 +301,7 @@ void empole_chgpen_cu2(EMPOLEPARAS, const real* restrict x, const real* restrict
             atomic_add(-pgrad.frcx, gx, k);
             atomic_add(-pgrad.frcy, gy, k);
             atomic_add(-pgrad.frcz, gz, k);
+
 
 
             atomic_add(pgrad.ttmi[0], trqx, i);
@@ -356,6 +360,9 @@ void empole_chgpen_cu()
                  bufsize, nem, em, vir_em, demx, demy, demz, trqx, trqy, trqz,
                  TINKER_IMAGE_ARGS, pcore, pval, palpha, off2, f, rpole, //
                  st.sorted, st.niak, st.iak, st.lst, n, aewald);
+
+
+
    }
    if (nmexclude > 0) {
       auto ker2 = empole_chgpen_cu2<Ver>;
@@ -363,6 +370,8 @@ void empole_chgpen_cu()
                  bufsize, nem, em, vir_em, demx, demy, demz, trqx, trqy, trqz,
                  TINKER_IMAGE_ARGS, pcore, pval, palpha, off2, f, rpole, //
                  x, y, z, nmexclude, mexclude, mexclude_scale);
+
+
    }
 }
 

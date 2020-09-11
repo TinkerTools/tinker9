@@ -31,4 +31,10 @@ TINKER_EXTERN int nwexclude;
 TINKER_EXTERN int (*wexclude)[2];
 TINKER_EXTERN real* wexclude_scale;
 
+TINKER_EXTERN real (*work11_)[3];
+TINKER_EXTERN real (*work12_)[3];
+TINKER_EXTERN real (*work13_)[3];
+TINKER_EXTERN real (*work14_)[3];
+TINKER_EXTERN real (*work15_)[3];
+
 }

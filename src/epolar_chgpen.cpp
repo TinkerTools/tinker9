@@ -41,7 +41,7 @@ void epolar_chgpen_data(rc_op op)
       depz = nullptr;
 
       darray::deallocate(ufld, dufld);
-      darray::deallocate(work01_, work02_, work03_, work04_, work05_);
+      darray::deallocate(work11_, work12_, work13_, work14_, work15_);
    }
 
    if (op & rc_alloc) {
@@ -65,7 +65,7 @@ void epolar_chgpen_data(rc_op op)
          dufld = nullptr;
       }
 
-      darray::allocate(n, &work01_, &work02_, &work03_, &work04_, &work05_);
+      darray::allocate(n, &work11_, &work12_, &work13_, &work14_, &work15_);
    }
 
    if (op & rc_init) {
@@ -104,11 +104,11 @@ void induce2(real (*ud)[3])
             double u2 = uindbuf[3 * i + 1];
             double u3 = uindbuf[3 * i + 2];
             double unorm = std::sqrt(u1 * u1 + u2 * u2 + u3 * u3);
-            u1 *= units::debye;
-            u2 *= units::debye;
-            u3 *= units::debye;
-            unorm *= units::debye;
-            print(stdout, "%8d     %13.4f%13.4f%13.4f %13.4f\n", i + 1, u1, u2,
+            // u1 *= units::debye;
+            // u2 *= units::debye;
+            // u3 *= units::debye;
+            // unorm *= units::debye;
+            print(stdout, "%8d     %13.6e%13.6e%13.6e %13.6e\n", i + 1, u1, u2,
                   u3, unorm);
          }
       }

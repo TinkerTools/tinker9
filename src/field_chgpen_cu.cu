@@ -306,7 +306,7 @@ void ufield_chgpen_cu1(UFIELDPARAS, int n,
          } // end if (include)
       }
 
-
+      
       atomic_add(fid.x, &field[i][0]);
       atomic_add(fid.y, &field[i][1]);
       atomic_add(fid.z, &field[i][2]);

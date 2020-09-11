@@ -129,12 +129,12 @@ void pair_mpole_chgpen(                             //
    real rr1i, rr3i, rr5i, rr7i, rr1k, rr3k, rr5k, rr7k, rr1ik, rr3ik, rr5ik, rr7ik, rr9ik, rr11ik;
 
    if CONSTEXPR (eq<ETYP, EWALD>()) {
-      if CONSTEXPR (!do_g) {
-         damp_ewald<5>(bn, r, invr1, rr2, aewald);
-         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
-      } else {
+      if CONSTEXPR (do_g) {
          damp_ewald<6>(bn, r, invr1, rr2, aewald);
          damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
+      } else {
+         damp_ewald<5>(bn, r, invr1, rr2, aewald);
+         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
       bn[0] *= f;
       bn[1] *= f;
@@ -158,9 +158,11 @@ void pair_mpole_chgpen(                             //
       rr7ik = bn[3] - (1 - mscale * dmpik[3]) * rr7;
       rr9ik = bn[4] - (1 - mscale * dmpik[4]) * rr9;
       rr1 = bn[0] - (1 - mscale) * rr1;
+      rr3 = bn[1] - (1 - mscale) * rr3;
 
       if CONSTEXPR (do_g)
          rr11ik = bn[5] - (1 - mscale * dmpik[5]) * rr11;
+      
 
       // if CONSTEXPR (use_chgflx) {
       //    real t1i = corek * rr1i + valk * rr1ik;
@@ -182,10 +184,9 @@ void pair_mpole_chgpen(                             //
 
       if CONSTEXPR (do_g) {
          rr11 *= mscale;
-         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
-      } else
          damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
-
+      } else
+         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
 
       rr1i = dmpi[0] * rr1;
       rr3i = dmpi[1] * rr3;
@@ -225,13 +226,13 @@ void pair_mpole_chgpen(                             //
    if CONSTEXPR (do_g) {
 
       // gradient
-
       real qixk = qixx * qkx + qixy * qky + qixz * qkz;
       real qiyk = qixy * qkx + qiyy * qky + qiyz * qkz;
       real qizk = qixz * qkx + qiyz * qky + qizz * qkz;
       real qkxi = qkxx * qix + qkxy * qiy + qkxz * qiz;
       real qkyi = qkxy * qix + qkyy * qiy + qkyz * qiz;
       real qkzi = qkxz * qix + qkyz * qiy + qkzz * qiz;
+
 
       real diqkx = dix * qkxx + diy * qkxy + diz * qkxz;
       real diqky = dix * qkxy + diy * qkyy + diz * qkyz;
@@ -240,10 +241,13 @@ void pair_mpole_chgpen(                             //
       real dkqiy = dkx * qixy + dky * qiyy + dkz * qiyz;
       real dkqiz = dkx * qixz + dky * qiyz + dkz * qizz;
 
+
       real de = term1 * rr3 + term4ik * rr9ik + term5ik * rr11ik +
          term1i * rr3i + term1k * rr3k + term1ik * rr3ik + term2i * rr5i +
          term2k * rr5k + term2ik * rr5ik + term3i * rr7i + term3k * rr7k +
          term3ik * rr7ik;
+
+      
       term1 = -corek * rr3i - valk * rr3ik + dkr * rr5ik - qkr * rr7ik;
       real term2 = corei * rr3k + vali * rr3ik + dir * rr5ik + qir * rr7ik;
       real term3 = 2 * rr5ik;
@@ -251,15 +255,19 @@ void pair_mpole_chgpen(                             //
       real term5 = -2 * (corei * rr5k + vali * rr5ik + dir * rr7ik + qir * rr9ik);
       real term6 = 4 * rr7ik;
 
+
       pgrad.frcx = de * xr + term1 * dix + term2 * dkx +
          term3 * (diqkx - dkqix) + term4 * qix + term5 * qkx +
          term6 * (qixk + qkxi);
+         
       pgrad.frcy = de * yr + term1 * diy + term2 * dky +
          term3 * (diqky - dkqiy) + term4 * qiy + term5 * qky +
          term6 * (qiyk + qkyi);
       pgrad.frcz = de * zr + term1 * diz + term2 * dkz +
          term3 * (diqkz - dkqiz) + term4 * qiz + term5 * qkz +
          term6 * (qizk + qkzi);
+
+
 
       // torque
 
