@@ -326,15 +326,15 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
    //* /
    // block pairs that have scale factors
    for (int iw = iwarp; iw < nakpl; iw += nwarp) {
-      real ifx, ify, ifz;
-      real kfx, kfy, kfz;
+      real fix, fiy, fiz;
+      real fkx, fky, fkz;
       if CONSTEXPR (do_g) {
-         ifx = 0;
-         ify = 0;
-         ifz = 0;
-         kfx = 0;
-         kfy = 0;
-         kfz = 0;
+         fix = 0;
+         fiy = 0;
+         fiz = 0;
+         fkx = 0;
+         fky = 0;
+         fkz = 0;
       }
       real ivfx, ivfy, ivfz, kvfx, kvfy, kvfz;
       if CONSTEXPR (do_g and VOUT) {
@@ -462,12 +462,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                   vctlzy += cvt_to<vbuf_prec>(zr * dedy);
                   vctlzz += cvt_to<vbuf_prec>(zr * dedz);
                }
-               ifx += dedx;
-               ify += dedy;
-               ifz += dedz;
-               kfx -= dedx;
-               kfy -= dedy;
-               kfz -= dedz;
+               fix += dedx;
+               fiy += dedy;
+               fiz += dedz;
+               fkx -= dedx;
+               fky -= dedy;
+               fkz -= dedz;
             } else if CONSTEXPR (do_g and VOUT) {
                real dedx, dedy, dedz;
                decik = incl ? decik * invr : 0;
@@ -482,12 +482,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                   vctlzy += cvt_to<vbuf_prec>(zr * dedy);
                   vctlzz += cvt_to<vbuf_prec>(zr * dedz);
                }
-               ifx += dedx;
-               ify += dedy;
-               ifz += dedz;
-               kfx -= dedx;
-               kfy -= dedy;
-               kfz -= dedz;
+               fix += dedx;
+               fiy += dedy;
+               fiz += dedz;
+               fkx -= dedx;
+               fky -= dedy;
+               fkz -= dedz;
                devik = incl ? devik * invr : 0;
                dedx = decik * xr;
                dedy = decik * yr;
@@ -513,9 +513,9 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
             shxi = __shfl_sync(ALL_LANES, shxi, ilane + 1);
             shyi = __shfl_sync(ALL_LANES, shyi, ilane + 1);
             shzi = __shfl_sync(ALL_LANES, shzi, ilane + 1);
-            ifx = __shfl_sync(ALL_LANES, ifx, ilane + 1);
-            ify = __shfl_sync(ALL_LANES, ify, ilane + 1);
-            ifz = __shfl_sync(ALL_LANES, ifz, ilane + 1);
+            fix = __shfl_sync(ALL_LANES, fix, ilane + 1);
+            fiy = __shfl_sync(ALL_LANES, fiy, ilane + 1);
+            fiz = __shfl_sync(ALL_LANES, fiz, ilane + 1);
             if CONSTEXPR (VOUT) {
                ivfx = __shfl_sync(ALL_LANES, ivfx, ilane + 1);
                ivfy = __shfl_sync(ALL_LANES, ivfy, ilane + 1);
@@ -579,12 +579,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                   vctlzy += cvt_to<vbuf_prec>(zr * dedy);
                   vctlzz += cvt_to<vbuf_prec>(zr * dedz);
                }
-               ifx += dedx;
-               ify += dedy;
-               ifz += dedz;
-               kfx -= dedx;
-               kfy -= dedy;
-               kfz -= dedz;
+               fix += dedx;
+               fiy += dedy;
+               fiz += dedz;
+               fkx -= dedx;
+               fky -= dedy;
+               fkz -= dedz;
             } else if CONSTEXPR (do_g and VOUT) {
                real dedx, dedy, dedz;
                decik = incl ? decik * invr : 0;
@@ -599,12 +599,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                   vctlzy += cvt_to<vbuf_prec>(zr * dedy);
                   vctlzz += cvt_to<vbuf_prec>(zr * dedz);
                }
-               ifx += dedx;
-               ify += dedy;
-               ifz += dedz;
-               kfx -= dedx;
-               kfy -= dedy;
-               kfz -= dedz;
+               fix += dedx;
+               fiy += dedy;
+               fiz += dedz;
+               fkx -= dedx;
+               fky -= dedy;
+               fkz -= dedz;
                devik = incl ? devik * invr : 0;
                dedx = decik * xr;
                dedy = decik * yr;
@@ -630,9 +630,9 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
             shxi = __shfl_sync(ALL_LANES, shxi, ilane + 1);
             shyi = __shfl_sync(ALL_LANES, shyi, ilane + 1);
             shzi = __shfl_sync(ALL_LANES, shzi, ilane + 1);
-            ifx = __shfl_sync(ALL_LANES, ifx, ilane + 1);
-            ify = __shfl_sync(ALL_LANES, ify, ilane + 1);
-            ifz = __shfl_sync(ALL_LANES, ifz, ilane + 1);
+            fix = __shfl_sync(ALL_LANES, fix, ilane + 1);
+            fiy = __shfl_sync(ALL_LANES, fiy, ilane + 1);
+            fiz = __shfl_sync(ALL_LANES, fiz, ilane + 1);
             if CONSTEXPR (VOUT) {
                ivfx = __shfl_sync(ALL_LANES, ivfx, ilane + 1);
                ivfy = __shfl_sync(ALL_LANES, ivfy, ilane + 1);
@@ -644,19 +644,19 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
 
       if CONSTEXPR (do_g) {
 #if TINKER_ECHGLJ_USE_COALESCED_GRAD == 0
-         atomic_add(ifx, gx, shi);
-         atomic_add(ify, gy, shi);
-         atomic_add(ifz, gz, shi);
-         atomic_add(kfx, gx, k);
-         atomic_add(kfy, gy, k);
-         atomic_add(kfz, gz, k);
+         atomic_add(fix, gx, shi);
+         atomic_add(fiy, gy, shi);
+         atomic_add(fiz, gz, shi);
+         atomic_add(fkx, gx, k);
+         atomic_add(fky, gy, k);
+         atomic_add(fkz, gz, k);
 #else
-         atomic_add(ifx, gx, shatomi);
-         atomic_add(ify, gy, shatomi);
-         atomic_add(ifz, gz, shatomi);
-         atomic_add(kfx, gx, atomk);
-         atomic_add(kfy, gy, atomk);
-         atomic_add(kfz, gz, atomk);
+         atomic_add(fix, gx, shatomi);
+         atomic_add(fiy, gy, shatomi);
+         atomic_add(fiz, gz, shatomi);
+         atomic_add(fkx, gx, atomk);
+         atomic_add(fky, gy, atomk);
+         atomic_add(fkz, gz, atomk);
 #endif
       }
       if CONSTEXPR (do_g and VOUT) {
@@ -674,15 +674,15 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
    //* /
    // block-atoms
    for (int iw = iwarp; iw < niak; iw += nwarp) {
-      real ifx, ify, ifz;
-      real kfx, kfy, kfz;
+      real fix, fiy, fiz;
+      real fkx, fky, fkz;
       if CONSTEXPR (do_g) {
-         ifx = 0;
-         ify = 0;
-         ifz = 0;
-         kfx = 0;
-         kfy = 0;
-         kfz = 0;
+         fix = 0;
+         fiy = 0;
+         fiz = 0;
+         fkx = 0;
+         fky = 0;
+         fkz = 0;
       }
       real ivfx, ivfy, ivfz, kvfx, kvfy, kvfz;
       if CONSTEXPR (do_g and VOUT) {
@@ -793,12 +793,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                   vctlzy += cvt_to<vbuf_prec>(zr * dedy);
                   vctlzz += cvt_to<vbuf_prec>(zr * dedz);
                }
-               ifx += dedx;
-               ify += dedy;
-               ifz += dedz;
-               kfx -= dedx;
-               kfy -= dedy;
-               kfz -= dedz;
+               fix += dedx;
+               fiy += dedy;
+               fiz += dedz;
+               fkx -= dedx;
+               fky -= dedy;
+               fkz -= dedz;
             } else if CONSTEXPR (do_g and VOUT) {
                real dedx, dedy, dedz;
                decik = incl ? decik * invr : 0;
@@ -813,12 +813,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                   vctlzy += cvt_to<vbuf_prec>(zr * dedy);
                   vctlzz += cvt_to<vbuf_prec>(zr * dedz);
                }
-               ifx += dedx;
-               ify += dedy;
-               ifz += dedz;
-               kfx -= dedx;
-               kfy -= dedy;
-               kfz -= dedz;
+               fix += dedx;
+               fiy += dedy;
+               fiz += dedz;
+               fkx -= dedx;
+               fky -= dedy;
+               fkz -= dedz;
                devik = incl ? devik * invr : 0;
                dedx = decik * xr;
                dedy = decik * yr;
@@ -843,9 +843,9 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
             shxi = __shfl_sync(ALL_LANES, shxi, ilane + 1);
             shyi = __shfl_sync(ALL_LANES, shyi, ilane + 1);
             shzi = __shfl_sync(ALL_LANES, shzi, ilane + 1);
-            ifx = __shfl_sync(ALL_LANES, ifx, ilane + 1);
-            ify = __shfl_sync(ALL_LANES, ify, ilane + 1);
-            ifz = __shfl_sync(ALL_LANES, ifz, ilane + 1);
+            fix = __shfl_sync(ALL_LANES, fix, ilane + 1);
+            fiy = __shfl_sync(ALL_LANES, fiy, ilane + 1);
+            fiz = __shfl_sync(ALL_LANES, fiz, ilane + 1);
             if CONSTEXPR (VOUT) {
                ivfx = __shfl_sync(ALL_LANES, ivfx, ilane + 1);
                ivfy = __shfl_sync(ALL_LANES, ivfy, ilane + 1);
@@ -903,12 +903,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                   vctlzy += cvt_to<vbuf_prec>(zr * dedy);
                   vctlzz += cvt_to<vbuf_prec>(zr * dedz);
                }
-               ifx += dedx;
-               ify += dedy;
-               ifz += dedz;
-               kfx -= dedx;
-               kfy -= dedy;
-               kfz -= dedz;
+               fix += dedx;
+               fiy += dedy;
+               fiz += dedz;
+               fkx -= dedx;
+               fky -= dedy;
+               fkz -= dedz;
             } else if CONSTEXPR (do_g and VOUT) {
                real dedx, dedy, dedz;
                decik = incl ? decik * invr : 0;
@@ -923,12 +923,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                   vctlzy += cvt_to<vbuf_prec>(zr * dedy);
                   vctlzz += cvt_to<vbuf_prec>(zr * dedz);
                }
-               ifx += dedx;
-               ify += dedy;
-               ifz += dedz;
-               kfx -= dedx;
-               kfy -= dedy;
-               kfz -= dedz;
+               fix += dedx;
+               fiy += dedy;
+               fiz += dedz;
+               fkx -= dedx;
+               fky -= dedy;
+               fkz -= dedz;
                devik = incl ? devik * invr : 0;
                dedx = decik * xr;
                dedy = decik * yr;
@@ -953,9 +953,9 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
             shxi = __shfl_sync(ALL_LANES, shxi, ilane + 1);
             shyi = __shfl_sync(ALL_LANES, shyi, ilane + 1);
             shzi = __shfl_sync(ALL_LANES, shzi, ilane + 1);
-            ifx = __shfl_sync(ALL_LANES, ifx, ilane + 1);
-            ify = __shfl_sync(ALL_LANES, ify, ilane + 1);
-            ifz = __shfl_sync(ALL_LANES, ifz, ilane + 1);
+            fix = __shfl_sync(ALL_LANES, fix, ilane + 1);
+            fiy = __shfl_sync(ALL_LANES, fiy, ilane + 1);
+            fiz = __shfl_sync(ALL_LANES, fiz, ilane + 1);
             if CONSTEXPR (VOUT) {
                ivfx = __shfl_sync(ALL_LANES, ivfx, ilane + 1);
                ivfy = __shfl_sync(ALL_LANES, ivfy, ilane + 1);
@@ -967,19 +967,19 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
 
       if CONSTEXPR (do_g) {
 #if TINKER_ECHGLJ_USE_COALESCED_GRAD == 0
-         atomic_add(ifx, gx, shi);
-         atomic_add(ify, gy, shi);
-         atomic_add(ifz, gz, shi);
-         atomic_add(kfx, gx, k);
-         atomic_add(kfy, gy, k);
-         atomic_add(kfz, gz, k);
+         atomic_add(fix, gx, shi);
+         atomic_add(fiy, gy, shi);
+         atomic_add(fiz, gz, shi);
+         atomic_add(fkx, gx, k);
+         atomic_add(fky, gy, k);
+         atomic_add(fkz, gz, k);
 #else
-         atomic_add(ifx, gx, shatomi);
-         atomic_add(ify, gy, shatomi);
-         atomic_add(ifz, gz, shatomi);
-         atomic_add(kfx, gx, atomk);
-         atomic_add(kfy, gy, atomk);
-         atomic_add(kfz, gz, atomk);
+         atomic_add(fix, gx, shatomi);
+         atomic_add(fiy, gy, shatomi);
+         atomic_add(fiz, gz, shatomi);
+         atomic_add(fkx, gx, atomk);
+         atomic_add(fky, gy, atomk);
+         atomic_add(fkz, gz, atomk);
 #endif
       }
       if CONSTEXPR (do_g and VOUT) {

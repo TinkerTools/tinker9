@@ -1,4 +1,5 @@
 #include "elec.h"
+#include "echarge.h"
 #include "empole.h"
 #include "epolar.h"
 #include "glob.chglj.h"
@@ -374,6 +375,8 @@ bool amoeba_echglj(int vers)
    if (!use_potent(charge_term) || !use_potent(vdw_term))
       return false;
    if (!(clist_version() & NBL_SPATIAL))
+      return false;
+   if (ebuffer != 0)
       return false;
    if (vdwtyp != evdw_t::lj)
       return false;
