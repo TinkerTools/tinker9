@@ -17,7 +17,7 @@ void KERNEL_NAME(count_buffer restrict nebuf
 , int nakpl, const int* restrict iakpl
 , int niak, const int* restrict iak, const int* restrict lst
 , int nexclude, const int (*restrict exclude)[2]
-, const real* restrict exclude_scale, Spatial2::ScaleInfo info
+, const real* restrict exclude_scale, const unsigned int* restrict info
 GLOBAL_VARIABLES
 GLOBAL_ARRAYS
 PER_ATOM_ARRAYS
@@ -150,7 +150,7 @@ PER_ATOM_ARRAYS
         LOAD_ATOM_K_PARAMS
 
 
-        int bit0 = info.bit0[iw * WARP_SIZE + ilane];
+        int bit0 = info[iw * WARP_SIZE + ilane];
         for (int j = 0; j < WARP_SIZE; ++j) {
             int srclane = (ilane + j) & (WARP_SIZE - 1);
             int srcmask = 1 << srclane;

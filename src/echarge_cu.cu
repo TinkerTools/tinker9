@@ -246,7 +246,7 @@ void echarge_cu()
    real cut, off;
    if CONSTEXPR (eq<ETYP, EWALD>()) {
       off = switch_off(switch_ewald);
-      // cut = off; // not used
+      cut = off; // not used
    } else {
       off = switch_off(switch_charge);
       cut = switch_cut(switch_charge);

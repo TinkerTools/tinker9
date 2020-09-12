@@ -34,7 +34,13 @@ void pair_lj_v2(real r, real invr, //
                 real vscale, real radi, real epsi, real radk, real epsk,
                 real evcut, real evoff, real& restrict ev, real& restrict dev)
 {
-   bool incl = r <= evoff;
+   if (r > evoff) {
+      ev = 0;
+      if CONSTEXPR (DO_G) {
+         dev = 0;
+      }
+      return;
+   }
    real rad = RADRULE::avg(radi, radk);
    real eps = EPSRULE::savg(epsi, epsk);
    if CONSTEXPR (SCALE != 1)
@@ -55,9 +61,6 @@ void pair_lj_v2(real r, real invr, //
          dev = ev * dtaper + dev * taper;
       ev = ev * taper;
    }
-   ev = incl ? ev : 0;
-   if CONSTEXPR (DO_G)
-      dev = incl ? dev : 0;
 }
 
 
@@ -71,7 +74,13 @@ void pair_lj_v3(real r, real invr, //
                 real vscale, real rad, real eps, real evcut, real evoff,
                 real& restrict ev, real& restrict dev)
 {
-   bool incl = r <= evoff;
+   if (r > evoff) {
+      ev = 0;
+      if CONSTEXPR (DO_G) {
+         dev = 0;
+      }
+      return;
+   }
    if CONSTEXPR (SCALE != 1) {
       eps *= vscale;
    }
@@ -91,8 +100,5 @@ void pair_lj_v3(real r, real invr, //
          dev = ev * dtaper + dev * taper;
       ev = ev * taper;
    }
-   ev = incl ? ev : 0;
-   if CONSTEXPR (DO_G)
-      dev = incl ? dev : 0;
 }
 }

@@ -83,9 +83,9 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                 int nexclude, const int (*restrict exclude)[2],
                 const real (*restrict exclude_scale)[2], //
                 real eccut, real ecoff, real f, real aewald,
-                const real* restrict chg, Spatial2::ScaleInfo cinfo, //
+                const real* restrict chg, const unsigned int* restrict cinfo, //
                 real evcut, real evoff, const real2* restrict radeps,
-                Spatial2::ScaleInfo vinfo, //
+                const unsigned int* restrict vinfo, //
                 energy_buffer restrict ev, virial_buffer restrict vev,
                 grad_prec* restrict devx, grad_prec* restrict devy,
                 grad_prec* restrict devz)
@@ -317,8 +317,8 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
       }
 
 
-      int cbit0 = cinfo.bit0[iw * WARP_SIZE + ilane];
-      int vbit0 = vinfo.bit0[iw * WARP_SIZE + ilane];
+      int cbit0 = cinfo[iw * WARP_SIZE + ilane];
+      int vbit0 = vinfo[iw * WARP_SIZE + ilane];
 
 
       if (ilocal) {
@@ -947,8 +947,8 @@ void echglj_cu3()
    ec, vir_ec, decx, decy, decz, TINKER_IMAGE_ARGS, st.n, st.sorted, st.nakpl, \
       st.iakpl, st.niak, st.iak, st.lst, st.bnum, st.akc, ncvexclude,          \
       cvexclude, cvexclude_scale, eccut, ecoff, f, aewald, chg_coalesced,      \
-      st.si1, evcut, evoff, (const real2*)radeps_coalesced, st.si2, ev,        \
-      vir_ev, devx, devy, devz
+      st.si1.bit0, evcut, evoff, (const real2*)radeps_coalesced, st.si2.bit0,  \
+      ev, vir_ev, devx, devy, devz
 
 
    int ngrid = get_grid_size(BLOCK_DIM);

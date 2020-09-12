@@ -24,9 +24,10 @@ void elj_cu1(count_buffer restrict nebuf, energy_buffer restrict ebuf,
              const int* restrict iakpl, int niak, const int* restrict iak,
              const int* restrict lst, int nexclude,
              const int (*restrict exclude)[2],
-             const real* restrict exclude_scale, Spatial2::ScaleInfo info,
-             int njvdw, const real* restrict radmin,
-             const real* restrict epsilon, const int* restrict jvdw)
+             const real* restrict exclude_scale,
+             const unsigned int* restrict info, int njvdw,
+             const real* restrict radmin, const real* restrict epsilon,
+             const int* restrict jvdw)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -161,7 +162,7 @@ void elj_cu1(count_buffer restrict nebuf, energy_buffer restrict ebuf,
       int kjvdw = jvdw[k];
 
 
-      int bit0 = info.bit0[iw * WARP_SIZE + ilane];
+      int bit0 = info[iw * WARP_SIZE + ilane];
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
          int srcmask = 1 << srclane;
@@ -474,7 +475,7 @@ void elj_cu4()
       nev, ev, vir_ev, devx, devy, devz, TINKER_IMAGE_ARGS, cut, off, st.x,
       st.y, st.z, //
       n, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, nvexclude,
-      vexclude, vexclude_scale, st.si2, //
+      vexclude, vexclude_scale, st.si2.bit0, //
       njvdw, radmin, epsilon, jvdw);
 }
 

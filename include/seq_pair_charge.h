@@ -39,7 +39,7 @@ void pair_charge(real r, real xr, real yr, real zr, real cscale, real chgi,
          real invr = REAL_RECIP(r);
          real invrb2 = invrb * invrb;
          real de = erfterm * invrb2;
-         de += (2 * aewald / sqrtpi) * REAL_EXP(-rew * rew) * invr;
+         de += (2 * aewald / sqrtpi) * REAL_EXP(-rew * rew) * invrb;
          de *= -fik;
          de *= invr;
          dedx = de * xr;
@@ -165,7 +165,13 @@ void pair_chg_v2(real r, real invr, //
                  real cscale, real chgi, real chgk, real f, real aewald,
                  real eccut, real ecoff, real& restrict ec, real& restrict dec)
 {
-   bool incl = r <= ecoff;
+   if (r > ecoff) {
+      ec = 0;
+      if CONSTEXPR (DO_G) {
+         dec = 0;
+      }
+      return;
+   }
    real fik = f * chgi * chgk;
    if CONSTEXPR (eq<ETYP, EWALD>()) {
       const real rew = aewald * r;
@@ -186,7 +192,7 @@ void pair_chg_v2(real r, real invr, //
       }
       ec = fik * invr;
       if CONSTEXPR (DO_G) {
-         dec = -fik * invr * invr;
+         dec = -ec * invr;
       }
 
 
@@ -196,8 +202,6 @@ void pair_chg_v2(real r, real invr, //
       if (r > eccut) {
          real taper, dtaper;
          switch_taper5<DO_G>(r, eccut, ecoff, taper, dtaper);
-
-
          real trans, dtrans;
          real coef = fik * (REAL_RECIP(eccut) - REAL_RECIP(ecoff)) *
             REAL_RECIP((real)9.3);
@@ -213,8 +217,69 @@ void pair_chg_v2(real r, real invr, //
          ec = ec * taper + trans;
       }
    }
-   ec = incl ? ec : 0;
-   if CONSTEXPR (DO_G)
-      dec = incl ? dec : 0;
+}
+
+
+#pragma acc routine seq
+template <bool DO_G, class ETYP, int SCALE>
+SEQ_CUDA
+void pair_chg_v3(real r, real cscale, real chgi, real chgk, real ebuffer,
+                 real f, real aewald, real eccut, real ecoff, real& restrict ec,
+                 real& restrict dec)
+{
+   if (r > ecoff) {
+      ec = 0;
+      if CONSTEXPR (DO_G) {
+         dec = 0;
+      }
+      return;
+   }
+   real fik = f * chgi * chgk;
+   real rb = r + ebuffer;
+   real invrb = REAL_RECIP(rb);
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
+      const real rew = aewald * r;
+      const real expterm = REAL_EXP(-rew * rew);
+      real erfterm = REAL_ERFC_V2(rew, expterm);
+      if CONSTEXPR (SCALE != 1) {
+         erfterm += cscale - 1;
+      }
+      ec = fik * invrb * erfterm;
+      if CONSTEXPR (DO_G) {
+         constexpr real two = 2.0f / sqrtpi;
+         dec = erfterm * invrb + two * aewald * expterm;
+         dec *= -fik * invrb;
+      }
+   } else if CONSTEXPR (eq<ETYP, NON_EWALD_TAPER>()) {
+      if CONSTEXPR (SCALE != 1) {
+         fik *= cscale;
+      }
+      ec = fik * invrb;
+      if CONSTEXPR (DO_G) {
+         dec = -ec * invrb;
+      }
+
+
+      // shift energy
+      real shift = fik * 2 * REAL_RECIP(eccut + ecoff);
+      ec -= shift;
+      if (r > eccut) {
+         real taper, dtaper;
+         switch_taper5<DO_G>(r, eccut, ecoff, taper, dtaper);
+         real trans, dtrans;
+         real coef = fik * (REAL_RECIP(eccut) - REAL_RECIP(ecoff)) *
+            REAL_RECIP((real)9.3);
+         real invs = REAL_RECIP(ecoff - eccut);
+         real x = (r - eccut) * invs;
+         real y = (1 - x) * x;
+         trans = coef * y * y * y * (64 - 25 * x);
+         if CONSTEXPR (DO_G) {
+            dtrans = y * y * (25 * x - 12) * (7 * x - 16);
+            dtrans *= coef * invs;
+            dec = ec * dtaper + dec * taper + dtrans;
+         }
+         ec = ec * taper + trans;
+      }
+   }
 }
 }
