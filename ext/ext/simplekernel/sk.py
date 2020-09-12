@@ -82,7 +82,7 @@ PER_ATOM_ARRAYS
         if CONSTEXPR (do_e) {
             etl += cvt_to<ebuf_prec>(e);
             if CONSTEXPR (do_a) {
-                if (e != 0) {
+                if (scale != 0 and e != 0) {
                     ctl += 1;
                 }
             }
@@ -359,19 +359,25 @@ def generate(yaml_file):
     kernal_name = config['KERNEL_NAME']
 
     global_variables = ''
-    d_gvar = config['GLOBAL_VARIABLES']
+    d_gvar = {}
+    if 'GLOBAL_VARIABLES' in config.keys():
+        d_gvar = config['GLOBAL_VARIABLES']
     for k in sorted(d_gvar):
         e = d_gvar[k]
         global_variables = global_variables + ', %s %s' % (e['param_type'], e['name'])
 
     global_arrays = ''
-    d_gar = config['GLOBAL_ARRAYS']
+    d_gar = {}
+    if 'GLOBAL_ARRAYS' in config.keys():
+        d_gar = config['GLOBAL_ARRAYS']
     for k in sorted(d_gar):
         e = d_gar[k]
         global_arrays = global_arrays + ', %s %s' % (e['param_type'], e['name'])
 
     per_atom_arrays = ''
-    d_paa = config['PER_ATOM_ARRAYS']
+    d_paa = {}
+    if 'PER_ATOM_ARRAYS' in config.keys():
+        d_paa = config['PER_ATOM_ARRAYS']
     for k in sorted(d_paa):
         e = d_paa[k]
         per_atom_arrays = per_atom_arrays + ', %s %s' % (e['param_type'], e['name'])

@@ -134,7 +134,7 @@ void echarge_acc1()
 
       int i = cexclude[ii][0];
       int k = cexclude[ii][1];
-      real cscale = cexclude_scale[ii];
+      real cscale = cexclude_scale[ii] - 1;
 
 
       real ci = pchg[i];

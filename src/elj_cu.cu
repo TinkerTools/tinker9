@@ -94,7 +94,7 @@ void elj_cu1(count_buffer restrict nebuf, energy_buffer restrict ebuf,
       if CONSTEXPR (do_e) {
          etl += cvt_to<ebuf_prec>(e);
          if CONSTEXPR (do_a) {
-            if (e != 0) {
+            if (scale != 0 and e != 0) {
                ctl += 1;
             }
          }
