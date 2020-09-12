@@ -390,15 +390,12 @@ void nblist_data(rc_op op)
       }
    }
    if (u & NBL_SPATIAL) {
-      auto& unt = cspatial_unit;
       auto& un2 = cspatial_v2_unit;
       if (op & rc_alloc) {
-         spatial_alloc(unt, n, cut, buf, x, y, z);
          spatial_alloc(un2, n, cut, buf, x, y, z, 2, //
                        ncexclude, cexclude, nvexclude, vexclude);
       }
       if (op & rc_init) {
-         spatial_build(unt);
          spatial_build(un2);
       }
    }
@@ -516,19 +513,13 @@ void refresh_neighbors()
       nblist_update_acc(unt);
    }
    if (u & NBL_SPATIAL) {
-      auto& unt = cspatial_unit;
       auto& un2 = cspatial_v2_unit;
       if (rc_flag & calc::traj) {
-         unt->x = x;
-         unt->y = y;
-         unt->z = z;
-         unt.update_deviceptr(*unt, PROCEED_NEW_Q);
          un2->x = x;
          un2->y = y;
          un2->z = z;
          un2.update_deviceptr(*un2, PROCEED_NEW_Q);
       }
-      spatial_update(unt);
       spatial_update(un2);
    }
 

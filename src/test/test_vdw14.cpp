@@ -6,7 +6,7 @@
 using namespace tinker;
 
 
-TEST_CASE("Vdw14-Trpcage", "[ff][evdw][lj][trpcage]")
+TEST_CASE("Vdw14-Trpcage", "[ff][evdw][vdw14][lj][trpcage]")
 {
    rc_flag = calc::xyz | calc::vmask;
 
@@ -182,13 +182,13 @@ TEST_CASE("Vdw14-Trpcage", "[ff][evdw][lj][trpcage]")
    SECTION("  - elj -- pbc, cutoff")
    {
       std::string k1 = k0 +
-         "\nNEIGHBOR-LIST"
-         "\nLIST-BUFFER      0.5"
-         "\nCUTOFF           9.0"
-         "\nA-AXIS            30"
-         "\nB-AXIS            25"
-         "\nC-AXIS            20"
-         "\n";
+         "\n"
+         "NEIGHBOR-LIST\n"
+         "LIST-BUFFER      0.5\n"
+         "CUTOFF           9.0\n"
+         "A-AXIS            30\n"
+         "B-AXIS            25\n"
+         "C-AXIS            20\n";
 
 
       TestFile fxy(xname, x0);

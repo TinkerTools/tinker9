@@ -16,8 +16,8 @@ void echglj_rad_arith_eps_geom_ewald_real_cu(int);
 
 extern real* chg_coalesced;    // n
 extern real* radeps_coalesced; // 2*n
-// #define TINKER_ECHGLJ_USE_COALESCED_GRAD 0
-#define TINKER_ECHGLJ_USE_COALESCED_GRAD 1
+#define TINKER_ECHGLJ_USE_COALESCED_GRAD 0
+// #define TINKER_ECHGLJ_USE_COALESCED_GRAD 1
 extern grad_prec* gx_coalesced;
 extern grad_prec* gy_coalesced;
 extern grad_prec* gz_coalesced;

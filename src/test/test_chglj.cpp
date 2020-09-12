@@ -6,7 +6,7 @@
 using namespace tinker;
 
 
-TEST_CASE("Chglj-Trpcage", "[ff][echarge][elj][echglj][trpcage]")
+TEST_CASE("Chglj-Trpcage", "[ff][echarge][evdw][echglj][lj][trpcage]")
 {
    rc_flag = calc::xyz | calc::energy | calc::grad | calc::virial;
 
