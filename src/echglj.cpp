@@ -37,10 +37,6 @@ void echglj_data(rc_op op)
       darray::deallocate(cvexclude, cvexclude_scale);
       darray::deallocate(atom_rad, atom_eps);
       darray::deallocate(chg_coalesced, radeps_coalesced);
-#if TINKER_ECHGLJ_USE_COALESCED_GRAD
-      if (rc_flag & calc::grad)
-         darray::deallocate(gx_coalesced, gy_coalesced, gz_coalesced);
-#endif
    }
 
 
@@ -256,10 +252,6 @@ void echglj_data(rc_op op)
       darray::allocate(n, &atom_rad, &atom_eps);
       darray::allocate(n, &chg_coalesced);
       darray::allocate(2 * n, &radeps_coalesced);
-#if TINKER_ECHGLJ_USE_COALESCED_GRAD
-      if (rc_flag & calc::grad)
-         darray::allocate(n, &gx_coalesced, &gy_coalesced, &gz_coalesced);
-#endif
    }
 
 

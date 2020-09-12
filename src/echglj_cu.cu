@@ -7,13 +7,12 @@
 #include "mathfunc.h"
 #include "md.h"
 #include "osrw.h"
-#include "switch.h"
-#include "tool/gpu_card.h"
-
-
+#include "seq_pair_charge.h"
 #include "seq_pair_lj.h"
 #include "seq_triangle.h"
 #include "spatial2.h"
+#include "switch.h"
+#include "tool/gpu_card.h"
 
 
 extern "C"
@@ -70,84 +69,23 @@ extern "C"
 
 
 namespace tinker {
-template <bool DO_G, class ETYP, int SCALE>
-__device__
-void pair_chg_v2(real r, real invr, //
-                 real cscale, real chgi, real chgk, real f, real aewald,
-                 real eccut, real ecoff, real& restrict ec, real& restrict dec)
-{
-   bool incl = r <= ecoff;
-   real fik = f * chgi * chgk;
-   if CONSTEXPR (eq<ETYP, EWALD>()) {
-      const real rew = aewald * r;
-      const real expterm = REAL_EXP(-rew * rew);
-      real erfterm = REAL_ERFC_V2(rew, expterm);
-      if CONSTEXPR (SCALE != 1) {
-         erfterm += cscale - 1;
-      }
-      ec = fik * invr * erfterm;
-      if CONSTEXPR (DO_G) {
-         constexpr real two = 2.0f / sqrtpi;
-         dec = erfterm * invr + two * aewald * expterm;
-         dec *= -fik * invr;
-      }
-   } else if CONSTEXPR (eq<ETYP, NON_EWALD_TAPER>()) {
-      if CONSTEXPR (SCALE != 1) {
-         fik *= cscale;
-      }
-      ec = fik * invr;
-      if CONSTEXPR (DO_G) {
-         dec = -fik * invr * invr;
-      }
-
-
-      // shift energy
-      real shift = fik * 2 * REAL_RECIP(eccut + ecoff);
-      ec -= shift;
-      if (r > eccut) {
-         real taper, dtaper;
-         switch_taper5<DO_G>(r, eccut, ecoff, taper, dtaper);
-
-
-         real trans, dtrans;
-         real coef = fik * (REAL_RECIP(eccut) - REAL_RECIP(ecoff)) *
-            REAL_RECIP((real)9.3);
-         real invs = REAL_RECIP(ecoff - eccut);
-         real x = (r - eccut) * invs;
-         real y = (1 - x) * x;
-         trans = coef * y * y * y * (64 - 25 * x);
-         if CONSTEXPR (DO_G) {
-            dtrans = y * y * (25 * x - 12) * (7 * x - 16);
-            dtrans *= coef * invs;
-            dec = ec * dtaper + dec * taper + dtrans;
-         }
-         ec = ec * taper + trans;
-      }
-   }
-   ec = incl ? ec : 0;
-   if CONSTEXPR (DO_G)
-      dec = incl ? dec : 0;
-}
-
-
 template <class Ver, class IMG, class ETYP, class RADRULE, class EPSRULE,
           bool VOUT>
 __global__
 void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                 grad_prec* restrict gx, grad_prec* restrict gy,
-                grad_prec* restrict gz, //
-                real eccut, real ecoff, real f, real aewald,
-                const real* restrict chg, Spatial2::ScaleInfo cinfo, //
-                const real2* restrict radeps, real evcut, real evoff,
-                Spatial2::ScaleInfo vinfo, //
-                TINKER_IMAGE_PARAMS, int n,
-                const Spatial::SortedAtom* restrict sorted,
-                const Spatial2::Center* restrict akc, int nakpl,
+                grad_prec* restrict gz, TINKER_IMAGE_PARAMS, //
+                int n, const Spatial::SortedAtom* restrict sorted, int nakpl,
                 const int* restrict iakpl, int niak, const int* restrict iak,
                 const int* restrict lst, //
-                int ncvexclude, const int (*restrict cvexclude)[2],
-                const real (*restrict cvexclude_scale)[2],
-                const int* restrict bnum, //
+                const int* restrict bnum,
+                const Spatial2::Center* restrict akc, //
+                int nexclude, const int (*restrict exclude)[2],
+                const real (*restrict exclude_scale)[2], //
+                real eccut, real ecoff, real f, real aewald,
+                const real* restrict chg, Spatial2::ScaleInfo cinfo, //
+                real evcut, real evoff, const real2* restrict radeps,
+                Spatial2::ScaleInfo vinfo, //
                 energy_buffer restrict ev, virial_buffer restrict vev,
                 grad_prec* restrict devx, grad_prec* restrict devy,
                 grad_prec* restrict devz)
@@ -155,12 +93,6 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
-
-
-   static_assert(
-      (VOUT == true and TINKER_ECHGLJ_USE_COALESCED_GRAD == 0) or
-         (VOUT == false),
-      "Does not work with coalesced gradients if VDW energy buffer is in use.");
 
 
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
@@ -200,14 +132,14 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
 
 
    //* /
-   // cvexclude
-   for (int ii = ithread; ii < ncvexclude; ii += blockDim.x * gridDim.x) {
-      int i = cvexclude[ii][0];
-      int k = cvexclude[ii][1];
+   // exclude
+   for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
+      int i = exclude[ii][0];
+      int k = exclude[ii][1];
+      real cscale = exclude_scale[ii][0];
+      real vscale = exclude_scale[ii][1];
       int atomi = bnum[i];
       int atomk = bnum[k];
-      real cscale = cvexclude_scale[ii][0];
-      real vscale = cvexclude_scale[ii][1];
 
 
       real xi = sorted[atomi].x;
@@ -234,42 +166,29 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
 
       real ecik, decik;
       real evik, devik;
-      pair_chg_v2<do_g, ETYP, 0>(                     //
-         r, invr,                                     //
-         cscale, chgi, chgk, f, aewald, eccut, ecoff, //
-         ecik, decik);
-      pair_lj_v2<do_g, RADRULE, EPSRULE, 0>(           //
-         r, invr,                                      //
-         vscale, radi, epsi, radk, epsk, evcut, evoff, //
-         evik, devik);
+      pair_chg_v2<do_g, ETYP, 0>( //
+         r, invr, cscale, chgi, chgk, f, aewald, eccut, ecoff, ecik, decik);
+      pair_lj_v2<do_g, RADRULE, EPSRULE, 0>( //
+         r, invr, vscale, radi, epsi, radk, epsk, evcut, evoff, evik, devik);
       if CONSTEXPR (do_e and not VOUT) {
          ectl += cvt_to<ebuf_prec>(ecik + evik);
       } else if CONSTEXPR (do_e and VOUT) {
          ectl += cvt_to<ebuf_prec>(ecik);
          evtl += cvt_to<ebuf_prec>(evik);
       }
-      real dedx, dedy, dedz;
       if CONSTEXPR (do_g and not VOUT) {
+         real dedx, dedy, dedz;
          decik += devik;
          decik *= invr;
          dedx = decik * xr;
          dedy = decik * yr;
          dedz = decik * zr;
-#if TINKER_ECHGLJ_USE_COALESCED_GRAD == 0
          atomic_add(dedx, gx, i);
          atomic_add(dedy, gy, i);
          atomic_add(dedz, gz, i);
          atomic_add(-dedx, gx, k);
          atomic_add(-dedy, gy, k);
          atomic_add(-dedz, gz, k);
-#else
-         atomic_add(dedx, gx, atomi);
-         atomic_add(dedy, gy, atomi);
-         atomic_add(dedz, gz, atomi);
-         atomic_add(-dedx, gx, atomk);
-         atomic_add(-dedy, gy, atomk);
-         atomic_add(-dedz, gz, atomk);
-#endif
          if CONSTEXPR (do_v) {
             vctlxx += cvt_to<vbuf_prec>(xr * dedx);
             vctlyx += cvt_to<vbuf_prec>(yr * dedx);
@@ -279,6 +198,7 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
             vctlzz += cvt_to<vbuf_prec>(zr * dedz);
          }
       } else if CONSTEXPR (do_g and VOUT) {
+         real dedx, dedy, dedz;
          decik *= invr;
          dedx = decik * xr;
          dedy = decik * yr;
@@ -357,6 +277,7 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
       real shxi = sorted[shatomi].x;
       real shyi = sorted[shatomi].y;
       real shzi = sorted[shatomi].z;
+      int shi = sorted[shatomi].unsorted;
       chgarr[threadIdx.x] = chg[shatomi];
       radarr[threadIdx.x] = radeps[shatomi].x;
       epsarr[threadIdx.x] = radeps[shatomi].y;
@@ -367,15 +288,10 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
       real xk = sorted[atomk].x;
       real yk = sorted[atomk].y;
       real zk = sorted[atomk].z;
+      int k = sorted[atomk].unsorted;
       real chgk = chg[atomk];
       real radk = radeps[atomk].x;
       real epsk = radeps[atomk].y;
-
-
-#if TINKER_ECHGLJ_USE_COALESCED_GRAD == 0
-      int shi = sorted[shatomi].unsorted;
-      int k = sorted[atomk].unsorted;
-#endif
 
 
       real xc = akc[ty].x;
@@ -401,9 +317,8 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
       }
 
 
-      int pos = WARP_SIZE * iw + ilane;
-      int cbit0 = cinfo.bit0[pos];
-      int vbit0 = vinfo.bit0[pos];
+      int cbit0 = cinfo.bit0[iw * WARP_SIZE + ilane];
+      int vbit0 = vinfo.bit0[iw * WARP_SIZE + ilane];
 
 
       if (ilocal) {
@@ -418,7 +333,6 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
             real xr = shxi - xk;
             real yr = shyi - yk;
             real zr = shzi - zk;
-            real r2 = xr * xr + yr * yr + zr * zr;
 
 
             int cbit = cbit0 & srcmask;
@@ -426,18 +340,15 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
 
 
             bool incl = iid < kid and kid < n and cbit == 0 and vbit == 0;
+            real r2 = xr * xr + yr * yr + zr * zr;
             real r = REAL_SQRT(r2);
             real invr = REAL_RECIP(r);
             real ecik, decik;
             real evik, devik;
-            pair_chg_v2<do_g, ETYP, 1>(                //
-               r, invr,                                //
-               1, chgi, chgk, f, aewald, eccut, ecoff, //
-               ecik, decik);
-            pair_lj_v2<do_g, RADRULE, EPSRULE, 1>(      //
-               r, invr,                                 //
-               1, radi, epsi, radk, epsk, evcut, evoff, //
-               evik, devik);
+            pair_chg_v2<do_g, ETYP, 1>( //
+               r, invr, 1, chgi, chgk, f, aewald, eccut, ecoff, ecik, decik);
+            pair_lj_v2<do_g, RADRULE, EPSRULE, 1>( //
+               r, invr, 1, radi, epsi, radk, epsk, evcut, evoff, evik, devik);
 
 
             if CONSTEXPR (do_e and not VOUT) {
@@ -534,8 +445,6 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
             real xr = shxi - xk;
             real yr = shyi - yk;
             real zr = shzi - zk;
-            real r2 = IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS,
-                                TINKER_IMAGE_RECIP_ARGS);
 
 
             int cbit = cbit0 & srcmask;
@@ -543,18 +452,16 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
 
 
             bool incl = iid < kid and kid < n and cbit == 0 and vbit == 0;
+            real r2 = IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS,
+                                TINKER_IMAGE_RECIP_ARGS);
             real r = REAL_SQRT(r2);
             real invr = REAL_RECIP(r);
             real ecik, decik;
             real evik, devik;
-            pair_chg_v2<do_g, ETYP, 1>(                //
-               r, invr,                                //
-               1, chgi, chgk, f, aewald, eccut, ecoff, //
-               ecik, decik);
-            pair_lj_v2<do_g, RADRULE, EPSRULE, 1>(      //
-               r, invr,                                 //
-               1, radi, epsi, radk, epsk, evcut, evoff, //
-               evik, devik);
+            pair_chg_v2<do_g, ETYP, 1>( //
+               r, invr, 1, chgi, chgk, f, aewald, eccut, ecoff, ecik, decik);
+            pair_lj_v2<do_g, RADRULE, EPSRULE, 1>( //
+               r, invr, 1, radi, epsi, radk, epsk, evcut, evoff, evik, devik);
 
 
             if CONSTEXPR (do_e and not VOUT) {
@@ -643,21 +550,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
 
 
       if CONSTEXPR (do_g) {
-#if TINKER_ECHGLJ_USE_COALESCED_GRAD == 0
          atomic_add(fix, gx, shi);
          atomic_add(fiy, gy, shi);
          atomic_add(fiz, gz, shi);
          atomic_add(fkx, gx, k);
          atomic_add(fky, gy, k);
          atomic_add(fkz, gz, k);
-#else
-         atomic_add(fix, gx, shatomi);
-         atomic_add(fiy, gy, shatomi);
-         atomic_add(fiz, gz, shatomi);
-         atomic_add(fkx, gx, atomk);
-         atomic_add(fky, gy, atomk);
-         atomic_add(fkz, gz, atomk);
-#endif
       }
       if CONSTEXPR (do_g and VOUT) {
          atomic_add(ivfx, devx, shi);
@@ -700,6 +598,7 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
       real shxi = sorted[shatomi].x;
       real shyi = sorted[shatomi].y;
       real shzi = sorted[shatomi].z;
+      int shi = sorted[shatomi].unsorted;
       chgarr[threadIdx.x] = chg[shatomi];
       radarr[threadIdx.x] = radeps[shatomi].x;
       epsarr[threadIdx.x] = radeps[shatomi].y;
@@ -709,15 +608,10 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
       real xk = sorted[atomk].x;
       real yk = sorted[atomk].y;
       real zk = sorted[atomk].z;
+      int k = sorted[atomk].unsorted;
       real chgk = chg[atomk];
       real radk = radeps[atomk].x;
       real epsk = radeps[atomk].y;
-
-
-#if TINKER_ECHGLJ_USE_COALESCED_GRAD == 0
-      int shi = sorted[shatomi].unsorted;
-      int k = sorted[atomk].unsorted;
-#endif
 
 
       real xc = akc[ty].x;
@@ -753,22 +647,18 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
             real xr = shxi - xk;
             real yr = shyi - yk;
             real zr = shzi - zk;
-            real r2 = xr * xr + yr * yr + zr * zr;
 
 
             bool incl = atomk > 0;
+            real r2 = xr * xr + yr * yr + zr * zr;
             real r = REAL_SQRT(r2);
             real invr = REAL_RECIP(r);
             real ecik, decik;
             real evik, devik;
-            pair_chg_v2<do_g, ETYP, 1>(                //
-               r, invr,                                //
-               1, chgi, chgk, f, aewald, eccut, ecoff, //
-               ecik, decik);
-            pair_lj_v2<do_g, RADRULE, EPSRULE, 1>(      //
-               r, invr,                                 //
-               1, radi, epsi, radk, epsk, evcut, evoff, //
-               evik, devik);
+            pair_chg_v2<do_g, ETYP, 1>( //
+               r, invr, 1, chgi, chgk, f, aewald, eccut, ecoff, ecik, decik);
+            pair_lj_v2<do_g, RADRULE, EPSRULE, 1>( //
+               r, invr, 1, radi, epsi, radk, epsk, evcut, evoff, evik, devik);
 
 
             if CONSTEXPR (do_e and not VOUT) {
@@ -862,23 +752,19 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
             real xr = shxi - xk;
             real yr = shyi - yk;
             real zr = shzi - zk;
-            real r2 = IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS,
-                                TINKER_IMAGE_RECIP_ARGS);
 
 
             bool incl = atomk > 0;
+            real r2 = IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS,
+                                TINKER_IMAGE_RECIP_ARGS);
             real r = REAL_SQRT(r2);
             real invr = REAL_RECIP(r);
             real ecik, decik;
             real evik, devik;
-            pair_chg_v2<do_g, ETYP, 1>(                //
-               r, invr,                                //
-               1, chgi, chgk, f, aewald, eccut, ecoff, //
-               ecik, decik);
-            pair_lj_v2<do_g, RADRULE, EPSRULE, 1>(      //
-               r, invr,                                 //
-               1, radi, epsi, radk, epsk, evcut, evoff, //
-               evik, devik);
+            pair_chg_v2<do_g, ETYP, 1>( //
+               r, invr, 1, chgi, chgk, f, aewald, eccut, ecoff, ecik, decik);
+            pair_lj_v2<do_g, RADRULE, EPSRULE, 1>( //
+               r, invr, 1, radi, epsi, radk, epsk, evcut, evoff, evik, devik);
 
 
             if CONSTEXPR (do_e and not VOUT) {
@@ -966,21 +852,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
 
 
       if CONSTEXPR (do_g) {
-#if TINKER_ECHGLJ_USE_COALESCED_GRAD == 0
          atomic_add(fix, gx, shi);
          atomic_add(fiy, gy, shi);
          atomic_add(fiz, gz, shi);
          atomic_add(fkx, gx, k);
          atomic_add(fky, gy, k);
          atomic_add(fkz, gz, k);
-#else
-         atomic_add(fix, gx, shatomi);
-         atomic_add(fiy, gy, shatomi);
-         atomic_add(fiz, gz, shatomi);
-         atomic_add(fkx, gx, atomk);
-         atomic_add(fky, gy, atomk);
-         atomic_add(fkz, gz, atomk);
-#endif
       }
       if CONSTEXPR (do_g and VOUT) {
          atomic_add(ivfx, devx, shi);
@@ -1032,37 +909,6 @@ void echglj_coalesce(int n, real* restrict schg, real2* restrict svdw, //
 }
 
 
-template <int ACT>
-__global__
-void echglj_grad_coalesce(int n, grad_prec* restrict gxc,
-                          grad_prec* restrict gyc, grad_prec* restrict gzc,
-                          const int* restrict bnum, grad_prec* restrict gx,
-                          grad_prec* restrict gy, grad_prec* restrict gz)
-{
-   if CONSTEXPR (ACT == 0) {
-      // zero out the coalesced gradients
-      for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
-           i += blockDim.x * gridDim.x) {
-         gxc[i] = 0;
-         gyc[i] = 0;
-         gzc[i] = 0;
-      }
-   }
-
-
-   if CONSTEXPR (ACT == 1) {
-      // add to the global gradients
-      for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
-           i += blockDim.x * gridDim.x) {
-         int sorted = bnum[i];
-         atomic_add(gxc[sorted], gx, i);
-         atomic_add(gyc[sorted], gy, i);
-         atomic_add(gzc[sorted], gz, i);
-      }
-   }
-}
-
-
 template <class Ver, class ETYP, class RADRULE, class EPSRULE, bool VOUT>
 void echglj_cu3()
 {
@@ -1081,7 +927,7 @@ void echglj_cu3()
    real aewald = 0;
    if CONSTEXPR (eq<ETYP, EWALD>()) {
       ecoff = switch_off(switch_ewald);
-      // eccut = ecoff; // not used
+      eccut = ecoff; // not used
       PMEUnit pu = epme_unit;
       aewald = pu->aewald;
    } else {
@@ -1097,24 +943,12 @@ void echglj_cu3()
    evcut = switch_cut(switch_vdw);
 
 
-#if TINKER_ECHGLJ_USE_COALESCED_GRAD
-   if CONSTEXPR (Ver::g) {
-      launch_k1s(nonblk, st.n, echglj_grad_coalesce<0>,          //
-                 st.n, gx_coalesced, gy_coalesced, gz_coalesced, //
-                 st.bnum, decx, decy, decz);
-   }
-#   define TINKER_ECHGLJ_COALESCED_GRAD gx_coalesced, gy_coalesced, gz_coalesced
-#else
-#   define TINKER_ECHGLJ_COALESCED_GRAD decx, decy, decz
-#endif
-
-
 #define ECHGLJ_CU3_V2_ARGS                                                     \
-   ec, vir_ec, TINKER_ECHGLJ_COALESCED_GRAD, eccut, ecoff, f, aewald,          \
-      chg_coalesced, st.si1, (const real2*)radeps_coalesced, evcut, evoff,     \
-      st.si2, TINKER_IMAGE_ARGS, st.n, st.sorted, st.akc, st.nakpl, st.iakpl,  \
-      st.niak, st.iak, st.lst, ncvexclude, cvexclude, cvexclude_scale,         \
-      st.bnum, ev, vir_ev, devx, devy, devz
+   ec, vir_ec, decx, decy, decz, TINKER_IMAGE_ARGS, st.n, st.sorted, st.nakpl, \
+      st.iakpl, st.niak, st.iak, st.lst, st.bnum, st.akc, ncvexclude,          \
+      cvexclude, cvexclude_scale, eccut, ecoff, f, aewald, chg_coalesced,      \
+      st.si1, evcut, evoff, (const real2*)radeps_coalesced, st.si2, ev,        \
+      vir_ev, devx, devy, devz
 
 
    int ngrid = get_grid_size(BLOCK_DIM);
@@ -1133,14 +967,6 @@ void echglj_cu3()
    } else {
       assert(false);
    }
-#if TINKER_ECHGLJ_USE_COALESCED_GRAD
-   if CONSTEXPR (Ver::g) {
-      launch_k1s(nonblk, st.n, echglj_grad_coalesce<1>,          //
-                 st.n, gx_coalesced, gy_coalesced, gz_coalesced, //
-                 st.bnum, decx, decy, decz);
-   }
-#endif
-#undef TINKER_ECHGLJ_COALESCED_GRAD
 #undef ECHGLJ_CU3_V2_ARGS
 }
 
