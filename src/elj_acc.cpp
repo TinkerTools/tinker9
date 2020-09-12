@@ -127,7 +127,7 @@ void elj_acc1()
 
       int i = vexclude[ii][0];
       int k = vexclude[ii][1];
-      real vscale = vexclude_scale[ii];
+      real vscale = vexclude_scale[ii] - 1;
 
 
       int it = jvdw[i];

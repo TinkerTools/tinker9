@@ -68,7 +68,7 @@ void elj_cu1(LJ_PARA, int n, const Spatial::SortedAtom* restrict sorted,
    for (int ii = ithread; ii < nvexclude; ii += blockDim.x * gridDim.x) {
       int i = vexclude[ii][0];
       int k = vexclude[ii][1];
-      real vscale = vexclude_scale[ii] + 1;
+      real vscale = vexclude_scale[ii];
 
 
       int jit = jvdw[i];

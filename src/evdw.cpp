@@ -202,7 +202,7 @@ void evdw_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(v2scale - 1);
+                  excls.push_back(v2scale);
                }
             }
          }
@@ -217,7 +217,7 @@ void evdw_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(v3scale - 1);
+                  excls.push_back(v3scale);
                }
             }
          }
@@ -232,7 +232,7 @@ void evdw_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(v4scale - 1);
+                  excls.push_back(v4scale);
                }
             }
          }
@@ -247,7 +247,7 @@ void evdw_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(v5scale - 1);
+                  excls.push_back(v5scale);
                }
             }
          }
