@@ -118,7 +118,4 @@ void spatial2_cut(int& px, int& py, int& pz, int level)
    py = pmax;
    pz = pmax;
 }
-
-
-Spatial2Unit cspatial_v2_unit;
 }

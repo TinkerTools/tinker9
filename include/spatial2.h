@@ -154,7 +154,4 @@ void spatial2_data_alloc(Spatial2Unit& u, int n, double cutoff, double buffer,
 void spatial2_cut(int& px, int& py, int& pz, int level);
 void spatial_data_init_cu(Spatial2Unit);
 void spatial_data_update_sorted(Spatial2Unit);
-
-
-extern Spatial2Unit cspatial_v2_unit;
 }

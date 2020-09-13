@@ -9,7 +9,7 @@ namespace tinker {
  * \ingroup vdw
  */
 #pragma acc routine seq
-template <int DO_G>
+template <bool DO_G>
 SEQ_CUDA
 void pair_lj(real rik, real rik2, real rv, real eps, real vscalek,
              real& restrict e, real& restrict de)
@@ -28,7 +28,7 @@ void pair_lj(real rik, real rik2, real rv, real eps, real vscalek,
  * \ingroup vdw
  */
 #pragma acc routine seq
-template <int DO_G, class RADRULE, class EPSRULE, int SCALE>
+template <bool DO_G, class RADRULE, class EPSRULE, int SCALE>
 SEQ_CUDA
 void pair_lj_v2(real r, real invr, //
                 real vscale, real radi, real epsi, real radk, real epsk,
@@ -68,7 +68,7 @@ void pair_lj_v2(real r, real invr, //
  * \ingroup vdw
  */
 #pragma acc routine seq
-template <int DO_G, int SCALE>
+template <bool DO_G, int SCALE>
 SEQ_CUDA
 void pair_lj_v3(real r, real invr, //
                 real vscale, real rad, real eps, real evcut, real evoff,
