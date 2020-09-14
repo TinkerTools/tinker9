@@ -29,7 +29,6 @@ void pair_dfield_chgpen(real r2, real xr, real yr, real zr, real dscale,
    
    damp_dir(dmpi,dmpk,r,alphai,alphak);
 
-   
    if CONSTEXPR (eq<ETYP, EWALD>())
       damp_ewald<4>(bn, r, invr1, rr2, aewald);
    real rr1 = invr1;
@@ -80,9 +79,9 @@ void pair_dfield_chgpen(real r2, real xr, real yr, real zr, real dscale,
    inci = c1 * dr - rr3k * dkxyz + 2 * rr5k * qkxyz;
    fid += inci;
 
-   c1 = -(rr3 * corei + rr3i * vali - rr5i * dir + rr7i * qir);
-   inck = c1 * dr - rr3i * dixyz + 2 * rr5i * qixyz;
-   fkd -= inck;
+   c1 = (rr3 * corei + rr3i * vali + rr5i * dir + rr7i * qir);
+   inck = c1 * dr - rr3i * dixyz - 2 * rr5i * qixyz;
+   fkd += inck;
 
 }
 
@@ -135,6 +134,9 @@ void pair_ufield_chgpen(real r2, real xr, real yr, real zr, real wscale, //
    inck = coef * dr + bn[1] * uid;
    fkd += inck;   
 
-   // printf("zrsd %14.6e %14.6e\n", fid.x, fkd.x);
+   //printf("fid %5.2f %5.2f %5.2f %16.8e %16.8e %16.8e\n", alphai, alphak, r, uid.x, uid.y, uid.z);
+   //printf("fkd %5.2f %5.2f %5.2f %16.8e %16.8e %16.8e\n", alphai, alphak, r, ukd.x, ukd.y, ukd.z);
+
+   //printf("zrsd %14.6e %14.6e\n", fid.x, fkd.x);
 }
 }

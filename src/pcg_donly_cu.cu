@@ -23,11 +23,13 @@ void pcg_udir_donly(int n, const real* restrict polarity, real (*restrict udir)[
    for (int i = ITHREAD; i < n; i += STRIDE) {
       real poli = polarity[i];
       real test;
+      real test2;
       #pragma unroll
       for (int j = 0; j < 3; ++j) {
          udir[i][j] = poli * field[i][j];
          test = udir[i][j];
-         // printf("udir %14.6e\n", test);
+         test2 = field[i][j];
+         //printf("udir %14.6e field %14.6e\n", test, test2);
       }
    }
 }
@@ -206,7 +208,7 @@ void induce_mutual_pcg_cu2(real (*uind)[3])
    while (!done) {
       ++iter;
 
-      printf("%d\n", iter);
+      // printf("%d\n", iter);
       // T p and p
       // vec = (inv_alpha + Tu) conj, field = -Tu conj
       // vec = inv_alpha * conj - field

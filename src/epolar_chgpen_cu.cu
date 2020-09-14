@@ -301,9 +301,7 @@ void epolar_chgpen_cu2(POLARPARAS, const real* restrict x,
       int i = dwexclude[ii][0];
       int k = dwexclude[ii][1];
       real dscale = dwexclude_scale[ii][0];
-      real wscale =
-         dwexclude_scale[ii][1]; // change to match definition of wscale
-
+      real wscale = dwexclude_scale[ii][1]; 
 
       real xi = x[i];
       real yi = y[i];

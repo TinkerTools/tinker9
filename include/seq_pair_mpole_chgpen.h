@@ -80,6 +80,7 @@ void pair_mpole_chgpen(                             //
    real invr1 = REAL_RECIP(r);
    real rr2 = invr1 * invr1;
 
+
    real dmpi[5];
    real dmpk[5];
    real dmpik[6];

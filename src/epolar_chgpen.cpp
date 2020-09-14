@@ -108,7 +108,7 @@ void induce2(real (*ud)[3])
             // u2 *= units::debye;
             // u3 *= units::debye;
             // unorm *= units::debye;
-            print(stdout, "%8d     %13.6e%13.6e%13.6e %13.6e\n", i + 1, u1, u2,
+            print(stdout, "%8d     %16.6e%16.6e%16.6e %16.6e\n", i + 1, u1, u2,
                   u3, unorm);
          }
       }

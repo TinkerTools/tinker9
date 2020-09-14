@@ -86,8 +86,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
    real rr3k, rr5k, rr7k, rr9k, rr5ik, rr7ik;
    real dsr3i, dsr5i, dsr7i, dsr3k, dsr5k, dsr7k;
 
-
-
    if CONSTEXPR (eq<ETYP, EWALD>()) {
 
 
@@ -165,8 +163,11 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
          2 * (qiu * rr5i - qku * rr5k) - dkr * uir * rr5k - dir * ukr * rr5i +
          qkr * uir * rr7k - qir * ukr * rr7i;
 
-      printf("\nEpolar");
-      printf("%5.2f %5.2f %14.8f %16.8e %16.8e %16.8e\n", alphai, alphak, e, uix, ukr, uiz);
+      if CONSTEXPR (eq<ETYP, NON_EWALD>())
+         e *= dscale;
+
+      //printf("\nEpolar");
+      //printf("%5.2f %5.2f %5.2f %16.8e %16.8e %16.8e\n", alphai, alphak, r, e, qiu, qku);
    }
 
 

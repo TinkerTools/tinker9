@@ -138,7 +138,6 @@ void dfield_chgpen_cu2(DFIELDPARAS, const real* restrict x,
       int k = dexclude[ii][1];
       real dscale = dexclude_scale[ii];
 
-
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
@@ -202,6 +201,7 @@ void dfield_chgpen_ewald_real_cu(real (*field)[3])
                  pcore, pval, palpha, rpole, TINKER_IMAGE_ARGS, off2, n,
                  st.sorted, st.niak, st.iak, st.lst, aewald);
    }
+   printf("nd %d\n", ndexclude);
    if (ndexclude > 0) {
       launch_k1s(nonblk, ndexclude, dfield_chgpen_cu2, field, pcore, pval,
                  palpha, rpole, TINKER_IMAGE_ARGS, off2, x, y, z, ndexclude,
@@ -328,7 +328,6 @@ void ufield_chgpen_cu2(UFIELDPARAS, const real* restrict x,
       int i = wexclude[ii][0];
       int k = wexclude[ii][1];
       real wscale = wexclude_scale[ii];
-
 
       real xi = x[i];
       real yi = y[i];

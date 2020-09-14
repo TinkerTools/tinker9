@@ -323,6 +323,7 @@ void chgpen_data(rc_op op)
       d3scale = polpot::d3scale;
       d4scale = polpot::d4scale;
 
+
       exclik.clear();
       excls.clear();
       for (int i = 0; i < n; ++i) {
