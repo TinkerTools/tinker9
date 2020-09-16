@@ -33,7 +33,7 @@ PAIRWISE_SCALED: |
   real e, de;
   pair_lj_v3<do_g, 0>(r, invr, scale, rv, eps, cut, off, e, de);
 
-PAIRWISE_CODE: |
+PAIRWISE_FULL: |
   real r2 = image2(xr, yr, zr);
   real r = REAL_SQRT(r2);
   real invr = REAL_RECIP(r);

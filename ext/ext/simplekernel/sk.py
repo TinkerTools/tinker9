@@ -17,10 +17,8 @@ void KERNEL_NAME(count_buffer restrict nebuf
 , int nakpl, const int* restrict iakpl
 , int niak, const int* restrict iak, const int* restrict lst
 , int nexclude, const int (*restrict exclude)[2]
-, const real* restrict exclude_scale, const unsigned int* restrict info
-GLOBAL_VARIABLES
-GLOBAL_ARRAYS
-PER_ATOM_ARRAYS
+, const real* restrict exclude_scale,
+const unsigned int* restrict info GLOBAL_VARIABLES GLOBAL_ARRAYS PER_ATOM_ARRAYS
 )
 {
     constexpr bool do_e = Ver::e;
@@ -163,7 +161,7 @@ PER_ATOM_ARRAYS
 
 
             bool incl = iid < kid and kid < n and bit == 0;
-            PAIRWISE_CODE
+            PAIRWISE_FULL
 
 
             if CONSTEXPR (do_e) {
@@ -260,7 +258,7 @@ PER_ATOM_ARRAYS
 
 
             bool incl = atomk > 0;
-            PAIRWISE_CODE
+            PAIRWISE_FULL
 
 
             if CONSTEXPR (do_e) {
@@ -393,7 +391,7 @@ def generate(yaml_file):
         .replace('LOAD_ATOM_SHI_PARAMS', load_per_atom_params('shi', 'shi', d_paa))\
         .replace('LOAD_SHFL_PARAMS', load_shfl_params('i', 'shi', d_paa))\
         .replace('SHFL_ATOM_I_PARAMS', shft_per_atom_params('shi', d_paa))\
-        .replace('PAIRWISE_CODE', config['PAIRWISE_CODE'])\
+        .replace('PAIRWISE_FULL', config['PAIRWISE_FULL'])\
         .replace('PAIRWISE_SCALED', config['PAIRWISE_SCALED'])
 
     print(output)

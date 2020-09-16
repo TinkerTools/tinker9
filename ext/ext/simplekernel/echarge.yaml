@@ -29,7 +29,7 @@ PAIRWISE_SCALED: |
   real e, de;
   pair_chg_v3<do_g, ETYP, 0>(r, scale, ichg, kchg, ebuffer, f, aewald, cut, off, e, de);
 
-PAIRWISE_CODE: |
+PAIRWISE_FULL: |
   real r2 = image2(xr, yr, zr);
   real r = REAL_SQRT(r2);
   real invr = REAL_RECIP(r);
