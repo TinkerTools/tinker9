@@ -315,6 +315,9 @@ void spatial_bc(int n, int px, int py, int pz,
 
       int ix, iy, iz;
       frac_to_ixyz(ix, iy, iz, px, py, pz, f.x, f.y, f.z);
+      ix &= ((1 << px) - 1);
+      iy &= ((1 << py) - 1);
+      iz &= ((1 << pz) - 1);
       if (box_shape == OCT_BOX)
          ixyz_octahedron(ix, iy, iz, px, py, pz);
       int id = ixyz_to_box(ix, iy, iz, px, py, pz);
@@ -787,6 +790,17 @@ void spatial2_step1(int n, int pz, int2* restrict b2num, //
 
       int ix, iy, iz;
       frac_to_ixyz(ix, iy, iz, pz, pz, pz, f.x, f.y, f.z);
+      // Due to the limited precision, f.z (and f.x, f.y) may turn out to be
+      // +0.5, which should have been in the range of [-0.5, +0.5). Thus iz may
+      // be (2**pz)/2, which is also out of range. However, the Hilbert curve
+      // algorithm used here works so well that we don't even need to call
+      // "image" for the fractional coordinates. Here we still "filter" iz as
+      // follows because we want it to be "in-range" for the truncated
+      // octahedron box.
+      int px = pz, py = pz;
+      ix &= ((1 << px) - 1);
+      iy &= ((1 << py) - 1);
+      iz &= ((1 << pz) - 1);
       if (box_shape == OCT_BOX)
          ixyz_octahedron(ix, iy, iz, pz, pz, pz);
       coord_t ixyz[3] = {ix, iy, iz};
