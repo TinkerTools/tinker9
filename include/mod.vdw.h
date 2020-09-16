@@ -65,7 +65,6 @@ TINKER_EXTERN int njvdw;
 TINKER_EXTERN grad_prec* gxred;
 TINKER_EXTERN grad_prec* gyred;
 TINKER_EXTERN grad_prec* gzred;
-TINKER_EXTERN bool vdw_exclude_bond;
 TINKER_EXTERN int nvdw14;
 TINKER_EXTERN int (*vdw14ik)[2];
 TINKER_EXTERN int nvexclude;

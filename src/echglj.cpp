@@ -193,7 +193,7 @@ void echglj_data(rc_op op)
 
 
          // v
-         if (v2scale != 1 && vdw_exclude_bond == false) {
+         if (v2scale != 1) {
             nn = couple::n12[i];
             for (int j = 0; j < nn; ++j) {
                int k = couple::i12[i][j];

@@ -46,9 +46,6 @@ void evdw_data(rc_op op)
       jcount = 0;
 
 
-      vdw_exclude_bond = false;
-
-
       if (vdwtyp == evdw_t::hal)
          darray::deallocate(ired, kred, xred, yred, zred, gxred, gyred, gzred);
 
@@ -167,17 +164,6 @@ void evdw_data(rc_op op)
       darray::allocate(n, &mut);
 
 
-      vdw_exclude_bond = false;
-      if (vdwtyp == evdw_t::hal) {
-         vdw_exclude_bond =
-            (vdwpot::v2scale == 0) && (vlist_version() & NBL_SPATIAL);
-      } else {
-         vdw_exclude_bond =
-            (vdwpot::v2scale == 0) && (clist_version() & NBL_SPATIAL);
-      }
-      vdw_exclude_bond = false; // for Spatial2
-
-
       v2scale = vdwpot::v2scale;
       v3scale = vdwpot::v3scale;
       v4scale = vdwpot::v4scale;
@@ -194,7 +180,7 @@ void evdw_data(rc_op op)
          int nn;
          int bask;
 
-         if (v2scale != 1 && vdw_exclude_bond == false) {
+         if (v2scale != 1) {
             nn = couple::n12[i];
             for (int j = 0; j < nn; ++j) {
                int k = couple::i12[i][j];
