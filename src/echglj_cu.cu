@@ -912,14 +912,15 @@ void echglj_coalesce(int n, real* restrict schg, real2* restrict svdw, //
 template <class Ver, class ETYP, class RADRULE, class EPSRULE, bool VOUT>
 void echglj_cu3()
 {
-   const auto& st = *cspatial_v2_unit;
+   auto& st = *cspatial_v2_unit;
 
 
-   if (st.fresh) {
+   if (st.fresh & cspatial_fresh_mask_echglj) {
       auto ker = echglj_coalesce<RADRULE, EPSRULE>;
       launch_k1s(nonblk, st.n, ker,                             //
                  st.n, chg_coalesced, (real2*)radeps_coalesced, //
                  st.sorted, pchg, atom_rad, atom_eps);
+      st.fresh &= ~cspatial_fresh_mask_echglj;
    }
 
 

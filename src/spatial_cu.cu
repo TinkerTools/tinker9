@@ -503,7 +503,6 @@ namespace tinker {
 void spatial_data_update_sorted(SpatialUnit u)
 {
    auto& st = *u;
-   st.fresh = 0;
    launch_k1s(nonblk, n, spatial_update_sorted, n, st.sorted, st.x, st.y, st.z,
               TINKER_IMAGE_ARGS);
 }
@@ -511,8 +510,7 @@ void spatial_data_update_sorted(SpatialUnit u)
 
 void spatial_data_init_cu(SpatialUnit u)
 {
-   assert(u->fresh == 0);
-   u->fresh = 1;
+   u->fresh = -1; // 0xFFFFFFFF
    const real cutbuf = u->cutoff + u->buffer;
    const real cutbuf2 = cutbuf * cutbuf;
    const real lbuf = u->buffer;
@@ -1443,8 +1441,7 @@ void run_spatial2_step5(Spatial2Unit u)
 
 void spatial_data_init_cu(Spatial2Unit u)
 {
-   assert(u->fresh == 0);
-   u->fresh = 1;
+   u->fresh = -1; // 0xFFFFFFFF;
    const real lbuf = u->buffer;
    const int n = u->n;
 
@@ -1530,7 +1527,6 @@ void spatial_data_init_cu(Spatial2Unit u)
 
 void spatial_data_update_sorted(Spatial2Unit u)
 {
-   u->fresh = 0;
    launch_k1s(nonblk, u->n, spatial2_update_sorted, //
               u->n, u->sorted, u->x, u->y, u->z,    //
               TINKER_IMAGE_ARGS, u->cutoff, u->akc, u->half);
