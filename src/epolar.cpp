@@ -1,10 +1,13 @@
 #include "epolar.h"
 #include "empole.h"
+#include "induce.h"
 #include "md.h"
+#include "mod.uprior.h"
 #include "nblist.h"
 #include "pme.h"
 #include "potent.h"
 #include "tool/host_zero.h"
+#include "tool/io_fort_str.h"
 #include "tool/io_print.h"
 #include <map>
 #include <tinker/detail/couple.hh>
@@ -14,6 +17,7 @@
 #include <tinker/detail/polpot.hh>
 #include <tinker/detail/sizes.hh>
 #include <tinker/detail/units.hh>
+#include <tinker/detail/uprior.hh>
 
 
 namespace tinker {
@@ -48,6 +52,30 @@ void epolar_data(rc_op op)
       darray::deallocate(ufld, dufld);
       darray::deallocate(work01_, work02_, work03_, work04_, work05_, work06_,
                          work07_, work08_, work09_, work10_);
+
+
+      if (polpred == UPred::ASPC) {
+         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04,
+                            udalt_05, udalt_06, udalt_07, udalt_08, udalt_09,
+                            udalt_10, udalt_11, udalt_12, udalt_13, udalt_14,
+                            udalt_15, upalt_00, upalt_01, upalt_02, upalt_03,
+                            upalt_04, upalt_05, upalt_06, upalt_07, upalt_08,
+                            upalt_09, upalt_10, upalt_11, upalt_12, upalt_13,
+                            upalt_14, upalt_15);
+      } else if (polpred == UPred::GEAR) {
+         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04,
+                            udalt_05, upalt_00, upalt_01, upalt_02, upalt_03,
+                            upalt_04, upalt_05);
+      } else if (polpred == UPred::LSQR) {
+         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04,
+                            udalt_05, udalt_06, upalt_00, upalt_01, upalt_02,
+                            upalt_03, upalt_04, upalt_05, upalt_06);
+         darray::deallocate(udalt_lsqr_a, udalt_lsqr_b, upalt_lsqr_a,
+                            upalt_lsqr_b);
+      }
+      polpred = UPred::NONE;
+      maxualt = 0;
+      nualt = 0;
    }
 
    if (op & rc_alloc) {
@@ -377,6 +405,61 @@ void epolar_data(rc_op op)
 
       darray::allocate(n, &work01_, &work02_, &work03_, &work04_, &work05_,
                        &work06_, &work07_, &work08_, &work09_, &work10_);
+
+
+      if (uprior::use_pred) {
+         fstr_view predstr = uprior::polpred;
+         if (predstr == "ASPC") {
+            polpred = UPred::ASPC;
+         } else if (predstr == "GEAR") {
+            polpred = UPred::GEAR;
+         } else {
+            polpred = UPred::LSQR;
+         }
+      } else {
+         polpred = UPred::NONE;
+      }
+      maxualt = 0;
+      nualt = 0;
+
+      if (polpred == UPred::ASPC) {
+         maxualt = 16;
+         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
+                          &udalt_04, &udalt_05, &udalt_06, &udalt_07, &udalt_08,
+                          &udalt_09, &udalt_10, &udalt_11, &udalt_12, &udalt_13,
+                          &udalt_14, &udalt_15, &upalt_00, &upalt_01, &upalt_02,
+                          &upalt_03, &upalt_04, &upalt_05, &upalt_06, &upalt_07,
+                          &upalt_08, &upalt_09, &upalt_10, &upalt_11, &upalt_12,
+                          &upalt_13, &upalt_14, &upalt_15);
+         darray::zero(PROCEED_NEW_Q, n, udalt_00, udalt_01, udalt_02, udalt_03,
+                      udalt_04, udalt_05, udalt_06, udalt_07, udalt_08,
+                      udalt_09, udalt_10, udalt_11, udalt_12, udalt_13,
+                      udalt_14, udalt_15, upalt_00, upalt_01, upalt_02,
+                      upalt_03, upalt_04, upalt_05, upalt_06, upalt_07,
+                      upalt_08, upalt_09, upalt_10, upalt_11, upalt_12,
+                      upalt_13, upalt_14, upalt_15);
+      } else if (polpred == UPred::GEAR) {
+         maxualt = 6;
+         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
+                          &udalt_04, &udalt_05, &upalt_00, &upalt_01, &upalt_02,
+                          &upalt_03, &upalt_04, &upalt_05);
+         darray::zero(PROCEED_NEW_Q, n, udalt_00, udalt_01, udalt_02, udalt_03,
+                      udalt_04, udalt_05, upalt_00, upalt_01, upalt_02,
+                      upalt_03, upalt_04, upalt_05);
+      } else if (polpred == UPred::LSQR) {
+         maxualt = 7;
+         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
+                          &udalt_04, &udalt_05, &udalt_06, &upalt_00, &upalt_01,
+                          &upalt_02, &upalt_03, &upalt_04, &upalt_05,
+                          &upalt_06);
+         int lenb = maxualt - 1;
+         int lena = lenb * lenb; // lenb*(lenb+1)/2 should be plenty.
+         darray::allocate(lena, &udalt_lsqr_a, &upalt_lsqr_a);
+         darray::allocate(lenb, &udalt_lsqr_b, &upalt_lsqr_b);
+         darray::zero(PROCEED_NEW_Q, n, udalt_00, udalt_01, udalt_02, udalt_03,
+                      udalt_04, udalt_05, udalt_06, upalt_00, upalt_01,
+                      upalt_02, upalt_03, upalt_04, upalt_05, upalt_06);
+      }
    }
 
    if (op & rc_init) {
@@ -398,6 +481,7 @@ void epolar_data(rc_op op)
 void induce(real (*ud)[3], real (*up)[3])
 {
    induce_mutual_pcg1(ud, up);
+   ulspred_save(ud, up);
 
    if (inform::debug && use_potent(polar_term)) {
       std::vector<double> uindbuf;

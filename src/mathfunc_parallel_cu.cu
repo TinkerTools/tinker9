@@ -103,11 +103,15 @@ template <>
 void dotprod_cu<float>(float* ans, const float* a, const float* b, int nelem,
                        LPFlag flag)
 {
-   bool sync = flag & LPFlag::DEFAULT_Q;
-   cublasHandle_t hd = (sync ? h_cublas : h_cublas_nonblk);
+   bool dq = flag & LPFlag::DEFAULT_Q;
+   cublasHandle_t hd = (dq ? h_cublas : h_cublas_nonblk);
    check_rt(cublasSdot(hd, nelem, a, 1, b, 1, ans));
-   if (flag & LPFlag::WAIT)
-      check_rt(cudaStreamSynchronize(nullptr));
+   if (flag & LPFlag::WAIT) {
+      if (dq)
+         check_rt(cudaStreamSynchronize(nullptr));
+      else
+         check_rt(cudaStreamSynchronize(nonblk));
+   }
 }
 
 
@@ -115,11 +119,15 @@ template <>
 void dotprod_cu<double>(double* ans, const double* a, const double* b,
                         int nelem, LPFlag flag)
 {
-   bool sync = flag & LPFlag::DEFAULT_Q;
-   cublasHandle_t hd = (sync ? h_cublas : h_cublas_nonblk);
+   bool dq = flag & LPFlag::DEFAULT_Q;
+   cublasHandle_t hd = (dq ? h_cublas : h_cublas_nonblk);
    check_rt(cublasDdot(hd, nelem, a, 1, b, 1, ans));
-   if (flag & LPFlag::WAIT)
-      check_rt(cudaStreamSynchronize(nullptr));
+   if (flag & LPFlag::WAIT) {
+      if (dq)
+         check_rt(cudaStreamSynchronize(nullptr));
+      else
+         check_rt(cudaStreamSynchronize(nonblk));
+   }
 }
 
 
