@@ -97,6 +97,11 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
          damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
 
+      bn[1] *= f;
+      bn[2] *= f;
+      bn[3] *= f;
+      bn[4] *= f;
+
       rr3core = bn[1] - (1 - dscale) * rr3;
       rr5core = bn[2] - (1 - dscale) * rr5;
       rr3i = bn[1] - (1 - dscale * dmpi[1]) * rr3;
@@ -162,12 +167,12 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
          ukr * (corei * rr3core + vali * rr3i) + diu * rr3i + dku * rr3k +
          2 * (qiu * rr5i - qku * rr5k) - dkr * uir * rr5k - dir * ukr * rr5i +
          qkr * uir * rr7k - qir * ukr * rr7i;
+      printf("%5.2f %5.2f %5.2f %16.8e %16.8e\n", alphai, alphak, r, uir, e);
 
       if CONSTEXPR (eq<ETYP, NON_EWALD>())
          e *= dscale;
 
       //printf("\nEpolar");
-      //printf("%5.2f %5.2f %5.2f %16.8e %16.8e %16.8e\n", alphai, alphak, r, e, qiu, qku);
    }
 
 
@@ -182,12 +187,15 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       real tuir = -dsr5i * ukr;
       real tukr = -dsr5k * uir;
 
-      pgrad.ufldi[0] = f * (tix3 + xr * tuir);
-      pgrad.ufldi[1] = f * (tiy3 + yr * tuir);
-      pgrad.ufldi[2] = f * (tiz3 + zr * tuir);
-      pgrad.ufldk[0] = f * (tkx3 + xr * tukr);
-      pgrad.ufldk[1] = f * (tky3 + yr * tukr);
-      pgrad.ufldk[2] = f * (tkz3 + zr * tukr);
+      // printf("%5.2f %5.2f %5.2f %16.8e %16.8e\n", alphai, alphak, r, bn[1], dmpi[1]);
+
+      pgrad.ufldi[0] = (tix3 + xr * tuir);
+      pgrad.ufldi[1] = (tiy3 + yr * tuir);
+      pgrad.ufldi[2] = (tiz3 + zr * tuir);
+      pgrad.ufldk[0] = (tkx3 + xr * tukr);
+      pgrad.ufldk[1] = (tky3 + yr * tukr);
+      pgrad.ufldk[2] = (tkz3 + zr * tukr);
+
 
       // get induced dipole field gradient used for quadrupole torques
 
@@ -200,18 +208,18 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       tuir = -dsr7i * ukr;
       tukr = -dsr7k * uir;
 
-      pgrad.dufldi[0] = f * (xr * tix5 + xr * xr * tuir);
-      pgrad.dufldi[1] = f * (xr * tiy5 + yr * tix5 + 2 * xr * yr * tuir);
-      pgrad.dufldi[2] = f * (yr * tiy5 + yr * yr * tuir);
-      pgrad.dufldi[3] = f * (xr * tiz5 + zr * tix5 + 2 * xr * zr * tuir);
-      pgrad.dufldi[4] = f * (yr * tiz5 + zr * tiy5 + 2 * yr * zr * tuir);
-      pgrad.dufldi[5] = f * (zr * tiz5 + zr * zr * tuir);
-      pgrad.dufldk[0] = f * (-xr * tkx5 - xr * xr * tukr);
-      pgrad.dufldk[1] = f * (-xr * tky5 - yr * tkx5 - 2 * xr * yr * tukr);
-      pgrad.dufldk[2] = f * (-yr * tky5 - yr * yr * tukr);
-      pgrad.dufldk[3] = f * (-xr * tkz5 - zr * tkx5 - 2 * xr * zr * tukr);
-      pgrad.dufldk[4] = f * (-yr * tkz5 - zr * tky5 - 2 * yr * zr * tukr);
-      pgrad.dufldk[5] = f * (-zr * tkz5 - zr * zr * tukr);
+      pgrad.dufldi[0] = (xr * tix5 + xr * xr * tuir);
+      pgrad.dufldi[1] = (xr * tiy5 + yr * tix5 + 2 * xr * yr * tuir);
+      pgrad.dufldi[2] = (yr * tiy5 + yr * yr * tuir);
+      pgrad.dufldi[3] = (xr * tiz5 + zr * tix5 + 2 * xr * zr * tuir);
+      pgrad.dufldi[4] = (yr * tiz5 + zr * tiy5 + 2 * yr * zr * tuir);
+      pgrad.dufldi[5] = (zr * tiz5 + zr * zr * tuir);
+      pgrad.dufldk[0] = (-xr * tkx5 - xr * xr * tukr);
+      pgrad.dufldk[1] = (-xr * tky5 - yr * tkx5 - 2 * xr * yr * tukr);
+      pgrad.dufldk[2] = (-yr * tky5 - yr * yr * tukr);
+      pgrad.dufldk[3] = (-xr * tkz5 - zr * tkx5 - 2 * xr * zr * tukr);
+      pgrad.dufldk[4] = (-yr * tkz5 - zr * tky5 - 2 * yr * zr * tukr);
+      pgrad.dufldk[5] = (-zr * tkz5 - zr * zr * tukr);
 
       // get the field gradient for direct polarization force
 
@@ -300,6 +308,7 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       real tkxy = -valk * term1k - corek * term1core - dky * term2k - dkx * term3k +
          dkr * term4k - qkxy * term5k + qky * term6k + qkx * term7k -
          qkr * term8k;
+
       term2i = rr5i * xr;
       term1i = zr * term2i;
       term1core = rr5core * xr * zr;
@@ -323,6 +332,7 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       real tkxz = -valk * term1k - corek * term1core - dkz * term2k - dkx * term3k +
          dkr * term4k - qkxz * term5k + qkz * term6k + qkx * term7k -
          qkr * term8k;
+
       term2i = rr5i * yr;
       term1i = zr * term2i;
       term1core = rr5core * yr * zr;
@@ -365,6 +375,7 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
          pgrad.frcx = 2 * depx * dscale;
          pgrad.frcy = 2 * depy * dscale;
          pgrad.frcz = 2 * depz * dscale;
+
       }
 
       // get the dtau/dr terms used for mutual polarization force
@@ -397,21 +408,22 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       tkyz = uky * term1 + ukz * term2 - ukr * term3;
 
 
-      depx = tixx * ukx + tixy * uky + tixz * ukz - tkxx * uix - tkxy * uiy -
+      depx = tixx * ukx + tixy * uky + tixz * ukz + tkxx * uix + tkxy * uiy +
          tkxz * uiz;
-      depy = tixy * ukx + tiyy * uky + tiyz * ukz - tkxy * uix - tkyy * uiy -
+      depy = tixy * ukx + tiyy * uky + tiyz * ukz + tkxy * uix + tkyy * uiy +
          tkyz * uiz;
-      depz = tixz * ukx + tiyz * uky + tizz * ukz - tkxz * uix - tkyz * uiy -
+      depz = tixz * ukx + tiyz * uky + tizz * ukz + tkxz * uix + tkyz * uiy +
          tkzz * uiz;
+
 
       if CONSTEXPR (eq<ETYP, EWALD>()) {
          pgrad.frcx -= depx;
          pgrad.frcy -= depy;
          pgrad.frcz -= depz;
       } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
-         pgrad.frcx -= wscale * depx;
-         pgrad.frcy -= wscale * depy;
-         pgrad.frcz -= wscale * depz;
+         pgrad.frcx += wscale * depx;
+         pgrad.frcy += wscale * depy;
+         pgrad.frcz += wscale * depz;
       }
 
       // pgrad.frcx *= f;

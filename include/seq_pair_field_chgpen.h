@@ -83,6 +83,7 @@ void pair_dfield_chgpen(real r2, real xr, real yr, real zr, real dscale,
    inck = c1 * dr - rr3i * dixyz - 2 * rr5i * qixyz;
    fkd += inck;
 
+
 }
 
 
@@ -113,7 +114,8 @@ void pair_ufield_chgpen(real r2, real xr, real yr, real zr, real wscale, //
    real rr5 = rr1 * rr2 * rr2;
 
    if CONSTEXPR (eq<ETYP, EWALD>()) {
-      bn[1] -= (bn[1] - (1 - scale3) * rr3);
+      bn[1] *= -1;
+      bn[1] += (1 - scale3) * rr3;
       bn[2] -=  3 * (1 - scale5) * rr5;
    } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
       bn[1] = -scale3 * rr3;
@@ -133,6 +135,9 @@ void pair_ufield_chgpen(real r2, real xr, real yr, real zr, real wscale, //
    coef = bn[2] * dot3(dr, uid);
    inck = coef * dr + bn[1] * uid;
    fkd += inck;   
+
+   //printf("%5.2f %5.2f %5.2f %16.8e %16.8e\n", alphai, alphak, r, inci.x, inci.y);
+
 
    //printf("fid %5.2f %5.2f %5.2f %16.8e %16.8e %16.8e\n", alphai, alphak, r, uid.x, uid.y, uid.z);
    //printf("fkd %5.2f %5.2f %5.2f %16.8e %16.8e %16.8e\n", alphai, alphak, r, ukd.x, ukd.y, ukd.z);
