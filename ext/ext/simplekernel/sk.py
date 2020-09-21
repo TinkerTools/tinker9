@@ -1,11 +1,8 @@
-#!/usr/bin/env python
-
-
 import yaml
 import sys
 
 
-kernal_body = R'''
+kernel_template = R'''
 template <TPARAMS>
 __global__
 void KERNEL_NAME(count_buffer restrict nebuf
@@ -354,7 +351,7 @@ def generate(yaml_file):
     with open(yaml_file) as file:
         config = yaml.full_load(file)
 
-    kernal_name = config['KERNEL_NAME']
+    kernel_name = config['KERNEL_NAME']
 
     global_variables = ''
     d_gvar = {}
@@ -380,9 +377,9 @@ def generate(yaml_file):
         e = d_paa[k]
         per_atom_arrays = per_atom_arrays + ', %s %s' % (e['param_type'], e['name'])
 
-    output = kernal_body\
+    output = kernel_template\
         .replace('TPARAMS', config['TPARAMS'])\
-        .replace('KERNEL_NAME', kernal_name)\
+        .replace('KERNEL_NAME', kernel_name)\
         .replace('GLOBAL_VARIABLES', global_variables)\
         .replace('GLOBAL_ARRAYS', global_arrays)\
         .replace('PER_ATOM_ARRAYS', per_atom_arrays)\
