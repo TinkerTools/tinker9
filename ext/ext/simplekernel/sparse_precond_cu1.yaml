@@ -7,8 +7,7 @@ TEMPLATE_PARAMS: __launch_bounds__(BLOCK_DIM)
 # VIRIAL:
 # GRADIENT:
 
-CUT_DISTANCE:
-  - cut
+# CUT_DISTANCE:
 OFF_DISTANCE:
   - 'off'
 
