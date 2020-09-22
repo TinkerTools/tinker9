@@ -1,0 +1,113 @@
+KERNEL_NAME: sparse_precond_cu1
+TEMPLATE_PARAMS: __launch_bounds__(BLOCK_DIM)
+# CONSTEXPR_FLAGS:
+
+# COUNT:
+# ENERGY:
+# VIRIAL:
+# GRADIENT:
+
+CUT_DISTANCE:
+  - cut
+OFF_DISTANCE:
+  - 'off'
+
+EXCLUDE_INFO:
+  - uinfo
+
+SCALE_1X_TYPE: real_const_array
+
+EXTRA_PARAMS: |
+  , const real (*restrict rsd)[3], const real (*restrict rsdp)[3]
+  , real (*restrict zrsd)[3], real (*restrict zrsdp)[3]
+  , const real* restrict pdamp, const real* restrict thole
+  , const real* restrict polarity
+
+I_POSITION:
+  - def: shared real xi from:x
+  - def: shared real yi from:y
+  - def: shared real zi from:z
+K_POSITION:
+  - def: register real xk from:x
+  - def: register real yk from:y
+  - def: register real zk from:z
+
+I_FORCE:
+  - def: shared real fidx addto:zrsd,0
+  - def: shared real fidy addto:zrsd,1
+  - def: shared real fidz addto:zrsd,2
+  - def: shared real fipx addto:zrsdp,0
+  - def: shared real fipy addto:zrsdp,1
+  - def: shared real fipz addto:zrsdp,2
+K_FORCE:
+  - def: register real fkdx addto:zrsd,0
+  - def: register real fkdy addto:zrsd,1
+  - def: register real fkdz addto:zrsd,2
+  - def: register real fkpx addto:zrsdp,0
+  - def: register real fkpy addto:zrsdp,1
+  - def: register real fkpz addto:zrsdp,2
+
+I_VARIABLES:
+  - def: shared real uidx from:rsd,0
+  - def: shared real uidy from:rsd,1
+  - def: shared real uidz from:rsd,2
+  - def: shared real uipx from:rsdp,0
+  - def: shared real uipy from:rsdp,1
+  - def: shared real uipz from:rsdp,2
+  - def: shared real pdi  from:pdamp
+  - def: shared real pti  from:thole
+  - def: shared real poli from:polarity
+K_VARIABLES:
+  - def: register real ukdx from:rsd,0
+  - def: register real ukdy from:rsd,1
+  - def: register real ukdz from:rsd,2
+  - def: register real ukpx from:rsdp,0
+  - def: register real ukpy from:rsdp,1
+  - def: register real ukpz from:rsdp,2
+  - def: register real pdk  from:pdamp
+  - def: register real ptk  from:thole
+  - def: register real polk from:polarity
+
+# SCALED_PAIRWISE_INTERACTION:
+
+FULL_PAIRWISE_INTERACTION: |
+  real xr = xk - xi;
+  real yr = yk - yi;
+  real zr = zk - zi;
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    real r = REAL_SQRT(r2);
+    real scale3, scale5;
+    damp_thole2(r, pdi, pti, pdk, ptk, scale3, scale5);
+    scale3 *= scalea;
+    scale5 *= scalea;
+    real polik = poli * polk;
+    real rr3 = scale3 * polik * REAL_RECIP(r * r2);
+    real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
+
+
+    real c;
+    int klane = srclane + threadIdx.x - ilane;
+    c = rr5 * dot3(xr,yr,zr,ukdx,ukdy,ukdz);
+    shfidx[klane] += c * xr - rr3 * ukdx;
+    shfidy[klane] += c * yr - rr3 * ukdy;
+    shfidz[klane] += c * zr - rr3 * ukdz;
+
+
+    c = rr5 * dot3(xr,yr,zr,ukpx,ukpy,ukpz);
+    shfipx[klane] += c * xr - rr3 * ukpx;
+    shfipy[klane] += c * yr - rr3 * ukpy;
+    shfipz[klane] += c * zr - rr3 * ukpz;
+
+
+    c = rr5 * dot3(xr,yr,zr,uidx,uidy,uidz);
+    fkdx += c * xr - rr3 * shuidx[klane];
+    fkdy += c * yr - rr3 * shuidy[klane];
+    fkdz += c * zr - rr3 * shuidz[klane];
+
+
+    c = rr5 * dot3(xr,yr,zr,uipx,uipy,uipz);
+    fkpx += c * xr - rr3 * shuipx[klane];
+    fkpy += c * yr - rr3 * shuipy[klane];
+    fkpz += c * zr - rr3 * shuipz[klane];
+  } // end if (include)

@@ -142,7 +142,7 @@ void epolar_data(rc_op op)
                   insert_dpu(ik_dpu, i, k, u1scale - 1, 'u');
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  exclik.push_back(u1scale - 1);
+                  exclik.push_back(u1scale);
                }
             }
          }
@@ -156,7 +156,7 @@ void epolar_data(rc_op op)
                   insert_dpu(ik_dpu, i, k, u2scale - 1, 'u');
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  exclik.push_back(u2scale - 1);
+                  exclik.push_back(u2scale);
                }
             }
          }
@@ -170,7 +170,7 @@ void epolar_data(rc_op op)
                   insert_dpu(ik_dpu, i, k, u3scale - 1, 'u');
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  exclik.push_back(u3scale - 1);
+                  exclik.push_back(u3scale);
                }
             }
          }
@@ -184,7 +184,7 @@ void epolar_data(rc_op op)
                   insert_dpu(ik_dpu, i, k, u4scale - 1, 'u');
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  exclik.push_back(u4scale - 1);
+                  exclik.push_back(u4scale);
                }
             }
          }

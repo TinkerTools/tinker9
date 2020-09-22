@@ -130,7 +130,7 @@ void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
    for (int ii = 0; ii < nuexclude; ++ii) {
       int i = uexclude[ii][0];
       int k = uexclude[ii][1];
-      real uscale = uexclude_scale[ii];
+      real uscale = uexclude_scale[ii] - 1;
 
       real xi = x[i];
       real yi = y[i];
