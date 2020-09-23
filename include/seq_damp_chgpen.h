@@ -484,6 +484,8 @@ inline void damp_mut(real* restrict dmpik, real r, real alphai, real alphak)
           dampi5 * div144) *
             expi;
 
+      printf("dmp r d1 d2 %16.8e%16.8e%16.8e\n", r,dmpik[1],dmpik[2]);
+
    } else {
 
       real dampk2 = dampk * dampk;

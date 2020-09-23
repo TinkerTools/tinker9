@@ -29,6 +29,7 @@ void epolar_data(rc_op op)
    bool rc_a = rc_flag & calc::analyz;
 
    if (op & rc_dealloc) {
+      printf("dealloc epolar 1\n");
       nuexclude = 0;
       darray::deallocate(uexclude, uexclude_scale);
       ndpexclude = 0;
@@ -76,6 +77,8 @@ void epolar_data(rc_op op)
       polpred = UPred::NONE;
       maxualt = 0;
       nualt = 0;
+
+      printf("dealloc epolar 2\n");
    }
 
    if (op & rc_alloc) {

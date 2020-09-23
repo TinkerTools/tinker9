@@ -46,6 +46,7 @@ void pchg_data(rc_op op)
 
    if (op & rc_dealloc) {
       darray::deallocate(pchg);
+      printf(" dealloc pchg_data\n");
    }
 
 
@@ -265,6 +266,7 @@ void mscale_data(rc_op op)
 void chgpen_data(rc_op op)
 {
    if (op & rc_dealloc) {
+      printf("dealloc chgpen 1\n");
       ndwexclude = 0;
       darray::deallocate(dwexclude, dwexclude_scale);
       ndexclude = 0;
@@ -272,7 +274,11 @@ void chgpen_data(rc_op op)
       nwexclude = 0;
       darray::deallocate(wexclude, wexclude_scale);
 
-      darray::deallocate(pcore, pval, palpha);
+      
+     // darray::deallocate(pval);
+     // darray::deallocate(palpha);
+     // darray::deallocate(pcore);
+      printf("dealloc chgpen 2\n");
    }
 
    if (op & rc_alloc) {

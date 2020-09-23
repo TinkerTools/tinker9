@@ -32,6 +32,8 @@ void empole_chgpen_data(rc_op op)
       demx = nullptr;
       demy = nullptr;
       demz = nullptr;
+
+      printf(" dealloc empole_chgpen\n");
    }
 
    if (op & rc_alloc) {

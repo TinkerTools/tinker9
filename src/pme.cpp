@@ -141,6 +141,7 @@ void pme_data(rc_op op)
       ppme_unit.close();
       pvpme_unit.close();
       dpme_unit.close();
+      printf(" dealloc pme_data\n");
    }
 
 
