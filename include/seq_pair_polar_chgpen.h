@@ -102,25 +102,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       bn[3] *= f;
       bn[4] *= f;
 
-      rr3core = bn[1] - (1 - dscale) * rr3;
-      rr5core = bn[2] - (1 - dscale) * rr5;
-      rr3i = bn[1] - (1 - dscale * dmpi[1]) * rr3;
-      rr5i = bn[2] - (1 - dscale * dmpi[2]) * rr5;
-      rr7i = bn[3] - (1 - dscale * dmpi[3]) * rr7;
-      rr9i = bn[4] - (1 - dscale * dmpi[4]) * rr9;
-      rr3k = bn[1] - (1 - dscale * dmpk[1]) * rr3;
-      rr5k = bn[2] - (1 - dscale * dmpk[2]) * rr5;
-      rr7k = bn[3] - (1 - dscale * dmpk[3]) * rr7;
-      rr9k = bn[4] - (1 - dscale * dmpk[4]) * rr9;
-      rr5ik = bn[2] - (1 - wscale * dmpik[2]) * rr5;
-      rr7ik = bn[3] - (1 - wscale * dmpik[3]) * rr7;
-
-      dsr3i = 2 * rr3i;
-      dsr3k = 2 * rr3k;
-      dsr5i = 2 * rr5i;
-      dsr5k = 2 * rr5i;
-      dsr7i = 2 * rr7i;
-      dsr7k = 2 * rr7i;
 
    } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
 
@@ -130,33 +111,36 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
          damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
 
-
-      rr3core = rr3;
-      rr5core = rr5;
-      rr3i = rr3 * dmpi[1];
-      rr5i = rr5 * dmpi[2];
-      rr7i = rr7 * dmpi[3];
-      rr9i = rr9 * dmpi[4];
-      rr3k = rr3 * dmpk[1];
-      rr5k = rr5 * dmpk[2];
-      rr7k = rr7 * dmpk[3];
-      rr9k = rr9 * dmpk[4];
-      rr5ik = rr5 * dmpik[2];
-      rr7ik = rr7 * dmpik[3];
-
-
-      dsr3i = 2 * rr3i * dscale;
-      dsr5i = 2 * rr5i * dscale;
-      dsr7i = 2 * rr7i * dscale;
-      dsr3k = 2 * rr3k * dscale;
-      dsr5k = 2 * rr5k * dscale;
-      dsr7k = 2 * rr7k * dscale;
+      //printf("dscale %5.2f wscale %5.2f\n", dscale, wscale);
+      bn[1] = rr3;
+      bn[2] = rr5;
+      bn[3] = rr7;
+      bn[4] = rr9;
 
    }
    // if CONSTEXPR (use_chgflx) {
    //    poti = -ukr * dsr3i;
    //    potk = uir * dsr3k;
    // }
+   rr3core = bn[1] - (1 - dscale) * rr3;
+   rr5core = bn[2] - (1 - dscale) * rr5;
+   rr3i = bn[1] - (1 - dscale * dmpi[1]) * rr3;
+   rr5i = bn[2] - (1 - dscale * dmpi[2]) * rr5;
+   rr7i = bn[3] - (1 - dscale * dmpi[3]) * rr7;
+   rr9i = bn[4] - (1 - dscale * dmpi[4]) * rr9;
+   rr3k = bn[1] - (1 - dscale * dmpk[1]) * rr3;
+   rr5k = bn[2] - (1 - dscale * dmpk[2]) * rr5;
+   rr7k = bn[3] - (1 - dscale * dmpk[3]) * rr7;
+   rr9k = bn[4] - (1 - dscale * dmpk[4]) * rr9;
+   rr5ik = bn[2] - (1 - wscale * dmpik[2]) * rr5;
+   rr7ik = bn[3] - (1 - wscale * dmpik[3]) * rr7;
+
+   dsr3i = 2 * rr3i;
+   dsr3k = 2 * rr3k;
+   dsr5i = 2 * rr5i;
+   dsr5k = 2 * rr5k;
+   dsr7i = 2 * rr7i;
+   dsr7k = 2 * rr7k;
 
    if CONSTEXPR (do_e) {
       real diu = dix * ukx + diy * uky + diz * ukz;
@@ -167,12 +151,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
          ukr * (corei * rr3core + vali * rr3i) + diu * rr3i + dku * rr3k +
          2 * (qiu * rr5i - qku * rr5k) - dkr * uir * rr5k - dir * ukr * rr5i +
          qkr * uir * rr7k - qir * ukr * rr7i;
-      printf("%5.2f %5.2f %5.2f %16.8e %16.8e\n", alphai, alphak, r, uir, e);
-
-      if CONSTEXPR (eq<ETYP, NON_EWALD>())
-         e *= dscale;
-
-      //printf("\nEpolar");
    }
 
 
@@ -195,7 +173,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       pgrad.ufldk[0] = (tkx3 + xr * tukr);
       pgrad.ufldk[1] = (tky3 + yr * tukr);
       pgrad.ufldk[2] = (tkz3 + zr * tukr);
-
 
       // get induced dipole field gradient used for quadrupole torques
 
@@ -220,6 +197,7 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       pgrad.dufldk[3] = (-xr * tkz5 - zr * tkx5 - 2 * xr * zr * tukr);
       pgrad.dufldk[4] = (-yr * tkz5 - zr * tky5 - 2 * yr * zr * tukr);
       pgrad.dufldk[5] = (-zr * tkz5 - zr * zr * tukr);
+
 
       // get the field gradient for direct polarization force
 
@@ -367,16 +345,12 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       depz = tixz * ukx + tiyz * uky + tizz * ukz - tkxz * uix - tkyz * uiy -
          tkzz * uiz;
 
-      if CONSTEXPR (eq<ETYP, EWALD>()) {
-         pgrad.frcx = -2 * depx;
-         pgrad.frcy = -2 * depy;
-         pgrad.frcz = -2 * depz;
-      } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
-         pgrad.frcx = 2 * depx * dscale;
-         pgrad.frcy = 2 * depy * dscale;
-         pgrad.frcz = 2 * depz * dscale;
 
-      }
+      pgrad.frcx += 2 * depx;
+      pgrad.frcy += 2 * depy;
+      pgrad.frcz += 2 * depz;
+
+      //printf("1o %5.2f %16.8e %16.8e %16.8e\n", r, pgrad.frcx, pgrad.frcy, pgrad.frcz);
 
       // get the dtau/dr terms used for mutual polarization force
 
@@ -415,22 +389,14 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       depz = tixz * ukx + tiyz * uky + tizz * ukz + tkxz * uix + tkyz * uiy +
          tkzz * uiz;
 
+      //printf("2o %5.2f %16.8e %16.8e %16.8e\n", r, depx, depy, depz);
 
-      if CONSTEXPR (eq<ETYP, EWALD>()) {
-         pgrad.frcx -= depx;
-         pgrad.frcy -= depy;
-         pgrad.frcz -= depz;
-      } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
-         pgrad.frcx += wscale * depx;
-         pgrad.frcy += wscale * depy;
-         pgrad.frcz += wscale * depz;
-      }
+      pgrad.frcx += depx;
+      pgrad.frcy += depy;
+      pgrad.frcz += depz;
 
-      // pgrad.frcx *= f;
-      // pgrad.frcy *= f;
-      // pgrad.frcz *= f;
 
-      //printf("%5.2f %5.2f %14.8f %14.8f %14.8f %14.8f\n", alphai, alphak, r, rr7ik, rr9ik, rr11ik);
+      //printf("3o %5.2f %16.8e %16.8e %16.8e\n", r, pgrad.frcx, pgrad.frcy, pgrad.frcz);
    }
 }
 }

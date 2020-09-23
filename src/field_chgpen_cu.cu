@@ -201,7 +201,6 @@ void dfield_chgpen_ewald_real_cu(real (*field)[3])
                  pcore, pval, palpha, rpole, TINKER_IMAGE_ARGS, off2, n,
                  st.sorted, st.niak, st.iak, st.lst, aewald);
    }
-   printf("nd %d\n", ndexclude);
    if (ndexclude > 0) {
       launch_k1s(nonblk, ndexclude, dfield_chgpen_cu2, field, pcore, pval,
                  palpha, rpole, TINKER_IMAGE_ARGS, off2, x, y, z, ndexclude,

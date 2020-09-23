@@ -349,6 +349,8 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
          atomic_add(e, ep, offset);
       }
    }
+
+
    grid_uind(pu, fuind, fuind);
    fftfront(pu);
    // TODO: store vs. recompute qfac
@@ -376,9 +378,11 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
          int j1 = deriv1[k + 1];
          int j2 = deriv2[k + 1];
          int j3 = deriv3[k + 1];
-         f1 += (fuind[i][k] + fuind[i][k]) * fphi[i][j1];
-         f2 += (fuind[i][k] + fuind[i][k]) * fphi[i][j2];
-         f3 += (fuind[i][k] + fuind[i][k]) * fphi[i][j3];
+         f1 += 2 * fuind[i][k] * fphi[i][j1];
+         f2 += 2 * fuind[i][k] * fphi[i][j2];
+         f3 += 2 * fuind[i][k] * fphi[i][j3];
+
+         // printf("%5d %5d %16.8e %5d %16.8e %5d %16.8e\n", i,k,fuind[i][k],j1,fphi[i][j1],j2, fphi[i][j2]);
          // if poltyp .eq. 'MUTUAL'
          f1 += 2 * fuind[i][k] * fphid[i][j1];
          f2 += 2 * fuind[i][k] * fphid[i][j2];
@@ -398,6 +402,14 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
          real h1 = recipa.x * f1 + recipb.x * f2 + recipc.x * f3;
          real h2 = recipa.y * f1 + recipb.y * f2 + recipc.y * f3;
          real h3 = recipa.z * f1 + recipb.z * f2 + recipc.z * f3;
+
+         // real dx, dy, dz;
+         // dx = depx[i];
+         // dy = depy[i];
+         // dz = depz[i];
+
+         //printf("%16.8e %16.8e %16.8e\n", dx, dy, dz);
+
          atomic_add(h1 * f, depx, i);
          atomic_add(h2 * f, depy, i);
          atomic_add(h3 * f, depz, i);
@@ -431,6 +443,8 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
       real uix = gpu_uind[i][0];
       real uiy = gpu_uind[i][1];
       real uiz = gpu_uind[i][2];
+
+      //printf("%5d %16.8e %16.8e %16.8e\n", i, uix, uiy, uiz);
 
       if CONSTEXPR (do_g) {
          real tep1 = cmp[i][3] * cphidp[i][2] - cmp[i][2] * cphidp[i][3] +
@@ -473,9 +487,9 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
    if CONSTEXPR (do_v) {
       auto size = buffer_size() * virial_buffer_traits::value;
       #pragma acc parallel loop independent async deviceptr(vir_ep,vir_m)
-      for (int i = 0; i < (int)size; ++i) {
+      for (int i = 0; i < (int)size; ++i) 
          vir_ep[0][i] -= vir_m[0][i];
-      }
+      
 
       darray::scale(PROCEED_NEW_Q, n, f, cphi, fphid);
 
@@ -588,9 +602,9 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
       fftfront(pvu);
 
       // qgrid: pu_qgrid
-      #pragma acc parallel loop independent async\
-                  deviceptr(cmp,gpu_uind)
-      
+      // #pragma acc parallel loop independent async\
+      //             deviceptr(cmp,gpu_uind)
+
       cmp_to_fmp(pu, cmp, fmp);
       grid_mpole(pu, fmp);
       fftfront(pu);
@@ -669,18 +683,18 @@ void epolar_chgpen_ewald_real_acc(int vers, const real (*uind)[3])
 
 void epolar_chgpen_ewald_recip_self_acc(int vers, const real (*uind)[3])
 {
-   // if (vers == calc::v0) {
-   //    epolar_chgpen_ewald_recip_self_acc1<calc::V0>(uind);
-   // } else if (vers == calc::v1) {
-   //    epolar_chgpen_ewald_recip_self_acc1<calc::V1>(uind);
-   // } else if (vers == calc::v3) {
-   //    epolar_chgpen_ewald_recip_self_acc1<calc::V3>(uind);
-   // } else if (vers == calc::v4) {
-   //    epolar_chgpen_ewald_recip_self_acc1<calc::V4>(uind);
-   // } else if (vers == calc::v5) {
-   //    epolar_chgpen_ewald_recip_self_acc1<calc::V5>(uind);
-   // } else if (vers == calc::v6) {
-   //    epolar_chgpen_ewald_recip_self_acc1<calc::V6>(uind);
-   // }
+   if (vers == calc::v0) {
+      epolar_chgpen_ewald_recip_self_acc1<calc::V0>(uind);
+   } else if (vers == calc::v1) {
+      epolar_chgpen_ewald_recip_self_acc1<calc::V1>(uind);
+   } else if (vers == calc::v3) {
+      epolar_chgpen_ewald_recip_self_acc1<calc::V3>(uind);
+   } else if (vers == calc::v4) {
+      epolar_chgpen_ewald_recip_self_acc1<calc::V4>(uind);
+   } else if (vers == calc::v5) {
+      epolar_chgpen_ewald_recip_self_acc1<calc::V5>(uind);
+   } else if (vers == calc::v6) {
+      epolar_chgpen_ewald_recip_self_acc1<calc::V6>(uind);
+   }
 }
 }
