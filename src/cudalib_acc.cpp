@@ -22,6 +22,12 @@ void cudalib_data(rc_op op)
       check_rt(cublasDestroy(h_cublas_nonblk));
       check_rt(cudaFreeHost(pinned_buf));
       check_rt(cudaFree(dptr_buf));
+
+
+      use_pme_stream = false;
+      pme_stream = nullptr;
+      pme_queue = -42;
+      check_rt(cudaEventDestroy(pme_event_finish));
    }
 
 
@@ -42,10 +48,20 @@ void cudalib_data(rc_op op)
       check_rt(cudaMalloc(&dptr_buf, nblock * sizeof(double)));
 
 
+      use_pme_stream = false;
+      pme_queue = async_queue + 1;
+      pme_stream = (cudaStream_t)acc_get_cuda_stream(pme_queue);
+      check_rt(
+         cudaEventCreateWithFlags(&pme_event_finish, cudaEventDisableTiming));
+
+
       check_rt(cudaProfilerStart());
    }
 #else
-   (void)op;
+   if (op & rc_alloc) {
+      use_pme_stream = false;
+      pme_queue = -42;
+   }
 #endif
 }
 }

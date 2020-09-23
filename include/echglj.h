@@ -1,12 +1,15 @@
 #pragma once
 #include "echarge.h"
 #include "evdw.h"
+#include "glob.accasync.h"
 #include "glob.chglj.h"
 #include "tool/rc_man.h"
 
 
 namespace tinker {
 void echglj_data(rc_op op);
+void echglj_data_cu(rc_op);
+void echglj_cu_sync_pme_stream(bool use_pmestream);
 void echglj(int vers);
 
 

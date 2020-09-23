@@ -550,11 +550,16 @@ void echarge_fphi_self_cu()
    int nfft3 = st.nfft3;
 
 
+   auto stream = nonblk;
+   if (use_pme_stream)
+      stream = pme_stream;
    auto ker = echarge_cu3<Ver, 5>;
-   launch_k2s(nonblk, PME_BLOCKDIM, n, ker,         //
+   launch_k2s(stream, PME_BLOCKDIM, n, ker,         //
               bufsize, nec, ec, pchg, f, aewald, n, //
               nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc,
               decx, decy, decz);
+   if (use_pme_stream)
+      check_rt(cudaEventRecord(pme_event_finish, stream));
 }
 
 

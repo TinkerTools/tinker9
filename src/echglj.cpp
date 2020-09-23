@@ -273,6 +273,11 @@ void echglj_data(rc_op op)
       darray::copyin(WAIT_NEW_Q, n, atom_rad, vrad.data());
       darray::copyin(WAIT_NEW_Q, n, atom_eps, veps.data());
    }
+
+
+#if TINKER_CUDART
+   echglj_data_cu(op);
+#endif
 }
 
 
@@ -291,8 +296,8 @@ void echglj(int vers)
    assert(radrule == evdw_t::arithmetic);
    assert(epsrule == evdw_t::geometric);
    if (use_ewald()) {
-      echglj_rad_arith_eps_geom_ewald_real_cu(vers);
       echarge_ewald_recip_self(vers);
+      echglj_rad_arith_eps_geom_ewald_real_cu(vers);
    } else {
       echglj_rad_arith_eps_geom_nonewald_cu(vers);
    }

@@ -43,7 +43,6 @@ void energy_data(rc_op op)
 
    rc_man elec42{elec_data, op};
    rc_man pme42{pme_data, op};
-   rc_man fft42{fft_data, op};
 
    rc_man echarge42{echarge_data, op};
    // Must follow evdw_data() and echarge_data().
@@ -58,6 +57,9 @@ void energy_data(rc_op op)
    // HIPPO
    rc_man echgtrn42{echgtrn_data, op};
    rc_man edisp42{edisp_data, op};
+
+   // Must call fft_data() after all of the electrostatics routines.
+   rc_man fft42{fft_data, op};
 }
 
 
@@ -212,6 +214,11 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (use_potent(geom_term))
       if (tscfg("egeom", ecore_val))
          egeom(vers);
+
+
+#if TINKER_CUDART
+   echglj_cu_sync_pme_stream(use_pme_stream);
+#endif
 }
 
 

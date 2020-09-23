@@ -69,6 +69,27 @@ extern "C"
 
 
 namespace tinker {
+void echglj_data_cu(rc_op op)
+{
+   if (op & rc_dealloc) {
+      use_pme_stream = false;
+   }
+
+
+   if (op & rc_alloc) {
+      use_pme_stream = true;
+   }
+}
+
+
+void echglj_cu_sync_pme_stream(bool use_pmestream)
+{
+   if (use_pmestream) {
+      check_rt(cudaStreamWaitEvent(nonblk, pme_event_finish, 0));
+   }
+}
+
+
 template <class Ver, class IMG, class ETYP, class RADRULE, class EPSRULE,
           bool VOUT>
 __global__

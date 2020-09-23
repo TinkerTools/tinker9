@@ -268,7 +268,8 @@ void pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
 
 
    auto bufsize = buffer_size();
-   #pragma acc parallel loop independent async\
+   #pragma acc parallel loop independent\
+               async(use_pme_stream ? pme_queue : async_queue)\
                deviceptr(gpu_e,gpu_vir,qgrid,bsmod1,bsmod2,bsmod3)
    for (int i = 0; i < ntot; ++i) {
       if (i == 0) {
