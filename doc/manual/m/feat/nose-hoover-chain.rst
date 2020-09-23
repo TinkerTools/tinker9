@@ -16,8 +16,8 @@ Number  Sections in MTK  Method
 3b      5.4              RESPA 3a
 ======  ===============  ======
 
-The isothermal-isobaric integrator implemented here is NPT-XO-RESPA (#2b-4a).
-The canonical Tinker has #2.
+The isothermal-isobaric integrator implemented in Fortran Tinker and here is
+NPT-XO (#2a-4a).
 
 .. [#Martyna1996]
    Martyna, G. J.; Tuckerman, M. E.; Tobias, D. J. and Klein, M. L.

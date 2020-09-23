@@ -5,7 +5,7 @@
 /**
  * \def image
  * \ingroup math
- * Apply periodic boundary conditions to displacements (`xr, yr, zr`) and
+ * Apply periodic boundary conditions to displacement (`xr, yr, zr`) and
  * preserve the correct signs.
  *
  * For testing purpose, defining it in the source code before including this

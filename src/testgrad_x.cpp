@@ -4,6 +4,9 @@
 #include <tinker/detail/inform.hh>
 
 
+#define TINKER_TESTGRAD_VIRIAL 0
+
+
 namespace tinker {
 void x_testgrad(int, char**)
 {
@@ -19,6 +22,9 @@ void x_testgrad(int, char**)
 
    int flags = calc::xyz;
    flags += (calc::energy + calc::grad);
+#if TINKER_TESTGRAD_VIRIAL
+   flags += calc::virial;
+#endif
 
 
    rc_flag = flags;
@@ -33,6 +39,15 @@ void x_testgrad(int, char**)
    const int len_e = 20 + digits;
    const char* fmt_e = "\n Total Potential Energy :%1$*2$.*3$f Kcal/mole\n\n";
    print(out, fmt_e, esum, len_e, digits);
+
+
+#if TINKER_TESTGRAD_VIRIAL
+   const char* fmt_v = " %-36s%12.3f %12.3f %12.3f\n";
+   print(out, fmt_v, "Internal Virial Tensor :", vir[0], vir[1], vir[2]);
+   print(out, fmt_v, "", vir[3], vir[4], vir[5]);
+   print(out, fmt_v, "", vir[6], vir[7], vir[8]);
+#endif
+
 
    std::string fmt_t;
    std::string fmt;

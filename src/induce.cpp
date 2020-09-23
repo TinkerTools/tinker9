@@ -16,4 +16,16 @@ void sparse_precond_apply(const real (*rsd)[3], const real (*rsdp)[3],
 #endif
       sparse_precond_apply_acc(rsd, rsdp, zrsd, zrsdp);
 }
+
+
+void ulspred_save(const real (*uind)[3], const real (*uinp)[3])
+{
+   ulspred_save_acc(uind, uinp);
+}
+
+
+void ulspred_sum(real (*uind)[3], real (*uinp)[3])
+{
+   ulspred_sum_acc(uind, uinp);
+}
 }

@@ -49,11 +49,7 @@ void n_data(rc_op op)
 
 #if TINKER_CUDART
       nelem_buffer = gpu_max_nparallel(idevice);
-      size_t nelem1 = pow2_ge(nelem_buffer);
-      size_t nelem2 = pow2_ge(n);
-      nelem_buffer = std::min(nelem1, nelem2);
-      int nelem3 = 4 * 1024;
-      nelem_buffer = std::max(nelem_buffer, nelem3);
+      nelem_buffer = pow2_ge(nelem_buffer);
 #elif TINKER_HOST
       nelem_buffer = 1;
 #endif
@@ -87,25 +83,23 @@ void copy_pos_to_xyz(bool check_nblist)
 }
 
 
-void propagate_xyz(time_prec dt, bool check_nblist)
+void propagate_pos(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz,
+                   const vel_prec* vlx, const vel_prec* vly,
+                   const vel_prec* vlz)
 {
-   propagate_pos_acc(dt);
-   copy_pos_to_xyz(check_nblist);
+   propagate_pos_acc(dt, qx, qy, qz, vlx, vly, vlz);
 }
 
 
 void propagate_pos(time_prec dt)
 {
-   propagate_pos_acc(dt);
+   propagate_pos_acc(dt, xpos, ypos, zpos, vx, vy, vz);
 }
 
 
-void propagate_xyz_axbv(double a, double b, bool check_nblist)
+void propagate_pos_axbv(double a, double b)
 {
    propagate_pos_axbv_acc(a, b);
-   copy_pos_to_xyz();
-   if (check_nblist)
-      refresh_neighbors();
 }
 
 
@@ -235,11 +229,28 @@ void xyz_data(rc_op op)
 mass_prec *mass, *massinv;
 vel_prec *vx, *vy, *vz;
 
+void propagate_velocity(time_prec dt, vel_prec* vlx, vel_prec* vly,
+                        vel_prec* vlz, const vel_prec* vlx0,
+                        const vel_prec* vly0, const vel_prec* vlz0,
+                        const grad_prec* grx, const grad_prec* gry,
+                        const grad_prec* grz)
+{
+   propagate_velocity_acc(dt, vlx, vly, vlz, vlx0, vly0, vlz0, grx, gry, grz);
+}
+
+
+void propagate_velocity(time_prec dt, vel_prec* vlx, vel_prec* vly,
+                        vel_prec* vlz, const grad_prec* grx,
+                        const grad_prec* gry, const grad_prec* grz)
+{
+   propagate_velocity_acc(dt, vlx, vly, vlz, grx, gry, grz);
+}
+
 
 void propagate_velocity(time_prec dt, const grad_prec* grx,
                         const grad_prec* gry, const grad_prec* grz)
 {
-   propagate_velocity_acc(dt, grx, gry, grz);
+   propagate_velocity(dt, vx, vy, vz, grx, gry, grz);
 }
 
 

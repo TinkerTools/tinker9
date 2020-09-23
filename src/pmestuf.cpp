@@ -1,4 +1,5 @@
 #include "pmestuf.h"
+#include "nblist.h"
 #include "tool/error.h"
 
 namespace tinker {
@@ -57,7 +58,7 @@ void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 
 
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (mlist_version() & NBL_SPATIAL)
       grid_uind_cu(pme_u, fuind, fuinp);
    else
 #endif

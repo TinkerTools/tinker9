@@ -47,26 +47,22 @@ Barostat barostat;
 
 pos_prec *x_pmonte, *y_pmonte, *z_pmonte;
 vel_prec *vx_pmonte, *vy_pmonte, *vz_pmonte;
+bool do_pmonte;
 
 
-void monte_carlo_barostat(energy_prec epot)
+void monte_carlo_barostat(energy_prec epot, T_prec temp)
 {
-   monte_carlo_barostat_acc(epot);
+   monte_carlo_barostat_acc(epot, temp);
 }
 
 
 //====================================================================//
 
 
-void halftime_correction(bool do_voltrial)
+void pressure2(energy_prec epot, T_prec temp)
 {
-   if (thermostat == NOSE_HOOVER_CHAIN_THERMOSTAT &&
-       barostat == MONTE_CARLO_BAROSTAT) {
-   } else if (thermostat == NOSE_HOOVER_CHAIN_THERMOSTAT) {
-   } else if (barostat == MONTE_CARLO_BAROSTAT && do_voltrial) {
-      energy_prec epot;
-      copy_energy(calc::energy, &epot);
-      monte_carlo_barostat(epot);
+   if (do_pmonte) {
+      monte_carlo_barostat(epot, temp);
    }
 }
 }

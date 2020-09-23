@@ -132,6 +132,10 @@ void nhc_npt(int istep, time_prec dt)
 
    // set some time values for the dynamics integration
    const time_prec dt_2 = 0.5f * dt;
+   // This initialization is intentially kept the same as the Fortran code.
+   // Yes, the real press is available here, but when the Fortran code was
+   // written, virial may not be available if simulation was restarted from
+   // a ".dyn" file.
    if (istep == 1)
       press = bath::atmsph;
 
@@ -166,7 +170,8 @@ void nhc_npt(int istep, time_prec dt)
    // sinh(x)/x: Taylor series up to x**10
    double poly = 1 + term2 * (e2 + term2 * (e4 + term2 * (e6 + term2 * e8)));
    poly *= expterm * dt;
-   propagate_xyz_axbv(eterm2, poly, true);
+   propagate_pos_axbv(eterm2, poly);
+   copy_pos_to_xyz(true);
 
 
    energy(vers1);
@@ -190,4 +195,7 @@ void nhc_npt(int istep, time_prec dt)
    }
    press = (stress[0][0] + stress[1][1] + stress[2][2]) / 3;
 }
+
+
+void lpiston_npt(int istep, time_prec dt) {}
 }

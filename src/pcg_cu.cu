@@ -2,6 +2,7 @@
 #include "field.h"
 #include "induce.h"
 #include "launch.h"
+#include "mod.uprior.h"
 #include "tinker_rt.h"
 #include "tool/cudalib.h"
 #include "tool/io_print.h"
@@ -27,6 +28,24 @@ void pcg_udir(int n, const real* restrict polarity, real (*restrict udir)[3],
       for (int j = 0; j < 3; ++j) {
          udir[i][j] = poli * field[i][j];
          udirp[i][j] = poli * fieldp[i][j];
+      }
+   }
+}
+
+
+__global__
+void pcg_rsd(int n, const real* restrict polarity_inv,         //
+             real (*restrict rsd)[3], real (*restrict rsp)[3], //
+             const real (*restrict udir)[3], const real (*restrict udip)[3],
+             const real (*restrict uind)[3], const real (*restrict uinp)[3],
+             const real (*restrict field)[3], const real (*restrict fielp)[3])
+{
+   for (int i = ITHREAD; i < n; i += STRIDE) {
+      real poli_inv = polarity_inv[i];
+      #pragma unroll
+      for (int j = 0; j < 3; ++j) {
+         rsd[i][j] = (udir[i][j] - uind[i][j]) * poli_inv + field[i][j];
+         rsp[i][j] = (udip[i][j] - uinp[i][j]) * poli_inv + fielp[i][j];
       }
    }
 }
@@ -145,32 +164,48 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
    auto* vecp = work10_;
 
 
-   const bool dirguess = polpcg::pcgguess;
    const bool sparse_prec = polpcg::pcgprec;
-
-
-   // zero out the induced dipoles at each site
-   darray::zero(PROCEED_NEW_Q, n, uind, uinp);
+   bool dirguess = polpcg::pcgguess;
+   bool predict = polpred != UPred::NONE;
+   if (predict and nualt < maxualt) {
+      predict = false;
+      dirguess = true;
+   }
 
 
    // get the electrostatic field due to permanent multipoles
    dfield(field, fieldp);
-
-
    // direct induced dipoles
    launch_k1s(nonblk, n, pcg_udir, n, polarity, udir, udirp, field, fieldp);
-   if (dirguess) {
+
+
+   // initial induced dipole
+   if (predict) {
+      ulspred_sum(uind, uinp);
+   } else if (dirguess) {
       darray::copy(PROCEED_NEW_Q, n, uind, udir);
       darray::copy(PROCEED_NEW_Q, n, uinp, udirp);
+   } else {
+      darray::zero(PROCEED_NEW_Q, n, uind, uinp);
    }
 
 
    // initial residual r(0)
-   // if do not use pcgguess, r(0) = E - T Zero = E
+   //
    // if use pcgguess, r(0) = E - (inv_alpha + Tu) alpha E
    //                       = E - E -Tu udir
    //                       = -Tu udir
-   if (dirguess) {
+   //
+   // in general, r(0) = E - (inv_alpha + Tu) u(0)
+   //                  = -Tu u(0) + E - inv_alpha u(0)
+   //                  = -Tu u(0) + inv_alpha (udir - u(0))
+   //
+   // if do not use pcgguess, r(0) = E - T Zero = E
+   if (predict) {
+      ufield(uind, uinp, field, fieldp);
+      launch_k1s(nonblk, n, pcg_rsd, n, polarity_inv, rsd, rsdp, udir, udirp,
+                 uind, uinp, field, fieldp);
+   } else if (dirguess) {
       ufield(udir, udirp, rsd, rsdp);
    } else {
       darray::copy(PROCEED_NEW_Q, n, rsd, field);

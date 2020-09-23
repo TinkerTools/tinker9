@@ -36,6 +36,7 @@ void echglj_data(rc_op op)
       vdwpr_in_use = false;
       darray::deallocate(cvexclude, cvexclude_scale);
       darray::deallocate(atom_rad, atom_eps);
+      darray::deallocate(chg_coalesced, radeps_coalesced);
    }
 
 
@@ -109,8 +110,8 @@ void echglj_data(rc_op op)
          auto it = a.find(key);
          if (it == a.end()) {
             cv x;
-            x.c = 0;
-            x.v = 0;
+            x.c = 1;
+            x.v = 1;
             if (ch == 'c')
                x.c = val;
             else if (ch == 'v')
@@ -152,7 +153,7 @@ void echglj_data(rc_op op)
                int k = couple::i12[i][j];
                k -= 1;
                if (k > i) {
-                  insert_cv(ik_scale, i, k, c2scale - 1, 'c');
+                  insert_cv(ik_scale, i, k, c2scale, 'c');
                }
             }
          }
@@ -163,7 +164,7 @@ void echglj_data(rc_op op)
                int k = couple::i13[bask + j];
                k -= 1;
                if (k > i) {
-                  insert_cv(ik_scale, i, k, c3scale - 1, 'c');
+                  insert_cv(ik_scale, i, k, c3scale, 'c');
                }
             }
          }
@@ -174,7 +175,7 @@ void echglj_data(rc_op op)
                int k = couple::i14[bask + j];
                k -= 1;
                if (k > i) {
-                  insert_cv(ik_scale, i, k, c4scale - 1, 'c');
+                  insert_cv(ik_scale, i, k, c4scale, 'c');
                }
             }
          }
@@ -185,20 +186,20 @@ void echglj_data(rc_op op)
                int k = couple::i15[bask + j];
                k -= 1;
                if (k > i) {
-                  insert_cv(ik_scale, i, k, c5scale - 1, 'c');
+                  insert_cv(ik_scale, i, k, c5scale, 'c');
                }
             }
          }
 
 
          // v
-         if (v2scale != 1 && vdw_exclude_bond == false) {
+         if (v2scale != 1) {
             nn = couple::n12[i];
             for (int j = 0; j < nn; ++j) {
                int k = couple::i12[i][j];
                k -= 1;
                if (k > i) {
-                  insert_cv(ik_scale, i, k, v2scale - 1, 'v');
+                  insert_cv(ik_scale, i, k, v2scale, 'v');
                }
             }
          }
@@ -209,7 +210,7 @@ void echglj_data(rc_op op)
                int k = couple::i13[bask + j];
                k -= 1;
                if (k > i) {
-                  insert_cv(ik_scale, i, k, v3scale - 1, 'v');
+                  insert_cv(ik_scale, i, k, v3scale, 'v');
                }
             }
          }
@@ -220,7 +221,7 @@ void echglj_data(rc_op op)
                int k = couple::i14[bask + j];
                k -= 1;
                if (k > i) {
-                  insert_cv(ik_scale, i, k, v4scale - 1, 'v');
+                  insert_cv(ik_scale, i, k, v4scale, 'v');
                }
             }
          }
@@ -231,7 +232,7 @@ void echglj_data(rc_op op)
                int k = couple::i15[bask + j];
                k -= 1;
                if (k > i) {
-                  insert_cv(ik_scale, i, k, v5scale - 1, 'v');
+                  insert_cv(ik_scale, i, k, v5scale, 'v');
                }
             }
          }
@@ -249,6 +250,8 @@ void echglj_data(rc_op op)
       darray::copyin(WAIT_NEW_Q, ncvexclude, cvexclude, ik_vec.data());
       darray::copyin(WAIT_NEW_Q, ncvexclude, cvexclude_scale, scal_vec.data());
       darray::allocate(n, &atom_rad, &atom_eps);
+      darray::allocate(n, &chg_coalesced);
+      darray::allocate(2 * n, &radeps_coalesced);
    }
 
 
@@ -273,8 +276,7 @@ void echglj_data(rc_op op)
 
 
 #if TINKER_CUDART
-   extern void echglj_cu_data(rc_op);
-   echglj_cu_data(op);
+   echglj_data_cu(op);
 #endif
 }
 
@@ -294,8 +296,8 @@ void echglj(int vers)
    assert(radrule == evdw_t::arithmetic);
    assert(epsrule == evdw_t::geometric);
    if (use_ewald()) {
-      echglj_rad_arith_eps_geom_ewald_real_cu(vers);
       echarge_ewald_recip_self(vers);
+      echglj_rad_arith_eps_geom_ewald_real_cu(vers);
    } else {
       echglj_rad_arith_eps_geom_nonewald_cu(vers);
    }
@@ -321,4 +323,11 @@ void echglj(int vers)
    }
 #endif
 }
+
+
+real* chg_coalesced;
+real* radeps_coalesced;
+grad_prec* gx_coalesced;
+grad_prec* gy_coalesced;
+grad_prec* gz_coalesced;
 }

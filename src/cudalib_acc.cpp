@@ -18,23 +18,22 @@ void cudalib_data(rc_op op)
 
       async_queue = -42;
       nonblk = nullptr;
-      check_rt(cudaStreamDestroy(stream2));
       check_rt(cublasDestroy(h_cublas));
       check_rt(cublasDestroy(h_cublas_nonblk));
       check_rt(cudaFreeHost(pinned_buf));
       check_rt(cudaFree(dptr_buf));
 
 
-      cudaEventDestroy(stream2_begin_event);
-      cudaEventDestroy(stream2_end_event);
-      use_stream2 = false;
+      use_pme_stream = false;
+      pme_stream = nullptr;
+      pme_queue = -42;
+      check_rt(cudaEventDestroy(pme_event_finish));
    }
 
 
    if (op & rc_alloc) {
       async_queue = acc_get_default_async();
       nonblk = (cudaStream_t)acc_get_cuda_stream(async_queue);
-      check_rt(cudaStreamCreateWithFlags(&stream2, cudaStreamNonBlocking));
       check_rt(cublasCreate(&h_cublas));        // calls cudaMemcpy [sync] here
       check_rt(cublasCreate(&h_cublas_nonblk)); // calls cudaMemcpy [sync] here
       check_rt(cublasSetStream(h_cublas_nonblk, nonblk));
@@ -49,38 +48,19 @@ void cudalib_data(rc_op op)
       check_rt(cudaMalloc(&dptr_buf, nblock * sizeof(double)));
 
 
-      cudaEventCreateWithFlags(&stream2_begin_event, cudaEventDisableTiming);
-      cudaEventCreateWithFlags(&stream2_end_event, cudaEventDisableTiming);
-      use_stream2 = false;
+      use_pme_stream = false;
+      pme_queue = async_queue + 1;
+      pme_stream = (cudaStream_t)acc_get_cuda_stream(pme_queue);
+      check_rt(
+         cudaEventCreateWithFlags(&pme_event_finish, cudaEventDisableTiming));
 
 
       check_rt(cudaProfilerStart());
    }
 #else
-   (void)op;
-#endif
-}
-
-
-void stream2_sync()
-{
-#if TINKER_CUDART
-   if (use_stream2) {
-      check_rt(cudaEventRecord(stream2_end_event, stream2));
-      check_rt(cudaStreamWaitEvent(nonblk, stream2_end_event, 0));
-   }
-#endif
-}
-
-
-void stream2_begin()
-{
-#if TINKER_CUDART
-   if (use_stream2) {
-      // Record `stream2_begin_event` when other kernels on `nonblk` have ended.
-      check_rt(cudaEventRecord(stream2_begin_event, nonblk));
-      // `stream2` will wait until `stream2_begin_event` is recorded.
-      check_rt(cudaStreamWaitEvent(stream2, stream2_begin_event, 0));
+   if (op & rc_alloc) {
+      use_pme_stream = false;
+      pme_queue = -42;
    }
 #endif
 }
