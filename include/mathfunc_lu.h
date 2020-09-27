@@ -5,7 +5,7 @@
 
 namespace tinker {
 #pragma acc routine seq
-template <class T, int n>
+template <int n, class T = double>
 void ludcmp(T* lu, int* indx)
 {
    const T TINY = 1.0e-16;
@@ -55,7 +55,7 @@ void ludcmp(T* lu, int* indx)
 
 
 #pragma acc routine seq
-template <class T, int n>
+template <int n, class T = double>
 void lubksb(const T* lu, T* x, const int* indx)
 {
    int ii = 0;
@@ -82,8 +82,8 @@ void lubksb(const T* lu, T* x, const int* indx)
 
 
 #pragma acc routine seq
-template <class T, int n>
-void lumprove(const T* lu, T* x, const int* indx, const T* aref, const T* b)
+template <int n, class R, class T = double>
+void lumprove(const T* lu, T* x, const int* indx, const T* aref, const R* b)
 {
    T r[n];
    for (int i = 0; i < n; i++) {
@@ -92,7 +92,7 @@ void lumprove(const T* lu, T* x, const int* indx, const T* aref, const T* b)
          sdp += (double)aref[i * n + j] * (double)x[j];
       r[i] = sdp;
    }
-   lubksb<T, n>(lu, r, indx);
+   lubksb<n>(lu, r, indx);
    for (int i = 0; i < n; i++)
       x[i] -= r[i];
 }
@@ -111,16 +111,16 @@ void lumprove(const T* lu, T* x, const int* indx, const T* aref, const T* b)
  *    Cambridge University Press (2007).
  *    </a>
  */
-template <class T, int n>
-void symlusolve(const T* aUpRowMajor, T* b)
+template <int n, class R>
+void symlusolve(const R* aUpRowMajor, R* b)
 {
    #pragma acc serial async deviceptr(aUpRowMajor,b)
    {
       // A x = b
-      T a[n][n];   // full A matrix
-      T lu[n][n];  // LU decompostion
-      T x[n];      // solution
-      int indx[n]; // permutation
+      double a[n][n];  // full A matrix
+      double lu[n][n]; // LU decompostion
+      double x[n];     // solution
+      int indx[n];     // permutation
 
 
       // Initialize the internal arrays.
@@ -139,11 +139,11 @@ void symlusolve(const T* aUpRowMajor, T* b)
       }
 
 
-      T* plu = &lu[0][0];
-      T* pa = &a[0][0];
-      ludcmp<T, n>(plu, indx);
-      lubksb<T, n>(plu, x, indx);
-      lumprove<T, n>(plu, x, indx, pa, b);
+      double* plu = &lu[0][0];
+      double* pa = &a[0][0];
+      ludcmp<n>(plu, indx);
+      lubksb<n>(plu, x, indx);
+      lumprove<n>(plu, x, indx, pa, b);
 
 
       // Copy out the solution.

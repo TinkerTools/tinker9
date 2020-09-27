@@ -146,22 +146,22 @@ TEST_CASE("MathFuncPow2", "[util][math]")
       REQUIRE(f(1023) == 1024);
       REQUIRE(f(1024) == 1024);
    }
+}
 
 
+TEST_CASE("LUSolve", "[util][math]")
+{
 #if TINKER_HOST
-   SECTION("LUDecomposition")
-   {
-      //  1  2  3                      1.5      8
-      //  *  5  5  matrix-vector-dot  -0.5  =  13
-      //  *  * 12                      2.5     32
-      float aUpRow[] = {1, 2, 3, 5, 5, 12};
-      float b[] = {8, 13, 32};
-      float x[] = {1.5, -0.5, 2.5};
+   //  1  2  3                      1.5      8
+   //  *  5  5  matrix-vector-dot  -0.5  =  13
+   //  *  * 12                      2.5     32
+   float aUpRow[] = {1, 2, 3, 5, 5, 12};
+   float b[] = {8, 13, 32};
+   float x[] = {1.5, -0.5, 2.5};
 
 
-      symlusolve<float, 3>(aUpRow, b);
-      for (int i = 0; i < 3; ++i)
-         REQUIRE(x[i] == b[i]);
-   }
+   symlusolve<3, float>(aUpRow, b);
+   for (int i = 0; i < 3; ++i)
+      REQUIRE(x[i] == b[i]);
 #endif
 }
