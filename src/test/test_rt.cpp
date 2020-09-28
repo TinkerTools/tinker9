@@ -18,6 +18,24 @@ TestFile::TestFile(const std::string& name, const std::string& content)
 }
 
 
+TestFile::TestFile(const std::string& file)
+   : good_(false)
+   , name_()
+{
+   auto pos = file.find_last_of('/');
+   name_ = file.substr(pos + 1);
+   if (name_ == "")
+      return;
+
+   std::ifstream fsrc(file, std::ios::binary);
+   std::ofstream fdst(name_, std::ios::binary);
+   good_ = fdst.is_open();
+   if (good_) {
+      fdst << fsrc.rdbuf();
+   }
+}
+
+
 TestFile::~TestFile()
 {
    if (good_)

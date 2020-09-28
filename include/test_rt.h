@@ -23,6 +23,8 @@ private:
 public:
    /// Writes `content` to file with `name` to disk.
    TestFile(const std::string& name, const std::string& content);
+   /// Copy `file` to the current working directory.
+   TestFile(const std::string& file);
    /// Removes the file on disk if possible.
    ~TestFile();
    /// Prevents file being deleted.

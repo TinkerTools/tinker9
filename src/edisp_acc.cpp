@@ -83,27 +83,24 @@ void disp_pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_v)
          }
 
 
-         if CONSTEXPR (DO_E || DO_V) {
-            real struc2 = gridx * gridx + gridy * gridy;
-            eterm = (-fac1 * erfcterm * hhh - expterm * (fac2 + fac3 * hsq)) *
+         real struc2 = gridx * gridx + gridy * gridy;
+         eterm = (-fac1 * erfcterm * hhh - expterm * (fac2 + fac3 * hsq)) *
+            REAL_RECIP(denom);
+         real e = eterm * struc2;
+         if CONSTEXPR (DO_E) {
+            atomic_add(e, gpu_e, i & (bufsize - 1));
+         }
+         if CONSTEXPR (DO_V) {
+            real vterm = 3 * (fac1 * erfcterm * h + fac3 * expterm) * struc2 *
                REAL_RECIP(denom);
-            real e = eterm * struc2;
-            if CONSTEXPR (DO_E) {
-               atomic_add(e, gpu_e, i & (bufsize - 1));
-            }
-            if CONSTEXPR (DO_V) {
-               real vterm = 3 * (fac1 * erfcterm * h + fac3 * expterm) *
-                  struc2 * REAL_RECIP(denom);
-               real vxx = (h1 * h1 * vterm - e);
-               real vxy = h1 * h2 * vterm;
-               real vxz = h1 * h3 * vterm;
-               real vyy = (h2 * h2 * vterm - e);
-               real vyz = h2 * h3 * vterm;
-               real vzz = (h3 * h3 * vterm - e);
-               atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, gpu_v,
-                          i & (bufsize - 1));
-            }
-         } // end if (e or v)
+            real vxx = (h1 * h1 * vterm - e);
+            real vxy = h1 * h2 * vterm;
+            real vxz = h1 * h3 * vterm;
+            real vyy = (h2 * h2 * vterm - e);
+            real vyz = h2 * h3 * vterm;
+            real vzz = (h3 * h3 * vterm - e);
+            atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, gpu_v, i & (bufsize - 1));
+         }
       }
 
 
