@@ -86,7 +86,6 @@ FULL_PAIRWISE_INTERACTION: |
 
 
     real c;
-    int klane = srclane + threadIdx.x - ilane;
     c = rr5 * dot3(xr,yr,zr,ukdx,ukdy,ukdz);
     shfidx[klane] += c * xr - rr3 * ukdx;
     shfidy[klane] += c * yr - rr3 * ukdy;

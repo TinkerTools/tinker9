@@ -98,7 +98,7 @@ void edisp_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(dsp2scale - 1);
+                  excls.push_back(dsp2scale);
                }
             }
          }
@@ -113,7 +113,7 @@ void edisp_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(dsp3scale - 1);
+                  excls.push_back(dsp3scale);
                }
             }
          }
@@ -128,7 +128,7 @@ void edisp_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(dsp4scale - 1);
+                  excls.push_back(dsp4scale);
                }
             }
          }
@@ -143,7 +143,7 @@ void edisp_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(dsp5scale - 1);
+                  excls.push_back(dsp5scale);
                }
             }
          }
