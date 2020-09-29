@@ -197,5 +197,5 @@ void nhc_npt(int istep, time_prec dt)
 }
 
 
-void lpiston_npt(int istep, time_prec dt) {}
+//void lpiston_npt(int istep, time_prec dt) {}
 }

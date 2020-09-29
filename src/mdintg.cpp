@@ -167,6 +167,11 @@ void integrate_data(rc_op op)
                           &leapfrog_vx, &leapfrog_vy, &leapfrog_vz);
          energy(calc::grad);
       } else if (intg == lpiston_npt) {
+         darray::allocate(n, &leapfrog_x, &leapfrog_y, &leapfrog_z,
+                          &leapfrog_vx, &leapfrog_vy, &leapfrog_vz);
+         darray::allocate(n, &leapfrog_vxold, &leapfrog_vyold, &leapfrog_vzold);
+         energy(calc::v1);
+
       } else if (intg == nhc_npt) {
          if (use_rattle()) {
             TINKER_THROW(

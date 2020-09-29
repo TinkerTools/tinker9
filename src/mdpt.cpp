@@ -29,6 +29,13 @@ void temper(time_prec dt, T_prec& temp)
       assert(false);
 }
 
+// Langevin Piston
+void temper_leapfrog(time_prec dt, T_prec& temp)
+{
+   kinetic_cu_leapfrog(temp);
+
+}
+
 
 Thermostat thermostat;
 

@@ -252,4 +252,30 @@ void rattle2(time_prec dt, bool do_v)
       }
    }
 }
+
+// Langevin Piston
+void rattle_lp(time_prec dt,
+              pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+              const pos_prec* xold, const pos_prec* yold,const pos_prec* zold)
+{
+   rattle_settle_acc_lp(dt, xnew, ynew, znew, xold, yold, zold);
+   rattle_acc_lp(dt, xnew, ynew, znew, xold, yold, zold);
+}
+
+void rattle2_lf(time_prec dt,
+                pos_prec* vx_lp, pos_prec* vy_lp, pos_prec* vz_lp,
+                const vel_prec* vx_new, const vel_prec* vy_new, const vel_prec* zx_new,
+                const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
+{
+   darray::zero(PROCEED_NEW_Q, buffer_size(), vir_buf);
+
+   rattle2_lf_acc(dt, vx_lp, vy_lp, vz_lp, vx_new, vy_new, zx_new, xold, yold, zold);
+
+   virial_prec v[9];
+   virial_reduce(v, vir_buf);
+   for (int iv = 0; iv < 9; ++iv) {
+      vir[iv] += v[iv];
+   }
+}
+
 }
