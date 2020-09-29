@@ -9,6 +9,8 @@ void kinetic_cu(T_prec&);
 
 
 void temper(time_prec dt, T_prec& temp);
+void kinetic_cu_leapfrog(T_prec&);
+void temper_leapfrog(time_prec dt, T_prec& temp);
 inline void pressure() {}
 
 

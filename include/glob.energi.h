@@ -138,6 +138,15 @@ TINKER_EXTERN energy_prec energy_elec;
  */
 TINKER_EXTERN energy_prec eksum;
 TINKER_EXTERN energy_prec ekin[3][3];
+/**
+ * \va eksum_old
+ * Kinetic energy at n-1/2
+ * \var eksum_vx
+ * Kinetic energy at n
+ */
+TINKER_EXTERN energy_prec eksum_old;
+TINKER_EXTERN energy_prec eksum_vx;
+
 
 
 /**

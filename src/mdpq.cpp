@@ -305,4 +305,70 @@ void vel_data(rc_op op)
       darray::copyin2(WAIT_NEW_Q, 2, 3, n, vz, moldyn::v);
    }
 }
+
+//Langevin Piston
+void propagate_velocity_lp(vel_prec* vx_lp, vel_prec* vy_lp, vel_prec* vz_lp,
+                           vel_prec* vxnew_lp, vel_prec* vynew_lp, vel_prec* vznew_lp,
+                           vel_prec* vxold_lp, vel_prec* vyold_lp, vel_prec* vzold_lp,
+                           double scale, energy_prec& eksum_new, energy_prec& eksum_old)
+{
+   propagate_velocity_lp_acc(vx_lp, vy_lp, vz_lp,
+                             vxnew_lp, vynew_lp, vznew_lp,
+                             vxold_lp, vyold_lp, vzold_lp,
+                             scale, eksum_new, eksum_old);
+}
+
+void propagate_pos_lp(time_prec dt, pos_prec* x_lp, pos_prec* y_lp, pos_prec* z_lp,
+                      vel_prec* vx_lp, vel_prec* vy_lp, vel_prec* vz_lp,
+                      pos_prec* xold_lp, pos_prec* yold_lp, pos_prec* zold_lp, double scale)
+{
+
+      propagate_pos_lp_acc(dt, x_lp, y_lp, z_lp, vx_lp, vy_lp, vz_lp,
+                       xold_lp, yold_lp, zold_lp, scale);
+
+}
+
+void propagate_pos_lp2(time_prec dt, pos_prec* x_lp, pos_prec* y_lp, pos_prec* z_lp,
+                      pos_prec* xold_lp, pos_prec* yold_lp, pos_prec* zold_lp, double scale)
+{
+
+      propagate_pos_lp_acc2(dt, x_lp, y_lp, z_lp,
+                       xold_lp, yold_lp, zold_lp, scale);
+
+}
+
+void propagate_velocity_lp2(time_prec dt, vel_prec* vx_lp, vel_prec* vy_lp, vel_prec* vz_lp,
+                            pos_prec* x_lp, pos_prec* y_lp, pos_prec* z_lp,
+                            pos_prec* xold_lp, pos_prec* yold_lp, pos_prec* zold_lp)
+{
+   propagate_velocity_lp_acc2(dt, vx_lp, vy_lp, vz_lp, x_lp, y_lp, z_lp,
+                              xold_lp, yold_lp, zold_lp);
+}
+
+void propagate_velocity_lp3(vel_prec* vx_lp, vel_prec* vy_lp, vel_prec* vz_lp,
+                           vel_prec* vxnew_lp, vel_prec* vynew_lp, vel_prec* vznew_lp,
+                           vel_prec* vxold_lp, vel_prec* vyold_lp, vel_prec* vzold_lp,
+                           energy_prec& eksum_new)
+{
+   propagate_velocity_lp_acc3(vx_lp, vy_lp, vz_lp,
+                             vxnew_lp, vynew_lp, vznew_lp,
+                             vxold_lp, vyold_lp, vzold_lp,
+                             eksum_new);
+}
+void propagate_pos_lf(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz,
+                      pos_prec* qxold, pos_prec* qyold, pos_prec* qzold,
+                      const vel_prec* vlx, const vel_prec* vly,
+                      const vel_prec* vlz)
+{
+   propagate_pos_lf_acc(dt, qx, qy, qz, qxold, qyold, qzold, vlx, vly, vlz);
+}
+
+void swap_v_lf(vel_prec* vxnew, vel_prec* vynew, vel_prec* vznew,
+               vel_prec* vxold, vel_prec* vyold, vel_prec* vzold)
+{
+   swap_v_lf_acc(vxnew, vynew, vznew, vxold, vyold, vzold);
+}
+
+
+
 }

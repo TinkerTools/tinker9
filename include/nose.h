@@ -20,5 +20,5 @@ extern double gnh[maxnose]; // ksi force
 
 
 // Feller et al. 1995, https://doi.org/10.1063/1.470648
-void lpiston_npt(int istep, time_prec dt_ps);
+//void lpiston_npt(int istep, time_prec dt_ps);
 }

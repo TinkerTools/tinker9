@@ -88,4 +88,67 @@ void kinetic_cu(T_prec& temp)
    eksum = exx + eyy + ezz;
    temp = 2 * eksum / (mdstuf::nfree * units::gasconst);
 }
+
+void kinetic_cu_leapfrog(T_prec& temp)
+{
+   //Ek at +1/2
+   cudaStream_t st = nonblk;
+   constexpr int HN = 6;
+   energy_prec* dptr = reinterpret_cast<energy_prec*>(dptr_buf);
+   energy_prec(*dptr6)[HN] = reinterpret_cast<energy_prec(*)[HN]>(dptr_buf);
+   energy_prec* hptr = reinterpret_cast<energy_prec*>(pinned_buf);
+   int grid_siz1 = get_grid_size(BLOCK_DIM);
+   grid_siz1 = grid_siz1 / HN;
+   int grid_siz2 = (n + BLOCK_DIM - 1) / BLOCK_DIM;
+   int grid_size = std::min(grid_siz1, grid_siz2);
+   const energy_prec ekcal_inv = 1.0 / units::ekcal;
+   velocity_to_ekin_cu<BLOCK_DIM>
+      <<<grid_size, BLOCK_DIM, 0, st>>>(dptr, leapfrog_vx, leapfrog_vy, leapfrog_vz, 
+                                        mass, n, ekcal_inv);
+   reduce2<energy_prec, BLOCK_DIM, HN, HN, OpPlus<energy_prec>>
+      <<<1, BLOCK_DIM, 0, st>>>(dptr6, dptr6, grid_size);
+   check_rt(cudaMemcpyAsync(hptr, dptr, HN * sizeof(energy_prec),
+                            cudaMemcpyDeviceToHost, st));
+   check_rt(cudaStreamSynchronize(st));
+   energy_prec exx = hptr[0];
+   energy_prec eyy = hptr[1];
+   energy_prec ezz = hptr[2];
+   energy_prec exy = hptr[3];
+   energy_prec eyz = hptr[4];
+   energy_prec ezx = hptr[5];
+   eksum = exx + eyy + ezz;
+
+   //Ek at -1/2
+   energy_prec* dptr_old = reinterpret_cast<energy_prec*>(dptr_buf);
+   energy_prec(*dptr6_old)[HN] = reinterpret_cast<energy_prec(*)[HN]>(dptr_buf);
+   energy_prec* hptr_old = reinterpret_cast<energy_prec*>(pinned_buf);
+   velocity_to_ekin_cu<BLOCK_DIM>
+      <<<grid_size, BLOCK_DIM, 0, st>>>(dptr_old, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold, 
+                                        mass, n, ekcal_inv);
+   reduce2<energy_prec, BLOCK_DIM, HN, HN, OpPlus<energy_prec>>
+      <<<1, BLOCK_DIM, 0, st>>>(dptr6_old, dptr6_old, grid_size);
+   check_rt(cudaMemcpyAsync(hptr_old, dptr_old, HN * sizeof(energy_prec),
+                            cudaMemcpyDeviceToHost, st));
+   check_rt(cudaStreamSynchronize(st));
+   exx += hptr_old[0];
+   eyy += hptr_old[1];
+   ezz += hptr_old[2];
+   exy += hptr_old[3];
+   eyz += hptr_old[4];
+   ezx += hptr_old[5];
+   eksum_old = hptr_old[0] + hptr_old[1] + hptr_old[2];
+
+   ekin[0][0] = exx * 0.5f;
+   ekin[0][1] = exy * 0.5f;
+   ekin[0][2] = ezx * 0.5f;
+   ekin[1][0] = exy * 0.5f;
+   ekin[1][1] = eyy * 0.5f;
+   ekin[1][2] = eyz * 0.5f;
+   ekin[2][0] = ezx * 0.5f;
+   ekin[2][1] = eyz * 0.5f;
+   ekin[2][2] = ezz * 0.5f;
+   temp = (eksum + eksum_old) / (mdstuf::nfree * units::gasconst);
+}
+
+
 }
