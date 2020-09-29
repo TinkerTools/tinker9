@@ -832,9 +832,9 @@ void rattle2_settle_acc(time_prec dt, bool do_v)
 }
 
 // Langevin Piston
-void rattle_acc_lp(time_prec dt, 
-                   pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-                   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
+void rattle_acc_lp(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+                   const pos_prec* xold, const pos_prec* yold,
+                   const pos_prec* zold)
 {
    if (nratmol <= 0)
       return;
@@ -888,12 +888,11 @@ void rattle_acc_lp(time_prec dt,
          }
       } // end (maxiter or done)
    }
-
 }
 
-void settle_acc1_lp(time_prec dt, 
-                    pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-                    const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
+void settle_acc1_lp(time_prec dt, pos_prec* xnew, pos_prec* ynew,
+                    pos_prec* znew, const pos_prec* xold, const pos_prec* yold,
+                    const pos_prec* zold)
 {
    if (nratwt <= 0)
       return;
@@ -1143,32 +1142,33 @@ void settle_acc1_lp(time_prec dt,
       xnew[ic] = xcom + xc3;
       ynew[ic] = ycom + yc3;
       znew[ic] = zcom + zc3;
-
-
    }
 }
 
 
-void rattle2_lf_acc1(time_prec dt,
-                     pos_prec* vx_lp, pos_prec* vy_lp, pos_prec* vz_lp,
-                     const vel_prec* vx_new, const vel_prec* vy_new, const vel_prec* vz_new,
-                     const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
+void rattle2_lf_acc1(time_prec dt, pos_prec* vx_lp, pos_prec* vy_lp,
+                     pos_prec* vz_lp, const vel_prec* vx_new,
+                     const vel_prec* vy_new, const vel_prec* vz_new,
+                     const pos_prec* xold, const pos_prec* yold,
+                     const pos_prec* zold)
 {
 
-   const double vterm = -1 / (dt * units::ekcal); // ekcal conversion from kcal to g*Ang**2/ps**2; ekcal=4.1840d+2
+   const double vterm =
+      -1 / (dt * units::ekcal); // ekcal conversion from kcal to g*Ang**2/ps**2;
+                                // ekcal=4.1840d+2
    size_t bufsize = buffer_size();
-   //printf("bufsize = %d\n", bufsize); // 32768
-   //printf("df = %lf \n", dt); // ps
+   // printf("bufsize = %d\n", bufsize); // 32768
+   // printf("df = %lf \n", dt); // ps
 
    #pragma acc parallel loop independent async\
            deviceptr(mass,xold,yold,zold,vx_lp,vy_lp,vz_lp,vx_new,vy_new,vz_new,vir_buf)
    for (int i = 0; i < n; ++i) {
-      //double m = mass[i];
-      //printf("m[%d] = %lf\n",i,m); // atomic mass
+      // double m = mass[i];
+      // printf("m[%d] = %lf\n",i,m); // atomic mass
       double fact = mass[i] * vterm;
-      //double rx = xold[i];
-      //printf("rx[%d] = %lf\n", i, rx); // Angstrom
-      vx_lp[i] = (vx_new[i] - vx_lp[i]) * fact; //forces
+      // double rx = xold[i];
+      // printf("rx[%d] = %lf\n", i, rx); // Angstrom
+      vx_lp[i] = (vx_new[i] - vx_lp[i]) * fact; // forces
       vy_lp[i] = (vy_new[i] - vy_lp[i]) * fact;
       vz_lp[i] = (vz_new[i] - vz_lp[i]) * fact;
       size_t offset = i & (bufsize - 1);
@@ -1180,26 +1180,28 @@ void rattle2_lf_acc1(time_prec dt,
       vyy += yold[i] * vy_lp[i];
       vzy += zold[i] * vy_lp[i];
       vzz += zold[i] * vz_lp[i];
-      atomic_add((real)vxx, (real)vyx, (real)vzx, (real)vyy,
-                 (real)vzy, (real)vzz, vir_buf, offset);
+      atomic_add((real)vxx, (real)vyx, (real)vzx, (real)vyy, (real)vzy,
+                 (real)vzz, vir_buf, offset);
    }
 }
 
-void rattle2_lf_acc(time_prec dt, 
-                    pos_prec* vx_lp, pos_prec* vy_lp, pos_prec* vz_lp,
-                    const vel_prec* vx_new, const vel_prec* vy_new, const vel_prec* zx_new,
-                    const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
+
+void rattle2_lf_acc(time_prec dt, pos_prec* vx_lp, pos_prec* vy_lp,
+                    pos_prec* vz_lp, const vel_prec* vx_new,
+                    const vel_prec* vy_new, const vel_prec* zx_new,
+                    const pos_prec* xold, const pos_prec* yold,
+                    const pos_prec* zold)
 
 {
-   rattle2_lf_acc1(dt, vx_lp, vy_lp, vz_lp, vx_new, vy_new, zx_new, xold, yold, zold);
+   rattle2_lf_acc1(dt, vx_lp, vy_lp, vz_lp, vx_new, vy_new, zx_new, xold, yold,
+                   zold);
 }
 
-void rattle_settle_acc_lp(time_prec dt, 
-                          pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-                          const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
+
+void rattle_settle_acc_lp(time_prec dt, pos_prec* xnew, pos_prec* ynew,
+                          pos_prec* znew, const pos_prec* xold,
+                          const pos_prec* yold, const pos_prec* zold)
 {
    settle_acc1_lp(dt, xnew, ynew, znew, xold, yold, zold);
 }
-
-
 }
