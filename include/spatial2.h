@@ -80,7 +80,7 @@ namespace tinker {
  */
 struct Spatial2
 {
-   static constexpr int LSTCAP = 32;
+   static constexpr int LSTCAP = 40;
    // output
    int nakpl;  // Length of iakpl.
    int niak;   // Length of iak. Not greater than LSTCAP*nak.
@@ -101,7 +101,6 @@ struct Spatial2
    // internal
    int* iakpl_rev; // Length nakp. array[pair] == location in iakpl.
    int* akpf;      // Length nakpk. Block pair bit flags.
-   int* iakbuf;    // Length length of iak.
 
 
    Spatial::SortedAtom* sorted; // Length n.

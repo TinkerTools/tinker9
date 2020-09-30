@@ -687,8 +687,8 @@ void ulspred_sum_acc(real (*restrict uind)[3], real (*restrict uinp)[3])
       }
 
 
-      symlusolve<real, 6>(udalt_lsqr_a, udalt_lsqr_b);
-      symlusolve<real, 6>(upalt_lsqr_a, upalt_lsqr_b);
+      symlusolve<6, real>(udalt_lsqr_a, udalt_lsqr_b);
+      symlusolve<6, real>(upalt_lsqr_a, upalt_lsqr_b);
 
 
       real3_ptr pd0 = pd[0];

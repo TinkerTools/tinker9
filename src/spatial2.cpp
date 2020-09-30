@@ -9,7 +9,7 @@ Spatial2::~Spatial2()
    darray::deallocate(iakpl, iak, lst);
 
 
-   darray::deallocate(iakpl_rev, akpf, iakbuf, sorted, bnum);
+   darray::deallocate(iakpl_rev, akpf, sorted, bnum);
    darray::deallocate(akc, half);
    darray::deallocate(update, xold, yold, zold);
 
@@ -53,7 +53,6 @@ void spatial2_data_alloc(Spatial2Unit& u, int n, double cutoff, double buffer,
 
    darray::allocate(st.nakp, &st.iakpl_rev);
    darray::allocate(st.nakpk, &st.akpf);
-   darray::allocate(st.nak * Spatial2::LSTCAP, &st.iakbuf);
    darray::allocate(st.n, &st.sorted, &st.bnum);
    darray::allocate(st.nak, &st.akc, &st.half);
 

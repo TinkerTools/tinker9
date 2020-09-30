@@ -420,6 +420,14 @@ void epolar_data(rc_op op)
             polpred = UPred::GEAR;
          } else {
             polpred = UPred::LSQR;
+#if TINKER_REAL_SIZE == 4
+            print(stdout,
+                  "\n"
+                  " Warning -- 32-bit floating-point induced dipoles.\n"
+                  "            LSQR Predictor is numerically unstable.\n"
+                  "            Use at your own risk.\n"
+                  "\n");
+#endif
          }
       } else {
          polpred = UPred::NONE;

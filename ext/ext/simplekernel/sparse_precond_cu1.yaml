@@ -86,7 +86,6 @@ FULL_PAIRWISE_INTERACTION: |
 
 
     real c;
-    int klane = srclane + threadIdx.x - ilane;
     c = rr5 * dot3(xr,yr,zr,ukdx,ukdy,ukdz);
     shfidx[klane] += c * xr - rr3 * ukdx;
     shfidy[klane] += c * yr - rr3 * ukdy;
@@ -100,13 +99,13 @@ FULL_PAIRWISE_INTERACTION: |
 
 
     c = rr5 * dot3(xr,yr,zr,uidx,uidy,uidz);
-    fkdx += c * xr - rr3 * shuidx[klane];
-    fkdy += c * yr - rr3 * shuidy[klane];
-    fkdz += c * zr - rr3 * shuidz[klane];
+    fkdx += c * xr - rr3 * uidx;
+    fkdy += c * yr - rr3 * uidy;
+    fkdz += c * zr - rr3 * uidz;
 
 
     c = rr5 * dot3(xr,yr,zr,uipx,uipy,uipz);
-    fkpx += c * xr - rr3 * shuipx[klane];
-    fkpy += c * yr - rr3 * shuipy[klane];
-    fkpz += c * zr - rr3 * shuipz[klane];
+    fkpx += c * xr - rr3 * uipx;
+    fkpy += c * yr - rr3 * uipy;
+    fkpz += c * zr - rr3 * uipz;
   } // end if (include)

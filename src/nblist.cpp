@@ -320,7 +320,6 @@ void nblist_data(rc_op op)
       SpatialUnit::clear();
       thrust_cache_dealloc();
       mspatial_unit.close();
-      dspspatial_unit.close();
 
 
       Spatial2Unit::clear();
@@ -328,6 +327,7 @@ void nblist_data(rc_op op)
       vspatial_v2_unit.close();
       uspatial_v2_unit.close();
       mspatial_v2_unit.close();
+      dspspatial_v2_unit.close();
 #endif
    }
 
@@ -476,12 +476,12 @@ void nblist_data(rc_op op)
       }
    }
    if (u & NBL_SPATIAL) {
-      auto& unt = dspspatial_unit;
+      auto& un2 = dspspatial_v2_unit;
       if (op & rc_alloc) {
-         spatial_alloc(unt, n, cut, buf, x, y, z);
+         spatial_alloc(un2, n, cut, buf, x, y, z, 1, ndspexclude, dspexclude);
       }
       if (op & rc_init) {
-         spatial_build(unt);
+         spatial_build(un2);
       }
    }
 
@@ -600,14 +600,13 @@ void refresh_neighbors()
       nblist_update_acc(unt);
    }
    if (u & NBL_SPATIAL) {
-      auto& unt = dspspatial_unit;
+      auto& un2 = dspspatial_v2_unit;
       if (rc_flag & calc::traj) {
-         unt->x = x;
-         unt->y = y;
-         unt->z = z;
-         unt.update_deviceptr(*unt, PROCEED_NEW_Q);
+         un2->x = x;
+         un2->y = y;
+         un2->z = z;
       }
-      spatial_update(unt);
+      spatial_update(un2);
    }
 }
 }
