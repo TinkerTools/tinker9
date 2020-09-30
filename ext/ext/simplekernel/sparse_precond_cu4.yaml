@@ -80,7 +80,7 @@ FULL_PAIRWISE_INTERACTION: |
 
 
     c = rr5 * dot3(xr,yr,zr,uidx,uidy,uidz);
-    fkdx += c * xr - rr3 * shuidx[klane];
-    fkdy += c * yr - rr3 * shuidy[klane];
-    fkdz += c * zr - rr3 * shuidz[klane];
+    fkdx += c * xr - rr3 * uidx;
+    fkdy += c * yr - rr3 * uidy;
+    fkdz += c * zr - rr3 * uidz;
   } // end if (include)

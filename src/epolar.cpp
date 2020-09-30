@@ -18,6 +18,7 @@
 #include <tinker/detail/sizes.hh>
 #include <tinker/detail/units.hh>
 #include <tinker/detail/uprior.hh>
+#include <tinker/detail/mplpot.hh>
 
 
 namespace tinker {
@@ -25,11 +26,12 @@ void epolar_data(rc_op op)
 {
    if (!use_potent(polar_term))
       return;
+   if (mplpot::use_chgpen)
+      return;
 
    bool rc_a = rc_flag & calc::analyz;
 
    if (op & rc_dealloc) {
-      printf("dealloc epolar 1\n");
       nuexclude = 0;
       darray::deallocate(uexclude, uexclude_scale);
       ndpexclude = 0;

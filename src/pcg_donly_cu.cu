@@ -3,6 +3,7 @@
 #include "induce_donly.h"
 #include "launch.h"
 #include "tinker_rt.h"
+#include "mod.uprior.h"
 #include "tool/cudalib.h"
 #include "tool/io_print.h"
 #include <tinker/detail/inform.hh>
@@ -22,14 +23,18 @@ void pcg_udir_donly(int n, const real* restrict polarity, real (*restrict udir)[
 {
    for (int i = ITHREAD; i < n; i += STRIDE) {
       real poli = polarity[i];
-      real test;
-      real test2;
+      //real test;
+      //real test2;
       #pragma unroll
       for (int j = 0; j < 3; ++j) {
          udir[i][j] = poli * field[i][j];
-         test = udir[i][j];
-         test2 = field[i][j];
-         //printf("udir %14.6e field %14.6e\n", test, test2);
+
+      // real test = udir[i][0];
+      // real test1 = udir[i][1];
+      // real test2 = field[i][0];
+      // real test3 = field[i][1];
+      // printf("udir %16.8e%16.8e\n", test, test1);
+      // printf("field %16.8e%16.8e\n", test2, test3);
       }
    }
 }
@@ -44,12 +49,35 @@ void pcg_rsd1(int n, const real* restrict polarity, real (*restrict rsd)[3])
          rsd[i][1] = 0;
          rsd[i][2] = 0;
       } else {
-         real test = rsd[i][0];
-         // printf("rsd %16.8e\n", test);
+         // real test1, test2, test3;
+         // test1 = rsd[i][0];
+         // test2 = rsd[i][1];
+         // test3 = rsd[i][2];
+         // printf("PRINT i %3d %16.8e%16.8e%16.8e\n", i, test1, test2, test3);
       }
    }
 }
 
+__global__
+void pcg_rsd2(int n, const real* restrict polarity_inv,         //
+             real (*restrict rsd)[3], //
+             const real (*restrict udir)[3],
+             const real (*restrict uind)[3],
+             const real (*restrict field)[3])
+{
+   for (int i = ITHREAD; i < n; i += STRIDE) {
+      real poli_inv = polarity_inv[i];
+      #pragma unroll
+      for (int j = 0; j < 3; ++j) {
+         rsd[i][j] = (udir[i][j] - uind[i][j]) * poli_inv + field[i][j];
+         // auto r = rsd[i][j];
+         // auto ud = udir[i][j];
+         // auto u = uind[i][j];
+         // auto fd = field[i][j];
+         // printf("calc init rsd[%d][%d] : %16.8e = (%16.8e - %16.8e)*%16.8e + %16.8e\n",i,j,r,ud,u,poli_inv,fd);
+      }
+   }
+}
 
 __global__
 void pcg_p4(int n, const real* restrict polarity_inv, real (*restrict vec)[3],
@@ -57,20 +85,16 @@ void pcg_p4(int n, const real* restrict polarity_inv, real (*restrict vec)[3],
 {
    for (int i = ITHREAD; i < n; i += STRIDE) {
       real poli_inv = polarity_inv[i];
-      real test;
-      real test2;
+
       #pragma unroll
-      for (int j = 0; j < 3; ++j) {
+      for (int j = 0; j < 3; ++j) 
          vec[i][j] = poli_inv * conj[i][j] - field[i][j];
-         test = poli_inv * conj[i][j];
-         test2 = field[i][j];
-      }
-      // test = poli_inv * conj[0][0];
-      // test2 = vec[0][0];
-      // printf("conj/poli  %16.8e vec  %16.8e\n", test, test2);
-      // test = poli_inv * conj[1][0];
-      // test2 = vec[1][0];
-      // printf("conj/poli2 %16.8e vec %16.8e\n", test, test2);
+
+      // real test1, test2, test3;
+      // test1 = field[i][0];
+      // test2 = field[i][1];
+      // test3 = field[i][2];
+      //printf("i %3d field %16.8e%16.8e%16.8e\n", i, test1, test2, test3);
    }
 }
 
@@ -89,8 +113,8 @@ void pcg_p5(int n, const real* restrict polarity, //
          uind[i][j] += a * conj[i][j];
          rsd[i][j] -= a * vec[i][j];
       }
-      real test = uind[0][0];
-      real test2 = conj[0][0];
+      //real test = uind[0][0];
+      //real test2 = conj[0][0];
       // printf("uind %16.8e a %16.8e conj %16.8e\n", test,a,test2);
       // test = uind[1][0];
       // test2 = conj[1][0];
@@ -126,11 +150,10 @@ void pcg_peek1(int n, float pcgpeek, const real* restrict polarity,
 {
    for (int i = ITHREAD; i < n; i += STRIDE) {
       real term = pcgpeek * polarity[i];
-      real test;
       #pragma unroll
       for (int j = 0; j < 3; ++j) {
          uind[i][j] += term * rsd[i][j];
-         test = rsd[i][j];
+         //real test = rsd[i][j];
          // printf("peek %14.6e\n", test);
 
       }
@@ -147,12 +170,18 @@ void induce_mutual_pcg_cu2(real (*uind)[3])
    auto* vec = work15_;
 
 
-   const bool dirguess = polpcg::pcgguess;
+   // const bool dirguess = polpcg::pcgguess;
+   // const bool sparse_prec = polpcg::pcgprec;
    const bool sparse_prec = polpcg::pcgprec;
-
+   bool dirguess = polpcg::pcgguess;
+   bool predict = polpred != UPred::NONE;
+   if (predict and nualt < maxualt) {
+      predict = false;
+      dirguess = true;
+   }
 
    // zero out the induced dipoles at each site
-   darray::zero(PROCEED_NEW_Q, n, uind);
+   // darray::zero(PROCEED_NEW_Q, n, uind);
 
    // get the electrostatic field due to permanent multipoles
    dfield_chgpen(field);
@@ -160,22 +189,40 @@ void induce_mutual_pcg_cu2(real (*uind)[3])
 
    // direct induced dipoles
    launch_k1s(nonblk, n, pcg_udir_donly, n, polarity, udir, field);
-   if (dirguess)
+   
+   // if (dirguess)
+   //    darray::copy(PROCEED_NEW_Q, n, uind, udir);
+   // initial induced dipole
+   if (predict) {
+      ulspred_sum2(uind);
+   } else if (dirguess) {
       darray::copy(PROCEED_NEW_Q, n, uind, udir);
-
+   } else {
+      darray::zero(PROCEED_NEW_Q, n, uind);
+   }
 
    // initial residual r(0)
    // if do not use pcgguess, r(0) = E - T Zero = E
    // if use pcgguess, r(0) = E - (inv_alpha + Tu) alpha E
    //                       = E - E -Tu udir
    //                       = -Tu udir
-   if (dirguess) 
+   // if (dirguess) 
+   //    ufield_chgpen(udir, rsd);
+   // else 
+   //    darray::copy(PROCEED_NEW_Q, n, rsd, field);
+
+   // launch_k1s(nonblk, n, pcg_rsd1, n, polarity, rsd);
+   if (predict) {
+      ufield_chgpen(uind, field);
+      launch_k1s(nonblk, n, pcg_rsd2, n, polarity_inv, rsd, udir,
+                 uind, field);
+   } else if (dirguess) {
       ufield_chgpen(udir, rsd);
-   else 
+   } else {
       darray::copy(PROCEED_NEW_Q, n, rsd, field);
+   }
 
-   launch_k1s(nonblk, n, pcg_rsd1, n, polarity, rsd);
-
+   launch_k1s(nonblk, n, pcg_rsd1, n, polarity, field);
 
    // initial M r(0) and p(0)
    if (sparse_prec) {
@@ -185,7 +232,6 @@ void induce_mutual_pcg_cu2(real (*uind)[3])
       diag_precond2(rsd, zrsd);
    
    darray::copy(PROCEED_NEW_Q, n, conj, zrsd);
-
 
    // initial r(0) M r(0)
    real* sum = &((real*)dptr_buf)[0];

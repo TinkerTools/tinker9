@@ -132,7 +132,7 @@ void sparse_precond_cu3(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
 //         ii += blockDim.x * gridDim.x) {
 //       int i = wexclude[ii][0];
 //       int k = wexclude[ii][1];
-//       real wscale = wexclude_scale[ii];
+//       real wscale = wexclude_scale[ii] - 1;
 
 
 //       real xi = x[i];
@@ -276,9 +276,6 @@ void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off,
          real rr3 = scale3 * polik * REAL_RECIP(r * r2);
          real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
 
-         if (scalea != 0)
-         printf(" p1 r rr3 rr5 %16.8e%16.8e%16.8e scale %.4lf\n", r,rr3,rr5,scalea);
-
          real c;
          int klane = srclane + threadIdx.x - ilane;
          c = rr5 * dot3(xr, yr, zr, ukdx, ukdy, ukdz);
@@ -288,9 +285,9 @@ void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off,
 
 
          c = rr5 * dot3(xr, yr, zr, uidx, uidy, uidz);
-         fkdx += c * xr - rr3 * shuidx[klane];
-         fkdy += c * yr - rr3 * shuidy[klane];
-         fkdz += c * zr - rr3 * shuidz[klane];
+         fkdx += c * xr - rr3 * uidx;
+         fkdy += c * yr - rr3 * uidy;
+         fkdz += c * zr - rr3 * uidz;
       } // end if (include)
 
 
@@ -381,8 +378,6 @@ void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off,
             real rr3 = scale3 * polik * REAL_RECIP(r * r2);
             real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
 
-            printf(" p2 r rr3 %16.8e%16.8e%16.8e%16.8e%16.8e%16.8e%16.8e \n", r,rr3,scale3,dmpik[1],poli,polk,polik);
-
             real c;
             int klane = srclane + threadIdx.x - ilane;
             c = rr5 * dot3(xr, yr, zr, ukdx, ukdy, ukdz);
@@ -392,9 +387,9 @@ void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off,
 
 
             c = rr5 * dot3(xr, yr, zr, uidx, uidy, uidz);
-            fkdx += c * xr - rr3 * shuidx[klane];
-            fkdy += c * yr - rr3 * shuidy[klane];
-            fkdz += c * zr - rr3 * shuidz[klane];
+            fkdx += c * xr - rr3 * uidx;
+            fkdy += c * yr - rr3 * uidy;
+            fkdz += c * zr - rr3 * uidz;
          } // end if (include)
 
 
@@ -477,8 +472,6 @@ void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off,
             real rr3 = scale3 * polik * REAL_RECIP(r * r2);
             real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
 
-            printf(" p3 r rr3 rr5 %16.8e%16.8e%16.8e scale %.4lf\n", r,rr3,rr5,scalea);
-
             real c;
             int klane = srclane + threadIdx.x - ilane;
             c = rr5 * dot3(xr, yr, zr, ukdx, ukdy, ukdz);
@@ -488,9 +481,9 @@ void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off,
 
 
             c = rr5 * dot3(xr, yr, zr, uidx, uidy, uidz);
-            fkdx += c * xr - rr3 * shuidx[klane];
-            fkdy += c * yr - rr3 * shuidy[klane];
-            fkdz += c * zr - rr3 * shuidz[klane];
+            fkdx += c * xr - rr3 * uidx;
+            fkdy += c * yr - rr3 * uidy;
+            fkdz += c * zr - rr3 * uidz;
          } // end if (include)
       }
 
@@ -532,8 +525,8 @@ void sparse_precond_apply_cu2(const real (*rsd)[3], real (*zrsd)[3])
    //               x, y, z, nwexclude, wexclude, wexclude_scale);
    int ngrid = get_grid_size(BLOCK_DIM);
    sparse_precond_cu4<<<ngrid, BLOCK_DIM, 0, nonblk>>>(
-      st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nuexclude, uexclude,
-      uexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak,
+      st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nwexclude, wexclude,
+      wexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak,
       st.iak, st.lst, rsd, zrsd, palpha, polarity);
 }
 }

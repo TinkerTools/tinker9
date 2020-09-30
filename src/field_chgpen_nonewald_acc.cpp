@@ -202,7 +202,7 @@ void ufield_chgpen_nonewald_acc(const real (*uind)[3], real (*field)[3])
    for (int ii = 0; ii < nwexclude; ++ii) {
       int i = wexclude[ii][0];
       int k = wexclude[ii][1];
-      real wscale = wexclude_scale[ii];
+      real wscale = wexclude_scale[ii] - 1;
 
       real xi = x[i];
       real yi = y[i];

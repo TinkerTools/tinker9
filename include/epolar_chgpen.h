@@ -22,9 +22,11 @@ void epolar_chgpen_nonewald(int vers);
 void epolar_chgpen_ewald(int vers);
 void epolar_chgpen_ewald_real(int vers);
 void epolar_chgpen_ewald_recip_self(int vers);
+void epolar1_dotprod(const real (*uind)[3], const real (*udirp)[3]);
+
 // see also subroutine epolar0e in epolar.f
 
-
+void epolar1_dotprod_acc(const real (*uind)[3], const real (*udirp)[3]);
 void epolar_chgpen_nonewald_acc(int vers, const real (*d)[3]);
 void epolar_chgpen_ewald_real_acc(int vers, const real (*d)[3]);
 void epolar_chgpen_ewald_recip_self_acc(int vers, const real (*d)[3]);

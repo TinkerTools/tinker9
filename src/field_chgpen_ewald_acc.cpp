@@ -1,7 +1,6 @@
 #include "add.h"
 #include "empole_chgpen.h"
 #include "epolar_chgpen.h"
-#include "epolar.h"
 #include "glob.nblist.h"
 #include "image.h"
 #include "md.h"
@@ -281,7 +280,7 @@ void ufield_chgpen_ewald_real_acc(const real (*uind)[3], real (*field)[3])
    for (int ii = 0; ii < nwexclude; ++ii) {
       int i = wexclude[ii][0];
       int k = wexclude[ii][1];
-      real wscale = wexclude_scale[ii];
+      real wscale = wexclude_scale[ii] - 1;
 
       real xi = x[i];
       real yi = y[i];

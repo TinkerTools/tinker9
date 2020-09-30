@@ -266,7 +266,6 @@ void mscale_data(rc_op op)
 void chgpen_data(rc_op op)
 {
    if (op & rc_dealloc) {
-      printf("dealloc chgpen 1\n");
       ndwexclude = 0;
       darray::deallocate(dwexclude, dwexclude_scale);
       ndexclude = 0;
@@ -275,10 +274,9 @@ void chgpen_data(rc_op op)
       darray::deallocate(wexclude, wexclude_scale);
 
       
-     // darray::deallocate(pval);
-     // darray::deallocate(palpha);
-     // darray::deallocate(pcore);
-      printf("dealloc chgpen 2\n");
+      darray::deallocate(pval);
+      darray::deallocate(palpha);
+      darray::deallocate(pcore);
    }
 
    if (op & rc_alloc) {
@@ -417,7 +415,7 @@ void chgpen_data(rc_op op)
                   insert_dw(ik_dw, i, k, w2scale - 1, 'w');
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(w2scale - 1);
+                  excls.push_back(w2scale);
                }
             }
          }
@@ -431,7 +429,7 @@ void chgpen_data(rc_op op)
                   insert_dw(ik_dw, i, k, w3scale - 1, 'w');
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(w3scale - 1);
+                  excls.push_back(w3scale);
                }
             }
          }
@@ -445,7 +443,7 @@ void chgpen_data(rc_op op)
                   insert_dw(ik_dw, i, k, w4scale - 1, 'w');
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(w4scale - 1);
+                  excls.push_back(w4scale);
                }
             }
          }
@@ -459,7 +457,7 @@ void chgpen_data(rc_op op)
                   insert_dw(ik_dw, i, k, w5scale - 1, 'w');
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(w5scale - 1);
+                  excls.push_back(w5scale);
                }
             }
          }

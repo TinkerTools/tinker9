@@ -136,11 +136,11 @@ void pair_ufield_chgpen(real r2, real xr, real yr, real zr, real wscale, //
    inck = coef * dr + bn[1] * uid;
    fkd += inck;   
 
-   //printf("%5.2f %5.2f %5.2f %16.8e %16.8e\n", alphai, alphak, r, inci.x, inci.y);
+   //printf("wscale %5.2f\n", wscale);
 
 
-   //printf("fid %5.2f %5.2f %5.2f %16.8e %16.8e %16.8e\n", alphai, alphak, r, uid.x, uid.y, uid.z);
-   //printf("fkd %5.2f %5.2f %5.2f %16.8e %16.8e %16.8e\n", alphai, alphak, r, ukd.x, ukd.y, ukd.z);
+   //printf("fid %5.2f %16.8e %16.8e %16.8e\n", r, inci.x, inci.y, inci.z);
+   //printf("fkd %5.2f %16.8e %16.8e %16.8e\n", r, ukd.x, ukd.y, ukd.z);
 
    //printf("zrsd %14.6e %14.6e\n", fid.x, fkd.x);
 }

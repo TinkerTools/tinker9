@@ -326,7 +326,7 @@ void ufield_chgpen_cu2(UFIELDPARAS, const real* restrict x,
         ii += blockDim.x * gridDim.x) {
       int i = wexclude[ii][0];
       int k = wexclude[ii][1];
-      real wscale = wexclude_scale[ii];
+      real wscale = wexclude_scale[ii] - 1;
 
       real xi = x[i];
       real yi = y[i];
