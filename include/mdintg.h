@@ -29,6 +29,8 @@ void velocity_verlet(int istep, time_prec dt_ps);
 // Langevin Piston barostat
 // Feller et al. 1995, https://doi.org/10.1063/1.470648
 void lpiston_npt(int istep, time_prec dt_ps);
+extern energy_prec eksum_old; // Kinetic energy at n-1/2.
+extern energy_prec eksum_mid; // Kinetic energy at n+1/2.
 // old xyz
 extern pos_prec* leapfrog_x;
 extern pos_prec* leapfrog_y;

@@ -68,6 +68,8 @@ void velocity_verlet(int istep, time_prec dt_ps)
 }
 
 
+energy_prec eksum_old;
+energy_prec eksum_mid;
 pos_prec *leapfrog_x, *leapfrog_y, *leapfrog_z;
 vel_prec *leapfrog_vx, *leapfrog_vy, *leapfrog_vz;
 vel_prec *leapfrog_vxold, *leapfrog_vyold, *leapfrog_vzold;
@@ -151,20 +153,20 @@ void langevin_piston(time_prec dt, virial_prec press)
       sf = xtlabc + hdot_lp * dt;   // h at 1
       sh = sf - 0.5 * hdot_lp * dt; // h at 1/2
       // thermostat
-      pnhf_lp = (2.0 * eksum_vx - df * kbt) / pnhm_lp;
+      pnhf_lp = (2.0 * eksum_mid - df * kbt) / pnhm_lp;
       if (pnhf_pre == 0.0)
          pnhf_pre = pnhf_lp;
       pnhv_lp = pnhv_pre_lp + 0.5 * (pnhf_pre + pnhf_lp) * dt;
 
       eksum_new = 0.0;
       eksum = 0.0;
-      eksum_vx = 0.0;
+      eksum_mid = 0.0;
       scale = -(hdot_mid / xtlabc + pnhv_lp) * dt;
       // vx = vxnew + scale * (vold + vx)/2
       propagate_velocity_lp(vx, vy, vz, leapfrog_vxold, leapfrog_vyold,
                             leapfrog_vzold, leapfrog_vx, leapfrog_vy,
                             leapfrog_vz, scale, eksum_new,
-                            eksum_vx); // eksum_new -> vx; eksum -> (vx+vold)/2
+                            eksum_mid); // eksum_new -> vx; eksum -> (vx+vold)/2
 
 
       // x = vx * dt + xold + scale * (x+xold)
@@ -360,10 +362,10 @@ void lpiston_npt(int istep, time_prec dt_ps)
 
    // vx = (vnew + vold) / 2
    eksum_new = 0.0;
-   eksum_vx = 0.0;
+   eksum_mid = 0.0;
    propagate_velocity_lp3(vx, vy, vz, leapfrog_vx, leapfrog_vy, leapfrog_vz,
                           leapfrog_vxold, leapfrog_vyold, leapfrog_vzold,
-                          eksum_vx);
+                          eksum_mid);
 
 
    temper_leapfrog(dt_ps, temp); // get eksum and eksum_old
