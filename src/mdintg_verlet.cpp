@@ -220,14 +220,14 @@ void langevin_piston(time_prec dt, virial_prec press)
    const bool userat = use_rattle();
    if (userat) {
 
-      rattle_lp(dt, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
+          shake(dt, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
 
       scale = 0.5 * hdot_lp * dt / sh;
 
       //xold = xold + scale * (x + xold)
       propagate_pos_lp2(dt, xpos, ypos, zpos,
                        leapfrog_x, leapfrog_y, leapfrog_z, scale);
-      rattle_lp(dt, leapfrog_x, leapfrog_y, leapfrog_z, xpos, ypos, zpos);
+          shake(dt, leapfrog_x, leapfrog_y, leapfrog_z, xpos, ypos, zpos);
 
       // vx =  (x - xold) / dt
       propagate_velocity_lp2(dt, vx, vy, vz, xpos, ypos, zpos,
@@ -280,7 +280,7 @@ void lpiston_npt(int istep, time_prec dt_ps)
          darray::copy(PROCEED_NEW_Q, n, leapfrog_z, zpos);
 
          if (userat) {
-            rattle_lp(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
+                shake(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
             copy_pos_to_xyz(true);
             darray::copy(PROCEED_NEW_Q, n, leapfrog_x, xpos);
             darray::copy(PROCEED_NEW_Q, n, leapfrog_y, ypos);
@@ -294,7 +294,7 @@ void lpiston_npt(int istep, time_prec dt_ps)
          darray::copy(PROCEED_NEW_Q, n, ypos, leapfrog_y);
          darray::copy(PROCEED_NEW_Q, n, zpos, leapfrog_z);
          if (userat) {
-            rattle_lp(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
+                shake(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
             darray::copy(PROCEED_NEW_Q, n, leapfrog_x, xpos);
             darray::copy(PROCEED_NEW_Q, n, leapfrog_y, ypos);
             darray::copy(PROCEED_NEW_Q, n, leapfrog_z, zpos);
@@ -318,7 +318,7 @@ void lpiston_npt(int istep, time_prec dt_ps)
          propagate_pos_lf(-dt_ps, xpos, ypos, zpos,
                           leapfrog_x, leapfrog_y, leapfrog_z,
                           leapfrog_vx, leapfrog_vy, leapfrog_vz);
-         rattle_lp(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
+             shake(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
          // vnew =  (xold - x) / dt
          propagate_velocity_lp2(dt_ps, leapfrog_vx, leapfrog_vy, leapfrog_vz,
                                 leapfrog_x, leapfrog_y, leapfrog_z, xpos, ypos, zpos);
@@ -332,13 +332,13 @@ void lpiston_npt(int istep, time_prec dt_ps)
          propagate_velocity(dt_ps, vx, vy, vz,
                       leapfrog_vx, leapfrog_vy, leapfrog_vz, gx, gy, gz);
 
-         rattle_lp(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
+             shake(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
 
          // vold =  (x - xold) / dt
          propagate_velocity_lp2(dt_ps, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold,
                                 xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
          // virshk
-         rattle2_lf(dt_ps, vx, vy, vz,
+             shake2(dt_ps, vx, vy, vz,
                  leapfrog_vxold, leapfrog_vyold, leapfrog_vzold,
                  leapfrog_x, leapfrog_y, leapfrog_z);
          // vx = (vnew + vold) / 2
@@ -390,14 +390,14 @@ void lpiston_npt(int istep, time_prec dt_ps)
                        leapfrog_x, leapfrog_y, leapfrog_z,
                        leapfrog_vx, leapfrog_vy, leapfrog_vz);
 
-      rattle_lp(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
+          shake(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
 
       // vnew =  (x - xold) / dt
       propagate_velocity_lp2(dt_ps, leapfrog_vx, leapfrog_vy, leapfrog_vz, xpos, ypos, zpos,
                              leapfrog_x, leapfrog_y, leapfrog_z);
 
       // do virial correction
-      rattle2_lf(dt_ps, vx, vy, vz,
+          shake2(dt_ps, vx, vy, vz,
                  leapfrog_vx, leapfrog_vy, leapfrog_vz,
                  leapfrog_x, leapfrog_y, leapfrog_z);
    }

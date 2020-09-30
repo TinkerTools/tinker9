@@ -98,10 +98,10 @@ extern "C"
    {};
 
 
-   // Velocity Verlet vs Leap Frog
-   struct VelocityVerlet
+   // RATTLE vs SHAKE
+   struct RATTLE
    {};
-   struct LeapFrog
+   struct SHAKE
    {};
 
 

@@ -19,24 +19,22 @@ void rattle2_acc(time_prec, bool);
 void rattle2_settle_acc(time_prec, bool);
 
 
-void rattle_lp(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+void shake(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+           const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
+void shake_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
                const pos_prec* xold, const pos_prec* yold,
                const pos_prec* zold);
-void rattle_acc_lp(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-                   const pos_prec* xold, const pos_prec* yold,
-                   const pos_prec* zold);
-void rattle_settle_acc_lp(time_prec dt, pos_prec* xnew, pos_prec* ynew,
-                          pos_prec* znew, const pos_prec* xold,
-                          const pos_prec* yold, const pos_prec* zold);
+void shake_settle_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew,
+                      pos_prec* znew, const pos_prec* xold,
+                      const pos_prec* yold, const pos_prec* zold);
 
-
-void rattle2_lf(time_prec dt, pos_prec* vx_lp, pos_prec* vy_lp, pos_prec* vz_lp,
-                const vel_prec* vx_new, const vel_prec* vy_new,
-                const vel_prec* zx_new, const pos_prec* xold,
-                const pos_prec* yold, const pos_prec* zold);
-void rattle2_lf_acc(time_prec dt, pos_prec* vx_lp, pos_prec* vy_lp,
-                    pos_prec* vz_lp, const vel_prec* vx_new,
-                    const vel_prec* vy_new, const vel_prec* zx_new,
-                    const pos_prec* xold, const pos_prec* yold,
-                    const pos_prec* zold);
+void shake2(time_prec dt, const vel_prec* vxold, const vel_prec* vyold,
+            const vel_prec* vzold, const vel_prec* vxnew, const vel_prec* vynew,
+            const vel_prec* vznew, const pos_prec* xold, const pos_prec* yold,
+            const pos_prec* zold);
+void shake2_acc(time_prec dt, const vel_prec* vxold, const vel_prec* vyold,
+                const vel_prec* vzold, const vel_prec* vxnew,
+                const vel_prec* vynew, const vel_prec* vznew,
+                const pos_prec* xold, const pos_prec* yold,
+                const pos_prec* zold);
 }
