@@ -199,7 +199,7 @@ void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
  * u(i+1) = u(i) + a p(i)
  * r(i+1) = r(i) - a T p(i)
  * beta (or b(i+1)) = r(i+1) M r(i+1) / r(i) M r(i)
- * p(i+1) = M r(r+1) + b(i+1) p(i)
+ * p(i+1) = M r(i+1) + b(i+1) p(i)
  * ------------------------------
  *
  * subroutine induce0a in induce.f
