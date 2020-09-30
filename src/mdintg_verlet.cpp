@@ -378,7 +378,7 @@ void lpiston_npt(int istep, time_prec dt_ps)
    }
    press = (stress[0][0] + stress[1][1] + stress[2][2]) / 3;
    press += (eksum + eksum_old) * factor / 3;
-   swap_v_lf(leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold,
-             leapfrog_vyold, leapfrog_vzold);
+   swap_velocity(leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold,
+                 leapfrog_vyold, leapfrog_vzold);
 }
 }
