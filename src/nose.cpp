@@ -195,7 +195,4 @@ void nhc_npt(int istep, time_prec dt)
    }
    press = (stress[0][0] + stress[1][1] + stress[2][2]) / 3;
 }
-
-
-//void lpiston_npt(int istep, time_prec dt) {}
 }

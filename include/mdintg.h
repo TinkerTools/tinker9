@@ -24,23 +24,31 @@ void integrate_data(rc_op);
 
 namespace tinker {
 void velocity_verlet(int istep, time_prec dt_ps);
-// https://doi.org/10.1063/1.448118
-void leapfrog(int istep, time_prec dt_ps);
-extern pos_prec *leapfrog_x, *leapfrog_y, *leapfrog_z;    // old xyz
-extern vel_prec *leapfrog_vx, *leapfrog_vy, *leapfrog_vz; // halftime velocity
+
 
 // Langevin Piston barostat
 // Feller et al. 1995, https://doi.org/10.1063/1.470648
-extern vel_prec *leapfrog_vxold, *leapfrog_vyold, *leapfrog_vzold; // old halftime velocity
-void langevin_piston(time_prec dt, virial_prec press);
 void lpiston_npt(int istep, time_prec dt_ps);
-extern double hdot_lp; // box length (h) velocity
-extern double hmass_lp; // h mass
-extern double pnhv_lp; // thermostat velocity
+// old xyz
+extern pos_prec* leapfrog_x;
+extern pos_prec* leapfrog_y;
+extern pos_prec* leapfrog_z;
+// halftime velocity
+extern vel_prec* leapfrog_vx;
+extern vel_prec* leapfrog_vy;
+extern vel_prec* leapfrog_vz;
+// old halftime velocity
+extern vel_prec* leapfrog_vxold;
+extern vel_prec* leapfrog_vyold;
+extern vel_prec* leapfrog_vzold;
+extern double hdot_lp;     // box length (h) velocity
+extern double hmass_lp;    // h mass
+extern double pnhv_lp;     // thermostat velocity
 extern double pnhv_pre_lp; // old thermostat velocity
-extern double pnhm_lp; // thermostat mass
-extern double pnhf_lp; // thermostat force
-extern double pnh_lp; // thermostat
+extern double pnhm_lp;     // thermostat mass
+extern double pnhf_lp;     // thermostat force
+extern double pnh_lp;      // thermostat
+void langevin_piston(time_prec dt, virial_prec press);
 
 
 extern grad_prec *gx1, *gy1, *gz1;

@@ -174,10 +174,6 @@ void x_dynamic(int, char**)
       print(stdout,
             " Molecular Dynamics Trajectory via"
             " Velocity Verlet Algorithm\n");
-   else if (integrate == "LEAPFROG")
-      print(stdout,
-            " Molecular Dynamics Trajectory via"
-            " Leapfrog Algorithm\n");
    else if (integrate == "LPISTON")
       print(stdout,
             " Molecular Dynamics Trajectory via"

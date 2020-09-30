@@ -77,9 +77,10 @@ void propagate(int nsteps, time_prec dt_ps)
 void integrate_data(rc_op op)
 {
    if (op & rc_dealloc) {
-      if (intg == leapfrog) {
-         darray::deallocate(leapfrog_x, leapfrog_y, leapfrog_z, leapfrog_vx,
-                            leapfrog_vy, leapfrog_vz);
+      if (intg == lpiston_npt) {
+         darray::deallocate(leapfrog_x, leapfrog_y, leapfrog_z);
+         darray::deallocate(leapfrog_vx, leapfrog_vy, leapfrog_vz,
+                            leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
       }
 
       if (intg == respa_fast_slow)
@@ -136,8 +137,6 @@ void integrate_data(rc_op op)
       intg = nullptr;
       if (itg == "VERLET") {
          intg = velocity_verlet;
-      } else if (itg == "LEAPFROG") {
-         intg = leapfrog;
       } else if (itg == "LPISTON") {
          intg = lpiston_npt;
          thermostat = LANGEVIN_PISTON_THERMOSTAT;
@@ -162,16 +161,11 @@ void integrate_data(rc_op op)
       if (intg == velocity_verlet) {
          // need full gradient to start/restart the simulation
          energy(calc::grad);
-      } else if (intg == leapfrog) {
-         darray::allocate(n, &leapfrog_x, &leapfrog_y, &leapfrog_z,
-                          &leapfrog_vx, &leapfrog_vy, &leapfrog_vz);
-         energy(calc::grad);
       } else if (intg == lpiston_npt) {
-         darray::allocate(n, &leapfrog_x, &leapfrog_y, &leapfrog_z,
-                          &leapfrog_vx, &leapfrog_vy, &leapfrog_vz);
-         darray::allocate(n, &leapfrog_vxold, &leapfrog_vyold, &leapfrog_vzold);
+         darray::allocate(n, &leapfrog_x, &leapfrog_y, &leapfrog_z);
+         darray::allocate(n, &leapfrog_vx, &leapfrog_vy, &leapfrog_vz,
+                          &leapfrog_vxold, &leapfrog_vyold, &leapfrog_vzold);
          energy(calc::v1);
-
       } else if (intg == nhc_npt) {
          if (use_rattle()) {
             TINKER_THROW(
