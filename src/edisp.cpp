@@ -235,11 +235,12 @@ void edisp(int vers)
 void edisp_ewald(int vers)
 {
 #if TINKER_CUDART
-   if (dsplist_version() & NBL_SPATIAL) {
+   if (dsplist_version() & NBL_SPATIAL)
       edisp_ewald_real_cu(vers);
-   } else
-      ;
+   else
 #endif
+      edisp_ewald_real_acc(vers);
+
 
    // recip and self
    bool do_e = vers & calc::energy;
@@ -258,8 +259,8 @@ void edisp_ewald(int vers)
    if (pltfm_config & CU_PLTFM)
       edisp_ewald_recip_self_cu(vers);
    else
-      ;
 #endif
+      edisp_ewald_recip_self_acc(vers);
 
 
    // account for the total energy and virial correction term
@@ -289,7 +290,7 @@ void edisp_nonewald(int vers)
    if (dsplist_version() & NBL_SPATIAL)
       edisp_nonewald_cu(vers);
    else
-      ;
 #endif
+      edisp_nonewald_acc(vers);
 }
 }

@@ -477,6 +477,8 @@ void edisp_cu3(size_t bufsize, count_buffer restrict ndisp,
    for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < n;
         ii += blockDim.x * gridDim.x) {
       real icsix = csix[ii];
+      if (icsix == 0)
+         continue;
 
 
       // self energy
