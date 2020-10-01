@@ -10,18 +10,17 @@ template <bool DO_G, class DTYP, int SCALE>
 SEQ_CUDA
 void pair_disp(real r, real r2, real rr1, //
                real dspscale, real aewald, real ci, real ai, real ck, real ak,
-               real edcut, real edoff, real& restrict e0, real& restrict de0)
+               real edcut, real edoff, real& restrict e, real& restrict de)
 {
    if (r > edoff) {
-      e0 = 0;
+      e = 0;
       if CONSTEXPR (DO_G) {
-         de0 = 0;
+         de = 0;
       }
       return;
    }
 
 
-   real e, de;
    real rr2 = rr1 * rr1;
    real rr6 = rr2 * rr2 * rr2;
    real di = ai * r;
@@ -92,10 +91,5 @@ void pair_disp(real r, real r2, real rr1, //
       if CONSTEXPR (DO_G)
          de *= dspscale;
    }
-
-
-   e0 = e;
-   if CONSTEXPR (DO_G)
-      de0 = de;
 }
 }

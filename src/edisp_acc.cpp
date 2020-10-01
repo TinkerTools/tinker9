@@ -163,158 +163,156 @@ void edisp_acc1()
    size_t bufsize = buffer_size();
 
 
-   MAYBE_UNUSED int ngrid = get_grid_size(BLOCK_DIM);
-   #pragma acc kernels async num_gangs(ngrid) vector_length(BLOCK_DIM)\
-               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
+   #pragma acc parallel async present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(x,y,z,dedspx,dedspy,dedspz,ndisp,edsp,vir_edsp,\
-               dspexclude,dspexclude_scale,nlst,lst,\
-               csix,adisp)
-   {
-      #pragma acc loop independent
-      for (int ii = 0; ii < ndspexclude; ++ii) {
-         int offset = ii & (bufsize - 1);
-         int i = dspexclude[ii][0];
-         int k = dspexclude[ii][1];
-         real scalea = dspexclude_scale[ii];
+               csix,adisp,dspexclude,dspexclude_scale)
+   #pragma acc loop independent
+   for (int ii = 0; ii < ndspexclude; ++ii) {
+      int offset = ii & (bufsize - 1);
+      int i = dspexclude[ii][0];
+      int k = dspexclude[ii][1];
+      real scalea = dspexclude_scale[ii];
 
 
-         real ci = csix[i];
-         real ai = adisp[i];
-         real ck = csix[k];
-         real ak = adisp[k];
-         real xi = x[i];
-         real yi = y[i];
-         real zi = z[i];
+      real ci = csix[i];
+      real ai = adisp[i];
+      real ck = csix[k];
+      real ak = adisp[k];
+      real xi = x[i];
+      real yi = y[i];
+      real zi = z[i];
+      real xr = xi - x[k];
+      real yr = yi - y[k];
+      real zr = zi - z[k];
+      real r2 = image2(xr, yr, zr);
+      if (r2 <= off * off) {
+         real r = REAL_SQRT(r2);
+         real rr1 = REAL_RECIP(r);
+         real e0, de0, e1, de1;
+         pair_disp<do_g, DTYP, 0>(r, r2, rr1, scalea, aewald, ci, ai, ck, ak,
+                                  cut, off, e0, de0);
+         pair_disp<do_g, DTYP, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, cut,
+                                  off, e1, de1);
+         real e, de;
+         e = e0 - e1;
+         if CONSTEXPR (do_e) {
+            if (e != 0) {
+               atomic_add(e, edsp, offset);
+            }
+         }
+         if CONSTEXPR (do_a) {
+            if (scalea == 0) {
+               atomic_add(-1, ndisp, offset);
+            }
+         }
+         if CONSTEXPR (do_g) {
+            de = de0 - de1;
+            de *= rr1;
+            real dedx, dedy, dedz;
+            dedx = de * xr;
+            dedy = de * yr;
+            dedz = de * zr;
+            atomic_add(dedx, dedspx, i);
+            atomic_add(dedy, dedspy, i);
+            atomic_add(dedz, dedspz, i);
+            atomic_add(-dedx, dedspx, k);
+            atomic_add(-dedy, dedspy, k);
+            atomic_add(-dedz, dedspz, k);
+            if CONSTEXPR (do_v) {
+               real vxx = xr * dedx;
+               real vyx = yr * dedx;
+               real vzx = zr * dedx;
+               real vyy = yr * dedy;
+               real vzy = zr * dedy;
+               real vzz = zr * dedz;
+               atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_edsp, offset);
+            }
+         }
+      }
+   }
+
+
+   MAYBE_UNUSED int ngrid = get_grid_size(BLOCK_DIM);
+   #pragma acc parallel async present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
+               deviceptr(x,y,z,dedspx,dedspy,dedspz,ndisp,edsp,vir_edsp,\
+               csix,adisp,nlst,lst) num_gangs(ngrid) vector_length(BLOCK_DIM)
+   #pragma acc loop gang independent
+   for (int i = 0; i < n; ++i) {
+      int offset = i & (bufsize - 1);
+      real xi = x[i];
+      real yi = y[i];
+      real zi = z[i];
+      real ci = csix[i];
+      real ai = adisp[i];
+      MAYBE_UNUSED int ctl = 0;
+      MAYBE_UNUSED real etl = 0;
+      MAYBE_UNUSED real vxxtl = 0, vyxtl = 0, vzxtl = 0, vyytl = 0, vzytl = 0,
+                        vzztl = 0;
+      MAYBE_UNUSED real gxi = 0, gyi = 0, gzi = 0;
+
+
+      int nlsti = nlst[i];
+      #pragma acc loop vector independent
+      for (int kk = 0; kk < nlsti; ++kk) {
+         int k = lst[i * maxnlist + kk];
          real xr = xi - x[k];
          real yr = yi - y[k];
          real zr = zi - z[k];
+         real ck = csix[k];
+         real ak = adisp[k];
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off) {
             real r = REAL_SQRT(r2);
             real rr1 = REAL_RECIP(r);
-            real e0, de0, e1, de1;
-            pair_disp<do_g, DTYP, 0>(r, r2, rr1, scalea, aewald, ci, ai, ck, ak,
-                                     cut, off, e0, de0);
-            pair_disp<do_g, DTYP, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, cut,
-                                     off, e1, de1);
             real e, de;
-            e = e0 - e1;
+            pair_disp<do_g, DTYP, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, cut,
+                                     off, e, de);
             if CONSTEXPR (do_e) {
-               if (e != 0) {
-                  atomic_add(e, edsp, offset);
-               }
+               etl += e;
             }
             if CONSTEXPR (do_a) {
-               if (scalea == 0) {
-                  atomic_add(-1, ndisp, offset);
+               if (e != 0) {
+                  ctl += 1;
                }
             }
             if CONSTEXPR (do_g) {
-               de = de0 - de1;
                de *= rr1;
                real dedx, dedy, dedz;
                dedx = de * xr;
                dedy = de * yr;
                dedz = de * zr;
-               atomic_add(dedx, dedspx, i);
-               atomic_add(dedy, dedspy, i);
-               atomic_add(dedz, dedspz, i);
+               gxi += dedx;
+               gyi += dedy;
+               gzi += dedz;
                atomic_add(-dedx, dedspx, k);
                atomic_add(-dedy, dedspy, k);
                atomic_add(-dedz, dedspz, k);
                if CONSTEXPR (do_v) {
-                  real vxx = xr * dedx;
-                  real vyx = yr * dedx;
-                  real vzx = zr * dedx;
-                  real vyy = yr * dedy;
-                  real vzy = zr * dedy;
-                  real vzz = zr * dedz;
-                  atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_edsp, offset);
+                  vxxtl += xr * dedx;
+                  vyxtl += yr * dedx;
+                  vzxtl += zr * dedx;
+                  vyytl += yr * dedy;
+                  vzytl += zr * dedy;
+                  vzztl += zr * dedz;
                }
             }
          }
+      } // end loop (kk)
+
+
+      if CONSTEXPR (do_e) {
+         atomic_add(etl, edsp, offset);
       }
-
-
-      #pragma acc loop gang independent
-      for (int i = 0; i < n; ++i) {
-         int offset = i & (bufsize - 1);
-         real xi = x[i];
-         real yi = y[i];
-         real zi = z[i];
-         real ci = csix[i];
-         real ai = adisp[i];
-         MAYBE_UNUSED int ctl = 0;
-         MAYBE_UNUSED real etl = 0;
-         MAYBE_UNUSED real vxxtl = 0, vyxtl = 0, vzxtl = 0, vyytl = 0,
-                           vzytl = 0, vzztl = 0;
-         MAYBE_UNUSED real gxi = 0, gyi = 0, gzi = 0;
-
-
-         int nlsti = nlst[i];
-         #pragma acc loop vector independent
-         for (int kk = 0; kk < nlsti; ++kk) {
-            int k = lst[i * maxnlist + kk];
-            real xr = xi - x[k];
-            real yr = yi - y[k];
-            real zr = zi - z[k];
-            real ck = csix[k];
-            real ak = adisp[k];
-            real r2 = image2(xr, yr, zr);
-            if (r2 <= off * off) {
-               real r = REAL_SQRT(r2);
-               real rr1 = REAL_RECIP(r);
-               real e, de;
-               pair_disp<do_g, DTYP, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak,
-                                        cut, off, e, de);
-               if CONSTEXPR (do_e) {
-                  etl += e;
-               }
-               if CONSTEXPR (do_a) {
-                  if (e != 0) {
-                     ctl += 1;
-                  }
-               }
-               if CONSTEXPR (do_g) {
-                  de *= rr1;
-                  real dedx, dedy, dedz;
-                  dedx = de * xr;
-                  dedy = de * yr;
-                  dedz = de * zr;
-                  gxi += dedx;
-                  gyi += dedy;
-                  gzi += dedz;
-                  atomic_add(-dedx, dedspx, k);
-                  atomic_add(-dedy, dedspy, k);
-                  atomic_add(-dedz, dedspz, k);
-                  if CONSTEXPR (do_v) {
-                     vxxtl += xr * dedx;
-                     vyxtl += yr * dedx;
-                     vzxtl += zr * dedx;
-                     vyytl += yr * dedy;
-                     vzytl += zr * dedy;
-                     vzztl += zr * dedz;
-                  }
-               }
-            }
-         } // end loop (kk)
-
-
-         if CONSTEXPR (do_e) {
-            atomic_add(etl, edsp, offset);
-         }
-         if CONSTEXPR (do_a) {
-            atomic_add(ctl, ndisp, offset);
-         }
-         if CONSTEXPR (do_g) {
-            atomic_add(gxi, dedspx, i);
-            atomic_add(gyi, dedspy, i);
-            atomic_add(gzi, dedspz, i);
-         }
-         if CONSTEXPR (do_v) {
-            atomic_add(vxxtl, vyxtl, vzxtl, vyytl, vzytl, vzztl, vir_edsp,
-                       offset);
-         }
+      if CONSTEXPR (do_a) {
+         atomic_add(ctl, ndisp, offset);
+      }
+      if CONSTEXPR (do_g) {
+         atomic_add(gxi, dedspx, i);
+         atomic_add(gyi, dedspy, i);
+         atomic_add(gzi, dedspz, i);
+      }
+      if CONSTEXPR (do_v) {
+         atomic_add(vxxtl, vyxtl, vzxtl, vyytl, vzytl, vzztl, vir_edsp, offset);
       }
    }
 }
