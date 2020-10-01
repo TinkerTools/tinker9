@@ -16,9 +16,9 @@ TEST_CASE("EDISP-1-NONDEWALD", "[ff][edisp][nondewald]")
    int argc = 4;
 
 
-   const double eps_e = 0.0001;
-   const double eps_g = 0.0001;
-   const double eps_v = 0.001;
+   const double eps_e = test_get_eps(0.0055, 0.0001);
+   const double eps_g = test_get_eps(0.0150, 0.0001);
+   const double eps_v = test_get_eps(0.055, 0.001);
 
 
    TestReference r(TINKER_GPU_DIRSTR "/src/test/disp.1.txt");
@@ -82,9 +82,9 @@ TEST_CASE("EDISP-2-DEWALD", "[ff][edisp][dewald]")
    int argc = 4;
 
 
-   const double eps_e = 0.001;
-   const double eps_g = 0.0001;
-   const double eps_v = 0.001;
+   const double eps_e = test_get_eps(0.0030, 0.0001);
+   const double eps_g = test_get_eps(0.0120, 0.0001);
+   const double eps_v = test_get_eps(0.050, 0.001);
 
 
    TestReference r(TINKER_GPU_DIRSTR "/src/test/disp.2.txt");
