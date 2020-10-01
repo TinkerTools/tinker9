@@ -20,7 +20,9 @@
 
 
 namespace tinker {
-void kinetic_acc(T_prec& temp)
+void kinetic_explicit_acc(T_prec& temp_out, energy_prec& eksum_out,
+                          energy_prec (&ekin_out)[3][3], const vel_prec* vx,
+                          const vel_prec* vy, const vel_prec* vz)
 {
    const energy_prec ekcal_inv = 1.0 / units::ekcal;
    energy_prec exx = 0;
@@ -40,17 +42,21 @@ void kinetic_acc(T_prec& temp)
       eyz += term * vy[i] * vz[i];
       ezx += term * vz[i] * vx[i];
    }
-   ekin[0][0] = exx;
-   ekin[0][1] = exy;
-   ekin[0][2] = ezx;
-   ekin[1][0] = exy;
-   ekin[1][1] = eyy;
-   ekin[1][2] = eyz;
-   ekin[2][0] = ezx;
-   ekin[2][1] = eyz;
-   ekin[2][2] = ezz;
-   eksum = exx + eyy + ezz;
-   temp = 2 * eksum / (mdstuf::nfree * units::gasconst);
+   energy_prec eksum_local = exx + eyy + ezz;
+   T_prec temp_local = 2 * eksum_local / (mdstuf::nfree * units::gasconst);
+
+
+   ekin_out[0][0] = exx;
+   ekin_out[0][1] = exy;
+   ekin_out[0][2] = ezx;
+   ekin_out[1][0] = exy;
+   ekin_out[1][1] = eyy;
+   ekin_out[1][2] = eyz;
+   ekin_out[2][0] = ezx;
+   ekin_out[2][1] = eyz;
+   ekin_out[2][2] = ezz;
+   eksum_out = eksum_local;
+   temp_out = temp_local;
 }
 
 

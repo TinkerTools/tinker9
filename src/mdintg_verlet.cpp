@@ -310,7 +310,7 @@ void lpiston_npt(int istep, time_prec dt_ps)
       }
 
       // calculate eksum (at n+1/2) and eksum_old (at n-1/2)
-      temper_leapfrog(dt_ps, temp);
+      kinetic_leapfrog(temp);
       double vbox = volbox();
       double factor = units::prescon / vbox;
       double stress[3][3];
@@ -368,7 +368,7 @@ void lpiston_npt(int istep, time_prec dt_ps)
                           eksum_mid);
 
 
-   temper_leapfrog(dt_ps, temp); // get eksum and eksum_old
+   kinetic_leapfrog(temp); // get eksum and eksum_old
 
    double vbox = volbox();
    double factor = units::prescon / vbox;

@@ -4,13 +4,19 @@
 
 namespace tinker {
 void kinetic(T_prec& temp);
-void kinetic_acc(T_prec&);
-void kinetic_cu(T_prec&);
+void kinetic_explicit(T_prec& temp_out, energy_prec& eksum_out,
+                      energy_prec (&ekin_out)[3][3], const vel_prec* vx,
+                      const vel_prec* vy, const vel_prec* vz);
+void kinetic_explicit_acc(T_prec& temp_out, energy_prec& eksum_out,
+                          energy_prec (&ekin_out)[3][3], const vel_prec* vx,
+                          const vel_prec* vy, const vel_prec* vz);
+void kinetic_explicit_cu(T_prec& temp_out, energy_prec& eksum_out,
+                         energy_prec (&ekin_out)[3][3], const vel_prec* vx,
+                         const vel_prec* vy, const vel_prec* vz);
+void kinetic_leapfrog(T_prec& temp);
 
 
 void temper(time_prec dt, T_prec& temp);
-void kinetic_cu_leapfrog(T_prec&);
-void temper_leapfrog(time_prec dt, T_prec& temp);
 inline void pressure() {}
 
 
