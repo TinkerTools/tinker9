@@ -1,8 +1,9 @@
-Tinker GPU: Software Tools for Molecular Design
+Tinker 9: Software Tools for Molecular Design
 ===============================================
 [//]: # (Badges)
 [![Build Status](https://travis-ci.com/zhi-wang/tinker.gpu.svg?branch=master)](https://travis-ci.com/zhi-wang/tinker.gpu)
 
+# This repository will be renamed to `tinker9` and move to [TinkerTools](https://github.com/tinkertools) in a few days.
 
 ## What I Am Up To
 ### Build System
