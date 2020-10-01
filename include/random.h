@@ -14,10 +14,19 @@ T random();
 /**
  * \ingroup rand
  * \brief Returns a random number from a normal Gaussian distribution
- * with a mean of zero and a variance of one.
+ * with a mean of zero and a standard deviation of one.
  */
 template <class T>
 T normal();
+
+
+/**
+ * \ingroup rand
+ * \brief Returns a random number from a normal Gaussian distribution
+ * with a mean of u and a standard deviation of s.
+ */
+template <class T>
+T normal(T u, T s);
 
 
 /**

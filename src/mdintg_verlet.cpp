@@ -5,9 +5,8 @@
 #include "mdintg.h"
 #include "mdpq.h"
 #include "mdpt.h"
+#include "random.h"
 #include "rattle.h"
-#include <chrono>
-#include <random>
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
@@ -89,7 +88,6 @@ double press;
 
 void langevin_piston(time_prec dt, virial_prec press)
 {
-
    const double vbox = volbox();
    const int df = mdstuf::nfree;
    hmass_lp =
@@ -112,9 +110,6 @@ void langevin_piston(time_prec dt, virial_prec press)
    const double kbt = units::gasconst * bath::kelvin;
    const double prfwd =
       sqrt(2.0 * gamma_piston * dt * kbt / (3.0 * hmass_lp)) / dt;
-   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-   std::default_random_engine generator(seed);
-   std::normal_distribution<double> random_gaussian(0.0, prfwd);
    double h_random_force;
    double pwinv;
    double eksum_new;
@@ -143,7 +138,7 @@ void langevin_piston(time_prec dt, virial_prec press)
       hdot_lp = hdot_old;
 
       delpx = 3.0 * delp / xtlabc;
-      h_random_force = random_gaussian(generator);
+      h_random_force = normal<double>(0, prfwd);
       hdot_pre = hdot_lp;
       randfor = pbfact * h_random_force / dt;
       hdot_lp = palpha * hdot_lp + pwinv * delpx * vbox * pbfact / dt +

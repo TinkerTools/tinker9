@@ -49,6 +49,24 @@ template double normal<double>();
 
 
 template <class T>
+T normal(T u, T s)
+{
+   // Box-Muller Transform.
+   constexpr T eps = std::numeric_limits<T>::epsilon();
+   constexpr T twopi = 2 * M_PI;
+   T uniform1, uniform2;
+   do {
+      uniform1 = random<T>();
+      uniform2 = random<T>();
+   } while (uniform1 <= eps);
+   T z0 = std::sqrt(-2.0 * std::log(uniform1)) * std::cos(twopi * uniform2);
+   return u + s * z0;
+}
+template float normal<float>(float, float);
+template double normal<double>(double, double);
+
+
+template <class T>
 T chi_squared(int k)
 {
 #if USE_TINKER_RANDOM_FUNC
