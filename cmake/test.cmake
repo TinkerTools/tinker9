@@ -22,15 +22,15 @@ endif ()
 
 if (HOST)
 add_executable (all.tests)
-target_link_libraries (all.tests all_tests_o tinkergpu0 ${EXT_LIBS})
+target_link_libraries (all.tests all_tests_o tinker9_host ${EXT_LIBS})
 else ()
 add_custom_target (all.tests ALL
    DEPENDS
       all_tests_o
-      tinkergpu_acc
-      tinkergpu_cu
-      tinkergpu_f
-      tinkergpu_cpp
+      tinker9_acc
+      tinker9_cu
+      tinker9_f
+      tinker9_cpp
       LIBTINKER
       LIBFFTW
       LIBFFTW_THREADS
@@ -40,10 +40,10 @@ add_custom_target (all.tests ALL
       "$<$<CONFIG:RELEASE>:${LIST_CXX_FLAGS_RELEASE}>"
       -o all.tests
       $<TARGET_OBJECTS:all_tests_o>
-      $<TARGET_OBJECTS:tinkergpu_acc>
-      $<TARGET_OBJECTS:tinkergpu_cu>
-      $<TARGET_OBJECTS:tinkergpu_f>
-      $<TARGET_OBJECTS:tinkergpu_cpp>
+      $<TARGET_OBJECTS:tinker9_acc>
+      $<TARGET_OBJECTS:tinker9_cu>
+      $<TARGET_OBJECTS:tinker9_f>
+      $<TARGET_OBJECTS:tinker9_cpp>
       $<TARGET_FILE:LIBTINKER>
       $<TARGET_FILE:LIBFFTW>
       $<TARGET_FILE:LIBFFTW_THREADS>

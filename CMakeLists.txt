@@ -85,7 +85,7 @@ cmake_minimum_required (VERSION 3.11)
 ########################################################################
 
 
-project (TinkerGPU LANGUAGES NONE)
+project (Tinker9 LANGUAGES NONE)
 enable_language (C)
 enable_language (CXX)
 set (macro_defs)
