@@ -20,7 +20,7 @@ Tinker9 User's Manual
    GitHub Repository
    =================
 
-   `Click here. <https://github.com/zhi-wang/tinker9>`_
+   `Click here. <https://github.com/tinkertools/tinker9>`_
 
 
    Index and Search

@@ -1,7 +1,7 @@
 Tinker9: Software Tools for Molecular Design
 ============================================
 [//]: # (Badges)
-[![Build Status](https://travis-ci.com/zhi-wang/tinker9.svg?branch=master)](https://travis-ci.com/zhi-wang/tinker9)
+[![Build Status](https://travis-ci.com/tinkertools/tinker9.svg?branch=master)](https://travis-ci.com/tinkertools/tinker9)
 
 
 ## Installation Steps
@@ -15,7 +15,7 @@ Please read the [style guide](doc/style.md) before contributing to this code bas
 
 
 ## Repository
-<a href="https://github.com/zhi-wang/tinker9">
+<a href="https://github.com/tinkertools/tinker9">
    <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
    alt="GitHub Repository" width="100"/>
 </a>
