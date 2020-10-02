@@ -1,7 +1,7 @@
 # Style Guide
 
 Tinker is now offloading part of future developments to C++.
-Some of the signature features of C++ include:
+<!-- Some of the signature features of C++ include:
    - procedural programming, most of the C features, and improved C++ features,
    - object-oriented programming,
    - generic programming (template),
@@ -73,10 +73,10 @@ some features from the future standards because
 <!--  -->
 
 
-<a name='header'></a>
-## Header Files
+<!-- <a name='header'></a>
+## Header Files -->
 
-<a name='hd.self.contained'></a>
+<!-- <a name='hd.self.contained'></a>
 ### Self-contained Headers
 Header files should be self-contained (compile on their own) and end in `.h`.
 Non-header files that are meant for inclusion should end in `.hh` and be used
@@ -186,13 +186,13 @@ __global__ void c(int* t) { *t += a(); }
 ```
 
 <a name='hd.inl.ord'></a>
-### Names and Order of Includes
+### Names and Order of Includes -->
 
 
 <!--  -->
 
 
-<a name='naming'></a>
+<!-- <a name='naming'></a>
 ## Naming
 
 Rule of thumb:
@@ -262,19 +262,19 @@ how they look.
 #define ROUNDED_PI 3.0
 // single precision square root
 #define REAL_SQRT(x) sqrtf(x)
-```
+``` -->
 
 <!--  -->
 
 
-<a name='comments'></a>
-## Comments
+<!-- <a name='comments'></a>
+## Comments -->
 
 
 <!--  -->
 
 
-<a name='format'></a>
+<!-- <a name='format'></a>
 ## Formatting
 
 Let `clang-format` do the job. A style file `_clang-format` has been added to
@@ -343,3 +343,4 @@ real div_by_p375_add(real val) {
    return val / 0.375f; // OK, because 0.375f is accurate for 3/8.
 }
 ```
+-->
