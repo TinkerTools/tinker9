@@ -6,7 +6,7 @@ Tinker9: Software Tools for Molecular Design
 
 ## Installation Steps
    1. [Prerequisites](doc/manual/m/install/preq.rst)
-   2. [Build the Canonical Tinker (important to get THE REQUIRED version of Tinker)](doc/manual/m/install/tinker.rst)
+   2. [Build the Canonical Tinker (important to get the REQUIRED version)](doc/manual/m/install/tinker.rst)
    3. [Build Tinker9 with CMake](doc/manual/m/install/buildwithcmake.rst)
 
 
