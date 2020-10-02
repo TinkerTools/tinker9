@@ -53,6 +53,6 @@ script:
   - cd ../..
 
 
-# test tinker.gpu
+# test tinker9
   - opt=release host=1 prec=d fftw_dir=fftw tinker_dir=tinker/source cmake ..
   - make test -j2

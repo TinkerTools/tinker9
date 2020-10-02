@@ -9,7 +9,7 @@
 
 namespace tinker {
 namespace {
-const char* main_name = "tinker.gpu";
+const char* main_name = "tinker9";
 const std::string analyze_name = "analyze";
 const std::string dynamic_name = "dynamic";
 const std::string helper_name = "help";

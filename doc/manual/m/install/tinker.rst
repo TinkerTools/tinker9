@@ -13,10 +13,10 @@ and copy Tinker to the build directory:
 .. code-block:: bash
 
    # create build directory
-   mkdir -p tinker.gpu/build
+   mkdir -p tinker9/build
 
    # checkout Tinker
-   cd tinker.gpu/tinker
+   cd tinker9/tinker
    git submodule update --init
 
    # copy Tinker
@@ -41,5 +41,5 @@ then checkout the required version b606a90b.
 .. code-block:: bash
 
    # current working directory
-   # /home/tinker.gpu/build/tinker/source
+   # /home/tinker9/build/tinker/source
    make libtinker.a -j

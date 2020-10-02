@@ -20,7 +20,7 @@ Tinker GPU User's Manual
    GitHub Repository
    =================
 
-   `Click here. <https://github.com/zhi-wang/tinker.gpu>`_
+   `Click here. <https://github.com/zhi-wang/tinker9>`_
 
 
    Index and Search

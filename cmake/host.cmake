@@ -18,15 +18,15 @@ add_library (tinker9_host STATIC
 )
 
 
-add_executable (tinker.gpu ${MAIN_CPP})
-target_compile_definitions (tinker.gpu PRIVATE ${macro_defs})
+add_executable (tinker9 ${MAIN_CPP})
+target_compile_definitions (tinker9 PRIVATE ${macro_defs})
 set (EXT_LIBS pthread LIBTINKER LIBFFTW LIBFFTW_THREADS)
 if (PREC STREQUAL "m" OR PREC STREQUAL "s")
    list (APPEND EXT_LIBS LIBFFTWF LIBFFTWF_THREADS)
 endif ()
-set_target_properties (tinker.gpu PROPERTIES
+set_target_properties (tinker9 PROPERTIES
    CXX_STANDARD 11
    CXX_EXTENSIONS OFF)
-target_include_directories (tinker.gpu SYSTEM PRIVATE ${comm_sys_inc_path})
-target_include_directories (tinker.gpu PRIVATE ${proj_internal_inc_path})
-target_link_libraries (tinker.gpu tinker9_host ${EXT_LIBS})
+target_include_directories (tinker9 SYSTEM PRIVATE ${comm_sys_inc_path})
+target_include_directories (tinker9 PRIVATE ${proj_internal_inc_path})
+target_link_libraries (tinker9 tinker9_host ${EXT_LIBS})

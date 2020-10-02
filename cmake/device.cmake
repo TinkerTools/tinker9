@@ -106,7 +106,7 @@ separate_arguments (LIST_CXX_FLAGS_RELEASE NATIVE_COMMAND ${CMAKE_CXX_FLAGS_RELE
 ########################################################################
 
 
-add_custom_target (tinker.gpu ALL
+add_custom_target (tinker9 ALL
    DEPENDS
       tinker9_main
       tinker9_acc
@@ -120,7 +120,7 @@ add_custom_target (tinker.gpu ALL
       ${CMAKE_CXX_COMPILER} CUDA_HOME=${CUDA_DIR}
       "$<$<CONFIG:DEBUG>:${LIST_CXX_FLAGS_DEBUG}>"
       "$<$<CONFIG:RELEASE>:${LIST_CXX_FLAGS_RELEASE}>"
-      -o tinker.gpu
+      -o tinker9
       $<TARGET_OBJECTS:tinker9_main>
       $<TARGET_OBJECTS:tinker9_acc>
       $<TARGET_OBJECTS:tinker9_cu>
