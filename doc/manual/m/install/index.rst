@@ -6,4 +6,3 @@ Installation on Your Computer
    preq
    tinker
    buildwithcmake
-   tinkergpu

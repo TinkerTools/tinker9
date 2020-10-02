@@ -531,8 +531,8 @@ doc:
 man:
 	cp -r $(top_dir__)/doc/manual .
 	mkdir -p manual/_build manual/_static manual/_template
-	grep '^\##/' $(top_dir__)/make/Makefile | sed -e 's|##/ ||' | sed -e 's|##/||' > manual/m/install/tinkergpu.rst
-	cp manual/m/install/tinkergpu.rst $(top_dir__)/doc/manual/m/install/tinkergpu.rst
+	grep '^\##/' $(top_dir__)/make/Makefile | sed -e 's|##/ ||' | sed -e 's|##/||' > manual/m/install/tinker9.rst
+	cp manual/m/install/tinker9.rst $(top_dir__)/doc/manual/m/install/tinker9.rst
 	make -C manual html latexpdf
 	touch manual/_build/html/.nojekyll
 

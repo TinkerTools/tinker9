@@ -45,7 +45,6 @@ recommended because of the following cons:
    1. [Prerequisites](doc/manual/m/install/preq.rst)
    2. [Build the Canonical Tinker (important to get THE REQUIRED version of Tinker)](doc/manual/m/install/tinker.rst)
    3. [Build Tinker GPU with CMake](doc/manual/m/install/buildwithcmake.rst)
-      or [(Deprecated) Build Tinker GPU with Makefile](doc/manual/m/install/tinkergpu.rst)
 
 Links are only functional on GitHub.
 
