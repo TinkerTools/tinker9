@@ -1,5 +1,5 @@
-Tinker 9: Software Tools for Molecular Design
-===============================================
+Tinker9: Software Tools for Molecular Design
+============================================
 [//]: # (Badges)
 [![Build Status](https://travis-ci.com/zhi-wang/tinker9.svg?branch=master)](https://travis-ci.com/zhi-wang/tinker9)
 
@@ -44,7 +44,7 @@ recommended because of the following cons:
 ## Installation Steps
    1. [Prerequisites](doc/manual/m/install/preq.rst)
    2. [Build the Canonical Tinker (important to get THE REQUIRED version of Tinker)](doc/manual/m/install/tinker.rst)
-   3. [Build Tinker GPU with CMake](doc/manual/m/install/buildwithcmake.rst)
+   3. [Build Tinker9 with CMake](doc/manual/m/install/buildwithcmake.rst)
 
 Links are only functional on GitHub.
 

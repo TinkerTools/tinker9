@@ -5,7 +5,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
-PROJECT_NAME           = "Tinker GPU"
+PROJECT_NAME           = "Tinker9"
 PROJECT_NUMBER         = $(ENV_GIT_HEAD)
 PROJECT_BRIEF          =
 PROJECT_LOGO           =
