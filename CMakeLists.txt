@@ -388,7 +388,7 @@ endif ()
 
 ## scripts
 add_custom_target (SHELL_EXE COMMAND
-   "${CMAKE_COMMAND}" -E copy "${PROJECT_SOURCE_DIR}/shell/*.gpu" "${CMAKE_BINARY_DIR}")
+   "${CMAKE_COMMAND}" -E copy "${PROJECT_SOURCE_DIR}/shell/*9.sh" "${CMAKE_BINARY_DIR}")
 add_dependencies (tinker9 SHELL_EXE)
 
 
