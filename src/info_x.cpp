@@ -22,10 +22,10 @@ const char* get_SHA1()
 
 std::string get_version_string()
 {
-   std::string r = format("%d.%d.%d", TINKER_GPU_VERSION_MAJOR,
-                          TINKER_GPU_VERSION_MINOR, TINKER_GPU_VERSION_PATCH);
-#ifdef TINKER_GPU_GIT_SHORT_HASH
-   r += format(" GIT %s", TINKER_STR(TINKER_GPU_GIT_SHORT_HASH));
+   std::string r = format("%d.%d.%d", TINKER9_VERSION_MAJOR,
+                          TINKER9_VERSION_MINOR, TINKER9_VERSION_PATCH);
+#ifdef TINKER9_GIT_SHORT_HASH
+   r += format(" GIT %s", TINKER_STR(TINKER9_GIT_SHORT_HASH));
 #endif
    return r;
 }

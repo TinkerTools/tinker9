@@ -1,4 +1,4 @@
-#include "main_tinker_gpu.h"
+#include "main_tinker9.h"
 #include "test.h"
 
 

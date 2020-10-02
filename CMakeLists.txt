@@ -320,7 +320,7 @@ elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
 endif ()
 
 
-list (APPEND macro_defs TINKER_GPU_DIR=${CMAKE_SOURCE_DIR})
+list (APPEND macro_defs TINKER9_DIR=${CMAKE_SOURCE_DIR})
 
 
 find_package (Git)
@@ -337,7 +337,7 @@ if (GIT_FOUND)
       string (REPLACE "\"" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
       string (REPLACE "\n" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
       string (REPLACE "\r" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
-      list (APPEND macro_defs TINKER_GPU_GIT_SHORT_HASH=${STRING_SHA1_GIT})
+      list (APPEND macro_defs TINKER9_GIT_SHORT_HASH=${STRING_SHA1_GIT})
 
 
       execute_process (

@@ -1,4 +1,4 @@
-#include "main_tinker_gpu.h"
+#include "main_tinker9.h"
 #include "tool/rc_man.h"
 #include <algorithm>
 #include <functional>

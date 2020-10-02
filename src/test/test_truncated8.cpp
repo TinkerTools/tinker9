@@ -257,7 +257,7 @@ octahedron
    TestFile fpr(pname, p0);
 
 
-   TestReference r(TINKER_GPU_DIRSTR "/src/test/truncated8.1.txt");
+   TestReference r(TINKER9_DIRSTR "/src/test/truncated8.1.txt");
    auto ref_e = r.get_energy();
    auto ref_v = r.get_virial();
    auto ref_count = r.get_count();

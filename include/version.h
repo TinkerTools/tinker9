@@ -2,18 +2,18 @@
 
 
 /**
- * \def TINKER_GPU_VERSION_MAJOR
+ * \def TINKER9_VERSION_MAJOR
  * \ingroup macro
  * Major version.
  *
- * \def TINKER_GPU_VERSION_MINOR
+ * \def TINKER9_VERSION_MINOR
  * \ingroup macro
  * Minor version.
  *
- * \def TINKER_GPU_VERSION_PATCH
+ * \def TINKER9_VERSION_PATCH
  * \ingroup macro
  * Patch version.
  */
-#define TINKER_GPU_VERSION_MAJOR 0
-#define TINKER_GPU_VERSION_MINOR 3
-#define TINKER_GPU_VERSION_PATCH 30
+#define TINKER9_VERSION_MAJOR 0
+#define TINKER9_VERSION_MINOR 3
+#define TINKER9_VERSION_PATCH 30

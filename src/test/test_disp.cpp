@@ -7,9 +7,9 @@ using namespace tinker;
 
 TEST_CASE("EDISP-1-NONDEWALD", "[ff][edisp][nondewald]")
 {
-   TestFile fx1(TINKER_GPU_DIRSTR "/src/test/file/c5h12acnh2.xyz");
-   TestFile fk1(TINKER_GPU_DIRSTR "/src/test/file/disp/ndewald.key");
-   TestFile fp1(TINKER_GPU_DIRSTR "/src/test/file/disp/hippo19.prm");
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/c5h12acnh2.xyz");
+   TestFile fk1(TINKER9_DIRSTR "/src/test/file/disp/ndewald.key");
+   TestFile fp1(TINKER9_DIRSTR "/src/test/file/disp/hippo19.prm");
    const char* xn = "c5h12acnh2.xyz";
    const char* kn = "ndewald.key";
    const char* argv[] = {"dummy", xn, "-k", kn};
@@ -21,7 +21,7 @@ TEST_CASE("EDISP-1-NONDEWALD", "[ff][edisp][nondewald]")
    const double eps_v = test_get_eps(0.055, 0.001);
 
 
-   TestReference r(TINKER_GPU_DIRSTR "/src/test/disp.1.txt");
+   TestReference r(TINKER9_DIRSTR "/src/test/disp.1.txt");
    auto ref_c = r.get_count();
    auto ref_e = r.get_energy();
    auto ref_v = r.get_virial();
@@ -73,9 +73,9 @@ TEST_CASE("EDISP-1-NONDEWALD", "[ff][edisp][nondewald]")
 
 TEST_CASE("EDISP-2-DEWALD", "[ff][edisp][dewald]")
 {
-   TestFile fx1(TINKER_GPU_DIRSTR "/src/test/file/c5h12acnh2.xyz");
-   TestFile fk1(TINKER_GPU_DIRSTR "/src/test/file/disp/dewald.key");
-   TestFile fp1(TINKER_GPU_DIRSTR "/src/test/file/disp/hippo19.prm");
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/c5h12acnh2.xyz");
+   TestFile fk1(TINKER9_DIRSTR "/src/test/file/disp/dewald.key");
+   TestFile fp1(TINKER9_DIRSTR "/src/test/file/disp/hippo19.prm");
    const char* xn = "c5h12acnh2.xyz";
    const char* kn = "dewald.key";
    const char* argv[] = {"dummy", xn, "-k", kn};
@@ -87,7 +87,7 @@ TEST_CASE("EDISP-2-DEWALD", "[ff][edisp][dewald]")
    const double eps_v = test_get_eps(0.050, 0.001);
 
 
-   TestReference r(TINKER_GPU_DIRSTR "/src/test/disp.2.txt");
+   TestReference r(TINKER9_DIRSTR "/src/test/disp.2.txt");
    auto ref_c = r.get_count();
    auto ref_e = r.get_energy();
    auto ref_v = r.get_virial();
