@@ -12,11 +12,11 @@ matrix:
     - os: linux
       dist: bionic
       env:
-        - CI_DEPEND_DIR=https://raw.githubusercontent.com/zhi-wang/ci-depend/master/xenial
+        - CI_DEPEND_DIR=https://raw.githubusercontent.com/tinkertools/tinker9/travis/.travis-libtinker
 
 
 before_install:
-  - sudo apt-get install gfortran cmake
+  - sudo apt-get install gfortran cmake fftw3
 
 
 script:
@@ -27,19 +27,19 @@ script:
   - echo $PWD
 
 
-# fftw
-  - mkdir build
-  - cd build
-  - mkdir -p fftw/include
-  - curl $CI_DEPEND_DIR/fftw/include/fftw3.h -o fftw/include/fftw3.h
+# # fftw
+#   - mkdir build
+#   - cd build
+#   - mkdir -p fftw/include
+#   - curl $CI_DEPEND_DIR/fftw/include/fftw3.h -o fftw/include/fftw3.h
 
-  - mkdir -p fftw/lib
-  - cd fftw/lib
-  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3.a          -o libfftw3.a
-  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3_threads.a  -o libfftw3_threads.a
-  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f.a         -o libfftw3f.a
-  - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f_threads.a -o libfftw3f_threads.a
-  - cd ../../..
+#   - mkdir -p fftw/lib
+#   - cd fftw/lib
+#   - curl $CI_DEPEND_DIR/fftw/lib/libfftw3.a          -o libfftw3.a
+#   - curl $CI_DEPEND_DIR/fftw/lib/libfftw3_threads.a  -o libfftw3_threads.a
+#   - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f.a         -o libfftw3f.a
+#   - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f_threads.a -o libfftw3f_threads.a
+#   - cd ../../..
 
 
 # libtinker.a
@@ -48,7 +48,7 @@ script:
   - cd ..
   - cp -r tinker build
   - cd build/tinker/source
-  - curl $CI_DEPEND_DIR/tinker-b606a90b/Makefile -o Makefile
+  - curl $CI_DEPEND_DIR/Makefile -o Makefile
   - make libtinker.a -j2
   - cd ../..
 

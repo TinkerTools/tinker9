@@ -108,7 +108,7 @@ On the other hand, if you are adding an internal global variable, for instance a
 preallocated global work array, you should always declare it inside the `detail`
 namespace.
 
-```
+```C++
 // new_array.h
 namespace detail {
 extern int* global_work_array;

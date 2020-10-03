@@ -15,7 +15,7 @@ TEST_CASE("ALA-1", "[ff][eimptor][ala]")
    int usage = calc::xyz | calc::vmask;
 
    std::string k0 = ala_amber99sb_key;
-   k0 += "imptorsterm  only\n"
+   k0 += "imptorterm   only\n"
          "imptorunit    100\n";
 
 
