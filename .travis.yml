@@ -7,7 +7,7 @@ branches:
 language: generic
 
 
-matrix:
+jobs:
   include:
     - os: linux
       dist: bionic
@@ -28,8 +28,11 @@ script:
 
 
 # # fftw
-  - mkdir build
-#   - cd build
+  - mkdir -p build/fftw
+  - cd build/fftw
+  - ln -s /usr/include include
+  - ln -s /usr/lib/x86_64-linux-gnu lib
+  - cd ../..
 #   - mkdir -p fftw/include
 #   - curl $CI_DEPEND_DIR/fftw/include/fftw3.h -o fftw/include/fftw3.h
 
@@ -54,5 +57,5 @@ script:
 
 
 # test tinker9
-  - opt=release host=1 prec=d fftw_dir=/usr tinker_dir=tinker/source cmake ..
+  - opt=release host=1 prec=d fftw_dir=fftw tinker_dir=tinker/source cmake ..
   - make test -j2
