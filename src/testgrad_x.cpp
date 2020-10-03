@@ -75,10 +75,10 @@ void x_testgrad(int, char**)
       else
          return false;
    };
-   int print_top_n = 15;
+   // int print_top_n = 15;
    for (int i = 0; i < n; ++i) {
-      if (!do_print(i, n, print_top_n))
-         continue;
+      // if (not do_print(i, n, print_top_n))
+      //    continue;
 
 
       real x1 = gdx[i];
