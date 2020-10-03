@@ -16,7 +16,7 @@ matrix:
 
 
 before_install:
-  - sudo apt-get install gfortran cmake fftw3
+  - sudo apt-get install gfortran cmake fftw3-dev
 
 
 script:
@@ -54,5 +54,5 @@ script:
 
 
 # test tinker9
-  - opt=release host=1 prec=d fftw_dir=fftw tinker_dir=tinker/source cmake ..
+  - opt=release host=1 prec=d fftw_dir=/usr tinker_dir=tinker/source cmake ..
   - make test -j2
