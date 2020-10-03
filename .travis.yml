@@ -28,7 +28,7 @@ script:
 
 
 # # fftw
-#   - mkdir build
+  - mkdir build
 #   - cd build
 #   - mkdir -p fftw/include
 #   - curl $CI_DEPEND_DIR/fftw/include/fftw3.h -o fftw/include/fftw3.h
