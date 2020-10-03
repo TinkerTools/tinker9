@@ -786,7 +786,7 @@ EXEFILES = alchemy.x \
 	    xyzpdb.x
 
 %.o: %.f
-	${F77} ${F77FLAGS} ${OPTFLAGS} $< -o $@ 
+	${F77} ${F77FLAGS} ${OPTFLAGS} $< -o $@
 
 %.x: %.o libtinker.a
 	${F77} ${LINKFLAGS} -o $@ ${LIBDIR} ${FFTW_LIBDIR} $^ ${LIBS} ${FFTW_LIBS}; strip $@
@@ -1057,7 +1057,7 @@ create_links:
 	ln -s $(BINDIR)/xyzmol2    $(LINKDIR)/xyzmol2
 	ln -s $(BINDIR)/xyzpdb     $(LINKDIR)/xyzpdb
 
-libtinker.a: ${OBJS} 
+libtinker.a: ${OBJS}
 	ar ${LIBFLAGS} libtinker.a \
 	action.o \
 	active.o \

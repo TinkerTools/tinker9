@@ -12,7 +12,7 @@ jobs:
     - os: linux
       dist: bionic
       env:
-        - CI_DEPEND_DIR=https://raw.githubusercontent.com/tinkertools/tinker9/travis/.travis-libtinker
+        - CI_DEPEND_DIR=https://raw.githubusercontent.com/tinkertools/tinker9/master/.travis-libtinker
 
 
 before_install:
@@ -27,22 +27,12 @@ script:
   - echo $PWD
 
 
-# # fftw
+# fftw
   - mkdir -p build/fftw/include
   - cd build/fftw
   - cp /usr/include/fftw3.h include/fftw3.h
   - ln -s /usr/lib/x86_64-linux-gnu lib
   - cd ../..
-#   - mkdir -p fftw/include
-#   - curl $CI_DEPEND_DIR/fftw/include/fftw3.h -o fftw/include/fftw3.h
-
-#   - mkdir -p fftw/lib
-#   - cd fftw/lib
-#   - curl $CI_DEPEND_DIR/fftw/lib/libfftw3.a          -o libfftw3.a
-#   - curl $CI_DEPEND_DIR/fftw/lib/libfftw3_threads.a  -o libfftw3_threads.a
-#   - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f.a         -o libfftw3f.a
-#   - curl $CI_DEPEND_DIR/fftw/lib/libfftw3f_threads.a -o libfftw3f_threads.a
-#   - cd ../../..
 
 
 # libtinker.a
