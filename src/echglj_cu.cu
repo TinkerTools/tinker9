@@ -386,14 +386,14 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                dedx = decik * xr;
                dedy = decik * yr;
                dedz = decik * zr;
-               if CONSTEXPR (do_v) {
-                  vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vctlzz += cvt_to<vbuf_prec>(zr * dedz);
-               }
+               // if CONSTEXPR (do_v) {
+               //    vctlxx += cvt_to<vbuf_prec>(xr * dedx);
+               //    vctlyx += cvt_to<vbuf_prec>(yr * dedx);
+               //    vctlzx += cvt_to<vbuf_prec>(zr * dedx);
+               //    vctlyy += cvt_to<vbuf_prec>(yr * dedy);
+               //    vctlzy += cvt_to<vbuf_prec>(zr * dedy);
+               //    vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+               // }
                fix += dedx;
                fiy += dedy;
                fiz += dedz;
@@ -406,14 +406,14 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                dedx = decik * xr;
                dedy = decik * yr;
                dedz = decik * zr;
-               if CONSTEXPR (do_v) {
-                  vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vctlzz += cvt_to<vbuf_prec>(zr * dedz);
-               }
+               // if CONSTEXPR (do_v) {
+               //    vctlxx += cvt_to<vbuf_prec>(xr * dedx);
+               //    vctlyx += cvt_to<vbuf_prec>(yr * dedx);
+               //    vctlzx += cvt_to<vbuf_prec>(zr * dedx);
+               //    vctlyy += cvt_to<vbuf_prec>(yr * dedy);
+               //    vctlzy += cvt_to<vbuf_prec>(zr * dedy);
+               //    vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+               // }
                fix += dedx;
                fiy += dedy;
                fiz += dedz;
@@ -424,14 +424,14 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                dedx = decik * xr;
                dedy = decik * yr;
                dedz = decik * zr;
-               if CONSTEXPR (do_v) {
-                  vvtlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vvtlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vvtlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vvtlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vvtlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vvtlzz += cvt_to<vbuf_prec>(zr * dedz);
-               }
+               // if CONSTEXPR (do_v) {
+               //    vvtlyx += cvt_to<vbuf_prec>(yr * dedx);
+               //    vvtlxx += cvt_to<vbuf_prec>(xr * dedx);
+               //    vvtlzx += cvt_to<vbuf_prec>(zr * dedx);
+               //    vvtlyy += cvt_to<vbuf_prec>(yr * dedy);
+               //    vvtlzy += cvt_to<vbuf_prec>(zr * dedy);
+               //    vvtlzz += cvt_to<vbuf_prec>(zr * dedz);
+               // }
                ivfx += dedx;
                ivfy += dedy;
                ivfz += dedz;
@@ -452,6 +452,24 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                ivfx = __shfl_sync(ALL_LANES, ivfx, ilane + 1);
                ivfy = __shfl_sync(ALL_LANES, ivfy, ilane + 1);
                ivfz = __shfl_sync(ALL_LANES, ivfz, ilane + 1);
+            }
+         }
+
+
+         if CONSTEXPR (do_v) {
+            vctlxx += cvt_to<vbuf_prec>(shxi * fix + xk * fkx);
+            vctlyx += cvt_to<vbuf_prec>(shyi * fix + yk * fkx);
+            vctlzx += cvt_to<vbuf_prec>(shzi * fix + zk * fkx);
+            vctlyy += cvt_to<vbuf_prec>(shyi * fiy + yk * fky);
+            vctlzy += cvt_to<vbuf_prec>(shzi * fiy + zk * fky);
+            vctlzz += cvt_to<vbuf_prec>(shzi * fiz + zk * fkz);
+            if CONSTEXPR (VOUT) {
+               vvtlyx += cvt_to<vbuf_prec>(shyi * ivfx + yk * kvfy);
+               vvtlxx += cvt_to<vbuf_prec>(shxi * ivfx + xk * kvfx);
+               vvtlzx += cvt_to<vbuf_prec>(shzi * ivfx + zk * kvfz);
+               vvtlyy += cvt_to<vbuf_prec>(shyi * ivfy + yk * kvfy);
+               vvtlzy += cvt_to<vbuf_prec>(shzi * ivfy + zk * kvfz);
+               vvtlzz += cvt_to<vbuf_prec>(shzi * ivfz + zk * kvfz);
             }
          }
       } else {
@@ -696,14 +714,14 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                dedx = decik * xr;
                dedy = decik * yr;
                dedz = decik * zr;
-               if CONSTEXPR (do_v) {
-                  vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vctlzz += cvt_to<vbuf_prec>(zr * dedz);
-               }
+               // if CONSTEXPR (do_v) {
+               //    vctlxx += cvt_to<vbuf_prec>(xr * dedx);
+               //    vctlyx += cvt_to<vbuf_prec>(yr * dedx);
+               //    vctlzx += cvt_to<vbuf_prec>(zr * dedx);
+               //    vctlyy += cvt_to<vbuf_prec>(yr * dedy);
+               //    vctlzy += cvt_to<vbuf_prec>(zr * dedy);
+               //    vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+               // }
                fix += dedx;
                fiy += dedy;
                fiz += dedz;
@@ -716,14 +734,14 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                dedx = decik * xr;
                dedy = decik * yr;
                dedz = decik * zr;
-               if CONSTEXPR (do_v) {
-                  vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vctlzz += cvt_to<vbuf_prec>(zr * dedz);
-               }
+               // if CONSTEXPR (do_v) {
+               //    vctlxx += cvt_to<vbuf_prec>(xr * dedx);
+               //    vctlyx += cvt_to<vbuf_prec>(yr * dedx);
+               //    vctlzx += cvt_to<vbuf_prec>(zr * dedx);
+               //    vctlyy += cvt_to<vbuf_prec>(yr * dedy);
+               //    vctlzy += cvt_to<vbuf_prec>(zr * dedy);
+               //    vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+               // }
                fix += dedx;
                fiy += dedy;
                fiz += dedz;
@@ -734,14 +752,14 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                dedx = decik * xr;
                dedy = decik * yr;
                dedz = decik * zr;
-               if CONSTEXPR (do_v) {
-                  vvtlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vvtlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vvtlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vvtlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vvtlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vvtlzz += cvt_to<vbuf_prec>(zr * dedz);
-               }
+               // if CONSTEXPR (do_v) {
+               //    vvtlyx += cvt_to<vbuf_prec>(yr * dedx);
+               //    vvtlxx += cvt_to<vbuf_prec>(xr * dedx);
+               //    vvtlzx += cvt_to<vbuf_prec>(zr * dedx);
+               //    vvtlyy += cvt_to<vbuf_prec>(yr * dedy);
+               //    vvtlzy += cvt_to<vbuf_prec>(zr * dedy);
+               //    vvtlzz += cvt_to<vbuf_prec>(zr * dedz);
+               // }
                ivfx += dedx;
                ivfy += dedy;
                ivfz += dedz;
@@ -761,6 +779,24 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf,
                ivfx = __shfl_sync(ALL_LANES, ivfx, ilane + 1);
                ivfy = __shfl_sync(ALL_LANES, ivfy, ilane + 1);
                ivfz = __shfl_sync(ALL_LANES, ivfz, ilane + 1);
+            }
+         }
+
+
+         if CONSTEXPR (do_v) {
+            vctlxx += cvt_to<vbuf_prec>(shxi * fix + xk * fkx);
+            vctlyx += cvt_to<vbuf_prec>(shyi * fix + yk * fkx);
+            vctlzx += cvt_to<vbuf_prec>(shzi * fix + zk * fkx);
+            vctlyy += cvt_to<vbuf_prec>(shyi * fiy + yk * fky);
+            vctlzy += cvt_to<vbuf_prec>(shzi * fiy + zk * fky);
+            vctlzz += cvt_to<vbuf_prec>(shzi * fiz + zk * fkz);
+            if CONSTEXPR (VOUT) {
+               vvtlyx += cvt_to<vbuf_prec>(shyi * ivfx + yk * kvfy);
+               vvtlxx += cvt_to<vbuf_prec>(shxi * ivfx + xk * kvfx);
+               vvtlzx += cvt_to<vbuf_prec>(shzi * ivfx + zk * kvfz);
+               vvtlyy += cvt_to<vbuf_prec>(shyi * ivfy + yk * kvfy);
+               vvtlzy += cvt_to<vbuf_prec>(shzi * ivfy + zk * kvfz);
+               vvtlzz += cvt_to<vbuf_prec>(shzi * ivfz + zk * kvfz);
             }
          }
       } else {
