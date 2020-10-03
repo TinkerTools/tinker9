@@ -28,9 +28,9 @@ script:
 
 
 # # fftw
-  - mkdir -p build/fftw
+  - mkdir -p build/fftw/include
   - cd build/fftw
-  - ln -s /usr/include include
+  - cp /usr/include/fftw3.h include/fftw3.h
   - ln -s /usr/lib/x86_64-linux-gnu lib
   - cd ../..
 #   - mkdir -p fftw/include
