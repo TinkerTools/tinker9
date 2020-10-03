@@ -1,6 +1,5 @@
 #include "subroutine.h"
 #include "tool/io_print.h"
-#include <tinker/detail/chgpen.hh>
 #include <tinker/detail/inform.hh>
 
 
@@ -93,8 +92,7 @@ void mechanic()
 
    // get the base force field from parameter file and keyfile
    field_();
-   /// TODO: Remove this hack when Tinker initialize it in initprm.
-   chgpen::ncp = 0;
+
 
    // find unit cell type, lattice parameters and cutoff values
    unitcell_();
