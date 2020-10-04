@@ -17,8 +17,6 @@ add_custom_target (man
          "${PROJECT_SOURCE_DIR}/doc/manual/m/install/buildwithcmake.rst"
    COMMAND
       make -C "${CMAKE_BINARY_DIR}/manual" html latexpdf
-   COMMAND
-      ${CMAKE_COMMAND} -E touch "${CMAKE_BINARY_DIR}/manual/_build/html/.nojekyll"
 )
 
 
