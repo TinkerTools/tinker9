@@ -36,7 +36,7 @@ types in the table below should be processed by
 > Generic C++ files should not have any OpenACC directive or CUDA specific macro
 > or syntax, such as `__global__` and triple arrow brackets `<<<>>>`.
 
-> Some files are suffixed by extra markers, e.g., `_acc.cpp` and `_cu.cu`, which
+> Extra markers are suffixed to some files, e.g., `_acc.cpp` and `_cu.cu`, which
 > may seem redundant but are used to keep the compilation procedure simple.
 
 The minimum version of clang-format required is 10. The following command will
