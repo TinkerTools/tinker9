@@ -116,7 +116,7 @@ extern int* global_work_array;
 
 // new_array.cpp
 namespace detail {
-int int* global_work_array;
+int* global_work_array;
 }
 ```
 
