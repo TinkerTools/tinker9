@@ -7,6 +7,7 @@ Tinker9 User's Manual
 =====================
 
 .. toctree::
+   :numbered:
    :maxdepth: 2
 
    m/intro
@@ -17,10 +18,8 @@ Tinker9 User's Manual
 
 .. only:: html
 
-   GitHub Repository
-   =================
-
-   `Click here. <https://github.com/tinkertools/tinker9>`_
+   `GitHub Repository <https://github.com/tinkertools/tinker9>`_
+   =============================================================
 
 
    Index and Search
