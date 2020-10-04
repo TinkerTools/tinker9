@@ -1,5 +1,5 @@
-Tinker9: Software Tools for Molecular Design
-============================================
+Tinker9: Tools for Molecular Design with GPU Support
+====================================================
 [//]: # (Badges)
 [![Build Status](https://travis-ci.com/tinkertools/tinker9.svg?branch=master)](https://travis-ci.com/tinkertools/tinker9)
 
