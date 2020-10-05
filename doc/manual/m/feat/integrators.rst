@@ -36,22 +36,18 @@ Number  Sections in MTK  Method
 The isothermal-isobaric integrator implemented in Fortran Tinker and here is
 NPT-XO (#2a-4a).
 
-.. note::
-
-   The MTK Nosé-Hoover method can be enabled by the keyword
+MTK Nosé-Hoover Chain can be enabled by the keywords
 
    .. code-block::
 
+      # either
       integrator nose-hoover
 
-   or the combination of the following keywords
-
-   .. code-block::
-
+      # or
       thermostat nose-hoover
       barostat   nose-hoover
 
-   and the NPT option in the `dynamic` program.
+and the NPT option in the `dynamic` program.
 
 .. _label-lpiston:
 
@@ -61,22 +57,18 @@ Langevin Piston
 The Langevin piston method for constant pressure [#Feller1995]_ is
 integrated in the Leapfrog framework.
 
-.. note::
-
-   The Langevin Piston method can be enabled by the keyword
+Langevin Piston can be enabled by the keywords
 
    .. code-block::
 
+      # either
       integrator lpiston
 
-   or the combination of the following keywords
-
-   .. code-block::
-
+      # or
       thermostat lpiston
       barostat   lpiston
 
-   and the NPT option in the `dynamic` program.
+and the NPT option in the `dynamic` program.
 
 .. [#Martyna1996]
    Martyna, G. J.; Tuckerman, M. E.; Tobias, D. J. and Klein, M. L.
