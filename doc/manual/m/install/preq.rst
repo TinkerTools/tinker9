@@ -53,9 +53,9 @@ then added `export PGI_LOCALRC=/path/to/new_config` to my bash resource file.
 - `ClangFormat <https://clang.llvm.org/docs/ClangFormat.html>`_:
   to format the source code.
 
-- `Sphinx <https://www.sphinx-doc.org>`_ to generate user's manual.
+- `Sphinx <https://www.sphinx-doc.org>`_: to generate user's manual.
 
-   - PDF version depends on `TeX <https://www.tug.org/begin.html>`_.
+   - PDF version also depends on `TeX <https://www.tug.org/begin.html>`_.
 
    - HTML version requires
      `sphinx-rtd-theme <https://pypi.org/project/sphinx-rtd-theme>`_
