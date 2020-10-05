@@ -16,8 +16,6 @@ RESPA Integrator
 Extended Nosé-Hoover Chain by MTK
 ---------------------------------
 
-.. index:: NOSE-HOOVER
-
 Several methods for NVT and NPT ensembles were discussed in MTK [#Martyna1996]_.
 
 ======  ===============  ======
@@ -65,16 +63,16 @@ integrated in the Leapfrog framework.
 
    Langevin Piston can be enabled by keywords
 
-      .. code-block:: text
+   .. code-block:: text
 
-         integrator lpiston
+      integrator lpiston
 
    or
 
-      .. code-block:: text
+   .. code-block:: text
 
-         thermostat lpiston
-         barostat   lpiston
+      thermostat lpiston
+      barostat   lpiston
 
    with the NPT option in the `dynamic` program.
 
