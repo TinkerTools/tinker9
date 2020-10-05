@@ -38,7 +38,7 @@ NPT-XO (#2a-4a).
 
 MTK Nosé-Hoover Chain can be enabled by the keywords
 
-   .. code-block::
+   .. code-block:: text
 
       # either
       integrator nose-hoover
@@ -59,7 +59,7 @@ integrated in the Leapfrog framework.
 
 Langevin Piston can be enabled by the keywords
 
-   .. code-block::
+   .. code-block:: text
 
       # either
       integrator lpiston
