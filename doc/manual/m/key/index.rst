@@ -1,7 +1,7 @@
 Use of the Keyword Control File
 ===============================
 
-Keywords are read from the keyword control file.
+Keywords are **case insensitive** texts read from the keyword control file.
 
 Several keywords take a list of integer values (atom numbers, for example) as
 modifiers. For these keywords the integers can simply be listed explicitly
@@ -17,6 +17,7 @@ modifiers, and usage examples.
 
 .. toctree::
 
+   dynamic
    fep
    math
    hippo

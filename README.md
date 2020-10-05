@@ -18,10 +18,3 @@ and the PDF version is accessible from the same webpage.
 
 ## Style Guide
 Please read the [style guide](doc/style.md) before contributing to this code base.
-
-
-## Repository
-<a href="https://github.com/tinkertools/tinker9">
-   <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
-   alt="GitHub Repository" width="100"/>
-</a>
