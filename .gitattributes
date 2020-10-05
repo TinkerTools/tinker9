@@ -6,6 +6,7 @@ _clang-format   text
 Doxyfile        text
 LICENSE         text
 *.html          text
+*.markdown      text
 *.md            text
 *.rst           text
 *.tex           text
