@@ -139,8 +139,8 @@ void dfield_cu2(DFIELDPARAS, const real* restrict x, const real* restrict y,
         ii += blockDim.x * gridDim.x) {
       int i = dpexclude[ii][0];
       int k = dpexclude[ii][1];
-      real dscale = dpexclude_scale[ii][0];
-      real pscale = dpexclude_scale[ii][1];
+      real dscale = dpexclude_scale[ii][0] - 1;
+      real pscale = dpexclude_scale[ii][1] - 1;
 
 
       real xi = x[i];

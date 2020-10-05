@@ -44,10 +44,10 @@ void emplar_data(rc_op op)
          auto it = a.find(key);
          if (it == a.end()) {
             mdpu x;
-            x.m = 0;
-            x.d = 0;
-            x.p = 0;
-            x.u = 0;
+            x.m = 1;
+            x.d = 1;
+            x.p = 1;
+            x.u = 1;
             if (ch == 'm')
                x.m = val;
             else if (ch == 'd')
@@ -122,7 +122,7 @@ void emplar_data(rc_op op)
                int k = couple_i12[bask + j];
                k -= 1;
                if (k > i) {
-                  insert_mdpu(ik_scale, i, k, m2scale - 1, 'm');
+                  insert_mdpu(ik_scale, i, k, m2scale, 'm');
                }
             }
          }
@@ -135,7 +135,7 @@ void emplar_data(rc_op op)
                int k = couple_i13[bask + j];
                k -= 1;
                if (k > i) {
-                  insert_mdpu(ik_scale, i, k, m3scale - 1, 'm');
+                  insert_mdpu(ik_scale, i, k, m3scale, 'm');
                }
             }
          }
@@ -148,7 +148,7 @@ void emplar_data(rc_op op)
                int k = couple_i14[bask + j];
                k -= 1;
                if (k > i) {
-                  insert_mdpu(ik_scale, i, k, m4scale - 1, 'm');
+                  insert_mdpu(ik_scale, i, k, m4scale, 'm');
                }
             }
          }
@@ -161,7 +161,7 @@ void emplar_data(rc_op op)
                int k = couple_i15[bask + j];
                k -= 1;
                if (k > i) {
-                  insert_mdpu(ik_scale, i, k, m5scale - 1, 'm');
+                  insert_mdpu(ik_scale, i, k, m5scale, 'm');
                }
             }
          }
@@ -175,10 +175,10 @@ void emplar_data(rc_op op)
             bask = i * maxn12;
             for (int j = 0; j < nn; ++j) {
                int k = couple_i12[bask + j];
-               real val = p2scale - 1;
+               real val = p2scale;
                for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
                   if (k == polgrp::ip11[i * maxp11 + jj])
-                     val = p2iscale - 1;
+                     val = p2iscale;
                }
                k -= 1;
                if (k > i) {
@@ -193,10 +193,10 @@ void emplar_data(rc_op op)
             bask = i * maxn13;
             for (int j = 0; j < nn; ++j) {
                int k = couple_i13[bask + j];
-               real val = p3scale - 1;
+               real val = p3scale;
                for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
                   if (k == polgrp::ip11[i * maxp11 + jj])
-                     val = p3iscale - 1;
+                     val = p3iscale;
                }
                k -= 1;
                if (k > i) {
@@ -211,10 +211,10 @@ void emplar_data(rc_op op)
             bask = i * maxn14;
             for (int j = 0; j < nn; ++j) {
                int k = couple_i14[bask + j];
-               real val = p4scale - 1;
+               real val = p4scale;
                for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
                   if (k == polgrp::ip11[i * maxp11 + jj])
-                     val = p4iscale - 1;
+                     val = p4iscale;
                }
                k -= 1;
                if (k > i) {
@@ -229,10 +229,10 @@ void emplar_data(rc_op op)
             bask = i * maxn15;
             for (int j = 0; j < nn; ++j) {
                int k = couple_i15[bask + j];
-               real val = p5scale - 1;
+               real val = p5scale;
                for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
                   if (k == polgrp::ip11[i * maxp11 + jj])
-                     val = p5iscale - 1;
+                     val = p5iscale;
                }
                k -= 1;
                if (k > i) {
@@ -251,7 +251,7 @@ void emplar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip11[bask + j] - 1;
                if (k > i) {
-                  insert_mdpu(ik_scale, i, k, d1scale - 1, 'd');
+                  insert_mdpu(ik_scale, i, k, d1scale, 'd');
                }
             }
          }
@@ -263,7 +263,7 @@ void emplar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip12[bask + j] - 1;
                if (k > i) {
-                  insert_mdpu(ik_scale, i, k, d2scale - 1, 'd');
+                  insert_mdpu(ik_scale, i, k, d2scale, 'd');
                }
             }
          }
@@ -275,7 +275,7 @@ void emplar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip13[bask + j] - 1;
                if (k > i) {
-                  insert_mdpu(ik_scale, i, k, d3scale - 1, 'd');
+                  insert_mdpu(ik_scale, i, k, d3scale, 'd');
                }
             }
          }
@@ -287,7 +287,7 @@ void emplar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip14[bask + j] - 1;
                if (k > i) {
-                  insert_mdpu(ik_scale, i, k, d4scale - 1, 'd');
+                  insert_mdpu(ik_scale, i, k, d4scale, 'd');
                }
             }
          }
@@ -302,7 +302,7 @@ void emplar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip11[bask + j] - 1;
                if (k > i) {
-                  insert_mdpu(ik_scale, i, k, u1scale - 1, 'u');
+                  insert_mdpu(ik_scale, i, k, u1scale, 'u');
                }
             }
          }
@@ -314,7 +314,7 @@ void emplar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip12[bask + j] - 1;
                if (k > i) {
-                  insert_mdpu(ik_scale, i, k, u2scale - 1, 'u');
+                  insert_mdpu(ik_scale, i, k, u2scale, 'u');
                }
             }
          }
@@ -326,7 +326,7 @@ void emplar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip13[bask + j] - 1;
                if (k > i) {
-                  insert_mdpu(ik_scale, i, k, u3scale - 1, 'u');
+                  insert_mdpu(ik_scale, i, k, u3scale, 'u');
                }
             }
          }
@@ -338,7 +338,7 @@ void emplar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip14[bask + j] - 1;
                if (k > i) {
-                  insert_mdpu(ik_scale, i, k, u4scale - 1, 'u');
+                  insert_mdpu(ik_scale, i, k, u4scale, 'u');
                }
             }
          }

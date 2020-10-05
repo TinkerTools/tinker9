@@ -193,7 +193,7 @@ void mscale_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(m2scale - 1);
+                  excls.push_back(m2scale);
                }
             }
          }
@@ -207,7 +207,7 @@ void mscale_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(m3scale - 1);
+                  excls.push_back(m3scale);
                }
             }
          }
@@ -221,7 +221,7 @@ void mscale_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(m4scale - 1);
+                  excls.push_back(m4scale);
                }
             }
          }
@@ -235,7 +235,7 @@ void mscale_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(m5scale - 1);
+                  excls.push_back(m5scale);
                }
             }
          }

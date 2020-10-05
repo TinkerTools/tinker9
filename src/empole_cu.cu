@@ -231,7 +231,7 @@ void empole_cu2(EMPOLEPARAS, const real* restrict x, const real* restrict y,
 
       int i = mexclude[ii][0];
       int k = mexclude[ii][1];
-      real mscale = mexclude_scale[ii];
+      real mscale = mexclude_scale[ii] - 1;
 
 
       real xi = x[i];
