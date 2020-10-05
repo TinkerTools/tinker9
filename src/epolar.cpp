@@ -79,7 +79,7 @@ void epolar_data(rc_op op)
    }
 
    if (op & rc_alloc) {
-      // see also attach.h
+      // see also attach.f
       const int maxn13 = 3 * sizes::maxval;
       const int maxn14 = 9 * sizes::maxval;
       const int maxn15 = 27 * sizes::maxval;
