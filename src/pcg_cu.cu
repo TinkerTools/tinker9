@@ -94,8 +94,13 @@ void pcg_p2(int n, const real* restrict polarity,              //
             real (*restrict rsd)[3], real (*restrict rsdp)[3],
             const real (*restrict vec)[3], const real (*restrict vecp)[3])
 {
-   real a = *ksum / *ka;
-   real ap = *ksump / *kap;
+   real kaval = *ka, kapval = *kap;
+   real a = *ksum / kaval;
+   real ap = *ksump / kapval;
+   if (kaval == 0)
+      a = 0;
+   if (kapval == 0)
+      ap = 0;
    for (int i = ITHREAD; i < n; i += STRIDE) {
       #pragma unroll
       for (int j = 0; j < 3; ++j) {
@@ -122,8 +127,13 @@ void pcg_p3(int n, const real* restrict ksum, const real* restrict ksump,
             real (*restrict conj)[3], real (*restrict conjp)[3],
             real (*restrict zrsd)[3], real (*restrict zrsdp)[3])
 {
-   real b = *ksum1 / *ksum;
-   real bp = *ksump1 / *ksump;
+   real kaval = *ksum, kapval = *ksump;
+   real b = *ksum1 / kaval;
+   real bp = *ksump1 / kapval;
+   if (kaval == 0)
+      b = 0;
+   if (kapval == 0)
+      bp = 0;
    for (int i = ITHREAD; i < n; i += STRIDE) {
       #pragma unroll
       for (int j = 0; j < 3; ++j) {
