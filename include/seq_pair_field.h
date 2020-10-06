@@ -148,4 +148,76 @@ void pair_ufield(real r2, real xr, real yr, real zr, real uscale, //
    coef = bn[2] * dot3(dr, uip);
    fkp += coef * dr - bn[1] * uip;
 }
+
+
+template <class ETYP>
+SEQ_CUDA
+void pair_ufield_v2(real r2, real xr, real yr, real zr, real uscale,
+                    real aewald, //
+                    real uindi0, real uindi1, real uindi2, real uinpi0,
+                    real uinpi1, real uinpi2, real pdi, real pti, //
+                    real uindk0, real uindk1, real uindk2, real uinpk0,
+                    real uinpk1, real uinpk2, real pdk, real ptk, //
+                    real& restrict fidx, real& restrict fidy,
+                    real& restrict fidz, real& restrict fipx,
+                    real& restrict fipy, real& restrict fipz,
+                    real& restrict fkdx, real& restrict fkdy,
+                    real& restrict fkdz, real& restrict fkpx,
+                    real& restrict fkpy, real& restrict fkpz)
+{
+   real r = REAL_SQRT(r2);
+   real invr1 = REAL_RECIP(r);
+   real rr2 = invr1 * invr1;
+
+   real scale3, scale5;
+   damp_thole2(r, pdi, pti, pdk, ptk, scale3, scale5);
+
+   real bn[3];
+   if CONSTEXPR (eq<ETYP, EWALD>())
+      damp_ewald<3>(bn, r, invr1, rr2, aewald);
+   real rr1 = invr1;
+   real rr3 = rr1 * rr2;
+   real rr5 = 3 * rr1 * rr2 * rr2;
+
+
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
+      bn[1] -= (1 - uscale * scale3) * rr3;
+      bn[2] -= (1 - uscale * scale5) * rr5;
+   } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
+      bn[1] = uscale * scale3 * rr3;
+      bn[2] = uscale * scale5 * rr5;
+   }
+
+
+   real coef;
+   real3 dr = make_real3(xr, yr, zr);
+   real3 uid = make_real3(uindi0, uindi1, uindi2);
+   real3 uip = make_real3(uinpi0, uinpi1, uinpi2);
+   real3 ukd = make_real3(uindk0, uindk1, uindk2);
+   real3 ukp = make_real3(uinpk0, uinpk1, uinpk2);
+
+   coef = bn[2] * dot3(dr, ukd);
+   real3 fid = coef * dr - bn[1] * ukd;
+   fidx += fid.x;
+   fidy += fid.y;
+   fidz += fid.z;
+
+   coef = bn[2] * dot3(dr, ukp);
+   real3 fip = coef * dr - bn[1] * ukp;
+   fipx += fip.x;
+   fipy += fip.y;
+   fipz += fip.z;
+
+   coef = bn[2] * dot3(dr, uid);
+   real3 fkd = coef * dr - bn[1] * uid;
+   fkdx += fkd.x;
+   fkdy += fkd.y;
+   fkdz += fkd.z;
+
+   coef = bn[2] * dot3(dr, uip);
+   real3 fkp = coef * dr - bn[1] * uip;
+   fkpx += fkp.x;
+   fkpy += fkp.y;
+   fkpz += fkp.z;
+}
 }
