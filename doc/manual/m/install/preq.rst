@@ -23,19 +23,19 @@ For Linux, we need:
 
 **FFTW Libraries**
 
-Two prebuilt FFTW libraries: `libfftw3` and `libfftw3_threads` are used by
-Tinker. Two more FFTW libraries, `libfftw3f`, `libfftw3f_threads` are
+Two prebuilt FFTW libraries: *libfftw3* and *libfftw3_threads* are used by
+Tinker. Two more FFTW libraries, *libfftw3f*, *libfftw3f_threads* are
 needed by the single precision CPU code.
 
 **More About Using PGI Compiler on the Clusters**
 
 I recently (in Jan. 2020) worked on a cluster that was still running
 Red Hat with gcc 4.8.5 by default without root privilege. Although several
-more recent gcc and PGI versions were available via the `module` program,
+more recent gcc and PGI versions were available via the *module* program,
 the most recent PGI compiler (2019) was still configured with gcc 4.8.5
 by default, which had a very bad support for C++11.
 Since I didn't have root privilege on the cluster, I had to use
-a custom `localrc` file by running the following command to
+a custom *localrc* file by running the following command to
 reconfigure PGI compiler with gcc 7.4.0:
 
 .. code-block:: bash
@@ -46,7 +46,7 @@ reconfigure PGI compiler with gcc 7.4.0:
    -g77 /usr/local/gcc-7.4.0/bin/gfortran \
    -o -net > /path/to/new_config
 
-then added `export PGI_LOCALRC=/path/to/new_config` to my bash resource file.
+then added *export PGI_LOCALRC=/path/to/new_config* to my bash resource file.
 
 **Other Nonmandatory Utilities**
 
@@ -59,7 +59,7 @@ then added `export PGI_LOCALRC=/path/to/new_config` to my bash resource file.
 
    - HTML version requires
      `sphinx-rtd-theme <https://pypi.org/project/sphinx-rtd-theme>`_
-     from `pip`.
+     from *pip*.
 
      .. code-block:: bash
 

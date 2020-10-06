@@ -49,7 +49,7 @@ NPT-XO (#2a-4a).
       thermostat nose-hoover
       barostat   nose-hoover
 
-   with the NPT option in the `dynamic` program.
+   with the NPT option in the *dynamic* program.
 
 .. _label-lpiston:
 
@@ -74,7 +74,7 @@ integrated in the Leapfrog framework.
       thermostat lpiston
       barostat   lpiston
 
-   with the NPT option in the `dynamic` program.
+   with the NPT option in the *dynamic* program.
 
 .. [#Martyna1996]
    Martyna, G. J.; Tuckerman, M. E.; Tobias, D. J. and Klein, M. L.
