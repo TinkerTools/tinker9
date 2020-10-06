@@ -62,7 +62,6 @@ CMakeLists.txt Location  /home/tinker9
 =======================  ===================
 
 .. code-block:: bash
-   :linenos:
 
    # use environmental variables
    CXX=pgc++ \

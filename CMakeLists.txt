@@ -66,7 +66,6 @@ cmake_minimum_required (VERSION 3.11)
 !!/ =======================  ===================
 !!/
 !!/ .. code-block:: bash
-!!/    :linenos:
 !!/
 !!/    # use environmental variables
 !!/    CXX=pgc++ \

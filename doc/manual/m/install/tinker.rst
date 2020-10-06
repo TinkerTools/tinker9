@@ -11,7 +11,6 @@ checkout Tinker from the `tinker` git submodule
 and copy Tinker to the build directory:
 
 .. code-block:: bash
-   :linenos:
 
    # create build directory
    mkdir -p tinker9/build
