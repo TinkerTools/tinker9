@@ -17,8 +17,7 @@ namespace tinker {
 template <class ETYP>
 __launch_bounds__(BLOCK_DIM) __global__
 void dfield_cu1(int n, TINKER_IMAGE_PARAMS, real off,
-                const unsigned* restrict minfo, const unsigned* restrict dpinfo,
-                const unsigned* restrict uinfo, int nexclude,
+                const unsigned* restrict mdpuinfo, int nexclude,
                 const int (*restrict exclude)[2],
                 const real (*restrict exclude_scale)[4], const real* restrict x,
                 const real* restrict y, const real* restrict z,
@@ -228,9 +227,7 @@ void dfield_cu1(int n, TINKER_IMAGE_PARAMS, real off,
       ptk = thole[k];
 
 
-      unsigned int minfo0 = minfo[iw * WARP_SIZE + ilane];
-      unsigned int dpinfo0 = dpinfo[iw * WARP_SIZE + ilane];
-      unsigned int uinfo0 = uinfo[iw * WARP_SIZE + ilane];
+      unsigned int mdpuinfo0 = mdpuinfo[iw * WARP_SIZE + ilane];
 
 
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -256,8 +253,7 @@ void dfield_cu1(int n, TINKER_IMAGE_PARAMS, real off,
 
 
          bool incl = iid < kid and kid < n;
-         incl = incl and (minfo0 & srcmask) == 0 and
-            (dpinfo0 & srcmask) == 0 and (uinfo0 & srcmask) == 0;
+         incl = incl and (mdpuinfo0 & srcmask) == 0;
          real scaleb = 1;
          real scalec = 1;
          real xr = xk - xi;
@@ -417,10 +413,9 @@ void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
 
    int ngrid = get_grid_size(BLOCK_DIM);
    dfield_cu1<EWALD><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
-      st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, st.si2.bit0, st.si3.bit0,
-      nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y, st.z, st.sorted,
-      st.nakpl, st.iakpl, st.niak, st.iak, st.lst, field, fieldp, rpole, thole,
-      pdamp, aewald);
+      st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nmdpuexclude, mdpuexclude,
+      mdpuexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
+      st.niak, st.iak, st.lst, field, fieldp, rpole, thole, pdamp, aewald);
 }
 
 
@@ -433,18 +428,16 @@ void dfield_nonewald_cu(real (*field)[3], real (*fieldp)[3])
    darray::zero(PROCEED_NEW_Q, n, field, fieldp);
    int ngrid = get_grid_size(BLOCK_DIM);
    dfield_cu1<NON_EWALD><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
-      st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, st.si2.bit0, st.si3.bit0,
-      nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y, st.z, st.sorted,
-      st.nakpl, st.iakpl, st.niak, st.iak, st.lst, field, fieldp, rpole, thole,
-      pdamp, 0);
+      st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nmdpuexclude, mdpuexclude,
+      mdpuexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
+      st.niak, st.iak, st.lst, field, fieldp, rpole, thole, pdamp, 0);
 }
 
 
 template <class ETYP>
 __launch_bounds__(BLOCK_DIM) __global__
 void ufield_cu1(int n, TINKER_IMAGE_PARAMS, real off,
-                const unsigned* restrict minfo, const unsigned* restrict dpinfo,
-                const unsigned* restrict uinfo, int nexclude,
+                const unsigned* restrict mdpuinfo, int nexclude,
                 const int (*restrict exclude)[2],
                 const real (*restrict exclude_scale)[4], const real* restrict x,
                 const real* restrict y, const real* restrict z,
@@ -628,9 +621,7 @@ void ufield_cu1(int n, TINKER_IMAGE_PARAMS, real off,
       ptk = thole[k];
 
 
-      unsigned int minfo0 = minfo[iw * WARP_SIZE + ilane];
-      unsigned int dpinfo0 = dpinfo[iw * WARP_SIZE + ilane];
-      unsigned int uinfo0 = uinfo[iw * WARP_SIZE + ilane];
+      unsigned int mdpuinfo0 = mdpuinfo[iw * WARP_SIZE + ilane];
 
 
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -652,8 +643,7 @@ void ufield_cu1(int n, TINKER_IMAGE_PARAMS, real off,
 
 
          bool incl = iid < kid and kid < n;
-         incl = incl and (minfo0 & srcmask) == 0 and
-            (dpinfo0 & srcmask) == 0 and (uinfo0 & srcmask) == 0;
+         incl = incl and (mdpuinfo0 & srcmask) == 0;
          real scaled = 1;
          real xr = xk - xi;
          real yr = yk - yi;
@@ -800,10 +790,9 @@ void ufield_ewald_real_cu(const real (*uind)[3], const real (*uinp)[3],
 
    int ngrid = get_grid_size(BLOCK_DIM);
    ufield_cu1<EWALD><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
-      st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, st.si2.bit0, st.si3.bit0,
-      nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y, st.z, st.sorted,
-      st.nakpl, st.iakpl, st.niak, st.iak, st.lst, uind, uinp, field, fieldp,
-      thole, pdamp, aewald);
+      st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nmdpuexclude, mdpuexclude,
+      mdpuexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
+      st.niak, st.iak, st.lst, uind, uinp, field, fieldp, thole, pdamp, aewald);
 }
 
 
@@ -817,9 +806,8 @@ void ufield_nonewald_cu(const real (*uind)[3], const real (*uinp)[3],
    darray::zero(PROCEED_NEW_Q, n, field, fieldp);
    int ngrid = get_grid_size(BLOCK_DIM);
    ufield_cu1<NON_EWALD><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
-      st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, st.si2.bit0, st.si3.bit0,
-      nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y, st.z, st.sorted,
-      st.nakpl, st.iakpl, st.niak, st.iak, st.lst, uind, uinp, field, fieldp,
-      thole, pdamp, 0);
+      st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nmdpuexclude, mdpuexclude,
+      mdpuexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
+      st.niak, st.iak, st.lst, uind, uinp, field, fieldp, thole, pdamp, 0);
 }
 }

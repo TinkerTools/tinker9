@@ -5,6 +5,7 @@
 #include "epolar.h"
 #include "evdw.h"
 #include "glob.chglj.h"
+#include "glob.mplar.h"
 #include "glob.nblist.h"
 #include "glob.spatial.h"
 #include "md.h"
@@ -424,8 +425,8 @@ void nblist_data(rc_op op)
          spatial_alloc(unt, n, cut, buf, x, y, z);
          if (mplpot::use_chgpen) {
          } else {
-            spatial_alloc(un2, n, cut, buf, x, y, z, 3, nmexclude, mexclude,
-                          ndpexclude, dpexclude, nuexclude, uexclude);
+            spatial_alloc(un2, n, cut, buf, x, y, z, 1, nmdpuexclude,
+                          mdpuexclude);
          }
       }
       if (op & rc_init) {
