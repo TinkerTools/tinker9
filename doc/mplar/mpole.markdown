@@ -63,7 +63,7 @@ $$
 So the traceless quadrupole tensor can be defined based on the equation above as
 
 $$
-\Theta_{ij} = \frac{1}{2} \int d\bm{s} \rho(\bm{s})(3s_i s_j - s^2\delta_{ij}).
+\Theta_{ij} = \frac{1}{2} \int d\vec{s} \rho(\vec{s})(3s_i s_j - s^2\delta_{ij}).
 $$
 We can easily confirm that $\sum_k^{x,y,z}(3s_k s_k-s^2) = 0$, therefore
 
