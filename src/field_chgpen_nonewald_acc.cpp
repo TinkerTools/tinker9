@@ -57,12 +57,13 @@ void dfield_chgpen_nonewald_acc(real (*field)[3])
             real3 fid = make_real3(0, 0, 0);
             real3 fkd = make_real3(0, 0, 0);
             pair_dfield_chgpen<NON_EWALD>( //
-               r2, xr, yr, zr, 1, ci, dix, diy, diz, corei, vali, alphai,
-               qixx, qixy, qixz, qiyy, qiyz, qizz, rpole[k][mpl_pme_0],
+               r2, xr, yr, zr, 1, ci, dix, diy, diz, corei, vali, alphai, qixx,
+               qixy, qixz, qiyy, qiyz, qizz, rpole[k][mpl_pme_0],
                rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
                pcore[k], pval[k], palpha[k], rpole[k][mpl_pme_xx],
                rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
-               rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], 0, fid, fkd);
+               rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], 0, 
+               fid.x, fid.y, fid.z, fkd.x, fkd.y, fkd.z);
 
             gxi += fid.x;
             gyi += fid.y;
@@ -114,12 +115,13 @@ void dfield_chgpen_nonewald_acc(real (*field)[3])
          real3 fid = make_real3(0, 0, 0);
          real3 fkd = make_real3(0, 0, 0);
          pair_dfield_chgpen<NON_EWALD>( //
-               r2, xr, yr, zr, dscale, ci, dix, diy, diz, corei, vali, alphai,
-               qixx, qixy, qixz, qiyy, qiyz, qizz, rpole[k][mpl_pme_0],
-               rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
-               pcore[k], pval[k], palpha[k], rpole[k][mpl_pme_xx],
-               rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
-               rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], 0, fid, fkd);
+            r2, xr, yr, zr, dscale, ci, dix, diy, diz, corei, vali, alphai,
+            qixx, qixy, qixz, qiyy, qiyz, qizz, rpole[k][mpl_pme_0],
+            rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
+            pcore[k], pval[k], palpha[k], rpole[k][mpl_pme_xx],
+            rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
+            rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], 0, 
+            fid.x, fid.y, fid.z, fkd.x, fkd.y, fkd.z);
 
          atomic_add(fid.x, &field[i][0]);
          atomic_add(fid.y, &field[i][1]);
@@ -135,7 +137,7 @@ void dfield_chgpen_nonewald_acc(real (*field)[3])
 // see also subroutine ufield0b in induce.f
 #define UFIELD_DPTRS x, y, z, pcore, pval, palpha, field, uind
 void ufield_chgpen_nonewald_acc(const real (*uind)[3], real (*field)[3])
-                         
+
 {
    darray::zero(PROCEED_NEW_Q, n, field);
 
@@ -173,10 +175,10 @@ void ufield_chgpen_nonewald_acc(const real (*uind)[3], real (*field)[3])
          if (r2 <= off2) {
             real3 fid = make_real3(0, 0, 0);
             real3 fkd = make_real3(0, 0, 0);
-            pair_ufield_chgpen<NON_EWALD>(r2, xr, yr, zr, 1, uindi0, uindi1, uindi2,
-                                      corei, vali, alphai, uind[k][0],
-                                      uind[k][1], uind[k][2], pcore[k], pval[k],
-                                      palpha[k], 0, fid, fkd);
+            pair_ufield_chgpen<NON_EWALD>(
+               r2, xr, yr, zr, 1, uindi0, uindi1, uindi2, corei, vali, alphai,
+               uind[k][0], uind[k][1], uind[k][2], pcore[k], pval[k], palpha[k],
+               0, fid.x, fid.y, fid.z, fkd.x, fkd.y, fkd.z);
 
             gxi += fid.x;
             gyi += fid.y;
@@ -186,7 +188,6 @@ void ufield_chgpen_nonewald_acc(const real (*uind)[3], real (*field)[3])
             atomic_add(fkd.x, &field[k][0]);
             atomic_add(fkd.y, &field[k][1]);
             atomic_add(fkd.z, &field[k][2]);
-
          }
       } // end for (int kk)
 
@@ -222,10 +223,10 @@ void ufield_chgpen_nonewald_acc(const real (*uind)[3], real (*field)[3])
       if (r2 <= off2) {
          real3 fid = make_real3(0, 0, 0);
          real3 fkd = make_real3(0, 0, 0);
-         pair_ufield_chgpen<NON_EWALD>(r2, xr, yr, zr, wscale, uindi0, uindi1, uindi2,
-                                      corei, vali, alphai, uind[k][0],
-                                      uind[k][1], uind[k][2], pcore[k], pval[k],
-                                      palpha[k], 0, fid, fkd);
+         pair_ufield_chgpen<NON_EWALD>(
+            r2, xr, yr, zr, wscale, uindi0, uindi1, uindi2, corei, vali, alphai,
+            uind[k][0], uind[k][1], uind[k][2], pcore[k], pval[k], palpha[k], 0,
+            fid.x, fid.y, fid.z, fkd.x, fkd.y, fkd.z);
 
          atomic_add(fid.x, &field[i][0]);
          atomic_add(fid.y, &field[i][1]);

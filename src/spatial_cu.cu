@@ -807,6 +807,7 @@ void spatial2_step1(int n, int pz, int2* restrict b2num, //
       AxesToTranspose(ixyz, pz);
       int id = TransposeToIndex(ixyz, pz);
       b2num[i] = make_int2(id, i); // B.1
+      //b2num[i] = make_int2(i, i);
    }
 
 

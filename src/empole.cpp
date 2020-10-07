@@ -4,12 +4,15 @@
 #include "potent.h"
 #include "tool/host_zero.h"
 #include <tinker/detail/sizes.hh>
+#include <tinker/detail/mplpot.hh>
 
 
 namespace tinker {
 void empole_data(rc_op op)
 {
    if (!use_potent(mpole_term))
+      return;
+   if (mplpot::use_chgpen)
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -25,6 +28,8 @@ void empole_data(rc_op op)
       demx = nullptr;
       demy = nullptr;
       demz = nullptr;
+      printf(" dealloc empole\n");
+
    }
 
    if (op & rc_alloc) {

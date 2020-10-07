@@ -21,7 +21,6 @@ void empole_chgpen_data(rc_op op)
    bool rc_a = rc_flag & calc::analyz;
 
    if (op & rc_dealloc) {
-      darray::deallocate(pcore, pval, palpha);
       if (rc_a) {
          buffer_deallocate(rc_flag, nem);
          buffer_deallocate(rc_flag, em, vir_em, demx, demy, demz);
@@ -33,7 +32,6 @@ void empole_chgpen_data(rc_op op)
       demy = nullptr;
       demz = nullptr;
 
-      printf(" dealloc empole_chgpen\n");
    }
 
    if (op & rc_alloc) {
@@ -44,8 +42,6 @@ void empole_chgpen_data(rc_op op)
       demy = gy_elec;
       demz = gz_elec;
 
-      darray::allocate(n, &pcore, &pval, &palpha);
-
       if (rc_a) {
          buffer_allocate(rc_flag, &nem);
          buffer_allocate(rc_flag, &em, &vir_em, &demx, &demy, &demz);
@@ -53,9 +49,6 @@ void empole_chgpen_data(rc_op op)
    }
 
    if (op & rc_init) {
-      darray::copyin(WAIT_NEW_Q, n, pcore, chgpen::pcore);
-      darray::copyin(WAIT_NEW_Q, n, pval, chgpen::pval);
-      darray::copyin(WAIT_NEW_Q, n, palpha, chgpen::palpha);
    }
 }
 

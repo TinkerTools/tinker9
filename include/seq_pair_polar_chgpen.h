@@ -52,7 +52,7 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
                        real ukx, real uky, real ukz, real f, real aewald,
                        real& restrict e, PairPolarGrad& restrict pgrad)
 {
-   
+
 
    real dir = dix * xr + diy * yr + diz * zr;
    real qix = qixx * xr + qixy * yr + qixz * zr;
@@ -67,7 +67,7 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
    real uir = uix * xr + uiy * yr + uiz * zr;
    real ukr = ukx * xr + uky * yr + ukz * zr;
 
-
+   // printf("dscale %5.2f wscale %5.2f\n", dscale, wscale);
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
    real rr2 = invr1 * invr1;
@@ -87,8 +87,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
    real dsr3i, dsr5i, dsr7i, dsr3k, dsr5k, dsr7k;
 
    if CONSTEXPR (eq<ETYP, EWALD>()) {
-
-
       if CONSTEXPR (!do_g) {
          damp_ewald<4>(bn, r, invr1, rr2, aewald);
          damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
@@ -111,12 +109,11 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
          damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
 
-      //printf("dscale %5.2f wscale %5.2f\n", dscale, wscale);
+      // printf("dscale %5.2f wscale %5.2f\n", dscale, wscale);
       bn[1] = rr3;
       bn[2] = rr5;
       bn[3] = rr7;
       bn[4] = rr9;
-
    }
    // if CONSTEXPR (use_chgflx) {
    //    poti = -ukr * dsr3i;
@@ -165,7 +162,8 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       real tuir = -dsr5i * ukr;
       real tukr = -dsr5k * uir;
 
-      // printf("%5.2f %5.2f %5.2f %16.8e %16.8e\n", alphai, alphak, r, bn[1], dmpi[1]);
+      // printf("%5.2f %16.8e %16.8e\n", r, bn[1], dmpi[1]);
+      // printf("%5.2f %14.6f %14.6f %14.6f\n", r,rr5ik,rr7ik,yr);
 
       pgrad.ufldi[0] = (tix3 + xr * tuir);
       pgrad.ufldi[1] = (tiy3 + yr * tuir);
@@ -219,11 +217,11 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       term4k = 2 * rr5k;
       term5k = 5 * rr7k * xr;
       term6k = rr9k * xr * xr;
-      real tixx = vali * term1i + corei * term1core + dix * term2i - dir * term3i -
-         qixx * term4i + qix * term5i - qir * term6i +
+      real tixx = vali * term1i + corei * term1core + dix * term2i -
+         dir * term3i - qixx * term4i + qix * term5i - qir * term6i +
          (qiy * yr + qiz * zr) * rr7i;
-      real tkxx = valk * term1k + corek * term1core - dkx * term2k + dkr * term3k -
-         qkxx * term4k + qkx * term5k - qkr * term6k +
+      real tkxx = valk * term1k + corek * term1core - dkx * term2k +
+         dkr * term3k - qkxx * term4k + qkx * term5k - qkr * term6k +
          (qky * yr + qkz * zr) * rr7k;
       term1i = rr3i - rr5i * yr * yr;
       term1core = rr3core - rr5core * yr * yr;
@@ -238,11 +236,11 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       term4k = 2 * rr5k;
       term5k = 5 * rr7k * yr;
       term6k = rr9k * yr * yr;
-      real tiyy = vali * term1i + corei * term1core + diy * term2i - dir * term3i -
-         qiyy * term4i + qiy * term5i - qir * term6i +
+      real tiyy = vali * term1i + corei * term1core + diy * term2i -
+         dir * term3i - qiyy * term4i + qiy * term5i - qir * term6i +
          (qix * xr + qiz * zr) * rr7i;
-      real tkyy = valk * term1k + corek * term1core - dky * term2k + dkr * term3k -
-         qkyy * term4k + qky * term5k - qkr * term6k +
+      real tkyy = valk * term1k + corek * term1core - dky * term2k +
+         dkr * term3k - qkyy * term4k + qky * term5k - qkr * term6k +
          (qkx * xr + qkz * zr) * rr7k;
       term1i = rr3i - rr5i * zr * zr;
       term1core = rr3core - rr5core * zr * zr;
@@ -257,11 +255,11 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       term4k = 2 * rr5k;
       term5k = 5 * rr7k * zr;
       term6k = rr9k * zr * zr;
-      real tizz = vali * term1i + corei * term1core + diz * term2i - dir * term3i -
-         qizz * term4i + qiz * term5i - qir * term6i +
+      real tizz = vali * term1i + corei * term1core + diz * term2i -
+         dir * term3i - qizz * term4i + qiz * term5i - qir * term6i +
          (qix * xr + qiy * yr) * rr7i;
-      real tkzz = valk * term1k + corek * term1core - dkz * term2k + dkr * term3k -
-         qkzz * term4k + qkz * term5k - qkr * term6k +
+      real tkzz = valk * term1k + corek * term1core - dkz * term2k +
+         dkr * term3k - qkzz * term4k + qkz * term5k - qkr * term6k +
          (qkx * xr + qky * yr) * rr7k;
       term2i = rr5i * xr;
       term1i = yr * term2i;
@@ -280,12 +278,12 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       term6k = 2 * rr7k * xr;
       term7k = 2 * rr7k * yr;
       term8k = yr * rr9k * xr;
-      real tixy = -vali * term1i - corei * term1core + diy * term2i + dix * term3i -
-         dir * term4i - qixy * term5i + qiy * term6i + qix * term7i -
-         qir * term8i;
-      real tkxy = -valk * term1k - corek * term1core - dky * term2k - dkx * term3k +
-         dkr * term4k - qkxy * term5k + qky * term6k + qkx * term7k -
-         qkr * term8k;
+      real tixy = -vali * term1i - corei * term1core + diy * term2i +
+         dix * term3i - dir * term4i - qixy * term5i + qiy * term6i +
+         qix * term7i - qir * term8i;
+      real tkxy = -valk * term1k - corek * term1core - dky * term2k -
+         dkx * term3k + dkr * term4k - qkxy * term5k + qky * term6k +
+         qkx * term7k - qkr * term8k;
 
       term2i = rr5i * xr;
       term1i = zr * term2i;
@@ -304,12 +302,12 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       term6k = 2 * rr7k * xr;
       term7k = 2 * rr7k * zr;
       term8k = zr * rr9k * xr;
-      real tixz = -vali * term1i - corei * term1core + diz * term2i + dix * term3i -
-         dir * term4i - qixz * term5i + qiz * term6i + qix * term7i -
-         qir * term8i;
-      real tkxz = -valk * term1k - corek * term1core - dkz * term2k - dkx * term3k +
-         dkr * term4k - qkxz * term5k + qkz * term6k + qkx * term7k -
-         qkr * term8k;
+      real tixz = -vali * term1i - corei * term1core + diz * term2i +
+         dix * term3i - dir * term4i - qixz * term5i + qiz * term6i +
+         qix * term7i - qir * term8i;
+      real tkxz = -valk * term1k - corek * term1core - dkz * term2k -
+         dkx * term3k + dkr * term4k - qkxz * term5k + qkz * term6k +
+         qkx * term7k - qkr * term8k;
 
       term2i = rr5i * yr;
       term1i = zr * term2i;
@@ -328,12 +326,12 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       term6k = 2 * rr7k * yr;
       term7k = 2 * rr7k * zr;
       term8k = zr * rr9k * yr;
-      real tiyz = -vali * term1i - corei * term1core + diz * term2i + diy * term3i -
-         dir * term4i - qiyz * term5i + qiz * term6i + qiy * term7i -
-         qir * term8i;
-      real tkyz = -valk * term1k - corek * term1core - dkz * term2k - dky * term3k +
-         dkr * term4k - qkyz * term5k + qkz * term6k + qky * term7k -
-         qkr * term8k;
+      real tiyz = -vali * term1i - corei * term1core + diz * term2i +
+         diy * term3i - dir * term4i - qiyz * term5i + qiz * term6i +
+         qiy * term7i - qir * term8i;
+      real tkyz = -valk * term1k - corek * term1core - dkz * term2k -
+         dky * term3k + dkr * term4k - qkyz * term5k + qkz * term6k +
+         qky * term7k - qkr * term8k;
 
 
       real depx, depy, depz;
@@ -345,12 +343,9 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       depz = tixz * ukx + tiyz * uky + tizz * ukz - tkxz * uix - tkyz * uiy -
          tkzz * uiz;
 
-
       pgrad.frcx += 2 * depx;
       pgrad.frcy += 2 * depy;
       pgrad.frcz += 2 * depz;
-
-      //printf("1o %5.2f %16.8e %16.8e %16.8e\n", r, pgrad.frcx, pgrad.frcy, pgrad.frcz);
 
       // get the dtau/dr terms used for mutual polarization force
 
@@ -389,14 +384,13 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       depz = tixz * ukx + tiyz * uky + tizz * ukz + tkxz * uix + tkyz * uiy +
          tkzz * uiz;
 
-      //printf("2o %5.2f %16.8e %16.8e %16.8e\n", r, depx, depy, depz);
-
+      
       pgrad.frcx += depx;
       pgrad.frcy += depy;
       pgrad.frcz += depz;
 
-
-      //printf("3o %5.2f %16.8e %16.8e %16.8e\n", r, pgrad.frcx, pgrad.frcy, pgrad.frcz);
+      //printf("3o %5.2f %16.8e %16.8e %16.8e\n", r, pgrad.frcx, pgrad.frcy,
+      //       pgrad.frcz);
    }
 }
 }

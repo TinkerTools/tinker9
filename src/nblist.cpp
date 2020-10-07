@@ -424,7 +424,12 @@ void nblist_data(rc_op op)
       auto& un2 = mspatial_v2_unit;
       if (op & rc_alloc) {
          spatial_alloc(unt, n, cut, buf, x, y, z);
-         spatial_alloc(un2, n, cut, buf, x, y, z, 1, nmexclude, mexclude);
+         // spatial_alloc(un2, n, cut, buf, x, y, z, 1, nmexclude, mexclude);
+         if (not mplpot::use_chgpen) {
+            spatial_alloc(un2, n, cut, buf, x, y, z, 1, nmexclude, mexclude);
+         } else {
+            spatial_alloc(un2, n, cut, buf, x, y, z, 1, nmdwexclude, mdwexclude);
+         }
       }
       if (op & rc_init) {
          spatial_build(unt);

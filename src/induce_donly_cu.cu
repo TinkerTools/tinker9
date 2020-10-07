@@ -24,7 +24,7 @@ void sparse_precond_cu3(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
       #pragma unroll
       for (int j = 0; j < 3; ++j) {
          zrsd[i][j] = poli * rsd[i][j];
-         // real test = zrsd[i][j];
+         // real test = rsd[i][j];
          // printf("udiag zrsd %14.6e\n", test);
       }
    }
@@ -182,8 +182,8 @@ void sparse_precond_cu3(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
 
 
 __launch_bounds__(BLOCK_DIM) __global__
-void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off,
-                        const unsigned* restrict uinfo, int nexclude,
+void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS,
+                        real off, const unsigned* restrict winfo, int nexclude,
                         const int (*restrict exclude)[2],
                         const real* restrict exclude_scale,
                         const real* restrict x, const real* restrict y,
@@ -259,8 +259,8 @@ void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off,
       polk = polarity[k];
 
 
+      int klane = threadIdx.x;
       constexpr bool incl = true;
-      const int srclane = ilane;
       real xr = xk - xi;
       real yr = yk - yi;
       real zr = zk - zi;
@@ -277,7 +277,6 @@ void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off,
          real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
 
          real c;
-         int klane = srclane + threadIdx.x - ilane;
          c = rr5 * dot3(xr, yr, zr, ukdx, ukdy, ukdz);
          shfidx[klane] += c * xr - rr3 * ukdx;
          shfidy[klane] += c * yr - rr3 * ukdy;
@@ -343,25 +342,26 @@ void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off,
       polk = polarity[k];
 
 
-      unsigned int uinfo0 = uinfo[iw * WARP_SIZE + ilane];
+      unsigned int winfo0 = winfo[iw * WARP_SIZE + ilane];
 
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
          int srcmask = 1 << srclane;
+         int klane = srclane + threadIdx.x - ilane;
          int iid = shiid;
-         real xi = shxi[srclane + threadIdx.x - ilane];
-         real yi = shyi[srclane + threadIdx.x - ilane];
-         real zi = shzi[srclane + threadIdx.x - ilane];
-         real uidx = shuidx[srclane + threadIdx.x - ilane];
-         real uidy = shuidy[srclane + threadIdx.x - ilane];
-         real uidz = shuidz[srclane + threadIdx.x - ilane];
-         real alphai = shalphai[srclane + threadIdx.x - ilane];
-         real poli = shpoli[srclane + threadIdx.x - ilane];
+         real xi = shxi[klane];
+         real yi = shyi[klane];
+         real zi = shzi[klane];
+         real uidx = shuidx[klane];
+         real uidy = shuidy[klane];
+         real uidz = shuidz[klane];
+         real alphai = shalphai[klane];
+         real poli = shpoli[klane];
 
 
          bool incl = iid < kid and kid < n;
-         incl = incl and (uinfo0 & srcmask) == 0;
+         incl = incl and (winfo0 & srcmask) == 0;
          real scalea = 1;
          real xr = xk - xi;
          real yr = yk - yi;
@@ -379,7 +379,6 @@ void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off,
             real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
 
             real c;
-            int klane = srclane + threadIdx.x - ilane;
             c = rr5 * dot3(xr, yr, zr, ukdx, ukdy, ukdz);
             shfidx[klane] += c * xr - rr3 * ukdx;
             shfidy[klane] += c * yr - rr3 * ukdy;
@@ -445,14 +444,15 @@ void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off,
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
-         real xi = shxi[srclane + threadIdx.x - ilane];
-         real yi = shyi[srclane + threadIdx.x - ilane];
-         real zi = shzi[srclane + threadIdx.x - ilane];
-         real uidx = shuidx[srclane + threadIdx.x - ilane];
-         real uidy = shuidy[srclane + threadIdx.x - ilane];
-         real uidz = shuidz[srclane + threadIdx.x - ilane];
-         real alphai = shalphai[srclane + threadIdx.x - ilane];
-         real poli = shpoli[srclane + threadIdx.x - ilane];
+         int klane = srclane + threadIdx.x - ilane;
+         real xi = shxi[klane];
+         real yi = shyi[klane];
+         real zi = shzi[klane];
+         real uidx = shuidx[klane];
+         real uidy = shuidy[klane];
+         real uidz = shuidz[klane];
+         real alphai = shalphai[klane];
+         real poli = shpoli[klane];
 
 
          bool incl = atomk > 0;
@@ -473,7 +473,6 @@ void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off,
             real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
 
             real c;
-            int klane = srclane + threadIdx.x - ilane;
             c = rr5 * dot3(xr, yr, zr, ukdx, ukdy, ukdz);
             shfidx[klane] += c * xr - rr3 * ukdx;
             shfidy[klane] += c * yr - rr3 * ukdy;
@@ -496,7 +495,9 @@ void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off,
       atomic_add(fkdz, &zrsd[k][2]);
    }
    // */
-} // generated by ComplexKernelBuilder (ck.py) 1.3
+
+
+} // generated by ComplexKernelBuilder (ck.py) 1.5.1
 
 
 void sparse_precond_apply_cu2(const real (*rsd)[3], real (*zrsd)[3])

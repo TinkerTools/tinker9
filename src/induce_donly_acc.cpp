@@ -5,13 +5,13 @@
 #include "glob.nblist.h"
 #include "image.h"
 #include "induce_donly.h"
+#include "mathfunc_lu.h"
+#include "mod.uprior.h"
 #include "seq_damp_chgpen.h"
 #include "tinker_rt.h"
 #include "tool/error.h"
 #include "tool/gpu_card.h"
 #include "tool/io_print.h"
-#include "mathfunc_lu.h"
-#include "mod.uprior.h"
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/polpcg.hh>
 #include <tinker/detail/polpot.hh>
@@ -25,21 +25,20 @@ void diag_precond2(const real (*rsd)[3], real (*zrsd)[3])
    for (int i = 0; i < n; ++i) {
       real poli = polarity[i];
       #pragma acc loop seq
-      for (int j = 0; j < 3; ++j) 
+      for (int j = 0; j < 3; ++j)
          zrsd[i][j] = poli * rsd[i][j];
    }
 }
 
 #define APPLY_DPTRS rsd, zrsd, x, y, z, polarity, palpha
-void sparse_precond_apply_acc2(const real (*rsd)[3], 
-                              real (*zrsd)[3])
+void sparse_precond_apply_acc2(const real (*rsd)[3], real (*zrsd)[3])
 {
    #pragma acc parallel loop independent async\
                deviceptr(polarity,rsd,zrsd)
    for (int i = 0; i < n; ++i) {
       real poli = udiag * polarity[i];
       #pragma acc loop seq
-      for (int j = 0; j < 3; ++j) 
+      for (int j = 0; j < 3; ++j)
          zrsd[i][j] = poli * rsd[i][j];
    }
 
@@ -78,7 +77,7 @@ void sparse_precond_apply_acc2(const real (*rsd)[3],
          real r = REAL_SQRT(r2);
 
          real dmpik[3];
-         damp_mut(dmpik,r,alphai,alphak);
+         damp_mut(dmpik, r, alphai, alphak);
          real scale3 = dmpik[1];
          real scale5 = dmpik[2];
 
@@ -103,7 +102,6 @@ void sparse_precond_apply_acc2(const real (*rsd)[3],
                     &zrsd[k][1]);
          atomic_add(m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2],
                     &zrsd[k][2]);
-
       }
 
       atomic_add(gxi, &zrsd[i][0]);
@@ -135,7 +133,7 @@ void sparse_precond_apply_acc2(const real (*rsd)[3],
       real r = REAL_SQRT(r2);
 
       real dmpik[3];
-      damp_mut(dmpik,r,alphai,alphak);
+      damp_mut(dmpik, r, alphai, alphak);
       real scale3 = wscale * dmpik[1];
       real scale5 = wscale * dmpik[2];
 
@@ -215,11 +213,11 @@ void induce_mutual_pcg_acc2(real (*uind)[3])
    for (int i = 0; i < n; ++i) {
       real poli = polarity[i];
       #pragma acc loop seq
-      for (int j = 0; j < 3; ++j) 
+      for (int j = 0; j < 3; ++j)
          udir[i][j] = poli * field[i][j];
    }
 
-   // if (dirguess) 
+   // if (dirguess)
    //    darray::copy(PROCEED_NEW_Q, n, uind, udir);
    // initial induced dipole
    if (predict) {
@@ -248,7 +246,7 @@ void induce_mutual_pcg_acc2(real (*uind)[3])
       for (int i = 0; i < n; ++i) {
          real pol = polarity_inv[i];
          #pragma acc loop seq
-         for (int j = 0; j < 3; ++j) 
+         for (int j = 0; j < 3; ++j)
             rsd[i][j] = (udir[i][j] - uind[i][j]) * pol + field[i][j];
       }
    } else if (dirguess) {
@@ -305,7 +303,7 @@ void induce_mutual_pcg_acc2(real (*uind)[3])
       for (int i = 0; i < n; ++i) {
          real poli_inv = polarity_inv[i];
          #pragma acc loop seq
-         for (int j = 0; j < 3; ++j) 
+         for (int j = 0; j < 3; ++j)
             vec[i][j] = poli_inv * conj[i][j] - field[i][j];
       }
 
@@ -351,7 +349,7 @@ void induce_mutual_pcg_acc2(real (*uind)[3])
                   deviceptr(conj,zrsd)
       for (int i = 0; i < n; ++i) {
          #pragma acc loop seq
-         for (int j = 0; j < 3; ++j) 
+         for (int j = 0; j < 3; ++j)
             conj[i][j] = zrsd[i][j] + b * conj[i][j];
       }
 
@@ -388,7 +386,7 @@ void induce_mutual_pcg_acc2(real (*uind)[3])
          for (int i = 0; i < n; ++i) {
             real term = pcgpeek * polarity[i];
             #pragma acc loop seq
-            for (int j = 0; j < 3; ++j) 
+            for (int j = 0; j < 3; ++j)
                uind[i][j] += term * rsd[i][j];
          }
       }
@@ -594,7 +592,7 @@ void ulspred_sum_acc2(real (*restrict uind)[3])
       }
 
 
-      symlusolve<real, 6>(udalt_lsqr_a, udalt_lsqr_b);
+      symlusolve<6, real>(udalt_lsqr_a, udalt_lsqr_b);
 
       real3_ptr pd0 = pd[0];
       real3_ptr pd1 = pd[1];

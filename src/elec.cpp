@@ -203,7 +203,7 @@ void mscale_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(m2scale - 1);
+                  excls.push_back(m2scale);
                }
             }
          }
@@ -217,7 +217,7 @@ void mscale_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(m3scale - 1);
+                  excls.push_back(m3scale);
                }
             }
          }
@@ -231,7 +231,7 @@ void mscale_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(m4scale - 1);
+                  excls.push_back(m4scale);
                }
             }
          }
@@ -245,7 +245,7 @@ void mscale_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(m5scale - 1);
+                  excls.push_back(m5scale);
                }
             }
          }
@@ -266,10 +266,10 @@ void mscale_data(rc_op op)
 void chgpen_data(rc_op op)
 {
    if (op & rc_dealloc) {
-      ndwexclude = 0;
-      darray::deallocate(dwexclude, dwexclude_scale);
-      ndexclude = 0;
-      darray::deallocate(dexclude, dexclude_scale);
+      // ndwexclude = 0;
+      // darray::deallocate(dwexclude, dwexclude_scale);
+      nmdwexclude = 0;
+      darray::deallocate(mdwexclude, mdwexclude_scale);
       nwexclude = 0;
       darray::deallocate(wexclude, wexclude_scale);
 
@@ -281,6 +281,7 @@ void chgpen_data(rc_op op)
 
    if (op & rc_alloc) {
       // see also attach.h
+      const int maxn12 = sizes::maxval;
       const int maxn13 = 3 * sizes::maxval;
       const int maxn14 = 9 * sizes::maxval;
       const int maxn15 = 27 * sizes::maxval;
@@ -289,130 +290,228 @@ void chgpen_data(rc_op op)
       const int maxp13 = polgrp::maxp13;
       const int maxp14 = polgrp::maxp14;
 
+      const int* couple_i12 = &couple::i12[0][0];
+      const int* couple_i13 = couple::i13;
+      const int* couple_i14 = couple::i14;
+      const int* couple_i15 = couple::i15;
 
-      struct dw_scale
+      // struct dw_scale
+      // {
+      //    real d, w;
+      // };
+
+      // auto insert_dw = [](std::map<std::pair<int, int>, dw_scale>& m, int i,
+      //                     int k, real val, char ch) {
+      //    std::pair<int, int> key;
+      //    key.first = i;
+      //    key.second = k;
+      //    auto it = m.find(key);
+      //    if (it == m.end()) {
+      //       dw_scale dw;
+      //       dw.d = 0;
+      //       dw.w = 0;
+      //       if (ch == 'd')
+      //          dw.d = val;
+      //       else if (ch == 'w')
+      //          dw.w = val;
+      //       m[key] = dw;
+      //    } else {
+      //       if (ch == 'd')
+      //          it->second.d = val;
+      //       else if (ch == 'w')
+      //          it->second.w = val;
+      //    }
+      // };
+
+      // std::map<std::pair<int, int>, dw_scale> ik_dw;
+
+      struct mdw
       {
-         real d, w;
+         real m, d, w;
       };
 
-      auto insert_dw = [](std::map<std::pair<int, int>, dw_scale>& m, int i,
-                          int k, real val, char ch) {
+      // mdw exlc list
+      auto insert_mdw = [](std::map<std::pair<int, int>, mdw>& a, int i,
+                            int k, real val, char ch) {
          std::pair<int, int> key;
          key.first = i;
          key.second = k;
-         auto it = m.find(key);
-         if (it == m.end()) {
-            dw_scale dw;
-            dw.d = 0;
-            dw.w = 0;
-            if (ch == 'd')
-               dw.d = val;
+         auto it = a.find(key);
+         if (it == a.end()) {
+            mdw x;
+            x.m = 1;
+            x.d = 1;
+            x.w = 1;
+            if (ch == 'm')
+               x.m = val;
+            else if (ch == 'd')
+               x.d = val;
             else if (ch == 'w')
-               dw.w = val;
-            m[key] = dw;
+               x.w = val;
+            a[key] = x;
          } else {
-            if (ch == 'd')
+            if (ch == 'm')
+               it->second.m = val;
+            else if (ch == 'd')
                it->second.d = val;
             else if (ch == 'w')
                it->second.w = val;
          }
       };
 
-      std::map<std::pair<int, int>, dw_scale> ik_dw;
+      std::map<std::pair<int, int>, mdw> ik_mdw;
 
-      std::vector<int> exclik;
-      std::vector<real> excls;
+      m2scale = mplpot::m2scale;
+      m3scale = mplpot::m3scale;
+      m4scale = mplpot::m4scale;
+      m5scale = mplpot::m5scale;
 
-      d1scale = polpot::d1scale;
-      d2scale = polpot::d2scale;
-      d3scale = polpot::d3scale;
-      d4scale = polpot::d4scale;
+      int nn, bask;
 
-
-      exclik.clear();
-      excls.clear();
-      for (int i = 0; i < n; ++i) {
-         int nn, bask;
-
-         if (d1scale != 1) {
-            nn = polgrp::np11[i];
-            bask = i * maxp11;
+      const bool usempole = use_potent(mpole_term);
+      for (int i = 0; usempole and i < n; ++i) {
+         if (m2scale != 1) {
+            nn = couple::n12[i];
             for (int j = 0; j < nn; ++j) {
-               int k = polgrp::ip11[bask + j] - 1;
-               if (k > i) {
-                  insert_dw(ik_dw, i, k, d1scale - 1, 'd');
-                  exclik.push_back(i);
-                  exclik.push_back(k);
-                  excls.push_back(d1scale - 1);
-               }
+               int k = couple::i12[i][j] - 1;
+               if (k > i) 
+                  insert_mdw(ik_mdw, i, k, m2scale, 'm');
             }
          }
 
-         if (d2scale != 1) {
-            nn = polgrp::np12[i];
-            bask = i * maxp12;
+         if (m3scale != 1) {
+            nn = couple::n13[i];
+            bask = i * maxn13;
             for (int j = 0; j < nn; ++j) {
-               int k = polgrp::ip12[bask + j] - 1;
-               if (k > i) {
-                  insert_dw(ik_dw, i, k, d2scale - 1, 'd');
-                  exclik.push_back(i);
-                  exclik.push_back(k);
-                  excls.push_back(d2scale - 1);
-               }
+               int k = couple::i13[bask + j] - 1;
+               if (k > i) 
+                  insert_mdw(ik_mdw, i, k, m3scale, 'm');
             }
          }
 
-         if (d3scale != 1) {
-            nn = polgrp::np13[i];
-            bask = i * maxp13;
+         if (m4scale != 1) {
+            nn = couple::n14[i];
+            bask = i * maxn14;
             for (int j = 0; j < nn; ++j) {
-               int k = polgrp::ip13[bask + j] - 1;
-               if (k > i) {
-                  insert_dw(ik_dw, i, k, d3scale - 1, 'd');
-                  exclik.push_back(i);
-                  exclik.push_back(k);
-                  excls.push_back(d3scale - 1);
-               }
+               int k = couple::i14[bask + j] - 1;
+               if (k > i) 
+                  insert_mdw(ik_mdw, i, k, m4scale, 'm');
             }
          }
 
-         if (d4scale != 1) {
-            nn = polgrp::np14[i];
-            bask = i * maxp14;
+         if (m5scale != 1) {
+            nn = couple::n15[i];
+            bask = i * maxn15;
             for (int j = 0; j < nn; ++j) {
-               int k = polgrp::ip14[bask + j] - 1;
-               if (k > i) {
-                  insert_dw(ik_dw, i, k, d4scale - 1, 'd');
-                  exclik.push_back(i);
-                  exclik.push_back(k);
-                  excls.push_back(d4scale - 1);
-               }
+               int k = couple::i15[bask + j] - 1;
+               if (k > i) 
+                  insert_mdw(ik_mdw, i, k, m5scale, 'm');
             }
          }
       }
 
-      ndexclude = excls.size();
-      darray::allocate(ndexclude, &dexclude, &dexclude_scale);
-      darray::copyin(WAIT_NEW_Q, ndexclude, dexclude, exclik.data());
-      darray::copyin(WAIT_NEW_Q, ndexclude, dexclude_scale, excls.data());
+      const real p2scale = polpot::p2scale;
+      const real p3scale = polpot::p3scale;
+      const real p4scale = polpot::p4scale;
+      const real p5scale = polpot::p5scale;
+      const real p2iscale = polpot::p2iscale;
+      const real p3iscale = polpot::p3iscale;
+      const real p4iscale = polpot::p4iscale;
+      const real p5iscale = polpot::p5iscale;
+
+
+      // setup dscale values based on polar-scale and polar-iscale
+      const bool usepolar = use_potent(polar_term);
+      for (int i = 0; usepolar and i < n; ++i) {
+         if (p2scale != 1 || p2iscale != 1) {
+            nn = couple::n12[i];
+            bask = i * maxn12;
+            for (int j = 0; j < nn; ++j) {
+               int k = couple_i12[bask + j];
+               real val = p2scale;
+               for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
+                  if (k == polgrp::ip11[i * maxp11 + jj])
+                     val = p2iscale;
+               }
+               k -= 1;
+               if (k > i) {
+                  insert_mdw(ik_mdw, i, k, val, 'd');
+               }
+            }
+         }
+
+         if (p3scale != 1 || p3iscale != 1) {
+            nn = couple::n13[i];
+            bask = i * maxn13;
+            for (int j = 0; j < nn; ++j) {
+               int k = couple_i13[bask + j];
+               real val = p3scale;
+               for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
+                  if (k == polgrp::ip11[i * maxp11 + jj])
+                     val = p3iscale;
+               }
+               k -= 1;
+               if (k > i) {
+                  insert_mdw(ik_mdw, i, k, val, 'd');
+               }
+            }
+         }
+
+         if (p4scale != 1 || p4iscale != 1) {
+            nn = couple::n14[i];
+            bask = i * maxn14;
+            for (int j = 0; j < nn; ++j) {
+               int k = couple_i14[bask + j];
+               real val = p4scale;
+               for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
+                  if (k == polgrp::ip11[i * maxp11 + jj])
+                     val = p4iscale;
+               }
+               k -= 1;
+               if (k > i) {
+                  insert_mdw(ik_mdw, i, k, val, 'd');
+               }
+            }
+         }
+
+         if (p5scale != 1 || p5iscale != 1) {
+            nn = couple::n15[i];
+            bask = i * maxn15;
+            for (int j = 0; j < nn; ++j) {
+               int k = couple_i15[bask + j];
+               real val = p5scale;
+               for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
+                  if (k == polgrp::ip11[i * maxp11 + jj])
+                     val = p5iscale;
+               }
+               k -= 1;
+               if (k > i) {
+                  insert_mdw(ik_mdw, i, k, val, 'd');
+               }
+            }
+         }
+      }
 
       w2scale = polpot::w2scale;
       w3scale = polpot::w3scale;
       w4scale = polpot::w4scale;
       w5scale = polpot::w5scale;
 
+      std::vector<int> exclik;
+      std::vector<real> excls;
+
       exclik.clear();
       excls.clear();
+      
 
-      for (int i = 0; i < n; ++i) {
-         int nn, bask;
-
+      for (int i = 0; usepolar and i < n; ++i) {
          if (w2scale != 1) {
             nn = couple::n12[i];
             for (int j = 0; j < nn; ++j) {
                int k = couple::i12[i][j] - 1;
                if (k > i) {
-                  insert_dw(ik_dw, i, k, w2scale - 1, 'w');
+                  // insert_dw(ik_dw, i, k, w2scale, 'w');
+                  insert_mdw(ik_mdw, i, k, w2scale, 'w');
                   exclik.push_back(i);
                   exclik.push_back(k);
                   excls.push_back(w2scale);
@@ -426,7 +525,8 @@ void chgpen_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = couple::i13[bask + j] - 1;
                if (k > i) {
-                  insert_dw(ik_dw, i, k, w3scale - 1, 'w');
+                  // insert_dw(ik_dw, i, k, w3scale, 'w');
+                  insert_mdw(ik_mdw, i, k, w3scale, 'w');
                   exclik.push_back(i);
                   exclik.push_back(k);
                   excls.push_back(w3scale);
@@ -440,7 +540,8 @@ void chgpen_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = couple::i14[bask + j] - 1;
                if (k > i) {
-                  insert_dw(ik_dw, i, k, w4scale - 1, 'w');
+                  // insert_dw(ik_dw, i, k, w4scale, 'w');
+                  insert_mdw(ik_mdw, i, k, w4scale, 'w');
                   exclik.push_back(i);
                   exclik.push_back(k);
                   excls.push_back(w4scale);
@@ -454,7 +555,8 @@ void chgpen_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = couple::i15[bask + j] - 1;
                if (k > i) {
-                  insert_dw(ik_dw, i, k, w5scale - 1, 'w');
+                  // insert_dw(ik_dw, i, k, w5scale, 'w');
+                  insert_mdw(ik_mdw, i, k, w5scale, 'w');
                   exclik.push_back(i);
                   exclik.push_back(k);
                   excls.push_back(w5scale);
@@ -469,19 +571,32 @@ void chgpen_data(rc_op op)
       darray::copyin(WAIT_NEW_Q, nwexclude, wexclude_scale, excls.data());
 
 
-      std::vector<int> dw_ik_vec;
-      std::vector<real> dw_sc_vec;
-      for (auto& it : ik_dw) {
-         dw_ik_vec.push_back(it.first.first);
-         dw_ik_vec.push_back(it.first.second);
-         dw_sc_vec.push_back(it.second.d);
-         dw_sc_vec.push_back(it.second.w);
+      // std::vector<int> dw_ik_vec;
+      // std::vector<real> dw_sc_vec;
+      // for (auto& it : ik_dw) {
+      //    dw_ik_vec.push_back(it.first.first);
+      //    dw_ik_vec.push_back(it.first.second);
+      //    dw_sc_vec.push_back(it.second.d);
+      //    dw_sc_vec.push_back(it.second.w);
+      // }
+      // ndwexclude = ik_dw.size();
+      // darray::allocate(ndwexclude, &dwexclude, &dwexclude_scale);
+      // darray::copyin(WAIT_NEW_Q, ndwexclude, dwexclude, dw_ik_vec.data());
+      // darray::copyin(WAIT_NEW_Q, ndwexclude, dwexclude_scale, dw_sc_vec.data());
+      std::vector<int> ik_vec;
+      std::vector<real> scal_vec;
+      for (auto& it : ik_mdw) {
+         ik_vec.push_back(it.first.first);
+         ik_vec.push_back(it.first.second);
+         scal_vec.push_back(it.second.m);
+         scal_vec.push_back(it.second.d);
+         scal_vec.push_back(it.second.w);
       }
-      ndwexclude = ik_dw.size();
-      darray::allocate(ndwexclude, &dwexclude, &dwexclude_scale);
-      darray::copyin(WAIT_NEW_Q, ndwexclude, dwexclude, dw_ik_vec.data());
-      darray::copyin(WAIT_NEW_Q, ndwexclude, dwexclude_scale, dw_sc_vec.data());
-
+      nmdwexclude = ik_mdw.size();
+      darray::allocate(nmdwexclude, &mdwexclude, &mdwexclude_scale);
+      darray::copyin(WAIT_NEW_Q, nmdwexclude, mdwexclude, ik_vec.data());
+      darray::copyin(WAIT_NEW_Q, nmdwexclude, mdwexclude_scale,
+                     scal_vec.data());
       darray::allocate(n, &pcore, &pval, &palpha);
    }
 

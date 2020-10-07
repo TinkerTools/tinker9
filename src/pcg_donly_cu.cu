@@ -90,11 +90,16 @@ void pcg_p4(int n, const real* restrict polarity_inv, real (*restrict vec)[3],
       for (int j = 0; j < 3; ++j) 
          vec[i][j] = poli_inv * conj[i][j] - field[i][j];
 
-      // real test1, test2, test3;
+      real test1, test2, test3;
       // test1 = field[i][0];
       // test2 = field[i][1];
       // test3 = field[i][2];
-      //printf("i %3d field %16.8e%16.8e%16.8e\n", i, test1, test2, test3);
+      test1 = vec[i][0];
+      test2 = vec[i][1];
+      test3 = vec[i][2];
+
+      // printf("vec %16.8e %16.8e %16.8e\n", test1, test2, test3);
+
    }
 }
 
@@ -106,19 +111,21 @@ void pcg_p5(int n, const real* restrict polarity, //
             const real (*restrict conj)[3], real (*restrict rsd)[3],
             const real (*restrict vec)[3])
 {
-   real a = *ksum / *ka;
+   real kaval = *ka;
+   real a = *ksum / kaval;
+   if (kaval == 0) a = 0;
    for (int i = ITHREAD; i < n; i += STRIDE) {
       #pragma unroll
       for (int j = 0; j < 3; ++j) {
          uind[i][j] += a * conj[i][j];
          rsd[i][j] -= a * vec[i][j];
       }
-      //real test = uind[0][0];
-      //real test2 = conj[0][0];
-      // printf("uind %16.8e a %16.8e conj %16.8e\n", test,a,test2);
-      // test = uind[1][0];
-      // test2 = conj[1][0];
-      // printf("uind2 %16.8e a %16.8e conj %16.8e\n", test,a,test2);
+      // real test = vec[i][0];
+      // real test2 = conj[i][0];
+      // printf("a %16.8e conj %16.8e vec %16.8e || %16.8e%16.8e \n", a,test2,test,*ksum,*ka);
+      // test = uind[i][1];
+      // test2 = conj[i][1];
+      // printf("uind2 %16.8e conj %16.8e\n", test,test2);
       // test = *ksum;
       // test2 = *ka;
       // printf("sum %16.8e a %16.8e \n", test,test2);
@@ -135,7 +142,9 @@ __global__
 void pcg_p6(int n, const real* restrict ksum, const real* restrict ksum1,
             real (*restrict conj)[3], real (*restrict zrsd)[3])
 {
-   real b = *ksum1 / *ksum;
+   real ksumval = *ksum;
+   real b = *ksum1 / ksumval;
+   if (ksumval == 0) b = 0;
    for (int i = ITHREAD; i < n; i += STRIDE) {
       #pragma unroll
       for (int j = 0; j < 3; ++j)
@@ -222,7 +231,7 @@ void induce_mutual_pcg_cu2(real (*uind)[3])
       darray::copy(PROCEED_NEW_Q, n, rsd, field);
    }
 
-   launch_k1s(nonblk, n, pcg_rsd1, n, polarity, field);
+   launch_k1s(nonblk, n, pcg_rsd1, n, polarity, rsd);
 
    // initial M r(0) and p(0)
    if (sparse_prec) {
@@ -231,6 +240,8 @@ void induce_mutual_pcg_cu2(real (*uind)[3])
    } else 
       diag_precond2(rsd, zrsd);
    
+   // launch_k1s(nonblk, n, pcg_rsd1, n, polarity, rsd);
+
    darray::copy(PROCEED_NEW_Q, n, conj, zrsd);
 
    // initial r(0) M r(0)
