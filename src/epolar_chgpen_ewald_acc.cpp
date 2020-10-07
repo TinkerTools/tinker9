@@ -173,15 +173,15 @@ void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
    } // end for (int i)
 
    #pragma acc parallel async\
-               deviceptr(POLAR_DPTRS,dwexclude,dwexclude_scale)
+               deviceptr(POLAR_DPTRS,mdwexclude,mdwexclude_scale)
    #pragma acc loop independent private(pgrad)
-   for (int ii = 0; ii < ndwexclude; ++ii) {
+   for (int ii = 0; ii < nmdwexclude; ++ii) {
       int offset = ii & (bufsize - 1);
 
-      int i = dwexclude[ii][0];
-      int k = dwexclude[ii][1];
-      real dscale = dwexclude_scale[ii][0];
-      real wscale = dwexclude_scale[ii][1];
+      int i = mdwexclude[ii][0];
+      int k = mdwexclude[ii][1];
+      real dscale = mdwexclude_scale[ii][0] - 1;
+      real wscale = mdwexclude_scale[ii][1] - 1;
 
       real xi = x[i];
       real yi = y[i];

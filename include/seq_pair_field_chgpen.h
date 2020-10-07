@@ -18,7 +18,9 @@ void pair_dfield_chgpen(real r2, real xr, real yr, real zr, real dscale,
                  real corek, real valk, real alphak,
                  real qkxx, real qkxy,
                  real qkxz, real qkyy, real qkyz, real qkzz, 
-                 real aewald, real3& restrict fid, real3& restrict fkd)
+                 real aewald, real& restrict fidx, real& restrict fidy, 
+                 real& restrict fidz, real& restrict fkdx,
+                 real& restrict fkdy, real& restrict fkdz)
 {
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
@@ -31,6 +33,7 @@ void pair_dfield_chgpen(real r2, real xr, real yr, real zr, real dscale,
 
    if CONSTEXPR (eq<ETYP, EWALD>())
       damp_ewald<4>(bn, r, invr1, rr2, aewald);
+   
    real rr1 = invr1;
    real rr3 = rr1 * rr2;
    real rr5 = 3 * rr1 * rr2 * rr2;
@@ -77,13 +80,17 @@ void pair_dfield_chgpen(real r2, real xr, real yr, real zr, real dscale,
    }
    c1 = -(rr3 * corek + rr3k * valk - rr5k * dkr + rr7k * qkr);
    inci = c1 * dr - rr3k * dkxyz + 2 * rr5k * qkxyz;
-   fid += inci;
+   fidx += inci.x;
+   fidy += inci.y;
+   fidz += inci.z;
 
    c1 = (rr3 * corei + rr3i * vali + rr5i * dir + rr7i * qir);
    inck = c1 * dr - rr3i * dixyz - 2 * rr5i * qixyz;
-   fkd += inck;
+   fkdx += inck.x;
+   fkdy += inck.y;
+   fkdz += inck.z;
 
-
+   //printf("dfid %5.2f %5.2f %16.8e %16.8e %16.8e\n", dscale, r, inci.x, inci.y, inci.z);
 }
 
 
@@ -94,7 +101,9 @@ void pair_ufield_chgpen(real r2, real xr, real yr, real zr, real wscale, //
                  real corei, real vali, real alphai,    //
                  real uindk0, real uindk1, real uindk2, //
                  real corek, real valk, real alphak,    //
-                 real aewald, real3& restrict fid, real3& restrict fkd)
+                 real aewald, real& restrict fidx, real& restrict fidy, 
+                 real& restrict fidz, real& restrict fkdx,
+                 real& restrict fkdy, real& restrict fkdz)
 {
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
@@ -107,13 +116,13 @@ void pair_ufield_chgpen(real r2, real xr, real yr, real zr, real wscale, //
    scale3 = wscale * dmpik[1];
    scale5 = wscale * dmpik[2];
 
-   if CONSTEXPR (eq<ETYP, EWALD>())
-      damp_ewald<3>(bn, r, invr1, rr2, aewald);
    real rr1 = invr1;
    real rr3 = rr1 * rr2;
    real rr5 = rr1 * rr2 * rr2;
 
    if CONSTEXPR (eq<ETYP, EWALD>()) {
+      damp_ewald<3>(bn, r, invr1, rr2, aewald);
+
       bn[1] *= -1;
       bn[1] += (1 - scale3) * rr3;
       bn[2] -=  3 * (1 - scale5) * rr5;
@@ -121,6 +130,8 @@ void pair_ufield_chgpen(real r2, real xr, real yr, real zr, real wscale, //
       bn[1] = -scale3 * rr3;
       bn[2] = 3 * scale5 * rr5;
    }
+
+
 
    real coef;
    real3 inci, inck;
@@ -130,18 +141,21 @@ void pair_ufield_chgpen(real r2, real xr, real yr, real zr, real wscale, //
 
    coef = bn[2] * dot3(dr, ukd);
    inci = coef * dr + bn[1] * ukd;
-   fid += inci;
+   fidx += inci.x;
+   fidy += inci.y;
+   fidz += inci.z;
 
    coef = bn[2] * dot3(dr, uid);
    inck = coef * dr + bn[1] * uid;
-   fkd += inck;   
+   fkdx += inck.x;
+   fkdy += inck.y;
+   fkdz += inck.z;   
 
-   //printf("%5.2f %5.2f %5.2f %16.8e %16.8e\n", alphai, alphak, r, inci.x, inci.y);
+   //printf("wscale %5.2f\n", wscale);
 
 
-   //printf("fid %5.2f %5.2f %5.2f %16.8e %16.8e %16.8e\n", alphai, alphak, r, uid.x, uid.y, uid.z);
-   //printf("fkd %5.2f %5.2f %5.2f %16.8e %16.8e %16.8e\n", alphai, alphak, r, ukd.x, ukd.y, ukd.z);
-
-   //printf("zrsd %14.6e %14.6e\n", fid.x, fkd.x);
+   //printf("ufid %5.2f %16.8e %16.8e %16.8e\n", r, inci.x, inci.y, inci.z);
+   //printf("uid  %5.2f %16.8e %16.8e\n", r, uid.x, uid.y);
+   //printf("zrsd %5.2f %16.8e %16.8e\n", r, fidy, fkdy);
 }
 }

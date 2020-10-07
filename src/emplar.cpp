@@ -19,15 +19,21 @@ void emplar_data(rc_op op)
    // implies must use cuda and PBC
    if (!(mlist_version() & NBL_SPATIAL))
       return;
-
+   if (mplpot::use_chgpen)
+      return;
 
    if (!use_potent(mpole_term) || !use_potent(polar_term))
       return;
 
 
    if (op & rc_dealloc) {
+      printf(" dealloc emplar 1\n");
+
       nmdpuexclude = 0;
       darray::deallocate(mdpuexclude, mdpuexclude_scale);
+
+      printf(" dealloc emplar\n");
+
    }
 
 

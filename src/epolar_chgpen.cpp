@@ -1,32 +1,37 @@
-#include "epolar.h"
 #include "epolar_chgpen.h"
 #include "empole_chgpen.h"
+#include "induce_donly.h"
 #include "md.h"
+#include "mod.uprior.h"
 #include "nblist.h"
 #include "pme.h"
 #include "potent.h"
 #include "tool/host_zero.h"
+#include "tool/io_fort_str.h"
 #include "tool/io_print.h"
 #include <map>
 #include <tinker/detail/chgpen.hh>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/inform.hh>
+#include <tinker/detail/mplpot.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/polgrp.hh>
 #include <tinker/detail/polpot.hh>
 #include <tinker/detail/sizes.hh>
 #include <tinker/detail/units.hh>
-
+#include <tinker/detail/uprior.hh>
 
 namespace tinker {
 void epolar_chgpen_data(rc_op op)
 {
    if (!use_potent(polar_term))
       return;
+   if (!mplpot::use_chgpen)
+      return;
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {     
+   if (op & rc_dealloc) {
       darray::deallocate(polarity, polarity_inv);
 
       if (rc_a) {
@@ -42,6 +47,23 @@ void epolar_chgpen_data(rc_op op)
 
       darray::deallocate(ufld, dufld);
       darray::deallocate(work11_, work12_, work13_, work14_, work15_);
+
+      if (polpred == UPred::ASPC) {
+         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04,
+                            udalt_05, udalt_06, udalt_07, udalt_08, udalt_09,
+                            udalt_10, udalt_11, udalt_12, udalt_13, udalt_14,
+                            udalt_15);
+      } else if (polpred == UPred::GEAR) {
+         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04,
+                            udalt_05);
+      } else if (polpred == UPred::LSQR) {
+         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04,
+                            udalt_05, udalt_06);
+         darray::deallocate(udalt_lsqr_a, udalt_lsqr_b);
+      }
+      polpred = UPred::NONE;
+      maxualt = 0;
+      nualt = 0;
    }
 
    if (op & rc_alloc) {
@@ -66,6 +88,48 @@ void epolar_chgpen_data(rc_op op)
       }
 
       darray::allocate(n, &work11_, &work12_, &work13_, &work14_, &work15_);
+      if (uprior::use_pred) {
+         fstr_view predstr = uprior::polpred;
+         if (predstr == "ASPC") {
+            polpred = UPred::ASPC;
+         } else if (predstr == "GEAR") {
+            polpred = UPred::GEAR;
+         } else {
+            polpred = UPred::LSQR;
+         }
+      } else {
+         polpred = UPred::NONE;
+      }
+      maxualt = 0;
+      nualt = 0;
+
+      if (polpred == UPred::ASPC) {
+         maxualt = 16;
+         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
+                          &udalt_04, &udalt_05, &udalt_06, &udalt_07, &udalt_08,
+                          &udalt_09, &udalt_10, &udalt_11, &udalt_12, &udalt_13,
+                          &udalt_14, &udalt_15);
+         darray::zero(PROCEED_NEW_Q, n, udalt_00, udalt_01, udalt_02, udalt_03,
+                      udalt_04, udalt_05, udalt_06, udalt_07, udalt_08,
+                      udalt_09, udalt_10, udalt_11, udalt_12, udalt_13,
+                      udalt_14, udalt_15);
+      } else if (polpred == UPred::GEAR) {
+         maxualt = 6;
+         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
+                          &udalt_04, &udalt_05);
+         darray::zero(PROCEED_NEW_Q, n, udalt_00, udalt_01, udalt_02, udalt_03,
+                      udalt_04, udalt_05);
+      } else if (polpred == UPred::LSQR) {
+         maxualt = 7;
+         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
+                          &udalt_04, &udalt_05, &udalt_06);
+         int lenb = maxualt - 1;
+         int lena = lenb * lenb; // lenb*(lenb+1)/2 should be plenty.
+         darray::allocate(lena, &udalt_lsqr_a);
+         darray::allocate(lenb, &udalt_lsqr_b);
+         darray::zero(PROCEED_NEW_Q, n, udalt_00, udalt_01, udalt_02, udalt_03,
+                      udalt_04, udalt_05, udalt_06);
+      }
    }
 
    if (op & rc_init) {
@@ -85,6 +149,7 @@ void epolar_chgpen_data(rc_op op)
 void induce2(real (*ud)[3])
 {
    induce_mutual_pcg2(ud);
+   ulspred_save2(ud);
 
    if (inform::debug && use_potent(polar_term)) {
       std::vector<double> uindbuf;
@@ -197,7 +262,7 @@ void epolar_chgpen_nonewald(int vers)
 
    induce2(uind);
    if (edot)
-      epolar0_dotprod(uind, udir);
+      epolar1_dotprod(uind, udir);
    if (vers != calc::v0) {
 #if TINKER_CUDART
       if (mlist_version() & NBL_SPATIAL)
@@ -226,7 +291,7 @@ void epolar_chgpen_ewald(int vers)
 
    induce2(uind);
    if (edot)
-      epolar0_dotprod(uind, udir);
+      epolar1_dotprod(uind, udir);
    if (vers != calc::v0) {
       epolar_chgpen_ewald_real(ver2);
       epolar_chgpen_ewald_recip_self(ver2);
@@ -248,6 +313,11 @@ void epolar_chgpen_ewald_real(int vers)
 void epolar_chgpen_ewald_recip_self(int vers)
 {
    epolar_chgpen_ewald_recip_self_acc(vers, uind);
+}
+
+void epolar1_dotprod(const real (*uind)[3], const real (*udirp)[3])
+{
+   return epolar1_dotprod_acc(uind, udirp);
 }
 
 }

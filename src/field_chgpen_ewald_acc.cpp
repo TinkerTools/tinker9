@@ -1,7 +1,6 @@
 #include "add.h"
 #include "empole_chgpen.h"
 #include "epolar_chgpen.h"
-#include "epolar.h"
 #include "glob.nblist.h"
 #include "image.h"
 #include "md.h"
@@ -92,12 +91,13 @@ void dfield_chgpen_ewald_real_acc(real (*field)[3])
             real3 fid = make_real3(0, 0, 0);
             real3 fkd = make_real3(0, 0, 0);
             pair_dfield_chgpen<EWALD>( //
-               r2, xr, yr, zr, 1, ci, dix, diy, diz, corei, vali, alphai,
-               qixx, qixy, qixz, qiyy, qiyz, qizz, rpole[k][mpl_pme_0],
+               r2, xr, yr, zr, 1, ci, dix, diy, diz, corei, vali, alphai, qixx,
+               qixy, qixz, qiyy, qiyz, qizz, rpole[k][mpl_pme_0],
                rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
                pcore[k], pval[k], palpha[k], rpole[k][mpl_pme_xx],
                rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
-               rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], aewald, fid, fkd);
+               rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], aewald, 
+               fid.x, fid.y, fid.z, fkd.x, fkd.y, fkd.z);
 
 
             gxi += fid.x;
@@ -155,7 +155,8 @@ void dfield_chgpen_ewald_real_acc(real (*field)[3])
             rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
             pcore[k], pval[k], palpha[k], rpole[k][mpl_pme_xx],
             rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
-            rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], 0, fid, fkd);
+            rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], 0, 
+            fid.x, fid.y, fid.z, fkd.x, fkd.y, fkd.z);
 
          atomic_add(fid.x, &field[i][0]);
          atomic_add(fid.y, &field[i][1]);
@@ -254,10 +255,10 @@ void ufield_chgpen_ewald_real_acc(const real (*uind)[3], real (*field)[3])
          if (r2 <= off2) {
             real3 fid = make_real3(0, 0, 0);
             real3 fkd = make_real3(0, 0, 0);
-            pair_ufield_chgpen<EWALD>(r2, xr, yr, zr, 1, uindi0, uindi1, uindi2,
-                                      corei, vali, alphai, uind[k][0],
-                                      uind[k][1], uind[k][2], pcore[k], pval[k],
-                                      palpha[k], aewald, fid, fkd);
+            pair_ufield_chgpen<EWALD>(
+               r2, xr, yr, zr, 1, uindi0, uindi1, uindi2, corei, vali, alphai,
+               uind[k][0], uind[k][1], uind[k][2], pcore[k], pval[k], palpha[k],
+               aewald, fid.x, fid.y, fid.z, fkd.x, fkd.y, fkd.z);
 
             gxi += fid.x;
             gyi += fid.y;
@@ -281,7 +282,7 @@ void ufield_chgpen_ewald_real_acc(const real (*uind)[3], real (*field)[3])
    for (int ii = 0; ii < nwexclude; ++ii) {
       int i = wexclude[ii][0];
       int k = wexclude[ii][1];
-      real wscale = wexclude_scale[ii];
+      real wscale = wexclude_scale[ii] - 1;
 
       real xi = x[i];
       real yi = y[i];
@@ -301,10 +302,10 @@ void ufield_chgpen_ewald_real_acc(const real (*uind)[3], real (*field)[3])
       if (r2 <= off2) {
          real3 fid = make_real3(0, 0, 0);
          real3 fkd = make_real3(0, 0, 0);
-         pair_ufield_chgpen<NON_EWALD>(r2, xr, yr, zr, wscale, uindi0, uindi1,
-                                       uindi2, corei, vali, alphai, uind[k][0],
-                                       uind[k][1], uind[k][2], pcore[k],
-                                       pval[k], palpha[k], 0, fid, fkd);
+         pair_ufield_chgpen<NON_EWALD>(
+            r2, xr, yr, zr, wscale, uindi0, uindi1, uindi2, corei, vali, alphai,
+            uind[k][0], uind[k][1], uind[k][2], pcore[k], pval[k], palpha[k], 0,
+            fid.x, fid.y, fid.z, fkd.x, fkd.y, fkd.z);
 
          atomic_add(fid.x, &field[i][0]);
          atomic_add(fid.y, &field[i][1]);

@@ -1,0 +1,85 @@
+KERNEL_NAME: sparse_precond_cu4
+TEMPLATE_PARAMS: __launch_bounds__(BLOCK_DIM)
+# CONSTEXPR_FLAGS:
+
+# COUNT:
+# ENERGY:
+# VIRIAL:
+# GRADIENT:
+
+# CUT_DISTANCE:
+OFF_DISTANCE:
+  - 'off'
+
+EXCLUDE_INFO:
+  - winfo
+
+SCALE_1X_TYPE: real_const_array
+
+EXTRA_PARAMS: |
+  , const real (*restrict rsd)[3]
+  , real (*restrict zrsd)[3]
+  , const real* restrict palpha
+  , const real* restrict polarity
+
+I_POSITION:
+  - def: shared real xi from:x
+  - def: shared real yi from:y
+  - def: shared real zi from:z
+K_POSITION:
+  - def: register real xk from:x
+  - def: register real yk from:y
+  - def: register real zk from:z
+
+I_FORCE:
+  - def: shared real fidx addto:zrsd,0
+  - def: shared real fidy addto:zrsd,1
+  - def: shared real fidz addto:zrsd,2
+K_FORCE:
+  - def: register real fkdx addto:zrsd,0
+  - def: register real fkdy addto:zrsd,1
+  - def: register real fkdz addto:zrsd,2
+
+I_VARIABLES:
+  - def: shared real uidx from:rsd,0
+  - def: shared real uidy from:rsd,1
+  - def: shared real uidz from:rsd,2
+  - def: shared real alphai from:palpha
+  - def: shared real poli from:polarity
+K_VARIABLES:
+  - def: register real ukdx from:rsd,0
+  - def: register real ukdy from:rsd,1
+  - def: register real ukdz from:rsd,2
+  - def: register real alphak from:palpha
+  - def: register real polk from:polarity
+
+# SCALED_PAIRWISE_INTERACTION:
+
+FULL_PAIRWISE_INTERACTION: |
+  real xr = xk - xi;
+  real yr = yk - yi;
+  real zr = zk - zi;
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    real r = REAL_SQRT(r2);
+    real dmpik[3];
+    damp_mut(dmpik,r,alphai,alphak);
+    real scale3 = scalea * dmpik[1];
+    real scale5 = scalea * dmpik[2];
+
+    real polik = poli * polk;
+    real rr3 = scale3 * polik * REAL_RECIP(r * r2);
+    real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
+
+    real c;
+    c = rr5 * dot3(xr,yr,zr,ukdx,ukdy,ukdz);
+    shfidx[klane] += c * xr - rr3 * ukdx;
+    shfidy[klane] += c * yr - rr3 * ukdy;
+    shfidz[klane] += c * zr - rr3 * ukdz;
+
+
+    c = rr5 * dot3(xr,yr,zr,uidx,uidy,uidz);
+    fkdx += c * xr - rr3 * uidx;
+    fkdy += c * yr - rr3 * uidy;
+    fkdz += c * zr - rr3 * uidz;
+  } // end if (include)

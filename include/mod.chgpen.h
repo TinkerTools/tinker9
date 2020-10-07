@@ -17,9 +17,13 @@ TINKER_EXTERN real w3scale;
 TINKER_EXTERN real w4scale;
 TINKER_EXTERN real w5scale;
 
-TINKER_EXTERN int ndwexclude;
-TINKER_EXTERN int (*dwexclude)[2];
-TINKER_EXTERN real (*dwexclude_scale)[2];
+// TINKER_EXTERN int ndwexclude;
+// TINKER_EXTERN int (*dwexclude)[2];
+// TINKER_EXTERN real (*dwexclude_scale)[2];
+
+TINKER_EXTERN int nmdwexclude;
+TINKER_EXTERN int (*mdwexclude)[2];
+TINKER_EXTERN real (*mdwexclude_scale)[3];
 
 
 TINKER_EXTERN int ndexclude;

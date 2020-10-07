@@ -1,0 +1,89 @@
+KERNEL_NAME: dfield_chgpen_cu1
+TEMPLATE_PARAMS: __launch_bounds__(BLOCK_DIM)
+# CONSTEXPR_FLAGS:
+
+# COUNT:
+# ENERGY:
+# VIRIAL:
+# GRADIENT:
+
+# CUT_DISTANCE:
+OFF_DISTANCE:
+  - 'off'
+
+EXCLUDE_INFO:
+  - dinfo
+
+SCALE_1X_TYPE: real3_const_array,1
+
+EXTRA_PARAMS: |
+  , real(*restrict field)[3]
+  , const real(*restrict rpole)[10]
+  , real *restrict pcore
+  , real *restrict pval
+  , const real* restrict palpha
+  , real aewald
+
+I_POSITION:
+  - def: shared real xi from:x
+  - def: shared real yi from:y
+  - def: shared real zi from:z
+K_POSITION:
+  - def: register real xk from:x
+  - def: register real yk from:y
+  - def: register real zk from:z
+
+I_FORCE:
+  - def: shared real fidx addto:field,0
+  - def: shared real fidy addto:field,1
+  - def: shared real fidz addto:field,2
+K_FORCE:
+  - def: register real fkdx addto:field,0
+  - def: register real fkdy addto:field,1
+  - def: register real fkdz addto:field,2
+
+I_VARIABLES:
+  - def: shared real ci from:rpole,mpl_pme_0
+  - def: shared real dix from:rpole,mpl_pme_x
+  - def: shared real diy from:rpole,mpl_pme_y
+  - def: shared real diz from:rpole,mpl_pme_z
+  - def: shared real qixx from:rpole,mpl_pme_xx
+  - def: shared real qixy from:rpole,mpl_pme_xy
+  - def: shared real qixz from:rpole,mpl_pme_xz
+  - def: shared real qiyy from:rpole,mpl_pme_yy
+  - def: shared real qiyz from:rpole,mpl_pme_yz
+  - def: shared real qizz from:rpole,mpl_pme_zz
+  - def: shared real corei from:pcore
+  - def: shared real alphai from:palpha
+  - def: shared real vali from:pval
+K_VARIABLES:
+  - def: register real ck from:rpole,mpl_pme_0
+  - def: register real dkx from:rpole,mpl_pme_x
+  - def: register real dky from:rpole,mpl_pme_y
+  - def: register real dkz from:rpole,mpl_pme_z
+  - def: register real qkxx from:rpole,mpl_pme_xx
+  - def: register real qkxy from:rpole,mpl_pme_xy
+  - def: register real qkxz from:rpole,mpl_pme_xz
+  - def: register real qkyy from:rpole,mpl_pme_yy
+  - def: register real qkyz from:rpole,mpl_pme_yz
+  - def: register real qkzz from:rpole,mpl_pme_zz
+  - def: register real corek from:pcore
+  - def: register real alphak from:palpha
+  - def: register real valk from:pval
+
+# SCALED_PAIRWISE_INTERACTION:
+
+FULL_PAIRWISE_INTERACTION: |
+  real xr = xk - xi;
+  real yr = yk - yi;
+  real zr = zk - zi;
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    pair_dfield_chgpen<ETYP>(
+      r2, xr, yr, zr, scaleb, ci, dix, diy, diz, corei, vali, alphai,
+        qixx, qixy, qixz, qiyy, qiyz, qizz, 
+        ck, dkx, dky, dkz, corek, valk, alphak,
+        qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, aewald, 
+        shfidx[klane], shfidy[klane], shfidz[klane], 
+        fkdx,fkdy, fkdz);
+  } // end if (include)

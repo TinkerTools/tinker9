@@ -13,10 +13,13 @@
 #include "spatial2.h"
 #include "switch.h"
 #include "thrust_cache.h"
+#include "mod.chgpen.h"
+#include "mod.mplpot.h"
 #include "tool/darray.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/limits.hh>
+#include <tinker/detail/mplpot.hh>
 #include <tinker/detail/neigh.hh>
 #include <tinker/detail/vdwpot.hh>
 
@@ -323,6 +326,7 @@ void nblist_data(rc_op op)
       cspatial_v2_unit.close();
       vspatial_v2_unit.close();
       uspatial_v2_unit.close();
+      mspatial_v2_unit.close();
       dspspatial_v2_unit.close();
 #endif
    }
@@ -417,11 +421,19 @@ void nblist_data(rc_op op)
    }
    if (u & NBL_SPATIAL) {
       auto& unt = mspatial_unit;
+      auto& un2 = mspatial_v2_unit;
       if (op & rc_alloc) {
          spatial_alloc(unt, n, cut, buf, x, y, z);
+         // spatial_alloc(un2, n, cut, buf, x, y, z, 1, nmexclude, mexclude);
+         if (not mplpot::use_chgpen) {
+            spatial_alloc(un2, n, cut, buf, x, y, z, 1, nmexclude, mexclude);
+         } else {
+            spatial_alloc(un2, n, cut, buf, x, y, z, 1, nmdwexclude, mdwexclude);
+         }
       }
       if (op & rc_init) {
          spatial_build(unt);
+         spatial_build(un2);
       }
    }
 
@@ -443,7 +455,11 @@ void nblist_data(rc_op op)
    if (u & NBL_SPATIAL) {
       auto& un2 = uspatial_v2_unit;
       if (op & rc_alloc) {
-         spatial_alloc(un2, n, cut, buf, x, y, z, 1, nuexclude, uexclude);
+         if (not mplpot::use_chgpen) {
+            spatial_alloc(un2, n, cut, buf, x, y, z, 1, nuexclude, uexclude);
+         } else {
+            spatial_alloc(un2, n, cut, buf, x, y, z, 1, nwexclude, wexclude);
+         }
       }
       if (op & rc_init) {
          spatial_build(un2);
@@ -538,13 +554,18 @@ void refresh_neighbors()
    }
    if (u & NBL_SPATIAL) {
       auto& unt = mspatial_unit;
+      auto& un2 = mspatial_v2_unit;
       if (rc_flag & calc::traj) {
          unt->x = x;
          unt->y = y;
          unt->z = z;
          unt.update_deviceptr(*unt, PROCEED_NEW_Q);
+         un2->x = x;
+         un2->y = y;
+         un2->z = z;
       }
       spatial_update(unt);
+      spatial_update(un2);
    }
 
 
