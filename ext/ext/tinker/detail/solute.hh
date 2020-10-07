@@ -24,8 +24,6 @@ extern double*& vsolv;
 extern double*& wace;
 extern double*& s2ace;
 extern double*& uace;
-extern char (&solvtyp)[8];
-extern char (&borntyp)[8];
 
 #ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(solute, doffset);
@@ -49,8 +47,6 @@ extern "C" double* TINKER_MOD(solute, vsolv);
 extern "C" double* TINKER_MOD(solute, wace);
 extern "C" double* TINKER_MOD(solute, s2ace);
 extern "C" double* TINKER_MOD(solute, uace);
-extern "C" char TINKER_MOD(solute, solvtyp)[8];
-extern "C" char TINKER_MOD(solute, borntyp)[8];
 
 double& doffset = TINKER_MOD(solute, doffset);
 double& p1 = TINKER_MOD(solute, p1);
@@ -73,7 +69,5 @@ double*& vsolv = TINKER_MOD(solute, vsolv);
 double*& wace = TINKER_MOD(solute, wace);
 double*& s2ace = TINKER_MOD(solute, s2ace);
 double*& uace = TINKER_MOD(solute, uace);
-char (&solvtyp)[8] = TINKER_MOD(solute, solvtyp);
-char (&borntyp)[8] = TINKER_MOD(solute, borntyp);
 #endif
 } }

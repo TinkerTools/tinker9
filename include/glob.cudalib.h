@@ -13,8 +13,7 @@ TINKER_EXTERN void* pinned_buf;
 TINKER_EXTERN void* dptr_buf;
 
 
-TINKER_EXTERN cudaStream_t stream2;
-TINKER_EXTERN cudaEvent_t stream2_begin_event;
-TINKER_EXTERN cudaEvent_t stream2_end_event;
+TINKER_EXTERN cudaStream_t pme_stream;
+TINKER_EXTERN cudaEvent_t pme_event_finish;
 }
 #endif

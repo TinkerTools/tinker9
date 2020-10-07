@@ -1,4 +1,3 @@
-
 #include "mdpq.h"
 #include "box.h"
 #include "mdcalc.h"
@@ -49,11 +48,7 @@ void n_data(rc_op op)
 
 #if TINKER_CUDART
       nelem_buffer = gpu_max_nparallel(idevice);
-      size_t nelem1 = pow2_ge(nelem_buffer);
-      size_t nelem2 = pow2_ge(n);
-      nelem_buffer = std::min(nelem1, nelem2);
-      int nelem3 = 4 * 1024;
-      nelem_buffer = std::max(nelem_buffer, nelem3);
+      nelem_buffer = pow2_ge(nelem_buffer);
 #elif TINKER_HOST
       nelem_buffer = 1;
 #endif
@@ -87,25 +82,23 @@ void copy_pos_to_xyz(bool check_nblist)
 }
 
 
-void propagate_xyz(time_prec dt, bool check_nblist)
+void propagate_pos(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz,
+                   const vel_prec* vlx, const vel_prec* vly,
+                   const vel_prec* vlz)
 {
-   propagate_pos_acc(dt);
-   copy_pos_to_xyz(check_nblist);
+   propagate_pos_acc(dt, qx, qy, qz, vlx, vly, vlz);
 }
 
 
 void propagate_pos(time_prec dt)
 {
-   propagate_pos_acc(dt);
+   propagate_pos_acc(dt, xpos, ypos, zpos, vx, vy, vz);
 }
 
 
-void propagate_xyz_axbv(double a, double b, bool check_nblist)
+void propagate_pos_axbv(double a, double b)
 {
    propagate_pos_axbv_acc(a, b);
-   copy_pos_to_xyz();
-   if (check_nblist)
-      refresh_neighbors();
 }
 
 
@@ -235,11 +228,28 @@ void xyz_data(rc_op op)
 mass_prec *mass, *massinv;
 vel_prec *vx, *vy, *vz;
 
+void propagate_velocity(time_prec dt, vel_prec* vlx, vel_prec* vly,
+                        vel_prec* vlz, const vel_prec* vlx0,
+                        const vel_prec* vly0, const vel_prec* vlz0,
+                        const grad_prec* grx, const grad_prec* gry,
+                        const grad_prec* grz)
+{
+   propagate_velocity_acc(dt, vlx, vly, vlz, vlx0, vly0, vlz0, grx, gry, grz);
+}
+
+
+void propagate_velocity(time_prec dt, vel_prec* vlx, vel_prec* vly,
+                        vel_prec* vlz, const grad_prec* grx,
+                        const grad_prec* gry, const grad_prec* grz)
+{
+   propagate_velocity_acc(dt, vlx, vly, vlz, grx, gry, grz);
+}
+
 
 void propagate_velocity(time_prec dt, const grad_prec* grx,
                         const grad_prec* gry, const grad_prec* grz)
 {
-   propagate_velocity_acc(dt, grx, gry, grz);
+   propagate_velocity(dt, vx, vy, vz, grx, gry, grz);
 }
 
 
@@ -293,5 +303,80 @@ void vel_data(rc_op op)
       darray::copyin2(PROCEED_NEW_Q, 1, 3, n, vy, moldyn::v);
       darray::copyin2(WAIT_NEW_Q, 2, 3, n, vz, moldyn::v);
    }
+}
+
+
+//====================================================================//
+
+
+void swap_velocity(vel_prec* vxnew, vel_prec* vynew, vel_prec* vznew,
+                   vel_prec* vxold, vel_prec* vyold, vel_prec* vzold)
+{
+   swap_velocity_acc(vxnew, vynew, vznew, vxold, vyold, vzold);
+}
+
+
+void propagate_pos_lp(time_prec dt, pos_prec* x_lp, pos_prec* y_lp,
+                      pos_prec* z_lp, const vel_prec* vx_lp,
+                      const vel_prec* vy_lp, const vel_prec* vz_lp,
+                      const pos_prec* xold_lp, const pos_prec* yold_lp,
+                      const pos_prec* zold_lp, double scale)
+{
+
+   propagate_pos_lp_acc(dt, x_lp, y_lp, z_lp, vx_lp, vy_lp, vz_lp, xold_lp,
+                        yold_lp, zold_lp, scale);
+}
+
+
+void propagate_pos_lp2(time_prec dt, const pos_prec* x_lp, const pos_prec* y_lp,
+                       const pos_prec* z_lp, pos_prec* xold_lp,
+                       pos_prec* yold_lp, pos_prec* zold_lp, double scale)
+{
+   propagate_pos_lp2_acc(dt, x_lp, y_lp, z_lp, xold_lp, yold_lp, zold_lp,
+                         scale);
+}
+
+
+void propagate_pos_lf(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz,
+                      const pos_prec* qxold, const pos_prec* qyold,
+                      const pos_prec* qzold, const vel_prec* vlx,
+                      const vel_prec* vly, const vel_prec* vlz)
+{
+   propagate_pos_lf_acc(dt, qx, qy, qz, qxold, qyold, qzold, vlx, vly, vlz);
+}
+
+
+void propagate_velocity_lp(vel_prec* vx_lp, vel_prec* vy_lp, vel_prec* vz_lp,
+                           const vel_prec* vxnew_lp, const vel_prec* vynew_lp,
+                           const vel_prec* vznew_lp, const vel_prec* vxold_lp,
+                           const vel_prec* vyold_lp, const vel_prec* vzold_lp,
+                           const double scale, energy_prec& eksum_new,
+                           energy_prec& eksum_old)
+{
+   propagate_velocity_lp_acc(vx_lp, vy_lp, vz_lp, vxnew_lp, vynew_lp, vznew_lp,
+                             vxold_lp, vyold_lp, vzold_lp, scale, eksum_new,
+                             eksum_old);
+}
+
+
+void propagate_velocity_lp2(time_prec dt, vel_prec* vx_lp, vel_prec* vy_lp,
+                            vel_prec* vz_lp, const pos_prec* x_lp,
+                            const pos_prec* y_lp, const pos_prec* z_lp,
+                            const pos_prec* xold_lp, const pos_prec* yold_lp,
+                            const pos_prec* zold_lp)
+{
+   propagate_velocity_lp2_acc(dt, vx_lp, vy_lp, vz_lp, x_lp, y_lp, z_lp,
+                              xold_lp, yold_lp, zold_lp);
+}
+
+
+void propagate_velocity_lp3(vel_prec* vx_lp, vel_prec* vy_lp, vel_prec* vz_lp,
+                            const vel_prec* vxnew_lp, const vel_prec* vynew_lp,
+                            const vel_prec* vznew_lp, const vel_prec* vxold_lp,
+                            const vel_prec* vyold_lp, const vel_prec* vzold_lp,
+                            energy_prec& eksum_new)
+{
+   propagate_velocity_lp3_acc(vx_lp, vy_lp, vz_lp, vxnew_lp, vynew_lp, vznew_lp,
+                              vxold_lp, vyold_lp, vzold_lp, eksum_new);
 }
 }

@@ -1,60 +1,22 @@
-Tinker GPU: Software Tools for Molecular Design
-===============================================
+Tinker9: Tools for Molecular Design with GPU Support
+====================================================
 [//]: # (Badges)
-[![Build Status](https://travis-ci.com/zhi-wang/tinker.gpu.svg?branch=master)](https://travis-ci.com/zhi-wang/tinker.gpu)
+[![Build Status](https://travis-ci.com/tinkertools/tinker9.svg?branch=master)](https://travis-ci.com/tinkertools/tinker9)
+[![Docs Status](https://readthedocs.org/projects/tinker9-manual/badge/?version=latest&style=flat)](https://tinker9-manual.readthedocs.io)
 
-
-## What I Am Up To
-### Build System
-CMake scripts have been added.
-
-**(Deprecated) Makefile**
-Please always run `make -f make/Makefile create_build` to create a build
-directory first in order to generate other files in the build directory
-required by `Makefile`.
-
-### GNU C++
-The version of `g++` cannot be overly recent, in case `nvcc` might fail to support.
-I also believe version `4.x` is outdated for some of the C++11 features used here.
-
-
-## Getting the Source Code
-If you don't plan to send us pull requests on Github, and you don't want to get
-the entire history of the source code, you can clone a few recent versions by
-```bash
-git clone --depth 5 https://github.com/zhi-wang/tinker.gpu
-```
-
-To get the full git history,
-```bash
-git clone https://github.com/zhi-wang/tinker.gpu
-```
-
-If you are planning to send us pull requests, please fork this project to your
-personal Github account.
-
-Directly downloading zip file from Github webpage would work but is not
-recommended because of the following cons:
-   * No Git commit information to keep track of issues or bugs.
-   * Tinker submodule would not work.
-   * Has to download zip file in the furture for new commits.
-
+## Introduction
+Tinker9 is a complete rewrite and extension of the canonical Tinker software, currently Tinker8. Tinker9 is implemented as C++ code with OpenACC directives and CUDA kernels providing excellent performance on GPUs. At present, Tinker9 builds against the object library from Tinker8, and provides GPU versions of the Tinker DYNAMIC, MINIMIZE, ANALYZE and TESTGRAD programs. Existing Tinker file formats and force field parameter files are fully compatible with Tinker9, and nearly all Tinker8 keywords function identically in Tinker9. Over time we plan to port much or all of the remaining portions of Fortran Tinker8 to the C++ Tinker9 code base.
 
 ## Installation Steps
    1. [Prerequisites](doc/manual/m/install/preq.rst)
-   2. [Build the Canonical Tinker (important to get THE REQUIRED version of Tinker)](doc/manual/m/install/tinker.rst)
-   3. [Build Tinker GPU with CMake](doc/manual/m/install/buildwithcmake.rst)
-      or [(Deprecated) Build Tinker GPU with Makefile](doc/manual/m/install/tinkergpu.rst)
-
-Links are only functional on GitHub.
+   2. [Build the Canonical Tinker (important to get the REQUIRED version)](doc/manual/m/install/tinker.rst)
+   3. [Build Tinker9 with CMake](doc/manual/m/install/buildwithcmake.rst)
 
 
-## Repository
-<a href="https://github.com/zhi-wang/tinker.gpu">
-   <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
-   alt="GitHub Repository" width="100"/>
-</a>
+## User's Manual (In Progress)
+The HTML version is hosted on [readthedocs](https://tinker9-manual.readthedocs.io)
+and the PDF version is accessible from the same webpage.
 
 
-For more information, visit the user manual
-hosted on [github.io](https://zhi-wang.github.io/tinker.gpu).
+## Style Guide
+Please read the [style guide](doc/style.md) before contributing to this code base.

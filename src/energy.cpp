@@ -43,7 +43,6 @@ void energy_data(rc_op op)
 
    rc_man elec42{elec_data, op};
    rc_man pme42{pme_data, op};
-   rc_man fft42{fft_data, op};
 
    rc_man echarge42{echarge_data, op};
    // Must follow evdw_data() and echarge_data().
@@ -61,6 +60,9 @@ void energy_data(rc_op op)
    rc_man echgtrn42{echgtrn_data, op};
    rc_man erepel42{erepel_data, op};
    rc_man edisp42{edisp_data, op};
+
+   // Must call fft_data() after all of the electrostatics routines.
+   rc_man fft42{fft_data, op};
 }
 
 
@@ -141,9 +143,6 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    ecore_val = false;
    ecore_vdw = false;
    ecore_ele = false;
-
-
-   stream2_begin();
 
 
    // non-bonded terms
@@ -231,7 +230,9 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          egeom(vers);
 
 
-   stream2_sync();
+#if TINKER_CUDART
+   echglj_cu_sync_pme_stream(use_pme_stream);
+#endif
 }
 
 

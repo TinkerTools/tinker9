@@ -349,7 +349,7 @@ void ufield_cu2(UFIELDPARAS, const real* restrict x, const real* restrict y,
         ii += blockDim.x * gridDim.x) {
       int i = uexclude[ii][0];
       int k = uexclude[ii][1];
-      real uscale = uexclude_scale[ii];
+      real uscale = uexclude_scale[ii] - 1;
 
 
       real xi = x[i];

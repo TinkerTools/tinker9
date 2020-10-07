@@ -1,20 +1,28 @@
 #pragma once
 #include "mathfunc.h"
 #include "seq_def.h"
+#include "seq_switch.h"
 
 
 namespace tinker {
 #pragma acc routine seq
-template <bool DO_G, class DTYP>
+template <bool DO_G, class DTYP, int SCALE>
 SEQ_CUDA
-void pair_disp(real r, real r2, real dspscale, real aewald, real ci, real ai,
-               real ck, real ak, e_prec& restrict e, e_prec& restrict de)
+void pair_disp(real r, real r2, real rr1, //
+               real dspscale, real aewald, real ci, real ai, real ck, real ak,
+               real edcut, real edoff, real& restrict e, real& restrict de)
 {
-   real rr1 = REAL_RECIP(r);
-   real rr2 = REAL_RECIP(r2);
+   if (r > edoff) {
+      e = 0;
+      if CONSTEXPR (DO_G) {
+         de = 0;
+      }
+      return;
+   }
+
+
+   real rr2 = rr1 * rr1;
    real rr6 = rr2 * rr2 * rr2;
-
-
    real di = ai * r;
    real dk = ak * r;
    real expi = REAL_EXP(-di);
@@ -50,23 +58,38 @@ void pair_disp(real r, real r2, real dspscale, real aewald, real ci, real ai,
    }
 
 
+   if CONSTEXPR (SCALE == 1)
+      dspscale = 1;
+
+
    if CONSTEXPR (eq<DTYP, DEWALD>()) {
       real ralpha2 = r2 * aewald * aewald;
       real term = 1 + ralpha2 + 0.5f * ralpha2 * ralpha2;
       real expterm = REAL_EXP(-ralpha2);
       real expa = expterm * term;
-      e = -ci * ck * rr6 * (expa + damp * damp - 1);
+      e = -ci * ck * rr6 * (dspscale * damp * damp + expa - 1);
       if CONSTEXPR (DO_G) {
          real rterm = -ralpha2 * ralpha2 * ralpha2 * rr1 * expterm;
-         de = -6 * e * rr1 - ci * ck * rr6 * (rterm + 2 * damp * ddamp);
+         de = -6 * e * rr1 -
+            ci * ck * rr6 * (rterm + 2 * dspscale * damp * ddamp);
       }
-   } else if CONSTEXPR (eq<DTYP, NON_EWALD>() || eq<DTYP, NON_EWALD_TAPER>()) {
+   } else if CONSTEXPR (eq<DTYP, NON_EWALD_TAPER>()) {
       e = -ci * ck * rr6;
       if CONSTEXPR (DO_G) {
          de = -6 * e * rr1;
-         de = dspscale * (de * damp * damp + 2 * e * damp * ddamp);
+         de = de * damp * damp + 2 * e * damp * ddamp;
       }
-      e = dspscale * (e * damp * damp);
+      e = e * damp * damp;
+      if (r > edcut) {
+         real taper, dtaper;
+         switch_taper5<DO_G>(r, edcut, edoff, taper, dtaper);
+         if CONSTEXPR (DO_G)
+            de = e * dtaper + de * taper;
+         e = e * taper;
+      }
+      e *= dspscale;
+      if CONSTEXPR (DO_G)
+         de *= dspscale;
    }
 }
 }

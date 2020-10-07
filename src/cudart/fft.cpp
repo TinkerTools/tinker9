@@ -1,6 +1,7 @@
 #include "fft.h"
 #include "edisp.h"
 #include "elec.h"
+#include "glob.accasync.h"
 #include "pme.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
@@ -56,7 +57,10 @@ void fft_data(rc_op op)
          int nslow = st.nfft3;
          // different from FFTW Fortran API
          check_rt(cufftPlan3d(&iplan, nslow, st.nfft2, nfast, typ));
-         check_rt(cufftSetStream(iplan, nonblk));
+         auto stream = nonblk;
+         if (use_pme_stream)
+            stream = pme_stream;
+         check_rt(cufftSetStream(iplan, stream));
          ++idx;
       }
    }

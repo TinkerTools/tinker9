@@ -30,6 +30,7 @@
 #include "mod.torpot.h"
 #include "mod.tors.h"
 #include "mod.tortor.h"
+#include "mod.uprior.h"
 #include "mod.urey.h"
 #include "mod.urypot.h"
 #include "mod.vdw.h"

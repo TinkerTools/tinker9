@@ -110,7 +110,7 @@ void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer,
    darray::allocate(st.nak * st.nxk, &st.xkf);
    darray::allocate(st.n, &st.update, &st.xold, &st.yold, &st.zold);
 
-   st.rebuild = 1;
+   st.fresh = 0;
    st.cutoff = cutoff;
    st.buffer = buffer;
    st.x = x;

@@ -3,7 +3,7 @@
 # Author: Andrew Abi-Mansour
 # DOC: 08/29/2019
 # Email: andrew.gaam [at] gmail [dot] com
-# Description: entry script for compiling/testing tinker.gpu
+# Description: entry script for compiling/testing tinker9
 # Usage example:
 #	export FFTW_DIR=/usr/lib/x86_64-linux-gnu
 #	export TINKER_DIR=../../tinker/source
@@ -24,7 +24,7 @@ function pre_install {
 
 	create_build
 	copy_files
-	echo "Installation files copied to build dir. Now run 'cd build' then 'make' to compile tinker.gpu."
+	echo "Installation files copied to build dir. Now run 'cd build' then 'make' to compile tinker9."
 }
 
 function install {

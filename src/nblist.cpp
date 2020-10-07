@@ -1,19 +1,24 @@
 #include "nblist.h"
+#include "echarge.h"
 #include "edisp.h"
 #include "elec.h"
 #include "epolar.h"
 #include "evdw.h"
+#include "glob.chglj.h"
 #include "glob.nblist.h"
 #include "glob.spatial.h"
 #include "md.h"
 #include "platform.h"
 #include "potent.h"
+#include "spatial2.h"
 #include "switch.h"
 #include "thrust_cache.h"
 #include "tool/darray.h"
 #include <tinker/detail/bound.hh>
+#include <tinker/detail/chgpot.hh>
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/neigh.hh>
+#include <tinker/detail/vdwpot.hh>
 
 
 namespace tinker {
@@ -245,20 +250,22 @@ static void spatial_alloc(SpatialUnit& unt, int n, real cut, real buf,
 
 
 // rc_init
-static void spatial_build(SpatialUnit unt)
+template <class SPT>
+static void spatial_build(SPT unt)
 {
    spatial_data_init_cu(unt);
 }
 
 
-static void spatial_update(SpatialUnit unt)
+template <class SPT>
+static void spatial_update(SPT unt)
 {
    extern int check_spatial(int, real, int*, const real*, const real*,
                             const real*, real*, real*, real*);
    auto& st = *unt;
-   st.rebuild = check_spatial(st.n, st.buffer, st.update, st.x, st.y, st.z,
+   int answer = check_spatial(st.n, st.buffer, st.update, st.x, st.y, st.z,
                               st.xold, st.yold, st.zold);
-   if (st.rebuild) {
+   if (answer) {
       spatial_data_init_cu(unt);
    } else {
       spatial_data_update_sorted(unt);
@@ -268,9 +275,28 @@ static void spatial_update(SpatialUnit unt)
 static void spatial_alloc(SpatialUnit&, int, real, real, const real*,
                           const real*, const real*)
 {}
-static void spatial_build(SpatialUnit) {}
-static void spatial_update(SpatialUnit) {}
+template <class SPT>
+static void spatial_build(SPT)
+{}
+template <class SPT>
+static void spatial_update(SPT)
+{}
 #endif
+static void spatial_alloc( //
+   Spatial2Unit& unt, int n, real cut, real buf, const real* x, const real* y,
+   const real* z, int nstype,            //
+   int ns1 = 0, int (*js1)[2] = nullptr, //
+   int ns2 = 0, int (*js2)[2] = nullptr, //
+   int ns3 = 0, int (*js3)[2] = nullptr, //
+   int ns4 = 0, int (*js4)[2] = nullptr)
+{
+#if TINKER_CUDART
+   spatial2_data_alloc(unt, n, cut, buf, x, y, z, nstype, //
+                       ns1, js1, ns2, js2, ns3, js3, ns4, js4);
+   alloc_thrust_cache = true;
+#else
+#endif
+}
 
 
 //====================================================================//
@@ -290,11 +316,14 @@ void nblist_data(rc_op op)
 #if TINKER_CUDART
       SpatialUnit::clear();
       thrust_cache_dealloc();
-      vspatial_unit.close();
-      cspatial_unit.close();
       mspatial_unit.close();
-      uspatial_unit.close();
-      dspspatial_unit.close();
+
+
+      Spatial2Unit::clear();
+      cspatial_v2_unit.close();
+      vspatial_v2_unit.close();
+      uspatial_v2_unit.close();
+      dspspatial_v2_unit.close();
 #endif
    }
 
@@ -328,13 +357,14 @@ void nblist_data(rc_op op)
       }
    }
    if (u & NBL_SPATIAL) {
-      auto& unt = vspatial_unit;
+      auto& un2 = vspatial_v2_unit;
       if (op & rc_alloc) {
-         spatial_alloc(unt, n, cut, buf, xred, yred, zred);
+         spatial_alloc(un2, n, cut, buf, xred, yred, zred, 1, nvexclude,
+                       vexclude);
       }
       if (op & rc_init) {
          ehal_reduce_xyz();
-         spatial_build(unt);
+         spatial_build(un2);
       }
    }
 
@@ -361,12 +391,13 @@ void nblist_data(rc_op op)
       }
    }
    if (u & NBL_SPATIAL) {
-      auto& unt = cspatial_unit;
+      auto& un2 = cspatial_v2_unit;
       if (op & rc_alloc) {
-         spatial_alloc(unt, n, cut, buf, x, y, z);
+         spatial_alloc(un2, n, cut, buf, x, y, z, 2, //
+                       ncexclude, cexclude, nvexclude, vexclude);
       }
       if (op & rc_init) {
-         spatial_build(unt);
+         spatial_build(un2);
       }
    }
 
@@ -410,12 +441,12 @@ void nblist_data(rc_op op)
       }
    }
    if (u & NBL_SPATIAL) {
-      auto& unt = uspatial_unit;
+      auto& un2 = uspatial_v2_unit;
       if (op & rc_alloc) {
-         spatial_alloc(unt, n, cut, buf, x, y, z);
+         spatial_alloc(un2, n, cut, buf, x, y, z, 1, nuexclude, uexclude);
       }
       if (op & rc_init) {
-         spatial_build(unt);
+         spatial_build(un2);
       }
    }
 
@@ -434,12 +465,12 @@ void nblist_data(rc_op op)
       }
    }
    if (u & NBL_SPATIAL) {
-      auto& unt = dspspatial_unit;
+      auto& un2 = dspspatial_v2_unit;
       if (op & rc_alloc) {
-         spatial_alloc(unt, n, cut, buf, x, y, z);
+         spatial_alloc(un2, n, cut, buf, x, y, z, 1, ndspexclude, dspexclude);
       }
       if (op & rc_init) {
-         spatial_build(unt);
+         spatial_build(un2);
       }
    }
 
@@ -464,9 +495,9 @@ void refresh_neighbors()
       nblist_update_acc(unt);
    }
    if (u & NBL_SPATIAL) {
-      auto& unt = vspatial_unit;
+      auto& un2 = vspatial_v2_unit;
       ehal_reduce_xyz();
-      spatial_update(unt);
+      spatial_update(un2);
    }
 
 
@@ -483,14 +514,13 @@ void refresh_neighbors()
       nblist_update_acc(unt);
    }
    if (u & NBL_SPATIAL) {
-      auto& unt = cspatial_unit;
+      auto& un2 = cspatial_v2_unit;
       if (rc_flag & calc::traj) {
-         unt->x = x;
-         unt->y = y;
-         unt->z = z;
-         unt.update_deviceptr(*unt, PROCEED_NEW_Q);
+         un2->x = x;
+         un2->y = y;
+         un2->z = z;
       }
-      spatial_update(unt);
+      spatial_update(un2);
    }
 
 
@@ -531,14 +561,13 @@ void refresh_neighbors()
       nblist_update_acc(unt);
    }
    if (u & NBL_SPATIAL) {
-      auto& unt = uspatial_unit;
+      auto& un2 = uspatial_v2_unit;
       if (rc_flag & calc::traj) {
-         unt->x = x;
-         unt->y = y;
-         unt->z = z;
-         unt.update_deviceptr(*unt, PROCEED_NEW_Q);
+         un2->x = x;
+         un2->y = y;
+         un2->z = z;
       }
-      spatial_update(unt);
+      spatial_update(un2);
    }
 
 
@@ -555,14 +584,13 @@ void refresh_neighbors()
       nblist_update_acc(unt);
    }
    if (u & NBL_SPATIAL) {
-      auto& unt = dspspatial_unit;
+      auto& un2 = dspspatial_v2_unit;
       if (rc_flag & calc::traj) {
-         unt->x = x;
-         unt->y = y;
-         unt->z = z;
-         unt.update_deviceptr(*unt, PROCEED_NEW_Q);
+         un2->x = x;
+         un2->y = y;
+         un2->z = z;
       }
-      spatial_update(unt);
+      spatial_update(un2);
    }
 }
 }

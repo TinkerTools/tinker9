@@ -70,7 +70,7 @@ void echarge_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excl.push_back(c2scale - 1);
+                  excl.push_back(c2scale);
                }
             }
          }
@@ -83,7 +83,7 @@ void echarge_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excl.push_back(c3scale - 1);
+                  excl.push_back(c3scale);
                }
             }
          }
@@ -96,7 +96,7 @@ void echarge_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excl.push_back(c4scale - 1);
+                  excl.push_back(c4scale);
                }
             }
          }
@@ -109,7 +109,7 @@ void echarge_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excl.push_back(c5scale - 1);
+                  excl.push_back(c5scale);
                }
             }
          }

@@ -10,6 +10,7 @@
 #include "mdpt.h"
 #include "mdsave.h"
 #include "nose.h"
+#include "random.h"
 #include "rattle.h"
 #include "tool/darray.h"
 #include "tool/io_fort_str.h"
@@ -48,6 +49,13 @@ void (*intg)(int, time_prec);
 void propagate(int nsteps, time_prec dt_ps)
 {
    for (int istep = 1; istep <= nsteps; ++istep) {
+      do_pmonte = false;
+      if (barostat == MONTE_CARLO_BAROSTAT) {
+         double rdm = random<double>();
+         if (rdm < 1.0 / bath::voltrial)
+            do_pmonte = true;
+      }
+
       TINKER_LOG("Integrating Step %10d", istep);
       intg(istep, dt_ps);
 
@@ -69,6 +77,12 @@ void propagate(int nsteps, time_prec dt_ps)
 void integrate_data(rc_op op)
 {
    if (op & rc_dealloc) {
+      if (intg == lpiston_npt) {
+         darray::deallocate(leapfrog_x, leapfrog_y, leapfrog_z);
+         darray::deallocate(leapfrog_vx, leapfrog_vy, leapfrog_vz,
+                            leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
+      }
+
       if (intg == respa_fast_slow)
          darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
 
@@ -91,6 +105,8 @@ void integrate_data(rc_op op)
             thermostat = ANDERSEN_THERMOSTAT;
          else if (th == "NOSE-HOOVER")
             thermostat = NOSE_HOOVER_CHAIN_THERMOSTAT;
+         else if (th == "LPISTON")
+            thermostat = LANGEVIN_PISTON_THERMOSTAT;
          else
             assert(false);
       } else {
@@ -105,6 +121,8 @@ void integrate_data(rc_op op)
             barostat = BUSSI_BAROSTAT;
          else if (br == "NOSE-HOOVER")
             barostat = NOSE_HOOVER_CHAIN_BAROSTAT;
+         else if (br == "LPISTON")
+            barostat = LANGEVIN_PISTON_BAROSTAT;
          else if (br == "MONTECARLO") {
             barostat = MONTE_CARLO_BAROSTAT;
             darray::allocate(n, &x_pmonte, &y_pmonte, &z_pmonte);
@@ -115,23 +133,45 @@ void integrate_data(rc_op op)
          barostat = NONE_BAROSTAT;
       }
 
-      // Only gradient is necessary to start a simulation.
       fstr_view itg = mdstuf::integrate;
       intg = nullptr;
       if (itg == "VERLET") {
          intg = velocity_verlet;
+      } else if (itg == "LPISTON") {
+         intg = lpiston_npt;
+         thermostat = LANGEVIN_PISTON_THERMOSTAT;
+         barostat = LANGEVIN_PISTON_BAROSTAT;
+      } else if (itg == "NOSE-HOOVER") {
+         intg = nhc_npt;
+         thermostat = NOSE_HOOVER_CHAIN_THERMOSTAT;
+         barostat = NOSE_HOOVER_CHAIN_BAROSTAT;
+      } else if (itg == "RESPA") {
+         intg = respa_fast_slow;
+      }
+
+      if (thermostat == LANGEVIN_PISTON_THERMOSTAT and
+          barostat == LANGEVIN_PISTON_BAROSTAT) {
+         intg = lpiston_npt;
+      } else if (thermostat == NOSE_HOOVER_CHAIN_THERMOSTAT and
+                 barostat == NOSE_HOOVER_CHAIN_BAROSTAT) {
+         intg = nhc_npt;
+      }
+
+      // Only gradient is necessary to start a simulation.
+      if (intg == velocity_verlet) {
          // need full gradient to start/restart the simulation
          energy(calc::grad);
-      } else if (itg == "STOCHASTIC") {
-      } else if (itg == "BAOAB") {
-      } else if (itg == "BUSSI") {
-      } else if (itg == "NOSE-HOOVER") {
+      } else if (intg == lpiston_npt) {
+         darray::allocate(n, &leapfrog_x, &leapfrog_y, &leapfrog_z);
+         darray::allocate(n, &leapfrog_vx, &leapfrog_vy, &leapfrog_vz,
+                          &leapfrog_vxold, &leapfrog_vyold, &leapfrog_vzold);
+         energy(calc::v1);
+      } else if (intg == nhc_npt) {
          if (use_rattle()) {
             TINKER_THROW(
                "Constraints under NH-NPT require the ROLL algorithm.");
          }
          double ekt = units::gasconst * bath::kelvin;
-         intg = nhc_npt;
          vbar = 0;
          qbar = (mdstuf::nfree + 1) * ekt * bath::taupres * bath::taupres;
          gbar = 0;
@@ -142,10 +182,7 @@ void integrate_data(rc_op op)
          }
          qnh[0] *= mdstuf::nfree;
          energy(calc::grad);
-      } else if (itg == "GHMC") {
-      } else if (itg == "RIGIDBODY") {
-      } else if (itg == "RESPA") {
-         intg = respa_fast_slow;
+      } else if (intg == respa_fast_slow) {
          // need fast and slow gradients to start/restart the simulation
          darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
 
@@ -160,11 +197,10 @@ void integrate_data(rc_op op)
          darray::copy(PROCEED_NEW_Q, n, gx2, gx);
          darray::copy(PROCEED_NEW_Q, n, gy2, gy);
          darray::copy(PROCEED_NEW_Q, n, gz2, gz);
-      } else {
+      } else if (intg == nullptr) {
          // beeman
          TINKER_THROW("Beeman integrator is not available.");
       }
-      assert(intg);
    }
 }
 }

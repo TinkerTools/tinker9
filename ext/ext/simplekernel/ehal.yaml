@@ -1,0 +1,67 @@
+TPARAMS: class Ver
+
+KERNEL_NAME: ehal_cu1
+
+GLOBAL_VARIABLES:
+  gvar1:
+    type: int
+    param_type: int
+    name: njvdw
+  gvar2:
+    type: real
+    param_type: real
+    name: vlam
+  gvar3:
+    type: evdw_t
+    param_type: evdw_t
+    name: vcouple
+
+GLOBAL_ARRAYS:
+  garr1:
+    type: real
+    param_type: const real* restrict
+    name: radmin
+  garr2:
+    type: real
+    param_type: const real* restrict
+    name: epsilon
+
+PER_ATOM_ARRAYS:
+  paar1:
+    type: int
+    param_type: const int* restrict
+    name: jvdw
+  paar2:
+    type: int
+    param_type: const int* restrict
+    name: mut
+
+PAIRWISE_SCALED: |
+  real r2 = image2(xr, yr, zr);
+  real r = REAL_SQRT(r2);
+  real invr = REAL_RECIP(r);
+  real rv = radmin[ijvdw * njvdw + kjvdw];
+  real eps = epsilon[ijvdw * njvdw + kjvdw];
+  real vlambda = 1;
+  if (vcouple == evdw_t::decouple) {
+    vlambda = (imut == kmut ? 1 : vlam);
+  } else if (vcouple == evdw_t::annihilate) {
+    vlambda = (imut || kmut ? vlam : 1);
+  }
+  real e, de;
+  pair_hal_v2<do_g, 0>(r, scale, rv, eps, cut, off, vlambda, GHAL, DHAL, SCEXP, SCALPHA, e, de);
+
+PAIRWISE_FULL: |
+  real r2 = image2(xr, yr, zr);
+  real r = REAL_SQRT(r2);
+  real invr = REAL_RECIP(r);
+  real rv = radmin[ijvdw * njvdw + kjvdw];
+  real eps = epsilon[ijvdw * njvdw + kjvdw];
+  real vlambda = 1;
+  if (vcouple == evdw_t::decouple) {
+    vlambda = (imut == kmut ? 1 : vlam);
+  } else if (vcouple == evdw_t::annihilate) {
+    vlambda = (imut || kmut ? vlam : 1);
+  }
+  real e, de;
+  pair_hal_v2<do_g, 1>(r, 1, rv, eps, cut, off, vlambda, GHAL, DHAL, SCEXP, SCALPHA, e, de);

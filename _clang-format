@@ -39,3 +39,4 @@ StatementMacros:
     - __device__
     - SEQ_ROUTINE
     - SEQ_CUDA
+    - _Pragma

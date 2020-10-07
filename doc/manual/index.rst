@@ -1,12 +1,14 @@
-.. Tinker GPU documentation master file, created by
+.. Tinker9 documentation master file, created by
    sphinx-quickstart on Fri May  8 03:18:35 2020.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Tinker GPU User's Manual
-========================
+Tinker9 User's Manual
+=====================
 
 .. toctree::
+   :caption: Contents
+   :numbered:
    :maxdepth: 2
 
    m/intro
@@ -15,16 +17,13 @@ Tinker GPU User's Manual
    m/key/index
 
 
+
 .. only:: html
 
-   GitHub Repository
-   =================
+   .. toctree::
+      :caption: Appendix
 
-   `Click here. <https://github.com/zhi-wang/tinker.gpu>`_
+      genindex
 
-
-   Index and Search
-   ================
-
-   * :ref:`genindex`
-   * :ref:`search`
+   `GitHub Repository <https://github.com/tinkertools/tinker9>`_
+   =============================================================

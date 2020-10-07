@@ -6,7 +6,7 @@
 using namespace tinker;
 
 
-TEST_CASE("Chglj-Trpcage", "[ff][echarge][elj][echglj][trpcage]")
+TEST_CASE("Chglj-Trpcage", "[ff][echarge][evdw][echglj][lj][trpcage]")
 {
    rc_flag = calc::xyz | calc::energy | calc::grad | calc::virial;
 
@@ -39,7 +39,7 @@ torsionterm  none
       TestFile fp1(pn, p0);
 
 
-      TestReference r(TINKER_GPU_DIRSTR "/src/test/chglj.1.txt");
+      TestReference r(TINKER9_DIRSTR "/src/test/chglj.1.txt");
       auto ref_e = r.get_energy();
       auto ref_v = r.get_virial();
       auto ref_g = r.get_gradient();
@@ -101,7 +101,7 @@ vdw-correction
       TestFile fp1(pn, p0);
 
 
-      TestReference r(TINKER_GPU_DIRSTR "/src/test/chglj.2.txt");
+      TestReference r(TINKER9_DIRSTR "/src/test/chglj.2.txt");
       auto ref_e = r.get_energy();
       auto ref_v = r.get_virial();
       auto ref_g = r.get_gradient();

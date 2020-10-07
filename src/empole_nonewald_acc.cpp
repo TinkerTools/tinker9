@@ -120,7 +120,7 @@ void empole_nonewald_acc1()
    } // end for (int i)
 
    #pragma acc parallel async\
-               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\ 
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(DEVICE_PTRS,mexclude,mexclude_scale)
    #pragma acc loop independent private(pgrad)
    for (int ii = 0; ii < nmexclude; ++ii) {

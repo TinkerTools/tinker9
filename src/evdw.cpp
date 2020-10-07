@@ -46,9 +46,6 @@ void evdw_data(rc_op op)
       jcount = 0;
 
 
-      vdw_exclude_bond = false;
-
-
       if (vdwtyp == evdw_t::hal)
          darray::deallocate(ired, kred, xred, yred, zred, gxred, gyred, gzred);
 
@@ -123,6 +120,8 @@ void evdw_data(rc_op op)
          epsrule = evdw_t::geometric;
       else if (str3 == "CUBIC-MEAN")
          epsrule = evdw_t::cubic_mean;
+      else if (str3 == "HHG")
+         epsrule = evdw_t::hhg;
       else
          assert(false);
 
@@ -165,16 +164,6 @@ void evdw_data(rc_op op)
       darray::allocate(n, &mut);
 
 
-      vdw_exclude_bond = false;
-      if (vdwtyp == evdw_t::hal) {
-         vdw_exclude_bond =
-            (vdwpot::v2scale == 0) && (vlist_version() & NBL_SPATIAL);
-      } else {
-         vdw_exclude_bond =
-            (vdwpot::v2scale == 0) && (clist_version() & NBL_SPATIAL);
-      }
-
-
       v2scale = vdwpot::v2scale;
       v3scale = vdwpot::v3scale;
       v4scale = vdwpot::v4scale;
@@ -191,7 +180,7 @@ void evdw_data(rc_op op)
          int nn;
          int bask;
 
-         if (v2scale != 1 && vdw_exclude_bond == false) {
+         if (v2scale != 1) {
             nn = couple::n12[i];
             for (int j = 0; j < nn; ++j) {
                int k = couple::i12[i][j];
@@ -199,7 +188,7 @@ void evdw_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(v2scale - 1);
+                  excls.push_back(v2scale);
                }
             }
          }
@@ -214,7 +203,7 @@ void evdw_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(v3scale - 1);
+                  excls.push_back(v3scale);
                }
             }
          }
@@ -229,7 +218,7 @@ void evdw_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(v4scale - 1);
+                  excls.push_back(v4scale);
                }
             }
          }
@@ -244,7 +233,7 @@ void evdw_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(v5scale - 1);
+                  excls.push_back(v5scale);
                }
             }
          }

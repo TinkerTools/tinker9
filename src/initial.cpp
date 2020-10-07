@@ -1,5 +1,7 @@
 #include "subroutine.h"
 #include "tool/io_fort_str.h"
+#include "tool/io_print.h"
+#include "version.h"
 #include <tinker/tinker_mod.h>
 #ifdef _OPENMP
 #   include <omp.h>
@@ -29,7 +31,8 @@ void initial()
 
    // display program banner and copyright notice
    if (first)
-      promo_();
+      // promo_();
+      print(stdout, "%s\n", TINKER9_PROMO_STRING);
 
 
    // command line arguments to the program

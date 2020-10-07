@@ -9,7 +9,8 @@ namespace {
 const char* get_SHA1()
 {
    return         //
-      "b606a90b"; // Thu Jul 16 16:58:41 2020 -0500
+      "25b7ee7a"; // Thu Oct 1 22:32:58 2020 -0500
+   // "b606a90b"; // Thu Jul 16 16:58:41 2020 -0500
    // "350df099"; // Tue Apr  7 21:01:20 2020 -0500
    // "11e84c69"; // Tue Nov 12 14:56:12 2019 -0600
    // "291a85c1"; // Fri Jul 19 16:21:27 2019 +0200
@@ -22,10 +23,10 @@ const char* get_SHA1()
 
 std::string get_version_string()
 {
-   std::string r = format("%d.%d.%d", TINKER_GPU_VERSION_MAJOR,
-                          TINKER_GPU_VERSION_MINOR, TINKER_GPU_VERSION_PATCH);
-#ifdef TINKER_GPU_GIT_SHORT_HASH
-   r += format(" GIT %s", TINKER_STR(TINKER_GPU_GIT_SHORT_HASH));
+   std::string r = format("%d.%d.%d", TINKER9_VERSION_MAJOR,
+                          TINKER9_VERSION_MINOR, TINKER9_VERSION_PATCH);
+#ifdef TINKER9_GIT_SHORT_HASH
+   r += format(" GIT %s", TINKER_STR(TINKER9_GIT_SHORT_HASH));
 #endif
    return r;
 }

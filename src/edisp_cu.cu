@@ -7,274 +7,416 @@
 #include "pmestuf.h"
 #include "seq_bsplgen.h"
 #include "seq_pair_disp.h"
-#include "seq_switch.h"
+#include "seq_triangle.h"
 #include "switch.h"
+#include "tool/gpu_card.h"
 
 
 namespace tinker {
-#define EDISPPARAS                                                             \
-   size_t bufsize, count_buffer restrict ndisp, energy_buffer restrict edsp,   \
-      virial_buffer restrict vir_edsp, grad_prec *restrict gx,                 \
-      grad_prec *restrict gy, grad_prec *restrict gz, TINKER_IMAGE_PARAMS,     \
-      real cut, real off, const real *restrict csix,                           \
-      const real *restrict adisp
-
-
 template <class Ver, class DTYP>
 __global__
-void edisp_cu1(EDISPPARAS, const Spatial::SortedAtom* restrict sorted, int niak,
-               const int* restrict iak, const int* restrict lst, int n,
-               real aewald)
+void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd,
+               energy_buffer restrict ed, virial_buffer restrict vd,
+               grad_prec* restrict gx, grad_prec* restrict gy,
+               grad_prec* restrict gz, real cut, real off,
+               const unsigned* restrict dinfo, int nexclude,
+               const int (*restrict exclude)[2],
+               const real* restrict exclude_scale, const real* restrict x,
+               const real* restrict y, const real* restrict z,
+               const Spatial::SortedAtom* restrict sorted, int nakpl,
+               const int* restrict iakpl, int niak, const int* restrict iak,
+               const int* restrict lst, const real* restrict csix,
+               const real* restrict adisp, real aewald)
 {
-   constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
-   constexpr bool do_g = Ver::g;
+   constexpr bool do_e = Ver::e;
    constexpr bool do_v = Ver::v;
+   constexpr bool do_g = Ver::g;
 
 
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
-   const int offset = ithread & (bufsize - 1);
 
 
-   MAYBE_UNUSED int ctl;
-   MAYBE_UNUSED e_prec etl;
-   MAYBE_UNUSED v_prec vtlxx, vtlyx, vtlzx, vtlyy, vtlzy, vtlzz;
-   MAYBE_UNUSED real gxi, gyi, gzi, gxk, gyk, gzk;
+   int ndtl;
+   if CONSTEXPR (do_a) {
+      ndtl = 0;
+   }
+   using ebuf_prec = energy_buffer_traits::type;
+   ebuf_prec edtl;
+   if CONSTEXPR (do_e) {
+      edtl = 0;
+   }
+   using vbuf_prec = virial_buffer_traits::type;
+   vbuf_prec vdtlxx, vdtlyx, vdtlzx, vdtlyy, vdtlzy, vdtlzz;
+   if CONSTEXPR (do_v) {
+      vdtlxx = 0;
+      vdtlyx = 0;
+      vdtlzx = 0;
+      vdtlyy = 0;
+      vdtlzy = 0;
+      vdtlzz = 0;
+   }
 
 
-   const real cut2 = cut * cut;
-   const real off2 = off * off;
-   for (int iw = iwarp; iw < niak; iw += nwarp) {
-      if CONSTEXPR (do_a)
-         ctl = 0;
-      if CONSTEXPR (do_e)
-         etl = 0;
+   real shxi;
+   real shyi;
+   real shzi;
+   real xk;
+   real yk;
+   real zk;
+   real shgxi;
+   real shgyi;
+   real shgzi;
+   real gxk;
+   real gyk;
+   real gzk;
+   real shci;
+   real shai;
+   real ck;
+   real ak;
+
+
+   //* /
+   // exclude
+   for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
       if CONSTEXPR (do_g) {
-         gxi = 0;
-         gyi = 0;
-         gzi = 0;
+         shgxi = 0;
+         shgyi = 0;
+         shgzi = 0;
          gxk = 0;
          gyk = 0;
          gzk = 0;
       }
-      if CONSTEXPR (do_v) {
-         vtlxx = 0;
-         vtlyx = 0;
-         vtlzx = 0;
-         vtlyy = 0;
-         vtlzy = 0;
-         vtlzz = 0;
+
+
+      int shi = exclude[ii][0];
+      int k = exclude[ii][1];
+      real scalea = exclude_scale[ii];
+
+
+      real xi = x[shi];
+      real yi = y[shi];
+      real zi = z[shi];
+      xk = x[k];
+      yk = y[k];
+      zk = z[k];
+      real ci = csix[shi];
+      real ai = adisp[shi];
+      ck = csix[k];
+      ak = adisp[k];
+
+
+      constexpr bool incl = true;
+      real xr = xi - xk;
+      real yr = yi - yk;
+      real zr = zi - zk;
+      real r2 = image2(xr, yr, zr);
+      if (r2 <= off * off and incl) {
+         real r = REAL_SQRT(r2);
+         real rr1 = REAL_RECIP(r);
+         real e, de;
+         pair_disp<do_g, DTYP, 0>(r, r2, rr1, scalea, aewald, ci, ai, ck, ak,
+                                  cut, off, e, de);
+         if CONSTEXPR (do_e) {
+            edtl += cvt_to<ebuf_prec>(e);
+            if CONSTEXPR (do_a) {
+               if (scalea != 0 and e != 0)
+                  ndtl += 1;
+            }
+         }
+         if CONSTEXPR (do_g) {
+            real dedx, dedy, dedz;
+            de *= rr1;
+            dedx = de * xr;
+            dedy = de * yr;
+            dedz = de * zr;
+            shgxi += dedx;
+            shgyi += dedy;
+            shgzi += dedz;
+            gxk -= dedx;
+            gyk -= dedy;
+            gzk -= dedz;
+            if CONSTEXPR (do_v) {
+               vdtlxx += cvt_to<vbuf_prec>(xr * dedx);
+               vdtlyx += cvt_to<vbuf_prec>(yr * dedx);
+               vdtlzx += cvt_to<vbuf_prec>(zr * dedx);
+               vdtlyy += cvt_to<vbuf_prec>(yr * dedy);
+               vdtlzy += cvt_to<vbuf_prec>(zr * dedy);
+               vdtlzz += cvt_to<vbuf_prec>(zr * dedz);
+            }
+         }
+      } // end if (include)
+
+
+      if CONSTEXPR (do_g) {
+         atomic_add(shgxi, gx, shi);
+         atomic_add(shgyi, gy, shi);
+         atomic_add(shgzi, gz, shi);
+         atomic_add(gxk, gx, k);
+         atomic_add(gyk, gy, k);
+         atomic_add(gzk, gz, k);
+      }
+   }
+   // */
+
+
+   //* /
+   // block pairs that have scale factors
+   for (int iw = iwarp; iw < nakpl; iw += nwarp) {
+      if CONSTEXPR (do_g) {
+         shgxi = 0;
+         shgyi = 0;
+         shgzi = 0;
+         gxk = 0;
+         gyk = 0;
+         gzk = 0;
       }
 
 
-      int atomi = min(iak[iw] * WARP_SIZE + ilane, n - 1);
-      real xi = sorted[atomi].x;
-      real yi = sorted[atomi].y;
-      real zi = sorted[atomi].z;
-      int i = sorted[atomi].unsorted;
-      real ci = csix[i];
-      real ai = adisp[i];
+      int tri, tx, ty;
+      tri = iakpl[iw];
+      tri_to_xy(tri, tx, ty);
 
 
-      int shatomk = lst[iw * WARP_SIZE + ilane];
-      real shx = sorted[shatomk].x;
-      real shy = sorted[shatomk].y;
-      real shz = sorted[shatomk].z;
-      int shk = sorted[shatomk].unsorted;
-      real shck = csix[shk];
-      real shak = adisp[shk];
+      int shiid = ty * WARP_SIZE + ilane;
+      int shatomi = min(shiid, n - 1);
+      int shi = sorted[shatomi].unsorted;
+      int kid = tx * WARP_SIZE + ilane;
+      int atomk = min(kid, n - 1);
+      int k = sorted[atomk].unsorted;
+      shxi = sorted[shatomi].x;
+      shyi = sorted[shatomi].y;
+      shzi = sorted[shatomi].z;
+      xk = sorted[atomk].x;
+      yk = sorted[atomk].y;
+      zk = sorted[atomk].z;
+
+
+      shci = csix[shi];
+      shai = adisp[shi];
+      ck = csix[k];
+      ak = adisp[k];
+
+
+      unsigned int dinfo0 = dinfo[iw * WARP_SIZE + ilane];
 
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
-         int atomk = __shfl_sync(ALL_LANES, shatomk, srclane);
-         real xr = xi - __shfl_sync(ALL_LANES, shx, srclane);
-         real yr = yi - __shfl_sync(ALL_LANES, shy, srclane);
-         real zr = zi - __shfl_sync(ALL_LANES, shz, srclane);
-         real ck = __shfl_sync(ALL_LANES, shck, srclane);
-         real ak = __shfl_sync(ALL_LANES, shak, srclane);
+         int srcmask = 1 << srclane;
+         int iid = shiid;
+         real xi = shxi;
+         real yi = shyi;
+         real zi = shzi;
+         real ci = shci;
+         real ai = shai;
 
 
-         MAYBE_UNUSED real dedx = 0, dedy = 0, dedz = 0;
+         bool incl = iid < kid and kid < n;
+         incl = incl and (dinfo0 & srcmask) == 0;
+         real scalea = 1;
+         real xr = xi - xk;
+         real yr = yi - yk;
+         real zr = zi - zk;
          real r2 = image2(xr, yr, zr);
-         if (atomi < atomk && r2 <= off2) {
+         if (r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
-
-
-            MAYBE_UNUSED e_prec e, de;
-            if CONSTEXPR (eq<DTYP, DEWALD>()) {
-               pair_disp<do_g, DEWALD>(r, r2, 1, aewald, ci, ai, ck, ak, e, de);
-            } else if CONSTEXPR (eq<DTYP, NON_EWALD_TAPER>()) {
-               pair_disp<do_g, NON_EWALD_TAPER>(r, r2, 1, 0, ci, ai, ck, ak, e,
-                                                de);
-               if (r2 > cut2) {
-                  real taper, dtaper;
-                  switch_taper5<do_g>(r, cut, off, taper, dtaper);
-                  if CONSTEXPR (do_g)
-                     de = e * dtaper + de * taper;
-                  if CONSTEXPR (do_e)
-                     e *= taper;
+            real rr1 = REAL_RECIP(r);
+            real e, de;
+            pair_disp<do_g, DTYP, 1>(r, r2, rr1, scalea, aewald, ci, ai, ck, ak,
+                                     cut, off, e, de);
+            if CONSTEXPR (do_e) {
+               edtl += cvt_to<ebuf_prec>(e);
+               if CONSTEXPR (do_a) {
+                  if (e != 0)
+                     ndtl += 1;
                }
             }
-
-
-            if CONSTEXPR (do_a)
-               if (e != 0)
-                  ctl += 1;
-            if CONSTEXPR (do_e)
-               etl += e;
             if CONSTEXPR (do_g) {
-               de *= REAL_RECIP(r);
+               real dedx, dedy, dedz;
+               de *= rr1;
                dedx = de * xr;
                dedy = de * yr;
                dedz = de * zr;
+               shgxi += dedx;
+               shgyi += dedy;
+               shgzi += dedz;
+               gxk -= dedx;
+               gyk -= dedy;
+               gzk -= dedz;
                if CONSTEXPR (do_v) {
-                  vtlxx += xr * dedx;
-                  vtlyx += yr * dedx;
-                  vtlzx += zr * dedx;
-                  vtlyy += yr * dedy;
-                  vtlzy += zr * dedy;
-                  vtlzz += zr * dedz;
+                  vdtlxx += cvt_to<vbuf_prec>(xr * dedx);
+                  vdtlyx += cvt_to<vbuf_prec>(yr * dedx);
+                  vdtlzx += cvt_to<vbuf_prec>(zr * dedx);
+                  vdtlyy += cvt_to<vbuf_prec>(yr * dedy);
+                  vdtlzy += cvt_to<vbuf_prec>(zr * dedy);
+                  vdtlzz += cvt_to<vbuf_prec>(zr * dedz);
                }
             }
          } // end if (include)
 
 
+         shiid = __shfl_sync(ALL_LANES, shiid, ilane + 1);
+         shxi = __shfl_sync(ALL_LANES, shxi, ilane + 1);
+         shyi = __shfl_sync(ALL_LANES, shyi, ilane + 1);
+         shzi = __shfl_sync(ALL_LANES, shzi, ilane + 1);
+         shci = __shfl_sync(ALL_LANES, shci, ilane + 1);
+         shai = __shfl_sync(ALL_LANES, shai, ilane + 1);
          if CONSTEXPR (do_g) {
-            int dstlane = (ilane + WARP_SIZE - j) & (WARP_SIZE - 1);
-            gxi += dedx;
-            gyi += dedy;
-            gzi += dedz;
-            gxk -= __shfl_sync(ALL_LANES, dedx, dstlane);
-            gyk -= __shfl_sync(ALL_LANES, dedy, dstlane);
-            gzk -= __shfl_sync(ALL_LANES, dedz, dstlane);
+            shgxi = __shfl_sync(ALL_LANES, shgxi, ilane + 1);
+            shgyi = __shfl_sync(ALL_LANES, shgyi, ilane + 1);
+            shgzi = __shfl_sync(ALL_LANES, shgzi, ilane + 1);
          }
       }
 
 
-      if CONSTEXPR (do_a)
-         atomic_add(ctl, ndisp, offset);
-      if CONSTEXPR (do_e)
-         atomic_add(etl, edsp, offset);
       if CONSTEXPR (do_g) {
-         atomic_add(gxi, gx, i);
-         atomic_add(gyi, gy, i);
-         atomic_add(gzi, gz, i);
-         atomic_add(gxk, gx, shk);
-         atomic_add(gyk, gy, shk);
-         atomic_add(gzk, gz, shk);
-      }
-      if CONSTEXPR (do_v)
-         atomic_add(vtlxx, vtlyx, vtlzx, vtlyy, vtlzy, vtlzz, vir_edsp, offset);
-   } // end for (iw)
-}
-
-
-template <class Ver, class DTYP>
-__global__
-void edisp_cu2(EDISPPARAS, const real* restrict x, const real* restrict y,
-               const real* restrict z, int ndspexclude,
-               const int (*restrict dspexclude)[2],
-               const real* restrict dspexclude_scale)
-{
-   constexpr bool do_e = Ver::e;
-   constexpr bool do_a = Ver::a;
-   constexpr bool do_g = Ver::g;
-   constexpr bool do_v = Ver::v;
-
-
-   const real cut2 = cut * cut;
-   const real off2 = off * off;
-   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < ndspexclude;
-        ii += blockDim.x * gridDim.x) {
-      int offset = ii & (bufsize - 1);
-
-
-      int i = dspexclude[ii][0];
-      int k = dspexclude[ii][1];
-      real dspscale = dspexclude_scale[ii];
-
-
-      real ci = csix[i];
-      real ai = adisp[i];
-      real xi = x[i];
-      real yi = y[i];
-      real zi = z[i];
-
-
-      real ck = csix[k];
-      real ak = adisp[k];
-      real xr = xi - x[k];
-      real yr = yi - y[k];
-      real zr = zi - z[k];
-
-
-      real r2 = image2(xr, yr, zr);
-      if (r2 <= off2) {
-         real r = REAL_SQRT(r2);
-
-
-         MAYBE_UNUSED e_prec e, de;
-         pair_disp<do_g, NON_EWALD>(r, r2, dspscale, 0, ci, ai, ck, ak, e, de);
-         if CONSTEXPR (eq<DTYP, NON_EWALD_TAPER>()) {
-            if (r2 > cut2) {
-               real taper, dtaper;
-               switch_taper5<do_g>(r, cut, off, taper, dtaper);
-               if CONSTEXPR (do_g)
-                  de = e * dtaper + de * taper;
-               if CONSTEXPR (do_e)
-                  e = e * taper;
-            }
-         }
-
-
-         if CONSTEXPR (do_a)
-            if (dspscale == -1 && e != 0)
-               atomic_add(-1, ndisp, offset);
-         if CONSTEXPR (do_e)
-            atomic_add(e, edsp, offset);
-         if CONSTEXPR (do_g) {
-            de *= REAL_RECIP(r);
-            real dedx = de * xr;
-            real dedy = de * yr;
-            real dedz = de * zr;
-            atomic_add(dedx, gx, i);
-            atomic_add(dedy, gy, i);
-            atomic_add(dedz, gz, i);
-            atomic_add(-dedx, gx, k);
-            atomic_add(-dedy, gy, k);
-            atomic_add(-dedz, gz, k);
-            if CONSTEXPR (do_v) {
-               real vxx = xr * dedx;
-               real vyx = yr * dedx;
-               real vzx = zr * dedx;
-               real vyy = yr * dedy;
-               real vzy = zr * dedy;
-               real vzz = zr * dedz;
-               atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_edsp, offset);
-            }
-         }
+         atomic_add(shgxi, gx, shi);
+         atomic_add(shgyi, gy, shi);
+         atomic_add(shgzi, gz, shi);
+         atomic_add(gxk, gx, k);
+         atomic_add(gyk, gy, k);
+         atomic_add(gzk, gz, k);
       }
    }
-}
+   // */
+
+
+   //* /
+   // block-atoms
+   for (int iw = iwarp; iw < niak; iw += nwarp) {
+      if CONSTEXPR (do_g) {
+         shgxi = 0;
+         shgyi = 0;
+         shgzi = 0;
+         gxk = 0;
+         gyk = 0;
+         gzk = 0;
+      }
+
+
+      int ty = iak[iw];
+      int shatomi = ty * WARP_SIZE + ilane;
+      int shi = sorted[shatomi].unsorted;
+      int atomk = lst[iw * WARP_SIZE + ilane];
+      int k = sorted[atomk].unsorted;
+      shxi = sorted[shatomi].x;
+      shyi = sorted[shatomi].y;
+      shzi = sorted[shatomi].z;
+      xk = sorted[atomk].x;
+      yk = sorted[atomk].y;
+      zk = sorted[atomk].z;
+
+
+      shci = csix[shi];
+      shai = adisp[shi];
+      ck = csix[k];
+      ak = adisp[k];
+
+
+      for (int j = 0; j < WARP_SIZE; ++j) {
+         real xi = shxi;
+         real yi = shyi;
+         real zi = shzi;
+         real ci = shci;
+         real ai = shai;
+
+
+         bool incl = atomk > 0;
+         real scalea = 1;
+         real xr = xi - xk;
+         real yr = yi - yk;
+         real zr = zi - zk;
+         real r2 = image2(xr, yr, zr);
+         if (r2 <= off * off and incl) {
+            real r = REAL_SQRT(r2);
+            real rr1 = REAL_RECIP(r);
+            real e, de;
+            pair_disp<do_g, DTYP, 1>(r, r2, rr1, scalea, aewald, ci, ai, ck, ak,
+                                     cut, off, e, de);
+            if CONSTEXPR (do_e) {
+               edtl += cvt_to<ebuf_prec>(e);
+               if CONSTEXPR (do_a) {
+                  if (e != 0)
+                     ndtl += 1;
+               }
+            }
+            if CONSTEXPR (do_g) {
+               real dedx, dedy, dedz;
+               de *= rr1;
+               dedx = de * xr;
+               dedy = de * yr;
+               dedz = de * zr;
+               shgxi += dedx;
+               shgyi += dedy;
+               shgzi += dedz;
+               gxk -= dedx;
+               gyk -= dedy;
+               gzk -= dedz;
+               if CONSTEXPR (do_v) {
+                  vdtlxx += cvt_to<vbuf_prec>(xr * dedx);
+                  vdtlyx += cvt_to<vbuf_prec>(yr * dedx);
+                  vdtlzx += cvt_to<vbuf_prec>(zr * dedx);
+                  vdtlyy += cvt_to<vbuf_prec>(yr * dedy);
+                  vdtlzy += cvt_to<vbuf_prec>(zr * dedy);
+                  vdtlzz += cvt_to<vbuf_prec>(zr * dedz);
+               }
+            }
+         } // end if (include)
+
+
+         shxi = __shfl_sync(ALL_LANES, shxi, ilane + 1);
+         shyi = __shfl_sync(ALL_LANES, shyi, ilane + 1);
+         shzi = __shfl_sync(ALL_LANES, shzi, ilane + 1);
+         shci = __shfl_sync(ALL_LANES, shci, ilane + 1);
+         shai = __shfl_sync(ALL_LANES, shai, ilane + 1);
+         if CONSTEXPR (do_g) {
+            shgxi = __shfl_sync(ALL_LANES, shgxi, ilane + 1);
+            shgyi = __shfl_sync(ALL_LANES, shgyi, ilane + 1);
+            shgzi = __shfl_sync(ALL_LANES, shgzi, ilane + 1);
+         }
+      }
+
+
+      if CONSTEXPR (do_g) {
+         atomic_add(shgxi, gx, shi);
+         atomic_add(shgyi, gy, shi);
+         atomic_add(shgzi, gz, shi);
+         atomic_add(gxk, gx, k);
+         atomic_add(gyk, gy, k);
+         atomic_add(gzk, gz, k);
+      }
+   }
+   // */
+
+
+   if CONSTEXPR (do_a) {
+      atomic_add(ndtl, nd, ithread);
+   }
+   if CONSTEXPR (do_e) {
+      atomic_add(edtl, ed, ithread);
+   }
+   if CONSTEXPR (do_v) {
+      atomic_add(vdtlxx, vdtlyx, vdtlzx, vdtlyy, vdtlzy, vdtlzz, vd, ithread);
+   }
+} // generated by ComplexKernelBuilder (ck.py) 1.5
 
 
 template <class Ver, class DTYP>
 void edisp_cu()
 {
-   const auto& st = *dspspatial_unit;
+   const auto& st = *dspspatial_v2_unit;
    real cut, off;
    if CONSTEXPR (eq<DTYP, DEWALD>()) {
       off = switch_off(switch_dewald);
-      // cut = off; // not used
+      cut = off; // not used
    } else {
       off = switch_off(switch_disp);
       cut = switch_cut(switch_disp);
    }
-   size_t bufsize = buffer_size();
 
 
    real aewald = 0;
@@ -284,37 +426,12 @@ void edisp_cu()
    }
 
 
-   if CONSTEXPR (eq<DTYP, DEWALD>()) {
-      if (st.niak > 0) {
-         auto ker1 = edisp_cu1<Ver, DEWALD>;
-         launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
-                    bufsize, ndisp, edsp, vir_edsp, dedspx, dedspy, dedspz,
-                    TINKER_IMAGE_ARGS, 0, off, csix, adisp, //
-                    st.sorted, st.niak, st.iak, st.lst, n, aewald);
-      }
-      if (ndspexclude > 0) {
-         auto ker2 = edisp_cu2<Ver, NON_EWALD>;
-         launch_k1s(nonblk, ndspexclude, ker2, //
-                    bufsize, ndisp, edsp, vir_edsp, dedspx, dedspy, dedspz,
-                    TINKER_IMAGE_ARGS, 0, off, csix, adisp, //
-                    x, y, z, ndspexclude, dspexclude, dspexclude_scale);
-      }
-   } else if CONSTEXPR (eq<DTYP, NON_EWALD_TAPER>()) {
-      if (st.niak > 0) {
-         auto ker1 = edisp_cu1<Ver, NON_EWALD_TAPER>;
-         launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
-                    bufsize, ndisp, edsp, vir_edsp, dedspx, dedspy, dedspz,
-                    TINKER_IMAGE_ARGS, cut, off, csix, adisp, //
-                    st.sorted, st.niak, st.iak, st.lst, n, aewald);
-      }
-      if (ndspexclude > 0) {
-         auto ker2 = edisp_cu2<Ver, NON_EWALD_TAPER>;
-         launch_k1s(nonblk, ndspexclude, ker2, //
-                    bufsize, ndisp, edsp, vir_edsp, dedspx, dedspy, dedspz,
-                    TINKER_IMAGE_ARGS, cut, off, csix, adisp, //
-                    x, y, z, ndspexclude, dspexclude, dspexclude_scale);
-      }
-   }
+   int ngrid = get_grid_size(BLOCK_DIM);
+   edisp_cu1<Ver, DTYP><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
+      st.n, TINKER_IMAGE_ARGS, ndisp, edsp, vir_edsp, dedspx, dedspy, dedspz,
+      cut, off, st.si1.bit0, ndspexclude, dspexclude, dspexclude_scale, st.x,
+      st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, csix,
+      adisp, aewald);
 }
 
 
@@ -360,6 +477,8 @@ void edisp_cu3(size_t bufsize, count_buffer restrict ndisp,
    for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < n;
         ii += blockDim.x * gridDim.x) {
       real icsix = csix[ii];
+      if (icsix == 0)
+         continue;
 
 
       // self energy

@@ -100,16 +100,18 @@ void copy_pos_to_xyz_acc();
  * \param check_nblist  If `ture`, check the neighbor lists after updating the
  *                      coordinates.
  */
-void propagate_xyz(time_prec dt, bool check_nblist);
+void propagate_pos(time_prec, pos_prec*, pos_prec*, pos_prec*, const vel_prec*,
+                   const vel_prec*, const vel_prec*);
 void propagate_pos(time_prec);
-void propagate_pos_acc(time_prec);
+void propagate_pos_acc(time_prec, pos_prec*, pos_prec*, pos_prec*,
+                       const vel_prec*, const vel_prec*, const vel_prec*);
 
 
 /**
  * \ingroup mdpq
  * x = a x + b v
  */
-void propagate_xyz_axbv(double a, double b, bool check_nblist);
+void propagate_pos_axbv(double a, double b);
 void propagate_pos_axbv_acc(double a, double b);
 
 
@@ -160,6 +162,26 @@ extern mass_prec* massinv;
 extern vel_prec *vx, *vy, *vz;
 
 
+// v = v0 + g/m dt; v and v0 are different
+void propagate_velocity(time_prec dt, vel_prec* vlx, vel_prec* vly,
+                        vel_prec* vlz, const vel_prec* vlx0,
+                        const vel_prec* vly0, const vel_prec* vlz0,
+                        const grad_prec* grx, const grad_prec* gry,
+                        const grad_prec* grz);
+void propagate_velocity_acc(time_prec, vel_prec*, vel_prec*, vel_prec*,
+                            const vel_prec*, const vel_prec*, const vel_prec*,
+                            const grad_prec*, const grad_prec*,
+                            const grad_prec*);
+
+
+void propagate_velocity(time_prec dt, vel_prec* vlx, vel_prec* vly,
+                        vel_prec* vlz, const grad_prec* grx,
+                        const grad_prec* gry, const grad_prec* grz);
+void propagate_velocity_acc(time_prec, vel_prec*, vel_prec*, vel_prec*,
+                            const grad_prec*, const grad_prec*,
+                            const grad_prec*);
+
+
 /**
  * \ingroup mdpq
  * \brief Update velocities via `v += -g/m dt`.
@@ -174,8 +196,6 @@ void propagate_velocity2(time_prec dt, const grad_prec* grx,
                          const grad_prec* gry, const grad_prec* grz,
                          time_prec dt2, const grad_prec* grx2,
                          const grad_prec* gry2, const grad_prec* grz2);
-void propagate_velocity_acc(time_prec, const grad_prec*, const grad_prec*,
-                            const grad_prec*);
 void propagate_velocity2_acc(time_prec, const grad_prec*, const grad_prec*,
                              const grad_prec*, time_prec, const grad_prec*,
                              const grad_prec*, const grad_prec*);
@@ -183,4 +203,82 @@ void propagate_velocity2_acc(time_prec, const grad_prec*, const grad_prec*,
 
 void mass_data(rc_op);
 void vel_data(rc_op);
+
+
+//====================================================================//
+
+
+void swap_velocity(vel_prec* vxnew, vel_prec* vynew, vel_prec* vznew,
+                   vel_prec* vxold, vel_prec* vyold, vel_prec* vzold);
+void swap_velocity_acc(vel_prec* vxnew, vel_prec* vynew, vel_prec* vznew,
+                       vel_prec* vxold, vel_prec* vyold, vel_prec* vzold);
+
+
+void propagate_pos_lp(time_prec dt, pos_prec* x_lp, pos_prec* y_lp,
+                      pos_prec* z_lp, const vel_prec* vx_lp, const vel_prec* vy,
+                      const vel_prec* vz, const pos_prec* xold_lp,
+                      const pos_prec* yold_lp, const pos_prec* zold_lp,
+                      double scale);
+void propagate_pos_lp_acc(time_prec dt, pos_prec* x_lp, pos_prec* y_lp,
+                          pos_prec* z_lp, const vel_prec* vx_lp,
+                          const vel_prec* vy_lp, const vel_prec* vz_lp,
+                          const pos_prec* xold_lp, const pos_prec* yold_lp,
+                          const pos_prec* zold_lp, double scale);
+
+
+void propagate_pos_lp2(time_prec dt, const pos_prec* x_lp, const pos_prec* y_lp,
+                       const pos_prec* z_lp, pos_prec* xold_lp,
+                       pos_prec* yold_lp, pos_prec* zold_lp, double scale);
+void propagate_pos_lp2_acc(time_prec dt, const pos_prec* x_lp,
+                           const pos_prec* y_lp, const pos_prec* z_lp,
+                           pos_prec* xold_lp, pos_prec* yold_lp,
+                           pos_prec* zold_lp, double scale);
+
+
+void propagate_pos_lf(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz,
+                      const pos_prec* qxold, const pos_prec* qyold,
+                      const pos_prec* qzold, const vel_prec* vlx,
+                      const vel_prec* vly, const vel_prec* vlz);
+void propagate_pos_lf_acc(time_prec dt, pos_prec* qx, pos_prec* qy,
+                          pos_prec* qz, const pos_prec* qxold,
+                          const pos_prec* qyold, const pos_prec* qzold,
+                          const vel_prec* vlx, const vel_prec* vly,
+                          const vel_prec* vlz);
+
+
+void propagate_velocity_lp(vel_prec* vx_lp, vel_prec* vy_lp, vel_prec* vz_lp,
+                           const vel_prec* vxnew_lp, const vel_prec* vynew_lp,
+                           const vel_prec* vznew_lp, const vel_prec* vxold_lp,
+                           const vel_prec* vyold_lp, const vel_prec* vzold_lp,
+                           const double scale, energy_prec& eksum_new,
+                           energy_prec& eksum_old);
+void propagate_velocity_lp_acc(
+   vel_prec* vx_lp, vel_prec* vy_lp, vel_prec* vz_lp, const vel_prec* vxnew_lp,
+   const vel_prec* vynew_lp, const vel_prec* vznew_lp, const vel_prec* vxold_lp,
+   const vel_prec* vyold_lp, const vel_prec* vzold_lp, const double scale,
+   energy_prec& eksum_new, energy_prec& eksum_old);
+
+
+void propagate_velocity_lp2(time_prec dt, vel_prec* vx_lp, vel_prec* vy_lp,
+                            vel_prec* vz_lp, const pos_prec* x_lp,
+                            const pos_prec* y_lp, const pos_prec* z_lp,
+                            const pos_prec* xold_lp, const pos_prec* yold_lp,
+                            const pos_prec* zold_lp);
+void propagate_velocity_lp2_acc(time_prec dt, vel_prec* vx_lp, vel_prec* vy_lp,
+                                vel_prec* vz_lp, const pos_prec* x_lp,
+                                const pos_prec* y_lp, const pos_prec* z_lp,
+                                const pos_prec* xold_lp,
+                                const pos_prec* yold_lp,
+                                const pos_prec* zold_lp);
+
+
+void propagate_velocity_lp3(vel_prec* vx_lp, vel_prec* vy_lp, vel_prec* vz_lp,
+                            const vel_prec* vxnew_lp, const vel_prec* vynew_lp,
+                            const vel_prec* vznew_lp, const vel_prec* vxold_lp,
+                            const vel_prec* vyold_lp, const vel_prec* vzold_lp,
+                            energy_prec& eksum_new);
+void propagate_velocity_lp3_acc(
+   vel_prec* vx_lp, vel_prec* vy_lp, vel_prec* vz_lp, const vel_prec* vxnew_lp,
+   const vel_prec* vynew_lp, const vel_prec* vznew_lp, const vel_prec* vxold_lp,
+   const vel_prec* vyold_lp, const vel_prec* vzold_lp, energy_prec& eksum_new);
 }

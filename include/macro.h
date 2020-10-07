@@ -280,8 +280,8 @@ using mixed = float;
 //====================================================================//
 
 
-#ifndef TINKER_GPU_DIR
-#   error TINKER_GPU_DIR is not set.
+#ifndef TINKER9_DIR
+#   error TINKER9_DIR is not set.
 #else
-#   define TINKER_GPU_DIRSTR TINKER_STR(TINKER_GPU_DIR)
+#   define TINKER9_DIRSTR TINKER_STR(TINKER9_DIR)
 #endif
