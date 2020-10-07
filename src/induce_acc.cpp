@@ -380,6 +380,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
       real sum1, sump1;
       sum1 = darray::dot(WAIT_NEW_Q, n, rsd, zrsd);
       sump1 = darray::dot(WAIT_NEW_Q, n, rsdp, zrsdp);
+      b = 0;
+      bp = 0;
       if (sum != 0)
          b = sum1 / sum;
       if (sump != 0)

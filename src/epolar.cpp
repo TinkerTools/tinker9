@@ -79,7 +79,7 @@ void epolar_data(rc_op op)
    }
 
    if (op & rc_alloc) {
-      // see also attach.h
+      // see also attach.f
       const int maxn13 = 3 * sizes::maxval;
       const int maxn14 = 9 * sizes::maxval;
       const int maxn15 = 27 * sizes::maxval;
@@ -100,9 +100,9 @@ void epolar_data(rc_op op)
          auto it = m.find(key);
          if (it == m.end()) {
             dpu_scale dpu;
-            dpu.d = 0;
-            dpu.p = 0;
-            dpu.u = 0;
+            dpu.d = 1;
+            dpu.p = 1;
+            dpu.u = 1;
             if (ch == 'd')
                dpu.d = val;
             else if (ch == 'p')
@@ -139,7 +139,7 @@ void epolar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip11[bask + j] - 1;
                if (k > i) {
-                  insert_dpu(ik_dpu, i, k, u1scale - 1, 'u');
+                  insert_dpu(ik_dpu, i, k, u1scale, 'u');
                   exclik.push_back(i);
                   exclik.push_back(k);
                   exclik.push_back(u1scale);
@@ -153,7 +153,7 @@ void epolar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip12[bask + j] - 1;
                if (k > i) {
-                  insert_dpu(ik_dpu, i, k, u2scale - 1, 'u');
+                  insert_dpu(ik_dpu, i, k, u2scale, 'u');
                   exclik.push_back(i);
                   exclik.push_back(k);
                   exclik.push_back(u2scale);
@@ -167,7 +167,7 @@ void epolar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip13[bask + j] - 1;
                if (k > i) {
-                  insert_dpu(ik_dpu, i, k, u3scale - 1, 'u');
+                  insert_dpu(ik_dpu, i, k, u3scale, 'u');
                   exclik.push_back(i);
                   exclik.push_back(k);
                   exclik.push_back(u3scale);
@@ -181,7 +181,7 @@ void epolar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip14[bask + j] - 1;
                if (k > i) {
-                  insert_dpu(ik_dpu, i, k, u4scale - 1, 'u');
+                  insert_dpu(ik_dpu, i, k, u4scale, 'u');
                   exclik.push_back(i);
                   exclik.push_back(k);
                   exclik.push_back(u4scale);
@@ -219,8 +219,8 @@ void epolar_data(rc_op op)
          auto it = m.find(k);
          if (it == m.end()) {
             dp_scale dp;
-            dp.d = 0;
-            dp.p = 0;
+            dp.d = 1;
+            dp.p = 1;
             if (dpchar == 'd')
                dp.d = val;
             else if (dpchar == 'p')
@@ -243,8 +243,8 @@ void epolar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip11[bask + j] - 1;
                if (k > i) {
-                  insert_dpu(ik_dpu, i, k, d1scale - 1, 'd');
-                  insert_dp(k_dpscale, k, d1scale - 1, 'd');
+                  insert_dpu(ik_dpu, i, k, d1scale, 'd');
+                  insert_dp(k_dpscale, k, d1scale, 'd');
                }
             }
          }
@@ -255,8 +255,8 @@ void epolar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip12[bask + j] - 1;
                if (k > i) {
-                  insert_dpu(ik_dpu, i, k, d2scale - 1, 'd');
-                  insert_dp(k_dpscale, k, d2scale - 1, 'd');
+                  insert_dpu(ik_dpu, i, k, d2scale, 'd');
+                  insert_dp(k_dpscale, k, d2scale, 'd');
                }
             }
          }
@@ -267,8 +267,8 @@ void epolar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip13[bask + j] - 1;
                if (k > i) {
-                  insert_dpu(ik_dpu, i, k, d3scale - 1, 'd');
-                  insert_dp(k_dpscale, k, d3scale - 1, 'd');
+                  insert_dpu(ik_dpu, i, k, d3scale, 'd');
+                  insert_dp(k_dpscale, k, d3scale, 'd');
                }
             }
          }
@@ -279,8 +279,8 @@ void epolar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip14[bask + j] - 1;
                if (k > i) {
-                  insert_dpu(ik_dpu, i, k, d4scale - 1, 'd');
-                  insert_dp(k_dpscale, k, d4scale - 1, 'd');
+                  insert_dpu(ik_dpu, i, k, d4scale, 'd');
+                  insert_dp(k_dpscale, k, d4scale, 'd');
                }
             }
          }
@@ -289,10 +289,10 @@ void epolar_data(rc_op op)
             nn = couple::n12[i];
             for (int j = 0; j < nn; ++j) {
                int k = couple::i12[i][j];
-               real val = p2scale - 1;
+               real val = p2scale;
                for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
                   if (k == polgrp::ip11[i * maxp11 + jj])
-                     val = p2iscale - 1;
+                     val = p2iscale;
                }
                k -= 1;
                if (k > i) {
@@ -307,10 +307,10 @@ void epolar_data(rc_op op)
             bask = i * maxn13;
             for (int j = 0; j < nn; ++j) {
                int k = couple::i13[bask + j];
-               real val = p3scale - 1;
+               real val = p3scale;
                for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
                   if (k == polgrp::ip11[i * maxp11 + jj])
-                     val = p3iscale - 1;
+                     val = p3iscale;
                }
                k -= 1;
                if (k > i) {
@@ -325,10 +325,10 @@ void epolar_data(rc_op op)
             bask = i * maxn14;
             for (int j = 0; j < nn; ++j) {
                int k = couple::i14[bask + j];
-               real val = p4scale - 1;
+               real val = p4scale;
                for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
                   if (k == polgrp::ip11[i * maxp11 + jj])
-                     val = p4iscale - 1;
+                     val = p4iscale;
                }
                k -= 1;
                if (k > i) {
@@ -343,10 +343,10 @@ void epolar_data(rc_op op)
             bask = i * maxn15;
             for (int j = 0; j < nn; ++j) {
                int k = couple::i15[bask + j];
-               real val = p5scale - 1;
+               real val = p5scale;
                for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
                   if (k == polgrp::ip11[i * maxp11 + jj])
-                     val = p5iscale - 1;
+                     val = p5iscale;
                }
                k -= 1;
                if (k > i) {

@@ -7,6 +7,7 @@ Tinker9 User's Manual
 =====================
 
 .. toctree::
+   :caption: Contents
    :numbered:
    :maxdepth: 2
 
@@ -16,14 +17,13 @@ Tinker9 User's Manual
    m/key/index
 
 
+
 .. only:: html
+
+   .. toctree::
+      :caption: Appendix
+
+      genindex
 
    `GitHub Repository <https://github.com/tinkertools/tinker9>`_
    =============================================================
-
-
-   Index and Search
-   ================
-
-   * :ref:`genindex`
-   * :ref:`search`

@@ -190,7 +190,7 @@ void echgtrn_cu2(HIPPO_CHGTRN_PARA, const real* x, const real* y, const real* z,
 
       int i = mexclude[ii][0];
       int k = mexclude[ii][1];
-      real mscale = mexclude_scale[ii];
+      real mscale = mexclude_scale[ii] - 1;
 
 
       real alphai = dmpct[i];

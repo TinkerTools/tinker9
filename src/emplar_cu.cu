@@ -1100,10 +1100,10 @@ void emplar_cu2(EMPLARPARAS, const real* restrict x, const real* restrict y,
 
       int i = mdpuexclude[ii][0];
       int k = mdpuexclude[ii][1];
-      real mscale = mdpuexclude_scale[ii][0];
-      real dscale = mdpuexclude_scale[ii][1];
-      real pscale = mdpuexclude_scale[ii][2];
-      real uscale = mdpuexclude_scale[ii][3];
+      real mscale = mdpuexclude_scale[ii][0] - 1;
+      real dscale = mdpuexclude_scale[ii][1] - 1;
+      real pscale = mdpuexclude_scale[ii][2] - 1;
+      real uscale = mdpuexclude_scale[ii][3] - 1;
 
 
       real xi = x[i];

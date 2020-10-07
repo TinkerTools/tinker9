@@ -128,7 +128,7 @@ void empole_nonewald_acc1()
 
       int i = mexclude[ii][0];
       int k = mexclude[ii][1];
-      real mscale = mexclude_scale[ii];
+      real mscale = mexclude_scale[ii] - 1;
 
       real xi = x[i];
       real yi = y[i];

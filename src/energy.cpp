@@ -51,8 +51,6 @@ void energy_data(rc_op op)
    // empole_data() must be in front of epolar_data().
    rc_man empole42{empole_data, op};
    rc_man epolar42{epolar_data, op};
-   // Must follow empole_data() and epolar_data().
-   rc_man emplar42{emplar_data, op};
 
    // HIPPO
    rc_man echgtrn42{echgtrn_data, op};

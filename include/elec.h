@@ -23,7 +23,7 @@ void pchg_data(rc_op);
 // HIPPO: repulsion
 void pole_data(rc_op);
 
-void mscale_data(rc_op);
+void mdpuscale_data(rc_op);
 
 
 //====================================================================//

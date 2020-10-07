@@ -180,9 +180,9 @@ void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
 
       int i = dpuexclude[ii][0];
       int k = dpuexclude[ii][1];
-      real dscale = dpuexclude_scale[ii][0];
-      real pscale = dpuexclude_scale[ii][1];
-      real uscale = dpuexclude_scale[ii][2];
+      real dscale = dpuexclude_scale[ii][0] - 1;
+      real pscale = dpuexclude_scale[ii][1] - 1;
+      real uscale = dpuexclude_scale[ii][2] - 1;
 
       real xi = x[i];
       real yi = y[i];

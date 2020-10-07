@@ -5,9 +5,11 @@
 #include "epolar.h"
 #include "evdw.h"
 #include "glob.chglj.h"
+#include "glob.mplar.h"
 #include "glob.nblist.h"
 #include "glob.spatial.h"
 #include "md.h"
+#include "mod.mplpot.h"
 #include "platform.h"
 #include "potent.h"
 #include "spatial2.h"
@@ -17,6 +19,7 @@
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/limits.hh>
+#include <tinker/detail/mplpot.hh>
 #include <tinker/detail/neigh.hh>
 #include <tinker/detail/vdwpot.hh>
 
@@ -322,6 +325,7 @@ void nblist_data(rc_op op)
       cspatial_v2_unit.close();
       vspatial_v2_unit.close();
       uspatial_v2_unit.close();
+      mspatial_v2_unit.close();
       dspspatial_v2_unit.close();
 #endif
    }
@@ -416,11 +420,18 @@ void nblist_data(rc_op op)
    }
    if (u & NBL_SPATIAL) {
       auto& unt = mspatial_unit;
+      auto& un2 = mspatial_v2_unit;
       if (op & rc_alloc) {
          spatial_alloc(unt, n, cut, buf, x, y, z);
+         if (mplpot::use_chgpen) {
+         } else {
+            spatial_alloc(un2, n, cut, buf, x, y, z, 1, nmdpuexclude,
+                          mdpuexclude);
+         }
       }
       if (op & rc_init) {
          spatial_build(unt);
+         spatial_build(un2);
       }
    }
 
@@ -544,6 +555,13 @@ void refresh_neighbors()
          unt.update_deviceptr(*unt, PROCEED_NEW_Q);
       }
       spatial_update(unt);
+      auto& un2 = mspatial_v2_unit;
+      if (rc_flag & calc::traj) {
+         un2->x = x;
+         un2->y = y;
+         un2->z = z;
+      }
+      spatial_update(un2);
    }
 
 
