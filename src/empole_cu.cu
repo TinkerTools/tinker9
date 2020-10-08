@@ -327,7 +327,7 @@ void empole_cu()
 
       if CONSTEXPR (do_e) {
          launch_k1s(nonblk, n, empole_self_cu<do_a>, //
-                    bufsize, nem, em, rpole, n, f, aewald);
+                    nem, em, rpole, n, f, aewald);
       }
    }
    if (st.niak > 0) {
