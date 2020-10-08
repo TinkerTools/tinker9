@@ -102,9 +102,9 @@ void pair_mplar(                                                          //
    real& restrict frcxk, real& restrict frcyk, real& restrict frczk,
    real& restrict trqxi, real& restrict trqyi, real& restrict trqzi,
    real& restrict trqxk, real& restrict trqyk, real& restrict trqzk,
-   real& restrict etl, real& restrict vtlxx, real& restrict vtlxy,
-   real& restrict vtlxz, real& restrict vtlyy, real& restrict vtlyz,
-   real& restrict vtlzz)
+   real& restrict et1, real& restrict vt1xx, real& restrict vt1xy,
+   real& restrict vt1xz, real& restrict vt1yy, real& restrict vt1yz,
+   real& restrict vt1zz)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -378,7 +378,7 @@ void pair_mplar(                                                          //
       real e = phi1[0] * ci + phi1[1] * di.x + phi1[2] * di.y + phi1[3] * di.z +
          phi1[4] * qixx + phi1[5] * qiyy + phi1[6] * qizz + phi1[7] * qixy +
          phi1[8] * qixz + phi1[9] * qiyz;
-      etl += f * e;
+      et1 = f * e;
    }
 
 
@@ -567,12 +567,12 @@ void pair_mplar(                                                          //
       trqzk += f * gltrq2.z;
    }
    if CONSTEXPR (do_v) {
-      vtlxx -= dR.x * frc.x;
-      vtlxy -= 0.5f * (dR.y * frc.x + dR.x * frc.y);
-      vtlxz -= 0.5f * (dR.z * frc.x + dR.x * frc.z);
-      vtlyy -= dR.y * frc.y;
-      vtlyz -= 0.5f * (dR.z * frc.y + dR.y * frc.z);
-      vtlzz -= dR.z * frc.z;
+      vt1xx = -dR.x * frc.x;
+      vt1xy = -0.5f * (dR.y * frc.x + dR.x * frc.y);
+      vt1xz = -0.5f * (dR.z * frc.x + dR.x * frc.z);
+      vt1yy = -dR.y * frc.y;
+      vt1yz = -0.5f * (dR.z * frc.y + dR.y * frc.z);
+      vt1zz = -dR.z * frc.z;
    }
 }
 
@@ -760,14 +760,6 @@ void emplar_cu1(int n, TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf,
       if (r2 <= off * off and incl) {
          real e, vxx, vyx, vzx, vyy, vzy, vzz;
          real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
-         if CONSTEXPR (do_e) {
-            e = 0;
-            e1 = 0;
-         }
-         if CONSTEXPR (do_v) {
-            vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
-            vxx1 = 0, vyx1 = 0, vzx1 = 0, vyy1 = 0, vzy1 = 0, vzz1 = 0;
-         }
          pair_mplar<Ver, ETYP>(
             r2, make_real3(xr, yr, zr), 1, 1, 1, 1, ci,
             make_real3(dix, diy, diz), qixx, qixy, qixz, qiyy, qiyz, qizz,
@@ -934,12 +926,6 @@ void emplar_cu1(int n, TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf,
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
-            if CONSTEXPR (do_e) {
-               e = 0;
-            }
-            if CONSTEXPR (do_v) {
-               vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
-            }
             pair_mplar<Ver, ETYP>(
                r2, make_real3(xr, yr, zr), 1, 1, 1, 1, ci,
                make_real3(dix, diy, diz), qixx, qixy, qixz, qiyy, qiyz, qizz,
@@ -1089,12 +1075,6 @@ void emplar_cu1(int n, TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf,
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
-            if CONSTEXPR (do_e) {
-               e = 0;
-            }
-            if CONSTEXPR (do_v) {
-               vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
-            }
             pair_mplar<Ver, ETYP>(
                r2, make_real3(xr, yr, zr), 1, 1, 1, 1, ci,
                make_real3(dix, diy, diz), qixx, qixy, qixz, qiyy, qiyz, qizz,

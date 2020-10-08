@@ -161,8 +161,7 @@ void pole_data(rc_op op)
 
 void mdpuscale_data(rc_op op)
 {
-   if (not use_potent(mpole_term) and not use_potent(polar_term) and
-       not use_potent(chgtrn_term))
+   if (not use_potent(mpole_term) and not use_potent(polar_term))
       return;
 
 

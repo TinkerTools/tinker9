@@ -216,6 +216,7 @@ def function_parameter(ptype, pname):
 
 def load_scale_parameter(ptype, stem, input, separate_scaled_pairwise):
     if ptype == 'real_const_array':
+        v = ''
         if input is None:
             if not separate_scaled_pairwise:
                 v = 'real {}a = 1;'.format(stem)

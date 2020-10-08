@@ -106,7 +106,7 @@ FULL_PAIRWISE_INTERACTION: |
     real rr1 = REAL_RECIP(r);
     real e, de;
     pair_disp<do_g, DTYP, 1>(r, r2, rr1,
-      scalea, aewald, ci, ai, ck, ak, cut, off, e, de);
+      1, aewald, ci, ai, ck, ak, cut, off, e, de);
     if CONSTEXPR (do_e) {
       edtl += cvt_to<ebuf_prec>(e);
       if CONSTEXPR (do_a) {

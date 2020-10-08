@@ -341,7 +341,7 @@ void grid_mpole_cu(PMEUnit pme_u, real (*fmp)[10])
       auto ker = grid_put_cu2<MPOLE, 5>;
       int npa = 5 * 5 * 5 * n;
       launch_k1s(nonblk, npa, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
-                 mspatial_unit->sorted, n, padded_n, n1, n2, n3,
+                 mspatial_v2_unit->sorted, n, padded_n, n1, n2, n3,
                  (const real*)fmp, nullptr, st.qgrid);
    }
 }
@@ -366,7 +366,7 @@ void grid_uind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
       auto ker = grid_put_cu2<UIND, 5>;
       int npa = 5 * 5 * 5 * n;
       launch_k1s(nonblk, npa, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
-                 mspatial_unit->sorted, n, padded_n, n1, n2, n3,
+                 mspatial_v2_unit->sorted, n, padded_n, n1, n2, n3,
                  (const real*)fuind, (const real*)fuinp, st.qgrid);
    }
 }
