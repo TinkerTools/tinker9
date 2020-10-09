@@ -414,8 +414,9 @@ void nblist_data(rc_op op)
       if (op & rc_alloc) {
          if (mplpot::use_chgpen) {
          } else {
-            spatial_alloc(un2, n, cut, buf, x, y, z, 1, nmdpuexclude,
-                          mdpuexclude);
+            spatial_alloc(un2, n, cut, buf, x, y, z, 4, nmdpuexclude,
+                          mdpuexclude, nmexclude, mexclude, ndpexclude,
+                          dpexclude, nuexclude, uexclude);
          }
       }
       if (op & rc_init) {
