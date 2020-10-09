@@ -1,0 +1,198 @@
+KERNEL_NAME: epolar_cu1
+TEMPLATE_PARAMS: template<class Ver, class ETYP>
+CONSTEXPR_FLAGS: |
+  constexpr bool do_e = Ver::e;
+  constexpr bool do_a = Ver::a;
+  constexpr bool do_g = Ver::g;
+  constexpr bool do_v = Ver::v;
+
+COUNT:
+  - nep
+ENERGY:
+  - ep
+VIRIAL:
+  - vep
+GRADIENT:
+  - gx
+  - gy
+  - gz
+
+# CUT_DISTANCE:
+OFF_DISTANCE:
+  - 'off'
+
+EXCLUDE_INFO:
+  - mdpuinfo
+
+SCALE_1X_TYPE: real4_const_array,1,2,3
+
+EXTRA_PARAMS: |
+  , real (*restrict ufld)[3], real (*restrict dufld)[6]
+  , const real (*restrict rpole)[10]
+  , const real (*restrict uind)[3], const real (*restrict uinp)[3]
+  , const real* restrict thole, const real* restrict pdamp
+  , real f, real aewald
+
+I_POSITION:
+  - def: shared real xi from:x
+  - def: shared real yi from:y
+  - def: shared real zi from:z
+K_POSITION:
+  - def: register real xk from:x
+  - def: register real yk from:y
+  - def: register real zk from:z
+
+I_FORCE:
+  - def: shared real frcxi addto:gx
+  - def: shared real frcyi addto:gy
+  - def: shared real frczi addto:gz
+  - def: shared real ufld0i  addto:ufld,0
+  - def: shared real ufld1i  addto:ufld,1
+  - def: shared real ufld2i  addto:ufld,2
+  - def: shared real dufld0i addto:dufld,0
+  - def: shared real dufld1i addto:dufld,1
+  - def: shared real dufld2i addto:dufld,2
+  - def: shared real dufld3i addto:dufld,3
+  - def: shared real dufld4i addto:dufld,4
+  - def: shared real dufld5i addto:dufld,5
+K_FORCE:
+  - def: register real frcxk addto:gx
+  - def: register real frcyk addto:gy
+  - def: register real frczk addto:gz
+  - def: register real ufld0k  addto:ufld,0
+  - def: register real ufld1k  addto:ufld,1
+  - def: register real ufld2k  addto:ufld,2
+  - def: register real dufld0k addto:dufld,0
+  - def: register real dufld1k addto:dufld,1
+  - def: register real dufld2k addto:dufld,2
+  - def: register real dufld3k addto:dufld,3
+  - def: register real dufld4k addto:dufld,4
+  - def: register real dufld5k addto:dufld,5
+
+I_VARIABLES:
+  - def: shared real ci   from:rpole,mpl_pme_0
+  - def: shared real dix  from:rpole,mpl_pme_x
+  - def: shared real diy  from:rpole,mpl_pme_y
+  - def: shared real diz  from:rpole,mpl_pme_z
+  - def: shared real qixx from:rpole,mpl_pme_xx
+  - def: shared real qixy from:rpole,mpl_pme_xy
+  - def: shared real qixz from:rpole,mpl_pme_xz
+  - def: shared real qiyy from:rpole,mpl_pme_yy
+  - def: shared real qiyz from:rpole,mpl_pme_yz
+  - def: shared real qizz from:rpole,mpl_pme_zz
+  - def: shared real uidx from:uind,0
+  - def: shared real uidy from:uind,1
+  - def: shared real uidz from:uind,2
+  - def: shared real uipx from:uinp,0
+  - def: shared real uipy from:uinp,1
+  - def: shared real uipz from:uinp,2
+  - def: shared real pdi  from:pdamp
+  - def: shared real pti  from:thole
+K_VARIABLES:
+  - def: register real ck   from:rpole,mpl_pme_0
+  - def: register real dkx  from:rpole,mpl_pme_x
+  - def: register real dky  from:rpole,mpl_pme_y
+  - def: register real dkz  from:rpole,mpl_pme_z
+  - def: register real qkxx from:rpole,mpl_pme_xx
+  - def: register real qkxy from:rpole,mpl_pme_xy
+  - def: register real qkxz from:rpole,mpl_pme_xz
+  - def: register real qkyy from:rpole,mpl_pme_yy
+  - def: register real qkyz from:rpole,mpl_pme_yz
+  - def: register real qkzz from:rpole,mpl_pme_zz
+  - def: register real ukdx from:uind,0
+  - def: register real ukdy from:uind,1
+  - def: register real ukdz from:uind,2
+  - def: register real ukpx from:uinp,0
+  - def: register real ukpy from:uinp,1
+  - def: register real ukpz from:uinp,2
+  - def: register real pdk from:pdamp
+  - def: register real ptk from:thole
+
+SCALED_PAIRWISE_INTERACTION: |
+  real xr = xk - xi;
+  real yr = yk - yi;
+  real zr = zk - zi;
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    real e, vxx, vyx, vzx, vyy, vzy, vzz;
+    real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
+    pair_polar_v2<Ver, ETYP>(
+      r2, xr, yr, zr, 1, 1, 1, //
+      ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz,
+      uidx, uidy, uidz, uipx, uipy, uipz, pdi, pti, //
+      ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
+      ukdx, ukdy, ukdz, ukpx, ukpy, ukpz, pdk, ptk, //
+      f, aewald, //
+      shfrcxi[klane],shfrcyi[klane],shfrczi[klane],frcxk,frcyk,frczk,
+      shufld0i[klane],shufld1i[klane],shufld2i[klane],ufld0k,ufld1k,ufld2k, //
+      shdufld0i[klane],shdufld1i[klane],shdufld2i[klane],
+      shdufld3i[klane],shdufld4i[klane],shdufld5i[klane],
+      dufld0k,dufld1k,dufld2k,dufld3k,dufld4k,dufld5k, //
+      e1,vxx1,vyx1,vzx1,vyy1,vzy1,vzz1);
+    pair_polar_v2<Ver, NON_EWALD>(
+      r2, xr, yr, zr, scaleb-1, scalec-1, scaled-1, //
+      ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz,
+      uidx, uidy, uidz, uipx, uipy, uipz, pdi, pti, //
+      ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
+      ukdx, ukdy, ukdz, ukpx, ukpy, ukpz, pdk, ptk, //
+      f, aewald, //
+      shfrcxi[klane],shfrcyi[klane],shfrczi[klane],frcxk,frcyk,frczk,
+      shufld0i[klane],shufld1i[klane],shufld2i[klane],ufld0k,ufld1k,ufld2k, //
+      shdufld0i[klane],shdufld1i[klane],shdufld2i[klane],
+      shdufld3i[klane],shdufld4i[klane],shdufld5i[klane],
+      dufld0k,dufld1k,dufld2k,dufld3k,dufld4k,dufld5k, //
+      e,vxx,vyx,vzx,vyy,vzy,vzz);
+    if CONSTEXPR (do_e) {
+      e = e + e1;
+      eptl += cvt_to<ebuf_prec>(e);
+      if CONSTEXPR (do_a) {
+        if (scalec != 0 and e != 0) // pscale != 0
+          neptl += 1;
+      }
+    }
+    if CONSTEXPR (do_v) {
+      veptlxx += cvt_to<vbuf_prec>(vxx + vxx1);
+      veptlyx += cvt_to<vbuf_prec>(vyx + vyx1);
+      veptlzx += cvt_to<vbuf_prec>(vzx + vzx1);
+      veptlyy += cvt_to<vbuf_prec>(vyy + vyy1);
+      veptlzy += cvt_to<vbuf_prec>(vzy + vzy1);
+      veptlzz += cvt_to<vbuf_prec>(vzz + vzz1);
+    }
+  } // end if (include)
+
+FULL_PAIRWISE_INTERACTION: |
+  real xr = xk - xi;
+  real yr = yk - yi;
+  real zr = zk - zi;
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    real e, vxx, vyx, vzx, vyy, vzy, vzz;
+    pair_polar_v2<Ver, ETYP>(
+      r2, xr, yr, zr, 1, 1, 1, //
+      ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz,
+      uidx, uidy, uidz, uipx, uipy, uipz, pdi, pti, //
+      ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
+      ukdx, ukdy, ukdz, ukpx, ukpy, ukpz, pdk, ptk, //
+      f, aewald, //
+      shfrcxi[klane],shfrcyi[klane],shfrczi[klane],frcxk,frcyk,frczk,
+      shufld0i[klane],shufld1i[klane],shufld2i[klane],ufld0k,ufld1k,ufld2k, //
+      shdufld0i[klane],shdufld1i[klane],shdufld2i[klane],
+      shdufld3i[klane],shdufld4i[klane],shdufld5i[klane],
+      dufld0k,dufld1k,dufld2k,dufld3k,dufld4k,dufld5k, //
+      e,vxx,vyx,vzx,vyy,vzy,vzz);
+    if CONSTEXPR (do_e) {
+      eptl += cvt_to<ebuf_prec>(e);
+      if CONSTEXPR (do_a) {
+        if (e != 0)
+          neptl += 1;
+      }
+    }
+    if CONSTEXPR (do_v) {
+      veptlxx += cvt_to<vbuf_prec>(vxx);
+      veptlyx += cvt_to<vbuf_prec>(vyx);
+      veptlzx += cvt_to<vbuf_prec>(vzx);
+      veptlyy += cvt_to<vbuf_prec>(vyy);
+      veptlzy += cvt_to<vbuf_prec>(vzy);
+      veptlzz += cvt_to<vbuf_prec>(vzz);
+    }
+  } // end if (include)

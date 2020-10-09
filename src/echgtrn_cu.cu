@@ -258,32 +258,6 @@ void echgtrn_cu2(HIPPO_CHGTRN_PARA, const real* x, const real* y, const real* z,
 template <class Ver>
 void echgtrn_cu3()
 {
-   const auto& st = *mspatial_unit;
-   real cut = switch_cut(switch_chgtrn);
-   real off = switch_off(switch_chgtrn);
-   real f = electric / dielec;
-
-
-   auto bufsize = buffer_size();
-
-
-   assert(ctrntyp == chgtrn_t::SEPARATE);
-
-
-   auto ker1 = echgtrn_cu1<Ver>;
-   if (st.niak > 0)
-      launch_k1s(nonblk, WARP_SIZE * st.niak, ker1, //
-                 bufsize, nct, ect, vir_ect, dectx, decty, dectz,
-                 TINKER_IMAGE_ARGS, chgct, dmpct, f, cut, off, //
-                 n, st.sorted, st.niak, st.iak, st.lst);
-
-
-   auto ker2 = echgtrn_cu2<Ver>;
-   if (nmexclude > 0)
-      launch_k1s(nonblk, nmexclude, ker2, //
-                 bufsize, nct, ect, vir_ect, dectx, decty, dectz,
-                 TINKER_IMAGE_ARGS, chgct, dmpct, f, cut, off, x, y, z,
-                 nmexclude, mexclude, mexclude_scale);
 }
 
 
