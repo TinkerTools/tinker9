@@ -1,5 +1,6 @@
+CK_VERSION: 1 # 1: a long kernel
 KERNEL_NAME: dfield_cu1
-TEMPLATE_PARAMS: template<class ETYP> __launch_bounds__(BLOCK_DIM)
+TEMPLATE_PARAMS: template<class ETYP>
 # CONSTEXPR_FLAGS:
 
 # COUNT:
@@ -12,9 +13,9 @@ OFF_DISTANCE:
   - 'off'
 
 EXCLUDE_INFO:
-  - mdpuinfo
+  - dpinfo
 
-SCALE_1X_TYPE: real4_const_array,1,2
+SCALE_1X_TYPE: real2_const_array,0,1
 
 EXTRA_PARAMS: |
   , real (*restrict field)[3], real (*restrict fieldp)[3]
@@ -23,21 +24,21 @@ EXTRA_PARAMS: |
   , real aewald
 
 I_POSITION:
-  - def: shared real xi from:x
-  - def: shared real yi from:y
-  - def: shared real zi from:z
+  - def: register real xi from:x
+  - def: register real yi from:y
+  - def: register real zi from:z
 K_POSITION:
   - def: register real xk from:x
   - def: register real yk from:y
   - def: register real zk from:z
 
 I_FORCE:
-  - def: shared real fidx addto:field,0
-  - def: shared real fidy addto:field,1
-  - def: shared real fidz addto:field,2
-  - def: shared real fipx addto:fieldp,0
-  - def: shared real fipy addto:fieldp,1
-  - def: shared real fipz addto:fieldp,2
+  - def: register real fidx addto:field,0
+  - def: register real fidy addto:field,1
+  - def: register real fidz addto:field,2
+  - def: register real fipx addto:fieldp,0
+  - def: register real fipy addto:fieldp,1
+  - def: register real fipz addto:fieldp,2
 K_FORCE:
   - def: register real fkdx addto:field,0
   - def: register real fkdy addto:field,1
@@ -76,15 +77,15 @@ K_VARIABLES:
 # SCALED_PAIRWISE_INTERACTION:
 
 FULL_PAIRWISE_INTERACTION: |
-  real xr = xk - xi;
-  real yr = yk - yi;
-  real zr = zk - zi;
+  real xr = xk - @xi@;
+  real yr = yk - @yi@;
+  real zr = zk - @zi@;
   real r2 = image2(xr,yr,zr);
   if (r2 <= off * off and incl) {
-    pair_dfield_v2<ETYP>(r2, xr, yr, zr, scaleb, scalec, aewald,
-      ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, pdi, pti,
+    pair_dfield_v2<ETYP>(r2, xr, yr, zr, scalea, scaleb, aewald,
+      @ci@, @dix@, @diy@, @diz@,
+      @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@, @pdi@, @pti@,
       ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, pdk, ptk,
-      shfidx[klane], shfidy[klane], shfidz[klane],
-      shfipx[klane], shfipy[klane], shfipz[klane],
+      @fidx@, @fidy@, @fidz@, @fipx@, @fipy@, @fipz@,
       fkdx, fkdy, fkdz, fkpx, fkpy, fkpz);
   } // end if (include)

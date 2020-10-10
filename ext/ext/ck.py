@@ -4,6 +4,7 @@ import re
 
 
 class yamlkey:
+    ck_version = 'CK_VERSION'
     kernel_name = 'KERNEL_NAME'
     template_params = 'TEMPLATE_PARAMS'
     constexpr_flags = 'CONSTEXPR_FLAGS'
@@ -417,6 +418,140 @@ void KERNEL_NAMEc(TINKER_IMAGE_PARAMS \
 '''
 
 
+kernel_template = '''
+TEMPLATE_PARAMS
+__global__
+void KERNEL_NAME(int n, TINKER_IMAGE_PARAMS \
+COUNT_KERNEL_PARAMS ENERGY_KERNEL_PARAMS \
+VIRIAL_KERNEL_PARAMS GRADIENT_KERNEL_PARAMS \
+CUT_KERNEL_PARAMS OFF_KERNEL_PARAMS \
+EXCLUDE_INFO_KERNEL_PARAMS EXCLUDE_SCALE_KERNEL_PARAMS \
+, const Spatial::SortedAtom* restrict sorted \
+, int nakpl, const int* restrict iakpl \
+, int niak, const int* restrict iak, const int* restrict lst \
+EXTRA_KERNEL_PARAMS)
+{
+    KERNEL_CONSTEXPR_FLAGS \
+    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
+    const int iwarp = ithread / WARP_SIZE;
+    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
+    const int ilane = threadIdx.x & (WARP_SIZE - 1);
+
+
+    DECLARE_ZERO_LOCAL_COUNT \
+    DECLARE_ZERO_LOCAL_ENERGY \
+    DECLARE_ZERO_LOCAL_VIRIAL \
+    DECLARE_POSITION_I_AND_K \
+    DECLARE_FORCE_I_AND_K \
+    DECLARE_PARAMS_I_AND_K
+
+
+    KERNEL_HAS_1X_SCALE
+    for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
+        KERNEL_SCALED_KLANE \
+        KERNEL_ZERO_LOCAL_FORCE
+
+
+        int i = exclude[ii][0];
+        int k = exclude[ii][1];
+        KERNEL_LOAD_1X_SCALES
+
+
+        KERNEL_INIT_EXCLUDE_XYZ
+        KERNEL_INIT_EXCLUDE_PARAMS_I_AND_K
+
+
+        constexpr bool incl = true;
+        KERNEL_SCALED_PAIRWISE_INTERACTION
+
+
+        KERNEL_SAVE_LOCAL_FORCE
+    }
+    // */
+
+
+    for (int iw = iwarp; iw < nakpl; iw += nwarp) {
+        KERNEL_ZERO_LOCAL_FORCE
+
+
+        int tri, tx, ty;
+        tri = iakpl[iw];
+        tri_to_xy(tri, tx, ty);
+
+
+        int iid = ty * WARP_SIZE + ilane;
+        int atomi = min(iid, n - 1);
+        int i = sorted[atomi].unsorted;
+        int kid = tx * WARP_SIZE + ilane;
+        int atomk = min(kid, n - 1);
+        int k = sorted[atomk].unsorted;
+        KERNEL_INIT_XYZ
+
+
+        KERNEL_INIT_PARAMS_I_AND_K
+
+
+        KERNEL_LOAD_INFO_VARIABLES \
+        for (int j = 0; j < WARP_SIZE; ++j) {
+            int srclane = (ilane + j) & (WARP_SIZE - 1);
+            KERNEL_KLANE1 \
+            bool incl = iid < kid and kid < n; \
+            KERNEL_EXCLUDE_BIT \
+            KERNEL_SCALE_1 \
+            KERNEL_FULL_PAIRWISE_INTERACTION
+
+
+            iid = __shfl_sync(ALL_LANES, iid, ilane + 1); \
+            KERNEL_SHUFFLE_XYZ_I \
+            KERNEL_SHUFFLE_PARAMS_I \
+            KERNEL_SHUFFLE_LOCAL_FORCE
+        }
+
+
+        KERNEL_SAVE_LOCAL_FORCE
+    }
+
+
+
+    for (int iw = iwarp; iw < niak; iw += nwarp) {
+        KERNEL_ZERO_LOCAL_FORCE
+
+
+        int ty = iak[iw];
+        int atomi = ty * WARP_SIZE + ilane;
+        int i = sorted[atomi].unsorted;
+        int atomk = lst[iw * WARP_SIZE + ilane];
+        int k = sorted[atomk].unsorted; \
+        KERNEL_INIT_XYZ
+
+
+        KERNEL_INIT_PARAMS_I_AND_K
+
+
+        for (int j = 0; j < WARP_SIZE; ++j) {
+            KERNEL_KLANE2 \
+            bool incl = atomk > 0; \
+            KERNEL_SCALE_1 \
+            KERNEL_FULL_PAIRWISE_INTERACTION
+
+
+            KERNEL_SHUFFLE_XYZ_I \
+            KERNEL_SHUFFLE_PARAMS_I \
+            KERNEL_SHUFFLE_LOCAL_FORCE
+        }
+
+
+        KERNEL_SAVE_LOCAL_FORCE
+    }
+
+
+    KERNEL_SUM_COUNT
+    KERNEL_SUM_ENERGY
+    KERNEL_SUM_VIRIAL
+}
+'''
+
+
 if __name__ == '__main__':
     yaml_file = sys.argv[1]
     use_klane = False
@@ -441,15 +576,15 @@ if __name__ == '__main__':
                                 elif s2.startswith('addto:'):
                                     s3 = s2.replace('addto:', '')
                                     d['addto'] = s3
-        k = 'I_FORCE'
-        if k in config.keys():
-            lst = config[k]
-            for d in lst:
-                k2 = 'location'
-                if k2 in d.keys():
-                    v2 = d[k2]
-                    if v2 == 'shared':
-                        use_klane = True
+        for k in [yamlkey.i_position, yamlkey.i_force, yamlkey.i_variables]:
+            if k in config.keys():
+                lst = config[k]
+                for d in lst:
+                    k2 = 'location'
+                    if k2 in d.keys():
+                        v2 = d[k2]
+                        if v2 == 'shared':
+                            use_klane = True
 
 
     d = {}
@@ -588,8 +723,8 @@ if __name__ == '__main__':
         if 'constexpr bool do_g =' in vcfg:
             v1 = 'if CONSTEXPR (do_g) {%s}' % v1
             v2 = 'if CONSTEXPR (do_g) {%s}' % v2
-    if v3 != '':
-        v3 = 'if CONSTEXPR (do_g) {%s}' % v3
+        if v3 != '':
+            v3 = 'if CONSTEXPR (do_g) {%s}' % v3
     d[k], d[k0], d[k1], d[k2], d[k3] = v, v0, v1, v2, v3
 
 
@@ -681,6 +816,7 @@ if __name__ == '__main__':
 
     k, v = 'EXCLUDE_SCALE_KERNEL_PARAMS', ''
     k1, v1 = 'KERNEL_LOAD_1X_SCALES', ''
+    k2, v2 = 'KERNEL_HAS_1X_SCALE', '/* /'
     k3, v3 = 'KERNEL_SCALE_1', ''
     kcfg = yamlkey.scale_1x_type
     separate_scaled_pairwise = yamlkey.scaled_pairwise in config.keys()
@@ -689,11 +825,12 @@ if __name__ == '__main__':
         v = ', int nexclude, const int (*restrict exclude)[2]'
         v = v + function_parameter(vcfg, 'exclude_scale')
         v1 = load_scale_parameter(vcfg, 'scale', 'exclude_scale', separate_scaled_pairwise)
+        v2 = '//* /'
         v3 = load_scale_parameter(vcfg, 'scale', None, separate_scaled_pairwise)
     v = v + ', const real* restrict x'
     v = v + ', const real* restrict y'
     v = v + ', const real* restrict z'
-    d[k], d[k1], d[k3] = v, v1, v3
+    d[k], d[k1], d[k2], d[k3] = v, v1, v2, v3
 
 
     k, v = 'KERNEL_FULL_PAIRWISE_INTERACTION', ''
@@ -714,8 +851,19 @@ if __name__ == '__main__':
     # output
 
 
-    print('// ck.py Version 2.0.1')
+    print('// ck.py Version 2.0.2')
     print('\n\n')
+
+
+    kcfg = yamlkey.ck_version
+    if kcfg in config.keys():
+        ver = config[kcfg]
+        if ver == 1:
+            output = replace(kernel_template, d)
+            output = replace_i_vars(output, config)
+            print(output)
+            print('\n\n')
+            exit(0)
 
 
     if yamlkey.scale_1x_type in config.keys():
