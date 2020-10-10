@@ -102,9 +102,9 @@ void pair_mplar(                                                          //
    real& restrict frcxk, real& restrict frcyk, real& restrict frczk,
    real& restrict trqxi, real& restrict trqyi, real& restrict trqzi,
    real& restrict trqxk, real& restrict trqyk, real& restrict trqzk,
-   real& restrict et1, real& restrict vt1xx, real& restrict vt1xy,
-   real& restrict vt1xz, real& restrict vt1yy, real& restrict vt1yz,
-   real& restrict vt1zz)
+   real& restrict eo, real& restrict voxx, real& restrict voxy,
+   real& restrict voxz, real& restrict voyy, real& restrict voyz,
+   real& restrict vozz)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -378,7 +378,7 @@ void pair_mplar(                                                          //
       real e = phi1[0] * ci + phi1[1] * di.x + phi1[2] * di.y + phi1[3] * di.z +
          phi1[4] * qixx + phi1[5] * qiyy + phi1[6] * qizz + phi1[7] * qixy +
          phi1[8] * qixz + phi1[9] * qiyz;
-      et1 = f * e;
+      eo = f * e;
    }
 
 
@@ -567,17 +567,17 @@ void pair_mplar(                                                          //
       trqzk += f * gltrq2.z;
    }
    if CONSTEXPR (do_v) {
-      vt1xx = -dR.x * frc.x;
-      vt1xy = -0.5f * (dR.y * frc.x + dR.x * frc.y);
-      vt1xz = -0.5f * (dR.z * frc.x + dR.x * frc.z);
-      vt1yy = -dR.y * frc.y;
-      vt1yz = -0.5f * (dR.z * frc.y + dR.y * frc.z);
-      vt1zz = -dR.z * frc.z;
+      voxx = -dR.x * frc.x;
+      voxy = -0.5f * (dR.y * frc.x + dR.x * frc.y);
+      voxz = -0.5f * (dR.z * frc.x + dR.x * frc.z);
+      voyy = -dR.y * frc.y;
+      voyz = -0.5f * (dR.z * frc.y + dR.y * frc.z);
+      vozz = -dR.z * frc.z;
    }
 }
 
 
-// ck.py Version 2.0.0
+// ck.py Version 2.0.1
 
 
 template <class Ver, class ETYP>
@@ -748,20 +748,7 @@ void emplar_cu1c(TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf,
       real zr = zk - zi[klane];
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
-         real e, vxx, vyx, vzx, vyy, vzy, vzz;
          real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
-         pair_mplar<Ver, ETYP>(
-            r2, make_real3(xr, yr, zr), 1, 1, 1, 1, ci[klane],
-            make_real3(dix[klane], diy[klane], diz[klane]), qixx[klane],
-            qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
-            make_real3(uidx[klane], uidy[klane], uidz[klane]),
-            make_real3(uipx[klane], uipy[klane], uipz[klane]), pdi[klane],
-            pti[klane], ck, make_real3(dkx, dky, dkz), qkxx, qkxy, qkxz, qkyy,
-            qkyz, qkzz, make_real3(ukdx, ukdy, ukdz),
-            make_real3(ukpx, ukpy, ukpz), pdk, ptk, f, aewald, frcxi[klane],
-            frcyi[klane], frczi[klane], frcxk, frcyk, frczk, trqxi[klane],
-            trqyi[klane], trqzi[klane], trqxk, trqyk, trqzk, e, vxx, vyx, vzx,
-            vyy, vzy, vzz);
          pair_mplar<Ver, NON_EWALD>(
             r2, make_real3(xr, yr, zr), scalea - 1, scaleb - 1, scalec - 1,
             scaled - 1, ci[klane],
@@ -776,15 +763,15 @@ void emplar_cu1c(TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf,
             trqyi[klane], trqzi[klane], trqxk, trqyk, trqzk, e1, vxx1, vyx1,
             vzx1, vyy1, vzy1, vzz1);
          if CONSTEXPR (do_e) {
-            ebuftl += cvt_to<ebuf_prec>(e + e1);
+            ebuftl += cvt_to<ebuf_prec>(e1);
          }
          if CONSTEXPR (do_v) {
-            vbuftlxx += cvt_to<vbuf_prec>(vxx + vxx1);
-            vbuftlyx += cvt_to<vbuf_prec>(vyx + vyx1);
-            vbuftlzx += cvt_to<vbuf_prec>(vzx + vzx1);
-            vbuftlyy += cvt_to<vbuf_prec>(vyy + vyy1);
-            vbuftlzy += cvt_to<vbuf_prec>(vzy + vzy1);
-            vbuftlzz += cvt_to<vbuf_prec>(vzz + vzz1);
+            vbuftlxx += cvt_to<vbuf_prec>(vxx1);
+            vbuftlyx += cvt_to<vbuf_prec>(vyx1);
+            vbuftlzx += cvt_to<vbuf_prec>(vzx1);
+            vbuftlyy += cvt_to<vbuf_prec>(vyy1);
+            vbuftlzy += cvt_to<vbuf_prec>(vzy1);
+            vbuftlzz += cvt_to<vbuf_prec>(vzz1);
          }
       } // end if (include)
 
@@ -825,9 +812,8 @@ void emplar_cu1b(TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf,
                  const real (*restrict rpole)[10],
                  const real (*restrict uind)[3], const real (*restrict uinp)[3],
                  const real* restrict thole, const real* restrict pdamp, real f,
-                 real aewald, const unsigned* restrict mdpuinfo,
-                 const Spatial::SortedAtom* restrict sorted, int n, int nakpl,
-                 const int* restrict iakpl)
+                 real aewald, const Spatial::SortedAtom* restrict sorted, int n,
+                 int nakpl, const int* restrict iakpl)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -984,13 +970,10 @@ void emplar_cu1b(TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf,
       ptk = thole[k];
 
 
-      unsigned int mdpuinfo0 = mdpuinfo[iw * WARP_SIZE + ilane];
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
-         int srcmask = 1 << srclane;
          int klane = srclane + threadIdx.x - ilane;
          bool incl = iid < kid and kid < n;
-         incl = incl and (mdpuinfo0 & srcmask) == 0;
          real xr = xk - xi[klane];
          real yr = yk - yi[klane];
          real zr = zk - zi[klane];
@@ -1314,7 +1297,7 @@ void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
    kerb<<<ngrid, BLOCK_DIM, 0, nonblk>>>(
       TINKER_IMAGE_ARGS, em, vir_em, demx, demy, demz, off, trqx, trqy, trqz,
       rpole, uind, uinp, thole, pdamp, f, aewald, //
-      st.si1.bit0, st.sorted, st.n, st.nakpl, st.iakpl);
+      st.sorted, st.n, st.nakpl, st.iakpl);
    auto kerc = emplar_cu1c<Ver, ETYP>;
    kerc<<<ngrid, BLOCK_DIM, 0, nonblk>>>(
       TINKER_IMAGE_ARGS, em, vir_em, demx, demy, demz, off, trqx, trqy, trqz,

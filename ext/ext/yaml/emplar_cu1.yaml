@@ -20,8 +20,8 @@ GRADIENT:
 OFF_DISTANCE:
   - 'off'
 
-EXCLUDE_INFO:
-  - mdpuinfo
+# EXCLUDE_INFO:
+#   - mdpuinfo
 
 SCALE_1X_TYPE: real4_const_array,0,1,2,3
 
@@ -101,20 +101,7 @@ SCALED_PAIRWISE_INTERACTION: |
   real zr = zk - @zi@;
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
-    real e, vxx, vyx, vzx, vyy, vzy, vzz;
     real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
-    pair_mplar<Ver, ETYP>(
-      r2, make_real3(xr, yr, zr), 1, 1, 1, 1,
-      @ci@, make_real3(@dix@, @diy@, @diz@),
-      @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@,
-      make_real3(@uidx@, @uidy@, @uidz@),
-      make_real3(@uipx@, @uipy@, @uipz@), @pdi@, @pti@,
-      ck, make_real3(dkx, dky, dkz), qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
-      make_real3(ukdx, ukdy, ukdz), make_real3(ukpx, ukpy, ukpz), pdk, ptk,
-      f, aewald,
-      @frcxi@, @frcyi@, @frczi@, frcxk, frcyk, frczk,
-      @trqxi@, @trqyi@, @trqzi@, trqxk, trqyk, trqzk,
-      e, vxx, vyx, vzx, vyy, vzy, vzz);
     pair_mplar<Ver, NON_EWALD>(
       r2, make_real3(xr, yr, zr), scalea-1, scaleb-1, scalec-1, scaled-1,
       @ci@, make_real3(@dix@, @diy@, @diz@),
@@ -128,15 +115,15 @@ SCALED_PAIRWISE_INTERACTION: |
       @trqxi@, @trqyi@, @trqzi@, trqxk, trqyk, trqzk,
       e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1);
     if CONSTEXPR (do_e) {
-      ebuftl += cvt_to<ebuf_prec>(e + e1);
+      ebuftl += cvt_to<ebuf_prec>(e1);
     }
     if CONSTEXPR (do_v) {
-      vbuftlxx += cvt_to<vbuf_prec>(vxx + vxx1);
-      vbuftlyx += cvt_to<vbuf_prec>(vyx + vyx1);
-      vbuftlzx += cvt_to<vbuf_prec>(vzx + vzx1);
-      vbuftlyy += cvt_to<vbuf_prec>(vyy + vyy1);
-      vbuftlzy += cvt_to<vbuf_prec>(vzy + vzy1);
-      vbuftlzz += cvt_to<vbuf_prec>(vzz + vzz1);
+      vbuftlxx += cvt_to<vbuf_prec>(vxx1);
+      vbuftlyx += cvt_to<vbuf_prec>(vyx1);
+      vbuftlzx += cvt_to<vbuf_prec>(vzx1);
+      vbuftlyy += cvt_to<vbuf_prec>(vyy1);
+      vbuftlzy += cvt_to<vbuf_prec>(vzy1);
+      vbuftlzz += cvt_to<vbuf_prec>(vzz1);
     }
   } // end if (include)
 

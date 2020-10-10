@@ -345,7 +345,6 @@ void KERNEL_NAMEb(TINKER_IMAGE_PARAMS \
         KERNEL_LOAD_INFO_VARIABLES \
         for (int j = 0; j < WARP_SIZE; ++j) {
             int srclane = (ilane + j) & (WARP_SIZE - 1);
-            int srcmask = 1 << srclane;
             KERNEL_KLANE1 \
             bool incl = iid < kid and kid < n; \
             KERNEL_EXCLUDE_BIT \
@@ -675,8 +674,8 @@ if __name__ == '__main__':
             v = v + ', const unsigned* restrict {}'.format(t)
             v2 = v2 + 'unsigned int {0:}0 = {0:}[iw * WARP_SIZE + ilane];'.format(t)
             v3 = v3 + ' and ({}0 & srcmask) == 0'.format(t)
-    if v3 != 0:
-        v3 = 'incl = incl {};'.format(v3)
+    if v3 != '':
+        v3 = 'int srcmask = 1 << srclane;' + 'incl = incl {};'.format(v3)
     d[k], d[k2], d[k3] = v, v2, v3
 
 
@@ -715,7 +714,7 @@ if __name__ == '__main__':
     # output
 
 
-    print('// ck.py Version 2.0.0')
+    print('// ck.py Version 2.0.1')
     print('\n\n')
 
 
