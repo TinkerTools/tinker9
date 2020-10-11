@@ -387,8 +387,8 @@ void nblist_data(rc_op op)
    if (u & NBL_SPATIAL) {
       auto& un2 = cspatial_v2_unit;
       if (op & rc_alloc) {
-         spatial_alloc(un2, n, cut, buf, x, y, z, 2, //
-                       ncexclude, cexclude, nvexclude, vexclude);
+         spatial_alloc(un2, n, cut, buf, x, y, z, 1, //
+                       ncvexclude, cvexclude);
       }
       if (op & rc_init) {
          spatial_build(un2);
