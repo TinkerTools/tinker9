@@ -949,7 +949,7 @@ void echglj_cu3()
    ec, vir_ec, decx, decy, decz, TINKER_IMAGE_ARGS, st.n, st.sorted, st.nakpl, \
       st.iakpl, st.niak, st.iak, st.lst, st.bnum, st.akc, ncvexclude,          \
       cvexclude, cvexclude_scale, eccut, ecoff, f, aewald, chg_coalesced,      \
-      st.si1.bit0, evcut, evoff, (const real2*)radeps_coalesced, ev, vir_ev,   \
+      st.si3.bit0, evcut, evoff, (const real2*)radeps_coalesced, ev, vir_ev,   \
       devx, devy, devz
 
 
