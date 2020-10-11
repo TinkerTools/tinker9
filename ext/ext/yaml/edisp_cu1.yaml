@@ -1,3 +1,4 @@
+CK_VERSION: 1
 KERNEL_NAME: edisp_cu1
 TEMPLATE_PARAMS: template <class Ver, class DTYP>
 CONSTEXPR_FLAGS: |
@@ -56,16 +57,16 @@ K_VARIABLES:
   - def: register real ak from:adisp
 
 SCALED_PAIRWISE_INTERACTION: |
-  real xr = xi - xk;
-  real yr = yi - yk;
-  real zr = zi - zk;
+  real xr = @xi@ - xk;
+  real yr = @yi@ - yk;
+  real zr = @zi@ - zk;
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
     real r = REAL_SQRT(r2);
     real rr1 = REAL_RECIP(r);
     real e, de;
     pair_disp<do_g, DTYP, 0>(r, r2, rr1,
-      scalea, aewald, ci, ai, ck, ak, cut, off, e, de);
+      scalea, aewald, @ci@, @ai@, ck, ak, cut, off, e, de);
     if CONSTEXPR (do_e) {
       edtl += cvt_to<ebuf_prec>(e);
       if CONSTEXPR (do_a) {
@@ -79,9 +80,9 @@ SCALED_PAIRWISE_INTERACTION: |
       dedx = de * xr;
       dedy = de * yr;
       dedz = de * zr;
-      shgxi += dedx;
-      shgyi += dedy;
-      shgzi += dedz;
+      @gxi@ += dedx;
+      @gyi@ += dedy;
+      @gzi@ += dedz;
       gxk -= dedx;
       gyk -= dedy;
       gzk -= dedz;
@@ -97,16 +98,16 @@ SCALED_PAIRWISE_INTERACTION: |
   } // end if (include)
 
 FULL_PAIRWISE_INTERACTION: |
-  real xr = xi - xk;
-  real yr = yi - yk;
-  real zr = zi - zk;
+  real xr = @xi@ - xk;
+  real yr = @yi@ - yk;
+  real zr = @zi@ - zk;
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
     real r = REAL_SQRT(r2);
     real rr1 = REAL_RECIP(r);
     real e, de;
     pair_disp<do_g, DTYP, 1>(r, r2, rr1,
-      1, aewald, ci, ai, ck, ak, cut, off, e, de);
+      1, aewald, @ci@, @ai@, ck, ak, cut, off, e, de);
     if CONSTEXPR (do_e) {
       edtl += cvt_to<ebuf_prec>(e);
       if CONSTEXPR (do_a) {
@@ -120,9 +121,9 @@ FULL_PAIRWISE_INTERACTION: |
       dedx = de * xr;
       dedy = de * yr;
       dedz = de * zr;
-      shgxi += dedx;
-      shgyi += dedy;
-      shgzi += dedz;
+      @gxi@ += dedx;
+      @gyi@ += dedy;
+      @gzi@ += dedz;
       gxk -= dedx;
       gyk -= dedy;
       gzk -= dedz;

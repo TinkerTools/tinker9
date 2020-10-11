@@ -13,6 +13,7 @@
 
 
 namespace tinker {
+// ck.py Version 2.0.2
 template <class Ver, class DTYP>
 __global__
 void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd,
@@ -32,8 +33,6 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd,
    constexpr bool do_e = Ver::e;
    constexpr bool do_v = Ver::v;
    constexpr bool do_g = Ver::g;
-
-
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
@@ -59,52 +58,49 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd,
       vdtlzy = 0;
       vdtlzz = 0;
    }
-
-
-   real shxi;
-   real shyi;
-   real shzi;
+   real xi;
+   real yi;
+   real zi;
    real xk;
    real yk;
    real zk;
-   real shgxi;
-   real shgyi;
-   real shgzi;
+   real gxi;
+   real gyi;
+   real gzi;
    real gxk;
    real gyk;
    real gzk;
-   real shci;
-   real shai;
+   real ci;
+   real ai;
    real ck;
    real ak;
 
 
    //* /
-   // exclude
    for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
       if CONSTEXPR (do_g) {
-         shgxi = 0;
-         shgyi = 0;
-         shgzi = 0;
+         gxi = 0;
+         gyi = 0;
+         gzi = 0;
          gxk = 0;
          gyk = 0;
          gzk = 0;
       }
 
 
-      int shi = exclude[ii][0];
+      int i = exclude[ii][0];
       int k = exclude[ii][1];
       real scalea = exclude_scale[ii];
 
 
-      real xi = x[shi];
-      real yi = y[shi];
-      real zi = z[shi];
+      xi = x[i];
+      yi = y[i];
+      zi = z[i];
       xk = x[k];
       yk = y[k];
       zk = z[k];
-      real ci = csix[shi];
-      real ai = adisp[shi];
+      ci = csix[i];
+      ai = adisp[i];
       ck = csix[k];
       ak = adisp[k];
 
@@ -133,9 +129,9 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd,
             dedx = de * xr;
             dedy = de * yr;
             dedz = de * zr;
-            shgxi += dedx;
-            shgyi += dedy;
-            shgzi += dedz;
+            gxi += dedx;
+            gyi += dedy;
+            gzi += dedz;
             gxk -= dedx;
             gyk -= dedy;
             gzk -= dedz;
@@ -152,9 +148,9 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd,
 
 
       if CONSTEXPR (do_g) {
-         atomic_add(shgxi, gx, shi);
-         atomic_add(shgyi, gy, shi);
-         atomic_add(shgzi, gz, shi);
+         atomic_add(gxi, gx, i);
+         atomic_add(gyi, gy, i);
+         atomic_add(gzi, gz, i);
          atomic_add(gxk, gx, k);
          atomic_add(gyk, gy, k);
          atomic_add(gzk, gz, k);
@@ -163,13 +159,11 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd,
    // */
 
 
-   //* /
-   // block pairs that have scale factors
    for (int iw = iwarp; iw < nakpl; iw += nwarp) {
       if CONSTEXPR (do_g) {
-         shgxi = 0;
-         shgyi = 0;
-         shgzi = 0;
+         gxi = 0;
+         gyi = 0;
+         gzi = 0;
          gxk = 0;
          gyk = 0;
          gzk = 0;
@@ -181,41 +175,31 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd,
       tri_to_xy(tri, tx, ty);
 
 
-      int shiid = ty * WARP_SIZE + ilane;
-      int shatomi = min(shiid, n - 1);
-      int shi = sorted[shatomi].unsorted;
+      int iid = ty * WARP_SIZE + ilane;
+      int atomi = min(iid, n - 1);
+      int i = sorted[atomi].unsorted;
       int kid = tx * WARP_SIZE + ilane;
       int atomk = min(kid, n - 1);
       int k = sorted[atomk].unsorted;
-      shxi = sorted[shatomi].x;
-      shyi = sorted[shatomi].y;
-      shzi = sorted[shatomi].z;
+      xi = sorted[atomi].x;
+      yi = sorted[atomi].y;
+      zi = sorted[atomi].z;
       xk = sorted[atomk].x;
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
 
-      shci = csix[shi];
-      shai = adisp[shi];
+      ci = csix[i];
+      ai = adisp[i];
       ck = csix[k];
       ak = adisp[k];
 
 
       unsigned int dinfo0 = dinfo[iw * WARP_SIZE + ilane];
-
-
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
-         int srcmask = 1 << srclane;
-         int iid = shiid;
-         real xi = shxi;
-         real yi = shyi;
-         real zi = shzi;
-         real ci = shci;
-         real ai = shai;
-
-
          bool incl = iid < kid and kid < n;
+         int srcmask = 1 << srclane;
          incl = incl and (dinfo0 & srcmask) == 0;
          real xr = xi - xk;
          real yr = yi - yk;
@@ -240,9 +224,9 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd,
                dedx = de * xr;
                dedy = de * yr;
                dedz = de * zr;
-               shgxi += dedx;
-               shgyi += dedy;
-               shgzi += dedz;
+               gxi += dedx;
+               gyi += dedy;
+               gzi += dedz;
                gxk -= dedx;
                gyk -= dedy;
                gzk -= dedz;
@@ -258,39 +242,36 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd,
          } // end if (include)
 
 
-         shiid = __shfl_sync(ALL_LANES, shiid, ilane + 1);
-         shxi = __shfl_sync(ALL_LANES, shxi, ilane + 1);
-         shyi = __shfl_sync(ALL_LANES, shyi, ilane + 1);
-         shzi = __shfl_sync(ALL_LANES, shzi, ilane + 1);
-         shci = __shfl_sync(ALL_LANES, shci, ilane + 1);
-         shai = __shfl_sync(ALL_LANES, shai, ilane + 1);
+         iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
+         xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
+         yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
+         zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
+         ci = __shfl_sync(ALL_LANES, ci, ilane + 1);
+         ai = __shfl_sync(ALL_LANES, ai, ilane + 1);
          if CONSTEXPR (do_g) {
-            shgxi = __shfl_sync(ALL_LANES, shgxi, ilane + 1);
-            shgyi = __shfl_sync(ALL_LANES, shgyi, ilane + 1);
-            shgzi = __shfl_sync(ALL_LANES, shgzi, ilane + 1);
+            gxi = __shfl_sync(ALL_LANES, gxi, ilane + 1);
+            gyi = __shfl_sync(ALL_LANES, gyi, ilane + 1);
+            gzi = __shfl_sync(ALL_LANES, gzi, ilane + 1);
          }
       }
 
 
       if CONSTEXPR (do_g) {
-         atomic_add(shgxi, gx, shi);
-         atomic_add(shgyi, gy, shi);
-         atomic_add(shgzi, gz, shi);
+         atomic_add(gxi, gx, i);
+         atomic_add(gyi, gy, i);
+         atomic_add(gzi, gz, i);
          atomic_add(gxk, gx, k);
          atomic_add(gyk, gy, k);
          atomic_add(gzk, gz, k);
       }
    }
-   // */
 
 
-   //* /
-   // block-atoms
    for (int iw = iwarp; iw < niak; iw += nwarp) {
       if CONSTEXPR (do_g) {
-         shgxi = 0;
-         shgyi = 0;
-         shgzi = 0;
+         gxi = 0;
+         gyi = 0;
+         gzi = 0;
          gxk = 0;
          gyk = 0;
          gzk = 0;
@@ -298,32 +279,25 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd,
 
 
       int ty = iak[iw];
-      int shatomi = ty * WARP_SIZE + ilane;
-      int shi = sorted[shatomi].unsorted;
+      int atomi = ty * WARP_SIZE + ilane;
+      int i = sorted[atomi].unsorted;
       int atomk = lst[iw * WARP_SIZE + ilane];
       int k = sorted[atomk].unsorted;
-      shxi = sorted[shatomi].x;
-      shyi = sorted[shatomi].y;
-      shzi = sorted[shatomi].z;
+      xi = sorted[atomi].x;
+      yi = sorted[atomi].y;
+      zi = sorted[atomi].z;
       xk = sorted[atomk].x;
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
 
-      shci = csix[shi];
-      shai = adisp[shi];
+      ci = csix[i];
+      ai = adisp[i];
       ck = csix[k];
       ak = adisp[k];
 
 
       for (int j = 0; j < WARP_SIZE; ++j) {
-         real xi = shxi;
-         real yi = shyi;
-         real zi = shzi;
-         real ci = shci;
-         real ai = shai;
-
-
          bool incl = atomk > 0;
          real xr = xi - xk;
          real yr = yi - yk;
@@ -348,9 +322,9 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd,
                dedx = de * xr;
                dedy = de * yr;
                dedz = de * zr;
-               shgxi += dedx;
-               shgyi += dedy;
-               shgzi += dedz;
+               gxi += dedx;
+               gyi += dedy;
+               gzi += dedz;
                gxk -= dedx;
                gyk -= dedy;
                gzk -= dedz;
@@ -366,29 +340,28 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd,
          } // end if (include)
 
 
-         shxi = __shfl_sync(ALL_LANES, shxi, ilane + 1);
-         shyi = __shfl_sync(ALL_LANES, shyi, ilane + 1);
-         shzi = __shfl_sync(ALL_LANES, shzi, ilane + 1);
-         shci = __shfl_sync(ALL_LANES, shci, ilane + 1);
-         shai = __shfl_sync(ALL_LANES, shai, ilane + 1);
+         xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
+         yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
+         zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
+         ci = __shfl_sync(ALL_LANES, ci, ilane + 1);
+         ai = __shfl_sync(ALL_LANES, ai, ilane + 1);
          if CONSTEXPR (do_g) {
-            shgxi = __shfl_sync(ALL_LANES, shgxi, ilane + 1);
-            shgyi = __shfl_sync(ALL_LANES, shgyi, ilane + 1);
-            shgzi = __shfl_sync(ALL_LANES, shgzi, ilane + 1);
+            gxi = __shfl_sync(ALL_LANES, gxi, ilane + 1);
+            gyi = __shfl_sync(ALL_LANES, gyi, ilane + 1);
+            gzi = __shfl_sync(ALL_LANES, gzi, ilane + 1);
          }
       }
 
 
       if CONSTEXPR (do_g) {
-         atomic_add(shgxi, gx, shi);
-         atomic_add(shgyi, gy, shi);
-         atomic_add(shgzi, gz, shi);
+         atomic_add(gxi, gx, i);
+         atomic_add(gyi, gy, i);
+         atomic_add(gzi, gz, i);
          atomic_add(gxk, gx, k);
          atomic_add(gyk, gy, k);
          atomic_add(gzk, gz, k);
       }
    }
-   // */
 
 
    if CONSTEXPR (do_a) {
@@ -400,7 +373,7 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd,
    if CONSTEXPR (do_v) {
       atomic_add(vdtlxx, vdtlyx, vdtlzx, vdtlyy, vdtlzy, vdtlzz, vd, ithread);
    }
-} // generated by ComplexKernelBuilder (ck.py) 1.5.2
+}
 
 
 template <class Ver, class DTYP>
