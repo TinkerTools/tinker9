@@ -1,3 +1,4 @@
+CK_VERSION: 1
 KERNEL_NAME: empole_cu1
 TEMPLATE_PARAMS: template<class Ver, class ETYP>
 CONSTEXPR_FLAGS: |
@@ -79,28 +80,28 @@ K_VARIABLES:
   - def: register real qkzz from:rpole,mpl_pme_zz
 
 SCALED_PAIRWISE_INTERACTION: |
-  real xr = xk - xi;
-  real yr = yk - yi;
-  real zr = zk - zi;
+  real xr = xk - @xi@;
+  real yr = yk - @yi@;
+  real zr = zk - @zi@;
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
     real e, vxx, vyx, vzx, vyy, vzy, vzz;
     real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
     pair_mpole_v2<Ver, ETYP>(
       r2, xr, yr, zr, 1,
-      ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz,
+      @ci@, @dix@, @diy@, @diz@, @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@,
       ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
       f, aewald,
-      shfrcxi[klane], shfrcyi[klane], shfrczi[klane], frcxk, frcyk, frczk,
-      shtrqxi[klane], shtrqyi[klane], shtrqzi[klane], trqxk, trqyk, trqzk,
+      @frcxi@, @frcyi@, @frczi@, frcxk, frcyk, frczk,
+      @trqxi@, @trqyi@, @trqzi@, trqxk, trqyk, trqzk,
       e, vxx, vyx, vzx, vyy, vzy, vzz);
     pair_mpole_v2<Ver, NON_EWALD>(
       r2, xr, yr, zr, scalea - 1,
-      ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz,
+      @ci@, @dix@, @diy@, @diz@, @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@,
       ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
       f, aewald,
-      shfrcxi[klane], shfrcyi[klane], shfrczi[klane], frcxk, frcyk, frczk,
-      shtrqxi[klane], shtrqyi[klane], shtrqzi[klane], trqxk, trqyk, trqzk,
+      @frcxi@, @frcyi@, @frczi@, frcxk, frcyk, frczk,
+      @trqxi@, @trqyi@, @trqzi@, trqxk, trqyk, trqzk,
       e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1);
     if CONSTEXPR (do_e) {
       e = e + e1;
@@ -121,19 +122,19 @@ SCALED_PAIRWISE_INTERACTION: |
   } // end if (include)
 
 FULL_PAIRWISE_INTERACTION: |
-  real xr = xk - xi;
-  real yr = yk - yi;
-  real zr = zk - zi;
+  real xr = xk - @xi@;
+  real yr = yk - @yi@;
+  real zr = zk - @zi@;
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
     real e, vxx, vyx, vzx, vyy, vzy, vzz;
     pair_mpole_v2<Ver, ETYP>(
       r2, xr, yr, zr, 1,
-      ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz,
+      @ci@, @dix@, @diy@, @diz@, @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@,
       ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
       f, aewald,
-      shfrcxi[klane], shfrcyi[klane], shfrczi[klane], frcxk, frcyk, frczk,
-      shtrqxi[klane], shtrqyi[klane], shtrqzi[klane], trqxk, trqyk, trqzk,
+      @frcxi@, @frcyi@, @frczi@, frcxk, frcyk, frczk,
+      @trqxi@, @trqyi@, @trqzi@, trqxk, trqyk, trqzk,
       e, vxx, vyx, vzx, vyy, vzy, vzz);
     if CONSTEXPR (do_e) {
       emtl += cvt_to<ebuf_prec>(e);
