@@ -95,17 +95,19 @@ bool use_energi_elec()
 const TimeScaleConfig& default_tsconfig()
 {
    static TimeScaleConfig tsconfig{
-      {"ebond", 0},   {"eangle", 0},  {"estrbnd", 0}, {"eurey", 0},
-      {"eopbend", 0}, {"eimptor", 0}, {"etors", 0},   {"epitors", 0},
-      {"etortor", 0}, {"egeom", 0},
+      {"ebond", 0},    {"eangle", 0},  {"estrbnd", 0}, {"eurey", 0},
+      {"eopbend", 0},  {"eimptor", 0}, {"etors", 0},   {"epitors", 0},
+      {"etortor", 0},  {"egeom", 0},
+
+      {"evalence", 0},
 
       {"evdw", 0},
 
-      {"echarge", 0}, {"echglj", 0},
+      {"echarge", 0},  {"echglj", 0},
 
-      {"emplar", 0},  {"empole", 0},  {"epolar", 0},
+      {"emplar", 0},   {"empole", 0},  {"epolar", 0},
 
-      {"echgtrn", 0}, {"edisp", 0},   {"erepel", 0},  {"ehippo", 0},
+      {"echgtrn", 0},  {"edisp", 0},   {"erepel", 0},  {"ehippo", 0},
    };
    return tsconfig;
 }
@@ -195,9 +197,6 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (use_potent(imptors_term))
       if (tscfg("eimptor", ecore_val))
          eimptor(vers);
-   if (use_potent(torsion_term))
-      if (tscfg("etors", ecore_val))
-         etors(vers);
    if (use_potent(pitors_term))
       if (tscfg("epitors", ecore_val))
          epitors(vers);
@@ -212,6 +211,19 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (use_potent(geom_term))
       if (tscfg("egeom", ecore_val))
          egeom(vers);
+
+
+   if (pltfm_config & CU_PLTFM)
+      goto cuda_valence_label;
+   if (use_potent(torsion_term))
+      if (tscfg("etors", ecore_val))
+         etors(vers);
+
+
+cuda_valence_label:
+   if (pltfm_config & CU_PLTFM)
+      if (tscfg("evalence", ecore_val))
+         evalence(vers);
 
 
 #if TINKER_CUDART
