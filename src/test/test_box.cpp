@@ -3,6 +3,7 @@
 #include "mathfunc.h"
 #include "test.h"
 #include "tinker_rt.h"
+#include "tool/gpu_card.h"
 #include <cmath>
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/boxes.hh>
@@ -50,6 +51,7 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
 
    fortran_runtime_initialize(argc, (char**)argv);
    initial();
+   gpu_card_data(rc_alloc | rc_init);
    box_data_acc(rc_alloc);
 
    double eps = 1.0e-6;
@@ -96,6 +98,7 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
    }
 
    box_data_acc(rc_dealloc);
+   gpu_card_data(rc_dealloc);
    TINKER_RT(final)();
    fortran_runtime_finish();
 }
@@ -109,6 +112,7 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
 
    fortran_runtime_initialize(argc, (char**)argv);
    initial();
+   gpu_card_data(rc_alloc | rc_init);
    box_data_acc(rc_alloc);
 
    double eps = 1.0e-6;
@@ -179,6 +183,7 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
    }
 
    box_data_acc(rc_dealloc);
+   gpu_card_data(rc_dealloc);
    TINKER_RT(final)();
    fortran_runtime_finish();
 }
@@ -193,6 +198,7 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
 
    fortran_runtime_initialize(argc, (char**)argv);
    initial();
+   gpu_card_data(rc_alloc | rc_init);
    box_data_acc(rc_alloc);
 
    double eps = 1.0e-6;
@@ -242,6 +248,7 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
    }
 
    box_data_acc(rc_dealloc);
+   gpu_card_data(rc_dealloc);
    TINKER_RT(final)();
    fortran_runtime_finish();
 }
