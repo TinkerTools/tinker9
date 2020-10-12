@@ -205,14 +205,14 @@ void dk_tortor(real& restrict e, real& restrict vxx, real& restrict vyx,
 
       real rcb = REAL_SQRT(xcb * xcb + ycb * ycb + zcb * zcb);
       real cosine1 = (xt * xu + yt * yu + zt * zu) * REAL_RECIP(rtru);
-      cosine1 = REAL_MIN(1, REAL_MAX(-1, cosine1));
+      cosine1 = REAL_MIN((real)1, REAL_MAX((real)-1, cosine1));
       sign = xba * xu + yba * yu + zba * zu;
       real angle1 = (sign < 0 ? -radian : radian) * REAL_ACOS(cosine1);
       real value1 = angle1;
 
       real rdc = REAL_SQRT(xdc * xdc + ydc * ydc + zdc * zdc);
       real cosine2 = (xu * xv + yu * yv + zu * zv) * REAL_RECIP(rurv);
-      cosine2 = REAL_MIN(1, REAL_MAX(-1, cosine2));
+      cosine2 = REAL_MIN((real)1, REAL_MAX((real)-1, cosine2));
       sign = xcb * xv + ycb * yv + zcb * zv;
       real angle2 = (sign < 0 ? -radian : radian) * REAL_ACOS(cosine2);
       real value2 = angle2;

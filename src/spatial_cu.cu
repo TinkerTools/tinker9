@@ -1296,9 +1296,9 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
             xr = REAL_ABS(xr) - (half[wx].x + hxi);
             yr = REAL_ABS(yr) - (half[wx].y + hyi);
             zr = REAL_ABS(zr) - (half[wx].z + hzi);
-            xr = REAL_MAX(0., xr);
-            yr = REAL_MAX(0., yr);
-            zr = REAL_MAX(0., zr);
+            xr = REAL_MAX((real)0, xr);
+            yr = REAL_MAX((real)0, yr);
+            zr = REAL_MAX((real)0, zr);
             r2 = xr * xr + yr * yr + zr * zr;
             if (r2 > rlimit2)
                calcwx = false;

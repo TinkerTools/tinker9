@@ -45,7 +45,7 @@ void dk_geom(
       yacm += y[k] * weigh;
       zacm += z[k] * weigh;
    }
-   real weigha = REAL_MAX(1, grpmass[ia]);
+   real weigha = REAL_MAX((real)1, grpmass[ia]);
    weigha = REAL_RECIP(weigha);
 
 
@@ -60,7 +60,7 @@ void dk_geom(
       ybcm += y[k] * weigh;
       zbcm += z[k] * weigh;
    }
-   real weighb = REAL_MAX(1, grpmass[ib]);
+   real weighb = REAL_MAX((real)1, grpmass[ib]);
    weighb = REAL_RECIP(weighb);
 
 
