@@ -7,33 +7,30 @@ namespace tinker {
 #pragma acc routine seq
 template <class Ver>
 SEQ_CUDA
-void dk_tors(
-   real& restrict e, real& restrict vxx, real& restrict vyx, real& restrict vzx,
-   real& restrict vyy, real& restrict vzy, real& restrict vzz,
+void dk_tors(real& restrict e, real& restrict vxx, real& restrict vyx,
+             real& restrict vzx, real& restrict vyy, real& restrict vzy,
+             real& restrict vzz,
 
-   real& restrict dedxia, real& restrict dedyia, real& restrict dedzia,
-   real& restrict dedxib, real& restrict dedyib, real& restrict dedzib,
-   real& restrict dedxic, real& restrict dedyic, real& restrict dedzic,
-   real& restrict dedxid, real& restrict dedyid, real& restrict dedzid,
+             grad_prec* restrict detx, grad_prec* restrict dety,
+             grad_prec* restrict detz,
 
+             real torsunit, int i, const int (*restrict itors)[4],
 
-   real torsunit, int i, int& restrict ia, int& restrict ib, int& restrict ic,
-   int& restrict id, const int (*restrict itors)[4],
+             const real (*restrict tors1)[4], const real (*restrict tors2)[4],
+             const real (*restrict tors3)[4], const real (*restrict tors4)[4],
+             const real (*restrict tors5)[4], const real (*restrict tors6)[4],
 
-   const real (*restrict tors1)[4], const real (*restrict tors2)[4],
-   const real (*restrict tors3)[4], const real (*restrict tors4)[4],
-   const real (*restrict tors5)[4], const real (*restrict tors6)[4],
-
-   const real* restrict x, const real* restrict y, const real* restrict z)
+             const real* restrict x, const real* restrict y,
+             const real* restrict z)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
 
-   ia = itors[i][0];
-   ib = itors[i][1];
-   ic = itors[i][2];
-   id = itors[i][3];
+   const int ia = itors[i][0];
+   const int ib = itors[i][1];
+   const int ic = itors[i][2];
+   const int id = itors[i][3];
 
    real xia = x[ia];
    real yia = y[ia];
@@ -154,19 +151,31 @@ void dk_tors(
 
          // compute first derivative components for this angle
 
-         dedxia = zcb * dedyt - ycb * dedzt;
-         dedyia = xcb * dedzt - zcb * dedxt;
-         dedzia = ycb * dedxt - xcb * dedyt;
-         dedxib = yca * dedzt - zca * dedyt + zdc * dedyu - ydc * dedzu;
-         dedyib = zca * dedxt - xca * dedzt + xdc * dedzu - zdc * dedxu;
-         dedzib = xca * dedyt - yca * dedxt + ydc * dedxu - xdc * dedyu;
-         dedxic = zba * dedyt - yba * dedzt + ydb * dedzu - zdb * dedyu;
-         dedyic = xba * dedzt - zba * dedxt + zdb * dedxu - xdb * dedzu;
-         dedzic = yba * dedxt - xba * dedyt + xdb * dedyu - ydb * dedxu;
-         dedxid = zcb * dedyu - ycb * dedzu;
-         dedyid = xcb * dedzu - zcb * dedxu;
-         dedzid = ycb * dedxu - xcb * dedyu;
+         real dedxia = zcb * dedyt - ycb * dedzt;
+         real dedyia = xcb * dedzt - zcb * dedxt;
+         real dedzia = ycb * dedxt - xcb * dedyt;
+         real dedxib = yca * dedzt - zca * dedyt + zdc * dedyu - ydc * dedzu;
+         real dedyib = zca * dedxt - xca * dedzt + xdc * dedzu - zdc * dedxu;
+         real dedzib = xca * dedyt - yca * dedxt + ydc * dedxu - xdc * dedyu;
+         real dedxic = zba * dedyt - yba * dedzt + ydb * dedzu - zdb * dedyu;
+         real dedyic = xba * dedzt - zba * dedxt + zdb * dedxu - xdb * dedzu;
+         real dedzic = yba * dedxt - xba * dedyt + xdb * dedyu - ydb * dedxu;
+         real dedxid = zcb * dedyu - ycb * dedzu;
+         real dedyid = xcb * dedzu - zcb * dedxu;
+         real dedzid = ycb * dedxu - xcb * dedyu;
 
+         atomic_add(dedxia, detx, ia);
+         atomic_add(dedyia, dety, ia);
+         atomic_add(dedzia, detz, ia);
+         atomic_add(dedxib, detx, ib);
+         atomic_add(dedyib, dety, ib);
+         atomic_add(dedzib, detz, ib);
+         atomic_add(dedxic, detx, ic);
+         atomic_add(dedyic, dety, ic);
+         atomic_add(dedzic, detz, ic);
+         atomic_add(dedxid, detx, id);
+         atomic_add(dedyid, dety, id);
+         atomic_add(dedzid, detz, id);
 
          if CONSTEXPR (do_v) {
             vxx = xcb * (dedxic + dedxid) - xba * dedxia + xdc * dedxid;

@@ -197,9 +197,9 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (use_potent(imptors_term))
       if (tscfg("eimptor", ecore_val))
          eimptor(vers);
-   if (use_potent(pitors_term))
-      if (tscfg("epitors", ecore_val))
-         epitors(vers);
+
+
+
    if (use_potent(tortor_term))
       if (tscfg("etortor", ecore_val))
          etortor(vers);
@@ -212,6 +212,9 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (use_potent(torsion_term))
       if (tscfg("etors", ecore_val))
          etors(vers);
+   if (use_potent(pitors_term))
+      if (tscfg("epitors", ecore_val))
+         epitors(vers);
 
 
    // misc. terms
