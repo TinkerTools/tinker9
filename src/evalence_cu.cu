@@ -232,6 +232,7 @@ void evalence_cu1(
       ebuf_prec etl = 0;
       etl += e0t;  // etors
       etl += e0pt; // epitors
+      etl += e0tt; // etortor
       etl += e0g;  // egeom
       atomic_add(etl, ebuf, ithread);
    }
@@ -244,6 +245,9 @@ void evalence_cu1(
       // epitors
       vtlxx += v0ptxx, vtlyx += v0ptyx, vtlzx += v0ptzx;
       vtlyy += v0ptyy, vtlzy += v0ptzy, vtlzz += v0ptzz;
+      // etortor
+      vtlxx += v0ttxx, vtlyx += v0ttyx, vtlzx += v0ttzx;
+      vtlyy += v0ttyy, vtlzy += v0ttzy, vtlzz += v0ttzz;
       // egeom
       vtlxx += v0gxx, vtlyx += v0gyx, vtlzx += v0gzx;
       vtlyy += v0gyy, vtlzy += v0gzy, vtlzz += v0gzz;
