@@ -262,7 +262,9 @@ void evalence_cu1(
 }
 
 
-void evalence_cu2(int vers, bool flag_tors, bool flag_pitors, bool flag_tortor,
+void evalence_cu2(int vers, bool flag_bond, bool flag_angle, bool flag_strbnd,
+                  bool flag_urey, bool flag_opb, bool flag_imptor,
+                  bool flag_tors, bool flag_pitors, bool flag_tortor,
                   bool flag_geom)
 {
 #define EVALENCE_ARGS                                                          \
@@ -316,6 +318,7 @@ void evalence_cu2(int vers, bool flag_tors, bool flag_pitors, bool flag_tortor,
          evalence_cu1<calc::V6, false>
             <<<ngrid, BLOCK_DIM, 0, nonblk>>>(EVALENCE_ARGS);
    }
+#undef EVALENCE_ARGS
 }
 
 
@@ -326,7 +329,12 @@ void evalence_cu(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
-
+   bool flag_bond = use_potent(bond_term);
+   bool flag_angle = use_potent(angle_term);
+   bool flag_strbnd = use_potent(strbnd_term);
+   bool flag_urey = use_potent(urey_term);
+   bool flag_opb = use_potent(opbend_term);
+   bool flag_imptor = use_potent(imptors_term);
    bool flag_tors = use_potent(torsion_term);
    bool flag_pitors = use_potent(pitors_term);
    bool flag_tortor = use_potent(tortor_term);
@@ -372,8 +380,11 @@ void evalence_cu(int vers)
    }
 
 
-   if (flag_tors or flag_pitors or flag_tortor or flag_geom) {
-      evalence_cu2(vers, flag_tors, flag_pitors, flag_tortor, flag_geom);
+   if (flag_bond or flag_angle or flag_strbnd or flag_urey or flag_opb or
+       flag_imptor or flag_tors or flag_pitors or flag_tortor or flag_geom) {
+      evalence_cu2(vers, flag_bond, flag_angle, flag_strbnd, flag_urey,
+                   flag_opb, flag_imptor, flag_tors, flag_pitors, flag_tortor,
+                   flag_geom);
    }
 
 
