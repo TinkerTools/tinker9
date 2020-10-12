@@ -199,12 +199,6 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          eimptor(vers);
 
 
-
-   if (use_potent(tortor_term))
-      if (tscfg("etortor", ecore_val))
-         etortor(vers);
-
-
    if (pltfm_config & CU_PLTFM)
       goto cuda_valence_label;
 
@@ -215,6 +209,9 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (use_potent(pitors_term))
       if (tscfg("epitors", ecore_val))
          epitors(vers);
+   if (use_potent(tortor_term))
+      if (tscfg("etortor", ecore_val))
+         etortor(vers);
 
 
    // misc. terms

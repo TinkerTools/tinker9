@@ -20,7 +20,7 @@
 #   define REAL_ASIN      asin
 #   define REAL_ERF       erf
 #   define REAL_ERFC(x)   (1 - erf(x))
-#   define REAL_MIN       fmin
+#   define REAL_MIN(a, b) ((a) < (b) ? (a) : (b))
 #   define REAL_MAX(a, b) ((a) < (b) ? (b) : (a))
 #   define REAL_SIGN      copysign
 // #   define REAL_ERFC      erfc
