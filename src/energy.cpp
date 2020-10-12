@@ -194,15 +194,15 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (use_potent(opbend_term))
       if (tscfg("eopbend", ecore_val))
          eopbend(vers);
-   if (use_potent(imptors_term))
-      if (tscfg("eimptor", ecore_val))
-         eimptor(vers);
 
 
    if (pltfm_config & CU_PLTFM)
       goto cuda_valence_label;
 
 
+   if (use_potent(imptors_term))
+      if (tscfg("eimptor", ecore_val))
+         eimptor(vers);
    if (use_potent(torsion_term))
       if (tscfg("etors", ecore_val))
          etors(vers);

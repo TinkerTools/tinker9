@@ -1,4 +1,5 @@
 #pragma once
+#include "add.h"
 #include "mathfunc.h"
 #include "seq_def.h"
 

@@ -24,6 +24,15 @@ namespace tinker {
 template <class Ver, bool rc_a>
 __global__
 void evalence_cu1(
+   // eimptor
+   energy_buffer restrict eit, virial_buffer restrict vir_eit,
+   grad_prec* restrict deitx, grad_prec* restrict deity,
+   grad_prec* restrict deitz,
+
+   real itorunit, int nitors, const int (*restrict iitors)[4],
+   const real (*restrict itors1)[4], const real (*restrict itors2)[4],
+   const real (*restrict itors3)[4],
+
    // etors
    energy_buffer restrict et, virial_buffer restrict vir_et,
    grad_prec* restrict detx, grad_prec* restrict dety, grad_prec* restrict detz,
@@ -79,26 +88,63 @@ void evalence_cu1(
 
 
    using ebuf_prec = energy_buffer_traits::type;
+   ebuf_prec e0it; // eimptor
    ebuf_prec e0t;  // etors
    ebuf_prec e0pt; // epitors
    ebuf_prec e0tt; // etortor
    ebuf_prec e0g;  // egeom
    if CONSTEXPR (do_e) {
+      e0it = 0;
       e0t = 0;
       e0pt = 0;
       e0tt = 0;
       e0g = 0;
    }
    using vbuf_prec = virial_buffer_traits::type;
+   vbuf_prec v0itxx, v0ityx, v0itzx, v0ityy, v0itzy, v0itzz; // eimptor
    vbuf_prec v0txx, v0tyx, v0tzx, v0tyy, v0tzy, v0tzz;       // etors
    vbuf_prec v0ptxx, v0ptyx, v0ptzx, v0ptyy, v0ptzy, v0ptzz; // epitors
    vbuf_prec v0ttxx, v0ttyx, v0ttzx, v0ttyy, v0ttzy, v0ttzz; // etors
    vbuf_prec v0gxx, v0gyx, v0gzx, v0gyy, v0gzy, v0gzz;       // egeom
    if CONSTEXPR (do_v) {
+      v0itxx = 0, v0ityx = 0, v0itzx = 0, v0ityy = 0, v0itzy = 0, v0itzz = 0;
       v0txx = 0, v0tyx = 0, v0tzx = 0, v0tyy = 0, v0tzy = 0, v0tzz = 0;
       v0ptxx = 0, v0ptyx = 0, v0ptzx = 0, v0ptyy = 0, v0ptzy = 0, v0ptzz = 0;
       v0ttxx = 0, v0ttyx = 0, v0ttzx = 0, v0ttyy = 0, v0ttzy = 0, v0ttzz = 0;
       v0gxx = 0, v0gyx = 0, v0gzx = 0, v0gyy = 0, v0gzy = 0, v0gzz = 0;
+   }
+
+
+   // eimptor
+   for (int i = ithread; i < nitors; i += stride) {
+      real e, vxx, vyx, vzx, vyy, vzy, vzz;
+      dk_imptor<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
+
+                     deitx, deity, deitz,
+
+                     itorunit, i, iitors, itors1, itors2, itors3,
+
+                     x, y, z);
+      if CONSTEXPR (do_e) {
+         e0it += cvt_to<ebuf_prec>(e);
+      }
+      if CONSTEXPR (do_v) {
+         v0itxx += cvt_to<vbuf_prec>(vxx);
+         v0ityx += cvt_to<vbuf_prec>(vyx);
+         v0itzx += cvt_to<vbuf_prec>(vzx);
+         v0ityy += cvt_to<vbuf_prec>(vyy);
+         v0itzy += cvt_to<vbuf_prec>(vzy);
+         v0itzz += cvt_to<vbuf_prec>(vzz);
+      }
+   }
+   if CONSTEXPR (do_e and rc_a) {
+      if (nitors > 0)
+         atomic_add(e0it, eit, ithread);
+   }
+   if CONSTEXPR (do_v and rc_a) {
+      if (nitors > 0)
+         atomic_add(v0itxx, v0ityx, v0itzx, v0ityy, v0itzy, v0itzz, vir_eit,
+                    ithread);
    }
 
 
@@ -236,6 +282,7 @@ void evalence_cu1(
    // total energy and virial
    if CONSTEXPR (do_e and not rc_a) {
       ebuf_prec etl = 0;
+      etl += e0it; // eimptor
       etl += e0t;  // etors
       etl += e0pt; // epitors
       etl += e0tt; // etortor
@@ -245,6 +292,9 @@ void evalence_cu1(
    if CONSTEXPR (do_v and not rc_a) {
       vbuf_prec vtlxx = 0, vtlyx = 0, vtlzx = 0;
       vbuf_prec vtlyy = 0, vtlzy = 0, vtlzz = 0;
+      // eimptor
+      vtlxx += v0itxx, vtlyx += v0ityx, vtlzx += v0itzx;
+      vtlyy += v0ityy, vtlzy += v0itzy, vtlzz += v0itzz;
       // etors
       vtlxx += v0txx, vtlyx += v0tyx, vtlzx += v0tzx;
       vtlyy += v0tyy, vtlzy += v0tzy, vtlzz += v0tzz;
@@ -268,15 +318,17 @@ void evalence_cu2(int vers, bool flag_bond, bool flag_angle, bool flag_strbnd,
                   bool flag_geom)
 {
 #define EVALENCE_ARGS                                                          \
-   /* etors */ et, vir_et, detx, dety, detz, torsunit, flag_tors ? ntors : 0,  \
-      itors, tors1, tors2, tors3, tors4, tors5, tors6, /* epitors */ ept,      \
-      vir_ept, deptx, depty, deptz, ptorunit, flag_pitors ? npitors : 0, ipit, \
-      kpit, /* etortor */ ett, vir_ett, dettx, detty, dettz, ttorunit,         \
-      flag_tortor ? ntortor : 0, itt, ibitor, chkttor_ia_, tnx, tny, ttx, tty, \
-      tbf, tbx, tby, tbxy, /* egeom */ eg, vir_eg, degx, degy, degz,           \
-      flag_geom ? ngfix : 0, igfix, gfix, /* total */ eng_buf, vir_buf,        \
-      /* other */ x, y, z, mass, molecule.molecule, grp.igrp, grp.kgrp,        \
-      grp.grpmass, TINKER_IMAGE_ARGS
+   /* eimptor */ eit, vir_eit, deitx, deity, deitz, itorunit,                  \
+      flag_imptor ? nitors : 0, iitors, itors1, itors2, itors3,                \
+      /* etors */ et, vir_et, detx, dety, detz, torsunit,                      \
+      flag_tors ? ntors : 0, itors, tors1, tors2, tors3, tors4, tors5, tors6,  \
+      /* epitors */ ept, vir_ept, deptx, depty, deptz, ptorunit,               \
+      flag_pitors ? npitors : 0, ipit, kpit, /* etortor */ ett, vir_ett,       \
+      dettx, detty, dettz, ttorunit, flag_tortor ? ntortor : 0, itt, ibitor,   \
+      chkttor_ia_, tnx, tny, ttx, tty, tbf, tbx, tby, tbxy, /* egeom */ eg,    \
+      vir_eg, degx, degy, degz, flag_geom ? ngfix : 0, igfix, gfix,            \
+      /* total */ eng_buf, vir_buf, /* other */ x, y, z, mass,                 \
+      molecule.molecule, grp.igrp, grp.kgrp, grp.grpmass, TINKER_IMAGE_ARGS
 
 
    int ngrid = get_grid_size(BLOCK_DIM);
@@ -329,6 +381,7 @@ void evalence_cu(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
+
    bool flag_bond = use_potent(bond_term);
    bool flag_angle = use_potent(angle_term);
    bool flag_strbnd = use_potent(strbnd_term);
@@ -342,6 +395,15 @@ void evalence_cu(int vers)
 
 
    size_t bsize = buffer_size();
+   if (rc_a and flag_imptor) {
+      size_t bsize = buffer_size();
+      if (do_e)
+         darray::zero(PROCEED_NEW_Q, bsize, eit);
+      if (do_v)
+         darray::zero(PROCEED_NEW_Q, bsize, vir_eit);
+      if (do_g)
+         darray::zero(PROCEED_NEW_Q, n, deitx, deity, deitz);
+   }
    if (rc_a and flag_tors) {
       host_zero(energy_et, virial_et);
       if (do_e)
@@ -388,6 +450,19 @@ void evalence_cu(int vers)
    }
 
 
+   if (rc_a and flag_imptor) {
+      if (do_e) {
+         energy_eit = energy_reduce(eit);
+         energy_valence += energy_eit;
+      }
+      if (do_v) {
+         virial_reduce(virial_eit, vir_eit);
+         for (int iv = 0; iv < 9; ++iv)
+            virial_valence[iv] += virial_eit[iv];
+      }
+      if (do_g)
+         sum_gradient(gx, gy, gz, deitx, deity, deitz);
+   }
    if (rc_a and flag_tors) {
       if (do_e) {
          energy_et = energy_reduce(et);
