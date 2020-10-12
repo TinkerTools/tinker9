@@ -179,9 +179,6 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    // bonded terms
 
 
-   if (use_potent(bond_term))
-      if (tscfg("ebond", ecore_val))
-         ebond(vers);
    if (use_potent(angle_term))
       if (tscfg("eangle", ecore_val))
          eangle(vers);
@@ -198,6 +195,11 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
    if (pltfm_config & CU_PLTFM)
       goto cuda_valence_label;
+
+
+   if (use_potent(bond_term))
+      if (tscfg("ebond", ecore_val))
+         ebond(vers);
 
 
    if (use_potent(imptors_term))
