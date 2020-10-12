@@ -42,7 +42,7 @@ void egeom_acc1()
          real xacm = 0;
          real yacm = 0;
          real zacm = 0;
-         #pragma acc loop independent reduction(+:xacm,yacm,zacm)
+         #pragma acc loop seq reduction(+:xacm,yacm,zacm)
          for (int j = ja1; j < ja2; ++j) {
             int k = kgrp[j];
             real weigh = mass[k];
@@ -56,7 +56,7 @@ void egeom_acc1()
          real xbcm = 0;
          real ybcm = 0;
          real zbcm = 0;
-         #pragma acc loop independent reduction(+:xbcm,ybcm,zbcm)
+         #pragma acc loop seq reduction(+:xbcm,ybcm,zbcm)
          for (int j = jb1; j < jb2; ++j) {
             int k = kgrp[j];
             real weigh = mass[k];
@@ -94,7 +94,7 @@ void egeom_acc1()
             real dedy = de * yr;
             real dedz = de * zr;
 
-            #pragma acc loop independent
+            #pragma acc loop seq
             for (int j = ja1; j < ja2; ++j) {
                int k = kgrp[j];
                real ratio = mass[k] * weigha;
@@ -103,7 +103,7 @@ void egeom_acc1()
                atomic_add(dedz * ratio, degz, k);
             }
 
-            #pragma acc loop independent
+            #pragma acc loop seq
             for (int j = jb1; j < jb2; ++j) {
                int k = kgrp[j];
                real ratio = mass[k] * weighb;

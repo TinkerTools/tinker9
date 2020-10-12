@@ -7,23 +7,23 @@
 
 
 #if TINKER_REAL_SIZE == 8
-#   define REAL_SQRT     sqrt
-#   define REAL_EXP      exp
-#   define REAL_FLOOR    floor
-#   define REAL_ABS      fabs
-#   define REAL_POW      pow
-#   define REAL_RECIP(x) (1 / static_cast<double>(x))
-#   define REAL_RSQRT(x) (1 / sqrt(x))
-#   define REAL_COS      cos
-#   define REAL_SIN      sin
-#   define REAL_ACOS     acos
-#   define REAL_ASIN     asin
-#   define REAL_ERF      erf
-#   define REAL_ERFC(x)  (1 - erf(x))
-#   define REAL_MIN      fmin
-#   define REAL_MAX      fmax
-#   define REAL_SIGN     copysign
-// #   define REAL_ERFC     erfc
+#   define REAL_SQRT      sqrt
+#   define REAL_EXP       exp
+#   define REAL_FLOOR     floor
+#   define REAL_ABS       fabs
+#   define REAL_POW       pow
+#   define REAL_RECIP(x)  (1 / static_cast<double>(x))
+#   define REAL_RSQRT(x)  (1 / sqrt(x))
+#   define REAL_COS       cos
+#   define REAL_SIN       sin
+#   define REAL_ACOS      acos
+#   define REAL_ASIN      asin
+#   define REAL_ERF       erf
+#   define REAL_ERFC(x)   (1 - erf(x))
+#   define REAL_MIN       fmin
+#   define REAL_MAX(a, b) ((a) < (b) ? (b) : (a))
+#   define REAL_SIGN      copysign
+// #   define REAL_ERFC      erfc
 #   define REAL_ERFC_V2(x, expterm) (1 - erf(x))
 #endif
 

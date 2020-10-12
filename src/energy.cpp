@@ -205,19 +205,21 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          etortor(vers);
 
 
+   if (pltfm_config & CU_PLTFM)
+      goto cuda_valence_label;
+
+
+   if (use_potent(torsion_term))
+      if (tscfg("etors", ecore_val))
+         etors(vers);
+
+
    // misc. terms
 
 
    if (use_potent(geom_term))
       if (tscfg("egeom", ecore_val))
          egeom(vers);
-
-
-   if (pltfm_config & CU_PLTFM)
-      goto cuda_valence_label;
-   if (use_potent(torsion_term))
-      if (tscfg("etors", ecore_val))
-         etors(vers);
 
 
 cuda_valence_label:
