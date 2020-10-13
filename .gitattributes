@@ -21,8 +21,8 @@ LICENSE         text
 *.h             text
 *.hh            text
 *.hpp           text
-
 *.hxx           text
+
 *.py            text
 *.yaml          text
 *.yml           text
