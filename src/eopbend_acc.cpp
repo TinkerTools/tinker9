@@ -125,8 +125,8 @@ void eopbend_acc1()
             real deddt = opbunit * force * dt * radian *
                (2 + 3 * copb * dt + 4 * qopb * dt2 + 5 * popb * dt3 +
                 6 * sopb * dt4);
-            real dedcos =
-               -deddt * REAL_SIGN(1, ee) * REAL_RSQRT(cc * rdb2 - ee * ee);
+            real dedcos = -deddt * REAL_SIGN((real)1, ee) *
+               REAL_RSQRT(cc * rdb2 - ee * ee);
             real term = ee * REAL_RECIP(cc);
             real dccdxia, dccdyia, dccdzia;
             real dccdxic, dccdyic, dccdzic;
