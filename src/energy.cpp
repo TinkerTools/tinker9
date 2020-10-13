@@ -179,9 +179,6 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    // bonded terms
 
 
-   if (use_potent(strbnd_term))
-      if (tscfg("estrbnd", ecore_val))
-         estrbnd(vers);
    if (use_potent(urey_term))
       if (tscfg("eurey", ecore_val))
          eurey(vers);
@@ -200,6 +197,9 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (use_potent(angle_term))
       if (tscfg("eangle", ecore_val))
          eangle(vers);
+   if (use_potent(strbnd_term))
+      if (tscfg("estrbnd", ecore_val))
+         estrbnd(vers);
 
 
    if (use_potent(imptors_term))
