@@ -114,7 +114,6 @@ void dk_tortor(real& restrict e, real& restrict vxx, real& restrict vyx,
                grad_prec* restrict dettx, grad_prec* restrict detty,
                grad_prec* restrict dettz,
 
-
                real ttorunit, int itortor, const int (*restrict itt)[3],
                const int (*restrict ibitor)[5], const int* restrict chkttor_ia_,
 

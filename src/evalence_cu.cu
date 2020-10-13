@@ -47,6 +47,14 @@ void evalence_cu1(
    real stbnunit, int nstrbnd, const int (*restrict isb)[3],
    const real (*restrict sbk)[2],
 
+   // eurey
+   energy_buffer restrict eub, virial_buffer restrict vir_eub,
+   grad_prec* restrict deubx, grad_prec* restrict deuby,
+   grad_prec* restrict deubz,
+
+   real ureyunit, int nurey, const int (*restrict iury)[3],
+   const real* restrict uk, const real* restrict ul, real cury, real qury,
+
    // eimptor
    energy_buffer restrict eit, virial_buffer restrict vir_eit,
    grad_prec* restrict deitx, grad_prec* restrict deity,
@@ -114,6 +122,7 @@ void evalence_cu1(
    ebuf_prec e0b;  // ebond
    ebuf_prec e0a;  // eangle
    ebuf_prec e0ba; // estrbnd
+   ebuf_prec e0ub; // eurey
    ebuf_prec e0it; // eimptor
    ebuf_prec e0t;  // etors
    ebuf_prec e0pt; // epitors
@@ -123,6 +132,7 @@ void evalence_cu1(
       e0b = 0;
       e0a = 0;
       e0ba = 0;
+      e0ub = 0;
       e0it = 0;
       e0t = 0;
       e0pt = 0;
@@ -133,6 +143,7 @@ void evalence_cu1(
    vbuf_prec v0bxx, v0byx, v0bzx, v0byy, v0bzy, v0bzz;       // ebond
    vbuf_prec v0axx, v0ayx, v0azx, v0ayy, v0azy, v0azz;       // eangle
    vbuf_prec v0baxx, v0bayx, v0bazx, v0bayy, v0bazy, v0bazz; // estrbnd
+   vbuf_prec v0ubxx, v0ubyx, v0ubzx, v0ubyy, v0ubzy, v0ubzz; // eurey
    vbuf_prec v0itxx, v0ityx, v0itzx, v0ityy, v0itzy, v0itzz; // eimptor
    vbuf_prec v0txx, v0tyx, v0tzx, v0tyy, v0tzy, v0tzz;       // etors
    vbuf_prec v0ptxx, v0ptyx, v0ptzx, v0ptyy, v0ptzy, v0ptzz; // epitors
@@ -142,6 +153,7 @@ void evalence_cu1(
       v0bxx = 0, v0byx = 0, v0bzx = 0, v0byy = 0, v0bzy = 0, v0bzz = 0;
       v0axx = 0, v0ayx = 0, v0azx = 0, v0ayy = 0, v0azy = 0, v0azz = 0;
       v0baxx = 0, v0bayx = 0, v0bazx = 0, v0bayy = 0, v0bazy = 0, v0bazz = 0;
+      v0ubxx = 0, v0ubyx = 0, v0ubzx = 0, v0ubyy = 0, v0ubzy = 0, v0ubzz = 0;
       v0itxx = 0, v0ityx = 0, v0itzx = 0, v0ityy = 0, v0itzy = 0, v0itzz = 0;
       v0txx = 0, v0tyx = 0, v0tzx = 0, v0tyy = 0, v0tzy = 0, v0tzz = 0;
       v0ptxx = 0, v0ptyx = 0, v0ptzx = 0, v0ptyy = 0, v0ptzy = 0, v0ptzz = 0;
@@ -243,6 +255,39 @@ void evalence_cu1(
    if CONSTEXPR (do_v and rc_a) {
       if (nstrbnd > 0)
          atomic_add(v0baxx, v0bayx, v0bazx, v0bayy, v0bazy, v0bazz, vir_eba,
+                    ithread);
+   }
+
+
+   // eurey
+   for (int i = ithread; i < nurey; i += stride) {
+      real e, vxx, vyx, vzx, vyy, vzy, vzz;
+      dk_urey<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
+
+                   deubx, deuby, deubz,
+
+                   ureyunit, i, iury, uk, ul, cury, qury,
+
+                   x, y, z);
+      if CONSTEXPR (do_e) {
+         e0ub += cvt_to<ebuf_prec>(e);
+      }
+      if CONSTEXPR (do_v) {
+         v0ubxx += cvt_to<vbuf_prec>(vxx);
+         v0ubyx += cvt_to<vbuf_prec>(vyx);
+         v0ubzx += cvt_to<vbuf_prec>(vzx);
+         v0ubyy += cvt_to<vbuf_prec>(vyy);
+         v0ubzy += cvt_to<vbuf_prec>(vzy);
+         v0ubzz += cvt_to<vbuf_prec>(vzz);
+      }
+   }
+   if CONSTEXPR (do_e and rc_a) {
+      if (nurey > 0)
+         atomic_add(e0ub, eub, ithread);
+   }
+   if CONSTEXPR (do_v and rc_a) {
+      if (nurey > 0)
+         atomic_add(v0ubxx, v0ubyx, v0ubzx, v0ubyy, v0ubzy, v0ubzz, vir_eub,
                     ithread);
    }
 
@@ -417,6 +462,7 @@ void evalence_cu1(
       etl += e0b;  // ebond
       etl += e0a;  // eangle
       etl += e0ba; // estrbnd
+      etl += e0ub; // eurey
       etl += e0it; // eimptor
       etl += e0t;  // etors
       etl += e0pt; // epitors
@@ -436,6 +482,9 @@ void evalence_cu1(
       // estrbnd
       vtlxx += v0baxx, vtlyx += v0bayx, vtlzx += v0bazx;
       vtlyy += v0bayy, vtlzy += v0bazy, vtlzz += v0bazz;
+      // eurey
+      vtlxx += v0ubxx, vtlyx += v0ubyx, vtlzx += v0ubzx;
+      vtlyy += v0ubyy, vtlzy += v0ubzy, vtlzz += v0ubzz;
       // eimptor
       vtlxx += v0itxx, vtlyx += v0ityx, vtlzx += v0itzx;
       vtlyy += v0ityy, vtlzy += v0itzy, vtlzz += v0itzz;
@@ -467,16 +516,17 @@ void evalence_cu2(int vers, bool flag_bond, bool flag_angle, bool flag_strbnd,
       vir_ea, deax, deay, deaz, angtyp, angunit, flag_angle ? nangle : 0,      \
       iang, anat, ak, cang, qang, pang, sang, /* estrbnd */ eba, vir_eba,      \
       debax, debay, debaz, stbnunit, flag_strbnd ? nstrbnd : 0, isb, sbk,      \
-      /* eimptor */ eit, vir_eit, deitx, deity, deitz, itorunit,               \
-      flag_imptor ? nitors : 0, iitors, itors1, itors2, itors3,                \
-      /* etors */ et, vir_et, detx, dety, detz, torsunit,                      \
-      flag_tors ? ntors : 0, itors, tors1, tors2, tors3, tors4, tors5, tors6,  \
-      /* epitors */ ept, vir_ept, deptx, depty, deptz, ptorunit,               \
-      flag_pitors ? npitors : 0, ipit, kpit, /* etortor */ ett, vir_ett,       \
-      dettx, detty, dettz, ttorunit, flag_tortor ? ntortor : 0, itt, ibitor,   \
-      chkttor_ia_, tnx, tny, ttx, tty, tbf, tbx, tby, tbxy, /* egeom */ eg,    \
-      vir_eg, degx, degy, degz, flag_geom ? ngfix : 0, igfix, gfix,            \
-      /* total */ eng_buf, vir_buf, /* other */ x, y, z, mass,                 \
+      /* eurey */ eub, vir_eub, deubx, deuby, deubz, ureyunit,                 \
+      flag_urey ? nurey : 0, iury, uk, ul, cury, qury, /* eimptor */ eit,      \
+      vir_eit, deitx, deity, deitz, itorunit, flag_imptor ? nitors : 0,        \
+      iitors, itors1, itors2, itors3, /* etors */ et, vir_et, detx, dety,      \
+      detz, torsunit, flag_tors ? ntors : 0, itors, tors1, tors2, tors3,       \
+      tors4, tors5, tors6, /* epitors */ ept, vir_ept, deptx, depty, deptz,    \
+      ptorunit, flag_pitors ? npitors : 0, ipit, kpit, /* etortor */ ett,      \
+      vir_ett, dettx, detty, dettz, ttorunit, flag_tortor ? ntortor : 0, itt,  \
+      ibitor, chkttor_ia_, tnx, tny, ttx, tty, tbf, tbx, tby, tbxy,            \
+      /* egeom */ eg, vir_eg, degx, degy, degz, flag_geom ? ngfix : 0, igfix,  \
+      gfix, /* total */ eng_buf, vir_buf, /* other */ x, y, z, mass,           \
       molecule.molecule, grp.igrp, grp.kgrp, grp.grpmass, TINKER_IMAGE_ARGS
 
 
@@ -567,6 +617,15 @@ void evalence_cu(int vers)
          darray::zero(PROCEED_NEW_Q, bsize, vir_eba);
       if (do_g)
          darray::zero(PROCEED_NEW_Q, n, debax, debay, debaz);
+   }
+   if (rc_a and flag_urey) {
+      host_zero(energy_eub, virial_eub);
+      if (do_e)
+         darray::zero(PROCEED_NEW_Q, bsize, eub);
+      if (do_v)
+         darray::zero(PROCEED_NEW_Q, bsize, vir_eub);
+      if (do_g)
+         darray::zero(PROCEED_NEW_Q, n, deubx, deuby, deubz);
    }
    if (rc_a and flag_imptor) {
       size_t bsize = buffer_size();
@@ -661,6 +720,19 @@ void evalence_cu(int vers)
       }
       if (do_g)
          sum_gradient(gx, gy, gz, debax, debay, debaz);
+   }
+   if (rc_a and flag_urey) {
+      if (do_e) {
+         energy_eub = energy_reduce(eub);
+         energy_valence += energy_eub;
+      }
+      if (do_v) {
+         virial_reduce(virial_eub, vir_eub);
+         for (int iv = 0; iv < 9; ++iv)
+            virial_valence[iv] += virial_eub[iv];
+      }
+      if (do_g)
+         sum_gradient(gx, gy, gz, deubx, deuby, deubz);
    }
    if (rc_a and flag_imptor) {
       if (do_e) {

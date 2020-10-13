@@ -176,12 +176,6 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          edisp(vers);
 
 
-   // bonded terms
-
-
-   if (use_potent(urey_term))
-      if (tscfg("eurey", ecore_val))
-         eurey(vers);
    if (use_potent(opbend_term))
       if (tscfg("eopbend", ecore_val))
          eopbend(vers);
@@ -191,6 +185,9 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       if (tscfg("evalence", ecore_val))
          evalence(vers);
    } else {
+      // bonded terms
+
+
       if (use_potent(bond_term))
          if (tscfg("ebond", ecore_val))
             ebond(vers);
@@ -200,6 +197,9 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       if (use_potent(strbnd_term))
          if (tscfg("estrbnd", ecore_val))
             estrbnd(vers);
+      if (use_potent(urey_term))
+         if (tscfg("eurey", ecore_val))
+            eurey(vers);
 
 
       if (use_potent(imptors_term))

@@ -14,7 +14,6 @@ void dk_bond(
 
    grad_prec* restrict debx, grad_prec* restrict deby, grad_prec* restrict debz,
 
-
    ebond_t bndtyp, real bndunit, int i, const int (*restrict ibnd)[2],
    const real* restrict bl, const real* restrict bk, real cbnd, real qbnd,
 

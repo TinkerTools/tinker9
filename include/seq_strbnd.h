@@ -14,7 +14,6 @@ void dk_strbnd(real& restrict e, real& restrict vxx, real& restrict vyx,
                grad_prec* restrict debax, grad_prec* restrict debay,
                grad_prec* restrict debaz,
 
-
                real stbnunit, int istrbnd, const int (*restrict isb)[3],
                const real (*restrict sbk)[2],
 
