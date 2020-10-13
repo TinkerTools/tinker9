@@ -187,47 +187,42 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          eopbend(vers);
 
 
-   if (pltfm_config & CU_PLTFM)
-      goto cuda_valence_label;
-
-
-   if (use_potent(bond_term))
-      if (tscfg("ebond", ecore_val))
-         ebond(vers);
-   if (use_potent(angle_term))
-      if (tscfg("eangle", ecore_val))
-         eangle(vers);
-   if (use_potent(strbnd_term))
-      if (tscfg("estrbnd", ecore_val))
-         estrbnd(vers);
-
-
-   if (use_potent(imptors_term))
-      if (tscfg("eimptor", ecore_val))
-         eimptor(vers);
-   if (use_potent(torsion_term))
-      if (tscfg("etors", ecore_val))
-         etors(vers);
-   if (use_potent(pitors_term))
-      if (tscfg("epitors", ecore_val))
-         epitors(vers);
-   if (use_potent(tortor_term))
-      if (tscfg("etortor", ecore_val))
-         etortor(vers);
-
-
-   // misc. terms
-
-
-   if (use_potent(geom_term))
-      if (tscfg("egeom", ecore_val))
-         egeom(vers);
-
-
-cuda_valence_label:
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & CU_PLTFM) {
       if (tscfg("evalence", ecore_val))
          evalence(vers);
+   } else {
+      if (use_potent(bond_term))
+         if (tscfg("ebond", ecore_val))
+            ebond(vers);
+      if (use_potent(angle_term))
+         if (tscfg("eangle", ecore_val))
+            eangle(vers);
+      if (use_potent(strbnd_term))
+         if (tscfg("estrbnd", ecore_val))
+            estrbnd(vers);
+
+
+      if (use_potent(imptors_term))
+         if (tscfg("eimptor", ecore_val))
+            eimptor(vers);
+      if (use_potent(torsion_term))
+         if (tscfg("etors", ecore_val))
+            etors(vers);
+      if (use_potent(pitors_term))
+         if (tscfg("epitors", ecore_val))
+            epitors(vers);
+      if (use_potent(tortor_term))
+         if (tscfg("etortor", ecore_val))
+            etortor(vers);
+
+
+      // misc. terms
+
+
+      if (use_potent(geom_term))
+         if (tscfg("egeom", ecore_val))
+            egeom(vers);
+   }
 
 
 #if TINKER_CUDART
