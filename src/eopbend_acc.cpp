@@ -108,7 +108,7 @@ void eopbend_acc1()
 
       if (rdb2 != 0 && cc != 0) {
          real sine = REAL_ABS(ee) * REAL_RSQRT(cc * rdb2);
-         sine = REAL_MIN(1, sine);
+         sine = REAL_MIN((real)1, sine);
          real angle = radian * REAL_ASIN(sine);
          real dt = angle;
          real dt2 = dt * dt;
