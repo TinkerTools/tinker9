@@ -373,6 +373,23 @@ void echarge_acc3()
 
 void echarge_ewald_fphi_self_acc(int vers)
 {
+   int bso = epme_unit->bsorder;
+   if (bso == 4) {
+      if (vers == calc::v0)
+         echarge_acc3<calc::V0, 4>();
+      else if (vers == calc::v1)
+         echarge_acc3<calc::V1, 4>();
+      else if (vers == calc::v3)
+         echarge_acc3<calc::V3, 4>();
+      else if (vers == calc::v4)
+         echarge_acc3<calc::V4, 4>();
+      else if (vers == calc::v5)
+         echarge_acc3<calc::V5, 4>();
+      else if (vers == calc::v6)
+         echarge_acc3<calc::V6, 4>();
+      return;
+   }
+   assert(bso == 5);
    if (vers == calc::v0)
       echarge_acc3<calc::V0, 5>();
    else if (vers == calc::v1)

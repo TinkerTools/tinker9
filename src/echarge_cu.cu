@@ -574,11 +574,19 @@ void echarge_fphi_self_cu()
    auto stream = nonblk;
    if (use_pme_stream)
       stream = pme_stream;
-   auto ker = echarge_cu3<Ver, 5>;
-   launch_k2s(stream, PME_BLOCKDIM, n, ker,         //
-              bufsize, nec, ec, pchg, f, aewald, n, //
-              nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc,
-              decx, decy, decz);
+   if (st.bsorder == 5) {
+      auto ker = echarge_cu3<Ver, 5>;
+      launch_k2s(stream, PME_BLOCKDIM, n, ker,         //
+                 bufsize, nec, ec, pchg, f, aewald, n, //
+                 nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc,
+                 decx, decy, decz);
+   } else if (st.bsorder == 4) {
+      auto ker = echarge_cu3<Ver, 4>;
+      launch_k2s(stream, PME_BLOCKDIM, n, ker,         //
+                 bufsize, nec, ec, pchg, f, aewald, n, //
+                 nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc,
+                 decx, decy, decz);
+   }
    if (use_pme_stream)
       check_rt(cudaEventRecord(pme_event_finish, stream));
 }

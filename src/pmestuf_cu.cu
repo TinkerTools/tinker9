@@ -301,9 +301,15 @@ void grid_pchg_cu(PMEUnit pme_u, real* pchg)
       stream = pme_stream;
    using type = std::remove_pointer<decltype(st.qgrid)>::type;
    check_rt(cudaMemsetAsync(st.qgrid, 0, 2 * nt * sizeof(type), stream));
-   auto ker = grid_put_cu1<PCHG, 5>;
-   launch_k2s(stream, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, pchg,
-              nullptr, st.qgrid, recipa, recipb, recipc);
+   if (st.bsorder == 5) {
+      auto ker = grid_put_cu1<PCHG, 5>;
+      launch_k2s(stream, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, pchg,
+                 nullptr, st.qgrid, recipa, recipb, recipc);
+   } else if (st.bsorder == 4) {
+      auto ker = grid_put_cu1<PCHG, 4>;
+      launch_k2s(stream, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, pchg,
+                 nullptr, st.qgrid, recipa, recipb, recipc);
+   }
 }
 
 
