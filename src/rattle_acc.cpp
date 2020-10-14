@@ -393,7 +393,7 @@ void shake_settle_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew,
 
 
 template <bool DO_V>
-void rattle2_acc1(time_prec dt)
+void constrain2_acc(time_prec dt)
 {
    if (nratmol <= 0)
       return;
@@ -649,9 +649,9 @@ void settle2_acc1(time_prec dt)
 void rattle2_acc(time_prec dt, bool do_v)
 {
    if (do_v) {
-      rattle2_acc1<true>(dt);
+      constrain2_acc<true>(dt);
    } else {
-      rattle2_acc1<false>(dt);
+      constrain2_acc<false>(dt);
    }
 }
 

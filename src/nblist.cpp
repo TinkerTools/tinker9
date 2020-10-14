@@ -265,8 +265,7 @@ static void spatial_alloc( //
 
 
 // rc_init
-template <class SPT>
-static void spatial_build(SPT unt)
+static void spatial_build(Spatial2Unit unt)
 {
 #if TINKER_CUDART
    spatial_data_init_cu(unt);
@@ -275,8 +274,7 @@ static void spatial_build(SPT unt)
 }
 
 
-template <class SPT>
-static void spatial_update(SPT unt)
+static void spatial_update(Spatial2Unit unt)
 {
 #if TINKER_CUDART
    extern int check_spatial(int, real, int*, const real*, const real*,
