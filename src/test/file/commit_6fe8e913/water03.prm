@@ -1,6 +1,5 @@
-namespace commit_6fe8e913 {
-const char* water03_prm =
-R"**(      ##############################
+
+      ##############################
       ##                          ##
       ##  Force Field Definition  ##
       ##                          ##
@@ -159,5 +158,3 @@ multipole     2    1    2               0.25983
 
 polarize      1           0.837      0.390       2
 polarize      2           0.496      0.390       1
-)**";
-}

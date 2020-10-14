@@ -31,14 +31,13 @@ TEST_CASE("Urey-Ten-Water", "[ff][eurey][h2o10]")
 {
    const char* k = "test_h2o10.key";
    const char* x1 = "test_h2o10.xyz";
-   const char* p = "water03.prm";
 
    std::string k0 = h2o10_key;
    k0 += ureyterm_only;
    TestFile fke(k, k0);
 
    TestFile fx1(x1, h2o10_xyz);
-   TestFile fpr(p, commit_6fe8e913::water03_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/water03.prm");
 
    const char* argv[] = {"dummy", x1};
    int argc = 2;
