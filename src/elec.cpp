@@ -46,7 +46,6 @@ void pchg_data(rc_op op)
 
    if (op & rc_dealloc) {
       darray::deallocate(pchg);
-      printf(" dealloc pchg_data\n");
    }
 
 
@@ -368,7 +367,7 @@ void chgpen_data(rc_op op)
 
       int nn, bask;
 
-      const bool usempole = use_potent(mpole_term);
+      const bool usempole = use_potent(mpole_term) || use_potent(chgtrn_term);
       for (int i = 0; usempole and i < n; ++i) {
          if (m2scale != 1) {
             nn = couple::n12[i];

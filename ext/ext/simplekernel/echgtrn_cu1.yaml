@@ -1,0 +1,114 @@
+KERNEL_NAME: echgtrn_cu1
+TEMPLATE_PARAMS: template <class Ver>
+CONSTEXPR_FLAGS: |
+  constexpr bool do_a = Ver::a;
+  constexpr bool do_e = Ver::e;
+  constexpr bool do_v = Ver::v;
+  constexpr bool do_g = Ver::g;
+
+COUNT:
+  - nc
+ENERGY:
+  - ec
+VIRIAL:
+  - vc
+GRADIENT:
+  - gx
+  - gy
+  - gz
+
+CUT_DISTANCE:
+  - 'cut'
+
+OFF_DISTANCE:
+  - 'off'
+
+EXCLUDE_INFO:
+  - minfo
+
+SCALE_1X_TYPE: real3_const_array,0
+
+EXTRA_PARAMS: |
+  , real *restrict chgct
+  , real *restrict dmpct
+  , real f
+
+I_POSITION:
+  - def: register real xi from:x
+  - def: register real yi from:y
+  - def: register real zi from:z
+K_POSITION:
+  - def: register real xk from:x
+  - def: register real yk from:y
+  - def: register real zk from:z
+
+I_FORCE:
+  - def: register real gxi addto:gx
+  - def: register real gyi addto:gy
+  - def: register real gzi addto:gz
+K_FORCE:
+  - def: register real gxk addto:gx
+  - def: register real gyk addto:gy
+  - def: register real gzk addto:gz
+
+I_VARIABLES:
+  - def: register real chgi from:chgct
+  - def: register real alphai from:dmpct
+K_VARIABLES:
+  - def: register real chgk from:chgct
+  - def: register real alphak from:dmpct
+
+#SCALED_PAIRWISE_INTERACTION: |
+
+FULL_PAIRWISE_INTERACTION: |
+  real xr = xk - xi;
+  real yr = yk - yi;
+  real zr = zk - zi;
+
+  MAYBE_UNUSED real dedx = 0, dedy = 0, dedz = 0;
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    real r = REAL_SQRT(r2);
+
+    MAYBE_UNUSED e_prec e, de;
+    pair_chgtrn<do_g>(r, scalea, f, alphai, chgi, alphak, chgk, e, de);
+
+
+    if (r2 > cut * cut) {
+        real taper, dtaper;
+        switch_taper5<do_g>(r, cut, off, taper, dtaper);
+        if CONSTEXPR (do_g)
+          de = e * dtaper + de * taper;
+        if CONSTEXPR (do_e)
+          e *= taper;
+    }
+
+
+    if CONSTEXPR (do_a)
+        if (e != 0)
+          nctl += 1;
+    if CONSTEXPR (do_e)
+        ectl += cvt_to<ebuf_prec>(e);
+    if CONSTEXPR (do_g) {
+      de *= REAL_RECIP(r);
+      dedx = de * xr;
+      dedy = de * yr;
+      dedz = de * zr;
+
+      shgxi += dedx;
+      shgyi += dedy;
+      shgzi += dedz;
+      gxk -= dedx;
+      gyk -= dedy;
+      gzk -= dedz;
+
+      if CONSTEXPR (do_v) {
+        vctlxx += cvt_to<vbuf_prec>(xr * dedx);
+        vctlyx += cvt_to<vbuf_prec>(yr * dedx);
+        vctlzx += cvt_to<vbuf_prec>(zr * dedx);
+        vctlyy += cvt_to<vbuf_prec>(yr * dedy);
+        vctlzy += cvt_to<vbuf_prec>(zr * dedy);
+        vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+      }
+    }
+  } // end if (include)

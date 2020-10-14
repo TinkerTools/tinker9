@@ -8,13 +8,14 @@
 #include "glob.nblist.h"
 #include "glob.spatial.h"
 #include "md.h"
+#include "mod.chgpen.h"
+#include "mod.mplpot.h"
+#include "mod.repel.h"
 #include "platform.h"
 #include "potent.h"
 #include "spatial2.h"
 #include "switch.h"
 #include "thrust_cache.h"
-#include "mod.chgpen.h"
-#include "mod.mplpot.h"
 #include "tool/darray.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/chgpot.hh>
@@ -428,7 +429,8 @@ void nblist_data(rc_op op)
          if (not mplpot::use_chgpen) {
             spatial_alloc(un2, n, cut, buf, x, y, z, 1, nmexclude, mexclude);
          } else {
-            spatial_alloc(un2, n, cut, buf, x, y, z, 1, nmdwexclude, mdwexclude);
+            spatial_alloc(un2, n, cut, buf, x, y, z, 2, nmdwexclude, mdwexclude,
+                          nrepexclude, repexclude);
          }
       }
       if (op & rc_init) {

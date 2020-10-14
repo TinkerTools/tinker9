@@ -28,8 +28,6 @@ void empole_data(rc_op op)
       demx = nullptr;
       demy = nullptr;
       demz = nullptr;
-      printf(" dealloc empole\n");
-
    }
 
    if (op & rc_alloc) {

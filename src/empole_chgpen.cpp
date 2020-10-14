@@ -11,7 +11,7 @@
 namespace tinker {
 void empole_chgpen_data(rc_op op)
 {
-   if (!use_potent(mpole_term))
+   if (!use_potent(mpole_term) && !use_potent(chgtrn_term))
       return;
 
    if (!mplpot::use_chgpen)

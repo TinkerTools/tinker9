@@ -89,8 +89,6 @@ void pair_dfield_chgpen(real r2, real xr, real yr, real zr, real dscale,
    fkdx += inck.x;
    fkdy += inck.y;
    fkdz += inck.z;
-
-   //printf("dfid %5.2f %5.2f %16.8e %16.8e %16.8e\n", dscale, r, inci.x, inci.y, inci.z);
 }
 
 
@@ -150,12 +148,5 @@ void pair_ufield_chgpen(real r2, real xr, real yr, real zr, real wscale, //
    fkdx += inck.x;
    fkdy += inck.y;
    fkdz += inck.z;   
-
-   //printf("wscale %5.2f\n", wscale);
-
-
-   //printf("ufid %5.2f %16.8e %16.8e %16.8e\n", r, inci.x, inci.y, inci.z);
-   //printf("uid  %5.2f %16.8e %16.8e\n", r, uid.x, uid.y);
-   //printf("zrsd %5.2f %16.8e %16.8e\n", r, fidy, fkdy);
 }
 }

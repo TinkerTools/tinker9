@@ -134,7 +134,7 @@ FULL_PAIRWISE_INTERACTION: |
       if (e != 0)
           nptl += 1;
     if CONSTEXPR (do_e)
-        eptl += e;
+        eptl += cvt_to<ebuf_prec>(e);
     if CONSTEXPR (do_g) {
       shgxi[klane] += pgrad.frcx;
       shgyi[klane] += pgrad.frcy;
@@ -166,11 +166,11 @@ FULL_PAIRWISE_INTERACTION: |
       duk5 += pgrad.dufldk[5];
     }
     if CONSTEXPR (do_v) {
-        vptlxx += -xr * pgrad.frcx;
-        vptlyx += -0.5f * (yr * pgrad.frcx + xr * pgrad.frcy);
-        vptlzx += -0.5f * (zr * pgrad.frcx + xr * pgrad.frcz);
-        vptlyy += -yr * pgrad.frcy;
-        vptlzy += -0.5f * (zr * pgrad.frcy + yr * pgrad.frcz);
-        vptlzz += -zr * pgrad.frcz;
+        vptlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
+        vptlyx += cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+        vptlzx += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
+        vptlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
+        vptlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
+        vptlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
     }
   } // end if (include)

@@ -169,11 +169,11 @@ void induce2(real (*ud)[3])
             double u2 = uindbuf[3 * i + 1];
             double u3 = uindbuf[3 * i + 2];
             double unorm = std::sqrt(u1 * u1 + u2 * u2 + u3 * u3);
-            // u1 *= units::debye;
-            // u2 *= units::debye;
-            // u3 *= units::debye;
-            // unorm *= units::debye;
-            print(stdout, "%8d     %16.6e%16.6e%16.6e %16.6e\n", i + 1, u1, u2,
+            u1 *= units::debye;
+            u2 *= units::debye;
+            u3 *= units::debye;
+            unorm *= units::debye;
+            print(stdout, "%8d     %13.4f%13.4f%13.4f %13.4f\n", i + 1, u1, u2,
                   u3, unorm);
          }
       }

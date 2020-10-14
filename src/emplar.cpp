@@ -27,13 +27,8 @@ void emplar_data(rc_op op)
 
 
    if (op & rc_dealloc) {
-      printf(" dealloc emplar 1\n");
-
       nmdpuexclude = 0;
       darray::deallocate(mdpuexclude, mdpuexclude_scale);
-
-      printf(" dealloc emplar\n");
-
    }
 
 

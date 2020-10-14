@@ -216,7 +216,6 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd,
 
 
          bool incl = iid < kid and kid < n;
-         printf("disp loop 2 incl %d iid %d kid %d n %d\n", incl, iid, kid, n);
 
          incl = incl and (dinfo0 & srcmask) == 0;
          real scalea = 1;

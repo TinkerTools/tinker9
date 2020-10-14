@@ -77,8 +77,6 @@ void evdw_data(rc_op op)
 
       elrc_vol = 0;
       vlrc_vol = 0;
-
-      printf(" dealloc evdw\n");
    }
 
 

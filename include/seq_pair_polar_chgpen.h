@@ -67,7 +67,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
    real uir = uix * xr + uiy * yr + uiz * zr;
    real ukr = ukx * xr + uky * yr + ukz * zr;
 
-   // printf("dscale %5.2f wscale %5.2f\n", dscale, wscale);
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
    real rr2 = invr1 * invr1;
@@ -109,7 +108,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
          damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
 
-      // printf("dscale %5.2f wscale %5.2f\n", dscale, wscale);
       bn[1] = rr3;
       bn[2] = rr5;
       bn[3] = rr7;
@@ -162,8 +160,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       real tuir = -dsr5i * ukr;
       real tukr = -dsr5k * uir;
 
-      // printf("%5.2f %16.8e %16.8e\n", r, bn[1], dmpi[1]);
-      // printf("%5.2f %14.6f %14.6f %14.6f\n", r,rr5ik,rr7ik,yr);
 
       pgrad.ufldi[0] = (tix3 + xr * tuir);
       pgrad.ufldi[1] = (tiy3 + yr * tuir);
@@ -389,8 +385,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       pgrad.frcy += depy;
       pgrad.frcz += depz;
 
-      //printf("3o %5.2f %16.8e %16.8e %16.8e\n", r, pgrad.frcx, pgrad.frcy,
-      //       pgrad.frcz);
    }
 }
 }

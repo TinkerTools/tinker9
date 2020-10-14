@@ -1,5 +1,5 @@
-KERNEL_NAME: empole_chgpen_cu1
-TEMPLATE_PARAMS: template <class Ver, class ETYP>
+KERNEL_NAME: erepel_cu1
+TEMPLATE_PARAMS: template <class Ver>
 CONSTEXPR_FLAGS: |
   constexpr bool do_a = Ver::a;
   constexpr bool do_e = Ver::e;
@@ -7,34 +7,35 @@ CONSTEXPR_FLAGS: |
   constexpr bool do_g = Ver::g;
 
 COUNT:
-  - nem
+  - nr
 ENERGY:
-  - em
+  - er
 VIRIAL:
-  - vem
+  - vr
 GRADIENT:
   - gx
   - gy
   - gz
 
-#CUT_DISTANCE:
+CUT_DISTANCE:
+  - 'cut'
+
 OFF_DISTANCE:
   - 'off'
 
 EXCLUDE_INFO:
-  - minfo
+  - rinfo
 
-SCALE_1X_TYPE: real3_const_array,0
+SCALE_1X_TYPE: real_const_array
 
 EXTRA_PARAMS: |
   , real *restrict trqx
   , real *restrict trqy
   , real *restrict trqz
   , const real(*restrict rpole)[10]
-  , real *restrict pcore
-  , real *restrict pval
-  , const real* restrict palpha
-  , real aewald, real f
+  , real *restrict sizpr
+  , real *restrict elepr
+  , const real* restrict dmppr
 
 I_POSITION:
   - def: shared real xi from:x
@@ -71,9 +72,10 @@ I_VARIABLES:
   - def: shared real qiyy from:rpole,mpl_pme_yy
   - def: shared real qiyz from:rpole,mpl_pme_yz
   - def: shared real qizz from:rpole,mpl_pme_zz
-  - def: shared real corei from:pcore
-  - def: shared real alphai from:palpha
-  - def: shared real vali from:pval
+  - def: shared real sizi from:sizpr
+  - def: shared real dmpi from:dmppr
+  - def: shared real vali from:elepr
+  
 K_VARIABLES:
   - def: register real ck from:rpole,mpl_pme_0
   - def: register real dkx from:rpole,mpl_pme_x
@@ -85,9 +87,9 @@ K_VARIABLES:
   - def: register real qkyy from:rpole,mpl_pme_yy
   - def: register real qkyz from:rpole,mpl_pme_yz
   - def: register real qkzz from:rpole,mpl_pme_zz
-  - def: register real corek from:pcore
-  - def: register real alphak from:palpha
-  - def: register real valk from:pval
+  - def: register real sizk from:sizpr
+  - def: register real dmpk from:dmppr
+  - def: register real valk from:elepr
 
 #SCALED_PAIRWISE_INTERACTION: |
 
@@ -97,24 +99,23 @@ FULL_PAIRWISE_INTERACTION: |
   real zr = zk - zi;
 
   real e;
-  PairMPoleGrad pgrad;
+  PairRepelGrad pgrad;
   zero(pgrad);
 
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
-    pair_mpole_chgpen<do_e, do_g, ETYP>(
-      r2, xr, yr, zr, scalea,                  //
-      ci, dix, diy, diz, corei, vali, alphai, //
-      qixx, qixy, qixz, qiyy, qiyz, qizz, //
-      ck, dkx, dky, dkz, corek, valk, alphak, //
-      qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, //
-      f, aewald, e, pgrad);
+    pair_repel<do_e, do_g>( //
+      r2, scalea, cut, off, xr, yr, zr, sizi,
+      dmpi, vali, ci, dix, diy, diz, qixx, qixy,
+      qixz, qiyy, qiyz, qizz, sizk, dmpk, valk, ck,
+      dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy,
+      qkyz, qkzz, e, pgrad);
 
     if CONSTEXPR (do_a)
       if (e != 0)
-          nemtl += 1;
+          nrtl += 1;
     if CONSTEXPR (do_e)
-        emtl += cvt_to<ebuf_prec>(e);
+        ertl += cvt_to<ebuf_prec>(e);
     if CONSTEXPR (do_g) {
       shgxi[klane] += pgrad.frcx;
       shgyi[klane] += pgrad.frcy;
@@ -123,19 +124,20 @@ FULL_PAIRWISE_INTERACTION: |
       gyk -= pgrad.frcy;
       gzk -= pgrad.frcz;
 
-      shtxi[klane] += pgrad.ttmi[0];
-      shtyi[klane] += pgrad.ttmi[1];
-      shtzi[klane] += pgrad.ttmi[2];
-      txk += pgrad.ttmk[0];
-      tyk += pgrad.ttmk[1];
-      tzk += pgrad.ttmk[2];
+
+      shtxi[klane] += pgrad.ttqi[0];
+      shtyi[klane] += pgrad.ttqi[1];
+      shtzi[klane] += pgrad.ttqi[2];
+      txk += pgrad.ttqk[0];
+      tyk += pgrad.ttqk[1];
+      tzk += pgrad.ttqk[2];
     }
     if CONSTEXPR (do_v) {
-      vemtlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
-      vemtlyx += cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
-      vemtlzx += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
-      vemtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
-      vemtlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
-      vemtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
+        vrtlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
+        vrtlyx += cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+        vrtlzx += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
+        vrtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
+        vrtlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
+        vrtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
     }
   } // end if (include)

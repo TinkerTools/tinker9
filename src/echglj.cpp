@@ -37,8 +37,6 @@ void echglj_data(rc_op op)
       darray::deallocate(cvexclude, cvexclude_scale);
       darray::deallocate(atom_rad, atom_eps);
       darray::deallocate(chg_coalesced, radeps_coalesced);
-
-      printf(" dealloc echglj_data \n");
    }
 
 

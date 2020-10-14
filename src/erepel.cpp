@@ -77,7 +77,7 @@ void erepel_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(r2scale - 1);
+                  excls.push_back(r2scale);
                }
             }
          }
@@ -92,7 +92,7 @@ void erepel_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(r3scale - 1);
+                  excls.push_back(r3scale);
                }
             }
          }
@@ -107,7 +107,7 @@ void erepel_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(r4scale - 1);
+                  excls.push_back(r4scale);
                }
             }
          }
@@ -122,7 +122,7 @@ void erepel_data(rc_op op)
                if (k > i) {
                   exclik.push_back(i);
                   exclik.push_back(k);
-                  excls.push_back(r5scale - 1);
+                  excls.push_back(r5scale);
                }
             }
          }

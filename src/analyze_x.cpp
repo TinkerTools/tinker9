@@ -175,9 +175,9 @@ void x_analyze_e()
 
 void x_analyze_v()
 {
-   if (use_osrw)
+   if (use_osrw) 
       osrw_energy(calc::grad + calc::virial);
-   else
+   else 
       energy(calc::grad + calc::virial);
    auto& out = stdout;
 
