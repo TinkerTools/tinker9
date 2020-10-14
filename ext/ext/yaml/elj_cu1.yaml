@@ -1,0 +1,140 @@
+CK_VERSION: 1
+KERNEL_NAME: elj_cu1
+TEMPLATE_PARAMS: template <class Ver>
+CONSTEXPR_FLAGS: |
+  constexpr bool do_e = Ver::e;
+  constexpr bool do_a = Ver::a;
+  constexpr bool do_g = Ver::g;
+  constexpr bool do_v = Ver::v;
+
+COUNT:
+  - nev
+ENERGY:
+  - ev
+VIRIAL:
+  - vev
+GRADIENT:
+  - gx
+  - gy
+  - gz
+
+CUT_DISTANCE:
+  - cut
+OFF_DISTANCE:
+  - 'off'
+
+EXCLUDE_INFO:
+  - info
+
+SCALE_1X_TYPE: real_const_array
+
+EXTRA_PARAMS: |
+  , int njvdw, const real* restrict radmin, const real* restrict epsilon
+  , const int* restrict jvdw
+
+I_POSITION:
+  - def: register real xi from:x
+  - def: register real yi from:y
+  - def: register real zi from:z
+K_POSITION:
+  - def: register real xk from:x
+  - def: register real yk from:y
+  - def: register real zk from:z
+
+I_FORCE:
+  - def: register real fix addto:gx
+  - def: register real fiy addto:gy
+  - def: register real fiz addto:gz
+K_FORCE:
+  - def: register real fkx addto:gx
+  - def: register real fky addto:gy
+  - def: register real fkz addto:gz
+
+I_VARIABLES:
+  - def: register int ijvdw from:jvdw
+K_VARIABLES:
+  - def: register int kjvdw from:jvdw
+
+SCALED_PAIRWISE_INTERACTION: |
+  real xr = @xi@ - xk;
+  real yr = @yi@ - yk;
+  real zr = @zi@ - zk;
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    real r = REAL_SQRT(r2);
+    real invr = REAL_RECIP(r);
+    real rv = radmin[@ijvdw@ * njvdw + kjvdw];
+    real eps = epsilon[@ijvdw@ * njvdw + kjvdw];
+    real e, de;
+    pair_lj_v3<do_g, 0>(r, invr, scalea, rv, eps, cut, off, e, de);
+    if CONSTEXPR (do_e) {
+      evtl += cvt_to<ebuf_prec>(e);
+      if CONSTEXPR (do_a) {
+        if (scalea != 0 and e != 0)
+          nevtl += 1;
+      }
+    }
+    if CONSTEXPR (do_g) {
+      real dedx, dedy, dedz;
+      de = de * invr;
+      dedx = de * xr;
+      dedy = de * yr;
+      dedz = de * zr;
+      @fix@ += dedx;
+      @fiy@ += dedy;
+      @fiz@ += dedz;
+      fkx -= dedx;
+      fky -= dedy;
+      fkz -= dedz;
+      if CONSTEXPR (do_v) {
+        vevtlxx += cvt_to<vbuf_prec>(xr * dedx);
+        vevtlyx += cvt_to<vbuf_prec>(yr * dedx);
+        vevtlzx += cvt_to<vbuf_prec>(zr * dedx);
+        vevtlyy += cvt_to<vbuf_prec>(yr * dedy);
+        vevtlzy += cvt_to<vbuf_prec>(zr * dedy);
+        vevtlzz += cvt_to<vbuf_prec>(zr * dedz);
+      }
+    }
+  }
+
+FULL_PAIRWISE_INTERACTION: |
+  real xr = @xi@ - xk;
+  real yr = @yi@ - yk;
+  real zr = @zi@ - zk;
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    real r = REAL_SQRT(r2);
+    real invr = REAL_RECIP(r);
+    real rv = radmin[@ijvdw@ * njvdw + kjvdw];
+    real eps = epsilon[@ijvdw@ * njvdw + kjvdw];
+    real e, de;
+    pair_lj_v3<do_g, 1>(r, invr, 1, rv, eps, cut, off, e, de);
+    if CONSTEXPR (do_e) {
+      evtl += cvt_to<ebuf_prec>(e);
+      if CONSTEXPR (do_a) {
+        if (e != 0)
+          nevtl += 1;
+      }
+    }
+    if CONSTEXPR (do_g) {
+      real dedx, dedy, dedz;
+      de = de * invr;
+      dedx = de * xr;
+      dedy = de * yr;
+      dedz = de * zr;
+      @fix@ += dedx;
+      @fiy@ += dedy;
+      @fiz@ += dedz;
+      fkx -= dedx;
+      fky -= dedy;
+      fkz -= dedz;
+      if CONSTEXPR (do_v) {
+        vevtlxx += cvt_to<vbuf_prec>(xr * dedx);
+        vevtlyx += cvt_to<vbuf_prec>(yr * dedx);
+        vevtlzx += cvt_to<vbuf_prec>(zr * dedx);
+        vevtlyy += cvt_to<vbuf_prec>(yr * dedy);
+        vevtlzy += cvt_to<vbuf_prec>(zr * dedy);
+        vevtlzz += cvt_to<vbuf_prec>(zr * dedz);
+      }
+    }
+  }
