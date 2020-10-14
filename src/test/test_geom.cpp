@@ -36,7 +36,7 @@ TEST_CASE("Geom-Local-Frame2-1", "[ff][egeom][local-frame2]")
    k0 += ortho_box;
 
 
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
    TestFile fx1(x, local_frame_xyz2);
 
 

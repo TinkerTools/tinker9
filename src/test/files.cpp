@@ -2,7 +2,6 @@
 
 namespace tinker {
 // prm files
-#include "file/amoeba09.hh"
 
 #include "file/charmm19.hh"
 

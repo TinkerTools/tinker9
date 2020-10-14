@@ -241,8 +241,6 @@ octahedron
    214  Ar     0.460849    9.822268    5.406630     3
    215  Ar     0.912467    7.829541    2.962234     3
    216  Ar    -1.651634    7.544497    4.574398     3)**";
-   const char* pname = "amoeba09.prm";
-   const char* p0 = commit_6fe8e913::amoeba09_prm;
 
 
    const double eps_e = 0.0001;
@@ -254,7 +252,7 @@ octahedron
 
    TestFile fxy(xname, x0);
    TestFile fke(kname, k0);
-   TestFile fpr(pname, p0);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
 
    TestReference r(TINKER9_DIRSTR "/src/test/truncated8.1.txt");

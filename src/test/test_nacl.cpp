@@ -32,7 +32,7 @@ using namespace tinker;
 
 TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
 {
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    const std::string key = std::string(nacl_key) + "vdwterm    only\n";
 
@@ -213,7 +213,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
 
 TEST_CASE("NaCl-2", "[ff][empole][nonewald][nacl]")
 {
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    std::string key = nacl_key;
    key += "multipoleterm    only\n";
@@ -254,7 +254,7 @@ TEST_CASE("NaCl-2", "[ff][empole][nonewald][nacl]")
 
 TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]")
 {
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    std::string key = nacl_key4;
    key += "multipoleterm    only\n";

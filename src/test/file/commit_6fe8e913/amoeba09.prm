@@ -1,6 +1,4 @@
-namespace commit_6fe8e913 {
-const char* amoeba09_prm =
-R"**(
+
       ##############################
       ##                          ##
       ##  Force Field Definition  ##
@@ -3394,6 +3392,3 @@ polarize    347          0.4960     0.3900    343
 polarize    348          0.6960     0.3900    344
 polarize    349          0.6960     0.3900    345
 polarize    350          0.6960     0.3900    346
-
-)**";
-}

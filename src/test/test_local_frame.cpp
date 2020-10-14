@@ -19,7 +19,7 @@ static bool do_ij(int i, int /* j */)
 
 TEST_CASE("Local-Frame-1", "[ff][empole][nonewald][local-frame]")
 {
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    const char* k = "test_local_frame.key";
    std::string key0 = local_frame_key;
@@ -85,7 +85,7 @@ TEST_CASE("Local-Frame-1", "[ff][empole][nonewald][local-frame]")
 
 TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]")
 {
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    const char* k = "test_local_frame.key";
    std::string key0 = local_frame_key;
@@ -187,7 +187,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]")
 
 TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
 {
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    const char* k = "test_local_frame.key";
    std::string key0 = local_frame_key;
@@ -396,7 +396,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
 
 TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
 {
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    const char* k = "test_local_frame.key";
    std::string key0 = local_frame_key;

@@ -3,9 +3,6 @@
 
 namespace tinker {
 // prm files
-namespace commit_6fe8e913 {
-extern const char* amoeba09_prm;
-}
 
 namespace commit_11e84c69 {
 extern const char* charmm19_prm;

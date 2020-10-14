@@ -59,7 +59,7 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
 
    TestFile fd(d, arbox_dyn);
    TestFile fx(x, arbox_xyz);
-   TestFile fp(p, commit_6fe8e913::amoeba09_prm);
+   TestFile fp(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    const char* argv[] = {"dummy", x};
    int argc = 2;
