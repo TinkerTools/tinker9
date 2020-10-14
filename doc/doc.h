@@ -1,16 +1,6 @@
 #error This header file should never have been included.
 
 
-/// \defgroup style  Style Guide
-
-
-/* sed '/PATTERN/ r doc/style.md' doc/doc.h > output */
-/**
- * \ingroup style
- * \page style_md_pasted_here
- */
-
-
 /// \defgroup macro  Predefined Macros
 /// \defgroup prec  Precisions of MM and MD Types
 /// \defgroup acc_syntax  OpenACC Specific Code
