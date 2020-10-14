@@ -19,7 +19,7 @@ TEST_CASE("ALA-1", "[ff][eimptor][ala]")
          "imptorunit    100\n";
 
 
-   TestFile fpr("amber99sb.prm", commit_350df099::amber99sb_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_350df099/amber99sb.prm");
    TestFile fx1(x, ala_amber99sb_xyz);
    TestFile fk1(k, k0);
 

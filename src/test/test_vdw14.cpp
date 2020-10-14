@@ -16,8 +16,6 @@ TEST_CASE("Vdw14-Trpcage", "[ff][evdw][vdw14][lj][trpcage]")
    k0 += "\nVDWTERM ONLY\n";
    const char* xname = "test_vdw14.xyz";
    const char* x0 = trpcage_charmm19_xyz;
-   const char* pname = "charmm19.prm";
-   const char* p0 = commit_11e84c69::charmm19_prm;
 
 
    const double eps_e = 0.0001;
@@ -31,7 +29,8 @@ TEST_CASE("Vdw14-Trpcage", "[ff][evdw][vdw14][lj][trpcage]")
    {
       TestFile fxy(xname, x0);
       TestFile fke(kname, k0);
-      TestFile fpr(pname, p0);
+      TestFile fpr(TINKER9_DIRSTR
+                   "/src/test/file/commit_11e84c69/charmm19.prm");
 
 
       TestReference r(TINKER9_DIRSTR "/src/test/vdw14.1.txt");
@@ -97,7 +96,8 @@ TEST_CASE("Vdw14-Trpcage", "[ff][evdw][vdw14][lj][trpcage]")
 
       TestFile fxy(xname, x0);
       TestFile fke(kname, k1);
-      TestFile fpr(pname, p0);
+      TestFile fpr(TINKER9_DIRSTR
+                   "/src/test/file/commit_11e84c69/charmm19.prm");
 
 
       TestReference r(TINKER9_DIRSTR "/src/test/vdw14.2.txt");

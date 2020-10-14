@@ -16,8 +16,6 @@ TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage]")
    k0 += "\nCHARGETERM ONLY\n";
    const char* xname = "test_pchg.xyz";
    const char* x0 = trpcage_charmm19_xyz;
-   const char* pname = "charmm19.prm";
-   const char* p0 = commit_11e84c69::charmm19_prm;
 
 
    const double eps_e = 0.0001;
@@ -31,7 +29,8 @@ TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage]")
    {
       TestFile fxy(xname, x0);
       TestFile fke(kname, k0);
-      TestFile fpr(pname, p0);
+      TestFile fpr(TINKER9_DIRSTR
+                   "/src/test/file/commit_11e84c69/charmm19.prm");
 
 
       const double ref_e = -769.0436;
@@ -195,7 +194,8 @@ TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage]")
 
       TestFile fxy(xname, x0);
       TestFile fke(kname, k1);
-      TestFile fpr(pname, p0);
+      TestFile fpr(TINKER9_DIRSTR
+                   "/src/test/file/commit_11e84c69/charmm19.prm");
 
 
       const double ref_e = -784.1710;

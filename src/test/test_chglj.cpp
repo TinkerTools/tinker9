@@ -21,8 +21,6 @@ torsionterm  none
 )**";
    const char* xn = "test_chglj.xyz";
    const char* x0 = trpcage_charmm19_xyz;
-   const char* pn = "charmm19.prm";
-   const char* p0 = commit_11e84c69::charmm19_prm;
 
 
    const double eps_e = 0.0001;
@@ -36,7 +34,8 @@ torsionterm  none
    {
       TestFile fx1(xn, x0);
       TestFile fk1(kn, k0);
-      TestFile fp1(pn, p0);
+      TestFile fp1(TINKER9_DIRSTR
+                   "/src/test/file/commit_11e84c69/charmm19.prm");
 
 
       TestReference r(TINKER9_DIRSTR "/src/test/chglj.1.txt");
@@ -98,7 +97,8 @@ vdw-correction
 
       TestFile fx1(xn, x0);
       TestFile fk1(kn, k1);
-      TestFile fp1(pn, p0);
+      TestFile fp1(TINKER9_DIRSTR
+                   "/src/test/file/commit_11e84c69/charmm19.prm");
 
 
       TestReference r(TINKER9_DIRSTR "/src/test/chglj.2.txt");

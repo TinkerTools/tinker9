@@ -1,5 +1,4 @@
-namespace commit_350df099 {
-const char* amber99sb_prm = R"**(
+
       ##############################
       ##                          ##
       ##  Force Field Definition  ##
@@ -3711,5 +3710,3 @@ biotype    2009    CA      "Calcium Ion"                    2009
 biotype    2010    SR      "Strontium Ion"                  2010
 biotype    2011    BA      "Barium Ion"                     2011
 biotype    2013    CL      "Chloride Ion"                   2012
-)**";
-}
