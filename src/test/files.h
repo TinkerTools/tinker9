@@ -6,7 +6,6 @@ namespace tinker {
 namespace commit_6fe8e913 {
 extern const char* water03_prm;
 extern const char* amoeba09_prm;
-extern const char* amoebabio09_prm;
 }
 
 namespace commit_11e84c69 {
