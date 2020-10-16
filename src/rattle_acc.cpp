@@ -359,6 +359,82 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
    }
 }
 
+template <class HTYPE>
+void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew,
+                       pos_prec* znew, const pos_prec* xold,
+                       const pos_prec* yold, const pos_prec* zold)
+{
+   if (nratch <= 0)
+      return;
+
+
+   #pragma acc parallel loop independent async\
+           deviceptr(xold,yold,zold,xnew,ynew,znew,vx,vy,vz,massinv,\
+                     iratch,kratch)
+   for (int im = 0; im < nratch; ++im) {
+      int ia, ib;
+      double lab;
+      double rma, rmb, invm;
+      ia = iratch[im][0];
+      ib = iratch[im][1];
+      lab = kratch[im];
+      rma = massinv[ia];
+      rmb = massinv[ib];
+      invm = rma + rmb;
+
+
+      // vectors AB0, AB1
+      // AB0 dot AB1
+      double xb0, yb0, zb0, sqb0, xb1, yb1, zb1, sqb1, dot;
+      xb0 = xold[ib] - xold[ia];
+      yb0 = yold[ib] - yold[ia];
+      zb0 = zold[ib] - zold[ia];
+      sqb0 = xb0 * xb0 + yb0 * yb0 + zb0 * zb0;
+      xb1 = xnew[ib] - xnew[ia];
+      yb1 = ynew[ib] - ynew[ia];
+      zb1 = znew[ib] - znew[ia];
+      sqb1 = xb1 * xb1 + yb1 * yb1 + zb1 * zb1;
+      dot = xb0 * xb1 + yb0 * yb1 + zb0 * zb1;
+
+
+      // al lambda**2 - 2 * be lambda + ga = 0
+      double al, be, ga, sqterm, lam;
+      al = sqb0 * invm * invm;
+      be = invm * dot;
+      ga = sqb1 - lab * lab;
+      sqterm = be * be - al * ga;
+      lam = (be - sqrt(sqterm)) / al;
+
+
+      // delta_A and delta_B
+      double dxa, dya, dza, dxb, dyb, dzb;
+      dxa = lam * xb0 * rma;
+      dya = lam * yb0 * rma;
+      dza = lam * zb0 * rma;
+      dxb = -lam * xb0 * rmb;
+      dyb = -lam * yb0 * rmb;
+      dzb = -lam * zb0 * rmb;
+
+
+      xnew[ia] += dxa;
+      ynew[ia] += dya;
+      znew[ia] += dza;
+      xnew[ib] += dxb;
+      ynew[ib] += dyb;
+      znew[ib] += dzb;
+
+
+      if (eq<HTYPE, RATTLE>()) {
+         double invdt = 1 / dt;
+         vx[ia] += dxa * invdt;
+         vy[ia] += dya * invdt;
+         vz[ia] += dza * invdt;
+         vx[ib] += dxb * invdt;
+         vy[ib] += dyb * invdt;
+         vz[ib] += dzb * invdt;
+      }
+   }
+}
 
 void rattle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
                 const pos_prec* zold)
@@ -374,6 +450,13 @@ void rattle_settle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 }
 
 
+void rattle_ch_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
+                   const pos_prec* zold)
+{
+   constrain_ch_acc1<RATTLE>(dt, xpos, ypos, zpos, xold, yold, zold);
+}
+
+
 void shake_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
                const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
@@ -386,6 +469,14 @@ void shake_settle_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew,
                       const pos_prec* yold, const pos_prec* zold)
 {
    settle_acc1<SHAKE>(dt, xnew, ynew, znew, xold, yold, zold);
+}
+
+
+void shake_ch_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+                  const pos_prec* xold, const pos_prec* yold,
+                  const pos_prec* zold)
+{
+   constrain_ch_acc1<SHAKE>(dt, xnew, ynew, znew, xold, yold, zold);
 }
 
 
@@ -646,6 +737,72 @@ void settle2_acc1(time_prec dt)
 }
 
 
+template <bool DO_V>
+void constrain2_ch_acc1(time_prec dt)
+{
+   if (nratch <= 0)
+      return;
+
+
+   const double vterm = 2 / (dt * units::ekcal);
+   size_t bufsize = buffer_size();
+
+
+   #pragma acc parallel loop independent async\
+           deviceptr(massinv,xpos,ypos,zpos,vx,vy,vz,vir_buf,iratch,kratch)
+   for (int im = 0; im < nratch; ++im) {
+      int ia, ib;
+      double lab;
+      double rma, rmb;
+      ia = iratch[im][0];
+      ib = iratch[im][1];
+      lab = kratch[im];
+      rma = massinv[ia];
+      rmb = massinv[ib];
+
+
+      // vectors AB3, vAB0, AB3 dot vAB0, -lam
+      double xr, yr, zr, xv, yv, zv, dot, term;
+      xr = xpos[ib] - xpos[ia];
+      yr = ypos[ib] - ypos[ia];
+      zr = zpos[ib] - zpos[ia];
+      xv = vx[ib] - vx[ia];
+      yv = vy[ib] - vy[ia];
+      zv = vz[ib] - vz[ia];
+      dot = xr * xv + yr * yv + zr * zv;
+      term = -dot / ((rma + rmb) * lab * lab);
+
+
+      double xterm, yterm, zterm;
+      xterm = xr * term;
+      yterm = yr * term;
+      zterm = zr * term;
+      vx[ia] -= xterm * rma;
+      vy[ia] -= yterm * rma;
+      vz[ia] -= zterm * rma;
+      vx[ib] += xterm * rmb;
+      vy[ib] += yterm * rmb;
+      vz[ib] += zterm * rmb;
+      if CONSTEXPR (DO_V) {
+         size_t offset = im & (bufsize - 1);
+         double vxx = 0, vyx = 0, vzx = 0;
+         double vyy = 0, vzy = 0, vzz = 0;
+         xterm *= vterm;
+         yterm *= vterm;
+         zterm *= vterm;
+         vxx -= xr * xterm;
+         vyx -= yr * xterm;
+         vzx -= zr * xterm;
+         vyy -= yr * yterm;
+         vzy -= zr * yterm;
+         vzz -= zr * zterm;
+         atomic_add((real)vxx, (real)vyx, (real)vzx, (real)vyy, (real)vzy,
+                    (real)vzz, vir_buf, offset);
+      }
+   }
+}
+
+
 void rattle2_acc(time_prec dt, bool do_v)
 {
    if (do_v) {
@@ -662,6 +819,16 @@ void rattle2_settle_acc(time_prec dt, bool do_v)
       settle2_acc1<true>(dt);
    else
       settle2_acc1<false>(dt);
+}
+
+
+void rattle2_ch_acc(time_prec dt, bool do_v)
+{
+   if (do_v) {
+      constrain2_ch_acc1<true>(dt);
+   } else {
+      constrain2_ch_acc1<false>(dt);
+   }
 }
 
 

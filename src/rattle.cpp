@@ -284,7 +284,7 @@ void rattle_data(rc_op op)
             vecich.push_back(a);
             vecich.push_back(b);
             veckch.push_back(ab);
-            // it.clear();
+            it.clear();
          } else if (HCMol_is_ch2(it, a, b, c, ab, ac)) {
             vecich2.push_back(a);
             vecich2.push_back(b);
@@ -378,6 +378,7 @@ void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold,
             const pos_prec* zold)
 {
    rattle_settle_acc(dt, xold, yold, zold);
+   rattle_ch_acc(dt, xold, yold, zold);
    rattle_acc(dt, xold, yold, zold);
 }
 
@@ -390,6 +391,7 @@ void rattle2(time_prec dt, bool do_v)
 
 
    rattle2_settle_acc(dt, do_v);
+   rattle2_ch_acc(dt, do_v);
    rattle2_acc(dt, do_v);
 
 
@@ -407,6 +409,7 @@ void shake(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
            const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    shake_settle_acc(dt, xnew, ynew, znew, xold, yold, zold);
+   shake_ch_acc(dt, xnew, ynew, znew, xold, yold, zold);
    shake_acc(dt, xnew, ynew, znew, xold, yold, zold);
 }
 
