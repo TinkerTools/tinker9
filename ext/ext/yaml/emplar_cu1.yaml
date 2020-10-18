@@ -1,3 +1,4 @@
+CK_VERSION: 2 # split a long kernel into shorter pieces
 KERNEL_NAME: emplar_cu1
 TEMPLATE_PARAMS: template<class Ver, class ETYP>
 CONSTEXPR_FLAGS: |

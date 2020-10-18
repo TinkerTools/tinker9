@@ -855,17 +855,20 @@ if __name__ == '__main__':
     print('\n\n')
 
 
-    kcfg = yamlkey.ck_version
+    kcfg, ck_version = yamlkey.ck_version, 1
     if kcfg in config.keys():
-        ver = config[kcfg]
-        if ver == 1:
-            output = replace(kernel_template, d)
-            output = replace_i_vars(output, config)
-            print(output)
-            print('\n\n')
-            exit(0)
+        ck_version = config[kcfg]
 
 
+    if ck_version == 1:
+        output = replace(kernel_template, d)
+        output = replace_i_vars(output, config)
+        print(output)
+        print('\n\n')
+        exit(0)
+
+
+    # ck_version is 2
     if yamlkey.scale_1x_type in config.keys():
         output = replace(kernel_template_c, d)
         output = replace_i_vars(output, config)

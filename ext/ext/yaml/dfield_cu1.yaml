@@ -1,4 +1,3 @@
-CK_VERSION: 1 # 1: a long kernel
 KERNEL_NAME: dfield_cu1
 TEMPLATE_PARAMS: template<class ETYP>
 # CONSTEXPR_FLAGS:
