@@ -368,7 +368,7 @@ void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew,
       return;
 
 
-   #pragma acc parallel loop independent async\
+   #pragma acc parallel loop independent vector_length(64) async\
            deviceptr(xold,yold,zold,xnew,ynew,znew,vx,vy,vz,massinv,\
                      iratch,kratch)
    for (int im = 0; im < nratch; ++im) {
@@ -435,6 +435,7 @@ void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew,
       }
    }
 }
+
 
 void rattle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
                 const pos_prec* zold)
@@ -748,15 +749,13 @@ void constrain2_ch_acc1(time_prec dt)
    size_t bufsize = buffer_size();
 
 
-   #pragma acc parallel loop independent async\
-           deviceptr(massinv,xpos,ypos,zpos,vx,vy,vz,vir_buf,iratch,kratch)
+   #pragma acc parallel loop independent vector_length(64) async\
+           deviceptr(massinv,xpos,ypos,zpos,vx,vy,vz,vir_buf,iratch)
    for (int im = 0; im < nratch; ++im) {
       int ia, ib;
-      double lab;
       double rma, rmb;
       ia = iratch[im][0];
       ib = iratch[im][1];
-      lab = kratch[im];
       rma = massinv[ia];
       rmb = massinv[ib];
 
@@ -770,7 +769,8 @@ void constrain2_ch_acc1(time_prec dt)
       yv = vy[ib] - vy[ia];
       zv = vz[ib] - vz[ia];
       dot = xr * xv + yr * yv + zr * zv;
-      term = -dot / ((rma + rmb) * lab * lab);
+      double r2 = xr * xr + yr * yr + zr * zr;
+      term = -dot / ((rma + rmb) * r2);
 
 
       double xterm, yterm, zterm;

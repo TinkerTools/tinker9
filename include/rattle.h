@@ -15,11 +15,15 @@ void rattle_settle_acc(time_prec, const pos_prec*, const pos_prec*,
                        const pos_prec*);
 void rattle_ch_acc(time_prec, const pos_prec*, const pos_prec*,
                    const pos_prec*);
+// methylene and methyl groups
+void rattle_methyl_cu(time_prec, const pos_prec*, const pos_prec*,
+                      const pos_prec*);
 
 void rattle2(time_prec dt, bool do_v);
 void rattle2_acc(time_prec, bool);
 void rattle2_settle_acc(time_prec, bool);
 void rattle2_ch_acc(time_prec, bool);
+void rattle2_methyl_cu(time_prec, bool);
 
 
 void shake(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
@@ -32,6 +36,8 @@ void shake_settle_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew,
                       const pos_prec* yold, const pos_prec* zold);
 void shake_ch_acc(time_prec, pos_prec*, pos_prec*, pos_prec*, const pos_prec*,
                   const pos_prec*, const pos_prec*);
+void shake_methyl_cu(time_prec, pos_prec*, pos_prec*, pos_prec*,
+                     const pos_prec*, const pos_prec*, const pos_prec*);
 
 void shake2(time_prec dt, const vel_prec* vxold, const vel_prec* vyold,
             const vel_prec* vzold, const vel_prec* vxnew, const vel_prec* vynew,
