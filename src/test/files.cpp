@@ -10,8 +10,6 @@ namespace tinker {
 // local_frame test set
 #include "file/local_frame.hh"
 
-// crambin3 test set
-#include "file/crambin3.hh"
 
 // trpcage test set
 #include "file/trpcage.hh"
