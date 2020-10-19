@@ -21,8 +21,4 @@ extern const char* trpcage_xyz;
 extern const char* trpcage_key;
 extern const char* trpcage_charmm19_xyz;
 extern const char* trpcage_charmm19_key;
-
-// ten water molecules test set
-extern const char* h2o10_xyz;
-extern const char* h2o10_key;
 }

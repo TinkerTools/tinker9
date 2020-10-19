@@ -10,7 +10,4 @@ namespace tinker {
 
 // trpcage test set
 #include "file/trpcage.hh"
-
-// ten water molecules test set
-#include "file/h2o10.hh"
 }
