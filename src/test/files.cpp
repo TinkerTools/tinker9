@@ -1,9 +1,6 @@
 #include "files.h"
 
 namespace tinker {
-// xyz files
-#include "file/watersmall.hh"
-
 // NaCl ion pair test set
 #include "file/nacl.hh"
 
