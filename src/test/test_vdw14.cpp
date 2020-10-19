@@ -32,7 +32,7 @@ TEST_CASE("Vdw14-Trpcage", "[ff][evdw][vdw14][lj][trpcage]")
                    "/src/test/file/commit_11e84c69/charmm19.prm");
 
 
-      TestReference r(TINKER9_DIRSTR "/src/test/vdw14.1.txt");
+      TestReference r(TINKER9_DIRSTR "/src/test/ref/vdw14.1.txt");
       auto ref_e = r.get_energy();
       auto ref_v = r.get_virial();
       auto ref_count = r.get_count();
@@ -100,7 +100,7 @@ TEST_CASE("Vdw14-Trpcage", "[ff][evdw][vdw14][lj][trpcage]")
                    "/src/test/file/commit_11e84c69/charmm19.prm");
 
 
-      TestReference r(TINKER9_DIRSTR "/src/test/vdw14.2.txt");
+      TestReference r(TINKER9_DIRSTR "/src/test/ref/vdw14.2.txt");
       auto ref_e = r.get_energy();
       auto ref_v = r.get_virial();
       auto ref_count = r.get_count();

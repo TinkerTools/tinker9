@@ -36,7 +36,7 @@ torsionterm  none
                    "/src/test/file/commit_11e84c69/charmm19.prm");
 
 
-      TestReference r(TINKER9_DIRSTR "/src/test/chglj.1.txt");
+      TestReference r(TINKER9_DIRSTR "/src/test/ref/chglj.1.txt");
       auto ref_e = r.get_energy();
       auto ref_v = r.get_virial();
       auto ref_g = r.get_gradient();
@@ -100,7 +100,7 @@ vdw-correction
                    "/src/test/file/commit_11e84c69/charmm19.prm");
 
 
-      TestReference r(TINKER9_DIRSTR "/src/test/chglj.2.txt");
+      TestReference r(TINKER9_DIRSTR "/src/test/ref/chglj.2.txt");
       auto ref_e = r.get_energy();
       auto ref_v = r.get_virial();
       auto ref_g = r.get_gradient();

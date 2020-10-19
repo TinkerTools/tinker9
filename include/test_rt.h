@@ -21,11 +21,19 @@ private:
 
 
 public:
-   TestFile(const std::string& file, std::string dst = "",
+   /**
+    * Copies file from `src` to `dst` and append the `extra` text to `dst` if
+    * `extra` is not empty.
+    *
+    * If `dst` is an empty string, `dst` will have the same filename in the
+    * current working directory. If `src` is an empty string, it will create a
+    * new file at `dst`.
+    */
+   TestFile(const std::string& src, std::string dst = "",
             std::string extra = "");
-   /// Removes the file on disk if possible.
+   /** Removes the file on disk if possible. */
    ~TestFile();
-   /// Prevents file being deleted.
+   /** Prevents the file being deleted. */
    void keep();
 };
 

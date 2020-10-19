@@ -21,7 +21,7 @@ TEST_CASE("EDISP-1-NONDEWALD", "[ff][edisp][nondewald]")
    const double eps_v = test_get_eps(0.055, 0.001);
 
 
-   TestReference r(TINKER9_DIRSTR "/src/test/disp.1.txt");
+   TestReference r(TINKER9_DIRSTR "/src/test/ref/disp.1.txt");
    auto ref_c = r.get_count();
    auto ref_e = r.get_energy();
    auto ref_v = r.get_virial();
@@ -87,7 +87,7 @@ TEST_CASE("EDISP-2-DEWALD", "[ff][edisp][dewald]")
    const double eps_v = test_get_eps(0.050, 0.001);
 
 
-   TestReference r(TINKER9_DIRSTR "/src/test/disp.2.txt");
+   TestReference r(TINKER9_DIRSTR "/src/test/ref/disp.2.txt");
    auto ref_c = r.get_count();
    auto ref_e = r.get_energy();
    auto ref_v = r.get_virial();
