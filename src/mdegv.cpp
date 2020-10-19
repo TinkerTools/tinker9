@@ -2,6 +2,7 @@
 #include "energy.h"
 #include "mdcalc.h"
 #include "mdpq.h"
+#include "tool/device_zero.h"
 #include "tool/host_zero.h"
 
 
@@ -16,22 +17,17 @@ void zero_egv(int vers)
    size_t bsize = buffer_size();
    if (vers & calc::energy) {
       host_zero(esum, energy_valence, energy_vdw, energy_elec);
-      darray::zero(PROCEED_NEW_Q, bsize, eng_buf);
-      darray::zero(PROCEED_NEW_Q, bsize, eng_buf_vdw);
-      darray::zero(PROCEED_NEW_Q, bsize, eng_buf_elec);
+      zero3_async(n, eng_buf, eng_buf_vdw, eng_buf_elec);
    }
 
    if (vers & calc::virial) {
       host_zero(vir, virial_valence, virial_vdw, virial_elec);
-      darray::zero(PROCEED_NEW_Q, buffer_size(), vir_buf);
-      darray::zero(PROCEED_NEW_Q, bsize, vir_buf_vdw);
-      darray::zero(PROCEED_NEW_Q, bsize, vir_buf_elec);
+      zero3_async(bsize, vir_buf, vir_buf_vdw, vir_buf_elec);
    }
 
    if (vers & calc::grad) {
-      darray::zero(PROCEED_NEW_Q, n, gx, gy, gz);
-      darray::zero(PROCEED_NEW_Q, n, gx_vdw, gy_vdw, gz_vdw);
-      darray::zero(PROCEED_NEW_Q, n, gx_elec, gy_elec, gz_elec);
+      zero9_async(n, gx, gy, gz, gx_vdw, gy_vdw, gz_vdw, gx_elec, gy_elec,
+                  gz_elec);
    }
 }
 
