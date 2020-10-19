@@ -49,6 +49,43 @@ void TestFile::keep()
 }
 
 
+TestFil2::TestFil2(const std::string& file, std::string dst, std::string extra)
+{
+   if (dst == "") {
+      auto pos = file.find_last_of('/');
+      name = file.substr(pos + 1);
+      if (name == "")
+         return;
+   } else {
+      name = dst;
+   }
+
+
+   std::ifstream fsrc(file, std::ios::binary);
+   std::ofstream fdst(name, std::ios::binary);
+   good = fdst.is_open();
+   if (good) {
+      fdst << fsrc.rdbuf();
+      if (extra != "") {
+         fdst << extra;
+      }
+   }
+}
+
+
+TestFil2::~TestFil2()
+{
+   if (good)
+      std::remove(name.c_str());
+}
+
+
+void TestFil2::keep()
+{
+   good = false;
+}
+
+
 TestFileExpected::TestFileExpected(const std::string& name)
    : name_(name)
 {}

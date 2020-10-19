@@ -32,6 +32,23 @@ public:
 };
 
 
+class TestFil2
+{
+private:
+   bool good;
+   std::string name;
+
+
+public:
+   TestFil2(const std::string& file, std::string dst = "",
+            std::string extra = "");
+
+   ~TestFil2();
+
+   void keep();
+};
+
+
 /**
  * \ingroup test
  * Removes the file with the given name in its destructor if possible.

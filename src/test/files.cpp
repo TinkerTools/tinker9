@@ -27,7 +27,4 @@ namespace tinker {
 
 // potassium ion and water
 #include "file/potassium.hh"
-
-// alanine dipeptide test set
-#include "file/ala.hh"
 }
