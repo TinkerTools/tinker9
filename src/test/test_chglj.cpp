@@ -12,15 +12,13 @@ TEST_CASE("Chglj-Trpcage", "[ff][echarge][evdw][echglj][lj][trpcage]")
 
 
    const char* kn = "test_chglj.key";
-   std::string k0 = trpcage_charmm19_key;
-   k0 += R"**(
+   std::string k0 = R"**(
 bondterm     none
 angleterm    none
 impropterm   none
 torsionterm  none
 )**";
    const char* xn = "test_chglj.xyz";
-   const char* x0 = trpcage_charmm19_xyz;
 
 
    const double eps_e = 0.0001;
@@ -32,8 +30,9 @@ torsionterm  none
 
    SECTION("  - echglj -- no pbc, no cutoff")
    {
-      TestFile fx1(xn, x0);
-      TestFile fk1(kn, k0);
+      TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.xyz", xn);
+      TestFil2 fk1(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.key", kn,
+                   k0);
       TestFile fp1(TINKER9_DIRSTR
                    "/src/test/file/commit_11e84c69/charmm19.prm");
 
@@ -95,8 +94,9 @@ vdw-correction
 )**";
 
 
-      TestFile fx1(xn, x0);
-      TestFile fk1(kn, k1);
+      TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.xyz", xn);
+      TestFil2 fk1(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.key", kn,
+                   k1);
       TestFile fp1(TINKER9_DIRSTR
                    "/src/test/file/commit_11e84c69/charmm19.prm");
 
