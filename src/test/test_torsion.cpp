@@ -168,11 +168,10 @@ TEST_CASE("Torsion-Trpcage", "[ff][etors][trpcage]")
    const char* k = "test_trpcage.key";
    const char* x1 = "test_trpcage.xyz";
 
-   std::string k0 = trpcage_key;
-   k0 += torsionterm_only;
-   TestFile fke(k, k0);
+   std::string k0 = torsionterm_only;
+   TestFil2 fke(TINKER9_DIRSTR "/src/test/file/trpcage/trpcage.key", k, k0);
 
-   TestFile fx1(x1, trpcage_xyz);
+   TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/trpcage/trpcage.xyz", x1);
    TestFile fpr(TINKER9_DIRSTR
                 "/src/test/file/commit_6fe8e913/amoebapro13.prm");
 

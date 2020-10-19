@@ -168,11 +168,10 @@ TEST_CASE("Angle-Trpcage", "[ff][eangle][trpcage]")
    const char* k = "test_trpcage.key";
    const char* x1 = "test_trpcage.xyz";
 
-   std::string k0 = trpcage_key;
-   k0 += angleterm_only;
-   TestFile fke(k, k0);
+   std::string k0 = angleterm_only;
+   TestFil2 fke(TINKER9_DIRSTR "/src/test/file/trpcage/trpcage.key", k, k0);
 
-   TestFile fx1(x1, trpcage_xyz);
+   TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/trpcage/trpcage.xyz", x1);
    TestFile fpr(TINKER9_DIRSTR
                 "/src/test/file/commit_291a85c1/amoebapro13.prm");
 
