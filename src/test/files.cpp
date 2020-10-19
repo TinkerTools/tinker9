@@ -22,8 +22,6 @@ namespace tinker {
 // six argon atoms test set
 #include "file/ar6.hh"
 
-// 216 argon box test set
-#include "file/arbox.hh"
 
 // potassium ion and water
 #include "file/potassium.hh"

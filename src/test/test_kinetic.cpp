@@ -14,12 +14,11 @@ TEST_CASE("Kinetic-ArBox", "[ff][kinetic][arbox]")
    const char* d = "test_arbox.dyn";
    const char* x = "test_arbox.xyz";
 
-   std::string k0 = arbox_key;
-   k0 += verlet_intg;
-   TestFile fke(k, k0);
+   std::string k0 = verlet_intg;
+   TestFil2 fke(TINKER9_DIRSTR "/src/test/file/arbox/arbox.key", k, k0);
 
-   TestFile fd(d, arbox_dyn2);
-   TestFile fx(x, arbox_xyz);
+   TestFil2 fd(TINKER9_DIRSTR "/src/test/file/arbox/arbox.dyn_2", d);
+   TestFil2 fx(TINKER9_DIRSTR "/src/test/file/arbox/arbox.xyz", x);
    TestFile fp(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    const char* argv[] = {"dummy", x};
