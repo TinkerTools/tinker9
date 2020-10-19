@@ -8,9 +8,8 @@ using namespace tinker;
 
 
 namespace {
-std::string k0 = std::string(kwater_key) + "osrw-lambda   0.5\n";
+std::string k0 = "osrw-lambda   0.5\n";
 const char* k1 = "test_osrw.key";
-const char* x0 = kwater_xyz;
 const char* x1 = "test_osrw.xyz";
 const char* argv[] = {"dummy", x1};
 int argc = 2;
@@ -50,8 +49,8 @@ const double refg_0[][3] = {{0.0000, 0.0000, 0.0000},
 
 TEST_CASE("K-Water", "[ff][osrw]")
 {
-   TestFile fx(x1, x0);
-   TestFile fk(k1, k0);
+   TestFil2 fx(TINKER9_DIRSTR "/src/test/file/kwater/kwater.xyz", x1);
+   TestFil2 fk(TINKER9_DIRSTR "/src/test/file/kwater/kwater.key", k1, k0);
    TestFile fp(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
    int flag = calc::xyz | calc::vmask;
    flag &= ~calc::analyz;
@@ -113,8 +112,8 @@ TEST_CASE("K-Water", "[ff][osrw]")
 
 TEST_CASE("K-Water-Analyze", "[ff][osrw]")
 {
-   TestFile fx(x1, x0);
-   TestFile fk(k1, k0);
+   TestFil2 fx(TINKER9_DIRSTR "/src/test/file/kwater/kwater.xyz", x1);
+   TestFil2 fk(TINKER9_DIRSTR "/src/test/file/kwater/kwater.key", k1, k0);
    TestFile fp(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
    int flag = calc::xyz | calc::vmask;
 

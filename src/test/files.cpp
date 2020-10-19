@@ -18,7 +18,4 @@ namespace tinker {
 
 // ten water molecules test set
 #include "file/h2o10.hh"
-
-// potassium ion and water
-#include "file/potassium.hh"
 }

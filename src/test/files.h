@@ -31,9 +31,4 @@ extern const char* trpcage_charmm19_key;
 // ten water molecules test set
 extern const char* h2o10_xyz;
 extern const char* h2o10_key;
-
-
-// potassium ion and water
-extern const char* kwater_key;
-extern const char* kwater_xyz;
 }
