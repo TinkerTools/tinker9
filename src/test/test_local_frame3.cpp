@@ -35,7 +35,8 @@ TEST_CASE("Local-Frame3-1",
 {
    std::string key = key0;
 
-   TestFile fxy(xname, local_frame_xyz2);
+   TestFil2 fxy(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
+                xname);
    TestFile fke(kname, key);
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
@@ -113,7 +114,8 @@ TEST_CASE("Local-Frame3-2", "[ff][empole][epolar][emplar][ewald][local-frame3]")
    std::string key = key0;
    key += "ewald\n";
 
-   TestFile fxy(xname, local_frame_xyz2);
+   TestFil2 fxy(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
+                xname);
    TestFile fke(kname, key);
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
@@ -183,7 +185,8 @@ TEST_CASE("Local-Frame3-3", "[ff][empole][epolar][emplar][ewald][local-frame3]")
    std::string key = key0;
    key += "ewald\n";
 
-   TestFile fxy(xname, local_frame_xyz2);
+   TestFil2 fxy(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
+                xname);
    TestFile fke(kname, key);
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 

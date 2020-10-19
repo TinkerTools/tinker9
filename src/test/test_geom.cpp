@@ -32,18 +32,19 @@ TEST_CASE("Geom-Local-Frame2-1", "[ff][egeom][local-frame2]")
    int usage = calc::xyz | calc::mass | calc::vmask;
 
 
-   std::string k0 = local_frame_key;
-   k0 += ortho_box;
+   std::string k0 = ortho_box;
 
 
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
-   TestFile fx1(x, local_frame_xyz2);
+   TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
+                x);
 
 
    SECTION("  - group restraint")
    {
       k0 += group_restrn;
-      TestFile fke(k, k0);
+      TestFil2 fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key",
+                   k, k0);
 
 
       test_begin_with_args(argc, argv);
