@@ -7,7 +7,7 @@ using namespace tinker;
 
 TEST_CASE("EDISP-1-NONDEWALD", "[ff][edisp][nondewald]")
 {
-   TestFile fx1(TINKER9_DIRSTR "/src/test/file/c5h12acnh2.xyz");
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/c5h12acnh2/c5h12acnh2.xyz");
    TestFile fk1(TINKER9_DIRSTR "/src/test/file/disp/ndewald.key");
    TestFile fp1(TINKER9_DIRSTR "/src/test/file/disp/hippo19.prm");
    const char* xn = "c5h12acnh2.xyz";
@@ -73,7 +73,7 @@ TEST_CASE("EDISP-1-NONDEWALD", "[ff][edisp][nondewald]")
 
 TEST_CASE("EDISP-2-DEWALD", "[ff][edisp][dewald]")
 {
-   TestFile fx1(TINKER9_DIRSTR "/src/test/file/c5h12acnh2.xyz");
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/c5h12acnh2/c5h12acnh2.xyz");
    TestFile fk1(TINKER9_DIRSTR "/src/test/file/disp/dewald.key");
    TestFile fp1(TINKER9_DIRSTR "/src/test/file/disp/hippo19.prm");
    const char* xn = "c5h12acnh2.xyz";
