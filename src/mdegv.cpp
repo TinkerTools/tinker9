@@ -17,7 +17,7 @@ void zero_egv(int vers)
    size_t bsize = buffer_size();
    if (vers & calc::energy) {
       host_zero(esum, energy_valence, energy_vdw, energy_elec);
-      zero3_async(n, eng_buf, eng_buf_vdw, eng_buf_elec);
+      zero3_async(bsize, eng_buf, eng_buf_vdw, eng_buf_elec);
    }
 
    if (vers & calc::virial) {
