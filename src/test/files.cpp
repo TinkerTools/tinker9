@@ -19,10 +19,6 @@ namespace tinker {
 // ten water molecules test set
 #include "file/h2o10.hh"
 
-// six argon atoms test set
-#include "file/ar6.hh"
-
-
 // potassium ion and water
 #include "file/potassium.hh"
 }

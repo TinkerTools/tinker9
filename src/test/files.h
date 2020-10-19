@@ -32,11 +32,6 @@ extern const char* trpcage_charmm19_key;
 extern const char* h2o10_xyz;
 extern const char* h2o10_key;
 
-// six argon atoms test set
-extern const char* ar6_xyz;
-extern const char* ar6_key;
-extern const char* ar6_dyn;
-
 
 // potassium ion and water
 extern const char* kwater_key;
