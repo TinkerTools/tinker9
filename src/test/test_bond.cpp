@@ -169,9 +169,9 @@ TEST_CASE("Bond-Trpcage", "[ff][ebond][harmonic][trpcage]")
    const char* x1 = "test_trpcage.xyz";
 
    std::string k0 = bondterm_only;
-   TestFil2 fke(TINKER9_DIRSTR "/src/test/file/trpcage/trpcage.key", k, k0);
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/trpcage/trpcage.key", k, k0);
 
-   TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/trpcage/trpcage.xyz", x1);
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/trpcage/trpcage.xyz", x1);
    TestFile fpr(TINKER9_DIRSTR
                 "/src/test/file/commit_6fe8e913/amoebapro13.prm");
 

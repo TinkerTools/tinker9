@@ -29,8 +29,8 @@ torsionterm  none
 
    SECTION("  - echglj -- no pbc, no cutoff")
    {
-      TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.xyz", xn);
-      TestFil2 fk1(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.key", kn,
+      TestFile fx1(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.xyz", xn);
+      TestFile fk1(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.key", kn,
                    k0);
       TestFile fp1(TINKER9_DIRSTR
                    "/src/test/file/commit_11e84c69/charmm19.prm");
@@ -93,8 +93,8 @@ vdw-correction
 )**";
 
 
-      TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.xyz", xn);
-      TestFil2 fk1(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.key", kn,
+      TestFile fx1(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.xyz", xn);
+      TestFile fk1(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.key", kn,
                    k1);
       TestFile fp1(TINKER9_DIRSTR
                    "/src/test/file/commit_11e84c69/charmm19.prm");

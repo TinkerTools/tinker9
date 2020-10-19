@@ -35,14 +35,14 @@ TEST_CASE("Geom-Local-Frame2-1", "[ff][egeom][local-frame2]")
 
 
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
-   TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
                 x);
 
 
    SECTION("  - group restraint")
    {
       k0 += group_restrn;
-      TestFil2 fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key",
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key",
                    k, k0);
 
 

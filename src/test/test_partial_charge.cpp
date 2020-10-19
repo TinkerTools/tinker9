@@ -24,9 +24,9 @@ TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage]")
 
    SECTION("  - ec -- no pbc, no cutoff, non-ewald, taper")
    {
-      TestFil2 fxy(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.xyz",
+      TestFile fxy(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.xyz",
                    xname);
-      TestFil2 fke(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.key",
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.key",
                    kname, k0);
       TestFile fpr(TINKER9_DIRSTR
                    "/src/test/file/commit_11e84c69/charmm19.prm");
@@ -190,9 +190,9 @@ TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage]")
          "C-AXIS            20\n";
 
 
-      TestFil2 fxy(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.xyz",
+      TestFile fxy(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.xyz",
                    xname);
-      TestFil2 fke(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.key",
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.key",
                    kname, k1);
       TestFile fpr(TINKER9_DIRSTR
                    "/src/test/file/commit_11e84c69/charmm19.prm");

@@ -43,11 +43,11 @@ TEST_CASE("Local-Frame2-1", "[ff][triclinic][evdw][hal][local-frame2]")
 {
    std::string k0 = triclinic_box;
    k0 += "vdwterm  only\n";
-   TestFil2 fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
                 k0);
 
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
-   TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
                 x1);
 
    test_begin_with_args(argc, argv);
@@ -74,11 +74,11 @@ TEST_CASE("Local-Frame2-2", "[ff][monoclinic][evdw][hal][local-frame2]")
 {
    std::string k0 = monoclinic_box;
    k0 += "vdwterm  only\n";
-   TestFil2 fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
                 k0);
 
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
-   TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
                 x1);
 
    test_begin_with_args(argc, argv);

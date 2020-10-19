@@ -166,9 +166,9 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]")
    const char* k = "test_arbox.key";
    const char* x1 = "test_arbox.arc";
 
-   TestFil2 fke(TINKER9_DIRSTR "/src/test/file/arbox/arbox.key", k);
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/arbox/arbox.key", k);
 
-   TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/arbox/arbox.arc", x1);
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/arbox/arbox.arc", x1);
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    const char* argv[] = {"dummy", x1};

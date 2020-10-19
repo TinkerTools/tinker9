@@ -28,8 +28,8 @@ using namespace tinker;
 TEST_CASE("Bounds", "[ff][box]")
 {
    const char* xn = "test_bounds.xyz";
-   TestFile xfile(xn, coord);
-   TestFile kfile("test_bounds.key", keyfile);
+   TestFile xfile("", xn, coord);
+   TestFile kfile("", "test_bounds.key", keyfile);
    TestFile pfile(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    // box: cubic 20 20 20

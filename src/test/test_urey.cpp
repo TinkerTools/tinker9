@@ -32,9 +32,9 @@ TEST_CASE("Urey-Ten-Water", "[ff][eurey][h2o10]")
    const char* x1 = "test_h2o10.xyz";
 
    std::string k0 = ureyterm_only;
-   TestFil2 fke(TINKER9_DIRSTR "/src/test/file/water10/h2o10.key", k, k0);
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/water10/h2o10.key", k, k0);
 
-   TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/water10/h2o10.xyz", x1);
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/water10/h2o10.xyz", x1);
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/water03.prm");
 
    const char* argv[] = {"dummy", x1};

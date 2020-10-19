@@ -53,10 +53,10 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
    const char* p = "amoeba09.prm";
 
    std::string k0 = "integrator  verlet\n";
-   TestFil2 fke(TINKER9_DIRSTR "/src/test/file/arbox/arbox.key", k, k0);
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/arbox/arbox.key", k, k0);
 
-   TestFil2 fd(TINKER9_DIRSTR "/src/test/file/arbox/arbox.dyn", d);
-   TestFil2 fx(TINKER9_DIRSTR "/src/test/file/arbox/arbox.xyz", x);
+   TestFile fd(TINKER9_DIRSTR "/src/test/file/arbox/arbox.dyn", d);
+   TestFile fx(TINKER9_DIRSTR "/src/test/file/arbox/arbox.xyz", x);
    TestFile fp(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    const char* argv[] = {"dummy", x};

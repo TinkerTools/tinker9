@@ -16,35 +16,16 @@ namespace tinker {
 class TestFile
 {
 private:
-   bool good_;
-   std::string name_;
-
-
-public:
-   /// Writes `content` to file with `name` to disk.
-   TestFile(const std::string& name, const std::string& content);
-   /// Copy `file` to the current working directory.
-   TestFile(const std::string& file);
-   /// Removes the file on disk if possible.
-   ~TestFile();
-   /// Prevents file being deleted.
-   void keep();
-};
-
-
-class TestFil2
-{
-private:
    bool good;
    std::string name;
 
 
 public:
-   TestFil2(const std::string& file, std::string dst = "",
+   TestFile(const std::string& file, std::string dst = "",
             std::string extra = "");
-
-   ~TestFil2();
-
+   /// Removes the file on disk if possible.
+   ~TestFile();
+   /// Prevents file being deleted.
    void keep();
 };
 

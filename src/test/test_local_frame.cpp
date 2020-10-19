@@ -23,7 +23,7 @@ TEST_CASE("Local-Frame-1", "[ff][empole][nonewald][local-frame]")
    const char* k = "test_local_frame.key";
 
    const char* x1 = "test_local_frame.xyz";
-   TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.xyz",
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.xyz",
                 x1);
 
    int usage = 0;
@@ -33,7 +33,7 @@ TEST_CASE("Local-Frame-1", "[ff][empole][nonewald][local-frame]")
    SECTION("empole -- gas phase, no cutoff")
    {
       std::string key1 = "multipoleterm    only\n";
-      TestFil2 fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key",
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key",
                    k, key1);
 
       const char* argv[] = {"dummy", x1};
@@ -89,7 +89,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]")
    const char* k = "test_local_frame.key";
 
    const char* x1 = "test_local_frame.xyz";
-   TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.xyz",
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.xyz",
                 x1);
 
    int usage = 0;
@@ -104,7 +104,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]")
       key1 += "neighbor-list\n";
       key1 += "list-buffer    0.1\n";
       key1 += "a-axis    20.0\n";
-      TestFil2 fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key",
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key",
                    k, key1);
 
       const char* argv[] = {"dummy", x1};
@@ -191,11 +191,11 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
    const char* k = "test_local_frame.key";
    std::string key1 = "usolve-cutoff    0.01\n";
    key1 += "polarizeterm    only\n";
-   TestFil2 fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
                 key1);
 
    const char* x1 = "test_local_frame.xyz";
-   TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.xyz",
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.xyz",
                 x1);
 
    int usage = 0;
@@ -406,11 +406,11 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
    key1 += "neighbor-list\n";
    key1 += "list-buffer    0.1\n";
    key1 += "a-axis    20.0\n";
-   TestFil2 fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
                 key1);
 
    const char* x1 = "test_local_frame.xyz";
-   TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.xyz",
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.xyz",
                 x1);
 
    int usage = 0;

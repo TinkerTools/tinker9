@@ -18,8 +18,8 @@ TEST_CASE("ALA-1", "[ff][eimptor][ala]")
 
 
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_350df099/amber99sb.prm");
-   TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/ala/ala.xyz", x);
-   TestFil2 fk1(TINKER9_DIRSTR "/src/test/file/ala/ala.key", k, k0);
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/ala/ala.xyz", x);
+   TestFile fk1(TINKER9_DIRSTR "/src/test/file/ala/ala.key", k, k0);
 
 
    test_begin_with_args(argc, argv);

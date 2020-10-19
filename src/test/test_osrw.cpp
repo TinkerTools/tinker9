@@ -48,8 +48,8 @@ const double refg_0[][3] = {{0.0000, 0.0000, 0.0000},
 
 TEST_CASE("K-Water", "[ff][osrw]")
 {
-   TestFil2 fx(TINKER9_DIRSTR "/src/test/file/kwater/kwater.xyz", x1);
-   TestFil2 fk(TINKER9_DIRSTR "/src/test/file/kwater/kwater.key", k1, k0);
+   TestFile fx(TINKER9_DIRSTR "/src/test/file/kwater/kwater.xyz", x1);
+   TestFile fk(TINKER9_DIRSTR "/src/test/file/kwater/kwater.key", k1, k0);
    TestFile fp(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
    int flag = calc::xyz | calc::vmask;
    flag &= ~calc::analyz;
@@ -111,8 +111,8 @@ TEST_CASE("K-Water", "[ff][osrw]")
 
 TEST_CASE("K-Water-Analyze", "[ff][osrw]")
 {
-   TestFil2 fx(TINKER9_DIRSTR "/src/test/file/kwater/kwater.xyz", x1);
-   TestFil2 fk(TINKER9_DIRSTR "/src/test/file/kwater/kwater.key", k1, k0);
+   TestFile fx(TINKER9_DIRSTR "/src/test/file/kwater/kwater.xyz", x1);
+   TestFile fk(TINKER9_DIRSTR "/src/test/file/kwater/kwater.key", k1, k0);
    TestFile fp(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
    int flag = calc::xyz | calc::vmask;
 

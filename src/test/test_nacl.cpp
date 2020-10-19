@@ -43,10 +43,10 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
 
    SECTION("  - ehal -- no switch")
    {
-      TestFil2 fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key",
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key",
                    "test_nacl.key", key);
       const char* x1 = "test_nacl.xyz";
-      TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/nacl/nacl1.xyz", x1);
+      TestFile fx1(TINKER9_DIRSTR "/src/test/file/nacl/nacl1.xyz", x1);
 
       const char* argv[] = {"dummy", x1};
       int argc = 2;
@@ -70,10 +70,10 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
 
    SECTION("  - ehal -- switch, near cut")
    {
-      TestFil2 fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key",
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key",
                    "test_nacl.key", key);
       const char* x2 = "test_nacl.xyz_2";
-      TestFil2 fx2(TINKER9_DIRSTR "/src/test/file/nacl/nacl2.xyz", x2);
+      TestFile fx2(TINKER9_DIRSTR "/src/test/file/nacl/nacl2.xyz", x2);
       const char* argv[] = {"dummy", x2};
       int argc = 2;
 
@@ -96,10 +96,10 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
 
    SECTION("  - ehal -- switch, near off")
    {
-      TestFil2 fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key",
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key",
                    "test_nacl.key", key);
       const char* x3 = "test_nacl.xyz_3";
-      TestFil2 fx3(TINKER9_DIRSTR "/src/test/file/nacl/nacl3.xyz", x3);
+      TestFile fx3(TINKER9_DIRSTR "/src/test/file/nacl/nacl3.xyz", x3);
 
       const char* argv[] = {"dummy", x3};
       int argc = 2;
@@ -129,10 +129,10 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
       key4 += "c-axis            10.0\n";
       key4 += "vdw-correction\n";
 
-      TestFil2 fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key",
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key",
                    "test_nacl.key", key4);
       const char* x4 = "test_nacl.xyz_4";
-      TestFil2 fx4(TINKER9_DIRSTR "/src/test/file/nacl/nacl1.xyz", x4);
+      TestFile fx4(TINKER9_DIRSTR "/src/test/file/nacl/nacl1.xyz", x4);
 
       const char* argv[] = {"dummy", x4};
       int argc = 2;
@@ -164,10 +164,10 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
       key5 += "ligand 2\n";
       key5 += "vdw-lambda 0.9\n";
 
-      TestFil2 fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key",
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key",
                    "test_nacl.key", key5);
       const char* x5 = "test_nacl.xyz_5";
-      TestFil2 fx4(TINKER9_DIRSTR "/src/test/file/nacl/nacl1.xyz", x5);
+      TestFile fx4(TINKER9_DIRSTR "/src/test/file/nacl/nacl1.xyz", x5);
 
       const char* argv[] = {"dummy", x5};
       int argc = 2;
@@ -220,7 +220,7 @@ TEST_CASE("NaCl-2", "[ff][empole][nonewald][nacl]")
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    std::string key = "multipoleterm    only\n";
-   TestFil2 fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key", "test_nacl.key",
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key", "test_nacl.key",
                 key);
 
    int usage = 0;
@@ -232,7 +232,7 @@ TEST_CASE("NaCl-2", "[ff][empole][nonewald][nacl]")
    SECTION("empole -- non-ewald, pbc")
    {
       const char* x1 = "test_nacl.xyz";
-      TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/nacl/nacl1.xyz", x1);
+      TestFile fx1(TINKER9_DIRSTR "/src/test/file/nacl/nacl1.xyz", x1);
 
       const char* argv[] = {"dummy", x1};
       int argc = 2;
@@ -261,7 +261,7 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]")
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    std::string key = "multipoleterm    only\n";
-   TestFil2 fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl4.key", "test_nacl.key",
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl4.key", "test_nacl.key",
                 key);
 
    int usage = 0;
@@ -273,7 +273,7 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]")
    SECTION("empole -- pme")
    {
       const char* x4 = "test_nacl.xyz_4";
-      TestFil2 fx1(TINKER9_DIRSTR "/src/test/file/nacl/nacl4.xyz", x4);
+      TestFile fx1(TINKER9_DIRSTR "/src/test/file/nacl/nacl4.xyz", x4);
 
       const char* argv[] = {"dummy", x4};
       int argc = 2;
