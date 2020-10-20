@@ -33,6 +33,7 @@ static void epolar_trq_cu(real* restrict trqx, real* restrict trqy,
          qixz * dufld[i][4] + 2 * qixy * (dufld[i][0] - dufld[i][2]) +
          (qiyy - qixx) * dufld[i][1];
 
+
       trqx[i] += tep1;
       trqy[i] += tep2;
       trqz[i] += tep3;

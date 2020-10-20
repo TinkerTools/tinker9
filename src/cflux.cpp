@@ -1,4 +1,5 @@
 #include "cflux.h"
+#include "couple.h"
 #include "eangle.h"
 #include "ebond.h"
 #include "md.h"
@@ -29,7 +30,6 @@ void cflux_data(rc_op op)
       darray::deallocate(bflx, aflx, abflx);
       darray::deallocate(pdelta, atomic, balist);
       darray::deallocate(mono0);
-      darray::deallocate(couple_i12, couple_n12);
       darray::deallocate(decfx, decfy, decfz, pot);
    }
 
@@ -38,7 +38,6 @@ void cflux_data(rc_op op)
       darray::allocate(n, &mono0);
       darray::allocate(nbond, &bflx);
       darray::allocate(nangle, &aflx, &abflx, &balist);
-      darray::allocate(n, &couple_i12, &couple_n12);
 
       if (rc_flag & calc::grad) {
          darray::allocate(n, &decfx, &decfy, &decfz, &pot);
@@ -61,30 +60,13 @@ void cflux_data(rc_op op)
       if (rc_flag & calc::grad)
          darray::zero(PROCEED_NEW_Q, n, decfx, decfy, decfz, pot);
 
-         
+
       std::vector<int> ibalstvec(nangle * 2);
       for (size_t i = 0; i < ibalstvec.size(); ++i) {
          ibalstvec[i] = atmlst::balist[i] - 1;
       }
 
       darray::copyin(WAIT_NEW_Q, nangle, balist, ibalstvec.data());
-      
-      int c_maxn12 = 8;
-      std::vector<int> ibuf;
-      ibuf.resize(c_maxn12 * n);
-      for (int i = 0; i < n; ++i) {
-         int nn = couple::n12[i];
-         int base = i * c_maxn12;
-         for (int j = 0; j < nn; ++j) {
-            int k = couple::i12[i][j];
-            ibuf[base + j] = k - 1;
-         }
-         for (int j = nn; j < c_maxn12; ++j) {
-            ibuf[base + j] = -1;
-         }
-      }
-      darray::copyin(WAIT_NEW_Q, n, couple_i12, ibuf.data());
-      darray::copyin(WAIT_NEW_Q, n, couple_n12, couple::n12);
    }
 }
 

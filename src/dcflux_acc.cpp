@@ -1,5 +1,6 @@
 #include "add.h"
 #include "cflux.h"
+#include "couple.h"
 #include "eangle.h"
 #include "ebond.h"
 #include "elec.h"
@@ -89,7 +90,7 @@ void ang_dcflux()
 
       real c1 = pb2 / rba;
       real c2 = pb1 / rbc;
-      
+
       real fax = c1 * xab;
       real fay = c1 * yab;
       real faz = c1 * zab;
@@ -181,7 +182,6 @@ void dcflux_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz,
 void zero_pot()
 {
    darray::zero(PROCEED_NEW_Q, n, pot);
-
 }
 
 }

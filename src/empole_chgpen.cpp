@@ -1,12 +1,13 @@
 #include "empole_chgpen.h"
+#include "cflux.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
 #include "tool/host_zero.h"
 #include <tinker/detail/chgpen.hh>
-#include <tinker/detail/sizes.hh>
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/potent.hh>
+#include <tinker/detail/sizes.hh>
 
 
 namespace tinker {
@@ -17,7 +18,7 @@ void empole_chgpen_data(rc_op op)
 
    if (!mplpot::use_chgpen)
       return;
-   
+
 
    bool rc_a = rc_flag & calc::analyz;
 
@@ -32,7 +33,6 @@ void empole_chgpen_data(rc_op op)
       demx = nullptr;
       demy = nullptr;
       demz = nullptr;
-
    }
 
    if (op & rc_alloc) {
@@ -77,15 +77,15 @@ void empole_chgpen(int vers)
          darray::zero(PROCEED_NEW_Q, n, demx, demy, demz);
    }
 
-   if (use_cf) 
+   if (use_cf)
       alterchg();
-   
+
 
    mpole_init(vers);
-   
+
    use_cf = use_cf and do_g;
 
-   
+
    if (use_cf) {
       zero_pot();
    }

@@ -45,7 +45,6 @@ struct LocalFrame
 TINKER_EXTERN LocalFrame* zaxis;
 TINKER_EXTERN real (*pole)[mpl_total];
 TINKER_EXTERN real (*rpole)[mpl_total];
-TINKER_EXTERN real* mono0;
 TINKER_EXTERN real* trqx;
 TINKER_EXTERN real* trqy;
 TINKER_EXTERN real* trqz;

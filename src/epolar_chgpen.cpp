@@ -1,4 +1,5 @@
 #include "epolar_chgpen.h"
+#include "cflux.h"
 #include "induce_donly.h"
 #include "md.h"
 #include "mod.uprior.h"
@@ -203,13 +204,13 @@ void epolar_chgpen(int vers)
    }
 
 
-   if (use_cf) 
+   if (use_cf)
       alterchg();
-   
+
 
    mpole_init(vers);
 
-   
+
    use_cf = use_cf and do_g;
 
    if (use_cf) {

@@ -1,4 +1,5 @@
 #include "elec.h"
+#include "cflux.h"
 #include "echarge.h"
 #include "empole.h"
 #include "empole_chgpen.h"
@@ -29,8 +30,8 @@
 namespace tinker {
 bool use_ewald()
 {
-   bool flag = use_energi_elec();
-   return flag && limits::use_ewald;
+   bool flag = use_energi_elec() and limits::use_ewald;
+   return flag;
 }
 
 

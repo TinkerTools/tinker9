@@ -283,7 +283,7 @@ void induce_mutual_pcg_acc2(real (*uind)[3])
    const bool debug = inform::debug;
    const int politer = polpot::politer;
    const real poleps = polpot::poleps;
-   const real debye = units::debye;
+   // const real debye = units::debye;
    const real pcgpeek = polpcg::pcgpeek;
    const int maxiter = 100; // see also subroutine induce0a in induce.f
 

@@ -50,7 +50,6 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
    const char* k = "test_arbox.key";
    const char* d = "test_arbox.dyn";
    const char* x = "test_arbox.xyz";
-   const char* p = "amoeba09.prm";
 
    std::string k0 = "integrator  verlet\n";
    TestFile fke(TINKER9_DIRSTR "/src/test/file/arbox/arbox.key", k, k0);

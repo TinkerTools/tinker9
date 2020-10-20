@@ -1,5 +1,6 @@
 #include "add.h"
 #include "cflux.h"
+#include "couple.h"
 #include "eangle.h"
 #include "ebond.h"
 #include "elec.h"
@@ -23,7 +24,6 @@ void bndchg_acc1()
       real pb = bflx[i];
       int atoma = atomic[ia];
       int atomb = atomic[ib];
-
 
 
       real ideal = bl[i];
@@ -134,7 +134,7 @@ void angchg_acc1()
 
       atomic_add(dq1, pdelta, ia);
       atomic_add(dq2, pdelta, ic);
-      atomic_add(-(dq1+dq2), pdelta, ib);
+      atomic_add(-(dq1 + dq2), pdelta, ib);
    } // end for (int i)
 }
 
@@ -144,27 +144,18 @@ void alterchg_acc()
 
    bndchg_acc1();
    angchg_acc1();
-   
-   // alter atomic partial charge values
-   // nion, iion
 
    // alter monopoles and charge penetration
 
    // for (int i = 0; i < npole; ++i) {
 
    // charge penenetration
-   //if (mplpot::use_chgpen)
+   // if (mplpot::use_chgpen)
    #pragma acc parallel loop independent async\
             deviceptr(pval,pval0,pdelta,pole,mono0)
    for (int i = 0; i < n; ++i) {
       pval[i] = pval0[i] + pdelta[i];
       pole[i][0] = mono0[i] + pdelta[i];
    }
-
-   // pole[i][0] = mono0[i] + pdelta[k];
-   // for (int i = 0; i < nion; ++i) {
-   //    k = iion[i];
-   //    pchg[i] = pchg0[i] + pdelta[k]
-   // }
 }
 }

@@ -1,8 +1,9 @@
 #pragma once
-#include "cflux.h"
+#include "mod.cflux.h"
 #include "mod.charge.h"
 #include "mod.chgpen.h"
 #include "mod.chgpot.h"
+#include "mod.ctrpot.h"
 #include "mod.mpole.h"
 #include "mod.polar.h"
 #include "tool/rc_man.h"
