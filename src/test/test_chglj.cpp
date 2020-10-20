@@ -1,4 +1,3 @@
-#include "files.h"
 #include "test.h"
 #include "test_rt.h"
 
@@ -12,17 +11,13 @@ TEST_CASE("Chglj-Trpcage", "[ff][echarge][evdw][echglj][lj][trpcage]")
 
 
    const char* kn = "test_chglj.key";
-   std::string k0 = trpcage_charmm19_key;
-   k0 += R"**(
+   std::string k0 = R"**(
 bondterm     none
 angleterm    none
 impropterm   none
 torsionterm  none
 )**";
    const char* xn = "test_chglj.xyz";
-   const char* x0 = trpcage_charmm19_xyz;
-   const char* pn = "charmm19.prm";
-   const char* p0 = commit_11e84c69::charmm19_prm;
 
 
    const double eps_e = 0.0001;
@@ -34,12 +29,14 @@ torsionterm  none
 
    SECTION("  - echglj -- no pbc, no cutoff")
    {
-      TestFile fx1(xn, x0);
-      TestFile fk1(kn, k0);
-      TestFile fp1(pn, p0);
+      TestFile fx1(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.xyz", xn);
+      TestFile fk1(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.key", kn,
+                   k0);
+      TestFile fp1(TINKER9_DIRSTR
+                   "/src/test/file/commit_11e84c69/charmm19.prm");
 
 
-      TestReference r(TINKER9_DIRSTR "/src/test/chglj.1.txt");
+      TestReference r(TINKER9_DIRSTR "/src/test/ref/chglj.1.txt");
       auto ref_e = r.get_energy();
       auto ref_v = r.get_virial();
       auto ref_g = r.get_gradient();
@@ -96,12 +93,14 @@ vdw-correction
 )**";
 
 
-      TestFile fx1(xn, x0);
-      TestFile fk1(kn, k1);
-      TestFile fp1(pn, p0);
+      TestFile fx1(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.xyz", xn);
+      TestFile fk1(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.key", kn,
+                   k1);
+      TestFile fp1(TINKER9_DIRSTR
+                   "/src/test/file/commit_11e84c69/charmm19.prm");
 
 
-      TestReference r(TINKER9_DIRSTR "/src/test/chglj.2.txt");
+      TestReference r(TINKER9_DIRSTR "/src/test/ref/chglj.2.txt");
       auto ref_e = r.get_energy();
       auto ref_v = r.get_virial();
       auto ref_g = r.get_gradient();

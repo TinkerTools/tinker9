@@ -1,4 +1,3 @@
-#include "files.h"
 #include "test.h"
 #include "test_rt.h"
 
@@ -14,14 +13,13 @@ TEST_CASE("ALA-1", "[ff][eimptor][ala]")
    int argc = 2;
    int usage = calc::xyz | calc::vmask;
 
-   std::string k0 = ala_amber99sb_key;
-   k0 += "imptorterm   only\n"
-         "imptorunit    100\n";
+   std::string k0 = "imptorterm   only\n"
+                    "imptorunit    100\n";
 
 
-   TestFile fpr("amber99sb.prm", commit_350df099::amber99sb_prm);
-   TestFile fx1(x, ala_amber99sb_xyz);
-   TestFile fk1(k, k0);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_350df099/amber99sb.prm");
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/ala/ala.xyz", x);
+   TestFile fk1(TINKER9_DIRSTR "/src/test/file/ala/ala.key", k, k0);
 
 
    test_begin_with_args(argc, argv);

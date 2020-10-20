@@ -1,4 +1,3 @@
-#include "files.h"
 #include "test.h"
 #include "test_rt.h"
 
@@ -32,9 +31,9 @@ using namespace tinker;
 
 TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
 {
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
-   const std::string key = std::string(nacl_key) + "vdwterm    only\n";
+   const std::string key = "vdwterm    only\n";
 
    int usage = 0;
    usage |= calc::xyz;
@@ -44,9 +43,10 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
 
    SECTION("  - ehal -- no switch")
    {
-      TestFile fke("test_nacl.key", key);
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key",
+                   "test_nacl.key", key);
       const char* x1 = "test_nacl.xyz";
-      TestFile fx1(x1, nacl_xyz1);
+      TestFile fx1(TINKER9_DIRSTR "/src/test/file/nacl/nacl1.xyz", x1);
 
       const char* argv[] = {"dummy", x1};
       int argc = 2;
@@ -70,9 +70,10 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
 
    SECTION("  - ehal -- switch, near cut")
    {
-      TestFile fke("test_nacl.key", key);
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key",
+                   "test_nacl.key", key);
       const char* x2 = "test_nacl.xyz_2";
-      TestFile fx2(x2, nacl_xyz2);
+      TestFile fx2(TINKER9_DIRSTR "/src/test/file/nacl/nacl2.xyz", x2);
       const char* argv[] = {"dummy", x2};
       int argc = 2;
 
@@ -95,9 +96,10 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
 
    SECTION("  - ehal -- switch, near off")
    {
-      TestFile fke("test_nacl.key", key);
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key",
+                   "test_nacl.key", key);
       const char* x3 = "test_nacl.xyz_3";
-      TestFile fx3(x3, nacl_xyz3);
+      TestFile fx3(TINKER9_DIRSTR "/src/test/file/nacl/nacl3.xyz", x3);
 
       const char* argv[] = {"dummy", x3};
       int argc = 2;
@@ -127,9 +129,10 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
       key4 += "c-axis            10.0\n";
       key4 += "vdw-correction\n";
 
-      TestFile fke("test_nacl.key", key4);
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key",
+                   "test_nacl.key", key4);
       const char* x4 = "test_nacl.xyz_4";
-      TestFile fx4(x4, nacl_xyz1);
+      TestFile fx4(TINKER9_DIRSTR "/src/test/file/nacl/nacl1.xyz", x4);
 
       const char* argv[] = {"dummy", x4};
       int argc = 2;
@@ -161,9 +164,10 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
       key5 += "ligand 2\n";
       key5 += "vdw-lambda 0.9\n";
 
-      TestFile fke("test_nacl.key", key5);
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key",
+                   "test_nacl.key", key5);
       const char* x5 = "test_nacl.xyz_5";
-      TestFile fx4(x5, nacl_xyz1);
+      TestFile fx4(TINKER9_DIRSTR "/src/test/file/nacl/nacl1.xyz", x5);
 
       const char* argv[] = {"dummy", x5};
       int argc = 2;
@@ -213,11 +217,11 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
 
 TEST_CASE("NaCl-2", "[ff][empole][nonewald][nacl]")
 {
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
-   std::string key = nacl_key;
-   key += "multipoleterm    only\n";
-   TestFile fke("test_nacl.key", key);
+   std::string key = "multipoleterm    only\n";
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl.key", "test_nacl.key",
+                key);
 
    int usage = 0;
    usage |= calc::xyz;
@@ -228,7 +232,7 @@ TEST_CASE("NaCl-2", "[ff][empole][nonewald][nacl]")
    SECTION("empole -- non-ewald, pbc")
    {
       const char* x1 = "test_nacl.xyz";
-      TestFile fx1(x1, nacl_xyz1);
+      TestFile fx1(TINKER9_DIRSTR "/src/test/file/nacl/nacl1.xyz", x1);
 
       const char* argv[] = {"dummy", x1};
       int argc = 2;
@@ -254,11 +258,11 @@ TEST_CASE("NaCl-2", "[ff][empole][nonewald][nacl]")
 
 TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]")
 {
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
-   std::string key = nacl_key4;
-   key += "multipoleterm    only\n";
-   TestFile fke("test_nacl.key", key);
+   std::string key = "multipoleterm    only\n";
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/nacl/nacl4.key", "test_nacl.key",
+                key);
 
    int usage = 0;
    usage |= calc::xyz;
@@ -269,7 +273,7 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]")
    SECTION("empole -- pme")
    {
       const char* x4 = "test_nacl.xyz_4";
-      TestFile fx1(x4, nacl_xyz4);
+      TestFile fx1(TINKER9_DIRSTR "/src/test/file/nacl/nacl4.xyz", x4);
 
       const char* argv[] = {"dummy", x4};
       int argc = 2;

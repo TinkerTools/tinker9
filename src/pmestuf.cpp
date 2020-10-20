@@ -21,8 +21,8 @@ void bspline_fill(PMEUnit pme_u, int level)
 void grid_pchg(PMEUnit pme_u, real* pchg)
 {
    int bso = pme_u->bsorder;
-   if (bso != 5)
-      TINKER_THROW(format("grid_pchg(): bsorder is %d; must be 5.\n", bso));
+   if (bso != 5 and bso != 4)
+      TINKER_THROW(format("grid_pchg(): bsorder is %d; must be 4 or 5.\n", bso));
 
 
 #if TINKER_CUDART

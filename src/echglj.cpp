@@ -126,7 +126,7 @@ void echglj_data(rc_op op)
       };
 
 
-      // see also attach.h
+      // see also attach.f
       const int maxn13 = 3 * sizes::maxval;
       const int maxn14 = 9 * sizes::maxval;
       const int maxn15 = 27 * sizes::maxval;

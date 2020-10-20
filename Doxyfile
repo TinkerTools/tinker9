@@ -113,7 +113,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # Configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = README.md include doc
+INPUT                  = README.md include doc doc/style.md
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = \
                          *.h \

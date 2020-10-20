@@ -6,8 +6,8 @@ Build the Canonical Tinker
    **If the incorrect Tinker version was used, the executables would be
    very likely to fail with segfault.**
 
-If this source code was cloned by git, you can
-checkout Tinker from the *tinker* git submodule
+If this source code was cloned by Git, you can
+checkout Tinker from the *tinker* Git submodule
 and copy Tinker to the build directory:
 
 .. code-block:: bash

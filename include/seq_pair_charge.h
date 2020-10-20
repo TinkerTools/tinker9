@@ -227,13 +227,6 @@ void pair_chg_v3(real r, real cscale, real chgi, real chgk, real ebuffer,
                  real f, real aewald, real eccut, real ecoff, real& restrict ec,
                  real& restrict dec)
 {
-   if (r > ecoff) {
-      ec = 0;
-      if CONSTEXPR (DO_G) {
-         dec = 0;
-      }
-      return;
-   }
    real fik = f * chgi * chgk;
    real rb = r + ebuffer;
    real invrb = REAL_RECIP(rb);

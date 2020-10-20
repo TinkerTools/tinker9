@@ -1,4 +1,3 @@
-#include "files.h"
 #include "test.h"
 #include "test_rt.h"
 
@@ -167,14 +166,13 @@ TEST_CASE("Pitors-Trpcage", "[ff][epitors][trpcage]")
 {
    const char* k = "test_trpcage.key";
    const char* x1 = "test_trpcage.xyz";
-   const char* p = "amoebapro13.prm";
 
-   std::string k0 = trpcage_key;
-   k0 += pitorsterm_only;
-   TestFile fke(k, k0);
+   std::string k0 = pitorsterm_only;
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/trpcage/trpcage.key", k, k0);
 
-   TestFile fx1(x1, trpcage_xyz);
-   TestFile fpr(p, commit_6fe8e913::amoebapro13_prm);
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/trpcage/trpcage.xyz", x1);
+   TestFile fpr(TINKER9_DIRSTR
+                "/src/test/file/commit_6fe8e913/amoebapro13.prm");
 
    const char* argv[] = {"dummy", x1};
    int argc = 2;

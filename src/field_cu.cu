@@ -6,393 +6,743 @@
 #include "md.h"
 #include "pme.h"
 #include "seq_pair_field.h"
+#include "seq_triangle.h"
 #include "switch.h"
 #include "tool/cudalib.h"
+#include "tool/gpu_card.h"
 
 
 namespace tinker {
-#define DFIELDPARAS                                                            \
-   real(*restrict field)[3], real(*restrict fieldp)[3],                        \
-      const real *restrict thole, const real *restrict pdamp,                  \
-      const real(*restrict rpole)[10], TINKER_IMAGE_PARAMS, real off2
-
-
+// ck.py Version 2.0.2
 template <class ETYP>
-__launch_bounds__(BLOCK_DIM) __global__
-void dfield_cu1(DFIELDPARAS, int n, const Spatial::SortedAtom* restrict sorted,
-                int niak, const int* restrict iak, const int* restrict lst,
+__global__
+void dfield_cu1(int n, TINKER_IMAGE_PARAMS, real off,
+                const unsigned* restrict dpinfo, int nexclude,
+                const int (*restrict exclude)[2],
+                const real (*restrict exclude_scale)[2], const real* restrict x,
+                const real* restrict y, const real* restrict z,
+                const Spatial::SortedAtom* restrict sorted, int nakpl,
+                const int* restrict iakpl, int niak, const int* restrict iak,
+                const int* restrict lst, real (*restrict field)[3],
+                real (*restrict fieldp)[3], const real (*restrict rpole)[10],
+                const real* restrict thole, const real* restrict pdamp,
                 real aewald)
 {
-   const int iwarp = (threadIdx.x + blockIdx.x * blockDim.x) / WARP_SIZE;
+   const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
+   const int iwarp = ithread / WARP_SIZE;
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
 
 
-   struct Data
-   {
-      real3 fkd, fkp;
-      real3 rk;
-      real ck;
-      real dkx, dky, dkz;
-      real qkxx, qkxy, qkxz, qkyy, qkyz, qkzz;
-      real pdk, ptk;
-   };
-   __shared__ Data data[BLOCK_DIM];
+   real xi;
+   real yi;
+   real zi;
+   real xk;
+   real yk;
+   real zk;
+   real fidx;
+   real fidy;
+   real fidz;
+   real fipx;
+   real fipy;
+   real fipz;
+   real fkdx;
+   real fkdy;
+   real fkdz;
+   real fkpx;
+   real fkpy;
+   real fkpz;
+   __shared__ real ci[BLOCK_DIM];
+   __shared__ real dix[BLOCK_DIM];
+   __shared__ real diy[BLOCK_DIM];
+   __shared__ real diz[BLOCK_DIM];
+   __shared__ real qixx[BLOCK_DIM];
+   __shared__ real qixy[BLOCK_DIM];
+   __shared__ real qixz[BLOCK_DIM];
+   __shared__ real qiyy[BLOCK_DIM];
+   __shared__ real qiyz[BLOCK_DIM];
+   __shared__ real qizz[BLOCK_DIM];
+   __shared__ real pdi[BLOCK_DIM];
+   __shared__ real pti[BLOCK_DIM];
+   real ck;
+   real dkx;
+   real dky;
+   real dkz;
+   real qkxx;
+   real qkxy;
+   real qkxz;
+   real qkyy;
+   real qkyz;
+   real qkzz;
+   real pdk;
+   real ptk;
+
+
+   //* /
+   for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
+      const int klane = threadIdx.x;
+      fidx = 0;
+      fidy = 0;
+      fidz = 0;
+      fipx = 0;
+      fipy = 0;
+      fipz = 0;
+      fkdx = 0;
+      fkdy = 0;
+      fkdz = 0;
+      fkpx = 0;
+      fkpy = 0;
+      fkpz = 0;
+
+
+      int i = exclude[ii][0];
+      int k = exclude[ii][1];
+      real scalea = exclude_scale[ii][0];
+      real scaleb = exclude_scale[ii][1];
+
+
+      xi = x[i];
+      yi = y[i];
+      zi = z[i];
+      xk = x[k];
+      yk = y[k];
+      zk = z[k];
+      ci[klane] = rpole[i][mpl_pme_0];
+      dix[klane] = rpole[i][mpl_pme_x];
+      diy[klane] = rpole[i][mpl_pme_y];
+      diz[klane] = rpole[i][mpl_pme_z];
+      qixx[klane] = rpole[i][mpl_pme_xx];
+      qixy[klane] = rpole[i][mpl_pme_xy];
+      qixz[klane] = rpole[i][mpl_pme_xz];
+      qiyy[klane] = rpole[i][mpl_pme_yy];
+      qiyz[klane] = rpole[i][mpl_pme_yz];
+      qizz[klane] = rpole[i][mpl_pme_zz];
+      pdi[klane] = pdamp[i];
+      pti[klane] = thole[i];
+      ck = rpole[k][mpl_pme_0];
+      dkx = rpole[k][mpl_pme_x];
+      dky = rpole[k][mpl_pme_y];
+      dkz = rpole[k][mpl_pme_z];
+      qkxx = rpole[k][mpl_pme_xx];
+      qkxy = rpole[k][mpl_pme_xy];
+      qkxz = rpole[k][mpl_pme_xz];
+      qkyy = rpole[k][mpl_pme_yy];
+      qkyz = rpole[k][mpl_pme_yz];
+      qkzz = rpole[k][mpl_pme_zz];
+      pdk = pdamp[k];
+      ptk = thole[k];
+
+
+      constexpr bool incl = true;
+      real xr = xk - xi;
+      real yr = yk - yi;
+      real zr = zk - zi;
+      real r2 = image2(xr, yr, zr);
+      if (r2 <= off * off and incl) {
+         pair_dfield_v2<ETYP>(
+            r2, xr, yr, zr, scalea, scaleb, aewald, ci[klane], dix[klane],
+            diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane],
+            qiyy[klane], qiyz[klane], qizz[klane], pdi[klane], pti[klane], ck,
+            dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, pdk, ptk, fidx,
+            fidy, fidz, fipx, fipy, fipz, fkdx, fkdy, fkdz, fkpx, fkpy, fkpz);
+      } // end if (include)
+
+
+      atomic_add(fidx, &field[i][0]);
+      atomic_add(fidy, &field[i][1]);
+      atomic_add(fidz, &field[i][2]);
+      atomic_add(fipx, &fieldp[i][0]);
+      atomic_add(fipy, &fieldp[i][1]);
+      atomic_add(fipz, &fieldp[i][2]);
+      atomic_add(fkdx, &field[k][0]);
+      atomic_add(fkdy, &field[k][1]);
+      atomic_add(fkdz, &field[k][2]);
+      atomic_add(fkpx, &fieldp[k][0]);
+      atomic_add(fkpy, &fieldp[k][1]);
+      atomic_add(fkpz, &fieldp[k][2]);
+   }
+   // */
+
+
+   for (int iw = iwarp; iw < nakpl; iw += nwarp) {
+      fidx = 0;
+      fidy = 0;
+      fidz = 0;
+      fipx = 0;
+      fipy = 0;
+      fipz = 0;
+      fkdx = 0;
+      fkdy = 0;
+      fkdz = 0;
+      fkpx = 0;
+      fkpy = 0;
+      fkpz = 0;
+
+
+      int tri, tx, ty;
+      tri = iakpl[iw];
+      tri_to_xy(tri, tx, ty);
+
+
+      int iid = ty * WARP_SIZE + ilane;
+      int atomi = min(iid, n - 1);
+      int i = sorted[atomi].unsorted;
+      int kid = tx * WARP_SIZE + ilane;
+      int atomk = min(kid, n - 1);
+      int k = sorted[atomk].unsorted;
+      xi = sorted[atomi].x;
+      yi = sorted[atomi].y;
+      zi = sorted[atomi].z;
+      xk = sorted[atomk].x;
+      yk = sorted[atomk].y;
+      zk = sorted[atomk].z;
+
+
+      ci[threadIdx.x] = rpole[i][mpl_pme_0];
+      dix[threadIdx.x] = rpole[i][mpl_pme_x];
+      diy[threadIdx.x] = rpole[i][mpl_pme_y];
+      diz[threadIdx.x] = rpole[i][mpl_pme_z];
+      qixx[threadIdx.x] = rpole[i][mpl_pme_xx];
+      qixy[threadIdx.x] = rpole[i][mpl_pme_xy];
+      qixz[threadIdx.x] = rpole[i][mpl_pme_xz];
+      qiyy[threadIdx.x] = rpole[i][mpl_pme_yy];
+      qiyz[threadIdx.x] = rpole[i][mpl_pme_yz];
+      qizz[threadIdx.x] = rpole[i][mpl_pme_zz];
+      pdi[threadIdx.x] = pdamp[i];
+      pti[threadIdx.x] = thole[i];
+      ck = rpole[k][mpl_pme_0];
+      dkx = rpole[k][mpl_pme_x];
+      dky = rpole[k][mpl_pme_y];
+      dkz = rpole[k][mpl_pme_z];
+      qkxx = rpole[k][mpl_pme_xx];
+      qkxy = rpole[k][mpl_pme_xy];
+      qkxz = rpole[k][mpl_pme_xz];
+      qkyy = rpole[k][mpl_pme_yy];
+      qkyz = rpole[k][mpl_pme_yz];
+      qkzz = rpole[k][mpl_pme_zz];
+      pdk = pdamp[k];
+      ptk = thole[k];
+
+
+      unsigned int dpinfo0 = dpinfo[iw * WARP_SIZE + ilane];
+      for (int j = 0; j < WARP_SIZE; ++j) {
+         int srclane = (ilane + j) & (WARP_SIZE - 1);
+         int klane = srclane + threadIdx.x - ilane;
+         bool incl = iid < kid and kid < n;
+         int srcmask = 1 << srclane;
+         incl = incl and (dpinfo0 & srcmask) == 0;
+         real scalea = 1;
+         real scaleb = 1;
+         real xr = xk - xi;
+         real yr = yk - yi;
+         real zr = zk - zi;
+         real r2 = image2(xr, yr, zr);
+         if (r2 <= off * off and incl) {
+            pair_dfield_v2<ETYP>(
+               r2, xr, yr, zr, scalea, scaleb, aewald, ci[klane], dix[klane],
+               diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane],
+               qiyy[klane], qiyz[klane], qizz[klane], pdi[klane], pti[klane],
+               ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, pdk, ptk,
+               fidx, fidy, fidz, fipx, fipy, fipz, fkdx, fkdy, fkdz, fkpx, fkpy,
+               fkpz);
+         } // end if (include)
+
+
+         iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
+         xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
+         yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
+         zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
+         fidx = __shfl_sync(ALL_LANES, fidx, ilane + 1);
+         fidy = __shfl_sync(ALL_LANES, fidy, ilane + 1);
+         fidz = __shfl_sync(ALL_LANES, fidz, ilane + 1);
+         fipx = __shfl_sync(ALL_LANES, fipx, ilane + 1);
+         fipy = __shfl_sync(ALL_LANES, fipy, ilane + 1);
+         fipz = __shfl_sync(ALL_LANES, fipz, ilane + 1);
+      }
+
+
+      atomic_add(fidx, &field[i][0]);
+      atomic_add(fidy, &field[i][1]);
+      atomic_add(fidz, &field[i][2]);
+      atomic_add(fipx, &fieldp[i][0]);
+      atomic_add(fipy, &fieldp[i][1]);
+      atomic_add(fipz, &fieldp[i][2]);
+      atomic_add(fkdx, &field[k][0]);
+      atomic_add(fkdy, &field[k][1]);
+      atomic_add(fkdz, &field[k][2]);
+      atomic_add(fkpx, &fieldp[k][0]);
+      atomic_add(fkpy, &fieldp[k][1]);
+      atomic_add(fkpz, &fieldp[k][2]);
+   }
 
 
    for (int iw = iwarp; iw < niak; iw += nwarp) {
-      real3 fid = make_real3(0, 0, 0);
-      real3 fip = make_real3(0, 0, 0);
-      int atomi = min(iak[iw] * WARP_SIZE + ilane, n - 1);
-      real3 ri = make_real3(sorted[atomi].x, sorted[atomi].y, sorted[atomi].z);
+      fidx = 0;
+      fidy = 0;
+      fidz = 0;
+      fipx = 0;
+      fipy = 0;
+      fipz = 0;
+      fkdx = 0;
+      fkdy = 0;
+      fkdz = 0;
+      fkpx = 0;
+      fkpy = 0;
+      fkpz = 0;
+
+
+      int ty = iak[iw];
+      int atomi = ty * WARP_SIZE + ilane;
       int i = sorted[atomi].unsorted;
-      real ci = rpole[i][mpl_pme_0];
-      real dix = rpole[i][mpl_pme_x];
-      real diy = rpole[i][mpl_pme_y];
-      real diz = rpole[i][mpl_pme_z];
-      real qixx = rpole[i][mpl_pme_xx];
-      real qixy = rpole[i][mpl_pme_xy];
-      real qixz = rpole[i][mpl_pme_xz];
-      real qiyy = rpole[i][mpl_pme_yy];
-      real qiyz = rpole[i][mpl_pme_yz];
-      real qizz = rpole[i][mpl_pme_zz];
-      real pdi = pdamp[i];
-      real pti = thole[i];
+      int atomk = lst[iw * WARP_SIZE + ilane];
+      int k = sorted[atomk].unsorted;
+      xi = sorted[atomi].x;
+      yi = sorted[atomi].y;
+      zi = sorted[atomi].z;
+      xk = sorted[atomk].x;
+      yk = sorted[atomk].y;
+      zk = sorted[atomk].z;
 
 
-      data[threadIdx.x].fkd = make_real3(0, 0, 0);
-      data[threadIdx.x].fkp = make_real3(0, 0, 0);
-      int shatomk = lst[iw * WARP_SIZE + ilane];
-      data[threadIdx.x].rk =
-         make_real3(sorted[shatomk].x, sorted[shatomk].y, sorted[shatomk].z);
-      int shk = sorted[shatomk].unsorted;
-      data[threadIdx.x].ck = rpole[shk][mpl_pme_0];
-      data[threadIdx.x].dkx = rpole[shk][mpl_pme_x];
-      data[threadIdx.x].dky = rpole[shk][mpl_pme_y];
-      data[threadIdx.x].dkz = rpole[shk][mpl_pme_z];
-      data[threadIdx.x].qkxx = rpole[shk][mpl_pme_xx];
-      data[threadIdx.x].qkxy = rpole[shk][mpl_pme_xy];
-      data[threadIdx.x].qkxz = rpole[shk][mpl_pme_xz];
-      data[threadIdx.x].qkyy = rpole[shk][mpl_pme_yy];
-      data[threadIdx.x].qkyz = rpole[shk][mpl_pme_yz];
-      data[threadIdx.x].qkzz = rpole[shk][mpl_pme_zz];
-      data[threadIdx.x].pdk = pdamp[shk];
-      data[threadIdx.x].ptk = thole[shk];
+      ci[threadIdx.x] = rpole[i][mpl_pme_0];
+      dix[threadIdx.x] = rpole[i][mpl_pme_x];
+      diy[threadIdx.x] = rpole[i][mpl_pme_y];
+      diz[threadIdx.x] = rpole[i][mpl_pme_z];
+      qixx[threadIdx.x] = rpole[i][mpl_pme_xx];
+      qixy[threadIdx.x] = rpole[i][mpl_pme_xy];
+      qixz[threadIdx.x] = rpole[i][mpl_pme_xz];
+      qiyy[threadIdx.x] = rpole[i][mpl_pme_yy];
+      qiyz[threadIdx.x] = rpole[i][mpl_pme_yz];
+      qizz[threadIdx.x] = rpole[i][mpl_pme_zz];
+      pdi[threadIdx.x] = pdamp[i];
+      pti[threadIdx.x] = thole[i];
+      ck = rpole[k][mpl_pme_0];
+      dkx = rpole[k][mpl_pme_x];
+      dky = rpole[k][mpl_pme_y];
+      dkz = rpole[k][mpl_pme_z];
+      qkxx = rpole[k][mpl_pme_xx];
+      qkxy = rpole[k][mpl_pme_xy];
+      qkxz = rpole[k][mpl_pme_xz];
+      qkyy = rpole[k][mpl_pme_yy];
+      qkyz = rpole[k][mpl_pme_yz];
+      qkzz = rpole[k][mpl_pme_zz];
+      pdk = pdamp[k];
+      ptk = thole[k];
 
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
          int klane = srclane + threadIdx.x - ilane;
-         int atomk = __shfl_sync(ALL_LANES, shatomk, srclane);
-         real3 dr = data[klane].rk - ri;
-
-
-         real r2 = image2(dr.x, dr.y, dr.z);
-         if (atomi < atomk && r2 <= off2) {
-            if CONSTEXPR (eq<ETYP, EWALD>()) {
-               pair_dfield<EWALD>(
-                  r2, dr.x, dr.y, dr.z, 1, 1, ci, dix, diy, diz, qixx, qixy,
-                  qixz, qiyy, qiyz, qizz, pdi, pti, data[klane].ck,
-                  data[klane].dkx, data[klane].dky, data[klane].dkz,
-                  data[klane].qkxx, data[klane].qkxy, data[klane].qkxz,
-                  data[klane].qkyy, data[klane].qkyz, data[klane].qkzz,
-                  data[klane].pdk, data[klane].ptk, aewald, fid, fip,
-                  data[klane].fkd, data[klane].fkp);
-            }
-            if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
-               pair_dfield<NON_EWALD>(
-                  r2, dr.x, dr.y, dr.z, 1, 1, ci, dix, diy, diz, qixx, qixy,
-                  qixz, qiyy, qiyz, qizz, pdi, pti, data[klane].ck,
-                  data[klane].dkx, data[klane].dky, data[klane].dkz,
-                  data[klane].qkxx, data[klane].qkxy, data[klane].qkxz,
-                  data[klane].qkyy, data[klane].qkyz, data[klane].qkzz,
-                  data[klane].pdk, data[klane].ptk, 0, fid, fip,
-                  data[klane].fkd, data[klane].fkp);
-            }
+         bool incl = atomk > 0;
+         real scalea = 1;
+         real scaleb = 1;
+         real xr = xk - xi;
+         real yr = yk - yi;
+         real zr = zk - zi;
+         real r2 = image2(xr, yr, zr);
+         if (r2 <= off * off and incl) {
+            pair_dfield_v2<ETYP>(
+               r2, xr, yr, zr, scalea, scaleb, aewald, ci[klane], dix[klane],
+               diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane],
+               qiyy[klane], qiyz[klane], qizz[klane], pdi[klane], pti[klane],
+               ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, pdk, ptk,
+               fidx, fidy, fidz, fipx, fipy, fipz, fkdx, fkdy, fkdz, fkpx, fkpy,
+               fkpz);
          } // end if (include)
+
+
+         xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
+         yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
+         zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
+         fidx = __shfl_sync(ALL_LANES, fidx, ilane + 1);
+         fidy = __shfl_sync(ALL_LANES, fidy, ilane + 1);
+         fidz = __shfl_sync(ALL_LANES, fidz, ilane + 1);
+         fipx = __shfl_sync(ALL_LANES, fipx, ilane + 1);
+         fipy = __shfl_sync(ALL_LANES, fipy, ilane + 1);
+         fipz = __shfl_sync(ALL_LANES, fipz, ilane + 1);
       }
 
 
-      atomic_add(fid.x, &field[i][0]);
-      atomic_add(fid.y, &field[i][1]);
-      atomic_add(fid.z, &field[i][2]);
-      atomic_add(fip.x, &fieldp[i][0]);
-      atomic_add(fip.y, &fieldp[i][1]);
-      atomic_add(fip.z, &fieldp[i][2]);
-      atomic_add(data[threadIdx.x].fkd.x, &field[shk][0]);
-      atomic_add(data[threadIdx.x].fkd.y, &field[shk][1]);
-      atomic_add(data[threadIdx.x].fkd.z, &field[shk][2]);
-      atomic_add(data[threadIdx.x].fkp.x, &fieldp[shk][0]);
-      atomic_add(data[threadIdx.x].fkp.y, &fieldp[shk][1]);
-      atomic_add(data[threadIdx.x].fkp.z, &fieldp[shk][2]);
-   } // end for (iw)
-}
-
-
-__global__
-void dfield_cu2(DFIELDPARAS, const real* restrict x, const real* restrict y,
-                const real* restrict z, int ndpexclude,
-                const int (*restrict dpexclude)[2],
-                const real (*restrict dpexclude_scale)[2])
-{
-   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < ndpexclude;
-        ii += blockDim.x * gridDim.x) {
-      int i = dpexclude[ii][0];
-      int k = dpexclude[ii][1];
-      real dscale = dpexclude_scale[ii][0];
-      real pscale = dpexclude_scale[ii][1];
-
-
-      real xi = x[i];
-      real yi = y[i];
-      real zi = z[i];
-      real ci = rpole[i][mpl_pme_0];
-      real dix = rpole[i][mpl_pme_x];
-      real diy = rpole[i][mpl_pme_y];
-      real diz = rpole[i][mpl_pme_z];
-      real qixx = rpole[i][mpl_pme_xx];
-      real qixy = rpole[i][mpl_pme_xy];
-      real qixz = rpole[i][mpl_pme_xz];
-      real qiyy = rpole[i][mpl_pme_yy];
-      real qiyz = rpole[i][mpl_pme_yz];
-      real qizz = rpole[i][mpl_pme_zz];
-      real pdi = pdamp[i];
-      real pti = thole[i];
-
-
-      real xr = x[k] - xi;
-      real yr = y[k] - yi;
-      real zr = z[k] - zi;
-
-
-      real r2 = image2(xr, yr, zr);
-      if (r2 <= off2) {
-         real3 fid = make_real3(0, 0, 0);
-         real3 fip = make_real3(0, 0, 0);
-         real3 fkd = make_real3(0, 0, 0);
-         real3 fkp = make_real3(0, 0, 0);
-         pair_dfield<NON_EWALD>(
-            r2, xr, yr, zr, dscale, pscale, ci, dix, diy, diz, qixx, qixy, qixz,
-            qiyy, qiyz, qizz, pdi, pti, rpole[k][mpl_pme_0],
-            rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
-            rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz],
-            rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz],
-            pdamp[k], thole[k], 0, fid, fip, fkd, fkp);
-
-
-         atomic_add(fid.x, &field[i][0]);
-         atomic_add(fid.y, &field[i][1]);
-         atomic_add(fid.z, &field[i][2]);
-         atomic_add(fip.x, &fieldp[i][0]);
-         atomic_add(fip.y, &fieldp[i][1]);
-         atomic_add(fip.z, &fieldp[i][2]);
-
-
-         atomic_add(fkd.x, &field[k][0]);
-         atomic_add(fkd.y, &field[k][1]);
-         atomic_add(fkd.z, &field[k][2]);
-         atomic_add(fkp.x, &fieldp[k][0]);
-         atomic_add(fkp.y, &fieldp[k][1]);
-         atomic_add(fkp.z, &fieldp[k][2]);
-      } // end if (include)
+      atomic_add(fidx, &field[i][0]);
+      atomic_add(fidy, &field[i][1]);
+      atomic_add(fidz, &field[i][2]);
+      atomic_add(fipx, &fieldp[i][0]);
+      atomic_add(fipy, &fieldp[i][1]);
+      atomic_add(fipz, &fieldp[i][2]);
+      atomic_add(fkdx, &field[k][0]);
+      atomic_add(fkdy, &field[k][1]);
+      atomic_add(fkdz, &field[k][2]);
+      atomic_add(fkpx, &fieldp[k][0]);
+      atomic_add(fkpy, &fieldp[k][1]);
+      atomic_add(fkpz, &fieldp[k][2]);
    }
 }
 
 
 void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
 {
-   const auto& st = *mspatial_unit;
+   const auto& st = *mspatial_v2_unit;
    const real off = switch_off(switch_ewald);
-   const real off2 = off * off;
 
 
    const PMEUnit pu = ppme_unit;
    const real aewald = pu->aewald;
-   if (st.niak > 0) {
-      launch_k1s(nonblk, WARP_SIZE * st.niak, dfield_cu1<EWALD>, field, fieldp,
-                 thole, pdamp, rpole, TINKER_IMAGE_ARGS, off2, n, st.sorted,
-                 st.niak, st.iak, st.lst, aewald);
-   }
-   if (ndpexclude > 0) {
-      launch_k1s(nonblk, ndpexclude, dfield_cu2, field, fieldp, thole, pdamp,
-                 rpole, TINKER_IMAGE_ARGS, off2, x, y, z, ndpexclude, dpexclude,
-                 dpexclude_scale);
-   }
+
+
+   int ngrid = get_grid_size(BLOCK_DIM);
+   ngrid *= BLOCK_DIM;
+   int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
+   nparallel = std::max(nparallel, ngrid);
+   launch_k1s(nonblk, nparallel, dfield_cu1<EWALD>, //
+              st.n, TINKER_IMAGE_ARGS, off, st.si3.bit0, ndpexclude, dpexclude,
+              dpexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
+              st.niak, st.iak, st.lst, field, fieldp, rpole, thole, pdamp,
+              aewald);
 }
 
 
 void dfield_nonewald_cu(real (*field)[3], real (*fieldp)[3])
 {
-   const auto& st = *mspatial_unit;
+   const auto& st = *mspatial_v2_unit;
    const real off = switch_off(switch_mpole);
-   const real off2 = off * off;
 
 
    darray::zero(PROCEED_NEW_Q, n, field, fieldp);
-   if (st.niak > 0) {
-      launch_k1s(nonblk, WARP_SIZE * st.niak, dfield_cu1<NON_EWALD>, field,
-                 fieldp, thole, pdamp, rpole, TINKER_IMAGE_ARGS, off2, n,
-                 st.sorted, st.niak, st.iak, st.lst, 0);
-   }
-   if (ndpexclude > 0) {
-      launch_k1s(nonblk, ndpexclude, dfield_cu2, field, fieldp, thole, pdamp,
-                 rpole, TINKER_IMAGE_ARGS, off2, x, y, z, ndpexclude, dpexclude,
-                 dpexclude_scale);
-   }
+   int ngrid = get_grid_size(BLOCK_DIM);
+   ngrid *= BLOCK_DIM;
+   int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
+   nparallel = std::max(nparallel, ngrid);
+   launch_k1s(nonblk, nparallel, dfield_cu1<NON_EWALD>, //
+              st.n, TINKER_IMAGE_ARGS, off, st.si3.bit0, ndpexclude, dpexclude,
+              dpexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
+              st.niak, st.iak, st.lst, field, fieldp, rpole, thole, pdamp, 0);
 }
 
 
-#define UFIELDPARAS                                                            \
-   const real(*restrict uind)[3], const real(*restrict uinp)[3],               \
-      real(*restrict field)[3], real(*restrict fieldp)[3],                     \
-      const real *restrict thole, const real *restrict pdamp,                  \
-      TINKER_IMAGE_PARAMS, real off2
-
-
+// ck.py Version 2.0.2
 template <class ETYP>
-__launch_bounds__(BLOCK_DIM) __global__
-void ufield_cu1(UFIELDPARAS, int n, const Spatial::SortedAtom* restrict sorted,
-                int niak, const int* restrict iak, const int* restrict lst,
-                real aewald)
+__global__
+void ufield_cu1(int n, TINKER_IMAGE_PARAMS, real off,
+                const unsigned* restrict uinfo, int nexclude,
+                const int (*restrict exclude)[2],
+                const real* restrict exclude_scale, const real* restrict x,
+                const real* restrict y, const real* restrict z,
+                const Spatial::SortedAtom* restrict sorted, int nakpl,
+                const int* restrict iakpl, int niak, const int* restrict iak,
+                const int* restrict lst, const real (*restrict uind)[3],
+                const real (*restrict uinp)[3], real (*restrict field)[3],
+                real (*restrict fieldp)[3], const real* restrict thole,
+                const real* restrict pdamp, real aewald)
 {
-   const int iwarp = (threadIdx.x + blockIdx.x * blockDim.x) / WARP_SIZE;
+   const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
+   const int iwarp = ithread / WARP_SIZE;
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
 
 
-   struct Data
-   {
-      real3 fkd, fkp, ukd, ukp, rk;
-      real pdk, ptk;
-   };
-   __shared__ Data data[BLOCK_DIM];
+   real xi;
+   real yi;
+   real zi;
+   real xk;
+   real yk;
+   real zk;
+   real fidx;
+   real fidy;
+   real fidz;
+   real fipx;
+   real fipy;
+   real fipz;
+   real fkdx;
+   real fkdy;
+   real fkdz;
+   real fkpx;
+   real fkpy;
+   real fkpz;
+   __shared__ real uidx[BLOCK_DIM];
+   __shared__ real uidy[BLOCK_DIM];
+   __shared__ real uidz[BLOCK_DIM];
+   __shared__ real uipx[BLOCK_DIM];
+   __shared__ real uipy[BLOCK_DIM];
+   __shared__ real uipz[BLOCK_DIM];
+   __shared__ real pdi[BLOCK_DIM];
+   __shared__ real pti[BLOCK_DIM];
+   real ukdx;
+   real ukdy;
+   real ukdz;
+   real ukpx;
+   real ukpy;
+   real ukpz;
+   real pdk;
+   real ptk;
+
+
+   //* /
+   for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
+      const int klane = threadIdx.x;
+      fidx = 0;
+      fidy = 0;
+      fidz = 0;
+      fipx = 0;
+      fipy = 0;
+      fipz = 0;
+      fkdx = 0;
+      fkdy = 0;
+      fkdz = 0;
+      fkpx = 0;
+      fkpy = 0;
+      fkpz = 0;
+
+
+      int i = exclude[ii][0];
+      int k = exclude[ii][1];
+      real scalea = exclude_scale[ii];
+
+
+      xi = x[i];
+      yi = y[i];
+      zi = z[i];
+      xk = x[k];
+      yk = y[k];
+      zk = z[k];
+      uidx[klane] = uind[i][0];
+      uidy[klane] = uind[i][1];
+      uidz[klane] = uind[i][2];
+      uipx[klane] = uinp[i][0];
+      uipy[klane] = uinp[i][1];
+      uipz[klane] = uinp[i][2];
+      pdi[klane] = pdamp[i];
+      pti[klane] = thole[i];
+      ukdx = uind[k][0];
+      ukdy = uind[k][1];
+      ukdz = uind[k][2];
+      ukpx = uinp[k][0];
+      ukpy = uinp[k][1];
+      ukpz = uinp[k][2];
+      pdk = pdamp[k];
+      ptk = thole[k];
+
+
+      constexpr bool incl = true;
+      real xr = xk - xi;
+      real yr = yk - yi;
+      real zr = zk - zi;
+      real r2 = image2(xr, yr, zr);
+      if (r2 <= off * off and incl) {
+         pair_ufield_v2<ETYP>(
+            r2, xr, yr, zr, scalea, aewald, uidx[klane], uidy[klane],
+            uidz[klane], uipx[klane], uipy[klane], uipz[klane], pdi[klane],
+            pti[klane], ukdx, ukdy, ukdz, ukpx, ukpy, ukpz, pdk, ptk, fidx,
+            fidy, fidz, fipx, fipy, fipz, fkdx, fkdy, fkdz, fkpx, fkpy, fkpz);
+      } // end if (include)
+
+
+      atomic_add(fidx, &field[i][0]);
+      atomic_add(fidy, &field[i][1]);
+      atomic_add(fidz, &field[i][2]);
+      atomic_add(fipx, &fieldp[i][0]);
+      atomic_add(fipy, &fieldp[i][1]);
+      atomic_add(fipz, &fieldp[i][2]);
+      atomic_add(fkdx, &field[k][0]);
+      atomic_add(fkdy, &field[k][1]);
+      atomic_add(fkdz, &field[k][2]);
+      atomic_add(fkpx, &fieldp[k][0]);
+      atomic_add(fkpy, &fieldp[k][1]);
+      atomic_add(fkpz, &fieldp[k][2]);
+   }
+   // */
+
+
+   for (int iw = iwarp; iw < nakpl; iw += nwarp) {
+      fidx = 0;
+      fidy = 0;
+      fidz = 0;
+      fipx = 0;
+      fipy = 0;
+      fipz = 0;
+      fkdx = 0;
+      fkdy = 0;
+      fkdz = 0;
+      fkpx = 0;
+      fkpy = 0;
+      fkpz = 0;
+
+
+      int tri, tx, ty;
+      tri = iakpl[iw];
+      tri_to_xy(tri, tx, ty);
+
+
+      int iid = ty * WARP_SIZE + ilane;
+      int atomi = min(iid, n - 1);
+      int i = sorted[atomi].unsorted;
+      int kid = tx * WARP_SIZE + ilane;
+      int atomk = min(kid, n - 1);
+      int k = sorted[atomk].unsorted;
+      xi = sorted[atomi].x;
+      yi = sorted[atomi].y;
+      zi = sorted[atomi].z;
+      xk = sorted[atomk].x;
+      yk = sorted[atomk].y;
+      zk = sorted[atomk].z;
+
+
+      uidx[threadIdx.x] = uind[i][0];
+      uidy[threadIdx.x] = uind[i][1];
+      uidz[threadIdx.x] = uind[i][2];
+      uipx[threadIdx.x] = uinp[i][0];
+      uipy[threadIdx.x] = uinp[i][1];
+      uipz[threadIdx.x] = uinp[i][2];
+      pdi[threadIdx.x] = pdamp[i];
+      pti[threadIdx.x] = thole[i];
+      ukdx = uind[k][0];
+      ukdy = uind[k][1];
+      ukdz = uind[k][2];
+      ukpx = uinp[k][0];
+      ukpy = uinp[k][1];
+      ukpz = uinp[k][2];
+      pdk = pdamp[k];
+      ptk = thole[k];
+
+
+      unsigned int uinfo0 = uinfo[iw * WARP_SIZE + ilane];
+      for (int j = 0; j < WARP_SIZE; ++j) {
+         int srclane = (ilane + j) & (WARP_SIZE - 1);
+         int klane = srclane + threadIdx.x - ilane;
+         bool incl = iid < kid and kid < n;
+         int srcmask = 1 << srclane;
+         incl = incl and (uinfo0 & srcmask) == 0;
+         real scalea = 1;
+         real xr = xk - xi;
+         real yr = yk - yi;
+         real zr = zk - zi;
+         real r2 = image2(xr, yr, zr);
+         if (r2 <= off * off and incl) {
+            pair_ufield_v2<ETYP>(r2, xr, yr, zr, scalea, aewald, uidx[klane],
+                                 uidy[klane], uidz[klane], uipx[klane],
+                                 uipy[klane], uipz[klane], pdi[klane],
+                                 pti[klane], ukdx, ukdy, ukdz, ukpx, ukpy, ukpz,
+                                 pdk, ptk, fidx, fidy, fidz, fipx, fipy, fipz,
+                                 fkdx, fkdy, fkdz, fkpx, fkpy, fkpz);
+         } // end if (include)
+
+
+         iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
+         xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
+         yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
+         zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
+         fidx = __shfl_sync(ALL_LANES, fidx, ilane + 1);
+         fidy = __shfl_sync(ALL_LANES, fidy, ilane + 1);
+         fidz = __shfl_sync(ALL_LANES, fidz, ilane + 1);
+         fipx = __shfl_sync(ALL_LANES, fipx, ilane + 1);
+         fipy = __shfl_sync(ALL_LANES, fipy, ilane + 1);
+         fipz = __shfl_sync(ALL_LANES, fipz, ilane + 1);
+      }
+
+
+      atomic_add(fidx, &field[i][0]);
+      atomic_add(fidy, &field[i][1]);
+      atomic_add(fidz, &field[i][2]);
+      atomic_add(fipx, &fieldp[i][0]);
+      atomic_add(fipy, &fieldp[i][1]);
+      atomic_add(fipz, &fieldp[i][2]);
+      atomic_add(fkdx, &field[k][0]);
+      atomic_add(fkdy, &field[k][1]);
+      atomic_add(fkdz, &field[k][2]);
+      atomic_add(fkpx, &fieldp[k][0]);
+      atomic_add(fkpy, &fieldp[k][1]);
+      atomic_add(fkpz, &fieldp[k][2]);
+   }
 
 
    for (int iw = iwarp; iw < niak; iw += nwarp) {
-      real3 fid = make_real3(0, 0, 0);
-      real3 fip = make_real3(0, 0, 0);
-      int atomi = min(iak[iw] * WARP_SIZE + ilane, n - 1);
-      real3 ri = make_real3(sorted[atomi].x, sorted[atomi].y, sorted[atomi].z);
+      fidx = 0;
+      fidy = 0;
+      fidz = 0;
+      fipx = 0;
+      fipy = 0;
+      fipz = 0;
+      fkdx = 0;
+      fkdy = 0;
+      fkdz = 0;
+      fkpx = 0;
+      fkpy = 0;
+      fkpz = 0;
+
+
+      int ty = iak[iw];
+      int atomi = ty * WARP_SIZE + ilane;
       int i = sorted[atomi].unsorted;
-      real3 uid = make_real3(uind[i][0], uind[i][1], uind[i][2]);
-      real3 uip = make_real3(uinp[i][0], uinp[i][1], uinp[i][2]);
-      real pdi = pdamp[i];
-      real pti = thole[i];
+      int atomk = lst[iw * WARP_SIZE + ilane];
+      int k = sorted[atomk].unsorted;
+      xi = sorted[atomi].x;
+      yi = sorted[atomi].y;
+      zi = sorted[atomi].z;
+      xk = sorted[atomk].x;
+      yk = sorted[atomk].y;
+      zk = sorted[atomk].z;
 
 
-      data[threadIdx.x].fkd = make_real3(0, 0, 0);
-      data[threadIdx.x].fkp = make_real3(0, 0, 0);
-      int shatomk = lst[iw * WARP_SIZE + ilane];
-      data[threadIdx.x].rk =
-         make_real3(sorted[shatomk].x, sorted[shatomk].y, sorted[shatomk].z);
-      int shk = sorted[shatomk].unsorted;
-      data[threadIdx.x].ukd =
-         make_real3(uind[shk][0], uind[shk][1], uind[shk][2]);
-      data[threadIdx.x].ukp =
-         make_real3(uinp[shk][0], uinp[shk][1], uinp[shk][2]);
-      data[threadIdx.x].pdk = pdamp[shk];
-      data[threadIdx.x].ptk = thole[shk];
+      uidx[threadIdx.x] = uind[i][0];
+      uidy[threadIdx.x] = uind[i][1];
+      uidz[threadIdx.x] = uind[i][2];
+      uipx[threadIdx.x] = uinp[i][0];
+      uipy[threadIdx.x] = uinp[i][1];
+      uipz[threadIdx.x] = uinp[i][2];
+      pdi[threadIdx.x] = pdamp[i];
+      pti[threadIdx.x] = thole[i];
+      ukdx = uind[k][0];
+      ukdy = uind[k][1];
+      ukdz = uind[k][2];
+      ukpx = uinp[k][0];
+      ukpy = uinp[k][1];
+      ukpz = uinp[k][2];
+      pdk = pdamp[k];
+      ptk = thole[k];
 
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
          int klane = srclane + threadIdx.x - ilane;
-         int atomk = __shfl_sync(ALL_LANES, shatomk, srclane);
-         real3 dr = data[klane].rk - ri;
-
-
-         real r2 = image2(dr.x, dr.y, dr.z);
-         if (atomi < atomk && r2 <= off2) {
-            if CONSTEXPR (eq<ETYP, EWALD>()) {
-               pair_ufield<EWALD>(
-                  r2, dr.x, dr.y, dr.z, 1, uid.x, uid.y, uid.z, uip.x, uip.y,
-                  uip.z, pdi, pti, data[klane].ukd.x, data[klane].ukd.y,
-                  data[klane].ukd.z, data[klane].ukp.x, data[klane].ukp.y,
-                  data[klane].ukp.z, data[klane].pdk, data[klane].ptk, aewald,
-                  fid, fip, data[klane].fkd, data[klane].fkp);
-            }
-            if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
-               pair_ufield<NON_EWALD>(
-                  r2, dr.x, dr.y, dr.z, 1, uid.x, uid.y, uid.z, uip.x, uip.y,
-                  uip.z, pdi, pti, data[klane].ukd.x, data[klane].ukd.y,
-                  data[klane].ukd.z, data[klane].ukp.x, data[klane].ukp.y,
-                  data[klane].ukp.z, data[klane].pdk, data[klane].ptk, 0, fid,
-                  fip, data[klane].fkd, data[klane].fkp);
-            }
+         bool incl = atomk > 0;
+         real scalea = 1;
+         real xr = xk - xi;
+         real yr = yk - yi;
+         real zr = zk - zi;
+         real r2 = image2(xr, yr, zr);
+         if (r2 <= off * off and incl) {
+            pair_ufield_v2<ETYP>(r2, xr, yr, zr, scalea, aewald, uidx[klane],
+                                 uidy[klane], uidz[klane], uipx[klane],
+                                 uipy[klane], uipz[klane], pdi[klane],
+                                 pti[klane], ukdx, ukdy, ukdz, ukpx, ukpy, ukpz,
+                                 pdk, ptk, fidx, fidy, fidz, fipx, fipy, fipz,
+                                 fkdx, fkdy, fkdz, fkpx, fkpy, fkpz);
          } // end if (include)
+
+
+         xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
+         yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
+         zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
+         fidx = __shfl_sync(ALL_LANES, fidx, ilane + 1);
+         fidy = __shfl_sync(ALL_LANES, fidy, ilane + 1);
+         fidz = __shfl_sync(ALL_LANES, fidz, ilane + 1);
+         fipx = __shfl_sync(ALL_LANES, fipx, ilane + 1);
+         fipy = __shfl_sync(ALL_LANES, fipy, ilane + 1);
+         fipz = __shfl_sync(ALL_LANES, fipz, ilane + 1);
       }
 
 
-      atomic_add(fid.x, &field[i][0]);
-      atomic_add(fid.y, &field[i][1]);
-      atomic_add(fid.z, &field[i][2]);
-      atomic_add(fip.x, &fieldp[i][0]);
-      atomic_add(fip.y, &fieldp[i][1]);
-      atomic_add(fip.z, &fieldp[i][2]);
-      atomic_add(data[threadIdx.x].fkd.x, &field[shk][0]);
-      atomic_add(data[threadIdx.x].fkd.y, &field[shk][1]);
-      atomic_add(data[threadIdx.x].fkd.z, &field[shk][2]);
-      atomic_add(data[threadIdx.x].fkp.x, &fieldp[shk][0]);
-      atomic_add(data[threadIdx.x].fkp.y, &fieldp[shk][1]);
-      atomic_add(data[threadIdx.x].fkp.z, &fieldp[shk][2]);
-   } // end for (iw)
-}
-
-
-__global__
-void ufield_cu2(UFIELDPARAS, const real* restrict x, const real* restrict y,
-                const real* restrict z, int nuexclude,
-                const int (*restrict uexclude)[2],
-                const real* restrict uexclude_scale)
-{
-   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < nuexclude;
-        ii += blockDim.x * gridDim.x) {
-      int i = uexclude[ii][0];
-      int k = uexclude[ii][1];
-      real uscale = uexclude_scale[ii] - 1;
-
-
-      real xi = x[i];
-      real yi = y[i];
-      real zi = z[i];
-      real3 uid = make_real3(uind[i][0], uind[i][1], uind[i][2]);
-      real3 uip = make_real3(uinp[i][0], uinp[i][1], uinp[i][2]);
-      real pdi = pdamp[i];
-      real pti = thole[i];
-
-
-      real xr = x[k] - xi;
-      real yr = y[k] - yi;
-      real zr = z[k] - zi;
-
-
-      real r2 = image2(xr, yr, zr);
-      if (r2 <= off2) {
-         real3 fid = make_real3(0, 0, 0);
-         real3 fip = make_real3(0, 0, 0);
-         real3 fkd = make_real3(0, 0, 0);
-         real3 fkp = make_real3(0, 0, 0);
-         pair_ufield<NON_EWALD>(
-            r2, xr, yr, zr, uscale, uid.x, uid.y, uid.z, uip.x, uip.y, uip.z,
-            pdi, pti, uind[k][0], uind[k][1], uind[k][2], uinp[k][0],
-            uinp[k][1], uinp[k][2], pdamp[k], thole[k], 0, fid, fip, fkd, fkp);
-
-
-         atomic_add(fid.x, &field[i][0]);
-         atomic_add(fid.y, &field[i][1]);
-         atomic_add(fid.z, &field[i][2]);
-         atomic_add(fip.x, &fieldp[i][0]);
-         atomic_add(fip.y, &fieldp[i][1]);
-         atomic_add(fip.z, &fieldp[i][2]);
-
-
-         atomic_add(fkd.x, &field[k][0]);
-         atomic_add(fkd.y, &field[k][1]);
-         atomic_add(fkd.z, &field[k][2]);
-         atomic_add(fkp.x, &fieldp[k][0]);
-         atomic_add(fkp.y, &fieldp[k][1]);
-         atomic_add(fkp.z, &fieldp[k][2]);
-      } // end if (include)
+      atomic_add(fidx, &field[i][0]);
+      atomic_add(fidy, &field[i][1]);
+      atomic_add(fidz, &field[i][2]);
+      atomic_add(fipx, &fieldp[i][0]);
+      atomic_add(fipy, &fieldp[i][1]);
+      atomic_add(fipz, &fieldp[i][2]);
+      atomic_add(fkdx, &field[k][0]);
+      atomic_add(fkdy, &field[k][1]);
+      atomic_add(fkdz, &field[k][2]);
+      atomic_add(fkpx, &fieldp[k][0]);
+      atomic_add(fkpy, &fieldp[k][1]);
+      atomic_add(fkpz, &fieldp[k][2]);
    }
 }
 
@@ -400,46 +750,42 @@ void ufield_cu2(UFIELDPARAS, const real* restrict x, const real* restrict y,
 void ufield_ewald_real_cu(const real (*uind)[3], const real (*uinp)[3],
                           real (*field)[3], real (*fieldp)[3])
 {
-   const auto& st = *mspatial_unit;
+   const auto& st = *mspatial_v2_unit;
    const real off = switch_off(switch_ewald);
-   const real off2 = off * off;
 
 
    const PMEUnit pu = ppme_unit;
    const real aewald = pu->aewald;
 
 
-   if (st.niak > 0) {
-      launch_k1s(nonblk, WARP_SIZE * st.niak, ufield_cu1<EWALD>, uind, uinp,
-                 field, fieldp, thole, pdamp, TINKER_IMAGE_ARGS, off2, n,
-                 st.sorted, st.niak, st.iak, st.lst, aewald);
-   }
-   if (nuexclude) {
-      launch_k1s(nonblk, nuexclude, ufield_cu2, uind, uinp, field, fieldp,
-                 thole, pdamp, TINKER_IMAGE_ARGS, off2, x, y, z, nuexclude,
-                 uexclude, uexclude_scale);
-   }
+   int ngrid = get_grid_size(BLOCK_DIM);
+   ngrid *= BLOCK_DIM;
+   int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
+   nparallel = std::max(nparallel, ngrid);
+   launch_k1s(nonblk, nparallel, ufield_cu1<EWALD>, //
+              st.n, TINKER_IMAGE_ARGS, off, st.si4.bit0, nuexclude, uexclude,
+              uexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
+              st.niak, st.iak, st.lst, uind, uinp, field, fieldp, thole, pdamp,
+              aewald);
 }
 
 
 void ufield_nonewald_cu(const real (*uind)[3], const real (*uinp)[3],
                         real (*field)[3], real (*fieldp)[3])
 {
-   const auto& st = *mspatial_unit;
+   const auto& st = *mspatial_v2_unit;
    const real off = switch_off(switch_mpole);
-   const real off2 = off * off;
 
 
    darray::zero(PROCEED_NEW_Q, n, field, fieldp);
-   if (st.niak > 0) {
-      launch_k1s(nonblk, WARP_SIZE * st.niak, ufield_cu1<NON_EWALD>, uind, uinp,
-                 field, fieldp, thole, pdamp, TINKER_IMAGE_ARGS, off2, n,
-                 st.sorted, st.niak, st.iak, st.lst, 0);
-   }
-   if (nuexclude) {
-      launch_k1s(nonblk, nuexclude, ufield_cu2, uind, uinp, field, fieldp,
-                 thole, pdamp, TINKER_IMAGE_ARGS, off2, x, y, z, nuexclude,
-                 uexclude, uexclude_scale);
-   }
+   int ngrid = get_grid_size(BLOCK_DIM);
+   ngrid *= BLOCK_DIM;
+   int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
+   nparallel = std::max(nparallel, ngrid);
+   launch_k1s(nonblk, nparallel, ufield_cu1<NON_EWALD>, //
+              st.n, TINKER_IMAGE_ARGS, off, st.si4.bit0, nuexclude, uexclude,
+              uexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
+              st.niak, st.iak, st.lst, uind, uinp, field, fieldp, thole, pdamp,
+              0);
 }
 }

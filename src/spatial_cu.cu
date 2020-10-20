@@ -163,9 +163,9 @@ inline void ixyz_octahedron(int& restrict ix, int& restrict iy,
       //    iw1 -= qw2; iw1 -= SIGN(qw2, 0); iw1 -= SIGN(qw2, iw1-iw2)
       //
       //    iw1 -= SIGN(qw2, iw1-iw2)
-      ix1 -= TINKER_COPYSIGN(qx2, ix1 - ix2);
-      iy1 -= TINKER_COPYSIGN(qy2, iy1 - iy2);
-      iz1 -= TINKER_COPYSIGN(qz2, iz1 - iz2);
+      ix1 -= INT_COPYSIGN(qx2, ix1 - ix2);
+      iy1 -= INT_COPYSIGN(qy2, iy1 - iy2);
+      iz1 -= INT_COPYSIGN(qz2, iz1 - iz2);
    }
 
 
@@ -807,7 +807,9 @@ void spatial2_step1(int n, int pz, int2* restrict b2num, //
       AxesToTranspose(ixyz, pz);
       int id = TransposeToIndex(ixyz, pz);
       b2num[i] = make_int2(id, i); // B.1
-      b2num[i] = make_int2(i, i);
+      // For debugging purpose, uncomment the next line to disable the sorting
+      // in the next step, so that sorted[i].unsorted == i.
+      // b2num[i] = make_int2(i, i);
    }
 
 
@@ -1294,9 +1296,9 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
             xr = REAL_ABS(xr) - (half[wx].x + hxi);
             yr = REAL_ABS(yr) - (half[wx].y + hyi);
             zr = REAL_ABS(zr) - (half[wx].z + hzi);
-            xr = REAL_MAX(0., xr);
-            yr = REAL_MAX(0., yr);
-            zr = REAL_MAX(0., zr);
+            xr = REAL_MAX((real)0, xr);
+            yr = REAL_MAX((real)0, yr);
+            zr = REAL_MAX((real)0, zr);
             r2 = xr * xr + yr * yr + zr * zr;
             if (r2 > rlimit2)
                calcwx = false;

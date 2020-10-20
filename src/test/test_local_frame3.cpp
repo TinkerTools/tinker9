@@ -1,4 +1,3 @@
-#include "files.h"
 #include "test.h"
 #include "test_rt.h"
 
@@ -35,9 +34,10 @@ TEST_CASE("Local-Frame3-1",
 {
    std::string key = key0;
 
-   TestFile fxy(xname, local_frame_xyz2);
-   TestFile fke(kname, key);
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fxy(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
+                xname);
+   TestFile fke("", kname, key);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    test_begin_with_args(argc, argv);
    rc_flag = usage;
@@ -113,9 +113,10 @@ TEST_CASE("Local-Frame3-2", "[ff][empole][epolar][emplar][ewald][local-frame3]")
    std::string key = key0;
    key += "ewald\n";
 
-   TestFile fxy(xname, local_frame_xyz2);
-   TestFile fke(kname, key);
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fxy(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
+                xname);
+   TestFile fke("", kname, key);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    test_begin_with_args(argc, argv);
    rc_flag = usage;
@@ -183,9 +184,10 @@ TEST_CASE("Local-Frame3-3", "[ff][empole][epolar][emplar][ewald][local-frame3]")
    std::string key = key0;
    key += "ewald\n";
 
-   TestFile fxy(xname, local_frame_xyz2);
-   TestFile fke(kname, key);
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fxy(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
+                xname);
+   TestFile fke("", kname, key);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    test_begin_with_args(argc, argv);
    rc_flag = usage & ~calc::analyz;

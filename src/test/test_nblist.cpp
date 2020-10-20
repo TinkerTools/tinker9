@@ -1,13 +1,12 @@
-#include "tool/error.h"
-#include "files.h"
 #include "glob.nblist.h"
-#include "tool/io_print.h"
-#include "tool/io_text.h"
 #include "md.h"
 #include "platform.h"
-#include "tool/rc_man.h"
 #include "test.h"
 #include "test_rt.h"
+#include "tool/error.h"
+#include "tool/io_print.h"
+#include "tool/io_text.h"
+#include "tool/rc_man.h"
 #include <fstream>
 #include <set>
 #include <sstream>
@@ -166,13 +165,11 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]")
 
    const char* k = "test_arbox.key";
    const char* x1 = "test_arbox.arc";
-   const char* p = "amoeba09.prm";
 
-   std::string k0 = arbox_key;
-   TestFile fke(k, k0);
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/arbox/arbox.key", k);
 
-   TestFile fx1(x1, arbox_arc);
-   TestFile fpr(p, commit_6fe8e913::amoeba09_prm);
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/arbox/arbox.arc", x1);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    const char* argv[] = {"dummy", x1};
    int argc = 2;

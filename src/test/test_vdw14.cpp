@@ -1,4 +1,3 @@
-#include "files.h"
 #include "test.h"
 #include "test_rt.h"
 
@@ -12,12 +11,8 @@ TEST_CASE("Vdw14-Trpcage", "[ff][evdw][vdw14][lj][trpcage]")
 
 
    const char* kname = "test_vdw14.key";
-   std::string k0 = trpcage_charmm19_key;
-   k0 += "\nVDWTERM ONLY\n";
+   std::string k0 = "VDWTERM ONLY\n";
    const char* xname = "test_vdw14.xyz";
-   const char* x0 = trpcage_charmm19_xyz;
-   const char* pname = "charmm19.prm";
-   const char* p0 = commit_11e84c69::charmm19_prm;
 
 
    const double eps_e = 0.0001;
@@ -29,12 +24,15 @@ TEST_CASE("Vdw14-Trpcage", "[ff][evdw][vdw14][lj][trpcage]")
 
    SECTION("  - elj -- no pbc, no cutoff")
    {
-      TestFile fxy(xname, x0);
-      TestFile fke(kname, k0);
-      TestFile fpr(pname, p0);
+      TestFile fxy(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.xyz",
+                   xname);
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.key",
+                   kname, k0);
+      TestFile fpr(TINKER9_DIRSTR
+                   "/src/test/file/commit_11e84c69/charmm19.prm");
 
 
-      TestReference r(TINKER9_DIRSTR "/src/test/vdw14.1.txt");
+      TestReference r(TINKER9_DIRSTR "/src/test/ref/vdw14.1.txt");
       auto ref_e = r.get_energy();
       auto ref_v = r.get_virial();
       auto ref_count = r.get_count();
@@ -86,7 +84,6 @@ TEST_CASE("Vdw14-Trpcage", "[ff][evdw][vdw14][lj][trpcage]")
    SECTION("  - elj -- pbc, cutoff")
    {
       std::string k1 = k0 +
-         "\n"
          "NEIGHBOR-LIST\n"
          "LIST-BUFFER      0.5\n"
          "CUTOFF           9.0\n"
@@ -95,12 +92,15 @@ TEST_CASE("Vdw14-Trpcage", "[ff][evdw][vdw14][lj][trpcage]")
          "C-AXIS            20\n";
 
 
-      TestFile fxy(xname, x0);
-      TestFile fke(kname, k1);
-      TestFile fpr(pname, p0);
+      TestFile fxy(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.xyz",
+                   xname);
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.key",
+                   kname, k1);
+      TestFile fpr(TINKER9_DIRSTR
+                   "/src/test/file/commit_11e84c69/charmm19.prm");
 
 
-      TestReference r(TINKER9_DIRSTR "/src/test/vdw14.2.txt");
+      TestReference r(TINKER9_DIRSTR "/src/test/ref/vdw14.2.txt");
       auto ref_e = r.get_energy();
       auto ref_v = r.get_virial();
       auto ref_count = r.get_count();

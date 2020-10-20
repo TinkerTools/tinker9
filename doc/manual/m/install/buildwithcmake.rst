@@ -7,9 +7,9 @@ You can skip this section if you are familar with CMake.
 
 Suppose the current working directory is */home/tinker9* and we
 want to create a build directory called *build-cmake* in
-*/home/tinker9*. We can do ``mkdir build-cmake`` then ``cd build-cmake``.
+*/home/tinker9*. We can do *mkdir build-cmake* then *cd build-cmake*.
 Because the top-level CMakeLists.txt file is in the parent directory,
-if there was nothing else to configure, command ``cmake ..`` would generate
+if there was nothing else to configure, command *cmake ..* would generate
 the Makefile. The alternative way is to specify the build and source
 directories to CMake, e.g.,
 
@@ -17,19 +17,19 @@ directories to CMake, e.g.,
 
    cmake -B /home/tinker9/build-cmake -S /home/tinker9
 
-Some CMake installations also provide a command line gui ``ccmake`` and a
-simple gui program ``cmake-gui`` that can replace ``cmake`` in the commands
+Some CMake installations also provide a command line gui *ccmake* and a
+simple gui program *cmake-gui* that can replace *cmake* in the commands
 above.
 
 Configure Compilers
 -------------------
-Set ``CXX=...`` and ``FC=...`` to specify the non-default C++ and Fortran
+Set *CXX=...* and *FC=...* to specify the non-default C++ and Fortran
 compilers, respectively.
 
-In general there is only one situation where you have to configure the C++
-compiler in command line, regardless of using ``cmake`` or ``ccmake``, which
-is to compile the GPU OpenACC code with ``pgc++``. The command
-``(c)cmake [...]`` will become ``CXX=pgc++ (c)cmake [...]``.
+In general the only situation where you have to configure the C++
+compiler in command line, regardless of using *cmake* or *ccmake*,
+is to compile the GPU OpenACC code with *pgc++*. The command
+*(c)cmake [...]* will become *CXX=pgc++ (c)cmake [...]*.
 
 Configure Tinker9
 -----------------
@@ -37,9 +37,9 @@ The following options are passed to CMake program with their default
 values (if there is one). **-D** is prefixed to the options. CMake provides
 two standard ways to let users to customize the values:
 
-- Change their values interactively in the ``ccmake`` command line gui;
+- Change their values interactively in the *ccmake* command line gui;
 - Pass the new value to CMake via command line arguments
-  ``cmake -DOPTION=NewValue``.
+  *cmake -DOPTION=NewValue*.
 
 In addition to these two canonical methods, default value can also be set
 by its corresponding environmental variable, documented as **(env)** here.

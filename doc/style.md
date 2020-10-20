@@ -88,7 +88,7 @@ If you want to provide a new global variable as a public interface similar to a
 new variable inside a Fortran module, you should follow the standard C/C++
 method: declaring it in a header file and define it in a source file.
 
-```C++
+```cpp
 // new_var.h
 extern int new_var_unstable_name;
 
@@ -99,7 +99,7 @@ int new_var_unstable_name;
 If the name and usage have been stable for a while, you should change it to the
 following style.
 
-```C++
+```cpp
 // new_module.h
 TINKER_EXTERN int new_var_stable;
 ```
@@ -108,7 +108,7 @@ On the other hand, if you are adding an internal global variable, for instance a
 preallocated global work array, you should always declare it inside the `detail`
 namespace.
 
-```C++
+```cpp
 // new_array.h
 namespace detail {
 extern int* global_work_array;

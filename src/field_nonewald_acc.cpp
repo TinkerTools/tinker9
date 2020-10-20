@@ -99,8 +99,8 @@ void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
    for (int ii = 0; ii < ndpexclude; ++ii) {
       int i = dpexclude[ii][0];
       int k = dpexclude[ii][1];
-      real dscale = dpexclude_scale[ii][0];
-      real pscale = dpexclude_scale[ii][1];
+      real dscale = dpexclude_scale[ii][0] - 1;
+      real pscale = dpexclude_scale[ii][1] - 1;
 
       real xi = x[i];
       real yi = y[i];

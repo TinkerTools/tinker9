@@ -74,13 +74,6 @@ void pair_lj_v3(real r, real invr, //
                 real vscale, real rad, real eps, real evcut, real evoff,
                 real& restrict ev, real& restrict dev)
 {
-   if (r > evoff) {
-      ev = 0;
-      if CONSTEXPR (DO_G) {
-         dev = 0;
-      }
-      return;
-   }
    if CONSTEXPR (SCALE != 1) {
       eps *= vscale;
    }

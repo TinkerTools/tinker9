@@ -6,6 +6,11 @@
 #include "tool/rc_man.h"
 
 
+// TODO: HIPPO remove this file.
+#error This header file was created for debugging.
+#error Comment these lines out if you need to include this header file.
+
+
 namespace tinker {
 bool use_ewald();
 
@@ -22,8 +27,6 @@ void pchg_data(rc_op);
 // AMOBEA: multipole, polarization
 // HIPPO: repulsion
 void pole_data(rc_op);
-
-void mscale_data(rc_op);
 
 
 //====================================================================//

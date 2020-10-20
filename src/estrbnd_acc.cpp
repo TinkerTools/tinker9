@@ -58,7 +58,7 @@ void estrbnd_acc1()
          rp = REAL_MAX(rp, (real)(0.0001));
          real dot = xab * xcb + yab * ycb + zab * zcb;
          real cosine = dot * REAL_RECIP(rab * rcb);
-         cosine = REAL_MIN(1, REAL_MAX(-1, cosine));
+         cosine = REAL_MIN((real)1, REAL_MAX((real)-1, cosine));
          real angle = radian * REAL_ACOS(cosine);
 
          real dt = angle - anat[i];

@@ -77,7 +77,7 @@ void eangle_acc1()
             rp = REAL_MAX(rp, (real)0.0001);
             real dot = xab * xcb + yab * ycb + zab * zcb;
             real cosine = dot * REAL_RSQRT(rab2 * rcb2);
-            cosine = REAL_MIN((real)0.1, REAL_MAX(-1, cosine));
+            cosine = REAL_MIN((real)0.1, REAL_MAX((real)-1, cosine));
             real angle = radian * REAL_ACOS(cosine);
 
             MAYBE_UNUSED real e;
@@ -167,7 +167,7 @@ void eangle_acc1()
          if (rap2 != 0 && rcp2 != 0) {
             real dot = xap * xcp + yap * ycp + zap * zcp;
             real cosine = dot * REAL_RSQRT(rap2 * rcp2);
-            cosine = REAL_MIN(1, REAL_MAX(-1, cosine));
+            cosine = REAL_MIN((real)1, REAL_MAX((real)-1, cosine));
             real angle = radian * REAL_ACOS(cosine);
             real dt = angle - ideal;
             real dt2 = dt * dt;

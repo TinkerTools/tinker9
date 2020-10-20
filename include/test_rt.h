@@ -16,18 +16,24 @@ namespace tinker {
 class TestFile
 {
 private:
-   bool good_;
-   std::string name_;
+   bool good;
+   std::string name;
 
 
 public:
-   /// Writes `content` to file with `name` to disk.
-   TestFile(const std::string& name, const std::string& content);
-   /// Copy `file` to the current working directory.
-   TestFile(const std::string& file);
-   /// Removes the file on disk if possible.
+   /**
+    * Copies file from `src` to `dst` and append the `extra` text to `dst` if
+    * `extra` is not empty.
+    *
+    * If `dst` is an empty string, `dst` will have the same filename in the
+    * current working directory. If `src` is an empty string, it will create a
+    * new file at `dst`.
+    */
+   TestFile(const std::string& src, std::string dst = "",
+            std::string extra = "");
+   /** Removes the file on disk if possible. */
    ~TestFile();
-   /// Prevents file being deleted.
+   /** Prevents the file being deleted. */
    void keep();
 };
 

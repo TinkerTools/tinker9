@@ -1,8 +1,7 @@
-#include "files.h"
-#include "tool/io_fort_str.h"
 #include "mdpq.h"
 #include "test.h"
 #include "test_rt.h"
+#include "tool/io_fort_str.h"
 #include <fstream>
 #include <tinker/detail/files.hh>
 
@@ -29,9 +28,9 @@ using namespace tinker;
 TEST_CASE("Bounds", "[ff][box]")
 {
    const char* xn = "test_bounds.xyz";
-   TestFile xfile(xn, coord);
-   TestFile kfile("test_bounds.key", keyfile);
-   TestFile pfile("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile xfile("", xn, coord);
+   TestFile kfile("", "test_bounds.key", keyfile);
+   TestFile pfile(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    // box: cubic 20 20 20
    // 51, -83, 164 -> -9, -3, 4

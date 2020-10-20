@@ -1,4 +1,3 @@
-#include "files.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "test.h"
@@ -63,13 +62,12 @@ TEST_CASE("Reduce", "[util][math][reduce]")
 
    const char* k = "test_trpcage.key";
    const char* x1 = "test_trpcage.xyz";
-   const char* p = "amoebapro13.prm";
-   std::string k0 = trpcage_key;
-   k0 += "\nbondterm only\n";
-   k0 += "\ngpu-package cuda\n";
-   TestFile fke(k, k0);
-   TestFile fx1(x1, trpcage_xyz);
-   TestFile fpr(p, commit_6fe8e913::amoebapro13_prm);
+   std::string k0 = "bondterm only\n "
+                    "gpu-package cuda\n";
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/trpcage/trpcage.key", k, k0);
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/trpcage/trpcage.xyz", x1);
+   TestFile fpr(TINKER9_DIRSTR
+                "/src/test/file/commit_6fe8e913/amoebapro13.prm");
    const char* argv[] = {"dummy", x1};
    int argc = 2;
    test_begin_with_args(argc, argv);

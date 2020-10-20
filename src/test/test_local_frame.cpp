@@ -1,5 +1,4 @@
 #include "field.h"
-#include "files.h"
 #include "test.h"
 #include "test_rt.h"
 #include <tinker/detail/units.hh>
@@ -19,13 +18,13 @@ static bool do_ij(int i, int /* j */)
 
 TEST_CASE("Local-Frame-1", "[ff][empole][nonewald][local-frame]")
 {
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    const char* k = "test_local_frame.key";
-   std::string key0 = local_frame_key;
 
    const char* x1 = "test_local_frame.xyz";
-   TestFile fx1(x1, local_frame_xyz);
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.xyz",
+                x1);
 
    int usage = 0;
    usage |= calc::xyz;
@@ -33,9 +32,9 @@ TEST_CASE("Local-Frame-1", "[ff][empole][nonewald][local-frame]")
 
    SECTION("empole -- gas phase, no cutoff")
    {
-      std::string key1 = key0;
-      key1 += "multipoleterm    only\n";
-      TestFile fke(k, key1);
+      std::string key1 = "multipoleterm    only\n";
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key",
+                   k, key1);
 
       const char* argv[] = {"dummy", x1};
       int argc = 2;
@@ -85,13 +84,13 @@ TEST_CASE("Local-Frame-1", "[ff][empole][nonewald][local-frame]")
 
 TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]")
 {
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    const char* k = "test_local_frame.key";
-   std::string key0 = local_frame_key;
 
    const char* x1 = "test_local_frame.xyz";
-   TestFile fx1(x1, local_frame_xyz);
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.xyz",
+                x1);
 
    int usage = 0;
    usage |= calc::xyz;
@@ -99,14 +98,14 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]")
 
    SECTION("empole -- pme")
    {
-      std::string key1 = key0;
-      key1 += "multipoleterm    only\n";
+      std::string key1 = "multipoleterm    only\n";
       key1 += "ewald\n";
       key1 += "ewald-cutoff    7.0\n";
       key1 += "neighbor-list\n";
       key1 += "list-buffer    0.1\n";
       key1 += "a-axis    20.0\n";
-      TestFile fke(k, key1);
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key",
+                   k, key1);
 
       const char* argv[] = {"dummy", x1};
       int argc = 2;
@@ -187,16 +186,17 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]")
 
 TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
 {
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    const char* k = "test_local_frame.key";
-   std::string key0 = local_frame_key;
-   key0 += "usolve-cutoff    0.01\n";
-   key0 += "polarizeterm    only\n";
-   TestFile fke(k, key0);
+   std::string key1 = "usolve-cutoff    0.01\n";
+   key1 += "polarizeterm    only\n";
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
+                key1);
 
    const char* x1 = "test_local_frame.xyz";
-   TestFile fx1(x1, local_frame_xyz);
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.xyz",
+                x1);
 
    int usage = 0;
    usage |= calc::xyz;
@@ -396,21 +396,22 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
 
 TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
 {
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    const char* k = "test_local_frame.key";
-   std::string key0 = local_frame_key;
-   key0 += "usolve-cutoff    0.01\n";
-   key0 += "polarizeterm    only\n";
-   key0 += "ewald\n";
-   key0 += "ewald-cutoff    7.0\n";
-   key0 += "neighbor-list\n";
-   key0 += "list-buffer    0.1\n";
-   key0 += "a-axis    20.0\n";
-   TestFile fke(k, key0);
+   std::string key1 = "usolve-cutoff    0.01\n";
+   key1 += "polarizeterm    only\n";
+   key1 += "ewald\n";
+   key1 += "ewald-cutoff    7.0\n";
+   key1 += "neighbor-list\n";
+   key1 += "list-buffer    0.1\n";
+   key1 += "a-axis    20.0\n";
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
+                key1);
 
    const char* x1 = "test_local_frame.xyz";
-   TestFile fx1(x1, local_frame_xyz);
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.xyz",
+                x1);
 
    int usage = 0;
    usage |= calc::xyz;

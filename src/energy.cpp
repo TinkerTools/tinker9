@@ -1,7 +1,7 @@
 #include "energy.h"
+#include "cflux.h"
 #include "md.h"
 #include "nblist.h"
-#include "cflux.h"
 #include "potent.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
@@ -52,8 +52,6 @@ void energy_data(rc_op op)
    // empole_data() must be in front of epolar_data().
    rc_man empole42{empole_data, op};
    rc_man epolar42{epolar_data, op};
-   // Must follow empole_data() and epolar_data().
-   rc_man emplar42{emplar_data, op};
 
    // HIPPO
    rc_man cflux43{cflux_data, op};
@@ -102,19 +100,23 @@ bool use_energi_elec()
 const TimeScaleConfig& default_tsconfig()
 {
    static TimeScaleConfig tsconfig{
-      {"ebond", 0},   {"eangle", 0},  {"estrbnd", 0}, {"eurey", 0},
-      {"eopbend", 0}, {"eimptor", 0}, {"etors", 0},   {"epitors", 0},
-      {"etortor", 0}, {"egeom", 0},
+      {"ebond", 0},         {"eangle", 0},        {"estrbnd", 0},
+      {"eurey", 0},         {"eopbend", 0},       {"eimptor", 0},
+      {"etors", 0},         {"epitors", 0},       {"etortor", 0},
+      {"egeom", 0},
+
+      {"evalence", 0},
 
       {"evdw", 0},
 
-      {"echarge", 0}, {"echglj", 0},
+      {"echarge", 0},       {"echglj", 0},
 
-      {"emplar", 0},  {"empole", 0},  {"epolar", 0},
+      {"emplar", 0},        {"empole", 0},        {"epolar", 0},
 
-      {"empole_chgpen", 0},  {"epolar_chgpen", 0},
+      {"empole_chgpen", 0}, {"epolar_chgpen", 0},
 
-      {"echgtrn", 0}, {"edisp", 0},   {"erepel", 0},  {"ehippo", 0},
+      {"echgtrn", 0},       {"edisp", 0},         {"erepel", 0},
+      {"ehippo", 0},
    };
    return tsconfig;
 }
@@ -175,11 +177,11 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          emplar(vers);
 
 
-   if (hippo_empole(vers)) 
-      if (tscfg("empole_chgpen", ecore_ele)) 
+   if (hippo_empole(vers))
+      if (tscfg("empole_chgpen", ecore_ele))
          empole_chgpen(vers);
-   if (hippo_epolar(vers)) 
-      if (tscfg("epolar_chgpen", ecore_ele)) 
+   if (hippo_epolar(vers))
+      if (tscfg("epolar_chgpen", ecore_ele))
          epolar_chgpen(vers);
    if (use_potent(chgtrn_term))
       if (tscfg("echgtrn", ecore_ele))
@@ -192,44 +194,49 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          erepel(vers);
 
 
-   // bonded terms
+   if (pltfm_config & CU_PLTFM) {
+      if (tscfg("evalence", ecore_val))
+         evalence(vers);
+   } else {
+      // bonded terms
 
 
-   if (use_potent(bond_term))
-      if (tscfg("ebond", ecore_val))
-         ebond(vers);
-   if (use_potent(angle_term))
-      if (tscfg("eangle", ecore_val))
-         eangle(vers);
-   if (use_potent(strbnd_term))
-      if (tscfg("estrbnd", ecore_val))
-         estrbnd(vers);
-   if (use_potent(urey_term))
-      if (tscfg("eurey", ecore_val))
-         eurey(vers);
-   if (use_potent(opbend_term))
-      if (tscfg("eopbend", ecore_val))
-         eopbend(vers);
-   if (use_potent(imptors_term))
-      if (tscfg("eimptor", ecore_val))
-         eimptor(vers);
-   if (use_potent(torsion_term))
-      if (tscfg("etors", ecore_val))
-         etors(vers);
-   if (use_potent(pitors_term))
-      if (tscfg("epitors", ecore_val))
-         epitors(vers);
-   if (use_potent(tortor_term))
-      if (tscfg("etortor", ecore_val))
-         etortor(vers);
+      if (use_potent(bond_term))
+         if (tscfg("ebond", ecore_val))
+            ebond(vers);
+      if (use_potent(angle_term))
+         if (tscfg("eangle", ecore_val))
+            eangle(vers);
+      if (use_potent(strbnd_term))
+         if (tscfg("estrbnd", ecore_val))
+            estrbnd(vers);
+      if (use_potent(urey_term))
+         if (tscfg("eurey", ecore_val))
+            eurey(vers);
+      if (use_potent(opbend_term))
+         if (tscfg("eopbend", ecore_val))
+            eopbend(vers);
+      if (use_potent(imptors_term))
+         if (tscfg("eimptor", ecore_val))
+            eimptor(vers);
+      if (use_potent(torsion_term))
+         if (tscfg("etors", ecore_val))
+            etors(vers);
+      if (use_potent(pitors_term))
+         if (tscfg("epitors", ecore_val))
+            epitors(vers);
+      if (use_potent(tortor_term))
+         if (tscfg("etortor", ecore_val))
+            etortor(vers);
 
 
-   // misc. terms
+      // misc. terms
 
 
-   if (use_potent(geom_term))
-      if (tscfg("egeom", ecore_val))
-         egeom(vers);
+      if (use_potent(geom_term))
+         if (tscfg("egeom", ecore_val))
+            egeom(vers);
+   }
 
 
 #if TINKER_CUDART

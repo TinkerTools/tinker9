@@ -1,5 +1,5 @@
-Tinker9: Tools for Molecular Design with GPU Support
-====================================================
+Tinker9: Next Generation of Tinker with GPU Support
+===================================================
 [//]: # (Badges)
 [![Build Status](https://travis-ci.com/tinkertools/tinker9.svg?branch=master)](https://travis-ci.com/tinkertools/tinker9)
 [![Docs Status](https://readthedocs.org/projects/tinker9-manual/badge/?version=latest&style=flat)](https://tinker9-manual.readthedocs.io)

@@ -5,6 +5,7 @@
 #include "epolar.h"
 #include "evdw.h"
 #include "glob.chglj.h"
+#include "glob.mplar.h"
 #include "glob.nblist.h"
 #include "glob.spatial.h"
 #include "md.h"
@@ -244,48 +245,11 @@ static void nblist_alloc(nblist_t version, NBListUnit& nblu, int maxn,
 
 #if TINKER_CUDART
 static bool alloc_thrust_cache;
-// rc_alloc
-static void spatial_alloc(SpatialUnit& unt, int n, real cut, real buf,
-                          const real* x, const real* y, const real* z)
-{
-   spatial_data_alloc(unt, n, cut, buf, x, y, z);
-   alloc_thrust_cache = true;
-}
-
-
-// rc_init
-template <class SPT>
-static void spatial_build(SPT unt)
-{
-   spatial_data_init_cu(unt);
-}
-
-
-template <class SPT>
-static void spatial_update(SPT unt)
-{
-   extern int check_spatial(int, real, int*, const real*, const real*,
-                            const real*, real*, real*, real*);
-   auto& st = *unt;
-   int answer = check_spatial(st.n, st.buffer, st.update, st.x, st.y, st.z,
-                              st.xold, st.yold, st.zold);
-   if (answer) {
-      spatial_data_init_cu(unt);
-   } else {
-      spatial_data_update_sorted(unt);
-   }
-}
 #else
-static void spatial_alloc(SpatialUnit&, int, real, real, const real*,
-                          const real*, const real*)
-{}
-template <class SPT>
-static void spatial_build(SPT)
-{}
-template <class SPT>
-static void spatial_update(SPT)
-{}
 #endif
+
+
+// rc_alloc
 static void spatial_alloc( //
    Spatial2Unit& unt, int n, real cut, real buf, const real* x, const real* y,
    const real* z, int nstype,            //
@@ -298,6 +262,34 @@ static void spatial_alloc( //
    spatial2_data_alloc(unt, n, cut, buf, x, y, z, nstype, //
                        ns1, js1, ns2, js2, ns3, js3, ns4, js4);
    alloc_thrust_cache = true;
+#else
+#endif
+}
+
+
+// rc_init
+static void spatial_build(Spatial2Unit unt)
+{
+#if TINKER_CUDART
+   spatial_data_init_cu(unt);
+#else
+#endif
+}
+
+
+static void spatial_update(Spatial2Unit unt)
+{
+#if TINKER_CUDART
+   extern int check_spatial(int, real, int*, const real*, const real*,
+                            const real*, real*, real*, real*);
+   auto& st = *unt;
+   int answer = check_spatial(st.n, st.buffer, st.update, st.x, st.y, st.z,
+                              st.xold, st.yold, st.zold);
+   if (answer) {
+      spatial_data_init_cu(unt);
+   } else {
+      spatial_data_update_sorted(unt);
+   }
 #else
 #endif
 }
@@ -318,17 +310,15 @@ void nblist_data(rc_op op)
 
 
 #if TINKER_CUDART
-      SpatialUnit::clear();
-      thrust_cache_dealloc();
-      mspatial_unit.close();
-
-
       Spatial2Unit::clear();
       cspatial_v2_unit.close();
       vspatial_v2_unit.close();
       uspatial_v2_unit.close();
       mspatial_v2_unit.close();
       dspspatial_v2_unit.close();
+
+
+      thrust_cache_dealloc();
 #endif
    }
 
@@ -398,8 +388,9 @@ void nblist_data(rc_op op)
    if (u & NBL_SPATIAL) {
       auto& un2 = cspatial_v2_unit;
       if (op & rc_alloc) {
-         spatial_alloc(un2, n, cut, buf, x, y, z, 2, //
-                       ncexclude, cexclude, nvexclude, vexclude);
+         spatial_alloc(un2, n, cut, buf, x, y, z, 3, //
+                       ncexclude, cexclude, nvexclude, vexclude, ncvexclude,
+                       cvexclude);
       }
       if (op & rc_init) {
          spatial_build(un2);
@@ -421,20 +412,18 @@ void nblist_data(rc_op op)
       }
    }
    if (u & NBL_SPATIAL) {
-      auto& unt = mspatial_unit;
       auto& un2 = mspatial_v2_unit;
       if (op & rc_alloc) {
-         spatial_alloc(unt, n, cut, buf, x, y, z);
-         // spatial_alloc(un2, n, cut, buf, x, y, z, 1, nmexclude, mexclude);
-         if (not mplpot::use_chgpen) {
-            spatial_alloc(un2, n, cut, buf, x, y, z, 1, nmexclude, mexclude);
-         } else {
+         if (mplpot::use_chgpen) {
             spatial_alloc(un2, n, cut, buf, x, y, z, 2, nmdwexclude, mdwexclude,
                           nrepexclude, repexclude);
+         } else {
+            spatial_alloc(un2, n, cut, buf, x, y, z, 4, nmdpuexclude,
+                          mdpuexclude, nmexclude, mexclude, ndpexclude,
+                          dpexclude, nuexclude, uexclude);
          }
       }
       if (op & rc_init) {
-         spatial_build(unt);
          spatial_build(un2);
       }
    }
@@ -555,18 +544,12 @@ void refresh_neighbors()
       nblist_update_acc(unt);
    }
    if (u & NBL_SPATIAL) {
-      auto& unt = mspatial_unit;
       auto& un2 = mspatial_v2_unit;
       if (rc_flag & calc::traj) {
-         unt->x = x;
-         unt->y = y;
-         unt->z = z;
-         unt.update_deviceptr(*unt, PROCEED_NEW_Q);
          un2->x = x;
          un2->y = y;
          un2->z = z;
       }
-      spatial_update(unt);
       spatial_update(un2);
    }
 
