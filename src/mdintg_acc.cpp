@@ -5,6 +5,7 @@
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
+#include <tinker/detail/molcul.hh>
 #include <tinker/detail/units.hh>
 
 
@@ -20,29 +21,54 @@ void mdrest_acc(int istep)
 
    // zero out the total mass and overall linear velocity
 
-   mass_prec totmass = 0;
+   mass_prec totmass = molcul::totmass;
    vel_prec vtot1 = 0, vtot2 = 0, vtot3 = 0;
+   energy_prec etrans = 0;
 
-   // compute linear velocity of the system center of mass
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM) {
+      bool copyout = inform::debug or not bound::use_bounds;
+      mdrest_remove_pbc_momentum_cu(copyout, vtot1, vtot2, vtot3);
+   } else
+#endif
+   {
+      // compute linear velocity of the system center of mass
 
-   #pragma acc parallel loop independent async\
-               deviceptr(mass,vx,vy,vz)
-   for (int i = 0; i < n; ++i) {
-      mass_prec weigh = mass[i];
-      totmass += weigh;
-      vtot1 += vx[i] * weigh;
-      vtot2 += vy[i] * weigh;
-      vtot3 += vz[i] * weigh;
+      #pragma acc parallel loop independent async\
+                  deviceptr(mass,vx,vy,vz)
+      for (int i = 0; i < n; ++i) {
+         mass_prec weigh = mass[i];
+         vtot1 += vx[i] * weigh;
+         vtot2 += vy[i] * weigh;
+         vtot3 += vz[i] * weigh;
+      }
+
+      vtot1 /= totmass;
+      vtot2 /= totmass;
+      vtot3 /= totmass;
+
+      // eliminate any translation of the overall system
+
+      #pragma acc parallel loop independent async deviceptr(vx,vy,vz)
+      for (int i = 0; i < n; ++i) {
+         vx[i] -= vtot1;
+         vy[i] -= vtot2;
+         vz[i] -= vtot3;
+      }
    }
 
-   vtot1 /= totmass;
-   vtot2 /= totmass;
-   vtot3 /= totmass;
+   // print the translational velocity of the overall system
 
-   // compute translational kinetic energy of overall system
+   if (inform::debug) {
+      // compute translational kinetic energy of overall system
+      etrans = vtot1 * vtot1 + vtot2 * vtot2 + vtot3 * vtot3;
+      etrans *= 0.5f * totmass / ekcal;
 
-   energy_prec etrans = vtot1 * vtot1 + vtot2 * vtot2 + vtot3 * vtot3;
-   etrans *= 0.5f * totmass / ekcal;
+      print(stdout,
+            " System Linear Velocity :  %12.2e%12.2e%12.2e\n Translational "
+            "Kinetic Energy :%10s%12.4f Kcal/mole\n",
+            vtot1, vtot2, vtot3, "", etrans);
+   }
 
    energy_prec erot = 0;
    pos_prec xtot = 0, ytot = 0, ztot = 0;
@@ -114,29 +140,9 @@ void mdrest_acc(int istep)
       }
       erot = vang[0] * mang1 + vang[1] * mang2 + vang[2] * mang3;
       erot *= (0.5f / ekcal);
-   }
 
-   // eliminate any translation of the overall system
+      // eliminate any rotation about the system center of mass
 
-   #pragma acc parallel loop independent async deviceptr(vx,vy,vz)
-   for (int i = 0; i < n; ++i) {
-      vx[i] -= vtot1;
-      vy[i] -= vtot2;
-      vz[i] -= vtot3;
-   }
-
-   // print the translational velocity of the overall system
-
-   if (inform::debug) {
-      print(stdout,
-            " System Linear Velocity :  %12.2f%12.2f%12.2f\n Translational "
-            "Kinetic Energy :%10s%12.4f Kcal/mole\n",
-            vtot1, vtot2, vtot3, "", etrans);
-   }
-
-   // eliminate any rotation about the system center of mass
-
-   if (!bound::use_bounds) {
       #pragma acc parallel loop independent async\
                   deviceptr(xpos,ypos,zpos,vx,vy,vz)
       for (int i = 0; i < n; ++i) {
@@ -147,15 +153,15 @@ void mdrest_acc(int istep)
          vy[i] -= vang[2] * xdel + vang[0] * zdel;
          vz[i] -= vang[0] * ydel + vang[1] * xdel;
       }
-   }
 
-   // print the angular velocity of the overall system
+      // print the angular velocity of the overall system
 
-   if (inform::debug) {
-      print(stdout,
-            " System Angular Velocity : %12.2f%12.2f%12.2f\n Rotational "
-            "Kinetic Energy :%13s%12.4f Kcal/mole\n",
-            vang[0], vang[1], vang[2], "", erot);
+      if (inform::debug) {
+         print(stdout,
+               " System Angular Velocity : %12.2e%12.2e%12.2e\n Rotational "
+               "Kinetic Energy :%13s%12.4f Kcal/mole\n",
+               vang[0], vang[1], vang[2], "", erot);
+      }
    }
 }
 }
