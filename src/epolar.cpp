@@ -12,13 +12,13 @@
 #include <map>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/inform.hh>
+#include <tinker/detail/mplpot.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/polgrp.hh>
 #include <tinker/detail/polpot.hh>
 #include <tinker/detail/sizes.hh>
 #include <tinker/detail/units.hh>
 #include <tinker/detail/uprior.hh>
-#include <tinker/detail/mplpot.hh>
 
 
 namespace tinker {

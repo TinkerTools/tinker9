@@ -16,7 +16,7 @@
 namespace tinker {
 bool use_dewald()
 {
-   return use_potent(disp_term) && limits::use_dewald;
+   return use_potent(disp_term) and limits::use_dewald;
 }
 
 

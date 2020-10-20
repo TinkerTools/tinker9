@@ -3,8 +3,8 @@
 #include "nblist.h"
 #include "potent.h"
 #include "tool/host_zero.h"
-#include <tinker/detail/sizes.hh>
 #include <tinker/detail/mplpot.hh>
+#include <tinker/detail/sizes.hh>
 
 
 namespace tinker {

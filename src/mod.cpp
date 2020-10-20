@@ -6,6 +6,7 @@
 #include "mod.bitor.h"
 #include "mod.bndpot.h"
 #include "mod.bndstr.h"
+#include "mod.cflux.h"
 #include "mod.charge.h"
 #include "mod.chgpen.h"
 #include "mod.chgpot.h"
@@ -35,7 +36,6 @@
 #include "mod.urypot.h"
 #include "mod.vdw.h"
 #include "mod.vdwpot.h"
-#include "mod.cflux.h"
 
 #include "glob.accasync.h"
 #include "glob.box.h"
