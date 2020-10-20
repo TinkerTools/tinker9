@@ -5,11 +5,13 @@
 #include "tool/io_fort_str.h"
 #include <tinker/detail/bndpot.hh>
 #include <tinker/detail/bndstr.hh>
+#include <tinker/detail/potent.hh>
 
 namespace tinker {
 void ebond_data(rc_op op)
 {
-   if (!use_potent(bond_term) && !use_potent(strbnd_term))
+   if (!use_potent(bond_term) && !use_potent(strbnd_term) &&
+       !potent::use_chgflx)
       return;
 
    bool rc_a = rc_flag & calc::analyz;

@@ -6,6 +6,7 @@
 #include <tinker/detail/chgpen.hh>
 #include <tinker/detail/sizes.hh>
 #include <tinker/detail/mplpot.hh>
+#include <tinker/detail/potent.hh>
 
 
 namespace tinker {
@@ -60,6 +61,7 @@ void empole_chgpen(int vers)
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
+   int use_cf = potent::use_chgflx;
 
 
    host_zero(energy_em, virial_em);
@@ -75,12 +77,26 @@ void empole_chgpen(int vers)
          darray::zero(PROCEED_NEW_Q, n, demx, demy, demz);
    }
 
+   if (use_cf) 
+      alterchg();
+   
 
    mpole_init(vers);
+   
+   use_cf = use_cf and do_g;
+
+   
+   if (use_cf) {
+      zero_pot();
+   }
    if (use_ewald())
-      empole_chgpen_ewald(vers);
+      empole_chgpen_ewald(vers, use_cf);
    else
-      empole_chgpen_nonewald(vers);
+      empole_chgpen_nonewald(vers, use_cf);
+
+   if (use_cf)
+      dcflux(vers, demx, demy, demz, vir_em);
+
    torque(vers, demx, demy, demz);
    if (do_v) {
       virial_buffer u2 = vir_trq;
@@ -91,7 +107,6 @@ void empole_chgpen(int vers)
          virial_elec[iv] += v2[iv];
       }
    }
-
 
    if (rc_a) {
       if (do_e) {
@@ -115,37 +130,37 @@ void empole_chgpen(int vers)
 }
 
 
-void empole_chgpen_nonewald(int vers)
+void empole_chgpen_nonewald(int vers, int use_cf)
 {
 #if TINKER_CUDART
    if (mlist_version() & NBL_SPATIAL)
-      empole_chgpen_nonewald_cu(vers);
+      empole_chgpen_nonewald_cu(vers, use_cf);
    else
 #endif
       empole_chgpen_nonewald_acc(vers);
 }
 
 
-void empole_chgpen_ewald(int vers)
+void empole_chgpen_ewald(int vers, int use_cf)
 {
-   empole_chgpen_ewald_real_self(vers);
-   empole_chgpen_ewald_recip(vers);
+   empole_chgpen_ewald_real_self(vers, use_cf);
+   empole_chgpen_ewald_recip(vers, use_cf);
 }
 
 
-void empole_chgpen_ewald_real_self(int vers)
+void empole_chgpen_ewald_real_self(int vers, int use_cf)
 {
 #if TINKER_CUDART
    if (mlist_version() & NBL_SPATIAL)
-      empole_chgpen_ewald_real_self_cu(vers);
+      empole_chgpen_ewald_real_self_cu(vers, use_cf);
    else
 #endif
       empole_chgpen_ewald_real_self_acc(vers);
 }
 
 
-void empole_chgpen_ewald_recip(int vers)
+void empole_chgpen_ewald_recip(int vers, int use_cf)
 {
-   empole_chgpen_ewald_recip_acc(vers);
+   empole_chgpen_ewald_recip_acc(vers, use_cf);
 }
 }

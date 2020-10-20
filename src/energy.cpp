@@ -1,6 +1,7 @@
 #include "energy.h"
 #include "md.h"
 #include "nblist.h"
+#include "cflux.h"
 #include "potent.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
@@ -55,6 +56,7 @@ void energy_data(rc_op op)
    rc_man emplar42{emplar_data, op};
 
    // HIPPO
+   rc_man cflux43{cflux_data, op};
    rc_man empole43{empole_chgpen_data, op};
    rc_man epolar43{epolar_chgpen_data, op};
    rc_man echgtrn42{echgtrn_data, op};

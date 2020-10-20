@@ -1,5 +1,5 @@
 
-template <class Ver, class ETYP>
+template <class Ver, class ETYP, bool CFLX>
 __global__
 void epolar_chgpen_cu1(
    int n, TINKER_IMAGE_PARAMS, count_buffer restrict np,
@@ -11,9 +11,9 @@ void epolar_chgpen_cu1(
    const Spatial::SortedAtom* restrict sorted, int nakpl,
    const int* restrict iakpl, int niak, const int* restrict iak,
    const int* restrict lst, real (*restrict ufld)[3], real (*restrict dufld)[6],
-   const real (*restrict uind)[3], const real (*restrict rpole)[10],
-   real* restrict pcore, real* restrict pval, const real* restrict palpha,
-   real aewald, real f)
+   const real (*restrict uind)[3], real* restrict pot,
+   const real (*restrict rpole)[10], real* restrict pcore, real* restrict pval,
+   const real* restrict palpha, real aewald, real f)
 {
    constexpr bool do_a = Ver::a;
    constexpr bool do_e = Ver::e;
@@ -66,6 +66,7 @@ void epolar_chgpen_cu1(
    __shared__ real shdui3[BLOCK_DIM];
    __shared__ real shdui4[BLOCK_DIM];
    __shared__ real shdui5[BLOCK_DIM];
+   __shared__ real shpoti[BLOCK_DIM];
    real gxk;
    real gyk;
    real gzk;
@@ -78,6 +79,7 @@ void epolar_chgpen_cu1(
    real duk3;
    real duk4;
    real duk5;
+   real potk;
    __shared__ real shci[BLOCK_DIM];
    __shared__ real shdix[BLOCK_DIM];
    __shared__ real shdiy[BLOCK_DIM];
@@ -128,6 +130,7 @@ void epolar_chgpen_cu1(
          shdui3[threadIdx.x] = 0;
          shdui4[threadIdx.x] = 0;
          shdui5[threadIdx.x] = 0;
+         shpoti[threadIdx.x] = 0;
          gxk = 0;
          gyk = 0;
          gzk = 0;
@@ -140,6 +143,7 @@ void epolar_chgpen_cu1(
          duk3 = 0;
          duk4 = 0;
          duk5 = 0;
+         potk = 0;
       }
 
 
@@ -196,21 +200,22 @@ void epolar_chgpen_cu1(
       real zr = zk - zi;
 
       real e;
+      real pota, potb;
       PairPolarGrad pgrad;
       zero(pgrad);
 
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
-         pair_polar_chgpen<do_e, do_g, ETYP>( //
-            r2, xr, yr, zr, scaleb, scalec,   //
+         pair_polar_chgpen<do_e, do_g, ETYP, CFLX>( //
+            r2, xr, yr, zr, scaleb, scalec,         //
             ci, dix, diy, diz, corei, vali, alphai, qixx, qixy, qixz, qiyy,
             qiyz, qizz, uix, uiy, uiz, //
             ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy,
-            qkyz, qkzz, ukx, uky, ukz, //
-            f, aewald, e, pgrad);
+            qkyz, qkzz, ukx, uky, ukz, f, aewald, //
+            e, pota, potb, pgrad);
 
          if CONSTEXPR (do_a)
-            if (e != 0 and (scalea+scaleb) != 0)
+            if (e != 0)
                nptl += 1;
          if CONSTEXPR (do_e)
             eptl += cvt_to<ebuf_prec>(e);
@@ -255,6 +260,10 @@ void epolar_chgpen_cu1(
                cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
             vptlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
          }
+         if CONSTEXPR (CFLX) {
+            shpoti[klane] += pota;
+            potk += potb
+         }
       } // end if (include)
 
 
@@ -271,6 +280,7 @@ void epolar_chgpen_cu1(
          atomic_add(shdui3[threadIdx.x], &dufld[shi][3]);
          atomic_add(shdui4[threadIdx.x], &dufld[shi][4]);
          atomic_add(shdui5[threadIdx.x], &dufld[shi][5]);
+         atomic_add(shpoti[threadIdx.x], pot, shi);
          atomic_add(gxk, gx, k);
          atomic_add(gyk, gy, k);
          atomic_add(gzk, gz, k);
@@ -283,6 +293,7 @@ void epolar_chgpen_cu1(
          atomic_add(duk3, &dufld[k][3]);
          atomic_add(duk4, &dufld[k][4]);
          atomic_add(duk5, &dufld[k][5]);
+         atomic_add(potk, pot, k);
       }
    }
    // */
@@ -304,6 +315,7 @@ void epolar_chgpen_cu1(
          shdui3[threadIdx.x] = 0;
          shdui4[threadIdx.x] = 0;
          shdui5[threadIdx.x] = 0;
+         shpoti[threadIdx.x] = 0;
          gxk = 0;
          gyk = 0;
          gzk = 0;
@@ -316,6 +328,7 @@ void epolar_chgpen_cu1(
          duk3 = 0;
          duk4 = 0;
          duk5 = 0;
+         potk = 0;
       }
 
 
@@ -410,18 +423,19 @@ void epolar_chgpen_cu1(
          real zr = zk - zi;
 
          real e;
+         real pota, potb;
          PairPolarGrad pgrad;
          zero(pgrad);
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_polar_chgpen<do_e, do_g, ETYP>( //
-               r2, xr, yr, zr, scaleb, scalec,   //
+            pair_polar_chgpen<do_e, do_g, ETYP, CFLX>( //
+               r2, xr, yr, zr, scaleb, scalec,         //
                ci, dix, diy, diz, corei, vali, alphai, qixx, qixy, qixz, qiyy,
                qiyz, qizz, uix, uiy, uiz, //
                ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy,
-               qkyz, qkzz, ukx, uky, ukz, //
-               f, aewald, e, pgrad);
+               qkyz, qkzz, ukx, uky, ukz, f, aewald, //
+               e, pota, potb, pgrad);
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -469,6 +483,10 @@ void epolar_chgpen_cu1(
                                            (zr * pgrad.frcy + yr * pgrad.frcz));
                vptlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
             }
+            if CONSTEXPR (CFLX) {
+               shpoti[klane] += pota;
+               potk += potb
+            }
          } // end if (include)
 
 
@@ -489,6 +507,7 @@ void epolar_chgpen_cu1(
          atomic_add(shdui3[threadIdx.x], &dufld[shi][3]);
          atomic_add(shdui4[threadIdx.x], &dufld[shi][4]);
          atomic_add(shdui5[threadIdx.x], &dufld[shi][5]);
+         atomic_add(shpoti[threadIdx.x], pot, shi);
          atomic_add(gxk, gx, k);
          atomic_add(gyk, gy, k);
          atomic_add(gzk, gz, k);
@@ -501,6 +520,7 @@ void epolar_chgpen_cu1(
          atomic_add(duk3, &dufld[k][3]);
          atomic_add(duk4, &dufld[k][4]);
          atomic_add(duk5, &dufld[k][5]);
+         atomic_add(potk, pot, k);
       }
    }
    // */
@@ -522,6 +542,7 @@ void epolar_chgpen_cu1(
          shdui3[threadIdx.x] = 0;
          shdui4[threadIdx.x] = 0;
          shdui5[threadIdx.x] = 0;
+         shpoti[threadIdx.x] = 0;
          gxk = 0;
          gyk = 0;
          gzk = 0;
@@ -534,6 +555,7 @@ void epolar_chgpen_cu1(
          duk3 = 0;
          duk4 = 0;
          duk5 = 0;
+         potk = 0;
       }
 
 
@@ -616,18 +638,19 @@ void epolar_chgpen_cu1(
          real zr = zk - zi;
 
          real e;
+         real pota, potb;
          PairPolarGrad pgrad;
          zero(pgrad);
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_polar_chgpen<do_e, do_g, ETYP>( //
-               r2, xr, yr, zr, scaleb, scalec,   //
+            pair_polar_chgpen<do_e, do_g, ETYP, CFLX>( //
+               r2, xr, yr, zr, scaleb, scalec,         //
                ci, dix, diy, diz, corei, vali, alphai, qixx, qixy, qixz, qiyy,
                qiyz, qizz, uix, uiy, uiz, //
                ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy,
-               qkyz, qkzz, ukx, uky, ukz, //
-               f, aewald, e, pgrad);
+               qkyz, qkzz, ukx, uky, ukz, f, aewald, //
+               e, pota, potb, pgrad);
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -675,6 +698,10 @@ void epolar_chgpen_cu1(
                                            (zr * pgrad.frcy + yr * pgrad.frcz));
                vptlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
             }
+            if CONSTEXPR (CFLX) {
+               shpoti[klane] += pota;
+               potk += potb
+            }
          } // end if (include)
       }
 
@@ -692,6 +719,7 @@ void epolar_chgpen_cu1(
          atomic_add(shdui3[threadIdx.x], &dufld[shi][3]);
          atomic_add(shdui4[threadIdx.x], &dufld[shi][4]);
          atomic_add(shdui5[threadIdx.x], &dufld[shi][5]);
+         atomic_add(shpoti[threadIdx.x], pot, shi);
          atomic_add(gxk, gx, k);
          atomic_add(gyk, gy, k);
          atomic_add(gzk, gz, k);
@@ -704,6 +732,7 @@ void epolar_chgpen_cu1(
          atomic_add(duk3, &dufld[k][3]);
          atomic_add(duk4, &dufld[k][4]);
          atomic_add(duk5, &dufld[k][5]);
+         atomic_add(potk, pot, k);
       }
    }
    // */

@@ -35,7 +35,7 @@
 #include "mod.urypot.h"
 #include "mod.vdw.h"
 #include "mod.vdwpot.h"
-
+#include "mod.cflux.h"
 
 #include "glob.accasync.h"
 #include "glob.box.h"

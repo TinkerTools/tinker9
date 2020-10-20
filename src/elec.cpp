@@ -23,6 +23,7 @@
 #include <tinker/detail/mpole.hh>
 #include <tinker/detail/polgrp.hh>
 #include <tinker/detail/polpot.hh>
+#include <tinker/detail/potent.hh>
 
 
 
@@ -272,7 +273,8 @@ void chgpen_data(rc_op op)
       nwexclude = 0;
       darray::deallocate(wexclude, wexclude_scale);
 
-      
+
+      darray::deallocate(pval0);
       darray::deallocate(pval);
       darray::deallocate(palpha);
       darray::deallocate(pcore);
@@ -596,11 +598,12 @@ void chgpen_data(rc_op op)
       darray::copyin(WAIT_NEW_Q, nmdwexclude, mdwexclude, ik_vec.data());
       darray::copyin(WAIT_NEW_Q, nmdwexclude, mdwexclude_scale,
                      scal_vec.data());
-      darray::allocate(n, &pcore, &pval, &palpha);
+      darray::allocate(n, &pcore, &pval0, &pval, &palpha);
    }
 
    if (op & rc_init) {
       darray::copyin(WAIT_NEW_Q, n, pcore, chgpen::pcore);
+      darray::copyin(WAIT_NEW_Q, n, pval0, chgpen::pval0);
       darray::copyin(WAIT_NEW_Q, n, pval, chgpen::pval);
       darray::copyin(WAIT_NEW_Q, n, palpha, chgpen::palpha);
    }
@@ -759,6 +762,13 @@ bool amoeba_evdw(int vers)
 }
 
 
+bool chgflux(int vers)
+{
+   if (potent::use_chgflx)
+      return true;
+   else
+      return false;
+}
 bool hippo_empole(int vers)
 {
    if (!mplpot::use_chgpen)

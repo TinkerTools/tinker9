@@ -211,17 +211,17 @@ void empole_chgpen_nonewald_acc1()
 
 void empole_chgpen_nonewald_acc(int vers)
 {
-   if (vers == calc::v0)
-      empole_chgpen_nonewald_acc1<calc::V0>();
-   else if (vers == calc::v1)
-      empole_chgpen_nonewald_acc1<calc::V1>();
-   else if (vers == calc::v3)
-      empole_chgpen_nonewald_acc1<calc::V3>();
-   else if (vers == calc::v4)
-      empole_chgpen_nonewald_acc1<calc::V4>();
-   else if (vers == calc::v5)
-      empole_chgpen_nonewald_acc1<calc::V5>();
-   else if (vers == calc::v6)
-      empole_chgpen_nonewald_acc1<calc::V6>();
+   // if (vers == calc::v0)
+   //    empole_chgpen_nonewald_acc1<calc::V0>();
+   // else if (vers == calc::v1)
+   //    empole_chgpen_nonewald_acc1<calc::V1>();
+   // else if (vers == calc::v3)
+   //    empole_chgpen_nonewald_acc1<calc::V3>();
+   // else if (vers == calc::v4)
+   //    empole_chgpen_nonewald_acc1<calc::V4>();
+   // else if (vers == calc::v5)
+   //    empole_chgpen_nonewald_acc1<calc::V5>();
+   // else if (vers == calc::v6)
+   //    empole_chgpen_nonewald_acc1<calc::V6>();
 }
 }

@@ -1,7 +1,7 @@
 #include "add.h"
-#include "empole_chgpen.h"
 #include "epolar_chgpen.h"
 #include "epolar_trq.h"
+#include "cflux.h"
 #include "glob.spatial.h"
 #include "image.h"
 #include "launch.h"
@@ -15,7 +15,7 @@
 
 
 namespace tinker {
-template <class Ver, class ETYP>
+template <class Ver, class ETYP, int CFLX>
 __global__
 void epolar_chgpen_cu1(
    int n, TINKER_IMAGE_PARAMS, count_buffer restrict np,
@@ -27,9 +27,9 @@ void epolar_chgpen_cu1(
    const Spatial::SortedAtom* restrict sorted, int nakpl,
    const int* restrict iakpl, int niak, const int* restrict iak,
    const int* restrict lst, real (*restrict ufld)[3], real (*restrict dufld)[6],
-   const real (*restrict uind)[3], const real (*restrict rpole)[10],
-   real* restrict pcore, real* restrict pval, const real* restrict palpha,
-   real aewald, real f)
+   const real (*restrict uind)[3], real* restrict pot,
+   const real (*restrict rpole)[10], real* restrict pcore, real* restrict pval,
+   const real* restrict palpha, real aewald, real f)
 {
    constexpr bool do_a = Ver::a;
    constexpr bool do_e = Ver::e;
@@ -82,6 +82,7 @@ void epolar_chgpen_cu1(
    __shared__ real shdui3[BLOCK_DIM];
    __shared__ real shdui4[BLOCK_DIM];
    __shared__ real shdui5[BLOCK_DIM];
+   __shared__ real shpoti[BLOCK_DIM];
    real gxk;
    real gyk;
    real gzk;
@@ -94,6 +95,7 @@ void epolar_chgpen_cu1(
    real duk3;
    real duk4;
    real duk5;
+   real potk;
    __shared__ real shci[BLOCK_DIM];
    __shared__ real shdix[BLOCK_DIM];
    __shared__ real shdiy[BLOCK_DIM];
@@ -157,6 +159,10 @@ void epolar_chgpen_cu1(
          duk4 = 0;
          duk5 = 0;
       }
+      if CONSTEXPR (CFLX) {
+         shpoti[threadIdx.x] = 0;
+         potk = 0;
+      }
 
 
       int shi = exclude[ii][0];
@@ -211,22 +217,23 @@ void epolar_chgpen_cu1(
       real yr = yk - yi;
       real zr = zk - zi;
 
-      real e;
+      real e = 0;
+      real pota, potb;
       PairPolarGrad pgrad;
       zero(pgrad);
 
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
-         pair_polar_chgpen<do_e, do_g, ETYP>( //
-            r2, xr, yr, zr, scaleb, scalec,   //
+         pair_polar_chgpen<do_e, do_g, ETYP, CFLX>( //
+            r2, xr, yr, zr, scaleb, scalec,         //
             ci, dix, diy, diz, corei, vali, alphai, qixx, qixy, qixz, qiyy,
             qiyz, qizz, uix, uiy, uiz, //
             ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy,
-            qkyz, qkzz, ukx, uky, ukz, //
-            f, aewald, e, pgrad);
+            qkyz, qkzz, ukx, uky, ukz, f, aewald, //
+            e, pota, potb, pgrad);
 
          if CONSTEXPR (do_a)
-            if (e != 0)
+            if (e != 0 and scaleb != 0)
                nptl += 1;
          if CONSTEXPR (do_e)
             eptl += cvt_to<ebuf_prec>(e);
@@ -271,6 +278,10 @@ void epolar_chgpen_cu1(
                cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
             vptlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
          }
+         // if CONSTEXPR (CFLX) {
+         //    shpoti[klane] += pota;
+         //    potk += potb;
+         // }
       } // end if (include)
 
 
@@ -299,6 +310,10 @@ void epolar_chgpen_cu1(
          atomic_add(duk3, &dufld[k][3]);
          atomic_add(duk4, &dufld[k][4]);
          atomic_add(duk5, &dufld[k][5]);
+      }
+      if CONSTEXPR (CFLX) {
+         atomic_add(shpoti[threadIdx.x], pot, shi);
+         atomic_add(potk, pot, k);
       }
    }
    // */
@@ -332,6 +347,10 @@ void epolar_chgpen_cu1(
          duk3 = 0;
          duk4 = 0;
          duk5 = 0;
+      }
+      if CONSTEXPR (CFLX) {
+         shpoti[threadIdx.x] = 0;
+         potk = 0;
       }
 
 
@@ -426,18 +445,19 @@ void epolar_chgpen_cu1(
          real zr = zk - zi;
 
          real e;
+         real pota = 0, potb = 0;
          PairPolarGrad pgrad;
          zero(pgrad);
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_polar_chgpen<do_e, do_g, ETYP>( //
-               r2, xr, yr, zr, scaleb, scalec,   //
+            pair_polar_chgpen<do_e, do_g, ETYP, CFLX>( //
+               r2, xr, yr, zr, scaleb, scalec,         //
                ci, dix, diy, diz, corei, vali, alphai, qixx, qixy, qixz, qiyy,
                qiyz, qizz, uix, uiy, uiz, //
                ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy,
-               qkyz, qkzz, ukx, uky, ukz, //
-               f, aewald, e, pgrad);
+               qkyz, qkzz, ukx, uky, ukz, f, aewald, //
+               e, pota, potb, pgrad);
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -485,6 +505,10 @@ void epolar_chgpen_cu1(
                                            (zr * pgrad.frcy + yr * pgrad.frcz));
                vptlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
             }
+            if CONSTEXPR (CFLX) {
+               shpoti[klane] += pota;
+               potk += potb;
+            }
          } // end if (include)
 
 
@@ -518,6 +542,10 @@ void epolar_chgpen_cu1(
          atomic_add(duk4, &dufld[k][4]);
          atomic_add(duk5, &dufld[k][5]);
       }
+      if CONSTEXPR (CFLX) {
+         atomic_add(shpoti[threadIdx.x], pot, shi);
+         atomic_add(potk, pot, k);
+      }
    }
    // */
 
@@ -550,6 +578,10 @@ void epolar_chgpen_cu1(
          duk3 = 0;
          duk4 = 0;
          duk5 = 0;
+      }
+      if CONSTEXPR (CFLX) {
+         shpoti[threadIdx.x] = 0;
+         potk = 0;
       }
 
 
@@ -632,18 +664,19 @@ void epolar_chgpen_cu1(
          real zr = zk - zi;
 
          real e;
+         real pota = 0, potb = 0;
          PairPolarGrad pgrad;
          zero(pgrad);
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_polar_chgpen<do_e, do_g, ETYP>( //
-               r2, xr, yr, zr, scaleb, scalec,   //
+            pair_polar_chgpen<do_e, do_g, ETYP, CFLX>( //
+               r2, xr, yr, zr, scaleb, scalec,         //
                ci, dix, diy, diz, corei, vali, alphai, qixx, qixy, qixz, qiyy,
                qiyz, qizz, uix, uiy, uiz, //
                ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy,
-               qkyz, qkzz, ukx, uky, ukz, //
-               f, aewald, e, pgrad);
+               qkyz, qkzz, ukx, uky, ukz, f, aewald, //
+               e, pota, potb, pgrad);
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -691,6 +724,10 @@ void epolar_chgpen_cu1(
                                            (zr * pgrad.frcy + yr * pgrad.frcz));
                vptlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
             }
+            if CONSTEXPR (CFLX) {
+               shpoti[klane] += pota;
+               potk += potb;
+            }
          } // end if (include)
       }
 
@@ -721,6 +758,10 @@ void epolar_chgpen_cu1(
          atomic_add(duk4, &dufld[k][4]);
          atomic_add(duk5, &dufld[k][5]);
       }
+      if CONSTEXPR (CFLX) {
+         atomic_add(shpoti[threadIdx.x], pot, shi);
+         atomic_add(potk, pot, k);
+      }
    }
    // */
 
@@ -737,11 +778,10 @@ void epolar_chgpen_cu1(
 } // generated by ComplexKernelBuilder (ck.py) 1.5.1
 
 
-template <class Ver, class ETYP>
+template <class Ver, class ETYP, int CFLX>
 void epolar_chgpen_cu(const real (*uind)[3])
 {
    constexpr bool do_g = Ver::g;
-
 
    // const auto& st = *mspatial_unit;
    const auto& st = *mspatial_v2_unit;
@@ -765,13 +805,12 @@ void epolar_chgpen_cu(const real (*uind)[3])
    if CONSTEXPR (do_g)
       darray::zero(PROCEED_NEW_Q, n, ufld, dufld);
 
-
    int ngrid = get_grid_size(BLOCK_DIM);
-   epolar_chgpen_cu1<Ver, ETYP><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
+   epolar_chgpen_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
       st.n, TINKER_IMAGE_ARGS, nep, ep, vir_ep, depx, depy, depz, off,
       st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z,
       st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, ufld, dufld, uind,
-      rpole, pcore, pval, palpha, aewald, f);
+      pot, rpole, pcore, pval, palpha, aewald, f);
 
    // torque
    if CONSTEXPR (do_g) {
@@ -781,38 +820,72 @@ void epolar_chgpen_cu(const real (*uind)[3])
 }
 
 
-void epolar_chgpen_nonewald_cu(int vers, const real (*uind)[3])
+void epolar_chgpen_nonewald_cu(int vers, int use_cf, const real (*uind)[3])
 {
-   if (vers == calc::v0) {
-      epolar_chgpen_cu<calc::V0, NON_EWALD>(uind);
-   } else if (vers == calc::v1) {
-      epolar_chgpen_cu<calc::V1, NON_EWALD>(uind);
-   } else if (vers == calc::v3) {
-      epolar_chgpen_cu<calc::V3, NON_EWALD>(uind);
-   } else if (vers == calc::v4) {
-      epolar_chgpen_cu<calc::V4, NON_EWALD>(uind);
-   } else if (vers == calc::v5) {
-      epolar_chgpen_cu<calc::V5, NON_EWALD>(uind);
-   } else if (vers == calc::v6) {
-      epolar_chgpen_cu<calc::V6, NON_EWALD>(uind);
+   if (use_cf) {
+      if (vers == calc::v0) {
+         epolar_chgpen_cu<calc::V0, NON_EWALD, 1>(uind);
+      } else if (vers == calc::v1) {
+         epolar_chgpen_cu<calc::V1, NON_EWALD, 1>(uind);
+      } else if (vers == calc::v3) {
+         epolar_chgpen_cu<calc::V3, NON_EWALD, 1>(uind);
+      } else if (vers == calc::v4) {
+         epolar_chgpen_cu<calc::V4, NON_EWALD, 1>(uind);
+      } else if (vers == calc::v5) {
+         epolar_chgpen_cu<calc::V5, NON_EWALD, 1>(uind);
+      } else if (vers == calc::v6) {
+         epolar_chgpen_cu<calc::V6, NON_EWALD, 1>(uind);
+      }
+   }
+   else {
+      if (vers == calc::v0) {
+         epolar_chgpen_cu<calc::V0, NON_EWALD, 0>(uind);
+      } else if (vers == calc::v1) {
+         epolar_chgpen_cu<calc::V1, NON_EWALD, 0>(uind);
+      } else if (vers == calc::v3) {
+         epolar_chgpen_cu<calc::V3, NON_EWALD, 0>(uind);
+      } else if (vers == calc::v4) {
+         epolar_chgpen_cu<calc::V4, NON_EWALD, 0>(uind);
+      } else if (vers == calc::v5) {
+         epolar_chgpen_cu<calc::V5, NON_EWALD, 0>(uind);
+      } else if (vers == calc::v6) {
+         epolar_chgpen_cu<calc::V6, NON_EWALD, 0>(uind);
+      }
    }
 }
 
 
-void epolar_chgpen_ewald_real_cu(int vers, const real (*uind)[3])
+void epolar_chgpen_ewald_real_cu(int vers, int use_cf, const real (*uind)[3])
 {
-   if (vers == calc::v0) {
-      epolar_chgpen_cu<calc::V0, EWALD>(uind);
-   } else if (vers == calc::v1) {
-      epolar_chgpen_cu<calc::V1, EWALD>(uind);
-   } else if (vers == calc::v3) {
-      epolar_chgpen_cu<calc::V3, EWALD>(uind);
-   } else if (vers == calc::v4) {
-      epolar_chgpen_cu<calc::V4, EWALD>(uind);
-   } else if (vers == calc::v5) {
-      epolar_chgpen_cu<calc::V5, EWALD>(uind);
-   } else if (vers == calc::v6) {
-      epolar_chgpen_cu<calc::V6, EWALD>(uind);
+   if (use_cf) {
+      if (vers == calc::v0) {
+         epolar_chgpen_cu<calc::V0, EWALD, 1>(uind);
+      } else if (vers == calc::v1) {
+         epolar_chgpen_cu<calc::V1, EWALD, 1>(uind);
+      } else if (vers == calc::v3) {
+         epolar_chgpen_cu<calc::V3, EWALD, 1>(uind);
+      } else if (vers == calc::v4) {
+         epolar_chgpen_cu<calc::V4, EWALD, 1>(uind);
+      } else if (vers == calc::v5) {
+         epolar_chgpen_cu<calc::V5, EWALD, 1>(uind);
+      } else if (vers == calc::v6) {
+         epolar_chgpen_cu<calc::V6, EWALD, 1>(uind);
+      }
+   }
+   else {
+      if (vers == calc::v0) {
+         epolar_chgpen_cu<calc::V0, EWALD, 0>(uind);
+      } else if (vers == calc::v1) {
+         epolar_chgpen_cu<calc::V1, EWALD, 0>(uind);
+      } else if (vers == calc::v3) {
+         epolar_chgpen_cu<calc::V3, EWALD, 0>(uind);
+      } else if (vers == calc::v4) {
+         epolar_chgpen_cu<calc::V4, EWALD, 0>(uind);
+      } else if (vers == calc::v5) {
+         epolar_chgpen_cu<calc::V5, EWALD, 0>(uind);
+      } else if (vers == calc::v6) {
+         epolar_chgpen_cu<calc::V6, EWALD, 0>(uind);
+      }
    }
 }
 }

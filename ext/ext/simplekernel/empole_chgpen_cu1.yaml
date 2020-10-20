@@ -1,5 +1,5 @@
 KERNEL_NAME: empole_chgpen_cu1
-TEMPLATE_PARAMS: template <class Ver, class ETYP>
+TEMPLATE_PARAMS: template <class Ver, class ETYP, int CFLX>
 CONSTEXPR_FLAGS: |
   constexpr bool do_a = Ver::a;
   constexpr bool do_e = Ver::e;
@@ -30,6 +30,7 @@ EXTRA_PARAMS: |
   , real *restrict trqx
   , real *restrict trqy
   , real *restrict trqz
+  , real *restrict pot
   , const real(*restrict rpole)[10]
   , real *restrict pcore
   , real *restrict pval
@@ -52,6 +53,7 @@ I_FORCE:
   - def: shared real txi addto:trqx
   - def: shared real tyi addto:trqy
   - def: shared real tzi addto:trqz
+  - def: shared real poti addto:pot
 K_FORCE:
   - def: register real gxk addto:gx
   - def: register real gyk addto:gy
@@ -59,6 +61,7 @@ K_FORCE:
   - def: register real txk addto:trqx
   - def: register real tyk addto:trqy
   - def: register real tzk addto:trqz
+  - def: register real potk addto:pot
 
 I_VARIABLES:
   - def: shared real ci from:rpole,mpl_pme_0
@@ -97,18 +100,19 @@ FULL_PAIRWISE_INTERACTION: |
   real zr = zk - zi;
 
   real e;
+  real pota, potb;
   PairMPoleGrad pgrad;
   zero(pgrad);
 
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
-    pair_mpole_chgpen<do_e, do_g, ETYP>(
+    pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(
       r2, xr, yr, zr, scalea,                  //
       ci, dix, diy, diz, corei, vali, alphai, //
       qixx, qixy, qixz, qiyy, qiyz, qizz, //
       ck, dkx, dky, dkz, corek, valk, alphak, //
       qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, //
-      f, aewald, e, pgrad);
+      f, aewald, e, pota, potb, pgrad);
 
     if CONSTEXPR (do_a)
       if (e != 0)
@@ -137,5 +141,9 @@ FULL_PAIRWISE_INTERACTION: |
       vemtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
       vemtlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
       vemtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
+    }
+    if CONSTEXPR (CFLX) {
+      shpoti[klane] += pota;
+      potk += potb;
     }
   } // end if (include)

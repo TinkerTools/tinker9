@@ -1,25 +1,30 @@
 #include "add.h"
+#include "cflux.h"
+#include "eangle.h"
 #include "ebond.h"
+#include "elec.h"
+#include "mathfunc_const.h"
 #include "md.h"
 #include <cassert>
+#include <tinker/detail/atmlst.hh>
+#include <tinker/detail/atomid.hh>
+#include <tinker/detail/mplpot.hh>
+
 
 namespace tinker {
-template <class Ver, class BNDTYP>
 void bndchg_acc1()
 {
-   auto bufsize = buffer_size();
-
    #pragma acc parallel loop independent async\
-               deviceptr(x,y,z, atomic, i12, \
-               ibnd,bflux,bl,\
-               pdelta)
+               deviceptr(x,y,z,ibnd,bflx,bl,\
+               atomic,couple_n12,couple_i12,pdelta)
    for (int i = 0; i < nbond; ++i) {
-      int offset = i & (bufsize - 1);
       int ia = ibnd[i][0];
       int ib = ibnd[i][1];
       real pb = bflx[i];
       int atoma = atomic[ia];
       int atomb = atomic[ib];
+
+
 
       real ideal = bl[i];
       real xab = x[ia] - x[ib];
@@ -36,8 +41,8 @@ void bndchg_acc1()
       else if (atoma < atomb)
          priority = -1;
       else {
-         int n12a = n12[ia];
-         int n12b = n12[ib];
+         int n12a = couple_n12[ia];
+         int n12b = couple_n12[ib];
 
          if (n12a > n12b)
             priority = 1;
@@ -48,12 +53,12 @@ void bndchg_acc1()
             int nhb = 0;
 
             for (int j = 0; j < n12a; ++j) {
-                if (atomic[i12[j][ia]] == 1)
+               if (atomic[couple_i12[ia][j]] == 1)
                   nha += 1;
             }
 
             for (int j = 0; j < n12b; ++j) {
-                if (atomic[i12[j][ib]] == 1)
+               if (atomic[couple_i12[ib][j]] == 1)
                   nhb += 1;
             }
 
@@ -66,34 +71,27 @@ void bndchg_acc1()
          }
       }
 
-      pdelta[ia] -= dq * priority;
-      pdelta[ib] += dq * priority;
+      atomic_add(-dq * priority, pdelta, ia);
+      atomic_add(dq * priority, pdelta, ib);
    } // end for (int i)
 }
 
-
-template <class Ver>
 void angchg_acc1()
 {
-   auto bufsize = buffer_size();
-
    #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,\
-               iang,anat,balist,angtyp, \
-               aflx, abflx,)
+               deviceptr(x,y,z,iang,anat,angtyp,\
+               aflx,abflx,bl,balist,pdelta)
    for (int i = 0; i < nangle; ++i) {
-      int offset = i & (bufsize - 1);
       int ia = iang[i][0];
       int ib = iang[i][1];
       int ic = iang[i][2];
-      
+
       real pa1 = aflx[i][0];
-      real pa1 = aflx[i][1];
+      real pa2 = aflx[i][1];
       real pb1 = abflx[i][0];
       real pb2 = abflx[i][1];
 
       real ideal = anat[i];
-      real force = ak[i];
 
       real xia = x[ia];
       real yia = y[ia];
@@ -112,53 +110,61 @@ void angchg_acc1()
       real ycb = yic - yib;
       real zcb = zic - zib;
 
-      real rab2 = xab * xab + yab * yab + zab * zab;
-      real rcb2 = xcb * xcb + ycb * ycb + zcb * zcb;
+      real rab = REAL_SQRT(xab * xab + yab * yab + zab * zab);
+      real rcb = REAL_SQRT(xcb * xcb + ycb * ycb + zcb * zcb);
 
-      if (rab2 != 0 && rcb2 != 0) {
-         real dot = xab * xcb + yab * ycb + zab * zcb;
-         real cosine = dot * REAL_RSQRT(rab2 * rcb2);
-         cosine = REAL_MIN((real)0.1, REAL_MAX(-1, cosine));
-         real angle = radian * REAL_ACOS(cosine);
+      real dot, angle, cosine;
+      if (rab != 0 and rcb != 0) {
+         dot = xab * xcb + yab * ycb + zab * zcb;
+         cosine = dot / (rab * rcb);
+         cosine = REAL_MIN(1.0, REAL_MAX(-1, cosine));
+         angle = radian * REAL_ACOS(cosine);
       }
 
-      real rab0 = bl[balist[i][0]];
-      real rcb0 = bl[balist[i][1]];
+      int ab = balist[i][0];
+      int cb = balist[i][1];
+      real rab0 = bl[ab];
+      real rcb0 = bl[cb];
 
-      dq1 = pb1 * (rcb - rcb0) + pa1 * (angle - ideal) / radian;
-      dq2 = pb2 * (rab - rab0) + pa2 * (angle - ideal) / radian;
-      pdelta[ia] += dq1;
-      pdelta[ib] -= (dq1 + dq2);
-      pdelta[ic] += dq2;
+      real dq1 = pb1 * (rcb - rcb0) + pa1 * (angle - ideal) / radian;
+      real dq2 = pb2 * (rab - rab0) + pa2 * (angle - ideal) / radian;
+      // pdelta[ia] += dq1;
+      // pdelta[ib] -= (dq1 + dq2);
+      // pdelta[ic] += dq2;
+
+      atomic_add(dq1, pdelta, ia);
+      atomic_add(dq2, pdelta, ic);
+      atomic_add(-(dq1+dq2), pdelta, ib);
    } // end for (int i)
 }
 
-void alterchg() {
-   real pdelta[n];
-   for (int i = 0; i < n; ++i)
-      pdelta[i] = 0;
+void alterchg_acc()
+{
+   darray::zero(PROCEED_NEW_Q, n, pdelta);
 
    bndchg_acc1();
    angchg_acc1();
+   
    // alter atomic partial charge values
-   // nion, iion 
+   // nion, iion
 
-   //alter monopoles and charge penetration
+   // alter monopoles and charge penetration
 
-   for (int i = 0; i < npole; ++i) {
-      int k = ipole[i];
-      pole[i][0] = mono0[i] + pdelta[k];
+   // for (int i = 0; i < npole; ++i) {
 
-      // charge penenetration
-      if CONSTEXPR (use_chgpen)
-         pval[i] = pval0[i] + pdelta[k];
+   // charge penenetration
+   //if (mplpot::use_chgpen)
+   #pragma acc parallel loop independent async\
+            deviceptr(pval,pval0,pdelta,pole,mono0)
+   for (int i = 0; i < n; ++i) {
+      pval[i] = pval0[i] + pdelta[i];
+      pole[i][0] = mono0[i] + pdelta[i];
    }
 
-   
-   for (int i = 0; i < nion; ++i) {
-      k = iion[i];
-      pchg[i] = pchg0[i] + pdelta[k]
-   }
-   
+   // pole[i][0] = mono0[i] + pdelta[k];
+   // for (int i = 0; i < nion; ++i) {
+   //    k = iion[i];
+   //    pchg[i] = pchg0[i] + pdelta[k]
+   // }
 }
 }

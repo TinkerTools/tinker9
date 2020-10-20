@@ -6,12 +6,13 @@
 #include <cassert>
 #include <tinker/detail/angbnd.hh>
 #include <tinker/detail/angpot.hh>
+#include <tinker/detail/potent.hh>
 
 namespace tinker {
 void eangle_data(rc_op op)
 {
    if (!use_potent(angle_term) && !use_potent(strbnd_term) &&
-       !use_potent(opbend_term))
+       !use_potent(opbend_term) && !potent::use_chgflx)
       return;
 
    bool rc_a = rc_flag & calc::analyz;

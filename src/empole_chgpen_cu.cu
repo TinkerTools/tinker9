@@ -1,6 +1,7 @@
 #include "add.h"
+#include "cflux.h"
 #include "empole_chgpen.h"
-#include "empole_self.h"
+#include "empole_chgpen_self.h"
 #include "glob.pme.h"
 #include "glob.spatial.h"
 #include "image.h"
@@ -15,7 +16,7 @@
 
 
 namespace tinker {
-template <class Ver, class ETYP>
+template <class Ver, class ETYP, int CFLX>
 __global__
 void empole_chgpen_cu1(
    int n, TINKER_IMAGE_PARAMS, count_buffer restrict nem,
@@ -27,8 +28,9 @@ void empole_chgpen_cu1(
    const Spatial::SortedAtom* restrict sorted, int nakpl,
    const int* restrict iakpl, int niak, const int* restrict iak,
    const int* restrict lst, real* restrict trqx, real* restrict trqy,
-   real* restrict trqz, const real (*restrict rpole)[10], real* restrict pcore,
-   real* restrict pval, const real* restrict palpha, real aewald, real f)
+   real* restrict trqz, real* restrict pot, const real (*restrict rpole)[10],
+   real* restrict pcore, real* restrict pval, const real* restrict palpha,
+   real aewald, real f)
 {
    constexpr bool do_a = Ver::a;
    constexpr bool do_e = Ver::e;
@@ -75,12 +77,14 @@ void empole_chgpen_cu1(
    __shared__ real shtxi[BLOCK_DIM];
    __shared__ real shtyi[BLOCK_DIM];
    __shared__ real shtzi[BLOCK_DIM];
+   __shared__ real shpoti[BLOCK_DIM];
    real gxk;
    real gyk;
    real gzk;
    real txk;
    real tyk;
    real tzk;
+   real potk;
    __shared__ real shci[BLOCK_DIM];
    __shared__ real shdix[BLOCK_DIM];
    __shared__ real shdiy[BLOCK_DIM];
@@ -126,6 +130,11 @@ void empole_chgpen_cu1(
          tyk = 0;
          tzk = 0;
       }
+      if CONSTEXPR (CFLX) {
+         shpoti[threadIdx.x] = 0;
+         potk = 0;
+      }
+
 
 
       int shi = exclude[ii][0];
@@ -174,21 +183,23 @@ void empole_chgpen_cu1(
       real zr = zk - zi;
 
       real e;
+      real pota, potb;
       PairMPoleGrad pgrad;
       zero(pgrad);
 
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
-         pair_mpole_chgpen<do_e, do_g, ETYP>(
+         pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(
             r2, xr, yr, zr, scalea,                 //
             ci, dix, diy, diz, corei, vali, alphai, //
             qixx, qixy, qixz, qiyy, qiyz, qizz,     //
             ck, dkx, dky, dkz, corek, valk, alphak, //
             qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,     //
-            f, aewald, e, pgrad);
-
-         if CONSTEXPR (do_a)
-            if (e != 0 and scalea != 0)
+            f, aewald, e, pota, potb, pgrad);
+         
+         
+         if CONSTEXPR (do_a and scalea != 0)
+            if (e != 0)
                nemtl += 1;
          if CONSTEXPR (do_e)
             emtl += cvt_to<ebuf_prec>(e);
@@ -218,6 +229,11 @@ void empole_chgpen_cu1(
                cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
             vemtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
          }
+         if CONSTEXPR (CFLX) {
+            shpoti[klane] += pota;
+            potk += potb;
+            printf("%2d %2d %15.8e %15.8e\n", klane+1,k+1,pota,potb);
+         }
       } // end if (include)
 
 
@@ -234,6 +250,10 @@ void empole_chgpen_cu1(
          atomic_add(txk, trqx, k);
          atomic_add(tyk, trqy, k);
          atomic_add(tzk, trqz, k);
+      }
+      if CONSTEXPR (CFLX) {
+        atomic_add(shpoti[threadIdx.x], pot, shi);
+        atomic_add(potk, pot, k);
       }
    }
    // */
@@ -255,6 +275,10 @@ void empole_chgpen_cu1(
          txk = 0;
          tyk = 0;
          tzk = 0;
+      }
+      if CONSTEXPR (CFLX) {
+         shpoti[threadIdx.x] = 0;
+         potk = 0;
       }
 
 
@@ -339,18 +363,20 @@ void empole_chgpen_cu1(
          real zr = zk - zi;
 
          real e;
+         real pota, potb;
          PairMPoleGrad pgrad;
          zero(pgrad);
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_mpole_chgpen<do_e, do_g, ETYP>(
+            pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(
                r2, xr, yr, zr, scalea,                 //
                ci, dix, diy, diz, corei, vali, alphai, //
                qixx, qixy, qixz, qiyy, qiyz, qizz,     //
                ck, dkx, dky, dkz, corek, valk, alphak, //
                qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,     //
-               f, aewald, e, pgrad);
+               f, aewald, e, pota, potb, pgrad);
+
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -383,6 +409,11 @@ void empole_chgpen_cu1(
                   -0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
                vemtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
             }
+            if CONSTEXPR (CFLX) {
+               shpoti[klane] += pota;
+               potk += potb;
+               printf("%2d %2d %15.8e %15.8e\n", klane+1,k+1,pota,potb);
+            }
          } // end if (include)
 
 
@@ -404,6 +435,10 @@ void empole_chgpen_cu1(
          atomic_add(tyk, trqy, k);
          atomic_add(tzk, trqz, k);
       }
+      if CONSTEXPR (CFLX) {
+        atomic_add(shpoti[threadIdx.x], pot, shi);
+        atomic_add(potk, pot, k);
+      }
    }
    // */
 
@@ -424,6 +459,10 @@ void empole_chgpen_cu1(
          txk = 0;
          tyk = 0;
          tzk = 0;
+      }
+      if CONSTEXPR (CFLX) {
+         shpoti[threadIdx.x] = 0;
+         potk = 0;
       }
 
 
@@ -496,18 +535,20 @@ void empole_chgpen_cu1(
          real zr = zk - zi;
 
          real e;
+         real pota, potb;
          PairMPoleGrad pgrad;
          zero(pgrad);
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_mpole_chgpen<do_e, do_g, ETYP>(
+            pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(
                r2, xr, yr, zr, scalea,                 //
                ci, dix, diy, diz, corei, vali, alphai, //
                qixx, qixy, qixz, qiyy, qiyz, qizz,     //
                ck, dkx, dky, dkz, corek, valk, alphak, //
                qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,     //
-               f, aewald, e, pgrad);
+               f, aewald, e, pota, potb, pgrad);
+
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -540,6 +581,11 @@ void empole_chgpen_cu1(
                   -0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
                vemtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
             }
+            if CONSTEXPR (CFLX) {
+               shpoti[klane] += pota;
+               potk += potb;
+               printf("%2d %2d %15.8e %15.8e\n", klane+1,k+1,pota,potb);
+            }
          } // end if (include)
       }
 
@@ -558,6 +604,10 @@ void empole_chgpen_cu1(
          atomic_add(tyk, trqy, k);
          atomic_add(tzk, trqz, k);
       }
+      if CONSTEXPR (CFLX) {
+        atomic_add(shpoti[threadIdx.x], pot, shi);
+        atomic_add(potk, pot, k);
+      }
    }
    // */
 
@@ -575,7 +625,7 @@ void empole_chgpen_cu1(
 } // generated by ComplexKernelBuilder (ck.py) 1.5.1
 
 
-template <class Ver, class ETYP>
+template <class Ver, class ETYP, int CFLX>
 void empole_chgpen_cu()
 {
    constexpr bool do_e = Ver::e;
@@ -600,54 +650,85 @@ void empole_chgpen_cu()
       aewald = pu->aewald;
 
 
-      if CONSTEXPR (do_e) {
-         launch_k1s(nonblk, n, empole_self_cu<do_a>, //
-                    bufsize, nem, em, rpole, n, f, aewald);
-      }
+      
+      launch_k1s(nonblk, n, empole_chgpen_self_cu<do_a, do_e, CFLX>, //
+                  bufsize, nem, em, rpole, pot, n, f, aewald);
    }
 
 
    int ngrid = get_grid_size(BLOCK_DIM);
-   empole_chgpen_cu1<Ver, ETYP><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
+   empole_chgpen_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
       st.n, TINKER_IMAGE_ARGS, nem, em, vir_em, demx, demy, demz, off,
       st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z,
       st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, trqx, trqy, trqz,
-      rpole, pcore, pval, palpha, aewald, f);
+      pot, rpole, pcore, pval, palpha, aewald, f);
 }
 
 
-void empole_chgpen_nonewald_cu(int vers)
+void empole_chgpen_nonewald_cu(int vers, int use_cf)
 {
-   if (vers == calc::v0) {
-      empole_chgpen_cu<calc::V0, NON_EWALD>();
-   } else if (vers == calc::v1) {
-      empole_chgpen_cu<calc::V1, NON_EWALD>();
-   } else if (vers == calc::v3) {
-      empole_chgpen_cu<calc::V3, NON_EWALD>();
-   } else if (vers == calc::v4) {
-      empole_chgpen_cu<calc::V4, NON_EWALD>();
-   } else if (vers == calc::v5) {
-      empole_chgpen_cu<calc::V5, NON_EWALD>();
-   } else if (vers == calc::v6) {
-      empole_chgpen_cu<calc::V6, NON_EWALD>();
+   if (use_cf) {
+      if (vers == calc::v0) {
+         empole_chgpen_cu<calc::V0, NON_EWALD, 1>();
+      } else if (vers == calc::v1) {
+         empole_chgpen_cu<calc::V1, NON_EWALD, 1>();
+      } else if (vers == calc::v3) {
+         empole_chgpen_cu<calc::V3, NON_EWALD, 1>();
+      } else if (vers == calc::v4) {
+         empole_chgpen_cu<calc::V4, NON_EWALD, 1>();
+      } else if (vers == calc::v5) {
+         empole_chgpen_cu<calc::V5, NON_EWALD, 1>();
+      } else if (vers == calc::v6) {
+         empole_chgpen_cu<calc::V6, NON_EWALD, 1>();
+      }
+   } else {
+      if (vers == calc::v0) {
+         empole_chgpen_cu<calc::V0, NON_EWALD, 0>();
+      } else if (vers == calc::v1) {
+         empole_chgpen_cu<calc::V1, NON_EWALD, 0>();
+      } else if (vers == calc::v3) {
+         empole_chgpen_cu<calc::V3, NON_EWALD, 0>();
+      } else if (vers == calc::v4) {
+         empole_chgpen_cu<calc::V4, NON_EWALD, 0>();
+      } else if (vers == calc::v5) {
+         empole_chgpen_cu<calc::V5, NON_EWALD, 0>();
+      } else if (vers == calc::v6) {
+         empole_chgpen_cu<calc::V6, NON_EWALD, 0>();
+      }
    }
 }
 
 
-void empole_chgpen_ewald_real_self_cu(int vers)
+void empole_chgpen_ewald_real_self_cu(int vers, int use_cf)
 {
-   if (vers == calc::v0) {
-      empole_chgpen_cu<calc::V0, EWALD>();
-   } else if (vers == calc::v1) {
-      empole_chgpen_cu<calc::V1, EWALD>();
-   } else if (vers == calc::v3) {
-      empole_chgpen_cu<calc::V3, EWALD>();
-   } else if (vers == calc::v4) {
-      empole_chgpen_cu<calc::V4, EWALD>();
-   } else if (vers == calc::v5) {
-      empole_chgpen_cu<calc::V5, EWALD>();
-   } else if (vers == calc::v6) {
-      empole_chgpen_cu<calc::V6, EWALD>();
+   if (use_cf) {
+      if (vers == calc::v0) {
+         empole_chgpen_cu<calc::V0, EWALD, 1>();
+      } else if (vers == calc::v1) {
+         empole_chgpen_cu<calc::V1, EWALD, 1>();
+      } else if (vers == calc::v3) {
+         empole_chgpen_cu<calc::V3, EWALD, 1>();
+      } else if (vers == calc::v4) {
+         empole_chgpen_cu<calc::V4, EWALD, 1>();
+      } else if (vers == calc::v5) {
+         empole_chgpen_cu<calc::V5, EWALD, 1>();
+      } else if (vers == calc::v6) {
+         empole_chgpen_cu<calc::V6, EWALD, 1>();
+      }
+   } else {
+      if (vers == calc::v0) {
+         empole_chgpen_cu<calc::V0, EWALD, 0>();
+      } else if (vers == calc::v1) {
+         empole_chgpen_cu<calc::V1, EWALD, 0>();
+      } else if (vers == calc::v3) {
+         empole_chgpen_cu<calc::V3, EWALD, 0>();
+      } else if (vers == calc::v4) {
+         empole_chgpen_cu<calc::V4, EWALD, 0>();
+      } else if (vers == calc::v5) {
+         empole_chgpen_cu<calc::V5, EWALD, 0>();
+      } else if (vers == calc::v6) {
+         empole_chgpen_cu<calc::V6, EWALD, 0>();
+      }
    }
 }
 }

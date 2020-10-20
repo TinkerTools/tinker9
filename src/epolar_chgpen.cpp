@@ -1,5 +1,4 @@
 #include "epolar_chgpen.h"
-#include "empole_chgpen.h"
 #include "induce_donly.h"
 #include "md.h"
 #include "mod.uprior.h"
@@ -10,14 +9,11 @@
 #include "tool/io_fort_str.h"
 #include "tool/io_print.h"
 #include <map>
-#include <tinker/detail/chgpen.hh>
-#include <tinker/detail/couple.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/polar.hh>
-#include <tinker/detail/polgrp.hh>
 #include <tinker/detail/polpot.hh>
-#include <tinker/detail/sizes.hh>
+#include <tinker/detail/potent.hh>
 #include <tinker/detail/units.hh>
 #include <tinker/detail/uprior.hh>
 
@@ -188,6 +184,7 @@ void epolar_chgpen(int vers)
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
+   int use_cf = potent::use_chgflx;
 
 
    host_zero(energy_ep, virial_ep);
@@ -206,11 +203,27 @@ void epolar_chgpen(int vers)
    }
 
 
+   if (use_cf) 
+      alterchg();
+   
+
    mpole_init(vers);
+
+   
+   use_cf = use_cf and do_g;
+
+   if (use_cf) {
+      zero_pot();
+   }
+
    if (use_ewald())
-      epolar_chgpen_ewald(vers);
+      epolar_chgpen_ewald(vers, use_cf);
    else
-      epolar_chgpen_nonewald(vers);
+      epolar_chgpen_nonewald(vers, use_cf);
+
+   if (use_cf)
+      dcflux(vers, depx, depy, depz, vir_ep);
+
    torque(vers, depx, depy, depz);
    if (do_v) {
       virial_buffer u2 = vir_trq;
@@ -245,7 +258,7 @@ void epolar_chgpen(int vers)
 }
 
 
-void epolar_chgpen_nonewald(int vers)
+void epolar_chgpen_nonewald(int vers, int use_cf)
 {
    // v0: E_dot
    // v1: EGV = E_dot + GV
@@ -266,7 +279,7 @@ void epolar_chgpen_nonewald(int vers)
    if (vers != calc::v0) {
 #if TINKER_CUDART
       if (mlist_version() & NBL_SPATIAL)
-         epolar_chgpen_nonewald_cu(ver2, uind);
+         epolar_chgpen_nonewald_cu(ver2, use_cf, uind);
       else
 #endif
          epolar_chgpen_nonewald_acc(ver2, uind);
@@ -274,7 +287,7 @@ void epolar_chgpen_nonewald(int vers)
 }
 
 
-void epolar_chgpen_ewald(int vers)
+void epolar_chgpen_ewald(int vers, int use_cf)
 {
    // v0: E_dot
    // v1: EGV = E_dot + GV
@@ -293,26 +306,26 @@ void epolar_chgpen_ewald(int vers)
    if (edot)
       epolar1_dotprod(uind, udir);
    if (vers != calc::v0) {
-      epolar_chgpen_ewald_real(ver2);
-      epolar_chgpen_ewald_recip_self(ver2);
+      epolar_chgpen_ewald_real(ver2, use_cf);
+      epolar_chgpen_ewald_recip_self(ver2, use_cf);
    }
 }
 
 
-void epolar_chgpen_ewald_real(int vers)
+void epolar_chgpen_ewald_real(int vers, int use_cf)
 {
 #if TINKER_CUDART
    if (mlist_version() & NBL_SPATIAL)
-      epolar_chgpen_ewald_real_cu(vers, uind);
+      epolar_chgpen_ewald_real_cu(vers, use_cf, uind);
    else
 #endif
       epolar_chgpen_ewald_real_acc(vers, uind);
 }
 
 
-void epolar_chgpen_ewald_recip_self(int vers)
+void epolar_chgpen_ewald_recip_self(int vers, int use_cf)
 {
-   epolar_chgpen_ewald_recip_self_acc(vers, uind);
+   epolar_chgpen_ewald_recip_self_acc(vers, use_cf, uind);
 }
 
 void epolar1_dotprod(const real (*uind)[3], const real (*udirp)[3])

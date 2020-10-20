@@ -40,7 +40,7 @@ inline void zero(PairPolarGrad& pgrad)
 
 
 #pragma acc routine seq
-template <bool do_e, bool do_g, class ETYP>
+template <bool do_e, bool do_g, class ETYP, int CFLX>
 SEQ_CUDA
 void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
                        real wscale, real ci, real dix, real diy, real diz,
@@ -50,7 +50,8 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
                        real dkz, real corek, real valk, real alphak, real qkxx,
                        real qkxy, real qkxz, real qkyy, real qkyz, real qkzz,
                        real ukx, real uky, real ukz, real f, real aewald,
-                       real& restrict e, PairPolarGrad& restrict pgrad)
+                       real& restrict e, real& restrict poti,
+                       real& restrict potk, PairPolarGrad& restrict pgrad)
 {
 
 
@@ -84,14 +85,13 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
    real rr3core, rr5core, rr3i, rr5i, rr7i, rr9i;
    real rr3k, rr5k, rr7k, rr9k, rr5ik, rr7ik;
    real dsr3i, dsr5i, dsr7i, dsr3k, dsr5k, dsr7k;
-
    if CONSTEXPR (eq<ETYP, EWALD>()) {
-      if CONSTEXPR (!do_g) {
-         damp_ewald<4>(bn, r, invr1, rr2, aewald);
-         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
-      } else {
+      if CONSTEXPR (do_g) {
          damp_ewald<5>(bn, r, invr1, rr2, aewald);
          damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
+      } else {
+         damp_ewald<4>(bn, r, invr1, rr2, aewald);
+         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
 
       bn[1] *= f;
@@ -102,10 +102,10 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
 
    } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
 
-      if CONSTEXPR (!do_g)
-         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
-      else {
+      if CONSTEXPR (do_g)
          damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
+      else {
+         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
 
       bn[1] = rr3;
@@ -113,10 +113,8 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       bn[3] = rr7;
       bn[4] = rr9;
    }
-   // if CONSTEXPR (use_chgflx) {
-   //    poti = -ukr * dsr3i;
-   //    potk = uir * dsr3k;
-   // }
+
+
    rr3core = bn[1] - (1 - dscale) * rr3;
    rr5core = bn[2] - (1 - dscale) * rr5;
    rr3i = bn[1] - (1 - dscale * dmpi[1]) * rr3;
@@ -137,6 +135,11 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
    dsr7i = 2 * rr7i;
    dsr7k = 2 * rr7k;
 
+   if CONSTEXPR (CFLX) {
+      poti = -ukr * dsr3i;
+      potk = uir * dsr3k;
+   }
+
    if CONSTEXPR (do_e) {
       real diu = dix * ukx + diy * uky + diz * ukz;
       real qiu = qix * ukx + qiy * uky + qiz * ukz;
@@ -146,6 +149,7 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
          ukr * (corei * rr3core + vali * rr3i) + diu * rr3i + dku * rr3k +
          2 * (qiu * rr5i - qku * rr5k) - dkr * uir * rr5k - dir * ukr * rr5i +
          qkr * uir * rr7k - qir * ukr * rr7i;
+      //printf("%6.3f %16.8e %16.8e %16.8e %16.8e\n", r, uir, ukr, diu, dku);
    }
 
 
@@ -380,11 +384,10 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       depz = tixz * ukx + tiyz * uky + tizz * ukz + tkxz * uix + tkyz * uiy +
          tkzz * uiz;
 
-      
+
       pgrad.frcx += depx;
       pgrad.frcy += depy;
       pgrad.frcz += depz;
-
    }
 }
 }

@@ -317,7 +317,7 @@ void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
    }
 }
 
-template <class Ver>
+template <class Ver, int CFLX>
 void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
 {
    constexpr bool do_e = Ver::e;
@@ -434,7 +434,7 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
    real fterm_term = -2 * f * aewald * aewald * aewald / 3 / sqrtpi;
    #pragma acc parallel loop independent async\
                deviceptr(ep,nep,trqx,trqy,trqz,\
-               rpole,cmp,gpu_uind,cphidp)
+               rpole,cmp,gpu_uind,cphidp,pot)
    for (int i = 0; i < n; ++i) {
       int offset = i & (bufsize - 1);
       real dix = rpole[i][mpl_pme_x];
@@ -469,6 +469,9 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
          trqx[i] += tep1;
          trqy[i] += tep2;
          trqz[i] += tep3;
+
+         if CONSTEXPR (CFLX) 
+            atomic_add(cphidp[i][0], pot, i);
       }
 
       if CONSTEXPR (do_e) {
@@ -681,20 +684,37 @@ void epolar_chgpen_ewald_real_acc(int vers, const real (*uind)[3])
    // }
 }
 
-void epolar_chgpen_ewald_recip_self_acc(int vers, const real (*uind)[3])
-{
-   if (vers == calc::v0) {
-      epolar_chgpen_ewald_recip_self_acc1<calc::V0>(uind);
-   } else if (vers == calc::v1) {
-      epolar_chgpen_ewald_recip_self_acc1<calc::V1>(uind);
-   } else if (vers == calc::v3) {
-      epolar_chgpen_ewald_recip_self_acc1<calc::V3>(uind);
-   } else if (vers == calc::v4) {
-      epolar_chgpen_ewald_recip_self_acc1<calc::V4>(uind);
-   } else if (vers == calc::v5) {
-      epolar_chgpen_ewald_recip_self_acc1<calc::V5>(uind);
-   } else if (vers == calc::v6) {
-      epolar_chgpen_ewald_recip_self_acc1<calc::V6>(uind);
+void epolar_chgpen_ewald_recip_self_acc(int vers, int use_cf, const real (*uind)[3])
+{  
+   if (use_cf) {
+      if (vers == calc::v0) {
+         epolar_chgpen_ewald_recip_self_acc1<calc::V0, 1>(uind);
+      } else if (vers == calc::v1) {
+         epolar_chgpen_ewald_recip_self_acc1<calc::V1, 1>(uind);
+      } else if (vers == calc::v3) {
+         epolar_chgpen_ewald_recip_self_acc1<calc::V3, 1>(uind);
+      } else if (vers == calc::v4) {
+         epolar_chgpen_ewald_recip_self_acc1<calc::V4, 1>(uind);
+      } else if (vers == calc::v5) {
+         epolar_chgpen_ewald_recip_self_acc1<calc::V5, 1>(uind);
+      } else if (vers == calc::v6) {
+         epolar_chgpen_ewald_recip_self_acc1<calc::V6, 1>(uind);
+      }
+   }
+   else {
+      if (vers == calc::v0) {
+         epolar_chgpen_ewald_recip_self_acc1<calc::V0, 0>(uind);
+      } else if (vers == calc::v1) {
+         epolar_chgpen_ewald_recip_self_acc1<calc::V1, 0>(uind);
+      } else if (vers == calc::v3) {
+         epolar_chgpen_ewald_recip_self_acc1<calc::V3, 0>(uind);
+      } else if (vers == calc::v4) {
+         epolar_chgpen_ewald_recip_self_acc1<calc::V4, 0>(uind);
+      } else if (vers == calc::v5) {
+         epolar_chgpen_ewald_recip_self_acc1<calc::V5, 0>(uind);
+      } else if (vers == calc::v6) {
+         epolar_chgpen_ewald_recip_self_acc1<calc::V6, 0>(uind);
+      }
    }
 }
 }

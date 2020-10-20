@@ -1,5 +1,5 @@
 KERNEL_NAME: epolar_chgpen_cu1
-TEMPLATE_PARAMS: template <class Ver, class ETYP>
+TEMPLATE_PARAMS: template <class Ver, class ETYP, bool CFLX>
 CONSTEXPR_FLAGS: |
   constexpr bool do_a = Ver::a;
   constexpr bool do_e = Ver::e;
@@ -30,6 +30,7 @@ EXTRA_PARAMS: |
   , real(*restrict ufld)[3]
   , real(*restrict dufld)[6]
   , const real(*restrict uind)[3]
+  , real *restrict pot
   , const real(*restrict rpole)[10]
   , real *restrict pcore
   , real *restrict pval
@@ -58,6 +59,7 @@ I_FORCE:
   - def: shared real dui3 addto:dufld,3
   - def: shared real dui4 addto:dufld,4
   - def: shared real dui5 addto:dufld,5
+  - def: shared real poti addto:pot
 K_FORCE:
   - def: register real gxk addto:gx
   - def: register real gyk addto:gy
@@ -71,6 +73,7 @@ K_FORCE:
   - def: register real duk3 addto:dufld,3
   - def: register real duk4 addto:dufld,4
   - def: register real duk5 addto:dufld,5
+  - def: register real potk addto:pot
 
 I_VARIABLES:
   - def: shared real ci from:rpole,mpl_pme_0
@@ -115,20 +118,21 @@ FULL_PAIRWISE_INTERACTION: |
   real zr = zk - zi;
 
   real e;
+  real pota, potb;
   PairPolarGrad pgrad;
   zero(pgrad);
 
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
-    pair_polar_chgpen<do_e, do_g, ETYP>( //
+    pair_polar_chgpen<do_e, do_g, ETYP, CFLX>( //
       r2, xr, yr, zr, scaleb, scalec,       //
       ci, dix, diy, diz, corei, vali, alphai,
       qixx, qixy, qixz, qiyy, qiyz, qizz, uix,
       uiy, uiz,  //
       ck, dkx, dky, dkz, corek, valk, alphak,
       qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,
-      uky, ukz,  //
-      f, aewald, e, pgrad);
+      uky, ukz, f, aewald,  //
+      e, pota, potb, pgrad);
 
     if CONSTEXPR (do_a)
       if (e != 0)
@@ -172,5 +176,9 @@ FULL_PAIRWISE_INTERACTION: |
         vptlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
         vptlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
         vptlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
+    }
+    if CONSTEXPR (CFLX) {
+      shpoti[klane] += pota;
+      potk += potb;
     }
   } // end if (include)

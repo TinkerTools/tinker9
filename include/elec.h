@@ -1,5 +1,7 @@
 #pragma once
+#include "cflux.h"
 #include "mod.charge.h"
+#include "mod.chgpen.h"
 #include "mod.chgpot.h"
 #include "mod.mpole.h"
 #include "mod.polar.h"
@@ -58,6 +60,7 @@ bool amoeba_echglj(int vers);
 bool amoeba_echarge(int vers);
 bool amoeba_evdw(int vers);
 
+bool chgflux(int vers);
 bool hippo_empole(int vers);
 bool hippo_epolar(int vers);
 }

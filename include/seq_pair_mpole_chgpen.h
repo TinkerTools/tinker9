@@ -66,7 +66,7 @@ inline void zero(PairMPoleGrad& pgrad)
  * \see PairMPoleGrad
  */
 #pragma acc routine seq
-template <bool do_e, bool do_g, class ETYP>
+template <bool do_e, bool do_g, class ETYP, int CFLX>
 SEQ_CUDA
 void pair_mpole_chgpen(                             //
    real r2, real xr, real yr, real zr, real mscale, //
@@ -74,7 +74,8 @@ void pair_mpole_chgpen(                             //
    real qixx, real qixy, real qixz, real qiyy, real qiyz, real qizz, //
    real ck, real dkx, real dky, real dkz, real corek, real valk, real alphak,
    real qkxx, real qkxy, real qkxz, real qkyy, real qkyz, real qkzz, //
-   real f, real aewald, real& restrict e, PairMPoleGrad& restrict pgrad)
+   real f, real aewald, real& restrict e, real& restrict poti,
+   real& restrict potk, PairMPoleGrad& restrict pgrad)
 {
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
@@ -127,7 +128,8 @@ void pair_mpole_chgpen(                             //
    real term4ik = dir * qkr - dkr * qir - 4 * qik;
    real term5ik = qir * qkr;
 
-   real rr1i, rr3i, rr5i, rr7i, rr1k, rr3k, rr5k, rr7k, rr1ik, rr3ik, rr5ik, rr7ik, rr9ik, rr11ik;
+   real rr1i, rr3i, rr5i, rr7i, rr1k, rr3k, rr5k, rr7k, rr1ik, rr3ik, rr5ik,
+      rr7ik, rr9ik, rr11ik;
 
    if CONSTEXPR (eq<ETYP, EWALD>()) {
       if CONSTEXPR (do_g) {
@@ -145,78 +147,51 @@ void pair_mpole_chgpen(                             //
       if CONSTEXPR (do_g)
          bn[5] *= f;
 
-      rr1i = bn[0] - (1 - mscale * dmpi[0]) * rr1;
-      rr3i = bn[1] - (1 - mscale * dmpi[1]) * rr3;
-      rr5i = bn[2] - (1 - mscale * dmpi[2]) * rr5;
-      rr7i = bn[3] - (1 - mscale * dmpi[3]) * rr7;
-      rr1k = bn[0] - (1 - mscale * dmpk[0]) * rr1;
-      rr3k = bn[1] - (1 - mscale * dmpk[1]) * rr3;
-      rr5k = bn[2] - (1 - mscale * dmpk[2]) * rr5;
-      rr7k = bn[3] - (1 - mscale * dmpk[3]) * rr7;
-      rr1ik = bn[0] - (1 - mscale * dmpik[0]) * rr1;
-      rr3ik = bn[1] - (1 - mscale * dmpik[1]) * rr3;
-      rr5ik = bn[2] - (1 - mscale * dmpik[2]) * rr5;
-      rr7ik = bn[3] - (1 - mscale * dmpik[3]) * rr7;
-      rr9ik = bn[4] - (1 - mscale * dmpik[4]) * rr9;
-      rr1 = bn[0] - (1 - mscale) * rr1;
-      rr3 = bn[1] - (1 - mscale) * rr3;
-
-      if CONSTEXPR (do_g)
-         rr11ik = bn[5] - (1 - mscale * dmpik[5]) * rr11;
-      
-
-      // if CONSTEXPR (use_chgflx) {
-      //    real t1i = corek * rr1i + valk * rr1ik;
-      //    real t1k = corei * rr1k + vali * rr1ik;
-      //    real t2i = -dkr * rr3ik;
-      //    real t2k = dir * rr3ik;
-      //    real t3i = qkr * rr5ik;
-      //    real t3k = qir * rr5ik;
-      //    poti = t1i + t2i + t3i;
-      //    potk = t1k + t2k + t3k;
-      // }
-
    } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
-      rr1 *= mscale;
-      rr3 *= mscale;
-      rr5 *= mscale;
-      rr7 *= mscale;
-      rr9 *= mscale;
-
       if CONSTEXPR (do_g) {
-         rr11 *= mscale;
          damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       } else
          damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
 
-      rr1i = dmpi[0] * rr1;
-      rr3i = dmpi[1] * rr3;
-      rr5i = dmpi[2] * rr5;
-      rr7i = dmpi[3] * rr7;
-      rr1k = dmpk[0] * rr1;
-      rr3k = dmpk[1] * rr3;
-      rr5k = dmpk[2] * rr5;
-      rr7k = dmpk[3] * rr7;
-      rr1ik = dmpik[0] * rr1;
-      rr3ik = dmpik[1] * rr3;
-      rr5ik = dmpik[2] * rr5;
-      rr7ik = dmpik[3] * rr7;
-      rr9ik = dmpik[4] * rr9;
-
-      if CONSTEXPR (do_g)
-         rr11ik = dmpik[5] * rr11;
-
-      // if CONSTEXPR (use_chgflx) {
-      //    real t1i = corek * dmpi[0] + valk * dmpik[0];
-      //    real t1k = corei * dmpk[0] + vali * dmpik[0];
-      //    real t2i = -dkr * dmpik[1];
-      //    real t2k = dir * dmpik[1];
-      //    real t3i = qkr * dmpik[2];
-      //    real t3k = qir * dmpik[2];
-      //    poti = t1i + t2i + t3i;
-      //    potk = t1k + t2k + t3k;
-      // }
+      bn[0] = rr1;
+      bn[1] = rr3;
+      bn[2] = rr5;
+      bn[3] = rr7;
+      bn[4] = rr9;
+      if CONSTEXPR (do_g) 
+         bn[5] = rr11;
    } // endif NON_EWALD
+
+   rr1i = bn[0] - (1 - mscale * dmpi[0]) * rr1;
+   rr3i = bn[1] - (1 - mscale * dmpi[1]) * rr3;
+   rr5i = bn[2] - (1 - mscale * dmpi[2]) * rr5;
+   rr7i = bn[3] - (1 - mscale * dmpi[3]) * rr7;
+   rr1k = bn[0] - (1 - mscale * dmpk[0]) * rr1;
+   rr3k = bn[1] - (1 - mscale * dmpk[1]) * rr3;
+   rr5k = bn[2] - (1 - mscale * dmpk[2]) * rr5;
+   rr7k = bn[3] - (1 - mscale * dmpk[3]) * rr7;
+   rr1ik = bn[0] - (1 - mscale * dmpik[0]) * rr1;
+   rr3ik = bn[1] - (1 - mscale * dmpik[1]) * rr3;
+   rr5ik = bn[2] - (1 - mscale * dmpik[2]) * rr5;
+   rr7ik = bn[3] - (1 - mscale * dmpik[3]) * rr7;
+   rr9ik = bn[4] - (1 - mscale * dmpik[4]) * rr9;
+   rr1 = bn[0] - (1 - mscale) * rr1;
+   rr3 = bn[1] - (1 - mscale) * rr3;
+
+   if CONSTEXPR (do_g)
+      rr11ik = bn[5] - (1 - mscale * dmpik[5]) * rr11;
+
+
+   if CONSTEXPR (CFLX) {
+      real t1i = corek * rr1i + valk * rr1ik;
+      real t1k = corei * rr1k + vali * rr1ik;
+      real t2i = -dkr * rr3ik;
+      real t2k = dir * rr3ik;
+      real t3i = qkr * rr5ik;
+      real t3k = qir * rr5ik;
+      poti = t1i + t2i + t3i;
+      potk = t1k + t2k + t3k;
+   }
 
    if CONSTEXPR (do_e) {
       e = term1 * rr1 + term4ik * rr7ik + term5ik * rr9ik + term1i * rr1i +
@@ -248,26 +223,27 @@ void pair_mpole_chgpen(                             //
          term2k * rr5k + term2ik * rr5ik + term3i * rr7i + term3k * rr7k +
          term3ik * rr7ik;
 
-      
+
       term1 = -corek * rr3i - valk * rr3ik + dkr * rr5ik - qkr * rr7ik;
       real term2 = corei * rr3k + vali * rr3ik + dir * rr5ik + qir * rr7ik;
       real term3 = 2 * rr5ik;
-      real term4 = -2 * (corek * rr5i + valk * rr5ik - dkr * rr7ik + qkr * rr9ik);
-      real term5 = -2 * (corei * rr5k + vali * rr5ik + dir * rr7ik + qir * rr9ik);
+      real term4 =
+         -2 * (corek * rr5i + valk * rr5ik - dkr * rr7ik + qkr * rr9ik);
+      real term5 =
+         -2 * (corei * rr5k + vali * rr5ik + dir * rr7ik + qir * rr9ik);
       real term6 = 4 * rr7ik;
 
 
       pgrad.frcx = de * xr + term1 * dix + term2 * dkx +
          term3 * (diqkx - dkqix) + term4 * qix + term5 * qkx +
          term6 * (qixk + qkxi);
-         
+
       pgrad.frcy = de * yr + term1 * diy + term2 * dky +
          term3 * (diqky - dkqiy) + term4 * qiy + term5 * qky +
          term6 * (qiyk + qkyi);
       pgrad.frcz = de * zr + term1 * diz + term2 * dkz +
          term3 * (diqkz - dkqiz) + term4 * qiz + term5 * qkz +
          term6 * (qizk + qkzi);
-
 
 
       // torque

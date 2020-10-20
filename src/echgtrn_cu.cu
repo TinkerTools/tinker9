@@ -133,7 +133,7 @@ void echgtrn_cu1(
 
 
          if CONSTEXPR (do_a)
-            if (e != 0)
+            if (e != 0 and scalea != 0)
                nctl += 1;
          if CONSTEXPR (do_e)
             ectl += cvt_to<ebuf_prec>(e);
@@ -143,12 +143,12 @@ void echgtrn_cu1(
             dedy = de * yr;
             dedz = de * zr;
 
-            shgxi += dedx;
-            shgyi += dedy;
-            shgzi += dedz;
-            gxk -= dedx;
-            gyk -= dedy;
-            gzk -= dedz;
+            shgxi -= dedx;
+            shgyi -= dedy;
+            shgzi -= dedz;
+            gxk += dedx;
+            gyk += dedy;
+            gzk += dedz;
 
             if CONSTEXPR (do_v) {
                vctlxx += cvt_to<vbuf_prec>(xr * dedx);
@@ -264,12 +264,12 @@ void echgtrn_cu1(
                dedy = de * yr;
                dedz = de * zr;
 
-               shgxi += dedx;
-               shgyi += dedy;
-               shgzi += dedz;
-               gxk -= dedx;
-               gyk -= dedy;
-               gzk -= dedz;
+               shgxi -= dedx;
+               shgyi -= dedy;
+               shgzi -= dedz;
+               gxk += dedx;
+               gyk += dedy;
+               gzk += dedz;
 
                if CONSTEXPR (do_v) {
                   vctlxx += cvt_to<vbuf_prec>(xr * dedx);
@@ -386,12 +386,12 @@ void echgtrn_cu1(
                dedy = de * yr;
                dedz = de * zr;
 
-               shgxi += dedx;
-               shgyi += dedy;
-               shgzi += dedz;
-               gxk -= dedx;
-               gyk -= dedy;
-               gzk -= dedz;
+               shgxi -= dedx;
+               shgyi -= dedy;
+               shgzi -= dedz;
+               gxk += dedx;
+               gyk += dedy;
+               gzk += dedz;
 
                if CONSTEXPR (do_v) {
                   vctlxx += cvt_to<vbuf_prec>(xr * dedx);
