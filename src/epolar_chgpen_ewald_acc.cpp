@@ -12,7 +12,7 @@
 
 namespace tinker {
 #define POLAR_DPTRS                                                            \
-   x, y, z, depx, depy, depz, rpole, pcore, pval, palpha, uind, nep, ep,        \
+   x, y, z, depx, depy, depz, rpole, pcore, pval, palpha, uind, nep, ep,       \
       vir_ep, ufld, dufld
 template <class Ver>
 void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
@@ -62,7 +62,7 @@ void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
       real corei = pcore[i];
       real alphai = palpha[i];
       real vali = pval[i];
-      
+
       real gxi = 0, gyi = 0, gzi = 0;
       real txi = 0, tyi = 0, tzi = 0;
       real du0 = 0, du1 = 0, du2 = 0, du3 = 0, du4 = 0, du5 = 0;
@@ -96,11 +96,11 @@ void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
             real corek = pcore[k];
             real alphak = palpha[k];
             real valk = pval[k];
-            
+
 
             MAYBE_UNUSED real e;
             pair_polar_chgpen<do_e, do_g, EWALD>( //
-               r2, xr, yr, zr, 1, 1,        //
+               r2, xr, yr, zr, 1, 1,              //
                ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
                uiz, corei, vali, alphai, //
                ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
@@ -202,7 +202,7 @@ void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
       real corei = pcore[i];
       real alphai = palpha[i];
       real vali = pval[i];
-      
+
 
       real xr = x[k] - xi;
       real yr = y[k] - yi;
@@ -382,7 +382,6 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
          f2 += 2 * fuind[i][k] * fphi[i][j2];
          f3 += 2 * fuind[i][k] * fphi[i][j3];
 
-         // printf("%5d %5d %16.8e %5d %16.8e %5d %16.8e\n", i,k,fuind[i][k],j1,fphi[i][j1],j2, fphi[i][j2]);
          // if poltyp .eq. 'MUTUAL'
          f1 += 2 * fuind[i][k] * fphid[i][j1];
          f2 += 2 * fuind[i][k] * fphid[i][j2];
@@ -403,12 +402,6 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
          real h2 = recipa.y * f1 + recipb.y * f2 + recipc.y * f3;
          real h3 = recipa.z * f1 + recipb.z * f2 + recipc.z * f3;
 
-         // real dx, dy, dz;
-         // dx = depx[i];
-         // dy = depy[i];
-         // dz = depz[i];
-
-         //printf("%16.8e %16.8e %16.8e\n", dx, dy, dz);
 
          atomic_add(h1 * f, depx, i);
          atomic_add(h2 * f, depy, i);
@@ -444,7 +437,6 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
       real uiy = gpu_uind[i][1];
       real uiz = gpu_uind[i][2];
 
-      //printf("%5d %16.8e %16.8e %16.8e\n", i, uix, uiy, uiz);
 
       if CONSTEXPR (do_g) {
          real tep1 = cmp[i][3] * cphidp[i][2] - cmp[i][2] * cphidp[i][3] +
@@ -470,7 +462,7 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
          trqy[i] += tep2;
          trqz[i] += tep3;
 
-         if CONSTEXPR (CFLX) 
+         if CONSTEXPR (CFLX)
             atomic_add(cphidp[i][0], pot, i);
       }
 
@@ -490,9 +482,9 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
    if CONSTEXPR (do_v) {
       auto size = buffer_size() * virial_buffer_traits::value;
       #pragma acc parallel loop independent async deviceptr(vir_ep,vir_m)
-      for (int i = 0; i < (int)size; ++i) 
+      for (int i = 0; i < (int)size; ++i)
          vir_ep[0][i] -= vir_m[0][i];
-      
+
 
       darray::scale(PROCEED_NEW_Q, n, f, cphi, fphid);
 
@@ -572,20 +564,17 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
             cmp[i][9] * cphidp[i][9];
 
          // if (poltyp .eq. 'MUTUAL')
-         vxx = vxx -
-            (cphid[1] * gpu_uind[i][0]);
+         vxx = vxx - (cphid[1] * gpu_uind[i][0]);
          vxy = vxy -
             0.25f *
                (2 * cphid[1] * gpu_uind[i][1] + 2 * cphid[2] * gpu_uind[i][0]);
          vxz = vxz -
             0.25f *
-               (2 * cphid[1] * gpu_uind[i][2] +
-                2 * cphid[3] * gpu_uind[i][0]);
+               (2 * cphid[1] * gpu_uind[i][2] + 2 * cphid[3] * gpu_uind[i][0]);
          vyy = vyy - cphid[2] * gpu_uind[i][1];
          vyz = vyz -
             0.25f *
-               (2 * cphid[2] * gpu_uind[i][2] +
-                2 * cphid[3] * gpu_uind[i][1]);
+               (2 * cphid[2] * gpu_uind[i][2] + 2 * cphid[3] * gpu_uind[i][1]);
          vzz = vzz - cphid[3] * gpu_uind[i][2];
          // end if
 
@@ -684,8 +673,9 @@ void epolar_chgpen_ewald_real_acc(int vers, const real (*uind)[3])
    // }
 }
 
-void epolar_chgpen_ewald_recip_self_acc(int vers, int use_cf, const real (*uind)[3])
-{  
+void epolar_chgpen_ewald_recip_self_acc(int vers, int use_cf,
+                                        const real (*uind)[3])
+{
    if (use_cf) {
       if (vers == calc::v0) {
          epolar_chgpen_ewald_recip_self_acc1<calc::V0, 1>(uind);
@@ -700,8 +690,7 @@ void epolar_chgpen_ewald_recip_self_acc(int vers, int use_cf, const real (*uind)
       } else if (vers == calc::v6) {
          epolar_chgpen_ewald_recip_self_acc1<calc::V6, 1>(uind);
       }
-   }
-   else {
+   } else {
       if (vers == calc::v0) {
          epolar_chgpen_ewald_recip_self_acc1<calc::V0, 0>(uind);
       } else if (vers == calc::v1) {

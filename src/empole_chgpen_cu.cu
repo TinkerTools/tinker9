@@ -136,7 +136,6 @@ void empole_chgpen_cu1(
       }
 
 
-
       int shi = exclude[ii][0];
       int k = exclude[ii][1];
       real scalea = exclude_scale[ii][0];
@@ -196,8 +195,8 @@ void empole_chgpen_cu1(
             ck, dkx, dky, dkz, corek, valk, alphak, //
             qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,     //
             f, aewald, e, pota, potb, pgrad);
-         
-         
+
+
          if CONSTEXPR (do_a)
             if (e != 0 and scalea != 0)
                nemtl += 1;
@@ -232,7 +231,6 @@ void empole_chgpen_cu1(
          if CONSTEXPR (CFLX) {
             shpoti[klane] += pota;
             potk += potb;
-            //printf("%2d %2d %15.8e %15.8e\n", klane+1,k+1,pota,potb);
          }
       } // end if (include)
 
@@ -252,8 +250,8 @@ void empole_chgpen_cu1(
          atomic_add(tzk, trqz, k);
       }
       if CONSTEXPR (CFLX) {
-        atomic_add(shpoti[threadIdx.x], pot, shi);
-        atomic_add(potk, pot, k);
+         atomic_add(shpoti[threadIdx.x], pot, shi);
+         atomic_add(potk, pot, k);
       }
    }
    // */
@@ -412,7 +410,6 @@ void empole_chgpen_cu1(
             if CONSTEXPR (CFLX) {
                shpoti[klane] += pota;
                potk += potb;
-               //printf("%2d %2d %15.8e %15.8e\n", klane+1,k+1,pota,potb);
             }
          } // end if (include)
 
@@ -436,8 +433,8 @@ void empole_chgpen_cu1(
          atomic_add(tzk, trqz, k);
       }
       if CONSTEXPR (CFLX) {
-        atomic_add(shpoti[threadIdx.x], pot, shi);
-        atomic_add(potk, pot, k);
+         atomic_add(shpoti[threadIdx.x], pot, shi);
+         atomic_add(potk, pot, k);
       }
    }
    // */
@@ -584,7 +581,6 @@ void empole_chgpen_cu1(
             if CONSTEXPR (CFLX) {
                shpoti[klane] += pota;
                potk += potb;
-               //printf("%2d %2d %15.8e %15.8e\n", klane+1,k+1,pota,potb);
             }
          } // end if (include)
       }
@@ -605,8 +601,8 @@ void empole_chgpen_cu1(
          atomic_add(tzk, trqz, k);
       }
       if CONSTEXPR (CFLX) {
-        atomic_add(shpoti[threadIdx.x], pot, shi);
-        atomic_add(potk, pot, k);
+         atomic_add(shpoti[threadIdx.x], pot, shi);
+         atomic_add(potk, pot, k);
       }
    }
    // */
@@ -650,9 +646,8 @@ void empole_chgpen_cu()
       aewald = pu->aewald;
 
 
-      
       launch_k1s(nonblk, n, empole_chgpen_self_cu<do_a, do_e, CFLX>, //
-                  bufsize, nem, em, rpole, pot, n, f, aewald);
+                 bufsize, nem, em, rpole, pot, n, f, aewald);
    }
 
 
