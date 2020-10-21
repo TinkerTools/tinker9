@@ -9,6 +9,7 @@ TINKER_EXTERN real* pval;
 TINKER_EXTERN real* pval0;
 TINKER_EXTERN real* palpha;
 
+
 //====================================================================//
 
 
@@ -17,9 +18,6 @@ TINKER_EXTERN real w3scale;
 TINKER_EXTERN real w4scale;
 TINKER_EXTERN real w5scale;
 
-// TINKER_EXTERN int ndwexclude;
-// TINKER_EXTERN int (*dwexclude)[2];
-// TINKER_EXTERN real (*dwexclude_scale)[2];
 
 TINKER_EXTERN int nmdwexclude;
 TINKER_EXTERN int (*mdwexclude)[2];
@@ -35,10 +33,10 @@ TINKER_EXTERN int nwexclude;
 TINKER_EXTERN int (*wexclude)[2];
 TINKER_EXTERN real* wexclude_scale;
 
+
 TINKER_EXTERN real (*work11_)[3];
 TINKER_EXTERN real (*work12_)[3];
 TINKER_EXTERN real (*work13_)[3];
 TINKER_EXTERN real (*work14_)[3];
 TINKER_EXTERN real (*work15_)[3];
-
 }

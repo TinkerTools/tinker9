@@ -10,8 +10,6 @@ TINKER_EXTERN real (*abflx)[2];
 TINKER_EXTERN int* atomic;
 TINKER_EXTERN int (*balist)[2];
 
-//TINKER_EXTERN count_buffer naflx;
-//TINKER_EXTERN count_buffer nbflx;
 
 TINKER_EXTERN real* mono0;
 TINKER_EXTERN real* pdelta;
