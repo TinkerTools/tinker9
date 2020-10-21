@@ -94,10 +94,11 @@ void empole_chgpen(int vers)
    else
       empole_chgpen_nonewald(vers, use_cf);
 
+   torque(vers, demx, demy, demz);
+
    if (use_cf)
       dcflux(vers, demx, demy, demz, vir_em);
 
-   torque(vers, demx, demy, demz);
    if (do_v) {
       virial_buffer u2 = vir_trq;
       virial_prec v2[9];

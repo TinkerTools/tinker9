@@ -198,8 +198,8 @@ void empole_chgpen_cu1(
             f, aewald, e, pota, potb, pgrad);
          
          
-         if CONSTEXPR (do_a and scalea != 0)
-            if (e != 0)
+         if CONSTEXPR (do_a)
+            if (e != 0 and scalea != 0)
                nemtl += 1;
          if CONSTEXPR (do_e)
             emtl += cvt_to<ebuf_prec>(e);
@@ -232,7 +232,7 @@ void empole_chgpen_cu1(
          if CONSTEXPR (CFLX) {
             shpoti[klane] += pota;
             potk += potb;
-            printf("%2d %2d %15.8e %15.8e\n", klane+1,k+1,pota,potb);
+            //printf("%2d %2d %15.8e %15.8e\n", klane+1,k+1,pota,potb);
          }
       } // end if (include)
 
@@ -412,7 +412,7 @@ void empole_chgpen_cu1(
             if CONSTEXPR (CFLX) {
                shpoti[klane] += pota;
                potk += potb;
-               printf("%2d %2d %15.8e %15.8e\n", klane+1,k+1,pota,potb);
+               //printf("%2d %2d %15.8e %15.8e\n", klane+1,k+1,pota,potb);
             }
          } // end if (include)
 
@@ -584,7 +584,7 @@ void empole_chgpen_cu1(
             if CONSTEXPR (CFLX) {
                shpoti[klane] += pota;
                potk += potb;
-               printf("%2d %2d %15.8e %15.8e\n", klane+1,k+1,pota,potb);
+               //printf("%2d %2d %15.8e %15.8e\n", klane+1,k+1,pota,potb);
             }
          } // end if (include)
       }

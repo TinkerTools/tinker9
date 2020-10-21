@@ -10,7 +10,8 @@
 
 namespace tinker {
 #define DEVICE_PTRS                                                            \
-   x, y, z, demx, demy, demz, rpole, pcore, pval, palpha, nem, em, vir_em, trqx, trqy, trqz
+   x, y, z, demx, demy, demz, rpole, pcore, pval, palpha, nem, em, vir_em,     \
+      trqx, trqy, trqz
 template <class Ver>
 void empole_chgpen_ewald_real_self_acc1()
 {
@@ -76,14 +77,13 @@ void empole_chgpen_ewald_real_self_acc1()
          if (r2 <= off2) {
             MAYBE_UNUSED real e;
             pair_mpole_chgpen<do_e, do_g, EWALD>(
-                  r2, xr, yr, zr, 1,                                     //
-                  ci, dix, diy, diz, corei, vali, alphai, //
-                  qixx, qixy, qixz, qiyy, qiyz, qizz, //
-                  rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
-                  rpole[k][mpl_pme_z], corek, valk, alphak,
-                  rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz],
-                  rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz],
-                  f, aewald, e, pgrad);
+               r2, xr, yr, zr, 1,                      //
+               ci, dix, diy, diz, corei, vali, alphai, //
+               qixx, qixy, qixz, qiyy, qiyz, qizz,     //
+               rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
+               rpole[k][mpl_pme_z], corek, valk, alphak, rpole[k][mpl_pme_xx],
+               rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
+               rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], f, aewald, e, pgrad);
 
             if CONSTEXPR (do_a)
                atomic_add(1, nem, offset);
@@ -185,14 +185,13 @@ void empole_chgpen_ewald_real_self_acc1()
       if (r2 <= off2) {
          MAYBE_UNUSED real e;
          pair_mpole_chgpen<do_e, do_g, NON_EWALD>(
-                  r2, xr, yr, zr, mscale,                                     //
-                  ci, dix, diy, diz, corei, vali, alphai, //
-                  qixx, qixy, qixz, qiyy, qiyz, qizz, //
-                  rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
-                  rpole[k][mpl_pme_z], corek, valk, alphak,
-                  rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz],
-                  rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz],
-                  f, 0, e, pgrad);
+            r2, xr, yr, zr, mscale,                 //
+            ci, dix, diy, diz, corei, vali, alphai, //
+            qixx, qixy, qixz, qiyy, qiyz, qizz,     //
+            rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
+            rpole[k][mpl_pme_z], corek, valk, alphak, rpole[k][mpl_pme_xx],
+            rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
+            rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], f, 0, e, pgrad);
 
          if CONSTEXPR (do_a) {
             if (mscale == -1)
@@ -365,13 +364,11 @@ void empole_chgpen_ewald_recip_acc1()
 
             atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
          } // end if (do_v)
-
          if CONSTEXPR (CFLX) {
-            atomic_add(cphi[i][0], pot, i);
+            atomic_add(f * cphi[i][0], pot, i);
          }
-
-      }    // end if (do_g)
-   }       // end for (int i)
+      } // end if (do_g)
+   }    // end for (int i)
 }
 
 
@@ -407,8 +404,7 @@ void empole_chgpen_ewald_recip_acc(int vers, int use_cf)
          empole_chgpen_ewald_recip_acc1<calc::V5, 1>();
       else if (vers == calc::v6)
          empole_chgpen_ewald_recip_acc1<calc::V6, 1>();
-   } 
-   else {
+   } else {
       if (vers == calc::v0)
          empole_chgpen_ewald_recip_acc1<calc::V0, 0>();
       else if (vers == calc::v1)

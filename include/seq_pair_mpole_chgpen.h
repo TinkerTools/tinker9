@@ -182,17 +182,6 @@ void pair_mpole_chgpen(                             //
       rr11ik = bn[5] - (1 - mscale * dmpik[5]) * rr11;
 
 
-   if CONSTEXPR (CFLX) {
-      real t1i = corek * rr1i + valk * rr1ik;
-      real t1k = corei * rr1k + vali * rr1ik;
-      real t2i = -dkr * rr3ik;
-      real t2k = dir * rr3ik;
-      real t3i = qkr * rr5ik;
-      real t3k = qir * rr5ik;
-      poti = t1i + t2i + t3i;
-      potk = t1k + t2k + t3k;
-   }
-
    if CONSTEXPR (do_e) {
       e = term1 * rr1 + term4ik * rr7ik + term5ik * rr9ik + term1i * rr1i +
          term1k * rr1k + term1ik * rr1ik + term2i * rr3i + term2k * rr3k +
@@ -233,6 +222,17 @@ void pair_mpole_chgpen(                             //
          -2 * (corei * rr5k + vali * rr5ik + dir * rr7ik + qir * rr9ik);
       real term6 = 4 * rr7ik;
 
+
+      if CONSTEXPR (CFLX) {
+         real t1i = corek * rr1i + valk * rr1ik;
+         real t1k = corei * rr1k + vali * rr1ik;
+         real t2i = -dkr * rr3ik;
+         real t2k = dir * rr3ik;
+         real t3i = qkr * rr5ik;
+         real t3k = qir * rr5ik;
+         poti = t1i + t2i + t3i;
+         potk = t1k + t2k + t3k;
+      }
 
       pgrad.frcx = de * xr + term1 * dix + term2 * dkx +
          term3 * (diqkx - dkqix) + term4 * qix + term5 * qkx +
