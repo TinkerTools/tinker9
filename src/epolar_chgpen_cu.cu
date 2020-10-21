@@ -1,7 +1,7 @@
 #include "add.h"
+#include "cflux.h"
 #include "epolar_chgpen.h"
 #include "epolar_trq.h"
-#include "cflux.h"
 #include "glob.spatial.h"
 #include "image.h"
 #include "launch.h"
@@ -20,8 +20,8 @@ __global__
 void epolar_chgpen_cu1(
    int n, TINKER_IMAGE_PARAMS, count_buffer restrict np,
    energy_buffer restrict ep, virial_buffer restrict vp, grad_prec* restrict gx,
-   grad_prec* restrict gy, grad_prec* restrict gz,
-   real off, const unsigned* restrict dwinfo, int nexclude,
+   grad_prec* restrict gy, grad_prec* restrict gz, real off,
+   const unsigned* restrict dwinfo, int nexclude,
    const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3],
    const real* restrict x, const real* restrict y, const real* restrict z,
    const Spatial::SortedAtom* restrict sorted, int nakpl,
@@ -278,10 +278,10 @@ void epolar_chgpen_cu1(
                cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
             vptlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
          }
-         // if CONSTEXPR (CFLX) {
-         //    shpoti[klane] += pota;
-         //    potk += potb;
-         // }
+         if CONSTEXPR (CFLX) {
+            shpoti[klane] += pota;
+            potk += potb;
+         }
       } // end if (include)
 
 
@@ -836,8 +836,7 @@ void epolar_chgpen_nonewald_cu(int vers, int use_cf, const real (*uind)[3])
       } else if (vers == calc::v6) {
          epolar_chgpen_cu<calc::V6, NON_EWALD, 1>(uind);
       }
-   }
-   else {
+   } else {
       if (vers == calc::v0) {
          epolar_chgpen_cu<calc::V0, NON_EWALD, 0>(uind);
       } else if (vers == calc::v1) {
@@ -871,8 +870,7 @@ void epolar_chgpen_ewald_real_cu(int vers, int use_cf, const real (*uind)[3])
       } else if (vers == calc::v6) {
          epolar_chgpen_cu<calc::V6, EWALD, 1>(uind);
       }
-   }
-   else {
+   } else {
       if (vers == calc::v0) {
          epolar_chgpen_cu<calc::V0, EWALD, 0>(uind);
       } else if (vers == calc::v1) {

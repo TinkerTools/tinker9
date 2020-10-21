@@ -135,10 +135,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
    dsr7i = 2 * rr7i;
    dsr7k = 2 * rr7k;
 
-   if CONSTEXPR (CFLX) {
-      poti = -ukr * dsr3i;
-      potk = uir * dsr3k;
-   }
 
    if CONSTEXPR (do_e) {
       real diu = dix * ukx + diy * uky + diz * ukz;
@@ -149,7 +145,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
          ukr * (corei * rr3core + vali * rr3i) + diu * rr3i + dku * rr3k +
          2 * (qiu * rr5i - qku * rr5k) - dkr * uir * rr5k - dir * ukr * rr5i +
          qkr * uir * rr7k - qir * ukr * rr7i;
-      //printf("%6.3f %16.8e %16.8e %16.8e %16.8e\n", r, uir, ukr, diu, dku);
    }
 
 
@@ -164,6 +159,10 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       real tuir = -dsr5i * ukr;
       real tukr = -dsr5k * uir;
 
+      if CONSTEXPR (CFLX) {
+         poti = -ukr * dsr3i;
+         potk = uir * dsr3k;
+      }
 
       pgrad.ufldi[0] = (tix3 + xr * tuir);
       pgrad.ufldi[1] = (tiy3 + yr * tuir);

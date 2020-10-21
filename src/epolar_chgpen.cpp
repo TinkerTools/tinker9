@@ -222,10 +222,10 @@ void epolar_chgpen(int vers)
    else
       epolar_chgpen_nonewald(vers, use_cf);
 
+   torque(vers, depx, depy, depz);
    if (use_cf)
       dcflux(vers, depx, depy, depz, vir_ep);
 
-   torque(vers, depx, depy, depz);
    if (do_v) {
       virial_buffer u2 = vir_trq;
       virial_prec v2[9];
