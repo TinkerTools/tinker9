@@ -7,13 +7,13 @@
 
 
 namespace tinker {
-
 struct PairRepelGrad
 {
    real frcx, frcy, frcz;
    real ttqi[3];
    real ttqk[3];
 };
+
 
 SEQ_ROUTINE
 inline void zero(PairRepelGrad& pgrad)
@@ -28,6 +28,7 @@ inline void zero(PairRepelGrad& pgrad)
    pgrad.ttqk[1] = 0;
    pgrad.ttqk[2] = 0;
 }
+
 
 #pragma acc routine seq
 template <bool do_e, bool do_g>
@@ -76,7 +77,6 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
    // dmpik(11) == dmpik[5]
 
    // same as in emplar_cu
-
    real dir = dot3(di, dr);
    real3 qi_dr = matvec(qixx, qixy, qixz, qiyy, qiyz, qizz, dr);
    real qir = dot3(dr, qi_dr);
@@ -90,7 +90,6 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
    real dkqi = dot3(dk, qi_dr);
    real qiqk = dot3(qixx, qiyy, qizz, qkxx, qkyy, qkzz) +
       2 * dot3(qixy, qixz, qiyz, qkxy, qkxz, qkyz);
-   //
 
    real term1 = vali * valk;
    real term2 = valk * dir - vali * dkr + dik;
@@ -108,7 +107,6 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
    }
 
    // gradient
-
    if CONSTEXPR (do_g) {
       real de = term1 * dmpik[1] + term2 * dmpik[2] + term3 * dmpik[3] +
          term4 * dmpik[4] + term5 * dmpik[5];
@@ -141,7 +139,6 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
       real dkqiy = dk.x * qixy + dk.y * qiyy + dk.z * qiyz;
       real dkqiz = dk.x * qixz + dk.y * qiyz + dk.z * qizz;
 
-      //
       real3 frc0;
       frc0.x = de * dr.x + term1 * di.x + term2 * dk.x +
          term3 * (diqkx - dkqix) + term4 * qix + term5 * qkx +
@@ -152,7 +149,6 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
       frc0.z = de * dr.z + term1 * di.z + term2 * dk.z +
          term3 * (diqkz - dkqiz) + term4 * qiz + term5 * qkz +
          term6 * (qizk + qkzi);
-
 
       pgrad.frcx = frc0.x * rr1 + eterm * rr3 * dr.x;
       pgrad.frcy = frc0.y * rr1 + eterm * rr3 * dr.y;

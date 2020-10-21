@@ -37,7 +37,6 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
    const real div9 = 1 / ((real)9);
    const real div945 = 1 / ((real)945);
 
-
    real pre, s, ds, d2s, d3s, d4s, d5s;
    if (diff < 0.001f) {
       real r6 = r3 * r3;
@@ -52,7 +51,6 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
       d3s = dmpi25 * expi * r6 / ((real)45);
       d4s = (dmpi25 * r6 + dmpi26 * r7) * expi / ((real)315);
 
-
       if CONSTEXPR (order > 9) {
          real r8 = r4 * r4;
          real dmpi27 = dmpi24 * dmpi23;
@@ -60,7 +58,6 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
       }
    } else {
       // treat the case where alpha damping exponents are unequal
-
 
       // divisions
       real div5 = 1 / ((real)5);
@@ -83,7 +80,6 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
       real tmp = (4 * dmpi2 * dmpk2) / term;
       pre = (8192 * dmpi23 * dmpk23) / (term * term * term * term);
 
-
       real coef1 = 4 / term;
 
       s = (dampi * expk) + (dampk * expi) + tmp * (expi - expk);
@@ -97,7 +93,6 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
          ((dmpi2 * r2 + dmpi22 * r3) * div3 +
           coef1 * (dmpi23 * r2 * div3 + dmpi22 * r + dmpi2)) *
             dmpk2 * expi;
-
 
       d3s = ((dmpk23 * r4 * div3 + dmpk22 * r3 + dmpk2 * r2) * div5 -
              coef1 *
@@ -145,13 +140,13 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
                dmpk2 * expi;
       }
    }
+
    // convert partial derivatives into full derivatives
    s *= rinv;
    ds *= rr3;
    d2s *= rr5;
    d3s *= rr7;
    d4s *= rr9;
-
 
    dmpik[0] = 0.5f * pre * s * s;
    dmpik[1] = pre * s * ds;

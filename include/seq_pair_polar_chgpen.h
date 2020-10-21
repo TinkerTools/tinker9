@@ -3,42 +3,10 @@
 #include "md.h"
 #include "seq_damp.h"
 #include "seq_damp_chgpen.h"
+#include "seq_pair_polar.h"
 
 
 namespace tinker {
-struct PairPolarGrad
-{
-   real frcx, frcy, frcz;
-   real ufldi[3], ufldk[3];
-   real dufldi[6], dufldk[6];
-};
-
-
-SEQ_ROUTINE
-inline void zero(PairPolarGrad& pgrad)
-{
-   pgrad.frcx = 0;
-   pgrad.frcy = 0;
-   pgrad.frcz = 0;
-   #pragma unroll
-   for (int i = 0; i < 3; ++i) {
-      pgrad.ufldi[i] = 0;
-   }
-   #pragma unroll
-   for (int i = 0; i < 3; ++i) {
-      pgrad.ufldk[i] = 0;
-   }
-   #pragma unroll
-   for (int i = 0; i < 6; ++i) {
-      pgrad.dufldi[i] = 0;
-   }
-   #pragma unroll
-   for (int i = 0; i < 6; ++i) {
-      pgrad.dufldk[i] = 0;
-   }
-}
-
-
 #pragma acc routine seq
 template <bool do_e, bool do_g, class ETYP, int CFLX>
 SEQ_CUDA
@@ -53,8 +21,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
                        real& restrict e, real& restrict poti,
                        real& restrict potk, PairPolarGrad& restrict pgrad)
 {
-
-
    real dir = dix * xr + diy * yr + diz * zr;
    real qix = qixx * xr + qixy * yr + qixz * zr;
    real qiy = qixy * xr + qiyy * yr + qiyz * zr;
@@ -98,10 +64,7 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       bn[2] *= f;
       bn[3] *= f;
       bn[4] *= f;
-
-
    } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
-
       if CONSTEXPR (do_g)
          damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       else {
@@ -113,7 +76,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       bn[3] = rr7;
       bn[4] = rr9;
    }
-
 
    rr3core = bn[1] - (1 - dscale) * rr3;
    rr5core = bn[2] - (1 - dscale) * rr5;
@@ -135,7 +97,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
    dsr7i = 2 * rr7i;
    dsr7k = 2 * rr7k;
 
-
    if CONSTEXPR (do_e) {
       real diu = dix * ukx + diy * uky + diz * ukz;
       real qiu = qix * ukx + qiy * uky + qiz * ukz;
@@ -146,7 +107,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
          2 * (qiu * rr5i - qku * rr5k) - dkr * uir * rr5k - dir * ukr * rr5i +
          qkr * uir * rr7k - qir * ukr * rr7i;
    }
-
 
    if CONSTEXPR (do_g) {
       // get the induced dipole field used for dipole torques
@@ -194,7 +154,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       pgrad.dufldk[3] = (-xr * tkz5 - zr * tkx5 - 2 * xr * zr * tukr);
       pgrad.dufldk[4] = (-yr * tkz5 - zr * tky5 - 2 * yr * zr * tukr);
       pgrad.dufldk[5] = (-zr * tkz5 - zr * zr * tukr);
-
 
       // get the field gradient for direct polarization force
 
@@ -332,7 +291,6 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
          dky * term3k + dkr * term4k - qkyz * term5k + qkz * term6k +
          qky * term7k - qkr * term8k;
 
-
       real depx, depy, depz;
 
       depx = tixx * ukx + tixy * uky + tixz * ukz - tkxx * uix - tkxy * uiy -
@@ -375,14 +333,12 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       tiyz = uiy * term1 + uiz * term2 - uir * term3;
       tkyz = uky * term1 + ukz * term2 - ukr * term3;
 
-
       depx = tixx * ukx + tixy * uky + tixz * ukz + tkxx * uix + tkxy * uiy +
          tkxz * uiz;
       depy = tixy * ukx + tiyy * uky + tiyz * ukz + tkxy * uix + tkyy * uiy +
          tkyz * uiz;
       depz = tixz * ukx + tiyz * uky + tizz * ukz + tkxz * uix + tkyz * uiy +
          tkzz * uiz;
-
 
       pgrad.frcx += depx;
       pgrad.frcy += depy;
