@@ -1,6 +1,5 @@
 #pragma once
 #include "elec.h"
-#include "mod.chgpen.h"
 #include "mod.chgtrn.h"
 #include "mod.ctrpot.h"
 #include "mod.mplpot.h"

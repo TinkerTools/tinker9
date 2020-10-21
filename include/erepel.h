@@ -1,7 +1,7 @@
 #pragma once
+#include "mod.mpole.h"
 #include "mod.repel.h"
 #include "mod.reppot.h"
-#include "mod.mpole.h"
 #include "tool/rc_man.h"
 
 

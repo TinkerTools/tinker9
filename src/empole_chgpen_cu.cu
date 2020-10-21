@@ -628,15 +628,12 @@ void empole_chgpen_cu()
    constexpr bool do_a = Ver::a;
 
 
-   // const auto& st = *mspatial_unit;
    const auto& st = *mspatial_v2_unit;
    real off;
    if CONSTEXPR (eq<ETYP, EWALD>())
       off = switch_off(switch_ewald);
    else
       off = switch_off(switch_mpole);
-   // const real off2 = off * off;
-   auto bufsize = buffer_size();
 
 
    const real f = electric / dielec;
@@ -647,7 +644,7 @@ void empole_chgpen_cu()
 
 
       launch_k1s(nonblk, n, empole_chgpen_self_cu<do_a, do_e, CFLX>, //
-                 bufsize, nem, em, rpole, pot, n, f, aewald);
+                 nem, em, rpole, pot, n, f, aewald);
    }
 
 
