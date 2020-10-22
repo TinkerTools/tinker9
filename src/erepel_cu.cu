@@ -205,7 +205,6 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
             tzk += pgrad.ttqk[2];
 
             if CONSTEXPR (do_v) {
-               
                real vxx = (-xr * pgrad.frcx);
                real vyx = (-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
                real vzx = (-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
@@ -590,7 +589,6 @@ void erepel_cu2()
    real cut = switch_cut(switch_repuls);
    real off = switch_off(switch_repuls);
 
-   auto bufsize = buffer_size();
 
    int ngrid = get_grid_size(BLOCK_DIM);
    erepel_cu1<Ver><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
