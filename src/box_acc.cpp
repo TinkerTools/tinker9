@@ -17,6 +17,6 @@ void box_data_acc(rc_op op)
 
 void box_copyin_acc()
 {
-   #pragma acc update device(lvec1,lvec2,lvec3,recipa,recipb,recipc)
+   #pragma acc update async device(lvec1,lvec2,lvec3,recipa,recipb,recipc)
 }
 }
