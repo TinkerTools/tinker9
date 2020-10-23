@@ -55,6 +55,7 @@ void grid_uind_cu(PMEUnit, real (*)[3], real (*)[3]);
 
 
 void pme_conv_acc(PMEUnit, energy_buffer, virial_buffer);
+void pme_conv_cu(PMEUnit, energy_buffer, virial_buffer);
 
 
 void fphi_mpole_acc(PMEUnit, real (*)[20]);

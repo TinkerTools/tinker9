@@ -314,10 +314,10 @@ void pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
          if CONSTEXPR (DO_E || DO_V) {
             real struc2 = gridx * gridx + gridy * gridy;
             real eterm = 0.5f * f * expterm * struc2;
-            if (DO_E) {
+            if CONSTEXPR (DO_E) {
                atomic_add(eterm, gpu_e, i & (bufsize - 1));
             }
-            if (DO_V) {
+            if CONSTEXPR (DO_V) {
                real vterm = (2 / hsq) * (1 - term) * eterm;
 
                real vxx = (h1 * h1 * vterm - eterm);
