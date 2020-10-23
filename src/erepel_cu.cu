@@ -26,8 +26,8 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
                 const int* restrict iakpl, int niak, const int* restrict iak,
                 const int* restrict lst, real* restrict trqx,
                 real* restrict trqy, real* restrict trqz,
-                const real (*restrict rpole)[10], real* restrict sizpr,
-                real* restrict elepr, const real* restrict dmppr)
+                const real (*restrict rpole)[10], const real* restrict sizpr,
+                const real* restrict elepr, const real* restrict dmppr)
 {
    constexpr bool do_a = Ver::a;
    constexpr bool do_e = Ver::e;
@@ -178,13 +178,13 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
 
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
-         pair_repel<do_e, do_g>( //
+         pair_repel<do_g>( //
             r2, scalea, cut, off, xr, yr, zr, sizi, dmpi, vali, ci, dix, diy,
             diz, qixx, qixy, qixz, qiyy, qiyz, qizz, sizk, dmpk, valk, ck, dkx,
             dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, e, pgrad);
 
          if CONSTEXPR (do_a)
-            if (e != 0 and scalea != 0)
+            if (e != 0)
                nrtl += 1;
          if CONSTEXPR (do_e)
             ertl += cvt_to<ebuf_prec>(e);
@@ -203,22 +203,17 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
             txk += pgrad.ttqk[0];
             tyk += pgrad.ttqk[1];
             tzk += pgrad.ttqk[2];
-
-            if CONSTEXPR (do_v) {
-               real vxx = (-xr * pgrad.frcx);
-               real vyx = (-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
-               real vzx = (-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
-               real vyy = (-yr * pgrad.frcy);
-               real vzy = (-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
-               real vzz = (-zr * pgrad.frcz);
-
-               vrtlxx += cvt_to<vbuf_prec>(vxx);
-               vrtlyx += cvt_to<vbuf_prec>(vyx);
-               vrtlzx += cvt_to<vbuf_prec>(vzx);
-               vrtlyy += cvt_to<vbuf_prec>(vyy);
-               vrtlzy += cvt_to<vbuf_prec>(vzy);
-               vrtlzz += cvt_to<vbuf_prec>(vzz);
-            }
+         }
+         if CONSTEXPR (do_v) {
+            vrtlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
+            vrtlyx +=
+               cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+            vrtlzx +=
+               cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
+            vrtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
+            vrtlzy +=
+               cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
+            vrtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
          }
       } // end if (include)
 
@@ -346,7 +341,7 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_repel<do_e, do_g>( //
+            pair_repel<do_g>( //
                r2, scalea, cut, off, xr, yr, zr, sizi, dmpi, vali, ci, dix, diy,
                diz, qixx, qixy, qixz, qiyy, qiyz, qizz, sizk, dmpk, valk, ck,
                dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, e, pgrad);
@@ -371,22 +366,17 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
                txk += pgrad.ttqk[0];
                tyk += pgrad.ttqk[1];
                tzk += pgrad.ttqk[2];
-
-               if CONSTEXPR (do_v) {
-                  real vxx = (-xr * pgrad.frcx);
-                  real vyx = (-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
-                  real vzx = (-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
-                  real vyy = (-yr * pgrad.frcy);
-                  real vzy = (-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
-                  real vzz = (-zr * pgrad.frcz);
-
-                  vrtlxx += cvt_to<vbuf_prec>(vxx);
-                  vrtlyx += cvt_to<vbuf_prec>(vyx);
-                  vrtlzx += cvt_to<vbuf_prec>(vzx);
-                  vrtlyy += cvt_to<vbuf_prec>(vyy);
-                  vrtlzy += cvt_to<vbuf_prec>(vzy);
-                  vrtlzz += cvt_to<vbuf_prec>(vzz);
-               }
+            }
+            if CONSTEXPR (do_v) {
+               vrtlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
+               vrtlyx += cvt_to<vbuf_prec>(-0.5f *
+                                           (yr * pgrad.frcx + xr * pgrad.frcy));
+               vrtlzx += cvt_to<vbuf_prec>(-0.5f *
+                                           (zr * pgrad.frcx + xr * pgrad.frcz));
+               vrtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
+               vrtlzy += cvt_to<vbuf_prec>(-0.5f *
+                                           (zr * pgrad.frcy + yr * pgrad.frcz));
+               vrtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
             }
          } // end if (include)
 
@@ -506,7 +496,7 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_repel<do_e, do_g>( //
+            pair_repel<do_g>( //
                r2, scalea, cut, off, xr, yr, zr, sizi, dmpi, vali, ci, dix, diy,
                diz, qixx, qixy, qixz, qiyy, qiyz, qizz, sizk, dmpk, valk, ck,
                dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, e, pgrad);
@@ -531,22 +521,17 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
                txk += pgrad.ttqk[0];
                tyk += pgrad.ttqk[1];
                tzk += pgrad.ttqk[2];
-
-               if CONSTEXPR (do_v) {
-                  real vxx = (-xr * pgrad.frcx);
-                  real vyx = (-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
-                  real vzx = (-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
-                  real vyy = (-yr * pgrad.frcy);
-                  real vzy = (-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
-                  real vzz = (-zr * pgrad.frcz);
-
-                  vrtlxx += cvt_to<vbuf_prec>(vxx);
-                  vrtlyx += cvt_to<vbuf_prec>(vyx);
-                  vrtlzx += cvt_to<vbuf_prec>(vzx);
-                  vrtlyy += cvt_to<vbuf_prec>(vyy);
-                  vrtlzy += cvt_to<vbuf_prec>(vzy);
-                  vrtlzz += cvt_to<vbuf_prec>(vzz);
-               }
+            }
+            if CONSTEXPR (do_v) {
+               vrtlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
+               vrtlyx += cvt_to<vbuf_prec>(-0.5f *
+                                           (yr * pgrad.frcx + xr * pgrad.frcy));
+               vrtlzx += cvt_to<vbuf_prec>(-0.5f *
+                                           (zr * pgrad.frcx + xr * pgrad.frcz));
+               vrtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
+               vrtlzy += cvt_to<vbuf_prec>(-0.5f *
+                                           (zr * pgrad.frcy + yr * pgrad.frcz));
+               vrtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
             }
          } // end if (include)
       }
@@ -579,7 +564,7 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
    if CONSTEXPR (do_v) {
       atomic_add(vrtlxx, vrtlyx, vrtlzx, vrtlyy, vrtlzy, vrtlzz, vr, ithread);
    }
-} // generated by ComplexKernelBuilder (ck.py) 1.5.1
+} // generated by ComplexKernelBuilder (ck.py) 1.5.3
 
 
 template <class Ver>

@@ -31,7 +31,7 @@ inline void zero(PairRepelGrad& pgrad)
 
 
 #pragma acc routine seq
-template <bool do_e, bool do_g>
+template <bool do_g>
 SEQ_CUDA
 void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
                 real zr, real sizi, real dmpi, real vali, real ci, real dix,
@@ -102,9 +102,7 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
       term4 * dmpik[3] + term5 * dmpik[4];
 
    // energy
-   if CONSTEXPR (do_e) {
-      e = sizik * eterm * rInv;
-   }
+   e = sizik * eterm * rInv;
 
    // gradient
    if CONSTEXPR (do_g) {
@@ -246,8 +244,7 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
          pgrad.ttqk[1] *= taper;
          pgrad.ttqk[2] *= taper;
       }
-      if CONSTEXPR (do_e)
-         e *= taper;
+      e *= taper;
    }
 }
 }
