@@ -20,8 +20,8 @@ real dot_vect(const real* restrict a, const real* restrict b)
 void bnd_dcflux()
 {
    #pragma acc parallel loop independent async\
-                deviceptr(x,y,z,ibnd,bflx,pot,\
-                decfx,decfy,decfz)
+               deviceptr(x,y,z,ibnd,bflx,pot,\
+               decfx,decfy,decfz)
    for (int i = 0; i < nbond; ++i) {
       int ia = ibnd[i][0];
       int ib = ibnd[i][1];
@@ -50,8 +50,8 @@ void bnd_dcflux()
 void ang_dcflux()
 {
    #pragma acc parallel loop independent async\
-                deviceptr(x,y,z,iang,aflx,abflx,pot,\
-                decfx,decfy,decfz)
+               deviceptr(x,y,z,iang,aflx,abflx,pot,\
+               decfx,decfy,decfz)
    for (int i = 0; i < nangle; ++i) {
       int ia = iang[i][0];
       int ib = iang[i][1];
@@ -136,10 +136,9 @@ void dcflux_acc1(grad_prec* restrict gx, grad_prec* restrict gy,
                  grad_prec* restrict gz, virial_buffer restrict vir)
 {
    auto bufsize = buffer_size();
-   using vbuf_prec = virial_buffer_traits::type;
 
    #pragma acc parallel loop independent async\
-                deviceptr(decfx,decfy,decfz)
+               deviceptr(decfx,decfy,decfz)
    for (int i = 0; i < n; ++i) {
       decfx[i] = 0;
       decfy[i] = 0;
@@ -150,21 +149,20 @@ void dcflux_acc1(grad_prec* restrict gx, grad_prec* restrict gy,
    ang_dcflux();
 
    #pragma acc parallel loop independent async\
-                deviceptr(x,y,z,decfx,decfy,decfz,\
-                gx,gy,gz,vir)
+               deviceptr(x,y,z,decfx,decfy,decfz,\
+               gx,gy,gz,vir)
    for (int i = 0; i < n; ++i) {
       atomic_add(decfx[i], gx, i);
       atomic_add(decfy[i], gy, i);
       atomic_add(decfz[i], gz, i);
 
       if CONSTEXPR (DO_V) {
-         real vxx = cvt_to<vbuf_prec>(x[i] * decfx[i]);
-         real vyx = cvt_to<vbuf_prec>(y[i] * decfx[i]);
-         real vzx = cvt_to<vbuf_prec>(z[i] * decfx[i]);
-         real vyy = cvt_to<vbuf_prec>(y[i] * decfy[i]);
-         real vzy = cvt_to<vbuf_prec>(z[i] * decfy[i]);
-         real vzz = cvt_to<vbuf_prec>(z[i] * decfz[i]);
-
+         real vxx = x[i] * decfx[i];
+         real vyx = y[i] * decfx[i];
+         real vzx = z[i] * decfx[i];
+         real vyy = y[i] * decfy[i];
+         real vzy = z[i] * decfy[i];
+         real vzz = z[i] * decfz[i];
          atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir, i & (bufsize - 1));
       }
    }
@@ -183,5 +181,4 @@ void zero_pot()
 {
    darray::zero(PROCEED_NEW_Q, n, pot);
 }
-
 }

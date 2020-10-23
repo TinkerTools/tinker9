@@ -181,7 +181,7 @@ void sparse_precond_apply_acc2(const real (*rsd)[3], real (*zrsd)[3])
  * conj = p
  * vec = T P
  */
-void induce_mutual_pcg_acc2(real (*uind)[3])
+void induce_mutual_pcg2_acc(real (*uind)[3])
 {
    auto* field = work01_;
    auto* rsd = work02_;
@@ -414,10 +414,10 @@ void induce_mutual_pcg2(real (*uind)[3])
 {
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
-      induce_mutual_pcg_cu2(uind);
+      induce_mutual_pcg2_cu(uind);
    else
 #endif
-      induce_mutual_pcg_acc2(uind);
+      induce_mutual_pcg2_acc(uind);
 }
 
 
