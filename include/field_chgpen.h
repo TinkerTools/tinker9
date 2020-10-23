@@ -12,7 +12,6 @@ void dfield_chgpen_ewald_recip_self (real (*field)[3]);
 void dfield_chgpen_ewald_real       (real (*field)[3]);
 
 void dfield_chgpen_nonewald_acc         (real (*field)[3]);
-void dfield_chgpen_ewald_recip_self_acc (real (*field)[3]);
 void dfield_chgpen_ewald_real_acc       (real (*field)[3]);
 void dfield_chgpen_nonewald_cu          (real (*field)[3]);
 void dfield_chgpen_ewald_real_cu        (real (*field)[3]);

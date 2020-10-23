@@ -176,9 +176,4 @@ void dcflux_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz,
    else
       dcflux_acc1<0>(gx, gy, gz, nullptr);
 }
-
-void zero_pot()
-{
-   darray::zero(PROCEED_NEW_Q, n, pot);
-}
 }

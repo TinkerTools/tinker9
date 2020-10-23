@@ -11,37 +11,6 @@
 #include "tool/gpu_card.h"
 
 namespace tinker {
-// see also subroutine udirect1 in induce.f
-void dfield_chgpen_ewald_recip_self_acc(real (*field)[3])
-{
-   darray::zero(PROCEED_NEW_Q, n, field);
-
-   const PMEUnit pu = ppme_unit;
-   const real aewald = pu->aewald;
-   const real term = aewald * aewald * aewald * 4 / 3 / sqrtpi;
-
-   cmp_to_fmp(pu, cmp, fmp);
-   grid_mpole(pu, fmp);
-   fftfront(pu);
-   if (vir_m)
-      pme_conv(pu, vir_m);
-   else
-      pme_conv(pu);
-   fftback(pu);
-   fphi_mpole(pu);
-   fphi_to_cphi(pu, fphi, cphi);
-
-   #pragma acc parallel loop independent async deviceptr(field,cphi,rpole)
-   for (int i = 0; i < n; ++i) {
-      real dix = rpole[i][mpl_pme_x];
-      real diy = rpole[i][mpl_pme_y];
-      real diz = rpole[i][mpl_pme_z];
-      field[i][0] += (-cphi[i][1] + term * dix);
-      field[i][1] += (-cphi[i][2] + term * diy);
-      field[i][2] += (-cphi[i][3] + term * diz);
-   }
-}
-
 // see also subroutine udirect2b / dfield_chgpen0c in induce.f
 #define DFIELD_DPTRS x, y, z, pcore, pval, palpha, field, rpole
 void dfield_chgpen_ewald_real_acc(real (*field)[3])
@@ -96,8 +65,8 @@ void dfield_chgpen_ewald_real_acc(real (*field)[3])
                rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
                pcore[k], pval[k], palpha[k], rpole[k][mpl_pme_xx],
                rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
-               rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], aewald, 
-               fid.x, fid.y, fid.z, fkd.x, fkd.y, fkd.z);
+               rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], aewald, fid.x, fid.y,
+               fid.z, fkd.x, fkd.y, fkd.z);
 
 
             gxi += fid.x;
@@ -155,8 +124,8 @@ void dfield_chgpen_ewald_real_acc(real (*field)[3])
             rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
             pcore[k], pval[k], palpha[k], rpole[k][mpl_pme_xx],
             rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
-            rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], 0, 
-            fid.x, fid.y, fid.z, fkd.x, fkd.y, fkd.z);
+            rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], 0, fid.x, fid.y, fid.z,
+            fkd.x, fkd.y, fkd.z);
 
          atomic_add(fid.x, &field[i][0]);
          atomic_add(fid.y, &field[i][1]);

@@ -71,15 +71,21 @@ void cflux_data(rc_op op)
 }
 
 
+void zero_pot()
+{
+   darray::zero(PROCEED_NEW_Q, n, pot);
+}
+
+
 void alterchg()
 {
    alterchg_acc();
 }
+
 
 void dcflux(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz,
             virial_buffer v)
 {
    dcflux_acc(vers, gx, gy, gz, v);
 }
-
 }

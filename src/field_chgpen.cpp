@@ -1,5 +1,6 @@
-#include "elec.h"
 #include "field_chgpen.h"
+#include "elec.h"
+#include "field.h"
 #include "md.h"
 #include "nblist.h"
 
@@ -34,7 +35,7 @@ void dfield_chgpen_ewald(real (*field)[3])
 
 void dfield_chgpen_ewald_recip_self(real (*field)[3])
 {
-   dfield_chgpen_ewald_recip_self_acc(field);
+   dfield_ewald_recip_self_acc(field);
 }
 
 

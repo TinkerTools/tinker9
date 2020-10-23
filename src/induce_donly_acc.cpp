@@ -31,7 +31,7 @@ void diag_precond2(const real (*rsd)[3], real (*zrsd)[3])
 }
 
 #define APPLY_DPTRS rsd, zrsd, x, y, z, polarity, palpha
-void sparse_precond_apply_acc2(const real (*rsd)[3], real (*zrsd)[3])
+void sparse_precond_apply2_acc(const real (*rsd)[3], real (*zrsd)[3])
 {
    #pragma acc parallel loop independent async\
                deviceptr(polarity,rsd,zrsd)
@@ -421,7 +421,7 @@ void induce_mutual_pcg2(real (*uind)[3])
 }
 
 
-void ulspred_save_acc2(const real (*restrict uind)[3])
+void ulspred_save2_acc(const real (*restrict uind)[3])
 {
    if (polpred == UPred::NONE)
       return;
@@ -463,7 +463,7 @@ void ulspred_save_acc2(const real (*restrict uind)[3])
       ud[i][2] = uind[i][2];
    }
 }
-void ulspred_sum_acc2(real (*restrict uind)[3])
+void ulspred_sum2_acc(real (*restrict uind)[3])
 {
    if (nualt < maxualt)
       return;
