@@ -65,16 +65,16 @@ void x_testgrad(int, char**)
       fmt = "\n Anlyt%10d       %12.4f%12.4f%12.4f  %12.4f";
    }
    print(out, fmt_t, "");
-   auto do_print = [](int i, int n, int top_m) {
-      if (n <= 2 * top_m)
-         return true;
-      else if (i < top_m)
-         return true;
-      else if (i >= n - top_m)
-         return true;
-      else
-         return false;
-   };
+   // auto do_print = [](int i, int n, int top_m) {
+   //    if (n <= 2 * top_m)
+   //       return true;
+   //    else if (i < top_m)
+   //       return true;
+   //    else if (i >= n - top_m)
+   //       return true;
+   //    else
+   //       return false;
+   // };
    // int print_top_n = 15;
    for (int i = 0; i < n; ++i) {
       // if (not do_print(i, n, print_top_n))
