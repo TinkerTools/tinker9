@@ -38,7 +38,7 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
    const real div945 = 1 / ((real)945);
 
    real pre, s, ds, d2s, d3s, d4s, d5s;
-   if (diff < 0.001f) {
+   if (diff < 0.005f) {
       real r6 = r3 * r3;
       real r7 = r4 * r3;
 

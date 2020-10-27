@@ -28,7 +28,6 @@ inline void damp_pole(real* restrict dmpik, real* restrict dmpi,
    const real div15 = 1 / ((real)15);
    const real div30 = 1 / ((real)30);
    const real div105 = 1 / ((real)105);
-   const real div210 = 1 / ((real)210);
 
    // GORDON1
    // core-valence
@@ -38,8 +37,8 @@ inline void damp_pole(real* restrict dmpik, real* restrict dmpi,
    dmpi[3] =
       1 - (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + dampi4 * div30) * expi;
    dmpi[4] = 1 -
-      (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + 4 * dampi4 * div105 +
-       dampi5 * div210) *
+      (1 + dampi + 0.5f * dampi2 + dampi3 * div6 +
+       (4 * dampi4 + 0.5f * dampi5) * div105) *
          expi;
 
    if (diff < eps) {
@@ -52,13 +51,15 @@ inline void damp_pole(real* restrict dmpik, real* restrict dmpi,
       // valence-valence
       real dampi6 = dampi3 * dampi3;
       real dampi7 = dampi3 * dampi4;
+      const real div5 = 1 / ((real)5);
       const real div16 = 1 / ((real)16);
+      const real div21 = 1 / ((real)21);
       const real div24 = 1 / ((real)24);
+      const real div42 = 1 / ((real)42);
       const real div48 = 1 / ((real)48);
       const real div120 = 1 / ((real)120);
       const real div144 = 1 / ((real)144);
-      const real div720 = 1 / ((real)720);
-      const real div5040 = 1 / ((real)5040);
+      const real div210 = 1 / ((real)210);
 
       dmpik[0] =
          1 - (1 + (11 * dampi + 3 * dampi2) * div16 + dampi3 * div48) * expi;
@@ -70,20 +71,21 @@ inline void damp_pole(real* restrict dmpik, real* restrict dmpi,
             expi;
       dmpik[3] = 1 -
          (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + dampi4 * div24 +
-          dampi5 * div120 + dampi6 * div720) *
+          (dampi5 + dampi6 * div6) * div120) *
             expi;
       dmpik[4] = 1 -
-         (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + dampi4 * div24 +
-          dampi5 * div120 + dampi6 * div720 + dampi7 * div5040) *
+         ((1 + dampi + 0.5f * dampi2 + dampi3 * div6) +
+          ((dampi4 + +dampi5 * div5) +
+           0.1f * (dampi6 * div3 + dampi7 * div21)) *
+             div24) *
             expi;
-
       if CONSTEXPR (ORDER > 9) {
          real dampi8 = dampi4 * dampi4;
-         const real div45360 = 1 / ((real)45360);
+         const real div378 = 1 / ((real)378);
          dmpik[5] = 1 -
             (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + dampi4 * div24 +
-             dampi5 * div120 + dampi6 * div720 + dampi7 * div5040 +
-             div45360 * dampi8) *
+             (dampi5 + dampi6 * div6 + dampi7 * div42 + dampi8 * div378) *
+                div120) *
                expi;
       }
    } else {
@@ -95,7 +97,6 @@ inline void damp_pole(real* restrict dmpik, real* restrict dmpi,
       const real div5 = 1 / ((real)5);
       const real div7 = 1 / ((real)7);
       const real div21 = 1 / ((real)21);
-      const real div210 = 1 / ((real)210);
 
       dmpk[0] = 1 - (1 + 0.5f * dampk) * expk;
       dmpk[1] = 1 - (1 + dampk + 0.5f * dampk2) * expk;
@@ -103,8 +104,8 @@ inline void damp_pole(real* restrict dmpik, real* restrict dmpi,
       dmpk[3] = 1 -
          (1 + dampk + 0.5f * dampk2 + dampk3 * div6 + dampk4 * div30) * expk;
       dmpk[4] = 1 -
-         (1 + dampk + 0.5f * dampk2 + +dampk3 * div6 + 4 * dampk4 * div105 +
-          dampk5 * div210) *
+         (1 + dampk + 0.5f * dampk2 + dampk3 * div6 +
+          (4 * dampk4 + 0.5f * dampk5) * div105) *
             expk;
 
       // valence-valence
@@ -137,12 +138,12 @@ inline void damp_pole(real* restrict dmpik, real* restrict dmpi,
             expk;
       dmpik[4] = 1 -
          termi2 *
-            (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + 4 * dampi4 * div105 +
-             dampi5 * div210) *
+            (1 + dampi + 0.5f * dampi2 + dampi3 * div6 +
+             (4 * dampi4 + 0.5f * dampi5) * div105) *
             expi -
          termk2 *
-            (1 + dampk + 0.5f * dampk2 + dampk3 * div6 + 4 * dampk4 * div105 +
-             dampk5 * div210) *
+            (1 + dampk + 0.5f * dampk2 + dampk3 * div6 +
+             (4 * dampk4 + 0.5f * dampk5) * div105) *
             expk -
          2 * termi2 * termk *
             (1 + dampi + 3 * dampi2 * div7 + 2 * dampi3 * div21 +
@@ -186,7 +187,7 @@ SEQ_CUDA
 inline void damp_polar(real* restrict dmpik, real* restrict dmpi,
                        real* restrict dmpk, real r, real alphai, real alphak)
 {
-   real eps = 0.001f;
+   real eps = 0.005f;
    real diff = REAL_ABS(alphai - alphak);
    real dampi = alphai * r;
    real dampk = alphak * r;
@@ -297,7 +298,7 @@ inline void damp_dir(real* restrict dmpi, real* restrict dmpk, real r,
 SEQ_CUDA
 inline void damp_mut(real* restrict dmpik, real r, real alphai, real alphak)
 {
-   real eps = 0.001f;
+   real eps = 0.005f;
    real diff = REAL_ABS(alphai - alphak);
    real dampi = alphai * r;
    real dampk = alphak * r;

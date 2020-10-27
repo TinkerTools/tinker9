@@ -233,7 +233,7 @@ void epolar_chgpen_cu1(
             e, pota, potb, pgrad);
 
          if CONSTEXPR (do_a)
-            if (e != 0)
+            if (e != 0 and scaleb != 0)
                nptl += 1;
          if CONSTEXPR (do_e)
             eptl += cvt_to<ebuf_prec>(e);
