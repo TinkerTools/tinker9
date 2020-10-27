@@ -539,18 +539,11 @@ void mdpuscale_data(rc_op op)
 void chgpen_data(rc_op op)
 {
    if (op & rc_dealloc) {
-      // ndwexclude = 0;
-      // darray::deallocate(dwexclude, dwexclude_scale);
       nmdwexclude = 0;
       darray::deallocate(mdwexclude, mdwexclude_scale);
       nwexclude = 0;
       darray::deallocate(wexclude, wexclude_scale);
-
-
-      darray::deallocate(pval0);
-      darray::deallocate(pval);
-      darray::deallocate(palpha);
-      darray::deallocate(pcore);
+      darray::deallocate(pval0, pval, palpha, pcore);
    }
 
    if (op & rc_alloc) {
@@ -567,42 +560,13 @@ void chgpen_data(rc_op op)
       const int* couple_i14 = couple::i14;
       const int* couple_i15 = couple::i15;
 
-      // struct dw_scale
-      // {
-      //    real d, w;
-      // };
-
-      // auto insert_dw = [](std::map<std::pair<int, int>, dw_scale>& m, int i,
-      //                     int k, real val, char ch) {
-      //    std::pair<int, int> key;
-      //    key.first = i;
-      //    key.second = k;
-      //    auto it = m.find(key);
-      //    if (it == m.end()) {
-      //       dw_scale dw;
-      //       dw.d = 0;
-      //       dw.w = 0;
-      //       if (ch == 'd')
-      //          dw.d = val;
-      //       else if (ch == 'w')
-      //          dw.w = val;
-      //       m[key] = dw;
-      //    } else {
-      //       if (ch == 'd')
-      //          it->second.d = val;
-      //       else if (ch == 'w')
-      //          it->second.w = val;
-      //    }
-      // };
-
-      // std::map<std::pair<int, int>, dw_scale> ik_dw;
 
       struct mdw
       {
          real m, d, w;
       };
 
-      // mdw exlc list
+      // mdw excl list
       auto insert_mdw = [](std::map<std::pair<int, int>, mdw>& a, int i, int k,
                            real val, char ch) {
          std::pair<int, int> key;
@@ -640,7 +604,7 @@ void chgpen_data(rc_op op)
 
       int nn, bask;
 
-      const bool usempole = use_potent(mpole_term) || use_potent(chgtrn_term);
+      const bool usempole = use_potent(mpole_term) or use_potent(chgtrn_term);
       for (int i = 0; usempole and i < n; ++i) {
          if (m2scale != 1) {
             nn = couple::n12[i];
@@ -695,7 +659,7 @@ void chgpen_data(rc_op op)
       // setup dscale values based on polar-scale and polar-iscale
       const bool usepolar = use_potent(polar_term);
       for (int i = 0; usepolar and i < n; ++i) {
-         if (p2scale != 1 || p2iscale != 1) {
+         if (p2scale != 1 or p2iscale != 1) {
             nn = couple::n12[i];
             bask = i * maxn12;
             for (int j = 0; j < nn; ++j) {
@@ -712,7 +676,7 @@ void chgpen_data(rc_op op)
             }
          }
 
-         if (p3scale != 1 || p3iscale != 1) {
+         if (p3scale != 1 or p3iscale != 1) {
             nn = couple::n13[i];
             bask = i * maxn13;
             for (int j = 0; j < nn; ++j) {
@@ -729,7 +693,7 @@ void chgpen_data(rc_op op)
             }
          }
 
-         if (p4scale != 1 || p4iscale != 1) {
+         if (p4scale != 1 or p4iscale != 1) {
             nn = couple::n14[i];
             bask = i * maxn14;
             for (int j = 0; j < nn; ++j) {
@@ -746,7 +710,7 @@ void chgpen_data(rc_op op)
             }
          }
 
-         if (p5scale != 1 || p5iscale != 1) {
+         if (p5scale != 1 or p5iscale != 1) {
             nn = couple::n15[i];
             bask = i * maxn15;
             for (int j = 0; j < nn; ++j) {
@@ -772,17 +736,12 @@ void chgpen_data(rc_op op)
       std::vector<int> exclik;
       std::vector<real> excls;
 
-      exclik.clear();
-      excls.clear();
-
-
       for (int i = 0; usepolar and i < n; ++i) {
          if (w2scale != 1) {
             nn = couple::n12[i];
             for (int j = 0; j < nn; ++j) {
                int k = couple::i12[i][j] - 1;
                if (k > i) {
-                  // insert_dw(ik_dw, i, k, w2scale, 'w');
                   insert_mdw(ik_mdw, i, k, w2scale, 'w');
                   exclik.push_back(i);
                   exclik.push_back(k);
@@ -797,7 +756,6 @@ void chgpen_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = couple::i13[bask + j] - 1;
                if (k > i) {
-                  // insert_dw(ik_dw, i, k, w3scale, 'w');
                   insert_mdw(ik_mdw, i, k, w3scale, 'w');
                   exclik.push_back(i);
                   exclik.push_back(k);
@@ -812,7 +770,6 @@ void chgpen_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = couple::i14[bask + j] - 1;
                if (k > i) {
-                  // insert_dw(ik_dw, i, k, w4scale, 'w');
                   insert_mdw(ik_mdw, i, k, w4scale, 'w');
                   exclik.push_back(i);
                   exclik.push_back(k);
@@ -827,7 +784,6 @@ void chgpen_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = couple::i15[bask + j] - 1;
                if (k > i) {
-                  // insert_dw(ik_dw, i, k, w5scale, 'w');
                   insert_mdw(ik_mdw, i, k, w5scale, 'w');
                   exclik.push_back(i);
                   exclik.push_back(k);
@@ -842,20 +798,6 @@ void chgpen_data(rc_op op)
       darray::copyin(WAIT_NEW_Q, nwexclude, wexclude, exclik.data());
       darray::copyin(WAIT_NEW_Q, nwexclude, wexclude_scale, excls.data());
 
-
-      // std::vector<int> dw_ik_vec;
-      // std::vector<real> dw_sc_vec;
-      // for (auto& it : ik_dw) {
-      //    dw_ik_vec.push_back(it.first.first);
-      //    dw_ik_vec.push_back(it.first.second);
-      //    dw_sc_vec.push_back(it.second.d);
-      //    dw_sc_vec.push_back(it.second.w);
-      // }
-      // ndwexclude = ik_dw.size();
-      // darray::allocate(ndwexclude, &dwexclude, &dwexclude_scale);
-      // darray::copyin(WAIT_NEW_Q, ndwexclude, dwexclude, dw_ik_vec.data());
-      // darray::copyin(WAIT_NEW_Q, ndwexclude, dwexclude_scale,
-      // dw_sc_vec.data());
       std::vector<int> ik_vec;
       std::vector<real> scal_vec;
       for (auto& it : ik_mdw) {
@@ -1035,10 +977,8 @@ bool amoeba_evdw(int vers)
 
 bool hippo_empole(int vers)
 {
-   if (!mplpot::use_chgpen)
+   if (not mplpot::use_chgpen)
       return false;
-
-
    if (amoeba_emplar(vers))
       return false;
    return use_potent(mpole_term);
@@ -1047,10 +987,8 @@ bool hippo_empole(int vers)
 
 bool hippo_epolar(int vers)
 {
-   if (!mplpot::use_chgpen)
+   if (not mplpot::use_chgpen)
       return false;
-
-
    if (amoeba_emplar(vers))
       return false;
    return use_potent(polar_term);

@@ -33,6 +33,7 @@ void cflux_data(rc_op op)
       darray::deallocate(decfx, decfy, decfz, pot);
    }
 
+
    if (op & rc_alloc) {
       darray::allocate(n, &pdelta, &atomic);
       darray::allocate(n, &mono0);
@@ -49,6 +50,7 @@ void cflux_data(rc_op op)
       }
    }
 
+
    if (op & rc_init) {
       darray::copyin(WAIT_NEW_Q, nbond, bflx, cflux::bflx);
       darray::copyin(WAIT_NEW_Q, nangle, aflx, cflux::aflx);
@@ -56,16 +58,13 @@ void cflux_data(rc_op op)
       darray::copyin(WAIT_NEW_Q, n, atomic, atomid::atomic);
       darray::copyin(WAIT_NEW_Q, n, mono0, mpole::mono0);
 
-
       if (rc_flag & calc::grad)
          darray::zero(PROCEED_NEW_Q, n, decfx, decfy, decfz, pot);
-
 
       std::vector<int> ibalstvec(nangle * 2);
       for (size_t i = 0; i < ibalstvec.size(); ++i) {
          ibalstvec[i] = atmlst::balist[i] - 1;
       }
-
       darray::copyin(WAIT_NEW_Q, nangle, balist, ibalstvec.data());
    }
 }

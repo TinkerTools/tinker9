@@ -10,12 +10,16 @@
 #include "tool/energy_buffer.h"
 #include "tool/gpu_card.h"
 
+
 namespace tinker {
+namespace {
 #pragma acc routine seq
 real dot_vect(const real* restrict a, const real* restrict b)
 {
    return (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]);
 }
+}
+
 
 void bnd_dcflux()
 {
@@ -25,11 +29,11 @@ void bnd_dcflux()
    for (int i = 0; i < nbond; ++i) {
       int ia = ibnd[i][0];
       int ib = ibnd[i][1];
+
       real pb = bflx[i];
       real xab = x[ia] - x[ib];
       real yab = y[ia] - y[ib];
       real zab = z[ia] - z[ib];
-
       real rab = REAL_SQRT(xab * xab + yab * yab + zab * zab);
       real dpot = pot[ia] - pot[ib];
       pb = pb / rab;
@@ -37,7 +41,6 @@ void bnd_dcflux()
       real fx = dpot * pb * xab;
       real fy = dpot * pb * yab;
       real fz = dpot * pb * zab;
-
       atomic_add(-fx, decfx, ia);
       atomic_add(-fy, decfy, ia);
       atomic_add(-fz, decfz, ia);
@@ -46,6 +49,7 @@ void bnd_dcflux()
       atomic_add(fz, decfz, ib);
    }
 }
+
 
 void ang_dcflux()
 {
@@ -56,6 +60,7 @@ void ang_dcflux()
       int ia = iang[i][0];
       int ib = iang[i][1];
       int ic = iang[i][2];
+
       real pa1 = aflx[i][0];
       real pa2 = aflx[i][1];
       real pb1 = abflx[i][0];
@@ -90,7 +95,6 @@ void ang_dcflux()
 
       real c1 = pb2 / rba;
       real c2 = pb1 / rbc;
-
       real fax = c1 * xab;
       real fay = c1 * yab;
       real faz = c1 * zab;
@@ -104,11 +108,9 @@ void ang_dcflux()
       real dot = dot_vect(dba, dbc);
       real term = -rba * rbc / REAL_SQRT(rba2 * rbc2 - dot * dot);
       real fterm = term * (dpota * pa1 + dpotc * pa2);
-
       c1 = 1 / (rba * rbc);
       c2 = dot / (rba3 * rbc);
       real c3 = dot / (rbc3 * rba);
-
       real fax2 = fterm * (c1 * xcb - c2 * xab);
       real fay2 = fterm * (c1 * ycb - c2 * yab);
       real faz2 = fterm * (c1 * zcb - c2 * zab);
@@ -118,7 +120,6 @@ void ang_dcflux()
       real fbx2 = -(fax2 + fcx2);
       real fby2 = -(fay2 + fcy2);
       real fbz2 = -(faz2 + fcz2);
-
       atomic_add((fax + fax2), decfx, ia);
       atomic_add((fay + fay2), decfy, ia);
       atomic_add((faz + faz2), decfz, ia);
@@ -137,6 +138,7 @@ void dcflux_acc1(grad_prec* restrict gx, grad_prec* restrict gy,
 {
    auto bufsize = buffer_size();
 
+
    #pragma acc parallel loop independent async\
                deviceptr(decfx,decfy,decfz)
    for (int i = 0; i < n; ++i) {
@@ -145,8 +147,10 @@ void dcflux_acc1(grad_prec* restrict gx, grad_prec* restrict gy,
       decfz[i] = 0;
    }
 
+
    bnd_dcflux();
    ang_dcflux();
+
 
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,decfx,decfy,decfz,\
@@ -167,6 +171,7 @@ void dcflux_acc1(grad_prec* restrict gx, grad_prec* restrict gy,
       }
    }
 }
+
 
 void dcflux_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz,
                 virial_buffer vir)
