@@ -26,6 +26,7 @@ inline void damp_pole(real* restrict dmpik, real* restrict dmpi,
    const real div3 = 1 / ((real)3);
    const real div6 = 1 / ((real)6);
    const real div15 = 1 / ((real)15);
+   const real div21 = 1 / ((real)21);
    const real div30 = 1 / ((real)30);
    const real div105 = 1 / ((real)105);
 
@@ -53,13 +54,11 @@ inline void damp_pole(real* restrict dmpik, real* restrict dmpi,
       real dampi7 = dampi3 * dampi4;
       const real div5 = 1 / ((real)5);
       const real div16 = 1 / ((real)16);
-      const real div21 = 1 / ((real)21);
       const real div24 = 1 / ((real)24);
       const real div42 = 1 / ((real)42);
       const real div48 = 1 / ((real)48);
       const real div120 = 1 / ((real)120);
       const real div144 = 1 / ((real)144);
-      const real div210 = 1 / ((real)210);
 
       dmpik[0] =
          1 - (1 + (11 * dampi + 3 * dampi2) * div16 + dampi3 * div48) * expi;
@@ -96,7 +95,6 @@ inline void damp_pole(real* restrict dmpik, real* restrict dmpi,
 
       const real div5 = 1 / ((real)5);
       const real div7 = 1 / ((real)7);
-      const real div21 = 1 / ((real)21);
 
       dmpk[0] = 1 - (1 + 0.5f * dampk) * expk;
       dmpk[1] = 1 - (1 + dampk + 0.5f * dampk2) * expk;

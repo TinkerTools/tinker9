@@ -782,8 +782,6 @@ template <class Ver, class ETYP, int CFLX>
 void epolar_chgpen_cu(const real (*uind)[3])
 {
    constexpr bool do_g = Ver::g;
-
-   // const auto& st = *mspatial_unit;
    const auto& st = *mspatial_v2_unit;
    real off;
 
@@ -824,11 +822,13 @@ void epolar_chgpen_nonewald_cu(int vers, int use_cf, const real (*uind)[3])
 {
    if (use_cf) {
       if (vers == calc::v0) {
-         epolar_chgpen_cu<calc::V0, NON_EWALD, 1>(uind);
+         // epolar_chgpen_cu<calc::V0, NON_EWALD, 1>(uind);
+         assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v1) {
          epolar_chgpen_cu<calc::V1, NON_EWALD, 1>(uind);
       } else if (vers == calc::v3) {
-         epolar_chgpen_cu<calc::V3, NON_EWALD, 1>(uind);
+         // epolar_chgpen_cu<calc::V3, NON_EWALD, 1>(uind);
+         assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v4) {
          epolar_chgpen_cu<calc::V4, NON_EWALD, 1>(uind);
       } else if (vers == calc::v5) {
@@ -858,11 +858,13 @@ void epolar_chgpen_ewald_real_cu(int vers, int use_cf, const real (*uind)[3])
 {
    if (use_cf) {
       if (vers == calc::v0) {
-         epolar_chgpen_cu<calc::V0, EWALD, 1>(uind);
+         // epolar_chgpen_cu<calc::V0, EWALD, 1>(uind);
+         assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v1) {
          epolar_chgpen_cu<calc::V1, EWALD, 1>(uind);
       } else if (vers == calc::v3) {
-         epolar_chgpen_cu<calc::V3, EWALD, 1>(uind);
+         // epolar_chgpen_cu<calc::V3, EWALD, 1>(uind);
+         assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v4) {
          epolar_chgpen_cu<calc::V4, EWALD, 1>(uind);
       } else if (vers == calc::v5) {

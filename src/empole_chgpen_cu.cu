@@ -641,8 +641,6 @@ void empole_chgpen_cu()
    if CONSTEXPR (eq<ETYP, EWALD>()) {
       PMEUnit pu = epme_unit;
       aewald = pu->aewald;
-
-
       launch_k1s(nonblk, n, empole_chgpen_self_cu<do_a, do_e, CFLX>, //
                  nem, em, rpole, pot, n, f, aewald);
    }
@@ -661,11 +659,13 @@ void empole_chgpen_nonewald_cu(int vers, int use_cf)
 {
    if (use_cf) {
       if (vers == calc::v0) {
-         empole_chgpen_cu<calc::V0, NON_EWALD, 1>();
+         // empole_chgpen_cu<calc::V0, NON_EWALD, 1>();
+         assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v1) {
          empole_chgpen_cu<calc::V1, NON_EWALD, 1>();
       } else if (vers == calc::v3) {
-         empole_chgpen_cu<calc::V3, NON_EWALD, 1>();
+         // empole_chgpen_cu<calc::V3, NON_EWALD, 1>();
+         assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v4) {
          empole_chgpen_cu<calc::V4, NON_EWALD, 1>();
       } else if (vers == calc::v5) {
@@ -695,11 +695,13 @@ void empole_chgpen_ewald_real_self_cu(int vers, int use_cf)
 {
    if (use_cf) {
       if (vers == calc::v0) {
-         empole_chgpen_cu<calc::V0, EWALD, 1>();
+         // empole_chgpen_cu<calc::V0, EWALD, 1>();
+         assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v1) {
          empole_chgpen_cu<calc::V1, EWALD, 1>();
       } else if (vers == calc::v3) {
-         empole_chgpen_cu<calc::V3, EWALD, 1>();
+         // empole_chgpen_cu<calc::V3, EWALD, 1>();
+         assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v4) {
          empole_chgpen_cu<calc::V4, EWALD, 1>();
       } else if (vers == calc::v5) {

@@ -43,7 +43,7 @@ void epolar_chgpen_data(rc_op op)
       depz = nullptr;
 
       darray::deallocate(ufld, dufld);
-      darray::deallocate(work11_, work12_, work13_, work14_, work15_);
+      darray::deallocate(work01_, work02_, work03_, work04_, work05_);
 
       if (polpred == UPred::ASPC) {
          darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04,
@@ -84,7 +84,7 @@ void epolar_chgpen_data(rc_op op)
          dufld = nullptr;
       }
 
-      darray::allocate(n, &work11_, &work12_, &work13_, &work14_, &work15_);
+      darray::allocate(n, &work01_, &work02_, &work03_, &work04_, &work05_);
       if (uprior::use_pred) {
          fstr_view predstr = uprior::polpred;
          if (predstr == "ASPC") {

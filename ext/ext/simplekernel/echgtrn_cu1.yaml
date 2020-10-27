@@ -64,26 +64,11 @@ FULL_PAIRWISE_INTERACTION: |
   real xr = xk - xi;
   real yr = yk - yi;
   real zr = zk - zi;
-
-  MAYBE_UNUSED real dedx = 0, dedy = 0, dedz = 0;
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
     real r = REAL_SQRT(r2);
-
-    MAYBE_UNUSED e_prec e, de;
-    pair_chgtrn<do_g>(r, scalea, f, alphai, chgi, alphak, chgk, e, de);
-
-
-    if (r2 > cut * cut) {
-        real taper, dtaper;
-        switch_taper5<do_g>(r, cut, off, taper, dtaper);
-        if CONSTEXPR (do_g)
-          de = e * dtaper + de * taper;
-        if CONSTEXPR (do_e)
-          e *= taper;
-    }
-
-
+    e_prec e, de;
+    pair_chgtrn<do_g>(r, cut, off, scalea, f, alphai, chgi, alphak, chgk, e, de);
     if CONSTEXPR (do_a)
         if (e != 0)
           nctl += 1;
@@ -91,16 +76,16 @@ FULL_PAIRWISE_INTERACTION: |
         ectl += cvt_to<ebuf_prec>(e);
     if CONSTEXPR (do_g) {
       de *= REAL_RECIP(r);
-      dedx = de * xr;
-      dedy = de * yr;
-      dedz = de * zr;
+      real dedx = de * xr;
+      real dedy = de * yr;
+      real dedz = de * zr;
 
-      shgxi += dedx;
-      shgyi += dedy;
-      shgzi += dedz;
-      gxk -= dedx;
-      gyk -= dedy;
-      gzk -= dedz;
+      shgxi -= dedx;
+      shgyi -= dedy;
+      shgzi -= dedz;
+      gxk += dedx;
+      gyk += dedy;
+      gzk += dedz;
 
       if CONSTEXPR (do_v) {
         vctlxx += cvt_to<vbuf_prec>(xr * dedx);

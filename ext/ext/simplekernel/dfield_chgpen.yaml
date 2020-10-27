@@ -1,5 +1,5 @@
 KERNEL_NAME: dfield_chgpen_cu1
-TEMPLATE_PARAMS: __launch_bounds__(BLOCK_DIM)
+TEMPLATE_PARAMS: template <class ETYP>
 # CONSTEXPR_FLAGS:
 
 # COUNT:
@@ -19,24 +19,24 @@ SCALE_1X_TYPE: real3_const_array,1
 EXTRA_PARAMS: |
   , real(*restrict field)[3]
   , const real(*restrict rpole)[10]
-  , real *restrict pcore
-  , real *restrict pval
+  , const real *restrict pcore
+  , const real *restrict pval
   , const real* restrict palpha
   , real aewald
 
 I_POSITION:
-  - def: shared real xi from:x
-  - def: shared real yi from:y
-  - def: shared real zi from:z
+  - def: register real xi from:x
+  - def: register real yi from:y
+  - def: register real zi from:z
 K_POSITION:
   - def: register real xk from:x
   - def: register real yk from:y
   - def: register real zk from:z
 
 I_FORCE:
-  - def: shared real fidx addto:field,0
-  - def: shared real fidy addto:field,1
-  - def: shared real fidz addto:field,2
+  - def: register real fidx addto:field,0
+  - def: register real fidy addto:field,1
+  - def: register real fidz addto:field,2
 K_FORCE:
   - def: register real fkdx addto:field,0
   - def: register real fkdy addto:field,1
@@ -74,16 +74,16 @@ K_VARIABLES:
 # SCALED_PAIRWISE_INTERACTION:
 
 FULL_PAIRWISE_INTERACTION: |
-  real xr = xk - xi;
-  real yr = yk - yi;
-  real zr = zk - zi;
+  real xr = xk - @xi@;
+  real yr = yk - @yi@;
+  real zr = zk - @zi@;
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
     pair_dfield_chgpen<ETYP>(
-      r2, xr, yr, zr, scaleb, ci, dix, diy, diz, corei, vali, alphai,
-        qixx, qixy, qixz, qiyy, qiyz, qizz, 
+      r2, xr, yr, zr, scaleb, @ci@, @dix@, @diy@, @diz@, @corei@, @vali@, @alphai@,
+        @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@, 
         ck, dkx, dky, dkz, corek, valk, alphak,
         qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, aewald, 
-        shfidx[klane], shfidy[klane], shfidz[klane], 
+        @fidx@, @fidy@, @fidz@, 
         fkdx,fkdy, fkdz);
   } // end if (include)

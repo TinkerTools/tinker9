@@ -14,8 +14,9 @@
 
 
 namespace tinker {
+// ck.py Version 2.0.2
 template <class ETYP>
-__launch_bounds__(BLOCK_DIM) __global__
+__global__
 void dfield_chgpen_cu1(
    int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict dinfo,
    int nexclude, const int (*restrict exclude)[2],
@@ -24,8 +25,8 @@ void dfield_chgpen_cu1(
    const Spatial::SortedAtom* restrict sorted, int nakpl,
    const int* restrict iakpl, int niak, const int* restrict iak,
    const int* restrict lst, real (*restrict field)[3],
-   const real (*restrict rpole)[10], real* restrict pcore, real* restrict pval,
-   const real* restrict palpha, real aewald)
+   const real (*restrict rpole)[10], const real* restrict pcore,
+   const real* restrict pval, const real* restrict palpha, real aewald)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
@@ -33,31 +34,31 @@ void dfield_chgpen_cu1(
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
 
 
-   __shared__ real shxi[BLOCK_DIM];
-   __shared__ real shyi[BLOCK_DIM];
-   __shared__ real shzi[BLOCK_DIM];
+   real xi;
+   real yi;
+   real zi;
    real xk;
    real yk;
    real zk;
-   __shared__ real shfidx[BLOCK_DIM];
-   __shared__ real shfidy[BLOCK_DIM];
-   __shared__ real shfidz[BLOCK_DIM];
+   real fidx;
+   real fidy;
+   real fidz;
    real fkdx;
    real fkdy;
    real fkdz;
-   __shared__ real shci[BLOCK_DIM];
-   __shared__ real shdix[BLOCK_DIM];
-   __shared__ real shdiy[BLOCK_DIM];
-   __shared__ real shdiz[BLOCK_DIM];
-   __shared__ real shqixx[BLOCK_DIM];
-   __shared__ real shqixy[BLOCK_DIM];
-   __shared__ real shqixz[BLOCK_DIM];
-   __shared__ real shqiyy[BLOCK_DIM];
-   __shared__ real shqiyz[BLOCK_DIM];
-   __shared__ real shqizz[BLOCK_DIM];
-   __shared__ real shcorei[BLOCK_DIM];
-   __shared__ real shalphai[BLOCK_DIM];
-   __shared__ real shvali[BLOCK_DIM];
+   __shared__ real ci[BLOCK_DIM];
+   __shared__ real dix[BLOCK_DIM];
+   __shared__ real diy[BLOCK_DIM];
+   __shared__ real diz[BLOCK_DIM];
+   __shared__ real qixx[BLOCK_DIM];
+   __shared__ real qixy[BLOCK_DIM];
+   __shared__ real qixz[BLOCK_DIM];
+   __shared__ real qiyy[BLOCK_DIM];
+   __shared__ real qiyz[BLOCK_DIM];
+   __shared__ real qizz[BLOCK_DIM];
+   __shared__ real corei[BLOCK_DIM];
+   __shared__ real alphai[BLOCK_DIM];
+   __shared__ real vali[BLOCK_DIM];
    real ck;
    real dkx;
    real dky;
@@ -74,40 +75,40 @@ void dfield_chgpen_cu1(
 
 
    //* /
-   // exclude
    for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
-      shfidx[threadIdx.x] = 0;
-      shfidy[threadIdx.x] = 0;
-      shfidz[threadIdx.x] = 0;
+      const int klane = threadIdx.x;
+      fidx = 0;
+      fidy = 0;
+      fidz = 0;
       fkdx = 0;
       fkdy = 0;
       fkdz = 0;
 
 
-      int shi = exclude[ii][0];
+      int i = exclude[ii][0];
       int k = exclude[ii][1];
       real scaleb = exclude_scale[ii][1];
 
 
-      real xi = x[shi];
-      real yi = y[shi];
-      real zi = z[shi];
+      xi = x[i];
+      yi = y[i];
+      zi = z[i];
       xk = x[k];
       yk = y[k];
       zk = z[k];
-      real ci = rpole[shi][mpl_pme_0];
-      real dix = rpole[shi][mpl_pme_x];
-      real diy = rpole[shi][mpl_pme_y];
-      real diz = rpole[shi][mpl_pme_z];
-      real qixx = rpole[shi][mpl_pme_xx];
-      real qixy = rpole[shi][mpl_pme_xy];
-      real qixz = rpole[shi][mpl_pme_xz];
-      real qiyy = rpole[shi][mpl_pme_yy];
-      real qiyz = rpole[shi][mpl_pme_yz];
-      real qizz = rpole[shi][mpl_pme_zz];
-      real corei = pcore[shi];
-      real alphai = palpha[shi];
-      real vali = pval[shi];
+      ci[klane] = rpole[i][mpl_pme_0];
+      dix[klane] = rpole[i][mpl_pme_x];
+      diy[klane] = rpole[i][mpl_pme_y];
+      diz[klane] = rpole[i][mpl_pme_z];
+      qixx[klane] = rpole[i][mpl_pme_xx];
+      qixy[klane] = rpole[i][mpl_pme_xy];
+      qixz[klane] = rpole[i][mpl_pme_xz];
+      qiyy[klane] = rpole[i][mpl_pme_yy];
+      qiyz[klane] = rpole[i][mpl_pme_yz];
+      qizz[klane] = rpole[i][mpl_pme_zz];
+      corei[klane] = pcore[i];
+      alphai[klane] = palpha[i];
+      vali[klane] = pval[i];
       ck = rpole[k][mpl_pme_0];
       dkx = rpole[k][mpl_pme_x];
       dky = rpole[k][mpl_pme_y];
@@ -123,7 +124,6 @@ void dfield_chgpen_cu1(
       valk = pval[k];
 
 
-      int klane = threadIdx.x;
       constexpr bool incl = true;
       real xr = xk - xi;
       real yr = yk - yi;
@@ -131,16 +131,17 @@ void dfield_chgpen_cu1(
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
          pair_dfield_chgpen<ETYP>(
-            r2, xr, yr, zr, scaleb, ci, dix, diy, diz, corei, vali, alphai,
-            qixx, qixy, qixz, qiyy, qiyz, qizz, ck, dkx, dky, dkz, corek, valk,
-            alphak, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, aewald, shfidx[klane],
-            shfidy[klane], shfidz[klane], fkdx, fkdy, fkdz);
+            r2, xr, yr, zr, scaleb, ci[klane], dix[klane], diy[klane],
+            diz[klane], corei[klane], vali[klane], alphai[klane], qixx[klane],
+            qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], ck,
+            dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy, qkyz,
+            qkzz, aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
       } // end if (include)
 
 
-      atomic_add(shfidx[threadIdx.x], &field[shi][0]);
-      atomic_add(shfidy[threadIdx.x], &field[shi][1]);
-      atomic_add(shfidz[threadIdx.x], &field[shi][2]);
+      atomic_add(fidx, &field[i][0]);
+      atomic_add(fidy, &field[i][1]);
+      atomic_add(fidz, &field[i][2]);
       atomic_add(fkdx, &field[k][0]);
       atomic_add(fkdy, &field[k][1]);
       atomic_add(fkdz, &field[k][2]);
@@ -148,12 +149,10 @@ void dfield_chgpen_cu1(
    // */
 
 
-   //* /
-   // block pairs that have scale factors
    for (int iw = iwarp; iw < nakpl; iw += nwarp) {
-      shfidx[threadIdx.x] = 0;
-      shfidy[threadIdx.x] = 0;
-      shfidz[threadIdx.x] = 0;
+      fidx = 0;
+      fidy = 0;
+      fidz = 0;
       fkdx = 0;
       fkdy = 0;
       fkdz = 0;
@@ -164,33 +163,33 @@ void dfield_chgpen_cu1(
       tri_to_xy(tri, tx, ty);
 
 
-      int shiid = ty * WARP_SIZE + ilane;
-      int shatomi = min(shiid, n - 1);
-      int shi = sorted[shatomi].unsorted;
+      int iid = ty * WARP_SIZE + ilane;
+      int atomi = min(iid, n - 1);
+      int i = sorted[atomi].unsorted;
       int kid = tx * WARP_SIZE + ilane;
       int atomk = min(kid, n - 1);
       int k = sorted[atomk].unsorted;
-      shxi[threadIdx.x] = sorted[shatomi].x;
-      shyi[threadIdx.x] = sorted[shatomi].y;
-      shzi[threadIdx.x] = sorted[shatomi].z;
+      xi = sorted[atomi].x;
+      yi = sorted[atomi].y;
+      zi = sorted[atomi].z;
       xk = sorted[atomk].x;
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
 
-      shci[threadIdx.x] = rpole[shi][mpl_pme_0];
-      shdix[threadIdx.x] = rpole[shi][mpl_pme_x];
-      shdiy[threadIdx.x] = rpole[shi][mpl_pme_y];
-      shdiz[threadIdx.x] = rpole[shi][mpl_pme_z];
-      shqixx[threadIdx.x] = rpole[shi][mpl_pme_xx];
-      shqixy[threadIdx.x] = rpole[shi][mpl_pme_xy];
-      shqixz[threadIdx.x] = rpole[shi][mpl_pme_xz];
-      shqiyy[threadIdx.x] = rpole[shi][mpl_pme_yy];
-      shqiyz[threadIdx.x] = rpole[shi][mpl_pme_yz];
-      shqizz[threadIdx.x] = rpole[shi][mpl_pme_zz];
-      shcorei[threadIdx.x] = pcore[shi];
-      shalphai[threadIdx.x] = palpha[shi];
-      shvali[threadIdx.x] = pval[shi];
+      ci[threadIdx.x] = rpole[i][mpl_pme_0];
+      dix[threadIdx.x] = rpole[i][mpl_pme_x];
+      diy[threadIdx.x] = rpole[i][mpl_pme_y];
+      diz[threadIdx.x] = rpole[i][mpl_pme_z];
+      qixx[threadIdx.x] = rpole[i][mpl_pme_xx];
+      qixy[threadIdx.x] = rpole[i][mpl_pme_xy];
+      qixz[threadIdx.x] = rpole[i][mpl_pme_xz];
+      qiyy[threadIdx.x] = rpole[i][mpl_pme_yy];
+      qiyz[threadIdx.x] = rpole[i][mpl_pme_yz];
+      qizz[threadIdx.x] = rpole[i][mpl_pme_zz];
+      corei[threadIdx.x] = pcore[i];
+      alphai[threadIdx.x] = palpha[i];
+      vali[threadIdx.x] = pval[i];
       ck = rpole[k][mpl_pme_0];
       dkx = rpole[k][mpl_pme_x];
       dky = rpole[k][mpl_pme_y];
@@ -207,32 +206,11 @@ void dfield_chgpen_cu1(
 
 
       unsigned int dinfo0 = dinfo[iw * WARP_SIZE + ilane];
-
-
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
-         int srcmask = 1 << srclane;
          int klane = srclane + threadIdx.x - ilane;
-         int iid = shiid;
-         real xi = shxi[klane];
-         real yi = shyi[klane];
-         real zi = shzi[klane];
-         real ci = shci[klane];
-         real dix = shdix[klane];
-         real diy = shdiy[klane];
-         real diz = shdiz[klane];
-         real qixx = shqixx[klane];
-         real qixy = shqixy[klane];
-         real qixz = shqixz[klane];
-         real qiyy = shqiyy[klane];
-         real qiyz = shqiyz[klane];
-         real qizz = shqizz[klane];
-         real corei = shcorei[klane];
-         real alphai = shalphai[klane];
-         real vali = shvali[klane];
-
-
          bool incl = iid < kid and kid < n;
+         int srcmask = 1 << srclane;
          incl = incl and (dinfo0 & srcmask) == 0;
          real scaleb = 1;
          real xr = xk - xi;
@@ -241,64 +219,69 @@ void dfield_chgpen_cu1(
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             pair_dfield_chgpen<ETYP>(
-               r2, xr, yr, zr, scaleb, ci, dix, diy, diz, corei, vali, alphai,
-               qixx, qixy, qixz, qiyy, qiyz, qizz, ck, dkx, dky, dkz, corek,
-               valk, alphak, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, aewald,
-               shfidx[klane], shfidy[klane], shfidz[klane], fkdx, fkdy, fkdz);
+               r2, xr, yr, zr, scaleb, ci[klane], dix[klane], diy[klane],
+               diz[klane], corei[klane], vali[klane], alphai[klane],
+               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
+               qizz[klane], ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy,
+               qkxz, qkyy, qkyz, qkzz, aewald, fidx, fidy, fidz, fkdx, fkdy,
+               fkdz);
          } // end if (include)
 
 
-         shiid = __shfl_sync(ALL_LANES, shiid, ilane + 1);
+         iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
+         xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
+         yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
+         zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
+         fidx = __shfl_sync(ALL_LANES, fidx, ilane + 1);
+         fidy = __shfl_sync(ALL_LANES, fidy, ilane + 1);
+         fidz = __shfl_sync(ALL_LANES, fidz, ilane + 1);
       }
 
 
-      atomic_add(shfidx[threadIdx.x], &field[shi][0]);
-      atomic_add(shfidy[threadIdx.x], &field[shi][1]);
-      atomic_add(shfidz[threadIdx.x], &field[shi][2]);
+      atomic_add(fidx, &field[i][0]);
+      atomic_add(fidy, &field[i][1]);
+      atomic_add(fidz, &field[i][2]);
       atomic_add(fkdx, &field[k][0]);
       atomic_add(fkdy, &field[k][1]);
       atomic_add(fkdz, &field[k][2]);
    }
-   // */
 
 
-   //* /
-   // block-atoms
    for (int iw = iwarp; iw < niak; iw += nwarp) {
-      shfidx[threadIdx.x] = 0;
-      shfidy[threadIdx.x] = 0;
-      shfidz[threadIdx.x] = 0;
+      fidx = 0;
+      fidy = 0;
+      fidz = 0;
       fkdx = 0;
       fkdy = 0;
       fkdz = 0;
 
 
       int ty = iak[iw];
-      int shatomi = ty * WARP_SIZE + ilane;
-      int shi = sorted[shatomi].unsorted;
+      int atomi = ty * WARP_SIZE + ilane;
+      int i = sorted[atomi].unsorted;
       int atomk = lst[iw * WARP_SIZE + ilane];
       int k = sorted[atomk].unsorted;
-      shxi[threadIdx.x] = sorted[shatomi].x;
-      shyi[threadIdx.x] = sorted[shatomi].y;
-      shzi[threadIdx.x] = sorted[shatomi].z;
+      xi = sorted[atomi].x;
+      yi = sorted[atomi].y;
+      zi = sorted[atomi].z;
       xk = sorted[atomk].x;
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
 
-      shci[threadIdx.x] = rpole[shi][mpl_pme_0];
-      shdix[threadIdx.x] = rpole[shi][mpl_pme_x];
-      shdiy[threadIdx.x] = rpole[shi][mpl_pme_y];
-      shdiz[threadIdx.x] = rpole[shi][mpl_pme_z];
-      shqixx[threadIdx.x] = rpole[shi][mpl_pme_xx];
-      shqixy[threadIdx.x] = rpole[shi][mpl_pme_xy];
-      shqixz[threadIdx.x] = rpole[shi][mpl_pme_xz];
-      shqiyy[threadIdx.x] = rpole[shi][mpl_pme_yy];
-      shqiyz[threadIdx.x] = rpole[shi][mpl_pme_yz];
-      shqizz[threadIdx.x] = rpole[shi][mpl_pme_zz];
-      shcorei[threadIdx.x] = pcore[shi];
-      shalphai[threadIdx.x] = palpha[shi];
-      shvali[threadIdx.x] = pval[shi];
+      ci[threadIdx.x] = rpole[i][mpl_pme_0];
+      dix[threadIdx.x] = rpole[i][mpl_pme_x];
+      diy[threadIdx.x] = rpole[i][mpl_pme_y];
+      diz[threadIdx.x] = rpole[i][mpl_pme_z];
+      qixx[threadIdx.x] = rpole[i][mpl_pme_xx];
+      qixy[threadIdx.x] = rpole[i][mpl_pme_xy];
+      qixz[threadIdx.x] = rpole[i][mpl_pme_xz];
+      qiyy[threadIdx.x] = rpole[i][mpl_pme_yy];
+      qiyz[threadIdx.x] = rpole[i][mpl_pme_yz];
+      qizz[threadIdx.x] = rpole[i][mpl_pme_zz];
+      corei[threadIdx.x] = pcore[i];
+      alphai[threadIdx.x] = palpha[i];
+      vali[threadIdx.x] = pval[i];
       ck = rpole[k][mpl_pme_0];
       dkx = rpole[k][mpl_pme_x];
       dky = rpole[k][mpl_pme_y];
@@ -317,24 +300,6 @@ void dfield_chgpen_cu1(
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
          int klane = srclane + threadIdx.x - ilane;
-         real xi = shxi[klane];
-         real yi = shyi[klane];
-         real zi = shzi[klane];
-         real ci = shci[klane];
-         real dix = shdix[klane];
-         real diy = shdiy[klane];
-         real diz = shdiz[klane];
-         real qixx = shqixx[klane];
-         real qixy = shqixy[klane];
-         real qixz = shqixz[klane];
-         real qiyy = shqiyy[klane];
-         real qiyz = shqiyz[klane];
-         real qizz = shqizz[klane];
-         real corei = shcorei[klane];
-         real alphai = shalphai[klane];
-         real vali = shvali[klane];
-
-
          bool incl = atomk > 0;
          real scaleb = 1;
          real xr = xk - xi;
@@ -343,23 +308,33 @@ void dfield_chgpen_cu1(
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             pair_dfield_chgpen<ETYP>(
-               r2, xr, yr, zr, scaleb, ci, dix, diy, diz, corei, vali, alphai,
-               qixx, qixy, qixz, qiyy, qiyz, qizz, ck, dkx, dky, dkz, corek,
-               valk, alphak, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, aewald,
-               shfidx[klane], shfidy[klane], shfidz[klane], fkdx, fkdy, fkdz);
+               r2, xr, yr, zr, scaleb, ci[klane], dix[klane], diy[klane],
+               diz[klane], corei[klane], vali[klane], alphai[klane],
+               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
+               qizz[klane], ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy,
+               qkxz, qkyy, qkyz, qkzz, aewald, fidx, fidy, fidz, fkdx, fkdy,
+               fkdz);
          } // end if (include)
+
+
+         xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
+         yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
+         zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
+         fidx = __shfl_sync(ALL_LANES, fidx, ilane + 1);
+         fidy = __shfl_sync(ALL_LANES, fidy, ilane + 1);
+         fidz = __shfl_sync(ALL_LANES, fidz, ilane + 1);
       }
 
 
-      atomic_add(shfidx[threadIdx.x], &field[shi][0]);
-      atomic_add(shfidy[threadIdx.x], &field[shi][1]);
-      atomic_add(shfidz[threadIdx.x], &field[shi][2]);
+      atomic_add(fidx, &field[i][0]);
+      atomic_add(fidy, &field[i][1]);
+      atomic_add(fidz, &field[i][2]);
       atomic_add(fkdx, &field[k][0]);
       atomic_add(fkdy, &field[k][1]);
       atomic_add(fkdz, &field[k][2]);
    }
-   // */
-} // generated by ComplexKernelBuilder (ck.py) 1.5.1
+}
+
 
 template <class ETYP>
 void dfield_chgpen_cu(real (*field)[3])
@@ -399,8 +374,9 @@ void dfield_chgpen_nonewald_cu(real (*field)[3])
 }
 
 
+// ck.py Version 2.0.2
 template <class ETYP>
-__launch_bounds__(BLOCK_DIM) __global__
+__global__
 void ufield_chgpen_cu1(
    int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict winfo,
    int nexclude, const int (*restrict exclude)[2],
@@ -409,8 +385,8 @@ void ufield_chgpen_cu1(
    const Spatial::SortedAtom* restrict sorted, int nakpl,
    const int* restrict iakpl, int niak, const int* restrict iak,
    const int* restrict lst, const real (*restrict uind)[3],
-   real (*restrict field)[3], real* restrict pcore, real* restrict pval,
-   const real* restrict palpha, real aewald)
+   real (*restrict field)[3], const real* restrict pcore,
+   const real* restrict pval, const real* restrict palpha, real aewald)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
@@ -418,24 +394,24 @@ void ufield_chgpen_cu1(
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
 
 
-   __shared__ real shxi[BLOCK_DIM];
-   __shared__ real shyi[BLOCK_DIM];
-   __shared__ real shzi[BLOCK_DIM];
+   real xi;
+   real yi;
+   real zi;
    real xk;
    real yk;
    real zk;
-   __shared__ real shfidx[BLOCK_DIM];
-   __shared__ real shfidy[BLOCK_DIM];
-   __shared__ real shfidz[BLOCK_DIM];
+   real fidx;
+   real fidy;
+   real fidz;
    real fkdx;
    real fkdy;
    real fkdz;
-   __shared__ real shuidx[BLOCK_DIM];
-   __shared__ real shuidy[BLOCK_DIM];
-   __shared__ real shuidz[BLOCK_DIM];
-   __shared__ real shcorei[BLOCK_DIM];
-   __shared__ real shalphai[BLOCK_DIM];
-   __shared__ real shvali[BLOCK_DIM];
+   __shared__ real uidx[BLOCK_DIM];
+   __shared__ real uidy[BLOCK_DIM];
+   __shared__ real uidz[BLOCK_DIM];
+   __shared__ real corei[BLOCK_DIM];
+   __shared__ real alphai[BLOCK_DIM];
+   __shared__ real vali[BLOCK_DIM];
    real ukdx;
    real ukdy;
    real ukdz;
@@ -445,33 +421,33 @@ void ufield_chgpen_cu1(
 
 
    //* /
-   // exclude
    for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
-      shfidx[threadIdx.x] = 0;
-      shfidy[threadIdx.x] = 0;
-      shfidz[threadIdx.x] = 0;
+      const int klane = threadIdx.x;
+      fidx = 0;
+      fidy = 0;
+      fidz = 0;
       fkdx = 0;
       fkdy = 0;
       fkdz = 0;
 
 
-      int shi = exclude[ii][0];
+      int i = exclude[ii][0];
       int k = exclude[ii][1];
       real scalec = exclude_scale[ii][2];
 
 
-      real xi = x[shi];
-      real yi = y[shi];
-      real zi = z[shi];
+      xi = x[i];
+      yi = y[i];
+      zi = z[i];
       xk = x[k];
       yk = y[k];
       zk = z[k];
-      real uidx = uind[shi][0];
-      real uidy = uind[shi][1];
-      real uidz = uind[shi][2];
-      real corei = pcore[shi];
-      real alphai = palpha[shi];
-      real vali = pval[shi];
+      uidx[klane] = uind[i][0];
+      uidy[klane] = uind[i][1];
+      uidz[klane] = uind[i][2];
+      corei[klane] = pcore[i];
+      alphai[klane] = palpha[i];
+      vali[klane] = pval[i];
       ukdx = uind[k][0];
       ukdy = uind[k][1];
       ukdz = uind[k][2];
@@ -480,7 +456,6 @@ void ufield_chgpen_cu1(
       valk = pval[k];
 
 
-      int klane = threadIdx.x;
       constexpr bool incl = true;
       real xr = xk - xi;
       real yr = yk - yi;
@@ -488,15 +463,15 @@ void ufield_chgpen_cu1(
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
          pair_ufield_chgpen<ETYP>(
-            r2, xr, yr, zr, scalec, uidx, uidy, uidz, corei, vali, alphai, ukdx,
-            ukdy, ukdz, corek, valk, alphak, aewald, shfidx[klane],
-            shfidy[klane], shfidz[klane], fkdx, fkdy, fkdz);
+            r2, xr, yr, zr, scalec, uidx[klane], uidy[klane], uidz[klane],
+            corei[klane], vali[klane], alphai[klane], ukdx, ukdy, ukdz, corek,
+            valk, alphak, aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
       } // end if (include)
 
 
-      atomic_add(shfidx[threadIdx.x], &field[shi][0]);
-      atomic_add(shfidy[threadIdx.x], &field[shi][1]);
-      atomic_add(shfidz[threadIdx.x], &field[shi][2]);
+      atomic_add(fidx, &field[i][0]);
+      atomic_add(fidy, &field[i][1]);
+      atomic_add(fidz, &field[i][2]);
       atomic_add(fkdx, &field[k][0]);
       atomic_add(fkdy, &field[k][1]);
       atomic_add(fkdz, &field[k][2]);
@@ -504,12 +479,10 @@ void ufield_chgpen_cu1(
    // */
 
 
-   //* /
-   // block pairs that have scale factors
    for (int iw = iwarp; iw < nakpl; iw += nwarp) {
-      shfidx[threadIdx.x] = 0;
-      shfidy[threadIdx.x] = 0;
-      shfidz[threadIdx.x] = 0;
+      fidx = 0;
+      fidy = 0;
+      fidz = 0;
       fkdx = 0;
       fkdy = 0;
       fkdz = 0;
@@ -520,26 +493,26 @@ void ufield_chgpen_cu1(
       tri_to_xy(tri, tx, ty);
 
 
-      int shiid = ty * WARP_SIZE + ilane;
-      int shatomi = min(shiid, n - 1);
-      int shi = sorted[shatomi].unsorted;
+      int iid = ty * WARP_SIZE + ilane;
+      int atomi = min(iid, n - 1);
+      int i = sorted[atomi].unsorted;
       int kid = tx * WARP_SIZE + ilane;
       int atomk = min(kid, n - 1);
       int k = sorted[atomk].unsorted;
-      shxi[threadIdx.x] = sorted[shatomi].x;
-      shyi[threadIdx.x] = sorted[shatomi].y;
-      shzi[threadIdx.x] = sorted[shatomi].z;
+      xi = sorted[atomi].x;
+      yi = sorted[atomi].y;
+      zi = sorted[atomi].z;
       xk = sorted[atomk].x;
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
 
-      shuidx[threadIdx.x] = uind[shi][0];
-      shuidy[threadIdx.x] = uind[shi][1];
-      shuidz[threadIdx.x] = uind[shi][2];
-      shcorei[threadIdx.x] = pcore[shi];
-      shalphai[threadIdx.x] = palpha[shi];
-      shvali[threadIdx.x] = pval[shi];
+      uidx[threadIdx.x] = uind[i][0];
+      uidy[threadIdx.x] = uind[i][1];
+      uidz[threadIdx.x] = uind[i][2];
+      corei[threadIdx.x] = pcore[i];
+      alphai[threadIdx.x] = palpha[i];
+      vali[threadIdx.x] = pval[i];
       ukdx = uind[k][0];
       ukdy = uind[k][1];
       ukdz = uind[k][2];
@@ -549,25 +522,11 @@ void ufield_chgpen_cu1(
 
 
       unsigned int winfo0 = winfo[iw * WARP_SIZE + ilane];
-
-
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
-         int srcmask = 1 << srclane;
          int klane = srclane + threadIdx.x - ilane;
-         int iid = shiid;
-         real xi = shxi[klane];
-         real yi = shyi[klane];
-         real zi = shzi[klane];
-         real uidx = shuidx[klane];
-         real uidy = shuidy[klane];
-         real uidz = shuidz[klane];
-         real corei = shcorei[klane];
-         real alphai = shalphai[klane];
-         real vali = shvali[klane];
-
-
          bool incl = iid < kid and kid < n;
+         int srcmask = 1 << srclane;
          incl = incl and (winfo0 & srcmask) == 0;
          real scalec = 1;
          real xr = xk - xi;
@@ -576,56 +535,59 @@ void ufield_chgpen_cu1(
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             pair_ufield_chgpen<ETYP>(
-               r2, xr, yr, zr, scalec, uidx, uidy, uidz, corei, vali, alphai,
-               ukdx, ukdy, ukdz, corek, valk, alphak, aewald, shfidx[klane],
-               shfidy[klane], shfidz[klane], fkdx, fkdy, fkdz);
+               r2, xr, yr, zr, scalec, uidx[klane], uidy[klane], uidz[klane],
+               corei[klane], vali[klane], alphai[klane], ukdx, ukdy, ukdz,
+               corek, valk, alphak, aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
          } // end if (include)
 
 
-         shiid = __shfl_sync(ALL_LANES, shiid, ilane + 1);
+         iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
+         xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
+         yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
+         zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
+         fidx = __shfl_sync(ALL_LANES, fidx, ilane + 1);
+         fidy = __shfl_sync(ALL_LANES, fidy, ilane + 1);
+         fidz = __shfl_sync(ALL_LANES, fidz, ilane + 1);
       }
 
 
-      atomic_add(shfidx[threadIdx.x], &field[shi][0]);
-      atomic_add(shfidy[threadIdx.x], &field[shi][1]);
-      atomic_add(shfidz[threadIdx.x], &field[shi][2]);
+      atomic_add(fidx, &field[i][0]);
+      atomic_add(fidy, &field[i][1]);
+      atomic_add(fidz, &field[i][2]);
       atomic_add(fkdx, &field[k][0]);
       atomic_add(fkdy, &field[k][1]);
       atomic_add(fkdz, &field[k][2]);
    }
-   // */
 
 
-   //* /
-   // block-atoms
    for (int iw = iwarp; iw < niak; iw += nwarp) {
-      shfidx[threadIdx.x] = 0;
-      shfidy[threadIdx.x] = 0;
-      shfidz[threadIdx.x] = 0;
+      fidx = 0;
+      fidy = 0;
+      fidz = 0;
       fkdx = 0;
       fkdy = 0;
       fkdz = 0;
 
 
       int ty = iak[iw];
-      int shatomi = ty * WARP_SIZE + ilane;
-      int shi = sorted[shatomi].unsorted;
+      int atomi = ty * WARP_SIZE + ilane;
+      int i = sorted[atomi].unsorted;
       int atomk = lst[iw * WARP_SIZE + ilane];
       int k = sorted[atomk].unsorted;
-      shxi[threadIdx.x] = sorted[shatomi].x;
-      shyi[threadIdx.x] = sorted[shatomi].y;
-      shzi[threadIdx.x] = sorted[shatomi].z;
+      xi = sorted[atomi].x;
+      yi = sorted[atomi].y;
+      zi = sorted[atomi].z;
       xk = sorted[atomk].x;
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
 
-      shuidx[threadIdx.x] = uind[shi][0];
-      shuidy[threadIdx.x] = uind[shi][1];
-      shuidz[threadIdx.x] = uind[shi][2];
-      shcorei[threadIdx.x] = pcore[shi];
-      shalphai[threadIdx.x] = palpha[shi];
-      shvali[threadIdx.x] = pval[shi];
+      uidx[threadIdx.x] = uind[i][0];
+      uidy[threadIdx.x] = uind[i][1];
+      uidz[threadIdx.x] = uind[i][2];
+      corei[threadIdx.x] = pcore[i];
+      alphai[threadIdx.x] = palpha[i];
+      vali[threadIdx.x] = pval[i];
       ukdx = uind[k][0];
       ukdy = uind[k][1];
       ukdz = uind[k][2];
@@ -637,17 +599,6 @@ void ufield_chgpen_cu1(
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
          int klane = srclane + threadIdx.x - ilane;
-         real xi = shxi[klane];
-         real yi = shyi[klane];
-         real zi = shzi[klane];
-         real uidx = shuidx[klane];
-         real uidy = shuidy[klane];
-         real uidz = shuidz[klane];
-         real corei = shcorei[klane];
-         real alphai = shalphai[klane];
-         real vali = shvali[klane];
-
-
          bool incl = atomk > 0;
          real scalec = 1;
          real xr = xk - xi;
@@ -656,22 +607,29 @@ void ufield_chgpen_cu1(
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             pair_ufield_chgpen<ETYP>(
-               r2, xr, yr, zr, scalec, uidx, uidy, uidz, corei, vali, alphai,
-               ukdx, ukdy, ukdz, corek, valk, alphak, aewald, shfidx[klane],
-               shfidy[klane], shfidz[klane], fkdx, fkdy, fkdz);
+               r2, xr, yr, zr, scalec, uidx[klane], uidy[klane], uidz[klane],
+               corei[klane], vali[klane], alphai[klane], ukdx, ukdy, ukdz,
+               corek, valk, alphak, aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
          } // end if (include)
+
+
+         xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
+         yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
+         zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
+         fidx = __shfl_sync(ALL_LANES, fidx, ilane + 1);
+         fidy = __shfl_sync(ALL_LANES, fidy, ilane + 1);
+         fidz = __shfl_sync(ALL_LANES, fidz, ilane + 1);
       }
 
 
-      atomic_add(shfidx[threadIdx.x], &field[shi][0]);
-      atomic_add(shfidy[threadIdx.x], &field[shi][1]);
-      atomic_add(shfidz[threadIdx.x], &field[shi][2]);
+      atomic_add(fidx, &field[i][0]);
+      atomic_add(fidy, &field[i][1]);
+      atomic_add(fidz, &field[i][2]);
       atomic_add(fkdx, &field[k][0]);
       atomic_add(fkdy, &field[k][1]);
       atomic_add(fkdz, &field[k][2]);
    }
-   // */
-} // generated by ComplexKernelBuilder (ck.py) 1.5.1
+}
 
 
 template <class ETYP>

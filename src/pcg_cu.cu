@@ -95,8 +95,7 @@ void pcg_p2(int n, const real* restrict polarity,              //
             const real (*restrict vec)[3], const real (*restrict vecp)[3])
 {
    real kaval = *ka, kapval = *kap;
-   real a = *ksum / kaval;
-   real ap = *ksump / kapval;
+   real a = *ksum / kaval, ap = *ksump / kapval;
    if (kaval == 0)
       a = 0;
    if (kapval == 0)
@@ -128,8 +127,7 @@ void pcg_p3(int n, const real* restrict ksum, const real* restrict ksump,
             real (*restrict zrsd)[3], real (*restrict zrsdp)[3])
 {
    real kaval = *ksum, kapval = *ksump;
-   real b = *ksum1 / kaval;
-   real bp = *ksump1 / kapval;
+   real b = *ksum1 / kaval, bp = *ksump1 / kapval;
    if (kaval == 0)
       b = 0;
    if (kapval == 0)
