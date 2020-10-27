@@ -5,12 +5,13 @@ namespace tinker {
 void box_data_acc(rc_op op)
 {
    if (op & rc_dealloc) {
-      #pragma acc exit data delete(lvec1,lvec2,lvec3,recipa,recipb,recipc)
+      #pragma acc exit data async delete(lvec1,lvec2,lvec3,recipa,recipb,recipc)
    }
 
 
    if (op & rc_alloc) {
-      #pragma acc enter data create(lvec1,lvec2,lvec3,recipa,recipb,recipc)
+      #pragma acc enter data async\
+              create(lvec1,lvec2,lvec3,recipa,recipb,recipc)
    }
 }
 
