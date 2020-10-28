@@ -10,7 +10,9 @@
 
 namespace tinker {
 #define DEVICE_PTRS                                                            \
-   x, y, z, demx, demy, demz, rpole, pcore, pval, palpha, nem, em, vir_em, trqx, trqy, trqz
+   x, y, z, demx, demy, demz, rpole, pcore, pval, palpha, nem, em, vir_em,     \
+      trqx, trqy, trqz
+// TODO: HIPPO not reviewed
 template <class Ver>
 void empole_chgpen_nonewald_acc1()
 {
@@ -71,14 +73,13 @@ void empole_chgpen_nonewald_acc1()
          if (r2 <= off2) {
             MAYBE_UNUSED real e;
             pair_mpole_chgpen<do_e, do_g, NON_EWALD>(
-                  r2, xr, yr, zr, 1,                                     //
-                  ci, dix, diy, diz, corei, vali, alphai, //
-                  qixx, qixy, qixz, qiyy, qiyz, qizz, //
-                  rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
-                  rpole[k][mpl_pme_z], corek, valk, alphak,
-                  rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz],
-                  rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz],
-                  f, 0, e, pgrad);
+               r2, xr, yr, zr, 1,                      //
+               ci, dix, diy, diz, corei, vali, alphai, //
+               qixx, qixy, qixz, qiyy, qiyz, qizz,     //
+               rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
+               rpole[k][mpl_pme_z], corek, valk, alphak, rpole[k][mpl_pme_xx],
+               rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
+               rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], f, 0, e, pgrad);
 
             if CONSTEXPR (do_a)
                atomic_add(1, nem, offset);
@@ -163,14 +164,13 @@ void empole_chgpen_nonewald_acc1()
       if (r2 <= off2) {
          MAYBE_UNUSED real e;
          pair_mpole_chgpen<do_e, do_g, NON_EWALD>(
-                  r2, xr, yr, zr, mscale,                                     //
-                  ci, dix, diy, diz, corei, vali, alphai, //
-                  qixx, qixy, qixz, qiyy, qiyz, qizz, //
-                  rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
-                  rpole[k][mpl_pme_z], corek, valk, alphak,
-                  rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz],
-                  rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz],
-                  f, 0, e, pgrad);
+            r2, xr, yr, zr, mscale,                 //
+            ci, dix, diy, diz, corei, vali, alphai, //
+            qixx, qixy, qixz, qiyy, qiyz, qizz,     //
+            rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
+            rpole[k][mpl_pme_z], corek, valk, alphak, rpole[k][mpl_pme_xx],
+            rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
+            rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], f, 0, e, pgrad);
 
          if CONSTEXPR (do_a)
             if (mscale == -1)
@@ -209,19 +209,7 @@ void empole_chgpen_nonewald_acc1()
    }
 }
 
-void empole_chgpen_nonewald_acc(int vers)
-{
-   // if (vers == calc::v0)
-   //    empole_chgpen_nonewald_acc1<calc::V0>();
-   // else if (vers == calc::v1)
-   //    empole_chgpen_nonewald_acc1<calc::V1>();
-   // else if (vers == calc::v3)
-   //    empole_chgpen_nonewald_acc1<calc::V3>();
-   // else if (vers == calc::v4)
-   //    empole_chgpen_nonewald_acc1<calc::V4>();
-   // else if (vers == calc::v5)
-   //    empole_chgpen_nonewald_acc1<calc::V5>();
-   // else if (vers == calc::v6)
-   //    empole_chgpen_nonewald_acc1<calc::V6>();
-}
+
+// TODO: HIPPO not reviewed
+void empole_chgpen_nonewald_acc(int vers) {}
 }

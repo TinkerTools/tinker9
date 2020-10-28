@@ -11,6 +11,7 @@
 namespace tinker {
 // see also subroutine dfield_chgpen0b in induce.f
 #define DFIELD_DPTRS x, y, z, pcore, pval, palpha, field, rpole
+// TODO: HIPPO not reviewed
 void dfield_chgpen_nonewald_acc(real (*field)[3])
 {
    darray::zero(PROCEED_NEW_Q, n, field);
@@ -62,8 +63,8 @@ void dfield_chgpen_nonewald_acc(real (*field)[3])
                rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
                pcore[k], pval[k], palpha[k], rpole[k][mpl_pme_xx],
                rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
-               rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], 0, 
-               fid.x, fid.y, fid.z, fkd.x, fkd.y, fkd.z);
+               rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], 0, fid.x, fid.y,
+               fid.z, fkd.x, fkd.y, fkd.z);
 
             gxi += fid.x;
             gyi += fid.y;
@@ -120,8 +121,8 @@ void dfield_chgpen_nonewald_acc(real (*field)[3])
             rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
             pcore[k], pval[k], palpha[k], rpole[k][mpl_pme_xx],
             rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
-            rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], 0, 
-            fid.x, fid.y, fid.z, fkd.x, fkd.y, fkd.z);
+            rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], 0, fid.x, fid.y, fid.z,
+            fkd.x, fkd.y, fkd.z);
 
          atomic_add(fid.x, &field[i][0]);
          atomic_add(fid.y, &field[i][1]);
@@ -134,10 +135,11 @@ void dfield_chgpen_nonewald_acc(real (*field)[3])
    }
 }
 
+
 // see also subroutine ufield0b in induce.f
 #define UFIELD_DPTRS x, y, z, pcore, pval, palpha, field, uind
+// TODO: HIPPO not reviewed
 void ufield_chgpen_nonewald_acc(const real (*uind)[3], real (*field)[3])
-
 {
    darray::zero(PROCEED_NEW_Q, n, field);
 

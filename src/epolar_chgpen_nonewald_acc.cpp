@@ -11,8 +11,9 @@
 
 namespace tinker {
 #define POLAR_DPTRS                                                            \
-   x, y, z, depx, depy, depz, rpole, pcore, pval, palpha, uind, nep, ep,        \
+   x, y, z, depx, depy, depz, rpole, pcore, pval, palpha, uind, nep, ep,       \
       vir_ep, ufld, dufld
+// TODO: HIPPO not reviewed
 template <class Ver>
 void epolar_chgpen_nonewald_acc1(const real (*uind)[3])
 {
@@ -58,7 +59,7 @@ void epolar_chgpen_nonewald_acc1(const real (*uind)[3])
       real corei = pcore[i];
       real alphai = palpha[i];
       real vali = pval[i];
-      
+
       real gxi = 0, gyi = 0, gzi = 0;
       real txi = 0, tyi = 0, tzi = 0;
       real du0 = 0, du1 = 0, du2 = 0, du3 = 0, du4 = 0, du5 = 0;
@@ -95,7 +96,7 @@ void epolar_chgpen_nonewald_acc1(const real (*uind)[3])
 
             MAYBE_UNUSED real e;
             pair_polar_chgpen<do_e, do_g, NON_EWALD>( //
-               r2, xr, yr, zr, 1, 1,        //
+               r2, xr, yr, zr, 1, 1,                  //
                ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
                uiz, corei, vali, alphai, //
                ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
@@ -220,12 +221,12 @@ void epolar_chgpen_nonewald_acc1(const real (*uind)[3])
 
          MAYBE_UNUSED real e;
          pair_polar_chgpen<do_e, do_g, NON_EWALD>( //
-               r2, xr, yr, zr, dscale, wscale,        //
-               ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
-               uiz, corei, vali, alphai, //
-               ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
-               ukz, corek, valk, alphak, //
-               f, 0, e, pgrad);
+            r2, xr, yr, zr, dscale, wscale,        //
+            ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
+            uiz, corei, vali, alphai, //
+            ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
+            ukz, corek, valk, alphak, //
+            f, 0, e, pgrad);
 
          if CONSTEXPR (do_a)
             if (dscale == -1)
@@ -308,20 +309,7 @@ void epolar_chgpen_nonewald_acc1(const real (*uind)[3])
    }
 }
 
-void epolar_chgpen_nonewald_acc(int vers, const real (*uind)[3])
-{
-   // if (vers == calc::v0) {
-   //    epolar_chgpen_nonewald_acc1<calc::V0>(uind);
-   // } else if (vers == calc::v1) {
-   //    epolar_chgpen_nonewald_acc1<calc::V1>(uind);
-   // } else if (vers == calc::v3) {
-   //    epolar_chgpen_nonewald_acc1<calc::V3>(uind);
-   // } else if (vers == calc::v4) {
-   //    epolar_chgpen_nonewald_acc1<calc::V4>(uind);
-   // } else if (vers == calc::v5) {
-   //    epolar_chgpen_nonewald_acc1<calc::V5>(uind);
-   // } else if (vers == calc::v6) {
-   //    epolar_chgpen_nonewald_acc1<calc::V6>(uind);
-   // }
-}
+
+// TODO: HIPPO not reviewed
+void epolar_chgpen_nonewald_acc(int vers, const real (*uind)[3]) {}
 }
