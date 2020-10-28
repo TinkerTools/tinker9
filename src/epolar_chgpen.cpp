@@ -21,9 +21,9 @@
 namespace tinker {
 void epolar_chgpen_data(rc_op op)
 {
-   if (!use_potent(polar_term))
+   if (not use_potent(polar_term))
       return;
-   if (!mplpot::use_chgpen)
+   if (not mplpot::use_chgpen)
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -159,8 +159,7 @@ void induce2(real (*ud)[3])
                header = false;
                print(stdout, "\n Induced Dipole Moments (Debye) :\n");
                print(stdout,
-                     "\n    Atom %1$13s X %1$10s Y %1$10s Z %1$9s Total\n\n",
-                     "");
+                     "\n    Atom %1$13s X %1$10s Y %1$10s Z %1$9s Total\n\n");
             }
             double u1 = uindbuf[3 * i];
             double u2 = uindbuf[3 * i + 1];
@@ -186,7 +185,7 @@ void epolar_chgpen(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
    int use_cf = potent::use_chgflx;
-
+   int use_cfgrad = use_cf and do_g;
 
    host_zero(energy_ep, virial_ep);
    size_t bsize = buffer_size();
@@ -206,26 +205,17 @@ void epolar_chgpen(int vers)
 
    if (use_cf)
       alterchg();
-
-
    mpole_init(vers);
-
-
-   use_cf = use_cf and do_g;
-
-   if (use_cf) {
+   if (use_cfgrad) {
       zero_pot();
    }
-
    if (use_ewald())
-      epolar_chgpen_ewald(vers, use_cf);
+      epolar_chgpen_ewald(vers, use_cfgrad);
    else
-      epolar_chgpen_nonewald(vers, use_cf);
-
+      epolar_chgpen_nonewald(vers, use_cfgrad);
    torque(vers, depx, depy, depz);
-   if (use_cf)
+   if (use_cfgrad)
       dcflux(vers, depx, depy, depz, vir_ep);
-
    if (do_v) {
       virial_buffer u2 = vir_trq;
       virial_prec v2[9];

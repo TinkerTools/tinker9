@@ -13,12 +13,10 @@
 namespace tinker {
 void empole_chgpen_data(rc_op op)
 {
-   if (!use_potent(mpole_term) && !use_potent(chgtrn_term))
+   if (not use_potent(mpole_term) and not use_potent(chgtrn_term))
       return;
-
-   if (!mplpot::use_chgpen)
+   if (not mplpot::use_chgpen)
       return;
-
 
    bool rc_a = rc_flag & calc::analyz;
 
@@ -62,6 +60,7 @@ void empole_chgpen(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
    int use_cf = potent::use_chgflx;
+   int use_cfgrad = use_cf and do_g;
 
 
    host_zero(energy_em, virial_em);
@@ -77,28 +76,20 @@ void empole_chgpen(int vers)
          darray::zero(PROCEED_NEW_Q, n, demx, demy, demz);
    }
 
+
    if (use_cf)
       alterchg();
-
-
    mpole_init(vers);
-
-   use_cf = use_cf and do_g;
-
-
-   if (use_cf) {
+   if (use_cfgrad) {
       zero_pot();
    }
    if (use_ewald())
-      empole_chgpen_ewald(vers, use_cf);
+      empole_chgpen_ewald(vers, use_cfgrad);
    else
-      empole_chgpen_nonewald(vers, use_cf);
-
+      empole_chgpen_nonewald(vers, use_cfgrad);
    torque(vers, demx, demy, demz);
-
-   if (use_cf)
+   if (use_cfgrad)
       dcflux(vers, demx, demy, demz, vir_em);
-
    if (do_v) {
       virial_buffer u2 = vir_trq;
       virial_prec v2[9];
@@ -108,6 +99,7 @@ void empole_chgpen(int vers)
          virial_elec[iv] += v2[iv];
       }
    }
+
 
    if (rc_a) {
       if (do_e) {

@@ -14,6 +14,7 @@ namespace tinker {
 #define POLAR_DPTRS                                                            \
    x, y, z, depx, depy, depz, rpole, pcore, pval, palpha, uind, nep, ep,       \
       vir_ep, ufld, dufld
+// TODO: HIPPO not reviewed
 template <class Ver>
 void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
 {
@@ -349,8 +350,6 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
          atomic_add(e, ep, offset);
       }
    }
-
-
    grid_uind(pu, fuind, fuind);
    fftfront(pu);
    // TODO: store vs. recompute qfac
@@ -381,7 +380,6 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
          f1 += 2 * fuind[i][k] * fphi[i][j1];
          f2 += 2 * fuind[i][k] * fphi[i][j2];
          f3 += 2 * fuind[i][k] * fphi[i][j3];
-
          // if poltyp .eq. 'MUTUAL'
          f1 += 2 * fuind[i][k] * fphid[i][j1];
          f2 += 2 * fuind[i][k] * fphid[i][j2];
@@ -401,8 +399,6 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
          real h1 = recipa.x * f1 + recipb.x * f2 + recipc.x * f3;
          real h2 = recipa.y * f1 + recipb.y * f2 + recipc.y * f3;
          real h3 = recipa.z * f1 + recipb.z * f2 + recipc.z * f3;
-
-
          atomic_add(h1 * f, depx, i);
          atomic_add(h2 * f, depy, i);
          atomic_add(h3 * f, depz, i);
@@ -436,7 +432,6 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
       real uix = gpu_uind[i][0];
       real uiy = gpu_uind[i][1];
       real uiz = gpu_uind[i][2];
-
 
       if CONSTEXPR (do_g) {
          real tep1 = cmp[i][3] * cphidp[i][2] - cmp[i][2] * cphidp[i][3] +
@@ -482,9 +477,9 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
    if CONSTEXPR (do_v) {
       auto size = buffer_size() * virial_buffer_traits::value;
       #pragma acc parallel loop independent async deviceptr(vir_ep,vir_m)
-      for (int i = 0; i < (int)size; ++i)
+      for (int i = 0; i < (int)size; ++i) {
          vir_ep[0][i] -= vir_m[0][i];
-
+      }
 
       darray::scale(PROCEED_NEW_Q, n, f, cphi, fphid);
 
@@ -594,9 +589,6 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
       fftfront(pvu);
 
       // qgrid: pu_qgrid
-      // #pragma acc parallel loop independent async\
-      //             deviceptr(cmp,gpu_uind)
-
       cmp_to_fmp(pu, cmp, fmp);
       grid_mpole(pu, fmp);
       fftfront(pu);
@@ -656,33 +648,22 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
 }
 
 
-void epolar_chgpen_ewald_real_acc(int vers, const real (*uind)[3])
-{
-   // if (vers == calc::v0) {
-   //    epolar_chgpen_ewald_real_acc1<calc::V0>(uind);
-   // } else if (vers == calc::v1) {
-   //    epolar_chgpen_ewald_real_acc1<calc::V1>(uind);
-   // } else if (vers == calc::v3) {
-   //    epolar_chgpen_ewald_real_acc1<calc::V3>(uind);
-   // } else if (vers == calc::v4) {
-   //    epolar_chgpen_ewald_real_acc1<calc::V4>(uind);
-   // } else if (vers == calc::v5) {
-   //    epolar_chgpen_ewald_real_acc1<calc::V5>(uind);
-   // } else if (vers == calc::v6) {
-   //    epolar_chgpen_ewald_real_acc1<calc::V6>(uind);
-   // }
-}
+// TODO: HIPPO not reviewed
+void epolar_chgpen_ewald_real_acc(int vers, const real (*uind)[3]) {}
+
 
 void epolar_chgpen_ewald_recip_self_acc(int vers, int use_cf,
                                         const real (*uind)[3])
 {
    if (use_cf) {
       if (vers == calc::v0) {
-         epolar_chgpen_ewald_recip_self_acc1<calc::V0, 1>(uind);
+         // epolar_chgpen_ewald_recip_self_acc1<calc::V0, 1>(uind);
+         assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v1) {
          epolar_chgpen_ewald_recip_self_acc1<calc::V1, 1>(uind);
       } else if (vers == calc::v3) {
-         epolar_chgpen_ewald_recip_self_acc1<calc::V3, 1>(uind);
+         // epolar_chgpen_ewald_recip_self_acc1<calc::V3, 1>(uind);
+         assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v4) {
          epolar_chgpen_ewald_recip_self_acc1<calc::V4, 1>(uind);
       } else if (vers == calc::v5) {

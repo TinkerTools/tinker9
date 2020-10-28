@@ -12,6 +12,7 @@ namespace tinker {
 #define DEVICE_PTRS                                                            \
    x, y, z, demx, demy, demz, rpole, pcore, pval, palpha, nem, em, vir_em,     \
       trqx, trqy, trqz
+// TODO: HIPPO not reviewed
 template <class Ver>
 void empole_chgpen_ewald_real_self_acc1()
 {
@@ -232,7 +233,7 @@ void empole_chgpen_ewald_real_self_acc1()
 }
 
 template <class Ver, int CFLX>
-void empole_chgpen_ewald_recip_acc1()
+void empole_generic_ewald_recip_acc()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -270,7 +271,7 @@ void empole_chgpen_ewald_recip_acc1()
 
    #pragma acc parallel loop independent async\
                deviceptr(demx,demy,demz,\
-               cmp,fmp,cphi,fphi,em,vir_em,trqx,trqy,trqz, pot)
+               cmp,fmp,cphi,fphi,em,vir_em,trqx,trqy,trqz,pot)
    for (int i = 0; i < n; ++i) {
       constexpr int deriv1[] = {2, 5, 8, 9, 11, 16, 18, 14, 15, 20};
       constexpr int deriv2[] = {3, 8, 6, 10, 14, 12, 19, 16, 20, 17};
@@ -372,51 +373,40 @@ void empole_chgpen_ewald_recip_acc1()
 }
 
 
-void empole_chgpen_ewald_real_self_acc(int vers)
-{
-   // if (vers == calc::v0)
-   //    empole_chgpen_ewald_real_self_acc1<calc::V0>();
-   // else if (vers == calc::v1)
-   //    empole_chgpen_ewald_real_self_acc1<calc::V1>();
-   // else if (vers == calc::v3)
-   //    empole_chgpen_ewald_real_self_acc1<calc::V3>();
-   // else if (vers == calc::v4)
-   //    empole_chgpen_ewald_real_self_acc1<calc::V4>();
-   // else if (vers == calc::v5)
-   //    empole_chgpen_ewald_real_self_acc1<calc::V5>();
-   // else if (vers == calc::v6)
-   //    empole_chgpen_ewald_real_self_acc1<calc::V6>();
-}
+// TODO: HIPPO not reviewed
+void empole_chgpen_ewald_real_self_acc(int vers) {}
 
 
 void empole_chgpen_ewald_recip_acc(int vers, int use_cf)
 {
    if (use_cf) {
       if (vers == calc::v0)
-         empole_chgpen_ewald_recip_acc1<calc::V0, 1>();
+         // empole_generic_ewald_recip_acc<calc::V0, 1>();
+         assert(false && "CFLX must compute gradient.");
       else if (vers == calc::v1)
-         empole_chgpen_ewald_recip_acc1<calc::V1, 1>();
+         empole_generic_ewald_recip_acc<calc::V1, 1>();
       else if (vers == calc::v3)
-         empole_chgpen_ewald_recip_acc1<calc::V3, 1>();
+         // empole_generic_ewald_recip_acc<calc::V3, 1>();
+         assert(false && "CFLX must compute gradient.");
       else if (vers == calc::v4)
-         empole_chgpen_ewald_recip_acc1<calc::V4, 1>();
+         empole_generic_ewald_recip_acc<calc::V4, 1>();
       else if (vers == calc::v5)
-         empole_chgpen_ewald_recip_acc1<calc::V5, 1>();
+         empole_generic_ewald_recip_acc<calc::V5, 1>();
       else if (vers == calc::v6)
-         empole_chgpen_ewald_recip_acc1<calc::V6, 1>();
+         empole_generic_ewald_recip_acc<calc::V6, 1>();
    } else {
       if (vers == calc::v0)
-         empole_chgpen_ewald_recip_acc1<calc::V0, 0>();
+         empole_generic_ewald_recip_acc<calc::V0, 0>();
       else if (vers == calc::v1)
-         empole_chgpen_ewald_recip_acc1<calc::V1, 0>();
+         empole_generic_ewald_recip_acc<calc::V1, 0>();
       else if (vers == calc::v3)
-         empole_chgpen_ewald_recip_acc1<calc::V3, 0>();
+         empole_generic_ewald_recip_acc<calc::V3, 0>();
       else if (vers == calc::v4)
-         empole_chgpen_ewald_recip_acc1<calc::V4, 0>();
+         empole_generic_ewald_recip_acc<calc::V4, 0>();
       else if (vers == calc::v5)
-         empole_chgpen_ewald_recip_acc1<calc::V5, 0>();
+         empole_generic_ewald_recip_acc<calc::V5, 0>();
       else if (vers == calc::v6)
-         empole_chgpen_ewald_recip_acc1<calc::V6, 0>();
+         empole_generic_ewald_recip_acc<calc::V6, 0>();
    }
 }
 }
