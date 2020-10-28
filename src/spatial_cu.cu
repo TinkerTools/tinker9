@@ -1,3 +1,7 @@
+// Eventually thrust will drop c++11 support.
+#define THRUST_IGNORE_DEPRECATED_CPP_DIALECT
+
+
 #include "box.h"
 #include "image.h"
 #include "imagefc_cu.h"
