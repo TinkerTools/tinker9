@@ -19,4 +19,8 @@ void empole_ewald_recip_acc(int vers);
 void empole_ewald_real_self_acc(int vers);
 void empole_nonewald_cu(int vers);
 void empole_ewald_real_self_cu(int vers);
+
+
+template <class Ver, int CFLX>
+void empole_generic_ewald_recip_acc();
 }

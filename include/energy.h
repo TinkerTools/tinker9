@@ -30,6 +30,9 @@
 #include "echgtrn.h"
 #include "edisp.h"
 #include "ehippo.h"
+#include "empole_chgpen.h"
+#include "epolar_chgpen.h"
+#include "erepel.h"
 
 
 namespace tinker {

@@ -1,4 +1,5 @@
 #include "energy.h"
+#include "cflux.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
@@ -53,7 +54,11 @@ void energy_data(rc_op op)
    rc_man epolar42{epolar_data, op};
 
    // HIPPO
+   rc_man cflux43{cflux_data, op};
+   rc_man empole43{empole_chgpen_data, op};
+   rc_man epolar43{epolar_chgpen_data, op};
    rc_man echgtrn42{echgtrn_data, op};
+   rc_man erepel42{erepel_data, op};
    rc_man edisp42{edisp_data, op};
 
    // Must call fft_data() after all of the electrostatics routines.
@@ -95,19 +100,23 @@ bool use_energi_elec()
 const TimeScaleConfig& default_tsconfig()
 {
    static TimeScaleConfig tsconfig{
-      {"ebond", 0},    {"eangle", 0},  {"estrbnd", 0}, {"eurey", 0},
-      {"eopbend", 0},  {"eimptor", 0}, {"etors", 0},   {"epitors", 0},
-      {"etortor", 0},  {"egeom", 0},
+      {"ebond", 0},         {"eangle", 0},        {"estrbnd", 0},
+      {"eurey", 0},         {"eopbend", 0},       {"eimptor", 0},
+      {"etors", 0},         {"epitors", 0},       {"etortor", 0},
+      {"egeom", 0},
 
       {"evalence", 0},
 
       {"evdw", 0},
 
-      {"echarge", 0},  {"echglj", 0},
+      {"echarge", 0},       {"echglj", 0},
 
-      {"emplar", 0},   {"empole", 0},  {"epolar", 0},
+      {"emplar", 0},        {"empole", 0},        {"epolar", 0},
 
-      {"echgtrn", 0},  {"edisp", 0},   {"erepel", 0},  {"ehippo", 0},
+      {"empole_chgpen", 0}, {"epolar_chgpen", 0},
+
+      {"echgtrn", 0},       {"edisp", 0},         {"erepel", 0},
+      {"ehippo", 0},
    };
    return tsconfig;
 }
@@ -168,12 +177,21 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          emplar(vers);
 
 
+   if (hippo_empole(vers))
+      if (tscfg("empole_chgpen", ecore_ele))
+         empole_chgpen(vers);
+   if (hippo_epolar(vers))
+      if (tscfg("epolar_chgpen", ecore_ele))
+         epolar_chgpen(vers);
    if (use_potent(chgtrn_term))
       if (tscfg("echgtrn", ecore_ele))
          echgtrn(vers);
    if (use_potent(disp_term))
       if (tscfg("edisp", ecore_vdw))
          edisp(vers);
+   if (use_potent(repuls_term))
+      if (tscfg("erepel", ecore_vdw))
+         erepel(vers);
 
 
    if (pltfm_config & CU_PLTFM) {

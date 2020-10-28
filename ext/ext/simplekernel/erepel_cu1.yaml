@@ -1,0 +1,143 @@
+KERNEL_NAME: erepel_cu1
+TEMPLATE_PARAMS: template <class Ver>
+CONSTEXPR_FLAGS: |
+  constexpr bool do_a = Ver::a;
+  constexpr bool do_e = Ver::e;
+  constexpr bool do_v = Ver::v;
+  constexpr bool do_g = Ver::g;
+
+COUNT:
+  - nr
+ENERGY:
+  - er
+VIRIAL:
+  - vr
+GRADIENT:
+  - gx
+  - gy
+  - gz
+
+CUT_DISTANCE:
+  - 'cut'
+
+OFF_DISTANCE:
+  - 'off'
+
+EXCLUDE_INFO:
+  - rinfo
+
+SCALE_1X_TYPE: real_const_array
+
+EXTRA_PARAMS: |
+  , real *restrict trqx
+  , real *restrict trqy
+  , real *restrict trqz
+  , const real(*restrict rpole)[10]
+  , const real *restrict sizpr
+  , const real *restrict elepr
+  , const real* restrict dmppr
+
+I_POSITION:
+  - def: shared real xi from:x
+  - def: shared real yi from:y
+  - def: shared real zi from:z
+K_POSITION:
+  - def: register real xk from:x
+  - def: register real yk from:y
+  - def: register real zk from:z
+
+I_FORCE:
+  - def: shared real gxi addto:gx
+  - def: shared real gyi addto:gy
+  - def: shared real gzi addto:gz
+  - def: shared real txi addto:trqx
+  - def: shared real tyi addto:trqy
+  - def: shared real tzi addto:trqz
+K_FORCE:
+  - def: register real gxk addto:gx
+  - def: register real gyk addto:gy
+  - def: register real gzk addto:gz
+  - def: register real txk addto:trqx
+  - def: register real tyk addto:trqy
+  - def: register real tzk addto:trqz
+
+I_VARIABLES:
+  - def: shared real ci from:rpole,mpl_pme_0
+  - def: shared real dix from:rpole,mpl_pme_x
+  - def: shared real diy from:rpole,mpl_pme_y
+  - def: shared real diz from:rpole,mpl_pme_z
+  - def: shared real qixx from:rpole,mpl_pme_xx
+  - def: shared real qixy from:rpole,mpl_pme_xy
+  - def: shared real qixz from:rpole,mpl_pme_xz
+  - def: shared real qiyy from:rpole,mpl_pme_yy
+  - def: shared real qiyz from:rpole,mpl_pme_yz
+  - def: shared real qizz from:rpole,mpl_pme_zz
+  - def: shared real sizi from:sizpr
+  - def: shared real dmpi from:dmppr
+  - def: shared real vali from:elepr
+  
+K_VARIABLES:
+  - def: register real ck from:rpole,mpl_pme_0
+  - def: register real dkx from:rpole,mpl_pme_x
+  - def: register real dky from:rpole,mpl_pme_y
+  - def: register real dkz from:rpole,mpl_pme_z
+  - def: register real qkxx from:rpole,mpl_pme_xx
+  - def: register real qkxy from:rpole,mpl_pme_xy
+  - def: register real qkxz from:rpole,mpl_pme_xz
+  - def: register real qkyy from:rpole,mpl_pme_yy
+  - def: register real qkyz from:rpole,mpl_pme_yz
+  - def: register real qkzz from:rpole,mpl_pme_zz
+  - def: register real sizk from:sizpr
+  - def: register real dmpk from:dmppr
+  - def: register real valk from:elepr
+
+#SCALED_PAIRWISE_INTERACTION: |
+
+FULL_PAIRWISE_INTERACTION: |
+  real xr = xk - xi;
+  real yr = yk - yi;
+  real zr = zk - zi;
+
+  real e;
+  PairRepelGrad pgrad;
+  zero(pgrad);
+
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    pair_repel<do_g>( //
+      r2, scalea, cut, off, xr, yr, zr, sizi,
+      dmpi, vali, ci, dix, diy, diz, qixx, qixy,
+      qixz, qiyy, qiyz, qizz, sizk, dmpk, valk, ck,
+      dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy,
+      qkyz, qkzz, e, pgrad);
+
+    if CONSTEXPR (do_a)
+      if (e != 0)
+          nrtl += 1;
+    if CONSTEXPR (do_e)
+        ertl += cvt_to<ebuf_prec>(e);
+    if CONSTEXPR (do_g) {
+      shgxi[klane] += pgrad.frcx;
+      shgyi[klane] += pgrad.frcy;
+      shgzi[klane] += pgrad.frcz;
+      gxk -= pgrad.frcx;
+      gyk -= pgrad.frcy;
+      gzk -= pgrad.frcz;
+
+
+      shtxi[klane] += pgrad.ttqi[0];
+      shtyi[klane] += pgrad.ttqi[1];
+      shtzi[klane] += pgrad.ttqi[2];
+      txk += pgrad.ttqk[0];
+      tyk += pgrad.ttqk[1];
+      tzk += pgrad.ttqk[2];
+    }
+    if CONSTEXPR (do_v) {
+        vrtlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
+        vrtlyx += cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+        vrtlzx += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
+        vrtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
+        vrtlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
+        vrtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
+    }
+  } // end if (include)
