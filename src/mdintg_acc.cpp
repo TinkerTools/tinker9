@@ -1,3 +1,4 @@
+#include "accmanaged.h"
 #include "mdintg.h"
 #include "mdpq.h"
 #include "tinker_rt.h"
@@ -34,18 +35,25 @@ void mdrest_acc(int istep)
    {
       // compute linear velocity of the system center of mass
 
+      detail::vtot1 = 0;
+      detail::vtot2 = 0;
+      detail::vtot3 = 0;
+      #pragma acc update async device(detail::vtot1,detail::vtot2,detail::vtot3)
       #pragma acc parallel loop independent async\
+                  reduction(+:detail::vtot1,detail::vtot2,detail::vtot3)\
                   deviceptr(mass,vx,vy,vz)
       for (int i = 0; i < n; ++i) {
          mass_prec weigh = mass[i];
-         vtot1 += vx[i] * weigh;
-         vtot2 += vy[i] * weigh;
-         vtot3 += vz[i] * weigh;
+         detail::vtot1 += vx[i] * weigh;
+         detail::vtot2 += vy[i] * weigh;
+         detail::vtot3 += vz[i] * weigh;
       }
+      #pragma acc update async self(detail::vtot1,detail::vtot2,detail::vtot3)
+      #pragma acc wait
 
-      vtot1 /= totmass;
-      vtot2 /= totmass;
-      vtot3 /= totmass;
+      vtot1 = detail::vtot1 / totmass;
+      vtot2 = detail::vtot2 / totmass;
+      vtot3 = detail::vtot3 / totmass;
 
       // eliminate any translation of the overall system
 
