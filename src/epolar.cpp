@@ -494,7 +494,7 @@ void induce(real (*ud)[3], real (*up)[3])
    if (inform::debug && use_potent(polar_term)) {
       std::vector<double> uindbuf;
       uindbuf.resize(3 * n);
-      darray::copyout(n, uindbuf.data(), ud, async_queue);
+      darray::copyout(async_queue, n, uindbuf.data(), ud);
       wait_for(async_queue);
       bool header = true;
       for (int i = 0; i < n; ++i) {

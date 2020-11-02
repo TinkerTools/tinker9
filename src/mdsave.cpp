@@ -76,15 +76,15 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    energy_prec epot = dup_buf_esum;
    set_tinker_box_module(dup_buf_box);
    if (sizeof(pos_prec) == sizeof(double)) {
-      darray::copyout(n, atoms::x, dup_buf_x, sync_queue);
-      darray::copyout(n, atoms::y, dup_buf_y, sync_queue);
-      darray::copyout(n, atoms::z, dup_buf_z, sync_queue);
+      darray::copyout(sync_queue, n, atoms::x, dup_buf_x);
+      darray::copyout(sync_queue, n, atoms::y, dup_buf_y);
+      darray::copyout(sync_queue, n, atoms::z, dup_buf_z);
       wait_for(sync_queue);
    } else {
       std::vector<pos_prec> arrx(n), arry(n), arrz(n);
-      darray::copyout(n, arrx.data(), dup_buf_x, sync_queue);
-      darray::copyout(n, arry.data(), dup_buf_y, sync_queue);
-      darray::copyout(n, arrz.data(), dup_buf_z, sync_queue);
+      darray::copyout(sync_queue, n, arrx.data(), dup_buf_x);
+      darray::copyout(sync_queue, n, arry.data(), dup_buf_y);
+      darray::copyout(sync_queue, n, arrz.data(), dup_buf_z);
       wait_for(sync_queue);
       for (int i = 0; i < n; ++i) {
          atoms::x[i] = arrx[i];
@@ -95,9 +95,9 @@ void mdsave_dup_then_write(int istep, time_prec dt)
 
    {
       std::vector<vel_prec> arrx(n), arry(n), arrz(n);
-      darray::copyout(n, arrx.data(), dup_buf_vx, sync_queue);
-      darray::copyout(n, arry.data(), dup_buf_vy, sync_queue);
-      darray::copyout(n, arrz.data(), dup_buf_vz, sync_queue);
+      darray::copyout(sync_queue, n, arrx.data(), dup_buf_vx);
+      darray::copyout(sync_queue, n, arry.data(), dup_buf_vy);
+      darray::copyout(sync_queue, n, arrz.data(), dup_buf_vz);
       wait_for(sync_queue);
       for (int i = 0; i < n; ++i) {
          int j = 3 * i;
@@ -129,7 +129,7 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    }
 
    if (mdsave_use_uind()) {
-      darray::copyout(n, polar::uind, dup_buf_uind, sync_queue);
+      darray::copyout(sync_queue, n, polar::uind, dup_buf_uind);
       wait_for(sync_queue);
    }
 

@@ -230,7 +230,7 @@ struct darray
 
 
    template <class U, class PTR>
-   static void copyout(size_t nelem, U* dst, const PTR src, int q)
+   static void copyout(int q, size_t nelem, U* dst, const PTR src)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
       device_memory_copyout_1d_array(flatten(dst), flatten(src), nelem * N, q);

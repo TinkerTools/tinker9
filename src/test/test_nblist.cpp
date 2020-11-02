@@ -189,8 +189,8 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]")
    lst.resize(n * maxnlst);
 
    for (int ifr = 0;;) {
-      darray::copyout(n, nlst.data(), vlist_unit->nlst, async_queue);
-      darray::copyout(n * maxnlst, lst.data(), vlist_unit->lst, async_queue);
+      darray::copyout(async_queue, n, nlst.data(), vlist_unit->nlst);
+      darray::copyout(async_queue, n * maxnlst, lst.data(), vlist_unit->lst);
       wait_for(async_queue);
 
       for (int iatom = 0; iatom < n; ++iatom)
