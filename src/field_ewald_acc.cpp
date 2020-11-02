@@ -14,7 +14,7 @@ namespace tinker {
 // see also subroutine udirect1 in induce.f
 void dfield_ewald_recip_self_acc(real (*field)[3])
 {
-   darray::zero(PROCEED_NEW_Q, n, field);
+   darray::zero(async_queue, n, field);
 
    const PMEUnit pu = ppme_unit;
    const real aewald = pu->aewald;
@@ -193,7 +193,7 @@ void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
 void ufield_ewald_recip_self_acc(const real (*uind)[3], const real (*uinp)[3],
                                  real (*field)[3], real (*fieldp)[3])
 {
-   darray::zero(PROCEED_NEW_Q, n, field, fieldp);
+   darray::zero(async_queue, n, field, fieldp);
 
    const PMEUnit pu = ppme_unit;
    const auto& st = *pu;

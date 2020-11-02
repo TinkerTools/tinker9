@@ -47,20 +47,14 @@ void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
 }
 
 
-void device_memory_zero_bytes(void* dst, size_t nbytes, LPFlag flag)
+void device_memory_zero_bytes_async(void* dst, size_t nbytes, int queue)
 {
    if (dst == nullptr)
       return;
 
 
-   cudaStream_t s;
-   if (flag & LPFlag::DEFAULT_Q)
-      s = nullptr;
-   else
-      s = nonblk;
+   cudaStream_t s = queue == sync_queue ? nullptr : nonblk;
    check_rt(cudaMemsetAsync(dst, 0, nbytes, s));
-   if (flag & LPFlag::WAIT)
-      check_rt(cudaStreamSynchronize(s));
 }
 
 

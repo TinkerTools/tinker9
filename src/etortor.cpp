@@ -144,11 +144,11 @@ void etortor(int vers)
       host_zero(energy_ett, virial_ett);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, ett);
+         darray::zero(async_queue, bsize, ett);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_ett);
+         darray::zero(async_queue, bsize, vir_ett);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, dettx, detty, dettz);
+         darray::zero(async_queue, n, dettx, detty, dettz);
    }
 
 

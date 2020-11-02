@@ -86,11 +86,11 @@ void eangle(int vers)
       host_zero(energy_ea, virial_ea);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, ea);
+         darray::zero(async_queue, bsize, ea);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_ea);
+         darray::zero(async_queue, bsize, vir_ea);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, deax, deay, deaz);
+         darray::zero(async_queue, n, deax, deay, deaz);
    }
 
 

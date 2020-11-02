@@ -176,13 +176,13 @@ void edisp(int vers)
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)
-         darray::zero(PROCEED_NEW_Q, bsize, ndisp);
+         darray::zero(async_queue, bsize, ndisp);
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, edsp);
+         darray::zero(async_queue, bsize, edsp);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_edsp);
+         darray::zero(async_queue, bsize, vir_edsp);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, dedspx, dedspy, dedspz);
+         darray::zero(async_queue, n, dedspx, dedspy, dedspz);
    }
 
 

@@ -47,7 +47,7 @@ void scale_gradient(double scale, grad_prec* g0x, grad_prec* g0y,
    if (scale == 1)
       return;
    else if (scale == 0) {
-      darray::zero(PROCEED_NEW_Q, n, g0x, g0y, g0z);
+      darray::zero(async_queue, n, g0x, g0y, g0z);
    } else
       scale_gradient_acc(scale, g0x, g0y, g0z);
 }

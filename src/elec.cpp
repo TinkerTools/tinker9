@@ -549,9 +549,9 @@ void elec_data(rc_op op)
 void mpole_init(int vers)
 {
    if (vers & calc::grad)
-      darray::zero(PROCEED_NEW_Q, n, trqx, trqy, trqz);
+      darray::zero(async_queue, n, trqx, trqy, trqz);
    if (vers & calc::virial)
-      darray::zero(PROCEED_NEW_Q, buffer_size(), vir_trq);
+      darray::zero(async_queue, buffer_size(), vir_trq);
 
 
    chkpole();
@@ -561,7 +561,7 @@ void mpole_init(int vers)
    if (use_ewald()) {
       rpole_to_cmp();
       if (vir_m)
-         darray::zero(PROCEED_NEW_Q, buffer_size(), vir_m);
+         darray::zero(async_queue, buffer_size(), vir_m);
       if (pltfm_config & CU_PLTFM) {
          bool precompute_theta = (!TINKER_CU_THETA_ON_THE_FLY_GRID_MPOLE) ||
             (!TINKER_CU_THETA_ON_THE_FLY_GRID_UIND);

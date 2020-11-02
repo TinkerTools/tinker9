@@ -78,13 +78,13 @@ void echgtrn(int vers)
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)
-         darray::zero(PROCEED_NEW_Q, bsize, nct);
+         darray::zero(async_queue, bsize, nct);
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, ect);
+         darray::zero(async_queue, bsize, ect);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_ect);
+         darray::zero(async_queue, bsize, vir_ect);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, dectx, decty, dectz);
+         darray::zero(async_queue, n, dectx, decty, dectz);
    }
 
 

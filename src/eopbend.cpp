@@ -75,11 +75,11 @@ void eopbend(int vers)
       host_zero(energy_eopb, virial_eopb);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, eopb);
+         darray::zero(async_queue, bsize, eopb);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_eopb);
+         darray::zero(async_queue, bsize, vir_eopb);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, deopbx, deopby, deopbz);
+         darray::zero(async_queue, n, deopbx, deopby, deopbz);
    }
 
 

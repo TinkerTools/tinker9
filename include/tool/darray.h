@@ -26,7 +26,6 @@ void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
  * \param src     Device pointer.
  * \param nbytes  Number of bytes.
  * \param queue   OpenACC queue.
- * \see LPFlag
  */
 void device_memory_copyout_bytes_async(void* dst, const void* src,
                                        size_t nbytes, int queue);
@@ -47,10 +46,9 @@ void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
  * Writes zero bytes on device.
  * \param dst     Device pointer.
  * \param nbytes  Number of bytes.
- * \param flag    Kernel policy.
- * \see LPFlag
+ * \param queue   OpenACC queue.
  */
-void device_memory_zero_bytes(void* dst, size_t nbytes, LPFlag flag);
+void device_memory_zero_bytes_async(void* dst, size_t nbytes, int queue);
 /**
  * \ingroup rc
  * Deallocates device pointer.
@@ -206,19 +204,19 @@ struct darray
 
 
    template <class PTR>
-   static void zero(LPFlag flag, size_t nelem, PTR p)
+   static void zero(int q, size_t nelem, PTR p)
    {
       typedef typename deduce_ptr<PTR>::type T;
       constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_zero_bytes(flatten(p), sizeof(T) * nelem * N, flag);
+      device_memory_zero_bytes_async(flatten(p), sizeof(T) * nelem * N, q);
    }
 
 
    template <class PTR, class... PTRS>
-   static void zero(LPFlag flag, size_t nelem, PTR p, PTRS... ps)
+   static void zero(int q, size_t nelem, PTR p, PTRS... ps)
    {
-      zero(flag, nelem, p);
-      zero(flag, nelem, ps...);
+      zero(q, nelem, p);
+      zero(q, nelem, ps...);
    }
 
 

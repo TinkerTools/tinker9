@@ -283,7 +283,7 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    virial_prec osrw_dv0[9] = {0};
    host_zero(osrw_dv1);
    if (vers & calc::grad)
-      darray::zero(PROCEED_NEW_Q, n, osrw_dgx, osrw_dgy, osrw_dgz);
+      darray::zero(async_queue, n, osrw_dgx, osrw_dgy, osrw_dgz);
 
 
    energy_prec aec = 0, aem = 0, aep = 0;

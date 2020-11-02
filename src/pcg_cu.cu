@@ -194,7 +194,7 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       darray::copy(PROCEED_NEW_Q, n, uind, udir);
       darray::copy(PROCEED_NEW_Q, n, uinp, udirp);
    } else {
-      darray::zero(PROCEED_NEW_Q, n, uind, uinp);
+      darray::zero(async_queue, n, uind, uinp);
    }
 
 

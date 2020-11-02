@@ -65,11 +65,11 @@ void estrbnd(int vers)
       host_zero(energy_eba, virial_eba);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, eba);
+         darray::zero(async_queue, bsize, eba);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_eba);
+         darray::zero(async_queue, bsize, vir_eba);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, debax, debay, debaz);
+         darray::zero(async_queue, n, debax, debay, debaz);
    }
 
 

@@ -60,11 +60,11 @@ void egeom(int vers)
       host_zero(energy_eg, virial_eg);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, eg);
+         darray::zero(async_queue, bsize, eg);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_eg);
+         darray::zero(async_queue, bsize, vir_eg);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, degx, degy, degz);
+         darray::zero(async_queue, n, degx, degy, degz);
    }
 
 

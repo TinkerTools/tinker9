@@ -69,11 +69,11 @@ void etors(int vers)
       host_zero(energy_et, virial_et);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, et);
+         darray::zero(async_queue, bsize, et);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_et);
+         darray::zero(async_queue, bsize, vir_et);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, detx, dety, detz);
+         darray::zero(async_queue, n, detx, dety, detz);
    }
 
 

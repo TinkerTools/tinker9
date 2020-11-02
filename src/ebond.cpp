@@ -72,11 +72,11 @@ void ebond(int vers)
       host_zero(energy_eb, virial_eb);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, eb);
+         darray::zero(async_queue, bsize, eb);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_eb);
+         darray::zero(async_queue, bsize, vir_eb);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, debx, deby, debz);
+         darray::zero(async_queue, n, debx, deby, debz);
    }
 
 

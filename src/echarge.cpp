@@ -151,13 +151,13 @@ void echarge(int vers)
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)
-         darray::zero(PROCEED_NEW_Q, bsize, nec);
+         darray::zero(async_queue, bsize, nec);
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, ec);
+         darray::zero(async_queue, bsize, ec);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_ec);
+         darray::zero(async_queue, bsize, vir_ec);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, decx, decy, decz);
+         darray::zero(async_queue, n, decx, decy, decz);
    }
 
    if (use_ewald()) {

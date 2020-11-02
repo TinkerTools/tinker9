@@ -26,7 +26,7 @@ void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes, LPFlag)
 }
 
 
-void device_memory_zero_bytes(void* dst, size_t nbytes, LPFlag)
+void device_memory_zero_bytes_async(void* dst, size_t nbytes, int)
 {
    if (dst == nullptr)
       return;

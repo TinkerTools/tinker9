@@ -67,11 +67,11 @@ void eimptor(int vers)
       host_zero(energy_eit, virial_eit);
       size_t bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, eit);
+         darray::zero(async_queue, bsize, eit);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_eit);
+         darray::zero(async_queue, bsize, vir_eit);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, deitx, deity, deitz);
+         darray::zero(async_queue, n, deitx, deity, deitz);
    }
 
 

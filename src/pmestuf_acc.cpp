@@ -27,7 +27,7 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
    assert(bsorder <= 5);
 
 
-   darray::zero(PROCEED_NEW_Q, 2 * nfft1 * nfft2 * nfft3, st.qgrid);
+   darray::zero(async_queue, 2 * nfft1 * nfft2 * nfft3, st.qgrid);
 
 
    #pragma acc parallel loop independent async\

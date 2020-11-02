@@ -495,13 +495,13 @@ void evdw(int vers)
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)
-         darray::zero(PROCEED_NEW_Q, bsize, nev);
+         darray::zero(async_queue, bsize, nev);
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, ev);
+         darray::zero(async_queue, bsize, ev);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_ev);
+         darray::zero(async_queue, bsize, vir_ev);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, devx, devy, devz);
+         darray::zero(async_queue, n, devx, devy, devz);
    }
 
 

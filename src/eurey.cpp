@@ -67,11 +67,11 @@ void eurey(int vers)
       host_zero(energy_eub, virial_eub);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, eub);
+         darray::zero(async_queue, bsize, eub);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_eub);
+         darray::zero(async_queue, bsize, vir_eub);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, deubx, deuby, deubz);
+         darray::zero(async_queue, n, deubx, deuby, deubz);
    }
 
 

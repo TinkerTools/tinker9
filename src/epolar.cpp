@@ -439,7 +439,7 @@ void epolar_data(rc_op op)
                           &upalt_03, &upalt_04, &upalt_05, &upalt_06, &upalt_07,
                           &upalt_08, &upalt_09, &upalt_10, &upalt_11, &upalt_12,
                           &upalt_13, &upalt_14, &upalt_15);
-         darray::zero(PROCEED_NEW_Q, n, udalt_00, udalt_01, udalt_02, udalt_03,
+         darray::zero(async_queue, n, udalt_00, udalt_01, udalt_02, udalt_03,
                       udalt_04, udalt_05, udalt_06, udalt_07, udalt_08,
                       udalt_09, udalt_10, udalt_11, udalt_12, udalt_13,
                       udalt_14, udalt_15, upalt_00, upalt_01, upalt_02,
@@ -451,7 +451,7 @@ void epolar_data(rc_op op)
          darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
                           &udalt_04, &udalt_05, &upalt_00, &upalt_01, &upalt_02,
                           &upalt_03, &upalt_04, &upalt_05);
-         darray::zero(PROCEED_NEW_Q, n, udalt_00, udalt_01, udalt_02, udalt_03,
+         darray::zero(async_queue, n, udalt_00, udalt_01, udalt_02, udalt_03,
                       udalt_04, udalt_05, upalt_00, upalt_01, upalt_02,
                       upalt_03, upalt_04, upalt_05);
       } else if (polpred == UPred::LSQR) {
@@ -464,7 +464,7 @@ void epolar_data(rc_op op)
          int lena = lenb * lenb; // lenb*(lenb+1)/2 should be plenty.
          darray::allocate(lena, &udalt_lsqr_a, &upalt_lsqr_a);
          darray::allocate(lenb, &udalt_lsqr_b, &upalt_lsqr_b);
-         darray::zero(PROCEED_NEW_Q, n, udalt_00, udalt_01, udalt_02, udalt_03,
+         darray::zero(async_queue, n, udalt_00, udalt_01, udalt_02, udalt_03,
                       udalt_04, udalt_05, udalt_06, upalt_00, upalt_01,
                       upalt_02, upalt_03, upalt_04, upalt_05, upalt_06);
       }
@@ -534,14 +534,14 @@ void epolar(int vers)
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)
-         darray::zero(PROCEED_NEW_Q, bsize, nep);
+         darray::zero(async_queue, bsize, nep);
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, ep);
+         darray::zero(async_queue, bsize, ep);
       if (do_v) {
-         darray::zero(PROCEED_NEW_Q, bsize, vir_ep);
+         darray::zero(async_queue, bsize, vir_ep);
       }
       if (do_g) {
-         darray::zero(PROCEED_NEW_Q, n, depx, depy, depz);
+         darray::zero(async_queue, n, depx, depy, depz);
       }
    }
 

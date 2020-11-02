@@ -392,7 +392,7 @@ void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 void rattle2(time_prec dt, bool do_v)
 {
    if (do_v) {
-      darray::zero(PROCEED_NEW_Q, buffer_size(), vir_buf);
+      darray::zero(async_queue, buffer_size(), vir_buf);
    }
 
 
@@ -433,7 +433,7 @@ void shake2(time_prec dt, const vel_prec* vxold, const vel_prec* vyold,
             const vel_prec* vznew, const pos_prec* xold, const pos_prec* yold,
             const pos_prec* zold)
 {
-   darray::zero(PROCEED_NEW_Q, buffer_size(), vir_buf);
+   darray::zero(async_queue, buffer_size(), vir_buf);
 
 
    shake2_acc(dt, vxold, vyold, vzold, vxnew, vynew, vznew, xold, yold, zold);

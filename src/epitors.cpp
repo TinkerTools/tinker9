@@ -62,11 +62,11 @@ void epitors(int vers)
       host_zero(energy_ept, virial_ept);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, ept);
+         darray::zero(async_queue, bsize, ept);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_ept);
+         darray::zero(async_queue, bsize, vir_ept);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, deptx, depty, deptz);
+         darray::zero(async_queue, n, deptx, depty, deptz);
    }
 
 

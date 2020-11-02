@@ -58,13 +58,13 @@ void empole(int vers)
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)
-         darray::zero(PROCEED_NEW_Q, bsize, nem);
+         darray::zero(async_queue, bsize, nem);
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, em);
+         darray::zero(async_queue, bsize, em);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_em);
+         darray::zero(async_queue, bsize, vir_em);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, demx, demy, demz);
+         darray::zero(async_queue, n, demx, demy, demz);
    }
 
 
