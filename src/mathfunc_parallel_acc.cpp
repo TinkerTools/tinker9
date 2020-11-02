@@ -69,19 +69,19 @@ template double dotprod_acc(const double*, const double*, size_t, int);
 
 
 template <class T>
-void dotprod_acc(T* ans, const T* a, const T* b, int nelem, int queue)
+void dotprod_acc(T* ans, const T* a, const T* b, size_t nelem, int queue)
 {
    #pragma acc serial async(queue) deviceptr(ans)
    {
       *ans = 0;
    }
    #pragma acc parallel loop async(queue) deviceptr(ans,a,b)
-   for (int i = 0; i < nelem; ++i) {
+   for (size_t i = 0; i < nelem; ++i) {
       *ans += a[i] * b[i];
    }
 }
-template void dotprod_acc(float*, const float*, const float*, int, int);
-template void dotprod_acc(double*, const double*, const double*, int, int);
+template void dotprod_acc(float*, const float*, const float*, size_t, int);
+template void dotprod_acc(double*, const double*, const double*, size_t, int);
 
 
 template <class T>

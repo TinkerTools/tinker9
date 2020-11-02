@@ -65,7 +65,7 @@ T dotprod(const T* a, const T* b, size_t nelem, int queue)
  * \brief Dot product of two linear arrays.
  */
 template <class T>
-void dotprod(T* ans, const T* a, const T* b, int nelem, int queue)
+void dotprod(T* ans, const T* a, const T* b, size_t nelem, int queue)
 {
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)

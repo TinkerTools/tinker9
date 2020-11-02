@@ -17,7 +17,7 @@ T dotprod_acc(const T* a, const T* b, size_t nelem, int queue);
 
 
 template <class T>
-void dotprod_acc(T* ans, const T* a, const T* b, int nelem, int queue);
+void dotprod_acc(T* ans, const T* a, const T* b, size_t nelem, int queue);
 
 
 template <class T>

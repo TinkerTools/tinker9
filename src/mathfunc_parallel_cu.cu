@@ -87,7 +87,7 @@ template void reduce_sum2_cu(unsigned long long (&)[6],
 
 
 template <>
-void dotprod_cu<float>(float* ans, const float* a, const float* b, int nelem,
+void dotprod_cu<float>(float* ans, const float* a, const float* b, size_t nelem,
                        int queue)
 {
    bool dq = queue == syncq;
@@ -98,7 +98,7 @@ void dotprod_cu<float>(float* ans, const float* a, const float* b, int nelem,
 
 template <>
 void dotprod_cu<double>(double* ans, const double* a, const double* b,
-                        int nelem, int queue)
+                        size_t nelem, int queue)
 {
    bool dq = queue == syncq;
    cublasHandle_t hd = (dq ? h_cublas : h_cublas_nonblk);

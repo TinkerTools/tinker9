@@ -261,7 +261,7 @@ struct darray
 
 
    template <class ANS, class PTR, class PTR2>
-   static void dot(int q, int nelem, ANS ans, const PTR ptr, const PTR2 ptr2)
+   static void dot(int q, size_t nelem, ANS ans, const PTR ptr, const PTR2 ptr2)
    {
       typedef typename deduce_ptr<PTR>::type T;
       constexpr size_t N = deduce_ptr<PTR>::n;

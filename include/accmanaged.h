@@ -1,5 +1,4 @@
 #pragma once
-#include "macro.h"
 #include "mdprec.h"
 #include "tool/rc_man.h"
 
