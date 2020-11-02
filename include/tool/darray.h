@@ -36,11 +36,10 @@ void device_memory_copyout_bytes_async(void* dst, const void* src,
  * \param dst     Destination device pointer.
  * \param src     Source device pointer.
  * \param nbytes  Number of bytes.
- * \param flag    Kernel policy.
- * \see LPFlag
+ * \param queue   OpenACC queue.
  */
-void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
-                              LPFlag flag);
+void device_memory_copy_bytes_async(void* dst, const void* src, size_t nbytes,
+                                    int queue);
 /**
  * \ingroup rc
  * Writes zero bytes on device.
@@ -238,14 +237,14 @@ struct darray
 
 
    template <class PTR, class U>
-   static void copy(LPFlag flag, size_t nelem, PTR dst, const U* src)
+   static void copy(int q, size_t nelem, PTR dst, const U* src)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
       using DT = typename deduce_ptr<PTR>::type;
       using ST = typename deduce_ptr<U*>::type;
       static_assert(std::is_same<DT, ST>::value, "");
       size_t size = N * sizeof(ST) * nelem;
-      device_memory_copy_bytes(flatten(dst), flatten(src), size, flag);
+      device_memory_copy_bytes_async(flatten(dst), flatten(src), size, q);
    }
 
 

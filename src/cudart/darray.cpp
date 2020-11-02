@@ -33,17 +33,11 @@ void device_memory_copyout_bytes_async(void* dst, const void* src,
    check_rt(cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyDeviceToHost, s));
 }
 
-void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
-                              LPFlag flag)
+void device_memory_copy_bytes_async(void* dst, const void* src, size_t nbytes,
+                                    int queue)
 {
-   cudaStream_t s;
-   if (flag & LPFlag::DEFAULT_Q)
-      s = nullptr;
-   else
-      s = nonblk;
+   cudaStream_t s = queue == sync_queue ? nullptr : nonblk;
    check_rt(cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyDeviceToDevice, s));
-   if (flag & LPFlag::WAIT)
-      check_rt(cudaStreamSynchronize(s));
 }
 
 

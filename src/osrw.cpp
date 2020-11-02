@@ -154,12 +154,12 @@ void osrw_data(rc_op op)
             darray::allocate(osrw_ntbnd, &osrw_itbnd);
             darray::allocate(ntors, &osrw_tors1, &osrw_tors2, &osrw_tors3,
                              &osrw_tors4, &osrw_tors5, &osrw_tors6);
-            darray::copy(PROCEED_NEW_Q, ntors, osrw_tors1, tors1);
-            darray::copy(PROCEED_NEW_Q, ntors, osrw_tors2, tors2);
-            darray::copy(PROCEED_NEW_Q, ntors, osrw_tors3, tors3);
-            darray::copy(PROCEED_NEW_Q, ntors, osrw_tors4, tors4);
-            darray::copy(PROCEED_NEW_Q, ntors, osrw_tors5, tors5);
-            darray::copy(PROCEED_NEW_Q, ntors, osrw_tors6, tors6);
+            darray::copy(async_queue, ntors, osrw_tors1, tors1);
+            darray::copy(async_queue, ntors, osrw_tors2, tors2);
+            darray::copy(async_queue, ntors, osrw_tors3, tors3);
+            darray::copy(async_queue, ntors, osrw_tors4, tors4);
+            darray::copy(async_queue, ntors, osrw_tors5, tors5);
+            darray::copy(async_queue, ntors, osrw_tors6, tors6);
             darray::copyin(WAIT_NEW_Q, osrw_ntbnd, osrw_itbnd, buf.data());
          }
       }
@@ -181,14 +181,14 @@ void osrw_data(rc_op op)
 
    if (op & rc_init) {
       if (use_potent(charge_term)) {
-         darray::copy(PROCEED_NEW_Q, n, osrw_pchg, pchg);
+         darray::copy(async_queue, n, osrw_pchg, pchg);
       }
 
 
       if (use_potent(mpole_term) || use_potent(polar_term)) {
-         darray::copy(PROCEED_NEW_Q, n, osrw_pole, pole);
+         darray::copy(async_queue, n, osrw_pole, pole);
          if (use_potent(polar_term)) {
-            darray::copy(PROCEED_NEW_Q, n, osrw_polarity, polarity);
+            darray::copy(async_queue, n, osrw_polarity, polarity);
          }
       }
    }
@@ -371,9 +371,9 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
                       gz_elec);
          sum_gradient(sele0, gx, gy, gz, gx_elec, gy_elec, gz_elec);
       }
-      darray::copy(PROCEED_NEW_Q, n, osrw_gx, gx);
-      darray::copy(PROCEED_NEW_Q, n, osrw_gy, gy);
-      darray::copy(PROCEED_NEW_Q, n, osrw_gz, gz);
+      darray::copy(async_queue, n, osrw_gx, gx);
+      darray::copy(async_queue, n, osrw_gy, gy);
+      darray::copy(async_queue, n, osrw_gz, gz);
    }
 
 

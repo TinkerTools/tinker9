@@ -46,20 +46,20 @@ void mdsave_dup_then_write(int istep, time_prec dt)
 
    dup_buf_esum = esum;
    get_default_box(dup_buf_box);
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_x, xpos);
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_y, ypos);
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_z, zpos);
+   darray::copy(async_queue, n, dup_buf_x, xpos);
+   darray::copy(async_queue, n, dup_buf_y, ypos);
+   darray::copy(async_queue, n, dup_buf_z, zpos);
 
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_vx, vx);
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_vy, vy);
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_vz, vz);
+   darray::copy(async_queue, n, dup_buf_vx, vx);
+   darray::copy(async_queue, n, dup_buf_vy, vy);
+   darray::copy(async_queue, n, dup_buf_vz, vz);
 
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_gx, gx);
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_gy, gy);
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_gz, gz);
+   darray::copy(async_queue, n, dup_buf_gx, gx);
+   darray::copy(async_queue, n, dup_buf_gy, gy);
+   darray::copy(async_queue, n, dup_buf_gz, gz);
 
    if (mdsave_use_uind()) {
-      darray::copy(PROCEED_NEW_Q, 3 * n, &dup_buf_uind[0][0], &uind[0][0]);
+      darray::copy(async_queue, 3 * n, &dup_buf_uind[0][0], &uind[0][0]);
    }
 
    // Record mdsave_begin_event when nonblk is available.

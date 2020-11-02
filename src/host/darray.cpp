@@ -20,7 +20,8 @@ void device_memory_copyout_bytes_async(void* dst, const void* src,
 }
 
 
-void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes, LPFlag)
+void device_memory_copy_bytes_async(void* dst, const void* src, size_t nbytes,
+                                    int)
 {
    std::memcpy(dst, src, nbytes);
 }

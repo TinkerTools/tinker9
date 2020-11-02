@@ -249,8 +249,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
    if (predict) {
       ulspred_sum(uind, uinp);
    } else if (dirguess) {
-      darray::copy(PROCEED_NEW_Q, n, uind, udir);
-      darray::copy(PROCEED_NEW_Q, n, uinp, udirp);
+      darray::copy(async_queue, n, uind, udir);
+      darray::copy(async_queue, n, uinp, udirp);
    } else {
       darray::zero(async_queue, n, uind, uinp);
    }
@@ -275,8 +275,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
    } else if (dirguess) {
       ufield(udir, udirp, rsd, rsdp);
    } else {
-      darray::copy(PROCEED_NEW_Q, n, rsd, field);
-      darray::copy(PROCEED_NEW_Q, n, rsdp, fieldp);
+      darray::copy(async_queue, n, rsd, field);
+      darray::copy(async_queue, n, rsdp, fieldp);
    }
    #pragma acc parallel loop independent async deviceptr(polarity,rsd,rsdp)
    for (int i = 0; i < n; ++i) {
@@ -298,8 +298,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
    } else {
       diag_precond(rsd, rsdp, zrsd, zrsdp);
    }
-   darray::copy(PROCEED_NEW_Q, n, conj, zrsd);
-   darray::copy(PROCEED_NEW_Q, n, conjp, zrsdp);
+   darray::copy(async_queue, n, conj, zrsd);
+   darray::copy(async_queue, n, conjp, zrsdp);
 
    // initial r(0) M r(0)
 
