@@ -76,14 +76,16 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    energy_prec epot = dup_buf_esum;
    set_tinker_box_module(dup_buf_box);
    if (sizeof(pos_prec) == sizeof(double)) {
-      darray::copyout(PROCEED_DEFAULT_Q, n, atoms::x, dup_buf_x);
-      darray::copyout(PROCEED_DEFAULT_Q, n, atoms::y, dup_buf_y);
-      darray::copyout(WAIT_DEFAULT_Q, n, atoms::z, dup_buf_z);
+      darray::copyout(n, atoms::x, dup_buf_x, sync_queue);
+      darray::copyout(n, atoms::y, dup_buf_y, sync_queue);
+      darray::copyout(n, atoms::z, dup_buf_z, sync_queue);
+      wait_for(sync_queue);
    } else {
       std::vector<pos_prec> arrx(n), arry(n), arrz(n);
-      darray::copyout(PROCEED_DEFAULT_Q, n, arrx.data(), dup_buf_x);
-      darray::copyout(PROCEED_DEFAULT_Q, n, arry.data(), dup_buf_y);
-      darray::copyout(WAIT_DEFAULT_Q, n, arrz.data(), dup_buf_z);
+      darray::copyout(n, arrx.data(), dup_buf_x, sync_queue);
+      darray::copyout(n, arry.data(), dup_buf_y, sync_queue);
+      darray::copyout(n, arrz.data(), dup_buf_z, sync_queue);
+      wait_for(sync_queue);
       for (int i = 0; i < n; ++i) {
          atoms::x[i] = arrx[i];
          atoms::y[i] = arry[i];
@@ -93,9 +95,10 @@ void mdsave_dup_then_write(int istep, time_prec dt)
 
    {
       std::vector<vel_prec> arrx(n), arry(n), arrz(n);
-      darray::copyout(PROCEED_DEFAULT_Q, n, arrx.data(), dup_buf_vx);
-      darray::copyout(PROCEED_DEFAULT_Q, n, arry.data(), dup_buf_vy);
-      darray::copyout(WAIT_DEFAULT_Q, n, arrz.data(), dup_buf_vz);
+      darray::copyout(n, arrx.data(), dup_buf_vx, sync_queue);
+      darray::copyout(n, arry.data(), dup_buf_vy, sync_queue);
+      darray::copyout(n, arrz.data(), dup_buf_vz, sync_queue);
+      wait_for(sync_queue);
       for (int i = 0; i < n; ++i) {
          int j = 3 * i;
          moldyn::v[j] = arrx[i];
@@ -126,7 +129,8 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    }
 
    if (mdsave_use_uind()) {
-      darray::copyout(WAIT_DEFAULT_Q, n, polar::uind, dup_buf_uind);
+      darray::copyout(n, polar::uind, dup_buf_uind, sync_queue);
+      wait_for(sync_queue);
    }
 
    // Record mdsave_end_event when stream (0) is available.

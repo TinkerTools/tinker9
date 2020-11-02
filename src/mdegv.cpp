@@ -82,17 +82,16 @@ void copy_energy(int vers, energy_prec* eng)
 
 void copy_gradient(int vers, double* grdx, double* grdy, double* grdz,
                    const grad_prec* gx_src, const grad_prec* gy_src,
-                   const grad_prec* gz_src, bool useNewQ)
+                   const grad_prec* gz_src, int queue)
 {
-   LPFlag proceed = useNewQ ? PROCEED_NEW_Q : WAIT_DEFAULT_Q;
-   LPFlag wait = useNewQ ? WAIT_NEW_Q : WAIT_DEFAULT_Q;
    if (vers & calc::grad) {
       if (grdx && grdy && grdz) {
 #if TINKER_DETERMINISTIC_FORCE
          std::vector<grad_prec> hgx(n), hgy(n), hgz(n);
-         darray::copyout(proceed, n, hgx.data(), gx_src);
-         darray::copyout(proceed, n, hgy.data(), gy_src);
-         darray::copyout(wait, n, hgz.data(), gz_src);
+         darray::copyout(n, hgx.data(), gx_src, queue);
+         darray::copyout(n, hgy.data(), gy_src, queue);
+         darray::copyout(n, hgz.data(), gz_src, queue);
+         wait_for(queue);
          for (int i = 0; i < n; ++i) {
             grdx[i] = to_flt_host<double>(hgx[i]);
             grdy[i] = to_flt_host<double>(hgy[i]);
@@ -101,18 +100,20 @@ void copy_gradient(int vers, double* grdx, double* grdy, double* grdz,
 #else
          if (sizeof(grad_prec) < sizeof(double)) {
             std::vector<grad_prec> hgx(n), hgy(n), hgz(n);
-            darray::copyout(proceed, n, hgx.data(), gx_src);
-            darray::copyout(proceed, n, hgy.data(), gy_src);
-            darray::copyout(wait, n, hgz.data(), gz_src);
+            darray::copyout(n, hgx.data(), gx_src, queue);
+            darray::copyout(n, hgy.data(), gy_src, queue);
+            darray::copyout(n, hgz.data(), gz_src, queue);
+            wait_for(queue);
             for (int i = 0; i < n; ++i) {
                grdx[i] = hgx[i];
                grdy[i] = hgy[i];
                grdz[i] = hgz[i];
             }
          } else {
-            darray::copyout(proceed, n, grdx, (double*)gx_src);
-            darray::copyout(proceed, n, grdy, (double*)gy_src);
-            darray::copyout(wait, n, grdz, (double*)gz_src);
+            darray::copyout(n, grdx, (double*)gx_src, queue);
+            darray::copyout(n, grdy, (double*)gy_src, queue);
+            darray::copyout(n, grdz, (double*)gz_src, queue);
+            wait_for(queue);
          }
 #endif
       }
@@ -124,7 +125,7 @@ void copy_gradient(int vers, double* grdx, double* grdy, double* grdz,
                    const grad_prec* gx_src, const grad_prec* gy_src,
                    const grad_prec* gz_src)
 {
-   copy_gradient(vers, grdx, grdy, grdz, gx_src, gy_src, gz_src, true);
+   copy_gradient(vers, grdx, grdy, grdz, gx_src, gy_src, gz_src, async_queue);
 }
 
 

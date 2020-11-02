@@ -16,6 +16,7 @@ void cudalib_data(rc_op op)
       check_rt(cudaProfilerStop());
 
 
+      sync_queue = -42;
       async_queue = -42;
       nonblk = nullptr;
       check_rt(cublasDestroy(h_cublas));
@@ -32,6 +33,7 @@ void cudalib_data(rc_op op)
 
 
    if (op & rc_alloc) {
+      sync_queue = acc_async_sync;
       async_queue = acc_get_default_async();
       nonblk = (cudaStream_t)acc_get_cuda_stream(async_queue);
       check_rt(cublasCreate(&h_cublas));        // calls cudaMemcpy [sync] here

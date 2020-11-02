@@ -57,9 +57,10 @@ TEST_CASE("Bounds", "[ff][box]")
    double yref[] = {-3, -5};
    double zref[] = {4, 7};
    real xans[2], yans[2], zans[2];
-   darray::copyout(PROCEED_NEW_Q, 2, xans, x);
-   darray::copyout(PROCEED_NEW_Q, 2, yans, y);
-   darray::copyout(WAIT_NEW_Q, 2, zans, z);
+   darray::copyout(2, xans, x, async_queue);
+   darray::copyout(2, yans, y, async_queue);
+   darray::copyout(2, zans, z, async_queue);
+   wait_for(async_queue);
 
 
    COMPARE_REALS(xans[0], xref[0], eps);

@@ -117,7 +117,8 @@ void mdrest_remove_pbc_momentum_cu(bool copyout, vel_prec& vtot1,
 
    if (copyout) {
       vel_prec v[3];
-      darray::copyout(WAIT_NEW_Q, 3, v, xout);
+      darray::copyout(3, v, xout, async_queue);
+      wait_for(async_queue);
       vtot1 = v[0];
       vtot2 = v[1];
       vtot3 = v[2];

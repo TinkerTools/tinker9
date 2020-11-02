@@ -1,4 +1,5 @@
 #include "tool/darray.h"
+#include "glob.accasync.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
 #include <cstring>
@@ -6,6 +7,12 @@
 
 
 namespace tinker {
+void wait_for(int queue)
+{
+   cudaStream_t s = queue == sync_queue ? nullptr : nonblk;
+   check_rt(cudaStreamSynchronize(s));
+}
+
 void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
                                 LPFlag flag)
 {
@@ -19,20 +26,12 @@ void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
       check_rt(cudaStreamSynchronize(s));
 }
 
-
-void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
-                                 LPFlag flag)
+void device_memory_copyout_bytes_async(void* dst, const void* src,
+                                       size_t nbytes, int queue)
 {
-   cudaStream_t s;
-   if (flag & LPFlag::DEFAULT_Q)
-      s = nullptr;
-   else
-      s = nonblk;
+   cudaStream_t s = queue == sync_queue ? nullptr : nonblk;
    check_rt(cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyDeviceToHost, s));
-   if (flag & LPFlag::WAIT)
-      check_rt(cudaStreamSynchronize(s));
 }
-
 
 void device_memory_copy_bytes(void* dst, const void* src, size_t nbytes,
                               LPFlag flag)

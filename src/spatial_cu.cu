@@ -565,7 +565,8 @@ void spatial_data_init_cu(SpatialUnit u)
    int level = px + py + pz;
    int mnax;
    const int* mnaxptr = thrust::max_element(policy, ax_scan, ax_scan + 1 + nx);
-   darray::copyout(WAIT_NEW_Q, 1, &mnax, mnaxptr);
+   darray::copyout(1, &mnax, mnaxptr, async_queue);
+   wait_for(async_queue);
    while (mnax > Spatial::BLOCK) {
       darray::deallocate(nearby, ax_scan, xkf);
 
@@ -596,7 +597,8 @@ void spatial_data_init_cu(SpatialUnit u)
                  u->yold, u->zold, //
                  nx, nearby);
       mnaxptr = thrust::max_element(policy, ax_scan, ax_scan + 1 + nx);
-      darray::copyout(WAIT_NEW_Q, 1, &mnax, mnaxptr);
+      darray::copyout(1, &mnax, mnaxptr, async_queue);
+      wait_for(async_queue);
    }
    // B.5
    thrust::stable_sort_by_key(policy, boxnum, boxnum + n, sorted);
@@ -1456,7 +1458,8 @@ void run_spatial2_step5(Spatial2Unit u)
               dev_niak, u->iak, u->lst,             //
               n, u->nak, cutbuf, TINKER_IMAGE_ARGS, //
               u->akpf, u->sorted, u->akc, u->half);
-   darray::copyout(WAIT_NEW_Q, 1, &u->niak, dev_niak);
+   darray::copyout(1, &u->niak, dev_niak, async_queue);
+   wait_for(async_queue);
    if (u->niak > u->nak * Spatial2::LSTCAP) {
       int cap = Spatial2::LSTCAP;
       TINKER_THROW(
@@ -1506,7 +1509,8 @@ void spatial_data_init_cu(Spatial2Unit u)
               u->bnum, u->nstype,             //
               si1.ns, si1.js, si2.ns, si2.js, //
               si3.ns, si3.js, si4.ns, si4.js);
-   darray::copyout(WAIT_NEW_Q, 1, &u->nakpl, nakpl_ptr0);
+   darray::copyout(1, &u->nakpl, nakpl_ptr0, async_queue);
+   wait_for(async_queue);
    if (WARP_SIZE + u->nakpl > u->cap_nakpl) {
       u->cap_nakpl = WARP_SIZE + u->nakpl;
       darray::deallocate(u->iakpl);

@@ -108,7 +108,8 @@ int check_spatial(int n, real lbuf, int* restrict update,
       }
    }
    int ans;
-   darray::copyout(WAIT_NEW_Q, 1, &ans, &update[0]);
+   darray::copyout(1, &ans, &update[0], async_queue);
+   wait_for(async_queue);
    return ans;
 }
 

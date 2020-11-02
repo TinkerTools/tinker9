@@ -1,4 +1,5 @@
 #pragma once
+#include "glob.accasync.h"
 #include "mathfunc.h"
 #include "tool/deduce_ptr.h"
 #include "tool/lpflag.h"
@@ -6,6 +7,7 @@
 
 
 namespace tinker {
+void wait_for(int queue);
 /**
  * \ingroup rc
  * Similar to OpenACC copyin, copies data from host to device.
@@ -23,11 +25,11 @@ void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
  * \param dst     Host pointer.
  * \param src     Device pointer.
  * \param nbytes  Number of bytes.
- * \param flag    Kernel policy.
+ * \param queue   OpenACC queue.
  * \see LPFlag
  */
-void device_memory_copyout_bytes(void* dst, const void* src, size_t nbytes,
-                                 LPFlag flag);
+void device_memory_copyout_bytes_async(void* dst, const void* src,
+                                       size_t nbytes, int queue);
 /**
  * \ingroup rc
  * Copies data between two pointers.
@@ -112,12 +114,11 @@ void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem,
  * \param dst    Destination address.
  * \param src    Source address.
  * \param nelem  Number of elements to copy to the 1D host array.
- * \param flag   Kernel policy.
+ * \param q      OpenACC queue.
  * \see LPFlag
  */
 template <class DT, class ST>
-void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem,
-                                    LPFlag flag)
+void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem, int q)
 {
    device_memory_check_type<DT>();
    device_memory_check_type<ST>();
@@ -126,10 +127,10 @@ void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem,
 
    size_t size = ss * nelem;
    if (ds == ss) {
-      device_memory_copyout_bytes(dst, src, size, flag);
+      device_memory_copyout_bytes_async(dst, src, size, q);
    } else {
       std::vector<ST> buf(nelem);
-      device_memory_copyout_bytes(buf.data(), src, size, flag);
+      device_memory_copyout_bytes_async(buf.data(), src, size, q);
       for (size_t i = 0; i < nelem; ++i)
          dst[i] = buf[i];
    }
@@ -231,11 +232,10 @@ struct darray
 
 
    template <class U, class PTR>
-   static void copyout(LPFlag flag, size_t nelem, U* dst, const PTR src)
+   static void copyout(size_t nelem, U* dst, const PTR src, int q)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_copyout_1d_array(flatten(dst), flatten(src), nelem * N,
-                                     flag);
+      device_memory_copyout_1d_array(flatten(dst), flatten(src), nelem * N, q);
    }
 
 
