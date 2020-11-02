@@ -86,32 +86,32 @@ TEST_CASE("Reduce", "[util][math][reduce]")
    wait_for(async_queue);
 
 
-   ai = parallel::reduce_sum(di, N, WAIT_NEW_Q);
+   ai = parallel::reduce_sum(di, N, async_queue);
    REQUIRE(ai == refi);
 
-   af = parallel::reduce_sum(df, N, WAIT_NEW_Q);
+   af = parallel::reduce_sum(df, N, async_queue);
    REQUIRE(af == reff);
 
 
-   ad = parallel::reduce_sum(dd, N, WAIT_NEW_Q);
+   ad = parallel::reduce_sum(dd, N, async_queue);
    REQUIRE(ad == refd);
 
 
-   au = parallel::reduce_sum(du, N, WAIT_NEW_Q);
+   au = parallel::reduce_sum(du, N, async_queue);
    REQUIRE(au == refu);
 
 
-   parallel::reduce_sum2(af2, df2, N, WAIT_NEW_Q);
+   parallel::reduce_sum2(af2, df2, N, async_queue);
    for (int j = 0; j < H; ++j)
       REQUIRE(af2[j] == reff2[j]);
 
 
-   parallel::reduce_sum2(ad2, dd2, N, WAIT_NEW_Q);
+   parallel::reduce_sum2(ad2, dd2, N, async_queue);
    for (int j = 0; j < H; ++j)
       REQUIRE(ad2[j] == refd2[j]);
 
 
-   parallel::reduce_sum2(au2, du2, N, WAIT_NEW_Q);
+   parallel::reduce_sum2(au2, du2, N, async_queue);
    for (int j = 0; j < H; ++j)
       REQUIRE(au2[j] == refu2[j]);
 

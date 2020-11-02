@@ -1,43 +1,31 @@
 #include "mathfunc_parallel_acc.h"
 #include "glob.accasync.h"
-#include "tool/acclib.h"
 #include "tool/deduce_ptr.h"
 #include <cassert>
 
 
 namespace tinker {
 template <class T>
-T reduce_sum_acc(const T* gpu_a, size_t cpu_n, LPFlag flag)
+T reduce_sum_acc(const T* gpu_a, size_t cpu_n, int queue)
 {
    T val = 0;
-   if (flag & LPFlag::DEFAULT_Q) {
-      #pragma acc parallel loop independent\
-                  deviceptr(gpu_a) reduction(+:val)
-      for (size_t i = 0; i < cpu_n; ++i)
-         val += gpu_a[i];
-   } else {
-      // This OpenACC directive was
-      // acc parallel loop independent async deviceptr(gpu_a) reduction(+:val)
-      // but kept receiving segmentation fault. Luckily, this code is easy
-      // enough for compiler to recognize it is reduction.
-      #pragma acc parallel loop async deviceptr(gpu_a)
-      for (size_t i = 0; i < cpu_n; ++i)
-         val += gpu_a[i];
-   }
-   // implicit OpenACC wait
-   assert(flag & LPFlag::WAIT);
+   #pragma acc parallel loop independent async(queue)\
+               deviceptr(gpu_a) copy(val) reduction(+:val)
+   for (size_t i = 0; i < cpu_n; ++i)
+      val += gpu_a[i];
+   #pragma acc wait(queue)
    return val;
 }
-template int reduce_sum_acc(const int*, size_t, LPFlag);
-template float reduce_sum_acc(const float*, size_t, LPFlag);
-template double reduce_sum_acc(const double*, size_t, LPFlag);
+template int reduce_sum_acc(const int*, size_t, int);
+template float reduce_sum_acc(const float*, size_t, int);
+template double reduce_sum_acc(const double*, size_t, int);
 template unsigned long long reduce_sum_acc(const unsigned long long*, size_t,
-                                           LPFlag);
+                                           int);
 
 
 template <class HT, size_t HN, class DPTR>
 void reduce_sum2_acc(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem,
-                     LPFlag flag)
+                     int queue)
 {
    typedef typename deduce_ptr<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type DT;
@@ -46,51 +34,21 @@ void reduce_sum2_acc(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem,
    constexpr size_t neach = deduce_ptr<DPTR>::n;
    static_assert(HN <= neach, "");
 
-   bool sync = flag & LPFlag::DEFAULT_Q;
+
    for (size_t iv = 0; iv < HN; ++iv) {
       HT ans = 0;
-      if (sync) {
-         #pragma acc parallel loop independent\
-                     deviceptr(v) reduction(+:ans)
-         for (size_t ig = 0; ig < nelem; ++ig)
-            ans += v[ig][iv];
-      } else {
-         // see reduce_sum()
-         #pragma acc parallel loop async deviceptr(v)
-         for (size_t ig = 0; ig < nelem; ++ig)
-            ans += v[ig][iv];
-      }
-      // implicit OpenACC wait
-      assert(flag & LPFlag::WAIT);
+      #pragma acc parallel loop independent async(queue)\
+                  deviceptr(v) copy(ans) reduction(+:ans)
+      for (size_t ig = 0; ig < nelem; ++ig)
+         ans += v[ig][iv];
+      #pragma acc wait(queue)
       h_ans[iv] = ans;
    }
 }
-template void reduce_sum2_acc(float (&)[6], float (*)[8], size_t, LPFlag);
-template void reduce_sum2_acc(double (&)[6], double (*)[8], size_t, LPFlag);
+template void reduce_sum2_acc(float (&)[6], float (*)[8], size_t, int);
+template void reduce_sum2_acc(double (&)[6], double (*)[8], size_t, int);
 template void reduce_sum2_acc(unsigned long long (&)[6],
-                              unsigned long long (*)[8], size_t, LPFlag);
-
-
-template <class T>
-T reduce_logic_or_acc(const T* gpu_a, size_t cpu_n, LPFlag flag)
-{
-   T val = false;
-   if (flag & LPFlag::DEFAULT_Q) {
-      #pragma acc parallel loop independent\
-                  deviceptr(gpu_a) reduction(||:val)
-      for (size_t i = 0; i < cpu_n; ++i)
-         val = (val || gpu_a[i]);
-   } else {
-      // see reduce_sum()
-      #pragma acc parallel loop async deviceptr(gpu_a)
-      for (size_t i = 0; i < cpu_n; ++i)
-         val = (val || gpu_a[i]);
-   }
-   // implicit OpenACC wait
-   assert(flag & LPFlag::WAIT);
-   return val;
-}
-template int reduce_logic_or_acc(const int*, size_t, LPFlag);
+                              unsigned long long (*)[8], size_t, int);
 
 
 template <class T>

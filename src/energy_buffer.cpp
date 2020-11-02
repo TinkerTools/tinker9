@@ -56,14 +56,14 @@ void buffer_deallocate(int flag, count_buffer c)
 }
 int count_reduce(const count_buffer ne)
 {
-   int c = parallel::reduce_sum(ne, buffer_size(), WAIT_NEW_Q);
+   int c = parallel::reduce_sum(ne, buffer_size(), async_queue);
    return c;
 }
 
 
 energy_prec energy_reduce(const energy_buffer e)
 {
-   auto b = parallel::reduce_sum(e, buffer_size(), WAIT_NEW_Q);
+   auto b = parallel::reduce_sum(e, buffer_size(), async_queue);
    energy_prec real_out = to_flt_host<energy_prec>(b);
    return real_out;
 }
@@ -73,7 +73,7 @@ void virial_reduce(virial_prec (&v1)[virial_buffer_traits::N],
                    const virial_buffer v)
 {
    virial_buffer_traits::type b[virial_buffer_traits::N];
-   parallel::reduce_sum2(b, v, buffer_size(), WAIT_NEW_Q);
+   parallel::reduce_sum2(b, v, buffer_size(), async_queue);
    for (size_t i = 0; i < virial_buffer_traits::N; ++i)
       v1[i] = to_flt_host<virial_prec>(b[i]);
 }

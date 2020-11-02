@@ -21,7 +21,7 @@ struct GenericUnitAlloc<GenericUnitVersion::DisableOnDevice>
 {
    static void deallocate(void*) {}
    static void allocate(void**, size_t) {}
-   static void copyin(void*, const void*, size_t, LPFlag) {}
+   static void copyin(void*, const void*, size_t, int) {}
 };
 
 

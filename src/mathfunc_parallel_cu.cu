@@ -13,9 +13,8 @@
 namespace tinker {
 namespace {
 template <class T, class Op>
-void reduce_to_dptr(const T* a, size_t nelem, bool sync)
+void reduce_to_dptr(const T* a, size_t nelem, cudaStream_t st)
 {
-   cudaStream_t st = (sync ? nullptr : nonblk);
    T* dptr = (T*)dptr_buf;
    int grid_siz1 = get_grid_size(BLOCK_DIM);
    int grid_siz2 = (nelem + BLOCK_DIM - 1) / BLOCK_DIM;
@@ -26,37 +25,35 @@ void reduce_to_dptr(const T* a, size_t nelem, bool sync)
 
 
 template <class T, class Op>
-T reduce_general(const T* a, size_t nelem, LPFlag flag)
+T reduce_general(const T* a, size_t nelem, int queue)
 {
-   bool sync = flag & LPFlag::DEFAULT_Q;
-   cudaStream_t st = (sync ? nullptr : nonblk);
+   cudaStream_t s = queue == sync_queue ? nullptr : nonblk;
    T* dptr = (T*)dptr_buf;
    T* hptr = (T*)pinned_buf;
-   reduce_to_dptr<T, Op>(a, nelem, sync);
-   check_rt(cudaMemcpyAsync(hptr, dptr, sizeof(T), cudaMemcpyDeviceToHost, st));
+   reduce_to_dptr<T, Op>(a, nelem, s);
+   check_rt(cudaMemcpyAsync(hptr, dptr, sizeof(T), cudaMemcpyDeviceToHost, s));
    // always wait
-   assert(flag & LPFlag::WAIT);
-   check_rt(cudaStreamSynchronize(st));
+   check_rt(cudaStreamSynchronize(s));
    return *hptr;
 }
 }
 
 
 template <class T>
-T reduce_sum_cu(const T* a, size_t nelem, LPFlag flag)
+T reduce_sum_cu(const T* a, size_t nelem, int queue)
 {
-   return reduce_general<T, OpPlus<T>>(a, nelem, flag);
+   return reduce_general<T, OpPlus<T>>(a, nelem, queue);
 }
-template int reduce_sum_cu(const int*, size_t, LPFlag);
-template float reduce_sum_cu(const float*, size_t, LPFlag);
-template double reduce_sum_cu(const double*, size_t, LPFlag);
+template int reduce_sum_cu(const int*, size_t, int);
+template float reduce_sum_cu(const float*, size_t, int);
+template double reduce_sum_cu(const double*, size_t, int);
 template unsigned long long reduce_sum_cu(const unsigned long long*, size_t,
-                                          LPFlag);
+                                          int);
 
 
 template <class HT, size_t HN, class DPTR>
 void reduce_sum2_cu(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem,
-                    LPFlag flag)
+                    int queue)
 {
    typedef typename deduce_ptr<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type T;
@@ -64,8 +61,7 @@ void reduce_sum2_cu(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem,
    constexpr size_t N = deduce_ptr<DPTR>::n;
    static_assert(HN <= N, "");
 
-   bool sync = flag & LPFlag::DEFAULT_Q;
-   cudaStream_t st = (sync ? nullptr : nonblk);
+   cudaStream_t s = queue == sync_queue ? nullptr : nonblk;
    T(*dptr)[HN] = (T(*)[HN])dptr_buf;
    T* hptr = (T*)pinned_buf;
    int grid_siz1 = get_grid_size(BLOCK_DIM);
@@ -73,30 +69,21 @@ void reduce_sum2_cu(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem,
    int grid_siz2 = (nelem + BLOCK_DIM - 1) / BLOCK_DIM;
    int grid_size = std::min(grid_siz1, grid_siz2);
    reduce2<T, BLOCK_DIM, HN, N, OpPlus<T>>
-      <<<grid_size, BLOCK_DIM, 0, st>>>(dptr, a, nelem);
+      <<<grid_size, BLOCK_DIM, 0, s>>>(dptr, a, nelem);
    reduce2<T, BLOCK_DIM, HN, HN, OpPlus<T>>
-      <<<1, BLOCK_DIM, 0, st>>>(dptr, dptr, grid_size);
+      <<<1, BLOCK_DIM, 0, s>>>(dptr, dptr, grid_size);
    check_rt(cudaMemcpyAsync(hptr, (T*)dptr, HN * sizeof(HN),
-                            cudaMemcpyDeviceToHost, st));
+                            cudaMemcpyDeviceToHost, s));
    // always wait
-   assert(flag & LPFlag::WAIT);
-   check_rt(cudaStreamSynchronize(st));
+   check_rt(cudaStreamSynchronize(s));
    #pragma unroll
    for (int j = 0; j < HN; ++j)
       h_ans[j] = hptr[j];
 }
-template void reduce_sum2_cu(float (&)[6], float (*)[8], size_t, LPFlag);
-template void reduce_sum2_cu(double (&)[6], double (*)[8], size_t, LPFlag);
+template void reduce_sum2_cu(float (&)[6], float (*)[8], size_t, int);
+template void reduce_sum2_cu(double (&)[6], double (*)[8], size_t, int);
 template void reduce_sum2_cu(unsigned long long (&)[6],
-                             unsigned long long (*)[8], size_t, LPFlag);
-
-
-template <class T>
-T reduce_logic_or_cu(const T* a, size_t nelem, LPFlag flag)
-{
-   return reduce_general<T, OpLogicOr<T>>(a, nelem, flag);
-}
-template int reduce_logic_or_cu(const int*, size_t, LPFlag);
+                             unsigned long long (*)[8], size_t, int);
 
 
 template <>
