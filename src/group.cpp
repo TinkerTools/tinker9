@@ -41,25 +41,25 @@ void group_data(rc_op op)
       for (int i = 0; i < n; ++i) {
          buf[i] = group::kgrp[i] - 1;
       }
-      darray::copyin(async_queue, n, st.kgrp, buf.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, n, st.kgrp, buf.data());
+      wait_for(asyncq);
 
       for (int i = 0; i < n; ++i) {
          buf[i] = group::grplist[i];
       }
-      darray::copyin(async_queue, n, st.grplist, buf.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, n, st.grplist, buf.data());
+      wait_for(asyncq);
 
       for (int i = 0; i <= st.ngrp; ++i) {
          int j = 2 * i;
          buf[j] = group::igrp[j] - 1;
          buf[j + 1] = group::igrp[j + 1];
       }
-      darray::copyin(async_queue, st.ngrp + 1, st.igrp, buf.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, st.ngrp + 1, st.igrp, buf.data());
+      wait_for(asyncq);
 
-      darray::copyin(async_queue, st.ngrp + 1, st.grpmass, group::grpmass);
-      wait_for(async_queue);
+      darray::copyin(asyncq, st.ngrp + 1, st.grpmass, group::grpmass);
+      wait_for(asyncq);
 
       std::vector<real> wgrpv((1 + st.ngrp) * (1 + st.ngrp));
       for (int i = 0; i <= st.ngrp; ++i) {
@@ -69,8 +69,8 @@ void group_data(rc_op op)
             wgrpv[i + j * (1 + st.ngrp)] = wg;
          }
       }
-      darray::copyin(async_queue, wgrpv.size(), st.wgrp, wgrpv.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, wgrpv.size(), st.wgrp, wgrpv.data());
+      wait_for(asyncq);
    }
 }
 }

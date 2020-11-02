@@ -35,7 +35,7 @@ void dfield_ewald(real (*field)[3], real (*fieldp)[3])
 void dfield_ewald_recip_self(real (*field)[3], real (*fieldp)[3])
 {
    dfield_ewald_recip_self_acc(field);
-   darray::copy(async_queue, n, fieldp, field);
+   darray::copy(asyncq, n, fieldp, field);
 }
 
 

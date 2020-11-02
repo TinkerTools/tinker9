@@ -191,10 +191,10 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
    if (predict) {
       ulspred_sum(uind, uinp);
    } else if (dirguess) {
-      darray::copy(async_queue, n, uind, udir);
-      darray::copy(async_queue, n, uinp, udirp);
+      darray::copy(asyncq, n, uind, udir);
+      darray::copy(asyncq, n, uinp, udirp);
    } else {
-      darray::zero(async_queue, n, uind, uinp);
+      darray::zero(asyncq, n, uind, uinp);
    }
 
 
@@ -216,8 +216,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
    } else if (dirguess) {
       ufield(udir, udirp, rsd, rsdp);
    } else {
-      darray::copy(async_queue, n, rsd, field);
-      darray::copy(async_queue, n, rsdp, fieldp);
+      darray::copy(asyncq, n, rsd, field);
+      darray::copy(asyncq, n, rsdp, fieldp);
    }
    launch_k1s(nonblk, n, pcg_rsd0, n, polarity, rsd, rsdp);
 
@@ -229,15 +229,15 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
    } else {
       diag_precond(rsd, rsdp, zrsd, zrsdp);
    }
-   darray::copy(async_queue, n, conj, zrsd);
-   darray::copy(async_queue, n, conjp, zrsdp);
+   darray::copy(asyncq, n, conj, zrsd);
+   darray::copy(asyncq, n, conjp, zrsdp);
 
 
    // initial r(0) M r(0)
    real* sum = &((real*)dptr_buf)[0];
    real* sump = &((real*)dptr_buf)[1];
-   darray::dot(async_queue, n, sum, rsd, zrsd);
-   darray::dot(async_queue, n, sump, rsdp, zrsdp);
+   darray::dot(asyncq, n, sum, rsd, zrsd);
+   darray::dot(asyncq, n, sump, rsdp, zrsdp);
 
 
    // conjugate gradient iteration of the mutual induced dipoles
@@ -271,8 +271,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       real* a = &((real*)dptr_buf)[2];
       real* ap = &((real*)dptr_buf)[3];
       // a <- r M r / p T p; a = sum / a; ap = sump / ap
-      darray::dot(async_queue, n, a, conj, vec);
-      darray::dot(async_queue, n, ap, conjp, vecp);
+      darray::dot(asyncq, n, a, conj, vec);
+      darray::dot(asyncq, n, ap, conjp, vecp);
 
 
       // u <- u + a p
@@ -291,8 +291,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       // b = sum1 / sum; bp = sump1 / sump
       real* sum1 = &((real*)dptr_buf)[4];
       real* sump1 = &((real*)dptr_buf)[5];
-      darray::dot(async_queue, n, sum1, rsd, zrsd);
-      darray::dot(async_queue, n, sump1, rsdp, zrsdp);
+      darray::dot(asyncq, n, sum1, rsd, zrsd);
+      darray::dot(asyncq, n, sump1, rsdp, zrsdp);
 
 
       // calculate/update p
@@ -301,13 +301,13 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
 
 
       // copy sum1/p to sum/p
-      darray::copy(async_queue, 2, sum, sum1);
+      darray::copy(asyncq, 2, sum, sum1);
 
 
       real* epsd = &((real*)dptr_buf)[6];
       real* epsp = &((real*)dptr_buf)[7];
-      darray::dot(async_queue, n, epsd, rsd, rsd);
-      darray::dot(async_queue, n, epsp, rsdp, rsdp);
+      darray::dot(asyncq, n, epsd, rsd, rsd);
+      darray::dot(asyncq, n, epsp, rsdp, rsdp);
       check_rt(cudaMemcpyAsync((real*)pinned_buf, epsd, 2 * sizeof(real),
                                cudaMemcpyDeviceToHost, nonblk));
       check_rt(cudaStreamSynchronize(nonblk));

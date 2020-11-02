@@ -188,15 +188,15 @@ void integrate_data(rc_op op)
 
          // save fast gradients to gx1 etc.
          energy(calc::grad, RESPA_FAST, respa_tsconfig());
-         darray::copy(async_queue, n, gx1, gx);
-         darray::copy(async_queue, n, gy1, gy);
-         darray::copy(async_queue, n, gz1, gz);
+         darray::copy(asyncq, n, gx1, gx);
+         darray::copy(asyncq, n, gy1, gy);
+         darray::copy(asyncq, n, gz1, gz);
 
          // save slow gradients to gx2 etc.
          energy(calc::grad, RESPA_SLOW, respa_tsconfig());
-         darray::copy(async_queue, n, gx2, gx);
-         darray::copy(async_queue, n, gy2, gy);
-         darray::copy(async_queue, n, gz2, gz);
+         darray::copy(asyncq, n, gx2, gx);
+         darray::copy(asyncq, n, gy2, gy);
+         darray::copy(asyncq, n, gz2, gz);
       } else if (intg == nullptr) {
          // beeman
          TINKER_THROW("Beeman integrator is not available.");

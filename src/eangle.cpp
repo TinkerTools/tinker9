@@ -46,10 +46,10 @@ void eangle_data(rc_op op)
       for (size_t i = 0; i < iangvec.size(); ++i) {
          iangvec[i] = angbnd::iang[i] - 1;
       }
-      darray::copyin(async_queue, nangle, iang, iangvec.data());
-      darray::copyin(async_queue, nangle, ak, angbnd::ak);
-      darray::copyin(async_queue, nangle, anat, angbnd::anat);
-      wait_for(async_queue);
+      darray::copyin(asyncq, nangle, iang, iangvec.data());
+      darray::copyin(asyncq, nangle, ak, angbnd::ak);
+      darray::copyin(asyncq, nangle, anat, angbnd::anat);
+      wait_for(asyncq);
 
       angunit = angpot::angunit;
       cang = angpot::cang;
@@ -71,8 +71,8 @@ void eangle_data(rc_op op)
             assert(false);
          }
       }
-      darray::copyin(async_queue, nangle, angtyp, angtypvec.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, nangle, angtyp, angtypvec.data());
+      wait_for(asyncq);
    }
 }
 
@@ -88,11 +88,11 @@ void eangle(int vers)
       host_zero(energy_ea, virial_ea);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(async_queue, bsize, ea);
+         darray::zero(asyncq, bsize, ea);
       if (do_v)
-         darray::zero(async_queue, bsize, vir_ea);
+         darray::zero(asyncq, bsize, vir_ea);
       if (do_g)
-         darray::zero(async_queue, n, deax, deay, deaz);
+         darray::zero(asyncq, n, deax, deay, deaz);
    }
 
 

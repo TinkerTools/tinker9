@@ -308,27 +308,27 @@ void rattle_data(rc_op op)
       assert(veciwater.size() % 3 == 0);
       nratwt = veciwater.size() / 3;
       darray::allocate(nratwt, &iratwt, &kratwt);
-      darray::copyin(async_queue, nratwt, iratwt, veciwater.data());
-      darray::copyin(async_queue, nratwt, kratwt, veckwater.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, nratwt, iratwt, veciwater.data());
+      darray::copyin(asyncq, nratwt, kratwt, veckwater.data());
+      wait_for(asyncq);
       assert(vecich.size() % 2 == 0);
       nratch = vecich.size() / 2;
       darray::allocate(nratch, &iratch, &kratch);
-      darray::copyin(async_queue, nratch, iratch, vecich.data());
-      darray::copyin(async_queue, nratch, kratch, veckch.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, nratch, iratch, vecich.data());
+      darray::copyin(asyncq, nratch, kratch, veckch.data());
+      wait_for(asyncq);
       assert(vecich2.size() % 3 == 0);
       nratch2 = vecich2.size() / 3;
       darray::allocate(nratch2, &iratch2, &kratch2);
-      darray::copyin(async_queue, nratch2, iratch2, vecich2.data());
-      darray::copyin(async_queue, nratch2, kratch2, veckch2.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, nratch2, iratch2, vecich2.data());
+      darray::copyin(asyncq, nratch2, kratch2, veckch2.data());
+      wait_for(asyncq);
       assert(vecich3.size() % 4 == 0);
       nratch3 = vecich3.size() / 4;
       darray::allocate(nratch3, &iratch3, &kratch3);
-      darray::copyin(async_queue, nratch3, iratch3, vecich3.data());
-      darray::copyin(async_queue, nratch3, kratch3, veckch3.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, nratch3, iratch3, vecich3.data());
+      darray::copyin(asyncq, nratch3, kratch3, veckch3.data());
+      wait_for(asyncq);
 
 
       // erase water-like and methyl-like constraints in hc_mols
@@ -366,10 +366,10 @@ void rattle_data(rc_op op)
 
       darray::allocate(nrat, &irat, &krat);
       darray::allocate(nratmol, &iratmol);
-      darray::copyin(async_queue, nrat, irat, iratn.data());
-      darray::copyin(async_queue, nrat, krat, kr.data());
-      darray::copyin(async_queue, nratmol, iratmol, iratm.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, nrat, irat, iratn.data());
+      darray::copyin(asyncq, nrat, krat, kr.data());
+      darray::copyin(asyncq, nratmol, iratmol, iratm.data());
+      wait_for(asyncq);
 
 
       darray::allocate(n, &rattle_xold, &rattle_yold, &rattle_zold);
@@ -397,7 +397,7 @@ void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 void rattle2(time_prec dt, bool do_v)
 {
    if (do_v) {
-      darray::zero(async_queue, buffer_size(), vir_buf);
+      darray::zero(asyncq, buffer_size(), vir_buf);
    }
 
 
@@ -438,7 +438,7 @@ void shake2(time_prec dt, const vel_prec* vxold, const vel_prec* vyold,
             const vel_prec* vznew, const pos_prec* xold, const pos_prec* yold,
             const pos_prec* zold)
 {
-   darray::zero(async_queue, buffer_size(), vir_buf);
+   darray::zero(asyncq, buffer_size(), vir_buf);
 
 
    shake2_acc(dt, vxold, vyold, vzold, vxnew, vynew, vznew, xold, yold, zold);

@@ -147,10 +147,10 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
                         bbuf[c + 2], bbuf[c + 3], bbuf[c + 4], bbuf[c + 5]);
          }
       }
-      darray::copyin(async_queue, n * tn, trajx, xbuf.data());
-      darray::copyin(async_queue, n * tn, trajy, ybuf.data());
-      darray::copyin(async_queue, n * tn, trajz, zbuf.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, n * tn, trajx, xbuf.data());
+      darray::copyin(asyncq, n * tn, trajy, ybuf.data());
+      darray::copyin(asyncq, n * tn, trajz, zbuf.data());
+      wait_for(asyncq);
    } else {
       std::string msg = "Cannot Open File ";
       msg += arcfile;
@@ -190,9 +190,9 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]")
    lst.resize(n * maxnlst);
 
    for (int ifr = 0;;) {
-      darray::copyout(async_queue, n, nlst.data(), vlist_unit->nlst);
-      darray::copyout(async_queue, n * maxnlst, lst.data(), vlist_unit->lst);
-      wait_for(async_queue);
+      darray::copyout(asyncq, n, nlst.data(), vlist_unit->nlst);
+      darray::copyout(asyncq, n * maxnlst, lst.data(), vlist_unit->lst);
+      wait_for(asyncq);
 
       for (int iatom = 0; iatom < n; ++iatom)
          REQUIRE(find_match(&lst[iatom * maxnlst], nlst[iatom], ifr, iatom));

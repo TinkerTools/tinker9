@@ -116,9 +116,9 @@ void echarge_data(rc_op op)
       }
       ncexclude = excl.size();
       darray::allocate(ncexclude, &cexclude, &cexclude_scale);
-      darray::copyin(async_queue, ncexclude, cexclude, exclik.data());
-      darray::copyin(async_queue, ncexclude, cexclude_scale, excl.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, ncexclude, cexclude, exclik.data());
+      darray::copyin(asyncq, ncexclude, cexclude_scale, excl.data());
+      wait_for(asyncq);
 
 
       nec = nullptr;
@@ -152,13 +152,13 @@ void echarge(int vers)
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)
-         darray::zero(async_queue, bsize, nec);
+         darray::zero(asyncq, bsize, nec);
       if (do_e)
-         darray::zero(async_queue, bsize, ec);
+         darray::zero(asyncq, bsize, ec);
       if (do_v)
-         darray::zero(async_queue, bsize, vir_ec);
+         darray::zero(asyncq, bsize, vir_ec);
       if (do_g)
-         darray::zero(async_queue, n, decx, decy, decz);
+         darray::zero(asyncq, n, decx, decy, decz);
    }
 
    if (use_ewald()) {

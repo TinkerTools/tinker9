@@ -117,7 +117,7 @@ void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer,
    st.y = y;
    st.z = z;
 
-   u.update_deviceptr(st, async_queue);
-   wait_for(async_queue);
+   u.update_deviceptr(st, asyncq);
+   wait_for(asyncq);
 }
 }

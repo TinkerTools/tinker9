@@ -16,8 +16,8 @@ void cudalib_data(rc_op op)
       check_rt(cudaProfilerStop());
 
 
-      sync_queue = -42;
-      async_queue = -42;
+      syncq = -42;
+      asyncq = -42;
       nonblk = nullptr;
       check_rt(cublasDestroy(h_cublas));
       check_rt(cublasDestroy(h_cublas_nonblk));
@@ -33,9 +33,9 @@ void cudalib_data(rc_op op)
 
 
    if (op & rc_alloc) {
-      sync_queue = acc_async_sync;
-      async_queue = acc_get_default_async();
-      nonblk = (cudaStream_t)acc_get_cuda_stream(async_queue);
+      syncq = acc_async_sync;
+      asyncq = acc_get_default_async();
+      nonblk = (cudaStream_t)acc_get_cuda_stream(asyncq);
       check_rt(cublasCreate(&h_cublas));        // calls cudaMemcpy [sync] here
       check_rt(cublasCreate(&h_cublas_nonblk)); // calls cudaMemcpy [sync] here
       check_rt(cublasSetStream(h_cublas_nonblk, nonblk));
@@ -51,7 +51,7 @@ void cudalib_data(rc_op op)
 
 
       use_pme_stream = false;
-      pme_queue = async_queue + 1;
+      pme_queue = asyncq + 1;
       pme_stream = (cudaStream_t)acc_get_cuda_stream(pme_queue);
       check_rt(
          cudaEventCreateWithFlags(&pme_event_finish, cudaEventDisableTiming));

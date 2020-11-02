@@ -154,14 +154,14 @@ void osrw_data(rc_op op)
             darray::allocate(osrw_ntbnd, &osrw_itbnd);
             darray::allocate(ntors, &osrw_tors1, &osrw_tors2, &osrw_tors3,
                              &osrw_tors4, &osrw_tors5, &osrw_tors6);
-            darray::copy(async_queue, ntors, osrw_tors1, tors1);
-            darray::copy(async_queue, ntors, osrw_tors2, tors2);
-            darray::copy(async_queue, ntors, osrw_tors3, tors3);
-            darray::copy(async_queue, ntors, osrw_tors4, tors4);
-            darray::copy(async_queue, ntors, osrw_tors5, tors5);
-            darray::copy(async_queue, ntors, osrw_tors6, tors6);
-            darray::copyin(async_queue, osrw_ntbnd, osrw_itbnd, buf.data());
-            wait_for(async_queue);
+            darray::copy(asyncq, ntors, osrw_tors1, tors1);
+            darray::copy(asyncq, ntors, osrw_tors2, tors2);
+            darray::copy(asyncq, ntors, osrw_tors3, tors3);
+            darray::copy(asyncq, ntors, osrw_tors4, tors4);
+            darray::copy(asyncq, ntors, osrw_tors5, tors5);
+            darray::copy(asyncq, ntors, osrw_tors6, tors6);
+            darray::copyin(asyncq, osrw_ntbnd, osrw_itbnd, buf.data());
+            wait_for(asyncq);
          }
       }
 
@@ -182,14 +182,14 @@ void osrw_data(rc_op op)
 
    if (op & rc_init) {
       if (use_potent(charge_term)) {
-         darray::copy(async_queue, n, osrw_pchg, pchg);
+         darray::copy(asyncq, n, osrw_pchg, pchg);
       }
 
 
       if (use_potent(mpole_term) || use_potent(polar_term)) {
-         darray::copy(async_queue, n, osrw_pole, pole);
+         darray::copy(asyncq, n, osrw_pole, pole);
          if (use_potent(polar_term)) {
-            darray::copy(async_queue, n, osrw_polarity, polarity);
+            darray::copy(asyncq, n, osrw_polarity, polarity);
          }
       }
    }
@@ -284,7 +284,7 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    virial_prec osrw_dv0[9] = {0};
    host_zero(osrw_dv1);
    if (vers & calc::grad)
-      darray::zero(async_queue, n, osrw_dgx, osrw_dgy, osrw_dgz);
+      darray::zero(asyncq, n, osrw_dgx, osrw_dgy, osrw_dgz);
 
 
    energy_prec aec = 0, aem = 0, aep = 0;
@@ -372,9 +372,9 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
                       gz_elec);
          sum_gradient(sele0, gx, gy, gz, gx_elec, gy_elec, gz_elec);
       }
-      darray::copy(async_queue, n, osrw_gx, gx);
-      darray::copy(async_queue, n, osrw_gy, gy);
-      darray::copy(async_queue, n, osrw_gz, gz);
+      darray::copy(asyncq, n, osrw_gx, gx);
+      darray::copy(asyncq, n, osrw_gy, gy);
+      darray::copy(asyncq, n, osrw_gz, gz);
    }
 
 

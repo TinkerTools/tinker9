@@ -407,7 +407,7 @@ void dfield_nonewald_cu(real (*field)[3], real (*fieldp)[3])
    const real off = switch_off(switch_mpole);
 
 
-   darray::zero(async_queue, n, field, fieldp);
+   darray::zero(asyncq, n, field, fieldp);
    int ngrid = get_grid_size(BLOCK_DIM);
    ngrid *= BLOCK_DIM;
    int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
@@ -777,7 +777,7 @@ void ufield_nonewald_cu(const real (*uind)[3], const real (*uinp)[3],
    const real off = switch_off(switch_mpole);
 
 
-   darray::zero(async_queue, n, field, fieldp);
+   darray::zero(asyncq, n, field, fieldp);
    int ngrid = get_grid_size(BLOCK_DIM);
    ngrid *= BLOCK_DIM;
    int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;

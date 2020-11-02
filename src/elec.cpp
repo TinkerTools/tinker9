@@ -54,8 +54,8 @@ void pchg_data(rc_op op)
          int itype = atoms::type[i] - 1;
          pchgbuf[i] = kchrge::chg[itype];
       }
-      darray::copyin(async_queue, n, pchg, pchgbuf.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, n, pchg, pchgbuf.data());
+      wait_for(asyncq);
    }
 }
 
@@ -133,8 +133,8 @@ void pole_data(rc_op op)
             val = pole_none;
          zaxisbuf[i].polaxe = val;
       }
-      darray::copyin(async_queue, n, zaxis, zaxisbuf.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, n, zaxis, zaxisbuf.data());
+      wait_for(asyncq);
 
 
       std::vector<double> polebuf(mpl_total * n);
@@ -156,8 +156,8 @@ void pole_data(rc_op op)
          polebuf[b1 + mpl_pme_yz] = mpole::pole[b2 + 9];
          polebuf[b1 + mpl_pme_zz] = mpole::pole[b2 + 12];
       }
-      darray::copyin(async_queue, n, pole, polebuf.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, n, pole, polebuf.data());
+      wait_for(asyncq);
    }
 }
 
@@ -505,9 +505,9 @@ void mdpuscale_data(rc_op op)
       }
       nmexclude = excls.size();
       darray::allocate(nmexclude, &mexclude, &mexclude_scale);
-      darray::copyin(async_queue, nmexclude, mexclude, exclik.data());
-      darray::copyin(async_queue, nmexclude, mexclude_scale, excls.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, nmexclude, mexclude, exclik.data());
+      darray::copyin(asyncq, nmexclude, mexclude_scale, excls.data());
+      wait_for(asyncq);
 
 
       std::vector<int> ik_vec;
@@ -522,10 +522,10 @@ void mdpuscale_data(rc_op op)
       }
       nmdpuexclude = ik_scale.size();
       darray::allocate(nmdpuexclude, &mdpuexclude, &mdpuexclude_scale);
-      darray::copyin(async_queue, nmdpuexclude, mdpuexclude, ik_vec.data());
-      darray::copyin(async_queue, nmdpuexclude, mdpuexclude_scale,
+      darray::copyin(asyncq, nmdpuexclude, mdpuexclude, ik_vec.data());
+      darray::copyin(asyncq, nmdpuexclude, mdpuexclude_scale,
                      scal_vec.data());
-      wait_for(async_queue);
+      wait_for(asyncq);
    }
 
 
@@ -554,9 +554,9 @@ void elec_data(rc_op op)
 void mpole_init(int vers)
 {
    if (vers & calc::grad)
-      darray::zero(async_queue, n, trqx, trqy, trqz);
+      darray::zero(asyncq, n, trqx, trqy, trqz);
    if (vers & calc::virial)
-      darray::zero(async_queue, buffer_size(), vir_trq);
+      darray::zero(asyncq, buffer_size(), vir_trq);
 
 
    chkpole();
@@ -566,7 +566,7 @@ void mpole_init(int vers)
    if (use_ewald()) {
       rpole_to_cmp();
       if (vir_m)
-         darray::zero(async_queue, buffer_size(), vir_m);
+         darray::zero(asyncq, buffer_size(), vir_m);
       if (pltfm_config & CU_PLTFM) {
          bool precompute_theta = (!TINKER_CU_THETA_ON_THE_FLY_GRID_MPOLE) ||
             (!TINKER_CU_THETA_ON_THE_FLY_GRID_UIND);

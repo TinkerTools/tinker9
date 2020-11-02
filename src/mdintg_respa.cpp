@@ -140,9 +140,9 @@ void respa_fast_slow(int istep, time_prec dt_ps)
 
    // update a_fast
    energy(vers1, RESPA_FAST, respa_tsconfig());
-   darray::copy(async_queue, n, gx1, gx);
-   darray::copy(async_queue, n, gy1, gy);
-   darray::copy(async_queue, n, gz1, gz);
+   darray::copy(asyncq, n, gx1, gx);
+   darray::copy(asyncq, n, gy1, gy);
+   darray::copy(asyncq, n, gz1, gz);
    copy_energy(vers1, &esum_f);
    copy_virial(vers1, vir_f);
    if (vers1 & calc::virial) {
@@ -153,9 +153,9 @@ void respa_fast_slow(int istep, time_prec dt_ps)
 
    // update a_slow
    energy(vers1, RESPA_SLOW, respa_tsconfig());
-   darray::copy(async_queue, n, gx2, gx);
-   darray::copy(async_queue, n, gy2, gy);
-   darray::copy(async_queue, n, gz2, gz);
+   darray::copy(asyncq, n, gx2, gx);
+   darray::copy(asyncq, n, gy2, gy);
+   darray::copy(asyncq, n, gz2, gz);
    // esum: e slow
    // vir: v slow
    // esum_f: e fast

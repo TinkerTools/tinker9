@@ -46,11 +46,11 @@ void eimptor_data(rc_op op)
       for (int i = 0; i < 4 * nitors; ++i) {
          ibuf[i] = imptor::iitors[i] - 1;
       }
-      darray::copyin(async_queue, nitors, iitors, ibuf.data());
-      darray::copyin(async_queue, nitors, itors1, imptor::itors1);
-      darray::copyin(async_queue, nitors, itors2, imptor::itors2);
-      darray::copyin(async_queue, nitors, itors3, imptor::itors3);
-      wait_for(async_queue);
+      darray::copyin(asyncq, nitors, iitors, ibuf.data());
+      darray::copyin(asyncq, nitors, itors1, imptor::itors1);
+      darray::copyin(asyncq, nitors, itors2, imptor::itors2);
+      darray::copyin(asyncq, nitors, itors3, imptor::itors3);
+      wait_for(asyncq);
       itorunit = torpot::itorunit;
    }
 }
@@ -68,11 +68,11 @@ void eimptor(int vers)
       host_zero(energy_eit, virial_eit);
       size_t bsize = buffer_size();
       if (do_e)
-         darray::zero(async_queue, bsize, eit);
+         darray::zero(asyncq, bsize, eit);
       if (do_v)
-         darray::zero(async_queue, bsize, vir_eit);
+         darray::zero(asyncq, bsize, vir_eit);
       if (do_g)
-         darray::zero(async_queue, n, deitx, deity, deitz);
+         darray::zero(asyncq, n, deitx, deity, deitz);
    }
 
 

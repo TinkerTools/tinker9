@@ -27,7 +27,7 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
    assert(bsorder <= 5);
 
 
-   darray::zero(async_queue, 2 * nfft1 * nfft2 * nfft3, st.qgrid);
+   darray::zero(asyncq, 2 * nfft1 * nfft2 * nfft3, st.qgrid);
 
 
    #pragma acc parallel loop independent async\
@@ -269,7 +269,7 @@ void pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
 
    auto bufsize = buffer_size();
    #pragma acc parallel loop independent\
-               async(use_pme_stream ? pme_queue : async_queue)\
+               async(use_pme_stream ? pme_queue : asyncq)\
                deviceptr(gpu_e,gpu_vir,qgrid,bsmod1,bsmod2,bsmod3)
    for (int i = 0; i < ntot; ++i) {
       if (i == 0) {

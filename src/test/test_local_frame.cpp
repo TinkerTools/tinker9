@@ -245,9 +245,9 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
       std::vector<std::array<double, 3>> fieldd, fieldp;
       fieldd.resize(n);
       fieldp.resize(n);
-      darray::copyout(async_queue, n, &fieldd[0][0], udir);
-      darray::copyout(async_queue, n, &fieldp[0][0], udirp);
-      wait_for(async_queue);
+      darray::copyout(asyncq, n, &fieldd[0][0], udir);
+      darray::copyout(asyncq, n, &fieldp[0][0], udirp);
+      wait_for(asyncq);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(fieldd[i][j] ==
@@ -296,15 +296,15 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
             up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
          }
       }
-      darray::copyin(async_queue, n, uind, &ud[0][0]);
-      darray::copyin(async_queue, n, uinp, &up[0][0]);
-      wait_for(async_queue);
+      darray::copyin(asyncq, n, uind, &ud[0][0]);
+      darray::copyin(asyncq, n, uinp, &up[0][0]);
+      wait_for(asyncq);
       ufield_nonewald(uind, uinp, udir, udirp);
       ud.resize(n);
       up.resize(n);
-      darray::copyout(async_queue, n, &ud[0][0], udir);
-      darray::copyout(async_queue, n, &up[0][0], udirp);
-      wait_for(async_queue);
+      darray::copyout(asyncq, n, &ud[0][0], udir);
+      darray::copyout(asyncq, n, &up[0][0], udirp);
+      wait_for(asyncq);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(ud[i][j] == Approx(ref_ufield_d[i][j]).margin(eps_f));
@@ -346,9 +346,9 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
       std::vector<std::array<double, 3>> ud, up;
       ud.resize(n);
       up.resize(n);
-      darray::copyout(async_queue, n, &ud[0][0], uind);
-      darray::copyout(async_queue, n, &up[0][0], uinp);
-      wait_for(async_queue);
+      darray::copyout(asyncq, n, &ud[0][0], uind);
+      darray::copyout(asyncq, n, &up[0][0], uinp);
+      wait_for(asyncq);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(ud[i][j] * debye ==
@@ -464,9 +464,9 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
       std::vector<std::array<double, 3>> fieldd, fieldp;
       fieldd.resize(n);
       fieldp.resize(n);
-      darray::copyout(async_queue, n, &fieldd[0][0], udir);
-      darray::copyout(async_queue, n, &fieldp[0][0], udirp);
-      wait_for(async_queue);
+      darray::copyout(asyncq, n, &fieldd[0][0], udir);
+      darray::copyout(asyncq, n, &fieldp[0][0], udirp);
+      wait_for(asyncq);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(fieldd[i][j] ==
@@ -515,15 +515,15 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
             up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
          }
       }
-      darray::copyin(async_queue, n, uind, &ud[0][0]);
-      darray::copyin(async_queue, n, uinp, &up[0][0]);
-      wait_for(async_queue);
+      darray::copyin(asyncq, n, uind, &ud[0][0]);
+      darray::copyin(asyncq, n, uinp, &up[0][0]);
+      wait_for(asyncq);
       ufield_ewald(uind, uinp, udir, udirp);
       ud.resize(n);
       up.resize(n);
-      darray::copyout(async_queue, n, &ud[0][0], udir);
-      darray::copyout(async_queue, n, &up[0][0], udirp);
-      wait_for(async_queue);
+      darray::copyout(asyncq, n, &ud[0][0], udir);
+      darray::copyout(asyncq, n, &up[0][0], udirp);
+      wait_for(asyncq);
 
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
@@ -566,9 +566,9 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
       std::vector<std::array<double, 3>> ud, up;
       ud.resize(n);
       up.resize(n);
-      darray::copyout(async_queue, n, &ud[0][0], uind);
-      darray::copyout(async_queue, n, &up[0][0], uinp);
-      wait_for(async_queue);
+      darray::copyout(asyncq, n, &ud[0][0], uind);
+      darray::copyout(asyncq, n, &up[0][0], uinp);
+      wait_for(asyncq);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(ud[i][j] * debye ==

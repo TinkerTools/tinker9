@@ -150,16 +150,16 @@ void edisp_data(rc_op op)
       }
       ndspexclude = excls.size();
       darray::allocate(ndspexclude, &dspexclude, &dspexclude_scale);
-      darray::copyin(async_queue, ndspexclude, dspexclude, exclik.data());
-      darray::copyin(async_queue, ndspexclude, dspexclude_scale, excls.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, ndspexclude, dspexclude, exclik.data());
+      darray::copyin(asyncq, ndspexclude, dspexclude_scale, excls.data());
+      wait_for(asyncq);
    }
 
 
    if (op & rc_init) {
       csixpr = disp::csixpr;
-      darray::copyin(async_queue, n, csix, disp::csix);
-      darray::copyin(async_queue, n, adisp, disp::adisp);
+      darray::copyin(asyncq, n, csix, disp::csix);
+      darray::copyin(asyncq, n, adisp, disp::adisp);
    }
 }
 
@@ -177,13 +177,13 @@ void edisp(int vers)
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)
-         darray::zero(async_queue, bsize, ndisp);
+         darray::zero(asyncq, bsize, ndisp);
       if (do_e)
-         darray::zero(async_queue, bsize, edsp);
+         darray::zero(asyncq, bsize, edsp);
       if (do_v)
-         darray::zero(async_queue, bsize, vir_edsp);
+         darray::zero(asyncq, bsize, vir_edsp);
       if (do_g)
-         darray::zero(async_queue, n, dedspx, dedspy, dedspz);
+         darray::zero(asyncq, n, dedspx, dedspy, dedspz);
    }
 
 

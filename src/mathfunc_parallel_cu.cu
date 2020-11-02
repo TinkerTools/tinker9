@@ -27,7 +27,7 @@ void reduce_to_dptr(const T* a, size_t nelem, cudaStream_t st)
 template <class T, class Op>
 T reduce_general(const T* a, size_t nelem, int queue)
 {
-   cudaStream_t s = queue == sync_queue ? nullptr : nonblk;
+   cudaStream_t s = queue == syncq ? nullptr : nonblk;
    T* dptr = (T*)dptr_buf;
    T* hptr = (T*)pinned_buf;
    reduce_to_dptr<T, Op>(a, nelem, s);
@@ -61,7 +61,7 @@ void reduce_sum2_cu(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem,
    constexpr size_t N = deduce_ptr<DPTR>::n;
    static_assert(HN <= N, "");
 
-   cudaStream_t s = queue == sync_queue ? nullptr : nonblk;
+   cudaStream_t s = queue == syncq ? nullptr : nonblk;
    T(*dptr)[HN] = (T(*)[HN])dptr_buf;
    T* hptr = (T*)pinned_buf;
    int grid_siz1 = get_grid_size(BLOCK_DIM);
@@ -90,7 +90,7 @@ template <>
 void dotprod_cu<float>(float* ans, const float* a, const float* b, int nelem,
                        int queue)
 {
-   bool dq = queue == sync_queue;
+   bool dq = queue == syncq;
    cublasHandle_t hd = (dq ? h_cublas : h_cublas_nonblk);
    check_rt(cublasSdot(hd, nelem, a, 1, b, 1, ans));
 }
@@ -100,7 +100,7 @@ template <>
 void dotprod_cu<double>(double* ans, const double* a, const double* b,
                         int nelem, int queue)
 {
-   bool dq = queue == sync_queue;
+   bool dq = queue == syncq;
    cublasHandle_t hd = (dq ? h_cublas : h_cublas_nonblk);
    check_rt(cublasDdot(hd, nelem, a, 1, b, 1, ans));
 }

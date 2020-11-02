@@ -55,30 +55,30 @@ void etortor_data(rc_op op)
       ibuf.resize(5 * nbitor);
       for (int i = 0; i < 5 * nbitor; ++i)
          ibuf[i] = bitor_::ibitor[i] - 1;
-      darray::copyin(async_queue, nbitor, ibitor, ibuf.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, nbitor, ibitor, ibuf.data());
+      wait_for(asyncq);
 
       ibuf.resize(3 * nbitor);
       for (int i = 0; i < 3 * nbitor; ++i)
          ibuf[i] = tortor::itt[i] - 1;
-      darray::copyin(async_queue, nbitor, itt, ibuf.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, nbitor, itt, ibuf.data());
+      wait_for(asyncq);
 
       ibuf.resize(ktrtor::maxntt);
       for (int i = 0; i < ktrtor::maxntt; ++i)
          ibuf[i] = ktrtor::tnx[i];
-      darray::copyin(async_queue, ktrtor::maxntt, tnx, ibuf.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, ktrtor::maxntt, tnx, ibuf.data());
+      wait_for(asyncq);
       for (int i = 0; i < ktrtor::maxntt; ++i)
          ibuf[i] = ktrtor::tny[i];
-      darray::copyin(async_queue, ktrtor::maxntt, tny, ibuf.data());
-      darray::copyin(async_queue, ktrtor::maxntt, ttx, &ktrtor::ttx[0][0]);
-      darray::copyin(async_queue, ktrtor::maxntt, tty, &ktrtor::tty[0][0]);
-      darray::copyin(async_queue, ktrtor::maxntt, tbf, &ktrtor::tbf[0][0]);
-      darray::copyin(async_queue, ktrtor::maxntt, tbx, &ktrtor::tbx[0][0]);
-      darray::copyin(async_queue, ktrtor::maxntt, tby, &ktrtor::tby[0][0]);
-      darray::copyin(async_queue, ktrtor::maxntt, tbxy, &ktrtor::tbxy[0][0]);
-      wait_for(async_queue);
+      darray::copyin(asyncq, ktrtor::maxntt, tny, ibuf.data());
+      darray::copyin(asyncq, ktrtor::maxntt, ttx, &ktrtor::ttx[0][0]);
+      darray::copyin(asyncq, ktrtor::maxntt, tty, &ktrtor::tty[0][0]);
+      darray::copyin(asyncq, ktrtor::maxntt, tbf, &ktrtor::tbf[0][0]);
+      darray::copyin(asyncq, ktrtor::maxntt, tbx, &ktrtor::tbx[0][0]);
+      darray::copyin(asyncq, ktrtor::maxntt, tby, &ktrtor::tby[0][0]);
+      darray::copyin(asyncq, ktrtor::maxntt, tbxy, &ktrtor::tbxy[0][0]);
+      wait_for(asyncq);
 
       ttorunit = torpot::ttorunit;
 
@@ -132,8 +132,8 @@ void etortor_data(rc_op op)
          }
          ibuf[itortor] = ia;
       }
-      darray::copyin(async_queue, ntortor, chkttor_ia_, ibuf.data());
-      wait_for(async_queue);
+      darray::copyin(asyncq, ntortor, chkttor_ia_, ibuf.data());
+      wait_for(asyncq);
    }
 }
 
@@ -149,11 +149,11 @@ void etortor(int vers)
       host_zero(energy_ett, virial_ett);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(async_queue, bsize, ett);
+         darray::zero(asyncq, bsize, ett);
       if (do_v)
-         darray::zero(async_queue, bsize, vir_ett);
+         darray::zero(asyncq, bsize, vir_ett);
       if (do_g)
-         darray::zero(async_queue, n, dettx, detty, dettz);
+         darray::zero(asyncq, n, dettx, detty, dettz);
    }
 
 

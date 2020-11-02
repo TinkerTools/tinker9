@@ -22,7 +22,7 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
    constexpr bool do_v = Ver::v;
 
    if CONSTEXPR (do_g)
-      darray::zero(async_queue, n, ufld, dufld);
+      darray::zero(asyncq, n, ufld, dufld);
 
    const real off = switch_off(switch_ewald);
    const real off2 = off * off;
@@ -430,7 +430,7 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
    //    end do
    // end do
    // Notice that only 10 * n elements were scaled in the original code.
-   darray::scale(async_queue, n, 0.5f * f, fphidp);
+   darray::scale(asyncq, n, 0.5f * f, fphidp);
    fphi_to_cphi(pu, fphidp, cphidp);
 
    // recip and self torques
@@ -494,7 +494,7 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
          vir_ep[0][i] -= vir_m[0][i];
       }
 
-      darray::scale(async_queue, n, f, cphi, fphid, fphip);
+      darray::scale(asyncq, n, f, cphi, fphid, fphip);
 
       #pragma acc parallel loop independent async\
                   deviceptr(vir_ep,cmp,\

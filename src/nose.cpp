@@ -111,9 +111,9 @@ void hoover(time_prec dt, virial_prec press)
 
    // use scale factor to update the atomic velocities
    // eq. 41 velocities
-   darray::scale(async_queue, n, scale, vx);
-   darray::scale(async_queue, n, scale, vy);
-   darray::scale(async_queue, n, scale, vz);
+   darray::scale(asyncq, n, scale, vx);
+   darray::scale(asyncq, n, scale, vy);
+   darray::scale(asyncq, n, scale, vz);
 }
 
 
