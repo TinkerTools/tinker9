@@ -18,11 +18,11 @@ T reduce_logic_or_acc(const T* a, size_t nelem, LPFlag flag);
 
 
 template <class T>
-T dotprod_acc(const T* a, const T* b, size_t nelem, LPFlag flag);
+T dotprod_acc(const T* a, const T* b, size_t nelem, int queue);
 
 
 template <class T>
-void dotprod_acc(T* ans, const T* a, const T* b, int nelem, LPFlag flag);
+void dotprod_acc(T* ans, const T* a, const T* b, int nelem, int queue);
 
 
 template <class T>

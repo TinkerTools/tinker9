@@ -101,37 +101,25 @@ template int reduce_logic_or_cu(const int*, size_t, LPFlag);
 
 template <>
 void dotprod_cu<float>(float* ans, const float* a, const float* b, int nelem,
-                       LPFlag flag)
+                       int queue)
 {
-   bool dq = flag & LPFlag::DEFAULT_Q;
+   bool dq = queue == sync_queue;
    cublasHandle_t hd = (dq ? h_cublas : h_cublas_nonblk);
    check_rt(cublasSdot(hd, nelem, a, 1, b, 1, ans));
-   if (flag & LPFlag::WAIT) {
-      if (dq)
-         check_rt(cudaStreamSynchronize(nullptr));
-      else
-         check_rt(cudaStreamSynchronize(nonblk));
-   }
 }
 
 
 template <>
 void dotprod_cu<double>(double* ans, const double* a, const double* b,
-                        int nelem, LPFlag flag)
+                        int nelem, int queue)
 {
-   bool dq = flag & LPFlag::DEFAULT_Q;
+   bool dq = queue == sync_queue;
    cublasHandle_t hd = (dq ? h_cublas : h_cublas_nonblk);
    check_rt(cublasDdot(hd, nelem, a, 1, b, 1, ans));
-   if (flag & LPFlag::WAIT) {
-      if (dq)
-         check_rt(cudaStreamSynchronize(nullptr));
-      else
-         check_rt(cudaStreamSynchronize(nonblk));
-   }
 }
 
 
-// cublas gemm does not work as fast here prior to cuda 10.1.
+// cublas gemm does not run as fast here prior to cuda 10.1.
 // Old code:
 //
 // #if CUDART_VERSION >= 10100 // >= 10.1

@@ -95,58 +95,35 @@ template int reduce_logic_or_acc(const int*, size_t, LPFlag);
 
 template <class T>
 T dotprod_acc(const T* restrict gpu_a, const T* restrict gpu_b, size_t cpu_n,
-              LPFlag flag)
+              int queue)
 {
    T val = 0;
-   if (flag & LPFlag::DEFAULT_Q) {
-      #pragma acc parallel loop independent\
-                  deviceptr(gpu_a,gpu_b) reduction(+:val)
-      for (size_t i = 0; i < cpu_n; ++i)
-         val += gpu_a[i] * gpu_b[i];
-   } else {
-      // see reduce_sum()
-      #pragma acc parallel loop async deviceptr(gpu_a,gpu_b)
-      for (size_t i = 0; i < cpu_n; ++i)
-         val += gpu_a[i] * gpu_b[i];
+   #pragma acc parallel loop independent async(queue)\
+               deviceptr(gpu_a,gpu_b) copy(val) reduction(+:val)
+   for (size_t i = 0; i < cpu_n; ++i) {
+      val += gpu_a[i] * gpu_b[i];
    }
-   // implicit OpenACC wait
-   assert(flag & LPFlag::WAIT);
+   #pragma acc wait(queue)
    return val;
 }
-template float dotprod_acc(const float*, const float*, size_t, LPFlag);
-template double dotprod_acc(const double*, const double*, size_t, LPFlag);
+template float dotprod_acc(const float*, const float*, size_t, int);
+template double dotprod_acc(const double*, const double*, size_t, int);
 
 
 template <class T>
-void dotprod_acc(T* ans, const T* a, const T* b, int nelem, LPFlag flag)
+void dotprod_acc(T* ans, const T* a, const T* b, int nelem, int queue)
 {
-   bool sync = flag & LPFlag::DEFAULT_Q;
-   // T v = 0;
-   if (sync) {
-      #pragma acc serial deviceptr(ans)
-      {
-         *ans = 0;
-      }
-      #pragma acc parallel loop deviceptr(ans,a,b)
-      for (int i = 0; i < nelem; ++i) {
-         *ans += a[i] * b[i];
-      }
-   } else {
-      #pragma acc serial async deviceptr(ans)
-      {
-         *ans = 0;
-      }
-      #pragma acc parallel loop async deviceptr(ans,a,b)
-      for (int i = 0; i < nelem; ++i) {
-         *ans += a[i] * b[i];
-      }
+   #pragma acc serial async(queue) deviceptr(ans)
+   {
+      *ans = 0;
    }
-   // if (flag & LPFlag::WAIT) {
-   wait_queue(flag);
-   // }
+   #pragma acc parallel loop async(queue) deviceptr(ans,a,b)
+   for (int i = 0; i < nelem; ++i) {
+      *ans += a[i] * b[i];
+   }
 }
-template void dotprod_acc(float*, const float*, const float*, int, LPFlag);
-template void dotprod_acc(double*, const double*, const double*, int, LPFlag);
+template void dotprod_acc(float*, const float*, const float*, int, int);
+template void dotprod_acc(double*, const double*, const double*, int, int);
 
 
 template <class T>

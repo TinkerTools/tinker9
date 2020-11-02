@@ -66,9 +66,9 @@ T reduce_logic_or(const T* a, size_t nelem, LPFlag flag)
  * \return The dot product to the host thread.
  */
 template <class T>
-T dotprod(const T* a, const T* b, size_t nelem, LPFlag flag)
+T dotprod(const T* a, const T* b, size_t nelem, int queue)
 {
-   return dotprod_acc(a, b, nelem, flag);
+   return dotprod_acc(a, b, nelem, queue);
 }
 
 
@@ -77,14 +77,14 @@ T dotprod(const T* a, const T* b, size_t nelem, LPFlag flag)
  * \brief Dot product of two linear arrays.
  */
 template <class T>
-void dotprod(T* ans, const T* a, const T* b, int nelem, LPFlag flag)
+void dotprod(T* ans, const T* a, const T* b, int nelem, int queue)
 {
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
-      dotprod_cu(ans, a, b, nelem, flag);
+      dotprod_cu(ans, a, b, nelem, queue);
    else
 #endif
-      dotprod_acc(ans, a, b, nelem, flag);
+      dotprod_acc(ans, a, b, nelem, queue);
 }
 
 

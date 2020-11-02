@@ -304,8 +304,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
    // initial r(0) M r(0)
 
    real sum, sump;
-   sum = darray::dot(WAIT_NEW_Q, n, rsd, zrsd);
-   sump = darray::dot(WAIT_NEW_Q, n, rsdp, zrsdp);
+   sum = darray::dot_sync(async_queue, n, rsd, zrsd);
+   sump = darray::dot_sync(async_queue, n, rsdp, zrsdp);
 
    // conjugate gradient iteration of the mutual induced dipoles
 
@@ -340,8 +340,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 
       // a <- p T p
       real a, ap;
-      a = darray::dot(WAIT_NEW_Q, n, conj, vec);
-      ap = darray::dot(WAIT_NEW_Q, n, conjp, vecp);
+      a = darray::dot_sync(async_queue, n, conj, vec);
+      ap = darray::dot_sync(async_queue, n, conjp, vecp);
       // a <- r M r / p T p
       if (a != 0)
          a = sum / a;
@@ -378,8 +378,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 
       real b, bp;
       real sum1, sump1;
-      sum1 = darray::dot(WAIT_NEW_Q, n, rsd, zrsd);
-      sump1 = darray::dot(WAIT_NEW_Q, n, rsdp, zrsdp);
+      sum1 = darray::dot_sync(async_queue, n, rsd, zrsd);
+      sump1 = darray::dot_sync(async_queue, n, rsdp, zrsdp);
       b = 0;
       bp = 0;
       if (sum != 0)
@@ -405,8 +405,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 
       real epsd;
       real epsp;
-      epsd = darray::dot(WAIT_NEW_Q, n, rsd, rsd);
-      epsp = darray::dot(WAIT_NEW_Q, n, rsdp, rsdp);
+      epsd = darray::dot_sync(async_queue, n, rsd, rsd);
+      epsp = darray::dot_sync(async_queue, n, rsdp, rsdp);
 
       epsold = eps;
       eps = REAL_MAX(epsd, epsp);
@@ -668,8 +668,8 @@ void ulspred_sum_acc(real (*restrict uind)[3], real (*restrict uinp)[3])
       // c(k,m) = u(k) dot u(m)
       // b(1) ~ b(6) = c(1,2) ~ c(1,7)
       for (int k = 0; k < 6; ++k) {
-         darray::dot(PROCEED_NEW_Q, n, &udalt_lsqr_b[k], pd[0], pd[k + 1]);
-         darray::dot(PROCEED_NEW_Q, n, &upalt_lsqr_b[k], pp[0], pp[k + 1]);
+         darray::dot(async_queue, n, &udalt_lsqr_b[k], pd[0], pd[k + 1]);
+         darray::dot(async_queue, n, &upalt_lsqr_b[k], pp[0], pp[k + 1]);
       }
       // a(1) ~ a(21)
       // OpenACC and CPU save the upper triangle.
@@ -682,8 +682,8 @@ void ulspred_sum_acc(real (*restrict uind)[3], real (*restrict uinp)[3])
       int ia = 0;
       for (int k = 1; k < 7; ++k) {
          for (int m = k; m < 7; ++m) {
-            darray::dot(PROCEED_NEW_Q, n, &udalt_lsqr_a[ia], pd[k], pd[m]);
-            darray::dot(PROCEED_NEW_Q, n, &upalt_lsqr_a[ia], pp[k], pp[m]);
+            darray::dot(async_queue, n, &udalt_lsqr_a[ia], pd[k], pd[m]);
+            darray::dot(async_queue, n, &upalt_lsqr_a[ia], pp[k], pp[m]);
             ++ia;
          }
       }

@@ -17,5 +17,5 @@ T reduce_logic_or_cu(const T* a, size_t nelem, LPFlag flag);
 
 
 template <class T>
-void dotprod_cu(T* ans, const T* a, const T* b, int nelem, LPFlag flag);
+void dotprod_cu(T* ans, const T* a, const T* b, int nelem, int queue);
 }
