@@ -54,7 +54,8 @@ void pchg_data(rc_op op)
          int itype = atoms::type[i] - 1;
          pchgbuf[i] = kchrge::chg[itype];
       }
-      darray::copyin(WAIT_NEW_Q, n, pchg, pchgbuf.data());
+      darray::copyin(async_queue, n, pchg, pchgbuf.data());
+      wait_for(async_queue);
    }
 }
 
@@ -132,7 +133,8 @@ void pole_data(rc_op op)
             val = pole_none;
          zaxisbuf[i].polaxe = val;
       }
-      darray::copyin(WAIT_NEW_Q, n, zaxis, zaxisbuf.data());
+      darray::copyin(async_queue, n, zaxis, zaxisbuf.data());
+      wait_for(async_queue);
 
 
       std::vector<double> polebuf(mpl_total * n);
@@ -154,7 +156,8 @@ void pole_data(rc_op op)
          polebuf[b1 + mpl_pme_yz] = mpole::pole[b2 + 9];
          polebuf[b1 + mpl_pme_zz] = mpole::pole[b2 + 12];
       }
-      darray::copyin(WAIT_NEW_Q, n, pole, polebuf.data());
+      darray::copyin(async_queue, n, pole, polebuf.data());
+      wait_for(async_queue);
    }
 }
 
@@ -502,8 +505,9 @@ void mdpuscale_data(rc_op op)
       }
       nmexclude = excls.size();
       darray::allocate(nmexclude, &mexclude, &mexclude_scale);
-      darray::copyin(WAIT_NEW_Q, nmexclude, mexclude, exclik.data());
-      darray::copyin(WAIT_NEW_Q, nmexclude, mexclude_scale, excls.data());
+      darray::copyin(async_queue, nmexclude, mexclude, exclik.data());
+      darray::copyin(async_queue, nmexclude, mexclude_scale, excls.data());
+      wait_for(async_queue);
 
 
       std::vector<int> ik_vec;
@@ -518,9 +522,10 @@ void mdpuscale_data(rc_op op)
       }
       nmdpuexclude = ik_scale.size();
       darray::allocate(nmdpuexclude, &mdpuexclude, &mdpuexclude_scale);
-      darray::copyin(WAIT_NEW_Q, nmdpuexclude, mdpuexclude, ik_vec.data());
-      darray::copyin(WAIT_NEW_Q, nmdpuexclude, mdpuexclude_scale,
+      darray::copyin(async_queue, nmdpuexclude, mdpuexclude, ik_vec.data());
+      darray::copyin(async_queue, nmdpuexclude, mdpuexclude_scale,
                      scal_vec.data());
+      wait_for(async_queue);
    }
 
 

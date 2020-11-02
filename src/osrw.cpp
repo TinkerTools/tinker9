@@ -160,7 +160,8 @@ void osrw_data(rc_op op)
             darray::copy(async_queue, ntors, osrw_tors4, tors4);
             darray::copy(async_queue, ntors, osrw_tors5, tors5);
             darray::copy(async_queue, ntors, osrw_tors6, tors6);
-            darray::copyin(WAIT_NEW_Q, osrw_ntbnd, osrw_itbnd, buf.data());
+            darray::copyin(async_queue, osrw_ntbnd, osrw_itbnd, buf.data());
+            wait_for(async_queue);
          }
       }
 

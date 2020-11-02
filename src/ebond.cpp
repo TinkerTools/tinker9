@@ -54,9 +54,10 @@ void ebond_data(rc_op op)
       for (size_t i = 0; i < ibndvec.size(); ++i) {
          ibndvec[i] = bndstr::ibnd[i] - 1;
       }
-      darray::copyin(WAIT_NEW_Q, nbond, ibnd, ibndvec.data());
-      darray::copyin(WAIT_NEW_Q, nbond, bl, bndstr::bl);
-      darray::copyin(WAIT_NEW_Q, nbond, bk, bndstr::bk);
+      darray::copyin(async_queue, nbond, ibnd, ibndvec.data());
+      darray::copyin(async_queue, nbond, bl, bndstr::bl);
+      darray::copyin(async_queue, nbond, bk, bndstr::bk);
+      wait_for(async_queue);
    }
 }
 

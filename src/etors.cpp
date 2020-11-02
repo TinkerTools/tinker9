@@ -46,13 +46,14 @@ void etors_data(rc_op op)
       for (int i = 0; i < 4 * ntors; ++i) {
          ibuf[i] = tors::itors[i] - 1;
       }
-      darray::copyin(WAIT_NEW_Q, ntors, itors, ibuf.data());
-      darray::copyin(WAIT_NEW_Q, ntors, tors1, tors::tors1);
-      darray::copyin(WAIT_NEW_Q, ntors, tors2, tors::tors2);
-      darray::copyin(WAIT_NEW_Q, ntors, tors3, tors::tors3);
-      darray::copyin(WAIT_NEW_Q, ntors, tors4, tors::tors4);
-      darray::copyin(WAIT_NEW_Q, ntors, tors5, tors::tors5);
-      darray::copyin(WAIT_NEW_Q, ntors, tors6, tors::tors6);
+      darray::copyin(async_queue, ntors, itors, ibuf.data());
+      darray::copyin(async_queue, ntors, tors1, tors::tors1);
+      darray::copyin(async_queue, ntors, tors2, tors::tors2);
+      darray::copyin(async_queue, ntors, tors3, tors::tors3);
+      darray::copyin(async_queue, ntors, tors4, tors::tors4);
+      darray::copyin(async_queue, ntors, tors5, tors::tors5);
+      darray::copyin(async_queue, ntors, tors6, tors::tors6);
+      wait_for(async_queue);
       torsunit = torpot::torsunit;
    }
 }

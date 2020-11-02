@@ -45,9 +45,10 @@ void eurey_data(rc_op op)
       std::vector<int> ibuf(3 * nangle);
       for (int i = 0; i < 3 * nangle; ++i)
          ibuf[i] = urey::iury[i] - 1;
-      darray::copyin(WAIT_NEW_Q, nangle, iury, ibuf.data());
-      darray::copyin(WAIT_NEW_Q, nangle, uk, urey::uk);
-      darray::copyin(WAIT_NEW_Q, nangle, ul, urey::ul);
+      darray::copyin(async_queue, nangle, iury, ibuf.data());
+      darray::copyin(async_queue, nangle, uk, urey::uk);
+      darray::copyin(async_queue, nangle, ul, urey::ul);
+      wait_for(async_queue);
 
       cury = urypot::cury;
       qury = urypot::qury;

@@ -6,8 +6,8 @@
 namespace tinker {
 void wait_for(int) {}
 
-void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
-                                LPFlag)
+void device_memory_copyin_bytes_async(void* dst, const void* src, size_t nbytes,
+                                      int)
 {
    std::memcpy(dst, src, nbytes);
 }

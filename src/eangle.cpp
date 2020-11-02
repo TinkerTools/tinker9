@@ -46,9 +46,10 @@ void eangle_data(rc_op op)
       for (size_t i = 0; i < iangvec.size(); ++i) {
          iangvec[i] = angbnd::iang[i] - 1;
       }
-      darray::copyin(WAIT_NEW_Q, nangle, iang, iangvec.data());
-      darray::copyin(WAIT_NEW_Q, nangle, ak, angbnd::ak);
-      darray::copyin(WAIT_NEW_Q, nangle, anat, angbnd::anat);
+      darray::copyin(async_queue, nangle, iang, iangvec.data());
+      darray::copyin(async_queue, nangle, ak, angbnd::ak);
+      darray::copyin(async_queue, nangle, anat, angbnd::anat);
+      wait_for(async_queue);
 
       angunit = angpot::angunit;
       cang = angpot::cang;
@@ -70,7 +71,8 @@ void eangle_data(rc_op op)
             assert(false);
          }
       }
-      darray::copyin(WAIT_NEW_Q, nangle, angtyp, angtypvec.data());
+      darray::copyin(async_queue, nangle, angtyp, angtypvec.data());
+      wait_for(async_queue);
    }
 }
 

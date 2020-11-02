@@ -44,8 +44,9 @@ void epitors_data(rc_op op)
       std::vector<int> ibuf(6 * ntors);
       for (int i = 0; i < 6 * ntors; ++i)
          ibuf[i] = pitors::ipit[i] - 1;
-      darray::copyin(WAIT_NEW_Q, ntors, ipit, ibuf.data());
-      darray::copyin(WAIT_NEW_Q, ntors, kpit, pitors::kpit);
+      darray::copyin(async_queue, ntors, ipit, ibuf.data());
+      darray::copyin(async_queue, ntors, kpit, pitors::kpit);
+      wait_for(async_queue);
       ptorunit = torpot::ptorunit;
    }
 }

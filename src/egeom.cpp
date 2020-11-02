@@ -42,8 +42,9 @@ void egeom_data(rc_op op)
 
 
    if (op & rc_init) {
-      darray::copyin(WAIT_NEW_Q, ngfix, igfix, restrn::igfix);
-      darray::copyin(WAIT_NEW_Q, ngfix, gfix, restrn::gfix);
+      darray::copyin(async_queue, ngfix, igfix, restrn::igfix);
+      darray::copyin(async_queue, ngfix, gfix, restrn::gfix);
+      wait_for(async_queue);
    }
 }
 

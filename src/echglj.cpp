@@ -247,8 +247,9 @@ void echglj_data(rc_op op)
       }
       ncvexclude = ik_scale.size();
       darray::allocate(ncvexclude, &cvexclude, &cvexclude_scale);
-      darray::copyin(WAIT_NEW_Q, ncvexclude, cvexclude, ik_vec.data());
-      darray::copyin(WAIT_NEW_Q, ncvexclude, cvexclude_scale, scal_vec.data());
+      darray::copyin(async_queue, ncvexclude, cvexclude, ik_vec.data());
+      darray::copyin(async_queue, ncvexclude, cvexclude_scale, scal_vec.data());
+      wait_for(async_queue);
       darray::allocate(n, &atom_rad, &atom_eps);
       darray::allocate(n, &chg_coalesced);
       darray::allocate(2 * n, &radeps_coalesced);
@@ -270,8 +271,9 @@ void echglj_data(rc_op op)
             veps[i] = kvdws::eps[jj];
          }
       }
-      darray::copyin(WAIT_NEW_Q, n, atom_rad, vrad.data());
-      darray::copyin(WAIT_NEW_Q, n, atom_eps, veps.data());
+      darray::copyin(async_queue, n, atom_rad, vrad.data());
+      darray::copyin(async_queue, n, atom_eps, veps.data());
+      wait_for(async_queue);
    }
 
 

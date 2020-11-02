@@ -14,11 +14,10 @@ void wait_for(int queue);
  * \param dst     Device pointer.
  * \param src     Host pointer.
  * \param nbytes  Number of bytes.
- * \param flag    Kernel policy.
- * \see LPFlag
+ * \param queue   OpenACC queue.
  */
-void device_memory_copyin_bytes(void* dst, const void* src, size_t nbytes,
-                                LPFlag flag);
+void device_memory_copyin_bytes_async(void* dst, const void* src, size_t nbytes,
+                                      int queue);
 /**
  * \ingroup rc
  * Similar to OpenACC copyout, copies data from device to host.
@@ -81,12 +80,10 @@ void device_memory_check_type()
  * \param dst    Destination address.
  * \param src    Source address.
  * \param nelem  Number of elements to copy to the 1D device array.
- * \param flag   Kernel policy.
- * \see LPFlag
+ * \param q      OpenACC queue.
  */
 template <class DT, class ST>
-void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem,
-                                   LPFlag flag)
+void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem, int q)
 {
    device_memory_check_type<DT>();
    device_memory_check_type<ST>();
@@ -95,12 +92,12 @@ void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem,
 
    size_t size = ds * nelem;
    if (ds == ss) {
-      device_memory_copyin_bytes(dst, src, size, flag);
+      device_memory_copyin_bytes_async(dst, src, size, q);
    } else {
       std::vector<DT> buf(nelem);
       for (size_t i = 0; i < nelem; ++i)
          buf[i] = src[i];
-      device_memory_copyin_bytes(dst, buf.data(), size, flag);
+      device_memory_copyin_bytes_async(dst, buf.data(), size, q);
    }
 }
 
@@ -220,11 +217,10 @@ struct darray
 
 
    template <class PTR, class U>
-   static void copyin(LPFlag flag, size_t nelem, PTR dst, const U* src)
+   static void copyin(int q, size_t nelem, PTR dst, const U* src)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_copyin_1d_array(flatten(dst), flatten(src), nelem * N,
-                                    flag);
+      device_memory_copyin_1d_array(flatten(dst), flatten(src), nelem * N, q);
    }
 
 
@@ -245,34 +241,6 @@ struct darray
       static_assert(std::is_same<DT, ST>::value, "");
       size_t size = N * sizeof(ST) * nelem;
       device_memory_copy_bytes_async(flatten(dst), flatten(src), size, q);
-   }
-
-
-   template <class DT, class ST>
-   static void copyin2(LPFlag flag, size_t idx0, size_t ndim, size_t nelem,
-                       DT dst, const ST src)
-   {
-      static_assert(deduce_ptr<DT>::n == 1, "");
-      static_assert(deduce_ptr<ST>::n == 1, "");
-      typedef typename deduce_ptr<DT>::type T;
-      std::vector<T> buf(nelem);
-      for (size_t i = 0; i < nelem; ++i)
-         buf[i] = src[ndim * i + idx0];
-      copyin(flag, nelem, dst, buf.data());
-   }
-
-
-   template <class DT, class ST>
-   static void copyout2(LPFlag flag, size_t idx0, size_t ndim, size_t nelem,
-                        DT dst, const ST src)
-   {
-      static_assert(deduce_ptr<DT>::n == 1, "");
-      static_assert(deduce_ptr<ST>::n == 1, "");
-      typedef typename deduce_ptr<ST>::type T;
-      std::vector<T> buf(nelem);
-      copyout(flag, nelem, buf.data(), src);
-      for (size_t i = 0; i < nelem; ++i)
-         dst[ndim * i + idx0] = buf[i];
    }
 
 

@@ -46,10 +46,11 @@ void eimptor_data(rc_op op)
       for (int i = 0; i < 4 * nitors; ++i) {
          ibuf[i] = imptor::iitors[i] - 1;
       }
-      darray::copyin(WAIT_NEW_Q, nitors, iitors, ibuf.data());
-      darray::copyin(WAIT_NEW_Q, nitors, itors1, imptor::itors1);
-      darray::copyin(WAIT_NEW_Q, nitors, itors2, imptor::itors2);
-      darray::copyin(WAIT_NEW_Q, nitors, itors3, imptor::itors3);
+      darray::copyin(async_queue, nitors, iitors, ibuf.data());
+      darray::copyin(async_queue, nitors, itors1, imptor::itors1);
+      darray::copyin(async_queue, nitors, itors2, imptor::itors2);
+      darray::copyin(async_queue, nitors, itors3, imptor::itors3);
+      wait_for(async_queue);
       itorunit = torpot::itorunit;
    }
 }

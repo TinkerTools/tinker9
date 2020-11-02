@@ -150,15 +150,16 @@ void edisp_data(rc_op op)
       }
       ndspexclude = excls.size();
       darray::allocate(ndspexclude, &dspexclude, &dspexclude_scale);
-      darray::copyin(WAIT_NEW_Q, ndspexclude, dspexclude, exclik.data());
-      darray::copyin(WAIT_NEW_Q, ndspexclude, dspexclude_scale, excls.data());
+      darray::copyin(async_queue, ndspexclude, dspexclude, exclik.data());
+      darray::copyin(async_queue, ndspexclude, dspexclude_scale, excls.data());
+      wait_for(async_queue);
    }
 
 
    if (op & rc_init) {
       csixpr = disp::csixpr;
-      darray::copyin(PROCEED_NEW_Q, n, csix, disp::csix);
-      darray::copyin(PROCEED_NEW_Q, n, adisp, disp::adisp);
+      darray::copyin(async_queue, n, csix, disp::csix);
+      darray::copyin(async_queue, n, adisp, disp::adisp);
    }
 }
 

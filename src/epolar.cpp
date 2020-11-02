@@ -191,8 +191,9 @@ void epolar_data(rc_op op)
       }
       nuexclude = excls.size();
       darray::allocate(nuexclude, &uexclude, &uexclude_scale);
-      darray::copyin(WAIT_NEW_Q, nuexclude, uexclude, exclik.data());
-      darray::copyin(WAIT_NEW_Q, nuexclude, uexclude_scale, excls.data());
+      darray::copyin(async_queue, nuexclude, uexclude, exclik.data());
+      darray::copyin(async_queue, nuexclude, uexclude_scale, excls.data());
+      wait_for(async_queue);
 
       d1scale = polpot::d1scale;
       d2scale = polpot::d2scale;
@@ -374,14 +375,16 @@ void epolar_data(rc_op op)
       }
       ndpuexclude = ik_dpu.size();
       darray::allocate(ndpuexclude, &dpuexclude, &dpuexclude_scale);
-      darray::copyin(WAIT_NEW_Q, ndpuexclude, dpuexclude, dpu_ik_vec.data());
-      darray::copyin(WAIT_NEW_Q, ndpuexclude, dpuexclude_scale,
+      darray::copyin(async_queue, ndpuexclude, dpuexclude, dpu_ik_vec.data());
+      darray::copyin(async_queue, ndpuexclude, dpuexclude_scale,
                      dpu_sc_vec.data());
+      wait_for(async_queue);
 
       ndpexclude = excls.size() / 2;
       darray::allocate(ndpexclude, &dpexclude, &dpexclude_scale);
-      darray::copyin(WAIT_NEW_Q, ndpexclude, dpexclude, exclik.data());
-      darray::copyin(WAIT_NEW_Q, ndpexclude, dpexclude_scale, excls.data());
+      darray::copyin(async_queue, ndpexclude, dpexclude, exclik.data());
+      darray::copyin(async_queue, ndpexclude, dpexclude_scale, excls.data());
+      wait_for(async_queue);
 
       darray::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
 
@@ -478,10 +481,11 @@ void epolar_data(rc_op op)
       for (int i = 0; i < n; ++i) {
          pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
       }
-      darray::copyin(WAIT_NEW_Q, n, polarity, polar::polarity);
-      darray::copyin(WAIT_NEW_Q, n, thole, polar::thole);
-      darray::copyin(WAIT_NEW_Q, n, pdamp, polar::pdamp);
-      darray::copyin(WAIT_NEW_Q, n, polarity_inv, pinvbuf.data());
+      darray::copyin(async_queue, n, polarity, polar::polarity);
+      darray::copyin(async_queue, n, thole, polar::thole);
+      darray::copyin(async_queue, n, pdamp, polar::pdamp);
+      darray::copyin(async_queue, n, polarity_inv, pinvbuf.data());
+      wait_for(async_queue);
    }
 }
 

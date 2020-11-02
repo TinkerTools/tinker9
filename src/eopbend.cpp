@@ -53,8 +53,9 @@ void eopbend_data(rc_op op)
       std::vector<int> ibuf(nangle);
       for (int i = 0; i < nangle; ++i)
          ibuf[i] = opbend::iopb[i] - 1;
-      darray::copyin(WAIT_NEW_Q, nangle, iopb, ibuf.data());
-      darray::copyin(WAIT_NEW_Q, nangle, opbk, opbend::opbk);
+      darray::copyin(async_queue, nangle, iopb, ibuf.data());
+      darray::copyin(async_queue, nangle, opbk, opbend::opbk);
+      wait_for(async_queue);
       opbunit = angpot::opbunit;
       copb = angpot::copb;
       qopb = angpot::qopb;

@@ -116,8 +116,9 @@ void echarge_data(rc_op op)
       }
       ncexclude = excl.size();
       darray::allocate(ncexclude, &cexclude, &cexclude_scale);
-      darray::copyin(WAIT_NEW_Q, ncexclude, cexclude, exclik.data());
-      darray::copyin(WAIT_NEW_Q, ncexclude, cexclude_scale, excl.data());
+      darray::copyin(async_queue, ncexclude, cexclude, exclik.data());
+      darray::copyin(async_queue, ncexclude, cexclude_scale, excl.data());
+      wait_for(async_queue);
 
 
       nec = nullptr;

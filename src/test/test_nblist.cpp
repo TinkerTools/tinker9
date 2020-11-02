@@ -147,9 +147,10 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
                         bbuf[c + 2], bbuf[c + 3], bbuf[c + 4], bbuf[c + 5]);
          }
       }
-      darray::copyin(PROCEED_NEW_Q, n * tn, trajx, xbuf.data());
-      darray::copyin(PROCEED_NEW_Q, n * tn, trajy, ybuf.data());
-      darray::copyin(WAIT_NEW_Q, n * tn, trajz, zbuf.data());
+      darray::copyin(async_queue, n * tn, trajx, xbuf.data());
+      darray::copyin(async_queue, n * tn, trajy, ybuf.data());
+      darray::copyin(async_queue, n * tn, trajz, zbuf.data());
+      wait_for(async_queue);
    } else {
       std::string msg = "Cannot Open File ";
       msg += arcfile;

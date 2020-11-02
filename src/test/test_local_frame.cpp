@@ -296,8 +296,9 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
             up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
          }
       }
-      darray::copyin(PROCEED_NEW_Q, n, uind, &ud[0][0]);
-      darray::copyin(WAIT_NEW_Q, n, uinp, &up[0][0]);
+      darray::copyin(async_queue, n, uind, &ud[0][0]);
+      darray::copyin(async_queue, n, uinp, &up[0][0]);
+      wait_for(async_queue);
       ufield_nonewald(uind, uinp, udir, udirp);
       ud.resize(n);
       up.resize(n);
@@ -514,8 +515,9 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
             up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
          }
       }
-      darray::copyin(PROCEED_NEW_Q, n, uind, &ud[0][0]);
-      darray::copyin(WAIT_NEW_Q, n, uinp, &up[0][0]);
+      darray::copyin(async_queue, n, uind, &ud[0][0]);
+      darray::copyin(async_queue, n, uinp, &up[0][0]);
+      wait_for(async_queue);
       ufield_ewald(uind, uinp, udir, udirp);
       ud.resize(n);
       up.resize(n);

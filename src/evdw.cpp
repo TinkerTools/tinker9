@@ -240,8 +240,9 @@ void evdw_data(rc_op op)
       }
       nvexclude = excls.size();
       darray::allocate(nvexclude, &vexclude, &vexclude_scale);
-      darray::copyin(WAIT_NEW_Q, nvexclude, vexclude, exclik.data());
-      darray::copyin(WAIT_NEW_Q, nvexclude, vexclude_scale, excls.data());
+      darray::copyin(async_queue, nvexclude, vexclude, exclik.data());
+      darray::copyin(async_queue, nvexclude, vexclude_scale, excls.data());
+      wait_for(async_queue);
 
 
       // check VDW14 interations
@@ -324,7 +325,8 @@ void evdw_data(rc_op op)
             // radmin4 and epsilon4 are similar to radmin and epsilon
             darray::allocate(jcount * jcount, &radmin4, &epsilon4);
             darray::allocate(nvdw14, &vdw14ik);
-            darray::copyin(WAIT_NEW_Q, nvdw14, vdw14ik, v14ikbuf.data());
+            darray::copyin(async_queue, nvdw14, vdw14ik, v14ikbuf.data());
+            wait_for(async_queue);
          }
       }
 
@@ -358,12 +360,14 @@ void evdw_data(rc_op op)
             iredbuf[i] = jt;
             kredbuf[i] = vdw::kred[i];
          }
-         darray::copyin(WAIT_NEW_Q, n, ired, iredbuf.data());
-         darray::copyin(WAIT_NEW_Q, n, kred, kredbuf.data());
+         darray::copyin(async_queue, n, ired, iredbuf.data());
+         darray::copyin(async_queue, n, kred, kredbuf.data());
+         wait_for(async_queue);
       }
 
 
-      darray::copyin(WAIT_NEW_Q, n, jvdw, jvdwbuf.data());
+      darray::copyin(async_queue, n, jvdw, jvdwbuf.data());
+      wait_for(async_queue);
       njvdw = jcount;
 
 
@@ -379,8 +383,9 @@ void evdw_data(rc_op op)
             epsvec.push_back(vdw::epsilon[offset]);
          }
       }
-      darray::copyin(WAIT_NEW_Q, jcount * jcount, radmin, radvec.data());
-      darray::copyin(WAIT_NEW_Q, jcount * jcount, epsilon, epsvec.data());
+      darray::copyin(async_queue, jcount * jcount, radmin, radvec.data());
+      darray::copyin(async_queue, jcount * jcount, epsilon, epsvec.data());
+      wait_for(async_queue);
 
 
       if (nvdw14) {
@@ -395,8 +400,9 @@ void evdw_data(rc_op op)
                eps4buf.push_back(vdw::epsilon4[offset]);
             }
          }
-         darray::copyin(WAIT_NEW_Q, jcount * jcount, radmin4, rad4buf.data());
-         darray::copyin(WAIT_NEW_Q, jcount * jcount, epsilon4, eps4buf.data());
+         darray::copyin(async_queue, jcount * jcount, radmin4, rad4buf.data());
+         darray::copyin(async_queue, jcount * jcount, epsilon4, eps4buf.data());
+         wait_for(async_queue);
       }
 
 
@@ -412,7 +418,8 @@ void evdw_data(rc_op op)
             mutvec[i] = 0;
          }
       }
-      darray::copyin(WAIT_NEW_Q, n, mut, mutvec.data());
+      darray::copyin(async_queue, n, mut, mutvec.data());
+      wait_for(async_queue);
       vlam = mutant::vlambda;
 
 

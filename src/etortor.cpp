@@ -55,26 +55,30 @@ void etortor_data(rc_op op)
       ibuf.resize(5 * nbitor);
       for (int i = 0; i < 5 * nbitor; ++i)
          ibuf[i] = bitor_::ibitor[i] - 1;
-      darray::copyin(WAIT_NEW_Q, nbitor, ibitor, ibuf.data());
+      darray::copyin(async_queue, nbitor, ibitor, ibuf.data());
+      wait_for(async_queue);
 
       ibuf.resize(3 * nbitor);
       for (int i = 0; i < 3 * nbitor; ++i)
          ibuf[i] = tortor::itt[i] - 1;
-      darray::copyin(WAIT_NEW_Q, nbitor, itt, ibuf.data());
+      darray::copyin(async_queue, nbitor, itt, ibuf.data());
+      wait_for(async_queue);
 
       ibuf.resize(ktrtor::maxntt);
       for (int i = 0; i < ktrtor::maxntt; ++i)
          ibuf[i] = ktrtor::tnx[i];
-      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tnx, ibuf.data());
+      darray::copyin(async_queue, ktrtor::maxntt, tnx, ibuf.data());
+      wait_for(async_queue);
       for (int i = 0; i < ktrtor::maxntt; ++i)
          ibuf[i] = ktrtor::tny[i];
-      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tny, ibuf.data());
-      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, ttx, &ktrtor::ttx[0][0]);
-      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tty, &ktrtor::tty[0][0]);
-      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tbf, &ktrtor::tbf[0][0]);
-      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tbx, &ktrtor::tbx[0][0]);
-      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tby, &ktrtor::tby[0][0]);
-      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tbxy, &ktrtor::tbxy[0][0]);
+      darray::copyin(async_queue, ktrtor::maxntt, tny, ibuf.data());
+      darray::copyin(async_queue, ktrtor::maxntt, ttx, &ktrtor::ttx[0][0]);
+      darray::copyin(async_queue, ktrtor::maxntt, tty, &ktrtor::tty[0][0]);
+      darray::copyin(async_queue, ktrtor::maxntt, tbf, &ktrtor::tbf[0][0]);
+      darray::copyin(async_queue, ktrtor::maxntt, tbx, &ktrtor::tbx[0][0]);
+      darray::copyin(async_queue, ktrtor::maxntt, tby, &ktrtor::tby[0][0]);
+      darray::copyin(async_queue, ktrtor::maxntt, tbxy, &ktrtor::tbxy[0][0]);
+      wait_for(async_queue);
 
       ttorunit = torpot::ttorunit;
 
@@ -128,7 +132,8 @@ void etortor_data(rc_op op)
          }
          ibuf[itortor] = ia;
       }
-      darray::copyin(WAIT_NEW_Q, ntortor, chkttor_ia_, ibuf.data());
+      darray::copyin(async_queue, ntortor, chkttor_ia_, ibuf.data());
+      wait_for(async_queue);
    }
 }
 
