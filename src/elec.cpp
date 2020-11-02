@@ -523,8 +523,7 @@ void mdpuscale_data(rc_op op)
       nmdpuexclude = ik_scale.size();
       darray::allocate(nmdpuexclude, &mdpuexclude, &mdpuexclude_scale);
       darray::copyin(asyncq, nmdpuexclude, mdpuexclude, ik_vec.data());
-      darray::copyin(asyncq, nmdpuexclude, mdpuexclude_scale,
-                     scal_vec.data());
+      darray::copyin(asyncq, nmdpuexclude, mdpuexclude_scale, scal_vec.data());
       wait_for(asyncq);
    }
 

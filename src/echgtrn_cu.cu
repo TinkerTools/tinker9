@@ -257,8 +257,7 @@ void echgtrn_cu2(HIPPO_CHGTRN_PARA, const real* x, const real* y, const real* z,
 
 template <class Ver>
 void echgtrn_cu3()
-{
-}
+{}
 
 
 void echgtrn_cu(int vers)

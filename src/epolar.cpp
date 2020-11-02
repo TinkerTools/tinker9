@@ -376,8 +376,7 @@ void epolar_data(rc_op op)
       ndpuexclude = ik_dpu.size();
       darray::allocate(ndpuexclude, &dpuexclude, &dpuexclude_scale);
       darray::copyin(asyncq, ndpuexclude, dpuexclude, dpu_ik_vec.data());
-      darray::copyin(asyncq, ndpuexclude, dpuexclude_scale,
-                     dpu_sc_vec.data());
+      darray::copyin(asyncq, ndpuexclude, dpuexclude_scale, dpu_sc_vec.data());
       wait_for(asyncq);
 
       ndpexclude = excls.size() / 2;
