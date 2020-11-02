@@ -7,10 +7,15 @@
 
 
 namespace tinker {
+/**
+ * \ingroup rc
+ * Similar to OpenACC wait and CUDA stream synchronize.
+ * \param queue  OpenACC queue.
+ */
 void wait_for(int queue);
 /**
  * \ingroup rc
- * Similar to OpenACC copyin, copies data from host to device.
+ * Similar to OpenACC async copyin, copies data from host to device.
  * \param dst     Device pointer.
  * \param src     Host pointer.
  * \param nbytes  Number of bytes.
@@ -20,7 +25,7 @@ void device_memory_copyin_bytes_async(void* dst, const void* src, size_t nbytes,
                                       int queue);
 /**
  * \ingroup rc
- * Similar to OpenACC copyout, copies data from device to host.
+ * Similar to OpenACC async copyout, copies data from device to host.
  * \param dst     Host pointer.
  * \param src     Device pointer.
  * \param nbytes  Number of bytes.
@@ -76,7 +81,7 @@ void device_memory_check_type()
 
 /**
  * \ingroup rc
- * Copies data to 1D array from host to device.
+ * Copies data to 1D array, host to device.
  * \param dst    Destination address.
  * \param src    Source address.
  * \param nelem  Number of elements to copy to the 1D device array.
@@ -104,7 +109,7 @@ void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem, int q)
 
 /**
  * \ingroup rc
- * Copies data to 1D array from device to host.
+ * Copies data to 1D array, device to host.
  * \param dst    Destination address.
  * \param src    Source address.
  * \param nelem  Number of elements to copy to the 1D host array.
@@ -271,18 +276,18 @@ struct darray
 
 
    template <class FLT, class PTR>
-   static void scale(LPFlag flag, size_t nelem, FLT scal, PTR ptr)
+   static void scale(int q, size_t nelem, FLT scal, PTR ptr)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
-      parallel::scale_array(flatten(ptr), scal, nelem * N, flag);
+      parallel::scale_array(flatten(ptr), scal, nelem * N, q);
    }
 
 
    template <class FLT, class PTR, class... PTRS>
-   static void scale(LPFlag flag, size_t nelem, FLT scal, PTR ptr, PTRS... ptrs)
+   static void scale(int q, size_t nelem, FLT scal, PTR ptr, PTRS... ptrs)
    {
-      scale(flag, nelem, scal, ptr);
-      scale(flag, nelem, scal, ptrs...);
+      scale(q, nelem, scal, ptr);
+      scale(q, nelem, scal, ptrs...);
    }
 };
 

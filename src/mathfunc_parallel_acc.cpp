@@ -150,23 +150,13 @@ template void dotprod_acc(double*, const double*, const double*, int, LPFlag);
 
 
 template <class T>
-void scale_array_acc(T* gpu_dst, T scal, size_t nelem, LPFlag flag)
+void scale_array_acc(T* gpu_dst, T scal, size_t nelem, int queue)
 {
-   if (flag & LPFlag::DEFAULT_Q) {
-      #pragma acc parallel loop independent deviceptr(gpu_dst)
-      for (size_t i = 0; i < nelem; ++i) {
-         gpu_dst[i] *= scal;
-      }
-   } else {
-      #pragma acc parallel loop independent async deviceptr(gpu_dst)
-      for (size_t i = 0; i < nelem; ++i) {
-         gpu_dst[i] *= scal;
-      }
+   #pragma acc parallel loop independent async(queue) deviceptr(gpu_dst)
+   for (size_t i = 0; i < nelem; ++i) {
+      gpu_dst[i] *= scal;
    }
-   // if (flag & LPFlag::WAIT) {
-   wait_queue(flag);
-   // }
 }
-template void scale_array_acc(float*, float, size_t, LPFlag);
-template void scale_array_acc(double*, double, size_t, LPFlag);
+template void scale_array_acc(float*, float, size_t, int);
+template void scale_array_acc(double*, double, size_t, int);
 }

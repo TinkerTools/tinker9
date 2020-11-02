@@ -26,5 +26,5 @@ void dotprod_acc(T* ans, const T* a, const T* b, int nelem, LPFlag flag);
 
 
 template <class T>
-void scale_array_acc(T* dst, T scal, size_t nelem, LPFlag flag);
+void scale_array_acc(T* dst, T scal, size_t nelem, int queue);
 }

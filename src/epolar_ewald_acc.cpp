@@ -430,7 +430,7 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
    //    end do
    // end do
    // Notice that only 10 * n elements were scaled in the original code.
-   darray::scale(PROCEED_NEW_Q, n, 0.5f * f, fphidp);
+   darray::scale(async_queue, n, 0.5f * f, fphidp);
    fphi_to_cphi(pu, fphidp, cphidp);
 
    // recip and self torques
@@ -494,7 +494,7 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
          vir_ep[0][i] -= vir_m[0][i];
       }
 
-      darray::scale(PROCEED_NEW_Q, n, f, cphi, fphid, fphip);
+      darray::scale(async_queue, n, f, cphi, fphid, fphip);
 
       #pragma acc parallel loop independent async\
                   deviceptr(vir_ep,cmp,\
