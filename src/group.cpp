@@ -56,8 +56,6 @@ void group_data(rc_op op)
          buf[j + 1] = group::igrp[j + 1];
       }
       darray::copyin(g::q0, st.ngrp + 1, st.igrp, buf.data());
-      wait_for(g::q0);
-
       darray::copyin(g::q0, st.ngrp + 1, st.grpmass, group::grpmass);
       wait_for(g::q0);
 

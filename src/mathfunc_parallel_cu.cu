@@ -27,13 +27,13 @@ void reduce_to_dptr(const T* a, size_t nelem, cudaStream_t st)
 template <class T, class Op>
 T reduce_general(const T* a, size_t nelem, int queue)
 {
-   cudaStream_t s = queue == g::q1 ? nullptr : nonblk;
+   cudaStream_t st = queue == g::q1 ? nullptr : nonblk;
    T* dptr = (T*)dptr_buf;
    T* hptr = (T*)pinned_buf;
-   reduce_to_dptr<T, Op>(a, nelem, s);
-   check_rt(cudaMemcpyAsync(hptr, dptr, sizeof(T), cudaMemcpyDeviceToHost, s));
+   reduce_to_dptr<T, Op>(a, nelem, st);
+   check_rt(cudaMemcpyAsync(hptr, dptr, sizeof(T), cudaMemcpyDeviceToHost, st));
    // always wait
-   check_rt(cudaStreamSynchronize(s));
+   check_rt(cudaStreamSynchronize(st));
    return *hptr;
 }
 }
@@ -61,7 +61,7 @@ void reduce_sum2_cu(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem,
    constexpr size_t N = deduce_ptr<DPTR>::n;
    static_assert(HN <= N, "");
 
-   cudaStream_t s = queue == g::q1 ? nullptr : nonblk;
+   cudaStream_t st = queue == g::q1 ? nullptr : nonblk;
    T(*dptr)[HN] = (T(*)[HN])dptr_buf;
    T* hptr = (T*)pinned_buf;
    int grid_siz1 = get_grid_size(BLOCK_DIM);
@@ -69,13 +69,13 @@ void reduce_sum2_cu(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem,
    int grid_siz2 = (nelem + BLOCK_DIM - 1) / BLOCK_DIM;
    int grid_size = std::min(grid_siz1, grid_siz2);
    reduce2<T, BLOCK_DIM, HN, N, OpPlus<T>>
-      <<<grid_size, BLOCK_DIM, 0, s>>>(dptr, a, nelem);
+      <<<grid_size, BLOCK_DIM, 0, st>>>(dptr, a, nelem);
    reduce2<T, BLOCK_DIM, HN, HN, OpPlus<T>>
-      <<<1, BLOCK_DIM, 0, s>>>(dptr, dptr, grid_size);
+      <<<1, BLOCK_DIM, 0, st>>>(dptr, dptr, grid_size);
    check_rt(cudaMemcpyAsync(hptr, (T*)dptr, HN * sizeof(HN),
-                            cudaMemcpyDeviceToHost, s));
+                            cudaMemcpyDeviceToHost, st));
    // always wait
-   check_rt(cudaStreamSynchronize(s));
+   check_rt(cudaStreamSynchronize(st));
    #pragma unroll
    for (int j = 0; j < HN; ++j)
       h_ans[j] = hptr[j];

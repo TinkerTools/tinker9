@@ -89,6 +89,7 @@ TEST_CASE("Reduce", "[util][math][reduce]")
    ai = parallel::reduce_sum(di, N, g::q0);
    REQUIRE(ai == refi);
 
+
    af = parallel::reduce_sum(df, N, g::q0);
    REQUIRE(af == reff);
 
