@@ -8,20 +8,15 @@ void accmanaged_data(rc_op op)
 
 
    if (op & rc_dealloc) {
-      #pragma acc exit data async delete(exx,eyy,ezz,exy,eyz,ezx,\
-              vtot1,vtot2,vtot3)
+      // #pragma acc exit data async delete()
    }
 
 
    if (op & rc_alloc) {
-      #pragma acc enter data async create(exx,eyy,ezz,exy,eyz,ezx,\
-              vtot1,vtot2,vtot3)
+      // #pragma acc enter data async create()
    }
 }
 
 
-namespace detail {
-energy_prec exx, eyy, ezz, exy, eyz, ezx; // kinetic
-vel_prec vtot1, vtot2, vtot3;             // mdrest
-}
+namespace detail {}
 }

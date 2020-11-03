@@ -213,6 +213,7 @@ void ufield_ewald_recip_self_acc(const real (*uind)[3], const real (*uinp)[3],
    const real term = aewald * aewald * aewald * 4 / 3 / sqrtpi;
 
    #pragma acc parallel loop independent async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(field,fieldp,uind,uinp,fdip_phi1,fdip_phi2)
    for (int i = 0; i < n; ++i) {
       real a[3][3];

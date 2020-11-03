@@ -26,43 +26,34 @@ void kinetic_explicit_acc(T_prec& temp_out, energy_prec& eksum_out,
                           const vel_prec* vy, const vel_prec* vz)
 {
    const energy_prec ekcal_inv = 1.0 / units::ekcal;
-   detail::exx = 0;
-   detail::eyy = 0;
-   detail::ezz = 0;
-   detail::exy = 0;
-   detail::eyz = 0;
-   detail::ezx = 0;
-   #pragma acc update async device(detail::exx,detail::eyy,detail::ezz,\
-               detail::exy,detail::eyz,detail::ezx)
+   energy_prec exx = 0, eyy = 0, ezz = 0, exy = 0, eyz = 0, ezx = 0;
    #pragma acc parallel loop independent async\
-               reduction(+:detail::exx,detail::eyy,detail::ezz,\
-               detail::exy,detail::eyz,detail::ezx)\
+               copy(exx,eyy,ezz,exy,eyz,ezx)\
+               reduction(+:exx,eyy,ezz,exy,eyz,ezx)\
                deviceptr(mass,vx,vy,vz)
    for (int i = 0; i < n; ++i) {
       energy_prec term = 0.5f * mass[i] * ekcal_inv;
-      detail::exx += term * vx[i] * vx[i];
-      detail::eyy += term * vy[i] * vy[i];
-      detail::ezz += term * vz[i] * vz[i];
-      detail::exy += term * vx[i] * vy[i];
-      detail::eyz += term * vy[i] * vz[i];
-      detail::ezx += term * vz[i] * vx[i];
+      exx += term * vx[i] * vx[i];
+      eyy += term * vy[i] * vy[i];
+      ezz += term * vz[i] * vz[i];
+      exy += term * vx[i] * vy[i];
+      eyz += term * vy[i] * vz[i];
+      ezx += term * vz[i] * vx[i];
    }
-   #pragma acc update async self(detail::exx,detail::eyy,detail::ezz,\
-               detail::exy,detail::eyz,detail::ezx)
    #pragma acc wait
-   energy_prec eksum_local = detail::exx + detail::eyy + detail::ezz;
+   energy_prec eksum_local = exx + eyy + ezz;
    T_prec temp_local = 2 * eksum_local / (mdstuf::nfree * units::gasconst);
 
 
-   ekin_out[0][0] = detail::exx;
-   ekin_out[0][1] = detail::exy;
-   ekin_out[0][2] = detail::ezx;
-   ekin_out[1][0] = detail::exy;
-   ekin_out[1][1] = detail::eyy;
-   ekin_out[1][2] = detail::eyz;
-   ekin_out[2][0] = detail::ezx;
-   ekin_out[2][1] = detail::eyz;
-   ekin_out[2][2] = detail::ezz;
+   ekin_out[0][0] = exx;
+   ekin_out[0][1] = exy;
+   ekin_out[0][2] = ezx;
+   ekin_out[1][0] = exy;
+   ekin_out[1][1] = eyy;
+   ekin_out[1][2] = eyz;
+   ekin_out[2][0] = ezx;
+   ekin_out[2][1] = eyz;
+   ekin_out[2][2] = ezz;
    eksum_out = eksum_local;
    temp_out = temp_local;
 }

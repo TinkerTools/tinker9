@@ -376,7 +376,8 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
    // increment the dipole polarization gradient contributions
 
    #pragma acc parallel loop independent async deviceptr(depx,depy,depz,\
-               fmp,fphi,fuind,fuinp,fphid,fphip,fphidp)
+               fmp,fphi,fuind,fuinp,fphid,fphip,fphidp)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)
    for (int i = 0; i < n; ++i) {
       // data deriv1  / 2, 5,  8,  9, 11, 16, 18, 14, 15, 20 /
       // data deriv2  / 3, 8,  6, 10, 14, 12, 19, 16, 20, 17 /
@@ -497,6 +498,7 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
       darray::scale(g::q0, n, f, cphi, fphid, fphip);
 
       #pragma acc parallel loop independent async\
+                  present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                   deviceptr(vir_ep,cmp,\
                   gpu_uind,gpu_uinp,fphid,fphip,cphi,cphidp)
       for (int i = 0; i < n; ++i) {
@@ -628,7 +630,8 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
       real pterm = (pi / aewald) * (pi / aewald);
       real box_volume = volbox();
 
-      #pragma acc parallel loop independent async deviceptr(d,p,vir_ep)
+      #pragma acc parallel loop independent async deviceptr(d,p,vir_ep)\
+                  present(lvec1,lvec2,lvec3,recipa,recipb,recipc)
       for (int i = 1; i < ntot; ++i) {
          const real volterm = pi * box_volume;
 
