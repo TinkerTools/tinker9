@@ -160,6 +160,7 @@ void edisp_data(rc_op op)
       csixpr = disp::csixpr;
       darray::copyin(g::q0, n, csix, disp::csix);
       darray::copyin(g::q0, n, adisp, disp::adisp);
+      wait_for(g::q0);
    }
 }
 
