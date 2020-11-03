@@ -40,6 +40,7 @@ void disp_pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_v)
 
    size_t bufsize = buffer_size();
    #pragma acc parallel loop independent async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(gpu_e,gpu_v,qgrid,bsmod1,bsmod2,bsmod3)
    for (int i = 0; i < ntot; ++i) {
       if (i == 0) {

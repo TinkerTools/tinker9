@@ -257,6 +257,7 @@ void empole_ewald_recip_acc1()
    const real f = electric / dielec;
 
    #pragma acc parallel loop independent async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(demx,demy,demz,\
                cmp,fmp,cphi,fphi,em,vir_em,trqx,trqy,trqz)
    for (int i = 0; i < n; ++i) {

@@ -13,7 +13,9 @@ TINKER_EXTERN void* pinned_buf;
 TINKER_EXTERN void* dptr_buf;
 
 
-TINKER_EXTERN cudaStream_t pme_stream;
+namespace g {
+TINKER_EXTERN cudaStream_t spme;
+}
 TINKER_EXTERN cudaEvent_t pme_event_finish;
 }
 #endif

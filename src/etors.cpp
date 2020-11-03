@@ -46,13 +46,14 @@ void etors_data(rc_op op)
       for (int i = 0; i < 4 * ntors; ++i) {
          ibuf[i] = tors::itors[i] - 1;
       }
-      darray::copyin(WAIT_NEW_Q, ntors, itors, ibuf.data());
-      darray::copyin(WAIT_NEW_Q, ntors, tors1, tors::tors1);
-      darray::copyin(WAIT_NEW_Q, ntors, tors2, tors::tors2);
-      darray::copyin(WAIT_NEW_Q, ntors, tors3, tors::tors3);
-      darray::copyin(WAIT_NEW_Q, ntors, tors4, tors::tors4);
-      darray::copyin(WAIT_NEW_Q, ntors, tors5, tors::tors5);
-      darray::copyin(WAIT_NEW_Q, ntors, tors6, tors::tors6);
+      darray::copyin(g::q0, ntors, itors, ibuf.data());
+      darray::copyin(g::q0, ntors, tors1, tors::tors1);
+      darray::copyin(g::q0, ntors, tors2, tors::tors2);
+      darray::copyin(g::q0, ntors, tors3, tors::tors3);
+      darray::copyin(g::q0, ntors, tors4, tors::tors4);
+      darray::copyin(g::q0, ntors, tors5, tors::tors5);
+      darray::copyin(g::q0, ntors, tors6, tors::tors6);
+      wait_for(g::q0);
       torsunit = torpot::torsunit;
    }
 }
@@ -69,11 +70,11 @@ void etors(int vers)
       host_zero(energy_et, virial_et);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, et);
+         darray::zero(g::q0, bsize, et);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_et);
+         darray::zero(g::q0, bsize, vir_et);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, detx, dety, detz);
+         darray::zero(g::q0, n, detx, dety, detz);
    }
 
 

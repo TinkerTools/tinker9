@@ -251,6 +251,7 @@ void propagate_velocity_lp_acc(
    const energy_prec ekcal_inv = 1.0 / units::ekcal;
    energy_prec ekn = 0, eko = 0;
    #pragma acc parallel loop independent async\
+               copy(ekn,eko) reduction(+:ekn,eko)\
                deviceptr(mass,vx_lp,vy_lp,vz_lp,vxnew_lp,vynew_lp,vznew_lp,\
                vxold_lp,vyold_lp,vzold_lp)
    for (int i = 0; i < n; ++i) {
@@ -265,6 +266,7 @@ void propagate_velocity_lp_acc(
       ekn += term *
          (vx_lp[i] * vx_lp[i] + vy_lp[i] * vy_lp[i] + vz_lp[i] * vz_lp[i]);
    }
+   #pragma acc wait
    eksum_old = eko;
    eksum_new = ekn;
 }
@@ -297,6 +299,7 @@ void propagate_velocity_lp3_acc(
    const energy_prec ekcal_inv = 1.0 / units::ekcal;
    energy_prec ekn = 0;
    #pragma acc parallel loop independent async\
+               copy(ekn) reduction(+:ekn)\
                deviceptr(mass,vx_lp,vy_lp,vz_lp,vxnew_lp,vynew_lp,vznew_lp,\
                vxold_lp,vyold_lp,vzold_lp)
    for (int i = 0; i < n; ++i) {
@@ -307,6 +310,7 @@ void propagate_velocity_lp3_acc(
       ekn += term *
          (vx_lp[i] * vx_lp[i] + vy_lp[i] * vy_lp[i] + vz_lp[i] * vz_lp[i]);
    }
+   #pragma acc wait
    eksum_new = ekn;
 }
 }

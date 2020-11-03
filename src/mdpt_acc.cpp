@@ -2,6 +2,7 @@
 #include "tool/log.h"
 
 
+#include "accmanaged.h"
 #include "box.h"
 #include "energy.h"
 #include "glob.molecule.h"
@@ -25,13 +26,10 @@ void kinetic_explicit_acc(T_prec& temp_out, energy_prec& eksum_out,
                           const vel_prec* vy, const vel_prec* vz)
 {
    const energy_prec ekcal_inv = 1.0 / units::ekcal;
-   energy_prec exx = 0;
-   energy_prec eyy = 0;
-   energy_prec ezz = 0;
-   energy_prec exy = 0;
-   energy_prec eyz = 0;
-   energy_prec ezx = 0;
+   energy_prec exx = 0, eyy = 0, ezz = 0, exy = 0, eyz = 0, ezx = 0;
    #pragma acc parallel loop independent async\
+               copy(exx,eyy,ezz,exy,eyz,ezx)\
+               reduction(+:exx,eyy,ezz,exy,eyz,ezx)\
                deviceptr(mass,vx,vy,vz)
    for (int i = 0; i < n; ++i) {
       energy_prec term = 0.5f * mass[i] * ekcal_inv;
@@ -42,6 +40,7 @@ void kinetic_explicit_acc(T_prec& temp_out, energy_prec& eksum_out,
       eyz += term * vy[i] * vz[i];
       ezx += term * vz[i] * vx[i];
    }
+   #pragma acc wait
    energy_prec eksum_local = exx + eyy + ezz;
    T_prec temp_local = 2 * eksum_local / (mdstuf::nfree * units::gasconst);
 
@@ -127,12 +126,12 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
    double volold = volbox();
    double volnew = 0;
    double eold = epot;
-   darray::copy(PROCEED_NEW_Q, n, x_pmonte, xpos);
-   darray::copy(PROCEED_NEW_Q, n, y_pmonte, ypos);
-   darray::copy(PROCEED_NEW_Q, n, z_pmonte, zpos);
-   darray::copy(PROCEED_NEW_Q, n, vx_pmonte, vx);
-   darray::copy(PROCEED_NEW_Q, n, vy_pmonte, vy);
-   darray::copy(PROCEED_NEW_Q, n, vz_pmonte, vz);
+   darray::copy(g::q0, n, x_pmonte, xpos);
+   darray::copy(g::q0, n, y_pmonte, ypos);
+   darray::copy(g::q0, n, z_pmonte, zpos);
+   darray::copy(g::q0, n, vx_pmonte, vx);
+   darray::copy(g::q0, n, vy_pmonte, vy);
+   darray::copy(g::q0, n, vz_pmonte, vz);
 
 
    if (isotropic) {
@@ -231,12 +230,12 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
       TINKER_LOG("MC Barostat Move Rejected");
       esum = eold;
       set_default_box(boxold);
-      darray::copy(PROCEED_NEW_Q, n, xpos, x_pmonte);
-      darray::copy(PROCEED_NEW_Q, n, ypos, y_pmonte);
-      darray::copy(PROCEED_NEW_Q, n, zpos, z_pmonte);
-      darray::copy(PROCEED_NEW_Q, n, vx, vx_pmonte);
-      darray::copy(PROCEED_NEW_Q, n, vy, vy_pmonte);
-      darray::copy(PROCEED_NEW_Q, n, vz, vz_pmonte);
+      darray::copy(g::q0, n, xpos, x_pmonte);
+      darray::copy(g::q0, n, ypos, y_pmonte);
+      darray::copy(g::q0, n, zpos, z_pmonte);
+      darray::copy(g::q0, n, vx, vx_pmonte);
+      darray::copy(g::q0, n, vy, vy_pmonte);
+      darray::copy(g::q0, n, vz, vz_pmonte);
       copy_pos_to_xyz();
       refresh_neighbors();
    } else {

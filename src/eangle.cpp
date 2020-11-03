@@ -46,9 +46,10 @@ void eangle_data(rc_op op)
       for (size_t i = 0; i < iangvec.size(); ++i) {
          iangvec[i] = angbnd::iang[i] - 1;
       }
-      darray::copyin(WAIT_NEW_Q, nangle, iang, iangvec.data());
-      darray::copyin(WAIT_NEW_Q, nangle, ak, angbnd::ak);
-      darray::copyin(WAIT_NEW_Q, nangle, anat, angbnd::anat);
+      darray::copyin(g::q0, nangle, iang, iangvec.data());
+      darray::copyin(g::q0, nangle, ak, angbnd::ak);
+      darray::copyin(g::q0, nangle, anat, angbnd::anat);
+      wait_for(g::q0);
 
       angunit = angpot::angunit;
       cang = angpot::cang;
@@ -70,7 +71,8 @@ void eangle_data(rc_op op)
             assert(false);
          }
       }
-      darray::copyin(WAIT_NEW_Q, nangle, angtyp, angtypvec.data());
+      darray::copyin(g::q0, nangle, angtyp, angtypvec.data());
+      wait_for(g::q0);
    }
 }
 
@@ -86,11 +88,11 @@ void eangle(int vers)
       host_zero(energy_ea, virial_ea);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, ea);
+         darray::zero(g::q0, bsize, ea);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_ea);
+         darray::zero(g::q0, bsize, vir_ea);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, deax, deay, deaz);
+         darray::zero(g::q0, n, deax, deay, deaz);
    }
 
 

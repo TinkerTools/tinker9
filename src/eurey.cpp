@@ -45,9 +45,10 @@ void eurey_data(rc_op op)
       std::vector<int> ibuf(3 * nangle);
       for (int i = 0; i < 3 * nangle; ++i)
          ibuf[i] = urey::iury[i] - 1;
-      darray::copyin(WAIT_NEW_Q, nangle, iury, ibuf.data());
-      darray::copyin(WAIT_NEW_Q, nangle, uk, urey::uk);
-      darray::copyin(WAIT_NEW_Q, nangle, ul, urey::ul);
+      darray::copyin(g::q0, nangle, iury, ibuf.data());
+      darray::copyin(g::q0, nangle, uk, urey::uk);
+      darray::copyin(g::q0, nangle, ul, urey::ul);
+      wait_for(g::q0);
 
       cury = urypot::cury;
       qury = urypot::qury;
@@ -67,11 +68,11 @@ void eurey(int vers)
       host_zero(energy_eub, virial_eub);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, eub);
+         darray::zero(g::q0, bsize, eub);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_eub);
+         darray::zero(g::q0, bsize, vir_eub);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, deubx, deuby, deubz);
+         darray::zero(g::q0, n, deubx, deuby, deubz);
    }
 
 
