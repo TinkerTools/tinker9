@@ -61,6 +61,7 @@ void echgtrn_data(rc_op op)
          dmpctvec[i] = idmp;
       }
       darray::copyin(g::q0, n, dmpct, dmpctvec.data());
+      wait_for(g::q0);
    }
 }
 
