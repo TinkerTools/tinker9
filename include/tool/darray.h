@@ -249,7 +249,7 @@ struct darray
 
 
    template <class PTR, class PTR2>
-   static typename deduce_ptr<PTR>::type dot_sync(int q, size_t nelem,
+   static typename deduce_ptr<PTR>::type dot_wait(int q, size_t nelem,
                                                   const PTR ptr, const PTR2 b)
    {
       typedef typename deduce_ptr<PTR>::type T;

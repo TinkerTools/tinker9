@@ -39,8 +39,8 @@ void couple_data(rc_op op)
             ibuf[base + j] = -1;
          }
       }
-      darray::copyin(asyncq, n, couple_i12, ibuf.data());
-      wait_for(asyncq);
+      darray::copyin(g::q0, n, couple_i12, ibuf.data());
+      wait_for(g::q0);
    }
 }
 }

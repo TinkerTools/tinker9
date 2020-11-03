@@ -76,42 +76,42 @@ TEST_CASE("Reduce", "[util][math][reduce]")
 
    darray::allocate(N, &di, &df, &dd, &du);
    darray::allocate(N, &df2, &dd2, &du2);
-   darray::copyin(asyncq, N, di, vi.data());
-   darray::copyin(asyncq, N, df, vf.data());
-   darray::copyin(asyncq, N, dd, vd.data());
-   darray::copyin(asyncq, N, du, vu.data());
-   darray::copyin(asyncq, N, df2, vf2.data());
-   darray::copyin(asyncq, N, dd2, vd2.data());
-   darray::copyin(asyncq, N, du2, vu2.data());
-   wait_for(asyncq);
+   darray::copyin(g::q0, N, di, vi.data());
+   darray::copyin(g::q0, N, df, vf.data());
+   darray::copyin(g::q0, N, dd, vd.data());
+   darray::copyin(g::q0, N, du, vu.data());
+   darray::copyin(g::q0, N, df2, vf2.data());
+   darray::copyin(g::q0, N, dd2, vd2.data());
+   darray::copyin(g::q0, N, du2, vu2.data());
+   wait_for(g::q0);
 
 
-   ai = parallel::reduce_sum(di, N, asyncq);
+   ai = parallel::reduce_sum(di, N, g::q0);
    REQUIRE(ai == refi);
 
-   af = parallel::reduce_sum(df, N, asyncq);
+   af = parallel::reduce_sum(df, N, g::q0);
    REQUIRE(af == reff);
 
 
-   ad = parallel::reduce_sum(dd, N, asyncq);
+   ad = parallel::reduce_sum(dd, N, g::q0);
    REQUIRE(ad == refd);
 
 
-   au = parallel::reduce_sum(du, N, asyncq);
+   au = parallel::reduce_sum(du, N, g::q0);
    REQUIRE(au == refu);
 
 
-   parallel::reduce_sum2(af2, df2, N, asyncq);
+   parallel::reduce_sum2(af2, df2, N, g::q0);
    for (int j = 0; j < H; ++j)
       REQUIRE(af2[j] == reff2[j]);
 
 
-   parallel::reduce_sum2(ad2, dd2, N, asyncq);
+   parallel::reduce_sum2(ad2, dd2, N, g::q0);
    for (int j = 0; j < H; ++j)
       REQUIRE(ad2[j] == refd2[j]);
 
 
-   parallel::reduce_sum2(au2, du2, N, asyncq);
+   parallel::reduce_sum2(au2, du2, N, g::q0);
    for (int j = 0; j < H; ++j)
       REQUIRE(au2[j] == refu2[j]);
 

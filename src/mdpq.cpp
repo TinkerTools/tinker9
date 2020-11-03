@@ -209,13 +209,13 @@ void xyz_data(rc_op op)
 
    if (op & rc_init) {
       if (calc::traj & rc_flag) {
-         darray::copyin(asyncq, n, x, atoms::x);
-         darray::copyin(asyncq, n, y, atoms::y);
-         darray::copyin(asyncq, n, z, atoms::z);
+         darray::copyin(g::q0, n, x, atoms::x);
+         darray::copyin(g::q0, n, y, atoms::y);
+         darray::copyin(g::q0, n, z, atoms::z);
       } else {
-         darray::copyin(asyncq, n, xpos, atoms::x);
-         darray::copyin(asyncq, n, ypos, atoms::y);
-         darray::copyin(asyncq, n, zpos, atoms::z);
+         darray::copyin(g::q0, n, xpos, atoms::x);
+         darray::copyin(g::q0, n, ypos, atoms::y);
+         darray::copyin(g::q0, n, zpos, atoms::z);
          copy_pos_to_xyz();
       }
    }
@@ -279,9 +279,9 @@ void mass_data(rc_op op)
       std::vector<double> mbuf(n);
       for (int i = 0; i < n; ++i)
          mbuf[i] = 1 / atomid::mass[i];
-      darray::copyin(asyncq, n, massinv, mbuf.data());
-      darray::copyin(asyncq, n, mass, atomid::mass);
-      wait_for(asyncq);
+      darray::copyin(g::q0, n, massinv, mbuf.data());
+      darray::copyin(g::q0, n, mass, atomid::mass);
+      wait_for(g::q0);
    }
 }
 
@@ -306,10 +306,10 @@ void vel_data(rc_op op)
          vvy[i] = moldyn::v[3 * i + 1];
          vvz[i] = moldyn::v[3 * i + 2];
       }
-      darray::copyin(asyncq, n, vx, vvx.data());
-      darray::copyin(asyncq, n, vy, vvy.data());
-      darray::copyin(asyncq, n, vz, vvz.data());
-      wait_for(asyncq);
+      darray::copyin(g::q0, n, vx, vvx.data());
+      darray::copyin(g::q0, n, vy, vvy.data());
+      darray::copyin(g::q0, n, vz, vvz.data());
+      wait_for(g::q0);
    }
 }
 

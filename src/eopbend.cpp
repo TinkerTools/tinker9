@@ -53,9 +53,9 @@ void eopbend_data(rc_op op)
       std::vector<int> ibuf(nangle);
       for (int i = 0; i < nangle; ++i)
          ibuf[i] = opbend::iopb[i] - 1;
-      darray::copyin(asyncq, nangle, iopb, ibuf.data());
-      darray::copyin(asyncq, nangle, opbk, opbend::opbk);
-      wait_for(asyncq);
+      darray::copyin(g::q0, nangle, iopb, ibuf.data());
+      darray::copyin(g::q0, nangle, opbk, opbend::opbk);
+      wait_for(g::q0);
       opbunit = angpot::opbunit;
       copb = angpot::copb;
       qopb = angpot::qopb;
@@ -76,11 +76,11 @@ void eopbend(int vers)
       host_zero(energy_eopb, virial_eopb);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(asyncq, bsize, eopb);
+         darray::zero(g::q0, bsize, eopb);
       if (do_v)
-         darray::zero(asyncq, bsize, vir_eopb);
+         darray::zero(g::q0, bsize, vir_eopb);
       if (do_g)
-         darray::zero(asyncq, n, deopbx, deopby, deopbz);
+         darray::zero(g::q0, n, deopbx, deopby, deopbz);
    }
 
 

@@ -648,92 +648,92 @@ void evalence_cu(int vers)
    if (rc_a and flag_bond) {
       host_zero(energy_eb, virial_eb);
       if (do_e)
-         darray::zero(asyncq, bsize, eb);
+         darray::zero(g::q0, bsize, eb);
       if (do_v)
-         darray::zero(asyncq, bsize, vir_eb);
+         darray::zero(g::q0, bsize, vir_eb);
       if (do_g)
-         darray::zero(asyncq, n, debx, deby, debz);
+         darray::zero(g::q0, n, debx, deby, debz);
    }
    if (rc_a and flag_angle) {
       host_zero(energy_ea, virial_ea);
       if (do_e)
-         darray::zero(asyncq, bsize, ea);
+         darray::zero(g::q0, bsize, ea);
       if (do_v)
-         darray::zero(asyncq, bsize, vir_ea);
+         darray::zero(g::q0, bsize, vir_ea);
       if (do_g)
-         darray::zero(asyncq, n, deax, deay, deaz);
+         darray::zero(g::q0, n, deax, deay, deaz);
    }
    if (rc_a and flag_strbnd) {
       host_zero(energy_eba, virial_eba);
       if (do_e)
-         darray::zero(asyncq, bsize, eba);
+         darray::zero(g::q0, bsize, eba);
       if (do_v)
-         darray::zero(asyncq, bsize, vir_eba);
+         darray::zero(g::q0, bsize, vir_eba);
       if (do_g)
-         darray::zero(asyncq, n, debax, debay, debaz);
+         darray::zero(g::q0, n, debax, debay, debaz);
    }
    if (rc_a and flag_urey) {
       host_zero(energy_eub, virial_eub);
       if (do_e)
-         darray::zero(asyncq, bsize, eub);
+         darray::zero(g::q0, bsize, eub);
       if (do_v)
-         darray::zero(asyncq, bsize, vir_eub);
+         darray::zero(g::q0, bsize, vir_eub);
       if (do_g)
-         darray::zero(asyncq, n, deubx, deuby, deubz);
+         darray::zero(g::q0, n, deubx, deuby, deubz);
    }
    if (rc_a and flag_opb) {
       host_zero(energy_eopb, virial_eopb);
       if (do_e)
-         darray::zero(asyncq, bsize, eopb);
+         darray::zero(g::q0, bsize, eopb);
       if (do_v)
-         darray::zero(asyncq, bsize, vir_eopb);
+         darray::zero(g::q0, bsize, vir_eopb);
       if (do_g)
-         darray::zero(asyncq, n, deopbx, deopby, deopbz);
+         darray::zero(g::q0, n, deopbx, deopby, deopbz);
    }
    if (rc_a and flag_imptor) {
       size_t bsize = buffer_size();
       if (do_e)
-         darray::zero(asyncq, bsize, eit);
+         darray::zero(g::q0, bsize, eit);
       if (do_v)
-         darray::zero(asyncq, bsize, vir_eit);
+         darray::zero(g::q0, bsize, vir_eit);
       if (do_g)
-         darray::zero(asyncq, n, deitx, deity, deitz);
+         darray::zero(g::q0, n, deitx, deity, deitz);
    }
    if (rc_a and flag_tors) {
       host_zero(energy_et, virial_et);
       if (do_e)
-         darray::zero(asyncq, bsize, et);
+         darray::zero(g::q0, bsize, et);
       if (do_v)
-         darray::zero(asyncq, bsize, vir_et);
+         darray::zero(g::q0, bsize, vir_et);
       if (do_g)
-         darray::zero(asyncq, n, detx, dety, detz);
+         darray::zero(g::q0, n, detx, dety, detz);
    }
    if (rc_a and flag_pitors) {
       host_zero(energy_ept, virial_ept);
       if (do_e)
-         darray::zero(asyncq, bsize, ept);
+         darray::zero(g::q0, bsize, ept);
       if (do_v)
-         darray::zero(asyncq, bsize, vir_ept);
+         darray::zero(g::q0, bsize, vir_ept);
       if (do_g)
-         darray::zero(asyncq, n, deptx, depty, deptz);
+         darray::zero(g::q0, n, deptx, depty, deptz);
    }
    if (rc_a and flag_tortor) {
       host_zero(energy_ett, virial_ett);
       if (do_e)
-         darray::zero(asyncq, bsize, ett);
+         darray::zero(g::q0, bsize, ett);
       if (do_v)
-         darray::zero(asyncq, bsize, vir_ett);
+         darray::zero(g::q0, bsize, vir_ett);
       if (do_g)
-         darray::zero(asyncq, n, dettx, detty, dettz);
+         darray::zero(g::q0, n, dettx, detty, dettz);
    }
    if (rc_a and flag_geom) {
       host_zero(energy_eg, virial_eg);
       if (do_e)
-         darray::zero(asyncq, bsize, eg);
+         darray::zero(g::q0, bsize, eg);
       if (do_v)
-         darray::zero(asyncq, bsize, vir_eg);
+         darray::zero(g::q0, bsize, vir_eg);
       if (do_g)
-         darray::zero(asyncq, n, degx, degy, degz);
+         darray::zero(g::q0, n, degx, degy, degz);
    }
 
 

@@ -42,9 +42,9 @@ void egeom_data(rc_op op)
 
 
    if (op & rc_init) {
-      darray::copyin(asyncq, ngfix, igfix, restrn::igfix);
-      darray::copyin(asyncq, ngfix, gfix, restrn::gfix);
-      wait_for(asyncq);
+      darray::copyin(g::q0, ngfix, igfix, restrn::igfix);
+      darray::copyin(g::q0, ngfix, gfix, restrn::gfix);
+      wait_for(g::q0);
    }
 }
 
@@ -61,11 +61,11 @@ void egeom(int vers)
       host_zero(energy_eg, virial_eg);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(asyncq, bsize, eg);
+         darray::zero(g::q0, bsize, eg);
       if (do_v)
-         darray::zero(asyncq, bsize, vir_eg);
+         darray::zero(g::q0, bsize, vir_eg);
       if (do_g)
-         darray::zero(asyncq, n, degx, degy, degz);
+         darray::zero(g::q0, n, degx, degy, degz);
    }
 
 

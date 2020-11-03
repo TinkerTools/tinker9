@@ -3,8 +3,11 @@
 
 
 namespace tinker {
-TINKER_EXTERN int syncq;
-TINKER_EXTERN int asyncq;
-TINKER_EXTERN int pme_queue;
+namespace gpu {
+TINKER_EXTERN int q0;
+TINKER_EXTERN int q1;
+TINKER_EXTERN int qpme;
+}
+namespace g = gpu;
 TINKER_EXTERN bool use_pme_stream;
 }

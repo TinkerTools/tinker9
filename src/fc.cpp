@@ -106,10 +106,10 @@ void t_prterr()
    Box p;
    get_default_box(p);
    set_tinker_box_module(p);
-   darray::copyout(asyncq, n, atoms::x, xpos);
-   darray::copyout(asyncq, n, atoms::y, ypos);
-   darray::copyout(asyncq, n, atoms::z, zpos);
-   wait_for(asyncq);
+   darray::copyout(g::q0, n, atoms::x, xpos);
+   darray::copyout(g::q0, n, atoms::y, ypos);
+   darray::copyout(g::q0, n, atoms::z, zpos);
+   wait_for(g::q0);
    TINKER_RT(prterr)();
 }
 

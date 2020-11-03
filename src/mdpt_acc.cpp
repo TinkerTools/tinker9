@@ -135,12 +135,12 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
    double volold = volbox();
    double volnew = 0;
    double eold = epot;
-   darray::copy(asyncq, n, x_pmonte, xpos);
-   darray::copy(asyncq, n, y_pmonte, ypos);
-   darray::copy(asyncq, n, z_pmonte, zpos);
-   darray::copy(asyncq, n, vx_pmonte, vx);
-   darray::copy(asyncq, n, vy_pmonte, vy);
-   darray::copy(asyncq, n, vz_pmonte, vz);
+   darray::copy(g::q0, n, x_pmonte, xpos);
+   darray::copy(g::q0, n, y_pmonte, ypos);
+   darray::copy(g::q0, n, z_pmonte, zpos);
+   darray::copy(g::q0, n, vx_pmonte, vx);
+   darray::copy(g::q0, n, vy_pmonte, vy);
+   darray::copy(g::q0, n, vz_pmonte, vz);
 
 
    if (isotropic) {
@@ -239,12 +239,12 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
       TINKER_LOG("MC Barostat Move Rejected");
       esum = eold;
       set_default_box(boxold);
-      darray::copy(asyncq, n, xpos, x_pmonte);
-      darray::copy(asyncq, n, ypos, y_pmonte);
-      darray::copy(asyncq, n, zpos, z_pmonte);
-      darray::copy(asyncq, n, vx, vx_pmonte);
-      darray::copy(asyncq, n, vy, vy_pmonte);
-      darray::copy(asyncq, n, vz, vz_pmonte);
+      darray::copy(g::q0, n, xpos, x_pmonte);
+      darray::copy(g::q0, n, ypos, y_pmonte);
+      darray::copy(g::q0, n, zpos, z_pmonte);
+      darray::copy(g::q0, n, vx, vx_pmonte);
+      darray::copy(g::q0, n, vy, vy_pmonte);
+      darray::copy(g::q0, n, vz, vz_pmonte);
       copy_pos_to_xyz();
       refresh_neighbors();
    } else {

@@ -323,7 +323,7 @@ void grid_disp_cu(PMEUnit pme_u, real* csix)
    int nt = n1 * n2 * n3;
 
 
-   darray::zero(asyncq, 2 * nt, st.qgrid);
+   darray::zero(g::q0, 2 * nt, st.qgrid);
    auto ker = grid_put_cu1<DISP, 4>;
    launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, csix,
               nullptr, st.qgrid, recipa, recipb, recipc);
@@ -339,7 +339,7 @@ void grid_mpole_cu(PMEUnit pme_u, real (*fmp)[10])
    int nt = n1 * n2 * n3;
 
 
-   darray::zero(asyncq, 2 * nt, st.qgrid);
+   darray::zero(g::q0, 2 * nt, st.qgrid);
    if (TINKER_CU_THETA_ON_THE_FLY_GRID_MPOLE) {
       auto ker = grid_put_cu1<MPOLE, 5>;
       launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
@@ -363,7 +363,7 @@ void grid_uind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
    int nt = n1 * n2 * n3;
 
 
-   darray::zero(asyncq, 2 * nt, st.qgrid);
+   darray::zero(g::q0, 2 * nt, st.qgrid);
    if (TINKER_CU_THETA_ON_THE_FLY_GRID_UIND) {
       auto ker = grid_put_cu1<UIND, 5>;
       launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,

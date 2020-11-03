@@ -240,9 +240,9 @@ void evdw_data(rc_op op)
       }
       nvexclude = excls.size();
       darray::allocate(nvexclude, &vexclude, &vexclude_scale);
-      darray::copyin(asyncq, nvexclude, vexclude, exclik.data());
-      darray::copyin(asyncq, nvexclude, vexclude_scale, excls.data());
-      wait_for(asyncq);
+      darray::copyin(g::q0, nvexclude, vexclude, exclik.data());
+      darray::copyin(g::q0, nvexclude, vexclude_scale, excls.data());
+      wait_for(g::q0);
 
 
       // check VDW14 interations
@@ -325,8 +325,8 @@ void evdw_data(rc_op op)
             // radmin4 and epsilon4 are similar to radmin and epsilon
             darray::allocate(jcount * jcount, &radmin4, &epsilon4);
             darray::allocate(nvdw14, &vdw14ik);
-            darray::copyin(asyncq, nvdw14, vdw14ik, v14ikbuf.data());
-            wait_for(asyncq);
+            darray::copyin(g::q0, nvdw14, vdw14ik, v14ikbuf.data());
+            wait_for(g::q0);
          }
       }
 
@@ -360,14 +360,14 @@ void evdw_data(rc_op op)
             iredbuf[i] = jt;
             kredbuf[i] = vdw::kred[i];
          }
-         darray::copyin(asyncq, n, ired, iredbuf.data());
-         darray::copyin(asyncq, n, kred, kredbuf.data());
-         wait_for(asyncq);
+         darray::copyin(g::q0, n, ired, iredbuf.data());
+         darray::copyin(g::q0, n, kred, kredbuf.data());
+         wait_for(g::q0);
       }
 
 
-      darray::copyin(asyncq, n, jvdw, jvdwbuf.data());
-      wait_for(asyncq);
+      darray::copyin(g::q0, n, jvdw, jvdwbuf.data());
+      wait_for(g::q0);
       njvdw = jcount;
 
 
@@ -383,9 +383,9 @@ void evdw_data(rc_op op)
             epsvec.push_back(vdw::epsilon[offset]);
          }
       }
-      darray::copyin(asyncq, jcount * jcount, radmin, radvec.data());
-      darray::copyin(asyncq, jcount * jcount, epsilon, epsvec.data());
-      wait_for(asyncq);
+      darray::copyin(g::q0, jcount * jcount, radmin, radvec.data());
+      darray::copyin(g::q0, jcount * jcount, epsilon, epsvec.data());
+      wait_for(g::q0);
 
 
       if (nvdw14) {
@@ -400,9 +400,9 @@ void evdw_data(rc_op op)
                eps4buf.push_back(vdw::epsilon4[offset]);
             }
          }
-         darray::copyin(asyncq, jcount * jcount, radmin4, rad4buf.data());
-         darray::copyin(asyncq, jcount * jcount, epsilon4, eps4buf.data());
-         wait_for(asyncq);
+         darray::copyin(g::q0, jcount * jcount, radmin4, rad4buf.data());
+         darray::copyin(g::q0, jcount * jcount, epsilon4, eps4buf.data());
+         wait_for(g::q0);
       }
 
 
@@ -418,8 +418,8 @@ void evdw_data(rc_op op)
             mutvec[i] = 0;
          }
       }
-      darray::copyin(asyncq, n, mut, mutvec.data());
-      wait_for(asyncq);
+      darray::copyin(g::q0, n, mut, mutvec.data());
+      wait_for(g::q0);
       vlam = mutant::vlambda;
 
 
@@ -502,13 +502,13 @@ void evdw(int vers)
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)
-         darray::zero(asyncq, bsize, nev);
+         darray::zero(g::q0, bsize, nev);
       if (do_e)
-         darray::zero(asyncq, bsize, ev);
+         darray::zero(g::q0, bsize, ev);
       if (do_v)
-         darray::zero(asyncq, bsize, vir_ev);
+         darray::zero(g::q0, bsize, vir_ev);
       if (do_g)
-         darray::zero(asyncq, n, devx, devy, devz);
+         darray::zero(g::q0, n, devx, devy, devz);
    }
 
 

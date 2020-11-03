@@ -29,21 +29,21 @@ void molecule_data(rc_op op)
          buf[j] = molcul::imol[j] - 1;
          buf[j + 1] = molcul::imol[j + 1];
       }
-      darray::copyin(asyncq, st.nmol, st.imol, buf.data());
-      wait_for(asyncq);
+      darray::copyin(g::q0, st.nmol, st.imol, buf.data());
+      wait_for(g::q0);
       for (int i = 0; i < n; ++i) {
          buf[i] = molcul::kmol[i] - 1;
       }
-      darray::copyin(asyncq, n, st.kmol, buf.data());
-      wait_for(asyncq);
+      darray::copyin(g::q0, n, st.kmol, buf.data());
+      wait_for(g::q0);
       for (int i = 0; i < n; ++i) {
          buf[i] = molcul::molcule[i] - 1;
       }
-      darray::copyin(asyncq, n, st.molecule, buf.data());
-      wait_for(asyncq);
+      darray::copyin(g::q0, n, st.molecule, buf.data());
+      wait_for(g::q0);
       st.totmass = molcul::totmass;
-      darray::copyin(asyncq, st.nmol, st.molmass, molcul::molmass);
-      wait_for(asyncq);
+      darray::copyin(g::q0, st.nmol, st.molmass, molcul::molmass);
+      wait_for(g::q0);
    }
 }
 }

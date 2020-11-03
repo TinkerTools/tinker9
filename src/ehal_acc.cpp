@@ -76,7 +76,7 @@ void ehal_acc1()
    auto bufsize = buffer_size();
 
    if CONSTEXPR (do_g)
-      darray::zero(asyncq, n, gxred, gyred, gzred);
+      darray::zero(g::q0, n, gxred, gyred, gzred);
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\

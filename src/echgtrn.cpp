@@ -52,7 +52,7 @@ void echgtrn_data(rc_op op)
 
 
    if (op & rc_init) {
-      darray::copyin(asyncq, n, chgct, chgtrn::chgct);
+      darray::copyin(g::q0, n, chgct, chgtrn::chgct);
       std::vector<real> dmpctvec(n);
       for (int i = 0; i < n; ++i) {
          real idmp = chgtrn::dmpct[i];
@@ -60,7 +60,7 @@ void echgtrn_data(rc_op op)
             idmp = 1000;
          dmpctvec[i] = idmp;
       }
-      darray::copyin(asyncq, n, dmpct, dmpctvec.data());
+      darray::copyin(g::q0, n, dmpct, dmpctvec.data());
    }
 }
 
@@ -78,13 +78,13 @@ void echgtrn(int vers)
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)
-         darray::zero(asyncq, bsize, nct);
+         darray::zero(g::q0, bsize, nct);
       if (do_e)
-         darray::zero(asyncq, bsize, ect);
+         darray::zero(g::q0, bsize, ect);
       if (do_v)
-         darray::zero(asyncq, bsize, vir_ect);
+         darray::zero(g::q0, bsize, vir_ect);
       if (do_g)
-         darray::zero(asyncq, n, dectx, decty, dectz);
+         darray::zero(g::q0, n, dectx, decty, dectz);
    }
 
 

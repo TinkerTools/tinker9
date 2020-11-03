@@ -236,8 +236,8 @@ static void nblist_alloc(nblist_t version, NBListUnit& nblu, int maxn,
    st.cutoff = cutoff;
    st.buffer = buffer;
 
-   nblu.update_deviceptr(st, asyncq);
-   wait_for(asyncq);
+   nblu.update_deviceptr(st, g::q0);
+   wait_for(g::q0);
 }
 
 
@@ -508,7 +508,7 @@ void refresh_neighbors()
          unt->x = x;
          unt->y = y;
          unt->z = z;
-         unt.update_deviceptr(*unt, asyncq);
+         unt.update_deviceptr(*unt, g::q0);
       }
       nblist_update_acc(unt);
    }
@@ -531,7 +531,7 @@ void refresh_neighbors()
          unt->x = x;
          unt->y = y;
          unt->z = z;
-         unt.update_deviceptr(*unt, asyncq);
+         unt.update_deviceptr(*unt, g::q0);
       }
       nblist_update_acc(unt);
    }
@@ -554,7 +554,7 @@ void refresh_neighbors()
          unt->x = x;
          unt->y = y;
          unt->z = z;
-         unt.update_deviceptr(*unt, asyncq);
+         unt.update_deviceptr(*unt, g::q0);
       }
       nblist_update_acc(unt);
    }
@@ -577,7 +577,7 @@ void refresh_neighbors()
          unt->x = x;
          unt->y = y;
          unt->z = z;
-         unt.update_deviceptr(*unt, asyncq);
+         unt.update_deviceptr(*unt, g::q0);
       }
       nblist_update_acc(unt);
    }

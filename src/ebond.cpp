@@ -54,10 +54,10 @@ void ebond_data(rc_op op)
       for (size_t i = 0; i < ibndvec.size(); ++i) {
          ibndvec[i] = bndstr::ibnd[i] - 1;
       }
-      darray::copyin(asyncq, nbond, ibnd, ibndvec.data());
-      darray::copyin(asyncq, nbond, bl, bndstr::bl);
-      darray::copyin(asyncq, nbond, bk, bndstr::bk);
-      wait_for(asyncq);
+      darray::copyin(g::q0, nbond, ibnd, ibndvec.data());
+      darray::copyin(g::q0, nbond, bl, bndstr::bl);
+      darray::copyin(g::q0, nbond, bk, bndstr::bk);
+      wait_for(g::q0);
    }
 }
 
@@ -73,11 +73,11 @@ void ebond(int vers)
       host_zero(energy_eb, virial_eb);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(asyncq, bsize, eb);
+         darray::zero(g::q0, bsize, eb);
       if (do_v)
-         darray::zero(asyncq, bsize, vir_eb);
+         darray::zero(g::q0, bsize, vir_eb);
       if (do_g)
-         darray::zero(asyncq, n, debx, deby, debz);
+         darray::zero(g::q0, n, debx, deby, debz);
    }
 
 
