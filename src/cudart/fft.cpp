@@ -59,7 +59,7 @@ void fft_data(rc_op op)
          check_rt(cufftPlan3d(&iplan, nslow, st.nfft2, nfast, typ));
          auto stream = nonblk;
          if (use_pme_stream)
-            stream = pme_stream;
+            stream = g::spme;
          check_rt(cufftSetStream(iplan, stream));
          ++idx;
       }

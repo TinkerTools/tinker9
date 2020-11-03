@@ -26,7 +26,7 @@ void cudalib_data(rc_op op)
 
 
       use_pme_stream = false;
-      pme_stream = nullptr;
+      g::spme = nullptr;
       g::qpme = -42;
       check_rt(cudaEventDestroy(pme_event_finish));
    }
@@ -52,7 +52,7 @@ void cudalib_data(rc_op op)
 
       use_pme_stream = false;
       g::qpme = g::q0 + 1;
-      pme_stream = (cudaStream_t)acc_get_cuda_stream(g::qpme);
+      g::spme = (cudaStream_t)acc_get_cuda_stream(g::qpme);
       check_rt(
          cudaEventCreateWithFlags(&pme_event_finish, cudaEventDisableTiming));
 

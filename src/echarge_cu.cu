@@ -573,7 +573,7 @@ void echarge_fphi_self_cu()
 
    auto stream = nonblk;
    if (use_pme_stream)
-      stream = pme_stream;
+      stream = g::spme;
    if (st.bsorder == 5) {
       auto ker = echarge_cu3<Ver, 5>;
       launch_k2s(stream, PME_BLOCKDIM, n, ker,         //

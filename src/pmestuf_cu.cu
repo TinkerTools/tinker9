@@ -299,7 +299,7 @@ void grid_pchg_cu(PMEUnit pme_u, real* pchg)
 
    auto stream = nonblk;
    if (use_pme_stream)
-      stream = pme_stream;
+      stream = g::spme;
    using type = std::remove_pointer<decltype(st.qgrid)>::type;
    check_rt(cudaMemsetAsync(st.qgrid, 0, 2 * nt * sizeof(type), stream));
    if (st.bsorder == 5) {
@@ -1144,7 +1144,7 @@ void pme_conv_cu2(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
 
 
    auto ker = pme_conv_cu1<DO_E, DO_V>;
-   auto stream = use_pme_stream ? pme_stream : nonblk;
+   auto stream = use_pme_stream ? g::spme : nonblk;
    int ngrid = get_grid_size(BLOCK_DIM);
    ker<<<ngrid, BLOCK_DIM, 0, stream>>>(n1, n2, n3, qgrid, bsmod1, bsmod2,
                                         bsmod3, f, aewald, TINKER_IMAGE_ARGS,
