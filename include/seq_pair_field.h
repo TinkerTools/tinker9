@@ -203,6 +203,7 @@ void pair_dfield_v2(real r2, real xr, real yr, real zr, real dscale,
 }
 
 
+#pragma acc routine seq
 template <class ETYP>
 SEQ_CUDA
 void pair_ufield(real r2, real xr, real yr, real zr, real uscale, //

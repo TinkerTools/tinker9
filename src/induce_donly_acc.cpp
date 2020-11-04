@@ -199,7 +199,6 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
 
    // zero out the induced dipoles at each site
 
-   // darray::zero(PROCEED_NEW_Q, n, uind);
    bool predict = polpred != UPred::NONE;
    if (predict and nualt < maxualt) {
       predict = false;
@@ -220,15 +219,13 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
          udir[i][j] = poli * field[i][j];
    }
 
-   // if (dirguess)
-   //    darray::copy(PROCEED_NEW_Q, n, uind, udir);
    // initial induced dipole
    if (predict) {
       ulspred_sum2(uind);
    } else if (dirguess) {
-      darray::copy(PROCEED_NEW_Q, n, uind, udir);
+      darray::copy(g::q0, n, uind, udir);
    } else {
-      darray::zero(PROCEED_NEW_Q, n, uind);
+      darray::zero(g::q0, n, uind);
    }
    // initial residual r(0)
 
@@ -237,11 +234,6 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
    //                       = E - E -Tu udir
    //                       = -Tu udir
 
-   // if (dirguess) {
-   //    ufield_chgpen(udir, rsd);
-   // } else {
-   //    darray::copy(PROCEED_NEW_Q, n, rsd, field);
-   // }
    if (predict) {
       ufield_chgpen(uind, field);
       #pragma acc parallel loop independent async\
@@ -255,7 +247,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
    } else if (dirguess) {
       ufield_chgpen(udir, rsd);
    } else {
-      darray::copy(PROCEED_NEW_Q, n, rsd, field);
+      darray::copy(g::q0, n, rsd, field);
    }
    #pragma acc parallel loop independent async deviceptr(polarity,rsd)
    for (int i = 0; i < n; ++i) {
@@ -274,12 +266,12 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
    } else {
       diag_precond2(rsd, zrsd);
    }
-   darray::copy(PROCEED_NEW_Q, n, conj, zrsd);
+   darray::copy(g::q0, n, conj, zrsd);
 
    // initial r(0) M r(0)
 
    real sum;
-   sum = darray::dot(WAIT_NEW_Q, n, rsd, zrsd);
+   sum = darray::dot_wait(g::q0, n, rsd, zrsd);
 
    // conjugate gradient iteration of the mutual induced dipoles
 
@@ -312,7 +304,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
 
       // a <- p T p
       real a;
-      a = darray::dot(WAIT_NEW_Q, n, conj, vec);
+      a = darray::dot_wait(g::q0, n, conj, vec);
       // a <- r M r / p T p
       if (a != 0)
          a = sum / a;
@@ -342,7 +334,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
 
       real b;
       real sum1;
-      sum1 = darray::dot(WAIT_NEW_Q, n, rsd, zrsd);
+      sum1 = darray::dot_wait(g::q0, n, rsd, zrsd);
       if (sum != 0)
          b = sum1 / sum;
 
@@ -360,7 +352,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
       sum = sum1;
 
       real epsd;
-      epsd = darray::dot(WAIT_NEW_Q, n, rsd, rsd);
+      epsd = darray::dot_wait(g::q0, n, rsd, rsd);
 
       epsold = eps;
       eps = epsd;
@@ -578,7 +570,7 @@ void ulspred_sum2_acc(real (*restrict uind)[3])
       // c(k,m) = u(k) dot u(m)
       // b(1) ~ b(6) = c(1,2) ~ c(1,7)
       for (int k = 0; k < 6; ++k) {
-         darray::dot(PROCEED_NEW_Q, n, &udalt_lsqr_b[k], pd[0], pd[k + 1]);
+         darray::dot(g::q0, n, &udalt_lsqr_b[k], pd[0], pd[k + 1]);
       }
       // a(1) ~ a(21)
       // OpenACC and CPU save the upper triangle.
@@ -591,7 +583,7 @@ void ulspred_sum2_acc(real (*restrict uind)[3])
       int ia = 0;
       for (int k = 1; k < 7; ++k) {
          for (int m = k; m < 7; ++m) {
-            darray::dot(PROCEED_NEW_Q, n, &udalt_lsqr_a[ia], pd[k], pd[m]);
+            darray::dot(g::q0, n, &udalt_lsqr_a[ia], pd[k], pd[m]);
             ++ia;
          }
       }

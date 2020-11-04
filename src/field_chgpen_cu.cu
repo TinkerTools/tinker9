@@ -368,7 +368,7 @@ void dfield_chgpen_ewald_real_cu(real (*field)[3])
 }
 void dfield_chgpen_nonewald_cu(real (*field)[3])
 {
-   darray::zero(PROCEED_NEW_Q, n, field);
+   darray::zero(g::q0, n, field);
 
    dfield_chgpen_cu<NON_EWALD>(field);
 }
@@ -666,7 +666,7 @@ void ufield_chgpen_ewald_real_cu(const real (*uind)[3], real (*field)[3])
 
 void ufield_chgpen_nonewald_cu(const real (*uind)[3], real (*field)[3])
 {
-   darray::zero(PROCEED_NEW_Q, n, field);
+   darray::zero(g::q0, n, field);
    ufield_chgpen_cu<NON_EWALD>(uind, field);
 }
 }

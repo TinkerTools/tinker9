@@ -264,7 +264,8 @@ void echarge_acc3()
    auto bufsize = buffer_size();
 
 
-   #pragma acc parallel async deviceptr(pchg,qgrid,nec,ec,x,y,z,decx,decy,decz)
+   #pragma acc parallel async deviceptr(pchg,qgrid,nec,ec,x,y,z,decx,decy,decz)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)
    #pragma acc loop independent
    for (int ii = 0; ii < n; ++ii) {
       real chgi = pchg[ii];

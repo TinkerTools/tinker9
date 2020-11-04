@@ -26,6 +26,7 @@ void dfield_chgpen_ewald_real_acc(real (*field)[3])
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(DFIELD_DPTRS,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -87,6 +88,7 @@ void dfield_chgpen_ewald_real_acc(real (*field)[3])
    } // end for (int i)
 
    #pragma acc parallel async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(DFIELD_DPTRS,dexclude,dexclude_scale)
    #pragma acc loop independent
    for (int ii = 0; ii < ndexclude; ++ii) {
@@ -142,7 +144,7 @@ void dfield_chgpen_ewald_real_acc(real (*field)[3])
 // see also subroutine umutual1 in induce.f
 void ufield_chgpen_ewald_recip_self_acc(const real (*uind)[3], real (*field)[3])
 {
-   darray::zero(PROCEED_NEW_Q, n, field);
+   darray::zero(g::q0, n, field);
 
    const PMEUnit pu = ppme_unit;
    const auto& st = *pu;
@@ -162,6 +164,7 @@ void ufield_chgpen_ewald_recip_self_acc(const real (*uind)[3], real (*field)[3])
    const real term = aewald * aewald * aewald * 4 / 3 / sqrtpi;
 
    #pragma acc parallel loop independent async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(field,uind,fdip_phi1)
    for (int i = 0; i < n; ++i) {
       real a[3][3];
@@ -199,6 +202,7 @@ void ufield_chgpen_ewald_real_acc(const real (*uind)[3], real (*field)[3])
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(UFIELD_DPTRS,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -244,10 +248,10 @@ void ufield_chgpen_ewald_real_acc(const real (*uind)[3], real (*field)[3])
       atomic_add(gxi, &field[i][0]);
       atomic_add(gyi, &field[i][1]);
       atomic_add(gzi, &field[i][2]);
-
    } // end for (int i)
 
    #pragma acc parallel async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(UFIELD_DPTRS,wexclude,wexclude_scale)
    #pragma acc loop independent
    for (int ii = 0; ii < nwexclude; ++ii) {

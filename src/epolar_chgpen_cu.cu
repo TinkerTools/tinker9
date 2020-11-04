@@ -801,7 +801,7 @@ void epolar_chgpen_cu(const real (*uind)[3])
 
 
    if CONSTEXPR (do_g)
-      darray::zero(PROCEED_NEW_Q, n, ufld, dufld);
+      darray::zero(g::q0, n, ufld, dufld);
 
    int ngrid = get_grid_size(BLOCK_DIM);
    epolar_chgpen_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, nonblk>>>(

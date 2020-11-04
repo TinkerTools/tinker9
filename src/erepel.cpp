@@ -129,15 +129,17 @@ void erepel_data(rc_op op)
       }
       nrepexclude = excls.size();
       darray::allocate(nrepexclude, &repexclude, &repexclude_scale);
-      darray::copyin(WAIT_NEW_Q, nrepexclude, repexclude, exclik.data());
-      darray::copyin(WAIT_NEW_Q, nrepexclude, repexclude_scale, excls.data());
+      darray::copyin(g::q0, nrepexclude, repexclude, exclik.data());
+      darray::copyin(g::q0, nrepexclude, repexclude_scale, excls.data());
+      wait_for(g::q0);
    }
 
 
    if (op & rc_init) {
-      darray::copyin(PROCEED_NEW_Q, n, sizpr, repel::sizpr);
-      darray::copyin(PROCEED_NEW_Q, n, dmppr, repel::dmppr);
-      darray::copyin(PROCEED_NEW_Q, n, elepr, repel::elepr);
+      darray::copyin(g::q0, n, sizpr, repel::sizpr);
+      darray::copyin(g::q0, n, dmppr, repel::dmppr);
+      darray::copyin(g::q0, n, elepr, repel::elepr);
+      wait_for(g::q0);
    }
 }
 
@@ -155,13 +157,13 @@ void erepel(int vers)
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)
-         darray::zero(PROCEED_NEW_Q, bsize, nrep);
+         darray::zero(g::q0, bsize, nrep);
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, er);
+         darray::zero(g::q0, bsize, er);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_er);
+         darray::zero(g::q0, bsize, vir_er);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, derx, dery, derz);
+         darray::zero(g::q0, n, derx, dery, derz);
    }
 
 

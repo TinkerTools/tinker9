@@ -45,8 +45,9 @@ void estrbnd_data(rc_op op)
       for (int i = 0; i < 3 * nangle; ++i) {
          ibuf[i] = strbnd::isb[i] - 1;
       }
-      darray::copyin(WAIT_NEW_Q, nangle, isb, ibuf.data());
-      darray::copyin(WAIT_NEW_Q, nangle, sbk, strbnd::sbk);
+      darray::copyin(g::q0, nangle, isb, ibuf.data());
+      darray::copyin(g::q0, nangle, sbk, strbnd::sbk);
+      wait_for(g::q0);
 
       stbnunit = angpot::stbnunit;
    }
@@ -65,11 +66,11 @@ void estrbnd(int vers)
       host_zero(energy_eba, virial_eba);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, eba);
+         darray::zero(g::q0, bsize, eba);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_eba);
+         darray::zero(g::q0, bsize, vir_eba);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, debax, debay, debaz);
+         darray::zero(g::q0, n, debax, debay, debaz);
    }
 
 
