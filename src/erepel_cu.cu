@@ -576,7 +576,7 @@ void erepel_cu2()
 
 
    int ngrid = get_grid_size(BLOCK_DIM);
-   erepel_cu1<Ver><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
+   erepel_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(
       st.n, TINKER_IMAGE_ARGS, nrep, er, vir_er, derx, dery, derz, cut, off,
       st.si2.bit0, nrepexclude, repexclude, repexclude_scale, st.x, st.y, st.z,
       st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, trqx, trqy, trqz,

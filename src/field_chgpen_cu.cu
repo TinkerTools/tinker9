@@ -356,7 +356,7 @@ void dfield_chgpen_cu(real (*field)[3])
 
 
    int ngrid = get_grid_size(BLOCK_DIM);
-   dfield_chgpen_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
+   dfield_chgpen_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(
       st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nmdwexclude, mdwexclude,
       mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
       st.niak, st.iak, st.lst, field, rpole, pcore, pval, palpha, aewald);
@@ -652,7 +652,7 @@ void ufield_chgpen_cu(const real (*uind)[3], real (*field)[3])
    }
 
    int ngrid = get_grid_size(BLOCK_DIM);
-   ufield_chgpen_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
+   ufield_chgpen_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(
       st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nmdwexclude, mdwexclude,
       mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
       st.niak, st.iak, st.lst, uind, field, pcore, pval, palpha, aewald);

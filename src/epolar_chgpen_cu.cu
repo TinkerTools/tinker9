@@ -789,7 +789,6 @@ void epolar_chgpen_cu(const real (*uind)[3])
       off = switch_off(switch_ewald);
    else
       off = switch_off(switch_mpole);
-   auto bufsize = buffer_size();
 
 
    const real f = 0.5f * electric / dielec;
@@ -804,7 +803,7 @@ void epolar_chgpen_cu(const real (*uind)[3])
       darray::zero(g::q0, n, ufld, dufld);
 
    int ngrid = get_grid_size(BLOCK_DIM);
-   epolar_chgpen_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
+   epolar_chgpen_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, g::s0>>>(
       st.n, TINKER_IMAGE_ARGS, nep, ep, vir_ep, depx, depy, depz, off,
       st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z,
       st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, ufld, dufld, uind,
@@ -812,7 +811,7 @@ void epolar_chgpen_cu(const real (*uind)[3])
 
    // torque
    if CONSTEXPR (do_g) {
-      launch_k1s(nonblk, n, epolar_trq_cu, //
+      launch_k1s(g::s0, n, epolar_trq_cu, //
                  trqx, trqy, trqz, n, rpole, ufld, dufld);
    }
 }

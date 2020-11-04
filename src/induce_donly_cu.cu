@@ -336,11 +336,11 @@ void sparse_precond_apply2_cu(const real (*rsd)[3], real (*zrsd)[3])
    const real off = switch_off(switch_usolve) + st.buffer;
 
 
-   launch_k1s(nonblk, n, sparse_precond_cu3, //
+   launch_k1s(g::s0, n, sparse_precond_cu3, //
               rsd, zrsd, polarity, n, udiag);
 
    int ngrid = get_grid_size(BLOCK_DIM);
-   sparse_precond_cu4<<<ngrid, BLOCK_DIM, 0, nonblk>>>(
+   sparse_precond_cu4<<<ngrid, BLOCK_DIM, 0, g::s0>>>(
       st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nwexclude, wexclude,
       wexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak,
       st.iak, st.lst, rsd, zrsd, palpha, polarity);
