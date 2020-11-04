@@ -411,9 +411,8 @@ void echgtrn_cu2()
 
 
    assert(ctrntyp == chgtrn_t::SEPARATE);
-
    int ngrid = get_grid_size(BLOCK_DIM);
-   echgtrn_cu1<Ver><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
+   echgtrn_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(
       st.n, TINKER_IMAGE_ARGS, nct, ect, vir_ect, dectx, decty, dectz, cut, off,
       st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z,
       st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, chgct, dmpct, f);

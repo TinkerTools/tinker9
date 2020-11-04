@@ -22,7 +22,7 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
    constexpr bool do_v = Ver::v;
 
    if CONSTEXPR (do_g)
-      darray::zero(PROCEED_NEW_Q, n, ufld, dufld);
+      darray::zero(g::q0, n, ufld, dufld);
 
    const real off = switch_off(switch_ewald);
    const real off2 = off * off;
@@ -376,7 +376,8 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
    // increment the dipole polarization gradient contributions
 
    #pragma acc parallel loop independent async deviceptr(depx,depy,depz,\
-               fmp,fphi,fuind,fuinp,fphid,fphip,fphidp)
+               fmp,fphi,fuind,fuinp,fphid,fphip,fphidp)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)
    for (int i = 0; i < n; ++i) {
       // data deriv1  / 2, 5,  8,  9, 11, 16, 18, 14, 15, 20 /
       // data deriv2  / 3, 8,  6, 10, 14, 12, 19, 16, 20, 17 /
@@ -430,7 +431,7 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
    //    end do
    // end do
    // Notice that only 10 * n elements were scaled in the original code.
-   darray::scale(PROCEED_NEW_Q, n, 0.5f * f, fphidp);
+   darray::scale(g::q0, n, 0.5f * f, fphidp);
    fphi_to_cphi(pu, fphidp, cphidp);
 
    // recip and self torques
@@ -494,9 +495,10 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
          vir_ep[0][i] -= vir_m[0][i];
       }
 
-      darray::scale(PROCEED_NEW_Q, n, f, cphi, fphid, fphip);
+      darray::scale(g::q0, n, f, cphi, fphid, fphip);
 
       #pragma acc parallel loop independent async\
+                  present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                   deviceptr(vir_ep,cmp,\
                   gpu_uind,gpu_uinp,fphid,fphip,cphi,cphidp)
       for (int i = 0; i < n; ++i) {
@@ -628,7 +630,8 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3],
       real pterm = (pi / aewald) * (pi / aewald);
       real box_volume = volbox();
 
-      #pragma acc parallel loop independent async deviceptr(d,p,vir_ep)
+      #pragma acc parallel loop independent async deviceptr(d,p,vir_ep)\
+                  present(lvec1,lvec2,lvec3,recipa,recipb,recipc)
       for (int i = 1; i < ntot; ++i) {
          const real volterm = pi * box_volume;
 

@@ -1,5 +1,4 @@
 #include "md.h"
-#include "tool/acclib.h"
 
 
 namespace tinker {
@@ -13,7 +12,7 @@ void minimize_set_xx_by_pos_acc(int n, double* xx, const double* scale)
       xx[j + 1] = ypos[i] * scale[j + 1];
       xx[j + 2] = zpos[i] * scale[j + 2];
    }
-   wait_queue(WAIT_NEW_Q);
+   #pragma acc wait
 }
 
 
@@ -27,6 +26,6 @@ void minimize_set_pos_acc(int n, const double* xx, const double* scale)
       ypos[i] = xx[j + 1] / scale[j + 1];
       zpos[i] = xx[j + 2] / scale[j + 2];
    }
-   wait_queue(WAIT_NEW_Q);
+   #pragma acc wait
 }
 }

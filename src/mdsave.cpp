@@ -46,24 +46,24 @@ void mdsave_dup_then_write(int istep, time_prec dt)
 
    dup_buf_esum = esum;
    get_default_box(dup_buf_box);
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_x, xpos);
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_y, ypos);
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_z, zpos);
+   darray::copy(g::q0, n, dup_buf_x, xpos);
+   darray::copy(g::q0, n, dup_buf_y, ypos);
+   darray::copy(g::q0, n, dup_buf_z, zpos);
 
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_vx, vx);
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_vy, vy);
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_vz, vz);
+   darray::copy(g::q0, n, dup_buf_vx, vx);
+   darray::copy(g::q0, n, dup_buf_vy, vy);
+   darray::copy(g::q0, n, dup_buf_vz, vz);
 
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_gx, gx);
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_gy, gy);
-   darray::copy(PROCEED_NEW_Q, n, dup_buf_gz, gz);
+   darray::copy(g::q0, n, dup_buf_gx, gx);
+   darray::copy(g::q0, n, dup_buf_gy, gy);
+   darray::copy(g::q0, n, dup_buf_gz, gz);
 
    if (mdsave_use_uind()) {
-      darray::copy(PROCEED_NEW_Q, 3 * n, &dup_buf_uind[0][0], &uind[0][0]);
+      darray::copy(g::q0, 3 * n, &dup_buf_uind[0][0], &uind[0][0]);
    }
 
-   // Record mdsave_begin_event when nonblk is available.
-   // Stream (0) will wait until mdsave_begin_event is recorded.
+   // Record mdsave_begin_event when g::s0 is available.
+   // g::s1 will wait until mdsave_begin_event is recorded.
    dup_stream.begin_copyout();
 
    mtx_dup.lock();
@@ -76,14 +76,16 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    energy_prec epot = dup_buf_esum;
    set_tinker_box_module(dup_buf_box);
    if (sizeof(pos_prec) == sizeof(double)) {
-      darray::copyout(PROCEED_DEFAULT_Q, n, atoms::x, dup_buf_x);
-      darray::copyout(PROCEED_DEFAULT_Q, n, atoms::y, dup_buf_y);
-      darray::copyout(WAIT_DEFAULT_Q, n, atoms::z, dup_buf_z);
+      darray::copyout(g::q1, n, atoms::x, dup_buf_x);
+      darray::copyout(g::q1, n, atoms::y, dup_buf_y);
+      darray::copyout(g::q1, n, atoms::z, dup_buf_z);
+      wait_for(g::q1);
    } else {
       std::vector<pos_prec> arrx(n), arry(n), arrz(n);
-      darray::copyout(PROCEED_DEFAULT_Q, n, arrx.data(), dup_buf_x);
-      darray::copyout(PROCEED_DEFAULT_Q, n, arry.data(), dup_buf_y);
-      darray::copyout(WAIT_DEFAULT_Q, n, arrz.data(), dup_buf_z);
+      darray::copyout(g::q1, n, arrx.data(), dup_buf_x);
+      darray::copyout(g::q1, n, arry.data(), dup_buf_y);
+      darray::copyout(g::q1, n, arrz.data(), dup_buf_z);
+      wait_for(g::q1);
       for (int i = 0; i < n; ++i) {
          atoms::x[i] = arrx[i];
          atoms::y[i] = arry[i];
@@ -93,9 +95,10 @@ void mdsave_dup_then_write(int istep, time_prec dt)
 
    {
       std::vector<vel_prec> arrx(n), arry(n), arrz(n);
-      darray::copyout(PROCEED_DEFAULT_Q, n, arrx.data(), dup_buf_vx);
-      darray::copyout(PROCEED_DEFAULT_Q, n, arry.data(), dup_buf_vy);
-      darray::copyout(WAIT_DEFAULT_Q, n, arrz.data(), dup_buf_vz);
+      darray::copyout(g::q1, n, arrx.data(), dup_buf_vx);
+      darray::copyout(g::q1, n, arry.data(), dup_buf_vy);
+      darray::copyout(g::q1, n, arrz.data(), dup_buf_vz);
+      wait_for(g::q1);
       for (int i = 0; i < n; ++i) {
          int j = 3 * i;
          moldyn::v[j] = arrx[i];
@@ -126,11 +129,12 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    }
 
    if (mdsave_use_uind()) {
-      darray::copyout(WAIT_DEFAULT_Q, n, polar::uind, dup_buf_uind);
+      darray::copyout(g::q1, n, polar::uind, dup_buf_uind);
+      wait_for(g::q1);
    }
 
-   // Record mdsave_end_event when stream (0) is available.
-   // nonblk will wait until mdsave_end_event is recorded, so that the dup_
+   // Record mdsave_end_event when g::s1 is available.
+   // g::s0 will wait until mdsave_end_event is recorded, so that the dup_
    // arrays are idle and ready to be written.
    dup_stream.end_copyout();
 

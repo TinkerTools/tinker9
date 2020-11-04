@@ -44,8 +44,9 @@ void epitors_data(rc_op op)
       std::vector<int> ibuf(6 * ntors);
       for (int i = 0; i < 6 * ntors; ++i)
          ibuf[i] = pitors::ipit[i] - 1;
-      darray::copyin(WAIT_NEW_Q, ntors, ipit, ibuf.data());
-      darray::copyin(WAIT_NEW_Q, ntors, kpit, pitors::kpit);
+      darray::copyin(g::q0, ntors, ipit, ibuf.data());
+      darray::copyin(g::q0, ntors, kpit, pitors::kpit);
+      wait_for(g::q0);
       ptorunit = torpot::ptorunit;
    }
 }
@@ -62,11 +63,11 @@ void epitors(int vers)
       host_zero(energy_ept, virial_ept);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, ept);
+         darray::zero(g::q0, bsize, ept);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_ept);
+         darray::zero(g::q0, bsize, vir_ept);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, deptx, depty, deptz);
+         darray::zero(g::q0, n, deptx, depty, deptz);
    }
 
 

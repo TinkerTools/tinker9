@@ -50,10 +50,12 @@ void bndchg_acc1()
          else {
             int nha = 0;
             int nhb = 0;
+            #pragma acc loop seq
             for (int j = 0; j < n12a; ++j) {
                if (atomic[couple_i12[ia][j]] == 1)
                   nha += 1;
             }
+            #pragma acc loop seq
             for (int j = 0; j < n12b; ++j) {
                if (atomic[couple_i12[ib][j]] == 1)
                   nhb += 1;
@@ -131,7 +133,7 @@ void angchg_acc1()
 
 void alterchg_acc()
 {
-   darray::zero(PROCEED_NEW_Q, n, pdelta);
+   darray::zero(g::q0, n, pdelta);
 
 
    bndchg_acc1();

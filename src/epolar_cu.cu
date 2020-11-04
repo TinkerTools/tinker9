@@ -657,10 +657,10 @@ void epolar_cu(const real (*uind)[3], const real (*uinp)[3])
 
 
    if CONSTEXPR (do_g) {
-      darray::zero(PROCEED_NEW_Q, n, ufld, dufld);
+      darray::zero(g::q0, n, ufld, dufld);
    }
    int ngrid = get_grid_size(BLOCK_DIM);
-   epolar_cu1<Ver, ETYP><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
+   epolar_cu1<Ver, ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(
       st.n, TINKER_IMAGE_ARGS, nep, ep, vir_ep, depx, depy, depz, off,
       st.si1.bit0, nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y,
       st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, ufld, dufld,
@@ -669,7 +669,7 @@ void epolar_cu(const real (*uind)[3], const real (*uinp)[3])
 
    // torque
    if CONSTEXPR (do_g) {
-      launch_k1s(nonblk, n, epolar_trq_cu, //
+      launch_k1s(g::s0, n, epolar_trq_cu, //
                  trqx, trqy, trqz, n, rpole, ufld, dufld);
    }
 }

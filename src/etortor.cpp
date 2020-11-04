@@ -55,26 +55,30 @@ void etortor_data(rc_op op)
       ibuf.resize(5 * nbitor);
       for (int i = 0; i < 5 * nbitor; ++i)
          ibuf[i] = bitor_::ibitor[i] - 1;
-      darray::copyin(WAIT_NEW_Q, nbitor, ibitor, ibuf.data());
+      darray::copyin(g::q0, nbitor, ibitor, ibuf.data());
+      wait_for(g::q0);
 
       ibuf.resize(3 * nbitor);
       for (int i = 0; i < 3 * nbitor; ++i)
          ibuf[i] = tortor::itt[i] - 1;
-      darray::copyin(WAIT_NEW_Q, nbitor, itt, ibuf.data());
+      darray::copyin(g::q0, nbitor, itt, ibuf.data());
+      wait_for(g::q0);
 
       ibuf.resize(ktrtor::maxntt);
       for (int i = 0; i < ktrtor::maxntt; ++i)
          ibuf[i] = ktrtor::tnx[i];
-      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tnx, ibuf.data());
+      darray::copyin(g::q0, ktrtor::maxntt, tnx, ibuf.data());
+      wait_for(g::q0);
       for (int i = 0; i < ktrtor::maxntt; ++i)
          ibuf[i] = ktrtor::tny[i];
-      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tny, ibuf.data());
-      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, ttx, &ktrtor::ttx[0][0]);
-      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tty, &ktrtor::tty[0][0]);
-      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tbf, &ktrtor::tbf[0][0]);
-      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tbx, &ktrtor::tbx[0][0]);
-      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tby, &ktrtor::tby[0][0]);
-      darray::copyin(WAIT_NEW_Q, ktrtor::maxntt, tbxy, &ktrtor::tbxy[0][0]);
+      darray::copyin(g::q0, ktrtor::maxntt, tny, ibuf.data());
+      darray::copyin(g::q0, ktrtor::maxntt, ttx, &ktrtor::ttx[0][0]);
+      darray::copyin(g::q0, ktrtor::maxntt, tty, &ktrtor::tty[0][0]);
+      darray::copyin(g::q0, ktrtor::maxntt, tbf, &ktrtor::tbf[0][0]);
+      darray::copyin(g::q0, ktrtor::maxntt, tbx, &ktrtor::tbx[0][0]);
+      darray::copyin(g::q0, ktrtor::maxntt, tby, &ktrtor::tby[0][0]);
+      darray::copyin(g::q0, ktrtor::maxntt, tbxy, &ktrtor::tbxy[0][0]);
+      wait_for(g::q0);
 
       ttorunit = torpot::ttorunit;
 
@@ -128,7 +132,8 @@ void etortor_data(rc_op op)
          }
          ibuf[itortor] = ia;
       }
-      darray::copyin(WAIT_NEW_Q, ntortor, chkttor_ia_, ibuf.data());
+      darray::copyin(g::q0, ntortor, chkttor_ia_, ibuf.data());
+      wait_for(g::q0);
    }
 }
 
@@ -144,11 +149,11 @@ void etortor(int vers)
       host_zero(energy_ett, virial_ett);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, ett);
+         darray::zero(g::q0, bsize, ett);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_ett);
+         darray::zero(g::q0, bsize, vir_ett);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, dettx, detty, dettz);
+         darray::zero(g::q0, n, dettx, detty, dettz);
    }
 
 

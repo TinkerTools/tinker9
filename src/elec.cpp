@@ -60,7 +60,8 @@ void pchg_data(rc_op op)
          int itype = atoms::type[i] - 1;
          pchgbuf[i] = kchrge::chg[itype];
       }
-      darray::copyin(WAIT_NEW_Q, n, pchg, pchgbuf.data());
+      darray::copyin(g::q0, n, pchg, pchgbuf.data());
+      wait_for(g::q0);
    }
 }
 
@@ -138,7 +139,8 @@ void pole_data(rc_op op)
             val = pole_none;
          zaxisbuf[i].polaxe = val;
       }
-      darray::copyin(WAIT_NEW_Q, n, zaxis, zaxisbuf.data());
+      darray::copyin(g::q0, n, zaxis, zaxisbuf.data());
+      wait_for(g::q0);
 
 
       std::vector<double> polebuf(mpl_total * n);
@@ -160,7 +162,8 @@ void pole_data(rc_op op)
          polebuf[b1 + mpl_pme_yz] = mpole::pole[b2 + 9];
          polebuf[b1 + mpl_pme_zz] = mpole::pole[b2 + 12];
       }
-      darray::copyin(WAIT_NEW_Q, n, pole, polebuf.data());
+      darray::copyin(g::q0, n, pole, polebuf.data());
+      wait_for(g::q0);
    }
 }
 
@@ -508,8 +511,9 @@ void mdpuscale_data(rc_op op)
       }
       nmexclude = excls.size();
       darray::allocate(nmexclude, &mexclude, &mexclude_scale);
-      darray::copyin(WAIT_NEW_Q, nmexclude, mexclude, exclik.data());
-      darray::copyin(WAIT_NEW_Q, nmexclude, mexclude_scale, excls.data());
+      darray::copyin(g::q0, nmexclude, mexclude, exclik.data());
+      darray::copyin(g::q0, nmexclude, mexclude_scale, excls.data());
+      wait_for(g::q0);
 
 
       std::vector<int> ik_vec;
@@ -524,9 +528,9 @@ void mdpuscale_data(rc_op op)
       }
       nmdpuexclude = ik_scale.size();
       darray::allocate(nmdpuexclude, &mdpuexclude, &mdpuexclude_scale);
-      darray::copyin(WAIT_NEW_Q, nmdpuexclude, mdpuexclude, ik_vec.data());
-      darray::copyin(WAIT_NEW_Q, nmdpuexclude, mdpuexclude_scale,
-                     scal_vec.data());
+      darray::copyin(g::q0, nmdpuexclude, mdpuexclude, ik_vec.data());
+      darray::copyin(g::q0, nmdpuexclude, mdpuexclude_scale, scal_vec.data());
+      wait_for(g::q0);
    }
 
 
@@ -795,8 +799,9 @@ void chgpen_data(rc_op op)
 
       nwexclude = excls.size();
       darray::allocate(nwexclude, &wexclude, &wexclude_scale);
-      darray::copyin(WAIT_NEW_Q, nwexclude, wexclude, exclik.data());
-      darray::copyin(WAIT_NEW_Q, nwexclude, wexclude_scale, excls.data());
+      darray::copyin(g::q0, nwexclude, wexclude, exclik.data());
+      darray::copyin(g::q0, nwexclude, wexclude_scale, excls.data());
+      wait_for(g::q0);
 
       std::vector<int> ik_vec;
       std::vector<real> scal_vec;
@@ -809,17 +814,18 @@ void chgpen_data(rc_op op)
       }
       nmdwexclude = ik_mdw.size();
       darray::allocate(nmdwexclude, &mdwexclude, &mdwexclude_scale);
-      darray::copyin(WAIT_NEW_Q, nmdwexclude, mdwexclude, ik_vec.data());
-      darray::copyin(WAIT_NEW_Q, nmdwexclude, mdwexclude_scale,
-                     scal_vec.data());
+      darray::copyin(g::q0, nmdwexclude, mdwexclude, ik_vec.data());
+      darray::copyin(g::q0, nmdwexclude, mdwexclude_scale, scal_vec.data());
+      wait_for(g::q0);
       darray::allocate(n, &pcore, &pval0, &pval, &palpha);
    }
 
    if (op & rc_init) {
-      darray::copyin(WAIT_NEW_Q, n, pcore, chgpen::pcore);
-      darray::copyin(WAIT_NEW_Q, n, pval0, chgpen::pval0);
-      darray::copyin(WAIT_NEW_Q, n, pval, chgpen::pval);
-      darray::copyin(WAIT_NEW_Q, n, palpha, chgpen::palpha);
+      darray::copyin(g::q0, n, pcore, chgpen::pcore);
+      darray::copyin(g::q0, n, pval0, chgpen::pval0);
+      darray::copyin(g::q0, n, pval, chgpen::pval);
+      darray::copyin(g::q0, n, palpha, chgpen::palpha);
+      wait_for(g::q0);
    }
 }
 
@@ -845,9 +851,9 @@ void elec_data(rc_op op)
 void mpole_init(int vers)
 {
    if (vers & calc::grad)
-      darray::zero(PROCEED_NEW_Q, n, trqx, trqy, trqz);
+      darray::zero(g::q0, n, trqx, trqy, trqz);
    if (vers & calc::virial)
-      darray::zero(PROCEED_NEW_Q, buffer_size(), vir_trq);
+      darray::zero(g::q0, buffer_size(), vir_trq);
 
 
    chkpole();
@@ -857,7 +863,7 @@ void mpole_init(int vers)
    if (use_ewald()) {
       rpole_to_cmp();
       if (vir_m)
-         darray::zero(PROCEED_NEW_Q, buffer_size(), vir_m);
+         darray::zero(g::q0, buffer_size(), vir_m);
       if (pltfm_config & CU_PLTFM) {
          bool precompute_theta = (!TINKER_CU_THETA_ON_THE_FLY_GRID_MPOLE) ||
             (!TINKER_CU_THETA_ON_THE_FLY_GRID_UIND);

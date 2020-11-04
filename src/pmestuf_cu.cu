@@ -297,9 +297,9 @@ void grid_pchg_cu(PMEUnit pme_u, real* pchg)
    int nt = n1 * n2 * n3;
 
 
-   auto stream = nonblk;
+   auto stream = g::s0;
    if (use_pme_stream)
-      stream = pme_stream;
+      stream = g::spme;
    using type = std::remove_pointer<decltype(st.qgrid)>::type;
    check_rt(cudaMemsetAsync(st.qgrid, 0, 2 * nt * sizeof(type), stream));
    if (st.bsorder == 5) {
@@ -323,9 +323,9 @@ void grid_disp_cu(PMEUnit pme_u, real* csix)
    int nt = n1 * n2 * n3;
 
 
-   darray::zero(PROCEED_NEW_Q, 2 * nt, st.qgrid);
+   darray::zero(g::q0, 2 * nt, st.qgrid);
    auto ker = grid_put_cu1<DISP, 4>;
-   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, csix,
+   launch_k2s(g::s0, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, csix,
               nullptr, st.qgrid, recipa, recipb, recipc);
 }
 
@@ -339,15 +339,15 @@ void grid_mpole_cu(PMEUnit pme_u, real (*fmp)[10])
    int nt = n1 * n2 * n3;
 
 
-   darray::zero(PROCEED_NEW_Q, 2 * nt, st.qgrid);
+   darray::zero(g::q0, 2 * nt, st.qgrid);
    if (TINKER_CU_THETA_ON_THE_FLY_GRID_MPOLE) {
       auto ker = grid_put_cu1<MPOLE, 5>;
-      launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
+      launch_k2s(g::s0, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
                  (const real*)fmp, nullptr, st.qgrid, recipa, recipb, recipc);
    } else {
       auto ker = grid_put_cu2<MPOLE, 5>;
       int npa = 5 * 5 * 5 * n;
-      launch_k1s(nonblk, npa, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
+      launch_k1s(g::s0, npa, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
                  mspatial_v2_unit->sorted, n, padded_n, n1, n2, n3,
                  (const real*)fmp, nullptr, st.qgrid);
    }
@@ -363,16 +363,16 @@ void grid_uind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
    int nt = n1 * n2 * n3;
 
 
-   darray::zero(PROCEED_NEW_Q, 2 * nt, st.qgrid);
+   darray::zero(g::q0, 2 * nt, st.qgrid);
    if (TINKER_CU_THETA_ON_THE_FLY_GRID_UIND) {
       auto ker = grid_put_cu1<UIND, 5>;
-      launch_k2s(nonblk, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
+      launch_k2s(g::s0, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3,
                  (const real*)fuind, (const real*)fuinp, st.qgrid, recipa,
                  recipb, recipc);
    } else {
       auto ker = grid_put_cu2<UIND, 5>;
       int npa = 5 * 5 * 5 * n;
-      launch_k1s(nonblk, npa, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
+      launch_k1s(g::s0, npa, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
                  mspatial_v2_unit->sorted, n, padded_n, n1, n2, n3,
                  (const real*)fuind, (const real*)fuinp, st.qgrid);
    }
@@ -424,13 +424,13 @@ void bspline_fill_cu(PMEUnit u, int level)
    auto& st = *u;
    if (level == 2) {
       auto ker = bspline_fill_cu1<2, 5>;
-      launch_k1s(nonblk, n, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
-                 x, y, z, n, padded_n, st.nfft1, st.nfft2, st.nfft3, recipa,
+      launch_k1s(g::s0, n, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3, x,
+                 y, z, n, padded_n, st.nfft1, st.nfft2, st.nfft3, recipa,
                  recipb, recipc);
    } else if (level == 3) {
       auto ker = bspline_fill_cu1<3, 5>;
-      launch_k1s(nonblk, n, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
-                 x, y, z, n, padded_n, st.nfft1, st.nfft2, st.nfft3, recipa,
+      launch_k1s(g::s0, n, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3, x,
+                 y, z, n, padded_n, st.nfft1, st.nfft2, st.nfft3, recipa,
                  recipb, recipc);
    }
 }
@@ -948,7 +948,7 @@ void fphi_mpole_cu(PMEUnit pme_u, real (*fphi)[20])
 
 
    auto ker = fphi_get_cu<MPOLE, 5>;
-   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, (real*)fphi,
+   launch_k2s(g::s0, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, (real*)fphi,
               nullptr, nullptr, st.qgrid, recipa, recipb, recipc);
 }
 
@@ -963,7 +963,7 @@ void fphi_uind_cu(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10],
 
 
    auto ker = fphi_get_cu<UIND, 5>;
-   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z,
+   launch_k2s(g::s0, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z,
               (real*)fdip_phi1, (real*)fdip_phi2, (real*)fdip_sum_phi, st.qgrid,
               recipa, recipb, recipc);
 }
@@ -978,7 +978,7 @@ void fphi_uind2_cu(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10])
 
 
    auto ker = fphi_get_cu<UIND2, 5>;
-   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z,
+   launch_k2s(g::s0, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z,
               (real*)fdip_phi1, (real*)fdip_phi2, nullptr, st.qgrid, recipa,
               recipb, recipc);
 }
@@ -1144,7 +1144,7 @@ void pme_conv_cu2(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
 
 
    auto ker = pme_conv_cu1<DO_E, DO_V>;
-   auto stream = use_pme_stream ? pme_stream : nonblk;
+   auto stream = use_pme_stream ? g::spme : g::s0;
    int ngrid = get_grid_size(BLOCK_DIM);
    ker<<<ngrid, BLOCK_DIM, 0, stream>>>(n1, n2, n3, qgrid, bsmod1, bsmod2,
                                         bsmod3, f, aewald, TINKER_IMAGE_ARGS,

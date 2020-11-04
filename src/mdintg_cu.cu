@@ -110,14 +110,15 @@ void mdrest_remove_pbc_momentum_cu(bool copyout, vel_prec& vtot1,
    int ngrid = std::min(grid_siz1, grid_siz2);
 
 
-   mdrest_sum_p_cu<B><<<ngrid, B, 0, nonblk>>>(n, ptr, mass, vx, vy, vz);
+   mdrest_sum_p_cu<B><<<ngrid, B, 0, g::s0>>>(n, ptr, mass, vx, vy, vz);
    mdrest_remove_p_cu<B>
-      <<<ngrid, B, 0, nonblk>>>(n, invtotmass, ptr, vx, vy, vz, xout);
+      <<<ngrid, B, 0, g::s0>>>(n, invtotmass, ptr, vx, vy, vz, xout);
 
 
    if (copyout) {
       vel_prec v[3];
-      darray::copyout(WAIT_NEW_Q, 3, v, xout);
+      darray::copyout(g::q0, 3, v, xout);
+      wait_for(g::q0);
       vtot1 = v[0];
       vtot2 = v[1];
       vtot3 = v[2];

@@ -392,7 +392,7 @@ void echarge_cu()
 
    int ngrid = get_grid_size(BLOCK_DIM);
    auto ker1 = echarge_cu1<Ver, ETYP>;
-   ker1<<<ngrid, BLOCK_DIM, 0, nonblk>>>(
+   ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(
       st.n, TINKER_IMAGE_ARGS, nec, ec, vir_ec, decx, decy, decz, cut, off,
       st.si1.bit0, ncexclude, cexclude, cexclude_scale, st.x, st.y, st.z,
       st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, ebuffer, f,
@@ -439,17 +439,18 @@ void echarge_ewald_real_cu(int vers)
 
 template <class Ver, int bsorder>
 __global__
-void echarge_cu3(size_t bufsize, count_buffer restrict nec,
-                 energy_buffer restrict ec, const real* restrict pchg, real f,
-                 real aewald, int n, int nfft1, int nfft2, int nfft3,
-                 const real* restrict x, const real* restrict y,
-                 const real* restrict z, const real* restrict qgrid, real3 reca,
-                 real3 recb, real3 recc, grad_prec* restrict gx,
-                 grad_prec* restrict gy, grad_prec* restrict gz)
+void echarge_cu3(count_buffer restrict nec, energy_buffer restrict ec,
+                 const real* restrict pchg, real f, real aewald, int n,
+                 int nfft1, int nfft2, int nfft3, const real* restrict x,
+                 const real* restrict y, const real* restrict z,
+                 const real* restrict qgrid, real3 reca, real3 recb, real3 recc,
+                 grad_prec* restrict gx, grad_prec* restrict gy,
+                 grad_prec* restrict gz)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
    constexpr bool do_g = Ver::g;
+   const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
 
 
    real thetai1[4 * 5];
@@ -459,8 +460,7 @@ void echarge_cu3(size_t bufsize, count_buffer restrict nec,
    real* restrict array = &sharedarray[5 * 5 * threadIdx.x];
 
 
-   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < n;
-        ii += blockDim.x * gridDim.x) {
+   for (int ii = ithread; ii < n; ii += blockDim.x * gridDim.x) {
       real chgi = pchg[ii];
       if (chgi == 0)
          continue;
@@ -468,12 +468,11 @@ void echarge_cu3(size_t bufsize, count_buffer restrict nec,
 
       // self energy, tinfoil
       if CONSTEXPR (do_e) {
-         int offset = ii & (bufsize - 1);
          real fs = -f * aewald * REAL_RECIP(sqrtpi);
          real e = fs * chgi * chgi;
-         atomic_add(e, ec, offset);
+         atomic_add(e, ec, ithread);
          if CONSTEXPR (do_a) {
-            atomic_add(1, nec, offset);
+            atomic_add(1, nec, ithread);
          }
       }
 
@@ -562,7 +561,6 @@ void echarge_cu3(size_t bufsize, count_buffer restrict nec,
 template <class Ver>
 void echarge_fphi_self_cu()
 {
-   auto bufsize = buffer_size();
    real f = electric / dielec;
    const auto& st = *epme_unit;
    real aewald = st.aewald;
@@ -571,19 +569,19 @@ void echarge_fphi_self_cu()
    int nfft3 = st.nfft3;
 
 
-   auto stream = nonblk;
+   auto stream = g::s0;
    if (use_pme_stream)
-      stream = pme_stream;
+      stream = g::spme;
    if (st.bsorder == 5) {
       auto ker = echarge_cu3<Ver, 5>;
-      launch_k2s(stream, PME_BLOCKDIM, n, ker,         //
-                 bufsize, nec, ec, pchg, f, aewald, n, //
+      launch_k2s(stream, PME_BLOCKDIM, n, ker, //
+                 nec, ec, pchg, f, aewald, n,  //
                  nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc,
                  decx, decy, decz);
    } else if (st.bsorder == 4) {
       auto ker = echarge_cu3<Ver, 4>;
-      launch_k2s(stream, PME_BLOCKDIM, n, ker,         //
-                 bufsize, nec, ec, pchg, f, aewald, n, //
+      launch_k2s(stream, PME_BLOCKDIM, n, ker, //
+                 nec, ec, pchg, f, aewald, n,  //
                  nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc,
                  decx, decy, decz);
    }

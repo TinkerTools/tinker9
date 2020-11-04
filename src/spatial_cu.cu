@@ -510,7 +510,7 @@ namespace tinker {
 void spatial_data_update_sorted(SpatialUnit u)
 {
    auto& st = *u;
-   launch_k1s(nonblk, n, spatial_update_sorted, n, st.sorted, st.x, st.y, st.z,
+   launch_k1s(g::s0, n, spatial_update_sorted, n, st.sorted, st.x, st.y, st.z,
               TINKER_IMAGE_ARGS);
 }
 
@@ -545,17 +545,17 @@ void spatial_data_init_cu(SpatialUnit u)
 
 
    // auto policy = thrust::device;
-   auto policy = thrust::cuda::par(thrust_cache).on(nonblk);
+   auto policy = thrust::cuda::par(thrust_cache).on(g::s0);
 
 
    // B.1 D.1
-   darray::zero(PROCEED_NEW_Q, nx + 1, ax_scan);
+   darray::zero(g::q0, nx + 1, ax_scan);
    // B.2 B.3 B.4 C.1
    const auto* lx = u->x;
    const auto* ly = u->y;
    const auto* lz = u->z;
    int ZERO_LBUF = (lbuf <= 0 ? 1 : 0);
-   launch_k1s(nonblk, n, spatial_bc,                      //
+   launch_k1s(g::s0, n, spatial_bc,                       //
               n, px, py, pz, sorted, boxnum, ax_scan + 1, //
               lx, ly, lz, TINKER_IMAGE_ARGS, cutbuf2, ZERO_LBUF, u->xold,
               u->yold, u->zold, //
@@ -565,7 +565,8 @@ void spatial_data_init_cu(SpatialUnit u)
    int level = px + py + pz;
    int mnax;
    const int* mnaxptr = thrust::max_element(policy, ax_scan, ax_scan + 1 + nx);
-   darray::copyout(WAIT_NEW_Q, 1, &mnax, mnaxptr);
+   darray::copyout(g::q0, 1, &mnax, mnaxptr);
+   wait_for(g::q0);
    while (mnax > Spatial::BLOCK) {
       darray::deallocate(nearby, ax_scan, xkf);
 
@@ -586,17 +587,18 @@ void spatial_data_init_cu(SpatialUnit u)
       darray::allocate(nx + 1, &ax_scan);
       darray::allocate(nak * nxk, &xkf);
 
-      u.update_deviceptr(*u, PROCEED_NEW_Q);
+      u.update_deviceptr(*u, g::q0);
 
-      darray::zero(PROCEED_NEW_Q, nx + 1, ax_scan);
+      darray::zero(g::q0, nx + 1, ax_scan);
       int ZERO_LBUF = (lbuf <= 0 ? 1 : 0);
-      launch_k1s(nonblk, n, spatial_bc,                      //
+      launch_k1s(g::s0, n, spatial_bc,                       //
                  n, px, py, pz, sorted, boxnum, ax_scan + 1, //
                  lx, ly, lz, TINKER_IMAGE_ARGS, cutbuf2, ZERO_LBUF, u->xold,
                  u->yold, u->zold, //
                  nx, nearby);
       mnaxptr = thrust::max_element(policy, ax_scan, ax_scan + 1 + nx);
-      darray::copyout(WAIT_NEW_Q, 1, &mnax, mnaxptr);
+      darray::copyout(g::q0, 1, &mnax, mnaxptr);
+      wait_for(g::q0);
    }
    // B.5
    thrust::stable_sort_by_key(policy, boxnum, boxnum + n, sorted);
@@ -611,7 +613,7 @@ void spatial_data_init_cu(SpatialUnit u)
 
 
    // E
-   launch_k1s(nonblk, padded, spatial_e, n, nak, boxnum, xakf, sorted,
+   launch_k1s(g::s0, padded, spatial_e, n, nak, boxnum, xakf, sorted,
               TINKER_IMAGE_ARGS);
    // F.1
    xak_sum = thrust::transform_reduce(policy, xakf, xakf + nak, POPC(), 0,
@@ -628,14 +630,13 @@ void spatial_data_init_cu(SpatialUnit u)
       darray::allocate(iak_size, &u->iak);
    }
    // must update the device pointer to apply the changes in xak_sum
-   u.update_deviceptr(*u, PROCEED_NEW_Q);
+   u.update_deviceptr(*u, g::q0);
 
 
-   darray::zero(PROCEED_NEW_Q, near * xak_sum * Spatial::BLOCK,
-                u->lst);                        // G.6
-   darray::zero(PROCEED_NEW_Q, nak, naak);      // H.1
-   darray::zero(PROCEED_NEW_Q, nak * nxk, xkf); // H.1
-   launch_k1s(nonblk, padded, spatial_ghi, u.deviceptr(), n, TINKER_IMAGE_ARGS,
+   darray::zero(g::q0, near * xak_sum * Spatial::BLOCK, u->lst); // G.6
+   darray::zero(g::q0, nak, naak);                               // H.1
+   darray::zero(g::q0, nak * nxk, xkf);                          // H.1
+   launch_k1s(g::s0, padded, spatial_ghi, u.deviceptr(), n, TINKER_IMAGE_ARGS,
               cutbuf2);
 
 
@@ -648,7 +649,7 @@ void spatial_data_init_cu(SpatialUnit u)
                                  IntInt32Pair::Int32IsZero());  // G.7
    u->niak = thrust::get<1>(end2.get_iterator_tuple()) - lst32; // G.7
    assert((thrust::get<0>(end2.get_iterator_tuple()) - u->iak) == u->niak);
-   u.update_deviceptr(*u, PROCEED_NEW_Q);
+   u.update_deviceptr(*u, g::q0);
 }
 }
 
@@ -1450,13 +1451,14 @@ void run_spatial2_step5(Spatial2Unit u)
    u->niak = 0;
    int* dev_niak = &u->update[2];
    real cutbuf = u->cutoff + u->buffer;
-   launch_k1s(nonblk, u->nakp, spatial2_step5<IMG>, //
+   launch_k1s(g::s0, u->nakp, spatial2_step5<IMG>, //
               u->bnum, u->iakpl_rev, u->nstype, u->si1, u->si2, u->si3,
               u->si4,                               //
               dev_niak, u->iak, u->lst,             //
               n, u->nak, cutbuf, TINKER_IMAGE_ARGS, //
               u->akpf, u->sorted, u->akc, u->half);
-   darray::copyout(WAIT_NEW_Q, 1, &u->niak, dev_niak);
+   darray::copyout(g::q0, 1, &u->niak, dev_niak);
+   wait_for(g::q0);
    if (u->niak > u->nak * Spatial2::LSTCAP) {
       int cap = Spatial2::LSTCAP;
       TINKER_THROW(
@@ -1476,7 +1478,7 @@ void spatial_data_init_cu(Spatial2Unit u)
    const int n = u->n;
 
 
-   auto policy = thrust::cuda::par(thrust_cache).on(nonblk);
+   auto policy = thrust::cuda::par(thrust_cache).on(g::s0);
 
 
    const auto* lx = u->x;
@@ -1485,12 +1487,12 @@ void spatial_data_init_cu(Spatial2Unit u)
    int ZERO_LBUF = (lbuf <= 0 ? 1 : 0);
    real cutbuf = (u->cutoff + lbuf);
    int2* b2num = (int2*)u->update;
-   launch_k1s(nonblk, n, spatial2_step1, //
+   launch_k1s(g::s0, n, spatial2_step1, //
               n, u->pz, b2num, lx, ly, lz, TINKER_IMAGE_ARGS, u->nakpk,
               u->akpf);
    // thrust::sort(policy, b2num, b2num + n, spatial2_less());
    thrust::stable_sort(policy, b2num, b2num + n, spatial2_less());
-   launch_k1s(nonblk, n, spatial2_step2, //
+   launch_k1s(g::s0, n, spatial2_step2, //
               n, u->sorted, u->bnum, b2num, lx, ly, lz, ZERO_LBUF, u->xold,
               u->yold, u->zold, //
               TINKER_IMAGE_ARGS, cutbuf, u->akc, u->half);
@@ -1501,12 +1503,13 @@ void spatial_data_init_cu(Spatial2Unit u)
    auto& si3 = u->si3;
    auto& si4 = u->si4;
    int* nakpl_ptr0 = &u->update[0];
-   launch_k1s(nonblk, n, spatial2_step3,      //
+   launch_k1s(g::s0, n, spatial2_step3,       //
               u->nak, u->akpf, nakpl_ptr0,    //
               u->bnum, u->nstype,             //
               si1.ns, si1.js, si2.ns, si2.js, //
               si3.ns, si3.js, si4.ns, si4.js);
-   darray::copyout(WAIT_NEW_Q, 1, &u->nakpl, nakpl_ptr0);
+   darray::copyout(g::q0, 1, &u->nakpl, nakpl_ptr0);
+   wait_for(g::q0);
    if (WARP_SIZE + u->nakpl > u->cap_nakpl) {
       u->cap_nakpl = WARP_SIZE + u->nakpl;
       darray::deallocate(u->iakpl);
@@ -1535,7 +1538,7 @@ void spatial_data_init_cu(Spatial2Unit u)
 
 
    int* nakpl_ptr1 = &u->update[1];
-   launch_k1s(nonblk, u->nakp, spatial2_step4,                       //
+   launch_k1s(g::s0, u->nakp, spatial2_step4,                        //
               u->nakpk, nakpl_ptr1, u->akpf, u->iakpl, u->iakpl_rev, //
               u->cap_nakpl, u->nstype,                               //
               si1.bit0, si2.bit0, si3.bit0, si4.bit0);
@@ -1557,8 +1560,8 @@ void spatial_data_init_cu(Spatial2Unit u)
 
 void spatial_data_update_sorted(Spatial2Unit u)
 {
-   launch_k1s(nonblk, u->n, spatial2_update_sorted, //
-              u->n, u->sorted, u->x, u->y, u->z,    //
+   launch_k1s(g::s0, u->n, spatial2_update_sorted, //
+              u->n, u->sorted, u->x, u->y, u->z,   //
               TINKER_IMAGE_ARGS, u->cutoff, u->akc, u->half);
 }
 }

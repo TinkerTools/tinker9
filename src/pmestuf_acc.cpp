@@ -27,10 +27,11 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
    assert(bsorder <= 5);
 
 
-   darray::zero(PROCEED_NEW_Q, 2 * nfft1 * nfft2 * nfft3, st.qgrid);
+   darray::zero(g::q0, 2 * nfft1 * nfft2 * nfft3, st.qgrid);
 
 
    #pragma acc parallel loop independent async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(pchg,fmp,fuind,fuinp,x,y,z,qgrid)
    for (int i = 0; i < n; ++i) {
       real thetai1[4 * 5];
@@ -269,7 +270,8 @@ void pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
 
    auto bufsize = buffer_size();
    #pragma acc parallel loop independent\
-               async(use_pme_stream ? pme_queue : async_queue)\
+               async(use_pme_stream ? g::qpme : g::q0)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(gpu_e,gpu_vir,qgrid,bsmod1,bsmod2,bsmod3)
    for (int i = 0; i < ntot; ++i) {
       if (i == 0) {
@@ -382,6 +384,7 @@ void fphi_get_acc(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
 
 
    #pragma acc parallel loop independent async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(fphi,fdip_phi1,fdip_phi2,fdip_sum_phi,x,y,z,qgrid)
    for (int i = 0; i < n; ++i) {
       real thetai1[4 * 5];
@@ -818,7 +821,8 @@ void cmp_to_fmp_acc(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
    int nfft3 = st.nfft3;
 
 
-   #pragma acc parallel loop independent async deviceptr(cmp,fmp)
+   #pragma acc parallel loop independent async deviceptr(cmp,fmp)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)
    for (int iatom = 0; iatom < n; ++iatom) {
       real a[3][3];
       // see also subroutine cart_to_frac in pmestuf.f
@@ -920,7 +924,8 @@ void cuind_to_fuind_acc(PMEUnit pme_u, const real (*cind)[3],
    int nfft3 = st.nfft3;
 
 
-   #pragma acc parallel loop independent async deviceptr(cind,cinp,fuind,fuinp)
+   #pragma acc parallel loop independent async deviceptr(cind,cinp,fuind,fuinp)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)
    for (int i = 0; i < n; ++i) {
       real a[3][3];
       a[0][0] = nfft1 * recipa.x;
@@ -953,7 +958,8 @@ void fphi_to_cphi_acc(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
    int nfft3 = st.nfft3;
 
 
-   #pragma acc parallel loop async deviceptr(fphi,cphi)
+   #pragma acc parallel loop async deviceptr(fphi,cphi)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)
    for (int iatom = 0; iatom < n; ++iatom) {
       real a[3][3];
       // see also subroutine frac_to_cart in pmestuf.f

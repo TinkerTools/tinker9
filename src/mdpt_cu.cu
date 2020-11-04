@@ -53,7 +53,7 @@ void kinetic_explicit_cu(T_prec& temp_out, energy_prec& eksum_out,
                          energy_prec (&ekin_out)[3][3], const vel_prec* vx,
                          const vel_prec* vy, const vel_prec* vz)
 {
-   cudaStream_t st = nonblk;
+   cudaStream_t st = g::s0;
    constexpr int HN = 6;
    energy_prec* dptr = reinterpret_cast<energy_prec*>(dptr_buf);
    energy_prec(*dptr6)[HN] = reinterpret_cast<energy_prec(*)[HN]>(dptr_buf);
