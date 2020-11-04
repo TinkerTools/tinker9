@@ -398,7 +398,7 @@ void edisp_cu()
 
 
    int ngrid = get_grid_size(BLOCK_DIM);
-   edisp_cu1<Ver, DTYP><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
+   edisp_cu1<Ver, DTYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(
       st.n, TINKER_IMAGE_ARGS, ndisp, edsp, vir_edsp, dedspx, dedspy, dedspz,
       cut, off, st.si1.bit0, ndspexclude, dspexclude, dspexclude_scale, st.x,
       st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, csix,
@@ -425,17 +425,18 @@ void edisp_ewald_real_cu(int vers)
 
 template <class Ver, int bsorder>
 __global__
-void edisp_cu3(size_t bufsize, count_buffer restrict ndisp,
-               energy_buffer restrict edsp, const real* restrict csix,
-               real aewald, int n, int nfft1, int nfft2, int nfft3,
-               const real* restrict x, const real* restrict y,
-               const real* restrict z, const real* restrict qgrid, real3 reca,
-               real3 recb, real3 recc, grad_prec* restrict gx,
-               grad_prec* restrict gy, grad_prec* restrict gz)
+void edisp_cu3(count_buffer restrict ndisp, energy_buffer restrict edsp,
+               const real* restrict csix, real aewald, int n, int nfft1,
+               int nfft2, int nfft3, const real* restrict x,
+               const real* restrict y, const real* restrict z,
+               const real* restrict qgrid, real3 reca, real3 recb, real3 recc,
+               grad_prec* restrict gx, grad_prec* restrict gy,
+               grad_prec* restrict gz)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
    constexpr bool do_g = Ver::g;
+   const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
 
 
    real thetai1[4 * 5];
@@ -445,8 +446,7 @@ void edisp_cu3(size_t bufsize, count_buffer restrict ndisp,
    real* restrict array = &sharedarray[5 * 5 * threadIdx.x];
 
 
-   for (int ii = threadIdx.x + blockIdx.x * blockDim.x; ii < n;
-        ii += blockDim.x * gridDim.x) {
+   for (int ii = ithread; ii < n; ii += blockDim.x * gridDim.x) {
       real icsix = csix[ii];
       if (icsix == 0)
          continue;
@@ -454,14 +454,13 @@ void edisp_cu3(size_t bufsize, count_buffer restrict ndisp,
 
       // self energy
       if CONSTEXPR (do_e) {
-         int offset = ii & (bufsize - 1);
          real fs = aewald * aewald;
          fs *= fs * fs;
          fs /= 12;
          real e = fs * icsix * icsix;
-         atomic_add(e, edsp, offset);
+         atomic_add(e, edsp, ithread);
          if CONSTEXPR (do_a) {
-            atomic_add(1, ndisp, offset);
+            atomic_add(1, ndisp, ithread);
          }
       }
 
@@ -550,7 +549,6 @@ void edisp_cu3(size_t bufsize, count_buffer restrict ndisp,
 template <class Ver>
 void edisp_cu4()
 {
-   size_t bufsize = buffer_size();
    const auto& st = *dpme_unit;
    real aewald = st.aewald;
    int nfft1 = st.nfft1;
@@ -560,9 +558,9 @@ void edisp_cu4()
 
    assert(st.bsorder == 4);
    auto ker = edisp_cu3<Ver, 4>;
-   launch_k2s(nonblk, PME_BLOCKDIM, n, ker, //
-              bufsize, ndisp, edsp, csix, aewald, n, nfft1, nfft2, nfft3, x, y,
-              z, st.qgrid, recipa, recipb, recipc, dedspx, dedspy, dedspz);
+   launch_k2s(g::s0, PME_BLOCKDIM, n, ker, //
+              ndisp, edsp, csix, aewald, n, nfft1, nfft2, nfft3, x, y, z,
+              st.qgrid, recipa, recipb, recipc, dedspx, dedspy, dedspz);
 }
 
 

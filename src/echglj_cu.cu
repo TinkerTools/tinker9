@@ -85,7 +85,7 @@ void echglj_data_cu(rc_op op)
 void echglj_cu_sync_pme_stream(bool use_pmestream)
 {
    if (use_pmestream) {
-      check_rt(cudaStreamWaitEvent(nonblk, pme_event_finish, 0));
+      check_rt(cudaStreamWaitEvent(g::s0, pme_event_finish, 0));
    }
 }
 
@@ -918,7 +918,7 @@ void echglj_cu3()
 
    if (st.fresh & cspatial_fresh_mask_echglj) {
       auto ker = echglj_coalesce<RADRULE, EPSRULE>;
-      launch_k1s(nonblk, st.n, ker,                             //
+      launch_k1s(g::s0, st.n, ker,                              //
                  st.n, chg_coalesced, (real2*)radeps_coalesced, //
                  st.sorted, pchg, atom_rad, atom_eps);
       st.fresh &= ~cspatial_fresh_mask_echglj;
@@ -956,16 +956,16 @@ void echglj_cu3()
    int ngrid = get_grid_size(BLOCK_DIM);
    if (box_shape == ORTHO_BOX) {
       auto ker1 = echglj_cu5<Ver, PBC_ORTHO, ETYP, RADRULE, EPSRULE, VOUT>;
-      ker1<<<ngrid, BLOCK_DIM, 0, nonblk>>>(ECHGLJ_CU3_V2_ARGS);
+      ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(ECHGLJ_CU3_V2_ARGS);
    } else if (box_shape == MONO_BOX) {
       auto ker1 = echglj_cu5<Ver, PBC_MONO, ETYP, RADRULE, EPSRULE, VOUT>;
-      ker1<<<ngrid, BLOCK_DIM, 0, nonblk>>>(ECHGLJ_CU3_V2_ARGS);
+      ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(ECHGLJ_CU3_V2_ARGS);
    } else if (box_shape == TRI_BOX) {
       auto ker1 = echglj_cu5<Ver, PBC_TRI, ETYP, RADRULE, EPSRULE, VOUT>;
-      ker1<<<ngrid, BLOCK_DIM, 0, nonblk>>>(ECHGLJ_CU3_V2_ARGS);
+      ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(ECHGLJ_CU3_V2_ARGS);
    } else if (box_shape == OCT_BOX) {
       auto ker1 = echglj_cu5<Ver, PBC_OCT, ETYP, RADRULE, EPSRULE, VOUT>;
-      ker1<<<ngrid, BLOCK_DIM, 0, nonblk>>>(ECHGLJ_CU3_V2_ARGS);
+      ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(ECHGLJ_CU3_V2_ARGS);
    } else {
       assert(false);
    }

@@ -62,8 +62,8 @@ void mdsave_dup_then_write(int istep, time_prec dt)
       darray::copy(g::q0, 3 * n, &dup_buf_uind[0][0], &uind[0][0]);
    }
 
-   // Record mdsave_begin_event when nonblk is available.
-   // Stream (0) will wait until mdsave_begin_event is recorded.
+   // Record mdsave_begin_event when g::s0 is available.
+   // g::s1 will wait until mdsave_begin_event is recorded.
    dup_stream.begin_copyout();
 
    mtx_dup.lock();
@@ -133,8 +133,8 @@ void mdsave_dup_then_write(int istep, time_prec dt)
       wait_for(g::q1);
    }
 
-   // Record mdsave_end_event when stream (0) is available.
-   // nonblk will wait until mdsave_end_event is recorded, so that the dup_
+   // Record mdsave_end_event when g::s1 is available.
+   // g::s0 will wait until mdsave_end_event is recorded, so that the dup_
    // arrays are idle and ready to be written.
    dup_stream.end_copyout();
 

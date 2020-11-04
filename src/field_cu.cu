@@ -393,7 +393,7 @@ void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
    ngrid *= BLOCK_DIM;
    int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
    nparallel = std::max(nparallel, ngrid);
-   launch_k1s(nonblk, nparallel, dfield_cu1<EWALD>, //
+   launch_k1s(g::s0, nparallel, dfield_cu1<EWALD>, //
               st.n, TINKER_IMAGE_ARGS, off, st.si3.bit0, ndpexclude, dpexclude,
               dpexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
               st.niak, st.iak, st.lst, field, fieldp, rpole, thole, pdamp,
@@ -412,7 +412,7 @@ void dfield_nonewald_cu(real (*field)[3], real (*fieldp)[3])
    ngrid *= BLOCK_DIM;
    int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
    nparallel = std::max(nparallel, ngrid);
-   launch_k1s(nonblk, nparallel, dfield_cu1<NON_EWALD>, //
+   launch_k1s(g::s0, nparallel, dfield_cu1<NON_EWALD>, //
               st.n, TINKER_IMAGE_ARGS, off, st.si3.bit0, ndpexclude, dpexclude,
               dpexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
               st.niak, st.iak, st.lst, field, fieldp, rpole, thole, pdamp, 0);
@@ -762,7 +762,7 @@ void ufield_ewald_real_cu(const real (*uind)[3], const real (*uinp)[3],
    ngrid *= BLOCK_DIM;
    int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
    nparallel = std::max(nparallel, ngrid);
-   launch_k1s(nonblk, nparallel, ufield_cu1<EWALD>, //
+   launch_k1s(g::s0, nparallel, ufield_cu1<EWALD>, //
               st.n, TINKER_IMAGE_ARGS, off, st.si4.bit0, nuexclude, uexclude,
               uexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
               st.niak, st.iak, st.lst, uind, uinp, field, fieldp, thole, pdamp,
@@ -782,7 +782,7 @@ void ufield_nonewald_cu(const real (*uind)[3], const real (*uinp)[3],
    ngrid *= BLOCK_DIM;
    int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
    nparallel = std::max(nparallel, ngrid);
-   launch_k1s(nonblk, nparallel, ufield_cu1<NON_EWALD>, //
+   launch_k1s(g::s0, nparallel, ufield_cu1<NON_EWALD>, //
               st.n, TINKER_IMAGE_ARGS, off, st.si4.bit0, nuexclude, uexclude,
               uexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
               st.niak, st.iak, st.lst, uind, uinp, field, fieldp, thole, pdamp,

@@ -588,37 +588,37 @@ void evalence_cu2(int vers, bool flag_bond, bool flag_angle, bool flag_strbnd,
    if (rc_flag & calc::analyz) {
       if (vers == calc::v0 or vers == calc::v3)
          evalence_cu1<calc::V0, true>
-            <<<ngrid, BLOCK_DIM, 0, nonblk>>>(EVALENCE_ARGS);
+            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
       else if (vers == calc::v1)
          evalence_cu1<calc::V1, true>
-            <<<ngrid, BLOCK_DIM, 0, nonblk>>>(EVALENCE_ARGS);
+            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
       else if (vers == calc::v4)
          evalence_cu1<calc::V4, true>
-            <<<ngrid, BLOCK_DIM, 0, nonblk>>>(EVALENCE_ARGS);
+            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
       else if (vers == calc::v5)
          evalence_cu1<calc::V5, true>
-            <<<ngrid, BLOCK_DIM, 0, nonblk>>>(EVALENCE_ARGS);
+            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
       else if (vers == calc::v6)
          evalence_cu1<calc::V6, true>
-            <<<ngrid, BLOCK_DIM, 0, nonblk>>>(EVALENCE_ARGS);
+            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
    } else {
       if (vers == calc::v0)
          evalence_cu1<calc::V0, false>
-            <<<ngrid, BLOCK_DIM, 0, nonblk>>>(EVALENCE_ARGS);
+            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
       else if (vers == calc::v1)
          evalence_cu1<calc::V1, false>
-            <<<ngrid, BLOCK_DIM, 0, nonblk>>>(EVALENCE_ARGS);
+            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
       else if (vers == calc::v3)
          assert(false);
       else if (vers == calc::v4)
          evalence_cu1<calc::V4, false>
-            <<<ngrid, BLOCK_DIM, 0, nonblk>>>(EVALENCE_ARGS);
+            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
       else if (vers == calc::v5)
          evalence_cu1<calc::V5, false>
-            <<<ngrid, BLOCK_DIM, 0, nonblk>>>(EVALENCE_ARGS);
+            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
       else if (vers == calc::v6)
          evalence_cu1<calc::V6, false>
-            <<<ngrid, BLOCK_DIM, 0, nonblk>>>(EVALENCE_ARGS);
+            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
    }
 #undef EVALENCE_ARGS
 }

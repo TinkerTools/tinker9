@@ -6,16 +6,15 @@
 
 
 namespace tinker {
-TINKER_EXTERN cudaStream_t nonblk;
-TINKER_EXTERN cublasHandle_t h_cublas;
-TINKER_EXTERN cublasHandle_t h_cublas_nonblk;
+namespace g {
+TINKER_EXTERN cudaStream_t s0;
+TINKER_EXTERN cudaStream_t s1;
+TINKER_EXTERN cudaStream_t spme;
+TINKER_EXTERN cublasHandle_t h0;
+TINKER_EXTERN cublasHandle_t h1;
+}
 TINKER_EXTERN void* pinned_buf;
 TINKER_EXTERN void* dptr_buf;
-
-
-namespace g {
-TINKER_EXTERN cudaStream_t spme;
-}
 TINKER_EXTERN cudaEvent_t pme_event_finish;
 }
 #endif

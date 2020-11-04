@@ -489,7 +489,7 @@ void elj_cu4()
 
 
    int ngrid = get_grid_size(BLOCK_DIM);
-   elj_cu1<Ver><<<ngrid, BLOCK_DIM, 0, nonblk>>>(
+   elj_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(
       st.n, TINKER_IMAGE_ARGS, nev, ev, vir_ev, devx, devy, devz, cut, off,
       st.si2.bit0, nvexclude, vexclude, vexclude_scale, st.x, st.y, st.z,
       st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, njvdw, radmin,
@@ -506,7 +506,7 @@ void elj_cu5()
       const real off = switch_off(switch_vdw);
 
 
-      launch_k1s(nonblk, nvdw14, elj_cu2<Ver>, //
+      launch_k1s(g::s0, nvdw14, elj_cu2<Ver>, //
                  nev, ev, vir_ev, devx, devy, devz, TINKER_IMAGE_ARGS, cut, off,
                  st.x, st.y, st.z,             //
                  njvdw, radmin, epsilon, jvdw, //

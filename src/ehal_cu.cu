@@ -455,19 +455,11 @@ void ehal_cu3()
 
    int ngrid = get_grid_size(BLOCK_DIM);
    auto ker1 = ehal_cu1<Ver>;
-   ker1<<<ngrid, BLOCK_DIM, 0, nonblk>>>(
-      // nev, ev, vir_ev, gxred, gyred, gzred, TINKER_IMAGE_ARGS, cut, off,
-      // st.x, st.y, st.z, st.n, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak,
-      // st.lst, nvexclude, vexclude, vexclude_scale, st.si1.bit0, njvdw, vlam,
-      // vcouple, radmin, epsilon, jvdw, mut
-
+   ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(
       st.n, TINKER_IMAGE_ARGS, nev, ev, vir_ev, gxred, gyred, gzred, cut, off,
       st.si1.bit0, nvexclude, vexclude, vexclude_scale, st.x, st.y, st.z,
       st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, njvdw, vlam,
-      vcouple, radmin, epsilon, jvdw, mut
-
-
-   );
+      vcouple, radmin, epsilon, jvdw, mut);
 
 
    if CONSTEXPR (do_g) {

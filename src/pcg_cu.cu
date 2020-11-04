@@ -184,7 +184,7 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
    // get the electrostatic field due to permanent multipoles
    dfield(field, fieldp);
    // direct induced dipoles
-   launch_k1s(nonblk, n, pcg_udir, n, polarity, udir, udirp, field, fieldp);
+   launch_k1s(g::s0, n, pcg_udir, n, polarity, udir, udirp, field, fieldp);
 
 
    // initial induced dipole
@@ -211,7 +211,7 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
    // if do not use pcgguess, r(0) = E - T Zero = E
    if (predict) {
       ufield(uind, uinp, field, fieldp);
-      launch_k1s(nonblk, n, pcg_rsd, n, polarity_inv, rsd, rsdp, udir, udirp,
+      launch_k1s(g::s0, n, pcg_rsd, n, polarity_inv, rsd, rsdp, udir, udirp,
                  uind, uinp, field, fieldp);
    } else if (dirguess) {
       ufield(udir, udirp, rsd, rsdp);
@@ -219,7 +219,7 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       darray::copy(g::q0, n, rsd, field);
       darray::copy(g::q0, n, rsdp, fieldp);
    }
-   launch_k1s(nonblk, n, pcg_rsd0, n, polarity, rsd, rsdp);
+   launch_k1s(g::s0, n, pcg_rsd0, n, polarity, rsd, rsdp);
 
 
    // initial M r(0) and p(0)
@@ -263,7 +263,7 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       // vec = (inv_alpha + Tu) conj, field = -Tu conj
       // vec = inv_alpha * conj - field
       ufield(conj, conjp, field, fieldp);
-      launch_k1s(nonblk, n, pcg_p1, n, polarity_inv, vec, vecp, conj, conjp,
+      launch_k1s(g::s0, n, pcg_p1, n, polarity_inv, vec, vecp, conj, conjp,
                  field, fieldp);
 
 
@@ -277,7 +277,7 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
 
       // u <- u + a p
       // r <- r - a T p
-      launch_k1s(nonblk, n, pcg_p2, n, polarity, a, ap, sum, sump, uind, uinp,
+      launch_k1s(g::s0, n, pcg_p2, n, polarity, a, ap, sum, sump, uind, uinp,
                  conj, conjp, rsd, rsdp, vec, vecp);
 
 
@@ -296,8 +296,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
 
 
       // calculate/update p
-      launch_k1s(nonblk, n, pcg_p3, n, sum, sump, sum1, sump1, conj, conjp,
-                 zrsd, zrsdp);
+      launch_k1s(g::s0, n, pcg_p3, n, sum, sump, sum1, sump1, conj, conjp, zrsd,
+                 zrsdp);
 
 
       // copy sum1/p to sum/p
@@ -309,8 +309,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       darray::dot(g::q0, n, epsd, rsd, rsd);
       darray::dot(g::q0, n, epsp, rsdp, rsdp);
       check_rt(cudaMemcpyAsync((real*)pinned_buf, epsd, 2 * sizeof(real),
-                               cudaMemcpyDeviceToHost, nonblk));
-      check_rt(cudaStreamSynchronize(nonblk));
+                               cudaMemcpyDeviceToHost, g::s0));
+      check_rt(cudaStreamSynchronize(g::s0));
       epsold = eps;
       eps = REAL_MAX(((real*)pinned_buf)[0], ((real*)pinned_buf)[1]);
       eps = debye * REAL_SQRT(eps / n);
@@ -336,7 +336,7 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
 
       // apply a "peek" iteration to the mutual induced dipoles
       if (done) {
-         launch_k1s(nonblk, n, pcg_peek, n, pcgpeek, polarity, uind, uinp, rsd,
+         launch_k1s(g::s0, n, pcg_peek, n, pcgpeek, polarity, uind, uinp, rsd,
                     rsdp);
       }
    }

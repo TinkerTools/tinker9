@@ -510,7 +510,7 @@ namespace tinker {
 void spatial_data_update_sorted(SpatialUnit u)
 {
    auto& st = *u;
-   launch_k1s(nonblk, n, spatial_update_sorted, n, st.sorted, st.x, st.y, st.z,
+   launch_k1s(g::s0, n, spatial_update_sorted, n, st.sorted, st.x, st.y, st.z,
               TINKER_IMAGE_ARGS);
 }
 
@@ -545,7 +545,7 @@ void spatial_data_init_cu(SpatialUnit u)
 
 
    // auto policy = thrust::device;
-   auto policy = thrust::cuda::par(thrust_cache).on(nonblk);
+   auto policy = thrust::cuda::par(thrust_cache).on(g::s0);
 
 
    // B.1 D.1
@@ -555,7 +555,7 @@ void spatial_data_init_cu(SpatialUnit u)
    const auto* ly = u->y;
    const auto* lz = u->z;
    int ZERO_LBUF = (lbuf <= 0 ? 1 : 0);
-   launch_k1s(nonblk, n, spatial_bc,                      //
+   launch_k1s(g::s0, n, spatial_bc,                       //
               n, px, py, pz, sorted, boxnum, ax_scan + 1, //
               lx, ly, lz, TINKER_IMAGE_ARGS, cutbuf2, ZERO_LBUF, u->xold,
               u->yold, u->zold, //
@@ -591,7 +591,7 @@ void spatial_data_init_cu(SpatialUnit u)
 
       darray::zero(g::q0, nx + 1, ax_scan);
       int ZERO_LBUF = (lbuf <= 0 ? 1 : 0);
-      launch_k1s(nonblk, n, spatial_bc,                      //
+      launch_k1s(g::s0, n, spatial_bc,                       //
                  n, px, py, pz, sorted, boxnum, ax_scan + 1, //
                  lx, ly, lz, TINKER_IMAGE_ARGS, cutbuf2, ZERO_LBUF, u->xold,
                  u->yold, u->zold, //
@@ -613,7 +613,7 @@ void spatial_data_init_cu(SpatialUnit u)
 
 
    // E
-   launch_k1s(nonblk, padded, spatial_e, n, nak, boxnum, xakf, sorted,
+   launch_k1s(g::s0, padded, spatial_e, n, nak, boxnum, xakf, sorted,
               TINKER_IMAGE_ARGS);
    // F.1
    xak_sum = thrust::transform_reduce(policy, xakf, xakf + nak, POPC(), 0,
@@ -636,7 +636,7 @@ void spatial_data_init_cu(SpatialUnit u)
    darray::zero(g::q0, near * xak_sum * Spatial::BLOCK, u->lst); // G.6
    darray::zero(g::q0, nak, naak);                               // H.1
    darray::zero(g::q0, nak * nxk, xkf);                          // H.1
-   launch_k1s(nonblk, padded, spatial_ghi, u.deviceptr(), n, TINKER_IMAGE_ARGS,
+   launch_k1s(g::s0, padded, spatial_ghi, u.deviceptr(), n, TINKER_IMAGE_ARGS,
               cutbuf2);
 
 
@@ -1451,7 +1451,7 @@ void run_spatial2_step5(Spatial2Unit u)
    u->niak = 0;
    int* dev_niak = &u->update[2];
    real cutbuf = u->cutoff + u->buffer;
-   launch_k1s(nonblk, u->nakp, spatial2_step5<IMG>, //
+   launch_k1s(g::s0, u->nakp, spatial2_step5<IMG>, //
               u->bnum, u->iakpl_rev, u->nstype, u->si1, u->si2, u->si3,
               u->si4,                               //
               dev_niak, u->iak, u->lst,             //
@@ -1478,7 +1478,7 @@ void spatial_data_init_cu(Spatial2Unit u)
    const int n = u->n;
 
 
-   auto policy = thrust::cuda::par(thrust_cache).on(nonblk);
+   auto policy = thrust::cuda::par(thrust_cache).on(g::s0);
 
 
    const auto* lx = u->x;
@@ -1487,12 +1487,12 @@ void spatial_data_init_cu(Spatial2Unit u)
    int ZERO_LBUF = (lbuf <= 0 ? 1 : 0);
    real cutbuf = (u->cutoff + lbuf);
    int2* b2num = (int2*)u->update;
-   launch_k1s(nonblk, n, spatial2_step1, //
+   launch_k1s(g::s0, n, spatial2_step1, //
               n, u->pz, b2num, lx, ly, lz, TINKER_IMAGE_ARGS, u->nakpk,
               u->akpf);
    // thrust::sort(policy, b2num, b2num + n, spatial2_less());
    thrust::stable_sort(policy, b2num, b2num + n, spatial2_less());
-   launch_k1s(nonblk, n, spatial2_step2, //
+   launch_k1s(g::s0, n, spatial2_step2, //
               n, u->sorted, u->bnum, b2num, lx, ly, lz, ZERO_LBUF, u->xold,
               u->yold, u->zold, //
               TINKER_IMAGE_ARGS, cutbuf, u->akc, u->half);
@@ -1503,7 +1503,7 @@ void spatial_data_init_cu(Spatial2Unit u)
    auto& si3 = u->si3;
    auto& si4 = u->si4;
    int* nakpl_ptr0 = &u->update[0];
-   launch_k1s(nonblk, n, spatial2_step3,      //
+   launch_k1s(g::s0, n, spatial2_step3,       //
               u->nak, u->akpf, nakpl_ptr0,    //
               u->bnum, u->nstype,             //
               si1.ns, si1.js, si2.ns, si2.js, //
@@ -1538,7 +1538,7 @@ void spatial_data_init_cu(Spatial2Unit u)
 
 
    int* nakpl_ptr1 = &u->update[1];
-   launch_k1s(nonblk, u->nakp, spatial2_step4,                       //
+   launch_k1s(g::s0, u->nakp, spatial2_step4,                        //
               u->nakpk, nakpl_ptr1, u->akpf, u->iakpl, u->iakpl_rev, //
               u->cap_nakpl, u->nstype,                               //
               si1.bit0, si2.bit0, si3.bit0, si4.bit0);
@@ -1560,8 +1560,8 @@ void spatial_data_init_cu(Spatial2Unit u)
 
 void spatial_data_update_sorted(Spatial2Unit u)
 {
-   launch_k1s(nonblk, u->n, spatial2_update_sorted, //
-              u->n, u->sorted, u->x, u->y, u->z,    //
+   launch_k1s(g::s0, u->n, spatial2_update_sorted, //
+              u->n, u->sorted, u->x, u->y, u->z,   //
               TINKER_IMAGE_ARGS, u->cutoff, u->akc, u->half);
 }
 }

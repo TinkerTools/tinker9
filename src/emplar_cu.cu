@@ -1283,23 +1283,23 @@ void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
 
       if CONSTEXPR (Ver::e) {
          auto ker0 = empole_self_cu<Ver::a>;
-         launch_k1s(nonblk, n, ker0, //
+         launch_k1s(g::s0, n, ker0, //
                     nullptr, em, rpole, n, f, aewald);
       }
    }
    int ngrid = get_grid_size(BLOCK_DIM);
    auto kera = emplar_cu1a<Ver, ETYP>;
-   kera<<<ngrid, BLOCK_DIM, 0, nonblk>>>(
+   kera<<<ngrid, BLOCK_DIM, 0, g::s0>>>(
       TINKER_IMAGE_ARGS, em, vir_em, demx, demy, demz, off, trqx, trqy, trqz,
       rpole, uind, uinp, thole, pdamp, f, aewald, //
       st.sorted, st.niak, st.iak, st.lst);
    auto kerb = emplar_cu1b<Ver, ETYP>;
-   kerb<<<ngrid, BLOCK_DIM, 0, nonblk>>>(
+   kerb<<<ngrid, BLOCK_DIM, 0, g::s0>>>(
       TINKER_IMAGE_ARGS, em, vir_em, demx, demy, demz, off, trqx, trqy, trqz,
       rpole, uind, uinp, thole, pdamp, f, aewald, //
       st.sorted, st.n, st.nakpl, st.iakpl);
    auto kerc = emplar_cu1c<Ver, ETYP>;
-   kerc<<<ngrid, BLOCK_DIM, 0, nonblk>>>(
+   kerc<<<ngrid, BLOCK_DIM, 0, g::s0>>>(
       TINKER_IMAGE_ARGS, em, vir_em, demx, demy, demz, off, trqx, trqy, trqz,
       rpole, uind, uinp, thole, pdamp, f, aewald, //
       nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y, st.z);
