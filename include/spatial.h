@@ -6,7 +6,6 @@
 namespace tinker {
 /**
  * \ingroup spatial
- * \page spatial
  *
  * Data structures and procedures to construct the spatial decomposition
  * in O(N) time complexity.

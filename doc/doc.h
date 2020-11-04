@@ -9,11 +9,10 @@
 /// \defgroup error  Errors and Exceptions
 /// \defgroup test  Unit Tests
 
-
+/// \defgroup async  Asynchronous Flow Control
 /// \defgroup rc  Resource: Pointer, Allocation, Deallocation, Queue
 
 
-/// \defgroup spatial  Spatial Decomposition
 /// \defgroup spatial2  Spatial Decomposition Version 2
 
 
@@ -21,6 +20,7 @@
 
 
 /*
+/// \defgroup spatial  Spatial Decomposition
 /// \defgroup geom  Geometrical Restraints
 /// \defgroup vdw  Van der Waals (VDW)
 /// \defgroup charge  Partial Charge Electrostatics
