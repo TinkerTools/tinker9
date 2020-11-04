@@ -203,7 +203,7 @@ void rattle_methyl_cu(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
 
    auto ker = constrain_methyl_cu1<RATTLE>;
-   launch_k2s(nonblk, 64, n23, ker,
+   launch_k2s(g::s0, 64, n23, ker,
 
               rateps, nratch2, iratch2, kratch2, nratch3, iratch3, kratch3,
 
@@ -223,7 +223,7 @@ void shake_methyl_cu(time_prec dt, pos_prec* xnew, pos_prec* ynew,
 
 
    auto ker = constrain_methyl_cu1<SHAKE>;
-   launch_k2s(nonblk, 64, n23, ker,
+   launch_k2s(g::s0, 64, n23, ker,
 
               rateps, nratch2, iratch2, kratch2, nratch3, iratch3, kratch3,
 
@@ -422,7 +422,7 @@ void rattle2_methyl_cu(time_prec dt, bool do_v)
 
    if (do_v) {
       auto ker = constrain2_methyl_cu1<true>;
-      launch_k2s(nonblk, 64, n23, ker,
+      launch_k2s(g::s0, 64, n23, ker,
 
                  nratch2, iratch2, nratch3, iratch3,
 
@@ -431,7 +431,7 @@ void rattle2_methyl_cu(time_prec dt, bool do_v)
                  xpos, ypos, zpos, massinv);
    } else {
       auto ker = constrain2_methyl_cu1<false>;
-      launch_k2s(nonblk, 64, n23, ker,
+      launch_k2s(g::s0, 64, n23, ker,
 
                  nratch2, iratch2, nratch3, iratch3,
 

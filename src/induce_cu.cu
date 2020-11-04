@@ -456,13 +456,13 @@ void sparse_precond_apply_cu(const real (*rsd)[3], const real (*rsdp)[3],
    off = off + st.buffer;
 
 
-   launch_k1s(nonblk, n, sparse_precond_cu0, //
+   launch_k1s(g::s0, n, sparse_precond_cu0, //
               rsd, rsdp, zrsd, zrsdp, polarity, n, udiag);
    int ngrid = get_grid_size(BLOCK_DIM);
    ngrid *= BLOCK_DIM;
    int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
    nparallel = std::max(nparallel, ngrid);
-   launch_k1s(nonblk, nparallel, sparse_precond_cu1, //
+   launch_k1s(g::s0, nparallel, sparse_precond_cu1, //
               st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nuexclude, uexclude,
               uexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
               st.niak, st.iak, st.lst, rsd, rsdp, zrsd, zrsdp, pdamp, thole,

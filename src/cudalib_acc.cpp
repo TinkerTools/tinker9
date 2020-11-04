@@ -18,9 +18,10 @@ void cudalib_data(rc_op op)
 
       g::q0 = -42;
       g::q1 = -42;
-      nonblk = nullptr;
-      check_rt(cublasDestroy(h_cublas));
-      check_rt(cublasDestroy(h_cublas_nonblk));
+      g::s0 = nullptr;
+      g::s1 = nullptr;
+      check_rt(cublasDestroy(g::h0));
+      check_rt(cublasDestroy(g::h1));
       check_rt(cudaFreeHost(pinned_buf));
       check_rt(cudaFree(dptr_buf));
 
@@ -35,14 +36,16 @@ void cudalib_data(rc_op op)
    if (op & rc_alloc) {
       g::q0 = acc_get_default_async();
       g::q1 = acc_async_sync;
-      nonblk = (cudaStream_t)acc_get_cuda_stream(g::q0);
-      check_rt(cublasCreate(&h_cublas));        // calls cudaMemcpy [sync] here
-      check_rt(cublasCreate(&h_cublas_nonblk)); // calls cudaMemcpy [sync] here
-      check_rt(cublasSetStream(h_cublas_nonblk, nonblk));
+      g::s0 = (cudaStream_t)acc_get_cuda_stream(g::q0);
+      g::s1 = (cudaStream_t)acc_get_cuda_stream(g::q1);
+      check_rt(cublasCreate(&g::h0)); // calls cudaMemcpy [sync] here
+      check_rt(cublasCreate(&g::h1)); // calls cudaMemcpy [sync] here
+      check_rt(cublasSetStream(g::h0, g::s0));
+      check_rt(cublasSetStream(g::h1, g::s1));
       // set pointer mode for cublas dot kernels
       cublasPointerMode_t ptrflag = CUBLAS_POINTER_MODE_DEVICE;
-      check_rt(cublasSetPointerMode(h_cublas, ptrflag));
-      check_rt(cublasSetPointerMode(h_cublas_nonblk, ptrflag));
+      check_rt(cublasSetPointerMode(g::h0, ptrflag));
+      check_rt(cublasSetPointerMode(g::h1, ptrflag));
 
 
       int nblock = get_grid_size(BLOCK_DIM);

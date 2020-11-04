@@ -36,7 +36,7 @@ void ExecQ::allocate()
 
 void ExecQ::begin_copyout()
 {
-   check_rt(cudaEventRecord(ptr->mdsave_begin_event, nonblk));
+   check_rt(cudaEventRecord(ptr->mdsave_begin_event, g::s0));
    check_rt(cudaStreamWaitEvent(ptr->ss, ptr->mdsave_begin_event, 0));
 }
 
@@ -44,6 +44,6 @@ void ExecQ::begin_copyout()
 void ExecQ::end_copyout()
 {
    check_rt(cudaEventRecord(ptr->mdsave_end_event, ptr->ss));
-   check_rt(cudaStreamWaitEvent(nonblk, ptr->mdsave_end_event, 0));
+   check_rt(cudaStreamWaitEvent(g::s0, ptr->mdsave_end_event, 0));
 }
 }

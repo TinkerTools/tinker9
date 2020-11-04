@@ -57,7 +57,7 @@ void fft_data(rc_op op)
          int nslow = st.nfft3;
          // different from FFTW Fortran API
          check_rt(cufftPlan3d(&iplan, nslow, st.nfft2, nfast, typ));
-         auto stream = nonblk;
+         auto stream = g::s0;
          if (use_pme_stream)
             stream = g::spme;
          check_rt(cufftSetStream(iplan, stream));
