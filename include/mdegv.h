@@ -47,7 +47,7 @@ void sum_gradient_acc(double, grad_prec*, grad_prec*, grad_prec*,
 
 void copy_gradient(int vers, double* grdx, double* grdy, double* grdz,
                    const grad_prec* gx_src, const grad_prec* gy_src,
-                   const grad_prec* gz_src, bool use_new_q);
+                   const grad_prec* gz_src, int queue);
 /**
  * \ingroup mdegv
  * \brief

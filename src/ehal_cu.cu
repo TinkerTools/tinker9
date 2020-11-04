@@ -450,7 +450,7 @@ void ehal_cu3()
 
 
    if CONSTEXPR (do_g)
-      darray::zero(PROCEED_NEW_Q, n, gxred, gyred, gzred);
+      darray::zero(g::q0, n, gxred, gyred, gzred);
 
 
    int ngrid = get_grid_size(BLOCK_DIM);

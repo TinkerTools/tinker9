@@ -52,27 +52,28 @@ void cflux_data(rc_op op)
 
 
    if (op & rc_init) {
-      darray::copyin(WAIT_NEW_Q, nbond, bflx, cflux::bflx);
-      darray::copyin(WAIT_NEW_Q, nangle, aflx, cflux::aflx);
-      darray::copyin(WAIT_NEW_Q, nangle, abflx, cflux::abflx);
-      darray::copyin(WAIT_NEW_Q, n, atomic, atomid::atomic);
-      darray::copyin(WAIT_NEW_Q, n, mono0, mpole::mono0);
+      darray::copyin(g::q0, nbond, bflx, cflux::bflx);
+      darray::copyin(g::q0, nangle, aflx, cflux::aflx);
+      darray::copyin(g::q0, nangle, abflx, cflux::abflx);
+      darray::copyin(g::q0, n, atomic, atomid::atomic);
+      darray::copyin(g::q0, n, mono0, mpole::mono0);
 
       if (rc_flag & calc::grad)
-         darray::zero(PROCEED_NEW_Q, n, decfx, decfy, decfz, pot);
+         darray::zero(g::q0, n, decfx, decfy, decfz, pot);
 
       std::vector<int> ibalstvec(nangle * 2);
       for (size_t i = 0; i < ibalstvec.size(); ++i) {
          ibalstvec[i] = atmlst::balist[i] - 1;
       }
-      darray::copyin(WAIT_NEW_Q, nangle, balist, ibalstvec.data());
+      darray::copyin(g::q0, nangle, balist, ibalstvec.data());
+      wait_for(g::q0);
    }
 }
 
 
 void zero_pot()
 {
-   darray::zero(PROCEED_NEW_Q, n, pot);
+   darray::zero(g::q0, n, pot);
 }
 
 

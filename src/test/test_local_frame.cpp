@@ -245,8 +245,9 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
       std::vector<std::array<double, 3>> fieldd, fieldp;
       fieldd.resize(n);
       fieldp.resize(n);
-      darray::copyout(PROCEED_NEW_Q, n, &fieldd[0][0], udir);
-      darray::copyout(WAIT_NEW_Q, n, &fieldp[0][0], udirp);
+      darray::copyout(g::q0, n, &fieldd[0][0], udir);
+      darray::copyout(g::q0, n, &fieldp[0][0], udirp);
+      wait_for(g::q0);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(fieldd[i][j] ==
@@ -295,13 +296,15 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
             up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
          }
       }
-      darray::copyin(PROCEED_NEW_Q, n, uind, &ud[0][0]);
-      darray::copyin(WAIT_NEW_Q, n, uinp, &up[0][0]);
+      darray::copyin(g::q0, n, uind, &ud[0][0]);
+      darray::copyin(g::q0, n, uinp, &up[0][0]);
+      wait_for(g::q0);
       ufield_nonewald(uind, uinp, udir, udirp);
       ud.resize(n);
       up.resize(n);
-      darray::copyout(PROCEED_NEW_Q, n, &ud[0][0], udir);
-      darray::copyout(WAIT_NEW_Q, n, &up[0][0], udirp);
+      darray::copyout(g::q0, n, &ud[0][0], udir);
+      darray::copyout(g::q0, n, &up[0][0], udirp);
+      wait_for(g::q0);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(ud[i][j] == Approx(ref_ufield_d[i][j]).margin(eps_f));
@@ -343,8 +346,9 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
       std::vector<std::array<double, 3>> ud, up;
       ud.resize(n);
       up.resize(n);
-      darray::copyout(PROCEED_NEW_Q, n, &ud[0][0], uind);
-      darray::copyout(WAIT_NEW_Q, n, &up[0][0], uinp);
+      darray::copyout(g::q0, n, &ud[0][0], uind);
+      darray::copyout(g::q0, n, &up[0][0], uinp);
+      wait_for(g::q0);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(ud[i][j] * debye ==
@@ -460,8 +464,9 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
       std::vector<std::array<double, 3>> fieldd, fieldp;
       fieldd.resize(n);
       fieldp.resize(n);
-      darray::copyout(PROCEED_NEW_Q, n, &fieldd[0][0], udir);
-      darray::copyout(WAIT_NEW_Q, n, &fieldp[0][0], udirp);
+      darray::copyout(g::q0, n, &fieldd[0][0], udir);
+      darray::copyout(g::q0, n, &fieldp[0][0], udirp);
+      wait_for(g::q0);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(fieldd[i][j] ==
@@ -510,13 +515,15 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
             up[i][j] = 0.1 * (i + 1) - 0.03 * (j + 1);
          }
       }
-      darray::copyin(PROCEED_NEW_Q, n, uind, &ud[0][0]);
-      darray::copyin(WAIT_NEW_Q, n, uinp, &up[0][0]);
+      darray::copyin(g::q0, n, uind, &ud[0][0]);
+      darray::copyin(g::q0, n, uinp, &up[0][0]);
+      wait_for(g::q0);
       ufield_ewald(uind, uinp, udir, udirp);
       ud.resize(n);
       up.resize(n);
-      darray::copyout(PROCEED_NEW_Q, n, &ud[0][0], udir);
-      darray::copyout(WAIT_NEW_Q, n, &up[0][0], udirp);
+      darray::copyout(g::q0, n, &ud[0][0], udir);
+      darray::copyout(g::q0, n, &up[0][0], udirp);
+      wait_for(g::q0);
 
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
@@ -559,8 +566,9 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
       std::vector<std::array<double, 3>> ud, up;
       ud.resize(n);
       up.resize(n);
-      darray::copyout(PROCEED_NEW_Q, n, &ud[0][0], uind);
-      darray::copyout(WAIT_NEW_Q, n, &up[0][0], uinp);
+      darray::copyout(g::q0, n, &ud[0][0], uind);
+      darray::copyout(g::q0, n, &up[0][0], uinp);
+      wait_for(g::q0);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(ud[i][j] * debye ==

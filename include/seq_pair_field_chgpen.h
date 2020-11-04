@@ -90,6 +90,7 @@ void pair_dfield_chgpen(real r2, real xr, real yr, real zr, real dscale,
 }
 
 
+#pragma acc routine seq
 template <class ETYP>
 SEQ_CUDA
 void pair_ufield_chgpen(real r2, real xr, real yr, real zr, real wscale, //

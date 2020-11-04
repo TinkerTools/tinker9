@@ -21,7 +21,7 @@ void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
    constexpr bool do_v = Ver::v;
 
    if CONSTEXPR (do_g)
-      darray::zero(PROCEED_NEW_Q, n, ufld, dufld);
+      darray::zero(g::q0, n, ufld, dufld);
 
    const real off = switch_off(switch_mpole);
    const real off2 = off * off;

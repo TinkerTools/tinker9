@@ -14,7 +14,7 @@ namespace tinker {
 // TODO: HIPPO not reviewed
 void dfield_chgpen_nonewald_acc(real (*field)[3])
 {
-   darray::zero(PROCEED_NEW_Q, n, field);
+   darray::zero(g::q0, n, field);
 
    const real off = switch_off(switch_mpole);
    const real off2 = off * off;
@@ -23,6 +23,7 @@ void dfield_chgpen_nonewald_acc(real (*field)[3])
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(DFIELD_DPTRS,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -83,6 +84,7 @@ void dfield_chgpen_nonewald_acc(real (*field)[3])
    } // end for (int i)
 
    #pragma acc parallel async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(DFIELD_DPTRS,dexclude,dexclude_scale)
    #pragma acc loop independent
    for (int ii = 0; ii < ndexclude; ++ii) {
@@ -141,7 +143,7 @@ void dfield_chgpen_nonewald_acc(real (*field)[3])
 // TODO: HIPPO not reviewed
 void ufield_chgpen_nonewald_acc(const real (*uind)[3], real (*field)[3])
 {
-   darray::zero(PROCEED_NEW_Q, n, field);
+   darray::zero(g::q0, n, field);
 
    const real off = switch_off(switch_mpole);
    const real off2 = off * off;
@@ -150,6 +152,7 @@ void ufield_chgpen_nonewald_acc(const real (*uind)[3], real (*field)[3])
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(UFIELD_DPTRS,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -200,6 +203,7 @@ void ufield_chgpen_nonewald_acc(const real (*uind)[3], real (*field)[3])
    } // end for (int i)
 
    #pragma acc parallel async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(UFIELD_DPTRS,wexclude,wexclude_scale)
    #pragma acc loop independent
    for (int ii = 0; ii < nwexclude; ++ii) {

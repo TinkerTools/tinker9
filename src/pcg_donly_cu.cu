@@ -155,9 +155,9 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
    if (predict) {
       ulspred_sum2(uind);
    } else if (dirguess) {
-      darray::copy(PROCEED_NEW_Q, n, uind, udir);
+      darray::copy(g::q0, n, uind, udir);
    } else {
-      darray::zero(PROCEED_NEW_Q, n, uind);
+      darray::zero(g::q0, n, uind);
    }
 
 
@@ -178,7 +178,7 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
    } else if (dirguess) {
       ufield_chgpen(udir, rsd);
    } else {
-      darray::copy(PROCEED_NEW_Q, n, rsd, field);
+      darray::copy(g::q0, n, rsd, field);
    }
    launch_k1s(nonblk, n, pcg_rsd1, n, polarity, rsd);
 
@@ -190,12 +190,12 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
    } else {
       diag_precond2(rsd, zrsd);
    }
-   darray::copy(PROCEED_NEW_Q, n, conj, zrsd);
+   darray::copy(g::q0, n, conj, zrsd);
 
 
    // initial r(0) M r(0)
    real* sum = &((real*)dptr_buf)[0];
-   darray::dot(PROCEED_NEW_Q, n, sum, rsd, zrsd);
+   darray::dot(g::q0, n, sum, rsd, zrsd);
 
 
    // conjugate gradient iteration of the mutual induced dipoles
@@ -227,7 +227,7 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
       // a <- p T p
       real* a = &((real*)dptr_buf)[1];
       // a <- r M r / p T p; a = sum / a; ap = sump / ap
-      darray::dot(PROCEED_NEW_Q, n, a, conj, vec);
+      darray::dot(g::q0, n, a, conj, vec);
 
 
       // u <- u + a p
@@ -244,7 +244,7 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
 
       // b = sum1 / sum; bp = sump1 / sump
       real* sum1 = &((real*)dptr_buf)[2];
-      darray::dot(PROCEED_NEW_Q, n, sum1, rsd, zrsd);
+      darray::dot(g::q0, n, sum1, rsd, zrsd);
 
 
       // calculate/update p
@@ -252,11 +252,11 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
 
 
       // copy sum1/p to sum/p
-      darray::copy(PROCEED_NEW_Q, 2, sum, sum1);
+      darray::copy(g::q0, 2, sum, sum1);
 
 
       real* epsd = &((real*)dptr_buf)[3];
-      darray::dot(PROCEED_NEW_Q, n, epsd, rsd, rsd);
+      darray::dot(g::q0, n, epsd, rsd, rsd);
       check_rt(cudaMemcpyAsync((real*)pinned_buf, epsd, sizeof(real),
                                cudaMemcpyDeviceToHost, nonblk));
       check_rt(cudaStreamSynchronize(nonblk));
@@ -292,8 +292,8 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
    // print the results from the conjugate gradient iteration
    if (debug) {
       print(stdout,
-            " Induced Dipoles :    Iterations %4d      RMS "
-            "Residual %14.10f\n",
+            " Induced Dipoles :    Iterations %4d      RMS"
+            " Residual %14.10f\n",
             iter, eps);
    }
 
