@@ -31,6 +31,7 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
    real dmpi25 = dmpi23 * dmpi22;
 
    real diff = REAL_ABS(dmpi - dmpk);
+   real eps = 0.005f;
 
    // divisions
    const real div3 = 1 / ((real)3);
@@ -38,7 +39,7 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
    const real div945 = 1 / ((real)945);
 
    real pre, s, ds, d2s, d3s, d4s, d5s;
-   if (diff < 0.005f) {
+   if (diff < eps) {
       real r6 = r3 * r3;
       real r7 = r4 * r3;
 
@@ -76,11 +77,12 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
       real dmpk24 = dmpk22 * dmpk22;
       real dmpk25 = dmpk23 * dmpk22;
 
-      real term = dmpi22 - dmpk22;
-      real tmp = (4 * dmpi2 * dmpk2) / term;
+      real term = 0.25f * (dmpi + dmpk) * (dmpi - dmpk);
+      real term1 = (dmpi + dmpk) * (dmpi - dmpk);
+      real tmp = 4 * (dmpi * dmpk) / term1;
       pre = (8192 * dmpi23 * dmpk23) / (term * term * term * term);
 
-      real coef1 = 4 / term;
+      real coef1 = 16  / term1;
 
       s = (dampi * expk) + (dampk * expi) + tmp * (expi - expk);
       ds =

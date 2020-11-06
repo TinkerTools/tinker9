@@ -10,7 +10,7 @@ SEQ_CUDA
 inline void damp_pole(real* restrict dmpik, real* restrict dmpi,
                       real* restrict dmpk, real r, real alphai, real alphak)
 {
-   real eps = 0.001f;
+   real eps = 0.01f;
    real diff = REAL_ABS(alphai - alphak);
    real dampi = alphai * r;
    real dampk = alphak * r;
@@ -109,8 +109,9 @@ inline void damp_pole(real* restrict dmpik, real* restrict dmpi,
       // valence-valence
       real alphai2 = alphai * alphai;
       real alphak2 = alphak * alphak;
-      real termi = alphak2 / (alphak2 - alphai2);
-      real termk = alphai2 / (alphai2 - alphak2);
+      real alphaik = ((alphak + alphai) * (alphak - alphai));
+      real termi = alphak2 / alphaik;
+      real termk = -alphai2 / alphaik;
       real termi2 = termi * termi;
       real termk2 = termk * termk;
 
@@ -185,7 +186,7 @@ SEQ_CUDA
 inline void damp_polar(real* restrict dmpik, real* restrict dmpi,
                        real* restrict dmpk, real r, real alphai, real alphak)
 {
-   real eps = 0.005f;
+   real eps = 0.05f;
    real diff = REAL_ABS(alphai - alphak);
    real dampi = alphai * r;
    real dampk = alphak * r;
@@ -230,8 +231,9 @@ inline void damp_polar(real* restrict dmpik, real* restrict dmpi,
       // valence-valence
       real alphai2 = alphai * alphai;
       real alphak2 = alphak * alphak;
-      real termi = alphak2 / (alphak2 - alphai2);
-      real termk = alphai2 / (alphai2 - alphak2);
+      real alphaik = ((alphak + alphai) * (alphak - alphai));
+      real termi = alphak2 / alphaik;
+      real termk = -alphai2 / alphaik;
       real termi2 = termi * termi;
       real termk2 = termk * termk;
 
@@ -253,7 +255,7 @@ SEQ_CUDA
 inline void damp_dir(real* restrict dmpi, real* restrict dmpk, real r,
                      real alphai, real alphak)
 {
-   real eps = 0.001f;
+   real eps = 0.05f;
    real diff = REAL_ABS(alphai - alphak);
    real dampi = alphai * r;
    real dampk = alphak * r;
@@ -296,7 +298,7 @@ inline void damp_dir(real* restrict dmpi, real* restrict dmpk, real r,
 SEQ_CUDA
 inline void damp_mut(real* restrict dmpik, real r, real alphai, real alphak)
 {
-   real eps = 0.005f;
+   real eps = 0.05f;
    real diff = REAL_ABS(alphai - alphak);
    real dampi = alphai * r;
    real dampk = alphak * r;
