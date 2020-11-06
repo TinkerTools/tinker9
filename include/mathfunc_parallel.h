@@ -49,8 +49,11 @@ void reduce_sum2(HT (&h_ans)[HN], DPTR v, size_t nelem, int queue)
 /**
  * \ingroup math
  * \brief Sum over all of the elements of an 1D array. This routine will first
- * save the result at the designated device memory, then attempt to copy out
- * the result to the host variable in an asynchronous/non-blocking manner.
+ * save the result in the device memory, then attempt to copy out the result to
+ * the host variable in an asynchronous/non-blocking manner. A valid device
+ * pointer is required for the result on the device as input, although the
+ * internal implementation may or may not use it, thus there is no guarantee
+ * you can copy out the result to CPU from the designated device pointer.
  *
  * \f[ Sum = \sum_i^n a_i \f]
  *

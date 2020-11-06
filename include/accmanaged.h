@@ -15,5 +15,13 @@ extern energy_buffer_traits::type host_e_ele;
 extern void* dptr_e_val;
 extern void* dptr_e_vdw;
 extern void* dptr_e_ele;
+
+
+extern virial_buffer_traits::type host_v_val[virial_buffer_traits::N];
+extern virial_buffer_traits::type host_v_vdw[virial_buffer_traits::N];
+extern virial_buffer_traits::type host_v_ele[virial_buffer_traits::N];
+extern void* dptr_v_val;
+extern void* dptr_v_vdw;
+extern void* dptr_v_ele;
 }
 }

@@ -109,14 +109,28 @@ template double dotprod_acc(const double*, const double*, size_t, int);
 template <class T>
 void dotprod_acc(T* ans, const T* a, const T* b, size_t nelem, int queue)
 {
-   #pragma acc serial async(queue) deviceptr(ans)
-   {
-      *ans = 0;
+   static T ans1;
+   static T* pans1;
+#if _OPENACC
+   static bool first = true;
+   if (first) {
+      #pragma acc enter data async(queue) create(ans1)
+      pans1 = (T*)acc_deviceptr(&ans1);
+      first = false;
    }
-   #pragma acc parallel loop async(queue) deviceptr(ans,a,b)
+#else
+   pans1 = &ans1;
+#endif
+
+
+   ans1 = 0;
+   #pragma acc update async(queue) device(ans1)
+   #pragma acc parallel loop independent async(queue) deviceptr(a,b)\
+               reduction(+:ans1) present(ans1)
    for (size_t i = 0; i < nelem; ++i) {
-      *ans += a[i] * b[i];
+      ans1 += a[i] * b[i];
    }
+   darray::copy(queue, 1, ans, pans1);
 }
 template void dotprod_acc(float*, const float*, const float*, size_t, int);
 template void dotprod_acc(double*, const double*, const double*, size_t, int);
