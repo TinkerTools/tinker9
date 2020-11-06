@@ -1,4 +1,5 @@
 #include "energy.h"
+#include "accmanaged.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
@@ -238,6 +239,8 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
+
+   /*
    if (do_e) {
       if (!rc_a) {
          energy_prec e;
@@ -256,6 +259,42 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       }
       esum = energy_valence + energy_vdw + energy_elec;
    }
+   */
+   bool must_wait = false;
+   detail::host_e_val = 0;
+   detail::host_e_vdw = 0;
+   detail::host_e_ele = 0;
+   if (do_e) {
+      using e_t = energy_buffer_traits::type;
+      if (!rc_a) {
+         size_t bufsize = buffer_size();
+         if (ecore_val) {
+            must_wait = true;
+            parallel::reduce_sum_on_device((e_t*)detail::dptr_e_val,
+                                           detail::host_e_val, eng_buf, bufsize,
+                                           g::q0);
+         }
+         if (ecore_vdw && eng_buf_vdw) {
+            must_wait = true;
+            parallel::reduce_sum_on_device((e_t*)detail::dptr_e_vdw,
+                                           detail::host_e_vdw, eng_buf_vdw,
+                                           bufsize, g::q0);
+         }
+         if (ecore_ele && eng_buf_elec) {
+            must_wait = true;
+            parallel::reduce_sum_on_device((e_t*)detail::dptr_e_ele,
+                                           detail::host_e_ele, eng_buf_elec,
+                                           bufsize, g::q0);
+         }
+      }
+   }
+   if (must_wait) {
+      wait_for(g::q0);
+   }
+   energy_valence += to_flt_host<energy_prec>(detail::host_e_val);
+   energy_vdw += to_flt_host<energy_prec>(detail::host_e_vdw);
+   energy_elec += to_flt_host<energy_prec>(detail::host_e_ele);
+   esum = energy_valence + energy_vdw + energy_elec;
 
 
    if (do_v) {

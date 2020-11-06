@@ -86,6 +86,32 @@ template void reduce_sum2_cu(unsigned long long (&)[6],
                              unsigned long long (*)[8], size_t, int);
 
 
+template <class T>
+void reduce_sum_on_device_cu(T* dp_ans, T& ans, const T* a, size_t nelem,
+                             int queue)
+{
+   cudaStream_t st = queue == g::q1 ? g::s1 : g::s0;
+   T* dptr = (T*)dptr_buf;
+   using Op = OpPlus<T>;
+
+
+   int grid_siz1 = get_grid_size(BLOCK_DIM);
+   int grid_siz2 = (nelem + BLOCK_DIM - 1) / BLOCK_DIM;
+   int grid_size = std::min(grid_siz1, grid_siz2);
+   reduce<T, BLOCK_DIM, Op><<<grid_size, BLOCK_DIM, 0, st>>>(dptr, a, nelem);
+   reduce<T, BLOCK_DIM, Op><<<1, BLOCK_DIM, 0, st>>>(dp_ans, dptr, grid_size);
+   check_rt(
+      cudaMemcpyAsync(&ans, dp_ans, sizeof(T), cudaMemcpyDeviceToHost, st));
+}
+template void reduce_sum_on_device_cu(int*, int&, const int*, size_t, int);
+template void reduce_sum_on_device_cu(float*, float&, const float*, size_t,
+                                      int);
+template void reduce_sum_on_device_cu(double*, double&, const double*, size_t,
+                                      int);
+template void reduce_sum_on_device_cu(unsigned long long*, unsigned long long&,
+                                      const unsigned long long*, size_t, int);
+
+
 template <>
 void dotprod_cu<float>(float* ans, const float* a, const float* b, size_t nelem,
                        int queue)

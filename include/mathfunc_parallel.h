@@ -48,6 +48,33 @@ void reduce_sum2(HT (&h_ans)[HN], DPTR v, size_t nelem, int queue)
 
 /**
  * \ingroup math
+ * \brief Sum over all of the elements of an 1D array. This routine will first
+ * save the result at the designated device memory, then attempt to copy out
+ * the result to the host variable in an asynchronous/non-blocking manner.
+ *
+ * \f[ Sum = \sum_i^n a_i \f]
+ *
+ * \param dp_ans  Device pointer used to store the reduction result.
+ * \param ans     Host variable for the reduction result.
+ * \param a       Device pointer to the array.
+ * \param nelem   Number of elements.
+ * \param queue   OpenACC queue.
+ */
+template <class T>
+void reduce_sum_on_device(T* dp_ans, T& ans, const T* a, size_t nelem,
+                          int queue)
+{
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      return reduce_sum_on_device_cu(dp_ans, ans, a, nelem, queue);
+   else
+#endif
+      return reduce_sum_on_device_acc(dp_ans, ans, a, nelem, queue);
+}
+
+
+/**
+ * \ingroup math
  * \brief Dot product of two linear arrays.
  *
  * \f[ DotProduct = \sum_i^n a_i \cdot b_i \f]

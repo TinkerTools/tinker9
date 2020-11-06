@@ -12,7 +12,7 @@
 /// \defgroup async  Asynchronous Flow Control
 /// \defgroup rc  Resource: Pointer, Allocation, Deallocation, Queue
 
-
+/// \defgroup math  Math
 /// \defgroup spatial2  Spatial Decomposition Version 2
 
 
@@ -38,7 +38,6 @@
 /// \defgroup osrw  OSRW
 
 
-/// \defgroup math  Math
 /// \defgroup rand  Random Number
 /// \defgroup nvidia  Nvidia GPU
 /// \defgroup bindc    Fortran Tinker to C Interface
