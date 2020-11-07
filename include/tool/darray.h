@@ -256,7 +256,7 @@ struct darray
       constexpr size_t N = deduce_ptr<PTR>::n;
       typedef typename deduce_ptr<PTR2>::type T2;
       static_assert(std::is_same<T, T2>::value, "");
-      return parallel::dotprod(flatten(ptr), flatten(b), nelem * N, q);
+      return dotprod(flatten(ptr), flatten(b), nelem * N, q);
    }
 
 
@@ -269,7 +269,7 @@ struct darray
       static_assert(std::is_same<T, T2>::value, "");
       typedef typename deduce_ptr<ANS>::type TA;
       static_assert(std::is_same<T, TA>::value, "");
-      parallel::dotprod(ans, flatten(ptr), flatten(ptr2), nelem * N, q);
+      dotprod(ans, flatten(ptr), flatten(ptr2), nelem * N, q);
    }
 
 
@@ -277,7 +277,7 @@ struct darray
    static void scale(int q, size_t nelem, FLT scal, PTR ptr)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
-      parallel::scale_array(flatten(ptr), scal, nelem * N, q);
+      scale_array(flatten(ptr), scal, nelem * N, q);
    }
 
 

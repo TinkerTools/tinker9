@@ -270,21 +270,18 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          size_t bufsize = buffer_size();
          if (ecore_val) {
             must_wait = true;
-            parallel::reduce_sum_on_device((e_t*)detail::dptr_e_val,
-                                           detail::host_e_val, eng_buf, bufsize,
-                                           g::q0);
+            reduce_sum_on_device((e_t*)detail::dptr_e_val, detail::host_e_val,
+                                 eng_buf, bufsize, g::q0);
          }
          if (ecore_vdw && eng_buf_vdw) {
             must_wait = true;
-            parallel::reduce_sum_on_device((e_t*)detail::dptr_e_vdw,
-                                           detail::host_e_vdw, eng_buf_vdw,
-                                           bufsize, g::q0);
+            reduce_sum_on_device((e_t*)detail::dptr_e_vdw, detail::host_e_vdw,
+                                 eng_buf_vdw, bufsize, g::q0);
          }
          if (ecore_ele && eng_buf_elec) {
             must_wait = true;
-            parallel::reduce_sum_on_device((e_t*)detail::dptr_e_ele,
-                                           detail::host_e_ele, eng_buf_elec,
-                                           bufsize, g::q0);
+            reduce_sum_on_device((e_t*)detail::dptr_e_ele, detail::host_e_ele,
+                                 eng_buf_elec, bufsize, g::q0);
          }
       }
    }

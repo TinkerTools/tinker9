@@ -5,7 +5,6 @@
 
 
 namespace tinker {
-namespace parallel {
 /**
  * \ingroup math
  * \brief Sum over all of the elements of an 1D array.
@@ -116,6 +115,5 @@ template <class T>
 void scale_array(T* dst, T scal, size_t nelem, int queue)
 {
    return scale_array_acc(dst, scal, nelem, queue);
-}
 }
 }
