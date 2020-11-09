@@ -76,10 +76,10 @@ void pair_mpole_chgpen(                             //
    if CONSTEXPR (eq<ETYP, EWALD>()) {
       if CONSTEXPR (do_g) {
          damp_ewald<6>(bn, r, invr1, rr2, aewald);
-         damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
+         damp_pole_v2<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       } else {
          damp_ewald<5>(bn, r, invr1, rr2, aewald);
-         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
+         damp_pole_v2<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
 
       bn[0] *= f;
@@ -91,9 +91,9 @@ void pair_mpole_chgpen(                             //
          bn[5] *= f;
    } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
       if CONSTEXPR (do_g) {
-         damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
+         damp_pole_v2<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       } else
-         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
+         damp_pole_v2<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
 
       bn[0] = rr1;
       bn[1] = rr3;
@@ -104,24 +104,25 @@ void pair_mpole_chgpen(                             //
          bn[5] = rr11;
    } // endif NON_EWALD
 
-   rr1i = bn[0] - (1 - mscale * dmpi[0]) * rr1;
-   rr3i = bn[1] - (1 - mscale * dmpi[1]) * rr3;
-   rr5i = bn[2] - (1 - mscale * dmpi[2]) * rr5;
-   rr7i = bn[3] - (1 - mscale * dmpi[3]) * rr7;
-   rr1k = bn[0] - (1 - mscale * dmpk[0]) * rr1;
-   rr3k = bn[1] - (1 - mscale * dmpk[1]) * rr3;
-   rr5k = bn[2] - (1 - mscale * dmpk[2]) * rr5;
-   rr7k = bn[3] - (1 - mscale * dmpk[3]) * rr7;
-   rr1ik = bn[0] - (1 - mscale * dmpik[0]) * rr1;
-   rr3ik = bn[1] - (1 - mscale * dmpik[1]) * rr3;
-   rr5ik = bn[2] - (1 - mscale * dmpik[2]) * rr5;
-   rr7ik = bn[3] - (1 - mscale * dmpik[3]) * rr7;
-   rr9ik = bn[4] - (1 - mscale * dmpik[4]) * rr9;
-   rr1 = bn[0] - (1 - mscale) * rr1;
-   rr3 = bn[1] - (1 - mscale) * rr3;
+   real m = 1 - mscale;
+   rr1i = bn[0] - (m + mscale * dmpi[0]) * rr1;
+   rr3i = bn[1] - (m + mscale * dmpi[1]) * rr3;
+   rr5i = bn[2] - (m + mscale * dmpi[2]) * rr5;
+   rr7i = bn[3] - (m + mscale * dmpi[3]) * rr7;
+   rr1k = bn[0] - (m + mscale * dmpk[0]) * rr1;
+   rr3k = bn[1] - (m + mscale * dmpk[1]) * rr3;
+   rr5k = bn[2] - (m + mscale * dmpk[2]) * rr5;
+   rr7k = bn[3] - (m + mscale * dmpk[3]) * rr7;
+   rr1ik = bn[0] - (m + mscale * dmpik[0]) * rr1;
+   rr3ik = bn[1] - (m + mscale * dmpik[1]) * rr3;
+   rr5ik = bn[2] - (m + mscale * dmpik[2]) * rr5;
+   rr7ik = bn[3] - (m + mscale * dmpik[3]) * rr7;
+   rr9ik = bn[4] - (m + mscale * dmpik[4]) * rr9;
+   rr1 = bn[0] - m * rr1;
+   rr3 = bn[1] - m * rr3;
 
    if CONSTEXPR (do_g)
-      rr11ik = bn[5] - (1 - mscale * dmpik[5]) * rr11;
+      rr11ik = bn[5] - (m + mscale * dmpik[5]) * rr11;
 
 
    if CONSTEXPR (do_e) {

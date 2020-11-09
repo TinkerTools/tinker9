@@ -54,10 +54,10 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
    if CONSTEXPR (eq<ETYP, EWALD>()) {
       if CONSTEXPR (do_g) {
          damp_ewald<5>(bn, r, invr1, rr2, aewald);
-         damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
+         damp_pole_v2<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       } else {
          damp_ewald<4>(bn, r, invr1, rr2, aewald);
-         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
+         damp_pole_v2<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
 
       bn[1] *= f;
@@ -66,9 +66,9 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       bn[4] *= f;
    } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
       if CONSTEXPR (do_g)
-         damp_pole<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
+         damp_pole_v2<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       else {
-         damp_pole<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
+         damp_pole_v2<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
 
       bn[1] = rr3;
@@ -77,18 +77,20 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       bn[4] = rr9;
    }
 
-   rr3core = bn[1] - (1 - dscale) * rr3;
-   rr5core = bn[2] - (1 - dscale) * rr5;
-   rr3i = bn[1] - (1 - dscale * dmpi[1]) * rr3;
-   rr5i = bn[2] - (1 - dscale * dmpi[2]) * rr5;
-   rr7i = bn[3] - (1 - dscale * dmpi[3]) * rr7;
-   rr9i = bn[4] - (1 - dscale * dmpi[4]) * rr9;
-   rr3k = bn[1] - (1 - dscale * dmpk[1]) * rr3;
-   rr5k = bn[2] - (1 - dscale * dmpk[2]) * rr5;
-   rr7k = bn[3] - (1 - dscale * dmpk[3]) * rr7;
-   rr9k = bn[4] - (1 - dscale * dmpk[4]) * rr9;
-   rr5ik = bn[2] - (1 - wscale * dmpik[2]) * rr5;
-   rr7ik = bn[3] - (1 - wscale * dmpik[3]) * rr7;
+   real d = 1 - dscale;
+   real w = 1 - wscale;
+   rr3core = bn[1] - d * rr3;
+   rr5core = bn[2] - d * rr5;
+   rr3i = bn[1] - (d + dscale * dmpi[1]) * rr3;
+   rr5i = bn[2] - (d + dscale * dmpi[2]) * rr5;
+   rr7i = bn[3] - (d + dscale * dmpi[3]) * rr7;
+   rr9i = bn[4] - (d + dscale * dmpi[4]) * rr9;
+   rr3k = bn[1] - (d + dscale * dmpk[1]) * rr3;
+   rr5k = bn[2] - (d + dscale * dmpk[2]) * rr5;
+   rr7k = bn[3] - (d + dscale * dmpk[3]) * rr7;
+   rr9k = bn[4] - (d + dscale * dmpk[4]) * rr9;
+   rr5ik = bn[2] - (w + wscale * dmpik[2]) * rr5;
+   rr7ik = bn[3] - (w + wscale * dmpik[3]) * rr7;
 
    dsr3i = 2 * rr3i;
    dsr3k = 2 * rr3k;

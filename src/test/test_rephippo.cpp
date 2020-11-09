@@ -5,7 +5,7 @@
 using namespace tinker;
 
 
-TEST_CASE("EREPEL-1", "[ff][erepel][c5h12-acnh2]")
+TEST_CASE("EREPEL-1", "[ff][hippo][erepel][c5h12-acnh2]")
 {
    TestFile fx1(TINKER9_DIRSTR "/src/test/file/c5h12acnh2/c5h12acnh2.xyz");
    TestFile fk1(TINKER9_DIRSTR "/src/test/file/hippo/repuls/rep.key");
@@ -71,7 +71,7 @@ TEST_CASE("EREPEL-1", "[ff][erepel][c5h12-acnh2]")
 }
 
 
-TEST_CASE("EREPEL-2", "[ff][erepel][water]")
+TEST_CASE("EREPEL-2", "[ff][hippo][erepel][water]")
 {
    TestFile fx1(TINKER9_DIRSTR "/src/test/file/water10/h2o10.xyz");
    TestFile fk1(TINKER9_DIRSTR "/src/test/file/hippo/repuls/repwater.key");

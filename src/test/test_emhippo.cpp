@@ -5,7 +5,7 @@
 using namespace tinker;
 
 
-TEST_CASE("EMPOLE-1", "[ff][emhippo][ewald]")
+TEST_CASE("EMPOLE-1-HIPPO", "[ff][hippo][emhippo][ewald]")
 {
    TestFile fx1(TINKER9_DIRSTR "/src/test/file/c5h12acnh2/c5h12acnh2.xyz");
    TestFile fk1(TINKER9_DIRSTR "/src/test/file/hippo/mpole/ewald.key");
@@ -16,9 +16,9 @@ TEST_CASE("EMPOLE-1", "[ff][emhippo][ewald]")
    int argc = 4;
 
 
-   const double eps_e = test_get_eps(0.05, 0.0002);
-   const double eps_g = test_get_eps(0.5, 0.0005);
-   const double eps_v = test_get_eps(1.05, 0.001);
+   const double eps_e = test_get_eps(0.03, 0.0001);
+   const double eps_g = test_get_eps(0.3, 0.0001);
+   const double eps_v = test_get_eps(1.15, 0.0004);
 
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/emhippo.1.txt");
@@ -71,7 +71,7 @@ TEST_CASE("EMPOLE-1", "[ff][emhippo][ewald]")
 }
 
 
-TEST_CASE("EMPOLE-2", "[ff][emhippo][newald]")
+TEST_CASE("EMPOLE-2-HIPPO", "[ff][hippo][emhippo][newald]")
 {
    TestFile fx1(TINKER9_DIRSTR "/src/test/file/c5h12acnh2/c5h12acnh2.xyz");
    TestFile fk1(TINKER9_DIRSTR "/src/test/file/hippo/mpole/newald.key");
@@ -82,9 +82,9 @@ TEST_CASE("EMPOLE-2", "[ff][emhippo][newald]")
    int argc = 4;
 
 
-   const double eps_e = test_get_eps(0.05, 0.0001);
-   const double eps_g = test_get_eps(0.5, 0.0004);
-   const double eps_v = test_get_eps(1.05, 0.001);
+   const double eps_e = test_get_eps(0.035, 0.0001);
+   const double eps_g = test_get_eps(0.3, 0.0001);
+   const double eps_v = test_get_eps(1.15, 0.0005);
 
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/emhippo.2.txt");

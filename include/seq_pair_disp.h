@@ -34,10 +34,8 @@ void pair_disp(real r, real r2, real rr1, //
    if (diff > eps) {
       real ai2 = ai * ai;
       real ak2 = ak * ak;
-      // real ti = ak2 * REAL_RECIP(ak2 - ai2);
-      // real tk = ai2 * REAL_RECIP(ai2 - ak2);
-      real ti = ak2 * REAL_RECIP((ak + ai)*(ak - ai));
-      real tk = ai2 * REAL_RECIP((ai + ak)*(ai - ak));
+      real ti = ak2 * REAL_RECIP((ak + ai) * (ak - ai));
+      real tk = ai2 * REAL_RECIP((ai + ak) * (ai - ak));
       real a1 = 2 * ti + 1;
       real b1 = 2 * tk + 1;
       real termi = ((di / 2 + b1) / 2 * di + b1) * di + b1;
