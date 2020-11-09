@@ -1,10 +1,7 @@
 #include "mathfunc_parallel_acc.h"
 #include "glob.accasync.h"
-#include "tool/darray.h"
+#include "tool/deduce_ptr.h"
 #include <cassert>
-#if _OPENACC
-#   include <openacc.h>
-#endif
 
 
 namespace tinker {
@@ -55,20 +52,13 @@ template void reduce_sum2_acc(unsigned long long (&)[6],
 
 
 template <class T>
-void reduce_sum_on_device_acc(T*, T& ans, const T* a, size_t nelem, int queue)
+void reduce_sum_on_device_acc(T* dp_ans, const T* a, size_t nelem, int queue)
 {
    static T ans1;
-   static T* pans1;
-#if _OPENACC
    static bool first = true;
-   if (first) {
-      #pragma acc enter data async(queue) create(ans1)
-      pans1 = (T*)acc_deviceptr(&ans1);
+   #pragma acc enter data if(first) async(queue) create(ans1)
+   if (first)
       first = false;
-   }
-#else
-   pans1 = &ans1;
-#endif
 
 
    ans1 = 0;
@@ -78,15 +68,49 @@ void reduce_sum_on_device_acc(T*, T& ans, const T* a, size_t nelem, int queue)
    for (size_t i = 0; i < nelem; ++i) {
       ans1 += a[i];
    }
-   darray::copyout(queue, 1, &ans, pans1);
+   #pragma acc serial async(queue) present(ans1) deviceptr(dp_ans)
+   {
+      *dp_ans = ans1;
+   }
 }
-template void reduce_sum_on_device_acc(int*, int&, const int*, size_t, int);
-template void reduce_sum_on_device_acc(float*, float&, const float*, size_t,
-                                       int);
-template void reduce_sum_on_device_acc(double*, double&, const double*, size_t,
-                                       int);
-template void reduce_sum_on_device_acc(unsigned long long*, unsigned long long&,
+template void reduce_sum_on_device_acc(int*, const int*, size_t, int);
+template void reduce_sum_on_device_acc(float*, const float*, size_t, int);
+template void reduce_sum_on_device_acc(double*, const double*, size_t, int);
+template void reduce_sum_on_device_acc(unsigned long long*,
                                        const unsigned long long*, size_t, int);
+
+
+template <class T, size_t HN, class DPTR>
+void reduce_sum2_on_device_acc(T (&dref)[HN], DPTR v, size_t nelem, int queue)
+{
+   static T ans1;
+   static bool first = true;
+   #pragma acc enter data if(first) async(queue) create(ans1)
+   if (first)
+      first = false;
+
+
+   T* dptr = &dref[0];
+   for (size_t iv = 0; iv < HN; ++iv) {
+      ans1 = 0;
+      #pragma acc update async(queue) device(ans1)
+      #pragma acc parallel loop independent async(queue) deviceptr(v)\
+                  reduction(+:ans1) present(ans1)
+      for (size_t ig = 0; ig < nelem; ++ig) {
+         ans1 += v[ig][iv];
+      }
+      #pragma acc serial async(queue) deviceptr(dptr) present(ans1)
+      {
+         dptr[iv] = ans1;
+      }
+   }
+}
+template void reduce_sum2_on_device_acc(float (&)[6], float (*)[8], size_t,
+                                        int);
+template void reduce_sum2_on_device_acc(double (&)[6], double (*)[8], size_t,
+                                        int);
+template void reduce_sum2_on_device_acc(unsigned long long (&)[6],
+                                        unsigned long long (*)[8], size_t, int);
 
 
 template <class T>
@@ -110,17 +134,10 @@ template <class T>
 void dotprod_acc(T* ans, const T* a, const T* b, size_t nelem, int queue)
 {
    static T ans1;
-   static T* pans1;
-#if _OPENACC
    static bool first = true;
-   if (first) {
-      #pragma acc enter data async(queue) create(ans1)
-      pans1 = (T*)acc_deviceptr(&ans1);
+   #pragma acc enter data if(first) async(queue) create(ans1)
+   if (first)
       first = false;
-   }
-#else
-   pans1 = &ans1;
-#endif
 
 
    ans1 = 0;
@@ -130,7 +147,10 @@ void dotprod_acc(T* ans, const T* a, const T* b, size_t nelem, int queue)
    for (size_t i = 0; i < nelem; ++i) {
       ans1 += a[i] * b[i];
    }
-   darray::copy(queue, 1, ans, pans1);
+   #pragma acc serial async(queue) present(ans1) deviceptr(ans)
+   {
+      *ans = ans1;
+   }
 }
 template void dotprod_acc(float*, const float*, const float*, size_t, int);
 template void dotprod_acc(double*, const double*, const double*, size_t, int);

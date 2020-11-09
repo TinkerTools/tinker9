@@ -69,6 +69,23 @@ energy_prec energy_reduce(const energy_buffer e)
 }
 
 
+void virial_reshape(virial_prec (&v_out)[9],
+                    const virial_prec (&v1)[virial_buffer_traits::N])
+{
+   // xx yx zx yy zy zz
+   //  0  1  2  3  4  5
+   v_out[0] = v1[0]; // xx
+   v_out[1] = v1[1]; // xy
+   v_out[2] = v1[2]; // xz
+   v_out[3] = v1[1]; // yx
+   v_out[4] = v1[3]; // yy
+   v_out[5] = v1[4]; // yz
+   v_out[6] = v1[2]; // zx
+   v_out[7] = v1[4]; // zy
+   v_out[8] = v1[5]; // zz
+}
+
+
 void virial_reduce(virial_prec (&v1)[virial_buffer_traits::N],
                    const virial_buffer v)
 {
@@ -83,16 +100,6 @@ void virial_reduce(virial_prec (&v_out)[9], const virial_buffer v)
 {
    virial_prec v1[virial_buffer_traits::N];
    virial_reduce(v1, v);
-   // xx yx zx yy zy zz
-   //  0  1  2  3  4  5
-   v_out[0] = v1[0]; // xx
-   v_out[1] = v1[1]; // xy
-   v_out[2] = v1[2]; // xz
-   v_out[3] = v1[1]; // yx
-   v_out[4] = v1[3]; // yy
-   v_out[5] = v1[4]; // yz
-   v_out[6] = v1[2]; // zx
-   v_out[7] = v1[4]; // zy
-   v_out[8] = v1[5]; // zz
+   virial_reshape(v_out, v1);
 }
 }

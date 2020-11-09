@@ -13,6 +13,7 @@
 /// \defgroup rc  Resource: Pointer, Allocation, Deallocation, Queue
 
 /// \defgroup math  Math
+/// \defgroup parallel_algo  Parallel Algorithms
 /// \defgroup spatial2  Spatial Decomposition Version 2
 
 

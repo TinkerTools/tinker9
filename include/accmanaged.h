@@ -23,5 +23,18 @@ extern virial_buffer_traits::type host_v_ele[virial_buffer_traits::N];
 extern void* dptr_v_val;
 extern void* dptr_v_vdw;
 extern void* dptr_v_ele;
+
+
+struct EVArray
+{
+   energy_buffer_traits::type e_val, e_vdw, e_ele;
+   virial_buffer_traits::type v_val[virial_buffer_traits::N],
+      v_vdw[virial_buffer_traits::N], v_ele[virial_buffer_traits::N];
+
+
+   static void copyout_async(int queue, EVArray& href, const EVArray* dptr);
+};
+extern EVArray ev_hobj;
+extern EVArray* ev_dptr;
 }
 }

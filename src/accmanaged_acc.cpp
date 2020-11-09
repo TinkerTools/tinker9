@@ -1,4 +1,5 @@
 #include "accmanaged.h"
+#include "tool/darray.h"
 #if _OPENACC
 #   include <openacc.h>
 #endif
@@ -11,6 +12,10 @@ void accmanaged_data(rc_op op)
 
 
    if (op & rc_dealloc) {
+      device_memory_deallocate_bytes(ev_dptr);
+      ev_dptr = nullptr;
+
+
       dptr_e_val = nullptr;
       dptr_e_ele = nullptr;
       dptr_e_vdw = nullptr;
@@ -27,6 +32,9 @@ void accmanaged_data(rc_op op)
 
 
    if (op & rc_alloc) {
+      device_memory_allocate_bytes((void**)(&ev_dptr), sizeof(EVArray));
+
+
       dptr_e_val = &host_e_val;
       dptr_e_vdw = &host_e_vdw;
       dptr_e_ele = &host_e_ele;
@@ -69,5 +77,13 @@ virial_buffer_traits::type host_v_ele[virial_buffer_traits::N];
 void* dptr_v_val;
 void* dptr_v_vdw;
 void* dptr_v_ele;
+
+
+EVArray ev_hobj;
+EVArray* ev_dptr;
+void EVArray::copyout_async(int queue, EVArray& href, const EVArray* dptr)
+{
+   device_memory_copyout_bytes_async(&href, dptr, sizeof(EVArray), queue);
+}
 }
 }
