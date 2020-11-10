@@ -3,8 +3,8 @@
 #include "md.h"
 #include "tinker_rt.h"
 #include "tool/error.h"
+#include "tool/exec.h"
 #include <cuda_runtime.h>
-#include <nvml.h>
 #include <thrust/version.h>
 
 
@@ -173,20 +173,18 @@ static int recommend_device(int ndev)
 
    std::vector<int> gpercent, prcd; // precedence
    std::vector<double> gflops;
-   check_rt(nvmlInit());
    for (int i = 0; i < ndev; ++i) {
-      nvmlDevice_t hd;
-      nvmlUtilization_t util;
-      check_rt(nvmlDeviceGetHandleByIndex(i, &hd));
-      check_rt(nvmlDeviceGetUtilizationRates(hd, &util));
-      prcd.push_back(i);
-      gpercent.push_back(util.gpu);
       const auto& a = get_device_attributes()[i];
+      std::string cmd = format("nvidia-smi --query-gpu=utilization.gpu "
+                               "--format=csv,noheader,nounits -i %s",
+                               a.pci_string);
+      std::string percent = exec(cmd);
+      prcd.push_back(i);
+      gpercent.push_back(std::stoi(percent));
       double gf = a.clock_rate_kHz;
       gf *= a.cores_per_multiprocessor * a.multiprocessor_count;
       gflops.push_back(gf);
    }
-   check_rt(nvmlShutdown());
 
 
    auto strictly_prefer = [&](int idev, int jdev) {
