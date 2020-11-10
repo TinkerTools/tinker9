@@ -1,5 +1,6 @@
 #include "energy.h"
 #include "accmanaged.h"
+#include "glob.dhflow.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
@@ -292,7 +293,8 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       }
    }
    if (must_wait) {
-      detail::EVArray::copyout_async(g::q0, detail::ev_hobj, detail::ev_dptr);
+      device_memory_copyout_bytes_async(&detail::ev_hobj, detail::ev_dptr,
+                                        sizeof(DHFlow), g::q0);
       wait_for(g::q0);
    }
    if (do_e) {
