@@ -1,4 +1,5 @@
 #include "echarge.h"
+#include "echglj.h"
 #include "md.h"
 #include "nblist.h"
 #include "pmestuf.h"
@@ -239,5 +240,9 @@ void echarge_ewald_recip_self(int vers)
    else
 #endif
       echarge_ewald_fphi_self_acc(vers);
+
+#if TINKER_CUDART
+   echglj_cu_sync_pme_stream(use_pme_stream and (vers & calc::analyz));
+#endif
 }
 }

@@ -225,7 +225,7 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 
 #if TINKER_CUDART
-   echglj_cu_sync_pme_stream(use_pme_stream);
+   echglj_cu_sync_pme_stream(use_pme_stream and not(vers & calc::analyz));
 #endif
 }
 
