@@ -5,6 +5,7 @@ list (APPEND LIB_CPP ${PLATFORM_CPP})
 
 
 ## CUDA
+set (CMAKE_CUDA_COMPILER "${CUDA_DIR}/bin/nvcc")
 add_library (tinker9_cu OBJECT ${LIB_CU})
 target_compile_definitions (tinker9_cu PRIVATE ${macro_defs})
 enable_language (CUDA)

@@ -20,6 +20,8 @@ For Linux, we need:
 - GNU or Intel Fortran compiler.
 - Recent C++ compiler that supports C++11 syntax.
 - (GPU code only) PGI compiler for OpenACC and nvcc for CUDA.
+- If Nvidia driver has been installed correctly, *nvidia-smi* should be
+  available.
 
 **FFTW Libraries**
 
