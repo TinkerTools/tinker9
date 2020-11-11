@@ -175,9 +175,19 @@ static int recommend_device(int ndev)
    std::vector<double> gflops;
    for (int i = 0; i < ndev; ++i) {
       const auto& a = get_device_attributes()[i];
-      std::string cmd = format("nvidia-smi --query-gpu=utilization.gpu "
+      int val1 = -1;
+      std::string smi = "nvidia-smi";
+      val1 = std::system("which nvidia-smi > /dev/null");
+      if (val1 != 0) {
+         val1 = std::system("which nvidia-smi.exe > /dev/null");
+         smi = "nvidia-smi.exe";
+         if (val1 != 0) {
+            TINKER_THROW("nvidia-smi is not found.");
+         }
+      }
+      std::string cmd = format("%s --query-gpu=utilization.gpu "
                                "--format=csv,noheader,nounits -i %s",
-                               a.pci_string);
+                               smi, a.pci_string);
       std::string percent = exec(cmd);
       prcd.push_back(i);
       gpercent.push_back(std::stoi(percent));
