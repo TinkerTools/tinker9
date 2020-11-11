@@ -58,7 +58,6 @@ cmake_minimum_required (VERSION 3.11)
 !!/ opt                      release
 !!/ host                     0
 !!/ prec                     m
-!!/ cuda_dir                 /usr/local/cuda
 !!/ compute_capability       75
 !!/ tinker_dir               /home/tinker/source
 !!/ fftw_dir                 /usr/local
@@ -70,14 +69,14 @@ cmake_minimum_required (VERSION 3.11)
 !!/    # use environmental variables
 !!/    CXX=pgc++ \
 !!/    opt=release host=0 prec=m \
-!!/    cuda_dir=/usr/local/cuda compute_capability=75 \
+!!/    compute_capability=75 \
 !!/    tinker_dir=/home/tinker/source fftw_dir=/usr/local \
 !!/    cmake /home/tinker9
 !!/
 !!/    # use cmake -DOPTIONS
 !!/    CXX=pgc++ cmake -S /home/tinker9 \
 !!/    -DCMAKE_BUILD_TYPE=Release -DHOST=0 -DPREC=m \
-!!/    -DCUDA_DIR=/usr/local/cuda -DCOMPUTE_CAPABILITY=75 \
+!!/    -DCOMPUTE_CAPABILITY=75 \
 !!/    -DTINKER_DIR=/home/tinker/source -DFFTW_DIR=/usr/local
 !!/
 !!/
@@ -271,28 +270,6 @@ else ()
    set (compCapValue 60,70)
 endif ()
 set (COMPUTE_CAPABILITY ${compCapValue} CACHE STRING "CUDA Compute Capability")
-#[[
-!!/ **-DCUDA_DIR (cuda_dir) = /usr/local/cuda**
-!!/
-!!/ Top-level CUDA installation directory, under which directories *include*,
-!!/ *lib* or *lib64* can be found.
-!!/
-!!/ Sometimes the PGI compiler and the NVCC compiler are not "compatible." For
-!!/ instance, although PGI 19.4 supports CUDA 9.2, 10.0, 10.1, but the default
-!!/ CUDA version configured in PGI 19.4 may be 9.2 and the external NVCC version
-!!/ is 10.1. One solution is to pass *CUDA_HOME=${cuda_dir}* to the PGI
-!!/ compiler, in which case, **cuda_dir** should be set to
-!!/ */usr/local/cuda-10.1*.
-!!/
-]]
-if (DEFINED ENV{cuda_dir})
-   get_filename_component (cudaDirValue "$ENV{cuda_dir}"
-      ABSOLUTE BASE_DIR "${CMAKE_BINARY_DIR}"
-   )
-else ()
-   set (cudaDirValue /usr/local/cuda)
-endif ()
-set (CUDA_DIR ${cudaDirValue} CACHE PATH "CUDA Directory")
 
 
 #[[

@@ -35,7 +35,7 @@ add_custom_target (all.tests ALL
       LIBFFTW
       LIBFFTW_THREADS
    COMMAND
-      ${CMAKE_CXX_COMPILER} CUDA_HOME=${CUDA_DIR}
+      ${CMAKE_CXX_COMPILER}
       "$<$<CONFIG:DEBUG>:${LIST_CXX_FLAGS_DEBUG}>"
       "$<$<CONFIG:RELEASE>:${LIST_CXX_FLAGS_RELEASE}>"
       -o all.tests
