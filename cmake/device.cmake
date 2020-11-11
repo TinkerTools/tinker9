@@ -1,4 +1,5 @@
 list (APPEND macro_defs TINKER_CUDART)
+list (APPEND comm_sys_inc_path "${CUDA_DIR}/include")
 file (GLOB PLATFORM_CPP "${PROJECT_SOURCE_DIR}/src/cudart/*.cpp")
 list (APPEND LIB_CPP ${PLATFORM_CPP})
 
@@ -61,7 +62,7 @@ foreach (var ${CCLIST2})
    string (APPEND CCLIST4 ,cc${var})
 endforeach () # ,cc60,cc70
 target_compile_options (tinker9_acc PRIVATE
-   -acc verystrict -Minfo=accel
+   CUDA_HOME=${CUDA_DIR} -acc verystrict -Minfo=accel
 )
 ## Debug add flag: -ta=tesla:lineinfo,cc60,cc70
 ## Release add flag: -ta=tesla:fastmath,cc60,cc70
@@ -116,7 +117,7 @@ add_custom_target (tinker9 ALL
       LIBFFTW
       LIBFFTW_THREADS
    COMMAND
-      ${CMAKE_CXX_COMPILER}
+      ${CMAKE_CXX_COMPILER} CUDA_HOME=${CUDA_DIR}
       "$<$<CONFIG:DEBUG>:${LIST_CXX_FLAGS_DEBUG}>"
       "$<$<CONFIG:RELEASE>:${LIST_CXX_FLAGS_RELEASE}>"
       -o tinker9

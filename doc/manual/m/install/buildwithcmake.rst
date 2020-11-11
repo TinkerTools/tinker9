@@ -54,6 +54,7 @@ CXX                      pgc++
 opt                      release
 host                     0
 prec                     m
+cuda_dir                 /usr/local/cuda
 compute_capability       75
 tinker_dir               /home/tinker/source
 fftw_dir                 /usr/local
@@ -65,14 +66,14 @@ CMakeLists.txt Location  /home/tinker9
    # use environmental variables
    CXX=pgc++ \
    opt=release host=0 prec=m \
-   compute_capability=75 \
+   cuda_dir=/usr/local/cuda compute_capability=75 \
    tinker_dir=/home/tinker/source fftw_dir=/usr/local \
    cmake /home/tinker9
 
    # use cmake -DOPTIONS
    CXX=pgc++ cmake -S /home/tinker9 \
    -DCMAKE_BUILD_TYPE=Release -DHOST=0 -DPREC=m \
-   -DCOMPUTE_CAPABILITY=75 \
+   -DCUDA_DIR=/usr/local/cuda -DCOMPUTE_CAPABILITY=75 \
    -DTINKER_DIR=/home/tinker/source -DFFTW_DIR=/usr/local
 
 
@@ -129,6 +130,18 @@ Multiple compute capabilites will increase the size of executables.
 
 The full list of compute capabilities can be found on the
 `Nvidia website. <https://developer.nvidia.com/cuda-gpus>`_
+
+**-DCUDA_DIR (cuda_dir) = /usr/local/cuda**
+
+Top-level CUDA installation directory, under which directories *include*,
+*lib* or *lib64* can be found.
+
+Sometimes the PGI compiler and the NVCC compiler are not "compatible." For
+instance, although PGI 19.4 supports CUDA 9.2, 10.0, 10.1, but the default
+CUDA version configured in PGI 19.4 may be 9.2 and the external NVCC version
+is 10.1. One solution is to pass *CUDA_HOME=${cuda_dir}* to the PGI
+compiler, in which case, **cuda_dir** should be set to
+*/usr/local/cuda-10.1*.
 
 Make Tinker9
 ------------
