@@ -180,7 +180,12 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 
    if (pltfm_config & CU_PLTFM) {
-      if (tscfg("evalence", ecore_val))
+      bool calc_val = use_potent(bond_term) or use_potent(angle_term) or
+         use_potent(strbnd_term) or use_potent(urey_term) or
+         use_potent(opbend_term) or use_potent(imptors_term) or
+         use_potent(torsion_term) or use_potent(pitors_term) or
+         use_potent(tortor_term) or use_potent(geom_term);
+      if (calc_val and tscfg("evalence", ecore_val))
          evalence(vers);
    } else {
       // bonded terms
