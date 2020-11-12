@@ -13,7 +13,7 @@ GPU device for the program. Value will be overwritten by environment variable
 For instance, a node has four CUDA devices, and the *CUDA_VISIBLE_DEVICES*
 environment variable (part of CUDA library) has been set to
 *CUDA_VISIBLE_DEVICES=1,3*. This means only two CUDA devices are avaiable
-here, thus the valid values for **CUDA-DEVICE** are 0 and 1.
+here, thus the valid values for *CUDA-DEVICE* are 0 and 1.
 
 **GPU-PACKAGE [CUDA/OPENACC]**
 

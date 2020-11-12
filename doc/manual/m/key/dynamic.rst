@@ -21,11 +21,13 @@ Molecular Dynamics and Ensemble Keywords
     :ref:`label-nose-hoover`,
     :ref:`label-lpiston`
 
-**BAROSTAT [NOSE-HOOVER/BAROSTAT**
+**BAROSTAT [MONTECARLO/BERENDSEN/NOSE-HOOVER/LPISTON]**
 
 .. index:: BAROSTAT
 
 .. seealso::
 
+    :ref:`label-monte-carlo-barostat`,
+    :ref:`label-berendsen-barostat`,
     :ref:`label-nose-hoover`,
     :ref:`label-lpiston`
