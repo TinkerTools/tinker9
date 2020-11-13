@@ -96,10 +96,126 @@ void bussi_thermostat_acc(time_prec dt_prec, T_prec temp_prec)
       vy[i] *= sc;
       vz[i] *= sc;
    }
+   for (int i = 0; i < 3; ++i) {
+      for (int j = 0; j < 3; ++j) {
+         ekin[i][j] *= scale * scale;
+      }
+   }
 }
 
 
 //====================================================================//
+
+
+void berendsen_barostat_acc(time_prec dt)
+{
+   if (not bound::use_bounds)
+      return;
+
+   double vol = volbox();
+   double factor = units::prescon / vol;
+   double stress[3][3];
+   for (int i = 0; i < 3; ++i) {
+      for (int j = 0; j < 3; ++j) {
+         int iv = 3 * i + j;
+         stress[i][j] = factor * (2 * ekin[i][j] - vir[iv]);
+      }
+   }
+   const double third = 1.0 / 3;
+   double pres = (stress[0][0] + stress[1][1] + stress[2][2]) * third;
+
+   if (bath::anisotrop) {
+      double scale = third * dt * bath::compress / bath::taupres;
+      double ascale[3][3];
+      for (int i = 0; i < 3; ++i) {
+         for (int j = 0; j < 3; ++j) {
+            if (j == i) {
+               ascale[i][j] = 1 + scale * (stress[i][i] - bath::atmsph);
+            } else {
+               ascale[i][j] = scale * stress[i][j];
+            }
+         }
+      }
+
+      double temp[3][3], hbox[3][3];
+      temp[0][0] = lvec1.x;
+      temp[0][1] = 0;
+      temp[0][2] = 0;
+      temp[1][0] = lvec1.y;
+      temp[1][1] = lvec2.y;
+      temp[1][2] = 0;
+      temp[2][0] = lvec1.z;
+      temp[2][1] = lvec2.z;
+      temp[2][2] = lvec3.z;
+      for (int i = 0; i < 3; ++i) {
+         for (int j = 0; j < 3; ++j) {
+            hbox[i][j] = 0;
+            for (int k = 0; k < 3; ++k) {
+               hbox[i][j] += ascale[k][j] * temp[i][k];
+            }
+         }
+      }
+      double l0, l1, l2, a0 = 90, a1 = 90, a2 = 90;
+      l0 = std::sqrt(hbox[0][0] * hbox[0][0] + hbox[0][1] * hbox[0][1] +
+                     hbox[0][2] * hbox[0][2]);
+      l1 = std::sqrt(hbox[1][0] * hbox[1][0] + hbox[1][1] * hbox[1][1] +
+                     hbox[1][2] * hbox[1][2]);
+      l2 = std::sqrt(hbox[2][0] * hbox[2][0] + hbox[2][1] * hbox[2][1] +
+                     hbox[2][2] * hbox[2][2]);
+      if (box_shape == MONO_BOX or box_shape == TRI_BOX) {
+         // beta
+         a1 = (hbox[0][0] * hbox[2][0] + hbox[0][1] * hbox[2][1] +
+               hbox[0][2] * hbox[2][2]) /
+            (l0 * l2);
+         a1 = radian * std::acos(a1);
+      }
+      if (box_shape == TRI_BOX) {
+         // alpha
+         a0 = (hbox[1][0] * hbox[2][0] + hbox[1][1] * hbox[2][1] +
+               hbox[1][2] * hbox[2][2]) /
+            (l1 * l2);
+         a0 = radian * std::acos(a0);
+         // gamma
+         a2 = (hbox[0][0] * hbox[1][0] + hbox[0][1] * hbox[1][1] +
+               hbox[0][2] * hbox[1][2]) /
+            (l0 * l1);
+         a2 = radian * std::acos(a2);
+      }
+      Box newbox;
+      box_lattice(newbox, box_shape, l0, l1, l2, a0, a1, a2);
+      set_default_box(newbox);
+
+      #pragma acc parallel loop independent async\
+              deviceptr(xpos,ypos,zpos) firstprivate(ascale[0:3][0:3])
+      for (int i = 0; i < n; ++i) {
+         pos_prec xk = xpos[i];
+         pos_prec yk = ypos[i];
+         pos_prec zk = zpos[i];
+         xpos[i] = xk * ascale[0][0] + yk * ascale[0][1] + zk * ascale[0][2];
+         ypos[i] = xk * ascale[1][0] + yk * ascale[1][1] + zk * ascale[1][2];
+         zpos[i] = xk * ascale[2][0] + yk * ascale[2][1] + zk * ascale[2][2];
+      }
+      copy_pos_to_xyz();
+   } else {
+      double scale =
+         1 + (dt * bath::compress / bath::taupres) * (pres - bath::atmsph);
+      scale = std::pow(scale, third);
+
+      lvec1 *= scale;
+      lvec2 *= scale;
+      lvec3 *= scale;
+      set_default_recip_box();
+
+      #pragma acc parallel loop independent async\
+              deviceptr(xpos,ypos,zpos)
+      for (int i = 0; i < n; ++i) {
+         xpos[i] *= scale;
+         ypos[i] *= scale;
+         zpos[i] *= scale;
+      }
+      copy_pos_to_xyz();
+   }
+}
 
 
 void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)

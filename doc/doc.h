@@ -16,7 +16,7 @@
 /// \defgroup parallel_algo  Parallel Algorithms
 /// \defgroup spatial2  Spatial Decomposition Version 2
 
-
+/// \defgroup box  Periodic Boundary Box
 /// \defgroup mdegv  Energy, Gradient, and Virial Tensor
 
 
@@ -35,7 +35,6 @@
 /// \defgroup mdsave  Saving MD Trajectory Snapshots
 /// \defgroup mdpt  Thermostats (T) and Barostats (P)
 /// \defgroup mdintg  Integrators
-/// \defgroup box  Periodic Boundary Box
 /// \defgroup osrw  OSRW
 
 

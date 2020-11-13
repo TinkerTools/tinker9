@@ -32,7 +32,7 @@ void temper(time_prec dt, T_prec& temp);
  *    J. Chem. Phys., 81, 3684-3690 (1984).
  *    </a>
  */
-void pressure();
+void pressure(time_prec dt);
 
 
 enum class Thermostat
@@ -90,8 +90,8 @@ void monte_carlo_barostat(energy_prec epot, T_prec temp);
 void monte_carlo_barostat_acc(energy_prec epot, T_prec temp);
 
 
-void berendsen_barostat();
-void berendsen_barostat_acc();
+void berendsen_barostat(time_prec dt);
+void berendsen_barostat_acc(time_prec);
 
 
 //====================================================================//

@@ -66,13 +66,13 @@ void temper(time_prec dt, T_prec& temp)
 }
 
 
-void pressure()
+void pressure(time_prec dt)
 {
    if (barostat == NONE_BAROSTAT)
       return;
 
    if (barostat == BERENDSEN_BAROSTAT)
-      berendsen_barostat();
+      berendsen_barostat(dt);
 }
 
 
@@ -102,7 +102,10 @@ void monte_carlo_barostat(energy_prec epot, T_prec temp)
 }
 
 
-void berendsen_barostat() {}
+void berendsen_barostat(time_prec dt)
+{
+   berendsen_barostat_acc(dt);
+}
 
 
 //====================================================================//

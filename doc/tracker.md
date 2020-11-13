@@ -6,7 +6,7 @@
 |------------:|-----------:|---------------------------------:|-----------------------------------------:|
 |       Bussi | Thermostat |                         Complete | [@Zhi Wang](https://github.com/zhi-wang) |
 | Monte Carlo |   Barostat | Only *Isotropic* and *Molecular* | [@Zhi Wang](https://github.com/zhi-wang) |
-|   Berendsen |   Barostat |                    *In Progress* | [@Zhi Wang](https://github.com/zhi-wang) |
+|   Berendsen |   Barostat |      Complete except *RIGIDBODY* | [@Zhi Wang](https://github.com/zhi-wang) |
 
 ### Langevin Piston Integrator
 

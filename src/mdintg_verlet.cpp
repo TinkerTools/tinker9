@@ -63,7 +63,7 @@ void velocity_verlet(int istep, time_prec dt_ps)
 
    // full-step corrections
    temper(dt_ps, temp);
-   pressure();
+   pressure(dt_ps);
 }
 
 
