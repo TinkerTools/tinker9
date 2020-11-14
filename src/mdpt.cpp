@@ -61,6 +61,8 @@ void temper(time_prec dt, T_prec& temp)
       kinetic(temp);
       bussi_thermostat(dt, temp);
    } else {
+      // We don't need temperature for NVE but we still compute it anyway.
+      // if (thermostat != NONE_THERMOSTAT and barostat != NONE_BAROSTAT)
       kinetic(temp);
    }
 }
