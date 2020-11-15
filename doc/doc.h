@@ -19,6 +19,7 @@
 /// \defgroup box  Periodic Boundary Box
 /// \defgroup mdegv  Energy, Gradient, and Virial Tensor
 
+/// \defgroup fft  Fast Fourier Transform
 
 /*
 /// \defgroup spatial  Spatial Decomposition
