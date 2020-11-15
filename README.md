@@ -19,7 +19,7 @@ and the PDF version is accessible from the same webpage.
 
 
 ## Features and Progress Tracker
-Please visit the [Project Wiki](https://github.com/TinkerTools/tinker9/wiki) for more details.
+Please visit the [GitHub Projects Page](https://github.com/TinkerTools/tinker9/projects) for more details.
 
 
 ## Style Guide
