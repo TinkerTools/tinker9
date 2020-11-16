@@ -40,7 +40,7 @@ TEST_CASE("Bounds", "[ff][box]")
    const char* argv[] = {"dummy", xn};
    int argc = 2;
    test_begin_with_args(argc, argv);
-   rc_flag = calc::xyz;
+   rc_flag = calc::xyz | calc::mass;
    initialize();
 
 
