@@ -7,10 +7,15 @@
 #include "tool/io_print.h"
 #include "tool/io_read.h"
 #include <fstream>
+#include <tinker/detail/atoms.hh>
 #include <tinker/detail/files.hh>
+#include <tinker/detail/mpole.hh>
+#include <tinker/detail/polar.hh>
 
 namespace tinker {
 void x_analyze_e();
+void moments();
+void x_analyze_m();
 void x_analyze_v();
 
 void x_analyze(int, char**)
@@ -45,13 +50,15 @@ void x_analyze(int, char**)
  The Tinker Energy Analysis Utility Can :
 
  Total Potential Energy and its Components [E]
+ Electrostatic Moments and Principle Axes [M]
  Internal Virial, dE/dV Values & Pressure [V]
 
  Enter the Desired Analysis Types [E] :  )";
    read_stream(opt, prompt, std::string("#"), [](std::string s) {
       Text::upcase(s);
       auto failed = std::string::npos;
-      if (s.find("E") != failed || s.find("V") != failed)
+      if (s.find("E") != failed or s.find("M") != failed or
+          s.find("V") != failed)
          return 0;
       else
          return 1;
@@ -78,6 +85,8 @@ void x_analyze(int, char**)
    int nframe_processed = 1;
    if (opt.find("E") != failed)
       x_analyze_e();
+   if (opt.find("M") != failed)
+      x_analyze_m();
    if (opt.find("V") != failed)
       x_analyze_v();
    while (!done) {
@@ -87,6 +96,8 @@ void x_analyze(int, char**)
       print(out, "\n Analysis for Archive Structure :%16d\n", nframe_processed);
       if (opt.find("E") != failed)
          x_analyze_e();
+      if (opt.find("M") != failed)
+         x_analyze_m();
       if (opt.find("V") != failed)
          x_analyze_v();
    }
@@ -167,6 +178,57 @@ void x_analyze_e()
    if (use_potent(geom_term))
       print(out, fmt, "Geometric Restraints", energy_eg,
             count_bonded_term(geom_term));
+}
+
+
+void x_analyze_m()
+{
+   if (use_potent(mpole_term) or use_potent(polar_term)) {
+      mpole_init(calc::energy);
+      if (use_potent(polar_term))
+         induce(uind, uinp);
+   }
+   bounds();
+
+   // download x y z
+   std::vector<pos_prec> xv(n), yv(n), zv(n);
+   darray::copyout(g::q0, n, xv.data(), xpos);
+   darray::copyout(g::q0, n, yv.data(), ypos);
+   darray::copyout(g::q0, n, zv.data(), zpos);
+   // download rpole, uind
+   std::vector<real> rpolev(n * 10), uindv(n * 3);
+   if (use_potent(mpole_term) or use_potent(polar_term))
+      darray::copyout(g::q0, n * 10, rpolev.data(), &rpole[0][0]);
+   else
+      std::fill(rpolev.begin(), rpolev.end(), 0);
+   if (use_potent(polar_term))
+      darray::copyout(g::q0, n * 3, uindv.data(), &uind[0][0]);
+   else
+      std::fill(uindv.begin(), uindv.end(), 0);
+   wait_for(g::q0);
+   for (int i = 0; i < n; ++i) {
+      atoms::x[i] = xv[i];
+      atoms::y[i] = yv[i];
+      atoms::z[i] = zv[i];
+      int t = 0;
+      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_0];
+      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_x];
+      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_y];
+      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_z];
+      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_xx]; // xx
+      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_xy]; // xy
+      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_xz]; // xz
+      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_yx]; // yx
+      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_yy]; // yy
+      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_yz]; // yz
+      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_zx]; // zx
+      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_zy]; // zy
+      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_zz]; // zz
+      polar::uind[3 * i + 0] = uindv[3 * i + 0];
+      polar::uind[3 * i + 1] = uindv[3 * i + 1];
+      polar::uind[3 * i + 2] = uindv[3 * i + 2];
+   }
+   moments();
 }
 
 
