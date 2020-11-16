@@ -183,50 +183,48 @@ void x_analyze_e()
 
 void x_analyze_m()
 {
-   if (use_potent(mpole_term) or use_potent(polar_term)) {
-      mpole_init(calc::energy);
-      if (use_potent(polar_term))
-         induce(uind, uinp);
-   }
    bounds();
-
    // download x y z
    std::vector<pos_prec> xv(n), yv(n), zv(n);
    darray::copyout(g::q0, n, xv.data(), xpos);
    darray::copyout(g::q0, n, yv.data(), ypos);
    darray::copyout(g::q0, n, zv.data(), zpos);
-   // download rpole, uind
-   std::vector<real> rpolev(n * 10), uindv(n * 3);
-   if (use_potent(mpole_term) or use_potent(polar_term))
-      darray::copyout(g::q0, n * 10, rpolev.data(), &rpole[0][0]);
-   else
-      std::fill(rpolev.begin(), rpolev.end(), 0);
-   if (use_potent(polar_term))
-      darray::copyout(g::q0, n * 3, uindv.data(), &uind[0][0]);
-   else
-      std::fill(uindv.begin(), uindv.end(), 0);
    wait_for(g::q0);
    for (int i = 0; i < n; ++i) {
       atoms::x[i] = xv[i];
       atoms::y[i] = yv[i];
       atoms::z[i] = zv[i];
-      int t = 0;
-      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_0];
-      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_x];
-      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_y];
-      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_z];
-      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_xx]; // xx
-      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_xy]; // xy
-      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_xz]; // xz
-      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_yx]; // yx
-      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_yy]; // yy
-      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_yz]; // yz
-      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_zx]; // zx
-      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_zy]; // zy
-      mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_zz]; // zz
-      polar::uind[3 * i + 0] = uindv[3 * i + 0];
-      polar::uind[3 * i + 1] = uindv[3 * i + 1];
-      polar::uind[3 * i + 2] = uindv[3 * i + 2];
+   }
+
+   // download rpole, uind
+   if (use_potent(mpole_term) or use_potent(polar_term)) {
+      std::vector<real> rpolev(n * 10), uindv(n * 3);
+      mpole_init(calc::energy);
+      darray::copyout(g::q0, n * 10, rpolev.data(), &rpole[0][0]);
+      if (use_potent(polar_term)) {
+         induce(uind, uinp);
+         darray::copyout(g::q0, n * 3, uindv.data(), &uind[0][0]);
+      }
+      wait_for(g::q0);
+      for (int i = 0; i < n; ++i) {
+         int t = 0;
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_0];
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_x];
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_y];
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_z];
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_xx]; // xx
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_xy]; // xy
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_xz]; // xz
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_yx]; // yx
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_yy]; // yy
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_yz]; // yz
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_zx]; // zx
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_zy]; // zy
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_zz]; // zz
+         polar::uind[3 * i + 0] = uindv[3 * i + 0];
+         polar::uind[3 * i + 1] = uindv[3 * i + 1];
+         polar::uind[3 * i + 2] = uindv[3 * i + 2];
+      }
    }
    moments();
 }

@@ -5,8 +5,10 @@
 #include <tinker/detail/atoms.hh>
 #include <tinker/detail/charge.hh>
 #include <tinker/detail/chgpot.hh>
+#include <tinker/detail/dipole.hh>
 #include <tinker/detail/moment.hh>
 #include <tinker/detail/mpole.hh>
+#include <tinker/detail/polar.hh>
 #include <tinker/detail/units.hh>
 #include <vector>
 
@@ -59,7 +61,7 @@ void moments()
 
 
    // partial charges
-   for (int i = 0; i < n; ++i) {
+   for (int i = 0; i < n and charge::nion > 0; ++i) {
       double c = charge::pchg[i];
       moment::netchg += c;
       moment::xdpl += xcm[i] * c;
@@ -74,6 +76,66 @@ void moments()
       moment::zxqpl += zcm[i] * xcm[i] * c;
       moment::zyqpl += zcm[i] * ycm[i] * c;
       moment::zzqpl += zcm[i] * zcm[i] * c;
+   }
+
+
+   // bond dipoles
+   for (int i = 0; i < dipole::ndipole; ++i) {
+      int j = dipole::idpl[2 * i + 0] - 1;
+      int k = dipole::idpl[2 * i + 1] - 1;
+      double xi = atoms::x[j] - atoms::x[k];
+      double yi = atoms::y[j] - atoms::y[k];
+      double zi = atoms::z[j] - atoms::z[k];
+      double ri = std::sqrt(xi * xi + yi * yi + zi * zi);
+      double xbnd = dipole::bdpl[i] * (xi / ri) / units::debye;
+      double ybnd = dipole::bdpl[i] * (yi / ri) / units::debye;
+      double zbnd = dipole::bdpl[i] * (zi / ri) / units::debye;
+      double xc = atoms::x[j] - xi * dipole::sdpl[i];
+      double yc = atoms::y[j] - yi * dipole::sdpl[i];
+      double zc = atoms::z[j] - zi * dipole::sdpl[i];
+      moment::xdpl += xbnd;
+      moment::ydpl += ybnd;
+      moment::zdpl += zbnd;
+      moment::xxqpl += 2 * xc * xbnd;
+      moment::xyqpl += xc * ybnd + yc * xbnd;
+      moment::xzqpl += xc * zbnd + zc * xbnd;
+      moment::yxqpl += yc * xbnd + xc * ybnd;
+      moment::yyqpl += 2 * yc * ybnd;
+      moment::yzqpl += yc * zbnd + zc * ybnd;
+      moment::zxqpl += zc * xbnd + xc * zbnd;
+      moment::zyqpl += zc * ybnd + yc * zbnd;
+      moment::zzqpl += 2 * zc * zbnd;
+   }
+
+
+   // atomic multipoles
+   for (int i = 0; i < n and mpole::npole > 0; ++i) {
+      mpole::rpole[13 * i + 1] += polar::uind[3 * i + 0];
+      mpole::rpole[13 * i + 2] += polar::uind[3 * i + 1];
+      mpole::rpole[13 * i + 3] += polar::uind[3 * i + 2];
+
+
+#define RPOLE(j, i) mpole::rpole[13 * (i) + (j)-1]
+      moment::netchg += RPOLE(1, i);
+      moment::xdpl += xcm[i] * RPOLE(1, i) + RPOLE(2, i);
+      moment::ydpl += ycm[i] * RPOLE(1, i) + RPOLE(3, i);
+      moment::zdpl += zcm[i] * RPOLE(1, i) + RPOLE(4, i);
+      moment::xxqpl += xcm[i] * xcm[i] * RPOLE(1, i) + 2 * xcm[i] * RPOLE(2, i);
+      moment::xyqpl += xcm[i] * ycm[i] * RPOLE(1, i) + xcm[i] * RPOLE(3, i) +
+         ycm[i] * RPOLE(2, i);
+      moment::xzqpl += xcm[i] * zcm[i] * RPOLE(1, i) + xcm[i] * RPOLE(4, i) +
+         zcm[i] * RPOLE(2, i);
+      moment::yxqpl += +ycm[i] * xcm[i] * RPOLE(1, i) + ycm[i] * RPOLE(2, i) +
+         xcm[i] * RPOLE(3, i);
+      moment::yyqpl += ycm[i] * ycm[i] * RPOLE(1, i) + 2 * ycm[i] * RPOLE(3, i);
+      moment::yzqpl += ycm[i] * zcm[i] * RPOLE(1, i) + ycm[i] * RPOLE(4, i) +
+         zcm[i] * RPOLE(3, i);
+      moment::zxqpl += zcm[i] * xcm[i] * RPOLE(1, i) + zcm[i] * RPOLE(2, i) +
+         xcm[i] * RPOLE(4, i);
+      moment::zyqpl += zcm[i] * ycm[i] * RPOLE(1, i) + zcm[i] * RPOLE(3, i) +
+         ycm[i] * RPOLE(4, i);
+      moment::zzqpl += zcm[i] * zcm[i] * RPOLE(1, i) + 2 * zcm[i] * RPOLE(4, i);
+#undef RPOLE
    }
 
 
