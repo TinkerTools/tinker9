@@ -1,10 +1,13 @@
+#include "elec.h"
+#include "epolar.h"
+#include "mdcalc.h"
 #include "mdpq.h"
-#include "tool/io_print.h"
+#include "potent.h"
+#include "tool/darray.h"
 #include <cmath>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>
 #include <tinker/detail/charge.hh>
-#include <tinker/detail/chgpot.hh>
 #include <tinker/detail/dipole.hh>
 #include <tinker/detail/moment.hh>
 #include <tinker/detail/mpole.hh>
@@ -15,8 +18,6 @@
 
 namespace tinker {
 extern "C" void TINKER_RT(jacobi)(int*, double*, double*, double*);
-extern "C" void TINKER_RT(gyrate)(double*);
-extern "C" void TINKER_RT(inertia)(int*);
 void moments()
 {
    moment::netchg = 0;
@@ -36,6 +37,20 @@ void moments()
    moment::zxqpl = 0;
    moment::zyqpl = 0;
    moment::zzqpl = 0;
+
+
+   bounds();
+   // download x y z
+   std::vector<pos_prec> xv(n), yv(n), zv(n);
+   darray::copyout(g::q0, n, xv.data(), xpos);
+   darray::copyout(g::q0, n, yv.data(), ypos);
+   darray::copyout(g::q0, n, zv.data(), zpos);
+   wait_for(g::q0);
+   for (int i = 0; i < n; ++i) {
+      atoms::x[i] = xv[i];
+      atoms::y[i] = yv[i];
+      atoms::z[i] = zv[i];
+   }
 
 
    // center of mass
@@ -109,33 +124,66 @@ void moments()
 
 
    // atomic multipoles
-   for (int i = 0; i < n and mpole::npole > 0; ++i) {
-      mpole::rpole[13 * i + 1] += polar::uind[3 * i + 0];
-      mpole::rpole[13 * i + 2] += polar::uind[3 * i + 1];
-      mpole::rpole[13 * i + 3] += polar::uind[3 * i + 2];
+   if (use_potent(mpole_term) or use_potent(polar_term)) {
+      // download rpole, uind
+      std::vector<real> rpolev(n * 10), uindv(n * 3);
+      mpole_init(calc::energy);
+      darray::copyout(g::q0, n * 10, rpolev.data(), &rpole[0][0]);
+      if (use_potent(polar_term)) {
+         induce(uind, uinp);
+         darray::copyout(g::q0, n * 3, uindv.data(), &uind[0][0]);
+      } else {
+         std::fill(uindv.begin(), uindv.end(), 0);
+      }
+      wait_for(g::q0);
+      for (int i = 0; i < n and mpole::npole > 0; ++i) {
+         int t = 0;
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_0];
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_x];
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_y];
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_z];
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_xx]; // xx
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_xy]; // xy
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_xz]; // xz
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_yx]; // yx
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_yy]; // yy
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_yz]; // yz
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_zx]; // zx
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_zy]; // zy
+         mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_zz]; // zz
+         polar::uind[3 * i + 0] = uindv[3 * i + 0];
+         polar::uind[3 * i + 1] = uindv[3 * i + 1];
+         polar::uind[3 * i + 2] = uindv[3 * i + 2];
+         mpole::rpole[13 * i + 1] += uindv[3 * i + 0];
+         mpole::rpole[13 * i + 2] += uindv[3 * i + 1];
+         mpole::rpole[13 * i + 3] += uindv[3 * i + 2];
 
 
 #define RPOLE(j, i) mpole::rpole[13 * (i) + (j)-1]
-      moment::netchg += RPOLE(1, i);
-      moment::xdpl += xcm[i] * RPOLE(1, i) + RPOLE(2, i);
-      moment::ydpl += ycm[i] * RPOLE(1, i) + RPOLE(3, i);
-      moment::zdpl += zcm[i] * RPOLE(1, i) + RPOLE(4, i);
-      moment::xxqpl += xcm[i] * xcm[i] * RPOLE(1, i) + 2 * xcm[i] * RPOLE(2, i);
-      moment::xyqpl += xcm[i] * ycm[i] * RPOLE(1, i) + xcm[i] * RPOLE(3, i) +
-         ycm[i] * RPOLE(2, i);
-      moment::xzqpl += xcm[i] * zcm[i] * RPOLE(1, i) + xcm[i] * RPOLE(4, i) +
-         zcm[i] * RPOLE(2, i);
-      moment::yxqpl += +ycm[i] * xcm[i] * RPOLE(1, i) + ycm[i] * RPOLE(2, i) +
-         xcm[i] * RPOLE(3, i);
-      moment::yyqpl += ycm[i] * ycm[i] * RPOLE(1, i) + 2 * ycm[i] * RPOLE(3, i);
-      moment::yzqpl += ycm[i] * zcm[i] * RPOLE(1, i) + ycm[i] * RPOLE(4, i) +
-         zcm[i] * RPOLE(3, i);
-      moment::zxqpl += zcm[i] * xcm[i] * RPOLE(1, i) + zcm[i] * RPOLE(2, i) +
-         xcm[i] * RPOLE(4, i);
-      moment::zyqpl += zcm[i] * ycm[i] * RPOLE(1, i) + zcm[i] * RPOLE(3, i) +
-         ycm[i] * RPOLE(4, i);
-      moment::zzqpl += zcm[i] * zcm[i] * RPOLE(1, i) + 2 * zcm[i] * RPOLE(4, i);
+         moment::netchg += RPOLE(1, i);
+         moment::xdpl += xcm[i] * RPOLE(1, i) + RPOLE(2, i);
+         moment::ydpl += ycm[i] * RPOLE(1, i) + RPOLE(3, i);
+         moment::zdpl += zcm[i] * RPOLE(1, i) + RPOLE(4, i);
+         moment::xxqpl +=
+            xcm[i] * xcm[i] * RPOLE(1, i) + 2 * xcm[i] * RPOLE(2, i);
+         moment::xyqpl += xcm[i] * ycm[i] * RPOLE(1, i) + xcm[i] * RPOLE(3, i) +
+            ycm[i] * RPOLE(2, i);
+         moment::xzqpl += xcm[i] * zcm[i] * RPOLE(1, i) + xcm[i] * RPOLE(4, i) +
+            zcm[i] * RPOLE(2, i);
+         moment::yxqpl += +ycm[i] * xcm[i] * RPOLE(1, i) +
+            ycm[i] * RPOLE(2, i) + xcm[i] * RPOLE(3, i);
+         moment::yyqpl +=
+            ycm[i] * ycm[i] * RPOLE(1, i) + 2 * ycm[i] * RPOLE(3, i);
+         moment::yzqpl += ycm[i] * zcm[i] * RPOLE(1, i) + ycm[i] * RPOLE(4, i) +
+            zcm[i] * RPOLE(3, i);
+         moment::zxqpl += zcm[i] * xcm[i] * RPOLE(1, i) + zcm[i] * RPOLE(2, i) +
+            xcm[i] * RPOLE(4, i);
+         moment::zyqpl += zcm[i] * ycm[i] * RPOLE(1, i) + zcm[i] * RPOLE(3, i) +
+            ycm[i] * RPOLE(4, i);
+         moment::zzqpl +=
+            zcm[i] * zcm[i] * RPOLE(1, i) + 2 * zcm[i] * RPOLE(4, i);
 #undef RPOLE
+      }
    }
 
 
@@ -153,7 +201,7 @@ void moments()
 
 
    // add the atomic quadrupoles
-   for (int i = 0; i < n; ++i) {
+   for (int i = 0; i < n and mpole::npole > 0; ++i) {
       moment::xxqpl += 3.0 * mpole::rpole[i * 13 + 4];
       moment::xyqpl += 3.0 * mpole::rpole[i * 13 + 5];
       moment::xzqpl += 3.0 * mpole::rpole[i * 13 + 6];
@@ -197,55 +245,5 @@ void moments()
    a[2][2] = moment::zzqpl;
    int three = 3;
    TINKER_RT(jacobi)(&three, &a[0][0], moment::netqpl, &b[0][0]);
-
-
-   auto out = stdout;
-   print(out,
-         "\n"
-         " Total Electric Charge :%12s%13.5lf Electrons\n",
-         "", moment::netchg);
-   print(out,
-         "\n"
-         " Dipole Moment Magnitude :%10s%13.3lf Debye\n"
-         "\n"
-         " Dipole X,Y,Z-Components :%10s%13.3lf%13.3lf%13.3lf\n",
-         "", moment::netdpl, "", moment::xdpl, moment::ydpl, moment::zdpl);
-   print(out,
-         "\n"
-         " Quadrupole Moment Tensor :%9s%13.3lf%13.3lf%13.3lf\n"
-         "      (Buckinghams)%17s%13.3lf%13.3lf%13.3lf\n"
-         "%36s%13.3lf%13.3lf%13.3lf\n",
-         "", moment::xxqpl, moment::xyqpl, moment::xzqpl, "", moment::yxqpl,
-         moment::yyqpl, moment::yzqpl, "", moment::zxqpl, moment::zyqpl,
-         moment::zzqpl
-
-   );
-   print(out,
-         "\n"
-         " Principal Axes Quadrupole :%8s%13.3lf%13.3lf%13.3lf\n",
-         "", moment::netqpl[0], moment::netqpl[1], moment::netqpl[2]);
-
-
-   if (chgpot::dielec != 1) {
-      print(out,
-            "\n"
-            " Dielectric Constant :%14s%13.3lf\n",
-            "", chgpot::dielec);
-      print(out, " Effective Total Charge :%11s%13.5lf Electrons\n", "",
-            moment::netchg / std::sqrt(chgpot::dielec));
-      print(out, " Effective Dipole Moment :%10s%13.3lf Debye\n", "",
-            moment::netdpl / std::sqrt(chgpot::dielec));
-   }
-
-
-   // radius of gyration and moments of inertia
-   double rg;
-   TINKER_RT(gyrate)(&rg);
-   print(out,
-         "\n"
-         " Radius of Gyration :%15s%13.3lf Angstroms\n",
-         "", rg);
-   int one = 1;
-   TINKER_RT(inertia)(&one);
 }
 }
