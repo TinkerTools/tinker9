@@ -124,6 +124,11 @@ int count_reduce(const count_buffer b);
 energy_prec energy_reduce(const energy_buffer b);
 /**
  * \ingroup mdegv
+ */
+void virial_reshape(virial_prec (&output)[9],
+                    const virial_prec (&input)[virial_buffer_traits::N]);
+/**
+ * \ingroup mdegv
  * \see count_reduce
  */
 void virial_reduce(virial_prec (&)[virial_buffer_traits::N],

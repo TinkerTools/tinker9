@@ -4,9 +4,6 @@
 namespace tinker {
 void accmanaged_data(rc_op op)
 {
-   using namespace detail;
-
-
    if (op & rc_dealloc) {
       // #pragma acc exit data async delete()
    }
@@ -16,7 +13,4 @@ void accmanaged_data(rc_op op)
       // #pragma acc enter data async create()
    }
 }
-
-
-namespace detail {}
 }

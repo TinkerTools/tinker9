@@ -1,5 +1,6 @@
 #include "mdegv.h"
 #include "energy.h"
+#include "glob.dhflow.h"
 #include "mdcalc.h"
 #include "mdpq.h"
 #include "tool/device_zero.h"
@@ -150,6 +151,19 @@ void copy_virial(int vers, virial_prec* virial)
 void egv_data(rc_op op)
 {
    bool rc_a = rc_flag & calc::analyz;
+
+
+   if (op & rc_dealloc) {
+      using namespace detail;
+      device_memory_deallocate_bytes(ev_dptr);
+      ev_dptr = nullptr;
+   }
+
+
+   if (op & rc_alloc) {
+      using namespace detail;
+      device_memory_allocate_bytes((void**)(&ev_dptr), sizeof(DHFlow));
+   }
 
 
    if (rc_flag & calc::energy) {

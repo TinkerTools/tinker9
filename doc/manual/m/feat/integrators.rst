@@ -1,5 +1,15 @@
-Integrators
-===========
+Integrators and Ensembles
+=========================
+
+.. _label-monte-carlo-barostat:
+
+Monte Carlo Barostat
+--------------------
+
+.. _label-berendsen-barostat:
+
+Berendsen Barostat
+------------------
 
 .. _label-verlet:
 

@@ -18,5 +18,9 @@ The HTML version is hosted on [readthedocs](https://tinker9-manual.readthedocs.i
 and the PDF version is accessible from the same webpage.
 
 
+## Features and Progress Tracker
+Please visit the [GitHub Projects Page](https://github.com/TinkerTools/tinker9/projects) for more details.
+
+
 ## Style Guide
 Please read the [style guide](doc/style.md) before contributing to this code base.

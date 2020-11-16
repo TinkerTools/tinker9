@@ -56,33 +56,22 @@ void buffer_deallocate(int flag, count_buffer c)
 }
 int count_reduce(const count_buffer ne)
 {
-   int c = parallel::reduce_sum(ne, buffer_size(), g::q0);
+   int c = reduce_sum(ne, buffer_size(), g::q0);
    return c;
 }
 
 
 energy_prec energy_reduce(const energy_buffer e)
 {
-   auto b = parallel::reduce_sum(e, buffer_size(), g::q0);
+   auto b = reduce_sum(e, buffer_size(), g::q0);
    energy_prec real_out = to_flt_host<energy_prec>(b);
    return real_out;
 }
 
 
-void virial_reduce(virial_prec (&v1)[virial_buffer_traits::N],
-                   const virial_buffer v)
+void virial_reshape(virial_prec (&v_out)[9],
+                    const virial_prec (&v1)[virial_buffer_traits::N])
 {
-   virial_buffer_traits::type b[virial_buffer_traits::N];
-   parallel::reduce_sum2(b, v, buffer_size(), g::q0);
-   for (size_t i = 0; i < virial_buffer_traits::N; ++i)
-      v1[i] = to_flt_host<virial_prec>(b[i]);
-}
-
-
-void virial_reduce(virial_prec (&v_out)[9], const virial_buffer v)
-{
-   virial_prec v1[virial_buffer_traits::N];
-   virial_reduce(v1, v);
    // xx yx zx yy zy zz
    //  0  1  2  3  4  5
    v_out[0] = v1[0]; // xx
@@ -94,5 +83,23 @@ void virial_reduce(virial_prec (&v_out)[9], const virial_buffer v)
    v_out[6] = v1[2]; // zx
    v_out[7] = v1[4]; // zy
    v_out[8] = v1[5]; // zz
+}
+
+
+void virial_reduce(virial_prec (&v1)[virial_buffer_traits::N],
+                   const virial_buffer v)
+{
+   virial_buffer_traits::type b[virial_buffer_traits::N];
+   reduce_sum2(b, v, buffer_size(), g::q0);
+   for (size_t i = 0; i < virial_buffer_traits::N; ++i)
+      v1[i] = to_flt_host<virial_prec>(b[i]);
+}
+
+
+void virial_reduce(virial_prec (&v_out)[9], const virial_buffer v)
+{
+   virial_prec v1[virial_buffer_traits::N];
+   virial_reduce(v1, v);
+   virial_reshape(v_out, v1);
 }
 }

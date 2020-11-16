@@ -1,10 +1,13 @@
 #include "energy.h"
+#include "accmanaged.h"
 #include "cflux.h"
+#include "glob.dhflow.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
+#include "tool/host_zero.h"
 
 
 namespace tinker {
@@ -195,7 +198,12 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 
    if (pltfm_config & CU_PLTFM) {
-      if (tscfg("evalence", ecore_val))
+      bool calc_val = use_potent(bond_term) or use_potent(angle_term) or
+         use_potent(strbnd_term) or use_potent(urey_term) or
+         use_potent(opbend_term) or use_potent(imptors_term) or
+         use_potent(torsion_term) or use_potent(pitors_term) or
+         use_potent(tortor_term) or use_potent(geom_term);
+      if (calc_val and tscfg("evalence", ecore_val))
          evalence(vers);
    } else {
       // bonded terms
@@ -240,7 +248,7 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 
 #if TINKER_CUDART
-   echglj_cu_sync_pme_stream(use_pme_stream);
+   echglj_cu_sync_pme_stream(use_pme_stream and not(vers & calc::analyz));
 #endif
 }
 
@@ -256,50 +264,106 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
+
+   bool must_wait = false;
+   detail::ev_hobj.e_val = 0;
+   detail::ev_hobj.e_vdw = 0;
+   detail::ev_hobj.e_ele = 0;
    if (do_e) {
       if (!rc_a) {
-         energy_prec e;
+         size_t bufsize = buffer_size();
          if (ecore_val) {
-            e = energy_reduce(eng_buf);
-            energy_valence += e;
+            must_wait = true;
+            reduce_sum_on_device(&detail::ev_dptr->e_val, eng_buf, bufsize,
+                                 g::q0);
          }
          if (ecore_vdw && eng_buf_vdw) {
-            e = energy_reduce(eng_buf_vdw);
-            energy_vdw += e;
+            must_wait = true;
+            reduce_sum_on_device(&detail::ev_dptr->e_vdw, eng_buf_vdw, bufsize,
+                                 g::q0);
          }
          if (ecore_ele && eng_buf_elec) {
-            e = energy_reduce(eng_buf_elec);
-            energy_elec += e;
+            must_wait = true;
+            reduce_sum_on_device(&detail::ev_dptr->e_ele, eng_buf_elec, bufsize,
+                                 g::q0);
+         }
+      }
+   }
+
+
+   host_zero(detail::ev_hobj.v_val);
+   host_zero(detail::ev_hobj.v_vdw);
+   host_zero(detail::ev_hobj.v_ele);
+   if (do_v) {
+      using v_t = virial_buffer_traits::type;
+      if (!rc_a) {
+         size_t bufsize = buffer_size();
+         if (ecore_val) {
+            must_wait = true;
+            reduce_sum2_on_device(detail::ev_dptr->v_val, vir_buf, bufsize,
+                                  g::q0);
+         }
+         if (ecore_vdw && vir_buf_vdw) {
+            must_wait = true;
+            reduce_sum2_on_device(detail::ev_dptr->v_vdw, vir_buf_vdw, bufsize,
+                                  g::q0);
+         }
+         if (ecore_ele && vir_buf_elec) {
+            must_wait = true;
+            reduce_sum2_on_device(detail::ev_dptr->v_ele, vir_buf_elec, bufsize,
+                                  g::q0);
+         }
+      }
+   }
+   if (must_wait) {
+      device_memory_copyout_bytes_async(&detail::ev_hobj, detail::ev_dptr,
+                                        sizeof(DHFlow), g::q0);
+      wait_for(g::q0);
+   }
+   if (do_e) {
+      if (!rc_a) {
+         if (ecore_val) {
+            energy_valence += to_flt_host<energy_prec>(detail::ev_hobj.e_val);
+         }
+         if (ecore_vdw && eng_buf_vdw) {
+            energy_vdw += to_flt_host<energy_prec>(detail::ev_hobj.e_vdw);
+         }
+         if (ecore_ele && eng_buf_elec) {
+            energy_elec += to_flt_host<energy_prec>(detail::ev_hobj.e_ele);
          }
       }
       esum = energy_valence + energy_vdw + energy_elec;
    }
-
-
    if (do_v) {
       if (!rc_a) {
-         virial_prec v[9];
          if (ecore_val) {
-            virial_reduce(v, vir_buf);
+            virial_prec vval[virial_buffer_traits::N], v2val[9];
+            for (int iv = 0; iv < virial_buffer_traits::N; ++iv)
+               vval[iv] = to_flt_host<virial_prec>(detail::ev_hobj.v_val[iv]);
+            virial_reshape(v2val, vval);
             for (int iv = 0; iv < 9; ++iv)
-               virial_valence[iv] += v[iv];
+               virial_valence[iv] += v2val[iv];
          }
          if (ecore_vdw && vir_buf_vdw) {
-            virial_reduce(v, vir_buf_vdw);
+            virial_prec vvdw[virial_buffer_traits::N], v2vdw[9];
+            for (int iv = 0; iv < virial_buffer_traits::N; ++iv)
+               vvdw[iv] = to_flt_host<virial_prec>(detail::ev_hobj.v_vdw[iv]);
+            virial_reshape(v2vdw, vvdw);
             for (int iv = 0; iv < 9; ++iv)
-               virial_vdw[iv] += v[iv];
+               virial_vdw[iv] += v2vdw[iv];
          }
          if (ecore_ele && vir_buf_elec) {
-            virial_reduce(v, vir_buf_elec);
+            virial_prec vele[virial_buffer_traits::N], v2ele[9];
+            for (int iv = 0; iv < virial_buffer_traits::N; ++iv)
+               vele[iv] = to_flt_host<virial_prec>(detail::ev_hobj.v_ele[iv]);
+            virial_reshape(v2ele, vele);
             for (int iv = 0; iv < 9; ++iv)
-               virial_elec[iv] += v[iv];
+               virial_elec[iv] += v2ele[iv];
          }
       }
       for (int iv = 0; iv < 9; ++iv)
          vir[iv] = virial_valence[iv] + virial_vdw[iv] + virial_elec[iv];
    }
-
-
    if (do_g) {
       if (ecore_vdw && gx_vdw)
          sum_gradient(gx, gy, gz, gx_vdw, gy_vdw, gz_vdw);

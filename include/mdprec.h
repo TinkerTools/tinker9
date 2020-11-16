@@ -16,11 +16,11 @@
  * | energy (for integrators)    | energy_prec | mixed            |
  * | virial (for integrators)    | virial_prec | mixed            |
  * | gradient (deterministic)    | grad_prec   | fixed            |
- * | gradient (stochastic error) | grad_prec   | real             |
+ * | gradient (floating-point)   | grad_prec   | real             |
  * | energy (individual terms)   | e_prec      | real             |
  * | virial (individual terms)   | v_prec      | real             |
- * | gradient (individual terms) | undefined   | real             |
- * | position (for energies)     | undefined   | real             |
+ * | gradient (individual terms) | real        | real             |
+ * | position (for energies)     | real        | real             |
  */
 
 

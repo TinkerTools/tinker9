@@ -5,6 +5,7 @@ list (APPEND LIB_CPP ${PLATFORM_CPP})
 
 
 ## CUDA
+set (CMAKE_CUDA_COMPILER "${CUDA_DIR}/bin/nvcc")
 add_library (tinker9_cu OBJECT ${LIB_CU})
 target_compile_definitions (tinker9_cu PRIVATE ${macro_defs})
 enable_language (CUDA)
@@ -131,7 +132,6 @@ add_custom_target (tinker9 ALL
       $<TARGET_FILE:LIBFFTW_THREADS>
       "-L$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES},;-L>"
       "-l$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES},;-l>"
-      -L${CUDA_DIR}/lib64/stubs -lnvidia-ml
       -acc -Mcudalib=cufft,cublas
       $<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${CCLIST4}>
       $<$<CONFIG:RELEASE>:-ta=tesla:fastmath${CCLIST4}>

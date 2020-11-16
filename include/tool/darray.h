@@ -98,7 +98,8 @@ void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem, int q)
    if (ds == ss) {
       device_memory_copyin_bytes_async(dst, src, size, q);
    } else {
-      std::vector<DT> buf(nelem);
+      static std::vector<DT> buf;
+      buf.reserve(nelem);
       for (size_t i = 0; i < nelem; ++i)
          buf[i] = src[i];
       device_memory_copyin_bytes_async(dst, buf.data(), size, q);
@@ -129,6 +130,7 @@ void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem, int q)
    } else {
       std::vector<ST> buf(nelem);
       device_memory_copyout_bytes_async(buf.data(), src, size, q);
+      wait_for(q);
       for (size_t i = 0; i < nelem; ++i)
          dst[i] = buf[i];
    }
@@ -256,7 +258,7 @@ struct darray
       constexpr size_t N = deduce_ptr<PTR>::n;
       typedef typename deduce_ptr<PTR2>::type T2;
       static_assert(std::is_same<T, T2>::value, "");
-      return parallel::dotprod(flatten(ptr), flatten(b), nelem * N, q);
+      return dotprod(flatten(ptr), flatten(b), nelem * N, q);
    }
 
 
@@ -269,7 +271,7 @@ struct darray
       static_assert(std::is_same<T, T2>::value, "");
       typedef typename deduce_ptr<ANS>::type TA;
       static_assert(std::is_same<T, TA>::value, "");
-      parallel::dotprod(ans, flatten(ptr), flatten(ptr2), nelem * N, q);
+      dotprod(ans, flatten(ptr), flatten(ptr2), nelem * N, q);
    }
 
 
@@ -277,7 +279,7 @@ struct darray
    static void scale(int q, size_t nelem, FLT scal, PTR ptr)
    {
       constexpr size_t N = deduce_ptr<PTR>::n;
-      parallel::scale_array(flatten(ptr), scal, nelem * N, q);
+      scale_array(flatten(ptr), scal, nelem * N, q);
    }
 
 

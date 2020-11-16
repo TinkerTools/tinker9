@@ -53,11 +53,12 @@ void bounds_pos_acc()
    auto nmol = molecule.nmol;
    const auto* imol = molecule.imol;
    const auto* kmol = molecule.kmol;
+   const auto* molmass = molecule.molmass;
 
 
    #pragma acc parallel loop independent async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(imol,kmol,xpos,ypos,zpos)
+               deviceptr(imol,kmol,xpos,ypos,zpos,mass,molmass)
    for (int i = 0; i < nmol; ++i) {
       // locate the center of each molecule
       pos_prec xmid = 0, ymid = 0, zmid = 0;
@@ -66,11 +67,11 @@ void bounds_pos_acc()
       #pragma acc loop seq
       for (int j = start; j < stop; ++j) {
          int k = kmol[j];
-         xmid += xpos[k];
-         ymid += ypos[k];
-         zmid += zpos[k];
+         xmid += xpos[k] * mass[k];
+         ymid += ypos[k] * mass[k];
+         zmid += zpos[k] * mass[k];
       }
-      int weigh = stop - start;
+      mass_prec weigh = molmass[i];
       xmid /= weigh;
       ymid /= weigh;
       zmid /= weigh;
