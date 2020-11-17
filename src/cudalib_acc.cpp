@@ -1,4 +1,5 @@
 #include "glob.accasync.h"
+#include "platform.h"
 #include "tool/cudalib.h"
 #if TINKER_CUDART
 #   include "tool/error.h"
@@ -29,6 +30,7 @@ void cudalib_data(rc_op op)
       use_pme_stream = false;
       g::spme = nullptr;
       g::qpme = -42;
+      check_rt(cudaEventDestroy(pme_event_start));
       check_rt(cudaEventDestroy(pme_event_finish));
    }
 
@@ -54,8 +56,15 @@ void cudalib_data(rc_op op)
 
 
       use_pme_stream = false;
-      g::qpme = g::q0 + 1;
-      g::spme = (cudaStream_t)acc_get_cuda_stream(g::qpme);
+      if (pltfm_config & CU_PLTFM) {
+         g::qpme = g::q1;
+         g::spme = g::s1;
+      } else {
+         g::qpme = g::q0 + 1;
+         g::spme = (cudaStream_t)acc_get_cuda_stream(g::qpme);
+      }
+      check_rt(
+         cudaEventCreateWithFlags(&pme_event_start, cudaEventDisableTiming));
       check_rt(
          cudaEventCreateWithFlags(&pme_event_finish, cudaEventDisableTiming));
 

@@ -82,7 +82,25 @@ void echglj_data_cu(rc_op op)
 }
 
 
-void echglj_cu_sync_pme_stream(bool use_pmestream)
+void pme_stream_start_record_cu(bool use_pmestream)
+{
+   if (use_pmestream) {
+      check_rt(cudaEventRecord(pme_event_start, g::s0));
+   }
+}
+void pme_stream_start_wait_cu(bool use_pmestream)
+{
+   if (use_pmestream) {
+      check_rt(cudaStreamWaitEvent(g::spme, pme_event_start, 0));
+   }
+}
+void pme_stream_finish_record_cu(bool use_pmestream)
+{
+   if (use_pmestream) {
+      check_rt(cudaEventRecord(pme_event_finish, g::spme));
+   }
+}
+void pme_stream_finish_wait_cu(bool use_pmestream)
 {
    if (use_pmestream) {
       check_rt(cudaStreamWaitEvent(g::s0, pme_event_finish, 0));

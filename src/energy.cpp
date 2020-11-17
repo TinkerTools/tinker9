@@ -144,57 +144,15 @@ auto tscfg__ = [](std::string eng, bool& use_flag, unsigned tsflag,
 
 void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 {
+   pme_stream_start_record(use_pme_stream);
+
+
    vers = vers & calc::vmask;
 
 
    ecore_val = false;
    ecore_vdw = false;
    ecore_ele = false;
-
-
-   // non-bonded terms
-
-
-   if (amoeba_evdw(vers))
-      if (tscfg("evdw", ecore_vdw))
-         evdw(vers);
-
-
-   if (amoeba_echarge(vers))
-      if (tscfg("echarge", ecore_ele))
-         echarge(vers);
-   if (amoeba_echglj(vers))
-      if (tscfg("echglj", ecore_ele)) {
-         ecore_vdw = true;
-         echglj(vers);
-      }
-
-   if (amoeba_empole(vers))
-      if (tscfg("empole", ecore_ele))
-         empole(vers);
-   if (amoeba_epolar(vers))
-      if (tscfg("epolar", ecore_ele))
-         epolar(vers);
-   if (amoeba_emplar(vers))
-      if (tscfg("emplar", ecore_ele))
-         emplar(vers);
-
-
-   if (hippo_empole(vers))
-      if (tscfg("empole_chgpen", ecore_ele))
-         empole_chgpen(vers);
-   if (hippo_epolar(vers))
-      if (tscfg("epolar_chgpen", ecore_ele))
-         epolar_chgpen(vers);
-   if (use_potent(chgtrn_term))
-      if (tscfg("echgtrn", ecore_ele))
-         echgtrn(vers);
-   if (use_potent(disp_term))
-      if (tscfg("edisp", ecore_vdw))
-         edisp(vers);
-   if (use_potent(repuls_term))
-      if (tscfg("erepel", ecore_vdw))
-         erepel(vers);
 
 
    if (pltfm_config & CU_PLTFM) {
@@ -247,9 +205,43 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    }
 
 
-#if TINKER_CUDART
-   echglj_cu_sync_pme_stream(use_pme_stream and not(vers & calc::analyz));
-#endif
+   // non-bonded terms
+
+
+   if (amoeba_evdw(vers))
+      if (tscfg("evdw", ecore_vdw))
+         evdw(vers);
+
+
+   if (amoeba_echarge(vers))
+      if (tscfg("echarge", ecore_ele))
+         echarge(vers);
+   if (amoeba_echglj(vers))
+      if (tscfg("echglj", ecore_ele)) {
+         ecore_vdw = true;
+         echglj(vers);
+      }
+
+   if (amoeba_empole(vers))
+      if (tscfg("empole", ecore_ele))
+         empole(vers);
+   if (amoeba_epolar(vers))
+      if (tscfg("epolar", ecore_ele))
+         epolar(vers);
+   if (amoeba_emplar(vers))
+      if (tscfg("emplar", ecore_ele))
+         emplar(vers);
+
+
+   if (use_potent(chgtrn_term))
+      if (tscfg("echgtrn", ecore_ele))
+         echgtrn(vers);
+   if (use_potent(disp_term))
+      if (tscfg("edisp", ecore_vdw))
+         edisp(vers);
+
+
+   pme_stream_finish_wait(use_pme_stream and not(vers & calc::analyz));
 }
 
 

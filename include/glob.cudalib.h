@@ -25,6 +25,7 @@ TINKER_EXTERN cublasHandle_t h1;
 }
 TINKER_EXTERN void* pinned_buf;
 TINKER_EXTERN void* dptr_buf;
+TINKER_EXTERN cudaEvent_t pme_event_start;
 TINKER_EXTERN cudaEvent_t pme_event_finish;
 }
 #endif
