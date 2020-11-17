@@ -585,8 +585,6 @@ void echarge_fphi_self_cu()
                  nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc,
                  decx, decy, decz);
    }
-   if (use_pme_stream)
-      check_rt(cudaEventRecord(pme_event_finish, stream));
 }
 
 
