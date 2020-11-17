@@ -16,7 +16,7 @@ void kinetic_explicit_cu(T_prec& temp_out, energy_prec& eksum_out,
 void kinetic_leapfrog(T_prec& temp);
 
 
-void temper(time_prec dt, T_prec& temp);
+void temper(time_prec dt, T_prec& temp, bool save);
 /**
  * \ingroup mdpt
  * \brief Berendsen barostat by scaling the coordinates and box dimensions via

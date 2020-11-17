@@ -182,7 +182,7 @@ void respa_fast_slow(int istep, time_prec dt_ps)
 
 
    // full-step corrections
-   temper(dt_ps, temp);
+   temper(dt_ps, temp, save);
    pressure(dt_ps);
 }
 }
