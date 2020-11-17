@@ -1,6 +1,7 @@
 #include "md.h"
 #include "test.h"
 #include "test_rt.h"
+#include <tinker/detail/inform.hh>
 
 using namespace tinker;
 
@@ -70,11 +71,14 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
    const int nsteps = 20;
    const double eps_e = 0.0001;
    std::vector<double> epots, eksums;
+   int old = inform::iwrite;
+   inform::iwrite = 1;
    for (int i = 1; i <= nsteps; ++i) {
       velocity_verlet(i, dt_ps);
       epots.push_back(esum);
       eksums.push_back(eksum);
    }
+   inform::iwrite = old;
 
    finish();
    test_end();
