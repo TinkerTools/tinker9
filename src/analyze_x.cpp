@@ -205,9 +205,7 @@ void x_analyze_m()
          "%36s%13.3lf%13.3lf%13.3lf\n",
          "", moment::xxqpl, moment::xyqpl, moment::xzqpl, "", moment::yxqpl,
          moment::yyqpl, moment::yzqpl, "", moment::zxqpl, moment::zyqpl,
-         moment::zzqpl
-
-   );
+         moment::zzqpl);
    print(out,
          "\n"
          " Principal Axes Quadrupole :%8s%13.3lf%13.3lf%13.3lf\n",
