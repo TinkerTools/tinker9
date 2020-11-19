@@ -21,6 +21,8 @@ void pair_disp(real r, real r2, real rr1, //
    }
 
 
+   real eps = 0.005f;
+   real diff = REAL_ABS(ai - ak);
    real rr2 = rr1 * rr1;
    real rr6 = rr2 * rr2 * rr2;
    real di = ai * r;
@@ -29,11 +31,11 @@ void pair_disp(real r, real r2, real rr1, //
    real expk = REAL_EXP(-dk);
    real di2 = di * di;
    real damp = 1, ddamp = 0;
-   if (ai != ak) {
+   if (diff > eps) {
       real ai2 = ai * ai;
       real ak2 = ak * ak;
-      real ti = ak2 * REAL_RECIP(ak2 - ai2);
-      real tk = ai2 * REAL_RECIP(ai2 - ak2);
+      real ti = ak2 * REAL_RECIP((ak + ai) * (ak - ai));
+      real tk = ai2 * REAL_RECIP((ai + ak) * (ai - ak));
       real a1 = 2 * ti + 1;
       real b1 = 2 * tk + 1;
       real termi = ((di / 2 + b1) / 2 * di + b1) * di + b1;
@@ -49,8 +51,7 @@ void pair_disp(real r, real r2, real rr1, //
          b2 *= ak * dk2 * tk * tk * expk;
          ddamp = a2 + b2;
       }
-   }
-   if (ai == ak) {
+   } else {
       real term = ((((di + 5) * di + 17) * di / 96 + 0.5f) * di + 1) * di + 1;
       damp = 1 - term * expi;
       if CONSTEXPR (DO_G)
