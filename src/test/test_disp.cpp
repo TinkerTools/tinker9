@@ -16,9 +16,9 @@ TEST_CASE("EDISP-1-NONDEWALD", "[ff][hippo][edisp][nondewald]")
    int argc = 4;
 
 
-   const double eps_e = test_get_eps(0.0020, 0.0001);
-   const double eps_g = test_get_eps(0.0075, 0.0001);
-   const double eps_v = test_get_eps(0.030, 0.001);
+   const double eps_e = test_get_eps(0.0001, 0.0001);
+   const double eps_g = test_get_eps(0.0002, 0.0001);
+   const double eps_v = test_get_eps(0.001, 0.001);
 
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/disp.1.txt");
@@ -82,9 +82,9 @@ TEST_CASE("EDISP-2-DEWALD", "[ff][hippo][edisp][dewald]")
    int argc = 4;
 
 
-   const double eps_e = test_get_eps(0.0020, 0.0001);
-   const double eps_g = test_get_eps(0.0070, 0.0001);
-   const double eps_v = test_get_eps(0.025, 0.001);
+   const double eps_e = test_get_eps(0.0027, 0.0001);
+   const double eps_g = test_get_eps(0.0007, 0.0001);
+   const double eps_v = test_get_eps(0.006, 0.001);
 
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/disp.2.txt");
