@@ -9,7 +9,7 @@
 namespace tinker {
 void eimprop_data(rc_op op)
 {
-   if (not use_potent(imporp_term))
+   if (not use_potent(improp_term))
       return;
 
 

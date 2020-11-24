@@ -38,7 +38,7 @@ int use_potent(potent_t term)
    case opbend_term:
       val = potent::use_opbend;
       break;
-   case imporp_term:
+   case improp_term:
       val = potent::use_improp;
       break;
    case imptors_term:
@@ -112,7 +112,7 @@ int count_bonded_term(potent_t term)
    case opbend_term:
       val = opbend::nopbend;
       break;
-   case imporp_term:
+   case improp_term:
       val = improp::niprop;
       break;
    case imptors_term:

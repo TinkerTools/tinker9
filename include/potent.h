@@ -12,7 +12,7 @@ typedef enum
    angang_term,  // eaa
    opbend_term,  // eopb
    opdist_term,  // eopd
-   imporp_term,  // eid
+   improp_term,  // eid
    imptors_term, // eit
    torsion_term, // et
    pitors_term,  // ept

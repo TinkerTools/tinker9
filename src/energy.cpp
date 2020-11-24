@@ -147,17 +147,13 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    ecore_ele = false;
 
 
-   if (use_potent(imporp_term))
-      if (tscfg("eimprop", ecore_val))
-         eimprop(vers);
-
-
    if (pltfm_config & CU_PLTFM) {
       bool calc_val = use_potent(bond_term) or use_potent(angle_term) or
          use_potent(strbnd_term) or use_potent(urey_term) or
-         use_potent(opbend_term) or use_potent(imptors_term) or
-         use_potent(torsion_term) or use_potent(pitors_term) or
-         use_potent(tortor_term) or use_potent(geom_term);
+         use_potent(opbend_term) or use_potent(improp_term) or
+         use_potent(imptors_term) or use_potent(torsion_term) or
+         use_potent(pitors_term) or use_potent(tortor_term) or
+         use_potent(geom_term);
       if (calc_val and tscfg("evalence", ecore_val))
          evalence(vers);
    } else {
@@ -179,6 +175,9 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       if (use_potent(opbend_term))
          if (tscfg("eopbend", ecore_val))
             eopbend(vers);
+      if (use_potent(improp_term))
+         if (tscfg("eimprop", ecore_val))
+            eimprop(vers);
       if (use_potent(imptors_term))
          if (tscfg("eimptor", ecore_val))
             eimptor(vers);

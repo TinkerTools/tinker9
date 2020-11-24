@@ -74,7 +74,7 @@ void dk_improp(real& restrict e, real& restrict vxx, real& restrict vyx,
       real rcb = REAL_SQRT(xcb * xcb + ycb * ycb + zcb * zcb);
       real cosine = (xt * xu + yt * yu + zt * zu) * REAL_RECIP(rtru);
       real sine = (xcb * xtu + ycb * ytu + zcb * ztu) * REAL_RECIP(rcb * rtru);
-      cosine = REAL_MIN(1.0f, REAL_MAX(-1.0f, cosine));
+      cosine = REAL_MIN((real)1.0, REAL_MAX((real)-1, cosine));
       real angle = radian * REAL_ACOS(cosine);
       if (sine < 0)
          angle = -angle;
