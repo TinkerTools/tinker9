@@ -1,5 +1,5 @@
-Special Features & Methods
-==========================
+Features & Methods
+==================
 
 .. toctree::
 

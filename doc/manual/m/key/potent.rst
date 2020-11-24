@@ -1,6 +1,8 @@
 Potential Function Keywords
 ===========================
 
+.. include:: ../replace.rst
+
 Improper Dihedral Angle
 -----------------------
 
@@ -14,11 +16,10 @@ the potential. The *NONE* option turns off use of this potential energy term.
 The *ONLY* option turns off all potential energy terms except for this one.
 
 **IMPROPUNIT [real]**
-
 .. index:: IMPROPUNIT
 
 Sets the scale factor needed to convert the energy value computed by the
-CHARMM-style improper dihedral angle potential into units of kcal/mole.
+CHARMM-style improper dihedral angle potential into units of kcal/mol.
 The correct value is force field dependent and typically provided in the header
 of the master force field parameter file. The default value of 1.0 is used,
 if the *IMPROPUNIT* keyword is not given in the force field parameter file
@@ -29,7 +30,9 @@ or the keyfile.
 .. index:: IMPROPER
 
 This keyword provides the values for a single CHARMM-style improper dihedral
-angle parameter.
+angle parameter as follows.
+
+- D |nbsp| A |nbsp| B |nbsp| C |nbsp| Force (1/|rad2|) |nbsp| Ideal (degree)
 
 .. seealso::
 
