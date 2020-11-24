@@ -7,10 +7,10 @@ Molecular Dynamics and Ensemble Keywords
 
 .. seealso::
 
-    :ref:`label-verlet`,
-    :ref:`label-respa`,
-    :ref:`label-nose-hoover`,
-    :ref:`label-lpiston`
+   :ref:`label-verlet`,
+   :ref:`label-respa`,
+   :ref:`label-nose-hoover`,
+   :ref:`label-lpiston`
 
 **THERMOSTAT [NOSE-HOOVER/LPISTON]**
 
@@ -18,8 +18,8 @@ Molecular Dynamics and Ensemble Keywords
 
 .. seealso::
 
-    :ref:`label-nose-hoover`,
-    :ref:`label-lpiston`
+   :ref:`label-nose-hoover`,
+   :ref:`label-lpiston`
 
 **BAROSTAT [MONTECARLO/BERENDSEN/NOSE-HOOVER/LPISTON]**
 
@@ -27,7 +27,7 @@ Molecular Dynamics and Ensemble Keywords
 
 .. seealso::
 
-    :ref:`label-monte-carlo-barostat`,
-    :ref:`label-berendsen-barostat`,
-    :ref:`label-nose-hoover`,
-    :ref:`label-lpiston`
+   :ref:`label-monte-carlo-barostat`,
+   :ref:`label-berendsen-barostat`,
+   :ref:`label-nose-hoover`,
+   :ref:`label-lpiston`
