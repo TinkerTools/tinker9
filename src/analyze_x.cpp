@@ -139,6 +139,10 @@ void x_analyze_e()
       print(out, fmt, "Out-of-Plane Bend", energy_eopb,
             count_bonded_term(opbend_term));
 
+   if (use_potent(imporp_term))
+      print(out, fmt, "Improper Dihedral", energy_eid,
+            count_bonded_term(imporp_term));
+
    if (use_potent(imptors_term))
       print(out, fmt, "Improper Torsion", energy_eit,
             count_bonded_term(imptors_term));

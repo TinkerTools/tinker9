@@ -21,8 +21,8 @@ const TimeScaleConfig& respa_tsconfig()
    static TimeScaleConfig tsconfig{
       {"ebond", fast},    {"eangle", fast},  {"estrbnd", fast},
       {"eurey", fast},    {"eopbend", fast}, {"etors", fast},
-      {"eimptor", fast},  {"epitors", fast}, {"etortor", fast},
-      {"egeom", fast},
+      {"eimprop", fast},  {"eimptor", fast}, {"epitors", fast},
+      {"etortor", fast},  {"egeom", fast},
 
       {"evalence", fast},
 

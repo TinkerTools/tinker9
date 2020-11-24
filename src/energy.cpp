@@ -29,6 +29,7 @@ void energy_data(rc_op op)
    rc_man estrbnd42{estrbnd_data, op};
    rc_man eurey42{eurey_data, op};
    rc_man eopbend42{eopbend_data, op};
+   rc_man eimprop42{eimprop_data, op};
    rc_man eimptor42{eimptor_data, op};
    rc_man etors42{etors_data, op};
    rc_man epitors42{epitors_data, op};
@@ -99,8 +100,8 @@ const TimeScaleConfig& default_tsconfig()
 {
    static TimeScaleConfig tsconfig{
       {"ebond", 0},    {"eangle", 0},  {"estrbnd", 0}, {"eurey", 0},
-      {"eopbend", 0},  {"eimptor", 0}, {"etors", 0},   {"epitors", 0},
-      {"etortor", 0},  {"egeom", 0},
+      {"eopbend", 0},  {"eimprop", 0}, {"eimptor", 0}, {"etors", 0},
+      {"epitors", 0},  {"etortor", 0}, {"egeom", 0},
 
       {"evalence", 0},
 
@@ -144,6 +145,11 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    ecore_val = false;
    ecore_vdw = false;
    ecore_ele = false;
+
+
+   if (use_potent(imporp_term))
+      if (tscfg("eimprop", ecore_val))
+         eimprop(vers);
 
 
    if (pltfm_config & CU_PLTFM) {

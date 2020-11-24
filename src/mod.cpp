@@ -13,6 +13,7 @@
 #include "mod.disp.h"
 #include "mod.dsppot.h"
 #include "mod.freeze.h"
+#include "mod.improp.h"
 #include "mod.imptor.h"
 #include "mod.ktrtor.h"
 #include "mod.mplpot.h"
