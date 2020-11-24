@@ -23,7 +23,7 @@ The harmonic functional form implemented in Tinker is
 
 .. math::
 
-   U = k(\varphi-\varphi_0)^2,
+   U = k(\varphi-\varphi_0)^2.
 
-where it is worth noting that there is *no* 1/2 coefficient before the force
+It is worth noting that there is *no* 1/2 coefficient before the force
 coefficient, which may be different in other software packages.

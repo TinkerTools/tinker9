@@ -3,8 +3,8 @@ Potential Function Keywords
 
 .. include:: ../replace.rst
 
-Improper Dihedral Angle
------------------------
+Improper Dihedral
+-----------------
 
 **IMPROPTERM [NONE/ONLY]**
 
