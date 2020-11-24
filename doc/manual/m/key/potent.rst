@@ -16,6 +16,7 @@ the potential. The *NONE* option turns off use of this potential energy term.
 The *ONLY* option turns off all potential energy terms except for this one.
 
 **IMPROPUNIT [real]**
+
 .. index:: IMPROPUNIT
 
 Sets the scale factor needed to convert the energy value computed by the
