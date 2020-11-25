@@ -1,6 +1,26 @@
 Potential Energy Functions
 ==========================
 
+.. _label-bond:
+
+Bond Stretch
+------------
+
+.. math::
+
+   \Delta b = b - b_0, U = k\Delta b^2(1 + k_3\Delta b + k_4\Delta b^2).
+
+The Morse oscillator
+
+.. math::
+
+   U = D_e [1 - \exp(-a\Delta b)]^2.
+
+.. _label-angle:
+
+Angle Bending
+-------------
+
 .. _label-improp:
 
 Improper Dihedral
@@ -25,5 +45,5 @@ The harmonic functional form implemented in Tinker is
 
    U = k(\varphi-\varphi_0)^2.
 
-It is worth noting that there is *no* 1/2 coefficient before the force
+It is worth noting that there is no 1/2 coefficient before the force
 coefficient, which may be different in other software packages.
