@@ -24,8 +24,8 @@ TEST_CASE("Improp-Trpcage", "[ff][eimprop][trpcage]")
    auto ref_g = r.get_gradient();
 
 
-   const double eps_e = test_get_eps(0.0003, 0.0001);
-   const double eps_g = test_get_eps(0.0090, 0.0001);
+   const double eps_e = test_get_eps(0.0001, 0.0001);
+   const double eps_g = test_get_eps(0.0003, 0.0001);
    const double eps_v = test_get_eps(0.001, 0.001);
 
 

@@ -606,35 +606,40 @@ void evalence_cu1(
 }
 
 
+// clang-format off
+#define EVALENCE_ARGS                                                          \
+   /* ebond */ eb, vir_eb, debx, deby, debz, bndtyp, bndunit,                  \
+   flag_bond ? nbond : 0, ibnd, bl, bk, cbnd, qbnd,                            \
+   /* eangle */ ea, vir_ea, deax, deay, deaz, angtyp, angunit,                 \
+   flag_angle ? nangle : 0, iang, anat, ak, cang, qang, pang, sang,            \
+   /* estrbnd */ eba, vir_eba, debax, debay, debaz, stbnunit,                  \
+   flag_strbnd ? nstrbnd : 0, isb, sbk,                                        \
+   /* eurey */ eub, vir_eub, deubx, deuby, deubz, ureyunit,                    \
+   flag_urey ? nurey : 0, iury, uk, ul, cury, qury,                            \
+   /* eopbend */ eopb, vir_eopb, deopbx, deopby, deopbz, opbtyp, opbunit,      \
+   flag_opb ? nopbend : 0, iopb, opbk, copb, qopb, popb, sopb,                 \
+   /* eimprop */ eid, vir_eid, deidx, deidy, deidz, idihunit,                  \
+   flag_improp ? niprop : 0, iiprop, kprop, vprop,                             \
+   /* eimptor */ eit, vir_eit, deitx, deity, deitz, itorunit,                  \
+   flag_imptor ? nitors : 0, iitors, itors1, itors2, itors3,                   \
+   /* etors */ et, vir_et, detx, dety, detz, torsunit,                         \
+   flag_tors ? ntors : 0, itors, tors1, tors2, tors3, tors4, tors5, tors6,     \
+   /* epitors */ ept, vir_ept, deptx, depty, deptz, ptorunit,                  \
+   flag_pitors ? npitors : 0, ipit, kpit,                                      \
+   /* etortor */ ett, vir_ett, dettx, detty, dettz, ttorunit,                  \
+   flag_tortor ? ntortor : 0, itt, ibitor, chkttor_ia_,                        \
+   tnx, tny, ttx, tty, tbf, tbx, tby, tbxy,                                    \
+   /* egeom */ eg, vir_eg, degx, degy, degz,                                   \
+   flag_geom ? ngfix : 0, igfix, gfix,                                         \
+   /* total */ eng_buf, vir_buf,                                               \
+   /* other */ x, y, z, mass, molecule.molecule,                               \
+   grp.igrp, grp.kgrp, grp.grpmass, TINKER_IMAGE_ARGS
+// clang-format on
 void evalence_cu2(int vers, bool flag_bond, bool flag_angle, bool flag_strbnd,
                   bool flag_urey, bool flag_opb, bool flag_improp,
                   bool flag_imptor, bool flag_tors, bool flag_pitors,
                   bool flag_tortor, bool flag_geom)
 {
-#define EVALENCE_ARGS                                                          \
-   /* ebond */ eb, vir_eb, debx, deby, debz, bndtyp, bndunit,                  \
-      flag_bond ? nbond : 0, ibnd, bl, bk, cbnd, qbnd, /* eangle */ ea,        \
-      vir_ea, deax, deay, deaz, angtyp, angunit, flag_angle ? nangle : 0,      \
-      iang, anat, ak, cang, qang, pang, sang, /* estrbnd */ eba, vir_eba,      \
-      debax, debay, debaz, stbnunit, flag_strbnd ? nstrbnd : 0, isb, sbk,      \
-      /* eurey */ eub, vir_eub, deubx, deuby, deubz, ureyunit,                 \
-      flag_urey ? nurey : 0, iury, uk, ul, cury, qury, /* eopbend */           \
-      eopb, vir_eopb, deopbx, deopby, deopbz, opbtyp, opbunit,                 \
-      flag_opb ? nopbend : 0, iopb, opbk, copb, qopb, popb, sopb,              \
-      /* eimprop */ eid, vir_eid, deidx, deidy, deidz, idihunit,               \
-      flag_improp ? niprop : 0, iiprop, kprop, vprop, /* eimptor */ eit,       \
-      vir_eit, deitx, deity, deitz, itorunit, flag_imptor ? nitors : 0,        \
-      iitors, itors1, itors2, itors3, /* etors */ et, vir_et, detx, dety,      \
-      detz, torsunit, flag_tors ? ntors : 0, itors, tors1, tors2, tors3,       \
-      tors4, tors5, tors6, /* epitors */ ept, vir_ept, deptx, depty, deptz,    \
-      ptorunit, flag_pitors ? npitors : 0, ipit, kpit, /* etortor */ ett,      \
-      vir_ett, dettx, detty, dettz, ttorunit, flag_tortor ? ntortor : 0, itt,  \
-      ibitor, chkttor_ia_, tnx, tny, ttx, tty, tbf, tbx, tby, tbxy,            \
-      /* egeom */ eg, vir_eg, degx, degy, degz, flag_geom ? ngfix : 0, igfix,  \
-      gfix, /* total */ eng_buf, vir_buf, /* other */ x, y, z, mass,           \
-      molecule.molecule, grp.igrp, grp.kgrp, grp.grpmass, TINKER_IMAGE_ARGS
-
-
    int ngrid = get_grid_size(BLOCK_DIM);
    if (rc_flag & calc::analyz) {
       if (vers == calc::v0 or vers == calc::v3)
@@ -671,8 +676,8 @@ void evalence_cu2(int vers, bool flag_bond, bool flag_angle, bool flag_strbnd,
          evalence_cu1<calc::V6, false>
             <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
    }
-#undef EVALENCE_ARGS
 }
+#undef EVALENCE_ARGS
 
 
 void evalence_cu(int vers)

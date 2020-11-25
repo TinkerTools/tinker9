@@ -4,6 +4,7 @@
 
 
 namespace tinker {
+// Computing angle from sine instead of cosine may have a higher precision.
 #pragma acc routine seq
 template <class Ver>
 SEQ_CUDA
@@ -72,12 +73,8 @@ void dk_improp(real& restrict e, real& restrict vxx, real& restrict vyx,
 
    if (rtru != 0) {
       real rcb = REAL_SQRT(xcb * xcb + ycb * ycb + zcb * zcb);
-      real cosine = (xt * xu + yt * yu + zt * zu) * REAL_RECIP(rtru);
       real sine = (xcb * xtu + ycb * ytu + zcb * ztu) * REAL_RECIP(rcb * rtru);
-      cosine = REAL_MIN((real)1.0, REAL_MAX((real)-1, cosine));
-      real angle = radian * REAL_ACOS(cosine);
-      if (sine < 0)
-         angle = -angle;
+      real angle = radian * REAL_ASIN(sine);
 
       if (REAL_ABS(angle + ideal) < REAL_ABS(angle - ideal))
          ideal = -ideal;
