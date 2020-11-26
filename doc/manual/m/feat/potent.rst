@@ -3,18 +3,34 @@ Potential Energy Functions
 
 .. _label-bond:
 
-Bond Stretch
-------------
+Bond Stretching
+---------------
+
+Bond term is an empirical function of the deviation of the bond length from
+its ideal value (:math:`\Delta b = b - b_0`).
+To support the AMOEBA force field model, Tinker includes 3rd and 4th terms.
 
 .. math::
 
-   \Delta b = b - b_0, U = k\Delta b^2(1 + k_3\Delta b + k_4\Delta b^2).
+   U = k\Delta b^2(1 + k_3\Delta b + k_4\Delta b^2).
 
-The Morse oscillator
+Setting 3rd and 4th order coefficients to zero will give the harmonic
+functional form.
+
+.. note::
+
+   Different from Hooke's Law (:math:`U = k x^2/2`), Tinker usually drops
+   the coefficient 1/2.
+
+The Morse oscillator is also implemented in Tinker:
 
 .. math::
 
    U = D_e [1 - \exp(-a\Delta b)]^2.
+
+Parameter *a* is hardwired to 2. Following equation
+:math:`a = \sqrt{\frac{k}{2 D_e}}` and the Tinker convention to include 1/2 in
+the force constant, *De* is hardwired to *k*/4.
 
 .. _label-angle:
 
