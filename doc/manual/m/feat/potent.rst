@@ -8,7 +8,8 @@ Bond Stretching
 
 Bond term is an empirical function of the deviation of the bond length from
 its ideal value (:math:`\Delta b = b - b_0`).
-To support the AMOEBA force field model, Tinker includes 3rd and 4th terms.
+To support the AMOEBA force field model, Tinker includes the 3rd and 4th order
+terms.
 
 .. math::
 
