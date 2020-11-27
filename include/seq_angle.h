@@ -4,6 +4,23 @@
 
 
 namespace tinker {
+/**
+ * Comment
+ * Zhi Wang, July 1, 2019
+ *
+ * The original Tinker implementation has following expressions
+ * xip = xib + xt * delta
+ * xap = xia - xip
+ *
+ * And they were reorganized to
+ * xap = xia - xib - xt * delta
+ * for higher accuracy in the single precision mode.
+ *
+ * Consider an example where
+ * xia = 33.553368, xib = 34.768604
+ * xt = 0.33142909, delta = 0.0044494048,
+ * the later expression gives a better numerical result.
+ */
 #pragma acc routine seq
 template <class Ver>
 SEQ_CUDA
@@ -22,6 +39,10 @@ void dk_angle(
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
+   if CONSTEXPR (do_e)
+      e = 0;
+   if CONSTEXPR (do_v)
+      vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
 
    int ia = iang[i][0];
    int ib = iang[i][1];
@@ -129,9 +150,6 @@ void dk_angle(
       real zt = xad * ycd - yad * xcd;
       real rt2 = xt * xt + yt * yt + zt * zt;
       real delta = -(xt * xbd + yt * ybd + zt * zbd) * REAL_RECIP(rt2);
-      // real xip = xib + xt * delta;
-      // real yip = yib + yt * delta;
-      // real zip = zib + zt * delta;
       real xap = xia - xib - xt * delta;
       real yap = yia - yib - yt * delta;
       real zap = zia - zib - zt * delta;
