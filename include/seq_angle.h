@@ -97,6 +97,13 @@ void dk_angle(
                deddt = angunit * force * dt * radian *
                   (2 + 3 * cang * dt + 4 * qang * dt2 + 5 * pang * dt3 +
                    6 * sang * dt4);
+         } else if (angtypi == eangle_t::linear) {
+            real factor = 2 * angunit * radian * radian;
+            real sine = REAL_SQRT(1 - cosine * cosine);
+            if CONSTEXPR (do_e)
+               e = factor * force * (1 + cosine);
+            if CONSTEXPR (do_g)
+               deddt = -factor * force * sine;
          }
 
          if CONSTEXPR (do_g) {

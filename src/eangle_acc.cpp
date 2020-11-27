@@ -4,7 +4,7 @@
 #include "md.h"
 #include "seq_angle.h"
 
-// TODO: linear and fourier angles
+// TODO: fourier angle
 
 namespace tinker {
 template <class Ver>

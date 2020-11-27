@@ -48,6 +48,25 @@ Terms from cubic to sextic are used in the AMOEBA force field.
    U = k\Delta\theta^2(1+k_3\Delta\theta+k_4\Delta\theta^2
                         +k_5\Delta\theta^3+k_6\Delta\theta^4).
 
+The gradient of this generalized harmonic functional from (called *HARMONIC*
+angle type in Tinker) is ill-formed at 180 deg (denoted as *LINEAR* angle type
+in Tinker). In order to simulate linear molecules, i.e., carbon dioxide,
+special treatment is needed.
+
+Since the ideal angle should always be :math:`\pi` rad, the deviation can be
+approximated by
+
+.. math::
+
+   \Delta\theta=\theta-\pi=2(\frac{\theta}{2}-\frac{\pi}{2})\sim
+   2\sin(\frac{\theta}{2}-\frac{\pi}{2})=-2\cos\frac{\theta}{2}.
+
+Only keeping the quadratic term, the potential energy can be simplified to
+
+.. math::
+
+   U = 2k(1+\cos\theta).
+
 .. _label-improp:
 
 Improper Dihedral
