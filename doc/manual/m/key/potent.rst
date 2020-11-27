@@ -122,7 +122,63 @@ The default units for the force constant are kcal/mol/|rad2|, but this can be
 controlled via the *ANGLEUNIT* keyword.
 An example is as follows:
 
-- ANGLE |nbsp| A1 |nbsp| C |nbsp| A2 |nbsp| Force (kcal/mol/|rad2|) |nbsp| Ideal (degree)
+- ANGLE |nbsp| A1 |nbsp| C |nbsp| A2 |nbsp| Force (kcal/mol/|rad2|) |nbsp| Ideal (deg)
+
+**ANGLE-CUBIC [real]**
+
+.. index:: ANGLE-CUBIC
+
+Sets the value (in 1/deg) of the cubic term in the Taylor series expansion
+form of the bond angle bending potential energy.
+The real number modifier gives the value of the coefficient as a multiple of
+the quadratic coefficient.
+This term multiplied by the angle bending energy unit conversion factor, the
+force constant, and the cube of the deviation of the bond angle from its ideal
+value gives the cubic contribution to the angle bending energy.
+The default value in the absence of the *ANGLE-CUBIC* keyword is zero;
+i.e., the cubic angle bending term is omitted.
+
+**ANGLE-QUARTIC [real]**
+
+.. index:: ANGLE-QUARTIC
+
+Sets the value (in 1/|deg2|) of the quartic term in the Taylor series expansion
+form of the bond angle bending potential energy.
+The real number modifier gives the value of the coefficient as a multiple of
+the quadratic coefficient.
+This term multiplied by the angle bending energy unit conversion factor, the
+force constant, and the forth power of the deviation of the bond angle from its
+ideal value gives the quartic contribution to the angle bending energy.
+The default value in the absence of the *ANGLE-QUARTIC* keyword is zero;
+i.e., the quartic angle bending term is omitted.
+
+**ANGLE-PENTIC [real]**
+
+.. index:: ANGLE-PENTIC
+
+Sets the value (in 1/|deg3|) of the fifth power term in the Taylor series
+expansion form of the bond angle bending potential energy.
+The real number modifier gives the value of the coefficient as a multiple of
+the quadratic coefficient.
+This term multiplied by the angle bending energy unit conversion factor, the
+force constant, and the fifth power of the deviation of the bond angle from
+its ideal value gives the pentic contribution to the angle bending energy.
+The default value in the absence of the *ANGLE-PENTIC* keyword is zero;
+i.e., the pentic angle bending term is omitted.
+
+**ANGLE-SEXTIC [real]**
+
+.. index:: ANGLE-SEXTIC
+
+Sets the value (in 1/|deg4|) of the sixth power term in the Taylor series
+expansion form of the bond angle bending potential energy.
+The real number modifier gives the value of the coefficient as a multiple of
+the quadratic coefficient.
+This term multiplied by the angle bending energy unit conversion factor, the
+force constant, and the sixth power of the deviation of the bond angle from
+its ideal value gives the sextic contribution to the angle bending energy.
+The default value in the absence of the *ANGLE-SEXTIC* keyword is zero;
+i.e., the sextic angle bending term is omitted.
 
 **ANGLEF**
 
@@ -167,7 +223,7 @@ or the keyfile.
 This keyword provides the values for a single CHARMM-style improper dihedral
 angle parameter as follows:
 
-- IMPROPER |nbsp| D |nbsp| A |nbsp| B |nbsp| C |nbsp| Force (kcal/mol/|rad2|) |nbsp| Ideal (degree)
+- IMPROPER |nbsp| D |nbsp| A |nbsp| B |nbsp| C |nbsp| Force (kcal/mol/|rad2|) |nbsp| Ideal (deg)
 
 .. seealso::
 

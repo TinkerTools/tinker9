@@ -2,3 +2,6 @@
 .. |rad2| replace:: rad\ :sup:`2`
 .. |ang| unicode:: U+00C5 .. angstrom
 .. |ang2| replace:: |ang|\ :sup:`2`
+.. |deg2| replace:: deg\ :sup:`2`
+.. |deg3| replace:: deg\ :sup:`3`
+.. |deg4| replace:: deg\ :sup:`4`

@@ -38,6 +38,16 @@ the force constant, *De* is hardwired to *k*/4.
 Angle Bending
 -------------
 
+Similar to bond stretching, the angle bending term is also an empirical
+function of the deviation of angle from its ideal value
+(:math:`\Delta\theta=\theta-\theta_0`).
+Terms from cubic to sextic are used in the AMOEBA force field.
+
+.. math::
+
+   U = k\Delta\theta^2(1+k_3\Delta\theta+k_4\Delta\theta^2
+                        +k_5\Delta\theta^3+k_6\Delta\theta^4).
+
 .. _label-improp:
 
 Improper Dihedral
