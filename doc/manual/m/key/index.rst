@@ -23,3 +23,4 @@ modifiers, and usage examples.
    math
    hippo
    gpu
+   uncategorized

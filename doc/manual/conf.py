@@ -19,7 +19,7 @@
 
 project = "Tinker9 User's Manual"
 copyright = '2020, Zhi Wang'
-author = 'Zhi Wang'
+author = 'Zhi Wang and Jay W. Ponder'
 master_doc = 'index'
 
 
