@@ -60,7 +60,7 @@ then added *export PGI_LOCALRC=/path/to/new_config* to my bash resource file.
 - `ClangFormat <https://clang.llvm.org/docs/ClangFormat.html>`_:
   to format the source code.
 
-- `Sphinx <https://www.sphinx-doc.org>`_: to generate user's manual.
+- `Sphinx <https://www.sphinx-doc.org>`_: to generate user manual.
 
    - PDF version also depends on `TeX <https://www.tug.org/begin.html>`_.
 
@@ -72,4 +72,4 @@ then added *export PGI_LOCALRC=/path/to/new_config* to my bash resource file.
 
         pip install sphinx-rtd-theme
 
-- `Doxygen <https://www.doxygen.nl>`_: to generate developer's manual.
+- `Doxygen <https://www.doxygen.nl>`_: to generate developer guides.

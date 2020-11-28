@@ -17,10 +17,12 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "Tinker9 User's Manual"
+project = "Tinker9 User Manual"
 copyright = '2020, Zhi Wang'
-author = 'Zhi Wang and Jay W. Ponder'
 master_doc = 'index'
+latex_documents = [(master_doc, 'tinker9manual.tex', project,
+    'Zhi Wang and Jay W. Ponder',
+    'manual')]
 
 
 # -- General configuration ---------------------------------------------------
@@ -54,10 +56,6 @@ html_static_path = ['_static']
 
 
 # -- Options for LaTeXPDF output ---------------------------------------------
-
-main_file_for_latex = 'tinker9manual.tex'
-theme_for_latex = 'manual'
-latex_documents = [(master_doc, main_file_for_latex, project, author, theme_for_latex)]
 
 latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').

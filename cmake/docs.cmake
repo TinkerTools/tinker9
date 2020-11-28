@@ -1,4 +1,4 @@
-## User's Manual
+## User Manual
 add_custom_target (man
    COMMAND
       ${CMAKE_COMMAND} -E copy_directory
@@ -20,7 +20,7 @@ add_custom_target (man
 )
 
 
-## Developer's Manual
+## Developer Guides
 add_custom_target (doc
    COMMAND
       ${CMAKE_COMMAND} -E copy
