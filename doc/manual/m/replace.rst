@@ -5,3 +5,4 @@
 .. |deg2| replace:: deg\ :sup:`2`
 .. |deg3| replace:: deg\ :sup:`3`
 .. |deg4| replace:: deg\ :sup:`4`
+.. |pm| unicode:: U+00B1 .. plus-minus sign

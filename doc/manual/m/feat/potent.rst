@@ -1,13 +1,15 @@
 Potential Energy Functions
 ==========================
 
+.. include:: ../replace.rst
+
 .. _label-bond:
 
 Bond Stretching
 ---------------
 
-Bond term is an empirical function of the deviation of the bond length from
-its ideal value (:math:`\Delta b = b - b_0`).
+Bond term is an empirical function of bond deviating from the ideal
+bond length (:math:`\Delta b = b - b_0`).
 To support the AMOEBA force field model, Tinker includes the 3rd and 4th order
 terms.
 
@@ -29,17 +31,17 @@ The Morse oscillator is also implemented in Tinker:
 
    U = D_e [1 - \exp(-a\Delta b)]^2.
 
-Parameter *a* is hardwired to 2. Following equation
+Parameter *a* is hardwired to 2 by approximation. Following equation
 :math:`a = \sqrt{\frac{k}{2 D_e}}` and the Tinker convention to include 1/2 in
-the force constant, *De* is hardwired to *k*/4.
+the force constant, *De* is *k*/4.
 
 .. _label-angle:
 
 Angle Bending
 -------------
 
-Similar to bond stretching, the angle bending term is also an empirical
-function of the deviation of angle from its ideal value
+Similar to bond stretching, angle bending term is also an empirical
+function of angle deviating from the ideal angle value
 (:math:`\Delta\theta=\theta-\theta_0`).
 Terms from cubic to sextic are used in the AMOEBA force field.
 
@@ -48,9 +50,10 @@ Terms from cubic to sextic are used in the AMOEBA force field.
    U = k\Delta\theta^2(1+k_3\Delta\theta+k_4\Delta\theta^2
                         +k_5\Delta\theta^3+k_6\Delta\theta^4).
 
-The gradient of this generalized harmonic functional from (called *HARMONIC*
+The gradient of this generalized harmonic function (called *HARMONIC*
 angle type in Tinker) is ill-formed at 180 deg (denoted as *LINEAR* angle type
-in Tinker). In order to simulate linear molecules, i.e., carbon dioxide,
+in Tinker), because arccos'(x) does not have a definition at |pm|\ 1.
+In order to simulate linear molecules, i.e., carbon dioxide,
 special treatment is needed.
 
 Since the ideal angle should always be :math:`\pi` rad, the deviation can be
@@ -61,7 +64,7 @@ approximated by
    \Delta\theta=\theta-\pi=2(\frac{\theta}{2}-\frac{\pi}{2})\sim
    2\sin(\frac{\theta}{2}-\frac{\pi}{2})=-2\cos\frac{\theta}{2}.
 
-Only keeping the quadratic term, the potential energy can be simplified to
+Only keeping the quadratic term, the angle bending term can be simplified to
 
 .. math::
 
