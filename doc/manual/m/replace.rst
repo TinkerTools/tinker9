@@ -6,3 +6,12 @@
 .. |deg3| replace:: deg\ :sup:`3`
 .. |deg4| replace:: deg\ :sup:`4`
 .. |pm| unicode:: U+00B1 .. plus-minus sign
+
+.. role:: raw-latex(raw)
+   :format: latex
+
+.. role:: raw-html(raw)
+   :format: html
+
+.. |not9| replace:: :raw-html:`<span style="font-variant: small-caps">NotInTinker9</span>`
+                    :raw-latex:`\textsc{NotInTinker9}`

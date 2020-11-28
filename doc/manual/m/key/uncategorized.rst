@@ -121,18 +121,6 @@ Uncategorized Keywords
 
 .. index::  BNDCFLUX
 
-**BOND3**
-
-.. index::  BOND3
-
-**BOND4**
-
-.. index::  BOND4
-
-**BOND5**
-
-.. index::  BOND5
-
 **BORN-RADIUS**
 
 .. index::  BORN-RADIUS

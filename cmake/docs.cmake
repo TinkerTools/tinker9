@@ -1,5 +1,5 @@
 ## User Manual
-add_custom_target (man
+add_custom_target (copy_manual_dir
    COMMAND
       ${CMAKE_COMMAND} -E copy_directory
          "${PROJECT_SOURCE_DIR}/doc/manual" "${CMAKE_BINARY_DIR}/manual"
@@ -15,8 +15,30 @@ add_custom_target (man
       ${CMAKE_COMMAND} -E copy
          "${CMAKE_BINARY_DIR}/manual/m/install/buildwithcmake.rst"
          "${PROJECT_SOURCE_DIR}/doc/manual/m/install/buildwithcmake.rst"
+)
+
+
+add_custom_target (man
+   DEPENDS
+      copy_manual_dir
    COMMAND
       make -C "${CMAKE_BINARY_DIR}/manual" html latexpdf
+)
+
+
+add_custom_target (html
+   DEPENDS
+      copy_manual_dir
+   COMMAND
+      make -C "${CMAKE_BINARY_DIR}/manual" html
+)
+
+
+add_custom_target (pdf
+   DEPENDS
+      copy_manual_dir
+   COMMAND
+      make -C "${CMAKE_BINARY_DIR}/manual" latexpdf
 )
 
 
