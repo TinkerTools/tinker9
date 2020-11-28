@@ -5,3 +5,6 @@ version: 2
 
 sphinx:
   configuration: doc/manual/conf.py
+
+formats:
+  - pdf
