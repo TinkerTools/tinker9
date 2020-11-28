@@ -55,6 +55,10 @@ html_static_path = ['_static']
 
 # -- Options for LaTeXPDF output ---------------------------------------------
 
+main_file_for_latex = 'tinker9manual.tex'
+theme_for_latex = 'manual'
+latex_documents = [(master_doc, main_file_for_latex, project, author, theme_for_latex)]
+
 latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
     'papersize': 'letterpaper',
