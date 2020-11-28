@@ -6,4 +6,7 @@ version: 2
 sphinx:
   configuration: doc/manual/conf.py
 
-formats: all
+formats:
+  - htmlzip
+  - pdf
+
