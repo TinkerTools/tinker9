@@ -16,7 +16,7 @@ void eangle_acc1()
 
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,deax,deay,deaz,\
-               iang,anat,ak,angtyp,\
+               iang,anat,ak,afld,angtyp,\
                ea,vir_ea)
    for (int i = 0; i < nangle; ++i) {
       int offset = i & (bufsize - 1);
@@ -25,7 +25,9 @@ void eangle_acc1()
 
                     deax, deay, deaz,
 
-                    angtyp, angunit, i, iang, anat, ak, cang, qang, pang, sang,
+                    angtyp, angunit, i, iang, anat, ak, afld,
+
+                    cang, qang, pang, sang,
 
                     x, y, z);
       if CONSTEXPR (do_e)

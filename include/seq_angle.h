@@ -24,17 +24,21 @@ namespace tinker {
 #pragma acc routine seq
 template <class Ver>
 SEQ_CUDA
-void dk_angle(
-   real& restrict e, real& restrict vxx, real& restrict vyx, real& restrict vzx,
-   real& restrict vyy, real& restrict vzy, real& restrict vzz,
+void dk_angle(real& restrict e, real& restrict vxx, real& restrict vyx,
+              real& restrict vzx, real& restrict vyy, real& restrict vzy,
+              real& restrict vzz,
 
-   grad_prec* restrict deax, grad_prec* restrict deay, grad_prec* restrict deaz,
+              grad_prec* restrict deax, grad_prec* restrict deay,
+              grad_prec* restrict deaz,
 
-   const eangle_t* restrict angtyp, real angunit, int i,
-   const int (*restrict iang)[4], const real* restrict anat,
-   const real* restrict ak, real cang, real qang, real pang, real sang,
+              const eangle_t* restrict angtyp, real angunit, int i,
+              const int (*restrict iang)[4], const real* restrict anat,
+              const real* restrict ak, const real* restrict afld,
 
-   const real* restrict x, const real* restrict y, const real* restrict z)
+              real cang, real qang, real pang, real sang,
+
+              const real* restrict x, const real* restrict y,
+              const real* restrict z)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -81,7 +85,7 @@ void dk_angle(
          rp = REAL_MAX(rp, (real)0.0001);
          real dot = xab * xcb + yab * ycb + zab * zcb;
          real cosine = dot * REAL_RSQRT(rab2 * rcb2);
-         cosine = REAL_MIN((real)0.1, REAL_MAX((real)-1, cosine));
+         cosine = REAL_MIN((real)1, REAL_MAX((real)-1, cosine));
          real angle = radian * REAL_ACOS(cosine);
 
          real deddt;
@@ -104,6 +108,18 @@ void dk_angle(
                e = factor * force * (1 + cosine);
             if CONSTEXPR (do_g)
                deddt = -factor * force * sine;
+         } else if (angtypi == eangle_t::fourier) {
+            real fold = afld[i];
+            real factor = 2 * angunit * (radian / fold) * (radian / fold);
+            real dt = (fold * angle - ideal) * _1radian;
+            if CONSTEXPR (do_e) {
+               real cosine = REAL_COS(dt);
+               e = factor * force * (1 + cosine);
+            }
+            if CONSTEXPR (do_g) {
+               real sine = REAL_SIN(dt);
+               deddt = -factor * force * fold * sine;
+            }
          }
 
          if CONSTEXPR (do_g) {

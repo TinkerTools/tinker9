@@ -38,7 +38,9 @@ void evalence_cu1(
 
    const eangle_t* restrict angtyp, real angunit, int nangle,
    const int (*restrict iang)[4], const real* restrict anat,
-   const real* restrict ak, real cang, real qang, real pang, real sang,
+   const real* restrict ak, const real* restrict afld,
+
+   real cang, real qang, real pang, real sang,
 
    // estrbnd
    energy_buffer restrict eba, virial_buffer restrict vir_eba,
@@ -227,7 +229,9 @@ void evalence_cu1(
 
                     deax, deay, deaz,
 
-                    angtyp, angunit, i, iang, anat, ak, cang, qang, pang, sang,
+                    angtyp, angunit, i, iang, anat, ak, afld,
+
+                    cang, qang, pang, sang,
 
                     x, y, z);
       if CONSTEXPR (do_e) {
@@ -611,7 +615,7 @@ void evalence_cu1(
    /* ebond */ eb, vir_eb, debx, deby, debz, bndtyp, bndunit,                  \
    flag_bond ? nbond : 0, ibnd, bl, bk, cbnd, qbnd,                            \
    /* eangle */ ea, vir_ea, deax, deay, deaz, angtyp, angunit,                 \
-   flag_angle ? nangle : 0, iang, anat, ak, cang, qang, pang, sang,            \
+   flag_angle ? nangle : 0, iang, anat, ak, afld, cang, qang, pang, sang,      \
    /* estrbnd */ eba, vir_eba, debax, debay, debaz, stbnunit,                  \
    flag_strbnd ? nstrbnd : 0, isb, sbk,                                        \
    /* eurey */ eub, vir_eub, deubx, deuby, deubz, ureyunit,                    \

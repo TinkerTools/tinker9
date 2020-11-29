@@ -10,14 +10,14 @@
 namespace tinker {
 void eangle_data(rc_op op)
 {
-   if (!use_potent(angle_term) && !use_potent(strbnd_term) &&
-       !use_potent(opbend_term))
+   if (not use_potent(angle_term) and not use_potent(strbnd_term) and
+       not use_potent(opbend_term))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
 
    if (op & rc_dealloc) {
-      darray::deallocate(iang, ak, anat, angtyp);
+      darray::deallocate(iang, ak, anat, afld, angtyp);
 
       if (rc_a)
          buffer_deallocate(rc_flag, ea, vir_ea, deax, deay, deaz);
@@ -30,7 +30,7 @@ void eangle_data(rc_op op)
 
    if (op & rc_alloc) {
       nangle = count_bonded_term(angle_term);
-      darray::allocate(nangle, &iang, &ak, &anat, &angtyp);
+      darray::allocate(nangle, &iang, &ak, &anat, &afld, &angtyp);
 
       ea = eng_buf;
       vir_ea = vir_buf;
@@ -49,6 +49,7 @@ void eangle_data(rc_op op)
       darray::copyin(g::q0, nangle, iang, iangvec.data());
       darray::copyin(g::q0, nangle, ak, angbnd::ak);
       darray::copyin(g::q0, nangle, anat, angbnd::anat);
+      darray::copyin(g::q0, nangle, afld, angbnd::afld);
       wait_for(g::q0);
 
       angunit = angpot::angunit;
