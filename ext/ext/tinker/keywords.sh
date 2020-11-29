@@ -18,7 +18,7 @@ done | sort | uniq >> "${OUTPUT}"
 #    if [ ${line::1} != '#' ]; then
 #       echo "**"$line"**"
 #       echo
-#       echo ".. index:: " $line
+#       echo ".. index::" $line
 #       echo
 #    fi
 # done < "${OUTPUT}"

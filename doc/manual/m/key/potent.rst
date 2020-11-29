@@ -78,15 +78,15 @@ i.e., the quartic bond stretching term is omitted.
 
 **BOND3 [2 integers & 2 reals]** |not9|
 
-.. index::  BOND3
+.. index:: BOND3
 
 **BOND4 [2 integers & 2 reals]** |not9|
 
-.. index::  BOND4
+.. index:: BOND4
 
 **BOND5 [2 integers & 2 reals]** |not9|
 
-.. index::  BOND5
+.. index:: BOND5
 
 .. seealso::
 
@@ -135,6 +135,28 @@ controlled via the *ANGLEUNIT* keyword.
 An example is as follows:
 
 - ANGLE |nbsp| A1 |nbsp| C |nbsp| A2 |nbsp| Force (kcal/mol/|rad2|) |nbsp| Ideal (deg)
+
+**ANGLEF [3 integers & 3 reals]**
+
+.. index:: ANGLEF
+
+This keyword provides the values for a single bond angle bending parameter
+for a SHAPES-style Fourier potential function.
+The integer modifiers give the atom class numbers for the three kinds of atoms
+involved in the angle which is to be defined.
+The real number modifiers give the force constant value for the angle,
+the angle shift in degrees, and the periodicity value.
+Note that the force constant should be given as the “harmonic” value and not
+the native Fourier value.
+The default units for the force constant are kcal/mol/|rad2|,
+but this can be controlled via the *ANGLEUNIT* keyword.
+An example is as follows:
+
+- ANGLEF |nbsp| A1 |nbsp| C |nbsp| A2 |nbsp| Force (kcal/mol/|rad2|) |nbsp| Ideal (deg) |nbsp| Periodicity
+
+**ANGLEP**
+
+.. index:: ANGLEP
 
 **ANGLE-CUBIC [real]**
 
@@ -192,13 +214,17 @@ its ideal value gives the sextic contribution to the angle bending energy.
 The default value in the absence of the *ANGLE-SEXTIC* keyword is zero;
 i.e., the sextic angle bending term is omitted.
 
-**ANGLEF** |not9|
+**ANGLE3** |not9|
 
-.. index:: ANGLEF
+.. index:: ANGLE3
 
-**ANGLEP**
+**ANGLE4** |not9|
 
-.. index:: ANGLEP
+.. index:: ANGLE4
+
+**ANGLE5** |not9|
+
+.. index:: ANGLE5
 
 .. seealso::
 

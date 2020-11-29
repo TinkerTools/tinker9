@@ -53,9 +53,8 @@ Terms from cubic to sextic are used in the AMOEBA force field.
 The gradient of this generalized harmonic function (called *HARMONIC*
 angle type in Tinker) is ill-formed at 180 deg (denoted as *LINEAR* angle type
 in Tinker), because arccos'(x) does not have a definition at |pm|\ 1.
-In order to simulate linear molecules, i.e., carbon dioxide,
+In order to simulate linear molecules, e.g., carbon dioxide,
 special treatment is needed.
-
 Since the ideal angle should always be :math:`\pi` rad, the deviation can be
 approximated by
 
@@ -69,6 +68,14 @@ Only keeping the quadratic term, the angle bending term can be simplified to
 .. math::
 
    U = 2k(1+\cos\theta).
+
+The *LINEAR* angle type is a special case of the SHAPES-style Fourier potential
+function with 1-fold periodicity, which is referred to as *FOURIER* angle type
+in Tinker jargon and has the following form
+
+.. math::
+
+   U = 2k(1+\cos(n\theta-\theta_0)).
 
 .. _label-improp:
 
