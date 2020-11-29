@@ -16,7 +16,10 @@ Tinker9 User Manual
    m/feat/index
    m/key/index
 
+.. toctree::
+   :caption: Bibliography
 
+   m/biblio
 
 .. only:: html
 

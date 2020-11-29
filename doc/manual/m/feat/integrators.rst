@@ -26,7 +26,7 @@ RESPA Integrator
 Extended Nosé-Hoover Chain by MTK
 ---------------------------------
 
-Several methods for NVT and NPT ensembles were discussed in MTK [#Martyna1996]_.
+Several methods for NVT and NPT ensembles were discussed in MTK [Martyna1996]_.
 
 ======  ===============  ======
 Number  Sections in MTK  Method
@@ -66,7 +66,7 @@ NPT-XO (#2a-4a).
 Langevin Piston
 ---------------
 
-The Langevin piston method for constant pressure [#Feller1995]_ is
+The Langevin piston method for constant pressure [Feller1995]_ is
 integrated in the Leapfrog framework.
 
 .. tip::
@@ -85,11 +85,3 @@ integrated in the Leapfrog framework.
       barostat   lpiston
 
    with the NPT option in the *dynamic* program.
-
-.. [#Martyna1996]
-   Martyna, G. J.; Tuckerman, M. E.; Tobias, D. J. and Klein, M. L.
-   `Mol. Phys., 87, 1117 (1996) <https://doi.org/10.1080/00268979600100761>`_
-
-.. [#Feller1995]
-   Feller, S. E.; Zhang, Y.; Pastor, R. W. and Brooks, B. R.
-   `J. Chem. Phys., 103, 4613 (1995) <https://doi.org/10.1063/1.470648>`_

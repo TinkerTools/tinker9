@@ -43,18 +43,15 @@ Angle Bending
 Similar to bond stretching, angle bending term is also an empirical
 function of angle deviating from the ideal angle value
 (:math:`\Delta\theta=\theta-\theta_0`).
-Terms from cubic to sextic are used in the AMOEBA force field.
+Terms from cubic to sextic are added to generalize the *HARMONIC* functional from.
 
 .. math::
 
    U = k\Delta\theta^2(1+k_3\Delta\theta+k_4\Delta\theta^2
                         +k_5\Delta\theta^3+k_6\Delta\theta^4).
 
-The gradient of this generalized harmonic function (called *HARMONIC*
-angle type in Tinker) is ill-formed at 180 deg (denoted as *LINEAR* angle type
-in Tinker), because arccos'(x) does not have a definition at |pm|\ 1.
-In order to simulate linear molecules, e.g., carbon dioxide,
-special treatment is needed.
+MMFF force field has a special treatment for *LINEAR* angle,
+e.g., carbon dioxide.
 Since the ideal angle should always be :math:`\pi` rad, the deviation can be
 approximated by
 
@@ -70,8 +67,8 @@ Only keeping the quadratic term, the angle bending term can be simplified to
    U = 2k(1+\cos\theta).
 
 The *LINEAR* angle type is a special case of the SHAPES-style Fourier potential
-function with 1-fold periodicity, which is referred to as *FOURIER* angle type
-in Tinker jargon and has the following form
+function [Allured1991]_ with 1-fold periodicity, which is referred to as the
+*FOURIER* angle type in Tinker jargon and has the following form
 
 .. math::
 
