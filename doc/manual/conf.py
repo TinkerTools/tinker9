@@ -31,6 +31,7 @@ latex_documents = [(master_doc, 'tinker9manual.tex', project,
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinxcontrib.bibtex'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -71,3 +72,20 @@ latex_elements = {
         \usepackage{inconsolata}
     ''',
 }
+
+from pybtex.style.formatting.unsrt import Style as UnsrtStyle
+from pybtex.plugin import register_plugin
+from pybtex.style.template import sentence, optional, words
+
+class UnsrtStyleModified(UnsrtStyle):
+    def format_web_refs(self, e):
+        if 'doi' in e.fields:
+            return sentence [ optional [ self.format_doi(e) ] ]
+        elif 'pubmed' in e.fields:
+            return sentence [ optional [ self.format_pubmed(e) ] ]
+        elif 'url' in e.fields:
+            return sentence [ optional [ self.format_url(e) ] ]
+        else:
+            return words ['']
+
+register_plugin('pybtex.style.formatting', 'unsrt-modified', UnsrtStyleModified)

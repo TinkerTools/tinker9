@@ -18,7 +18,7 @@ Tinker9 User Manual
 .. toctree::
    :caption: Bibliography
 
-   m/biblio
+   m/zrefs
 
 .. only:: html
 

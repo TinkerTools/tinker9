@@ -67,7 +67,7 @@ Only keeping the quadratic term, the angle bending term can be simplified to
    U = 2k(1+\cos\theta).
 
 The *LINEAR* angle type is a special case of the SHAPES-style Fourier potential
-function [Allured1991]_ with 1-fold periodicity, which is referred to as the
+function :cite:`shapes-ff` with 1-fold periodicity, which is referred to as the
 *FOURIER* angle type in Tinker jargon and has the following form
 
 .. math::
