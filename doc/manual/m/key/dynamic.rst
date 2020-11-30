@@ -1,7 +1,7 @@
 Molecular Dynamics and Ensemble Keywords
 ========================================
 
-**INTEGRATOR [VERLET/RESPA/NOSE-HOOVER/LPISTON]**
+**INTEGRATOR [VERLET / RESPA / NOSE-HOOVER / LPISTON]**
 
 .. index:: INTEGRATOR
 
@@ -12,7 +12,7 @@ Molecular Dynamics and Ensemble Keywords
    :ref:`label-nose-hoover`,
    :ref:`label-lpiston`
 
-**THERMOSTAT [NOSE-HOOVER/LPISTON]**
+**THERMOSTAT [NOSE-HOOVER / LPISTON]**
 
 .. index:: THERMOSTAT
 
@@ -21,7 +21,7 @@ Molecular Dynamics and Ensemble Keywords
    :ref:`label-nose-hoover`,
    :ref:`label-lpiston`
 
-**BAROSTAT [MONTECARLO/BERENDSEN/NOSE-HOOVER/LPISTON]**
+**BAROSTAT [MONTECARLO / BERENDSEN / NOSE-HOOVER / LPISTON]**
 
 .. index:: BAROSTAT
 

@@ -79,6 +79,9 @@ latex_elements = {
 \geometry{paperheight=8.5in,paperwidth=5.5in,top=1.0in,bottom=1.0in,left=0.5in,right=0.5in,heightrounded}
 
 \addto{\captionsenglish}{\renewcommand{\bibname}{References}}
+
+% prevent hyphenation
+\hyphenation{LPISTON}
 ''',
 }
 

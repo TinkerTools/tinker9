@@ -6,7 +6,7 @@ Potential Function Keywords
 Bond Stretching
 ---------------
 
-**BONDTYPE [HARMONIC/MORSE]**
+**BONDTYPE [HARMONIC / MORSE]**
 
 .. index:: BONDTYPE
 
@@ -17,7 +17,7 @@ The *MORSE* option selects a Morse potential fit to the ideal bond length and
 stretching force constant parameter values.
 The default is to use the *HARMONIC* potential.
 
-**BONDTERM [NONE/ONLY]**
+**BONDTERM [NONE / ONLY]**
 
 .. index:: BONDTERM
 
@@ -95,7 +95,7 @@ i.e., the quartic bond stretching term is omitted.
 Angle Bending
 -------------
 
-**ANGLETERM [NONE/ONLY]**
+**ANGLETERM [NONE / ONLY]**
 
 .. index:: ANGLETERM
 
@@ -233,7 +233,7 @@ i.e., the sextic angle bending term is omitted.
 Improper Dihedral
 -----------------
 
-**IMPROPTERM [NONE/ONLY]**
+**IMPROPTERM [NONE / ONLY]**
 
 .. index:: IMPROPTERM
 
