@@ -16,7 +16,7 @@ Tinker9 User Manual
    m/key/index
 
 .. toctree::
-   :caption: Bibliography
+   :caption: References
 
    m/zrefs
 

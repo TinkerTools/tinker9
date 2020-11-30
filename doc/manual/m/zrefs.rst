@@ -1,7 +1,7 @@
 .. only:: html
 
-   Bibliography
-   ============
+   References
+   ==========
 
 .. bibliography:: refs.bib
    :cited:

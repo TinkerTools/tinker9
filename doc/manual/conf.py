@@ -63,14 +63,23 @@ latex_elements = {
     'papersize': 'letterpaper',
 
 # The font size ('10pt', '11pt' or '12pt').
-    'pointsize': '11pt',
+    'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
     'preamble': r'''
-        \usepackage{charter}
-        \usepackage[defaultsans]{lato}
-        \usepackage{inconsolata}
-    ''',
+%\usepackage{charter}
+%\usepackage{fouriernc}
+\usepackage[notextcomp]{kpfonts}
+% sans serif
+\usepackage[defaultsans]{lato}
+% monospace
+\usepackage{inconsolata}
+
+% \usepackage{geometry} % already used
+\geometry{paperheight=8.5in,paperwidth=5.5in,top=1.0in,bottom=1.0in,left=0.5in,right=0.5in,heightrounded}
+
+\addto{\captionsenglish}{\renewcommand{\bibname}{References}}
+''',
 }
 
 from pybtex.style.formatting.unsrt import Style as UnsrtStyle
