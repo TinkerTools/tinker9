@@ -8,7 +8,6 @@ Tinker9 User Manual
 
 .. toctree::
    :caption: Contents
-   :numbered:
    :maxdepth: 2
 
    m/intro

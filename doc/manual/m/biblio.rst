@@ -3,6 +3,12 @@
    Bibliography
    ============
 
+.. paper: MM3 Force Field
+
+.. [Allinger1989]
+   Allinger, N. L., Yuh, Y. H. and Lii, J-H.
+   `J. Am. Chem. Soc., 111, 8551 (1989). <https://doi.org/10.1021/ja00205a001>`_
+
 .. paper: SHAPES Force Field
 
 .. [Allured1991]
