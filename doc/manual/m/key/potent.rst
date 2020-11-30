@@ -134,7 +134,7 @@ The default units for the force constant are kcal/mol/|rad2|, but this can be
 controlled via the *ANGLEUNIT* keyword.
 An example is as follows:
 
-- ANGLE |nbsp| A1 |nbsp| C |nbsp| A2 |nbsp| Force (kcal/mol/|rad2|) |nbsp| Ideal (deg)
+- ANGLE |nbsp| A1 |nbsp| C |nbsp| A2 |nbsp| Force |nbsp| Ideal (deg)
 
 **ANGLEF [3 integers & 3 reals]**
 
@@ -152,7 +152,7 @@ The default units for the force constant are kcal/mol/|rad2|,
 but this can be controlled via the *ANGLEUNIT* keyword.
 An example is as follows:
 
-- ANGLEF |nbsp| A1 |nbsp| C |nbsp| A2 |nbsp| Force (kcal/mol/|rad2|) |nbsp| Ideal (deg) |nbsp| Periodicity
+- ANGLEF |nbsp| A1 |nbsp| C |nbsp| A2 |nbsp| Force |nbsp| Ideal (deg) |nbsp| Periodicity
 
 **ANGLEP**
 
@@ -229,6 +229,46 @@ i.e., the sextic angle bending term is omitted.
 .. seealso::
 
    :ref:`label-angle`
+
+Stretch-Bend Coupling
+---------------------
+
+**STRBNDTERM [NONE / ONLY]**
+
+.. index:: STRBNDTERM
+
+This keyword controls use of the bond stretching-angle bending cross term
+potential energy.
+In the absence of a modifying option, this keyword turns on use of the potential.
+The *NONE* option turns off use of this potential energy term.
+The *ONLY* option turns off all potential energy terms except for this one.
+
+**STRBNDUNIT [real]**
+
+.. index:: STRBNDUNIT
+
+Sets the scale factor needed to convert the energy value computed by the
+bond stretching-angle bending cross term potential into units of kcal/mol.
+The correct value is force field dependent and typically provided in the header
+of the master force field parameter file.
+The default value of 1.0 is used, if the *STRBNDUNIT* keyword is not given
+in the force field parameter file or the keyfile.
+
+**STRBND [3 integers & 2 reals]**
+
+.. index:: STRBND
+
+This keyword provides the values for a single stretch-bend cross term
+potential parameter.
+The default units for the stretch-bend force constant are kcal/mol/|ang|/deg,
+but this can be controlled via the *STRBNDUNIT* keyword.
+An example is as follows:
+
+- STRBND |nbsp| A1 |nbsp| C |nbsp| A2 |nbsp| Force1 |nbsp| Force2
+
+.. seealso::
+
+   :ref:`label-strbnd`
 
 Improper Dihedral
 -----------------

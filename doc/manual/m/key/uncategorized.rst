@@ -1269,18 +1269,6 @@ Uncategorized Keywords
 
 .. index:: STEPMIN
 
-**STRBND**
-
-.. index:: STRBND
-
-**STRBNDTERM**
-
-.. index:: STRBNDTERM
-
-**STRBNDUNIT**
-
-.. index:: STRBNDUNIT
-
 **STRTORS**
 
 .. index:: STRTORS

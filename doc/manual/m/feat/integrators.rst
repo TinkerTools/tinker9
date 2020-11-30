@@ -23,10 +23,11 @@ RESPA Integrator
 
 .. _label-nose-hoover:
 
-Extended Nosé-Hoover Chain by MTK
----------------------------------
+Extended Nosé-Hoover Chain
+--------------------------
 
-Several methods for NVT and NPT ensembles were discussed in MTK :cite:`mtk-nhc`.
+Authors of paper :cite:`mtk-nhc` (MTK) discussed several methods for NVT and
+NPT ensembles.
 
 ======  ===============  ======
 Number  Sections in MTK  Method
@@ -46,7 +47,7 @@ NPT-XO (#2a-4a).
 
 .. tip::
 
-   MTK Nosé-Hoover Chain can be enabled by keywords
+   Nosé-Hoover Chain can be enabled by keywords
 
    .. code-block:: text
 
