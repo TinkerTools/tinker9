@@ -1,5 +1,5 @@
-Potential Function Keywords
-===========================
+Valence Potential Keywords
+==========================
 
 .. include:: ../replace.rst
 
@@ -43,10 +43,11 @@ is not given in the force field parameter file or the keyfile.
 This keyword provides the values for a single bond stretching parameter.
 The integer modifiers give the atom class numbers for the two kinds of atoms
 involved in the bond which is to be defined. The real number modifiers give the
-force constant value for the bond and the ideal bond length in Angstroms.
+force constant value in kcal/mol/|ang2| for the bond and the ideal bond length
+in Angstroms.
 An example is as follows:
 
-- BOND |nbsp| A |nbsp| B |nbsp| Force (kcal/mol/|ang2|) |nbsp| Ideal
+- BOND |nbsp| A |nbsp| B |nbsp| Force |nbsp| Ideal
 
 **BOND-CUBIC [real]**
 

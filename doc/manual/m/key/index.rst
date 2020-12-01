@@ -1,4 +1,4 @@
-Use of the Keyword Control File
+Keywords & Keyword Control File
 ===============================
 
 This section contains detailed descriptions of the keyword parameters used to

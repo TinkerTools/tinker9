@@ -1,5 +1,5 @@
-Potential Energy Functions
-==========================
+Valence Potential Functions
+===========================
 
 .. include:: ../replace.rst
 
