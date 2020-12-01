@@ -15,7 +15,7 @@ environment variable (part of CUDA library) has been set to
 *CUDA_VISIBLE_DEVICES=1,3*. This means only two CUDA devices are avaiable
 here, thus the valid values for *CUDA-DEVICE* are 0 and 1.
 
-**GPU-PACKAGE [CUDA/OPENACC]**
+**GPU-PACKAGE [CUDA / OPENACC]**
 
 .. index:: GPU-PACKAGE
 .. index:: GPU_PACKAGE
