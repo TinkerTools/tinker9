@@ -1369,26 +1369,6 @@ Uncategorized Keywords
 
 .. index:: TRUNCATE
 
-**UREY-CUBIC**
-
-.. index:: UREY-CUBIC
-
-**UREY-QUARTIC**
-
-.. index:: UREY-QUARTIC
-
-**UREYBRAD**
-
-.. index:: UREYBRAD
-
-**UREYTERM**
-
-.. index:: UREYTERM
-
-**UREYUNIT**
-
-.. index:: UREYUNIT
-
 **USOLVE-BUFFER**
 
 .. index:: USOLVE-BUFFER

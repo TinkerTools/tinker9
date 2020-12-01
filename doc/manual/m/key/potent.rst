@@ -46,7 +46,7 @@ involved in the bond which is to be defined. The real number modifiers give the
 force constant value for the bond and the ideal bond length in Angstroms.
 An example is as follows:
 
-- BOND |nbsp| A |nbsp| B |nbsp| Force (kcal/mol/|ang2|) |nbsp| Ideal (|ang|)
+- BOND |nbsp| A |nbsp| B |nbsp| Force (kcal/mol/|ang2|) |nbsp| Ideal
 
 **BOND-CUBIC [real]**
 
@@ -285,6 +285,70 @@ An example is as follows:
 .. seealso::
 
    :ref:`label-strbnd`
+
+Urey-Bradley Potential
+----------------------
+
+**UREYTERM [NONE / ONLY]**
+
+.. index:: UREYTERM
+
+This keyword controls use of the Urey-Bradley potential energy term.
+In the absence of a modifying option, this keyword turns on use of the potential.
+The *NONE* option turns off use of this potential energy term.
+The *ONLY* option turns off all potential energy terms except for this one.
+
+**UREYUNIT [real]**
+
+.. index:: UREYUNIT
+
+Sets the scale factor needed to convert the energy value computed by the
+Urey-Bradley potential into units of kcal/mol.
+The correct value is force field dependent and typically provided in the header
+of the master force field parameter file.
+The default value of 1.0 is used, if the *UREYUNIT* keyword is not given in the
+force field parameter file or the keyfile.
+
+**UREYBRAD [3 integers & 2 reals]**
+
+.. index:: UREYBRAD
+
+This keyword provides the values for a single Urey-Bradley cross term potential
+parameter. The integer modifiers give the atom class numbers for the three kinds
+of atoms involved in the angle for which a Urey-Bradley term is to be defined.
+The real number modifiers give the force constant value for the term and the
+target value for the 1-3 distance in Angstroms.
+The default units for the force constant are kcal/mol/|ang2|, but this can be
+controlled via the *UREYUNIT* keyword.
+An example is as follows:
+
+- UREYBRAD |nbsp| A1 |nbsp| C |nbsp| A3 |nbsp| Force |nbsp| Ideal
+
+**UREY-CUBIC [real]**
+
+.. index:: UREY-CUBIC
+
+Sets the value (in 1/|ang|) of the cubic term in the Taylor series expansion
+form of the Urey-Bradley potential energy.
+The real number modifier gives the value of the coefficient as a multiple
+of the quadratic coefficient.
+The default value in the absence of the *UREY-CUBIC* keyword is zero;
+i.e., the cubic Urey-Bradley term is omitted.
+
+**UREY-QUARTIC [real]**
+
+.. index:: UREY-QUARTIC
+
+Sets the value (in 1/|ang2|) of the quartic term in the Taylor series expansion
+form of the Urey-Bradley potential energy.
+The real number modifier gives the value of the coefficient as a multiple
+of the quadratic coefficient.
+The default value in the absence of the *UREY-QUARTIC* keyword is zero;
+i.e., the quartic Urey-Bradley term is omitted.
+
+.. seealso::
+
+   :ref:`label-urey`
 
 Improper Dihedral
 -----------------

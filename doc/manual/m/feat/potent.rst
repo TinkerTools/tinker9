@@ -43,7 +43,7 @@ Angle Bending
 Similar to bond stretching, angle bending term is also an empirical
 function of angle deviating from the ideal angle value
 (:math:`\Delta\theta=\theta-\theta_0`).
-Terms from cubic to sextic are added to generalize the *HARMONIC* functional from.
+Terms from cubic to sextic are added to generalize the *HARMONIC* functional form.
 
 .. math::
 
@@ -99,6 +99,21 @@ coupling are those of the MM3 force field :cite:`mm3-ff`:
 Even though force constants *k1* and *k2* are implemented as two independent
 variables in Tinker, they were treated as the same variable in the original
 literature.
+
+.. _label-urey:
+
+Urey-Bradley Potential
+----------------------
+
+Urey-Bradley potential energy accounts for the 1-3 nonbonded interactions.
+The cubic and quartic terms are added to the harmonic functional form in Tinker:
+
+.. math::
+
+   U = k\Delta u^2(1 + k_3\Delta u + k_4\Delta u^2),
+
+where :math:`\Delta u` is the difference of 1-3 distance deviating from its
+ideal value. Coefficients *k3* and *k4* are usually zero.
 
 .. _label-improp:
 
