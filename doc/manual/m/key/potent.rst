@@ -134,7 +134,7 @@ The default units for the force constant are kcal/mol/|rad2|, but this can be
 controlled via the *ANGLEUNIT* keyword.
 An example is as follows:
 
-- ANGLE |nbsp| A1 |nbsp| C |nbsp| A2 |nbsp| Force |nbsp| Ideal (deg)
+- ANGLE |nbsp| A1 |nbsp| C |nbsp| A2 |nbsp| Force |nbsp| Ideal
 
 **ANGLEF [3 integers & 3 reals]**
 
@@ -152,11 +152,22 @@ The default units for the force constant are kcal/mol/|rad2|,
 but this can be controlled via the *ANGLEUNIT* keyword.
 An example is as follows:
 
-- ANGLEF |nbsp| A1 |nbsp| C |nbsp| A2 |nbsp| Force |nbsp| Ideal (deg) |nbsp| Periodicity
+- ANGLEF |nbsp| A1 |nbsp| C |nbsp| A2 |nbsp| Force |nbsp| Ideal |nbsp| Periodicity
 
-**ANGLEP**
+**ANGLEP [3 integers & 2 reals]**
 
 .. index:: ANGLEP
+
+This keyword provides the values for an *IN-PLANE* angle bending parameter.
+The integer modifiers give the atom class numbers for the three kinds of atoms
+involved in the angle which is to be defined.
+The real number modifiers give the force constant value for the angle and
+ideal bond angle in degrees.
+The default units for the force constant are kcal/mol/|rad2|, but this can be
+controlled via the *ANGLEUNIT* keyword.
+An example is as follows:
+
+- ANGLEP |nbsp| A1 |nbsp| C |nbsp| A2 |nbsp| Force |nbsp| Ideal
 
 **ANGLE-CUBIC [real]**
 
@@ -260,6 +271,11 @@ in the force field parameter file or the keyfile.
 
 This keyword provides the values for a single stretch-bend cross term
 potential parameter.
+The integer modifiers give the atom class numbers for the three kinds of atoms
+involved in the angle which is to be defined.
+The real number modifiers give the force constant values for the first bond
+(first two atom classes) with the angle, and the second bond with the angle,
+respectively.
 The default units for the stretch-bend force constant are kcal/mol/|ang|/deg,
 but this can be controlled via the *STRBNDUNIT* keyword.
 An example is as follows:
@@ -299,9 +315,14 @@ or the keyfile.
 .. index:: IMPROPER
 
 This keyword provides the values for a single CHARMM-style improper dihedral
-angle parameter as follows:
+angle parameter.
+The integer modifiers give the atom class numbers for the four kinds of atoms
+involved in the dihedral which is to be defined.
+The real number modifiers give the force constant in kcal/mol/|rad2| and ideal
+dihedral angle in degrees.
+An example is as follows:
 
-- IMPROPER |nbsp| D |nbsp| A |nbsp| B |nbsp| C |nbsp| Force (kcal/mol/|rad2|) |nbsp| Ideal (deg)
+- IMPROPER |nbsp| D |nbsp| A |nbsp| B |nbsp| C |nbsp| Force |nbsp| Ideal
 
 .. seealso::
 

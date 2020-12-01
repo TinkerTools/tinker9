@@ -74,6 +74,16 @@ function :cite:`shapes-ff` with 1-fold periodicity, which is referred to as the
 
    U = 2k(1+\cos(n\theta-\theta_0)).
 
+In addition, there is another *IN-PLANE* angle type for trigonal center atoms.
+One can project atom *D* to point *X* on plane *ABC*. Instead of angle *A-D-B*,
+the ideal and actual angle values are for angle *A-X-B*.
+
+.. figure:: ../fig/anglep.*
+   :width: 300 px
+   :align: center
+
+   A trigonal center and an in-plane angle.
+
 .. _label-strbnd:
 
 Stretch-Bend Coupling

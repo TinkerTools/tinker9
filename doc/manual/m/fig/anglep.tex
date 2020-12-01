@@ -1,0 +1,17 @@
+\input{begin}
+
+\node[draw=none]   (X) at (0,-1.5) {X};
+\node[circle,draw] (D) at (0,0)    {D};
+\node[circle,draw] (A) at (-3,-3)  {A};
+\node[circle,draw] (B) at (-1,2)   {B};
+\node[circle,draw] (C) at (3,-2)   {C};
+\fill[fill=gray,fill opacity=0.2] (A.center) -- (B.center) -- (C.center);
+
+\draw (A) -- (D) -- (B);
+\draw (C) -- (D);
+\draw[dashed] (D) -- (X);
+\draw[dashed] (A) -- (X) -- (B);
+\draw[dashed] (A) -- (B) -- (C) -- (A);
+\pic[draw,->,>=stealth,"$\theta$",angle eccentricity=1.5] {angle=B--X--A};
+
+\input{end}
