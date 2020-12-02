@@ -15,7 +15,8 @@ Tinker9 is a complete rewrite and extension of the canonical Tinker software, cu
 
 ## User Manual (In Progress)
 The HTML version is hosted on [readthedocs](https://tinker9-manual.readthedocs.io)
-and the PDF version is accessible from the same webpage.
+and the [PDF](https://tinker9-manual.readthedocs.io/_/downloads/en/latest/pdf/)
+version is accessible from the same webpage.
 
 
 ## Features and Progress Tracker

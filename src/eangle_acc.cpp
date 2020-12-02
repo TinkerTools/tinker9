@@ -4,8 +4,6 @@
 #include "md.h"
 #include "seq_angle.h"
 
-// TODO: fourier angle
-
 namespace tinker {
 template <class Ver>
 void eangle_acc1()
