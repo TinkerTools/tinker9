@@ -581,18 +581,6 @@ Uncategorized Keywords
 
 .. index:: IEL-SCF
 
-**IMPTORS**
-
-.. index:: IMPTORS
-
-**IMPTORTERM**
-
-.. index:: IMPTORTERM
-
-**IMPTORUNIT**
-
-.. index:: IMPTORUNIT
-
 **INACTIVE**
 
 .. index:: INACTIVE

@@ -141,3 +141,8 @@ The harmonic functional form implemented in Tinker is
 
 There is no coefficient 1/2 before the force coefficient,
 which may be different in other software packages.
+
+.. _label-imptor:
+
+Improper Torsion
+----------------

@@ -392,3 +392,48 @@ An example is as follows:
 .. seealso::
 
    :ref:`label-improp`
+
+Improper Torsion
+----------------
+
+**IMPTORTERM [NONE / ONLY]**
+
+.. index:: IMPTORTERM
+
+This keyword controls use of the AMBER-style improper torsional angle potential
+energy term.
+In the absence of a modifying option, this keyword turns on use of the potential.
+The *NONE* option turns off use of this potential energy term.
+The *ONLY* option turns off all potential energy terms except for this one.
+
+**IMPTORUNIT [real]**
+
+.. index:: IMPTORUNIT
+
+Sets the scale factor needed to convert the energy value computed by the
+AMBER-style improper torsional angle potential into units of kcal/mol.
+The correct value is force field dependent and typically provided in the header
+of the master force field parameter file.
+The default value of 1.0 is used, if the *IMPTORSUNIT* keyword is not given in
+the force field parameter file or the keyfile.
+
+**IMPTORS [4 integers & up to 3 real/real/integer triples]**
+
+.. index:: IMPTORS
+
+This keyword provides the values for a single AMBER-style improper torsional
+angle parameter.
+The first four integer modifiers give the atom class numbers for the atoms
+involved in the improper torsional angle to be defined.
+By convention, the third atom class of the four is the trigonal atom on which
+the improper torsion is centered.
+The torsional angle computed is literally that defined by the four atom classes
+in the order specified by the keyword.
+Each of the remaining triples of real/real/integer modifiers give the
+half-amplitude, phase offset in degrees and periodicity of a particular
+improper torsional term, respectively.
+Periodicities through 3-fold are allowed for improper torsional parameters.
+
+.. seealso::
+
+   :ref:`label-imptor`
