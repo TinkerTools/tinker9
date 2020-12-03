@@ -3,6 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. include:: m/replace.rst
+
 Tinker9 User Manual
 =====================
 
@@ -15,6 +17,14 @@ Tinker9 User Manual
    m/feat/index
    m/key/index
 
+:raw-latex:`\appendix`
+
+.. toctree::
+   :caption: Appendices
+   :maxdepth: 2
+
+   m/qi/index
+
 .. toctree::
    :caption: References
 
@@ -23,7 +33,7 @@ Tinker9 User Manual
 .. only:: html
 
    .. toctree::
-      :caption: Appendix
+      :caption: Index
 
       genindex
 
