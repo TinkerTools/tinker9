@@ -121,7 +121,7 @@ Improper Dihedral
 -----------------
 
 Commonly used in the CHARMM force fields, this potential function is meant to
-keep atoms planar. The ideal angle :math:`\varphi_0` defined by dihedral
+keep atoms planar. The ideal angle :math:`\phi_0` defined by dihedral
 *D-A-B-C* will always be zero degrees. *D* is the trigonal atom, *A-B-C* are the
 peripheral atoms. In the original CHARMM parameter files, the trigonal atom is
 often listed last as *C-B-A-D*.
@@ -137,7 +137,7 @@ The harmonic functional form implemented in Tinker is
 
 .. math::
 
-   U = k(\varphi-\varphi_0)^2.
+   U = k(\phi-\phi_0)^2.
 
 There is no coefficient 1/2 before the force coefficient,
 which may be different in other software packages.
@@ -146,3 +146,14 @@ which may be different in other software packages.
 
 Improper Torsion
 ----------------
+
+Commonly used in the AMBER force fields, it defines a hypothetical torsional
+angle for four atoms not successively bonded, e.g., a trigonal center.
+The functional form is similar to the proper torsion,
+
+.. math::
+
+   U = \sum_{n=1}^3 V_n[1+\cos(n\phi-\delta_n)],
+
+where *n* is the periodicity and :math:`\delta_n` is the
+corresponding phase shift.
