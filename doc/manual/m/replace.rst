@@ -6,6 +6,7 @@
 .. |deg3| replace:: deg\ :sup:`3`
 .. |deg4| replace:: deg\ :sup:`4`
 .. |e2| replace:: e\ :sup:`2`
+.. |bohr2| replace:: Bohr\ :sup:`2`
 .. |pm| unicode:: U+00B1 .. plus-minus sign
 
 .. role:: raw-latex(raw)
