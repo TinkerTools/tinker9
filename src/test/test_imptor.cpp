@@ -25,7 +25,7 @@ TEST_CASE("ALA-1", "[ff][eimptor][ala]")
    auto ref_g = r.get_gradient();
 
 
-   const double eps_e = 0.0001;
+   const double eps_e = test_get_eps(0.0002, 0.0001);
    const double eps_g = 0.0001;
    const double eps_v = 0.001;
 
