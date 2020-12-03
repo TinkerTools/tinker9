@@ -5,11 +5,12 @@ respectively.
 
 
 ## Units and Multipole Moments
-The electrostatic potential at $\bm{r}$ due to the charge distribution nearby is
+The electrostatic potential at $\vec{r}$ due to the charge distribution
+nearby is
 
 $$
-\phi(\bm{r}) = \frac{1}{4\pi\epsilon_0}
-               \int d\bm{s} \frac{\rho(\bm{s})}{|\bm{r}-\bm{s}|}.
+\phi(\vec{r}) = \frac{1}{4\pi\epsilon_0}
+                \int d\vec{s}\frac{\rho(\vec{s})}{|\vec{r}-\vec{s}|}.
 $$
 
 Tinker uses a variable `electric` (of the `chgpot` module) to represent the
@@ -18,17 +19,17 @@ Its unit is (Å/(e·e))(kcal/mol), and its current default
 magnitude is 332.063713, which is a constant defined by `coulomb` of the `units`
 module. The default value is editable by the `ELECTRIC` keyword.
 
-Expanding $|\bm{r}-\bm{s}|^{-1}$ by Taylor series, the potential can be
+Expanding $|\vec{r}-\vec{s}|^{-1}$ by Taylor series, the potential can be
 rewritten as
 
 $$
 \frac{1}{4\pi\epsilon_0}
 \left(
-             \left[             \int d\bm{s} \rho(\bm{s})        \right]
+             \left[             \int d\vec{s} \rho(\vec{s})        \right]
              \frac{1}{r}
-- \sum_i     \left[             \int d\bm{s} \rho(\bm{s})s_i     \right]
+- \sum_i     \left[             \int d\vec{s} \rho(\vec{s})s_i     \right]
              \nabla_i \frac{1}{r}
-+ \sum_{i,j} \left[ \frac{1}{2} \int d\bm{s} \rho(\bm{s})s_i s_j \right]
++ \sum_{i,j} \left[ \frac{1}{2} \int d\vec{s} \rho(\vec{s})s_i s_j \right]
              \nabla_i \nabla_j \frac{1}{r}
 - \cdots
 \right),
@@ -48,21 +49,21 @@ Potential due to the quadrupole is
 
 $$
 \frac{1}{4\pi\epsilon_0} \sum_{i,j} \left[
-\frac{1}{2} \int d\bm{s} \rho(\bm{s})s_i s_j\right]
+\frac{1}{2}\int d\vec{s} \rho(\vec{s})s_i s_j\right]
 \frac{3r_i r_j - r^2\delta_{ij}}{r^5},
 $$
 which can be rewritten as
 
 $$
 \frac{1}{4\pi\epsilon_0} \sum_{i,j} \left[
-\frac{1}{2} \int d\bm{s} \rho(\bm{s})(3s_i s_j - s^2\delta_{ij})\right]
+\frac{1}{2} \int d\vec{s} \rho(\vec{s})(3s_i s_j - s^2\delta_{ij})\right]
 \frac{r_i r_j}{r^5}.
 $$
 
 So the traceless quadrupole tensor can be defined based on the equation above as
 
 $$
-\Theta_{ij} = \frac{1}{2} \int d\bm{s} \rho(\bm{s})(3s_i s_j - s^2\delta_{ij}).
+\Theta_{ij} = \frac{1}{2} \int d\vec{s} \rho(\vec{s})(3s_i s_j - s^2\delta_{ij}).
 $$
 We can easily confirm that $\sum_k^{x,y,z}(3s_k s_k-s^2) = 0$, therefore
 
@@ -77,34 +78,34 @@ has the advantage to optimize the expressions because the quadrupoles are tracel
 ## Derivatives of 1/r
 As we can see in the previous section, high-order gradients of $1/r$ are
 necessary for the electrostatic potential.
-The displacement $\bm{r}_{12} = \bm{r}_2 - \bm{r}_1 = (r_x,r_y,r_z)$ starts from
+The displacement $\vec{r}_{12}=\vec{r}_2 -\vec{r}_1 =(r_x,r_y,r_z)$ starts from
 atom 1 and ends in atom 2.
 For any scalar $f$, it is easy to confirm that
 
 $$
-\frac{\partial f}{\partial \bm{r}} =  \frac{\partial f}{\partial \bm{r}_2}
-                                   = -\frac{\partial f}{\partial \bm{r}_1},
+\frac{\partial f}{\partial\vec{r}} =  \frac{\partial f}{\partial\vec{r}_2}
+                                   = -\frac{\partial f}{\partial\vec{r}_1},
 $$
 and for $f(r,r_x,r_y,r_z)$,
 
 $$
 \nabla f(r,r_x,r_y,r_z) = \frac{\partial f(r)}{\partial r}\nabla r +
 \sum_j\frac{\partial f(r_j)}{\partial r_j}\nabla r_j =
-\frac{\partial f(r)}{\partial r}\frac{\bm{r}}{r} +
+\frac{\partial f(r)}{\partial r}\frac{\vec{r}}{r} +
 \nabla f(r_x,r_y,r_z).
 $$ (1)
 
 So the derivatives of $1/r$ with respect to $a$, $b$, $c$, etc., which are
 one of the x, y, z directions, are
 
-| Terms | Expressions |
-|-------|-------------|
-|  T0   | $\lambda_1/r$ |
-|  T1   | $-\lambda_3 r_a/r^3$ |
-|  T2   | $\lambda_5 3r_a r_b/r^5 -\lambda_3\delta_{ab}/r^3$ |
-|  T3   | $-\lambda_7 15 r_a r_b r_c/r^7 +\lambda_5 3\Sigma r_a\delta_{bc}/r^5$ |
-|  T4   | $\lambda_9 105 r_a r_b r_c r_d/r^9 -\lambda_7 15\Sigma r_a r_b\delta_{cd}/r^7 +\lambda_5 3\Sigma\delta_{ab}\delta_{cd}/r^5$ |
-|  T5   | $-\lambda_{11}945 r_a r_b r_c r_d r_e/r^{11} +\lambda_9 105\Sigma r_a r_b r_c\delta_{de}/r^9 -\lambda_7 15\Sigma r_a\delta_{bc}\delta_{de}/r^7$ |
+| Orders of Derivatives | Expressions                                  |
+|-----------------------|----------------------------------------------|
+|   0   | $\lambda_1/r$ |
+|   1   | $-\lambda_3 r_a/r^3$ |
+|   2   | $\lambda_5 3r_a r_b/r^5 -\lambda_3\delta_{ab}/r^3$ |
+|   3   | $-\lambda_7 15 r_a r_b r_c/r^7 +\lambda_5 3\Sigma r_a\delta_{bc}/r^5$ |
+|   4   | $\lambda_9 105 r_a r_b r_c r_d/r^9 -\lambda_7 15\Sigma r_a r_b\delta_{cd}/r^7 +\lambda_5 3\Sigma\delta_{ab}\delta_{cd}/r^5$ |
+|   5   | $-\lambda_{11}945 r_a r_b r_c r_d r_e/r^{11} +\lambda_9 105\Sigma r_a r_b r_c\delta_{de}/r^9 -\lambda_7 15\Sigma r_a\delta_{bc}\delta_{de}/r^7$ |
 
 where
 
@@ -118,14 +119,14 @@ In the following sections, $\lambda_k (k-2)!! / r^k$ will be denoted by $R_k$.
 
 
 ## Rotation Matrix and Quasi-Internal (QI) Frame
-Rotation matrix $R$ maps a vector (1D tensor) $\bm{x}$ from frame a to b,
-$R\bm{x}_a = \bm{x}_b$. To preserve the dot product of any two vectors $\bm{x}$
-and $\bm{y}$ in either frame, $\bm{x}_b^t \bm{y}_b = \bm{x}_a^t \bm{y}_a$, the
-rotation matrix must be orthogonal, i.e., $R^t R = I$.
+Rotation matrix $R$ maps a vector (1D tensor) $\vec{x}$ from frame a to b,
+$R\vec{x}_a=\vec{x}_b$. To preserve the dot product of any two vectors $\vec{x}$
+and $\vec{y}$ in either frame, $\vec{x}_b^t \vec{y}_b = \vec{x}_a^t \vec{y}_a$,
+the rotation matrix must be orthogonal, i.e., $R^t R = I$.
 
 Rotating a 2D tensor (matrix) $Q_a$ from frame a to b, we have $Q_b$, and the
 quadratic form must be preserved in both frames.
-From $\bm{x}_b^t Q_b \bm{y}_b = \bm{x}_a^t Q_a \bm{y}_a$, we get
+From $\vec{x}_b^t Q_b \vec{y}_b = \vec{x}_a^t Q_a \vec{y}_a$, we get
 
 $$
 Q_b = R Q_a R^t.
@@ -151,18 +152,18 @@ and must be equal to $U_2$. Therefore, the pairwise energy of atoms 1 and 2 can
 alternatively be defined as
 
 $$
-U = M_2 T(\bm{r}) M_1,
+U = M_2 T(\vec{r}) M_1,
 $$
-where the $T$ matrix is only a function of $\bm{r}$ and the transpose symbols
+where the $T$ matrix is only a function of $\vec{r}$ and the transpose symbol
 has been dropped.
 
 If $M$ does not depend on the positions of other atoms, e.g. charge and induced
-dipoles, $\nabla U$ is as simple as $M_2 \nabla T(\bm{r}) M_1$, which is
+dipoles, $\nabla U$ is as simple as $M_2 \nabla T(\vec{r}) M_1$, which is
 referred to as the *force* term in the code, but technically should have been
 called the *incomplete negative force*. The force term is incomplete because
 the multipole parameters are defined in the *local* frame coordinate, thus $M$
-usually does rely on the positions of other atoms and the $\nabla M(\bm{r})$
-terms are non-zero. Terms related to $\nabla M(\bm{r})$ are treated as *torque*
+usually does rely on the positions of other atoms and the $\nabla M(\vec{r})$
+terms are non-zero. Terms related to $\nabla M(\vec{r})$ are treated as *torque*
 terms.
 
 If using QI frame, all of the dipoles, quadrupoles, and induced dipoles of the
@@ -181,7 +182,7 @@ torques must be rotated back from QI frame to global frame.
 Let us revisit Eq.(1) for electrostatic potential in QI frame.
 $\phi$ no longer has explicit dependency on $r_x,r_y,r_z$,
 thus $\nabla \phi(r_x,r_y,r_z) = 0$,
-and $\nabla \phi(r,r_x,r_y,r_z) = \phi_r' \bm{r}/r$.
+and $\nabla \phi(r,r_x,r_y,r_z) = \phi_r' \vec{r}/r$.
 Some terms are tabulated as follows.
 
 | Terms | Expressions |
@@ -205,12 +206,12 @@ With the expressions of torque,
 
 $$
 \tau = \begin{vmatrix}
-\bm{i}     & \bm{j}     & \bm{k}     \\
+\vec{i}    & \vec{j}    & \vec{k}    \\
 d\phi/dr_x & d\phi/dr_y & d\phi/dr_z \\
 D_x        & D_y        & D_z
 \end{vmatrix}
 = \begin{vmatrix}
-\bm{i}     & \bm{j}     & \bm{k}  \\
+\vec{i}    & \vec{j}    & \vec{k} \\
 0          & 0          & \phi_r' \\
 D_x        & D_y        & D_z
 \end{vmatrix}
@@ -249,8 +250,7 @@ The pdf version was generated by
 ```bash
 pandoc mpole.markdown -o mpole.pdf \
 -Vfontfamily=fouriernc \
--Vheader-includes='\hypersetup{colorlinks=true}' \
--Vheader-includes='\usepackage{bm}'
+-Vheader-includes='\hypersetup{colorlinks=true}'
 ```
 
 
