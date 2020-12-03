@@ -23,7 +23,8 @@ Tinker9 User Manual
    :caption: Appendices
    :maxdepth: 2
 
-   m/qi/index
+   m/append/mpole
+   m/append/qi
 
 .. toctree::
    :caption: References
