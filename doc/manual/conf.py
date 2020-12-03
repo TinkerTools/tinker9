@@ -83,6 +83,14 @@ latex_elements = {
 % prevent hyphenation
 \hyphenation{LPISTON}
 ''',
+
+   'sphinxsetup': '''
+       TitleColor={rgb}{0,0,0},
+       InnerLinkColor={rgb}{0,0,0},
+       OuterLinkColor={rgb}{0,0,0},
+       VerbatimColor={rgb}{0.9,0.9,0.9},
+       VerbatimBorderColor={rgb}{1,1,1}
+'''
 }
 
 from pybtex.style.formatting.unsrt import Style as UnsrtStyle
