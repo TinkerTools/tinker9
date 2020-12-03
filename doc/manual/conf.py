@@ -48,7 +48,31 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+# Until sphinx_rtd_theme fixes the position of equation label.
+# html_theme = 'sphinx_rtd_theme'
+# alabaster theme options
+html_theme = 'alabaster'
+yellow_color = '#FADB6A'
+blue_color = '#E6F6FF'
+pink_color = '#FFDDDD'
+html_theme_options = {
+    # 'logo': 'logo.png',
+    'github_button': 'true',
+    'github_user': 'tinkertools',
+    'github_repo': 'tinker9',
+    'travis_button': 'true',
+
+    'font_family': "'Helvetica Neue', 'Lato', 'Arial', sans serif",
+
+    'note_bg':        yellow_color,
+    'note_border':    yellow_color,
+    'tip_bg':         blue_color,
+    'tip_border':     blue_color,
+    'seealso_bg':     blue_color,
+    'seealso_border': blue_color,
+    'warn_bg':        pink_color,
+    'warn_border':    pink_color,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

@@ -9,7 +9,7 @@ Bond Stretching
 ---------------
 
 Bond term is an empirical function of bond deviating from the ideal
-bond length (:math:`\Delta b = b - b_0`).
+bond length, i.e., :math:`\Delta b = b - b_0`.
 To support the AMOEBA force field model, Tinker includes the 3rd and 4th order
 terms.
 
@@ -22,7 +22,7 @@ functional form.
 
 .. note::
 
-   Different from Hooke's Law (:math:`U = k x^2/2`), Tinker usually drops
+   Different from Hooke's Law, :math:`U = k x^2/2`, Tinker usually drops
    the coefficient 1/2.
 
 The Morse oscillator is also implemented in Tinker:
@@ -41,8 +41,8 @@ Angle Bending
 -------------
 
 Similar to bond stretching, angle bending term is also an empirical
-function of angle deviating from the ideal angle value
-(:math:`\Delta\theta=\theta-\theta_0`).
+function of angle deviating from the ideal angle value, i.e.,
+:math:`\Delta\theta=\theta-\theta_0`.
 Terms from cubic to sextic are added to generalize the *HARMONIC* functional form.
 
 .. math::
