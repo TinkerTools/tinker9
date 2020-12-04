@@ -1,0 +1,7 @@
+Electrostatics
+==============
+
+.. toctree::
+
+   mpole
+   qi

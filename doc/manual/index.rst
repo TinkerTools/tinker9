@@ -16,15 +16,7 @@ Tinker9 User Manual
    m/install/index
    m/feat/index
    m/key/index
-
-:raw-latex:`\appendix`
-
-.. toctree::
-   :caption: Appendices
-   :maxdepth: 2
-
-   m/append/mpole
-   m/append/qi
+   m/elec/index
 
 .. toctree::
    :caption: References
