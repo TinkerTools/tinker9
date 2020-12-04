@@ -1,5 +1,5 @@
-Keywords & Keyword Control File
-===============================
+Keywords
+========
 
 This section contains detailed descriptions of the keyword parameters used to
 define or alter the course of a Tinker calculation.

@@ -801,38 +801,6 @@ Uncategorized Keywords
 
 .. index:: OCTAHEDRON
 
-**OPBEND**
-
-.. index:: OPBEND
-
-**OPBEND-CUBIC**
-
-.. index:: OPBEND-CUBIC
-
-**OPBEND-PENTIC**
-
-.. index:: OPBEND-PENTIC
-
-**OPBEND-QUARTIC**
-
-.. index:: OPBEND-QUARTIC
-
-**OPBEND-SEXTIC**
-
-.. index:: OPBEND-SEXTIC
-
-**OPBENDTERM**
-
-.. index:: OPBENDTERM
-
-**OPBENDTYPE**
-
-.. index:: OPBENDTYPE
-
-**OPBENDUNIT**
-
-.. index:: OPBENDUNIT
-
 **OPDIST**
 
 .. index:: OPDIST
