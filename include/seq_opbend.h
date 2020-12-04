@@ -5,6 +5,19 @@
 
 
 namespace tinker {
+/**
+ * Comments
+ * Zhi Wang, Jun 25, 2019
+ *
+ * The original implementation in Tinker uses ACOS(cosine) to calculate the
+ * out-of-plane angle, which is the major source of error in the single
+ * precision mode.
+ *
+ * These angles (theta) are usually very small (e.g. 0.001 rad), so the value of
+ * variable cosine is very close to 1 (cosine = SQRT(1 - eps**2)). As a result,
+ * it is much more accurate to use theta = ASIN(eps) instead of theta =
+ * ACOS(cosine) to calculate the angles.
+ */
 #pragma acc routine seq
 template <class Ver>
 SEQ_CUDA
@@ -26,7 +39,10 @@ void dk_opbend(real& restrict e, real& restrict vxx, real& restrict vyx,
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
-
+   if CONSTEXPR (do_e)
+      e = 0;
+   if CONSTEXPR (do_v)
+      vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
 
    const real force = opbk[iopbend];
    const int i = iopb[iopbend];
