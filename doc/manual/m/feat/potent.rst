@@ -76,8 +76,10 @@ function :cite:`shapes-ff` with 1-fold periodicity, which is referred to as the
 
 In addition, there is another *IN-PLANE* angle type for trigonal center atoms.
 One can project atom *D* to point *X* on plane *ABC*. Instead of angle *A-D-B*,
-the ideal and actual angle values are for angle *A-X-B*.
+the ideal and actual angle values are for angle *A-X-B*
+(see :numref:`fig-anglep`).
 
+.. _fig-anglep:
 .. figure:: ../fig/anglep.*
    :width: 300 px
    :align: center
@@ -119,6 +121,18 @@ ideal value. Coefficients *k3* and *k4* are usually zero.
 
 Out-of-Plane Bending
 --------------------
+
+Tinker has implemented two types of out-of-plane bending angles.
+In the Wilson-Decius-Cross formulation :cite:`w-d-c`,
+the out-of-plane angle :math:`\chi` associated with bond *BD* in
+:numref:`fig-anglep` is the angle between *BD* and plane *ADC*,
+whereas the Allinger formulation uses the angle between *BD* and plane *ABC*.
+Similar to harmonic bond stretching, the following functional form has been
+implemented in Tinker:
+
+.. math::
+
+   U = k\chi^2(1 + k_3\chi + k_4\chi^2).
 
 .. _label-improp:
 

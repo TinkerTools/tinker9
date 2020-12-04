@@ -24,6 +24,7 @@ latex_documents = [(master_doc, 'tinker9manual.tex', project,
     'Zhi Wang and Jay W. Ponder',
     'manual')]
 
+numfig = True
 
 # -- General configuration ---------------------------------------------------
 
