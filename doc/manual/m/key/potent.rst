@@ -1,5 +1,5 @@
-Valence Potential Keywords
-==========================
+Valence Potentials
+==================
 
 .. include:: ../replace.rst
 
@@ -21,7 +21,7 @@ The default is to use the *HARMONIC* potential.
 
 .. index:: BONDTERM
 
-This keyword controls use of the bond stretching potential energy term.
+Controls use of the bond stretching potential energy term.
 In the absence of a modifying option, this keyword turns on use of the potential.
 The *NONE* option turns off use of this potential energy term.
 The *ONLY* option turns off all potential energy terms except for this one.
@@ -40,7 +40,7 @@ is not given in the force field parameter file or the keyfile.
 
 .. index:: BOND
 
-This keyword provides the values for a single bond stretching parameter.
+Provides the values for a single bond stretching parameter.
 The integer modifiers give the atom class numbers for the two kinds of atoms
 involved in the bond which is to be defined. The real number modifiers give the
 force constant value in kcal/mol/|ang2| for the bond and the ideal bond length
@@ -100,7 +100,7 @@ Angle Bending
 
 .. index:: ANGLETERM
 
-This keyword controls use of the bond angle bending potential energy term.
+Controls use of the bond angle bending potential energy term.
 In the absence of a modifying option, this keyword turns on use of the potential.
 The *NONE* option turns off use of this potential energy term.
 The *ONLY* option turns off all potential energy terms except for this one.
@@ -120,7 +120,7 @@ is not given in the force field parameter file or the keyfile.
 
 .. index:: ANGLE
 
-This keyword provides the values for a single bond angle bending parameter.
+Provides the values for a single bond angle bending parameter.
 The integer modifiers give the atom class numbers for the three kinds of atoms
 involved in the angle which is to be defined.
 The real number modifiers give the force constant value for the angle and up
@@ -141,7 +141,7 @@ An example is as follows:
 
 .. index:: ANGLEF
 
-This keyword provides the values for a single bond angle bending parameter
+Provides the values for a single bond angle bending parameter
 for a SHAPES-style Fourier potential function.
 The integer modifiers give the atom class numbers for the three kinds of atoms
 involved in the angle which is to be defined.
@@ -159,11 +159,17 @@ An example is as follows:
 
 .. index:: ANGLEP
 
-This keyword provides the values for an *IN-PLANE* angle bending parameter.
+Provides the values for a single projected in-plane bond angle bending parameter.
 The integer modifiers give the atom class numbers for the three kinds of atoms
 involved in the angle which is to be defined.
 The real number modifiers give the force constant value for the angle and
-ideal bond angle in degrees.
+up to two ideal bond angles in degrees.
+In most cases only one ideal bond angle is given, and that value is used for
+all occurrences of the specified bond angle.
+If all two ideal angles are given, the values apply when the central atom of
+the angle is attached to 0 or 1 additional hydrogen atoms, respectively.
+This "hydrogen environment" option is provided to implement the corresponding
+feature of Allinger's MM force fields.
 The default units for the force constant are kcal/mol/|rad2|, but this can be
 controlled via the *ANGLEUNIT* keyword.
 An example is as follows:
@@ -249,7 +255,7 @@ Stretch-Bend Coupling
 
 .. index:: STRBNDTERM
 
-This keyword controls use of the bond stretching-angle bending cross term
+Controls use of the bond stretching-angle bending cross term
 potential energy.
 In the absence of a modifying option, this keyword turns on use of the potential.
 The *NONE* option turns off use of this potential energy term.
@@ -270,8 +276,7 @@ in the force field parameter file or the keyfile.
 
 .. index:: STRBND
 
-This keyword provides the values for a single stretch-bend cross term
-potential parameter.
+Provides the values for a single stretch-bend cross term potential parameter.
 The integer modifiers give the atom class numbers for the three kinds of atoms
 involved in the angle which is to be defined.
 The real number modifiers give the force constant values for the first bond
@@ -294,7 +299,7 @@ Urey-Bradley Potential
 
 .. index:: UREYTERM
 
-This keyword controls use of the Urey-Bradley potential energy term.
+Controls use of the Urey-Bradley potential energy term.
 In the absence of a modifying option, this keyword turns on use of the potential.
 The *NONE* option turns off use of this potential energy term.
 The *ONLY* option turns off all potential energy terms except for this one.
@@ -314,7 +319,7 @@ force field parameter file or the keyfile.
 
 .. index:: UREYBRAD
 
-This keyword provides the values for a single Urey-Bradley cross term potential
+Provides the values for a single Urey-Bradley cross term potential
 parameter. The integer modifiers give the atom class numbers for the three kinds
 of atoms involved in the angle for which a Urey-Bradley term is to be defined.
 The real number modifiers give the force constant value for the term and the
@@ -354,13 +359,13 @@ i.e., the quartic Urey-Bradley term is omitted.
 Out-of-Plane Bending
 --------------------
 
-**OPBENDTYPE [ALLINGER / W-D-C]**
+**OPBENDTYPE [W-D-C / ALLINGER]**
 
 .. index:: OPBENDTYPE
 
 Sets the type of angle to be used in the out-of-plane bending potential energy term.
-The choices are to use the Allinger angle from the MM2/MM3 force fields,
-or the Wilson-Decius-Cross (W-D-C) formulation from vibrational spectroscopy.
+The choices are to use the Wilson-Decius-Cross (W-D-C) formulation from
+vibrational spectroscopy, or the Allinger angle from the MM2/MM3 force fields.
 The default value in the absence of the *OPBENDTYPE* keyword
 is to use the W-D-C angle.
 
@@ -368,7 +373,7 @@ is to use the W-D-C angle.
 
 .. index:: OPBENDTERM
 
-This keyword controls use of the out-of-plane bending potential energy term.
+Controls use of the out-of-plane bending potential energy term.
 In the absence of a modifying option, this keyword turns on use of the potential.
 The *NONE* option turns off use of this potential energy term.
 The *ONLY* option turns off all potential energy terms except for this one.
@@ -388,7 +393,7 @@ given in the force field parameter file or the keyfile.
 
 .. index:: OPBEND
 
-This keyword provides the values for a single out-of-plane bending potential parameter.
+Provides the values for a single out-of-plane bending potential parameter.
 The first integer modifier is the atom class of the out-of-plane atom and
 the second integer is the atom class of the central trigonal atom.
 The third and fourth integers give the atom classes of the two remaining atoms
@@ -469,7 +474,7 @@ Improper Dihedral
 
 .. index:: IMPROPTERM
 
-This keyword controls use of the CHARMM-style improper dihedral angle potential
+Controls use of the CHARMM-style improper dihedral angle potential
 energy term.
 In the absence of a modifying option, this keyword turns on use of the potential.
 The *NONE* option turns off use of this potential energy term.
@@ -490,8 +495,7 @@ or the keyfile.
 
 .. index:: IMPROPER
 
-This keyword provides the values for a single CHARMM-style improper dihedral
-angle parameter.
+Provides the values for a single CHARMM-style improper dihedral angle parameter.
 The integer modifiers give the atom class numbers for the four kinds of atoms
 involved in the dihedral which is to be defined.
 The real number modifiers give the force constant in kcal/mol/|rad2| and ideal
@@ -511,8 +515,7 @@ Improper Torsion
 
 .. index:: IMPTORTERM
 
-This keyword controls use of the AMBER-style improper torsional angle potential
-energy term.
+Controls use of the AMBER-style improper torsional angle potential energy term.
 In the absence of a modifying option, this keyword turns on use of the potential.
 The *NONE* option turns off use of this potential energy term.
 The *ONLY* option turns off all potential energy terms except for this one.
@@ -532,8 +535,7 @@ the force field parameter file or the keyfile.
 
 .. index:: IMPTORS
 
-This keyword provides the values for a single AMBER-style improper torsional
-angle parameter.
+Provides the values for a single AMBER-style improper torsional angle parameter.
 The first four integer modifiers give the atom class numbers for the atoms
 involved in the improper torsional angle to be defined.
 By convention, the third atom class of the four is the trigonal atom on which

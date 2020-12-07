@@ -48,5 +48,5 @@ Two common transformations used in Tinker are:
    Global frame *g* and QI frame *i* of atoms 1 and 2.
    The z direction of this QI frame is chosen along the distance vector.
 
-Optimized Algebra in QI Frame
------------------------------
+Multipole Interaction in QI Frame
+---------------------------------

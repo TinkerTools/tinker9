@@ -1,5 +1,5 @@
-Molecular Dynamics and Ensemble Keywords
-========================================
+Molecular Dynamics and Ensembles
+================================
 
 **INTEGRATOR [VERLET / RESPA / NOSE-HOOVER / LPISTON]**
 

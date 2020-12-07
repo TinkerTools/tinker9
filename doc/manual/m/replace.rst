@@ -16,5 +16,7 @@
 .. role:: raw-html(raw)
    :format: html
 
-.. |not9| replace:: :raw-html:`<span style="font-variant: small-caps">NotInTinker9</span>`
-                    :raw-latex:`\textsc{NotInTinker9}`
+.. |not9| replace:: :raw-html:`<span style="text-decoration:line-through" style="font-variant:small-caps">Tinker9</span>`
+                    :raw-latex:`\sout{\textsc{Tinker9}}`
+.. |not8| replace:: :raw-html:`<span style="text-decoration:line-through" style="font-variant:small-caps">Tinker8</span>`
+                    :raw-latex:`\sout{\textsc{Tinker8}}`

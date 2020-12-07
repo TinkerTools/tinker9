@@ -100,6 +100,8 @@ latex_elements = {
 % monospace
 \usepackage{inconsolata}
 
+\usepackage[normalem]{ulem} % strikethrough text: \sout{text}
+
 % \usepackage{geometry} % already used
 \geometry{paperheight=8.5in,paperwidth=5.5in,top=1.0in,bottom=1.0in,left=0.5in,right=0.5in,heightrounded}
 

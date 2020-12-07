@@ -45,9 +45,9 @@ modifiers, and usage examples.
 .. toctree::
 
    potent
+   hippo
    dynamic
    fep
-   math
-   hippo
    gpu
+   math
    uncategorized
