@@ -1,6 +1,8 @@
 Uncategorized
 =============
 
+.. include:: ../replace.rst
+
 **A-AXIS**
 
 .. index:: A-AXIS
