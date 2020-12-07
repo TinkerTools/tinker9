@@ -77,18 +77,6 @@ its ideal value gives the quartic contribution to the bond stretching energy.
 The default value in the absence of the *BOND-QUARTIC* keyword is zero;
 i.e., the quartic bond stretching term is omitted.
 
-**BOND3 [2 integers & 2 reals]** |not9|
-
-.. index:: BOND3
-
-**BOND4 [2 integers & 2 reals]** |not9|
-
-.. index:: BOND4
-
-**BOND5 [2 integers & 2 reals]** |not9|
-
-.. index:: BOND5
-
 .. seealso::
 
    :ref:`label-bond`
@@ -231,18 +219,6 @@ force constant, and the sixth power of the deviation of the bond angle from
 its ideal value gives the sextic contribution to the angle bending energy.
 The default value in the absence of the *ANGLE-SEXTIC* keyword is zero;
 i.e., the sextic angle bending term is omitted.
-
-**ANGLE3** |not9|
-
-.. index:: ANGLE3
-
-**ANGLE4** |not9|
-
-.. index:: ANGLE4
-
-**ANGLE5** |not9|
-
-.. index:: ANGLE5
 
 .. seealso::
 

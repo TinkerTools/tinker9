@@ -48,6 +48,6 @@ modifiers, and usage examples.
    hippo
    dynamic
    fep
-   gpu
+   parallel
    math
    uncategorized
