@@ -8,6 +8,7 @@
 .. |e2| replace:: e\ :sup:`2`
 .. |bohr2| replace:: Bohr\ :sup:`2`
 .. |pm| unicode:: U+00B1 .. plus-minus sign
+.. |x| unicode:: U+00D7 .. multiplication sign
 
 .. role:: raw-latex(raw)
    :format: latex

@@ -9,26 +9,27 @@ Definitions and Units
 The electrostatic potential at *r* due to the charge distribution nearby is
 
 .. math::
+   :label: pot1
 
    \phi(r) = \frac{1}{4\pi\epsilon_0}
-   \int ds\frac{\rho(s)}{|r-s|}.
+   \int ds\frac{\rho(s)}{|r-s|},\ ds=\mathrm{d}x \mathrm{d}y \mathrm{d}z.
 
 Tinker uses a variable **electric** (in **chgpot** module) to represent the
 the factor :math:`1/(4\pi\epsilon_0)`.
 Its default magnitude is 332.063713, which is a constant defined by variable
 **coulomb** (in **units** module), and its units are kcal/mol |ang|/|e2|.
-The default value is editable by the *ELECTIRIC* keyword.
+The default value can be modified by the *ELECTIRIC* keyword.
 
 .. note::
 
    Should the value of **coulomb** documented here be out-dated and become
-   inconsistent with our code, a pull request will be appreciated.
+   inconsistent with our code, please send us a pull request.
 
 Expanding :math:`1/|r-s|` in Taylor series, :math:`4\pi\epsilon_0\phi(r)`
 can be rewritten as
 
 .. math::
-   :label: pot1
+   :label: pot2
 
    \left[\int ds\rho(s)\right]\frac{1}{r}
    -\sum_i\left[\int ds\rho(s)s_i\right]\nabla_i\frac{1}{r}
@@ -51,7 +52,7 @@ Quadrupole  e |bohr2|        e |ang2|
 In addition to different units, the quadrupole moments in Tinker parameter
 files use what is traditionally called *traceless quadrupole* :math:`\Theta`
 that has a different definition than *Q\**.
-The third term in :eq:`pot1` can be rewritten as
+The third term in :eq:`pot2` can be rewritten as
 
 .. math::
 
@@ -78,48 +79,34 @@ Internally, Tinker scales :math:`\Theta` by 1/3
 
 so that the energy expression is the same as if we were using *Q\**.
 
-Rotation Matrix
----------------
+Energy Torque  Gradient
+-----------------------
 
-Consider two vectors *u*, *v* and two reference frames *A*, *B*.
-*R* is the rotation matrix of the *axes* such that
+Potential energy
+
+.. math::
+   :label: pot3
+
+   U = \frac{1}{4\pi\epsilon_0}\int ds\rho(s)\phi(s).
+
+Potential energy with discretized charge distribution in :eq:`pot3`
+
+.. math::
+   :label: pot4
+
+   U(r) = \phi(r) C(r) + \phi'(r) D(r) + \phi''(r) Q(r) + \cdots.
+
+Distance
 
 .. math::
 
-   R u_A = u_B,
+   (r_x,r_y,r_z)=\boldsymbol{r}=r_2-r_1.
 
-   R v_A = v_B.
-
-Since :math:`u_A^T v_A=u_B^T v_B`,
+Pairwise (atoms 1 and 2) quadrupole energy
 
 .. math::
 
-   R R^T=I.
-
-A 2-D tensor, e.g., quadrupole moment *Q*, in two reference frames are
-associated by
-
-.. math::
-
-   u_A^T Q_A v_A = u_B^T Q_B v_B.
-
-It is easy to prove that
-
-.. math::
-
-   R Q_A R^T = Q_B.
-
-Two common transformations used in Tinker are:
-
-- From (A) *Local Frame* (in which parameters are provided)
-  to (B) *Global Frame* (in which the calculation is done);
-- From (A) *Global Frame* (for direct pairwise electrostatics)
-  to (B) *Quasi-Internal Frame* (for optimized algebra).
-
-Multipole Energy
-----------------
-
-Distance :math:`(r_x,r_y,r_z)=r=r_2-r_1`.
+   U_{12} = M_1^T T_{12} M_2.
 
 Multipoles
 
@@ -137,15 +124,29 @@ T matrix
 
 .. math::
 
-   T = \begin{pmatrix}
-   1          & \nabla_1           & \nabla_1^2           \\
-   \nabla_2   & \nabla_2\nabla_1   & \nabla_2\nabla_1^2   \\
-   \nabla_2^2 & \nabla_2^2\nabla_1 & \nabla_2^2\nabla_1^2
-   \end{pmatrix}\frac{1}{|r|}.
+   T_{12} = \begin{pmatrix}
+   1          & \nabla_2           & \nabla_2^2           \\
+   \nabla_1   & \nabla_1\nabla_2   & \nabla_1\nabla_2^2   \\
+   \nabla_1^2 & \nabla_1^2\nabla_2 & \nabla_1^2\nabla_2^2
+   \end{pmatrix}\frac{1}{r}.
 
-Energy :math:`U = M_2^T T M_1`, or
+The upper left 4\ |x|\ 4 elements of :math:`T_{12}`
 
 .. math::
-   :label: pot2
 
-   U = \phi C + \phi' D + \phi'' Q.
+   T_{12}^{4 \times 4} = \begin{pmatrix}
+   1/r     & -r_x/r^3           & -r_y/r^3           & -r_z/r^3     \\
+   r_x/r^3 & -3r_x^2/r^5 +1/r^3 & -3r_xr_y/r^5       & -3r_xr_z/r^5 \\
+   r_y/r^3 & -3r_xr_y/r^5       & -3r_y^2/r^5 +1/r^3 & -3r_yr_z/r^5 \\
+   r_z/r^3 & -3r_xr_z/r^5       & -3r_yr_z/r^5       & -3r_z^2/r^5 +1/r^3
+   \end{pmatrix}.
+
+Energy, torque, and force
+
+=========  ================  ======================  ====================
+Terms      Energy            Torque                  Force
+=========  ================  ======================  ====================
+C          :math:`\phi C`    N/A                     :math:`\phi' C`
+D          :math:`\phi' D`   :math:`\phi'\times D`   :math:`\phi'' D`
+Q          :math:`\phi'' Q`  :math:`\phi''\times Q`  :math:`\phi''' Q`
+=========  ================  ======================  ====================
