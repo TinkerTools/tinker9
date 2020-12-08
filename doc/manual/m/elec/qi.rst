@@ -74,7 +74,7 @@ Once the torques are computed the same way as in the previous section
 
 .. math::
 
-   \tau = \tau_1 + \tau_2 &= \boldsymbol{r}\times\boldsymbol{F}
+   \tau = \tau_1 + \tau_2 = \boldsymbol{r}\times\boldsymbol{F}
         = (U'_x,U'_y,U'_z)\times(0,0,r) = (U'_y r, -U'_z r, 0),
 
 x and y direction gradients then become
