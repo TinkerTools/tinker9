@@ -141,6 +141,36 @@ The upper left 4\ |x|\ 4 elements of :math:`T_{12}`
    r_z/r^3 & -3r_xr_z/r^5       & -3r_yr_z/r^5       & -3r_z^2/r^5 +1/r^3
    \end{pmatrix}.
 
+In the EWALD summation, :math:`1/r^k` terms will have different forms (*Bn*).
+Neverthelss, they are still connected through derivatives.
+
+=================================  =====================================
+Non-EWALD                          EWALD
+=================================  =====================================
+:math:`1/r`                        :math:`B_0=\mathrm{erfc}(\alpha r)/r`
+:math:`1/r^3`                      :math:`B_1`
+:math:`3/r^5`                      :math:`B_2`
+:math:`15/r^7`                     :math:`B_3`
+:math:`105/r^9`                    :math:`B_4`
+:math:`945/r^{11}`                 :math:`B_5`
+=================================  =====================================
+
+The *Bn* terms are related to the (complementary) Boys functions and
+(complementary) error functions. For :math:`x>0` and :math:`n\ge 0`,
+
+.. math::
+   \frac{\mathrm{erf}(x)}{x} &= \frac{2}{\sqrt{\pi}}F_0(x^2),    \\
+   \frac{\mathrm{erfc}(x)}{x} &= \frac{2}{\sqrt{\pi}}F_0^C(x^2), \\
+   F_n(x) &= \int_0^1 \exp(-xt^2)t^{2n} dt,                      \\
+   F_n^C(x) &= \int_1^\infty \exp(-xt^2)t^{2n} dt.
+
+The Boys functions can be generated through upward and downward recursions
+
+.. math::
+
+   F_n(x) = \frac{2xF_{n+1}(x) + \exp(-x)}{2n+1}, \\
+   F_n^C(x) = \frac{2xF_{n+1}^C(x) - \exp(-x)}{2n+1}.
+
 Energy, torque, and force
 
 =========  ================  ======================  ====================
@@ -157,3 +187,5 @@ Q          :math:`\phi'' Q`  :math:`\phi''\times Q`  :math:`\phi''' Q`
    \tau_{i}(Q) &= -2 \sum_{jk}\sum_{l}^{xyz} \epsilon_{ijk}Q_{jl}\phi''_{kl},
 
 where :math:`\epsilon_{ijk}` is the Levi-Civita symbol.
+
+Reference: :cite:`mpole-pme`.
