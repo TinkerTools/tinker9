@@ -89,40 +89,148 @@ Potential Terms                   Notes
 Charge Terms
 ~~~~~~~~~~~~
 
-:math:`A \leftarrow B` stands for :math:`A = A + B`.
+:math:`A : B` stands for :math:`A = A + B`.
+If there is no ambiguity, :math:`f'` and :math:`f''` may stand for
+:math:`(f'_x,f'_y,f'_z)` and
+:math:`(f''_{xx},f''_{yy},f''_{zz},f''_{xy},f''_{xz},f''_{yz})`, respectively.
 
 .. math::
 
-   \phi_1 &\leftarrow T_{12}^{(1,1)} C_2 = C_2 B_0, \\
-   \phi'_1 &\leftarrow T_{12}^{(2:4,1)} C_2 = C_2 \begin{pmatrix}
-   0 \\
-   0 \\
-   r B_1 \end{pmatrix}, \\
-   \phi''_1 &\leftarrow T_{12}^{(5:13,1)} C_2 = \begin{pmatrix}
-   0 \\
-   0 \\
-   0 \\
-   0 \\
-   0 \\
-   0 \end{pmatrix}.
+   \phi_1 &: T_{12}^{(1,1)} C_2 = B_0 C_2, \\
+   \phi'_1 &: T_{12}^{(2:4,1)} C_2 = \begin{pmatrix}
+      0 \\
+      0 \\
+      r B_1 C_2 \end{pmatrix}, \\
+   \phi''_1 &: T_{12}^{(5:13,1)} C_2 = -\begin{pmatrix}
+      B_1 C_2 \\
+      B_1 C_2 \\
+      (B_1 - r^2 B_2) C_2 \\
+      0 \\
+      0 \\
+      0 \end{pmatrix}.
 
 .. math::
 
-   \phi_2 &\leftarrow T_{21}^{(1,1)} C_1 = C_1 B_0, \\
-   \phi'_2 &\leftarrow T_{21}^{(2:4,1)} C_1 = C_1 \begin{pmatrix}
-   0 \\
-   0 \\
-   -r B_1 \end{pmatrix}, \\
-   \phi''_2 &\leftarrow T_{21}^{(5:13,1)} C_1 = \begin{pmatrix}
-   0 \\
-   0 \\
-   0 \\
-   0 \\
-   0 \\
-   0 \end{pmatrix}.
+   \phi_2 &: T_{21}^{(1,1)} C_1 = B_0 C_1, \\
+   \phi'_2 &: T_{21}^{(2:4,1)} C_1 = \begin{pmatrix}
+      0 \\
+      0 \\
+      -r B_1 C_1 \end{pmatrix}, \\
+   \phi''_2 &: T_{21}^{(5:13,1)} C_1 = -\begin{pmatrix}
+      B_1 C_1 \\
+      B_1 C_1 \\
+      (B_1 - r^2 B_2) C_1 \\
+      0 \\
+      0 \\
+      0 \end{pmatrix}.
+
+.. math::
+
+   -E_{z1} &: r B_1 C_2, \\
+   -E'_{z1} &: -\begin{pmatrix}
+      0 \\
+      0 \\
+      B_1 - r^2 B_2 \end{pmatrix}, \\
+   -E''_{z1} &: -\begin{pmatrix}
+      r B_2 C_2               \\
+      r B_2 C_2               \\
+      (3 r B_2 - r^3 B_3) C_2 \\
+      0                       \\
+      0                       \\
+      0 \end{pmatrix}.
 
 Dipole Terms
 ~~~~~~~~~~~~
 
+.. math::
+
+   \phi_1 &: T_{12}^{(1,2:4)} D_2 = -r B_1 D_{z2}, \\
+   \phi'_1 &: T_{12}^{(2:4,2:4)} D_2 = \begin{pmatrix}
+      B_1 D_{x2} \\
+      B_1 D_{y2} \\
+      (B_1 - r^2 B_2) D_{z2} \end{pmatrix}, \\
+   \phi''_1 &: T_{12}^{(5:13,2:4)} D_2 = \begin{pmatrix}
+      r B_2 D_{z2}               \\
+      r B_2 D_{z2}               \\
+      (3 r B_2 - r^3 B_3) D_{z2} \\
+      0                          \\
+      2 r B_2 D_{x2}             \\
+      2 r B_2 D_{y2} \end{pmatrix}.
+
+.. math::
+
+   \phi_2 &: T_{21}^{(1,2:4)} D_1 = r B_1 D_{z1}, \\
+   \phi'_2 &: T_{21}^{(2:4,2:4)} D_1 = \begin{pmatrix}
+      B_1 D_{x1} \\
+      B_1 D_{y1} \\
+      (B_1 - r^2 B_2) D_{z1} \end{pmatrix}, \\
+   \phi''_2 &: T_{21}^{(5:13,2:4)} D_1 = -\begin{pmatrix}
+      r B_2 D_{z1}               \\
+      r B_2 D_{z1}               \\
+      (3 r B_2 - r^3 B_3) D_{z1} \\
+      0                          \\
+      2 r B_2 D_{x1}             \\
+      2 r B_2 D_{y1} \end{pmatrix}.
+
+.. math::
+
+   -E_{z1} &: (B_1 - r^2 B_2) D_{z2}, \\
+   -E'_{z1} &: \begin{pmatrix}
+      r B_2 D_{x2} \\
+      r B_2 D_{y2} \\
+      (3 r B_2 - r^3 B_3) D_{z2} \end{pmatrix}, \\
+   -E''_{z1} &: -\begin{pmatrix}
+      (B_2 - r^2 B_3) D_{z2}               \\
+      (B_2 - r^2 B_3) D_{z2}               \\
+      (3 B_2 - 6 r^2 B_3 + r^4 B_4) D_{z2} \\
+      0                                    \\
+      2 (B_2 - r^2 B_3) D_{x2}             \\
+      2 (B_2 - r^2 B_3) D_{y2} \end{pmatrix}.
+
 Quadrupole Terms
 ~~~~~~~~~~~~~~~~
+
+.. math::
+
+   \phi_1 &: T_{12}^{(1,5:13)} Q_2 = r^2 B_2 Q_{zz2}, \\
+   \phi'_1 &: T_{12}^{(2:4,5:13)} Q_2 = -\begin{pmatrix}
+      2 r B_2 Q_{xz2} \\
+      2 r B_2 Q_{yz2} \\
+      (2 r B_2 - r^3 B_3) Q_{zz2} \end{pmatrix}, \\
+   \phi''_1 &: T_{12}^{(5:13,5:13)} Q_2 = \begin{pmatrix}
+      2 B_2 Q_{xx2} - r^2 B_3 Q_{zz2}       \\
+      2 B_2 Q_{yy2} - r^2 B_3 Q_{zz2}       \\
+      (2 B_2 - 5 r^2 B_3 + r^4 B_4) Q_{zz2} \\
+      4 B_2 Q_{xy2}                         \\
+      4 (B_2 - r^2 B_3) Q_{xz2}             \\
+      4 (B_2 - r^2 B_3) Q_{yz2} \end{pmatrix}.
+
+.. math::
+
+   \phi_2 &: T_{21}^{(1,5:13)} Q_1 = r^2 B_2 Q_{zz1}, \\
+   \phi'_2 &: T_{21}^{(2:4,5:13)} Q_1 = \begin{pmatrix}
+      2 r B_2 Q_{xz1} \\
+      2 r B_2 Q_{yz1} \\
+      (2 r B_2 - r^3 B_3) Q_{zz1} \end{pmatrix}, \\
+   \phi''_2 &: T_{21}^{(5:13,5:13)} Q_1 = \begin{pmatrix}
+      2 B_2 Q_{xx1} - r^2 B_3 Q_{zz1}       \\
+      2 B_2 Q_{yy1} - r^2 B_3 Q_{zz1}       \\
+      (2 B_2 - 5 r^2 B_3 + r^4 B_4) Q_{zz1} \\
+      4 B_2 Q_{xy1}                         \\
+      4 (B_2 - r^2 B_3) Q_{xz1}             \\
+      4 (B_2 - r^2 B_3) Q_{yz1} \end{pmatrix}.
+
+.. math::
+
+   -E_{z1} &: -(2 r B_2 - r^3 B_3) Q_{zz2}, \\
+   -E'_{z1} &: \begin{pmatrix}
+      2 (B_2 - r^2 B_3) Q_{xz2} \\
+      2 (B_2 - r^2 B_3) Q_{yz2} \\
+      (2 B_2 - 5 r^2 B_3 + r^4 B_4) Q_{zz2} \end{pmatrix}, \\
+   -E''_{z1} &: \begin{pmatrix}
+      -2 r B_3 Q_{yy2} - r^3 B_4 Q_{zz2}       \\
+      -2 r B_3 Q_{xx2} - r^3 B_4 Q_{zz2}       \\
+      (12 r B_3 - 9 r^3 B_4 + r^5 B_5) Q_{zz2} \\
+      4 r B_3 Q_{xy2}                          \\
+      4 (3 r B_3 - r^3 B_4) Q_{xz2}            \\
+      4 (3 r B_3 - r^3 B_4) Q_{yz2} \end{pmatrix}.
