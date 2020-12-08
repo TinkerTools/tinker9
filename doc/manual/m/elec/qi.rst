@@ -52,7 +52,8 @@ Multipole Interaction in QI Frame
 ---------------------------------
 
 Once the distance vector is in QI frame, many derivatives can be simplified
-as shown in the following table.
+as shown in the following table. *f(r)* does not explicitly depend on
+:math:`r_x,r_y,r_z`.
 
 ==================================  ==================  =============
 Gradients                           Global Frame        QI Frame
@@ -75,7 +76,7 @@ Once the torques are computed the same way as in the previous section
 .. math::
 
    \tau = \tau_1 + \tau_2 = \boldsymbol{r}\times\boldsymbol{F}
-        = (U'_x,U'_y,U'_z)\times(0,0,r) = (U'_y r, -U'_z r, 0),
+        = (U'_x,U'_y,U'_z)\times(0,0,r) = (U'_y r, -U'_x r, 0),
 
 x and y direction gradients then become
 

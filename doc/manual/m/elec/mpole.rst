@@ -150,3 +150,10 @@ C          :math:`\phi C`    N/A                     :math:`\phi' C`
 D          :math:`\phi' D`   :math:`\phi'\times D`   :math:`\phi'' D`
 Q          :math:`\phi'' Q`  :math:`\phi''\times Q`  :math:`\phi''' Q`
 =========  ================  ======================  ====================
+
+.. math::
+
+   \tau(D) &= \phi'\times D = D \times E, \\
+   \tau_{i}(Q) &= -2 \sum_{jk}\sum_{l}^{xyz} \epsilon_{ijk}Q_{jl}\phi''_{kl},
+
+where :math:`\epsilon_{ijk}` is the Levi-Civita symbol.
