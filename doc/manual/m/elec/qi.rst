@@ -1,6 +1,14 @@
 Quasi-Internal Frame
 ====================
 
+.. _fig-qiframe:
+.. figure:: ../fig/qiframe.*
+   :width: 300 px
+   :align: center
+
+   Global frame *g* and QI frame *i* of atoms 1 and 2.
+   The z direction of this QI frame is chosen along the distance vector.
+
 Rotation Matrix
 ---------------
 
@@ -40,16 +48,11 @@ Two common transformations used in Tinker are:
   to (B) *Quasi-Internal (QI) Frame* (for optimized algebra),
   as shown in :numref:`fig-qiframe`.
 
-.. _fig-qiframe:
-.. figure:: ../fig/qiframe.*
-   :width: 300 px
-   :align: center
-
-   Global frame *g* and QI frame *i* of atoms 1 and 2.
-   The z direction of this QI frame is chosen along the distance vector.
-
 Multipole Interaction in QI Frame
 ---------------------------------
+
+Once the distance vector is in QI frame, many derivatives can be simplified
+as shown in the following table.
 
 ==================================  ==================  =============
 Gradients                           Global Frame        QI Frame
@@ -59,7 +62,38 @@ Gradients                           Global Frame        QI Frame
 :math:`\partial f(r)/\partial z_2`  :math:`f'(r)r_z/r`  :math:`f'(r)`
 ==================================  ==================  =============
 
-where :math:`f'(r)=\partial f(r)/\partial r`.
+For potential energy, :eq:`pot4` can be used without modification in QI frame.
+Since :math:`\partial\phi_1/\partial z_1 = -E_{z1}`, the z direction gradient
+can be obtained from z direction electrostatic field (*Ez*):
+
+.. math::
+
+   \frac{\partial U}{\partial z}=-E_z C -E'_z D -E''_z Q -\cdots.
+
+Once the torques are computed the same way as in the previous section
+
+.. math::
+
+   \tau = \tau_1 + \tau_2 &= \boldsymbol{r}\times\boldsymbol{F}
+        = (U'_x,U'_y,U'_z)\times(0,0,r) = (U'_y r, -U'_z r, 0),
+
+x and y direction gradients then become
+
+.. math::
+
+   U'_x &= -\tau_y/r, \\
+   U'_y &= \tau_x/r.
+
+Depending on the direction of distance vector, the signs of x and y direction
+gradients may flip.
+
+Details
+-------
+
+In the following notes, :math:`A : B` stands for :math:`A = A + B`.
+If there is no ambiguity, :math:`f'` and :math:`f''` may stand for
+:math:`(f'_x,f'_y,f'_z)` and
+:math:`(f''_{xx},f''_{yy},f''_{zz},f''_{xy},f''_{xz},f''_{yz})`, respectively.
 
 ================================  =================================================
 Potential Terms                   Notes
@@ -88,11 +122,6 @@ Potential Terms                   Notes
 
 Charge Terms
 ~~~~~~~~~~~~
-
-:math:`A : B` stands for :math:`A = A + B`.
-If there is no ambiguity, :math:`f'` and :math:`f''` may stand for
-:math:`(f'_x,f'_y,f'_z)` and
-:math:`(f''_{xx},f''_{yy},f''_{zz},f''_{xy},f''_{xz},f''_{yz})`, respectively.
 
 .. math::
 
