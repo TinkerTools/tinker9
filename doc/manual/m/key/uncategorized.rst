@@ -927,18 +927,6 @@ Uncategorized
 
 .. index:: PISYSTEM
 
-**PITORS**
-
-.. index:: PITORS
-
-**PITORSTERM**
-
-.. index:: PITORSTERM
-
-**PITORSUNIT**
-
-.. index:: PITORSUNIT
-
 **PME-GRID**
 
 .. index:: PME-GRID

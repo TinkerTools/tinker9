@@ -572,6 +572,51 @@ An example is as follows:
 
    :ref:`label-torsion`
 
+Pi-Orbital Torsional Angle
+--------------------------
+
+**PITORSTERM [NONE / ONLY]**
+
+.. index:: PITORSTERM
+
+Controls use of the pi-orbital torsional angle potential energy term.
+In the absence of a modifying option, this keyword turns on use of the potential.
+The *NONE* option turns off use of this potential energy term.
+The *ONLY* option turns off all potential energy terms except for this one.
+
+**PITORSUNIT [real]**
+
+.. index:: PITORSUNIT
+
+Sets the scale factor needed to convert the energy value computed by
+the pi-orbital torsional angle potential into units of kcal/mol.
+The correct value is force field dependent and typically provided in the header
+of the master force field parameter file.
+The default value of 1.0 is used, if the *PITORSUNIT* keyword is not given
+in the force field parameter file or the keyfile.
+
+**PITORS [2 integers & 1 real]**
+
+.. index:: PITORS
+
+Provides the values for a single pi-orbital torsional angle potential parameter.
+The two integer modifiers give the atom class numbers for the atoms involved
+in the central bond of the torsional angle to be parameterized. The real modifier
+gives the value of the 2-fold Fourier amplitude in kcal/mol for the torsional
+angle between p-orbitals centered on the defined bond atom classes.
+The default units for the stretch-torsion force constant can be controlled
+via the *PITORSUNIT* keyword.
+An example is as follows:
+
+- PITORS |nbsp| A |nbsp| B |nbsp| Amplitude
+
+.. seealso::
+
+   :ref:`label-pitors`
+
+Torsion-Torsion Coupling
+------------------------
+
 **TORTORTERM [NONE / ONLY]**
 
 .. index:: TORTORTERM

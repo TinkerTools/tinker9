@@ -191,6 +191,18 @@ The functional form implemented in Tinker is
 where *n* is the periodicity (up to 6) and :math:`\delta_n` is the
 corresponding phase shift.
 
+.. _label-pitors:
+
+Pi-Orbital Torsional Angle
+--------------------------
+
+The 2-fold Fourier torsional angle potential to keep a pi-orbital molecular
+structure (e.g., ethylene) planar.
+
+.. math::
+
+   U = V[1+\cos(2\phi-\pi)].
+
 .. _label-tortor:
 
 Torsion-Torsion Coupling
