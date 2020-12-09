@@ -519,10 +519,55 @@ the improper torsion is centered.
 The torsional angle computed is literally that defined by the four atom classes
 in the order specified by the keyword.
 Each of the remaining triples of real/real/integer modifiers give the
-half-amplitude, phase offset in degrees and periodicity of a particular
+half-amplitude in kcal/mol, phase offset in degrees and periodicity of a particular
 improper torsional term, respectively.
 Periodicities through 3-fold are allowed for improper torsional parameters.
+An example is as follows:
+
+- IMPTORS |nbsp| A |nbsp| B |nbsp| C |nbsp| D |nbsp| Amplitude |nbsp| PhaseOffset |nbsp| Periodicity
 
 .. seealso::
 
    :ref:`label-imptor`
+
+Torsional Angle
+---------------
+
+**TORSIONTERM [NONE / ONLY]**
+
+.. index:: TORSIONTERM
+
+Controls use of the torsional angle potential energy term.
+In the absence of a modifying option, this keyword turns on use of the potential.
+The *NONE* option turns off use of this potential energy term.
+The *ONLY* option turns off all potential energy terms except for this one.
+
+**TORSIONUNIT [real]**
+
+.. index:: TORSIONUNIT
+
+Sets the scale factor needed to convert the energy value computed by
+the torsional angle potential into units of kcal/mol.
+The correct value is force field dependent and typically provided in the header
+of the master force field parameter file.
+The default value of 1.0 is used, if the *TORSIONUNIT* keyword is not given
+in the force field parameter file or the keyfile.
+
+**TORSION [4 integers & up to 6 real/real/integer triples]**
+
+.. index:: TORSION
+
+Provides the values for a single torsional angle parameter.
+The first four integer modifiers give the atom class numbers for the atoms
+involved in the torsional angle to be defined.
+Each of the remaining triples of real/real/integer modifiers give the amplitude
+in kcal/mol, phase offset in degrees and periodicity of a particular
+torsional function term, respectively.
+Periodicities through 6-fold are allowed for torsional parameters.
+An example is as follows:
+
+- TORSION |nbsp| A |nbsp| B |nbsp| C |nbsp| D |nbsp| Amplitude |nbsp| PhaseOffset |nbsp| Periodicity
+
+.. seealso::
+
+   :ref:`label-torsion`

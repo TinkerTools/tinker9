@@ -1307,10 +1307,6 @@ Uncategorized
 
 .. index:: TORS-LAMBDA
 
-**TORSION**
-
-.. index:: TORSION
-
 **TORSION4**
 
 .. index:: TORSION4
@@ -1318,14 +1314,6 @@ Uncategorized
 **TORSION5**
 
 .. index:: TORSION5
-
-**TORSIONTERM**
-
-.. index:: TORSIONTERM
-
-**TORSIONUNIT**
-
-.. index:: TORSIONUNIT
 
 **TORTORS**
 
