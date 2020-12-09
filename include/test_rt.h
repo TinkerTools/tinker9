@@ -34,7 +34,7 @@ public:
    /** Removes the file on disk if possible. */
    ~TestFile();
    /** Prevents the file being deleted. */
-   void keep();
+   void __keep();
 };
 
 

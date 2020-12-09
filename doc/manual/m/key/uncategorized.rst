@@ -1315,18 +1315,6 @@ Uncategorized
 
 .. index:: TORSION5
 
-**TORTORS**
-
-.. index:: TORTORS
-
-**TORTORTERM**
-
-.. index:: TORTORTERM
-
-**TORTORUNIT**
-
-.. index:: TORTORUNIT
-
 **TRIAL-DISTANCE**
 
 .. index:: TRIAL-DISTANCE

@@ -190,3 +190,11 @@ The functional form implemented in Tinker is
 
 where *n* is the periodicity (up to 6) and :math:`\delta_n` is the
 corresponding phase shift.
+
+.. _label-tortor:
+
+Torsion-Torsion Coupling
+------------------------
+
+The potential energy is extrapolated from a predefined 2-D map with the
+:math:`(\phi,\psi)` angles.

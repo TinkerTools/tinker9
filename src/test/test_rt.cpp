@@ -45,7 +45,7 @@ TestFile::~TestFile()
 }
 
 
-void TestFile::keep()
+void TestFile::__keep()
 {
    good = false;
 }

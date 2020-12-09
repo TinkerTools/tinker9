@@ -571,3 +571,42 @@ An example is as follows:
 .. seealso::
 
    :ref:`label-torsion`
+
+**TORTORTERM [NONE / ONLY]**
+
+.. index:: TORTORTERM
+
+Controls use of the torsion-torsion potential energy term.
+In the absence of a modifying option, this keyword turns on use of the potential.
+The *NONE* option turns off use of this potential energy term.
+The *ONLY* option turns off all potential energy terms except for this one.
+
+**TORTORUNIT [real]**
+
+.. index:: TORTORUNIT
+
+Sets the scale factor needed to convert the energy value computed by the
+torsion-torsion potential into units of kcal/mol.
+The correct value is force field dependent and typically provided in the header
+of the master force field parameter file.
+The default value of 1.0 is used, if the *TORTORUNIT* keyword is not given in
+the force field parameter file or the keyfile.
+
+**TORTORS [7 integers, then multiple lines of 2 integers and 1 real]**
+
+.. index:: TORTORS
+
+Provides the values for a single torsion-torsion parameter.
+The first five integer modifiers give the atom class numbers for the atoms
+involved in the two adjacent torsional angles to be defined.
+The last two integer modifiers contain the number of data grid points that lie
+along each axis of the torsion-torsion map.
+For example, this value will be 13 for a 30 degree torsional angle spacing,
+i.e., 360/30 = 12, but 13 values are required since data values for
+-180 and +180 degrees must both be supplied.
+The subsequent lines contain the torsion-torsion map data as the integer values
+in degrees of each torsional angle and the target energy value in kcal/mol.
+
+.. seealso::
+
+   :ref:`label-tortor`
