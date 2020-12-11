@@ -32,9 +32,9 @@ can be rewritten as
    :label: pot2
 
    \left[\int ds\rho(s)\right]\frac{1}{r}
-   -\sum_i\left[\int ds\rho(s)s_i\right]\nabla_i\frac{1}{r}
+   +\sum_i\left[\int ds\rho(s)s_i\right]\nabla_i\frac{1}{r}
    +\sum_{ij}\left[\frac{1}{2}\int ds\rho(s)s_i s_j\right]\nabla_i\nabla_j\frac{1}{r}
-   - \cdots,
+   +\cdots,
 
 where three pairs of square brackets give a set of definitions of monopole
 (charge, *C*), dipole (*D*), and quadrupole moments (*Q\**), respectively.
