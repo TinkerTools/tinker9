@@ -1,5 +1,5 @@
-Multipole Moment
-================
+Permanent Multipole
+===================
 
 .. include:: ../replace.rst
 
