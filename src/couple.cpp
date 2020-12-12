@@ -11,17 +11,18 @@ static_assert(couple_maxn12 >= sizes::maxval, "");
 
 
 int (*couple_i12)[couple_maxn12];
+int* couple_n12;
 
 
 void couple_data(rc_op op)
 {
    if (op & rc_dealloc) {
-      darray::deallocate(couple_i12);
+      darray::deallocate(couple_i12, couple_n12);
    }
 
 
    if (op & rc_alloc) {
-      darray::allocate(n, &couple_i12);
+      darray::allocate(n, &couple_i12, &couple_n12);
    }
 
 
@@ -40,6 +41,7 @@ void couple_data(rc_op op)
          }
       }
       darray::copyin(g::q0, n, couple_i12, ibuf.data());
+      darray::copyin(g::q0, n, couple_n12, couple::n12);
       wait_for(g::q0);
    }
 }

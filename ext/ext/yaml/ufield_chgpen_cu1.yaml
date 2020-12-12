@@ -1,0 +1,74 @@
+KERNEL_NAME: ufield_chgpen_cu1
+TEMPLATE_PARAMS: template <class ETYP>
+# CONSTEXPR_FLAGS:
+
+# COUNT:
+# ENERGY:
+# VIRIAL:
+# GRADIENT:
+
+# CUT_DISTANCE:
+OFF_DISTANCE:
+  - 'off'
+
+EXCLUDE_INFO:
+  - winfo
+
+SCALE_1X_TYPE: real3_const_array,2
+
+EXTRA_PARAMS: |
+  , const real(*restrict uind)[3]
+  , real(*restrict field)[3]
+  , const real *restrict pcore
+  , const real *restrict pval
+  , const real* restrict palpha
+  , real aewald
+
+I_POSITION:
+  - def: register real xi from:x
+  - def: register real yi from:y
+  - def: register real zi from:z
+K_POSITION:
+  - def: register real xk from:x
+  - def: register real yk from:y
+  - def: register real zk from:z
+
+I_FORCE:
+  - def: register real fidx addto:field,0
+  - def: register real fidy addto:field,1
+  - def: register real fidz addto:field,2
+K_FORCE:
+  - def: register real fkdx addto:field,0
+  - def: register real fkdy addto:field,1
+  - def: register real fkdz addto:field,2
+
+I_VARIABLES:
+  - def: shared real uidx from:uind,0
+  - def: shared real uidy from:uind,1
+  - def: shared real uidz from:uind,2
+  - def: shared real corei from:pcore
+  - def: shared real alphai from:palpha
+  - def: shared real vali from:pval
+K_VARIABLES:
+  - def: register real ukdx from:uind,0
+  - def: register real ukdy from:uind,1
+  - def: register real ukdz from:uind,2
+  - def: register real corek from:pcore
+  - def: register real alphak from:palpha
+  - def: register real valk from:pval
+
+# SCALED_PAIRWISE_INTERACTION:
+
+FULL_PAIRWISE_INTERACTION: |
+  real xr = xk - @xi@;
+  real yr = yk - @yi@;
+  real zr = zk - @zi@;
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    pair_ufield_chgpen<ETYP>(
+      r2, xr, yr, zr, scalec, @uidx@, @uidy@, @uidz@, @corei@, @vali@,
+      @alphai@, ukdx, ukdy, ukdz,
+      corek, valk, alphak, aewald, @fidx@,
+      @fidy@, @fidz@,
+      fkdx, fkdy, fkdz);
+  } // end if (include)

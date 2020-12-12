@@ -6,7 +6,9 @@
 #include "mod.bitor.h"
 #include "mod.bndpot.h"
 #include "mod.bndstr.h"
+#include "mod.cflux.h"
 #include "mod.charge.h"
+#include "mod.chgpen.h"
 #include "mod.chgpot.h"
 #include "mod.chgtrn.h"
 #include "mod.ctrpot.h"
@@ -23,6 +25,8 @@
 #include "mod.pitors.h"
 #include "mod.polar.h"
 #include "mod.polpot.h"
+#include "mod.repel.h"
+#include "mod.reppot.h"
 #include "mod.restrn.h"
 #include "mod.strbnd.h"
 #include "mod.torpot.h"
@@ -33,7 +37,6 @@
 #include "mod.urypot.h"
 #include "mod.vdw.h"
 #include "mod.vdwpot.h"
-
 
 #include "glob.accasync.h"
 #include "glob.box.h"

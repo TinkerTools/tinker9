@@ -6,6 +6,7 @@
 #include <cassert>
 #include <tinker/detail/angbnd.hh>
 #include <tinker/detail/angpot.hh>
+#include <tinker/detail/potent.hh>
 
 namespace tinker {
 void eangle_data(rc_op op)

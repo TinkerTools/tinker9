@@ -3,6 +3,7 @@
 #include "nblist.h"
 #include "potent.h"
 #include "tool/host_zero.h"
+#include <tinker/detail/mplpot.hh>
 #include <tinker/detail/sizes.hh>
 
 
@@ -10,6 +11,8 @@ namespace tinker {
 void empole_data(rc_op op)
 {
    if (!use_potent(mpole_term))
+      return;
+   if (mplpot::use_chgpen)
       return;
 
    bool rc_a = rc_flag & calc::analyz;

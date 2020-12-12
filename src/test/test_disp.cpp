@@ -5,7 +5,7 @@
 using namespace tinker;
 
 
-TEST_CASE("EDISP-1-NONDEWALD", "[ff][edisp][nondewald]")
+TEST_CASE("EDISP-1-NONDEWALD", "[ff][hippo][edisp][nondewald]")
 {
    TestFile fx1(TINKER9_DIRSTR "/src/test/file/c5h12acnh2/c5h12acnh2.xyz");
    TestFile fk1(TINKER9_DIRSTR "/src/test/file/disp/ndewald.key");
@@ -16,9 +16,9 @@ TEST_CASE("EDISP-1-NONDEWALD", "[ff][edisp][nondewald]")
    int argc = 4;
 
 
-   const double eps_e = test_get_eps(0.0055, 0.0001);
-   const double eps_g = test_get_eps(0.0150, 0.0001);
-   const double eps_v = test_get_eps(0.055, 0.001);
+   const double eps_e = test_get_eps(0.0001, 0.0001);
+   const double eps_g = test_get_eps(0.0002, 0.0001);
+   const double eps_v = test_get_eps(0.001, 0.001);
 
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/disp.1.txt");
@@ -71,7 +71,7 @@ TEST_CASE("EDISP-1-NONDEWALD", "[ff][edisp][nondewald]")
 }
 
 
-TEST_CASE("EDISP-2-DEWALD", "[ff][edisp][dewald]")
+TEST_CASE("EDISP-2-DEWALD", "[ff][hippo][edisp][dewald]")
 {
    TestFile fx1(TINKER9_DIRSTR "/src/test/file/c5h12acnh2/c5h12acnh2.xyz");
    TestFile fk1(TINKER9_DIRSTR "/src/test/file/disp/dewald.key");
@@ -83,8 +83,8 @@ TEST_CASE("EDISP-2-DEWALD", "[ff][edisp][dewald]")
 
 
    const double eps_e = test_get_eps(0.0030, 0.0001);
-   const double eps_g = test_get_eps(0.0120, 0.0001);
-   const double eps_v = test_get_eps(0.050, 0.001);
+   const double eps_g = test_get_eps(0.0007, 0.0001);
+   const double eps_v = test_get_eps(0.006, 0.001);
 
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/disp.2.txt");

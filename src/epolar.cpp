@@ -12,6 +12,7 @@
 #include <map>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/inform.hh>
+#include <tinker/detail/mplpot.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/polgrp.hh>
 #include <tinker/detail/polpot.hh>
@@ -24,6 +25,8 @@ namespace tinker {
 void epolar_data(rc_op op)
 {
    if (!use_potent(polar_term))
+      return;
+   if (mplpot::use_chgpen)
       return;
 
    bool rc_a = rc_flag & calc::analyz;

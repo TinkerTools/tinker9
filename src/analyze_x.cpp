@@ -162,6 +162,9 @@ void x_analyze_e()
    if (use_potent(vdw_term))
       print(out, fmt, "Van der Waals", energy_ev, count_reduce(nev));
 
+   if (use_potent(repuls_term))
+      print(out, fmt, "Repulsion", energy_er, count_reduce(nrep));
+
    if (use_potent(disp_term))
       print(out, fmt, "Dispersion", energy_edsp, count_reduce(ndisp));
 
