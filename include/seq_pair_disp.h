@@ -22,7 +22,7 @@ void pair_disp(real r, real r2, real rr1, //
 
 #if TINKER_REAL_SIZE == 8
    real eps = 0.001f;
-#else TINKER_REAL_SIZE == 4
+#elif TINKER_REAL_SIZE == 4
    real eps = 0.05f;
 #endif
 
