@@ -98,8 +98,8 @@ C.G. Terms            Tinker variables and routines
 :math:`M`             uscale()
 ====================  =============================
 
-Polarization Model: AMOEBA
---------------------------
+Polarization Model: AMOEBA (Thole Damping)
+------------------------------------------
 
 AMOEBA force field adopts two polarization schemes, *d* and *p*, for the
 external field due to the permanent multipoles, and a third scheme *u* for
@@ -137,3 +137,7 @@ another target function
 
 The difference in two target functions is usually negligible unless other
 loose convergence methods are used to compute the induced dipoles.
+
+.. math::
+
+   \rho = \frac{3a}{4\pi}\exp(-au^3).
