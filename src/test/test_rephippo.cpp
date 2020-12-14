@@ -16,10 +16,9 @@ TEST_CASE("EREPEL-1", "[ff][hippo][erepel][c5h12-acnh2]")
    int argc = 4;
 
 
-   const double eps_e = test_get_eps(0.06, 0.004);
-   const double eps_g = test_get_eps(1.2, 0.01);
-   const double eps_v = test_get_eps(2.5, 0.02);
-
+   const double eps_e = test_get_eps(0.004, 0.0001);
+   const double eps_g = test_get_eps(0.007, 0.0001);
+   const double eps_v = test_get_eps(0.009, 0.0010);
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/rephippo.1.txt");
    auto ref_c = r.get_count();
@@ -84,8 +83,7 @@ TEST_CASE("EREPEL-2", "[ff][hippo][erepel][water]")
 
    const double eps_e = test_get_eps(0.0001, 0.0001);
    const double eps_g = test_get_eps(0.0005, 0.0001);
-   const double eps_v = test_get_eps(0.0010, 0.001);
-
+   const double eps_v = test_get_eps(0.0010, 0.0010);
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/rephippo.2.txt");
    auto ref_c = r.get_count();

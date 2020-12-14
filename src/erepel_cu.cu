@@ -5,7 +5,7 @@
 #include "launch.h"
 #include "md.h"
 #include "seq_bsplgen.h"
-#include "seq_damprep.h"
+#include "seq_damp_hippo.h"
 #include "seq_pair_repel.h"
 #include "seq_triangle.h"
 #include "switch.h"

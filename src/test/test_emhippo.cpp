@@ -16,9 +16,9 @@ TEST_CASE("EMPOLE-1-HIPPO", "[ff][hippo][emhippo][ewald]")
    int argc = 4;
 
 
-   const double eps_e = test_get_eps(0.03, 0.0001);
-   const double eps_g = test_get_eps(0.3, 0.0001);
-   const double eps_v = test_get_eps(1.15, 0.0004);
+   const double eps_e = test_get_eps(0.0030, 0.0001);
+   const double eps_g = test_get_eps(0.0020, 0.0001);
+   const double eps_v = test_get_eps(0.0085, 0.0010);
 
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/emhippo.1.txt");
@@ -82,9 +82,9 @@ TEST_CASE("EMPOLE-2-HIPPO", "[ff][hippo][emhippo][newald]")
    int argc = 4;
 
 
-   const double eps_e = test_get_eps(0.035, 0.0001);
-   const double eps_g = test_get_eps(0.3, 0.0001);
-   const double eps_v = test_get_eps(1.15, 0.0005);
+   const double eps_e = test_get_eps(0.0025, 0.0001);
+   const double eps_g = test_get_eps(0.0020, 0.0001);
+   const double eps_v = test_get_eps(0.0065, 0.0010);
 
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/emhippo.2.txt");

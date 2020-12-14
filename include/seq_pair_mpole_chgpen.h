@@ -2,7 +2,7 @@
 #include "elec.h"
 #include "md.h"
 #include "seq_damp.h"
-#include "seq_damp_chgpen.h"
+#include "seq_damp_hippo.h"
 #include "seq_pair_mpole.h"
 
 

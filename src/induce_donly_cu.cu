@@ -7,7 +7,7 @@
 #include "induce_donly.h"
 #include "launch.h"
 #include "mdpq.h"
-#include "seq_damp_chgpen.h"
+#include "seq_damp_hippo.h"
 #include "seq_triangle.h"
 #include "switch.h"
 #include "tool/gpu_card.h"

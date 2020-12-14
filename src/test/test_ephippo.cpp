@@ -16,9 +16,9 @@ TEST_CASE("EPOLAR-1-HIPPO", "[ff][hippo][ephippo][ewald]")
    int argc = 4;
 
 
-   const double eps_e = test_get_eps(0.0001, 0.0001);
-   const double eps_g = test_get_eps(0.08, 0.0001);
-   const double eps_v = test_get_eps(0.15, 0.001);
+   const double eps_e = test_get_eps(0.04, 0.0001);
+   const double eps_g = test_get_eps(0.04, 0.0001);
+   const double eps_v = test_get_eps(0.25, 0.0010);
 
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/ephippo.1.txt");
@@ -82,9 +82,9 @@ TEST_CASE("EPOLAR-2-HIPPO", "[ff][hippo][ephippo][newald]")
    int argc = 4;
 
 
-   const double eps_e = test_get_eps(0.0001, 0.0001);
-   const double eps_g = test_get_eps(0.08, 0.0001);
-   const double eps_v = test_get_eps(0.15, 0.001);
+   const double eps_e = test_get_eps(0.040, 0.0001);
+   const double eps_g = test_get_eps(0.045, 0.0001);
+   const double eps_v = test_get_eps(0.250, 0.0010);
 
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/ephippo.2.txt");

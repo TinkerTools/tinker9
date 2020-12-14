@@ -7,7 +7,7 @@
 #include "induce_donly.h"
 #include "mathfunc_lu.h"
 #include "mod.uprior.h"
-#include "seq_damp_chgpen.h"
+#include "seq_damp_hippo.h"
 #include "tinker_rt.h"
 #include "tool/error.h"
 #include "tool/gpu_card.h"

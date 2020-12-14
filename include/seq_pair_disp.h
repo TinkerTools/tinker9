@@ -20,8 +20,12 @@ void pair_disp(real r, real r2, real rr1, //
       return;
    }
 
+#if TINKER_REAL_SIZE == 8
+   real eps = 0.001f;
+#else TINKER_REAL_SIZE == 4
+   real eps = 0.05f;
+#endif
 
-   real eps = 0.005f;
    real diff = REAL_ABS(ai - ak);
    real rr2 = rr1 * rr1;
    real rr6 = rr2 * rr2 * rr2;
@@ -52,6 +56,9 @@ void pair_disp(real r, real r2, real rr1, //
          ddamp = a2 + b2;
       }
    } else {
+      ai = 0.5f * (ai + ak);
+      di = ai * r;
+      real expi = REAL_EXP(-di);
       real term = ((((di + 5) * di + 17) * di / 96 + 0.5f) * di + 1) * di + 1;
       damp = 1 - term * expi;
       if CONSTEXPR (DO_G)
