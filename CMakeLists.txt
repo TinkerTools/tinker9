@@ -323,11 +323,11 @@ set (CUDA_DIR ${cudaDirValue} CACHE PATH "CUDA Directory")
 !!/
 !!/ **man**
 !!/
-!!/ Generate user's manual.
+!!/ Generate user manual.
 !!/
 !!/ **doc**
 !!/
-!!/ Generate developer's manual.
+!!/ Generate developer guides.
 !!/
 ]]
 

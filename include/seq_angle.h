@@ -4,24 +4,49 @@
 
 
 namespace tinker {
+/**
+ * Comment
+ * Zhi Wang, July 1, 2019
+ *
+ * The original Tinker implementation has following expressions
+ * xip = xib + xt * delta
+ * xap = xia - xip
+ *
+ * And they were reorganized to
+ * xap = xia - xib - xt * delta
+ * for higher accuracy in the single precision mode.
+ *
+ * Consider an example where
+ * xia = 33.553368, xib = 34.768604
+ * xt = 0.33142909, delta = 0.0044494048,
+ * the later expression gives a better numerical result.
+ */
 #pragma acc routine seq
 template <class Ver>
 SEQ_CUDA
-void dk_angle(
-   real& restrict e, real& restrict vxx, real& restrict vyx, real& restrict vzx,
-   real& restrict vyy, real& restrict vzy, real& restrict vzz,
+void dk_angle(real& restrict e, real& restrict vxx, real& restrict vyx,
+              real& restrict vzx, real& restrict vyy, real& restrict vzy,
+              real& restrict vzz,
 
-   grad_prec* restrict deax, grad_prec* restrict deay, grad_prec* restrict deaz,
+              grad_prec* restrict deax, grad_prec* restrict deay,
+              grad_prec* restrict deaz,
 
-   const eangle_t* restrict angtyp, real angunit, int i,
-   const int (*restrict iang)[4], const real* restrict anat,
-   const real* restrict ak, real cang, real qang, real pang, real sang,
+              const eangle_t* restrict angtyp, real angunit, int i,
+              const int (*restrict iang)[4], const real* restrict anat,
+              const real* restrict ak, const real* restrict afld,
 
-   const real* restrict x, const real* restrict y, const real* restrict z)
+              real cang, real qang, real pang, real sang,
+
+              const real* restrict x, const real* restrict y,
+              const real* restrict z)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
+   if CONSTEXPR (do_e)
+      e = 0;
+   if CONSTEXPR (do_v)
+      vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
 
    int ia = iang[i][0];
    int ib = iang[i][1];
@@ -60,7 +85,7 @@ void dk_angle(
          rp = REAL_MAX(rp, (real)0.0001);
          real dot = xab * xcb + yab * ycb + zab * zcb;
          real cosine = dot * REAL_RSQRT(rab2 * rcb2);
-         cosine = REAL_MIN((real)0.1, REAL_MAX((real)-1, cosine));
+         cosine = REAL_MIN((real)1, REAL_MAX((real)-1, cosine));
          real angle = radian * REAL_ACOS(cosine);
 
          real deddt;
@@ -76,6 +101,25 @@ void dk_angle(
                deddt = angunit * force * dt * radian *
                   (2 + 3 * cang * dt + 4 * qang * dt2 + 5 * pang * dt3 +
                    6 * sang * dt4);
+         } else if (angtypi == eangle_t::linear) {
+            real factor = 2 * angunit * radian * radian;
+            real sine = REAL_SQRT(1 - cosine * cosine);
+            if CONSTEXPR (do_e)
+               e = factor * force * (1 + cosine);
+            if CONSTEXPR (do_g)
+               deddt = -factor * force * sine;
+         } else if (angtypi == eangle_t::fourier) {
+            real fold = afld[i];
+            real factor = 2 * angunit * (radian / fold) * (radian / fold);
+            real dt = (fold * angle - ideal) * _1radian;
+            if CONSTEXPR (do_e) {
+               real cosine = REAL_COS(dt);
+               e = factor * force * (1 + cosine);
+            }
+            if CONSTEXPR (do_g) {
+               real sine = REAL_SIN(dt);
+               deddt = -factor * force * fold * sine;
+            }
          }
 
          if CONSTEXPR (do_g) {
@@ -129,9 +173,6 @@ void dk_angle(
       real zt = xad * ycd - yad * xcd;
       real rt2 = xt * xt + yt * yt + zt * zt;
       real delta = -(xt * xbd + yt * ybd + zt * zbd) * REAL_RECIP(rt2);
-      // real xip = xib + xt * delta;
-      // real yip = yib + yt * delta;
-      // real zip = zib + zt * delta;
       real xap = xia - xib - xt * delta;
       real yap = yia - yib - yt * delta;
       real zap = zia - zib - zt * delta;

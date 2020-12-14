@@ -3,25 +3,30 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Tinker9 User's Manual
+.. include:: m/replace.rst
+
+Tinker9 User Manual
 =====================
 
 .. toctree::
    :caption: Contents
-   :numbered:
    :maxdepth: 2
 
    m/intro
    m/install/index
    m/feat/index
    m/key/index
+   m/elec/index
 
+.. toctree::
+   :caption: References
 
+   m/zrefs
 
 .. only:: html
 
    .. toctree::
-      :caption: Appendix
+      :caption: Index
 
       genindex
 

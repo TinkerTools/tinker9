@@ -5,6 +5,7 @@
 #include "glob.molecule.h"
 #include "image.h"
 #include "md.h"
+#include "seq_geom.h"
 #include <cassert>
 
 
@@ -13,118 +14,36 @@ template <class Ver>
 void egeom_acc1()
 {
    constexpr bool do_e = Ver::e;
-   constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
-
-   auto bufsize = buffer_size();
+   size_t bufsize = buffer_size();
 
    const auto* molec = molecule.molecule;
    const auto* igrp = grp.igrp;
    const auto* kgrp = grp.kgrp;
    const auto* grpmass = grp.grpmass;
 
-   #pragma acc kernels async present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
+   // group restraints
+   #pragma acc parallel loop independent async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(x,y,z,degx,degy,degz,mass,molec,\
                igrp,kgrp,grpmass,igfix,gfix,\
                eg,vir_eg)
-   {
-      // group restraints
-      #pragma acc loop independent
-      for (int i = 0; i < ngfix; ++i) {
-         int offset = i & (bufsize - 1);
-         int ia = igfix[i][0];
-         int ib = igfix[i][1];
-         int ja1 = igrp[ia][0];
-         int ja2 = igrp[ia][1];
-         int jb1 = igrp[ib][0];
-         int jb2 = igrp[ib][1];
+   for (int i = 0; i < ngfix; ++i) {
+      int offset = i & (bufsize - 1);
+      real e, vxx, vyx, vzx, vyy, vzy, vzz;
+      dk_geom<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-         real xacm = 0;
-         real yacm = 0;
-         real zacm = 0;
-         #pragma acc loop seq reduction(+:xacm,yacm,zacm)
-         for (int j = ja1; j < ja2; ++j) {
-            int k = kgrp[j];
-            real weigh = mass[k];
-            xacm += x[k] * weigh;
-            yacm += y[k] * weigh;
-            zacm += z[k] * weigh;
-         }
-         real weigha = REAL_MAX((real)1, grpmass[ia]);
-         weigha = REAL_RECIP(weigha);
+                   degx, degy, degz,
 
-         real xbcm = 0;
-         real ybcm = 0;
-         real zbcm = 0;
-         #pragma acc loop seq reduction(+:xbcm,ybcm,zbcm)
-         for (int j = jb1; j < jb2; ++j) {
-            int k = kgrp[j];
-            real weigh = mass[k];
-            xbcm += x[k] * weigh;
-            ybcm += y[k] * weigh;
-            zbcm += z[k] * weigh;
-         }
-         real weighb = REAL_MAX((real)1, grpmass[ib]);
-         weighb = REAL_RECIP(weighb);
+                   i, igfix, gfix,
 
-         real xr = xacm * weigha - xbcm * weighb;
-         real yr = yacm * weigha - ybcm * weighb;
-         real zr = zacm * weigha - zbcm * weighb;
-
-         bool intermol = molec[kgrp[ja1]] != molec[kgrp[jb1]];
-         if (intermol)
-            image(xr, yr, zr);
-
-         real r = REAL_SQRT(xr * xr + yr * yr + zr * zr);
-         real force = gfix[i][0];
-         real gf1 = gfix[i][1];
-         real gf2 = gfix[i][2];
-         real target = (r < gf1 ? gf1 : (r > gf2 ? gf2 : r));
-         real dt = r - target;
-
-         if CONSTEXPR (do_e) {
-            real dt2 = dt * dt;
-            real e = force * dt2;
-            atomic_add(e, eg, offset);
-         }
-         if CONSTEXPR (do_g) {
-            real rinv = (r == 0 ? 1 : REAL_RECIP(r));
-            real de = 2 * force * dt * rinv;
-            real dedx = de * xr;
-            real dedy = de * yr;
-            real dedz = de * zr;
-
-            #pragma acc loop seq
-            for (int j = ja1; j < ja2; ++j) {
-               int k = kgrp[j];
-               real ratio = mass[k] * weigha;
-               atomic_add(dedx * ratio, degx, k);
-               atomic_add(dedy * ratio, degy, k);
-               atomic_add(dedz * ratio, degz, k);
-            }
-
-            #pragma acc loop seq
-            for (int j = jb1; j < jb2; ++j) {
-               int k = kgrp[j];
-               real ratio = mass[k] * weighb;
-               atomic_add(-dedx * ratio, degx, k);
-               atomic_add(-dedy * ratio, degy, k);
-               atomic_add(-dedz * ratio, degz, k);
-            }
-
-            if CONSTEXPR (do_v) {
-               real vxx = xr * dedx;
-               real vyx = yr * dedx;
-               real vzx = zr * dedx;
-               real vyy = yr * dedy;
-               real vzy = zr * dedy;
-               real vzz = zr * dedz;
-
-               atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_eg, offset);
-            } // end if (do_v)
-         }    // end if (do_g)
-      }       // end ngfix loop
-   }
+                   x, y, z, mass, molec, igrp, kgrp, grpmass,
+                   TINKER_IMAGE_ARGS);
+      if CONSTEXPR (do_e)
+         atomic_add(e, eg, offset);
+      if CONSTEXPR (do_v)
+         atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_eg, offset);
+   } // end ngfix loop
 }
 
 

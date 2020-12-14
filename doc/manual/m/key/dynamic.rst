@@ -1,31 +1,33 @@
-Molecular Dynamics and Ensemble Keywords
-========================================
+Molecular Dynamics and Ensembles
+================================
 
-**INTEGRATOR [VERLET/RESPA/NOSE-HOOVER/LPISTON]**
+**INTEGRATOR [VERLET / RESPA / NOSE-HOOVER / LPISTON]**
 
 .. index:: INTEGRATOR
 
 .. seealso::
 
-    :ref:`label-verlet`,
-    :ref:`label-respa`,
-    :ref:`label-nose-hoover`,
-    :ref:`label-lpiston`
+   :ref:`label-verlet`,
+   :ref:`label-respa`,
+   :ref:`label-nose-hoover`,
+   :ref:`label-lpiston`
 
-**THERMOSTAT [NOSE-HOOVER/LPISTON]**
+**THERMOSTAT [NOSE-HOOVER / LPISTON]**
 
 .. index:: THERMOSTAT
 
 .. seealso::
 
-    :ref:`label-nose-hoover`,
-    :ref:`label-lpiston`
+   :ref:`label-nose-hoover`,
+   :ref:`label-lpiston`
 
-**BAROSTAT [NOSE-HOOVER/BAROSTAT**
+**BAROSTAT [MONTECARLO / BERENDSEN / NOSE-HOOVER / LPISTON]**
 
 .. index:: BAROSTAT
 
 .. seealso::
 
-    :ref:`label-nose-hoover`,
-    :ref:`label-lpiston`
+   :ref:`label-monte-carlo-barostat`,
+   :ref:`label-berendsen-barostat`,
+   :ref:`label-nose-hoover`,
+   :ref:`label-lpiston`

@@ -24,6 +24,10 @@ void dk_pitors(real& restrict e, real& restrict vxx, real& restrict vyx,
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
+   if CONSTEXPR (do_e)
+      e = 0;
+   if CONSTEXPR (do_v)
+      vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
 
    const int ia = ipit[i][0];
    const int ib = ipit[i][1];

@@ -1,6 +1,8 @@
-Special Features & Methods
-==========================
+Features & Methods
+==================
 
 .. toctree::
 
+   potent
+   potent-vdw
    integrators

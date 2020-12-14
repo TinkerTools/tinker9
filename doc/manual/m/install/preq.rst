@@ -13,13 +13,20 @@ In order to compile the GPU code, the most recent
 is preferred for the OpenACC directives. Due to its limitations,
 the GPU code is unavailable on macOS.
 
-No effort has been spared on building excutables for Windows yet.
-
 For Linux, we need:
 
 - GNU or Intel Fortran compiler.
 - Recent C++ compiler that supports C++11 syntax.
 - (GPU code only) PGI compiler for OpenACC and nvcc for CUDA.
+- If Nvidia driver has been installed correctly, *nvidia-smi* should be
+  available.
+
+The PGI compilers have recently been rebranded as
+`NVIDIA HPC SDK <https://developer.nvidia.com/hpc-sdk>`_
+and we successfully built Tinker9 on Windows WSL2 Ubuntu with
+CUDA 11.0 and NVHPC 20.9. Please proceed to
+`this webpage <https://docs.nvidia.com/cuda/wsl-user-guide/index.html>`_
+for more details.
 
 **FFTW Libraries**
 
@@ -53,7 +60,7 @@ then added *export PGI_LOCALRC=/path/to/new_config* to my bash resource file.
 - `ClangFormat <https://clang.llvm.org/docs/ClangFormat.html>`_:
   to format the source code.
 
-- `Sphinx <https://www.sphinx-doc.org>`_: to generate user's manual.
+- `Sphinx <https://www.sphinx-doc.org>`_: to generate user manual.
 
    - PDF version also depends on `TeX <https://www.tug.org/begin.html>`_.
 
@@ -65,4 +72,4 @@ then added *export PGI_LOCALRC=/path/to/new_config* to my bash resource file.
 
         pip install sphinx-rtd-theme
 
-- `Doxygen <https://www.doxygen.nl>`_: to generate developer's manual.
+- `Doxygen <https://www.doxygen.nl>`_: to generate developer guides.

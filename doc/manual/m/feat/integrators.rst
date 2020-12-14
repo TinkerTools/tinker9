@@ -1,5 +1,15 @@
-Integrators
-===========
+Integrators and Ensembles
+=========================
+
+.. _label-monte-carlo-barostat:
+
+Monte Carlo Barostat
+--------------------
+
+.. _label-berendsen-barostat:
+
+Berendsen Barostat
+------------------
 
 .. _label-verlet:
 
@@ -13,10 +23,11 @@ RESPA Integrator
 
 .. _label-nose-hoover:
 
-Extended Nosé-Hoover Chain by MTK
----------------------------------
+Extended Nosé-Hoover Chain
+--------------------------
 
-Several methods for NVT and NPT ensembles were discussed in MTK [#Martyna1996]_.
+Authors of paper :cite:`mtk-nhc` (MTK) discussed several methods for NVT and
+NPT ensembles.
 
 ======  ===============  ======
 Number  Sections in MTK  Method
@@ -36,7 +47,7 @@ NPT-XO (#2a-4a).
 
 .. tip::
 
-   MTK Nosé-Hoover Chain can be enabled by keywords
+   Nosé-Hoover Chain can be enabled by keywords
 
    .. code-block:: text
 
@@ -56,7 +67,7 @@ NPT-XO (#2a-4a).
 Langevin Piston
 ---------------
 
-The Langevin piston method for constant pressure [#Feller1995]_ is
+The Langevin piston method for constant pressure :cite:`lpiston` is
 integrated in the Leapfrog framework.
 
 .. tip::
@@ -75,11 +86,3 @@ integrated in the Leapfrog framework.
       barostat   lpiston
 
    with the NPT option in the *dynamic* program.
-
-.. [#Martyna1996]
-   Martyna, G. J.; Tuckerman, M. E.; Tobias, D. J. and Klein, M. L.
-   `Mol. Phys., 87, 1117 (1996) <https://doi.org/10.1080/00268979600100761>`_
-
-.. [#Feller1995]
-   Feller, S. E.; Zhang, Y.; Pastor, R. W. and Brooks, B. R.
-   `J. Chem. Phys., 103, 4613 (1995) <https://doi.org/10.1063/1.470648>`_

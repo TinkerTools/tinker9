@@ -17,11 +17,14 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "Tinker9 User's Manual"
+project = "Tinker9 User Manual"
 copyright = '2020, Zhi Wang'
-author = 'Zhi Wang'
 master_doc = 'index'
+latex_documents = [(master_doc, 'tinker9manual.tex', project,
+    'Zhi Wang and Jay W. Ponder',
+    'manual')]
 
+numfig = True
 
 # -- General configuration ---------------------------------------------------
 
@@ -29,6 +32,7 @@ master_doc = 'index'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinxcontrib.bibtex'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -45,7 +49,31 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+# Until sphinx_rtd_theme fixes the position of equation label.
+# html_theme = 'sphinx_rtd_theme'
+# alabaster theme options
+html_theme = 'alabaster'
+yellow_color = '#FADB6A'
+blue_color = '#E6F6FF'
+pink_color = '#FFDDDD'
+html_theme_options = {
+    # 'logo': 'logo.png',
+    'github_button': 'true',
+    'github_user': 'tinkertools',
+    'github_repo': 'tinker9',
+    'travis_button': 'true',
+
+    'font_family': "'Helvetica Neue', 'Lato', 'Arial', sans serif",
+
+    'note_bg':        yellow_color,
+    'note_border':    yellow_color,
+    'tip_bg':         blue_color,
+    'tip_border':     blue_color,
+    'seealso_bg':     blue_color,
+    'seealso_border': blue_color,
+    'warn_bg':        pink_color,
+    'warn_border':    pink_color,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -60,12 +88,51 @@ latex_elements = {
     'papersize': 'letterpaper',
 
 # The font size ('10pt', '11pt' or '12pt').
-    'pointsize': '11pt',
+    'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
     'preamble': r'''
-        \usepackage{charter}
-        \usepackage[defaultsans]{lato}
-        \usepackage{inconsolata}
-    ''',
+%\usepackage{charter}
+%\usepackage{fouriernc}
+\usepackage[notextcomp]{kpfonts}
+% sans serif
+\usepackage[defaultsans]{lato}
+% monospace
+\usepackage{inconsolata}
+
+\usepackage[normalem]{ulem} % strikethrough text: \sout{text}
+
+% \usepackage{geometry} % already used
+\geometry{paperheight=8.5in,paperwidth=5.5in,top=1.0in,bottom=1.0in,left=0.5in,right=0.5in,heightrounded}
+
+\addto{\captionsenglish}{\renewcommand{\bibname}{References}}
+
+% prevent hyphenation
+\hyphenation{LPISTON}
+''',
+
+   'sphinxsetup': '''
+       TitleColor={rgb}{0,0,0},
+       InnerLinkColor={rgb}{0,0,0},
+       OuterLinkColor={rgb}{0,0,0},
+       VerbatimColor={rgb}{0.9,0.9,0.9},
+       VerbatimBorderColor={rgb}{1,1,1}
+'''
 }
+
+from pybtex.style.formatting.unsrt import Style as UnsrtStyle
+from pybtex.plugin import register_plugin
+from pybtex.style.template import sentence, optional, words
+
+class UnsrtStyleModified(UnsrtStyle):
+    def format_web_refs(self, e):
+        if 'doi' in e.fields:
+            return sentence [ optional [ self.format_doi(e) ] ]
+        elif 'pubmed' in e.fields:
+            return sentence [ optional [ self.format_pubmed(e) ] ]
+        elif 'url' in e.fields:
+            return sentence [ optional [ self.format_url(e) ] ]
+        else:
+            return words ['']
+
+register_plugin('pybtex.style.formatting', 'unsrt-modified', UnsrtStyleModified)

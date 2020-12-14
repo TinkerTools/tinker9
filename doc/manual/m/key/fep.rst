@@ -1,10 +1,10 @@
-Free Energy Perturbation and OSRW Keywords
-==========================================
+Free Energy
+===========
 
 **OSRW-ELE []**
 
 **OSRW-LAMBDA [real]**
-This keyword sets the internal logical flag for OSRW to *true* and provides
+Sets the internal logical flag for OSRW to *true* and provides
 the initial value of lambda.
 
 **OSRW-TORS []**

@@ -62,8 +62,8 @@ void velocity_verlet(int istep, time_prec dt_ps)
       rattle2(dt_ps, vers1 bitand calc::virial);
 
    // full-step corrections
-   temper(dt_ps, temp);
-   pressure();
+   temper(dt_ps, temp, save);
+   pressure(dt_ps);
 }
 
 

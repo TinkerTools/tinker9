@@ -56,9 +56,10 @@ void pair_disp(real r, real r2, real rr1, //
          ddamp = a2 + b2;
       }
    } else {
-      ai = 0.5f * (ai + ak);
+      ai = (ai + ak) * 0.5f;
       di = ai * r;
-      real expi = REAL_EXP(-di);
+      di2 = di * di;
+      expi = REAL_EXP(-di);
       real term = ((((di + 5) * di + 17) * di / 96 + 0.5f) * di + 1) * di + 1;
       damp = 1 - term * expi;
       if CONSTEXPR (DO_G)

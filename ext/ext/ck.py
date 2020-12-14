@@ -150,7 +150,10 @@ def ik_force(iork, op, lst):
         elif op == 'zero':
             if shared:
                 suffix = '[threadIdx.x]'
-            v = v + '{}{}{} = 0;'.format(prefix, name, suffix)
+            v1 = '{}{}{} = 0;'.format(prefix, name, suffix)
+            if 'onlyif' in it.keys():
+                v1 = 'if CONSTEXPR ({}) {}'.format(it['onlyif'], v1)
+            v = v + v1
         elif op == 'init':
             if shared:
                 suffix = '[threadIdx.x]'
@@ -195,10 +198,13 @@ def ik_force(iork, op, lst):
                 suffix = '[threadIdx.x]'
             dst = it['addto']
             if ',' not in dst:
-                v = v + 'atomic_add({}{}{}, {}, {}{});'.format(prefix, name, suffix, dst, prefix, iork)
+                v1 = 'atomic_add({}{}{}, {}, {}{});'.format(prefix, name, suffix, dst, prefix, iork)
             else:
                 vs = dst.split(',')
-                v = v + 'atomic_add({}{}{}, &{}[{}{}][{}]);'.format(prefix, name, suffix, vs[0], prefix, iork, vs[1])
+                v1 = 'atomic_add({}{}{}, &{}[{}{}][{}]);'.format(prefix, name, suffix, vs[0], prefix, iork, vs[1])
+            if 'onlyif' in it.keys():
+                v1 = 'if CONSTEXPR ({}) {}'.format(it['onlyif'], v1)
+            v = v + v1
     return v
 
 
@@ -576,6 +582,9 @@ if __name__ == '__main__':
                                 elif s2.startswith('addto:'):
                                     s3 = s2.replace('addto:', '')
                                     d['addto'] = s3
+                                elif s2.startswith('onlyif:'):
+                                    s3 = s2.replace('onlyif:', '')
+                                    d['onlyif'] = s3
         for k in [yamlkey.i_position, yamlkey.i_force, yamlkey.i_variables]:
             if k in config.keys():
                 lst = config[k]
@@ -851,7 +860,7 @@ if __name__ == '__main__':
     # output
 
 
-    print('// ck.py Version 2.0.2')
+    print('// ck.py Version 2.0.3')
     print('\n\n')
 
 

@@ -55,16 +55,28 @@ void kinetic_leapfrog(T_prec& temp)
 }
 
 
-void temper(time_prec dt, T_prec& temp)
+void temper(time_prec dt, T_prec& temp, bool save)
 {
-   kinetic(temp);
-   if (thermostat == NONE_THERMOSTAT)
+   if (thermostat == BUSSI_THERMOSTAT) {
+      kinetic(temp);
+      bussi_thermostat(dt, temp);
+   } else {
+      // We don't need temperature for NVE but we still compute it anyway.
+      if ((thermostat != NONE_THERMOSTAT and barostat != NONE_BAROSTAT) or
+          save) {
+         kinetic(temp);
+      }
+   }
+}
+
+
+void pressure(time_prec dt)
+{
+   if (barostat == NONE_BAROSTAT)
       return;
 
-   if (thermostat == BUSSI_THERMOSTAT)
-      bussi_thermostat(dt, temp);
-   else
-      assert(false);
+   if (barostat == BERENDSEN_BAROSTAT)
+      berendsen_barostat(dt);
 }
 
 
@@ -91,6 +103,12 @@ bool do_pmonte;
 void monte_carlo_barostat(energy_prec epot, T_prec temp)
 {
    monte_carlo_barostat_acc(epot, temp);
+}
+
+
+void berendsen_barostat(time_prec dt)
+{
+   berendsen_barostat_acc(dt);
 }
 
 

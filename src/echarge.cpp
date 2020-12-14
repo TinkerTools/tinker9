@@ -1,4 +1,5 @@
 #include "echarge.h"
+#include "echglj.h"
 #include "md.h"
 #include "nblist.h"
 #include "pmestuf.h"
@@ -169,6 +170,7 @@ void echarge(int vers)
       else
 #endif
          echarge_ewald_real_acc(vers);
+      pme_stream_finish_wait(use_pme_stream and (vers & calc::analyz));
    } else
       echarge_nonewald(vers);
 
@@ -207,6 +209,9 @@ void echarge_nonewald(int vers)
 
 void echarge_ewald_recip_self(int vers)
 {
+   pme_stream_start_wait(use_pme_stream);
+
+
    // ewald recip space, self term
    // ewald real space
 
@@ -239,5 +244,8 @@ void echarge_ewald_recip_self(int vers)
    else
 #endif
       echarge_ewald_fphi_self_acc(vers);
+
+
+   pme_stream_finish_record(use_pme_stream);
 }
 }

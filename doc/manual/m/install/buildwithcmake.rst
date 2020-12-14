@@ -170,9 +170,9 @@ Run unit tests in a random order. Exit on the first error.
 
 **man**
 
-Generate user's manual.
+Generate user manual.
 
 **doc**
 
-Generate developer's manual.
+Generate developer guides.
 

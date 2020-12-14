@@ -16,8 +16,23 @@ void kinetic_explicit_cu(T_prec& temp_out, energy_prec& eksum_out,
 void kinetic_leapfrog(T_prec& temp);
 
 
-void temper(time_prec dt, T_prec& temp);
-inline void pressure() {}
+void temper(time_prec dt, T_prec& temp, bool save);
+/**
+ * \ingroup mdpt
+ * \brief Berendsen barostat by scaling the coordinates and box dimensions via
+ * coupling to an external constant pressure bath. Code for anisotropic pressure
+ * coupling was provided by Guido Raos, Dipartimento di Chimica, Politecnico di
+ * Milano, Italy.
+ *
+ * Literature reference:
+ *    - <a href="https://doi.org/10.1063/1.448118">
+ *    H. J. C. Berendsen, J. P. M. Postma, W. F. van Gunsteren, A. DiNola,
+ *    and J. R. Hauk,
+ *    "Molecular dynamics with coupling to an external bath",
+ *    J. Chem. Phys., 81, 3684-3690 (1984).
+ *    </a>
+ */
+void pressure(time_prec dt);
 
 
 enum class Thermostat
@@ -73,6 +88,10 @@ extern bool do_pmonte;
  */
 void monte_carlo_barostat(energy_prec epot, T_prec temp);
 void monte_carlo_barostat_acc(energy_prec epot, T_prec temp);
+
+
+void berendsen_barostat(time_prec dt);
+void berendsen_barostat_acc(time_prec);
 
 
 //====================================================================//

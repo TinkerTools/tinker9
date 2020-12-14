@@ -34,7 +34,7 @@ public:
    /** Removes the file on disk if possible. */
    ~TestFile();
    /** Prevents the file being deleted. */
-   void keep();
+   void __keep();
 };
 
 
@@ -221,34 +221,3 @@ void test_mdinit(double t = 0, double atm = 0);
    }
 #define COMPARE_GRADIENT(ref_grad, eps)                                        \
    COMPARE_GRADIENT2(ref_grad, eps, [](int, int) { return true; })
-
-
-/**
- * \def COMPARE_BONDED_FORCE
- * \ingroup test
- * Compares the result of bonded (valence) force term.
- */
-#define COMPARE_BONDED_FORCE(cpu_count, gpu_e, gpu_v, ref_e, eps_e, ref_count, \
-                             ref_g, eps_g, ref_v, eps_v)                       \
-   {                                                                           \
-      auto do_ij_ = [](int, int) { return true; };                             \
-      energy(calc::v3);                                                        \
-      COMPARE_ENERGY(gpu_e, ref_e, eps_e);                                     \
-      REQUIRE(cpu_count == ref_count);                                         \
-                                                                               \
-      energy(calc::v1);                                                        \
-      COMPARE_ENERGY(gpu_e, ref_e, eps_e);                                     \
-      COMPARE_GRADIENT2(ref_g, eps_g, do_ij_);                                 \
-      COMPARE_VIR(gpu_v, ref_v, eps_v);                                        \
-                                                                               \
-      energy(calc::v4);                                                        \
-      COMPARE_ENERGY(gpu_e, ref_e, eps_e);                                     \
-      COMPARE_GRADIENT2(ref_g, eps_g, do_ij_);                                 \
-                                                                               \
-      energy(calc::v5);                                                        \
-      COMPARE_GRADIENT2(ref_g, eps_g, do_ij_);                                 \
-                                                                               \
-      energy(calc::v6);                                                        \
-      COMPARE_GRADIENT2(ref_g, eps_g, do_ij_);                                 \
-      COMPARE_VIR(gpu_v, ref_v, eps_v);                                        \
-   }

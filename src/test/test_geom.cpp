@@ -5,23 +5,6 @@
 using namespace tinker;
 
 
-static const char* ortho_box = R"**(
-a-axis 30.0
-)**";
-
-
-static const char* group_restrn = R"**(
-group 1     5
-group 2   7,8
-group 3 -9,14
-
-# force dist1 (dist2)
-restrain-groups 1 2  2.1     1.3
-restrain-groups 2 3  5.3     2.9 3.7
-restrainterm        only
-)**";
-
-
 TEST_CASE("Geom-Local-Frame2-1", "[ff][egeom][local-frame2]")
 {
    const char* k = "test_local_frame2.key";
@@ -31,9 +14,6 @@ TEST_CASE("Geom-Local-Frame2-1", "[ff][egeom][local-frame2]")
    int usage = calc::xyz | calc::mass | calc::vmask;
 
 
-   std::string k0 = ortho_box;
-
-
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
    TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
                 x);
@@ -41,9 +21,33 @@ TEST_CASE("Geom-Local-Frame2-1", "[ff][egeom][local-frame2]")
 
    SECTION("  - group restraint")
    {
-      k0 += group_restrn;
+      const char* k0 =
+         R"**(
+a-axis   30.0
+
+group 1     5
+group 2   7,8
+group 3 -9,14
+
+# force dist1 (dist2)
+restrain-groups 1 2  2.1     1.3
+restrain-groups 2 3  5.3     2.9 3.7
+restrainterm        only
+)**";
       TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key",
                    k, k0);
+
+
+      TestReference r(TINKER9_DIRSTR "/src/test/ref/geom.1.txt");
+      auto ref_e = r.get_energy();
+      auto ref_v = r.get_virial();
+      auto ref_count = r.get_count();
+      auto ref_g = r.get_gradient();
+
+
+      const double eps_e = 0.0001;
+      const double eps_g = 0.0001;
+      const double eps_v = 0.001;
 
 
       test_begin_with_args(argc, argv);
@@ -51,28 +55,32 @@ TEST_CASE("Geom-Local-Frame2-1", "[ff][egeom][local-frame2]")
       initialize();
 
 
-      const double eps_e = 0.0001;
-      const double ref_e = 11.0900;
-      const int ref_count = 2;
-      const double eps_g = 0.0001;
-      const double eps_v = 0.001;
-      const double ref_v[][3] = {{12.479, 12.738, 12.921},
-                                 {12.738, 13.378, 16.537},
-                                 {12.921, 16.537, 43.236}};
-      const double ref_g[][3] = {
-         {0.0000, 0.0000, 0.0000},    {0.0000, 0.0000, 0.0000},
-         {0.0000, 0.0000, 0.0000},    {0.0000, 0.0000, 0.0000},
-         {-5.0508, -4.7929, -1.9947}, {0.0000, 0.0000, 0.0000},
-         {3.5223, 3.8316, 5.7537},    {3.5223, 3.8316, 5.7537},
-         {-0.6803, -0.9793, -3.2457}, {-0.5833, -0.8398, -2.7832},
-         {-0.5833, -0.8398, -2.7832}, {-0.0490, -0.0705, -0.2336},
-         {-0.0490, -0.0705, -0.2336}, {-0.0490, -0.0705, -0.2336},
-         {0.0000, 0.0000, 0.0000},    {0.0000, 0.0000, 0.0000},
-         {0.0000, 0.0000, 0.0000},    {0.0000, 0.0000, 0.0000}};
+      energy(calc::v3);
+      COMPARE_REALS(esum, ref_e, eps_e);
+      COMPARE_INTS(ngfix, ref_count);
 
 
-      COMPARE_BONDED_FORCE(ngfix, eg, vir_eg, ref_e, eps_e, ref_count, ref_g,
-                           eps_g, ref_v, eps_v);
+      energy(calc::v1);
+      COMPARE_REALS(esum, ref_e, eps_e);
+      for (int i = 0; i < 3; ++i)
+         for (int j = 0; j < 3; ++j)
+            COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
+
+
+      energy(calc::v4);
+      COMPARE_REALS(esum, ref_e, eps_e);
+      COMPARE_GRADIENT(ref_g, eps_g);
+
+
+      energy(calc::v5);
+      COMPARE_GRADIENT(ref_g, eps_g);
+
+
+      energy(calc::v6);
+      COMPARE_GRADIENT(ref_g, eps_g);
+      for (int i = 0; i < 3; ++i)
+         for (int j = 0; j < 3; ++j)
+            COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
 
       finish();
