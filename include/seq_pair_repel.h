@@ -38,7 +38,7 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
                 real diy, real diz, real qixx, real qixy, real qixz, real qiyy,
                 real qiyz, real qizz, real sizk, real dmpk, real valk, real ck,
                 real dkx, real dky, real dkz, real qkxx, real qkxy, real qkxz,
-                real qkyy, real qkyz, real qkzz, mixed& restrict e,
+                real qkyy, real qkyz, real qkzz, real& restrict e,
                 PairRepelGrad& restrict pgrad)
 {
    real cut2 = cut * cut;
