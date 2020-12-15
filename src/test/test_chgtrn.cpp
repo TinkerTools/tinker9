@@ -5,7 +5,7 @@
 using namespace tinker;
 
 
-TEST_CASE("ECHGTRN-1", "[ff][echgtrn][dmso]")
+TEST_CASE("ECHGTRN-1", "[ff][hippo][echgtrn][dmso]")
 {
    TestFile fx1(TINKER9_DIRSTR "/src/test/file/dmso/dmso.xyz");
    TestFile fk1(TINKER9_DIRSTR "/src/test/file/hippo/chgtrn/chgtrn.key");
@@ -18,7 +18,7 @@ TEST_CASE("ECHGTRN-1", "[ff][echgtrn][dmso]")
 
    const double eps_e = test_get_eps(0.0001, 0.0001);
    const double eps_g = test_get_eps(0.0001, 0.0001);
-   const double eps_v = test_get_eps(0.0005, 0.0001);
+   const double eps_v = test_get_eps(0.0005, 0.0004);
 
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/chgtrn.1.txt");

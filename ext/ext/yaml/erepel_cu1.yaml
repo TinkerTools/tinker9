@@ -94,9 +94,9 @@ K_VARIABLES:
 #SCALED_PAIRWISE_INTERACTION: |
 
 FULL_PAIRWISE_INTERACTION: |
-  real xr = xk - xi;
-  real yr = yk - yi;
-  real zr = zk - zi;
+  real xr = xk - @xi@;
+  real yr = yk - @yi@;
+  real zr = zk - @zi@;
 
   real e;
   PairRepelGrad pgrad;
@@ -105,9 +105,9 @@ FULL_PAIRWISE_INTERACTION: |
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
     pair_repel<do_g>( //
-      r2, scalea, cut, off, xr, yr, zr, sizi,
-      dmpi, vali, ci, dix, diy, diz, qixx, qixy,
-      qixz, qiyy, qiyz, qizz, sizk, dmpk, valk, ck,
+      r2, scalea, cut, off, xr, yr, zr, @sizi@,
+      @dmpi@, @vali@, @ci@, @dix@, @diy@, @diz@, @qixx@, @qixy@,
+      @qixz@, @qiyy@, @qiyz@, @qizz@, sizk, dmpk, valk, ck,
       dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy,
       qkyz, qkzz, e, pgrad);
 
@@ -117,17 +117,17 @@ FULL_PAIRWISE_INTERACTION: |
     if CONSTEXPR (do_e)
         ertl += cvt_to<ebuf_prec>(e);
     if CONSTEXPR (do_g) {
-      shgxi[klane] += pgrad.frcx;
-      shgyi[klane] += pgrad.frcy;
-      shgzi[klane] += pgrad.frcz;
+      @gxi@ += pgrad.frcx;
+      @gyi@ += pgrad.frcy;
+      @gzi@ += pgrad.frcz;
       gxk -= pgrad.frcx;
       gyk -= pgrad.frcy;
       gzk -= pgrad.frcz;
 
 
-      shtxi[klane] += pgrad.ttqi[0];
-      shtyi[klane] += pgrad.ttqi[1];
-      shtzi[klane] += pgrad.ttqi[2];
+      @txi@ += pgrad.ttqi[0];
+      @tyi@ += pgrad.ttqi[1];
+      @tzi@ += pgrad.ttqi[2];
       txk += pgrad.ttqk[0];
       tyk += pgrad.ttqk[1];
       tzk += pgrad.ttqk[2];

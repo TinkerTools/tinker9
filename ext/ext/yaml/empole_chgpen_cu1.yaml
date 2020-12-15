@@ -1,5 +1,5 @@
 KERNEL_NAME: empole_chgpen_cu1
-TEMPLATE_PARAMS: template <class Ver, class ETYP, int CFLX>
+TEMPLATE_PARAMS: template <class Ver, class ETYP, bool CFLX>
 CONSTEXPR_FLAGS: |
   constexpr bool do_a = Ver::a;
   constexpr bool do_e = Ver::e;
@@ -53,7 +53,7 @@ I_FORCE:
   - def: shared real txi addto:trqx
   - def: shared real tyi addto:trqy
   - def: shared real tzi addto:trqz
-  - def: shared real poti addto:pot
+  - def: shared real poti addto:pot onlyif:CFLX
 K_FORCE:
   - def: register real gxk addto:gx
   - def: register real gyk addto:gy
@@ -61,7 +61,7 @@ K_FORCE:
   - def: register real txk addto:trqx
   - def: register real tyk addto:trqy
   - def: register real tzk addto:trqz
-  - def: register real potk addto:pot
+  - def: register real potk addto:pot onlyif:CFLX
 
 I_VARIABLES:
   - def: shared real ci from:rpole,mpl_pme_0
@@ -92,12 +92,10 @@ K_VARIABLES:
   - def: register real alphak from:palpha
   - def: register real valk from:pval
 
-#SCALED_PAIRWISE_INTERACTION: |
-
-FULL_PAIRWISE_INTERACTION: |
-  real xr = xk - xi;
-  real yr = yk - yi;
-  real zr = zk - zi;
+SCALED_PAIRWISE_INTERACTION: |
+  real xr = xk - @xi@;
+  real yr = yk - @yi@;
+  real zr = zk - @zi@;
 
   real e;
   real pota, potb;
@@ -108,28 +106,28 @@ FULL_PAIRWISE_INTERACTION: |
   if (r2 <= off * off and incl) {
     pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(
       r2, xr, yr, zr, scalea,                  //
-      ci, dix, diy, diz, corei, vali, alphai, //
-      qixx, qixy, qixz, qiyy, qiyz, qizz, //
+      @ci@, @dix@, @diy@, @diz@, @corei@, @vali@, @alphai@, //
+      @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@, //
       ck, dkx, dky, dkz, corek, valk, alphak, //
       qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, //
       f, aewald, e, pota, potb, pgrad);
 
     if CONSTEXPR (do_a)
-      if (e != 0)
+      if (e != 0 and scalea != 0)
           nemtl += 1;
     if CONSTEXPR (do_e)
         emtl += cvt_to<ebuf_prec>(e);
     if CONSTEXPR (do_g) {
-      shgxi[klane] += pgrad.frcx;
-      shgyi[klane] += pgrad.frcy;
-      shgzi[klane] += pgrad.frcz;
+      @gxi@ += pgrad.frcx;
+      @gyi@ += pgrad.frcy;
+      @gzi@ += pgrad.frcz;
       gxk -= pgrad.frcx;
       gyk -= pgrad.frcy;
       gzk -= pgrad.frcz;
 
-      shtxi[klane] += pgrad.ttmi[0];
-      shtyi[klane] += pgrad.ttmi[1];
-      shtzi[klane] += pgrad.ttmi[2];
+      @txi@ += pgrad.ttmi[0];
+      @tyi@ += pgrad.ttmi[1];
+      @tzi@ += pgrad.ttmi[2];
       txk += pgrad.ttmk[0];
       tyk += pgrad.ttmk[1];
       tzk += pgrad.ttmk[2];
@@ -143,7 +141,61 @@ FULL_PAIRWISE_INTERACTION: |
       vemtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
     }
     if CONSTEXPR (CFLX) {
-      shpoti[klane] += pota;
+      @poti@ += pota;
+      potk += potb;
+    }
+  } // end if (include)
+
+FULL_PAIRWISE_INTERACTION: |
+  real xr = xk - @xi@;
+  real yr = yk - @yi@;
+  real zr = zk - @zi@;
+
+  real e;
+  real pota, potb;
+  PairMPoleGrad pgrad;
+  zero(pgrad);
+
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(
+      r2, xr, yr, zr, 1,                  //
+      @ci@, @dix@, @diy@, @diz@, @corei@, @vali@, @alphai@, //
+      @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@, //
+      ck, dkx, dky, dkz, corek, valk, alphak, //
+      qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, //
+      f, aewald, e, pota, potb, pgrad);
+
+    if CONSTEXPR (do_a)
+      if (e != 0)
+          nemtl += 1;
+    if CONSTEXPR (do_e)
+        emtl += cvt_to<ebuf_prec>(e);
+    if CONSTEXPR (do_g) {
+      @gxi@ += pgrad.frcx;
+      @gyi@ += pgrad.frcy;
+      @gzi@ += pgrad.frcz;
+      gxk -= pgrad.frcx;
+      gyk -= pgrad.frcy;
+      gzk -= pgrad.frcz;
+
+      @txi@ += pgrad.ttmi[0];
+      @tyi@ += pgrad.ttmi[1];
+      @tzi@ += pgrad.ttmi[2];
+      txk += pgrad.ttmk[0];
+      tyk += pgrad.ttmk[1];
+      tzk += pgrad.ttmk[2];
+    }
+    if CONSTEXPR (do_v) {
+      vemtlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
+      vemtlyx += cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+      vemtlzx += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
+      vemtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
+      vemtlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
+      vemtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
+    }
+    if CONSTEXPR (CFLX) {
+      @poti@ += pota;
       potk += potb;
     }
   } // end if (include)

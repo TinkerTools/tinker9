@@ -14,7 +14,7 @@
 
 
 namespace tinker {
-// ck.py Version 2.0.2
+// ck.py Version 2.0.3
 template <class ETYP>
 __global__
 void dfield_chgpen_cu1(
@@ -374,7 +374,7 @@ void dfield_chgpen_nonewald_cu(real (*field)[3])
 }
 
 
-// ck.py Version 2.0.2
+// ck.py Version 2.0.3
 template <class ETYP>
 __global__
 void ufield_chgpen_cu1(
