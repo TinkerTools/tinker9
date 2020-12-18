@@ -984,29 +984,6 @@ void fphi_uind2_cu(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10])
 }
 
 
-void pme_cuda_func_config()
-{
-   // grid
-
-   auto grid_mpolek = grid_put_cu1<MPOLE, 5>;
-   check_rt(cudaFuncSetCacheConfig(grid_mpolek, cudaFuncCachePreferNone));
-
-   auto grid_uindk = grid_put_cu1<UIND, 5>;
-   check_rt(cudaFuncSetCacheConfig(grid_uindk, cudaFuncCachePreferNone));
-
-   // fphi
-
-   auto fphi_mpole = fphi_get_cu<MPOLE, 5>;
-   check_rt(cudaFuncSetCacheConfig(fphi_mpole, cudaFuncCachePreferL1));
-
-   auto fphi_uind = fphi_get_cu<UIND, 5>;
-   check_rt(cudaFuncSetCacheConfig(fphi_uind, cudaFuncCachePreferL1));
-
-   auto fphi_uind2 = fphi_get_cu<UIND2, 5>;
-   check_rt(cudaFuncSetCacheConfig(fphi_uind2, cudaFuncCachePreferL1));
-}
-
-
 template <bool DO_E, bool DO_V>
 __global__
 void pme_conv_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2],
