@@ -98,8 +98,8 @@ C.G. Terms            Tinker variables and routines
 :math:`M`             uscale()
 ====================  =============================
 
-Polarization Model: AMOEBA (Thole Damping)
-------------------------------------------
+Polarization Model: AMOEBA (Thole Damping 2)
+--------------------------------------------
 
 AMOEBA force field adopts two polarization schemes, *d* and *p*, for the
 external field due to the permanent multipoles, and a third scheme *u* for
@@ -138,6 +138,51 @@ another target function
 The difference in two target functions is usually negligible unless other
 loose convergence methods are used to compute the induced dipoles.
 
+In the Thole damping model, a charge distribution
+:math:`\rho` is used as a replacement for the point dipole model.
+AMOEBA adopts the second functional form
+
 .. math::
 
-   \rho = \frac{3a}{4\pi}\exp(-au^3).
+   \rho = \frac{3a}{4\pi}\exp(-au^3)
+
+from paper :cite:`thole-damping`, where *u* is the polarizability-scaled
+distance. The electrostatic field and potential at distance *r* can be obtained
+from Gauss's law,
+
+.. math::
+
+   E(r) = -\phi'(r) = \frac{1}{r^2} \int_0^u du\ 4\pi u^2 \rho = \frac{1-\exp(-au^3)}{r^2},
+
+.. math::
+
+   \phi(r) = \int_r^\infty dr\ E(r) = \frac{\lambda_1}{r} = \frac{1}{r}\left(
+      1-\frac{(au^3)^\frac{1}{3}}{3}\Gamma(-\frac{1}{3},au^3)\right),
+
+where :math:`\lambda_1` serves as the :math:`B_0` term in EWALD
+quadrupole interactions.
+:math:`\lambda_n` terms are also related via derivatives.
+
+.. math::
+
+   \phi'_i         &= \phi'\frac{r_i}{r}, \\
+   \phi''_{ij}     &= \left(\phi''-\frac{\phi'}{r}\right)\frac{r_i r_j}{r^2} + \frac{\phi'}{r}\delta_{ij} \\
+   \phi'''_{ijk}   &= \\
+   \phi''''_{ijkl} &=
+
+.. math::
+
+   \phi^{[2]} &= \frac{1}{r^3}\left[2-(2+3au^3)\exp(-au^3)\right],          \\
+   \phi^{[3]} &= \frac{3}{r^4}\left[-2+(2+2au^3+3a^2u^6)\exp(-au^3)\right], \\
+   \phi^{[4]} &= \frac{3}{r^5}\left[8-(8+8au^3+9a^3u^9)\exp(-au^3)\right].
+
+.. math::
+
+   (\lambda_1/r)'=-\lambda_3/r^2 &\Rightarrow
+   \lambda_3 = 1 - \exp(-au^3),                                         \\
+   \frac{3\lambda_3}{r^5} = \phi^{[2]} &\Rightarrow
+   \lambda_5 = 1 - (1+au^3)\exp(-au^3),                                \\
+   &\Rightarrow
+   \lambda_7 = 1 - \left(1+au^3+\frac{3}{5}(au^3)^2\right)\exp(-au^3), \\
+   &\Rightarrow
+   \lambda_9 = 1 - \left(1+au^3+\frac{18}{35}(au^3)^2+\frac{9}{35}(au^3)^3\right)\exp(-au^3).
