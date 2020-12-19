@@ -32,7 +32,7 @@ The polarization energy is given by
 On the right-hand side of :eq:`polar1`:
 
    - the 1st term is the contribution from the external field;
-   - the 2nd term is the mutual polarization energy.
+   - the 2nd term is the mutual and self polarization energy.
 
 Finally, the polarization energy is
 
@@ -156,33 +156,40 @@ from Gauss's law,
 
 .. math::
 
-   \phi(r) = \int_r^\infty dr\ E(r) = \frac{\lambda_1}{r} = \frac{1}{r}\left(
-      1-\frac{(au^3)^\frac{1}{3}}{3}\Gamma(-\frac{1}{3},au^3)\right),
+   \phi(r) = \int_r^\infty dr\ E(r) = \frac{\lambda_1}{r} = \frac{1}{r}\left[
+      1-\frac{(au^3)^\frac{1}{3}}{3}\Gamma(-\frac{1}{3},au^3)\right],
 
 where :math:`\lambda_1` serves as the :math:`B_0` term in EWALD
 quadrupole interactions.
-:math:`\lambda_n` terms are also related via derivatives.
+:math:`\lambda_n` terms are also related via derivatives
 
 .. math::
 
-   \phi'_i         &= \phi'\frac{r_i}{r}, \\
-   \phi''_{ij}     &= \left(\phi''-\frac{\phi'}{r}\right)\frac{r_i r_j}{r^2} + \frac{\phi'}{r}\delta_{ij} \\
-   \phi'''_{ijk}   &= \\
-   \phi''''_{ijkl} &=
+   \phi'' &= \frac{1}{r^3}\left[2-(2+3au^3)\exp(-au^3)\right],          \\
+   \phi''' &= \frac{3}{r^4}\left[-2+(2+2au^3+3a^2u^6)\exp(-au^3)\right], \\
+   \phi'''' &= \frac{3}{r^5}\left[8-(8+8au^3+9a^3u^9)\exp(-au^3)\right],
 
 .. math::
 
-   \phi^{[2]} &= \frac{1}{r^3}\left[2-(2+3au^3)\exp(-au^3)\right],          \\
-   \phi^{[3]} &= \frac{3}{r^4}\left[-2+(2+2au^3+3a^2u^6)\exp(-au^3)\right], \\
-   \phi^{[4]} &= \frac{3}{r^5}\left[8-(8+8au^3+9a^3u^9)\exp(-au^3)\right].
+   \phi'_i        &= \phi'\frac{r_i}{r}, \\
+   \phi''_{ij}    &= \left(\phi''-\frac{\phi'}{r}\right)\frac{r_i r_j}{r^2}
+                     +\frac{\phi'}{r}\delta_{ij}, \\
+   \phi'''_{ijk}  &= \left(\phi'''-\frac{3\phi''}{r}+\frac{3\phi'}{r^2}\right)\frac{r_i r_j r_k}{r^3}
+                     +\left(\frac{\phi''}{r}-\frac{\phi'}{r^2}\right)\frac{\sum r_k \delta_{ij}}{r}, \\
+   \phi''''_{ijkl}&= \left(\phi''''-\frac{6\phi'''}{r}+\frac{15\phi''}{r^2}-\frac{15\phi'}{r^3}\right)
+                     \frac{r_i r_j r_k r_l}{r^4} \\
+                  &+\left(\frac{\phi'''}{r}-\frac{3\phi''}{r^2}+\frac{3\phi'}{r^3}\right)\frac{\sum r_k r_l\delta_{ij}}{r^2}
+                     +\left(\frac{\phi''}{r^2}-\frac{\phi'}{r^3}\right)\sum\delta_{kl}\delta_{ij}.
+
+Thus,
 
 .. math::
 
-   (\lambda_1/r)'=-\lambda_3/r^2 &\Rightarrow
-   \lambda_3 = 1 - \exp(-au^3),                                         \\
-   \frac{3\lambda_3}{r^5} = \phi^{[2]} &\Rightarrow
-   \lambda_5 = 1 - (1+au^3)\exp(-au^3),                                \\
-   &\Rightarrow
-   \lambda_7 = 1 - \left(1+au^3+\frac{3}{5}(au^3)^2\right)\exp(-au^3), \\
-   &\Rightarrow
-   \lambda_9 = 1 - \left(1+au^3+\frac{18}{35}(au^3)^2+\frac{9}{35}(au^3)^3\right)\exp(-au^3).
+   -\lambda_3/r^3 &= \phi'/r \Rightarrow        \\
+                  &\lambda_3 = 1 - \exp(-au^3), \\
+   3\lambda_5/r^5 &= (\phi''-\phi'/r)/r^2 \Rightarrow   \\
+                  &\lambda_5 = 1 - (1+au^3)\exp(-au^3), \\
+   -15\lambda_7/r^7 &= (\phi'''-3\phi''/r+3\phi'/r^2)/r^3 \Rightarrow                   \\
+                    &\lambda_7 = 1 - \left(1+au^3+\frac{3}{5}a^2 u^6\right)\exp(-au^3), \\
+   105\lambda_9/r^9 &= (\phi''''-6\phi'''/r+15\phi''/r^2-15\phi'/r^3)/r^4 \Rightarrow   \\
+                    &\lambda_9 = 1 - \left(1+au^3+\frac{18}{35}a^2 u^6+\frac{9}{35}a^3 u^9\right)\exp(-au^3).
