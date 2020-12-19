@@ -15,7 +15,10 @@ void egeom_data(rc_op op)
    bool rc_a = rc_flag & calc::analyz;
 
    if (op & rc_dealloc) {
+      ngfix = 0;
       darray::deallocate(igfix, gfix);
+      ndfix = 0;
+      darray::deallocate(idfix, dfix);
 
       if (rc_a)
          buffer_deallocate(rc_flag, eg, vir_eg, degx, degy, degz);
@@ -30,6 +33,8 @@ void egeom_data(rc_op op)
    if (op & rc_alloc) {
       ngfix = restrn::ngfix;
       darray::allocate(ngfix, &igfix, &gfix);
+      ndfix = restrn::ndfix;
+      darray::allocate(ndfix, &idfix, &dfix);
 
       eg = eng_buf;
       vir_eg = vir_buf;
@@ -44,6 +49,12 @@ void egeom_data(rc_op op)
    if (op & rc_init) {
       darray::copyin(g::q0, ngfix, igfix, restrn::igfix);
       darray::copyin(g::q0, ngfix, gfix, restrn::gfix);
+      std::vector<int> idfixbuf(2 * ndfix);
+      for (int i = 0; i < 2 * ndfix; ++i) {
+         idfixbuf[i] = restrn::idfix[i] - 1;
+      }
+      darray::copyin(g::q0, ndfix, idfix, idfixbuf.data());
+      darray::copyin(g::q0, ndfix, dfix, restrn::dfix);
       wait_for(g::q0);
    }
 }

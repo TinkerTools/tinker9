@@ -1,4 +1,4 @@
- test_geom.cpp
+ test_geom.cpp -- group restraint
 
  Energy Component Breakdown :           Kcal/mole        Interactions
  Geometric Restraints                     11.0900                2

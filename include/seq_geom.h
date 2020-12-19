@@ -8,7 +8,7 @@ namespace tinker {
 #pragma acc routine seq
 template <class Ver>
 SEQ_CUDA
-void dk_geom(
+void dk_geom_group(
    real& restrict e, real& restrict vxx, real& restrict vyx, real& restrict vzx,
    real& restrict vyy, real& restrict vzy, real& restrict vzz,
 
@@ -109,6 +109,75 @@ void dk_geom(
          atomic_add(-dedy * ratio, degy, k);
          atomic_add(-dedz * ratio, degz, k);
       }
+      if CONSTEXPR (do_v) {
+         vxx = xr * dedx;
+         vyx = yr * dedx;
+         vzx = zr * dedx;
+         vyy = yr * dedy;
+         vzy = zr * dedy;
+         vzz = zr * dedz;
+      }
+   }
+}
+
+
+#pragma acc routine seq
+template <class Ver>
+SEQ_CUDA
+void dk_geom_distance(
+   real& restrict e, real& restrict vxx, real& restrict vyx, real& restrict vzx,
+   real& restrict vyy, real& restrict vzy, real& restrict vzz,
+
+   grad_prec* restrict degx, grad_prec* restrict degy, grad_prec* restrict degz,
+
+   int i, const int (*restrict idfix)[2], const real (*restrict dfix)[3],
+
+   const real* restrict x, const real* restrict y, const real* restrict z,
+   const int* restrict molec, TINKER_IMAGE_PARAMS)
+{
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
+
+
+   int ia = idfix[i][0];
+   int ib = idfix[i][1];
+   real force = dfix[i][0];
+   real df1 = dfix[i][1];
+   real df2 = dfix[i][2];
+
+   real xr = x[ia] - x[ib];
+   real yr = y[ia] - y[ib];
+   real zr = z[ia] - z[ib];
+   bool intermol = molec[ia] != molec[ib];
+   if (intermol)
+      image(xr, yr, zr);
+   real r = REAL_SQRT(xr * xr + yr * yr + zr * zr);
+   real target = r;
+   if (r < df1)
+      target = df1;
+   if (r > df2)
+      target = df2;
+   real dt = r - target;
+
+
+   if CONSTEXPR (do_e) {
+      real dt2 = dt * dt;
+      e = force * dt2;
+   }
+   if CONSTEXPR (do_g) {
+      if (r == 0)
+         r = 1;
+      real de = 2 * force * dt * REAL_RECIP(r);
+      real dedx = de * xr;
+      real dedy = de * yr;
+      real dedz = de * zr;
+      atomic_add(dedx, degx, ia);
+      atomic_add(dedy, degy, ia);
+      atomic_add(dedz, degz, ia);
+      atomic_add(-dedx, degx, ib);
+      atomic_add(-dedy, degy, ib);
+      atomic_add(-dedz, degz, ib);
       if CONSTEXPR (do_v) {
          vxx = xr * dedx;
          vyx = yr * dedx;

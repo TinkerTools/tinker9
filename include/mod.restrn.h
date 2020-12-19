@@ -15,6 +15,11 @@ TINKER_EXTERN int (*igfix)[2];
 TINKER_EXTERN real (*gfix)[3];
 
 
+TINKER_EXTERN int ndfix;
+TINKER_EXTERN int (*idfix)[2];
+TINKER_EXTERN real (*dfix)[3];
+
+
 TINKER_EXTERN energy_buffer eg;
 TINKER_EXTERN virial_buffer vir_eg;
 TINKER_EXTERN grad_prec* degx;

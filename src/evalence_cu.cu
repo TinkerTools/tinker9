@@ -122,6 +122,8 @@ void evalence_cu1(
 
    int ngfix, const int (*restrict igfix)[2], const real (*restrict gfix)[3],
 
+   int ndfix, const int (*restrict idfix)[2], const real (*restrict dfix)[3],
+
    // total
    energy_buffer restrict ebuf, virial_buffer restrict vbuf,
 
@@ -520,17 +522,17 @@ void evalence_cu1(
    }
 
 
-   // egeom
+   // egeom group
    for (int i = ithread; i < ngfix; i += stride) {
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
-      dk_geom<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
+      dk_geom_group<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                   degx, degy, degz,
+                         degx, degy, degz,
 
-                   i, igfix, gfix,
+                         i, igfix, gfix,
 
-                   x, y, z, mass, molec, igrp, kgrp, grpmass,
-                   TINKER_IMAGE_ARGS);
+                         x, y, z, mass, molec, igrp, kgrp, grpmass,
+                         TINKER_IMAGE_ARGS);
       if CONSTEXPR (do_e) {
          e0g += cvt_to<ebuf_prec>(e);
       }
@@ -543,13 +545,35 @@ void evalence_cu1(
          v0gzz += cvt_to<vbuf_prec>(vzz);
       }
    }
-   if CONSTEXPR (do_e and rc_a) {
-      if (ngfix > 0)
-         atomic_add(e0g, eg, ithread);
+   // egeom distance
+   for (int i = ithread; i < ndfix; i += stride) {
+      real e, vxx, vyx, vzx, vyy, vzy, vzz;
+      dk_geom_distance<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
+
+                            degx, degy, degz,
+
+                            i, idfix, dfix,
+
+                            x, y, z, molec, TINKER_IMAGE_ARGS);
+      if CONSTEXPR (do_e) {
+         e0g += cvt_to<ebuf_prec>(e);
+      }
+      if CONSTEXPR (do_v) {
+         v0gxx += cvt_to<vbuf_prec>(vxx);
+         v0gyx += cvt_to<vbuf_prec>(vyx);
+         v0gzx += cvt_to<vbuf_prec>(vzx);
+         v0gyy += cvt_to<vbuf_prec>(vyy);
+         v0gzy += cvt_to<vbuf_prec>(vzy);
+         v0gzz += cvt_to<vbuf_prec>(vzz);
+      }
    }
-   if CONSTEXPR (do_v and rc_a) {
-      if (ngfix > 0)
+   if (ngfix + ndfix > 0) {
+      if CONSTEXPR (do_e and rc_a) {
+         atomic_add(e0g, eg, ithread);
+      }
+      if CONSTEXPR (do_v and rc_a) {
          atomic_add(v0gxx, v0gyx, v0gzx, v0gyy, v0gzy, v0gzz, vir_eg, ithread);
+      }
    }
 
 
@@ -635,6 +659,7 @@ void evalence_cu1(
    tnx, tny, ttx, tty, tbf, tbx, tby, tbxy,                                    \
    /* egeom */ eg, vir_eg, degx, degy, degz,                                   \
    flag_geom ? ngfix : 0, igfix, gfix,                                         \
+   flag_geom ? ndfix : 0, idfix, dfix,                                         \
    /* total */ eng_buf, vir_buf,                                               \
    /* other */ x, y, z, mass, molecule.molecule,                               \
    grp.igrp, grp.kgrp, grp.grpmass, TINKER_IMAGE_ARGS

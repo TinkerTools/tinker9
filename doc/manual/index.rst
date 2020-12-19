@@ -15,8 +15,8 @@ Tinker9 User Manual
    m/intro
    m/install/index
    m/feat/index
-   m/key/index
    m/elec/index
+   m/key/index
 
 .. toctree::
    :caption: References

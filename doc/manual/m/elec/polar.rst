@@ -63,15 +63,11 @@ and the polarization gradient is
 .. math::
 
    U' &= -\frac{1}{2} (E\mu' + \mu E') \\
-      &= -\frac{1}{2} [\mu\tilde{T}\tilde{T}^{-1}(\epsilon' +E' -\tilde{T}'\mu) +\mu E'] \\
-      &= -\frac{1}{2} (\mu\epsilon' +\mu E' -\mu\tilde{T}'\mu +\mu E').
+      &= -\frac{1}{2} [(-\epsilon+\mu\tilde{T})\tilde{T}^{-1}(\epsilon' +E' -\tilde{T}'\mu) +\mu E'] \\
+      &\approx -\frac{1}{2} (\mu E' -\mu\tilde{T}'\mu +\mu E'),
 
-If the convergence of :eq:`u-dipole2` is tight, :math:`\epsilon` and :math:`\epsilon'`
-terms will drop. The polarization gradient becomes
-
-.. math::
-
-   U' = -\frac{1}{2} (\mu E' -\mu\tilde{T}'\mu +\mu E').
+only if the convergence of :eq:`u-dipole2` is tight that :math:`\epsilon` and :math:`\epsilon'`
+terms will drop.
 
 Conjugate Gradient
 ------------------
