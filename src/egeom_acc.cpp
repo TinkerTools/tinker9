@@ -81,6 +81,23 @@ void egeom_acc1()
       if CONSTEXPR (do_v)
          atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_eg, offset);
    }
+
+   // torsion restraints
+   #pragma acc parallel loop independent async\
+               deviceptr(x,y,z,degx,degy,degz,itfix,tfix,eg,vir_eg)
+   for (int i = 0; i < ntfix; ++i) {
+      int offset = i & (bufsize - 1);
+      real e, vxx, vyx, vzx, vyy, vzy, vzz;
+      dk_geom_torsion<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
+
+                           degx, degy, degz,
+
+                           i, itfix, tfix, x, y, z);
+      if CONSTEXPR (do_e)
+         atomic_add(e, eg, offset);
+      if CONSTEXPR (do_v)
+         atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_eg, offset);
+   }
 }
 
 

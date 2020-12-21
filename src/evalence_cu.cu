@@ -591,6 +591,26 @@ void evalence_cu1(
          v0gzz += cvt_to<vbuf_prec>(vzz);
       }
    }
+   // egeom torsion
+   for (int i = ithread; i < ntfix; i += stride) {
+      real e, vxx, vyx, vzx, vyy, vzy, vzz;
+      dk_geom_torsion<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
+
+                           degx, degy, degz,
+
+                           i, itfix, tfix, x, y, z);
+      if CONSTEXPR (do_e) {
+         e0g += cvt_to<ebuf_prec>(e);
+      }
+      if CONSTEXPR (do_v) {
+         v0gxx += cvt_to<vbuf_prec>(vxx);
+         v0gyx += cvt_to<vbuf_prec>(vyx);
+         v0gzx += cvt_to<vbuf_prec>(vzx);
+         v0gyy += cvt_to<vbuf_prec>(vyy);
+         v0gzy += cvt_to<vbuf_prec>(vzy);
+         v0gzz += cvt_to<vbuf_prec>(vzz);
+      }
+   }
    if (ngfix + ndfix + nafix + ntfix > 0) {
       if CONSTEXPR (do_e and rc_a) {
          atomic_add(e0g, eg, ithread);
