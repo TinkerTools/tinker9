@@ -146,6 +146,7 @@ void dk_geom_distance(
    real df1 = dfix[i][1];
    real df2 = dfix[i][2];
 
+
    real xr = x[ia] - x[ib];
    real yr = y[ia] - y[ib];
    real zr = z[ia] - z[ib];
@@ -185,6 +186,116 @@ void dk_geom_distance(
          vyy = yr * dedy;
          vzy = zr * dedy;
          vzz = zr * dedz;
+      }
+   }
+}
+
+
+#pragma acc routine seq
+template <class Ver>
+SEQ_CUDA
+void dk_geom_angle(
+   real& restrict e, real& restrict vxx, real& restrict vyx, real& restrict vzx,
+   real& restrict vyy, real& restrict vzy, real& restrict vzz,
+
+   grad_prec* restrict degx, grad_prec* restrict degy, grad_prec* restrict degz,
+
+   int i, const int (*restrict iafix)[3], const real (*restrict afix)[3],
+
+   const real* restrict x, const real* restrict y, const real* restrict z)
+{
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
+   if CONSTEXPR (do_e)
+      e = 0;
+   if CONSTEXPR (do_v)
+      vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
+
+
+   int ia = iafix[i][0];
+   int ib = iafix[i][1];
+   int ic = iafix[i][2];
+   real force = afix[i][0];
+   real af1 = afix[i][1];
+   real af2 = afix[i][2];
+
+
+   real xia = x[ia];
+   real yia = y[ia];
+   real zia = z[ia];
+   real xib = x[ib];
+   real yib = y[ib];
+   real zib = z[ib];
+   real xic = x[ic];
+   real yic = y[ic];
+   real zic = z[ic];
+
+
+   real xab = xia - xib;
+   real yab = yia - yib;
+   real zab = zia - zib;
+   real xcb = xic - xib;
+   real ycb = yic - yib;
+   real zcb = zic - zib;
+   real rab2 = xab * xab + yab * yab + zab * zab;
+   real rcb2 = xcb * xcb + ycb * ycb + zcb * zcb;
+   if (rab2 != 0 && rcb2 != 0) {
+      real xp = ycb * zab - zcb * yab;
+      real yp = zcb * xab - xcb * zab;
+      real zp = xcb * yab - ycb * xab;
+      real rp = REAL_SQRT(xp * xp + yp * yp + zp * zp);
+      rp = REAL_MAX(rp, (real)0.0001);
+      real dot = xab * xcb + yab * ycb + zab * zcb;
+      real cosine = dot * REAL_RSQRT(rab2 * rcb2);
+      cosine = REAL_MIN((real)1, REAL_MAX((real)-1, cosine));
+      real angle = radian * REAL_ACOS(cosine);
+
+
+      real target = angle;
+      if (angle < af1)
+         target = af1;
+      if (angle > af2)
+         target = af2;
+      real dt = angle - target;
+
+
+      if CONSTEXPR (do_e) {
+         real dt2 = dt * dt;
+         e = force * dt2;
+      }
+      if CONSTEXPR (do_g) {
+         real deddt = 2 * force * dt * radian;
+         real terma = -deddt * REAL_RECIP(rab2 * rp);
+         real termc = deddt * REAL_RECIP(rcb2 * rp);
+         real dedxia = terma * (yab * zp - zab * yp);
+         real dedyia = terma * (zab * xp - xab * zp);
+         real dedzia = terma * (xab * yp - yab * xp);
+         real dedxic = termc * (ycb * zp - zcb * yp);
+         real dedyic = termc * (zcb * xp - xcb * zp);
+         real dedzic = termc * (xcb * yp - ycb * xp);
+         real dedxib = -dedxia - dedxic;
+         real dedyib = -dedyia - dedyic;
+         real dedzib = -dedzia - dedzic;
+
+
+         atomic_add(dedxia, degx, ia);
+         atomic_add(dedyia, degy, ia);
+         atomic_add(dedzia, degz, ia);
+         atomic_add(dedxib, degx, ib);
+         atomic_add(dedyib, degy, ib);
+         atomic_add(dedzib, degz, ib);
+         atomic_add(dedxic, degx, ic);
+         atomic_add(dedyic, degy, ic);
+         atomic_add(dedzic, degz, ic);
+         if CONSTEXPR (do_v) {
+            vxx = xab * dedxia + xcb * dedxic;
+            vyx = yab * dedxia + ycb * dedxic;
+            vzx = zab * dedxia + zcb * dedxic;
+            vyy = yab * dedyia + ycb * dedyic;
+            vzy = zab * dedyia + zcb * dedyic;
+            vzz = zab * dedzia + zcb * dedzic;
+         }
       }
    }
 }

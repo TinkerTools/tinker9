@@ -19,6 +19,10 @@ void egeom_data(rc_op op)
       darray::deallocate(igfix, gfix);
       ndfix = 0;
       darray::deallocate(idfix, dfix);
+      nafix = 0;
+      darray::deallocate(iafix, afix);
+      ntfix = 0;
+      darray::deallocate(itfix, tfix);
 
       if (rc_a)
          buffer_deallocate(rc_flag, eg, vir_eg, degx, degy, degz);
@@ -35,6 +39,10 @@ void egeom_data(rc_op op)
       darray::allocate(ngfix, &igfix, &gfix);
       ndfix = restrn::ndfix;
       darray::allocate(ndfix, &idfix, &dfix);
+      nafix = restrn::nafix;
+      darray::allocate(nafix, &iafix, &afix);
+      ntfix = restrn::ntfix;
+      darray::allocate(ntfix, &itfix, &tfix);
 
       eg = eng_buf;
       vir_eg = vir_buf;
@@ -55,6 +63,18 @@ void egeom_data(rc_op op)
       }
       darray::copyin(g::q0, ndfix, idfix, idfixbuf.data());
       darray::copyin(g::q0, ndfix, dfix, restrn::dfix);
+      std::vector<int> iafixbuf(3 * nafix);
+      for (int i = 0; i < 3 * nafix; ++i) {
+         iafixbuf[i] = restrn::iafix[i] - 1;
+      }
+      darray::copyin(g::q0, nafix, iafix, iafixbuf.data());
+      darray::copyin(g::q0, nafix, afix, restrn::afix);
+      std::vector<int> itfixbuf(4 * ntfix);
+      for (int i = 0; i < 4 * ntfix; ++i) {
+         itfixbuf[i] = restrn::itfix[i] - 1;
+      }
+      darray::copyin(g::q0, ntfix, itfix, itfixbuf.data());
+      darray::copyin(g::q0, ntfix, tfix, restrn::tfix);
       wait_for(g::q0);
    }
 }
