@@ -29,6 +29,3 @@ Tinker9 User Manual
       :caption: Index
 
       genindex
-
-   `GitHub Repository <https://github.com/tinkertools/tinker9>`_
-   =============================================================

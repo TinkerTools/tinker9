@@ -64,12 +64,12 @@ then added *export PGI_LOCALRC=/path/to/new_config* to my bash resource file.
 
    - PDF version also depends on `TeX <https://www.tug.org/begin.html>`_.
 
-   - HTML version requires
-     `sphinx-rtd-theme <https://pypi.org/project/sphinx-rtd-theme>`_
-     from *pip*.
-
-     .. code-block:: bash
-
-        pip install sphinx-rtd-theme
+   - HTML theme from *pip*.
 
 - `Doxygen <https://www.doxygen.nl>`_: to generate developer guides.
+
+.. code-block:: bash
+
+   pip install -U Sphinx
+   pip install 'sphinxcontrib-bibtex==1.0.0'
+   pip install pydata-sphinx-theme
