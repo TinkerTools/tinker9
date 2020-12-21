@@ -124,6 +124,10 @@ void evalence_cu1(
 
    int ndfix, const int (*restrict idfix)[2], const real (*restrict dfix)[3],
 
+   int nafix, const int (*restrict iafix)[3], const real (*restrict afix)[3],
+
+   int ntfix, const int (*restrict itfix)[4], const real (*restrict tfix)[3],
+
    // total
    energy_buffer restrict ebuf, virial_buffer restrict vbuf,
 
@@ -567,7 +571,27 @@ void evalence_cu1(
          v0gzz += cvt_to<vbuf_prec>(vzz);
       }
    }
-   if (ngfix + ndfix > 0) {
+   // egeom angle
+   for (int i = ithread; i < nafix; i += stride) {
+      real e, vxx, vyx, vzx, vyy, vzy, vzz;
+      dk_geom_angle<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
+
+                         degx, degy, degz,
+
+                         i, iafix, afix, x, y, z);
+      if CONSTEXPR (do_e) {
+         e0g += cvt_to<ebuf_prec>(e);
+      }
+      if CONSTEXPR (do_v) {
+         v0gxx += cvt_to<vbuf_prec>(vxx);
+         v0gyx += cvt_to<vbuf_prec>(vyx);
+         v0gzx += cvt_to<vbuf_prec>(vzx);
+         v0gyy += cvt_to<vbuf_prec>(vyy);
+         v0gzy += cvt_to<vbuf_prec>(vzy);
+         v0gzz += cvt_to<vbuf_prec>(vzz);
+      }
+   }
+   if (ngfix + ndfix + nafix + ntfix > 0) {
       if CONSTEXPR (do_e and rc_a) {
          atomic_add(e0g, eg, ithread);
       }
@@ -660,6 +684,8 @@ void evalence_cu1(
    /* egeom */ eg, vir_eg, degx, degy, degz,                                   \
    flag_geom ? ngfix : 0, igfix, gfix,                                         \
    flag_geom ? ndfix : 0, idfix, dfix,                                         \
+   flag_geom ? nafix : 0, iafix, afix,                                         \
+   flag_geom ? ntfix : 0, itfix, tfix,                                         \
    /* total */ eng_buf, vir_buf,                                               \
    /* other */ x, y, z, mass, molecule.molecule,                               \
    grp.igrp, grp.kgrp, grp.grpmass, TINKER_IMAGE_ARGS
