@@ -120,6 +120,10 @@ void evalence_cu1(
    energy_buffer restrict eg, virial_buffer restrict vir_eg,
    grad_prec* restrict degx, grad_prec* restrict degy, grad_prec* restrict degz,
 
+   int npfix, const int* restrict ipfix, const int (*restrict kpfix)[3],
+   const real* restrict xpfix, const real* restrict ypfix,
+   const real* restrict zpfix, const real (*restrict pfix)[2],
+
    int ngfix, const int (*restrict igfix)[2], const real (*restrict gfix)[3],
 
    int ndfix, const int (*restrict idfix)[2], const real (*restrict dfix)[3],
@@ -526,6 +530,28 @@ void evalence_cu1(
    }
 
 
+   // egeom position
+   for (int i = ithread; i < npfix; i += stride) {
+      real e, vxx, vyx, vzx, vyy, vzy, vzz;
+      dk_geom_position<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
+
+                            degx, degy, degz,
+
+                            i, ipfix, kpfix, xpfix, ypfix, zpfix, pfix,
+
+                            x, y, z, TINKER_IMAGE_ARGS);
+      if CONSTEXPR (do_e) {
+         e0g += cvt_to<ebuf_prec>(e);
+      }
+      if CONSTEXPR (do_v) {
+         v0gxx += cvt_to<vbuf_prec>(vxx);
+         v0gyx += cvt_to<vbuf_prec>(vyx);
+         v0gzx += cvt_to<vbuf_prec>(vzx);
+         v0gyy += cvt_to<vbuf_prec>(vyy);
+         v0gzy += cvt_to<vbuf_prec>(vzy);
+         v0gzz += cvt_to<vbuf_prec>(vzz);
+      }
+   }
    // egeom group
    for (int i = ithread; i < ngfix; i += stride) {
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
@@ -611,7 +637,7 @@ void evalence_cu1(
          v0gzz += cvt_to<vbuf_prec>(vzz);
       }
    }
-   if (ngfix + ndfix + nafix + ntfix > 0) {
+   if (npfix + ngfix + ndfix + nafix + ntfix > 0) {
       if CONSTEXPR (do_e and rc_a) {
          atomic_add(e0g, eg, ithread);
       }
@@ -702,6 +728,7 @@ void evalence_cu1(
    flag_tortor ? ntortor : 0, itt, ibitor, chkttor_ia_,                        \
    tnx, tny, ttx, tty, tbf, tbx, tby, tbxy,                                    \
    /* egeom */ eg, vir_eg, degx, degy, degz,                                   \
+   flag_geom ? npfix : 0, ipfix, kpfix, xpfix, ypfix, zpfix, pfix,             \
    flag_geom ? ngfix : 0, igfix, gfix,                                         \
    flag_geom ? ndfix : 0, idfix, dfix,                                         \
    flag_geom ? nafix : 0, iafix, afix,                                         \

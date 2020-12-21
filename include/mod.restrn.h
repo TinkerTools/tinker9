@@ -4,6 +4,15 @@
 
 
 namespace tinker {
+TINKER_EXTERN int npfix;
+TINKER_EXTERN int* ipfix;
+TINKER_EXTERN int (*kpfix)[3];
+TINKER_EXTERN real* xpfix;
+TINKER_EXTERN real* ypfix;
+TINKER_EXTERN real* zpfix;
+TINKER_EXTERN real (*pfix)[2];
+
+
 /// \ingroup geom
 /// \brief Number of group distance restraints to be applied.
 TINKER_EXTERN int ngfix;

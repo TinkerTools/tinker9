@@ -15,6 +15,8 @@ void egeom_data(rc_op op)
    bool rc_a = rc_flag & calc::analyz;
 
    if (op & rc_dealloc) {
+      npfix = 0;
+      darray::deallocate(ipfix, kpfix, xpfix, ypfix, zpfix, pfix);
       ngfix = 0;
       darray::deallocate(igfix, gfix);
       ndfix = 0;
@@ -35,6 +37,8 @@ void egeom_data(rc_op op)
 
 
    if (op & rc_alloc) {
+      npfix = restrn::npfix;
+      darray::allocate(npfix, &ipfix, &kpfix, &xpfix, &ypfix, &zpfix, &pfix);
       ngfix = restrn::ngfix;
       darray::allocate(ngfix, &igfix, &gfix);
       ndfix = restrn::ndfix;
@@ -55,6 +59,16 @@ void egeom_data(rc_op op)
 
 
    if (op & rc_init) {
+      std::vector<int> ipfixbuf(npfix);
+      for (int i = 0; i < npfix; ++i) {
+         ipfixbuf[i] = restrn::ipfix[i] - 1;
+      }
+      darray::copyin(g::q0, npfix, ipfix, ipfixbuf.data());
+      darray::copyin(g::q0, npfix, kpfix, restrn::kpfix);
+      darray::copyin(g::q0, npfix, xpfix, restrn::xpfix);
+      darray::copyin(g::q0, npfix, ypfix, restrn::ypfix);
+      darray::copyin(g::q0, npfix, zpfix, restrn::zpfix);
+      darray::copyin(g::q0, npfix, pfix, restrn::pfix);
       darray::copyin(g::q0, ngfix, igfix, restrn::igfix);
       darray::copyin(g::q0, ngfix, gfix, restrn::gfix);
       std::vector<int> idfixbuf(2 * ndfix);

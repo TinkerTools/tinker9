@@ -167,9 +167,8 @@ void dk_geom_distance(
       e = force * dt2;
    }
    if CONSTEXPR (do_g) {
-      if (r == 0)
-         r = 1;
-      real de = 2 * force * dt * REAL_RECIP(r);
+      real rinv = (r == 0 ? 1 : REAL_RECIP(r));
+      real de = 2 * force * dt * rinv;
       real dedx = de * xr;
       real dedy = de * yr;
       real dedz = de * zr;
@@ -467,6 +466,67 @@ void dk_geom_torsion(
             vzy = zcb * (dedyic + dedyid) - zba * dedyia + zdc * dedyid;
             vzz = zcb * (dedzic + dedzid) - zba * dedzia + zdc * dedzid;
          }
+      }
+   }
+}
+
+
+#pragma acc routine seq
+template <class Ver>
+SEQ_CUDA
+void dk_geom_position(
+   real& restrict e, real& restrict vxx, real& restrict vyx, real& restrict vzx,
+   real& restrict vyy, real& restrict vzy, real& restrict vzz,
+
+   grad_prec* restrict degx, grad_prec* restrict degy, grad_prec* restrict degz,
+
+   int i, const int* restrict ipfix, const int (*restrict kpfix)[3],
+   const real* restrict xpfix, const real* restrict ypfix,
+   const real* restrict zpfix, const real (*restrict pfix)[2],
+
+   const real* restrict x, const real* restrict y, const real* restrict z,
+   TINKER_IMAGE_PARAMS)
+{
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
+
+
+   int ia = ipfix[i];
+   real force = pfix[i][0];
+   real radius = pfix[i][1];
+   real xr = 0, yr = 0, zr = 0;
+   if (kpfix[i][0])
+      xr = x[ia] - xpfix[i];
+   if (kpfix[i][1])
+      yr = y[ia] - ypfix[i];
+   if (kpfix[i][2])
+      zr = z[ia] - zpfix[i];
+   image(xr, yr, zr);
+   real r = REAL_SQRT(xr * xr + yr * yr + zr * zr);
+   real dt = REAL_MAX((real)0, r - radius);
+
+
+   if CONSTEXPR (do_e) {
+      real dt2 = dt * dt;
+      e = force * dt2;
+   }
+   if CONSTEXPR (do_g) {
+      real rinv = (r == 0 ? 1 : REAL_RECIP(r));
+      real de = 2 * force * dt * rinv;
+      real dedx = de * xr;
+      real dedy = de * yr;
+      real dedz = de * zr;
+      atomic_add(dedx, degx, ia);
+      atomic_add(dedy, degy, ia);
+      atomic_add(dedz, degz, ia);
+      if CONSTEXPR (do_v) {
+         vxx = xr * dedx;
+         vyx = yr * dedx;
+         vzx = zr * dedx;
+         vyy = yr * dedy;
+         vzy = zr * dedy;
+         vzz = zr * dedz;
       }
    }
 }

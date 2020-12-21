@@ -22,6 +22,27 @@ void egeom_acc1()
    const auto* kgrp = grp.kgrp;
    const auto* grpmass = grp.grpmass;
 
+   // position restraints
+   #pragma acc parallel loop independent async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
+               deviceptr(x,y,z,degx,degy,degz,ipfix,kpfix,xpfix,ypfix,zpfix,\
+               pfix,eg,vir_eg)
+   for (int i = 0; i < npfix; ++i) {
+      int offset = i & (bufsize - 1);
+      real e, vxx, vyx, vzx, vyy, vzy, vzz;
+      dk_geom_position<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
+
+                            degx, degy, degz,
+
+                            i, ipfix, kpfix, xpfix, ypfix, zpfix, pfix,
+
+                            x, y, z, TINKER_IMAGE_ARGS);
+      if CONSTEXPR (do_e)
+         atomic_add(e, eg, offset);
+      if CONSTEXPR (do_v)
+         atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_eg, offset);
+   }
+
    // group restraints
    #pragma acc parallel loop independent async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
