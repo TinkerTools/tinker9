@@ -32,6 +32,7 @@ void get_kbool(std::string k, T& v, bool v_if_k_not_found);
 extern "C"
 {
    void TINKER_RT(final)();
+   void TINKER_RT(getarc)(int*);
    void TINKER_RT(getxyz)();
    void TINKER_RT(command)();
    void TINKER_RT(mdinit)();

@@ -7,9 +7,8 @@
 
 
 namespace {
-constexpr int MAX_NCHAR = 240;
 char out[2048];
-static_assert(2048 >= MAX_NCHAR + 5, "");
+static_assert(2048 >= tinker::MAX_NCHAR + 5, "");
 }
 
 
@@ -89,6 +88,15 @@ const char* t_version(const char* file, const char* status)
    int slen = strlen(status);
    fc_version(out, file, flen, status, slen);
    return out;
+}
+
+
+extern "C" void fc_suffix(char* file, const char* ext, const char* status,
+                          int slen);
+void t_suffix(char* filename, const char* extension, const char* status)
+{
+   int slen = strlen(status);
+   fc_suffix(filename, extension, status, slen);
 }
 
 
