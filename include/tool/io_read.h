@@ -31,6 +31,14 @@ int read_string(Arg& arg, const char* str, size_t len)
 }
 
 
+inline int read_string(std::string& arg, const char* str, size_t len)
+{
+   const int succeed = 0;
+   arg = std::string(str, len);
+   return succeed;
+}
+
+
 template <class Arg, size_t Len>
 int read_string(Arg& arg, const char (&src)[Len])
 {

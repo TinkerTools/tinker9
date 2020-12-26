@@ -412,5 +412,198 @@ void x_bar_makebar()
 }
 
 
-void x_bar_barcalc() {}
+void x_bar_barcalc()
+{
+   auto out = stdout;
+   int exist = false;
+   int query;
+   char string[MAX_NCHAR];
+   std::string str;
+   auto invalid_barfile = [&](const std::string& s) {
+      std::memcpy(string, s.data(), s.length());
+      t_basefile(string);
+      t_suffix(string, "bar", "old");
+      std::ifstream fr(s);
+      return not fr;
+   };
+
+
+   // ask the user for file with potential energies and volumes
+   nextarg(string, exist);
+   if (exist) {
+      t_basefile(string);
+      t_suffix(string, "bar", "old");
+      str = string;
+   }
+   read_stream(str,
+               "\n"
+               " Enter Potential Energy BAR File Name :  ",
+               std::string(""), invalid_barfile);
+   std::string barfile = string;
+
+
+   auto invalid_frames = [](const std::string& s) {
+      std::istringstream iss(s);
+      int start, stop, step;
+      iss >> start >> stop >> step;
+      return start <= 0 or stop <= start or step <= 0;
+   };
+
+
+   // set beginning and ending frame for trajectory A
+   int starta = 0, stopa = 0, stepa = 0;
+   query = true;
+   if (query) {
+      nextarg(string, exist);
+      if (exist) {
+         int count = std::sscanf(string, "%d", &starta);
+         query = count == 1;
+      }
+   }
+   if (query) {
+      nextarg(string, exist);
+      if (exist) {
+         int count = std::sscanf(string, "%d", &stopa);
+         query = count == 1;
+      }
+   }
+   if (query) {
+      nextarg(string, exist);
+      if (exist) {
+         int count = std::sscanf(string, "%d", &stepa);
+         query = count == 1;
+      }
+   }
+   str = std::to_string(starta) + " " + std::to_string(stopa) + " " +
+      std::to_string(stepa);
+   read_stream(str,
+               "\n"
+               " First & Last Frame and Step Increment for Trajectory A :  ",
+               std::string(""), invalid_frames);
+   {
+      std::istringstream iss(str);
+      iss >> starta >> stopa >> stepa;
+   }
+
+
+   // set beginning and ending frame for trajectory B
+   int startb = 0, stopb = 0, stepb = 0;
+   query = true;
+   if (query) {
+      nextarg(string, exist);
+      if (exist) {
+         int count = std::sscanf(string, "%d", &startb);
+         query = count == 1;
+      }
+   }
+   if (query) {
+      nextarg(string, exist);
+      if (exist) {
+         int count = std::sscanf(string, "%d", &stopb);
+         query = count == 1;
+      }
+   }
+   if (query) {
+      nextarg(string, exist);
+      if (exist) {
+         int count = std::sscanf(string, "%d", &stepb);
+         query = count == 1;
+      }
+   }
+   str = std::to_string(startb) + " " + std::to_string(stopb) + " " +
+      std::to_string(stepb);
+   str = std::to_string(startb) + " " + std::to_string(stopb) + " " +
+      std::to_string(stepb);
+   read_stream(str,
+               "\n"
+               " First & Last Frame and Step Increment for Trajectory B :  ",
+               std::string(""), invalid_frames);
+   {
+      std::istringstream iss(str);
+      iss >> startb >> stopb >> stepb;
+   }
+
+
+   std::vector<double> ua0, ua1, ub0, ub1, vola, volb, vloga, vlogb;
+   std::ifstream ibar(barfile);
+
+
+   //====================================================================//
+
+
+   // read potential energies and volumes for trajectory A
+   int nfrma = 0, nfrma1;
+   double tempa = 0;
+   std::getline(ibar, str);
+   std::sscanf(str.c_str(), "%d %lf\n", &nfrma, &tempa);
+   nfrma1 = nfrma;
+   str = str.substr(str.find_first_not_of(' '));
+   str = str.substr(str.find_first_of(' '));
+   str = str.substr(str.find_first_not_of(' '));
+   str = str.substr(str.find_first_of(' '));
+   str = str.substr(str.find_first_not_of(' '));
+   std::string titlea = str;
+   nfrma = std::min(nfrma, stopa);
+   for (int i = 1; i <= nfrma1; ++i) {
+      std::getline(ibar, str);
+      if (((i - starta) % stepa) == 0 and i <= stopa) {
+         double u0 = 0, u1 = 0, v = 0;
+         std::sscanf(str.c_str(), "%*d %lf %lf %lf\n", &u0, &u1, &v);
+         ua0.push_back(u0);
+         ua1.push_back(u1);
+         vola.push_back(v);
+      }
+   }
+   nfrma = vola.size();
+
+
+   // read potential energies and volumes for trajectory B
+   int nfrmb = 0, nfrmb1;
+   double tempb = 0;
+   std::getline(ibar, str);
+   std::sscanf(str.c_str(), "%d %lf\n", &nfrmb, &tempb);
+   nfrmb1 = nfrmb;
+   str = str.substr(str.find_first_not_of(' '));
+   str = str.substr(str.find_first_of(' '));
+   str = str.substr(str.find_first_not_of(' '));
+   str = str.substr(str.find_first_of(' '));
+   str = str.substr(str.find_first_not_of(' '));
+   std::string titleb = str;
+   nfrmb = std::min(nfrmb, stopb);
+   for (int i = 1; i <= nfrmb1; ++i) {
+      std::getline(ibar, str);
+      if (((i - startb) % stepb) == 0 and i <= stopb) {
+         double u0 = 0, u1 = 0, v = 0;
+         std::sscanf(str.c_str(), "%*d %lf %lf %lf\n", &u0, &u1, &v);
+         ub0.push_back(u0);
+         ub1.push_back(u1);
+         volb.push_back(v);
+      }
+   }
+   nfrmb = volb.size();
+   ibar.close();
+
+
+   // provide info about trajectories and number of frames
+   print(out,
+         "\n"
+         " Simulation Trajectory A and Thermodynamic State 0 :  \n"
+         "\n"
+         " %s\n",
+         titlea);
+   print(out,
+         " Number of Frames :    %8d\n"
+         " Temperature :       %10.2lf\n",
+         nfrma, tempa);
+   print(out,
+         "\n"
+         " Simulation Trajectory B and Thermodynamic State 1 :  \n"
+         "\n"
+         " %s\n",
+         titleb);
+   print(out,
+         " Number of Frames :    %8d\n"
+         " Temperature :       %10.2lf\n",
+         nfrmb, tempb);
+}
 }

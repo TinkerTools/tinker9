@@ -103,6 +103,13 @@ void t_suffix(char* filename, const char* extension, const char* status);
 
 /**
  * \ingroup bindc
+ * \brief Tinker subroutine: basefile(string)
+ */
+void t_basefile(char* string);
+
+
+/**
+ * \ingroup bindc
  * \brief Tinker subroutine: prtxyz
  */
 void t_prtxyz(int ixyz);

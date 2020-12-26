@@ -100,6 +100,13 @@ void t_suffix(char* filename, const char* extension, const char* status)
 }
 
 
+extern "C" void fc_basefile(char* string);
+void t_basefile(char* string)
+{
+   fc_basefile(string);
+}
+
+
 extern "C" void TINKER_RT(prtxyz)(int*);
 void t_prtxyz(int ixyz)
 {
