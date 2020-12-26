@@ -84,4 +84,16 @@ void read_stream(Arg& arg, std::string prompt, Arg auto_fill, Invalid&& invalid,
          input_fail = invalid(arg);
    }
 }
+
+
+/**
+ * \ingroup io
+ * \brief Rewind a stream object.
+ */
+template <class T>
+void rewind_stream(T& stream)
+{
+   stream.clear();
+   stream.seekg(0);
+}
 }

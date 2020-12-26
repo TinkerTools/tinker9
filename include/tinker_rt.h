@@ -34,6 +34,7 @@ extern "C"
    void TINKER_RT(final)();
    void TINKER_RT(getarc)(int*);
    void TINKER_RT(getxyz)();
+   void TINKER_RT(readxyz)(int*);
    void TINKER_RT(command)();
    void TINKER_RT(mdinit)();
    void TINKER_RT(invert)(int* n, double* a);

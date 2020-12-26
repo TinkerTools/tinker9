@@ -16,6 +16,7 @@
 #include "switch.h"
 #include "tool/io_fort_str.h"
 #include <tinker/detail/atoms.hh>
+#include <tinker/detail/charge.hh>
 #include <tinker/detail/chgpen.hh>
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/couple.hh>
@@ -55,12 +56,13 @@ void pchg_data(rc_op op)
 
 
    if (op & rc_init) {
-      std::vector<real> pchgbuf(n);
-      for (int i = 0; i < n; ++i) {
-         int itype = atoms::type[i] - 1;
-         pchgbuf[i] = kchrge::chg[itype];
-      }
-      darray::copyin(g::q0, n, pchg, pchgbuf.data());
+      // std::vector<real> pchgbuf(n);
+      // for (int i = 0; i < n; ++i) {
+      //    int itype = atoms::type[i] - 1;
+      //    pchgbuf[i] = kchrge::chg[itype];
+      // }
+      // darray::copyin(g::q0, n, pchg, pchgbuf.data());
+      darray::copyin(g::q0, n, pchg, charge::pchg);
       wait_for(g::q0);
    }
 }
