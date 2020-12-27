@@ -1,5 +1,6 @@
 #include "energy.h"
 #include "nblist.h"
+#include "random.h"
 #include "tinker_rt.h"
 #include <array>
 #include <fstream>
@@ -7,6 +8,7 @@
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/keys.hh>
 #include <tinker/detail/titles.hh>
+#include <tinker/detail/units.hh>
 
 
 namespace tinker {
@@ -587,7 +589,7 @@ void x_bar_barcalc()
    // provide info about trajectories and number of frames
    print(out,
          "\n"
-         " Simulation Trajectory A and Thermodynamic State 0 :  \n"
+         " Simulation Trajectory A and Thermodynamic State 0 :\n"
          "\n"
          " %s\n",
          titlea);
@@ -597,7 +599,7 @@ void x_bar_barcalc()
          nfrma, tempa);
    print(out,
          "\n"
-         " Simulation Trajectory B and Thermodynamic State 1 :  \n"
+         " Simulation Trajectory B and Thermodynamic State 1 :\n"
          "\n"
          " %s\n",
          titleb);
@@ -605,5 +607,381 @@ void x_bar_barcalc()
          " Number of Frames :    %8d\n"
          " Temperature :       %10.2lf\n",
          nfrmb, tempb);
+
+
+   // set the frame ratio, temperature and Boltzmann factor
+   double term = random<double>(); // TODO
+   double frma = nfrma, frmb = nfrmb;
+   double rfrm = frma / frmb;
+   double rta = units::gasconst * tempa;
+   double rtb = units::gasconst * tempb;
+   double rt = 0.5 * (rta + rtb);
+
+
+   // set the number of bootstrap trials to be generated
+   int nfrm = std::max(nfrma, nfrmb);
+   int nbst = std::min(100000, (int)std::round(1.e8 / nfrm));
+   double bst = nbst;
+   double ratio = bst / (bst - 1);
+
+
+   // find average volumes and corrections for both trajectories
+   double sum, sum2;
+   double vasum = 0, vasum2 = 0, vbsum = 0, vbsum2 = 0;
+   double vavea, vaveb;
+   for (int k = 0; k < nbst; ++k) {
+      sum = 0;
+      for (int i = 0; i < nfrma; ++i) {
+         int j = (int)(frma * random<double>());
+         sum += vola[j];
+      }
+      vavea = sum / frma;
+      vasum += vavea;
+      vasum2 += vavea * vavea;
+
+
+      sum = 0;
+      for (int i = 0; i < nfrmb; ++i) {
+         int j = (int)(frmb * random<double>());
+         sum += volb[j];
+      }
+      vaveb = sum / frmb;
+      vbsum += vaveb;
+      vbsum2 += vaveb * vaveb;
+   }
+   vavea = vasum / bst;
+   double vstda = std::sqrt(ratio * (vasum2 / bst - vavea * vavea));
+   vaveb = vasum / bst;
+   double vstdb = std::sqrt(ratio * (vbsum2 / bst - vaveb * vaveb));
+   if (vavea != 0)
+      for (int i = 0; i < nfrma; ++i)
+         if (vola[i] != 0)
+            vloga.push_back(-rta * std::log(vola[i] / vavea));
+   if (vaveb != 0)
+      for (int i = 0; i < nfrmb; ++i)
+         if (volb[i] != 0)
+            vlogb.push_back(-rtb * std::log(volb[i] / vaveb));
+
+
+   // get the free energy change via thermodynamic perturbation
+   print(out,
+         "\n"
+         " Free Energy Difference via FEP Method :\n"
+         "\n");
+   double cfsum = 0, cfsum2 = 0, cbsum = 0, cbsum2 = 0;
+   double cfore, cback;
+   for (int k = 0; k < nbst; ++k) {
+      sum = 0;
+      for (int i = 0; i < nfrma; ++i) {
+         int j = (int)(frma * random<double>());
+         sum += std::exp((ua0[j] - ua1[j] + vloga[j]) / rta);
+      }
+      cfore = -rta * std::log(sum / frma);
+      cfsum += cfore;
+      cfsum2 += cfore * cfore;
+
+
+      sum = 0;
+      for (int i = 0; i < nfrmb; ++i) {
+         int j = (int)(frmb * random<double>());
+         sum += std::exp((ub1[j] - ub0[j] + vlogb[j]) / rtb);
+      }
+      cback = rtb * std::log(sum / frmb);
+      cbsum += cback;
+      cbsum2 += cback * cback;
+   }
+   cfore = cfsum / bst;
+   double stdcf = std::sqrt(ratio * (cfsum2 / bst - cfore * cfore));
+   cback = cbsum / bst;
+   double stdcb = std::sqrt(ratio * (cbsum2 / bst - cback * cback));
+   print(out,
+         " Free Energy via Forward FEP         %12.4lf +/-%9.4lf Kcal/mol\n",
+         cfore, stdcf);
+   print(out,
+         " Free Energy via Backward FEP        %12.4lf +/-%9.4lf Kcal/mol\n",
+         cback, stdcb);
+
+
+   // determine the initial free energy via the BAR method
+   print(out,
+         "\n"
+         " Free Energy Difference via BAR Method :\n"
+         "\n");
+   const int maxiter = 100;
+   const double eps = 0.0001;
+   bool done = false;
+   int iter = 0;
+   double cnew = 0, cold, stdev;
+   double top, top2, bot, bot2;
+   do {
+      cold = cnew;
+      top = 0, top2 = 0, bot = 0, bot2 = 0;
+      for (int i = 0; i < nfrmb; ++i) {
+         double fterm =
+            1.0 / (1.0 + std::exp((ub0[i] - ub1[i] + vlogb[i] + cold) / rtb));
+         top += fterm;
+         top2 += fterm * fterm;
+      }
+      for (int i = 0; i < nfrma; ++i) {
+         double fterm =
+            1.0 / (1.0 + std::exp((ua1[i] - ua0[i] + vloga[i] - cold) / rta));
+         bot += fterm;
+         bot2 += fterm * fterm;
+      }
+      cnew = rt * std::log(rfrm * top / bot) + cold;
+      stdev = std::sqrt((bot2 - bot * bot / frma) / (bot * bot) +
+                        (top2 - top * top / frmb) / (top * top));
+      double delta = std::fabs(cnew - cold);
+      print(out, " BAR Iteration%4d%19s%12.4lf Kcal/mol\n", iter, "", cnew);
+      if (delta < eps) {
+         done = true;
+         print(
+            out,
+            "\n"
+            " Free Energy via BAR Iteration       %12.4lf +/-%9.4lf Kcal/mol\n",
+            cnew, stdev);
+      } else {
+         ++iter;
+      }
+   } while (not done and iter <= maxiter);
+   if (not done) {
+      done = true;
+      print(out,
+            "\n"
+            " BAR Free Energy Estimate not Converged after%4d Iterations\n",
+            maxiter);
+      return;
+   }
+
+
+   // use bootstrap analysis to estimate statistical error
+   std::vector<int> bsta, bstb;
+   sum = 0, sum2 = 0;
+   for (int k = 0; k < nbst; ++k) {
+      bstb.clear();
+      for (int i = 0; i < nfrmb; ++i) {
+         int j = (int)(frmb * random<double>());
+         bstb.push_back(j);
+      }
+      bsta.clear();
+      for (int i = 0; i < nfrma; ++i) {
+         int j = (int)(frma * random<double>());
+         bsta.push_back(j);
+      }
+
+
+      done = false;
+      iter = 0;
+      cnew = 0;
+      do {
+         cold = cnew;
+         top = 0, bot = 0;
+         for (int i = 0; i < nfrmb; ++i) {
+            int j = bstb[i];
+            top += 1.0 /
+               (1.0 + std::exp((ub0[j] - ub1[j] + vlogb[i] + cold) / rtb));
+         }
+         for (int i = 0; i < nfrma; ++i) {
+            int j = bsta[i];
+            bot += 1.0 /
+               (1.0 + std::exp((ua1[j] - ua0[j] + vloga[i] - cold) / rta));
+         }
+         cnew = rt * std::log(rfrm * top / bot) + cold;
+         double delta = std::fabs(cnew - cold);
+         if (delta < eps) {
+            done = true;
+            sum += cnew;
+            sum2 += cnew * cnew;
+         } else {
+            ++iter;
+         }
+      } while (not done);
+   }
+   cnew = sum / bst;
+   ratio = bst / (bst - 1.0);
+   stdev = std::sqrt(ratio * (sum2 / bst - cnew * cnew));
+   print(out,
+         " Free Energy via BAR Bootstrap       %12.4lf +/-%9.4lf Kcal/mol\n",
+         cnew, stdev);
+
+
+   // find the enthalpy directly via average potential energy
+   print(out,
+         "\n"
+         " Enthalpy from Potential Energy Averages :\n"
+         "\n");
+   double patm = 1;
+   double epv = (vaveb - vavea) * patm / units::prescon;
+   double stdpv = (vstda + vstdb) * patm / units::prescon;
+   double u0sum = 0, u0sum2 = 0, u1sum = 0, u1sum2 = 0, hsum = 0, hsum2 = 0;
+   double uave0, uave1, hdir;
+   double stdev0, stdev1;
+   for (int k = 0; k < nbst; ++k) {
+      uave0 = 0;
+      uave1 = 0;
+      for (int i = 0; i < nfrma; ++i) {
+         int j = (int)(frma * random<double>());
+         uave0 += ua0[j];
+      }
+      for (int i = 0; i < nfrmb; ++i) {
+         int j = (int)(frmb * random<double>());
+         uave1 += ub1[j];
+      }
+      uave0 /= frma;
+      uave1 /= frmb;
+      u0sum += uave0;
+      u0sum2 += uave0 * uave0;
+      u1sum += uave1;
+      u1sum2 += uave1 * uave1;
+      hdir = uave1 - uave0 + epv;
+      hsum += hdir;
+      hsum2 += hdir * hdir;
+   }
+   uave0 = u0sum / bst;
+   stdev0 = std::sqrt(ratio * (u0sum2 / bst - uave0 * uave0));
+   uave1 = u1sum / bst;
+   stdev1 = std::sqrt(ratio * (u1sum2 / bst - uave1 * uave1));
+   hdir = hsum / bst;
+   stdev = std::sqrt(ratio * (hsum2 / bst - hdir * hdir));
+   print(out,
+         " Average Energy for State 0          %12.4lf +/-%9.4lf kcal/mol\n",
+         uave0, stdev0);
+   print(out,
+         " Average Energy for State 1          %12.4lf +/-%9.4lf kcal/mol\n",
+         uave1, stdev1);
+   if (epv != 0) {
+      print(out,
+            " PdV Work Term for 1 Atm             %12.4lf +/-%9.4lf kcal/mol\n",
+            epv, stdpv);
+   }
+   print(out,
+         " Enthalpy via Direct Estimate        %12.4lf +/-%9.4lf Kcal/mol\n",
+         hdir, stdev);
+
+
+   // calculate the enthalpy via thermodynamic perturbation
+   print(out,
+         "\n"
+         " Enthalpy and Entropy via FEP Method :\n"
+         "\n");
+   double hfsum = 0, hfsum2 = 0, hbsum = 0, hbsum2 = 0;
+   double hfore, hback, stdhf, stdhb;
+   double sfore, sback;
+   for (int k = 0; k < nbst; ++k) {
+      top = 0;
+      bot = 0;
+      for (int i = 0; i < nfrma; ++i) {
+         int j = (int)(frma * random<double>());
+         double term = std::exp((ua0[j] - ua1[j] + vloga[j]) / rta);
+         top += ua1[j] * term;
+         bot += term;
+      }
+      hfore = (top / bot) - uave0;
+      hfsum += hfore;
+      hfsum2 += hfore * hfore;
+
+
+      top = 0;
+      bot = 0;
+      for (int i = 0; i < nfrmb; ++i) {
+         int j = (int)(frmb * random<double>());
+         double term = std::exp((ub1[j] - ub0[j] + vlogb[j]) / rtb);
+         top += ub0[j] * term;
+         bot += term;
+      }
+      hback = -(top / bot) + uave1;
+      hbsum += hback;
+      hbsum2 += hback * hback;
+   }
+
+
+   hfore = hfsum / bst;
+   stdhf = std::sqrt(ratio * (hfsum2 / bst - hfore * hfore));
+   stdhf += stdev0;
+   sfore = (hfore - cfore) / tempa;
+
+
+   hback = hbsum / bst;
+   stdhb = std::sqrt(ratio * (hbsum2 / bst - hback * hback));
+   stdhb += stdev1;
+   sback = (hback - cback) / tempb;
+
+
+   print(out,
+         " Enthalpy via Forward FEP            %12.4lf +/-%9.4lf Kcal/mol\n",
+         hfore, stdhf);
+   print(out, " Entropy via Forward FEP             %12.6lf Kcal/mol/K\n",
+         sfore);
+   print(out, " Forward FEP -T*dS Value             %12.4lf Kcal/mol\n",
+         -tempa * sfore);
+
+
+   print(out,
+         "\n"
+         " Enthalpy via Backward FEP           %12.4lf +/-%9.4lf Kcal/mol\n",
+         hback, stdhb);
+   print(out, " Entropy via Backward FEP            %12.6lf Kcal/mol/K\n",
+         sback);
+   print(out, " Backward FEP -T*dS Value            %12.4lf Kcal/mol\n",
+         -tempb * sback);
+
+
+   // determine the enthalpy and entropy via the BAR method
+   print(out,
+         "\n"
+         " Enthalpy and Entropy via BAR Method :\n"
+         "\n");
+   double hbar, tsbar, sbar;
+   double fsum, fvsum, bsum, bvsum;
+   double fbvsum, vsum, fbsum0, fbsum1;
+   hsum = 0, hsum2 = 0;
+   for (int k = 0; k < nbst; ++k) {
+      fsum = 0, fvsum = 0, fbvsum = 0, vsum = 0, fbsum0 = 0;
+      for (int i = 0; i < nfrma; ++i) {
+         int j = (int)(frma * random<double>());
+         double fore =
+            1.0 / (1.0 + std::exp((ua1[j] - ua0[j] + vloga[j] - cnew) / rta));
+         double back =
+            1.0 / (1.0 + std::exp((ua0[j] - ua1[j] + vloga[j] + cnew) / rta));
+         fsum += fore;
+         fvsum += fore * ua0[j];
+         fbvsum += fore * back * (ua1[j] - ua0[j] + vloga[j]);
+         vsum += ua0[j];
+         fbsum0 += fore * back;
+      }
+      double alpha0 = fvsum - fsum * (vsum / frma) + fbvsum;
+
+
+      bsum = 0, bvsum = 0, fbvsum = 0, vsum = 0, fbsum1 = 0;
+      for (int i = 0; i < nfrmb; ++i) {
+         int j = (int)(frmb * random<double>());
+         double fore =
+            1.0 / (1.0 + std::exp((ub1[j] - ub0[j] + vlogb[j] - cnew) / rtb));
+         double back =
+            1.0 / (1.0 + std::exp((ub0[j] - ub1[j] + vlogb[j] + cnew) / rtb));
+         bsum += back;
+         bvsum += back * ub1[j];
+         fbvsum += fore * back * (ub1[j] - ub0[j] + vlogb[j]);
+         vsum += ub1[j];
+         fbsum1 += fore * back;
+      }
+      double alpha1 = bvsum - bsum * (vsum / frmb) - fbvsum;
+
+
+      hbar = (alpha0 - alpha1) / (fbsum0 + fbsum1);
+      hsum += hbar;
+      hsum2 += hbar * hbar;
+   }
+   hbar = hsum / bst;
+   stdev = std::sqrt(ratio * (hsum2 / bst - hbar * hbar));
+   tsbar = hbar - cnew;
+   sbar = tsbar / (0.5 * (tempa + tempb));
+   print(out,
+         " Enthalpy via BAR Estimate           %12.4lf +/-%9.4lf Kcal/mol\n",
+         hbar, stdev);
+   print(out, " Entropy via BAR Estimate            %12.6lf Kcal/mol/K\n",
+         sbar);
+   print(out, " BAR Estimate of -T*dS               %12.4lf Kcal/mol\n",
+         -tsbar);
 }
 }
