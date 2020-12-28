@@ -18,14 +18,12 @@ void x_bar_barcalc();
 
 void x_bar(int, char**)
 {
-   char string[MAX_NCHAR];
-   int exist = false;
-   auto out = stdout;
-
-
    initial();
 
 
+   char string[MAX_NCHAR];
+   auto out = stdout;
+   int exist;
    int mode = 0;
    auto invalid_mode = [](int m) { return m != 1 and m != 2; };
    const char* mode_string1 = R"(
@@ -34,6 +32,8 @@ void x_bar(int, char**)
     (1) Create BAR File with Perturbed Potential Energies
     (2) Compute Thermodynamic Values from Tinker BAR File
 )";
+
+
    nextarg(string, exist);
    if (exist)
       read_string(mode, string);
@@ -610,7 +610,6 @@ void x_bar_barcalc()
 
 
    // set the frame ratio, temperature and Boltzmann factor
-   double term = random<double>(); // TODO
    double frma = nfrma, frmb = nfrmb;
    double rfrm = frma / frmb;
    double rta = units::gasconst * tempa;
@@ -651,7 +650,7 @@ void x_bar_barcalc()
    }
    vavea = vasum / bst;
    double vstda = std::sqrt(ratio * (vasum2 / bst - vavea * vavea));
-   vaveb = vasum / bst;
+   vaveb = vbsum / bst;
    double vstdb = std::sqrt(ratio * (vbsum2 / bst - vaveb * vaveb));
    if (vavea != 0)
       for (int i = 0; i < nfrma; ++i)
