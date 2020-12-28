@@ -24,6 +24,7 @@
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/mpole.hh>
+#include <tinker/detail/mutant.hh>
 #include <tinker/detail/polgrp.hh>
 #include <tinker/detail/polpot.hh>
 
@@ -56,13 +57,18 @@ void pchg_data(rc_op op)
 
 
    if (op & rc_init) {
-      // std::vector<real> pchgbuf(n);
-      // for (int i = 0; i < n; ++i) {
-      //    int itype = atoms::type[i] - 1;
-      //    pchgbuf[i] = kchrge::chg[itype];
-      // }
-      // darray::copyin(g::q0, n, pchg, pchgbuf.data());
-      darray::copyin(g::q0, n, pchg, charge::pchg);
+      std::vector<real> pchgbuf(n);
+      for (int i = 0; i < n; ++i) {
+         int itype = atoms::type[i] - 1;
+         pchgbuf[i] = kchrge::chg[itype];
+         double el;
+         if (mutant::mut[i])
+            el = mutant::elambda;
+         else
+            el = 1;
+         pchgbuf[i] *= el;
+      }
+      darray::copyin(g::q0, n, pchg, pchgbuf.data());
       wait_for(g::q0);
    }
 }
