@@ -59,18 +59,6 @@ Uncategorized
 
 .. index:: ANGMAX
 
-**ANGTORS**
-
-.. index:: ANGTORS
-
-**ANGTORTERM**
-
-.. index:: ANGTORTERM
-
-**ANGTORUNIT**
-
-.. index:: ANGTORUNIT
-
 **ANISO-PRESSURE**
 
 .. index:: ANISO-PRESSURE
@@ -1214,18 +1202,6 @@ Uncategorized
 **STEPMIN**
 
 .. index:: STEPMIN
-
-**STRTORS**
-
-.. index:: STRTORS
-
-**STRTORTERM**
-
-.. index:: STRTORTERM
-
-**STRTORUNIT**
-
-.. index:: STRTORUNIT
 
 **SURFACE-TENSION**
 

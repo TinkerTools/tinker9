@@ -203,6 +203,16 @@ structure (e.g., ethylene) planar.
 
    U = V[1+\cos(2\phi-\pi)].
 
+.. _label-strtor:
+
+Stretch-Torsion Coupling
+------------------------
+
+.. _label-angtor:
+
+Angle-Torsion Coupling
+----------------------
+
 .. _label-tortor:
 
 Torsion-Torsion Coupling

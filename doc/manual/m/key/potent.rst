@@ -614,6 +614,63 @@ An example is as follows:
 
    :ref:`label-pitors`
 
+Stretch-Torsion Coupling
+------------------------
+
+   :ref:`label-strtor`
+
+**STRTORTERM [NONE / ONLY]**
+
+.. index:: STRTORTERM
+
+In the absence of a modifying option, this keyword turns on use of the potential.
+The *NONE* option turns off use of this potential energy term.
+The *ONLY* option turns off all potential energy terms except for this one.
+
+**STRTORUNIT [real]**
+
+.. index:: STRTORUNIT
+
+The correct value is force field dependent and typically provided in the header
+of the master force field parameter file.
+The default value of 1.0 is used, if the *STRTORUNIT* keyword is not given
+in the force field parameter file or the keyfile.
+
+**STRTORS**
+
+.. index:: STRTORS
+
+Provides the values for a single stretch-torsion cross term potential parameter.
+The two integer modifiers give the atom class numbers for the atoms involved
+in the central bond of the torsional angles to be parameterized.
+The real modifier gives the value of the stretch-torsion force constant for
+all torsional angles with the defined central bond atom classes.
+The default units for the stretch-torsion force constant can be controlled via
+the *STRTORUNIT* keyword.
+
+Angle-Torsion Coupling
+----------------------
+
+**ANGTORTERM [NONE / ONLY]**
+
+.. index:: ANGTORTERM
+
+In the absence of a modifying option, this keyword turns on use of the potential.
+The *NONE* option turns off use of this potential energy term.
+The *ONLY* option turns off all potential energy terms except for this one.
+
+**ANGTORUNIT [real]**
+
+.. index:: ANGTORUNIT
+
+**ANGTORS**
+
+.. index:: ANGTORS
+
+.. seealso::
+
+   :ref:`label-angtor`
+
 Torsion-Torsion Coupling
 ------------------------
 
