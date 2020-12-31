@@ -57,6 +57,7 @@ restrainterm        only
 
    energy(calc::v1);
    COMPARE_REALS(esum, ref_e, eps_e);
+   COMPARE_GRADIENT(ref_g, eps_g);
    for (int i = 0; i < 3; ++i)
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
@@ -129,6 +130,7 @@ restrainterm        only
 
    energy(calc::v1);
    COMPARE_REALS(esum, ref_e, eps_e);
+   COMPARE_GRADIENT(ref_g, eps_g);
    for (int i = 0; i < 3; ++i)
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
@@ -201,6 +203,7 @@ restrainterm        only
 
    energy(calc::v1);
    COMPARE_REALS(esum, ref_e, eps_e);
+   COMPARE_GRADIENT(ref_g, eps_g);
    for (int i = 0; i < 3; ++i)
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
@@ -273,6 +276,7 @@ restrainterm        only
 
    energy(calc::v1);
    COMPARE_REALS(esum, ref_e, eps_e);
+   COMPARE_GRADIENT(ref_g, eps_g);
    for (int i = 0; i < 3; ++i)
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
@@ -345,6 +349,7 @@ restrainterm        only
 
    energy(calc::v1);
    COMPARE_REALS(esum, ref_e, eps_e);
+   COMPARE_GRADIENT(ref_g, eps_g);
    for (int i = 0; i < 3; ++i)
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
