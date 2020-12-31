@@ -34,6 +34,8 @@ void energy_data(rc_op op)
    rc_man eimptor42{eimptor_data, op};
    rc_man etors42{etors_data, op};
    rc_man epitors42{epitors_data, op};
+   rc_man estrtor42{estrtor_data, op};
+   rc_man eangtor42{eangtor_data, op};
    rc_man etortor42{etortor_data, op};
 
    // misc. terms
@@ -104,9 +106,11 @@ bool use_energi_elec()
 const TimeScaleConfig& default_tsconfig()
 {
    static TimeScaleConfig tsconfig{
-      {"ebond", 0},         {"eangle", 0},        {"estrbnd", 0}, {"eurey", 0},
-      {"eopbend", 0},       {"eimprop", 0},       {"eimptor", 0}, {"etors", 0},
-      {"epitors", 0},       {"etortor", 0},       {"egeom", 0},
+      {"ebond", 0},         {"eangle", 0},        {"estrbnd", 0},
+      {"eurey", 0},         {"eopbend", 0},       {"eimprop", 0},
+      {"eimptor", 0},       {"etors", 0},         {"epitors", 0},
+      {"estrtor", 0},       {"eangtor", 0},       {"etortor", 0},
+      {"egeom", 0},
 
       {"evalence", 0},
 
@@ -118,7 +122,8 @@ const TimeScaleConfig& default_tsconfig()
 
       {"empole_chgpen", 0}, {"epolar_chgpen", 0},
 
-      {"echgtrn", 0},       {"edisp", 0},         {"erepel", 0},  {"ehippo", 0},
+      {"echgtrn", 0},       {"edisp", 0},         {"erepel", 0},
+      {"ehippo", 0},
    };
    return tsconfig;
 }
@@ -152,6 +157,14 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    ecore_val = false;
    ecore_vdw = false;
    ecore_ele = false;
+
+
+   if (use_potent(strtor_term))
+      if (tscfg("estrtor", ecore_val))
+         estrtor(vers);
+   if (use_potent(angtor_term))
+      if (tscfg("eangtor", ecore_val))
+         eangtor(vers);
 
 
    if (pltfm_config & CU_PLTFM) {

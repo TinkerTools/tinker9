@@ -3,12 +3,14 @@
 
 
 #include "eangle.h"
+#include "eangtor.h"
 #include "ebond.h"
 #include "eimprop.h"
 #include "eimptor.h"
 #include "eopbend.h"
 #include "epitors.h"
 #include "estrbnd.h"
+#include "estrtor.h"
 #include "etors.h"
 #include "etortor.h"
 #include "eurey.h"

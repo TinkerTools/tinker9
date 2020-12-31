@@ -10,8 +10,8 @@
 namespace tinker {
 void ebond_data(rc_op op)
 {
-   if (!use_potent(bond_term) and !use_potent(strbnd_term) and
-       !potent::use_chgflx)
+   if (not use_potent(bond_term) and not use_potent(strbnd_term) and
+       not use_potent(strtor_term) and not potent::use_chgflx)
       return;
 
    bool rc_a = rc_flag & calc::analyz;
