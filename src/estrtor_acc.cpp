@@ -14,7 +14,8 @@ void estrtor_acc1()
 
 
    #pragma acc parallel loop independent async\
-                deviceptr(x,y,z,ebt,vir_ebt,debtx,debty,debtz)
+               deviceptr(x,y,z,ebt,vir_ebt,debtx,debty,debtz,\
+               ist,kst,bl,itors,tors1,tors2,tors3)
    for (int istrtor = 0; istrtor < nstrtor; ++istrtor) {
       int offset = istrtor & (bufsize - 1);
       real e, vxx, vyx, vzx, vyy, vzy, vzz;

@@ -3,6 +3,7 @@
 #include "potent.h"
 #include "tool/host_zero.h"
 #include <tinker/detail/angtor.hh>
+#include <tinker/detail/torpot.hh>
 
 
 namespace tinker {
@@ -16,14 +17,42 @@ void eangtor_data(rc_op op)
 
 
    if (op & rc_dealloc) {
+      nangtor = 0;
+      darray::deallocate(iat, kant);
+      if (rc_a)
+         buffer_deallocate(rc_flag, eat, vir_eat, deatx, deaty, deatz);
+      eat = nullptr;
+      vir_eat = nullptr;
+      deatx = nullptr;
+      deaty = nullptr;
+      deatz = nullptr;
    }
 
 
    if (op & rc_alloc) {
+      nangtor = count_bonded_term(angtor_term);
+      darray::allocate(nangtor, &iat, &kant);
+
+
+      eat = eng_buf;
+      vir_eat = vir_buf;
+      deatx = gx;
+      deaty = gy;
+      deatz = gz;
+      if (rc_a)
+         buffer_allocate(rc_flag, &eat, &vir_eat, &deatx, &deaty, &deatz);
    }
 
 
    if (op & rc_init) {
+      std::vector<int> ibuf;
+      ibuf.resize(4 * nangtor);
+      for (int i = 0; i < 3 * nangtor; ++i)
+         ibuf[i] = angtor::iat[i] - 1;
+      darray::copyin(g::q0, nangtor, iat, ibuf.data());
+      darray::copyin(g::q0, nangtor, kant, angtor::kant);
+      wait_for(g::q0);
+      atorunit = torpot::atorunit;
    }
 }
 

@@ -15,10 +15,8 @@ void dk_strtor(real& restrict e, real& restrict vxx, real& restrict vyx,
                grad_prec* restrict debtx, grad_prec* restrict debty,
                grad_prec* restrict debtz,
 
-
                real storunit, int istrtor, const int (*restrict ist)[4],
                const real (*restrict kst)[9],
-
 
                const real* restrict bl, const int (*restrict itors)[4],
                const real (*restrict tors1)[4], const real (*restrict tors2)[4],
@@ -66,9 +64,9 @@ void dk_strtor(real& restrict e, real& restrict vxx, real& restrict vyx,
    real zdc = zid - zic;
 
 
-   real rba = sqrt(xba * xba + yba * yba + zba * zba);
-   real rcb = sqrt(xcb * xcb + ycb * ycb + zcb * zcb);
-   real rdc = sqrt(xdc * xdc + ydc * ydc + zdc * zdc);
+   real rba = REAL_SQRT(xba * xba + yba * yba + zba * zba);
+   real rcb = REAL_SQRT(xcb * xcb + ycb * ycb + zcb * zcb);
+   real rdc = REAL_SQRT(xdc * xdc + ydc * ydc + zdc * zdc);
    real rmin = REAL_MIN(rba, rcb);
    rmin = REAL_MIN(rmin, rdc);
    if (rmin == 0)
