@@ -125,97 +125,106 @@ void dk_angtor(real& restrict e, real& restrict vxx, real& restrict vyx,
    }
 
 
-   int k;
-   real v1, v2, v3, cosang, angle, dot, dt, e1, e2;
+   real e1, e2;
    MAYBE_UNUSED real dedxia, dedyia, dedzia;
    MAYBE_UNUSED real dedxib, dedyib, dedzib;
    MAYBE_UNUSED real dedxic, dedyic, dedzic;
    MAYBE_UNUSED real dedxid, dedyid, dedzid;
 
 
-   v1 = kant[iangtor][0];
-   v2 = kant[iangtor][1];
-   v3 = kant[iangtor][2];
-   k = iat[iangtor][1];
-   dot = xba * xcb + yba * ycb + zba * zcb;
-   cosang = -dot * REAL_RSQRT(rba2 * rcb2);
-   angle = radian * REAL_ACOS(cosang);
-   dt = angle - anat[k];
-   e1 = atorunit * dt * (v1 * phi1 + v2 * phi2 + v3 * phi3);
-   if CONSTEXPR (do_g) {
-      real dedphi = atorunit * dt * (v1 * dphi1 + v2 * dphi2 + v3 * dphi3);
-      real ddt = atorunit * radian * (v1 * phi1 + v2 * phi2 + v3 * phi3);
-      real dedxt = dedphi * (zcb * yt - ycb * zt) / (rt2 * rcb);
-      real dedyt = dedphi * (xcb * zt - zcb * xt) / (rt2 * rcb);
-      real dedzt = dedphi * (ycb * xt - xcb * yt) / (rt2 * rcb);
-      real dedxu = dedphi * (ycb * zu - zcb * yu) / (ru2 * rcb);
-      real dedyu = dedphi * (zcb * xu - xcb * zu) / (ru2 * rcb);
-      real dedzu = dedphi * (xcb * yu - ycb * xu) / (ru2 * rcb);
+   {
+      real v1 = kant[iangtor][0];
+      real v2 = kant[iangtor][1];
+      real v3 = kant[iangtor][2];
+      int k = iat[iangtor][1];
+      real dot = xba * xcb + yba * ycb + zba * zcb;
+      real cosang = -dot * REAL_RSQRT(rba2 * rcb2);
+      real angle = radian * REAL_ACOS(cosang);
+      real dt = angle - anat[k];
+      e1 = atorunit * dt * (v1 * phi1 + v2 * phi2 + v3 * phi3);
+      if CONSTEXPR (do_g) {
+         real dedphi = atorunit * dt * (v1 * dphi1 + v2 * dphi2 + v3 * dphi3);
+         real ddt = atorunit * radian * (v1 * phi1 + v2 * phi2 + v3 * phi3);
+         real dedxt = dedphi * (zcb * yt - ycb * zt) / (rt2 * rcb);
+         real dedyt = dedphi * (xcb * zt - zcb * xt) / (rt2 * rcb);
+         real dedzt = dedphi * (ycb * xt - xcb * yt) / (rt2 * rcb);
+         real dedxu = dedphi * (ycb * zu - zcb * yu) / (ru2 * rcb);
+         real dedyu = dedphi * (zcb * xu - xcb * zu) / (ru2 * rcb);
+         real dedzu = dedphi * (xcb * yu - ycb * xu) / (ru2 * rcb);
 
 
-      real terma = -ddt / (rba2 * REAL_SQRT(rt2));
-      real termc = ddt / (rcb2 * REAL_SQRT(rt2));
-      dedxia = terma * (zba * yt - yba * zt) + zcb * dedyt - ycb * dedzt;
-      dedyia = terma * (xba * zt - zba * xt) + xcb * dedzt - zcb * dedxt;
-      dedzia = terma * (yba * xt - xba * yt) + ycb * dedxt - xcb * dedyt;
-      dedxib = terma * (yba * zt - zba * yt) + termc * (zcb * yt - ycb * zt) +
-         yca * dedzt - zca * dedyt + zdc * dedyu - ydc * dedzu;
-      dedyib = terma * (zba * xt - xba * zt) + termc * (xcb * zt - zcb * xt) +
-         zca * dedxt - xca * dedzt + xdc * dedzu - zdc * dedxu;
-      dedzib = terma * (xba * yt - yba * xt) + termc * (ycb * xt - xcb * yt) +
-         xca * dedyt - yca * dedxt + ydc * dedxu - xdc * dedyu;
-      dedxic = termc * (ycb * zt - zcb * yt) + zba * dedyt - yba * dedzt +
-         ydb * dedzu - zdb * dedyu;
-      dedyic = termc * (zcb * xt - xcb * zt) + xba * dedzt - zba * dedxt +
-         zdb * dedxu - xdb * dedzu;
-      dedzic = termc * (xcb * yt - ycb * xt) + yba * dedxt - xba * dedyt +
-         xdb * dedyu - ydb * dedxu;
-      dedxid = zcb * dedyu - ycb * dedzu;
-      dedyid = xcb * dedzu - zcb * dedxu;
-      dedzid = ycb * dedxu - xcb * dedyu;
+         real terma = -ddt / (rba2 * REAL_SQRT(rt2));
+         real termc = ddt / (rcb2 * REAL_SQRT(rt2));
+         dedxia = terma * (zba * yt - yba * zt) + zcb * dedyt - ycb * dedzt;
+         dedyia = terma * (xba * zt - zba * xt) + xcb * dedzt - zcb * dedxt;
+         dedzia = terma * (yba * xt - xba * yt) + ycb * dedxt - xcb * dedyt;
+         dedxib = terma * (yba * zt - zba * yt) +
+            termc * (zcb * yt - ycb * zt) + yca * dedzt - zca * dedyt +
+            zdc * dedyu - ydc * dedzu;
+         dedyib = terma * (zba * xt - xba * zt) +
+            termc * (xcb * zt - zcb * xt) + zca * dedxt - xca * dedzt +
+            xdc * dedzu - zdc * dedxu;
+         dedzib = terma * (xba * yt - yba * xt) +
+            termc * (ycb * xt - xcb * yt) + xca * dedyt - yca * dedxt +
+            ydc * dedxu - xdc * dedyu;
+         dedxic = termc * (ycb * zt - zcb * yt) + zba * dedyt - yba * dedzt +
+            ydb * dedzu - zdb * dedyu;
+         dedyic = termc * (zcb * xt - xcb * zt) + xba * dedzt - zba * dedxt +
+            zdb * dedxu - xdb * dedzu;
+         dedzic = termc * (xcb * yt - ycb * xt) + yba * dedxt - xba * dedyt +
+            xdb * dedyu - ydb * dedxu;
+         dedxid = zcb * dedyu - ycb * dedzu;
+         dedyid = xcb * dedzu - zcb * dedxu;
+         dedzid = ycb * dedxu - xcb * dedyu;
+      }
    }
 
 
-   v1 = kant[iangtor][3];
-   v2 = kant[iangtor][4];
-   v3 = kant[iangtor][5];
-   k = iat[iangtor][2];
-   dot = xcb * xdc + ycb * ydc + zcb * zdc;
-   cosang = -dot * REAL_RSQRT(rcb2 * rdc2);
-   angle = radian * REAL_ACOS(cosang);
-   dt = angle - anat[k];
-   e2 = atorunit * dt * (v1 * phi1 + v2 * phi2 + v3 * phi3);
-   if CONSTEXPR (do_g) {
-      real dedphi = atorunit * dt * (v1 * dphi1 + v2 * dphi2 + v3 * dphi3);
-      real ddt = atorunit * radian * (v1 * phi1 + v2 * phi2 + v3 * phi3);
-      real dedxt = dedphi * (zcb * yt - ycb * zt) / (rt2 * rcb);
-      real dedyt = dedphi * (xcb * zt - zcb * xt) / (rt2 * rcb);
-      real dedzt = dedphi * (ycb * xt - xcb * yt) / (rt2 * rcb);
-      real dedxu = dedphi * (ycb * zu - zcb * yu) / (ru2 * rcb);
-      real dedyu = dedphi * (zcb * xu - xcb * zu) / (ru2 * rcb);
-      real dedzu = dedphi * (xcb * yu - ycb * xu) / (ru2 * rcb);
+   {
+      real v1 = kant[iangtor][3];
+      real v2 = kant[iangtor][4];
+      real v3 = kant[iangtor][5];
+      int k = iat[iangtor][2];
+      real dot = xcb * xdc + ycb * ydc + zcb * zdc;
+      real cosang = -dot * REAL_RSQRT(rcb2 * rdc2);
+      real angle = radian * acosf(cosang);
+      real dt = angle - anat[k];
+      e2 = atorunit * dt * (v1 * phi1 + v2 * phi2 + v3 * phi3);
+      if CONSTEXPR (do_g) {
+         real dedphi = atorunit * dt * (v1 * dphi1 + v2 * dphi2 + v3 * dphi3);
+         real ddt = atorunit * radian * (v1 * phi1 + v2 * phi2 + v3 * phi3);
+         real dedxt = dedphi * (zcb * yt - ycb * zt) / (rt2 * rcb);
+         real dedyt = dedphi * (xcb * zt - zcb * xt) / (rt2 * rcb);
+         real dedzt = dedphi * (ycb * xt - xcb * yt) / (rt2 * rcb);
+         real dedxu = dedphi * (ycb * zu - zcb * yu) / (ru2 * rcb);
+         real dedyu = dedphi * (zcb * xu - xcb * zu) / (ru2 * rcb);
+         real dedzu = dedphi * (xcb * yu - ycb * xu) / (ru2 * rcb);
 
 
-      real termb = -ddt / (rcb2 * REAL_SQRT(ru2));
-      real termd = ddt / (rdc2 * REAL_SQRT(ru2));
-      dedxia += zcb * dedyt - ycb * dedzt;
-      dedyia += xcb * dedzt - zcb * dedxt;
-      dedzia += ycb * dedxt - xcb * dedyt;
-      dedxib += termb * (zcb * yu - ycb * zu) + yca * dedzt - zca * dedyt +
-         zdc * dedyu - ydc * dedzu;
-      dedyib += termb * (xcb * zu - zcb * xu) + zca * dedxt - xca * dedzt +
-         xdc * dedzu - zdc * dedxu;
-      dedzib += termb * (ycb * xu - xcb * yu) + xca * dedyt - yca * dedxt +
-         ydc * dedxu - xdc * dedyu;
-      dedxic += termb * (ycb * zu - zcb * yu) + termd * (zdc * yu - ydc * zu) +
-         zba * dedyt - yba * dedzt + ydb * dedzu - zdb * dedyu;
-      dedyic += termb * (zcb * xu - xcb * zu) + termd * (xdc * zu - zdc * xu) +
-         xba * dedzt - zba * dedxt + zdb * dedxu - xdb * dedzu;
-      dedzic += termb * (xcb * yu - ycb * xu) + termd * (ydc * xu - xdc * yu) +
-         yba * dedxt - xba * dedyt + xdb * dedyu - ydb * dedxu;
-      dedxid += termd * (ydc * zu - zdc * yu) + zcb * dedyu - ycb * dedzu;
-      dedyid += termd * (zdc * xu - xdc * zu) + xcb * dedzu - zcb * dedxu;
-      dedzid += termd * (xdc * yu - ydc * xu) + ycb * dedxu - xcb * dedyu;
+         real termb = -ddt / (rcb2 * REAL_SQRT(ru2));
+         real termd = ddt / (rdc2 * REAL_SQRT(ru2));
+         dedxia += zcb * dedyt - ycb * dedzt;
+         dedyia += xcb * dedzt - zcb * dedxt;
+         dedzia += ycb * dedxt - xcb * dedyt;
+         dedxib += termb * (zcb * yu - ycb * zu) + yca * dedzt - zca * dedyt +
+            zdc * dedyu - ydc * dedzu;
+         dedyib += termb * (xcb * zu - zcb * xu) + zca * dedxt - xca * dedzt +
+            xdc * dedzu - zdc * dedxu;
+         dedzib += termb * (ycb * xu - xcb * yu) + xca * dedyt - yca * dedxt +
+            ydc * dedxu - xdc * dedyu;
+         dedxic += termb * (ycb * zu - zcb * yu) +
+            termd * (zdc * yu - ydc * zu) + zba * dedyt - yba * dedzt +
+            ydb * dedzu - zdb * dedyu;
+         dedyic += termb * (zcb * xu - xcb * zu) +
+            termd * (xdc * zu - zdc * xu) + xba * dedzt - zba * dedxt +
+            zdb * dedxu - xdb * dedzu;
+         dedzic += termb * (xcb * yu - ycb * xu) +
+            termd * (ydc * xu - xdc * yu) + yba * dedxt - xba * dedyt +
+            xdb * dedyu - ydb * dedxu;
+         dedxid += termd * (ydc * zu - zdc * yu) + zcb * dedyu - ycb * dedzu;
+         dedyid += termd * (zdc * xu - xdc * zu) + xcb * dedzu - zcb * dedxu;
+         dedzid += termd * (xdc * yu - ydc * xu) + ycb * dedxu - xcb * dedyu;
+      }
    }
 
 
