@@ -159,20 +159,13 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    ecore_ele = false;
 
 
-   if (use_potent(strtor_term))
-      if (tscfg("estrtor", ecore_val))
-         estrtor(vers);
-   if (use_potent(angtor_term))
-      if (tscfg("eangtor", ecore_val))
-         eangtor(vers);
-
-
    if (pltfm_config & CU_PLTFM) {
       bool calc_val = use_potent(bond_term) or use_potent(angle_term) or
          use_potent(strbnd_term) or use_potent(urey_term) or
          use_potent(opbend_term) or use_potent(improp_term) or
          use_potent(imptors_term) or use_potent(torsion_term) or
-         use_potent(pitors_term) or use_potent(tortor_term) or
+         use_potent(pitors_term) or use_potent(strtor_term) or
+         use_potent(angtor_term) or use_potent(tortor_term) or
          use_potent(geom_term);
       if (calc_val and tscfg("evalence", ecore_val))
          evalence(vers);
@@ -207,6 +200,12 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       if (use_potent(pitors_term))
          if (tscfg("epitors", ecore_val))
             epitors(vers);
+      if (use_potent(strtor_term))
+         if (tscfg("estrtor", ecore_val))
+            estrtor(vers);
+      if (use_potent(angtor_term))
+         if (tscfg("eangtor", ecore_val))
+            eangtor(vers);
       if (use_potent(tortor_term))
          if (tscfg("etortor", ecore_val))
             etortor(vers);
