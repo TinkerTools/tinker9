@@ -3,10 +3,10 @@
 #include "macro.h"
 
 namespace tinker { namespace polgrp {
-const int maxp11 = 120;
-const int maxp12 = 120;
-const int maxp13 = 120;
-const int maxp14 = 120;
+const int maxp11 = 200;
+const int maxp12 = 200;
+const int maxp13 = 200;
+const int maxp14 = 200;
 extern int*& np11;
 extern int*& np12;
 extern int*& np13;

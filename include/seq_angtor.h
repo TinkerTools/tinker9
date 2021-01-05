@@ -187,7 +187,7 @@ void dk_angtor(real& restrict e, real& restrict vxx, real& restrict vyx,
       int k = iat[iangtor][2];
       real dot = xcb * xdc + ycb * ydc + zcb * zdc;
       real cosang = -dot * REAL_RSQRT(rcb2 * rdc2);
-      real angle = radian * acosf(cosang);
+      real angle = radian * REAL_ACOS(cosang);
       real dt = angle - anat[k];
       e2 = atorunit * dt * (v1 * phi1 + v2 * phi2 + v3 * phi3);
       if CONSTEXPR (do_g) {

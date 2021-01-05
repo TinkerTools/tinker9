@@ -1111,6 +1111,10 @@ Uncategorized
 
 .. index:: RESPA-INNER
 
+**RESPTYPE**
+
+.. index:: RESPTYPE
+
 **ROTATABLE-BOND**
 
 .. index:: ROTATABLE-BOND
