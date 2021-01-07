@@ -31,6 +31,14 @@ int read_string(Arg& arg, const char* str, size_t len)
 }
 
 
+inline int read_string(std::string& arg, const char* str, size_t len)
+{
+   const int succeed = 0;
+   arg = std::string(str, len);
+   return succeed;
+}
+
+
 template <class Arg, size_t Len>
 int read_string(Arg& arg, const char (&src)[Len])
 {
@@ -83,5 +91,17 @@ void read_stream(Arg& arg, std::string prompt, Arg auto_fill, Invalid&& invalid,
       if (!input_fail)
          input_fail = invalid(arg);
    }
+}
+
+
+/**
+ * \ingroup io
+ * \brief Rewind a stream object.
+ */
+template <class T>
+void rewind_stream(T& stream)
+{
+   stream.clear();
+   stream.seekg(0);
 }
 }

@@ -10,6 +10,33 @@ c
 c
 c
 c
+      subroutine fc_trim (string,length)
+      implicit none
+      integer length
+      integer i,j,full,iletter
+      character*1 letter
+      character*(*) string
+c
+c     Return length of a string, ignoring trailing blanks or NULL characters.
+c     Printables: 32 to 126; SPACE = 32.
+c
+      j = 0
+      full = len(string)
+      do i = full, 1, -1
+         letter = string(i:i)
+         iletter = ichar(letter)
+         if (33.le.iletter .and. iletter.le.126) then
+            j = i
+            goto 10
+         end if
+      end do
+   10 continue
+      length = j
+      return
+      end
+c
+c
+c
       subroutine fc_rewind (unit)  bind(c)
       use iso_c_binding
       implicit none
@@ -89,7 +116,7 @@ c
       character(MAX_NCHAR,c_char), pointer :: kout
       call c_f_pointer (c_loc(out),kout)
       read (stdin,'(a)')  kout
-      klen = len_trim(kout)
+      call fc_trim (kout,klen)
       kout = kout(1:klen)//c_null_char
       return
       end
@@ -112,11 +139,55 @@ c
       if (slen .gt. 3)  call exit (1)
       istatus = kstatus(1:slen)
       call version (kout(1:flen),istatus)
-      klen = len_trim(kout)
+      call fc_trim (kout,klen)
 c
-c     NUL terminate the out string for C/C++
+c     NULL-terminate the output string for C/C++
 c
       kout = kout(1:klen)//c_null_char
+      return
+      end
+c
+c
+c
+      subroutine fc_suffix (file,ext,status,slen)  bind(c)
+      use iso_c_binding
+      use fcsize
+      implicit none
+      integer klen
+      integer(c_int), value :: slen
+      character(c_char), target :: file(*),ext(*),status(*)
+      character(MAX_NCHAR,c_char), pointer :: kfile,kext,kstatus
+      character(3,c_char) istatus
+      call c_f_pointer (c_loc(file),kfile)
+      call c_f_pointer (c_loc(ext),kext)
+      call c_f_pointer (c_loc(status),kstatus)
+      if (slen .gt. 3)  call exit (1)
+      istatus = kstatus(1:slen)
+      call suffix (kfile,kext,istatus)
+      call fc_trim (kfile,klen)
+c
+c     NULL-terminate the output string for C/C++
+c
+      kfile = kfile(1:klen)//c_null_char
+      return
+      end
+c
+c
+c
+      subroutine fc_basefile (string)  bind(c)
+      use iso_c_binding
+      use fcsize
+      implicit none
+      integer klen
+      character(c_char), target :: string(*)
+      character(MAX_NCHAR,c_char), pointer :: kstring
+      call c_f_pointer (c_loc(string),kstring)
+      call basefile (kstring)
+      call fc_trim (kstring,klen)
+c
+c     NULL-terminate the output string for C/C++
+c
+      kstring = kstring(1:klen)//c_null_char
       return
       end
 c

@@ -80,7 +80,7 @@ namespace tinker {
  */
 struct Spatial2
 {
-   static constexpr int LSTCAP = 40;
+   static constexpr int LSTCAP = 48;
    // output
    int nakpl;  // Length of iakpl.
    int niak;   // Length of iak. Not greater than LSTCAP*nak.

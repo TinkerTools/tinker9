@@ -15,8 +15,8 @@ Tinker9 User Manual
    m/intro
    m/install/index
    m/feat/index
-   m/key/index
    m/elec/index
+   m/key/index
 
 .. toctree::
    :caption: References
@@ -29,6 +29,3 @@ Tinker9 User Manual
       :caption: Index
 
       genindex
-
-   `GitHub Repository <https://github.com/tinkertools/tinker9>`_
-   =============================================================

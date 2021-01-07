@@ -141,12 +141,6 @@ void mechanic()
    ktortor_();
 
 
-   // assign van der Waals, repulsion and dispersion parameters
-   kvdw_();
-   krepel_();
-   kdisp_();
-
-
    // assign electrostatic interaction potential parameters
    kcharge_();
    kdipole_();
@@ -154,6 +148,12 @@ void mechanic()
    kpolar_();
    kchgtrn_();
    kchgflx_();
+
+
+   // assign van der Waals, repulsion and dispersion parameters
+   kvdw_();
+   krepel_();
+   kdisp_();
 
 
    // assign solvation, metal, pisystem and restraint parameters

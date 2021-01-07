@@ -59,18 +59,6 @@ Uncategorized
 
 .. index:: ANGMAX
 
-**ANGTORS**
-
-.. index:: ANGTORS
-
-**ANGTORTERM**
-
-.. index:: ANGTORTERM
-
-**ANGTORUNIT**
-
-.. index:: ANGTORUNIT
-
 **ANISO-PRESSURE**
 
 .. index:: ANISO-PRESSURE
@@ -1123,29 +1111,9 @@ Uncategorized
 
 .. index:: RESPA-INNER
 
-**RESTRAIN-ANGLE**
+**RESPTYPE**
 
-.. index:: RESTRAIN-ANGLE
-
-**RESTRAIN-DISTANCE**
-
-.. index:: RESTRAIN-DISTANCE
-
-**RESTRAIN-GROUPS**
-
-.. index:: RESTRAIN-GROUPS
-
-**RESTRAIN-POSITION**
-
-.. index:: RESTRAIN-POSITION
-
-**RESTRAIN-TORSION**
-
-.. index:: RESTRAIN-TORSION
-
-**RESTRAINTERM**
-
-.. index:: RESTRAINTERM
+.. index:: RESPTYPE
 
 **ROTATABLE-BOND**
 
@@ -1238,18 +1206,6 @@ Uncategorized
 **STEPMIN**
 
 .. index:: STEPMIN
-
-**STRTORS**
-
-.. index:: STRTORS
-
-**STRTORTERM**
-
-.. index:: STRTORTERM
-
-**STRTORUNIT**
-
-.. index:: STRTORUNIT
 
 **SURFACE-TENSION**
 

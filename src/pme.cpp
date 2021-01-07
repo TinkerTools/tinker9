@@ -249,12 +249,5 @@ void pme_data(rc_op op)
          pme_op_copyin(dpme_unit);
       }
    }
-
-
-#if TINKER_CUDART
-   if (op & rc_init) {
-      pme_cuda_func_config();
-   }
-#endif
 }
 }

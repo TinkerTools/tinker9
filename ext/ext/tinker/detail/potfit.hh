@@ -12,7 +12,7 @@ extern int& ngatm;
 extern int& nfatm;
 extern int (&npgrid)[maxref];
 extern int*& ipgrid;
-extern double& resp;
+extern double& wresp;
 extern double (&xdpl0)[maxref];
 extern double (&ydpl0)[maxref];
 extern double (&zdpl0)[maxref];
@@ -36,6 +36,7 @@ extern int*& fitchg;
 extern int*& fitpol;
 extern int*& gatm;
 extern int*& fatm;
+extern char (&resptyp)[4];
 
 #ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" int TINKER_MOD(potfit, nconf);
@@ -44,7 +45,7 @@ extern "C" int TINKER_MOD(potfit, ngatm);
 extern "C" int TINKER_MOD(potfit, nfatm);
 extern "C" int TINKER_MOD(potfit, npgrid)[maxref];
 extern "C" int* TINKER_MOD(potfit, ipgrid);
-extern "C" double TINKER_MOD(potfit, resp);
+extern "C" double TINKER_MOD(potfit, wresp);
 extern "C" double TINKER_MOD(potfit, xdpl0)[maxref];
 extern "C" double TINKER_MOD(potfit, ydpl0)[maxref];
 extern "C" double TINKER_MOD(potfit, zdpl0)[maxref];
@@ -68,6 +69,7 @@ extern "C" int* TINKER_MOD(potfit, fitchg);
 extern "C" int* TINKER_MOD(potfit, fitpol);
 extern "C" int* TINKER_MOD(potfit, gatm);
 extern "C" int* TINKER_MOD(potfit, fatm);
+extern "C" char TINKER_MOD(potfit, resptyp)[4];
 
 int& nconf = TINKER_MOD(potfit, nconf);
 int& namax = TINKER_MOD(potfit, namax);
@@ -75,7 +77,7 @@ int& ngatm = TINKER_MOD(potfit, ngatm);
 int& nfatm = TINKER_MOD(potfit, nfatm);
 int (&npgrid)[maxref] = TINKER_MOD(potfit, npgrid);
 int*& ipgrid = TINKER_MOD(potfit, ipgrid);
-double& resp = TINKER_MOD(potfit, resp);
+double& wresp = TINKER_MOD(potfit, wresp);
 double (&xdpl0)[maxref] = TINKER_MOD(potfit, xdpl0);
 double (&ydpl0)[maxref] = TINKER_MOD(potfit, ydpl0);
 double (&zdpl0)[maxref] = TINKER_MOD(potfit, zdpl0);
@@ -99,5 +101,6 @@ int*& fitchg = TINKER_MOD(potfit, fitchg);
 int*& fitpol = TINKER_MOD(potfit, fitpol);
 int*& gatm = TINKER_MOD(potfit, gatm);
 int*& fatm = TINKER_MOD(potfit, fatm);
+char (&resptyp)[4] = TINKER_MOD(potfit, resptyp);
 #endif
 } }

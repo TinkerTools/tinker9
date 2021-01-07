@@ -45,6 +45,7 @@ modifiers, and usage examples.
 .. toctree::
 
    potent
+   restrain
    hippo
    dynamic
    fep

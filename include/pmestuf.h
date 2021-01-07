@@ -34,9 +34,6 @@ void fphi_to_cphi(PMEUnit, const real (*fphi)[20], real (*cphi)[10]);
 //====================================================================//
 
 
-void pme_cuda_func_config();
-
-
 void bspline_fill_cu(PMEUnit, int level);
 
 

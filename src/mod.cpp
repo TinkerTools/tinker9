@@ -3,6 +3,7 @@
 
 #include "mod.angbnd.h"
 #include "mod.angpot.h"
+#include "mod.angtor.h"
 #include "mod.bitor.h"
 #include "mod.bndpot.h"
 #include "mod.bndstr.h"
@@ -29,6 +30,7 @@
 #include "mod.reppot.h"
 #include "mod.restrn.h"
 #include "mod.strbnd.h"
+#include "mod.strtor.h"
 #include "mod.torpot.h"
 #include "mod.tors.h"
 #include "mod.tortor.h"

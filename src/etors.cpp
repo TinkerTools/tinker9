@@ -9,7 +9,8 @@
 namespace tinker {
 void etors_data(rc_op op)
 {
-   if (!use_potent(torsion_term))
+   if (not use_potent(torsion_term) and not use_potent(strtor_term) and
+       not use_potent(angtor_term))
       return;
 
 

@@ -11,7 +11,7 @@ do
    k="${k#*.eq."'"}"
    k="${k%%" ')"*}"
    echo $k
-done | sort | uniq >> "${OUTPUT}"
+done | LC_COLLATE=C sort | uniq >> "${OUTPUT}"
 
 # while read line
 # do

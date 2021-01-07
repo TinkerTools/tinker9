@@ -25,7 +25,7 @@ and copy Tinker to the build directory:
 
 Alternatively, clone
 `Tinker from GitHub <https://github.com/tinkertools/tinker>`_,
-then checkout the required version **25b7ee7a**.
+then checkout the required version **c7641407**.
 
 **Make libtinker**
 

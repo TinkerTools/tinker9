@@ -22,7 +22,8 @@ const TimeScaleConfig& respa_tsconfig()
       {"ebond", fast},         {"eangle", fast},        {"estrbnd", fast},
       {"eurey", fast},         {"eopbend", fast},       {"etors", fast},
       {"eimprop", fast},       {"eimptor", fast},       {"epitors", fast},
-      {"etortor", fast},       {"egeom", fast},
+      {"estrtor", fast},       {"eangtor", fast},       {"etortor", fast},
+      {"egeom", fast},
 
       {"evalence", fast},
 

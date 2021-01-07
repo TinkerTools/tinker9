@@ -285,3 +285,11 @@ using mixed = float;
 #else
 #   define TINKER9_DIRSTR TINKER_STR(TINKER9_DIR)
 #endif
+
+
+//====================================================================//
+
+
+namespace tinker {
+constexpr int MAX_NCHAR = 240;
+}

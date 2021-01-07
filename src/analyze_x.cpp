@@ -155,6 +155,14 @@ void x_analyze_e()
       print(out, fmt, "Pi-Orbital Torsion", energy_ept,
             count_bonded_term(pitors_term));
 
+   if (use_potent(strtor_term))
+      print(out, fmt, "Stretch-Torsion", energy_ebt,
+            count_bonded_term(strtor_term));
+
+   if (use_potent(angtor_term))
+      print(out, fmt, "Angle-Torsion", energy_eat,
+            count_bonded_term(angle_term));
+
    if (use_potent(tortor_term))
       print(out, fmt, "Torsion-Torsion", energy_ett,
             count_bonded_term(tortor_term));
