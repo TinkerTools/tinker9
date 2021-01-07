@@ -12,7 +12,8 @@ namespace tinker {
 void eangle_data(rc_op op)
 {
    if (not use_potent(angle_term) and not use_potent(strbnd_term) and
-       not use_potent(opbend_term) and not use_potent(angtor_term))
+       not use_potent(opbend_term) and not use_potent(angtor_term) and
+       not potent::use_chgflx)
       return;
 
    bool rc_a = rc_flag & calc::analyz;

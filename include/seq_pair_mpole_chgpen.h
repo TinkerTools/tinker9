@@ -73,13 +73,19 @@ void pair_mpole_chgpen(                             //
    real rr1i, rr3i, rr5i, rr7i, rr1k, rr3k, rr5k, rr7k, rr1ik, rr3ik, rr5ik,
       rr7ik, rr9ik, rr11ik;
 
+   // Compute damping factors
+   if CONSTEXPR (do_g) {
+      damp_pole_v2<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
+   } else {
+      damp_pole_v2<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
+   }
+   //
+
    if CONSTEXPR (eq<ETYP, EWALD>()) {
       if CONSTEXPR (do_g) {
          damp_ewald<6>(bn, r, invr1, rr2, aewald);
-         damp_pole_v2<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
       } else {
          damp_ewald<5>(bn, r, invr1, rr2, aewald);
-         damp_pole_v2<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
       }
 
       bn[0] *= f;
@@ -90,11 +96,6 @@ void pair_mpole_chgpen(                             //
       if CONSTEXPR (do_g)
          bn[5] *= f;
    } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
-      if CONSTEXPR (do_g) {
-         damp_pole_v2<11>(dmpik, dmpi, dmpk, r, alphai, alphak);
-      } else
-         damp_pole_v2<9>(dmpik, dmpi, dmpk, r, alphai, alphak);
-
       bn[0] = rr1;
       bn[1] = rr3;
       bn[2] = rr5;
@@ -103,6 +104,7 @@ void pair_mpole_chgpen(                             //
       if CONSTEXPR (do_g)
          bn[5] = rr11;
    } // endif NON_EWALD
+
 
    real m = 1 - mscale;
    rr1i = bn[0] - (m + mscale * dmpi[0]) * rr1;

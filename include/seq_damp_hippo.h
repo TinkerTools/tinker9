@@ -546,7 +546,7 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
 
       real dmpi26 = dmpi23 * dmpi23;
 
-      pre = 128;
+      pre = 2;
       s = (r + dmpi2 * r2 + dmpi22 * r3 * div3) * expi;
       ds = (dmpi22 * r3 + dmpi23 * r4) * expi * div3;
       d2s = dmpi24 * expi * r5 * div9;
@@ -581,7 +581,7 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
       real term = 0.25f * (dmpi + dmpk) * (dmpi - dmpk);
       real term1 = (dmpi + dmpk) * (dmpi - dmpk);
       real tmp = 4 * (dmpi * dmpk) / term1;
-      pre = (8192 * dmpi23 * dmpk23) / (term * term * term * term);
+      pre = (128 * dmpi23 * dmpk23) / (term * term * term * term);
 
       real coef1 = 16 / term1;
 

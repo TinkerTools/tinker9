@@ -205,9 +205,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
       dirguess = true;
    }
    // get the electrostatic field due to permanent multipoles
-
    dfield_chgpen(field);
-
    // direct induced dipoles
 
    #pragma acc parallel loop independent async\
@@ -278,7 +276,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
    const bool debug = inform::debug;
    const int politer = polpot::politer;
    const real poleps = polpot::poleps;
-   // const real debye = units::debye;
+   const real debye = units::debye;
    const real pcgpeek = polpcg::pcgpeek;
    const int maxiter = 100; // see also subroutine induce0a in induce.f
 
@@ -335,13 +333,14 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
       real b;
       real sum1;
       sum1 = darray::dot_wait(g::q0, n, rsd, zrsd);
-      if (sum != 0)
-         b = sum1 / sum;
+      b = sum1 / sum;
+      if (sum == 0)
+         b = 0;
 
 
       // calculate/update p
       #pragma acc parallel loop independent async\
-                  deviceptr(conj,zrsd)
+                  deviceptr(conj,zrsd,rsd)
       for (int i = 0; i < n; ++i) {
          #pragma acc loop seq
          for (int j = 0; j < 3; ++j)
@@ -353,9 +352,10 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
 
       real epsd;
       epsd = darray::dot_wait(g::q0, n, rsd, rsd);
-
       epsold = eps;
       eps = epsd;
+      eps = debye * REAL_SQRT(eps / n);
+
 
       if (debug) {
          if (iter == 1) {

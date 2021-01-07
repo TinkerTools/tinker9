@@ -302,9 +302,9 @@ void pair_polar_chgpen(real r2, real xr, real yr, real zr, real dscale,
       depz = tixz * ukx + tiyz * uky + tizz * ukz - tkxz * uix - tkyz * uiy -
          tkzz * uiz;
 
-      pgrad.frcx += 2 * depx;
-      pgrad.frcy += 2 * depy;
-      pgrad.frcz += 2 * depz;
+      pgrad.frcx = 2 * depx;
+      pgrad.frcy = 2 * depy;
+      pgrad.frcz = 2 * depz;
 
       // get the dtau/dr terms used for mutual polarization force
 

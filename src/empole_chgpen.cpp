@@ -130,7 +130,7 @@ void empole_chgpen_nonewald(int vers, int use_cf)
       empole_chgpen_nonewald_cu(vers, use_cf);
    else
 #endif
-      empole_chgpen_nonewald_acc(vers);
+      empole_chgpen_nonewald_acc(vers, use_cf);
 }
 
 
@@ -148,7 +148,7 @@ void empole_chgpen_ewald_real_self(int vers, int use_cf)
       empole_chgpen_ewald_real_self_cu(vers, use_cf);
    else
 #endif
-      empole_chgpen_ewald_real_self_acc(vers);
+      empole_chgpen_ewald_real_self_acc(vers, use_cf);
 }
 
 

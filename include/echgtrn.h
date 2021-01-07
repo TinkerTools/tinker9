@@ -11,4 +11,5 @@ namespace tinker {
 void echgtrn_data(rc_op op);
 void echgtrn(int vers);
 void echgtrn_cu(int);
+void echgtrn_acc(int);
 }

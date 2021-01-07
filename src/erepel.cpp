@@ -172,8 +172,9 @@ void erepel(int vers)
    if (mlist_version() & NBL_SPATIAL)
       erepel_cu(vers);
    else
-      ;
 #endif
+      erepel_acc(vers);
+
    torque(vers, derx, dery, derz);
    if (do_v) {
       virial_buffer u2 = vir_trq;
