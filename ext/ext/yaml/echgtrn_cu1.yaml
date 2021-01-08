@@ -58,17 +58,53 @@ K_VARIABLES:
   - def: register real chgk from:chgct
   - def: register real alphak from:dmpct
 
-#SCALED_PAIRWISE_INTERACTION: |
-
-FULL_PAIRWISE_INTERACTION: |
-  real xr = xk - xi;
-  real yr = yk - yi;
-  real zr = zk - zi;
+SCALED_PAIRWISE_INTERACTION: |
+  real xr = xk - @xi@;
+  real yr = yk - @yi@;
+  real zr = zk - @zi@;
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
     real r = REAL_SQRT(r2);
     e_prec e, de;
-    pair_chgtrn<do_g>(r, cut, off, scalea, f, alphai, chgi, alphak, chgk, e, de);
+    pair_chgtrn<do_g>(r, cut, off, scalea, f, @alphai@, @chgi@, alphak, chgk, e, de);
+    if CONSTEXPR (do_a)
+        if (e != 0 and scalea != 0)
+          nctl += 1;
+    if CONSTEXPR (do_e)
+        ectl += cvt_to<ebuf_prec>(e);
+    if CONSTEXPR (do_g) {
+      de *= REAL_RECIP(r);
+      real dedx = de * xr;
+      real dedy = de * yr;
+      real dedz = de * zr;
+
+      @gxi@ -= dedx;
+      @gyi@ -= dedy;
+      @gzi@ -= dedz;
+      gxk += dedx;
+      gyk += dedy;
+      gzk += dedz;
+
+      if CONSTEXPR (do_v) {
+        vctlxx += cvt_to<vbuf_prec>(xr * dedx);
+        vctlyx += cvt_to<vbuf_prec>(yr * dedx);
+        vctlzx += cvt_to<vbuf_prec>(zr * dedx);
+        vctlyy += cvt_to<vbuf_prec>(yr * dedy);
+        vctlzy += cvt_to<vbuf_prec>(zr * dedy);
+        vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+      }
+    }
+  } // end if (include)
+
+FULL_PAIRWISE_INTERACTION: |
+  real xr = xk - @xi@;
+  real yr = yk - @yi@;
+  real zr = zk - @zi@;
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    real r = REAL_SQRT(r2);
+    e_prec e, de;
+    pair_chgtrn<do_g>(r, cut, off, 1, f, @alphai@, @chgi@, alphak, chgk, e, de);
     if CONSTEXPR (do_a)
         if (e != 0)
           nctl += 1;
@@ -80,9 +116,9 @@ FULL_PAIRWISE_INTERACTION: |
       real dedy = de * yr;
       real dedz = de * zr;
 
-      shgxi -= dedx;
-      shgyi -= dedy;
-      shgzi -= dedz;
+      @gxi@ -= dedx;
+      @gyi@ -= dedy;
+      @gzi@ -= dedz;
       gxk += dedx;
       gyk += dedy;
       gzk += dedz;

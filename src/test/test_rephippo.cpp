@@ -5,23 +5,22 @@
 using namespace tinker;
 
 
-TEST_CASE("EDISP-1-NONDEWALD", "[ff][hippo][edisp][nondewald]")
+TEST_CASE("EREPEL-1", "[ff][hippo][erepel][c5h12-acnh2]")
 {
    TestFile fx1(TINKER9_DIRSTR "/src/test/file/c5h12acnh2/c5h12acnh2.xyz");
-   TestFile fk1(TINKER9_DIRSTR "/src/test/file/disp/ndewald.key");
-   TestFile fp1(TINKER9_DIRSTR "/src/test/file/disp/hippo19.prm");
+   TestFile fk1(TINKER9_DIRSTR "/src/test/file/hippo/repuls/rep.key");
+   TestFile fp1(TINKER9_DIRSTR "/src/test/file/hippo/hippo19.prm");
    const char* xn = "c5h12acnh2.xyz";
-   const char* kn = "ndewald.key";
+   const char* kn = "rep.key";
    const char* argv[] = {"dummy", xn, "-k", kn};
    int argc = 4;
 
 
-   const double eps_e = test_get_eps(0.0001, 0.0001);
-   const double eps_g = test_get_eps(0.0003, 0.0001);
-   const double eps_v = test_get_eps(0.0010, 0.001);
+   const double eps_e = test_get_eps(0.0045, 0.0001);
+   const double eps_g = test_get_eps(0.0070, 0.0001);
+   const double eps_v = test_get_eps(0.0900, 0.0010);
 
-
-   TestReference r(TINKER9_DIRSTR "/src/test/ref/disp.1.txt");
+   TestReference r(TINKER9_DIRSTR "/src/test/ref/rephippo.1.txt");
    auto ref_c = r.get_count();
    auto ref_e = r.get_energy();
    auto ref_v = r.get_virial();
@@ -47,7 +46,7 @@ TEST_CASE("EDISP-1-NONDEWALD", "[ff][hippo][edisp][nondewald]")
 
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
-   COMPARE_INTS(count_reduce(ndisp), ref_c);
+   COMPARE_INTS(count_reduce(nrep), ref_c);
 
 
    energy(calc::v4);
@@ -71,23 +70,22 @@ TEST_CASE("EDISP-1-NONDEWALD", "[ff][hippo][edisp][nondewald]")
 }
 
 
-TEST_CASE("EDISP-2-DEWALD", "[ff][hippo][edisp][dewald]")
+TEST_CASE("EREPEL-2", "[ff][hippo][erepel][water]")
 {
-   TestFile fx1(TINKER9_DIRSTR "/src/test/file/c5h12acnh2/c5h12acnh2.xyz");
-   TestFile fk1(TINKER9_DIRSTR "/src/test/file/disp/dewald.key");
-   TestFile fp1(TINKER9_DIRSTR "/src/test/file/disp/hippo19.prm");
-   const char* xn = "c5h12acnh2.xyz";
-   const char* kn = "dewald.key";
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/water10/h2o10.xyz");
+   TestFile fk1(TINKER9_DIRSTR "/src/test/file/hippo/repuls/repwater.key");
+   TestFile fp1(TINKER9_DIRSTR "/src/test/file/hippo/water19.prm");
+   const char* xn = "h2o10.xyz";
+   const char* kn = "repwater.key";
    const char* argv[] = {"dummy", xn, "-k", kn};
    int argc = 4;
 
 
-   const double eps_e = test_get_eps(0.0035, 0.0001);
-   const double eps_g = test_get_eps(0.0007, 0.0001);
-   const double eps_v = test_get_eps(0.007, 0.001);
+   const double eps_e = test_get_eps(0.0001, 0.0001);
+   const double eps_g = test_get_eps(0.0005, 0.0001);
+   const double eps_v = test_get_eps(0.0010, 0.0010);
 
-
-   TestReference r(TINKER9_DIRSTR "/src/test/ref/disp.2.txt");
+   TestReference r(TINKER9_DIRSTR "/src/test/ref/rephippo.2.txt");
    auto ref_c = r.get_count();
    auto ref_e = r.get_energy();
    auto ref_v = r.get_virial();
@@ -113,7 +111,7 @@ TEST_CASE("EDISP-2-DEWALD", "[ff][hippo][edisp][dewald]")
 
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
-   COMPARE_INTS(count_reduce(ndisp), ref_c);
+   COMPARE_INTS(count_reduce(nrep), ref_c);
 
 
    energy(calc::v4);

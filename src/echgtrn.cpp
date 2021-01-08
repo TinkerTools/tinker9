@@ -93,8 +93,8 @@ void echgtrn(int vers)
    if (mlist_version() & NBL_SPATIAL)
       echgtrn_cu(vers);
    else
-      ;
 #endif
+      echgtrn_acc(vers);
 
 
    if (rc_a) {

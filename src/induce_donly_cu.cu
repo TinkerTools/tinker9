@@ -7,7 +7,7 @@
 #include "induce_donly.h"
 #include "launch.h"
 #include "mdpq.h"
-#include "seq_damp_chgpen.h"
+#include "seq_damp_hippo.h"
 #include "seq_triangle.h"
 #include "switch.h"
 #include "tool/gpu_card.h"
@@ -28,7 +28,7 @@ void sparse_precond_cu3(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
 }
 
 
-// ck.py Version 2.0.2
+// ck.py Version 2.0.3
 __global__
 void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off,
                         const unsigned* restrict winfo, int nexclude,

@@ -248,12 +248,21 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          emplar(vers);
 
 
+   if (hippo_empole(vers))
+      if (tscfg("empole_chgpen", ecore_ele))
+         empole_chgpen(vers);
+   if (hippo_epolar(vers))
+      if (tscfg("epolar_chgpen", ecore_ele))
+         epolar_chgpen(vers);
    if (use_potent(chgtrn_term))
       if (tscfg("echgtrn", ecore_ele))
          echgtrn(vers);
    if (use_potent(disp_term))
       if (tscfg("edisp", ecore_vdw))
          edisp(vers);
+   if (use_potent(repuls_term))
+      if (tscfg("erepel", ecore_vdw))
+         erepel(vers);
 
 
    pme_stream_finish_wait(use_pme_stream and not(vers & calc::analyz));

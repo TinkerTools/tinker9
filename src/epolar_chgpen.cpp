@@ -161,7 +161,8 @@ void induce2(real (*ud)[3])
                header = false;
                print(stdout, "\n Induced Dipole Moments (Debye) :\n");
                print(stdout,
-                     "\n    Atom %1$13s X %1$10s Y %1$10s Z %1$9s Total\n\n");
+                     "\n    Atom %1$13s X %1$10s Y %1$10s Z %1$9s Total\n\n",
+                     "");
             }
             double u1 = uindbuf[3 * i];
             double u2 = uindbuf[3 * i + 1];
@@ -273,7 +274,7 @@ void epolar_chgpen_nonewald(int vers, int use_cf)
          epolar_chgpen_nonewald_cu(ver2, use_cf, uind);
       else
 #endif
-         epolar_chgpen_nonewald_acc(ver2, uind);
+         epolar_chgpen_nonewald_acc(ver2, use_cf, uind);
    }
 }
 
@@ -310,7 +311,7 @@ void epolar_chgpen_ewald_real(int vers, int use_cf)
       epolar_chgpen_ewald_real_cu(vers, use_cf, uind);
    else
 #endif
-      epolar_chgpen_ewald_real_acc(vers, uind);
+      epolar_chgpen_ewald_real_acc(vers, use_cf, uind);
 }
 
 

@@ -12,11 +12,10 @@
 
 namespace tinker {
 #define POLAR_DPTRS                                                            \
-   x, y, z, depx, depy, depz, rpole, pcore, pval, palpha, uind, nep, ep,       \
+   x, y, z, depx, depy, depz, rpole, pcore, pval, palpha, pot, uind, nep, ep,  \
       vir_ep, ufld, dufld
-// TODO: HIPPO not reviewed
-template <class Ver>
-void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
+template <class Ver, class ETYP, bool CFLX>
+void epolar_chgpen_acc1(const real (*uind)[3])
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -26,21 +25,29 @@ void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
    if CONSTEXPR (do_g)
       darray::zero(g::q0, n, ufld, dufld);
 
-   const real off = switch_off(switch_ewald);
+   real aewald = 0;
+   real off;
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
+      off = switch_off(switch_ewald);
+      const PMEUnit pu = ppme_unit;
+      aewald = pu->aewald;
+   } else {
+      off = switch_off(switch_mpole);
+   }
+
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
 
-   auto bufsize = buffer_size();
+   size_t bufsize = buffer_size();
    PairPolarGrad pgrad;
 
    const real f = 0.5f * electric / dielec;
 
-   const PMEUnit pu = ppme_unit;
-   const real aewald = pu->aewald;
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(POLAR_DPTRS,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -64,14 +71,16 @@ void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
       real alphai = palpha[i];
       real vali = pval[i];
 
-      real gxi = 0, gyi = 0, gzi = 0;
-      real txi = 0, tyi = 0, tzi = 0;
-      real du0 = 0, du1 = 0, du2 = 0, du3 = 0, du4 = 0, du5 = 0;
+      MAYBE_UNUSED real gxi = 0, gyi = 0, gzi = 0;
+      MAYBE_UNUSED real txi = 0, tyi = 0, tzi = 0;
+      MAYBE_UNUSED real du0 = 0, du1 = 0, du2 = 0, du3 = 0, du4 = 0, du5 = 0;
+      MAYBE_UNUSED real poti = 0;
 
       int nmlsti = mlst->nlst[i];
       int base = i * maxnlst;
       #pragma acc loop vector independent private(pgrad)\
-                  reduction(+:gxi,gyi,gzi,txi,tyi,tzi,du0,du1,du2,du3,du4,du5)
+                  reduction(+:gxi,gyi,gzi,txi,tyi,tzi,poti,\
+                  du0,du1,du2,du3,du4,du5)
       for (int kk = 0; kk < nmlsti; ++kk) {
          int offset = kk & (bufsize - 1);
          int k = mlst->lst[base + kk];
@@ -79,8 +88,12 @@ void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
          real yr = y[k] - yi;
          real zr = z[k] - zi;
 
+         zero(pgrad);
          real r2 = image2(xr, yr, zr);
          if (r2 <= off2) {
+            MAYBE_UNUSED real e;
+            MAYBE_UNUSED real pota, potb;
+
             real ck = rpole[k][mpl_pme_0];
             real dkx = rpole[k][mpl_pme_x];
             real dky = rpole[k][mpl_pme_y];
@@ -99,20 +112,16 @@ void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
             real valk = pval[k];
 
 
-            MAYBE_UNUSED real e;
-            pair_polar_chgpen<do_e, do_g, EWALD>( //
-               r2, xr, yr, zr, 1, 1,              //
-               ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
-               uiz, corei, vali, alphai, //
-               ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
-               ukz, corek, valk, alphak, //
-               f, aewald, e, pgrad);
+            pair_polar_chgpen<do_e, do_g, ETYP, CFLX>( //
+               r2, xr, yr, zr, 1, 1, ci, dix, diy, diz, corei, vali, alphai,
+               qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy, uiz, ck, dkx, dky,
+               dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
+               ukx, uky, ukz, f, aewald, e, pota, potb, pgrad);
 
             if CONSTEXPR (do_a)
                atomic_add(1, nep, offset);
             if CONSTEXPR (do_e)
                atomic_add(e, ep, offset);
-
             if CONSTEXPR (do_g) {
                gxi += pgrad.frcx;
                gyi += pgrad.frcy;
@@ -150,12 +159,15 @@ void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
                   real vzz = -zr * pgrad.frcz;
 
                   atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep, offset);
-               }
-            }
-         }
-         // end if use_chgpen
-
-      } // end for (int kk)
+               } // end if (do_v)
+               // Charge flux term
+               if CONSTEXPR (CFLX) {
+                  poti += pota;
+                  atomic_add(potb, pot, k);
+               } // end CFLX
+            }    // end if (r2 <= off2)
+         }       // end if (do_g)
+      }          // end for (int kk)
 
       if CONSTEXPR (do_g) {
          atomic_add(gxi, depx, i);
@@ -170,10 +182,15 @@ void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
          atomic_add(du3, &dufld[i][3]);
          atomic_add(du4, &dufld[i][4]);
          atomic_add(du5, &dufld[i][5]);
+         if CONSTEXPR (CFLX) {
+            atomic_add(poti, pot, i);
+         }
       }
    } // end for (int i)
 
+
    #pragma acc parallel async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(POLAR_DPTRS,mdwexclude,mdwexclude_scale)
    #pragma acc loop independent private(pgrad)
    for (int ii = 0; ii < nmdwexclude; ++ii) {
@@ -181,8 +198,8 @@ void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
 
       int i = mdwexclude[ii][0];
       int k = mdwexclude[ii][1];
-      real dscale = mdwexclude_scale[ii][0] - 1;
-      real wscale = mdwexclude_scale[ii][1] - 1;
+      real dscale = mdwexclude_scale[ii][1] - 1;
+      real wscale = mdwexclude_scale[ii][2] - 1;
 
       real xi = x[i];
       real yi = y[i];
@@ -209,40 +226,34 @@ void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
       real yr = y[k] - yi;
       real zr = z[k] - zi;
 
+      real corek = pcore[k];
+      real alphak = palpha[k];
+      real valk = pval[k];
+
+      bool incl = dscale != 0 or wscale != 0;
+
       real r2 = image2(xr, yr, zr);
-      if (r2 <= off2) {
-         real ck = rpole[k][mpl_pme_0];
-         real dkx = rpole[k][mpl_pme_x];
-         real dky = rpole[k][mpl_pme_y];
-         real dkz = rpole[k][mpl_pme_z];
-         real qkxx = rpole[k][mpl_pme_xx];
-         real qkxy = rpole[k][mpl_pme_xy];
-         real qkxz = rpole[k][mpl_pme_xz];
-         real qkyy = rpole[k][mpl_pme_yy];
-         real qkyz = rpole[k][mpl_pme_yz];
-         real qkzz = rpole[k][mpl_pme_zz];
-         real ukx = uind[k][0];
-         real uky = uind[k][1];
-         real ukz = uind[k][2];
-         real corek = pcore[k];
-         real alphak = palpha[k];
-         real valk = pval[k];
+      if (r2 <= off2 and incl) {
 
          MAYBE_UNUSED real e;
-         pair_polar_chgpen<do_e, do_g, NON_EWALD>( //
-            r2, xr, yr, zr, dscale, wscale,        //
-            ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
-            uiz, corei, vali, alphai, //
-            ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
-            ukz, corek, valk, alphak, //
-            f, 0, e, pgrad);
+         MAYBE_UNUSED real pota, potb;
+
+         pair_polar_chgpen<do_e, do_g, NON_EWALD, CFLX>(       //
+            r2, xr, yr, zr, dscale, wscale,                    //
+            ci, dix, diy, diz, corei, vali, alphai,            //
+            qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy, uiz, //
+            rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
+            rpole[k][mpl_pme_z], corek, valk, alphak, rpole[k][mpl_pme_xx],
+            rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
+            rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], uind[k][0], uind[k][1],
+            uind[k][2], f, 0, e, pota, potb, pgrad);
 
          if CONSTEXPR (do_a)
-            if (dscale == -1)
+            if (dscale == -1 and e != 0)
                atomic_add(-1, nep, offset);
+
          if CONSTEXPR (do_e)
             atomic_add(e, ep, offset);
-
          if CONSTEXPR (do_g) {
             atomic_add(pgrad.frcx, depx, i);
             atomic_add(pgrad.frcy, depy, i);
@@ -281,9 +292,13 @@ void epolar_chgpen_ewald_real_acc1(const real (*uind)[3])
 
                atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep, offset);
             }
-         }
-      }
-   }
+            if CONSTEXPR (CFLX) {
+               atomic_add(pota, pot, i);
+               atomic_add(potb, pot, k);
+            } // end if CFLX
+         }    // end if (do_g)
+      }       // end if (r2 <= off2)
+   }          // end for (int ii)
 
    // torque
 
@@ -651,8 +666,76 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
 }
 
 
-// TODO: HIPPO not reviewed
-void epolar_chgpen_ewald_real_acc(int vers, const real (*uind)[3]) {}
+void epolar_chgpen_nonewald_acc(int vers, int use_cf, const real (*uind)[3])
+{
+   if (use_cf) {
+      if (vers == calc::v0) {
+         // epolar_chgpen_acc1<calc::V0, NON_EWALD, 1>(uind);
+         assert(false && "CFLX must compute gradient.");
+      } else if (vers == calc::v1) {
+         epolar_chgpen_acc1<calc::V1, NON_EWALD, 1>(uind);
+      } else if (vers == calc::v3) {
+         // epolar_chgpen_acc1<calc::V3, NON_EWALD, 1>(uind);
+         assert(false && "CFLX must compute gradient.");
+      } else if (vers == calc::v4) {
+         epolar_chgpen_acc1<calc::V4, NON_EWALD, 1>(uind);
+      } else if (vers == calc::v5) {
+         epolar_chgpen_acc1<calc::V5, NON_EWALD, 1>(uind);
+      } else if (vers == calc::v6) {
+         epolar_chgpen_acc1<calc::V6, NON_EWALD, 1>(uind);
+      }
+   } else {
+      if (vers == calc::v0) {
+         epolar_chgpen_acc1<calc::V0, NON_EWALD, 0>(uind);
+      } else if (vers == calc::v1) {
+         epolar_chgpen_acc1<calc::V1, NON_EWALD, 0>(uind);
+      } else if (vers == calc::v3) {
+         epolar_chgpen_acc1<calc::V3, NON_EWALD, 0>(uind);
+      } else if (vers == calc::v4) {
+         epolar_chgpen_acc1<calc::V4, NON_EWALD, 0>(uind);
+      } else if (vers == calc::v5) {
+         epolar_chgpen_acc1<calc::V5, NON_EWALD, 0>(uind);
+      } else if (vers == calc::v6) {
+         epolar_chgpen_acc1<calc::V6, NON_EWALD, 0>(uind);
+      }
+   }
+}
+
+
+void epolar_chgpen_ewald_real_acc(int vers, int use_cf, const real (*uind)[3])
+{
+   if (use_cf) {
+      if (vers == calc::v0) {
+         // epolar_chgpen_acc1<calc::V0, EWALD, 1>(uind);
+         assert(false && "CFLX must compute gradient.");
+      } else if (vers == calc::v1) {
+         epolar_chgpen_acc1<calc::V1, EWALD, 1>(uind);
+      } else if (vers == calc::v3) {
+         // epolar_chgpen_acc1<calc::V3, EWALD, 1>(uind);
+         assert(false && "CFLX must compute gradient.");
+      } else if (vers == calc::v4) {
+         epolar_chgpen_acc1<calc::V4, EWALD, 1>(uind);
+      } else if (vers == calc::v5) {
+         epolar_chgpen_acc1<calc::V5, EWALD, 1>(uind);
+      } else if (vers == calc::v6) {
+         epolar_chgpen_acc1<calc::V6, EWALD, 1>(uind);
+      }
+   } else {
+      if (vers == calc::v0) {
+         epolar_chgpen_acc1<calc::V0, EWALD, 0>(uind);
+      } else if (vers == calc::v1) {
+         epolar_chgpen_acc1<calc::V1, EWALD, 0>(uind);
+      } else if (vers == calc::v3) {
+         epolar_chgpen_acc1<calc::V3, EWALD, 0>(uind);
+      } else if (vers == calc::v4) {
+         epolar_chgpen_acc1<calc::V4, EWALD, 0>(uind);
+      } else if (vers == calc::v5) {
+         epolar_chgpen_acc1<calc::V5, EWALD, 0>(uind);
+      } else if (vers == calc::v6) {
+         epolar_chgpen_acc1<calc::V6, EWALD, 0>(uind);
+      }
+   }
+}
 
 
 void epolar_chgpen_ewald_recip_self_acc(int vers, int use_cf,

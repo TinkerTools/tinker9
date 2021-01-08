@@ -1,7 +1,7 @@
 #pragma once
 #include "elec.h"
 #include "md.h"
-#include "seq_damprep.h"
+#include "seq_damp_hippo.h"
 #include "seq_switch.h"
 #include "switch.h"
 
@@ -61,14 +61,15 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
    }
 
    // get damping coefficients for the Pauli repulsion energy
-
    real dmpik[6];
 
-   if CONSTEXPR (!do_g) {
-      damp_rep<9>(dmpik, r, rr1, r2, rr3, rr5, rr7, rr9, rr11, dmpi, dmpk);
-   } else {
+   if CONSTEXPR (do_g) {
       damp_rep<11>(dmpik, r, rr1, r2, rr3, rr5, rr7, rr9, rr11, dmpi, dmpk);
+   } else {
+      damp_rep<9>(dmpik, r, rr1, r2, rr3, rr5, rr7, rr9, rr11, dmpi, dmpk);
    }
+
+   // Fortran tinker indexing
    // dmpik(1) == dmpik[0]
    // dmpik(3) == dmpik[1]
    // dmpik(5) == dmpik[2]
@@ -101,9 +102,7 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
    real eterm = term1 * dmpik[0] + term2 * dmpik[1] + term3 * dmpik[2] +
       term4 * dmpik[3] + term5 * dmpik[4];
 
-   // energy
    e = sizik * eterm * rInv;
-
    // gradient
    if CONSTEXPR (do_g) {
       real de = term1 * dmpik[1] + term2 * dmpik[2] + term3 * dmpik[3] +

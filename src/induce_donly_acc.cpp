@@ -7,7 +7,7 @@
 #include "induce_donly.h"
 #include "mathfunc_lu.h"
 #include "mod.uprior.h"
-#include "seq_damp_chgpen.h"
+#include "seq_damp_hippo.h"
 #include "tinker_rt.h"
 #include "tool/error.h"
 #include "tool/gpu_card.h"
@@ -18,7 +18,6 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-// TODO: HIPPO not reviewed
 void diag_precond2(const real (*rsd)[3], real (*zrsd)[3])
 {
    #pragma acc parallel loop independent async\
@@ -32,7 +31,6 @@ void diag_precond2(const real (*rsd)[3], real (*zrsd)[3])
 }
 
 #define APPLY_DPTRS rsd, zrsd, x, y, z, polarity, palpha
-// TODO: HIPPO not reviewed
 void sparse_precond_apply2_acc(const real (*rsd)[3], real (*zrsd)[3])
 {
    #pragma acc parallel loop independent async\
@@ -183,7 +181,6 @@ void sparse_precond_apply2_acc(const real (*rsd)[3], real (*zrsd)[3])
  * conj = p
  * vec = T P
  */
-// TODO: HIPPO not reviewed
 void induce_mutual_pcg2_acc(real (*uind)[3])
 {
    auto* field = work01_;
@@ -205,9 +202,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
       dirguess = true;
    }
    // get the electrostatic field due to permanent multipoles
-
    dfield_chgpen(field);
-
    // direct induced dipoles
 
    #pragma acc parallel loop independent async\
@@ -278,7 +273,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
    const bool debug = inform::debug;
    const int politer = polpot::politer;
    const real poleps = polpot::poleps;
-   // const real debye = units::debye;
+   const real debye = units::debye;
    const real pcgpeek = polpcg::pcgpeek;
    const int maxiter = 100; // see also subroutine induce0a in induce.f
 
@@ -335,8 +330,9 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
       real b;
       real sum1;
       sum1 = darray::dot_wait(g::q0, n, rsd, zrsd);
-      if (sum != 0)
-         b = sum1 / sum;
+      b = sum1 / sum;
+      if (sum == 0)
+         b = 0;
 
 
       // calculate/update p
@@ -353,9 +349,10 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
 
       real epsd;
       epsd = darray::dot_wait(g::q0, n, rsd, rsd);
-
       epsold = eps;
       eps = epsd;
+      eps = debye * REAL_SQRT(eps / n);
+
 
       if (debug) {
          if (iter == 1) {

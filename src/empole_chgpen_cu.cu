@@ -16,7 +16,8 @@
 
 
 namespace tinker {
-template <class Ver, class ETYP, int CFLX>
+// ck.py Version 2.0.3
+template <class Ver, class ETYP, bool CFLX>
 __global__
 void empole_chgpen_cu1(
    int n, TINKER_IMAGE_PARAMS, count_buffer restrict nem,
@@ -36,8 +37,6 @@ void empole_chgpen_cu1(
    constexpr bool do_e = Ver::e;
    constexpr bool do_v = Ver::v;
    constexpr bool do_g = Ver::g;
-
-
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
@@ -63,21 +62,19 @@ void empole_chgpen_cu1(
       vemtlzy = 0;
       vemtlzz = 0;
    }
-
-
-   __shared__ real shxi[BLOCK_DIM];
-   __shared__ real shyi[BLOCK_DIM];
-   __shared__ real shzi[BLOCK_DIM];
+   __shared__ real xi[BLOCK_DIM];
+   __shared__ real yi[BLOCK_DIM];
+   __shared__ real zi[BLOCK_DIM];
    real xk;
    real yk;
    real zk;
-   __shared__ real shgxi[BLOCK_DIM];
-   __shared__ real shgyi[BLOCK_DIM];
-   __shared__ real shgzi[BLOCK_DIM];
-   __shared__ real shtxi[BLOCK_DIM];
-   __shared__ real shtyi[BLOCK_DIM];
-   __shared__ real shtzi[BLOCK_DIM];
-   __shared__ real shpoti[BLOCK_DIM];
+   __shared__ real gxi[BLOCK_DIM];
+   __shared__ real gyi[BLOCK_DIM];
+   __shared__ real gzi[BLOCK_DIM];
+   __shared__ real txi[BLOCK_DIM];
+   __shared__ real tyi[BLOCK_DIM];
+   __shared__ real tzi[BLOCK_DIM];
+   __shared__ real poti[BLOCK_DIM];
    real gxk;
    real gyk;
    real gzk;
@@ -85,19 +82,19 @@ void empole_chgpen_cu1(
    real tyk;
    real tzk;
    real potk;
-   __shared__ real shci[BLOCK_DIM];
-   __shared__ real shdix[BLOCK_DIM];
-   __shared__ real shdiy[BLOCK_DIM];
-   __shared__ real shdiz[BLOCK_DIM];
-   __shared__ real shqixx[BLOCK_DIM];
-   __shared__ real shqixy[BLOCK_DIM];
-   __shared__ real shqixz[BLOCK_DIM];
-   __shared__ real shqiyy[BLOCK_DIM];
-   __shared__ real shqiyz[BLOCK_DIM];
-   __shared__ real shqizz[BLOCK_DIM];
-   __shared__ real shcorei[BLOCK_DIM];
-   __shared__ real shalphai[BLOCK_DIM];
-   __shared__ real shvali[BLOCK_DIM];
+   __shared__ real ci[BLOCK_DIM];
+   __shared__ real dix[BLOCK_DIM];
+   __shared__ real diy[BLOCK_DIM];
+   __shared__ real diz[BLOCK_DIM];
+   __shared__ real qixx[BLOCK_DIM];
+   __shared__ real qixy[BLOCK_DIM];
+   __shared__ real qixz[BLOCK_DIM];
+   __shared__ real qiyy[BLOCK_DIM];
+   __shared__ real qiyz[BLOCK_DIM];
+   __shared__ real qizz[BLOCK_DIM];
+   __shared__ real corei[BLOCK_DIM];
+   __shared__ real alphai[BLOCK_DIM];
+   __shared__ real vali[BLOCK_DIM];
    real ck;
    real dkx;
    real dky;
@@ -114,52 +111,52 @@ void empole_chgpen_cu1(
 
 
    //* /
-   // exclude
    for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
+      const int klane = threadIdx.x;
       if CONSTEXPR (do_g) {
-         shgxi[threadIdx.x] = 0;
-         shgyi[threadIdx.x] = 0;
-         shgzi[threadIdx.x] = 0;
-         shtxi[threadIdx.x] = 0;
-         shtyi[threadIdx.x] = 0;
-         shtzi[threadIdx.x] = 0;
+         gxi[threadIdx.x] = 0;
+         gyi[threadIdx.x] = 0;
+         gzi[threadIdx.x] = 0;
+         txi[threadIdx.x] = 0;
+         tyi[threadIdx.x] = 0;
+         tzi[threadIdx.x] = 0;
+         if CONSTEXPR (CFLX)
+            poti[threadIdx.x] = 0;
          gxk = 0;
          gyk = 0;
          gzk = 0;
          txk = 0;
          tyk = 0;
          tzk = 0;
-      }
-      if CONSTEXPR (CFLX) {
-         shpoti[threadIdx.x] = 0;
-         potk = 0;
+         if CONSTEXPR (CFLX)
+            potk = 0;
       }
 
 
-      int shi = exclude[ii][0];
+      int i = exclude[ii][0];
       int k = exclude[ii][1];
       real scalea = exclude_scale[ii][0];
 
 
-      real xi = x[shi];
-      real yi = y[shi];
-      real zi = z[shi];
+      xi[klane] = x[i];
+      yi[klane] = y[i];
+      zi[klane] = z[i];
       xk = x[k];
       yk = y[k];
       zk = z[k];
-      real ci = rpole[shi][mpl_pme_0];
-      real dix = rpole[shi][mpl_pme_x];
-      real diy = rpole[shi][mpl_pme_y];
-      real diz = rpole[shi][mpl_pme_z];
-      real qixx = rpole[shi][mpl_pme_xx];
-      real qixy = rpole[shi][mpl_pme_xy];
-      real qixz = rpole[shi][mpl_pme_xz];
-      real qiyy = rpole[shi][mpl_pme_yy];
-      real qiyz = rpole[shi][mpl_pme_yz];
-      real qizz = rpole[shi][mpl_pme_zz];
-      real corei = pcore[shi];
-      real alphai = palpha[shi];
-      real vali = pval[shi];
+      ci[klane] = rpole[i][mpl_pme_0];
+      dix[klane] = rpole[i][mpl_pme_x];
+      diy[klane] = rpole[i][mpl_pme_y];
+      diz[klane] = rpole[i][mpl_pme_z];
+      qixx[klane] = rpole[i][mpl_pme_xx];
+      qixy[klane] = rpole[i][mpl_pme_xy];
+      qixz[klane] = rpole[i][mpl_pme_xz];
+      qiyy[klane] = rpole[i][mpl_pme_yy];
+      qiyz[klane] = rpole[i][mpl_pme_yz];
+      qizz[klane] = rpole[i][mpl_pme_zz];
+      corei[klane] = pcore[i];
+      alphai[klane] = palpha[i];
+      vali[klane] = pval[i];
       ck = rpole[k][mpl_pme_0];
       dkx = rpole[k][mpl_pme_x];
       dky = rpole[k][mpl_pme_y];
@@ -175,11 +172,10 @@ void empole_chgpen_cu1(
       valk = pval[k];
 
 
-      int klane = threadIdx.x;
       constexpr bool incl = true;
-      real xr = xk - xi;
-      real yr = yk - yi;
-      real zr = zk - zi;
+      real xr = xk - xi[klane];
+      real yr = yk - yi[klane];
+      real zr = zk - zi[klane];
 
       real e;
       real pota, potb;
@@ -189,13 +185,14 @@ void empole_chgpen_cu1(
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
          pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(
-            r2, xr, yr, zr, scalea,                 //
-            ci, dix, diy, diz, corei, vali, alphai, //
-            qixx, qixy, qixz, qiyy, qiyz, qizz,     //
+            r2, xr, yr, zr, scalea, //
+            ci[klane], dix[klane], diy[klane], diz[klane], corei[klane],
+            vali[klane], alphai[klane], //
+            qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
+            qizz[klane],                            //
             ck, dkx, dky, dkz, corek, valk, alphak, //
             qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,     //
             f, aewald, e, pota, potb, pgrad);
-
 
          if CONSTEXPR (do_a)
             if (e != 0 and scalea != 0)
@@ -203,16 +200,16 @@ void empole_chgpen_cu1(
          if CONSTEXPR (do_e)
             emtl += cvt_to<ebuf_prec>(e);
          if CONSTEXPR (do_g) {
-            shgxi[klane] += pgrad.frcx;
-            shgyi[klane] += pgrad.frcy;
-            shgzi[klane] += pgrad.frcz;
+            gxi[klane] += pgrad.frcx;
+            gyi[klane] += pgrad.frcy;
+            gzi[klane] += pgrad.frcz;
             gxk -= pgrad.frcx;
             gyk -= pgrad.frcy;
             gzk -= pgrad.frcz;
 
-            shtxi[klane] += pgrad.ttmi[0];
-            shtyi[klane] += pgrad.ttmi[1];
-            shtzi[klane] += pgrad.ttmi[2];
+            txi[klane] += pgrad.ttmi[0];
+            tyi[klane] += pgrad.ttmi[1];
+            tzi[klane] += pgrad.ttmi[2];
             txk += pgrad.ttmk[0];
             tyk += pgrad.ttmk[1];
             tzk += pgrad.ttmk[2];
@@ -229,54 +226,52 @@ void empole_chgpen_cu1(
             vemtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
          }
          if CONSTEXPR (CFLX) {
-            shpoti[klane] += pota;
+            poti[klane] += pota;
             potk += potb;
          }
       } // end if (include)
 
 
       if CONSTEXPR (do_g) {
-         atomic_add(shgxi[threadIdx.x], gx, shi);
-         atomic_add(shgyi[threadIdx.x], gy, shi);
-         atomic_add(shgzi[threadIdx.x], gz, shi);
-         atomic_add(shtxi[threadIdx.x], trqx, shi);
-         atomic_add(shtyi[threadIdx.x], trqy, shi);
-         atomic_add(shtzi[threadIdx.x], trqz, shi);
+         atomic_add(gxi[threadIdx.x], gx, i);
+         atomic_add(gyi[threadIdx.x], gy, i);
+         atomic_add(gzi[threadIdx.x], gz, i);
+         atomic_add(txi[threadIdx.x], trqx, i);
+         atomic_add(tyi[threadIdx.x], trqy, i);
+         atomic_add(tzi[threadIdx.x], trqz, i);
+         if CONSTEXPR (CFLX)
+            atomic_add(poti[threadIdx.x], pot, i);
          atomic_add(gxk, gx, k);
          atomic_add(gyk, gy, k);
          atomic_add(gzk, gz, k);
          atomic_add(txk, trqx, k);
          atomic_add(tyk, trqy, k);
          atomic_add(tzk, trqz, k);
-      }
-      if CONSTEXPR (CFLX) {
-         atomic_add(shpoti[threadIdx.x], pot, shi);
-         atomic_add(potk, pot, k);
+         if CONSTEXPR (CFLX)
+            atomic_add(potk, pot, k);
       }
    }
    // */
 
 
-   //* /
-   // block pairs that have scale factors
    for (int iw = iwarp; iw < nakpl; iw += nwarp) {
       if CONSTEXPR (do_g) {
-         shgxi[threadIdx.x] = 0;
-         shgyi[threadIdx.x] = 0;
-         shgzi[threadIdx.x] = 0;
-         shtxi[threadIdx.x] = 0;
-         shtyi[threadIdx.x] = 0;
-         shtzi[threadIdx.x] = 0;
+         gxi[threadIdx.x] = 0;
+         gyi[threadIdx.x] = 0;
+         gzi[threadIdx.x] = 0;
+         txi[threadIdx.x] = 0;
+         tyi[threadIdx.x] = 0;
+         tzi[threadIdx.x] = 0;
+         if CONSTEXPR (CFLX)
+            poti[threadIdx.x] = 0;
          gxk = 0;
          gyk = 0;
          gzk = 0;
          txk = 0;
          tyk = 0;
          tzk = 0;
-      }
-      if CONSTEXPR (CFLX) {
-         shpoti[threadIdx.x] = 0;
-         potk = 0;
+         if CONSTEXPR (CFLX)
+            potk = 0;
       }
 
 
@@ -285,33 +280,33 @@ void empole_chgpen_cu1(
       tri_to_xy(tri, tx, ty);
 
 
-      int shiid = ty * WARP_SIZE + ilane;
-      int shatomi = min(shiid, n - 1);
-      int shi = sorted[shatomi].unsorted;
+      int iid = ty * WARP_SIZE + ilane;
+      int atomi = min(iid, n - 1);
+      int i = sorted[atomi].unsorted;
       int kid = tx * WARP_SIZE + ilane;
       int atomk = min(kid, n - 1);
       int k = sorted[atomk].unsorted;
-      shxi[threadIdx.x] = sorted[shatomi].x;
-      shyi[threadIdx.x] = sorted[shatomi].y;
-      shzi[threadIdx.x] = sorted[shatomi].z;
+      xi[threadIdx.x] = sorted[atomi].x;
+      yi[threadIdx.x] = sorted[atomi].y;
+      zi[threadIdx.x] = sorted[atomi].z;
       xk = sorted[atomk].x;
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
 
-      shci[threadIdx.x] = rpole[shi][mpl_pme_0];
-      shdix[threadIdx.x] = rpole[shi][mpl_pme_x];
-      shdiy[threadIdx.x] = rpole[shi][mpl_pme_y];
-      shdiz[threadIdx.x] = rpole[shi][mpl_pme_z];
-      shqixx[threadIdx.x] = rpole[shi][mpl_pme_xx];
-      shqixy[threadIdx.x] = rpole[shi][mpl_pme_xy];
-      shqixz[threadIdx.x] = rpole[shi][mpl_pme_xz];
-      shqiyy[threadIdx.x] = rpole[shi][mpl_pme_yy];
-      shqiyz[threadIdx.x] = rpole[shi][mpl_pme_yz];
-      shqizz[threadIdx.x] = rpole[shi][mpl_pme_zz];
-      shcorei[threadIdx.x] = pcore[shi];
-      shalphai[threadIdx.x] = palpha[shi];
-      shvali[threadIdx.x] = pval[shi];
+      ci[threadIdx.x] = rpole[i][mpl_pme_0];
+      dix[threadIdx.x] = rpole[i][mpl_pme_x];
+      diy[threadIdx.x] = rpole[i][mpl_pme_y];
+      diz[threadIdx.x] = rpole[i][mpl_pme_z];
+      qixx[threadIdx.x] = rpole[i][mpl_pme_xx];
+      qixy[threadIdx.x] = rpole[i][mpl_pme_xy];
+      qixz[threadIdx.x] = rpole[i][mpl_pme_xz];
+      qiyy[threadIdx.x] = rpole[i][mpl_pme_yy];
+      qiyz[threadIdx.x] = rpole[i][mpl_pme_yz];
+      qizz[threadIdx.x] = rpole[i][mpl_pme_zz];
+      corei[threadIdx.x] = pcore[i];
+      alphai[threadIdx.x] = palpha[i];
+      vali[threadIdx.x] = pval[i];
       ck = rpole[k][mpl_pme_0];
       dkx = rpole[k][mpl_pme_x];
       dky = rpole[k][mpl_pme_y];
@@ -328,37 +323,15 @@ void empole_chgpen_cu1(
 
 
       unsigned int minfo0 = minfo[iw * WARP_SIZE + ilane];
-
-
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
-         int srcmask = 1 << srclane;
          int klane = srclane + threadIdx.x - ilane;
-         int iid = shiid;
-         real xi = shxi[klane];
-         real yi = shyi[klane];
-         real zi = shzi[klane];
-         real ci = shci[klane];
-         real dix = shdix[klane];
-         real diy = shdiy[klane];
-         real diz = shdiz[klane];
-         real qixx = shqixx[klane];
-         real qixy = shqixy[klane];
-         real qixz = shqixz[klane];
-         real qiyy = shqiyy[klane];
-         real qiyz = shqiyz[klane];
-         real qizz = shqizz[klane];
-         real corei = shcorei[klane];
-         real alphai = shalphai[klane];
-         real vali = shvali[klane];
-
-
          bool incl = iid < kid and kid < n;
+         int srcmask = 1 << srclane;
          incl = incl and (minfo0 & srcmask) == 0;
-         real scalea = 1;
-         real xr = xk - xi;
-         real yr = yk - yi;
-         real zr = zk - zi;
+         real xr = xk - xi[klane];
+         real yr = yk - yi[klane];
+         real zr = zk - zi[klane];
 
          real e;
          real pota, potb;
@@ -368,13 +341,14 @@ void empole_chgpen_cu1(
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(
-               r2, xr, yr, zr, scalea,                 //
-               ci, dix, diy, diz, corei, vali, alphai, //
-               qixx, qixy, qixz, qiyy, qiyz, qizz,     //
+               r2, xr, yr, zr, 1, //
+               ci[klane], dix[klane], diy[klane], diz[klane], corei[klane],
+               vali[klane], alphai[klane], //
+               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
+               qizz[klane],                            //
                ck, dkx, dky, dkz, corek, valk, alphak, //
                qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,     //
                f, aewald, e, pota, potb, pgrad);
-
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -382,16 +356,16 @@ void empole_chgpen_cu1(
             if CONSTEXPR (do_e)
                emtl += cvt_to<ebuf_prec>(e);
             if CONSTEXPR (do_g) {
-               shgxi[klane] += pgrad.frcx;
-               shgyi[klane] += pgrad.frcy;
-               shgzi[klane] += pgrad.frcz;
+               gxi[klane] += pgrad.frcx;
+               gyi[klane] += pgrad.frcy;
+               gzi[klane] += pgrad.frcz;
                gxk -= pgrad.frcx;
                gyk -= pgrad.frcy;
                gzk -= pgrad.frcz;
 
-               shtxi[klane] += pgrad.ttmi[0];
-               shtyi[klane] += pgrad.ttmi[1];
-               shtzi[klane] += pgrad.ttmi[2];
+               txi[klane] += pgrad.ttmi[0];
+               tyi[klane] += pgrad.ttmi[1];
+               tzi[klane] += pgrad.ttmi[2];
                txk += pgrad.ttmk[0];
                tyk += pgrad.ttmk[1];
                tzk += pgrad.ttmk[2];
@@ -408,87 +382,84 @@ void empole_chgpen_cu1(
                vemtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
             }
             if CONSTEXPR (CFLX) {
-               shpoti[klane] += pota;
+               poti[klane] += pota;
                potk += potb;
             }
          } // end if (include)
 
 
-         shiid = __shfl_sync(ALL_LANES, shiid, ilane + 1);
+         iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
       }
 
 
       if CONSTEXPR (do_g) {
-         atomic_add(shgxi[threadIdx.x], gx, shi);
-         atomic_add(shgyi[threadIdx.x], gy, shi);
-         atomic_add(shgzi[threadIdx.x], gz, shi);
-         atomic_add(shtxi[threadIdx.x], trqx, shi);
-         atomic_add(shtyi[threadIdx.x], trqy, shi);
-         atomic_add(shtzi[threadIdx.x], trqz, shi);
+         atomic_add(gxi[threadIdx.x], gx, i);
+         atomic_add(gyi[threadIdx.x], gy, i);
+         atomic_add(gzi[threadIdx.x], gz, i);
+         atomic_add(txi[threadIdx.x], trqx, i);
+         atomic_add(tyi[threadIdx.x], trqy, i);
+         atomic_add(tzi[threadIdx.x], trqz, i);
+         if CONSTEXPR (CFLX)
+            atomic_add(poti[threadIdx.x], pot, i);
          atomic_add(gxk, gx, k);
          atomic_add(gyk, gy, k);
          atomic_add(gzk, gz, k);
          atomic_add(txk, trqx, k);
          atomic_add(tyk, trqy, k);
          atomic_add(tzk, trqz, k);
-      }
-      if CONSTEXPR (CFLX) {
-         atomic_add(shpoti[threadIdx.x], pot, shi);
-         atomic_add(potk, pot, k);
+         if CONSTEXPR (CFLX)
+            atomic_add(potk, pot, k);
       }
    }
-   // */
 
 
-   //* /
-   // block-atoms
    for (int iw = iwarp; iw < niak; iw += nwarp) {
       if CONSTEXPR (do_g) {
-         shgxi[threadIdx.x] = 0;
-         shgyi[threadIdx.x] = 0;
-         shgzi[threadIdx.x] = 0;
-         shtxi[threadIdx.x] = 0;
-         shtyi[threadIdx.x] = 0;
-         shtzi[threadIdx.x] = 0;
+         gxi[threadIdx.x] = 0;
+         gyi[threadIdx.x] = 0;
+         gzi[threadIdx.x] = 0;
+         txi[threadIdx.x] = 0;
+         tyi[threadIdx.x] = 0;
+         tzi[threadIdx.x] = 0;
+         if CONSTEXPR (CFLX)
+            poti[threadIdx.x] = 0;
          gxk = 0;
          gyk = 0;
          gzk = 0;
          txk = 0;
          tyk = 0;
          tzk = 0;
-      }
-      if CONSTEXPR (CFLX) {
-         shpoti[threadIdx.x] = 0;
-         potk = 0;
+         if CONSTEXPR (CFLX)
+            potk = 0;
       }
 
 
       int ty = iak[iw];
-      int shatomi = ty * WARP_SIZE + ilane;
-      int shi = sorted[shatomi].unsorted;
+      int atomi = ty * WARP_SIZE + ilane;
+      int i = sorted[atomi].unsorted;
       int atomk = lst[iw * WARP_SIZE + ilane];
       int k = sorted[atomk].unsorted;
-      shxi[threadIdx.x] = sorted[shatomi].x;
-      shyi[threadIdx.x] = sorted[shatomi].y;
-      shzi[threadIdx.x] = sorted[shatomi].z;
+      xi[threadIdx.x] = sorted[atomi].x;
+      yi[threadIdx.x] = sorted[atomi].y;
+      zi[threadIdx.x] = sorted[atomi].z;
       xk = sorted[atomk].x;
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
 
-      shci[threadIdx.x] = rpole[shi][mpl_pme_0];
-      shdix[threadIdx.x] = rpole[shi][mpl_pme_x];
-      shdiy[threadIdx.x] = rpole[shi][mpl_pme_y];
-      shdiz[threadIdx.x] = rpole[shi][mpl_pme_z];
-      shqixx[threadIdx.x] = rpole[shi][mpl_pme_xx];
-      shqixy[threadIdx.x] = rpole[shi][mpl_pme_xy];
-      shqixz[threadIdx.x] = rpole[shi][mpl_pme_xz];
-      shqiyy[threadIdx.x] = rpole[shi][mpl_pme_yy];
-      shqiyz[threadIdx.x] = rpole[shi][mpl_pme_yz];
-      shqizz[threadIdx.x] = rpole[shi][mpl_pme_zz];
-      shcorei[threadIdx.x] = pcore[shi];
-      shalphai[threadIdx.x] = palpha[shi];
-      shvali[threadIdx.x] = pval[shi];
+      ci[threadIdx.x] = rpole[i][mpl_pme_0];
+      dix[threadIdx.x] = rpole[i][mpl_pme_x];
+      diy[threadIdx.x] = rpole[i][mpl_pme_y];
+      diz[threadIdx.x] = rpole[i][mpl_pme_z];
+      qixx[threadIdx.x] = rpole[i][mpl_pme_xx];
+      qixy[threadIdx.x] = rpole[i][mpl_pme_xy];
+      qixz[threadIdx.x] = rpole[i][mpl_pme_xz];
+      qiyy[threadIdx.x] = rpole[i][mpl_pme_yy];
+      qiyz[threadIdx.x] = rpole[i][mpl_pme_yz];
+      qizz[threadIdx.x] = rpole[i][mpl_pme_zz];
+      corei[threadIdx.x] = pcore[i];
+      alphai[threadIdx.x] = palpha[i];
+      vali[threadIdx.x] = pval[i];
       ck = rpole[k][mpl_pme_0];
       dkx = rpole[k][mpl_pme_x];
       dky = rpole[k][mpl_pme_y];
@@ -507,29 +478,10 @@ void empole_chgpen_cu1(
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
          int klane = srclane + threadIdx.x - ilane;
-         real xi = shxi[klane];
-         real yi = shyi[klane];
-         real zi = shzi[klane];
-         real ci = shci[klane];
-         real dix = shdix[klane];
-         real diy = shdiy[klane];
-         real diz = shdiz[klane];
-         real qixx = shqixx[klane];
-         real qixy = shqixy[klane];
-         real qixz = shqixz[klane];
-         real qiyy = shqiyy[klane];
-         real qiyz = shqiyz[klane];
-         real qizz = shqizz[klane];
-         real corei = shcorei[klane];
-         real alphai = shalphai[klane];
-         real vali = shvali[klane];
-
-
          bool incl = atomk > 0;
-         real scalea = 1;
-         real xr = xk - xi;
-         real yr = yk - yi;
-         real zr = zk - zi;
+         real xr = xk - xi[klane];
+         real yr = yk - yi[klane];
+         real zr = zk - zi[klane];
 
          real e;
          real pota, potb;
@@ -539,13 +491,14 @@ void empole_chgpen_cu1(
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(
-               r2, xr, yr, zr, scalea,                 //
-               ci, dix, diy, diz, corei, vali, alphai, //
-               qixx, qixy, qixz, qiyy, qiyz, qizz,     //
+               r2, xr, yr, zr, 1, //
+               ci[klane], dix[klane], diy[klane], diz[klane], corei[klane],
+               vali[klane], alphai[klane], //
+               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
+               qizz[klane],                            //
                ck, dkx, dky, dkz, corek, valk, alphak, //
                qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,     //
                f, aewald, e, pota, potb, pgrad);
-
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -553,16 +506,16 @@ void empole_chgpen_cu1(
             if CONSTEXPR (do_e)
                emtl += cvt_to<ebuf_prec>(e);
             if CONSTEXPR (do_g) {
-               shgxi[klane] += pgrad.frcx;
-               shgyi[klane] += pgrad.frcy;
-               shgzi[klane] += pgrad.frcz;
+               gxi[klane] += pgrad.frcx;
+               gyi[klane] += pgrad.frcy;
+               gzi[klane] += pgrad.frcz;
                gxk -= pgrad.frcx;
                gyk -= pgrad.frcy;
                gzk -= pgrad.frcz;
 
-               shtxi[klane] += pgrad.ttmi[0];
-               shtyi[klane] += pgrad.ttmi[1];
-               shtzi[klane] += pgrad.ttmi[2];
+               txi[klane] += pgrad.ttmi[0];
+               tyi[klane] += pgrad.ttmi[1];
+               tzi[klane] += pgrad.ttmi[2];
                txk += pgrad.ttmk[0];
                tyk += pgrad.ttmk[1];
                tzk += pgrad.ttmk[2];
@@ -579,7 +532,7 @@ void empole_chgpen_cu1(
                vemtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
             }
             if CONSTEXPR (CFLX) {
-               shpoti[klane] += pota;
+               poti[klane] += pota;
                potk += potb;
             }
          } // end if (include)
@@ -587,25 +540,24 @@ void empole_chgpen_cu1(
 
 
       if CONSTEXPR (do_g) {
-         atomic_add(shgxi[threadIdx.x], gx, shi);
-         atomic_add(shgyi[threadIdx.x], gy, shi);
-         atomic_add(shgzi[threadIdx.x], gz, shi);
-         atomic_add(shtxi[threadIdx.x], trqx, shi);
-         atomic_add(shtyi[threadIdx.x], trqy, shi);
-         atomic_add(shtzi[threadIdx.x], trqz, shi);
+         atomic_add(gxi[threadIdx.x], gx, i);
+         atomic_add(gyi[threadIdx.x], gy, i);
+         atomic_add(gzi[threadIdx.x], gz, i);
+         atomic_add(txi[threadIdx.x], trqx, i);
+         atomic_add(tyi[threadIdx.x], trqy, i);
+         atomic_add(tzi[threadIdx.x], trqz, i);
+         if CONSTEXPR (CFLX)
+            atomic_add(poti[threadIdx.x], pot, i);
          atomic_add(gxk, gx, k);
          atomic_add(gyk, gy, k);
          atomic_add(gzk, gz, k);
          atomic_add(txk, trqx, k);
          atomic_add(tyk, trqy, k);
          atomic_add(tzk, trqz, k);
-      }
-      if CONSTEXPR (CFLX) {
-         atomic_add(shpoti[threadIdx.x], pot, shi);
-         atomic_add(potk, pot, k);
+         if CONSTEXPR (CFLX)
+            atomic_add(potk, pot, k);
       }
    }
-   // */
 
 
    if CONSTEXPR (do_a) {
@@ -618,7 +570,7 @@ void empole_chgpen_cu1(
       atomic_add(vemtlxx, vemtlyx, vemtlzx, vemtlyy, vemtlzy, vemtlzz, vem,
                  ithread);
    }
-} // generated by ComplexKernelBuilder (ck.py) 1.5.1
+}
 
 
 template <class Ver, class ETYP, int CFLX>

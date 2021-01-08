@@ -110,7 +110,74 @@ K_VARIABLES:
   - def: register real alphak from:palpha
   - def: register real valk from:pval
 
-#SCALED_PAIRWISE_INTERACTION: |
+SCALED_PAIRWISE_INTERACTION: |
+  real xr = xk - @xi@;
+  real yr = yk - @yi@;
+  real zr = zk - @zi@;
+
+  real e;
+  real pota, potb;
+  PairPolarGrad pgrad;
+  zero(pgrad);
+
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    pair_polar_chgpen<do_e, do_g, ETYP, CFLX>( //
+      r2, xr, yr, zr, scaleb, scalec, //
+      @ci@, @dix@, @diy@, @diz@, @corei@, @vali@, @alphai@,
+      @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@, @uix@, @uiy@, @uiz@, //
+      ck, dkx, dky, dkz, corek, valk, alphak,
+      qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky, ukz, f, aewald, //
+      e, pota, potb, pgrad);
+
+    if CONSTEXPR (do_a)
+      if (e != 0 and scaleb != 0)
+          nptl += 1;
+    if CONSTEXPR (do_e)
+        eptl += cvt_to<ebuf_prec>(e);
+    if CONSTEXPR (do_g) {
+      @gxi@ += pgrad.frcx;
+      @gyi@ += pgrad.frcy;
+      @gzi@ += pgrad.frcz;
+      gxk -= pgrad.frcx;
+      gyk -= pgrad.frcy;
+      gzk -= pgrad.frcz;
+
+
+      @txi@ += pgrad.ufldi[0];
+      @tyi@ += pgrad.ufldi[1];
+      @tzi@ += pgrad.ufldi[2];
+      txk += pgrad.ufldk[0];
+      tyk += pgrad.ufldk[1];
+      tzk += pgrad.ufldk[2];
+
+
+      @dui0@ += pgrad.dufldi[0];
+      @dui1@ += pgrad.dufldi[1];
+      @dui2@ += pgrad.dufldi[2];
+      @dui3@ += pgrad.dufldi[3];
+      @dui4@ += pgrad.dufldi[4];
+      @dui5@ += pgrad.dufldi[5];
+      duk0 += pgrad.dufldk[0];
+      duk1 += pgrad.dufldk[1];
+      duk2 += pgrad.dufldk[2];
+      duk3 += pgrad.dufldk[3];
+      duk4 += pgrad.dufldk[4];
+      duk5 += pgrad.dufldk[5];
+    }
+    if CONSTEXPR (do_v) {
+        vptlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
+        vptlyx += cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+        vptlzx += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
+        vptlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
+        vptlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
+        vptlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
+    }
+    if CONSTEXPR (CFLX) {
+      @poti@ += pota;
+      potk += potb;
+    }
+  } // end if (include)
 
 FULL_PAIRWISE_INTERACTION: |
   real xr = xk - @xi@;
@@ -125,7 +192,7 @@ FULL_PAIRWISE_INTERACTION: |
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
     pair_polar_chgpen<do_e, do_g, ETYP, CFLX>( //
-      r2, xr, yr, zr, scaleb, scalec, //
+      r2, xr, yr, zr, 1, 1, //
       @ci@, @dix@, @diy@, @diz@, @corei@, @vali@, @alphai@,
       @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@, @uix@, @uiy@, @uiz@, //
       ck, dkx, dky, dkz, corek, valk, alphak,

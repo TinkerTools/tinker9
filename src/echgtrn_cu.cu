@@ -15,6 +15,7 @@
 
 
 namespace tinker {
+// ck.py Version 2.0.3
 template <class Ver>
 __global__
 void echgtrn_cu1(
@@ -32,8 +33,6 @@ void echgtrn_cu1(
    constexpr bool do_e = Ver::e;
    constexpr bool do_v = Ver::v;
    constexpr bool do_g = Ver::g;
-
-
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
@@ -59,52 +58,49 @@ void echgtrn_cu1(
       vctlzy = 0;
       vctlzz = 0;
    }
-
-
-   real shxi;
-   real shyi;
-   real shzi;
+   real xi;
+   real yi;
+   real zi;
    real xk;
    real yk;
    real zk;
-   real shgxi;
-   real shgyi;
-   real shgzi;
+   real gxi;
+   real gyi;
+   real gzi;
    real gxk;
    real gyk;
    real gzk;
-   real shchgi;
-   real shalphai;
+   real chgi;
+   real alphai;
    real chgk;
    real alphak;
 
 
    //* /
-   // exclude
    for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
       if CONSTEXPR (do_g) {
-         shgxi = 0;
-         shgyi = 0;
-         shgzi = 0;
+         gxi = 0;
+         gyi = 0;
+         gzi = 0;
          gxk = 0;
          gyk = 0;
          gzk = 0;
       }
 
 
-      int shi = exclude[ii][0];
+      int i = exclude[ii][0];
       int k = exclude[ii][1];
       real scalea = exclude_scale[ii][0];
 
 
-      real xi = x[shi];
-      real yi = y[shi];
-      real zi = z[shi];
+      xi = x[i];
+      yi = y[i];
+      zi = z[i];
       xk = x[k];
       yk = y[k];
       zk = z[k];
-      real chgi = chgct[shi];
-      real alphai = dmpct[shi];
+      chgi = chgct[i];
+      alphai = dmpct[i];
       chgk = chgct[k];
       alphak = dmpct[k];
 
@@ -120,7 +116,7 @@ void echgtrn_cu1(
          pair_chgtrn<do_g>(r, cut, off, scalea, f, alphai, chgi, alphak, chgk,
                            e, de);
          if CONSTEXPR (do_a)
-            if (e != 0)
+            if (e != 0 and scalea != 0)
                nctl += 1;
          if CONSTEXPR (do_e)
             ectl += cvt_to<ebuf_prec>(e);
@@ -130,9 +126,9 @@ void echgtrn_cu1(
             real dedy = de * yr;
             real dedz = de * zr;
 
-            shgxi -= dedx;
-            shgyi -= dedy;
-            shgzi -= dedz;
+            gxi -= dedx;
+            gyi -= dedy;
+            gzi -= dedz;
             gxk += dedx;
             gyk += dedy;
             gzk += dedz;
@@ -150,9 +146,9 @@ void echgtrn_cu1(
 
 
       if CONSTEXPR (do_g) {
-         atomic_add(shgxi, gx, shi);
-         atomic_add(shgyi, gy, shi);
-         atomic_add(shgzi, gz, shi);
+         atomic_add(gxi, gx, i);
+         atomic_add(gyi, gy, i);
+         atomic_add(gzi, gz, i);
          atomic_add(gxk, gx, k);
          atomic_add(gyk, gy, k);
          atomic_add(gzk, gz, k);
@@ -161,13 +157,11 @@ void echgtrn_cu1(
    // */
 
 
-   //* /
-   // block pairs that have scale factors
    for (int iw = iwarp; iw < nakpl; iw += nwarp) {
       if CONSTEXPR (do_g) {
-         shgxi = 0;
-         shgyi = 0;
-         shgzi = 0;
+         gxi = 0;
+         gyi = 0;
+         gzi = 0;
          gxk = 0;
          gyk = 0;
          gzk = 0;
@@ -179,44 +173,32 @@ void echgtrn_cu1(
       tri_to_xy(tri, tx, ty);
 
 
-      int shiid = ty * WARP_SIZE + ilane;
-      int shatomi = min(shiid, n - 1);
-      int shi = sorted[shatomi].unsorted;
+      int iid = ty * WARP_SIZE + ilane;
+      int atomi = min(iid, n - 1);
+      int i = sorted[atomi].unsorted;
       int kid = tx * WARP_SIZE + ilane;
       int atomk = min(kid, n - 1);
       int k = sorted[atomk].unsorted;
-      shxi = sorted[shatomi].x;
-      shyi = sorted[shatomi].y;
-      shzi = sorted[shatomi].z;
+      xi = sorted[atomi].x;
+      yi = sorted[atomi].y;
+      zi = sorted[atomi].z;
       xk = sorted[atomk].x;
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
 
-      shchgi = chgct[shi];
-      shalphai = dmpct[shi];
+      chgi = chgct[i];
+      alphai = dmpct[i];
       chgk = chgct[k];
       alphak = dmpct[k];
 
 
       unsigned int minfo0 = minfo[iw * WARP_SIZE + ilane];
-
-
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
-         int srcmask = 1 << srclane;
-
-         int iid = shiid;
-         real xi = shxi;
-         real yi = shyi;
-         real zi = shzi;
-         real chgi = shchgi;
-         real alphai = shalphai;
-
-
          bool incl = iid < kid and kid < n;
+         int srcmask = 1 << srclane;
          incl = incl and (minfo0 & srcmask) == 0;
-         real scalea = 1;
          real xr = xk - xi;
          real yr = yk - yi;
          real zr = zk - zi;
@@ -224,8 +206,8 @@ void echgtrn_cu1(
          if (r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
             e_prec e, de;
-            pair_chgtrn<do_g>(r, cut, off, scalea, f, alphai, chgi, alphak,
-                              chgk, e, de);
+            pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e,
+                              de);
             if CONSTEXPR (do_a)
                if (e != 0)
                   nctl += 1;
@@ -237,9 +219,9 @@ void echgtrn_cu1(
                real dedy = de * yr;
                real dedz = de * zr;
 
-               shgxi -= dedx;
-               shgyi -= dedy;
-               shgzi -= dedz;
+               gxi -= dedx;
+               gyi -= dedy;
+               gzi -= dedz;
                gxk += dedx;
                gyk += dedy;
                gzk += dedz;
@@ -256,39 +238,36 @@ void echgtrn_cu1(
          } // end if (include)
 
 
-         shiid = __shfl_sync(ALL_LANES, shiid, ilane + 1);
-         shxi = __shfl_sync(ALL_LANES, shxi, ilane + 1);
-         shyi = __shfl_sync(ALL_LANES, shyi, ilane + 1);
-         shzi = __shfl_sync(ALL_LANES, shzi, ilane + 1);
-         shchgi = __shfl_sync(ALL_LANES, shchgi, ilane + 1);
-         shalphai = __shfl_sync(ALL_LANES, shalphai, ilane + 1);
+         iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
+         xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
+         yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
+         zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
+         chgi = __shfl_sync(ALL_LANES, chgi, ilane + 1);
+         alphai = __shfl_sync(ALL_LANES, alphai, ilane + 1);
          if CONSTEXPR (do_g) {
-            shgxi = __shfl_sync(ALL_LANES, shgxi, ilane + 1);
-            shgyi = __shfl_sync(ALL_LANES, shgyi, ilane + 1);
-            shgzi = __shfl_sync(ALL_LANES, shgzi, ilane + 1);
+            gxi = __shfl_sync(ALL_LANES, gxi, ilane + 1);
+            gyi = __shfl_sync(ALL_LANES, gyi, ilane + 1);
+            gzi = __shfl_sync(ALL_LANES, gzi, ilane + 1);
          }
       }
 
 
       if CONSTEXPR (do_g) {
-         atomic_add(shgxi, gx, shi);
-         atomic_add(shgyi, gy, shi);
-         atomic_add(shgzi, gz, shi);
+         atomic_add(gxi, gx, i);
+         atomic_add(gyi, gy, i);
+         atomic_add(gzi, gz, i);
          atomic_add(gxk, gx, k);
          atomic_add(gyk, gy, k);
          atomic_add(gzk, gz, k);
       }
    }
-   // */
 
 
-   //* /
-   // block-atoms
    for (int iw = iwarp; iw < niak; iw += nwarp) {
       if CONSTEXPR (do_g) {
-         shgxi = 0;
-         shgyi = 0;
-         shgzi = 0;
+         gxi = 0;
+         gyi = 0;
+         gzi = 0;
          gxk = 0;
          gyk = 0;
          gzk = 0;
@@ -296,35 +275,26 @@ void echgtrn_cu1(
 
 
       int ty = iak[iw];
-      int shatomi = ty * WARP_SIZE + ilane;
-      int shi = sorted[shatomi].unsorted;
+      int atomi = ty * WARP_SIZE + ilane;
+      int i = sorted[atomi].unsorted;
       int atomk = lst[iw * WARP_SIZE + ilane];
       int k = sorted[atomk].unsorted;
-      shxi = sorted[shatomi].x;
-      shyi = sorted[shatomi].y;
-      shzi = sorted[shatomi].z;
+      xi = sorted[atomi].x;
+      yi = sorted[atomi].y;
+      zi = sorted[atomi].z;
       xk = sorted[atomk].x;
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
 
-      shchgi = chgct[shi];
-      shalphai = dmpct[shi];
+      chgi = chgct[i];
+      alphai = dmpct[i];
       chgk = chgct[k];
       alphak = dmpct[k];
 
 
       for (int j = 0; j < WARP_SIZE; ++j) {
-
-         real xi = shxi;
-         real yi = shyi;
-         real zi = shzi;
-         real chgi = shchgi;
-         real alphai = shalphai;
-
-
          bool incl = atomk > 0;
-         real scalea = 1;
          real xr = xk - xi;
          real yr = yk - yi;
          real zr = zk - zi;
@@ -332,8 +302,8 @@ void echgtrn_cu1(
          if (r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
             e_prec e, de;
-            pair_chgtrn<do_g>(r, cut, off, scalea, f, alphai, chgi, alphak,
-                              chgk, e, de);
+            pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e,
+                              de);
             if CONSTEXPR (do_a)
                if (e != 0)
                   nctl += 1;
@@ -345,9 +315,9 @@ void echgtrn_cu1(
                real dedy = de * yr;
                real dedz = de * zr;
 
-               shgxi -= dedx;
-               shgyi -= dedy;
-               shgzi -= dedz;
+               gxi -= dedx;
+               gyi -= dedy;
+               gzi -= dedz;
                gxk += dedx;
                gyk += dedy;
                gzk += dedz;
@@ -364,29 +334,28 @@ void echgtrn_cu1(
          } // end if (include)
 
 
-         shxi = __shfl_sync(ALL_LANES, shxi, ilane + 1);
-         shyi = __shfl_sync(ALL_LANES, shyi, ilane + 1);
-         shzi = __shfl_sync(ALL_LANES, shzi, ilane + 1);
-         shchgi = __shfl_sync(ALL_LANES, shchgi, ilane + 1);
-         shalphai = __shfl_sync(ALL_LANES, shalphai, ilane + 1);
+         xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
+         yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
+         zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
+         chgi = __shfl_sync(ALL_LANES, chgi, ilane + 1);
+         alphai = __shfl_sync(ALL_LANES, alphai, ilane + 1);
          if CONSTEXPR (do_g) {
-            shgxi = __shfl_sync(ALL_LANES, shgxi, ilane + 1);
-            shgyi = __shfl_sync(ALL_LANES, shgyi, ilane + 1);
-            shgzi = __shfl_sync(ALL_LANES, shgzi, ilane + 1);
+            gxi = __shfl_sync(ALL_LANES, gxi, ilane + 1);
+            gyi = __shfl_sync(ALL_LANES, gyi, ilane + 1);
+            gzi = __shfl_sync(ALL_LANES, gzi, ilane + 1);
          }
       }
 
 
       if CONSTEXPR (do_g) {
-         atomic_add(shgxi, gx, shi);
-         atomic_add(shgyi, gy, shi);
-         atomic_add(shgzi, gz, shi);
+         atomic_add(gxi, gx, i);
+         atomic_add(gyi, gy, i);
+         atomic_add(gzi, gz, i);
          atomic_add(gxk, gx, k);
          atomic_add(gyk, gy, k);
          atomic_add(gzk, gz, k);
       }
    }
-   // */
 
 
    if CONSTEXPR (do_a) {
@@ -398,7 +367,7 @@ void echgtrn_cu1(
    if CONSTEXPR (do_v) {
       atomic_add(vctlxx, vctlyx, vctlzx, vctlyy, vctlzy, vctlzz, vc, ithread);
    }
-} // generated by ComplexKernelBuilder (ck.py) 1.5.3
+}
 
 
 template <class Ver>

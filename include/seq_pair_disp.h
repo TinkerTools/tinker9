@@ -20,8 +20,12 @@ void pair_disp(real r, real r2, real rr1, //
       return;
    }
 
-
+#if TINKER_REAL_SIZE == 8
+   real eps = 0.001f;
+#elif TINKER_REAL_SIZE == 4
    real eps = 0.05f;
+#endif
+
    real diff = REAL_ABS(ai - ak);
    real rr2 = rr1 * rr1;
    real rr6 = rr2 * rr2 * rr2;
