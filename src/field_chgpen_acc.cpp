@@ -13,7 +13,6 @@
 namespace tinker {
 // see also subroutine udirect2b / dfield_chgpen0c in induce.f
 #define DFIELD_DPTRS x, y, z, pcore, pval, palpha, field, rpole
-// TODO: HIPPO not reviewed
 template <class ETYP>
 void dfield_chgpen_acc1(real (*field)[3])
 {
@@ -198,7 +197,6 @@ void ufield_chgpen_ewald_recip_self_acc(const real (*uind)[3], real (*field)[3])
 }
 
 #define UFIELD_DPTRS x, y, z, pcore, pval, palpha, field, uind
-// TODO: HIPPO not reviewed
 template <class ETYP>
 void ufield_chgpen_acc1(const real (*uind)[3], real (*field)[3])
 {

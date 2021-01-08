@@ -14,7 +14,6 @@ namespace tinker {
 #define POLAR_DPTRS                                                            \
    x, y, z, depx, depy, depz, rpole, pcore, pval, palpha, pot, uind, nep, ep,  \
       vir_ep, ufld, dufld
-// TODO: HIPPO not reviewed
 template <class Ver, class ETYP, bool CFLX>
 void epolar_chgpen_acc1(const real (*uind)[3])
 {
@@ -667,7 +666,6 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
 }
 
 
-// TODO: HIPPO not reviewed
 void epolar_chgpen_nonewald_acc(int vers, int use_cf, const real (*uind)[3])
 {
    if (use_cf) {

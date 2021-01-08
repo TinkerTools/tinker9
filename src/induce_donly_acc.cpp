@@ -18,7 +18,6 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-// TODO: HIPPO not reviewed
 void diag_precond2(const real (*rsd)[3], real (*zrsd)[3])
 {
    #pragma acc parallel loop independent async\
@@ -32,7 +31,6 @@ void diag_precond2(const real (*rsd)[3], real (*zrsd)[3])
 }
 
 #define APPLY_DPTRS rsd, zrsd, x, y, z, polarity, palpha
-// TODO: HIPPO not reviewed
 void sparse_precond_apply2_acc(const real (*rsd)[3], real (*zrsd)[3])
 {
    #pragma acc parallel loop independent async\
@@ -183,7 +181,6 @@ void sparse_precond_apply2_acc(const real (*rsd)[3], real (*zrsd)[3])
  * conj = p
  * vec = T P
  */
-// TODO: HIPPO not reviewed
 void induce_mutual_pcg2_acc(real (*uind)[3])
 {
    auto* field = work01_;
@@ -340,7 +337,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
 
       // calculate/update p
       #pragma acc parallel loop independent async\
-                  deviceptr(conj,zrsd,rsd)
+                  deviceptr(conj,zrsd)
       for (int i = 0; i < n; ++i) {
          #pragma acc loop seq
          for (int j = 0; j < 3; ++j)

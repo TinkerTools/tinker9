@@ -13,7 +13,6 @@ namespace tinker {
 #define DEVICE_PTRS                                                            \
    x, y, z, demx, demy, demz, rpole, pcore, pval, palpha, pot, nem, em,        \
       vir_em, trqx, trqy, trqz
-// TODO: HIPPO not reviewed
 template <class Ver, class ETYP, bool CFLX>
 void empole_chgpen_acc1()
 {
@@ -414,7 +413,6 @@ void empole_generic_ewald_recip_acc()
 }
 
 
-// TODO: HIPPO not reviewed
 void empole_chgpen_nonewald_acc(int vers, int use_cf)
 {
    if (use_cf) {
@@ -451,7 +449,6 @@ void empole_chgpen_nonewald_acc(int vers, int use_cf)
 }
 
 
-// TODO: HIPPO not reviewed
 void empole_chgpen_ewald_real_self_acc(int vers, int use_cf)
 {
    if (use_cf) {
