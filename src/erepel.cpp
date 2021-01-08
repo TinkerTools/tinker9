@@ -23,6 +23,7 @@ void erepel_data(rc_op op)
 
    if (op & rc_dealloc) {
       darray::deallocate(sizpr, dmppr, elepr);
+      nrepexclude = 0;
       darray::deallocate(repexclude, repexclude_scale);
 
 
