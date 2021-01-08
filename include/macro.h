@@ -39,6 +39,9 @@ to mimic its name mangling.
 #if defined(__INTEL_COMPILER)
 #   define TINKER_ICPC
 
+#elif defined(__PGIC__)
+#   define TINKER_PGI
+
 #elif defined(__clang__)
 #   define TINKER_CLANG
 // xcode clang is different from llvm clang
