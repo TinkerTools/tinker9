@@ -1,5 +1,6 @@
 #include "elec.h"
 #include "epolar.h"
+#include "epolar_chgpen.h"
 #include "mdcalc.h"
 #include "mdpq.h"
 #include "potent.h"
@@ -10,6 +11,7 @@
 #include <tinker/detail/charge.hh>
 #include <tinker/detail/dipole.hh>
 #include <tinker/detail/moment.hh>
+#include <tinker/detail/mplpot.hh>
 #include <tinker/detail/mpole.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/units.hh>
@@ -130,7 +132,10 @@ void moments()
       mpole_init(calc::energy);
       darray::copyout(g::q0, n * 10, rpolev.data(), &rpole[0][0]);
       if (use_potent(polar_term)) {
-         induce(uind, uinp);
+         if (mplpot::use_chgpen)
+            induce2(uind);
+         else
+            induce(uind, uinp);
          darray::copyout(g::q0, n * 3, uindv.data(), &uind[0][0]);
       } else {
          std::fill(uindv.begin(), uindv.end(), 0);
