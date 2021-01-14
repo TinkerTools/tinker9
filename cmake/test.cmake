@@ -8,9 +8,9 @@ set_target_properties (all_tests_o PROPERTIES
    CXX_STANDARD 11
    CXX_EXTENSIONS OFF
 )
-target_include_directories (all_tests_o SYSTEM PRIVATE ${comm_sys_inc_path})
+target_include_directories (all_tests_o SYSTEM PRIVATE "${TINKER9_SYS_INC_PATH}")
 target_include_directories (all_tests_o PRIVATE
-   ${proj_internal_inc_path}
+   "${TINKER9_INTERNAL_INC_PATH}"
    "${PROJECT_SOURCE_DIR}/src/test"
 )
 if (NOT HOST)

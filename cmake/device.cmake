@@ -1,5 +1,5 @@
 list (APPEND macro_defs TINKER_CUDART)
-list (APPEND comm_sys_inc_path "${CUDA_DIR}/include")
+list (APPEND TINKER9_SYS_INC_PATH "${CUDA_DIR}/include")
 file (GLOB PLATFORM_CPP "${PROJECT_SOURCE_DIR}/src/cudart/*.cpp")
 list (APPEND LIB_CPP ${PLATFORM_CPP})
 
@@ -13,9 +13,9 @@ set_target_properties (tinker9_cu PROPERTIES
    CUDA_STANDARD 11
    CUDA_EXTENSIONS OFF
 )
-target_include_directories (tinker9_cu SYSTEM PRIVATE ${comm_sys_inc_path})
+target_include_directories (tinker9_cu SYSTEM PRIVATE "${TINKER9_SYS_INC_PATH}")
 target_include_directories (tinker9_cu PRIVATE
-   ${proj_internal_inc_path}
+   "${TINKER9_INTERNAL_INC_PATH}"
    "${PROJECT_SOURCE_DIR}/include/syntax/cu"
 )
 ## Compute Capability 60,70 ->
@@ -52,9 +52,9 @@ set_target_properties (tinker9_acc PROPERTIES
    CXX_STANDARD 11
    CXX_EXTENSIONS OFF
 )
-target_include_directories (tinker9_acc SYSTEM PRIVATE ${comm_sys_inc_path})
+target_include_directories (tinker9_acc SYSTEM PRIVATE "${TINKER9_SYS_INC_PATH}")
 target_include_directories (tinker9_acc PRIVATE
-   ${proj_internal_inc_path}
+   "${TINKER9_INTERNAL_INC_PATH}"
    "${PROJECT_SOURCE_DIR}/include/syntax/acc"
 )
 ## Compute Capability 60,70 -> ,cc60,cc70
@@ -80,9 +80,9 @@ set_target_properties (tinker9_cpp PROPERTIES
    CXX_STANDARD 11
    CXX_EXTENSIONS OFF
 )
-target_include_directories (tinker9_cpp SYSTEM PRIVATE ${comm_sys_inc_path})
+target_include_directories (tinker9_cpp SYSTEM PRIVATE "${TINKER9_SYS_INC_PATH}")
 target_include_directories (tinker9_cpp PRIVATE
-   ${proj_internal_inc_path}
+   "${TINKER9_INTERNAL_INC_PATH}"
    "${PROJECT_SOURCE_DIR}/include/syntax/acc"
 )
 
@@ -93,9 +93,9 @@ set_target_properties (tinker9_main PROPERTIES
    CXX_STANDARD 11
    CXX_EXTENSIONS OFF
 )
-target_include_directories (tinker9_main SYSTEM PRIVATE ${comm_sys_inc_path})
+target_include_directories (tinker9_main SYSTEM PRIVATE "${TINKER9_SYS_INC_PATH}")
 target_include_directories (tinker9_main PRIVATE
-   ${proj_internal_inc_path}
+   "${TINKER9_INTERNAL_INC_PATH}"
    "${PROJECT_SOURCE_DIR}/include/syntax/acc"
 )
 

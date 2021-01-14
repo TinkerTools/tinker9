@@ -90,8 +90,12 @@ cmake_minimum_required (VERSION 3.11)
 project (Tinker9 LANGUAGES NONE)
 enable_language (C)
 enable_language (CXX)
-set (macro_defs)
 enable_language (Fortran)
+
+
+set (macro_defs)
+
+
 list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 #[[
 !!/ **-DCMAKE_BUILD_TYPE (opt) = release**
@@ -378,10 +382,10 @@ endif ()
 
 
 ## include path
-set (comm_sys_inc_path
+set (TINKER9_SYS_INC_PATH
    "${FFTW_DIR}/include"
    "${PROJECT_SOURCE_DIR}/ext/ext")
-set (proj_internal_inc_path "${PROJECT_SOURCE_DIR}/include")
+set (TINKER9_INTERNAL_INC_PATH "${PROJECT_SOURCE_DIR}/include")
 
 
 ## main file
