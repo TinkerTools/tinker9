@@ -509,7 +509,8 @@ void induce(real (*ud)[3], real (*up)[3])
                header = false;
                print(stdout, "\n Induced Dipole Moments (Debye) :\n");
                print(stdout,
-                     "\n    Atom %1$13s X %1$10s Y %1$10s Z %1$9s Total\n\n");
+                     "\n    Atom %1$13s X %1$10s Y %1$10s Z %1$9s Total\n\n",
+                     "");
             }
             double u1 = uindbuf[3 * i];
             double u2 = uindbuf[3 * i + 1];
