@@ -17,7 +17,7 @@ set_target_properties (tinker9_cu PROPERTIES
    CUDA_STANDARD
       11
 )
-target_compile_definitions (tinker9_cu PRIVATE ${macro_defs})
+target_compile_definitions (tinker9_cu PRIVATE ${TINKER9_DEFS})
 target_include_directories (tinker9_cu SYSTEM PRIVATE "${TINKER9_SYS_INC_PATH}")
 target_include_directories (tinker9_cu PRIVATE
    "${TINKER9_CUDA_INTERNAL_INC_PATH}"

@@ -4,7 +4,7 @@ set_target_properties (tinker9 PROPERTIES
    CXX_STANDARD
       11
 )
-target_compile_definitions (tinker9 PRIVATE "${macro_defs}")
+target_compile_definitions (tinker9 PRIVATE "${TINKER9_DEFS}")
 target_include_directories (tinker9 SYSTEM PRIVATE "${TINKER9_SYS_INC_PATH}")
 target_include_directories (tinker9 PRIVATE "${TINKER9_INTERNAL_INC_PATH}")
 set (TINKER9_EXT_LIBS pthread LIBTINKER LIBFFTW LIBFFTW_THREADS)

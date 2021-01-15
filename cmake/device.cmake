@@ -3,7 +3,7 @@ set_target_properties (tinker9_main PROPERTIES
    CXX_STANDARD
       11
 )
-target_compile_definitions (tinker9_main PRIVATE "${macro_defs}")
+target_compile_definitions (tinker9_main PRIVATE "${TINKER9_DEFS}")
 target_include_directories (tinker9_main SYSTEM PRIVATE "${TINKER9_SYS_INC_PATH}")
 target_include_directories (tinker9_main PRIVATE "${TINKER9_INTERNAL_INC_PATH}")
 

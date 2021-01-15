@@ -319,7 +319,7 @@ enable_language (CXX)
 enable_language (Fortran)
 
 
-set (macro_defs)
+set (TINKER9_DEFS)
 
 
 add_library (LIBTINKER STATIC IMPORTED)
@@ -351,20 +351,20 @@ endif ()
 
 
 if (PREC STREQUAL "m")
-   list (APPEND macro_defs TINKER_MIXED_PRECISION)
+   list (APPEND TINKER9_DEFS TINKER_MIXED_PRECISION)
 elseif (PREC STREQUAL "s")
-   list (APPEND macro_defs TINKER_SINGLE_PRECISION)
+   list (APPEND TINKER9_DEFS TINKER_SINGLE_PRECISION)
 elseif (PREC STREQUAL "d")
-   list (APPEND macro_defs TINKER_DOUBLE_PRECISION)
+   list (APPEND TINKER9_DEFS TINKER_DOUBLE_PRECISION)
 endif ()
 
 
 if (DETERMINISTIC_FORCE STREQUAL "")
    # No default behavior for empty value.
 elseif (NOT DETERMINISTIC_FORCE)
-   list (APPEND macro_defs TINKER_DETERMINISTIC_FORCE=0)
+   list (APPEND TINKER9_DEFS TINKER_DETERMINISTIC_FORCE=0)
 elseif (DETERMINISTIC_FORCE)
-   list (APPEND macro_defs TINKER_DETERMINISTIC_FORCE=1)
+   list (APPEND TINKER9_DEFS TINKER_DETERMINISTIC_FORCE=1)
 endif ()
 
 
@@ -372,13 +372,13 @@ endif ()
 
 
 if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
-   list (APPEND macro_defs TINKER_GFORTRAN)
+   list (APPEND TINKER9_DEFS TINKER_GFORTRAN)
 elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
-   list (APPEND macro_defs TINKER_IFORT)
+   list (APPEND TINKER9_DEFS TINKER_IFORT)
 endif ()
 
 
-list (APPEND macro_defs TINKER9_DIR=${CMAKE_SOURCE_DIR})
+list (APPEND TINKER9_DEFS TINKER9_DIR=${CMAKE_SOURCE_DIR})
 
 
 find_package (Git)
@@ -395,7 +395,7 @@ if (GIT_FOUND)
       string (REPLACE "\"" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
       string (REPLACE "\n" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
       string (REPLACE "\r" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
-      list (APPEND macro_defs TINKER9_GIT_SHORT_HASH=${STRING_SHA1_GIT})
+      list (APPEND TINKER9_DEFS TINKER9_GIT_SHORT_HASH=${STRING_SHA1_GIT})
 
 
       execute_process (
@@ -422,10 +422,10 @@ set (TINKER9_SYS_INC_PATH
    "${PROJECT_SOURCE_DIR}/ext/ext")
 set (TINKER9_INTERNAL_INC_PATH "${PROJECT_SOURCE_DIR}/include")
 if (HOST)
-   list (APPEND macro_defs TINKER_HOST)
+   list (APPEND TINKER9_DEFS TINKER_HOST)
    list (APPEND TINKER9_INTERNAL_INC_PATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
 else ()
-   list (APPEND macro_defs TINKER_CUDART)
+   list (APPEND TINKER9_DEFS TINKER_CUDART)
    list (APPEND TINKER9_INTERNAL_INC_PATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
    list (APPEND TINKER9_SYS_INC_PATH "${CUDA_DIR}/include")
    # remove "include/syntax/acc" from the include paths for src-cu
@@ -435,7 +435,7 @@ endif ()
 
 ## openacc
 ## cm9a -- cmake external project tinker9 openacc
-string (REPLACE ";" "|" TINKER9_EP_OPENACC_MACRO "${macro_defs}")
+string (REPLACE ";" "|" TINKER9_EP_OPENACC_MACRO "${TINKER9_DEFS}")
 string (REPLACE ";" "|" TINKER9_EP_OPENACC_SYS_INC_PATH "${TINKER9_SYS_INC_PATH}")
 string (REPLACE ";" "|" TINKER9_EP_OPENACC_INTERNAL_INC_PATH "${TINKER9_INTERNAL_INC_PATH}")
 ExternalProject_Add (cm9a
@@ -474,7 +474,7 @@ file (GLOB TINKER9_TEST_SRC
    "src/test/*.cpp"
 )
 add_library (all_tests_o OBJECT ${TINKER9_TEST_SRC})
-target_compile_definitions (all_tests_o PRIVATE ${macro_defs})
+target_compile_definitions (all_tests_o PRIVATE ${TINKER9_DEFS})
 set_target_properties (all_tests_o PROPERTIES
    CXX_STANDARD
       11
