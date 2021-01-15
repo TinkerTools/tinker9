@@ -29,9 +29,9 @@ else ()
 
 
 ## Compute Capability 60,70 -> ,cc60,cc70
-set (CCLIST4) # ""
-foreach (var ${CCLIST2})
-   string (APPEND CCLIST4 ,cc${var})
+set (TINKER9_CCLST4) # ""
+foreach (var ${TINKER9_CCLIST})
+   string (APPEND TINKER9_CCLST4 ,cc${var})
 endforeach () # ,cc60,cc70
 
 
@@ -43,8 +43,8 @@ target_compile_options (tinker9_acc PRIVATE
 ## Debug add flag: -ta=tesla:lineinfo,cc60,cc70
 ## Release add flag: -ta=tesla:fastmath,cc60,cc70
 target_compile_options (tinker9_acc PRIVATE
-   $<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${CCLIST4}>
-   $<$<CONFIG:RELEASE>:-ta=tesla:fastmath${CCLIST4}>
+   $<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${TINKER9_CCLST4}>
+   $<$<CONFIG:RELEASE>:-ta=tesla:fastmath${TINKER9_CCLST4}>
 )
 
 

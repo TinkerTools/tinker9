@@ -44,8 +44,8 @@ add_custom_target (tinker9 ALL
       "-L$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES},;-L>"
       "-l$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES},;-l>"
       -acc -Mcudalib=cufft,cublas
-      $<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${CCLIST4}>
-      $<$<CONFIG:RELEASE>:-ta=tesla:fastmath${CCLIST4}>
+      $<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${TINKER9_CCLST4}>
+      $<$<CONFIG:RELEASE>:-ta=tesla:fastmath${TINKER9_CCLST4}>
    COMMAND_EXPAND_LISTS
 )
 
@@ -82,7 +82,7 @@ add_custom_target (all.tests ALL
       "-L$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES},;-L>"
       "-l$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES},;-l>"
       -acc -Mcudalib=cufft,cublas
-      $<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${CCLIST4}>
-      $<$<CONFIG:RELEASE>:-ta=tesla:fastmath${CCLIST4}>
+      $<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${TINKER9_CCLST4}>
+      $<$<CONFIG:RELEASE>:-ta=tesla:fastmath${TINKER9_CCLST4}>
    COMMAND_EXPAND_LISTS
 )

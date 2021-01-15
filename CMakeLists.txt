@@ -242,8 +242,7 @@ endif ()
 set (COMPUTE_CAPABILITY ${compCapValue} CACHE STRING "CUDA Compute Capability")
 ## Compute Capability 60,70 ->
 ## -gencode arch=compute_60,code=sm_60 -gencode arch=compute_70,code=sm_70
-set (CCLIST2 ${COMPUTE_CAPABILITY}) # 60,70
-string (REPLACE "," ";" CCLIST2 ${CCLIST2}) # 60;70
+string (REPLACE "," ";" TINKER9_CCLIST ${COMPUTE_CAPABILITY}) # 60;70
 
 
 #[[
@@ -261,8 +260,9 @@ string (REPLACE "," ";" CCLIST2 ${CCLIST2}) # 60;70
 !!/
 ]]
 if (DEFINED ENV{cuda_dir})
-   get_filename_component (cudaDirValue "$ENV{cuda_dir}"
-      ABSOLUTE BASE_DIR "${CMAKE_BINARY_DIR}"
+   get_filename_component (cudaDirValue "$ENV{cuda_dir}" ABSOLUTE
+      BASE_DIR
+         "${CMAKE_BINARY_DIR}"
    )
 else ()
    set (cudaDirValue /usr/local/cuda)

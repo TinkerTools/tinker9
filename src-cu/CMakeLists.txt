@@ -23,7 +23,7 @@ target_include_directories (tinker9_cu PRIVATE
    "${TINKER9_CUDA_INTERNAL_INC_PATH}"
    "${PROJECT_SOURCE_DIR}/include/syntax/cu"
 )
-foreach (var ${CCLIST2})
+foreach (var ${TINKER9_CCLIST})
    target_compile_options (tinker9_cu PRIVATE
       "SHELL:-gencode arch=compute_${var},code=sm_${var}"
    )
