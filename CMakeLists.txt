@@ -87,18 +87,6 @@ cmake_minimum_required (VERSION 3.11)
 ########################################################################
 
 
-include (ExternalProject)
-
-
-project (Tinker9 LANGUAGES NONE)
-enable_language (C)
-enable_language (CXX)
-enable_language (Fortran)
-
-
-set (macro_defs)
-
-
 #[[
 !!/ **-DCMAKE_BUILD_TYPE (opt) = release**
 !!/
@@ -118,9 +106,6 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif ()
 
 
-########################################################################
-
-
 #[[
 !!/ **-DTINKER_DIR (tinker_dir) = ${CMAKE_BINARY_DIR}/tinker/source**
 !!/
@@ -128,19 +113,14 @@ endif ()
 !!/
 ]]
 if (DEFINED ENV{tinker_dir})
-   get_filename_component (tinkerDirValue "$ENV{tinker_dir}"
-      ABSOLUTE BASE_DIR "${CMAKE_BINARY_DIR}"
+   get_filename_component (tinkerDirValue "$ENV{tinker_dir}" ABSOLUTE
+      BASE_DIR
+         "${CMAKE_BINARY_DIR}"
    )
 else ()
    set (tinkerDirValue "${CMAKE_BINARY_DIR}/tinker/source")
 endif ()
 set (TINKER_DIR ${tinkerDirValue} CACHE PATH "Path to libtinker.a")
-##
-add_library (LIBTINKER STATIC IMPORTED)
-set_target_properties (LIBTINKER PROPERTIES
-   IMPORTED_LOCATION "${TINKER_DIR}/libtinker.a"
-)
-
 
 
 #[[
@@ -151,33 +131,14 @@ set_target_properties (LIBTINKER PROPERTIES
 !!/
 ]]
 if (DEFINED ENV{fftw_dir})
-   get_filename_component (fftwDirValue "$ENV{fftw_dir}"
-      ABSOLUTE BASE_DIR "${CMAKE_BINARY_DIR}"
+   get_filename_component (fftwDirValue "$ENV{fftw_dir}" ABSOLUTE
+      BASE_DIR
+         "${CMAKE_BINARY_DIR}"
    )
 else ()
    set (fftwDirValue "${CMAKE_BINARY_DIR}/fftw")
 endif ()
 set (FFTW_DIR ${fftwDirValue} CACHE PATH "FFTW3 Directory")
-##
-add_library (LIBFFTW STATIC IMPORTED)
-set_target_properties (LIBFFTW PROPERTIES
-   IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3.a")
-add_library (LIBFFTW_THREADS STATIC IMPORTED)
-set_target_properties (LIBFFTW_THREADS PROPERTIES
-   IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3_threads.a"
-)
-if (EXISTS "${FFTW_DIR}/lib/libfftw3f.a")
-   add_library (LIBFFTWF STATIC IMPORTED)
-   set_target_properties (LIBFFTWF PROPERTIES
-      IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f.a"
-   )
-endif ()
-if (EXISTS "${FFTW_DIR}/lib/libfftw3f_threads.a")
-   add_library (LIBFFTWF_THREADS STATIC IMPORTED)
-   set_target_properties (LIBFFTWF_THREADS PROPERTIES
-      IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f_threads.a"
-   )
-endif ()
 
 
 #[[
@@ -193,9 +154,8 @@ else ()
    set (hostValue 1)
 endif ()
 set (HOST ${hostValue} CACHE BOOL "0 or OFF GPU) / 1 or ON (CPU)")
-
-
-## openacc compiler
+## OpenACC Compiler
+## TINKER9_ACC_COMPILER
 if (HOST)
    set (TINKER9_ACC_COMPILER "${CMAKE_CXX_COMPILER}")
 else ()
@@ -231,14 +191,6 @@ else ()
    set (precValue d)
 endif ()
 set (PREC ${precValue} CACHE STRING "d (DOUBLE) / s (SINGLE) / m (MIXED)")
-##
-if (PREC STREQUAL "m")
-   list (APPEND macro_defs TINKER_MIXED_PRECISION)
-elseif (PREC STREQUAL "s")
-   list (APPEND macro_defs TINKER_SINGLE_PRECISION)
-elseif (PREC STREQUAL "d")
-   list (APPEND macro_defs TINKER_DOUBLE_PRECISION)
-endif ()
 
 
 #[[
@@ -268,14 +220,6 @@ endif ()
 set (DETERMINISTIC_FORCE ${detForceValue} CACHE STRING
    "Deterministic Force: [NO DEFAULT] / 0 (OFF) / 1 (ON)"
 )
-##
-if (DETERMINISTIC_FORCE STREQUAL "")
-   # No default behavior for empty value.
-elseif (NOT DETERMINISTIC_FORCE)
-   list (APPEND macro_defs TINKER_DETERMINISTIC_FORCE=0)
-elseif (DETERMINISTIC_FORCE)
-   list (APPEND macro_defs TINKER_DETERMINISTIC_FORCE=1)
-endif ()
 
 
 #[[
@@ -296,8 +240,6 @@ else ()
    set (compCapValue 60,70)
 endif ()
 set (COMPUTE_CAPABILITY ${compCapValue} CACHE STRING "CUDA Compute Capability")
-
-
 ## Compute Capability 60,70 ->
 ## -gencode arch=compute_60,code=sm_60 -gencode arch=compute_70,code=sm_70
 set (CCLIST2 ${COMPUTE_CAPABILITY}) # 60,70
@@ -363,6 +305,70 @@ set (CUDA_DIR ${cudaDirValue} CACHE PATH "CUDA Directory")
 !!/ Generate developer guides.
 !!/
 ]]
+
+
+########################################################################
+
+
+include (ExternalProject)
+
+
+project (Tinker9 LANGUAGES NONE)
+enable_language (C)
+enable_language (CXX)
+enable_language (Fortran)
+
+
+set (macro_defs)
+
+
+add_library (LIBTINKER STATIC IMPORTED)
+set_target_properties (LIBTINKER PROPERTIES
+   IMPORTED_LOCATION
+      "${TINKER_DIR}/libtinker.a"
+)
+
+
+add_library (LIBFFTW STATIC IMPORTED)
+set_target_properties (LIBFFTW PROPERTIES
+   IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3.a")
+add_library (LIBFFTW_THREADS STATIC IMPORTED)
+set_target_properties (LIBFFTW_THREADS PROPERTIES
+   IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3_threads.a"
+)
+if (EXISTS "${FFTW_DIR}/lib/libfftw3f.a")
+   add_library (LIBFFTWF STATIC IMPORTED)
+   set_target_properties (LIBFFTWF PROPERTIES
+      IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f.a"
+   )
+endif ()
+if (EXISTS "${FFTW_DIR}/lib/libfftw3f_threads.a")
+   add_library (LIBFFTWF_THREADS STATIC IMPORTED)
+   set_target_properties (LIBFFTWF_THREADS PROPERTIES
+      IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f_threads.a"
+   )
+endif ()
+
+
+if (PREC STREQUAL "m")
+   list (APPEND macro_defs TINKER_MIXED_PRECISION)
+elseif (PREC STREQUAL "s")
+   list (APPEND macro_defs TINKER_SINGLE_PRECISION)
+elseif (PREC STREQUAL "d")
+   list (APPEND macro_defs TINKER_DOUBLE_PRECISION)
+endif ()
+
+
+if (DETERMINISTIC_FORCE STREQUAL "")
+   # No default behavior for empty value.
+elseif (NOT DETERMINISTIC_FORCE)
+   list (APPEND macro_defs TINKER_DETERMINISTIC_FORCE=0)
+elseif (DETERMINISTIC_FORCE)
+   list (APPEND macro_defs TINKER_DETERMINISTIC_FORCE=1)
+endif ()
+
+
+########################################################################
 
 
 if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
