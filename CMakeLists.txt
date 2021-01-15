@@ -87,6 +87,9 @@ cmake_minimum_required (VERSION 3.11)
 ########################################################################
 
 
+include (ExternalProject)
+
+
 project (Tinker9 LANGUAGES NONE)
 enable_language (C)
 enable_language (CXX)
@@ -96,7 +99,6 @@ enable_language (Fortran)
 set (macro_defs)
 
 
-list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 #[[
 !!/ **-DCMAKE_BUILD_TYPE (opt) = release**
 !!/
@@ -193,6 +195,25 @@ endif ()
 set (HOST ${hostValue} CACHE BOOL "0 or OFF GPU) / 1 or ON (CPU)")
 
 
+## openacc compiler
+if (HOST)
+   set (TINKER9_ACC_COMPILER "${CMAKE_CXX_COMPILER}")
+else ()
+   if (DEFINED ENV{ACC})
+      set (accCompilerHintValue "$ENV{ACC}")
+   else ()
+      set (accCompilerHintValue "${CMAKE_CXX_COMPILER}")
+   endif ()
+   find_program (TINKER9_ACC_COMPILER
+      NAMES
+         "${accCompilerHintValue}"
+         "nvc++"
+         "pgc++"
+      REQUIRED
+   )
+endif ()
+
+
 #[[
 !!/ **-DPREC (prec) = d**
 !!/
@@ -275,6 +296,14 @@ else ()
    set (compCapValue 60,70)
 endif ()
 set (COMPUTE_CAPABILITY ${compCapValue} CACHE STRING "CUDA Compute Capability")
+
+
+## Compute Capability 60,70 ->
+## -gencode arch=compute_60,code=sm_60 -gencode arch=compute_70,code=sm_70
+set (CCLIST2 ${COMPUTE_CAPABILITY}) # 60,70
+string (REPLACE "," ";" CCLIST2 ${CCLIST2}) # 60;70
+
+
 #[[
 !!/ **-DCUDA_DIR (cuda_dir) = /usr/local/cuda**
 !!/
@@ -386,25 +415,82 @@ set (TINKER9_SYS_INC_PATH
    "${FFTW_DIR}/include"
    "${PROJECT_SOURCE_DIR}/ext/ext")
 set (TINKER9_INTERNAL_INC_PATH "${PROJECT_SOURCE_DIR}/include")
-
-
-## main file
-file (GLOB MAIN_CPP "${PROJECT_SOURCE_DIR}/src/main*.cpp")
-## fortran file(s)
-file (GLOB LIB_F "${PROJECT_SOURCE_DIR}/src/*.f")
-## acc files
-file (GLOB LIB_ACC "${PROJECT_SOURCE_DIR}/src/*_acc.cpp")
-## cpp files
-file (GLOB LIB_CPP "${PROJECT_SOURCE_DIR}/src/*.cpp")
-list (REMOVE_ITEM LIB_CPP ${MAIN_CPP} ${LIB_ACC})
-## cu files
-file (GLOB LIB_CU "${PROJECT_SOURCE_DIR}/src/*_cu.cu")
-
-
-## tinker9
 if (HOST)
+   list (APPEND macro_defs TINKER_HOST)
+   list (APPEND TINKER9_INTERNAL_INC_PATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
+else ()
+   list (APPEND macro_defs TINKER_CUDART)
+   list (APPEND TINKER9_INTERNAL_INC_PATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
+   list (APPEND TINKER9_SYS_INC_PATH "${CUDA_DIR}/include")
+   # remove "include/syntax/acc" from the include paths for src-cu
+   # add "include/syntax/cu" to the include paths for src-cu
+endif ()
+
+
+## openacc
+## cm9a -- cmake external project tinker9 openacc
+string (REPLACE ";" "|" TINKER9_EP_OPENACC_MACRO "${macro_defs}")
+string (REPLACE ";" "|" TINKER9_EP_OPENACC_SYS_INC_PATH "${TINKER9_SYS_INC_PATH}")
+string (REPLACE ";" "|" TINKER9_EP_OPENACC_INTERNAL_INC_PATH "${TINKER9_INTERNAL_INC_PATH}")
+ExternalProject_Add (cm9a
+   SOURCE_DIR
+      "${PROJECT_SOURCE_DIR}/src-acc"
+   BINARY_DIR
+      "${CMAKE_BINARY_DIR}/cm9a"
+   PREFIX
+      "${CMAKE_BINARY_DIR}/cm9a"
+   LIST_SEPARATOR
+      |
+   CMAKE_ARGS
+      "-DCMAKE_CXX_COMPILER=${TINKER9_ACC_COMPILER}"
+      "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/cm9a"
+      "-DTINKER9_MACRO=${TINKER9_EP_OPENACC_MACRO}"
+      "-DTINKER9_SYS_INC_PATH=${TINKER9_EP_OPENACC_SYS_INC_PATH}"
+      "-DTINKER9_INTERNAL_INC_PATH=${TINKER9_EP_OPENACC_INTERNAL_INC_PATH}"
+)
+set (TINKER9_ACC_STATIC_LIB_LOC "${CMAKE_BINARY_DIR}/cm9a/libtinker9_acc.a")
+add_library (tinker9_acc STATIC IMPORTED)
+set_target_properties (tinker9_acc PROPERTIES
+   IMPORTED_LOCATION
+      "${TINKER9_ACC_STATIC_LIB_LOC}"
+)
+set_source_files_properties ("${TINKER9_ACC_STATIC_LIB_LOC}" PROPERTIES
+   EXTERNAL_OBJECT
+      TRUE
+   GENERATED
+      TRUE
+)
+
+
+## test files
+file (GLOB TINKER9_TEST_SRC
+   "src-main/main_all_tests.cpp"
+   "src/test/*.cpp"
+)
+add_library (all_tests_o OBJECT ${TINKER9_TEST_SRC})
+target_compile_definitions (all_tests_o PRIVATE ${macro_defs})
+set_target_properties (all_tests_o PROPERTIES
+   CXX_STANDARD
+      11
+)
+target_include_directories (all_tests_o SYSTEM PRIVATE "${TINKER9_SYS_INC_PATH}")
+target_include_directories (all_tests_o PRIVATE
+   "${TINKER9_INTERNAL_INC_PATH}"
+   "${PROJECT_SOURCE_DIR}/src/test"
+)
+
+
+## executables
+## tinker9 and all.tests
+list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+if (HOST)
+   add_subdirectory (src)
+   add_subdirectory (src-f)
    include (host) # host.cmake
 else ()
+   add_subdirectory (src-cu)
+   add_subdirectory (src)
+   add_subdirectory (src-f)
    include (device) # device.cmake
 endif ()
 
@@ -416,7 +502,14 @@ add_dependencies (tinker9 SHELL_EXE)
 
 
 ## unit tests
-include (test) # test.cmake
+add_custom_target (test
+   COMMAND
+      ./all.tests info
+   COMMAND
+      ./all.tests [ff],[util] -a --durations yes --order rand --rng-seed time
+   DEPENDS
+      all.tests
+)
 
 
 ## documentations
