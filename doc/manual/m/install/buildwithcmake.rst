@@ -23,8 +23,14 @@ above.
 
 Configure Compilers
 -------------------
-Set *CXX=...* and *FC=...* to specify the non-default C++ and Fortran
-compilers, respectively.
+Set *CXX=...*, *CUDACXX=...*, and *FC=...* to specify the non-default C++,
+CUDA, and Fortran compilers, respectively. These environmental variables
+are supported by *cmake*.
+
+This cmake script checks a custom environmental variable *ACC=...*
+*only* for the GPU code.
+If not set, the building script will take a guess at the OpenACC compilers.
+It will be set to the default C++ compiler for the CPU code.
 
 In general the only situation where you have to configure the C++
 compiler in command line, regardless of using *cmake* or *ccmake*,
@@ -135,6 +141,8 @@ The full list of compute capabilities can be found on the
 
 Top-level CUDA installation directory, under which directories *include*,
 *lib* or *lib64* can be found.
+This option will supersede the CUDA installation identified by the official
+*CUDACXX* environmental variable.
 
 Sometimes the PGI compiler and the NVCC compiler are not "compatible." For
 instance, although PGI 19.4 supports CUDA 9.2, 10.0, 10.1, but the default

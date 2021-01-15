@@ -27,8 +27,14 @@ cmake_minimum_required (VERSION 3.11)
 !!/
 !!/ Configure Compilers
 !!/ -------------------
-!!/ Set *CXX=...* and *FC=...* to specify the non-default C++ and Fortran
-!!/ compilers, respectively.
+!!/ Set *CXX=...*, *CUDACXX=...*, and *FC=...* to specify the non-default C++,
+!!/ CUDA, and Fortran compilers, respectively. These environmental variables
+!!/ are supported by *cmake*.
+!!/
+!!/ This cmake script checks a custom environmental variable *ACC=...*
+!!/ *only* for the GPU code.
+!!/ If not set, the building script will take a guess at the OpenACC compilers.
+!!/ It will be set to the default C++ compiler for the CPU code.
 !!/
 !!/ In general the only situation where you have to configure the C++
 !!/ compiler in command line, regardless of using *cmake* or *ccmake*,
@@ -154,24 +160,6 @@ else ()
    set (hostValue 1)
 endif ()
 set (HOST ${hostValue} CACHE BOOL "0 or OFF GPU) / 1 or ON (CPU)")
-## OpenACC Compiler
-## TINKER9_ACC_COMPILER
-if (HOST)
-   set (TINKER9_ACC_COMPILER "${CMAKE_CXX_COMPILER}")
-else ()
-   if (DEFINED ENV{ACC})
-      set (accCompilerHintValue "$ENV{ACC}")
-   else ()
-      set (accCompilerHintValue "${CMAKE_CXX_COMPILER}")
-   endif ()
-   find_program (TINKER9_ACC_COMPILER
-      NAMES
-         "${accCompilerHintValue}"
-         "nvc++"
-         "pgc++"
-      REQUIRED
-   )
-endif ()
 
 
 #[[
@@ -240,8 +228,7 @@ else ()
    set (compCapValue 60,70)
 endif ()
 set (COMPUTE_CAPABILITY ${compCapValue} CACHE STRING "CUDA Compute Capability")
-## Compute Capability 60,70 ->
-## -gencode arch=compute_60,code=sm_60 -gencode arch=compute_70,code=sm_70
+## Compute Capability 60,70 -> 60;70
 string (REPLACE "," ";" TINKER9_CCLIST ${COMPUTE_CAPABILITY}) # 60;70
 
 
@@ -250,6 +237,8 @@ string (REPLACE "," ";" TINKER9_CCLIST ${COMPUTE_CAPABILITY}) # 60;70
 !!/
 !!/ Top-level CUDA installation directory, under which directories *include*,
 !!/ *lib* or *lib64* can be found.
+!!/ This option will supersede the CUDA installation identified by the official
+!!/ *CUDACXX* environmental variable.
 !!/
 !!/ Sometimes the PGI compiler and the NVCC compiler are not "compatible." For
 !!/ instance, although PGI 19.4 supports CUDA 9.2, 10.0, 10.1, but the default
@@ -264,10 +253,38 @@ if (DEFINED ENV{cuda_dir})
       BASE_DIR
          "${CMAKE_BINARY_DIR}"
    )
+elseif (DEFINED ENV{CUDACXX})
+   find_program (cudaCCValue $ENV{CUDACXX})
+   get_filename_component (cudaCCValue "${cudaCCValue}" DIRECTORY)
 else ()
    set (cudaDirValue /usr/local/cuda)
 endif ()
 set (CUDA_DIR ${cudaDirValue} CACHE PATH "CUDA Directory")
+if (HOST)
+   set (TINKER9_ACC_COMPILER "${CMAKE_CXX_COMPILER}")
+else ()
+   ## cuda compiler
+   ## CMAKE_CUDA_COMPILER
+   set (CMAKE_CUDA_COMPILER "${CUDA_DIR}/bin/nvcc")
+   ## openacc compiler
+   ## TINKER9_ACC_COMPILER
+   if (DEFINED ENV{ACC})
+      find_program (TINKER9_ACC_COMPILER
+         NAMES
+            "$ENV{ACC}"
+            "nvc++"
+            "pgc++"
+         REQUIRED
+      )
+   else ()
+      find_program (TINKER9_ACC_COMPILER
+         NAMES
+            "nvc++"
+            "pgc++"
+         REQUIRED
+      )
+   endif ()
+endif ()
 
 
 #[[
@@ -319,9 +336,11 @@ enable_language (CXX)
 enable_language (Fortran)
 
 
+## macro: an empty list
 set (TINKER9_DEFS)
 
 
+## libtinker.a
 add_library (LIBTINKER STATIC IMPORTED)
 set_target_properties (LIBTINKER PROPERTIES
    IMPORTED_LOCATION
@@ -329,6 +348,7 @@ set_target_properties (LIBTINKER PROPERTIES
 )
 
 
+## fftw
 add_library (LIBFFTW STATIC IMPORTED)
 set_target_properties (LIBFFTW PROPERTIES
    IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3.a")
@@ -350,6 +370,7 @@ if (EXISTS "${FFTW_DIR}/lib/libfftw3f_threads.a")
 endif ()
 
 
+## macro: precision
 if (PREC STREQUAL "m")
    list (APPEND TINKER9_DEFS TINKER_MIXED_PRECISION)
 elseif (PREC STREQUAL "s")
@@ -359,6 +380,7 @@ elseif (PREC STREQUAL "d")
 endif ()
 
 
+## macro: deterministic force
 if (DETERMINISTIC_FORCE STREQUAL "")
    # No default behavior for empty value.
 elseif (NOT DETERMINISTIC_FORCE)
@@ -368,9 +390,7 @@ elseif (DETERMINISTIC_FORCE)
 endif ()
 
 
-########################################################################
-
-
+## macro: fortran compiler
 if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
    list (APPEND TINKER9_DEFS TINKER_GFORTRAN)
 elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
@@ -378,7 +398,11 @@ elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
 endif ()
 
 
+## macro: src directory
 list (APPEND TINKER9_DEFS TINKER9_DIR=${CMAKE_SOURCE_DIR})
+
+
+########################################################################
 
 
 find_package (Git)
