@@ -27,8 +27,14 @@ cmake_minimum_required (VERSION 3.11)
 !!/
 !!/ Configure Compilers
 !!/ -------------------
-!!/ Set *CXX=...* and *FC=...* to specify the non-default C++ and Fortran
-!!/ compilers, respectively.
+!!/ Set *CXX=...*, *CUDACXX=...*, and *FC=...* to specify the non-default C++,
+!!/ CUDA, and Fortran compilers, respectively. These environmental variables
+!!/ are supported by *cmake*.
+!!/
+!!/ This cmake script checks a custom environmental variable *ACC=...*
+!!/ *only* for the GPU code.
+!!/ If not set, the building script will take a guess at the OpenACC compilers.
+!!/ It will be set to the default C++ compiler for the CPU code.
 !!/
 !!/ In general the only situation where you have to configure the C++
 !!/ compiler in command line, regardless of using *cmake* or *ccmake*,
@@ -87,12 +93,6 @@ cmake_minimum_required (VERSION 3.11)
 ########################################################################
 
 
-project (Tinker9 LANGUAGES NONE)
-enable_language (C)
-enable_language (CXX)
-set (macro_defs)
-enable_language (Fortran)
-list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 #[[
 !!/ **-DCMAKE_BUILD_TYPE (opt) = release**
 !!/
@@ -112,9 +112,6 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif ()
 
 
-########################################################################
-
-
 #[[
 !!/ **-DTINKER_DIR (tinker_dir) = ${CMAKE_BINARY_DIR}/tinker/source**
 !!/
@@ -122,19 +119,14 @@ endif ()
 !!/
 ]]
 if (DEFINED ENV{tinker_dir})
-   get_filename_component (tinkerDirValue "$ENV{tinker_dir}"
-      ABSOLUTE BASE_DIR "${CMAKE_BINARY_DIR}"
+   get_filename_component (tinkerDirValue "$ENV{tinker_dir}" ABSOLUTE
+      BASE_DIR
+         "${CMAKE_BINARY_DIR}"
    )
 else ()
    set (tinkerDirValue "${CMAKE_BINARY_DIR}/tinker/source")
 endif ()
 set (TINKER_DIR ${tinkerDirValue} CACHE PATH "Path to libtinker.a")
-##
-add_library (LIBTINKER STATIC IMPORTED)
-set_target_properties (LIBTINKER PROPERTIES
-   IMPORTED_LOCATION "${TINKER_DIR}/libtinker.a"
-)
-
 
 
 #[[
@@ -145,33 +137,14 @@ set_target_properties (LIBTINKER PROPERTIES
 !!/
 ]]
 if (DEFINED ENV{fftw_dir})
-   get_filename_component (fftwDirValue "$ENV{fftw_dir}"
-      ABSOLUTE BASE_DIR "${CMAKE_BINARY_DIR}"
+   get_filename_component (fftwDirValue "$ENV{fftw_dir}" ABSOLUTE
+      BASE_DIR
+         "${CMAKE_BINARY_DIR}"
    )
 else ()
    set (fftwDirValue "${CMAKE_BINARY_DIR}/fftw")
 endif ()
 set (FFTW_DIR ${fftwDirValue} CACHE PATH "FFTW3 Directory")
-##
-add_library (LIBFFTW STATIC IMPORTED)
-set_target_properties (LIBFFTW PROPERTIES
-   IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3.a")
-add_library (LIBFFTW_THREADS STATIC IMPORTED)
-set_target_properties (LIBFFTW_THREADS PROPERTIES
-   IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3_threads.a"
-)
-if (EXISTS "${FFTW_DIR}/lib/libfftw3f.a")
-   add_library (LIBFFTWF STATIC IMPORTED)
-   set_target_properties (LIBFFTWF PROPERTIES
-      IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f.a"
-   )
-endif ()
-if (EXISTS "${FFTW_DIR}/lib/libfftw3f_threads.a")
-   add_library (LIBFFTWF_THREADS STATIC IMPORTED)
-   set_target_properties (LIBFFTWF_THREADS PROPERTIES
-      IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f_threads.a"
-   )
-endif ()
 
 
 #[[
@@ -206,14 +179,6 @@ else ()
    set (precValue d)
 endif ()
 set (PREC ${precValue} CACHE STRING "d (DOUBLE) / s (SINGLE) / m (MIXED)")
-##
-if (PREC STREQUAL "m")
-   list (APPEND macro_defs TINKER_MIXED_PRECISION)
-elseif (PREC STREQUAL "s")
-   list (APPEND macro_defs TINKER_SINGLE_PRECISION)
-elseif (PREC STREQUAL "d")
-   list (APPEND macro_defs TINKER_DOUBLE_PRECISION)
-endif ()
 
 
 #[[
@@ -243,14 +208,6 @@ endif ()
 set (DETERMINISTIC_FORCE ${detForceValue} CACHE STRING
    "Deterministic Force: [NO DEFAULT] / 0 (OFF) / 1 (ON)"
 )
-##
-if (DETERMINISTIC_FORCE STREQUAL "")
-   # No default behavior for empty value.
-elseif (NOT DETERMINISTIC_FORCE)
-   list (APPEND macro_defs TINKER_DETERMINISTIC_FORCE=0)
-elseif (DETERMINISTIC_FORCE)
-   list (APPEND macro_defs TINKER_DETERMINISTIC_FORCE=1)
-endif ()
 
 
 #[[
@@ -271,11 +228,17 @@ else ()
    set (compCapValue 60,70)
 endif ()
 set (COMPUTE_CAPABILITY ${compCapValue} CACHE STRING "CUDA Compute Capability")
+## Compute Capability 60,70 -> 60;70
+string (REPLACE "," ";" T9_CUCCLIST ${COMPUTE_CAPABILITY}) # 60;70
+
+
 #[[
 !!/ **-DCUDA_DIR (cuda_dir) = /usr/local/cuda**
 !!/
 !!/ Top-level CUDA installation directory, under which directories *include*,
 !!/ *lib* or *lib64* can be found.
+!!/ This option will supersede the CUDA installation identified by the official
+!!/ *CUDACXX* environmental variable.
 !!/
 !!/ Sometimes the PGI compiler and the NVCC compiler are not "compatible." For
 !!/ instance, although PGI 19.4 supports CUDA 9.2, 10.0, 10.1, but the default
@@ -286,13 +249,22 @@ set (COMPUTE_CAPABILITY ${compCapValue} CACHE STRING "CUDA Compute Capability")
 !!/
 ]]
 if (DEFINED ENV{cuda_dir})
-   get_filename_component (cudaDirValue "$ENV{cuda_dir}"
-      ABSOLUTE BASE_DIR "${CMAKE_BINARY_DIR}"
+   get_filename_component (cudaDirValue "$ENV{cuda_dir}" ABSOLUTE
+      BASE_DIR
+         "${CMAKE_BINARY_DIR}"
    )
+elseif (DEFINED ENV{CUDACXX})
+   find_program (cudaCCValue $ENV{CUDACXX})
+   get_filename_component (cudaCCValue "${cudaCCValue}" DIRECTORY)
 else ()
    set (cudaDirValue /usr/local/cuda)
 endif ()
 set (CUDA_DIR ${cudaDirValue} CACHE PATH "CUDA Directory")
+## cuda compiler
+## set CMAKE_CUDA_COMPILER before project ()   
+if (NOT HOST)
+   set (CMAKE_CUDA_COMPILER "${CUDA_DIR}/bin/nvcc")
+endif ()
 
 
 #[[
@@ -332,14 +304,110 @@ set (CUDA_DIR ${cudaDirValue} CACHE PATH "CUDA Directory")
 ]]
 
 
-if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
-   list (APPEND macro_defs TINKER_GFORTRAN)
-elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
-   list (APPEND macro_defs TINKER_IFORT)
+########################################################################
+
+
+include (ExternalProject)
+
+
+project (Tinker9 LANGUAGES NONE)
+enable_language (C)
+enable_language (CXX)
+enable_language (Fortran)
+
+
+## macro: an empty list
+set (T9_DEFS)
+
+
+## libtinker.a
+add_library (t9_ltinker STATIC IMPORTED)
+set_target_properties (t9_ltinker PROPERTIES
+   IMPORTED_LOCATION
+      "${TINKER_DIR}/libtinker.a"
+)
+
+
+## fftw
+add_library (t9_lfftw STATIC IMPORTED)
+set_target_properties (t9_lfftw PROPERTIES
+   IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3.a")
+add_library (t9_lfftw_threads STATIC IMPORTED)
+set_target_properties (t9_lfftw_threads PROPERTIES
+   IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3_threads.a"
+)
+if (EXISTS "${FFTW_DIR}/lib/libfftw3f.a")
+   add_library (t9_lfftwf STATIC IMPORTED)
+   set_target_properties (t9_lfftwf PROPERTIES
+      IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f.a"
+   )
+endif ()
+if (EXISTS "${FFTW_DIR}/lib/libfftw3f_threads.a")
+   add_library (t9_lfftwf_threads STATIC IMPORTED)
+   set_target_properties (t9_lfftwf_threads PROPERTIES
+      IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f_threads.a"
+   )
 endif ()
 
 
-list (APPEND macro_defs TINKER9_DIR=${CMAKE_SOURCE_DIR})
+## macro: precision
+if (PREC STREQUAL "m")
+   list (APPEND T9_DEFS TINKER_MIXED_PRECISION)
+elseif (PREC STREQUAL "s")
+   list (APPEND T9_DEFS TINKER_SINGLE_PRECISION)
+elseif (PREC STREQUAL "d")
+   list (APPEND T9_DEFS TINKER_DOUBLE_PRECISION)
+endif ()
+
+
+## macro: deterministic force
+if (DETERMINISTIC_FORCE STREQUAL "")
+   # No default behavior for empty value.
+elseif (NOT DETERMINISTIC_FORCE)
+   list (APPEND T9_DEFS TINKER_DETERMINISTIC_FORCE=0)
+elseif (DETERMINISTIC_FORCE)
+   list (APPEND T9_DEFS TINKER_DETERMINISTIC_FORCE=1)
+endif ()
+
+
+## macro: fortran compiler
+if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
+   list (APPEND T9_DEFS TINKER_GFORTRAN)
+elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
+   list (APPEND T9_DEFS TINKER_IFORT)
+endif ()
+
+
+## macro: project directory
+## TINKER9_DIR is needed in the source code.
+list (APPEND T9_DEFS TINKER9_DIR=${PROJECT_SOURCE_DIR})
+
+
+## openacc compiler
+## set T9_ACC_COMPILER after project (), otherwise CMAKE_CXX_COMPILER is empty.
+if (HOST)
+   set (T9_ACC_COMPILER "${CMAKE_CXX_COMPILER}")
+else ()
+   if (DEFINED ENV{ACC})
+      find_program (T9_ACC_COMPILER
+         NAMES
+            "$ENV{ACC}"
+            "nvc++"
+            "pgc++"
+         REQUIRED
+      )
+   else ()
+      find_program (T9_ACC_COMPILER
+         NAMES
+            "nvc++"
+            "pgc++"
+         REQUIRED
+      )
+   endif ()
+endif ()
+
+
+########################################################################
 
 
 find_package (Git)
@@ -356,7 +424,8 @@ if (GIT_FOUND)
       string (REPLACE "\"" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
       string (REPLACE "\n" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
       string (REPLACE "\r" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
-      list (APPEND macro_defs TINKER9_GIT_SHORT_HASH=${STRING_SHA1_GIT})
+      ## TINKER9_GIT_SHORT_HASH is needed in the source code.
+      list (APPEND T9_DEFS TINKER9_GIT_SHORT_HASH=${STRING_SHA1_GIT})
 
 
       execute_process (
@@ -378,55 +447,129 @@ endif ()
 
 
 ## include path
-set (comm_sys_inc_path
+set (T9_SYS_INCPATH
    "${FFTW_DIR}/include"
    "${PROJECT_SOURCE_DIR}/ext/ext")
-set (proj_internal_inc_path "${PROJECT_SOURCE_DIR}/include")
-
-
-## main file
-file (GLOB MAIN_CPP "${PROJECT_SOURCE_DIR}/src/main*.cpp")
-## fortran file(s)
-file (GLOB LIB_F "${PROJECT_SOURCE_DIR}/src/*.f")
-## acc files
-file (GLOB LIB_ACC "${PROJECT_SOURCE_DIR}/src/*_acc.cpp")
-## cpp files
-file (GLOB LIB_CPP "${PROJECT_SOURCE_DIR}/src/*.cpp")
-list (REMOVE_ITEM LIB_CPP ${MAIN_CPP} ${LIB_ACC})
-## cu files
-file (GLOB LIB_CU "${PROJECT_SOURCE_DIR}/src/*_cu.cu")
-
-
-## tinker9
+set (T9_INCPATH "${PROJECT_SOURCE_DIR}/include")
 if (HOST)
+   list (APPEND T9_DEFS TINKER_HOST)
+   list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
+else ()
+   list (APPEND T9_DEFS TINKER_CUDART)
+   list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
+   list (APPEND T9_SYS_INCPATH "${CUDA_DIR}/include")
+   # remove "include/syntax/acc" from the include paths for src-cu
+   # add "include/syntax/cu" to the include paths for src-cu
+endif ()
+
+
+## openacc
+string (REPLACE ";" "|" T9_EP_ACC_MACRO "${T9_DEFS}")
+string (REPLACE ";" "|" T9_EP_ACC_SYS_INCPATH "${T9_SYS_INCPATH}")
+string (REPLACE ";" "|" T9_EP_ACC_INCPATH "${T9_INCPATH}")
+string (REPLACE ";" "|" T9_ACC_CCLIST "${T9_CUCCLIST}")
+ExternalProject_Add (cmtinker9acc
+   SOURCE_DIR
+      "${PROJECT_SOURCE_DIR}/src-acc"
+   BINARY_DIR
+      "${CMAKE_BINARY_DIR}/cmtinker9acc"
+   PREFIX
+      "${CMAKE_BINARY_DIR}/cmtinker9acc"
+   BUILD_BYPRODUCTS
+      "${CMAKE_BINARY_DIR}/cmtinker9acc"
+   BUILD_ALWAYS
+      1
+   LIST_SEPARATOR
+      |
+   CMAKE_ARGS
+      "-DCMAKE_CXX_COMPILER=${T9_ACC_COMPILER}"
+      "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+      "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/cmtinker9acc"
+      "-DT9_SYS_INCPATH=${T9_EP_ACC_SYS_INCPATH}"
+      "-DT9_INCPATH=${T9_EP_ACC_INCPATH}"
+      "-DT9_ACC_DEFS=${T9_EP_ACC_MACRO}"
+      "-DT9_ACC_ONHOST=${HOST}"
+      "-DT9_ACC_CUDADIR=${CUDA_DIR}"
+      "-DT9_ACC_CCLIST=${T9_ACC_CCLIST}"
+)
+set (__T9_ACC_STATIC_LIB_LOC "${CMAKE_BINARY_DIR}/cmtinker9acc/libtinker9_acc.a")
+add_library (tinker9_EP_acc STATIC IMPORTED)
+set_target_properties (tinker9_EP_acc PROPERTIES
+   IMPORTED_LOCATION
+      "${__T9_ACC_STATIC_LIB_LOC}"
+)
+set_source_files_properties ("${__T9_ACC_STATIC_LIB_LOC}" PROPERTIES
+   EXTERNAL_OBJECT
+      TRUE
+   GENERATED
+      TRUE
+)
+
+
+## test files
+file (GLOB T9_TEST_SRC
+   "src-main/main_all_tests.cpp"
+   "src/test/*.cpp"
+)
+add_library (__t9_all_tests_o OBJECT ${T9_TEST_SRC})
+target_compile_definitions (__t9_all_tests_o PRIVATE ${T9_DEFS})
+set_target_properties (__t9_all_tests_o PROPERTIES
+   CXX_STANDARD
+      11
+)
+target_include_directories (__t9_all_tests_o SYSTEM PRIVATE "${T9_SYS_INCPATH}")
+target_include_directories (__t9_all_tests_o PRIVATE
+   "${T9_INCPATH}"
+   "${PROJECT_SOURCE_DIR}/src/test"
+)
+
+
+## executables
+## tinker9 and all.tests
+list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+if (HOST)
+   add_subdirectory (src)
+   add_subdirectory (src-f)
    include (host) # host.cmake
 else ()
+   add_subdirectory (src-cu)
+   add_subdirectory (src)
+   add_subdirectory (src-f)
    include (device) # device.cmake
 endif ()
 
 
 ## scripts
-add_custom_target (SHELL_EXE COMMAND
-   "${CMAKE_COMMAND}" -E copy "${PROJECT_SOURCE_DIR}/shell/*9.sh" "${CMAKE_BINARY_DIR}")
-add_dependencies (tinker9 SHELL_EXE)
+add_custom_target (__t9_copy_shell_exe)
+foreach (var
+   "${PROJECT_SOURCE_DIR}/shell/analyze9.sh"   
+   "${PROJECT_SOURCE_DIR}/shell/bar9.sh"
+   "${PROJECT_SOURCE_DIR}/shell/dynamic9.sh"
+   "${PROJECT_SOURCE_DIR}/shell/info9.sh"
+   "${PROJECT_SOURCE_DIR}/shell/minimize9.sh"
+   "${PROJECT_SOURCE_DIR}/shell/testgrad9.sh"
+   )
+   get_filename_component (__t9_fname "${var}" NAME)
+   add_custom_command (TARGET __t9_copy_shell_exe POST_BUILD
+      COMMAND
+         "${CMAKE_COMMAND}" -E copy "${var}" "${CMAKE_BINARY_DIR}"
+      BYPRODUCTS
+         "${CMAKE_BINARY_DIR}/${__t9_fname}"
+   )
+endforeach ()
+add_dependencies (tinker9 __t9_copy_shell_exe)
 
 
 ## unit tests
-include (test) # test.cmake
+add_custom_target (test
+   DEPENDS
+      all.tests
+   COMMAND
+      ./all.tests info
+   COMMAND
+      ./all.tests [ff],[util] -a --durations yes --order rand --rng-seed time
+)
 
 
 ## documentations
 include (docs) # docs.cmake
-
-
-## more files to clean
-set_property (DIRECTORY
-   PROPERTY
-      ADDITIONAL_MAKE_CLEAN_FILES
-         "${CMAKE_BINARY_DIR}/README.md"
-         "${CMAKE_BINARY_DIR}/doc"
-         "${CMAKE_BINARY_DIR}/html"
-         "${CMAKE_BINARY_DIR}/include"
-         "${CMAKE_BINARY_DIR}/latex"
-         "${CMAKE_BINARY_DIR}/manual"
-)

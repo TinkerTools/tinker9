@@ -1,32 +1,37 @@
-list (APPEND macro_defs TINKER_HOST)
-list (APPEND proj_internal_inc_path "${PROJECT_SOURCE_DIR}/include/syntax/acc")
-file (GLOB PLATFORM_CPP "${PROJECT_SOURCE_DIR}/src/host/*.cpp")
-list (APPEND LIB_CPP ${PLATFORM_CPP})
-
-
-add_library (tinker9_f OBJECT ${LIB_F})
-add_library (tinker9_cpp OBJECT ${LIB_ACC} ${LIB_CPP})
-target_compile_definitions (tinker9_cpp PRIVATE ${macro_defs})
-set_target_properties (tinker9_cpp PROPERTIES
-   CXX_STANDARD 11
-   CXX_EXTENSIONS OFF)
-target_include_directories (tinker9_cpp SYSTEM PRIVATE ${comm_sys_inc_path})
-target_include_directories (tinker9_cpp PRIVATE ${proj_internal_inc_path})
-add_library (tinker9_host STATIC
-   $<TARGET_OBJECTS:tinker9_f>
-   $<TARGET_OBJECTS:tinker9_cpp>
+add_executable (tinker9 src-main/main_tinker9.cpp)
+add_dependencies (tinker9 cmtinker9acc)
+set_target_properties (tinker9 PROPERTIES
+   CXX_STANDARD
+      11
+)
+target_compile_definitions (tinker9 PRIVATE "${T9_DEFS}")
+target_include_directories (tinker9 SYSTEM PRIVATE "${T9_SYS_INCPATH}")
+target_include_directories (tinker9 PRIVATE "${T9_INCPATH}")
+set (T9_EXTLIBS pthread t9_ltinker t9_lfftw t9_lfftw_threads)
+if (PREC STREQUAL "m" OR PREC STREQUAL "s")
+   list (APPEND T9_EXTLIBS t9_lfftwf t9_lfftwf_threads)
+endif ()
+target_link_libraries (tinker9
+   "-Wl,--start-group"
+   $<TARGET_FILE:tinker9_EP_acc>
+   tinker9_cpp
+   tinker9_f
+   "-Wl,--end-group"
+   "${T9_EXTLIBS}"
 )
 
 
-add_executable (tinker9 ${MAIN_CPP})
-target_compile_definitions (tinker9 PRIVATE ${macro_defs})
-set (EXT_LIBS pthread LIBTINKER LIBFFTW LIBFFTW_THREADS)
-if (PREC STREQUAL "m" OR PREC STREQUAL "s")
-   list (APPEND EXT_LIBS LIBFFTWF LIBFFTWF_THREADS)
-endif ()
-set_target_properties (tinker9 PROPERTIES
-   CXX_STANDARD 11
-   CXX_EXTENSIONS OFF)
-target_include_directories (tinker9 SYSTEM PRIVATE ${comm_sys_inc_path})
-target_include_directories (tinker9 PRIVATE ${proj_internal_inc_path})
-target_link_libraries (tinker9 tinker9_host ${EXT_LIBS})
+########################################################################
+
+
+add_executable (all.tests)
+add_dependencies (all.tests cmtinker9acc)
+target_link_libraries (all.tests
+   "-Wl,--start-group"
+   __t9_all_tests_o
+   $<TARGET_FILE:tinker9_EP_acc>
+   tinker9_cpp
+   tinker9_f
+   "-Wl,--end-group"
+   "${T9_EXTLIBS}"
+)
