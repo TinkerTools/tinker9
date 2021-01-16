@@ -321,30 +321,30 @@ set (T9_DEFS)
 
 
 ## libtinker.a
-add_library (LIBTINKER STATIC IMPORTED)
-set_target_properties (LIBTINKER PROPERTIES
+add_library (t9_ltinker STATIC IMPORTED)
+set_target_properties (t9_ltinker PROPERTIES
    IMPORTED_LOCATION
       "${TINKER_DIR}/libtinker.a"
 )
 
 
 ## fftw
-add_library (LIBFFTW STATIC IMPORTED)
-set_target_properties (LIBFFTW PROPERTIES
+add_library (t9_lfftw STATIC IMPORTED)
+set_target_properties (t9_lfftw PROPERTIES
    IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3.a")
-add_library (LIBFFTW_THREADS STATIC IMPORTED)
-set_target_properties (LIBFFTW_THREADS PROPERTIES
+add_library (t9_lfftw_threads STATIC IMPORTED)
+set_target_properties (t9_lfftw_threads PROPERTIES
    IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3_threads.a"
 )
 if (EXISTS "${FFTW_DIR}/lib/libfftw3f.a")
-   add_library (LIBFFTWF STATIC IMPORTED)
-   set_target_properties (LIBFFTWF PROPERTIES
+   add_library (t9_lfftwf STATIC IMPORTED)
+   set_target_properties (t9_lfftwf PROPERTIES
       IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f.a"
    )
 endif ()
 if (EXISTS "${FFTW_DIR}/lib/libfftw3f_threads.a")
-   add_library (LIBFFTWF_THREADS STATIC IMPORTED)
-   set_target_properties (LIBFFTWF_THREADS PROPERTIES
+   add_library (t9_lfftwf_threads STATIC IMPORTED)
+   set_target_properties (t9_lfftwf_threads PROPERTIES
       IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f_threads.a"
    )
 endif ()
@@ -469,6 +469,8 @@ string (REPLACE ";" "|" T9_EP_ACC_SYS_INCPATH "${T9_SYS_INCPATH}")
 string (REPLACE ";" "|" T9_EP_ACC_INCPATH "${T9_INCPATH}")
 string (REPLACE ";" "|" T9_ACC_CCLIST "${T9_CUCCLIST}")
 ExternalProject_Add (cmtinker9acc
+   BUILD_ALWAYS
+      1
    SOURCE_DIR
       "${PROJECT_SOURCE_DIR}/src-acc"
    BINARY_DIR
@@ -481,20 +483,20 @@ ExternalProject_Add (cmtinker9acc
       "-DCMAKE_CXX_COMPILER=${T9_ACC_COMPILER}"
       "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
       "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/cmtinker9acc"
-      "-DT9_ACC_DEFS=${T9_EP_ACC_MACRO}"
       "-DT9_SYS_INCPATH=${T9_EP_ACC_SYS_INCPATH}"
       "-DT9_INCPATH=${T9_EP_ACC_INCPATH}"
+      "-DT9_ACC_DEFS=${T9_EP_ACC_MACRO}"
       "-DT9_ACC_ONHOST=${HOST}"
       "-DT9_ACC_CUDADIR=${CUDA_DIR}"
       "-DT9_ACC_CCLIST=${T9_ACC_CCLIST}"
 )
-set (T9_ACC_STATIC_LIB_LOC "${CMAKE_BINARY_DIR}/cmtinker9acc/libtinker9_acc.a")
+set (__T9_ACC_STATIC_LIB_LOC "${CMAKE_BINARY_DIR}/cmtinker9acc/libtinker9_acc.a")
 add_library (tinker9_EP_acc STATIC IMPORTED)
 set_target_properties (tinker9_EP_acc PROPERTIES
    IMPORTED_LOCATION
-      "${T9_ACC_STATIC_LIB_LOC}"
+      "${__T9_ACC_STATIC_LIB_LOC}"
 )
-set_source_files_properties ("${T9_ACC_STATIC_LIB_LOC}" PROPERTIES
+set_source_files_properties ("${__T9_ACC_STATIC_LIB_LOC}" PROPERTIES
    EXTERNAL_OBJECT
       TRUE
    GENERATED
@@ -507,14 +509,14 @@ file (GLOB T9_TEST_SRC
    "src-main/main_all_tests.cpp"
    "src/test/*.cpp"
 )
-add_library (all_tests_o OBJECT ${T9_TEST_SRC})
-target_compile_definitions (all_tests_o PRIVATE ${T9_DEFS})
-set_target_properties (all_tests_o PROPERTIES
+add_library (__t9_all_tests_o OBJECT ${T9_TEST_SRC})
+target_compile_definitions (__t9_all_tests_o PRIVATE ${T9_DEFS})
+set_target_properties (__t9_all_tests_o PROPERTIES
    CXX_STANDARD
       11
 )
-target_include_directories (all_tests_o SYSTEM PRIVATE "${T9_SYS_INCPATH}")
-target_include_directories (all_tests_o PRIVATE
+target_include_directories (__t9_all_tests_o SYSTEM PRIVATE "${T9_SYS_INCPATH}")
+target_include_directories (__t9_all_tests_o PRIVATE
    "${T9_INCPATH}"
    "${PROJECT_SOURCE_DIR}/src/test"
 )
