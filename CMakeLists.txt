@@ -378,9 +378,9 @@ elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
 endif ()
 
 
-## macro: src directory
+## macro: project directory
 ## TINKER9_DIR is needed in the source code.
-list (APPEND T9_DEFS TINKER9_DIR=${CMAKE_SOURCE_DIR})
+list (APPEND T9_DEFS TINKER9_DIR=${PROJECT_SOURCE_DIR})
 
 
 ## openacc compiler
@@ -469,14 +469,16 @@ string (REPLACE ";" "|" T9_EP_ACC_SYS_INCPATH "${T9_SYS_INCPATH}")
 string (REPLACE ";" "|" T9_EP_ACC_INCPATH "${T9_INCPATH}")
 string (REPLACE ";" "|" T9_ACC_CCLIST "${T9_CUCCLIST}")
 ExternalProject_Add (cmtinker9acc
-   BUILD_ALWAYS
-      1
    SOURCE_DIR
       "${PROJECT_SOURCE_DIR}/src-acc"
    BINARY_DIR
       "${CMAKE_BINARY_DIR}/cmtinker9acc"
    PREFIX
       "${CMAKE_BINARY_DIR}/cmtinker9acc"
+   BUILD_BYPRODUCTS
+      "${CMAKE_BINARY_DIR}/cmtinker9acc"
+   BUILD_ALWAYS
+      1
    LIST_SEPARATOR
       |
    CMAKE_ARGS
@@ -538,34 +540,36 @@ endif ()
 
 
 ## scripts
-add_custom_target (SHELL_EXE COMMAND
-   "${CMAKE_COMMAND}" -E copy "${PROJECT_SOURCE_DIR}/shell/*9.sh" "${CMAKE_BINARY_DIR}")
-add_dependencies (tinker9 SHELL_EXE)
+add_custom_target (__t9_copy_shell_exe)
+foreach (var
+   "${PROJECT_SOURCE_DIR}/shell/analyze9.sh"   
+   "${PROJECT_SOURCE_DIR}/shell/bar9.sh"
+   "${PROJECT_SOURCE_DIR}/shell/dynamic9.sh"
+   "${PROJECT_SOURCE_DIR}/shell/info9.sh"
+   "${PROJECT_SOURCE_DIR}/shell/minimize9.sh"
+   "${PROJECT_SOURCE_DIR}/shell/testgrad9.sh"
+   )
+   get_filename_component (__t9_fname "${var}" NAME)
+   add_custom_command (TARGET __t9_copy_shell_exe POST_BUILD
+      COMMAND
+         "${CMAKE_COMMAND}" -E copy "${var}" "${CMAKE_BINARY_DIR}"
+      BYPRODUCTS
+         "${CMAKE_BINARY_DIR}/${__t9_fname}"
+   )
+endforeach ()
+add_dependencies (tinker9 __t9_copy_shell_exe)
 
 
 ## unit tests
 add_custom_target (test
+   DEPENDS
+      all.tests
    COMMAND
       ./all.tests info
    COMMAND
       ./all.tests [ff],[util] -a --durations yes --order rand --rng-seed time
-   DEPENDS
-      all.tests
 )
 
 
 ## documentations
 include (docs) # docs.cmake
-
-
-## more files to clean
-set_property (DIRECTORY
-   PROPERTY
-      ADDITIONAL_MAKE_CLEAN_FILES
-         "${CMAKE_BINARY_DIR}/README.md"
-         "${CMAKE_BINARY_DIR}/doc"
-         "${CMAKE_BINARY_DIR}/html"
-         "${CMAKE_BINARY_DIR}/include"
-         "${CMAKE_BINARY_DIR}/latex"
-         "${CMAKE_BINARY_DIR}/manual"
-)
