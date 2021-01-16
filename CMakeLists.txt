@@ -229,7 +229,7 @@ else ()
 endif ()
 set (COMPUTE_CAPABILITY ${compCapValue} CACHE STRING "CUDA Compute Capability")
 ## Compute Capability 60,70 -> 60;70
-string (REPLACE "," ";" TINKER9_CCLIST ${COMPUTE_CAPABILITY}) # 60;70
+string (REPLACE "," ";" T9_CUCCLIST ${COMPUTE_CAPABILITY}) # 60;70
 
 
 #[[
@@ -260,30 +260,10 @@ else ()
    set (cudaDirValue /usr/local/cuda)
 endif ()
 set (CUDA_DIR ${cudaDirValue} CACHE PATH "CUDA Directory")
-if (HOST)
-   set (TINKER9_ACC_COMPILER "${CMAKE_CXX_COMPILER}")
-else ()
-   ## cuda compiler
-   ## CMAKE_CUDA_COMPILER
+## cuda compiler
+## set CMAKE_CUDA_COMPILER before project ()   
+if (NOT HOST)
    set (CMAKE_CUDA_COMPILER "${CUDA_DIR}/bin/nvcc")
-   ## openacc compiler
-   ## TINKER9_ACC_COMPILER
-   if (DEFINED ENV{ACC})
-      find_program (TINKER9_ACC_COMPILER
-         NAMES
-            "$ENV{ACC}"
-            "nvc++"
-            "pgc++"
-         REQUIRED
-      )
-   else ()
-      find_program (TINKER9_ACC_COMPILER
-         NAMES
-            "nvc++"
-            "pgc++"
-         REQUIRED
-      )
-   endif ()
 endif ()
 
 
@@ -402,6 +382,30 @@ endif ()
 list (APPEND TINKER9_DEFS TINKER9_DIR=${CMAKE_SOURCE_DIR})
 
 
+## openacc compiler
+## set TINKER9_ACC_COMPILER after project (), otherwise CMAKE_CXX_COMPILER is empty.
+if (HOST)
+   set (TINKER9_ACC_COMPILER "${CMAKE_CXX_COMPILER}")
+else ()
+   if (DEFINED ENV{ACC})
+      find_program (TINKER9_ACC_COMPILER
+         NAMES
+            "$ENV{ACC}"
+            "nvc++"
+            "pgc++"
+         REQUIRED
+      )
+   else ()
+      find_program (TINKER9_ACC_COMPILER
+         NAMES
+            "nvc++"
+            "pgc++"
+         REQUIRED
+      )
+   endif ()
+endif ()
+
+
 ########################################################################
 
 
@@ -458,10 +462,10 @@ endif ()
 
 
 ## openacc
-## cm9a -- cmake external project tinker9 openacc
 string (REPLACE ";" "|" TINKER9_EP_OPENACC_MACRO "${TINKER9_DEFS}")
 string (REPLACE ";" "|" TINKER9_EP_OPENACC_SYS_INC_PATH "${TINKER9_SYS_INC_PATH}")
 string (REPLACE ";" "|" TINKER9_EP_OPENACC_INTERNAL_INC_PATH "${TINKER9_INTERNAL_INC_PATH}")
+string (REPLACE ";" "|" T9_ACCCCLIST "${T9_CUCCLIST}")
 ExternalProject_Add (cm9a
    SOURCE_DIR
       "${PROJECT_SOURCE_DIR}/src-acc"
@@ -473,14 +477,18 @@ ExternalProject_Add (cm9a
       |
    CMAKE_ARGS
       "-DCMAKE_CXX_COMPILER=${TINKER9_ACC_COMPILER}"
+      "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
       "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/cm9a"
       "-DTINKER9_MACRO=${TINKER9_EP_OPENACC_MACRO}"
       "-DTINKER9_SYS_INC_PATH=${TINKER9_EP_OPENACC_SYS_INC_PATH}"
       "-DTINKER9_INTERNAL_INC_PATH=${TINKER9_EP_OPENACC_INTERNAL_INC_PATH}"
+      "-DT9_ACCONHOST=${HOST}"
+      "-DT9_ACC_CUDADIR=${CUDA_DIR}"
+      "-DT9_ACCCCLIST=${T9_ACCCCLIST}"
 )
 set (TINKER9_ACC_STATIC_LIB_LOC "${CMAKE_BINARY_DIR}/cm9a/libtinker9_acc.a")
-add_library (tinker9_acc STATIC IMPORTED)
-set_target_properties (tinker9_acc PROPERTIES
+add_library (tinker9_EP_acc STATIC IMPORTED)
+set_target_properties (tinker9_EP_acc PROPERTIES
    IMPORTED_LOCATION
       "${TINKER9_ACC_STATIC_LIB_LOC}"
 )

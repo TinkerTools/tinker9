@@ -13,7 +13,7 @@ if (PREC STREQUAL "m" OR PREC STREQUAL "s")
 endif ()
 target_link_libraries (tinker9
    "-Wl,--start-group"
-   $<TARGET_FILE:tinker9_acc>
+   $<TARGET_FILE:tinker9_EP_acc>
    tinker9_cpp
    tinker9_f
    "-Wl,--end-group"
@@ -29,7 +29,7 @@ add_dependencies (all.tests cm9a)
 target_link_libraries (all.tests
    "-Wl,--start-group"
    all_tests_o
-   $<TARGET_FILE:tinker9_acc>
+   $<TARGET_FILE:tinker9_EP_acc>
    tinker9_cpp
    tinker9_f
    "-Wl,--end-group"

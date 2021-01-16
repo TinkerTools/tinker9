@@ -21,7 +21,7 @@ target_include_directories (tinker9_cu PRIVATE
    "${PROJECT_SOURCE_DIR}/include/syntax/cu"
 )
 ## -gencode arch=compute_60,code=sm_60 -gencode arch=compute_70,code=sm_70
-foreach (var ${TINKER9_CCLIST})
+foreach (var ${T9_CUCCLIST})
    target_compile_options (tinker9_cu PRIVATE
       "SHELL:-gencode arch=compute_${var},code=sm_${var}"
    )

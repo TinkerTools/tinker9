@@ -12,6 +12,13 @@ separate_arguments (LIST_CXX_FLAGS_DEBUG NATIVE_COMMAND ${CMAKE_CXX_FLAGS_DEBUG}
 separate_arguments (LIST_CXX_FLAGS_RELEASE NATIVE_COMMAND ${CMAKE_CXX_FLAGS_RELEASE})
 
 
+## Compute Capability 60,70 -> ,cc60,cc70
+set (T9_CCLST4) # ""
+foreach (var ${T9_CUCCLIST})
+   string (APPEND T9_CCLST4 ",cc${var}")
+endforeach () # ,cc60,cc70
+
+
 ########################################################################
 
 
@@ -33,7 +40,7 @@ add_custom_target (tinker9 ALL
       -o tinker9
       $<TARGET_OBJECTS:tinker9_main>
       "-Wl,--start-group"
-      $<TARGET_FILE:tinker9_acc>
+      $<TARGET_FILE:tinker9_EP_acc>
       $<TARGET_FILE:tinker9_cu>
       $<TARGET_FILE:tinker9_cpp>
       $<TARGET_FILE:tinker9_f>
@@ -44,8 +51,8 @@ add_custom_target (tinker9 ALL
       "-L$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES},;-L>"
       "-l$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES},;-l>"
       -acc -Mcudalib=cufft,cublas
-      $<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${TINKER9_CCLST4}>
-      $<$<CONFIG:RELEASE>:-ta=tesla:fastmath${TINKER9_CCLST4}>
+      $<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${T9_CCLST4}>
+      $<$<CONFIG:RELEASE>:-ta=tesla:fastmath${T9_CCLST4}>
    COMMAND_EXPAND_LISTS
 )
 
@@ -71,7 +78,7 @@ add_custom_target (all.tests ALL
       -o all.tests
       $<TARGET_OBJECTS:all_tests_o>
       "-Wl,--start-group"
-      $<TARGET_FILE:tinker9_acc>
+      $<TARGET_FILE:tinker9_EP_acc>
       $<TARGET_FILE:tinker9_cu>
       $<TARGET_FILE:tinker9_cpp>
       $<TARGET_FILE:tinker9_f>
@@ -82,7 +89,7 @@ add_custom_target (all.tests ALL
       "-L$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES},;-L>"
       "-l$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES},;-l>"
       -acc -Mcudalib=cufft,cublas
-      $<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${TINKER9_CCLST4}>
-      $<$<CONFIG:RELEASE>:-ta=tesla:fastmath${TINKER9_CCLST4}>
+      $<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${T9_CCLST4}>
+      $<$<CONFIG:RELEASE>:-ta=tesla:fastmath${T9_CCLST4}>
    COMMAND_EXPAND_LISTS
 )
