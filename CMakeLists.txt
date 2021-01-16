@@ -317,7 +317,7 @@ enable_language (Fortran)
 
 
 ## macro: an empty list
-set (TINKER9_DEFS)
+set (T9_DEFS)
 
 
 ## libtinker.a
@@ -352,11 +352,11 @@ endif ()
 
 ## macro: precision
 if (PREC STREQUAL "m")
-   list (APPEND TINKER9_DEFS TINKER_MIXED_PRECISION)
+   list (APPEND T9_DEFS TINKER_MIXED_PRECISION)
 elseif (PREC STREQUAL "s")
-   list (APPEND TINKER9_DEFS TINKER_SINGLE_PRECISION)
+   list (APPEND T9_DEFS TINKER_SINGLE_PRECISION)
 elseif (PREC STREQUAL "d")
-   list (APPEND TINKER9_DEFS TINKER_DOUBLE_PRECISION)
+   list (APPEND T9_DEFS TINKER_DOUBLE_PRECISION)
 endif ()
 
 
@@ -364,31 +364,32 @@ endif ()
 if (DETERMINISTIC_FORCE STREQUAL "")
    # No default behavior for empty value.
 elseif (NOT DETERMINISTIC_FORCE)
-   list (APPEND TINKER9_DEFS TINKER_DETERMINISTIC_FORCE=0)
+   list (APPEND T9_DEFS TINKER_DETERMINISTIC_FORCE=0)
 elseif (DETERMINISTIC_FORCE)
-   list (APPEND TINKER9_DEFS TINKER_DETERMINISTIC_FORCE=1)
+   list (APPEND T9_DEFS TINKER_DETERMINISTIC_FORCE=1)
 endif ()
 
 
 ## macro: fortran compiler
 if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
-   list (APPEND TINKER9_DEFS TINKER_GFORTRAN)
+   list (APPEND T9_DEFS TINKER_GFORTRAN)
 elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
-   list (APPEND TINKER9_DEFS TINKER_IFORT)
+   list (APPEND T9_DEFS TINKER_IFORT)
 endif ()
 
 
 ## macro: src directory
-list (APPEND TINKER9_DEFS TINKER9_DIR=${CMAKE_SOURCE_DIR})
+## TINKER9_DIR is needed in the source code.
+list (APPEND T9_DEFS TINKER9_DIR=${CMAKE_SOURCE_DIR})
 
 
 ## openacc compiler
-## set TINKER9_ACC_COMPILER after project (), otherwise CMAKE_CXX_COMPILER is empty.
+## set T9_ACC_COMPILER after project (), otherwise CMAKE_CXX_COMPILER is empty.
 if (HOST)
-   set (TINKER9_ACC_COMPILER "${CMAKE_CXX_COMPILER}")
+   set (T9_ACC_COMPILER "${CMAKE_CXX_COMPILER}")
 else ()
    if (DEFINED ENV{ACC})
-      find_program (TINKER9_ACC_COMPILER
+      find_program (T9_ACC_COMPILER
          NAMES
             "$ENV{ACC}"
             "nvc++"
@@ -396,7 +397,7 @@ else ()
          REQUIRED
       )
    else ()
-      find_program (TINKER9_ACC_COMPILER
+      find_program (T9_ACC_COMPILER
          NAMES
             "nvc++"
             "pgc++"
@@ -423,7 +424,8 @@ if (GIT_FOUND)
       string (REPLACE "\"" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
       string (REPLACE "\n" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
       string (REPLACE "\r" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
-      list (APPEND TINKER9_DEFS TINKER9_GIT_SHORT_HASH=${STRING_SHA1_GIT})
+      ## TINKER9_GIT_SHORT_HASH is needed in the source code.
+      list (APPEND T9_DEFS TINKER9_GIT_SHORT_HASH=${STRING_SHA1_GIT})
 
 
       execute_process (
@@ -445,26 +447,26 @@ endif ()
 
 
 ## include path
-set (TINKER9_SYS_INC_PATH
+set (T9_SYS_INCPATH
    "${FFTW_DIR}/include"
    "${PROJECT_SOURCE_DIR}/ext/ext")
-set (TINKER9_INTERNAL_INC_PATH "${PROJECT_SOURCE_DIR}/include")
+set (T9_INCPATH "${PROJECT_SOURCE_DIR}/include")
 if (HOST)
-   list (APPEND TINKER9_DEFS TINKER_HOST)
-   list (APPEND TINKER9_INTERNAL_INC_PATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
+   list (APPEND T9_DEFS TINKER_HOST)
+   list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
 else ()
-   list (APPEND TINKER9_DEFS TINKER_CUDART)
-   list (APPEND TINKER9_INTERNAL_INC_PATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
-   list (APPEND TINKER9_SYS_INC_PATH "${CUDA_DIR}/include")
+   list (APPEND T9_DEFS TINKER_CUDART)
+   list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
+   list (APPEND T9_SYS_INCPATH "${CUDA_DIR}/include")
    # remove "include/syntax/acc" from the include paths for src-cu
    # add "include/syntax/cu" to the include paths for src-cu
 endif ()
 
 
 ## openacc
-string (REPLACE ";" "|" TINKER9_EP_OPENACC_MACRO "${TINKER9_DEFS}")
-string (REPLACE ";" "|" TINKER9_EP_OPENACC_SYS_INC_PATH "${TINKER9_SYS_INC_PATH}")
-string (REPLACE ";" "|" TINKER9_EP_OPENACC_INTERNAL_INC_PATH "${TINKER9_INTERNAL_INC_PATH}")
+string (REPLACE ";" "|" T9_EP_ACC_MACRO "${T9_DEFS}")
+string (REPLACE ";" "|" T9_EP_ACC_SYS_INCPATH "${T9_SYS_INCPATH}")
+string (REPLACE ";" "|" T9_EP_ACC_INCPATH "${T9_INCPATH}")
 string (REPLACE ";" "|" T9_ACC_CCLIST "${T9_CUCCLIST}")
 ExternalProject_Add (cmtinker9acc
    SOURCE_DIR
@@ -476,23 +478,23 @@ ExternalProject_Add (cmtinker9acc
    LIST_SEPARATOR
       |
    CMAKE_ARGS
-      "-DCMAKE_CXX_COMPILER=${TINKER9_ACC_COMPILER}"
+      "-DCMAKE_CXX_COMPILER=${T9_ACC_COMPILER}"
       "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
       "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/cmtinker9acc"
-      "-DTINKER9_MACRO=${TINKER9_EP_OPENACC_MACRO}"
-      "-DTINKER9_SYS_INC_PATH=${TINKER9_EP_OPENACC_SYS_INC_PATH}"
-      "-DTINKER9_INTERNAL_INC_PATH=${TINKER9_EP_OPENACC_INTERNAL_INC_PATH}"
+      "-DT9_ACC_DEFS=${T9_EP_ACC_MACRO}"
+      "-DT9_SYS_INCPATH=${T9_EP_ACC_SYS_INCPATH}"
+      "-DT9_INCPATH=${T9_EP_ACC_INCPATH}"
       "-DT9_ACC_ONHOST=${HOST}"
       "-DT9_ACC_CUDADIR=${CUDA_DIR}"
       "-DT9_ACC_CCLIST=${T9_ACC_CCLIST}"
 )
-set (TINKER9_ACC_STATIC_LIB_LOC "${CMAKE_BINARY_DIR}/cmtinker9acc/libtinker9_acc.a")
+set (T9_ACC_STATIC_LIB_LOC "${CMAKE_BINARY_DIR}/cmtinker9acc/libtinker9_acc.a")
 add_library (tinker9_EP_acc STATIC IMPORTED)
 set_target_properties (tinker9_EP_acc PROPERTIES
    IMPORTED_LOCATION
-      "${TINKER9_ACC_STATIC_LIB_LOC}"
+      "${T9_ACC_STATIC_LIB_LOC}"
 )
-set_source_files_properties ("${TINKER9_ACC_STATIC_LIB_LOC}" PROPERTIES
+set_source_files_properties ("${T9_ACC_STATIC_LIB_LOC}" PROPERTIES
    EXTERNAL_OBJECT
       TRUE
    GENERATED
@@ -501,19 +503,19 @@ set_source_files_properties ("${TINKER9_ACC_STATIC_LIB_LOC}" PROPERTIES
 
 
 ## test files
-file (GLOB TINKER9_TEST_SRC
+file (GLOB T9_TEST_SRC
    "src-main/main_all_tests.cpp"
    "src/test/*.cpp"
 )
-add_library (all_tests_o OBJECT ${TINKER9_TEST_SRC})
-target_compile_definitions (all_tests_o PRIVATE ${TINKER9_DEFS})
+add_library (all_tests_o OBJECT ${T9_TEST_SRC})
+target_compile_definitions (all_tests_o PRIVATE ${T9_DEFS})
 set_target_properties (all_tests_o PROPERTIES
    CXX_STANDARD
       11
 )
-target_include_directories (all_tests_o SYSTEM PRIVATE "${TINKER9_SYS_INC_PATH}")
+target_include_directories (all_tests_o SYSTEM PRIVATE "${T9_SYS_INCPATH}")
 target_include_directories (all_tests_o PRIVATE
-   "${TINKER9_INTERNAL_INC_PATH}"
+   "${T9_INCPATH}"
    "${PROJECT_SOURCE_DIR}/src/test"
 )
 

@@ -4,20 +4,20 @@ cmake_minimum_required (VERSION 3.11)
 enable_language (CUDA)
 
 
-set (TINKER9_CUDA_INTERNAL_INC_PATH "${TINKER9_INTERNAL_INC_PATH}")
-list (REMOVE_ITEM TINKER9_CUDA_INTERNAL_INC_PATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
+set (T9_CUDA_INCPATH "${T9_INCPATH}")
+list (REMOVE_ITEM T9_CUDA_INCPATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
 
 
-file (GLOB TINKER9_CUDA_SRC "*_cu.cu")
-add_library (tinker9_cu STATIC "${TINKER9_CUDA_SRC}")
+file (GLOB T9_CUDA_SRC "*_cu.cu")
+add_library (tinker9_cu STATIC "${T9_CUDA_SRC}")
 set_target_properties (tinker9_cu PROPERTIES
    CUDA_STANDARD
       11
 )
-target_compile_definitions (tinker9_cu PRIVATE ${TINKER9_DEFS})
-target_include_directories (tinker9_cu SYSTEM PRIVATE "${TINKER9_SYS_INC_PATH}")
+target_compile_definitions (tinker9_cu PRIVATE ${T9_DEFS})
+target_include_directories (tinker9_cu SYSTEM PRIVATE "${T9_SYS_INCPATH}")
 target_include_directories (tinker9_cu PRIVATE
-   "${TINKER9_CUDA_INTERNAL_INC_PATH}"
+   "${T9_CUDA_INCPATH}"
    "${PROJECT_SOURCE_DIR}/include/syntax/cu"
 )
 ## -gencode arch=compute_60,code=sm_60 -gencode arch=compute_70,code=sm_70

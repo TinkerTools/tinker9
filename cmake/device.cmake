@@ -3,9 +3,9 @@ set_target_properties (tinker9_main PROPERTIES
    CXX_STANDARD
       11
 )
-target_compile_definitions (tinker9_main PRIVATE "${TINKER9_DEFS}")
-target_include_directories (tinker9_main SYSTEM PRIVATE "${TINKER9_SYS_INC_PATH}")
-target_include_directories (tinker9_main PRIVATE "${TINKER9_INTERNAL_INC_PATH}")
+target_compile_definitions (tinker9_main PRIVATE "${T9_DEFS}")
+target_include_directories (tinker9_main SYSTEM PRIVATE "${T9_SYS_INCPATH}")
+target_include_directories (tinker9_main PRIVATE "${T9_INCPATH}")
 
 
 separate_arguments (LIST_CXX_FLAGS_DEBUG NATIVE_COMMAND ${CMAKE_CXX_FLAGS_DEBUG})
@@ -33,7 +33,7 @@ add_custom_target (tinker9 ALL
       LIBFFTW
       LIBFFTW_THREADS
    COMMAND
-      "${TINKER9_ACC_COMPILER}"
+      "${T9_ACC_COMPILER}"
       CUDA_HOME=${CUDA_DIR}
       "$<$<CONFIG:DEBUG>:${LIST_CXX_FLAGS_DEBUG}>"
       "$<$<CONFIG:RELEASE>:${LIST_CXX_FLAGS_RELEASE}>"
@@ -71,7 +71,7 @@ add_custom_target (all.tests ALL
       LIBFFTW
       LIBFFTW_THREADS
    COMMAND
-      "${TINKER9_ACC_COMPILER}"
+      "${T9_ACC_COMPILER}"
       CUDA_HOME=${CUDA_DIR}
       "$<$<CONFIG:DEBUG>:${LIST_CXX_FLAGS_DEBUG}>"
       "$<$<CONFIG:RELEASE>:${LIST_CXX_FLAGS_RELEASE}>"
