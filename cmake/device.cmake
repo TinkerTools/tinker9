@@ -25,7 +25,7 @@ endforeach () # ,cc60,cc70
 add_custom_target (tinker9 ALL
    DEPENDS
       tinker9_main
-      cm9a
+      cmtinker9acc
       tinker9_cu
       tinker9_cpp
       tinker9_f
@@ -63,7 +63,7 @@ add_custom_target (tinker9 ALL
 add_custom_target (all.tests ALL
    DEPENDS
       all_tests_o
-      cm9a
+      cmtinker9acc
       tinker9_cu
       tinker9_cpp
       tinker9_f

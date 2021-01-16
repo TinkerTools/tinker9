@@ -19,8 +19,11 @@ install (TARGETS tinker9_acc DESTINATION "${CMAKE_INSTALL_PREFIX}")
 
 
 ########################################################################
-if (T9_ACCONHOST)
+if (T9_ACC_ONHOST)
 ## host
+
+
+set (T9_IGNORE_ME "${T9_ACC_CCLIST}${T9_ACC_CUDADIR}" )
 
 
 ########################################################################
@@ -29,9 +32,9 @@ else ()
 
 
 ## Compute Capability 60,70 -> ,cc60,cc70
-set (T9_ACCCCLST4) # ""
-foreach (var ${T9_ACCCCLIST})
-   string (APPEND T9_ACCCCLST4 ,cc${var})
+set (T9_ACC_CCLST4) # ""
+foreach (var ${T9_ACC_CCLIST})
+   string (APPEND T9_ACC_CCLST4 ,cc${var})
 endforeach () # ,cc60,cc70
 
 
@@ -43,8 +46,8 @@ target_compile_options (tinker9_acc PRIVATE
 ## Debug add flag: -ta=tesla:lineinfo,cc60,cc70
 ## Release add flag: -ta=tesla:fastmath,cc60,cc70
 target_compile_options (tinker9_acc PRIVATE
-   $<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${T9_ACCCCLST4}>
-   $<$<CONFIG:RELEASE>:-ta=tesla:fastmath${T9_ACCCCLST4}>
+   $<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${T9_ACC_CCLST4}>
+   $<$<CONFIG:RELEASE>:-ta=tesla:fastmath${T9_ACC_CCLST4}>
 )
 
 
