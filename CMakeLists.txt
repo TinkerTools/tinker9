@@ -33,13 +33,9 @@ cmake_minimum_required (VERSION 3.11)
 !!/
 !!/ This cmake script checks a custom environmental variable *ACC=...*
 !!/ *only* for the GPU code.
-!!/ If not set, the building script will take a guess at the OpenACC compilers.
-!!/ It will be set to the default C++ compiler for the CPU code.
-!!/
-!!/ In general the only situation where you have to configure the C++
-!!/ compiler in command line, regardless of using *cmake* or *ccmake*,
-!!/ is to compile the GPU OpenACC code with *pgc++*. The command
-!!/ *(c)cmake [...]* will become *CXX=pgc++ (c)cmake [...]*.
+!!/ If not set, the building script will take a guess at the OpenACC compiler.
+!!/ It will be set to the default C++ compiler for the CPU code. For instance,
+!!/ command *(c)cmake [...]* will become *ACC=pgc++ (c)cmake [...]*.
 !!/
 !!/ Configure Tinker9
 !!/ -----------------
@@ -60,7 +56,7 @@ cmake_minimum_required (VERSION 3.11)
 !!/ =======================  ===================
 !!/ Item                     Value
 !!/ =======================  ===================
-!!/ CXX                      pgc++
+!!/ ACC                      pgc++
 !!/ opt                      release
 !!/ host                     0
 !!/ prec                     m
@@ -74,14 +70,14 @@ cmake_minimum_required (VERSION 3.11)
 !!/ .. code-block:: bash
 !!/
 !!/    # use environmental variables
-!!/    CXX=pgc++ \
+!!/    ACC=pgc++ \
 !!/    opt=release host=0 prec=m \
 !!/    cuda_dir=/usr/local/cuda compute_capability=75 \
 !!/    tinker_dir=/home/tinker/source fftw_dir=/usr/local \
 !!/    cmake /home/tinker9
 !!/
 !!/    # use cmake -DOPTIONS
-!!/    CXX=pgc++ cmake -S /home/tinker9 \
+!!/    ACC=pgc++ cmake -S /home/tinker9 \
 !!/    -DCMAKE_BUILD_TYPE=Release -DHOST=0 -DPREC=m \
 !!/    -DCUDA_DIR=/usr/local/cuda -DCOMPUTE_CAPABILITY=75 \
 !!/    -DTINKER_DIR=/home/tinker/source -DFFTW_DIR=/usr/local
@@ -109,6 +105,21 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
       "Choose the type of build. Options: Debug / Release"
       FORCE
    )
+endif ()
+
+
+#[[
+!!/ **-DCMAKE_INSTALL_PREFIX (no env var) = [NO DEFAULT VALUE]**
+!!/
+!!/ Install the executables under *${CMAKE_INSTALL_PREFIX}*. If this option is
+!!/ not set, *make install* is configured not to install anything, which is
+!!/ different from the default cmake behavior to install under */usr/local*.
+!!/
+]]
+if (DEFINED CMAKE_INSTALL_PREFIX)
+   set (__T9_INSTALL_DEFINED 1)
+else ()
+   set (__T9_INSTALL_DEFINED 0)
 endif ()
 
 
@@ -537,6 +548,25 @@ else ()
    add_subdirectory (src-f)
    include (device) # device.cmake
 endif ()
+if (__T9_INSTALL_DEFINED)
+   set (__T9_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
+   if (HOST)
+      set (__T9_INSTALL_DIR "${__T9_INSTALL_DIR}/cpu")
+   else ()
+      set (__T9_INSTALL_DIR "${__T9_INSTALL_DIR}/gpu")
+   endif ()
+   if (PREC STREQUAL "m")
+      set (__T9_INSTALL_DIR "${__T9_INSTALL_DIR}-m")
+   elseif (PREC STREQUAL "s")
+      set (__T9_INSTALL_DIR "${__T9_INSTALL_DIR}-s")
+   elseif (PREC STREQUAL "d")
+      set (__T9_INSTALL_DIR "${__T9_INSTALL_DIR}-d")
+   endif ()
+   install (TARGETS tinker9
+      DESTINATION
+         "${__T9_INSTALL_DIR}"
+   )
+endif ()
 
 
 ## scripts
@@ -556,6 +586,12 @@ foreach (var
       BYPRODUCTS
          "${CMAKE_BINARY_DIR}/${__t9_fname}"
    )
+   if (__T9_INSTALL_DEFINED)
+      install (PROGRAMS "${var}"
+         DESTINATION
+            "${__T9_INSTALL_DIR}"
+      )
+   endif ()
 endforeach ()
 add_dependencies (tinker9 __t9_copy_shell_exe)
 

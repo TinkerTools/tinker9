@@ -29,13 +29,9 @@ are supported by *cmake*.
 
 This cmake script checks a custom environmental variable *ACC=...*
 *only* for the GPU code.
-If not set, the building script will take a guess at the OpenACC compilers.
-It will be set to the default C++ compiler for the CPU code.
-
-In general the only situation where you have to configure the C++
-compiler in command line, regardless of using *cmake* or *ccmake*,
-is to compile the GPU OpenACC code with *pgc++*. The command
-*(c)cmake [...]* will become *CXX=pgc++ (c)cmake [...]*.
+If not set, the building script will take a guess at the OpenACC compiler.
+It will be set to the default C++ compiler for the CPU code. For instance,
+command *(c)cmake [...]* will become *ACC=pgc++ (c)cmake [...]*.
 
 Configure Tinker9
 -----------------
@@ -56,7 +52,7 @@ Here are two equivalent examples to have Tinker9 configured as follows
 =======================  ===================
 Item                     Value
 =======================  ===================
-CXX                      pgc++
+ACC                      pgc++
 opt                      release
 host                     0
 prec                     m
@@ -70,14 +66,14 @@ CMakeLists.txt Location  /home/tinker9
 .. code-block:: bash
 
    # use environmental variables
-   CXX=pgc++ \
+   ACC=pgc++ \
    opt=release host=0 prec=m \
    cuda_dir=/usr/local/cuda compute_capability=75 \
    tinker_dir=/home/tinker/source fftw_dir=/usr/local \
    cmake /home/tinker9
 
    # use cmake -DOPTIONS
-   CXX=pgc++ cmake -S /home/tinker9 \
+   ACC=pgc++ cmake -S /home/tinker9 \
    -DCMAKE_BUILD_TYPE=Release -DHOST=0 -DPREC=m \
    -DCUDA_DIR=/usr/local/cuda -DCOMPUTE_CAPABILITY=75 \
    -DTINKER_DIR=/home/tinker/source -DFFTW_DIR=/usr/local
@@ -86,6 +82,12 @@ CMakeLists.txt Location  /home/tinker9
 **-DCMAKE_BUILD_TYPE (opt) = release**
 
 Build type is case insensitive and can either be *release* or *debug*.
+
+**-DCMAKE_INSTALL_PREFIX (no env var) = [NO DEFAULT VALUE]**
+
+Install the executables under *${CMAKE_INSTALL_PREFIX}*. If this option is
+not set, *make install* is configured not to install anything, which is
+different from the default cmake behavior to install under */usr/local*.
 
 **-DTINKER_DIR (tinker_dir) = ${CMAKE_BINARY_DIR}/tinker/source**
 
