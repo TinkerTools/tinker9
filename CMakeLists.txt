@@ -562,7 +562,7 @@ if (__T9_INSTALL_DEFINED)
    elseif (PREC STREQUAL "d")
       set (__T9_INSTALL_DIR "${__T9_INSTALL_DIR}-d")
    endif ()
-   install (TARGETS tinker9
+   install (PROGRAMS tinker9
       DESTINATION
          "${__T9_INSTALL_DIR}"
    )
