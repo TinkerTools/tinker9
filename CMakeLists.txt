@@ -479,15 +479,15 @@ string (REPLACE ";" "|" T9_EP_ACC_MACRO "${T9_DEFS}")
 string (REPLACE ";" "|" T9_EP_ACC_SYS_INCPATH "${T9_SYS_INCPATH}")
 string (REPLACE ";" "|" T9_EP_ACC_INCPATH "${T9_INCPATH}")
 string (REPLACE ";" "|" T9_ACC_CCLIST "${T9_CUCCLIST}")
-ExternalProject_Add (cmtinker9acc
+ExternalProject_Add (src-acc
    SOURCE_DIR
       "${PROJECT_SOURCE_DIR}/src-acc"
    BINARY_DIR
-      "${CMAKE_BINARY_DIR}/cmtinker9acc"
+      "${CMAKE_BINARY_DIR}/src-acc"
    PREFIX
-      "${CMAKE_BINARY_DIR}/cmtinker9acc"
+      "${CMAKE_BINARY_DIR}/src-acc"
    BUILD_BYPRODUCTS
-      "${CMAKE_BINARY_DIR}/cmtinker9acc"
+      "${CMAKE_BINARY_DIR}/src-acc"
    BUILD_ALWAYS
       1
    LIST_SEPARATOR
@@ -495,7 +495,7 @@ ExternalProject_Add (cmtinker9acc
    CMAKE_ARGS
       "-DCMAKE_CXX_COMPILER=${T9_ACC_COMPILER}"
       "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
-      "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/cmtinker9acc"
+      "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/src-acc"
       "-DT9_SYS_INCPATH=${T9_EP_ACC_SYS_INCPATH}"
       "-DT9_INCPATH=${T9_EP_ACC_INCPATH}"
       "-DT9_ACC_DEFS=${T9_EP_ACC_MACRO}"
@@ -503,7 +503,7 @@ ExternalProject_Add (cmtinker9acc
       "-DT9_ACC_CUDADIR=${CUDA_DIR}"
       "-DT9_ACC_CCLIST=${T9_ACC_CCLIST}"
 )
-set (__T9_ACC_STATIC_LIB_LOC "${CMAKE_BINARY_DIR}/cmtinker9acc/libtinker9_acc.a")
+set (__T9_ACC_STATIC_LIB_LOC "${CMAKE_BINARY_DIR}/src-acc/libtinker9_acc.a")
 add_library (tinker9_EP_acc STATIC IMPORTED)
 set_target_properties (tinker9_EP_acc PROPERTIES
    IMPORTED_LOCATION
