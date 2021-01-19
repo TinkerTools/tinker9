@@ -124,7 +124,14 @@ void test_mdinit(double t = 0, double atm = 0);
  * Reduces the number of interactions from the count buffer and compares to the
  * reference value.
  */
-#define COMPARE_INTS(i1, refi)       REQUIRE(i1 == refi)
+#define COMPARE_INTS(i1, refi) REQUIRE(i1 == refi)
+#define COMPARE_INTS_EPS(i1, refi, epsi)                                       \
+   {                                                                           \
+      int c1 = i1;                                                             \
+      int r1 = refi;                                                           \
+      REQUIRE(r1 - epsi <= c1);                                                \
+      REQUIRE(c1 <= r1 + epsi);                                                \
+   }
 #define COMPARE_REALS(v1, refv, eps) REQUIRE(v1 == Approx(refv).margin(eps))
 #define COMPARE_ENERGY(gpuptr, ref_eng, eps)                                   \
    {                                                                           \

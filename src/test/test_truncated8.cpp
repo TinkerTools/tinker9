@@ -17,6 +17,7 @@ TEST_CASE("Truncated-Octahedron", "[ff][pbc][arbox]")
    const double eps_e = 0.0001;
    const double eps_g = 0.0002;
    const double eps_v = 0.001;
+   const int eps_count = 1;
    const char* argv[] = {"dummy", xname};
    int argc = 2;
 
@@ -51,7 +52,8 @@ TEST_CASE("Truncated-Octahedron", "[ff][pbc][arbox]")
 
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
-   COMPARE_INTS(count_reduce(nev), ref_count);
+   // COMPARE_INTS(count_reduce(nev), ref_count);
+   COMPARE_INTS_EPS(count_reduce(nev), ref_count, eps_count);
 
 
    energy(calc::v4);
