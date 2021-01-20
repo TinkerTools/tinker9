@@ -1,6 +1,7 @@
 #include "energy.h"
 #include "mathfunc_pow2.h"
 #include "mdcalc.h"
+#include "mddebug.h"
 #include "mdegv.h"
 #include "mdintg.h"
 #include "mdpq.h"
