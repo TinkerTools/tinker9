@@ -56,7 +56,7 @@ add_custom_target (doc
       ${CMAKE_COMMAND} -E copy_directory
          "${PROJECT_SOURCE_DIR}/include" "${CMAKE_BINARY_DIR}/include"
    COMMAND
-      doxygen "${PROJECT_SOURCE_DIR}/Doxyfile" ENV_GIT_HEAD="${STRING_GIT_HEAD}"
+      doxygen "${PROJECT_SOURCE_DIR}/Doxyfile" ENV_GIT_HEAD="${__T9_GIT_HEAD}"
    BYPRODUCTS
       "${CMAKE_BINARY_DIR}/README.md"
       "${CMAKE_BINARY_DIR}/doc"

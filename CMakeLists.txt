@@ -430,13 +430,27 @@ if (GIT_FOUND)
          WORKING_DIRECTORY
             "${PROJECT_SOURCE_DIR}"
          OUTPUT_VARIABLE
-            STRING_SHA1_GIT
+            __T9_GIT_SHA1
       )
-      string (REPLACE "\"" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
-      string (REPLACE "\n" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
-      string (REPLACE "\r" "" STRING_SHA1_GIT ${STRING_SHA1_GIT})
+      string (REPLACE "\"" "" __T9_GIT_SHA1 ${__T9_GIT_SHA1})
+      string (REPLACE "\n" "" __T9_GIT_SHA1 ${__T9_GIT_SHA1})
+      string (REPLACE "\r" "" __T9_GIT_SHA1 ${__T9_GIT_SHA1})
       ## TINKER9_GIT_SHORT_HASH is needed in the source code.
-      list (APPEND T9_DEFS TINKER9_GIT_SHORT_HASH=${STRING_SHA1_GIT})
+      list (APPEND T9_DEFS TINKER9_GIT_SHORT_HASH=${__T9_GIT_SHA1})
+
+
+      execute_process (
+         COMMAND
+            "${GIT_EXECUTABLE}" log -1 --format=%cd
+         WORKING_DIRECTORY
+            "${PROJECT_SOURCE_DIR}"
+         OUTPUT_VARIABLE
+            __T9_GIT_DATE
+      )
+      string (REPLACE "\"" "" __T9_GIT_DATE ${__T9_GIT_DATE})
+      string (REPLACE "\n" "" __T9_GIT_DATE ${__T9_GIT_DATE})
+      string (REPLACE "\r" "" __T9_GIT_DATE ${__T9_GIT_DATE})
+      list (APPEND T9_DEFS TINKER9_GIT_DATE="${__T9_GIT_DATE}")
 
 
       execute_process (
@@ -445,11 +459,11 @@ if (GIT_FOUND)
          WORKING_DIRECTORY
             "${PROJECT_SOURCE_DIR}"
          OUTPUT_VARIABLE
-            STRING_GIT_HEAD
+            __T9_GIT_HEAD
       )
-      string (REPLACE "\"" "" STRING_GIT_HEAD ${STRING_GIT_HEAD})
-      string (REPLACE "\n" "" STRING_GIT_HEAD ${STRING_GIT_HEAD})
-      string (REPLACE "\r" "" STRING_GIT_HEAD ${STRING_GIT_HEAD})
+      string (REPLACE "\"" "" __T9_GIT_HEAD ${__T9_GIT_HEAD})
+      string (REPLACE "\n" "" __T9_GIT_HEAD ${__T9_GIT_HEAD})
+      string (REPLACE "\r" "" __T9_GIT_HEAD ${__T9_GIT_HEAD})
    endif ()
 endif ()
 
