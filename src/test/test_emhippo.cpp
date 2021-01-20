@@ -17,7 +17,7 @@ TEST_CASE("EMPOLE-1-EWALD-HIPPO", "[ff][hippo][emhippo][ewald]")
 
 
    const double eps_e = test_get_eps(0.0045, 0.0001);
-   const double eps_g = test_get_eps(0.0020, 0.0001);
+   const double eps_g = test_get_eps(0.0025, 0.0001);
    const double eps_v = test_get_eps(0.0085, 0.0010);
 
 
@@ -83,7 +83,7 @@ TEST_CASE("EMPOLE-2-NONEWALD-HIPPO", "[ff][hippo][emhippo][nonewald]")
 
 
    const double eps_e = test_get_eps(0.0035, 0.0001);
-   const double eps_g = test_get_eps(0.0020, 0.0001);
+   const double eps_g = test_get_eps(0.0025, 0.0001);
    const double eps_v = test_get_eps(0.0065, 0.0010);
 
 
