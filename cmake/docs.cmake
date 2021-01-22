@@ -1,5 +1,5 @@
-## User's Manual
-add_custom_target (man
+## User Manual
+add_custom_target (__t9_copy_manual_dir
    COMMAND
       ${CMAKE_COMMAND} -E copy_directory
          "${PROJECT_SOURCE_DIR}/doc/manual" "${CMAKE_BINARY_DIR}/manual"
@@ -15,14 +15,36 @@ add_custom_target (man
       ${CMAKE_COMMAND} -E copy
          "${CMAKE_BINARY_DIR}/manual/m/install/buildwithcmake.rst"
          "${PROJECT_SOURCE_DIR}/doc/manual/m/install/buildwithcmake.rst"
-   COMMAND
-      make -C "${CMAKE_BINARY_DIR}/manual" html latexpdf
-   COMMAND
-      ${CMAKE_COMMAND} -E touch "${CMAKE_BINARY_DIR}/manual/_build/html/.nojekyll"
+   BYPRODUCTS
+      "${CMAKE_BINARY_DIR}/manual"
 )
 
 
-## Developer's Manual
+add_custom_target (man
+   DEPENDS
+      __t9_copy_manual_dir
+   COMMAND
+      make -C "${CMAKE_BINARY_DIR}/manual" html latexpdf
+)
+
+
+add_custom_target (html
+   DEPENDS
+      __t9_copy_manual_dir
+   COMMAND
+      make -C "${CMAKE_BINARY_DIR}/manual" html
+)
+
+
+add_custom_target (pdf
+   DEPENDS
+      __t9_copy_manual_dir
+   COMMAND
+      make -C "${CMAKE_BINARY_DIR}/manual" latexpdf
+)
+
+
+## Developer Guides
 add_custom_target (doc
    COMMAND
       ${CMAKE_COMMAND} -E copy
@@ -31,11 +53,13 @@ add_custom_target (doc
       ${CMAKE_COMMAND} -E copy_directory
          "${PROJECT_SOURCE_DIR}/doc" "${CMAKE_BINARY_DIR}/doc"
    COMMAND
-      sed '/page style_md_pasted_here/ r doc/style.md' "${PROJECT_SOURCE_DIR}/doc/doc.h"
-         > "${CMAKE_BINARY_DIR}/doc/doc.h"
-   COMMAND
       ${CMAKE_COMMAND} -E copy_directory
          "${PROJECT_SOURCE_DIR}/include" "${CMAKE_BINARY_DIR}/include"
    COMMAND
-      doxygen "${PROJECT_SOURCE_DIR}/Doxyfile" ENV_GIT_HEAD="${STRING_GIT_HEAD}"
+      doxygen "${PROJECT_SOURCE_DIR}/Doxyfile" ENV_GIT_HEAD="${__T9_GIT_HEAD}"
+   BYPRODUCTS
+      "${CMAKE_BINARY_DIR}/README.md"
+      "${CMAKE_BINARY_DIR}/doc"
+      "${CMAKE_BINARY_DIR}/html"
+      "${CMAKE_BINARY_DIR}/include"
 )

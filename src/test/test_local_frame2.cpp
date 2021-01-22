@@ -1,4 +1,3 @@
-#include "files.h"
 #include "test.h"
 #include "test_rt.h"
 
@@ -42,13 +41,14 @@ static int argc = 2;
 
 TEST_CASE("Local-Frame2-1", "[ff][triclinic][evdw][hal][local-frame2]")
 {
-   std::string k0 = local_frame_key;
-   k0 += triclinic_box;
+   std::string k0 = triclinic_box;
    k0 += "vdwterm  only\n";
-   TestFile fke(k, k0);
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
+                k0);
 
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
-   TestFile fx1(x1, local_frame_xyz2);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
+                x1);
 
    test_begin_with_args(argc, argv);
    rc_flag = usage;
@@ -72,13 +72,14 @@ TEST_CASE("Local-Frame2-1", "[ff][triclinic][evdw][hal][local-frame2]")
 
 TEST_CASE("Local-Frame2-2", "[ff][monoclinic][evdw][hal][local-frame2]")
 {
-   std::string k0 = local_frame_key;
-   k0 += monoclinic_box;
+   std::string k0 = monoclinic_box;
    k0 += "vdwterm  only\n";
-   TestFile fke(k, k0);
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
+                k0);
 
-   TestFile fpr("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
-   TestFile fx1(x1, local_frame_xyz2);
+   TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
+                x1);
 
    test_begin_with_args(argc, argv);
    rc_flag = usage;

@@ -1,4 +1,3 @@
-#include "files.h"
 #include "test.h"
 #include "test_rt.h"
 
@@ -12,12 +11,8 @@ TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage]")
 
 
    const char* kname = "test_pchg.key";
-   std::string k0 = trpcage_charmm19_key;
-   k0 += "\nCHARGETERM ONLY\n";
+   std::string k0 = "CHARGETERM ONLY\n";
    const char* xname = "test_pchg.xyz";
-   const char* x0 = trpcage_charmm19_xyz;
-   const char* pname = "charmm19.prm";
-   const char* p0 = commit_11e84c69::charmm19_prm;
 
 
    const double eps_e = 0.0001;
@@ -29,9 +24,12 @@ TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage]")
 
    SECTION("  - ec -- no pbc, no cutoff, non-ewald, taper")
    {
-      TestFile fxy(xname, x0);
-      TestFile fke(kname, k0);
-      TestFile fpr(pname, p0);
+      TestFile fxy(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.xyz",
+                   xname);
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.key",
+                   kname, k0);
+      TestFile fpr(TINKER9_DIRSTR
+                   "/src/test/file/commit_11e84c69/charmm19.prm");
 
 
       const double ref_e = -769.0436;
@@ -183,19 +181,21 @@ TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage]")
    SECTION("  - ec -- pbc, cutoff, ewald")
    {
       std::string k1 = k0 +
-         "\nEWALD"
-         "\nNEIGHBOR-LIST"
-         "\nCUTOFF           9.0"
-         "\nLIST-BUFFER      0.5"
-         "\nA-AXIS            25"
-         "\nB-AXIS            30"
-         "\nC-AXIS            20"
-         "\n";
+         "EWALD\n"
+         "NEIGHBOR-LIST\n"
+         "CUTOFF           9.0\n"
+         "LIST-BUFFER      0.5\n"
+         "A-AXIS            25\n"
+         "B-AXIS            30\n"
+         "C-AXIS            20\n";
 
 
-      TestFile fxy(xname, x0);
-      TestFile fke(kname, k1);
-      TestFile fpr(pname, p0);
+      TestFile fxy(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.xyz",
+                   xname);
+      TestFile fke(TINKER9_DIRSTR "/src/test/file/trpcage/trp_charmm.key",
+                   kname, k1);
+      TestFile fpr(TINKER9_DIRSTR
+                   "/src/test/file/commit_11e84c69/charmm19.prm");
 
 
       const double ref_e = -784.1710;

@@ -21,6 +21,7 @@ const int asterisk = 42;
 const int plus = 43;
 const int comma = 44;
 const int minus = 45;
+const int dash = 45;
 const int period = 46;
 const int frontslash = 47;
 const int colon = 58;

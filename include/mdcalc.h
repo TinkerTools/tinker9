@@ -130,6 +130,13 @@ extern "C"
    {};
    struct GAUSS
    {};
+
+
+   // GORDON1 vs. GORDON2 damping functions
+   struct GORDON1
+   {};
+   struct GORDON2
+   {};
 }
 
 

@@ -6,6 +6,7 @@ _clang-format   text
 Doxyfile        text
 LICENSE         text
 *.html          text
+*.markdown      text
 *.md            text
 *.rst           text
 *.tex           text
@@ -20,8 +21,8 @@ LICENSE         text
 *.h             text
 *.hh            text
 *.hpp           text
-
 *.hxx           text
+
 *.py            text
 *.yaml          text
 *.yml           text

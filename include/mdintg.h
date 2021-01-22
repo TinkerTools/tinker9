@@ -7,6 +7,8 @@
 namespace tinker {
 void mdrest(int istep);
 void mdrest_acc(int istep);
+void mdrest_remove_pbc_momentum_cu(bool copyout, vel_prec& vtot1,
+                                   vel_prec& vtot2, vel_prec& vtot3);
 
 
 void md_data(rc_op op);

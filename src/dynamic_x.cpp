@@ -48,8 +48,9 @@ void x_dynamic(int, char**)
       read_string(nstep, string);
    }
    read_stream(nstep,
-               "\n Enter the Number of Dynamics Steps to be Taken :  ", 0,
-               [](int i) { return i < 0; });
+               "\n"
+               " Enter the Number of Dynamics Steps to be Taken :  ",
+               0, [](int i) { return i < 0; });
 
    // get the length of the dynamics time step in picoseconds
 
@@ -59,8 +60,9 @@ void x_dynamic(int, char**)
       read_string(dt, string);
    }
    read_stream(dt,
-               "\n Enter the Time Step Length in Femtoseconds [1.0] :  ", 1.0,
-               [](double i) { return i <= 0; });
+               "\n"
+               " Enter the Time Step Length in Femtoseconds [1.0] :  ",
+               1.0, [](double i) { return i <= 0; });
    dt *= 0.001;
 
    // enforce bounds on thermostat and barostat coupling times
@@ -76,17 +78,20 @@ void x_dynamic(int, char**)
       read_string(dtsave, string);
    }
    read_stream(dtsave,
-               "\n Enter Time between Saves in Picoseconds [0.1] :  ", 0.1,
-               [](double i) { return i <= 0; });
+               "\n"
+               " Enter Time between Saves in Picoseconds [0.1] :  ",
+               0.1, [](double i) { return i <= 0; });
    inform::iwrite = std::round(dtsave / dt);
 
    // get choice of statistical ensemble for periodic system
 
    const char* ask_kelvin =
-      "\n Enter the Desired Temperature in Degrees K [298] :  ";
+      "\n"
+      " Enter the Desired Temperature in Degrees K [298] :  ";
    const double default_kelvin = 298.0;
    auto invalid_kelvin = [](double t) { return t < 0; };
-   const char* ask_atm = "\n Enter the Desired Pressure in Atm [1.0] :  ";
+   const char* ask_atm = "\n"
+                         " Enter the Desired Pressure in Atm [1.0] :  ";
    const double default_atm = 1.0;
    auto invalid_atm = [](double t) { return t <= 0; };
 
@@ -111,7 +116,8 @@ void x_dynamic(int, char**)
             mode = 4;
             print(
                stdout,
-               "\n Switching to NPT Ensemble as Required by Chosen Integrator");
+               "\n"
+               " Switching to NPT Ensemble as Required by Chosen Integrator");
          }
       }
 

@@ -7,10 +7,13 @@
 #include "tool/io_print.h"
 #include "tool/io_read.h"
 #include <fstream>
+#include <tinker/detail/chgpot.hh>
 #include <tinker/detail/files.hh>
+#include <tinker/detail/moment.hh>
 
 namespace tinker {
 void x_analyze_e();
+void x_analyze_m();
 void x_analyze_v();
 
 void x_analyze(int, char**)
@@ -45,13 +48,15 @@ void x_analyze(int, char**)
  The Tinker Energy Analysis Utility Can :
 
  Total Potential Energy and its Components [E]
+ Electrostatic Moments and Principle Axes [M]
  Internal Virial, dE/dV Values & Pressure [V]
 
  Enter the Desired Analysis Types [E] :  )";
    read_stream(opt, prompt, std::string("#"), [](std::string s) {
       Text::upcase(s);
       auto failed = std::string::npos;
-      if (s.find("E") != failed || s.find("V") != failed)
+      if (s.find("E") != failed or s.find("M") != failed or
+          s.find("V") != failed)
          return 0;
       else
          return 1;
@@ -78,6 +83,8 @@ void x_analyze(int, char**)
    int nframe_processed = 1;
    if (opt.find("E") != failed)
       x_analyze_e();
+   if (opt.find("M") != failed)
+      x_analyze_m();
    if (opt.find("V") != failed)
       x_analyze_v();
    while (!done) {
@@ -87,6 +94,8 @@ void x_analyze(int, char**)
       print(out, "\n Analysis for Archive Structure :%16d\n", nframe_processed);
       if (opt.find("E") != failed)
          x_analyze_e();
+      if (opt.find("M") != failed)
+         x_analyze_m();
       if (opt.find("V") != failed)
          x_analyze_v();
    }
@@ -130,6 +139,10 @@ void x_analyze_e()
       print(out, fmt, "Out-of-Plane Bend", energy_eopb,
             count_bonded_term(opbend_term));
 
+   if (use_potent(improp_term))
+      print(out, fmt, "Improper Dihedral", energy_eid,
+            count_bonded_term(improp_term));
+
    if (use_potent(imptors_term))
       print(out, fmt, "Improper Torsion", energy_eit,
             count_bonded_term(imptors_term));
@@ -142,12 +155,23 @@ void x_analyze_e()
       print(out, fmt, "Pi-Orbital Torsion", energy_ept,
             count_bonded_term(pitors_term));
 
+   if (use_potent(strtor_term))
+      print(out, fmt, "Stretch-Torsion", energy_ebt,
+            count_bonded_term(strtor_term));
+
+   if (use_potent(angtor_term))
+      print(out, fmt, "Angle-Torsion", energy_eat,
+            count_bonded_term(angle_term));
+
    if (use_potent(tortor_term))
       print(out, fmt, "Torsion-Torsion", energy_ett,
             count_bonded_term(tortor_term));
 
    if (use_potent(vdw_term))
       print(out, fmt, "Van der Waals", energy_ev, count_reduce(nev));
+
+   if (use_potent(repuls_term))
+      print(out, fmt, "Repulsion", energy_er, count_reduce(nrep));
 
    if (use_potent(disp_term))
       print(out, fmt, "Dispersion", energy_edsp, count_reduce(ndisp));
@@ -169,6 +193,57 @@ void x_analyze_e()
             count_bonded_term(geom_term));
 }
 
+void moments();
+extern "C" void TINKER_RT(gyrate)(double*);
+extern "C" void TINKER_RT(inertia)(int*);
+void x_analyze_m()
+{
+   auto out = stdout;
+   moments();
+   print(out,
+         "\n"
+         " Total Electric Charge :%12s%13.5lf Electrons\n",
+         "", moment::netchg);
+   print(out,
+         "\n"
+         " Dipole Moment Magnitude :%10s%13.3lf Debye\n"
+         "\n"
+         " Dipole X,Y,Z-Components :%10s%13.3lf%13.3lf%13.3lf\n",
+         "", moment::netdpl, "", moment::xdpl, moment::ydpl, moment::zdpl);
+   print(out,
+         "\n"
+         " Quadrupole Moment Tensor :%9s%13.3lf%13.3lf%13.3lf\n"
+         "      (Buckinghams)%17s%13.3lf%13.3lf%13.3lf\n"
+         "%36s%13.3lf%13.3lf%13.3lf\n",
+         "", moment::xxqpl, moment::xyqpl, moment::xzqpl, "", moment::yxqpl,
+         moment::yyqpl, moment::yzqpl, "", moment::zxqpl, moment::zyqpl,
+         moment::zzqpl);
+   print(out,
+         "\n"
+         " Principal Axes Quadrupole :%8s%13.3lf%13.3lf%13.3lf\n",
+         "", moment::netqpl[0], moment::netqpl[1], moment::netqpl[2]);
+
+   if (chgpot::dielec != 1) {
+      print(out,
+            "\n"
+            " Dielectric Constant :%14s%13.3lf\n",
+            "", chgpot::dielec);
+      print(out, " Effective Total Charge :%11s%13.5lf Electrons\n", "",
+            moment::netchg / std::sqrt(chgpot::dielec));
+      print(out, " Effective Dipole Moment :%10s%13.3lf Debye\n", "",
+            moment::netdpl / std::sqrt(chgpot::dielec));
+   }
+
+   // radius of gyration and moments of inertia
+   double rg;
+   TINKER_RT(gyrate)(&rg);
+   print(out,
+         "\n"
+         " Radius of Gyration :%15s%13.3lf Angstroms\n",
+         "", rg);
+   int one = 1;
+   TINKER_RT(inertia)(&one);
+}
 
 void x_analyze_v()
 {

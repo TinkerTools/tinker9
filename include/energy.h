@@ -3,17 +3,23 @@
 
 
 #include "eangle.h"
+#include "eangtor.h"
 #include "ebond.h"
+#include "eimprop.h"
 #include "eimptor.h"
 #include "eopbend.h"
 #include "epitors.h"
 #include "estrbnd.h"
+#include "estrtor.h"
 #include "etors.h"
 #include "etortor.h"
 #include "eurey.h"
 
 
 #include "egeom.h"
+
+
+#include "evalence.h"
 
 
 #include "echarge.h"
@@ -27,6 +33,9 @@
 #include "echgtrn.h"
 #include "edisp.h"
 #include "ehippo.h"
+#include "empole_chgpen.h"
+#include "epolar_chgpen.h"
+#include "erepel.h"
 
 
 namespace tinker {

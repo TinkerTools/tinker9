@@ -1,0 +1,22 @@
+\input{begin}
+
+\def\half{0.5}
+\def\sqrtIII{1.732}
+\def\len{0.5}
+
+\coordinate (O) at (0,0);
+\coordinate (A) at (\len,0);
+\coordinate (B) at (0,\len);
+\node[circle,draw] (N1) at (1,1)     {1};
+\node[circle,draw] (N2) at (2,1+\sqrtIII) {2};
+\coordinate (O2) at (2,1);
+\coordinate (A2) at (2+\len*\half*\sqrtIII,1-\len*\half);
+\coordinate (B2) at (2+\len*\half,1+\len*\half*\sqrtIII);
+
+\draw[->,>=stealth] (O) -- (A) node[right] {$y_g$};
+\draw[->,>=stealth] (O) -- (B) node[above] {$z_g$};
+\draw (N1) -- (N2);
+\draw[->,>=stealth] (O2) -- (A2) node[right] {$y_i$};
+\draw[->,>=stealth] (O2) -- (B2) node[above] {$z_i$};
+
+\input{end}

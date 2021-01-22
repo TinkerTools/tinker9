@@ -1,5 +1,9 @@
 include/*template
 
+# Wiki
+*.wiki
+*.wiki/*
+
 # Manual
 doc/manual/_build/*
 

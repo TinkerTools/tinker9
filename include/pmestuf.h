@@ -34,9 +34,6 @@ void fphi_to_cphi(PMEUnit, const real (*fphi)[20], real (*cphi)[10]);
 //====================================================================//
 
 
-void pme_cuda_func_config();
-
-
 void bspline_fill_cu(PMEUnit, int level);
 
 
@@ -55,6 +52,7 @@ void grid_uind_cu(PMEUnit, real (*)[3], real (*)[3]);
 
 
 void pme_conv_acc(PMEUnit, energy_buffer, virial_buffer);
+void pme_conv_cu(PMEUnit, energy_buffer, virial_buffer);
 
 
 void fphi_mpole_acc(PMEUnit, real (*)[20]);

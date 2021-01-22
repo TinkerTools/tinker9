@@ -12,6 +12,7 @@
 #include <map>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/inform.hh>
+#include <tinker/detail/mplpot.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/polgrp.hh>
 #include <tinker/detail/polpot.hh>
@@ -24,6 +25,8 @@ namespace tinker {
 void epolar_data(rc_op op)
 {
    if (!use_potent(polar_term))
+      return;
+   if (mplpot::use_chgpen)
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -79,7 +82,7 @@ void epolar_data(rc_op op)
    }
 
    if (op & rc_alloc) {
-      // see also attach.h
+      // see also attach.f
       const int maxn13 = 3 * sizes::maxval;
       const int maxn14 = 9 * sizes::maxval;
       const int maxn15 = 27 * sizes::maxval;
@@ -100,9 +103,9 @@ void epolar_data(rc_op op)
          auto it = m.find(key);
          if (it == m.end()) {
             dpu_scale dpu;
-            dpu.d = 0;
-            dpu.p = 0;
-            dpu.u = 0;
+            dpu.d = 1;
+            dpu.p = 1;
+            dpu.u = 1;
             if (ch == 'd')
                dpu.d = val;
             else if (ch == 'p')
@@ -139,7 +142,7 @@ void epolar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip11[bask + j] - 1;
                if (k > i) {
-                  insert_dpu(ik_dpu, i, k, u1scale - 1, 'u');
+                  insert_dpu(ik_dpu, i, k, u1scale, 'u');
                   exclik.push_back(i);
                   exclik.push_back(k);
                   exclik.push_back(u1scale);
@@ -153,7 +156,7 @@ void epolar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip12[bask + j] - 1;
                if (k > i) {
-                  insert_dpu(ik_dpu, i, k, u2scale - 1, 'u');
+                  insert_dpu(ik_dpu, i, k, u2scale, 'u');
                   exclik.push_back(i);
                   exclik.push_back(k);
                   exclik.push_back(u2scale);
@@ -167,7 +170,7 @@ void epolar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip13[bask + j] - 1;
                if (k > i) {
-                  insert_dpu(ik_dpu, i, k, u3scale - 1, 'u');
+                  insert_dpu(ik_dpu, i, k, u3scale, 'u');
                   exclik.push_back(i);
                   exclik.push_back(k);
                   exclik.push_back(u3scale);
@@ -181,7 +184,7 @@ void epolar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip14[bask + j] - 1;
                if (k > i) {
-                  insert_dpu(ik_dpu, i, k, u4scale - 1, 'u');
+                  insert_dpu(ik_dpu, i, k, u4scale, 'u');
                   exclik.push_back(i);
                   exclik.push_back(k);
                   exclik.push_back(u4scale);
@@ -191,8 +194,9 @@ void epolar_data(rc_op op)
       }
       nuexclude = excls.size();
       darray::allocate(nuexclude, &uexclude, &uexclude_scale);
-      darray::copyin(WAIT_NEW_Q, nuexclude, uexclude, exclik.data());
-      darray::copyin(WAIT_NEW_Q, nuexclude, uexclude_scale, excls.data());
+      darray::copyin(g::q0, nuexclude, uexclude, exclik.data());
+      darray::copyin(g::q0, nuexclude, uexclude_scale, excls.data());
+      wait_for(g::q0);
 
       d1scale = polpot::d1scale;
       d2scale = polpot::d2scale;
@@ -219,8 +223,8 @@ void epolar_data(rc_op op)
          auto it = m.find(k);
          if (it == m.end()) {
             dp_scale dp;
-            dp.d = 0;
-            dp.p = 0;
+            dp.d = 1;
+            dp.p = 1;
             if (dpchar == 'd')
                dp.d = val;
             else if (dpchar == 'p')
@@ -243,8 +247,8 @@ void epolar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip11[bask + j] - 1;
                if (k > i) {
-                  insert_dpu(ik_dpu, i, k, d1scale - 1, 'd');
-                  insert_dp(k_dpscale, k, d1scale - 1, 'd');
+                  insert_dpu(ik_dpu, i, k, d1scale, 'd');
+                  insert_dp(k_dpscale, k, d1scale, 'd');
                }
             }
          }
@@ -255,8 +259,8 @@ void epolar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip12[bask + j] - 1;
                if (k > i) {
-                  insert_dpu(ik_dpu, i, k, d2scale - 1, 'd');
-                  insert_dp(k_dpscale, k, d2scale - 1, 'd');
+                  insert_dpu(ik_dpu, i, k, d2scale, 'd');
+                  insert_dp(k_dpscale, k, d2scale, 'd');
                }
             }
          }
@@ -267,8 +271,8 @@ void epolar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip13[bask + j] - 1;
                if (k > i) {
-                  insert_dpu(ik_dpu, i, k, d3scale - 1, 'd');
-                  insert_dp(k_dpscale, k, d3scale - 1, 'd');
+                  insert_dpu(ik_dpu, i, k, d3scale, 'd');
+                  insert_dp(k_dpscale, k, d3scale, 'd');
                }
             }
          }
@@ -279,8 +283,8 @@ void epolar_data(rc_op op)
             for (int j = 0; j < nn; ++j) {
                int k = polgrp::ip14[bask + j] - 1;
                if (k > i) {
-                  insert_dpu(ik_dpu, i, k, d4scale - 1, 'd');
-                  insert_dp(k_dpscale, k, d4scale - 1, 'd');
+                  insert_dpu(ik_dpu, i, k, d4scale, 'd');
+                  insert_dp(k_dpscale, k, d4scale, 'd');
                }
             }
          }
@@ -289,10 +293,10 @@ void epolar_data(rc_op op)
             nn = couple::n12[i];
             for (int j = 0; j < nn; ++j) {
                int k = couple::i12[i][j];
-               real val = p2scale - 1;
+               real val = p2scale;
                for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
                   if (k == polgrp::ip11[i * maxp11 + jj])
-                     val = p2iscale - 1;
+                     val = p2iscale;
                }
                k -= 1;
                if (k > i) {
@@ -307,10 +311,10 @@ void epolar_data(rc_op op)
             bask = i * maxn13;
             for (int j = 0; j < nn; ++j) {
                int k = couple::i13[bask + j];
-               real val = p3scale - 1;
+               real val = p3scale;
                for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
                   if (k == polgrp::ip11[i * maxp11 + jj])
-                     val = p3iscale - 1;
+                     val = p3iscale;
                }
                k -= 1;
                if (k > i) {
@@ -325,10 +329,10 @@ void epolar_data(rc_op op)
             bask = i * maxn14;
             for (int j = 0; j < nn; ++j) {
                int k = couple::i14[bask + j];
-               real val = p4scale - 1;
+               real val = p4scale;
                for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
                   if (k == polgrp::ip11[i * maxp11 + jj])
-                     val = p4iscale - 1;
+                     val = p4iscale;
                }
                k -= 1;
                if (k > i) {
@@ -343,10 +347,10 @@ void epolar_data(rc_op op)
             bask = i * maxn15;
             for (int j = 0; j < nn; ++j) {
                int k = couple::i15[bask + j];
-               real val = p5scale - 1;
+               real val = p5scale;
                for (int jj = 0; jj < polgrp::np11[i]; ++jj) {
                   if (k == polgrp::ip11[i * maxp11 + jj])
-                     val = p5iscale - 1;
+                     val = p5iscale;
                }
                k -= 1;
                if (k > i) {
@@ -374,14 +378,15 @@ void epolar_data(rc_op op)
       }
       ndpuexclude = ik_dpu.size();
       darray::allocate(ndpuexclude, &dpuexclude, &dpuexclude_scale);
-      darray::copyin(WAIT_NEW_Q, ndpuexclude, dpuexclude, dpu_ik_vec.data());
-      darray::copyin(WAIT_NEW_Q, ndpuexclude, dpuexclude_scale,
-                     dpu_sc_vec.data());
+      darray::copyin(g::q0, ndpuexclude, dpuexclude, dpu_ik_vec.data());
+      darray::copyin(g::q0, ndpuexclude, dpuexclude_scale, dpu_sc_vec.data());
+      wait_for(g::q0);
 
       ndpexclude = excls.size() / 2;
       darray::allocate(ndpexclude, &dpexclude, &dpexclude_scale);
-      darray::copyin(WAIT_NEW_Q, ndpexclude, dpexclude, exclik.data());
-      darray::copyin(WAIT_NEW_Q, ndpexclude, dpexclude_scale, excls.data());
+      darray::copyin(g::q0, ndpexclude, dpexclude, exclik.data());
+      darray::copyin(g::q0, ndpexclude, dpexclude_scale, excls.data());
+      wait_for(g::q0);
 
       darray::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
 
@@ -439,7 +444,7 @@ void epolar_data(rc_op op)
                           &upalt_03, &upalt_04, &upalt_05, &upalt_06, &upalt_07,
                           &upalt_08, &upalt_09, &upalt_10, &upalt_11, &upalt_12,
                           &upalt_13, &upalt_14, &upalt_15);
-         darray::zero(PROCEED_NEW_Q, n, udalt_00, udalt_01, udalt_02, udalt_03,
+         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03,
                       udalt_04, udalt_05, udalt_06, udalt_07, udalt_08,
                       udalt_09, udalt_10, udalt_11, udalt_12, udalt_13,
                       udalt_14, udalt_15, upalt_00, upalt_01, upalt_02,
@@ -451,7 +456,7 @@ void epolar_data(rc_op op)
          darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
                           &udalt_04, &udalt_05, &upalt_00, &upalt_01, &upalt_02,
                           &upalt_03, &upalt_04, &upalt_05);
-         darray::zero(PROCEED_NEW_Q, n, udalt_00, udalt_01, udalt_02, udalt_03,
+         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03,
                       udalt_04, udalt_05, upalt_00, upalt_01, upalt_02,
                       upalt_03, upalt_04, upalt_05);
       } else if (polpred == UPred::LSQR) {
@@ -464,7 +469,7 @@ void epolar_data(rc_op op)
          int lena = lenb * lenb; // lenb*(lenb+1)/2 should be plenty.
          darray::allocate(lena, &udalt_lsqr_a, &upalt_lsqr_a);
          darray::allocate(lenb, &udalt_lsqr_b, &upalt_lsqr_b);
-         darray::zero(PROCEED_NEW_Q, n, udalt_00, udalt_01, udalt_02, udalt_03,
+         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03,
                       udalt_04, udalt_05, udalt_06, upalt_00, upalt_01,
                       upalt_02, upalt_03, upalt_04, upalt_05, upalt_06);
       }
@@ -478,10 +483,11 @@ void epolar_data(rc_op op)
       for (int i = 0; i < n; ++i) {
          pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
       }
-      darray::copyin(WAIT_NEW_Q, n, polarity, polar::polarity);
-      darray::copyin(WAIT_NEW_Q, n, thole, polar::thole);
-      darray::copyin(WAIT_NEW_Q, n, pdamp, polar::pdamp);
-      darray::copyin(WAIT_NEW_Q, n, polarity_inv, pinvbuf.data());
+      darray::copyin(g::q0, n, polarity, polar::polarity);
+      darray::copyin(g::q0, n, thole, polar::thole);
+      darray::copyin(g::q0, n, pdamp, polar::pdamp);
+      darray::copyin(g::q0, n, polarity_inv, pinvbuf.data());
+      wait_for(g::q0);
    }
 }
 
@@ -494,7 +500,8 @@ void induce(real (*ud)[3], real (*up)[3])
    if (inform::debug && use_potent(polar_term)) {
       std::vector<double> uindbuf;
       uindbuf.resize(3 * n);
-      darray::copyout(WAIT_NEW_Q, n, uindbuf.data(), ud);
+      darray::copyout(g::q0, n, uindbuf.data(), ud);
+      wait_for(g::q0);
       bool header = true;
       for (int i = 0; i < n; ++i) {
          if (polar::polarity[i] != 0) {
@@ -534,14 +541,14 @@ void epolar(int vers)
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)
-         darray::zero(PROCEED_NEW_Q, bsize, nep);
+         darray::zero(g::q0, bsize, nep);
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, ep);
+         darray::zero(g::q0, bsize, ep);
       if (do_v) {
-         darray::zero(PROCEED_NEW_Q, bsize, vir_ep);
+         darray::zero(g::q0, bsize, vir_ep);
       }
       if (do_g) {
-         darray::zero(PROCEED_NEW_Q, n, depx, depy, depz);
+         darray::zero(g::q0, n, depx, depy, depz);
       }
    }
 

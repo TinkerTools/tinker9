@@ -1,7 +1,9 @@
 #include "mdegv.h"
 #include "energy.h"
+#include "glob.dhflow.h"
 #include "mdcalc.h"
 #include "mdpq.h"
+#include "tool/device_zero.h"
 #include "tool/host_zero.h"
 
 
@@ -16,22 +18,17 @@ void zero_egv(int vers)
    size_t bsize = buffer_size();
    if (vers & calc::energy) {
       host_zero(esum, energy_valence, energy_vdw, energy_elec);
-      darray::zero(PROCEED_NEW_Q, bsize, eng_buf);
-      darray::zero(PROCEED_NEW_Q, bsize, eng_buf_vdw);
-      darray::zero(PROCEED_NEW_Q, bsize, eng_buf_elec);
+      zero3_async(bsize, eng_buf, eng_buf_vdw, eng_buf_elec);
    }
 
    if (vers & calc::virial) {
       host_zero(vir, virial_valence, virial_vdw, virial_elec);
-      darray::zero(PROCEED_NEW_Q, buffer_size(), vir_buf);
-      darray::zero(PROCEED_NEW_Q, bsize, vir_buf_vdw);
-      darray::zero(PROCEED_NEW_Q, bsize, vir_buf_elec);
+      zero3_async(bsize, vir_buf, vir_buf_vdw, vir_buf_elec);
    }
 
    if (vers & calc::grad) {
-      darray::zero(PROCEED_NEW_Q, n, gx, gy, gz);
-      darray::zero(PROCEED_NEW_Q, n, gx_vdw, gy_vdw, gz_vdw);
-      darray::zero(PROCEED_NEW_Q, n, gx_elec, gy_elec, gz_elec);
+      zero9_async(n, gx, gy, gz, gx_vdw, gy_vdw, gz_vdw, gx_elec, gy_elec,
+                  gz_elec);
    }
 }
 
@@ -51,7 +48,7 @@ void scale_gradient(double scale, grad_prec* g0x, grad_prec* g0y,
    if (scale == 1)
       return;
    else if (scale == 0) {
-      darray::zero(PROCEED_NEW_Q, n, g0x, g0y, g0z);
+      darray::zero(g::q0, n, g0x, g0y, g0z);
    } else
       scale_gradient_acc(scale, g0x, g0y, g0z);
 }
@@ -86,17 +83,16 @@ void copy_energy(int vers, energy_prec* eng)
 
 void copy_gradient(int vers, double* grdx, double* grdy, double* grdz,
                    const grad_prec* gx_src, const grad_prec* gy_src,
-                   const grad_prec* gz_src, bool useNewQ)
+                   const grad_prec* gz_src, int queue)
 {
-   LPFlag proceed = useNewQ ? PROCEED_NEW_Q : WAIT_DEFAULT_Q;
-   LPFlag wait = useNewQ ? WAIT_NEW_Q : WAIT_DEFAULT_Q;
    if (vers & calc::grad) {
       if (grdx && grdy && grdz) {
 #if TINKER_DETERMINISTIC_FORCE
          std::vector<grad_prec> hgx(n), hgy(n), hgz(n);
-         darray::copyout(proceed, n, hgx.data(), gx_src);
-         darray::copyout(proceed, n, hgy.data(), gy_src);
-         darray::copyout(wait, n, hgz.data(), gz_src);
+         darray::copyout(queue, n, hgx.data(), gx_src);
+         darray::copyout(queue, n, hgy.data(), gy_src);
+         darray::copyout(queue, n, hgz.data(), gz_src);
+         wait_for(queue);
          for (int i = 0; i < n; ++i) {
             grdx[i] = to_flt_host<double>(hgx[i]);
             grdy[i] = to_flt_host<double>(hgy[i]);
@@ -105,18 +101,20 @@ void copy_gradient(int vers, double* grdx, double* grdy, double* grdz,
 #else
          if (sizeof(grad_prec) < sizeof(double)) {
             std::vector<grad_prec> hgx(n), hgy(n), hgz(n);
-            darray::copyout(proceed, n, hgx.data(), gx_src);
-            darray::copyout(proceed, n, hgy.data(), gy_src);
-            darray::copyout(wait, n, hgz.data(), gz_src);
+            darray::copyout(queue, n, hgx.data(), gx_src);
+            darray::copyout(queue, n, hgy.data(), gy_src);
+            darray::copyout(queue, n, hgz.data(), gz_src);
+            wait_for(queue);
             for (int i = 0; i < n; ++i) {
                grdx[i] = hgx[i];
                grdy[i] = hgy[i];
                grdz[i] = hgz[i];
             }
          } else {
-            darray::copyout(proceed, n, grdx, (double*)gx_src);
-            darray::copyout(proceed, n, grdy, (double*)gy_src);
-            darray::copyout(wait, n, grdz, (double*)gz_src);
+            darray::copyout(queue, n, grdx, (double*)gx_src);
+            darray::copyout(queue, n, grdy, (double*)gy_src);
+            darray::copyout(queue, n, grdz, (double*)gz_src);
+            wait_for(queue);
          }
 #endif
       }
@@ -128,7 +126,7 @@ void copy_gradient(int vers, double* grdx, double* grdy, double* grdz,
                    const grad_prec* gx_src, const grad_prec* gy_src,
                    const grad_prec* gz_src)
 {
-   copy_gradient(vers, grdx, grdy, grdz, gx_src, gy_src, gz_src, true);
+   copy_gradient(vers, grdx, grdy, grdz, gx_src, gy_src, gz_src, g::q0);
 }
 
 
@@ -153,6 +151,19 @@ void copy_virial(int vers, virial_prec* virial)
 void egv_data(rc_op op)
 {
    bool rc_a = rc_flag & calc::analyz;
+
+
+   if (op & rc_dealloc) {
+      using namespace detail;
+      device_memory_deallocate_bytes(ev_dptr);
+      ev_dptr = nullptr;
+   }
+
+
+   if (op & rc_alloc) {
+      using namespace detail;
+      device_memory_allocate_bytes((void**)(&ev_dptr), sizeof(DHFlow));
+   }
 
 
    if (rc_flag & calc::energy) {

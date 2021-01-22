@@ -1,6 +1,6 @@
 #include "thrust_cache.h"
-#include "tool/darray.h"
 #include "md.h"
+#include "tool/darray.h"
 
 
 namespace tinker {

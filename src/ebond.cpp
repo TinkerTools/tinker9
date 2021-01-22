@@ -5,11 +5,13 @@
 #include "tool/io_fort_str.h"
 #include <tinker/detail/bndpot.hh>
 #include <tinker/detail/bndstr.hh>
+#include <tinker/detail/potent.hh>
 
 namespace tinker {
 void ebond_data(rc_op op)
 {
-   if (!use_potent(bond_term) && !use_potent(strbnd_term))
+   if (not use_potent(bond_term) and not use_potent(strbnd_term) and
+       not use_potent(strtor_term) and not potent::use_chgflx)
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -54,9 +56,10 @@ void ebond_data(rc_op op)
       for (size_t i = 0; i < ibndvec.size(); ++i) {
          ibndvec[i] = bndstr::ibnd[i] - 1;
       }
-      darray::copyin(WAIT_NEW_Q, nbond, ibnd, ibndvec.data());
-      darray::copyin(WAIT_NEW_Q, nbond, bl, bndstr::bl);
-      darray::copyin(WAIT_NEW_Q, nbond, bk, bndstr::bk);
+      darray::copyin(g::q0, nbond, ibnd, ibndvec.data());
+      darray::copyin(g::q0, nbond, bl, bndstr::bl);
+      darray::copyin(g::q0, nbond, bk, bndstr::bk);
+      wait_for(g::q0);
    }
 }
 
@@ -72,11 +75,11 @@ void ebond(int vers)
       host_zero(energy_eb, virial_eb);
       auto bsize = buffer_size();
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, eb);
+         darray::zero(g::q0, bsize, eb);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_eb);
+         darray::zero(g::q0, bsize, vir_eb);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, debx, deby, debz);
+         darray::zero(g::q0, n, debx, deby, debz);
    }
 
 

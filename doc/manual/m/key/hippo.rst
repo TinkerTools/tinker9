@@ -1,5 +1,5 @@
-HIPPO Force Field Keywords
-==========================
+HIPPO Force Field
+=================
 
 **CHGTRN [integer & 2 reals]**
 

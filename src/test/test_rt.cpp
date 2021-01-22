@@ -6,46 +6,48 @@
 
 
 namespace tinker {
-TestFile::TestFile(const std::string& name, const std::string& content)
-   : good_(false)
-   , name_(name)
+TestFile::TestFile(const std::string& file, std::string dst, std::string extra)
 {
-   std::ofstream fout(name);
-   good_ = fout.is_open();
-   if (good_) {
-      fout << content;
+   if (dst == "") {
+      auto pos = file.find_last_of('/');
+      name = file.substr(pos + 1);
+      if (name == "")
+         return;
+   } else {
+      name = dst;
    }
-}
 
 
-TestFile::TestFile(const std::string& file)
-   : good_(false)
-   , name_()
-{
-   auto pos = file.find_last_of('/');
-   name_ = file.substr(pos + 1);
-   if (name_ == "")
-      return;
-
-   std::ifstream fsrc(file, std::ios::binary);
-   std::ofstream fdst(name_, std::ios::binary);
-   good_ = fdst.is_open();
-   if (good_) {
-      fdst << fsrc.rdbuf();
+   if (file != "") {
+      std::ifstream fsrc(file, std::ios::binary);
+      std::ofstream fdst(name, std::ios::binary);
+      good = fdst.is_open();
+      if (good) {
+         fdst << fsrc.rdbuf();
+         if (extra != "") {
+            fdst << extra;
+         }
+      }
+   } else {
+      std::ofstream fout(name);
+      good = fout.is_open();
+      if (good) {
+         fout << extra;
+      }
    }
 }
 
 
 TestFile::~TestFile()
 {
-   if (good_)
-      std::remove(name_.c_str());
+   if (good)
+      std::remove(name.c_str());
 }
 
 
-void TestFile::keep()
+void TestFile::__keep()
 {
-   good_ = false;
+   good = false;
 }
 
 

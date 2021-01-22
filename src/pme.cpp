@@ -114,15 +114,19 @@ void pme_op_copyin(PMEUnit unit)
    std::vector<double> bsmodbuf(maxfft);
    TINKER_RT(dftmod)
    (bsmodbuf.data(), bsarray.data(), &st.nfft1, &st.bsorder);
-   darray::copyin(WAIT_NEW_Q, st.nfft1, st.bsmod1, bsmodbuf.data());
+   darray::copyin(g::q0, st.nfft1, st.bsmod1, bsmodbuf.data());
+   wait_for(g::q0);
    TINKER_RT(dftmod)
    (bsmodbuf.data(), bsarray.data(), &st.nfft2, &st.bsorder);
-   darray::copyin(WAIT_NEW_Q, st.nfft2, st.bsmod2, bsmodbuf.data());
+   darray::copyin(g::q0, st.nfft2, st.bsmod2, bsmodbuf.data());
+   wait_for(g::q0);
    TINKER_RT(dftmod)
    (bsmodbuf.data(), bsarray.data(), &st.nfft3, &st.bsorder);
-   darray::copyin(WAIT_NEW_Q, st.nfft3, st.bsmod3, bsmodbuf.data());
+   darray::copyin(g::q0, st.nfft3, st.bsmod3, bsmodbuf.data());
+   wait_for(g::q0);
 
-   unit.update_deviceptr(st, WAIT_NEW_Q);
+   unit.update_deviceptr(st, g::q0);
+   wait_for(g::q0);
 }
 }
 }
@@ -245,12 +249,5 @@ void pme_data(rc_op op)
          pme_op_copyin(dpme_unit);
       }
    }
-
-
-#if TINKER_CUDART
-   if (op & rc_init) {
-      pme_cuda_func_config();
-   }
-#endif
 }
 }

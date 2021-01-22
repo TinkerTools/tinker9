@@ -7,9 +7,8 @@
 
 
 namespace {
-constexpr int MAX_NCHAR = 240;
 char out[2048];
-static_assert(2048 >= MAX_NCHAR + 5, "");
+static_assert(2048 >= tinker::MAX_NCHAR + 5, "");
 }
 
 
@@ -92,6 +91,22 @@ const char* t_version(const char* file, const char* status)
 }
 
 
+extern "C" void fc_suffix(char* file, const char* ext, const char* status,
+                          int slen);
+void t_suffix(char* filename, const char* extension, const char* status)
+{
+   int slen = strlen(status);
+   fc_suffix(filename, extension, status, slen);
+}
+
+
+extern "C" void fc_basefile(char* string);
+void t_basefile(char* string)
+{
+   fc_basefile(string);
+}
+
+
 extern "C" void TINKER_RT(prtxyz)(int*);
 void t_prtxyz(int ixyz)
 {
@@ -106,9 +121,10 @@ void t_prterr()
    Box p;
    get_default_box(p);
    set_tinker_box_module(p);
-   darray::copyout(PROCEED_NEW_Q, n, atoms::x, xpos);
-   darray::copyout(PROCEED_NEW_Q, n, atoms::y, ypos);
-   darray::copyout(WAIT_NEW_Q, n, atoms::z, zpos);
+   darray::copyout(g::q0, n, atoms::x, xpos);
+   darray::copyout(g::q0, n, atoms::y, ypos);
+   darray::copyout(g::q0, n, atoms::z, zpos);
+   wait_for(g::q0);
    TINKER_RT(prterr)();
 }
 

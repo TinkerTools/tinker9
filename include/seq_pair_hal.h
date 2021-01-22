@@ -44,13 +44,6 @@ void pair_hal_v2(real r, real vscale, real rv, real eps, real evcut, real evoff,
                  real vlambda, real ghal, real dhal, real scexp, real scalpha,
                  real& restrict e, real& restrict de)
 {
-   if (r > evoff) {
-      e = 0;
-      if CONSTEXPR (DO_G) {
-         de = 0;
-      }
-      return;
-   }
    if CONSTEXPR (SCALE != 1) {
       eps *= vscale;
    }

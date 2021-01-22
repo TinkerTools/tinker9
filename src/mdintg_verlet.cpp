@@ -38,9 +38,9 @@ void velocity_verlet(int istep, time_prec dt_ps)
 
    const bool userat = use_rattle();
    if (userat) {
-      darray::copy(PROCEED_NEW_Q, n, rattle_xold, xpos);
-      darray::copy(PROCEED_NEW_Q, n, rattle_yold, ypos);
-      darray::copy(PROCEED_NEW_Q, n, rattle_zold, zpos);
+      darray::copy(g::q0, n, rattle_xold, xpos);
+      darray::copy(g::q0, n, rattle_yold, ypos);
+      darray::copy(g::q0, n, rattle_zold, zpos);
    }
    // s += v * dt
    propagate_pos(dt_ps);
@@ -62,8 +62,8 @@ void velocity_verlet(int istep, time_prec dt_ps)
       rattle2(dt_ps, vers1 bitand calc::virial);
 
    // full-step corrections
-   temper(dt_ps, temp);
-   pressure();
+   temper(dt_ps, temp, save);
+   pressure(dt_ps);
 }
 
 
@@ -127,9 +127,9 @@ void langevin_piston(time_prec dt, virial_prec press)
    pnhf_pre = pnhf_lp;
    pnhv_pre_lp = pnhv_lp;
 
-   darray::copy(PROCEED_NEW_Q, n, vx, leapfrog_vxold);
-   darray::copy(PROCEED_NEW_Q, n, vy, leapfrog_vyold);
-   darray::copy(PROCEED_NEW_Q, n, vz, leapfrog_vzold);
+   darray::copy(g::q0, n, vx, leapfrog_vxold);
+   darray::copy(g::q0, n, vy, leapfrog_vyold);
+   darray::copy(g::q0, n, vz, leapfrog_vzold);
 
    double xtlabc_old = xtlabc;
    hdot_old = hdot_lp;
@@ -192,9 +192,9 @@ void langevin_piston(time_prec dt, virial_prec press)
 
    } // userat
 
-   darray::copy(PROCEED_NEW_Q, n, leapfrog_vxold, vx);
-   darray::copy(PROCEED_NEW_Q, n, leapfrog_vyold, vy);
-   darray::copy(PROCEED_NEW_Q, n, leapfrog_vzold, vz);
+   darray::copy(g::q0, n, leapfrog_vxold, vx);
+   darray::copy(g::q0, n, leapfrog_vyold, vy);
+   darray::copy(g::q0, n, leapfrog_vzold, vz);
    // vx = 0.5 * (vxnew + vxold)
    eksum_new = 0.0;
    propagate_velocity_lp3(vx, vy, vz, leapfrog_vx, leapfrog_vy, leapfrog_vz,
@@ -231,29 +231,29 @@ void lpiston_npt(int istep, time_prec dt_ps)
    if (istep == 1 || com_done) {
 
       if (istep == 1) {
-         darray::copy(PROCEED_NEW_Q, n, leapfrog_x, xpos);
-         darray::copy(PROCEED_NEW_Q, n, leapfrog_y, ypos);
-         darray::copy(PROCEED_NEW_Q, n, leapfrog_z, zpos);
+         darray::copy(g::q0, n, leapfrog_x, xpos);
+         darray::copy(g::q0, n, leapfrog_y, ypos);
+         darray::copy(g::q0, n, leapfrog_z, zpos);
 
          if (userat) {
             shake(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
             copy_pos_to_xyz(true);
-            darray::copy(PROCEED_NEW_Q, n, leapfrog_x, xpos);
-            darray::copy(PROCEED_NEW_Q, n, leapfrog_y, ypos);
-            darray::copy(PROCEED_NEW_Q, n, leapfrog_z, zpos);
+            darray::copy(g::q0, n, leapfrog_x, xpos);
+            darray::copy(g::q0, n, leapfrog_y, ypos);
+            darray::copy(g::q0, n, leapfrog_z, zpos);
             energy(vers1);
          }
 
       } else {
 
-         darray::copy(PROCEED_NEW_Q, n, xpos, leapfrog_x);
-         darray::copy(PROCEED_NEW_Q, n, ypos, leapfrog_y);
-         darray::copy(PROCEED_NEW_Q, n, zpos, leapfrog_z);
+         darray::copy(g::q0, n, xpos, leapfrog_x);
+         darray::copy(g::q0, n, ypos, leapfrog_y);
+         darray::copy(g::q0, n, zpos, leapfrog_z);
          if (userat) {
             shake(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
-            darray::copy(PROCEED_NEW_Q, n, leapfrog_x, xpos);
-            darray::copy(PROCEED_NEW_Q, n, leapfrog_y, ypos);
-            darray::copy(PROCEED_NEW_Q, n, leapfrog_z, zpos);
+            darray::copy(g::q0, n, leapfrog_x, xpos);
+            darray::copy(g::q0, n, leapfrog_y, ypos);
+            darray::copy(g::q0, n, leapfrog_z, zpos);
          }
 
          copy_pos_to_xyz(true);
@@ -326,9 +326,9 @@ void lpiston_npt(int istep, time_prec dt_ps)
    copy_pos_to_xyz(true);
    energy(vers1);
 
-   darray::copy(PROCEED_NEW_Q, n, leapfrog_x, xpos);
-   darray::copy(PROCEED_NEW_Q, n, leapfrog_y, ypos);
-   darray::copy(PROCEED_NEW_Q, n, leapfrog_z, zpos);
+   darray::copy(g::q0, n, leapfrog_x, xpos);
+   darray::copy(g::q0, n, leapfrog_y, ypos);
+   darray::copy(g::q0, n, leapfrog_z, zpos);
 
    // propagate v(0.5 -> 1.5 old): v = vold + a(1)*dt
    propagate_velocity(dt_ps, leapfrog_vx, leapfrog_vy, leapfrog_vz,
@@ -336,9 +336,9 @@ void lpiston_npt(int istep, time_prec dt_ps)
                       gz);
 
    if (userat) {
-      darray::copy(PROCEED_NEW_Q, n, vx, leapfrog_vx);
-      darray::copy(PROCEED_NEW_Q, n, vy, leapfrog_vy);
-      darray::copy(PROCEED_NEW_Q, n, vz, leapfrog_vz);
+      darray::copy(g::q0, n, vx, leapfrog_vx);
+      darray::copy(g::q0, n, vy, leapfrog_vy);
+      darray::copy(g::q0, n, vz, leapfrog_vz);
 
       // x = xold + vnew * dt
       propagate_pos_lf(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y,

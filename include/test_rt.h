@@ -16,19 +16,25 @@ namespace tinker {
 class TestFile
 {
 private:
-   bool good_;
-   std::string name_;
+   bool good;
+   std::string name;
 
 
 public:
-   /// Writes `content` to file with `name` to disk.
-   TestFile(const std::string& name, const std::string& content);
-   /// Copy `file` to the current working directory.
-   TestFile(const std::string& file);
-   /// Removes the file on disk if possible.
+   /**
+    * Copies file from `src` to `dst` and append the `extra` text to `dst` if
+    * `extra` is not empty.
+    *
+    * If `dst` is an empty string, `dst` will have the same filename in the
+    * current working directory. If `src` is an empty string, it will create a
+    * new file at `dst`.
+    */
+   TestFile(const std::string& src, std::string dst = "",
+            std::string extra = "");
+   /** Removes the file on disk if possible. */
    ~TestFile();
-   /// Prevents file being deleted.
-   void keep();
+   /** Prevents the file being deleted. */
+   void __keep();
 };
 
 
@@ -118,7 +124,14 @@ void test_mdinit(double t = 0, double atm = 0);
  * Reduces the number of interactions from the count buffer and compares to the
  * reference value.
  */
-#define COMPARE_INTS(i1, refi)       REQUIRE(i1 == refi)
+#define COMPARE_INTS(i1, refi) REQUIRE(i1 == refi)
+#define COMPARE_INTS_EPS(i1, refi, epsi)                                       \
+   {                                                                           \
+      int c1 = i1;                                                             \
+      int r1 = refi;                                                           \
+      REQUIRE(r1 - epsi <= c1);                                                \
+      REQUIRE(c1 <= r1 + epsi);                                                \
+   }
 #define COMPARE_REALS(v1, refv, eps) REQUIRE(v1 == Approx(refv).margin(eps))
 #define COMPARE_ENERGY(gpuptr, ref_eng, eps)                                   \
    {                                                                           \
@@ -215,34 +228,3 @@ void test_mdinit(double t = 0, double atm = 0);
    }
 #define COMPARE_GRADIENT(ref_grad, eps)                                        \
    COMPARE_GRADIENT2(ref_grad, eps, [](int, int) { return true; })
-
-
-/**
- * \def COMPARE_BONDED_FORCE
- * \ingroup test
- * Compares the result of bonded (valence) force term.
- */
-#define COMPARE_BONDED_FORCE(cpu_count, gpu_e, gpu_v, ref_e, eps_e, ref_count, \
-                             ref_g, eps_g, ref_v, eps_v)                       \
-   {                                                                           \
-      auto do_ij_ = [](int, int) { return true; };                             \
-      energy(calc::v3);                                                        \
-      COMPARE_ENERGY(gpu_e, ref_e, eps_e);                                     \
-      REQUIRE(cpu_count == ref_count);                                         \
-                                                                               \
-      energy(calc::v1);                                                        \
-      COMPARE_ENERGY(gpu_e, ref_e, eps_e);                                     \
-      COMPARE_GRADIENT2(ref_g, eps_g, do_ij_);                                 \
-      COMPARE_VIR(gpu_v, ref_v, eps_v);                                        \
-                                                                               \
-      energy(calc::v4);                                                        \
-      COMPARE_ENERGY(gpu_e, ref_e, eps_e);                                     \
-      COMPARE_GRADIENT2(ref_g, eps_g, do_ij_);                                 \
-                                                                               \
-      energy(calc::v5);                                                        \
-      COMPARE_GRADIENT2(ref_g, eps_g, do_ij_);                                 \
-                                                                               \
-      energy(calc::v6);                                                        \
-      COMPARE_GRADIENT2(ref_g, eps_g, do_ij_);                                 \
-      COMPARE_VIR(gpu_v, ref_v, eps_v);                                        \
-   }

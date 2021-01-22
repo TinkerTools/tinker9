@@ -1,6 +1,5 @@
 #include "subroutine.h"
 #include "tool/io_print.h"
-#include <tinker/detail/chgpen.hh>
 #include <tinker/detail/inform.hh>
 
 
@@ -93,8 +92,7 @@ void mechanic()
 
    // get the base force field from parameter file and keyfile
    field_();
-   /// TODO: Remove this hack when Tinker initialize it in initprm.
-   chgpen::ncp = 0;
+
 
    // find unit cell type, lattice parameters and cutoff values
    unitcell_();
@@ -143,12 +141,6 @@ void mechanic()
    ktortor_();
 
 
-   // assign van der Waals, repulsion and dispersion parameters
-   kvdw_();
-   krepel_();
-   kdisp_();
-
-
    // assign electrostatic interaction potential parameters
    kcharge_();
    kdipole_();
@@ -156,6 +148,12 @@ void mechanic()
    kpolar_();
    kchgtrn_();
    kchgflx_();
+
+
+   // assign van der Waals, repulsion and dispersion parameters
+   kvdw_();
+   krepel_();
+   kdisp_();
 
 
    // assign solvation, metal, pisystem and restraint parameters

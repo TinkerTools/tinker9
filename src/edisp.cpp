@@ -16,7 +16,7 @@
 namespace tinker {
 bool use_dewald()
 {
-   return limits::use_dewald;
+   return use_potent(disp_term) and limits::use_dewald;
 }
 
 
@@ -150,15 +150,17 @@ void edisp_data(rc_op op)
       }
       ndspexclude = excls.size();
       darray::allocate(ndspexclude, &dspexclude, &dspexclude_scale);
-      darray::copyin(WAIT_NEW_Q, ndspexclude, dspexclude, exclik.data());
-      darray::copyin(WAIT_NEW_Q, ndspexclude, dspexclude_scale, excls.data());
+      darray::copyin(g::q0, ndspexclude, dspexclude, exclik.data());
+      darray::copyin(g::q0, ndspexclude, dspexclude_scale, excls.data());
+      wait_for(g::q0);
    }
 
 
    if (op & rc_init) {
       csixpr = disp::csixpr;
-      darray::copyin(PROCEED_NEW_Q, n, csix, disp::csix);
-      darray::copyin(PROCEED_NEW_Q, n, adisp, disp::adisp);
+      darray::copyin(g::q0, n, csix, disp::csix);
+      darray::copyin(g::q0, n, adisp, disp::adisp);
+      wait_for(g::q0);
    }
 }
 
@@ -176,13 +178,13 @@ void edisp(int vers)
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)
-         darray::zero(PROCEED_NEW_Q, bsize, ndisp);
+         darray::zero(g::q0, bsize, ndisp);
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, edsp);
+         darray::zero(g::q0, bsize, edsp);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_edsp);
+         darray::zero(g::q0, bsize, vir_edsp);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, dedspx, dedspy, dedspz);
+         darray::zero(g::q0, n, dedspx, dedspy, dedspz);
    }
 
 

@@ -1,4 +1,5 @@
 #include "echarge.h"
+#include "echglj.h"
 #include "md.h"
 #include "nblist.h"
 #include "pmestuf.h"
@@ -116,8 +117,9 @@ void echarge_data(rc_op op)
       }
       ncexclude = excl.size();
       darray::allocate(ncexclude, &cexclude, &cexclude_scale);
-      darray::copyin(WAIT_NEW_Q, ncexclude, cexclude, exclik.data());
-      darray::copyin(WAIT_NEW_Q, ncexclude, cexclude_scale, excl.data());
+      darray::copyin(g::q0, ncexclude, cexclude, exclik.data());
+      darray::copyin(g::q0, ncexclude, cexclude_scale, excl.data());
+      wait_for(g::q0);
 
 
       nec = nullptr;
@@ -151,13 +153,13 @@ void echarge(int vers)
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)
-         darray::zero(PROCEED_NEW_Q, bsize, nec);
+         darray::zero(g::q0, bsize, nec);
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, ec);
+         darray::zero(g::q0, bsize, ec);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_ec);
+         darray::zero(g::q0, bsize, vir_ec);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, decx, decy, decz);
+         darray::zero(g::q0, n, decx, decy, decz);
    }
 
    if (use_ewald()) {
@@ -168,6 +170,7 @@ void echarge(int vers)
       else
 #endif
          echarge_ewald_real_acc(vers);
+      pme_stream_finish_wait(use_pme_stream and (vers & calc::analyz));
    } else
       echarge_nonewald(vers);
 
@@ -206,6 +209,9 @@ void echarge_nonewald(int vers)
 
 void echarge_ewald_recip_self(int vers)
 {
+   pme_stream_start_wait(use_pme_stream);
+
+
    // ewald recip space, self term
    // ewald real space
 
@@ -238,5 +244,8 @@ void echarge_ewald_recip_self(int vers)
    else
 #endif
       echarge_ewald_fphi_self_acc(vers);
+
+
+   pme_stream_finish_record(use_pme_stream);
 }
 }

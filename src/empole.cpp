@@ -3,6 +3,7 @@
 #include "nblist.h"
 #include "potent.h"
 #include "tool/host_zero.h"
+#include <tinker/detail/mplpot.hh>
 #include <tinker/detail/sizes.hh>
 
 
@@ -10,6 +11,8 @@ namespace tinker {
 void empole_data(rc_op op)
 {
    if (!use_potent(mpole_term))
+      return;
+   if (mplpot::use_chgpen)
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -58,13 +61,13 @@ void empole(int vers)
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)
-         darray::zero(PROCEED_NEW_Q, bsize, nem);
+         darray::zero(g::q0, bsize, nem);
       if (do_e)
-         darray::zero(PROCEED_NEW_Q, bsize, em);
+         darray::zero(g::q0, bsize, em);
       if (do_v)
-         darray::zero(PROCEED_NEW_Q, bsize, vir_em);
+         darray::zero(g::q0, bsize, vir_em);
       if (do_g)
-         darray::zero(PROCEED_NEW_Q, n, demx, demy, demz);
+         darray::zero(g::q0, n, demx, demy, demz);
    }
 
 

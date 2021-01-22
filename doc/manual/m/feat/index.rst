@@ -1,8 +1,8 @@
-Special Features & Methods
-==========================
+Features & Methods
+==================
 
 .. toctree::
 
-   verlet
-   nose-hoover-chain
-   langevin-piston
+   potent
+   potent-vdw
+   integrators

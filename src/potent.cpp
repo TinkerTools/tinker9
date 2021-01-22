@@ -1,14 +1,17 @@
 #include "potent.h"
 #include <cassert>
 #include <tinker/detail/angbnd.hh>
+#include <tinker/detail/angtor.hh>
 #include <tinker/detail/atoms.hh>
 #include <tinker/detail/bndstr.hh>
+#include <tinker/detail/improp.hh>
 #include <tinker/detail/imptor.hh>
 #include <tinker/detail/opbend.hh>
 #include <tinker/detail/pitors.hh>
 #include <tinker/detail/potent.hh>
 #include <tinker/detail/restrn.hh>
 #include <tinker/detail/strbnd.hh>
+#include <tinker/detail/strtor.hh>
 #include <tinker/detail/tors.hh>
 #include <tinker/detail/tortor.hh>
 #include <tinker/detail/urey.hh>
@@ -37,6 +40,9 @@ int use_potent(potent_t term)
    case opbend_term:
       val = potent::use_opbend;
       break;
+   case improp_term:
+      val = potent::use_improp;
+      break;
    case imptors_term:
       val = potent::use_imptor;
       break;
@@ -45,6 +51,12 @@ int use_potent(potent_t term)
       break;
    case pitors_term:
       val = potent::use_pitors;
+      break;
+   case strtor_term:
+      val = potent::use_strtor;
+      break;
+   case angtor_term:
+      val = potent::use_angtor;
       break;
    case tortor_term:
       val = potent::use_tortor;
@@ -108,6 +120,9 @@ int count_bonded_term(potent_t term)
    case opbend_term:
       val = opbend::nopbend;
       break;
+   case improp_term:
+      val = improp::niprop;
+      break;
    case imptors_term:
       val = imptor::nitors;
       break;
@@ -116,6 +131,12 @@ int count_bonded_term(potent_t term)
       break;
    case pitors_term:
       val = pitors::npitors;
+      break;
+   case strtor_term:
+      val = strtor::nstrtor;
+      break;
+   case angtor_term:
+      val = angtor::nangtor;
       break;
    case tortor_term:
       val = tortor::ntortor;

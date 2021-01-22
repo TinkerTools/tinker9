@@ -32,9 +32,9 @@ inline int int_copysign_if(int a, int b)
 
 
 /**
- * \def TINKER_COPYSIGN
+ * \def INT_COPYSIGN
  * \ingroup cuda_syntax
  * Defines the implementation of `int copysign(int,int);` function.
  */
-#define TINKER_COPYSIGN int_copysign_shift
+#define INT_COPYSIGN int_copysign_shift
 }

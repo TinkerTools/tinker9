@@ -21,8 +21,9 @@ void bspline_fill(PMEUnit pme_u, int level)
 void grid_pchg(PMEUnit pme_u, real* pchg)
 {
    int bso = pme_u->bsorder;
-   if (bso != 5)
-      TINKER_THROW(format("grid_pchg(): bsorder is %d; must be 5.\n", bso));
+   if (bso != 5 and bso != 4)
+      TINKER_THROW(
+         format("grid_pchg(): bsorder is %d; must be 4 or 5.\n", bso));
 
 
 #if TINKER_CUDART
@@ -87,25 +88,45 @@ void grid_disp(PMEUnit pme_u, real* csix)
 
 void pme_conv(PMEUnit pme_u)
 {
-   pme_conv_acc(pme_u, nullptr, nullptr);
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      pme_conv_cu(pme_u, nullptr, nullptr);
+   else
+#endif
+      pme_conv_acc(pme_u, nullptr, nullptr);
 }
 
 
 void pme_conv(PMEUnit pme_u, virial_buffer gpu_vir)
 {
-   pme_conv_acc(pme_u, nullptr, gpu_vir);
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      pme_conv_cu(pme_u, nullptr, gpu_vir);
+   else
+#endif
+      pme_conv_acc(pme_u, nullptr, gpu_vir);
 }
 
 
 void pme_conv(PMEUnit pme_u, energy_buffer gpu_e)
 {
-   pme_conv_acc(pme_u, gpu_e, nullptr);
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      pme_conv_cu(pme_u, gpu_e, nullptr);
+   else
+#endif
+      pme_conv_acc(pme_u, gpu_e, nullptr);
 }
 
 
 void pme_conv(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
 {
-   pme_conv_acc(pme_u, gpu_e, gpu_vir);
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      pme_conv_cu(pme_u, gpu_e, gpu_vir);
+   else
+#endif
+      pme_conv_acc(pme_u, gpu_e, gpu_vir);
 }
 
 

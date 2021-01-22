@@ -126,7 +126,7 @@ void echglj_data(rc_op op)
       };
 
 
-      // see also attach.h
+      // see also attach.f
       const int maxn13 = 3 * sizes::maxval;
       const int maxn14 = 9 * sizes::maxval;
       const int maxn15 = 27 * sizes::maxval;
@@ -247,8 +247,9 @@ void echglj_data(rc_op op)
       }
       ncvexclude = ik_scale.size();
       darray::allocate(ncvexclude, &cvexclude, &cvexclude_scale);
-      darray::copyin(WAIT_NEW_Q, ncvexclude, cvexclude, ik_vec.data());
-      darray::copyin(WAIT_NEW_Q, ncvexclude, cvexclude_scale, scal_vec.data());
+      darray::copyin(g::q0, ncvexclude, cvexclude, ik_vec.data());
+      darray::copyin(g::q0, ncvexclude, cvexclude_scale, scal_vec.data());
+      wait_for(g::q0);
       darray::allocate(n, &atom_rad, &atom_eps);
       darray::allocate(n, &chg_coalesced);
       darray::allocate(2 * n, &radeps_coalesced);
@@ -270,8 +271,9 @@ void echglj_data(rc_op op)
             veps[i] = kvdws::eps[jj];
          }
       }
-      darray::copyin(WAIT_NEW_Q, n, atom_rad, vrad.data());
-      darray::copyin(WAIT_NEW_Q, n, atom_eps, veps.data());
+      darray::copyin(g::q0, n, atom_rad, vrad.data());
+      darray::copyin(g::q0, n, atom_eps, veps.data());
+      wait_for(g::q0);
    }
 
 

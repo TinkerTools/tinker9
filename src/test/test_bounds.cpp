@@ -1,8 +1,7 @@
-#include "files.h"
-#include "tool/io_fort_str.h"
 #include "mdpq.h"
 #include "test.h"
 #include "test_rt.h"
+#include "tool/io_fort_str.h"
 #include <fstream>
 #include <tinker/detail/files.hh>
 
@@ -29,9 +28,9 @@ using namespace tinker;
 TEST_CASE("Bounds", "[ff][box]")
 {
    const char* xn = "test_bounds.xyz";
-   TestFile xfile(xn, coord);
-   TestFile kfile("test_bounds.key", keyfile);
-   TestFile pfile("amoeba09.prm", commit_6fe8e913::amoeba09_prm);
+   TestFile xfile("", xn, coord);
+   TestFile kfile("", "test_bounds.key", keyfile);
+   TestFile pfile(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    // box: cubic 20 20 20
    // 51, -83, 164 -> -9, -3, 4
@@ -41,7 +40,7 @@ TEST_CASE("Bounds", "[ff][box]")
    const char* argv[] = {"dummy", xn};
    int argc = 2;
    test_begin_with_args(argc, argv);
-   rc_flag = calc::xyz;
+   rc_flag = calc::xyz | calc::mass;
    initialize();
 
 
@@ -58,9 +57,10 @@ TEST_CASE("Bounds", "[ff][box]")
    double yref[] = {-3, -5};
    double zref[] = {4, 7};
    real xans[2], yans[2], zans[2];
-   darray::copyout(PROCEED_NEW_Q, 2, xans, x);
-   darray::copyout(PROCEED_NEW_Q, 2, yans, y);
-   darray::copyout(WAIT_NEW_Q, 2, zans, z);
+   darray::copyout(g::q0, 2, xans, x);
+   darray::copyout(g::q0, 2, yans, y);
+   darray::copyout(g::q0, 2, zans, z);
+   wait_for(g::q0);
 
 
    COMPARE_REALS(xans[0], xref[0], eps);

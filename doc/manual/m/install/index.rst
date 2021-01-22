@@ -1,5 +1,5 @@
-Installation on Your Computer
-=============================
+Installation
+============
 
 .. toctree::
 

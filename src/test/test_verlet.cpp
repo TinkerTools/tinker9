@@ -1,7 +1,7 @@
-#include "files.h"
 #include "md.h"
 #include "test.h"
 #include "test_rt.h"
+#include <tinker/detail/inform.hh>
 
 using namespace tinker;
 
@@ -51,15 +51,13 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
    const char* k = "test_arbox.key";
    const char* d = "test_arbox.dyn";
    const char* x = "test_arbox.xyz";
-   const char* p = "amoeba09.prm";
 
-   std::string k0 = arbox_key;
-   k0 += "integrator  verlet\n";
-   TestFile fke(k, k0);
+   std::string k0 = "integrator  verlet\n";
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/arbox/arbox.key", k, k0);
 
-   TestFile fd(d, arbox_dyn);
-   TestFile fx(x, arbox_xyz);
-   TestFile fp(p, commit_6fe8e913::amoeba09_prm);
+   TestFile fd(TINKER9_DIRSTR "/src/test/file/arbox/arbox.dyn", d);
+   TestFile fx(TINKER9_DIRSTR "/src/test/file/arbox/arbox.xyz", x);
+   TestFile fp(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
    const char* argv[] = {"dummy", x};
    int argc = 2;
@@ -73,11 +71,14 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
    const int nsteps = 20;
    const double eps_e = 0.0001;
    std::vector<double> epots, eksums;
+   int old = inform::iwrite;
+   inform::iwrite = 1;
    for (int i = 1; i <= nsteps; ++i) {
       velocity_verlet(i, dt_ps);
       epots.push_back(esum);
       eksums.push_back(eksum);
    }
+   inform::iwrite = old;
 
    finish();
    test_end();
