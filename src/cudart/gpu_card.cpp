@@ -46,6 +46,21 @@ std::vector<DeviceAttribute>& get_device_attributes()
 }
 
 
+static std::string get_nvidia_smi()
+{
+   std::string smi = "nvidia-smi";
+   int val1 = std::system("which nvidia-smi > /dev/null");
+   if (val1 != 0) {
+      val1 = std::system("which nvidia-smi.exe > /dev/null");
+      smi = "nvidia-smi.exe";
+      if (val1 != 0) {
+         TINKER_THROW("nvidia-smi is not found.");
+      }
+   }
+   return smi;
+}
+
+
 static void get_device_attribute(DeviceAttribute& a, int device = 0)
 {
    cudaDeviceProp prop;
@@ -137,6 +152,9 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
    a.clock_rate_kHz = prop.clockRate;
 
 
+   check_rt(cudaDeviceReset());
+
+
    if (!found_cc) {
       TINKER_THROW(
          format("The code base should be updated for compute capability %d; "
@@ -175,16 +193,7 @@ static int recommend_device(int ndev)
    std::vector<double> gflops;
    for (int i = 0; i < ndev; ++i) {
       const auto& a = get_device_attributes()[i];
-      int val1 = -1;
-      std::string smi = "nvidia-smi";
-      val1 = std::system("which nvidia-smi > /dev/null");
-      if (val1 != 0) {
-         val1 = std::system("which nvidia-smi.exe > /dev/null");
-         smi = "nvidia-smi.exe";
-         if (val1 != 0) {
-            TINKER_THROW("nvidia-smi is not found.");
-         }
-      }
+      std::string smi = get_nvidia_smi();
       std::string cmd = format("%s --query-gpu=utilization.gpu "
                                "--format=csv,noheader,nounits -i %s",
                                smi, a.pci_string);
@@ -265,17 +274,7 @@ void gpu_card_data(rc_op op)
    }
 
    if (op & rc_init) {
-      if (cuda_device_flags == 0) {
-         cuda_device_flags = cudaDeviceMapHost;
-#if 1
-         cuda_device_flags |= cudaDeviceScheduleBlockingSync;
-#elif 0
-         // Using this flag may reduce the latency
-         // for cudaStreamSynchronize() calls.
-         cuda_device_flags |= cudaDeviceScheduleSpin;
-#endif
-         always_check_rt(cudaSetDeviceFlags(cuda_device_flags));
-      } else {
+      if (cuda_device_flags) {
          return;
       }
 
@@ -289,6 +288,18 @@ void gpu_card_data(rc_op op)
       idevice = recommend_device(ndevice);
 
       check_rt(cudaSetDevice(idevice));
+
+      if (cuda_device_flags == 0) {
+         cuda_device_flags = cudaDeviceMapHost;
+#if 1
+         cuda_device_flags |= cudaDeviceScheduleBlockingSync;
+#elif 0
+         // Using this flag may reduce the latency
+         // for cudaStreamSynchronize() calls.
+         cuda_device_flags |= cudaDeviceScheduleSpin;
+#endif
+         always_check_rt(cudaSetDeviceFlags(cuda_device_flags));
+      }
    }
 }
 
