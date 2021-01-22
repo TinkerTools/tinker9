@@ -12,6 +12,7 @@
 #include "syntax/cu/copysign.h"
 #include "syntax/cu/ffsn.h"
 #include "thrust_cache.h"
+#include "tool/fc.h"
 #include <thrust/extrema.h>
 #include <thrust/remove.h>
 #include <thrust/scan.h>
@@ -1461,6 +1462,7 @@ void run_spatial2_step5(Spatial2Unit u)
    wait_for(g::q0);
    if (u->niak > u->nak * Spatial2::LSTCAP) {
       int cap = Spatial2::LSTCAP;
+      t_prterr();
       TINKER_THROW(
          format("An internal array in Spatial2 requested %1$d elements, "
                 "but only %4$d (%3$d*%2$d) were allocated. "
