@@ -16,6 +16,13 @@
 #include <tinker/detail/units.hh>
 
 
+#if TINKER_CUDART
+#   include "glob.gpucard.h"
+#   include "tool/error.h"
+#   include <cuda_runtime.h>
+#endif
+
+
 namespace tinker {
 namespace {
 std::mutex mtx_dup, mtx_write;
@@ -41,6 +48,16 @@ grad_prec *dup_buf_gx, *dup_buf_gy, *dup_buf_gz;
 
 void mdsave_dup_then_write(int istep, time_prec dt)
 {
+#if TINKER_CUDART
+   /**
+    * This function (mdsave_dup_then_write) will run in another CPU thread.
+    * There is no guarantee that the CUDA runtime will use the same GPU card as
+    * the main thread, unless cudaSetDevice() is called explicitly.
+    *
+    * Of course this is not a problem if the computer has only one GPU card.
+    */
+   check_rt(cudaSetDevice(idevice));
+#endif
 
    // duplicate
 
