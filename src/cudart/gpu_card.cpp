@@ -158,7 +158,7 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
    if (!found_cc) {
       TINKER_THROW(
          format("The code base should be updated for compute capability %d; "
-                "Please refer to the Nvidia Cuda-C Programming Guide",
+                "Please refer to the NVIDIA Cuda-C Programming Guide",
                 a.cc));
    }
 }
