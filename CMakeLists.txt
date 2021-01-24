@@ -436,7 +436,6 @@ if (GIT_FOUND)
       string (REPLACE "\n" "" __T9_GIT_SHA1 ${__T9_GIT_SHA1})
       string (REPLACE "\r" "" __T9_GIT_SHA1 ${__T9_GIT_SHA1})
       ## TINKER9_GIT_SHORT_HASH is needed in the source code.
-      list (APPEND T9_DEFS TINKER9_GIT_SHORT_HASH=${__T9_GIT_SHA1})
 
 
       execute_process (
@@ -450,7 +449,6 @@ if (GIT_FOUND)
       string (REPLACE "\"" "" __T9_GIT_DATE ${__T9_GIT_DATE})
       string (REPLACE "\n" "" __T9_GIT_DATE ${__T9_GIT_DATE})
       string (REPLACE "\r" "" __T9_GIT_DATE ${__T9_GIT_DATE})
-      list (APPEND T9_DEFS TINKER9_GIT_DATE="${__T9_GIT_DATE}")
 
 
       execute_process (
