@@ -54,7 +54,8 @@ public:
 #define TINKER_THROW(msg)                                                      \
    do {                                                                        \
       print_backtrace();                                                       \
-      std::string m_ = format("%s at %s:%d", msg, __FILE__, __LINE__);         \
+      std::string ms_ = msg;                                                   \
+      std::string m_ = format("%s at %s:%d", ms_, __FILE__, __LINE__);         \
       throw FatalError(m_);                                                    \
    } while (0)
 

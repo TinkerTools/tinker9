@@ -113,7 +113,7 @@ endif ()
 !!/
 !!/ Install the executables under *${CMAKE_INSTALL_PREFIX}*. If this option is
 !!/ not set, *make install* is configured not to install anything, which is
-!!/ different from the default cmake behavior to install under */usr/local*.
+!!/ different from the default cmake behavior to install the program under */usr/local*.
 !!/
 ]]
 if (DEFINED CMAKE_INSTALL_PREFIX)
@@ -144,7 +144,7 @@ set (TINKER_DIR ${tinkerDirValue} CACHE PATH "Path to libtinker.a")
 !!/ **-DFFTW_DIR (fftw_dir) = ${CMAKE_BINARY_DIR}/fftw**
 !!/
 !!/ Top-level FFTW3 installation, under which
-!!/ *include/fftw3.h* and *lib/libfftw3* are expected to be found.
+!!/ *include/fftw3.h* and *lib/libfftw3* static libraries are expected to be found.
 !!/
 ]]
 if (DEFINED ENV{fftw_dir})
@@ -230,7 +230,7 @@ set (DETERMINISTIC_FORCE ${detForceValue} CACHE STRING
 !!/ Multiple compute capabilites will increase the size of executables.
 !!/
 !!/ The full list of compute capabilities can be found on the
-!!/ `Nvidia website. <https://developer.nvidia.com/cuda-gpus>`_
+!!/ `NVIDIA website. <https://developer.nvidia.com/cuda-gpus>`_
 !!/
 ]]
 if (DEFINED ENV{compute_capability})
@@ -436,7 +436,6 @@ if (GIT_FOUND)
       string (REPLACE "\n" "" __T9_GIT_SHA1 ${__T9_GIT_SHA1})
       string (REPLACE "\r" "" __T9_GIT_SHA1 ${__T9_GIT_SHA1})
       ## TINKER9_GIT_SHORT_HASH is needed in the source code.
-      list (APPEND T9_DEFS TINKER9_GIT_SHORT_HASH=${__T9_GIT_SHA1})
 
 
       execute_process (
@@ -450,7 +449,6 @@ if (GIT_FOUND)
       string (REPLACE "\"" "" __T9_GIT_DATE ${__T9_GIT_DATE})
       string (REPLACE "\n" "" __T9_GIT_DATE ${__T9_GIT_DATE})
       string (REPLACE "\r" "" __T9_GIT_DATE ${__T9_GIT_DATE})
-      list (APPEND T9_DEFS TINKER9_GIT_DATE="${__T9_GIT_DATE}")
 
 
       execute_process (

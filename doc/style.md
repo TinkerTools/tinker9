@@ -73,7 +73,7 @@ C++14 and C++17 are good, but the support from the toolchain to the newer
 standards may be years behind. As we are using multiple compilers, the
 intersection of the commonly supported syntax features may not leave us many
 options. And more likely, the options are limited by the combination of several
-other problems. For instance, the Nvidia driver is old and cannot be updated
+other problems. For instance, the NVIDIA driver is old and cannot be updated
 because the GPU is old and you don’t have root privilege of the cluster nodes,
 so CUDA is limited to 10.0, which only supports C++14 but not C++17. There are
 also a lot of machines still using GCC 4.8 as of 2020, which doesn’t have a

@@ -87,7 +87,7 @@ Build type is case insensitive and can either be *release* or *debug*.
 
 Install the executables under *${CMAKE_INSTALL_PREFIX}*. If this option is
 not set, *make install* is configured not to install anything, which is
-different from the default cmake behavior to install under */usr/local*.
+different from the default cmake behavior to install the program under */usr/local*.
 
 **-DTINKER_DIR (tinker_dir) = ${CMAKE_BINARY_DIR}/tinker/source**
 
@@ -96,7 +96,7 @@ Directory in which user compiled *libtinker.a*.
 **-DFFTW_DIR (fftw_dir) = ${CMAKE_BINARY_DIR}/fftw**
 
 Top-level FFTW3 installation, under which
-*include/fftw3.h* and *lib/libfftw3* are expected to be found.
+*include/fftw3.h* and *lib/libfftw3* static libraries are expected to be found.
 
 **-DHOST (host) = 1**
 
@@ -137,7 +137,7 @@ comma-separated, e.g. 35,60.
 Multiple compute capabilites will increase the size of executables.
 
 The full list of compute capabilities can be found on the
-`Nvidia website. <https://developer.nvidia.com/cuda-gpus>`_
+`NVIDIA website. <https://developer.nvidia.com/cuda-gpus>`_
 
 **-DCUDA_DIR (cuda_dir) = /usr/local/cuda**
 

@@ -3,7 +3,7 @@ Prerequisites
 
 **Hardware**
 
-A relatively recent Nvidia GPU is mandatory for the GPU code.
+A relatively recent NVIDIA GPU is mandatory for the GPU code.
 Nothing special is needed for the CPU code.
 
 **Operating Systems and Compilers**
@@ -18,14 +18,14 @@ For Linux, we need:
 - GNU or Intel Fortran compiler.
 - Recent C++ compiler that supports C++11 syntax.
 - (GPU code only) PGI compiler for OpenACC and nvcc for CUDA.
-- If Nvidia driver has been installed correctly, *nvidia-smi* should be
+- If NVIDIA driver has been installed correctly, *nvidia-smi* should be
   available.
 
 The PGI compilers have recently been rebranded as
 `NVIDIA HPC SDK <https://developer.nvidia.com/hpc-sdk>`_
 and we successfully built Tinker9 on Windows WSL2 Ubuntu with
 CUDA 11.0 and NVHPC 20.9. Please proceed to
-`this webpage <https://docs.nvidia.com/cuda/wsl-user-guide/index.html>`_
+`this NVIDIA webpage <https://docs.nvidia.com/cuda/wsl-user-guide/index.html>`_
 for more details.
 
 **FFTW Libraries**
