@@ -22,6 +22,10 @@ Release/*
 .vscode
 .vscode/*
 
+# bin
+bin/*
+bin*/*
+
 # build
 build/*
 build*/*

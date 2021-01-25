@@ -1,15 +1,11 @@
 #include "add.h"
 #include "cflux.h"
-#include "couple.h"
 #include "eangle.h"
 #include "ebond.h"
 #include "elec.h"
 #include "mathfunc_const.h"
 #include "md.h"
 #include <cassert>
-#include <tinker/detail/atmlst.hh>
-#include <tinker/detail/atomid.hh>
-#include <tinker/detail/mplpot.hh>
 
 
 namespace tinker {
@@ -34,42 +30,8 @@ void bndchg_acc1()
       real dq = pb * (rab - ideal);
 
 
-      // determine higher priority of the bonded atoms
-      int priority;
-      if (atoma > atomb) {
-         priority = 1;
-      } else if (atoma < atomb) {
-         priority = -1;
-      } else {
-         int n12a = couple_n12[ia];
-         int n12b = couple_n12[ib];
-         if (n12a > n12b)
-            priority = 1;
-         else if (n12a < n12b)
-            priority = -1;
-         else {
-            int nha = 0;
-            int nhb = 0;
-            #pragma acc loop seq
-            for (int j = 0; j < n12a; ++j) {
-               if (atomic[couple_i12[ia][j]] == 1)
-                  nha += 1;
-            }
-            #pragma acc loop seq
-            for (int j = 0; j < n12b; ++j) {
-               if (atomic[couple_i12[ib][j]] == 1)
-                  nhb += 1;
-            }
-            if (nha > nhb)
-               priority = 1;
-            else if (nha < nhb)
-               priority = -1;
-            else
-               priority = 0;
-         }
-      }
-      atomic_add(-dq * priority, pdelta, ia);
-      atomic_add(dq * priority, pdelta, ib);
+      atomic_add(-dq, pdelta, ia);
+      atomic_add(dq, pdelta, ib);
    } // end for (int i)
 }
 
@@ -142,7 +104,7 @@ void alterchg_acc()
 
    // alter monopoles and charge penetration
    #pragma acc parallel loop independent async\
-            deviceptr(pval,pval0,pdelta,pole,mono0)
+           deviceptr(pval,pval0,pdelta,pole,mono0)
    for (int i = 0; i < n; ++i) {
       pval[i] = pval0[i] + pdelta[i];
       pole[i][0] = mono0[i] + pdelta[i];
