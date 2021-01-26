@@ -332,10 +332,27 @@ set (T9_DEFS)
 
 
 ## libtinker.a
+ExternalProject_Add (src-libtinker
+   SOURCE_DIR
+      "${PROJECT_SOURCE_DIR}/src-libtinker"
+   BINARY_DIR
+      "${CMAKE_BINARY_DIR}/src-libtinker"
+   PREFIX
+      "${CMAKE_BINARY_DIR}/src-libtinker"
+   CMAKE_ARGS
+      "-DCMAKE_BUILD_TYPE=RelWithDebInfo"
+      "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/src-libtinker"
+)
 add_library (t9_ltinker STATIC IMPORTED)
 set_target_properties (t9_ltinker PROPERTIES
    IMPORTED_LOCATION
-      "${TINKER_DIR}/libtinker.a"
+      "${CMAKE_BINARY_DIR}/src-libtinker/libtinker.a"
+)
+set_source_files_properties ("${CMAKE_BINARY_DIR}/src-libtinker/libtinker.a" PROPERTIES
+   EXTERNAL_OBJECT
+      TRUE
+   GENERATED
+      TRUE
 )
 
 
@@ -435,7 +452,6 @@ if (GIT_FOUND)
       string (REPLACE "\"" "" __T9_GIT_SHA1 ${__T9_GIT_SHA1})
       string (REPLACE "\n" "" __T9_GIT_SHA1 ${__T9_GIT_SHA1})
       string (REPLACE "\r" "" __T9_GIT_SHA1 ${__T9_GIT_SHA1})
-      ## TINKER9_GIT_SHORT_HASH is needed in the source code.
 
 
       execute_process (

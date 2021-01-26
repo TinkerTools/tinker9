@@ -1,5 +1,5 @@
 add_executable (tinker9 src-main/main_tinker9.cpp)
-add_dependencies (tinker9 src-acc)
+add_dependencies (tinker9 src-acc src-libtinker)
 set_target_properties (tinker9 PROPERTIES
    CXX_STANDARD
       11
@@ -13,7 +13,7 @@ if (PREC STREQUAL "m" OR PREC STREQUAL "s")
 endif ()
 target_link_libraries (tinker9
    "-Wl,--start-group"
-   $<TARGET_FILE:tinker9_EP_acc>
+   tinker9_EP_acc
    tinker9_cpp
    tinker9_f
    "-Wl,--end-group"
@@ -25,11 +25,11 @@ target_link_libraries (tinker9
 
 
 add_executable (all.tests)
-add_dependencies (all.tests src-acc)
+add_dependencies (all.tests src-acc src-libtinker)
 target_link_libraries (all.tests
    "-Wl,--start-group"
    __t9_all_tests_o
-   $<TARGET_FILE:tinker9_EP_acc>
+   tinker9_EP_acc
    tinker9_cpp
    tinker9_f
    "-Wl,--end-group"
