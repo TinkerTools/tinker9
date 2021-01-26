@@ -23,13 +23,15 @@ endforeach () # ,cc60,cc70
 
 
 add_custom_target (tinker9 ALL
+   BYPRODUCTS
+      tinker9
    DEPENDS
       tinker9_main
       src-acc
       tinker9_cu
       tinker9_cpp
       tinker9_f
-      t9_ltinker
+      src-libtinker
       t9_lfftw
       t9_lfftw_threads
    COMMAND
@@ -61,13 +63,15 @@ add_custom_target (tinker9 ALL
 
 
 add_custom_target (all.tests ALL
+   BYPRODUCTS
+      all.tests
    DEPENDS
       __t9_all_tests_o
       src-acc
       tinker9_cu
       tinker9_cpp
       tinker9_f
-      t9_ltinker
+      src-libtinker
       t9_lfftw
       t9_lfftw_threads
    COMMAND

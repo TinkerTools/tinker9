@@ -58,7 +58,6 @@ host                     0
 prec                     m
 cuda_dir                 /usr/local/cuda
 compute_capability       75
-tinker_dir               /home/tinker/source
 fftw_dir                 /usr/local
 CMakeLists.txt Location  /home/tinker9
 =======================  ===================
@@ -69,14 +68,14 @@ CMakeLists.txt Location  /home/tinker9
    ACC=pgc++ \
    opt=release host=0 prec=m \
    cuda_dir=/usr/local/cuda compute_capability=75 \
-   tinker_dir=/home/tinker/source fftw_dir=/usr/local \
+   fftw_dir=/usr/local \
    cmake /home/tinker9
 
    # use cmake -DOPTIONS
    ACC=pgc++ cmake -S /home/tinker9 \
    -DCMAKE_BUILD_TYPE=Release -DHOST=0 -DPREC=m \
    -DCUDA_DIR=/usr/local/cuda -DCOMPUTE_CAPABILITY=75 \
-   -DTINKER_DIR=/home/tinker/source -DFFTW_DIR=/usr/local
+   -DFFTW_DIR=/usr/local
 
 
 **-DCMAKE_BUILD_TYPE (opt) = release**
@@ -88,10 +87,6 @@ Build type is case insensitive and can either be *release* or *debug*.
 Install the executables under *${CMAKE_INSTALL_PREFIX}*. If this option is
 not set, *make install* is configured not to install anything, which is
 different from the default cmake behavior to install the program under */usr/local*.
-
-**-DTINKER_DIR (tinker_dir) = ${CMAKE_BINARY_DIR}/tinker/source**
-
-Directory in which user compiled *libtinker.a*.
 
 **-DFFTW_DIR (fftw_dir) = ${CMAKE_BINARY_DIR}/fftw**
 

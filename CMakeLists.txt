@@ -62,7 +62,6 @@ cmake_minimum_required (VERSION 3.11)
 !!/ prec                     m
 !!/ cuda_dir                 /usr/local/cuda
 !!/ compute_capability       75
-!!/ tinker_dir               /home/tinker/source
 !!/ fftw_dir                 /usr/local
 !!/ CMakeLists.txt Location  /home/tinker9
 !!/ =======================  ===================
@@ -73,14 +72,14 @@ cmake_minimum_required (VERSION 3.11)
 !!/    ACC=pgc++ \
 !!/    opt=release host=0 prec=m \
 !!/    cuda_dir=/usr/local/cuda compute_capability=75 \
-!!/    tinker_dir=/home/tinker/source fftw_dir=/usr/local \
+!!/    fftw_dir=/usr/local \
 !!/    cmake /home/tinker9
 !!/
 !!/    # use cmake -DOPTIONS
 !!/    ACC=pgc++ cmake -S /home/tinker9 \
 !!/    -DCMAKE_BUILD_TYPE=Release -DHOST=0 -DPREC=m \
 !!/    -DCUDA_DIR=/usr/local/cuda -DCOMPUTE_CAPABILITY=75 \
-!!/    -DTINKER_DIR=/home/tinker/source -DFFTW_DIR=/usr/local
+!!/    -DFFTW_DIR=/usr/local
 !!/
 !!/
 ]]
@@ -121,23 +120,6 @@ if (DEFINED CMAKE_INSTALL_PREFIX)
 else ()
    set (__T9_INSTALL_DEFINED 0)
 endif ()
-
-
-#[[
-!!/ **-DTINKER_DIR (tinker_dir) = ${CMAKE_BINARY_DIR}/tinker/source**
-!!/
-!!/ Directory in which user compiled *libtinker.a*.
-!!/
-]]
-if (DEFINED ENV{tinker_dir})
-   get_filename_component (tinkerDirValue "$ENV{tinker_dir}" ABSOLUTE
-      BASE_DIR
-         "${CMAKE_BINARY_DIR}"
-   )
-else ()
-   set (tinkerDirValue "${CMAKE_BINARY_DIR}/tinker/source")
-endif ()
-set (TINKER_DIR ${tinkerDirValue} CACHE PATH "Path to libtinker.a")
 
 
 #[[

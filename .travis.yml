@@ -11,8 +11,8 @@ jobs:
   include:
     - os: linux
       dist: bionic
-      env:
-        - CI_DEPEND_DIR=https://raw.githubusercontent.com/tinkertools/tinker9/master
+      # env:
+      #   - CI_DEPEND_DIR=https://raw.githubusercontent.com/tinkertools/tinker9/master
 
 
 before_install:
@@ -39,13 +39,9 @@ script:
   - cd tinker
   - git submodule update --init
   - cd ..
-  - cp -r tinker build
-  - cd build/tinker/source
-  - curl $CI_DEPEND_DIR/.travis-Makefile -o Makefile
-  - make libtinker.a
-  - cd ../..
+  - cd build
 
 
 # test tinker9
-  - opt=release host=1 prec=d fftw_dir=fftw tinker_dir=tinker/source cmake ..
+  - opt=release host=1 prec=d fftw_dir=fftw cmake ..
   - make test
