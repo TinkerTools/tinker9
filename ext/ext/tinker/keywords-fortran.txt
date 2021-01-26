@@ -1,4 +1,4 @@
-# c7641407 Tinker (Fortran)
+# 6a1c6104 Tinker (Fortran)
 A-AXIS
 A-EXPTERM
 ACTIVE
