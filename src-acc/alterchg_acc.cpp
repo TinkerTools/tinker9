@@ -13,12 +13,10 @@ void bndchg_acc1()
 {
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,ibnd,bflx,bl,\
-               atomic,couple_n12,couple_i12,pdelta)
+               pdelta)
    for (int i = 0; i < nbond; ++i) {
       int ia = ibnd[i][0];
       int ib = ibnd[i][1];
-      int atoma = atomic[ia];
-      int atomb = atomic[ib];
 
 
       real pb = bflx[i];
