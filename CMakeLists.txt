@@ -91,7 +91,9 @@ cmake_minimum_required (VERSION 3.11)
 #[[
 !!/ **-DCMAKE_BUILD_TYPE (opt) = release**
 !!/
-!!/ Build type is case insensitive and can either be *release* or *debug*.
+!!/ Standard *CMAKE_BUILD_TYPE* option. Build type is case insensitive and
+!!/ can *Debug*, *Release*, *RelWithDegInfo* (release with debug info),
+!!/ and *MinSizeRel* (minimum size release).
 !!/
 ]]
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -101,10 +103,14 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
       set (optValue Release)
    endif ()
    set (CMAKE_BUILD_TYPE ${optValue} CACHE STRING
-      "Choose the type of build. Options: Debug / Release"
+      "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel ..."
       FORCE
    )
+   set_property (CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+      Debug Release RelWithDebInfo MinSizeRel
+   )
 endif ()
+string (TOUPPER ${CMAKE_BUILD_TYPE} __T9_BUILD_TYPE)
 
 
 #[[
@@ -141,7 +147,7 @@ set (FFTW_DIR ${fftwDirValue} CACHE PATH "FFTW3 Directory")
 
 
 #[[
-!!/ **-DHOST (host) = 1**
+!!/ **-DHOST (host) = ON**
 !!/
 !!/ Flag to compile to GPU (with value 0 or OFF) or CPU (with value 1 or ON)
 !!/ version.
@@ -152,16 +158,16 @@ if (DEFINED ENV{host})
 else ()
    set (hostValue 1)
 endif ()
-set (HOST ${hostValue} CACHE BOOL "0 or OFF GPU) / 1 or ON (CPU)")
+set (HOST ${hostValue} CACHE BOOL "Build Executables for GPU Platform (OFF) or CPU Platform (ON)")
 
 
 #[[
-!!/ **-DPREC (prec) = d**
+!!/ **-DPREC (prec) = double**
 !!/
-!!/ Precision of the floating-point numbers. With flag *d*, all of the
-!!/ floating-point numbers are treated as real*8/double values,
-!!/ or real*4/single values if with flag *s*. Mixed precision flag *m* will
-!!/ use real*4 or real*8 numbers in different places. Note that this flag will
+!!/ Precision of the floating-point numbers. With flag *double*/*d*, all of the
+!!/ floating-point numbers are treated as real\*8/double values,
+!!/ or real\*4/single values if with flag *single*/*s*. Mixed precision flag *mixed*/*m* will
+!!/ use real\*4 or real\*8 numbers in different places. Note that this flag will
 !!/ not change the precision of the variables hard-coded as *float* or *double*
 !!/ types.
 !!/
@@ -169,18 +175,27 @@ set (HOST ${hostValue} CACHE BOOL "0 or OFF GPU) / 1 or ON (CPU)")
 if (DEFINED ENV{prec})
    set (precValue $ENV{prec})
 else ()
-   set (precValue d)
+   set (precValue double)
 endif ()
-set (PREC ${precValue} CACHE STRING "d (DOUBLE) / s (SINGLE) / m (MIXED)")
+set (PREC ${precValue} CACHE STRING "Floating-Point Precision: double/d, single/s, mixed/m")
+set_property (CACHE PREC PROPERTY STRINGS double single mixed d s m)
+string (TOLOWER ${PREC} PREC)
+if (PREC STREQUAL "double")
+   set (PREC "d")
+elseif (PREC STREQUAL "single")
+   set (PREC "s")
+elseif (PREC STREQUAL "mixed")
+   set (PREC "m")
+endif ()
 
 
 #[[
-!!/ **-DDETERMINISTIC_FORCE (deterministic_force) = [NO DEFAULT VALUE]**
+!!/ **-DDETERMINISTIC_FORCE (deterministic_force) = AUTO**
 !!/
-!!/ Flag to use deterministic force. There is no default value for this flag.
+!!/ Flag to use deterministic force.
 !!/ This feature will be implicitly enabled by mixed and single precisions, but
-!!/ can be explicitly disabled by setting the flag to 0,
-!!/ and can be explicitly enabled by value 1.
+!!/ can be explicitly disabled by setting the flag to *OFF* (or 0),
+!!/ and can be explicitly enabled by value *ON* (or 1).
 !!/
 !!/ In general, evaluating energy, forces etc. twice, we don't expect to get
 !!/ two identical answers, but we may not care as much because the difference
@@ -196,11 +211,15 @@ set (PREC ${precValue} CACHE STRING "d (DOUBLE) / s (SINGLE) / m (MIXED)")
 if (DEFINED ENV{deterministic_force})
    set (detForceValue $ENV{deterministic_force})
 else ()
-   set (detForceValue)
+   set (detForceValue AUTO)
 endif ()
 set (DETERMINISTIC_FORCE ${detForceValue} CACHE STRING
-   "Deterministic Force: [NO DEFAULT] / 0 (OFF) / 1 (ON)"
+   "Deterministic Force: AUTO, OFF, ON"
 )
+set_property (CACHE DETERMINISTIC_FORCE PROPERTY STRINGS AUTO "OFF" "ON")
+if (DETERMINISTIC_FORCE STREQUAL Auto OR DETERMINISTIC_FORCE STREQUAL auto)
+   set (DETERMINISTIC_FORCE AUTO)
+endif ()
 
 
 #[[
@@ -220,7 +239,9 @@ if (DEFINED ENV{compute_capability})
 else ()
    set (compCapValue 60,70)
 endif ()
-set (COMPUTE_CAPABILITY ${compCapValue} CACHE STRING "CUDA Compute Capability")
+set (COMPUTE_CAPABILITY ${compCapValue} CACHE STRING
+   "CUDA Compute Capability Multiplied by 10 (Comma-Separated)"
+)
 ## Compute Capability 60,70 -> 60;70
 string (REPLACE "," ";" T9_CUCCLIST ${COMPUTE_CAPABILITY}) # 60;70
 
@@ -247,8 +268,8 @@ if (DEFINED ENV{cuda_dir})
          "${CMAKE_BINARY_DIR}"
    )
 elseif (DEFINED ENV{CUDACXX})
-   find_program (cudaCCValue $ENV{CUDACXX})
-   get_filename_component (cudaCCValue "${cudaCCValue}" DIRECTORY)
+   find_program (T9_CUDA_COMPILER $ENV{CUDACXX})
+   get_filename_component (cudaDirValue "${T9_CUDA_COMPILER}" DIRECTORY)
 else ()
    set (cudaDirValue /usr/local/cuda)
 endif ()
@@ -371,7 +392,7 @@ endif ()
 
 
 ## macro: deterministic force
-if (DETERMINISTIC_FORCE STREQUAL "")
+if (DETERMINISTIC_FORCE STREQUAL "AUTO")
    # No default behavior for empty value.
 elseif (NOT DETERMINISTIC_FORCE)
    list (APPEND T9_DEFS TINKER_DETERMINISTIC_FORCE=0)

@@ -28,7 +28,7 @@ foreach (var ${T9_CUCCLIST})
 endforeach ()
 ## Debug add flag: -lineinfo
 ## Release add flag: --use_fast_math
-target_compile_options (tinker9_cu PRIVATE
-   $<$<CONFIG:DEBUG>:-lineinfo>
-   $<$<CONFIG:RELEASE>:--use_fast_math>
-)
+string (APPEND CMAKE_CUDA_FLAGS_DEBUG          " -lineinfo")
+string (APPEND CMAKE_CUDA_FLAGS_RELWITHDEBINFO " -lineinfo --use_fast_math")
+string (APPEND CMAKE_CUDA_FLAGS_RELEASE        " --use_fast_math")
+string (APPEND CMAKE_CUDA_FLAGS_MINSIZEREL     " --use_fast_math")

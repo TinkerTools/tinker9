@@ -62,7 +62,7 @@ std::string format(const F& f, Ts&&... args)
    const char* fmt = fmt_fwd(f);
    size_t l = std::snprintf(nullptr, 0, fmt, fmt_fwd(args)...);
    size_t sz = l + 1;
-   const int len = 64;
+   const int len = 128;
    if (sz <= len) {
       char buf[len];
       std::snprintf(buf, sz, fmt, fmt_fwd(args)...);

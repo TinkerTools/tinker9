@@ -8,15 +8,19 @@ target_include_directories (tinker9_main SYSTEM PRIVATE "${T9_SYS_INCPATH}")
 target_include_directories (tinker9_main PRIVATE "${T9_INCPATH}")
 
 
-separate_arguments (__T9_DEBUG_FLAGS NATIVE_COMMAND ${CMAKE_CXX_FLAGS_DEBUG})
-separate_arguments (__T9_RELEASE_FLAGS NATIVE_COMMAND ${CMAKE_CXX_FLAGS_RELEASE})
-
-
 ## Compute Capability 60,70 -> ,cc60,cc70
 set (__T9_CC4) # ""
 foreach (var ${T9_CUCCLIST})
    string (APPEND __T9_CC4 ",cc${var}")
 endforeach () # ,cc60,cc70
+
+
+separate_arguments (__T9_DEVICE_LINK_FLAGS_DEBUG           NATIVE_COMMAND "${CMAKE_CXX_FLAGS_DEBUG}          -ta=tesla:lineinfo${__T9_ACC_CCLST4}")
+separate_arguments (__T9_DEVICE_LINK_FLAGS_RELWITHDEBINFO  NATIVE_COMMAND "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -ta=tesla:lineinfo,fastmath${__T9_ACC_CCLST4}")
+separate_arguments (__T9_DEVICE_LINK_FLAGS_RELEASE         NATIVE_COMMAND "${CMAKE_CXX_FLAGS_RELEASE}        -ta=tesla:fastmath${__T9_ACC_CCLST4}")
+separate_arguments (__T9_DEVICE_LINK_FLAGS_MINSIZEREL      NATIVE_COMMAND "${CMAKE_CXX_FLAGS_MINSIZEREL}     -ta=tesla:fastmath${__T9_ACC_CCLST4}")
+## Replace -Os flag by -O2 flag for MinSizeRel
+list (TRANSFORM __T9_DEVICE_LINK_FLAGS_MINSIZEREL REPLACE "-Os" "-O2")
 
 
 ########################################################################
@@ -37,8 +41,6 @@ add_custom_target (tinker9 ALL
    COMMAND
       "${T9_ACC_COMPILER}"
       CUDA_HOME=${CUDA_DIR}
-      "$<$<CONFIG:DEBUG>:${__T9_DEBUG_FLAGS}>"
-      "$<$<CONFIG:RELEASE>:${__T9_RELEASE_FLAGS}>"
       -o tinker9
       $<TARGET_OBJECTS:tinker9_main>
       "-Wl,--start-group"
@@ -53,8 +55,7 @@ add_custom_target (tinker9 ALL
       "-L$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES},;-L>"
       "-l$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES},;-l>"
       -acc -Mcudalib=cufft,cublas
-      $<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${__T9_CC4}>
-      $<$<CONFIG:RELEASE>:-ta=tesla:fastmath${__T9_CC4}>
+      ${__T9_DEVICE_LINK_FLAGS_${__T9_BUILD_TYPE}}
    COMMAND_EXPAND_LISTS
 )
 
@@ -77,8 +78,6 @@ add_custom_target (all.tests ALL
    COMMAND
       "${T9_ACC_COMPILER}"
       CUDA_HOME=${CUDA_DIR}
-      "$<$<CONFIG:DEBUG>:${__T9_DEBUG_FLAGS}>"
-      "$<$<CONFIG:RELEASE>:${__T9_RELEASE_FLAGS}>"
       -o all.tests
       $<TARGET_OBJECTS:__t9_all_tests_o>
       "-Wl,--start-group"
@@ -93,7 +92,6 @@ add_custom_target (all.tests ALL
       "-L$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES},;-L>"
       "-l$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES},;-l>"
       -acc -Mcudalib=cufft,cublas
-      $<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${__T9_CC4}>
-      $<$<CONFIG:RELEASE>:-ta=tesla:fastmath${__T9_CC4}>
+      ${__T9_DEVICE_LINK_FLAGS_${__T9_BUILD_TYPE}}
    COMMAND_EXPAND_LISTS
 )

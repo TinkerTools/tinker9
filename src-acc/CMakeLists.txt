@@ -59,10 +59,10 @@ target_compile_options (tinker9_acc PRIVATE
 )
 ## Debug add flag: -ta=tesla:lineinfo,cc60,cc70
 ## Release add flag: -ta=tesla:fastmath,cc60,cc70
-target_compile_options (tinker9_acc PRIVATE
-   $<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${__T9_ACC_CCLST4}>
-   $<$<CONFIG:RELEASE>:-ta=tesla:fastmath${__T9_ACC_CCLST4}>
-)
+string (APPEND CMAKE_CXX_FLAGS_DEBUG          " -ta=tesla:lineinfo${__T9_ACC_CCLST4}")
+string (APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO " -ta=tesla:lineinfo,fastmath${__T9_ACC_CCLST4}")
+string (APPEND CMAKE_CXX_FLAGS_RELEASE        " -ta=tesla:fastmath${__T9_ACC_CCLST4}")
+string (APPEND CMAKE_CXX_FLAGS_MINSIZEREL     " -ta=tesla:fastmath${__T9_ACC_CCLST4}")
 
 
 endif ()
