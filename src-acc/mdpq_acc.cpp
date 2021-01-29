@@ -12,7 +12,7 @@ void copy_pos_to_xyz_acc()
       return;
    else
       #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,xpos,ypos,zpos)
+                  deviceptr(x,y,z,xpos,ypos,zpos)
       for (int i = 0; i < n; ++i) {
          x[i] = xpos[i];
          y[i] = ypos[i];
