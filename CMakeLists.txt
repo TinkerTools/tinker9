@@ -92,7 +92,7 @@ cmake_minimum_required (VERSION 3.11)
 !!/ **-DCMAKE_BUILD_TYPE (opt) = release**
 !!/
 !!/ Standard *CMAKE_BUILD_TYPE* option. Build type is case insensitive and
-!!/ can *Debug*, *Release*, *RelWithDegInfo* (release with debug info),
+!!/ can *Debug*, *Release*, *RelWithDebInfo* (release with debug info),
 !!/ and *MinSizeRel* (minimum size release).
 !!/
 ]]
@@ -101,6 +101,16 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
       set (optValue $ENV{opt})
    else ()
       set (optValue Release)
+   endif ()
+   string (TOLOWER ${optValue} optValue)
+   if (optValue STREQUAL debug)
+      set (optValue Debug)
+   elseif (optValue STREQUAL release)
+      set (optValue Release)
+   elseif (optValue STREQUAL relwithdebinfo)
+      set (optValue RelWithDebInfo)
+   elseif (optValue STREQUAL minsizerel)
+      set (optValue MinSizeRel)
    endif ()
    set (CMAKE_BUILD_TYPE ${optValue} CACHE STRING
       "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel ..."
@@ -177,9 +187,9 @@ if (DEFINED ENV{prec})
 else ()
    set (precValue double)
 endif ()
+string (TOLOWER ${precValue} precValue)
 set (PREC ${precValue} CACHE STRING "Floating-Point Precision: double/d, single/s, mixed/m")
 set_property (CACHE PREC PROPERTY STRINGS double single mixed d s m)
-string (TOLOWER ${PREC} PREC)
 if (PREC STREQUAL "double")
    set (PREC "d")
 elseif (PREC STREQUAL "single")
@@ -213,13 +223,11 @@ if (DEFINED ENV{deterministic_force})
 else ()
    set (detForceValue AUTO)
 endif ()
+string (TOUPPER ${detForceValue} detForceValue)
 set (DETERMINISTIC_FORCE ${detForceValue} CACHE STRING
    "Deterministic Force: AUTO, OFF, ON"
 )
 set_property (CACHE DETERMINISTIC_FORCE PROPERTY STRINGS AUTO "OFF" "ON")
-if (DETERMINISTIC_FORCE STREQUAL Auto OR DETERMINISTIC_FORCE STREQUAL auto)
-   set (DETERMINISTIC_FORCE AUTO)
-endif ()
 
 
 #[[

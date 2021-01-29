@@ -81,7 +81,7 @@ CMakeLists.txt Location  /home/tinker9
 **-DCMAKE_BUILD_TYPE (opt) = release**
 
 Standard *CMAKE_BUILD_TYPE* option. Build type is case insensitive and
-can *Debug*, *Release*, *RelWithDegInfo* (release with debug info),
+can *Debug*, *Release*, *RelWithDebInfo* (release with debug info),
 and *MinSizeRel* (minimum size release).
 
 **-DCMAKE_INSTALL_PREFIX (no env var) = [NO DEFAULT VALUE]**
