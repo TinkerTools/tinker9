@@ -89,7 +89,7 @@ cmake_minimum_required (VERSION 3.11)
 
 
 #[[
-!!/ **-DCMAKE_BUILD_TYPE (opt) = release**
+!!/ **-DCMAKE_BUILD_TYPE (opt) = Release**
 !!/
 !!/ Standard *CMAKE_BUILD_TYPE* option. Build type is case insensitive and
 !!/ can *Debug*, *Release*, *RelWithDebInfo* (release with debug info),
@@ -124,7 +124,7 @@ string (TOUPPER ${CMAKE_BUILD_TYPE} __T9_BUILD_TYPE)
 
 
 #[[
-!!/ **-DCMAKE_INSTALL_PREFIX (no env var) = [NO DEFAULT VALUE]**
+!!/ **-DCMAKE_INSTALL_PREFIX (install) = [NO DEFAULT VALUE]**
 !!/
 !!/ Install the executables under *${CMAKE_INSTALL_PREFIX}*. If this option is
 !!/ not set, *make install* is configured not to install anything, which is
@@ -133,6 +133,17 @@ string (TOUPPER ${CMAKE_BUILD_TYPE} __T9_BUILD_TYPE)
 ]]
 if (DEFINED CMAKE_INSTALL_PREFIX)
    set (__T9_INSTALL_DEFINED 1)
+elseif (DEFINED ENV{install})
+   set (installValue "$ENV{install}")
+   set (CMAKE_INSTALL_PREFIX ${installValue} CACHE STRING
+      "Install path prefix, prepended onto install directories."
+      FORCE
+   )
+   if (installValue STREQUAL "")
+      set (__T9_INSTALL_DEFINED 0)
+   elseif ()
+      set (__T9_INSTALL_DEFINED 1)
+   endif ()
 else ()
    set (__T9_INSTALL_DEFINED 0)
 endif ()
@@ -601,7 +612,7 @@ if (__T9_INSTALL_DEFINED)
    elseif (PREC STREQUAL "d")
       set (__T9_INSTALL_DIR "${__T9_INSTALL_DIR}-d")
    endif ()
-   install (PROGRAMS tinker9
+   install (PROGRAMS "${CMAKE_BINARY_DIR}/tinker9"
       DESTINATION
          "${__T9_INSTALL_DIR}"
    )

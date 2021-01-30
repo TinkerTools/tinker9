@@ -78,13 +78,13 @@ CMakeLists.txt Location  /home/tinker9
    -DFFTW_DIR=/usr/local
 
 
-**-DCMAKE_BUILD_TYPE (opt) = release**
+**-DCMAKE_BUILD_TYPE (opt) = Release**
 
 Standard *CMAKE_BUILD_TYPE* option. Build type is case insensitive and
 can *Debug*, *Release*, *RelWithDebInfo* (release with debug info),
 and *MinSizeRel* (minimum size release).
 
-**-DCMAKE_INSTALL_PREFIX (no env var) = [NO DEFAULT VALUE]**
+**-DCMAKE_INSTALL_PREFIX (install) = [NO DEFAULT VALUE]**
 
 Install the executables under *${CMAKE_INSTALL_PREFIX}*. If this option is
 not set, *make install* is configured not to install anything, which is
