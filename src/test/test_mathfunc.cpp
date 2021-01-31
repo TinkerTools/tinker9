@@ -30,7 +30,7 @@ TEST_CASE("MathFuncPow2", "[util][math]")
       REQUIRE(f(1) == 0x00000002);
       REQUIRE(f(2) == 0x00000004);
       REQUIRE(f(30) == 0x40000000);
-      REQUIRE(f(31) == 0x80000000);
+      REQUIRE((unsigned int)f(31) == 0x80000000);
 
       REQUIRE(g(0) == 0x00000001);
       REQUIRE(g(1) == 0x00000002);
@@ -39,7 +39,7 @@ TEST_CASE("MathFuncPow2", "[util][math]")
       REQUIRE(g(31) == 0x80000000);
 
       REQUIRE(g(32) == 0x100000000ll);
-      REQUIRE(g(63) == 0x8000000000000000ll);
+      REQUIRE((unsigned long long)g(63) == 0x8000000000000000ull);
    }
 
 

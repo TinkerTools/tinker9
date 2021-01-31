@@ -61,7 +61,7 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
       real uiz = uind[i][2];
       real pdi = pdamp[i];
       real pti = thole[i];
-      MAYBE_UNUSED real uixp, uiyp, uizp;
+      real uixp = 0, uiyp = 0, uizp = 0;
       if CONSTEXPR (do_g) {
          uixp = uinp[i][0];
          uiyp = uinp[i][1];
@@ -97,7 +97,7 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
             real ukx = uind[k][0];
             real uky = uind[k][1];
             real ukz = uind[k][2];
-            MAYBE_UNUSED real ukxp, ukyp, ukzp;
+            real ukxp = 0, ukyp = 0, ukzp = 0;
             if CONSTEXPR (do_g) {
                ukxp = uinp[k][0];
                ukyp = uinp[k][1];
@@ -209,7 +209,7 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
       real uiz = uind[i][2];
       real pdi = pdamp[i];
       real pti = thole[i];
-      MAYBE_UNUSED real uixp, uiyp, uizp;
+      real uixp = 0, uiyp = 0, uizp = 0;
       if CONSTEXPR (do_g) {
          uixp = uinp[i][0];
          uiyp = uinp[i][1];
@@ -235,7 +235,7 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
          real ukx = uind[k][0];
          real uky = uind[k][1];
          real ukz = uind[k][2];
-         MAYBE_UNUSED real ukxp, ukyp, ukzp;
+         real ukxp = 0, ukyp = 0, ukzp = 0;
          if CONSTEXPR (do_g) {
             ukxp = uinp[k][0];
             ukyp = uinp[k][1];

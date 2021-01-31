@@ -311,7 +311,6 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    host_zero(detail::ev_hobj.v_vdw);
    host_zero(detail::ev_hobj.v_ele);
    if (do_v) {
-      using v_t = virial_buffer_traits::type;
       if (!rc_a) {
          size_t bufsize = buffer_size();
          if (ecore_val) {
@@ -354,7 +353,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       if (!rc_a) {
          if (ecore_val) {
             virial_prec vval[virial_buffer_traits::N], v2val[9];
-            for (int iv = 0; iv < virial_buffer_traits::N; ++iv)
+            for (int iv = 0; iv < (int)virial_buffer_traits::N; ++iv)
                vval[iv] = to_flt_host<virial_prec>(detail::ev_hobj.v_val[iv]);
             virial_reshape(v2val, vval);
             for (int iv = 0; iv < 9; ++iv)
@@ -362,7 +361,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          }
          if (ecore_vdw && vir_buf_vdw) {
             virial_prec vvdw[virial_buffer_traits::N], v2vdw[9];
-            for (int iv = 0; iv < virial_buffer_traits::N; ++iv)
+            for (int iv = 0; iv < (int)virial_buffer_traits::N; ++iv)
                vvdw[iv] = to_flt_host<virial_prec>(detail::ev_hobj.v_vdw[iv]);
             virial_reshape(v2vdw, vvdw);
             for (int iv = 0; iv < 9; ++iv)
@@ -370,7 +369,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          }
          if (ecore_ele && vir_buf_elec) {
             virial_prec vele[virial_buffer_traits::N], v2ele[9];
-            for (int iv = 0; iv < virial_buffer_traits::N; ++iv)
+            for (int iv = 0; iv < (int)virial_buffer_traits::N; ++iv)
                vele[iv] = to_flt_host<virial_prec>(detail::ev_hobj.v_ele[iv]);
             virial_reshape(v2ele, vele);
             for (int iv = 0; iv < 9; ++iv)

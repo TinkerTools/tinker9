@@ -50,15 +50,14 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
    real rr5 = 3 * rr3 * rr2;
    real rr7 = 5 * rr5 * rr2;
    real rr9 = 7 * rr7 * rr2;
-   real rr11;
+   real rr11 = 0;
+   if CONSTEXPR (do_g) {
+      rr11 = 9 * rr9 * rr2;
+   }
 
    real3 dr = make_real3(xr, yr, zr);
    real3 di = make_real3(dix, diy, diz);
    real3 dk = make_real3(dkx, dky, dkz);
-
-   if CONSTEXPR (do_g) {
-      rr11 = 9 * rr9 * rr2;
-   }
 
    // get damping coefficients for the Pauli repulsion energy
    real dmpik[6];
