@@ -169,7 +169,6 @@ void erepel_acc1()
       zero(pgrad);
       real r2 = image2(xr, yr, zr);
       if (r2 <= off2 and rscale != 0) {
-         real r = REAL_SQRT(r2);
          real e;
          pair_repel<do_g>( //
             r2, rscale, cut, off, xr, yr, zr, sizi, dmpi, vali, ci, dix, diy,

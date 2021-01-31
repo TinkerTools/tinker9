@@ -45,9 +45,6 @@ void sparse_precond_apply2_acc(const real (*rsd)[3], real (*zrsd)[3])
    const int maxnlst = ulist_unit->maxnlst;
    const auto* ulst = ulist_unit.deviceptr();
 
-   // MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
-   // #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
-   //             deviceptr(APPLY_DPTRS,ulst)
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
@@ -109,8 +106,6 @@ void sparse_precond_apply2_acc(const real (*rsd)[3], real (*zrsd)[3])
       atomic_add(gzi, &zrsd[i][2]);
    }
 
-   // #pragma acc parallel loop async\
-   //             deviceptr(APPLY_DPTRS,wexclude,wexclude_scale)
    #pragma acc parallel loop async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(APPLY_DPTRS,wexclude,wexclude_scale)

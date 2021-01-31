@@ -209,7 +209,7 @@ public:
    /// Gets device pointer to the object.
    const T* deviceptr() const
    {
-      assert(0 <= unit && unit < deviceptrs().size() &&
+      assert(0 <= unit && (size_t)unit < deviceptrs().size() &&
              "const T* GenericUnit::deviceptr() const");
       return deviceptrs()[unit].get();
    }

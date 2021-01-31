@@ -349,6 +349,11 @@ enable_language (CXX)
 enable_language (Fortran)
 
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+   string (APPEND CMAKE_CXX_FLAGS_DEBUG " -Wall -Wno-unknown-pragmas")
+endif ()
+
+
 ## macro: an empty list
 set (T9_DEFS)
 

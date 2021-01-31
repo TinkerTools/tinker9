@@ -37,6 +37,11 @@ if (T9_ACC_ONHOST)
 ## host
 
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+   string (APPEND CMAKE_CXX_FLAGS_DEBUG " -Wall -Wno-unknown-pragmas")
+endif ()
+
+
 set (__T9_IGNORE_ME "${T9_ACC_CCLIST}${T9_ACC_CUDADIR}" )
 
 
