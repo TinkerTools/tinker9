@@ -32,3 +32,7 @@ string (APPEND CMAKE_CUDA_FLAGS_DEBUG          " -lineinfo")
 string (APPEND CMAKE_CUDA_FLAGS_RELWITHDEBINFO " -lineinfo --use_fast_math")
 string (APPEND CMAKE_CUDA_FLAGS_RELEASE        " --use_fast_math")
 string (APPEND CMAKE_CUDA_FLAGS_MINSIZEREL     " --use_fast_math")
+
+
+string (APPEND CMAKE_CUDA_FLAGS_DEBUG " --compiler-options -Wall")
+string (APPEND CMAKE_CUDA_FLAGS_DEBUG " --compiler-options -Wno-unknown-pragmas")

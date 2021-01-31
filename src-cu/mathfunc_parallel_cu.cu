@@ -77,7 +77,7 @@ void reduce_sum2_cu(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem,
    // always wait
    check_rt(cudaStreamSynchronize(st));
    #pragma unroll
-   for (int j = 0; j < HN; ++j)
+   for (size_t j = 0; j < HN; ++j)
       h_ans[j] = hptr[j];
 }
 template void reduce_sum2_cu(float (&)[6], float (*)[8], size_t, int);

@@ -19,6 +19,8 @@ separate_arguments (__T9_DEVICE_LINK_FLAGS_DEBUG           NATIVE_COMMAND "${CMA
 separate_arguments (__T9_DEVICE_LINK_FLAGS_RELWITHDEBINFO  NATIVE_COMMAND "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -ta=tesla:lineinfo,fastmath${__T9_ACC_CCLST4}")
 separate_arguments (__T9_DEVICE_LINK_FLAGS_RELEASE         NATIVE_COMMAND "${CMAKE_CXX_FLAGS_RELEASE}        -ta=tesla:fastmath${__T9_ACC_CCLST4}")
 separate_arguments (__T9_DEVICE_LINK_FLAGS_MINSIZEREL      NATIVE_COMMAND "${CMAKE_CXX_FLAGS_MINSIZEREL}     -ta=tesla:fastmath${__T9_ACC_CCLST4}")
+## Remove "-Wno-unknown-pragmas"
+list (REMOVE_ITEM __T9_DEVICE_LINK_FLAGS_DEBUG "-Wno-unknown-pragmas")
 ## Replace -Os flag by -O2 flag for MinSizeRel
 list (TRANSFORM __T9_DEVICE_LINK_FLAGS_MINSIZEREL REPLACE "-Os" "-O2")
 

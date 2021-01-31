@@ -624,7 +624,7 @@ void spatial_data_init_cu(SpatialUnit u)
                                     0, thrust::plus<int>());
    size_t iak_size = near * xak_sum;            // F.3
    size_t lst_size = iak_size * Spatial::BLOCK; // F.4
-   if (iak_size > iak_cap) {
+   if (iak_size > (size_t)iak_cap) {
       iak_cap = iak_size;
       darray::deallocate(u->lst, u->iak);
       darray::allocate(lst_size, &u->lst);
@@ -1512,7 +1512,7 @@ void spatial_data_init_cu(Spatial2Unit u)
               si3.ns, si3.js, si4.ns, si4.js);
    darray::copyout(g::q0, 1, &u->nakpl, nakpl_ptr0);
    wait_for(g::q0);
-   if (WARP_SIZE + u->nakpl > u->cap_nakpl) {
+   if (WARP_SIZE + u->nakpl > (unsigned)u->cap_nakpl) {
       u->cap_nakpl = WARP_SIZE + u->nakpl;
       darray::deallocate(u->iakpl);
       darray::allocate(u->cap_nakpl, &u->iakpl);
