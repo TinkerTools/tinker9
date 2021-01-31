@@ -2,6 +2,7 @@
 
 .gitattributes  text
 .gitignore      text
+.gitmodules     text
 _clang-format   text
 Doxyfile        text
 LICENSE         text
