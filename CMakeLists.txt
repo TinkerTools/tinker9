@@ -92,7 +92,7 @@ cmake_minimum_required (VERSION 3.11)
 !!/ **-DCMAKE_BUILD_TYPE (opt) = Release**
 !!/
 !!/ Standard *CMAKE_BUILD_TYPE* option. Build type is case insensitive and
-!!/ can *Debug*, *Release*, *RelWithDebInfo* (release with debug info),
+!!/ can be *Debug*, *Release*, *RelWithDebInfo* (release with debug info),
 !!/ and *MinSizeRel* (minimum size release).
 !!/
 ]]
@@ -168,7 +168,7 @@ set (FFTW_DIR ${fftwDirValue} CACHE PATH "FFTW3 Directory")
 
 
 #[[
-!!/ **-DHOST (host) = ON**
+!!/ **-DHOST (host) = OFF**
 !!/
 !!/ Flag to compile to GPU (with value 0 or OFF) or CPU (with value 1 or ON)
 !!/ version.
@@ -177,13 +177,13 @@ set (FFTW_DIR ${fftwDirValue} CACHE PATH "FFTW3 Directory")
 if (DEFINED ENV{host})
    set (hostValue $ENV{host})
 else ()
-   set (hostValue 1)
+   set (hostValue OFF)
 endif ()
 set (HOST ${hostValue} CACHE BOOL "Build Executables for GPU Platform (OFF) or CPU Platform (ON)")
 
 
 #[[
-!!/ **-DPREC (prec) = double**
+!!/ **-DPREC (prec) = mixed**
 !!/
 !!/ Precision of the floating-point numbers. With flag *double*/*d*, all of the
 !!/ floating-point numbers are treated as real\*8/double values,
@@ -196,7 +196,7 @@ set (HOST ${hostValue} CACHE BOOL "Build Executables for GPU Platform (OFF) or C
 if (DEFINED ENV{prec})
    set (precValue $ENV{prec})
 else ()
-   set (precValue double)
+   set (precValue mixed)
 endif ()
 string (TOLOWER ${precValue} precValue)
 set (PREC ${precValue} CACHE STRING "Floating-Point Precision: double/d, single/s, mixed/m")

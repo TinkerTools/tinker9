@@ -81,7 +81,7 @@ CMakeLists.txt Location  /home/tinker9
 **-DCMAKE_BUILD_TYPE (opt) = Release**
 
 Standard *CMAKE_BUILD_TYPE* option. Build type is case insensitive and
-can *Debug*, *Release*, *RelWithDebInfo* (release with debug info),
+can be *Debug*, *Release*, *RelWithDebInfo* (release with debug info),
 and *MinSizeRel* (minimum size release).
 
 **-DCMAKE_INSTALL_PREFIX (install) = [NO DEFAULT VALUE]**
@@ -95,12 +95,12 @@ different from the default cmake behavior to install the program under */usr/loc
 Top-level FFTW3 installation, under which
 *include/fftw3.h* and *lib/libfftw3* static libraries are expected to be found.
 
-**-DHOST (host) = ON**
+**-DHOST (host) = OFF**
 
 Flag to compile to GPU (with value 0 or OFF) or CPU (with value 1 or ON)
 version.
 
-**-DPREC (prec) = double**
+**-DPREC (prec) = mixed**
 
 Precision of the floating-point numbers. With flag *double*/*d*, all of the
 floating-point numbers are treated as real\*8/double values,
