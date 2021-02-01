@@ -52,30 +52,25 @@ Here are two equivalent examples to have Tinker9 configured as follows
 =======================  ===================
 Item                     Value
 =======================  ===================
-ACC                      pgc++
 opt                      release
 host                     0
 prec                     m
 cuda_dir                 /usr/local/cuda
 compute_capability       75
-fftw_dir                 /usr/local
 CMakeLists.txt Location  /home/tinker9
 =======================  ===================
 
 .. code-block:: bash
 
    # use environmental variables
-   ACC=pgc++ \
    opt=release host=0 prec=m \
    cuda_dir=/usr/local/cuda compute_capability=75 \
-   fftw_dir=/usr/local \
    cmake /home/tinker9
 
    # use cmake -DOPTIONS
-   ACC=pgc++ cmake -S /home/tinker9 \
+   cmake /home/tinker9 \
    -DCMAKE_BUILD_TYPE=Release -DHOST=0 -DPREC=m \
-   -DCUDA_DIR=/usr/local/cuda -DCOMPUTE_CAPABILITY=75 \
-   -DFFTW_DIR=/usr/local
+   -DCUDA_DIR=/usr/local/cuda -DCOMPUTE_CAPABILITY=75
 
 
 **-DCMAKE_BUILD_TYPE (opt) = Release**
@@ -89,16 +84,6 @@ and *MinSizeRel* (minimum size release).
 Install the executables under *${CMAKE_INSTALL_PREFIX}*. If this option is
 not set, *make install* is configured not to install anything, which is
 different from the default cmake behavior to install the program under */usr/local*.
-
-**-DFFTW_DIR (fftw_dir) = ${CMAKE_BINARY_DIR}/fftw**
-
-Top-level FFTW3 installation, under which
-*include/fftw3.h* and *lib/libfftw3* static libraries are expected to be found.
-
-**-DHOST (host) = OFF**
-
-Flag to compile to GPU (with value 0 or OFF) or CPU (with value 1 or ON)
-version.
 
 **-DPREC (prec) = mixed**
 
@@ -126,7 +111,14 @@ you are willing to elongate the process of the inevitable divergence at the
 cost of slightly slower simulation speed, a more "deterministic" force
 (using fixed-point arithmetic) can help.
 
+**-DHOST (host) = OFF**
+
+Flag to compile to GPU (with value 0 or OFF) or CPU (with value 1 or ON)
+version.
+
 **-DCOMPUTE_CAPABILITY (compute_capability) = 60,70**
+
+GPU code only.
 
 CUDA compute capability (multiplied by 10) of GPU.
 Valid values (noninclusive) are 35, 50, 60, 70, 75 etc., and can be
@@ -137,6 +129,8 @@ The full list of compute capabilities can be found on the
 `NVIDIA website. <https://developer.nvidia.com/cuda-gpus>`_
 
 **-DCUDA_DIR (cuda_dir) = /usr/local/cuda**
+
+GPU code only.
 
 Top-level CUDA installation directory, under which directories *include*,
 *lib* or *lib64* can be found.
@@ -149,6 +143,13 @@ CUDA version configured in PGI 19.4 may be 9.2 and the external NVCC version
 is 10.1. One solution is to pass *CUDA_HOME=${cuda_dir}* to the PGI
 compiler, in which case, **cuda_dir** should be set to
 */usr/local/cuda-10.1*.
+
+**-DFFTW_DIR (fftw_dir) = ${CMAKE_BINARY_DIR}/fftw**
+
+CPU code only.
+
+Top-level FFTW3 installation, under which
+*include/fftw3.h* and *lib/libfftw3* static libraries are expected to be found.
 
 Make Tinker9
 ------------

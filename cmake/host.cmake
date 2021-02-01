@@ -8,9 +8,6 @@ target_compile_definitions (tinker9 PRIVATE "${T9_DEFS}")
 target_include_directories (tinker9 SYSTEM PRIVATE "${T9_SYS_INCPATH}")
 target_include_directories (tinker9 PRIVATE "${T9_INCPATH}")
 set (T9_EXTLIBS pthread t9_ltinker t9_lfftw t9_lfftw_threads)
-if (PREC STREQUAL "m" OR PREC STREQUAL "s")
-   list (APPEND T9_EXTLIBS t9_lfftwf t9_lfftwf_threads)
-endif ()
 target_link_libraries (tinker9
    "-Wl,--start-group"
    tinker9_EP_acc

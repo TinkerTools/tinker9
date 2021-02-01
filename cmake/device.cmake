@@ -38,8 +38,6 @@ add_custom_target (tinker9 ALL
       tinker9_cpp
       tinker9_f
       src-libtinker
-      t9_lfftw
-      t9_lfftw_threads
    COMMAND
       "${T9_ACC_COMPILER}"
       CUDA_HOME=${CUDA_DIR}
@@ -52,8 +50,6 @@ add_custom_target (tinker9 ALL
       $<TARGET_FILE:tinker9_f>
       "-Wl,--end-group"
       $<TARGET_FILE:t9_ltinker>
-      $<TARGET_FILE:t9_lfftw>
-      $<TARGET_FILE:t9_lfftw_threads>
       "-L$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES},;-L>"
       "-l$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES},;-l>"
       -acc -Mcudalib=cufft,cublas
@@ -75,8 +71,6 @@ add_custom_target (all.tests ALL
       tinker9_cpp
       tinker9_f
       src-libtinker
-      t9_lfftw
-      t9_lfftw_threads
    COMMAND
       "${T9_ACC_COMPILER}"
       CUDA_HOME=${CUDA_DIR}
@@ -89,8 +83,6 @@ add_custom_target (all.tests ALL
       $<TARGET_FILE:tinker9_f>
       "-Wl,--end-group"
       $<TARGET_FILE:t9_ltinker>
-      $<TARGET_FILE:t9_lfftw>
-      $<TARGET_FILE:t9_lfftw_threads>
       "-L$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES},;-L>"
       "-l$<JOIN:${CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES},;-l>"
       -acc -Mcudalib=cufft,cublas
