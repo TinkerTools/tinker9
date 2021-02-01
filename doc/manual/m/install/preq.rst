@@ -54,7 +54,7 @@ then added *export PGI_LOCALRC=/path/to/new_config* to my bash resource file.
 Canonical Tinker requires FFTW libraries because by default it is compiled with OpenMP.
 Otherwise, Tinker will use *FFTPACK*.
 In Tinker9, the underlying *libtinker.a* will be compiled without OpenMP,
-therefore they are no longer mandatory for GPU code.
+therefore FFTW libraries are no longer mandatory for GPU code.
 
 However, FFTW libraries are required by CPU code.
 Two prebuilt FFTW libraries, *libfftw3* and *libfftw3_threads* are needed by

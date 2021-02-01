@@ -3,8 +3,8 @@ Build the Canonical Tinker
 
 **Checkout the Required Version of Tinker**
 
-   **If the incorrect Tinker version was used, the executables would be
-   very likely to fail with segfault.**
+Using the incorrect Tinker version, the executables would be
+very likely to fail with segfault.
 
 If this source code was cloned by Git, you can
 checkout Tinker from the *tinker* Git submodule:
@@ -21,6 +21,7 @@ checkout Tinker from the *tinker* Git submodule:
 Alternatively, clone
 `Tinker from GitHub <https://github.com/tinkertools/tinker>`_,
 then checkout the required version **6a1c6104**.
+You should move this *tinker* directory under *tinker9*.
 
 **Make libtinker**
 
