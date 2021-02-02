@@ -368,6 +368,7 @@ ExternalProject_Add (src-libtinker
    PREFIX
       "${CMAKE_BINARY_DIR}/src-libtinker"
    CMAKE_ARGS
+      "-DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}"
       "-DCMAKE_BUILD_TYPE=RelWithDebInfo"
       "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/src-libtinker"
 )
