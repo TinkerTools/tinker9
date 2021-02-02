@@ -9,9 +9,9 @@ target_include_directories (tinker9_main PRIVATE "${T9_INCPATH}")
 
 
 ## Compute Capability 60,70 -> ,cc60,cc70
-set (__T9_CC4) # ""
+set (__T9_ACC_CCLST4) # ""
 foreach (var ${T9_CUCCLIST})
-   string (APPEND __T9_CC4 ",cc${var}")
+   string (APPEND __T9_ACC_CCLST4 ",cc${var}")
 endforeach () # ,cc60,cc70
 
 
