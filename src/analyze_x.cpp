@@ -30,20 +30,6 @@ void x_analyze(int, char**)
    if (exist) {
       read_string(opt, string);
    }
-   //   std::string prompt = R"(
-   //  The Tinker Energy Analysis Utility Can :
-
-   //  General System and Force Field Information [G]
-   //  Force Field Parameters for Interactions [P]
-   //  Total Potential Energy and its Components [E]
-   //  Energy Breakdown over Each of the Atoms [A]
-   //  List of the Large Individual Interactions [L]
-   //  Details for All Individual Interactions [D]
-   //  Electrostatic Moments and Principle Axes [M]
-   //  Internal Virial, dE/dV Values & Pressure [V]
-   //  Connectivity Lists for Each of the Atoms [C]
-
-   //  Enter the Desired Analysis Types [G,P,E,A,L,D,M,V,C] :  )";
    std::string prompt = R"(
  The Tinker Energy Analysis Utility Can :
 

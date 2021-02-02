@@ -11,11 +11,8 @@ checkout Tinker from the *tinker* Git submodule:
 
 .. code-block:: bash
 
-   # create build directory
-   mkdir -p tinker9/build
-
    # checkout Tinker
-   cd tinker9/tinker
+   cd tinker9
    git submodule update --init
 
 Alternatively, clone
