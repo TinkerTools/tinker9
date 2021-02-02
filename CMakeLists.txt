@@ -56,30 +56,25 @@ cmake_minimum_required (VERSION 3.11)
 !!/ =======================  ===================
 !!/ Item                     Value
 !!/ =======================  ===================
-!!/ ACC                      pgc++
 !!/ opt                      release
 !!/ host                     0
 !!/ prec                     m
 !!/ cuda_dir                 /usr/local/cuda
 !!/ compute_capability       75
-!!/ fftw_dir                 /usr/local
 !!/ CMakeLists.txt Location  /home/tinker9
 !!/ =======================  ===================
 !!/
 !!/ .. code-block:: bash
 !!/
 !!/    # use environmental variables
-!!/    ACC=pgc++ \
 !!/    opt=release host=0 prec=m \
 !!/    cuda_dir=/usr/local/cuda compute_capability=75 \
-!!/    fftw_dir=/usr/local \
 !!/    cmake /home/tinker9
 !!/
 !!/    # use cmake -DOPTIONS
-!!/    ACC=pgc++ cmake -S /home/tinker9 \
+!!/    cmake /home/tinker9 \
 !!/    -DCMAKE_BUILD_TYPE=Release -DHOST=0 -DPREC=m \
-!!/    -DCUDA_DIR=/usr/local/cuda -DCOMPUTE_CAPABILITY=75 \
-!!/    -DFFTW_DIR=/usr/local
+!!/    -DCUDA_DIR=/usr/local/cuda -DCOMPUTE_CAPABILITY=75
 !!/
 !!/
 ]]
@@ -92,7 +87,7 @@ cmake_minimum_required (VERSION 3.11)
 !!/ **-DCMAKE_BUILD_TYPE (opt) = Release**
 !!/
 !!/ Standard *CMAKE_BUILD_TYPE* option. Build type is case insensitive and
-!!/ can *Debug*, *Release*, *RelWithDebInfo* (release with debug info),
+!!/ can be *Debug*, *Release*, *RelWithDebInfo* (release with debug info),
 !!/ and *MinSizeRel* (minimum size release).
 !!/
 ]]
@@ -150,40 +145,7 @@ endif ()
 
 
 #[[
-!!/ **-DFFTW_DIR (fftw_dir) = ${CMAKE_BINARY_DIR}/fftw**
-!!/
-!!/ Top-level FFTW3 installation, under which
-!!/ *include/fftw3.h* and *lib/libfftw3* static libraries are expected to be found.
-!!/
-]]
-if (DEFINED ENV{fftw_dir})
-   get_filename_component (fftwDirValue "$ENV{fftw_dir}" ABSOLUTE
-      BASE_DIR
-         "${CMAKE_BINARY_DIR}"
-   )
-else ()
-   set (fftwDirValue "${CMAKE_BINARY_DIR}/fftw")
-endif ()
-set (FFTW_DIR ${fftwDirValue} CACHE PATH "FFTW3 Directory")
-
-
-#[[
-!!/ **-DHOST (host) = ON**
-!!/
-!!/ Flag to compile to GPU (with value 0 or OFF) or CPU (with value 1 or ON)
-!!/ version.
-!!/
-]]
-if (DEFINED ENV{host})
-   set (hostValue $ENV{host})
-else ()
-   set (hostValue 1)
-endif ()
-set (HOST ${hostValue} CACHE BOOL "Build Executables for GPU Platform (OFF) or CPU Platform (ON)")
-
-
-#[[
-!!/ **-DPREC (prec) = double**
+!!/ **-DPREC (prec) = mixed**
 !!/
 !!/ Precision of the floating-point numbers. With flag *double*/*d*, all of the
 !!/ floating-point numbers are treated as real\*8/double values,
@@ -196,7 +158,7 @@ set (HOST ${hostValue} CACHE BOOL "Build Executables for GPU Platform (OFF) or C
 if (DEFINED ENV{prec})
    set (precValue $ENV{prec})
 else ()
-   set (precValue double)
+   set (precValue mixed)
 endif ()
 string (TOLOWER ${precValue} precValue)
 set (PREC ${precValue} CACHE STRING "Floating-Point Precision: double/d, single/s, mixed/m")
@@ -242,7 +204,24 @@ set_property (CACHE DETERMINISTIC_FORCE PROPERTY STRINGS AUTO "OFF" "ON")
 
 
 #[[
+!!/ **-DHOST (host) = OFF**
+!!/
+!!/ Flag to compile to GPU (with value 0 or OFF) or CPU (with value 1 or ON)
+!!/ version.
+!!/
+]]
+if (DEFINED ENV{host})
+   set (hostValue $ENV{host})
+else ()
+   set (hostValue OFF)
+endif ()
+set (HOST ${hostValue} CACHE BOOL "Build Executables for GPU Platform (OFF) or CPU Platform (ON)")
+
+
+#[[
 !!/ **-DCOMPUTE_CAPABILITY (compute_capability) = 60,70**
+!!/
+!!/ GPU code only.
 !!/
 !!/ CUDA compute capability (multiplied by 10) of GPU.
 !!/ Valid values (noninclusive) are 35, 50, 60, 70, 75 etc., and can be
@@ -267,6 +246,8 @@ string (REPLACE "," ";" T9_CUCCLIST ${COMPUTE_CAPABILITY}) # 60;70
 
 #[[
 !!/ **-DCUDA_DIR (cuda_dir) = /usr/local/cuda**
+!!/
+!!/ GPU code only.
 !!/
 !!/ Top-level CUDA installation directory, under which directories *include*,
 !!/ *lib* or *lib64* can be found.
@@ -298,6 +279,26 @@ set (CUDA_DIR ${cudaDirValue} CACHE PATH "CUDA Directory")
 if (NOT HOST)
    set (CMAKE_CUDA_COMPILER "${CUDA_DIR}/bin/nvcc")
 endif ()
+
+
+#[[
+!!/ **-DFFTW_DIR (fftw_dir) = ${CMAKE_BINARY_DIR}/fftw**
+!!/
+!!/ CPU code only.
+!!/
+!!/ Top-level FFTW3 installation, under which
+!!/ *include/fftw3.h* and *lib/libfftw3* static libraries are expected to be found.
+!!/
+]]
+if (DEFINED ENV{fftw_dir})
+   get_filename_component (fftwDirValue "$ENV{fftw_dir}" ABSOLUTE
+      BASE_DIR
+         "${CMAKE_BINARY_DIR}"
+   )
+else ()
+   set (fftwDirValue "${CMAKE_BINARY_DIR}/fftw")
+endif ()
+set (FFTW_DIR ${fftwDirValue} CACHE PATH "FFTW3 Directory")
 
 
 #[[
@@ -367,6 +368,7 @@ ExternalProject_Add (src-libtinker
    PREFIX
       "${CMAKE_BINARY_DIR}/src-libtinker"
    CMAKE_ARGS
+      "-DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}"
       "-DCMAKE_BUILD_TYPE=RelWithDebInfo"
       "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/src-libtinker"
 )
@@ -384,22 +386,22 @@ set_source_files_properties ("${CMAKE_BINARY_DIR}/src-libtinker/libtinker.a" PRO
 
 
 ## fftw
-add_library (t9_lfftw STATIC IMPORTED)
-set_target_properties (t9_lfftw PROPERTIES
-   IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3.a")
-add_library (t9_lfftw_threads STATIC IMPORTED)
-set_target_properties (t9_lfftw_threads PROPERTIES
-   IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3_threads.a"
-)
-if (EXISTS "${FFTW_DIR}/lib/libfftw3f.a")
-   add_library (t9_lfftwf STATIC IMPORTED)
-   set_target_properties (t9_lfftwf PROPERTIES
+if (PREC STREQUAL "d")
+   add_library (t9_lfftw STATIC IMPORTED)
+   set_target_properties (t9_lfftw PROPERTIES
+      IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3.a"
+   )
+   add_library (t9_lfftw_threads STATIC IMPORTED)
+   set_target_properties (t9_lfftw_threads PROPERTIES
+      IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3_threads.a"
+   )
+elseif (PREC STREQUAL "m" OR PREC STREQUAL "s")
+   add_library (t9_lfftw STATIC IMPORTED)
+   set_target_properties (t9_lfftw PROPERTIES
       IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f.a"
    )
-endif ()
-if (EXISTS "${FFTW_DIR}/lib/libfftw3f_threads.a")
-   add_library (t9_lfftwf_threads STATIC IMPORTED)
-   set_target_properties (t9_lfftwf_threads PROPERTIES
+   add_library (t9_lfftw_threads STATIC IMPORTED)
+   set_target_properties (t9_lfftw_threads PROPERTIES
       IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f_threads.a"
    )
 endif ()

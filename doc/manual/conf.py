@@ -17,11 +17,14 @@
 
 # -- Project information -----------------------------------------------------
 
+import datetime
 project = "Tinker9 User Manual"
-copyright = '2020, Zhi Wang'
+author_html = "Zhi Wang & Jay W. Ponder"
+author_latex = "Zhi Wang \& Jay W. Ponder"
+copyright = '%s, %s' % (datetime.datetime.now().year, author_html)
 master_doc = 'index'
 latex_documents = [(master_doc, 'tinker9manual.tex', project,
-    'Zhi Wang and Jay W. Ponder',
+     author_latex,
     'manual')]
 
 numfig = True

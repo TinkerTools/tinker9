@@ -28,12 +28,6 @@ CUDA 11.0 and NVHPC 20.9. Please proceed to
 `this NVIDIA webpage <https://docs.nvidia.com/cuda/wsl-user-guide/index.html>`_
 for more details.
 
-**FFTW Libraries**
-
-Two prebuilt FFTW libraries: *libfftw3* and *libfftw3_threads* are used by
-Tinker. Two more FFTW libraries, *libfftw3f*, *libfftw3f_threads* are
-needed by the single precision CPU code.
-
 **More About Using PGI Compiler on the Clusters**
 
 I recently (in Jan. 2020) worked on a cluster that was still running
@@ -54,6 +48,19 @@ reconfigure PGI compiler with gcc 7.4.0:
    -o -net > /path/to/new_config
 
 then added *export PGI_LOCALRC=/path/to/new_config* to my bash resource file.
+
+**FFTW Libraries**
+
+Canonical Tinker requires FFTW libraries because by default it is compiled with OpenMP.
+Otherwise, Tinker will use *FFTPACK*.
+In Tinker9, the underlying *libtinker.a* will be compiled without OpenMP,
+therefore FFTW libraries are no longer mandatory for GPU code.
+
+However, FFTW libraries are required by CPU code.
+Two prebuilt FFTW libraries, *libfftw3* and *libfftw3_threads* are needed by
+the double precision CPU code.
+The other two FFTW libraries, *libfftw3f* and *libfftw3f_threads* are needed by
+the mixed and single precision CPU code.
 
 **Other Nonmandatory Utilities**
 
