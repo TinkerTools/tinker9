@@ -85,6 +85,12 @@ Install the executables under *${CMAKE_INSTALL_PREFIX}*. If this option is
 not set, *make install* is configured not to install anything, which is
 different from the default cmake behavior to install the program under */usr/local*.
 
+**-DSTD (std) = 11**
+
+C++ syntax standard. The source code is c++11-compliant, and should have no
+problems compiled with c++14. If set to *14* here, users should make sure
+the compilers are c++14-compliant.
+
 **-DPREC (prec) = mixed**
 
 Precision of the floating-point numbers. With flag *double*/*d*, all of the

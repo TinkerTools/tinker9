@@ -145,6 +145,24 @@ endif ()
 
 
 #[[
+!!/ **-DSTD (std) = 11**
+!!/
+!!/ C++ syntax standard. The source code is c++11-compliant, and should have no
+!!/ problems compiled with c++14. If set to *14* here, users should make sure
+!!/ the compilers are c++14-compliant.
+!!/
+]]
+if (DEFINED ENV{std})
+   set (stdValue $ENV{std})
+else ()
+   set (stdValue 11)
+endif ()
+set (STD ${stdValue} CACHE STRING "C++ standard: 11 and 14.")
+set_property (CACHE STD PROPERTY STRINGS 11 14)
+set (T9_CPPSTD ${STD})
+
+
+#[[
 !!/ **-DPREC (prec) = mixed**
 !!/
 !!/ Precision of the floating-point numbers. With flag *double*/*d*, all of the
@@ -238,7 +256,7 @@ else ()
    set (compCapValue 60,70)
 endif ()
 set (COMPUTE_CAPABILITY ${compCapValue} CACHE STRING
-   "CUDA Compute Capability Multiplied by 10 (Comma-Separated)"
+   "[GPU ONLY] CUDA Compute Capability Multiplied by 10 (Comma-Separated)"
 )
 ## Compute Capability 60,70 -> 60;70
 string (REPLACE "," ";" T9_CUCCLIST ${COMPUTE_CAPABILITY}) # 60;70
@@ -273,7 +291,7 @@ elseif (DEFINED ENV{CUDACXX})
 else ()
    set (cudaDirValue /usr/local/cuda)
 endif ()
-set (CUDA_DIR ${cudaDirValue} CACHE PATH "CUDA Directory")
+set (CUDA_DIR ${cudaDirValue} CACHE PATH "[GPU ONLY] CUDA Directory")
 ## cuda compiler
 ## set CMAKE_CUDA_COMPILER before project ()   
 if (NOT HOST)
@@ -298,7 +316,7 @@ if (DEFINED ENV{fftw_dir})
 else ()
    set (fftwDirValue "${CMAKE_BINARY_DIR}/fftw")
 endif ()
-set (FFTW_DIR ${fftwDirValue} CACHE PATH "FFTW3 Directory")
+set (FFTW_DIR ${fftwDirValue} CACHE PATH "[CPU ONLY] FFTW3 Directory")
 
 
 #[[
@@ -553,6 +571,7 @@ ExternalProject_Add (src-acc
       "-DCMAKE_CXX_COMPILER=${T9_ACC_COMPILER}"
       "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
       "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/src-acc"
+      "-DT9_CPPSTD=${T9_CPPSTD}"
       "-DT9_SYS_INCPATH=${T9_EP_ACC_SYS_INCPATH}"
       "-DT9_INCPATH=${T9_EP_ACC_INCPATH}"
       "-DT9_ACC_DEFS=${T9_EP_ACC_MACRO}"
@@ -583,7 +602,7 @@ add_library (__t9_all_tests_o OBJECT ${T9_TEST_SRC})
 target_compile_definitions (__t9_all_tests_o PRIVATE ${T9_DEFS})
 set_target_properties (__t9_all_tests_o PROPERTIES
    CXX_STANDARD
-      11
+      ${T9_CPPSTD}
 )
 target_include_directories (__t9_all_tests_o SYSTEM PRIVATE "${T9_SYS_INCPATH}")
 target_include_directories (__t9_all_tests_o PRIVATE

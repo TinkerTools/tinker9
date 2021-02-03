@@ -12,7 +12,7 @@ file (GLOB __T9_CUDA_SRC "*_cu.cu")
 add_library (tinker9_cu STATIC "${__T9_CUDA_SRC}")
 set_target_properties (tinker9_cu PROPERTIES
    CUDA_STANDARD
-      11
+      ${T9_CPPSTD}
 )
 target_compile_definitions (tinker9_cu PRIVATE ${T9_DEFS})
 target_include_directories (tinker9_cu SYSTEM PRIVATE "${T9_SYS_INCPATH}")

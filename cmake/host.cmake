@@ -2,7 +2,7 @@ add_executable (tinker9 src-main/main_tinker9.cpp)
 add_dependencies (tinker9 src-acc src-libtinker)
 set_target_properties (tinker9 PROPERTIES
    CXX_STANDARD
-      11
+      ${T9_CPPSTD}
 )
 target_compile_definitions (tinker9 PRIVATE "${T9_DEFS}")
 target_include_directories (tinker9 SYSTEM PRIVATE "${T9_SYS_INCPATH}")

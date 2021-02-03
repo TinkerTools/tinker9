@@ -1,7 +1,7 @@
 add_library (tinker9_main OBJECT src-main/main_tinker9.cpp)
 set_target_properties (tinker9_main PROPERTIES
    CXX_STANDARD
-      11
+      ${T9_CPPSTD}
 )
 target_compile_definitions (tinker9_main PRIVATE "${T9_DEFS}")
 target_include_directories (tinker9_main SYSTEM PRIVATE "${T9_SYS_INCPATH}")

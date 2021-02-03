@@ -23,7 +23,7 @@ file (GLOB __T9_ACC_SRC "*_acc.cpp")
 add_library (tinker9_acc STATIC "${__T9_ACC_SRC}")
 set_target_properties (tinker9_acc PROPERTIES
    CXX_STANDARD
-      11
+      ${T9_CPPSTD}
 )
 target_compile_definitions (tinker9_acc PRIVATE "${T9_ACC_DEFS}")
 target_include_directories (tinker9_acc SYSTEM PRIVATE "${T9_SYS_INCPATH}")

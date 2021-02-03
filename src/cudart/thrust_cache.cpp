@@ -12,7 +12,7 @@ ThrustCache::ThrustCache()
 
 auto ThrustCache::allocate(ptrdiff_t numbyte) -> value_type*
 {
-   if (numbyte > nbytes) {
+   if ((size_t)numbyte > nbytes) {
       nbytes = numbyte;
       device_memory_deallocate_bytes(ptr);
       device_memory_allocate_bytes(reinterpret_cast<void**>(&ptr), nbytes);

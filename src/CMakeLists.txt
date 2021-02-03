@@ -12,7 +12,7 @@ endif ()
 add_library (__t9_cpp_o OBJECT "${__T9_CPP_SRC}")
 set_target_properties (__t9_cpp_o PROPERTIES
    CXX_STANDARD
-      11
+      ${T9_CPPSTD}
 )
 target_compile_definitions (__t9_cpp_o PRIVATE "${T9_DEFS}")
 target_include_directories (__t9_cpp_o SYSTEM PRIVATE "${T9_SYS_INCPATH}")
@@ -25,7 +25,7 @@ add_library (__t9_version_related_o OBJECT
 )
 set_target_properties (__t9_version_related_o PROPERTIES
    CXX_STANDARD
-      11
+      ${T9_CPPSTD}
 )
 if (__T9_GIT_SHA1)
    target_compile_definitions (__t9_version_related_o PRIVATE
