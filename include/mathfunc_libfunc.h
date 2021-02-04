@@ -18,6 +18,8 @@
 #   define REAL_SIN      sin
 #   define REAL_ACOS     acos
 #   define REAL_ASIN     asin
+#   define REAL_SINH     sinh
+#   define REAL_COSH     cosh
 #   define REAL_ERF      erf
 #   define REAL_ERFC(x)  (1 - erf(x))
 #   define REAL_MIN      fmin
@@ -40,6 +42,8 @@
 #   define REAL_SIN      sinf
 #   define REAL_ACOS     acosf
 #   define REAL_ASIN     asinf
+#   define REAL_SINH     sinhf
+#   define REAL_COSH     coshf
 #   define REAL_ERF      erff
 #   define REAL_ERFC     erfcf_hastings
 #   define REAL_MIN      fminf
