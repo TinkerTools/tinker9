@@ -14,6 +14,7 @@ Tinker9 User Manual
 
    m/intro
    m/install/index
+   m/tutorial/index
    m/feat/index
    m/elec/index
    m/key/index

@@ -12,6 +12,9 @@ Tinker9 is a complete rewrite and extension of the canonical Tinker software, cu
    2. [Build the Canonical Tinker (important to get the REQUIRED version)](doc/manual/m/install/tinker.rst)
    3. [Build Tinker9 with CMake](doc/manual/m/install/buildwithcmake.rst)
 
+## Quick Start Tutorials (In Progress)
+The [quick start tutorials](https://tinker9-manual.readthedocs.io/en/latest/m/tutorial/index.html)
+are included in the manual.
 
 ## User Manual (In Progress)
 The HTML version is hosted on [readthedocs](https://tinker9-manual.readthedocs.io)
