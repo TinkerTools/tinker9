@@ -3,11 +3,13 @@ Command Line GUI
 
 Tinker programs can take interactive input. The prompt messages try to be
 self-explanatory.
-
 Following is an example to use the interactive interface for a short DHFR
-simulation with an *AMOEBA* force field. Note that this simulation will not run
-unless more keywords are added to the key file. This is only an example of the
-interactive interface.
+simulation with an *AMOEBA* force field.
+
+.. warning::
+
+   The simulation will not run unless more keywords are added to the key file.
+   This is only a demonstration to the interactive interface.
 
 =======================  ===================  ===================
 Item                     Value                Input
@@ -87,3 +89,17 @@ interactive input to the program name.
     Joint Amber-CHARMM Benchmark on Dihydrofolate Reductase in Water
     23558 Atoms, 62.23 Ang Cube, 9 Ang Nonbond Cutoffs, 64x64x64 PME
     ################################################################
+
+You can also use *stdin redirection* to run Tinker programs. Save the
+command line arguments in a file and use it as follows.
+
+.. code-block:: text
+
+   zw@Blade:~/tutorial/example$ cat args.txt 
+   dhfr2.xyz
+   1000
+   2
+   1
+   2
+   298
+   zw@Blade:~/tutorial/example$ tinker9 dynamic < args.txt
