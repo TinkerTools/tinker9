@@ -219,7 +219,7 @@ void langevin_piston(time_prec dt, virial_prec press)
 void lpiston_npt(int istep, time_prec dt_ps)
 {
    int vers1 = rc_flag & calc::vmask;
-   bool save = !(!istep % inform::iwrite);
+   bool save = !(istep % inform::iwrite);
    double eksum_new = 0.0;
 
    if (!save)
