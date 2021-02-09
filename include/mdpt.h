@@ -42,6 +42,7 @@ enum class Thermostat
    ANDERSEN,
    NOSE_HOOVER_CHAIN,
    LANGEVIN_PISTON,
+   VV_LPISTON,
    NONE
 };
 constexpr auto BERENDSEN_THERMOSTAT = Thermostat::BERENDSEN;
@@ -49,6 +50,7 @@ constexpr auto BUSSI_THERMOSTAT = Thermostat::BUSSI;
 constexpr auto ANDERSEN_THERMOSTAT = Thermostat::ANDERSEN;
 constexpr auto NOSE_HOOVER_CHAIN_THERMOSTAT = Thermostat::NOSE_HOOVER_CHAIN;
 constexpr auto LANGEVIN_PISTON_THERMOSTAT = Thermostat::LANGEVIN_PISTON;
+constexpr auto VV_LPISTON_THERMOSTAT = Thermostat::VV_LPISTON;
 constexpr auto NONE_THERMOSTAT = Thermostat::NONE;
 extern Thermostat thermostat;
 
@@ -66,6 +68,7 @@ enum class Barostat
    BUSSI,
    NOSE_HOOVER_CHAIN,
    LANGEVIN_PISTON,
+   VV_LPISTON,
    MONTE_CARLO,
    NONE
 };
@@ -73,6 +76,7 @@ constexpr auto BERENDSEN_BAROSTAT = Barostat::BERENDSEN;
 constexpr auto BUSSI_BAROSTAT = Barostat::BUSSI;
 constexpr auto NOSE_HOOVER_CHAIN_BAROSTAT = Barostat::NOSE_HOOVER_CHAIN;
 constexpr auto LANGEVIN_PISTON_BAROSTAT = Barostat::LANGEVIN_PISTON;
+constexpr auto VV_LPISTON_BAROSTAT = Barostat::VV_LPISTON;
 constexpr auto MONTE_CARLO_BAROSTAT = Barostat::MONTE_CARLO;
 constexpr auto NONE_BAROSTAT = Barostat::NONE;
 extern Barostat barostat;

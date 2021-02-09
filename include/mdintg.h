@@ -55,6 +55,9 @@ extern double pnh_lp;      // thermostat
 void langevin_piston(time_prec dt, virial_prec press);
 
 
+void vv_lpiston_npt(int istep, time_prec dt_ps);
+
+
 extern grad_prec *gx1, *gy1, *gz1;
 extern grad_prec *gx2, *gy2, *gz2;
 constexpr unsigned RESPA_FAST = 1; // 2**0, fast group shall be 0.

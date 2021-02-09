@@ -107,6 +107,8 @@ void integrate_data(rc_op op)
             thermostat = NOSE_HOOVER_CHAIN_THERMOSTAT;
          else if (th == "LPISTON")
             thermostat = LANGEVIN_PISTON_THERMOSTAT;
+         else if (th == "VVLP")
+            thermostat = VV_LPISTON_THERMOSTAT;
          else
             assert(false);
       } else {
@@ -123,6 +125,8 @@ void integrate_data(rc_op op)
             barostat = NOSE_HOOVER_CHAIN_BAROSTAT;
          else if (br == "LPISTON")
             barostat = LANGEVIN_PISTON_BAROSTAT;
+         else if (br == "VVLP")
+            barostat = VV_LPISTON_BAROSTAT;
          else if (br == "MONTECARLO") {
             barostat = MONTE_CARLO_BAROSTAT;
             darray::allocate(n, &x_pmonte, &y_pmonte, &z_pmonte);
@@ -141,6 +145,10 @@ void integrate_data(rc_op op)
          intg = lpiston_npt;
          thermostat = LANGEVIN_PISTON_THERMOSTAT;
          barostat = LANGEVIN_PISTON_BAROSTAT;
+      } else if (itg == "VVLP") {
+         intg = vv_lpiston_npt;
+         thermostat = VV_LPISTON_THERMOSTAT;
+         barostat = VV_LPISTON_BAROSTAT;
       } else if (itg == "NOSE-HOOVER") {
          intg = nhc_npt;
          thermostat = NOSE_HOOVER_CHAIN_THERMOSTAT;
@@ -152,6 +160,9 @@ void integrate_data(rc_op op)
       if (thermostat == LANGEVIN_PISTON_THERMOSTAT and
           barostat == LANGEVIN_PISTON_BAROSTAT) {
          intg = lpiston_npt;
+      } else if (thermostat == VV_LPISTON_THERMOSTAT and
+                 barostat == VV_LPISTON_BAROSTAT) {
+         intg = vv_lpiston_npt;
       } else if (thermostat == NOSE_HOOVER_CHAIN_THERMOSTAT and
                  barostat == NOSE_HOOVER_CHAIN_BAROSTAT) {
          intg = nhc_npt;
@@ -166,6 +177,11 @@ void integrate_data(rc_op op)
          darray::allocate(n, &leapfrog_vx, &leapfrog_vy, &leapfrog_vz,
                           &leapfrog_vxold, &leapfrog_vyold, &leapfrog_vzold);
          energy(calc::v1);
+      } else if (intg == vv_lpiston_npt) {
+         double ekt = units::gasconst * bath::kelvin;
+         vbar = 0;
+         qbar = (mdstuf::nfree + 3) * ekt * bath::taupres * bath::taupres;
+         energy(calc::grad);
       } else if (intg == nhc_npt) {
          if (use_rattle()) {
             TINKER_THROW(
