@@ -167,7 +167,7 @@ void nhc_npt(int istep, time_prec dt)
    constexpr double e4 = e2 / 20;
    constexpr double e6 = e4 / 42;
    constexpr double e8 = e6 / 72;
-   // sinh(x)/x: Taylor series up to x**10
+   // sinh(x)/x: Taylor series
    double poly = 1 + term2 * (e2 + term2 * (e4 + term2 * (e6 + term2 * e8)));
    poly *= expterm * dt;
    propagate_pos_axbv(eterm2, poly);
