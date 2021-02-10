@@ -59,7 +59,7 @@ void velocity_verlet(int istep, time_prec dt_ps)
    // v += a * dt/2
    propagate_velocity(dt_2, gx, gy, gz);
    if (userat)
-      rattle2(dt_ps, vers1 bitand calc::virial);
+      rattle2(dt_ps, vers1 & calc::virial);
 
    // full-step corrections
    temper(dt_ps, temp, save);

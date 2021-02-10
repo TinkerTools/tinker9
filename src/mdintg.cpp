@@ -181,7 +181,7 @@ void integrate_data(rc_op op)
             gnh[i] = 0;
          }
          qnh[0] *= mdstuf::nfree;
-         energy(calc::grad);
+         energy(calc::v6);
       } else if (intg == respa_fast_slow) {
          // need fast and slow gradients to start/restart the simulation
          darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
