@@ -18,6 +18,7 @@
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
+#include <tinker/detail/stodyn.hh>
 #include <tinker/detail/units.hh>
 
 
@@ -182,6 +183,12 @@ void integrate_data(rc_op op)
          vbar = 0;
          qbar = (mdstuf::nfree + 3) * ekt * bath::taupres * bath::taupres;
          energy(calc::v6);
+
+         printf("\n");
+         printf(" Friction                        %12.4lf /ps\n",
+                stodyn::friction);
+         printf(" Time constant for the barostat  %12.4lf ps\n", bath::taupres);
+         printf("\n");
       } else if (intg == nhc_npt) {
          if (use_rattle()) {
             TINKER_THROW(
