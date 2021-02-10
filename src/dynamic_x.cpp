@@ -187,7 +187,7 @@ void x_dynamic(int, char**)
    else if (integrate == "VVLP")
       print(stdout,
             " Molecular Dynamics Trajectory via"
-            " Velocity Verlet Langevin Piston Algorithm\n");
+            " Velocity Verlet Langevin Piston\n");
    else if (integrate == "NOSE-HOOVER")
       print(stdout,
             " Molecular Dynamics Trajectory via"

@@ -125,7 +125,7 @@ double press;
 void nhc_npt(int istep, time_prec dt)
 {
    int vers1 = rc_flag & calc::vmask;
-   bool save = !(!istep % inform::iwrite);
+   bool save = !(istep % inform::iwrite);
    if (!save)
       vers1 &= ~calc::energy;
 
