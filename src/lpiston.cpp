@@ -53,7 +53,8 @@ void lp(time_prec dt, double R)
          const time_prec h_2 = h * 0.5;
          const double gh_2 = stodyn::friction * h_2;
          const double kbt = units::gasconst * bath::kelvin;
-         const double sd = std::sqrt(kbt * gh_2 / qbar); // standard deviation
+         const double sd =
+            std::sqrt(kbt * std::fabs(gh_2) / qbar); // standard deviation
 
 
          const double odnf = 1.0 + D / mdstuf::nfree;
