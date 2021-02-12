@@ -113,8 +113,12 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
 
 
    // Maximum number of resident blocks per multiprocessor
-   if (a.cc > 75)
+   if (a.cc > 86)
       found_cc = false;
+   else if (a.cc >= 86)
+      a.max_blocks_per_multiprocessor = 16;
+   else if (a.cc >= 80)
+      a.max_blocks_per_multiprocessor = 32;
    else if (a.cc >= 75)
       a.max_blocks_per_multiprocessor = 16;
    else if (a.cc >= 50)
@@ -128,14 +132,17 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
    // Number of CUDA cores per multiprocessor, not tabulated in
    // cuda-c-programming-guide;
    // documented in "Compute Capability - architecture"
-   // 7.0 7.2 7.5: 64
+   // 8.6: 128
+   // 7.0 7.2 7.5 8.0: 64
    // 6.1 6.2: 128
    // 6.0: 64
    // 5.0 5.2: 128
    // 3.0 3.5 3.7: 192
-   if (a.cc > 75)
+   if (a.cc > 86)
       found_cc = false;
-   else if (a.cc >= 70)
+   else if (a.cc >= 86)
+      a.cores_per_multiprocessor = 128;
+   else if (a.cc >= 80)
       a.cores_per_multiprocessor = 64;
    else if (a.cc >= 61)
       a.cores_per_multiprocessor = 128;
@@ -157,8 +164,8 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
 
    if (!found_cc) {
       TINKER_THROW(
-         format("The code base should be updated for compute capability %d; "
-                "Please refer to the NVIDIA Cuda-C Programming Guide",
+         format("The source code should be updated for compute capability %d; "
+                "Please let us know",
                 a.cc));
    }
 }
