@@ -21,14 +21,6 @@ void lp(time_prec dt, double R)
 {
    constexpr int D = 3;
    constexpr int nc = 5;
-   constexpr int ns = 3;
-   // w[0] = 1/(2 - 2**(1/3))
-   // w[1] = 1 - w[0] - w[2]
-   // w[2] = w[0]
-   constexpr double w[3] = {
-      1.351207191959657634047687808971460826921999376217144828328,
-      -1.70241438391931526809537561794292165384399875243428965665,
-      1.351207191959657634047687808971460826921999376217144828328};
 
 
    // trace of virial: xx+yy+zz
@@ -42,60 +34,61 @@ void lp(time_prec dt, double R)
 
 
    for (int k = 0; k < nc; ++k) {
-      for (int j = 0; j < ns; ++j) {
-         double eksum1 = eksum0;
-         double vbox1 = vbox0;
-         double vscal1 = vscal0;
-         double lensc1 = lensc0;
+      double eksum1 = eksum0;
+      double vbox1 = vbox0;
+      double vscal1 = vscal0;
+      double lensc1 = lensc0;
 
 
-         const time_prec h = w[j] * dt / (2 * nc);
-         const time_prec h_2 = h * 0.5;
-         const double gh_2 = stodyn::friction * h_2;
-         const double kbt = units::gasconst * bath::kelvin;
-         const double sd =
-            std::sqrt(kbt * std::fabs(gh_2) / qbar); // standard deviation
+      // const time_prec h = w[j] * dt / (2 * nc);
+      const time_prec h = dt / (2 * nc);
+      const time_prec h_2 = h * 0.5;
+      const double gh = stodyn::friction * h;
+      const double gh_2 = stodyn::friction * h_2;
+      const double kbt = units::gasconst * bath::kelvin;
+      const double sd = std::sqrt((1.0 - std::exp(-gh)) * kbt / qbar);
 
 
-         const double odnf = 1.0 + D / mdstuf::nfree;
-         const double opgh2 = 1.0 + gh_2;
-         const double omgh2 = 1.0 - gh_2;
+      const double odnf = 1.0 + D / mdstuf::nfree;
 
 
-         // units::prescon ~ 6.86*10^4
-         // 1 kcal/mol/Ang**3 = prescon atm
-         double DelP, DelP_m;
+      // units::prescon ~ 6.86*10^4
+      // 1 kcal/mol/Ang**3 = prescon atm
+      double DelP, DelP_m;
+      double egh2;
+      double vh, term;
 
 
-         // BBK vbar 1/2
-         DelP = odnf * 2 * eksum1 - tr_vir;
-         DelP = DelP - D * vbox1 * bath::atmsph / units::prescon;
-         DelP_m = DelP / qbar;
-         vbar = DelP_m * h_2 + omgh2 * vbar + sd * R;
+      // v 1/2
+      vh = vbar * h_2;
+      term = std::exp(-odnf * vh);
+      vscal1 *= term;
+      eksum1 *= (term * term);
 
 
-         // v and volume
-         const double vh = vbar * h;
-         const double term = std::exp(-odnf * vh);
-         vscal1 *= term;
-         eksum1 *= (term * term);
-         lensc1 *= std::exp(vh);
-         vbox1 *= std::exp(D * vh);
+      // vbar and volume
+      DelP = odnf * 2 * eksum1 - tr_vir;
+      DelP = DelP - D * vbox1 * bath::atmsph / units::prescon;
+      DelP_m = DelP / qbar;
+      egh2 = std::exp(-gh_2);
+      vbar = (1.0 - egh2) * DelP_m / stodyn::friction + egh2 * vbar + sd * R;
+      vh = vbar * h;
+      lensc1 *= std::exp(vh);
+      vbox1 *= std::exp(D * vh);
 
 
-         // BBK vbar 2/2
-         DelP = odnf * 2 * eksum1 - tr_vir;
-         DelP = DelP - D * vbox1 * bath::atmsph / units::prescon;
-         DelP_m = DelP / qbar;
-         vbar = (DelP_m * h_2 + vbar + sd * R) / opgh2;
+      // v 2/2
+      vh = vbar * h_2;
+      term = std::exp(-odnf * vh);
+      vscal1 *= term;
+      eksum1 *= (term * term);
 
 
-         // save
-         eksum0 = eksum1;
-         vbox0 = vbox1;
-         vscal0 = vscal1;
-         lensc0 = lensc1;
-      }
+      // save
+      eksum0 = eksum1;
+      vbox0 = vbox1;
+      vscal0 = vscal1;
+      lensc0 = lensc1;
    }
 
 
