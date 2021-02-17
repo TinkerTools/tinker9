@@ -20,7 +20,20 @@ namespace {
 void lp(time_prec dt, double R)
 {
    constexpr int D = 3;
-   constexpr int nc = 5;
+   constexpr int nc = 1;
+
+   // const time_prec h = w[j] * dt / (2 * nc);
+   const time_prec h = dt / (2 * nc);
+   const time_prec h_2 = h * 0.5;
+   const double gh = stodyn::friction * h;
+   const double gh_2 = stodyn::friction * h_2;
+   const double kbt = units::gasconst * bath::kelvin;
+   const double sd =
+      std::sqrt((1.0 - std::exp(-2 * stodyn::friction * dt)) * kbt / qbar) /
+      (2 * nc);
+
+
+   const double odnf = 1.0 + D / mdstuf::nfree;
 
 
    // trace of virial: xx+yy+zz
@@ -38,18 +51,6 @@ void lp(time_prec dt, double R)
       double vbox1 = vbox0;
       double vscal1 = vscal0;
       double lensc1 = lensc0;
-
-
-      // const time_prec h = w[j] * dt / (2 * nc);
-      const time_prec h = dt / (2 * nc);
-      const time_prec h_2 = h * 0.5;
-      const double gh = stodyn::friction * h;
-      const double gh_2 = stodyn::friction * h_2;
-      const double kbt = units::gasconst * bath::kelvin;
-      const double sd = std::sqrt((1.0 - std::exp(-gh)) * kbt / qbar);
-
-
-      const double odnf = 1.0 + D / mdstuf::nfree;
 
 
       // units::prescon ~ 6.86*10^4
@@ -109,10 +110,9 @@ void lp(time_prec dt, double R)
    lvec3 *= lensc0;
    set_default_recip_box();
 }
-}
 
 
-void vv_lpiston_npt(int istep, time_prec dt)
+void vv_lpiston_npt_v0(int istep, time_prec dt)
 {
    int vers1 = rc_flag & calc::vmask;
    bool save = !(istep % inform::iwrite);
@@ -157,5 +157,6 @@ void vv_lpiston_npt(int istep, time_prec dt)
 
    // iL1 2/2
    lp(dt, R);
+}
 }
 }
