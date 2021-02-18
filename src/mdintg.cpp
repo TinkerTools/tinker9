@@ -191,7 +191,8 @@ void integrate_data(rc_op op)
          printf("\n");
          printf(" Friction                        %12.4lf /ps\n",
                 stodyn::friction);
-         printf(" Time constant for the barostat  %12.4lf ps\n", bath::taupres);
+         printf(" Time constant for the const-T   %12.4lf ps\n", bath::tautemp);
+         printf(" Time constant for the const-P   %12.4lf ps\n", bath::taupres);
          printf("\n");
       } else if (intg == nhc_npt) {
          if (use_rattle()) {
