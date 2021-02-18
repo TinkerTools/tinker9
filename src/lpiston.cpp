@@ -17,6 +17,16 @@
 
 namespace tinker {
 namespace {
+double sinh_id(double x)
+{
+   double y = std::fabs(x);
+   if (y <= 1.0e-8)
+      return 1.0;
+   else
+      return std::sinh(y) / y;
+}
+
+
 void lp_v5(time_prec dt, double R)
 {
    const double D = 3.0;
@@ -125,13 +135,8 @@ void vv_lpiston_npt_v5(int istep, time_prec dt)
    set_default_recip_box();
 
 
-   constexpr double e2 = 1.0 / 6;
-   constexpr double e4 = e2 / 20;
-   constexpr double e6 = e4 / 42;
-   constexpr double e8 = e6 / 72;
-   // sinh(x)/x: Taylor series
-   const double term2 = term * term;
-   double poly = 1 + term2 * (e2 + term2 * (e4 + term2 * (e6 + term2 * e8)));
+   // sinh(x)/x
+   double poly = sinh_id(term);
    poly *= expterm * dt;
    propagate_pos_axbv(eterm2, poly);
    copy_pos_to_xyz(true);
