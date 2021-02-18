@@ -181,7 +181,11 @@ void integrate_data(rc_op op)
       } else if (intg == vv_lpiston_npt) {
          double ekt = units::gasconst * bath::kelvin;
          vbar = 0;
+         gbar = 0;
          qbar = (mdstuf::nfree + 3) * ekt * bath::taupres * bath::taupres;
+         vnh[0] = 0;
+         gnh[0] = 0;
+         qnh[0] = ekt * bath::tautemp * bath::tautemp;
          energy(calc::v6);
 
          printf("\n");
