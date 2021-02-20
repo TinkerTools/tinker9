@@ -260,7 +260,7 @@ void x_analyze_v()
       pres *= units::prescon / (3 * vol);
       pres_vir *= units::prescon / (3 * vol);
       print(out, fmt_p, temp, pres);
-      print(out, " Pressure from virial               %13.3lf Atmospheres\n",
+      print(out, " Pressure From Virial               %13.3lf Atmospheres\n",
             pres_vir);
    } else {
       print(out, fmt_p, temp, pres);
