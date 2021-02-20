@@ -7,9 +7,11 @@
 #include "tool/io_print.h"
 #include "tool/io_read.h"
 #include <fstream>
+#include <tinker/detail/bound.hh>
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/files.hh>
 #include <tinker/detail/moment.hh>
+#include <tinker/detail/units.hh>
 
 namespace tinker {
 void x_analyze_e();
@@ -244,5 +246,24 @@ void x_analyze_v()
    print(out, fmt, "Internal Virial Tensor :", vir[0], vir[1], vir[2]);
    print(out, fmt, "", vir[3], vir[4], vir[5]);
    print(out, fmt, "", vir[6], vir[7], vir[8]);
+
+   double pres = 0;
+   int temp = 298;
+   const char* fmt_p =
+      "\n"
+      " Pressure (Temp %3d K) :            %13.3lf Atmospheres\n";
+   if (bound::use_bounds) {
+      double vol = volbox();
+      double tr_vir = vir[0] + vir[4] + vir[8];
+      double pres_vir = -tr_vir;
+      pres = 3 * n * units::gasconst * temp + pres_vir;
+      pres *= units::prescon / (3 * vol);
+      pres_vir *= units::prescon / (3 * vol);
+      print(out, fmt_p, temp, pres);
+      print(out, " Pressure from virial               %13.3lf Atmospheres\n",
+            pres_vir);
+   } else {
+      print(out, fmt_p, temp, pres);
+   }
 }
 }
