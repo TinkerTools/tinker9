@@ -185,7 +185,7 @@ void integrate_data(rc_op op)
          qbar = (mdstuf::nfree + 3) * ekt * bath::taupres * bath::taupres;
          vnh[0] = 0;
          gnh[0] = 0;
-         qnh[0] = ekt * bath::tautemp * bath::tautemp;
+         qnh[0] = mdstuf::nfree * ekt * bath::tautemp * bath::tautemp;
          energy(calc::v6);
 
          printf("\n");
