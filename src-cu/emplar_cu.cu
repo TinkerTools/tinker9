@@ -1283,7 +1283,7 @@ void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
 
       if CONSTEXPR (Ver::e) {
          auto ker0 = empole_self_cu<Ver::a>;
-         launch_k1s(g::s0, n, ker0, //
+         launch_k1b(g::s0, n, ker0, //
                     nullptr, em, rpole, n, f, aewald);
       }
    }

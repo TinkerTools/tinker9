@@ -56,4 +56,10 @@ void launch_k1s(cudaStream_t st, int np, K k, Ts&&... a)
    const int bs = BLOCK_DIM;
    launch_k2s(st, bs, np, k, std::forward<Ts>(a)...);
 }
+template <class K, class... Ts>
+void launch_k1b(cudaStream_t st, int np, K k, Ts&&... a)
+{
+   const int bs = BLOCK_DIM;
+   launch_k2b(st, bs, np, k, std::forward<Ts>(a)...);
+}
 }

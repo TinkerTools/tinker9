@@ -593,7 +593,7 @@ void empole_chgpen_cu()
    if CONSTEXPR (eq<ETYP, EWALD>()) {
       PMEUnit pu = epme_unit;
       aewald = pu->aewald;
-      launch_k1s(g::s0, n, empole_chgpen_self_cu<do_a, do_e, CFLX>, //
+      launch_k1b(g::s0, n, empole_chgpen_self_cu<do_a, do_e, CFLX>, //
                  nem, em, rpole, pot, n, f, aewald);
    }
 
