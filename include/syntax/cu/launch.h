@@ -1,5 +1,6 @@
 #pragma once
 #include "glob.gpucard.h"
+#include "glob.nelembuffer.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
 
@@ -32,6 +33,13 @@ template <class K, class... Ts>
 void launch_k2s(cudaStream_t st, int bs, int np, K k, Ts&&... a)
 {
    const size_t sh = 0;
+   launch_k4(st, sh, bs, np, k, std::forward<Ts>(a)...);
+}
+template <class K, class... Ts>
+void launch_k2b(cudaStream_t st, int bs, int np, K k, Ts&&... a)
+{
+   const size_t sh = 0;
+   np = std::min(np, nelem_buffer);
    launch_k4(st, sh, bs, np, k, std::forward<Ts>(a)...);
 }
 

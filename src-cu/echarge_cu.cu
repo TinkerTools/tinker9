@@ -574,13 +574,13 @@ void echarge_fphi_self_cu()
       stream = g::spme;
    if (st.bsorder == 5) {
       auto ker = echarge_cu3<Ver, 5>;
-      launch_k2s(stream, PME_BLOCKDIM, n, ker, //
+      launch_k2b(stream, PME_BLOCKDIM, n, ker, //
                  nec, ec, pchg, f, aewald, n,  //
                  nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc,
                  decx, decy, decz);
    } else if (st.bsorder == 4) {
       auto ker = echarge_cu3<Ver, 4>;
-      launch_k2s(stream, PME_BLOCKDIM, n, ker, //
+      launch_k2b(stream, PME_BLOCKDIM, n, ker, //
                  nec, ec, pchg, f, aewald, n,  //
                  nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc,
                  decx, decy, decz);

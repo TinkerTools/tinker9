@@ -558,7 +558,7 @@ void edisp_cu4()
 
    assert(st.bsorder == 4);
    auto ker = edisp_cu3<Ver, 4>;
-   launch_k2s(g::s0, PME_BLOCKDIM, n, ker, //
+   launch_k2b(g::s0, PME_BLOCKDIM, n, ker, //
               ndisp, edsp, csix, aewald, n, nfft1, nfft2, nfft3, x, y, z,
               st.qgrid, recipa, recipb, recipc, dedspx, dedspy, dedspz);
 }
