@@ -1,4 +1,5 @@
 #pragma once
+#include "glob.nelembuffer.h"
 #include "mdprec.h"
 #include "tool/rc_man.h"
 #include <istream>
@@ -33,7 +34,6 @@ extern int rc_flag;
 extern int n;
 extern int padded_n;
 extern int trajn;
-extern int nelem_buffer;
 
 
 void n_data(rc_op);

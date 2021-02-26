@@ -51,7 +51,7 @@ namespace tinker {
  *       - <a href="https://stackoverflow.com/a/10384110">
  *       Paul Chernoch (stackoverflow question 499166, answer 10384110)
  *       </a>
- *       corrected the typo in `TransposetoAxes()`, which should have been
+ *       corrected the typo in `TransposetoAxes()`, which should read
  *    ```
  *    for(i=n-1; i>0; i--) X[i] ^= X[i-1];
  *    ```

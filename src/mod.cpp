@@ -51,5 +51,6 @@
 #include "glob.molecule.h"
 #include "glob.mplar.h"
 #include "glob.nblist.h"
+#include "glob.nelembuffer.h"
 #include "glob.pme.h"
 #include "glob.spatial.h"

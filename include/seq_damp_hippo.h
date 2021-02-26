@@ -83,7 +83,7 @@ inline void damp_pole_v1(real* restrict dmpik, real* restrict dmpi,
             expi;
       dmpik[4] = 1 -
          ((1 + dampi + 0.5f * dampi2 + dampi3 * div6) +
-          ((dampi4 + +dampi5 * div5) +
+          ((dampi4 + dampi5 * div5) +
            0.1f * (dampi6 * div3 + dampi7 * div21)) *
              div24) *
             expi;
