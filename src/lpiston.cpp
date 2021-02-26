@@ -64,7 +64,7 @@ void lp_v5(time_prec dt, double R)
 
 
       // vnh 1/2
-      gnh0 = (2 * eksum1 + qbar * vbar * vbar - Nf * kbt) / qnh0;
+      gnh0 = (2 * eksum1 - Nf * kbt) / qnh0;
       vnh0 = vnh0 + gnh0 * h_2;
 
 
@@ -89,7 +89,7 @@ void lp_v5(time_prec dt, double R)
 
 
       // vnh 2/2
-      gnh0 = (2 * eksum1 + qbar * vbar * vbar - Nf * kbt) / qnh0;
+      gnh0 = (2 * eksum1 - Nf * kbt) / qnh0;
       vnh0 = vnh0 + gnh0 * h_2;
 
 
