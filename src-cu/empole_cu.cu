@@ -469,7 +469,7 @@ void empole_cu()
 
 
       if CONSTEXPR (do_e) {
-         launch_k1s(g::s0, n, empole_self_cu<do_a>, //
+         launch_k1b(g::s0, n, empole_self_cu<do_a>, //
                     nem, em, rpole, n, f, aewald);
       }
    }

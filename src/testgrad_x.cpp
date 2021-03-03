@@ -20,7 +20,7 @@ void x_testgrad(int, char**)
    int digits = inform::digits;
 
 
-   int flags = calc::xyz;
+   int flags = (calc::xyz + calc::mass);
    flags += (calc::energy + calc::grad);
 #if TINKER_TESTGRAD_VIRIAL
    flags += calc::virial;

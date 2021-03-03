@@ -506,7 +506,7 @@ void elj_cu5()
       const real off = switch_off(switch_vdw);
 
 
-      launch_k1s(g::s0, nvdw14, elj_cu2<Ver>, //
+      launch_k1b(g::s0, nvdw14, elj_cu2<Ver>, //
                  nev, ev, vir_ev, devx, devy, devz, TINKER_IMAGE_ARGS, cut, off,
                  st.x, st.y, st.z,             //
                  njvdw, radmin, epsilon, jvdw, //

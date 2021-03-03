@@ -41,7 +41,7 @@ cmake_minimum_required (VERSION 3.12)
 !!/ -----------------
 !!/ The following options are passed to CMake program with their default
 !!/ values (if there is one). **-D** is prefixed to the options. CMake provides
-!!/ two standard ways to let users to customize the values:
+!!/ two standard ways to let users customize the values:
 !!/
 !!/ - Change their values interactively in the *ccmake* command line gui;
 !!/ - Pass the new value to CMake via command line arguments

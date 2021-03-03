@@ -24,7 +24,6 @@ int rc_flag = 0;
 int n;
 int padded_n;
 int trajn;
-int nelem_buffer;
 
 
 void n_data(rc_op op)

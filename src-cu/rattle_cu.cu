@@ -396,12 +396,12 @@ void constrain2_methyl_cu1(int nratch2, const int (*restrict iratch2)[3],
          xtermc *= vterm;
          ytermc *= vterm;
          ztermc *= vterm;
-         vxx -= (xb3 * xtermb + xc3 * xtermc + +xd3 * xtermd);
-         vyx -= (yb3 * xtermb + yc3 * xtermc + +yd3 * xtermd);
-         vzx -= (zb3 * xtermb + zc3 * xtermc + +zd3 * xtermd);
-         vyy -= (yb3 * ytermb + yc3 * ytermc + +yd3 * ytermd);
-         vzz -= (zb3 * ztermb + zc3 * ztermc + +zd3 * ztermd);
-         vzy -= (zb3 * ytermb + zc3 * ytermc + +zd3 * ytermd);
+         vxx -= (xb3 * xtermb + xc3 * xtermc + xd3 * xtermd);
+         vyx -= (yb3 * xtermb + yc3 * xtermc + yd3 * xtermd);
+         vzx -= (zb3 * xtermb + zc3 * xtermc + zd3 * xtermd);
+         vyy -= (yb3 * ytermb + yc3 * ytermc + yd3 * ytermd);
+         vzz -= (zb3 * ztermb + zc3 * ztermc + zd3 * ztermd);
+         vzy -= (zb3 * ytermb + zc3 * ytermc + zd3 * ytermd);
       }
    }
 
@@ -422,7 +422,7 @@ void rattle2_methyl_cu(time_prec dt, bool do_v)
 
    if (do_v) {
       auto ker = constrain2_methyl_cu1<true>;
-      launch_k2s(g::s0, 64, n23, ker,
+      launch_k2b(g::s0, 64, n23, ker,
 
                  nratch2, iratch2, nratch3, iratch3,
 
@@ -431,7 +431,7 @@ void rattle2_methyl_cu(time_prec dt, bool do_v)
                  xpos, ypos, zpos, massinv);
    } else {
       auto ker = constrain2_methyl_cu1<false>;
-      launch_k2s(g::s0, 64, n23, ker,
+      launch_k2b(g::s0, 64, n23, ker,
 
                  nratch2, iratch2, nratch3, iratch3,
 
