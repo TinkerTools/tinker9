@@ -8,6 +8,12 @@ bool use_rattle();
 void rattle_data(rc_op);
 
 
+// val = coef * mol_kinetic + mol_vir
+void ratcom_kevir(double coef, double atomic_vir, double& val);
+void ratcom_kevir_acc(double coef, double atomic_vir, double& val);
+void ratcom_kevir_cu(double coef, double atomic_vir, double& val);
+
+
 void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold,
             const pos_prec* zold);
 void rattle_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);

@@ -1,6 +1,8 @@
 #pragma once
+#include "glob.molecule.h"
 #include "macro.h"
 #include "mdprec.h"
+#include "tool/energy_buffer.h"
 
 
 namespace tinker {
@@ -39,4 +41,19 @@ TINKER_EXTERN int (*iratmol)[2];
 TINKER_EXTERN pos_prec* rattle_xold;
 TINKER_EXTERN pos_prec* rattle_yold;
 TINKER_EXTERN pos_prec* rattle_zold;
+
+
+// The "rattle-molecules" on device.
+TINKER_EXTERN Molecule rattle_dmol;
+// center-of-mass positions, momenta, and gradients
+TINKER_EXTERN pos_prec* ratcom_x;
+TINKER_EXTERN pos_prec* ratcom_y;
+TINKER_EXTERN pos_prec* ratcom_z;
+TINKER_EXTERN vel_prec* ratcom_px;
+TINKER_EXTERN vel_prec* ratcom_py;
+TINKER_EXTERN vel_prec* ratcom_pz;
+TINKER_EXTERN double* ratcom_gx;
+TINKER_EXTERN double* ratcom_gy;
+TINKER_EXTERN double* ratcom_gz;
+TINKER_EXTERN energy_buffer ratcom_kevir_buf;
 }

@@ -1,4 +1,5 @@
 #include "rattle.h"
+#include "mdcalc.h"
 #include "mdegv.h"
 #include "mdpq.h"
 #include "tool/darray.h"
@@ -8,6 +9,7 @@
 #include <cassert>
 #include <map>
 #include <set>
+#include <tinker/detail/atomid.hh>
 #include <tinker/detail/freeze.hh>
 
 
@@ -196,6 +198,24 @@ void rattle_data(rc_op op)
 
 
    if (op & rc_dealloc) {
+      rattle_dmol.nmol = 0;
+      rattle_dmol.totmass = 0;
+      darray::deallocate(rattle_dmol.imol, rattle_dmol.kmol,
+                         rattle_dmol.molecule, rattle_dmol.molmass);
+      if (rc_flag & calc::md) {
+         darray::deallocate(ratcom_x, ratcom_y, ratcom_z, ratcom_px, ratcom_py,
+                            ratcom_pz, ratcom_gx, ratcom_gy, ratcom_gz);
+         ratcom_x = nullptr;
+         ratcom_y = nullptr;
+         ratcom_z = nullptr;
+         ratcom_px = nullptr;
+         ratcom_py = nullptr;
+         ratcom_pz = nullptr;
+         ratcom_gx = nullptr;
+         ratcom_gy = nullptr;
+         ratcom_gz = nullptr;
+      }
+
       rateps = 0;
       nratwt = 0;
       darray::deallocate(iratwt, kratwt);
@@ -253,6 +273,100 @@ void rattle_data(rc_op op)
             auto& hcm = hc_mols[sz];
             hcm.insert(hc);
          }
+      }
+
+
+      // find the "rattle-molecules"
+      {
+         // host vectors
+         std::vector<int> hvec_imol, hvec_kmol, hvec_molec;
+         std::vector<mass_prec> hvec_molmass;
+
+         // first fill hvec_kmol by atom numbers; sort it later.
+         hvec_kmol.resize(n);
+         for (int i = 0; i < n; ++i) {
+            hvec_kmol[i] = i;
+         }
+
+         // sort hvec_kmol
+         // put all of the "rattle atoms" in front of the "free atoms"
+         auto hvec_kmol_sorter = [&](int ai, int aj) {
+            // assign big numbers for atom i and j; if atom i and j are found in
+            // constraints, assign smaller numbers to them.
+            int ordi = n + ai, ordj = n + aj;
+            auto end = hc_dict.end();
+            auto it = hc_dict.find(ai);
+            auto jt = hc_dict.find(aj);
+            if (it != end) {
+               ordi = it->second;
+            }
+            if (jt != end) {
+               ordj = jt->second;
+            }
+            // if atom i and j are in the same "rattle molecule",
+            // sort by their atom numbers
+            if (ordi == ordj) {
+               return ai < aj;
+            } else {
+               return ordi < ordj;
+            }
+         };
+         std::sort(hvec_kmol.begin(), hvec_kmol.end(), hvec_kmol_sorter);
+
+         hvec_molec.resize(n);
+         int current_mol = -1;
+         rattle_dmol.totmass = 0.0;
+         for (int i = 0; i < n; ++i) {
+            int k = hvec_kmol[i]; // the i-th atom in hvec_kmol
+            double kmass = atomid::mass[k];
+            rattle_dmol.totmass += kmass;
+            auto kt = hc_dict.find(k);
+            if (kt != hc_dict.end()) {
+               // atom k is a "rattle atom"
+               int k_mol = kt->second;
+               if (k_mol != current_mol) {
+                  // we are the first atom of a new "rattle molecule"
+                  hvec_molmass.push_back(kmass);
+                  current_mol = k_mol;
+                  hvec_imol.push_back(i);
+                  hvec_imol.push_back(i + 1);
+               } else {
+                  // we are still at the same "rattle molecule"
+                  hvec_molmass.back() += kmass;
+                  auto& iend = hvec_imol.back();
+                  ++iend;
+               }
+            } else {
+               // atom k is not a "rattle atom", and we will not meet another
+               // "rattle atom".
+               hvec_molmass.push_back(kmass);
+               ++current_mol;
+               hvec_imol.push_back(i);
+               hvec_imol.push_back(i + 1);
+            }
+            hvec_molec[k] = current_mol;
+         }
+
+         // allocate
+         if (rc_flag & calc::md) {
+            // Actually these arrays are only used for NPT RATTLE.
+            darray::allocate(n, &ratcom_x, &ratcom_y, &ratcom_z, &ratcom_px,
+                             &ratcom_py, &ratcom_pz, &ratcom_gx, &ratcom_gy,
+                             &ratcom_gz);
+         }
+
+         int nrmol = hvec_molmass.size();
+         int nmol2 = hvec_imol.size();
+         assert(2 * nrmol == nmol2 && "Error in RATTLE setup.");
+
+         rattle_dmol.nmol = nrmol;
+         darray::allocate(nrmol, &rattle_dmol.imol, &rattle_dmol.molmass);
+         darray::allocate(n, &rattle_dmol.kmol, &rattle_dmol.molecule);
+         darray::copyin(g::q0, nrmol, rattle_dmol.imol, hvec_imol.data());
+         darray::copyin(g::q0, nrmol, rattle_dmol.molmass, hvec_molmass.data());
+         darray::copyin(g::q0, n, rattle_dmol.kmol, hvec_kmol.data());
+         darray::copyin(g::q0, n, rattle_dmol.molecule, hvec_molec.data());
+         wait_for(g::q0);
       }
 
 
@@ -378,6 +492,16 @@ void rattle_data(rc_op op)
       hc_mols.clear();
       hc_dict.clear();
    }
+}
+
+
+void ratcom_kevir(double coef, double atomic_vir, double& val)
+{
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      ratcom_kevir_cu(coef, atomic_vir, val);
+#endif
+   ratcom_kevir_acc(coef, atomic_vir, val);
 }
 
 
