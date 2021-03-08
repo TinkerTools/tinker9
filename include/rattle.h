@@ -44,14 +44,4 @@ void shake_ch_acc(time_prec, pos_prec*, pos_prec*, pos_prec*, const pos_prec*,
                   const pos_prec*, const pos_prec*);
 void shake_methyl_cu(time_prec, pos_prec*, pos_prec*, pos_prec*,
                      const pos_prec*, const pos_prec*, const pos_prec*);
-
-void shake2(time_prec dt, const vel_prec* vxold, const vel_prec* vyold,
-            const vel_prec* vzold, const vel_prec* vxnew, const vel_prec* vynew,
-            const vel_prec* vznew, const pos_prec* xold, const pos_prec* yold,
-            const pos_prec* zold);
-void shake2_acc(time_prec dt, const vel_prec* vxold, const vel_prec* vyold,
-                const vel_prec* vzold, const vel_prec* vxnew,
-                const vel_prec* vynew, const vel_prec* vznew,
-                const pos_prec* xold, const pos_prec* yold,
-                const pos_prec* zold);
 }

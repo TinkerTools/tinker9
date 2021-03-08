@@ -835,39 +835,6 @@ void rattle2_ch_acc(time_prec dt, bool do_v)
 //====================================================================//
 
 
-void shake2_acc(time_prec dt, const vel_prec* vxold, const vel_prec* vyold,
-                const vel_prec* vzold, const vel_prec* vxnew,
-                const vel_prec* vynew, const vel_prec* vznew,
-                const pos_prec* xold, const pos_prec* yold,
-                const pos_prec* zold)
-{
-   const double vterm = -1 / (dt * units::ekcal);
-   size_t bufsize = buffer_size();
-
-
-   #pragma acc parallel loop independent async\
-           deviceptr(mass,xold,yold,zold,vxold,vyold,vzold,\
-           vxnew,vynew,vznew,vir_buf)
-   for (int i = 0; i < n; ++i) {
-      size_t offset = i & (bufsize - 1);
-      double fact = mass[i] * vterm;
-      double dx = (vxnew[i] - vxold[i]) * fact;
-      double dy = (vynew[i] - vyold[i]) * fact;
-      double dz = (vznew[i] - vzold[i]) * fact;
-      double vxx = 0, vyx = 0, vzx = 0;
-      double vyy = 0, vzy = 0, vzz = 0;
-      vxx += xold[i] * dx;
-      vyx += yold[i] * dx;
-      vzx += zold[i] * dx;
-      vyy += yold[i] * dy;
-      vzy += zold[i] * dy;
-      vzz += zold[i] * dz;
-      atomic_add((real)vxx, (real)vyx, (real)vzx, (real)vyy, (real)vzy,
-                 (real)vzz, vir_buf, offset);
-   }
-}
-
-
 void ratcom_kevir_acc(double coef, double atomic_vir, double& val)
 {
    int nmol = rattle_dmol.nmol;

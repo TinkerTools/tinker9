@@ -27,34 +27,6 @@ void kinetic_explicit(T_prec& temp_out, energy_prec& eksum_out,
 }
 
 
-void kinetic_leapfrog(T_prec& temp)
-{
-   // Ek at +1/2
-   T_prec t1;
-   energy_prec ekin1[3][3];
-   kinetic_explicit(t1, eksum, ekin1, leapfrog_vx, leapfrog_vy, leapfrog_vz);
-
-
-   // Ek at -1/2
-   T_prec t2;
-   energy_prec ekin2[3][3];
-   kinetic_explicit(t2, eksum_old, ekin2, leapfrog_vxold, leapfrog_vyold,
-                    leapfrog_vzold);
-
-
-   ekin[0][0] = 0.5 * (ekin1[0][0] + ekin2[0][0]);
-   ekin[0][1] = 0.5 * (ekin1[0][1] + ekin2[0][1]);
-   ekin[0][2] = 0.5 * (ekin1[0][2] + ekin2[0][2]);
-   ekin[1][0] = 0.5 * (ekin1[1][0] + ekin2[1][0]);
-   ekin[1][1] = 0.5 * (ekin1[1][1] + ekin2[1][1]);
-   ekin[1][2] = 0.5 * (ekin1[1][2] + ekin2[1][2]);
-   ekin[2][0] = 0.5 * (ekin1[2][0] + ekin2[2][0]);
-   ekin[2][1] = 0.5 * (ekin1[2][1] + ekin2[2][1]);
-   ekin[2][2] = 0.5 * (ekin1[2][2] + ekin2[2][2]);
-   temp = 0.5 * (t1 + t2);
-}
-
-
 void temper(time_prec dt, T_prec& temp, bool save)
 {
    if (thermostat == BUSSI_THERMOSTAT) {

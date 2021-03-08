@@ -3,6 +3,7 @@
 
 
 #include "energy.h"
+#include "lf_lpiston.h"
 #include "mdcalc.h"
 #include "mdegv.h"
 #include "mdintg.h"
@@ -78,7 +79,7 @@ void propagate(int nsteps, time_prec dt_ps)
 void integrate_data(rc_op op)
 {
    if (op & rc_dealloc) {
-      if (intg == lpiston_npt) {
+      if (intg == lf_lpiston_npt) {
          darray::deallocate(leapfrog_x, leapfrog_y, leapfrog_z);
          darray::deallocate(leapfrog_vx, leapfrog_vy, leapfrog_vz,
                             leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
@@ -143,7 +144,7 @@ void integrate_data(rc_op op)
       if (itg == "VERLET") {
          intg = velocity_verlet;
       } else if (itg == "LPISTON") {
-         intg = lpiston_npt;
+         intg = lf_lpiston_npt;
          thermostat = LANGEVIN_PISTON_THERMOSTAT;
          barostat = LANGEVIN_PISTON_BAROSTAT;
       } else if (itg == "VVLP") {
@@ -160,7 +161,7 @@ void integrate_data(rc_op op)
 
       if (thermostat == LANGEVIN_PISTON_THERMOSTAT and
           barostat == LANGEVIN_PISTON_BAROSTAT) {
-         intg = lpiston_npt;
+         intg = lf_lpiston_npt;
       } else if (thermostat == VV_LPISTON_THERMOSTAT and
                  barostat == VV_LPISTON_BAROSTAT) {
          intg = vv_lpiston_npt;
@@ -173,7 +174,7 @@ void integrate_data(rc_op op)
       if (intg == velocity_verlet) {
          // need full gradient to start/restart the simulation
          energy(calc::grad);
-      } else if (intg == lpiston_npt) {
+      } else if (intg == lf_lpiston_npt) {
          darray::allocate(n, &leapfrog_x, &leapfrog_y, &leapfrog_z);
          darray::allocate(n, &leapfrog_vx, &leapfrog_vy, &leapfrog_vz,
                           &leapfrog_vxold, &leapfrog_vyold, &leapfrog_vzold);

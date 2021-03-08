@@ -566,23 +566,4 @@ void shake(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
 #endif
    shake_acc(dt, xnew, ynew, znew, xold, yold, zold);
 }
-
-
-void shake2(time_prec dt, const vel_prec* vxold, const vel_prec* vyold,
-            const vel_prec* vzold, const vel_prec* vxnew, const vel_prec* vynew,
-            const vel_prec* vznew, const pos_prec* xold, const pos_prec* yold,
-            const pos_prec* zold)
-{
-   darray::zero(g::q0, buffer_size(), vir_buf);
-
-
-   shake2_acc(dt, vxold, vyold, vzold, vxnew, vynew, vznew, xold, yold, zold);
-
-
-   virial_prec v[9];
-   virial_reduce(v, vir_buf);
-   for (int iv = 0; iv < 9; ++iv) {
-      vir[iv] += v[iv];
-   }
-}
 }
