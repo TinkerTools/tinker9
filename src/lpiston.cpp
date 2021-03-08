@@ -7,6 +7,7 @@
 #include "mdpt.h"
 #include "nose.h"
 #include "random.h"
+#include "rattle.h"
 #include <cmath>
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
@@ -16,6 +17,9 @@
 
 
 namespace tinker {
+extern void vvlp_hc_acc(int, time_prec);
+
+
 namespace {
 double sinh_id(double x)
 {
@@ -111,6 +115,12 @@ void lp_v5(time_prec dt, double R)
 
 void vv_lpiston_npt_v5(int istep, time_prec dt)
 {
+   if (use_rattle()) {
+      vvlp_hc_acc(istep, dt);
+      return;
+   }
+
+
    int vers1 = rc_flag & calc::vmask;
    bool save = !(istep % inform::iwrite);
    if (!save)

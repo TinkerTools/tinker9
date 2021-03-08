@@ -204,7 +204,8 @@ void rattle_data(rc_op op)
                          rattle_dmol.molecule, rattle_dmol.molmass);
       if (rc_flag & calc::md) {
          darray::deallocate(ratcom_x, ratcom_y, ratcom_z, ratcom_px, ratcom_py,
-                            ratcom_pz, ratcom_gx, ratcom_gy, ratcom_gz);
+                            ratcom_pz, ratcom_gx, ratcom_gy, ratcom_gz,
+                            ratcom_massfrac);
          ratcom_x = nullptr;
          ratcom_y = nullptr;
          ratcom_z = nullptr;
@@ -214,6 +215,7 @@ void rattle_data(rc_op op)
          ratcom_gx = nullptr;
          ratcom_gy = nullptr;
          ratcom_gz = nullptr;
+         ratcom_massfrac = nullptr;
       }
 
       rateps = 0;
@@ -280,7 +282,7 @@ void rattle_data(rc_op op)
       {
          // host vectors
          std::vector<int> hvec_imol, hvec_kmol, hvec_molec;
-         std::vector<mass_prec> hvec_molmass;
+         std::vector<mass_prec> hvec_molmass, hvec_massfrac;
 
          // first fill hvec_kmol by atom numbers; sort it later.
          hvec_kmol.resize(n);
@@ -346,13 +348,20 @@ void rattle_data(rc_op op)
             }
             hvec_molec[k] = current_mol;
          }
+         hvec_massfrac.resize(n);
+         for (int i = 0; i < n; ++i) {
+            double imass = mass[i];
+            int im = hvec_molec[i];
+            double mmass = hvec_molmass[im];
+            hvec_massfrac[i] = imass / mmass;
+         }
 
          // allocate
          if (rc_flag & calc::md) {
             // Actually these arrays are only used for NPT RATTLE.
             darray::allocate(n, &ratcom_x, &ratcom_y, &ratcom_z, &ratcom_px,
                              &ratcom_py, &ratcom_pz, &ratcom_gx, &ratcom_gy,
-                             &ratcom_gz);
+                             &ratcom_gz, &ratcom_massfrac);
          }
 
          int nrmol = hvec_molmass.size();
@@ -366,6 +375,7 @@ void rattle_data(rc_op op)
          darray::copyin(g::q0, nrmol, rattle_dmol.molmass, hvec_molmass.data());
          darray::copyin(g::q0, n, rattle_dmol.kmol, hvec_kmol.data());
          darray::copyin(g::q0, n, rattle_dmol.molecule, hvec_molec.data());
+         darray::copyin(g::q0, n, ratcom_massfrac, hvec_massfrac.data());
          wait_for(g::q0);
       }
 
@@ -500,8 +510,9 @@ void ratcom_kevir(double coef, double atomic_vir, double& val)
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
       ratcom_kevir_cu(coef, atomic_vir, val);
+   else
 #endif
-   ratcom_kevir_acc(coef, atomic_vir, val);
+      ratcom_kevir_acc(coef, atomic_vir, val);
 }
 
 

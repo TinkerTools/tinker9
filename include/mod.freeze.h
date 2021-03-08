@@ -55,5 +55,7 @@ TINKER_EXTERN vel_prec* ratcom_pz;
 TINKER_EXTERN double* ratcom_gx;
 TINKER_EXTERN double* ratcom_gy;
 TINKER_EXTERN double* ratcom_gz;
+TINKER_EXTERN double* ratcom_massfrac;
+TINKER_EXTERN double ratcom_kevir_value;
 TINKER_EXTERN energy_buffer ratcom_kevir_buf;
 }

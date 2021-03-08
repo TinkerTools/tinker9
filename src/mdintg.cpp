@@ -183,10 +183,20 @@ void integrate_data(rc_op op)
          vbar = 0;
          gbar = 0;
          qbar = (mdstuf::nfree + 3) * ekt * bath::taupres * bath::taupres;
-         vnh[0] = 0;
-         gnh[0] = 0;
+         for (int i = 0; i < maxnose; ++i) {
+            vnh[i] = 0;
+            gnh[i] = 0;
+            qnh[i] = ekt * bath::tautemp * bath::tautemp;
+         }
          qnh[0] = mdstuf::nfree * ekt * bath::tautemp * bath::tautemp;
          energy(calc::v6);
+         if (use_rattle()) {
+            double odnf = 1.0;
+            if (n > 1)
+               odnf = 1.0 + 1.0 / (n - 1);
+            auto atomic_vir = vir[0] + vir[4] + vir[8];
+            ratcom_kevir(2.0 * odnf, atomic_vir, ratcom_kevir_value);
+         }
 
          printf("\n");
          printf(" Friction                        %12.4lf /ps\n",
