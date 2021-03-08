@@ -505,17 +505,6 @@ void rattle_data(rc_op op)
 }
 
 
-void ratcom_kevir(double coef, double atomic_vir, double& val)
-{
-#if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
-      ratcom_kevir_cu(coef, atomic_vir, val);
-   else
-#endif
-      ratcom_kevir_acc(coef, atomic_vir, val);
-}
-
-
 void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold,
             const pos_prec* zold)
 {

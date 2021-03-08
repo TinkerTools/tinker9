@@ -1,3 +1,4 @@
+#include "lpiston.h"
 #include "box.h"
 #include "energy.h"
 #include "mdcalc.h"
@@ -17,6 +18,18 @@
 
 
 namespace tinker {
+void ratcom_kevir(double coef, double atomic_vir, double& val)
+{
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      ratcom_kevir_cu(coef, atomic_vir, val);
+   else
+#endif
+      ratcom_kevir_acc(coef, atomic_vir, val);
+}
+void ratcom_kevir_cu(double coef, double atomic_vir, double& val) {}
+
+
 extern void vvlp_hc_acc(int, time_prec);
 
 

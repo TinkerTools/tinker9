@@ -440,7 +440,4 @@ void rattle2_methyl_cu(time_prec dt, bool do_v)
                  xpos, ypos, zpos, massinv);
    }
 }
-
-
-void ratcom_kevir_cu(double coef, double atomic_vir, double& val) {}
 }

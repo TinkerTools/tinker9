@@ -4,6 +4,7 @@
 
 #include "energy.h"
 #include "lf_lpiston.h"
+#include "lpiston.h"
 #include "mdcalc.h"
 #include "mdegv.h"
 #include "mdintg.h"
