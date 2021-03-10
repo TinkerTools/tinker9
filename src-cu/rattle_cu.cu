@@ -173,7 +173,7 @@ void constrain_methyl_cu1(
          ynew[id] += dyd;
          znew[id] += dzd;
       }
-      if (eq<HTYPE, RATTLE>()) {
+      if CONSTEXPR (not eq<HTYPE, SHAKE>()) {
          double invdt = 1 / dt;
          vx[ia] += dxa * invdt;
          vy[ia] += dya * invdt;
