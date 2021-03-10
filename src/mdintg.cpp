@@ -191,13 +191,13 @@ void integrate_data(rc_op op)
             qnh[i] = ekt * bath::tautemp * bath::tautemp;
          }
          qnh[0] = mdstuf::nfree * ekt * bath::tautemp * bath::tautemp;
+         lp_alpha = 1.0;
+         if (n > 1)
+            lp_alpha = 1.0 + 1.0 / (n - 1);
          energy(calc::v6);
          if (use_rattle()) {
-            double odnf = 1.0;
-            if (n > 1)
-               odnf = 1.0 + 1.0 / (n - 1);
             auto atomic_vir = vir[0] + vir[4] + vir[8];
-            ratcom_kevir(2.0 * odnf, atomic_vir, ratcom_kevir_value);
+            ratcom_kevir(2.0 * lp_alpha, atomic_vir, ratcom_kevir_value);
          }
 
          printf("\n");

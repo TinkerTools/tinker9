@@ -4,6 +4,7 @@
 
 
 namespace tinker {
+extern double lp_alpha;
 void vv_lpiston_npt(int istep, time_prec dt_ps);
 
 

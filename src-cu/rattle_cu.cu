@@ -1,9 +1,12 @@
 #include "add.h"
 #include "launch.h"
+#include "lpiston.h"
 #include "mdcalc.h"
 #include "mdegv.h"
 #include "mdpq.h"
+#include "nose.h"
 #include "rattle.h"
+#include "seq_lprat.h"
 #include <tinker/detail/units.hh>
 
 
@@ -19,6 +22,8 @@ void constrain_methyl_cu1(
    pos_prec* restrict znew, const pos_prec* restrict xold,
    const pos_prec* restrict yold, const pos_prec* restrict zold,
    const mass_prec* restrict massinv,
+
+   double vbar, const double* restrict mfrac,
 
    vel_prec* restrict vx, vel_prec* restrict vy, vel_prec* restrict vz)
 {
@@ -54,6 +59,19 @@ void constrain_methyl_cu1(
       rma = massinv[ia];
       rmb = massinv[ib];
       rmc = massinv[ic];
+      double ae1 = 1.0, be1 = 1.0, ce1 = 1.0, de1 = 1.0;
+      if CONSTEXPR (eq<HTYPE, LPRAT>()) {
+         ae1 = lprat_e1(dt, mfrac[ia], vbar);
+         be1 = lprat_e1(dt, mfrac[ib], vbar);
+         ce1 = lprat_e1(dt, mfrac[ic], vbar);
+         rma /= ae1;
+         rmb /= be1;
+         rmc /= ce1;
+         if (methyl) {
+            de1 = lprat_e1(dt, mfrac[id], vbar);
+            rmd /= de1;
+         }
+      }
 
 
       // vectors AB0, AB1;
@@ -173,21 +191,21 @@ void constrain_methyl_cu1(
          ynew[id] += dyd;
          znew[id] += dzd;
       }
-      if (eq<HTYPE, RATTLE>()) {
+      if CONSTEXPR (not eq<HTYPE, SHAKE>()) {
          double invdt = 1 / dt;
-         vx[ia] += dxa * invdt;
-         vy[ia] += dya * invdt;
-         vz[ia] += dza * invdt;
-         vx[ib] += dxb * invdt;
-         vy[ib] += dyb * invdt;
-         vz[ib] += dzb * invdt;
-         vx[ic] += dxc * invdt;
-         vy[ic] += dyc * invdt;
-         vz[ic] += dzc * invdt;
+         vx[ia] += dxa * invdt * ae1;
+         vy[ia] += dya * invdt * ae1;
+         vz[ia] += dza * invdt * ae1;
+         vx[ib] += dxb * invdt * be1;
+         vy[ib] += dyb * invdt * be1;
+         vz[ib] += dzb * invdt * be1;
+         vx[ic] += dxc * invdt * ce1;
+         vy[ic] += dyc * invdt * ce1;
+         vz[ic] += dzc * invdt * ce1;
          if (methyl) {
-            vx[id] += dxd * invdt;
-            vy[id] += dyd * invdt;
-            vz[id] += dzd * invdt;
+            vx[id] += dxd * invdt * de1;
+            vy[id] += dyd * invdt * de1;
+            vz[id] += dzd * invdt * de1;
          }
       }
    }
@@ -209,6 +227,29 @@ void rattle_methyl_cu(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
               dt, xpos, ypos, zpos, xold, yold, zold, massinv,
 
+              0.0, nullptr,
+
+              vx, vy, vz);
+}
+
+
+void lprat_methyl_cu(time_prec dt, const pos_prec* xold, const pos_prec* yold,
+                     const pos_prec* zold)
+{
+   int n23 = nratch2 + nratch3;
+   if (n23 <= 0)
+      return;
+
+
+   auto ker = constrain_methyl_cu1<LPRAT>;
+   launch_k2s(g::s0, 64, n23, ker,
+
+              rateps, nratch2, iratch2, kratch2, nratch3, iratch3, kratch3,
+
+              dt, xpos, ypos, zpos, xold, yold, zold, massinv,
+
+              vbar, ratcom_massfrac,
+
               vx, vy, vz);
 }
 
@@ -229,23 +270,25 @@ void shake_methyl_cu(time_prec dt, pos_prec* xnew, pos_prec* ynew,
 
               dt, xnew, ynew, znew, xold, yold, zold, massinv,
 
+              0.0, nullptr,
+
               nullptr, nullptr, nullptr);
 }
 
 
-template <bool DO_V>
+template <class HTYPE, bool DO_V>
 __global__
-void constrain2_methyl_cu1(int nratch2, const int (*restrict iratch2)[3],
-                           int nratch3, const int (*restrict iratch3)[4],
+void constrain2_methyl_cu1(
+   int nratch2, const int (*restrict iratch2)[3], int nratch3,
+   const int (*restrict iratch3)[4],
 
-                           time_prec dt, vel_prec* restrict vx,
-                           vel_prec* restrict vy, vel_prec* restrict vz,
-                           virial_buffer restrict vir_buf,
+   time_prec dt, vel_prec* restrict vx, vel_prec* restrict vy,
+   vel_prec* restrict vz, virial_buffer restrict vir_buf,
 
-                           const pos_prec* restrict xpos,
-                           const pos_prec* restrict ypos,
-                           const pos_prec* restrict zpos,
-                           const mass_prec* restrict massinv)
+   double al, double vbar, double vnh, const double* restrict mfrac,
+
+   const pos_prec* restrict xpos, const pos_prec* restrict ypos,
+   const pos_prec* restrict zpos, const mass_prec* restrict massinv)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int stride = blockDim.x * gridDim.x;
@@ -279,6 +322,18 @@ void constrain2_methyl_cu1(int nratch2, const int (*restrict iratch2)[3],
       rma = massinv[ia];
       rmb = massinv[ib];
       rmc = massinv[ic];
+      if CONSTEXPR (eq<HTYPE, LPRAT>()) {
+         double ae2 = lprat_e2(dt, mfrac[ia], vbar, al, vnh);
+         double be2 = lprat_e2(dt, mfrac[ib], vbar, al, vnh);
+         double ce2 = lprat_e2(dt, mfrac[ic], vbar, al, vnh);
+         rma /= ae2;
+         rmb /= be2;
+         rmc /= ce2;
+         if (methyl) {
+            double de2 = lprat_e2(dt, mfrac[id], vbar, al, vnh);
+            rmd /= de2;
+         }
+      }
 
 
       // matrix form
@@ -396,6 +451,9 @@ void constrain2_methyl_cu1(int nratch2, const int (*restrict iratch2)[3],
          xtermc *= vterm;
          ytermc *= vterm;
          ztermc *= vterm;
+         xtermd *= vterm;
+         ytermd *= vterm;
+         ztermd *= vterm;
          vxx -= (xb3 * xtermb + xc3 * xtermc + xd3 * xtermd);
          vyx -= (yb3 * xtermb + yc3 * xtermc + yd3 * xtermd);
          vzx -= (zb3 * xtermb + zc3 * xtermc + zd3 * xtermd);
@@ -421,23 +479,47 @@ void rattle2_methyl_cu(time_prec dt, bool do_v)
 
 
    if (do_v) {
-      auto ker = constrain2_methyl_cu1<true>;
+      auto ker = constrain2_methyl_cu1<RATTLE, true>;
       launch_k2b(g::s0, 64, n23, ker,
 
                  nratch2, iratch2, nratch3, iratch3,
 
                  dt, vx, vy, vz, vir_buf,
 
+                 0.0, 0.0, 0.0, nullptr,
+
                  xpos, ypos, zpos, massinv);
    } else {
-      auto ker = constrain2_methyl_cu1<false>;
+      auto ker = constrain2_methyl_cu1<RATTLE, false>;
       launch_k2b(g::s0, 64, n23, ker,
 
                  nratch2, iratch2, nratch3, iratch3,
 
                  dt, vx, vy, vz, nullptr,
 
+                 0.0, 0.0, 0.0, nullptr,
+
                  xpos, ypos, zpos, massinv);
    }
+}
+
+
+void lprat2_methyl_cu(time_prec dt)
+{
+   int n23 = nratch2 + nratch3;
+   if (n23 <= 0)
+      return;
+
+
+   auto ker = constrain2_methyl_cu1<LPRAT, true>;
+   launch_k2b(g::s0, 64, n23, ker,
+
+              nratch2, iratch2, nratch3, iratch3,
+
+              dt, vx, vy, vz, vir_buf,
+
+              lp_alpha, vbar, vnh[0], ratcom_massfrac,
+
+              xpos, ypos, zpos, massinv);
 }
 }

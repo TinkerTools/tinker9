@@ -18,6 +18,9 @@
 
 
 namespace tinker {
+double lp_alpha;
+
+
 void ratcom_kevir(double coef, double atomic_vir, double& val)
 {
 #if TINKER_CUDART
@@ -28,6 +31,48 @@ void ratcom_kevir(double coef, double atomic_vir, double& val)
       ratcom_kevir_acc(coef, atomic_vir, val);
 }
 void ratcom_kevir_cu(double coef, double atomic_vir, double& val) {}
+
+
+void lprat(time_prec dt, const pos_prec* xold, const pos_prec* yold,
+           const pos_prec* zold)
+{
+   lprat_settle_acc(dt, xold, yold, zold);
+   lprat_ch_acc(dt, xold, yold, zold);
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      lprat_methyl_cu(dt, xold, yold, zold);
+#endif
+   lprat_acc(dt, xold, yold, zold);
+}
+
+
+void lprat2(time_prec dt)
+{
+   const bool do_v = true;
+
+
+   if (do_v) {
+      darray::zero(g::q0, buffer_size(), vir_buf);
+   }
+
+
+   lprat2_settle_acc(dt);
+   lprat2_ch_acc(dt);
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      lprat2_methyl_cu(dt);
+#endif
+   lprat2_acc(dt);
+
+
+   if (do_v) {
+      virial_prec v[9];
+      virial_reduce(v, vir_buf);
+      for (int iv = 0; iv < 9; ++iv) {
+         vir[iv] += v[iv];
+      }
+   }
+}
 
 
 extern void vvlp_hc_acc(int, time_prec);

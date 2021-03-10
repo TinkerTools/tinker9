@@ -3,6 +3,18 @@
 #include "tool/rc_man.h"
 
 
+extern "C"
+{
+   // RATTLE vs SHAKE
+   struct RATTLE
+   {};
+   struct SHAKE
+   {};
+   struct LPRAT
+   {};
+}
+
+
 namespace tinker {
 bool use_rattle();
 void rattle_data(rc_op);
