@@ -86,6 +86,11 @@ void integrate_data(rc_op op)
                             leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
       }
 
+      if (intg == vv_lpiston_npt) {
+         if (use_rattle())
+            darray::deallocate(lp_molpres_buf);
+      }
+
       if (intg == respa_fast_slow)
          darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
 
@@ -196,8 +201,8 @@ void integrate_data(rc_op op)
             lp_alpha = 1.0 + 1.0 / (n - 1);
          energy(calc::v6);
          if (use_rattle()) {
-            auto atomic_vir = vir[0] + vir[4] + vir[8];
-            ratcom_kevir(2.0 * lp_alpha, atomic_vir, ratcom_kevir_value);
+            darray::allocate(buffer_size(), &lp_molpres_buf);
+            lp_molpressure(lp_alpha, lp_molpres);
          }
 
          printf("\n");

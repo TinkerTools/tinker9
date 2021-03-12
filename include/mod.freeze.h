@@ -2,7 +2,6 @@
 #include "glob.molecule.h"
 #include "macro.h"
 #include "mdprec.h"
-#include "tool/energy_buffer.h"
 
 
 namespace tinker {
@@ -52,10 +51,5 @@ TINKER_EXTERN pos_prec* ratcom_z;
 TINKER_EXTERN vel_prec* ratcom_px;
 TINKER_EXTERN vel_prec* ratcom_py;
 TINKER_EXTERN vel_prec* ratcom_pz;
-TINKER_EXTERN double* ratcom_gx;
-TINKER_EXTERN double* ratcom_gy;
-TINKER_EXTERN double* ratcom_gz;
 TINKER_EXTERN double* ratcom_massfrac;
-TINKER_EXTERN double ratcom_kevir_value;
-TINKER_EXTERN energy_buffer ratcom_kevir_buf;
 }

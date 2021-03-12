@@ -19,18 +19,19 @@
 
 namespace tinker {
 double lp_alpha;
+double lp_molpres;
+double* lp_molpres_buf;
 
 
-void ratcom_kevir(double coef, double atomic_vir, double& val)
+void lp_molpressure(double alpha, double& val)
 {
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
-      ratcom_kevir_cu(coef, atomic_vir, val);
+      lp_molpressure_cu(alpha, val);
    else
 #endif
-      ratcom_kevir_acc(coef, atomic_vir, val);
+      lp_molpressure_acc(alpha, val);
 }
-void ratcom_kevir_cu(double coef, double atomic_vir, double& val) {}
 
 
 void lprat(time_prec dt, const pos_prec* xold, const pos_prec* yold,
@@ -73,9 +74,6 @@ void lprat2(time_prec dt)
       }
    }
 }
-
-
-extern void vvlp_hc_acc(int, time_prec);
 
 
 namespace {
@@ -173,12 +171,6 @@ void lp_v5(time_prec dt, double R)
 
 void vv_lpiston_npt_v5(int istep, time_prec dt)
 {
-   if (use_rattle()) {
-      vvlp_hc_acc(istep, dt);
-      return;
-   }
-
-
    int vers1 = rc_flag & calc::vmask;
    bool save = !(istep % inform::iwrite);
    if (!save)
@@ -221,6 +213,10 @@ void vv_lpiston_npt_v5(int istep, time_prec dt)
 
 void vv_lpiston_npt(int istep, time_prec dt)
 {
-   vv_lpiston_npt_v5(istep, dt);
+   if (use_rattle()) {
+      vv_lpiston_hc_acc(istep, dt);
+   } else {
+      vv_lpiston_npt_v5(istep, dt);
+   }
 }
 }

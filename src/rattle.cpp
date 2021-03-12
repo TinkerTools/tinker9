@@ -204,17 +204,13 @@ void rattle_data(rc_op op)
                          rattle_dmol.molecule, rattle_dmol.molmass);
       if (rc_flag & calc::md) {
          darray::deallocate(ratcom_x, ratcom_y, ratcom_z, ratcom_px, ratcom_py,
-                            ratcom_pz, ratcom_gx, ratcom_gy, ratcom_gz,
-                            ratcom_massfrac);
+                            ratcom_pz, ratcom_massfrac);
          ratcom_x = nullptr;
          ratcom_y = nullptr;
          ratcom_z = nullptr;
          ratcom_px = nullptr;
          ratcom_py = nullptr;
          ratcom_pz = nullptr;
-         ratcom_gx = nullptr;
-         ratcom_gy = nullptr;
-         ratcom_gz = nullptr;
          ratcom_massfrac = nullptr;
       }
 
@@ -350,8 +346,8 @@ void rattle_data(rc_op op)
          }
          hvec_massfrac.resize(n);
          for (int i = 0; i < n; ++i) {
-            double imass = mass[i];
             int im = hvec_molec[i];
+            double imass = atomid::mass[i];
             double mmass = hvec_molmass[im];
             hvec_massfrac[i] = imass / mmass;
          }
@@ -360,8 +356,7 @@ void rattle_data(rc_op op)
          if (rc_flag & calc::md) {
             // Actually these arrays are only used for NPT RATTLE.
             darray::allocate(n, &ratcom_x, &ratcom_y, &ratcom_z, &ratcom_px,
-                             &ratcom_py, &ratcom_pz, &ratcom_gx, &ratcom_gy,
-                             &ratcom_gz, &ratcom_massfrac);
+                             &ratcom_py, &ratcom_pz, &ratcom_massfrac);
          }
 
          int nrmol = hvec_molmass.size();
