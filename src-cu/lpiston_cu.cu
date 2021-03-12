@@ -4,6 +4,7 @@
 #include "mdegv.h"
 #include "mdpq.h"
 #include "tool/darray.h"
+#include <tinker/detail/units.hh>
 
 
 namespace tinker {
@@ -18,10 +19,7 @@ void lp_molpressure_cu1(
    const grad_prec* restrict gy, const grad_prec* restrict gz,
 
    int nmol, const int (*restrict imol)[2], const int* restrict kmol,
-   const mass_prec* restrict molmass,
-
-   const pos_prec* restrict ratcom_x, const pos_prec* restrict ratcom_y,
-   const pos_prec* restrict ratcom_z)
+   const mass_prec* restrict molmass)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int stride = blockDim.x * gridDim.x;
@@ -29,9 +27,11 @@ void lp_molpressure_cu1(
 
    for (int im = ithread; im < nmol; im += stride) {
       double mvir = 0;
-      double igx, igy, igz;
-      double mgx = 0, mgy = 0, mgz = 0;
-      vel_prec px = 0, py = 0, pz = 0;
+      double igx, igy, igz;             // atomic gradients
+      pos_prec irx, iry, irz;           // atomic positions
+      double mgx = 0, mgy = 0, mgz = 0; // molecular gradients
+      pos_prec rx = 0, ry = 0, rz = 0;  // molecular positions
+      vel_prec px = 0, py = 0, pz = 0;  // molecular momenta
       int start = imol[im][0];
       int end = imol[im][1];
       for (int i = start; i < end; ++i) {
@@ -45,22 +45,26 @@ void lp_molpressure_cu1(
          igy = gy[k];
          igz = gz[k];
 #endif
-         mvir -= (igx * xpos[k] + igy * ypos[k] + igz * zpos[k]);
+         irx = xpos[k];
+         iry = ypos[k];
+         irz = zpos[k];
+         mvir -= (igx * irx + igy * iry + igz * irz); // unit: kcal/mol
 
 
          mgx += igx;
          mgy += igy;
          mgz += igz;
-
-
          mass_prec massk = mass[k];
+         rx += massk * irx;
+         ry += massk * iry;
+         rz += massk * irz;
          px += massk * vx[k];
          py += massk * vy[k];
          pz += massk * vz[k];
       }
-      mvir += mgx * ratcom_x[im] + mgy * ratcom_y[im] + mgz * ratcom_z[im];
       auto mmassinv = 1.0 / molmass[im];
-      auto mv2 = (px * px + py * py + pz * pz) * mmassinv;
+      mvir += (mgx * rx + mgy * ry + mgz * rz) * mmassinv;
+      auto mv2 = (px * px + py * py + pz * pz) * mmassinv / units::ekcal;
 
 
       lp_buf[ithread] += (alpha * mv2 - mvir);
@@ -81,13 +85,11 @@ void lp_molpressure_cu(double alpha, double& val)
               n, mass, xpos, ypos, zpos, vx, vy, vz, gx, gy, gz,
 
               rattle_dmol.nmol, rattle_dmol.imol, rattle_dmol.kmol,
-              rattle_dmol.molmass, ratcom_x, ratcom_y, ratcom_z);
+              rattle_dmol.molmass);
 
 
-   val = reduce_sum(lp_molpres_buf, bufsize, g::q0);
-
-
+   double sum = reduce_sum(lp_molpres_buf, bufsize, g::q0);
    virial_prec atomic_vir = vir[0] + vir[4] + vir[8];
-   val += atomic_vir;
+   val = sum + atomic_vir;
 }
 }

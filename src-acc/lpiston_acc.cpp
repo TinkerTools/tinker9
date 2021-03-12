@@ -28,12 +28,14 @@ void lp_molpressure_acc(double alpha, double& val)
    double sum = 0;
    #pragma acc parallel loop independent async\
                copy(sum) reduction(+:sum)\
-               deviceptr(molmass,imol,kmol,ratcom_x,ratcom_y,ratcom_z,\
+               deviceptr(molmass,imol,kmol,\
                   mass,xpos,ypos,zpos,vx,vy,vz,gx,gy,gz)
    for (int im = 0; im < nmol; ++im) {
       double mvir = 0.0;
       double igx, igy, igz;
+      pos_prec irx, iry, irz;
       double mgx = 0, mgy = 0, mgz = 0;
+      pos_prec rx = 0, ry = 0, rz = 0;
       vel_prec px = 0, py = 0, pz = 0;
       int start = imol[im][0];
       int stop = imol[im][1];
@@ -49,22 +51,27 @@ void lp_molpressure_acc(double alpha, double& val)
          igy = gy[k];
          igz = gz[k];
 #endif
-         mvir -= (igx * xpos[k] + igy * ypos[k] + igz * zpos[k]);
+         irx = xpos[k];
+         iry = ypos[k];
+         irz = zpos[k];
+         mvir -= (igx * irx + igy * iry + igz * irz); // unit: kcal/mol
 
 
          mgx += igx;
          mgy += igy;
          mgz += igz;
-
-
          mass_prec massk = mass[k];
+         rx += massk * irx;
+         ry += massk * iry;
+         rz += massk * irz;
          px += massk * vx[k];
          py += massk * vy[k];
          pz += massk * vz[k];
       }
-      mvir += mgx * ratcom_x[im] + mgy * ratcom_y[im] + mgz * ratcom_z[im];
       auto mmassinv = 1.0 / molmass[im];
-      auto mv2 = (px * px + py * py + pz * pz) * mmassinv;
+      mvir += (mgx * rx + mgy * ry + mgz * rz) * mmassinv;
+      auto mv2 = (px * px + py * py + pz * pz) * mmassinv / units::ekcal;
+      // convert from [g/mol][ang**2/ps**2] to [kcal/mol]
 
 
       sum += (alpha * mv2 - mvir);
@@ -77,15 +84,13 @@ void lp_molpressure_acc(double alpha, double& val)
 }
 
 
-namespace {
 void ratcom_p()
 {
    const int nmol = rattle_dmol.nmol;
    const auto* imol = rattle_dmol.imol;
    const auto* kmol = rattle_dmol.kmol;
    #pragma acc parallel loop independent async\
-               deviceptr(xpos,ypos,zpos,ratcom_x,ratcom_y,ratcom_z,\
-                  vx,vy,vz,ratcom_px,ratcom_py,ratcom_pz,\
+               deviceptr(vx,vy,vz,ratcom_px,ratcom_py,ratcom_pz,\
                   mass,imol,kmol)
    for (int im = 0; im < nmol; ++im) {
       int start = imol[im][0];
@@ -106,7 +111,7 @@ void ratcom_p()
 }
 
 
-void vvlp_hc_pt(time_prec dt, double R, int)
+void vv_lpiston_hc_pt(time_prec dt, double R)
 {
    const time_prec dt2 = 0.5 * dt;
    const time_prec dt4 = 0.25 * dt;
@@ -162,7 +167,6 @@ void vvlp_hc_pt(time_prec dt, double R, int)
       }
    }
 }
-}
 
 
 void vv_lpiston_hc_acc(int istep, time_prec dt)
@@ -187,7 +191,7 @@ void vv_lpiston_hc_acc(int istep, time_prec dt)
 
 
    // thermostat 1/2
-   vvlp_hc_pt(dt, R, 1);
+   vv_lpiston_hc_pt(dt, R);
    const double vnh0 = vnh[0];
 
 
@@ -328,6 +332,6 @@ void vv_lpiston_hc_acc(int istep, time_prec dt)
 
 
    // thermostat 2/2
-   vvlp_hc_pt(dt, R, 2);
+   vv_lpiston_hc_pt(dt, R);
 }
 }

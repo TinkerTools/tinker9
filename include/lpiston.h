@@ -15,6 +15,7 @@ void lp_molpressure_cu(double alpha, double& val);
 
 
 void vv_lpiston_npt(int istep, time_prec dt_ps);
+void vv_lpiston_uc(int, time_prec);
 void vv_lpiston_hc_acc(int, time_prec);
 
 

@@ -186,6 +186,9 @@ void integrate_data(rc_op op)
                           &leapfrog_vxold, &leapfrog_vyold, &leapfrog_vzold);
          energy(calc::v1);
       } else if (intg == vv_lpiston_npt) {
+         if (use_rattle()) {
+            darray::allocate(buffer_size(), &lp_molpres_buf);
+         }
          double ekt = units::gasconst * bath::kelvin;
          vbar = 0;
          gbar = 0;
@@ -200,10 +203,6 @@ void integrate_data(rc_op op)
          if (n > 1)
             lp_alpha = 1.0 + 1.0 / (n - 1);
          energy(calc::v6);
-         if (use_rattle()) {
-            darray::allocate(buffer_size(), &lp_molpres_buf);
-            lp_molpressure(lp_alpha, lp_molpres);
-         }
 
          printf("\n");
          printf(" Friction                        %12.4lf /ps\n",

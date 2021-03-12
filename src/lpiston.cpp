@@ -167,9 +167,10 @@ void lp_v5(time_prec dt, double R)
       for (int jj = 0; jj < 3; ++jj)
          ekin[ii][jj] *= velsc2;
 }
+}
 
 
-void vv_lpiston_npt_v5(int istep, time_prec dt)
+void vv_lpiston_uc(int istep, time_prec dt)
 {
    int vers1 = rc_flag & calc::vmask;
    bool save = !(istep % inform::iwrite);
@@ -208,7 +209,6 @@ void vv_lpiston_npt_v5(int istep, time_prec dt)
    propagate_velocity(dt_2, gx, gy, gz);
    lp_v5(dt, R);
 }
-}
 
 
 void vv_lpiston_npt(int istep, time_prec dt)
@@ -216,7 +216,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
    if (use_rattle()) {
       vv_lpiston_hc_acc(istep, dt);
    } else {
-      vv_lpiston_npt_v5(istep, dt);
+      vv_lpiston_uc(istep, dt);
    }
 }
 }
