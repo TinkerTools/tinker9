@@ -913,18 +913,18 @@ void rattle2_ch_acc(time_prec dt, bool do_v)
 
 void lprat2_acc(time_prec dt)
 {
-   constrain2_acc<LPRAT, true>(dt);
+   constrain2_acc<LPRAT, false>(dt);
 }
 
 
 void lprat2_settle_acc(time_prec dt)
 {
-   settle2_acc1<LPRAT, true>(dt);
+   settle2_acc1<LPRAT, false>(dt);
 }
 
 
 void lprat2_ch_acc(time_prec dt)
 {
-   constrain2_ch_acc1<LPRAT, true>(dt);
+   constrain2_ch_acc1<LPRAT, false>(dt);
 }
 }

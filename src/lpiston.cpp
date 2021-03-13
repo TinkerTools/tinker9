@@ -49,14 +49,6 @@ void lprat(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
 void lprat2(time_prec dt)
 {
-   const bool do_v = true;
-
-
-   if (do_v) {
-      darray::zero(g::q0, buffer_size(), vir_buf);
-   }
-
-
    lprat2_settle_acc(dt);
    lprat2_ch_acc(dt);
 #if TINKER_CUDART
@@ -64,15 +56,6 @@ void lprat2(time_prec dt)
       lprat2_methyl_cu(dt);
 #endif
    lprat2_acc(dt);
-
-
-   if (do_v) {
-      virial_prec v[9];
-      virial_reduce(v, vir_buf);
-      for (int iv = 0; iv < 9; ++iv) {
-         vir[iv] += v[iv];
-      }
-   }
 }
 
 

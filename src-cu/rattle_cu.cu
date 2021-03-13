@@ -511,12 +511,12 @@ void lprat2_methyl_cu(time_prec dt)
       return;
 
 
-   auto ker = constrain2_methyl_cu1<LPRAT, true>;
+   auto ker = constrain2_methyl_cu1<LPRAT, false>;
    launch_k2b(g::s0, 64, n23, ker,
 
               nratch2, iratch2, nratch3, iratch3,
 
-              dt, vx, vy, vz, vir_buf,
+              dt, vx, vy, vz, nullptr,
 
               lp_alpha, vbar, vnh[0], ratcom_massfrac,
 
