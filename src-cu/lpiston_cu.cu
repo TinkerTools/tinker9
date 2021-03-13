@@ -90,6 +90,6 @@ void lp_molpressure_cu(double alpha, double& val)
 
    double sum = reduce_sum(lp_molpres_buf, bufsize, g::q0);
    virial_prec atomic_vir = vir[0] + vir[4] + vir[8];
-   val = sum + atomic_vir;
+   val = sum - atomic_vir;
 }
 }

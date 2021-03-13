@@ -80,7 +80,7 @@ void lp_molpressure_acc(double alpha, double& val)
 
 
    virial_prec atomic_vir = vir[0] + vir[4] + vir[8];
-   val = sum + atomic_vir;
+   val = sum - atomic_vir;
 }
 
 
