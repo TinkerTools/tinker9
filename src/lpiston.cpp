@@ -76,20 +76,16 @@ void lp_v5(time_prec dt, double R)
    const double Nf = mdstuf::nfree;
    const double g = stodyn::friction;
    const double kbt = units::gasconst * bath::kelvin;
-   const double odnf = 1.0 + D / Nf;
+   const double odnf = lp_alpha;
 
 
    const int nc = 2;
    const double h = dt / (2 * nc);
    const double h_2 = 0.5 * h;
+   const double h_4 = 0.25 * h;
    const double opgh2 = 1.0 + g * h_2;
    const double omgh2 = 1.0 - g * h_2;
    const double sdbar = std::sqrt(2.0 * kbt * g * dt / qbar) / (4 * nc);
-
-
-   const double& qnh0 = qnh[0];
-   double& gnh0 = gnh[0];
-   double& vnh0 = vnh[0];
 
 
    const virial_prec tr_vir = vir[0] + vir[4] + vir[8];
@@ -107,8 +103,20 @@ void lp_v5(time_prec dt, double R)
 
 
       // vnh 1/2
-      gnh0 = (2 * eksum1 - Nf * kbt) / qnh0;
-      vnh0 = vnh0 + gnh0 * h_2;
+      for (int i = maxnose - 1; i > -1; --i) {
+         if (i == 0)
+            gnh[i] = (2 * eksum1 - Nf * kbt) / qnh[i];
+         else
+            gnh[i] = (qnh[i - 1] * vnh[i - 1] * vnh[i - 1] - kbt) / qnh[i];
+
+
+         if (i == maxnose - 1)
+            vnh[i] += gnh[i] * h_2;
+         else {
+            double exptm = std::exp(-vnh[i + 1] * h_4);
+            vnh[i] = (vnh[i] * exptm + gnh[i] * h_2) * exptm;
+         }
+      }
 
 
       // vbar 1/2
@@ -119,7 +127,7 @@ void lp_v5(time_prec dt, double R)
 
 
       // velocity
-      double scal = std::exp(-h * (odnf * vbar + vnh0));
+      double scal = std::exp(-h * (odnf * vbar + vnh[0]));
       velsc1 *= scal;
       eksum1 *= (scal * scal);
 
@@ -132,8 +140,20 @@ void lp_v5(time_prec dt, double R)
 
 
       // vnh 2/2
-      gnh0 = (2 * eksum1 - Nf * kbt) / qnh0;
-      vnh0 = vnh0 + gnh0 * h_2;
+      for (int i = 0; i < maxnose; ++i) {
+         if (i == 0)
+            gnh[i] = (2 * eksum1 - Nf * kbt) / qnh[i];
+         else
+            gnh[i] = (qnh[i - 1] * vnh[i - 1] * vnh[i - 1] - kbt) / qnh[i];
+
+
+         if (i == maxnose - 1)
+            vnh[i] += gnh[i] * h_2;
+         else {
+            double exptm = std::exp(-vnh[i + 1] * h_4);
+            vnh[i] = (vnh[i] * exptm + gnh[i] * h_2) * exptm;
+         }
+      }
 
 
       eksum0 = eksum1;
