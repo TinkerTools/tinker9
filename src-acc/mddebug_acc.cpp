@@ -27,14 +27,14 @@ void __debug_norm_propagate_pos_acc(pos_prec poseps, time_prec dt,
       int flag = big ? i : -1;
       which = which > flag ? which : flag;
    }
-   wait_for(g::q0);
+   #pragma acc wait
 
 
    if (which >= 0) {
       t_prterr();
-      TINKER_THROW(format(
-         "MD-DEBUG POS UPDATE  --  Atom %d Moved More than %.4lf Angstroms",
-         which + 1, poseps));
+      TINKER_THROW(format("MD-DEBUG POS UPDATE  --  Atom %d Tried to Move More"
+                          " than %.4lf Angstroms",
+                          which + 1, poseps));
    }
 }
 }
