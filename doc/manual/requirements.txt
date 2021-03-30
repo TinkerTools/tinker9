@@ -13,7 +13,7 @@ packaging==20.8
 pybtex==0.23.0
 pybtex-docutils==0.2.2
 pydata-sphinx-theme==0.4.1
-Pygments==2.7.3
+Pygments==2.7.4
 pyparsing==2.4.7
 pytz==2020.4
 PyYAML==5.4
