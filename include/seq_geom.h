@@ -376,7 +376,7 @@ void dk_geom_torsion(
 
    real cosine = (xt * xu + yt * yu + zt * zu) * REAL_RECIP(rtru);
    real sine = (xcb * xtu + ycb * ytu + zcb * ztu) * REAL_RECIP(rcb * rtru);
-   cosine = REAL_MIN((real)1.0,REAL_MAX((real)-1.0,cosine));
+   cosine = REAL_MIN((real)1.0,REAL_MAX((real)-1.0, cosine));
    real angle = radian * REAL_ACOS(cosine);
    if (sine < 0)
       angle = -angle;
