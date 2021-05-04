@@ -16,9 +16,9 @@ struct Molecule
    /// \brief Number of the molecule to which each atom belongs.
    int* molecule;
    /// \brief Total weight of all the molecules in the system.
-   mass_prec totmass;
+   double totmass;
    /// \brief Molecular weight for each molecule in the system.
-   mass_prec* molmass;
+   double* molmass;
 };
 TINKER_EXTERN Molecule molecule;
 }

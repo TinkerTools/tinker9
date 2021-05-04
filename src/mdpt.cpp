@@ -5,6 +5,8 @@
 #include "mdpq.h"
 #include "platform.h"
 #include <cassert>
+#include <tinker/detail/mdstuf.hh>
+#include <tinker/detail/units.hh>
 
 
 namespace tinker {
@@ -14,16 +16,33 @@ void kinetic(T_prec& temp)
 }
 
 
+extern void kinetic_energy_acc(energy_prec& eksum_out,
+                               energy_prec (&ekin_out)[3][3], int n,
+                               const double* mass, const vel_prec* vx,
+                               const vel_prec* vy, const vel_prec* vz);
+extern void kinetic_energy_cu(energy_prec& eksum_out,
+                              energy_prec (&ekin_out)[3][3], int n,
+                              const double* mass, const vel_prec* vx,
+                              const vel_prec* vy, const vel_prec* vz);
+void kinetic_energy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
+                    int n, const double* mass, const vel_prec* vx,
+                    const vel_prec* vy, const vel_prec* vz)
+{
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      kinetic_energy_cu(eksum_out, ekin_out, n, mass, vx, vy, vz);
+   else
+#endif
+      kinetic_energy_acc(eksum_out, ekin_out, n, mass, vx, vy, vz);
+}
+
+
 void kinetic_explicit(T_prec& temp_out, energy_prec& eksum_out,
                       energy_prec (&ekin_out)[3][3], const vel_prec* vx,
                       const vel_prec* vy, const vel_prec* vz)
 {
-#if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
-      kinetic_explicit_cu(temp_out, eksum_out, ekin_out, vx, vy, vz);
-   else
-#endif
-      kinetic_explicit_acc(temp_out, eksum_out, ekin_out, vx, vy, vz);
+   kinetic_energy(eksum_out, ekin_out, n, mass, vx, vy, vz);
+   temp_out = 2 * eksum_out / (mdstuf::nfree * units::gasconst);
 }
 
 

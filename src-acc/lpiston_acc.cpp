@@ -9,7 +9,10 @@
 #include "nose.h"
 #include "random.h"
 #include "rattle.h"
+#include "tinker_rt.h"
+#include "tool/error.h"
 #include <tinker/detail/bath.hh>
+#include <tinker/detail/freeze.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/stodyn.hh>
@@ -17,321 +20,186 @@
 
 
 namespace tinker {
-void lp_molpressure_acc(double alpha, double& val)
+namespace {
+int irespa, ibaro;
+double fric, rnd;
+double g0, g1, D;
+bool atomT, molT, atomP, molP, constrain, aniso;
+
+
+enum
 {
-   int nmol = rattle_dmol.nmol;
-   auto* molmass = rattle_dmol.molmass;
-   auto* imol = rattle_dmol.imol;
-   auto* kmol = rattle_dmol.kmol;
-
-
-   double sum = 0;
-   #pragma acc parallel loop independent async\
-               copy(sum) reduction(+:sum)\
-               deviceptr(molmass,imol,kmol,\
-                  mass,xpos,ypos,zpos,vx,vy,vz,gx,gy,gz)
-   for (int im = 0; im < nmol; ++im) {
-      double mvir = 0.0;
-      double igx, igy, igz;
-      pos_prec irx, iry, irz;
-      double mgx = 0, mgy = 0, mgz = 0;
-      pos_prec rx = 0, ry = 0, rz = 0;
-      vel_prec px = 0, py = 0, pz = 0;
-      int start = imol[im][0];
-      int stop = imol[im][1];
-      #pragma acc loop seq
-      for (int i = start; i < stop; ++i) {
-         int k = kmol[i];
-#if TINKER_DETERMINISTIC_FORCE
-         igx = to_flt_acc<double>(gx[k]);
-         igy = to_flt_acc<double>(gy[k]);
-         igz = to_flt_acc<double>(gz[k]);
-#else
-         igx = gx[k];
-         igy = gy[k];
-         igz = gz[k];
-#endif
-         irx = xpos[k];
-         iry = ypos[k];
-         irz = zpos[k];
-         mvir -= (igx * irx + igy * iry + igz * irz); // unit: kcal/mol
-
-
-         mgx += igx;
-         mgy += igy;
-         mgz += igz;
-         mass_prec massk = mass[k];
-         rx += massk * irx;
-         ry += massk * iry;
-         rz += massk * irz;
-         px += massk * vx[k];
-         py += massk * vy[k];
-         pz += massk * vz[k];
-      }
-      auto mmassinv = 1.0 / molmass[im];
-      mvir += (mgx * rx + mgy * ry + mgz * rz) * mmassinv;
-      auto mv2 = (px * px + py * py + pz * pz) * mmassinv / units::ekcal;
-      // convert from [g/mol][ang**2/ps**2] to [kcal/mol]
-
-
-      sum += (alpha * mv2 - mvir);
-   }
-   #pragma acc wait
-
-
-   virial_prec atomic_vir = vir[0] + vir[4] + vir[8];
-   val = sum - atomic_vir;
+   KW_NULL = 0,
+   KW_ATOM,
+   KW_MOL
+};
+int kw_t, kw_p;
 }
 
 
-void ratcom_p()
+void vv_lpiston_init()
 {
-   const int nmol = rattle_dmol.nmol;
-   const auto* imol = rattle_dmol.imol;
-   const auto* kmol = rattle_dmol.kmol;
-   #pragma acc parallel loop independent async\
-               deviceptr(vx,vy,vz,ratcom_px,ratcom_py,ratcom_pz,\
-                  mass,imol,kmol)
-   for (int im = 0; im < nmol; ++im) {
-      int start = imol[im][0];
-      int end = imol[im][1];
-      vel_prec ptx = 0, pty = 0, ptz = 0;
-      #pragma acc loop seq
-      for (int i = start; i < end; ++i) {
-         int k = kmol[i];
-         auto massk = mass[k];
-         ptx += massk * vx[k];
-         pty += massk * vy[k];
-         ptz += massk * vz[k];
-      }
-      ratcom_px[im] = ptx;
-      ratcom_py[im] = pty;
-      ratcom_pz[im] = ptz;
+   auto o = stdout;
+
+   // RESPA keywords:    "RESPA-INNER  0.25"
+   // Barostat keywords: "BARO-OUTER   6.0"
+   const time_prec eps = 1.0 / 1048576; // 2**-20
+   irespa = (int)(time_step / (mdstuf::arespa + eps)) + 1;
+   double abaro;
+   get_kv("BARO-OUTER", abaro, 1.0);
+   ibaro = (int)(abaro * 0.001 / (time_step + eps)) + 1;
+   if (ibaro % 2 == 0)
+      ibaro = ibaro - 1;
+   ibaro = std::max(1, ibaro);
+
+   fric = stodyn::friction;
+   rnd = 0.0;
+
+   // isotropic NPT
+   aniso = bath::anisotrop;
+
+   constrain = use_rattle();
+   D = 3.0;
+
+   // molecular pressure keyword: "VOLUME-SCALE  MOLECULAR"
+   // atomic pressure keyword:    "VOLUME-SCALE  ATOMIC"
+   // default pressure
+   fstr_view volscale_f = bath::volscale;
+   std::string volscale = volscale_f.trim();
+   if (volscale == "ATOMIC") {
+      kw_p = KW_ATOM;
+   } else if (volscale == "MOLECULAR") {
+      kw_p = KW_MOL;
+   } else if (constrain) {
+      kw_p = KW_MOL;
+   } else {
+      kw_p = KW_ATOM;
    }
-}
-
-
-void vv_lpiston_hc_pt(time_prec dt, double R)
-{
-   const time_prec dt2 = 0.5 * dt;
-   const time_prec dt4 = 0.25 * dt;
-   const time_prec dt8 = 0.125 * dt;
-   const double D = 3.0;
-   const double Nf = mdstuf::nfree;
-   const double g = stodyn::friction;
-   const double kbt = units::gasconst * bath::kelvin;
-   const double gkbt = Nf * kbt;
-   const double odnf = lp_alpha;
-   const double sdbar = std::sqrt(2.0 * kbt * g * dt / qbar) / 2;
-
-
-   T_prec temp;
-   kinetic(temp);
-
-
-   for (int i = maxnose - 1; i > -1; --i) {
-      if (i == 0)
-         gnh[i] = (2 * eksum - gkbt) / qnh[i];
-      else
-         gnh[i] = (qnh[i - 1] * vnh[i - 1] * vnh[i - 1] - kbt) / qnh[i];
-
-
-      if (i == maxnose - 1)
-         vnh[i] += gnh[i] * dt4;
-      else {
-         double exptm = std::exp(-vnh[i + 1] * dt8);
-         vnh[i] = (vnh[i] * exptm + gnh[i] * dt4) * exptm;
-      }
+   if (constrain and kw_p == KW_ATOM) {
+      TINKER_THROW("NPT RATTLE cannot use atomic volume scaling."
+                   " Set \"VOLUME-SCALE  MOLECULAR\" in the key file.");
+   }
+   if (not constrain and kw_p == KW_MOL) {
+      print(o, " No constraints hence setting VOLUME-SCALE to ATOMIC\n");
+      kw_p = KW_ATOM;
+      volscale = "ATOMIC";
+   }
+   atomP = false, molP = false;
+   if (kw_p == KW_ATOM) {
+      volscale = "ATOMIC";
+      atomP = true;
+      int val = std::max(n, 2);
+      g1 = D * (val - 1);
+   } else if (kw_p == KW_MOL) {
+      volscale = "MOLECULAR";
+      molP = true;
+      int val = std::max(rattle_dmol.nmol, 2);
+      g1 = D * (val - 1);
    }
 
+   // molecular temperature keyword: "VELOCITY-SCALE  MOLECULAR"
+   // atomic temperature keyword:    "VELOCITY-SCALE  ATOMIC"
+   // default temperature
+   std::string velscale_default, velscale;
+   if (constrain) {
+      velscale_default = "MOLECULAR";
+      kw_t = KW_MOL;
+   } else {
+      velscale_default = "ATOMIC";
+      kw_t = KW_ATOM;
+   }
+   get_kv("VELOCITY-SCALE", velscale, velscale_default);
+   if (velscale == "ATOMIC") {
+      kw_t = KW_ATOM;
+   } else if (velscale == "MOLECULAR") {
+      kw_t = KW_MOL;
+   }
+   atomT = false, molT = false;
+   if (kw_t == KW_ATOM) {
+      velscale = "ATOMIC";
+      atomT = true;
+      g0 = D * (n - 1);
+      if (constrain) {
+         g0 -= freeze::nrat;
+      }
+   } else if (kw_t == KW_MOL) {
+      velscale = "MOLECULAR";
+      molT = true;
+      g0 = D * (rattle_dmol.nmol - 1);
+   }
 
-   double vol0 = volbox();
-   lp_molpressure(odnf, lp_molpres);
-   gbar = lp_molpres - D * vol0 * bath::atmsph / units::prescon;
-   gbar /= qbar;
-   vbar += gbar * dt2 - g * vbar * dt2 + sdbar * R;
+   lp_alpha = 1.0 + D / g1;
 
 
+   // Nose-Hoover Chain
+   double ekt = units::gasconst * bath::kelvin;
+   vbar = 0;
+   gbar = 0;
+   qbar = (g0 + D) * ekt * bath::taupres * bath::taupres;
    for (int i = 0; i < maxnose; ++i) {
-      if (i == 0)
-         gnh[i] = (2 * eksum - gkbt) / qnh[i];
-      else
-         gnh[i] = (qnh[i - 1] * vnh[i - 1] * vnh[i - 1] - kbt) / qnh[i];
-
-
-      if (i == maxnose - 1)
-         vnh[i] += gnh[i] * dt4;
-      else {
-         double exptm = std::exp(-vnh[i + 1] * dt8);
-         vnh[i] = (vnh[i] * exptm + gnh[i] * dt4) * exptm;
-      }
+      vnh[i] = 0;
+      gnh[i] = 0;
+      qnh[i] = ekt * bath::tautemp * bath::tautemp;
    }
+   qnh[0] = g0 * ekt * bath::tautemp * bath::tautemp;
+   energy(calc::v6);
+
+   if (use_rattle()) {
+      darray::allocate(buffer_size(), &lp_vir_buf);
+   }
+
+   print(o, "\n");
+   print(o, " Friction                        %12.4lf /ps\n", stodyn::friction);
+   print(o, " Time constant for the const-T   %12.4lf ps\n", bath::tautemp);
+   print(o, " Time constant for the const-P   %12.4lf ps\n", bath::taupres);
+   print(o, " Temperature estimator           %12s\n", velscale);
+   print(o, " Pressure estimator              %12s\n", volscale);
+   print(o, " LP-G                            %12.0lf\n", g0);
+   print(o, " LP-G1                           %12.0lf\n", g1);
+   print(o, " IRESPA                          %12d\n", irespa);
+   print(o, " IBARO                           %12d\n", ibaro);
+   print(o, "\n");
 }
 
 
-void vv_lpiston_hc_acc(int istep, time_prec dt)
+void vv_lpiston_destory()
 {
-   int vers1 = rc_flag & calc::vmask;
-   bool save = !(istep % inform::iwrite);
-   if (!save)
-      vers1 &= ~calc::energy;
+   if (use_rattle())
+      darray::deallocate(lp_vir_buf);
+}
 
 
-   const time_prec dt2 = 0.5 * dt;
-   const double odnf = lp_alpha;
-   const double R = normal<double>();
+void lp_mol_virial_acc() {}
 
 
+void lp_center_of_mass_acc(const pos_prec* ax, const pos_prec* ay,
+                           const pos_prec* az, pos_prec* mx, pos_prec* my,
+                           pos_prec* mz)
+{
    const int nmol = rattle_dmol.nmol;
    const auto* imol = rattle_dmol.imol;
    const auto* kmol = rattle_dmol.kmol;
-   const auto* molec = rattle_dmol.molecule;
-   const auto* molmass = rattle_dmol.molmass;
    const auto* mfrac = ratcom_massfrac;
-
-
-   // thermostat 1/2
-   vv_lpiston_hc_pt(dt, R);
-   const double vnh0 = vnh[0];
-
-
-   // velocity 1/2
-   // iL6 dt/2
    #pragma acc parallel loop independent async\
-               deviceptr(vx,vy,vz,mfrac)
-   for (int i = 0; i < n; ++i) {
-      auto wui = mfrac[i];
-      auto coef = exp(-dt2 * (vnh0 + odnf * vbar * wui));
-      vx[i] *= coef;
-      vy[i] *= coef;
-      vz[i] *= coef;
-   }
-   // iL5 dt/2
-   ratcom_p();
-   #pragma acc parallel loop independent async\
-               deviceptr(vx,vy,vz,ratcom_px,ratcom_py,ratcom_pz,\
-                  mfrac,molmass,molec)
-   for (int i = 0; i < n; ++i) {
-      auto im = molec[i];
-      auto invMu = 1.0 / molmass[im];
-      auto wui = mfrac[i];
-      vx[i] -= dt2 * odnf * vbar * (ratcom_px[im] * invMu - wui * vx[i]);
-      vy[i] -= dt2 * odnf * vbar * (ratcom_py[im] * invMu - wui * vy[i]);
-      vz[i] -= dt2 * odnf * vbar * (ratcom_pz[im] * invMu - wui * vz[i]);
-   }
-   // iL4 dt/2
-   propagate_velocity(dt2, gx, gy, gz);
-
-
-   // volume iL3
-   const double eterm2 = std::exp(vbar * dt);
-   lvec1 *= eterm2;
-   lvec2 *= eterm2;
-   lvec3 *= eterm2;
-   set_default_recip_box();
-
-
-   darray::copy(g::q0, n, rattle_xold, xpos);
-   darray::copy(g::q0, n, rattle_yold, ypos);
-   darray::copy(g::q0, n, rattle_zold, zpos);
-
-
-   // position
-   // iL2 dt/2, then center-of-mass
-   #pragma acc parallel loop independent async\
-               deviceptr(xpos,ypos,zpos,ratcom_x,ratcom_y,ratcom_z,\
-                  mfrac,imol,kmol)
+               deviceptr(ax,ay,az,mx,my,mz,mfrac,imol,kmol)
    for (int im = 0; im < nmol; ++im) {
       int start = imol[im][0];
       int end = imol[im][1];
-      pos_prec rtx = 0, rty = 0, rtz = 0;
+      pos_prec tx = 0, ty = 0, tz = 0;
       #pragma acc loop seq
       for (int i = start; i < end; ++i) {
          int k = kmol[i];
-         auto wui = mfrac[k];
-         auto coef = exp(vbar * wui * dt2);
-
-         pos_prec xi, yi, zi;
-         xi = xpos[k] * coef;
-         yi = ypos[k] * coef;
-         zi = zpos[k] * coef;
-         xpos[k] = xi;
-         ypos[k] = yi;
-         zpos[k] = zi;
-
-         rtx += wui * xi;
-         rty += wui * yi;
-         rtz += wui * zi;
+         auto frk = mfrac[k];
+         tx += frk * ax[k];
+         ty += frk * ay[k];
+         tz += frk * az[k];
       }
-      ratcom_x[im] = rtx;
-      ratcom_y[im] = rty;
-      ratcom_z[im] = rtz;
+      mx[im] = tx;
+      my[im] = ty;
+      mz[im] = tz;
    }
-
-
-   // iL1 dt, then iL2 dt/2
-   #pragma acc parallel loop independent async\
-               deviceptr(xpos,ypos,zpos,vx,vy,vz,\
-                  ratcom_x,ratcom_y,ratcom_z,mfrac,molec)
-   for (int i = 0; i < n; ++i) {
-      const int im = molec[i];
-      const auto wui = mfrac[i];
-      const auto coef = exp(vbar * wui * dt2);
-      pos_prec xi, yi, zi;
-      xi = xpos[i];
-      yi = ypos[i];
-      zi = zpos[i];
-      xi = xi + dt * (vx[i] + vbar * (ratcom_x[im] - wui * xi));
-      yi = yi + dt * (vy[i] + vbar * (ratcom_y[im] - wui * yi));
-      zi = zi + dt * (vz[i] + vbar * (ratcom_z[im] - wui * zi));
-      xpos[i] = xi * coef;
-      ypos[i] = yi * coef;
-      zpos[i] = zi * coef;
-   }
-
-
-   // rattle
-   lprat(dt, rattle_xold, rattle_yold, rattle_zold);
-   copy_pos_to_xyz(true);
-
-
-   // update gradient
-   energy(vers1);
-
-
-   // velocity 2/2
-   // iL4 dt/2
-   propagate_velocity(dt2, gx, gy, gz);
-   // iL5 dt/2
-   ratcom_p();
-   #pragma acc parallel loop independent async\
-               deviceptr(vx,vy,vz,ratcom_px,ratcom_py,ratcom_pz,\
-                  mfrac,molmass,molec)
-   for (int i = 0; i < n; ++i) {
-      auto im = molec[i];
-      auto invMu = 1.0 / molmass[im];
-      auto wui = mfrac[i];
-      vx[i] -= dt2 * odnf * vbar * (ratcom_px[im] * invMu - wui * vx[i]);
-      vy[i] -= dt2 * odnf * vbar * (ratcom_py[im] * invMu - wui * vy[i]);
-      vz[i] -= dt2 * odnf * vbar * (ratcom_pz[im] * invMu - wui * vz[i]);
-   }
-   // iL6 dt/2
-   #pragma acc parallel loop independent async\
-               deviceptr(vx,vy,vz,mfrac)
-   for (int i = 0; i < n; ++i) {
-      auto wui = mfrac[i];
-      auto coef = exp(-dt2 * (vnh0 + odnf * vbar * wui));
-      vx[i] *= coef;
-      vy[i] *= coef;
-      vz[i] *= coef;
-   }
-
-
-   // rattle2
-   lprat2(dt);
-
-
-   // thermostat 2/2
-   vv_lpiston_hc_pt(dt, R);
 }
+
+
+void vv_lpiston_npt_acc(int istep, time_prec dt) {}
 }

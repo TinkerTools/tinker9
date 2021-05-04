@@ -12,9 +12,8 @@ namespace tinker {
 template <unsigned int B>
 __global__
 void mdrest_sum_p_cu(int n, vel_prec* restrict odata,
-                     const mass_prec* restrict mass,
-                     const vel_prec* restrict vx, const vel_prec* restrict vy,
-                     const vel_prec* restrict vz)
+                     const double* restrict mass, const vel_prec* restrict vx,
+                     const vel_prec* restrict vy, const vel_prec* restrict vz)
 {
    static_assert(B == 64, "");
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
@@ -24,7 +23,7 @@ void mdrest_sum_p_cu(int n, vel_prec* restrict odata,
 
    vel_prec x = 0, y = 0, z = 0;
    for (int i = ithread; i < n; i += stride) {
-      mass_prec m = mass[i];
+      auto m = mass[i];
       x += m * vx[i];
       y += m * vy[i];
       z += m * vz[i];
@@ -51,7 +50,7 @@ void mdrest_sum_p_cu(int n, vel_prec* restrict odata,
 
 template <int B>
 __global__
-void mdrest_remove_p_cu(int n, mass_prec invtotmass,
+void mdrest_remove_p_cu(int n, double invtotmass,
                         const vel_prec* restrict idata, vel_prec* restrict vx,
                         vel_prec* restrict vy, vel_prec* restrict vz,
                         vel_prec* restrict xout)
@@ -98,7 +97,7 @@ void mdrest_remove_pbc_momentum_cu(bool copyout, vel_prec& vtot1,
 {
    vel_prec* xout;
    xout = (vel_prec*)dptr_buf;
-   mass_prec invtotmass = 1 / molcul::totmass;
+   auto invtotmass = 1 / molcul::totmass;
 
 
    constexpr int HN = 3;

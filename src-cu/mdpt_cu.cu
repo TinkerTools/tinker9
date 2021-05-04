@@ -2,7 +2,6 @@
 #include "md.h"
 #include "syntax/cu/reduce.h"
 #include "tool/gpu_card.h"
-#include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>
 
 
@@ -13,7 +12,7 @@ __global__
 void velocity_to_ekin_cu(energy_prec* out, const vel_prec* restrict vx,
                          const vel_prec* restrict vy,
                          const vel_prec* restrict vz,
-                         const mass_prec* restrict mass, int n,
+                         const double* restrict mass, int n,
                          energy_prec ekcal_inv)
 {
    constexpr int HN = 6;
@@ -36,6 +35,7 @@ void velocity_to_ekin_cu(energy_prec* out, const vel_prec* restrict vx,
 
    using Op = OpPlus<energy_prec>;
    Op op;
+   static_assert(B <= 512, "");
    // clang-format off
    if (B >= 512) { if (t < 256) { _Pragma("unroll") for (int j = 0; j < HN; ++j) sd[j][t] = op(sd[j][t], sd[j][t + 256]); } __syncthreads(); }
    if (B >= 256) { if (t < 128) { _Pragma("unroll") for (int j = 0; j < HN; ++j) sd[j][t] = op(sd[j][t], sd[j][t + 128]); } __syncthreads(); }
@@ -49,9 +49,9 @@ void velocity_to_ekin_cu(energy_prec* out, const vel_prec* restrict vx,
 }
 
 
-void kinetic_explicit_cu(T_prec& temp_out, energy_prec& eksum_out,
-                         energy_prec (&ekin_out)[3][3], const vel_prec* vx,
-                         const vel_prec* vy, const vel_prec* vz)
+void kinetic_energy_cu(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
+                       int n, const double* mass, const vel_prec* vx,
+                       const vel_prec* vy, const vel_prec* vz)
 {
    cudaStream_t st = g::s0;
    constexpr int HN = 6;
@@ -76,8 +76,6 @@ void kinetic_explicit_cu(T_prec& temp_out, energy_prec& eksum_out,
    energy_prec exy = hptr[3];
    energy_prec eyz = hptr[4];
    energy_prec ezx = hptr[5];
-   energy_prec eksum_local = exx + eyy + ezz;
-   T_prec temp_local = 2 * eksum_local / (mdstuf::nfree * units::gasconst);
 
 
    ekin_out[0][0] = exx;
@@ -89,7 +87,6 @@ void kinetic_explicit_cu(T_prec& temp_out, energy_prec& eksum_out,
    ekin_out[2][0] = ezx;
    ekin_out[2][1] = eyz;
    ekin_out[2][2] = ezz;
-   eksum_out = eksum_local;
-   temp_out = temp_local;
+   eksum_out = exx + eyy + ezz;
 }
 }

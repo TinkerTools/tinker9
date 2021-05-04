@@ -10,7 +10,6 @@
  * |----------------------------:|------------:|-----------------:|
  * | time                        | time_prec   | mixed            |
  * | temperature                 | T_prec      | mixed            |
- * | mass                        | mass_prec   | mixed            |
  * | velocity                    | vel_prec    | mixed            |
  * | position (for integrators)  | pos_prec    | mixed            |
  * | energy (for integrators)    | energy_prec | mixed            |
@@ -75,7 +74,6 @@
 namespace tinker {
 using time_prec = mixed;
 using T_prec = mixed;
-using mass_prec = mixed;
 using vel_prec = mixed;
 using pos_prec = mixed;
 using energy_prec = mixed; // total energies

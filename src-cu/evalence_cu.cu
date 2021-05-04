@@ -155,9 +155,9 @@ void evalence_cu1(
 
    // other
    const real* restrict x, const real* restrict y, const real* restrict z,
-   const mass_prec* restrict mass, const int* restrict molec,
+   const double* restrict mass, const int* restrict molec,
    const int (*restrict igrp)[2], const int* restrict kgrp,
-   const mass_prec* restrict grpmass, TINKER_IMAGE_PARAMS)
+   const double* restrict grpmass, TINKER_IMAGE_PARAMS)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_v = Ver::v;

@@ -5,6 +5,9 @@
 
 
 namespace tinker {
+extern double time_step;
+
+
 void mdrest(int istep);
 void mdrest_acc(int istep);
 void mdrest_remove_pbc_momentum_cu(bool copyout, vel_prec& vtot1,

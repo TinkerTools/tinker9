@@ -3,7 +3,6 @@
 #include "mdpq.h"
 #include "nose.h"
 #include "rattle.h"
-#include "seq_lprat.h"
 #include "tinker_rt.h"
 #include "tool/darray.h"
 #include "tool/error.h"
@@ -30,10 +29,8 @@ void constrain_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
    const double eps = rateps;
 
 
-   auto* mfrac = ratcom_massfrac;
    #pragma acc parallel loop independent async\
            deviceptr(massinv,xnew,ynew,znew,vx,vy,vz,irat,krat,iratmol,\
-                     mfrac,\
                      xold,yold,zold)
    for (int im = 0; im < nratmol; ++im) {
       int mbegin = iratmol[im][0];
@@ -49,8 +46,8 @@ void constrain_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
             int ib = irat[i][1];
             double ae1 = 1.0, be1 = 1.0;
             if CONSTEXPR (eq<HTYPE, LPRAT>()) {
-               ae1 = lprat_e1(dt, mfrac[ia], vbar);
-               be1 = lprat_e1(dt, mfrac[ib], vbar);
+               ae1 = lp_rats1;
+               be1 = lp_rats1;
             }
             double xr, yr, zr, delta;
             xr = xnew[ib] - xnew[ia];
@@ -102,10 +99,8 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
       return;
 
 
-   auto* mfrac = ratcom_massfrac;
    #pragma acc parallel loop independent async\
            deviceptr(xold,yold,zold,xnew,ynew,znew,vx,vy,vz,mass,\
-                     mfrac,\
                      iratwt,kratwt)
    for (int iw = 0; iw < nratwt; ++iw) {
       // atoms a, b, c; lengths ab, ac, bc
@@ -123,9 +118,9 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
       m2 = mass[ic];
       double ae1 = 1.0, be1 = 1.0, ce1 = 1.0;
       if CONSTEXPR (eq<HTYPE, LPRAT>()) {
-         ae1 = lprat_e1(dt, mfrac[ia], vbar);
-         be1 = lprat_e1(dt, mfrac[ib], vbar);
-         ce1 = lprat_e1(dt, mfrac[ic], vbar);
+         ae1 = lp_rats1;
+         be1 = lp_rats1;
+         ce1 = lp_rats1;
          m0 *= ae1;
          m1 *= be1;
          m2 *= ce1;
@@ -390,10 +385,8 @@ void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew,
       return;
 
 
-   auto* mfrac = ratcom_massfrac;
    #pragma acc parallel loop independent vector_length(64) async\
            deviceptr(xold,yold,zold,xnew,ynew,znew,vx,vy,vz,massinv,\
-                     mfrac,\
                      iratch,kratch)
    for (int im = 0; im < nratch; ++im) {
       int ia, ib;
@@ -406,8 +399,8 @@ void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew,
       rmb = massinv[ib];
       double ae1 = 1.0, be1 = 1.0;
       if CONSTEXPR (eq<HTYPE, LPRAT>()) {
-         ae1 = lprat_e1(dt, mfrac[ia], vbar);
-         be1 = lprat_e1(dt, mfrac[ib], vbar);
+         ae1 = lp_rats1;
+         be1 = lp_rats1;
          rma /= ae1;
          rmb /= be1;
       }
@@ -548,11 +541,8 @@ void constrain2_acc(time_prec dt)
    size_t bufsize = buffer_size();
 
 
-   double vnh0 = vnh[0];
-   const auto* mfrac = ratcom_massfrac;
    #pragma acc parallel loop independent async\
-           deviceptr(massinv,xpos,ypos,zpos,vx,vy,vz,vir_buf,irat,krat,iratmol,\
-               mfrac)
+           deviceptr(massinv,xpos,ypos,zpos,vx,vy,vz,vir_buf,irat,krat,iratmol)
    for (int im = 0; im < nratmol; ++im) {
       int mbegin = iratmol[im][0];
       int mend = iratmol[im][1];
@@ -576,8 +566,8 @@ void constrain2_acc(time_prec dt)
             rma = massinv[ia];
             rmb = massinv[ib];
             if CONSTEXPR (eq<HTYPE, LPRAT>()) {
-               double ae2 = lprat_e2(dt, mfrac[ia], vbar, lp_alpha, vnh0);
-               double be2 = lprat_e2(dt, mfrac[ib], vbar, lp_alpha, vnh0);
+               double ae2 = lp_rats2;
+               double be2 = lp_rats2;
                rma /= ae2;
                rmb /= be2;
             }
@@ -629,10 +619,8 @@ void settle2_acc1(time_prec dt)
    size_t bufsize = buffer_size();
 
 
-   double vnh0 = vnh[0];
-   const auto* mfrac = ratcom_massfrac;
    #pragma acc parallel loop independent async\
-           deviceptr(vx,vy,vz,xpos,ypos,zpos,mass,vir_buf,iratwt,mfrac)
+           deviceptr(vx,vy,vz,xpos,ypos,zpos,mass,vir_buf,iratwt)
    for (int iw = 0; iw < nratwt; ++iw) {
       int ia, ib, ic;
       double m0, m1, m2;
@@ -643,9 +631,9 @@ void settle2_acc1(time_prec dt)
       m1 = mass[ib];
       m2 = mass[ic];
       if CONSTEXPR (eq<HTYPE, LPRAT>()) {
-         double ae2 = lprat_e2(dt, mfrac[ia], vbar, lp_alpha, vnh0);
-         double be2 = lprat_e2(dt, mfrac[ib], vbar, lp_alpha, vnh0);
-         double ce2 = lprat_e2(dt, mfrac[ic], vbar, lp_alpha, vnh0);
+         double ae2 = lp_rats2;
+         double be2 = lp_rats2;
+         double ce2 = lp_rats2;
          m0 *= ae2;
          m1 *= be2;
          m2 *= ce2;
@@ -820,10 +808,8 @@ void constrain2_ch_acc1(time_prec dt)
    size_t bufsize = buffer_size();
 
 
-   double vnh0 = vnh[0];
-   const auto* mfrac = ratcom_massfrac;
    #pragma acc parallel loop independent vector_length(64) async\
-           deviceptr(massinv,xpos,ypos,zpos,vx,vy,vz,vir_buf,iratch,mfrac)
+           deviceptr(massinv,xpos,ypos,zpos,vx,vy,vz,vir_buf,iratch)
    for (int im = 0; im < nratch; ++im) {
       int ia, ib;
       double rma, rmb;
@@ -832,8 +818,8 @@ void constrain2_ch_acc1(time_prec dt)
       rma = massinv[ia];
       rmb = massinv[ib];
       if CONSTEXPR (eq<HTYPE, LPRAT>()) {
-         double ae2 = lprat_e2(dt, mfrac[ia], vbar, lp_alpha, vnh0);
-         double be2 = lprat_e2(dt, mfrac[ib], vbar, lp_alpha, vnh0);
+         double ae2 = lp_rats2;
+         double be2 = lp_rats2;
          rma /= ae2;
          rmb /= be2;
       }

@@ -6,7 +6,6 @@
 #include "mdpq.h"
 #include "nose.h"
 #include "rattle.h"
-#include "seq_lprat.h"
 #include <tinker/detail/units.hh>
 
 
@@ -21,9 +20,9 @@ void constrain_methyl_cu1(
    time_prec dt, pos_prec* restrict xnew, pos_prec* restrict ynew,
    pos_prec* restrict znew, const pos_prec* restrict xold,
    const pos_prec* restrict yold, const pos_prec* restrict zold,
-   const mass_prec* restrict massinv,
+   const double* restrict massinv,
 
-   double vbar, const double* restrict mfrac,
+   double rats1,
 
    vel_prec* restrict vx, vel_prec* restrict vy, vel_prec* restrict vz)
 {
@@ -61,14 +60,14 @@ void constrain_methyl_cu1(
       rmc = massinv[ic];
       double ae1 = 1.0, be1 = 1.0, ce1 = 1.0, de1 = 1.0;
       if CONSTEXPR (eq<HTYPE, LPRAT>()) {
-         ae1 = lprat_e1(dt, mfrac[ia], vbar);
-         be1 = lprat_e1(dt, mfrac[ib], vbar);
-         ce1 = lprat_e1(dt, mfrac[ic], vbar);
+         ae1 = rats1;
+         be1 = rats1;
+         ce1 = rats1;
          rma /= ae1;
          rmb /= be1;
          rmc /= ce1;
          if (methyl) {
-            de1 = lprat_e1(dt, mfrac[id], vbar);
+            de1 = rats1;
             rmd /= de1;
          }
       }
@@ -227,7 +226,7 @@ void rattle_methyl_cu(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
               dt, xpos, ypos, zpos, xold, yold, zold, massinv,
 
-              0.0, nullptr,
+              lp_rats1,
 
               vx, vy, vz);
 }
@@ -248,7 +247,7 @@ void lprat_methyl_cu(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
               dt, xpos, ypos, zpos, xold, yold, zold, massinv,
 
-              vbar, ratcom_massfrac,
+              lp_rats1,
 
               vx, vy, vz);
 }
@@ -270,7 +269,7 @@ void shake_methyl_cu(time_prec dt, pos_prec* xnew, pos_prec* ynew,
 
               dt, xnew, ynew, znew, xold, yold, zold, massinv,
 
-              0.0, nullptr,
+              lp_rats1,
 
               nullptr, nullptr, nullptr);
 }
@@ -278,17 +277,19 @@ void shake_methyl_cu(time_prec dt, pos_prec* xnew, pos_prec* ynew,
 
 template <class HTYPE, bool DO_V>
 __global__
-void constrain2_methyl_cu1(
-   int nratch2, const int (*restrict iratch2)[3], int nratch3,
-   const int (*restrict iratch3)[4],
+void constrain2_methyl_cu1(int nratch2, const int (*restrict iratch2)[3],
+                           int nratch3, const int (*restrict iratch3)[4],
 
-   time_prec dt, vel_prec* restrict vx, vel_prec* restrict vy,
-   vel_prec* restrict vz, virial_buffer restrict vir_buf,
+                           time_prec dt, vel_prec* restrict vx,
+                           vel_prec* restrict vy, vel_prec* restrict vz,
+                           virial_buffer restrict vir_buf,
 
-   double al, double vbar, double vnh, const double* restrict mfrac,
+                           double rats2,
 
-   const pos_prec* restrict xpos, const pos_prec* restrict ypos,
-   const pos_prec* restrict zpos, const mass_prec* restrict massinv)
+                           const pos_prec* restrict xpos,
+                           const pos_prec* restrict ypos,
+                           const pos_prec* restrict zpos,
+                           const double* restrict massinv)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int stride = blockDim.x * gridDim.x;
@@ -323,14 +324,14 @@ void constrain2_methyl_cu1(
       rmb = massinv[ib];
       rmc = massinv[ic];
       if CONSTEXPR (eq<HTYPE, LPRAT>()) {
-         double ae2 = lprat_e2(dt, mfrac[ia], vbar, al, vnh);
-         double be2 = lprat_e2(dt, mfrac[ib], vbar, al, vnh);
-         double ce2 = lprat_e2(dt, mfrac[ic], vbar, al, vnh);
+         double ae2 = rats2;
+         double be2 = rats2;
+         double ce2 = rats2;
          rma /= ae2;
          rmb /= be2;
          rmc /= ce2;
          if (methyl) {
-            double de2 = lprat_e2(dt, mfrac[id], vbar, al, vnh);
+            double de2 = rats2;
             rmd /= de2;
          }
       }
@@ -486,7 +487,7 @@ void rattle2_methyl_cu(time_prec dt, bool do_v)
 
                  dt, vx, vy, vz, vir_buf,
 
-                 0.0, 0.0, 0.0, nullptr,
+                 lp_rats2,
 
                  xpos, ypos, zpos, massinv);
    } else {
@@ -497,7 +498,7 @@ void rattle2_methyl_cu(time_prec dt, bool do_v)
 
                  dt, vx, vy, vz, nullptr,
 
-                 0.0, 0.0, 0.0, nullptr,
+                 lp_rats2,
 
                  xpos, ypos, zpos, massinv);
    }
@@ -518,7 +519,7 @@ void lprat2_methyl_cu(time_prec dt)
 
               dt, vx, vy, vz, nullptr,
 
-              lp_alpha, vbar, vnh[0], ratcom_massfrac,
+              lp_rats2,
 
               xpos, ypos, zpos, massinv);
 }

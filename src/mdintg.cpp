@@ -20,11 +20,13 @@
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
-#include <tinker/detail/stodyn.hh>
 #include <tinker/detail/units.hh>
 
 
 namespace tinker {
+double time_step;
+
+
 void mdrest(int istep)
 {
    mdrest_acc(istep);
@@ -87,8 +89,7 @@ void integrate_data(rc_op op)
       }
 
       if (intg == vv_lpiston_npt) {
-         if (use_rattle())
-            darray::deallocate(lp_molpres_buf);
+         vv_lpiston_destory();
       }
 
       if (intg == respa_fast_slow)
@@ -186,30 +187,7 @@ void integrate_data(rc_op op)
                           &leapfrog_vxold, &leapfrog_vyold, &leapfrog_vzold);
          energy(calc::v1);
       } else if (intg == vv_lpiston_npt) {
-         if (use_rattle()) {
-            darray::allocate(buffer_size(), &lp_molpres_buf);
-         }
-         double ekt = units::gasconst * bath::kelvin;
-         vbar = 0;
-         gbar = 0;
-         qbar = (mdstuf::nfree + 3) * ekt * bath::taupres * bath::taupres;
-         for (int i = 0; i < maxnose; ++i) {
-            vnh[i] = 0;
-            gnh[i] = 0;
-            qnh[i] = ekt * bath::tautemp * bath::tautemp;
-         }
-         qnh[0] = mdstuf::nfree * ekt * bath::tautemp * bath::tautemp;
-         lp_alpha = 1.0;
-         if (n > 1)
-            lp_alpha = 1.0 + 1.0 / (n - 1);
-         energy(calc::v6);
-
-         printf("\n");
-         printf(" Friction                        %12.4lf /ps\n",
-                stodyn::friction);
-         printf(" Time constant for the const-T   %12.4lf ps\n", bath::tautemp);
-         printf(" Time constant for the const-P   %12.4lf ps\n", bath::taupres);
-         printf("\n");
+         vv_lpiston_init();
       } else if (intg == nhc_npt) {
          if (use_rattle()) {
             TINKER_THROW(

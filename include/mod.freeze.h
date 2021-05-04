@@ -48,8 +48,8 @@ TINKER_EXTERN Molecule rattle_dmol;
 TINKER_EXTERN pos_prec* ratcom_x;
 TINKER_EXTERN pos_prec* ratcom_y;
 TINKER_EXTERN pos_prec* ratcom_z;
-TINKER_EXTERN vel_prec* ratcom_px;
-TINKER_EXTERN vel_prec* ratcom_py;
-TINKER_EXTERN vel_prec* ratcom_pz;
+TINKER_EXTERN vel_prec* ratcom_vx;
+TINKER_EXTERN vel_prec* ratcom_vy;
+TINKER_EXTERN vel_prec* ratcom_vz;
 TINKER_EXTERN double* ratcom_massfrac;
 }

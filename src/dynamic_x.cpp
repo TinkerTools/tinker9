@@ -64,6 +64,7 @@ void x_dynamic(int, char**)
                " Enter the Time Step Length in Femtoseconds [1.0] :  ",
                1.0, [](double i) { return i <= 0; });
    dt *= 0.001;
+   time_step = dt;
 
    // enforce bounds on thermostat and barostat coupling times
 

@@ -17,9 +17,9 @@ void dk_geom_group(
    int i, const int (*restrict igfix)[2], const real (*restrict gfix)[3],
 
    const real* restrict x, const real* restrict y, const real* restrict z,
-   const mass_prec* restrict mass, const int* restrict molec,
+   const double* restrict mass, const int* restrict molec,
    const int (*restrict igrp)[2], const int* restrict kgrp,
-   const mass_prec* restrict grpmass, TINKER_IMAGE_PARAMS)
+   const double* restrict grpmass, TINKER_IMAGE_PARAMS)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;

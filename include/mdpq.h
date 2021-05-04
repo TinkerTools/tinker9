@@ -157,8 +157,8 @@ void xyz_data(rc_op);
  * \copydoc vx
  * \}
  */
-extern mass_prec* mass;
-extern mass_prec* massinv;
+extern double* mass;
+extern double* massinv;
 extern vel_prec *vx, *vy, *vz;
 
 

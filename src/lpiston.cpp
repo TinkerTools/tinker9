@@ -19,18 +19,74 @@
 
 namespace tinker {
 double lp_alpha;
-double lp_molpres;
-double* lp_molpres_buf;
+// double lp_mol_eksum;
+// double lp_mol_trvir;
+// double* lp_mol_ek_buf;
+// double* lp_mol_vir_buf;
+// double* lp_mol_ekvir_buf;
 
 
-void lp_molpressure(double alpha, double& val)
+double lp_rats1, lp_rats2;
+double lp_eksum;
+double lp_ekin[3][3];
+double lp_vir[9];
+virial_buffer lp_vir_buf;
+
+
+void lp_atom_kinetic()
+{
+   kinetic_energy(lp_eksum, lp_ekin, n, mass, vx, vy, vz);
+}
+
+
+void lp_mol_kinetic()
+{
+   auto& m = rattle_dmol;
+   kinetic_energy(lp_eksum, lp_ekin, m.nmol, m.molmass, ratcom_vx, ratcom_vy,
+                  ratcom_vz);
+}
+
+
+void lp_atom_virial()
+{
+   for (int iv = 0; iv < 9; ++iv)
+      lp_vir[iv] = vir[iv];
+}
+
+
+extern void lp_mol_virial_acc();
+extern void lp_mol_virial_cu();
+void lp_mol_virial()
 {
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
-      lp_molpressure_cu(alpha, val);
+      lp_mol_virial_cu();
    else
 #endif
-      lp_molpressure_acc(alpha, val);
+      lp_mol_virial_acc();
+}
+
+
+#if 0
+void lp_mol_ek_vir(bool do_ek, bool do_v)
+{
+#   if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      lp_mol_ek_vir_cu(do_ek, do_v);
+   else
+#   endif
+      lp_mol_ek_vir_acc(do_ek, do_v);
+}
+#endif
+
+
+void lp_center_of_mass(const pos_prec* atomx, const pos_prec* atomy,
+                       const pos_prec* atomz, pos_prec* molx, pos_prec* moly,
+                       pos_prec* molz)
+{
+   static_assert(std::is_same<pos_prec, vel_prec>::value,
+                 "pos_prec and vel_pres must be the same type.");
+   lp_center_of_mass_acc(atomx, atomy, atomz, molx, moly, molz);
 }
 
 
@@ -216,10 +272,6 @@ void vv_lpiston_uc(int istep, time_prec dt)
 
 void vv_lpiston_npt(int istep, time_prec dt)
 {
-   if (use_rattle()) {
-      vv_lpiston_hc_acc(istep, dt);
-   } else {
-      vv_lpiston_uc(istep, dt);
-   }
+   vv_lpiston_npt_acc(istep, dt);
 }
 }

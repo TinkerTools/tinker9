@@ -9,29 +9,28 @@
 
 namespace tinker {
 __global__
-void lp_molpressure_cu1(
-   double* restrict lp_buf, double alpha,
+void lp_mol_virial_cu1(virial_buffer restrict lp_vir_buf,
 
-   int n, const mass_prec* restrict mass, const pos_prec* restrict xpos,
-   const pos_prec* restrict ypos, const pos_prec* restrict zpos,
-   const vel_prec* restrict vx, const vel_prec* restrict vy,
-   const vel_prec* restrict vz, const grad_prec* restrict gx,
-   const grad_prec* restrict gy, const grad_prec* restrict gz,
+                       int n, const double* restrict mass,
+                       const pos_prec* restrict xpos,
+                       const pos_prec* restrict ypos,
+                       const pos_prec* restrict zpos,
+                       const grad_prec* restrict gx,
+                       const grad_prec* restrict gy,
+                       const grad_prec* restrict gz,
 
-   int nmol, const int (*restrict imol)[2], const int* restrict kmol,
-   const mass_prec* restrict molmass)
+                       int nmol, const int (*restrict imol)[2],
+                       const int* restrict kmol, const double* restrict molmass)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int stride = blockDim.x * gridDim.x;
 
-
    for (int im = ithread; im < nmol; im += stride) {
-      double mvir = 0;
+      double vxx = 0, vyy = 0, vzz = 0, vxy = 0, vxz = 0, vyz = 0;
       double igx, igy, igz;             // atomic gradients
       pos_prec irx, iry, irz;           // atomic positions
       double mgx = 0, mgy = 0, mgz = 0; // molecular gradients
       pos_prec rx = 0, ry = 0, rz = 0;  // molecular positions
-      vel_prec px = 0, py = 0, pz = 0;  // molecular momenta
       int start = imol[im][0];
       int end = imol[im][1];
       for (int i = start; i < end; ++i) {
@@ -48,48 +47,36 @@ void lp_molpressure_cu1(
          irx = xpos[k];
          iry = ypos[k];
          irz = zpos[k];
-         mvir -= (igx * irx + igy * iry + igz * irz); // unit: kcal/mol
-
+         vxx -= igx * irx;
+         vyy -= igy * iry;
+         vzz -= igz * irz;
+         vxy -= 0.5 * (igx * iry + igy * irx);
+         vxz -= 0.5 * (igx * irz + igz * irx);
+         vyz -= 0.5 * (igy * irz + igz * iry);
 
          mgx += igx;
          mgy += igy;
          mgz += igz;
-         mass_prec massk = mass[k];
+         auto massk = mass[k];
          rx += massk * irx;
          ry += massk * iry;
          rz += massk * irz;
-         px += massk * vx[k];
-         py += massk * vy[k];
-         pz += massk * vz[k];
       }
       auto mmassinv = 1.0 / molmass[im];
-      mvir += (mgx * rx + mgy * ry + mgz * rz) * mmassinv;
-      auto mv2 = (px * px + py * py + pz * pz) * mmassinv / units::ekcal;
-
-
-      lp_buf[ithread] += (alpha * mv2 - mvir);
+      vxx += mgx * rx * mmassinv;
+      vyy += mgy * ry * mmassinv;
+      vzz += mgz * rz * mmassinv;
+      vxy += 0.5 * (mgx * ry + mgy * rx) * mmassinv;
+      vxz += 0.5 * (mgx * rz + mgz * rx) * mmassinv;
+      vyz += 0.5 * (mgy * rz + mgz * ry) * mmassinv;
+      atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, lp_vir_buf, ithread);
    }
 }
 
 
-void lp_molpressure_cu(double alpha, double& val)
+void lp_mol_virial_cu()
 {
    auto bufsize = buffer_size();
-   darray::zero(g::q0, bufsize, lp_molpres_buf);
-
-
-   launch_k1b(g::s0, n, lp_molpressure_cu1,
-
-              lp_molpres_buf, alpha,
-
-              n, mass, xpos, ypos, zpos, vx, vy, vz, gx, gy, gz,
-
-              rattle_dmol.nmol, rattle_dmol.imol, rattle_dmol.kmol,
-              rattle_dmol.molmass);
-
-
-   double sum = reduce_sum(lp_molpres_buf, bufsize, g::q0);
-   virial_prec atomic_vir = vir[0] + vir[4] + vir[8];
-   val = sum - atomic_vir;
+   darray::zero(g::q0, bufsize, lp_vir_buf);
 }
 }
