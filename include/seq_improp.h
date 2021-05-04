@@ -83,7 +83,6 @@ void dk_improp(real& restrict e, real& restrict vxx, real& restrict vyx,
          dt -= 360;
       if (dt < -180)
          dt += 360;
-      dt *= _1radian;
 
 
       if CONSTEXPR (do_e) {
@@ -91,7 +90,7 @@ void dk_improp(real& restrict e, real& restrict vxx, real& restrict vyx,
       }
 
       if CONSTEXPR (do_g) {
-         real dedphi = 2 * idihunit * force * dt;
+         real dedphi = 2 * idihunit * force * dt * radian;
          real xca = xic - xia;
          real yca = yic - yia;
          real zca = zic - zia;

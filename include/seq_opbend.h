@@ -113,8 +113,9 @@ void dk_opbend(real& restrict e, real& restrict vxx, real& restrict vyx,
    real ee = xdb * (yab * zcb - zab * ycb) + ydb * (zab * xcb - xab * zcb) +
       zdb * (xab * ycb - yab * xcb);
    real rdb2 = xdb * xdb + ydb * ydb + zdb * zdb;
+   rdb2 = REAL_MAX(rdb2, (real)0.0001);
 
-   if (rdb2 != 0 && cc != 0) {
+   if (cc != 0) {
       real sine = REAL_ABS(ee) * REAL_RSQRT(cc * rdb2);
       sine = REAL_MIN((real)1, sine);
       real angle = radian * REAL_ASIN(sine);
