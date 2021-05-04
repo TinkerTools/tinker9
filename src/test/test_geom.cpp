@@ -163,7 +163,7 @@ TEST_CASE("Geom-Angle-Local-Frame2", "[ff][egeom][local-frame2]")
    const char* k0 = R"**(
 a-axis   30.0
 
-restrain-angle      4  3  5  5.0  115.0
+restrain-angle      4  3  5  16414.0317501  115.0 # 5.0*radian**2
 restrainterm        only
 )**";
    const char* x = "test_local_frame2.xyz";
@@ -236,7 +236,7 @@ TEST_CASE("Geom-Torsion-Local-Frame2", "[ff][egeom][local-frame2]")
    const char* k0 = R"**(
 a-axis   30.0
 
-restrain-torsion    9  10  11  12  1.0  -160.0
+restrain-torsion    9  10  11  12  3282.80635001  -160.0 # radian**2
 restrainterm        only
 )**";
    const char* x = "test_local_frame2.xyz";

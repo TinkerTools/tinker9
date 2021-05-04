@@ -259,7 +259,7 @@ void dk_geom_angle(
       target = af1;
    if (angle > af2)
       target = af2;
-   real dt = angle - target;
+   real dt = (angle - target) * _1radian;
 
 
    if CONSTEXPR (do_e) {
@@ -267,7 +267,7 @@ void dk_geom_angle(
       e = force * dt2;
    }
    if CONSTEXPR (do_g) {
-      real deddt = 2 * force * dt * radian;
+      real deddt = 2 * force * dt;
       real terma = -deddt * REAL_RECIP(rab2 * rp);
       real termc = deddt * REAL_RECIP(rcb2 * rp);
       real dedxia = terma * (yab * zp - zab * yp);
@@ -376,7 +376,7 @@ void dk_geom_torsion(
 
    real cosine = (xt * xu + yt * yu + zt * zu) * REAL_RECIP(rtru);
    real sine = (xcb * xtu + ycb * ytu + zcb * ztu) * REAL_RECIP(rcb * rtru);
-   cosine = REAL_MIN((real)1.0,REAL_MAX((real)-1.0, cosine));
+   cosine = REAL_MIN((real)1.0, REAL_MAX((real)-1.0, cosine));
    real angle = radian * REAL_ACOS(cosine);
    if (sine < 0)
       angle = -angle;
@@ -409,12 +409,13 @@ void dk_geom_torsion(
    if (dt < -180)
       dt += 360;
 
+   dt *= _1radian;
    if CONSTEXPR (do_e) {
       real dt2 = dt * dt;
       e = force * dt2;
    }
    if CONSTEXPR (do_g) {
-      real dedphi = 2 * radian * force * dt;
+      real dedphi = 2 * force * dt;
 
 
       real xca = xic - xia;
