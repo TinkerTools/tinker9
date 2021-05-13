@@ -62,6 +62,8 @@ directory structure. The new command will look like
    -g77 /usr/local/gcc-7.4.0/bin/gfortran \
    -d /dir_for_new_config -x
 
+then add *export NVLOCALRC=/dir_for_new_config/localrc* to the shell resource file.
+
 **FFTW Libraries**
 
 Canonical Tinker requires FFTW libraries because by default it is compiled with OpenMP.
