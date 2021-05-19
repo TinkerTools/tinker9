@@ -114,7 +114,8 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
                f, aewald, e, pgrad);
 
             if CONSTEXPR (do_a)
-               atomic_add(1, nep, offset);
+               if (e != 0)
+                  atomic_add(1, nep, offset);
             if CONSTEXPR (do_e)
                atomic_add(e, ep, offset);
 
@@ -252,7 +253,7 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
             f, 0, e, pgrad);
 
          if CONSTEXPR (do_a)
-            if (pscale == -1)
+            if (pscale == -1 and e != 0)
                atomic_add(-1, nep, offset);
          if CONSTEXPR (do_e)
             atomic_add(e, ep, offset);

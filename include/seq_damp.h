@@ -12,7 +12,7 @@ inline void damp_thole2(real r, real pdi, real pti, real pdk, real ptk,
    real pgamma = REAL_MIN(pti, ptk);
    real damp = pdi * pdk;
    real ratio = r * REAL_RECIP(damp);
-   damp = (damp == 0 ? 0 : -pgamma * ratio * ratio * ratio);
+   damp = (damp == 0 ? ((real)-1.0e16) : -pgamma * ratio * ratio * ratio);
    real expdamp = REAL_EXP(damp);
    scale3 = 1 - expdamp;
    scale5 = 1 - expdamp * (1 - damp);
@@ -28,7 +28,7 @@ inline void damp_thole3(real r, real pdi, real pti, real pdk, real ptk,
    real pgamma = REAL_MIN(pti, ptk);
    real damp = pdi * pdk;
    real ratio = r * REAL_RECIP(damp);
-   damp = (damp == 0 ? 0 : -pgamma * ratio * ratio * ratio);
+   damp = (damp == 0 ? ((real)-1.0e16) : -pgamma * ratio * ratio * ratio);
    real expdamp = REAL_EXP(damp);
    scale3 = 1 - expdamp;
    scale5 = 1 - expdamp * (1 - damp);
@@ -49,7 +49,7 @@ inline void damp_thole3g(real r, real rr2, real xr, real yr, real zr, real pdi,
    real pgamma = REAL_MIN(pti, ptk);
    real damp = pdi * pdk;
    real ratio = r * REAL_RECIP(damp);
-   damp = (damp == 0 ? 0 : pgamma * ratio * ratio * ratio);
+   damp = (damp == 0 ? ((real)1.0e16) : pgamma * ratio * ratio * ratio);
    scale31 = REAL_EXP(-damp);
    scale51 = scale31 * (1 + damp);
    scale71 = scale31 * (1 + damp + (real)0.6 * damp * damp);
@@ -76,7 +76,7 @@ inline void damp_thole4(real r, real pdi, real pti, real pdk, real ptk,
    real pgamma = REAL_MIN(pti, ptk);
    real damp = pdi * pdk;
    real ratio = r * REAL_RECIP(damp);
-   damp = (damp == 0 ? 0 : pgamma * ratio * ratio * ratio);
+   damp = (damp == 0 ? ((real)1.0e16) : pgamma * ratio * ratio * ratio);
    ex3 = REAL_EXP(-damp);
    ex5 = ex3 * (1 + damp);
    ex7 = ex3 * (1 + damp + (real)0.6 * damp * damp);
