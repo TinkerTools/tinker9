@@ -1,175 +1,88 @@
 #include "add.h"
-#include "box.h"
-#include "energy.h"
+
 #include "lpiston.h"
-#include "mdcalc.h"
 #include "mdegv.h"
 #include "mdpq.h"
-#include "mdpt.h"
-#include "nose.h"
-#include "random.h"
 #include "rattle.h"
-#include "tinker_rt.h"
-#include "tool/error.h"
-#include <tinker/detail/bath.hh>
-#include <tinker/detail/freeze.hh>
-#include <tinker/detail/inform.hh>
-#include <tinker/detail/mdstuf.hh>
-#include <tinker/detail/stodyn.hh>
-#include <tinker/detail/units.hh>
 
 
 namespace tinker {
-namespace {
-int irespa, ibaro;
-double fric, rnd;
-double g0, g1, D;
-bool atomT, molT, atomP, molP, constrain, aniso;
-
-
-enum
+void lp_mol_virial_acc()
 {
-   KW_NULL = 0,
-   KW_ATOM,
-   KW_MOL
-};
-int kw_t, kw_p;
-}
+   int nmol = rattle_dmol.nmol;
+   auto* molmass = rattle_dmol.molmass;
+   auto* imol = rattle_dmol.imol;
+   auto* kmol = rattle_dmol.kmol;
 
+   double mvxx = 0, mvyy = 0, mvzz = 0, mvxy = 0, mvxz = 0, mvyz = 0;
+   #pragma acc parallel loop independent async\
+               copy(mvxx,mvyy,mvzz,mvxy,mvxz,mvyz)\
+               reduction(+:mvxx,mvyy,mvzz,mvxy,mvxz,mvyz)\
+               deviceptr(molmass,imol,kmol,mass,xpos,ypos,zpos,gx,gy,gz)
+   for (int im = 0; im < nmol; ++im) {
+      double vxx = 0, vyy = 0, vzz = 0, vxy = 0, vxz = 0, vyz = 0;
+      double igx, igy, igz;             // atomic gradients
+      pos_prec irx, iry, irz;           // atomic positions
+      double mgx = 0, mgy = 0, mgz = 0; // molecular gradients
+      pos_prec rx = 0, ry = 0, rz = 0;  // molecular positions
+      int start = imol[im][0];
+      int end = imol[im][1];
+      #pragma acc loop seq
+      for (int i = start; i < end; ++i) {
+         int k = kmol[i];
+#if TINKER_DETERMINISTIC_FORCE
+         igx = to_flt_acc<double>(gx[k]);
+         igy = to_flt_acc<double>(gy[k]);
+         igz = to_flt_acc<double>(gz[k]);
+#else
+         igx = gx[k];
+         igy = gy[k];
+         igz = gz[k];
+#endif
+         irx = xpos[k];
+         iry = ypos[k];
+         irz = zpos[k];
+         vxx -= igx * irx;
+         vyy -= igy * iry;
+         vzz -= igz * irz;
+         vxy -= 0.5 * (igx * iry + igy * irx);
+         vxz -= 0.5 * (igx * irz + igz * irx);
+         vyz -= 0.5 * (igy * irz + igz * iry);
 
-void vv_lpiston_init()
-{
-   auto o = stdout;
-
-   // RESPA keywords:    "RESPA-INNER  0.25"
-   // Barostat keywords: "BARO-OUTER   6.0"
-   const time_prec eps = 1.0 / 1048576; // 2**-20
-   irespa = (int)(time_step / (mdstuf::arespa + eps)) + 1;
-   double abaro;
-   get_kv("BARO-OUTER", abaro, 1.0);
-   ibaro = (int)(abaro * 0.001 / (time_step + eps)) + 1;
-   if (ibaro % 2 == 0)
-      ibaro = ibaro - 1;
-   ibaro = std::max(1, ibaro);
-
-   fric = stodyn::friction;
-   rnd = 0.0;
-
-   // isotropic NPT
-   aniso = bath::anisotrop;
-
-   constrain = use_rattle();
-   D = 3.0;
-
-   // molecular pressure keyword: "VOLUME-SCALE  MOLECULAR"
-   // atomic pressure keyword:    "VOLUME-SCALE  ATOMIC"
-   // default pressure
-   fstr_view volscale_f = bath::volscale;
-   std::string volscale = volscale_f.trim();
-   if (volscale == "ATOMIC") {
-      kw_p = KW_ATOM;
-   } else if (volscale == "MOLECULAR") {
-      kw_p = KW_MOL;
-   } else if (constrain) {
-      kw_p = KW_MOL;
-   } else {
-      kw_p = KW_ATOM;
-   }
-   if (constrain and kw_p == KW_ATOM) {
-      TINKER_THROW("NPT RATTLE cannot use atomic volume scaling."
-                   " Set \"VOLUME-SCALE  MOLECULAR\" in the key file.");
-   }
-   if (not constrain and kw_p == KW_MOL) {
-      print(o, " No constraints hence setting VOLUME-SCALE to ATOMIC\n");
-      kw_p = KW_ATOM;
-      volscale = "ATOMIC";
-   }
-   atomP = false, molP = false;
-   if (kw_p == KW_ATOM) {
-      volscale = "ATOMIC";
-      atomP = true;
-      int val = std::max(n, 2);
-      g1 = D * (val - 1);
-   } else if (kw_p == KW_MOL) {
-      volscale = "MOLECULAR";
-      molP = true;
-      int val = std::max(rattle_dmol.nmol, 2);
-      g1 = D * (val - 1);
-   }
-
-   // molecular temperature keyword: "VELOCITY-SCALE  MOLECULAR"
-   // atomic temperature keyword:    "VELOCITY-SCALE  ATOMIC"
-   // default temperature
-   std::string velscale_default, velscale;
-   if (constrain) {
-      velscale_default = "MOLECULAR";
-      kw_t = KW_MOL;
-   } else {
-      velscale_default = "ATOMIC";
-      kw_t = KW_ATOM;
-   }
-   get_kv("VELOCITY-SCALE", velscale, velscale_default);
-   if (velscale == "ATOMIC") {
-      kw_t = KW_ATOM;
-   } else if (velscale == "MOLECULAR") {
-      kw_t = KW_MOL;
-   }
-   atomT = false, molT = false;
-   if (kw_t == KW_ATOM) {
-      velscale = "ATOMIC";
-      atomT = true;
-      g0 = D * (n - 1);
-      if (constrain) {
-         g0 -= freeze::nrat;
+         mgx += igx;
+         mgy += igy;
+         mgz += igz;
+         auto massk = mass[k];
+         rx += massk * irx;
+         ry += massk * iry;
+         rz += massk * irz;
       }
-   } else if (kw_t == KW_MOL) {
-      velscale = "MOLECULAR";
-      molT = true;
-      g0 = D * (rattle_dmol.nmol - 1);
+      auto mmassinv = 1 / molmass[im];
+      vxx += mgx * rx * mmassinv;
+      vyy += mgy * ry * mmassinv;
+      vzz += mgz * rz * mmassinv;
+      vxy += 0.5 * (mgx * ry + mgy * rx) * mmassinv;
+      vxz += 0.5 * (mgx * rz + mgz * rx) * mmassinv;
+      vyz += 0.5 * (mgy * rz + mgz * ry) * mmassinv;
+      mvxx += vxx;
+      mvyy += vyy;
+      mvzz += vzz;
+      mvxy += vxy;
+      mvxz += vxz;
+      mvyz += vyz;
    }
+   #pragma acc wait
 
-   lp_alpha = 1.0 + D / g1;
-
-
-   // Nose-Hoover Chain
-   double ekt = units::gasconst * bath::kelvin;
-   vbar = 0;
-   gbar = 0;
-   qbar = (g0 + D) * ekt * bath::taupres * bath::taupres;
-   for (int i = 0; i < maxnose; ++i) {
-      vnh[i] = 0;
-      gnh[i] = 0;
-      qnh[i] = ekt * bath::tautemp * bath::tautemp;
-   }
-   qnh[0] = g0 * ekt * bath::tautemp * bath::tautemp;
-   energy(calc::v6);
-
-   if (use_rattle()) {
-      darray::allocate(buffer_size(), &lp_vir_buf);
-   }
-
-   print(o, "\n");
-   print(o, " Friction                        %12.4lf /ps\n", stodyn::friction);
-   print(o, " Time constant for the const-T   %12.4lf ps\n", bath::tautemp);
-   print(o, " Time constant for the const-P   %12.4lf ps\n", bath::taupres);
-   print(o, " Temperature estimator           %12s\n", velscale);
-   print(o, " Pressure estimator              %12s\n", volscale);
-   print(o, " LP-G                            %12.0lf\n", g0);
-   print(o, " LP-G1                           %12.0lf\n", g1);
-   print(o, " IRESPA                          %12d\n", irespa);
-   print(o, " IBARO                           %12d\n", ibaro);
-   print(o, "\n");
+   lp_vir[0] = mvxx + vir[0];
+   lp_vir[1] = mvxy + vir[1];
+   lp_vir[2] = mvxz + vir[2];
+   lp_vir[3] = mvxy + vir[3];
+   lp_vir[4] = mvyy + vir[4];
+   lp_vir[5] = mvyz + vir[5];
+   lp_vir[6] = mvxz + vir[6];
+   lp_vir[7] = mvyz + vir[7];
+   lp_vir[8] = mvzz + vir[8];
 }
-
-
-void vv_lpiston_destory()
-{
-   if (use_rattle())
-      darray::deallocate(lp_vir_buf);
-}
-
-
-void lp_mol_virial_acc() {}
 
 
 void lp_center_of_mass_acc(const pos_prec* ax, const pos_prec* ay,
@@ -199,7 +112,4 @@ void lp_center_of_mass_acc(const pos_prec* ax, const pos_prec* ay,
       mz[im] = tz;
    }
 }
-
-
-void vv_lpiston_npt_acc(int istep, time_prec dt) {}
 }

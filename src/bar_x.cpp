@@ -539,16 +539,19 @@ void x_bar_barcalc()
    std::getline(ibar, str);
    std::sscanf(str.c_str(), "%d %lf\n", &nfrma, &tempa);
    nfrma1 = nfrma;
+   std::string titlea = "";
    str = str.substr(str.find_first_not_of(' '));
    str = str.substr(str.find_first_of(' '));
    str = str.substr(str.find_first_not_of(' '));
-   str = str.substr(str.find_first_of(' '));
-   str = str.substr(str.find_first_not_of(' '));
-   std::string titlea = str;
+   if (str.find_first_of(' ') != std::string::npos) {
+      str = str.substr(str.find_first_of(' '));
+      str = str.substr(str.find_first_not_of(' '));
+      titlea = str;
+   }
    nfrma = std::min(nfrma, stopa);
    for (int i = 1; i <= nfrma1; ++i) {
       std::getline(ibar, str);
-      if (((i - starta) % stepa) == 0 and i <= stopa) {
+      if (i >= starta and ((i - starta) % stepa) == 0 and i <= stopa) {
          double u0 = 0, u1 = 0, v = 0;
          std::sscanf(str.c_str(), "%*d %lf %lf %lf\n", &u0, &u1, &v);
          ua0.push_back(u0);
@@ -565,16 +568,19 @@ void x_bar_barcalc()
    std::getline(ibar, str);
    std::sscanf(str.c_str(), "%d %lf\n", &nfrmb, &tempb);
    nfrmb1 = nfrmb;
+   std::string titleb = "";
    str = str.substr(str.find_first_not_of(' '));
    str = str.substr(str.find_first_of(' '));
    str = str.substr(str.find_first_not_of(' '));
-   str = str.substr(str.find_first_of(' '));
-   str = str.substr(str.find_first_not_of(' '));
-   std::string titleb = str;
+   if (str.find_first_of(' ') != std::string::npos) {
+      str = str.substr(str.find_first_of(' '));
+      str = str.substr(str.find_first_not_of(' '));
+      titleb = str;
+   }
    nfrmb = std::min(nfrmb, stopb);
    for (int i = 1; i <= nfrmb1; ++i) {
       std::getline(ibar, str);
-      if (((i - startb) % stepb) == 0 and i <= stopb) {
+      if (i >= startb and ((i - startb) % stepb) == 0 and i <= stopb) {
          double u0 = 0, u1 = 0, v = 0;
          std::sscanf(str.c_str(), "%*d %lf %lf %lf\n", &u0, &u1, &v);
          ub0.push_back(u0);
