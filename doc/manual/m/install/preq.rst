@@ -45,9 +45,24 @@ reconfigure PGI compiler with gcc 7.4.0:
    -gcc /usr/local/gcc-7.4.0/bin/gcc \
    -gpp /usr/local/gcc-7.4.0/bin/g++ \
    -g77 /usr/local/gcc-7.4.0/bin/gfortran \
-   -o -net > /path/to/new_config
+   -d /dir_for_new_config -x
 
-then added *export PGI_LOCALRC=/path/to/new_config* to my bash resource file.
+then added *export PGI_LOCALRC=/dir_for_new_config/localrc* to my bash resource file.
+
+(Updated in Apr. 2021)
+
+Compilers with the new brand name NVHPC now have a different
+directory structure. The new command will look like
+
+.. code-block:: bash
+
+   makelocalrc $NVHPC/Linux_x86_64/2020/compilers \
+   -gcc /usr/local/gcc-7.4.0/bin/gcc \
+   -gpp /usr/local/gcc-7.4.0/bin/g++ \
+   -g77 /usr/local/gcc-7.4.0/bin/gfortran \
+   -d /dir_for_new_config -x
+
+then add *export NVLOCALRC=/dir_for_new_config/localrc* to the shell resource file.
 
 **FFTW Libraries**
 

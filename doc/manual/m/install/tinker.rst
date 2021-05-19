@@ -17,7 +17,7 @@ checkout Tinker from the *tinker* Git submodule:
 
 Alternatively, clone
 `Tinker from GitHub <https://github.com/tinkertools/tinker>`_,
-then checkout the required version **6a1c6104**.
+then checkout the required version **080e8f1d**.
 You should move this *tinker* directory under *tinker9*.
 
 **Make libtinker**

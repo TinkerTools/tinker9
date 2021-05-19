@@ -15,7 +15,7 @@ TEST_CASE("Angtor-A4", "[ff][eangtor][a4]")
    TestFile fke(TINKER9_DIRSTR "/src/test/file/nuc/a4.key", k, k0);
    TestFile fx1(TINKER9_DIRSTR "/src/test/file/nuc/a4.xyz", x1);
    TestFile fpr(TINKER9_DIRSTR
-                "/src/test/file/commit_25b7ee7a/amoebanuc17.prm");
+                "/src/test/file/commit_080e8f1d/amoebanuc17.prm");
 
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/angtor.txt");

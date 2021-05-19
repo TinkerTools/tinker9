@@ -6,7 +6,7 @@
 namespace tinker { namespace merck {
 using namespace sizes;
 
-extern int& nlignes;
+extern int& nligne;
 extern int (&bt_1)[2][500];
 extern int (&eqclass)[5][500];
 extern int (&crd)[100];
@@ -89,7 +89,7 @@ extern double (&pbci)[maxclass];
 extern double (&fcadj)[maxclass];
 
 #ifdef TINKER_FORTRAN_MODULE_CPP
-extern "C" int TINKER_MOD(merck, nlignes);
+extern "C" int TINKER_MOD(merck, nligne);
 extern "C" int TINKER_MOD(merck, bt_1)[2][500];
 extern "C" int TINKER_MOD(merck, eqclass)[5][500];
 extern "C" int TINKER_MOD(merck, crd)[100];
@@ -171,7 +171,7 @@ extern "C" double TINKER_MOD(merck, bci_1)[100][100];
 extern "C" double TINKER_MOD(merck, pbci)[maxclass];
 extern "C" double TINKER_MOD(merck, fcadj)[maxclass];
 
-int& nlignes = TINKER_MOD(merck, nlignes);
+int& nligne = TINKER_MOD(merck, nligne);
 int (&bt_1)[2][500] = TINKER_MOD(merck, bt_1);
 int (&eqclass)[5][500] = TINKER_MOD(merck, eqclass);
 int (&crd)[100] = TINKER_MOD(merck, crd);
