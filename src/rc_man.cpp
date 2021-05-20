@@ -52,7 +52,6 @@ void finish()
 #include "tool/gpu_card.h"
 
 
-#include "accmanaged.h"
 #include "box.h"
 #include "couple.h"
 #include "energy.h"
@@ -77,7 +76,6 @@ void device_data(rc_op op)
 
    // device
    rc_man cl42{cudalib_data, op};
-   rc_man am42{accmanaged_data, op};
 
    rc_man n42{n_data, op};
    rc_man cpl42{couple_data, op};
