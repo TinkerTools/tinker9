@@ -691,6 +691,7 @@ foreach (var
    "${PROJECT_SOURCE_DIR}/shell/info9.sh"
    "${PROJECT_SOURCE_DIR}/shell/minimize9.sh"
    "${PROJECT_SOURCE_DIR}/shell/testgrad9.sh"
+   "${PROJECT_SOURCE_DIR}/shell/chkver.py"
    )
    get_filename_component (__t9_fname "${var}" NAME)
    add_custom_command (TARGET __t9_copy_shell_exe POST_BUILD
