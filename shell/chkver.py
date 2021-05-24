@@ -21,7 +21,7 @@ git_log_format = '''TZ=UTC git log -1 --date='format-local:%Y-%m-%dT%H:%M:%SZ' \
 "abbreviated_commit": "%h",%n\
 "tree": "%T",%n\
 "author": {"name": "%aN","email": "%aE","date": "%ad"},%n\
-"commiter": {"name": "%cN","email": "%cE","date": "%cd"}%n}'
+"commiter": {"name": "%cN","email": "%cE","date": "%cd"}%n}'\
 '''
 
 def print_timedelta(delta:datetime.timedelta):
@@ -56,7 +56,7 @@ def exec_command(cmd:str):
    sp = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
    out = sp.communicate()[0]
    if sp.returncode != 0:
-      print('Command: {} returned error code {}.'.format(cmd, sp.returncode))
+      print('Command -- {} -- returned error code {}.'.format(cmd, sp.returncode))
       sys.exit(sp.returncode)
    else:
       return out.decode('utf-8').strip()
