@@ -102,9 +102,9 @@ void torque_acc1(virial_buffer gpu_vir, grad_prec* gx, grad_prec* gy,
          v[2] = z[ic] - z[ib];
          vsiz1 = REAL_RSQRT(torque_dot(v, v));
       } else {
-         int okay = !(REAL_ABS(u[0]) * usiz1 > 0.866f);
-         v[0] = (okay ? 1 : 0);
-         v[1] = (okay ? 0 : 1);
+         int foo = !(REAL_ABS(u[0]) > (real)0.866);
+         v[0] = (foo ? 1 : 0);
+         v[1] = (foo ? 0 : 1);
          v[2] = 0;
          vsiz1 = 1;
       }
