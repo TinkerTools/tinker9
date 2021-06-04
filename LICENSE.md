@@ -6,13 +6,13 @@ The Academic License for Tinker9
 - Sorbonne Université (Sorbonne)
 
 1. On behalf of the Tinker developer community, an informal consortium of researchers
-also known as the Tinker Core Development Consortium ("TCDC") formed by Washington
+also known as the Tinker Core Development Consortium (**"TCDC"**) formed by Washington
 University in Saint Louis (MO, USA), The University of Texas at Austin (TX, USA)
 and Sorbonne Université (Paris, France) (collectively, TCDC-Members, individually
-TCDC-Member), the TCDC-Members hereby grant to the Licensee (as identified in the
+TCDC-Member), the TCDC-Members hereby grant to the **Licensee** (as identified in the
 signature block below) a non-exclusive, nonsublicensable, non-transferable, revocable,
 non-commercial license to use the object and source code versions of the software
-known as "Tinker Software" (the "Software"), for internal academic purposes only,
+known as "Tinker Software" (the **"Software"**), for internal academic purposes only,
 including the right and license to incorporate improvements to the Software, for
 a period of five (5) years subject to the terms and conditions below. All rights,
 title, interest and copyright to the Software, to all portions thereof, and to any
@@ -69,32 +69,19 @@ the same degree of care it uses to protect its own computer programs and other c
 information.
 
 7. The user agrees that any reports or published results obtained with the Software
-will acknowledge its use by the appropriate citation. Considering the use of Tinker 8,
-any published work which utilizes Tinker shall give appropriate acknowledgement
-to the Tinker 8 developer community's contribution by including the following main
-reference:
-"TINKER 8: A Modular Software Package for Molecular Design and Simulation. Joshua A.
-Rackers, Marie L. Laury, Chao Lu, Zhi Wang, Louis Lagardère, Jean-Philip Piquemal, Pengyu
-Ren, Jay W. Ponder, Journal of Chemical Theory and Computation, 14, 5273-5289, 2018, DOI
-10.1021/acs.jctc.8b00529"
-Considering the use of the specific Tinker-HP code, included in the Tinker distribution,
-any published work which utilizes Tinker-HP shall give, in addition to the main Tinker
-reference, appropriate acknowledgement to the Tinker-HP developer community's contribution
-by including the following reference:
-"Tinker-HP: A Massively Parallel Molecular Dynamics Package for Multiscale Simulations
-of Large Complex Systems with Advanced Polarizable Force Fields, Louis Lagardère, LucHenri Jolly, Filippo Lipparini, Félix Aviat, Benjamin Stamm, Zhifeng F. Jing, Matthew Harger, G.
-Andres Cisneros, Nohad Gresh, Yvon Maday, Pengyu Ren, Jay W. Ponder, Jean-Philip Piquemal,
-Chemical Science, 9, 956-972, 2017, DOI: 10.1039/c7sc04531j"
-
-8. This license may be terminated upon twenty days’ notice for any breach of this
-Agreement, provided that that breach has not been corrected prior to the expiry of
-such notice.
-
-9. Commercial use of the Software, or derivative works based thereon, REQUIRES A
-COMMERCIAL LICENSE. Should Licensee wish to make commercial use of the Software,
-Licensee will contact the agency listed below which holds exclusive rights to negotiate
-an appropriate commercial license. Commercial Purposes include any sale, lease, license,
-or other transfer of the Software in its entirety or in part, to another entity.
-Commercial Purposes also includes, without limitation, uses of the Software by any
-entity, including Licensee, to perform any service for sale or contract research,
-to produce or manufacture products for sale.
+will acknowledge its use by the appropriate citation.
+   - The main Tinker reference. Any published work which utilizes Tinker shall give
+   appropriate acknowledgement to the Tinker 8 developer community's contribution by
+   including the following main reference:
+   > TINKER 8: A Modular Software Package for Molecular Design.
+   > Joshua A. Rackers, Zhi Wang, Chao Lu, Marie L. Laury, Louis Lagardère,
+   > Michael J. Schnieders, Jean-Philip Piquemal, Pengyu Ren, Jay W. Ponder,
+   > Journal of Chemical Theory and Computation, 14, 5273-5289, 2018,
+   > DOI: [10.1021/acs.jctc.8b00529](https://doi.org/10.1021/acs.jctc.8b00529)
+   - The Tinker9 reference. Considering the use of Tinker9, any published work which
+   utilizes Tinker9 shall give, in addition to the main Tinker reference, appropriate
+   acknowledgement to the Tinker9 developer community's contribution by including the
+   following reference:
+   > Tinker9: Next Generation of Tinker with GPU Support.
+   > Zhi Wang, Jay W. Ponder,
+   > 2021, https://github.com/TinkerTools/tinker9
