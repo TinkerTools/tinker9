@@ -70,21 +70,23 @@ information.
 
 7. The user agrees that any reports or published results obtained with the Software
 will acknowledge its use by the appropriate citation.
+
    - The main Tinker reference. Any published work which utilizes Tinker shall give
    appropriate acknowledgement to the Tinker 8 developer community's contribution by
    including the following main reference:
       > TINKER 8: A Modular Software Package for Molecular Design.
-      > Joshua A. Rackers, Zhi Wang, Chao Lu, Marie L. Laury, Louis Lagardère,
-      > Michael J. Schnieders, Jean-Philip Piquemal, Pengyu Ren, Jay W. Ponder,
-      > Journal of Chemical Theory and Computation, 14, 5273-5289, 2018,
-      > DOI: [10.1021/acs.jctc.8b00529](https://doi.org/10.1021/acs.jctc.8b00529)
+      Joshua A. Rackers, Zhi Wang, Chao Lu, Marie L. Laury, Louis Lagardère,
+      Michael J. Schnieders, Jean-Philip Piquemal, Pengyu Ren, Jay W. Ponder,
+      Journal of Chemical Theory and Computation, 14, 5273-5289, 2018,
+      DOI: [10.1021/acs.jctc.8b00529](https://doi.org/10.1021/acs.jctc.8b00529)
+
    - The Tinker9 reference. Considering the use of Tinker9, any published work which
    utilizes Tinker9 shall give, in addition to the main Tinker reference, appropriate
    acknowledgement to the Tinker9 developer community's contribution by including the
    following reference:
       > Tinker9: Next Generation of Tinker with GPU Support,
-      > Zhi Wang, Jay W. Ponder, 2021,
-      > https://github.com/TinkerTools/tinker9
+      Zhi Wang, Jay W. Ponder, 2021,
+      https://github.com/TinkerTools/tinker9
 
 8. This license may be terminated upon twenty days’ notice for any breach of this
 Agreement, provided that that breach has not been corrected prior to the expiry of
@@ -96,46 +98,41 @@ mail, return receipt requested, postage prepaid or by internationally-recognized
 mail service providing evidence of delivery. The effective date of any notice shall
 be the date of first receipt by the receiving Party or the date of refusal of receipt.
 Notices shall be sent to the addresses and addressees given below.
-   - **For North and South America and outside of Europe, preferably:**
-      ```
-      Washington University in Saint Louis
-      Department of Chemistry
-      Campus Box 1134
-      One Brookings Drive
-      Saint Louis, MO 63130 U.S.A.
-      c/o: Prof. Jay W. Ponder
 
-      Department of Biomedical Engineering
-      Cockrell School of Engineering
-      The University of Texas at Austin
-      107 W. Dean Keeton, BME Building
-      1 University Station, C0800
-      Austin, TX 78712 U.S.A.
+   - For North and South America and outside of Europe, preferably:            \
+      Washington University in Saint Louis                                     \
+      Department of Chemistry                                                  \
+      Campus Box 1134                                                          \
+      One Brookings Drive                                                      \
+      Saint Louis, MO 63130 U.S.A.                                             \
+      c/o: Prof. Jay W. Ponder                                                 \
+                                                                               \
+      Department of Biomedical Engineering                                     \
+      Cockrell School of Engineering                                           \
+      The University of Texas at Austin                                        \
+      107 W. Dean Keeton, BME Building                                         \
+      1 University Station, C0800                                              \
+      Austin, TX 78712 U.S.A.                                                  \
       c/o: Prof. Pengyu Ren
-      ```
-   - **For Europe, preferably:**
-      ```
-      Laboratoire de Chimie Théorique (LCT, UMR 7616)
-      CC 137, 4, Place Jussieu F-75252 Paris cedex 05 FRANCE
-      c/o: Prof. Jean-Philip Piquemal
 
-      Administrative Contact:
-      Sorbonne Université
-      Direction de la Recherche et du Transfert de Technologies
-      Tour Zamansky
-      4, Place Jussieu, 75252 Paris cedex 05 FRANCE
+   - For Europe, preferably:                                                   \
+      Laboratoire de Chimie Théorique (LCT, UMR 7616)                          \
+      CC 137, 4, Place Jussieu F-75252 Paris cedex 05 FRANCE                   \
+      c/o: Prof. Jean-Philip Piquemal                                          \
+                                                                               \
+      Administrative Contact:                                                  \
+      Sorbonne Université                                                      \
+      Direction de la Recherche et du Transfert de Technologies                \
+      Tour Zamansky                                                            \
+      4, Place Jussieu, 75252 Paris cedex 05 FRANCE                            \
       c/o: Mrs. Sophie Cluet - Ref. Sorbonne: X17/1504
-      ```
+
    As a Tinker licensee, we ask you to please Sign, Complete and Return the Research Description.
    ```
    Licensee:
-
    ____________ (signature);     ____________ (Name and Title)
-
    ____________ (Name and Title of Responsible Official, if not Signing Authority)
-
    ____________ (Organization);  ____________ (Address)
-
    ____________ (Email Address); ____________ (Date)
 
 
