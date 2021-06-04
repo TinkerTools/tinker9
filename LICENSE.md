@@ -12,7 +12,7 @@ and Sorbonne Université (Paris, France) (collectively, TCDC-Members, individual
 TCDC-Member), the TCDC-Members hereby grant to the **Licensee** (as identified in the
 signature block below) a non-exclusive, nonsublicensable, non-transferable, revocable,
 non-commercial license to use the object and source code versions of the software
-known as "Tinker Software" (the **"Software"**), for internal academic purposes only,
+known as "Tinker Software" and/or "Tinker9" (the **"Software"**), for internal academic purposes only,
 including the right and license to incorporate improvements to the Software, for
 a period of five (5) years subject to the terms and conditions below. All rights,
 title, interest and copyright to the Software, to all portions thereof, and to any
@@ -73,15 +73,76 @@ will acknowledge its use by the appropriate citation.
    - The main Tinker reference. Any published work which utilizes Tinker shall give
    appropriate acknowledgement to the Tinker 8 developer community's contribution by
    including the following main reference:
-   > TINKER 8: A Modular Software Package for Molecular Design.
-   > Joshua A. Rackers, Zhi Wang, Chao Lu, Marie L. Laury, Louis Lagardère,
-   > Michael J. Schnieders, Jean-Philip Piquemal, Pengyu Ren, Jay W. Ponder,
-   > Journal of Chemical Theory and Computation, 14, 5273-5289, 2018,
-   > DOI: [10.1021/acs.jctc.8b00529](https://doi.org/10.1021/acs.jctc.8b00529)
+      > TINKER 8: A Modular Software Package for Molecular Design.
+      > Joshua A. Rackers, Zhi Wang, Chao Lu, Marie L. Laury, Louis Lagardère,
+      > Michael J. Schnieders, Jean-Philip Piquemal, Pengyu Ren, Jay W. Ponder,
+      > Journal of Chemical Theory and Computation, 14, 5273-5289, 2018,
+      > DOI: [10.1021/acs.jctc.8b00529](https://doi.org/10.1021/acs.jctc.8b00529)
    - The Tinker9 reference. Considering the use of Tinker9, any published work which
    utilizes Tinker9 shall give, in addition to the main Tinker reference, appropriate
    acknowledgement to the Tinker9 developer community's contribution by including the
    following reference:
-   > Tinker9: Next Generation of Tinker with GPU Support.
-   > Zhi Wang, Jay W. Ponder,
-   > 2021, https://github.com/TinkerTools/tinker9
+      > Tinker9: Next Generation of Tinker with GPU Support,
+      > Zhi Wang, Jay W. Ponder, 2021,
+      > https://github.com/TinkerTools/tinker9
+
+8. This license may be terminated upon twenty days’ notice for any breach of this
+Agreement, provided that that breach has not been corrected prior to the expiry of
+such notice.
+
+9. Notice. Any notices or disclosures required or provided by the terms of this agreement
+shall be in writing and shall be delivered personally or sent by certified or registered
+mail, return receipt requested, postage prepaid or by internationally-recognized express
+mail service providing evidence of delivery. The effective date of any notice shall
+be the date of first receipt by the receiving Party or the date of refusal of receipt.
+Notices shall be sent to the addresses and addressees given below.
+   - **For North and South America and outside of Europe, preferably:**
+      ```
+      Washington University in Saint Louis
+      Department of Chemistry
+      Campus Box 1134
+      One Brookings Drive
+      Saint Louis, MO 63130 U.S.A.
+      c/o: Prof. Jay W. Ponder
+
+      Department of Biomedical Engineering
+      Cockrell School of Engineering
+      The University of Texas at Austin
+      107 W. Dean Keeton, BME Building
+      1 University Station, C0800
+      Austin, TX 78712 U.S.A.
+      c/o: Prof. Pengyu Ren
+      ```
+   - **For Europe, preferably:**
+      ```
+      Laboratoire de Chimie Théorique (LCT, UMR 7616)
+      CC 137, 4, Place Jussieu F-75252 Paris cedex 05 FRANCE
+      c/o: Prof. Jean-Philip Piquemal
+
+      Administrative Contact:
+      Sorbonne Université
+      Direction de la Recherche et du Transfert de Technologies
+      Tour Zamansky
+      4, Place Jussieu, 75252 Paris cedex 05 FRANCE
+      c/o: Mrs. Sophie Cluet - Ref. Sorbonne: X17/1504
+      ```
+   As a Tinker licensee, we ask you to please Sign, Complete and Return the Research Description.
+   ```
+   Licensee:
+
+   ____________ (signature);     ____________ (Name and Title)
+
+   ____________ (Name and Title of Responsible Official, if not Signing Authority)
+
+   ____________ (Organization);  ____________ (Address)
+
+   ____________ (Email Address); ____________ (Date)
+
+
+   Description of Research Purpose:
+   In addition to the describing the Research Purpose, please address the following questions.
+   (1) How many users will have access to the Software?
+   (2) Will the Software be installed on a single or multiple computer(s)?
+   (3) Will users be able to use the Software beyond a local network?
+   (4) Will the Software be installed at a supercomputing center?
+   ```
