@@ -84,7 +84,7 @@ will acknowledge its use by the appropriate citation.
    utilizes Tinker9 shall give, in addition to the main Tinker reference, appropriate
    acknowledgement to the Tinker9 developer community's contribution by including the
    following reference:
-      > Tinker9: Next Generation of Tinker with GPU Support,
+      > Tinker9: Next Generation of Tinker with GPU Support.
       Zhi Wang, Jay W. Ponder, 2021,
       https://github.com/TinkerTools/tinker9
 
@@ -100,6 +100,7 @@ be the date of first receipt by the receiving Party or the date of refusal of re
 Notices shall be sent to the addresses and addressees given below.
 
    - For North and South America and outside of Europe, preferably:            \
+                                                                               \
       Washington University in Saint Louis                                     \
       Department of Chemistry                                                  \
       Campus Box 1134                                                          \
@@ -116,6 +117,7 @@ Notices shall be sent to the addresses and addressees given below.
       c/o: Prof. Pengyu Ren
 
    - For Europe, preferably:                                                   \
+                                                                               \
       Laboratoire de Chimie Théorique (LCT, UMR 7616)                          \
       CC 137, 4, Place Jussieu F-75252 Paris cedex 05 FRANCE                   \
       c/o: Prof. Jean-Philip Piquemal                                          \
