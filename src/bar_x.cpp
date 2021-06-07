@@ -545,8 +545,8 @@ void x_bar_barcalc()
    str = str.substr(str.find_first_not_of(' '));
    if (str.find_first_of(' ') != std::string::npos) {
       str = str.substr(str.find_first_of(' '));
-      str = str.substr(str.find_first_not_of(' '));
-      titlea = str;
+      if (str.find_first_not_of(' ') != std::string::npos)
+         titlea = str.substr(str.find_first_not_of(' '));
    }
    nfrma = std::min(nfrma, stopa);
    for (int i = 1; i <= nfrma1; ++i) {
@@ -574,8 +574,8 @@ void x_bar_barcalc()
    str = str.substr(str.find_first_not_of(' '));
    if (str.find_first_of(' ') != std::string::npos) {
       str = str.substr(str.find_first_of(' '));
-      str = str.substr(str.find_first_not_of(' '));
-      titleb = str;
+      if (str.find_first_not_of(' ') != std::string::npos)
+         titleb = str.substr(str.find_first_not_of(' '));
    }
    nfrmb = std::min(nfrmb, stopb);
    for (int i = 1; i <= nfrmb1; ++i) {
