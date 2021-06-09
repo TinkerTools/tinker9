@@ -553,7 +553,9 @@ void x_bar_barcalc()
       std::getline(ibar, str);
       if (i >= starta and ((i - starta) % stepa) == 0 and i <= stopa) {
          double u0 = 0, u1 = 0, v = 0;
-         std::sscanf(str.c_str(), "%*d %lf %lf %lf\n", &u0, &u1, &v);
+         int cnt = std::sscanf(str.c_str(), "%*d %lf %lf %lf\n", &u0, &u1, &v);
+         if (cnt == 2)
+            v = 1.0;
          ua0.push_back(u0);
          ua1.push_back(u1);
          vola.push_back(v);
@@ -582,7 +584,9 @@ void x_bar_barcalc()
       std::getline(ibar, str);
       if (i >= startb and ((i - startb) % stepb) == 0 and i <= stopb) {
          double u0 = 0, u1 = 0, v = 0;
-         std::sscanf(str.c_str(), "%*d %lf %lf %lf\n", &u0, &u1, &v);
+         int cnt = std::sscanf(str.c_str(), "%*d %lf %lf %lf\n", &u0, &u1, &v);
+         if (cnt == 2)
+            v = 1.0;
          ub0.push_back(u0);
          ub1.push_back(u1);
          volb.push_back(v);
