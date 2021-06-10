@@ -58,6 +58,8 @@ field_ewald_acc.cpp
 field_nonewald_acc.cpp
 induce_acc.cpp
 induce_donly_acc.cpp
+lf_lpiston_acc.cpp
+lpiston_acc.cpp
 mathfunc_parallel_acc.cpp
 mddebug_acc.cpp
 mdegv_acc.cpp

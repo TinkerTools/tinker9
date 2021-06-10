@@ -48,6 +48,8 @@ induce_donly.cpp
 initial.cpp
 io_fort_str.cpp
 io_text.cpp
+lf_lpiston.cpp
+lpiston.cpp
 mdegv.cpp
 mdintg.cpp
 mdintg_respa.cpp
