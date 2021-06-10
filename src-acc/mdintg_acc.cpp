@@ -1,4 +1,3 @@
-#include "accmanaged.h"
 #include "mdintg.h"
 #include "mdpq.h"
 #include "tinker_rt.h"

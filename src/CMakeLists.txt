@@ -1,12 +1,100 @@
 cmake_minimum_required (VERSION 3.12)
 
 
-file (GLOB __T9_CPP_SRC "*.cpp")
+set (__T9_CPP_SRC
+analyze_x.cpp
+bar_x.cpp
+box.cpp
+cflux.cpp
+compilers.cpp
+couple.cpp
+dynamic_x.cpp
+eangle.cpp
+eangtor.cpp
+ebond.cpp
+echarge.cpp
+echglj.cpp
+echgtrn.cpp
+edisp.cpp
+egeom.cpp
+eimprop.cpp
+eimptor.cpp
+elec.cpp
+emplar.cpp
+empole_chgpen.cpp
+empole.cpp
+energy_buffer.cpp
+energy.cpp
+eopbend.cpp
+epitors.cpp
+epolar_chgpen.cpp
+epolar.cpp
+erepel.cpp
+error_nix.cpp
+estrbnd.cpp
+estrtor.cpp
+etors.cpp
+etortor.cpp
+eurey.cpp
+evalence.cpp
+evdw.cpp
+exec.cpp
+fc.cpp
+field_chgpen.cpp
+field.cpp
+group.cpp
+induce.cpp
+induce_donly.cpp
+initial.cpp
+io_fort_str.cpp
+io_text.cpp
+mdegv.cpp
+mdintg.cpp
+mdintg_respa.cpp
+mdintg_verlet.cpp
+mdpq.cpp
+mdpt.cpp
+mdsave.cpp
+mechanic2.cpp
+mechanic.cpp
+minimize_x.cpp
+mod.cpp
+molecule.cpp
+moments.cpp
+nblist.cpp
+nose.cpp
+osrw.cpp
+platform.cpp
+pme.cpp
+pmestuf.cpp
+potent.cpp
+random.cpp
+rattle.cpp
+rc_man.cpp
+spatial2.cpp
+spatial.cpp
+switch.cpp
+testgrad_x.cpp
+tinker_mod.cpp
+tinker_rt.cpp
+)
 if (HOST)
-   file (GLOB __T9_CPP_HOST_SRC "host/*.cpp")
+   set (__T9_CPP_HOST_SRC
+host/darray.cpp
+host/execq.cpp
+host/fft.cpp
+host/gpu_card.cpp
+   )
    list (APPEND __T9_CPP_SRC "${__T9_CPP_HOST_SRC}")
 else ()
-   file (GLOB __T9_CPP_CUDART_SRC "cudart/*.cpp")
+   set (__T9_CPP_CUDART_SRC
+cudart/darray.cpp
+cudart/error.cpp
+cudart/execq.cpp
+cudart/fft.cpp
+cudart/gpu_card.cpp
+cudart/thrust_cache.cpp
+   )
    list (APPEND __T9_CPP_SRC "${__T9_CPP_CUDART_SRC}")
 endif ()
 add_library (__t9_cpp_o OBJECT "${__T9_CPP_SRC}")

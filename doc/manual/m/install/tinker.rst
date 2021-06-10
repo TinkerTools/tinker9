@@ -1,7 +1,7 @@
-Build the Canonical Tinker
-==========================
+Download the Canonical Tinker
+=============================
 
-**Checkout the Required Version of Tinker**
+**Recommended**
 
 Using the incorrect Tinker version, the executables would be
 very likely to fail with segfault.
@@ -15,11 +15,17 @@ checkout Tinker from the *tinker* Git submodule:
    cd tinker9
    git submodule update --init
 
-Alternatively, clone
-`Tinker from GitHub <https://github.com/tinkertools/tinker>`_,
+**Deprecated**
+
+Alternatively, remove the directory *tinker9/tinker* and clone
+`Tinker from GitHub <https://github.com/tinkertools/tinker>`_
+to replace the deleted directory,
 then checkout the required version **080e8f1d**.
-You should move this *tinker* directory under *tinker9*.
 
-**Make libtinker**
+.. code-block:: bash
 
-Compiling libtinker is now automated in the next step.
+   cd tinker9
+   rm -rf tinker
+   git clone https://github.com/tinkertools/tinker
+   cd tinker
+   git checkout <TheRequiredVersion>

@@ -594,9 +594,46 @@ set_source_files_properties ("${__T9_ACC_STATIC_LIB_LOC}" PROPERTIES
 
 
 ## test files
-file (GLOB T9_TEST_SRC
-   "src-main/main_all_tests.cpp"
-   "src/test/*.cpp"
+set (T9_TEST_SRC
+src-main/main_all_tests.cpp
+src/test/test_angle.cpp
+src/test/test_angtor.cpp
+src/test/test_async.cpp
+src/test/test_bond.cpp
+src/test/test_bounds.cpp
+src/test/test_box.cpp
+src/test/test_chglj.cpp
+src/test/test_chgtrn.cpp
+src/test/test_disp.cpp
+src/test/test_emhippo.cpp
+src/test/test_ephippo.cpp
+src/test/test_geom.cpp
+src/test/test_improp.cpp
+src/test/test_imptor.cpp
+src/test/test_info.cpp
+src/test/test_kinetic.cpp
+src/test/test_local_frame2.cpp
+src/test/test_local_frame3.cpp
+src/test/test_local_frame.cpp
+src/test/test_mathfunc.cpp
+src/test/test_nacl.cpp
+src/test/test_nblist.cpp
+src/test/test_opbend.cpp
+src/test/test_osrw.cpp
+src/test/test_partial_charge.cpp
+src/test/test_pitors.cpp
+src/test/test_reduce.cpp
+src/test/test_rephippo.cpp
+src/test/test_rt.cpp
+src/test/test_strbnd.cpp
+src/test/test_strtor.cpp
+src/test/test_text.cpp
+src/test/test_torsion.cpp
+src/test/test_tortor.cpp
+src/test/test_truncated8.cpp
+src/test/test_urey.cpp
+src/test/test_vdw14.cpp
+src/test/test_verlet.cpp
 )
 add_library (__t9_all_tests_o OBJECT ${T9_TEST_SRC})
 target_compile_definitions (__t9_all_tests_o PRIVATE ${T9_DEFS})
@@ -654,6 +691,7 @@ foreach (var
    "${PROJECT_SOURCE_DIR}/shell/info9.sh"
    "${PROJECT_SOURCE_DIR}/shell/minimize9.sh"
    "${PROJECT_SOURCE_DIR}/shell/testgrad9.sh"
+   "${PROJECT_SOURCE_DIR}/shell/chkver.py"
    )
    get_filename_component (__t9_fname "${var}" NAME)
    add_custom_command (TARGET __t9_copy_shell_exe POST_BUILD
