@@ -275,7 +275,7 @@ void shake_methyl_cu(time_prec dt, pos_prec* xnew, pos_prec* ynew,
 }
 
 
-template <class HTYPE, bool DO_V>
+template <bool DO_V>
 __global__
 void constrain2_methyl_cu1(int nratch2, const int (*restrict iratch2)[3],
                            int nratch3, const int (*restrict iratch3)[4],
@@ -283,8 +283,6 @@ void constrain2_methyl_cu1(int nratch2, const int (*restrict iratch2)[3],
                            time_prec dt, vel_prec* restrict vx,
                            vel_prec* restrict vy, vel_prec* restrict vz,
                            virial_buffer restrict vir_buf,
-
-                           double rats2,
 
                            const pos_prec* restrict xpos,
                            const pos_prec* restrict ypos,
@@ -323,18 +321,6 @@ void constrain2_methyl_cu1(int nratch2, const int (*restrict iratch2)[3],
       rma = massinv[ia];
       rmb = massinv[ib];
       rmc = massinv[ic];
-      if CONSTEXPR (eq<HTYPE, LPRAT>()) {
-         double ae2 = rats2;
-         double be2 = rats2;
-         double ce2 = rats2;
-         rma /= ae2;
-         rmb /= be2;
-         rmc /= ce2;
-         if (methyl) {
-            double de2 = rats2;
-            rmd /= de2;
-         }
-      }
 
 
       // matrix form
@@ -480,47 +466,23 @@ void rattle2_methyl_cu(time_prec dt, bool do_v)
 
 
    if (do_v) {
-      auto ker = constrain2_methyl_cu1<RATTLE, true>;
+      auto ker = constrain2_methyl_cu1<true>;
       launch_k2b(g::s0, 64, n23, ker,
 
                  nratch2, iratch2, nratch3, iratch3,
 
                  dt, vx, vy, vz, vir_buf,
 
-                 lp_rats2,
-
                  xpos, ypos, zpos, massinv);
    } else {
-      auto ker = constrain2_methyl_cu1<RATTLE, false>;
+      auto ker = constrain2_methyl_cu1<false>;
       launch_k2b(g::s0, 64, n23, ker,
 
                  nratch2, iratch2, nratch3, iratch3,
 
                  dt, vx, vy, vz, nullptr,
 
-                 lp_rats2,
-
                  xpos, ypos, zpos, massinv);
    }
-}
-
-
-void lprat2_methyl_cu(time_prec dt)
-{
-   int n23 = nratch2 + nratch3;
-   if (n23 <= 0)
-      return;
-
-
-   auto ker = constrain2_methyl_cu1<LPRAT, false>;
-   launch_k2b(g::s0, 64, n23, ker,
-
-              nratch2, iratch2, nratch3, iratch3,
-
-              dt, vx, vy, vz, nullptr,
-
-              lp_rats2,
-
-              xpos, ypos, zpos, massinv);
 }
 }

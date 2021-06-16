@@ -7,6 +7,24 @@
 
 
 namespace tinker {
+void propagate_pos_raxbv_acc(
+
+   pos_prec* r1, pos_prec* r2, pos_prec* r3,
+
+   pos_prec a, pos_prec* x1, pos_prec* x2, pos_prec* x3,
+
+   pos_prec b, pos_prec* y1, pos_prec* y2, pos_prec* y3)
+{
+   #pragma acc parallel loop independent async\
+               deviceptr(r1,r2,r3,x1,x2,x3,y1,y2,y3)
+   for (int i = 0; i < n; ++i) {
+      r1[i] = r1[i] + a * x1[i] + b * y1[i];
+      r2[i] = r2[i] + a * x2[i] + b * y2[i];
+      r3[i] = r3[i] + a * x3[i] + b * y3[i];
+   }
+}
+
+
 void lp_mol_virial_acc()
 {
    int nmol = rattle_dmol.nmol;

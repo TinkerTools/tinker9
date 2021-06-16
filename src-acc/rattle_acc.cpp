@@ -529,7 +529,7 @@ void shake_ch_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
 //====================================================================//
 
 
-template <class HTYPE, bool DO_V>
+template <bool DO_V>
 void constrain2_acc(time_prec dt)
 {
    if (nratmol <= 0)
@@ -565,12 +565,6 @@ void constrain2_acc(time_prec dt)
             dot = xr * xv + yr * yv + zr * zv;
             rma = massinv[ia];
             rmb = massinv[ib];
-            if CONSTEXPR (eq<HTYPE, LPRAT>()) {
-               double ae2 = lp_rats2;
-               double be2 = lp_rats2;
-               rma /= ae2;
-               rmb /= be2;
-            }
             term = -dot / ((rma + rmb) * krat[i] * krat[i]);
             if (fabs(term) > eps) {
                done = false;
@@ -608,7 +602,7 @@ void constrain2_acc(time_prec dt)
 }
 
 
-template <class HTYPE, bool DO_V>
+template <bool DO_V>
 void settle2_acc1(time_prec dt)
 {
    if (nratwt <= 0)
@@ -630,14 +624,6 @@ void settle2_acc1(time_prec dt)
       m0 = mass[ia];
       m1 = mass[ib];
       m2 = mass[ic];
-      if CONSTEXPR (eq<HTYPE, LPRAT>()) {
-         double ae2 = lp_rats2;
-         double be2 = lp_rats2;
-         double ce2 = lp_rats2;
-         m0 *= ae2;
-         m1 *= be2;
-         m2 *= ce2;
-      }
 
 
       // vectors AB, BC, CA
@@ -797,7 +783,7 @@ void settle2_acc1(time_prec dt)
 }
 
 
-template <class HTYPE, bool DO_V>
+template <bool DO_V>
 void constrain2_ch_acc1(time_prec dt)
 {
    if (nratch <= 0)
@@ -817,12 +803,6 @@ void constrain2_ch_acc1(time_prec dt)
       ib = iratch[im][1];
       rma = massinv[ia];
       rmb = massinv[ib];
-      if CONSTEXPR (eq<HTYPE, LPRAT>()) {
-         double ae2 = lp_rats2;
-         double be2 = lp_rats2;
-         rma /= ae2;
-         rmb /= be2;
-      }
 
 
       // vectors AB3, vAB0, AB3 dot vAB0, -lam
@@ -871,9 +851,9 @@ void constrain2_ch_acc1(time_prec dt)
 void rattle2_acc(time_prec dt, bool do_v)
 {
    if (do_v) {
-      constrain2_acc<RATTLE, true>(dt);
+      constrain2_acc<true>(dt);
    } else {
-      constrain2_acc<RATTLE, false>(dt);
+      constrain2_acc<false>(dt);
    }
 }
 
@@ -881,36 +861,18 @@ void rattle2_acc(time_prec dt, bool do_v)
 void rattle2_settle_acc(time_prec dt, bool do_v)
 {
    if (do_v)
-      settle2_acc1<RATTLE, true>(dt);
+      settle2_acc1<true>(dt);
    else
-      settle2_acc1<RATTLE, false>(dt);
+      settle2_acc1<false>(dt);
 }
 
 
 void rattle2_ch_acc(time_prec dt, bool do_v)
 {
    if (do_v) {
-      constrain2_ch_acc1<RATTLE, true>(dt);
+      constrain2_ch_acc1<true>(dt);
    } else {
-      constrain2_ch_acc1<RATTLE, false>(dt);
+      constrain2_ch_acc1<false>(dt);
    }
-}
-
-
-void lprat2_acc(time_prec dt)
-{
-   constrain2_acc<LPRAT, false>(dt);
-}
-
-
-void lprat2_settle_acc(time_prec dt)
-{
-   settle2_acc1<LPRAT, false>(dt);
-}
-
-
-void lprat2_ch_acc(time_prec dt)
-{
-   constrain2_ch_acc1<LPRAT, false>(dt);
 }
 }

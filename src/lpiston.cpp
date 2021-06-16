@@ -23,7 +23,6 @@
 namespace tinker {
 double lp_alpha;
 double lp_rats1;
-double lp_rats2;
 double lp_eksum;
 double lp_ekin[3][3];
 double lp_vir[9];
@@ -82,6 +81,17 @@ double sinh_id(double x)
 }
 
 
+extern void propagate_pos_raxbv_acc(pos_prec*, pos_prec*, pos_prec*, pos_prec,
+                                    pos_prec*, pos_prec*, pos_prec*, pos_prec,
+                                    pos_prec*, pos_prec*, pos_prec*);
+void propagate_pos_raxbv(pos_prec* r1, pos_prec* r2, pos_prec* r3, pos_prec a,
+                         pos_prec* x1, pos_prec* x2, pos_prec* x3, pos_prec b,
+                         pos_prec* y1, pos_prec* y2, pos_prec* y3)
+{
+   propagate_pos_raxbv_acc(r1, r2, r3, a, x1, x2, x3, b, y1, y2, y3);
+}
+
+
 void lp_center_of_mass_acc(const pos_prec*, const pos_prec*, const pos_prec*,
                            pos_prec*, pos_prec*, pos_prec*);
 void lp_center_of_mass(const pos_prec* atomx, const pos_prec* atomy,
@@ -89,7 +99,7 @@ void lp_center_of_mass(const pos_prec* atomx, const pos_prec* atomy,
                        pos_prec* molz)
 {
    static_assert(std::is_same<pos_prec, vel_prec>::value,
-                 "pos_prec and vel_pres must be the same type.");
+                 "pos_prec and vel_prec must be the same type.");
    lp_center_of_mass_acc(atomx, atomy, atomz, molx, moly, molz);
 }
 
@@ -116,38 +126,22 @@ void lprat(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 }
 
 
-void lprat2_acc(time_prec);
-void lprat2_settle_acc(time_prec);
-void lprat2_ch_acc(time_prec);
-void lprat2_methyl_cu(time_prec);
-void lprat2(time_prec dt)
-{
-   lprat2_settle_acc(dt);
-   lprat2_ch_acc(dt);
-#if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
-      lprat2_methyl_cu(dt);
-#endif
-   lprat2_acc(dt);
-}
-
-
 //====================================================================//
 
 
 static int nrespa, nbaro;
-static double fric, rnd;
+static double rnd;
 static double g0, g1, D;
 static bool atomT, molT, atomP, molP, constrain, aniso;
-static enum { KW_NULL = 0, KW_ATOM, KW_MOL } kw_t, kw_p;
+static enum { KW_NULL = 0, KW_ATOM, KW_MOL } kw_p;
 
 
 void vv_lpiston_init()
 {
    auto o = stdout;
 
-   // RESPA keywords:    "RESPA-INNER  0.25"
-   // Barostat keywords: "BARO-OUTER   6.0"
+   // RESPA keyword:    "RESPA-INNER  0.25"
+   // Barostat keyword: "BARO-OUTER    6.0"
    const time_prec eps = 1.0 / 1048576; // 2**-20
    nrespa = (int)(time_step / (mdstuf::arespa + eps)) + 1;
    double abaro;
@@ -157,7 +151,7 @@ void vv_lpiston_init()
       nbaro = nbaro - 1;
    nbaro = std::max(1, nbaro);
 
-   fric = stodyn::friction;
+
    rnd = 0.0;
 
    // isotropic NPT
@@ -167,72 +161,28 @@ void vv_lpiston_init()
    D = 3.0;
 
    // molecular pressure keyword: "VOLUME-SCALE  MOLECULAR"
-   // atomic pressure keyword:    "VOLUME-SCALE  ATOMIC"
-   // default pressure
+   // atomic pressure keyword:    "VOLUME-SCALE     ATOMIC"
    fstr_view volscale_f = bath::volscale;
    std::string volscale = volscale_f.trim();
-   if (volscale == "ATOMIC") {
-      kw_p = KW_ATOM;
-   } else if (volscale == "MOLECULAR") {
-      kw_p = KW_MOL;
-   } else if (constrain) {
-      kw_p = KW_MOL;
-   } else {
-      kw_p = KW_ATOM;
-   }
-   if (constrain and kw_p == KW_ATOM) {
-      TINKER_THROW("NPT RATTLE cannot use atomic volume scaling."
-                   " Set \"VOLUME-SCALE  MOLECULAR\" in the key file.");
-   }
-   if (not constrain and kw_p == KW_MOL) {
-      print(o, " No constraints hence setting VOLUME-SCALE to ATOMIC\n");
-      kw_p = KW_ATOM;
-      volscale = "ATOMIC";
-   }
    atomP = false, molP = false;
-   if (kw_p == KW_ATOM) {
-      volscale = "ATOMIC";
-      atomP = true;
-      int val = std::max(n, 2);
-      g1 = D * (val - 1);
-   } else if (kw_p == KW_MOL) {
+   atomT = false, molT = false;
+   if (volscale == "MOLECULAR" or constrain) {
+      kw_p = KW_MOL;
       volscale = "MOLECULAR";
-      molP = true;
       int val = std::max(rattle_dmol.nmol, 2);
       g1 = D * (val - 1);
-   }
-
-   // molecular temperature keyword: "VELOCITY-SCALE  MOLECULAR"
-   // atomic temperature keyword:    "VELOCITY-SCALE  ATOMIC"
-   // default temperature
-   std::string velscale_default, velscale;
-   if (constrain) {
-      velscale_default = "MOLECULAR";
-      kw_t = KW_MOL;
-   } else {
-      velscale_default = "ATOMIC";
-      kw_t = KW_ATOM;
-   }
-   get_kv("VELOCITY-SCALE", velscale, velscale_default);
-   if (velscale == "ATOMIC") {
-      kw_t = KW_ATOM;
-   } else if (velscale == "MOLECULAR") {
-      kw_t = KW_MOL;
-   }
-   atomT = false, molT = false;
-   if (kw_t == KW_ATOM) {
-      velscale = "ATOMIC";
-      atomT = true;
-      g0 = D * (n - 1);
-      if (constrain) {
-         g0 -= freeze::nrat;
-      }
-   } else if (kw_t == KW_MOL) {
-      velscale = "MOLECULAR";
-      molT = true;
       g0 = D * (rattle_dmol.nmol - 1);
+      molP = true;
+      molT = true;
+   } else {
+      kw_p = KW_ATOM;
+      volscale = "ATOMIC";
+      int val = std::max(n, 2);
+      g1 = D * (val - 1);
+      g0 = D * (n - 1);
+      atomP = true;
+      atomT = true;
    }
-
    lp_alpha = 1.0 + D / g1;
 
    // Nose-Hoover Chain
@@ -264,27 +214,26 @@ void vv_lpiston_init()
    // calculate total gradient and atomic virial
    energy(calc::grad + calc::virial);
 
-   if (use_rattle()) {
+   if (constrain) {
       darray::allocate(buffer_size(), &lp_vir_buf);
    }
 
    print(o, "\n");
-   print(o, " Friction                        %12.4lf /ps\n", stodyn::friction);
-   print(o, " Time constant for the const-T   %12.4lf ps\n", bath::tautemp);
-   print(o, " Time constant for the const-P   %12.4lf ps\n", bath::taupres);
-   print(o, " Temperature estimator           %12s\n", velscale);
-   print(o, " Pressure estimator              %12s\n", volscale);
-   print(o, " LP-G                            %12.0lf\n", g0);
-   print(o, " LP-G1                           %12.0lf\n", g1);
-   print(o, " NRESPA                          %12d\n", nrespa);
-   print(o, " NBARO                           %12d\n", nbaro);
+   print(o, " Friction                     %12.4lf /ps\n", stodyn::friction);
+   print(o, " Time constant for  const-T   %12.4lf ps\n", bath::tautemp);
+   print(o, " Time constant for  const-P   %12.4lf ps\n", bath::taupres);
+   print(o, " Pressure estimator           %12s\n", volscale);
+   print(o, " LP-G                         %12.0lf\n", g0);
+   print(o, " LP-G1                        %12.0lf\n", g1);
+   print(o, " NRESPA                       %12d\n", nrespa);
+   print(o, " NBARO                        %12d\n", nbaro);
    print(o, "\n");
 }
 
 
 void vv_lpiston_destory()
 {
-   if (use_rattle())
+   if (constrain)
       darray::deallocate(lp_vir_buf);
    if (nrespa > 1)
       darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
@@ -294,39 +243,120 @@ void vv_lpiston_destory()
 //====================================================================//
 
 
-static void iso_tp(int half, time_prec dt)
+static void iso_tp(time_prec dt)
 {
    constexpr int ns = 2;
    const double kbt = units::gasconst * bath::kelvin;
-   time_prec DT = nbaro * dt, dt2 = 0.5 * dt, DT2 = 0.5 * DT;
-   time_prec h, h2, h4, H, H2;
-   h = dt2 / ns, h2 = 0.5 * h, h4 = 0.25 * h;
-   H = DT2 / ns, H2 = 0.5 * H;
-   double opgh2, omgh2, sd, alpha;
-   opgh2 = 1.0 + fric * H2;
-   omgh2 = 1.0 - fric * H2;
-   sd = sqrt(2.0 * kbt * fric * DT / qbar) / (4 * n);
-   alpha = lp_alpha;
+   time_prec t, t2, t4, t8, xt4;
+   t = dt / ns, t2 = t / 2, t4 = t / 4, t8 = t / 8, xt4 = nbaro * t4;
+
+   double opgxt4, omgxt4, sd;
+   opgxt4 = 1.0 + stodyn::friction * xt4;
+   omgxt4 = 1.0 - stodyn::friction * xt4;
+   sd = std::sqrt(nbaro * dt * 2.0 * stodyn::friction * kbt / qbar) / (4 * ns);
+
+   if (atomP)
+      lp_atom_virial();
+   else if (molP)
+      lp_mol_virial();
+   const virial_prec tr_vir = lp_vir[0] + lp_vir[4] + lp_vir[8];
+   const double vol0 = volbox();
+   if (atomT)
+      lp_atom_kinetic();
+   else if (molT)
+      lp_mol_kinetic();
+   double eksum0 = lp_eksum, eksum1;
+   double velsc0 = 1.0, velsc1;
+
+   double DelP;
+   for (int k = 0; k < ns; ++k) {
+      eksum1 = eksum0;
+      velsc1 = velsc0;
+
+      for (int i = maxnose - 1; i > -1; --i) {
+         if (i == 0)
+            gnh[i] = (2 * eksum1 - g0 * kbt) / qnh[i];
+         else
+            gnh[i] = (qnh[i - 1] * vnh[i - 1] * vnh[i - 1] - kbt) / qnh[i];
+
+         if (i == maxnose - 1)
+            vnh[i] += gnh[i] * t4;
+         else {
+            double exptm = std::exp(-vnh[i + 1] * t8);
+            vnh[i] = (vnh[i] * exptm + gnh[i] * t4) * exptm;
+         }
+      }
+
+      if (atomP or molP) {
+         DelP = lp_alpha * 2 * eksum1 - tr_vir;
+         DelP = DelP - D * vol0 * bath::atmsph / units::prescon;
+         gbar = DelP / qbar;
+         vbar = gbar * xt4 + omgxt4 * vbar + sd * rnd;
+      }
+
+      double scal;
+      if (atomP or molP)
+         scal = std::exp(-t2 * (vnh[0] + lp_alpha * vbar * nbaro));
+      else
+         scal = std::exp(-t2 * vnh[0]);
+      velsc1 *= scal;
+      eksum1 *= (scal * scal);
+
+      if (atomP or molP) {
+         DelP = lp_alpha * 2 * eksum1 - tr_vir;
+         DelP = DelP - D * vol0 * bath::atmsph / units::prescon;
+         gbar = DelP / qbar;
+         vbar = (gbar * xt4 + vbar + sd * rnd) / opgxt4;
+      }
+
+      for (int i = 0; i < maxnose; ++i) {
+         if (i == 0)
+            gnh[i] = (2 * eksum1 - g0 * kbt) / qnh[i];
+         else
+            gnh[i] = (qnh[i - 1] * vnh[i - 1] * vnh[i - 1] - kbt) / qnh[i];
+
+
+         if (i == maxnose - 1)
+            vnh[i] += gnh[i] * t4;
+         else {
+            double exptm = std::exp(-vnh[i + 1] * t8);
+            vnh[i] = (vnh[i] * exptm + gnh[i] * t4) * exptm;
+         }
+      }
+
+      eksum0 = eksum1;
+      velsc0 = velsc1;
+   }
+
+
+   darray::scale(g::q0, n, velsc0, vx);
+   darray::scale(g::q0, n, velsc0, vy);
+   darray::scale(g::q0, n, velsc0, vz);
+   const double velsc2 = velsc0 * velsc0;
+   lp_eksum *= velsc2;
+   for (int ii = 0; ii < 3; ++ii)
+      for (int jj = 0; jj < 3; ++jj)
+         lp_ekin[ii][jj] *= velsc2;
 }
 
 
 void vv_lpiston_npt(int istep, time_prec dt)
 {
-   time_prec DT = nbaro * dt, dt2 = 0.5 * dt, DT2 = 0.5 * DT;
-   time_prec dti = dt / nrespa, dti2 = dt2 / nrespa;
-   time_prec DTi = DT / nrespa, DTi2 = DT2 / nrespa;
-
-
    bool mid = (istep % nbaro) == (nbaro + 1) / 2;
-   lp_rats1 = 1.0, lp_rats2 = 1.0;
+   lp_rats1 = 1.0;
 
 
-   iso_tp(1, dt);
+   time_prec xdt = nbaro * dt, dt2 = 0.5 * dt, xdt2 = 0.5 * xdt;
+   time_prec dti = dt / nrespa, dti2 = dt2 / nrespa;
+   time_prec xdti = xdt / nrespa, xdti2 = xdt2 / nrespa;
+
+
+   iso_tp(dt);
    if (nrespa > 1) {
       // gx1: fast; gx2: slow
       propagate_velocity2(dti2, gx1, gy1, gz1, dt2, gx2, gy2, gz2);
    } else {
-      propagate_velocity(dt, gx, gy, gz);
+      propagate_velocity(dt2, gx, gy, gz);
    }
 
 
@@ -339,11 +369,11 @@ void vv_lpiston_npt(int istep, time_prec dt)
 
    double s;
    if (mid and (atomP or molP)) {
-      lvec1 *= std::exp(vbar * DT);
-      lvec2 *= std::exp(vbar * DT);
-      lvec3 *= std::exp(vbar * DT);
+      lvec1 *= std::exp(vbar * xdt);
+      lvec2 *= std::exp(vbar * xdt);
+      lvec3 *= std::exp(vbar * xdt);
       set_default_recip_box();
-      double vt2 = vbar * DTi2;
+      double vt2 = vbar * xdti2;
       // double s1b = 1.0;
       // double s1a = std::exp(vt2);
       double s1 = std::exp(vt2) * sinh_id(vt2);
@@ -352,17 +382,11 @@ void vv_lpiston_npt(int istep, time_prec dt)
    }
    for (int ir = 0; ir < nrespa; ++ir) {
       if (mid and atomP) {
-         propagate_pos_axbv(std::exp(vbar * DTi), s * dti);
+         propagate_pos_axbv(std::exp(vbar * xdti), s * dti);
       } else if (mid and molP) {
          lp_center_of_mass(xpos, ypos, zpos, ratcom_x, ratcom_y, ratcom_z);
-         #pragma acc parallel loop independent async\
-                 deviceptr(vx,vy,vz,xpos,ypos,zpos,ratcom_x,ratcom_y,ratcom_z)
-         for (int i = 0; i < n; ++i) {
-            double c1 = s * dti, c2 = std::exp(vbar * DTi) - 1.0;
-            xpos[i] += c1 * vx[i] + c2 * ratcom_x[i];
-            ypos[i] += c1 * vy[i] + c2 * ratcom_y[i];
-            zpos[i] += c1 * vz[i] + c2 * ratcom_z[i];
-         }
+         propagate_pos_raxbv(xpos, ypos, zpos, std::exp(vbar * xdti) - 1.0,
+                             ratcom_x, ratcom_y, ratcom_z, s * dti, vx, vy, vz);
       } else {
          propagate_pos(dti);
       }
@@ -372,27 +396,24 @@ void vv_lpiston_npt(int istep, time_prec dt)
          propagate_velocity(dti, gx, gy, gz);
       }
    }
-   if (constrain) {
-      assert(not atomP);
+   if (constrain)
       lprat(dt, rattle_xold, rattle_yold, rattle_zold);
-   }
+   copy_pos_to_xyz(true);
 
 
    rnd = normal<double>();
    atomP = false, molP = false;
+   int vers1 = rc_flag & calc::vmask;
+   if ((istep % inform::iwrite) != 0)
+      vers1 &= ~calc::energy;
    if (istep % nbaro == 0) {
       if (kw_p == KW_ATOM)
          atomP = true;
       if (kw_p == KW_MOL)
          molP = true;
-   }
-
-
-   int vers1 = rc_flag & calc::vmask;
-   if ((istep % inform::iwrite) != 0)
-      vers1 &= ~calc::energy;
-   if ((istep % nbaro) != 0)
+   } else {
       vers1 &= ~calc::virial;
+   }
 
 
    if (nrespa > 1) {
@@ -406,7 +427,6 @@ void vv_lpiston_npt(int istep, time_prec dt)
       copy_energy(vers1, &esum_f);
       copy_virial(vers1, vir_f);
 
-
       // slow force
       energy(vers1, RESPA_SLOW, respa_tsconfig());
       darray::copy(g::q0, n, gx2, gx);
@@ -419,15 +439,14 @@ void vv_lpiston_npt(int istep, time_prec dt)
             vir[iv] += vir_f[iv];
       }
 
-
       // gx1: fast; gx2: slow
       propagate_velocity2(dti2, gx1, gy1, gz1, dt2, gx2, gy2, gz2);
    } else {
       energy(vers1);
-      propagate_velocity(dt, gx, gy, gz);
+      propagate_velocity(dt2, gx, gy, gz);
    }
-   iso_tp(2, dt);
+   iso_tp(dt);
    if (constrain)
-      lprat2(dt);
+      rattle2(dt, atomP);
 }
 }
