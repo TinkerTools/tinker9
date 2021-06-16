@@ -21,7 +21,7 @@ void mdrest_acc(int istep)
 
    // zero out the total mass and overall linear velocity
 
-   mass_prec totmass = molcul::totmass;
+   auto totmass = molcul::totmass;
    vel_prec vtot1 = 0, vtot2 = 0, vtot3 = 0;
    energy_prec etrans = 0;
 
@@ -39,7 +39,7 @@ void mdrest_acc(int istep)
                   copy(vtot1,vtot2,vtot3) reduction(+:vtot1,vtot2,vtot3)\
                   deviceptr(mass,vx,vy,vz)
       for (int i = 0; i < n; ++i) {
-         mass_prec weigh = mass[i];
+         auto weigh = mass[i];
          vtot1 += vx[i] * weigh;
          vtot2 += vy[i] * weigh;
          vtot3 += vz[i] * weigh;
@@ -88,7 +88,7 @@ void mdrest_acc(int istep)
                   reduction(+:xtot,ytot,ztot,mang1,mang2,mang3)\
                   deviceptr(mass,xpos,ypos,zpos,vx,vy,vz)
       for (int i = 0; i < n; ++i) {
-         mass_prec weigh = mass[i];
+         auto weigh = mass[i];
          xtot += xpos[i] * weigh;
          ytot += ypos[i] * weigh;
          ztot += zpos[i] * weigh;
@@ -112,7 +112,7 @@ void mdrest_acc(int istep)
                   copy(xx,xy,xz,yy,yz,zz) reduction(+:xx,xy,xz,yy,yz,zz)\
                   deviceptr(mass,xpos,ypos,zpos)
       for (int i = 0; i < n; ++i) {
-         mass_prec weigh = mass[i];
+         auto weigh = mass[i];
          pos_prec xdel = xpos[i] - xtot;
          pos_prec ydel = ypos[i] - ytot;
          pos_prec zdel = zpos[i] - ztot;

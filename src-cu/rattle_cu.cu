@@ -18,7 +18,7 @@ void constrain_methyl_cu1(
    time_prec dt, pos_prec* restrict xnew, pos_prec* restrict ynew,
    pos_prec* restrict znew, const pos_prec* restrict xold,
    const pos_prec* restrict yold, const pos_prec* restrict zold,
-   const mass_prec* restrict massinv,
+   const double* restrict massinv,
 
    vel_prec* restrict vx, vel_prec* restrict vy, vel_prec* restrict vz)
 {
@@ -245,7 +245,7 @@ void constrain2_methyl_cu1(int nratch2, const int (*restrict iratch2)[3],
                            const pos_prec* restrict xpos,
                            const pos_prec* restrict ypos,
                            const pos_prec* restrict zpos,
-                           const mass_prec* restrict massinv)
+                           const double* restrict massinv)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int stride = blockDim.x * gridDim.x;

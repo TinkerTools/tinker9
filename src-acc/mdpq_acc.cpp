@@ -71,7 +71,7 @@ void bounds_pos_acc()
          ymid += ypos[k] * mass[k];
          zmid += zpos[k] * mass[k];
       }
-      mass_prec weigh = molmass[i];
+      auto weigh = molmass[i];
       xmid /= weigh;
       ymid /= weigh;
       zmid /= weigh;

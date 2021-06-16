@@ -16,7 +16,7 @@ struct Group
    /// \brief First and last atom of each group in the list.
    int (*igrp)[2];
    /// \brief Total mass of all the atoms in each group.
-   mass_prec* grpmass;
+   double* grpmass;
    /// \brief Weight for each set of group-group interactions.
    real* wgrp;
 };
