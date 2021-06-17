@@ -25,6 +25,20 @@ void propagate_pos_raxbv_acc(
 }
 
 
+void lp_propagate_mol_vel_acc(vel_prec scal)
+{
+   auto* molec = rattle_dmol.molecule;
+   #pragma acc parallel loop independent async\
+               deviceptr(vx,vy,vz,ratcom_vx,ratcom_vy,ratcom_vz,molec)
+   for (int i = 0; i < n; ++i) {
+      int im = molec[i];
+      vx[i] = vx[i] + scal * ratcom_vx[im];
+      vy[i] = vy[i] + scal * ratcom_vy[im];
+      vz[i] = vz[i] + scal * ratcom_vz[im];
+   }
+}
+
+
 void lp_mol_virial_acc()
 {
    int nmol = rattle_dmol.nmol;

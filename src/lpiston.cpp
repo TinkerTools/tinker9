@@ -92,6 +92,13 @@ void propagate_pos_raxbv(pos_prec* r1, pos_prec* r2, pos_prec* r3, pos_prec a,
 }
 
 
+extern void lp_propagate_mol_vel_acc(vel_prec);
+void lp_propagate_mol_vel(vel_prec scal)
+{
+   lp_propagate_mol_vel_acc(scal);
+}
+
+
 void lp_center_of_mass_acc(const pos_prec*, const pos_prec*, const pos_prec*,
                            pos_prec*, pos_prec*, pos_prec*);
 void lp_center_of_mass(const pos_prec* atomx, const pos_prec* atomy,
@@ -162,11 +169,10 @@ void vv_lpiston_init()
 
    // molecular pressure keyword: "VOLUME-SCALE  MOLECULAR"
    // atomic pressure keyword:    "VOLUME-SCALE     ATOMIC"
-   fstr_view volscale_f = bath::volscale;
-   std::string volscale = volscale_f.trim();
+   std::string volscale;
    atomP = false, molP = false;
    atomT = false, molT = false;
-   if (volscale == "MOLECULAR" or constrain) {
+   if (constrain) {
       kw_p = KW_MOL;
       volscale = "MOLECULAR";
       int val = std::max(rattle_dmol.nmol, 2);
@@ -346,18 +352,14 @@ static void iso_tp(time_prec dt)
       darray::scale(g::q0, n, velsc0, vy);
       darray::scale(g::q0, n, velsc0, vz);
    } else if (molT) {
-      propagate_pos_raxbv(vx, vy, vz,
-
-                          velsc0 - 1.0, ratcom_vx, ratcom_vy, ratcom_vz,
-
-                          0.0, ratcom_vx, ratcom_vy, ratcom_vz);
+      lp_propagate_mol_vel(velsc0 - 1.0);
    }
 }
 
 
 void vv_lpiston_npt(int istep, time_prec dt)
 {
-   bool mid = (istep % nbaro) == (nbaro + 1) / 2;
+   bool mid = (nbaro == 1) or ((istep % nbaro) == (nbaro + 1) / 2);
    lp_rats1 = 1.0;
 
 
