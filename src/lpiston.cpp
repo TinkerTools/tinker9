@@ -360,7 +360,6 @@ static void iso_tp(time_prec dt)
 void vv_lpiston_npt(int istep, time_prec dt)
 {
    bool mid = (nbaro == 1) or ((istep % nbaro) == (nbaro + 1) / 2);
-   lp_rats1 = 1.0;
 
 
    time_prec xdt = nbaro * dt, dt2 = 0.5 * dt, xdt2 = 0.5 * xdt;
@@ -384,7 +383,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
    }
 
 
-   double s;
+   double s = 1.0;
    if (mid and (atomP or molP)) {
       lvec1 *= std::exp(vbar * xdt);
       lvec2 *= std::exp(vbar * xdt);
