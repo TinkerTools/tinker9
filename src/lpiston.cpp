@@ -384,7 +384,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 
 
    double s = 1.0;
-   if (mid and (atomP or molP)) {
+   if (mid) {
       lvec1 *= std::exp(vbar * xdt);
       lvec2 *= std::exp(vbar * xdt);
       lvec3 *= std::exp(vbar * xdt);
@@ -396,9 +396,9 @@ void vv_lpiston_npt(int istep, time_prec dt)
       s = s1;
    }
    for (int ir = 0; ir < nrespa; ++ir) {
-      if (mid and atomP) {
+      if (mid and kw_p == KW_ATOM) {
          propagate_pos_axbv(std::exp(vbar * xdti), s * dti);
-      } else if (mid and molP) {
+      } else if (mid and kw_p == KW_MOL) {
          lp_center_of_mass(xpos, ypos, zpos, ratcom_x, ratcom_y, ratcom_z);
          propagate_pos_raxbv(xpos, ypos, zpos, std::exp(vbar * xdti) - 1.0,
                              ratcom_x, ratcom_y, ratcom_z, s * dti, vx, vy, vz);
@@ -428,7 +428,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
    if (istep % nbaro == 0) {
       if (kw_p == KW_ATOM)
          atomP = true;
-      if (kw_p == KW_MOL)
+      else if (kw_p == KW_MOL)
          molP = true;
    } else {
       vers1 &= ~calc::virial;
