@@ -360,6 +360,13 @@ static void iso_tp(time_prec dt)
 void vv_lpiston_npt(int istep, time_prec dt)
 {
    bool mid = (nbaro == 1) or ((istep % nbaro) == (nbaro + 1) / 2);
+   atomP = false, molP = false;
+   if (mid) {
+      if (kw_p == KW_ATOM)
+         atomP = true;
+      else if (kw_p == KW_MOL)
+         molP = true;
+   }
 
 
    time_prec xdt = nbaro * dt, dt2 = 0.5 * dt, xdt2 = 0.5 * xdt;
@@ -421,16 +428,10 @@ void vv_lpiston_npt(int istep, time_prec dt)
 
 
    rnd = normal<double>();
-   atomP = false, molP = false;
    int vers1 = rc_flag & calc::vmask;
    if ((istep % inform::iwrite) != 0)
       vers1 &= ~calc::energy;
-   if (istep % nbaro == 0) {
-      if (kw_p == KW_ATOM)
-         atomP = true;
-      else if (kw_p == KW_MOL)
-         molP = true;
-   } else {
+   if (not mid) {
       vers1 &= ~calc::virial;
    }
 
