@@ -407,15 +407,17 @@ void vv_lpiston_npt(int istep, time_prec dt)
       }
 
       if (ir < nrespa - 1) {
+         copy_pos_to_xyz(false);
          energy(calc::grad, RESPA_FAST, respa_tsconfig());
          propagate_velocity(dti, gx, gy, gz);
+      } else {
+         if (constrain) {
+            lp_rats1 = 1.0 / s;
+            lprat(dt, rattle_xold, rattle_yold, rattle_zold);
+         }
+         copy_pos_to_xyz(true);
       }
    }
-   if (constrain) {
-      lp_rats1 = 1.0 / s;
-      lprat(dt, rattle_xold, rattle_yold, rattle_zold);
-   }
-   copy_pos_to_xyz(true);
 
 
    rnd = normal<double>();
