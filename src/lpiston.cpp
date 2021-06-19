@@ -154,10 +154,7 @@ void vv_lpiston_init()
    double abaro;
    get_kv("BARO-OUTER", abaro, 1.0);
    nbaro = (int)(abaro * 0.001 / (time_step + eps)) + 1;
-   if (nbaro % 2 == 0)
-      nbaro = nbaro - 1;
    nbaro = std::max(1, nbaro);
-
 
    rnd = 0.0;
 
@@ -427,13 +424,13 @@ void vv_lpiston_npt(int istep, time_prec dt)
    }
 
 
-   rnd = normal<double>();
    int vers1 = rc_flag & calc::vmask;
    if ((istep % inform::iwrite) != 0)
       vers1 &= ~calc::energy;
-   if (not mid) {
+   if (not mid)
       vers1 &= ~calc::virial;
-   }
+   if (mid)
+      rnd = normal<double>();
 
 
    if (nrespa > 1) {
