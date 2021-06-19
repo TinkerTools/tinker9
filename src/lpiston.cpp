@@ -46,25 +46,23 @@ void lp_mol_kinetic()
 }
 
 
-void lp_atom_virial()
-{
-   for (int iv = 0; iv < 9; ++iv)
-      lp_vir[iv] = vir[iv];
-}
-
-
 extern void lp_mol_virial_acc();
 extern void lp_mol_virial_cu();
-void lp_mol_virial()
+void lp_virial(bool molP)
 {
-   for (int iv = 0; iv < 9; ++iv)
-      lp_vir[iv] = 0;
+   if (molP) {
+      for (int iv = 0; iv < 9; ++iv)
+         lp_vir[iv] = 0;
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
-      lp_mol_virial_cu();
-   else
+      if (pltfm_config & CU_PLTFM)
+         lp_mol_virial_cu();
+      else
 #endif
-      lp_mol_virial_acc();
+         lp_mol_virial_acc();
+   } else {
+      for (int iv = 0; iv < 9; ++iv)
+         lp_vir[iv] = vir[iv];
+   }
 }
 
 
@@ -260,18 +258,14 @@ static void iso_tp(time_prec dt)
    sd = std::sqrt(nbaro * dt * 2.0 * stodyn::friction * kbt / qbar) / (4 * ns);
 
 
-   if (molP or molT)
-      lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
-   if (atomP)
-      lp_atom_virial();
-   else if (molP)
-      lp_mol_virial();
    const virial_prec tr_vir = lp_vir[0] + lp_vir[4] + lp_vir[8];
    const double vol0 = volbox();
-   if (atomT)
+   if (atomT) {
       lp_atom_kinetic();
-   else if (molT)
+   } else if (molT) {
+      lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
       lp_mol_kinetic();
+   }
 
 
    double eksum0 = lp_eksum, eksum1;
@@ -366,6 +360,13 @@ void vv_lpiston_npt(int istep, time_prec dt)
    }
 
 
+   int vers1 = rc_flag & calc::vmask;
+   if ((istep % inform::iwrite) != 0)
+      vers1 &= ~calc::energy;
+   if (not mid)
+      vers1 &= ~calc::virial;
+
+
    time_prec xdt = nbaro * dt, dt2 = 0.5 * dt, xdt2 = 0.5 * xdt;
    time_prec dti = dt / nrespa, dti2 = dt2 / nrespa;
    time_prec xdti = xdt / nrespa, xdti2 = xdt2 / nrespa;
@@ -385,6 +386,10 @@ void vv_lpiston_npt(int istep, time_prec dt)
       darray::copy(g::q0, n, rattle_yold, ypos);
       darray::copy(g::q0, n, rattle_zold, zpos);
    }
+
+
+   virial_prec vir_fast[9] = {0};
+   energy_prec esum_f;
 
 
    double s = 1.0;
@@ -412,7 +417,12 @@ void vv_lpiston_npt(int istep, time_prec dt)
 
       if (ir < nrespa - 1) {
          copy_pos_to_xyz(false);
-         energy(calc::grad, RESPA_FAST, respa_tsconfig());
+         energy(vers1, RESPA_FAST, respa_tsconfig());
+         if (vers1 & calc::virial) {
+            lp_virial(molP);
+            for (int i = 0; i < 9; ++i)
+               vir_fast[i] += lp_vir[i];
+         }
          propagate_velocity(dti, gx, gy, gz);
       } else {
          if (constrain) {
@@ -424,25 +434,18 @@ void vv_lpiston_npt(int istep, time_prec dt)
    }
 
 
-   int vers1 = rc_flag & calc::vmask;
-   if ((istep % inform::iwrite) != 0)
-      vers1 &= ~calc::energy;
-   if (not mid)
-      vers1 &= ~calc::virial;
-   if (mid)
-      rnd = normal<double>();
-
-
    if (nrespa > 1) {
       // fast force
       energy(vers1, RESPA_FAST, respa_tsconfig());
       darray::copy(g::q0, n, gx1, gx);
       darray::copy(g::q0, n, gy1, gy);
       darray::copy(g::q0, n, gz1, gz);
-      energy_prec esum_f;
-      virial_prec vir_f[9];
       copy_energy(vers1, &esum_f);
-      copy_virial(vers1, vir_f);
+      if (vers1 & calc::virial) {
+         lp_virial(molP);
+         for (int i = 0; i < 9; ++i)
+            vir_fast[i] += lp_vir[i];
+      }
 
       // slow force
       energy(vers1, RESPA_SLOW, respa_tsconfig());
@@ -452,8 +455,9 @@ void vv_lpiston_npt(int istep, time_prec dt)
       if (vers1 & calc::energy)
          esum += esum_f;
       if (vers1 & calc::virial) {
+         lp_virial(molP);
          for (int iv = 0; iv < 9; ++iv)
-            vir[iv] += vir_f[iv];
+            lp_vir[iv] += vir_fast[iv] / nrespa;
       }
 
       // gx1: fast; gx2: slow
@@ -462,6 +466,8 @@ void vv_lpiston_npt(int istep, time_prec dt)
       energy(vers1);
       propagate_velocity(dt2, gx, gy, gz);
    }
+   if (mid)
+      rnd = normal<double>();
    iso_tp(dt);
    if (constrain)
       rattle2(dt, atomP);

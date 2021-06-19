@@ -15,8 +15,7 @@ extern virial_buffer lp_vir_buf;
 
 void lp_atom_kinetic();
 void lp_mol_kinetic();
-void lp_atom_virial();
-void lp_mol_virial();
+void lp_virial(bool molP);
 
 
 double sinh_id(double x);
