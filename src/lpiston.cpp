@@ -464,6 +464,8 @@ void vv_lpiston_npt(int istep, time_prec dt)
       propagate_velocity2(dti2, gx1, gy1, gz1, dt2, gx2, gy2, gz2);
    } else {
       energy(vers1);
+      if (vers1 & calc::virial)
+         lp_virial(molP);
       propagate_velocity(dt2, gx, gy, gz);
    }
    if (mid)
