@@ -472,6 +472,15 @@ void vv_lpiston_npt(int istep, time_prec dt)
       rnd = normal<double>();
    iso_tp(dt);
    if (constrain)
-      rattle2(dt, atomP);
+      rattle2(dt, false);
+
+
+   if ((istep % inform::iwrite) == 0) {
+      lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
+      lp_mol_kinetic();
+      printf("\n"
+             " Current MolKinetic     %12.4lf Kcal/mole of Frame %8d\n",
+             lp_eksum, istep / inform::iwrite);
+   }
 }
 }
