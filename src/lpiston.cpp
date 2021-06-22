@@ -190,7 +190,7 @@ void vv_lpiston_init()
    double ekt = units::gasconst * bath::kelvin;
    vbar = 0;
    gbar = 0;
-   qbar = (g0 + D) * ekt * bath::taupres * bath::taupres;
+   qbar = (g1 + 1) * ekt * bath::taupres * bath::taupres;
    for (int i = 0; i < maxnose; ++i) {
       vnh[i] = 0;
       gnh[i] = 0;
