@@ -149,9 +149,7 @@ void vv_lpiston_init()
    // Barostat keyword: "BARO-OUTER    6.0"
    const time_prec eps = 1.0 / 1048576; // 2**-20
    nrespa = (int)(time_step / (mdstuf::arespa + eps)) + 1;
-   double abaro;
-   get_kv("BARO-OUTER", abaro, 1.0);
-   nbaro = (int)(abaro * 0.001 / (time_step + eps)) + 1;
+   get_kv("VOLUME-TRIAL", nbaro, 1);
    nbaro = std::max(1, nbaro);
 
    rnd = 0.0;
