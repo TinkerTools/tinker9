@@ -166,8 +166,6 @@ void integrate_data(rc_op op)
       } else if (barostat == LANGEVIN_BAROSTAT) {
          if (itg == "VERLET" or itg == "RESPA")
             intg = vv_lpiston_npt;
-         if (itg == "VERLET")
-            mdstuf::arespa = time_step;
       } else if (thermostat == NOSE_HOOVER_CHAIN_THERMOSTAT and
                  barostat == NOSE_HOOVER_CHAIN_BAROSTAT) {
          intg = nhc_npt;
