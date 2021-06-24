@@ -156,6 +156,8 @@ void vv_lpiston_init()
    get_kv("VOLUME-TRIAL", nbaro, 1);
    nbaro = std::max(1, nbaro);
 
+   get_kv("FRICTION", stodyn::friction, 20.0);
+
    rnd = 0.0;
 
    // isotropic NPT
