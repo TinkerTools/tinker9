@@ -479,7 +479,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
       rattle2(dt, false);
 
 
-   if ((istep % inform::iwrite) == 0) {
+   if (molT and (istep % inform::iwrite) == 0) {
       lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
       lp_mol_kinetic();
       printf("\n"
