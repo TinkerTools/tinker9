@@ -228,7 +228,7 @@ void vv_lpiston_init()
    print(o, " Time constant for const-T    %12.4lf ps\n", bath::tautemp);
    print(o, " Time constant for const-P    %12.4lf ps\n", bath::taupres);
    print(o, " Pressure estimator           %12s\n", volscale);
-   print(o, " LP-G                         %12.0lf\n", g0);
+   print(o, " LP-G0                        %12.0lf\n", g0);
    print(o, " LP-G1                        %12.0lf\n", g1);
    print(o, " NRESPA                       %12d\n", nrespa);
    print(o, " NBARO                        %12d\n", nbaro);

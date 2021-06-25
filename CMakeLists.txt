@@ -619,6 +619,7 @@ src/test/test_mathfunc.cpp
 src/test/test_nacl.cpp
 src/test/test_nblist.cpp
 src/test/test_opbend.cpp
+src/test/test_orthomatrix.cpp
 src/test/test_osrw.cpp
 src/test/test_partial_charge.cpp
 src/test/test_pitors.cpp
