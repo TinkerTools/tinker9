@@ -8,15 +8,33 @@ namespace tinker {
  * matrix =  [21, 22, 23],
  *           [31, 32, 33]]
  *
- * answer[3][3] = A[3][3] B[3][3]
+ * S[3][3] = A[3][3] B[3][3]
  */
 template <class T>
-void matmul3(T answer[3][3], T A[3][3], T B[3][3])
+void matmul3(T S[3][3], T A[3][3], T B[3][3])
 {
    for (int i = 0; i < 3; ++i)
       for (int j = 0; j < 3; ++j)
-         answer[i][j] =
-            A[i][0] * B[0][j] + A[i][1] * B[1][j] + A[i][2] * B[2][j];
+         S[i][j] = A[i][0] * B[0][j] + A[i][1] * B[1][j] + A[i][2] * B[2][j];
+}
+
+
+/**
+ * C-Style
+ *          [[11, 12, 13],
+ * matrix =  [21, 22, 23],
+ *           [31, 32, 33]]
+ *
+ * answer[3][3] = A[3][3] answer[3][3]
+ */
+template <class T>
+void matmul3(T answer[3][3], T A[3][3])
+{
+   T B[3][3];
+   for (int i = 0; i < 3; ++i)
+      for (int j = 0; j < 3; ++j)
+         B[i][j] = answer[i][j];
+   matmul3(answer, A, B);
 }
 
 
