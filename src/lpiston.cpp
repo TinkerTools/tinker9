@@ -43,7 +43,7 @@ extern void lp_matvec_acc(int len, char transpose, double mat[3][3],
 void lp_matvec(int len, char transpose, double mat[3][3], pos_prec* ax,
                pos_prec* ay, pos_prec* az)
 {
-   lp_matvec(len, transpose, mat, ax, ay, az);
+   lp_matvec_acc(len, transpose, mat, ax, ay, az);
 }
 
 
@@ -582,28 +582,39 @@ void vv_lpiston_npt(int istep, time_prec dt)
 //====================================================================//
 
 
-// S = O DIAG O^T
-static void scalars_ODOt(double s[3][3], double o[3][3], double d[3])
+template <class T>
+static void prtmat(T m[3][3], const char* flag = nullptr)
 {
-   // clang-format off
-   s[0][0] = d[0]*o[0][0]*o[0][0] + d[1]*o[0][1]*o[0][1] + d[2]*o[0][2]*o[0][2];
-   s[0][1] = d[0]*o[0][0]*o[1][0] + d[1]*o[0][1]*o[1][1] + d[2]*o[0][2]*o[1][2];
-   s[0][2] = d[0]*o[0][0]*o[2][0] + d[1]*o[0][1]*o[2][1] + d[2]*o[0][2]*o[2][2];
-   // s[1][0] = d[0]*o[0][0]*o[1][0] + d[1]*o[0][1]*o[1][1] + d[2]*o[0][2]*o[1][2];
-   s[1][0] = s[0][1];
-   s[1][1] = d[0]*o[1][0]*o[1][0] + d[1]*o[1][1]*o[1][1] + d[2]*o[1][2]*o[1][2];
-   s[1][2] = d[0]*o[1][0]*o[2][0] + d[1]*o[1][1]*o[2][1] + d[2]*o[1][2]*o[2][2];
-   // s[2][0] = d[0]*o[0][0]*o[2][0] + d[1]*o[0][1]*o[2][1] + d[2]*o[0][2]*o[2][2];
-   // s[2][1] = d[0]*o[1][0]*o[2][0] + d[1]*o[1][1]*o[2][1] + d[2]*o[1][2]*o[2][2];
-   s[2][0] = s[0][2];
-   s[2][1] = s[1][2];
-   s[2][2] = d[0]*o[2][0]*o[2][0] + d[1]*o[2][1]*o[2][1] + d[2]*o[2][2]*o[2][2];
-   // clang-format on
+   if (flag)
+      printf(" %s\n", flag);
+   for (int i = 0; i < 3; ++i) {
+      if (i == 0)
+         printf(" [[");
+      else
+         printf("  [");
+      printf("%16.4e,%16.4e,%16.4e]", m[i][0], m[i][1], m[i][2]);
+      if (i == 0 or i == 1)
+         printf(",\n");
+      if (i == 2)
+         printf("]\n");
+   }
+   printf("\n");
 }
+
+template <class T>
+static void prtvec(T m[3], const char* flag = nullptr)
+{
+   if (flag)
+      printf(" %s\n", flag);
+   printf("  [%16.4e,%16.4e,%16.4e]\n", m[0], m[1], m[2]);
+   printf("\n");
+}
+
 
 static void iso_tp_aniso(time_prec dt)
 {
-   constexpr int ns = 2;
+   // constexpr int ns = 2;
+   constexpr int ns = 1;
    const double kbt = units::gasconst * bath::kelvin;
    time_prec t, t2, t4, t8, xt4;
    t = dt / ns, t2 = t / 2, t4 = t / 4, t8 = t / 8, xt4 = nbaro * t4;
@@ -671,6 +682,9 @@ static void iso_tp_aniso(time_prec dt)
             }
          }
          SymmMatrix::solve(vbar_matrix, vbar_ortho, vbar_eigen);
+         prtmat(vbar_matrix, "vbar");
+         prtmat(vbar_ortho, "vbar_ortho");
+         prtvec(vbar_eigen, "vbar_eigen");
       }
 
 
@@ -684,7 +698,7 @@ static void iso_tp_aniso(time_prec dt)
          // V(3) = O(3,3) DIAG(3) O^T(3,3) V(3)
          // Scal(3,3) = O(3,3) DIAG(3) O^T(3,3)
          double scal[3][3];
-         scalars_ODOt(scal, vbar_ortho, diag);
+         SymmMatrix::ODOt(scal, vbar_ortho, diag);
          matmul3(velsc1, scal);
 
          // kinetic tensor = ODO^T[3][3] K[3][3] ODO^T[3][3]
@@ -834,7 +848,7 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
                         std::exp(vbar_eigen[1] * xdt),
                         std::exp(vbar_eigen[2] * xdt)},
              scal[3][3];
-      scalars_ODOt(scal, vbar_ortho, diag);
+      SymmMatrix::ODOt(scal, vbar_ortho, diag);
       double h0[3][3] = {{lvec1.x, lvec1.y, lvec1.z},
                          {lvec2.x, lvec2.y, lvec2.z},
                          {lvec3.x, lvec3.y, lvec3.z}};
@@ -859,8 +873,8 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
                            std::exp(vbar_eigen[2] * xdti)},
                 diav[3] = {s[0] * dti, s[1] * dti, s[2] * dti};
          double sr[3][3], sv[3][3];
-         scalars_ODOt(sr, vbar_ortho, diar);
-         scalars_ODOt(sv, vbar_ortho, diav);
+         SymmMatrix::ODOt(sr, vbar_ortho, diar);
+         SymmMatrix::ODOt(sv, vbar_ortho, diav);
          if (kw_p == KW_ATOM) {
             propagate_pos_axbv_aniso(sr, sv);
          } else if (kw_p == KW_MOL) {

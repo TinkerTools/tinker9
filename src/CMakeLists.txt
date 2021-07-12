@@ -65,6 +65,7 @@ molecule.cpp
 moments.cpp
 nblist.cpp
 nose.cpp
+orthomatrix.cpp
 osrw.cpp
 platform.cpp
 pme.cpp

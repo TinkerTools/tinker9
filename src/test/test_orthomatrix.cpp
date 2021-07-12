@@ -102,4 +102,41 @@ TEST_CASE("OrthoMatrix", "[util][math][orthomatrix]")
       REQUIRE(diag[2][1] == Approx(a2[2][1]).margin(eps));
       REQUIRE(diag[2][2] == Approx(a2[2][2]).margin(eps));
    }
+
+   SECTION("ODOt")
+   {
+      double O[3][3] = {{2. / 3, -2. / 3, 1. / 3},
+                        {1. / 3, 2. / 3, 2. / 3},
+                        {2. / 3, 1. / 3, -2. / 3}};
+      double Ot[3][3];
+      for (int i = 0; i < 3; ++i)
+         for (int j = 0; j < 3; ++j)
+            Ot[i][j] = O[j][i];
+      double diag[3] = {9., 18., 27.};
+      double s[3][3], eps = 1.0e-8;
+
+      double ref1[3][3] = {{15., 0., -6.}, {0., 21., -6.}, {-6., -6., 18.}};
+      SymmMatrix::ODOt(s, O, diag);
+      REQUIRE(s[0][0] == Approx(ref1[0][0]).margin(eps));
+      REQUIRE(s[0][1] == Approx(ref1[0][1]).margin(eps));
+      REQUIRE(s[0][2] == Approx(ref1[0][2]).margin(eps));
+      REQUIRE(s[1][0] == Approx(ref1[1][0]).margin(eps));
+      REQUIRE(s[1][1] == Approx(ref1[1][1]).margin(eps));
+      REQUIRE(s[1][2] == Approx(ref1[1][2]).margin(eps));
+      REQUIRE(s[2][0] == Approx(ref1[2][0]).margin(eps));
+      REQUIRE(s[2][1] == Approx(ref1[2][1]).margin(eps));
+      REQUIRE(s[2][2] == Approx(ref1[2][2]).margin(eps));
+
+      double ref2[3][3] = {{18., 6., -6.}, {6., 15., 0.}, {-6., 0., 21.}};
+      SymmMatrix::ODOt(s, Ot, diag);
+      REQUIRE(s[0][0] == Approx(ref2[0][0]).margin(eps));
+      REQUIRE(s[0][1] == Approx(ref2[0][1]).margin(eps));
+      REQUIRE(s[0][2] == Approx(ref2[0][2]).margin(eps));
+      REQUIRE(s[1][0] == Approx(ref2[1][0]).margin(eps));
+      REQUIRE(s[1][1] == Approx(ref2[1][1]).margin(eps));
+      REQUIRE(s[1][2] == Approx(ref2[1][2]).margin(eps));
+      REQUIRE(s[2][0] == Approx(ref2[2][0]).margin(eps));
+      REQUIRE(s[2][1] == Approx(ref2[2][1]).margin(eps));
+      REQUIRE(s[2][2] == Approx(ref2[2][2]).margin(eps));
+   }
 }
