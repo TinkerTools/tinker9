@@ -609,8 +609,7 @@ static void prtvec(T m[3], const char* flag = nullptr)
 
 static void iso_tp_aniso(time_prec dt)
 {
-   // constexpr int ns = 2;
-   constexpr int ns = 1;
+   constexpr int ns = 2;
    const double kbt = units::gasconst * bath::kelvin;
    time_prec t, t2, t4, t8, xt4;
    t = dt / ns, t2 = t / 2, t4 = t / 4, t8 = t / 8, xt4 = nbaro * t4;
@@ -640,11 +639,9 @@ static void iso_tp_aniso(time_prec dt)
    for (int k = 0; k < ns; ++k) {
       double DelP[3][3];
 
-
       for (int i = 0; i < 3; ++i)
          for (int j = 0; j < 3; ++j)
-            velsc1[i][j] *= velsc0[i][j];
-
+            velsc1[i][j] = velsc0[i][j];
 
       for (int i = maxnose - 1; i > -1; --i) {
          if (i == 0)
@@ -659,7 +656,6 @@ static void iso_tp_aniso(time_prec dt)
             vnh[i] = (vnh[i] * exptm + gnh[i] * t4) * exptm;
          }
       }
-
 
       if (atomP or molP) {
          for (int i = 0; i < 3; ++i) {
@@ -678,11 +674,7 @@ static void iso_tp_aniso(time_prec dt)
             }
          }
          SymmMatrix::solve(vbar_matrix, vbar_ortho, vbar_eigen);
-         prtmat(vbar_matrix, "vbar");
-         prtmat(vbar_ortho, "vbar_ortho");
-         prtvec(vbar_eigen, "vbar_eigen");
       }
-
 
       if (atomP or molP) {
          double tr;
@@ -713,11 +705,11 @@ static void iso_tp_aniso(time_prec dt)
          ekin0[2][2] = c*c*u + 2*c*e*v + 2*c*f*w + e*e*x + 2*e*f*y + f*f*z;
          ekin0[0][1] = a*b*u + a*d*v + a*e*w + b*b*v + b*c*w + b*d*x + b*e*y + c*d*y + c*e*z;
          ekin0[0][2] = a*c*u + a*e*v + a*f*w + b*c*v + b*e*x + b*f*y + c*c*w + c*e*y + c*f*z;
-         // ekin0[1][0] = a*b*u + a*d*v + a*e*w + b*b*v + b*c*w + b*d*x + b*e*y + c*d*y + c*e*z;
-         ekin0[1][0] = ekin0[0][1];
          ekin0[1][2] = b*c*u + b*e*v + b*f*w + c*d*v + c*e*w + d*e*x + d*f*y + e*e*y + e*f*z;
-         // ekin0[2][0] = a*c*u + a*e*v + a*f*w + b*c*v + b*e*x + b*f*y + c*c*w + c*e*y + c*f*z;
-         // ekin0[2][1] = b*c*u + b*e*v + b*f*w + c*d*v + c*e*w + d*e*x + d*f*y + e*e*y + e*f*z;
+      // ekin0[1][0] = a*b*u + a*d*v + a*e*w + b*b*v + b*c*w + b*d*x + b*e*y + c*d*y + c*e*z;
+      // ekin0[2][0] = a*c*u + a*e*v + a*f*w + b*c*v + b*e*x + b*f*y + c*c*w + c*e*y + c*f*z;
+      // ekin0[2][1] = b*c*u + b*e*v + b*f*w + c*d*v + c*e*w + d*e*x + d*f*y + e*e*y + e*f*z;
+         ekin0[1][0] = ekin0[0][1];
          ekin0[2][0] = ekin0[0][2];
          ekin0[2][1] = ekin0[1][2];
          // clang-format on
@@ -730,7 +722,6 @@ static void iso_tp_aniso(time_prec dt)
                ekin0[i][j] *= scal;
          eksum1 *= scal;
       }
-
 
       if (atomP or molP) {
          for (int i = 0; i < 3; ++i) {
@@ -752,13 +743,11 @@ static void iso_tp_aniso(time_prec dt)
          SymmMatrix::solve(vbar_matrix, vbar_ortho, vbar_eigen);
       }
 
-
       for (int i = 0; i < maxnose; ++i) {
          if (i == 0)
             gnh[i] = (2 * eksum1 - g0 * kbt) / qnh[i];
          else
             gnh[i] = (qnh[i - 1] * vnh[i - 1] * vnh[i - 1] - kbt) / qnh[i];
-
 
          if (i == maxnose - 1)
             vnh[i] += gnh[i] * t4;
@@ -768,16 +757,15 @@ static void iso_tp_aniso(time_prec dt)
          }
       }
 
-
       for (int i = 0; i < 3; ++i)
          for (int j = 0; j < 3; ++j)
-            velsc0[i][j] *= velsc1[i][j];
+            velsc0[i][j] = velsc1[i][j];
    }
 
 
-   for (int ii = 0; ii < 3; ++ii)
-      for (int jj = 0; jj < 3; ++jj)
-         lp_ekin[ii][jj] = ekin0[ii][jj];
+   for (int i = 0; i < 3; ++i)
+      for (int j = 0; j < 3; ++j)
+         lp_ekin[i][j] = ekin0[i][j];
    lp_eksum = lp_ekin[0][0] + lp_ekin[1][1] + lp_ekin[2][2];
    if (atomT) {
       lp_matvec(n, 'N', velsc0, vx, vy, vz);
