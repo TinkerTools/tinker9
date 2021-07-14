@@ -5,7 +5,6 @@
 
 
 namespace tinker {
-extern double lp_alpha;
 extern double lp_rats1;
 extern double lp_eksum;
 extern double lp_ekin[3][3];

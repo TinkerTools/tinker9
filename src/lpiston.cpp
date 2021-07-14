@@ -22,7 +22,6 @@
 
 
 namespace tinker {
-double lp_alpha;
 double lp_rats1;
 double lp_eksum;
 double lp_ekin[3][3];
@@ -222,8 +221,6 @@ void vv_lpiston_init()
    constrain = use_rattle();
    D = 3.0;
 
-   // molecular pressure keyword: "VOLUME-SCALE  MOLECULAR"
-   // atomic pressure keyword:    "VOLUME-SCALE     ATOMIC"
    std::string volscale;
    atomP = false, molP = false;
    atomT = false, molT = false;
@@ -244,7 +241,6 @@ void vv_lpiston_init()
       atomP = true;
       atomT = true;
    }
-   lp_alpha = 1.0 + D / g1;
 
    // Nose-Hoover Chain
    double ekt = units::gasconst * bath::kelvin;
@@ -380,7 +376,7 @@ static void iso_tp(time_prec dt)
       }
 
       if (atomP or molP) {
-         DelP = lp_alpha * 2 * eksum1 - tr_vir;
+         DelP = (1.0 + D / g1) * 2 * eksum1 - tr_vir;
          DelP = DelP - D * vol0 * bath::atmsph / units::prescon;
          gbar = DelP / qbar;
          vbar = gbar * xt4 + omgxt4 * vbar + sd * rnd;
@@ -388,14 +384,14 @@ static void iso_tp(time_prec dt)
 
       double scal;
       if (atomP or molP)
-         scal = std::exp(-t2 * (vnh[0] + lp_alpha * vbar * nbaro));
+         scal = std::exp(-t2 * (vnh[0] + (1.0 + D / g1) * vbar * nbaro));
       else
          scal = std::exp(-t2 * vnh[0]);
       velsc1 *= scal;
       eksum1 *= (scal * scal);
 
       if (atomP or molP) {
-         DelP = lp_alpha * 2 * eksum1 - tr_vir;
+         DelP = (1.0 + D / g1) * 2 * eksum1 - tr_vir;
          DelP = DelP - D * vol0 * bath::atmsph / units::prescon;
          gbar = DelP / qbar;
          vbar = (gbar * xt4 + vbar + sd * rnd) / opgxt4;
@@ -842,7 +838,7 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
    energy_prec esum_f;
 
 
-   double s[3] = {1.0, 1.0, 1.0};
+   // double s[3] = {1.0, 1.0, 1.0};
    if (mid) {
       double diag[3] = {std::exp(vbar_eigen[0] * xdt),
                         std::exp(vbar_eigen[1] * xdt),
@@ -861,20 +857,22 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
                        vbar_eigen[2] * xdti2};
       // double s1b[3] = {1.0, 1.0, 1.0};
       // double s1a[3] = {std::exp(vt2[0]), std::exp(vt2[1]), std::exp(vt2[2])};
-      double s1[3] = {std::exp(vt2[0]) * sinh_id(vt2[0]),
-                      std::exp(vt2[1]) * sinh_id(vt2[1]),
-                      std::exp(vt2[2]) * sinh_id(vt2[2])};
-      s[0] = s1[0], s[1] = s1[1], s[2] = s1[2];
+      // double s1[3] = {std::exp(vt2[0]) * sinh_id(vt2[0]),
+      //                 std::exp(vt2[1]) * sinh_id(vt2[1]),
+      //                 std::exp(vt2[2]) * sinh_id(vt2[2])};
+      // s[0] = s1b[0], s[1] = s1b[1], s[2] = s1b[2];
    }
    for (int ir = 0; ir < nrespa; ++ir) {
       if (mid and (kw_p == KW_ATOM or kw_p == KW_MOL)) {
          double diar[3] = {std::exp(vbar_eigen[0] * xdti),
                            std::exp(vbar_eigen[1] * xdti),
                            std::exp(vbar_eigen[2] * xdti)},
-                diav[3] = {s[0] * dti, s[1] * dti, s[2] * dti};
+                // diav[3] = {s[0] * dti, s[1] * dti, s[2] * dti}
+            diav[3] = {dti, dti, dti};
          double sr[3][3], sv[3][3];
          SymmMatrix::ODOt(sr, vbar_ortho, diar);
-         SymmMatrix::ODOt(sv, vbar_ortho, diav);
+         // If using s1b, diav[3] will not change.
+         // SymmMatrix::ODOt(sv, vbar_ortho, diav);
          if (kw_p == KW_ATOM) {
             propagate_pos_axbv_aniso(sr, sv);
          } else if (kw_p == KW_MOL) {
@@ -899,12 +897,12 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
          propagate_velocity(dti, gx, gy, gz);
       } else {
          if (constrain) {
-            // TODO lp_rats1x,lp_rats1y,lp_rats1z
             lp_matvec(n, 'T', vbar_ortho, rattle_xold, rattle_yold,
                       rattle_zold);
             lp_matvec(n, 'T', vbar_ortho, xpos, ypos, zpos);
             lp_matvec(n, 'T', vbar_ortho, vx, vy, vz);
-            lprat(dt, rattle_xold, rattle_yold, rattle_zold);
+            // if using s1b, "rattle" will work here.
+            rattle(dt, rattle_xold, rattle_yold, rattle_zold);
             lp_matvec(n, 'N', vbar_ortho, xpos, ypos, zpos);
             lp_matvec(n, 'N', vbar_ortho, vx, vy, vz);
          }
