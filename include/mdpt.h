@@ -3,17 +3,13 @@
 
 
 namespace tinker {
-void kinetic(T_prec& temp);
+void kinetic_energy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
+                    int n, const double* mass, const vel_prec* vx,
+                    const vel_prec* vy, const vel_prec* vz);
 void kinetic_explicit(T_prec& temp_out, energy_prec& eksum_out,
                       energy_prec (&ekin_out)[3][3], const vel_prec* vx,
                       const vel_prec* vy, const vel_prec* vz);
-void kinetic_explicit_acc(T_prec& temp_out, energy_prec& eksum_out,
-                          energy_prec (&ekin_out)[3][3], const vel_prec* vx,
-                          const vel_prec* vy, const vel_prec* vz);
-void kinetic_explicit_cu(T_prec& temp_out, energy_prec& eksum_out,
-                         energy_prec (&ekin_out)[3][3], const vel_prec* vx,
-                         const vel_prec* vy, const vel_prec* vz);
-void kinetic_leapfrog(T_prec& temp);
+void kinetic(T_prec& temp);
 
 
 void temper(time_prec dt, T_prec& temp, bool save);
@@ -41,14 +37,14 @@ enum class Thermostat
    BUSSI,
    ANDERSEN,
    NOSE_HOOVER_CHAIN,
-   LANGEVIN_PISTON,
+   LEAPFROG_LPISTON,
    NONE
 };
 constexpr auto BERENDSEN_THERMOSTAT = Thermostat::BERENDSEN;
 constexpr auto BUSSI_THERMOSTAT = Thermostat::BUSSI;
 constexpr auto ANDERSEN_THERMOSTAT = Thermostat::ANDERSEN;
 constexpr auto NOSE_HOOVER_CHAIN_THERMOSTAT = Thermostat::NOSE_HOOVER_CHAIN;
-constexpr auto LANGEVIN_PISTON_THERMOSTAT = Thermostat::LANGEVIN_PISTON;
+constexpr auto LEAPFROG_LPISTON_THERMOSTAT = Thermostat::LEAPFROG_LPISTON;
 constexpr auto NONE_THERMOSTAT = Thermostat::NONE;
 extern Thermostat thermostat;
 
@@ -65,14 +61,16 @@ enum class Barostat
    BERENDSEN,
    BUSSI,
    NOSE_HOOVER_CHAIN,
-   LANGEVIN_PISTON,
+   LEAPFROG_LPISTON,
+   LANGEVIN,
    MONTE_CARLO,
    NONE
 };
 constexpr auto BERENDSEN_BAROSTAT = Barostat::BERENDSEN;
 constexpr auto BUSSI_BAROSTAT = Barostat::BUSSI;
 constexpr auto NOSE_HOOVER_CHAIN_BAROSTAT = Barostat::NOSE_HOOVER_CHAIN;
-constexpr auto LANGEVIN_PISTON_BAROSTAT = Barostat::LANGEVIN_PISTON;
+constexpr auto LEAPFROG_LPISTON_BAROSTAT = Barostat::LEAPFROG_LPISTON;
+constexpr auto LANGEVIN_BAROSTAT = Barostat::LANGEVIN;
 constexpr auto MONTE_CARLO_BAROSTAT = Barostat::MONTE_CARLO;
 constexpr auto NONE_BAROSTAT = Barostat::NONE;
 extern Barostat barostat;

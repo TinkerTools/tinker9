@@ -5,6 +5,9 @@
 
 
 namespace tinker {
+extern double time_step;
+
+
 void mdrest(int istep);
 void mdrest_acc(int istep);
 void mdrest_remove_pbc_momentum_cu(bool copyout, vel_prec& vtot1,
@@ -26,33 +29,6 @@ void integrate_data(rc_op);
 
 namespace tinker {
 void velocity_verlet(int istep, time_prec dt_ps);
-
-
-// Langevin Piston barostat
-// Feller et al. 1995, https://doi.org/10.1063/1.470648
-void lpiston_npt(int istep, time_prec dt_ps);
-extern energy_prec eksum_old; // Kinetic energy at n-1/2.
-extern energy_prec eksum_mid; // Kinetic energy at n+1/2.
-// old xyz
-extern pos_prec* leapfrog_x;
-extern pos_prec* leapfrog_y;
-extern pos_prec* leapfrog_z;
-// halftime velocity
-extern vel_prec* leapfrog_vx;
-extern vel_prec* leapfrog_vy;
-extern vel_prec* leapfrog_vz;
-// old halftime velocity
-extern vel_prec* leapfrog_vxold;
-extern vel_prec* leapfrog_vyold;
-extern vel_prec* leapfrog_vzold;
-extern double hdot_lp;     // box length (h) velocity
-extern double hmass_lp;    // h mass
-extern double pnhv_lp;     // thermostat velocity
-extern double pnhv_pre_lp; // old thermostat velocity
-extern double pnhm_lp;     // thermostat mass
-extern double pnhf_lp;     // thermostat force
-extern double pnh_lp;      // thermostat
-void langevin_piston(time_prec dt, virial_prec press);
 
 
 extern grad_prec *gx1, *gy1, *gz1;

@@ -5,6 +5,8 @@
 #include "mdpq.h"
 #include "platform.h"
 #include <cassert>
+#include <tinker/detail/mdstuf.hh>
+#include <tinker/detail/units.hh>
 
 
 namespace tinker {
@@ -14,44 +16,33 @@ void kinetic(T_prec& temp)
 }
 
 
+extern void kinetic_energy_acc(energy_prec& eksum_out,
+                               energy_prec (&ekin_out)[3][3], int n,
+                               const double* mass, const vel_prec* vx,
+                               const vel_prec* vy, const vel_prec* vz);
+extern void kinetic_energy_cu(energy_prec& eksum_out,
+                              energy_prec (&ekin_out)[3][3], int n,
+                              const double* mass, const vel_prec* vx,
+                              const vel_prec* vy, const vel_prec* vz);
+void kinetic_energy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
+                    int n, const double* mass, const vel_prec* vx,
+                    const vel_prec* vy, const vel_prec* vz)
+{
+#if TINKER_CUDART
+   if (pltfm_config & CU_PLTFM)
+      kinetic_energy_cu(eksum_out, ekin_out, n, mass, vx, vy, vz);
+   else
+#endif
+      kinetic_energy_acc(eksum_out, ekin_out, n, mass, vx, vy, vz);
+}
+
+
 void kinetic_explicit(T_prec& temp_out, energy_prec& eksum_out,
                       energy_prec (&ekin_out)[3][3], const vel_prec* vx,
                       const vel_prec* vy, const vel_prec* vz)
 {
-#if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
-      kinetic_explicit_cu(temp_out, eksum_out, ekin_out, vx, vy, vz);
-   else
-#endif
-      kinetic_explicit_acc(temp_out, eksum_out, ekin_out, vx, vy, vz);
-}
-
-
-void kinetic_leapfrog(T_prec& temp)
-{
-   // Ek at +1/2
-   T_prec t1;
-   energy_prec ekin1[3][3];
-   kinetic_explicit(t1, eksum, ekin1, leapfrog_vx, leapfrog_vy, leapfrog_vz);
-
-
-   // Ek at -1/2
-   T_prec t2;
-   energy_prec ekin2[3][3];
-   kinetic_explicit(t2, eksum_old, ekin2, leapfrog_vxold, leapfrog_vyold,
-                    leapfrog_vzold);
-
-
-   ekin[0][0] = 0.5 * (ekin1[0][0] + ekin2[0][0]);
-   ekin[0][1] = 0.5 * (ekin1[0][1] + ekin2[0][1]);
-   ekin[0][2] = 0.5 * (ekin1[0][2] + ekin2[0][2]);
-   ekin[1][0] = 0.5 * (ekin1[1][0] + ekin2[1][0]);
-   ekin[1][1] = 0.5 * (ekin1[1][1] + ekin2[1][1]);
-   ekin[1][2] = 0.5 * (ekin1[1][2] + ekin2[1][2]);
-   ekin[2][0] = 0.5 * (ekin1[2][0] + ekin2[2][0]);
-   ekin[2][1] = 0.5 * (ekin1[2][1] + ekin2[2][1]);
-   ekin[2][2] = 0.5 * (ekin1[2][2] + ekin2[2][2]);
-   temp = 0.5 * (t1 + t2);
+   kinetic_energy(eksum_out, ekin_out, n, mass, vx, vy, vz);
+   temp_out = 2 * eksum_out / (mdstuf::nfree * units::gasconst);
 }
 
 

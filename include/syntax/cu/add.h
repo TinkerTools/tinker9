@@ -110,4 +110,16 @@ inline G cvt_to(T val)
    else
       return static_cast<G>(val);
 }
+
+
+/**
+ * \ingroup cuda_syntax
+ * Converts fixed-point `val` to floating-point.
+ */
+template <class T>
+__device__
+inline T to_flt_cu(fixed val)
+{
+   return static_cast<T>(static_cast<long long>(val)) / 0x100000000ull;
+}
 }

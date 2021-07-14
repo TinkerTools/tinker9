@@ -3,6 +3,18 @@
 #include "tool/rc_man.h"
 
 
+extern "C"
+{
+   // RATTLE vs SHAKE
+   struct RATTLE
+   {};
+   struct SHAKE
+   {};
+   struct LPRAT
+   {};
+}
+
+
 namespace tinker {
 bool use_rattle();
 void rattle_data(rc_op);
@@ -18,6 +30,7 @@ void rattle_ch_acc(time_prec, const pos_prec*, const pos_prec*,
 // methylene and methyl groups
 void rattle_methyl_cu(time_prec, const pos_prec*, const pos_prec*,
                       const pos_prec*);
+
 
 void rattle2(time_prec dt, bool do_v);
 void rattle2_acc(time_prec, bool);
@@ -38,14 +51,4 @@ void shake_ch_acc(time_prec, pos_prec*, pos_prec*, pos_prec*, const pos_prec*,
                   const pos_prec*, const pos_prec*);
 void shake_methyl_cu(time_prec, pos_prec*, pos_prec*, pos_prec*,
                      const pos_prec*, const pos_prec*, const pos_prec*);
-
-void shake2(time_prec dt, const vel_prec* vxold, const vel_prec* vyold,
-            const vel_prec* vzold, const vel_prec* vxnew, const vel_prec* vynew,
-            const vel_prec* vznew, const pos_prec* xold, const pos_prec* yold,
-            const pos_prec* zold);
-void shake2_acc(time_prec dt, const vel_prec* vxold, const vel_prec* vyold,
-                const vel_prec* vzold, const vel_prec* vxnew,
-                const vel_prec* vynew, const vel_prec* vznew,
-                const pos_prec* xold, const pos_prec* yold,
-                const pos_prec* zold);
 }
