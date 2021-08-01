@@ -139,4 +139,15 @@ TEST_CASE("OrthoMatrix", "[util][math][orthomatrix]")
       REQUIRE(s[2][1] == Approx(ref2[2][1]).margin(eps));
       REQUIRE(s[2][2] == Approx(ref2[2][2]).margin(eps));
    }
+
+   SECTION("a")
+   {
+      double A[3][3] = {{3, 0, 8}, {0, 4, 0}, {8, 0, 5}}, o[3][3], w[3];
+      SymmMatrix::solve(A, o, w);
+      double s[3][3];
+      SymmMatrix::ODOt(s, o, w);
+
+      double B[3][3] = {{3, 0, 8}, {0, 4, 0}, {0, 0, 5}};
+      matmul3(B, s);
+   }
 }
