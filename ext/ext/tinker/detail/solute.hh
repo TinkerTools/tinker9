@@ -4,12 +4,14 @@
 
 namespace tinker { namespace solute {
 extern double& doffset;
+extern double& onipr;
 extern double& p1;
 extern double& p2;
 extern double& p3;
 extern double& p4;
 extern double& p5;
 extern double*& rsolv;
+extern double*& rdescr;
 extern double*& asolv;
 extern double*& rborn;
 extern double*& drb;
@@ -27,12 +29,14 @@ extern double*& uace;
 
 #ifdef TINKER_FORTRAN_MODULE_CPP
 extern "C" double TINKER_MOD(solute, doffset);
+extern "C" double TINKER_MOD(solute, onipr);
 extern "C" double TINKER_MOD(solute, p1);
 extern "C" double TINKER_MOD(solute, p2);
 extern "C" double TINKER_MOD(solute, p3);
 extern "C" double TINKER_MOD(solute, p4);
 extern "C" double TINKER_MOD(solute, p5);
 extern "C" double* TINKER_MOD(solute, rsolv);
+extern "C" double* TINKER_MOD(solute, rdescr);
 extern "C" double* TINKER_MOD(solute, asolv);
 extern "C" double* TINKER_MOD(solute, rborn);
 extern "C" double* TINKER_MOD(solute, drb);
@@ -49,12 +53,14 @@ extern "C" double* TINKER_MOD(solute, s2ace);
 extern "C" double* TINKER_MOD(solute, uace);
 
 double& doffset = TINKER_MOD(solute, doffset);
+double& onipr = TINKER_MOD(solute, onipr);
 double& p1 = TINKER_MOD(solute, p1);
 double& p2 = TINKER_MOD(solute, p2);
 double& p3 = TINKER_MOD(solute, p3);
 double& p4 = TINKER_MOD(solute, p4);
 double& p5 = TINKER_MOD(solute, p5);
 double*& rsolv = TINKER_MOD(solute, rsolv);
+double*& rdescr = TINKER_MOD(solute, rdescr);
 double*& asolv = TINKER_MOD(solute, asolv);
 double*& rborn = TINKER_MOD(solute, rborn);
 double*& drb = TINKER_MOD(solute, drb);

@@ -3,11 +3,17 @@
 #include "macro.h"
 
 namespace tinker { namespace ksolut {
-extern double*& solrad;
+extern double*& pbr;
+extern double*& csr;
+extern double*& gkr;
 
 #ifdef TINKER_FORTRAN_MODULE_CPP
-extern "C" double* TINKER_MOD(ksolut, solrad);
+extern "C" double* TINKER_MOD(ksolut, pbr);
+extern "C" double* TINKER_MOD(ksolut, csr);
+extern "C" double* TINKER_MOD(ksolut, gkr);
 
-double*& solrad = TINKER_MOD(ksolut, solrad);
+double*& pbr = TINKER_MOD(ksolut, pbr);
+double*& csr = TINKER_MOD(ksolut, csr);
+double*& gkr = TINKER_MOD(ksolut, gkr);
 #endif
 } }
