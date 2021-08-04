@@ -378,29 +378,7 @@ set (T9_DEFS)
 
 
 ## libtinker.a
-ExternalProject_Add (src-libtinker
-   SOURCE_DIR
-      "${PROJECT_SOURCE_DIR}/src-libtinker"
-   BINARY_DIR
-      "${CMAKE_BINARY_DIR}/src-libtinker"
-   PREFIX
-      "${CMAKE_BINARY_DIR}/src-libtinker"
-   CMAKE_ARGS
-      "-DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}"
-      "-DCMAKE_BUILD_TYPE=RelWithDebInfo"
-      "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/src-libtinker"
-)
-add_library (t9_ltinker STATIC IMPORTED)
-set_target_properties (t9_ltinker PROPERTIES
-   IMPORTED_LOCATION
-      "${CMAKE_BINARY_DIR}/src-libtinker/libtinker.a"
-)
-set_source_files_properties ("${CMAKE_BINARY_DIR}/src-libtinker/libtinker.a" PROPERTIES
-   EXTERNAL_OBJECT
-      TRUE
-   GENERATED
-      TRUE
-)
+add_subdirectory (src-libtinker)
 
 
 ## fftw
