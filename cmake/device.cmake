@@ -33,7 +33,7 @@ add_custom_target (tinker9 ALL
       tinker9
    DEPENDS
       tinker9_main
-      src-acc
+      tinker9_acc
       tinker9_cu
       tinker9_cpp
       tinker9_f
@@ -44,7 +44,7 @@ add_custom_target (tinker9 ALL
       -o tinker9
       $<TARGET_OBJECTS:tinker9_main>
       "-Wl,--start-group"
-      $<TARGET_FILE:tinker9_EP_acc>
+      $<TARGET_FILE:tinker9_acc>
       $<TARGET_FILE:tinker9_cu>
       $<TARGET_FILE:tinker9_cpp>
       $<TARGET_FILE:tinker9_f>
@@ -66,7 +66,7 @@ add_custom_target (all.tests ALL
       all.tests
    DEPENDS
       __t9_all_tests_o
-      src-acc
+      tinker9_acc
       tinker9_cu
       tinker9_cpp
       tinker9_f
@@ -77,7 +77,7 @@ add_custom_target (all.tests ALL
       -o all.tests
       $<TARGET_OBJECTS:__t9_all_tests_o>
       "-Wl,--start-group"
-      $<TARGET_FILE:tinker9_EP_acc>
+      $<TARGET_FILE:tinker9_acc>
       $<TARGET_FILE:tinker9_cu>
       $<TARGET_FILE:tinker9_cpp>
       $<TARGET_FILE:tinker9_f>

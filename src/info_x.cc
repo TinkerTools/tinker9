@@ -5,8 +5,7 @@
 
 
 namespace tinker {
-namespace {
-const char* get_SHA1()
+static const char* get_SHA1()
 {
    return         //
       "e2d1747a"; // Fri Jul 30 15:49:07 2021 -0500
@@ -26,7 +25,7 @@ const char* get_SHA1()
 }
 
 
-std::string get_version_string()
+static std::string get_version_string()
 {
    std::string r = format("%d.%d.%d", TINKER9_VERSION_MAJOR,
                           TINKER9_VERSION_MINOR, TINKER9_VERSION_PATCH);
@@ -35,7 +34,7 @@ std::string get_version_string()
 #endif
    return r;
 }
-}
+
 
 void x_info(int, char**)
 {

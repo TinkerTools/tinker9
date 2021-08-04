@@ -34,8 +34,8 @@ cmake_minimum_required (VERSION 3.12)
 !!/ This cmake script checks a custom environmental variable *ACC=...*
 !!/ *only* for the GPU code.
 !!/ If not set, the building script will take a guess at the OpenACC compiler.
-!!/ It will be set to the default C++ compiler for the CPU code. For instance,
-!!/ command *(c)cmake [...]* will become *ACC=pgc++ (c)cmake [...]*.
+!!/ *ACC* will also be used as the C++ compiler. The value of *CXX* (if set)
+!!/ will be neglected.
 !!/
 !!/ Configure Tinker9
 !!/ -----------------
@@ -293,7 +293,7 @@ else ()
 endif ()
 set (CUDA_DIR ${cudaDirValue} CACHE PATH "[GPU ONLY] CUDA Directory")
 ## cuda compiler
-## set CMAKE_CUDA_COMPILER before project ()   
+## set CMAKE_CUDA_COMPILER before project ()
 if (NOT HOST)
    set (CMAKE_CUDA_COMPILER "${CUDA_DIR}/bin/nvcc")
 endif ()
@@ -359,7 +359,27 @@ set (FFTW_DIR ${fftwDirValue} CACHE PATH "[CPU ONLY] FFTW3 Directory")
 ########################################################################
 
 
-include (ExternalProject)
+## openacc compiler
+if (NOT HOST)
+   if (DEFINED ENV{ACC})
+      find_program (T9_ACC_COMPILER
+         NAMES
+            "$ENV{ACC}"
+            "nvc++"
+            "pgc++"
+         REQUIRED
+      )
+   else ()
+      find_program (T9_ACC_COMPILER
+         NAMES
+            "nvc++"
+            "pgc++"
+         REQUIRED
+      )
+   endif ()
+   # set this line before project()
+   set (CMAKE_CXX_COMPILER "${T9_ACC_COMPILER}")
+endif ()
 
 
 project (Tinker9 LANGUAGES NONE)
@@ -436,30 +456,6 @@ endif ()
 list (APPEND T9_DEFS TINKER9_DIR=${PROJECT_SOURCE_DIR})
 
 
-## openacc compiler
-## set T9_ACC_COMPILER after project (), otherwise CMAKE_CXX_COMPILER is empty.
-if (HOST)
-   set (T9_ACC_COMPILER "${CMAKE_CXX_COMPILER}")
-else ()
-   if (DEFINED ENV{ACC})
-      find_program (T9_ACC_COMPILER
-         NAMES
-            "$ENV{ACC}"
-            "nvc++"
-            "pgc++"
-         REQUIRED
-      )
-   else ()
-      find_program (T9_ACC_COMPILER
-         NAMES
-            "nvc++"
-            "pgc++"
-         REQUIRED
-      )
-   endif ()
-endif ()
-
-
 ########################################################################
 
 
@@ -528,47 +524,7 @@ endif ()
 
 
 ## openacc
-string (REPLACE ";" "|" T9_EP_ACC_MACRO "${T9_DEFS}")
-string (REPLACE ";" "|" T9_EP_ACC_SYS_INCPATH "${T9_SYS_INCPATH}")
-string (REPLACE ";" "|" T9_EP_ACC_INCPATH "${T9_INCPATH}")
-string (REPLACE ";" "|" T9_ACC_CCLIST "${T9_CUCCLIST}")
-ExternalProject_Add (src-acc
-   SOURCE_DIR
-      "${PROJECT_SOURCE_DIR}/src-acc"
-   BINARY_DIR
-      "${CMAKE_BINARY_DIR}/src-acc"
-   PREFIX
-      "${CMAKE_BINARY_DIR}/src-acc"
-   BUILD_BYPRODUCTS
-      "${CMAKE_BINARY_DIR}/src-acc"
-   BUILD_ALWAYS
-      1
-   LIST_SEPARATOR
-      |
-   CMAKE_ARGS
-      "-DCMAKE_CXX_COMPILER=${T9_ACC_COMPILER}"
-      "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
-      "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/src-acc"
-      "-DT9_CPPSTD=${T9_CPPSTD}"
-      "-DT9_SYS_INCPATH=${T9_EP_ACC_SYS_INCPATH}"
-      "-DT9_INCPATH=${T9_EP_ACC_INCPATH}"
-      "-DT9_ACC_DEFS=${T9_EP_ACC_MACRO}"
-      "-DT9_ACC_ONHOST=${HOST}"
-      "-DT9_ACC_CUDADIR=${CUDA_DIR}"
-      "-DT9_ACC_CCLIST=${T9_ACC_CCLIST}"
-)
-set (__T9_ACC_STATIC_LIB_LOC "${CMAKE_BINARY_DIR}/src-acc/libtinker9_acc.a")
-add_library (tinker9_EP_acc STATIC IMPORTED)
-set_target_properties (tinker9_EP_acc PROPERTIES
-   IMPORTED_LOCATION
-      "${__T9_ACC_STATIC_LIB_LOC}"
-)
-set_source_files_properties ("${__T9_ACC_STATIC_LIB_LOC}" PROPERTIES
-   EXTERNAL_OBJECT
-      TRUE
-   GENERATED
-      TRUE
-)
+add_subdirectory (src-acc)
 
 
 ## test files
@@ -663,7 +619,7 @@ endif ()
 ## scripts
 add_custom_target (__t9_copy_shell_exe)
 foreach (var
-   "${PROJECT_SOURCE_DIR}/shell/analyze9.sh"   
+   "${PROJECT_SOURCE_DIR}/shell/analyze9.sh"
    "${PROJECT_SOURCE_DIR}/shell/bar9.sh"
    "${PROJECT_SOURCE_DIR}/shell/dynamic9.sh"
    "${PROJECT_SOURCE_DIR}/shell/info9.sh"
