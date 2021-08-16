@@ -381,7 +381,7 @@ void dk_geom_torsion(
    if (sine < 0)
       angle = -angle;
    real target;
-   if (angle > tf1 and angle > tf2)
+   if (angle > tf1 and angle < tf2)
       target = angle;
    else if (angle > tf1 and tf1 > tf2)
       target = angle;
