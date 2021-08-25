@@ -30,8 +30,8 @@ are supported by *cmake*.
 This cmake script checks a custom environmental variable *ACC=...*
 *only* for the GPU code.
 If not set, the building script will take a guess at the OpenACC compiler.
-It will be set to the default C++ compiler for the CPU code. For instance,
-command *(c)cmake [...]* will become *ACC=pgc++ (c)cmake [...]*.
+*ACC* will also be used as the C++ compiler. The value of *CXX* (if set)
+will be neglected.
 
 Configure Tinker9
 -----------------

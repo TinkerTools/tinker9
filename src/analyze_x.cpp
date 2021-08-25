@@ -14,86 +14,7 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-void x_analyze_e();
-void x_analyze_m();
-void x_analyze_v();
-
-void x_analyze(int, char**)
-{
-   initial();
-   TINKER_RT(getxyz)();
-   mechanic();
-   mechanic2();
-
-   char string[240];
-   int exist = false;
-   std::string opt;
-   nextarg(string, exist);
-   if (exist) {
-      read_string(opt, string);
-   }
-   std::string prompt = R"(
- The Tinker Energy Analysis Utility Can :
-
- Total Potential Energy and its Components [E]
- Electrostatic Moments and Principle Axes [M]
- Internal Virial, dE/dV Values & Pressure [V]
-
- Enter the Desired Analysis Types [E] :  )";
-   read_stream(opt, prompt, std::string("#"), [](std::string s) {
-      Text::upcase(s);
-      auto failed = std::string::npos;
-      if (s.find("E") != failed or s.find("M") != failed or
-          s.find("V") != failed)
-         return 0;
-      else
-         return 1;
-   });
-
-
-   int flags = calc::xyz + calc::mass;
-   flags += (calc::energy + calc::grad + calc::virial + calc::analyz);
-   rc_flag = flags;
-   initialize();
-
-
-   auto failed = std::string::npos;
-   Text::upcase(opt);
-
-
-   auto out = stdout;
-   fstr_view fsw = files::filename;
-   std::string fname = fsw.trim();
-   std::ifstream ipt(fname);
-   int done = false;
-   read_frame_copyin_to_xyz(ipt, done);
-   refresh_neighbors();
-   int nframe_processed = 1;
-   if (opt.find("E") != failed)
-      x_analyze_e();
-   if (opt.find("M") != failed)
-      x_analyze_m();
-   if (opt.find("V") != failed)
-      x_analyze_v();
-   while (!done) {
-      read_frame_copyin_to_xyz(ipt, done);
-      refresh_neighbors();
-      nframe_processed++;
-      print(out, "\n Analysis for Archive Structure :%16d\n", nframe_processed);
-      if (opt.find("E") != failed)
-         x_analyze_e();
-      if (opt.find("M") != failed)
-         x_analyze_m();
-      if (opt.find("V") != failed)
-         x_analyze_v();
-   }
-
-
-   finish();
-   TINKER_RT(final)();
-}
-
-void x_analyze_e()
+static void x_analyze_e()
 {
    if (use_osrw)
       osrw_energy(calc::energy + calc::analyz);
@@ -184,7 +105,7 @@ void x_analyze_e()
 void moments();
 extern "C" void TINKER_RT(gyrate)(double*);
 extern "C" void TINKER_RT(inertia)(int*);
-void x_analyze_m()
+static void x_analyze_m()
 {
    auto out = stdout;
    moments();
@@ -233,7 +154,7 @@ void x_analyze_m()
    TINKER_RT(inertia)(&one);
 }
 
-void x_analyze_v()
+static void x_analyze_v()
 {
    if (use_osrw)
       osrw_energy(calc::grad + calc::virial);
@@ -265,5 +186,69 @@ void x_analyze_v()
    } else {
       print(out, fmt_p, temp, pres);
    }
+}
+
+void x_analyze(int, char**)
+{
+   initial();
+   TINKER_RT(getxyz)();
+   mechanic();
+   mechanic2();
+
+   char string[240];
+   int exist = false;
+   std::string opt;
+   nextarg(string, exist);
+   if (exist) {
+      read_string(opt, string);
+   }
+   std::string prompt = R"(
+ The Tinker Energy Analysis Utility Can :
+
+ Total Potential Energy and its Components [E]
+ Electrostatic Moments and Principle Axes [M]
+ Internal Virial, dE/dV Values & Pressure [V]
+
+ Enter the Desired Analysis Types [E] :  )";
+   read_stream(opt, prompt, std::string("#"), [](std::string s) {
+      Text::upcase(s);
+      auto failed = std::string::npos;
+      if (s.find("E") != failed or s.find("M") != failed or
+          s.find("V") != failed)
+         return 0;
+      else
+         return 1;
+   });
+   Text::upcase(opt);
+
+   int flags = calc::xyz + calc::mass;
+   flags += (calc::energy + calc::grad + calc::virial + calc::analyz);
+   rc_flag = flags;
+   initialize();
+
+   auto failed = std::string::npos;
+   auto out = stdout;
+   fstr_view fsw = files::filename;
+   std::string fname = fsw.trim();
+   std::ifstream ipt(fname);
+   int done = false;
+   int nframe_processed = 0;
+   do {
+      read_frame_copyin_to_xyz(ipt, done);
+      refresh_neighbors();
+      nframe_processed++;
+      if (nframe_processed > 1)
+         print(out, "\n Analysis for Archive Structure :%16d\n",
+               nframe_processed);
+      if (opt.find("E") != failed)
+         x_analyze_e();
+      if (opt.find("M") != failed)
+         x_analyze_m();
+      if (opt.find("V") != failed)
+         x_analyze_v();
+   } while (not done);
+
+   finish();
+   TINKER_RT(final)();
 }
 }
