@@ -245,7 +245,7 @@ Sets the scale factor needed to convert the energy value computed by the
 bond stretching-angle bending cross term potential into units of kcal/mol.
 The correct value is force field dependent and typically provided in the header
 of the master force field parameter file.
-The default value of 1.0 is used, if the *STRBNDUNIT* keyword is not given
+The default value of :math:`\pi/180`  is used, if the *STRBNDUNIT* keyword is not given
 in the force field parameter file or the keyfile.
 
 **STRBND [3 integers & 2 reals]**
@@ -258,7 +258,7 @@ involved in the angle which is to be defined.
 The real number modifiers give the force constant values for the first bond
 (first two atom classes) with the angle, and the second bond with the angle,
 respectively.
-The default units for the stretch-bend force constant are kcal/mol/|ang|/deg,
+The default units for the stretch-bend force constant are kcal/mol/|ang|/rad,
 but this can be controlled via the *STRBNDUNIT* keyword.
 An example is as follows:
 
@@ -463,7 +463,7 @@ The *ONLY* option turns off all potential energy terms except for this one.
 Sets the scale factor needed to convert the energy value computed by the
 CHARMM-style improper dihedral angle potential into units of kcal/mol.
 The correct value is force field dependent and typically provided in the header
-of the master force field parameter file. The default value of 1.0 is used,
+of the master force field parameter file. The default value of :math:`(\pi/180)^2` is used,
 if the *IMPROPUNIT* keyword is not given in the force field parameter file
 or the keyfile.
 
@@ -473,7 +473,13 @@ or the keyfile.
 
 Provides the values for a single CHARMM-style improper dihedral angle parameter.
 The integer modifiers give the atom class numbers for the four kinds of atoms
-involved in the dihedral which is to be defined.
+involved in the torsion which is to be defined.
+The real number modifiers give the force constant value for the deviation from
+the target improper torsional angle, and the target value for the torsional angle,
+respectively.
+The default units for the improper force constant are kcal/mol/|rad2|,
+but this can be controlled via the *IMPROPUNIT* keyword.
+
 The real number modifiers give the force constant in kcal/mol/|rad2| and ideal
 dihedral angle in degrees.
 An example is as follows:
@@ -623,6 +629,7 @@ Stretch-Torsion Coupling
 
 .. index:: STRTORTERM
 
+Controls use of the bond stretching-torsional angle cross term potential energy.
 In the absence of a modifying option, this keyword turns on use of the potential.
 The *NONE* option turns off use of this potential energy term.
 The *ONLY* option turns off all potential energy terms except for this one.
@@ -631,6 +638,8 @@ The *ONLY* option turns off all potential energy terms except for this one.
 
 .. index:: STRTORUNIT
 
+Sets the scale factor needed to convert the energy value computed by
+the bond stretching-torsional angle cross term potential into units of kcal/mol.
 The correct value is force field dependent and typically provided in the header
 of the master force field parameter file.
 The default value of 1.0 is used, if the *STRTORUNIT* keyword is not given
@@ -644,7 +653,7 @@ Provides the values for a single stretch-torsion cross term potential parameter.
 The two integer modifiers give the atom class numbers for the atoms involved
 in the central bond of the torsional angles to be parameterized.
 The real modifier gives the value of the stretch-torsion force constant for
-all torsional angles with the defined central bond atom classes.
+all torsional angles with the defined atom classes for the central bond.
 The default units for the stretch-torsion force constant can be controlled via
 the *STRTORUNIT* keyword.
 
@@ -655,6 +664,7 @@ Angle-Torsion Coupling
 
 .. index:: ANGTORTERM
 
+Controls use of the angle bending-torsional angle cross term.
 In the absence of a modifying option, this keyword turns on use of the potential.
 The *NONE* option turns off use of this potential energy term.
 The *ONLY* option turns off all potential energy terms except for this one.
@@ -663,9 +673,24 @@ The *ONLY* option turns off all potential energy terms except for this one.
 
 .. index:: ANGTORUNIT
 
-**ANGTORS**
+Sets the scale factor needed to convert the energy value computed by
+the angle bending-torsional angle cross term into units of kcal/mol.
+The correct value is force field dependent and typically provided
+in the header of the master force field parameter file.
+The default value of :math:`\pi/180` is used, if the *ANGTORUNIT* keyword
+is not given in the force field parameter file or the keyfile.
+
+**ANGTORS [4 integers & 6 reals]**
 
 .. index:: ANGTORS
+
+Provides the values for a single bond angle bending-torsional angle parameter.
+The integer modifiers give the atom class numbers for the four kinds of atoms
+involved in the torsion and its contained angles.
+The real number modifiers give the force constant values for both angles
+coupled with 1-, 2- and 3-fold torsional terms.
+The default units for the force constants are kcal/mol/rad,
+but this can be controlled via the *ANGTORUNIT* keyword.
 
 .. seealso::
 

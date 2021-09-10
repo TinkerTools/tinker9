@@ -13,7 +13,7 @@ __global__
 void velocity_to_ekin_cu(energy_prec* out, const vel_prec* restrict vx,
                          const vel_prec* restrict vy,
                          const vel_prec* restrict vz,
-                         const mass_prec* restrict mass, int n,
+                         const double* restrict mass, int n,
                          energy_prec ekcal_inv)
 {
    constexpr int HN = 6;

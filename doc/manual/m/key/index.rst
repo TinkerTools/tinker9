@@ -51,4 +51,3 @@ modifiers, and usage examples.
    fep
    parallel
    math
-   uncategorized

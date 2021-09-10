@@ -30,14 +30,14 @@ are supported by *cmake*.
 This cmake script checks a custom environmental variable *ACC=...*
 *only* for the GPU code.
 If not set, the building script will take a guess at the OpenACC compiler.
-It will be set to the default C++ compiler for the CPU code. For instance,
-command *(c)cmake [...]* will become *ACC=pgc++ (c)cmake [...]*.
+*ACC* will also be used as the C++ compiler. The value of *CXX* (if set)
+will be neglected.
 
 Configure Tinker9
 -----------------
 The following options are passed to CMake program with their default
 values (if there is one). **-D** is prefixed to the options. CMake provides
-two standard ways to let users to customize the values:
+two standard ways to let users customize the values:
 
 - Change their values interactively in the *ccmake* command line gui;
 - Pass the new value to CMake via command line arguments

@@ -12,7 +12,7 @@ extern double& gamma;
 extern double& xbox2;
 extern double& ybox2;
 extern double& zbox2;
-extern double& box34;
+extern double& box23;
 extern double& volbox;
 extern double& beta_sin;
 extern double& beta_cos;
@@ -26,6 +26,8 @@ extern int& orthogonal;
 extern int& monoclinic;
 extern int& triclinic;
 extern int& octahedron;
+extern int& dodecadron;
+extern int& nonprism;
 extern char (&spacegrp)[10];
 
 #ifdef TINKER_FORTRAN_MODULE_CPP
@@ -38,7 +40,7 @@ extern "C" double TINKER_MOD(boxes, gamma);
 extern "C" double TINKER_MOD(boxes, xbox2);
 extern "C" double TINKER_MOD(boxes, ybox2);
 extern "C" double TINKER_MOD(boxes, zbox2);
-extern "C" double TINKER_MOD(boxes, box34);
+extern "C" double TINKER_MOD(boxes, box23);
 extern "C" double TINKER_MOD(boxes, volbox);
 extern "C" double TINKER_MOD(boxes, beta_sin);
 extern "C" double TINKER_MOD(boxes, beta_cos);
@@ -52,6 +54,8 @@ extern "C" int TINKER_MOD(boxes, orthogonal);
 extern "C" int TINKER_MOD(boxes, monoclinic);
 extern "C" int TINKER_MOD(boxes, triclinic);
 extern "C" int TINKER_MOD(boxes, octahedron);
+extern "C" int TINKER_MOD(boxes, dodecadron);
+extern "C" int TINKER_MOD(boxes, nonprism);
 extern "C" char TINKER_MOD(boxes, spacegrp)[10];
 
 double& xbox = TINKER_MOD(boxes, xbox);
@@ -63,7 +67,7 @@ double& gamma = TINKER_MOD(boxes, gamma);
 double& xbox2 = TINKER_MOD(boxes, xbox2);
 double& ybox2 = TINKER_MOD(boxes, ybox2);
 double& zbox2 = TINKER_MOD(boxes, zbox2);
-double& box34 = TINKER_MOD(boxes, box34);
+double& box23 = TINKER_MOD(boxes, box23);
 double& volbox = TINKER_MOD(boxes, volbox);
 double& beta_sin = TINKER_MOD(boxes, beta_sin);
 double& beta_cos = TINKER_MOD(boxes, beta_cos);
@@ -77,6 +81,8 @@ int& orthogonal = TINKER_MOD(boxes, orthogonal);
 int& monoclinic = TINKER_MOD(boxes, monoclinic);
 int& triclinic = TINKER_MOD(boxes, triclinic);
 int& octahedron = TINKER_MOD(boxes, octahedron);
+int& dodecadron = TINKER_MOD(boxes, dodecadron);
+int& nonprism = TINKER_MOD(boxes, nonprism);
 char (&spacegrp)[10] = TINKER_MOD(boxes, spacegrp);
 #endif
 } }

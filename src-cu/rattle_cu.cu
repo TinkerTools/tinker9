@@ -18,7 +18,7 @@ void constrain_methyl_cu1(
    time_prec dt, pos_prec* restrict xnew, pos_prec* restrict ynew,
    pos_prec* restrict znew, const pos_prec* restrict xold,
    const pos_prec* restrict yold, const pos_prec* restrict zold,
-   const mass_prec* restrict massinv,
+   const double* restrict massinv,
 
    vel_prec* restrict vx, vel_prec* restrict vy, vel_prec* restrict vz)
 {
@@ -173,7 +173,7 @@ void constrain_methyl_cu1(
          ynew[id] += dyd;
          znew[id] += dzd;
       }
-      if (eq<HTYPE, RATTLE>()) {
+      if CONSTEXPR (not eq<HTYPE, SHAKE>()) {
          double invdt = 1 / dt;
          vx[ia] += dxa * invdt;
          vy[ia] += dya * invdt;
@@ -245,7 +245,7 @@ void constrain2_methyl_cu1(int nratch2, const int (*restrict iratch2)[3],
                            const pos_prec* restrict xpos,
                            const pos_prec* restrict ypos,
                            const pos_prec* restrict zpos,
-                           const mass_prec* restrict massinv)
+                           const double* restrict massinv)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int stride = blockDim.x * gridDim.x;
@@ -396,6 +396,9 @@ void constrain2_methyl_cu1(int nratch2, const int (*restrict iratch2)[3],
          xtermc *= vterm;
          ytermc *= vterm;
          ztermc *= vterm;
+         xtermd *= vterm;
+         ytermd *= vterm;
+         ztermd *= vterm;
          vxx -= (xb3 * xtermb + xc3 * xtermc + xd3 * xtermd);
          vyx -= (yb3 * xtermb + yc3 * xtermc + yd3 * xtermd);
          vzx -= (zb3 * xtermb + zc3 * xtermc + zd3 * xtermd);

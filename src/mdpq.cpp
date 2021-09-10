@@ -224,7 +224,7 @@ void xyz_data(rc_op op)
 //====================================================================//
 
 
-mass_prec *mass, *massinv;
+double *mass, *massinv;
 vel_prec *vx, *vy, *vz;
 
 void propagate_velocity(time_prec dt, vel_prec* vlx, vel_prec* vly,

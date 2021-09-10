@@ -17,9 +17,9 @@ void dk_geom_group(
    int i, const int (*restrict igfix)[2], const real (*restrict gfix)[3],
 
    const real* restrict x, const real* restrict y, const real* restrict z,
-   const mass_prec* restrict mass, const int* restrict molec,
+   const double* restrict mass, const int* restrict molec,
    const int (*restrict igrp)[2], const int* restrict kgrp,
-   const mass_prec* restrict grpmass, TINKER_IMAGE_PARAMS)
+   const double* restrict grpmass, TINKER_IMAGE_PARAMS)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -238,63 +238,65 @@ void dk_geom_angle(
    real ycb = yic - yib;
    real zcb = zic - zib;
    real rab2 = xab * xab + yab * yab + zab * zab;
+   rab2 = REAL_MAX(rab2, (real)0.0001);
    real rcb2 = xcb * xcb + ycb * ycb + zcb * zcb;
-   if (rab2 != 0 && rcb2 != 0) {
-      real xp = ycb * zab - zcb * yab;
-      real yp = zcb * xab - xcb * zab;
-      real zp = xcb * yab - ycb * xab;
-      real rp = REAL_SQRT(xp * xp + yp * yp + zp * zp);
-      rp = REAL_MAX(rp, (real)0.0001);
-      real dot = xab * xcb + yab * ycb + zab * zcb;
-      real cosine = dot * REAL_RSQRT(rab2 * rcb2);
-      cosine = REAL_MIN((real)1, REAL_MAX((real)-1, cosine));
-      real angle = radian * REAL_ACOS(cosine);
+   rcb2 = REAL_MAX(rcb2, (real)0.0001);
 
 
-      real target = angle;
-      if (angle < af1)
-         target = af1;
-      if (angle > af2)
-         target = af2;
-      real dt = angle - target;
+   real xp = ycb * zab - zcb * yab;
+   real yp = zcb * xab - xcb * zab;
+   real zp = xcb * yab - ycb * xab;
+   real rp = REAL_SQRT(xp * xp + yp * yp + zp * zp);
+   rp = REAL_MAX(rp, (real)0.0001);
+   real dot = xab * xcb + yab * ycb + zab * zcb;
+   real cosine = dot * REAL_RSQRT(rab2 * rcb2);
+   cosine = REAL_MIN((real)1, REAL_MAX((real)-1, cosine));
+   real angle = radian * REAL_ACOS(cosine);
 
 
-      if CONSTEXPR (do_e) {
-         real dt2 = dt * dt;
-         e = force * dt2;
-      }
-      if CONSTEXPR (do_g) {
-         real deddt = 2 * force * dt * radian;
-         real terma = -deddt * REAL_RECIP(rab2 * rp);
-         real termc = deddt * REAL_RECIP(rcb2 * rp);
-         real dedxia = terma * (yab * zp - zab * yp);
-         real dedyia = terma * (zab * xp - xab * zp);
-         real dedzia = terma * (xab * yp - yab * xp);
-         real dedxic = termc * (ycb * zp - zcb * yp);
-         real dedyic = termc * (zcb * xp - xcb * zp);
-         real dedzic = termc * (xcb * yp - ycb * xp);
-         real dedxib = -dedxia - dedxic;
-         real dedyib = -dedyia - dedyic;
-         real dedzib = -dedzia - dedzic;
+   real target = angle;
+   if (angle < af1)
+      target = af1;
+   if (angle > af2)
+      target = af2;
+   real dt = (angle - target) * _1radian;
 
 
-         atomic_add(dedxia, degx, ia);
-         atomic_add(dedyia, degy, ia);
-         atomic_add(dedzia, degz, ia);
-         atomic_add(dedxib, degx, ib);
-         atomic_add(dedyib, degy, ib);
-         atomic_add(dedzib, degz, ib);
-         atomic_add(dedxic, degx, ic);
-         atomic_add(dedyic, degy, ic);
-         atomic_add(dedzic, degz, ic);
-         if CONSTEXPR (do_v) {
-            vxx = xab * dedxia + xcb * dedxic;
-            vyx = yab * dedxia + ycb * dedxic;
-            vzx = zab * dedxia + zcb * dedxic;
-            vyy = yab * dedyia + ycb * dedyic;
-            vzy = zab * dedyia + zcb * dedyic;
-            vzz = zab * dedzia + zcb * dedzic;
-         }
+   if CONSTEXPR (do_e) {
+      real dt2 = dt * dt;
+      e = force * dt2;
+   }
+   if CONSTEXPR (do_g) {
+      real deddt = 2 * force * dt;
+      real terma = -deddt * REAL_RECIP(rab2 * rp);
+      real termc = deddt * REAL_RECIP(rcb2 * rp);
+      real dedxia = terma * (yab * zp - zab * yp);
+      real dedyia = terma * (zab * xp - xab * zp);
+      real dedzia = terma * (xab * yp - yab * xp);
+      real dedxic = termc * (ycb * zp - zcb * yp);
+      real dedyic = termc * (zcb * xp - xcb * zp);
+      real dedzic = termc * (xcb * yp - ycb * xp);
+      real dedxib = -dedxia - dedxic;
+      real dedyib = -dedyia - dedyic;
+      real dedzib = -dedzia - dedzic;
+
+
+      atomic_add(dedxia, degx, ia);
+      atomic_add(dedyia, degy, ia);
+      atomic_add(dedzia, degz, ia);
+      atomic_add(dedxib, degx, ib);
+      atomic_add(dedyib, degy, ib);
+      atomic_add(dedzib, degz, ib);
+      atomic_add(dedxic, degx, ic);
+      atomic_add(dedyic, degy, ic);
+      atomic_add(dedzic, degz, ic);
+      if CONSTEXPR (do_v) {
+         vxx = xab * dedxia + xcb * dedxic;
+         vyx = yab * dedxia + ycb * dedxic;
+         vzx = zab * dedxia + zcb * dedxic;
+         vyy = yab * dedyia + ycb * dedyic;
+         vzy = zab * dedyia + zcb * dedyic;
+         vzz = zab * dedzia + zcb * dedzic;
       }
    }
 }
@@ -349,6 +351,8 @@ void dk_geom_torsion(
    real xcb = xic - xib;
    real ycb = yic - yib;
    real zcb = zic - zib;
+   real rcb = REAL_SQRT(xcb * xcb + ycb * ycb + zcb * zcb);
+   rcb = REAL_MAX(rcb, (real)0.0001);
    real xdc = xid - xic;
    real ydc = yid - yic;
    real zdc = zid - zic;
@@ -364,108 +368,109 @@ void dk_geom_torsion(
    real ytu = zt * xu - zu * xt;
    real ztu = xt * yu - xu * yt;
    real rt2 = xt * xt + yt * yt + zt * zt;
+   rt2 = REAL_MAX(rt2, (real)0.0001);
    real ru2 = xu * xu + yu * yu + zu * zu;
+   ru2 = REAL_MAX(ru2, (real)0.0001);
    real rtru = REAL_SQRT(rt2 * ru2);
 
 
-   if (rtru != 0) {
-      real rcb = REAL_SQRT(xcb * xcb + ycb * ycb + zcb * zcb);
-      real cosine = (xt * xu + yt * yu + zt * zu) * REAL_RECIP(rtru);
-      real sine = (xcb * xtu + ycb * ytu + zcb * ztu) * REAL_RECIP(rcb * rtru);
-      real angle = radian * REAL_ACOS(cosine);
-      if (sine < 0)
-         angle = -angle;
-      real target;
-      if (angle > tf1 and angle > tf2)
-         target = angle;
-      else if (angle > tf1 and tf1 > tf2)
-         target = angle;
-      else if (angle < tf2 and tf1 > tf2)
-         target = angle;
-      else {
-         real t1 = angle - tf1;
-         real t2 = angle - tf2;
-         if (t1 > 180)
-            t1 -= 360;
-         if (t1 < -180)
-            t1 += 360;
-         if (t2 > 180)
-            t2 -= 360;
-         if (t2 < -180)
-            t2 += 360;
-         if (REAL_ABS(t1) < REAL_ABS(t2))
-            target = tf1;
-         else
-            target = tf2;
-      }
-      real dt = angle - target;
-      if (dt > 180)
-         dt -= 360;
-      if (dt < -180)
-         dt += 360;
+   real cosine = (xt * xu + yt * yu + zt * zu) * REAL_RECIP(rtru);
+   real sine = (xcb * xtu + ycb * ytu + zcb * ztu) * REAL_RECIP(rcb * rtru);
+   cosine = REAL_MIN((real)1.0, REAL_MAX((real)-1.0, cosine));
+   real angle = radian * REAL_ACOS(cosine);
+   if (sine < 0)
+      angle = -angle;
+   real target;
+   if (angle > tf1 and angle < tf2)
+      target = angle;
+   else if (angle > tf1 and tf1 > tf2)
+      target = angle;
+   else if (angle < tf2 and tf1 > tf2)
+      target = angle;
+   else {
+      real t1 = angle - tf1;
+      real t2 = angle - tf2;
+      if (t1 > 180)
+         t1 -= 360;
+      if (t1 < -180)
+         t1 += 360;
+      if (t2 > 180)
+         t2 -= 360;
+      if (t2 < -180)
+         t2 += 360;
+      if (REAL_ABS(t1) < REAL_ABS(t2))
+         target = tf1;
+      else
+         target = tf2;
+   }
+   real dt = angle - target;
+   if (dt > 180)
+      dt -= 360;
+   if (dt < -180)
+      dt += 360;
 
-      if CONSTEXPR (do_e) {
-         real dt2 = dt * dt;
-         e = force * dt2;
-      }
-      if CONSTEXPR (do_g) {
-         real dedphi = 2 * radian * force * dt;
-
-
-         real xca = xic - xia;
-         real yca = yic - yia;
-         real zca = zic - zia;
-         real xdb = xid - xib;
-         real ydb = yid - yib;
-         real zdb = zid - zib;
+   dt *= _1radian;
+   if CONSTEXPR (do_e) {
+      real dt2 = dt * dt;
+      e = force * dt2;
+   }
+   if CONSTEXPR (do_g) {
+      real dedphi = 2 * force * dt;
 
 
-         real rt_inv = REAL_RECIP(rt2 * rcb);
-         real ru_inv = REAL_RECIP(ru2 * rcb);
-         real dedxt = dedphi * (yt * zcb - ycb * zt) * rt_inv;
-         real dedyt = dedphi * (zt * xcb - zcb * xt) * rt_inv;
-         real dedzt = dedphi * (xt * ycb - xcb * yt) * rt_inv;
-         real dedxu = -dedphi * (yu * zcb - ycb * zu) * ru_inv;
-         real dedyu = -dedphi * (zu * xcb - zcb * xu) * ru_inv;
-         real dedzu = -dedphi * (xu * ycb - xcb * yu) * ru_inv;
+      real xca = xic - xia;
+      real yca = yic - yia;
+      real zca = zic - zia;
+      real xdb = xid - xib;
+      real ydb = yid - yib;
+      real zdb = zid - zib;
 
 
-         real dedxia = zcb * dedyt - ycb * dedzt;
-         real dedyia = xcb * dedzt - zcb * dedxt;
-         real dedzia = ycb * dedxt - xcb * dedyt;
-         real dedxib = yca * dedzt - zca * dedyt + zdc * dedyu - ydc * dedzu;
-         real dedyib = zca * dedxt - xca * dedzt + xdc * dedzu - zdc * dedxu;
-         real dedzib = xca * dedyt - yca * dedxt + ydc * dedxu - xdc * dedyu;
-         real dedxic = zba * dedyt - yba * dedzt + ydb * dedzu - zdb * dedyu;
-         real dedyic = xba * dedzt - zba * dedxt + zdb * dedxu - xdb * dedzu;
-         real dedzic = yba * dedxt - xba * dedyt + xdb * dedyu - ydb * dedxu;
-         real dedxid = zcb * dedyu - ycb * dedzu;
-         real dedyid = xcb * dedzu - zcb * dedxu;
-         real dedzid = ycb * dedxu - xcb * dedyu;
+      real rt_inv = REAL_RECIP(rt2 * rcb);
+      real ru_inv = REAL_RECIP(ru2 * rcb);
+      real dedxt = dedphi * (yt * zcb - ycb * zt) * rt_inv;
+      real dedyt = dedphi * (zt * xcb - zcb * xt) * rt_inv;
+      real dedzt = dedphi * (xt * ycb - xcb * yt) * rt_inv;
+      real dedxu = -dedphi * (yu * zcb - ycb * zu) * ru_inv;
+      real dedyu = -dedphi * (zu * xcb - zcb * xu) * ru_inv;
+      real dedzu = -dedphi * (xu * ycb - xcb * yu) * ru_inv;
 
 
-         atomic_add(dedxia, degx, ia);
-         atomic_add(dedyia, degy, ia);
-         atomic_add(dedzia, degz, ia);
-         atomic_add(dedxib, degx, ib);
-         atomic_add(dedyib, degy, ib);
-         atomic_add(dedzib, degz, ib);
-         atomic_add(dedxic, degx, ic);
-         atomic_add(dedyic, degy, ic);
-         atomic_add(dedzic, degz, ic);
-         atomic_add(dedxid, degx, id);
-         atomic_add(dedyid, degy, id);
-         atomic_add(dedzid, degz, id);
+      real dedxia = zcb * dedyt - ycb * dedzt;
+      real dedyia = xcb * dedzt - zcb * dedxt;
+      real dedzia = ycb * dedxt - xcb * dedyt;
+      real dedxib = yca * dedzt - zca * dedyt + zdc * dedyu - ydc * dedzu;
+      real dedyib = zca * dedxt - xca * dedzt + xdc * dedzu - zdc * dedxu;
+      real dedzib = xca * dedyt - yca * dedxt + ydc * dedxu - xdc * dedyu;
+      real dedxic = zba * dedyt - yba * dedzt + ydb * dedzu - zdb * dedyu;
+      real dedyic = xba * dedzt - zba * dedxt + zdb * dedxu - xdb * dedzu;
+      real dedzic = yba * dedxt - xba * dedyt + xdb * dedyu - ydb * dedxu;
+      real dedxid = zcb * dedyu - ycb * dedzu;
+      real dedyid = xcb * dedzu - zcb * dedxu;
+      real dedzid = ycb * dedxu - xcb * dedyu;
 
 
-         if CONSTEXPR (do_v) {
-            vxx = xcb * (dedxic + dedxid) - xba * dedxia + xdc * dedxid;
-            vyx = ycb * (dedxic + dedxid) - yba * dedxia + ydc * dedxid;
-            vzx = zcb * (dedxic + dedxid) - zba * dedxia + zdc * dedxid;
-            vyy = ycb * (dedyic + dedyid) - yba * dedyia + ydc * dedyid;
-            vzy = zcb * (dedyic + dedyid) - zba * dedyia + zdc * dedyid;
-            vzz = zcb * (dedzic + dedzid) - zba * dedzia + zdc * dedzid;
-         }
+      atomic_add(dedxia, degx, ia);
+      atomic_add(dedyia, degy, ia);
+      atomic_add(dedzia, degz, ia);
+      atomic_add(dedxib, degx, ib);
+      atomic_add(dedyib, degy, ib);
+      atomic_add(dedzib, degz, ib);
+      atomic_add(dedxic, degx, ic);
+      atomic_add(dedyic, degy, ic);
+      atomic_add(dedzic, degz, ic);
+      atomic_add(dedxid, degx, id);
+      atomic_add(dedyid, degy, id);
+      atomic_add(dedzid, degz, id);
+
+
+      if CONSTEXPR (do_v) {
+         vxx = xcb * (dedxic + dedxid) - xba * dedxia + xdc * dedxid;
+         vyx = ycb * (dedxic + dedxid) - yba * dedxia + ydc * dedxid;
+         vzx = zcb * (dedxic + dedxid) - zba * dedxia + zdc * dedxid;
+         vyy = ycb * (dedyic + dedyid) - yba * dedyia + ydc * dedyid;
+         vzy = zcb * (dedyic + dedyid) - zba * dedyia + zdc * dedyid;
+         vzz = zcb * (dedzic + dedzid) - zba * dedzia + zdc * dedzid;
       }
    }
 }

@@ -56,7 +56,7 @@ void constrain_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
                dot = xr * xo + yr * yo + zr * zo;
                rma = massinv[ia];
                rmb = massinv[ib];
-               term = 0.5f * sor * delta / ((rma + rmb) * dot);
+               term = 0.5 * sor * delta / ((rma + rmb) * dot);
                xterm = xo * term;
                yterm = yo * term;
                zterm = zo * term;
@@ -344,7 +344,7 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
 
       // This code is not in the original SETTLE paper, but is necessary for
       // the velocity verlet integrator.
-      if (eq<HTYPE, RATTLE>()) {
+      if CONSTEXPR (eq<HTYPE, RATTLE>()) {
          double invdt = 1 / dt;
          vx[ia] += (xa3 - xa1) * invdt;
          vy[ia] += (ya3 - ya1) * invdt;
@@ -424,7 +424,7 @@ void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew,
       znew[ib] += dzb;
 
 
-      if (eq<HTYPE, RATTLE>()) {
+      if CONSTEXPR (eq<HTYPE, RATTLE>()) {
          double invdt = 1 / dt;
          vx[ia] += dxa * invdt;
          vy[ia] += dya * invdt;

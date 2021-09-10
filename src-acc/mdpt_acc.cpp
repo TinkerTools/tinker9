@@ -2,7 +2,6 @@
 #include "tool/log.h"
 
 
-#include "accmanaged.h"
 #include "box.h"
 #include "energy.h"
 #include "glob.molecule.h"
@@ -281,7 +280,7 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
             #pragma acc loop seq
             for (int j = start; j < stop; ++j) {
                int k = kmol[j];
-               mass_prec weigh = mass[k];
+               auto weigh = mass[k];
                xcm += xpos[k] * weigh;
                ycm += ypos[k] * weigh;
                zcm += zpos[k] * weigh;

@@ -5,11 +5,13 @@
 
 
 namespace tinker {
-namespace {
-const char* get_SHA1()
+static const char* get_SHA1()
 {
    return         //
-      "6a1c6104"; // Sun Jan 24 22:14:40 2021 -0600
+      "e2d1747a"; // Fri Jul 30 15:49:07 2021 -0500
+   // "1b49b76f"; // Wed Jun 30 14:12:59 2021 -0500
+   // "080e8f1d"; // Fri Apr 30 20:56:00 2021 -0500
+   // "6a1c6104"; // Sun Jan 24 22:14:40 2021 -0600
    // "c7641407"; // Tue Jan 5 15:20:48 2021 -0600
    // "25b7ee7a"; // Thu Oct 1 22:32:58 2020 -0500
    // "b606a90b"; // Thu Jul 16 16:58:41 2020 -0500
@@ -23,7 +25,7 @@ const char* get_SHA1()
 }
 
 
-std::string get_version_string()
+static std::string get_version_string()
 {
    std::string r = format("%d.%d.%d", TINKER9_VERSION_MAJOR,
                           TINKER9_VERSION_MINOR, TINKER9_VERSION_PATCH);
@@ -32,7 +34,7 @@ std::string get_version_string()
 #endif
    return r;
 }
-}
+
 
 void x_info(int, char**)
 {

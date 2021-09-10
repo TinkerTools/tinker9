@@ -34,14 +34,14 @@ cmake_minimum_required (VERSION 3.12)
 !!/ This cmake script checks a custom environmental variable *ACC=...*
 !!/ *only* for the GPU code.
 !!/ If not set, the building script will take a guess at the OpenACC compiler.
-!!/ It will be set to the default C++ compiler for the CPU code. For instance,
-!!/ command *(c)cmake [...]* will become *ACC=pgc++ (c)cmake [...]*.
+!!/ *ACC* will also be used as the C++ compiler. The value of *CXX* (if set)
+!!/ will be neglected.
 !!/
 !!/ Configure Tinker9
 !!/ -----------------
 !!/ The following options are passed to CMake program with their default
 !!/ values (if there is one). **-D** is prefixed to the options. CMake provides
-!!/ two standard ways to let users to customize the values:
+!!/ two standard ways to let users customize the values:
 !!/
 !!/ - Change their values interactively in the *ccmake* command line gui;
 !!/ - Pass the new value to CMake via command line arguments
@@ -293,7 +293,7 @@ else ()
 endif ()
 set (CUDA_DIR ${cudaDirValue} CACHE PATH "[GPU ONLY] CUDA Directory")
 ## cuda compiler
-## set CMAKE_CUDA_COMPILER before project ()   
+## set CMAKE_CUDA_COMPILER before project ()
 if (NOT HOST)
    set (CMAKE_CUDA_COMPILER "${CUDA_DIR}/bin/nvcc")
 endif ()
@@ -359,7 +359,27 @@ set (FFTW_DIR ${fftwDirValue} CACHE PATH "[CPU ONLY] FFTW3 Directory")
 ########################################################################
 
 
-include (ExternalProject)
+## openacc compiler
+if (NOT HOST)
+   if (DEFINED ENV{ACC})
+      find_program (T9_ACC_COMPILER
+         NAMES
+            "$ENV{ACC}"
+            "nvc++"
+            "pgc++"
+         REQUIRED
+      )
+   else ()
+      find_program (T9_ACC_COMPILER
+         NAMES
+            "nvc++"
+            "pgc++"
+         REQUIRED
+      )
+   endif ()
+   # set this line before project()
+   set (CMAKE_CXX_COMPILER "${T9_ACC_COMPILER}")
+endif ()
 
 
 project (Tinker9 LANGUAGES NONE)
@@ -378,29 +398,7 @@ set (T9_DEFS)
 
 
 ## libtinker.a
-ExternalProject_Add (src-libtinker
-   SOURCE_DIR
-      "${PROJECT_SOURCE_DIR}/src-libtinker"
-   BINARY_DIR
-      "${CMAKE_BINARY_DIR}/src-libtinker"
-   PREFIX
-      "${CMAKE_BINARY_DIR}/src-libtinker"
-   CMAKE_ARGS
-      "-DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}"
-      "-DCMAKE_BUILD_TYPE=RelWithDebInfo"
-      "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/src-libtinker"
-)
-add_library (t9_ltinker STATIC IMPORTED)
-set_target_properties (t9_ltinker PROPERTIES
-   IMPORTED_LOCATION
-      "${CMAKE_BINARY_DIR}/src-libtinker/libtinker.a"
-)
-set_source_files_properties ("${CMAKE_BINARY_DIR}/src-libtinker/libtinker.a" PROPERTIES
-   EXTERNAL_OBJECT
-      TRUE
-   GENERATED
-      TRUE
-)
+add_subdirectory (src-libtinker)
 
 
 ## fftw
@@ -456,30 +454,6 @@ endif ()
 ## macro: project directory
 ## TINKER9_DIR is needed in the source code.
 list (APPEND T9_DEFS TINKER9_DIR=${PROJECT_SOURCE_DIR})
-
-
-## openacc compiler
-## set T9_ACC_COMPILER after project (), otherwise CMAKE_CXX_COMPILER is empty.
-if (HOST)
-   set (T9_ACC_COMPILER "${CMAKE_CXX_COMPILER}")
-else ()
-   if (DEFINED ENV{ACC})
-      find_program (T9_ACC_COMPILER
-         NAMES
-            "$ENV{ACC}"
-            "nvc++"
-            "pgc++"
-         REQUIRED
-      )
-   else ()
-      find_program (T9_ACC_COMPILER
-         NAMES
-            "nvc++"
-            "pgc++"
-         REQUIRED
-      )
-   endif ()
-endif ()
 
 
 ########################################################################
@@ -550,53 +524,50 @@ endif ()
 
 
 ## openacc
-string (REPLACE ";" "|" T9_EP_ACC_MACRO "${T9_DEFS}")
-string (REPLACE ";" "|" T9_EP_ACC_SYS_INCPATH "${T9_SYS_INCPATH}")
-string (REPLACE ";" "|" T9_EP_ACC_INCPATH "${T9_INCPATH}")
-string (REPLACE ";" "|" T9_ACC_CCLIST "${T9_CUCCLIST}")
-ExternalProject_Add (src-acc
-   SOURCE_DIR
-      "${PROJECT_SOURCE_DIR}/src-acc"
-   BINARY_DIR
-      "${CMAKE_BINARY_DIR}/src-acc"
-   PREFIX
-      "${CMAKE_BINARY_DIR}/src-acc"
-   BUILD_BYPRODUCTS
-      "${CMAKE_BINARY_DIR}/src-acc"
-   BUILD_ALWAYS
-      1
-   LIST_SEPARATOR
-      |
-   CMAKE_ARGS
-      "-DCMAKE_CXX_COMPILER=${T9_ACC_COMPILER}"
-      "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
-      "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/src-acc"
-      "-DT9_CPPSTD=${T9_CPPSTD}"
-      "-DT9_SYS_INCPATH=${T9_EP_ACC_SYS_INCPATH}"
-      "-DT9_INCPATH=${T9_EP_ACC_INCPATH}"
-      "-DT9_ACC_DEFS=${T9_EP_ACC_MACRO}"
-      "-DT9_ACC_ONHOST=${HOST}"
-      "-DT9_ACC_CUDADIR=${CUDA_DIR}"
-      "-DT9_ACC_CCLIST=${T9_ACC_CCLIST}"
-)
-set (__T9_ACC_STATIC_LIB_LOC "${CMAKE_BINARY_DIR}/src-acc/libtinker9_acc.a")
-add_library (tinker9_EP_acc STATIC IMPORTED)
-set_target_properties (tinker9_EP_acc PROPERTIES
-   IMPORTED_LOCATION
-      "${__T9_ACC_STATIC_LIB_LOC}"
-)
-set_source_files_properties ("${__T9_ACC_STATIC_LIB_LOC}" PROPERTIES
-   EXTERNAL_OBJECT
-      TRUE
-   GENERATED
-      TRUE
-)
+add_subdirectory (src-acc)
 
 
 ## test files
-file (GLOB T9_TEST_SRC
-   "src-main/main_all_tests.cpp"
-   "src/test/*.cpp"
+set (T9_TEST_SRC
+src-main/main_all_tests.cpp
+src/test/test_angle.cpp
+src/test/test_angtor.cpp
+src/test/test_async.cpp
+src/test/test_bond.cpp
+src/test/test_bounds.cpp
+src/test/test_box.cpp
+src/test/test_chglj.cpp
+src/test/test_chgtrn.cpp
+src/test/test_disp.cpp
+src/test/test_emhippo.cpp
+src/test/test_ephippo.cpp
+src/test/test_geom.cpp
+src/test/test_improp.cpp
+src/test/test_imptor.cpp
+src/test/test_info.cpp
+src/test/test_kinetic.cpp
+src/test/test_local_frame2.cpp
+src/test/test_local_frame3.cpp
+src/test/test_local_frame.cpp
+src/test/test_mathfunc.cpp
+src/test/test_nacl.cpp
+src/test/test_nblist.cpp
+src/test/test_opbend.cpp
+src/test/test_osrw.cpp
+src/test/test_partial_charge.cpp
+src/test/test_pitors.cpp
+src/test/test_reduce.cpp
+src/test/test_rephippo.cpp
+src/test/test_rt.cpp
+src/test/test_strbnd.cpp
+src/test/test_strtor.cpp
+src/test/test_text.cpp
+src/test/test_torsion.cpp
+src/test/test_tortor.cpp
+src/test/test_truncated8.cpp
+src/test/test_urey.cpp
+src/test/test_vdw14.cpp
+src/test/test_verlet.cpp
 )
 add_library (__t9_all_tests_o OBJECT ${T9_TEST_SRC})
 target_compile_definitions (__t9_all_tests_o PRIVATE ${T9_DEFS})
@@ -648,12 +619,13 @@ endif ()
 ## scripts
 add_custom_target (__t9_copy_shell_exe)
 foreach (var
-   "${PROJECT_SOURCE_DIR}/shell/analyze9.sh"   
+   "${PROJECT_SOURCE_DIR}/shell/analyze9.sh"
    "${PROJECT_SOURCE_DIR}/shell/bar9.sh"
    "${PROJECT_SOURCE_DIR}/shell/dynamic9.sh"
    "${PROJECT_SOURCE_DIR}/shell/info9.sh"
    "${PROJECT_SOURCE_DIR}/shell/minimize9.sh"
    "${PROJECT_SOURCE_DIR}/shell/testgrad9.sh"
+   "${PROJECT_SOURCE_DIR}/shell/chkver.py"
    )
    get_filename_component (__t9_fname "${var}" NAME)
    add_custom_command (TARGET __t9_copy_shell_exe POST_BUILD
