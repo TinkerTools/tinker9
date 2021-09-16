@@ -71,10 +71,12 @@ void propagate_pos_raxbv_aniso_acc(
                deviceptr(molec,r1,r2,r3,x1,x2,x3,y1,y2,y3)
    for (int i = 0; i < n; ++i) {
       int im = molec[i];
+      auto x1im = x1[im], x2im = x2[im], x3im = x3[im];
+      auto y1i = y1[i], y2i = y2[i], y3i = y3[i];
       // clang-format off
-      r1[i] = r1[i] + (a00*x1[im]+a01*x2[im]+a02*x3[im]) + (b00*y1[i]+b01*y2[i]+b02*y3[i]);
-      r2[i] = r2[i] + (a10*x1[im]+a11*x2[im]+a12*x3[im]) + (b10*y1[i]+b11*y2[i]+b12*y3[i]);
-      r3[i] = r3[i] + (a20*x1[im]+a21*x2[im]+a22*x3[im]) + (b20*y1[i]+b21*y2[i]+b22*y3[i]);
+      r1[i] += (a00*x1im+a01*x2im+a02*x3im) + (b00*y1i+b01*y2i+b02*y3i);
+      r2[i] += (a10*x1im+a11*x2im+a12*x3im) + (b10*y1i+b11*y2i+b12*y3i);
+      r3[i] += (a20*x1im+a21*x2im+a22*x3im) + (b20*y1i+b21*y2i+b22*y3i);
       // clang-format on
    }
 }
@@ -127,9 +129,9 @@ void lp_propagate_mol_vel_aniso_acc(vel_prec scal[3][3])
    for (int i = 0; i < n; ++i) {
       int im = molec[i];
       auto xm = ratcom_vx[im], ym = ratcom_vy[im], zm = ratcom_vz[im];
-      vx[i] = vx[i] + s00 * xm + s01 * ym + s02 * zm;
-      vy[i] = vy[i] + s10 * xm + s11 * ym + s12 * zm;
-      vz[i] = vz[i] + s20 * xm + s21 * ym + s22 * zm;
+      vx[i] += s00 * xm + s01 * ym + s02 * zm;
+      vy[i] += s10 * xm + s11 * ym + s12 * zm;
+      vz[i] += s20 * xm + s21 * ym + s22 * zm;
    }
 }
 

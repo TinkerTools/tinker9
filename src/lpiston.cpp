@@ -30,8 +30,6 @@ virial_buffer lp_vir_buf;
 
 
 double vbar_matrix[3][3];
-double vbar_eigen[3];
-double vbar_ortho[3][3];
 
 
 //====================================================================//
@@ -81,16 +79,6 @@ void lp_virial(bool molP)
 
 
 //====================================================================//
-
-
-double sinh_id(double x)
-{
-   double y = std::fabs(x);
-   if (y <= 1.0e-8)
-      return 1.0;
-   else
-      return std::sinh(y) / y;
-}
 
 
 extern void propagate_pos_raxbv_acc(
@@ -288,18 +276,6 @@ void vv_lpiston_init()
       vbar_matrix[2][0] = 0;
       vbar_matrix[2][1] = 0;
       vbar_matrix[2][2] = 0;
-      vbar_eigen[0] = 0;
-      vbar_eigen[1] = 0;
-      vbar_eigen[2] = 0;
-      vbar_ortho[0][0] = 1.0;
-      vbar_ortho[0][1] = 0;
-      vbar_ortho[0][2] = 0;
-      vbar_ortho[1][0] = 0;
-      vbar_ortho[1][1] = 1.0;
-      vbar_ortho[1][2] = 0;
-      vbar_ortho[2][0] = 0;
-      vbar_ortho[2][1] = 0;
-      vbar_ortho[2][2] = 1.0;
    }
 
    print(o, "\n");
@@ -492,7 +468,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
       double vt2 = vbar * xdti2;
       // double s1b = 1.0;
       // double s1a = std::exp(vt2);
-      double s1 = std::exp(vt2) * sinh_id(vt2);
+      double s1 = std::exp(vt2) * sinhc(vt2);
       s = s1;
    }
    for (int ir = 0; ir < nrespa; ++ir) {
@@ -578,35 +554,6 @@ void vv_lpiston_npt(int istep, time_prec dt)
 //====================================================================//
 
 
-template <class T>
-static void prtmat(T m[3][3], const char* flag = nullptr)
-{
-   if (flag)
-      printf(" %s\n", flag);
-   for (int i = 0; i < 3; ++i) {
-      if (i == 0)
-         printf(" [[");
-      else
-         printf("  [");
-      printf("%16.4e,%16.4e,%16.4e]", m[i][0], m[i][1], m[i][2]);
-      if (i == 0 or i == 1)
-         printf(",\n");
-      if (i == 2)
-         printf("]\n");
-   }
-   printf("\n");
-}
-
-template <class T>
-static void prtvec(T m[3], const char* flag = nullptr)
-{
-   if (flag)
-      printf(" %s\n", flag);
-   printf("  [%16.4e,%16.4e,%16.4e]\n", m[0], m[1], m[2]);
-   printf("\n");
-}
-
-
 static void iso_tp_aniso(time_prec dt)
 {
    constexpr int ns = 2;
@@ -615,7 +562,7 @@ static void iso_tp_aniso(time_prec dt)
    t = dt / ns, t2 = t / 2, t4 = t / 4, t8 = t / 8, xt4 = nbaro * t4;
 
 
-   double opgxt4, omgxt4, sd;
+   double opgxt4, omgxt4, sd; // one plus, one minus, std dev
    opgxt4 = 1.0 + stodyn::friction * xt4;
    omgxt4 = 1.0 - stodyn::friction * xt4;
    sd = std::sqrt(nbaro * dt * 2.0 * stodyn::friction * kbt / qbar) / (4 * ns);
@@ -669,49 +616,53 @@ static void iso_tp_aniso(time_prec dt)
                vbar_matrix[i][j] = DelP[i][j] * xt4 +
                   omgxt4 * vbar_matrix[i][j] + sd * rnd_matrix[i][j];
             }
-            for (int j = 0; j < i; ++j) {
-               vbar_matrix[i][j] = vbar_matrix[j][i];
+            if (box_shape == BoxShape::MONO) {
+               vbar_matrix[0][1] = 0, vbar_matrix[1][2] = 0;
+            } else if (box_shape == BoxShape::ORTHO or
+                       box_shape == BoxShape::OCT) {
+               vbar_matrix[0][1] = 0, vbar_matrix[1][2] = 0;
+               vbar_matrix[0][2] = 0;
             }
          }
-         SymmMatrix::solve(vbar_matrix, vbar_ortho, vbar_eigen);
       }
 
       if (atomP or molP) {
          double tr;
          tr = (vbar_matrix[0][0] + vbar_matrix[1][1] + vbar_matrix[2][2]) / g1;
-         double diag[3] = {
-            std::exp(-t2 * (vnh[0] + tr * vbar_eigen[0] * nbaro)),
-            std::exp(-t2 * (vnh[0] + tr * vbar_eigen[1] * nbaro)),
-            std::exp(-t2 * (vnh[0] + tr * vbar_eigen[2] * nbaro))};
-         // V(3) = O(3,3) DIAG(3) O^T(3,3) V(3)
-         // Scal(3,3) = O(3,3) DIAG(3) O^T(3,3)
+         // mat = -(X*vg^T + X*Tr[vg]/g1 + v1)
+         double mat[3][3];
+         for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+               mat[i][j] = -vbar_matrix[i][j] * nbaro; // vg in use, not vg^T
+            }
+            mat[i][i] -= (tr * nbaro + vnh[0]);
+         }
+         std::swap(mat[0][1], mat[1][0]); // transpose
+         std::swap(mat[0][2], mat[2][0]);
+         std::swap(mat[1][2], mat[2][1]);
+         // scal = exp(mat t/2)
          double scal[3][3];
-         SymmMatrix::ODOt(scal, vbar_ortho, diag);
+         trimat_exp(scal, mat, t2);
          matmul3(velsc1, scal);
 
-         // kinetic tensor = ODO^T[3][3] K[3][3] ODO^T[3][3]
-         double a = scal[0][0], b = scal[0][1], c = scal[0][2];
-         double d = scal[1][1], e = scal[1][2], f = scal[2][2];
-         double u = ekin0[0][0], v = ekin0[0][1], w = ekin0[0][2];
-         double x = ekin0[1][1], y = ekin0[1][2], z = ekin0[2][2];
-
-         // [[u,v,w]    [[a,b,c]  [[u,v,w]  [[a,b,c]
-         //  [v,x,y]  =  [b,d,e]   [v,x,y]   [b,d,e]
-         //  [w,y,z]]    [c,e,f]]  [w,y,z]]  [c,e,f]]
+         // kinetic tensor = (s u).(s u)^T
+         double a = scal[0][0];
+         double b = scal[1][0], c = scal[1][1];
+         double d = scal[2][0], e = scal[2][1], f = scal[2][2];
+         double u = ekin0[0][0];
+         double v = ekin0[1][0], w = ekin0[1][1];
+         double x = ekin0[2][0], y = ekin0[2][1], z = ekin0[2][2];
 
          // clang-format off
-         ekin0[0][0] = a*a*u + 2*a*b*v + 2*a*c*w + b*b*x + 2*b*c*y + c*c*z;
-         ekin0[1][1] = b*b*u + 2*b*d*v + 2*b*e*w + d*d*x + 2*d*e*y + e*e*z;
-         ekin0[2][2] = c*c*u + 2*c*e*v + 2*c*f*w + e*e*x + 2*e*f*y + f*f*z;
-         ekin0[0][1] = a*b*u + a*d*v + a*e*w + b*b*v + b*c*w + b*d*x + b*e*y + c*d*y + c*e*z;
-         ekin0[0][2] = a*c*u + a*e*v + a*f*w + b*c*v + b*e*x + b*f*y + c*c*w + c*e*y + c*f*z;
-         ekin0[1][2] = b*c*u + b*e*v + b*f*w + c*d*v + c*e*w + d*e*x + d*f*y + e*e*y + e*f*z;
-      // ekin0[1][0] = a*b*u + a*d*v + a*e*w + b*b*v + b*c*w + b*d*x + b*e*y + c*d*y + c*e*z;
-      // ekin0[2][0] = a*c*u + a*e*v + a*f*w + b*c*v + b*e*x + b*f*y + c*c*w + c*e*y + c*f*z;
-      // ekin0[2][1] = b*c*u + b*e*v + b*f*w + c*d*v + c*e*w + d*e*x + d*f*y + e*e*y + e*f*z;
-         ekin0[1][0] = ekin0[0][1];
-         ekin0[2][0] = ekin0[0][2];
-         ekin0[2][1] = ekin0[1][2];
+         ekin0[0][0] = a*a*u;
+         ekin0[1][1] = b*b*u + c*c*w         + 2*b*c*v;
+         ekin0[2][2] = d*d*u + e*e*w + f*f*z + 2*d*e*v + 2*d*f*x + 2*e*f*y;
+         ekin0[1][0] = a*b*u + a*c*v;
+         ekin0[2][0] = a*d*u + a*e*v + a*f*x;
+         ekin0[2][1] = b*d*u + c*d*v + b*e*v + c*e*w + b*f*x + c*f*y;
+         ekin0[0][1] = ekin0[1][0];
+         ekin0[0][2] = ekin0[2][0];
+         ekin0[1][2] = ekin0[2][1];
          // clang-format on
          eksum1 = ekin0[0][0] + ekin0[1][1] + ekin0[2][2];
       } else {
@@ -736,11 +687,14 @@ static void iso_tp_aniso(time_prec dt)
                                     sd * rnd_matrix[i][j]) /
                   opgxt4;
             }
-            for (int j = 0; j < i; ++j) {
-               vbar_matrix[i][j] = vbar_matrix[j][i];
+            if (box_shape == BoxShape::MONO) {
+               vbar_matrix[0][1] = 0, vbar_matrix[1][2] = 0;
+            } else if (box_shape == BoxShape::ORTHO or
+                       box_shape == BoxShape::OCT) {
+               vbar_matrix[0][1] = 0, vbar_matrix[1][2] = 0;
+               vbar_matrix[0][2] = 0;
             }
          }
-         SymmMatrix::solve(vbar_matrix, vbar_ortho, vbar_eigen);
       }
 
       for (int i = 0; i < maxnose; ++i) {
@@ -801,9 +755,7 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
       vers1 &= ~calc::virial;
 
 
-   time_prec xdt = nbaro * dt, dt2 = 0.5 * dt, xdt2 = 0.5 * xdt;
-   time_prec dti = dt / nrespa, dti2 = dt2 / nrespa;
-   time_prec xdti = xdt / nrespa, xdti2 = xdt2 / nrespa;
+   time_prec dt2 = 0.5 * dt, dti = dt / nrespa, dti2 = dt2 / nrespa;
 
 
    iso_tp_aniso(dt);
@@ -826,13 +778,9 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
    energy_prec esum_f;
 
 
-   // double s[3] = {1.0, 1.0, 1.0};
    if (mid) {
-      double diag[3] = {std::exp(vbar_eigen[0] * xdt),
-                        std::exp(vbar_eigen[1] * xdt),
-                        std::exp(vbar_eigen[2] * xdt)},
-             scal[3][3];
-      SymmMatrix::ODOt(scal, vbar_ortho, diag);
+      double scal[3][3];
+      trimat_exp(scal, vbar_matrix, nbaro * dt);
       double h0[3][3] = {{lvec1.x, lvec1.y, lvec1.z},
                          {lvec2.x, lvec2.y, lvec2.z},
                          {lvec3.x, lvec3.y, lvec3.z}};
@@ -841,32 +789,24 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
       lvec2.x = h0[1][0], lvec2.y = h0[1][1], lvec2.z = h0[1][2];
       lvec3.x = h0[2][0], lvec3.y = h0[2][1], lvec3.z = h0[2][2];
       set_default_recip_box();
-      double vt2[3] = {vbar_eigen[0] * xdti2, vbar_eigen[1] * xdti2,
-                       vbar_eigen[2] * xdti2};
-      // double s1b[3] = {1.0, 1.0, 1.0};
-      // double s1a[3] = {std::exp(vt2[0]), std::exp(vt2[1]), std::exp(vt2[2])};
-      // double s1[3] = {std::exp(vt2[0]) * sinh_id(vt2[0]),
-      //                 std::exp(vt2[1]) * sinh_id(vt2[1]),
-      //                 std::exp(vt2[2]) * sinh_id(vt2[2])};
-      // s[0] = s1b[0], s[1] = s1b[1], s[2] = s1b[2];
    }
    for (int ir = 0; ir < nrespa; ++ir) {
       if (mid and (kw_p == KW_ATOM or kw_p == KW_MOL)) {
-         double diar[3] = {std::exp(vbar_eigen[0] * xdti),
-                           std::exp(vbar_eigen[1] * xdti),
-                           std::exp(vbar_eigen[2] * xdti)},
-                // diav[3] = {s[0] * dti, s[1] * dti, s[2] * dti}
-            diav[3] = {dti, dti, dti};
-         double sr[3][3], sv[3][3];
-         SymmMatrix::ODOt(sr, vbar_ortho, diar);
-         // If using s1b, diav[3] will not change.
-         // SymmMatrix::ODOt(sv, vbar_ortho, diav);
+         double sr[3][3], sv[3][3] = {0.0};
+         trimat_exp(sr, vbar_matrix, nbaro * dti);
          if (kw_p == KW_ATOM) {
+            double vbm[3][3];
+            for (int i = 0; i < 3; ++i)
+               for (int j = 0; j < 3; ++j)
+                  vbm[i][j] = nbaro * vbar_matrix[i][j];
+            trimat_t_expm1c(sv, vbm, dti);
             propagate_pos_axbv_aniso(sr, sv);
          } else if (kw_p == KW_MOL) {
             sr[0][0] = sr[0][0] - 1.0;
             sr[1][1] = sr[1][1] - 1.0;
             sr[2][2] = sr[2][2] - 1.0;
+            // S_b(dti)*dti = I*dt/nrespa
+            sv[0][0] = dti, sv[1][1] = dti, sv[2][2] = dti;
             lp_center_of_mass(xpos, ypos, zpos, ratcom_x, ratcom_y, ratcom_z);
             propagate_pos_raxbv_aniso(sr, sv);
          }
@@ -885,14 +825,8 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
          propagate_velocity(dti, gx, gy, gz);
       } else {
          if (constrain) {
-            lp_matvec(n, 'T', vbar_ortho, rattle_xold, rattle_yold,
-                      rattle_zold);
-            lp_matvec(n, 'T', vbar_ortho, xpos, ypos, zpos);
-            lp_matvec(n, 'T', vbar_ortho, vx, vy, vz);
-            // if using s1b, "rattle" will work here.
+            // if using S_b, "rattle" will work here.
             rattle(dt, rattle_xold, rattle_yold, rattle_zold);
-            lp_matvec(n, 'N', vbar_ortho, xpos, ypos, zpos);
-            lp_matvec(n, 'N', vbar_ortho, vx, vy, vz);
          }
          copy_pos_to_xyz(true);
       }

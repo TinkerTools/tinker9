@@ -59,4 +59,22 @@ struct SymmMatrix
    template <class T>
    static void ODOt(T s[3][3], T o[3][3], T d[3]);
 };
+
+
+// TODO: doc
+/// ans = exp(m t)
+template <class T>
+void trimat_exp(T ans[3][3], T m[3][3], T t);
+/// ans = ((exp mt)-1)/(mt)
+template <class T>
+void trimat_expm1c(T ans[3][3], T m[3][3], T t);
+/// ans = t ((exp mt)-1)/(mt)
+template <class T>
+void trimat_t_expm1c(T ans[3][3], T m[3][3], T t)
+{
+   trimat_expm1c(ans, m, t);
+   for (int i = 0; i < 3; ++i)
+      for (int j = 0; j < 3; ++j)
+         ans[i][j] *= t;
+}
 }

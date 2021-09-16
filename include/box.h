@@ -19,8 +19,6 @@ void get_tinker_box_module(Box&);
 /**
  * \ingroup box
  * \brief Similar to Tinker `lattice` subroutine.
- *
- * See doc/box/box.pdf for details.
  */
 void box_lattice(Box& p, BoxShape sh, double a, double b, double c,
                  double alpha_deg, double beta_deg, double gamma_deg);

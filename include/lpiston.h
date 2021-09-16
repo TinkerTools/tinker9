@@ -13,8 +13,6 @@ extern virial_buffer lp_vir_buf;
 
 
 extern double vbar_matrix[3][3];
-extern double vbar_eigen[3];
-extern double vbar_ortho[3][3];
 
 
 // (ax,ay,az) = mat (ax,ay,az) or (ax,ay,az) = transpose(mat) (ax,ay,az)
@@ -27,7 +25,6 @@ void lp_mol_kinetic();
 void lp_virial(bool molP);
 
 
-double sinh_id(double x);
 void propagate_pos_raxbv(double a, double b);
 void propagate_pos_raxbv_aniso(double a[3][3], double b[3][3]);
 void propagate_pos_axbv_aniso(double a[3][3], double b[3][3]);

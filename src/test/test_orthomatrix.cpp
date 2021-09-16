@@ -2,17 +2,6 @@
 #include "tool/orthomatrix.h"
 using namespace tinker;
 
-/* //
-static auto prteig = [](double w[3]) {
-   printf("%12.4lf%12.4lf%12.4lf\n", w[0], w[1], w[2]);
-};
-static auto prtmat = [](double m[3][3]) {
-   printf("%12.4lf%12.4lf%12.4lf\n", m[0][0], m[0][1], m[0][2]);
-   printf("%12.4lf%12.4lf%12.4lf\n", m[1][0], m[1][1], m[1][2]);
-   printf("%12.4lf%12.4lf%12.4lf\n", m[2][0], m[2][1], m[2][2]);
-};
-// */
-
 TEST_CASE("OrthoMatrix", "[util][math][orthomatrix]")
 {
    SECTION("Example 1")
@@ -149,5 +138,103 @@ TEST_CASE("OrthoMatrix", "[util][math][orthomatrix]")
 
       double B[3][3] = {{3, 0, 8}, {0, 4, 0}, {0, 0, 5}};
       matmul3(B, s);
+   }
+}
+
+
+TEST_CASE("MatrixExp", "[util][math][matrixexp]")
+{
+   unsigned long long c = 0x080000000ull;
+
+   SECTION("orthogonal")
+   {
+      double m[3][3] = {{1, 0, 0}, //
+                        {0, 2, 0}, //
+                        {0, 0, 1}};
+      double r[3][3] = {{1.105170918, 0, 0}, //
+                        {0, 1.221402758, 0}, //
+                        {0, 0, 1.105170918}};
+
+      double a[3][3] = {0};
+      trimat_exp(a, m, 0.1);
+
+      REQUIRE((long long)(c * r[0][0]) == (long long)(c * a[0][0]));
+      REQUIRE((long long)(c * r[0][1]) == (long long)(c * a[0][1]));
+      REQUIRE((long long)(c * r[0][2]) == (long long)(c * a[0][2]));
+      REQUIRE((long long)(c * r[1][0]) == (long long)(c * a[1][0]));
+      REQUIRE((long long)(c * r[1][1]) == (long long)(c * a[1][1]));
+      REQUIRE((long long)(c * r[1][2]) == (long long)(c * a[1][2]));
+      REQUIRE((long long)(c * r[2][0]) == (long long)(c * a[2][0]));
+      REQUIRE((long long)(c * r[2][1]) == (long long)(c * a[2][1]));
+      REQUIRE((long long)(c * r[2][2]) == (long long)(c * a[2][2]));
+   }
+
+   SECTION("monoclinic")
+   {
+      double m[3][3] = {{1, 0, 0.5}, //
+                        {0, 2, 0},   //
+                        {0, 0, 1}};
+      double r[3][3] = {{1.105170918, 0, 0.05525854590}, //
+                        {0, 1.221402758, 0},             //
+                        {0, 0, 1.105170918}};
+
+      double a[3][3] = {0};
+      trimat_exp(a, m, 0.1);
+
+      REQUIRE((long long)(c * r[0][0]) == (long long)(c * a[0][0]));
+      REQUIRE((long long)(c * r[0][1]) == (long long)(c * a[0][1]));
+      REQUIRE((long long)(c * r[0][2]) == (long long)(c * a[0][2]));
+      REQUIRE((long long)(c * r[1][0]) == (long long)(c * a[1][0]));
+      REQUIRE((long long)(c * r[1][1]) == (long long)(c * a[1][1]));
+      REQUIRE((long long)(c * r[1][2]) == (long long)(c * a[1][2]));
+      REQUIRE((long long)(c * r[2][0]) == (long long)(c * a[2][0]));
+      REQUIRE((long long)(c * r[2][1]) == (long long)(c * a[2][1]));
+      REQUIRE((long long)(c * r[2][2]) == (long long)(c * a[2][2]));
+   }
+
+   SECTION("triclinic1")
+   {
+      double m[3][3] = {{1, 1. / 3., 0.5}, //
+                        {0, 1, 0.2},       //
+                        {0, 0, 1}};
+      double r[3][3] = {{1.105170918, 0.03683903060, 0.05562693621}, //
+                        {0, 1.105170918, 0.02210341836},             //
+                        {0, 0, 1.105170918}};
+
+      double a[3][3] = {0};
+      trimat_exp(a, m, 0.1);
+
+      REQUIRE((long long)(c * r[0][0]) == (long long)(c * a[0][0]));
+      REQUIRE((long long)(c * r[0][1]) == (long long)(c * a[0][1]));
+      REQUIRE((long long)(c * r[0][2]) == (long long)(c * a[0][2]));
+      REQUIRE((long long)(c * r[1][0]) == (long long)(c * a[1][0]));
+      REQUIRE((long long)(c * r[1][1]) == (long long)(c * a[1][1]));
+      REQUIRE((long long)(c * r[1][2]) == (long long)(c * a[1][2]));
+      REQUIRE((long long)(c * r[2][0]) == (long long)(c * a[2][0]));
+      REQUIRE((long long)(c * r[2][1]) == (long long)(c * a[2][1]));
+      REQUIRE((long long)(c * r[2][2]) == (long long)(c * a[2][2]));
+   }
+
+   SECTION("triclinic2")
+   {
+      double m[3][3] = {{1, 1. / 3., 0.5}, //
+                        {0, 2, 0.2},       //
+                        {0, 0, 1}};
+      double r[3][3] = {{1.105170918, 0.03874394669, 0.05563952912}, //
+                        {0, 1.221402758, 0.02324636802},             //
+                        {0, 0, 1.105170918}};
+
+      double a[3][3] = {0};
+      trimat_exp(a, m, 0.1);
+
+      REQUIRE((long long)(c * r[0][0]) == (long long)(c * a[0][0]));
+      REQUIRE((long long)(c * r[0][1]) == (long long)(c * a[0][1]));
+      REQUIRE((long long)(c * r[0][2]) == (long long)(c * a[0][2]));
+      REQUIRE((long long)(c * r[1][0]) == (long long)(c * a[1][0]));
+      REQUIRE((long long)(c * r[1][1]) == (long long)(c * a[1][1]));
+      REQUIRE((long long)(c * r[1][2]) == (long long)(c * a[1][2]));
+      REQUIRE((long long)(c * r[2][0]) == (long long)(c * a[2][0]));
+      REQUIRE((long long)(c * r[2][1]) == (long long)(c * a[2][1]));
+      REQUIRE((long long)(c * r[2][2]) == (long long)(c * a[2][2]));
    }
 }
