@@ -637,12 +637,12 @@ static void iso_tp_aniso(time_prec dt)
             }
             mat[i][i] -= (tr * nbaro + vnh[0]);
          }
-         std::swap(mat[0][1], mat[1][0]); // transpose
-         std::swap(mat[0][2], mat[2][0]);
-         std::swap(mat[1][2], mat[2][1]);
          // scal = exp(mat t/2)
          double scal[3][3];
          trimat_exp(scal, mat, t2);
+         std::swap(scal[0][1], scal[1][0]); // transpose
+         std::swap(scal[0][2], scal[2][0]);
+         std::swap(scal[1][2], scal[2][1]);
          matmul3(velsc1, scal);
 
          // kinetic tensor = (s u).(s u)^T
