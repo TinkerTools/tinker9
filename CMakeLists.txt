@@ -553,7 +553,6 @@ src/test/test_mathfunc.cpp
 src/test/test_nacl.cpp
 src/test/test_nblist.cpp
 src/test/test_opbend.cpp
-src/test/test_orthomatrix.cpp
 src/test/test_osrw.cpp
 src/test/test_partial_charge.cpp
 src/test/test_pitors.cpp
@@ -565,6 +564,7 @@ src/test/test_strtor.cpp
 src/test/test_text.cpp
 src/test/test_torsion.cpp
 src/test/test_tortor.cpp
+src/test/test_trimatexp.cpp
 src/test/test_truncated8.cpp
 src/test/test_urey.cpp
 src/test/test_vdw14.cpp

@@ -4,6 +4,7 @@
 namespace tinker {
 /**
  * \ingroup math
+ * \brief The result of \f$ \sinh(x)/x \f$.
  */
 template <class T>
 T sinhc(T x)

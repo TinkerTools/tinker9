@@ -65,7 +65,6 @@ molecule.cpp
 moments.cpp
 nblist.cpp
 nose.cpp
-orthomatrix.cpp
 osrw.cpp
 platform.cpp
 pme.cpp
@@ -80,6 +79,7 @@ switch.cpp
 testgrad_x.cpp
 tinker_mod.cpp
 tinker_rt.cpp
+trimatexp.cpp
 )
 if (HOST)
    set (__T9_CPP_HOST_SRC

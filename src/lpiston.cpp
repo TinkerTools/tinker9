@@ -11,7 +11,7 @@
 #include "rattle.h"
 #include "tinker_rt.h"
 #include "tool/error.h"
-#include "tool/orthomatrix.h"
+#include "tool/trimatexp.h"
 #include <cmath>
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/freeze.hh>
