@@ -616,13 +616,13 @@ static void iso_tp_aniso(time_prec dt)
                vbar_matrix[i][j] = DelP[i][j] * xt4 +
                   omgxt4 * vbar_matrix[i][j] + sd * rnd_matrix[i][j];
             }
-            if (box_shape == BoxShape::MONO) {
-               vbar_matrix[0][1] = 0, vbar_matrix[1][2] = 0;
-            } else if (box_shape == BoxShape::ORTHO or
-                       box_shape == BoxShape::OCT) {
-               vbar_matrix[0][1] = 0, vbar_matrix[1][2] = 0;
-               vbar_matrix[0][2] = 0;
-            }
+         }
+         if (box_shape == BoxShape::MONO) {
+            vbar_matrix[0][1] = 0, vbar_matrix[1][2] = 0;
+         } else if (box_shape == BoxShape::ORTHO or
+                    box_shape == BoxShape::OCT) {
+            vbar_matrix[0][1] = 0, vbar_matrix[1][2] = 0;
+            vbar_matrix[0][2] = 0;
          }
       }
 
@@ -630,9 +630,9 @@ static void iso_tp_aniso(time_prec dt)
          double tr;
          tr = (vbar_matrix[0][0] + vbar_matrix[1][1] + vbar_matrix[2][2]) / g1;
          // mat = -(X*vg^T + X*Tr[vg]/g1 + v1)
-         double mat[3][3];
+         double mat[3][3] = {0};
          for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
+            for (int j = i; j < 3; ++j) {
                mat[i][j] = -vbar_matrix[i][j] * nbaro; // vg in use, not vg^T
             }
             mat[i][i] -= (tr * nbaro + vnh[0]);
@@ -667,6 +667,8 @@ static void iso_tp_aniso(time_prec dt)
          eksum1 = ekin0[0][0] + ekin0[1][1] + ekin0[2][2];
       } else {
          double scal = std::exp(-t2 * vnh[0]);
+         for (int i = 0; i < 3; ++i)
+            velsc1[i][i] *= scal;
          scal *= scal;
          for (int i = 0; i < 3; ++i)
             for (int j = 0; j < 3; ++j)
@@ -687,13 +689,13 @@ static void iso_tp_aniso(time_prec dt)
                                     sd * rnd_matrix[i][j]) /
                   opgxt4;
             }
-            if (box_shape == BoxShape::MONO) {
-               vbar_matrix[0][1] = 0, vbar_matrix[1][2] = 0;
-            } else if (box_shape == BoxShape::ORTHO or
-                       box_shape == BoxShape::OCT) {
-               vbar_matrix[0][1] = 0, vbar_matrix[1][2] = 0;
-               vbar_matrix[0][2] = 0;
-            }
+         }
+         if (box_shape == BoxShape::MONO) {
+            vbar_matrix[0][1] = 0, vbar_matrix[1][2] = 0;
+         } else if (box_shape == BoxShape::ORTHO or
+                    box_shape == BoxShape::OCT) {
+            vbar_matrix[0][1] = 0, vbar_matrix[1][2] = 0;
+            vbar_matrix[0][2] = 0;
          }
       }
 
