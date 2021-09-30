@@ -3,6 +3,8 @@
 
 
 #include "energy.h"
+#include "lf_lpiston.h"
+#include "lpiston.h"
 #include "mdcalc.h"
 #include "mdegv.h"
 #include "mdintg.h"
@@ -22,6 +24,9 @@
 
 
 namespace tinker {
+double time_step;
+
+
 void mdrest(int istep)
 {
    mdrest_acc(istep);
@@ -33,8 +38,8 @@ void md_data(rc_op op)
    if ((calc::md & rc_flag) == 0)
       return;
 
-   rc_man intg42_{integrate_data, op};
-   rc_man save42_{mdsave_data, op};
+   rc_man intg42{integrate_data, op};
+   rc_man save42{mdsave_data, op};
 }
 
 
@@ -77,10 +82,14 @@ void propagate(int nsteps, time_prec dt_ps)
 void integrate_data(rc_op op)
 {
    if (op & rc_dealloc) {
-      if (intg == lpiston_npt) {
+      if (intg == lf_lpiston_npt) {
          darray::deallocate(leapfrog_x, leapfrog_y, leapfrog_z);
          darray::deallocate(leapfrog_vx, leapfrog_vy, leapfrog_vz,
                             leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
+      }
+
+      if (intg == vv_lpiston_npt) {
+         vv_lpiston_destory();
       }
 
       if (intg == respa_fast_slow)
@@ -106,7 +115,7 @@ void integrate_data(rc_op op)
          else if (th == "NOSE-HOOVER")
             thermostat = NOSE_HOOVER_CHAIN_THERMOSTAT;
          else if (th == "LPISTON")
-            thermostat = LANGEVIN_PISTON_THERMOSTAT;
+            thermostat = LEAPFROG_LPISTON_THERMOSTAT;
          else
             assert(false);
       } else {
@@ -122,7 +131,9 @@ void integrate_data(rc_op op)
          else if (br == "NOSE-HOOVER")
             barostat = NOSE_HOOVER_CHAIN_BAROSTAT;
          else if (br == "LPISTON")
-            barostat = LANGEVIN_PISTON_BAROSTAT;
+            barostat = LEAPFROG_LPISTON_BAROSTAT;
+         else if (br == "LANGEVIN")
+            barostat = LANGEVIN_BAROSTAT;
          else if (br == "MONTECARLO") {
             barostat = MONTE_CARLO_BAROSTAT;
             darray::allocate(n, &x_pmonte, &y_pmonte, &z_pmonte);
@@ -138,9 +149,9 @@ void integrate_data(rc_op op)
       if (itg == "VERLET") {
          intg = velocity_verlet;
       } else if (itg == "LPISTON") {
-         intg = lpiston_npt;
-         thermostat = LANGEVIN_PISTON_THERMOSTAT;
-         barostat = LANGEVIN_PISTON_BAROSTAT;
+         intg = lf_lpiston_npt;
+         thermostat = LEAPFROG_LPISTON_THERMOSTAT;
+         barostat = LEAPFROG_LPISTON_BAROSTAT;
       } else if (itg == "NOSE-HOOVER") {
          intg = nhc_npt;
          thermostat = NOSE_HOOVER_CHAIN_THERMOSTAT;
@@ -149,9 +160,12 @@ void integrate_data(rc_op op)
          intg = respa_fast_slow;
       }
 
-      if (thermostat == LANGEVIN_PISTON_THERMOSTAT and
-          barostat == LANGEVIN_PISTON_BAROSTAT) {
-         intg = lpiston_npt;
+      if (thermostat == LEAPFROG_LPISTON_THERMOSTAT and
+          barostat == LEAPFROG_LPISTON_BAROSTAT) {
+         intg = lf_lpiston_npt;
+      } else if (barostat == LANGEVIN_BAROSTAT) {
+         if (itg == "VERLET" or itg == "RESPA")
+            intg = vv_lpiston_npt;
       } else if (thermostat == NOSE_HOOVER_CHAIN_THERMOSTAT and
                  barostat == NOSE_HOOVER_CHAIN_BAROSTAT) {
          intg = nhc_npt;
@@ -161,11 +175,13 @@ void integrate_data(rc_op op)
       if (intg == velocity_verlet) {
          // need full gradient to start/restart the simulation
          energy(calc::grad);
-      } else if (intg == lpiston_npt) {
+      } else if (intg == lf_lpiston_npt) {
          darray::allocate(n, &leapfrog_x, &leapfrog_y, &leapfrog_z);
          darray::allocate(n, &leapfrog_vx, &leapfrog_vy, &leapfrog_vz,
                           &leapfrog_vxold, &leapfrog_vyold, &leapfrog_vzold);
          energy(calc::v1);
+      } else if (intg == vv_lpiston_npt) {
+         vv_lpiston_init();
       } else if (intg == nhc_npt) {
          if (use_rattle()) {
             TINKER_THROW(

@@ -98,13 +98,6 @@ extern "C"
    {};
 
 
-   // RATTLE vs SHAKE
-   struct RATTLE
-   {};
-   struct SHAKE
-   {};
-
-
    // Bond terms.
    struct HARMONIC
    {};

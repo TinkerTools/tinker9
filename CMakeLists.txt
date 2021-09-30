@@ -564,6 +564,7 @@ src/test/test_strtor.cpp
 src/test/test_text.cpp
 src/test/test_torsion.cpp
 src/test/test_tortor.cpp
+src/test/test_trimatexp.cpp
 src/test/test_truncated8.cpp
 src/test/test_urey.cpp
 src/test/test_vdw14.cpp

@@ -27,6 +27,7 @@ field_chgpen_cu.cu
 field_cu.cu
 induce_cu.cu
 induce_donly_cu.cu
+lpiston_cu.cu
 mathfunc_parallel_cu.cu
 mdintg_cu.cu
 mdpt_cu.cu

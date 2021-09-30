@@ -20,9 +20,9 @@
 
 
 namespace tinker {
-void kinetic_explicit_acc(T_prec& temp_out, energy_prec& eksum_out,
-                          energy_prec (&ekin_out)[3][3], const vel_prec* vx,
-                          const vel_prec* vy, const vel_prec* vz)
+void kinetic_energy_acc(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
+                        int n, const double* mass, const vel_prec* vx,
+                        const vel_prec* vy, const vel_prec* vz)
 {
    const energy_prec ekcal_inv = 1.0 / units::ekcal;
    energy_prec exx = 0, eyy = 0, ezz = 0, exy = 0, eyz = 0, ezx = 0;
@@ -31,7 +31,7 @@ void kinetic_explicit_acc(T_prec& temp_out, energy_prec& eksum_out,
                reduction(+:exx,eyy,ezz,exy,eyz,ezx)\
                deviceptr(mass,vx,vy,vz)
    for (int i = 0; i < n; ++i) {
-      energy_prec term = 0.5f * mass[i] * ekcal_inv;
+      energy_prec term = 0.5 * mass[i] * ekcal_inv;
       exx += term * vx[i] * vx[i];
       eyy += term * vy[i] * vy[i];
       ezz += term * vz[i] * vz[i];
@@ -40,8 +40,6 @@ void kinetic_explicit_acc(T_prec& temp_out, energy_prec& eksum_out,
       ezx += term * vz[i] * vx[i];
    }
    #pragma acc wait
-   energy_prec eksum_local = exx + eyy + ezz;
-   T_prec temp_local = 2 * eksum_local / (mdstuf::nfree * units::gasconst);
 
 
    ekin_out[0][0] = exx;
@@ -53,8 +51,7 @@ void kinetic_explicit_acc(T_prec& temp_out, energy_prec& eksum_out,
    ekin_out[2][0] = ezx;
    ekin_out[2][1] = eyz;
    ekin_out[2][2] = ezz;
-   eksum_out = eksum_local;
-   temp_out = temp_local;
+   eksum_out = exx + eyy + ezz;
 }
 
 

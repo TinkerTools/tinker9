@@ -96,12 +96,12 @@ void respa_fast_slow(int istep, time_prec dt_ps)
       vers1 &= ~calc::energy;
 
 
-   time_prec arespa = mdstuf::arespa;    // inner time step
-   const time_prec eps = 1.0f / 1048576; // 2**-20
+   time_prec arespa = mdstuf::arespa;   // inner time step
+   const time_prec eps = 1.0 / 1048576; // 2**-20
    int nalt = (int)(dt_ps / (arespa + eps)) + 1;
-   time_prec dt_2 = 0.5f * dt_ps;
+   time_prec dt_2 = 0.5 * dt_ps;
    time_prec dta = dt_ps / nalt;
-   time_prec dta_2 = 0.5f * dta;
+   time_prec dta_2 = 0.5 * dta;
 
 
    virial_prec vir_fast[9] = {0};
