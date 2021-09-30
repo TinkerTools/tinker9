@@ -4,7 +4,6 @@
 #include "mdcalc.h"
 #include "mdegv.h"
 #include "mdpq.h"
-#include "nose.h"
 #include "rattle.h"
 #include <tinker/detail/units.hh>
 

@@ -1,7 +1,6 @@
 #include "add.h"
 #include "lpiston.h"
 #include "mdpq.h"
-#include "nose.h"
 #include "rattle.h"
 #include "tinker_rt.h"
 #include "tool/darray.h"
