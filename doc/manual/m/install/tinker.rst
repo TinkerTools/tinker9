@@ -20,7 +20,7 @@ checkout Tinker from the *tinker* Git submodule:
 Alternatively, remove the directory *tinker9/tinker* and clone
 `Tinker from GitHub <https://github.com/tinkertools/tinker>`_
 to replace the deleted directory,
-then checkout the required version **e2d1747a**.
+then checkout the required version **cc05b603**.
 
 .. code-block:: bash
 

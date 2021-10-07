@@ -48,6 +48,8 @@ induce_donly.cpp
 initial.cpp
 io_fort_str.cpp
 io_text.cpp
+lf_lpiston.cpp
+lpiston.cpp
 mdegv.cpp
 mdintg.cpp
 mdintg_respa.cpp
@@ -77,6 +79,7 @@ switch.cpp
 testgrad_x.cpp
 tinker_mod.cpp
 tinker_rt.cpp
+trimatexp.cpp
 )
 if (HOST)
    set (__T9_CPP_HOST_SRC

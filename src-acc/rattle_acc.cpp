@@ -1,4 +1,5 @@
 #include "add.h"
+#include "lpiston.h"
 #include "mdpq.h"
 #include "rattle.h"
 #include "tinker_rt.h"
@@ -42,6 +43,11 @@ void constrain_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
          for (int i = mbegin; i < mend; ++i) {
             int ia = irat[i][0];
             int ib = irat[i][1];
+            double ae1 = 1.0, be1 = 1.0;
+            if CONSTEXPR (eq<HTYPE, LPRAT>()) {
+               ae1 = lp_rats1;
+               be1 = lp_rats1;
+            }
             double xr, yr, zr, delta;
             xr = xnew[ib] - xnew[ia];
             yr = ynew[ib] - ynew[ia];
@@ -60,13 +66,13 @@ void constrain_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
                xterm = xo * term;
                yterm = yo * term;
                zterm = zo * term;
-               xnew[ia] -= xterm * rma;
-               ynew[ia] -= yterm * rma;
-               znew[ia] -= zterm * rma;
-               xnew[ib] += xterm * rmb;
-               ynew[ib] += yterm * rmb;
-               znew[ib] += zterm * rmb;
-               if CONSTEXPR (eq<HTYPE, RATTLE>()) {
+               xnew[ia] -= xterm * rma / ae1;
+               ynew[ia] -= yterm * rma / ae1;
+               znew[ia] -= zterm * rma / ae1;
+               xnew[ib] += xterm * rmb / be1;
+               ynew[ib] += yterm * rmb / be1;
+               znew[ib] += zterm * rmb / be1;
+               if CONSTEXPR (not eq<HTYPE, SHAKE>()) {
                   rma /= dt;
                   rmb /= dt;
                   vx[ia] -= xterm * rma;
@@ -109,6 +115,15 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
       m0 = mass[ia];
       m1 = mass[ib];
       m2 = mass[ic];
+      double ae1 = 1.0, be1 = 1.0, ce1 = 1.0;
+      if CONSTEXPR (eq<HTYPE, LPRAT>()) {
+         ae1 = lp_rats1;
+         be1 = lp_rats1;
+         ce1 = lp_rats1;
+         m0 *= ae1;
+         m1 *= be1;
+         m2 *= ce1;
+      }
       invm = 1 / (m0 + m1 + m2);
 
 
@@ -344,20 +359,21 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
 
       // This code is not in the original SETTLE paper, but is necessary for
       // the velocity verlet integrator.
-      if CONSTEXPR (eq<HTYPE, RATTLE>()) {
+      if CONSTEXPR (not eq<HTYPE, SHAKE>()) {
          double invdt = 1 / dt;
-         vx[ia] += (xa3 - xa1) * invdt;
-         vy[ia] += (ya3 - ya1) * invdt;
-         vz[ia] += (za3 - za1) * invdt;
-         vx[ib] += (xb3 - xb1) * invdt;
-         vy[ib] += (yb3 - yb1) * invdt;
-         vz[ib] += (zb3 - zb1) * invdt;
-         vx[ic] += (xc3 - xc1) * invdt;
-         vy[ic] += (yc3 - yc1) * invdt;
-         vz[ic] += (zc3 - zc1) * invdt;
+         vx[ia] += (xa3 - xa1) * invdt * ae1;
+         vy[ia] += (ya3 - ya1) * invdt * ae1;
+         vz[ia] += (za3 - za1) * invdt * ae1;
+         vx[ib] += (xb3 - xb1) * invdt * be1;
+         vy[ib] += (yb3 - yb1) * invdt * be1;
+         vz[ib] += (zb3 - zb1) * invdt * be1;
+         vx[ic] += (xc3 - xc1) * invdt * ce1;
+         vy[ic] += (yc3 - yc1) * invdt * ce1;
+         vz[ic] += (zc3 - zc1) * invdt * ce1;
       }
    }
 }
+
 
 template <class HTYPE>
 void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew,
@@ -380,6 +396,13 @@ void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew,
       lab = kratch[im];
       rma = massinv[ia];
       rmb = massinv[ib];
+      double ae1 = 1.0, be1 = 1.0;
+      if CONSTEXPR (eq<HTYPE, LPRAT>()) {
+         ae1 = lp_rats1;
+         be1 = lp_rats1;
+         rma /= ae1;
+         rmb /= be1;
+      }
       invm = rma + rmb;
 
 
@@ -424,14 +447,14 @@ void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew,
       znew[ib] += dzb;
 
 
-      if CONSTEXPR (eq<HTYPE, RATTLE>()) {
+      if CONSTEXPR (not eq<HTYPE, SHAKE>()) {
          double invdt = 1 / dt;
-         vx[ia] += dxa * invdt;
-         vy[ia] += dya * invdt;
-         vz[ia] += dza * invdt;
-         vx[ib] += dxb * invdt;
-         vy[ib] += dyb * invdt;
-         vz[ib] += dzb * invdt;
+         vx[ia] += dxa * invdt * ae1;
+         vy[ia] += dya * invdt * ae1;
+         vz[ia] += dza * invdt * ae1;
+         vx[ib] += dxb * invdt * be1;
+         vy[ib] += dyb * invdt * be1;
+         vz[ib] += dzb * invdt * be1;
       }
    }
 }
@@ -455,6 +478,27 @@ void rattle_ch_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
                    const pos_prec* zold)
 {
    constrain_ch_acc1<RATTLE>(dt, xpos, ypos, zpos, xold, yold, zold);
+}
+
+
+void lprat_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
+               const pos_prec* zold)
+{
+   constrain_acc<LPRAT>(dt, xpos, ypos, zpos, xold, yold, zold);
+}
+
+
+void lprat_settle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
+                      const pos_prec* zold)
+{
+   settle_acc1<LPRAT>(dt, xpos, ypos, zpos, xold, yold, zold);
+}
+
+
+void lprat_ch_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
+                  const pos_prec* zold)
+{
+   constrain_ch_acc1<LPRAT>(dt, xpos, ypos, zpos, xold, yold, zold);
 }
 
 
@@ -828,42 +872,6 @@ void rattle2_ch_acc(time_prec dt, bool do_v)
       constrain2_ch_acc1<true>(dt);
    } else {
       constrain2_ch_acc1<false>(dt);
-   }
-}
-
-
-//====================================================================//
-
-
-void shake2_acc(time_prec dt, const vel_prec* vxold, const vel_prec* vyold,
-                const vel_prec* vzold, const vel_prec* vxnew,
-                const vel_prec* vynew, const vel_prec* vznew,
-                const pos_prec* xold, const pos_prec* yold,
-                const pos_prec* zold)
-{
-   const double vterm = -1 / (dt * units::ekcal);
-   size_t bufsize = buffer_size();
-
-
-   #pragma acc parallel loop independent async\
-           deviceptr(mass,xold,yold,zold,vxold,vyold,vzold,\
-           vxnew,vynew,vznew,vir_buf)
-   for (int i = 0; i < n; ++i) {
-      size_t offset = i & (bufsize - 1);
-      double fact = mass[i] * vterm;
-      double dx = (vxnew[i] - vxold[i]) * fact;
-      double dy = (vynew[i] - vyold[i]) * fact;
-      double dz = (vznew[i] - vzold[i]) * fact;
-      double vxx = 0, vyx = 0, vzx = 0;
-      double vyy = 0, vzy = 0, vzz = 0;
-      vxx += xold[i] * dx;
-      vyx += yold[i] * dx;
-      vzx += zold[i] * dx;
-      vyy += yold[i] * dy;
-      vzy += zold[i] * dy;
-      vzz += zold[i] * dz;
-      atomic_add((real)vxx, (real)vyx, (real)vzx, (real)vyy, (real)vzy,
-                 (real)vzz, vir_buf, offset);
    }
 }
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include "glob.molecule.h"
 #include "macro.h"
 #include "mdprec.h"
 
@@ -39,4 +40,16 @@ TINKER_EXTERN int (*iratmol)[2];
 TINKER_EXTERN pos_prec* rattle_xold;
 TINKER_EXTERN pos_prec* rattle_yold;
 TINKER_EXTERN pos_prec* rattle_zold;
+
+
+// The "rattle-molecules" on device.
+TINKER_EXTERN Molecule rattle_dmol;
+// center-of-mass positions, momenta, and gradients
+TINKER_EXTERN pos_prec* ratcom_x;
+TINKER_EXTERN pos_prec* ratcom_y;
+TINKER_EXTERN pos_prec* ratcom_z;
+TINKER_EXTERN vel_prec* ratcom_vx;
+TINKER_EXTERN vel_prec* ratcom_vy;
+TINKER_EXTERN vel_prec* ratcom_vz;
+TINKER_EXTERN double* ratcom_massfrac;
 }
