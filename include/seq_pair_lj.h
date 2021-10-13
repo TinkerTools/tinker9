@@ -1,10 +1,44 @@
 #pragma once
 #include "mathfunc.h"
-#include "seq_def.h"
-#include "seq_switch.h"
+#include "seq_pair_vlambda.h"
 
 
 namespace tinker {
+/**
+ * \ingroup vdw
+ */
+#pragma acc routine seq
+template <bool DO_G, bool SOFTCORE>
+SEQ_CUDA
+void pair_lj_v0(real r, real invr, real vlambda, real rad, real eps,
+                real& restrict ev, real& restrict dev)
+{
+   if CONSTEXPR (SOFTCORE) {
+      real sig = invr * rad;
+      real sig2 = sig * sig;
+      real p6 = 1 / (sig2 * sig2 * sig2);
+      p6 = p6 * 2;
+      real sc = p6 + (1 - vlambda) / 2;
+      real invsc = 1 / sc;
+      real term = 4 * vlambda * eps * invsc * invsc;
+      ev = term * (1 - sc);
+      if CONSTEXPR (DO_G) {
+         real dterm = -6 * p6 * term * invr;
+         dev = dterm * (2 * invsc - 1);
+      }
+   } else {
+      real sig = invr * rad;
+      real sig2 = sig * sig;
+      real p6 = sig2 * sig2 * sig2;
+      real ep6 = eps * p6;
+      ev = ep6 * (p6 - 2);
+      if CONSTEXPR (DO_G) {
+         dev = ep6 * (p6 - 1) * (-12 * invr);
+      }
+   }
+}
+
+
 /**
  * \ingroup vdw
  */
@@ -68,23 +102,16 @@ void pair_lj_v2(real r, real invr, //
  * \ingroup vdw
  */
 #pragma acc routine seq
-template <bool DO_G, int SCALE>
+template <bool DO_G, bool SOFTCORE, int SCALE>
 SEQ_CUDA
-void pair_lj_v3(real r, real invr, //
+void pair_lj_v3(real r, real invr, real vlambda, //
                 real vscale, real rad, real eps, real evcut, real evoff,
                 real& restrict ev, real& restrict dev)
 {
    if CONSTEXPR (SCALE != 1) {
       eps *= vscale;
    }
-   real sig = invr * rad;
-   real sig2 = sig * sig;
-   real p6 = sig2 * sig2 * sig2;
-   real ep6 = eps * p6;
-   ev = ep6 * (p6 - 2);
-   if CONSTEXPR (DO_G) {
-      dev = ep6 * (p6 - 1) * (-12 * invr);
-   }
+   pair_lj_v0<DO_G, SOFTCORE>(r, invr, vlambda, rad, eps, ev, dev);
    // taper
    if (r > evcut) {
       real taper, dtaper;
