@@ -43,18 +43,13 @@ void pair_lj_v0(real r, real invr, real vlambda, real rad, real eps,
  * \ingroup vdw
  */
 #pragma acc routine seq
-template <bool DO_G>
+template <bool DO_G, bool SOFTCORE>
 SEQ_CUDA
-void pair_lj(real rik, real rik2, real rv, real eps, real vscalek,
-             real& restrict e, real& restrict de)
+void pair_lj_v1(real rik, real vlambda, real rv, real eps, real vscalek,
+                real& restrict e, real& restrict de)
 {
    eps *= vscalek;
-   real rv2_rik2 = rv * rv * REAL_RECIP(rik2);
-   real p6 = rv2_rik2 * rv2_rik2 * rv2_rik2;
-   e = eps * p6 * (p6 - 2);
-   if CONSTEXPR (DO_G) {
-      de = eps * p6 * (p6 - 1) * (-12 * REAL_RECIP(rik));
-   }
+   pair_lj_v0<DO_G, SOFTCORE>(rik, 1 / rik, vlambda, rv, eps, e, de);
 }
 
 
