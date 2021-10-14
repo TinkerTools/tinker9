@@ -45,6 +45,7 @@ inline void pme_stream_finish_wait(bool use_pmestream) {}
 #endif
 
 
+extern int* mut_coalesced;     // n
 extern real* chg_coalesced;    // n
 extern real* radeps_coalesced; // 2*n
 }

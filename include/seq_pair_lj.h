@@ -57,9 +57,9 @@ void pair_lj_v1(real rik, real vlambda, real rv, real eps, real vscalek,
  * \ingroup vdw
  */
 #pragma acc routine seq
-template <bool DO_G, class RADRULE, class EPSRULE, int SCALE>
+template <bool DO_G, bool SOFTCORE, class RADRULE, class EPSRULE, int SCALE>
 SEQ_CUDA
-void pair_lj_v2(real r, real invr, //
+void pair_lj_v2(real r, real invr, real vlambda, //
                 real vscale, real radi, real epsi, real radk, real epsk,
                 real evcut, real evoff, real& restrict ev, real& restrict dev)
 {
@@ -74,14 +74,7 @@ void pair_lj_v2(real r, real invr, //
    real eps = EPSRULE::savg(epsi, epsk);
    if CONSTEXPR (SCALE != 1)
       eps *= vscale;
-   real sig = invr * rad;
-   real sig2 = sig * sig;
-   real p6 = sig2 * sig2 * sig2;
-   real ep6 = eps * p6;
-   ev = ep6 * (p6 - 2);
-   if CONSTEXPR (DO_G) {
-      dev = ep6 * (p6 - 1) * (-12 * invr);
-   }
+   pair_lj_v0<DO_G, SOFTCORE>(r, invr, vlambda, rad, eps, ev, dev);
    // taper
    if (r > evcut) {
       real taper, dtaper;
