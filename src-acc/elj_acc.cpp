@@ -11,7 +11,7 @@
 
 namespace tinker {
 #define DEVICE_PTRS                                                            \
-   x, y, z, devx, devy, devz, jvdw, radmin, epsilon, nev, ev, vir_ev
+   x, y, z, devx, devy, devz, jvdw, radmin, epsilon, mut, nev, ev, vir_ev
 template <class Ver>
 void elj_acc1()
 {
@@ -43,6 +43,7 @@ void elj_acc1()
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
+      real imut = mut[i];
       MAYBE_UNUSED grad_prec gxi = 0, gyi = 0, gzi = 0;
 
 
@@ -55,6 +56,7 @@ void elj_acc1()
          real xr = xi - x[k];
          real yr = yi - y[k];
          real zr = zi - z[k];
+         int kmut = mut[k];
 
 
          real rik2 = image2(xr, yr, zr);
@@ -65,7 +67,8 @@ void elj_acc1()
 
 
             MAYBE_UNUSED real e, de;
-            pair_lj<do_g>(rik, rik2, rv, eps, 1, e, de);
+            real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+            pair_lj_v1<do_g, true>(rik, vlambda, rv, eps, 1, e, de);
 
 
             if (rik2 > cut2) {
@@ -134,12 +137,14 @@ void elj_acc1()
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
+      int imut = mut[i];
 
 
       int kt = jvdw[k];
       real xr = xi - x[k];
       real yr = yi - y[k];
       real zr = zi - z[k];
+      int kmut = mut[k];
 
 
       real rik2 = image2(xr, yr, zr);
@@ -150,7 +155,8 @@ void elj_acc1()
 
 
          MAYBE_UNUSED real e, de;
-         pair_lj<do_g>(rik, rik2, rv, eps, vscale, e, de);
+         real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+         pair_lj_v1<do_g, true>(rik, vlambda, rv, eps, vscale, e, de);
 
 
          if (rik2 > cut2) {
@@ -209,12 +215,14 @@ void elj_acc1()
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
+      int imut = mut[i];
 
 
       int kt = jvdw[k];
       real xr = xi - x[k];
       real yr = yi - y[k];
       real zr = zi - z[k];
+      int kmut = mut[k];
 
 
       real rik2 = image2(xr, yr, zr);
@@ -227,8 +235,9 @@ void elj_acc1()
 
 
          MAYBE_UNUSED real e, de, e4, de4;
-         pair_lj<do_g>(rik, rik2, rv, eps, v4scale, e, de);
-         pair_lj<do_g>(rik, rik2, rv4, eps4, v4scale, e4, de4);
+         real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+         pair_lj_v1<do_g, true>(rik, vlambda, rv, eps, v4scale, e, de);
+         pair_lj_v1<do_g, true>(rik, vlambda, rv4, eps4, v4scale, e4, de4);
          e = e4 - e;
          if CONSTEXPR (do_g)
             de = de4 - de;

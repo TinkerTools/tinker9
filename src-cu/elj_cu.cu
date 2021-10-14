@@ -13,7 +13,7 @@
 
 
 namespace tinker {
-// ck.py Version 2.0.2
+// ck.py Version 2.0.3
 template <class Ver>
 __global__
 void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
@@ -27,7 +27,8 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
              const Spatial::SortedAtom* restrict sorted, int nakpl,
              const int* restrict iakpl, int niak, const int* restrict iak,
              const int* restrict lst, int njvdw, const real* restrict radmin,
-             const real* restrict epsilon, const int* restrict jvdw)
+             const real* restrict epsilon, const int* restrict jvdw,
+             const int* restrict mut, real vlam, evdw_t vcouple)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -71,7 +72,9 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
    real fky;
    real fkz;
    int ijvdw;
+   int imut;
    int kjvdw;
+   int kmut;
 
 
    //* /
@@ -98,7 +101,9 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
       yk = y[k];
       zk = z[k];
       ijvdw = jvdw[i];
+      imut = mut[i];
       kjvdw = jvdw[k];
+      kmut = mut[k];
 
 
       constexpr bool incl = true;
@@ -112,7 +117,9 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
          real rv = radmin[ijvdw * njvdw + kjvdw];
          real eps = epsilon[ijvdw * njvdw + kjvdw];
          real e, de;
-         pair_lj_v3<do_g, 0>(r, invr, scalea, rv, eps, cut, off, e, de);
+         real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+         pair_lj_v3<do_g, true, 0>(r, invr, vlambda, scalea, rv, eps, cut, off,
+                                   e, de);
          if CONSTEXPR (do_e) {
             evtl += cvt_to<ebuf_prec>(e);
             if CONSTEXPR (do_a) {
@@ -187,7 +194,9 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
 
 
       ijvdw = jvdw[i];
+      imut = mut[i];
       kjvdw = jvdw[k];
+      kmut = mut[k];
 
 
       unsigned int info0 = info[iw * WARP_SIZE + ilane];
@@ -206,7 +215,9 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
             real rv = radmin[ijvdw * njvdw + kjvdw];
             real eps = epsilon[ijvdw * njvdw + kjvdw];
             real e, de;
-            pair_lj_v3<do_g, 1>(r, invr, 1, rv, eps, cut, off, e, de);
+            real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+            pair_lj_v3<do_g, true, 1>(r, invr, vlambda, 1, rv, eps, cut, off, e,
+                                      de);
             if CONSTEXPR (do_e) {
                evtl += cvt_to<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
@@ -243,6 +254,7 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
          yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
          zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
          ijvdw = __shfl_sync(ALL_LANES, ijvdw, ilane + 1);
+         imut = __shfl_sync(ALL_LANES, imut, ilane + 1);
          if CONSTEXPR (do_g) {
             fix = __shfl_sync(ALL_LANES, fix, ilane + 1);
             fiy = __shfl_sync(ALL_LANES, fiy, ilane + 1);
@@ -287,7 +299,9 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
 
 
       ijvdw = jvdw[i];
+      imut = mut[i];
       kjvdw = jvdw[k];
+      kmut = mut[k];
 
 
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -302,7 +316,9 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
             real rv = radmin[ijvdw * njvdw + kjvdw];
             real eps = epsilon[ijvdw * njvdw + kjvdw];
             real e, de;
-            pair_lj_v3<do_g, 1>(r, invr, 1, rv, eps, cut, off, e, de);
+            real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+            pair_lj_v3<do_g, true, 1>(r, invr, vlambda, 1, rv, eps, cut, off, e,
+                                      de);
             if CONSTEXPR (do_e) {
                evtl += cvt_to<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
@@ -338,6 +354,7 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
          yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
          zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
          ijvdw = __shfl_sync(ALL_LANES, ijvdw, ilane + 1);
+         imut = __shfl_sync(ALL_LANES, imut, ilane + 1);
          if CONSTEXPR (do_g) {
             fix = __shfl_sync(ALL_LANES, fix, ilane + 1);
             fiy = __shfl_sync(ALL_LANES, fiy, ilane + 1);
@@ -379,8 +396,8 @@ void elj_cu2(count_buffer restrict nebuf, energy_buffer restrict ebuf,
              TINKER_IMAGE_PARAMS, real cut, real off, const real* restrict x,
              const real* restrict y, const real* restrict z, //
              int njvdw, const real* restrict radmin,
-             const real* restrict epsilon,
-             const int* restrict jvdw, //
+             const real* restrict epsilon, const int* restrict jvdw,
+             const int* restrict mut, real vlam, evdw_t vcouple, //
              real v4scale, int nvdw14, const int (*restrict vdw14ik)[2],
              const real* restrict radmin4, const real* restrict epsilon4)
 {
@@ -416,12 +433,14 @@ void elj_cu2(count_buffer restrict nebuf, energy_buffer restrict ebuf,
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
+      int imut = mut[i];
 
 
       int jkt = jvdw[k];
       real xr = xi - x[k];
       real yr = yi - y[k];
       real zr = zi - z[k];
+      int kmut = mut[k];
 
 
       int pos = jit * njvdw + jkt;
@@ -437,8 +456,11 @@ void elj_cu2(count_buffer restrict nebuf, energy_buffer restrict ebuf,
 
 
       real e, de, e4, de4;
-      pair_lj_v3<do_g, 0>(r, invr, v4scale, rv, eps, cut, off, e, de);
-      pair_lj_v3<do_g, 0>(r, invr, v4scale, rv4, eps4, cut, off, e4, de4);
+      real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+      pair_lj_v3<do_g, true, 0>(r, invr, vlambda, v4scale, rv, eps, cut, off, e,
+                                de);
+      pair_lj_v3<do_g, true, 0>(r, invr, vlambda, v4scale, rv4, eps4, cut, off,
+                                e4, de4);
       e = e4 - e;
       if CONSTEXPR (do_g)
          de = de4 - de;
@@ -493,7 +515,7 @@ void elj_cu4()
       st.n, TINKER_IMAGE_ARGS, nev, ev, vir_ev, devx, devy, devz, cut, off,
       st.si2.bit0, nvexclude, vexclude, vexclude_scale, st.x, st.y, st.z,
       st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, njvdw, radmin,
-      epsilon, jvdw);
+      epsilon, jvdw, mut, vlam, vcouple);
 }
 
 
@@ -508,8 +530,8 @@ void elj_cu5()
 
       launch_k1b(g::s0, nvdw14, elj_cu2<Ver>, //
                  nev, ev, vir_ev, devx, devy, devz, TINKER_IMAGE_ARGS, cut, off,
-                 st.x, st.y, st.z,             //
-                 njvdw, radmin, epsilon, jvdw, //
+                 st.x, st.y, st.z,                                 //
+                 njvdw, radmin, epsilon, jvdw, mut, vlam, vcouple, //
                  v4scale, nvdw14, vdw14ik, radmin4, epsilon4);
    }
 }

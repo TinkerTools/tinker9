@@ -36,7 +36,7 @@ void echglj_data(rc_op op)
       vdwpr_in_use = false;
       darray::deallocate(cvexclude, cvexclude_scale);
       darray::deallocate(atom_rad, atom_eps);
-      darray::deallocate(chg_coalesced, radeps_coalesced);
+      darray::deallocate(mut_coalesced, chg_coalesced, radeps_coalesced);
    }
 
 
@@ -251,6 +251,7 @@ void echglj_data(rc_op op)
       darray::copyin(g::q0, ncvexclude, cvexclude_scale, scal_vec.data());
       wait_for(g::q0);
       darray::allocate(n, &atom_rad, &atom_eps);
+      darray::allocate(n, &mut_coalesced);
       darray::allocate(n, &chg_coalesced);
       darray::allocate(2 * n, &radeps_coalesced);
    }
@@ -327,6 +328,7 @@ void echglj(int vers)
 }
 
 
+int* mut_coalesced;
 real* chg_coalesced;
 real* radeps_coalesced;
 grad_prec* gx_coalesced;
