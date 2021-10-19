@@ -1,7 +1,7 @@
 #pragma once
+#include "fsinhc.h"
 #include "mathfunc.h"
 #include "seq_def.h"
-
 
 namespace tinker {
 #pragma acc routine seq
@@ -83,8 +83,7 @@ inline void damp_pole_v1(real* restrict dmpik, real* restrict dmpi,
             expi;
       dmpik[4] = 1 -
          ((1 + dampi + 0.5f * dampi2 + dampi3 * div6) +
-          ((dampi4 + dampi5 * div5) +
-           0.1f * (dampi6 * div3 + dampi7 * div21)) *
+          ((dampi4 + dampi5 * div5) + 0.1f * (dampi6 * div3 + dampi7 * div21)) *
              div24) *
             expi;
       if CONSTEXPR (ORDER > 9) {
@@ -501,9 +500,9 @@ inline void damp_pot(real* restrict dmpk, real r, real alphak)
 #pragma acc routine seq
 template <int order>
 SEQ_CUDA
-inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
-                     real rr5, real rr7, real rr9, real rr11, real dmpi,
-                     real dmpk)
+inline void damp_rep_obsolete(real* restrict dmpik, real r, real rinv, real r2,
+                              real rr3, real rr5, real rr7, real rr9, real rr11,
+                              real dmpi, real dmpk)
 {
 #if TINKER_REAL_SIZE == 8
    real eps = 0.001f;
@@ -661,5 +660,107 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
       d5s *= rr11;
       dmpik[5] = pre * (s * d5s + 5 * ds * d4s + 10 * d2s * d3s);
    }
+}
+
+
+/**
+ * rr1: 1/r
+ * ai: dmpi
+ * aj: dmpk
+ */
+#pragma acc routine seq
+template <int order>
+SEQ_CUDA
+inline void damp_rep(real* restrict dmpik, real r, real rr1, real r2, real rr3,
+                     real rr5, real rr7, real rr9, real rr11,
+                     real ai /* dmpi */, real aj /* dmpk */)
+{
+   real pfac = 2 / (ai + aj);
+   pfac = pfac * pfac;
+   pfac = pfac * ai * aj;
+   pfac = pfac * pfac * pfac;
+   pfac *= r2;
+
+   real a = ai * r / 2, b = aj * r / 2;
+   real c = (a + b) / 2, d = (b - a) / 2;
+   real expmc = REAL_EXP(-c);
+
+   real c2 = c * c;
+   real c3 = c2 * c;
+   real c4 = c2 * c2;
+   real d2 = d * d;
+   real d3 = d2 * d;
+   real d4 = d2 * d2;
+   real c2d2 = (c * d) * (c * d);
+
+   real f1d, f2d, f3d, f4d, f5d, f6d, f7d;
+   if CONSTEXPR (order > 9)
+      fsinhc7(d, f1d, f2d, f3d, f4d, f5d, f6d, f7d);
+   else
+      fsinhc6(d, f1d, f2d, f3d, f4d, f5d, f6d);
+
+   real inv3 = 1. / 3, inv15 = 1. / 15, inv105 = 1. / 105, inv945 = 1. / 945;
+
+   // compute
+   // clang-format off
+   real s;
+   s = f1d * (c+1)
+     + f2d * c2;
+   s *= rr1;
+   s *= expmc;
+   dmpik[0] = pfac * s * s;
+
+   real ds;
+   ds = f1d * c2
+      + f2d * ((c-2)*c2 - (c+1)*d2)
+      - f3d * c2d2;
+   ds *= rr3;
+   ds *= expmc;
+   dmpik[1] = pfac * 2 * s * ds;
+
+   real d2s = 0;
+   d2s += f1d * c3
+        + f2d * c2*((c-3)*c - 2*d2);
+   d2s += d2*(f3d * (2*(2-c)*c2 + (c+1)*d2)
+            + f4d * c2d2);
+   d2s *= rr5 * inv3;
+   d2s *= expmc;
+   dmpik[2] = pfac * 2 * (s * d2s + ds * ds);
+
+   real d3s = 0;
+   d3s += f1d * c3*(c+1)
+        + f2d * c3*(c*(c-3) - 3*(d2+1));
+   d3s -= d2*(f3d * 3*c2*((c-3)*c - d2)
+         + d2*(f4d * (3*(2-c)*c2 + (c+1)*d2)
+             + f5d * c2d2));
+   d3s *= rr7 * inv15;
+   d3s *= expmc;
+   dmpik[3] = pfac * 2 * (s * d3s + 3 * ds * d2s);
+
+   real d4s = 0;
+   d4s += f1d * c3*(3 + c*(c+3))
+        + f2d * c3*(c3 - 9*(c+1) - 2*c2 - 4*(c+1)*d2);
+   d4s += d2*(f3d * 2*c3*(6*(c+1) - 2*c2 + 3*d2)
+            + d2*(f4d * 2*c2*(3*(c-3)*c - 2*d2)
+                + f5d * d2*(4*(2-c)*c2 + (c+1)*d2)
+                + f6d * c2*d4));
+   d4s *= rr9 * inv105;
+   d4s *= expmc;
+   dmpik[4] = pfac * 2 * (s * d4s + 4 * ds * d3s + 3 * d2s * d2s);
+
+   if CONSTEXPR (order > 9) {
+      real d5s = 0;
+      d5s += f1d * c3*(15 + c*(15 + c*(c+6)));
+      d5s += f2d * c3*(c4 - 15*c2 - 45*(c+1) - 5*(3+c*(c+3))*d2);
+      d5s -= d2*(f3d * 5*c3*(c3 - 9*(c+1) - 2*c2 - 2*(c+1)*d2)
+               + d2*(f4d * 10*c3*(3 - (c-3)*c + d2)
+                   + d2*(f5d * 5*c2*(2*(c-3)*c - d2)
+                       + f6d * d2*((c+1)*d2 - 5*(c-2)*c2)
+                       + f7d * c2*d4)));
+      d5s *= rr11 * inv945;
+      d5s *= expmc;
+      dmpik[5] = pfac * 2 * (s * d5s + 5 * ds * d4s + 10 * d2s * d3s);
+   }
+   // clang-format on
 }
 }
