@@ -18,7 +18,7 @@ TEST_CASE("EDISP-1-NONDEWALD", "[ff][hippo][edisp][nondewald]")
 
    const double eps_e = test_get_eps(0.0001, 0.0001);
    const double eps_g = test_get_eps(0.0001, 0.0001);
-   const double eps_v = test_get_eps(0.0010, 0.001);
+   const double eps_v = test_get_eps(0.001, 0.001);
 
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/disp.1.txt");
