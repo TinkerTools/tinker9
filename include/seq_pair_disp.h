@@ -1,5 +1,6 @@
 #pragma once
 #include "mathfunc.h"
+#include "seq_damp_hippodisp.h"
 #include "seq_def.h"
 #include "seq_switch.h"
 
@@ -8,9 +9,10 @@ namespace tinker {
 #pragma acc routine seq
 template <bool DO_G, class DTYP, int SCALE>
 SEQ_CUDA
-void pair_disp(real r, real r2, real rr1, //
-               real dspscale, real aewald, real ci, real ai, real ck, real ak,
-               real edcut, real edoff, real& restrict e, real& restrict de)
+void pair_disp_obsolete(real r, real r2, real rr1, //
+                        real dspscale, real aewald, real ci, real ai, real ck,
+                        real ak, real edcut, real edoff, real& restrict e,
+                        real& restrict de)
 {
    if (r > edoff) {
       e = 0;
@@ -71,6 +73,65 @@ void pair_disp(real r, real r2, real rr1, //
       dspscale = 1;
 
 
+   if CONSTEXPR (eq<DTYP, DEWALD>()) {
+      real ralpha2 = r2 * aewald * aewald;
+      real term = 1 + ralpha2 + 0.5f * ralpha2 * ralpha2;
+      real expterm = REAL_EXP(-ralpha2);
+      real expa = expterm * term;
+      e = -ci * ck * rr6 * (dspscale * damp * damp + expa - 1);
+      if CONSTEXPR (DO_G) {
+         real rterm = -ralpha2 * ralpha2 * ralpha2 * rr1 * expterm;
+         de = -6 * e * rr1 -
+            ci * ck * rr6 * (rterm + 2 * dspscale * damp * ddamp);
+      }
+   } else if CONSTEXPR (eq<DTYP, NON_EWALD_TAPER>()) {
+      e = -ci * ck * rr6;
+      if CONSTEXPR (DO_G) {
+         de = -6 * e * rr1;
+         de = de * damp * damp + 2 * e * damp * ddamp;
+      }
+      e = e * damp * damp;
+      if (r > edcut) {
+         real taper, dtaper;
+         switch_taper5<DO_G>(r, edcut, edoff, taper, dtaper);
+         if CONSTEXPR (DO_G)
+            de = e * dtaper + de * taper;
+         e = e * taper;
+      }
+      e *= dspscale;
+      if CONSTEXPR (DO_G)
+         de *= dspscale;
+   }
+}
+
+
+#pragma acc routine seq
+template <bool DO_G, class DTYP, int SCALE>
+SEQ_CUDA
+void pair_disp(real r, real r2, real rr1, //
+               real dspscale, real aewald, real ci, real ai, real ck, real ak,
+               real edcut, real edoff, real& restrict e, real& restrict de)
+{
+   if (r > edoff) {
+      e = 0;
+      if CONSTEXPR (DO_G) {
+         de = 0;
+      }
+      return;
+   }
+
+
+   real rr2 = rr1 * rr1;
+   real rr6 = rr2 * rr2 * rr2;
+   real dmpik[2], damp, ddamp;
+   damp_hippodisp<DO_G>(dmpik, r, rr1, ai, ak);
+   damp = dmpik[0];
+   if CONSTEXPR (DO_G)
+      ddamp = dmpik[1];
+
+
+   if CONSTEXPR (SCALE == 1)
+      dspscale = 1;
    if CONSTEXPR (eq<DTYP, DEWALD>()) {
       real ralpha2 = r2 * aewald * aewald;
       real term = 1 + ralpha2 + 0.5f * ralpha2 * ralpha2;

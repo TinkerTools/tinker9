@@ -1,0 +1,23 @@
+---
+Checks: >
+   clang-diagnostic-*,
+   clang-analyzer-*,
+   bugprone-*,
+   cert-*,
+   cppcoreguidelines-*,
+   -cppcoreguidelines-avoid-c-arrays,
+   -cppcoreguidelines-pro-bounds-constant-array-index,
+   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+   clang-analyzer-*,
+   misc-*,
+   modernize-*,
+   performance-*,
+   portability-*,
+   readability-*,
+   -readability-braces-around-statements,
+   -readability-implicit-bool-conversion
+WarningsAsErrors:         ''
+HeaderFilterRegex:        ''
+AnalyzeTemporaryDtors: false
+FormatStyle:            none
+...
