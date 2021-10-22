@@ -4,6 +4,204 @@
 #include "seq_def.h"
 
 namespace tinker {
+#pragma acc routine seq
+template <int DirOrder, int MutOrder>
+SEQ_CUDA
+inline void damp_gordon1(real* restrict dmpij, real* restrict dmpi,
+                         real* restrict dmpj, real r, real ai, real aj)
+{
+   const real div3 = 1 / ((real)3);
+   const real div6 = 1 / ((real)6);
+   const real div15 = 1 / ((real)15);
+   const real div30 = 1 / ((real)30);
+   const real div105 = 1 / ((real)105);
+   const real div945 = 1 / ((real)945);
+
+   real a, expi, b, expk;
+   a = ai * r, b = aj * r;
+   expi = REAL_EXP(-a), expk = REAL_EXP(-b);
+
+   // dmpi, dmpj
+   real a2, a3, a4, a5, b2, b3, b4, b5;
+
+   if CONSTEXPR (DirOrder >= 1) {
+      dmpi[0] = (1 + 0.5f * a) * expi;
+      dmpj[0] = (1 + 0.5f * b) * expk;
+   }
+   if CONSTEXPR (DirOrder >= 3) {
+      a2 = a * a, b2 = b * b;
+      dmpi[1] = (1 + a + 0.5f * a2) * expi;
+      dmpj[1] = (1 + b + 0.5f * b2) * expk;
+   }
+   if CONSTEXPR (DirOrder >= 5) {
+      a3 = a * a2, b3 = b * b2;
+      dmpi[2] = (1 + a + 0.5f * a2 + a3 * div6) * expi;
+      dmpj[2] = (1 + b + 0.5f * b2 + b3 * div6) * expk;
+   }
+   if CONSTEXPR (DirOrder >= 7) {
+      a4 = a2 * a2, b4 = b2 * b2;
+      dmpi[3] = (1 + a + 0.5f * a2 + a3 * div6 + a4 * div30) * expi;
+      dmpj[3] = (1 + b + 0.5f * b2 + b3 * div6 + b4 * div30) * expk;
+   }
+   if CONSTEXPR (DirOrder >= 9) {
+      a5 = a2 * a3, b5 = b2 * b3;
+      dmpi[4] =
+         (1 + a + 0.5f * a2 + a3 * div6 + (4 * a4 + 0.5f * a5) * div105) * expi;
+      dmpj[4] =
+         (1 + b + 0.5f * b2 + b3 * div6 + (4 * b4 + 0.5f * b5) * div105) * expk;
+   }
+
+   // dmpij
+   if CONSTEXPR (MutOrder >= 1) {
+      real c = (b + a) / 2, d = (b - a) / 2;
+      real expmc = REAL_EXP(-c);
+      real t = (ai + aj) * r;
+      real x = a / t, y = 1 - x;
+      real ec = expmc / 16, ea = expi / 32, eb = expk / 32;
+
+      real c2 = c * c, c3 = c * c * c;
+      real d2 = d * d;
+      real c2d2 = c2 * d2;
+
+      real f1d, f2d, f3d, f4d, f5d, f6d, f7d;
+      if CONSTEXPR (MutOrder >= 11)
+         fsinhc7(d, f1d, f2d, f3d, f4d, f5d, f6d, f7d);
+      else if CONSTEXPR (MutOrder >= 9)
+         fsinhc6(d, f1d, f2d, f3d, f4d, f5d, f6d);
+      else if CONSTEXPR (MutOrder >= 7)
+         fsinhc5(d, f1d, f2d, f3d, f4d, f5d);
+      else if CONSTEXPR (MutOrder >= 5)
+         fsinhc4(d, f1d, f2d, f3d, f4d);
+      else if CONSTEXPR (MutOrder >= 3)
+         fsinhc3(d, f1d, f2d, f3d);
+      else
+         fsinhc2(d, f1d, f2d);
+
+#define TINKER_GORDON1_L00(X) (4 * ((X) * ((X) * (2 * (X)-3) - 3) + 6))
+#define TINKER_GORDON1_L01(X) ((X) * (4 * ((X)-3) * (X) + 11) - 2)
+#define TINKER_GORDON1_M0(a)  (1)
+#define TINKER_GORDON1_M1(a)  ((a) + 1)
+#define TINKER_GORDON1_M2(a)  ((a) * ((a) + 3) + 3)
+#define TINKER_GORDON1_M3(a)  ((a) * ((a) * ((a) + 6) + 15) + 15)
+#define TINKER_GORDON1_M4(a)  ((a) * ((a) * ((a) * ((a) + 10) + 45) + 105) + 105)
+#define TINKER_GORDON1_M5(a)                                                   \
+   ((a) * ((a) * ((a) * ((a) * ((a) + 15) + 105) + 420) + 945) + 945)
+
+      real l00x, l01x, l00y, l01y;
+      if CONSTEXPR (MutOrder >= 1) {
+         real k01, k02;
+         k01 = 3 * c * (c + 3);
+         k02 = c3;
+         l00x = TINKER_GORDON1_L00(x), l01x = TINKER_GORDON1_L01(x) * t;
+         l00y = TINKER_GORDON1_L00(y), l01y = TINKER_GORDON1_L01(y) * t;
+         dmpij[0] = ((k01 * f1d + k02 * f2d) * ec + (l00x + l01x) * ea +
+                     (l00y + l01y) * eb);
+      }
+      if CONSTEXPR (MutOrder >= 3) {
+         real k11, k12, k13, l10x, l11x, l10y, l11y;
+         k11 = 3 * c2 * (c + 2);
+         k12 = c * ((c - 2) * c2 - 3 * (c + 3) * d2);
+         k13 = -c3 * d2;
+         l10x = TINKER_GORDON1_M1(a) * l00x,
+         l11x = a * TINKER_GORDON1_M0(a) * l01x;
+         l10y = TINKER_GORDON1_M1(b) * l00y,
+         l11y = b * TINKER_GORDON1_M0(b) * l01y;
+         dmpij[1] = ((k11 * f1d + k12 * f2d + k13 * f3d) * ec +
+                     (l10x + l11x) * ea + (l10y + l11y) * eb);
+      }
+      if CONSTEXPR (MutOrder >= 5) {
+         real k21, k22, k23, k24, l20x, l21x, l20y, l21y;
+         k21 = 3 * c2 * (c * (c + 2) + 2);
+         k22 = c2 * ((c - 3) * c2 - 6 * (c + 2) * d2);
+         k23 = 3 * (c + 3) * d2 - 2 * (c - 2) * c2;
+         k24 = c2d2;
+         l20x = TINKER_GORDON1_M2(a) * l00x,
+         l21x = a * TINKER_GORDON1_M1(a) * l01x;
+         l20y = TINKER_GORDON1_M2(b) * l00y,
+         l21y = b * TINKER_GORDON1_M1(b) * l01y;
+         dmpij[2] = div3 *
+            ((k21 * f1d + k22 * f2d + c * d2 * (k23 * f3d + k24 * f4d)) * ec +
+             (l20x + l21x) * ea + (l20y + l21y) * eb);
+      }
+      if CONSTEXPR (MutOrder >= 7) {
+         real k31, k32, k33, k34, k35, l30x, l31x, l30y, l31y;
+         k31 = 3 * c2 * (c * (c * (c + 3) + 6) + 6);
+         k32 = c2 * (c2 * ((c - 3) * c - 3) - 9 * (c * (c + 2) + 2) * d2);
+         k33 = c2 * (9 * (c + 2) * d2 - 3 * (c - 3) * c2);
+         k34 = 3 * (c - 2) * c3 - 3 * c * (c + 3) * d2;
+         k35 = -c3 * d2;
+         l30x = TINKER_GORDON1_M3(a) * l00x,
+         l31x = a * TINKER_GORDON1_M2(a) * l01x;
+         l30y = TINKER_GORDON1_M3(b) * l00y,
+         l31y = b * TINKER_GORDON1_M2(b) * l01y;
+         dmpij[3] = div15 *
+            ((k31 * f1d + k32 * f2d +
+              d2 * (k33 * f3d + d2 * (k34 * f4d + k35 * f5d))) *
+                ec +
+             (l30x + l31x) * ea + (l30y + l31y) * eb);
+      }
+      if CONSTEXPR (MutOrder >= 9) {
+         real k41, k42, k43, k44, k45, k46, l40x, l41x, l40y, l41y;
+         k41 = 3 * c2 * (c * (c * (c * (c + 5) + 15) + 30) + 30);
+         k42 = c2 *
+            (c2 * (c * ((c - 2) * c - 9) - 9) -
+             12 * (c * (c * (c + 3) + 6) + 6) * d2);
+         k43 = c2 * (18 * (c * (c + 2) + 2) * d2 - 4 * c2 * ((c - 3) * c - 3));
+         k44 = c2 * (6 * (c - 3) * c2 - 12 * (c + 2) * d2);
+         k45 = c * (3 * (c + 3) * d2 - 4 * (c - 2) * c2);
+         k46 = c3 * d2;
+         l40x = TINKER_GORDON1_M4(a) * l00x,
+         l41x = a * TINKER_GORDON1_M3(a) * l01x;
+         l40y = TINKER_GORDON1_M4(b) * l00y,
+         l41y = b * TINKER_GORDON1_M3(b) * l01y;
+         dmpij[4] = div105 *
+            ((k41 * f1d + k42 * f2d +
+              d2 *
+                 (k43 * f3d +
+                  d2 * (k44 * f4d + d2 * (k45 * f5d + k46 * f6d)))) *
+                ec +
+             (l40x + l41x) * ea + (l40y + l41y) * eb);
+      }
+      if CONSTEXPR (MutOrder >= 11) {
+         real k51, k52, k53, k54, k55, k56, k57, l50x, l51x, l50y, l51y;
+         k51 = 3 * c2 * (c * (c * (c * (c * (c + 8) + 35) + 105) + 210) + 210);
+         k52 = c2 *
+            (c2 * (c * (c3 - 15 * c - 45) - 45) -
+             15 * (c * (c * (c * (c + 5) + 15) + 30) + 30) * d2);
+         k53 = c2 *
+            (5 * (c * (9 - (c - 2) * c) + 9) * c2 +
+             30 * (c * (c * (c + 3) + 6) + 6) * d2);
+         k54 = c2 * (10 * c2 * ((c - 3) * c - 3) - 30 * (c * (c + 2) + 2) * d2);
+         k55 = c2 * (15 * (c + 2) * d2 - 10 * (c - 3) * c2);
+         k56 = c * (5 * (c - 2) * c2 - 3 * (c + 3) * d2);
+         k57 = -c3 * d2;
+         l50x = TINKER_GORDON1_M5(a) * l00x,
+         l51x = a * TINKER_GORDON1_M4(a) * l01x;
+         l50y = TINKER_GORDON1_M5(b) * l00y,
+         l51y = b * TINKER_GORDON1_M4(b) * l01y;
+         dmpij[5] = div945 *
+            ((k51 * f1d + k52 * f2d +
+              d2 *
+                 (k53 * f3d +
+                  d2 *
+                     (k54 * f4d +
+                      d2 * (k55 * f5d + d2 * (k56 * f6d + k57 * f7d))))) *
+                ec +
+             (l50x + l51x) * ea + (l50y + l51y) * eb);
+      }
+
+#undef TINKER_GORDON1_L00
+#undef TINKER_GORDON1_L01
+#undef TINKER_GORDON1_M0
+#undef TINKER_GORDON1_M1
+#undef TINKER_GORDON1_M2
+#undef TINKER_GORDON1_M3
+#undef TINKER_GORDON1_M4
+#undef TINKER_GORDON1_M5
+   }
+}
+
+
 /**
  * \deprecated
  */
@@ -193,278 +391,32 @@ SEQ_CUDA
 inline void damp_pole_v2(real* restrict dmpij, real* restrict dmpi,
                          real* restrict dmpj, real r, real ai, real aj)
 {
-   // GORDON1
-
-   const real div3 = 1 / ((real)3);
-   const real div6 = 1 / ((real)6);
-   const real div15 = 1 / ((real)15);
-   const real div30 = 1 / ((real)30);
-   const real div105 = 1 / ((real)105);
-   const real div945 = 1 / ((real)945);
-
-   // dmpi, dmpj
-
-   real a = ai * r;
-   real expi = REAL_EXP(-a);
-   real a2 = a * a;
-   real a3 = a * a2;
-   real a4 = a2 * a2;
-   real a5 = a2 * a3;
-
-   dmpi[0] = (1 + 0.5f * a) * expi;
-   dmpi[1] = (1 + a + 0.5f * a2) * expi;
-   dmpi[2] = (1 + a + 0.5f * a2 + a3 * div6) * expi;
-   dmpi[3] = (1 + a + 0.5f * a2 + a3 * div6 + a4 * div30) * expi;
-   dmpi[4] =
-      (1 + a + 0.5f * a2 + a3 * div6 + (4 * a4 + 0.5f * a5) * div105) * expi;
-
-   real b = aj * r;
-   real expk = REAL_EXP(-b);
-   real b2 = b * b;
-   real b3 = b * b2;
-   real b4 = b2 * b2;
-   real b5 = b2 * b3;
-
-   dmpj[0] = (1 + 0.5f * b) * expk;
-   dmpj[1] = (1 + b + 0.5f * b2) * expk;
-   dmpj[2] = (1 + b + 0.5f * b2 + b3 * div6) * expk;
-   dmpj[3] = (1 + b + 0.5f * b2 + b3 * div6 + b4 * div30) * expk;
-   dmpj[4] =
-      (1 + b + 0.5f * b2 + b3 * div6 + (4 * b4 + 0.5f * b5) * div105) * expk;
-
-   // dmpij
-
-   real c = (b + a) / 2, d = (b - a) / 2;
-   real expmc = REAL_EXP(-c);
-   real t = (ai + aj) * r;
-   real x = a / t, y = 1 - x;
-
-   real c2 = c * c, c3 = c * c * c;
-   real d2 = d * d;
-   real c2d2 = c2 * d2;
-
-   real f1d, f2d, f3d, f4d, f5d, f6d, f7d;
-   if CONSTEXPR (order > 9)
-      fsinhc7(d, f1d, f2d, f3d, f4d, f5d, f6d, f7d);
-   else
-      fsinhc6(d, f1d, f2d, f3d, f4d, f5d, f6d);
-
-   real ec = expmc / 16, ea = expi / 32, eb = expk / 32;
-
-#define TINKER_GORDON1_L00(X) (4 * ((X) * ((X) * (2 * (X)-3) - 3) + 6))
-#define TINKER_GORDON1_L01(X) ((X) * (4 * ((X)-3) * (X) + 11) - 2)
-#define TINKER_GORDON1_M0(a)  (1)
-#define TINKER_GORDON1_M1(a)  ((a) + 1)
-#define TINKER_GORDON1_M2(a)  ((a) * ((a) + 3) + 3)
-#define TINKER_GORDON1_M3(a)  ((a) * ((a) * ((a) + 6) + 15) + 15)
-#define TINKER_GORDON1_M4(a)  ((a) * ((a) * ((a) * ((a) + 10) + 45) + 105) + 105)
-#define TINKER_GORDON1_M5(a)                                                   \
-   ((a) * ((a) * ((a) * ((a) * ((a) + 15) + 105) + 420) + 945) + 945)
-
-   // [0]
-   real k01, k02, l00x, l01x, l00y, l01y;
-   k01 = 3 * c * (c + 3);
-   k02 = c3;
-   l00x = TINKER_GORDON1_L00(x), l01x = TINKER_GORDON1_L01(x) * t;
-   l00y = TINKER_GORDON1_L00(y), l01y = TINKER_GORDON1_L01(y) * t;
-   dmpij[0] =
-      ((k01 * f1d + k02 * f2d) * ec + (l00x + l01x) * ea + (l00y + l01y) * eb);
-
-   // [1]
-   real k11, k12, k13, l10x, l11x, l10y, l11y;
-   k11 = 3 * c2 * (c + 2);
-   k12 = c * ((c - 2) * c2 - 3 * (c + 3) * d2);
-   k13 = -c3 * d2;
-   l10x = TINKER_GORDON1_M1(a) * l00x, l11x = a * TINKER_GORDON1_M0(a) * l01x;
-   l10y = TINKER_GORDON1_M1(b) * l00y, l11y = b * TINKER_GORDON1_M0(b) * l01y;
-   dmpij[1] = ((k11 * f1d + k12 * f2d + k13 * f3d) * ec + (l10x + l11x) * ea +
-               (l10y + l11y) * eb);
-
-   // [2]
-   real k21, k22, k23, k24, l20x, l21x, l20y, l21y;
-   k21 = 3 * c2 * (c * (c + 2) + 2);
-   k22 = c2 * ((c - 3) * c2 - 6 * (c + 2) * d2);
-   k23 = 3 * (c + 3) * d2 - 2 * (c - 2) * c2;
-   k24 = c2d2;
-   l20x = TINKER_GORDON1_M2(a) * l00x, l21x = a * TINKER_GORDON1_M1(a) * l01x;
-   l20y = TINKER_GORDON1_M2(b) * l00y, l21y = b * TINKER_GORDON1_M1(b) * l01y;
-   dmpij[2] = div3 *
-      ((k21 * f1d + k22 * f2d + c * d2 * (k23 * f3d + k24 * f4d)) * ec +
-       (l20x + l21x) * ea + (l20y + l21y) * eb);
-
-   // [3]
-   real k31, k32, k33, k34, k35, l30x, l31x, l30y, l31y;
-   k31 = 3 * c2 * (c * (c * (c + 3) + 6) + 6);
-   k32 = c2 * (c2 * ((c - 3) * c - 3) - 9 * (c * (c + 2) + 2) * d2);
-   k33 = c2 * (9 * (c + 2) * d2 - 3 * (c - 3) * c2);
-   k34 = 3 * (c - 2) * c3 - 3 * c * (c + 3) * d2;
-   k35 = -c3 * d2;
-   l30x = TINKER_GORDON1_M3(a) * l00x, l31x = a * TINKER_GORDON1_M2(a) * l01x;
-   l30y = TINKER_GORDON1_M3(b) * l00y, l31y = b * TINKER_GORDON1_M2(b) * l01y;
-   dmpij[3] = div15 *
-      ((k31 * f1d + k32 * f2d +
-        d2 * (k33 * f3d + d2 * (k34 * f4d + k35 * f5d))) *
-          ec +
-       (l30x + l31x) * ea + (l30y + l31y) * eb);
-
-   // [4]
-   real k41, k42, k43, k44, k45, k46, l40x, l41x, l40y, l41y;
-   k41 = 3 * c2 * (c * (c * (c * (c + 5) + 15) + 30) + 30);
-   k42 = c2 *
-      (c2 * (c * ((c - 2) * c - 9) - 9) -
-       12 * (c * (c * (c + 3) + 6) + 6) * d2);
-   k43 = c2 * (18 * (c * (c + 2) + 2) * d2 - 4 * c2 * ((c - 3) * c - 3));
-   k44 = c2 * (6 * (c - 3) * c2 - 12 * (c + 2) * d2);
-   k45 = c * (3 * (c + 3) * d2 - 4 * (c - 2) * c2);
-   k46 = c3 * d2;
-   l40x = TINKER_GORDON1_M4(a) * l00x, l41x = a * TINKER_GORDON1_M3(a) * l01x;
-   l40y = TINKER_GORDON1_M4(b) * l00y, l41y = b * TINKER_GORDON1_M3(b) * l01y;
-   dmpij[4] = div105 *
-      ((k41 * f1d + k42 * f2d +
-        d2 * (k43 * f3d + d2 * (k44 * f4d + d2 * (k45 * f5d + k46 * f6d)))) *
-          ec +
-       (l40x + l41x) * ea + (l40y + l41y) * eb);
-
-   // [5]
-   if CONSTEXPR (order > 9) {
-      real k51 = 0, k52 = 0, k53 = 0, k54 = 0, k55 = 0, k56 = 0, k57 = 0, l50x,
-           l51x, l50y, l51y;
-      k51 = 3 * c2 * (c * (c * (c * (c * (c + 8) + 35) + 105) + 210) + 210);
-      k52 = c2 *
-         (c2 * (c * (c3 - 15 * c - 45) - 45) -
-          15 * (c * (c * (c * (c + 5) + 15) + 30) + 30) * d2);
-      k53 = c2 *
-         (5 * (c * (9 - (c - 2) * c) + 9) * c2 +
-          30 * (c * (c * (c + 3) + 6) + 6) * d2);
-      k54 = c2 * (10 * c2 * ((c - 3) * c - 3) - 30 * (c * (c + 2) + 2) * d2);
-      k55 = c2 * (15 * (c + 2) * d2 - 10 * (c - 3) * c2);
-      k56 = c * (5 * (c - 2) * c2 - 3 * (c + 3) * d2);
-      k57 = -c3 * d2;
-      l50x = TINKER_GORDON1_M5(a) * l00x,
-      l51x = a * TINKER_GORDON1_M4(a) * l01x;
-      l50y = TINKER_GORDON1_M5(b) * l00y,
-      l51y = b * TINKER_GORDON1_M4(b) * l01y;
-      dmpij[5] = div945 *
-         ((k51 * f1d + k52 * f2d +
-           d2 *
-              (k53 * f3d +
-               d2 *
-                  (k54 * f4d +
-                   d2 * (k55 * f5d + d2 * (k56 * f6d + k57 * f7d))))) *
-             ec +
-          (l50x + l51x) * ea + (l50y + l51y) * eb);
-   }
-
-#undef TINKER_GORDON1_L00
-#undef TINKER_GORDON1_L01
-#undef TINKER_GORDON1_M0
-#undef TINKER_GORDON1_M1
-#undef TINKER_GORDON1_M2
-#undef TINKER_GORDON1_M3
-#undef TINKER_GORDON1_M4
-#undef TINKER_GORDON1_M5
+   damp_gordon1<9, order>(dmpij, dmpi, dmpj, r, ai, aj);
 }
 
 
-#pragma acc routine seq
-SEQ_CUDA
+SEQ_ROUTINE
 inline void damp_dir(real* restrict dmpi, real* restrict dmpk, real r,
                      real alphai, real alphak)
 {
-   // GORDON1
-   const real div6 = 1 / ((real)6);
-   const real div30 = 1 / ((real)30);
-
-   real dampi = alphai * r;
-   real dampk = alphak * r;
-   real expi = REAL_EXP(-dampi);
-   real expk = REAL_EXP(-dampk);
-
-   real dampi2 = dampi * dampi;
-   real dampi3 = dampi * dampi2;
-   real dampi4 = dampi2 * dampi2;
-
-   // core-valence
-
-   dmpi[1] = 1 - (1 + dampi + 0.5f * dampi2) * expi;
-   dmpi[2] = 1 - (1 + dampi + 0.5f * dampi2 + dampi3 * div6) * expi;
-   dmpi[3] =
-      1 - (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + dampi4 * div30) * expi;
-
-   real dampk2 = dampk * dampk;
-   real dampk3 = dampk * dampk2;
-   real dampk4 = dampk2 * dampk2;
-
-   dmpk[1] = 1 - (1 + dampk + 0.5f * dampk2) * expk;
-   dmpk[2] = 1 - (1 + dampk + 0.5f * dampk2 + dampk3 * div6) * expk;
-   dmpk[3] =
-      1 - (1 + dampk + 0.5f * dampk2 + dampk3 * div6 + dampk4 * div30) * expk;
+   damp_gordon1<7, 0>(nullptr, dmpi, dmpk, r, alphai, alphak);
+   // [0] is not used in the subsequent calculation.
+   dmpi[1] = 1 - dmpi[1];
+   dmpi[2] = 1 - dmpi[2];
+   dmpi[3] = 1 - dmpi[3];
+   dmpk[1] = 1 - dmpk[1];
+   dmpk[2] = 1 - dmpk[2];
+   dmpk[3] = 1 - dmpk[3];
 }
 
 
-#pragma acc routine seq
-SEQ_CUDA
+SEQ_ROUTINE
 inline void damp_mut(real* restrict dmpik, real r, real alphai, real alphak)
 {
-#if TINKER_REAL_SIZE == 8
-   real eps = 0.001f;
-#elif TINKER_REAL_SIZE == 4
-   real eps = 0.05f;
-#endif
-
-   real diff = REAL_ABS(alphai - alphak);
-
-   if (diff < eps)
-      alphai = 0.5f * (alphai + alphak);
-
-   real dampi = alphai * r;
-   real dampk = alphak * r;
-   real expi = REAL_EXP(-dampi);
-   real expk = REAL_EXP(-dampk);
-
-   real dampi2 = dampi * dampi;
-
-   // divisions
-   const real div6 = 1 / ((real)6);
-
-   // GORDON1
-   real dampi3 = dampi * dampi2;
-
-   if (diff < eps) {
-      real dampi4 = dampi2 * dampi2;
-      real dampi5 = dampi2 * dampi3;
-      const real div24 = 1 / ((real)24);
-      const real div48 = 1 / ((real)48);
-      const real div144 = 1 / ((real)144);
-
-      dmpik[1] =
-         1 - (1 + dampi + 0.5f * dampi2 + (7 * dampi3 + dampi4) * div48) * expi;
-      dmpik[2] = 1 -
-         (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + dampi4 * div24 +
-          dampi5 * div144) *
-            expi;
-   } else {
-      real dampk2 = dampk * dampk;
-      real dampk3 = dampk * dampk2;
-      real alphai2 = alphai * alphai;
-      real alphak2 = alphak * alphak;
-      real termi = alphak2 / (alphak2 - alphai2);
-      real termk = alphai2 / (alphai2 - alphak2);
-      real termi2 = termi * termi;
-      real termk2 = termk * termk;
-
-      const real div3 = 1 / ((real)3);
-
-      dmpik[1] = 1 - termi2 * (1 + dampi + 0.5f * dampi2) * expi -
-         termk2 * (1 + dampk + 0.5f * dampk2) * expk -
-         2 * termi2 * termk * (1 + dampi) * expi -
-         2 * termk2 * termi * (1 + dampk) * expk;
-      dmpik[2] = 1 -
-         termi2 * (1 + dampi + 0.5f * dampi2 + dampi3 * div6) * expi -
-         termk2 * (1 + dampk + 0.5f * dampk2 + dampk3 * div6) * expk -
-         2 * termi2 * termk * (1 + dampi + dampi2 * div3) * expi -
-         2 * termk2 * termi * (1 + dampk + dampk2 * div3) * expk;
-   }
+   damp_gordon1<0, 5>(dmpik, nullptr, nullptr, r, alphai, alphak);
+   // [0] is not used in the subsequent calculation.
+   dmpik[1] = 1 - dmpik[1];
+   dmpik[2] = 1 - dmpik[2];
 }
 
 
