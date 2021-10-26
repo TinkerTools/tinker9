@@ -2,10 +2,14 @@ cmake_minimum_required (VERSION 3.12)
 
 
 #'PATTERN' ==> [=[PATTERN]=]
-set (__T9_GREP_ARGS [=[(?<=OBJS =)(.*\n)*.*(?=EXEFILES =)]=])
+# The old command
+# grep -Poz '(?<=OBJS =)(.*\n)*.*(?=EXEFILES =)' Makefile
+# does not work with the BSD grep.
+# sed -ne '/OBJS =/,/EXEFILES =/{s/OBJS =//; /EXEFILES =/!p;}' Makefile
+set (__T9_GREP_ARGS [=[/OBJS =/,/EXEFILES =/{s/OBJS =//\; /EXEFILES =/!p\;}]=])
 execute_process (
    COMMAND
-      grep -Poz ${__T9_GREP_ARGS} Makefile
+      sed -ne ${__T9_GREP_ARGS} Makefile
    WORKING_DIRECTORY
       ${CMAKE_CURRENT_SOURCE_DIR}/../tinker/make
    OUTPUT_VARIABLE
