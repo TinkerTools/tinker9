@@ -25,29 +25,29 @@ inline void damp_gordon1(real* restrict dmpij, real* restrict dmpi,
    real a2, a3, a4, a5, b2, b3, b4, b5;
 
    if CONSTEXPR (DirOrder >= 1) {
-      dmpi[0] = (1 + 0.5f * a) * expi;
-      dmpj[0] = (1 + 0.5f * b) * expk;
+      dmpi[0] = 1 - (1 + 0.5f * a) * expi;
+      dmpj[0] = 1 - (1 + 0.5f * b) * expk;
    }
    if CONSTEXPR (DirOrder >= 3) {
       a2 = a * a, b2 = b * b;
-      dmpi[1] = (1 + a + 0.5f * a2) * expi;
-      dmpj[1] = (1 + b + 0.5f * b2) * expk;
+      dmpi[1] = 1 - (1 + a + 0.5f * a2) * expi;
+      dmpj[1] = 1 - (1 + b + 0.5f * b2) * expk;
    }
    if CONSTEXPR (DirOrder >= 5) {
       a3 = a * a2, b3 = b * b2;
-      dmpi[2] = (1 + a + 0.5f * a2 + a3 * div6) * expi;
-      dmpj[2] = (1 + b + 0.5f * b2 + b3 * div6) * expk;
+      dmpi[2] = 1 - (1 + a + 0.5f * a2 + a3 * div6) * expi;
+      dmpj[2] = 1 - (1 + b + 0.5f * b2 + b3 * div6) * expk;
    }
    if CONSTEXPR (DirOrder >= 7) {
       a4 = a2 * a2, b4 = b2 * b2;
-      dmpi[3] = (1 + a + 0.5f * a2 + a3 * div6 + a4 * div30) * expi;
-      dmpj[3] = (1 + b + 0.5f * b2 + b3 * div6 + b4 * div30) * expk;
+      dmpi[3] = 1 - (1 + a + 0.5f * a2 + a3 * div6 + a4 * div30) * expi;
+      dmpj[3] = 1 - (1 + b + 0.5f * b2 + b3 * div6 + b4 * div30) * expk;
    }
    if CONSTEXPR (DirOrder >= 9) {
       a5 = a2 * a3, b5 = b2 * b3;
-      dmpi[4] =
+      dmpi[4] = 1 -
          (1 + a + 0.5f * a2 + a3 * div6 + (4 * a4 + 0.5f * a5) * div105) * expi;
-      dmpj[4] =
+      dmpj[4] = 1 -
          (1 + b + 0.5f * b2 + b3 * div6 + (4 * b4 + 0.5f * b5) * div105) * expk;
    }
 
@@ -94,8 +94,9 @@ inline void damp_gordon1(real* restrict dmpij, real* restrict dmpi,
          k02 = c3;
          l00x = TINKER_GORDON1_L00(x), l01x = TINKER_GORDON1_L01(x) * t;
          l00y = TINKER_GORDON1_L00(y), l01y = TINKER_GORDON1_L01(y) * t;
-         dmpij[0] = ((k01 * f1d + k02 * f2d) * ec + (l00x + l01x) * ea +
-                     (l00y + l01y) * eb);
+         dmpij[0] = 1 -
+            ((k01 * f1d + k02 * f2d) * ec + (l00x + l01x) * ea +
+             (l00y + l01y) * eb);
       }
       if CONSTEXPR (MutOrder >= 3) {
          real k11, k12, k13, l10x, l11x, l10y, l11y;
@@ -106,8 +107,9 @@ inline void damp_gordon1(real* restrict dmpij, real* restrict dmpi,
          l11x = a * TINKER_GORDON1_M0(a) * l01x;
          l10y = TINKER_GORDON1_M1(b) * l00y,
          l11y = b * TINKER_GORDON1_M0(b) * l01y;
-         dmpij[1] = ((k11 * f1d + k12 * f2d + k13 * f3d) * ec +
-                     (l10x + l11x) * ea + (l10y + l11y) * eb);
+         dmpij[1] = 1 -
+            ((k11 * f1d + k12 * f2d + k13 * f3d) * ec + (l10x + l11x) * ea +
+             (l10y + l11y) * eb);
       }
       if CONSTEXPR (MutOrder >= 5) {
          real k21, k22, k23, k24, l20x, l21x, l20y, l21y;
@@ -119,9 +121,11 @@ inline void damp_gordon1(real* restrict dmpij, real* restrict dmpi,
          l21x = a * TINKER_GORDON1_M1(a) * l01x;
          l20y = TINKER_GORDON1_M2(b) * l00y,
          l21y = b * TINKER_GORDON1_M1(b) * l01y;
-         dmpij[2] = div3 *
-            ((k21 * f1d + k22 * f2d + c * d2 * (k23 * f3d + k24 * f4d)) * ec +
-             (l20x + l21x) * ea + (l20y + l21y) * eb);
+         dmpij[2] = 1 -
+            div3 *
+               ((k21 * f1d + k22 * f2d + c * d2 * (k23 * f3d + k24 * f4d)) *
+                   ec +
+                (l20x + l21x) * ea + (l20y + l21y) * eb);
       }
       if CONSTEXPR (MutOrder >= 7) {
          real k31, k32, k33, k34, k35, l30x, l31x, l30y, l31y;
@@ -134,11 +138,12 @@ inline void damp_gordon1(real* restrict dmpij, real* restrict dmpi,
          l31x = a * TINKER_GORDON1_M2(a) * l01x;
          l30y = TINKER_GORDON1_M3(b) * l00y,
          l31y = b * TINKER_GORDON1_M2(b) * l01y;
-         dmpij[3] = div15 *
-            ((k31 * f1d + k32 * f2d +
-              d2 * (k33 * f3d + d2 * (k34 * f4d + k35 * f5d))) *
-                ec +
-             (l30x + l31x) * ea + (l30y + l31y) * eb);
+         dmpij[3] = 1 -
+            div15 *
+               ((k31 * f1d + k32 * f2d +
+                 d2 * (k33 * f3d + d2 * (k34 * f4d + k35 * f5d))) *
+                   ec +
+                (l30x + l31x) * ea + (l30y + l31y) * eb);
       }
       if CONSTEXPR (MutOrder >= 9) {
          real k41, k42, k43, k44, k45, k46, l40x, l41x, l40y, l41y;
@@ -154,13 +159,14 @@ inline void damp_gordon1(real* restrict dmpij, real* restrict dmpi,
          l41x = a * TINKER_GORDON1_M3(a) * l01x;
          l40y = TINKER_GORDON1_M4(b) * l00y,
          l41y = b * TINKER_GORDON1_M3(b) * l01y;
-         dmpij[4] = div105 *
-            ((k41 * f1d + k42 * f2d +
-              d2 *
-                 (k43 * f3d +
-                  d2 * (k44 * f4d + d2 * (k45 * f5d + k46 * f6d)))) *
-                ec +
-             (l40x + l41x) * ea + (l40y + l41y) * eb);
+         dmpij[4] = 1 -
+            div105 *
+               ((k41 * f1d + k42 * f2d +
+                 d2 *
+                    (k43 * f3d +
+                     d2 * (k44 * f4d + d2 * (k45 * f5d + k46 * f6d)))) *
+                   ec +
+                (l40x + l41x) * ea + (l40y + l41y) * eb);
       }
       if CONSTEXPR (MutOrder >= 11) {
          real k51, k52, k53, k54, k55, k56, k57, l50x, l51x, l50y, l51y;
@@ -179,15 +185,16 @@ inline void damp_gordon1(real* restrict dmpij, real* restrict dmpi,
          l51x = a * TINKER_GORDON1_M4(a) * l01x;
          l50y = TINKER_GORDON1_M5(b) * l00y,
          l51y = b * TINKER_GORDON1_M4(b) * l01y;
-         dmpij[5] = div945 *
-            ((k51 * f1d + k52 * f2d +
-              d2 *
-                 (k53 * f3d +
-                  d2 *
-                     (k54 * f4d +
-                      d2 * (k55 * f5d + d2 * (k56 * f6d + k57 * f7d))))) *
-                ec +
-             (l50x + l51x) * ea + (l50y + l51y) * eb);
+         dmpij[5] = 1 -
+            div945 *
+               ((k51 * f1d + k52 * f2d +
+                 d2 *
+                    (k53 * f3d +
+                     d2 *
+                        (k54 * f4d +
+                         d2 * (k55 * f5d + d2 * (k56 * f6d + k57 * f7d))))) *
+                   ec +
+                (l50x + l51x) * ea + (l50y + l51y) * eb);
       }
 
 #undef TINKER_GORDON1_L00
@@ -400,13 +407,6 @@ inline void damp_dir(real* restrict dmpi, real* restrict dmpk, real r,
                      real alphai, real alphak)
 {
    damp_gordon1<7, 0>(nullptr, dmpi, dmpk, r, alphai, alphak);
-   // [0] is not used in the subsequent calculation.
-   dmpi[1] = 1 - dmpi[1];
-   dmpi[2] = 1 - dmpi[2];
-   dmpi[3] = 1 - dmpi[3];
-   dmpk[1] = 1 - dmpk[1];
-   dmpk[2] = 1 - dmpk[2];
-   dmpk[3] = 1 - dmpk[3];
 }
 
 
@@ -414,9 +414,6 @@ SEQ_ROUTINE
 inline void damp_mut(real* restrict dmpik, real r, real alphai, real alphak)
 {
    damp_gordon1<0, 5>(dmpik, nullptr, nullptr, r, alphai, alphak);
-   // [0] is not used in the subsequent calculation.
-   dmpik[1] = 1 - dmpik[1];
-   dmpik[2] = 1 - dmpik[2];
 }
 
 
