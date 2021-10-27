@@ -18,7 +18,7 @@ fi
 
 ACC_COMPILER=$(grep T9_ACC_COMPILER CMakeCache.txt | cut -d '=' -f 2-)
 if [ $ACC_COMPILER = '' ]; then
-   excho No OpenACC compiler was used.
+   echo No OpenACC compiler was used.
    exit
 fi
 PGI_GCCVERSION=$(makelocalrc -o | grep "GCC version" | awk '{print $4}')
@@ -29,8 +29,8 @@ GCCVERSION=$($FORTRAN_COMPILER --version | grep GNU | awk '{print $NF}')
 
 
 CONCLUDE () {
-   echo "ACC Compiler:        "  $ACC_COMPILER
-   echo "ACC is configured to:"  Version $PGI_GCCVERSION "(of the Fortran compiler)"
-   echo "Fortran Compiler:    "  Version $GCCVERSION
+   echo "ACC Compiler:         " $ACC_COMPILER
+   echo "ACC is configured to: " Version $PGI_GCCVERSION "(of the Fortran compiler)"
+   echo "Fortran Compiler:     " Version $GCCVERSION
 }
 CONCLUDE
