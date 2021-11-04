@@ -1,6 +1,6 @@
 #pragma once
 
-#include "macro.h"
+#include "macro.hh"
 
 namespace tinker { namespace kbonds {
 const int maxnb = 2000;

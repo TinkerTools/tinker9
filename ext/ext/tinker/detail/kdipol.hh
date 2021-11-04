@@ -1,6 +1,6 @@
 #pragma once
 
-#include "macro.h"
+#include "macro.hh"
 
 namespace tinker { namespace kdipol {
 const int maxnd = 1000;

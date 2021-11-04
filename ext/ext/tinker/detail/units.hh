@@ -1,6 +1,6 @@
 #pragma once
 
-#include "macro.h"
+#include "macro.hh"
 
 namespace tinker { namespace units {
 const double avogadro = 6.02214076e+23;

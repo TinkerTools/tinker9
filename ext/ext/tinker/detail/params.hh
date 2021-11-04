@@ -1,6 +1,6 @@
 #pragma once
 
-#include "macro.h"
+#include "macro.hh"
 
 namespace tinker { namespace params {
 const int maxprm = 25000;

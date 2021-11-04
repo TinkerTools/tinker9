@@ -1,6 +1,6 @@
 #pragma once
 
-#include "macro.h"
+#include "macro.hh"
 
 namespace tinker { namespace polgrp {
 const int maxp11 = 200;

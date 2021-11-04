@@ -23,7 +23,7 @@ _CurrentModule = ''
 
 # _SharedHeader = '"util/macro.h"'
 # _SharedHeader = '"util_macro.h"'
-_SharedHeader = '"macro.h"'
+_SharedHeader = '"macro.hh"'
 
 _TINKER_MOD = 'TINKER_MOD'
 
@@ -234,7 +234,7 @@ b5(a,a),b6(0:a,0:a) -> a,a'''
 
 
 def fortran_double_precision_expression(s):
-    result = re.search(r'[+-]?(\d+(\.\d*)?|\.\d+)([dD][+-]?\d+)?', s)
+    result = re.search(r'[+-]?(\d+(\.\d*)?|\.\d+)([dDeE][+-]?\d+)?', s)
     if result:
         s2 = result.group(0)
         s2 = s2.replace('d', 'e')

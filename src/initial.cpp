@@ -1,7 +1,7 @@
 #include "promo.h"
 #include "subroutine.h"
 #include "tool/io_fort_str.h"
-#include <tinker/tinker_mod.h>
+#include <tinker/modcpp.h>
 #ifdef _OPENMP
 #   include <omp.h>
 #endif

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "macro.h"
+#include "macro.hh"
 #include "sizes.hh"
 
 namespace tinker { namespace phipsi {

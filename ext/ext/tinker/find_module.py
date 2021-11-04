@@ -27,6 +27,21 @@ PROGRAM_TYPE = 'PROGRAM_TYPE'
 SUBROUTINE_TYPE = 'SUBROUTINE_TYPE'
 
 
+macroString = R'''#if !defined(TINKER_IFORT) && !defined(TINKER_GFORTRAN)
+#   warning We assume you used gfortran to compile the Tinker library. \
+If so, add the compiler flag -DTINKER_GFORTRAN to mute this message, \
+or -DTINKER_IFORT if the Intel Fortran compiler is used. Otherwise, \
+you should implement the name mangling macro (i.e., TINKER_MOD) here.
+#   define TINKER_GFORTRAN
+#endif
+
+#if defined(TINKER_GFORTRAN)
+#   define TINKER_MOD(mod, var) __##mod##_MOD_##var
+#elif defined(TINKER_IFORT)
+#   define TINKER_MOD(mod, var) mod##_mp_##var##_
+#endif'''
+
+
 def determine_module_subroutine_program(fortran_filename):
     global MODULE_FILES
     global PROGRAM_FILES
@@ -82,7 +97,7 @@ def option_list(files):
         _, _, _, dirname = determine_module_subroutine_program(f)
 
     text1 = '''#!/bin/bash
-HEADER=tinker_mod.h
+HEADER=modcpp.h
 DIR=detail
 
 rm -f $HEADER
@@ -105,6 +120,7 @@ ENDOFFILE
     print(text1)
     for m in MODULE_FILES:
         print('./parse.py fpp %s/%s.f > $DIR/%s.hh' % (dirname, m, m))
+    print('./find_module.py --macro > $DIR/macro.hh')
     for m in MODULE_FILES:
         print('echo \'#include "detail/%s.hh"\' >> $HEADER' % m)
     print(text2)
@@ -113,3 +129,7 @@ ENDOFFILE
 if __name__ == '__main__':
     if Option.lower() == 'list':
         option_list(Filenames)
+    elif Option.lower() == '--macro':
+        print('#pragma once')
+        print('')
+        print(macroString)

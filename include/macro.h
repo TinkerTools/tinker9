@@ -5,10 +5,8 @@
 
 
 #if defined(TINKER_GFORTRAN)
-#   define TINKER_MOD(mod, var) __##mod##_MOD_##var
 #   define TINKER_RT(rt)        rt##_
 #elif defined(TINKER_IFORT)
-#   define TINKER_MOD(mod, var) mod##_mp_##var##_
 #   define TINKER_RT(rt)        rt##_
 #else
 #   error We do not know what Fortran compiler you used to compile the Tinker  \
