@@ -287,7 +287,8 @@ if (DEFINED ENV{cuda_dir})
    )
 elseif (DEFINED ENV{CUDACXX})
    find_program (T9_CUDA_COMPILER $ENV{CUDACXX})
-   get_filename_component (cudaDirValue "${T9_CUDA_COMPILER}" DIRECTORY)
+   get_filename_component (cudaDirValue "${T9_CUDA_COMPILER}" DIRECTORY) # /usr/local/cuda/bin
+   get_filename_component (cudaDirValue "${cudaDirValue}" DIRECTORY)     # /usr/local/cuda
 else ()
    set (cudaDirValue /usr/local/cuda)
 endif ()
