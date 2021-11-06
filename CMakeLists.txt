@@ -399,7 +399,7 @@ set (T9_DEFS)
 
 
 ## libtinker.a
-add_subdirectory (src-libtinker)
+add_subdirectory (ext/ext/tinker/interface/cpp)
 
 
 ## fftw
@@ -441,14 +441,6 @@ elseif (NOT DETERMINISTIC_FORCE)
    list (APPEND T9_DEFS TINKER_DETERMINISTIC_FORCE=0)
 elseif (DETERMINISTIC_FORCE)
    list (APPEND T9_DEFS TINKER_DETERMINISTIC_FORCE=1)
-endif ()
-
-
-## macro: fortran compiler
-if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
-   list (APPEND T9_DEFS TINKER_GFORTRAN)
-elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
-   list (APPEND T9_DEFS TINKER_IFORT)
 endif ()
 
 
@@ -510,6 +502,7 @@ endif ()
 ## include path
 set (T9_SYS_INCPATH
    "${FFTW_DIR}/include"
+   "${PROJECT_SOURCE_DIR}/ext/ext/tinker/interface/cpp"
    "${PROJECT_SOURCE_DIR}/ext/ext")
 set (T9_INCPATH "${PROJECT_SOURCE_DIR}/include")
 if (HOST)
@@ -521,6 +514,13 @@ else ()
    list (APPEND T9_SYS_INCPATH "${CUDA_DIR}/include")
    # remove "include/syntax/acc" from the include paths for src-cu
    # add "include/syntax/cu" to the include paths for src-cu
+endif ()
+
+
+if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
+   list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/ext/ext/tinker/interface/include/tinker/gfortran")
+elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
+   list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/ext/ext/tinker/interface/include/tinker/ifort")
 endif ()
 
 

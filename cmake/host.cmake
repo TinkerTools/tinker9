@@ -13,7 +13,7 @@ target_link_libraries (tinker9
    tinker9_cpp
    tinker9_f
    "-Wl,--end-group"
-   tinker9_libtinker
+   tinkerFToCPP
    "${__T9_EXTLIBS}"
 )
 
@@ -29,6 +29,6 @@ target_link_libraries (all.tests
    tinker9_cpp
    tinker9_f
    "-Wl,--end-group"
-   tinker9_libtinker
+   tinkerFToCPP
    "${__T9_EXTLIBS}"
 )

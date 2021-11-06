@@ -1,6 +1,7 @@
 #include "main_tinker9.h"
 #include "tool/io_print.h"
-#include "tool/rc_man.h"
+#include <tinker/routines.h>
+
 #include <algorithm>
 #include <functional>
 #include <map>
@@ -69,14 +70,14 @@ int main(int argc, char** argv)
    if (launcher().find(argv[0]) == launcher().end()) {
       goto help_message;
    } else {
-      fortran_runtime_initialize(argc, argv);
+      tinkerFortranRuntimeBegin(argc, argv);
       try {
          launcher().at(argv[0])(argc, argv);
       } catch (const std::exception& err) {
          fprintf(stdout, " Terminating with uncaught exception :  %s\n",
                  err.what());
       }
-      fortran_runtime_finish();
+      tinkerFortranRuntimeEnd();
       return 0;
    }
 
