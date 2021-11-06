@@ -512,8 +512,8 @@ else ()
    list (APPEND T9_DEFS TINKER_CUDART)
    list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
    list (APPEND T9_SYS_INCPATH "${CUDA_DIR}/include")
-   # remove "include/syntax/acc" from the include paths for src-cu
-   # add "include/syntax/cu" to the include paths for src-cu
+   # remove "include/syntax/acc" from the include paths for src/cu
+   # add "include/syntax/cu" to the include paths for src/cu
 endif ()
 
 
@@ -592,8 +592,8 @@ if (HOST)
    add_subdirectory (src/f)
    include (host) # host.cmake
 else ()
-   add_subdirectory (src-cu)
    add_subdirectory (src)
+   add_subdirectory (src/cu)
    add_subdirectory (src/f)
    include (device) # device.cmake
 endif ()
