@@ -4,6 +4,7 @@
 #include "tool/darray.h"
 #include "tool/fcxx.h"
 #include <tinker/detail/atoms.hh>
+#include <tinker/routines.h>
 
 
 namespace {
@@ -39,26 +40,26 @@ void t_open(int unit, const char* file, const char* status)
 //====================================================================//
 
 
-extern "C" void TINKER_RT(fc_allocated)(void** p, int* ans);
+extern "C" void fc_allocated_(void** p, int* ans);
 int t_allocated(void* p)
 {
    int ans;
-   TINKER_RT(fc_allocated)(&p, &ans);
+   fc_allocated_(&p, &ans);
    return ans;
 }
 
 
-extern "C" void TINKER_RT(fc_deallocate)(void**);
+extern "C" void fc_deallocate_(void**);
 void t_deallocate(void* p)
 {
-   TINKER_RT(fc_deallocate)(&p);
+   fc_deallocate_(&p);
 }
 
 
-extern "C" void TINKER_RT(fc_allocate_char1)(void**, size_t);
+extern "C" void fc_allocate_char1_(void**, size_t);
 void t_allocate_char1(void** pp, size_t bytes1)
 {
-   TINKER_RT(fc_allocate_char1)(pp, bytes1);
+   fc_allocate_char1_(pp, bytes1);
 }
 
 
@@ -100,7 +101,6 @@ void t_basefile(char* string)
 }
 
 
-extern "C" void TINKER_RT(prterr)();
 void t_prterr()
 {
    using namespace tinker;
@@ -111,7 +111,7 @@ void t_prterr()
    darray::copyout(g::q0, n, atoms::y, ypos);
    darray::copyout(g::q0, n, atoms::z, zpos);
    wait_for(g::q0);
-   TINKER_RT(prterr)();
+   tinker_f_prterr();
 }
 TINKER_EXTERN_C_END
 
