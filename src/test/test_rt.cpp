@@ -159,10 +159,10 @@ void test_begin_with_args(int argc, const char** argv)
 {
    tinkerFortranRuntimeBegin(argc, const_cast<char**>(argv));
 
-   initial();
+   tinker_f_initial();
    TINKER_RT(command)();
    tinker_f_getxyz();
-   mechanic();
+   tinker_f_mechanic();
    mechanic2();
 }
 

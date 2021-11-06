@@ -1,7 +1,6 @@
 #pragma once
 #include "mathfunc.h"
 #include "md.h"
-#include "subroutine.h"
 #include "tool/io_fort_str.h"
 #include "tool/io_print.h"
 #include "tool/io_read.h"
@@ -11,6 +10,9 @@
 
 
 namespace tinker {
+void mechanic2();
+
+
 void nextarg(size_t len, char* str, int& exist);
 
 

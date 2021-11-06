@@ -46,7 +46,6 @@ field.cpp
 group.cpp
 induce.cpp
 induce_donly.cpp
-initial.cpp
 io_fort_str.cpp
 io_text.cpp
 lf_lpiston.cpp
@@ -59,7 +58,6 @@ mdpq.cpp
 mdpt.cpp
 mdsave.cpp
 mechanic2.cpp
-mechanic.cpp
 minimize_x.cpp
 mod.cpp
 molecule.cpp

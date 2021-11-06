@@ -26,9 +26,9 @@ void minimize_set_pos_acc(int, const double*, const double*);
 
 void x_minimize(int, char**)
 {
-   initial();
+   tinker_f_initial();
    tinker_f_getxyz();
-   mechanic();
+   tinker_f_mechanic();
 
 
    // perform the setup functions needed for optimization

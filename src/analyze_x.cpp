@@ -190,9 +190,9 @@ static void x_analyze_v()
 
 void x_analyze(int, char**)
 {
-   initial();
+   tinker_f_initial();
    tinker_f_getxyz();
-   mechanic();
+   tinker_f_mechanic();
    mechanic2();
 
    char string[240];

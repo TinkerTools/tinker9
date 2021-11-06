@@ -12,9 +12,9 @@ void x_dynamic(int, char**)
    char string[240];
    int exist = false;
 
-   initial();
+   tinker_f_initial();
    tinker_f_getxyz();
-   mechanic();
+   tinker_f_mechanic();
    mechanic2();
 
    bath::kelvin = 0;
