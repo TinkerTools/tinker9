@@ -426,7 +426,7 @@ void evdw_data(rc_op op)
       // Initialize elrc and vlrc.
       if (vdwpot::use_vcorr) {
          double elrc = 0, vlrc = 0;
-         t_evcorr1("VDW", &elrc, &vlrc);
+         evcorr1_(const_cast<char*>("VDW"), &elrc, &vlrc, 3);
          elrc_vol = elrc * volbox();
          vlrc_vol = vlrc * volbox();
       } else {

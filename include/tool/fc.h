@@ -106,14 +106,4 @@ void t_basefile(char* string);
  * \brief Tinker subroutine: prterr
  */
 void t_prterr();
-
-
-//====================================================================//
-
-
-/**
- * \ingroup bindc
- * \brief Tinker subroutine: evcorr1 (mode,elrc,vlrc)
- */
-void t_evcorr1(const char* mode, double* elrc, double* vlrc);
 TINKER_EXTERN_C_END

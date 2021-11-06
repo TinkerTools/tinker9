@@ -113,17 +113,6 @@ void t_prterr()
    wait_for(g::q0);
    TINKER_RT(prterr)();
 }
-
-
-//====================================================================//
-
-
-void fc_evcorr1(const char* mode, int mlen, double* elrc, double* vlrc);
-void t_evcorr1(const char* mode, double* elrc, double* vlrc)
-{
-   int mlen = strlen(mode);
-   fc_evcorr1(mode, mlen, elrc, vlrc);
-}
 TINKER_EXTERN_C_END
 
 

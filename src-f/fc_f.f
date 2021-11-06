@@ -190,21 +190,3 @@ c
       kstring = kstring(1:klen)//c_null_char
       return
       end
-c
-c
-c
-      subroutine fc_evcorr1 (mode,mlen,elrc,vlrc)  bind(c)
-      use iso_c_binding
-      use fcsize
-      implicit none
-      integer(c_int), value :: mlen
-      real*8 elrc,vlrc
-      character(c_char), target :: mode(*)
-      character(6,c_char), pointer :: kmode
-      character(6,c_char) imode
-      call c_f_pointer (c_loc(mode),kmode)
-      if (mlen .gt. 6)  call exit (1)
-      imode = kmode(1:mlen)
-      call evcorr1 (imode,elrc,vlrc)
-      return
-      end
