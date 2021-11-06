@@ -525,7 +525,7 @@ endif ()
 
 
 ## openacc
-add_subdirectory (src-acc)
+add_subdirectory (src/acc)
 
 
 ## test files
