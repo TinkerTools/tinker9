@@ -30,14 +30,11 @@ types in the table below should be processed by
 | C/C++/CUDA header                    | `.h`, `.hh`           |
 | C source                             | `.c`                  |
 | C++ source (generic)                 | `.cpp`, `.cxx`, `.cc` |
-| C++ source (with OpenACC directives) | `_acc.cpp`            |
-| CUDA source                          | `_cu.cu`              |
+| C++ source (with OpenACC directives) | `.cpp`                |
+| CUDA source                          | `.cu`                 |
 
 > Generic C++ files should not have any OpenACC directive or CUDA specific macro
 > or syntax, such as `__global__` and triple arrow brackets `<<<>>>`.
-> <br>
-> Extra markers are suffixed to some files, e.g., `_acc.cpp` and `_cu.cu`, which
-> may seem redundant but are used to keep the compilation procedure simple.
 
 The minimum version of clang-format required is 10. The following command will
 read the configurations from `tinker9/_clang-format` (enabled by `-style=file`)
