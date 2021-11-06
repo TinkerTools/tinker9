@@ -1,4 +1,4 @@
-add_executable (tinker9 src-main/main_tinker9.cpp)
+add_executable (tinker9 src/main/tinker9.cpp)
 set_target_properties (tinker9 PROPERTIES
    CXX_STANDARD
       ${T9_CPPSTD}

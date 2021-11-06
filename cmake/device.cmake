@@ -1,4 +1,4 @@
-add_library (tinker9_main OBJECT src-main/main_tinker9.cpp)
+add_library (tinker9_main OBJECT src/main/tinker9.cpp)
 set_target_properties (tinker9_main PROPERTIES
    CXX_STANDARD
       ${T9_CPPSTD}

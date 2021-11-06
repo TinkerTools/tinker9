@@ -530,7 +530,7 @@ add_subdirectory (src-acc)
 
 ## test files
 set (T9_TEST_SRC
-src-main/main_all_tests.cpp
+src/main/all_tests.cpp
 src/test/test_angle.cpp
 src/test/test_angtor.cpp
 src/test/test_async.cpp
@@ -589,12 +589,12 @@ target_include_directories (__t9_all_tests_o PRIVATE
 list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 if (HOST)
    add_subdirectory (src)
-   add_subdirectory (src-f)
+   add_subdirectory (src/f)
    include (host) # host.cmake
 else ()
    add_subdirectory (src-cu)
    add_subdirectory (src)
-   add_subdirectory (src-f)
+   add_subdirectory (src/f)
    include (device) # device.cmake
 endif ()
 if (__T9_INSTALL_DEFINED)
