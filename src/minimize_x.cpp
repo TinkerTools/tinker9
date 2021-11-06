@@ -32,7 +32,7 @@ void x_minimize(int, char**)
 
 
    // perform the setup functions needed for optimization
-   t_optinit();
+   tinker_f_optinit();
 
 
    // get termination criterion as RMS gradient per atom
@@ -49,12 +49,12 @@ void x_minimize(int, char**)
 
 
    // write out a copy of coordinates for later update
-   int imin = t_freeunit();
+   int imin = tinker_f_freeunit();
    const int leng = files::leng;
    std::string minfile = fstr_view(files::filename)(1, leng).trim() + ".xyz";
    minfile = t_version(minfile, "new");
    t_open(imin, minfile.c_str(), "new");
-   t_prtxyz(imin);
+   tinker_f_prtxyz(&imin);
    t_close(imin);
    fstr_view outview = files::outfile;
    outview = minfile;
@@ -96,7 +96,9 @@ void x_minimize(int, char**)
 
 
    // make the call to the optimization routine
-   t_lbfgs(3 * n, xx, grdmin, (void*)minimiz1);
+   int n3 = 3 * n;
+   double mini;
+   tinker_f_lbfgs(&n3, xx, &mini, &grdmin, minimiz1, tinker_f_optsave);
 
 
    // convert optimization parameters to atomic coordinates
@@ -139,10 +141,10 @@ void x_minimize(int, char**)
 
    // write the final coordinates into a file
    bounds();
-   imin = t_freeunit();
+   imin = tinker_f_freeunit();
    t_open(imin, minfile, "old");
    t_rewind(imin);
-   t_prtxyz(imin);
+   tinker_f_prtxyz(&imin);
    t_close(imin);
 
 

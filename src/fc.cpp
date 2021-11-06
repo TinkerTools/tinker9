@@ -13,13 +13,6 @@ static_assert(2048 >= tinker::MAX_NCHAR + 5, "");
 
 
 TINKER_EXTERN_C_BEGIN
-int TINKER_RT(freeunit)();
-int t_freeunit()
-{
-   return TINKER_RT(freeunit)();
-}
-
-
 void fc_rewind(int);
 void t_rewind(int unit)
 {
@@ -107,13 +100,6 @@ void t_basefile(char* string)
 }
 
 
-extern "C" void TINKER_RT(prtxyz)(int*);
-void t_prtxyz(int ixyz)
-{
-   TINKER_RT(prtxyz)(&ixyz);
-}
-
-
 extern "C" void TINKER_RT(prterr)();
 void t_prterr()
 {
@@ -132,52 +118,11 @@ void t_prterr()
 //====================================================================//
 
 
-extern "C" void TINKER_RT(optinit)();
-void t_optinit()
-{
-   TINKER_RT(optinit)();
-}
-
-
-extern "C" void TINKER_RT(optsave)(int* ncycle, double* f, double* xx);
-extern "C" void TINKER_RT(lbfgs)(int* nvar, double* x0, double* minimum,
-                                 double* grdmin, void* fgvalue, void* optsave);
-void t_lbfgs(int nvar, double* x0, double grdmin, void* fgvalue)
-{
-   double minimum;
-   void* opts = (void*)TINKER_RT(optsave);
-   TINKER_RT(lbfgs)(&nvar, x0, &minimum, &grdmin, fgvalue, opts);
-}
-
-
-//====================================================================//
-
-
 void fc_evcorr1(const char* mode, int mlen, double* elrc, double* vlrc);
 void t_evcorr1(const char* mode, double* elrc, double* vlrc)
 {
    int mlen = strlen(mode);
    fc_evcorr1(mode, mlen, elrc, vlrc);
-}
-
-
-//====================================================================//
-
-
-void TINKER_RT(extent)(double*);
-void t_extent(double& rmax)
-{
-   TINKER_RT(extent)(&rmax);
-}
-
-
-//====================================================================//
-
-
-void TINKER_RT(lattice)();
-void t_lattice()
-{
-   TINKER_RT(lattice)();
 }
 TINKER_EXTERN_C_END
 

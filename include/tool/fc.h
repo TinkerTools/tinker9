@@ -19,13 +19,6 @@
 TINKER_EXTERN_C_BEGIN
 /**
  * \ingroup bindc
- * \brief Tinker function: freeunit ().
- */
-int t_freeunit();
-
-
-/**
- * \ingroup bindc
  * \brief Fortran statement: rewind (unit=iunit).
  */
 void t_rewind(int unit);
@@ -110,13 +103,6 @@ void t_basefile(char* string);
 
 /**
  * \ingroup bindc
- * \brief Tinker subroutine: prtxyz
- */
-void t_prtxyz(int ixyz);
-
-
-/**
- * \ingroup bindc
  * \brief Tinker subroutine: prterr
  */
 void t_prterr();
@@ -127,45 +113,7 @@ void t_prterr();
 
 /**
  * \ingroup bindc
- * \brief Tinker subroutine: optinit
- */
-void t_optinit();
-
-
-/**
- * \ingroup bindc
- * \brief Tinker subroutine: lbfgs (nvar,x0,minimum,grdmin,fgvalue,optsave)
- * \note minimum and optsave are dropped from parameters.
- */
-void t_lbfgs(int nvar, double* x0, double grdmin, void* fgvalue);
-
-
-//====================================================================//
-
-
-/**
- * \ingroup bindc
  * \brief Tinker subroutine: evcorr1 (mode,elrc,vlrc)
  */
 void t_evcorr1(const char* mode, double* elrc, double* vlrc);
-
-
-//====================================================================//
-
-
-/**
- * \ingroup bindc
- * \brief Tinker subroutine: extent (rmax)
- */
-void t_extent(double& rmax);
-
-
-//====================================================================//
-
-
-/**
- * \ingroup bindc
- * \brief Tinker subroutine: lattice
- */
-void t_lattice();
 TINKER_EXTERN_C_END

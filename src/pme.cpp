@@ -150,7 +150,7 @@ void pme_data(rc_op op)
          double ecut = switch_off(switch_ewald);
          double dcut = switch_off(switch_dewald);
          double ext;
-         t_extent(ext);
+         tinker_f_extent(&ext);
          double wbox = 2 * (ext + std::fmax(ecut, dcut));
          box_extent(wbox);
       }

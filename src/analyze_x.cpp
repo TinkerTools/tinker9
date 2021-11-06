@@ -103,8 +103,6 @@ static void x_analyze_e()
 }
 
 void moments();
-extern "C" void TINKER_RT(gyrate)(double*);
-extern "C" void TINKER_RT(inertia)(int*);
 static void x_analyze_m()
 {
    auto out = stdout;
@@ -145,13 +143,13 @@ static void x_analyze_m()
 
    // radius of gyration and moments of inertia
    double rg;
-   TINKER_RT(gyrate)(&rg);
+   tinker_f_gyrate(&rg);
    print(out,
          "\n"
          " Radius of Gyration :%15s%13.3lf Angstroms\n",
          "", rg);
    int one = 1;
-   TINKER_RT(inertia)(&one);
+   tinker_f_inertia(&one);
 }
 
 static void x_analyze_v()

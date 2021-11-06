@@ -194,7 +194,7 @@ void x_bar_makebar()
 
    std::memcpy(string, filea, MAX_NCHAR);
    t_suffix(string, "arc", "old");
-   iarc = t_freeunit();
+   iarc = tinker_f_freeunit();
    t_open(iarc, string, "old");
    str = string;
    std::ifstream a_arc(str);
@@ -316,7 +316,7 @@ void x_bar_makebar()
 
    std::memcpy(string, fileb, MAX_NCHAR);
    t_suffix(string, "arc", "old");
-   iarc = t_freeunit();
+   iarc = tinker_f_freeunit();
    t_open(iarc, string, "old");
    str = string;
    std::ifstream b_arc(str);
