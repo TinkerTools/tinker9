@@ -13,8 +13,6 @@ extern int*& xaxis;
 extern int*& yaxis;
 extern double*& pole;
 extern double*& rpole;
-extern double*& spole;
-extern double*& srpole;
 extern double*& mono0;
 extern char (*&polaxe)[8];
 
@@ -28,8 +26,6 @@ extern "C" int* TINKER_MOD(mpole, xaxis);
 extern "C" int* TINKER_MOD(mpole, yaxis);
 extern "C" double* TINKER_MOD(mpole, pole);
 extern "C" double* TINKER_MOD(mpole, rpole);
-extern "C" double* TINKER_MOD(mpole, spole);
-extern "C" double* TINKER_MOD(mpole, srpole);
 extern "C" double* TINKER_MOD(mpole, mono0);
 extern "C" char (*TINKER_MOD(mpole, polaxe))[8];
 
@@ -42,8 +38,6 @@ int*& xaxis = TINKER_MOD(mpole, xaxis);
 int*& yaxis = TINKER_MOD(mpole, yaxis);
 double*& pole = TINKER_MOD(mpole, pole);
 double*& rpole = TINKER_MOD(mpole, rpole);
-double*& spole = TINKER_MOD(mpole, spole);
-double*& srpole = TINKER_MOD(mpole, srpole);
 double*& mono0 = TINKER_MOD(mpole, mono0);
 char (*&polaxe)[8] = TINKER_MOD(mpole, polaxe);
 #endif

@@ -214,10 +214,11 @@ class Tinker8:
     def fortranExternalCallInC(func: str, arg: str) -> str:
         lookupTable = {}
 
-        fname = 'fvalue'
-        # yes, these fvalue calls are different...
+        fname = 'evalue'
         for routine in ['numgrad']:
-            lookupTable[fname + '@' + routine] = 'double (*fvalue)()'
+            lookupTable[fname + '@' + routine] = 'double (*evalue)()'
+
+        fname = 'fvalue'
         for routine in ['simplex']:
             lookupTable[fname + '@' + routine] = 'double (*fvalue)(double*)'
 

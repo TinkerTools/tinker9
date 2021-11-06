@@ -188,6 +188,7 @@ void test_mdinit(double t, double atm)
    } else
       bath::isobaric = false;
 
-   tinker_f_mdinit();
+   double dt = 0.001;
+   tinker_f_mdinit(&dt);
 }
 }

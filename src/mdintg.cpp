@@ -24,9 +24,6 @@
 
 
 namespace tinker {
-double time_step;
-
-
 void mdrest(int istep)
 {
    mdrest_acc(istep);
@@ -54,6 +51,7 @@ void (*intg)(int, time_prec);
 void propagate(int nsteps, time_prec dt_ps)
 {
    for (int istep = 1; istep <= nsteps; ++istep) {
+      mdstuf::mdstep += 1;
       do_pmonte = false;
       if (barostat == MONTE_CARLO_BAROSTAT) {
          double rdm = random<double>();
@@ -71,7 +69,7 @@ void propagate(int nsteps, time_prec dt_ps)
       if (save) {
          T_prec temp;
          kinetic(temp);
-         mdsave_async(istep, dt_ps);
+         mdsave_async(dt_ps);
       }
       mdrest(istep);
    }

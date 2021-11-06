@@ -46,7 +46,7 @@ vel_prec *dup_buf_vx, *dup_buf_vy, *dup_buf_vz;
 grad_prec *dup_buf_gx, *dup_buf_gy, *dup_buf_gz;
 
 
-void mdsave_dup_then_write(int istep, time_prec dt)
+void mdsave_dup_then_write(time_prec dt)
 {
 #if TINKER_CUDART
    /**
@@ -158,7 +158,7 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    double dt1 = dt;
    double epot1 = epot;
    double eksum1 = eksum;
-   tinker_f_mdsave(&istep, &dt1, &epot1, &eksum1);
+   tinker_f_mdsave(&dt1, &epot1, &eksum1);
 
    mtx_write.lock();
    idle_write = true;
@@ -168,7 +168,7 @@ void mdsave_dup_then_write(int istep, time_prec dt)
 }
 
 
-void mdsave_async(int istep, time_prec dt)
+void mdsave_async(time_prec dt)
 {
    std::unique_lock<std::mutex> lck_write(mtx_write);
    cv_write.wait(lck_write, [=]() { return idle_write; });
@@ -176,7 +176,7 @@ void mdsave_async(int istep, time_prec dt)
 
 
    fut_dup_then_write =
-      std::async(std::launch::async, mdsave_dup_then_write, istep, dt);
+      std::async(std::launch::async, mdsave_dup_then_write, dt);
 
 
    std::unique_lock<std::mutex> lck_copy(mtx_dup);
