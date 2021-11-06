@@ -399,7 +399,7 @@ set (T9_DEFS)
 
 
 ## libtinker.a
-add_subdirectory (ext/ext/tinker/interface/cpp)
+add_subdirectory (ext/interface/cpp)
 
 
 ## fftw
@@ -502,7 +502,7 @@ endif ()
 ## include path
 set (T9_SYS_INCPATH
    "${FFTW_DIR}/include"
-   "${PROJECT_SOURCE_DIR}/ext/ext/tinker/interface/cpp"
+   "${PROJECT_SOURCE_DIR}/ext/interface/cpp"
    "${PROJECT_SOURCE_DIR}/ext/ext")
 set (T9_INCPATH "${PROJECT_SOURCE_DIR}/include")
 if (HOST)
@@ -518,9 +518,9 @@ endif ()
 
 
 if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
-   list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/ext/ext/tinker/interface/include/tinker/gfortran")
+   list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/ext/interface/include/tinker/gfortran")
 elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
-   list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/ext/ext/tinker/interface/include/tinker/ifort")
+   list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/ext/interface/include/tinker/ifort")
 endif ()
 
 
