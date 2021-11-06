@@ -191,7 +191,7 @@ static void x_analyze_v()
 void x_analyze(int, char**)
 {
    initial();
-   TINKER_RT(getxyz)();
+   tinker_f_getxyz();
    mechanic();
    mechanic2();
 
@@ -249,6 +249,6 @@ void x_analyze(int, char**)
    } while (not done);
 
    finish();
-   TINKER_RT(final)();
+   tinker_f_final();
 }
 }

@@ -51,7 +51,7 @@ void x_bar(int, char**)
       x_bar_barcalc();
 
 
-   TINKER_RT(final)();
+   tinker_f_final();
 }
 
 
@@ -80,7 +80,7 @@ void x_bar_makebar()
 
    // get trajectory A and setup mechanics calculation
    int iarc;
-   TINKER_RT(getarc)(&iarc);
+   tinker_f_getarc(&iarc);
    t_close(iarc);
    mechanic();
 
@@ -112,7 +112,7 @@ void x_bar_makebar()
 
 
    // get trajectory B and setup mechanics calculation
-   TINKER_RT(getarc)(&iarc);
+   tinker_f_getarc(&iarc);
    t_close(iarc);
    mechanic();
    inform::silent = true;
@@ -204,7 +204,7 @@ void x_bar_makebar()
       // reset trajectory A using the parameters for state 0
       rewind_stream(a_arc);
       t_rewind(iarc);
-      TINKER_RT(readxyz)(&iarc);
+      tinker_f_readxyz(&iarc);
       keys::nkey = nkey0;
       for (int i = 0; i < keys::nkey; ++i)
          std::memcpy(keys::keyline[i], keys0[i].data(), MAX_NCHAR);
@@ -239,7 +239,7 @@ void x_bar_makebar()
    // reset trajectory A using the parameters for state 1
    rewind_stream(a_arc);
    t_rewind(iarc);
-   TINKER_RT(readxyz)(&iarc);
+   tinker_f_readxyz(&iarc);
    keys::nkey = nkey1;
    for (int i = 0; i < keys::nkey; ++i)
       std::memcpy(keys::keyline[i], keys1[i].data(), MAX_NCHAR);
@@ -326,7 +326,7 @@ void x_bar_makebar()
       // reset trajectory B using the parameters for state 1
       rewind_stream(b_arc);
       t_rewind(iarc);
-      TINKER_RT(readxyz)(&iarc);
+      tinker_f_readxyz(&iarc);
       keys::nkey = nkey1;
       for (int i = 0; i < keys::nkey; ++i)
          std::memcpy(keys::keyline[i], keys1[i].data(), MAX_NCHAR);
@@ -361,7 +361,7 @@ void x_bar_makebar()
    // reset trajectory B using the parameters for state 0
    rewind_stream(b_arc);
    t_rewind(iarc);
-   TINKER_RT(readxyz)(&iarc);
+   tinker_f_readxyz(&iarc);
    keys::nkey = nkey0;
    for (int i = 0; i < keys::nkey; ++i)
       std::memcpy(keys::keyline[i], keys0[i].data(), MAX_NCHAR);

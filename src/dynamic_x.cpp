@@ -13,7 +13,7 @@ void x_dynamic(int, char**)
    int exist = false;
 
    initial();
-   TINKER_RT(getxyz)();
+   tinker_f_getxyz();
    mechanic();
    mechanic2();
 
@@ -166,7 +166,7 @@ void x_dynamic(int, char**)
 
    // perform the setup functions needed to run dynamics
 
-   TINKER_RT(mdinit)();
+   tinker_f_mdinit();
 
    int flags = calc::md;
    flags += (calc::xyz + calc::vel + calc::mass);
@@ -221,6 +221,6 @@ void x_dynamic(int, char**)
 
    // perform any final tasks before program exit
 
-   TINKER_RT(final)();
+   tinker_f_final();
 }
 }

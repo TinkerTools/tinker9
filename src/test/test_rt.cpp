@@ -161,7 +161,7 @@ void test_begin_with_args(int argc, const char** argv)
 
    initial();
    TINKER_RT(command)();
-   TINKER_RT(getxyz)();
+   tinker_f_getxyz();
    mechanic();
    mechanic2();
 }
@@ -169,7 +169,7 @@ void test_begin_with_args(int argc, const char** argv)
 
 void test_end()
 {
-   TINKER_RT(final)();
+   tinker_f_final();
    tinkerFortranRuntimeEnd();
 }
 
@@ -188,6 +188,6 @@ void test_mdinit(double t, double atm)
    } else
       bath::isobaric = false;
 
-   TINKER_RT(mdinit)();
+   tinker_f_mdinit();
 }
 }

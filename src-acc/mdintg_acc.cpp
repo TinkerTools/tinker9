@@ -138,7 +138,7 @@ void mdrest_acc(int istep)
       tensor[2][2] = xx + yy + eps;
 
       int ndim = 3;
-      TINKER_RT(invert)(&ndim, &tensor[0][0]);
+      tinker_f_invert(&ndim, &tensor[0][0]);
 
       // compute angular velocity and rotational kinetic energy
 

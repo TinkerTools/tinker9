@@ -100,7 +100,7 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
 
    box_data_acc(rc_dealloc);
    gpu_card_data(rc_dealloc);
-   TINKER_RT(final)();
+   tinker_f_final();
    tinkerFortranRuntimeEnd();
 }
 
@@ -185,7 +185,7 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
 
    box_data_acc(rc_dealloc);
    gpu_card_data(rc_dealloc);
-   TINKER_RT(final)();
+   tinker_f_final();
    tinkerFortranRuntimeEnd();
 }
 
@@ -250,6 +250,6 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
 
    box_data_acc(rc_dealloc);
    gpu_card_data(rc_dealloc);
-   TINKER_RT(final)();
+   tinker_f_final();
    tinkerFortranRuntimeEnd();
 }
