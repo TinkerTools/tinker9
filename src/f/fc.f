@@ -13,25 +13,25 @@ c
       subroutine fc_trim (string,length)
       implicit none
       integer length
-      integer i,j,full,iletter
+      integer i,j,full
       character*1 letter
       character*(*) string
 c
-c     Return length of a string, ignoring trailing blanks or NULL characters.
-c     Printables: 32 to 126; SPACE = 32.
+c     Return the trimmed length of a string
 c
       j = 0
       full = len(string)
-      do i = full, 1, -1
+      do i = 1, full
          letter = string(i:i)
-         iletter = ichar(letter)
-         if (33.le.iletter .and. iletter.le.126) then
-            j = i
+         if (letter .eq. char(0)) then
             goto 10
+         else
+            j = j + 1
          end if
       end do
    10 continue
-      length = j
+      full = j
+      length = len_trim(string(1:full))
       return
       end
 c
