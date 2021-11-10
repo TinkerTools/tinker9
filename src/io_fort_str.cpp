@@ -1,7 +1,6 @@
 #include "tool/io_fort_str.h"
 #include "tool/io_text.h"
 #include <algorithm>
-#include <cassert>
 #include <cstring>
 
 
@@ -120,14 +119,12 @@ std::string FortranStringView::trim() const
 
 FortranStringView FortranStringView::operator()(int begin1, int back1) const
 {
-   assert(1 <= begin1 && begin1 <= back1 && back1 <= (int)size());
    return FortranStringView(b_ + (begin1 - 1), back1 - begin1 + 1);
 }
 
 
 FortranStringView FortranStringView::operator()(int begin1) const
 {
-   assert(1 <= begin1 && begin1 <= (e_ - b_));
    return FortranStringView(b_ + (begin1 - 1), e_ - b_);
 }
 }
