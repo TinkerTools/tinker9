@@ -423,7 +423,7 @@ void x_bar_barcalc()
    std::string str;
    auto invalid_barfile = [&](const std::string& s) {
       std::memcpy(string, s.data(), s.length());
-      t_basefile(string);
+      tinker_f_basefile({string, MAX_NCHAR});
       t_suffix(string, "bar", "old");
       std::ifstream fr(s);
       return not fr;
@@ -433,7 +433,7 @@ void x_bar_barcalc()
    // ask the user for file with potential energies and volumes
    nextarg(string, exist);
    if (exist) {
-      t_basefile(string);
+      tinker_f_basefile({string, MAX_NCHAR});
       t_suffix(string, "bar", "old");
       str = string;
    }

@@ -171,22 +171,3 @@ c
       kfile = kfile(1:klen)//c_null_char
       return
       end
-c
-c
-c
-      subroutine fc_basefile (string)  bind(c)
-      use iso_c_binding
-      use fcsize
-      implicit none
-      integer klen
-      character(c_char), target :: string(*)
-      character(MAX_NCHAR,c_char), pointer :: kstring
-      call c_f_pointer (c_loc(string),kstring)
-      call basefile (kstring)
-      call fc_trim (kstring,klen)
-c
-c     NULL-terminate the output string for C/C++
-c
-      kstring = kstring(1:klen)//c_null_char
-      return
-      end

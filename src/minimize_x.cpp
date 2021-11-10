@@ -1,7 +1,7 @@
 #include "energy.h"
 #include "nblist.h"
 #include "tinker_rt.h"
-#include "tool/fcxx.h"
+#include "tool/fc.h"
 #include "tool/io_fort_str.h"
 #include "tool/io_print.h"
 #include <tinker/detail/files.hh>

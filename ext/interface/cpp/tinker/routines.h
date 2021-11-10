@@ -12,6 +12,8 @@ typedef int tinker_fchar_len_t;
 typedef size_t tinker_fchar_len_t;
 #endif
 
+typedef struct tinker_fcharacters_st { char* string; tinker_fchar_len_t capacity; } tinker_fcharacters;
+
 void tinkerFortranRuntimeBegin(int, char**);
 void tinkerFortranRuntimeEnd();
 

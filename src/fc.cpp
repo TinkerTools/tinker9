@@ -2,7 +2,6 @@
 #include "box.h"
 #include "mdpq.h"
 #include "tool/darray.h"
-#include "tool/fcxx.h"
 #include <tinker/detail/atoms.hh>
 #include <tinker/routines.h>
 
@@ -94,13 +93,6 @@ void t_suffix(char* filename, const char* extension, const char* status)
 }
 
 
-extern "C" void fc_basefile(char* string);
-void t_basefile(char* string)
-{
-   fc_basefile(string);
-}
-
-
 void t_prterr()
 {
    using namespace tinker;
@@ -142,4 +134,12 @@ std::string t_version(std::string file, std::string status)
    fc_version(out, file.c_str(), flen, status.c_str(), slen);
    return std::string(out);
 }
+}
+
+extern "C"
+{
+   void tinker_f_basefile(tinker_fcharacters string)
+   {
+      basefile_(string.string, string.capacity);
+   }
 }

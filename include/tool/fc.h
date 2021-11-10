@@ -96,14 +96,62 @@ void t_suffix(char* filename, const char* extension, const char* status);
 
 /**
  * \ingroup bindc
- * \brief Tinker subroutine: basefile(string)
- */
-void t_basefile(char* string);
-
-
-/**
- * \ingroup bindc
  * \brief Tinker subroutine: prterr
  */
 void t_prterr();
 TINKER_EXTERN_C_END
+
+#include "macro.h"
+#include <string>
+
+
+namespace tinker {
+/**
+ * \ingroup bindc
+ * \brief Fortran statement: open (unit=iunit,file=ifile,status=istatus).
+ */
+void t_open(int unit, std::string file, std::string status);
+
+
+/**
+ * \ingroup bindc
+ * \brief Fortran statement: allocate (p(dim1)).
+ * \note This C++ interface allocates array elements in Fortran.
+ */
+template <class T>
+void t_allocate_d1(T** pp, int dim1)
+{
+   void** p = (void**)pp;
+   size_t bytes1 = sizeof(T) * dim1;
+   t_allocate_char1(p, bytes1);
+}
+
+
+/**
+ * \ingroup bindc
+ * \brief Fortran statement: read (input,10) line.
+ */
+std::string t_read_stdin_line();
+
+
+/**
+ * \ingroup bindc
+ * \brief Tinker subroutine: version (filename,status).
+ * \note This C++ interface does not change the input file string.
+ */
+std::string t_version(std::string infile, std::string status);
+}
+
+
+#include <tinker/routines.h>
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+   void tinker_f_basefile(tinker_fcharacters string);
+
+#ifdef __cplusplus
+}
+#endif

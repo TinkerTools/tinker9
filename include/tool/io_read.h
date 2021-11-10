@@ -1,5 +1,5 @@
 #pragma once
-#include "tool/fcxx.h"
+#include "tool/fc.h"
 #include "tool/io_text.h"
 #include <iostream>
 #include <sstream>

@@ -19,6 +19,8 @@ typedef int tinker_fchar_len_t;
 #include <string.h>
 typedef size_t tinker_fchar_len_t;
 #endif
+
+typedef struct tinker_fcharacters_st { char* string; tinker_fchar_len_t capacity; } tinker_fcharacters;
 '''
 
 FortranRuntimeHeader = '''void tinkerFortranRuntimeBegin(int, char**);
