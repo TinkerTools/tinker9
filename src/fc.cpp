@@ -137,9 +137,4 @@ std::string t_version(std::string file, std::string status)
 }
 
 extern "C"
-{
-   void tinker_f_basefile(tinker_fcharacters string)
-   {
-      basefile_(string.string, string.capacity);
-   }
-}
+{}

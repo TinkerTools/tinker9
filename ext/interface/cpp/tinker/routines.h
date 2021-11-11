@@ -12,7 +12,7 @@ typedef int tinker_fchar_len_t;
 typedef size_t tinker_fchar_len_t;
 #endif
 
-typedef struct tinker_fcharacters_st { char* string; tinker_fchar_len_t capacity; } tinker_fcharacters;
+typedef struct tinker_fchars_st { char* string; tinker_fchar_len_t capacity; } tinker_fchars;
 
 void tinkerFortranRuntimeBegin(int, char**);
 void tinkerFortranRuntimeEnd();
@@ -49,6 +49,9 @@ void oprep_(double* dt, double* vfric, double* vrand);
 
 // basefile.f
 void basefile_(char* string, tinker_fchar_len_t string_cap);
+inline void tinker_f_basefile(tinker_fchars string) {
+    return basefile_(string.string, string.capacity);
+}
 
 // beeman.f
 void beeman_(double* dt);
@@ -196,6 +199,9 @@ void cirpln_(double* circen, double* cirrad, double* cirvec, double* plncen, dou
 void gendot_(int* ndots, double* dots, double* radius, double* xcenter, double* ycenter, double* zcenter);
 #define tinker_f_gendot gendot_
 void cerror_(char* string, tinker_fchar_len_t string_cap);
+inline void tinker_f_cerror(tinker_fchars string) {
+    return cerror_(string.string, string.capacity);
+}
 
 // control.f
 void control_();
@@ -259,6 +265,9 @@ void mmid_(int* nstep, double* htot, int* nvar, double* xs, double* dydx, double
 void pzextr_(int* iest, int* nvar, double* xest, double* yest, double* yz, double* dy);
 #define tinker_f_pzextr pzextr_
 void gdastat_(int* nstep, double* beta, double* xx, char* status, tinker_fchar_len_t status_cap);
+inline void tinker_f_gdastat(int* nstep, double* beta, double* xx, tinker_fchars status) {
+    return gdastat_(nstep, beta, xx, status.string, status.capacity);
+}
 
 // eangang.f
 void eangang_();
@@ -762,6 +771,9 @@ void minpath_(int* root, double* upper, double* lower, int* start, int* stop, in
 void trifix_(int* p, int* q);
 #define tinker_f_trifix trifix_
 void grafic_(int* n, double* a, char* title, tinker_fchar_len_t title_cap);
+inline void tinker_f_grafic(int* n, double* a, tinker_fchars title) {
+    return grafic_(n, a, title.string, title.capacity);
+}
 void dstmat_(double* dmx);
 #define tinker_f_dstmat dstmat_
 void metric_(double* gmx, int* nneg);
@@ -775,9 +787,21 @@ void chksize_();
 void majorize_(double* dmx);
 #define tinker_f_majorize majorize_
 void refine_(char* mode, double* fctval, double* grdmin, tinker_fchar_len_t mode_cap);
+inline void tinker_f_refine(tinker_fchars mode, double* fctval, double* grdmin) {
+    return refine_(mode.string, fctval, grdmin, mode.capacity);
+}
 void explore_(char* mode, int* nstep, double* dt, double* mass, double* temp_start, double* temp_stop, double* v, double* a, tinker_fchar_len_t mode_cap);
+inline void tinker_f_explore(tinker_fchars mode, int* nstep, double* dt, double* mass, double* temp_start, double* temp_stop, double* v, double* a) {
+    return explore_(mode.string, nstep, dt, mass, temp_start, temp_stop, v, a, mode.capacity);
+}
 void fracdist_(char* title, tinker_fchar_len_t title_cap);
+inline void tinker_f_fracdist(tinker_fchars title) {
+    return fracdist_(title.string, title.capacity);
+}
 void rmserror_(char* title, tinker_fchar_len_t title_cap);
+inline void tinker_f_rmserror(tinker_fchars title) {
+    return rmserror_(title.string, title.capacity);
+}
 void dmdump_(double* dmd);
 #define tinker_f_dmdump dmdump_
 double initerr_(double* xx, double* g);
@@ -1285,7 +1309,13 @@ void eurey3_();
 
 // evcorr.f
 void evcorr_(char* mode, double* elrc, tinker_fchar_len_t mode_cap);
+inline void tinker_f_evcorr(tinker_fchars mode, double* elrc) {
+    return evcorr_(mode.string, elrc, mode.capacity);
+}
 void evcorr1_(char* mode, double* elrc, double* vlrc, tinker_fchar_len_t mode_cap);
+inline void tinker_f_evcorr1(tinker_fchars mode, double* elrc, double* vlrc) {
+    return evcorr1_(mode.string, elrc, vlrc, mode.capacity);
+}
 
 // extra.f
 void extra_();
@@ -1393,6 +1423,9 @@ void getmol2_();
 
 // getnumb.f
 void getnumb_(char* string, int* number, int* next, tinker_fchar_len_t string_cap);
+inline void tinker_f_getnumb(tinker_fchars string, int* number, int* next) {
+    return getnumb_(string.string, number, next, string.capacity);
+}
 
 // getpdb.f
 void getpdb_();
@@ -1408,12 +1441,21 @@ void getref_(int* iref);
 
 // getstring.f
 void getstring_(char* string, char* text, int* next, tinker_fchar_len_t string_cap, tinker_fchar_len_t text_cap);
+inline void tinker_f_getstring(tinker_fchars string, tinker_fchars text, int* next) {
+    return getstring_(string.string, text.string, next, string.capacity, text.capacity);
+}
 
 // gettext.f
 void gettext_(char* string, char* text, int* next, tinker_fchar_len_t string_cap, tinker_fchar_len_t text_cap);
+inline void tinker_f_gettext(tinker_fchars string, tinker_fchars text, int* next) {
+    return gettext_(string.string, text.string, next, string.capacity, text.capacity);
+}
 
 // getword.f
 void getword_(char* string, char* word, int* next, tinker_fchar_len_t string_cap, tinker_fchar_len_t word_cap);
+inline void tinker_f_getword(tinker_fchars string, tinker_fchars word, int* next) {
+    return getword_(string.string, word.string, next, string.capacity, word.capacity);
+}
 
 // getxyz.f
 void getxyz_();
@@ -1459,6 +1501,9 @@ void hessrgd_(double* hrigid);
 
 // hessrot.f
 void hessrot_(char* mode, double* hrot, tinker_fchar_len_t mode_cap);
+inline void tinker_f_hessrot(tinker_fchars mode, double* hrot) {
+    return hessrot_(mode.string, hrot, mode.capacity);
+}
 
 // hybrid.f
 void hybrid_();
@@ -1540,7 +1585,13 @@ void ufield0e_(double* field, double* fieldp, double* fields, double* fieldps);
 void ulspred_();
 #define tinker_f_ulspred ulspred_
 void uscale0a_(char* mode, double* rsd, double* rsdp, double* zrsd, double* zrsdp, tinker_fchar_len_t mode_cap);
+inline void tinker_f_uscale0a(tinker_fchars mode, double* rsd, double* rsdp, double* zrsd, double* zrsdp) {
+    return uscale0a_(mode.string, rsd, rsdp, zrsd, zrsdp, mode.capacity);
+}
 void uscale0b_(char* mode, double* rsd, double* rsdp, double* zrsd, double* zrsdp, tinker_fchar_len_t mode_cap);
+inline void tinker_f_uscale0b(tinker_fchars mode, double* rsd, double* rsdp, double* zrsd, double* zrsdp) {
+    return uscale0b_(mode.string, rsd, rsdp, zrsd, zrsdp, mode.capacity);
+}
 
 // inertia.f
 void inertia_(int* mode);
@@ -1722,6 +1773,9 @@ void knp_();
 void khpmf_();
 #define tinker_f_khpmf khpmf_
 void setrad_(char* radtyp, tinker_fchar_len_t radtyp_cap);
+inline void tinker_f_setrad(tinker_fchars radtyp) {
+    return setrad_(radtyp.string, radtyp.capacity);
+}
 
 // kstrbnd.f
 void kstrbnd_();
@@ -1863,9 +1917,15 @@ void ulight_();
 
 // nextarg.f
 void nextarg_(char* string, int* exist, tinker_fchar_len_t string_cap);
+inline void tinker_f_nextarg(tinker_fchars string, int* exist) {
+    return nextarg_(string.string, exist, string.capacity);
+}
 
 // nexttext.f
 int nexttext_(char* string, tinker_fchar_len_t string_cap);
+inline int tinker_f_nexttext(tinker_fchars string) {
+    return nexttext_(string.string, string.capacity);
+}
 
 // nose.f
 void nose_(double* dt);
@@ -1879,9 +1939,15 @@ void nspline_(int* n, double* x0, double* y0, double* s1, double* s2, double* h,
 
 // number.f
 int number_(char* string, tinker_fchar_len_t string_cap);
+inline int tinker_f_number(tinker_fchars string) {
+    return number_(string.string, string.capacity);
+}
 
 // numeral.f
 void numeral_(int* number, char* string, int* size, tinker_fchar_len_t string_cap);
+inline void tinker_f_numeral(int* number, tinker_fchars string, int* size) {
+    return numeral_(number, string.string, size, string.capacity);
+}
 
 // numgrad.f
 void numgrad_(double (*evalue)(), double* g, double* eps);
@@ -1893,6 +1959,9 @@ void ocvm_(int* nvar, double* x0, double* f0, double* grdmin, double (*fgvalue)(
 
 // openend.f
 void openend_(int* iunit, char* name, tinker_fchar_len_t name_cap);
+inline void tinker_f_openend(int* iunit, tinker_fchars name) {
+    return openend_(iunit, name.string, name.capacity);
+}
 
 // optinit.f
 void optinit_();
@@ -1992,6 +2061,9 @@ void frac_to_cart_(double* ftc);
 
 // pmpb.f
 void apbsinitial_(int* dime, double* grid, double* gcent, double* cgrid, double* cgcent, double* fgrid, double* fgcent, double* pdie, double* sdie, double* srad, double* swin, double* sdens, double* kelvin, int* ionn, double* ionc, int* ionq, double* ionr, char* pbtyp, int* pbtyplen, char* pbsoln, int* pbsolnlen, char* bcfl, int* bcfllen, char* chgm, int* chgmlen, char* srfm, int* srfmlen, tinker_fchar_len_t pbtyp_cap, tinker_fchar_len_t pbsoln_cap, tinker_fchar_len_t bcfl_cap, tinker_fchar_len_t chgm_cap, tinker_fchar_len_t srfm_cap);
+inline void tinker_f_apbsinitial(int* dime, double* grid, double* gcent, double* cgrid, double* cgcent, double* fgrid, double* fgcent, double* pdie, double* sdie, double* srad, double* swin, double* sdens, double* kelvin, int* ionn, double* ionc, int* ionq, double* ionr, tinker_fchars pbtyp, int* pbtyplen, tinker_fchars pbsoln, int* pbsolnlen, tinker_fchars bcfl, int* bcfllen, tinker_fchars chgm, int* chgmlen, tinker_fchars srfm, int* srfmlen) {
+    return apbsinitial_(dime, grid, gcent, cgrid, cgcent, fgrid, fgcent, pdie, sdie, srad, swin, sdens, kelvin, ionn, ionc, ionq, ionr, pbtyp.string, pbtyplen, pbsoln.string, pbsolnlen, bcfl.string, bcfllen, chgm.string, chgmlen, srfm.string, srfmlen, pbtyp.capacity, pbsoln.capacity, bcfl.capacity, chgm.capacity, srfm.capacity);
+}
 void apbsempole_(int* n, double* pos, double* rsolv, double* pbpole, double* pbe, double* apbe, double* pbep, double* pbfp, double* pbtp);
 #define tinker_f_apbsempole apbsempole_
 void apbsinduce_(double* indpole, double* pbeuind);
@@ -2027,6 +2099,9 @@ void pscale_(double* dt, double* pres, double* stress);
 
 // prmkey.f
 void prmkey_(char* text, tinker_fchar_len_t text_cap);
+inline void tinker_f_prmkey(tinker_fchars text) {
+    return prmkey_(text.string, text.capacity);
+}
 void potoff_();
 #define tinker_f_potoff potoff_
 
@@ -2050,6 +2125,9 @@ void prtint_(int* izmt);
 void prtmol2_(int* imol2);
 #define tinker_f_prtmol2 prtmol2_
 void setmol2_(char* atmnam, char* atmtyp, double* atmchg, char* bndtyp, tinker_fchar_len_t atmnam_cap, tinker_fchar_len_t atmtyp_cap, tinker_fchar_len_t bndtyp_cap);
+inline void tinker_f_setmol2(tinker_fchars atmnam, tinker_fchars atmtyp, double* atmchg, tinker_fchars bndtyp) {
+    return setmol2_(atmnam.string, atmtyp.string, atmchg, bndtyp.string, atmnam.capacity, atmtyp.capacity, bndtyp.capacity);
+}
 
 // prtpdb.f
 void prtpdb_(int* ipdb);
@@ -2105,13 +2183,25 @@ void readdyn_(int* idyn);
 void readgau_();
 #define tinker_f_readgau readgau_
 void readgarc_(int* igau, char* string, char* word, int* length, int* next, tinker_fchar_len_t string_cap, tinker_fchar_len_t word_cap);
+inline void tinker_f_readgarc(int* igau, tinker_fchars string, tinker_fchars word, int* length, int* next) {
+    return readgarc_(igau, string.string, word.string, length, next, string.capacity, word.capacity);
+}
 
 // readgdma.f
 void readgdma_(int* idma);
 #define tinker_f_readgdma readgdma_
 void match1_(int* i, char* record, tinker_fchar_len_t record_cap);
+inline void tinker_f_match1(int* i, tinker_fchars record) {
+    return match1_(i, record.string, record.capacity);
+}
 void match2_(int* i, char* record, tinker_fchar_len_t record_cap);
+inline void tinker_f_match2(int* i, tinker_fchars record) {
+    return match2_(i, record.string, record.capacity);
+}
 void match3_(int* i, char* record, tinker_fchar_len_t record_cap);
+inline void tinker_f_match3(int* i, tinker_fchars record) {
+    return match3_(i, record.string, record.capacity);
+}
 
 // readint.f
 void readint_(int* izmt);
@@ -2131,6 +2221,9 @@ void readpdb_(int* ipdb);
 void scanpdb_(int* ipdb);
 #define tinker_f_scanpdb scanpdb_
 void fixpdb_(char* resname, char* atmname, tinker_fchar_len_t resname_cap, tinker_fchar_len_t atmname_cap);
+inline void tinker_f_fixpdb(tinker_fchars resname, tinker_fchars atmname) {
+    return fixpdb_(resname.string, atmname.string, resname.capacity, atmname.capacity);
+}
 
 // readprm.f
 void readprm_();
@@ -2198,6 +2291,9 @@ void sdarea_();
 
 // search.f
 void search_(int* nvar, double* f, double* g, double* x, double* p, double* f_move, double* angle, int* ncalls, double (*fgvalue)(double*, double*), char* status, tinker_fchar_len_t status_cap);
+inline void tinker_f_search(int* nvar, double* f, double* g, double* x, double* p, double* f_move, double* angle, int* ncalls, double (*fgvalue)(double*, double*), tinker_fchars status) {
+    return search_(nvar, f, g, x, p, f_move, angle, ncalls, fgvalue, status.string, status.capacity);
+}
 
 // server.f
 void chksocket_(int* flag);
@@ -2223,8 +2319,17 @@ void needupdate_(int* flag);
 void setupdated_();
 #define tinker_f_setupdated setupdated_
 void setfile_(char* filename, tinker_fchar_len_t filename_cap);
+inline void tinker_f_setfile(tinker_fchars filename) {
+    return setfile_(filename.string, filename.capacity);
+}
 void setforcefield_(char* forcefield, tinker_fchar_len_t forcefield_cap);
+inline void tinker_f_setforcefield(tinker_fchars forcefield) {
+    return setforcefield_(forcefield.string, forcefield.capacity);
+}
 void setkeyword_(int* i, char* keyline, tinker_fchar_len_t keyline_cap);
+inline void tinker_f_setkeyword(int* i, tinker_fchars keyline) {
+    return setkeyword_(i, keyline.string, keyline.capacity);
+}
 void setatomtypes_(int* n, int* type);
 #define tinker_f_setatomtypes setatomtypes_
 void setatomic_(int* n, int* atomic);
@@ -2236,7 +2341,13 @@ void setcharge_(int* n, double* charge);
 void setconnectivity_(int* n, int* b1, int* b2, int* b3, int* b4);
 #define tinker_f_setconnectivity setconnectivity_
 void setname_(int* i, char* name, tinker_fchar_len_t name_cap);
+inline void tinker_f_setname(int* i, tinker_fchars name) {
+    return setname_(i, name.string, name.capacity);
+}
 void setstory_(int* i, char* story, tinker_fchar_len_t story_cap);
+inline void tinker_f_setstory(int* i, tinker_fchars story) {
+    return setstory_(i, story.string, story.capacity);
+}
 void setcoordinates_(int* n, double* x, double* y, double* z);
 #define tinker_f_setcoordinates setcoordinates_
 void setstep_(int* ncycle);
@@ -2290,12 +2401,21 @@ void sort4_(int* n, int* list);
 void sort5_(int* n, int* list, int* m);
 #define tinker_f_sort5 sort5_
 void sort6_(int* n, char* list, tinker_fchar_len_t list_cap);
+inline void tinker_f_sort6(int* n, tinker_fchars list) {
+    return sort6_(n, list.string, list.capacity);
+}
 void sort7_(int* n, char* list, int* key, tinker_fchar_len_t list_cap);
+inline void tinker_f_sort7(int* n, tinker_fchars list, int* key) {
+    return sort7_(n, list.string, key, list.capacity);
+}
 void sort8_(int* n, int* list);
 #define tinker_f_sort8 sort8_
 void sort9_(int* n, double* list);
 #define tinker_f_sort9 sort9_
 void sort10_(int* n, char* list, tinker_fchar_len_t list_cap);
+inline void tinker_f_sort10(int* n, tinker_fchars list) {
+    return sort10_(n, list.string, list.capacity);
+}
 
 // square.f
 void square_(int* n, int* m, double* xlo, double* xhi, double* xc, double* fc, double* gc, double* fjac, double* grdmin, void (*rsdvalue)(int*, int*, double*, double*), void (*lsqwrite)(int*, int*, double*, double*, double*));
@@ -2307,6 +2427,9 @@ void trust_(int* n, int* m, double* xc, double* fcnorm, double* gc, double* a, i
 
 // suffix.f
 void suffix_(char* filename, char* extension, char* status, tinker_fchar_len_t filename_cap, tinker_fchar_len_t extension_cap, tinker_fchar_len_t status_cap);
+inline void tinker_f_suffix(tinker_fchars filename, tinker_fchars extension, tinker_fchars status) {
+    return suffix_(filename.string, extension.string, status.string, filename.capacity, extension.capacity, status.capacity);
+}
 
 // surface.f
 void surface_(double* total, double* area, double* radius, double* weight, double* probe);
@@ -2322,6 +2445,9 @@ void surfatom1_(int* ir, double* area, double* darea, double* radius);
 
 // switch.f
 void switch_(char* mode, tinker_fchar_len_t mode_cap);
+inline void tinker_f_switch(tinker_fchars mode) {
+    return switch_(mode.string, mode.capacity);
+}
 
 // tcgstuf.f
 void induce0b_();
@@ -2357,8 +2483,17 @@ void temper2_(double* dt, double* temp);
 
 // tncg.f
 void tncg_(char* mode, char* method, int* nvar, double* x0, double* minimum, double* grdmin, double (*fgvalue)(double*, double*), void (*hmatrix)(char*, double*, double*, int*, int*, int*, double*, tinker_fchar_len_t), void (*optsave)(int*, double*, double*), tinker_fchar_len_t mode_cap, tinker_fchar_len_t method_cap);
+inline void tinker_f_tncg(tinker_fchars mode, tinker_fchars method, int* nvar, double* x0, double* minimum, double* grdmin, double (*fgvalue)(double*, double*), void (*hmatrix)(char*, double*, double*, int*, int*, int*, double*, tinker_fchar_len_t), void (*optsave)(int*, double*, double*)) {
+    return tncg_(mode.string, method.string, nvar, x0, minimum, grdmin, fgvalue, hmatrix, optsave, mode.capacity, method.capacity);
+}
 void tnsolve_(char* mode, char* method, int* negtest, int* nvar, double* p, double* x0, double* g, double* h, int* h_init, int* h_stop, int* h_index, double* h_diag, int* cycle, int* iter_cg, int* fg_call, double (*fgvalue)(double*, double*), char* status, tinker_fchar_len_t mode_cap, tinker_fchar_len_t method_cap, tinker_fchar_len_t status_cap);
+inline void tinker_f_tnsolve(tinker_fchars mode, tinker_fchars method, int* negtest, int* nvar, double* p, double* x0, double* g, double* h, int* h_init, int* h_stop, int* h_index, double* h_diag, int* cycle, int* iter_cg, int* fg_call, double (*fgvalue)(double*, double*), tinker_fchars status) {
+    return tnsolve_(mode.string, method.string, negtest, nvar, p, x0, g, h, h_init, h_stop, h_index, h_diag, cycle, iter_cg, fg_call, fgvalue, status.string, mode.capacity, method.capacity, status.capacity);
+}
 void precond_(char* method, int* iter, int* nvar, double* s, double* r, double* h, int* h_init, int* h_stop, int* h_index, double* h_diag, tinker_fchar_len_t method_cap);
+inline void tinker_f_precond(tinker_fchars method, int* iter, int* nvar, double* s, double* r, double* h, int* h_init, int* h_stop, int* h_index, double* h_diag) {
+    return precond_(method.string, iter, nvar, s, r, h, h_init, h_stop, h_index, h_diag, method.capacity);
+}
 
 // torphase.f
 void torphase_(int* ft, double* vt, double* st);
@@ -2374,10 +2509,25 @@ void torsions_();
 
 // trimtext.f
 int trimtext_(char* string, tinker_fchar_len_t string_cap);
+inline int tinker_f_trimtext(tinker_fchars string) {
+    return trimtext_(string.string, string.capacity);
+}
 void trimhead_(char* string, tinker_fchar_len_t string_cap);
+inline void tinker_f_trimhead(tinker_fchars string) {
+    return trimhead_(string.string, string.capacity);
+}
 void justify_(char* string, tinker_fchar_len_t string_cap);
+inline void tinker_f_justify(tinker_fchars string) {
+    return justify_(string.string, string.capacity);
+}
 void upcase_(char* string, tinker_fchar_len_t string_cap);
+inline void tinker_f_upcase(tinker_fchars string) {
+    return upcase_(string.string, string.capacity);
+}
 void lowcase_(char* string, tinker_fchar_len_t string_cap);
+inline void tinker_f_lowcase(tinker_fchars string) {
+    return lowcase_(string.string, string.capacity);
+}
 
 // unitcell.f
 void unitcell_();
@@ -2389,6 +2539,9 @@ void verlet_(double* dt);
 
 // version.f
 void version_(char* filename, char* status, tinker_fchar_len_t filename_cap, tinker_fchar_len_t status_cap);
+inline void tinker_f_version(tinker_fchars filename, tinker_fchars status) {
+    return version_(filename.string, status.string, filename.capacity, status.capacity);
+}
 
 // volume.f
 void volume_(double* volume_tot, double* radius, double* exclude);

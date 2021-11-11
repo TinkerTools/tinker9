@@ -20,7 +20,7 @@ typedef int tinker_fchar_len_t;
 typedef size_t tinker_fchar_len_t;
 #endif
 
-typedef struct tinker_fcharacters_st { char* string; tinker_fchar_len_t capacity; } tinker_fcharacters;
+typedef struct tinker_fchars_st { char* string; tinker_fchar_len_t capacity; } tinker_fchars;
 '''
 
 FortranRuntimeHeader = '''void tinkerFortranRuntimeBegin(int, char**);
@@ -841,7 +841,7 @@ def exportRoutine(r: Variable) -> str:
             p2_lst.append(Tinker8.fortranExternalCallInC(r.symbol, arg.symbol))
         else:
             p2_lst.append('{}* {}'.format(arg.type, arg.symbol))
-            if (arg.type == 'char'):
+            if arg.type == 'char':
                 char_lst.append('tinker_fchar_len_t {}_cap'.format(arg.symbol))
     part2 = ', '.join(p2_lst)
     for ch in char_lst:
@@ -849,6 +849,29 @@ def exportRoutine(r: Variable) -> str:
     line: str = '{}({});'.format(part1, part2)
     if len(char_lst) == 0:
         line = line + '\n' + '#define tinker_f_{0} {0}_'.format(r.symbol)
+    else:
+        p3_lst: List[str] = []
+        p2_lst.clear()
+        char_lst.clear()
+        for arg in r.entries:
+            if arg.type == 'fptr':
+                p3_lst.append(arg.symbol)
+                p2_lst.append(Tinker8.fortranExternalCallInC(r.symbol, arg.symbol))
+            else:
+                if arg.type == 'char':
+                    p3_lst.append('{}.string'.format(arg.symbol))
+                    char_lst.append(arg.symbol)
+                    p2_lst.append('tinker_fchars {}'.format(arg.symbol))
+                else:
+                    p3_lst.append(arg.symbol)
+                    p2_lst.append('{}* {}'.format(arg.type, arg.symbol))
+        for ch in char_lst:
+            p3_lst.append('{}.capacity'.format(ch))
+        call_str = 'return {}_({});'.format(r.symbol, ', '.join(p3_lst))
+        line2 = '''inline {} tinker_f_{}({}) {{
+    {}
+}}'''.format(r.return_type, r.symbol, ', '.join(p2_lst), call_str)
+        line = line + '\n' + line2
     return line
 
 

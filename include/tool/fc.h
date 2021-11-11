@@ -150,8 +150,6 @@ extern "C"
 {
 #endif
 
-   void tinker_f_basefile(tinker_fcharacters string);
-
 #ifdef __cplusplus
 }
 #endif
