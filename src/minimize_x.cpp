@@ -53,9 +53,9 @@ void x_minimize(int, char**)
    const int leng = files::leng;
    std::string minfile = fstr_view(files::filename)(1, leng).trim() + ".xyz";
    minfile = tinker_f_version(minfile, "new");
-   t_open(imin, minfile.c_str(), "new");
+   tinker_f_open(&imin, minfile, "new");
    tinker_f_prtxyz(&imin);
-   t_close(imin);
+   tinker_f_close(&imin);
    fstr_view outview = files::outfile;
    outview = minfile;
 
@@ -142,10 +142,10 @@ void x_minimize(int, char**)
    // write the final coordinates into a file
    bounds();
    imin = tinker_f_freeunit();
-   t_open(imin, minfile, "old");
-   t_rewind(imin);
+   tinker_f_open(&imin, minfile, "old");
+   tinker_f_rewind(&imin);
    tinker_f_prtxyz(&imin);
-   t_close(imin);
+   tinker_f_close(&imin);
 
 
    finish();

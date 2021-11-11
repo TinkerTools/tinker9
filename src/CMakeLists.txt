@@ -32,6 +32,7 @@ epolar_chgpen.cpp
 epolar.cpp
 erepel.cpp
 error_nix.cpp
+error_prterr.cpp
 estrbnd.cpp
 estrtor.cpp
 etors.cpp

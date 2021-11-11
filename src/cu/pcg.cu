@@ -353,7 +353,7 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
 
    // terminate the calculation if dipoles failed to converge
    if (iter >= maxiter || eps > epsold) {
-      t_prterr();
+      prterr();
       TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
    }
 }

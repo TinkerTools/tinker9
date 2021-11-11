@@ -81,7 +81,7 @@ void x_bar_makebar()
    // get trajectory A and setup mechanics calculation
    int iarc;
    tinker_f_getarc(&iarc);
-   t_close(iarc);
+   tinker_f_close(&iarc);
    tinker_f_mechanic();
 
 
@@ -113,7 +113,7 @@ void x_bar_makebar()
 
    // get trajectory B and setup mechanics calculation
    tinker_f_getarc(&iarc);
-   t_close(iarc);
+   tinker_f_close(&iarc);
    tinker_f_mechanic();
    inform::silent = true;
 
@@ -198,15 +198,15 @@ void x_bar_makebar()
    tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("arc"), 3},
                    {const_cast<char*>("old"), 3});
    iarc = tinker_f_freeunit();
-   t_open(iarc, string, "old");
    str = fstr_view(string).trim();
+   tinker_f_open(&iarc, str, "old");
    std::ifstream a_arc(str);
 
 
    if (ua0.size() == 0) {
       // reset trajectory A using the parameters for state 0
       rewind_stream(a_arc);
-      t_rewind(iarc);
+      tinker_f_rewind(&iarc);
       tinker_f_readxyz(&iarc);
       keys::nkey = nkey0;
       for (int i = 0; i < keys::nkey; ++i)
@@ -241,7 +241,7 @@ void x_bar_makebar()
 
    // reset trajectory A using the parameters for state 1
    rewind_stream(a_arc);
-   t_rewind(iarc);
+   tinker_f_rewind(&iarc);
    tinker_f_readxyz(&iarc);
    keys::nkey = nkey1;
    for (int i = 0; i < keys::nkey; ++i)
@@ -276,7 +276,7 @@ void x_bar_makebar()
 
 
    // save potential energies and volumes for trajectory A
-   t_close(iarc);
+   tinker_f_close(&iarc);
    FILE* ibar = std::fopen(barfile.c_str(), "w");
    int nfrma = std::min(ua0.size(), ua1.size());
    str = fstr_view(titlea)(1, ltitlea).trim();
@@ -322,15 +322,15 @@ void x_bar_makebar()
    tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("arc"), 3},
                    {const_cast<char*>("old"), 3});
    iarc = tinker_f_freeunit();
-   t_open(iarc, string, "old");
    str = fstr_view(string).trim();
+   tinker_f_open(&iarc, str, "old");
    std::ifstream b_arc(str);
 
 
    if (ub1.size() == 0) {
       // reset trajectory B using the parameters for state 1
       rewind_stream(b_arc);
-      t_rewind(iarc);
+      tinker_f_rewind(&iarc);
       tinker_f_readxyz(&iarc);
       keys::nkey = nkey1;
       for (int i = 0; i < keys::nkey; ++i)
@@ -365,7 +365,7 @@ void x_bar_makebar()
 
    // reset trajectory B using the parameters for state 0
    rewind_stream(b_arc);
-   t_rewind(iarc);
+   tinker_f_rewind(&iarc);
    tinker_f_readxyz(&iarc);
    keys::nkey = nkey0;
    for (int i = 0; i < keys::nkey; ++i)
@@ -400,7 +400,7 @@ void x_bar_makebar()
 
 
    // save potential energies and volumes for trajectory B
-   t_close(iarc);
+   tinker_f_close(&iarc);
    int nfrmb = std::min(ub0.size(), ub1.size());
    str = fstr_view(titleb)(1, ltitleb).trim();
    print(ibar, "%8d%10.2lf  %s\n", nfrmb, tempb, str);
