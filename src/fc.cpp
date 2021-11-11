@@ -8,12 +8,6 @@
 #include <tinker/routines.h>
 
 
-namespace {
-char out[2048];
-static_assert(2048 >= tinker::MAX_NCHAR + 5, "");
-}
-
-
 TINKER_EXTERN_C_BEGIN
 void fc_rewind(int);
 void t_rewind(int unit)
@@ -67,14 +61,6 @@ void t_allocate_char1(void** pp, size_t bytes1)
 //====================================================================//
 
 
-extern "C" void fc_read_stdin_line(char* outfile);
-const char* t_read_stdin_line()
-{
-   fc_read_stdin_line(out);
-   return out;
-}
-
-
 void t_prterr()
 {
    using namespace tinker;
@@ -102,11 +88,6 @@ void t_open(int unit, std::string file, std::string status)
 }
 
 
-std::string t_read_stdin_line()
-{
-   fc_read_stdin_line(out);
-   return std::string(out);
-}
 }
 
 
@@ -120,5 +101,15 @@ std::string tinker_f_version(std::string file, std::string status)
    tinker_fchars str{buf, buffer_len};
    tinker_fchars sta{const_cast<char*>(status.c_str()), status.length()};
    tinker_f_version(str, sta);
+   return fstr_view(buf).trim();
+}
+
+extern "C" void suppl_read_stdin_line_(char* out, tinker_fchar_len_t out_cap);
+std::string tinker_f_read_stdin_line()
+{
+   using namespace tinker;
+   constexpr int buffer_len = 2048;
+   char buf[buffer_len] = {0};
+   suppl_read_stdin_line_(buf, buffer_len);
    return fstr_view(buf).trim();
 }

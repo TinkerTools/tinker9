@@ -72,15 +72,6 @@ void t_allocate_char1(void** pp, size_t bytes1);
 
 /**
  * \ingroup bindc
- * \brief Fortran statement: read (input,10) line, where input is `stdin`,
- * format 10 is format of a character string and line is a character string
- * long enough for format 10.
- */
-const char* t_read_stdin_line();
-
-
-/**
- * \ingroup bindc
  * \brief Tinker subroutine: prterr
  */
 void t_prterr();
@@ -112,11 +103,8 @@ void t_allocate_d1(T** pp, int dim1)
 }
 
 
-/**
- * \ingroup bindc
- * \brief Fortran statement: read (input,10) line.
- */
-std::string t_read_stdin_line();
+
+
 
 
 /**
@@ -131,3 +119,5 @@ std::string t_read_stdin_line();
 
 
 std::string tinker_f_version(std::string infile, std::string status);
+
+std::string tinker_f_read_stdin_line();

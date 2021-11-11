@@ -106,17 +106,19 @@ c
 c
 c
 c
-      subroutine fc_read_stdin_line (out)  bind(c)
+      subroutine suppl_read_stdin_line_ (out,outlen)  bind(c)
       use iso_c_binding
-      use fcsize
       implicit none
-      integer stdin,klen
+      integer i,stdin
+      integer*8, value :: outlen
       parameter (stdin=5)
       character(c_char), target :: out(*)
-      character(MAX_NCHAR,c_char), pointer :: kout
+      character(outlen,c_char), pointer :: kout
+c
       call c_f_pointer (c_loc(out),kout)
+      do i = 1, outlen
+         out(i:i) = char(0)
+      end do
       read (stdin,'(a)')  kout
-      call fc_trim (kout,klen)
-      kout = kout(1:klen)//c_null_char
       return
       end
