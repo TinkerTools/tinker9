@@ -67,8 +67,8 @@ void x_minimize(int, char**)
 
 
    // perform dynamic allocation of some global arrays
-   if (!t_allocated(scales::scale))
-      t_allocate_d1(&scales::scale, 3 * n);
+   if (!tinker_f_allocated(scales::scale))
+      tinker_f_allocate_dim(&scales::scale, 3 * n);
 
 
    // set scaling parameter for function and derivative values;

@@ -72,11 +72,11 @@ c
 c
 c
 c
-      subroutine fc_allocated (p,ans)
-      use iso_c_binding
+      subroutine suppl_allocated (p,ans)
       implicit none
       character, allocatable :: p(:)
-      integer(c_int) ans
+      integer ans
+c
       if (allocated(p)) then
          ans = 1
       else
@@ -87,20 +87,22 @@ c
 c
 c
 c
-      subroutine fc_deallocate (p)
+      subroutine suppl_deallocate (p)
       implicit none
       character, allocatable :: p(:)
+c
       deallocate (p)
       return
       end
 c
 c
 c
-      subroutine fc_allocate_char1 (p,bytes1)
+      subroutine suppl_allocate_byte (p,bytes)
       implicit none
-      integer*8, value :: bytes1
+      integer*8, value :: bytes
       character, allocatable :: p(:)
-      allocate (p(bytes1))
+c
+      allocate (p(bytes))
       return
       end
 c

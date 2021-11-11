@@ -41,32 +41,6 @@ void t_open(int unit, const char* file, const char* status);
 //====================================================================//
 
 
-/**
- * \ingroup bindc
- * \brief Fortran statement: allocated (p).
- */
-int t_allocated(void* p);
-
-
-/**
- * \ingroup bindc
- * \brief Fortran statement: deallocate (p).
- */
-void t_deallocate(void* p);
-
-
-/**
- * \ingroup bindc
- * \brief Fortran statement: allocate (p(dim1)).
- * \code{.f}
- * character, allocatable :: p(:)
- * allocate (p(bytes1))
- * \endcode
- * \note This C interface only allocates bytes (not array elements) in Fortran.
- */
-void t_allocate_char1(void** pp, size_t bytes1);
-
-
 //====================================================================//
 
 
@@ -94,30 +68,29 @@ void t_open(int unit, std::string file, std::string status);
  * \brief Fortran statement: allocate (p(dim1)).
  * \note This C++ interface allocates array elements in Fortran.
  */
-template <class T>
-void t_allocate_d1(T** pp, int dim1)
-{
-   void** p = (void**)pp;
-   size_t bytes1 = sizeof(T) * dim1;
-   t_allocate_char1(p, bytes1);
-}
 
-
-
-
-
-
-/**
- * \ingroup bindc
- * \brief Tinker subroutine: version (filename,status).
- * \note This C++ interface does not change the input file string.
- */
 }
 
 
 #include <tinker/routines.h>
 
-
+// version
 std::string tinker_f_version(std::string infile, std::string status);
 
+// memory
+int tinker_f_allocated(void* p);
+
+void tinker_f_deallocate(void* p);
+
+void tinker_f_allocate_byte(void** pp, size_t bytes);
+
+template <class T>
+void tinker_f_allocate_dim(T** pp, int dim)
+{
+   void** p = (void**)pp;
+   size_t bytes = sizeof(T) * dim;
+   tinker_f_allocate_byte(p, bytes);
+}
+
+// read stdin
 std::string tinker_f_read_stdin_line();

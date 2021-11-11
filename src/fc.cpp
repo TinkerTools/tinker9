@@ -35,27 +35,7 @@ void t_open(int unit, const char* file, const char* status)
 //====================================================================//
 
 
-extern "C" void fc_allocated_(void** p, int* ans);
-int t_allocated(void* p)
-{
-   int ans;
-   fc_allocated_(&p, &ans);
-   return ans;
-}
 
-
-extern "C" void fc_deallocate_(void**);
-void t_deallocate(void* p)
-{
-   fc_deallocate_(&p);
-}
-
-
-extern "C" void fc_allocate_char1_(void**, size_t);
-void t_allocate_char1(void** pp, size_t bytes1)
-{
-   fc_allocate_char1_(pp, bytes1);
-}
 
 
 //====================================================================//
@@ -102,6 +82,27 @@ std::string tinker_f_version(std::string file, std::string status)
    tinker_fchars sta{const_cast<char*>(status.c_str()), status.length()};
    tinker_f_version(str, sta);
    return fstr_view(buf).trim();
+}
+
+extern "C" void suppl_allocated_(void** p, int* ans);
+int tinker_f_allocated(void* p)
+{
+   int ans;
+   suppl_allocated_(&p, &ans);
+   return ans;
+}
+
+
+extern "C" void suppl_deallocate_(void**);
+void tinker_f_deallocate(void* p)
+{
+   suppl_deallocate_(&p);
+}
+
+extern "C" void suppl_allocate_byte_(void**, size_t);
+void tinker_f_allocate_byte(void** pp, size_t bytes)
+{
+   suppl_allocate_byte_(pp, bytes);
 }
 
 extern "C" void suppl_read_stdin_line_(char* out, tinker_fchar_len_t out_cap);
