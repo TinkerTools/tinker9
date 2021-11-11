@@ -120,28 +120,3 @@ c
       kout = kout(1:klen)//c_null_char
       return
       end
-c
-c
-c
-      subroutine fc_suffix (file,ext,status,slen)  bind(c)
-      use iso_c_binding
-      use fcsize
-      implicit none
-      integer klen
-      integer(c_int), value :: slen
-      character(c_char), target :: file(*),ext(*),status(*)
-      character(MAX_NCHAR,c_char), pointer :: kfile,kext,kstatus
-      character(3,c_char) istatus
-      call c_f_pointer (c_loc(file),kfile)
-      call c_f_pointer (c_loc(ext),kext)
-      call c_f_pointer (c_loc(status),kstatus)
-      if (slen .gt. 3)  call exit (1)
-      istatus = kstatus(1:slen)
-      call suffix (kfile,kext,istatus)
-      call fc_trim (kfile,klen)
-c
-c     NULL-terminate the output string for C/C++
-c
-      kfile = kfile(1:klen)//c_null_char
-      return
-      end

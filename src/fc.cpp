@@ -75,15 +75,6 @@ const char* t_read_stdin_line()
 }
 
 
-extern "C" void fc_suffix(char* file, const char* ext, const char* status,
-                          int slen);
-void t_suffix(char* filename, const char* extension, const char* status)
-{
-   int slen = strlen(status);
-   fc_suffix(filename, extension, status, slen);
-}
-
-
 void t_prterr()
 {
    using namespace tinker;

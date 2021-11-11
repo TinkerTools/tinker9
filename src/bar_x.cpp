@@ -164,16 +164,18 @@ void x_bar_makebar()
    const char* log_fmt = " Current Potential %lf\n";
    const char* process_fmt = "       Completed%8d Coordinate Frames\n";
    std::memcpy(string, filea, lenga);
-   t_suffix(string, "bar", "new");
-   std::string barfile = string;
+   tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("bar"), 3},
+                   {const_cast<char*>("new"), 3});
+   std::string barfile = fstr_view(string).trim();
    std::vector<double> ua0, ua1, ub0, ub1, vola, volb;
 
 
    // check for log with energies of trajectory A in state 0
    if (not recompute) {
       std::memcpy(string, filea, lenga);
-      t_suffix(string, "log", "old");
-      str = string;
+      tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("log"), 3},
+                      {const_cast<char*>("old"), 3});
+      str = fstr_view(string).trim();
       std::ifstream a_log(str);
       while (std::getline(a_log, str)) {
          double val;
@@ -193,10 +195,11 @@ void x_bar_makebar()
 
 
    std::memcpy(string, filea, MAX_NCHAR);
-   t_suffix(string, "arc", "old");
+   tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("arc"), 3},
+                   {const_cast<char*>("old"), 3});
    iarc = tinker_f_freeunit();
    t_open(iarc, string, "old");
-   str = string;
+   str = fstr_view(string).trim();
    std::ifstream a_arc(str);
 
 
@@ -294,8 +297,9 @@ void x_bar_makebar()
    // check for log with energies of trajectory B in state 1
    if (not recompute) {
       std::memcpy(string, fileb, lengb);
-      t_suffix(string, "log", "old");
-      str = string;
+      tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("log"), 3},
+                      {const_cast<char*>("old"), 3});
+      str = fstr_view(string).trim();
       std::ifstream b_log(str);
       while (std::getline(b_log, str)) {
          double val;
@@ -315,10 +319,11 @@ void x_bar_makebar()
 
 
    std::memcpy(string, fileb, MAX_NCHAR);
-   t_suffix(string, "arc", "old");
+   tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("arc"), 3},
+                   {const_cast<char*>("old"), 3});
    iarc = tinker_f_freeunit();
    t_open(iarc, string, "old");
-   str = string;
+   str = fstr_view(string).trim();
    std::ifstream b_arc(str);
 
 
@@ -424,8 +429,10 @@ void x_bar_barcalc()
    auto invalid_barfile = [&](const std::string& s) {
       std::memcpy(string, s.data(), s.length());
       tinker_f_basefile({string, MAX_NCHAR});
-      t_suffix(string, "bar", "old");
-      std::ifstream fr(s);
+      tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("bar"), 3},
+                      {const_cast<char*>("old"), 3});
+      std::string str = fstr_view(string).trim();
+      std::ifstream fr(str);
       return not fr;
    };
 
@@ -434,8 +441,9 @@ void x_bar_barcalc()
    nextarg(string, exist);
    if (exist) {
       tinker_f_basefile({string, MAX_NCHAR});
-      t_suffix(string, "bar", "old");
-      str = string;
+      tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("bar"), 3},
+                      {const_cast<char*>("old"), 3});
+      str = fstr_view(string).trim();
    }
    read_stream(str,
                "\n"

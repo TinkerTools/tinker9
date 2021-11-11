@@ -81,13 +81,6 @@ const char* t_read_stdin_line();
 
 /**
  * \ingroup bindc
- * \brief Tinker subroutine: suffix(filename,extension,status)
- */
-void t_suffix(char* filename, const char* extension, const char* status);
-
-
-/**
- * \ingroup bindc
  * \brief Tinker subroutine: prterr
  */
 void t_prterr();
