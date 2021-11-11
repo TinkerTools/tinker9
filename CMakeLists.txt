@@ -563,6 +563,7 @@ src/test/test_rt.cpp
 src/test/test_strbnd.cpp
 src/test/test_strtor.cpp
 src/test/test_text.cpp
+src/test/test_tinker_rt.cpp
 src/test/test_torsion.cpp
 src/test/test_tortor.cpp
 src/test/test_trimatexp.cpp

@@ -2,6 +2,8 @@
 #include "box.h"
 #include "mdpq.h"
 #include "tool/darray.h"
+#include "tool/io_fort_str.h"
+#include <cassert>
 #include <tinker/detail/atoms.hh>
 #include <tinker/routines.h>
 
@@ -73,17 +75,6 @@ const char* t_read_stdin_line()
 }
 
 
-extern "C" void fc_version(char* outfile, const char* file, int flen,
-                           const char* status, int slen);
-const char* t_version(const char* file, const char* status)
-{
-   int flen = strlen(file);
-   int slen = strlen(status);
-   fc_version(out, file, flen, status, slen);
-   return out;
-}
-
-
 extern "C" void fc_suffix(char* file, const char* ext, const char* status,
                           int slen);
 void t_suffix(char* filename, const char* extension, const char* status)
@@ -125,16 +116,18 @@ std::string t_read_stdin_line()
    fc_read_stdin_line(out);
    return std::string(out);
 }
+}
 
 
-std::string t_version(std::string file, std::string status)
+std::string tinker_f_version(std::string file, std::string status)
 {
-   int flen = file.size();
-   int slen = status.size();
-   fc_version(out, file.c_str(), flen, status.c_str(), slen);
-   return std::string(out);
+   using namespace tinker;
+   constexpr int buffer_len = 2048;
+   assert(file.length() + 10 < buffer_len);
+   char buf[buffer_len] = {0};
+   strncpy(buf, file.c_str(), file.length());
+   tinker_fchars str{buf, buffer_len};
+   tinker_fchars sta{const_cast<char*>(status.c_str()), status.length()};
+   tinker_f_version(str, sta);
+   return fstr_view(buf).trim();
 }
-}
-
-extern "C"
-{}

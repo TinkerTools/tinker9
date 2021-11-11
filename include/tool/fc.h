@@ -81,14 +81,6 @@ const char* t_read_stdin_line();
 
 /**
  * \ingroup bindc
- * \brief Tinker subroutine: version (filename,status)
- * \note This C interface does not change the input file string.
- */
-const char* t_version(const char* infile, const char* status);
-
-
-/**
- * \ingroup bindc
  * \brief Tinker subroutine: suffix(filename,extension,status)
  */
 void t_suffix(char* filename, const char* extension, const char* status);
@@ -139,17 +131,10 @@ std::string t_read_stdin_line();
  * \brief Tinker subroutine: version (filename,status).
  * \note This C++ interface does not change the input file string.
  */
-std::string t_version(std::string infile, std::string status);
 }
 
 
 #include <tinker/routines.h>
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
-#ifdef __cplusplus
-}
-#endif
+std::string tinker_f_version(std::string infile, std::string status);

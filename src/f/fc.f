@@ -123,32 +123,6 @@ c
 c
 c
 c
-      subroutine fc_version (out,file,flen,status,slen)  bind(c)
-      use iso_c_binding
-      use fcsize
-      implicit none
-      integer klen
-      integer(c_int), value :: flen,slen
-      character(c_char), target :: out(*),file(*),status(*)
-      character(MAX_NCHAR,c_char), pointer :: kout,kfile,kstatus
-      character(3,c_char) istatus
-      call c_f_pointer (c_loc(out),kout)
-      call c_f_pointer (c_loc(file),kfile)
-      call c_f_pointer (c_loc(status),kstatus)
-      kout = kfile(1:flen)
-      if (slen .gt. 3)  call exit (1)
-      istatus = kstatus(1:slen)
-      call version (kout(1:flen),istatus)
-      call fc_trim (kout,klen)
-c
-c     NULL-terminate the output string for C/C++
-c
-      kout = kout(1:klen)//c_null_char
-      return
-      end
-c
-c
-c
       subroutine fc_suffix (file,ext,status,slen)  bind(c)
       use iso_c_binding
       use fcsize

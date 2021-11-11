@@ -52,7 +52,7 @@ void x_minimize(int, char**)
    int imin = tinker_f_freeunit();
    const int leng = files::leng;
    std::string minfile = fstr_view(files::filename)(1, leng).trim() + ".xyz";
-   minfile = t_version(minfile, "new");
+   minfile = tinker_f_version(minfile, "new");
    t_open(imin, minfile.c_str(), "new");
    tinker_f_prtxyz(&imin);
    t_close(imin);
