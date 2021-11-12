@@ -41,7 +41,6 @@
 
 /// \defgroup rand  Random Number
 /// \defgroup nvidia  NVIDIA GPU
-/// \defgroup bindc    Fortran Tinker to C Interface
 */
 
 

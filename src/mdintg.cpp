@@ -24,9 +24,6 @@
 
 
 namespace tinker {
-double time_step;
-
-
 void mdrest(int istep)
 {
    mdrest_acc(istep);

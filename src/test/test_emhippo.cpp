@@ -82,7 +82,7 @@ TEST_CASE("EMPOLE-2-NONEWALD-HIPPO", "[ff][hippo][emhippo][nonewald]")
    int argc = 4;
 
 
-   const double eps_e = test_get_eps(0.0040, 0.0001);
+   const double eps_e = test_get_eps(0.0041, 0.0001);
    const double eps_g = test_get_eps(0.0003, 0.0001);
    const double eps_v = test_get_eps(0.0025, 0.001);
 

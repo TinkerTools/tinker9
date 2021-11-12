@@ -15,11 +15,11 @@
 #include <tinker/detail/mpole.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/units.hh>
+#include <tinker/routines.h>
 #include <vector>
 
 
 namespace tinker {
-extern "C" void TINKER_RT(jacobi)(int*, double*, double*, double*);
 void moments()
 {
    moment::netchg = 0;
@@ -249,6 +249,6 @@ void moments()
    a[1][2] = moment::zyqpl;
    a[2][2] = moment::zzqpl;
    int three = 3;
-   TINKER_RT(jacobi)(&three, &a[0][0], moment::netqpl, &b[0][0]);
+   tinker_f_jacobi(&three, &a[0][0], moment::netqpl, &b[0][0]);
 }
 }

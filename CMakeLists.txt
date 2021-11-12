@@ -399,7 +399,7 @@ set (T9_DEFS)
 
 
 ## libtinker.a
-add_subdirectory (src-libtinker)
+add_subdirectory (ext/interface/cpp)
 
 
 ## fftw
@@ -441,14 +441,6 @@ elseif (NOT DETERMINISTIC_FORCE)
    list (APPEND T9_DEFS TINKER_DETERMINISTIC_FORCE=0)
 elseif (DETERMINISTIC_FORCE)
    list (APPEND T9_DEFS TINKER_DETERMINISTIC_FORCE=1)
-endif ()
-
-
-## macro: fortran compiler
-if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
-   list (APPEND T9_DEFS TINKER_GFORTRAN)
-elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
-   list (APPEND T9_DEFS TINKER_IFORT)
 endif ()
 
 
@@ -510,6 +502,7 @@ endif ()
 ## include path
 set (T9_SYS_INCPATH
    "${FFTW_DIR}/include"
+   "${PROJECT_SOURCE_DIR}/ext/interface/cpp"
    "${PROJECT_SOURCE_DIR}/ext/ext")
 set (T9_INCPATH "${PROJECT_SOURCE_DIR}/include")
 if (HOST)
@@ -519,18 +512,25 @@ else ()
    list (APPEND T9_DEFS TINKER_CUDART)
    list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
    list (APPEND T9_SYS_INCPATH "${CUDA_DIR}/include")
-   # remove "include/syntax/acc" from the include paths for src-cu
-   # add "include/syntax/cu" to the include paths for src-cu
+   # remove "include/syntax/acc" from the include paths for src/cu
+   # add "include/syntax/cu" to the include paths for src/cu
+endif ()
+
+
+if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
+   list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/ext/interface/include/tinker/gfortran")
+elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
+   list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/ext/interface/include/tinker/ifort")
 endif ()
 
 
 ## openacc
-add_subdirectory (src-acc)
+add_subdirectory (src/acc)
 
 
 ## test files
 set (T9_TEST_SRC
-src-main/main_all_tests.cpp
+src/main/all_tests.cpp
 src/test/test_angle.cpp
 src/test/test_angtor.cpp
 src/test/test_async.cpp
@@ -563,6 +563,7 @@ src/test/test_rt.cpp
 src/test/test_strbnd.cpp
 src/test/test_strtor.cpp
 src/test/test_text.cpp
+src/test/test_tinker_rt.cpp
 src/test/test_torsion.cpp
 src/test/test_tortor.cpp
 src/test/test_trimatexp.cpp
@@ -589,12 +590,12 @@ target_include_directories (__t9_all_tests_o PRIVATE
 list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 if (HOST)
    add_subdirectory (src)
-   add_subdirectory (src-f)
+   add_subdirectory (src/f)
    include (host) # host.cmake
 else ()
-   add_subdirectory (src-cu)
    add_subdirectory (src)
-   add_subdirectory (src-f)
+   add_subdirectory (src/cu)
+   add_subdirectory (src/f)
    include (device) # device.cmake
 endif ()
 if (__T9_INSTALL_DEFINED)

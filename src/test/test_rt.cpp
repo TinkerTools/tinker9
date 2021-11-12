@@ -3,6 +3,7 @@
 #include "tool/error.h"
 #include <fstream>
 #include <tinker/detail/bath.hh>
+#include <tinker/routines.h>
 
 
 namespace tinker {
@@ -156,20 +157,20 @@ double test_get_eps(double eps_single, double eps_double)
 
 void test_begin_with_args(int argc, const char** argv)
 {
-   fortran_runtime_initialize(argc, const_cast<char**>(argv));
+   tinkerFortranRuntimeBegin(argc, const_cast<char**>(argv));
 
-   initial();
-   TINKER_RT(command)();
-   TINKER_RT(getxyz)();
-   mechanic();
+   tinker_f_initial();
+   tinker_f_command();
+   tinker_f_getxyz();
+   tinker_f_mechanic();
    mechanic2();
 }
 
 
 void test_end()
 {
-   TINKER_RT(final)();
-   fortran_runtime_finish();
+   tinker_f_final();
+   tinkerFortranRuntimeEnd();
 }
 
 
@@ -187,6 +188,7 @@ void test_mdinit(double t, double atm)
    } else
       bath::isobaric = false;
 
-   TINKER_RT(mdinit)();
+   double dt = 0.001;
+   tinker_f_mdinit(&dt);
 }
 }

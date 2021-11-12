@@ -12,9 +12,9 @@ void x_dynamic(int, char**)
    char string[240];
    int exist = false;
 
-   initial();
-   TINKER_RT(getxyz)();
-   mechanic();
+   tinker_f_initial();
+   tinker_f_getxyz();
+   tinker_f_mechanic();
    mechanic2();
 
    bath::kelvin = 0;
@@ -64,7 +64,6 @@ void x_dynamic(int, char**)
                " Enter the Time Step Length in Femtoseconds [1.0] :  ",
                1.0, [](double i) { return i <= 0; });
    dt *= 0.001;
-   time_step = dt;
 
    // enforce bounds on thermostat and barostat coupling times
 
@@ -166,7 +165,7 @@ void x_dynamic(int, char**)
 
    // perform the setup functions needed to run dynamics
 
-   TINKER_RT(mdinit)();
+   tinker_f_mdinit(&dt);
 
    int flags = calc::md;
    flags += (calc::xyz + calc::vel + calc::mass);
@@ -221,6 +220,6 @@ void x_dynamic(int, char**)
 
    // perform any final tasks before program exit
 
-   TINKER_RT(final)();
+   tinker_f_final();
 }
 }

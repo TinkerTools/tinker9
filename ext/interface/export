@@ -1,0 +1,19 @@
+#!/bin/bash
+
+
+src_dir=$(realpath ../source)
+export LC_COLLATE=C
+
+
+# mkdir -p c; rm -rf c/*; mkdir -p c/tinker/detail
+# cd c/tinker
+# python3 ../../parse.py --lang=c $src_dir/*.f | bash
+# mv CMakeLists.txt ..
+# cd ../..
+
+
+mkdir -p cpp; rm -rf cpp/*; mkdir -p cpp/tinker/detail
+cd cpp/tinker
+python3 ../../parse.py --lang=cpp $src_dir/*.f | bash
+mv CMakeLists.txt ..
+cd ../..

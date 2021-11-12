@@ -6,6 +6,14 @@
 namespace tinker {
 /**
  * \ingroup error
+ * Writes out a set of coordinates to a disk file
+ * prior to aborting on a serious error.
+ */
+void prterr();
+
+
+/**
+ * \ingroup error
  * Prints the call stack to a `FILE` pointer.
  */
 void print_backtrace(std::FILE* out = stderr);

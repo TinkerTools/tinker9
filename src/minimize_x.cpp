@@ -1,7 +1,7 @@
 #include "energy.h"
 #include "nblist.h"
 #include "tinker_rt.h"
-#include "tool/fcxx.h"
+#include "tool/fc.h"
 #include "tool/io_fort_str.h"
 #include "tool/io_print.h"
 #include <tinker/detail/files.hh>
@@ -26,13 +26,13 @@ void minimize_set_pos_acc(int, const double*, const double*);
 
 void x_minimize(int, char**)
 {
-   initial();
-   TINKER_RT(getxyz)();
-   mechanic();
+   tinker_f_initial();
+   tinker_f_getxyz();
+   tinker_f_mechanic();
 
 
    // perform the setup functions needed for optimization
-   t_optinit();
+   tinker_f_optinit();
 
 
    // get termination criterion as RMS gradient per atom
@@ -49,13 +49,13 @@ void x_minimize(int, char**)
 
 
    // write out a copy of coordinates for later update
-   int imin = t_freeunit();
+   int imin = tinker_f_freeunit();
    const int leng = files::leng;
    std::string minfile = fstr_view(files::filename)(1, leng).trim() + ".xyz";
-   minfile = t_version(minfile, "new");
-   t_open(imin, minfile.c_str(), "new");
-   t_prtxyz(imin);
-   t_close(imin);
+   minfile = tinker_f_version(minfile, "new");
+   tinker_f_open(&imin, minfile, "new");
+   tinker_f_prtxyz(&imin);
+   tinker_f_close(&imin);
    fstr_view outview = files::outfile;
    outview = minfile;
 
@@ -67,8 +67,8 @@ void x_minimize(int, char**)
 
 
    // perform dynamic allocation of some global arrays
-   if (!t_allocated(scales::scale))
-      t_allocate_d1(&scales::scale, 3 * n);
+   if (!tinker_f_allocated(scales::scale))
+      tinker_f_allocate_dim(&scales::scale, 3 * n);
 
 
    // set scaling parameter for function and derivative values;
@@ -96,7 +96,9 @@ void x_minimize(int, char**)
 
 
    // make the call to the optimization routine
-   t_lbfgs(3 * n, xx, grdmin, (void*)minimiz1);
+   int n3 = 3 * n;
+   double mini;
+   tinker_f_lbfgs(&n3, xx, &mini, &grdmin, minimiz1, tinker_f_optsave);
 
 
    // convert optimization parameters to atomic coordinates
@@ -139,15 +141,15 @@ void x_minimize(int, char**)
 
    // write the final coordinates into a file
    bounds();
-   imin = t_freeunit();
-   t_open(imin, minfile, "old");
-   t_rewind(imin);
-   t_prtxyz(imin);
-   t_close(imin);
+   imin = tinker_f_freeunit();
+   tinker_f_open(&imin, minfile, "old");
+   tinker_f_rewind(&imin);
+   tinker_f_prtxyz(&imin);
+   tinker_f_close(&imin);
 
 
    finish();
-   TINKER_RT(final)();
+   tinker_f_final();
 }
 
 

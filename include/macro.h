@@ -4,20 +4,6 @@
 //====================================================================//
 
 
-#if defined(TINKER_GFORTRAN)
-#   define TINKER_RT(rt)        rt##_
-#elif defined(TINKER_IFORT)
-#   define TINKER_RT(rt)        rt##_
-#else
-#   error We do not know what Fortran compiler you used to compile the Tinker  \
-library. You should implement these two macros (TINKER_MOD and TINKER_RT) here \
-to mimic its name mangling.
-#endif
-
-
-//====================================================================//
-
-
 // C++11
 #ifdef __cplusplus
 #   if __cplusplus < 201103L

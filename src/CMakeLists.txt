@@ -32,6 +32,7 @@ epolar_chgpen.cpp
 epolar.cpp
 erepel.cpp
 error_nix.cpp
+error_prterr.cpp
 estrbnd.cpp
 estrtor.cpp
 etors.cpp
@@ -46,7 +47,6 @@ field.cpp
 group.cpp
 induce.cpp
 induce_donly.cpp
-initial.cpp
 io_fort_str.cpp
 io_text.cpp
 lf_lpiston.cpp
@@ -59,7 +59,6 @@ mdpq.cpp
 mdpt.cpp
 mdsave.cpp
 mechanic2.cpp
-mechanic.cpp
 minimize_x.cpp
 mod.cpp
 molecule.cpp

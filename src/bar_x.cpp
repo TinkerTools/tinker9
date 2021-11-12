@@ -18,7 +18,7 @@ void x_bar_barcalc();
 
 void x_bar(int, char**)
 {
-   initial();
+   tinker_f_initial();
 
 
    char string[MAX_NCHAR];
@@ -51,7 +51,7 @@ void x_bar(int, char**)
       x_bar_barcalc();
 
 
-   TINKER_RT(final)();
+   tinker_f_final();
 }
 
 
@@ -80,9 +80,9 @@ void x_bar_makebar()
 
    // get trajectory A and setup mechanics calculation
    int iarc;
-   TINKER_RT(getarc)(&iarc);
-   t_close(iarc);
-   mechanic();
+   tinker_f_getarc(&iarc);
+   tinker_f_close(&iarc);
+   tinker_f_mechanic();
 
 
    // store the filename for trajectory A
@@ -112,9 +112,9 @@ void x_bar_makebar()
 
 
    // get trajectory B and setup mechanics calculation
-   TINKER_RT(getarc)(&iarc);
-   t_close(iarc);
-   mechanic();
+   tinker_f_getarc(&iarc);
+   tinker_f_close(&iarc);
+   tinker_f_mechanic();
    inform::silent = true;
 
 
@@ -164,16 +164,18 @@ void x_bar_makebar()
    const char* log_fmt = " Current Potential %lf\n";
    const char* process_fmt = "       Completed%8d Coordinate Frames\n";
    std::memcpy(string, filea, lenga);
-   t_suffix(string, "bar", "new");
-   std::string barfile = string;
+   tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("bar"), 3},
+                   {const_cast<char*>("new"), 3});
+   std::string barfile = fstr_view(string).trim();
    std::vector<double> ua0, ua1, ub0, ub1, vola, volb;
 
 
    // check for log with energies of trajectory A in state 0
    if (not recompute) {
       std::memcpy(string, filea, lenga);
-      t_suffix(string, "log", "old");
-      str = string;
+      tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("log"), 3},
+                      {const_cast<char*>("old"), 3});
+      str = fstr_view(string).trim();
       std::ifstream a_log(str);
       while (std::getline(a_log, str)) {
          double val;
@@ -193,22 +195,23 @@ void x_bar_makebar()
 
 
    std::memcpy(string, filea, MAX_NCHAR);
-   t_suffix(string, "arc", "old");
-   iarc = t_freeunit();
-   t_open(iarc, string, "old");
-   str = string;
+   tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("arc"), 3},
+                   {const_cast<char*>("old"), 3});
+   iarc = tinker_f_freeunit();
+   str = fstr_view(string).trim();
+   tinker_f_open(&iarc, str, "old");
    std::ifstream a_arc(str);
 
 
    if (ua0.size() == 0) {
       // reset trajectory A using the parameters for state 0
       rewind_stream(a_arc);
-      t_rewind(iarc);
-      TINKER_RT(readxyz)(&iarc);
+      tinker_f_rewind(&iarc);
+      tinker_f_readxyz(&iarc);
       keys::nkey = nkey0;
       for (int i = 0; i < keys::nkey; ++i)
          std::memcpy(keys::keyline[i], keys0[i].data(), MAX_NCHAR);
-      mechanic();
+      tinker_f_mechanic();
 
 
       // find potential energies for trajectory A in state 0
@@ -238,12 +241,12 @@ void x_bar_makebar()
 
    // reset trajectory A using the parameters for state 1
    rewind_stream(a_arc);
-   t_rewind(iarc);
-   TINKER_RT(readxyz)(&iarc);
+   tinker_f_rewind(&iarc);
+   tinker_f_readxyz(&iarc);
    keys::nkey = nkey1;
    for (int i = 0; i < keys::nkey; ++i)
       std::memcpy(keys::keyline[i], keys1[i].data(), MAX_NCHAR);
-   mechanic();
+   tinker_f_mechanic();
 
 
    // find potential energies for trajectory A in state 1
@@ -273,7 +276,7 @@ void x_bar_makebar()
 
 
    // save potential energies and volumes for trajectory A
-   t_close(iarc);
+   tinker_f_close(&iarc);
    FILE* ibar = std::fopen(barfile.c_str(), "w");
    int nfrma = std::min(ua0.size(), ua1.size());
    str = fstr_view(titlea)(1, ltitlea).trim();
@@ -294,8 +297,9 @@ void x_bar_makebar()
    // check for log with energies of trajectory B in state 1
    if (not recompute) {
       std::memcpy(string, fileb, lengb);
-      t_suffix(string, "log", "old");
-      str = string;
+      tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("log"), 3},
+                      {const_cast<char*>("old"), 3});
+      str = fstr_view(string).trim();
       std::ifstream b_log(str);
       while (std::getline(b_log, str)) {
          double val;
@@ -315,22 +319,23 @@ void x_bar_makebar()
 
 
    std::memcpy(string, fileb, MAX_NCHAR);
-   t_suffix(string, "arc", "old");
-   iarc = t_freeunit();
-   t_open(iarc, string, "old");
-   str = string;
+   tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("arc"), 3},
+                   {const_cast<char*>("old"), 3});
+   iarc = tinker_f_freeunit();
+   str = fstr_view(string).trim();
+   tinker_f_open(&iarc, str, "old");
    std::ifstream b_arc(str);
 
 
    if (ub1.size() == 0) {
       // reset trajectory B using the parameters for state 1
       rewind_stream(b_arc);
-      t_rewind(iarc);
-      TINKER_RT(readxyz)(&iarc);
+      tinker_f_rewind(&iarc);
+      tinker_f_readxyz(&iarc);
       keys::nkey = nkey1;
       for (int i = 0; i < keys::nkey; ++i)
          std::memcpy(keys::keyline[i], keys1[i].data(), MAX_NCHAR);
-      mechanic();
+      tinker_f_mechanic();
 
 
       // find potential energies for trajectory B in state 1
@@ -360,12 +365,12 @@ void x_bar_makebar()
 
    // reset trajectory B using the parameters for state 0
    rewind_stream(b_arc);
-   t_rewind(iarc);
-   TINKER_RT(readxyz)(&iarc);
+   tinker_f_rewind(&iarc);
+   tinker_f_readxyz(&iarc);
    keys::nkey = nkey0;
    for (int i = 0; i < keys::nkey; ++i)
       std::memcpy(keys::keyline[i], keys0[i].data(), MAX_NCHAR);
-   mechanic();
+   tinker_f_mechanic();
 
 
    // find potential energies for trajectory B in state 0
@@ -395,7 +400,7 @@ void x_bar_makebar()
 
 
    // save potential energies and volumes for trajectory B
-   t_close(iarc);
+   tinker_f_close(&iarc);
    int nfrmb = std::min(ub0.size(), ub1.size());
    str = fstr_view(titleb)(1, ltitleb).trim();
    print(ibar, "%8d%10.2lf  %s\n", nfrmb, tempb, str);
@@ -423,9 +428,11 @@ void x_bar_barcalc()
    std::string str;
    auto invalid_barfile = [&](const std::string& s) {
       std::memcpy(string, s.data(), s.length());
-      t_basefile(string);
-      t_suffix(string, "bar", "old");
-      std::ifstream fr(s);
+      tinker_f_basefile({string, MAX_NCHAR});
+      tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("bar"), 3},
+                      {const_cast<char*>("old"), 3});
+      std::string str = fstr_view(string).trim();
+      std::ifstream fr(str);
       return not fr;
    };
 
@@ -433,9 +440,10 @@ void x_bar_barcalc()
    // ask the user for file with potential energies and volumes
    nextarg(string, exist);
    if (exist) {
-      t_basefile(string);
-      t_suffix(string, "bar", "old");
-      str = string;
+      tinker_f_basefile({string, MAX_NCHAR});
+      tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("bar"), 3},
+                      {const_cast<char*>("old"), 3});
+      str = fstr_view(string).trim();
    }
    read_stream(str,
                "\n"
