@@ -4,7 +4,7 @@
 
 
 namespace tinker {
-void mdsave_async(time_prec dt);
+void mdsave_async(int istep, time_prec dt);
 void mdsave_synchronize();
 
 

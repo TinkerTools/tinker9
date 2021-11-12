@@ -334,9 +334,15 @@ class Variable:
         MacroTinkerMod: str = 'TINKER_MOD'
 
         macro_const: bool = False
+        is_c_header: bool = False
         if op == FileType.t9_extern_c_with_macro_const:
             macro_const = True
+            is_c_header = True
             op = FileType.t9_extern_c
+
+        extern_C_str: str = 'extern "C"'
+        if is_c_header:
+            extern_C_str = 'extern'
 
         line: str = '#error ERROR'
         local_symbol = self.symbol
@@ -362,7 +368,7 @@ class Variable:
                     line = 'extern {} (&{})'.format(self.type, local_symbol)
                 elif op == FileType.t9_extern_c:
                     # extern "C" double TINKER_MOD(atoms, x)
-                    line = 'extern "C" {} {}({}, {})'.format(self.type, MacroTinkerMod, self.scope, self.symbol)
+                    line = '{} {} {}({}, {})'.format(extern_C_str, self.type, MacroTinkerMod, self.scope, self.symbol)
                 elif op == FileType.t9_definition:
                     # double (&x)
                     line = '{} (&{})'.format(self.type, local_symbol)
@@ -387,7 +393,7 @@ class Variable:
                 if op == FileType.t9_extern_ref:
                     line = 'extern {}*& {};'.format(self.type, local_symbol)
                 elif op == FileType.t9_extern_c:
-                    line = 'extern "C" {}* {}({}, {});'.format(self.type, MacroTinkerMod, self.scope, self.symbol)
+                    line = '{} {}* {}({}, {});'.format(extern_C_str, self.type, MacroTinkerMod, self.scope, self.symbol)
                 elif op == FileType.t9_definition:
                     line = '{}*& {} = {}({}, {});'.format(self.type, local_symbol, MacroTinkerMod, self.scope, self.symbol)
             else:
@@ -397,7 +403,7 @@ class Variable:
                 if op == FileType.t9_extern_ref:
                     line = 'extern {} (*&{})'.format(self.type, local_symbol)
                 elif op == FileType.t9_extern_c:
-                    line = 'extern "C" {} (*{}({}, {}))'.format(self.type, MacroTinkerMod, self.scope, self.symbol)
+                    line = '{} {} (*{}({}, {}))'.format(extern_C_str, self.type, MacroTinkerMod, self.scope, self.symbol)
                 elif op == FileType.t9_definition:
                     line = '{} (*&{})'.format(self.type, local_symbol)
                 for x in reversed(known_dimension):
@@ -412,7 +418,7 @@ class Variable:
                 line = 'extern {}& {};'.format(self.type, local_symbol)
             elif op == FileType.t9_extern_c:
                 # extern "C" int TINKER_MOD(atoms, n);
-                line = 'extern "C" {} {}({}, {});'.format(self.type, MacroTinkerMod, self.scope, self.symbol)
+                line = '{} {} {}({}, {});'.format(extern_C_str, self.type, MacroTinkerMod, self.scope, self.symbol)
             elif op == FileType.t9_definition:
                 # int& n = TINKER_MOD(atoms, n);
                 line = '{}& {} = {}({}, {});'.format(self.type, local_symbol, MacroTinkerMod, self.scope, self.symbol)

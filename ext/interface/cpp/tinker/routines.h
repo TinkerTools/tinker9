@@ -42,7 +42,7 @@ void attach_();
 #define tinker_f_attach attach_
 
 // baoab.f
-void baoab_(double* dt);
+void baoab_(int* istep, double* dt);
 #define tinker_f_baoab baoab_
 void oprep_(double* dt, double* vfric, double* vrand);
 #define tinker_f_oprep oprep_
@@ -54,7 +54,7 @@ inline void tinker_f_basefile(tinker_fchars string) {
 }
 
 // beeman.f
-void beeman_(double* dt);
+void beeman_(int* istep, double* dt);
 #define tinker_f_beeman beeman_
 
 // bicubic.f
@@ -1462,9 +1462,9 @@ void getxyz_();
 #define tinker_f_getxyz getxyz_
 
 // ghmcstep.f
-void ghmcstep_(double* dt);
+void ghmcstep_(int* istep, double* dt);
 #define tinker_f_ghmcstep ghmcstep_
-void ghmcterm_(double* dt, double* alpha, double* beta);
+void ghmcterm_(int* istep, double* dt, double* alpha, double* beta);
 #define tinker_f_ghmcterm ghmcterm_
 
 // gradient.f
@@ -1844,15 +1844,15 @@ void mdinit_(double* dt);
 #define tinker_f_mdinit mdinit_
 
 // mdrest.f
-void mdrest_();
+void mdrest_(int* istep);
 #define tinker_f_mdrest mdrest_
 
 // mdsave.f
-void mdsave_(double* dt, double* epot, double* eksum);
+void mdsave_(int* istep, double* dt, double* epot, double* eksum);
 #define tinker_f_mdsave mdsave_
 
 // mdstat.f
-void mdstat_(double* dt, double* etot, double* epot, double* ekin, double* temp, double* pres);
+void mdstat_(int* istep, double* dt, double* etot, double* epot, double* ekin, double* temp, double* pres);
 #define tinker_f_mdstat mdstat_
 
 // mechanic.f
@@ -1928,7 +1928,7 @@ inline int tinker_f_nexttext(tinker_fchars string) {
 }
 
 // nose.f
-void nose_(double* dt);
+void nose_(int* istep, double* dt);
 #define tinker_f_nose nose_
 void hoover_(double* dt, double* press);
 #define tinker_f_hoover hoover_
@@ -2242,7 +2242,7 @@ void replica_(double* cutoff);
 #define tinker_f_replica replica_
 
 // respa.f
-void respa_(double* dt);
+void respa_(int* istep, double* dt);
 #define tinker_f_respa respa_
 void gradfast_(double* energy, double* derivs);
 #define tinker_f_gradfast gradfast_
@@ -2250,7 +2250,7 @@ void gradslow_(double* energy, double* derivs);
 #define tinker_f_gradslow gradslow_
 
 // rgdstep.f
-void rgdstep_(double* dt);
+void rgdstep_(int* istep, double* dt);
 #define tinker_f_rgdstep rgdstep_
 void rotrgd_(double* dfi, double* arot);
 #define tinker_f_rotrgd rotrgd_
@@ -2282,11 +2282,11 @@ void rotrsite_(int* isite, double* a);
 #define tinker_f_rotrsite rotrsite_
 
 // sdstep.f
-void sdstep_(double* dt);
+void sdstep_(int* istep, double* dt);
 #define tinker_f_sdstep sdstep_
-void sdterm_(double* dt, double* pfric, double* vfric, double* afric, double* prand, double* vrand);
+void sdterm_(int* istep, double* dt, double* pfric, double* vfric, double* afric, double* prand, double* vrand);
 #define tinker_f_sdterm sdterm_
-void sdarea_();
+void sdarea_(int* istep);
 #define tinker_f_sdarea sdarea_
 
 // search.f
@@ -2534,7 +2534,7 @@ void unitcell_();
 #define tinker_f_unitcell unitcell_
 
 // verlet.f
-void verlet_(double* dt);
+void verlet_(int* istep, double* dt);
 #define tinker_f_verlet verlet_
 
 // version.f

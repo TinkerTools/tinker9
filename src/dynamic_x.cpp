@@ -198,7 +198,6 @@ void x_dynamic(int, char**)
             " r-RESPA MTS Algorithm\n");
 
    auto t_start = std::chrono::steady_clock::now();
-   mdstuf::mdstep = 0;
    propagate(nstep, dt);
    auto t_end = std::chrono::steady_clock::now();
 
