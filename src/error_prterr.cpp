@@ -8,7 +8,6 @@
 namespace tinker {
 void prterr()
 {
-   using namespace tinker;
    Box p;
    get_default_box(p);
    set_tinker_box_module(p);
