@@ -2,6 +2,7 @@
 #include "test_rt.h"
 #include "tool/fc.h"
 #include "tool/io_fort_str.h"
+#include <cstring>
 using namespace tinker;
 
 TEST_CASE("Tinker_RT", "[util]")
