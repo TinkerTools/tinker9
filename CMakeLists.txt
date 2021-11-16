@@ -380,26 +380,31 @@ if (NOT HOST)
    endif ()
    # set this line before project()
    set (CMAKE_CXX_COMPILER "${T9_ACC_COMPILER}")
+   # 11   unrecognized preprocessing directive
+   # 177  variable was declared but never referenced
+   string (APPEND CMAKE_CXX_FLAGS " --diag_suppress=11,177")
+   # Compute Capability 60,70 -> ,cc60,cc70
+   set (__T9_ACC_CCLST4) # ""
+   foreach (var ${T9_CUCCLIST})
+      string (APPEND __T9_ACC_CCLST4 ",cc${var}")
+   endforeach () # ,cc60,cc70
 endif ()
 
 
+########################################################################
+
+
 project (Tinker9 LANGUAGES NONE)
-enable_language (C)
 enable_language (CXX)
 enable_language (Fortran)
+set (CMAKE_CXX_STANDARD ${T9_CPPSTD})
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
+set (CMAKE_CXX_EXTENSIONS OFF)
 
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
    string (APPEND CMAKE_CXX_FLAGS_DEBUG " -Wall -Wno-unknown-pragmas")
 endif ()
-
-
-## macro: an empty list
-set (T9_DEFS)
-
-
-## libtinker.a
-add_subdirectory (ext/interface/cpp)
 
 
 ## fftw
@@ -422,34 +427,6 @@ elseif (PREC STREQUAL "m" OR PREC STREQUAL "s")
       IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f_threads.a"
    )
 endif ()
-
-
-## macro: precision
-if (PREC STREQUAL "m")
-   list (APPEND T9_DEFS TINKER_MIXED_PRECISION)
-elseif (PREC STREQUAL "s")
-   list (APPEND T9_DEFS TINKER_SINGLE_PRECISION)
-elseif (PREC STREQUAL "d")
-   list (APPEND T9_DEFS TINKER_DOUBLE_PRECISION)
-endif ()
-
-
-## macro: deterministic force
-if (DETERMINISTIC_FORCE STREQUAL "AUTO")
-   # No default behavior for empty value.
-elseif (NOT DETERMINISTIC_FORCE)
-   list (APPEND T9_DEFS TINKER_DETERMINISTIC_FORCE=0)
-elseif (DETERMINISTIC_FORCE)
-   list (APPEND T9_DEFS TINKER_DETERMINISTIC_FORCE=1)
-endif ()
-
-
-## macro: project directory
-## TINKER9_DIR is needed in the source code.
-list (APPEND T9_DEFS TINKER9_DIR=${PROJECT_SOURCE_DIR})
-
-
-########################################################################
 
 
 find_package (Git)
@@ -496,106 +473,53 @@ if (GIT_FOUND)
 endif ()
 
 
-########################################################################
-
-
-## include path
-set (T9_SYS_INCPATH
-   "${FFTW_DIR}/include"
-   "${PROJECT_SOURCE_DIR}/ext/interface/cpp"
-   "${PROJECT_SOURCE_DIR}/ext/ext")
-set (T9_INCPATH "${PROJECT_SOURCE_DIR}/include")
+## macro: an empty list
+set (T9_DEFS)
+## macro: precision
+if (PREC STREQUAL "m")
+   list (APPEND T9_DEFS TINKER_MIXED_PRECISION)
+elseif (PREC STREQUAL "s")
+   list (APPEND T9_DEFS TINKER_SINGLE_PRECISION)
+elseif (PREC STREQUAL "d")
+   list (APPEND T9_DEFS TINKER_DOUBLE_PRECISION)
+endif ()
+## macro: HOST
 if (HOST)
    list (APPEND T9_DEFS TINKER_HOST)
-   list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
 else ()
    list (APPEND T9_DEFS TINKER_CUDART)
-   list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
-   list (APPEND T9_SYS_INCPATH "${CUDA_DIR}/include")
-   # remove "include/syntax/acc" from the include paths for src/cu
-   # add "include/syntax/cu" to the include paths for src/cu
 endif ()
-
-
-if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
-   list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/ext/interface/include/tinker/gfortran")
-elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
-   list (APPEND T9_INCPATH "${PROJECT_SOURCE_DIR}/ext/interface/include/tinker/ifort")
+## macro: deterministic force
+if (DETERMINISTIC_FORCE STREQUAL "AUTO")
+   # No default behavior for empty value.
+elseif (NOT DETERMINISTIC_FORCE)
+   list (APPEND T9_DEFS TINKER_DETERMINISTIC_FORCE=0)
+elseif (DETERMINISTIC_FORCE)
+   list (APPEND T9_DEFS TINKER_DETERMINISTIC_FORCE=1)
 endif ()
+## macro: project directory
+## TINKER9_DIR is needed in the source code.
+list (APPEND T9_DEFS TINKER9_DIR=${PROJECT_SOURCE_DIR})
 
 
-## openacc
+## libs
+add_subdirectory (ext/interface)
+add_subdirectory (src/f)
+add_subdirectory (src)
 add_subdirectory (src/acc)
-
-
-## test files
-set (T9_TEST_SRC
-src/main/all_tests.cpp
-src/test/test_angle.cpp
-src/test/test_angtor.cpp
-src/test/test_async.cpp
-src/test/test_bond.cpp
-src/test/test_bounds.cpp
-src/test/test_box.cpp
-src/test/test_chglj.cpp
-src/test/test_chgtrn.cpp
-src/test/test_disp.cpp
-src/test/test_emhippo.cpp
-src/test/test_ephippo.cpp
-src/test/test_geom.cpp
-src/test/test_improp.cpp
-src/test/test_imptor.cpp
-src/test/test_info.cpp
-src/test/test_kinetic.cpp
-src/test/test_local_frame2.cpp
-src/test/test_local_frame3.cpp
-src/test/test_local_frame.cpp
-src/test/test_mathfunc.cpp
-src/test/test_nacl.cpp
-src/test/test_nblist.cpp
-src/test/test_opbend.cpp
-src/test/test_osrw.cpp
-src/test/test_partial_charge.cpp
-src/test/test_pitors.cpp
-src/test/test_reduce.cpp
-src/test/test_rephippo.cpp
-src/test/test_rt.cpp
-src/test/test_strbnd.cpp
-src/test/test_strtor.cpp
-src/test/test_text.cpp
-src/test/test_tinker_rt.cpp
-src/test/test_torsion.cpp
-src/test/test_tortor.cpp
-src/test/test_trimatexp.cpp
-src/test/test_truncated8.cpp
-src/test/test_urey.cpp
-src/test/test_vdw14.cpp
-src/test/test_verlet.cpp
-)
-add_library (__t9_all_tests_o OBJECT ${T9_TEST_SRC})
-target_compile_definitions (__t9_all_tests_o PRIVATE ${T9_DEFS})
-set_target_properties (__t9_all_tests_o PROPERTIES
-   CXX_STANDARD
-      ${T9_CPPSTD}
-)
-target_include_directories (__t9_all_tests_o SYSTEM PRIVATE "${T9_SYS_INCPATH}")
-target_include_directories (__t9_all_tests_o PRIVATE
-   "${T9_INCPATH}"
-   "${PROJECT_SOURCE_DIR}/src/test"
-)
+if (HOST)
+else ()
+   add_subdirectory (src/cu)
+endif ()
+add_subdirectory (src/test)
 
 
 ## executables
 ## tinker9 and all.tests
 list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 if (HOST)
-   add_subdirectory (src)
-   add_subdirectory (src/f)
    include (host) # host.cmake
 else ()
-   add_subdirectory (src)
-   add_subdirectory (src/cu)
-   add_subdirectory (src/f)
    include (device) # device.cmake
 endif ()
 if (__T9_INSTALL_DEFINED)

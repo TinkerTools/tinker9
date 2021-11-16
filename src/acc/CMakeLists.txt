@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.12)
 
 
 ## libtinker9_acc.a
-set (__T9_ACC_SRC
+add_library (tinker9_acc OBJECT
 alterchg.cpp
 box.cpp
 compilers.cpp
@@ -57,38 +57,26 @@ rattle.cpp
 rotpole.cpp
 torque.cpp
 )
-add_library (tinker9_acc STATIC "${__T9_ACC_SRC}")
-set_target_properties (tinker9_acc PROPERTIES
-   CXX_STANDARD
-      ${T9_CPPSTD}
-)
-target_compile_definitions (tinker9_acc PRIVATE "${T9_DEFS}")
-target_include_directories (tinker9_acc SYSTEM PRIVATE "${T9_SYS_INCPATH}")
-target_include_directories (tinker9_acc PRIVATE "${T9_INCPATH}")
+target_include_directories (tinker9_acc PRIVATE "${PROJECT_SOURCE_DIR}/include/syntax/acc")
+target_link_libraries (tinker9_acc PRIVATE tinker9_cpp)
 
 
 ########################################################################
+
+
 if (HOST)
-   if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-      string (APPEND CMAKE_CXX_FLAGS_DEBUG " -Wall -Wno-unknown-pragmas")
-   endif ()
 else ()
-   ## Compute Capability 60,70 -> ,cc60,cc70
-   set (__T9_ACC_CCLST4) # ""
-   foreach (var ${T9_CUCCLIST})
-      string (APPEND __T9_ACC_CCLST4 ,cc${var})
-   endforeach () # ,cc60,cc70
-
-
-   target_compile_options (tinker9_acc PRIVATE
-      CUDA_HOME=${CUDA_DIR}
+   string (APPEND CMAKE_CXX_FLAGS " CUDA_HOME=${CUDA_DIR}")
+   target_compile_options (tinker9_acc PUBLIC
       -acc verystrict
       -Minfo=accel
    )
    ## Debug add flag: -ta=tesla:lineinfo,cc60,cc70
    ## Release add flag: -ta=tesla:fastmath,cc60,cc70
-   string (APPEND CMAKE_CXX_FLAGS_DEBUG          " -ta=tesla:lineinfo${__T9_ACC_CCLST4}")
-   string (APPEND CMAKE_CXX_FLAGS_RELWITHDEBINFO " -ta=tesla:lineinfo,fastmath${__T9_ACC_CCLST4}")
-   string (APPEND CMAKE_CXX_FLAGS_RELEASE        " -ta=tesla:fastmath${__T9_ACC_CCLST4}")
-   string (APPEND CMAKE_CXX_FLAGS_MINSIZEREL     " -ta=tesla:fastmath${__T9_ACC_CCLST4}")
+   target_compile_options (tinker9_acc PUBLIC
+      "$<$<CONFIG:DEBUG>:-ta=tesla:lineinfo${__T9_ACC_CCLST4}>"
+      "$<$<CONFIG:RELWITHDEBINFO>:-ta=tesla:lineinfo,fastmath${__T9_ACC_CCLST4}>"
+      "$<$<CONFIG:RELEASE>:-ta=tesla:fastmath${__T9_ACC_CCLST4}>"
+      "$<$<CONFIG:MINSIZEREL>:-ta=tesla:fastmath${__T9_ACC_CCLST4}>"
+   )
 endif ()

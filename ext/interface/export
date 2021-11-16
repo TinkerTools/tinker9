@@ -1,6 +1,10 @@
 #!/bin/bash
 
 
+src_dir=$(realpath ../source)
+export LC_COLLATE=C
+
+
 version_str_on_github() {
     echo "Checking updates on GitHub..."
     url_base="https://raw.githubusercontent.com/TinkerTools/tinker9/master/ext/interface"
@@ -31,7 +35,6 @@ export_c() {
 
     cd c/tinker
     python3 ../../parse.py --lang=c $src_dir/*.f | bash
-    mv CMakeLists.txt ..
     cd ../..
 }
 
@@ -43,13 +46,8 @@ export_cpp() {
 
     cd cpp/tinker
     python3 ../../parse.py --lang=cpp $src_dir/*.f | bash
-    mv CMakeLists.txt ..
     cd ../..
 }
-
-
-src_dir=$(realpath ../source)
-export LC_COLLATE=C
 
 
 # check updates

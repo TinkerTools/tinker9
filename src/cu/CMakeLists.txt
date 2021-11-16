@@ -2,13 +2,12 @@ cmake_minimum_required (VERSION 3.12)
 
 
 enable_language (CUDA)
+set (CMAKE_CUDA_STANDARD ${T9_CPPSTD})
+set (CMAKE_CUDA_STANDARD_REQUIRED ON)
+set (CMAKE_CUDA_EXTENSIONS OFF)
 
 
-set (__T9_CUDA_INCPATH "${T9_INCPATH}")
-list (REMOVE_ITEM __T9_CUDA_INCPATH "${PROJECT_SOURCE_DIR}/include/syntax/acc")
-
-
-set (__T9_CUDA_SRC
+add_library (tinker9_cu OBJECT
 compilers.cu
 echarge.cu
 echglj.cu
@@ -37,17 +36,10 @@ pmestuf.cu
 rattle.cu
 spatial.cu
 )
-add_library (tinker9_cu STATIC "${__T9_CUDA_SRC}")
-set_target_properties (tinker9_cu PROPERTIES
-   CUDA_STANDARD
-      ${T9_CPPSTD}
-)
-target_compile_definitions (tinker9_cu PRIVATE ${T9_DEFS})
-target_include_directories (tinker9_cu SYSTEM PRIVATE "${T9_SYS_INCPATH}")
-target_include_directories (tinker9_cu PRIVATE
-   "${__T9_CUDA_INCPATH}"
-   "${PROJECT_SOURCE_DIR}/include/syntax/cu"
-)
+target_include_directories (tinker9_cu PRIVATE "${PROJECT_SOURCE_DIR}/include/syntax/cu")
+target_link_libraries (tinker9_cu PRIVATE tinker9_cpp)
+
+
 ## -gencode arch=compute_60,code=sm_60 -gencode arch=compute_70,code=sm_70
 foreach (var ${T9_CUCCLIST})
    target_compile_options (tinker9_cu PRIVATE
@@ -56,11 +48,13 @@ foreach (var ${T9_CUCCLIST})
 endforeach ()
 ## Debug add flag: -lineinfo
 ## Release add flag: --use_fast_math
-string (APPEND CMAKE_CUDA_FLAGS_DEBUG          " -lineinfo")
-string (APPEND CMAKE_CUDA_FLAGS_RELWITHDEBINFO " -lineinfo --use_fast_math")
-string (APPEND CMAKE_CUDA_FLAGS_RELEASE        " --use_fast_math")
-string (APPEND CMAKE_CUDA_FLAGS_MINSIZEREL     " --use_fast_math")
-
-
-string (APPEND CMAKE_CUDA_FLAGS_DEBUG " --compiler-options -Wall")
-string (APPEND CMAKE_CUDA_FLAGS_DEBUG " --compiler-options -Wno-unknown-pragmas")
+target_compile_options (tinker9_cu PRIVATE
+   "$<$<CONFIG:DEBUG>:-lineinfo>"
+   "$<$<CONFIG:RELWITHDEBINFO>:-lineinfo;--use_fast_math>"
+   "$<$<CONFIG:RELEASE>:--use_fast_math>"
+   "$<$<CONFIG:MINSIZEREL>:--use_fast_math>"
+)
+target_compile_options (tinker9_cu PRIVATE
+   "$<$<CONFIG:DEBUG>:--compiler-options;-Wall>"
+   "$<$<CONFIG:DEBUG>:--compiler-options;-Wno-unknown-pragmas>"
+)
