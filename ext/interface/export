@@ -7,7 +7,7 @@
 # bash export c cpp
 
 
-src_dir=$(realpath ../source)
+src_dir=$PWD/../source
 export LC_COLLATE=C
 
 
