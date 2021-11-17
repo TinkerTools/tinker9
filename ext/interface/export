@@ -1,22 +1,33 @@
 #!/bin/bash
 
 
+# Attempt to update to the most recent version from GitHub then generate the interface code.
+# Usage:
+# bash export c cpp
+
+
 src_dir=$(realpath ../source)
 export LC_COLLATE=C
 
 
-version_str_on_github() {
+check_from_github() {
     echo "Checking updates on GitHub..."
     url_base="https://raw.githubusercontent.com/TinkerTools/tinker9/master/ext/interface"
     vnum=$(curl -s "$url_base/version.txt")
     if [[ $vnum =~ ^-?[0-9]+$ ]]; then
         # If vnum is a valid integer, compare it to the local version number.
-        lnum=$(cat version.txt)
+        lnum=0
+        if [ -f version.txt ]; then
+            lnum=$(cat version.txt)
+        fi
         if [ $lnum -lt $vnum ]; then
             echo Updating from GitHub...
             curl -O "$url_base/export"
             curl -O "$url_base/parse.py"
             curl -O "$url_base/version.txt"
+            mkdir -p include/tinker/{gfortran,ifort}
+            curl -o include/tinker/gfortran/macro.hh "$url_base/include/tinker/gfortran/macro.hh"
+            curl -o include/tinker/ifort/macro.hh    "$url_base/include/tinker/ifort/macro.hh"
             echo "Update completed. Please run this command again."
             exit 0
         else
@@ -51,7 +62,7 @@ export_cpp() {
 
 
 # check updates
-version_str_on_github
+check_from_github
 
 
 for a in "$@"; do
