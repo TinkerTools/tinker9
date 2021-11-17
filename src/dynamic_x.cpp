@@ -1,3 +1,4 @@
+#include "md.h"
 #include "tinker_rt.h"
 #include <chrono>
 #include <tinker/detail/bath.hh>

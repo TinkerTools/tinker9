@@ -1,4 +1,5 @@
 #include "energy.h"
+#include "md.h"
 #include "nblist.h"
 #include "random.h"
 #include "tinker_rt.h"

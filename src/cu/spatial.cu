@@ -12,7 +12,6 @@
 #include "syntax/cu/copysign.h"
 #include "syntax/cu/ffsn.h"
 #include "thrust_cache.h"
-#include "tool/fc.h"
 #include <thrust/extrema.h>
 #include <thrust/remove.h>
 #include <thrust/scan.h>

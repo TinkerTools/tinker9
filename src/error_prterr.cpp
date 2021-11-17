@@ -1,9 +1,9 @@
 #include "box.h"
 #include "mdpq.h"
+#include "tinker_rt.h"
 #include "tool/darray.h"
 #include "tool/error.h"
 #include <tinker/detail/atoms.hh>
-#include <tinker/routines.h>
 
 namespace tinker {
 void prterr()

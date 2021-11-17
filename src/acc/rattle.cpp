@@ -1,8 +1,7 @@
+#include "rattle.h"
 #include "add.h"
 #include "lpiston.h"
-#include "mdpq.h"
-#include "rattle.h"
-#include "tinker_rt.h"
+#include "md.h"
 #include "tool/darray.h"
 #include "tool/error.h"
 #include <tinker/detail/inform.hh>

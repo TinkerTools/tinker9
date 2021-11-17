@@ -9,7 +9,6 @@
 #include "switch.h"
 #include "tinker_rt.h"
 #include "tool/error.h"
-#include "tool/fc.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/ewald.hh>
 #include <tinker/detail/pme.hh>

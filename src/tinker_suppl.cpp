@@ -1,9 +1,8 @@
-#include "tool/fc.h"
+#include "tool/tinker_suppl.h"
 #include "f/tinker_supplement.h"
 #include "tool/io_fort_str.h"
 #include <cassert>
 #include <cstring>
-#include <tinker/routines.h>
 
 std::string tinker_f_version(std::string file, std::string status)
 {

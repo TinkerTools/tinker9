@@ -1,11 +1,8 @@
 #pragma once
-#include "mathfunc.h"
-#include "md.h"
 #include "tool/io_fort_str.h"
 #include "tool/io_print.h"
 #include "tool/io_read.h"
 #include "tool/io_text.h"
-#include <tinker/detail/keys.hh>
 #include <tinker/routines.h>
 
 

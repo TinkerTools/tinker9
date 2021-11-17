@@ -3,7 +3,6 @@
 #include "tool/error.h"
 #include <fstream>
 #include <tinker/detail/bath.hh>
-#include <tinker/routines.h>
 
 
 namespace tinker {

@@ -1,7 +1,7 @@
 #include "energy.h"
+#include "md.h"
 #include "nblist.h"
 #include "tinker_rt.h"
-#include "tool/fc.h"
 #include "tool/io_fort_str.h"
 #include "tool/io_print.h"
 #include <tinker/detail/files.hh>
@@ -68,7 +68,7 @@ void x_minimize(int, char**)
 
    // perform dynamic allocation of some global arrays
    if (!tinker_f_allocated(scales::scale))
-      tinker_f_allocate_dim(&scales::scale, 3 * n);
+      tinker_f_allocate_element(&scales::scale, 3 * n);
 
 
    // set scaling parameter for function and derivative values;

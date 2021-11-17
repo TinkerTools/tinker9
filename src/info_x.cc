@@ -1,3 +1,4 @@
+#include "md.h"
 #include "tinker_rt.h"
 #include "tool/compilers.h"
 #include "tool/gpu_card.h"

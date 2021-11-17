@@ -41,7 +41,6 @@ eurey.cpp
 evalence.cpp
 evdw.cpp
 exec.cpp
-fc.cpp
 field.cpp
 field_chgpen.cpp
 group.cpp
@@ -79,6 +78,7 @@ switch.cpp
 testgrad_x.cpp
 tinker_mod.cpp
 tinker_rt.cpp
+tinker_suppl.cpp
 trimatexp.cpp
 )
 if (HOST)

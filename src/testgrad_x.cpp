@@ -1,6 +1,6 @@
 #include "energy.h"
+#include "md.h"
 #include "tinker_rt.h"
-#include "tool/io_text.h"
 #include <tinker/detail/inform.hh>
 
 

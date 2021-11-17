@@ -2,7 +2,6 @@
 #include "mathfunc_libfunc.h"
 #include "mddebug.h"
 #include "mdpq.h"
-#include "tinker_rt.h"
 #include "tool/darray.h"
 #include "tool/error.h"
 

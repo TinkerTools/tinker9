@@ -1,5 +1,4 @@
-#include "mdintg.h"
-#include "mdpq.h"
+#include "md.h"
 #include "tinker_rt.h"
 #include "tool/io_print.h"
 #include <tinker/detail/bound.hh>

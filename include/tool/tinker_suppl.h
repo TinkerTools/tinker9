@@ -1,7 +1,6 @@
 #pragma once
 #include "macro.h"
 #include <string>
-#include <tinker/routines.h>
 
 // version
 std::string tinker_f_version(std::string infile, std::string status);
@@ -21,10 +20,10 @@ void tinker_f_deallocate(void* p);
 void tinker_f_allocate_byte(void** pp, size_t bytes);
 
 template <class T>
-void tinker_f_allocate_dim(T** pp, int dim)
+void tinker_f_allocate_element(T** pp, int nelem)
 {
    void** p = (void**)pp;
-   size_t bytes = sizeof(T) * dim;
+   size_t bytes = sizeof(T) * nelem;
    tinker_f_allocate_byte(p, bytes);
 }
 

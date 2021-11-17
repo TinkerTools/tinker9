@@ -4,6 +4,7 @@
 #include "mdcalc.h"
 #include "mdpq.h"
 #include "potent.h"
+#include "tinker_rt.h"
 #include "tool/darray.h"
 #include <cmath>
 #include <tinker/detail/atomid.hh>
@@ -15,7 +16,6 @@
 #include <tinker/detail/mpole.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/units.hh>
-#include <tinker/routines.h>
 #include <vector>
 
 

@@ -1,6 +1,7 @@
 #include "tinker_rt.h"
 #include <algorithm>
 #include <tinker/detail/argue.hh>
+#include <tinker/detail/keys.hh>
 
 
 namespace tinker {

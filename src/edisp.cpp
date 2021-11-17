@@ -4,14 +4,13 @@
 #include "nblist.h"
 #include "pmestuf.h"
 #include "potent.h"
-#include "tool/fc.h"
+#include "tinker_rt.h"
 #include "tool/host_zero.h"
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/disp.hh>
 #include <tinker/detail/dsppot.hh>
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/sizes.hh>
-#include <tinker/routines.h>
 
 
 namespace tinker {

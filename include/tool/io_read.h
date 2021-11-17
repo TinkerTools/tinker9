@@ -1,6 +1,6 @@
 #pragma once
-#include "tool/fc.h"
 #include "tool/io_text.h"
+#include "tool/tinker_suppl.h"
 #include <iostream>
 #include <sstream>
 

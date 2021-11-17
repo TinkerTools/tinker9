@@ -2,8 +2,8 @@
 #include "field_chgpen.h"
 #include "induce_donly.h"
 #include "launch.h"
+#include "md.h"
 #include "mod.uprior.h"
-#include "tinker_rt.h"
 #include "tool/cudalib.h"
 #include "tool/io_print.h"
 #include <tinker/detail/inform.hh>

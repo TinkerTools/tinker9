@@ -1,7 +1,6 @@
 #include "main_tinker9.h"
+#include "tinker_rt.h"
 #include "tool/io_print.h"
-#include <tinker/routines.h>
-
 #include <algorithm>
 #include <functional>
 #include <map>
