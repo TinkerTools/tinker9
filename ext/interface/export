@@ -3,6 +3,7 @@
 
 # Attempt to update to the most recent version from GitHub then generate the interface code.
 # Usage:
+# bash export update
 # bash export c cpp
 
 
@@ -61,12 +62,10 @@ export_cpp() {
 }
 
 
-# check updates
-check_from_github
-
-
 for a in "$@"; do
-    if [ "$a" = c ]; then
+    if [ "$a" = update ]; then
+        check_from_github
+    elif [ "$a" = c ]; then
         echo "Exporting the C interface..."
         export_c
     elif [ "$a" = cpp ]; then

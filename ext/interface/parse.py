@@ -803,10 +803,16 @@ def exportModuleToC(m: Variable) -> str:
     assert(m.type == 'module')
     lines: List[str] = []
     lines.append('')
+    lines.append('''#ifdef __cplusplus
+extern "C" {
+#endif''')
     for e in m.entries:
         l = e.f2c(FileType.t9_extern_c_with_macro_const)
         if l != '':
             lines.append(l)
+    lines.append('''#ifdef __cplusplus
+}
+#endif''')
     return '\n'.join(lines)
 
 def printFuncHeaderInC(filenames: List[str]) -> None:
