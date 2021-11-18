@@ -1,9 +1,6 @@
 #pragma once
 
 
-//====================================================================//
-
-
 // C++11
 #ifdef __cplusplus
 #   if __cplusplus < 201103L
@@ -13,11 +10,12 @@
 
 
 /**
- * \def restrict
- * \ingroup macro
- * Expands to `__restrict__` in the source code.
+ * \ingroup cpp_syntax
+ * \brief Expands to `__restrict__`, which is a common C++ extension.
  */
-#define restrict __restrict__
+#ifdef __cplusplus
+#   define restrict __restrict__
+#endif
 
 
 #if defined(__INTEL_COMPILER)
@@ -55,11 +53,10 @@
 
 
 /**
- * \def CONSTEXPR
- * \ingroup macro
- * Since C++17, `if constexpr` is added to C++ syntax.
+ * \ingroup cpp_syntax
+ * \brief Since C++17, `if constexpr` is allowed in C++.
  * `if CONSTEXPR` expands to `if constexpr` if this feature is supported.
- * Otherwise expands to `if`.
+ * Otherwise it expands to `if`.
  */
 #if __cplusplus >= 201703L && defined(__cpp_if_constexpr)
 #   define CONSTEXPR constexpr
@@ -69,9 +66,8 @@
 
 
 /**
- * \def MAYBE_UNUSED
- * \ingroup macro
- * Reduces the "unused variable" warnings from the compiler.
+ * \ingroup cpp_syntax
+ * \brief Reduces the "unused variable" warnings from the compiler.
  */
 #ifdef __has_cpp_attribute
 #   if __has_cpp_attribute(maybe_unused)
@@ -90,9 +86,8 @@
 
 
 /**
- * \def TINKER_STR
- * \ingroup macro
- * Converts a predefined macro `s` to a string `"s"`.
+ * \ingroup cpp_syntax
+ * \brief Converts a predefined macro `s` to a string `"s"`.
  */
 #define TINKER_STR(s)   TINKER_STR1_(s)
 #define TINKER_STR1_(s) #s
@@ -115,16 +110,16 @@
 
 /**
  * \def TINKER_EXTERN_DEFINITION_FILE
- * \ingroup macro
- * Define this macro to true before this header files being included so that
- * the declarations of the "extern" variables will become definitions in the
- * current compilation unit.
+ * \ingroup cpp_syntax
+ * \brief Define this macro to 1 before this header file being included so
+ * that the macro `TINKER_EXTERN` will not be expanded to `extern`.
+ * \see TINKER_EXTERN
  *
  * \def TINKER_EXTERN
- * \ingroup macro
- * In general, macro `TINKER_EXTERN` expands to `extern`, unless macro
- * `TINKER_EXTERN_DEFINITION_FILE` has been predefined to true.
- * This is useful to declare and define the global variables.
+ * \ingroup cpp_syntax
+ * \brief Expands to `extern`, unless `TINKER_EXTERN_DEFINITION_FILE` has been
+ * predefined to 1. This is useful to declare and define the global
+ * variables.
  * \see TINKER_EXTERN_DEFINITION_FILE
  */
 #ifndef TINKER_EXTERN_DEFINITION_FILE
@@ -141,9 +136,9 @@
 
 
 /**
- * \def TINKER_DEBUG
- * \ingroup macro
- * Expands to 0 if macro `NDEBUG` was predefined. Expands to 0 otherwise.
+ * \ingroup compiler
+ * \brief Expands to 0 if the macro `NDEBUG` was predefined.
+ * Expands to 1 otherwise.
  */
 #ifdef NDEBUG
 #   define TINKER_DEBUG 0
@@ -157,13 +152,13 @@
 
 /**
  * \def TINKER_HOST
- * \ingroup macro
- * Flag for the CPU-only code.
+ * \ingroup compiler
+ * \brief Macro for the CPU-only code.
  * \see TINKER_CUDART
  *
  * \def TINKER_CUDART
- * \ingroup macro
- * Flag for the GPU-enabled code.
+ * \ingroup compiler
+ * \brief Macro for the CUDA runtime-enabled GPU code.
  * \see TINKER_HOST
  */
 #ifndef TINKER_HOST
@@ -181,9 +176,9 @@
 
 /**
  * \def TINKER_DOUBLE_PRECISION
- * \ingroup macro
- * Only one of the precision macros can be set to 1 and the others will
- * be set to 0.
+ * \ingroup prec
+ * \brief Macro for the precision mode. Types `real` and `mixed` have different
+ * definitions in different modes.
  *
  * | Macros | real   | mixed  |
  * |--------|--------|--------|
@@ -191,12 +186,15 @@
  * | MIXED  | float  | double |
  * | SINGLE | float  | float  |
  *
+ * Only one of the precision macros can be set to 1 and the others will
+ * be set to 0.
+ *
  * \def TINKER_MIXED_PRECISION
- * \ingroup macro
+ * \ingroup prec
  * \copydoc TINKER_DOUBLE_PRECISION
  *
  * \def TINKER_SINGLE_PRECISION
- * \ingroup macro
+ * \ingroup prec
  * \copydoc TINKER_DOUBLE_PRECISION
  */
 #ifdef TINKER_DOUBLE_PRECISION
@@ -227,16 +225,16 @@ namespace tinker {
 /**
  * \typedef fixed
  * \ingroup prec
- * 64-bit unsigned integer type for fixed-point arithmetic.
+ * \brief 64-bit unsigned integer type for fixed-point arithmetic.
  *
  * \typedef real
  * \ingroup prec
- * Floating-point type with lower precision (not higher than #mixed).
+ * \brief Floating-point type with lower precision (not higher than #mixed).
  * \see TINKER_MIXED_PRECISION
  *
  * \typedef mixed
  * \ingroup prec
- * Floating-point type with higher precision (not lower than #real).
+ * \brief Floating-point type with higher precision (not lower than #real).
  * \see TINKER_MIXED_PRECISION
  */
 using fixed = unsigned long long;

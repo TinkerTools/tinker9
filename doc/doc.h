@@ -1,17 +1,25 @@
 #error This header file should never have been included.
 
 
-/// \defgroup macro  Predefined Macros
-/// \defgroup prec  Precisions of MM and MD Types
-/// \defgroup acc_syntax  OpenACC Specific Code
+/// \defgroup lang  Compilers and Syntax
+/// \defgroup compiler  Compilers
+/// \ingroup lang
+/// \defgroup cpp_syntax  C++ Syntax
+/// \ingroup lang
 /// \defgroup cuda_syntax  CUDA Specific Code
+/// \ingroup lang
+/// \defgroup acc_syntax  OpenACC Specific Code
+/// \ingroup lang
+
+
+/// \defgroup prec  Precisions
+
+
 /// \defgroup io  I/O and Text
 /// \defgroup error  Errors and Exceptions
 /// \defgroup test  Unit Tests
-
 /// \defgroup async  Asynchronous Flow Control
 /// \defgroup rc  Resource: Pointer, Allocation, Deallocation, Queue
-
 /// \defgroup math  Math
 /// \defgroup parallel_algo  Parallel Algorithms
 /// \defgroup spatial2  Spatial Decomposition Version 2
@@ -47,25 +55,22 @@
 //====================================================================//
 
 
-/// \def TINKER_ICPC
-/// \ingroup macro
-/// Is defined when Intel C++ compiler was detected.
+/// \ingroup compiler
+/// \brief Macro for the Intel C++ compiler.
 #define TINKER_ICPC
-/// \def TINKER_GCC
-/// \ingroup macro
-/// Is defined when GNU C++ compiler was detected.
+/// \ingroup compiler
+/// \brief Macro for the GNU C++ compiler.
 #define TINKER_GCC
-/// \def TINKER_CLANG
-/// \ingroup macro
-/// Is defined when Clang C++ (either Apple or LLVM) compiler was detected.
+/// \ingroup compiler
+/// \brief Macro for the Clang C++ (either Apple or LLVM) compiler.
 #define TINKER_CLANG
-/// \def TINKER_APPLE_CLANG
-/// \ingroup macro
-/// Is defined when Clang C++ (Apple) compiler was detected.
+/// \ingroup compiler
+/// \brief Macro for the Clang C++ (Apple) compiler.
 #define TINKER_APPLE_CLANG
-/// \def TINKER_LLVM_CLANG
-/// \ingroup macro
-/// Is defined when Clang C++ (LLVM) compiler was detected.
+/// \ingroup compiler
+/// \brief Macro for the Clang C++ (LLVM) compiler.
 #define TINKER_LLVM_CLANG
-/* documented in macro.h */
+/// \ingroup compiler
+/// \brief Macro for the PGI or NVHPC C++ compiler.
+#define TINKER_PGI
 #define TINKER_EXTERN_DEFINITION_FILE
