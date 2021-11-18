@@ -52,15 +52,15 @@ void TestFile::__keep()
 
 
 TestFileExpected::TestFileExpected(const std::string& name)
-   : name_(name)
+   : m_name(name)
 {}
 
 
 TestFileExpected::~TestFileExpected()
 {
-   std::ifstream chk(name_);
+   std::ifstream chk(m_name);
    if (chk) {
-      std::remove(name_.c_str());
+      std::remove(m_name.c_str());
    }
 }
 

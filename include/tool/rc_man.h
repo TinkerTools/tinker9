@@ -48,8 +48,8 @@ constexpr rc_op rc_init = rc_op::INIT;
 class ResourceManagement
 {
 private:
-   void (*f_)(rc_op);
-   rc_op op_;
+   void (*m_f)(rc_op);
+   rc_op m_op;
    bool will_dealloc() const;
    bool only_dealloc() const;
 

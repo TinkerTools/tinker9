@@ -178,6 +178,7 @@ void lprat(time_prec dt, const pos_prec* xold, const pos_prec* yold,
 
 
 static int nrespa, nbaro;
+static int nprtpres, iprtpres;
 static double rnd, rnd_matrix[3][3];
 static double g0, g1, D;
 static bool atomT, molT, atomP, molP, constrain, aniso;
@@ -199,6 +200,10 @@ void vv_lpiston_init()
    nbaro = std::max(1, nbaro);
 
    get_kv("FRICTION", stodyn::friction, 20.0);
+
+   // keyword: "PRINTOUT 5"
+   get_kv("PRINTOUT", nprtpres, 0);
+   iprtpres = 0;
 
    rnd = 0.0;
    for (int i = 0; i < 3; ++i)
@@ -304,7 +309,7 @@ void vv_lpiston_destory()
 //====================================================================//
 
 
-static void iso_tp(time_prec dt)
+static void iso_tp(time_prec dt, bool prtpres = false, int iCurrentStep = 0)
 {
    constexpr int ns = 2;
    const double kbt = units::gasconst * bath::kelvin;
@@ -403,6 +408,15 @@ static void iso_tp(time_prec dt)
       darray::scale(g::q0, n, velsc0, vz);
    } else if (molT) {
       lp_propagate_mol_vel(velsc0 - 1.0);
+   }
+
+
+   if (prtpres) {
+      double pres = units::prescon * (2 * lp_eksum - tr_vir) / (D * vol0);
+      print(stdout,
+            "\n"
+            " Current Pressure       %12.4lf Atm at Step %8d\n",
+            pres, iCurrentStep);
    }
 }
 
@@ -535,7 +549,16 @@ void vv_lpiston_npt(int istep, time_prec dt)
    }
    if (mid)
       rnd = normal<double>();
-   iso_tp(dt);
+   bool prtpres = false;
+   int iCurrentStep = 0;
+   if ((nprtpres != 0) and mid) {
+      iprtpres++;
+      if (iprtpres % nprtpres == 0) {
+         prtpres = true;
+         iCurrentStep = istep;
+      }
+   }
+   iso_tp(dt, prtpres, iCurrentStep);
    if (constrain)
       rattle2(dt, false);
 
@@ -544,7 +567,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
       lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
       lp_mol_kinetic();
       printf("\n"
-             " Current MolKinetic     %12.4lf Kcal/mole of Frame %8d\n",
+             " Current MolKinetic     %12.4lf Kcal/mole at Frame %8d\n",
              lp_eksum, istep / inform::iwrite);
    }
 }
@@ -553,7 +576,8 @@ void vv_lpiston_npt(int istep, time_prec dt)
 //====================================================================//
 
 
-static void iso_tp_aniso(time_prec dt)
+static void iso_tp_aniso(time_prec dt, bool prtpres = false,
+                         int iCurrentStep = 0)
 {
    constexpr int ns = 2;
    const double kbt = units::gasconst * bath::kelvin;
@@ -734,6 +758,26 @@ static void iso_tp_aniso(time_prec dt)
       }
       lp_propagate_mol_vel_aniso(scal);
    }
+
+
+   if (prtpres) {
+      double pres[3][3];
+      for (int i = 0; i < 3; ++i) {
+         for (int j = 0; j < 3; ++j) {
+            pres[i][j] =
+               units::prescon * (2 * lp_ekin[i][j] - lp_vir[3 * i + j]) / vol0;
+         }
+      }
+      print(stdout,
+            "\n"
+            " Current Pressure X at Step %8d %12.4lf%12.4lf%12.4lf\n",
+            iCurrentStep, pres[0][0], pres[0][1], pres[0][2]);
+      print(stdout, " Current Pressure Y at Step %8d %12.4lf%12.4lf%12.4lf\n",
+            iCurrentStep, pres[1][0], pres[1][1], pres[1][2]);
+      print(stdout,
+            " Current Pressure Z at Step %8d %12.4lf%12.4lf%12.4lf Atm\n",
+            iCurrentStep, pres[2][0], pres[2][1], pres[2][2]);
+   }
 }
 
 
@@ -878,7 +922,16 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
       rnd_matrix[2][0] = rnd_matrix[0][2];
       rnd_matrix[2][1] = rnd_matrix[1][2];
    }
-   iso_tp_aniso(dt);
+   bool prtpres = false;
+   int iCurrentStep = 0;
+   if ((nprtpres != 0) and mid) {
+      iprtpres++;
+      if (iprtpres % nprtpres == 0) {
+         prtpres = true;
+         iCurrentStep = istep;
+      }
+   }
+   iso_tp_aniso(dt, prtpres, iCurrentStep);
    if (constrain)
       rattle2(dt, false);
 
@@ -887,7 +940,7 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
       lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
       lp_mol_kinetic();
       printf("\n"
-             " Current MolKinetic     %12.4lf Kcal/mole of Frame %8d\n",
+             " Current MolKinetic     %12.4lf Kcal/mole at Frame %8d\n",
              lp_eksum, istep / inform::iwrite);
    }
 }

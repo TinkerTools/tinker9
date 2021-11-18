@@ -4,22 +4,22 @@
 namespace tinker {
 bool ResourceManagement::will_dealloc() const
 {
-   return op_ & rc_dealloc;
+   return m_op & rc_dealloc;
 }
 
 
 bool ResourceManagement::only_dealloc() const
 {
-   return op_ == rc_dealloc;
+   return m_op == rc_dealloc;
 }
 
 
 ResourceManagement::ResourceManagement(void (*f)(rc_op), rc_op op)
-   : f_(f)
-   , op_(op)
+   : m_f(f)
+   , m_op(op)
 {
    if (!will_dealloc()) {
-      f_(op_);
+      m_f(m_op);
    }
 }
 
@@ -27,7 +27,7 @@ ResourceManagement::ResourceManagement(void (*f)(rc_op), rc_op op)
 ResourceManagement::~ResourceManagement()
 {
    if (only_dealloc()) {
-      f_(op_);
+      m_f(m_op);
    }
 }
 

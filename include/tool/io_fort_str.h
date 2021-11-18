@@ -13,8 +13,8 @@ namespace tinker {
 class FortranStringView
 {
 private:
-   char* const b_; // begin in [begin, end)
-   char* const e_; // end in [begin, end)
+   char* const m_b; // begin in [begin, end)
+   char* const m_e; // end in [begin, end)
 
 
    FortranStringView() = delete; // no default constructor
@@ -46,8 +46,8 @@ private:
 public:
    template <size_t Len>
    FortranStringView(const char (&src)[Len])
-      : b_(const_cast<char*>(src))
-      , e_(b_ + Len)
+      : m_b(const_cast<char*>(src))
+      , m_e(m_b + Len)
    {}
    FortranStringView(const char* src, size_t len);
    FortranStringView(const char* src);
@@ -58,7 +58,7 @@ public:
    template <size_t Len>
    FortranStringView& operator=(const char (&src)[Len])
    {
-      copy_with_blank(b_, size(), src, Len);
+      copy_with_blank(m_b, size(), src, Len);
       return *this;
    }
    FortranStringView& operator=(const char* src);

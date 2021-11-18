@@ -23,11 +23,11 @@ bool FortranStringView::if_eq(const char* src, size_t len) const
    auto lb = this->len_trim();
    auto lc = std::max(lb, len);
    auto buffer = std::string(lc, (char)0);
-   // If src is longer, copy b_ to buffer, then compare src and buffer;
-   // or copy src to buffer, then compare b_ and buffer.
-   const char* ptr = b_;
+   // If src is longer, copy m_b to buffer, then compare src and buffer;
+   // or copy src to buffer, then compare m_b and buffer.
+   const char* ptr = m_b;
    if (len > lb) {
-      copy_with_blank(&buffer[0], lc, b_, lb);
+      copy_with_blank(&buffer[0], lc, m_b, lb);
       ptr = src;
    } else {
       copy_with_blank(&buffer[0], lc, src, len);
@@ -38,45 +38,45 @@ bool FortranStringView::if_eq(const char* src, size_t len) const
 
 size_t FortranStringView::size() const
 {
-   return e_ - b_;
+   return m_e - m_b;
 }
 
 
 FortranStringView::FortranStringView(const char* src, size_t len)
-   : b_(const_cast<char*>(src))
-   , e_(b_ + len)
+   : m_b(const_cast<char*>(src))
+   , m_e(m_b + len)
 {}
 
 
 FortranStringView::FortranStringView(const char* src)
-   : b_(const_cast<char*>(src))
-   , e_(b_ + std::strlen(src))
+   : m_b(const_cast<char*>(src))
+   , m_e(m_b + std::strlen(src))
 {}
 
 
 FortranStringView::FortranStringView(const std::string& src)
-   : b_(const_cast<char*>(&src[0]))
-   , e_(b_ + src.size())
+   : m_b(const_cast<char*>(&src[0]))
+   , m_e(m_b + src.size())
 {}
 
 
 FortranStringView& FortranStringView::operator=(const char* src)
 {
-   copy_with_blank(b_, size(), src, std::strlen(src));
+   copy_with_blank(m_b, size(), src, std::strlen(src));
    return *this;
 }
 
 
 FortranStringView& FortranStringView::operator=(const std::string& src)
 {
-   copy_with_blank(b_, size(), &src[0], src.size());
+   copy_with_blank(m_b, size(), &src[0], src.size());
    return *this;
 }
 
 
 FortranStringView& FortranStringView::operator=(const FortranStringView& src)
 {
-   copy_with_blank(b_, size(), src.b_, src.size());
+   copy_with_blank(m_b, size(), src.m_b, src.size());
    return *this;
 }
 
@@ -95,7 +95,7 @@ bool FortranStringView::operator==(const std::string& src) const
 
 bool FortranStringView::operator==(const FortranStringView& src) const
 {
-   return if_eq(src.b_, src.size());
+   return if_eq(src.m_b, src.size());
 }
 
 
@@ -103,9 +103,9 @@ size_t FortranStringView::len_trim() const
 {
    // Find the first (char)0.
    size_t pos = 0;
-   for (; pos < size() && b_[pos] != 0; ++pos)
+   for (; pos < size() && m_b[pos] != 0; ++pos)
       ;
-   for (; pos > 0 && Text::is_ws(b_[pos - 1]); --pos)
+   for (; pos > 0 && Text::is_ws(m_b[pos - 1]); --pos)
       ;
    return pos;
 }
@@ -113,18 +113,18 @@ size_t FortranStringView::len_trim() const
 
 std::string FortranStringView::trim() const
 {
-   return std::string(b_, b_ + len_trim());
+   return std::string(m_b, m_b + len_trim());
 }
 
 
 FortranStringView FortranStringView::operator()(int begin1, int back1) const
 {
-   return FortranStringView(b_ + (begin1 - 1), back1 - begin1 + 1);
+   return FortranStringView(m_b + (begin1 - 1), back1 - begin1 + 1);
 }
 
 
 FortranStringView FortranStringView::operator()(int begin1) const
 {
-   return FortranStringView(b_ + (begin1 - 1), e_ - b_);
+   return FortranStringView(m_b + (begin1 - 1), m_e - m_b);
 }
 }
