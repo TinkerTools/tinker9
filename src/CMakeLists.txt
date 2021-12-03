@@ -46,6 +46,7 @@ field_chgpen.cpp
 group.cpp
 induce.cpp
 induce_donly.cpp
+initial.cpp
 io_fort_str.cpp
 io_text.cpp
 lf_lpiston.cpp

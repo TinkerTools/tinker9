@@ -158,7 +158,7 @@ void test_begin_with_args(int argc, const char** argv)
 {
    tinkerFortranRuntimeBegin(argc, const_cast<char**>(argv));
 
-   tinker_f_initial();
+   initial();
    tinker_f_command();
    tinker_f_getxyz();
    tinker_f_mechanic();

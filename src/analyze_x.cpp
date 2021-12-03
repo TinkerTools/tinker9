@@ -188,7 +188,7 @@ static void x_analyze_v()
 
 void x_analyze(int, char**)
 {
-   tinker_f_initial();
+   initial();
    tinker_f_getxyz();
    tinker_f_mechanic();
    mechanic2();

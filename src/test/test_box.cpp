@@ -50,7 +50,7 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
    real xr, yr, zr;
 
    tinkerFortranRuntimeBegin(argc, (char**)argv);
-   tinker_f_initial();
+   initial();
    gpu_card_data(rc_alloc | rc_init);
    box_data_acc(rc_alloc);
 
@@ -111,7 +111,7 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
    real xr, yr, zr;
 
    tinkerFortranRuntimeBegin(argc, (char**)argv);
-   tinker_f_initial();
+   initial();
    gpu_card_data(rc_alloc | rc_init);
    box_data_acc(rc_alloc);
 
@@ -197,7 +197,7 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
    double xa, ya, za;
 
    tinkerFortranRuntimeBegin(argc, (char**)argv);
-   tinker_f_initial();
+   initial();
    gpu_card_data(rc_alloc | rc_init);
    box_data_acc(rc_alloc);
 

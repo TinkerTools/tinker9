@@ -19,7 +19,7 @@ void x_bar_barcalc();
 
 void x_bar(int, char**)
 {
-   tinker_f_initial();
+   initial();
 
 
    char string[MAX_NCHAR];

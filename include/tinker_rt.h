@@ -7,6 +7,7 @@
 
 
 namespace tinker {
+void initial();
 void mechanic2();
 
 

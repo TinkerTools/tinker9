@@ -10,7 +10,7 @@
 namespace tinker {
 void x_testgrad(int, char**)
 {
-   tinker_f_initial();
+   initial();
    tinker_f_getxyz();
    tinker_f_mechanic();
    mechanic2();
