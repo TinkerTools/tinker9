@@ -1,6 +1,5 @@
 #pragma once
-#include "mdintg.h"
-#include <tinker/detail/bath.hh>
+#include "nhc.h"
 
 
 namespace tinker {
@@ -10,7 +9,6 @@ void nhc_npt(int istep, time_prec dt_ps);
 void hoover(time_prec dt, virial_prec press);
 
 
-constexpr int maxnose = bath::maxnose;
 extern double vbar;         // epsilon velocity
 extern double qbar;         // epsilon mass
 extern double gbar;         // epsilon force

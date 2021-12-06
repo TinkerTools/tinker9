@@ -1,8 +1,9 @@
-#include "add.h"
 #include "lpiston.h"
+#include "add.h"
 #include "mdegv.h"
 #include "mdpq.h"
 #include "rattle.h"
+#include <tinker/detail/units.hh>
 
 
 namespace tinker {
@@ -239,6 +240,77 @@ void lp_center_of_mass_acc(const pos_prec* ax, const pos_prec* ay,
       mx[im] = tx;
       my[im] = ty;
       mz[im] = tz;
+   }
+}
+
+
+void propagate_velocity_06_acc(double vbar, time_prec dt, const grad_prec* grx,
+                               const grad_prec* gry, const grad_prec* grz,
+                               time_prec dt2, const grad_prec* grx2,
+                               const grad_prec* gry2, const grad_prec* grz2)
+{
+   const vel_prec ekcal = units::ekcal;
+   if (dt != 0 and dt2 != 0 and dt >= dt2) {
+      std::swap(dt, dt2);
+      std::swap(grx, grx2);
+      std::swap(gry, gry2);
+      std::swap(grz, grz2);
+   }
+   // dt < dt2
+   const auto t2 = dt / 2;
+   const double e1 = std::exp(-vbar * dt);
+   const double e2 = std::exp(-vbar * t2) * sinhc(vbar * t2);
+
+
+   if (dt2 == 0) {
+      #pragma acc parallel loop independent async\
+              deviceptr(massinv,vx,vy,vz,grx,gry,grz)
+      for (int i = 0; i < n; ++i) {
+#if TINKER_DETERMINISTIC_FORCE
+         auto gx = to_flt_acc<vel_prec>(grx[i]);
+         auto gy = to_flt_acc<vel_prec>(gry[i]);
+         auto gz = to_flt_acc<vel_prec>(grz[i]);
+#else
+         auto gx = grx[i];
+         auto gy = gry[i];
+         auto gz = grz[i];
+#endif
+         auto vlx = vx[i];
+         auto vly = vy[i];
+         auto vlz = vz[i];
+         auto coef = -ekcal * massinv[i] * dt;
+         vx[i] = vlx * e1 + coef * gx * e2;
+         vy[i] = vly * e1 + coef * gy * e2;
+         vz[i] = vlz * e1 + coef * gz * e2;
+      }
+   } else {
+      const auto drespa = dt2 / dt;
+      #pragma acc parallel loop independent async\
+              deviceptr(massinv,vx,vy,vz,grx,gry,grz,grx2,gry2,grz2)
+      for (int i = 0; i < n; ++i) {
+#if TINKER_DETERMINISTIC_FORCE
+         auto gx = to_flt_acc<vel_prec>(grx[i]);
+         auto gy = to_flt_acc<vel_prec>(gry[i]);
+         auto gz = to_flt_acc<vel_prec>(grz[i]);
+         auto gx2 = to_flt_acc<vel_prec>(grx2[i]);
+         auto gy2 = to_flt_acc<vel_prec>(gry2[i]);
+         auto gz2 = to_flt_acc<vel_prec>(grz2[i]);
+#else
+         auto gx = grx[i];
+         auto gy = gry[i];
+         auto gz = grz[i];
+         auto gx2 = grx2[i];
+         auto gy2 = gry2[i];
+         auto gz2 = grz2[i];
+#endif
+         auto vlx = vx[i];
+         auto vly = vy[i];
+         auto vlz = vz[i];
+         auto coef = -ekcal * massinv[i] * dt;
+         vx[i] = vlx * e1 + coef * (gx + gx2 * drespa) * e2;
+         vy[i] = vly * e1 + coef * (gy + gy2 * drespa) * e2;
+         vz[i] = vlz * e1 + coef * (gz + gz2 * drespa) * e2;
+      }
    }
 }
 }

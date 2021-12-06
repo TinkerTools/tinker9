@@ -64,6 +64,7 @@ mod.cpp
 molecule.cpp
 moments.cpp
 nblist.cpp
+nhc.cpp
 nose.cpp
 osrw.cpp
 platform.cpp
