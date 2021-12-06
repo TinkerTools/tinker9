@@ -431,6 +431,14 @@ endif ()
 
 find_package (Git)
 if (GIT_FOUND)
+   execute_process (
+      COMMAND
+         "${GIT_EXECUTABLE}" submodule update --init
+      WORKING_DIRECTORY
+         "${PROJECT_SOURCE_DIR}"
+   )
+
+
    if (EXISTS "${PROJECT_SOURCE_DIR}/.git")
       execute_process (
          COMMAND
