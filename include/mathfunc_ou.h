@@ -16,7 +16,7 @@ namespace tinker {
  * \param gamma   The friction coefficient.
  * \param a       The parameter \f$ a \f$.
  * \param b       The parameter \f$ b \f$.
- * \param R       The random number of distribution \f$ N(0,1) \f$.
+ * \param R       The random number of a standard normal distribution.
  */
 inline double ornstein_uhlenbeck_process(double t, double x0, double gamma,
                                          double a, double b, double R)

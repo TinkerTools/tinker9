@@ -983,6 +983,9 @@ static void local_scale_vel_atom(double velsc0)
    darray::scale(g::q0, n, velsc0, vy);
    darray::scale(g::q0, n, velsc0, vz);
 }
+// separate the update for vbar in two steps
+#define TINKER_LPISTON_SEP_VBAR 1
+// #define TINKER_LPISTON_SEP_VBAR 0
 static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
 {
    bool mid = (nbaro == 1) or ((istep % nbaro) == (nbaro + 1) / 2);
@@ -1001,24 +1004,31 @@ static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
 
 
    double dt2 = 0.5 * dt, dti = dt / nrespa, dti2 = dt2 / nrespa;
-   double xdt = nbaro * dt, xdti = xdt / nrespa, xdti2 = 0.5 * xdti;
+   double xdt = nbaro * dt, xdt2 = 0.5 * xdt;
+   double xdti = xdt / nrespa, xdti2 = 0.5 * xdti;
    double b = 2 * stodyn::friction * units::gasconst * bath::kelvin / qbar;
+
+
+   if (TINKER_LPISTON_SEP_VBAR and atomP)
+      vbar =
+         ornstein_uhlenbeck_process(xdt2, vbar, stodyn::friction, 0.0, b, rnd);
 
 
    nhc_isot_96(dt, maxnose, vnh, qnh, g0, local_kinetic_atom,
                local_scale_vel_atom);
 
 
-   virial_prec tr_vir;
-   double DelP, vol0;
    if (atomP) {
-      tr_vir = lp_vir[0] + lp_vir[4] + lp_vir[8];
-      vol0 = volbox();
-      DelP = (1.0 + D / g1) * 2 * lp_eksum - tr_vir;
+      virial_prec tr_vir = lp_vir[0] + lp_vir[4] + lp_vir[8];
+      double vol0 = volbox();
+      double DelP = (1.0 + D / g1) * 2 * lp_eksum - tr_vir;
       DelP = DelP - D * vol0 * bath::atmsph / units::prescon;
       gbar = DelP / qbar;
-      vbar =
-         ornstein_uhlenbeck_process(dt2, vbar, stodyn::friction, gbar, b, rnd);
+      if (TINKER_LPISTON_SEP_VBAR)
+         vbar = vbar + gbar * xdt2;
+      else
+         vbar = ornstein_uhlenbeck_process(xdt2, vbar, stodyn::friction, gbar,
+                                           b, rnd);
    }
 
 
@@ -1116,24 +1126,34 @@ static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
       }
    }
    if (prtpres) {
+      virial_prec tr_vir = lp_vir[0] + lp_vir[4] + lp_vir[8];
+      double vol0 = volbox();
       double pres = units::prescon * (2 * lp_eksum - tr_vir) / (D * vol0);
       print(stdout, fmt_current_pres, pres, istep);
    }
 
 
    if (atomP) {
-      tr_vir = lp_vir[0] + lp_vir[4] + lp_vir[8];
-      vol0 = volbox();
-      DelP = (1.0 + D / g1) * 2 * lp_eksum - tr_vir;
+      virial_prec tr_vir = lp_vir[0] + lp_vir[4] + lp_vir[8];
+      double vol0 = volbox();
+      double DelP = (1.0 + D / g1) * 2 * lp_eksum - tr_vir;
       DelP = DelP - D * vol0 * bath::atmsph / units::prescon;
       gbar = DelP / qbar;
-      vbar =
-         ornstein_uhlenbeck_process(dt2, vbar, stodyn::friction, gbar, b, rnd);
+      if (TINKER_LPISTON_SEP_VBAR)
+         vbar = vbar + gbar * xdt2;
+      else
+         vbar = ornstein_uhlenbeck_process(xdt2, vbar, stodyn::friction, gbar,
+                                           b, rnd);
    }
 
 
    nhc_isot_96(dt, maxnose, vnh, qnh, g0, local_kinetic_atom,
                local_scale_vel_atom);
+
+
+   if (TINKER_LPISTON_SEP_VBAR and atomP)
+      vbar =
+         ornstein_uhlenbeck_process(xdt2, vbar, stodyn::friction, 0.0, b, rnd);
 
 
    if (molT and (istep % inform::iwrite) == 0) {
