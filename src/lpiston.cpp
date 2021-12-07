@@ -984,8 +984,20 @@ static void local_scale_vel_atom(double velsc0)
    darray::scale(g::q0, n, velsc0, vz);
 }
 // separate the update for vbar in two steps
-#define TINKER_LPISTON_SEP_VBAR 1
 // #define TINKER_LPISTON_SEP_VBAR 0
+#define TINKER_LPISTON_SEP_VBAR 1
+// #define TINKER_LPISTON_VBAR_CHAIN 0
+#define TINKER_LPISTON_VBAR_CHAIN 1
+double vbar_nhc[maxnose], qbar_nhc[maxnose], vbar_ekin;
+static double* local_vbar_ekin()
+{
+   vbar_ekin = 0.5 * vbar_nhc[0] * vbar_nhc[0] * qbar_nhc[0];
+   return &vbar_ekin;
+}
+static void local_scale_vbar(double velsc0)
+{
+   vbar_nhc[0] *= velsc0;
+}
 static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
 {
    bool mid = (nbaro == 1) or ((istep % nbaro) == (nbaro + 1) / 2);
@@ -1009,9 +1021,24 @@ static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
    double b = 2 * stodyn::friction * units::gasconst * bath::kelvin / qbar;
 
 
-   if (TINKER_LPISTON_SEP_VBAR and atomP)
-      vbar =
-         ornstein_uhlenbeck_process(xdt2, vbar, stodyn::friction, 0.0, b, rnd);
+   if (TINKER_LPISTON_VBAR_CHAIN and istep == 1) {
+      for (int i = 0; i < maxnose; ++i) {
+         vbar_nhc[i] = 0;
+         qbar_nhc[i] = qbar;
+      }
+   }
+
+
+   if (TINKER_LPISTON_SEP_VBAR and atomP) {
+      if (TINKER_LPISTON_VBAR_CHAIN) {
+         nhc_isot_96(xdt, maxnose, vbar_nhc, qbar_nhc, 1.0, local_vbar_ekin,
+                     local_scale_vbar);
+         vbar = vbar_nhc[0];
+      } else {
+         vbar = ornstein_uhlenbeck_process(xdt2, vbar, stodyn::friction, 0.0, b,
+                                           rnd);
+      }
+   }
 
 
    nhc_isot_96(dt, maxnose, vnh, qnh, g0, local_kinetic_atom,
@@ -1151,9 +1178,16 @@ static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
                local_scale_vel_atom);
 
 
-   if (TINKER_LPISTON_SEP_VBAR and atomP)
-      vbar =
-         ornstein_uhlenbeck_process(xdt2, vbar, stodyn::friction, 0.0, b, rnd);
+   if (TINKER_LPISTON_SEP_VBAR and atomP) {
+      if (TINKER_LPISTON_VBAR_CHAIN) {
+         nhc_isot_96(xdt, maxnose, vbar_nhc, qbar_nhc, 1.0, local_vbar_ekin,
+                     local_scale_vbar);
+         vbar = vbar_nhc[0];
+      } else {
+         vbar = ornstein_uhlenbeck_process(xdt2, vbar, stodyn::friction, 0.0, b,
+                                           rnd);
+      }
+   }
 
 
    if (molT and (istep % inform::iwrite) == 0) {
