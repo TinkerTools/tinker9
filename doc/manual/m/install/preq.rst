@@ -93,5 +93,4 @@ the mixed and single precision CPU code.
 .. code-block:: bash
 
    pip install -U Sphinx
-   pip install 'sphinxcontrib-bibtex==1.0.0'
    pip install pydata-sphinx-theme
