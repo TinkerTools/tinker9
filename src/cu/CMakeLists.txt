@@ -12,6 +12,7 @@ compilers.cu
 echarge.cu
 echglj.cu
 echgtrn.cu
+echgtrn_aplus.cu
 edisp.cu
 ehal.cu
 elj.cu

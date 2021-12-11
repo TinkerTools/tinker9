@@ -16,6 +16,7 @@ ebond.cpp
 echarge.cpp
 echglj.cpp
 echgtrn.cpp
+echgtrn_aplus.cpp
 edisp.cpp
 egeom.cpp
 eimprop.cpp

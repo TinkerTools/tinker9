@@ -65,6 +65,9 @@ void energy_data(rc_op op)
    rc_man echgtrn42{echgtrn_data, op};
    rc_man erepel42{erepel_data, op};
    rc_man edisp42{edisp_data, op};
+   
+	 // AMOEBA+ 
+   rc_man echgtrn_aplus42{echgtrn_aplus_data, op};
 
    // Must call fft_data() after all of the electrostatics routines.
    rc_man fft42{fft_data, op};
@@ -123,6 +126,8 @@ const TimeScaleConfig& default_tsconfig()
 
       {"echgtrn", 0},       {"edisp", 0},         {"erepel", 0},
       {"ehippo", 0},
+			
+			{"echgtrn_aplus", 0}, {"eaplus", 0}, 
    };
    return tsconfig;
 }
@@ -256,6 +261,9 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (use_potent(chgtrn_term))
       if (tscfg("echgtrn", ecore_ele))
          echgtrn(vers);
+   if (use_potent(chgtrn_term))
+      if (tscfg("echgtrn_aplus", ecore_ele))
+         echgtrn_aplus(vers);
    if (use_potent(disp_term))
       if (tscfg("edisp", ecore_vdw))
          edisp(vers);

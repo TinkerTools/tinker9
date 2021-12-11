@@ -37,6 +37,7 @@
 #include "epolar_chgpen.h"
 #include "erepel.h"
 
+#include "echgtrn_aplus.h"
 
 namespace tinker {
 /**
