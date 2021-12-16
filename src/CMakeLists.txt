@@ -77,7 +77,6 @@ spatial.cpp
 spatial2.cpp
 switch.cpp
 testgrad_x.cpp
-tinker_mod.cpp
 tinker_rt.cpp
 tinker_suppl.cpp
 trimatexp.cpp
