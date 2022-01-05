@@ -226,6 +226,8 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
    double third = 1.0 / 3.0;
    double volmove = bath::volmove;
    double kt = units::gasconst * temp;
+   if (bath::isothermal)
+      kt = units::gasconst * bath::kelvin;
    bool isotropic = true;
    // double aniso_rdm = random<double>();
    // if (bath::anisotrop && aniso_rdm > 0.5)
