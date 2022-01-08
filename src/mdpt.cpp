@@ -87,7 +87,6 @@ Barostat barostat;
 
 
 pos_prec *x_pmonte, *y_pmonte, *z_pmonte;
-vel_prec *vx_pmonte, *vy_pmonte, *vz_pmonte;
 bool do_pmonte;
 
 
