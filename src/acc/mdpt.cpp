@@ -243,9 +243,6 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
    darray::copy(g::q0, n, x_pmonte, xpos);
    darray::copy(g::q0, n, y_pmonte, ypos);
    darray::copy(g::q0, n, z_pmonte, zpos);
-   darray::copy(g::q0, n, vx_pmonte, vx);
-   darray::copy(g::q0, n, vy_pmonte, vy);
-   darray::copy(g::q0, n, vz_pmonte, vz);
 
 
    if (isotropic) {
@@ -270,10 +267,9 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
          const auto* molmass = molecule.molmass;
          pos_prec pos_scale = scale - 1;
          #pragma acc parallel loop independent async\
-                     deviceptr(imol,kmol,mass,molmass,xpos,ypos,zpos,vx,vy,vz)
+                     deviceptr(imol,kmol,mass,molmass,xpos,ypos,zpos)
          for (int i = 0; i < nmol; ++i) {
             pos_prec xcm = 0, ycm = 0, zcm = 0;
-            vel_prec vxcm = 0, vycm = 0, vzcm = 0;
             int start = imol[i][0];
             int stop = imol[i][1];
             #pragma acc loop seq
@@ -283,28 +279,18 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
                xcm += xpos[k] * weigh;
                ycm += ypos[k] * weigh;
                zcm += zpos[k] * weigh;
-               vxcm += vx[k] * weigh;
-               vycm += vy[k] * weigh;
-               vzcm += vz[k] * weigh;
             }
             pos_prec term = pos_scale / molmass[i];
             pos_prec xmove, ymove, zmove;
-            vel_prec vxmove, vymove, vzmove;
             xmove = term * xcm;
             ymove = term * ycm;
             zmove = term * zcm;
-            vxmove = term * vxcm;
-            vymove = term * vycm;
-            vzmove = term * vzcm;
             #pragma acc loop seq
             for (int j = start; j < stop; ++j) {
                int k = kmol[j];
                xpos[k] += xmove;
                ypos[k] += ymove;
                zpos[k] += zmove;
-               vx[k] -= vxmove;
-               vy[k] -= vymove;
-               vz[k] -= vzmove;
             }
          }
          copy_pos_to_xyz();
@@ -347,9 +333,6 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
       darray::copy(g::q0, n, xpos, x_pmonte);
       darray::copy(g::q0, n, ypos, y_pmonte);
       darray::copy(g::q0, n, zpos, z_pmonte);
-      darray::copy(g::q0, n, vx, vx_pmonte);
-      darray::copy(g::q0, n, vy, vy_pmonte);
-      darray::copy(g::q0, n, vz, vz_pmonte);
       copy_pos_to_xyz();
       refresh_neighbors();
    } else {
