@@ -47,6 +47,10 @@ group.cpp
 induce.cpp
 induce_donly.cpp
 initial.cpp
+intg_baroBasic.cpp
+intg_enum.cpp
+intg_intgBasic.cpp
+intg_thermoBasic.cpp
 io_fort_str.cpp
 io_text.cpp
 lf_lpiston.cpp

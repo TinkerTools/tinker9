@@ -54,6 +54,8 @@ template double normal<double>(double, double);
 template <class T>
 T chi_squared(int k)
 {
+   if (k == 0)
+      return 0;
 #if USE_TINKER_RANDOM_FUNC
    T s = 0;
    for (int i = 0; i < k; ++i) {
