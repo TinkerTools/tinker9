@@ -23,10 +23,4 @@ void BasicThermostat::printDetail(FILE* o)
 {
    printBasic(o);
 }
-
-void BasicThermostat::control(double) {}
-
-void BasicThermostat::control1(double) {}
-
-void BasicThermostat::control2(double) {}
 }

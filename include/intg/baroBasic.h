@@ -1,4 +1,5 @@
 #pragma once
+#include "mdprec.h"
 #include <cstdio>
 
 namespace tinker {
@@ -9,11 +10,21 @@ protected:
    void printBasic(FILE*);
 
 public:
-   int nbaro() const;
    BasicBarostat();
    virtual ~BasicBarostat();
    virtual void printDetail(FILE*);
-   virtual void control(double timeStep);
-   virtual void controlAfter(double timeStep);
+
+   virtual void control1(time_prec timeStep) {}
+
+   virtual void control2(time_prec timeStep) {}
+
+   virtual void control3(time_prec timeStep) {}
+
+   virtual void control4(time_prec timeStep) {}
+
+   virtual bool ifApply(int istep)
+   {
+      return false;
+   }
 };
 }

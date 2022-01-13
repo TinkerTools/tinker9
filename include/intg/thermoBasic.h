@@ -1,4 +1,5 @@
 #pragma once
+#include "mdprec.h"
 #include <cstdio>
 
 namespace tinker {
@@ -11,8 +12,13 @@ public:
    BasicThermostat();
    virtual ~BasicThermostat();
    virtual void printDetail(FILE*);
-   virtual void control(double timeStep);
-   virtual void control1(double timeStep);
-   virtual void control2(double timeStep);
+
+   virtual void control1(time_prec timeStep) {}
+
+   virtual void control2(time_prec timeStep) {}
+
+   virtual void control3(time_prec timeStep) {}
+
+   virtual void control4(time_prec timeStep) {}
 };
 }

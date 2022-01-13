@@ -14,6 +14,7 @@ BasicThermostat* create(ThermostatEnum);
 enum class BarostatEnum
 {
    Null,
+   Berendsen,
    MonteCarlo,
    Nhc
 };
@@ -25,8 +26,6 @@ enum class IntegratorEnum
 {
    Verlet,
    VerletRespa,
-   LeapFrog,
-   LeapFrogRespa,
    Nhc06 // J. Phys. A, 39 5629 (2006)
          // https://doi.org/10.1088/0305-4470/39/19/S18
 };

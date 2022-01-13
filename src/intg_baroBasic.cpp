@@ -16,11 +16,6 @@ void BasicBarostat::printBasic(FILE* o)
    print(o, "\n");
 }
 
-int BasicBarostat::nbaro() const
-{
-   return m_nbaro;
-}
-
 BasicBarostat::BasicBarostat()
 {
    get_kv("VOLUME-TRIAL", m_nbaro, 1);
@@ -32,8 +27,4 @@ void BasicBarostat::printDetail(FILE* o)
 {
    printBasic(o);
 }
-
-void BasicBarostat::control(double) {}
-
-void BasicBarostat::controlAfter(double) {}
 }
