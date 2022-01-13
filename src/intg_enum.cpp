@@ -1,4 +1,6 @@
 #include "intg/baroBasic.h"
+#include "intg/baroBerendsen.h"
+#include "intg/baroMonteCarlo.h"
 #include "intg/enum.h"
 #include "intg/thermoBasic.h"
 
@@ -13,8 +15,10 @@ BasicThermostat* create(ThermostatEnum te)
 
 BasicBarostat* create(BarostatEnum be)
 {
-   if (be == BarostatEnum::Null)
-      return new BasicBarostat;
+   if (be == BarostatEnum::Berendsen)
+      return new BerendsenBarostat;
+   else if (be == BarostatEnum::MonteCarlo)
+      return new MonteCarloBarostat;
    else
       return new BasicBarostat;
 }

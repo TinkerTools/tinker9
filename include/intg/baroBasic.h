@@ -13,18 +13,10 @@ public:
    BasicBarostat();
    virtual ~BasicBarostat();
    virtual void printDetail(FILE*);
-
    virtual void control1(time_prec timeStep) {}
-
    virtual void control2(time_prec timeStep) {}
-
    virtual void control3(time_prec timeStep) {}
-
    virtual void control4(time_prec timeStep) {}
-
-   virtual bool ifApply(int istep)
-   {
-      return false;
-   }
+   virtual bool ifApply(int istep);
 };
 }

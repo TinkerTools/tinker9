@@ -48,12 +48,14 @@ induce.cpp
 induce_donly.cpp
 initial.cpp
 intg_baroBasic.cpp
+intg_baroBerendsen.cpp
 intg_baroMonteCarlo.cpp
 intg_enum.cpp
 intg_intgBasic.cpp
 intg_intgRespa.cpp
 intg_intgVerlet.cpp
 intg_thermoBasic.cpp
+intg_thermoBussi.cpp
 io_fort_str.cpp
 io_text.cpp
 lf_lpiston.cpp

@@ -27,4 +27,10 @@ void BasicBarostat::printDetail(FILE* o)
 {
    printBasic(o);
 }
+
+bool BasicBarostat::ifApply(int istep)
+{
+   int i = istep % m_nbaro;
+   return i == 0;
+}
 }
