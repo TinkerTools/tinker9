@@ -98,20 +98,31 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
    real term5 = qir * qkr;
 
    real sizik = sizi * sizk * rscale;
-   real eterm = term1 * dmpik[0] + term2 * dmpik[1] + term3 * dmpik[2] +
-      term4 * dmpik[3] + term5 * dmpik[4];
 
-   e = sizik * eterm * rInv;
+   real rr1ik = dmpik[0] * rr1;
+   real rr3ik = dmpik[1] * rr3;
+   real rr5ik = dmpik[2] * rr5;
+   real rr7ik = dmpik[3] * rr7;
+   real rr9ik = dmpik[4] * rr9;
+
+   if (rr1ik > 0.0001)
+      printf("%8.3f%8.3f%8.3f%12.6f%12.6f%12.6f%12.6f%12.6f\n",r,dmpi,dmpk,dmpik[0],dmpik[1],dmpik[2],
+                                                     dmpik[3],dmpik[4]);
+
+   real eterm = term1 * rr1ik + term2 * rr3ik + term3 * rr5ik + term4 * rr7ik +
+      term5 * rr9ik;
+   e = sizik * eterm;
    // gradient
    if CONSTEXPR (do_g) {
-      real de = term1 * dmpik[1] + term2 * dmpik[2] + term3 * dmpik[3] +
-         term4 * dmpik[4] + term5 * dmpik[5];
-      term1 = -valk * dmpik[1] + dkr * dmpik[2] - qkr * dmpik[3];
-      term2 = vali * dmpik[1] + dir * dmpik[2] + qir * dmpik[3];
-      term3 = 2 * dmpik[2];
-      term4 = 2 * (-valk * dmpik[2] + dkr * dmpik[3] - qkr * dmpik[4]);
-      term5 = 2 * (-vali * dmpik[2] - dir * dmpik[3] - qir * dmpik[4]);
-      real term6 = 4 * dmpik[3];
+      real rr11ik = dmpik[5] * rr11;
+      real de = term1 * rr3ik + term2 * rr5ik + term3 * rr7ik + term4 * rr9ik +
+         term5 * rr11ik;
+      term1 = -valk * rr3ik + dkr * rr5ik - qkr * rr7ik;
+      term2 =  vali * rr3ik + dir * rr5ik + qir * rr7ik;
+      term3 = 2 * rr5ik;
+      term4 = 2 * (-valk * rr5ik + dkr * rr7ik - qkr * rr9ik);
+      term5 = 2 * (-vali * rr5ik - dir * rr7ik - qir * rr9ik);
+      real term6 = 4 * rr7ik;
 
       // few intermediates, same as in emplar
       real qix = qi_dr.x;
@@ -145,10 +156,6 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
       frc0.z = de * dr.z + term1 * di.z + term2 * dk.z +
          term3 * (diqkz - dkqiz) + term4 * qiz + term5 * qkz +
          term6 * (qizk + qkzi);
-
-      pgrad.frcx = frc0.x * rr1 + eterm * rr3 * dr.x;
-      pgrad.frcy = frc0.y * rr1 + eterm * rr3 * dr.y;
-      pgrad.frcz = frc0.z * rr1 + eterm * rr3 * dr.z;
 
       pgrad.frcx *= sizik;
       pgrad.frcy *= sizik;
@@ -203,27 +210,27 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
              qiyy * qkxy - qiyz * qkxz);
 
       real3 trq0;
-      trq0.x = -dmpik[1] * dikx + term1 * dirx + term3 * (dqikx + dkqirx) -
+      trq0.x = -rr3ik * dikx + term1 * dirx + term3 * (dqikx + dkqirx) -
          term4 * qirx - term6 * (qikrx + qikx);
-      trq0.y = -dmpik[1] * diky + term1 * diry + term3 * (dqiky + dkqiry) -
+      trq0.y = -rr3ik * diky + term1 * diry + term3 * (dqiky + dkqiry) -
          term4 * qiry - term6 * (qikry + qiky);
-      trq0.z = -dmpik[1] * dikz + term1 * dirz + term3 * (dqikz + dkqirz) -
+      trq0.z = -rr3ik * dikz + term1 * dirz + term3 * (dqikz + dkqirz) -
          term4 * qirz - term6 * (qikrz + qikz);
 
-      pgrad.ttqi[0] += sizik * rr1 * trq0.x;
-      pgrad.ttqi[1] += sizik * rr1 * trq0.y;
-      pgrad.ttqi[2] += sizik * rr1 * trq0.z;
+      pgrad.ttqi[0] += sizik * trq0.x;
+      pgrad.ttqi[1] += sizik * trq0.y;
+      pgrad.ttqi[2] += sizik * trq0.z;
 
-      trq0.x = dmpik[1] * dikx + term2 * dkrx - term3 * (dqikx + diqkrx) -
+      trq0.x = rr3ik * dikx + term2 * dkrx - term3 * (dqikx + diqkrx) -
          term5 * qkrx - term6 * (qkirx - qikx);
-      trq0.y = dmpik[1] * diky + term2 * dkry - term3 * (dqiky + diqkry) -
+      trq0.y = rr3ik * diky + term2 * dkry - term3 * (dqiky + diqkry) -
          term5 * qkry - term6 * (qkiry - qiky);
-      trq0.z = dmpik[1] * dikz + term2 * dkrz - term3 * (dqikz + diqkrz) -
+      trq0.z = rr3ik * dikz + term2 * dkrz - term3 * (dqikz + diqkrz) -
          term5 * qkrz - term6 * (qkirz - qikz);
 
-      pgrad.ttqk[0] += sizik * rr1 * trq0.x;
-      pgrad.ttqk[1] += sizik * rr1 * trq0.y;
-      pgrad.ttqk[2] += sizik * rr1 * trq0.z;
+      pgrad.ttqk[0] += sizik * trq0.x;
+      pgrad.ttqk[1] += sizik * trq0.y;
+      pgrad.ttqk[2] += sizik * trq0.z;
    }
 
    if (r2 > cut2) {
