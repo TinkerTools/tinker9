@@ -15,7 +15,7 @@ void velocity_verlet(int istep, time_prec dt_ps)
    int vers1 = vers0;
 
    bool save = !(istep % inform::iwrite);
-   bool mcbaro = do_pmonte;
+   bool mcbaro;// = do_pmonte;
    if (barostat == MONTE_CARLO_BAROSTAT) {
       // toggle off the calc::virial bit if Monte Carlo Barostat is in use
       vers1 &= ~calc::virial;

@@ -87,7 +87,6 @@ Barostat barostat;
 
 
 pos_prec *x_pmonte, *y_pmonte, *z_pmonte;
-bool do_pmonte;
 
 
 void monte_carlo_barostat(energy_prec epot, T_prec temp)
@@ -107,8 +106,5 @@ void berendsen_barostat(time_prec dt)
 
 void pressure2(energy_prec epot, T_prec temp)
 {
-   if (do_pmonte) {
-      monte_carlo_barostat(epot, temp);
-   }
 }
 }

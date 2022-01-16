@@ -1,16 +1,23 @@
 #pragma once
 #include "intg/baroMonteCarlo.h"
 #include "mdegv.h"
+#include "mdpq.h"
 #include "mdpt.h"
 #include "random.h"
+#include "tool/darray.h"
 #include <tinker/detail/bath.hh>
 
 namespace tinker {
-MonteCarloBarostat::~MonteCarloBarostat() {}
+MonteCarloBarostat::~MonteCarloBarostat()
+{
+   darray::deallocate(x_pmonte, y_pmonte, z_pmonte);
+}
 
 MonteCarloBarostat::MonteCarloBarostat()
    : BasicBarostat()
-{}
+{
+   darray::allocate(n, &x_pmonte, &y_pmonte, &z_pmonte);
+}
 
 void MonteCarloBarostat::control4(time_prec)
 {

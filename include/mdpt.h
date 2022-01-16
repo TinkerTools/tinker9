@@ -77,7 +77,6 @@ extern Barostat barostat;
 
 
 extern pos_prec *x_pmonte, *y_pmonte, *z_pmonte;
-extern bool do_pmonte;
 /**
  * \ingroup mdpt
  * \param temp  Current temperature. If the simulation is also isotermal, this

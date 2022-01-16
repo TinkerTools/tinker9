@@ -3,7 +3,6 @@
 
 
 #include "energy.h"
-#include "lf_lpiston.h"
 #include "lpiston.h"
 #include "mdcalc.h"
 #include "mdegv.h"
@@ -51,13 +50,6 @@ void (*intg)(int, time_prec);
 void propagate(int nsteps, time_prec dt_ps)
 {
    for (int istep = 1; istep <= nsteps; ++istep) {
-      do_pmonte = false;
-      if (barostat == MONTE_CARLO_BAROSTAT) {
-         double rdm = random<double>();
-         if (rdm < 1.0 / bath::voltrial)
-            do_pmonte = true;
-      }
-
       TINKER_LOG("Integrating Step %10d", istep);
       intg(istep, dt_ps);
 
@@ -79,21 +71,14 @@ void propagate(int nsteps, time_prec dt_ps)
 void integrate_data(rc_op op)
 {
    if (op & rc_dealloc) {
-      if (intg == lf_lpiston_npt) {
-         darray::deallocate(leapfrog_x, leapfrog_y, leapfrog_z);
-         darray::deallocate(leapfrog_vx, leapfrog_vy, leapfrog_vz,
-                            leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
-      }
-
       if (intg == vv_lpiston_npt) {
          vv_lpiston_destory();
       }
 
-      if (intg == respa_fast_slow)
-         darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
+      
 
       if (barostat == MONTE_CARLO_BAROSTAT) {
-         darray::deallocate(x_pmonte, y_pmonte, z_pmonte);
+         
       }
 
       intg = nullptr;
@@ -132,7 +117,7 @@ void integrate_data(rc_op op)
             barostat = LANGEVIN_BAROSTAT;
          else if (br == "MONTECARLO") {
             barostat = MONTE_CARLO_BAROSTAT;
-            darray::allocate(n, &x_pmonte, &y_pmonte, &z_pmonte);
+            
          } else
             assert(false);
       } else {
@@ -144,70 +129,30 @@ void integrate_data(rc_op op)
       if (itg == "VERLET") {
          intg = velocity_verlet;
       } else if (itg == "LPISTON") {
-         intg = lf_lpiston_npt;
-         thermostat = LEAPFROG_LPISTON_THERMOSTAT;
-         barostat = LEAPFROG_LPISTON_BAROSTAT;
       } else if (itg == "NOSE-HOOVER") {
-         intg = nhc_npt;
-         thermostat = NOSE_HOOVER_CHAIN_THERMOSTAT;
-         barostat = NOSE_HOOVER_CHAIN_BAROSTAT;
       } else if (itg == "RESPA") {
          intg = respa_fast_slow;
       }
 
       if (thermostat == LEAPFROG_LPISTON_THERMOSTAT and
           barostat == LEAPFROG_LPISTON_BAROSTAT) {
-         intg = lf_lpiston_npt;
       } else if (barostat == LANGEVIN_BAROSTAT) {
          if (itg == "VERLET" or itg == "RESPA")
             intg = vv_lpiston_npt;
       } else if (thermostat == NOSE_HOOVER_CHAIN_THERMOSTAT and
                  barostat == NOSE_HOOVER_CHAIN_BAROSTAT) {
-         intg = nhc_npt;
       }
 
       // Only gradient is necessary to start a simulation.
       if (intg == velocity_verlet) {
          // need full gradient to start/restart the simulation
          energy(calc::grad);
-      } else if (intg == lf_lpiston_npt) {
-         darray::allocate(n, &leapfrog_x, &leapfrog_y, &leapfrog_z);
-         darray::allocate(n, &leapfrog_vx, &leapfrog_vy, &leapfrog_vz,
-                          &leapfrog_vxold, &leapfrog_vyold, &leapfrog_vzold);
-         energy(calc::v1);
-      } else if (intg == vv_lpiston_npt) {
+      } // else if (intg == lf_lpiston_npt) {
+        // TODO
+      // }
+      else if (intg == vv_lpiston_npt) {
          vv_lpiston_init();
-      } else if (intg == nhc_npt) {
-         if (use_rattle()) {
-            TINKER_THROW(
-               "Constraints under NH-NPT require the ROLL algorithm.");
-         }
-         double ekt = units::gasconst * bath::kelvin;
-         vbar = 0;
-         qbar = (mdstuf::nfree + 1) * ekt * bath::taupres * bath::taupres;
-         gbar = 0;
-         for (int i = 0; i < maxnose; ++i) {
-            vnh[i] = 0;
-            qnh[i] = ekt * bath::tautemp * bath::tautemp;
-            gnh[i] = 0;
-         }
-         qnh[0] *= mdstuf::nfree;
-         energy(calc::v6);
       } else if (intg == respa_fast_slow) {
-         // need fast and slow gradients to start/restart the simulation
-         darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
-
-         // save fast gradients to gx1 etc.
-         energy(calc::grad, RESPA_FAST, respa_tsconfig());
-         darray::copy(g::q0, n, gx1, gx);
-         darray::copy(g::q0, n, gy1, gy);
-         darray::copy(g::q0, n, gz1, gz);
-
-         // save slow gradients to gx2 etc.
-         energy(calc::grad, RESPA_SLOW, respa_tsconfig());
-         darray::copy(g::q0, n, gx2, gx);
-         darray::copy(g::q0, n, gy2, gy);
-         darray::copy(g::q0, n, gz2, gz);
       } else if (intg == nullptr) {
          // beeman
          TINKER_THROW("Beeman integrator is not available.");

@@ -22,8 +22,6 @@ RespaIntegrator::RespaIntegrator(ThermostatEnum te, BarostatEnum be)
 {
    m_nrespa = mdstuf::nrespa;
 
-   darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
-
    energy(calc::v1);
 
    // save fast gradients to gx1 etc.
@@ -37,6 +35,8 @@ RespaIntegrator::RespaIntegrator(ThermostatEnum te, BarostatEnum be)
    darray::copy(g::q0, n, gx2, gx);
    darray::copy(g::q0, n, gy2, gy);
    darray::copy(g::q0, n, gz2, gz);
+
+   darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
 }
 
 void RespaIntegrator::printDetail(FILE* o)

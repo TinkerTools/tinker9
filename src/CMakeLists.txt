@@ -52,6 +52,8 @@ intg_baroBerendsen.cpp
 intg_baroMonteCarlo.cpp
 intg_enum.cpp
 intg_intgBasic.cpp
+intg_intgLeapFrogLP.cpp
+intg_intgNhc96.cpp
 intg_intgRespa.cpp
 intg_intgVerlet.cpp
 intg_thermoBasic.cpp
