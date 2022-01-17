@@ -46,6 +46,7 @@ field_chgpen.cpp
 group.cpp
 induce.cpp
 induce_donly.cpp
+initial.cpp
 io_fort_str.cpp
 io_text.cpp
 lf_lpiston.cpp
@@ -76,7 +77,6 @@ spatial.cpp
 spatial2.cpp
 switch.cpp
 testgrad_x.cpp
-tinker_mod.cpp
 tinker_rt.cpp
 tinker_suppl.cpp
 trimatexp.cpp

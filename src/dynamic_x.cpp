@@ -13,7 +13,7 @@ void x_dynamic(int, char**)
    char string[240];
    int exist = false;
 
-   tinker_f_initial();
+   initial();
    tinker_f_getxyz();
    tinker_f_mechanic();
    mechanic2();
