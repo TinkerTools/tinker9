@@ -8,6 +8,8 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
+void Nhc96Integrator::printDetail(FILE*) {}
+
 void Nhc96Integrator::kickoff()
 {
    if (use_rattle()) {

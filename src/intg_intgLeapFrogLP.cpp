@@ -21,6 +21,8 @@ LeapFrogLPIntegrator::LeapFrogLPIntegrator()
                     &leapfrog_vxold, &leapfrog_vyold, &leapfrog_vzold);
 }
 
+void LeapFrogLPIntegrator::printDetail(FILE*) {}
+
 void LeapFrogLPIntegrator::kickoff()
 {
    energy(calc::v1);

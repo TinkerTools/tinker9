@@ -31,49 +31,11 @@ void temper(time_prec dt, T_prec& temp, bool save);
 void pressure(time_prec dt);
 
 
-enum class Thermostat
-{
-   BERENDSEN,
-   BUSSI,
-   ANDERSEN,
-   NOSE_HOOVER_CHAIN,
-   LEAPFROG_LPISTON,
-   NONE
-};
-constexpr auto BERENDSEN_THERMOSTAT = Thermostat::BERENDSEN;
-constexpr auto BUSSI_THERMOSTAT = Thermostat::BUSSI;
-constexpr auto ANDERSEN_THERMOSTAT = Thermostat::ANDERSEN;
-constexpr auto NOSE_HOOVER_CHAIN_THERMOSTAT = Thermostat::NOSE_HOOVER_CHAIN;
-constexpr auto LEAPFROG_LPISTON_THERMOSTAT = Thermostat::LEAPFROG_LPISTON;
-constexpr auto NONE_THERMOSTAT = Thermostat::NONE;
-extern Thermostat thermostat;
-
-
 //====================================================================//
 
 
 void bussi_thermostat(time_prec dt, T_prec temp);
 void bussi_thermostat_acc(time_prec dt, T_prec temp);
-
-
-enum class Barostat
-{
-   BERENDSEN,
-   BUSSI,
-   NOSE_HOOVER_CHAIN,
-   LEAPFROG_LPISTON,
-   LANGEVIN,
-   MONTE_CARLO,
-   NONE
-};
-constexpr auto BERENDSEN_BAROSTAT = Barostat::BERENDSEN;
-constexpr auto BUSSI_BAROSTAT = Barostat::BUSSI;
-constexpr auto NOSE_HOOVER_CHAIN_BAROSTAT = Barostat::NOSE_HOOVER_CHAIN;
-constexpr auto LEAPFROG_LPISTON_BAROSTAT = Barostat::LEAPFROG_LPISTON;
-constexpr auto LANGEVIN_BAROSTAT = Barostat::LANGEVIN;
-constexpr auto MONTE_CARLO_BAROSTAT = Barostat::MONTE_CARLO;
-constexpr auto NONE_BAROSTAT = Barostat::NONE;
-extern Barostat barostat;
 
 
 extern pos_prec *x_pmonte, *y_pmonte, *z_pmonte;

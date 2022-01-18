@@ -3,6 +3,12 @@
 
 
 #include "energy.h"
+#include "intg/enum.h"
+#include "intg/intgBasic.h"
+#include "intg/intgLeapFrogLP.h"
+#include "intg/intgNhc96.h"
+#include "intg/intgRespa.h"
+#include "intg/intgVerlet.h"
 #include "lpiston.h"
 #include "mdcalc.h"
 #include "mdegv.h"
@@ -42,16 +48,14 @@ void md_data(rc_op op)
 //====================================================================//
 
 
-namespace {
-void (*intg)(int, time_prec);
-}
+static BasicIntegrator* intg;
 
 
 void propagate(int nsteps, time_prec dt_ps)
 {
    for (int istep = 1; istep <= nsteps; ++istep) {
       TINKER_LOG("Integrating Step %10d", istep);
-      intg(istep, dt_ps);
+      intg->dynamic(istep, dt_ps);
 
       // mdstat
       bool save = (istep % inform::iwrite == 0);
@@ -71,90 +75,85 @@ void propagate(int nsteps, time_prec dt_ps)
 void integrate_data(rc_op op)
 {
    if (op & rc_dealloc) {
-      if (intg == vv_lpiston_npt) {
-         vv_lpiston_destory();
-      }
-
-      
-
-      if (barostat == MONTE_CARLO_BAROSTAT) {
-         
-      }
-
+      delete intg;
       intg = nullptr;
    }
 
    if (op & rc_init) {
+      ThermostatEnum thermostat = ThermostatEnum::Null;
       if (bath::isothermal) {
          fstr_view th = bath::thermostat;
-         if (th == "BERENDSEN")
-            thermostat = BERENDSEN_THERMOSTAT;
+         if (th == "ANDERSEN")
+            thermostat = ThermostatEnum::Andersen;
+         else if (th == "BERENDSEN")
+            thermostat = ThermostatEnum::Berendsen;
          else if (th == "BUSSI")
-            thermostat = BUSSI_THERMOSTAT;
-         else if (th == "ANDERSEN")
-            thermostat = ANDERSEN_THERMOSTAT;
-         else if (th == "NOSE-HOOVER")
-            thermostat = NOSE_HOOVER_CHAIN_THERMOSTAT;
+            thermostat = ThermostatEnum::Bussi;
          else if (th == "LPISTON")
-            thermostat = LEAPFROG_LPISTON_THERMOSTAT;
+            thermostat = ThermostatEnum::LeapFrogLP;
+         else if (th == "NOSE-HOOVER")
+            thermostat = ThermostatEnum::Nhc96;
          else
             assert(false);
-      } else {
-         thermostat = NONE_THERMOSTAT;
       }
 
+      BarostatEnum barostat = BarostatEnum::Null;
       if (bath::isobaric) {
          fstr_view br = bath::barostat;
          if (br == "BERENDSEN")
-            barostat = BERENDSEN_BAROSTAT;
+            barostat = BarostatEnum::Berendsen;
          else if (br == "BUSSI")
-            barostat = BUSSI_BAROSTAT;
-         else if (br == "NOSE-HOOVER")
-            barostat = NOSE_HOOVER_CHAIN_BAROSTAT;
-         else if (br == "LPISTON")
-            barostat = LEAPFROG_LPISTON_BAROSTAT;
+            barostat = BarostatEnum::Bussi;
          else if (br == "LANGEVIN")
-            barostat = LANGEVIN_BAROSTAT;
-         else if (br == "MONTECARLO") {
-            barostat = MONTE_CARLO_BAROSTAT;
-            
-         } else
+            barostat = BarostatEnum::Langevin;
+         else if (br == "LPISTON")
+            barostat = BarostatEnum::LeapFrogLP;
+         else if (br == "MONTECARLO")
+            barostat = BarostatEnum::MonteCarlo;
+         else if (br == "NOSE-HOOVER")
+            barostat = BarostatEnum::Nhc96;
+         else
             assert(false);
-      } else {
-         barostat = NONE_BAROSTAT;
       }
 
+      IntegratorEnum integrator = IntegratorEnum::Beeman;
       fstr_view itg = mdstuf::integrate;
-      intg = nullptr;
       if (itg == "VERLET") {
-         intg = velocity_verlet;
+         integrator = IntegratorEnum::Verlet;
       } else if (itg == "LPISTON") {
+         integrator = IntegratorEnum::LeapFrogLP;
+         thermostat = ThermostatEnum::LeapFrogLP;
+         barostat = BarostatEnum::LeapFrogLP;
       } else if (itg == "NOSE-HOOVER") {
+         integrator = IntegratorEnum::Nhc96;
+         thermostat = ThermostatEnum::Nhc96;
+         barostat = BarostatEnum::Nhc96;
       } else if (itg == "RESPA") {
-         intg = respa_fast_slow;
+         integrator = IntegratorEnum::VerletRespa;
       }
 
-      if (thermostat == LEAPFROG_LPISTON_THERMOSTAT and
-          barostat == LEAPFROG_LPISTON_BAROSTAT) {
-      } else if (barostat == LANGEVIN_BAROSTAT) {
+      if (thermostat == ThermostatEnum::LeapFrogLP and
+          barostat == BarostatEnum::LeapFrogLP) {
+         integrator = IntegratorEnum::LeapFrogLP;
+      } else if (barostat == BarostatEnum::Langevin) {
          if (itg == "VERLET" or itg == "RESPA")
-            intg = vv_lpiston_npt;
-      } else if (thermostat == NOSE_HOOVER_CHAIN_THERMOSTAT and
-                 barostat == NOSE_HOOVER_CHAIN_BAROSTAT) {
+            integrator = IntegratorEnum::LangevinNpt;
+      } else if (thermostat == ThermostatEnum::Nhc96 and
+                 barostat == BarostatEnum::Nhc96) {
+         integrator = IntegratorEnum::Nhc96;
       }
 
-      // Only gradient is necessary to start a simulation.
-      if (intg == velocity_verlet) {
-         // need full gradient to start/restart the simulation
-         energy(calc::grad);
-      } // else if (intg == lf_lpiston_npt) {
-        // TODO
-      // }
-      else if (intg == vv_lpiston_npt) {
-         vv_lpiston_init();
-      } else if (intg == respa_fast_slow) {
-      } else if (intg == nullptr) {
-         // beeman
+      intg = nullptr;
+      if (integrator == IntegratorEnum::LangevinNpt) {
+      } else if (integrator == IntegratorEnum::LeapFrogLP) {
+         intg = new LeapFrogLPIntegrator;
+      } else if (integrator == IntegratorEnum::Nhc96) {
+         intg = new Nhc96Integrator;
+      } else if (integrator == IntegratorEnum::Verlet) {
+         intg = new VerletIntegrator(thermostat, barostat);
+      } else if (integrator == IntegratorEnum::VerletRespa) {
+         intg = new RespaIntegrator(thermostat, barostat);
+      } else if (integrator == IntegratorEnum::Beeman) {
          TINKER_THROW("Beeman integrator is not available.");
       }
    }

@@ -27,6 +27,4 @@ public:
    static void updateVelocity(time_prec t);
    static void updatePosition(time_prec t);
 };
-
-extern BasicIntegrator* pintg;
 }

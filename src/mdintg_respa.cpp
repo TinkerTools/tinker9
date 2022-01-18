@@ -86,11 +86,11 @@ void respa_fast_slow(int istep, time_prec dt_ps)
    int vers1 = vers0;
 
    bool save = !(istep % inform::iwrite);
-   bool mcbaro;// = do_pmonte;
-   if (barostat == MONTE_CARLO_BAROSTAT) {
-      // toggle off the calc::virial bit if Monte Carlo Barostat is in use
-      vers1 &= ~calc::virial;
-   }
+   bool mcbaro; // = do_pmonte;
+   // if (barostat == MONTE_CARLO_BAROSTAT) {
+   //    // toggle off the calc::virial bit if Monte Carlo Barostat is in use
+   //    vers1 &= ~calc::virial;
+   // }
    // toggle off the calc::energy bit if neither save nor mcbaro
    if (!save && !mcbaro)
       vers1 &= ~calc::energy;

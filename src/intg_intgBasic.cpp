@@ -57,6 +57,4 @@ void BasicIntegrator::updatePosition(time_prec t)
 {
    propagate_pos(t);
 }
-
-BasicIntegrator* pintg;
 }
