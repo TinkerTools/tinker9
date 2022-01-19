@@ -143,7 +143,7 @@ void RespaIntegrator::dynamic(int istep, time_prec dt)
 
    this->rattle2(dt, vers1 & calc::virial);
 
-   m_thermo->control2(dt);
+   m_thermo->control2(dt, save);
    if (applyBaro)
       m_baro->control2(dt);
 }
