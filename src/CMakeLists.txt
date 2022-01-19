@@ -58,6 +58,7 @@ intg_intgRespa.cpp
 intg_intgVerlet.cpp
 intg_thermoBasic.cpp
 intg_thermoBussi.cpp
+intg_thermoNhc96.cpp
 io_fort_str.cpp
 io_text.cpp
 lf_lpiston.cpp
