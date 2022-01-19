@@ -129,33 +129,32 @@ void integrate_data(rc_op op)
          thermostat = ThermostatEnum::Nhc96;
          barostat = BarostatEnum::Nhc96;
       } else if (itg == "RESPA") {
-         integrator = IntegratorEnum::VerletRespa;
+         integrator = IntegratorEnum::Respa;
       }
 
       if (thermostat == ThermostatEnum::LeapFrogLP and
-          barostat == BarostatEnum::LeapFrogLP) {
+          barostat == BarostatEnum::LeapFrogLP)
          integrator = IntegratorEnum::LeapFrogLP;
-      } else if (barostat == BarostatEnum::Langevin) {
+      else if (barostat == BarostatEnum::Langevin) {
          if (itg == "VERLET" or itg == "RESPA")
             integrator = IntegratorEnum::LangevinNpt;
       } else if (thermostat == ThermostatEnum::Nhc96 and
-                 barostat == BarostatEnum::Nhc96) {
+                 barostat == BarostatEnum::Nhc96)
          integrator = IntegratorEnum::Nhc96;
-      }
+
 
       intg = nullptr;
       if (integrator == IntegratorEnum::LangevinNpt) {
-      } else if (integrator == IntegratorEnum::LeapFrogLP) {
+      } else if (integrator == IntegratorEnum::LeapFrogLP)
          intg = new LeapFrogLPIntegrator;
-      } else if (integrator == IntegratorEnum::Nhc96) {
+      else if (integrator == IntegratorEnum::Nhc96)
          intg = new Nhc96Integrator;
-      } else if (integrator == IntegratorEnum::Verlet) {
-         intg = new VerletIntegrator(thermostat, barostat);
-      } else if (integrator == IntegratorEnum::VerletRespa) {
+      else if (integrator == IntegratorEnum::Respa)
          intg = new RespaIntegrator(thermostat, barostat);
-      } else if (integrator == IntegratorEnum::Beeman) {
+      else if (integrator == IntegratorEnum::Verlet)
+         intg = new VerletIntegrator(thermostat, barostat);
+      else if (integrator == IntegratorEnum::Beeman)
          TINKER_THROW("Beeman integrator is not available.");
-      }
    }
 }
 }

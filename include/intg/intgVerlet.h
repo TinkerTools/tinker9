@@ -1,10 +1,12 @@
 #pragma once
 #include "baroBasic.h"
-#include "enum.h"
 #include "intgBasic.h"
 #include "thermoBasic.h"
 
 namespace tinker {
+enum class ThermostatEnum;
+enum class BarostatEnum;
+
 class VerletIntegrator : public BasicIntegrator
 {
 private:

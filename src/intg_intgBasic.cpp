@@ -41,10 +41,9 @@ void BasicIntegrator::rattle2(time_prec timeStep, bool doVirial)
 }
 
 BasicIntegrator::BasicIntegrator()
-{
-   m_iwrite = inform::iwrite;
-   m_userat = use_rattle();
-}
+   : m_iwrite(inform::iwrite)
+   , m_userat(use_rattle())
+{}
 
 BasicIntegrator::~BasicIntegrator() {}
 

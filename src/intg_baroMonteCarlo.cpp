@@ -1,4 +1,3 @@
-#pragma once
 #include "intg/baroMonteCarlo.h"
 #include "intg/enum.h"
 #include "mdegv.h"

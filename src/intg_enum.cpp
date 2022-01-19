@@ -3,12 +3,34 @@
 #include "intg/baroMonteCarlo.h"
 #include "intg/enum.h"
 #include "intg/thermoBasic.h"
+#include "intg/thermoBussi.h"
+#include "intg/thermoNhc96.h"
+#include "mdegv.h"
+#include "mdpq.h"
+#include "mdpt.h"
 
 namespace tinker {
+static double* localAtomKinetic()
+{
+   T_prec temp;
+   kinetic(temp);
+   return &eksum;
+}
+
+static void localScaleAtomVelocity(double velsc)
+{
+   darray::scale(g::q0, n, velsc, vx);
+   darray::scale(g::q0, n, velsc, vy);
+   darray::scale(g::q0, n, velsc, vz);
+}
+
 BasicThermostat* create(ThermostatEnum te)
 {
-   if (te == ThermostatEnum::Null)
-      return new BasicThermostat;
+   if (te == ThermostatEnum::Bussi)
+      return new BussiThermostat;
+   else if (te == ThermostatEnum::Nhc96)
+      return new Nhc96Thermostat(5, 5, 3.0 * (n - 1), localAtomKinetic,
+                                 localScaleAtomVelocity, std::string("NHC"));
    else
       return new BasicThermostat;
 }

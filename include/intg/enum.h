@@ -36,7 +36,7 @@ enum class IntegratorEnum
    Nhc06, // J. Phys. A, 39 5629 (2006)
           // https://doi.org/10.1088/0305-4470/39/19/S18
    Nhc96,
+   Respa,
    Verlet,
-   VerletRespa,
 };
 }

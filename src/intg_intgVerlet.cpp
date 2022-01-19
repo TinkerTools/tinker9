@@ -1,5 +1,6 @@
 #include "energy.h"
 #include "intg/baroMonteCarlo.h"
+#include "intg/enum.h"
 #include "intg/intgVerlet.h"
 #include "mdcalc.h"
 #include "mdpq.h"
@@ -53,9 +54,7 @@ void VerletIntegrator::dynamic(int istep, time_prec dt)
       m_baro->control1(dt);
    m_thermo->control1(dt);
 
-   // v += a * dt/2
    updateVelocity(dt2);
-
    this->rattleSave();
 
    m_thermo->control3(dt);
@@ -72,11 +71,9 @@ void VerletIntegrator::dynamic(int istep, time_prec dt)
    if (applyBaro)
       m_baro->control4(dt);
 
-   // v += a * dt/2 and rattle2
    updateVelocity(dt2);
    this->rattle2(dt, vers1 & calc::virial);
 
-   // full-step corrections
    m_thermo->control2(dt, save);
    if (applyBaro)
       m_baro->control2(dt);
