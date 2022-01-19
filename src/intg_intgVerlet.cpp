@@ -38,7 +38,7 @@ void VerletIntegrator::dynamic(int istep, time_prec dt)
    bool applyBaro = m_baro->ifApply(istep);
    bool mcbaro = false;
    if (applyBaro)
-      if (dynamic_cast<MonteCarloBarostat*>(m_baro))
+      if (m_baro->getBarostatEnum() == BarostatEnum::MonteCarlo)
          mcbaro = true;
    // toggle off the calc::virial bit if Monte Carlo Barostat is in use
    if (mcbaro)

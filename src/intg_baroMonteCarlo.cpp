@@ -1,9 +1,11 @@
 #pragma once
 #include "intg/baroMonteCarlo.h"
+#include "intg/enum.h"
 #include "mdegv.h"
 #include "mdpq.h"
 #include "mdpt.h"
 #include "random.h"
+#include "tinker_rt.h"
 #include "tool/darray.h"
 #include <tinker/detail/bath.hh>
 
@@ -14,9 +16,10 @@ MonteCarloBarostat::~MonteCarloBarostat()
 }
 
 MonteCarloBarostat::MonteCarloBarostat()
-   : BasicBarostat()
+   : BasicBarostat(BarostatEnum::MonteCarlo)
 {
    darray::allocate(n, &x_pmonte, &y_pmonte, &z_pmonte);
+   get_kv("VOLUME-TRIAL", m_nbaro, 1);
 }
 
 void MonteCarloBarostat::control4(time_prec)
@@ -27,7 +30,7 @@ void MonteCarloBarostat::control4(time_prec)
    monte_carlo_barostat(esum, temp);
 }
 
-bool MonteCarloBarostat::ifApply(int istep)
+bool MonteCarloBarostat::ifApply(int)
 {
    double rdm = random<double>();
    if (rdm < 1.0 / m_nbaro)

@@ -46,20 +46,7 @@ void kinetic_explicit(T_prec& temp_out, energy_prec& eksum_out,
 }
 
 
-void temper(time_prec dt, T_prec& temp, bool save)
-{
-   // TODO
-   // if (thermostat == BUSSI_THERMOSTAT) {
-   //    kinetic(temp);
-   //    bussi_thermostat(dt, temp);
-   // } else {
-   //    // We don't need temperature for NVE but we still compute it anyway.
-   //    if ((thermostat != NONE_THERMOSTAT and barostat != NONE_BAROSTAT) or
-   //        save) {
-   //       kinetic(temp);
-   //    }
-   // }
-}
+void temper(time_prec dt, T_prec& temp, bool save) {}
 
 
 void pressure(time_prec dt) {}

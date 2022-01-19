@@ -3,11 +3,15 @@
 #include <cstdio>
 
 namespace tinker {
+enum class BarostatEnum;
+
 class BasicBarostat
 {
 protected:
+   BarostatEnum m_baroEnum;
    int m_nbaro;
    void printBasic(FILE*);
+   BasicBarostat(BarostatEnum);
 
 public:
    BasicBarostat();
@@ -18,5 +22,6 @@ public:
    virtual void control3(time_prec timeStep) {}
    virtual void control4(time_prec timeStep) {}
    virtual bool ifApply(int istep);
+   BarostatEnum getBarostatEnum() const;
 };
 }
