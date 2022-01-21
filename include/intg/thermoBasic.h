@@ -18,7 +18,5 @@ public:
    virtual void printDetail(FILE*);
    virtual void control1(time_prec timeStep) {}
    virtual void control2(time_prec timeStep, bool save);
-   virtual void control3(time_prec timeStep) {}
-   virtual void control4(time_prec timeStep) {}
 };
 }

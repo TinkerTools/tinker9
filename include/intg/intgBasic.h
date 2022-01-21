@@ -24,7 +24,7 @@ public:
    virtual void kickoff() = 0;
    virtual void dynamic(int istep, time_prec dt) = 0;
 
-   static void updateVelocity(time_prec t);
-   static void updatePosition(time_prec t);
+   void updateVelocity(time_prec t);
+   void updatePosition(time_prec t);
 };
 }

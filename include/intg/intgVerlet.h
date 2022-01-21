@@ -9,9 +9,10 @@ enum class BarostatEnum;
 
 class VerletIntegrator : public BasicIntegrator
 {
-private:
+protected:
    BasicThermostat* m_thermo;
    BasicBarostat* m_baro;
+   int m_nrespa;
 
 public:
    ~VerletIntegrator();
@@ -19,5 +20,7 @@ public:
    void printDetail(FILE*) override;
    void kickoff() override;
    void dynamic(int, time_prec) override;
+
+   static void updateVelocity2(time_prec tfast, time_prec tslow);
 };
 }
