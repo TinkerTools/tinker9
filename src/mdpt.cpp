@@ -46,12 +46,6 @@ void kinetic_explicit(T_prec& temp_out, energy_prec& eksum_out,
 }
 
 
-void temper(time_prec dt, T_prec& temp, bool save) {}
-
-
-void pressure(time_prec dt) {}
-
-
 void bussi_thermostat(time_prec dt, T_prec temp)
 {
    bussi_thermostat_acc(dt, temp);
@@ -74,10 +68,4 @@ void berendsen_barostat(time_prec dt)
 {
    berendsen_barostat_acc(dt);
 }
-
-
-//====================================================================//
-
-
-void pressure2(energy_prec epot, T_prec temp) {}
 }

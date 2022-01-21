@@ -66,7 +66,6 @@ lpiston.cpp
 mdegv.cpp
 mdintg.cpp
 mdintg_respa.cpp
-mdintg_verlet.cpp
 mdpq.cpp
 mdpt.cpp
 mdsave.cpp

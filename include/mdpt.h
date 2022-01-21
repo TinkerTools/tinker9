@@ -12,7 +12,6 @@ void kinetic_explicit(T_prec& temp_out, energy_prec& eksum_out,
 void kinetic(T_prec& temp);
 
 
-void temper(time_prec dt, T_prec& temp, bool save);
 /**
  * \ingroup mdpt
  * \brief Berendsen barostat by scaling the coordinates and box dimensions via
@@ -28,7 +27,6 @@ void temper(time_prec dt, T_prec& temp, bool save);
  *    J. Chem. Phys., 81, 3684-3690 (1984).
  *    </a>
  */
-void pressure(time_prec dt);
 
 
 //====================================================================//
@@ -67,7 +65,8 @@ void berendsen_barostat_acc(time_prec);
  *    Molecular Physics, 87, 1117-1157 (1996).
  *    </a>
  */
-inline void temper2(time_prec dt, T_prec& temp) {}
+
+
 /**
  * \ingroup mdpt
  * \brief Applies a box size correction as needed for the Monte Carlo barostat
@@ -80,5 +79,4 @@ inline void temper2(time_prec dt, T_prec& temp) {}
  *    Molecular Physics, 23, 41-58 (1972).
  *    </a>
  */
-void pressure2(energy_prec epot, T_prec temp);
 }

@@ -30,7 +30,7 @@ void VerletIntegrator::printDetail(FILE* o)
 
 void VerletIntegrator::kickoff()
 {
-   energy(calc::v1);
+   energy(calc::grad);
 }
 
 void VerletIntegrator::dynamic(int istep, time_prec dt)

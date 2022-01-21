@@ -6,6 +6,9 @@
 using namespace tinker;
 
 #if TINKER_REAL_SIZE == 8
+#   include "intg/enum.h"
+#   include "intg/intgVerlet.h"
+
 static int usage_ =
    calc::xyz | calc::vel | calc::mass | calc::energy | calc::grad | calc::md;
 
@@ -73,8 +76,10 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
    std::vector<double> epots, eksums;
    int old = inform::iwrite;
    inform::iwrite = 1;
+   VerletIntegrator vvi(ThermostatEnum::Null, BarostatEnum::Null);
+   vvi.kickoff();
    for (int i = 1; i <= nsteps; ++i) {
-      velocity_verlet(i, dt_ps);
+      vvi.dynamic(i, dt_ps);
       epots.push_back(esum);
       eksums.push_back(eksum);
    }
