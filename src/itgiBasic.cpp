@@ -1,4 +1,4 @@
-#include "intg/intgBasic.h"
+#include "itgiBasic.h"
 #include "mdegv.h"
 #include "mdpq.h"
 #include "rattle.h"

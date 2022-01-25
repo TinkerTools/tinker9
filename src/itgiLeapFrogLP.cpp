@@ -1,5 +1,5 @@
+#include "itgiLeapFrogLP.h"
 #include "energy.h"
-#include "intg/intgLeapFrogLP.h"
 #include "lf_lpiston.h"
 #include "mdcalc.h"
 #include "mdpq.h"

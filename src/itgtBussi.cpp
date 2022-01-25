@@ -1,5 +1,5 @@
-#include "intg/enum.h"
-#include "intg/thermoBussi.h"
+#include "itgtBussi.h"
+#include "itgEnum.h"
 #include "mdpt.h"
 
 namespace tinker {

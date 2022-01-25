@@ -1,5 +1,5 @@
-#include "intg/baroBasic.h"
-#include "intg/enum.h"
+#include "itgbBasic.h"
+#include "itgEnum.h"
 #include "tool/io_print.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>

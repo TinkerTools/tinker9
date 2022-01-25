@@ -1,5 +1,5 @@
+#include "itgiRespa.h"
 #include "energy.h"
-#include "intg/intgRespa.h"
 #include "mdcalc.h"
 #include "mdegv.h"
 #include "mdintg.h"

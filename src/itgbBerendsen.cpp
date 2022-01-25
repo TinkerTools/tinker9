@@ -1,5 +1,5 @@
-#include "intg/baroBerendsen.h"
-#include "intg/enum.h"
+#include "itgbBerendsen.h"
+#include "itgEnum.h"
 #include "mdpt.h"
 
 namespace tinker {

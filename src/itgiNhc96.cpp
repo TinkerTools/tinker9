@@ -1,5 +1,5 @@
+#include "itgiNhc96.h"
 #include "energy.h"
-#include "intg/intgNhc96.h"
 #include "mdcalc.h"
 #include "nose.h"
 #include "rattle.h"

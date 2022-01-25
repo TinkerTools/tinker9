@@ -1,5 +1,5 @@
 #pragma once
-#include "baroBasic.h"
+#include "itgbBasic.h"
 
 namespace tinker {
 class BerendsenBarostat : public BasicBarostat

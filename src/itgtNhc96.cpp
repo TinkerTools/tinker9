@@ -1,5 +1,5 @@
-#include "intg/enum.h"
-#include "intg/thermoNhc96.h"
+#include "itgtNhc96.h"
+#include "itgEnum.h"
 #include <algorithm>
 #include <cmath>
 #include <tinker/detail/bath.hh>

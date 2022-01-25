@@ -1,5 +1,5 @@
 #pragma once
-#include "intgVerlet.h"
+#include "itgiVerlet.h"
 
 namespace tinker {
 class RespaIntegrator : public VerletIntegrator

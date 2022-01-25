@@ -1,5 +1,5 @@
 #pragma once
-#include "intgBasic.h"
+#include "itgiBasic.h"
 
 namespace tinker {
 class Nhc96Integrator : public BasicIntegrator

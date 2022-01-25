@@ -1,6 +1,6 @@
 #pragma once
+#include "itgtBasic.h"
 #include "nhc.h"
-#include "thermoBasic.h"
 #include <string>
 
 namespace tinker {

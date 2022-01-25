@@ -1,7 +1,7 @@
 #pragma once
-#include "baroBasic.h"
-#include "intgBasic.h"
-#include "thermoBasic.h"
+#include "itgbBasic.h"
+#include "itgiBasic.h"
+#include "itgtBasic.h"
 
 namespace tinker {
 enum class ThermostatEnum;

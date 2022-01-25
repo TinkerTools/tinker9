@@ -1,5 +1,5 @@
 #pragma once
-#include "thermoBasic.h"
+#include "itgtBasic.h"
 
 namespace tinker {
 class BussiThermostat : public BasicThermostat

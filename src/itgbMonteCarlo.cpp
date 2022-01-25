@@ -1,5 +1,5 @@
-#include "intg/baroMonteCarlo.h"
-#include "intg/enum.h"
+#include "itgbMonteCarlo.h"
+#include "itgEnum.h"
 #include "mdegv.h"
 #include "mdpq.h"
 #include "mdpt.h"

@@ -1,5 +1,5 @@
-#include "intg/enum.h"
-#include "intg/thermoBasic.h"
+#include "itgtBasic.h"
+#include "itgEnum.h"
 #include "mdpt.h"
 #include "tool/io_print.h"
 #include <tinker/detail/bath.hh>

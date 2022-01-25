@@ -2,13 +2,14 @@
 #include "tool/log.h"
 
 #include "energy.h"
-#include "intg/enum.h"
-#include "intg/intgBasic.h"
-#include "intg/intgLeapFrogLP.h"
-#include "intg/intgNhc96.h"
-#include "intg/intgRespa.h"
-#include "intg/intgVerlet.h"
+#include "itgEnum.h"
+#include "itgiBasic.h"
+#include "itgiLeapFrogLP.h"
+#include "itgiNhc96.h"
+#include "itgiRespa.h"
+#include "itgiVerlet.h"
 #include "lpiston.h"
+#include "mathfunc_pow2.h"
 #include "mdcalc.h"
 #include "mdegv.h"
 #include "mdintg.h"
@@ -149,5 +150,34 @@ void integrate_data(rc_op op)
       else if (integrator == IntegratorEnum::Beeman)
          TINKER_THROW("Beeman integrator is not available.");
    }
+}
+
+grad_prec *gx1, *gy1, *gz1;
+grad_prec *gx2, *gy2, *gz2;
+const TimeScaleConfig& respa_tsconfig()
+{
+   constexpr int fast = floor_log2_constexpr(RESPA_FAST); // short-range
+   constexpr int slow = floor_log2_constexpr(RESPA_SLOW); // long-range
+   static TimeScaleConfig tsconfig{
+      {"ebond", fast},         {"eangle", fast},        {"estrbnd", fast},
+      {"eurey", fast},         {"eopbend", fast},       {"etors", fast},
+      {"eimprop", fast},       {"eimptor", fast},       {"epitors", fast},
+      {"estrtor", fast},       {"eangtor", fast},       {"etortor", fast},
+      {"egeom", fast},
+
+      {"evalence", fast},
+
+      {"evdw", slow},
+
+      {"echarge", slow},       {"echglj", slow},
+
+      {"emplar", slow},        {"empole", slow},        {"epolar", slow},
+
+      {"empole_chgpen", slow}, {"epolar_chgpen", slow},
+
+      {"echgtrn", slow},       {"edisp", slow},         {"erepel", slow},
+      {"ehippo", slow},
+   };
+   return tsconfig;
 }
 }
