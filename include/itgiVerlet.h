@@ -13,12 +13,12 @@ protected:
    BasicThermostat* m_thermo;
    BasicBarostat* m_baro;
    int m_nrespa;
+   void kickoff() override;
 
 public:
    ~VerletIntegrator();
    VerletIntegrator(ThermostatEnum, BarostatEnum);
    void printDetail(FILE*) override;
-   void kickoff() override;
    void dynamic(int, time_prec) override;
 
    static void updateVelocity2(time_prec tfast, time_prec tslow);

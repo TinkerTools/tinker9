@@ -3,14 +3,10 @@
 #include "mdpt.h"
 #include "tool/io_print.h"
 #include <tinker/detail/bath.hh>
-#include <tinker/detail/inform.hh>
 
 namespace tinker {
 void BasicThermostat::printBasic(FILE* o)
 {
-   if (not inform::verbose)
-      return;
-
    print(o, " Temperature      : %12.1lf Kelvin\n", bath::kelvin);
    print(o, " Tau-Temperature  : %12.1lf ps\n", bath::tautemp);
    print(o, "\n");

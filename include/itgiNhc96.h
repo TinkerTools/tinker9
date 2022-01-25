@@ -4,9 +4,12 @@
 namespace tinker {
 class Nhc96Integrator : public BasicIntegrator
 {
-public:
-   void printDetail(FILE*) override;
+protected:
    void kickoff() override;
+
+public:
+   Nhc96Integrator();
+   void printDetail(FILE*) override;
    void dynamic(int, time_prec) override;
 };
 }

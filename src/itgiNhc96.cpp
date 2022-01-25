@@ -8,8 +8,6 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-void Nhc96Integrator::printDetail(FILE*) {}
-
 void Nhc96Integrator::kickoff()
 {
    if (use_rattle()) {
@@ -27,6 +25,14 @@ void Nhc96Integrator::kickoff()
    qnh[0] *= mdstuf::nfree;
    energy(calc::grad | calc::virial);
 }
+
+Nhc96Integrator::Nhc96Integrator()
+   : BasicIntegrator()
+{
+   this->kickoff();
+}
+
+void Nhc96Integrator::printDetail(FILE*) {}
 
 void Nhc96Integrator::dynamic(int istep, time_prec dt)
 {

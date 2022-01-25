@@ -2,14 +2,10 @@
 #include "itgEnum.h"
 #include "tool/io_print.h"
 #include <tinker/detail/bath.hh>
-#include <tinker/detail/inform.hh>
 
 namespace tinker {
 void BasicBarostat::printBasic(FILE* o)
 {
-   if (not inform::verbose)
-      return;
-
    print(o, " Pressure         : %12.1lf Atm\n", bath::atmsph);
    print(o, " Tau-Pressure     : %12.1lf ps\n", bath::taupres);
    print(o, " NBaro            : %12d\n", m_nbaro);

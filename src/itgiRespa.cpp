@@ -7,19 +7,6 @@
 #include <tinker/detail/mdstuf.hh>
 
 namespace tinker {
-RespaIntegrator::~RespaIntegrator()
-{
-   darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
-}
-
-RespaIntegrator::RespaIntegrator(ThermostatEnum te, BarostatEnum be)
-   : VerletIntegrator(te, be)
-{
-   m_nrespa = mdstuf::nrespa;
-   assert(m_nrespa > 1);
-   darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
-}
-
 void RespaIntegrator::kickoff()
 {
    // save fast gradients to gx1 etc.
@@ -35,5 +22,19 @@ void RespaIntegrator::kickoff()
    darray::copy(g::q0, n, gz2, gz);
 
    energy(calc::grad | calc::virial);
+}
+
+RespaIntegrator::~RespaIntegrator()
+{
+   darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
+}
+
+RespaIntegrator::RespaIntegrator(ThermostatEnum te, BarostatEnum be)
+   : VerletIntegrator(te, be)
+{
+   m_nrespa = mdstuf::nrespa;
+   assert(m_nrespa > 1);
+   darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
+   this->kickoff();
 }
 }

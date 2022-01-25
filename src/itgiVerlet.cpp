@@ -8,6 +8,11 @@
 #include "mdpq.h"
 
 namespace tinker {
+void VerletIntegrator::kickoff()
+{
+   energy(calc::grad);
+}
+
 VerletIntegrator::~VerletIntegrator()
 {
    delete m_thermo;
@@ -19,18 +24,15 @@ VerletIntegrator::VerletIntegrator(ThermostatEnum te, BarostatEnum be)
    , m_thermo(create(te))
    , m_baro(create(be))
    , m_nrespa(1)
-{}
+{
+   this->kickoff();
+}
 
 void VerletIntegrator::printDetail(FILE* o)
 {
    m_thermo->printDetail(o);
    m_baro->printDetail(o);
    printBasic(o);
-}
-
-void VerletIntegrator::kickoff()
-{
-   energy(calc::grad);
 }
 
 void VerletIntegrator::dynamic(int istep, time_prec dt)

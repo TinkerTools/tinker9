@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <cmath>
 #include <tinker/detail/bath.hh>
-#include <tinker/detail/inform.hh>
 #include <tinker/detail/units.hh>
 
 namespace tinker {
@@ -98,9 +97,6 @@ Nhc96Thermostat::Nhc96Thermostat(int nhclen, int nc, double dfree,
 
 void Nhc96Thermostat::printDetail(FILE* o)
 {
-   if (not inform::verbose)
-      return;
-
    fprintf(o, " %s\n", name.c_str());
    fprintf(o, " NHC N            : %12d\n", nnose);
    fprintf(o, " NHC NC           : %12d\n", nhc_nc);

@@ -6,6 +6,11 @@
 #include "tool/darray.h"
 
 namespace tinker {
+void LeapFrogLPIntegrator::kickoff()
+{
+   energy(calc::energy | calc::grad | calc::virial);
+}
+
 LeapFrogLPIntegrator::~LeapFrogLPIntegrator()
 {
    darray::deallocate(leapfrog_x, leapfrog_y, leapfrog_z);
@@ -19,14 +24,10 @@ LeapFrogLPIntegrator::LeapFrogLPIntegrator()
    darray::allocate(n, &leapfrog_x, &leapfrog_y, &leapfrog_z);
    darray::allocate(n, &leapfrog_vx, &leapfrog_vy, &leapfrog_vz,
                     &leapfrog_vxold, &leapfrog_vyold, &leapfrog_vzold);
+   this->kickoff();
 }
 
 void LeapFrogLPIntegrator::printDetail(FILE*) {}
-
-void LeapFrogLPIntegrator::kickoff()
-{
-   energy(calc::energy | calc::grad | calc::virial);
-}
 
 void LeapFrogLPIntegrator::dynamic(int istep, time_prec dt)
 {
