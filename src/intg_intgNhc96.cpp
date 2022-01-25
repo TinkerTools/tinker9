@@ -25,7 +25,7 @@ void Nhc96Integrator::kickoff()
       gnh[i] = 0;
    }
    qnh[0] *= mdstuf::nfree;
-   energy(calc::v6);
+   energy(calc::grad | calc::virial);
 }
 
 void Nhc96Integrator::dynamic(int istep, time_prec dt)

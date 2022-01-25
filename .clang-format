@@ -9,7 +9,7 @@ BreakConstructorInitializers:          BeforeComma
 PointerAlignment:                      Left
 AllowShortFunctionsOnASingleLine:      Empty
 
-MaxEmptyLinesToKeep:                   2
+MaxEmptyLinesToKeep:                   1
 AccessModifierOffset:                  -3
 IndentWidth:                           3
 ConstructorInitializerIndentWidth:     3

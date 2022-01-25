@@ -34,6 +34,6 @@ void RespaIntegrator::kickoff()
    darray::copy(g::q0, n, gy2, gy);
    darray::copy(g::q0, n, gz2, gz);
 
-   energy(calc::v1);
+   energy(calc::grad | calc::virial);
 }
 }

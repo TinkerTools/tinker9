@@ -1,7 +1,6 @@
 #define TINKER_ENABLE_LOG 0
 #include "tool/log.h"
 
-
 #include "energy.h"
 #include "intg/enum.h"
 #include "intg/intgBasic.h"
@@ -27,13 +26,12 @@
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>
 
-
 namespace tinker {
+void mdrest_acc(int istep);
 void mdrest(int istep)
 {
    mdrest_acc(istep);
 }
-
 
 void md_data(rc_op op)
 {
@@ -44,12 +42,9 @@ void md_data(rc_op op)
    rc_man save42{mdsave_data, op};
 }
 
-
 //====================================================================//
 
-
 static BasicIntegrator* intg;
-
 
 void propagate(int nsteps, time_prec dt_ps)
 {
@@ -70,7 +65,6 @@ void propagate(int nsteps, time_prec dt_ps)
    }
    mdsave_synchronize();
 }
-
 
 void integrate_data(rc_op op)
 {
@@ -141,7 +135,6 @@ void integrate_data(rc_op op)
       } else if (thermostat == ThermostatEnum::Nhc96 and
                  barostat == BarostatEnum::Nhc96)
          integrator = IntegratorEnum::Nhc96;
-
 
       intg = nullptr;
       if (integrator == IntegratorEnum::LangevinNpt) {

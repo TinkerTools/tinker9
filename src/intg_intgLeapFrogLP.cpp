@@ -25,7 +25,7 @@ void LeapFrogLPIntegrator::printDetail(FILE*) {}
 
 void LeapFrogLPIntegrator::kickoff()
 {
-   energy(calc::v1);
+   energy(calc::energy | calc::grad | calc::virial);
 }
 
 void LeapFrogLPIntegrator::dynamic(int istep, time_prec dt)
