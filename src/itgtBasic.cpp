@@ -7,9 +7,9 @@
 namespace tinker {
 void BasicThermostat::printBasic(FILE* o)
 {
+   print(o, "\n");
    print(o, " Temperature      : %12.1lf Kelvin\n", bath::kelvin);
    print(o, " Tau-Temperature  : %12.1lf ps\n", bath::tautemp);
-   print(o, "\n");
 }
 
 BasicThermostat::BasicThermostat(ThermostatEnum te)

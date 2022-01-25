@@ -6,10 +6,10 @@
 namespace tinker {
 void BasicBarostat::printBasic(FILE* o)
 {
+   print(o, "\n");
    print(o, " Pressure         : %12.1lf Atm\n", bath::atmsph);
    print(o, " Tau-Pressure     : %12.1lf ps\n", bath::taupres);
    print(o, " NBaro            : %12d\n", m_nbaro);
-   print(o, "\n");
 }
 
 BasicBarostat::BasicBarostat(BarostatEnum be)

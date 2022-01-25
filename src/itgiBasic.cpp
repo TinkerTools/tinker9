@@ -7,7 +7,10 @@
 #include <tinker/detail/inform.hh>
 
 namespace tinker {
-void BasicIntegrator::printBasic(FILE* o) {}
+void BasicIntegrator::printBasic(FILE* o)
+{
+   print(o, "\n");
+}
 
 bool BasicIntegrator::ifSave(int istep) const
 {
