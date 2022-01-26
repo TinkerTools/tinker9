@@ -10,6 +10,7 @@ class BasicBarostat
 protected:
    BarostatEnum m_baroEnum;
    int m_nbaro;
+   bool m_apply;
    void printBasic(FILE*);
    BasicBarostat(BarostatEnum);
 
@@ -22,6 +23,10 @@ public:
    virtual void control3(time_prec timeStep) {}
    virtual void control4(time_prec timeStep) {}
    virtual bool ifApply(int istep);
+   bool ifApply() const
+   {
+      return m_apply;
+   }
    BarostatEnum getBarostatEnum() const;
 };
 }

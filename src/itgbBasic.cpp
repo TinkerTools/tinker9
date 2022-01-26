@@ -15,6 +15,7 @@ void BasicBarostat::printBasic(FILE* o)
 BasicBarostat::BasicBarostat(BarostatEnum be)
    : m_baroEnum(be)
    , m_nbaro(1)
+   , m_apply(false)
 {}
 
 BasicBarostat::BasicBarostat()
@@ -31,8 +32,8 @@ void BasicBarostat::printDetail(FILE* o)
 
 bool BasicBarostat::ifApply(int istep)
 {
-   int i = istep % m_nbaro;
-   return i == 0;
+   m_apply = ((istep % m_nbaro) == 0);
+   return m_apply;
 }
 
 BarostatEnum BasicBarostat::getBarostatEnum() const

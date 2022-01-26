@@ -5,6 +5,7 @@
 #include "itgEnum.h"
 #include "itgiBasic.h"
 #include "itgiLeapFrogLP.h"
+#include "itgiNhc06.h"
 #include "itgiNhc96.h"
 #include "itgiRespa.h"
 #include "itgiVerlet.h"
@@ -86,6 +87,8 @@ void integrate_data(rc_op op)
             thermostat = ThermostatEnum::Bussi;
          else if (th == "LPISTON")
             thermostat = ThermostatEnum::LeapFrogLP;
+         else if (th == "NHC06")
+            thermostat = ThermostatEnum::Nhc06;
          else if (th == "NOSE-HOOVER")
             thermostat = ThermostatEnum::Nhc96;
          else
@@ -105,6 +108,8 @@ void integrate_data(rc_op op)
             barostat = BarostatEnum::LeapFrogLP;
          else if (br == "MONTECARLO")
             barostat = BarostatEnum::MonteCarlo;
+         else if (br == "NHC06")
+            barostat = BarostatEnum::Nhc06;
          else if (br == "NOSE-HOOVER")
             barostat = BarostatEnum::Nhc96;
          else
@@ -119,6 +124,10 @@ void integrate_data(rc_op op)
          integrator = IntegratorEnum::LeapFrogLP;
          thermostat = ThermostatEnum::LeapFrogLP;
          barostat = BarostatEnum::LeapFrogLP;
+      } else if (itg == "NHC06") {
+         integrator = IntegratorEnum::Nhc06;
+         thermostat = ThermostatEnum::Nhc06;
+         barostat = BarostatEnum::Nhc06;
       } else if (itg == "NOSE-HOOVER") {
          integrator = IntegratorEnum::Nhc96;
          thermostat = ThermostatEnum::Nhc96;
@@ -133,14 +142,19 @@ void integrate_data(rc_op op)
       else if (barostat == BarostatEnum::Langevin) {
          if (itg == "VERLET" or itg == "RESPA")
             integrator = IntegratorEnum::LangevinNpt;
-      } else if (thermostat == ThermostatEnum::Nhc96 and
-                 barostat == BarostatEnum::Nhc96)
+      } else if (thermostat == ThermostatEnum::Nhc06 and
+                 barostat == BarostatEnum::Nhc06)
+         integrator = IntegratorEnum::Nhc06;
+      else if (thermostat == ThermostatEnum::Nhc96 and
+               barostat == BarostatEnum::Nhc96)
          integrator = IntegratorEnum::Nhc96;
 
       intg = nullptr;
       if (integrator == IntegratorEnum::LangevinNpt) {
       } else if (integrator == IntegratorEnum::LeapFrogLP)
          intg = new LeapFrogLPIntegrator;
+      else if (integrator == IntegratorEnum::Nhc06)
+         intg = new Nhc06Integrator;
       else if (integrator == IntegratorEnum::Nhc96)
          intg = new Nhc96Integrator;
       else if (integrator == IntegratorEnum::Respa)

@@ -2,7 +2,6 @@
 #include "energy.h"
 #include "mdcalc.h"
 #include "nose.h"
-#include "rattle.h"
 #include "tool/error.h"
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>
@@ -10,9 +9,6 @@
 namespace tinker {
 void Nhc96Integrator::kickoff()
 {
-   if (use_rattle()) {
-      TINKER_THROW("Constraints under NH-NPT require the ROLL algorithm.");
-   }
    double ekt = units::gasconst * bath::kelvin;
    vbar = 0;
    qbar = (mdstuf::nfree + 1) * ekt * bath::taupres * bath::taupres;
@@ -29,6 +25,9 @@ void Nhc96Integrator::kickoff()
 Nhc96Integrator::Nhc96Integrator()
    : BasicIntegrator()
 {
+   if (m_userat)
+      TINKER_THROW("Constraints under NH-NPT require the ROLL algorithm.");
+
    this->kickoff();
 }
 

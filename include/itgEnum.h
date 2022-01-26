@@ -8,6 +8,7 @@ enum class ThermostatEnum
    Berendsen,
    Bussi,
    LeapFrogLP,
+   Nhc06,
    Nhc96,
 };
 
@@ -22,6 +23,7 @@ enum class BarostatEnum
    Langevin,
    LeapFrogLP,
    MonteCarlo,
+   Nhc06,
    Nhc96,
 };
 

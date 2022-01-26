@@ -33,8 +33,9 @@ bool MonteCarloBarostat::ifApply(int)
 {
    double rdm = random<double>();
    if (rdm < 1.0 / m_nbaro)
-      return true;
+      m_apply = true;
    else
-      return false;
+      m_apply = false;
+   return m_apply;
 }
 }

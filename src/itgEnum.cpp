@@ -5,32 +5,20 @@
 #include "itgtBasic.h"
 #include "itgtBussi.h"
 #include "itgtNhc96.h"
-#include "mdegv.h"
 #include "mdpq.h"
-#include "mdpt.h"
+#include <tinker/detail/mdstuf.hh>
 
 namespace tinker {
-static double* localAtomKinetic()
-{
-   T_prec temp;
-   kinetic(temp);
-   return &eksum;
-}
-
-static void localScaleAtomVelocity(double velsc)
-{
-   darray::scale(g::q0, n, velsc, vx);
-   darray::scale(g::q0, n, velsc, vy);
-   darray::scale(g::q0, n, velsc, vz);
-}
-
 BasicThermostat* create(ThermostatEnum te)
 {
+   // TODO check nfree
    if (te == ThermostatEnum::Bussi)
       return new BussiThermostat;
    else if (te == ThermostatEnum::Nhc96)
-      return new Nhc96Thermostat(5, 5, 3.0 * (n - 1), localAtomKinetic,
-                                 localScaleAtomVelocity, std::string("NHC"));
+      return new Nhc96Thermostat(5, 5, static_cast<double>(mdstuf::nfree),
+                                 Nhc96Thermostat::atomicKinetic,
+                                 Nhc96Thermostat::scaleAtomicVelocity,
+                                 std::string("NHC"));
    else
       return new BasicThermostat;
 }

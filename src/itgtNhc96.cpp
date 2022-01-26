@@ -1,5 +1,9 @@
 #include "itgtNhc96.h"
 #include "itgEnum.h"
+#include "mdegv.h"
+#include "mdpq.h"
+#include "mdpt.h"
+#include "tool/darray.h"
 #include <algorithm>
 #include <cmath>
 #include <tinker/detail/bath.hh>
@@ -116,5 +120,19 @@ void Nhc96Thermostat::control1(time_prec dt)
 void Nhc96Thermostat::control2(time_prec dt, bool)
 {
    this->controlImpl(dt);
+}
+
+double* Nhc96Thermostat::atomicKinetic()
+{
+   T_prec temp;
+   kinetic(temp);
+   return &eksum;
+}
+
+void Nhc96Thermostat::scaleAtomicVelocity(double velsc)
+{
+   darray::scale(g::q0, n, velsc, vx);
+   darray::scale(g::q0, n, velsc, vy);
+   darray::scale(g::q0, n, velsc, vz);
 }
 }
