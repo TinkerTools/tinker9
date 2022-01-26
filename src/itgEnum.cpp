@@ -11,7 +11,6 @@
 namespace tinker {
 BasicThermostat* create(ThermostatEnum te)
 {
-   // TODO check nfree
    if (te == ThermostatEnum::Bussi)
       return new BussiThermostat;
    else if (te == ThermostatEnum::Nhc96)

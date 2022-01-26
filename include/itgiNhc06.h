@@ -16,8 +16,9 @@ protected:
 public:
    Nhc06Thermostat();
    ~Nhc06Thermostat();
-   void control1(time_prec timeStep, bool applyBaro);
-   void control2(time_prec timeStep, bool save, bool applyBaro);
+   void printDetail(FILE*) override;
+   void control1b(time_prec timeStep, bool applyBaro);
+   void control2b(time_prec timeStep, bool save, bool applyBaro);
    double dof() const;
 };
 
@@ -28,8 +29,9 @@ protected:
    void control12Impl(time_prec timeStep);
 
 public:
-   double dof() const;
    Nhc06Barostat();
+   double dof() const;
+   void printDetail(FILE*) override;
    void control1(time_prec timeStep) override;
    void control2(time_prec timeStep) override;
    void control3(time_prec timeStep) override;

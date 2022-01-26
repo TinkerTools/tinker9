@@ -54,7 +54,7 @@ void propagate_vel_avbf_acc(double a, double b, const grad_prec* grx,
    vel_prec ekcal = units::ekcal;
    vel_prec sa = a, sb = b;
    #pragma acc parallel loop independent async\
-               deviceptr(massinv,vx,vy,vz,gx,gy,gz)
+               deviceptr(massinv,vx,vy,vz,grx,gry,grz)
    for (int i = 0; i < n; ++i) {
       vel_prec coef = -ekcal * massinv[i];
       vel_prec v0x, v0y, v0z;

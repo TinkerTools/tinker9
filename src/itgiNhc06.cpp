@@ -10,6 +10,7 @@
 #include "tinker_rt.h"
 #include "tool/error.h"
 #include <tinker/detail/mdstuf.hh>
+#include <tinker/detail/units.hh>
 
 namespace tinker {
 double* Nhc06Thermostat::vbarKinetic()
@@ -27,7 +28,7 @@ void Nhc06Thermostat::scaleVbarVelocity(double scale)
 Nhc06Thermostat::Nhc06Thermostat()
    : BasicThermostat(ThermostatEnum::Nhc06)
 {
-   double dofT = mdstuf::nfree; // TODO CHECK
+   double dofT = mdstuf::nfree;
    int nhclen = 4;
    int nc = 4;
 
@@ -38,7 +39,7 @@ Nhc06Thermostat::Nhc06Thermostat()
 
    // tbaro
    m_tbaro = new Nhc96Thermostat(nhclen, nc, 1.0, Nhc06Thermostat::vbarKinetic,
-                                 Nhc06Thermostat::scaleVbarVelocity, "NHCP");
+                                 Nhc06Thermostat::scaleVbarVelocity, "NHCB");
 }
 
 Nhc06Thermostat::~Nhc06Thermostat()
@@ -47,14 +48,20 @@ Nhc06Thermostat::~Nhc06Thermostat()
    delete m_tbaro;
 }
 
-void Nhc06Thermostat::control1(time_prec dt, bool applyBaro)
+void Nhc06Thermostat::printDetail(FILE* o)
+{
+   m_tpart->printDetail(o);
+   m_tbaro->printDetail(o);
+}
+
+void Nhc06Thermostat::control1b(time_prec dt, bool applyBaro)
 {
    if (applyBaro)
       m_tbaro->control1(dt);
    m_tpart->control1(dt);
 }
 
-void Nhc06Thermostat::control2(time_prec dt, bool save, bool applyBaro)
+void Nhc06Thermostat::control2b(time_prec dt, bool save, bool applyBaro)
 {
    m_tpart->control2(dt, save);
    if (applyBaro)
@@ -74,15 +81,25 @@ void Nhc06Barostat::control12Impl(time_prec dt)
    vbar += gbar * dt * 0.5;
 }
 
-double Nhc06Barostat::dof() const
-{
-   return m_dofP;
-}
-
 Nhc06Barostat::Nhc06Barostat()
    : BasicBarostat(BarostatEnum::Nhc06)
 {
    m_dofP = mdstuf::nfree;
+
+   double kt = units::gasconst * bath::kelvin;
+   qbar = kt * bath::taupres * bath::taupres * m_dofP;
+   vbar = 0;
+}
+
+void Nhc06Barostat::printDetail(FILE* o)
+{
+   print(o, " VBar Mass        : %12.2lf\n", qbar);
+   printBasic(o);
+}
+
+double Nhc06Barostat::dof() const
+{
+   return m_dofP;
 }
 
 void Nhc06Barostat::control1(time_prec dt)
@@ -123,7 +140,7 @@ Nhc06Integrator::Nhc06Integrator()
 
    m_thermo = new Nhc06Thermostat;
    m_baro = new Nhc06Barostat;
-   m_pedantic = false;
+   get_kbool("PEDANTIC", m_pedantic, false);
 
    this->kickoff();
 }
@@ -134,7 +151,12 @@ Nhc06Integrator::~Nhc06Integrator()
    delete m_baro;
 }
 
-void Nhc06Integrator::printDetail(FILE*) {}
+void Nhc06Integrator::printDetail(FILE* o)
+{
+   m_thermo->printDetail(o);
+   m_baro->printDetail(o);
+   printBasic(o);
+}
 
 void Nhc06Integrator::dynamic(int istep, time_prec dt)
 {
@@ -154,7 +176,7 @@ void Nhc06Integrator::dynamic(int istep, time_prec dt)
    if (applyBaro)
       al = 1.0 + 3.0 / m_baro->dof();
 
-   m_thermo->control1(dt, applyBaro);
+   m_thermo->control1b(dt, applyBaro);
    m_baro->control1(dt); // update vbar
 
    if (m_pedantic)
@@ -177,7 +199,7 @@ void Nhc06Integrator::dynamic(int istep, time_prec dt)
       updateVelocity(dt2);
 
    m_baro->control2(dt); // update vbar
-   m_thermo->control2(dt, save, applyBaro);
+   m_thermo->control2b(dt, save, applyBaro);
 }
 
 void Nhc06Integrator::updatePositionPedantic(time_prec t)

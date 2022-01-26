@@ -4,6 +4,7 @@
 #include "mdpq.h"
 #include "mdpt.h"
 #include "tool/darray.h"
+#include "tool/io_print.h"
 #include <algorithm>
 #include <cmath>
 #include <tinker/detail/bath.hh>
@@ -101,15 +102,18 @@ Nhc96Thermostat::Nhc96Thermostat(int nhclen, int nc, double dfree,
 
 void Nhc96Thermostat::printDetail(FILE* o)
 {
-   fprintf(o, " %s\n", name.c_str());
-   fprintf(o, " NHC N            : %12d\n", nnose);
-   fprintf(o, " NHC NC           : %12d\n", nhc_nc);
-   fprintf(o, " NHC NSY          : %12d\n", nhc_nsy);
+   print(o, " %s\n", name.c_str());
+   print(o, " DOF              : %12.1lf\n", g0);
+   print(o, " NHC N            : %12d\n", nnose);
+   print(o, " NHC NC           : %12d\n", nhc_nc);
+   int nsy = nhc_nsy;
+   print(o, " NHC NSY          : %12d\n", nsy);
    for (int i = 0; i < nnose; ++i) {
-      fprintf(o, " NHC %2d Mass      : %12.4lf\n", i + 1, qnh[i]);
-      fprintf(o, " NHC %2d Vel       : %12.4lf\n", i + 1, vnh[i]);
+      print(o, " NHC %2d Mass      : %12.4lf\n", i + 1, qnh[i]);
+      print(o, " NHC %2d Vel       : %12.4lf\n", i + 1, vnh[i]);
    }
    printBasic(o);
+   print(o, "\n");
 }
 
 void Nhc96Thermostat::control1(time_prec dt)
