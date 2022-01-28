@@ -1,5 +1,6 @@
 #include "itgbBasic.h"
 #include "itgEnum.h"
+#include "tinker_rt.h"
 #include "tool/io_print.h"
 #include <tinker/detail/bath.hh>
 
@@ -16,7 +17,13 @@ BasicBarostat::BasicBarostat(BarostatEnum be)
    : m_baroEnum(be)
    , m_nbaro(1)
    , m_apply(false)
-{}
+{
+   int msave;
+   msave = m_nbaro;
+   get_kv("VOLUME-TRIAL", m_nbaro, msave);
+   msave = m_nbaro;
+   get_kv("NBARO", m_nbaro, msave);
+}
 
 BasicBarostat::BasicBarostat()
    : m_baroEnum(BarostatEnum::Null)

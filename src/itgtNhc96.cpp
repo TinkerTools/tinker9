@@ -110,10 +110,8 @@ void Nhc96Thermostat::printDetail(FILE* o)
    print(o, " NHC NSY          : %12d\n", nsy);
    for (int i = 0; i < nnose; ++i) {
       print(o, " NHC %2d Mass      : %12.4lf\n", i + 1, qnh[i]);
-      print(o, " NHC %2d Vel       : %12.4lf\n", i + 1, vnh[i]);
    }
    printBasic(o);
-   print(o, "\n");
 }
 
 void Nhc96Thermostat::control1(time_prec dt)

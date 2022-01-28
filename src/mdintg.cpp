@@ -163,8 +163,10 @@ void integrate_data(rc_op op)
          intg = new VerletIntegrator(thermostat, barostat);
       else if (integrator == IntegratorEnum::Beeman)
          TINKER_THROW("Beeman integrator is not available.");
-      if (inform::verbose)
+      if (inform::verbose) {
+         print(stdout, "\n");
          intg->printDetail(stdout);
+      }
    }
 }
 

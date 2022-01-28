@@ -179,10 +179,13 @@ void Nhc06Integrator::dynamic(int istep, time_prec dt)
    m_thermo->control1b(dt, applyBaro);
    m_baro->control1(dt); // update vbar
 
-   if (m_pedantic)
+   if (m_pedantic) {
       updateVelocityPedantic(dt2, al * vbar);
-   else
+   } else {
+      double scale = std::exp(-al * vbar * dt2);
+      Nhc96Thermostat::scaleAtomicVelocity(scale);
       updateVelocity(dt2);
+   }
 
    m_baro->control3(dt); // update the volume
 
@@ -193,10 +196,13 @@ void Nhc06Integrator::dynamic(int istep, time_prec dt)
    copy_pos_to_xyz(true);
    energy(vers1);
 
-   if (m_pedantic)
+   if (m_pedantic) {
       updateVelocityPedantic(dt2, al * vbar);
-   else
+   } else {
       updateVelocity(dt2);
+      double scale = std::exp(-al * vbar * dt2);
+      Nhc96Thermostat::scaleAtomicVelocity(scale);
+   }
 
    m_baro->control2(dt); // update vbar
    m_thermo->control2b(dt, save, applyBaro);
