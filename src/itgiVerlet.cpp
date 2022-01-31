@@ -10,7 +10,7 @@
 namespace tinker {
 void VerletIntegrator::kickoff()
 {
-   energy(calc::grad);
+   energy((calc::grad | calc::virial) & rc_flag);
 }
 
 VerletIntegrator::~VerletIntegrator()
@@ -90,6 +90,8 @@ void VerletIntegrator::dynamic(int istep, time_prec dt)
             for (int i = 0; i < 9; ++i)
                vir_fast[i] += vir_f[i];
       }
+      updatePosition(dta);
+      copy_pos_to_xyz(true);
 
       // fast force
       energy(vers1, RESPA_FAST, respa_tsconfig());
