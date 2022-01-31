@@ -76,7 +76,8 @@ void Nhc06Barostat::control12Impl(time_prec dt)
    double al = 1.0 + dim / m_dofP;
    double vol0 = volbox();
    double tr_vir = vir[0] + vir[4] + vir[8];
-   double gbar = al * 2 * eksum - tr_vir - dim * vol0 * bath::atmsph;
+   double gbar =
+      al * 2 * eksum - tr_vir - dim * vol0 * bath::atmsph / units::prescon;
    gbar /= qbar;
    vbar += gbar * dt * 0.5;
 }
