@@ -4,7 +4,7 @@
 #include "itgtNhc96.h"
 
 namespace tinker {
-class Nhc06Thermostat : public BasicThermostat
+class LP22Thermostat : public BasicThermostat
 {
 protected:
    Nhc96Thermostat* m_tpart;
@@ -14,21 +14,27 @@ public:
    static double* vbarKinetic();
    static void scaleVbarVelocity(double scale);
 
-   Nhc06Thermostat();
-   ~Nhc06Thermostat();
+   LP22Thermostat();
+   ~LP22Thermostat();
    void printDetail(FILE*) override;
    void control1b(time_prec timeStep, bool applyBaro);
    void control2b(time_prec timeStep, bool applyBaro);
 };
 
-class Nhc06Barostat : public BasicBarostat
+class LP22Barostat : public BasicBarostat
 {
 protected:
+   static constexpr int m_shapeArray[6][2] = {{0, 0}, {1, 1}, {2, 2},
+                                             {0, 2}, {0, 1}, {1, 2}};
    double m_dofP;
-   void control12Impl(time_prec timeStep);
+   double m_fric;
+   double m_rdn[3][3];
+   int m_arrlen;
+
+   void control12Impl(time_prec);
 
 public:
-   Nhc06Barostat();
+   LP22Barostat();
    double dof() const;
    void printDetail(FILE*) override;
    void control1(time_prec timeStep) override;
@@ -36,21 +42,6 @@ public:
    void control3(time_prec timeStep) override;
 };
 
-class Nhc06Integrator : public BasicIntegrator
-{
-protected:
-   Nhc06Thermostat* m_thermo;
-   Nhc06Barostat* m_baro;
-   bool m_pedantic;
-   void kickoff() override;
-
-public:
-   Nhc06Integrator();
-   ~Nhc06Integrator();
-   void printDetail(FILE*) override;
-   void dynamic(int, time_prec) override;
-
-   static void updatePositionPedantic(time_prec t);
-   static void updateVelocityPedantic(time_prec t, double velbar);
-};
+// class LP22Integrator : public BasicIntegrator
+// {};
 }

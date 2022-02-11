@@ -61,9 +61,9 @@ void Nhc06Thermostat::control1b(time_prec dt, bool applyBaro)
    m_tpart->control1(dt);
 }
 
-void Nhc06Thermostat::control2b(time_prec dt, bool save, bool applyBaro)
+void Nhc06Thermostat::control2b(time_prec dt, bool applyBaro)
 {
-   m_tpart->control2(dt, save);
+   m_tpart->control2(dt, true);
    if (applyBaro)
       m_tbaro->control2(dt, false);
 }
@@ -92,15 +92,15 @@ Nhc06Barostat::Nhc06Barostat()
    vbar = 0;
 }
 
+double Nhc06Barostat::dof() const
+{
+   return m_dofP;
+}
+
 void Nhc06Barostat::printDetail(FILE* o)
 {
    print(o, " VBar Mass        : %12.2lf\n", qbar);
    printBasic(o);
-}
-
-double Nhc06Barostat::dof() const
-{
-   return m_dofP;
 }
 
 void Nhc06Barostat::control1(time_prec dt)
@@ -206,7 +206,7 @@ void Nhc06Integrator::dynamic(int istep, time_prec dt)
    }
 
    m_baro->control2(dt); // update vbar
-   m_thermo->control2b(dt, save, applyBaro);
+   m_thermo->control2b(dt, applyBaro);
 }
 
 void Nhc06Integrator::updatePositionPedantic(time_prec t)

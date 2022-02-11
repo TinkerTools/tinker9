@@ -55,6 +55,7 @@ itgbBerendsen.cpp
 itgbMonteCarlo.cpp
 itgiBasic.cpp
 itgiLeapFrogLP.cpp
+itgiLP22.cpp
 itgiNhc06.cpp
 itgiNhc96.cpp
 itgiRespa.cpp
