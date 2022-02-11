@@ -69,16 +69,15 @@ void LP22Thermostat::scaleVbarVelocity(double scale)
 }
 
 LP22Thermostat::LP22Thermostat()
-   : BasicThermostat(ThermostatEnum::LP22)
+   : BasicThermostat(ThermostatEnum::m_LP2022)
 {
    double dofT = mdstuf::nfree;
    int nhclen = 4;
    int nc = 4;
 
    // tpart
-   m_tpart =
-      new Nhc96Thermostat(nhclen, nc, dofT, Nhc96Thermostat::atomicKinetic,
-                          Nhc96Thermostat::scaleAtomicVelocity, "NHC");
+   m_tpart = new NhcThermostat(nhclen, nc, dofT, NhcThermostat::atomicKinetic,
+                               NhcThermostat::scaleAtomicVelocity, "NHC");
 
    // tbaro
    if (bath::anisotrop) {
@@ -90,8 +89,8 @@ LP22Thermostat::LP22Thermostat()
       if (box_shape == BoxShape::TRI)
          dofT = 6.0;
    }
-   m_tbaro = new Nhc96Thermostat(nhclen, nc, dofT, LP22Thermostat::vbarKinetic,
-                                 LP22Thermostat::scaleVbarVelocity, "NHCB");
+   m_tbaro = new NhcThermostat(nhclen, nc, dofT, LP22Thermostat::vbarKinetic,
+                               LP22Thermostat::scaleVbarVelocity, "NHCB");
 }
 
 LP22Thermostat::~LP22Thermostat()
@@ -158,7 +157,7 @@ void LP22Barostat::control12Impl(time_prec dt)
 }
 
 LP22Barostat::LP22Barostat()
-   : BasicBarostat(BarostatEnum::LP22)
+   : BasicBarostat(BarostatEnum::LP2022)
 {
    m_dofP = mdstuf::nfree;
    m_fric = stodyn::friction;

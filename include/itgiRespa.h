@@ -10,5 +10,6 @@ protected:
 public:
    ~RespaIntegrator();
    RespaIntegrator(ThermostatEnum, BarostatEnum);
+   RespaIntegrator(PropagatorEnum pe, ThermostatEnum te, BarostatEnum be) : VerletIntegrator(pe,te,be) {}
 };
 }

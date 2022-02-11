@@ -4,6 +4,7 @@
 #include "energy.h"
 #include "itgEnum.h"
 #include "itgiBasic.h"
+#include "itgiLP22.h"
 #include "itgiLeapFrogLP.h"
 #include "itgiNhc06.h"
 #include "itgiNhc96.h"
@@ -85,12 +86,10 @@ void integrate_data(rc_op op)
             thermostat = ThermostatEnum::Berendsen;
          else if (th == "BUSSI")
             thermostat = ThermostatEnum::Bussi;
-         else if (th == "LPISTON")
-            thermostat = ThermostatEnum::LeapFrogLP;
-         else if (th == "NHC06")
-            thermostat = ThermostatEnum::Nhc06;
          else if (th == "NOSE-HOOVER")
-            thermostat = ThermostatEnum::Nhc96;
+            thermostat = ThermostatEnum::Nhc;
+         else if (th == "LPISTON")
+            thermostat = ThermostatEnum::m_LeapFrogLP;
          else
             assert(false);
       }
@@ -103,64 +102,73 @@ void integrate_data(rc_op op)
          else if (br == "BUSSI")
             barostat = BarostatEnum::Bussi;
          else if (br == "LANGEVIN")
-            barostat = BarostatEnum::Langevin;
-         else if (br == "LPISTON")
-            barostat = BarostatEnum::LeapFrogLP;
+            barostat = BarostatEnum::LP2022;
          else if (br == "MONTECARLO")
             barostat = BarostatEnum::MonteCarlo;
          else if (br == "NHC06")
-            barostat = BarostatEnum::Nhc06;
+            barostat = BarostatEnum::Nhc2006;
+         else if (br == "LPISTON")
+            barostat = BarostatEnum::m_LeapFrogLP;
          else if (br == "NOSE-HOOVER")
-            barostat = BarostatEnum::Nhc96;
+            barostat = BarostatEnum::m_Nhc1996;
          else
             assert(false);
       }
 
       IntegratorEnum integrator = IntegratorEnum::Beeman;
+      if (thermostat == ThermostatEnum::m_LeapFrogLP and
+          barostat == BarostatEnum::m_LeapFrogLP)
+         integrator = IntegratorEnum::LeapFrogLP;
+      else if (thermostat == ThermostatEnum::Nhc and
+               barostat == BarostatEnum::m_Nhc1996)
+         integrator = IntegratorEnum::Nhc1996;
+
       fstr_view itg = mdstuf::integrate;
-      if (itg == "VERLET") {
+      if (itg == "RESPA") {
+         integrator = IntegratorEnum::Respa;
+      } else if (itg == "VERLET") {
          integrator = IntegratorEnum::Verlet;
       } else if (itg == "LPISTON") {
          integrator = IntegratorEnum::LeapFrogLP;
-         thermostat = ThermostatEnum::LeapFrogLP;
-         barostat = BarostatEnum::LeapFrogLP;
-      } else if (itg == "NHC06") {
-         integrator = IntegratorEnum::Nhc06;
-         thermostat = ThermostatEnum::Nhc06;
-         barostat = BarostatEnum::Nhc06;
+         thermostat = ThermostatEnum::m_LeapFrogLP;
+         barostat = BarostatEnum::m_LeapFrogLP;
       } else if (itg == "NOSE-HOOVER") {
-         integrator = IntegratorEnum::Nhc96;
-         thermostat = ThermostatEnum::Nhc96;
-         barostat = BarostatEnum::Nhc96;
-      } else if (itg == "RESPA") {
-         integrator = IntegratorEnum::Respa;
+         integrator = IntegratorEnum::Nhc1996;
+         thermostat = ThermostatEnum::m_Nhc1996;
+         barostat = BarostatEnum::m_Nhc1996;
       }
 
-      if (thermostat == ThermostatEnum::LeapFrogLP and
-          barostat == BarostatEnum::LeapFrogLP)
-         integrator = IntegratorEnum::LeapFrogLP;
-      else if (barostat == BarostatEnum::Langevin) {
-         if (itg == "VERLET" or itg == "RESPA")
-            integrator = IntegratorEnum::LangevinNpt;
-      } else if (thermostat == ThermostatEnum::Nhc06 and
-                 barostat == BarostatEnum::Nhc06)
-         integrator = IntegratorEnum::Nhc06;
-      else if (thermostat == ThermostatEnum::Nhc96 and
-               barostat == BarostatEnum::Nhc96)
-         integrator = IntegratorEnum::Nhc96;
+      bool nptVerlet = true;
+      if (integrator == IntegratorEnum::Verlet or
+          integrator == IntegratorEnum::Respa) {
+         if (barostat == BarostatEnum::LP2022) {
+            if (integrator == IntegratorEnum::Respa)
+               nptVerlet = false;
+            integrator = IntegratorEnum::LP2022;
+            thermostat = ThermostatEnum::m_LP2022;
+         } else if (barostat == BarostatEnum::Nhc2006) {
+            if (integrator == IntegratorEnum::Respa)
+               nptVerlet = false;
+            integrator = IntegratorEnum::Nhc2006;
+            thermostat = ThermostatEnum::m_Nhc2006;
+         }
+      }
 
       intg = nullptr;
-      if (integrator == IntegratorEnum::LangevinNpt) {
-      } else if (integrator == IntegratorEnum::LeapFrogLP)
-         intg = new LeapFrogLPIntegrator;
-      else if (integrator == IntegratorEnum::Nhc06)
-         intg = new Nhc06Integrator;
-      else if (integrator == IntegratorEnum::Nhc96)
-         intg = new Nhc96Integrator;
-      else if (integrator == IntegratorEnum::Respa)
-         intg = new RespaIntegrator(thermostat, barostat);
+      if (integrator == IntegratorEnum::Respa)
+         intg =
+            new RespaIntegrator(PropagatorEnum::Respa, thermostat, barostat);
       else if (integrator == IntegratorEnum::Verlet)
-         intg = new VerletIntegrator(thermostat, barostat);
+         intg =
+            new VerletIntegrator(PropagatorEnum::Verlet, thermostat, barostat);
+      else if (integrator == IntegratorEnum::LeapFrogLP)
+         intg = new LeapFrogLPIntegrator;
+      else if (integrator == IntegratorEnum::LP2022)
+         intg = new LP22Integrator(nptVerlet);
+      else if (integrator == IntegratorEnum::Nhc1996)
+         intg = new Nhc96Integrator;
+      else if (integrator == IntegratorEnum::Nhc2006)
+         intg = new Nhc06Integrator(nptVerlet);
       else if (integrator == IntegratorEnum::Beeman)
          TINKER_THROW("Beeman integrator is not available.");
       if (inform::verbose) {

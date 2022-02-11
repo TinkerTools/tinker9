@@ -26,20 +26,19 @@ void Nhc06Thermostat::scaleVbarVelocity(double scale)
 }
 
 Nhc06Thermostat::Nhc06Thermostat()
-   : BasicThermostat(ThermostatEnum::Nhc06)
+   : BasicThermostat(ThermostatEnum::m_Nhc2006)
 {
    double dofT = mdstuf::nfree;
    int nhclen = 4;
    int nc = 4;
 
    // tpart
-   m_tpart =
-      new Nhc96Thermostat(nhclen, nc, dofT, Nhc96Thermostat::atomicKinetic,
-                          Nhc96Thermostat::scaleAtomicVelocity, "NHC");
+   m_tpart = new NhcThermostat(nhclen, nc, dofT, NhcThermostat::atomicKinetic,
+                               NhcThermostat::scaleAtomicVelocity, "NHC");
 
    // tbaro
-   m_tbaro = new Nhc96Thermostat(nhclen, nc, 1.0, Nhc06Thermostat::vbarKinetic,
-                                 Nhc06Thermostat::scaleVbarVelocity, "NHCB");
+   m_tbaro = new NhcThermostat(nhclen, nc, 1.0, Nhc06Thermostat::vbarKinetic,
+                               Nhc06Thermostat::scaleVbarVelocity, "NHCB");
 }
 
 Nhc06Thermostat::~Nhc06Thermostat()
@@ -83,7 +82,7 @@ void Nhc06Barostat::control12Impl(time_prec dt)
 }
 
 Nhc06Barostat::Nhc06Barostat()
-   : BasicBarostat(BarostatEnum::Nhc06)
+   : BasicBarostat(BarostatEnum::Nhc2006)
 {
    m_dofP = mdstuf::nfree;
 
@@ -184,7 +183,7 @@ void Nhc06Integrator::dynamic(int istep, time_prec dt)
       updateVelocityPedantic(dt2, al * vbar);
    } else {
       double scale = std::exp(-al * vbar * dt2);
-      Nhc96Thermostat::scaleAtomicVelocity(scale);
+      NhcThermostat::scaleAtomicVelocity(scale);
       updateVelocity(dt2);
    }
 
@@ -202,7 +201,7 @@ void Nhc06Integrator::dynamic(int istep, time_prec dt)
    } else {
       updateVelocity(dt2);
       double scale = std::exp(-al * vbar * dt2);
-      Nhc96Thermostat::scaleAtomicVelocity(scale);
+      NhcThermostat::scaleAtomicVelocity(scale);
    }
 
    m_baro->control2(dt); // update vbar

@@ -1,9 +1,11 @@
 #pragma once
 #include "itgbBasic.h"
 #include "itgiBasic.h"
+#include "itgpVerlet.h"
 #include "itgtBasic.h"
 
 namespace tinker {
+enum class PropagatorEnum;
 enum class ThermostatEnum;
 enum class BarostatEnum;
 
@@ -18,6 +20,7 @@ protected:
 public:
    ~VerletIntegrator();
    VerletIntegrator(ThermostatEnum, BarostatEnum);
+   VerletIntegrator(PropagatorEnum, ThermostatEnum, BarostatEnum) {}
    void printDetail(FILE*) override;
    void dynamic(int, time_prec) override;
 

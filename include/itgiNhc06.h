@@ -1,14 +1,14 @@
 #pragma once
 #include "itgbBasic.h"
 #include "itgiBasic.h"
-#include "itgtNhc96.h"
+#include "itgtNhc.h"
 
 namespace tinker {
 class Nhc06Thermostat : public BasicThermostat
 {
 protected:
-   Nhc96Thermostat* m_tpart;
-   Nhc96Thermostat* m_tbaro;
+   NhcThermostat* m_tpart;
+   NhcThermostat* m_tbaro;
 
 public:
    static double* vbarKinetic();
@@ -45,6 +45,7 @@ protected:
    void kickoff() override;
 
 public:
+   Nhc06Integrator(bool useVerlet) {}
    Nhc06Integrator();
    ~Nhc06Integrator();
    void printDetail(FILE*) override;

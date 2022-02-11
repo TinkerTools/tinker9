@@ -62,7 +62,7 @@ itgiRespa.cpp
 itgiVerlet.cpp
 itgtBasic.cpp
 itgtBussi.cpp
-itgtNhc96.cpp
+itgtNhc.cpp
 lf_lpiston.cpp
 lpiston.cpp
 mdegv.cpp

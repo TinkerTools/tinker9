@@ -1,4 +1,4 @@
-#include "itgtNhc96.h"
+#include "itgtNhc.h"
 #include "itgEnum.h"
 #include "mdegv.h"
 #include "mdpq.h"
@@ -11,7 +11,7 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-void Nhc96Thermostat::controlImpl(time_prec dt)
+void NhcThermostat::controlImpl(time_prec dt)
 {
    const int nc = nhc_nc;
    constexpr int ns = nhc_nsy;
@@ -74,10 +74,9 @@ void Nhc96Thermostat::controlImpl(time_prec dt)
    scale_vel(velsc0);
 }
 
-Nhc96Thermostat::Nhc96Thermostat(int nhclen, int nc, double dfree,
-                                 double* (*kin)(), void (*scale)(double),
-                                 std::string str)
-   : BasicThermostat(ThermostatEnum::Nhc96)
+NhcThermostat::NhcThermostat(int nhclen, int nc, double dfree, double* (*kin)(),
+                             void (*scale)(double), std::string str)
+   : BasicThermostat(ThermostatEnum::m_Nhc1996)
    , nnose(nhclen)
    , nhc_nc(nc)
    , g0(dfree)
@@ -100,7 +99,7 @@ Nhc96Thermostat::Nhc96Thermostat(int nhclen, int nc, double dfree,
    qnh[0] *= g0;
 }
 
-void Nhc96Thermostat::printDetail(FILE* o)
+void NhcThermostat::printDetail(FILE* o)
 {
    print(o, " %s\n", name.c_str());
    print(o, " DOF              : %12.1lf\n", g0);
@@ -114,24 +113,24 @@ void Nhc96Thermostat::printDetail(FILE* o)
    printBasic(o);
 }
 
-void Nhc96Thermostat::control1(time_prec dt)
+void NhcThermostat::control1(time_prec dt)
 {
    this->controlImpl(dt);
 }
 
-void Nhc96Thermostat::control2(time_prec dt, bool)
+void NhcThermostat::control2(time_prec dt, bool)
 {
    this->controlImpl(dt);
 }
 
-double* Nhc96Thermostat::atomicKinetic()
+double* NhcThermostat::atomicKinetic()
 {
    T_prec temp;
    kinetic(temp);
    return &eksum;
 }
 
-void Nhc96Thermostat::scaleAtomicVelocity(double velsc)
+void NhcThermostat::scaleAtomicVelocity(double velsc)
 {
    darray::scale(g::q0, n, velsc, vx);
    darray::scale(g::q0, n, velsc, vy);
