@@ -30,7 +30,3 @@ Please visit the [GitHub Projects Page](https://github.com/TinkerTools/tinker9/p
 
 Use [GitHub Issues](https://github.com/TinkerTools/tinker9/issues) for bug tracking and
 [GitHub Discussions](https://github.com/TinkerTools/tinker9/discussions) for general discussions.
-
-
-## Style Guide
-Please read the [style guide](doc/style.md) before contributing to this code base.

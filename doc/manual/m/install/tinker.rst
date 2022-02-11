@@ -1,7 +1,11 @@
 Download the Canonical Tinker
 =============================
 
-**Recommended**
+Since **d71f4793** (`Dec. 6, 2021 <https://github.com/TinkerTools/tinker9/commit/d71f4793>`_),
+downloading the required Tinker version is automated in the CMake script.
+For versions prior to this commit, please refer to the following paragraphs.
+
+**Deprecated 1**
 
 Using the incorrect Tinker version, the executables would be
 very likely to fail with segfault.
@@ -15,12 +19,12 @@ checkout Tinker from the *tinker* Git submodule:
    cd tinker9
    git submodule update --init
 
-**Deprecated**
+**Deprecated 2**
 
 Alternatively, remove the directory *tinker9/tinker* and clone
 `Tinker from GitHub <https://github.com/tinkertools/tinker>`_
 to replace the deleted directory,
-then checkout the required version **cc05b603**.
+then checkout the required version **5aa9948d**.
 
 .. code-block:: bash
 

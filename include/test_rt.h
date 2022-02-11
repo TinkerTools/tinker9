@@ -45,7 +45,7 @@ public:
 class TestFileExpected
 {
 private:
-   std::string name_;
+   std::string m_name;
 
 
 public:

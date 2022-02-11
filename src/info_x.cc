@@ -1,3 +1,4 @@
+#include "md.h"
 #include "tinker_rt.h"
 #include "tool/compilers.h"
 #include "tool/gpu_card.h"
@@ -8,7 +9,11 @@ namespace tinker {
 static const char* get_SHA1()
 {
    return         //
-      "cc05b603"; // Tue Sep 28 21:03:42 2021 -0500
+      "5aa9948d"; // Wed Dec 15 14:44:53 2021 -0600
+   // "3d70a035"; // Fri Nov 12 09:18:37 2021 -0600
+   // "c2fd3ba8"; // Thu Nov 4 22:24:38 2021 -0500
+   // "a7a4e4bf"; // Fri Oct 8 18:53:39 2021 -0500
+   // "cc05b603"; // Tue Sep 28 21:03:42 2021 -0500
    // "e2d1747a"; // Fri Jul 30 15:49:07 2021 -0500
    // "1b49b76f"; // Wed Jun 30 14:12:59 2021 -0500
    // "080e8f1d"; // Fri Apr 30 20:56:00 2021 -0500

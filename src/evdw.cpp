@@ -3,7 +3,6 @@
 #include "nblist.h"
 #include "potent.h"
 #include "tinker_rt.h"
-#include "tool/fc.h"
 #include "tool/host_zero.h"
 #include "tool/io_fort_str.h"
 #include "tool/io_text.h"
@@ -426,7 +425,7 @@ void evdw_data(rc_op op)
       // Initialize elrc and vlrc.
       if (vdwpot::use_vcorr) {
          double elrc = 0, vlrc = 0;
-         t_evcorr1("VDW", &elrc, &vlrc);
+         tinker_f_evcorr1({const_cast<char*>("VDW"), 3}, &elrc, &vlrc);
          elrc_vol = elrc * volbox();
          vlrc_vol = vlrc * volbox();
       } else {

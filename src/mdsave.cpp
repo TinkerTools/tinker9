@@ -1,7 +1,7 @@
-#include "mdsave.h"
 #include "box.h"
 #include "epolar.h"
 #include "execq.h"
+#include "md.h"
 #include "potent.h"
 #include "tinker_rt.h"
 #include <condition_variable>
@@ -158,7 +158,7 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    double dt1 = dt;
    double epot1 = epot;
    double eksum1 = eksum;
-   TINKER_RT(mdsave)(&istep, &dt1, &epot1, &eksum1);
+   tinker_f_mdsave(&istep, &dt1, &epot1, &eksum1);
 
    mtx_write.lock();
    idle_write = true;

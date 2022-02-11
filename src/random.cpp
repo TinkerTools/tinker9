@@ -3,28 +3,16 @@
 #include <chrono>
 #include <random>
 
-
 #define USE_TINKER_RANDOM_FUNC 0
-#if USE_TINKER_RANDOM_FUNC
-extern "C"
-{
-   double random_();
-   double normal_();
-}
-#endif
-
 
 namespace tinker {
-namespace {
-std::default_random_engine generator;
-}
-
+static std::default_random_engine generator;
 
 template <class T>
 T random()
 {
 #if USE_TINKER_RANDOM_FUNC
-   return random_();
+   return tinker_f_random();
 #else
    static std::uniform_real_distribution<T> unif(0, 1);
    return unif(generator);
@@ -33,12 +21,11 @@ T random()
 template float random<float>();
 template double random<double>();
 
-
 template <class T>
 T normal()
 {
 #if USE_TINKER_RANDOM_FUNC
-   return normal_();
+   return tinker_f_normal();
 #else
    static std::normal_distribution<T> norm(0, 1);
    return norm(generator);
@@ -46,7 +33,6 @@ T normal()
 }
 template float normal<float>();
 template double normal<double>();
-
 
 template <class T>
 T normal(T u, T s)
@@ -65,14 +51,13 @@ T normal(T u, T s)
 template float normal<float>(float, float);
 template double normal<double>(double, double);
 
-
 template <class T>
 T chi_squared(int k)
 {
 #if USE_TINKER_RANDOM_FUNC
    T s = 0;
    for (int i = 0; i < k; ++i) {
-      double si = normal_();
+      double si = tinker_f_normal();
       s += si * si;
    }
    return s;
@@ -85,7 +70,6 @@ T chi_squared(int k)
 }
 template float chi_squared<float>(int);
 template double chi_squared<double>(int);
-
 
 void random_data(rc_op op)
 {

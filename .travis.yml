@@ -11,8 +11,6 @@ jobs:
   include:
     - os: linux
       dist: bionic
-      # env:
-      #   - CI_DEPEND_DIR=https://raw.githubusercontent.com/tinkertools/tinker9/master
 
 
 before_install:
@@ -35,13 +33,7 @@ script:
   - cd ../..
 
 
-# libtinker.a
-  - cd tinker
-  - git submodule update --init
-  - cd ..
-  - cd build
-
-
 # test tinker9
+  - cd build
   - opt=release host=1 prec=d fftw_dir=fftw cmake ..
   - make test

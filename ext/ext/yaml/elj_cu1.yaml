@@ -29,7 +29,7 @@ SCALE_1X_TYPE: real_const_array
 
 EXTRA_PARAMS: |
   , int njvdw, const real* restrict radmin, const real* restrict epsilon
-  , const int* restrict jvdw
+  , const int* restrict jvdw, const int* restrict mut, real vlam, evdw_t vcouple
 
 I_POSITION:
   - def: register real xi from:x
@@ -51,8 +51,10 @@ K_FORCE:
 
 I_VARIABLES:
   - def: register int ijvdw from:jvdw
+  - def: register int imut from:mut
 K_VARIABLES:
   - def: register int kjvdw from:jvdw
+  - def: register int kmut from:mut
 
 SCALED_PAIRWISE_INTERACTION: |
   real xr = @xi@ - xk;
@@ -65,7 +67,8 @@ SCALED_PAIRWISE_INTERACTION: |
     real rv = radmin[@ijvdw@ * njvdw + kjvdw];
     real eps = epsilon[@ijvdw@ * njvdw + kjvdw];
     real e, de;
-    pair_lj_v3<do_g, 0>(r, invr, scalea, rv, eps, cut, off, e, de);
+    real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+    pair_lj_v3<do_g, true, 0>(r, invr, vlambda, scalea, rv, eps, cut, off, e, de);
     if CONSTEXPR (do_e) {
       evtl += cvt_to<ebuf_prec>(e);
       if CONSTEXPR (do_a) {
@@ -107,7 +110,8 @@ FULL_PAIRWISE_INTERACTION: |
     real rv = radmin[@ijvdw@ * njvdw + kjvdw];
     real eps = epsilon[@ijvdw@ * njvdw + kjvdw];
     real e, de;
-    pair_lj_v3<do_g, 1>(r, invr, 1, rv, eps, cut, off, e, de);
+    real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+    pair_lj_v3<do_g, true, 1>(r, invr, vlambda, 1, rv, eps, cut, off, e, de);
     if CONSTEXPR (do_e) {
       evtl += cvt_to<ebuf_prec>(e);
       if CONSTEXPR (do_a) {

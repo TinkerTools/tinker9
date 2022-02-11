@@ -6,6 +6,14 @@
 namespace tinker {
 /**
  * \ingroup error
+ * Writes out a set of coordinates to a disk file
+ * prior to aborting on a serious error.
+ */
+void prterr();
+
+
+/**
+ * \ingroup error
  * Prints the call stack to a `FILE` pointer.
  */
 void print_backtrace(std::FILE* out = stderr);
@@ -26,22 +34,22 @@ std::string translate_error_code(T error_num);
 class FatalError : public std::exception
 {
 private:
-   std::string msg_;
+   std::string m_msg;
 
 
 public:
    FatalError(const char* msg)
-      : msg_(msg)
+      : m_msg(msg)
    {}
    FatalError(const std::string& msg)
-      : msg_(msg)
+      : m_msg(msg)
    {}
    FatalError(const FatalError& e)
-      : msg_(e.msg_)
+      : m_msg(e.m_msg)
    {}
    const char* what() const noexcept override
    {
-      return msg_.c_str();
+      return m_msg.c_str();
    }
 };
 

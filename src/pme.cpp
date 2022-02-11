@@ -9,7 +9,6 @@
 #include "switch.h"
 #include "tinker_rt.h"
 #include "tool/error.h"
-#include "tool/fc.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/ewald.hh>
 #include <tinker/detail/pme.hh>
@@ -103,7 +102,7 @@ void pme_op_copyin(PMEUnit unit)
    std::vector<double> array(st.bsorder);
    std::vector<double> bsarray(maxfft);
    double x = 0;
-   TINKER_RT(bspline)(&x, &st.bsorder, array.data());
+   tinker_f_bspline(&x, &st.bsorder, array.data());
    for (int i = 0; i < maxfft; ++i) {
       bsarray[i] = 0;
    }
@@ -112,16 +111,13 @@ void pme_op_copyin(PMEUnit unit)
       bsarray[i + 1] = array[i];
    }
    std::vector<double> bsmodbuf(maxfft);
-   TINKER_RT(dftmod)
-   (bsmodbuf.data(), bsarray.data(), &st.nfft1, &st.bsorder);
+   tinker_f_dftmod(bsmodbuf.data(), bsarray.data(), &st.nfft1, &st.bsorder);
    darray::copyin(g::q0, st.nfft1, st.bsmod1, bsmodbuf.data());
    wait_for(g::q0);
-   TINKER_RT(dftmod)
-   (bsmodbuf.data(), bsarray.data(), &st.nfft2, &st.bsorder);
+   tinker_f_dftmod(bsmodbuf.data(), bsarray.data(), &st.nfft2, &st.bsorder);
    darray::copyin(g::q0, st.nfft2, st.bsmod2, bsmodbuf.data());
    wait_for(g::q0);
-   TINKER_RT(dftmod)
-   (bsmodbuf.data(), bsarray.data(), &st.nfft3, &st.bsorder);
+   tinker_f_dftmod(bsmodbuf.data(), bsarray.data(), &st.nfft3, &st.bsorder);
    darray::copyin(g::q0, st.nfft3, st.bsmod3, bsmodbuf.data());
    wait_for(g::q0);
 
@@ -153,7 +149,7 @@ void pme_data(rc_op op)
          double ecut = switch_off(switch_ewald);
          double dcut = switch_off(switch_dewald);
          double ext;
-         t_extent(ext);
+         tinker_f_extent(&ext);
          double wbox = 2 * (ext + std::fmax(ecut, dcut));
          box_extent(wbox);
       }

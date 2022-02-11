@@ -1,6 +1,6 @@
 #pragma once
-#include "tool/fcxx.h"
 #include "tool/io_text.h"
+#include "tool/tinker_suppl.h"
 #include <iostream>
 #include <sstream>
 
@@ -71,7 +71,7 @@ void read_stream(Arg& arg, std::string prompt, Arg auto_fill, Invalid&& invalid,
       std::printf("%s", prompt.c_str());
       std::fflush(stdout);
       if (is_cin) {
-         line = t_read_stdin_line();
+         line = tinker_f_read_stdin_line();
       } else {
          istream.clear(); // Reset failbit.
          // Expunge the remaining input and invisible '\n',

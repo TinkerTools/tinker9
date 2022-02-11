@@ -1,5 +1,8 @@
 include/*template
 
+# macOS
+.DS_STORE
+
 # Wiki
 *.wiki
 *.wiki/*

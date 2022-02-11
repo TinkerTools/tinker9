@@ -1,200 +1,223 @@
 #pragma once
+#include "fsinhc.h"
 #include "mathfunc.h"
 #include "seq_def.h"
 
-
 namespace tinker {
 #pragma acc routine seq
-template <int ORDER>
+template <int DirOrder, int MutOrder>
 SEQ_CUDA
-inline void damp_pole_v1(real* restrict dmpik, real* restrict dmpi,
-                         real* restrict dmpk, real r, real alphai, real alphak)
+inline void damp_gordon1(real* restrict dmpij, real* restrict dmpi,
+                         real* restrict dmpj, real r, real ai, real aj)
 {
-#if TINKER_REAL_SIZE == 8
-   real eps = 0.001f;
-#elif TINKER_REAL_SIZE == 4
-   real eps = 0.005f;
-#endif
-
-   real diff = REAL_ABS(alphai - alphak);
-
-   if (diff < eps)
-      alphai = 0.5f * (alphai + alphak);
-
-   real dampi = alphai * r;
-   real dampk = alphak * r;
-   real expi = REAL_EXP(-dampi);
-   real expk = REAL_EXP(-dampk);
-
-   real dampi2 = dampi * dampi;
-   real dampi3 = dampi * dampi2;
-   real dampi4 = dampi2 * dampi2;
-   real dampi5 = dampi2 * dampi3;
-
-   // divisions
    const real div3 = 1 / ((real)3);
    const real div6 = 1 / ((real)6);
    const real div15 = 1 / ((real)15);
-   const real div21 = 1 / ((real)21);
    const real div30 = 1 / ((real)30);
    const real div105 = 1 / ((real)105);
+   const real div945 = 1 / ((real)945);
 
-   // GORDON1
-   // core-valence
-   dmpi[0] = 1 - (1 + 0.5f * dampi) * expi;
-   dmpi[1] = 1 - (1 + dampi + 0.5f * dampi2) * expi;
-   dmpi[2] = 1 - (1 + dampi + 0.5f * dampi2 + dampi3 * div6) * expi;
-   dmpi[3] =
-      1 - (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + dampi4 * div30) * expi;
-   dmpi[4] = 1 -
-      (1 + dampi + 0.5f * dampi2 + dampi3 * div6 +
-       (4 * dampi4 + 0.5f * dampi5) * div105) *
-         expi;
+   real a, expi, b, expk;
+   a = ai * r, b = aj * r;
+   expi = REAL_EXP(-a), expk = REAL_EXP(-b);
 
-   if (diff < eps) {
-      dmpk[0] = dmpi[0];
-      dmpk[1] = dmpi[1];
-      dmpk[2] = dmpi[2];
-      dmpk[3] = dmpi[3];
-      dmpk[4] = dmpi[4];
+   // dmpi, dmpj
+   real a2, a3, a4, a5, b2, b3, b4, b5;
 
-      // valence-valence
-      real dampi6 = dampi3 * dampi3;
-      real dampi7 = dampi3 * dampi4;
-      const real div5 = 1 / ((real)5);
-      const real div16 = 1 / ((real)16);
-      const real div24 = 1 / ((real)24);
-      const real div42 = 1 / ((real)42);
-      const real div48 = 1 / ((real)48);
-      const real div120 = 1 / ((real)120);
-      const real div144 = 1 / ((real)144);
+   if CONSTEXPR (DirOrder >= 1) {
+      dmpi[0] = 1 - (1 + 0.5f * a) * expi;
+      dmpj[0] = 1 - (1 + 0.5f * b) * expk;
+   }
+   if CONSTEXPR (DirOrder >= 3) {
+      a2 = a * a, b2 = b * b;
+      dmpi[1] = 1 - (1 + a + 0.5f * a2) * expi;
+      dmpj[1] = 1 - (1 + b + 0.5f * b2) * expk;
+   }
+   if CONSTEXPR (DirOrder >= 5) {
+      a3 = a * a2, b3 = b * b2;
+      dmpi[2] = 1 - (1 + a + 0.5f * a2 + a3 * div6) * expi;
+      dmpj[2] = 1 - (1 + b + 0.5f * b2 + b3 * div6) * expk;
+   }
+   if CONSTEXPR (DirOrder >= 7) {
+      a4 = a2 * a2, b4 = b2 * b2;
+      dmpi[3] = 1 - (1 + a + 0.5f * a2 + a3 * div6 + a4 * div30) * expi;
+      dmpj[3] = 1 - (1 + b + 0.5f * b2 + b3 * div6 + b4 * div30) * expk;
+   }
+   if CONSTEXPR (DirOrder >= 9) {
+      a5 = a2 * a3, b5 = b2 * b3;
+      dmpi[4] = 1 -
+         (1 + a + 0.5f * a2 + a3 * div6 + (4 * a4 + 0.5f * a5) * div105) * expi;
+      dmpj[4] = 1 -
+         (1 + b + 0.5f * b2 + b3 * div6 + (4 * b4 + 0.5f * b5) * div105) * expk;
+   }
 
-      dmpik[0] =
-         1 - (1 + (11 * dampi + 3 * dampi2) * div16 + dampi3 * div48) * expi;
-      dmpik[1] =
-         1 - (1 + dampi + 0.5f * dampi2 + (7 * dampi3 + dampi4) * div48) * expi;
-      dmpik[2] = 1 -
-         (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + dampi4 * div24 +
-          dampi5 * div144) *
-            expi;
-      dmpik[3] = 1 -
-         (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + dampi4 * div24 +
-          (dampi5 + dampi6 * div6) * div120) *
-            expi;
-      dmpik[4] = 1 -
-         ((1 + dampi + 0.5f * dampi2 + dampi3 * div6) +
-          ((dampi4 + dampi5 * div5) +
-           0.1f * (dampi6 * div3 + dampi7 * div21)) *
-             div24) *
-            expi;
-      if CONSTEXPR (ORDER > 9) {
-         real dampi8 = dampi4 * dampi4;
-         const real div378 = 1 / ((real)378);
-         dmpik[5] = 1 -
-            (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + dampi4 * div24 +
-             (dampi5 + dampi6 * div6 + dampi7 * div42 + dampi8 * div378) *
-                div120) *
-               expi;
+   // dmpij
+   if CONSTEXPR (MutOrder >= 1) {
+      real c = (b + a) / 2, d = (b - a) / 2;
+      real expmc = REAL_EXP(-c);
+      real t = (ai + aj) * r;
+      real x = a / t, y = 1 - x;
+      real ec = expmc / 16, ea = expi / 32, eb = expk / 32;
+
+      real c2 = c * c, c3 = c * c * c;
+      real d2 = d * d;
+      real c2d2 = c2 * d2;
+
+      real f1d, f2d, f3d, f4d, f5d, f6d, f7d;
+      if CONSTEXPR (MutOrder >= 11)
+         fsinhc7(d, f1d, f2d, f3d, f4d, f5d, f6d, f7d);
+      else if CONSTEXPR (MutOrder >= 9)
+         fsinhc6(d, f1d, f2d, f3d, f4d, f5d, f6d);
+      else if CONSTEXPR (MutOrder >= 7)
+         fsinhc5(d, f1d, f2d, f3d, f4d, f5d);
+      else if CONSTEXPR (MutOrder >= 5)
+         fsinhc4(d, f1d, f2d, f3d, f4d);
+      else if CONSTEXPR (MutOrder >= 3)
+         fsinhc3(d, f1d, f2d, f3d);
+      else
+         fsinhc2(d, f1d, f2d);
+
+#define TINKER_GORDON1_L00(X) (4 * ((X) * ((X) * (2 * (X)-3) - 3) + 6))
+#define TINKER_GORDON1_L01(X) ((X) * (4 * ((X)-3) * (X) + 11) - 2)
+#define TINKER_GORDON1_M0(a)  (1)
+#define TINKER_GORDON1_M1(a)  ((a) + 1)
+#define TINKER_GORDON1_M2(a)  ((a) * ((a) + 3) + 3)
+#define TINKER_GORDON1_M3(a)  ((a) * ((a) * ((a) + 6) + 15) + 15)
+#define TINKER_GORDON1_M4(a)  ((a) * ((a) * ((a) * ((a) + 10) + 45) + 105) + 105)
+#define TINKER_GORDON1_M5(a)                                                   \
+   ((a) * ((a) * ((a) * ((a) * ((a) + 15) + 105) + 420) + 945) + 945)
+
+      real l00x, l01x, l00y, l01y;
+      if CONSTEXPR (MutOrder >= 1) {
+         real k01, k02;
+         k01 = 3 * c * (c + 3);
+         k02 = c3;
+         l00x = TINKER_GORDON1_L00(x), l01x = TINKER_GORDON1_L01(x) * t;
+         l00y = TINKER_GORDON1_L00(y), l01y = TINKER_GORDON1_L01(y) * t;
+         dmpij[0] = 1 -
+            ((k01 * f1d + k02 * f2d) * ec + (l00x + l01x) * ea +
+             (l00y + l01y) * eb);
       }
-   } else {
-      real dampk2 = dampk * dampk;
-      real dampk3 = dampk * dampk2;
-      real dampk4 = dampk2 * dampk2;
-      real dampk5 = dampk2 * dampk3;
-
-      const real div5 = 1 / ((real)5);
-      const real div7 = 1 / ((real)7);
-
-      dmpk[0] = 1 - (1 + 0.5f * dampk) * expk;
-      dmpk[1] = 1 - (1 + dampk + 0.5f * dampk2) * expk;
-      dmpk[2] = 1 - (1 + dampk + 0.5f * dampk2 + dampk3 * div6) * expk;
-      dmpk[3] = 1 -
-         (1 + dampk + 0.5f * dampk2 + dampk3 * div6 + dampk4 * div30) * expk;
-      dmpk[4] = 1 -
-         (1 + dampk + 0.5f * dampk2 + dampk3 * div6 +
-          (4 * dampk4 + 0.5f * dampk5) * div105) *
-            expk;
-
-      // valence-valence
-      real alphai2 = alphai * alphai;
-      real alphak2 = alphak * alphak;
-      real alphaik = ((alphak + alphai) * (alphak - alphai));
-      real termi = alphak2 / alphaik;
-      real termk = -alphai2 / alphaik;
-      real termi2 = termi * termi;
-      real termk2 = termk * termk;
-
-      dmpik[0] = 1 - termi2 * (1 + 2 * termk + 0.5f * dampi) * expi -
-         termk2 * (1 + 2 * termi + 0.5f * dampk) * expk;
-      dmpik[1] = 1 - termi2 * (1 + dampi + 0.5f * dampi2) * expi -
-         termk2 * (1 + dampk + 0.5f * dampk2) * expk -
-         2 * termi2 * termk * (1 + dampi) * expi -
-         2 * termk2 * termi * (1 + dampk) * expk;
-      dmpik[2] = 1 -
-         termi2 * (1 + dampi + 0.5f * dampi2 + dampi3 * div6) * expi -
-         termk2 * (1 + dampk + 0.5f * dampk2 + dampk3 * div6) * expk -
-         2 * termi2 * termk * (1 + dampi + dampi2 * div3) * expi -
-         2 * termk2 * termi * (1 + dampk + dampk2 * div3) * expk;
-      dmpik[3] = 1 -
-         termi2 * (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + dampi4 * div30) *
-            expi -
-         termk2 * (1 + dampk + 0.5f * dampk2 + dampk3 * div6 + dampk4 * div30) *
-            expk -
-         2 * termi2 * termk * (1 + dampi + 2 * dampi2 * div5 + dampi3 * div15) *
-            expi -
-         2 * termk2 * termi * (1 + dampk + 2 * dampk2 * div5 + dampk3 * div15) *
-            expk;
-      dmpik[4] = 1 -
-         termi2 *
-            (1 + dampi + 0.5f * dampi2 + dampi3 * div6 +
-             (4 * dampi4 + 0.5f * dampi5) * div105) *
-            expi -
-         termk2 *
-            (1 + dampk + 0.5f * dampk2 + dampk3 * div6 +
-             (4 * dampk4 + 0.5f * dampk5) * div105) *
-            expk -
-         2 * termi2 * termk *
-            (1 + dampi + 3 * dampi2 * div7 + 2 * dampi3 * div21 +
-             dampi4 * div105) *
-            expi -
-         2 * termk2 * termi *
-            (1 + dampk + 3 * dampk2 * div7 + 2 * dampk3 * div21 +
-             dampk4 * div105) *
-            expk;
-
-      if CONSTEXPR (ORDER > 9) {
-         real dampi6 = dampi3 * dampi3;
-         real dampk6 = dampk3 * dampk3;
-         const real div945 = 1 / ((real)945);
-         const real div9 = 1 / ((real)9);
-         const real div63 = 1 / ((real)63);
-         const real div126 = 1 / ((real)126);
-         const real div315 = 1 / ((real)315);
-         const real div1890 = 1 / ((real)1890);
-
-         dmpik[5] = 1 -
-            (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + 5 * dampi4 * div126 +
-             2 * dampi5 * div315 + dampi6 * div1890) *
-               termi2 * expi -
-            (1 + dampk + 0.5f * dampk2 + dampk3 * div6 + 5 * dampk4 * div126 +
-             2 * dampk5 * div315 + dampk6 * div1890) *
-               termk2 * expk -
-            (1 + dampi + (4 * dampi2 + dampi3) * div9 + dampi4 * div63 +
-             dampi5 * div945) *
-               2 * termi2 * termk * expi -
-            (1 + dampk + (4 * dampk2 + dampk3) * div9 + dampk4 * div63 +
-             dampk5 * div945) *
-               2 * termk2 * termi * expk;
+      if CONSTEXPR (MutOrder >= 3) {
+         real k11, k12, k13, l10x, l11x, l10y, l11y;
+         k11 = 3 * c2 * (c + 2);
+         k12 = c * ((c - 2) * c2 - 3 * (c + 3) * d2);
+         k13 = -c3 * d2;
+         l10x = TINKER_GORDON1_M1(a) * l00x,
+         l11x = a * TINKER_GORDON1_M0(a) * l01x;
+         l10y = TINKER_GORDON1_M1(b) * l00y,
+         l11y = b * TINKER_GORDON1_M0(b) * l01y;
+         dmpij[1] = 1 -
+            ((k11 * f1d + k12 * f2d + k13 * f3d) * ec + (l10x + l11x) * ea +
+             (l10y + l11y) * eb);
       }
+      if CONSTEXPR (MutOrder >= 5) {
+         real k21, k22, k23, k24, l20x, l21x, l20y, l21y;
+         k21 = 3 * c2 * (c * (c + 2) + 2);
+         k22 = c2 * ((c - 3) * c2 - 6 * (c + 2) * d2);
+         k23 = 3 * (c + 3) * d2 - 2 * (c - 2) * c2;
+         k24 = c2d2;
+         l20x = TINKER_GORDON1_M2(a) * l00x,
+         l21x = a * TINKER_GORDON1_M1(a) * l01x;
+         l20y = TINKER_GORDON1_M2(b) * l00y,
+         l21y = b * TINKER_GORDON1_M1(b) * l01y;
+         dmpij[2] = 1 -
+            div3 *
+               ((k21 * f1d + k22 * f2d + c * d2 * (k23 * f3d + k24 * f4d)) *
+                   ec +
+                (l20x + l21x) * ea + (l20y + l21y) * eb);
+      }
+      if CONSTEXPR (MutOrder >= 7) {
+         real k31, k32, k33, k34, k35, l30x, l31x, l30y, l31y;
+         k31 = 3 * c2 * (c * (c * (c + 3) + 6) + 6);
+         k32 = c2 * (c2 * ((c - 3) * c - 3) - 9 * (c * (c + 2) + 2) * d2);
+         k33 = c2 * (9 * (c + 2) * d2 - 3 * (c - 3) * c2);
+         k34 = 3 * (c - 2) * c3 - 3 * c * (c + 3) * d2;
+         k35 = -c3 * d2;
+         l30x = TINKER_GORDON1_M3(a) * l00x,
+         l31x = a * TINKER_GORDON1_M2(a) * l01x;
+         l30y = TINKER_GORDON1_M3(b) * l00y,
+         l31y = b * TINKER_GORDON1_M2(b) * l01y;
+         dmpij[3] = 1 -
+            div15 *
+               ((k31 * f1d + k32 * f2d +
+                 d2 * (k33 * f3d + d2 * (k34 * f4d + k35 * f5d))) *
+                   ec +
+                (l30x + l31x) * ea + (l30y + l31y) * eb);
+      }
+      if CONSTEXPR (MutOrder >= 9) {
+         real k41, k42, k43, k44, k45, k46, l40x, l41x, l40y, l41y;
+         k41 = 3 * c2 * (c * (c * (c * (c + 5) + 15) + 30) + 30);
+         k42 = c2 *
+            (c2 * (c * ((c - 2) * c - 9) - 9) -
+             12 * (c * (c * (c + 3) + 6) + 6) * d2);
+         k43 = c2 * (18 * (c * (c + 2) + 2) * d2 - 4 * c2 * ((c - 3) * c - 3));
+         k44 = c2 * (6 * (c - 3) * c2 - 12 * (c + 2) * d2);
+         k45 = c * (3 * (c + 3) * d2 - 4 * (c - 2) * c2);
+         k46 = c3 * d2;
+         l40x = TINKER_GORDON1_M4(a) * l00x,
+         l41x = a * TINKER_GORDON1_M3(a) * l01x;
+         l40y = TINKER_GORDON1_M4(b) * l00y,
+         l41y = b * TINKER_GORDON1_M3(b) * l01y;
+         dmpij[4] = 1 -
+            div105 *
+               ((k41 * f1d + k42 * f2d +
+                 d2 *
+                    (k43 * f3d +
+                     d2 * (k44 * f4d + d2 * (k45 * f5d + k46 * f6d)))) *
+                   ec +
+                (l40x + l41x) * ea + (l40y + l41y) * eb);
+      }
+      if CONSTEXPR (MutOrder >= 11) {
+         real k51, k52, k53, k54, k55, k56, k57, l50x, l51x, l50y, l51y;
+         k51 = 3 * c2 * (c * (c * (c * (c * (c + 8) + 35) + 105) + 210) + 210);
+         k52 = c2 *
+            (c2 * (c * (c3 - 15 * c - 45) - 45) -
+             15 * (c * (c * (c * (c + 5) + 15) + 30) + 30) * d2);
+         k53 = c2 *
+            (5 * (c * (9 - (c - 2) * c) + 9) * c2 +
+             30 * (c * (c * (c + 3) + 6) + 6) * d2);
+         k54 = c2 * (10 * c2 * ((c - 3) * c - 3) - 30 * (c * (c + 2) + 2) * d2);
+         k55 = c2 * (15 * (c + 2) * d2 - 10 * (c - 3) * c2);
+         k56 = c * (5 * (c - 2) * c2 - 3 * (c + 3) * d2);
+         k57 = -c3 * d2;
+         l50x = TINKER_GORDON1_M5(a) * l00x,
+         l51x = a * TINKER_GORDON1_M4(a) * l01x;
+         l50y = TINKER_GORDON1_M5(b) * l00y,
+         l51y = b * TINKER_GORDON1_M4(b) * l01y;
+         dmpij[5] = 1 -
+            div945 *
+               ((k51 * f1d + k52 * f2d +
+                 d2 *
+                    (k53 * f3d +
+                     d2 *
+                        (k54 * f4d +
+                         d2 * (k55 * f5d + d2 * (k56 * f6d + k57 * f7d))))) *
+                   ec +
+                (l50x + l51x) * ea + (l50y + l51y) * eb);
+      }
+
+#undef TINKER_GORDON1_L00
+#undef TINKER_GORDON1_L01
+#undef TINKER_GORDON1_M0
+#undef TINKER_GORDON1_M1
+#undef TINKER_GORDON1_M2
+#undef TINKER_GORDON1_M3
+#undef TINKER_GORDON1_M4
+#undef TINKER_GORDON1_M5
    }
 }
 
 
+/**
+ * \deprecated
+ */
 #pragma acc routine seq
 template <int ORDER>
 SEQ_CUDA
-inline void damp_pole_v2(real* restrict dmpik, real* restrict dmpi,
-                         real* restrict dmpk, real r, real alphai, real alphak)
+inline void damp_pole_deprecated(real* restrict dmpik, real* restrict dmpi,
+                                 real* restrict dmpk, real r, real alphai,
+                                 real alphak)
 {
 #if TINKER_REAL_SIZE == 8
    real eps = 0.001f;
@@ -370,140 +393,39 @@ inline void damp_pole_v2(real* restrict dmpik, real* restrict dmpi,
 
 
 #pragma acc routine seq
+template <int order>
 SEQ_CUDA
+inline void damp_pole_v2(real* restrict dmpij, real* restrict dmpi,
+                         real* restrict dmpj, real r, real ai, real aj)
+{
+   damp_gordon1<9, order>(dmpij, dmpi, dmpj, r, ai, aj);
+}
+
+
+SEQ_ROUTINE
 inline void damp_dir(real* restrict dmpi, real* restrict dmpk, real r,
                      real alphai, real alphak)
 {
-   real eps = 0.001f;
-   real diff = REAL_ABS(alphai - alphak);
-   real dampi = alphai * r;
-   real dampk = alphak * r;
-   real expi = REAL_EXP(-dampi);
-   real expk = REAL_EXP(-dampk);
-
-   real dampi2 = dampi * dampi;
-   real dampi3 = dampi * dampi2;
-
-   // GORDON1
-   real dampi4 = dampi2 * dampi2;
-
-   // divisions
-   const real div6 = 1 / ((real)6);
-   const real div30 = 1 / ((real)30);
-
-   // core-valence
-   dmpi[1] = 1 - (1 + dampi + 0.5f * dampi2) * expi;
-   dmpi[2] = 1 - (1 + dampi + 0.5f * dampi2 + dampi3 * div6) * expi;
-   dmpi[3] =
-      1 - (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + dampi4 * div30) * expi;
-
-   if (diff < eps) {
-      dmpk[1] = dmpi[1];
-      dmpk[2] = dmpi[2];
-      dmpk[3] = dmpi[3];
-   } else {
-      real dampk2 = dampk * dampk;
-      real dampk3 = dampk * dampk2;
-      real dampk4 = dampk2 * dampk2;
-      dmpk[1] = 1 - (1 + dampk + 0.5f * dampk2) * expk;
-      dmpk[2] = 1 - (1 + dampk + 0.5f * dampk2 + dampk3 * div6) * expk;
-      dmpk[3] = 1 -
-         (1 + dampk + 0.5f * dampk2 + dampk3 * div6 + dampk4 * div30) * expk;
-   }
+   damp_gordon1<7, 0>(nullptr, dmpi, dmpk, r, alphai, alphak);
 }
 
 
-#pragma acc routine seq
-SEQ_CUDA
+SEQ_ROUTINE
 inline void damp_mut(real* restrict dmpik, real r, real alphai, real alphak)
 {
-#if TINKER_REAL_SIZE == 8
-   real eps = 0.001f;
-#elif TINKER_REAL_SIZE == 4
-   real eps = 0.05f;
-#endif
-
-   real diff = REAL_ABS(alphai - alphak);
-
-   if (diff < eps)
-      alphai = 0.5f * (alphai + alphak);
-
-   real dampi = alphai * r;
-   real dampk = alphak * r;
-   real expi = REAL_EXP(-dampi);
-   real expk = REAL_EXP(-dampk);
-
-   real dampi2 = dampi * dampi;
-
-   // divisions
-   const real div6 = 1 / ((real)6);
-
-   // GORDON1
-   real dampi3 = dampi * dampi2;
-
-   if (diff < eps) {
-      real dampi4 = dampi2 * dampi2;
-      real dampi5 = dampi2 * dampi3;
-      const real div24 = 1 / ((real)24);
-      const real div48 = 1 / ((real)48);
-      const real div144 = 1 / ((real)144);
-
-      dmpik[1] =
-         1 - (1 + dampi + 0.5f * dampi2 + (7 * dampi3 + dampi4) * div48) * expi;
-      dmpik[2] = 1 -
-         (1 + dampi + 0.5f * dampi2 + dampi3 * div6 + dampi4 * div24 +
-          dampi5 * div144) *
-            expi;
-   } else {
-      real dampk2 = dampk * dampk;
-      real dampk3 = dampk * dampk2;
-      real alphai2 = alphai * alphai;
-      real alphak2 = alphak * alphak;
-      real termi = alphak2 / (alphak2 - alphai2);
-      real termk = alphai2 / (alphai2 - alphak2);
-      real termi2 = termi * termi;
-      real termk2 = termk * termk;
-
-      const real div3 = 1 / ((real)3);
-
-      dmpik[1] = 1 - termi2 * (1 + dampi + 0.5f * dampi2) * expi -
-         termk2 * (1 + dampk + 0.5f * dampk2) * expk -
-         2 * termi2 * termk * (1 + dampi) * expi -
-         2 * termk2 * termi * (1 + dampk) * expk;
-      dmpik[2] = 1 -
-         termi2 * (1 + dampi + 0.5f * dampi2 + dampi3 * div6) * expi -
-         termk2 * (1 + dampk + 0.5f * dampk2 + dampk3 * div6) * expk -
-         2 * termi2 * termk * (1 + dampi + dampi2 * div3) * expi -
-         2 * termk2 * termi * (1 + dampk + dampk2 * div3) * expk;
-   }
+   damp_gordon1<0, 5>(dmpik, nullptr, nullptr, r, alphai, alphak);
 }
 
 
-#pragma acc routine seq
-SEQ_CUDA
-inline void damp_pot(real* restrict dmpk, real r, real alphak)
-{
-   real dampk = alphak * r;
-   real expk = REAL_EXP(-dampk);
-   real dampk2 = dampk * dampk;
-
-   // GORDON1
-   // divisions
-   const real div6 = 1 / ((real)6);
-
-   real dampk3 = dampk * dampk2;
-   dmpk[0] = 1 - (1 + 0.5f * dampk) * expk;
-   dmpk[1] = 1 - (1 + dampk + 0.5f * dampk2) * expk;
-   dmpk[2] = 1 - (1 + dampk + 0.5f * dampk2 + dampk3 * div6) * expk;
-}
-
-
+/**
+ * \deprecated
+ */
 #pragma acc routine seq
 template <int order>
 SEQ_CUDA
-inline void damp_rep_obsolete(real* restrict dmpik, real r, real rinv, real r2, real rr3,
-                     real rr5, real rr7, real rr9, real rr11, real dmpi,
-                     real dmpk)
+inline void damp_rep_deprecated(real* restrict dmpik, real r, real rinv,
+                                real r2, real rr3, real rr5, real rr7, real rr9,
+                                real rr11, real dmpi, real dmpk)
 {
 #if TINKER_REAL_SIZE == 8
    real eps = 0.001f;
@@ -663,143 +585,18 @@ inline void damp_rep_obsolete(real* restrict dmpik, real r, real rinv, real r2, 
    }
 }
 
-#pragma acc routine seq
-template <int N>
-SEQ_CUDA
-inline real fsinhc_analyt(real d, real d2, real d3, real d4,
-                          real y /* exp(-d) */, real z /* exp(+d) */)
-{
-   real cy, cz;
-   if CONSTEXPR (N == 7) {
-      cy = d * (d * (d * (d * (d * (d + 21) + 210) + 1260) + 4725) + 10395) +
-         10395;
-      cy = -cy;
-      cz = d * (d * (d * (d * (d * (d - 21) + 210) - 1260) + 4725) - 10395) +
-         10395;
-      real d13 = d3 * d3 * d3 * d4;
-      return (cy * y + cz * z) / (2 * d13);
-   } else if CONSTEXPR (N == 6) {
-      cy = d * (d * (d * (d * (d + 15) + 105) + 420) + 945) + 945;
-      cz = d * (d * (d * (d * (d - 15) + 105) - 420) + 945) - 945;
-      real d11 = d3 * d4 * d4;
-      return (cy * y + cz * z) / (2 * d11);
-   } else if CONSTEXPR (N == 5) {
-      cy = d * (d * (d * (d + 10) + 45) + 105) + 105;
-      cy = -cy;
-      cz = d * (d * (d * (d - 10) + 45) - 105) + 105;
-      real d9 = d3 * d3 * d3;
-      return (cy * y + cz * z) / (2 * d9);
-   } else if CONSTEXPR (N == 4) {
-      cy = d * (d * (d + 6) + 15) + 15;
-      cz = d * (d * (d - 6) + 15) - 15;
-      real d7 = d3 * d4;
-      return (cy * y + cz * z) / (2 * d7);
-   } else if CONSTEXPR (N == 3) {
-      cy = d2 + 3 * d + 3;
-      cy = -cy;
-      cz = d2 - 3 * d + 3;
-      real d5 = d2 * d3;
-      return (cy * y + cz * z) / (2 * d5);
-   } else if CONSTEXPR (N == 2) {
-      cy = d + 1;
-      cz = d - 1;
-      return (cy * y + cz * z) / (2 * d3);
-   } else /* if CONSTEXPR (N == 1) */ {
-      cy = -1;
-      cz = 1;
-      return (cy * y + cz * z) / (2 * d);
-   }
-}
 
-#pragma acc routine seq
-template <int N>
-SEQ_CUDA
-inline real fsinhc_taylor(real x2)
-{
-   constexpr real c[][5] = {
-      {1 / 1., 1 / 6., 1 / 20., 1 / 42., 1 / 72.},        // 1
-      {1 / 3., 1 / 10., 1 / 28., 1 / 54., 1 / 88.},       // 2
-      {1 / 15., 1 / 14., 1 / 36., 1 / 66., 1 / 104.},     // 3
-      {1 / 105., 1 / 18., 1 / 44., 1 / 78., 1 / 120.},    // 4
-      {1 / 945., 1 / 22., 1 / 52., 1 / 90., 1 / 136.},    // 5
-      {1 / 10395., 1 / 26., 1 / 60., 1 / 102., 1 / 152.}, // 6
-      {1 / 135135., 1 / 30., 1 / 68., 1 / 114., 1 / 168.} // 7
-   };
-   constexpr int M = N - 1;
-   // clang-format off
-   return c[M][0]*(1+x2*c[M][1]*(1+x2*c[M][2]*(1+x2*c[M][3]*(1+x2*c[M][4]))));
-   // clang-format on
-}
-
-#pragma acc routine seq
-template <int N>
-SEQ_CUDA
-inline real fsinhc(real d, real d2, real d3, real d4, real expmd /* exp(-d) */,
-                   real exppd /* exp(+d) */)
-{
-   constexpr int M = N - 1;
-   /**
-    * (x, Approx. |Analyt - Taylor|)
-    *
-    * f1   (0.90, 1e-8)   (0.35, 1e-12)
-    * f2   (1.15, 1e-8)   (0.45, 1e-12)
-    * f3   (1.5,  1e-8)   (0.6,  1e-12)
-    * f4   (2.0,  1e-8)   (0.8,  1e-12)
-    * f5   (2.7,  1e-8)   (1.1,  1e-12)
-    * f6   (3.7,  1e-8)   (1.5,  1e-12)
-    * f7   (5.0,  1e-8)   (2.0,  1e-12)
-    */
-   double epsd[] = {0.35, 0.45, 0.6, 0.8, 1.1, 1.5, 2.0};
-   float epsf[] = {0.9, 1.15, 1.5, 2.0, 2.7, 3.7, 5.0};
-   real absd = REAL_ABS(d), eps;
-   if CONSTEXPR (sizeof(real) == sizeof(double))
-      eps = epsd[M];
-   else
-      eps = epsf[M];
-   if CONSTEXPR (N == 7) {
-      if (absd > eps)
-         return fsinhc_analyt<7>(d, d2, d3, d4, expmd, exppd);
-      else
-         return fsinhc_taylor<7>(d2);
-   } else if CONSTEXPR (N == 6) {
-      if (absd > eps)
-         return fsinhc_analyt<6>(d, d2, d3, d4, expmd, exppd);
-      else
-         return fsinhc_taylor<6>(d2);
-   } else if CONSTEXPR (N == 5) {
-      if (absd > eps)
-         return fsinhc_analyt<5>(d, d2, d3, d4, expmd, exppd);
-      else
-         return fsinhc_taylor<5>(d2);
-   } else if CONSTEXPR (N == 4) {
-      if (absd > eps)
-         return fsinhc_analyt<4>(d, d2, d3, d4, expmd, exppd);
-      else
-         return fsinhc_taylor<4>(d2);
-   } else if CONSTEXPR (N == 3) {
-      if (absd > eps)
-         return fsinhc_analyt<3>(d, d2, d3, d4, expmd, exppd);
-      else
-         return fsinhc_taylor<3>(d2);
-   } else if CONSTEXPR (N == 2) {
-      if (absd > eps)
-         return fsinhc_analyt<2>(d, d2, d3, d4, expmd, exppd);
-      else
-         return fsinhc_taylor<2>(d2);
-   } else /* if CONSTEXPR (N == 1) */ {
-      if (absd > eps)
-         return fsinhc_analyt<1>(d, d2, d3, d4, expmd, exppd);
-      else
-         return fsinhc_taylor<1>(d2);
-   }
-}
-
+/**
+ * rr1: 1/r
+ * ai: dmpi
+ * aj: dmpk
+ */
 #pragma acc routine seq
 template <int order>
 SEQ_CUDA
-inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
-                     real rr5, real rr7, real rr9, real rr11, real ai,
-                     real aj)
+inline void damp_rep_oldmodel(real* restrict dmpik, real r, real rr1, real r2, real rr3,
+                     real rr5, real rr7, real rr9, real rr11,
+                     real ai /* dmpi */, real aj /* dmpk */)
 {
    real pfac = 2 / (ai + aj);
    pfac = pfac * pfac;
@@ -809,27 +606,20 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
 
    real a = ai * r / 2, b = aj * r / 2;
    real c = (a + b) / 2, d = (b - a) / 2;
-   real expmc = exp(-c);
-   real expmd = exp(-d);
-   real exppd = exp(d);
+   real expmc = REAL_EXP(-c);
 
    real c2 = c * c;
    real c3 = c2 * c;
    real c4 = c2 * c2;
    real d2 = d * d;
-   real d3 = d2 * d;
    real d4 = d2 * d2;
    real c2d2 = (c * d) * (c * d);
 
    real f1d, f2d, f3d, f4d, f5d, f6d, f7d;
-   f1d = fsinhc<1>(d, d2, d3, d4, expmd, exppd);
-   f2d = fsinhc<2>(d, d2, d3, d4, expmd, exppd);
-   f3d = fsinhc<3>(d, d2, d3, d4, expmd, exppd);
-   f4d = fsinhc<4>(d, d2, d3, d4, expmd, exppd);
-   f5d = fsinhc<5>(d, d2, d3, d4, expmd, exppd);
-   f6d = fsinhc<6>(d, d2, d3, d4, expmd, exppd);
    if CONSTEXPR (order > 9)
-      f7d = fsinhc<7>(d, d2, d3, d4, expmd, exppd);
+      fsinhc7(d, f1d, f2d, f3d, f4d, f5d, f6d, f7d);
+   else
+      fsinhc6(d, f1d, f2d, f3d, f4d, f5d, f6d);
 
    real inv3 = 1. / 3, inv15 = 1. / 15, inv105 = 1. / 105, inv945 = 1. / 945;
 
@@ -838,7 +628,7 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
    real s;
    s = f1d * (c+1)
      + f2d * c2;
-   s *= rinv;
+   s *= rr1;
    s *= expmc;
    dmpik[0] = pfac * s * s;
 
@@ -892,7 +682,128 @@ inline void damp_rep(real* restrict dmpik, real r, real rinv, real r2, real rr3,
       d5s *= rr11 * inv945;
       d5s *= expmc;
       dmpik[5] = pfac * 2 * (s * d5s + 5 * ds * d4s + 10 * d2s * d3s);
-      }
+   }
+   // clang-format on
+}
+
+
+#pragma acc routine seq
+template <int order>
+SEQ_CUDA
+inline void damp_rep(real* restrict dmpik, real r, real rr1, real r2, real rr3,
+                     real rr5, real rr7, real rr9, real rr11,
+                     real ai /* dmpi */, real aj /* dmpk */)
+{
+   real pfac = 2 / (ai + aj);
+   pfac = pfac * pfac;
+   pfac = pfac * ai * aj;
+   pfac = pfac * pfac * pfac;
+
+   real a = ai * r / 2, b = aj * r / 2;
+   real c = (a + b) / 2, d = (b - a) / 2;
+   real expmc = REAL_EXP(-c);
+
+   real c2 = c * c;
+   real c3 = c2 * c;
+   real c4 = c2 * c2;
+   real d2 = d * d;
+   real d4 = d2 * d2;
+   real c2d2 = (c * d) * (c * d);
+
+   real r3 = r2 * r;
+   real r4 = r2 * r2;
+   real r5 = r3 * r2;
+
+   real f1d, f2d, f3d, f4d, f5d, f6d, f7d;
+   if CONSTEXPR (order > 9)
+      fsinhc7(d, f1d, f2d, f3d, f4d, f5d, f6d, f7d);
+   else
+      fsinhc6(d, f1d, f2d, f3d, f4d, f5d, f6d);
+
+   real inv3 = 1. / 3, inv15 = 1. / 15, inv105 = 1. / 105, inv945 = 1. / 945;
+   real inv5 = 1. / 5, inv7 = 1. / 7;
+
+   // compute
+   // clang-format off
+   real s;
+   s = f1d * (c+1)
+     + f2d * c2;
+   
+   s *= expmc;
+   real s0s0 = pfac * s * s;
+
+   dmpik[0] = s0s0;
+
+   real ds;
+   ds = f1d * (-c2)
+       + f2d * (c2*(2-c) + d2*(c+1))
+       + f3d * c2d2;
+
+   ds *= expmc;
+   real s0s1 = pfac * s * ds;
+
+   dmpik[1] = s0s0 - 2*s0s1;
+
+   real d2s = 0;
+   d2s += f1d * c2*(c-1)
+        + f2d * (c2*(c2 - 4*c + 2) + d2*(c+1) - 2*c2d2);
+   d2s += d2*(f3d * (c2*(5 - 2*c) + d2*(c+1))
+            + f4d * c2d2);
+
+   d2s *= expmc * inv3;
+   real s1s1 = pfac * ds * ds;
+   real s0s2 = pfac * s * d2s;
+
+   dmpik[2] = dmpik[1] + 2*(s1s1*inv3 + s0s2);
+
+   real d3s = 0;
+   d3s += f1d * c3*(2-c)
+        + f2d * c2*(6*c2 - c3 - 6*c + 3*d2*(c-2));
+   d3s += d2*(f3d * 3*(c2*(c2 - 5*c + 4) + d2*(c+1) - c2d2)
+        + d2*(f4d * (3*c2*(3-c) + d2*(c+1))
+            + f5d * c2d2));
+
+   d3s *= expmc * inv15;
+   real s0s3 = pfac * s * d3s;
+   real s1s2 = pfac * ds * d2s;
+
+   dmpik[3] = dmpik[1] + 2 * ((2*s1s1 + 6*s0s2 - 3*s1s2) * inv5 - s0s3);
+
+
+   real d4s = 0;
+   d4s += f1d * c4*(c-3)
+        + f2d * c2*(c2*(c2 - 8*c + 12) + 2*d2*(7*c-3) - 4*c2d2);
+   d4s += d2*(f3d * (2*c2*(15*c2 - 2*c3 - 24*c + 6) + 3*d2*(c+1) + 6*c2d2*(c-3))
+        + d2*(f4d * (3*c2*(2*c2 - 12*c + 13) + 6*d2*(c+1) - 4*c2*d2)
+                + f5d * d2*(2*c2*(7 - 2*c) + d2*(c+1))
+                + f6d * c2*d4));
+
+   d4s *= expmc * inv105;
+   real s0s4 = pfac * s * d4s;
+   real s1s3 = pfac * ds * d3s;
+   real s2s2 = pfac * d2s * d2s;
+
+   dmpik[4] = dmpik[1] + 2*((3*(s1s1 + 3 * s0s2 - 2*s1s2 + 3*s2s2*inv5) 
+                       - 2*(5*s0s3 - 2*s1s3))*inv7 + s0s4);
+
+   if CONSTEXPR (order > 9) {
+      real d5s = 0;
+      d5s += c3*(f1d * c2*(4-c)
+           + f2d * (c2*(10*(c-2) - c2) + 5*(d2*(4-5*c) + c2d2)));
+      d5s += d2*(f3d * 5*c2*(c4 + 2*c*(c*(12 - 5*c) - 6) + d2*(10*c-9) - 2*c2d2)
+           + d2*(f4d * 5*(c2*(2*c2*(c-9) + 3*(13*c-6) + 2*d2*(4-c)) - 3*d2*(c+1))
+                   + d2*(f5d * 5*(c2*(2*c*(c-7) + 19) + 2*d2*(c+1) - c2d2)
+                       + f6d * d2*(5*c2*(4-c) + d2*(c+1))
+                       + f7d * c2*d4)));
+
+      d5s *= expmc * inv945;
+      real s0s5 = pfac * s * d5s;
+      real s1s4 = pfac * ds * d4s;
+      real s2s3 = pfac * d2s * d3s;
+
+      dmpik[5] = dmpik[1] + 2*((4*(s1s1*inv3 + s0s2) - 5*(s0s3 - s0s4 + s1s4*inv3)
+               + (9*s2s2 + 10*(2*s1s3 - s2s3))*inv7)*inv3 - s1s2 - s0s5); 
+   }
    // clang-format on
 }
 }

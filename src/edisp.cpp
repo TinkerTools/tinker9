@@ -4,7 +4,7 @@
 #include "nblist.h"
 #include "pmestuf.h"
 #include "potent.h"
-#include "tool/fc.h"
+#include "tinker_rt.h"
 #include "tool/host_zero.h"
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/disp.hh>
@@ -69,7 +69,7 @@ void edisp_data(rc_op op)
 
       if (dsppot::use_dcorr && !use_dewald()) {
          double elrc = 0, vlrc = 0;
-         t_evcorr1("DISP", &elrc, &vlrc);
+         tinker_f_evcorr1({const_cast<char*>("DISP"), 4}, &elrc, &vlrc);
          elrc_vol_dsp = elrc * volbox();
          vlrc_vol_dsp = vlrc * volbox();
       } else {

@@ -26,7 +26,7 @@
 /**
  * \ingroup prec
  * \def TINKER_DETERMINISTIC_FORCE
- * Logical macro for the underlying type of energy gradients.
+ * \brief Logical macro for the underlying type of energy gradients.
  *    - If `true`, always use fixed-point arithmetic to accumulate energy
  *    gradients, regardless of the underlying type of each individual component.
  *    - If `false`, use type `real`, which can either be `float` or `double`

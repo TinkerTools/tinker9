@@ -1,6 +1,6 @@
 #include "energy.h"
+#include "md.h"
 #include "tinker_rt.h"
-#include "tool/io_text.h"
 #include <tinker/detail/inform.hh>
 
 
@@ -11,8 +11,8 @@ namespace tinker {
 void x_testgrad(int, char**)
 {
    initial();
-   TINKER_RT(getxyz)();
-   mechanic();
+   tinker_f_getxyz();
+   tinker_f_mechanic();
    mechanic2();
 
 
@@ -104,6 +104,6 @@ void x_testgrad(int, char**)
 
 
    finish();
-   TINKER_RT(final)();
+   tinker_f_final();
 }
 }

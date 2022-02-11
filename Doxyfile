@@ -284,7 +284,8 @@ INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = NDEBUG \
                          TINKER_MIXED_PRECISION \
                          TINKER_CUDART \
-                         TINKER_EXTERN_DEFINITION_FILE
+                         TINKER_EXTERN_DEFINITION_FILE \
+                         __cplusplus
 EXPAND_AS_DEFINED      = YES
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

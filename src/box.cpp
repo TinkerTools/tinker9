@@ -1,8 +1,8 @@
 #include "box.h"
 #include "mathfunc.h"
 #include "md.h"
+#include "tinker_rt.h"
 #include "tool/darray.h"
-#include "tool/fc.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/boxes.hh>
 
@@ -182,7 +182,7 @@ void set_tinker_box_module(const Box& p)
    boxes::alpha = a_deg;
    boxes::beta = b_deg;
    boxes::gamma = c_deg;
-   t_lattice();
+   tinker_f_lattice();
 }
 
 

@@ -106,25 +106,23 @@ void pair_mpole_chgpen(                             //
    } // endif NON_EWALD
 
 
-   real m = 1 - mscale;
-   rr1i = bn[0] - (m + mscale * dmpi[0]) * rr1;
-   rr3i = bn[1] - (m + mscale * dmpi[1]) * rr3;
-   rr5i = bn[2] - (m + mscale * dmpi[2]) * rr5;
-   rr7i = bn[3] - (m + mscale * dmpi[3]) * rr7;
-   rr1k = bn[0] - (m + mscale * dmpk[0]) * rr1;
-   rr3k = bn[1] - (m + mscale * dmpk[1]) * rr3;
-   rr5k = bn[2] - (m + mscale * dmpk[2]) * rr5;
-   rr7k = bn[3] - (m + mscale * dmpk[3]) * rr7;
-   rr1ik = bn[0] - (m + mscale * dmpik[0]) * rr1;
-   rr3ik = bn[1] - (m + mscale * dmpik[1]) * rr3;
-   rr5ik = bn[2] - (m + mscale * dmpik[2]) * rr5;
-   rr7ik = bn[3] - (m + mscale * dmpik[3]) * rr7;
-   rr9ik = bn[4] - (m + mscale * dmpik[4]) * rr9;
-   rr1 = bn[0] - m * rr1;
-   rr3 = bn[1] - m * rr3;
-
+   rr1i = bn[0] - (1 - mscale * dmpi[0]) * rr1;
+   rr3i = bn[1] - (1 - mscale * dmpi[1]) * rr3;
+   rr5i = bn[2] - (1 - mscale * dmpi[2]) * rr5;
+   rr7i = bn[3] - (1 - mscale * dmpi[3]) * rr7;
+   rr1k = bn[0] - (1 - mscale * dmpk[0]) * rr1;
+   rr3k = bn[1] - (1 - mscale * dmpk[1]) * rr3;
+   rr5k = bn[2] - (1 - mscale * dmpk[2]) * rr5;
+   rr7k = bn[3] - (1 - mscale * dmpk[3]) * rr7;
+   rr1ik = bn[0] - (1 - mscale * dmpik[0]) * rr1;
+   rr3ik = bn[1] - (1 - mscale * dmpik[1]) * rr3;
+   rr5ik = bn[2] - (1 - mscale * dmpik[2]) * rr5;
+   rr7ik = bn[3] - (1 - mscale * dmpik[3]) * rr7;
+   rr9ik = bn[4] - (1 - mscale * dmpik[4]) * rr9;
    if CONSTEXPR (do_g)
-      rr11ik = bn[5] - (m + mscale * dmpik[5]) * rr11;
+      rr11ik = bn[5] - (1 - mscale * dmpik[5]) * rr11;
+   rr1 = bn[0] - (1 - mscale) * rr1;
+   rr3 = bn[1] - (1 - mscale) * rr3;
 
 
    if CONSTEXPR (do_e) {

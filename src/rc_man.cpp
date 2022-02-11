@@ -4,22 +4,22 @@
 namespace tinker {
 bool ResourceManagement::will_dealloc() const
 {
-   return op_ & rc_dealloc;
+   return m_op & rc_dealloc;
 }
 
 
 bool ResourceManagement::only_dealloc() const
 {
-   return op_ == rc_dealloc;
+   return m_op == rc_dealloc;
 }
 
 
 ResourceManagement::ResourceManagement(void (*f)(rc_op), rc_op op)
-   : f_(f)
-   , op_(op)
+   : m_f(f)
+   , m_op(op)
 {
    if (!will_dealloc()) {
-      f_(op_);
+      m_f(m_op);
    }
 }
 
@@ -27,7 +27,7 @@ ResourceManagement::ResourceManagement(void (*f)(rc_op), rc_op op)
 ResourceManagement::~ResourceManagement()
 {
    if (only_dealloc()) {
-      f_(op_);
+      m_f(m_op);
    }
 }
 
@@ -100,45 +100,3 @@ void device_data(rc_op op)
    rc_man md42{md_data, op};
 }
 }
-
-
-#if defined(TINKER_GFORTRAN)
-// GNU Fortran
-extern "C" void _gfortran_set_args(int, char**);
-
-
-namespace tinker {
-void fortran_runtime_initialize(int argc, char** argv)
-{
-   _gfortran_set_args(argc, argv);
-}
-
-
-void fortran_runtime_finish() {}
-}
-
-
-#elif defined(TINKER_IFORT)
-// Intel
-extern "C" void for_rtl_init_(int*, char**);
-extern "C" int for_rtl_finish_();
-extern "C" int for__l_argc;
-extern "C" char** for__a_argv;
-
-
-namespace tinker {
-void fortran_runtime_initialize(int argc, char** argv)
-{
-   // what a surprise that I had to use these undocumented variables here
-   for__l_argc = argc;
-   for__a_argv = argv;
-   for_rtl_init_(&argc, argv);
-}
-
-
-void fortran_runtime_finish()
-{
-   for_rtl_finish_();
-}
-}
-#endif

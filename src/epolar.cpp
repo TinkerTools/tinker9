@@ -476,7 +476,8 @@ void epolar_data(rc_op op)
    }
 
    if (op & rc_init) {
-      udiag = polpot::udiag;
+      // TODO: rename udiag to uaccel
+      udiag = polpot::uaccel;
 
       const double polmin = 1.0e-16;
       std::vector<double> pinvbuf(n);

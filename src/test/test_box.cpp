@@ -49,7 +49,7 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
    int argc = 1;
    real xr, yr, zr;
 
-   fortran_runtime_initialize(argc, (char**)argv);
+   tinkerFortranRuntimeBegin(argc, (char**)argv);
    initial();
    gpu_card_data(rc_alloc | rc_init);
    box_data_acc(rc_alloc);
@@ -99,8 +99,8 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
 
    box_data_acc(rc_dealloc);
    gpu_card_data(rc_dealloc);
-   TINKER_RT(final)();
-   fortran_runtime_finish();
+   tinker_f_final();
+   tinkerFortranRuntimeEnd();
 }
 
 
@@ -110,7 +110,7 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
    int argc = 1;
    real xr, yr, zr;
 
-   fortran_runtime_initialize(argc, (char**)argv);
+   tinkerFortranRuntimeBegin(argc, (char**)argv);
    initial();
    gpu_card_data(rc_alloc | rc_init);
    box_data_acc(rc_alloc);
@@ -184,8 +184,8 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
 
    box_data_acc(rc_dealloc);
    gpu_card_data(rc_dealloc);
-   TINKER_RT(final)();
-   fortran_runtime_finish();
+   tinker_f_final();
+   tinkerFortranRuntimeEnd();
 }
 
 
@@ -196,7 +196,7 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
    real xr, yr, zr;
    double xa, ya, za;
 
-   fortran_runtime_initialize(argc, (char**)argv);
+   tinkerFortranRuntimeBegin(argc, (char**)argv);
    initial();
    gpu_card_data(rc_alloc | rc_init);
    box_data_acc(rc_alloc);
@@ -249,6 +249,6 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
 
    box_data_acc(rc_dealloc);
    gpu_card_data(rc_dealloc);
-   TINKER_RT(final)();
-   fortran_runtime_finish();
+   tinker_f_final();
+   tinkerFortranRuntimeEnd();
 }

@@ -48,8 +48,8 @@ constexpr rc_op rc_init = rc_op::INIT;
 class ResourceManagement
 {
 private:
-   void (*f_)(rc_op);
-   rc_op op_;
+   void (*m_f)(rc_op);
+   rc_op m_op;
    bool will_dealloc() const;
    bool only_dealloc() const;
 
@@ -84,17 +84,4 @@ void finish();
  * Set up and clean up device environment.
  */
 void device_data(rc_op);
-
-
-/**
- * \ingroup rc
- * Wrappers of Intel `for_rtl_init_` function;
- * of GNU `_gfortran_set_args` function.
- */
-void fortran_runtime_initialize(int, char**);
-/**
- * \ingroup rc
- * Wrappers of Intel `for_rtl_finish_` function.
- */
-void fortran_runtime_finish();
 }
