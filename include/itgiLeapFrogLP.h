@@ -8,8 +8,8 @@ protected:
    void kickoff() override;
 
 public:
-   ~LeapFrogLPIntegrator();
    LeapFrogLPIntegrator();
+   ~LeapFrogLPIntegrator();
    void printDetail(FILE*) override;
    void dynamic(int, time_prec) override;
 };

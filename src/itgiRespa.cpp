@@ -4,10 +4,20 @@
 #include "mdegv.h"
 #include "mdintg.h"
 #include "mdpq.h"
-#include <tinker/detail/mdstuf.hh>
 
 namespace tinker {
 void RespaIntegrator::kickoff()
+{
+   RespaIntegrator::KickOff();
+}
+
+RespaIntegrator::RespaIntegrator(ThermostatEnum te, BarostatEnum be)
+   : BasicIntegrator(PropagatorEnum::Respa, te, be)
+{
+   this->kickoff();
+}
+
+void RespaIntegrator::KickOff()
 {
    energy((calc::grad | calc::virial) & rc_flag);
 
@@ -22,19 +32,5 @@ void RespaIntegrator::kickoff()
    darray::copy(g::q0, n, gx2, gx);
    darray::copy(g::q0, n, gy2, gy);
    darray::copy(g::q0, n, gz2, gz);
-}
-
-RespaIntegrator::~RespaIntegrator()
-{
-   darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
-}
-
-RespaIntegrator::RespaIntegrator(ThermostatEnum te, BarostatEnum be)
-   : VerletIntegrator(te, be)
-{
-   m_nrespa = mdstuf::nrespa;
-   assert(m_nrespa > 1);
-   darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
-   this->kickoff();
 }
 }

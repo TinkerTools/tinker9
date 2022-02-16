@@ -1,5 +1,4 @@
 #include "itgtNhc.h"
-#include "itgEnum.h"
 #include "mdegv.h"
 #include "mdpq.h"
 #include "mdpt.h"
@@ -76,7 +75,7 @@ void NhcThermostat::controlImpl(time_prec dt)
 
 NhcThermostat::NhcThermostat(int nhclen, int nc, double dfree, double* (*kin)(),
                              void (*scale)(double), std::string str)
-   : BasicThermostat(ThermostatEnum::m_Nhc1996)
+   : BasicThermostat()
    , nnose(nhclen)
    , nhc_nc(nc)
    , g0(dfree)
@@ -123,14 +122,14 @@ void NhcThermostat::control2(time_prec dt, bool)
    this->controlImpl(dt);
 }
 
-double* NhcThermostat::atomicKinetic()
+double* NhcThermostat::kineticAtomic()
 {
    T_prec temp;
    kinetic(temp);
    return &eksum;
 }
 
-void NhcThermostat::scaleAtomicVelocity(double velsc)
+void NhcThermostat::scaleVelocityAtomic(double velsc)
 {
    darray::scale(g::q0, n, velsc, vx);
    darray::scale(g::q0, n, velsc, vy);

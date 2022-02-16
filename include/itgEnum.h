@@ -59,4 +59,18 @@ enum class IntegratorEnum
    Nhc2006, // J. Phys. A, 39 5629 (2006)
             // https://doi.org/10.1088/0305-4470/39/19/S18
 };
+
+class IntegratorStaticData
+{
+protected:
+   static int nrespa;
+   static bool applyBaro;
+   static int anisoArrayLength;
+   static const int anisoArray[6][2];
+   static constexpr int OrthoOrOct = 3;
+   static constexpr int Mono = 4;
+   static constexpr int Tri = 6;
+};
+
+void __PlaceHolderMessage(const char* s);
 }

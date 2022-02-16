@@ -15,14 +15,22 @@ MonteCarloBarostat::~MonteCarloBarostat()
 }
 
 MonteCarloBarostat::MonteCarloBarostat()
-   : BasicBarostat(BarostatEnum::MonteCarlo)
+   : BasicBarostat()
 {
    darray::allocate(n, &x_pmonte, &y_pmonte, &z_pmonte);
    get_kv("VOLUME-TRIAL", m_nbaro, bath::voltrial);
 }
 
+BarostatEnum MonteCarloBarostat::getBarostatEnum() const
+{
+   return BarostatEnum::MonteCarlo;
+}
+
 void MonteCarloBarostat::control4(time_prec)
 {
+   if (not applyBaro)
+      return;
+
    T_prec temp = bath::kelvin;
    if (not bath::isothermal)
       kinetic(temp);
@@ -33,9 +41,9 @@ bool MonteCarloBarostat::ifApply(int)
 {
    double rdm = random<double>();
    if (rdm < 1.0 / m_nbaro)
-      m_apply = true;
+      applyBaro = true;
    else
-      m_apply = false;
-   return m_apply;
+      applyBaro = false;
+   return applyBaro;
 }
 }

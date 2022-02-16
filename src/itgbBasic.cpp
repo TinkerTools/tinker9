@@ -1,5 +1,4 @@
 #include "itgbBasic.h"
-#include "itgEnum.h"
 #include "tinker_rt.h"
 #include "tool/io_print.h"
 #include <tinker/detail/bath.hh>
@@ -13,10 +12,8 @@ void BasicBarostat::printBasic(FILE* o)
    print(o, " NBaro            : %12d\n", m_nbaro);
 }
 
-BasicBarostat::BasicBarostat(BarostatEnum be)
-   : m_baroEnum(be)
-   , m_nbaro(1)
-   , m_apply(false)
+BasicBarostat::BasicBarostat()
+   : m_nbaro(1)
 {
    int msave;
    msave = m_nbaro;
@@ -25,11 +22,6 @@ BasicBarostat::BasicBarostat(BarostatEnum be)
    get_kv("NBARO", m_nbaro, msave);
 }
 
-BasicBarostat::BasicBarostat()
-   : m_baroEnum(BarostatEnum::Null)
-   , m_nbaro(1)
-{}
-
 BasicBarostat::~BasicBarostat() {}
 
 void BasicBarostat::printDetail(FILE* o)
@@ -37,14 +29,19 @@ void BasicBarostat::printDetail(FILE* o)
    printBasic(o);
 }
 
-bool BasicBarostat::ifApply(int istep)
-{
-   m_apply = ((istep % m_nbaro) == 0);
-   return m_apply;
-}
-
 BarostatEnum BasicBarostat::getBarostatEnum() const
 {
-   return m_baroEnum;
+   return BarostatEnum::Null;
+}
+
+bool BasicBarostat::ifApply(int istep)
+{
+   applyBaro = ((istep % m_nbaro) == 0);
+   return applyBaro;
+}
+
+bool BasicBarostat::ifApply() const
+{
+   return applyBaro;
 }
 }

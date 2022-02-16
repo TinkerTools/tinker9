@@ -24,7 +24,7 @@ public:
    void control1(time_prec time_prec) override;
    void control2(time_prec time_prec, bool) override;
 
-   static double* atomicKinetic();
-   static void scaleAtomicVelocity(double scale);
+   static double* kineticAtomic();
+   static void scaleVelocityAtomic(double scale);
 };
 }

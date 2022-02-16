@@ -138,17 +138,17 @@ void integrate_data(rc_op op)
          barostat = BarostatEnum::m_Nhc1996;
       }
 
-      bool nptVerlet = true;
+      bool isNRespa1 = true;
       if (integrator == IntegratorEnum::Verlet or
           integrator == IntegratorEnum::Respa) {
          if (barostat == BarostatEnum::LP2022) {
             if (integrator == IntegratorEnum::Respa)
-               nptVerlet = false;
+               isNRespa1 = false;
             integrator = IntegratorEnum::LP2022;
             thermostat = ThermostatEnum::m_LP2022;
          } else if (barostat == BarostatEnum::Nhc2006) {
             if (integrator == IntegratorEnum::Respa)
-               nptVerlet = false;
+               isNRespa1 = false;
             integrator = IntegratorEnum::Nhc2006;
             thermostat = ThermostatEnum::m_Nhc2006;
          }
@@ -156,19 +156,17 @@ void integrate_data(rc_op op)
 
       intg = nullptr;
       if (integrator == IntegratorEnum::Respa)
-         intg =
-            new RespaIntegrator(PropagatorEnum::Respa, thermostat, barostat);
+         intg = new RespaIntegrator(thermostat, barostat);
       else if (integrator == IntegratorEnum::Verlet)
-         intg =
-            new VerletIntegrator(PropagatorEnum::Verlet, thermostat, barostat);
+         intg = new VerletIntegrator(thermostat, barostat);
       else if (integrator == IntegratorEnum::LeapFrogLP)
          intg = new LeapFrogLPIntegrator;
       else if (integrator == IntegratorEnum::LP2022)
-         intg = new LP22Integrator(nptVerlet);
+         intg = new LP22Integrator(isNRespa1);
       else if (integrator == IntegratorEnum::Nhc1996)
          intg = new Nhc96Integrator;
       else if (integrator == IntegratorEnum::Nhc2006)
-         intg = new Nhc06Integrator(nptVerlet);
+         intg = new Nhc06Integrator(isNRespa1);
       else if (integrator == IntegratorEnum::Beeman)
          TINKER_THROW("Beeman integrator is not available.");
       if (inform::verbose) {

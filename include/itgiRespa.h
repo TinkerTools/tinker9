@@ -1,15 +1,14 @@
 #pragma once
-#include "itgiVerlet.h"
+#include "itgiBasic.h"
 
 namespace tinker {
-class RespaIntegrator : public VerletIntegrator
+class RespaIntegrator : public BasicIntegrator
 {
 protected:
    void kickoff() override;
 
 public:
-   ~RespaIntegrator();
-   RespaIntegrator(ThermostatEnum, BarostatEnum);
-   RespaIntegrator(PropagatorEnum pe, ThermostatEnum te, BarostatEnum be) : VerletIntegrator(pe,te,be) {}
+   RespaIntegrator(ThermostatEnum te, BarostatEnum be);
+   static void KickOff();
 };
 }

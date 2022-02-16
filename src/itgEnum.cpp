@@ -1,7 +1,7 @@
 #include "itgEnum.h"
 
+#include "itgpBasic.h"
 #include "itgpRespa.h"
-#include "itgpVerlet.h"
 namespace tinker {
 BasicPropagator* create(PropagatorEnum pe)
 {
@@ -33,8 +33,8 @@ BasicThermostat* create(ThermostatEnum te)
       break;
    case ThermostatEnum::Nhc:
       t = new NhcThermostat(5, 5, static_cast<double>(mdstuf::nfree), //
-                            NhcThermostat::atomicKinetic,             //
-                            NhcThermostat::scaleAtomicVelocity,       //
+                            NhcThermostat::kineticAtomic,             //
+                            NhcThermostat::scaleVelocityAtomic,       //
                             std::string("NHC"));
       break;
    default:
@@ -72,5 +72,18 @@ BasicBarostat* create(BarostatEnum be)
       break;
    }
    return b;
+}
+}
+
+namespace tinker {
+int IntegratorStaticData::nrespa = 0;
+bool IntegratorStaticData::applyBaro = false;
+int IntegratorStaticData::anisoArrayLength = 0;
+const int IntegratorStaticData::anisoArray[6][2] = {{0, 0}, {1, 1}, {2, 2},
+                                                    {0, 2}, {0, 1}, {1, 2}};
+
+void __PlaceHolderMessage(const char* s)
+{
+   printf("\x1b[31m%s\033[0m\n", s);
 }
 }

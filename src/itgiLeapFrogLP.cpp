@@ -11,13 +11,6 @@ void LeapFrogLPIntegrator::kickoff()
    energy(calc::energy | calc::grad | calc::virial);
 }
 
-LeapFrogLPIntegrator::~LeapFrogLPIntegrator()
-{
-   darray::deallocate(leapfrog_x, leapfrog_y, leapfrog_z);
-   darray::deallocate(leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold,
-                      leapfrog_vyold, leapfrog_vzold);
-}
-
 LeapFrogLPIntegrator::LeapFrogLPIntegrator()
    : BasicIntegrator()
 {
@@ -25,6 +18,13 @@ LeapFrogLPIntegrator::LeapFrogLPIntegrator()
    darray::allocate(n, &leapfrog_vx, &leapfrog_vy, &leapfrog_vz,
                     &leapfrog_vxold, &leapfrog_vyold, &leapfrog_vzold);
    this->kickoff();
+}
+
+LeapFrogLPIntegrator::~LeapFrogLPIntegrator()
+{
+   darray::deallocate(leapfrog_x, leapfrog_y, leapfrog_z);
+   darray::deallocate(leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold,
+                      leapfrog_vyold, leapfrog_vzold);
 }
 
 void LeapFrogLPIntegrator::printDetail(FILE*) {}
