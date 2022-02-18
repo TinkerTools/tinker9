@@ -170,7 +170,6 @@ void integrate_data(rc_op op)
       else if (integrator == IntegratorEnum::Beeman)
          TINKER_THROW("Beeman integrator is not available.");
       if (inform::verbose) {
-         print(stdout, "\n");
          intg->printDetail(stdout);
       }
    }

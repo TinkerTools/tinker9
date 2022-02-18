@@ -6,6 +6,11 @@
 #include <tinker/detail/bath.hh>
 
 namespace tinker {
+const char* LP22Integrator::name() const
+{
+   return "Langevin Piston (2022)";
+}
+
 void LP22Integrator::kickoff()
 {
    if (m_isNRespa1)

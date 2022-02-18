@@ -7,11 +7,6 @@
 #include "tool/io_print.h"
 
 namespace tinker {
-void BasicIntegrator::printBasic(FILE* o)
-{
-   print(o, "\n");
-}
-
 void BasicIntegrator::plan(int istep)
 {
    int vers0 = rc_flag & calc::vmask;
@@ -54,7 +49,8 @@ void BasicIntegrator::printDetail(FILE* o)
 {
    m_thermo->printDetail(o);
    m_baro->printDetail(o);
-   this->printBasic(o);
+   print(o, "\n");
+   print(o, " %s\n", this->name());
 }
 
 void BasicIntegrator::dynamic(int istep, time_prec dt)
@@ -82,7 +78,6 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
    } else {
       virial_prec vir_fast[9] = {0};
       virial_prec vir_f[9];
-      energy_prec esum_f;
       time_prec dta = dt / nrespa;
 
       for (int ifast = 1; ifast < nrespa; ++ifast) {

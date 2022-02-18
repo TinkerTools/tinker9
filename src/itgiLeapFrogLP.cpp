@@ -6,6 +6,11 @@
 #include "tool/darray.h"
 
 namespace tinker {
+const char* LeapFrogLPIntegrator::name() const
+{
+   return "Molecular Dynamics Trajectory via Langevin Piston Algorithm";
+}
+
 void LeapFrogLPIntegrator::kickoff()
 {
    energy(calc::energy | calc::grad | calc::virial);
@@ -26,8 +31,6 @@ LeapFrogLPIntegrator::~LeapFrogLPIntegrator()
    darray::deallocate(leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold,
                       leapfrog_vyold, leapfrog_vzold);
 }
-
-void LeapFrogLPIntegrator::printDetail(FILE*) {}
 
 void LeapFrogLPIntegrator::dynamic(int istep, time_prec dt)
 {

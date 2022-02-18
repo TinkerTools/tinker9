@@ -4,6 +4,11 @@
 #include "mdpq.h"
 
 namespace tinker {
+const char* VerletIntegrator::name() const
+{
+   return "Molecular Dynamics Trajectory via Velocity Verlet Algorithm";
+}
+
 void VerletIntegrator::kickoff()
 {
    VerletIntegrator::KickOff();

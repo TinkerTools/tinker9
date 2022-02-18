@@ -6,19 +6,15 @@
 namespace tinker {
 void BasicThermostat::printBasic(FILE* o)
 {
-   print(o, "\n");
-   print(o, " Temperature      : %12.1lf Kelvin\n", bath::kelvin);
-   print(o, " Tau-Temperature  : %12.1lf ps\n", bath::tautemp);
+   print(o, " Temperature        %12.1lf Kelvin\n", bath::kelvin);
+   print(o, " Tau-Temperature    %12.1lf ps\n", bath::tautemp);
 }
 
 BasicThermostat::BasicThermostat() {}
 
 BasicThermostat::~BasicThermostat() {}
 
-void BasicThermostat::printDetail(FILE* o)
-{
-   printBasic(o);
-}
+void BasicThermostat::printDetail(FILE* o) {}
 
 void BasicThermostat::control1(time_prec) {}
 

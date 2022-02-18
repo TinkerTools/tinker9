@@ -100,14 +100,15 @@ NhcThermostat::NhcThermostat(int nhclen, int nc, double dfree, double* (*kin)(),
 
 void NhcThermostat::printDetail(FILE* o)
 {
+   print(o, "\n");
    print(o, " %s\n", name.c_str());
-   print(o, " DOF              : %12.1lf\n", g0);
-   print(o, " NHC N            : %12d\n", nnose);
-   print(o, " NHC NC           : %12d\n", nhc_nc);
+   print(o, " DOF                %12.1lf\n", g0);
+   print(o, " NHC N              %12d\n", nnose);
+   print(o, " NHC NC             %12d\n", nhc_nc);
    int nsy = nhc_nsy;
-   print(o, " NHC NSY          : %12d\n", nsy);
+   print(o, " NHC NSY            %12d\n", nsy);
    for (int i = 0; i < nnose; ++i) {
-      print(o, " NHC %2d Mass      : %12.4lf\n", i + 1, qnh[i]);
+      print(o, " NHC %2d Mass        %12.4lf\n", i + 1, qnh[i]);
    }
    printBasic(o);
 }

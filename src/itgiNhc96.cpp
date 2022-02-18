@@ -7,6 +7,11 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
+const char* Nhc96Integrator::name() const
+{
+   return "Molecular Dynamics Trajectory via Nose-Hoover NPT Algorithm";
+}
+
 void Nhc96Integrator::kickoff()
 {
    double ekt = units::gasconst * bath::kelvin;
@@ -30,8 +35,6 @@ Nhc96Integrator::Nhc96Integrator()
 
    this->kickoff();
 }
-
-void Nhc96Integrator::printDetail(FILE*) {}
 
 void Nhc96Integrator::dynamic(int istep, time_prec dt)
 {

@@ -6,6 +6,11 @@
 #include <tinker/detail/bath.hh>
 
 namespace tinker {
+const char* Nhc06Integrator::name() const
+{
+   return "NHC2006";
+}
+
 void Nhc06Integrator::kickoff()
 {
    if (m_isNRespa1)

@@ -6,6 +6,11 @@
 #include "mdpq.h"
 
 namespace tinker {
+const char* RespaIntegrator::name() const
+{
+   return "Molecular Dynamics Trajectory via r-RESPA MTS Algorithm";
+}
+
 void RespaIntegrator::kickoff()
 {
    RespaIntegrator::KickOff();

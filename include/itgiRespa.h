@@ -5,6 +5,7 @@ namespace tinker {
 class RespaIntegrator : public BasicIntegrator
 {
 protected:
+   const char* name() const override;
    void kickoff() override;
 
 public:

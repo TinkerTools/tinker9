@@ -7,6 +7,7 @@ class LP22Integrator : public BasicIntegrator
 {
 protected:
    bool m_isNRespa1;
+   const char* name() const override;
    void kickoff() override;
 
 public:

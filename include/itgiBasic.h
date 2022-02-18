@@ -14,16 +14,15 @@ protected:
    int vers1;
    bool save;
 
-   void printBasic(FILE*);
    virtual void plan(int istep);
-
+   virtual const char* name() const = 0;
    virtual void kickoff() = 0;
 
 public:
+   void printDetail(FILE*);
    BasicIntegrator(PropagatorEnum pe, ThermostatEnum te, BarostatEnum be);
    BasicIntegrator();
    virtual ~BasicIntegrator();
-   virtual void printDetail(FILE*);
    virtual void dynamic(int istep, time_prec dt);
 };
 }
