@@ -1,8 +1,16 @@
 #include "itgbBerendsen.h"
 #include "itgEnum.h"
 #include "mdpt.h"
+#include "tool/io_print.h"
 
 namespace tinker {
+void BerendsenBarostat::printDetail(FILE* o)
+{
+   print(o, "\n");
+   print(o, " Berendsen Barostat\n");
+   printBasic(o);
+}
+
 BarostatEnum BerendsenBarostat::getBarostatEnum() const
 {
    return BarostatEnum::Berendsen;

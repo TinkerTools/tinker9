@@ -1,6 +1,7 @@
 #include "itgbNhc06.h"
 #include "itgbLogVAniso.h"
 #include "itgbLogVIso.h"
+#include "tool/io_print.h"
 #include <tinker/detail/bath.hh>
 
 namespace tinker {
@@ -21,6 +22,7 @@ Nhc06Barostat::~Nhc06Barostat()
 
 void Nhc06Barostat::printDetail(FILE* o)
 {
+   print(o, "\n");
    m_baro->printDetail(o);
 }
 

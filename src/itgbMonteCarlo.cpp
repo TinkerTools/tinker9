@@ -6,6 +6,7 @@
 #include "random.h"
 #include "tinker_rt.h"
 #include "tool/darray.h"
+#include "tool/io_print.h"
 #include <tinker/detail/bath.hh>
 
 namespace tinker {
@@ -19,6 +20,13 @@ MonteCarloBarostat::MonteCarloBarostat()
 {
    darray::allocate(n, &x_pmonte, &y_pmonte, &z_pmonte);
    get_kv("VOLUME-TRIAL", m_nbaro, bath::voltrial);
+}
+
+void MonteCarloBarostat::printDetail(FILE* o)
+{
+   print(o, "\n");
+   print(o, " Monte Carlo Barostat\n");
+   printBasic(o);
 }
 
 BarostatEnum MonteCarloBarostat::getBarostatEnum() const
