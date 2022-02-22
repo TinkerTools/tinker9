@@ -68,6 +68,7 @@ void energy_data(rc_op op)
    
 	 // AMOEBA+ 
    rc_man echgtrn_aplus42{echgtrn_aplus_data, op};
+   rc_man empole_aplus43{empole_chgpen_aplus_data, op};
 
    // Must call fft_data() after all of the electrostatics routines.
    rc_man fft42{fft_data, op};
@@ -253,15 +254,15 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          emplar(vers);
 
 
-   if (hippo_empole(vers))
-      if (tscfg("empole_chgpen", ecore_ele))
-         empole_chgpen(vers);
-   if (hippo_epolar(vers))
-      if (tscfg("epolar_chgpen", ecore_ele))
-         epolar_chgpen(vers);
-   if (use_potent(chgtrn_term))
-      if (tscfg("echgtrn", ecore_ele))
-         echgtrn(vers);
+   //if (hippo_empole(vers))
+   //   if (tscfg("empole_chgpen", ecore_ele))
+   //      empole_chgpen(vers);
+   //if (hippo_epolar(vers))
+   //   if (tscfg("epolar_chgpen", ecore_ele))
+   //      epolar_chgpen(vers);
+   //if (use_potent(chgtrn_term))
+   //   if (tscfg("echgtrn", ecore_ele))
+   //      echgtrn(vers);
    if (use_potent(disp_term))
       if (tscfg("edisp", ecore_vdw))
          edisp(vers);
