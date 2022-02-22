@@ -63,4 +63,6 @@ bool amoeba_evdw(int vers);
 
 bool hippo_empole(int vers);
 bool hippo_epolar(int vers);
+
+bool amoebaplus_empole(int vers);
 }

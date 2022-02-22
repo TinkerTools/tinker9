@@ -127,7 +127,8 @@ const TimeScaleConfig& default_tsconfig()
       {"echgtrn", 0},       {"edisp", 0},         {"erepel", 0},
       {"ehippo", 0},
 			
-			{"echgtrn_aplus", 0}, {"eaplus", 0}, 
+			{"empole_chgpen_aplus", 0}, {"echgtrn_aplus", 0}, 
+			{"eaplus", 0}, 
    };
    return tsconfig;
 }
@@ -261,15 +262,19 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (use_potent(chgtrn_term))
       if (tscfg("echgtrn", ecore_ele))
          echgtrn(vers);
-   if (use_potent(chgtrn_term))
-      if (tscfg("echgtrn_aplus", ecore_ele))
-         echgtrn_aplus(vers);
    if (use_potent(disp_term))
       if (tscfg("edisp", ecore_vdw))
          edisp(vers);
    if (use_potent(repuls_term))
       if (tscfg("erepel", ecore_vdw))
          erepel(vers);
+   
+	 if (amoebaplus_empole(vers))
+      if (tscfg("empole_chgpen_aplus", ecore_ele))
+         empole_chgpen_aplus(vers);
+   if (use_potent(chgtrn_term))
+      if (tscfg("echgtrn_aplus", ecore_ele))
+         echgtrn_aplus(vers);
 
 
    pme_stream_finish_wait(use_pme_stream and not(vers & calc::analyz));

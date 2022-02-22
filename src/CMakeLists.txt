@@ -25,6 +25,7 @@ elec.cpp
 emplar.cpp
 empole.cpp
 empole_chgpen.cpp
+empole_chgpen_aplus.cpp
 energy.cpp
 energy_buffer.cpp
 eopbend.cpp

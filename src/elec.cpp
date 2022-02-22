@@ -3,6 +3,7 @@
 #include "echarge.h"
 #include "empole.h"
 #include "empole_chgpen.h"
+#include "empole_chgpen_aplus.h"
 #include "energy.h"
 #include "epolar.h"
 #include "epolar_chgpen.h"
@@ -1007,4 +1008,16 @@ bool hippo_epolar(int vers)
       return false;
    return use_potent(polar_term);
 }
+
+bool amoebaplus_empole(int vers)
+{
+   if (not mplpot::use_chgpen)
+      return false;
+   if (mplpot::pentyp == "GORDON1")
+      return false;
+   if (amoeba_emplar(vers))
+      return false;
+   return use_potent(mpole_term);
+}
+
 }

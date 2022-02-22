@@ -25,6 +25,7 @@ empole_chgpen.cpp
 empole_ewald.cpp
 empole_nonewald.cpp
 empole_opbend.cpp
+empole_chgpen_aplus.cpp
 eopbend.cpp
 epitors.cpp
 epolar_chgpen.cpp

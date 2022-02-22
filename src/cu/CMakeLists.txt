@@ -19,6 +19,7 @@ elj.cu
 emplar.cu
 empole_chgpen.cu
 empole.cu
+empole_chgpen_aplus.cu
 epolar_chgpen.cu
 epolar.cu
 erepel.cu

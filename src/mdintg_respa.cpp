@@ -37,7 +37,9 @@ const TimeScaleConfig& respa_tsconfig()
       {"empole_chgpen", slow}, {"epolar_chgpen", slow},
 
       {"echgtrn", slow},       {"edisp", slow},         {"erepel", slow},
-      {"ehippo", slow},    
+      {"ehippo", slow},   
+			
+			{"empole_chgpen_aplus", slow},
 			{"echgtrn_aplus", slow}, {"eaplus", slow}, 
    };
    return tsconfig;
