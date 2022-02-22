@@ -1,7 +1,36 @@
 #include "itgpLogV.h"
+#include "mathfunc_sinhc.h"
+#include "mdegv.h"
+#include "mdpq.h"
+#include "nose.h"
 #include <tinker/detail/mdstuf.hh>
 
 namespace tinker {
+void LogVPropagator::updateVelocity_1_2(time_prec t, int idx)
+{
+   if (m_atomic) {
+      if (applyBaro) {
+         if (m_aniso) {
+            __PlaceHolderMessage("Impl pending... updateVelocity1_2");
+         } else {
+            double al = 1.0 + 3.0 / dofP;
+            double vt = al * vbar * t;
+            double vt2 = vt * 0.5;
+            double et = std::exp(-vt);
+            double et2 = std::exp(-vt2) * sinhc(vt2);
+            propagate_vel_avbf(et, t * et2, gx, gy, gz);
+         }
+      } else {
+         if (idx == 1)
+            BasicPropagator::updateVelocity1(t);
+         else
+            BasicPropagator::updateVelocity2(t);
+      }
+   } else {
+      __PlaceHolderMessage("Impl pending... updateVelocity1_2");
+   }
+}
+
 LogVPropagator::LogVPropagator(bool isNRespa1, bool isAtomic, bool isAniso,
                                bool isPedantic)
    : BasicPropagator()
@@ -31,7 +60,21 @@ LogVPropagator::~LogVPropagator()
 
 void LogVPropagator::updatePosition(time_prec t)
 {
-   __PlaceHolderMessage("Impl pending... updatePosition");
+   if (m_atomic) {
+      if (not applyBaro) {
+         propagate_pos(t);
+      } else if (m_aniso) {
+         __PlaceHolderMessage("Impl pending... updatePosition");
+      } else {
+         double vt = vbar * t;
+         double vt2 = vt * 0.5;
+         double et = std::exp(vt);
+         double et2 = std::exp(vt2) * sinhc(vt2);
+         propagate_pos_axbv(et, t * et2);
+      }
+   } else {
+      __PlaceHolderMessage("Impl pending... updatePosition");
+   }
 }
 
 void LogVPropagator::updateVelocity0(time_prec t)
@@ -41,12 +84,12 @@ void LogVPropagator::updateVelocity0(time_prec t)
 
 void LogVPropagator::updateVelocity1(time_prec t)
 {
-   __PlaceHolderMessage("Impl pending... updateVelocity1");
+   updateVelocity_1_2(t, 1);
 }
 
 void LogVPropagator::updateVelocity2(time_prec t)
 {
-   __PlaceHolderMessage("Impl pending... updateVelocity2");
+   updateVelocity_1_2(t, 2);
 }
 
 void LogVPropagator::updateVelocityR1(time_prec tfast, time_prec t)

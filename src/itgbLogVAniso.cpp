@@ -22,7 +22,7 @@ void LogVAnisoBarostat::control_1_2(time_prec dt)
 
    double gbar[3][3] = {0};
    for (int i = 0; i < 3; ++i)
-      gbar[i][i] += 2 * eksum / m_dofP - vol0 * bath::atmsph / units::prescon;
+      gbar[i][i] += 2 * eksum / dofP - vol0 * bath::atmsph / units::prescon;
    for (int k = 0; k < anisoArrayLength; ++k) {
       int i = anisoArray[k][0];
       int j = anisoArray[k][1];
@@ -62,9 +62,9 @@ LogVAnisoBarostat::LogVAnisoBarostat(double fric)
       }
    }
 
-   m_dofP = mdstuf::nfree;
+   dofP = mdstuf::nfree;
    double kt = units::gasconst * bath::kelvin;
-   qbar = kt * bath::taupres * bath::taupres * m_dofP;
+   qbar = kt * bath::taupres * bath::taupres * dofP;
    vbar = 0;
    for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {

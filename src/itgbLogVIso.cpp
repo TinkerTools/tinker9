@@ -19,7 +19,7 @@ void LogVIsoBarostat::control_1_2(time_prec dt)
       b = 2 * m_fric * units::gasconst * bath::kelvin / qbar;
 
    double dim = 3.0;
-   double al = 1.0 + dim / m_dofP;
+   double al = 1.0 + dim / dofP;
    double tr_vir = vir[0] + vir[4] + vir[8];
 
    double gbar =
@@ -40,10 +40,10 @@ LogVIsoBarostat::LogVIsoBarostat(double fric)
    if (m_langevin)
       m_rdn = normal<double>();
 
-   m_dofP = mdstuf::nfree;
+   dofP = mdstuf::nfree;
 
    double kt = units::gasconst * bath::kelvin;
-   qbar = kt * bath::taupres * bath::taupres * m_dofP;
+   qbar = kt * bath::taupres * bath::taupres * dofP;
    vbar = 0;
 }
 

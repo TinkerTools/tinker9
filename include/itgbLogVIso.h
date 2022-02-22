@@ -5,7 +5,6 @@ namespace tinker {
 class LogVIsoBarostat : public BasicBarostat
 {
 protected:
-   double m_dofP;
    double m_fric;
    double m_rdn;
    bool m_langevin;

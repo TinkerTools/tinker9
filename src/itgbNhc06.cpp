@@ -7,6 +7,7 @@
 namespace tinker {
 Nhc06Barostat::Nhc06Barostat()
    : BasicBarostat()
+   , m_thermo(new Nhc06Thermostat(true, false))
    , m_baro(nullptr)
 {
    if (bath::anisotrop)
@@ -18,6 +19,7 @@ Nhc06Barostat::Nhc06Barostat()
 Nhc06Barostat::~Nhc06Barostat()
 {
    delete m_baro;
+   delete m_thermo;
 }
 
 void Nhc06Barostat::printDetail(FILE* o)
@@ -33,14 +35,14 @@ BarostatEnum Nhc06Barostat::getBarostatEnum() const
 
 void Nhc06Barostat::control1(time_prec dt)
 {
-   __PlaceHolderMessage("Nhc06Barostat::control1T");
+   m_thermo->control1(dt);
    m_baro->control1(dt);
 }
 
 void Nhc06Barostat::control2(time_prec dt)
 {
    m_baro->control2(dt);
-   __PlaceHolderMessage("Nhc06Barostat::control2T");
+   m_thermo->control2(dt, false);
 }
 
 void Nhc06Barostat::control3(time_prec dt)

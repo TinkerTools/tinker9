@@ -12,6 +12,8 @@ protected:
    bool m_aniso;    // anisotropic cell fluctuation
    bool m_pedantic; // pedantic velocity update
 
+   void updateVelocity_1_2(time_prec t, int idx);
+
 public:
    LogVPropagator(bool isNRespa1, bool isAtomic, bool isAniso, bool isPedantic);
    ~LogVPropagator();
