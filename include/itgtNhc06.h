@@ -7,11 +7,9 @@ class Nhc06Thermostat : public BasicThermostat
 protected:
    NhcThermostat* m_tpart;
    NhcThermostat* m_tbaro;
-   bool m_atomic;
-   bool m_aniso;
 
 public:
-   Nhc06Thermostat(bool isAtomic, bool isAniso);
+   Nhc06Thermostat();
    ~Nhc06Thermostat();
 
    void printDetail(FILE*) override;

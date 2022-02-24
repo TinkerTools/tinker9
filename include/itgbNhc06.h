@@ -1,5 +1,5 @@
 #pragma once
-#include "itgbBasic.h"
+#include "itgbLogVIso.h"
 #include "itgtNhc06.h"
 
 namespace tinker {
@@ -7,7 +7,7 @@ class Nhc06Barostat : public BasicBarostat
 {
 protected:
    Nhc06Thermostat* m_thermo;
-   BasicBarostat* m_baro;
+   LogVIsoBarostat* m_baro;
 
 public:
    Nhc06Barostat();

@@ -30,12 +30,8 @@ Nhc06Integrator::Nhc06Integrator(bool isNRespa1)
    if (bath::anisotrop)
       TINKER_THROW("Cannot use ANISO-PRESSURE in Nhc06Integrator.");
 
-   bool isAtomic = true;
-   bool isAniso = false;
-   bool isPedantic = true;
-
    delete m_prop;
-   m_prop = new LogVPropagator(isNRespa1, isAtomic, isAniso, isPedantic);
+   m_prop = new LogVPropagator(isNRespa1);
 
    this->kickoff();
 }

@@ -2,18 +2,14 @@
 #include "itgbLogVAniso.h"
 #include "itgbLogVIso.h"
 #include "tool/io_print.h"
-#include <tinker/detail/bath.hh>
 
 namespace tinker {
 Nhc06Barostat::Nhc06Barostat()
    : BasicBarostat()
-   , m_thermo(new Nhc06Thermostat(true, false))
+   , m_thermo(new Nhc06Thermostat)
    , m_baro(nullptr)
 {
-   if (bath::anisotrop)
-      m_baro = new LogVAnisoBarostat(0.0);
-   else
-      m_baro = new LogVIsoBarostat(0.0);
+   m_baro = new LogVIsoBarostat(0.0);
 }
 
 Nhc06Barostat::~Nhc06Barostat()

@@ -65,6 +65,8 @@ class IntegratorStaticData
 protected:
    static int nrespa;
    static bool applyBaro;
+   static bool atomic;
+   static bool aniso;
    static double dofP;
    static int anisoArrayLength;
    static const int anisoArray[6][2];

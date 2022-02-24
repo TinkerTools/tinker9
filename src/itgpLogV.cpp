@@ -8,9 +8,9 @@
 namespace tinker {
 void LogVPropagator::updateVelocity_1_2(time_prec t, int idx)
 {
-   if (m_atomic) {
+   if (atomic) {
       if (applyBaro) {
-         if (m_aniso) {
+         if (aniso) {
             __PlaceHolderMessage("Impl pending... updateVelocity1_2");
          } else {
             double al = 1.0 + 3.0 / dofP;
@@ -31,23 +31,14 @@ void LogVPropagator::updateVelocity_1_2(time_prec t, int idx)
    }
 }
 
-LogVPropagator::LogVPropagator(bool isNRespa1, bool isAtomic, bool isAniso,
-                               bool isPedantic)
+LogVPropagator::LogVPropagator(bool isNRespa1)
    : BasicPropagator()
    , m_respa(nullptr)
-   , m_atomic(isAtomic)
-   , m_aniso(isAniso)
-   , m_pedantic(isPedantic)
 {
    if (not isNRespa1) {
       nrespa = mdstuf::nrespa;
       m_respa = new RespaPropagator;
    }
-
-   if (m_atomic)
-      m_pedantic = true;
-   else
-      m_pedantic = false;
 }
 
 LogVPropagator::~LogVPropagator()
@@ -60,10 +51,10 @@ LogVPropagator::~LogVPropagator()
 
 void LogVPropagator::updatePosition(time_prec t)
 {
-   if (m_atomic) {
+   if (atomic) {
       if (not applyBaro) {
          propagate_pos(t);
-      } else if (m_aniso) {
+      } else if (aniso) {
          __PlaceHolderMessage("Impl pending... updatePosition");
       } else {
          double vt = vbar * t;

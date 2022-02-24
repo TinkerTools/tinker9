@@ -78,6 +78,8 @@ BasicBarostat* create(BarostatEnum be)
 namespace tinker {
 int IntegratorStaticData::nrespa = 0;
 bool IntegratorStaticData::applyBaro = false;
+bool IntegratorStaticData::atomic = true;
+bool IntegratorStaticData::aniso = false;
 double IntegratorStaticData::dofP = 1.0;
 int IntegratorStaticData::anisoArrayLength = 0;
 const int IntegratorStaticData::anisoArray[6][2] = {{0, 0}, {1, 1}, {2, 2},

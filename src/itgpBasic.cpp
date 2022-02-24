@@ -3,6 +3,7 @@
 #include "mdpq.h"
 #include "rattle.h"
 #include "tool/darray.h"
+#include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
 
 namespace tinker {
@@ -14,6 +15,9 @@ bool BasicPropagator::ifSave(int istep) const
 BasicPropagator::BasicPropagator()
 {
    nrespa = 1;
+
+   atomic = not useRattle();
+   aniso = bath::anisotrop;
 }
 
 BasicPropagator::~BasicPropagator() {}

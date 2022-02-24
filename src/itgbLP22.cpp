@@ -1,7 +1,6 @@
 #include "itgbLP22.h"
 #include "itgbLogVAniso.h"
 #include "itgbLogVIso.h"
-#include <tinker/detail/bath.hh>
 #include <tinker/detail/stodyn.hh>
 
 namespace tinker {
@@ -9,7 +8,7 @@ LP22Barostat::LP22Barostat()
    : BasicBarostat()
    , m_baro(nullptr)
 {
-   if (bath::anisotrop)
+   if (aniso)
       m_baro = new LogVAnisoBarostat(stodyn::friction);
    else
       m_baro = new LogVIsoBarostat(stodyn::friction);

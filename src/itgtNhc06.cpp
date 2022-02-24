@@ -5,17 +5,15 @@
 #include <tinker/detail/mdstuf.hh>
 
 namespace tinker {
-Nhc06Thermostat::Nhc06Thermostat(bool isAtomic, bool isAniso)
+Nhc06Thermostat::Nhc06Thermostat()
    : BasicThermostat()
-   , m_atomic(isAtomic)
-   , m_aniso(isAniso)
 {
    double dofT;
    int nhclen = 4;
    int nc = 4;
 
    // tpart
-   if (m_atomic) {
+   if (atomic) {
       dofT = mdstuf::nfree;
       m_tpart =
          new NhcThermostat(nhclen, nc, dofT, NhcThermostat::kineticAtomic,
