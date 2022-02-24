@@ -1,5 +1,6 @@
 #include "itgbLogVIso.h"
 #include "box.h"
+#include "lpiston.h"
 #include "mathfunc_ou.h"
 #include "mdegv.h"
 #include "nose.h"
@@ -20,10 +21,11 @@ void LogVIsoBarostat::control_1_2(time_prec dt)
 
    double dim = 3.0;
    double al = 1.0 + dim / dofP;
-   double tr_vir = vir[0] + vir[4] + vir[8];
+   double tr_vir = m_vir[0] + m_vir[4] + m_vir[8];
+   double eksu1 = *m_eksum;
 
    double gbar =
-      2 * eksum * al - tr_vir - dim * vol0 * bath::atmsph / units::prescon;
+      2 * eksu1 * al - tr_vir - dim * vol0 * bath::atmsph / units::prescon;
    gbar /= qbar;
    if (m_langevin)
       vbar = ornstein_uhlenbeck_process(dt2, vbar, m_fric, gbar, b, m_rdn);
@@ -33,10 +35,20 @@ void LogVIsoBarostat::control_1_2(time_prec dt)
 
 LogVIsoBarostat::LogVIsoBarostat(double fric)
    : BasicBarostat()
+   , m_vir(nullptr)
+   , m_eksum(nullptr)
    , m_fric(fric)
    , m_rdn()
    , m_langevin(fric != 0.0)
 {
+   if (atomic) {
+      m_vir = vir;
+      m_eksum = &eksum;
+   } else {
+      m_vir = lp_vir;
+      m_eksum = &lp_eksum;
+   }
+
    if (m_langevin)
       m_rdn = normal<double>();
 

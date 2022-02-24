@@ -20,13 +20,14 @@ void LogVAnisoBarostat::control_1_2(time_prec dt)
    if (m_langevin)
       b = 2 * m_fric * units::gasconst * bath::kelvin / qbar;
 
+   double eksu1 = *m_eksum;
    double gbar[3][3] = {0};
    for (int i = 0; i < 3; ++i)
-      gbar[i][i] += 2 * eksum / dofP - vol0 * bath::atmsph / units::prescon;
+      gbar[i][i] += 2 * eksu1 / dofP - vol0 * bath::atmsph / units::prescon;
    for (int k = 0; k < anisoArrayLength; ++k) {
       int i = anisoArray[k][0];
       int j = anisoArray[k][1];
-      gbar[i][j] += (2 * ekin[i][j] - vir[3 * i + j]);
+      gbar[i][j] += (2 * m_ekin[i][j] - m_vir[3 * i + j]);
       gbar[i][j] /= qbar;
       if (m_langevin)
          vbar_matrix[i][j] = ornstein_uhlenbeck_process(
@@ -38,6 +39,9 @@ void LogVAnisoBarostat::control_1_2(time_prec dt)
 
 LogVAnisoBarostat::LogVAnisoBarostat(double fric)
    : BasicBarostat()
+   , m_vir(nullptr)
+   , m_eksum(nullptr)
+   , m_ekin(nullptr)
    , m_fric(fric)
    , m_rdn()
    , m_langevin(fric != 0.0)
@@ -52,6 +56,16 @@ LogVAnisoBarostat::LogVAnisoBarostat(double fric)
    default:
       anisoArrayLength = OrthoOrOct;
       break;
+   }
+
+   if (atomic) {
+      m_vir = vir;
+      m_eksum = &eksum;
+      m_ekin = ekin;
+   } else {
+      m_vir = lp_vir;
+      m_eksum = &lp_eksum;
+      m_ekin = lp_ekin;
    }
 
    if (m_langevin) {
