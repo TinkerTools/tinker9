@@ -1,10 +1,12 @@
 #pragma once
 #include "itgbBasic.h"
+#include "itgtNhc06.h"
 
 namespace tinker {
 class LP22Barostat : public BasicBarostat
 {
 protected:
+   Nhc06Thermostat* m_thermo;
    BasicBarostat* m_baro;
 
 public:
