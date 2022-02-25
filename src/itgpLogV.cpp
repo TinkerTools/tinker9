@@ -53,13 +53,17 @@ LogVPropagator::~LogVPropagator()
 
 extern void pLogVPosMolIso_acc(double scal);
 extern void pLogVPosMolAniso_acc(double (*scal)[3]);
+extern void pLogVPosAtmAniso_acc(double (*a)[3], double (*b)[3]);
 void LogVPropagator::updatePosition(time_prec t)
 {
    if (atomic) {
       if (not applyBaro) {
          propagate_pos(t);
       } else if (aniso) {
-         __PlaceHolderMessage("Impl pending... updatePosition");
+         double a[3][3], b[3][3];
+         trimat_exp(a, vbar_matrix, t);
+         trimat_t_expm1c(b, vbar_matrix, t);
+         pLogVPosAtmAniso_acc(a, b);
       } else {
          double vt = vbar * t;
          double vt2 = vt * 0.5;

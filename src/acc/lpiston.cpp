@@ -354,4 +354,24 @@ void pLogVPosMolAniso_acc(double (*scal)[3])
       zpos[i] += zd;
    }
 }
+
+
+void pLogVPosAtmAniso_acc(double (*a)[3], double (*b)[3])
+{
+   auto a00 = a[0][0], a01 = a[0][1], a02 = a[0][2];
+   auto a10 = a[1][0], a11 = a[1][1], a12 = a[1][2];
+   auto a20 = a[2][0], a21 = a[2][1], a22 = a[2][2];
+   auto b00 = b[0][0], b01 = b[0][1], b02 = b[0][2];
+   auto b10 = b[1][0], b11 = b[1][1], b12 = b[1][2];
+   auto b20 = b[2][0], b21 = b[2][1], b22 = b[2][2];
+   #pragma acc parallel loop independent async\
+               deviceptr(xpos,ypos,zpos,vx,vy,vz)
+   for (int i = 0; i < n; ++i) {
+      auto o = xpos[i], p = ypos[i], q = zpos[i];
+      auto r = vx[i], s = vy[i], t = vz[i];
+      xpos[i] = (a00 * o + a01 * p + a02 * q) + (b00 * r + b01 * s + b02 * t);
+      ypos[i] = (a10 * o + a11 * p + a12 * q) + (b10 * r + b11 * s + b12 * t);
+      zpos[i] = (a20 * o + a21 * p + a22 * q) + (b20 * r + b21 * s + b22 * t);
+   }
+}
 }
