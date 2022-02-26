@@ -594,7 +594,7 @@ inline void damp_rep_deprecated(real* restrict dmpik, real r, real rinv,
 #pragma acc routine seq
 template <int order>
 SEQ_CUDA
-inline void damp_rep_oldmodel(real* restrict dmpik, real r, real rr1, real r2, real rr3,
+inline void damp_rep(real* restrict dmpik, real r, real rr1, real r2, real rr3,
                      real rr5, real rr7, real rr9, real rr11,
                      real ai /* dmpi */, real aj /* dmpk */)
 {
@@ -682,127 +682,6 @@ inline void damp_rep_oldmodel(real* restrict dmpik, real r, real rr1, real r2, r
       d5s *= rr11 * inv945;
       d5s *= expmc;
       dmpik[5] = pfac * 2 * (s * d5s + 5 * ds * d4s + 10 * d2s * d3s);
-   }
-   // clang-format on
-}
-
-
-#pragma acc routine seq
-template <int order>
-SEQ_CUDA
-inline void damp_rep(real* restrict dmpik, real r, real rr1, real r2, real rr3,
-                     real rr5, real rr7, real rr9, real rr11,
-                     real ai /* dmpi */, real aj /* dmpk */)
-{
-   real pfac = 2 / (ai + aj);
-   pfac = pfac * pfac;
-   pfac = pfac * ai * aj;
-   pfac = pfac * pfac * pfac;
-
-   real a = ai * r / 2, b = aj * r / 2;
-   real c = (a + b) / 2, d = (b - a) / 2;
-   real expmc = REAL_EXP(-c);
-
-   real c2 = c * c;
-   real c3 = c2 * c;
-   real c4 = c2 * c2;
-   real d2 = d * d;
-   real d4 = d2 * d2;
-   real c2d2 = (c * d) * (c * d);
-
-   real r3 = r2 * r;
-   real r4 = r2 * r2;
-   real r5 = r3 * r2;
-
-   real f1d, f2d, f3d, f4d, f5d, f6d, f7d;
-   if CONSTEXPR (order > 9)
-      fsinhc7(d, f1d, f2d, f3d, f4d, f5d, f6d, f7d);
-   else
-      fsinhc6(d, f1d, f2d, f3d, f4d, f5d, f6d);
-
-   real inv3 = 1. / 3, inv15 = 1. / 15, inv105 = 1. / 105, inv945 = 1. / 945;
-   real inv5 = 1. / 5, inv7 = 1. / 7;
-
-   // compute
-   // clang-format off
-   real s;
-   s = f1d * (c+1)
-     + f2d * c2;
-   
-   s *= expmc;
-   real s0s0 = pfac * s * s;
-
-   dmpik[0] = s0s0;
-
-   real ds;
-   ds = f1d * (-c2)
-       + f2d * (c2*(2-c) + d2*(c+1))
-       + f3d * c2d2;
-
-   ds *= expmc;
-   real s0s1 = pfac * s * ds;
-
-   dmpik[1] = s0s0 - 2*s0s1;
-
-   real d2s = 0;
-   d2s += f1d * c2*(c-1)
-        + f2d * (c2*(c2 - 4*c + 2) + d2*(c+1) - 2*c2d2);
-   d2s += d2*(f3d * (c2*(5 - 2*c) + d2*(c+1))
-            + f4d * c2d2);
-
-   d2s *= expmc * inv3;
-   real s1s1 = pfac * ds * ds;
-   real s0s2 = pfac * s * d2s;
-
-   dmpik[2] = dmpik[1] + 2*(s1s1*inv3 + s0s2);
-
-   real d3s = 0;
-   d3s += f1d * c3*(2-c)
-        + f2d * c2*(6*c2 - c3 - 6*c + 3*d2*(c-2));
-   d3s += d2*(f3d * 3*(c2*(c2 - 5*c + 4) + d2*(c+1) - c2d2)
-        + d2*(f4d * (3*c2*(3-c) + d2*(c+1))
-            + f5d * c2d2));
-
-   d3s *= expmc * inv15;
-   real s0s3 = pfac * s * d3s;
-   real s1s2 = pfac * ds * d2s;
-
-   dmpik[3] = dmpik[1] + 2 * ((2*s1s1 + 6*s0s2 - 3*s1s2) * inv5 - s0s3);
-
-
-   real d4s = 0;
-   d4s += f1d * c4*(c-3)
-        + f2d * c2*(c2*(c2 - 8*c + 12) + 2*d2*(7*c-3) - 4*c2d2);
-   d4s += d2*(f3d * (2*c2*(15*c2 - 2*c3 - 24*c + 6) + 3*d2*(c+1) + 6*c2d2*(c-3))
-        + d2*(f4d * (3*c2*(2*c2 - 12*c + 13) + 6*d2*(c+1) - 4*c2*d2)
-                + f5d * d2*(2*c2*(7 - 2*c) + d2*(c+1))
-                + f6d * c2*d4));
-
-   d4s *= expmc * inv105;
-   real s0s4 = pfac * s * d4s;
-   real s1s3 = pfac * ds * d3s;
-   real s2s2 = pfac * d2s * d2s;
-
-   dmpik[4] = dmpik[1] + 2*((3*(s1s1 + 3 * s0s2 - 2*s1s2 + 3*s2s2*inv5) 
-                       - 2*(5*s0s3 - 2*s1s3))*inv7 + s0s4);
-
-   if CONSTEXPR (order > 9) {
-      real d5s = 0;
-      d5s += c3*(f1d * c2*(4-c)
-           + f2d * (c2*(10*(c-2) - c2) + 5*(d2*(4-5*c) + c2d2)));
-      d5s += d2*(f3d * 5*c2*(c4 + 2*c*(c*(12 - 5*c) - 6) + d2*(10*c-9) - 2*c2d2)
-           + d2*(f4d * 5*(c2*(2*c2*(c-9) + 3*(13*c-6) + 2*d2*(4-c)) - 3*d2*(c+1))
-                   + d2*(f5d * 5*(c2*(2*c*(c-7) + 19) + 2*d2*(c+1) - c2d2)
-                       + f6d * d2*(5*c2*(4-c) + d2*(c+1))
-                       + f7d * c2*d4)));
-
-      d5s *= expmc * inv945;
-      real s0s5 = pfac * s * d5s;
-      real s1s4 = pfac * ds * d4s;
-      real s2s3 = pfac * d2s * d3s;
-
-      dmpik[5] = dmpik[1] + 2*((4*(s1s1*inv3 + s0s2) - 5*(s0s3 - s0s4 + s1s4*inv3)
-               + (9*s2s2 + 10*(2*s1s3 - s2s3))*inv7)*inv3 - s1s2 - s0s5); 
    }
    // clang-format on
 }
