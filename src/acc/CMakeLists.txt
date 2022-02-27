@@ -28,6 +28,7 @@ empole_opbend.cpp
 empole_chgpen_aplus.cpp
 eopbend.cpp
 epitors.cpp
+epolar_aplus.cpp
 epolar_chgpen.cpp
 epolar_dot.cpp
 epolar_ewald.cpp
@@ -38,11 +39,13 @@ estrtor.cpp
 etors.cpp
 etortor.cpp
 eurey.cpp
+field_aplus.cpp
 field_chgpen.cpp
 field_ewald.cpp
 field_nonewald.cpp
 induce.cpp
 induce_donly.cpp
+induce_aplus.cpp
 lf_lpiston.cpp
 lpiston.cpp
 mathfunc_parallel.cpp

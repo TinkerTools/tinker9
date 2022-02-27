@@ -32,6 +32,7 @@ eopbend.cpp
 epitors.cpp
 epolar.cpp
 epolar_chgpen.cpp
+epolar_aplus.cpp
 erepel.cpp
 error_nix.cpp
 error_prterr.cpp
@@ -45,9 +46,11 @@ evdw.cpp
 exec.cpp
 field.cpp
 field_chgpen.cpp
+field_aplus.cpp
 group.cpp
 induce.cpp
 induce_donly.cpp
+induce_aplus.cpp
 initial.cpp
 io_fort_str.cpp
 io_text.cpp

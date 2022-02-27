@@ -1,6 +1,6 @@
-#include "epolar.h"
-#include "empole.h"
-#include "induce.h"
+#include "epolar_aplus.h"
+#include "cflux.h"
+#include "induce_aplus.h"
 #include "md.h"
 #include "mod.uprior.h"
 #include "nblist.h"
@@ -16,19 +16,17 @@
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/polgrp.hh>
 #include <tinker/detail/polpot.hh>
+#include <tinker/detail/potent.hh>
 #include <tinker/detail/sizes.hh>
 #include <tinker/detail/units.hh>
 #include <tinker/detail/uprior.hh>
 
-
 namespace tinker {
-void epolar_data(rc_op op)
+void epolar_aplus_data(rc_op op)
 {
-   if (!use_potent(polar_term))
+   if (not use_potent(polar_term))
       return;
-   if (mplpot::use_chgpen)
-      return;
-   if (polpot::use_dirdamp)
+   if (not polpot::use_dirdamp)
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -41,7 +39,7 @@ void epolar_data(rc_op op)
       ndpuexclude = 0;
       darray::deallocate(dpuexclude, dpuexclude_scale);
 
-      darray::deallocate(polarity, thole, pdamp, polarity_inv);
+      darray::deallocate(polarity, pdamp, thole, dirdamp, polarity_inv);
 
       if (rc_a) {
          buffer_deallocate(rc_flag, nep);
@@ -55,28 +53,20 @@ void epolar_data(rc_op op)
       depz = nullptr;
 
       darray::deallocate(ufld, dufld);
-      darray::deallocate(work01_, work02_, work03_, work04_, work05_, work06_,
-                         work07_, work08_, work09_, work10_);
-
+      darray::deallocate(work01_, work02_, work03_, work04_, work05_);
 
       if (polpred == UPred::ASPC) {
          darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04,
                             udalt_05, udalt_06, udalt_07, udalt_08, udalt_09,
                             udalt_10, udalt_11, udalt_12, udalt_13, udalt_14,
-                            udalt_15, upalt_00, upalt_01, upalt_02, upalt_03,
-                            upalt_04, upalt_05, upalt_06, upalt_07, upalt_08,
-                            upalt_09, upalt_10, upalt_11, upalt_12, upalt_13,
-                            upalt_14, upalt_15);
+                            udalt_15);
       } else if (polpred == UPred::GEAR) {
          darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04,
-                            udalt_05, upalt_00, upalt_01, upalt_02, upalt_03,
-                            upalt_04, upalt_05);
+                            udalt_05);
       } else if (polpred == UPred::LSQR) {
          darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04,
-                            udalt_05, udalt_06, upalt_00, upalt_01, upalt_02,
-                            upalt_03, upalt_04, upalt_05, upalt_06);
-         darray::deallocate(udalt_lsqr_a, udalt_lsqr_b, upalt_lsqr_a,
-                            upalt_lsqr_b);
+                            udalt_05, udalt_06);
+         darray::deallocate(udalt_lsqr_a, udalt_lsqr_b);
       }
       polpred = UPred::NONE;
       maxualt = 0;
@@ -390,7 +380,7 @@ void epolar_data(rc_op op)
       darray::copyin(g::q0, ndpexclude, dpexclude_scale, excls.data());
       wait_for(g::q0);
 
-      darray::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
+      darray::allocate(n, &polarity, &pdamp, &thole, &dirdamp, &polarity_inv);
 
       nep = nullptr;
       ep = eng_buf_elec;
@@ -410,10 +400,7 @@ void epolar_data(rc_op op)
          dufld = nullptr;
       }
 
-      darray::allocate(n, &work01_, &work02_, &work03_, &work04_, &work05_,
-                       &work06_, &work07_, &work08_, &work09_, &work10_);
-
-
+      darray::allocate(n, &work01_, &work02_, &work03_, &work04_, &work05_);
       if (uprior::use_pred) {
          fstr_view predstr = uprior::polpred;
          if (predstr == "ASPC") {
@@ -442,38 +429,27 @@ void epolar_data(rc_op op)
          darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
                           &udalt_04, &udalt_05, &udalt_06, &udalt_07, &udalt_08,
                           &udalt_09, &udalt_10, &udalt_11, &udalt_12, &udalt_13,
-                          &udalt_14, &udalt_15, &upalt_00, &upalt_01, &upalt_02,
-                          &upalt_03, &upalt_04, &upalt_05, &upalt_06, &upalt_07,
-                          &upalt_08, &upalt_09, &upalt_10, &upalt_11, &upalt_12,
-                          &upalt_13, &upalt_14, &upalt_15);
+                          &udalt_14, &udalt_15);
          darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03,
                       udalt_04, udalt_05, udalt_06, udalt_07, udalt_08,
                       udalt_09, udalt_10, udalt_11, udalt_12, udalt_13,
-                      udalt_14, udalt_15, upalt_00, upalt_01, upalt_02,
-                      upalt_03, upalt_04, upalt_05, upalt_06, upalt_07,
-                      upalt_08, upalt_09, upalt_10, upalt_11, upalt_12,
-                      upalt_13, upalt_14, upalt_15);
+                      udalt_14, udalt_15);
       } else if (polpred == UPred::GEAR) {
          maxualt = 6;
          darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
-                          &udalt_04, &udalt_05, &upalt_00, &upalt_01, &upalt_02,
-                          &upalt_03, &upalt_04, &upalt_05);
+                          &udalt_04, &udalt_05);
          darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03,
-                      udalt_04, udalt_05, upalt_00, upalt_01, upalt_02,
-                      upalt_03, upalt_04, upalt_05);
+                      udalt_04, udalt_05);
       } else if (polpred == UPred::LSQR) {
          maxualt = 7;
          darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
-                          &udalt_04, &udalt_05, &udalt_06, &upalt_00, &upalt_01,
-                          &upalt_02, &upalt_03, &upalt_04, &upalt_05,
-                          &upalt_06);
+                          &udalt_04, &udalt_05, &udalt_06);
          int lenb = maxualt - 1;
          int lena = lenb * lenb; // lenb*(lenb+1)/2 should be plenty.
-         darray::allocate(lena, &udalt_lsqr_a, &upalt_lsqr_a);
-         darray::allocate(lenb, &udalt_lsqr_b, &upalt_lsqr_b);
+         darray::allocate(lena, &udalt_lsqr_a);
+         darray::allocate(lenb, &udalt_lsqr_b);
          darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03,
-                      udalt_04, udalt_05, udalt_06, upalt_00, upalt_01,
-                      upalt_02, upalt_03, upalt_04, upalt_05, upalt_06);
+                      udalt_04, udalt_05, udalt_06);
       }
    }
 
@@ -486,18 +462,19 @@ void epolar_data(rc_op op)
          pinvbuf[i] = 1.0 / std::max(polar::polarity[i], polmin);
       }
       darray::copyin(g::q0, n, polarity, polar::polarity);
-      darray::copyin(g::q0, n, thole, polar::thole);
       darray::copyin(g::q0, n, pdamp, polar::pdamp);
+      darray::copyin(g::q0, n, thole, polar::thole);
+      darray::copyin(g::q0, n, dirdamp, polar::dirdamp);
       darray::copyin(g::q0, n, polarity_inv, pinvbuf.data());
       wait_for(g::q0);
    }
 }
 
 
-void induce(real (*ud)[3], real (*up)[3])
+void induce3(real (*ud)[3])
 {
-   induce_mutual_pcg1(ud, up);
-   ulspred_save(ud, up);
+   induce_mutual_pcg3(ud);
+   ulspred_save3(ud);
 
    if (inform::debug && use_potent(polar_term)) {
       std::vector<double> uindbuf;
@@ -530,14 +507,15 @@ void induce(real (*ud)[3], real (*up)[3])
 }
 
 
-void epolar(int vers)
+void epolar_aplus(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
    bool do_a = vers & calc::analyz;
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-
+   int use_cf = potent::use_chgflx;
+   int use_cfgrad = use_cf and do_g;
 
    host_zero(energy_ep, virial_ep);
    size_t bsize = buffer_size();
@@ -546,21 +524,26 @@ void epolar(int vers)
          darray::zero(g::q0, bsize, nep);
       if (do_e)
          darray::zero(g::q0, bsize, ep);
-      if (do_v) {
+      if (do_v)
          darray::zero(g::q0, bsize, vir_ep);
-      }
-      if (do_g) {
+      if (do_g)
          darray::zero(g::q0, n, depx, depy, depz);
-      }
    }
 
 
+   if (use_cf)
+      alterchg();
    mpole_init(vers);
+   if (use_cfgrad) {
+      zero_pot();
+   }
    if (use_ewald())
-      epolar_ewald(vers);
+      epolar_aplus_ewald(vers, use_cfgrad);
    else
-      epolar_nonewald(vers);
+      epolar_aplus_nonewald(vers, use_cfgrad);
    torque(vers, depx, depy, depz);
+   if (use_cfgrad)
+      dcflux(vers, depx, depy, depz, vir_ep);
    if (do_v) {
       virial_buffer u2 = vir_trq;
       virial_prec v2[9];
@@ -594,7 +577,7 @@ void epolar(int vers)
 }
 
 
-void epolar_nonewald(int vers)
+void epolar_aplus_nonewald(int vers, int use_cf)
 {
    // v0: E_dot
    // v1: EGV = E_dot + GV
@@ -609,21 +592,21 @@ void epolar_nonewald(int vers)
    if (edot)
       ver2 &= ~calc::energy; // toggle off the calc::energy flag
 
-   induce(uind, uinp);
+   induce3(uind);
    if (edot)
-      epolar0_dotprod(uind, udirp);
+      epolar0_dotprod(uind, udir);
    if (vers != calc::v0) {
 #if TINKER_CUDART
       if (mlist_version() & NBL_SPATIAL)
-         epolar_nonewald_cu(ver2, uind, uinp);
+         epolar_aplus_nonewald_cu(ver2, use_cf, uind);
       else
 #endif
-         epolar_nonewald_acc(ver2, uind, uinp);
+         epolar_aplus_nonewald_acc(ver2, use_cf, uind);
    }
 }
 
 
-void epolar_ewald(int vers)
+void epolar_aplus_ewald(int vers, int use_cf)
 {
    // v0: E_dot
    // v1: EGV = E_dot + GV
@@ -638,35 +621,29 @@ void epolar_ewald(int vers)
    if (edot)
       ver2 &= ~calc::energy; // toggle off the calc::energy flag
 
-   induce(uind, uinp);
+   induce3(uind);
    if (edot)
-      epolar0_dotprod(uind, udirp);
+      epolar0_dotprod(uind, udir);
    if (vers != calc::v0) {
-      epolar_ewald_real(ver2);
-      epolar_ewald_recip_self(ver2);
+      epolar_aplus_ewald_real(ver2, use_cf);
+      epolar_aplus_ewald_recip_self(ver2, use_cf);
    }
 }
 
 
-void epolar_ewald_real(int vers)
+void epolar_aplus_ewald_real(int vers, int use_cf)
 {
 #if TINKER_CUDART
    if (mlist_version() & NBL_SPATIAL)
-      epolar_ewald_real_cu(vers, uind, uinp);
+      epolar_aplus_ewald_real_cu(vers, use_cf, uind);
    else
 #endif
-      epolar_ewald_real_acc(vers, uind, uinp);
+			epolar_aplus_ewald_real_acc(vers, use_cf, uind);
 }
 
 
-void epolar_ewald_recip_self(int vers)
+void epolar_aplus_ewald_recip_self(int vers, int use_cf)
 {
-   epolar_ewald_recip_self_acc(vers, uind, uinp);
-}
-
-
-void epolar0_dotprod(const real (*uind)[3], const real (*udirp)[3])
-{
-   return epolar0_dotprod_acc(uind, udirp);
+   epolar_aplus_ewald_recip_self_acc(vers, use_cf, uind);
 }
 }

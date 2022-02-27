@@ -39,6 +39,7 @@
 
 #include "empole_chgpen_aplus.h"
 #include "echgtrn_aplus.h"
+#include "epolar_aplus.h"
 
 namespace tinker {
 /**

@@ -7,6 +7,7 @@
 #include "energy.h"
 #include "epolar.h"
 #include "epolar_chgpen.h"
+#include "epolar_aplus.h"
 #include "glob.chglj.h"
 #include "glob.mplar.h"
 #include "md.h"
@@ -919,6 +920,8 @@ bool amoeba_emplar(int vers)
 {
    if (mplpot::use_chgpen)
       return false;
+   if (polpot::use_dirdamp)
+      return false;
    if (rc_flag & calc::analyz)
       return false;
    if (vers & calc::analyz)
@@ -947,6 +950,8 @@ bool amoeba_epolar(int vers)
    if (mplpot::use_chgpen)
       return false;
 
+   if (polpot::use_dirdamp)
+      return false;
 
    if (amoeba_emplar(vers))
       return false;
@@ -1004,6 +1009,10 @@ bool hippo_epolar(int vers)
 {
    if (not mplpot::use_chgpen)
       return false;
+	 if (polpot::use_dirdamp)
+	 	  return false;
+   if (mplpot::pentyp == "GORDON2")
+      return false;
    if (amoeba_emplar(vers))
       return false;
    return use_potent(polar_term);
@@ -1015,9 +1024,18 @@ bool amoebaplus_empole(int vers)
       return false;
    if (mplpot::pentyp == "GORDON1")
       return false;
+   return use_potent(mpole_term);
+}
+
+bool amoebaplus_epolar(int vers)
+{
+   if (not polpot::use_dirdamp)
+      return false;
+   if (mplpot::pentyp == "GORDON1")
+      return false;
    if (amoeba_emplar(vers))
       return false;
-   return use_potent(mpole_term);
+   return use_potent(polar_term);
 }
 
 }

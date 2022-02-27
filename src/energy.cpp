@@ -2,6 +2,7 @@
 #include "cflux.h"
 #include "glob.dhflow.h"
 #include "md.h"
+#include "mod.ctrpot.h"
 #include "nblist.h"
 #include "potent.h"
 #include "tool/cudalib.h"
@@ -68,7 +69,8 @@ void energy_data(rc_op op)
    
 	 // AMOEBA+ 
    rc_man echgtrn_aplus42{echgtrn_aplus_data, op};
-   rc_man empole_aplus43{empole_chgpen_aplus_data, op};
+   rc_man empole_aplus42{empole_chgpen_aplus_data, op};
+   rc_man epolar_aplus42{epolar_aplus_data, op};
 
    // Must call fft_data() after all of the electrostatics routines.
    rc_man fft42{fft_data, op};
@@ -128,7 +130,8 @@ const TimeScaleConfig& default_tsconfig()
       {"echgtrn", 0},       {"edisp", 0},         {"erepel", 0},
       {"ehippo", 0},
 			
-			{"empole_chgpen_aplus", 0}, {"echgtrn_aplus", 0}, 
+			{"empole_chgpen_aplus", 0}, {"echgtrn_aplus", 0},
+			{"epolar_aplus", 0}, 
 			{"eaplus", 0}, 
    };
    return tsconfig;
@@ -243,15 +246,15 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          echglj(vers);
       }
 
-   if (amoeba_empole(vers))
-      if (tscfg("empole", ecore_ele))
-         empole(vers);
-   if (amoeba_epolar(vers))
-      if (tscfg("epolar", ecore_ele))
-         epolar(vers);
-   if (amoeba_emplar(vers))
-      if (tscfg("emplar", ecore_ele))
-         emplar(vers);
+   //if (amoeba_empole(vers))
+   //   if (tscfg("empole", ecore_ele))
+   //      empole(vers);
+   //if (amoeba_epolar(vers))
+   //   if (tscfg("epolar", ecore_ele))
+   //      epolar(vers);
+   //if (amoeba_emplar(vers))
+   //   if (tscfg("emplar", ecore_ele))
+   //      emplar(vers);
 
 
    //if (hippo_empole(vers))
@@ -263,19 +266,23 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    //if (use_potent(chgtrn_term))
    //   if (tscfg("echgtrn", ecore_ele))
    //      echgtrn(vers);
-   if (use_potent(disp_term))
-      if (tscfg("edisp", ecore_vdw))
-         edisp(vers);
-   if (use_potent(repuls_term))
-      if (tscfg("erepel", ecore_vdw))
-         erepel(vers);
+   //if (use_potent(disp_term))
+   //   if (tscfg("edisp", ecore_vdw))
+   //      edisp(vers);
+   //if (use_potent(repuls_term))
+   //   if (tscfg("erepel", ecore_vdw))
+   //      erepel(vers);
    
 	 if (amoebaplus_empole(vers))
       if (tscfg("empole_chgpen_aplus", ecore_ele))
          empole_chgpen_aplus(vers);
-   if (use_potent(chgtrn_term))
+   //if (use_potent(chgtrn_term) and (ctrntyp == chgtrn_t::COMBINED))
+   if (use_potent(chgtrn_term)) 
       if (tscfg("echgtrn_aplus", ecore_ele))
          echgtrn_aplus(vers);
+   if (amoebaplus_epolar(vers))
+      if (tscfg("epolar_aplus", ecore_ele))
+         epolar_aplus(vers);
 
 
    pme_stream_finish_wait(use_pme_stream and not(vers & calc::analyz));
