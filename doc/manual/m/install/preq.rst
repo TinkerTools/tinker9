@@ -9,7 +9,7 @@ Nothing special is needed for the CPU code.
 **Operating Systems and Compilers**
 
 In order to compile the GPU code, the most recent
-`PGI compiler <https://www.pgroup.com/products/community.htm>`_
+`NVIDIA HPC compiler <https://www.developer.nvidia.com/hpc-sdk>`_
 is preferred for the OpenACC directives. Due to its limitations,
 the GPU code is unavailable on macOS.
 
