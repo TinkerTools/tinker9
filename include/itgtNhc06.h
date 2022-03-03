@@ -5,8 +5,8 @@ namespace tinker {
 class Nhc06Thermostat : public BasicThermostat
 {
 protected:
-   NhcThermostat* m_tpart;
-   NhcThermostat* m_tbaro;
+   NhcDevice* m_tpart;
+   NhcDevice* m_tbaro;
 
 public:
    Nhc06Thermostat();

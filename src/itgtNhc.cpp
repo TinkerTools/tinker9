@@ -10,7 +10,7 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-void NhcThermostat::controlImpl(time_prec dt)
+void NhcDevice::controlImpl(time_prec dt)
 {
    const int nc = nhc_nc;
    constexpr int ns = nhc_nsy;
@@ -73,8 +73,8 @@ void NhcThermostat::controlImpl(time_prec dt)
    scale_vel(velsc0);
 }
 
-NhcThermostat::NhcThermostat(int nhclen, int nc, double dfree, double* (*kin)(),
-                             void (*scale)(double), std::string str)
+NhcDevice::NhcDevice(int nhclen, int nc, double dfree, double* (*kin)(),
+                     void (*scale)(double), std::string str)
    : BasicThermostat()
    , nnose(nhclen)
    , nhc_nc(nc)
@@ -98,7 +98,7 @@ NhcThermostat::NhcThermostat(int nhclen, int nc, double dfree, double* (*kin)(),
    qnh[0] *= g0;
 }
 
-void NhcThermostat::printDetail(FILE* o)
+void NhcDevice::printDetail(FILE* o)
 {
    print(o, "\n");
    print(o, " %s\n", name.c_str());
@@ -113,24 +113,24 @@ void NhcThermostat::printDetail(FILE* o)
    printBasic(o);
 }
 
-void NhcThermostat::control1(time_prec dt)
+void NhcDevice::control1(time_prec dt)
 {
    this->controlImpl(dt);
 }
 
-void NhcThermostat::control2(time_prec dt, bool)
+void NhcDevice::control2(time_prec dt, bool)
 {
    this->controlImpl(dt);
 }
 
-double* NhcThermostat::kineticAtomic()
+double* NhcDevice::kineticAtomic()
 {
    T_prec temp;
    kinetic(temp);
    return &eksum;
 }
 
-void NhcThermostat::scaleVelocityAtomic(double velsc)
+void NhcDevice::scaleVelocityAtomic(double velsc)
 {
    darray::scale(g::q0, n, velsc, vx);
    darray::scale(g::q0, n, velsc, vy);

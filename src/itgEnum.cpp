@@ -32,10 +32,10 @@ BasicThermostat* create(ThermostatEnum te)
       t = new BussiThermostat;
       break;
    case ThermostatEnum::Nhc:
-      t = new NhcThermostat(5, 5, static_cast<double>(mdstuf::nfree), //
-                            NhcThermostat::kineticAtomic,             //
-                            NhcThermostat::scaleVelocityAtomic,       //
-                            std::string("NHC"));
+      t = new NhcDevice(5, 5, static_cast<double>(mdstuf::nfree), //
+                        NhcDevice::kineticAtomic,                 //
+                        NhcDevice::scaleVelocityAtomic,           //
+                        std::string("NHC"));
       break;
    default:
       t = new BasicThermostat;
