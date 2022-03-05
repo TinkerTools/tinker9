@@ -26,7 +26,7 @@ CUDA 11.0 and NVHPC 20.9. Please proceed to
 `this NVIDIA webpage <https://docs.nvidia.com/cuda/wsl-user-guide/index.html>`_
 for more details.
 
-**Using the old PGI Compiler Suite**
+**Using NVIDIA HPC SDK on Clusters**
 
 Prior to rebranding, the current NVIDIA HPC SDK was known as the PGI compiler
 suite. During Jan. 2020 we worked on a cluster that was still running
