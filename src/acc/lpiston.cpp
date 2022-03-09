@@ -318,11 +318,11 @@ void propagate_velocity_06_acc(double vbar, time_prec dt, const grad_prec* grx,
 void pLogVPosMolIso_acc(double scal)
 {
    double s = scal - 1;
-   const auto* kmol = rattle_dmol.kmol;
+   const auto* molec = rattle_dmol.molecule;
    #pragma acc parallel loop independent async\
-           deviceptr(xpos,ypos,zpos,ratcom_x,ratcom_y,ratcom_z,kmol)
+           deviceptr(xpos,ypos,zpos,ratcom_x,ratcom_y,ratcom_z,molec)
    for (int i = 0; i < n; ++i) {
-      auto k = kmol[i];
+      auto k = molec[i];
       xpos[i] += ratcom_x[k] * s;
       ypos[i] += ratcom_y[k] * s;
       zpos[i] += ratcom_z[k] * s;
@@ -338,11 +338,11 @@ void pLogVPosMolAniso_acc(double (*scal)[3])
    s00 = scal[0][0], s01 = scal[0][1], s02 = scal[0][2];
    s10 = scal[1][0], s11 = scal[1][1], s12 = scal[1][2];
    s20 = scal[2][0], s21 = scal[2][1], s22 = scal[2][2];
-   const auto* kmol = rattle_dmol.kmol;
+   const auto* molec = rattle_dmol.molecule;
    #pragma acc parallel loop independent async\
-           deviceptr(xpos,ypos,zpos,ratcom_x,ratcom_y,ratcom_z,kmol)
+           deviceptr(xpos,ypos,zpos,ratcom_x,ratcom_y,ratcom_z,molec)
    for (int i = 0; i < n; ++i) {
-      auto k = kmol[i];
+      auto k = molec[i];
       auto xc = ratcom_x[k];
       auto yc = ratcom_y[k];
       auto zc = ratcom_z[k];

@@ -62,9 +62,10 @@ double* Nhc06Thermostat::kineticRattleGroup()
    return &lp_eksum;
 }
 
+extern void lp_propagate_mol_vel_acc(double);
 void Nhc06Thermostat::scaleVelocityRattleGroup(double scale)
 {
-   __PlaceHolderMessage("Impl pending...");
+   lp_propagate_mol_vel_acc(scale - 1);
 }
 
 double* Nhc06Thermostat::kineticVbar()
