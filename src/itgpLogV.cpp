@@ -8,12 +8,38 @@
 #include <tinker/detail/mdstuf.hh>
 
 namespace tinker {
+extern void propagate_vel_avbf_aniso_acc(double sa[3][3], double sb[3][3],
+                                         const grad_prec* grx,
+                                         const grad_prec* gry,
+                                         const grad_prec* grz);
 void LogVPropagator::updateVelocity_1_2(time_prec t, int idx)
 {
    if (atomic) {
       if (applyBaro) {
          if (aniso) {
-            __PlaceHolderMessage("Impl pending... updateVelocity1_2");
+            double s1[3][3]; // v
+            double s2[3][3]; // F
+            double m[3][3];
+            double tr =
+               (vbar_matrix[0][0] + vbar_matrix[1][1] + vbar_matrix[2][2]) /
+               dofP;
+            for (int i = 0; i < 3; ++i) {
+               for (int j = 0; j < 3; ++j)
+                  m[i][j] = -vbar_matrix[i][j];
+               m[i][i] -= tr;
+            }
+
+            trimat_exp(s1, m, t);
+            trimat_t_expm1c(s2, m, t);
+            // transpose
+            std::swap(s1[0][1], s1[1][0]);
+            std::swap(s1[0][2], s1[2][0]);
+            std::swap(s1[1][2], s1[2][1]);
+            std::swap(s2[0][1], s2[1][0]);
+            std::swap(s2[0][2], s2[2][0]);
+            std::swap(s2[1][2], s2[2][1]);
+
+            propagate_vel_avbf_aniso_acc(s1, s2, gx, gy, gz);
          } else {
             double al = 1.0 + 3.0 / dofP;
             double vt = al * vbar * t;
@@ -25,11 +51,53 @@ void LogVPropagator::updateVelocity_1_2(time_prec t, int idx)
       } else {
          if (idx == 1)
             BasicPropagator::updateVelocity1(t);
-         else
+         else if (idx == 2)
             BasicPropagator::updateVelocity2(t);
       }
    } else {
-      __PlaceHolderMessage("Impl pending... updateVelocity1_2");
+      if (applyBaro) {
+         if (aniso) {
+            double scal[3][3];
+            double m[3][3];
+            double tr =
+               (vbar_matrix[0][0] + vbar_matrix[1][1] + vbar_matrix[2][2]) /
+               dofP;
+            for (int i = 0; i < 3; ++i) {
+               for (int j = 0; j < 3; ++j)
+                  m[i][j] = vbar_matrix[i][j];
+               m[i][i] += tr;
+            }
+            trimat_exp(scal, m, -t);
+            // transpose
+            std::swap(scal[0][1], scal[1][0]);
+            std::swap(scal[0][2], scal[2][0]);
+            std::swap(scal[1][2], scal[2][1]);
+
+            if (idx == 1) {
+               lp_propagate_mol_vel_aniso(scal);
+               BasicPropagator::updateVelocity1(t);
+            } else if (idx == 2) {
+               BasicPropagator::updateVelocity2(t);
+               lp_propagate_mol_vel_aniso(scal);
+            }
+         } else {
+            double al = 1.0 + 3.0 / dofP;
+            double scal = std::exp(al * vbar * t) - 1;
+
+            if (idx == 1) {
+               lp_propagate_mol_vel(scal);
+               BasicPropagator::updateVelocity1(t);
+            } else if (idx == 2) {
+               BasicPropagator::updateVelocity2(t);
+               lp_propagate_mol_vel(scal);
+            }
+         }
+      } else {
+         if (idx == 1)
+            BasicPropagator::updateVelocity1(t);
+         else if (idx == 2)
+            BasicPropagator::updateVelocity2(t);
+      }
    }
 }
 

@@ -374,4 +374,42 @@ void pLogVPosAtmAniso_acc(double (*a)[3], double (*b)[3])
       zpos[i] = (a20 * o + a21 * p + a22 * q) + (b20 * r + b21 * s + b22 * t);
    }
 }
+
+
+void propagate_vel_avbf_aniso_acc(double sa[3][3], double sb[3][3],
+                                  const grad_prec* grx, const grad_prec* gry,
+                                  const grad_prec* grz)
+{
+   vel_prec ekcal = units::ekcal;
+   vel_prec a00 = sa[0][0], a01 = sa[0][1], a02 = sa[0][2];
+   vel_prec a10 = sa[1][0], a11 = sa[1][1], a12 = sa[1][2];
+   vel_prec a20 = sa[2][0], a21 = sa[2][1], a22 = sa[2][2];
+   vel_prec b00 = sb[0][0], b01 = sb[0][1], b02 = sb[0][2];
+   vel_prec b10 = sb[1][0], b11 = sb[1][1], b12 = sb[1][2];
+   vel_prec b20 = sb[2][0], b21 = sb[2][1], b22 = sb[2][2];
+   #pragma acc parallel loop independent async\
+               deviceptr(massinv,vx,vy,vz,grx,gry,grz)
+   for (int i = 0; i < n; ++i) {
+      vel_prec coef = -ekcal * massinv[i];
+      vel_prec v0x, v0y, v0z;
+      vel_prec gx, gy, gz;
+      v0x = vx[i];
+      v0y = vy[i];
+      v0z = vz[i];
+#if TINKER_DETERMINISTIC_FORCE
+      gx = to_flt_acc<vel_prec>(grx[i]);
+      gy = to_flt_acc<vel_prec>(gry[i]);
+      gz = to_flt_acc<vel_prec>(grz[i]);
+#else
+      gx = grx[i];
+      gy = gry[i];
+      gz = grz[i];
+#endif
+      // clang-format off
+      vx[i] = a00 * v0x + a01 * v0y + a02 * v0z + b00 * gx + b01 * gy + b02 * gz;
+      vy[i] = a10 * v0x + a11 * v0y + a12 * v0z + b10 * gx + b11 * gy + b12 * gz;
+      vz[i] = a20 * v0x + a21 * v0y + a22 * v0z + b20 * gx + b21 * gy + b22 * gz;
+      // clang-foramt on
+   }
+}
 }
