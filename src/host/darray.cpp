@@ -27,6 +27,18 @@ void device_memory_copy_bytes_async(void* dst, const void* src, size_t nbytes,
 }
 
 
+void device_memory_swap_bytes_async(void* dst, void* src, size_t nbytes, int)
+{
+   char* s1 = reinterpret_cast<char*>(dst);
+   char* s2 = reinterpret_cast<char*>(src);
+   for (size_t i = 0; i < nbytes; ++i) {
+      char s = s1[i];
+      s1[i] = s2[i];
+      s2[i] = s;
+   }
+}
+
+
 void device_memory_zero_bytes_async(void* dst, size_t nbytes, int)
 {
    if (dst == nullptr)

@@ -35,6 +35,18 @@ void device_memory_copy_bytes_async(void* dst, const void* src, size_t nbytes,
 }
 
 
+extern void device_memory_swap_bytes_async_cu(char*, char*, size_t,
+                                              cudaStream_t);
+void device_memory_swap_bytes_async(void* dst, void* src, size_t nbytes,
+                                    int queue)
+{
+   cudaStream_t st = queue == g::q1 ? g::s1 : g::s0;
+   char* s1 = reinterpret_cast<char*>(dst);
+   char* s2 = reinterpret_cast<char*>(src);
+   device_memory_swap_bytes_async_cu(s1, s2, nbytes, st);
+}
+
+
 void device_memory_zero_bytes_async(void* dst, size_t nbytes, int queue)
 {
    if (dst == nullptr)

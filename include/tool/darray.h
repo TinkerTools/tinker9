@@ -43,6 +43,18 @@ void device_memory_copyout_bytes_async(void* dst, const void* src,
  */
 void device_memory_copy_bytes_async(void* dst, const void* src, size_t nbytes,
                                     int queue);
+
+/**
+ * \ingroup rc
+ * Swap data between two pointers.
+ * \param s1      The first array.
+ * \param s2      The second array.
+ * \param nbytes  Number of bytes.
+ * \param queue   OpenACC queue.
+ */
+void device_memory_swap_bytes_async(void* s1, void* s2, size_t nbytes,
+                                    int queue);
+
 /**
  * \ingroup rc
  * Writes zero bytes on device.
@@ -247,6 +259,18 @@ struct darray
       static_assert(std::is_same<DT, ST>::value, "");
       size_t size = N * sizeof(ST) * nelem;
       device_memory_copy_bytes_async(flatten(dst), flatten(src), size, q);
+   }
+
+
+   template <class PTR, class U>
+   static void swap(int q, size_t nelem, PTR dst, U* src)
+   {
+      constexpr size_t N = deduce_ptr<PTR>::n;
+      using DT = typename deduce_ptr<PTR>::type;
+      using ST = typename deduce_ptr<U*>::type;
+      static_assert(std::is_same<DT, ST>::value, "");
+      size_t size = N * sizeof(ST) * nelem;
+      device_memory_swap_bytes_async(flatten(dst), flatten(src), size, q);
    }
 
 
