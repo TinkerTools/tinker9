@@ -5,7 +5,6 @@
 #include <cstring>
 #include <cuda_runtime.h>
 
-
 namespace tinker {
 void wait_for(int queue)
 {
@@ -34,35 +33,19 @@ void device_memory_copy_bytes_async(void* dst, const void* src, size_t nbytes,
    check_rt(cudaMemcpyAsync(dst, src, nbytes, cudaMemcpyDeviceToDevice, st));
 }
 
-
-extern void device_memory_swap_bytes_async_cu(char*, char*, size_t,
-                                              cudaStream_t);
-void device_memory_swap_bytes_async(void* dst, void* src, size_t nbytes,
-                                    int queue)
-{
-   cudaStream_t st = queue == g::q1 ? g::s1 : g::s0;
-   char* s1 = reinterpret_cast<char*>(dst);
-   char* s2 = reinterpret_cast<char*>(src);
-   device_memory_swap_bytes_async_cu(s1, s2, nbytes, st);
-}
-
-
 void device_memory_zero_bytes_async(void* dst, size_t nbytes, int queue)
 {
    if (dst == nullptr)
       return;
 
-
    cudaStream_t st = queue == g::q1 ? g::s1 : g::s0;
    check_rt(cudaMemsetAsync(dst, 0, nbytes, st));
 }
-
 
 void device_memory_deallocate_bytes(void* ptr)
 {
    check_rt(cudaFree(ptr));
 }
-
 
 void device_memory_allocate_bytes(void** pptr, size_t nbytes)
 {

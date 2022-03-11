@@ -406,9 +406,9 @@ void propagate_vel_avbf_aniso_acc(double sa[3][3], double sb[3][3],
       gz = grz[i];
 #endif
       // clang-format off
-      vx[i] = a00 * v0x + a01 * v0y + a02 * v0z + b00 * gx + b01 * gy + b02 * gz;
-      vy[i] = a10 * v0x + a11 * v0y + a12 * v0z + b10 * gx + b11 * gy + b12 * gz;
-      vz[i] = a20 * v0x + a21 * v0y + a22 * v0z + b20 * gx + b21 * gy + b22 * gz;
+      vx[i] = a00 * v0x + a01 * v0y + a02 * v0z + coef * (b00 * gx + b01 * gy + b02 * gz);
+      vy[i] = a10 * v0x + a11 * v0y + a12 * v0z + coef * (b10 * gx + b11 * gy + b12 * gz);
+      vz[i] = a20 * v0x + a21 * v0y + a22 * v0z + coef * (b20 * gx + b21 * gy + b22 * gz);
       // clang-foramt on
    }
 }

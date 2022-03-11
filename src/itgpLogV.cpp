@@ -2,6 +2,7 @@
 #include "lpiston.h"
 #include "mathfunc_sinhc.h"
 #include "mdegv.h"
+#include "mdintg.h"
 #include "mdpq.h"
 #include "nose.h"
 #include "tool/trimatexp.h"
@@ -174,11 +175,15 @@ void LogVPropagator::updateVelocity2(time_prec t)
 
 void LogVPropagator::updateVelocityR1(time_prec tfast, time_prec t)
 {
-   __PlaceHolderMessage("Impl pending... updateVelocityR1");
+   // slow force
+
+   // fast force
 }
 
 void LogVPropagator::updateVelocityR2(time_prec tfast, time_prec t)
 {
-   __PlaceHolderMessage("Impl pending... updateVelocityR2");
+   // fast force
+
+   // slow force
 }
 }

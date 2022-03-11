@@ -9,7 +9,6 @@ set (CMAKE_CUDA_EXTENSIONS OFF)
 
 add_library (tinker9_cu OBJECT
 compilers.cu
-darray.cu
 echarge.cu
 echglj.cu
 echgtrn.cu
