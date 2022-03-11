@@ -1,10 +1,127 @@
 #include "lpiston.h"
 #include "add.h"
 #include "mdegv.h"
+#include "mdppg.h"
 #include "mdpq.h"
 #include "rattle.h"
 #include <tinker/detail/units.hh>
 
+namespace tinker {
+#pragma acc routine seq
+static inline vel_prec
+#if TINKER_DETERMINISTIC_FORCE
+cvt_grad(fixed val)
+{
+   return to_flt_acc<vel_prec>(val);
+}
+#else
+cvt_grad(grad_prec val)
+{
+   return val;
+}
+#endif
+
+void velAvbfIso_acc(int nrespa, vel_prec a, vel_prec b, vel_prec* vx,
+                    vel_prec* vy, vel_prec* vz, const grad_prec* gx1, const grad_prec* gy1, const grad_prec* gz1,
+                    const grad_prec* gx2, const grad_prec* gy2, const grad_prec* gz2)
+{
+   auto ekcal = units::ekcal;
+   if (nrespa == 1)
+      goto label_nrespa1;
+   else
+      goto label_nrespa2;
+
+label_nrespa1:
+   #pragma acc parallel loop independent async\
+               deviceptr(massinv,vx,vy,vz,gx1,gy1,gz1)
+   for (int i = 0; i < n; ++i) {
+      auto coef = -ekcal * massinv[i];
+      auto v0x = vx[i];
+      auto v0y = vy[i];
+      auto v0z = vz[i];
+      auto grx = cvt_grad(gx1[i]);
+      auto gry = cvt_grad(gy1[i]);
+      auto grz = cvt_grad(gz1[i]);
+      vx[i] = a * v0x + coef * b * grx;
+      vy[i] = a * v0y + coef * b * gry;
+      vz[i] = a * v0z + coef * b * grz;
+   }
+   return;
+
+label_nrespa2:
+   #pragma acc parallel loop independent async\
+               deviceptr(massinv,vx,vy,vz,gx1,gy1,gz1,gx2,gy2,gz2)
+   for (int i = 0; i < n; ++i) {
+      auto coef = -ekcal * massinv[i];
+      auto v0x = vx[i];
+      auto v0y = vy[i];
+      auto v0z = vz[i];
+      auto grx = cvt_grad(gx1[i]) / nrespa + cvt_grad(gx2[i]);
+      auto gry = cvt_grad(gy1[i]) / nrespa + cvt_grad(gy2[i]);
+      auto grz = cvt_grad(gz1[i]) / nrespa + cvt_grad(gz2[i]);
+      vx[i] = a * v0x + coef * b * grx;
+      vy[i] = a * v0y + coef * b * gry;
+      vz[i] = a * v0z + coef * b * grz;
+   }
+   return;
+}
+
+void velAvbfAni_acc(int nrespa, vel_prec a[3][3], vel_prec b[3][3],
+                    vel_prec* vx, vel_prec* vy, vel_prec* vz, const grad_prec* gx1,
+                    const grad_prec* gy1, const grad_prec* gz1, const grad_prec* gx2, const grad_prec* gy2, const grad_prec* gz2)
+{
+   auto ekcal = units::ekcal;
+   auto a00 = a[0][0], a01 = a[0][1], a02 = a[0][2];
+   auto a10 = a[1][0], a11 = a[1][1], a12 = a[1][2];
+   auto a20 = a[2][0], a21 = a[2][1], a22 = a[2][2];
+   auto b00 = b[0][0], b01 = b[0][1], b02 = b[0][2];
+   auto b10 = b[1][0], b11 = b[1][1], b12 = b[1][2];
+   auto b20 = b[2][0], b21 = b[2][1], b22 = b[2][2];
+
+   if (nrespa == 1)
+      goto label_nrespa1;
+   else
+      goto label_nrespa2;
+
+label_nrespa1:
+   #pragma acc parallel loop independent async\
+               deviceptr(massinv,vx,vy,vz,gx1,gy1,gz1)
+   for (int i = 0; i < n; ++i) {
+      auto coef = -ekcal * massinv[i];
+      auto v0x = vx[i];
+      auto v0y = vy[i];
+      auto v0z = vz[i];
+      auto grx = cvt_grad(gx1[i]);
+      auto gry = cvt_grad(gy1[i]);
+      auto grz = cvt_grad(gz1[i]);
+      // clang-format off
+      vx[i] = a00*v0x + a01*v0y + a02*v0z + coef*(b00*grx+b01*gry+b02*grz);
+      vy[i] = a10*v0x + a11*v0y + a12*v0z + coef*(b10*grx+b11*gry+b12*grz);
+      vz[i] = a20*v0x + a21*v0y + a22*v0z + coef*(b20*grx+b21*gry+b22*grz);
+      // clang-foramt on
+   }
+   return;
+
+label_nrespa2:
+   #pragma acc parallel loop independent async\
+               deviceptr(massinv,vx,vy,vz,gx1,gy1,gz1,gx2,gy2,gz2)
+   for (int i = 0; i < n; ++i) {
+      auto coef = -ekcal * massinv[i];
+      auto v0x = vx[i];
+      auto v0y = vy[i];
+      auto v0z = vz[i];
+      auto grx = cvt_grad(gx1[i]) / nrespa + cvt_grad(gx2[i]);
+      auto gry = cvt_grad(gy1[i]) / nrespa + cvt_grad(gy2[i]);
+      auto grz = cvt_grad(gz1[i]) / nrespa + cvt_grad(gz2[i]);
+      // clang-format off
+      vx[i] = a00*v0x + a01*v0y + a02*v0z + coef*(b00*grx+b01*gry+b02*grz);
+      vy[i] = a10*v0x + a11*v0y + a12*v0z + coef*(b10*grx+b11*gry+b12*grz);
+      vz[i] = a20*v0x + a21*v0y + a22*v0z + coef*(b20*grx+b21*gry+b22*grz);
+      // clang-foramt on
+   }
+   return;
+}
+}
 
 namespace tinker {
 void lp_matvec_acc(int len, char transpose, double mat[3][3],
@@ -30,7 +147,6 @@ void lp_matvec_acc(int len, char transpose, double mat[3][3],
    }
 }
 
-
 void propagate_pos_raxbv_acc(
 
    pos_prec* r1, pos_prec* r2, pos_prec* r3,
@@ -50,7 +166,6 @@ void propagate_pos_raxbv_acc(
       r3[i] = r3[i] + a * x3[im] + b * y3[i];
    }
 }
-
 
 void propagate_pos_raxbv_aniso_acc(
 
@@ -82,7 +197,6 @@ void propagate_pos_raxbv_aniso_acc(
    }
 }
 
-
 void propagate_pos_axbv_aniso_acc(double a[3][3], double b[3][3])
 {
    auto a00 = a[0][0], a01 = a[0][1], a02 = a[0][2];
@@ -104,7 +218,6 @@ void propagate_pos_axbv_aniso_acc(double a[3][3], double b[3][3])
    }
 }
 
-
 void lp_propagate_mol_vel_acc(vel_prec scal)
 {
    auto* molec = rattle_dmol.molecule;
@@ -117,7 +230,6 @@ void lp_propagate_mol_vel_acc(vel_prec scal)
       vz[i] = vz[i] + scal * ratcom_vz[im];
    }
 }
-
 
 void lp_propagate_mol_vel_aniso_acc(vel_prec scal[3][3])
 {
@@ -135,7 +247,6 @@ void lp_propagate_mol_vel_aniso_acc(vel_prec scal[3][3])
       vz[i] += s20 * xm + s21 * ym + s22 * zm;
    }
 }
-
 
 void lp_mol_virial_acc()
 {
@@ -214,7 +325,6 @@ void lp_mol_virial_acc()
    lp_vir[8] = mvzz + vir[8];
 }
 
-
 void lp_center_of_mass_acc(const pos_prec* ax, const pos_prec* ay,
                            const pos_prec* az, pos_prec* mx, pos_prec* my,
                            pos_prec* mz)
@@ -243,7 +353,6 @@ void lp_center_of_mass_acc(const pos_prec* ax, const pos_prec* ay,
    }
 }
 
-
 void propagate_velocity_06_acc(double vbar, time_prec dt, const grad_prec* grx,
                                const grad_prec* gry, const grad_prec* grz,
                                time_prec dt2, const grad_prec* grx2,
@@ -260,7 +369,6 @@ void propagate_velocity_06_acc(double vbar, time_prec dt, const grad_prec* grx,
    const auto t2 = dt / 2;
    const double e1 = std::exp(-vbar * dt);
    const double e2 = std::exp(-vbar * t2) * sinhc(vbar * t2);
-
 
    if (dt2 == 0) {
       #pragma acc parallel loop independent async\
@@ -314,7 +422,6 @@ void propagate_velocity_06_acc(double vbar, time_prec dt, const grad_prec* grx,
    }
 }
 
-
 void pLogVPosMolIso_acc(double scal)
 {
    double s = scal - 1;
@@ -328,7 +435,6 @@ void pLogVPosMolIso_acc(double scal)
       zpos[i] += ratcom_z[k] * s;
    }
 }
-
 
 void pLogVPosMolAniso_acc(double (*scal)[3])
 {
@@ -355,7 +461,6 @@ void pLogVPosMolAniso_acc(double (*scal)[3])
    }
 }
 
-
 void pLogVPosAtmAniso_acc(double (*a)[3], double (*b)[3])
 {
    auto a00 = a[0][0], a01 = a[0][1], a02 = a[0][2];
@@ -374,7 +479,6 @@ void pLogVPosAtmAniso_acc(double (*a)[3], double (*b)[3])
       zpos[i] = (a20 * o + a21 * p + a22 * q) + (b20 * r + b21 * s + b22 * t);
    }
 }
-
 
 void propagate_vel_avbf_aniso_acc(double sa[3][3], double sb[3][3],
                                   const grad_prec* grx, const grad_prec* gry,

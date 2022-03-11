@@ -65,7 +65,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
    if (nrespa == 1)
       m_prop->updateVelocity1(dt2);
    else
-      m_prop->updateVelocityR1(dt2 / nrespa, dt2);
+      m_prop->updateVelocityR1(dt2, nrespa);
    m_prop->rattleSave();
 
    m_baro->control3(dt);
@@ -84,7 +84,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
          m_prop->updatePosition(dta);
          copy_pos_to_xyz(false);
          energy(vers1, RESPA_FAST, respa_tsconfig());
-         m_prop->updateVelocity0(dta);
+         m_prop->updateVelocityR0(dta);
          copy_virial(vers1, vir_f);
          if (vers1 & calc::virial)
             for (int i = 0; i < 9; ++i)
@@ -96,9 +96,15 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
 
       // fast force
       energy(vers1, RESPA_FAST, respa_tsconfig());
+      darray::copy(g::q0, n, gx1, gx);
+      darray::copy(g::q0, n, gy1, gy);
+      darray::copy(g::q0, n, gz1, gz);
 
       // slow force
       energy(vers1, RESPA_SLOW, respa_tsconfig());
+      darray::copy(g::q0, n, gx2, gx);
+      darray::copy(g::q0, n, gy2, gy);
+      darray::copy(g::q0, n, gz2, gz);
    }
 
    m_baro->control4(dt);
@@ -106,7 +112,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
    if (nrespa == 1)
       m_prop->updateVelocity2(dt2);
    else
-      m_prop->updateVelocityR2(dt2 / nrespa, dt2);
+      m_prop->updateVelocityR2(dt2, nrespa);
    m_prop->rattle2(dt, vers1 & calc::virial);
 
    m_thermo->control2(dt, save);

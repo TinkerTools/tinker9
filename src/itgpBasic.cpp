@@ -22,14 +22,9 @@ BasicPropagator::BasicPropagator()
 
 BasicPropagator::~BasicPropagator() {}
 
-void BasicPropagator::updateVelocity0(time_prec t)
-{
-   propagate_velocity(t, gx, gy, gz);
-}
-
 void BasicPropagator::updateVelocity1(time_prec t)
 {
-   this->updateVelocity0(t);
+   propagate_velocity(t, gx, gy, gz);
 }
 
 void BasicPropagator::updateVelocity2(time_prec t)
@@ -37,12 +32,14 @@ void BasicPropagator::updateVelocity2(time_prec t)
    this->updateVelocity1(t);
 }
 
-void BasicPropagator::updateVelocityR1(time_prec tfast, time_prec t) {}
-
-void BasicPropagator::updateVelocityR2(time_prec tfast, time_prec t)
+void BasicPropagator::updateVelocityR0(time_prec t)
 {
-   this->updateVelocityR1(tfast, t);
+   this->updateVelocity1(t);
 }
+
+void BasicPropagator::updateVelocityR1(time_prec t, int nrespa) {}
+
+void BasicPropagator::updateVelocityR2(time_prec t, int nrespa) {}
 
 void BasicPropagator::updatePosition(time_prec t)
 {

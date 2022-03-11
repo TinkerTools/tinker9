@@ -8,7 +8,7 @@ public:
    RespaPropagator();
    ~RespaPropagator();
 
-   void updateVelocityR1(time_prec tfast, time_prec t) override;
-   void updateVelocityR2(time_prec tfast, time_prec t) override;
+   void updateVelocityR1(time_prec t, int nrespa) override;
+   void updateVelocityR2(time_prec t, int nrespa) override;
 };
 }

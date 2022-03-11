@@ -10,11 +10,11 @@ public:
    BasicPropagator();
    virtual ~BasicPropagator();
 
-   virtual void updateVelocity0(time_prec t);
    virtual void updateVelocity1(time_prec t);
    virtual void updateVelocity2(time_prec t);
-   virtual void updateVelocityR1(time_prec tfast, time_prec t);
-   virtual void updateVelocityR2(time_prec tfast, time_prec t);
+   virtual void updateVelocityR0(time_prec t);
+   virtual void updateVelocityR1(time_prec t, int nrespa);
+   virtual void updateVelocityR2(time_prec t, int nrespa);
    virtual void updatePosition(time_prec t);
 
    virtual void rattleSave();
