@@ -9,7 +9,7 @@ Nothing special is needed for the CPU code.
 **Operating Systems and Compilers**
 
 In order to compile the GPU code, the most recent
-`PGI compiler <https://www.pgroup.com/products/community.htm>`_
+`NVIDIA HPC SDK <https://www.developer.nvidia.com/hpc-sdk>`_
 is preferred for the OpenACC directives. Due to its limitations,
 the GPU code is unavailable on macOS.
 
@@ -17,20 +17,19 @@ For Linux, we need:
 
 - GNU or Intel Fortran compiler.
 - Recent C++ compiler that supports C++11 syntax.
-- (GPU code only) PGI compiler for OpenACC and nvcc for CUDA.
+- (GPU code only) NVIDIA HPC SDK with OpenACC support, and CUDA with nvcc.
 - If NVIDIA driver has been installed correctly, *nvidia-smi* should be
   available.
 
-The PGI compilers have recently been rebranded as
-`NVIDIA HPC SDK <https://developer.nvidia.com/hpc-sdk>`_
-and we successfully built Tinker9 on Windows WSL2 Ubuntu with
+We have successfully built Tinker9 on Windows WSL2 Ubuntu with
 CUDA 11.0 and NVHPC 20.9. Please proceed to
 `this NVIDIA webpage <https://docs.nvidia.com/cuda/wsl-user-guide/index.html>`_
 for more details.
 
-**More About Using PGI Compiler on the Clusters**
+**Using NVIDIA HPC SDK on Clusters**
 
-I recently (in Jan. 2020) worked on a cluster that was still running
+Prior to rebranding, the current NVIDIA HPC SDK was known as the PGI compiler
+suite. During Jan. 2020 we worked on a cluster that was still running
 Red Hat with gcc 4.8.5 by default without root privilege. Although several
 more recent gcc and PGI versions were available via the *module* program,
 the most recent PGI compiler (2019) was still configured with gcc 4.8.5
