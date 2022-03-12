@@ -94,7 +94,8 @@ BarostatEnum LogVAnisoBarostat::getBarostatEnum() const
 
 void LogVAnisoBarostat::printDetail(FILE* o)
 {
-   __PlaceHolderMessage("Print VbarMat");
+   print(o, " VBar Mass          %12.2lf\n", qbar);
+   printBasic(o);
 }
 
 void LogVAnisoBarostat::control1(time_prec dt)

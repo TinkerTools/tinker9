@@ -66,7 +66,7 @@ BarostatEnum LogVIsoBarostat::getBarostatEnum() const
 
 void LogVIsoBarostat::printDetail(FILE* o)
 {
-   print(o, " VBar Mass        : %12.2lf\n", qbar);
+   print(o, " VBar Mass          %12.2lf\n", qbar);
    printBasic(o);
 }
 

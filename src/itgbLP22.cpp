@@ -25,6 +25,7 @@ LP22Barostat::~LP22Barostat()
 void LP22Barostat::printDetail(FILE* o)
 {
    print(o, "\n");
+   m_thermo->printDetail(o);
    m_baro->printDetail(o);
 }
 

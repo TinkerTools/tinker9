@@ -84,9 +84,4 @@ double IntegratorStaticData::dofP = 1.0;
 int IntegratorStaticData::anisoArrayLength = 0;
 const int IntegratorStaticData::anisoArray[6][2] = {{0, 0}, {1, 1}, {2, 2},
                                                     {0, 2}, {0, 1}, {1, 2}};
-
-void __PlaceHolderMessage(const char* s)
-{
-   printf("\x1b[31m%s\033[0m\n", s);
-}
 }

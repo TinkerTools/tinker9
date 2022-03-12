@@ -17,6 +17,9 @@ void BasicIntegrator::plan(int istep)
    if (m_baro->ifApply(istep))
       if (m_baro->getBarostatEnum() == BarostatEnum::MonteCarlo)
          mcbaro = true;
+   // toggle off virial if !applyBaro
+   if (not applyBaro)
+      vers1 &= ~calc::virial;
    // toggle off virial for MC barostat
    if (mcbaro)
       vers1 &= ~calc::virial;
@@ -78,6 +81,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
    } else {
       virial_prec vir_fast[9] = {0};
       virial_prec vir_f[9];
+      energy_prec esum_f;
       time_prec dta = dt / nrespa;
 
       for (int ifast = 1; ifast < nrespa; ++ifast) {
@@ -99,12 +103,23 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
       darray::copy(g::q0, n, gx1, gx);
       darray::copy(g::q0, n, gy1, gy);
       darray::copy(g::q0, n, gz1, gz);
+      copy_energy(vers1, &esum_f);
+      if (vers1 & calc::virial) {
+         for (int iv = 0; iv < 9; ++iv)
+            vir_fast[iv] += vir[iv];
+      }
 
       // slow force
       energy(vers1, RESPA_SLOW, respa_tsconfig());
       darray::copy(g::q0, n, gx2, gx);
       darray::copy(g::q0, n, gy2, gy);
       darray::copy(g::q0, n, gz2, gz);
+      if (vers1 & calc::energy)
+         esum += esum_f;
+      if (vers1 & calc::virial) {
+         for (int iv = 0; iv < 9; ++iv)
+            vir[iv] += vir_fast[iv] / nrespa;
+      }
    }
 
    m_baro->control4(dt);

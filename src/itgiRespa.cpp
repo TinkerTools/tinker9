@@ -24,8 +24,6 @@ RespaIntegrator::RespaIntegrator(ThermostatEnum te, BarostatEnum be)
 
 void RespaIntegrator::KickOff()
 {
-   energy((calc::grad | calc::virial) & rc_flag);
-
    // save fast gradients to gx1 etc.
    energy(calc::grad, RESPA_FAST, respa_tsconfig());
    darray::copy(g::q0, n, gx1, gx);
@@ -37,5 +35,7 @@ void RespaIntegrator::KickOff()
    darray::copy(g::q0, n, gx2, gx);
    darray::copy(g::q0, n, gy2, gy);
    darray::copy(g::q0, n, gz2, gz);
+
+   energy((calc::grad | calc::virial) & rc_flag);
 }
 }

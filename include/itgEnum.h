@@ -74,6 +74,4 @@ protected:
    static constexpr int Mono = 4;
    static constexpr int Tri = 6;
 };
-
-void __PlaceHolderMessage(const char* s);
 }
