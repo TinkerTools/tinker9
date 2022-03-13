@@ -34,13 +34,17 @@ BasicIntegrator::BasicIntegrator(PropagatorEnum pe, ThermostatEnum te,
    : m_prop(create(pe))
    , m_thermo(create(te))
    , m_baro(create(be))
-{}
+{
+   this->plan(0);
+}
 
 BasicIntegrator::BasicIntegrator()
    : m_prop(new BasicPropagator)
    , m_thermo(new BasicThermostat)
    , m_baro(new BasicBarostat)
-{}
+{
+   this->plan(0);
+}
 
 BasicIntegrator::~BasicIntegrator()
 {
@@ -63,8 +67,6 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
 {
    time_prec dt2 = dt * 0.5;
 
-   this->plan(istep);
-
    m_baro->control1(dt);
    m_thermo->control1(dt);
 
@@ -76,6 +78,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
 
    m_baro->control3(dt);
 
+   this->plan(istep);
    if (nrespa == 1) {
       m_prop->updatePosition(dt);
       m_prop->rattle(dt);

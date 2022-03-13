@@ -17,7 +17,7 @@ void LogVIsoBarostat::control_1_2(time_prec dt)
    double vol0 = volbox();
    double b = 0;
    if (m_langevin)
-      b = 2 * m_fric * units::gasconst * bath::kelvin / qbar;
+      b = std::sqrt(2 * m_fric * units::gasconst * bath::kelvin / qbar);
 
    double dim = 3.0;
    double al = 1.0 + dim / dofP;

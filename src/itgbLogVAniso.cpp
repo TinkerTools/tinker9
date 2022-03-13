@@ -18,7 +18,7 @@ void LogVAnisoBarostat::control_1_2(time_prec dt)
    double vol0 = volbox();
    double b = 0;
    if (m_langevin)
-      b = 2 * m_fric * units::gasconst * bath::kelvin / qbar;
+      b = std::sqrt(2 * m_fric * units::gasconst * bath::kelvin / qbar);
 
    double eksu1 = *m_eksum;
    double gbar[3][3] = {0};

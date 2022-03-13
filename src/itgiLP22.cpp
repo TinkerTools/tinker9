@@ -2,6 +2,7 @@
 #include "itgiRespa.h"
 #include "itgiVerlet.h"
 #include "itgpLogV.h"
+#include "lpiston.h"
 #include "tinker_rt.h"
 
 namespace tinker {
@@ -16,6 +17,9 @@ void LP22Integrator::kickoff()
       VerletIntegrator::KickOff();
    else
       RespaIntegrator::KickOff();
+
+   if (not atomic)
+      lp_virial(true);
 }
 
 LP22Integrator::LP22Integrator(bool isNRespa1)

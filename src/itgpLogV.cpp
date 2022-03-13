@@ -97,6 +97,7 @@ void LogVPropagator::updateVelocityImpl(time_prec t, int idx, int nrespa)
       }
 
       if (idx == 1) {
+         lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
          if (aniso)
             lp_propagate_mol_vel_aniso(scal);
          else
@@ -109,6 +110,7 @@ void LogVPropagator::updateVelocityImpl(time_prec t, int idx, int nrespa)
          propagate_velocity2(t / nrespa, gx1, gy1, gz1, t, gx2, gy2, gz2);
 
       if (idx == 2) {
+         lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
          if (aniso)
             lp_propagate_mol_vel_aniso(scal);
          else
