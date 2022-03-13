@@ -10,6 +10,10 @@ void BasicBarostat::printBasic(FILE* o)
    print(o, " Pressure           %12.1lf Atm\n", bath::atmsph);
    print(o, " Tau-Pressure       %12.1lf ps\n", bath::taupres);
    print(o, " Volume Trial       %12d\n", m_nbaro);
+   if (aniso)
+      print(o, " Anisotropic Fluctuation\n");
+   else
+      print(o, " Isotropic Fluctuation\n");
 }
 
 BasicBarostat::BasicBarostat()

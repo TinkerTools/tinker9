@@ -22,8 +22,10 @@ cvt_grad(grad_prec val)
 #endif
 
 void velAvbfIso_acc(int nrespa, vel_prec a, vel_prec b, vel_prec* vx,
-                    vel_prec* vy, vel_prec* vz, const grad_prec* gx1, const grad_prec* gy1, const grad_prec* gz1,
-                    const grad_prec* gx2, const grad_prec* gy2, const grad_prec* gz2)
+                    vel_prec* vy, vel_prec* vz, const grad_prec* gx1,
+                    const grad_prec* gy1, const grad_prec* gz1,
+                    const grad_prec* gx2, const grad_prec* gy2,
+                    const grad_prec* gz2)
 {
    auto ekcal = units::ekcal;
    if (nrespa == 1)
@@ -67,8 +69,10 @@ label_nrespa2:
 }
 
 void velAvbfAni_acc(int nrespa, vel_prec a[3][3], vel_prec b[3][3],
-                    vel_prec* vx, vel_prec* vy, vel_prec* vz, const grad_prec* gx1,
-                    const grad_prec* gy1, const grad_prec* gz1, const grad_prec* gx2, const grad_prec* gy2, const grad_prec* gz2)
+                    vel_prec* vx, vel_prec* vy, vel_prec* vz,
+                    const grad_prec* gx1, const grad_prec* gy1,
+                    const grad_prec* gz1, const grad_prec* gx2,
+                    const grad_prec* gy2, const grad_prec* gz2)
 {
    auto ekcal = units::ekcal;
    auto a00 = a[0][0], a01 = a[0][1], a02 = a[0][2];
@@ -422,9 +426,8 @@ void propagate_velocity_06_acc(double vbar, time_prec dt, const grad_prec* grx,
    }
 }
 
-void pLogVPosMolIso_acc(double scal)
+void pLogVPosMolIso_acc(double s)
 {
-   double s = scal - 1;
    const auto* molec = rattle_dmol.molecule;
    #pragma acc parallel loop independent async\
            deviceptr(xpos,ypos,zpos,ratcom_x,ratcom_y,ratcom_z,molec)
@@ -452,9 +455,9 @@ void pLogVPosMolAniso_acc(double (*scal)[3])
       auto xc = ratcom_x[k];
       auto yc = ratcom_y[k];
       auto zc = ratcom_z[k];
-      auto xd = s00 * xc + s01 * yc + s02 * zc - xc;
-      auto yd = s10 * xc + s11 * yc + s12 * zc - yc;
-      auto zd = s20 * xc + s21 * yc + s22 * zc - xc;
+      auto xd = s00 * xc + s01 * yc + s02 * zc;
+      auto yd = s10 * xc + s11 * yc + s12 * zc;
+      auto zd = s20 * xc + s21 * yc + s22 * zc;
       xpos[i] += xd;
       ypos[i] += yd;
       zpos[i] += zd;

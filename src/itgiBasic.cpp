@@ -1,5 +1,6 @@
 #include "itgiBasic.h"
 #include "energy.h"
+#include "lpiston.h"
 #include "mdcalc.h"
 #include "mdegv.h"
 #include "mdintg.h"
@@ -53,6 +54,8 @@ void BasicIntegrator::printDetail(FILE* o)
    m_thermo->printDetail(o);
    m_baro->printDetail(o);
    print(o, "\n");
+   print(o, " NRespa             %12d\n", nrespa);
+   print(o, "\n");
    print(o, " %s\n", this->name());
 }
 
@@ -78,9 +81,11 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
       m_prop->rattle(dt);
       copy_pos_to_xyz(true);
       energy(vers1);
+      if (vers1 & calc::virial)
+         if (not atomic)
+            lp_virial(true);
    } else {
       virial_prec vir_fast[9] = {0};
-      virial_prec vir_f[9];
       energy_prec esum_f;
       time_prec dta = dt / nrespa;
 
@@ -89,10 +94,16 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
          copy_pos_to_xyz(false);
          energy(vers1, RESPA_FAST, respa_tsconfig());
          m_prop->updateVelocityR0(dta);
-         copy_virial(vers1, vir_f);
-         if (vers1 & calc::virial)
-            for (int i = 0; i < 9; ++i)
-               vir_fast[i] += vir_f[i];
+         if (vers1 & calc::virial) {
+            if (atomic) {
+               for (int iv = 0; iv < 9; ++iv)
+                  vir_fast[iv] += vir[iv];
+            } else {
+               lp_virial(true);
+               for (int iv = 0; iv < 9; ++iv)
+                  vir_fast[iv] += lp_vir[iv];
+            }
+         }
       }
       m_prop->updatePosition(dta);
       m_prop->rattle(dt);
@@ -105,8 +116,14 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
       darray::copy(g::q0, n, gz1, gz);
       copy_energy(vers1, &esum_f);
       if (vers1 & calc::virial) {
-         for (int iv = 0; iv < 9; ++iv)
-            vir_fast[iv] += vir[iv];
+         if (atomic) {
+            for (int iv = 0; iv < 9; ++iv)
+               vir_fast[iv] += vir[iv];
+         } else {
+            lp_virial(true);
+            for (int iv = 0; iv < 9; ++iv)
+               vir_fast[iv] += lp_vir[iv];
+         }
       }
 
       // slow force
@@ -117,8 +134,14 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
       if (vers1 & calc::energy)
          esum += esum_f;
       if (vers1 & calc::virial) {
-         for (int iv = 0; iv < 9; ++iv)
-            vir[iv] += vir_fast[iv] / nrespa;
+         if (atomic) {
+            for (int iv = 0; iv < 9; ++iv)
+               vir[iv] += vir_fast[iv] / nrespa;
+         } else {
+            lp_virial(true);
+            for (int iv = 0; iv < 9; ++iv)
+               lp_vir[iv] += vir_fast[iv] / nrespa;
+         }
       }
    }
 
