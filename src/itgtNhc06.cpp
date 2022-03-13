@@ -55,21 +55,26 @@ void Nhc06Thermostat::control2(time_prec dt, bool save)
       m_tbaro->control2(dt, false);
 }
 
-double* Nhc06Thermostat::kineticRattleGroup()
+double Nhc06Thermostat::kineticRattleGroup()
 {
    lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
    lp_mol_kinetic();
-   return &lp_eksum;
+   return lp_eksum;
 }
 
 void Nhc06Thermostat::scaleVelocityRattleGroup(double scale)
 {
+   double s2 = scale * scale;
+   lp_eksum *= s2;
+   for (int i = 0; i < 3; ++i)
+      for (int j = 0; j < 3; ++j)
+         lp_ekin[i][j] *= s2;
    lp_propagate_mol_vel(scale - 1);
 }
 
-double* Nhc06Thermostat::kineticVbar()
+double Nhc06Thermostat::kineticVbar()
 {
-   static double ekvbar;
+   double ekvbar;
    int i, j, k;
    ekvbar = 0;
    switch (anisoArrayLength) {
@@ -86,7 +91,7 @@ double* Nhc06Thermostat::kineticVbar()
       ekvbar += 0.5 * qbar * vbar * vbar;
       break;
    }
-   return &ekvbar;
+   return ekvbar;
 }
 
 void Nhc06Thermostat::scaleVelocityVbar(double scale)

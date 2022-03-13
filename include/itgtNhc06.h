@@ -16,10 +16,10 @@ public:
    void control1(time_prec dt) override;
    void control2(time_prec dt, bool save) override;
 
-   static double* kineticRattleGroup();
+   static double kineticRattleGroup();
    static void scaleVelocityRattleGroup(double scale);
 
-   static double* kineticVbar();
+   static double kineticVbar();
    static void scaleVelocityVbar(double scale);
 
    static double dofVbar();

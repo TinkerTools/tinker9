@@ -11,20 +11,20 @@ protected:
    int nnose, nhc_nc;
    double g0;
    double vnh[maxnose], qnh[maxnose];
-   double* (*f_kin)();
+   double (*f_kin)();
    void (*scale_vel)(double);
    std::string name;
 
    void controlImpl(double timeStep);
 
 public:
-   NhcDevice(int nhclen, int nc, double dfree, double* (*kin)(),
+   NhcDevice(int nhclen, int nc, double dfree, double (*kin)(),
              void (*scale)(double), std::string str);
    void printDetail(FILE*);
    void control1(time_prec time_prec) override;
    void control2(time_prec time_prec, bool) override;
 
-   static double* kineticAtomic();
+   static double kineticAtomic();
    static void scaleVelocityAtomic(double scale);
 };
 }

@@ -22,10 +22,9 @@ void NhcDevice::controlImpl(time_prec dt)
 
    double gnh[maxnose];
    double kbt = units::gasconst * bath::kelvin;
-   double& ref_eksum = *f_kin();
 
    double dtc = dt / nc;
-   double eksum0 = ref_eksum;
+   double eksum0 = f_kin();
    double velsc0 = 1.0;
    for (int k = 0; k < nc; ++k) {
       for (int j = 0; j < ns; ++j) {
@@ -69,11 +68,10 @@ void NhcDevice::controlImpl(time_prec dt)
       }
    }
 
-   ref_eksum = eksum0;
    scale_vel(velsc0);
 }
 
-NhcDevice::NhcDevice(int nhclen, int nc, double dfree, double* (*kin)(),
+NhcDevice::NhcDevice(int nhclen, int nc, double dfree, double (*kin)(),
                      void (*scale)(double), std::string str)
    : BasicThermostat()
    , nnose(nhclen)
@@ -123,15 +121,20 @@ void NhcDevice::control2(time_prec dt, bool)
    this->controlImpl(dt);
 }
 
-double* NhcDevice::kineticAtomic()
+double NhcDevice::kineticAtomic()
 {
    T_prec temp;
    kinetic(temp);
-   return &eksum;
+   return eksum;
 }
 
 void NhcDevice::scaleVelocityAtomic(double velsc)
 {
+   double s2 = velsc * velsc;
+   eksum *= s2;
+   for (int i = 0; i < 3; ++i)
+      for (int j = 0; j < 3; ++j)
+         ekin[i][j] *= s2;
    darray::scale(g::q0, n, velsc, vx);
    darray::scale(g::q0, n, velsc, vy);
    darray::scale(g::q0, n, velsc, vz);
