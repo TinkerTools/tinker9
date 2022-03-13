@@ -218,7 +218,7 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
 {
    if (not bound::use_bounds)
       return;
-   if (thermostat != NONE_THERMOSTAT)
+   if (bath::isothermal)
       temp = bath::kelvin;
 
 

@@ -14,6 +14,12 @@ void pair_lj_v0(real r, real invr, real vlambda, real rad, real eps,
                 real& restrict ev, real& restrict dev)
 {
    if CONSTEXPR (SOFTCORE) {
+      if (rad == 0) {
+         ev = 0;
+         if CONSTEXPR (DO_G)
+            dev = 0;
+         return;
+      }
       real sig = invr * rad;
       real sig2 = sig * sig;
       real p6 = 1 / (sig2 * sig2 * sig2);
