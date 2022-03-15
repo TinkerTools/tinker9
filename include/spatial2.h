@@ -1,7 +1,6 @@
 #pragma once
 #include "spatial.h"
 
-
 namespace tinker {
 /**
  * \ingroup spatial2
@@ -74,7 +73,6 @@ namespace tinker {
  *    1. For every atom block, set bit in `akpf` for block pair `(i,i)`.
  */
 
-
 /**
  * \ingroup spatial2
  */
@@ -88,7 +86,6 @@ struct Spatial2
    int* iak;   // List of blocks in "block-atoms".
    int* lst;   // List of atoms in "block-atoms".
 
-
    // internal
    int n;     // Number of atoms.
    int nak;   // Number of blocks.
@@ -97,15 +94,12 @@ struct Spatial2
    int px, py, pz;
    int cap_nakpl; // Capacity of iakpl. Initial value (32+8*nak).
 
-
    // internal
    int* iakpl_rev; // Length nakp. array[pair] == location in iakpl.
    int* akpf;      // Length nakpk. Block pair bit flags.
 
-
    Spatial::SortedAtom* sorted; // Length n.
    int* bnum;                   // Length n. array[unsorted] == sorted.
-
 
    struct alignas(16) Center
    {
@@ -114,7 +108,6 @@ struct Spatial2
    Center* akc;  // Length nak. Block center and the "local flag".
    Center* half; // Length nak. Half box size and radius.
 
-
    int fresh;
    real cutoff, buffer;
    const real* x;
@@ -122,7 +115,6 @@ struct Spatial2
    const real* z;
    int* update;              // Length max(2*n,128).
    real *xold, *yold, *zold; // Length n.
-
 
    struct ScaleInfo
    {
@@ -139,17 +131,15 @@ struct Spatial2
    ScaleInfo si3;
    ScaleInfo si4;
 
-
    ~Spatial2();
 };
 using Spatial2Unit = GenericUnit<Spatial2, GenericUnitVersion::DisableOnDevice>;
 
-
-void spatial2_data_alloc(Spatial2Unit& u, int n, double cutoff, double buffer,
-                         const real* x, const real* y, const real* z,
-                         int nstype,                                     //
-                         int ns1, int (*js1)[2], int ns2, int (*js2)[2], //
-                         int ns3, int (*js3)[2], int ns4, int (*js4)[2]);
+void spatial2_data_alloc(Spatial2Unit& u, int n, double cutoff, double buffer, const real* x,
+   const real* y, const real* z,
+   int nstype,                                     //
+   int ns1, int (*js1)[2], int ns2, int (*js2)[2], //
+   int ns3, int (*js3)[2], int ns4, int (*js4)[2]);
 void spatial2_cut(int& px, int& py, int& pz, int level);
 void spatial_data_init_cu(Spatial2Unit);
 void spatial_data_update_sorted(Spatial2Unit);

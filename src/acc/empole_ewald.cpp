@@ -9,8 +9,7 @@
 #include "tool/gpu_card.h"
 
 namespace tinker {
-#define DEVICE_PTRS                                                            \
-   x, y, z, demx, demy, demz, rpole, nem, em, vir_em, trqx, trqy, trqz
+#define DEVICE_PTRS x, y, z, demx, demy, demz, rpole, nem, em, vir_em, trqx, trqy, trqz
 template <class Ver>
 void empole_ewald_real_self_acc1()
 {
@@ -70,12 +69,11 @@ void empole_ewald_real_self_acc1()
          real r2 = image2(xr, yr, zr);
          if (r2 <= off2) {
             MAYBE_UNUSED real e;
-            pair_mpole<do_e, do_g, EWALD>(
-               r2, xr, yr, zr, 1,                                     //
+            pair_mpole<do_e, do_g, EWALD>(r2, xr, yr, zr, 1,          //
                ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, //
-               rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
-               rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy],
-               rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz],
+               rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
+               rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz],
+               rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz],
                rpole[k][mpl_pme_zz], //
                f, aewald, e, pgrad);
 
@@ -127,13 +125,12 @@ void empole_ewald_real_self_acc1()
 
       real cii = ci * ci;
       real dii = dix * dix + diy * diy + diz * diz;
-      real qii = 2 * (qixy * qixy + qixz * qixz + qiyz * qiyz) + qixx * qixx +
-         qiyy * qiyy + qizz * qizz;
+      real qii =
+         2 * (qixy * qixy + qixz * qixz + qiyz * qiyz) + qixx * qixx + qiyy * qiyy + qizz * qizz;
 
       if CONSTEXPR (do_e) {
          int offset = i & (bufsize - 1);
-         real e = fterm *
-            (cii + aewald_sq_2 * (dii / 3 + 2 * aewald_sq_2 * qii * (real)0.2));
+         real e = fterm * (cii + aewald_sq_2 * (dii / 3 + 2 * aewald_sq_2 * qii * (real)0.2));
          atomic_add(e, em, offset);
          if CONSTEXPR (do_a)
             atomic_add(1, nem, offset);
@@ -175,9 +172,9 @@ void empole_ewald_real_self_acc1()
          pair_mpole<do_e, do_g, NON_EWALD>(                        //
             r2, xr, yr, zr, mscale,                                //
             ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, //
-            rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
-            rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy],
-            rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz],
+            rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
+            rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
+            rpole[k][mpl_pme_yz],
             rpole[k][mpl_pme_zz], //
             f, 0, e, pgrad);
 
@@ -219,7 +216,6 @@ void empole_ewald_real_self_acc1()
    }
 }
 
-
 void empole_ewald_real_self_acc(int vers)
 {
    if (vers == calc::v0)
@@ -235,7 +231,6 @@ void empole_ewald_real_self_acc(int vers)
    else if (vers == calc::v6)
       empole_ewald_real_self_acc1<calc::V6>();
 }
-
 
 void empole_ewald_recip_acc(int vers)
 {

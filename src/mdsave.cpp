@@ -15,13 +15,11 @@
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/units.hh>
 
-
 #if TINKER_CUDART
 #   include "glob.gpucard.h"
 #   include "tool/error.h"
 #   include <cuda_runtime.h>
 #endif
-
 
 namespace tinker {
 namespace {
@@ -30,12 +28,10 @@ std::condition_variable cv_dup, cv_write;
 bool idle_dup, idle_write;
 std::future<void> fut_dup_then_write;
 
-
 bool mdsave_use_uind()
 {
    return output::uindsave && use_potent(polar_term);
 }
-
 
 ExecQ dup_stream;
 real (*dup_buf_uind)[3];
@@ -44,7 +40,6 @@ Box dup_buf_box;
 pos_prec *dup_buf_x, *dup_buf_y, *dup_buf_z;
 vel_prec *dup_buf_vx, *dup_buf_vy, *dup_buf_vz;
 grad_prec *dup_buf_gx, *dup_buf_gy, *dup_buf_gz;
-
 
 void mdsave_dup_then_write(int istep, time_prec dt)
 {
@@ -126,8 +121,8 @@ void mdsave_dup_then_write(int istep, time_prec dt)
 
    {
       std::vector<double> arrx(n), arry(n), arrz(n);
-      copy_gradient(calc::grad, arrx.data(), arry.data(), arrz.data(),
-                    dup_buf_gx, dup_buf_gy, dup_buf_gz, false);
+      copy_gradient(calc::grad, arrx.data(), arry.data(), arrz.data(), dup_buf_gx, dup_buf_gy,
+         dup_buf_gz, false);
       // convert gradient to acceleration
       const double ekcal = units::ekcal;
       for (int i = 0; i < n; ++i) {
@@ -167,30 +162,24 @@ void mdsave_dup_then_write(int istep, time_prec dt)
 }
 }
 
-
 void mdsave_async(int istep, time_prec dt)
 {
    std::unique_lock<std::mutex> lck_write(mtx_write);
    cv_write.wait(lck_write, [=]() { return idle_write; });
    idle_write = false;
 
-
-   fut_dup_then_write =
-      std::async(std::launch::async, mdsave_dup_then_write, istep, dt);
-
+   fut_dup_then_write = std::async(std::launch::async, mdsave_dup_then_write, istep, dt);
 
    std::unique_lock<std::mutex> lck_copy(mtx_dup);
    cv_dup.wait(lck_copy, [=]() { return idle_dup; });
    idle_dup = false;
 }
 
-
 void mdsave_synchronize()
 {
    if (fut_dup_then_write.valid())
       fut_dup_then_write.get();
 }
-
 
 void mdsave_data(rc_op op)
 {

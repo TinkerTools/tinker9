@@ -18,8 +18,7 @@ void etortor_data(rc_op op)
    bool rc_a = rc_flag & calc::analyz;
 
    if (op & rc_dealloc) {
-      darray::deallocate(ibitor, itt, tnx, tny, ttx, tty, tbf, tbx, tby, tbxy,
-                         chkttor_ia_);
+      darray::deallocate(ibitor, itt, tnx, tny, ttx, tty, tbf, tbx, tby, tbxy, chkttor_ia_);
 
       if (rc_a)
          buffer_deallocate(rc_flag, ett, vir_ett, dettx, detty, dettz);
@@ -34,8 +33,7 @@ void etortor_data(rc_op op)
       nbitor = bitor_::nbitor;
       darray::allocate(nbitor, &ibitor, &itt);
 
-      darray::allocate(ktrtor::maxntt, &tnx, &tny, &ttx, &tty, &tbf, &tbx, &tby,
-                       &tbxy);
+      darray::allocate(ktrtor::maxntt, &tnx, &tny, &ttx, &tty, &tbf, &tbx, &tby, &tbxy);
 
       ntortor = count_bonded_term(tortor_term);
       darray::allocate(ntortor, &chkttor_ia_);
@@ -144,7 +142,6 @@ void etortor(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
-
    if (rc_a) {
       host_zero(energy_ett, virial_ett);
       auto bsize = buffer_size();
@@ -156,9 +153,7 @@ void etortor(int vers)
          darray::zero(g::q0, n, dettx, detty, dettz);
    }
 
-
    etortor_acc(vers);
-
 
    if (rc_a) {
       if (do_e) {

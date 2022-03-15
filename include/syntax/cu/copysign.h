@@ -1,7 +1,6 @@
 #pragma once
 #include "macro.h"
 
-
 namespace tinker {
 /**
  * \ingroup cuda_syntax
@@ -16,7 +15,6 @@ inline int int_copysign_shift(int a, int b)
    return (mask + a) ^ mask;
 }
 
-
 /**
  * \ingroup cuda_syntax
  * If `b < 0`, returns `-abs(a)`, otherwise, returns `abs(a)`.
@@ -29,7 +27,6 @@ inline int int_copysign_if(int a, int b)
       ans = -ans;
    return ans;
 }
-
 
 /**
  * \def INT_COPYSIGN

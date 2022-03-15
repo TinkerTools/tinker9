@@ -1,7 +1,6 @@
 #pragma once
 #include "macro.h"
 
-
 /**
  * \ingroup prec
  * \page prec
@@ -21,7 +20,6 @@
  * | gradient (individual terms) | real        | real             |
  * | position (for energies)     | real        | real             |
  */
-
 
 /**
  * \ingroup prec
@@ -69,7 +67,6 @@
 #      define TINKER_DETERMINISTIC_FORCE 1
 #   endif
 #endif
-
 
 namespace tinker {
 using time_prec = mixed;

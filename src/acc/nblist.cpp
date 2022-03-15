@@ -1,31 +1,31 @@
+#include "nblist.h"
 #include "image.h"
 #include "md.h"
-#include "nblist.h"
 #include "tool/gpu_card.h"
 
 #if TINKER_CUDART
 namespace tinker {
-#   define m_swap_(a, b)                                                       \
-      {                                                                        \
-         auto tmp = b;                                                         \
-         b = a;                                                                \
-         a = tmp;                                                              \
+#   define m_swap_(a, b)                                                                           \
+      {                                                                                            \
+         auto tmp = b;                                                                             \
+         b = a;                                                                                    \
+         a = tmp;                                                                                  \
       }
-#   define m_max_heap_(arr, start, end)                                        \
-      {                                                                        \
-         int dad = start;                                                      \
-         int son = dad * 2 + 1;                                                \
-         while (son <= end) {                                                  \
-            if (son + 1 <= end && arr[son] < arr[son + 1])                     \
-               ++son;                                                          \
-            if (arr[dad] > arr[son])                                           \
-               return;                                                         \
-            else {                                                             \
-               m_swap_(arr[dad], arr[son]);                                    \
-               dad = son;                                                      \
-               son = dad * 2 + 1;                                              \
-            }                                                                  \
-         }                                                                     \
+#   define m_max_heap_(arr, start, end)                                                            \
+      {                                                                                            \
+         int dad = start;                                                                          \
+         int son = dad * 2 + 1;                                                                    \
+         while (son <= end) {                                                                      \
+            if (son + 1 <= end && arr[son] < arr[son + 1])                                         \
+               ++son;                                                                              \
+            if (arr[dad] > arr[son])                                                               \
+               return;                                                                             \
+            else {                                                                                 \
+               m_swap_(arr[dad], arr[son]);                                                        \
+               dad = son;                                                                          \
+               son = dad * 2 + 1;                                                                  \
+            }                                                                                      \
+         }                                                                                         \
       }
 
 #pragma acc routine seq
@@ -55,10 +55,9 @@ inline void sort_v1_(int* arr, int len)
 #endif
 
 namespace tinker {
-void check_nblist(int n, real lbuf, int* restrict update,
-                  const real* restrict x, const real* restrict y,
-                  const real* restrict z, real* restrict xold,
-                  real* restrict yold, real* restrict zold)
+void check_nblist(int n, real lbuf, int* restrict update, const real* restrict x,
+   const real* restrict y, const real* restrict z, real* restrict xold, real* restrict yold,
+   real* restrict zold)
 {
    const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
    #pragma acc parallel loop independent async\
@@ -82,14 +81,12 @@ void check_nblist(int n, real lbuf, int* restrict update,
    }
 }
 
-int check_spatial(int n, real lbuf, int* restrict update,
-                  const real* restrict x, const real* restrict y,
-                  const real* restrict z, real* restrict xold,
-                  real* restrict yold, real* restrict zold)
+int check_spatial(int n, real lbuf, int* restrict update, const real* restrict x,
+   const real* restrict y, const real* restrict z, real* restrict xold, real* restrict yold,
+   real* restrict zold)
 {
    if (lbuf == 0)
       return 1;
-
 
    // 0: do not rebuild; 1: rebuild
    const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
@@ -187,8 +184,7 @@ inline void update_v1_(NBListUnit nu)
    // test sites for displacement exceeding half the buffer
 
    auto& st = *nu;
-   check_nblist(n, st.buffer, st.update, st.x, st.y, st.z, st.xold, st.yold,
-                st.zold);
+   check_nblist(n, st.buffer, st.update, st.x, st.y, st.z, st.xold, st.yold, st.zold);
 
    // rebuild the higher numbered neighbors for updated sites
 
@@ -248,8 +244,7 @@ inline void update_v1_(NBListUnit nu)
                      for (int j = 0; j < lst->nlst[k]; ++j) {
                         if (lst->lst[k * maxnlst + j] == i) {
                            lst->nlst[k] -= 1;
-                           lst->lst[k * maxnlst + j] =
-                              lst->lst[k * maxnlst + lst->nlst[k]];
+                           lst->lst[k * maxnlst + j] = lst->lst[k * maxnlst + lst->nlst[k]];
                            goto label_30;
                         }
                      }

@@ -2,7 +2,6 @@
 #include "md.h"
 #include "seq_improp.h"
 
-
 namespace tinker {
 template <class Ver>
 void eimprop_acc1()
@@ -10,7 +9,6 @@ void eimprop_acc1()
    constexpr bool do_e = Ver::e;
    constexpr bool do_v = Ver::v;
    size_t bufsize = buffer_size();
-
 
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,deidx,deidy,deidz,\
@@ -21,18 +19,17 @@ void eimprop_acc1()
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_improp<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                     deidx, deidy, deidz,
+         deidx, deidy, deidz,
 
-                     idihunit, i, iiprop, kprop, vprop,
+         idihunit, i, iiprop, kprop, vprop,
 
-                     x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e)
          atomic_add(e, eid, offset);
       if CONSTEXPR (do_v)
          atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_eid, offset);
    }
 }
-
 
 void eimprop_acc(int vers)
 {

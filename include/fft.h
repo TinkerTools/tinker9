@@ -2,7 +2,6 @@
 #include "macro.h"
 #include <type_traits>
 
-
 namespace tinker {
 /**
  * \ingroup fft
@@ -56,7 +55,6 @@ namespace tinker {
  * > nz: The transform size in the z dimension. This is fastest changing
  * > dimension of a transform (contiguous in memory).
  */
-
 
 struct FFTPlan
 {

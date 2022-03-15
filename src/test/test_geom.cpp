@@ -1,9 +1,7 @@
 #include "test.h"
 #include "test_rt.h"
 
-
 using namespace tinker;
-
 
 TEST_CASE("Geom-Group-Local-Frame2", "[ff][egeom][local-frame2]")
 {
@@ -25,13 +23,9 @@ restrainterm        only
    int argc = 2;
    int usage = calc::xyz | calc::mass | calc::vmask;
 
-
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
-   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
-                x);
-   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
-                k0);
-
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz", x);
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k, k0);
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/geom.1.txt");
    auto ref_e = r.get_energy();
@@ -39,21 +33,17 @@ restrainterm        only
    auto ref_count = r.get_count();
    auto ref_g = r.get_gradient();
 
-
    const double eps_e = 0.0001;
    const double eps_g = 0.0001;
    const double eps_v = 0.001;
-
 
    test_begin_with_args(argc, argv);
    rc_flag = usage;
    initialize();
 
-
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
    COMPARE_INTS(ngfix, ref_count);
-
 
    energy(calc::v1);
    COMPARE_REALS(esum, ref_e, eps_e);
@@ -62,15 +52,12 @@ restrainterm        only
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
-
    energy(calc::v4);
    COMPARE_REALS(esum, ref_e, eps_e);
    COMPARE_GRADIENT(ref_g, eps_g);
 
-
    energy(calc::v5);
    COMPARE_GRADIENT(ref_g, eps_g);
-
 
    energy(calc::v6);
    COMPARE_GRADIENT(ref_g, eps_g);
@@ -78,11 +65,9 @@ restrainterm        only
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
-
    finish();
    test_end();
 }
-
 
 TEST_CASE("Geom-Distance-Local-Frame2", "[ff][egeom][local-frame2]")
 {
@@ -98,13 +83,9 @@ restrainterm        only
    int argc = 2;
    int usage = calc::xyz | calc::mass | calc::vmask;
 
-
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
-   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
-                x);
-   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
-                k0);
-
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz", x);
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k, k0);
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/geom.2.txt");
    auto ref_e = r.get_energy();
@@ -112,21 +93,17 @@ restrainterm        only
    auto ref_count = r.get_count();
    auto ref_g = r.get_gradient();
 
-
    const double eps_e = 0.0001;
    const double eps_g = 0.0001;
    const double eps_v = 0.001;
-
 
    test_begin_with_args(argc, argv);
    rc_flag = usage;
    initialize();
 
-
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
    COMPARE_INTS(ndfix, ref_count);
-
 
    energy(calc::v1);
    COMPARE_REALS(esum, ref_e, eps_e);
@@ -135,15 +112,12 @@ restrainterm        only
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
-
    energy(calc::v4);
    COMPARE_REALS(esum, ref_e, eps_e);
    COMPARE_GRADIENT(ref_g, eps_g);
 
-
    energy(calc::v5);
    COMPARE_GRADIENT(ref_g, eps_g);
-
 
    energy(calc::v6);
    COMPARE_GRADIENT(ref_g, eps_g);
@@ -151,11 +125,9 @@ restrainterm        only
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
-
    finish();
    test_end();
 }
-
 
 TEST_CASE("Geom-Angle-Local-Frame2", "[ff][egeom][local-frame2]")
 {
@@ -171,13 +143,9 @@ restrainterm        only
    int argc = 2;
    int usage = calc::xyz | calc::mass | calc::vmask;
 
-
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
-   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
-                x);
-   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
-                k0);
-
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz", x);
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k, k0);
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/geom.3.txt");
    auto ref_e = r.get_energy();
@@ -185,21 +153,17 @@ restrainterm        only
    auto ref_count = r.get_count();
    auto ref_g = r.get_gradient();
 
-
    const double eps_e = 0.0001;
    const double eps_g = 0.0001;
    const double eps_v = 0.001;
-
 
    test_begin_with_args(argc, argv);
    rc_flag = usage;
    initialize();
 
-
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
    COMPARE_INTS(nafix, ref_count);
-
 
    energy(calc::v1);
    COMPARE_REALS(esum, ref_e, eps_e);
@@ -208,15 +172,12 @@ restrainterm        only
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
-
    energy(calc::v4);
    COMPARE_REALS(esum, ref_e, eps_e);
    COMPARE_GRADIENT(ref_g, eps_g);
 
-
    energy(calc::v5);
    COMPARE_GRADIENT(ref_g, eps_g);
-
 
    energy(calc::v6);
    COMPARE_GRADIENT(ref_g, eps_g);
@@ -224,11 +185,9 @@ restrainterm        only
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
-
    finish();
    test_end();
 }
-
 
 TEST_CASE("Geom-Torsion-Local-Frame2", "[ff][egeom][local-frame2]")
 {
@@ -244,13 +203,9 @@ restrainterm        only
    int argc = 2;
    int usage = calc::xyz | calc::mass | calc::vmask;
 
-
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
-   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
-                x);
-   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
-                k0);
-
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz", x);
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k, k0);
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/geom.4.txt");
    auto ref_e = r.get_energy();
@@ -258,21 +213,17 @@ restrainterm        only
    auto ref_count = r.get_count();
    auto ref_g = r.get_gradient();
 
-
    const double eps_e = 0.0005;
    const double eps_g = 0.1000;
    const double eps_v = 0.0015;
-
 
    test_begin_with_args(argc, argv);
    rc_flag = usage;
    initialize();
 
-
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
    COMPARE_INTS(ntfix, ref_count);
-
 
    energy(calc::v1);
    COMPARE_REALS(esum, ref_e, eps_e);
@@ -281,15 +232,12 @@ restrainterm        only
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
-
    energy(calc::v4);
    COMPARE_REALS(esum, ref_e, eps_e);
    COMPARE_GRADIENT(ref_g, eps_g);
 
-
    energy(calc::v5);
    COMPARE_GRADIENT(ref_g, eps_g);
-
 
    energy(calc::v6);
    COMPARE_GRADIENT(ref_g, eps_g);
@@ -297,11 +245,9 @@ restrainterm        only
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
-
    finish();
    test_end();
 }
-
 
 TEST_CASE("Geom-Position-Local-Frame2", "[ff][egeom][local-frame2]")
 {
@@ -317,13 +263,9 @@ restrainterm        only
    int argc = 2;
    int usage = calc::xyz | calc::mass | calc::vmask;
 
-
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
-   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz",
-                x);
-   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k,
-                k0);
-
+   TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz", x);
+   TestFile fke(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame.key", k, k0);
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/geom.5.txt");
    auto ref_e = r.get_energy();
@@ -331,21 +273,17 @@ restrainterm        only
    auto ref_count = r.get_count();
    auto ref_g = r.get_gradient();
 
-
    const double eps_e = 0.0005;
    const double eps_g = 0.1000;
    const double eps_v = 0.0015;
-
 
    test_begin_with_args(argc, argv);
    rc_flag = usage;
    initialize();
 
-
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
    COMPARE_INTS(npfix, ref_count);
-
 
    energy(calc::v1);
    COMPARE_REALS(esum, ref_e, eps_e);
@@ -354,22 +292,18 @@ restrainterm        only
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
-
    energy(calc::v4);
    COMPARE_REALS(esum, ref_e, eps_e);
    COMPARE_GRADIENT(ref_g, eps_g);
 
-
    energy(calc::v5);
    COMPARE_GRADIENT(ref_g, eps_g);
-
 
    energy(calc::v6);
    COMPARE_GRADIENT(ref_g, eps_g);
    for (int i = 0; i < 3; ++i)
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
-
 
    finish();
    test_end();

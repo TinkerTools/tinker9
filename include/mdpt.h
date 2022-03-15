@@ -1,16 +1,12 @@
 #pragma once
 #include "mdprec.h"
 
-
 namespace tinker {
-void kinetic_energy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
-                    int n, const double* mass, const vel_prec* vx,
-                    const vel_prec* vy, const vel_prec* vz);
-void kinetic_explicit(T_prec& temp_out, energy_prec& eksum_out,
-                      energy_prec (&ekin_out)[3][3], const vel_prec* vx,
-                      const vel_prec* vy, const vel_prec* vz);
+void kinetic_energy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n,
+   const double* mass, const vel_prec* vx, const vel_prec* vy, const vel_prec* vz);
+void kinetic_explicit(T_prec& temp_out, energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
+   const vel_prec* vx, const vel_prec* vy, const vel_prec* vz);
 void kinetic(T_prec& temp);
-
 
 void temper(time_prec dt, T_prec& temp, bool save);
 /**
@@ -30,7 +26,6 @@ void temper(time_prec dt, T_prec& temp, bool save);
  */
 void pressure(time_prec dt);
 
-
 enum class Thermostat
 {
    BERENDSEN,
@@ -48,13 +43,10 @@ constexpr auto LEAPFROG_LPISTON_THERMOSTAT = Thermostat::LEAPFROG_LPISTON;
 constexpr auto NONE_THERMOSTAT = Thermostat::NONE;
 extern Thermostat thermostat;
 
-
 //====================================================================//
-
 
 void bussi_thermostat(time_prec dt, T_prec temp);
 void bussi_thermostat_acc(time_prec dt, T_prec temp);
-
 
 enum class Barostat
 {
@@ -75,7 +67,6 @@ constexpr auto MONTE_CARLO_BAROSTAT = Barostat::MONTE_CARLO;
 constexpr auto NONE_BAROSTAT = Barostat::NONE;
 extern Barostat barostat;
 
-
 extern pos_prec *x_pmonte, *y_pmonte, *z_pmonte;
 extern bool do_pmonte;
 /**
@@ -86,13 +77,10 @@ extern bool do_pmonte;
 void monte_carlo_barostat(energy_prec epot, T_prec temp);
 void monte_carlo_barostat_acc(energy_prec epot, T_prec temp);
 
-
 void berendsen_barostat(time_prec dt);
 void berendsen_barostat_acc(time_prec);
 
-
 //====================================================================//
-
 
 /**
  * \ingroup mdpt

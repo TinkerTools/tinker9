@@ -2,17 +2,14 @@
 #include "macro.h"
 #include "tool/energy_buffer.h"
 
-
 namespace tinker {
 TINKER_EXTERN real* sizpr;
 TINKER_EXTERN real* dmppr;
 TINKER_EXTERN real* elepr;
 
-
 TINKER_EXTERN int nrepexclude;
 TINKER_EXTERN int (*repexclude)[2];
 TINKER_EXTERN real* repexclude_scale;
-
 
 TINKER_EXTERN count_buffer nrep;
 TINKER_EXTERN energy_buffer er;

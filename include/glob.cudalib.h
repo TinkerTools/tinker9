@@ -4,7 +4,6 @@
 #   include <cublas_v2.h>
 #   include <cuda_runtime.h>
 
-
 namespace tinker {
 namespace g {
 /// \ingroup async

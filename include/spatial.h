@@ -2,7 +2,6 @@
 #include "tool/gen_unit.h"
 #include "tool/rc_man.h"
 
-
 namespace tinker {
 /**
  * \ingroup spatial
@@ -201,7 +200,6 @@ namespace tinker {
  *       (b) Write the neighbor atom back to `lst`.
  */
 
-
 /**
  * \ingroup spatial
  */
@@ -221,14 +219,12 @@ struct Spatial
    };
    static constexpr int BLOCK = 32;
 
-
    // output
    int niak;
    // internal
    int n, nak;
    int px, py, pz, nx, nxk;
    int near, xak_sum, iak_cap;
-
 
    // output
    int *iak, *lst;
@@ -240,7 +236,6 @@ struct Spatial
    int* ax_scan;                 // nx + 1
    int* xkf;                     // nax * nxk
 
-
    int fresh;
    real cutoff, buffer;
    const real* x;
@@ -249,11 +244,9 @@ struct Spatial
    int* update;              // n
    real *xold, *yold, *zold; // n
 
-
    ~Spatial();
 };
 using SpatialUnit = GenericUnit<Spatial, GenericUnitVersion::EnableOnDevice>;
-
 
 /**
  * \ingroup spatial
@@ -279,8 +272,8 @@ void spatial_cut_v3(int& px, int& py, int& pz, int level);
  * \ingroup spatial
  * Allocates internal spatial decomposition arrays.
  */
-void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer,
-                        const real* x, const real* y, const real* z);
+void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer, const real* x,
+   const real* y, const real* z);
 /**
  * \ingroup spatial
  * Constructs spatial decomposition.

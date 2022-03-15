@@ -2,7 +2,6 @@
 #include "macro.h"
 #include "tool/energy_buffer.h"
 
-
 namespace tinker {
 TINKER_EXTERN int ntors;
 TINKER_EXTERN int (*itors)[4];
@@ -12,7 +11,6 @@ TINKER_EXTERN real (*tors3)[4];
 TINKER_EXTERN real (*tors4)[4];
 TINKER_EXTERN real (*tors5)[4];
 TINKER_EXTERN real (*tors6)[4];
-
 
 TINKER_EXTERN energy_buffer et;
 TINKER_EXTERN virial_buffer vir_et;

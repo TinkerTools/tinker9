@@ -2,31 +2,26 @@
 #include "tool/darray.h"
 #include "tool/error.h"
 
-
 namespace tinker {
 Spatial2::~Spatial2()
 {
    darray::deallocate(iakpl, iak, lst);
 
-
    darray::deallocate(iakpl_rev, akpf, sorted, bnum);
    darray::deallocate(akc, half);
    darray::deallocate(update, xold, yold, zold);
 
-
    darray::deallocate(si1.bit0, si2.bit0, si3.bit0, si4.bit0);
 }
 
-
-void spatial2_data_alloc(Spatial2Unit& u, int n, double cutoff, double buffer,
-                         const real* x, const real* y, const real* z,    //
-                         int nstype,                                     //
-                         int ns1, int (*js1)[2], int ns2, int (*js2)[2], //
-                         int ns3, int (*js3)[2], int ns4, int (*js4)[2])
+void spatial2_data_alloc(Spatial2Unit& u, int n, double cutoff, double buffer, const real* x,
+   const real* y, const real* z,                   //
+   int nstype,                                     //
+   int ns1, int (*js1)[2], int ns2, int (*js2)[2], //
+   int ns3, int (*js3)[2], int ns4, int (*js4)[2])
 {
    u = Spatial2Unit::open();
    auto& st = *u;
-
 
    // output
    st.nakpl = 0;
@@ -34,7 +29,6 @@ void spatial2_data_alloc(Spatial2Unit& u, int n, double cutoff, double buffer,
    st.iakpl = nullptr;
    st.iak = nullptr;
    st.lst = nullptr;
-
 
    // internal
    st.n = n;
@@ -45,21 +39,17 @@ void spatial2_data_alloc(Spatial2Unit& u, int n, double cutoff, double buffer,
    spatial2_cut(st.px, st.py, st.pz, level);
    st.cap_nakpl = 32 + 8 * st.nak;
 
-
    darray::allocate(st.cap_nakpl, &st.iakpl);
    darray::allocate(st.nak * Spatial2::LSTCAP, &st.iak);
    darray::allocate(st.nak * Spatial2::LSTCAP * 32, &st.lst);
-
 
    darray::allocate(st.nakp, &st.iakpl_rev);
    darray::allocate(st.nakpk, &st.akpf);
    darray::allocate(st.n, &st.sorted, &st.bnum);
    darray::allocate(st.nak, &st.akc, &st.half);
 
-
    darray::allocate(std::max(128, st.n * 2), &st.update);
    darray::allocate(st.n, &st.xold, &st.yold, &st.zold);
-
 
    st.fresh = 0;
    st.cutoff = cutoff;
@@ -67,7 +57,6 @@ void spatial2_data_alloc(Spatial2Unit& u, int n, double cutoff, double buffer,
    st.x = x;
    st.y = y;
    st.z = z;
-
 
    st.nstype = nstype;
    st.si1.init();
@@ -92,7 +81,6 @@ void spatial2_data_alloc(Spatial2Unit& u, int n, double cutoff, double buffer,
    }
 }
 
-
 void Spatial2::ScaleInfo::init()
 {
    js = nullptr;
@@ -100,13 +88,11 @@ void Spatial2::ScaleInfo::init()
    ns = 0;
 }
 
-
 void Spatial2::ScaleInfo::set(int nns, int (*jjs)[2])
 {
    ns = nns;
    js = jjs;
 }
-
 
 void spatial2_cut(int& px, int& py, int& pz, int level)
 {

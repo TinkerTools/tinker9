@@ -2,12 +2,10 @@
 #include "macro.h"
 #include "tool/energy_buffer.h"
 
-
 namespace tinker {
 TINKER_EXTERN int nangtor;
 TINKER_EXTERN int (*iat)[3];
 TINKER_EXTERN real (*kant)[6];
-
 
 TINKER_EXTERN energy_buffer eat;
 TINKER_EXTERN virial_buffer vir_eat;

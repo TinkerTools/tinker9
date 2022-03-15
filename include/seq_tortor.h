@@ -3,84 +3,73 @@
 #include "mathfunc.h"
 #include "seq_def.h"
 
-
 namespace tinker {
 // see also bicubic.f
-#define BCUCOF__                                                               \
-   real c[4][4];                                                               \
-   real d1 = x1u - x1l;                                                        \
-   real d2 = x2u - x2l;                                                        \
-   real d12 = d1 * d2;                                                         \
-   real y1[4], y2[4], y12[4];                                                  \
-                                                                               \
-   y1[0] = d1 * y1i[0];                                                        \
-   y1[1] = d1 * y1i[1];                                                        \
-   y1[2] = d1 * y1i[2];                                                        \
-   y1[3] = d1 * y1i[3];                                                        \
-   y2[0] = d2 * y2i[0];                                                        \
-   y2[1] = d2 * y2i[1];                                                        \
-   y2[2] = d2 * y2i[2];                                                        \
-   y2[3] = d2 * y2i[3];                                                        \
-   y12[0] = d12 * y12i[0];                                                     \
-   y12[1] = d12 * y12i[1];                                                     \
-   y12[2] = d12 * y12i[2];                                                     \
-   y12[3] = d12 * y12i[3];                                                     \
-                                                                               \
-   c[0][0] = y[0];                                                             \
-   c[0][1] = y2[0];                                                            \
-   c[0][2] = 3 * (y[3] - y[0]) - (2 * y2[0] + y2[3]);                          \
-   c[0][3] = 2 * (y[0] - y[3]) + y2[0] + y2[3];                                \
-   c[1][0] = y1[0];                                                            \
-   c[1][1] = y12[0];                                                           \
-   c[1][2] = 3 * (y1[3] - y1[0]) - (2 * y12[0] + y12[3]);                      \
-   c[1][3] = 2 * (y1[0] - y1[3]) + y12[0] + y12[3];                            \
-   c[2][0] = 3 * (y[1] - y[0]) - (2 * y1[0] + y1[1]);                          \
-   c[2][1] = 3 * (y2[1] - y2[0]) - (2 * y12[0] + y12[1]);                      \
-   c[2][2] = 9 * (y[0] - y[1] + y[2] - y[3]) + 6 * y1[0] + 3 * y1[1] -         \
-      3 * y1[2] - 6 * y1[3] + 6 * y2[0] - 6 * y2[1] - 3 * y2[2] + 3 * y2[3] +  \
-      4 * y12[0] + 2 * y12[1] + y12[2] + 2 * y12[3];                           \
-   c[2][3] = 6 * (y[1] - y[0] + y[3] - y[2]) + -4 * y1[0] - 2 * y1[1] +        \
-      2 * y1[2] + 4 * y1[3] + -3 * y2[0] + 3 * y2[1] + 3 * y2[2] - 3 * y2[3] - \
-      2 * y12[0] - y12[1] - y12[2] - 2 * y12[3];                               \
-   c[3][0] = 2 * (y[0] - y[1]) + y1[0] + y1[1];                                \
-   c[3][1] = 2 * (y2[0] - y2[1]) + y12[0] + y12[1];                            \
-   c[3][2] = 6 * (y[1] - y[0] + y[3] - y[2]) +                                 \
-      3 * (y1[2] + y1[3] - y1[0] - y1[1]) +                                    \
-      2 * (2 * (y2[1] - y2[0]) + y2[2] - y2[3]) + -2 * (y12[0] + y12[1]) -     \
-      y12[2] - y12[3];                                                         \
-   c[3][3] = 4 * (y[0] - y[1] + y[2] - y[3]) +                                 \
-      2 * (y1[0] + y1[1] - y1[2] - y1[3]) +                                    \
-      2 * (y2[0] - y2[1] - y2[2] + y2[3]) + y12[0] + y12[1] + y12[2] + y12[3]; \
-                                                                               \
-   real t = (x1 - x1l) * REAL_RECIP(x1u - x1l);                                \
+#define BCUCOF__                                                                                   \
+   real c[4][4];                                                                                   \
+   real d1 = x1u - x1l;                                                                            \
+   real d2 = x2u - x2l;                                                                            \
+   real d12 = d1 * d2;                                                                             \
+   real y1[4], y2[4], y12[4];                                                                      \
+                                                                                                   \
+   y1[0] = d1 * y1i[0];                                                                            \
+   y1[1] = d1 * y1i[1];                                                                            \
+   y1[2] = d1 * y1i[2];                                                                            \
+   y1[3] = d1 * y1i[3];                                                                            \
+   y2[0] = d2 * y2i[0];                                                                            \
+   y2[1] = d2 * y2i[1];                                                                            \
+   y2[2] = d2 * y2i[2];                                                                            \
+   y2[3] = d2 * y2i[3];                                                                            \
+   y12[0] = d12 * y12i[0];                                                                         \
+   y12[1] = d12 * y12i[1];                                                                         \
+   y12[2] = d12 * y12i[2];                                                                         \
+   y12[3] = d12 * y12i[3];                                                                         \
+                                                                                                   \
+   c[0][0] = y[0];                                                                                 \
+   c[0][1] = y2[0];                                                                                \
+   c[0][2] = 3 * (y[3] - y[0]) - (2 * y2[0] + y2[3]);                                              \
+   c[0][3] = 2 * (y[0] - y[3]) + y2[0] + y2[3];                                                    \
+   c[1][0] = y1[0];                                                                                \
+   c[1][1] = y12[0];                                                                               \
+   c[1][2] = 3 * (y1[3] - y1[0]) - (2 * y12[0] + y12[3]);                                          \
+   c[1][3] = 2 * (y1[0] - y1[3]) + y12[0] + y12[3];                                                \
+   c[2][0] = 3 * (y[1] - y[0]) - (2 * y1[0] + y1[1]);                                              \
+   c[2][1] = 3 * (y2[1] - y2[0]) - (2 * y12[0] + y12[1]);                                          \
+   c[2][2] = 9 * (y[0] - y[1] + y[2] - y[3]) + 6 * y1[0] + 3 * y1[1] - 3 * y1[2] - 6 * y1[3] +     \
+      6 * y2[0] - 6 * y2[1] - 3 * y2[2] + 3 * y2[3] + 4 * y12[0] + 2 * y12[1] + y12[2] +           \
+      2 * y12[3];                                                                                  \
+   c[2][3] = 6 * (y[1] - y[0] + y[3] - y[2]) + -4 * y1[0] - 2 * y1[1] + 2 * y1[2] + 4 * y1[3] +    \
+      -3 * y2[0] + 3 * y2[1] + 3 * y2[2] - 3 * y2[3] - 2 * y12[0] - y12[1] - y12[2] - 2 * y12[3];  \
+   c[3][0] = 2 * (y[0] - y[1]) + y1[0] + y1[1];                                                    \
+   c[3][1] = 2 * (y2[0] - y2[1]) + y12[0] + y12[1];                                                \
+   c[3][2] = 6 * (y[1] - y[0] + y[3] - y[2]) + 3 * (y1[2] + y1[3] - y1[0] - y1[1]) +               \
+      2 * (2 * (y2[1] - y2[0]) + y2[2] - y2[3]) + -2 * (y12[0] + y12[1]) - y12[2] - y12[3];        \
+   c[3][3] = 4 * (y[0] - y[1] + y[2] - y[3]) + 2 * (y1[0] + y1[1] - y1[2] - y1[3]) +               \
+      2 * (y2[0] - y2[1] - y2[2] + y2[3]) + y12[0] + y12[1] + y12[2] + y12[3];                     \
+                                                                                                   \
+   real t = (x1 - x1l) * REAL_RECIP(x1u - x1l);                                                    \
    real u = (x2 - x2l) * REAL_RECIP(x2u - x2l)
 
-
-#define BCUCOF_ANSY__                                                          \
-   real ay = ((c[3][3] * u + c[3][2]) * u + c[3][1]) * u + c[3][0];            \
-   ay = t * ay + ((c[2][3] * u + c[2][2]) * u + c[2][1]) * u + c[2][0];        \
-   ay = t * ay + ((c[1][3] * u + c[1][2]) * u + c[1][1]) * u + c[1][0];        \
+#define BCUCOF_ANSY__                                                                              \
+   real ay = ((c[3][3] * u + c[3][2]) * u + c[3][1]) * u + c[3][0];                                \
+   ay = t * ay + ((c[2][3] * u + c[2][2]) * u + c[2][1]) * u + c[2][0];                            \
+   ay = t * ay + ((c[1][3] * u + c[1][2]) * u + c[1][1]) * u + c[1][0];                            \
    ay = t * ay + ((c[0][3] * u + c[0][2]) * u + c[0][1]) * u + c[0][0]
-
 
 SEQ_ROUTINE
 static void bcuint0(const real (&restrict y)[4], const real (&restrict y1i)[4],
-                    const real (&restrict y2i)[4],
-                    const real (&restrict y12i)[4], real x1l, real x1u,
-                    real x2l, real x2u, real x1, real x2, real& restrict ansy)
+   const real (&restrict y2i)[4], const real (&restrict y12i)[4], real x1l, real x1u, real x2l,
+   real x2u, real x1, real x2, real& restrict ansy)
 {
    BCUCOF__;
    BCUCOF_ANSY__;
    ansy = ay;
 }
 
-
 SEQ_ROUTINE
 static void bcuint1(const real (&restrict y)[4], const real (&restrict y1i)[4],
-                    const real (&restrict y2i)[4],
-                    const real (&restrict y12i)[4], real x1l, real x1u,
-                    real x2l, real x2u, real x1, real x2, real& restrict ansy,
-                    real& restrict ansy1, real& restrict ansy2)
+   const real (&restrict y2i)[4], const real (&restrict y12i)[4], real x1l, real x1u, real x2l,
+   real x2u, real x1, real x2, real& restrict ansy, real& restrict ansy1, real& restrict ansy2)
 {
    BCUCOF__;
    BCUCOF_ANSY__;
@@ -103,30 +92,23 @@ static void bcuint1(const real (&restrict y)[4], const real (&restrict y1i)[4],
 #undef BCUCOF__
 #undef BCUCOF_ANSY__
 
-
 #pragma acc routine seq
 template <class Ver>
 SEQ_CUDA
-void dk_tortor(real& restrict e, real& restrict vxx, real& restrict vyx,
-               real& restrict vzx, real& restrict vyy, real& restrict vzy,
-               real& restrict vzz,
+void dk_tortor(real& restrict e, real& restrict vxx, real& restrict vyx, real& restrict vzx,
+   real& restrict vyy, real& restrict vzy, real& restrict vzz,
 
-               grad_prec* restrict dettx, grad_prec* restrict detty,
-               grad_prec* restrict dettz,
+   grad_prec* restrict dettx, grad_prec* restrict detty, grad_prec* restrict dettz,
 
-               real ttorunit, int itortor, const int (*restrict itt)[3],
-               const int (*restrict ibitor)[5], const int* restrict chkttor_ia_,
+   real ttorunit, int itortor, const int (*restrict itt)[3], const int (*restrict ibitor)[5],
+   const int* restrict chkttor_ia_,
 
-               const int* restrict tnx, const int* restrict tny,
-               const real (*restrict ttx)[ktrtor::maxtgrd],
-               const real (*restrict tty)[ktrtor::maxtgrd],
-               const real (*restrict tbf)[ktrtor::maxtgrd2],
-               const real (*restrict tbx)[ktrtor::maxtgrd2],
-               const real (*restrict tby)[ktrtor::maxtgrd2],
-               const real (*restrict tbxy)[ktrtor::maxtgrd2],
+   const int* restrict tnx, const int* restrict tny, const real (*restrict ttx)[ktrtor::maxtgrd],
+   const real (*restrict tty)[ktrtor::maxtgrd], const real (*restrict tbf)[ktrtor::maxtgrd2],
+   const real (*restrict tbx)[ktrtor::maxtgrd2], const real (*restrict tby)[ktrtor::maxtgrd2],
+   const real (*restrict tbxy)[ktrtor::maxtgrd2],
 
-               const real* restrict x, const real* restrict y,
-               const real* restrict z)
+   const real* restrict x, const real* restrict y, const real* restrict z)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -276,8 +258,7 @@ void dk_tortor(real& restrict e, real& restrict vxx, real& restrict vyx,
 
       real dedang1, dedang2;
       if CONSTEXPR (do_g) {
-         bcuint1(ftt, ft1, ft2, ft12, x1l, x1u, y1l, y1u, value1, value2, e,
-                 dedang1, dedang2);
+         bcuint1(ftt, ft1, ft2, ft12, x1l, x1u, y1l, y1u, value1, value2, e, dedang1, dedang2);
       } else {
          bcuint0(ftt, ft1, ft2, ft12, x1l, x1u, y1l, y1u, value1, value2, e);
       }
@@ -343,18 +324,12 @@ void dk_tortor(real& restrict e, real& restrict vxx, real& restrict vyx,
          real dedxib2 = zdc * dedyu2 - ydc * dedzu2;
          real dedyib2 = xdc * dedzu2 - zdc * dedxu2;
          real dedzib2 = ydc * dedxu2 - xdc * dedyu2;
-         real dedxic2 =
-            ydb * dedzu2 - zdb * dedyu2 + zed * dedyv2 - yed * dedzv2;
-         real dedyic2 =
-            zdb * dedxu2 - xdb * dedzu2 + xed * dedzv2 - zed * dedxv2;
-         real dedzic2 =
-            xdb * dedyu2 - ydb * dedxu2 + yed * dedxv2 - xed * dedyv2;
-         real dedxid2 =
-            zcb * dedyu2 - ycb * dedzu2 + yec * dedzv2 - zec * dedyv2;
-         real dedyid2 =
-            xcb * dedzu2 - zcb * dedxu2 + zec * dedxv2 - xec * dedzv2;
-         real dedzid2 =
-            ycb * dedxu2 - xcb * dedyu2 + xec * dedyv2 - yec * dedxv2;
+         real dedxic2 = ydb * dedzu2 - zdb * dedyu2 + zed * dedyv2 - yed * dedzv2;
+         real dedyic2 = zdb * dedxu2 - xdb * dedzu2 + xed * dedzv2 - zed * dedxv2;
+         real dedzic2 = xdb * dedyu2 - ydb * dedxu2 + yed * dedxv2 - xed * dedyv2;
+         real dedxid2 = zcb * dedyu2 - ycb * dedzu2 + yec * dedzv2 - zec * dedyv2;
+         real dedyid2 = xcb * dedzu2 - zcb * dedxu2 + zec * dedxv2 - xec * dedzv2;
+         real dedzid2 = ycb * dedxu2 - xcb * dedyu2 + xec * dedyv2 - yec * dedxv2;
          real dedxie2 = zdc * dedyv2 - ydc * dedzv2;
          real dedyie2 = xdc * dedzv2 - zdc * dedxv2;
          real dedzie2 = ydc * dedxv2 - xdc * dedyv2;
@@ -382,21 +357,14 @@ void dk_tortor(real& restrict e, real& restrict vxx, real& restrict vyx,
             vyy = ycb * (dedyic + dedyid) - yba * dedyia + ydc * dedyid;
             vzy = zcb * (dedyic + dedyid) - zba * dedyia + zdc * dedyid;
             vzz = zcb * (dedzic + dedzid) - zba * dedzia + zdc * dedzid;
-            real vxx2 =
-               xdc * (dedxid2 + dedxie2) - xcb * dedxib2 + xed * dedxie2;
-            real vyx2 =
-               ydc * (dedxid2 + dedxie2) - ycb * dedxib2 + yed * dedxie2;
-            real vzx2 =
-               zdc * (dedxid2 + dedxie2) - zcb * dedxib2 + zed * dedxie2;
-            real vyy2 =
-               ydc * (dedyid2 + dedyie2) - ycb * dedyib2 + yed * dedyie2;
-            real vzy2 =
-               zdc * (dedyid2 + dedyie2) - zcb * dedyib2 + zed * dedyie2;
-            real vzz2 =
-               zdc * (dedzid2 + dedzie2) - zcb * dedzib2 + zed * dedzie2;
+            real vxx2 = xdc * (dedxid2 + dedxie2) - xcb * dedxib2 + xed * dedxie2;
+            real vyx2 = ydc * (dedxid2 + dedxie2) - ycb * dedxib2 + yed * dedxie2;
+            real vzx2 = zdc * (dedxid2 + dedxie2) - zcb * dedxib2 + zed * dedxie2;
+            real vyy2 = ydc * (dedyid2 + dedyie2) - ycb * dedyib2 + yed * dedyie2;
+            real vzy2 = zdc * (dedyid2 + dedyie2) - zcb * dedyib2 + zed * dedyie2;
+            real vzz2 = zdc * (dedzid2 + dedzie2) - zcb * dedzib2 + zed * dedzie2;
 
-            vxx += vxx2, vyx += vyx2, vzx += vzx2, vyy += vyy2, vzy += vzy2,
-               vzz += vzz2;
+            vxx += vxx2, vyx += vyx2, vzx += vzx2, vyy += vyy2, vzy += vzy2, vzz += vzz2;
          }
       }
    }

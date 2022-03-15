@@ -55,8 +55,7 @@ void print_backtrace_tmpl(std::FILE* fp)
       demangled_name = abi::__cxa_demangle(callee.c_str(), 0, 0, &status);
       if (!status) {
          // This name CAN be demangled.
-         std::string tmp =
-            ((tolerance + callee.length()) >= std::strlen(demangled_name))
+         std::string tmp = ((tolerance + callee.length()) >= std::strlen(demangled_name))
             ? demangled_name
             : callee;
          callee = tmp;

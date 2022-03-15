@@ -46,16 +46,13 @@ void epolar_chgpen_data(rc_op op)
       darray::deallocate(work01_, work02_, work03_, work04_, work05_);
 
       if (polpred == UPred::ASPC) {
-         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04,
-                            udalt_05, udalt_06, udalt_07, udalt_08, udalt_09,
-                            udalt_10, udalt_11, udalt_12, udalt_13, udalt_14,
-                            udalt_15);
+         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, udalt_06,
+            udalt_07, udalt_08, udalt_09, udalt_10, udalt_11, udalt_12, udalt_13, udalt_14,
+            udalt_15);
       } else if (polpred == UPred::GEAR) {
-         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04,
-                            udalt_05);
+         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05);
       } else if (polpred == UPred::LSQR) {
-         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04,
-                            udalt_05, udalt_06);
+         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, udalt_06);
          darray::deallocate(udalt_lsqr_a, udalt_lsqr_b);
       }
       polpred = UPred::NONE;
@@ -102,30 +99,26 @@ void epolar_chgpen_data(rc_op op)
 
       if (polpred == UPred::ASPC) {
          maxualt = 16;
-         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
-                          &udalt_04, &udalt_05, &udalt_06, &udalt_07, &udalt_08,
-                          &udalt_09, &udalt_10, &udalt_11, &udalt_12, &udalt_13,
-                          &udalt_14, &udalt_15);
-         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03,
-                      udalt_04, udalt_05, udalt_06, udalt_07, udalt_08,
-                      udalt_09, udalt_10, udalt_11, udalt_12, udalt_13,
-                      udalt_14, udalt_15);
+         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03, &udalt_04, &udalt_05,
+            &udalt_06, &udalt_07, &udalt_08, &udalt_09, &udalt_10, &udalt_11, &udalt_12, &udalt_13,
+            &udalt_14, &udalt_15);
+         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05,
+            udalt_06, udalt_07, udalt_08, udalt_09, udalt_10, udalt_11, udalt_12, udalt_13,
+            udalt_14, udalt_15);
       } else if (polpred == UPred::GEAR) {
          maxualt = 6;
-         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
-                          &udalt_04, &udalt_05);
-         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03,
-                      udalt_04, udalt_05);
+         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03, &udalt_04, &udalt_05);
+         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05);
       } else if (polpred == UPred::LSQR) {
          maxualt = 7;
-         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
-                          &udalt_04, &udalt_05, &udalt_06);
+         darray::allocate(
+            n, &udalt_00, &udalt_01, &udalt_02, &udalt_03, &udalt_04, &udalt_05, &udalt_06);
          int lenb = maxualt - 1;
          int lena = lenb * lenb; // lenb*(lenb+1)/2 should be plenty.
          darray::allocate(lena, &udalt_lsqr_a);
          darray::allocate(lenb, &udalt_lsqr_b);
-         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03,
-                      udalt_04, udalt_05, udalt_06);
+         darray::zero(
+            g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, udalt_06);
       }
    }
 
@@ -143,7 +136,6 @@ void epolar_chgpen_data(rc_op op)
    }
 }
 
-
 void induce2(real (*ud)[3])
 {
    induce_mutual_pcg2(ud);
@@ -160,9 +152,7 @@ void induce2(real (*ud)[3])
             if (header) {
                header = false;
                print(stdout, "\n Induced Dipole Moments (Debye) :\n");
-               print(stdout,
-                     "\n    Atom %1$13s X %1$10s Y %1$10s Z %1$9s Total\n\n",
-                     "");
+               print(stdout, "\n    Atom %1$13s X %1$10s Y %1$10s Z %1$9s Total\n\n", "");
             }
             double u1 = uindbuf[3 * i];
             double u2 = uindbuf[3 * i + 1];
@@ -172,13 +162,11 @@ void induce2(real (*ud)[3])
             u2 *= units::debye;
             u3 *= units::debye;
             unorm *= units::debye;
-            print(stdout, "%8d     %13.4f%13.4f%13.4f %13.4f\n", i + 1, u1, u2,
-                  u3, unorm);
+            print(stdout, "%8d     %13.4f%13.4f%13.4f %13.4f\n", i + 1, u1, u2, u3, unorm);
          }
       }
    }
 }
-
 
 void epolar_chgpen(int vers)
 {
@@ -203,7 +191,6 @@ void epolar_chgpen(int vers)
          darray::zero(g::q0, n, depx, depy, depz);
    }
 
-
    if (use_cf)
       alterchg();
    mpole_init(vers);
@@ -227,7 +214,6 @@ void epolar_chgpen(int vers)
       }
    }
 
-
    if (rc_a) {
       if (do_e) {
          energy_buffer u = ep;
@@ -248,7 +234,6 @@ void epolar_chgpen(int vers)
          sum_gradient(gx_elec, gy_elec, gz_elec, depx, depy, depz);
    }
 }
-
 
 void epolar_chgpen_nonewald(int vers, int use_cf)
 {
@@ -278,7 +263,6 @@ void epolar_chgpen_nonewald(int vers, int use_cf)
    }
 }
 
-
 void epolar_chgpen_ewald(int vers, int use_cf)
 {
    // v0: E_dot
@@ -303,7 +287,6 @@ void epolar_chgpen_ewald(int vers, int use_cf)
    }
 }
 
-
 void epolar_chgpen_ewald_real(int vers, int use_cf)
 {
 #if TINKER_CUDART
@@ -313,7 +296,6 @@ void epolar_chgpen_ewald_real(int vers, int use_cf)
 #endif
       epolar_chgpen_ewald_real_acc(vers, use_cf, uind);
 }
-
 
 void epolar_chgpen_ewald_recip_self(int vers, int use_cf)
 {

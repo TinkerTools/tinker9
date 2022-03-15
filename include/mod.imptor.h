@@ -2,13 +2,11 @@
 #include "macro.h"
 #include "tool/energy_buffer.h"
 
-
 namespace tinker {
 TINKER_EXTERN int (*iitors)[4];
 TINKER_EXTERN real (*itors1)[4];
 TINKER_EXTERN real (*itors2)[4];
 TINKER_EXTERN real (*itors3)[4];
-
 
 TINKER_EXTERN int nitors;
 TINKER_EXTERN energy_buffer eit;

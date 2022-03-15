@@ -2,9 +2,7 @@
 #include "mathfunc_erfc.h"
 #include <cmath>
 
-
 #define INT_ABS abs
-
 
 #if TINKER_REAL_SIZE == 8
 #   define REAL_SQRT     sqrt
@@ -28,7 +26,6 @@
 // #   define REAL_ERFC     erfc
 #   define REAL_ERFC_V2(x, expterm) (1 - erf(x))
 #endif
-
 
 #if TINKER_REAL_SIZE == 4
 #   define REAL_SQRT     sqrtf
@@ -54,13 +51,10 @@
 #   define REAL_ERFC_V2(x, expterm) erfcf_hastings((x), (expterm))
 #endif
 
-
 #ifdef _OPENACC
 #   include <accelmath.h>
 
-
 #pragma acc routine(abs) seq
-
 
 #pragma acc routine(sqrt) seq
 #pragma acc routine(exp) seq
@@ -76,7 +70,6 @@
 #pragma acc routine(fmin) seq
 #pragma acc routine(fmax) seq
 #pragma acc routine(copysign) seq
-
 
 #pragma acc routine(sqrtf) seq
 #pragma acc routine(expf) seq

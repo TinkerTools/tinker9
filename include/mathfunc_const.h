@@ -2,7 +2,6 @@
 #include "macro.h"
 #include <cmath>
 
-
 namespace tinker {
 /// \ingroup math
 /// \f$ \sqrt[6]{2} \f$
@@ -14,14 +13,12 @@ constexpr real sqrttwo = 1.41421356237309504880;
 /// \f$ \sqrt{3} \f$
 constexpr real sqrtthree = 1.73205080756887729353;
 
-
 /// \ingroup math
 /// \f$ exp(1) \f$
 constexpr real elog = M_E;
 /// \ingroup math
 /// \f$ ln(10) \f$
 constexpr real logten = M_LN10;
-
 
 /// \ingroup math
 /// \f$ \pi \f$

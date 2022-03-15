@@ -2,7 +2,6 @@
 #include "mathfunc.h"
 #include "seq_def.h"
 
-
 namespace tinker {
 /**
  * Comment
@@ -24,21 +23,17 @@ namespace tinker {
 #pragma acc routine seq
 template <class Ver>
 SEQ_CUDA
-void dk_angle(real& restrict e, real& restrict vxx, real& restrict vyx,
-              real& restrict vzx, real& restrict vyy, real& restrict vzy,
-              real& restrict vzz,
+void dk_angle(real& restrict e, real& restrict vxx, real& restrict vyx, real& restrict vzx,
+   real& restrict vyy, real& restrict vzy, real& restrict vzz,
 
-              grad_prec* restrict deax, grad_prec* restrict deay,
-              grad_prec* restrict deaz,
+   grad_prec* restrict deax, grad_prec* restrict deay, grad_prec* restrict deaz,
 
-              const eangle_t* restrict angtyp, real angunit, int i,
-              const int (*restrict iang)[4], const real* restrict anat,
-              const real* restrict ak, const real* restrict afld,
+   const eangle_t* restrict angtyp, real angunit, int i, const int (*restrict iang)[4],
+   const real* restrict anat, const real* restrict ak, const real* restrict afld,
 
-              real cang, real qang, real pang, real sang,
+   real cang, real qang, real pang, real sang,
 
-              const real* restrict x, const real* restrict y,
-              const real* restrict z)
+   const real* restrict x, const real* restrict y, const real* restrict z)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -95,12 +90,10 @@ void dk_angle(real& restrict e, real& restrict vxx, real& restrict vyx,
             real dt3 = dt2 * dt;
             real dt4 = dt2 * dt2;
             if CONSTEXPR (do_e)
-               e = angunit * force * dt2 *
-                  (1 + cang * dt + qang * dt2 + pang * dt3 + sang * dt4);
+               e = angunit * force * dt2 * (1 + cang * dt + qang * dt2 + pang * dt3 + sang * dt4);
             if CONSTEXPR (do_g)
                deddt = angunit * force * dt * radian *
-                  (2 + 3 * cang * dt + 4 * qang * dt2 + 5 * pang * dt3 +
-                   6 * sang * dt4);
+                  (2 + 3 * cang * dt + 4 * qang * dt2 + 5 * pang * dt3 + 6 * sang * dt4);
          } else if (angtypi == eangle_t::linear) {
             real factor = 2 * angunit * radian * radian;
             real sine = REAL_SQRT(1 - cosine * cosine);
@@ -192,14 +185,12 @@ void dk_angle(real& restrict e, real& restrict vxx, real& restrict vyx,
          real dt4 = dt2 * dt2;
 
          if CONSTEXPR (do_e) {
-            e = angunit * force * dt2 *
-               (1 + cang * dt + qang * dt2 + pang * dt3 + sang * dt4);
+            e = angunit * force * dt2 * (1 + cang * dt + qang * dt2 + pang * dt3 + sang * dt4);
          }
 
          if CONSTEXPR (do_g) {
             real deddt = angunit * force * dt * radian *
-               (2 + 3 * cang * dt + 4 * qang * dt2 + 5 * pang * dt3 +
-                6 * sang * dt4);
+               (2 + 3 * cang * dt + 4 * qang * dt2 + 5 * pang * dt3 + 6 * sang * dt4);
             real xm = ycp * zap - zcp * yap;
             real ym = zcp * xap - xcp * zap;
             real zm = xcp * yap - ycp * xap;
@@ -224,8 +215,7 @@ void dk_angle(real& restrict e, real& restrict vxx, real& restrict vyx,
 
             real delta2, term;
             delta2 = 2 * delta;
-            real ptrt2 =
-               (dedxip * xt + dedyip * yt + dedzip * zt) * REAL_RECIP(rt2);
+            real ptrt2 = (dedxip * xt + dedyip * yt + dedzip * zt) * REAL_RECIP(rt2);
             term = (zcd * ybd - ycd * zbd) + delta2 * (yt * zcd - zt * ycd);
             real dpdxia = delta * (ycd * dedzip - zcd * dedyip) + term * ptrt2;
             term = (xcd * zbd - zcd * xbd) + delta2 * (zt * xcd - xt * zcd);

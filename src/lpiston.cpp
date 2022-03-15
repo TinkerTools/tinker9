@@ -20,7 +20,6 @@
 #include <tinker/detail/stodyn.hh>
 #include <tinker/detail/units.hh>
 
-
 namespace tinker {
 double lp_rats1;
 double lp_eksum;
@@ -28,35 +27,27 @@ double lp_ekin[3][3];
 double lp_vir[9];
 virial_buffer lp_vir_buf;
 
-
 double vbar_matrix[3][3];
-
 
 //====================================================================//
 
-
-extern void lp_matvec_acc(int len, char transpose, double mat[3][3],
-                          pos_prec* ax, pos_prec* ay, pos_prec* az);
-void lp_matvec(int len, char transpose, double mat[3][3], pos_prec* ax,
-               pos_prec* ay, pos_prec* az)
+extern void lp_matvec_acc(
+   int len, char transpose, double mat[3][3], pos_prec* ax, pos_prec* ay, pos_prec* az);
+void lp_matvec(int len, char transpose, double mat[3][3], pos_prec* ax, pos_prec* ay, pos_prec* az)
 {
    lp_matvec_acc(len, transpose, mat, ax, ay, az);
 }
-
 
 void lp_atom_kinetic()
 {
    kinetic_energy(lp_eksum, lp_ekin, n, mass, vx, vy, vz);
 }
 
-
 void lp_mol_kinetic()
 {
    auto& m = rattle_dmol;
-   kinetic_energy(lp_eksum, lp_ekin, m.nmol, m.molmass, ratcom_vx, ratcom_vy,
-                  ratcom_vz);
+   kinetic_energy(lp_eksum, lp_ekin, m.nmol, m.molmass, ratcom_vx, ratcom_vy, ratcom_vz);
 }
-
 
 extern void lp_mol_virial_acc();
 extern void lp_mol_virial_cu();
@@ -77,9 +68,7 @@ void lp_virial(bool molP)
    }
 }
 
-
 //====================================================================//
-
 
 extern void propagate_pos_raxbv_acc(
 
@@ -92,13 +81,12 @@ void propagate_pos_raxbv(double a, double b)
 {
    propagate_pos_raxbv_acc(xpos, ypos, zpos,
 
-                           rattle_dmol.molecule,
+      rattle_dmol.molecule,
 
-                           a, ratcom_x, ratcom_y, ratcom_z,
+      a, ratcom_x, ratcom_y, ratcom_z,
 
-                           b, vx, vy, vz);
+      b, vx, vy, vz);
 }
-
 
 extern void propagate_pos_raxbv_aniso_acc(
 
@@ -111,13 +99,12 @@ void propagate_pos_raxbv_aniso(double a[3][3], double b[3][3])
 {
    propagate_pos_raxbv_aniso_acc(xpos, ypos, zpos,
 
-                                 rattle_dmol.molecule,
+      rattle_dmol.molecule,
 
-                                 a, ratcom_x, ratcom_y, ratcom_z,
+      a, ratcom_x, ratcom_y, ratcom_z,
 
-                                 b, vx, vy, vz);
+      b, vx, vy, vz);
 }
-
 
 extern void propagate_pos_axbv_aniso_acc(double[3][3], double[3][3]);
 void propagate_pos_axbv_aniso(double a[3][3], double b[3][3])
@@ -125,13 +112,11 @@ void propagate_pos_axbv_aniso(double a[3][3], double b[3][3])
    propagate_pos_axbv_aniso_acc(a, b);
 }
 
-
 extern void lp_propagate_mol_vel_acc(vel_prec);
 void lp_propagate_mol_vel(vel_prec scal)
 {
    lp_propagate_mol_vel_acc(scal);
 }
-
 
 extern void lp_propagate_mol_vel_aniso_acc(vel_prec scal[3][3]);
 void lp_propagate_mol_vel_aniso(vel_prec scal[3][3])
@@ -139,30 +124,23 @@ void lp_propagate_mol_vel_aniso(vel_prec scal[3][3])
    lp_propagate_mol_vel_aniso_acc(scal);
 }
 
-
-void lp_center_of_mass_acc(const pos_prec*, const pos_prec*, const pos_prec*,
-                           pos_prec*, pos_prec*, pos_prec*);
-void lp_center_of_mass(const pos_prec* atomx, const pos_prec* atomy,
-                       const pos_prec* atomz, pos_prec* molx, pos_prec* moly,
-                       pos_prec* molz)
+void lp_center_of_mass_acc(
+   const pos_prec*, const pos_prec*, const pos_prec*, pos_prec*, pos_prec*, pos_prec*);
+void lp_center_of_mass(const pos_prec* atomx, const pos_prec* atomy, const pos_prec* atomz,
+   pos_prec* molx, pos_prec* moly, pos_prec* molz)
 {
-   static_assert(std::is_same<pos_prec, vel_prec>::value,
-                 "pos_prec and vel_prec must be the same type.");
+   static_assert(
+      std::is_same<pos_prec, vel_prec>::value, "pos_prec and vel_prec must be the same type.");
    lp_center_of_mass_acc(atomx, atomy, atomz, molx, moly, molz);
 }
 
-
 //====================================================================//
 
-
 void lprat_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-void lprat_settle_acc(time_prec, const pos_prec*, const pos_prec*,
-                      const pos_prec*);
+void lprat_settle_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
 void lprat_ch_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-void lprat_methyl_cu(time_prec, const pos_prec*, const pos_prec*,
-                     const pos_prec*);
-void lprat(time_prec dt, const pos_prec* xold, const pos_prec* yold,
-           const pos_prec* zold)
+void lprat_methyl_cu(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
+void lprat(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    lprat_settle_acc(dt, xold, yold, zold);
    lprat_ch_acc(dt, xold, yold, zold);
@@ -173,9 +151,7 @@ void lprat(time_prec dt, const pos_prec* xold, const pos_prec* yold,
    lprat_acc(dt, xold, yold, zold);
 }
 
-
 //====================================================================//
-
 
 static int nrespa, nbaro;
 static int nprtpres, iprtpres;
@@ -183,7 +159,6 @@ static double rnd, rnd_matrix[3][3];
 static double g0, g1, D;
 static bool atomT, molT, atomP, molP, constrain, aniso;
 static enum { KW_NULL = 0, KW_ATOM, KW_MOL } kw_p;
-
 
 void vv_lpiston_init()
 {
@@ -296,7 +271,6 @@ void vv_lpiston_init()
    print(o, "\n");
 }
 
-
 void vv_lpiston_destory()
 {
    if (constrain)
@@ -305,9 +279,7 @@ void vv_lpiston_destory()
       darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
 }
 
-
 //====================================================================//
-
 
 static void iso_tp(time_prec dt, bool prtpres = false, int iCurrentStep = 0)
 {
@@ -316,12 +288,10 @@ static void iso_tp(time_prec dt, bool prtpres = false, int iCurrentStep = 0)
    time_prec t, t2, t4, t8, xt4;
    t = dt / ns, t2 = t / 2, t4 = t / 4, t8 = t / 8, xt4 = nbaro * t4;
 
-
    double opgxt4, omgxt4, sd;
    opgxt4 = 1.0 + stodyn::friction * xt4;
    omgxt4 = 1.0 - stodyn::friction * xt4;
    sd = std::sqrt(nbaro * dt * 2.0 * stodyn::friction * kbt / qbar) / (4 * ns);
-
 
    const virial_prec tr_vir = lp_vir[0] + lp_vir[4] + lp_vir[8];
    const double vol0 = volbox();
@@ -331,7 +301,6 @@ static void iso_tp(time_prec dt, bool prtpres = false, int iCurrentStep = 0)
       lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
       lp_mol_kinetic();
    }
-
 
    double eksum0 = lp_eksum, eksum1;
    double velsc0 = 1.0, velsc1;
@@ -383,7 +352,6 @@ static void iso_tp(time_prec dt, bool prtpres = false, int iCurrentStep = 0)
          else
             gnh[i] = (qnh[i - 1] * vnh[i - 1] * vnh[i - 1] - kbt) / qnh[i];
 
-
          if (i == maxnose - 1)
             vnh[i] += gnh[i] * t4;
          else {
@@ -395,7 +363,6 @@ static void iso_tp(time_prec dt, bool prtpres = false, int iCurrentStep = 0)
       eksum0 = eksum1;
       velsc0 = velsc1;
    }
-
 
    const double velsc2 = velsc0 * velsc0;
    lp_eksum *= velsc2;
@@ -410,16 +377,14 @@ static void iso_tp(time_prec dt, bool prtpres = false, int iCurrentStep = 0)
       lp_propagate_mol_vel(velsc0 - 1.0);
    }
 
-
    if (prtpres) {
       double pres = units::prescon * (2 * lp_eksum - tr_vir) / (D * vol0);
       print(stdout,
-            "\n"
-            " Current Pressure       %12.4lf Atm at Step %8d\n",
-            pres, iCurrentStep);
+         "\n"
+         " Current Pressure       %12.4lf Atm at Step %8d\n",
+         pres, iCurrentStep);
    }
 }
-
 
 static void lpiston_npt_aniso(int, time_prec);
 void vv_lpiston_npt(int istep, time_prec dt)
@@ -428,7 +393,6 @@ void vv_lpiston_npt(int istep, time_prec dt)
       lpiston_npt_aniso(istep, dt);
       return;
    }
-
 
    bool mid = (nbaro == 1) or ((istep % nbaro) == (nbaro + 1) / 2);
    atomP = false, molP = false;
@@ -439,18 +403,15 @@ void vv_lpiston_npt(int istep, time_prec dt)
          molP = true;
    }
 
-
    int vers1 = rc_flag & calc::vmask;
    if ((istep % inform::iwrite) != 0)
       vers1 &= ~calc::energy;
    if (not mid)
       vers1 &= ~calc::virial;
 
-
    time_prec xdt = nbaro * dt, dt2 = 0.5 * dt, xdt2 = 0.5 * xdt;
    time_prec dti = dt / nrespa, dti2 = dt2 / nrespa;
    time_prec xdti = xdt / nrespa, xdti2 = xdt2 / nrespa;
-
 
    iso_tp(dt);
    if (nrespa > 1) {
@@ -460,17 +421,14 @@ void vv_lpiston_npt(int istep, time_prec dt)
       propagate_velocity(dt2, gx, gy, gz);
    }
 
-
    if (constrain) {
       darray::copy(g::q0, n, rattle_xold, xpos);
       darray::copy(g::q0, n, rattle_yold, ypos);
       darray::copy(g::q0, n, rattle_zold, zpos);
    }
 
-
    virial_prec vir_fast[9] = {0};
    energy_prec esum_f;
-
 
    double s = 1.0;
    if (mid) {
@@ -511,7 +469,6 @@ void vv_lpiston_npt(int istep, time_prec dt)
          copy_pos_to_xyz(true);
       }
    }
-
 
    if (nrespa > 1) {
       // fast force
@@ -562,34 +519,28 @@ void vv_lpiston_npt(int istep, time_prec dt)
    if (constrain)
       rattle2(dt, false);
 
-
    if (molT and (istep % inform::iwrite) == 0) {
       lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
       lp_mol_kinetic();
       printf("\n"
              " Current MolKinetic     %12.4lf Kcal/mole at Frame %8d\n",
-             lp_eksum, istep / inform::iwrite);
+         lp_eksum, istep / inform::iwrite);
    }
 }
 
-
 //====================================================================//
 
-
-static void iso_tp_aniso(time_prec dt, bool prtpres = false,
-                         int iCurrentStep = 0)
+static void iso_tp_aniso(time_prec dt, bool prtpres = false, int iCurrentStep = 0)
 {
    constexpr int ns = 2;
    const double kbt = units::gasconst * bath::kelvin;
    time_prec t, t2, t4, t8, xt4;
    t = dt / ns, t2 = t / 2, t4 = t / 4, t8 = t / 8, xt4 = nbaro * t4;
 
-
    double opgxt4, omgxt4, sd; // one plus, one minus, std dev
    opgxt4 = 1.0 + stodyn::friction * xt4;
    omgxt4 = 1.0 - stodyn::friction * xt4;
    sd = std::sqrt(nbaro * dt * 2.0 * stodyn::friction * kbt / qbar) / (4 * ns);
-
 
    const double vol0 = volbox();
    if (atomT) {
@@ -599,13 +550,11 @@ static void iso_tp_aniso(time_prec dt, bool prtpres = false,
       lp_mol_kinetic();
    }
 
-
    double eksum1 = lp_eksum,
           ekin0[3][3] = {{lp_ekin[0][0], lp_ekin[0][1], lp_ekin[0][2]},
-                         {lp_ekin[1][0], lp_ekin[1][1], lp_ekin[1][2]},
-                         {lp_ekin[2][0], lp_ekin[2][1], lp_ekin[2][2]}};
-   double velsc0[3][3] = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}},
-          velsc1[3][3];
+             {lp_ekin[1][0], lp_ekin[1][1], lp_ekin[1][2]},
+             {lp_ekin[2][0], lp_ekin[2][1], lp_ekin[2][2]}};
+   double velsc0[3][3] = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}}, velsc1[3][3];
    for (int k = 0; k < ns; ++k) {
       double DelP[3][3];
 
@@ -632,18 +581,16 @@ static void iso_tp_aniso(time_prec dt, bool prtpres = false,
             for (int j = i; j < 3; ++j) {
                DelP[i][j] = 2 * ekin0[i][j] - lp_vir[3 * i + j];
                if (j == i) {
-                  DelP[i][i] +=
-                     2 * eksum1 / g1 - vol0 * bath::atmsph / units::prescon;
+                  DelP[i][i] += 2 * eksum1 / g1 - vol0 * bath::atmsph / units::prescon;
                }
                DelP[i][j] /= qbar;
-               vbar_matrix[i][j] = DelP[i][j] * xt4 +
-                  omgxt4 * vbar_matrix[i][j] + sd * rnd_matrix[i][j];
+               vbar_matrix[i][j] =
+                  DelP[i][j] * xt4 + omgxt4 * vbar_matrix[i][j] + sd * rnd_matrix[i][j];
             }
          }
          if (box_shape == BoxShape::MONO) {
             vbar_matrix[0][1] = 0, vbar_matrix[1][2] = 0;
-         } else if (box_shape == BoxShape::ORTHO or
-                    box_shape == BoxShape::OCT) {
+         } else if (box_shape == BoxShape::ORTHO or box_shape == BoxShape::OCT) {
             vbar_matrix[0][1] = 0, vbar_matrix[1][2] = 0;
             vbar_matrix[0][2] = 0;
          }
@@ -704,19 +651,16 @@ static void iso_tp_aniso(time_prec dt, bool prtpres = false,
             for (int j = i; j < 3; ++j) {
                DelP[i][j] = 2 * ekin0[i][j] - lp_vir[3 * i + j];
                if (j == i) {
-                  DelP[i][i] +=
-                     2 * eksum1 / g1 - vol0 * bath::atmsph / units::prescon;
+                  DelP[i][i] += 2 * eksum1 / g1 - vol0 * bath::atmsph / units::prescon;
                }
                DelP[i][j] /= qbar;
-               vbar_matrix[i][j] = (DelP[i][j] * xt4 + vbar_matrix[i][j] +
-                                    sd * rnd_matrix[i][j]) /
-                  opgxt4;
+               vbar_matrix[i][j] =
+                  (DelP[i][j] * xt4 + vbar_matrix[i][j] + sd * rnd_matrix[i][j]) / opgxt4;
             }
          }
          if (box_shape == BoxShape::MONO) {
             vbar_matrix[0][1] = 0, vbar_matrix[1][2] = 0;
-         } else if (box_shape == BoxShape::ORTHO or
-                    box_shape == BoxShape::OCT) {
+         } else if (box_shape == BoxShape::ORTHO or box_shape == BoxShape::OCT) {
             vbar_matrix[0][1] = 0, vbar_matrix[1][2] = 0;
             vbar_matrix[0][2] = 0;
          }
@@ -741,7 +685,6 @@ static void iso_tp_aniso(time_prec dt, bool prtpres = false,
             velsc0[i][j] = velsc1[i][j];
    }
 
-
    for (int i = 0; i < 3; ++i)
       for (int j = 0; j < 3; ++j)
          lp_ekin[i][j] = ekin0[i][j];
@@ -759,27 +702,23 @@ static void iso_tp_aniso(time_prec dt, bool prtpres = false,
       lp_propagate_mol_vel_aniso(scal);
    }
 
-
    if (prtpres) {
       double pres[3][3];
       for (int i = 0; i < 3; ++i) {
          for (int j = 0; j < 3; ++j) {
-            pres[i][j] =
-               units::prescon * (2 * lp_ekin[i][j] - lp_vir[3 * i + j]) / vol0;
+            pres[i][j] = units::prescon * (2 * lp_ekin[i][j] - lp_vir[3 * i + j]) / vol0;
          }
       }
       print(stdout,
-            "\n"
-            " Current Pressure X at Step %8d %12.4lf%12.4lf%12.4lf\n",
-            iCurrentStep, pres[0][0], pres[0][1], pres[0][2]);
-      print(stdout, " Current Pressure Y at Step %8d %12.4lf%12.4lf%12.4lf\n",
-            iCurrentStep, pres[1][0], pres[1][1], pres[1][2]);
-      print(stdout,
-            " Current Pressure Z at Step %8d %12.4lf%12.4lf%12.4lf Atm\n",
-            iCurrentStep, pres[2][0], pres[2][1], pres[2][2]);
+         "\n"
+         " Current Pressure X at Step %8d %12.4lf%12.4lf%12.4lf\n",
+         iCurrentStep, pres[0][0], pres[0][1], pres[0][2]);
+      print(stdout, " Current Pressure Y at Step %8d %12.4lf%12.4lf%12.4lf\n", iCurrentStep,
+         pres[1][0], pres[1][1], pres[1][2]);
+      print(stdout, " Current Pressure Z at Step %8d %12.4lf%12.4lf%12.4lf Atm\n", iCurrentStep,
+         pres[2][0], pres[2][1], pres[2][2]);
    }
 }
-
 
 static void lpiston_npt_aniso(int istep, time_prec dt)
 {
@@ -792,16 +731,13 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
          molP = true;
    }
 
-
    int vers1 = rc_flag & calc::vmask;
    if ((istep % inform::iwrite) != 0)
       vers1 &= ~calc::energy;
    if (not mid)
       vers1 &= ~calc::virial;
 
-
    time_prec dt2 = 0.5 * dt, dti = dt / nrespa, dti2 = dt2 / nrespa;
-
 
    iso_tp_aniso(dt);
    if (nrespa > 1) {
@@ -811,24 +747,20 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
       propagate_velocity(dt2, gx, gy, gz);
    }
 
-
    if (constrain) {
       darray::copy(g::q0, n, rattle_xold, xpos);
       darray::copy(g::q0, n, rattle_yold, ypos);
       darray::copy(g::q0, n, rattle_zold, zpos);
    }
 
-
    virial_prec vir_fast[9] = {0};
    energy_prec esum_f;
-
 
    if (mid) {
       double scal[3][3];
       trimat_exp(scal, vbar_matrix, nbaro * dt);
-      double h0[3][3] = {{lvec1.x, lvec1.y, lvec1.z},
-                         {lvec2.x, lvec2.y, lvec2.z},
-                         {lvec3.x, lvec3.y, lvec3.z}};
+      double h0[3][3] = {
+         {lvec1.x, lvec1.y, lvec1.z}, {lvec2.x, lvec2.y, lvec2.z}, {lvec3.x, lvec3.y, lvec3.z}};
       matmul3(h0, scal);
       lvec1.x = h0[0][0], lvec1.y = h0[0][1], lvec1.z = h0[0][2];
       lvec2.x = h0[1][0], lvec2.y = h0[1][1], lvec2.z = h0[1][2];
@@ -935,13 +867,12 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
    if (constrain)
       rattle2(dt, false);
 
-
    if (molT and (istep % inform::iwrite) == 0) {
       lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
       lp_mol_kinetic();
       printf("\n"
              " Current MolKinetic     %12.4lf Kcal/mole at Frame %8d\n",
-             lp_eksum, istep / inform::iwrite);
+         lp_eksum, istep / inform::iwrite);
    }
 }
 }

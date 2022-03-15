@@ -7,7 +7,6 @@
 #include <tinker/detail/molcul.hh>
 #include <tinker/detail/units.hh>
 
-
 namespace tinker {
 void mdrest_acc(int istep)
 {
@@ -67,9 +66,9 @@ void mdrest_acc(int istep)
       etrans *= 0.5f * totmass / ekcal;
 
       print(stdout,
-            " System Linear Velocity :  %12.2e%12.2e%12.2e\n"
-            " Translational Kinetic Energy :%10s%12.4f Kcal/mole\n",
-            vtot1, vtot2, vtot3, "", etrans);
+         " System Linear Velocity :  %12.2e%12.2e%12.2e\n"
+         " Translational Kinetic Energy :%10s%12.4f Kcal/mole\n",
+         vtot1, vtot2, vtot3, "", etrans);
    }
 
    if (!bound::use_bounds) {
@@ -142,8 +141,7 @@ void mdrest_acc(int istep)
       // compute angular velocity and rotational kinetic energy
 
       for (int i = 0; i < 3; ++i) {
-         vang[i] =
-            tensor[0][i] * mang1 + tensor[1][i] * mang2 + tensor[2][i] * mang3;
+         vang[i] = tensor[0][i] * mang1 + tensor[1][i] * mang2 + tensor[2][i] * mang3;
       }
       erot = vang[0] * mang1 + vang[1] * mang2 + vang[2] * mang3;
       erot *= (0.5f / ekcal);
@@ -165,9 +163,9 @@ void mdrest_acc(int istep)
 
       if (inform::debug) {
          print(stdout,
-               " System Angular Velocity : %12.2e%12.2e%12.2e\n Rotational "
-               "Kinetic Energy :%13s%12.4f Kcal/mole\n",
-               vang[0], vang[1], vang[2], "", erot);
+            " System Angular Velocity : %12.2e%12.2e%12.2e\n Rotational "
+            "Kinetic Energy :%13s%12.4f Kcal/mole\n",
+            vang[0], vang[1], vang[2], "", erot);
       }
    }
 }

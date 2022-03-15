@@ -1,7 +1,6 @@
 #pragma once
 #include "macro.h"
 
-
 namespace tinker {
 /**
  * \ingroup cuda_syntax
@@ -35,7 +34,6 @@ inline int ffsn(int c1, int n)
    // clang-format on
    return r + 1;
 }
-
 
 /**
  * \ingroup cuda_syntax

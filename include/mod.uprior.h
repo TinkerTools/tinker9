@@ -1,7 +1,6 @@
 #pragma once
 #include "macro.h"
 
-
 namespace tinker {
 enum class UPred
 {
@@ -45,7 +44,6 @@ TINKER_EXTERN real (*upalt_12)[3];
 TINKER_EXTERN real (*upalt_13)[3];
 TINKER_EXTERN real (*upalt_14)[3];
 TINKER_EXTERN real (*upalt_15)[3];
-
 
 TINKER_EXTERN real* udalt_lsqr_a;
 TINKER_EXTERN real* upalt_lsqr_a;

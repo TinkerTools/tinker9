@@ -12,7 +12,6 @@ const char* coord = R"**(   2
    2 Cl-    63.000000    95.000000    47.000000    14
 )**";
 
-
 const char* keyfile = R"**(
 parameters                 amoeba09
 a-axis                       20.000
@@ -21,9 +20,7 @@ bondterm                       only
 )**";
 }
 
-
 using namespace tinker;
-
 
 TEST_CASE("Bounds", "[ff][box]")
 {
@@ -36,13 +33,11 @@ TEST_CASE("Bounds", "[ff][box]")
    // 51, -83, 164 -> -9, -3, 4
    // 63,  95,  47 ->  3, -5, 7
 
-
    const char* argv[] = {"dummy", xn};
    int argc = 2;
    test_begin_with_args(argc, argv);
    rc_flag = calc::xyz | calc::mass;
    initialize();
-
 
    fstr_view fsw = files::filename;
    std::string fname = fsw.trim();
@@ -50,7 +45,6 @@ TEST_CASE("Bounds", "[ff][box]")
    int done = false;
    read_frame_copyin_to_xyz(ipt, done);
    bounds();
-
 
    double eps = 1.0e-5;
    double xref[] = {-9, 3};
@@ -62,14 +56,12 @@ TEST_CASE("Bounds", "[ff][box]")
    darray::copyout(g::q0, 2, zans, z);
    wait_for(g::q0);
 
-
    COMPARE_REALS(xans[0], xref[0], eps);
    COMPARE_REALS(yans[0], yref[0], eps);
    COMPARE_REALS(zans[0], zref[0], eps);
    COMPARE_REALS(xans[1], xref[1], eps);
    COMPARE_REALS(yans[1], yref[1], eps);
    COMPARE_REALS(zans[1], zref[1], eps);
-
 
    finish();
    test_end();

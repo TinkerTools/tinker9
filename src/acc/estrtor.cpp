@@ -1,8 +1,7 @@
-#include "add.h"
 #include "estrtor.h"
+#include "add.h"
 #include "md.h"
 #include "seq_strtor.h"
-
 
 namespace tinker {
 template <class Ver>
@@ -12,7 +11,6 @@ void estrtor_acc1()
    constexpr bool do_v = Ver::v;
    size_t bufsize = buffer_size();
 
-
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,ebt,vir_ebt,debtx,debty,debtz,\
                ist,kst,bl,itors,tors1,tors2,tors3)
@@ -21,18 +19,17 @@ void estrtor_acc1()
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_strtor<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz, debtx, debty, debtz,
 
-                     storunit, istrtor, ist, kst,
+         storunit, istrtor, ist, kst,
 
-                     bl, itors, tors1, tors2, tors3,
+         bl, itors, tors1, tors2, tors3,
 
-                     x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e)
          atomic_add(e, ebt, offset);
       if CONSTEXPR (do_v)
          atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_ebt, offset);
    }
 }
-
 
 void estrtor_acc(int vers)
 {

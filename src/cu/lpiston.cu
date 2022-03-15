@@ -6,21 +6,16 @@
 #include "tool/darray.h"
 #include <tinker/detail/units.hh>
 
-
 namespace tinker {
 __global__
 void lp_mol_virial_cu1(virial_buffer restrict lp_vir_buf,
 
-                       const double* restrict mass,
-                       const pos_prec* restrict xpos,
-                       const pos_prec* restrict ypos,
-                       const pos_prec* restrict zpos,
-                       const grad_prec* restrict gx,
-                       const grad_prec* restrict gy,
-                       const grad_prec* restrict gz,
+   const double* restrict mass, const pos_prec* restrict xpos, const pos_prec* restrict ypos,
+   const pos_prec* restrict zpos, const grad_prec* restrict gx, const grad_prec* restrict gy,
+   const grad_prec* restrict gz,
 
-                       int nmol, const int (*restrict imol)[2],
-                       const int* restrict kmol, const double* restrict molmass)
+   int nmol, const int (*restrict imol)[2], const int* restrict kmol,
+   const double* restrict molmass)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int stride = blockDim.x * gridDim.x;
@@ -73,7 +68,6 @@ void lp_mol_virial_cu1(virial_buffer restrict lp_vir_buf,
    }
 }
 
-
 void lp_mol_virial_cu()
 {
    auto bufsize = buffer_size();
@@ -81,10 +75,9 @@ void lp_mol_virial_cu()
 
    launch_k1b(g::s0, n, lp_mol_virial_cu1,
 
-              lp_vir_buf, mass, xpos, ypos, zpos, gx, gy, gz,
+      lp_vir_buf, mass, xpos, ypos, zpos, gx, gy, gz,
 
-              rattle_dmol.nmol, rattle_dmol.imol, rattle_dmol.kmol,
-              rattle_dmol.molmass);
+      rattle_dmol.nmol, rattle_dmol.imol, rattle_dmol.kmol, rattle_dmol.molmass);
 
    virial_reduce(lp_vir, lp_vir_buf);
    for (int iv = 0; iv < 9; ++iv)

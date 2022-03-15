@@ -14,7 +14,6 @@
 #include <tinker/detail/stodyn.hh>
 #include <tinker/detail/units.hh>
 
-
 namespace tinker {
 energy_prec eksum_old;
 energy_prec eksum_mid;
@@ -29,18 +28,15 @@ double pnhm_lp;
 double pnhf_lp;
 double pnh_lp;
 
-
 namespace {
 double press;
 }
-
 
 void lf_langevin_piston(time_prec dt, virial_prec press)
 {
    const double vbox = volbox();
    const int df = mdstuf::nfree;
-   hmass_lp =
-      bath::taupres; // use these as input for the baro/thermostat masses
+   hmass_lp = bath::taupres; // use these as input for the baro/thermostat masses
    pnhm_lp = bath::tautemp;
 
    double dpress;
@@ -53,12 +49,10 @@ void lf_langevin_piston(time_prec dt, virial_prec press)
    double hdot_mid;
    double sf, sh;
    const double gamma_piston = stodyn::friction;
-   const double palpha =
-      (1.0 - gamma_piston * dt / 2.0) / (1.0 + gamma_piston * dt / 2.0);
+   const double palpha = (1.0 - gamma_piston * dt / 2.0) / (1.0 + gamma_piston * dt / 2.0);
    const double pbfact = dt * dt / (1.0 + gamma_piston * dt / 2.0);
    const double kbt = units::gasconst * bath::kelvin;
-   const double prfwd =
-      sqrt(2.0 * gamma_piston * dt * kbt / (3.0 * hmass_lp)) / dt;
+   const double prfwd = sqrt(2.0 * gamma_piston * dt * kbt / (3.0 * hmass_lp)) / dt;
    double h_random_force;
    double pwinv;
    double eksum_new;
@@ -90,9 +84,8 @@ void lf_langevin_piston(time_prec dt, virial_prec press)
       h_random_force = normal<double>(0, prfwd);
       hdot_pre = hdot_lp;
       randfor = pbfact * h_random_force / dt;
-      hdot_lp = palpha * hdot_lp + pwinv * delpx * vbox * pbfact / dt +
-         randfor;                            // h vel at 1/2
-      hdot_mid = 0.5 * (hdot_lp + hdot_pre); // h vel at 0
+      hdot_lp = palpha * hdot_lp + pwinv * delpx * vbox * pbfact / dt + randfor; // h vel at 1/2
+      hdot_mid = 0.5 * (hdot_lp + hdot_pre);                                     // h vel at 0
 
       sf = xtlabc + hdot_lp * dt;   // h at 1
       sh = sf - 0.5 * hdot_lp * dt; // h at 1/2
@@ -107,16 +100,13 @@ void lf_langevin_piston(time_prec dt, virial_prec press)
       eksum_mid = 0.0;
       scale = -(hdot_mid / xtlabc + pnhv_lp) * dt;
       // vx = vxnew + scale * (vold + vx)/2
-      propagate_velocity_lp(vx, vy, vz, leapfrog_vxold, leapfrog_vyold,
-                            leapfrog_vzold, leapfrog_vx, leapfrog_vy,
-                            leapfrog_vz, scale, eksum_new,
-                            eksum_mid); // eksum_new -> vx; eksum -> (vx+vold)/2
-
+      propagate_velocity_lp(vx, vy, vz, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold, leapfrog_vx,
+         leapfrog_vy, leapfrog_vz, scale, eksum_new,
+         eksum_mid); // eksum_new -> vx; eksum -> (vx+vold)/2
 
       // x = vx * dt + xold + scale * (x+xold)
       scale = 0.5 * hdot_lp / sh * dt;
-      propagate_pos_lp(dt, xpos, ypos, zpos, vx, vy, vz, leapfrog_x, leapfrog_y,
-                       leapfrog_z, scale);
+      propagate_pos_lp(dt, xpos, ypos, zpos, vx, vy, vz, leapfrog_x, leapfrog_y, leapfrog_z, scale);
 
       xtlabc = sf;
       delp = delpr + 0.25 * (2.0 * eksum_new / vbox) / 3.0;
@@ -130,14 +120,11 @@ void lf_langevin_piston(time_prec dt, virial_prec press)
       scale = 0.5 * hdot_lp * dt / sh;
 
       // xold = xold + scale * (x + xold)
-      propagate_pos_lp2(dt, xpos, ypos, zpos, leapfrog_x, leapfrog_y,
-                        leapfrog_z, scale);
+      propagate_pos_lp2(dt, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z, scale);
       shake(dt, leapfrog_x, leapfrog_y, leapfrog_z, xpos, ypos, zpos);
 
       // vx =  (x - xold) / dt
-      propagate_velocity_lp2(dt, vx, vy, vz, xpos, ypos, zpos, leapfrog_x,
-                             leapfrog_y, leapfrog_z);
-
+      propagate_velocity_lp2(dt, vx, vy, vz, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
 
    } // userat
 
@@ -146,13 +133,12 @@ void lf_langevin_piston(time_prec dt, virial_prec press)
    darray::copy(g::q0, n, leapfrog_vzold, vz);
    // vx = 0.5 * (vxnew + vxold)
    eksum_new = 0.0;
-   propagate_velocity_lp3(vx, vy, vz, leapfrog_vx, leapfrog_vy, leapfrog_vz,
-                          leapfrog_vxold, leapfrog_vyold, leapfrog_vzold,
-                          eksum_new); // eksum_new => vx
+   propagate_velocity_lp3(vx, vy, vz, leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold,
+      leapfrog_vyold, leapfrog_vzold,
+      eksum_new); // eksum_new => vx
 
    pnhf_lp = (2.0 * eksum_new - df * kbt) / pnhm_lp;
    pnhv_lp = pnhv_pre_lp + 0.5 * (pnhf_pre + pnhf_lp) * dt;
-
 
    press = delp * units::prescon + bath::atmsph;
    lvec1.x = xtlabc;
@@ -211,46 +197,40 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
 
       // in step 1, vx(new) and vxold are opposite from notation
       // v(-0.5) = v(0) - a(0)*dt/2
-      propagate_velocity(-t2, leapfrog_vx, leapfrog_vy, leapfrog_vz, vx, vy, vz,
-                         gx, gy, gz);
+      propagate_velocity(-t2, leapfrog_vx, leapfrog_vy, leapfrog_vz, vx, vy, vz, gx, gy, gz);
       // v(0.5) = v(0) + a(0)*dt/2
-      propagate_velocity(t2, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold, vx,
-                         vy, vz, gx, gy, gz);
+      propagate_velocity(
+         t2, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold, vx, vy, vz, gx, gy, gz);
 
       if (userat) {
 
          // x = xold - vnew * dt
-         propagate_pos_lf(-dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y,
-                          leapfrog_z, leapfrog_vx, leapfrog_vy, leapfrog_vz);
+         propagate_pos_lf(-dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z, leapfrog_vx,
+            leapfrog_vy, leapfrog_vz);
          shake(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
          // vnew =  (xold - x) / dt
-         propagate_velocity_lp2(dt_ps, leapfrog_vx, leapfrog_vy, leapfrog_vz,
-                                leapfrog_x, leapfrog_y, leapfrog_z, xpos, ypos,
-                                zpos);
+         propagate_velocity_lp2(dt_ps, leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_x,
+            leapfrog_y, leapfrog_z, xpos, ypos, zpos);
 
          // x = xold + vold * dt
-         propagate_pos_lf(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y,
-                          leapfrog_z, leapfrog_vxold, leapfrog_vyold,
-                          leapfrog_vzold);
+         propagate_pos_lf(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z,
+            leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
 
          // propagate vx = vnew + a(1)*dt
-         propagate_velocity(dt_ps, vx, vy, vz, leapfrog_vx, leapfrog_vy,
-                            leapfrog_vz, gx, gy, gz);
+         propagate_velocity(dt_ps, vx, vy, vz, leapfrog_vx, leapfrog_vy, leapfrog_vz, gx, gy, gz);
 
          shake(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
 
          // vold =  (x - xold) / dt
-         propagate_velocity_lp2(dt_ps, leapfrog_vxold, leapfrog_vyold,
-                                leapfrog_vzold, xpos, ypos, zpos, leapfrog_x,
-                                leapfrog_y, leapfrog_z);
+         propagate_velocity_lp2(dt_ps, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold, xpos, ypos,
+            zpos, leapfrog_x, leapfrog_y, leapfrog_z);
          // virshk
-         shake2(dt_ps, vx, vy, vz, leapfrog_vxold, leapfrog_vyold,
-                leapfrog_vzold, leapfrog_x, leapfrog_y, leapfrog_z);
+         shake2(dt_ps, vx, vy, vz, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold, leapfrog_x,
+            leapfrog_y, leapfrog_z);
          // vx = (vnew + vold) / 2
          eksum_new = 0.0;
-         propagate_velocity_lp3(vx, vy, vz, leapfrog_vx, leapfrog_vy,
-                                leapfrog_vz, leapfrog_vxold, leapfrog_vyold,
-                                leapfrog_vzold, eksum_new); // eksum_new -> vx
+         propagate_velocity_lp3(vx, vy, vz, leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold,
+            leapfrog_vyold, leapfrog_vzold, eksum_new); // eksum_new -> vx
       }
 
       // calculate eksum (at n+1/2) and eksum_old (at n-1/2)
@@ -269,8 +249,8 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
    }
 
    // propagate x(0 -> 1): x = xold + v(0.5)*dt
-   propagate_pos_lf(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z,
-                    leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
+   propagate_pos_lf(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z, leapfrog_vxold,
+      leapfrog_vyold, leapfrog_vzold);
    lf_langevin_piston(dt_ps, press);
    copy_pos_to_xyz(true);
    energy(vers1);
@@ -280,9 +260,8 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
    darray::copy(g::q0, n, leapfrog_z, zpos);
 
    // propagate v(0.5 -> 1.5 old): v = vold + a(1)*dt
-   propagate_velocity(dt_ps, leapfrog_vx, leapfrog_vy, leapfrog_vz,
-                      leapfrog_vxold, leapfrog_vyold, leapfrog_vzold, gx, gy,
-                      gz);
+   propagate_velocity(dt_ps, leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold, leapfrog_vyold,
+      leapfrog_vzold, gx, gy, gz);
 
    if (userat) {
       darray::copy(g::q0, n, vx, leapfrog_vx);
@@ -290,27 +269,25 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
       darray::copy(g::q0, n, vz, leapfrog_vz);
 
       // x = xold + vnew * dt
-      propagate_pos_lf(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y,
-                       leapfrog_z, leapfrog_vx, leapfrog_vy, leapfrog_vz);
+      propagate_pos_lf(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z, leapfrog_vx,
+         leapfrog_vy, leapfrog_vz);
 
       shake(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
 
       // vnew =  (x - xold) / dt
-      propagate_velocity_lp2(dt_ps, leapfrog_vx, leapfrog_vy, leapfrog_vz, xpos,
-                             ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
+      propagate_velocity_lp2(dt_ps, leapfrog_vx, leapfrog_vy, leapfrog_vz, xpos, ypos, zpos,
+         leapfrog_x, leapfrog_y, leapfrog_z);
 
       // do virial correction
-      shake2(dt_ps, vx, vy, vz, leapfrog_vx, leapfrog_vy, leapfrog_vz,
-             leapfrog_x, leapfrog_y, leapfrog_z);
+      shake2(dt_ps, vx, vy, vz, leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_x, leapfrog_y,
+         leapfrog_z);
    }
 
    // vx = (vnew + vold) / 2
    eksum_new = 0.0;
    eksum_mid = 0.0;
-   propagate_velocity_lp3(vx, vy, vz, leapfrog_vx, leapfrog_vy, leapfrog_vz,
-                          leapfrog_vxold, leapfrog_vyold, leapfrog_vzold,
-                          eksum_mid);
-
+   propagate_velocity_lp3(vx, vy, vz, leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold,
+      leapfrog_vyold, leapfrog_vzold, eksum_mid);
 
    kinetic_leapfrog(temp); // get eksum and eksum_old
 
@@ -324,10 +301,9 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
    }
    press = (stress[0][0] + stress[1][1] + stress[2][2]) / 3;
    press += (eksum + eksum_old) * factor / 3;
-   swap_velocity(leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold,
-                 leapfrog_vyold, leapfrog_vzold);
+   swap_velocity(
+      leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
 }
-
 
 void kinetic_leapfrog(T_prec& temp)
 {
@@ -336,13 +312,10 @@ void kinetic_leapfrog(T_prec& temp)
    energy_prec ekin1[3][3];
    kinetic_explicit(t1, eksum, ekin1, leapfrog_vx, leapfrog_vy, leapfrog_vz);
 
-
    // Ek at -1/2
    T_prec t2;
    energy_prec ekin2[3][3];
-   kinetic_explicit(t2, eksum_old, ekin2, leapfrog_vxold, leapfrog_vyold,
-                    leapfrog_vzold);
-
+   kinetic_explicit(t2, eksum_old, ekin2, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
 
    ekin[0][0] = 0.5 * (ekin1[0][0] + ekin2[0][0]);
    ekin[0][1] = 0.5 * (ekin1[0][1] + ekin2[0][1]);
@@ -356,17 +329,13 @@ void kinetic_leapfrog(T_prec& temp)
    temp = 0.5 * (t1 + t2);
 }
 
-
-void shake2(time_prec dt, const vel_prec* vxold, const vel_prec* vyold,
-            const vel_prec* vzold, const vel_prec* vxnew, const vel_prec* vynew,
-            const vel_prec* vznew, const pos_prec* xold, const pos_prec* yold,
-            const pos_prec* zold)
+void shake2(time_prec dt, const vel_prec* vxold, const vel_prec* vyold, const vel_prec* vzold,
+   const vel_prec* vxnew, const vel_prec* vynew, const vel_prec* vznew, const pos_prec* xold,
+   const pos_prec* yold, const pos_prec* zold)
 {
    darray::zero(g::q0, buffer_size(), vir_buf);
 
-
    shake2_acc(dt, vxold, vyold, vzold, vxnew, vynew, vznew, xold, yold, zold);
-
 
    virial_prec v[9];
    virial_reduce(v, vir_buf);
@@ -375,78 +344,58 @@ void shake2(time_prec dt, const vel_prec* vxold, const vel_prec* vyold,
    }
 }
 
-
 //====================================================================//
 
-
-void swap_velocity(vel_prec* vxnew, vel_prec* vynew, vel_prec* vznew,
-                   vel_prec* vxold, vel_prec* vyold, vel_prec* vzold)
+void swap_velocity(vel_prec* vxnew, vel_prec* vynew, vel_prec* vznew, vel_prec* vxold,
+   vel_prec* vyold, vel_prec* vzold)
 {
    swap_velocity_acc(vxnew, vynew, vznew, vxold, vyold, vzold);
 }
 
-
-void propagate_pos_lp(time_prec dt, pos_prec* x_lp, pos_prec* y_lp,
-                      pos_prec* z_lp, const vel_prec* vx_lp,
-                      const vel_prec* vy_lp, const vel_prec* vz_lp,
-                      const pos_prec* xold_lp, const pos_prec* yold_lp,
-                      const pos_prec* zold_lp, double scale)
+void propagate_pos_lp(time_prec dt, pos_prec* x_lp, pos_prec* y_lp, pos_prec* z_lp,
+   const vel_prec* vx_lp, const vel_prec* vy_lp, const vel_prec* vz_lp, const pos_prec* xold_lp,
+   const pos_prec* yold_lp, const pos_prec* zold_lp, double scale)
 {
 
-   propagate_pos_lp_acc(dt, x_lp, y_lp, z_lp, vx_lp, vy_lp, vz_lp, xold_lp,
-                        yold_lp, zold_lp, scale);
+   propagate_pos_lp_acc(
+      dt, x_lp, y_lp, z_lp, vx_lp, vy_lp, vz_lp, xold_lp, yold_lp, zold_lp, scale);
 }
-
 
 void propagate_pos_lp2(time_prec dt, const pos_prec* x_lp, const pos_prec* y_lp,
-                       const pos_prec* z_lp, pos_prec* xold_lp,
-                       pos_prec* yold_lp, pos_prec* zold_lp, double scale)
+   const pos_prec* z_lp, pos_prec* xold_lp, pos_prec* yold_lp, pos_prec* zold_lp, double scale)
 {
-   propagate_pos_lp2_acc(dt, x_lp, y_lp, z_lp, xold_lp, yold_lp, zold_lp,
-                         scale);
+   propagate_pos_lp2_acc(dt, x_lp, y_lp, z_lp, xold_lp, yold_lp, zold_lp, scale);
 }
 
-
-void propagate_pos_lf(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz,
-                      const pos_prec* qxold, const pos_prec* qyold,
-                      const pos_prec* qzold, const vel_prec* vlx,
-                      const vel_prec* vly, const vel_prec* vlz)
+void propagate_pos_lf(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz, const pos_prec* qxold,
+   const pos_prec* qyold, const pos_prec* qzold, const vel_prec* vlx, const vel_prec* vly,
+   const vel_prec* vlz)
 {
    propagate_pos_lf_acc(dt, qx, qy, qz, qxold, qyold, qzold, vlx, vly, vlz);
 }
 
-
 void propagate_velocity_lp(vel_prec* vx_lp, vel_prec* vy_lp, vel_prec* vz_lp,
-                           const vel_prec* vxnew_lp, const vel_prec* vynew_lp,
-                           const vel_prec* vznew_lp, const vel_prec* vxold_lp,
-                           const vel_prec* vyold_lp, const vel_prec* vzold_lp,
-                           const double scale, energy_prec& eksum_new,
-                           energy_prec& eksum_old)
+   const vel_prec* vxnew_lp, const vel_prec* vynew_lp, const vel_prec* vznew_lp,
+   const vel_prec* vxold_lp, const vel_prec* vyold_lp, const vel_prec* vzold_lp, const double scale,
+   energy_prec& eksum_new, energy_prec& eksum_old)
 {
-   propagate_velocity_lp_acc(vx_lp, vy_lp, vz_lp, vxnew_lp, vynew_lp, vznew_lp,
-                             vxold_lp, vyold_lp, vzold_lp, scale, eksum_new,
-                             eksum_old);
+   propagate_velocity_lp_acc(vx_lp, vy_lp, vz_lp, vxnew_lp, vynew_lp, vznew_lp, vxold_lp, vyold_lp,
+      vzold_lp, scale, eksum_new, eksum_old);
 }
 
-
-void propagate_velocity_lp2(time_prec dt, vel_prec* vx_lp, vel_prec* vy_lp,
-                            vel_prec* vz_lp, const pos_prec* x_lp,
-                            const pos_prec* y_lp, const pos_prec* z_lp,
-                            const pos_prec* xold_lp, const pos_prec* yold_lp,
-                            const pos_prec* zold_lp)
+void propagate_velocity_lp2(time_prec dt, vel_prec* vx_lp, vel_prec* vy_lp, vel_prec* vz_lp,
+   const pos_prec* x_lp, const pos_prec* y_lp, const pos_prec* z_lp, const pos_prec* xold_lp,
+   const pos_prec* yold_lp, const pos_prec* zold_lp)
 {
-   propagate_velocity_lp2_acc(dt, vx_lp, vy_lp, vz_lp, x_lp, y_lp, z_lp,
-                              xold_lp, yold_lp, zold_lp);
+   propagate_velocity_lp2_acc(dt, vx_lp, vy_lp, vz_lp, x_lp, y_lp, z_lp, xold_lp, yold_lp, zold_lp);
 }
-
 
 void propagate_velocity_lp3(vel_prec* vx_lp, vel_prec* vy_lp, vel_prec* vz_lp,
-                            const vel_prec* vxnew_lp, const vel_prec* vynew_lp,
-                            const vel_prec* vznew_lp, const vel_prec* vxold_lp,
-                            const vel_prec* vyold_lp, const vel_prec* vzold_lp,
-                            energy_prec& eksum_new)
+   const vel_prec* vxnew_lp, const vel_prec* vynew_lp, const vel_prec* vznew_lp,
+   const vel_prec* vxold_lp, const vel_prec* vyold_lp, const vel_prec* vzold_lp,
+   energy_prec& eksum_new)
 {
-   propagate_velocity_lp3_acc(vx_lp, vy_lp, vz_lp, vxnew_lp, vynew_lp, vznew_lp,
-                              vxold_lp, vyold_lp, vzold_lp, eksum_new);
+   propagate_velocity_lp3_acc(
+      vx_lp, vy_lp, vz_lp, vxnew_lp, vynew_lp, vznew_lp, vxold_lp, vyold_lp, vzold_lp, eksum_new);
 }
 }

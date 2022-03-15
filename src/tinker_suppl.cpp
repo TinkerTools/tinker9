@@ -29,8 +29,7 @@ void tinker_f_close(int* unit)
 
 void tinker_f_open(int* unit, std::string file, std::string status)
 {
-   suppl_open_(unit, file.c_str(), status.c_str(), file.length(),
-               status.length());
+   suppl_open_(unit, file.c_str(), status.c_str(), file.length(), status.length());
 }
 
 int tinker_f_allocated(void* p)

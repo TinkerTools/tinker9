@@ -1,7 +1,6 @@
 #define TINKER_ENABLE_LOG 0
 #include "tool/log.h"
 
-
 #include "energy.h"
 #include "lf_lpiston.h"
 #include "lpiston.h"
@@ -22,13 +21,11 @@
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>
 
-
 namespace tinker {
 void mdrest(int istep)
 {
    mdrest_acc(istep);
 }
-
 
 void md_data(rc_op op)
 {
@@ -39,14 +36,11 @@ void md_data(rc_op op)
    rc_man save42{mdsave_data, op};
 }
 
-
 //====================================================================//
-
 
 namespace {
 void (*intg)(int, time_prec);
 }
-
 
 void propagate(int nsteps, time_prec dt_ps)
 {
@@ -75,14 +69,13 @@ void propagate(int nsteps, time_prec dt_ps)
    mdsave_synchronize();
 }
 
-
 void integrate_data(rc_op op)
 {
    if (op & rc_dealloc) {
       if (intg == lf_lpiston_npt) {
          darray::deallocate(leapfrog_x, leapfrog_y, leapfrog_z);
-         darray::deallocate(leapfrog_vx, leapfrog_vy, leapfrog_vz,
-                            leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
+         darray::deallocate(
+            leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
       }
 
       if (intg == vv_lpiston_npt) {
@@ -155,14 +148,13 @@ void integrate_data(rc_op op)
          intg = respa_fast_slow;
       }
 
-      if (thermostat == LEAPFROG_LPISTON_THERMOSTAT and
-          barostat == LEAPFROG_LPISTON_BAROSTAT) {
+      if (thermostat == LEAPFROG_LPISTON_THERMOSTAT and barostat == LEAPFROG_LPISTON_BAROSTAT) {
          intg = lf_lpiston_npt;
       } else if (barostat == LANGEVIN_BAROSTAT) {
          if (itg == "VERLET" or itg == "RESPA")
             intg = vv_lpiston_npt;
       } else if (thermostat == NOSE_HOOVER_CHAIN_THERMOSTAT and
-                 barostat == NOSE_HOOVER_CHAIN_BAROSTAT) {
+         barostat == NOSE_HOOVER_CHAIN_BAROSTAT) {
          intg = nhc_npt;
       }
 
@@ -172,15 +164,14 @@ void integrate_data(rc_op op)
          energy(calc::grad);
       } else if (intg == lf_lpiston_npt) {
          darray::allocate(n, &leapfrog_x, &leapfrog_y, &leapfrog_z);
-         darray::allocate(n, &leapfrog_vx, &leapfrog_vy, &leapfrog_vz,
-                          &leapfrog_vxold, &leapfrog_vyold, &leapfrog_vzold);
+         darray::allocate(n, &leapfrog_vx, &leapfrog_vy, &leapfrog_vz, &leapfrog_vxold,
+            &leapfrog_vyold, &leapfrog_vzold);
          energy(calc::v1);
       } else if (intg == vv_lpiston_npt) {
          vv_lpiston_init();
       } else if (intg == nhc_npt) {
          if (use_rattle()) {
-            TINKER_THROW(
-               "Constraints under NH-NPT require the ROLL algorithm.");
+            TINKER_THROW("Constraints under NH-NPT require the ROLL algorithm.");
          }
          double ekt = units::gasconst * bath::kelvin;
          vbar = 0;

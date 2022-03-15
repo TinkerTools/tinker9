@@ -9,7 +9,6 @@
 #include <tinker/detail/potent.hh>
 #include <tinker/detail/sizes.hh>
 
-
 namespace tinker {
 void empole_chgpen_data(rc_op op)
 {
@@ -47,10 +46,8 @@ void empole_chgpen_data(rc_op op)
       }
    }
 
-   if (op & rc_init) {
-   }
+   if (op & rc_init) {}
 }
-
 
 void empole_chgpen(int vers)
 {
@@ -61,7 +58,6 @@ void empole_chgpen(int vers)
    bool do_g = vers & calc::grad;
    int use_cf = potent::use_chgflx;
    int use_cfgrad = use_cf and do_g;
-
 
    host_zero(energy_em, virial_em);
    size_t bsize = buffer_size();
@@ -75,7 +71,6 @@ void empole_chgpen(int vers)
       if (do_g)
          darray::zero(g::q0, n, demx, demy, demz);
    }
-
 
    if (use_cf)
       alterchg();
@@ -100,7 +95,6 @@ void empole_chgpen(int vers)
       }
    }
 
-
    if (rc_a) {
       if (do_e) {
          energy_buffer u = em;
@@ -122,7 +116,6 @@ void empole_chgpen(int vers)
    }
 }
 
-
 void empole_chgpen_nonewald(int vers, int use_cf)
 {
 #if TINKER_CUDART
@@ -133,13 +126,11 @@ void empole_chgpen_nonewald(int vers, int use_cf)
       empole_chgpen_nonewald_acc(vers, use_cf);
 }
 
-
 void empole_chgpen_ewald(int vers, int use_cf)
 {
    empole_chgpen_ewald_real_self(vers, use_cf);
    empole_chgpen_ewald_recip(vers, use_cf);
 }
-
 
 void empole_chgpen_ewald_real_self(int vers, int use_cf)
 {
@@ -150,7 +141,6 @@ void empole_chgpen_ewald_real_self(int vers, int use_cf)
 #endif
       empole_chgpen_ewald_real_self_acc(vers, use_cf);
 }
-
 
 void empole_chgpen_ewald_recip(int vers, int use_cf)
 {

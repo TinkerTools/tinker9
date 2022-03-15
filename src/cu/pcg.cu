@@ -11,16 +11,13 @@
 #include <tinker/detail/polpot.hh>
 #include <tinker/detail/units.hh>
 
-
 namespace tinker {
 #define ITHREAD threadIdx.x + blockIdx.x* blockDim.x
 #define STRIDE  blockDim.x* gridDim.x
 
-
 __global__
 void pcg_udir(int n, const real* restrict polarity, real (*restrict udir)[3],
-              real (*restrict udirp)[3], const real (*restrict field)[3],
-              const real (*restrict fieldp)[3])
+   real (*restrict udirp)[3], const real (*restrict field)[3], const real (*restrict fieldp)[3])
 {
    for (int i = ITHREAD; i < n; i += STRIDE) {
       real poli = polarity[i];
@@ -32,13 +29,11 @@ void pcg_udir(int n, const real* restrict polarity, real (*restrict udir)[3],
    }
 }
 
-
 __global__
-void pcg_rsd(int n, const real* restrict polarity_inv,         //
-             real (*restrict rsd)[3], real (*restrict rsp)[3], //
-             const real (*restrict udir)[3], const real (*restrict udip)[3],
-             const real (*restrict uind)[3], const real (*restrict uinp)[3],
-             const real (*restrict field)[3], const real (*restrict fielp)[3])
+void pcg_rsd(int n, const real* restrict polarity_inv, //
+   real (*restrict rsd)[3], real (*restrict rsp)[3],   //
+   const real (*restrict udir)[3], const real (*restrict udip)[3], const real (*restrict uind)[3],
+   const real (*restrict uinp)[3], const real (*restrict field)[3], const real (*restrict fielp)[3])
 {
    for (int i = ITHREAD; i < n; i += STRIDE) {
       real poli_inv = polarity_inv[i];
@@ -50,10 +45,9 @@ void pcg_rsd(int n, const real* restrict polarity_inv,         //
    }
 }
 
-
 __global__
-void pcg_rsd0(int n, const real* restrict polarity, real (*restrict rsd)[3],
-              real (*restrict rsdp)[3])
+void pcg_rsd0(
+   int n, const real* restrict polarity, real (*restrict rsd)[3], real (*restrict rsdp)[3])
 {
    for (int i = ITHREAD; i < n; i += STRIDE) {
       if (polarity[i] == 0) {
@@ -67,12 +61,10 @@ void pcg_rsd0(int n, const real* restrict polarity, real (*restrict rsd)[3],
    }
 }
 
-
 __global__
 void pcg_p1(int n, const real* restrict polarity_inv, real (*restrict vec)[3],
-            real (*restrict vecp)[3], const real (*restrict conj)[3],
-            const real (*restrict conjp)[3], const real (*restrict field)[3],
-            const real (*restrict fieldp)[3])
+   real (*restrict vecp)[3], const real (*restrict conj)[3], const real (*restrict conjp)[3],
+   const real (*restrict field)[3], const real (*restrict fieldp)[3])
 {
    for (int i = ITHREAD; i < n; i += STRIDE) {
       real poli_inv = polarity_inv[i];
@@ -84,15 +76,13 @@ void pcg_p1(int n, const real* restrict polarity_inv, real (*restrict vec)[3],
    }
 }
 
-
 __global__
-void pcg_p2(int n, const real* restrict polarity,              //
-            const real* restrict ka, const real* restrict kap, //
-            const real* restrict ksum, const real* restrict ksump,
-            real (*restrict uind)[3], real (*restrict uinp)[3],
-            const real (*restrict conj)[3], const real (*restrict conjp)[3],
-            real (*restrict rsd)[3], real (*restrict rsdp)[3],
-            const real (*restrict vec)[3], const real (*restrict vecp)[3])
+void pcg_p2(int n, const real* restrict polarity,     //
+   const real* restrict ka, const real* restrict kap, //
+   const real* restrict ksum, const real* restrict ksump, real (*restrict uind)[3],
+   real (*restrict uinp)[3], const real (*restrict conj)[3], const real (*restrict conjp)[3],
+   real (*restrict rsd)[3], real (*restrict rsdp)[3], const real (*restrict vec)[3],
+   const real (*restrict vecp)[3])
 {
    real kaval = *ka, kapval = *kap;
    real a = *ksum / kaval, ap = *ksump / kapval;
@@ -119,12 +109,10 @@ void pcg_p2(int n, const real* restrict polarity,              //
    }
 }
 
-
 __global__
 void pcg_p3(int n, const real* restrict ksum, const real* restrict ksump,
-            const real* restrict ksum1, const real* restrict ksump1,
-            real (*restrict conj)[3], real (*restrict conjp)[3],
-            real (*restrict zrsd)[3], real (*restrict zrsdp)[3])
+   const real* restrict ksum1, const real* restrict ksump1, real (*restrict conj)[3],
+   real (*restrict conjp)[3], real (*restrict zrsd)[3], real (*restrict zrsdp)[3])
 {
    real kaval = *ksum, kapval = *ksump;
    real b = *ksum1 / kaval, bp = *ksump1 / kapval;
@@ -141,11 +129,9 @@ void pcg_p3(int n, const real* restrict ksum, const real* restrict ksump,
    }
 }
 
-
 __global__
-void pcg_peek(int n, float pcgpeek, const real* restrict polarity,
-              real (*restrict uind)[3], real (*restrict uinp)[3],
-              const real (*restrict rsd)[3], const real (*restrict rsdp)[3])
+void pcg_peek(int n, float pcgpeek, const real* restrict polarity, real (*restrict uind)[3],
+   real (*restrict uinp)[3], const real (*restrict rsd)[3], const real (*restrict rsdp)[3])
 {
    for (int i = ITHREAD; i < n; i += STRIDE) {
       real term = pcgpeek * polarity[i];
@@ -156,7 +142,6 @@ void pcg_peek(int n, float pcgpeek, const real* restrict polarity,
       }
    }
 }
-
 
 void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
 {
@@ -171,7 +156,6 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
    auto* vec = work09_;
    auto* vecp = work10_;
 
-
    const bool sparse_prec = polpcg::pcgprec;
    bool dirguess = polpcg::pcgguess;
    bool predict = polpred != UPred::NONE;
@@ -180,12 +164,10 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       dirguess = true;
    }
 
-
    // get the electrostatic field due to permanent multipoles
    dfield(field, fieldp);
    // direct induced dipoles
    launch_k1s(g::s0, n, pcg_udir, n, polarity, udir, udirp, field, fieldp);
-
 
    // initial induced dipole
    if (predict) {
@@ -196,7 +178,6 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
    } else {
       darray::zero(g::q0, n, uind, uinp);
    }
-
 
    // initial residual r(0)
    //
@@ -211,8 +192,8 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
    // if do not use pcgguess, r(0) = E - T Zero = E
    if (predict) {
       ufield(uind, uinp, field, fieldp);
-      launch_k1s(g::s0, n, pcg_rsd, n, polarity_inv, rsd, rsdp, udir, udirp,
-                 uind, uinp, field, fieldp);
+      launch_k1s(
+         g::s0, n, pcg_rsd, n, polarity_inv, rsd, rsdp, udir, udirp, uind, uinp, field, fieldp);
    } else if (dirguess) {
       ufield(udir, udirp, rsd, rsdp);
    } else {
@@ -220,7 +201,6 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       darray::copy(g::q0, n, rsdp, fieldp);
    }
    launch_k1s(g::s0, n, pcg_rsd0, n, polarity, rsd, rsdp);
-
 
    // initial M r(0) and p(0)
    if (sparse_prec) {
@@ -232,13 +212,11 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
    darray::copy(g::q0, n, conj, zrsd);
    darray::copy(g::q0, n, conjp, zrsdp);
 
-
    // initial r(0) M r(0)
    real* sum = &((real*)dptr_buf)[0];
    real* sump = &((real*)dptr_buf)[1];
    darray::dot(g::q0, n, sum, rsd, zrsd);
    darray::dot(g::q0, n, sump, rsdp, zrsdp);
-
 
    // conjugate gradient iteration of the mutual induced dipoles
    const bool debug = inform::debug;
@@ -248,24 +226,19 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
    const real pcgpeek = polpcg::pcgpeek;
    const int maxiter = 100; // see also subroutine induce0a in induce.f
 
-
    bool done = false;
    int iter = 0;
    real eps = 100;
    real epsold;
 
-
    while (!done) {
       ++iter;
-
 
       // T p and p
       // vec = (inv_alpha + Tu) conj, field = -Tu conj
       // vec = inv_alpha * conj - field
       ufield(conj, conjp, field, fieldp);
-      launch_k1s(g::s0, n, pcg_p1, n, polarity_inv, vec, vecp, conj, conjp,
-                 field, fieldp);
-
+      launch_k1s(g::s0, n, pcg_p1, n, polarity_inv, vec, vecp, conj, conjp, field, fieldp);
 
       // a <- p T p
       real* a = &((real*)dptr_buf)[2];
@@ -274,12 +247,10 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       darray::dot(g::q0, n, a, conj, vec);
       darray::dot(g::q0, n, ap, conjp, vecp);
 
-
       // u <- u + a p
       // r <- r - a T p
-      launch_k1s(g::s0, n, pcg_p2, n, polarity, a, ap, sum, sump, uind, uinp,
-                 conj, conjp, rsd, rsdp, vec, vecp);
-
+      launch_k1s(g::s0, n, pcg_p2, n, polarity, a, ap, sum, sump, uind, uinp, conj, conjp, rsd,
+         rsdp, vec, vecp);
 
       // calculate/update M r
       if (sparse_prec)
@@ -287,44 +258,37 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       else
          diag_precond(rsd, rsdp, zrsd, zrsdp);
 
-
       // b = sum1 / sum; bp = sump1 / sump
       real* sum1 = &((real*)dptr_buf)[4];
       real* sump1 = &((real*)dptr_buf)[5];
       darray::dot(g::q0, n, sum1, rsd, zrsd);
       darray::dot(g::q0, n, sump1, rsdp, zrsdp);
 
-
       // calculate/update p
-      launch_k1s(g::s0, n, pcg_p3, n, sum, sump, sum1, sump1, conj, conjp, zrsd,
-                 zrsdp);
-
+      launch_k1s(g::s0, n, pcg_p3, n, sum, sump, sum1, sump1, conj, conjp, zrsd, zrsdp);
 
       // copy sum1/p to sum/p
       darray::copy(g::q0, 2, sum, sum1);
-
 
       real* epsd = &((real*)dptr_buf)[6];
       real* epsp = &((real*)dptr_buf)[7];
       darray::dot(g::q0, n, epsd, rsd, rsd);
       darray::dot(g::q0, n, epsp, rsdp, rsdp);
-      check_rt(cudaMemcpyAsync((real*)pinned_buf, epsd, 2 * sizeof(real),
-                               cudaMemcpyDeviceToHost, g::s0));
+      check_rt(
+         cudaMemcpyAsync((real*)pinned_buf, epsd, 2 * sizeof(real), cudaMemcpyDeviceToHost, g::s0));
       check_rt(cudaStreamSynchronize(g::s0));
       epsold = eps;
       eps = REAL_MAX(((real*)pinned_buf)[0], ((real*)pinned_buf)[1]);
       eps = debye * REAL_SQRT(eps / n);
 
-
       if (debug) {
          if (iter == 1) {
             print(stdout,
-                  "\n Determination of SCF Induced Dipole Moments\n\n"
-                  "    Iter    RMS Residual (Debye)\n\n");
+               "\n Determination of SCF Induced Dipole Moments\n\n"
+               "    Iter    RMS Residual (Debye)\n\n");
          }
          print(stdout, " %8d       %-16.10f\n", iter, eps);
       }
-
 
       if (eps < poleps)
          done = true;
@@ -333,23 +297,19 @@ void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3])
       if (iter >= politer)
          done = true;
 
-
       // apply a "peek" iteration to the mutual induced dipoles
       if (done) {
-         launch_k1s(g::s0, n, pcg_peek, n, pcgpeek, polarity, uind, uinp, rsd,
-                    rsdp);
+         launch_k1s(g::s0, n, pcg_peek, n, pcgpeek, polarity, uind, uinp, rsd, rsdp);
       }
    }
-
 
    // print the results from the conjugate gradient iteration
    if (debug) {
       print(stdout,
-            " Induced Dipoles :    Iterations %4d      RMS "
-            "Residual %14.10f\n",
-            iter, eps);
+         " Induced Dipoles :    Iterations %4d      RMS "
+         "Residual %14.10f\n",
+         iter, eps);
    }
-
 
    // terminate the calculation if dipoles failed to converge
    if (iter >= maxiter || eps > epsold) {

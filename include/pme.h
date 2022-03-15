@@ -5,7 +5,6 @@
 #include "tool/gen_unit.h"
 #include "tool/rc_man.h"
 
-
 namespace tinker {
 /**
  * \ingroup pme
@@ -48,7 +47,6 @@ struct PME
    ~PME();
 };
 using PMEUnit = GenericUnit<PME, GenericUnitVersion::EnableOnDevice>;
-
 
 void pme_data(rc_op op);
 // This function must be called after pme_data has been called because it

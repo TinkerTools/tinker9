@@ -16,7 +16,6 @@
 #include <tinker/detail/tortor.hh>
 #include <tinker/detail/urey.hh>
 
-
 namespace tinker {
 int use_potent(potent_t term)
 {
@@ -99,7 +98,6 @@ int use_potent(potent_t term)
    }
    return val;
 }
-
 
 int count_bonded_term(potent_t term)
 {

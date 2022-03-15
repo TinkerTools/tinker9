@@ -18,13 +18,11 @@
 #include <tinker/detail/mpole.hh>
 #include <tinker/detail/potent.hh>
 
-
 namespace tinker {
 void cflux_data(rc_op op)
 {
    if (!potent::use_chgflx)
       return;
-
 
    if (op & rc_dealloc) {
       darray::deallocate(bflx, aflx, abflx);
@@ -32,7 +30,6 @@ void cflux_data(rc_op op)
       darray::deallocate(mono0);
       darray::deallocate(decfx, decfy, decfz, pot);
    }
-
 
    if (op & rc_alloc) {
       darray::allocate(n, &pdelta, &atomic);
@@ -49,7 +46,6 @@ void cflux_data(rc_op op)
          pot = nullptr;
       }
    }
-
 
    if (op & rc_init) {
       darray::copyin(g::q0, nbond, bflx, cflux::bflx);
@@ -70,21 +66,17 @@ void cflux_data(rc_op op)
    }
 }
 
-
 void zero_pot()
 {
    darray::zero(g::q0, n, pot);
 }
-
 
 void alterchg()
 {
    alterchg_acc();
 }
 
-
-void dcflux(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz,
-            virial_buffer v)
+void dcflux(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz, virial_buffer v)
 {
    dcflux_acc(vers, gx, gy, gz, v);
 }

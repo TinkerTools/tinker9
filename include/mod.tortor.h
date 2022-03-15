@@ -2,17 +2,13 @@
 #include "macro.h"
 #include "tool/energy_buffer.h"
 
-
 namespace tinker {
 TINKER_EXTERN int ntortor;
 TINKER_EXTERN int (*itt)[3];
 
-
 //====================================================================//
 
-
 TINKER_EXTERN int* chkttor_ia_;
-
 
 TINKER_EXTERN energy_buffer ett;
 TINKER_EXTERN virial_buffer vir_ett;

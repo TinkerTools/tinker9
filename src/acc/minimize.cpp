@@ -1,6 +1,5 @@
 #include "md.h"
 
-
 namespace tinker {
 void minimize_set_xx_by_pos_acc(int n, double* xx, const double* scale)
 {
@@ -14,7 +13,6 @@ void minimize_set_xx_by_pos_acc(int n, double* xx, const double* scale)
    }
    #pragma acc wait
 }
-
 
 void minimize_set_pos_acc(int n, const double* xx, const double* scale)
 {

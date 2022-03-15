@@ -7,13 +7,11 @@
 #include "tool/error.h"
 #include <cufft.h>
 
-
 namespace tinker {
 struct FFTPlanCUFFT : public FFTPlan
 {
    cufftHandle h;
 };
-
 
 void fft_data(rc_op op)
 {
@@ -66,7 +64,6 @@ void fft_data(rc_op op)
    }
 }
 
-
 void fftfront(PMEUnit pme_u)
 {
    FFTPlanUnit iplan_u = static_cast<int>(pme_u);
@@ -75,15 +72,14 @@ void fftfront(PMEUnit pme_u)
 
 #if TINKER_REAL_SIZE == 4
    cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),
-                reinterpret_cast<cufftComplex*>(st.qgrid), CUFFT_FORWARD);
+      reinterpret_cast<cufftComplex*>(st.qgrid), CUFFT_FORWARD);
 #elif TINKER_REAL_SIZE == 8
    cufftExecZ2Z(iplan, reinterpret_cast<cufftDoubleComplex*>(st.qgrid),
-                reinterpret_cast<cufftDoubleComplex*>(st.qgrid), CUFFT_FORWARD);
+      reinterpret_cast<cufftDoubleComplex*>(st.qgrid), CUFFT_FORWARD);
 #else
    static_assert(false, "");
 #endif
 }
-
 
 void fftback(PMEUnit pme_u)
 {
@@ -93,10 +89,10 @@ void fftback(PMEUnit pme_u)
 
 #if TINKER_REAL_SIZE == 4
    cufftExecC2C(iplan, reinterpret_cast<cufftComplex*>(st.qgrid),
-                reinterpret_cast<cufftComplex*>(st.qgrid), CUFFT_INVERSE);
+      reinterpret_cast<cufftComplex*>(st.qgrid), CUFFT_INVERSE);
 #elif TINKER_REAL_SIZE == 8
    cufftExecZ2Z(iplan, reinterpret_cast<cufftDoubleComplex*>(st.qgrid),
-                reinterpret_cast<cufftDoubleComplex*>(st.qgrid), CUFFT_INVERSE);
+      reinterpret_cast<cufftDoubleComplex*>(st.qgrid), CUFFT_INVERSE);
 #else
    static_assert(false, "");
 #endif

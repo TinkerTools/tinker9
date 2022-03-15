@@ -1,7 +1,6 @@
 #pragma once
 #include "tool/rc_man.h"
 
-
 namespace tinker {
 /**
  * \ingroup rand
@@ -9,7 +8,6 @@ namespace tinker {
  */
 template <class T>
 T random();
-
 
 /**
  * \ingroup rand
@@ -19,7 +17,6 @@ T random();
 template <class T>
 T normal();
 
-
 /**
  * \ingroup rand
  * \brief Returns a random number from a normal Gaussian distribution
@@ -27,7 +24,6 @@ T normal();
  */
 template <class T>
 T normal(T u, T s);
-
 
 /**
  * \ingroup rand
@@ -46,7 +42,6 @@ T normal(T u, T s);
  */
 template <class T = real>
 T chi_squared(int k);
-
 
 void random_data(rc_op);
 }

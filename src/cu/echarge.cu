@@ -12,23 +12,17 @@
 #include "switch.h"
 #include "tool/gpu_card.h"
 
-
 namespace tinker {
 // ck.py Version 2.0.2
 template <class Ver, class ETYP>
 __global__
-void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
-                 energy_buffer restrict ec, virial_buffer restrict vec,
-                 grad_prec* restrict gx, grad_prec* restrict gy,
-                 grad_prec* restrict gz, real cut, real off,
-                 const unsigned* restrict info, int nexclude,
-                 const int (*restrict exclude)[2],
-                 const real* restrict exclude_scale, const real* restrict x,
-                 const real* restrict y, const real* restrict z,
-                 const Spatial::SortedAtom* restrict sorted, int nakpl,
-                 const int* restrict iakpl, int niak, const int* restrict iak,
-                 const int* restrict lst, real ebuffer, real f, real aewald,
-                 const real* restrict chg)
+void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec, energy_buffer restrict ec,
+   virial_buffer restrict vec, grad_prec* restrict gx, grad_prec* restrict gy,
+   grad_prec* restrict gz, real cut, real off, const unsigned* restrict info, int nexclude,
+   const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x,
+   const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
+   int nakpl, const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
+   real ebuffer, real f, real aewald, const real* restrict chg)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -38,7 +32,6 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
    const int iwarp = ithread / WARP_SIZE;
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
-
 
    int nectl;
    if CONSTEXPR (do_a) {
@@ -74,7 +67,6 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
    real ichg;
    real kchg;
 
-
    //* /
    for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
       if CONSTEXPR (do_g) {
@@ -86,11 +78,9 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
          fkz = 0;
       }
 
-
       int i = exclude[ii][0];
       int k = exclude[ii][1];
       real scalea = exclude_scale[ii];
-
 
       xi = x[i];
       yi = y[i];
@@ -101,7 +91,6 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
       ichg = chg[i];
       kchg = chg[k];
 
-
       constexpr bool incl = true;
       real xr = xi - xk;
       real yr = yi - yk;
@@ -111,8 +100,7 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
          real r = REAL_SQRT(r2);
          real invr = REAL_RECIP(r);
          real e, de;
-         pair_chg_v3<do_g, ETYP, 0>(r, scalea, ichg, kchg, ebuffer, f, aewald,
-                                    cut, off, e, de);
+         pair_chg_v3<do_g, ETYP, 0>(r, scalea, ichg, kchg, ebuffer, f, aewald, cut, off, e, de);
          if CONSTEXPR (do_e) {
             ectl += cvt_to<ebuf_prec>(e);
             if CONSTEXPR (do_a) {
@@ -143,7 +131,6 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
          }
       }
 
-
       if CONSTEXPR (do_g) {
          atomic_add(fix, gx, i);
          atomic_add(fiy, gy, i);
@@ -155,7 +142,6 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
    }
    // */
 
-
    for (int iw = iwarp; iw < nakpl; iw += nwarp) {
       if CONSTEXPR (do_g) {
          fix = 0;
@@ -166,11 +152,9 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
          fkz = 0;
       }
 
-
       int tri, tx, ty;
       tri = iakpl[iw];
       tri_to_xy(tri, tx, ty);
-
 
       int iid = ty * WARP_SIZE + ilane;
       int atomi = min(iid, n - 1);
@@ -185,10 +169,8 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
-
       ichg = chg[i];
       kchg = chg[k];
-
 
       unsigned int info0 = info[iw * WARP_SIZE + ilane];
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -204,8 +186,7 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
             real r = REAL_SQRT(r2);
             real invr = REAL_RECIP(r);
             real e, de;
-            pair_chg_v3<do_g, ETYP, 1>(r, 1, ichg, kchg, ebuffer, f, aewald,
-                                       cut, off, e, de);
+            pair_chg_v3<do_g, ETYP, 1>(r, 1, ichg, kchg, ebuffer, f, aewald, cut, off, e, de);
             if CONSTEXPR (do_e) {
                ectl += cvt_to<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
@@ -235,7 +216,6 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
                }
             }
          }
-
 
          iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
          xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
@@ -249,7 +229,6 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
          }
       }
 
-
       if CONSTEXPR (do_g) {
          atomic_add(fix, gx, i);
          atomic_add(fiy, gy, i);
@@ -260,7 +239,6 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
       }
    }
 
-
    for (int iw = iwarp; iw < niak; iw += nwarp) {
       if CONSTEXPR (do_g) {
          fix = 0;
@@ -270,7 +248,6 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
          fky = 0;
          fkz = 0;
       }
-
 
       int ty = iak[iw];
       int atomi = ty * WARP_SIZE + ilane;
@@ -284,10 +261,8 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
-
       ichg = chg[i];
       kchg = chg[k];
-
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          bool incl = atomk > 0;
@@ -299,8 +274,7 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
             real r = REAL_SQRT(r2);
             real invr = REAL_RECIP(r);
             real e, de;
-            pair_chg_v3<do_g, ETYP, 1>(r, 1, ichg, kchg, ebuffer, f, aewald,
-                                       cut, off, e, de);
+            pair_chg_v3<do_g, ETYP, 1>(r, 1, ichg, kchg, ebuffer, f, aewald, cut, off, e, de);
             if CONSTEXPR (do_e) {
                ectl += cvt_to<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
@@ -331,7 +305,6 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
             }
          }
 
-
          xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
          yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
          zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
@@ -343,7 +316,6 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
          }
       }
 
-
       if CONSTEXPR (do_g) {
          atomic_add(fix, gx, i);
          atomic_add(fiy, gy, i);
@@ -354,7 +326,6 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
       }
    }
 
-
    if CONSTEXPR (do_a) {
       atomic_add(nectl, nec, ithread);
    }
@@ -362,11 +333,9 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec,
       atomic_add(ectl, ec, ithread);
    }
    if CONSTEXPR (do_v) {
-      atomic_add(vectlxx, vectlyx, vectlzx, vectlyy, vectlzy, vectlzz, vec,
-                 ithread);
+      atomic_add(vectlxx, vectlyx, vectlzx, vectlyy, vectlzy, vectlzz, vec, ithread);
    }
 }
-
 
 template <class Ver, class ETYP>
 void echarge_cu()
@@ -381,7 +350,6 @@ void echarge_cu()
       cut = switch_cut(switch_charge);
    }
 
-
    const real f = electric / dielec;
    real aewald = 0;
    if CONSTEXPR (eq<ETYP, EWALD>()) {
@@ -389,16 +357,12 @@ void echarge_cu()
       aewald = pu->aewald;
    }
 
-
    int ngrid = get_grid_size(BLOCK_DIM);
    auto ker1 = echarge_cu1<Ver, ETYP>;
-   ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(
-      st.n, TINKER_IMAGE_ARGS, nec, ec, vir_ec, decx, decy, decz, cut, off,
-      st.si1.bit0, ncexclude, cexclude, cexclude_scale, st.x, st.y, st.z,
-      st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, ebuffer, f,
-      aewald, pchg);
+   ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nec, ec, vir_ec, decx, decy, decz,
+      cut, off, st.si1.bit0, ncexclude, cexclude, cexclude_scale, st.x, st.y, st.z, st.sorted,
+      st.nakpl, st.iakpl, st.niak, st.iak, st.lst, ebuffer, f, aewald, pchg);
 }
-
 
 void echarge_nonewald_cu(int vers)
 {
@@ -416,7 +380,6 @@ void echarge_nonewald_cu(int vers)
       echarge_cu<calc::V6, NON_EWALD_TAPER>();
 }
 
-
 void echarge_ewald_real_cu(int vers)
 {
    if (vers == calc::v0)
@@ -433,25 +396,19 @@ void echarge_ewald_real_cu(int vers)
       echarge_cu<calc::V6, EWALD>();
 }
 
-
 //====================================================================//
-
 
 template <class Ver, int bsorder>
 __global__
-void echarge_cu3(count_buffer restrict nec, energy_buffer restrict ec,
-                 const real* restrict pchg, real f, real aewald, int n,
-                 int nfft1, int nfft2, int nfft3, const real* restrict x,
-                 const real* restrict y, const real* restrict z,
-                 const real* restrict qgrid, real3 reca, real3 recb, real3 recc,
-                 grad_prec* restrict gx, grad_prec* restrict gy,
-                 grad_prec* restrict gz)
+void echarge_cu3(count_buffer restrict nec, energy_buffer restrict ec, const real* restrict pchg,
+   real f, real aewald, int n, int nfft1, int nfft2, int nfft3, const real* restrict x,
+   const real* restrict y, const real* restrict z, const real* restrict qgrid, real3 reca,
+   real3 recb, real3 recc, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
    constexpr bool do_g = Ver::g;
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
-
 
    real thetai1[4 * 5];
    real thetai2[4 * 5];
@@ -459,12 +416,10 @@ void echarge_cu3(count_buffer restrict nec, energy_buffer restrict ec,
    __shared__ real sharedarray[5 * 5 * PME_BLOCKDIM];
    real* restrict array = &sharedarray[5 * 5 * threadIdx.x];
 
-
    for (int ii = ithread; ii < n; ii += blockDim.x * gridDim.x) {
       real chgi = pchg[ii];
       if (chgi == 0)
          continue;
-
 
       // self energy, tinfoil
       if CONSTEXPR (do_e) {
@@ -476,13 +431,11 @@ void echarge_cu3(count_buffer restrict nec, energy_buffer restrict ec,
          }
       }
 
-
       // recip gradient
       if CONSTEXPR (do_g) {
          real xi = x[ii];
          real yi = y[ii];
          real zi = z[ii];
-
 
          real w1 = xi * reca.x + yi * reca.y + zi * reca.z;
          w1 = w1 + 0.5f - REAL_FLOOR(w1 + 0.5f);
@@ -490,20 +443,17 @@ void echarge_cu3(count_buffer restrict nec, energy_buffer restrict ec,
          int igrid1 = REAL_FLOOR(fr1);
          w1 = fr1 - igrid1;
 
-
          real w2 = xi * recb.x + yi * recb.y + zi * recb.z;
          w2 = w2 + 0.5f - REAL_FLOOR(w2 + 0.5f);
          real fr2 = nfft2 * w2;
          int igrid2 = REAL_FLOOR(fr2);
          w2 = fr2 - igrid2;
 
-
          real w3 = xi * recc.x + yi * recc.y + zi * recc.z;
          w3 = w3 + 0.5f - REAL_FLOOR(w3 + 0.5f);
          real fr3 = nfft3 * w3;
          int igrid3 = REAL_FLOOR(fr3);
          w3 = fr3 - igrid3;
-
 
          igrid1 = igrid1 - bsorder + 1;
          igrid2 = igrid2 - bsorder + 1;
@@ -512,11 +462,9 @@ void echarge_cu3(count_buffer restrict nec, energy_buffer restrict ec,
          igrid2 += (igrid2 < 0 ? nfft2 : 0);
          igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
-
          bsplgen<2, bsorder>(w1, thetai1, array);
          bsplgen<2, bsorder>(w2, thetai2, array);
          bsplgen<2, bsorder>(w3, thetai3, array);
-
 
          real fi = f * chgi;
          real de1 = 0, de2 = 0, de3 = 0;
@@ -546,7 +494,6 @@ void echarge_cu3(count_buffer restrict nec, energy_buffer restrict ec,
             }
          } // end for (iz)
 
-
          real frcx = fi * (reca.x * de1 + recb.x * de2 + recc.x * de3);
          real frcy = fi * (reca.y * de1 + recb.y * de2 + recc.y * de3);
          real frcz = fi * (reca.z * de1 + recb.z * de2 + recc.z * de3);
@@ -556,7 +503,6 @@ void echarge_cu3(count_buffer restrict nec, energy_buffer restrict ec,
       }
    }
 }
-
 
 template <class Ver>
 void echarge_fphi_self_cu()
@@ -568,25 +514,21 @@ void echarge_fphi_self_cu()
    int nfft2 = st.nfft2;
    int nfft3 = st.nfft3;
 
-
    auto stream = g::s0;
    if (use_pme_stream)
       stream = g::spme;
    if (st.bsorder == 5) {
       auto ker = echarge_cu3<Ver, 5>;
       launch_k2b(stream, PME_BLOCKDIM, n, ker, //
-                 nec, ec, pchg, f, aewald, n,  //
-                 nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc,
-                 decx, decy, decz);
+         nec, ec, pchg, f, aewald, n,          //
+         nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc, decx, decy, decz);
    } else if (st.bsorder == 4) {
       auto ker = echarge_cu3<Ver, 4>;
       launch_k2b(stream, PME_BLOCKDIM, n, ker, //
-                 nec, ec, pchg, f, aewald, n,  //
-                 nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc,
-                 decx, decy, decz);
+         nec, ec, pchg, f, aewald, n,          //
+         nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc, decx, decy, decz);
    }
 }
-
 
 void echarge_ewald_fphi_self_cu(int vers)
 {

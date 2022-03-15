@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 
-
 namespace tinker {
 /**
  * \ingroup test
@@ -19,7 +18,6 @@ private:
    bool good;
    std::string name;
 
-
 public:
    /**
     * Copies file from `src` to `dst` and append the `extra` text to `dst` if
@@ -29,14 +27,12 @@ public:
     * current working directory. If `src` is an empty string, it will create a
     * new file at `dst`.
     */
-   TestFile(const std::string& src, std::string dst = "",
-            std::string extra = "");
+   TestFile(const std::string& src, std::string dst = "", std::string extra = "");
    /** Removes the file on disk if possible. */
    ~TestFile();
    /** Prevents the file being deleted. */
    void __keep();
 };
-
 
 /**
  * \ingroup test
@@ -47,13 +43,11 @@ class TestFileExpected
 private:
    std::string m_name;
 
-
 public:
    /// \param name  Name of the file to delete.
    TestFileExpected(const std::string& name);
    ~TestFileExpected();
 };
-
 
 /**
  * \ingroup test
@@ -75,7 +69,6 @@ public:
    double (*get_gradient())[3];
 };
 
-
 /**
  * \ingroup test
  * Returns tolerance eps depending on the predefined floating-point precision.
@@ -83,7 +76,6 @@ public:
  * \param eps_double  Smaller `eps` for higher floating-point precision.
  */
 double test_get_eps(double eps_single, double eps_double);
-
 
 /**
  * \ingroup test
@@ -103,7 +95,6 @@ void test_end();
  */
 void test_mdinit(double t = 0, double atm = 0);
 }
-
 
 /**
  * \def COMPARE_INTS
@@ -125,25 +116,24 @@ void test_mdinit(double t = 0, double atm = 0);
  * reference value.
  */
 #define COMPARE_INTS(i1, refi) REQUIRE(i1 == refi)
-#define COMPARE_INTS_EPS(i1, refi, epsi)                                       \
-   {                                                                           \
-      int c1 = i1;                                                             \
-      int r1 = refi;                                                           \
-      REQUIRE(r1 - epsi <= c1);                                                \
-      REQUIRE(c1 <= r1 + epsi);                                                \
+#define COMPARE_INTS_EPS(i1, refi, epsi)                                                           \
+   {                                                                                               \
+      int c1 = i1;                                                                                 \
+      int r1 = refi;                                                                               \
+      REQUIRE(r1 - epsi <= c1);                                                                    \
+      REQUIRE(c1 <= r1 + epsi);                                                                    \
    }
 #define COMPARE_REALS(v1, refv, eps) REQUIRE(v1 == Approx(refv).margin(eps))
-#define COMPARE_ENERGY(gpuptr, ref_eng, eps)                                   \
-   {                                                                           \
-      double eng = energy_reduce(gpuptr);                                      \
-      REQUIRE(eng == Approx(ref_eng).margin(eps));                             \
+#define COMPARE_ENERGY(gpuptr, ref_eng, eps)                                                       \
+   {                                                                                               \
+      double eng = energy_reduce(gpuptr);                                                          \
+      REQUIRE(eng == Approx(ref_eng).margin(eps));                                                 \
    }
-#define COMPARE_COUNT(gpuptr, ref_count)                                       \
-   {                                                                           \
-      int count = count_reduce(gpuptr);                                        \
-      REQUIRE(count == ref_count);                                             \
+#define COMPARE_COUNT(gpuptr, ref_count)                                                           \
+   {                                                                                               \
+      int count = count_reduce(gpuptr);                                                            \
+      REQUIRE(count == ref_count);                                                                 \
    }
-
 
 /**
  * \def COMPARE_VIR9
@@ -160,48 +150,47 @@ void test_mdinit(double t = 0, double atm = 0);
  * Reduces two virial tensors from two virial buffers and compares the sum to
  * the reference with a margin of `eps`.
  */
-#define COMPARE_VIR9(vir1, ref_v, eps)                                         \
-   {                                                                           \
-      REQUIRE(vir1[0] == Approx(ref_v[0][0]).margin(eps));                     \
-      REQUIRE(vir1[1] == Approx(ref_v[0][1]).margin(eps));                     \
-      REQUIRE(vir1[2] == Approx(ref_v[0][2]).margin(eps));                     \
-      REQUIRE(vir1[3] == Approx(ref_v[1][0]).margin(eps));                     \
-      REQUIRE(vir1[4] == Approx(ref_v[1][1]).margin(eps));                     \
-      REQUIRE(vir1[5] == Approx(ref_v[1][2]).margin(eps));                     \
-      REQUIRE(vir1[6] == Approx(ref_v[2][0]).margin(eps));                     \
-      REQUIRE(vir1[7] == Approx(ref_v[2][1]).margin(eps));                     \
-      REQUIRE(vir1[8] == Approx(ref_v[2][2]).margin(eps));                     \
+#define COMPARE_VIR9(vir1, ref_v, eps)                                                             \
+   {                                                                                               \
+      REQUIRE(vir1[0] == Approx(ref_v[0][0]).margin(eps));                                         \
+      REQUIRE(vir1[1] == Approx(ref_v[0][1]).margin(eps));                                         \
+      REQUIRE(vir1[2] == Approx(ref_v[0][2]).margin(eps));                                         \
+      REQUIRE(vir1[3] == Approx(ref_v[1][0]).margin(eps));                                         \
+      REQUIRE(vir1[4] == Approx(ref_v[1][1]).margin(eps));                                         \
+      REQUIRE(vir1[5] == Approx(ref_v[1][2]).margin(eps));                                         \
+      REQUIRE(vir1[6] == Approx(ref_v[2][0]).margin(eps));                                         \
+      REQUIRE(vir1[7] == Approx(ref_v[2][1]).margin(eps));                                         \
+      REQUIRE(vir1[8] == Approx(ref_v[2][2]).margin(eps));                                         \
    }
-#define COMPARE_VIR(gpuptr, ref_v, eps)                                        \
-   {                                                                           \
-      virial_prec vir1[9];                                                     \
-      virial_reduce(vir1, gpuptr);                                             \
-      REQUIRE(vir1[0] == Approx(ref_v[0][0]).margin(eps));                     \
-      REQUIRE(vir1[1] == Approx(ref_v[0][1]).margin(eps));                     \
-      REQUIRE(vir1[2] == Approx(ref_v[0][2]).margin(eps));                     \
-      REQUIRE(vir1[3] == Approx(ref_v[1][0]).margin(eps));                     \
-      REQUIRE(vir1[4] == Approx(ref_v[1][1]).margin(eps));                     \
-      REQUIRE(vir1[5] == Approx(ref_v[1][2]).margin(eps));                     \
-      REQUIRE(vir1[6] == Approx(ref_v[2][0]).margin(eps));                     \
-      REQUIRE(vir1[7] == Approx(ref_v[2][1]).margin(eps));                     \
-      REQUIRE(vir1[8] == Approx(ref_v[2][2]).margin(eps));                     \
+#define COMPARE_VIR(gpuptr, ref_v, eps)                                                            \
+   {                                                                                               \
+      virial_prec vir1[9];                                                                         \
+      virial_reduce(vir1, gpuptr);                                                                 \
+      REQUIRE(vir1[0] == Approx(ref_v[0][0]).margin(eps));                                         \
+      REQUIRE(vir1[1] == Approx(ref_v[0][1]).margin(eps));                                         \
+      REQUIRE(vir1[2] == Approx(ref_v[0][2]).margin(eps));                                         \
+      REQUIRE(vir1[3] == Approx(ref_v[1][0]).margin(eps));                                         \
+      REQUIRE(vir1[4] == Approx(ref_v[1][1]).margin(eps));                                         \
+      REQUIRE(vir1[5] == Approx(ref_v[1][2]).margin(eps));                                         \
+      REQUIRE(vir1[6] == Approx(ref_v[2][0]).margin(eps));                                         \
+      REQUIRE(vir1[7] == Approx(ref_v[2][1]).margin(eps));                                         \
+      REQUIRE(vir1[8] == Approx(ref_v[2][2]).margin(eps));                                         \
    }
-#define COMPARE_VIR2(gpuptr, gpuptr2, ref_v, eps)                              \
-   {                                                                           \
-      virial_prec vir1[9], vir2[9];                                            \
-      virial_reduce(vir1, gpuptr);                                             \
-      virial_reduce(vir2, gpuptr2);                                            \
-      REQUIRE(vir1[0] + vir2[0] == Approx(ref_v[0][0]).margin(eps));           \
-      REQUIRE(vir1[1] + vir2[1] == Approx(ref_v[0][1]).margin(eps));           \
-      REQUIRE(vir1[2] + vir2[2] == Approx(ref_v[0][2]).margin(eps));           \
-      REQUIRE(vir1[3] + vir2[3] == Approx(ref_v[1][0]).margin(eps));           \
-      REQUIRE(vir1[4] + vir2[4] == Approx(ref_v[1][1]).margin(eps));           \
-      REQUIRE(vir1[5] + vir2[5] == Approx(ref_v[1][2]).margin(eps));           \
-      REQUIRE(vir1[6] + vir2[6] == Approx(ref_v[2][0]).margin(eps));           \
-      REQUIRE(vir1[7] + vir2[7] == Approx(ref_v[2][1]).margin(eps));           \
-      REQUIRE(vir1[8] + vir2[8] == Approx(ref_v[2][2]).margin(eps));           \
+#define COMPARE_VIR2(gpuptr, gpuptr2, ref_v, eps)                                                  \
+   {                                                                                               \
+      virial_prec vir1[9], vir2[9];                                                                \
+      virial_reduce(vir1, gpuptr);                                                                 \
+      virial_reduce(vir2, gpuptr2);                                                                \
+      REQUIRE(vir1[0] + vir2[0] == Approx(ref_v[0][0]).margin(eps));                               \
+      REQUIRE(vir1[1] + vir2[1] == Approx(ref_v[0][1]).margin(eps));                               \
+      REQUIRE(vir1[2] + vir2[2] == Approx(ref_v[0][2]).margin(eps));                               \
+      REQUIRE(vir1[3] + vir2[3] == Approx(ref_v[1][0]).margin(eps));                               \
+      REQUIRE(vir1[4] + vir2[4] == Approx(ref_v[1][1]).margin(eps));                               \
+      REQUIRE(vir1[5] + vir2[5] == Approx(ref_v[1][2]).margin(eps));                               \
+      REQUIRE(vir1[6] + vir2[6] == Approx(ref_v[2][0]).margin(eps));                               \
+      REQUIRE(vir1[7] + vir2[7] == Approx(ref_v[2][1]).margin(eps));                               \
+      REQUIRE(vir1[8] + vir2[8] == Approx(ref_v[2][2]).margin(eps));                               \
    }
-
 
 /**
  * \def COMPARE_GRADIENT
@@ -213,18 +202,18 @@ void test_mdinit(double t = 0, double atm = 0);
  * \ingroup test
  * Compares the flitered gradients[i][j] components.
  */
-#define COMPARE_GRADIENT2(ref_grad, eps, check_ij)                             \
-   {                                                                           \
-      std::vector<double> gradx(n), grady(n), gradz(n);                        \
-      copy_gradient(calc::grad, gradx.data(), grady.data(), gradz.data());     \
-      for (int i = 0; i < n; ++i) {                                            \
-         if (check_ij(i, 0))                                                   \
-            REQUIRE(gradx[i] == Approx(ref_grad[i][0]).margin(eps));           \
-         if (check_ij(i, 1))                                                   \
-            REQUIRE(grady[i] == Approx(ref_grad[i][1]).margin(eps));           \
-         if (check_ij(i, 2))                                                   \
-            REQUIRE(gradz[i] == Approx(ref_grad[i][2]).margin(eps));           \
-      }                                                                        \
+#define COMPARE_GRADIENT2(ref_grad, eps, check_ij)                                                 \
+   {                                                                                               \
+      std::vector<double> gradx(n), grady(n), gradz(n);                                            \
+      copy_gradient(calc::grad, gradx.data(), grady.data(), gradz.data());                         \
+      for (int i = 0; i < n; ++i) {                                                                \
+         if (check_ij(i, 0))                                                                       \
+            REQUIRE(gradx[i] == Approx(ref_grad[i][0]).margin(eps));                               \
+         if (check_ij(i, 1))                                                                       \
+            REQUIRE(grady[i] == Approx(ref_grad[i][1]).margin(eps));                               \
+         if (check_ij(i, 2))                                                                       \
+            REQUIRE(gradz[i] == Approx(ref_grad[i][2]).margin(eps));                               \
+      }                                                                                            \
    }
-#define COMPARE_GRADIENT(ref_grad, eps)                                        \
+#define COMPARE_GRADIENT(ref_grad, eps)                                                            \
    COMPARE_GRADIENT2(ref_grad, eps, [](int, int) { return true; })

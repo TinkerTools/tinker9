@@ -1,7 +1,6 @@
 #pragma once
 #include "seq_def.h"
 
-
 namespace tinker {
 /**
  * \ingroup math
@@ -22,8 +21,7 @@ namespace tinker {
 #pragma acc routine seq
 template <int DO_DTAPER>
 SEQ_CUDA
-void switch_taper5(real rik, real cut, real off, real& restrict taper,
-                   real& restrict dtaper)
+void switch_taper5(real rik, real cut, real off, real& restrict taper, real& restrict dtaper)
 {
    real rinv = 1.0f / (cut - off);
    real x = (rik - off) * rinv;

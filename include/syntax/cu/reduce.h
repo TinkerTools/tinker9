@@ -1,7 +1,6 @@
 #pragma once
 #include "macro.h"
 
-
 namespace tinker {
 template <class T>
 struct OpPlus
@@ -12,13 +11,11 @@ struct OpPlus
       return 0;
    }
 
-
    __device__
    T operator()(T a, T b) const
    {
       return a + b;
    }
-
 
    __device__
    void x(volatile T& a, T b) const
@@ -26,7 +23,6 @@ struct OpPlus
       a += b;
    }
 };
-
 
 template <class T>
 struct OpLogicOr
@@ -37,13 +33,11 @@ struct OpLogicOr
       return false;
    }
 
-
    __device__
    T operator()(T a, T b) const
    {
       return a || b;
    }
-
 
    __device__
    void x(volatile T& a, T b) const
@@ -51,7 +45,6 @@ struct OpLogicOr
       a |= b;
    }
 };
-
 
 template <class T, unsigned int B, class Op>
 __device__
@@ -78,7 +71,6 @@ inline void warp_reduce(volatile T* sd, unsigned int t, Op op)
    // clang-format on
 }
 
-
 template <class T, unsigned int HN, unsigned int B, class Op>
 __device__
 inline void warp_reduce2(volatile T (*sd)[B], unsigned int t, Op op)
@@ -104,7 +96,6 @@ inline void warp_reduce2(volatile T (*sd)[B], unsigned int t, Op op)
    // clang-format on
 }
 
-
 template <class T, unsigned int B, class Op>
 __global__
 void reduce(T* g_odata, const T* g_idata, size_t n, Op op = Op())
@@ -117,7 +108,6 @@ void reduce(T* g_odata, const T* g_idata, size_t n, Op op = Op())
    }
    __syncthreads();
 
-
    // clang-format off
    if (B >= 512) { if (t < 256) { sd[t] = op(sd[t], sd[t + 256]); } __syncthreads(); }
    if (B >= 256) { if (t < 128) { sd[t] = op(sd[t], sd[t + 128]); } __syncthreads(); }
@@ -127,7 +117,6 @@ void reduce(T* g_odata, const T* g_idata, size_t n, Op op = Op())
    if (t == 0)
       g_odata[blockIdx.x] = sd[0];
 }
-
 
 template <class T, unsigned int B, unsigned int HN, size_t N, class Op>
 __global__
@@ -144,7 +133,6 @@ void reduce2(T (*g_odata)[HN], const T (*g_idata)[N], size_t n, Op op = Op())
          sd[j][t] = op(sd[j][t], g_idata[i][j]);
    }
    __syncthreads();
-
 
    // clang-format off
    if (B >= 512) { if (t < 256) { _Pragma("unroll") for (int j = 0; j < HN; ++j) sd[j][t] = op(sd[j][t], sd[j][t + 256]); } __syncthreads(); }

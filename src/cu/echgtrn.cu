@@ -13,21 +13,18 @@
 #include "tool/gpu_card.h"
 #include <cassert>
 
-
 namespace tinker {
 // ck.py Version 2.0.3
 template <class Ver>
 __global__
-void echgtrn_cu1(
-   int n, TINKER_IMAGE_PARAMS, count_buffer restrict nc,
-   energy_buffer restrict ec, virial_buffer restrict vc, grad_prec* restrict gx,
-   grad_prec* restrict gy, grad_prec* restrict gz, real cut, real off,
-   const unsigned* restrict minfo, int nexclude,
+void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nc, energy_buffer restrict ec,
+   virial_buffer restrict vc, grad_prec* restrict gx, grad_prec* restrict gy,
+   grad_prec* restrict gz, real cut, real off, const unsigned* restrict minfo, int nexclude,
    const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3],
    const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl,
-   const int* restrict iakpl, int niak, const int* restrict iak,
-   const int* restrict lst, real* restrict chgct, real* restrict dmpct, real f)
+   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
+   const int* restrict iak, const int* restrict lst, real* restrict chgct, real* restrict dmpct,
+   real f)
 {
    constexpr bool do_a = Ver::a;
    constexpr bool do_e = Ver::e;
@@ -37,7 +34,6 @@ void echgtrn_cu1(
    const int iwarp = ithread / WARP_SIZE;
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
-
 
    int nctl;
    if CONSTEXPR (do_a) {
@@ -75,7 +71,6 @@ void echgtrn_cu1(
    real chgk;
    real alphak;
 
-
    //* /
    for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
       if CONSTEXPR (do_g) {
@@ -87,11 +82,9 @@ void echgtrn_cu1(
          gzk = 0;
       }
 
-
       int i = exclude[ii][0];
       int k = exclude[ii][1];
       real scalea = exclude_scale[ii][0];
-
 
       xi = x[i];
       yi = y[i];
@@ -104,7 +97,6 @@ void echgtrn_cu1(
       chgk = chgct[k];
       alphak = dmpct[k];
 
-
       constexpr bool incl = true;
       real xr = xk - xi;
       real yr = yk - yi;
@@ -113,8 +105,7 @@ void echgtrn_cu1(
       if (r2 <= off * off and incl) {
          real r = REAL_SQRT(r2);
          e_prec e, de;
-         pair_chgtrn<do_g>(r, cut, off, scalea, f, alphai, chgi, alphak, chgk,
-                           e, de);
+         pair_chgtrn<do_g>(r, cut, off, scalea, f, alphai, chgi, alphak, chgk, e, de);
          if CONSTEXPR (do_a)
             if (e != 0 and scalea != 0)
                nctl += 1;
@@ -144,7 +135,6 @@ void echgtrn_cu1(
          }
       } // end if (include)
 
-
       if CONSTEXPR (do_g) {
          atomic_add(gxi, gx, i);
          atomic_add(gyi, gy, i);
@@ -156,7 +146,6 @@ void echgtrn_cu1(
    }
    // */
 
-
    for (int iw = iwarp; iw < nakpl; iw += nwarp) {
       if CONSTEXPR (do_g) {
          gxi = 0;
@@ -167,11 +156,9 @@ void echgtrn_cu1(
          gzk = 0;
       }
 
-
       int tri, tx, ty;
       tri = iakpl[iw];
       tri_to_xy(tri, tx, ty);
-
 
       int iid = ty * WARP_SIZE + ilane;
       int atomi = min(iid, n - 1);
@@ -186,12 +173,10 @@ void echgtrn_cu1(
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
-
       chgi = chgct[i];
       alphai = dmpct[i];
       chgk = chgct[k];
       alphak = dmpct[k];
-
 
       unsigned int minfo0 = minfo[iw * WARP_SIZE + ilane];
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -206,8 +191,7 @@ void echgtrn_cu1(
          if (r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
             e_prec e, de;
-            pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e,
-                              de);
+            pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e, de);
             if CONSTEXPR (do_a)
                if (e != 0)
                   nctl += 1;
@@ -236,7 +220,6 @@ void echgtrn_cu1(
                }
             }
          } // end if (include)
-
 
          iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
          xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
@@ -251,7 +234,6 @@ void echgtrn_cu1(
          }
       }
 
-
       if CONSTEXPR (do_g) {
          atomic_add(gxi, gx, i);
          atomic_add(gyi, gy, i);
@@ -262,7 +244,6 @@ void echgtrn_cu1(
       }
    }
 
-
    for (int iw = iwarp; iw < niak; iw += nwarp) {
       if CONSTEXPR (do_g) {
          gxi = 0;
@@ -272,7 +253,6 @@ void echgtrn_cu1(
          gyk = 0;
          gzk = 0;
       }
-
 
       int ty = iak[iw];
       int atomi = ty * WARP_SIZE + ilane;
@@ -286,12 +266,10 @@ void echgtrn_cu1(
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
-
       chgi = chgct[i];
       alphai = dmpct[i];
       chgk = chgct[k];
       alphak = dmpct[k];
-
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          bool incl = atomk > 0;
@@ -302,8 +280,7 @@ void echgtrn_cu1(
          if (r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
             e_prec e, de;
-            pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e,
-                              de);
+            pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e, de);
             if CONSTEXPR (do_a)
                if (e != 0)
                   nctl += 1;
@@ -333,7 +310,6 @@ void echgtrn_cu1(
             }
          } // end if (include)
 
-
          xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
          yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
          zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
@@ -346,7 +322,6 @@ void echgtrn_cu1(
          }
       }
 
-
       if CONSTEXPR (do_g) {
          atomic_add(gxi, gx, i);
          atomic_add(gyi, gy, i);
@@ -356,7 +331,6 @@ void echgtrn_cu1(
          atomic_add(gzk, gz, k);
       }
    }
-
 
    if CONSTEXPR (do_a) {
       atomic_add(nctl, nc, ithread);
@@ -369,7 +343,6 @@ void echgtrn_cu1(
    }
 }
 
-
 template <class Ver>
 void echgtrn_cu2()
 {
@@ -378,15 +351,12 @@ void echgtrn_cu2()
    real off = switch_off(switch_chgtrn);
    real f = electric / dielec;
 
-
    assert(ctrntyp == chgtrn_t::SEPARATE);
    int ngrid = get_grid_size(BLOCK_DIM);
-   echgtrn_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(
-      st.n, TINKER_IMAGE_ARGS, nct, ect, vir_ect, dectx, decty, dectz, cut, off,
-      st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z,
-      st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, chgct, dmpct, f);
+   echgtrn_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nct, ect, vir_ect,
+      dectx, decty, dectz, cut, off, st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x,
+      st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, chgct, dmpct, f);
 }
-
 
 void echgtrn_cu(int vers)
 {

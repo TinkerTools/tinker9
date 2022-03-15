@@ -10,7 +10,6 @@
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>
 
-
 namespace tinker {
 double vbar;
 double qbar;
@@ -19,7 +18,6 @@ double vnh[maxnose];
 double qnh[maxnose];
 double gnh[maxnose];
 
-
 void hoover(time_prec dt, virial_prec press)
 {
    constexpr int nc = 5;
@@ -27,11 +25,9 @@ void hoover(time_prec dt, virial_prec press)
    // w[0] = 1/(2 - 2**(1/3))
    // w[1] = 1 - w[0] - w[2]
    // w[2] = w[0]
-   constexpr double w[3] = {
-      1.351207191959657634047687808971460826921999376217144828328,
+   constexpr double w[3] = {1.351207191959657634047687808971460826921999376217144828328,
       -1.70241438391931526809537561794292165384399875243428965665,
       1.351207191959657634047687808971460826921999376217144828328};
-
 
    const double vbox = volbox();
    T_prec temp;
@@ -43,7 +39,6 @@ void hoover(time_prec dt, virial_prec press)
    const double dpress = (press - bath::atmsph) / units::prescon;
    const time_prec dtc = dt / nc;
 
-
    double scale = 1.0;
    for (int k = 0; k < nc; ++k) {
       for (int j = 0; j < ns; ++j) {
@@ -53,7 +48,6 @@ void hoover(time_prec dt, virial_prec press)
          const time_prec dt8 = 0.125 * dts;
          double expterm;
 
-
          // update barostat and thermostat velocities and forces
          // eq. 41 first half
          for (int i = maxnose - 1; i > -1; --i) {
@@ -61,7 +55,6 @@ void hoover(time_prec dt, virial_prec press)
                gnh[i] = (2 * eksum + qbar * vbar * vbar - gn1kt) / qnh[i];
             else
                gnh[i] = (qnh[i - 1] * vnh[i - 1] * vnh[i - 1] - ekt) / qnh[i];
-
 
             if (i == maxnose - 1)
                vnh[i] += gnh[i] * dt4;
@@ -74,7 +67,6 @@ void hoover(time_prec dt, virial_prec press)
          expterm = std::exp(-vnh[0] * dt8);
          vbar = (vbar * expterm + gbar * dt4) * expterm;
 
-
          // find velocity scale factor and update kinetic energy
          // eq. 41 velocities
          expterm = std::exp(-(vnh[0] + vbar * odnf) * dt2);
@@ -84,7 +76,6 @@ void hoover(time_prec dt, virial_prec press)
          for (int ii = 0; ii < 3; ++ii)
             for (int jj = 0; jj < 3; ++jj)
                ekin[ii][jj] *= exptm2;
-
 
          // update barostat and thermostat velocities and forces
          // eq. 41 second half
@@ -97,7 +88,6 @@ void hoover(time_prec dt, virial_prec press)
             else
                gnh[i] = (qnh[i - 1] * vnh[i - 1] * vnh[i - 1] - ekt) / qnh[i];
 
-
             if (i == maxnose - 1)
                vnh[i] += gnh[i] * dt4;
             else {
@@ -108,7 +98,6 @@ void hoover(time_prec dt, virial_prec press)
       }
    }
 
-
    // use scale factor to update the atomic velocities
    // eq. 41 velocities
    darray::scale(g::q0, n, scale, vx);
@@ -116,11 +105,9 @@ void hoover(time_prec dt, virial_prec press)
    darray::scale(g::q0, n, scale, vz);
 }
 
-
 namespace {
 double press;
 }
-
 
 void nhc_npt(int istep, time_prec dt)
 {
@@ -128,7 +115,6 @@ void nhc_npt(int istep, time_prec dt)
    bool save = !(istep % inform::iwrite);
    if (!save)
       vers1 &= ~calc::energy;
-
 
    // set some time values for the dynamics integration
    const time_prec dt_2 = 0.5f * dt;
@@ -139,19 +125,15 @@ void nhc_npt(int istep, time_prec dt)
    if (istep == 1)
       press = bath::atmsph;
 
-
    // update thermostat and barostat values, scale atomic velocities
    hoover(dt, press);
 
-
    propagate_velocity(dt_2, gx, gy, gz);
-
 
    double term = vbar * dt_2;
    double term2 = term * term;
    double expterm = std::exp(term);
    double eterm2 = expterm * expterm;
-
 
    // update the periodic box size and total volume
    // eq. 42 volume
@@ -159,7 +141,6 @@ void nhc_npt(int istep, time_prec dt)
    lvec2 *= eterm2;
    lvec3 *= eterm2;
    set_default_recip_box();
-
 
    // update atomic positions via coupling to barostat
    // eq. 42 coordinates
@@ -173,16 +154,12 @@ void nhc_npt(int istep, time_prec dt)
    propagate_pos_axbv(eterm2, poly);
    copy_pos_to_xyz(true);
 
-
    energy(vers1);
-
 
    propagate_velocity(dt_2, gx, gy, gz);
 
-
    // update thermostat and barostat values, scale atomic velocities
    hoover(dt, press);
-
 
    // set isotropic pressure to the average of tensor diagonal
    double vbox = volbox();

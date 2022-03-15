@@ -2,7 +2,6 @@
 #include "macro.h"
 #include "tool/energy_buffer.h"
 
-
 namespace tinker {
 /**
  * \ingroup mdegv
@@ -42,7 +41,6 @@ namespace tinker {
  * | deb    | alias: g     | new array |
  */
 
-
 /// \ingroup mdegv
 /// \{
 /**
@@ -56,7 +54,6 @@ namespace tinker {
 TINKER_EXTERN grad_prec* gx;
 TINKER_EXTERN grad_prec* gy;
 TINKER_EXTERN grad_prec* gz;
-
 
 // vdw
 // HIPPO dispersion, HIPPO repulsion
@@ -72,7 +69,6 @@ TINKER_EXTERN grad_prec* gx_vdw;
 TINKER_EXTERN grad_prec* gy_vdw;
 TINKER_EXTERN grad_prec* gz_vdw;
 
-
 // charge, mpole, polar
 // HIPPO charge transfer
 /**
@@ -87,7 +83,6 @@ TINKER_EXTERN grad_prec* gx_elec;
 TINKER_EXTERN grad_prec* gy_elec;
 TINKER_EXTERN grad_prec* gz_elec;
 
-
 /**
  * \var eng_buf
  * Energy buffer for the valence terms.
@@ -100,7 +95,6 @@ TINKER_EXTERN energy_buffer eng_buf;
 TINKER_EXTERN energy_buffer eng_buf_vdw;
 TINKER_EXTERN energy_buffer eng_buf_elec;
 
-
 /**
  * \var vir_buf
  * Virial buffer for the valence terms.
@@ -112,7 +106,6 @@ TINKER_EXTERN energy_buffer eng_buf_elec;
 TINKER_EXTERN virial_buffer vir_buf;
 TINKER_EXTERN virial_buffer vir_buf_vdw;
 TINKER_EXTERN virial_buffer vir_buf_elec;
-
 
 /**
  * \var esum
@@ -129,7 +122,6 @@ TINKER_EXTERN energy_prec energy_valence;
 TINKER_EXTERN energy_prec energy_vdw;
 TINKER_EXTERN energy_prec energy_elec;
 
-
 /**
  * \var eksum
  * Kinetic energy.
@@ -138,7 +130,6 @@ TINKER_EXTERN energy_prec energy_elec;
  */
 TINKER_EXTERN energy_prec eksum;
 TINKER_EXTERN energy_prec ekin[3][3];
-
 
 /**
  * \var vir

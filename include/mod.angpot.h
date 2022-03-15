@@ -1,7 +1,6 @@
 #pragma once
 #include "macro.h"
 
-
 namespace tinker {
 enum class eangle_t : int
 {
@@ -11,13 +10,11 @@ enum class eangle_t : int
    fourier
 };
 
-
 enum class eopbend_t
 {
    w_d_c,
    allinger
 };
-
 
 TINKER_EXTERN real angunit;
 TINKER_EXTERN real stbnunit;

@@ -2,7 +2,6 @@
 #include "macro.h"
 #include "nblist.h"
 
-
 namespace tinker {
 TINKER_EXTERN NBListUnit vlist_unit;
 TINKER_EXTERN NBListUnit clist_unit;

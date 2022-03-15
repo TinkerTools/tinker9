@@ -1,5 +1,5 @@
-#include "add.h"
 #include "estrbnd.h"
+#include "add.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "seq_strbnd.h"
@@ -21,13 +21,13 @@ void estrbnd_acc1()
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_strbnd<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                     debax, debay, debaz,
+         debax, debay, debaz,
 
-                     stbnunit, istrbnd, isb, sbk,
+         stbnunit, istrbnd, isb, sbk,
 
-                     bl, iang, anat,
+         bl, iang, anat,
 
-                     x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e)
          atomic_add(e, eba, offset);
       if CONSTEXPR (do_v)

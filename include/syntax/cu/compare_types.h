@@ -2,7 +2,6 @@
 #include "macro.h"
 #include <type_traits>
 
-
 namespace tinker {
 /**
  * \ingroup cuda_syntax

@@ -5,16 +5,13 @@
 #include <tinker/detail/strtor.hh>
 #include <tinker/detail/torpot.hh>
 
-
 namespace tinker {
 void estrtor_data(rc_op op)
 {
    if (not use_potent(strtor_term))
       return;
 
-
    bool rc_a = rc_flag & calc::analyz;
-
 
    if (op & rc_dealloc) {
       nstrtor = 0;
@@ -28,11 +25,9 @@ void estrtor_data(rc_op op)
       debtz = nullptr;
    }
 
-
    if (op & rc_alloc) {
       nstrtor = count_bonded_term(strtor_term);
       darray::allocate(nstrtor, &ist, &kst);
-
 
       ebt = eng_buf;
       vir_ebt = vir_buf;
@@ -42,7 +37,6 @@ void estrtor_data(rc_op op)
       if (rc_a)
          buffer_allocate(rc_flag, &ebt, &vir_ebt, &debtx, &debty, &debtz);
    }
-
 
    if (op & rc_init) {
       std::vector<int> ibuf;
@@ -56,14 +50,12 @@ void estrtor_data(rc_op op)
    }
 }
 
-
 void estrtor(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-
 
    if (rc_a) {
       host_zero(energy_ebt, virial_ebt);
@@ -76,9 +68,7 @@ void estrtor(int vers)
          darray::zero(g::q0, n, debtx, debty, debtz);
    }
 
-
    estrtor_acc(vers);
-
 
    if (rc_a) {
       if (do_e) {

@@ -2,7 +2,6 @@
 #include "macro.h"
 #include "tool/realn.h"
 
-
 namespace tinker {
 /**
  * \ingroup box
@@ -27,7 +26,6 @@ TINKER_EXTERN real3 lvec3;
 TINKER_EXTERN real3 recipa;
 TINKER_EXTERN real3 recipb;
 TINKER_EXTERN real3 recipc;
-
 
 /**
  * \ingroup box

@@ -2,7 +2,6 @@
 #include "macro.h"
 #include "tool/energy_buffer.h"
 
-
 namespace tinker {
 /**
  * \ingroup charge
@@ -11,7 +10,6 @@ namespace tinker {
  * array also includes zero charges.
  */
 TINKER_EXTERN real* pchg;
-
 
 TINKER_EXTERN count_buffer nec;
 TINKER_EXTERN energy_buffer ec;

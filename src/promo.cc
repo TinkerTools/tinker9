@@ -1,7 +1,6 @@
 #include "tool/io_print.h"
 #include "version.h"
 
-
 namespace tinker {
 void promo()
 {

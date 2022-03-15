@@ -19,17 +19,14 @@
 #include <tinker/detail/sizes.hh>
 #include <tinker/detail/vdwpot.hh>
 
-
 namespace tinker {
 void echglj_data(rc_op op)
 {
    if (!(clist_version() & NBL_SPATIAL))
       return;
 
-
    if (!use_potent(charge_term) || !use_potent(vdw_term))
       return;
-
 
    if (op & rc_dealloc) {
       ncvexclude = 0;
@@ -39,12 +36,10 @@ void echglj_data(rc_op op)
       darray::deallocate(mut_coalesced, chg_coalesced, radeps_coalesced);
    }
 
-
    if (op & rc_alloc) {
       // check "VDWPR" keyword
       if (!vdwpr_in_use) {
-         auto parse_vdwpr = [](std::string line, int& i, int& k, double& rad,
-                               double& eps) {
+         auto parse_vdwpr = [](std::string line, int& i, int& k, double& rad, double& eps) {
             try {
                auto vs = Text::split(line);
                std::string ke = vs.at(0);
@@ -97,13 +92,11 @@ void echglj_data(rc_op op)
          }
       }
 
-
       struct cv
       {
          real c, v;
       };
-      auto insert_cv = [](std::map<std::pair<int, int>, cv>& a, int i, int k,
-                          real val, char ch) {
+      auto insert_cv = [](std::map<std::pair<int, int>, cv>& a, int i, int k, real val, char ch) {
          std::pair<int, int> key;
          key.first = i;
          key.second = k;
@@ -125,7 +118,6 @@ void echglj_data(rc_op op)
          }
       };
 
-
       // see also attach.f
       const int maxn13 = 3 * sizes::maxval;
       const int maxn14 = 9 * sizes::maxval;
@@ -139,12 +131,10 @@ void echglj_data(rc_op op)
       const real v4scale = vdwpot::v4scale;
       const real v5scale = vdwpot::v5scale;
 
-
       std::map<std::pair<int, int>, cv> ik_scale;
       for (int i = 0; i < n; ++i) {
          int nn;
          int bask;
-
 
          // c
          if (c2scale != 1) {
@@ -190,7 +180,6 @@ void echglj_data(rc_op op)
                }
             }
          }
-
 
          // v
          if (v2scale != 1) {
@@ -256,7 +245,6 @@ void echglj_data(rc_op op)
       darray::allocate(2 * n, &radeps_coalesced);
    }
 
-
    if (op & rc_init) {
       std::vector<real> vrad(n), veps(n);
       if (vdwindex == evdw_t::atom_type) {
@@ -277,12 +265,10 @@ void echglj_data(rc_op op)
       wait_for(g::q0);
    }
 
-
 #if TINKER_CUDART
    echglj_data_cu(op);
 #endif
 }
-
 
 void echglj(int vers)
 {
@@ -290,10 +276,8 @@ void echglj(int vers)
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
 
-
    host_zero(energy_ec, virial_ec);
    host_zero(energy_ev, virial_ev);
-
 
    assert(vdwtyp == evdw_t::lj);
    assert(radrule == evdw_t::arithmetic);
@@ -304,7 +288,6 @@ void echglj(int vers)
    } else {
       echglj_rad_arith_eps_geom_nonewald_cu(vers);
    }
-
 
    if (do_e) {
       if (elrc_vol != 0) {
@@ -326,7 +309,6 @@ void echglj(int vers)
    }
 #endif
 }
-
 
 int* mut_coalesced;
 real* chg_coalesced;

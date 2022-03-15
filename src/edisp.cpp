@@ -12,27 +12,22 @@
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/sizes.hh>
 
-
 namespace tinker {
 bool use_dewald()
 {
    return use_potent(disp_term) and limits::use_dewald;
 }
 
-
 void edisp_data(rc_op op)
 {
    if (!use_potent(disp_term))
       return;
 
-
    bool rc_a = rc_flag & calc::analyz;
-
 
    if (op & rc_dealloc) {
       darray::deallocate(csix, adisp);
       darray::deallocate(dspexclude, dspexclude_scale);
-
 
       if (rc_a) {
          buffer_deallocate(rc_flag, ndisp);
@@ -45,15 +40,12 @@ void edisp_data(rc_op op)
       dedspy = nullptr;
       dedspz = nullptr;
 
-
       elrc_vol_dsp = 0;
       vlrc_vol_dsp = 0;
    }
 
-
    if (op & rc_alloc) {
       darray::allocate(n, &csix, &adisp);
-
 
       ndisp = nullptr;
       edsp = eng_buf_vdw;
@@ -65,7 +57,6 @@ void edisp_data(rc_op op)
          buffer_allocate(rc_flag, &ndisp);
          buffer_allocate(rc_flag, &edsp, &vir_edsp, &dedspx, &dedspy, &dedspz);
       }
-
 
       if (dsppot::use_dcorr && !use_dewald()) {
          double elrc = 0, vlrc = 0;
@@ -103,7 +94,6 @@ void edisp_data(rc_op op)
             }
          }
 
-
          if (dsp3scale != 1) {
             nn = couple::n13[i];
             bask = i * maxn13;
@@ -118,7 +108,6 @@ void edisp_data(rc_op op)
             }
          }
 
-
          if (dsp4scale != 1) {
             nn = couple::n14[i];
             bask = i * maxn14;
@@ -132,7 +121,6 @@ void edisp_data(rc_op op)
                }
             }
          }
-
 
          if (dsp5scale != 1) {
             nn = couple::n15[i];
@@ -155,7 +143,6 @@ void edisp_data(rc_op op)
       wait_for(g::q0);
    }
 
-
    if (op & rc_init) {
       csixpr = disp::csixpr;
       darray::copyin(g::q0, n, csix, disp::csix);
@@ -164,7 +151,6 @@ void edisp_data(rc_op op)
    }
 }
 
-
 void edisp(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -172,7 +158,6 @@ void edisp(int vers)
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-
 
    host_zero(energy_edsp, virial_edsp);
    size_t bsize = buffer_size();
@@ -187,12 +172,10 @@ void edisp(int vers)
          darray::zero(g::q0, n, dedspx, dedspy, dedspz);
    }
 
-
    if (use_dewald())
       edisp_ewald(vers);
    else
       edisp_nonewald(vers);
-
 
    if (do_e) {
       if (elrc_vol_dsp != 0) {
@@ -233,7 +216,6 @@ void edisp(int vers)
    }
 }
 
-
 void edisp_ewald(int vers)
 {
 #if TINKER_CUDART
@@ -243,13 +225,11 @@ void edisp_ewald(int vers)
 #endif
       edisp_ewald_real_acc(vers);
 
-
    // recip and self
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
    PMEUnit u = dpme_unit;
-
 
    grid_disp(u, csix);
    fftfront(u);
@@ -263,7 +243,6 @@ void edisp_ewald(int vers)
    else
 #endif
       edisp_ewald_recip_self_acc(vers);
-
 
    // account for the total energy and virial correction term
    if CONSTEXPR (do_e || do_v) {
@@ -284,7 +263,6 @@ void edisp_ewald(int vers)
       }
    }
 }
-
 
 void edisp_nonewald(int vers)
 {

@@ -93,12 +93,9 @@ void sparse_precond_apply2_acc(const real (*rsd)[3], real (*zrsd)[3])
          gyi += m1 * rsd[k][0] + m3 * rsd[k][1] + m4 * rsd[k][2];
          gzi += m2 * rsd[k][0] + m4 * rsd[k][1] + m5 * rsd[k][2];
 
-         atomic_add(m0 * rsd[i][0] + m1 * rsd[i][1] + m2 * rsd[i][2],
-                    &zrsd[k][0]);
-         atomic_add(m1 * rsd[i][0] + m3 * rsd[i][1] + m4 * rsd[i][2],
-                    &zrsd[k][1]);
-         atomic_add(m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2],
-                    &zrsd[k][2]);
+         atomic_add(m0 * rsd[i][0] + m1 * rsd[i][1] + m2 * rsd[i][2], &zrsd[k][0]);
+         atomic_add(m1 * rsd[i][0] + m3 * rsd[i][1] + m4 * rsd[i][2], &zrsd[k][1]);
+         atomic_add(m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2], &zrsd[k][2]);
       }
 
       atomic_add(gxi, &zrsd[i][0]);
@@ -329,7 +326,6 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
       if (sum == 0)
          b = 0;
 
-
       // calculate/update p
       #pragma acc parallel loop independent async\
                   deviceptr(conj,zrsd)
@@ -339,7 +335,6 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
             conj[i][j] = zrsd[i][j] + b * conj[i][j];
       }
 
-
       sum = sum1;
 
       real epsd;
@@ -348,12 +343,11 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
       eps = epsd;
       eps = debye * REAL_SQRT(eps / n);
 
-
       if (debug) {
          if (iter == 1) {
             print(stdout,
-                  "\n Determination of SCF Induced Dipole Moments\n\n"
-                  "    Iter    RMS Residual (Debye)\n\n");
+               "\n Determination of SCF Induced Dipole Moments\n\n"
+               "    Iter    RMS Residual (Debye)\n\n");
          }
          print(stdout, " %8d       %-16.10f\n", iter, eps);
       }
@@ -383,9 +377,9 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
 
    if (debug) {
       print(stdout,
-            " Induced Dipoles :    Iterations %4d      RMS "
-            "Residual %14.10f\n",
-            iter, eps);
+         " Induced Dipoles :    Iterations %4d      RMS "
+         "Residual %14.10f\n",
+         iter, eps);
    }
 
    // terminate the calculation if dipoles failed to converge
@@ -395,7 +389,6 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
       TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
    }
 }
-
 
 void induce_mutual_pcg2(real (*uind)[3])
 {
@@ -407,12 +400,10 @@ void induce_mutual_pcg2(real (*uind)[3])
       induce_mutual_pcg2_acc(uind);
 }
 
-
 void ulspred_save2_acc(const real (*restrict uind)[3])
 {
    if (polpred == UPred::NONE)
       return;
-
 
    // clang-format off
    real(*ud)[3];
@@ -441,7 +432,6 @@ void ulspred_save2_acc(const real (*restrict uind)[3])
    if (nualt > 2 * maxualt)
       nualt = nualt - maxualt;
 
-
    #pragma acc parallel loop independent async\
                deviceptr(uind,ud)
    for (int i = 0; i < n; ++i) {
@@ -451,36 +441,33 @@ void ulspred_save2_acc(const real (*restrict uind)[3])
    }
 }
 
-
 void ulspred_sum2_acc(real (*restrict uind)[3])
 {
    if (nualt < maxualt)
       return;
 
-
-   constexpr double aspc[16] = {62. / 17.,     //
-                                -310. / 51.,   //
-                                2170. / 323.,  //
-                                -2329. / 400., //
-                                1701. / 409.,  //
-                                -806. / 323.,  //
-                                1024. / 809.,  //
-                                -479. / 883.,  //
-                                257. / 1316.,  //
-                                -434. / 7429., //
-                                191. / 13375., //
-                                -62. / 22287., //
-                                3. / 7217.,    //
-                                -3. / 67015.,  //
-                                2. / 646323.,  //
-                                -1. / 9694845.};
-   constexpr double gear[6] = {6.,   //
-                               -15., //
-                               20.,  //
-                               -15., //
-                               6.,   //
-                               -1.};
-
+   constexpr double aspc[16] = {62. / 17., //
+      -310. / 51.,                         //
+      2170. / 323.,                        //
+      -2329. / 400.,                       //
+      1701. / 409.,                        //
+      -806. / 323.,                        //
+      1024. / 809.,                        //
+      -479. / 883.,                        //
+      257. / 1316.,                        //
+      -434. / 7429.,                       //
+      191. / 13375.,                       //
+      -62. / 22287.,                       //
+      3. / 7217.,                          //
+      -3. / 67015.,                        //
+      2. / 646323.,                        //
+      -1. / 9694845.};
+   constexpr double gear[6] = {6., //
+      -15.,                        //
+      20.,                         //
+      -15.,                        //
+      6.,                          //
+      -1.};
 
    if (polpred == UPred::ASPC) {
       double c00, c01, c02, c03, c04, c05, c06, c07;
@@ -507,24 +494,24 @@ void ulspred_sum2_acc(real (*restrict uind)[3])
               udalt_07,udalt_08,udalt_09,udalt_10,udalt_11,udalt_12,udalt_13,\
               udalt_14,udalt_15)
       for (int i = 0; i < n; ++i) {
-         uind[i][0] = c00 * udalt_00[i][0] + c01 * udalt_01[i][0] +
-            c02 * udalt_02[i][0] + c03 * udalt_03[i][0] + c04 * udalt_04[i][0] +
-            c05 * udalt_05[i][0] + c06 * udalt_06[i][0] + c07 * udalt_07[i][0] +
-            c08 * udalt_08[i][0] + c09 * udalt_09[i][0] + c10 * udalt_10[i][0] +
-            c11 * udalt_11[i][0] + c12 * udalt_12[i][0] + c13 * udalt_13[i][0] +
-            c14 * udalt_14[i][0] + c15 * udalt_15[i][0];
-         uind[i][1] = c00 * udalt_00[i][1] + c01 * udalt_01[i][1] +
-            c02 * udalt_02[i][1] + c03 * udalt_03[i][1] + c04 * udalt_04[i][1] +
-            c05 * udalt_05[i][1] + c06 * udalt_06[i][1] + c07 * udalt_07[i][1] +
-            c08 * udalt_08[i][1] + c09 * udalt_09[i][1] + c10 * udalt_10[i][1] +
-            c11 * udalt_11[i][1] + c12 * udalt_12[i][1] + c13 * udalt_13[i][1] +
-            c14 * udalt_14[i][1] + c15 * udalt_15[i][1];
-         uind[i][2] = c00 * udalt_00[i][2] + c01 * udalt_01[i][2] +
-            c02 * udalt_02[i][2] + c03 * udalt_03[i][2] + c04 * udalt_04[i][2] +
-            c05 * udalt_05[i][2] + c06 * udalt_06[i][2] + c07 * udalt_07[i][2] +
-            c08 * udalt_08[i][2] + c09 * udalt_09[i][2] + c10 * udalt_10[i][2] +
-            c11 * udalt_11[i][2] + c12 * udalt_12[i][2] + c13 * udalt_13[i][2] +
-            c14 * udalt_14[i][2] + c15 * udalt_15[i][2];
+         uind[i][0] = c00 * udalt_00[i][0] + c01 * udalt_01[i][0] + c02 * udalt_02[i][0] +
+            c03 * udalt_03[i][0] + c04 * udalt_04[i][0] + c05 * udalt_05[i][0] +
+            c06 * udalt_06[i][0] + c07 * udalt_07[i][0] + c08 * udalt_08[i][0] +
+            c09 * udalt_09[i][0] + c10 * udalt_10[i][0] + c11 * udalt_11[i][0] +
+            c12 * udalt_12[i][0] + c13 * udalt_13[i][0] + c14 * udalt_14[i][0] +
+            c15 * udalt_15[i][0];
+         uind[i][1] = c00 * udalt_00[i][1] + c01 * udalt_01[i][1] + c02 * udalt_02[i][1] +
+            c03 * udalt_03[i][1] + c04 * udalt_04[i][1] + c05 * udalt_05[i][1] +
+            c06 * udalt_06[i][1] + c07 * udalt_07[i][1] + c08 * udalt_08[i][1] +
+            c09 * udalt_09[i][1] + c10 * udalt_10[i][1] + c11 * udalt_11[i][1] +
+            c12 * udalt_12[i][1] + c13 * udalt_13[i][1] + c14 * udalt_14[i][1] +
+            c15 * udalt_15[i][1];
+         uind[i][2] = c00 * udalt_00[i][2] + c01 * udalt_01[i][2] + c02 * udalt_02[i][2] +
+            c03 * udalt_03[i][2] + c04 * udalt_04[i][2] + c05 * udalt_05[i][2] +
+            c06 * udalt_06[i][2] + c07 * udalt_07[i][2] + c08 * udalt_08[i][2] +
+            c09 * udalt_09[i][2] + c10 * udalt_10[i][2] + c11 * udalt_11[i][2] +
+            c12 * udalt_12[i][2] + c13 * udalt_13[i][2] + c14 * udalt_14[i][2] +
+            c15 * udalt_15[i][2];
       }
    } else if (polpred == UPred::GEAR) {
       double c00, c01, c02, c03, c04, c05;
@@ -538,25 +525,19 @@ void ulspred_sum2_acc(real (*restrict uind)[3])
               deviceptr(uind,\
               udalt_00,udalt_01,udalt_02,udalt_03,udalt_04,udalt_05)
       for (int i = 0; i < n; ++i) {
-         uind[i][0] = c00 * udalt_00[i][0] + c01 * udalt_01[i][0] +
-            c02 * udalt_02[i][0] + c03 * udalt_03[i][0] + c04 * udalt_04[i][0] +
-            c05 * udalt_05[i][0];
-         uind[i][1] = c00 * udalt_00[i][1] + c01 * udalt_01[i][1] +
-            c02 * udalt_02[i][1] + c03 * udalt_03[i][1] + c04 * udalt_04[i][1] +
-            c05 * udalt_05[i][1];
-         uind[i][2] = c00 * udalt_00[i][2] + c01 * udalt_01[i][2] +
-            c02 * udalt_02[i][2] + c03 * udalt_03[i][2] + c04 * udalt_04[i][2] +
-            c05 * udalt_05[i][2];
+         uind[i][0] = c00 * udalt_00[i][0] + c01 * udalt_01[i][0] + c02 * udalt_02[i][0] +
+            c03 * udalt_03[i][0] + c04 * udalt_04[i][0] + c05 * udalt_05[i][0];
+         uind[i][1] = c00 * udalt_00[i][1] + c01 * udalt_01[i][1] + c02 * udalt_02[i][1] +
+            c03 * udalt_03[i][1] + c04 * udalt_04[i][1] + c05 * udalt_05[i][1];
+         uind[i][2] = c00 * udalt_00[i][2] + c01 * udalt_01[i][2] + c02 * udalt_02[i][2] +
+            c03 * udalt_03[i][2] + c04 * udalt_04[i][2] + c05 * udalt_05[i][2];
       }
    } else if (polpred == UPred::LSQR) {
       using real3_ptr = real(*)[3];
-      real3_ptr ppd[7] = {udalt_00, udalt_01, udalt_02, udalt_03,
-                          udalt_04, udalt_05, udalt_06};
+      real3_ptr ppd[7] = {udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, udalt_06};
       real3_ptr pd[7] = {ppd[(nualt - 1 + 7) % 7], ppd[(nualt - 2 + 7) % 7],
-                         ppd[(nualt - 3 + 7) % 7], ppd[(nualt - 4 + 7) % 7],
-                         ppd[(nualt - 5 + 7) % 7], ppd[(nualt - 6 + 7) % 7],
-                         ppd[(nualt - 7 + 7) % 7]};
-
+         ppd[(nualt - 3 + 7) % 7], ppd[(nualt - 4 + 7) % 7], ppd[(nualt - 5 + 7) % 7],
+         ppd[(nualt - 6 + 7) % 7], ppd[(nualt - 7 + 7) % 7]};
 
       // k = 1 ~ 7, m = k ~ 7
       // c(k,m) = u(k) dot u(m)
@@ -580,7 +561,6 @@ void ulspred_sum2_acc(real (*restrict uind)[3])
          }
       }
 
-
       symlusolve<6, real>(udalt_lsqr_a, udalt_lsqr_b);
 
       real3_ptr pd0 = pd[0];
@@ -594,15 +574,12 @@ void ulspred_sum2_acc(real (*restrict uind)[3])
                   deviceptr(uind,bd,\
                   pd0,pd1,pd2,pd3,pd4,pd5)
       for (int i = 0; i < n; ++i) {
-         uind[i][0] = bd[0] * pd0[i][0] + bd[1] * pd1[i][0] +
-            bd[2] * pd2[i][0] + bd[3] * pd3[i][0] + bd[4] * pd4[i][0] +
-            bd[5] * pd5[i][0];
-         uind[i][1] = bd[0] * pd0[i][1] + bd[1] * pd1[i][1] +
-            bd[2] * pd2[i][1] + bd[3] * pd3[i][1] + bd[4] * pd4[i][1] +
-            bd[5] * pd5[i][1];
-         uind[i][2] = bd[0] * pd0[i][2] + bd[1] * pd1[i][2] +
-            bd[2] * pd2[i][2] + bd[3] * pd3[i][2] + bd[4] * pd4[i][2] +
-            bd[5] * pd5[i][2];
+         uind[i][0] = bd[0] * pd0[i][0] + bd[1] * pd1[i][0] + bd[2] * pd2[i][0] +
+            bd[3] * pd3[i][0] + bd[4] * pd4[i][0] + bd[5] * pd5[i][0];
+         uind[i][1] = bd[0] * pd0[i][1] + bd[1] * pd1[i][1] + bd[2] * pd2[i][1] +
+            bd[3] * pd3[i][1] + bd[4] * pd4[i][1] + bd[5] * pd5[i][1];
+         uind[i][2] = bd[0] * pd0[i][2] + bd[1] * pd1[i][2] + bd[2] * pd2[i][2] +
+            bd[3] * pd3[i][2] + bd[4] * pd4[i][2] + bd[5] * pd5[i][2];
       }
    }
 }

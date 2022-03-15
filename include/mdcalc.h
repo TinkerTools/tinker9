@@ -1,7 +1,6 @@
 #pragma once
 #include "compare_types.h"
 
-
 namespace tinker {
 namespace calc {
 /**
@@ -15,28 +14,23 @@ enum __CalcBits : int
    mass = 0x004, ///< Use mass.
    traj = 0x008, ///< Use multi-frame trajectory.
 
-
    energy = 0x010, ///< Evaluate energy.
    grad = 0x020,   ///< Evaluate energy gradient.
    virial = 0x040, ///< Evaluate virial tensor.
    analyz = 0x080, ///< Evaluate number of interactions.
 
-
-   vmask = energy + grad + virial +
-      analyz,   ///< Bits mask to clear energy-irrelevant flags.
-   v0 = energy, ///< Similar to Tinker energy routines. Energy only.
-   v1 = energy + grad + virial, ///< Similar to version 1 Tinker energy
-                                ///< routines. Energy, gradient, and virial.
-   v3 = energy + analyz, ///< Similar to version 3 Tinker energy routines.
-                         ///< Energy and number of interactions.
-   v4 = energy + grad,   ///< Energy and gradient.
-   v5 = grad,            ///< Gradient only.
-   v6 = grad + virial,   ///< Gradient and virial.
-
+   vmask = energy + grad + virial + analyz, ///< Bits mask to clear energy-irrelevant flags.
+   v0 = energy,                             ///< Similar to Tinker energy routines. Energy only.
+   v1 = energy + grad + virial,             ///< Similar to version 1 Tinker energy
+                                            ///< routines. Energy, gradient, and virial.
+   v3 = energy + analyz,                    ///< Similar to version 3 Tinker energy routines.
+                                            ///< Energy and number of interactions.
+   v4 = energy + grad,                      ///< Energy and gradient.
+   v5 = grad,                               ///< Gradient only.
+   v6 = grad + virial,                      ///< Gradient and virial.
 
    md = 0x100, ///< Run MD simulation.
 };
-
 
 /**
  * \ingroup mdcalc
@@ -56,7 +50,6 @@ struct __Vers
 }
 }
 
-
 extern "C"
 {
    // PME grids.
@@ -71,7 +64,6 @@ extern "C"
    struct DISP
    {};
 
-
    // Ewald vs. Non-Ewald
    struct EWALD
    {};
@@ -81,7 +73,6 @@ extern "C"
    {};
    struct NON_EWALD_TAPER
    {}; // Non-EWALD partial charge also uses switching functions.
-
 
    // Energy versions.
    struct Eng : public tinker::calc::__Vers<tinker::calc::v0>
@@ -97,20 +88,17 @@ extern "C"
    struct GradVir : public tinker::calc::__Vers<tinker::calc::v6>
    {};
 
-
    // Bond terms.
    struct HARMONIC
    {};
    struct MORSE
    {};
 
-
    // Opbend terms.
    struct WDC
    {};
    struct ALLINGER
    {};
-
 
    // VDW terms.
    struct LJ
@@ -124,14 +112,12 @@ extern "C"
    struct GAUSS
    {};
 
-
    // GORDON1 vs. GORDON2 damping functions
    struct GORDON1
    {};
    struct GORDON2
    {};
 }
-
 
 namespace tinker {
 namespace calc {

@@ -1,10 +1,9 @@
+#include "pmestuf.h"
 #include "add.h"
 #include "box.h"
 #include "elec.h"
 #include "md.h"
-#include "pmestuf.h"
 #include "seq_bsplgen.h"
-
 
 namespace tinker {
 template <class T>
@@ -13,12 +12,10 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
    auto& st = *pme_u;
    auto* qgrid = st.qgrid;
 
-
    MAYBE_UNUSED const real* pchg = ptr1;
    MAYBE_UNUSED const real(*fmp)[10] = (real(*)[10])ptr1;
    MAYBE_UNUSED const real(*fuind)[3] = (real(*)[3])ptr1;
    MAYBE_UNUSED const real(*fuinp)[3] = (real(*)[3])ptr2;
-
 
    const int nfft1 = st.nfft1;
    const int nfft2 = st.nfft2;
@@ -26,9 +23,7 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
    const int bsorder = st.bsorder;
    assert(bsorder <= 5);
 
-
    darray::zero(g::q0, 2 * nfft1 * nfft2 * nfft3, st.qgrid);
-
 
    #pragma acc parallel loop independent async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
@@ -38,16 +33,13 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
       real thetai2[4 * 5];
       real thetai3[4 * 5];
 
-
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
 
-
       // map fractional coordinate w from [-0.5 + k, 0.5 + k) to [0, 1)
       // w -> (w + 0.5) - FLOOR(w + 0.5)
       // see also subroutine bspline_fill in pmestuf.f
-
 
       real w1 = xi * recipa.x + yi * recipa.y + zi * recipa.z;
       w1 = w1 + 0.5f - REAL_FLOOR(w1 + 0.5f);
@@ -55,20 +47,17 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
       int igrid1 = REAL_FLOOR(fr1);
       w1 = fr1 - igrid1;
 
-
       real w2 = xi * recipb.x + yi * recipb.y + zi * recipb.z;
       w2 = w2 + 0.5f - REAL_FLOOR(w2 + 0.5f);
       real fr2 = nfft2 * w2;
       int igrid2 = REAL_FLOOR(fr2);
       w2 = fr2 - igrid2;
 
-
       real w3 = xi * recipc.x + yi * recipc.y + zi * recipc.z;
       w3 = w3 + 0.5f - REAL_FLOOR(w3 + 0.5f);
       real fr3 = nfft3 * w3;
       int igrid3 = REAL_FLOOR(fr3);
       w3 = fr3 - igrid3;
-
 
       igrid1 = igrid1 - bsorder + 1;
       igrid2 = igrid2 - bsorder + 1;
@@ -77,17 +66,14 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
       igrid2 += (igrid2 < 0 ? nfft2 : 0);
       igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
-
       if CONSTEXPR (eq<T, PCHG>() || eq<T, DISP>()) {
          real pchgi = pchg[i];
          if (pchgi == 0)
             continue;
 
-
          bsplgen<1>(w1, thetai1, bsorder);
          bsplgen<1>(w2, thetai2, bsorder);
          bsplgen<1>(w3, thetai3, bsorder);
-
 
          #pragma acc loop seq
          for (int iz = 0; iz < bsorder; ++iz) {
@@ -113,12 +99,10 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
          }
       } // end if (PCHG or DISP)
 
-
       if CONSTEXPR (eq<T, MPOLE>()) {
          bsplgen<3>(w1, thetai1, bsorder);
          bsplgen<3>(w2, thetai2, bsorder);
          bsplgen<3>(w3, thetai3, bsorder);
-
 
          real fmpi0 = fmp[i][mpl_pme_0];
          real fmpix = fmp[i][mpl_pme_x];
@@ -148,11 +132,9 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
                real u2 = thetai2[4 * iy + 2];
                // fmp: 0, x, y, z, xx, yy, zz, xy, xz, yz
                //      1, 2, 3, 4,  5,  6,  7,  8,  9, 10
-               real term0 = fmpi0 * u0 * v0 + fmpiy * u1 * v0 +
-                  fmpiz * u0 * v1 + fmpiyy * u2 * v0 + fmpizz * u0 * v2 +
-                  fmpiyz * u1 * v1;
-               real term1 =
-                  fmpix * u0 * v0 + fmpixy * u1 * v0 + fmpixz * u0 * v1;
+               real term0 = fmpi0 * u0 * v0 + fmpiy * u1 * v0 + fmpiz * u0 * v1 + fmpiyy * u2 * v0 +
+                  fmpizz * u0 * v2 + fmpiyz * u1 * v1;
+               real term1 = fmpix * u0 * v0 + fmpixy * u1 * v0 + fmpixz * u0 * v1;
                real term2 = fmpixx * u0 * v0;
                #pragma acc loop seq
                for (int ix = 0; ix < bsorder; ++ix) {
@@ -162,19 +144,16 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
                   real t0 = thetai1[4 * ix];
                   real t1 = thetai1[4 * ix + 1];
                   real t2 = thetai1[4 * ix + 2];
-                  atomic_add(term0 * t0 + term1 * t1 + term2 * t2, qgrid,
-                             2 * index);
+                  atomic_add(term0 * t0 + term1 * t1 + term2 * t2, qgrid, 2 * index);
                }
             } // end for (int iy)
          }
       } // end if (MPOLE)
 
-
       if CONSTEXPR (eq<T, UIND>()) {
          bsplgen<2>(w1, thetai1, bsorder);
          bsplgen<2>(w2, thetai2, bsorder);
          bsplgen<2>(w3, thetai3, bsorder);
-
 
          real fuindi0 = fuind[i][0];
          real fuindi1 = fuind[i][1];
@@ -216,33 +195,27 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
    }
 }
 
-
 void grid_pchg_acc(PMEUnit pme_u, real* pchg)
 {
    grid_put_acc<PCHG>(pme_u, pchg, nullptr);
 }
-
 
 void grid_disp_acc(PMEUnit pme_u, real* csix)
 {
    grid_put_acc<DISP>(pme_u, csix, nullptr);
 }
 
-
 void grid_mpole_acc(PMEUnit pme_u, real (*fmp)[10])
 {
    grid_put_acc<MPOLE>(pme_u, (real*)fmp, nullptr);
 }
-
 
 void grid_uind_acc(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 {
    grid_put_acc<UIND>(pme_u, (real*)fuind, (real*)fuinp);
 }
 
-
 //====================================================================//
-
 
 template <bool DO_E, bool DO_V>
 void pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
@@ -253,20 +226,17 @@ void pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
    const real* bsmod2 = st.bsmod2;
    const real* bsmod3 = st.bsmod3;
 
-
    const int nfft1 = st.nfft1;
    const int nfft2 = st.nfft2;
    const int nfft3 = st.nfft3;
    const int nff = nfft1 * nfft2;
    const int ntot = nfft1 * nfft2 * nfft3;
 
-
    const real f = electric / dielec;
    real aewald = st.aewald;
    real pterm = pi / aewald;
    pterm *= pterm;
    real box_volume = volbox();
-
 
    auto bufsize = buffer_size();
    #pragma acc parallel loop independent\
@@ -280,38 +250,32 @@ void pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
          continue;
       }
 
-
       int k3 = i / nff;
       int j = i - k3 * nff;
       int k2 = j / nfft1;
       int k1 = j - k2 * nfft1;
 
-
       int r1 = (k1 < (nfft1 + 1) / 2) ? k1 : (k1 - nfft1);
       int r2 = (k2 < (nfft2 + 1) / 2) ? k2 : (k2 - nfft2);
       int r3 = (k3 < (nfft3 + 1) / 2) ? k3 : (k3 - nfft3);
-
 
       real h1 = recipa.x * r1 + recipb.x * r2 + recipc.x * r3;
       real h2 = recipa.y * r1 + recipb.y * r2 + recipc.y * r3;
       real h3 = recipa.z * r1 + recipb.z * r2 + recipc.z * r3;
       real hsq = h1 * h1 + h2 * h2 + h3 * h3;
 
-
       real gridx = qgrid[i][0];
       real gridy = qgrid[i][1];
       real term = -pterm * hsq;
       real expterm = 0;
       if (term > -50) {
-         real denom =
-            hsq * pi * box_volume * bsmod1[k1] * bsmod2[k2] * bsmod3[k3];
+         real denom = hsq * pi * box_volume * bsmod1[k1] * bsmod2[k2] * bsmod3[k3];
          expterm = REAL_EXP(term) / denom;
          if (box_shape == UNBOUND_BOX)
             expterm *= (1 - REAL_COS(pi * lvec1.x * REAL_SQRT(hsq)));
          else if (box_shape == OCT_BOX)
             if ((k1 + k2 + k3) & 1)
                expterm = 0; // end if ((k1 + k2 + k3) % 2 != 0)
-
 
          if CONSTEXPR (DO_E || DO_V) {
             real struc2 = gridx * gridx + gridy * gridy;
@@ -328,19 +292,16 @@ void pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
                real vyy = (h2 * h2 * vterm - eterm);
                real vyz = h2 * h3 * vterm;
                real vzz = (h3 * h3 * vterm - eterm);
-               atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir,
-                          i & (bufsize - 1));
+               atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir, i & (bufsize - 1));
             }
          } // end if (e or v)
       }
-
 
       // complete the transformation of the PME grid
       qgrid[i][0] = gridx * expterm;
       qgrid[i][1] = gridy * expterm;
    }
 }
-
 
 void pme_conv_acc(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
 {
@@ -359,9 +320,7 @@ void pme_conv_acc(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
    }
 }
 
-
 //====================================================================//
-
 
 template <class T>
 void fphi_get_acc(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
@@ -369,19 +328,16 @@ void fphi_get_acc(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
    auto& st = *pme_u;
    auto* qgrid = st.qgrid;
 
-
    MAYBE_UNUSED real(*fphi)[20] = reinterpret_cast<real(*)[20]>(opt1);
    MAYBE_UNUSED real(*fdip_phi1)[10] = reinterpret_cast<real(*)[10]>(opt1);
    MAYBE_UNUSED real(*fdip_phi2)[10] = reinterpret_cast<real(*)[10]>(opt2);
    MAYBE_UNUSED real(*fdip_sum_phi)[20] = reinterpret_cast<real(*)[20]>(opt3);
-
 
    const int nfft1 = st.nfft1;
    const int nfft2 = st.nfft2;
    const int nfft3 = st.nfft3;
    const int bsorder = st.bsorder;
    assert(bsorder <= 5);
-
 
    #pragma acc parallel loop independent async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
@@ -391,16 +347,13 @@ void fphi_get_acc(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
       real thetai2[4 * 5];
       real thetai3[4 * 5];
 
-
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
 
-
       // map fractional coordinate w from [-0.5 + k, 0.5 + k) to [0, 1)
       // w -> (w + 0.5) - FLOOR(w + 0.5)
       // see also subroutine bspline_fill in pmestuf.f
-
 
       real w1 = xi * recipa.x + yi * recipa.y + zi * recipa.z;
       w1 = w1 + 0.5f - REAL_FLOOR(w1 + 0.5f);
@@ -408,20 +361,17 @@ void fphi_get_acc(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
       int igrid1 = REAL_FLOOR(fr1);
       w1 = fr1 - igrid1;
 
-
       real w2 = xi * recipb.x + yi * recipb.y + zi * recipb.z;
       w2 = w2 + 0.5f - REAL_FLOOR(w2 + 0.5f);
       real fr2 = nfft2 * w2;
       int igrid2 = REAL_FLOOR(fr2);
       w2 = fr2 - igrid2;
 
-
       real w3 = xi * recipc.x + yi * recipc.y + zi * recipc.z;
       w3 = w3 + 0.5f - REAL_FLOOR(w3 + 0.5f);
       real fr3 = nfft3 * w3;
       int igrid3 = REAL_FLOOR(fr3);
       w3 = fr3 - igrid3;
-
 
       igrid1 = igrid1 - bsorder + 1;
       igrid2 = igrid2 - bsorder + 1;
@@ -430,13 +380,11 @@ void fphi_get_acc(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
       igrid2 += (igrid2 < 0 ? nfft2 : 0);
       igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
-
       if CONSTEXPR (eq<T, MPOLE>() || eq<T, UIND>() || eq<T, UIND2>()) {
          bsplgen<4>(w1, thetai1, bsorder);
          bsplgen<4>(w2, thetai2, bsorder);
          bsplgen<4>(w3, thetai3, bsorder);
       }
-
 
       if CONSTEXPR (eq<T, MPOLE>()) {
          real tuv000 = 0;
@@ -554,7 +502,6 @@ void fphi_get_acc(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
          fphi[i][18] = tuv012;
          fphi[i][19] = tuv111;
       } // end if (fphi_mpole)
-
 
       if CONSTEXPR (eq<T, UIND>() || eq<T, UIND2>()) {
          real tuv100_1 = 0;
@@ -769,31 +716,23 @@ void fphi_get_acc(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
    }    // end for (int i)
 }
 
-
 void fphi_mpole_acc(PMEUnit pme_u, real (*gpu_fphi)[20])
 {
    fphi_get_acc<MPOLE>(pme_u, (real*)gpu_fphi, nullptr, nullptr);
 }
 
-
-void fphi_uind_acc(PMEUnit pme_u, real (*gpu_fdip_phi1)[10],
-                   real (*gpu_fdip_phi2)[10], real (*gpu_fdip_sum_phi)[20])
+void fphi_uind_acc(PMEUnit pme_u, real (*gpu_fdip_phi1)[10], real (*gpu_fdip_phi2)[10],
+   real (*gpu_fdip_sum_phi)[20])
 {
-   fphi_get_acc<UIND>(pme_u, (real*)gpu_fdip_phi1, (real*)gpu_fdip_phi2,
-                      (real*)gpu_fdip_sum_phi);
+   fphi_get_acc<UIND>(pme_u, (real*)gpu_fdip_phi1, (real*)gpu_fdip_phi2, (real*)gpu_fdip_sum_phi);
 }
 
-
-void fphi_uind2_acc(PMEUnit pme_u, real (*gpu_fdip_phi1)[10],
-                    real (*gpu_fdip_phi2)[10])
+void fphi_uind2_acc(PMEUnit pme_u, real (*gpu_fdip_phi1)[10], real (*gpu_fdip_phi2)[10])
 {
-   fphi_get_acc<UIND2>(pme_u, (real*)gpu_fdip_phi1, (real*)gpu_fdip_phi2,
-                       nullptr);
+   fphi_get_acc<UIND2>(pme_u, (real*)gpu_fdip_phi1, (real*)gpu_fdip_phi2, nullptr);
 }
-
 
 //====================================================================//
-
 
 void rpole_to_cmp_acc()
 {
@@ -812,14 +751,12 @@ void rpole_to_cmp_acc()
    }
 }
 
-
 void cmp_to_fmp_acc(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
 {
    auto& st = *pme_u;
    int nfft1 = st.nfft1;
    int nfft2 = st.nfft2;
    int nfft3 = st.nfft3;
-
 
    #pragma acc parallel loop independent async deviceptr(cmp,fmp)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)
@@ -836,7 +773,6 @@ void cmp_to_fmp_acc(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
       a[2][0] = nfft1 * recipa.z;
       a[2][1] = nfft2 * recipb.z;
       a[2][2] = nfft3 * recipc.z;
-
 
       // data qi1  / 1, 2, 3, 1, 1, 2 /
       // data qi2  / 1, 2, 3, 2, 3, 3 /
@@ -866,7 +802,6 @@ void cmp_to_fmp_acc(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
          }
       }
 
-
       // apply the transformation to get the fractional multipoles
       real cmpi[10], fmpi[10];
       cmpi[0] = cmp[iatom][0];
@@ -879,7 +814,6 @@ void cmp_to_fmp_acc(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
       cmpi[7] = cmp[iatom][7];
       cmpi[8] = cmp[iatom][8];
       cmpi[9] = cmp[iatom][9];
-
 
       fmpi[0] = cmpi[0];
       #pragma acc loop seq
@@ -899,7 +833,6 @@ void cmp_to_fmp_acc(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
          }
       }
 
-
       fmp[iatom][0] = fmpi[0];
       fmp[iatom][1] = fmpi[1];
       fmp[iatom][2] = fmpi[2];
@@ -913,16 +846,13 @@ void cmp_to_fmp_acc(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
    }
 }
 
-
-void cuind_to_fuind_acc(PMEUnit pme_u, const real (*cind)[3],
-                        const real (*cinp)[3], real (*fuind)[3],
-                        real (*fuinp)[3])
+void cuind_to_fuind_acc(
+   PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3], real (*fuind)[3], real (*fuinp)[3])
 {
    auto& st = *pme_u;
    int nfft1 = st.nfft1;
    int nfft2 = st.nfft2;
    int nfft3 = st.nfft3;
-
 
    #pragma acc parallel loop independent async deviceptr(cind,cinp,fuind,fuinp)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)
@@ -938,17 +868,13 @@ void cuind_to_fuind_acc(PMEUnit pme_u, const real (*cind)[3],
       a[2][1] = nfft2 * recipb.z;
       a[2][2] = nfft3 * recipc.z;
 
-
       #pragma acc loop seq
       for (int j = 0; j < 3; ++j) {
-         fuind[i][j] =
-            a[0][j] * cind[i][0] + a[1][j] * cind[i][1] + a[2][j] * cind[i][2];
-         fuinp[i][j] =
-            a[0][j] * cinp[i][0] + a[1][j] * cinp[i][1] + a[2][j] * cinp[i][2];
+         fuind[i][j] = a[0][j] * cind[i][0] + a[1][j] * cind[i][1] + a[2][j] * cind[i][2];
+         fuinp[i][j] = a[0][j] * cinp[i][0] + a[1][j] * cinp[i][1] + a[2][j] * cinp[i][2];
       }
    }
 }
-
 
 void fphi_to_cphi_acc(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
 {
@@ -956,7 +882,6 @@ void fphi_to_cphi_acc(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
    int nfft1 = st.nfft1;
    int nfft2 = st.nfft2;
    int nfft3 = st.nfft3;
-
 
    #pragma acc parallel loop async deviceptr(fphi,cphi)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)
@@ -974,12 +899,10 @@ void fphi_to_cphi_acc(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
       a[1][2] = nfft2 * recipb.z;
       a[2][2] = nfft3 * recipc.z;
 
-
       // data qi1  / 1, 2, 3, 1, 1, 2 /
       // data qi2  / 1, 2, 3, 2, 3, 3 /
       constexpr int qi1[] = {0, 1, 2, 0, 0, 1};
       constexpr int qi2[] = {0, 1, 2, 1, 2, 2};
-
 
       real ftc6[6][6];
       // get the fractional to Cartesian conversion matrix
@@ -999,7 +922,6 @@ void fphi_to_cphi_acc(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
          }
       }
 
-
       #pragma acc loop seq
       for (int i1 = 3; i1 < 6; ++i1) {
          int k = qi1[i1];
@@ -1017,7 +939,6 @@ void fphi_to_cphi_acc(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
          }
       }
 
-
       // apply the transformation to get the Cartesian potential
       real fphii[10], cphii[10];
       fphii[0] = fphi[iatom][0];
@@ -1030,7 +951,6 @@ void fphi_to_cphi_acc(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
       fphii[7] = fphi[iatom][7];
       fphii[8] = fphi[iatom][8];
       fphii[9] = fphi[iatom][9];
-
 
       cphii[0] = fphii[0];
       #pragma acc loop seq
@@ -1049,7 +969,6 @@ void fphi_to_cphi_acc(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
             cphii[j] += ftc6[k - 4][j - 4] * fphii[k];
          }
       }
-
 
       cphi[iatom][0] = cphii[0];
       cphi[iatom][1] = cphii[1];

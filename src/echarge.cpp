@@ -9,7 +9,6 @@
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/sizes.hh>
 
-
 namespace tinker {
 real ebuffer;
 real c2scale, c3scale, c4scale, c5scale;
@@ -17,15 +16,12 @@ int ncexclude;
 int (*cexclude)[2];
 real* cexclude_scale;
 
-
 void echarge_data(rc_op op)
 {
    if (!use_potent(charge_term))
       return;
 
-
    bool rc_a = rc_flag & calc::analyz;
-
 
    if (op & rc_dealloc) {
       ncexclude = 0;
@@ -43,16 +39,13 @@ void echarge_data(rc_op op)
       decz = nullptr;
    }
 
-
    if (op & rc_alloc) {
       ebuffer = chgpot::ebuffer;
-
 
       c2scale = chgpot::c2scale;
       c3scale = chgpot::c3scale;
       c4scale = chgpot::c4scale;
       c5scale = chgpot::c5scale;
-
 
       std::vector<int> exclik;
       std::vector<real> excl;
@@ -121,7 +114,6 @@ void echarge_data(rc_op op)
       darray::copyin(g::q0, ncexclude, cexclude_scale, excl.data());
       wait_for(g::q0);
 
-
       nec = nullptr;
       ec = eng_buf_elec;
       vir_ec = vir_buf_elec;
@@ -134,11 +126,8 @@ void echarge_data(rc_op op)
       }
    }
 
-
-   if (op & rc_init) {
-   }
+   if (op & rc_init) {}
 }
-
 
 void echarge(int vers)
 {
@@ -147,7 +136,6 @@ void echarge(int vers)
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-
 
    host_zero(energy_ec, virial_ec);
    size_t bsize = buffer_size();
@@ -195,7 +183,6 @@ void echarge(int vers)
    }
 }
 
-
 void echarge_nonewald(int vers)
 {
 #if TINKER_CUDART
@@ -206,15 +193,12 @@ void echarge_nonewald(int vers)
       echarge_nonewald_acc(vers);
 }
 
-
 void echarge_ewald_recip_self(int vers)
 {
    pme_stream_start_wait(use_pme_stream);
 
-
    // ewald recip space, self term
    // ewald real space
-
 
    const PMEUnit pu = epme_unit;
    grid_pchg(pu, pchg);
@@ -244,7 +228,6 @@ void echarge_ewald_recip_self(int vers)
    else
 #endif
       echarge_ewald_fphi_self_acc(vers);
-
 
    pme_stream_finish_record(use_pme_stream);
 }

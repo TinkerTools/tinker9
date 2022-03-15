@@ -1,7 +1,6 @@
 #pragma once
 #include "macro.h"
 
-
 namespace tinker {
 TINKER_EXTERN real idihunit; // improper dihedral
 TINKER_EXTERN real itorunit; // improper torsion

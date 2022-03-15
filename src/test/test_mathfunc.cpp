@@ -2,7 +2,6 @@
 #include "test.h"
 using namespace tinker;
 
-
 TEST_CASE("MathFuncPow2", "[util][math]")
 {
    SECTION("IsPow2")
@@ -19,7 +18,6 @@ TEST_CASE("MathFuncPow2", "[util][math]")
       REQUIRE(f(7) == false);
       REQUIRE(f(8) == true);
    }
-
 
    SECTION("Pow2")
    {
@@ -41,7 +39,6 @@ TEST_CASE("MathFuncPow2", "[util][math]")
       REQUIRE(g(32) == 0x100000000ll);
       REQUIRE((unsigned long long)g(63) == 0x8000000000000000ull);
    }
-
 
    SECTION("FloorLog2")
    {
@@ -82,7 +79,6 @@ TEST_CASE("MathFuncPow2", "[util][math]")
       REQUIRE(k(8) == f(8));
    }
 
-
    SECTION("CeilLog2")
    {
       int (*f)(int) = ceil_log2;
@@ -109,7 +105,6 @@ TEST_CASE("MathFuncPow2", "[util][math]")
       REQUIRE(g(9) == 4);
    }
 
-
    SECTION("Pow2LessOrEqual")
    {
       auto f = pow2_le;
@@ -127,7 +122,6 @@ TEST_CASE("MathFuncPow2", "[util][math]")
       REQUIRE(f(1024) == 1024);
       REQUIRE(f(1025) == 1024);
    }
-
 
    SECTION("Pow2GreaterOrEqual")
    {
@@ -148,7 +142,6 @@ TEST_CASE("MathFuncPow2", "[util][math]")
    }
 }
 
-
 TEST_CASE("LUSolve", "[util][math]")
 {
 #if TINKER_HOST
@@ -158,7 +151,6 @@ TEST_CASE("LUSolve", "[util][math]")
    float aUpRow[] = {1, 2, 3, 5, 5, 12};
    float b[] = {8, 13, 32};
    float x[] = {1.5, -0.5, 2.5};
-
 
    symlusolve<3, float>(aUpRow, b);
    for (int i = 0; i < 3; ++i)

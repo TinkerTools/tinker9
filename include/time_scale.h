@@ -3,7 +3,6 @@
 #include <map>
 #include <string>
 
-
 namespace tinker {
 /**
  * \ingroup mdegv
@@ -43,7 +42,6 @@ namespace tinker {
  * `"TIME-SCALE RESPA VDWTERM 0"`.
  */
 using TimeScaleConfig = std::map<std::string, int>;
-
 
 /**
  * \ingroup mdegv

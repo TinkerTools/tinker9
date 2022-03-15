@@ -4,16 +4,13 @@
 #include "tool/error.h"
 #include "tool/host_zero.h"
 
-
 namespace tinker {
 void emplar(int vers)
 {
 #if TINKER_CUDART
    bool do_v = vers & calc::virial;
 
-
    host_zero(energy_em, virial_em);
-
 
    mpole_init(vers);
    emplar_cu(vers);

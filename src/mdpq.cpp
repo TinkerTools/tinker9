@@ -13,18 +13,14 @@
 #include <tinker/detail/moldyn.hh>
 #include <tinker/detail/usage.hh>
 
-
 namespace tinker {
 int rc_flag = 0;
 
-
 //====================================================================//
-
 
 int n;
 int padded_n;
 int trajn;
-
 
 void n_data(rc_op op)
 {
@@ -58,20 +54,16 @@ void n_data(rc_op op)
    }
 }
 
-
 //====================================================================//
-
 
 real *x, *y, *z;
 real *trajx, *trajy, *trajz;
 pos_prec *xpos, *ypos, *zpos;
 
-
 void copy_pos_to_xyz()
 {
    copy_pos_to_xyz_acc();
 }
-
 
 void copy_pos_to_xyz(bool check_nblist)
 {
@@ -80,43 +72,35 @@ void copy_pos_to_xyz(bool check_nblist)
       refresh_neighbors();
 }
 
-
-void propagate_pos(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz,
-                   const vel_prec* vlx, const vel_prec* vly,
-                   const vel_prec* vlz)
+void propagate_pos(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz, const vel_prec* vlx,
+   const vel_prec* vly, const vel_prec* vlz)
 {
    propagate_pos_acc(dt, qx, qy, qz, vlx, vly, vlz);
 }
-
 
 void propagate_pos(time_prec dt)
 {
    propagate_pos_acc(dt, xpos, ypos, zpos, vx, vy, vz);
 }
 
-
 void propagate_pos_axbv(double a, double b)
 {
    propagate_pos_axbv_acc(a, b);
 }
-
 
 void bounds()
 {
    if (!bound::use_bounds)
       return;
 
-
    bounds_pos_acc();
    copy_pos_to_xyz();
 }
-
 
 void read_frame_copyin_to_xyz(std::istream& ipt, int& done)
 {
    if (done)
       return;
-
 
    if (ipt) {
       std::string line;
@@ -125,8 +109,7 @@ void read_frame_copyin_to_xyz(std::istream& ipt, int& done)
       // 18.643000   18.643000   18.643000   90.000000   90.000000   90.000000
       //  1  O      8.733783    7.084710   -0.688468     1     2     3
       double l1, l2, l3, a1, a2, a3;
-      int matched = std::sscanf(line.data(), "%lf%lf%lf%lf%lf%lf", &l1, &l2,
-                                &l3, &a1, &a2, &a3);
+      int matched = std::sscanf(line.data(), "%lf%lf%lf%lf%lf%lf", &l1, &l2, &l3, &a1, &a2, &a3);
       int row = 0;
       int index;
       char name[32];
@@ -156,11 +139,9 @@ void read_frame_copyin_to_xyz(std::istream& ipt, int& done)
       xyz_data(rc_init);
    }
 
-
    if (ipt.peek() == EOF)
       done = true;
 }
-
 
 void xyz_data(rc_op op)
 {
@@ -220,46 +201,36 @@ void xyz_data(rc_op op)
    }
 }
 
-
 //====================================================================//
-
 
 double *mass, *massinv;
 vel_prec *vx, *vy, *vz;
 
-void propagate_velocity(time_prec dt, vel_prec* vlx, vel_prec* vly,
-                        vel_prec* vlz, const vel_prec* vlx0,
-                        const vel_prec* vly0, const vel_prec* vlz0,
-                        const grad_prec* grx, const grad_prec* gry,
-                        const grad_prec* grz)
+void propagate_velocity(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz,
+   const vel_prec* vlx0, const vel_prec* vly0, const vel_prec* vlz0, const grad_prec* grx,
+   const grad_prec* gry, const grad_prec* grz)
 {
    propagate_velocity_acc(dt, vlx, vly, vlz, vlx0, vly0, vlz0, grx, gry, grz);
 }
 
-
-void propagate_velocity(time_prec dt, vel_prec* vlx, vel_prec* vly,
-                        vel_prec* vlz, const grad_prec* grx,
-                        const grad_prec* gry, const grad_prec* grz)
+void propagate_velocity(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz,
+   const grad_prec* grx, const grad_prec* gry, const grad_prec* grz)
 {
    propagate_velocity_acc(dt, vlx, vly, vlz, grx, gry, grz);
 }
 
-
-void propagate_velocity(time_prec dt, const grad_prec* grx,
-                        const grad_prec* gry, const grad_prec* grz)
+void propagate_velocity(
+   time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz)
 {
    propagate_velocity(dt, vx, vy, vz, grx, gry, grz);
 }
 
-
-void propagate_velocity2(time_prec dt, const grad_prec* grx,
-                         const grad_prec* gry, const grad_prec* grz,
-                         time_prec dt2, const grad_prec* grx2,
-                         const grad_prec* gry2, const grad_prec* grz2)
+void propagate_velocity2(time_prec dt, const grad_prec* grx, const grad_prec* gry,
+   const grad_prec* grz, time_prec dt2, const grad_prec* grx2, const grad_prec* gry2,
+   const grad_prec* grz2)
 {
    propagate_velocity2_acc(dt, grx, gry, grz, dt2, grx2, gry2, grz2);
 }
-
 
 void mass_data(rc_op op)
 {
@@ -283,7 +254,6 @@ void mass_data(rc_op op)
       wait_for(g::q0);
    }
 }
-
 
 void vel_data(rc_op op)
 {

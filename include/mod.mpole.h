@@ -2,7 +2,6 @@
 #include "macro.h"
 #include "tool/energy_buffer.h"
 
-
 namespace tinker {
 enum
 {
@@ -21,7 +20,6 @@ enum
    mpl_pme_zx = mpl_pme_xz,
    mpl_pme_zy = mpl_pme_yz,
 
-
    pole_none = 0,
    pole_z_only = 1,
    pole_z_then_x = 2,
@@ -29,7 +27,6 @@ enum
    pole_z_bisect = 4,
    pole_3_fold = 5
 };
-
 
 /**
  * \brief
@@ -49,9 +46,7 @@ TINKER_EXTERN real* trqx;
 TINKER_EXTERN real* trqy;
 TINKER_EXTERN real* trqz;
 
-
 TINKER_EXTERN virial_buffer vir_trq;
-
 
 TINKER_EXTERN count_buffer nem;
 TINKER_EXTERN energy_buffer em;

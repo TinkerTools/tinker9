@@ -1,6 +1,5 @@
 #define TINKER_EXTERN_DEFINITION_FILE 1
 
-
 #include "mod.angbnd.h"
 #include "mod.angpot.h"
 #include "mod.angtor.h"

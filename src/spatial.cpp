@@ -4,7 +4,6 @@
 #include "tool/darray.h"
 #include "tool/error.h"
 
-
 namespace tinker {
 Spatial::~Spatial()
 {
@@ -18,7 +17,6 @@ Spatial::~Spatial()
    darray::deallocate(xkf);
    darray::deallocate(update, xold, yold, zold);
 }
-
 
 void spatial_cut_v1(int& px, int& py, int& pz, int level)
 {
@@ -39,7 +37,6 @@ void spatial_cut_v3(int& px, int& py, int& pz, int level)
    // y = (fz * l2.z + fy * l2.y)
    // z = (fz * l3.z)
 
-
    double3 l1 = make_double3(lvec1.x, lvec1.y, lvec1.z);
    double3 l2 = make_double3(lvec2.x, lvec2.y, lvec2.z);
    double3 l3 = make_double3(lvec3.x, lvec3.y, lvec3.z);
@@ -51,7 +48,6 @@ void spatial_cut_v3(int& px, int& py, int& pz, int level)
       double xx = l1.z + l1.y + l1.x;
       double yy = l2.z + l2.y;
       double zz = l3.z;
-
 
       if ((zz > ratio * xx) && (zz > ratio * yy)) {
          // if z is approximately the longest, cut c-axis by half
@@ -79,9 +75,8 @@ void spatial_cut(int& px, int& py, int& pz, int level)
    spatial_cut_v3(px, py, pz, level);
 }
 
-
-void spatial_data_alloc(SpatialUnit& u, int n, double cutoff, double buffer,
-                        const real* x, const real* y, const real* z)
+void spatial_data_alloc(
+   SpatialUnit& u, int n, double cutoff, double buffer, const real* x, const real* y, const real* z)
 {
    u = SpatialUnit::open();
    auto& st = *u;

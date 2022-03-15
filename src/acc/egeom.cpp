@@ -1,13 +1,12 @@
+#include "egeom.h"
 #include "add.h"
 #include "box.h"
-#include "egeom.h"
 #include "glob.group.h"
 #include "glob.molecule.h"
 #include "image.h"
 #include "md.h"
 #include "seq_geom.h"
 #include <cassert>
-
 
 namespace tinker {
 template <class Ver>
@@ -32,11 +31,11 @@ void egeom_acc1()
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_geom_position<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                            degx, degy, degz,
+         degx, degy, degz,
 
-                            i, ipfix, kpfix, xpfix, ypfix, zpfix, pfix,
+         i, ipfix, kpfix, xpfix, ypfix, zpfix, pfix,
 
-                            x, y, z, TINKER_IMAGE_ARGS);
+         x, y, z, TINKER_IMAGE_ARGS);
       if CONSTEXPR (do_e)
          atomic_add(e, eg, offset);
       if CONSTEXPR (do_v)
@@ -54,12 +53,11 @@ void egeom_acc1()
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_geom_group<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                         degx, degy, degz,
+         degx, degy, degz,
 
-                         i, igfix, gfix,
+         i, igfix, gfix,
 
-                         x, y, z, mass, molec, igrp, kgrp, grpmass,
-                         TINKER_IMAGE_ARGS);
+         x, y, z, mass, molec, igrp, kgrp, grpmass, TINKER_IMAGE_ARGS);
       if CONSTEXPR (do_e)
          atomic_add(e, eg, offset);
       if CONSTEXPR (do_v)
@@ -75,11 +73,11 @@ void egeom_acc1()
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_geom_distance<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                            degx, degy, degz,
+         degx, degy, degz,
 
-                            i, idfix, dfix,
+         i, idfix, dfix,
 
-                            x, y, z, molec, TINKER_IMAGE_ARGS);
+         x, y, z, molec, TINKER_IMAGE_ARGS);
       if CONSTEXPR (do_e)
          atomic_add(e, eg, offset);
       if CONSTEXPR (do_v)
@@ -94,9 +92,9 @@ void egeom_acc1()
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_geom_angle<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                         degx, degy, degz,
+         degx, degy, degz,
 
-                         i, iafix, afix, x, y, z);
+         i, iafix, afix, x, y, z);
       if CONSTEXPR (do_e)
          atomic_add(e, eg, offset);
       if CONSTEXPR (do_v)
@@ -111,16 +109,15 @@ void egeom_acc1()
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_geom_torsion<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                           degx, degy, degz,
+         degx, degy, degz,
 
-                           i, itfix, tfix, x, y, z);
+         i, itfix, tfix, x, y, z);
       if CONSTEXPR (do_e)
          atomic_add(e, eg, offset);
       if CONSTEXPR (do_v)
          atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_eg, offset);
    }
 }
-
 
 void egeom_acc(int vers)
 {

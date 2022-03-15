@@ -7,7 +7,6 @@
 #include "rattle.h"
 #include <tinker/detail/inform.hh>
 
-
 namespace tinker {
 void velocity_verlet(int istep, time_prec dt_ps)
 {

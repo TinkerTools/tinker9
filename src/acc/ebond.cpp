@@ -1,5 +1,5 @@
-#include "add.h"
 #include "ebond.h"
+#include "add.h"
 #include "md.h"
 #include "seq_bond.h"
 #include <cassert>
@@ -21,11 +21,11 @@ void ebond_acc1()
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_bond<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                   debx, deby, debz,
+         debx, deby, debz,
 
-                   bndtyp, bndunit, i, ibnd, bl, bk, cbnd, qbnd,
+         bndtyp, bndunit, i, ibnd, bl, bk, cbnd, qbnd,
 
-                   x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e)
          atomic_add(e, eb, offset);
       if CONSTEXPR (do_v)

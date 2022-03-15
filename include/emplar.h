@@ -2,7 +2,6 @@
 #include "glob.mplar.h"
 #include "tool/rc_man.h"
 
-
 namespace tinker {
 /**
  * \brief Multipole and AMOEBA polarization energy.

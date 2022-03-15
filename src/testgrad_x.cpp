@@ -3,9 +3,7 @@
 #include "tinker_rt.h"
 #include <tinker/detail/inform.hh>
 
-
 #define TINKER_TESTGRAD_VIRIAL 0
-
 
 namespace tinker {
 void x_testgrad(int, char**)
@@ -15,10 +13,8 @@ void x_testgrad(int, char**)
    tinker_f_mechanic();
    mechanic2();
 
-
    auto out = stdout;
    int digits = inform::digits;
-
 
    int flags = (calc::xyz + calc::mass);
    flags += (calc::energy + calc::grad);
@@ -26,20 +22,16 @@ void x_testgrad(int, char**)
    flags += calc::virial;
 #endif
 
-
    rc_flag = flags;
    initialize();
    energy(rc_flag);
 
-
    std::vector<double> gdx(n), gdy(n), gdz(n);
    copy_gradient(calc::grad, gdx.data(), gdy.data(), gdz.data());
-
 
    const int len_e = 20 + digits;
    const char* fmt_e = "\n Total Potential Energy :%1$*2$.*3$f Kcal/mole\n\n";
    print(out, fmt_e, esum, len_e, digits);
-
 
 #if TINKER_TESTGRAD_VIRIAL
    const char* fmt_v = " %-36s%12.3f %12.3f %12.3f\n";
@@ -47,7 +39,6 @@ void x_testgrad(int, char**)
    print(out, fmt_v, "", vir[3], vir[4], vir[5]);
    print(out, fmt_v, "", vir[6], vir[7], vir[8]);
 #endif
-
 
    std::string fmt_t;
    std::string fmt;
@@ -80,7 +71,6 @@ void x_testgrad(int, char**)
       // if (not do_print(i, n, print_top_n))
       //    continue;
 
-
       real x1 = gdx[i];
       real y1 = gdy[i];
       real z1 = gdz[i];
@@ -88,7 +78,6 @@ void x_testgrad(int, char**)
       norm = REAL_SQRT(norm);
       print(out, fmt, i + 1, x1, y1, z1, norm);
    }
-
 
    double totnorm = 0;
    for (int i = 0; i < n; ++i) {
@@ -101,7 +90,6 @@ void x_testgrad(int, char**)
    const int len3 = 13 + digits;
    print(out, fmt3, "Total Gradient Norm Value", totnorm, len3, digits);
    print(out, fmt3, "RMS Gradient over All Atoms", rms, len3, digits);
-
 
    finish();
    tinker_f_final();

@@ -3,7 +3,6 @@
 #include "mathfunc.h"
 #include "seq_def.h"
 
-
 namespace tinker {
 /**
  * Comments
@@ -21,20 +20,15 @@ namespace tinker {
 #pragma acc routine seq
 template <class Ver>
 SEQ_CUDA
-void dk_opbend(real& restrict e, real& restrict vxx, real& restrict vyx,
-               real& restrict vzx, real& restrict vyy, real& restrict vzy,
-               real& restrict vzz,
+void dk_opbend(real& restrict e, real& restrict vxx, real& restrict vyx, real& restrict vzx,
+   real& restrict vyy, real& restrict vzy, real& restrict vzz,
 
-               grad_prec* restrict deopbx, grad_prec* restrict deopby,
-               grad_prec* restrict deopbz,
+   grad_prec* restrict deopbx, grad_prec* restrict deopby, grad_prec* restrict deopbz,
 
-               eopbend_t opbtyp, real opbunit, int iopbend,
-               const int* restrict iopb, const real* restrict opbk,
-               const int (*restrict iang)[4], real copb, real qopb, real popb,
-               real sopb,
+   eopbend_t opbtyp, real opbunit, int iopbend, const int* restrict iopb, const real* restrict opbk,
+   const int (*restrict iang)[4], real copb, real qopb, real popb, real sopb,
 
-               const real* restrict x, const real* restrict y,
-               const real* restrict z)
+   const real* restrict x, const real* restrict y, const real* restrict z)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -90,9 +84,7 @@ void dk_opbend(real& restrict e, real& restrict vxx, real& restrict vyx,
 
       rab2 = xab * xab + yab * yab + zab * zab;
       rcb2 = xcb * xcb + ycb * ycb + zcb * zcb;
-      cc = rab2 * rcb2 -
-         (xab * xcb + yab * ycb + zab * zcb) *
-            (xab * xcb + yab * ycb + zab * zcb);
+      cc = rab2 * rcb2 - (xab * xcb + yab * ycb + zab * zcb) * (xab * xcb + yab * ycb + zab * zcb);
       if CONSTEXPR (do_g)
          dot = xab * xcb + yab * ycb + zab * zcb;
    } else if (opbtyp == eopbend_t::allinger) {
@@ -101,17 +93,15 @@ void dk_opbend(real& restrict e, real& restrict vxx, real& restrict vyx,
 
       rad2 = xad * xad + yad * yad + zad * zad;
       rcd2 = xcd * xcd + ycd * ycd + zcd * zcd;
-      cc = rad2 * rcd2 -
-         (xad * xcd + yad * ycd + zad * zcd) *
-            (xad * xcd + yad * ycd + zad * zcd);
+      cc = rad2 * rcd2 - (xad * xcd + yad * ycd + zad * zcd) * (xad * xcd + yad * ycd + zad * zcd);
       if CONSTEXPR (do_g)
          dot = xad * xcd + yad * ycd + zad * zcd;
    }
 
    // find the out-of-plane angle bending energy
 
-   real ee = xdb * (yab * zcb - zab * ycb) + ydb * (zab * xcb - xab * zcb) +
-      zdb * (xab * ycb - yab * xcb);
+   real ee =
+      xdb * (yab * zcb - zab * ycb) + ydb * (zab * xcb - xab * zcb) + zdb * (xab * ycb - yab * xcb);
    real rdb2 = xdb * xdb + ydb * ydb + zdb * zdb;
    rdb2 = REAL_MAX(rdb2, (real)0.0001);
 
@@ -125,16 +115,13 @@ void dk_opbend(real& restrict e, real& restrict vxx, real& restrict vyx,
       real dt4 = dt2 * dt2;
 
       if CONSTEXPR (do_e) {
-         e = opbunit * force * dt2 *
-            (1 + copb * dt + qopb * dt2 + popb * dt3 + sopb * dt4);
+         e = opbunit * force * dt2 * (1 + copb * dt + qopb * dt2 + popb * dt3 + sopb * dt4);
       }
 
       if CONSTEXPR (do_g) {
          real deddt = opbunit * force * dt * radian *
-            (2 + 3 * copb * dt + 4 * qopb * dt2 + 5 * popb * dt3 +
-             6 * sopb * dt4);
-         real dedcos =
-            -deddt * REAL_SIGN((real)1, ee) * REAL_RSQRT(cc * rdb2 - ee * ee);
+            (2 + 3 * copb * dt + 4 * qopb * dt2 + 5 * popb * dt3 + 6 * sopb * dt4);
+         real dedcos = -deddt * REAL_SIGN((real)1, ee) * REAL_RSQRT(cc * rdb2 - ee * ee);
          real term = ee * REAL_RECIP(cc);
          real dccdxia, dccdyia, dccdzia;
          real dccdxic, dccdyic, dccdzic;

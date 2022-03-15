@@ -1,20 +1,18 @@
-#include "add.h"
 #include "lpiston.h"
+#include "add.h"
 #include "mdegv.h"
 #include "mdpq.h"
 #include "rattle.h"
 
-
 namespace tinker {
 void lp_matvec_acc(int len, char transpose, double mat[3][3],
 
-                   pos_prec* ax, pos_prec* ay, pos_prec* az)
+   pos_prec* ax, pos_prec* ay, pos_prec* az)
 {
    double m00 = mat[0][0], m01 = mat[0][1], m02 = mat[0][2];
    double m10 = mat[1][0], m11 = mat[1][1], m12 = mat[1][2];
    double m20 = mat[2][0], m21 = mat[2][1], m22 = mat[2][2];
-   if (transpose == 't' or transpose == 'T' or transpose == 'y' or
-       transpose == 'Y') {
+   if (transpose == 't' or transpose == 'T' or transpose == 'y' or transpose == 'Y') {
       m01 = mat[1][0], m02 = mat[2][0];
       m10 = mat[0][1], m12 = mat[2][1];
       m20 = mat[0][2], m21 = mat[1][2];
@@ -28,7 +26,6 @@ void lp_matvec_acc(int len, char transpose, double mat[3][3],
       az[i] = m20 * x + m21 * y + m22 * z;
    }
 }
-
 
 void propagate_pos_raxbv_acc(
 
@@ -49,7 +46,6 @@ void propagate_pos_raxbv_acc(
       r3[i] = r3[i] + a * x3[im] + b * y3[i];
    }
 }
-
 
 void propagate_pos_raxbv_aniso_acc(
 
@@ -81,7 +77,6 @@ void propagate_pos_raxbv_aniso_acc(
    }
 }
 
-
 void propagate_pos_axbv_aniso_acc(double a[3][3], double b[3][3])
 {
    auto a00 = a[0][0], a01 = a[0][1], a02 = a[0][2];
@@ -103,7 +98,6 @@ void propagate_pos_axbv_aniso_acc(double a[3][3], double b[3][3])
    }
 }
 
-
 void lp_propagate_mol_vel_acc(vel_prec scal)
 {
    auto* molec = rattle_dmol.molecule;
@@ -116,7 +110,6 @@ void lp_propagate_mol_vel_acc(vel_prec scal)
       vz[i] = vz[i] + scal * ratcom_vz[im];
    }
 }
-
 
 void lp_propagate_mol_vel_aniso_acc(vel_prec scal[3][3])
 {
@@ -134,7 +127,6 @@ void lp_propagate_mol_vel_aniso_acc(vel_prec scal[3][3])
       vz[i] += s20 * xm + s21 * ym + s22 * zm;
    }
 }
-
 
 void lp_mol_virial_acc()
 {
@@ -213,10 +205,8 @@ void lp_mol_virial_acc()
    lp_vir[8] = mvzz + vir[8];
 }
 
-
-void lp_center_of_mass_acc(const pos_prec* ax, const pos_prec* ay,
-                           const pos_prec* az, pos_prec* mx, pos_prec* my,
-                           pos_prec* mz)
+void lp_center_of_mass_acc(const pos_prec* ax, const pos_prec* ay, const pos_prec* az, pos_prec* mx,
+   pos_prec* my, pos_prec* mz)
 {
    const int nmol = rattle_dmol.nmol;
    const auto* imol = rattle_dmol.imol;

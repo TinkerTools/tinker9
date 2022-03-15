@@ -1,9 +1,8 @@
-#include "add.h"
 #include "etortor.h"
+#include "add.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "seq_tortor.h"
-
 
 namespace tinker {
 template <class Ver>
@@ -23,13 +22,13 @@ void etortor_acc1()
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_tortor<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                     dettx, detty, dettz,
+         dettx, detty, dettz,
 
-                     ttorunit, itortor, itt, ibitor, chkttor_ia_,
+         ttorunit, itortor, itt, ibitor, chkttor_ia_,
 
-                     tnx, tny, ttx, tty, tbf, tbx, tby, tbxy,
+         tnx, tny, ttx, tty, tbf, tbx, tby, tbxy,
 
-                     x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e)
          atomic_add(e, ett, offset);
       if CONSTEXPR (do_v)

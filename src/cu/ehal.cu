@@ -11,7 +11,6 @@
 #include "switch.h"
 #include "tool/gpu_card.h"
 
-
 /**
  * Overheads:
  *    - Different vcouple methods.
@@ -19,7 +18,6 @@
  *    - Random access to the "i" parameters and gradients.
  *    - (If not hard-coded) ghal, dhal, scexp, scalpha.
  */
-
 
 /**
  * Kernel ehal_cu1 on GTX 1070 for DHFR2
@@ -39,7 +37,6 @@
  * (c) - hard-coded decouple method; + generic vlambda method.
  */
 
-
 namespace tinker {
 #if 1
 #   define GHAL    (real)0.12
@@ -55,19 +52,14 @@ namespace tinker {
 // ck.py Version 2.0.2
 template <class Ver>
 __global__
-void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
-              energy_buffer restrict ev, virial_buffer restrict vev,
-              grad_prec* restrict gx, grad_prec* restrict gy,
-              grad_prec* restrict gz, real cut, real off,
-              const unsigned* restrict info, int nexclude,
-              const int (*restrict exclude)[2],
-              const real* restrict exclude_scale, const real* restrict x,
-              const real* restrict y, const real* restrict z,
-              const Spatial::SortedAtom* restrict sorted, int nakpl,
-              const int* restrict iakpl, int niak, const int* restrict iak,
-              const int* restrict lst, int njvdw, real vlam, evdw_t vcouple,
-              const real* restrict radmin, const real* restrict epsilon,
-              const int* restrict jvdw, const int* restrict mut)
+void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buffer restrict ev,
+   virial_buffer restrict vev, grad_prec* restrict gx, grad_prec* restrict gy,
+   grad_prec* restrict gz, real cut, real off, const unsigned* restrict info, int nexclude,
+   const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x,
+   const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
+   int nakpl, const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
+   int njvdw, real vlam, evdw_t vcouple, const real* restrict radmin, const real* restrict epsilon,
+   const int* restrict jvdw, const int* restrict mut)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -77,7 +69,6 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
    const int iwarp = ithread / WARP_SIZE;
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
-
 
    int nevtl;
    if CONSTEXPR (do_a) {
@@ -115,7 +106,6 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
    int kjvdw;
    int kmut;
 
-
    //* /
    for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
       if CONSTEXPR (do_g) {
@@ -127,11 +117,9 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
          fkz = 0;
       }
 
-
       int i = exclude[ii][0];
       int k = exclude[ii][1];
       real scalea = exclude_scale[ii];
-
 
       xi = x[i];
       yi = y[i];
@@ -143,7 +131,6 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
       imut = mut[i];
       kjvdw = jvdw[k];
       kmut = mut[k];
-
 
       constexpr bool incl = true;
       real xr = xi - xk;
@@ -161,8 +148,8 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
             vlambda = (imut || kmut ? vlam : 1);
          }
          real e, de;
-         pair_hal_v2<do_g, 0>(r, scalea, rv, eps, cut, off, vlambda, GHAL, DHAL,
-                              SCEXP, SCALPHA, e, de);
+         pair_hal_v2<do_g, 0>(
+            r, scalea, rv, eps, cut, off, vlambda, GHAL, DHAL, SCEXP, SCALPHA, e, de);
          if CONSTEXPR (do_e) {
             evtl += cvt_to<ebuf_prec>(e);
             if CONSTEXPR (do_a) {
@@ -193,7 +180,6 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
          }
       }
 
-
       if CONSTEXPR (do_g) {
          atomic_add(fix, gx, i);
          atomic_add(fiy, gy, i);
@@ -205,7 +191,6 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
    }
    // */
 
-
    for (int iw = iwarp; iw < nakpl; iw += nwarp) {
       if CONSTEXPR (do_g) {
          fix = 0;
@@ -216,11 +201,9 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
          fkz = 0;
       }
 
-
       int tri, tx, ty;
       tri = iakpl[iw];
       tri_to_xy(tri, tx, ty);
-
 
       int iid = ty * WARP_SIZE + ilane;
       int atomi = min(iid, n - 1);
@@ -235,12 +218,10 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
-
       ijvdw = jvdw[i];
       imut = mut[i];
       kjvdw = jvdw[k];
       kmut = mut[k];
-
 
       unsigned int info0 = info[iw * WARP_SIZE + ilane];
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -263,8 +244,8 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
                vlambda = (imut || kmut ? vlam : 1);
             }
             real e, de;
-            pair_hal_v2<do_g, 1>(r, 1, rv, eps, cut, off, vlambda, GHAL, DHAL,
-                                 SCEXP, SCALPHA, e, de);
+            pair_hal_v2<do_g, 1>(
+               r, 1, rv, eps, cut, off, vlambda, GHAL, DHAL, SCEXP, SCALPHA, e, de);
             if CONSTEXPR (do_e) {
                evtl += cvt_to<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
@@ -295,7 +276,6 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
             }
          }
 
-
          iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
          xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
          yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
@@ -309,7 +289,6 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
          }
       }
 
-
       if CONSTEXPR (do_g) {
          atomic_add(fix, gx, i);
          atomic_add(fiy, gy, i);
@@ -320,7 +299,6 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
       }
    }
 
-
    for (int iw = iwarp; iw < niak; iw += nwarp) {
       if CONSTEXPR (do_g) {
          fix = 0;
@@ -330,7 +308,6 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
          fky = 0;
          fkz = 0;
       }
-
 
       int ty = iak[iw];
       int atomi = ty * WARP_SIZE + ilane;
@@ -344,12 +321,10 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
-
       ijvdw = jvdw[i];
       imut = mut[i];
       kjvdw = jvdw[k];
       kmut = mut[k];
-
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          bool incl = atomk > 0;
@@ -368,8 +343,8 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
                vlambda = (imut || kmut ? vlam : 1);
             }
             real e, de;
-            pair_hal_v2<do_g, 1>(r, 1, rv, eps, cut, off, vlambda, GHAL, DHAL,
-                                 SCEXP, SCALPHA, e, de);
+            pair_hal_v2<do_g, 1>(
+               r, 1, rv, eps, cut, off, vlambda, GHAL, DHAL, SCEXP, SCALPHA, e, de);
             if CONSTEXPR (do_e) {
                evtl += cvt_to<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
@@ -400,7 +375,6 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
             }
          }
 
-
          xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
          yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
          zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
@@ -413,7 +387,6 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
          }
       }
 
-
       if CONSTEXPR (do_g) {
          atomic_add(fix, gx, i);
          atomic_add(fiy, gy, i);
@@ -424,7 +397,6 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
       }
    }
 
-
    if CONSTEXPR (do_a) {
       atomic_add(nevtl, nev, ithread);
    }
@@ -432,41 +404,33 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
       atomic_add(evtl, ev, ithread);
    }
    if CONSTEXPR (do_v) {
-      atomic_add(vevtlxx, vevtlyx, vevtlzx, vevtlyy, vevtlzy, vevtlzz, vev,
-                 ithread);
+      atomic_add(vevtlxx, vevtlyx, vevtlzx, vevtlyy, vevtlzy, vevtlzz, vev, ithread);
    }
 }
-
 
 template <class Ver>
 void ehal_cu3()
 {
    constexpr bool do_g = Ver::g;
 
-
    const auto& st = *vspatial_v2_unit;
    const real cut = switch_cut(switch_vdw);
    const real off = switch_off(switch_vdw);
 
-
    if CONSTEXPR (do_g)
       darray::zero(g::q0, n, gxred, gyred, gzred);
 
-
    int ngrid = get_grid_size(BLOCK_DIM);
    auto ker1 = ehal_cu1<Ver>;
-   ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(
-      st.n, TINKER_IMAGE_ARGS, nev, ev, vir_ev, gxred, gyred, gzred, cut, off,
-      st.si1.bit0, nvexclude, vexclude, vexclude_scale, st.x, st.y, st.z,
-      st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, njvdw, vlam,
-      vcouple, radmin, epsilon, jvdw, mut);
-
+   ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nev, ev, vir_ev, gxred, gyred,
+      gzred, cut, off, st.si1.bit0, nvexclude, vexclude, vexclude_scale, st.x, st.y, st.z,
+      st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, njvdw, vlam, vcouple, radmin, epsilon,
+      jvdw, mut);
 
    if CONSTEXPR (do_g) {
       ehal_resolve_gradient();
    }
 }
-
 
 void ehal_cu(int vers)
 {

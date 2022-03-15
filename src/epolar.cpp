@@ -20,7 +20,6 @@
 #include <tinker/detail/units.hh>
 #include <tinker/detail/uprior.hh>
 
-
 namespace tinker {
 void epolar_data(rc_op op)
 {
@@ -53,28 +52,22 @@ void epolar_data(rc_op op)
       depz = nullptr;
 
       darray::deallocate(ufld, dufld);
-      darray::deallocate(work01_, work02_, work03_, work04_, work05_, work06_,
-                         work07_, work08_, work09_, work10_);
-
+      darray::deallocate(
+         work01_, work02_, work03_, work04_, work05_, work06_, work07_, work08_, work09_, work10_);
 
       if (polpred == UPred::ASPC) {
-         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04,
-                            udalt_05, udalt_06, udalt_07, udalt_08, udalt_09,
-                            udalt_10, udalt_11, udalt_12, udalt_13, udalt_14,
-                            udalt_15, upalt_00, upalt_01, upalt_02, upalt_03,
-                            upalt_04, upalt_05, upalt_06, upalt_07, upalt_08,
-                            upalt_09, upalt_10, upalt_11, upalt_12, upalt_13,
-                            upalt_14, upalt_15);
+         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, udalt_06,
+            udalt_07, udalt_08, udalt_09, udalt_10, udalt_11, udalt_12, udalt_13, udalt_14,
+            udalt_15, upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05, upalt_06,
+            upalt_07, upalt_08, upalt_09, upalt_10, upalt_11, upalt_12, upalt_13, upalt_14,
+            upalt_15);
       } else if (polpred == UPred::GEAR) {
-         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04,
-                            udalt_05, upalt_00, upalt_01, upalt_02, upalt_03,
-                            upalt_04, upalt_05);
+         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, upalt_00,
+            upalt_01, upalt_02, upalt_03, upalt_04, upalt_05);
       } else if (polpred == UPred::LSQR) {
-         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04,
-                            udalt_05, udalt_06, upalt_00, upalt_01, upalt_02,
-                            upalt_03, upalt_04, upalt_05, upalt_06);
-         darray::deallocate(udalt_lsqr_a, udalt_lsqr_b, upalt_lsqr_a,
-                            upalt_lsqr_b);
+         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, udalt_06,
+            upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05, upalt_06);
+         darray::deallocate(udalt_lsqr_a, udalt_lsqr_b, upalt_lsqr_a, upalt_lsqr_b);
       }
       polpred = UPred::NONE;
       maxualt = 0;
@@ -95,8 +88,8 @@ void epolar_data(rc_op op)
       {
          real d, p, u;
       };
-      auto insert_dpu = [](std::map<std::pair<int, int>, dpu_scale>& m, int i,
-                           int k, real val, char ch) {
+      auto insert_dpu = [](std::map<std::pair<int, int>, dpu_scale>& m, int i, int k, real val,
+                           char ch) {
          std::pair<int, int> key;
          key.first = i;
          key.second = k;
@@ -218,8 +211,7 @@ void epolar_data(rc_op op)
       {
          real d, p;
       };
-      auto insert_dp = [](std::map<int, dp_scale>& m, int k, real val,
-                          char dpchar) {
+      auto insert_dp = [](std::map<int, dp_scale>& m, int k, real val, char dpchar) {
          auto it = m.find(k);
          if (it == m.end()) {
             dp_scale dp;
@@ -408,9 +400,8 @@ void epolar_data(rc_op op)
          dufld = nullptr;
       }
 
-      darray::allocate(n, &work01_, &work02_, &work03_, &work04_, &work05_,
-                       &work06_, &work07_, &work08_, &work09_, &work10_);
-
+      darray::allocate(n, &work01_, &work02_, &work03_, &work04_, &work05_, &work06_, &work07_,
+         &work08_, &work09_, &work10_);
 
       if (uprior::use_pred) {
          fstr_view predstr = uprior::polpred;
@@ -422,11 +413,11 @@ void epolar_data(rc_op op)
             polpred = UPred::LSQR;
 #if TINKER_REAL_SIZE == 4
             print(stdout,
-                  "\n"
-                  " Warning -- 32-bit floating-point induced dipoles.\n"
-                  "            LSQR Predictor is numerically unstable.\n"
-                  "            Use at your own risk.\n"
-                  "\n");
+               "\n"
+               " Warning -- 32-bit floating-point induced dipoles.\n"
+               "            LSQR Predictor is numerically unstable.\n"
+               "            Use at your own risk.\n"
+               "\n");
 #endif
          }
       } else {
@@ -437,41 +428,32 @@ void epolar_data(rc_op op)
 
       if (polpred == UPred::ASPC) {
          maxualt = 16;
-         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
-                          &udalt_04, &udalt_05, &udalt_06, &udalt_07, &udalt_08,
-                          &udalt_09, &udalt_10, &udalt_11, &udalt_12, &udalt_13,
-                          &udalt_14, &udalt_15, &upalt_00, &upalt_01, &upalt_02,
-                          &upalt_03, &upalt_04, &upalt_05, &upalt_06, &upalt_07,
-                          &upalt_08, &upalt_09, &upalt_10, &upalt_11, &upalt_12,
-                          &upalt_13, &upalt_14, &upalt_15);
-         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03,
-                      udalt_04, udalt_05, udalt_06, udalt_07, udalt_08,
-                      udalt_09, udalt_10, udalt_11, udalt_12, udalt_13,
-                      udalt_14, udalt_15, upalt_00, upalt_01, upalt_02,
-                      upalt_03, upalt_04, upalt_05, upalt_06, upalt_07,
-                      upalt_08, upalt_09, upalt_10, upalt_11, upalt_12,
-                      upalt_13, upalt_14, upalt_15);
+         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03, &udalt_04, &udalt_05,
+            &udalt_06, &udalt_07, &udalt_08, &udalt_09, &udalt_10, &udalt_11, &udalt_12, &udalt_13,
+            &udalt_14, &udalt_15, &upalt_00, &upalt_01, &upalt_02, &upalt_03, &upalt_04, &upalt_05,
+            &upalt_06, &upalt_07, &upalt_08, &upalt_09, &upalt_10, &upalt_11, &upalt_12, &upalt_13,
+            &upalt_14, &upalt_15);
+         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05,
+            udalt_06, udalt_07, udalt_08, udalt_09, udalt_10, udalt_11, udalt_12, udalt_13,
+            udalt_14, udalt_15, upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05,
+            upalt_06, upalt_07, upalt_08, upalt_09, upalt_10, upalt_11, upalt_12, upalt_13,
+            upalt_14, upalt_15);
       } else if (polpred == UPred::GEAR) {
          maxualt = 6;
-         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
-                          &udalt_04, &udalt_05, &upalt_00, &upalt_01, &upalt_02,
-                          &upalt_03, &upalt_04, &upalt_05);
-         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03,
-                      udalt_04, udalt_05, upalt_00, upalt_01, upalt_02,
-                      upalt_03, upalt_04, upalt_05);
+         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03, &udalt_04, &udalt_05,
+            &upalt_00, &upalt_01, &upalt_02, &upalt_03, &upalt_04, &upalt_05);
+         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05,
+            upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05);
       } else if (polpred == UPred::LSQR) {
          maxualt = 7;
-         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03,
-                          &udalt_04, &udalt_05, &udalt_06, &upalt_00, &upalt_01,
-                          &upalt_02, &upalt_03, &upalt_04, &upalt_05,
-                          &upalt_06);
+         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03, &udalt_04, &udalt_05,
+            &udalt_06, &upalt_00, &upalt_01, &upalt_02, &upalt_03, &upalt_04, &upalt_05, &upalt_06);
          int lenb = maxualt - 1;
          int lena = lenb * lenb; // lenb*(lenb+1)/2 should be plenty.
          darray::allocate(lena, &udalt_lsqr_a, &upalt_lsqr_a);
          darray::allocate(lenb, &udalt_lsqr_b, &upalt_lsqr_b);
-         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03,
-                      udalt_04, udalt_05, udalt_06, upalt_00, upalt_01,
-                      upalt_02, upalt_03, upalt_04, upalt_05, upalt_06);
+         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05,
+            udalt_06, upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05, upalt_06);
       }
    }
 
@@ -492,7 +474,6 @@ void epolar_data(rc_op op)
    }
 }
 
-
 void induce(real (*ud)[3], real (*up)[3])
 {
    induce_mutual_pcg1(ud, up);
@@ -509,9 +490,7 @@ void induce(real (*ud)[3], real (*up)[3])
             if (header) {
                header = false;
                print(stdout, "\n Induced Dipole Moments (Debye) :\n");
-               print(stdout,
-                     "\n    Atom %1$13s X %1$10s Y %1$10s Z %1$9s Total\n\n",
-                     "");
+               print(stdout, "\n    Atom %1$13s X %1$10s Y %1$10s Z %1$9s Total\n\n", "");
             }
             double u1 = uindbuf[3 * i];
             double u2 = uindbuf[3 * i + 1];
@@ -521,13 +500,11 @@ void induce(real (*ud)[3], real (*up)[3])
             u2 *= units::debye;
             u3 *= units::debye;
             unorm *= units::debye;
-            print(stdout, "%8d     %13.4f%13.4f%13.4f %13.4f\n", i + 1, u1, u2,
-                  u3, unorm);
+            print(stdout, "%8d     %13.4f%13.4f%13.4f %13.4f\n", i + 1, u1, u2, u3, unorm);
          }
       }
    }
 }
-
 
 void epolar(int vers)
 {
@@ -536,7 +513,6 @@ void epolar(int vers)
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-
 
    host_zero(energy_ep, virial_ep);
    size_t bsize = buffer_size();
@@ -553,7 +529,6 @@ void epolar(int vers)
       }
    }
 
-
    mpole_init(vers);
    if (use_ewald())
       epolar_ewald(vers);
@@ -569,7 +544,6 @@ void epolar(int vers)
          virial_elec[iv] += v2[iv];
       }
    }
-
 
    if (rc_a) {
       if (do_e) {
@@ -591,7 +565,6 @@ void epolar(int vers)
          sum_gradient(gx_elec, gy_elec, gz_elec, depx, depy, depz);
    }
 }
-
 
 void epolar_nonewald(int vers)
 {
@@ -621,7 +594,6 @@ void epolar_nonewald(int vers)
    }
 }
 
-
 void epolar_ewald(int vers)
 {
    // v0: E_dot
@@ -646,7 +618,6 @@ void epolar_ewald(int vers)
    }
 }
 
-
 void epolar_ewald_real(int vers)
 {
 #if TINKER_CUDART
@@ -657,12 +628,10 @@ void epolar_ewald_real(int vers)
       epolar_ewald_real_acc(vers, uind, uinp);
 }
 
-
 void epolar_ewald_recip_self(int vers)
 {
    epolar_ewald_recip_self_acc(vers, uind, uinp);
 }
-
 
 void epolar0_dotprod(const real (*uind)[3], const real (*udirp)[3])
 {

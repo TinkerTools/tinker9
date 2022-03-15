@@ -3,18 +3,15 @@
 #include "energy.h"
 #include "tool/rc_man.h"
 
-
 namespace tinker {
 constexpr int OSRW_LAM_LINEAR = 0;
 constexpr int OSRW_LAM_QUADRATIC = 1;
-
 
 extern bool use_osrw;
 extern double osrw_lambda;
 extern int osrw_vdw;
 extern int osrw_ele;
 extern int osrw_tor;
-
 
 /**
  * \ingroup osrw
@@ -35,7 +32,6 @@ extern energy_prec osrw_du1;
 extern virial_prec osrw_dv1[9];
 extern grad_prec *osrw_dgx, *osrw_dgy, *osrw_dgz;
 
-
 extern real* osrw_pchg;
 extern real (*osrw_pole)[mpl_total];
 extern real* osrw_polarity;
@@ -47,7 +43,6 @@ extern real (*osrw_tors3)[4];
 extern real (*osrw_tors4)[4];
 extern real (*osrw_tors5)[4];
 extern real (*osrw_tors6)[4];
-
 
 void osrw_mech();
 void osrw_data(rc_op);

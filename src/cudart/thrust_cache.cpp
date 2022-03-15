@@ -2,13 +2,11 @@
 #include "md.h"
 #include "tool/darray.h"
 
-
 namespace tinker {
 ThrustCache::ThrustCache()
    : nbytes(0)
    , ptr(nullptr)
 {}
-
 
 auto ThrustCache::allocate(ptrdiff_t numbyte) -> value_type*
 {
@@ -20,13 +18,11 @@ auto ThrustCache::allocate(ptrdiff_t numbyte) -> value_type*
    return ptr;
 }
 
-
 void ThrustCache::deallocate(value_type*, size_t)
 {
    // does not do anything
    return;
 }
-
 
 void ThrustCache::clear()
 {
@@ -35,15 +31,12 @@ void ThrustCache::clear()
    nbytes = 0;
 }
 
-
 ThrustCache thrust_cache;
-
 
 void thrust_cache_dealloc()
 {
    thrust_cache.clear();
 }
-
 
 void thrust_cache_alloc()
 {

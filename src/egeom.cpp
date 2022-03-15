@@ -5,7 +5,6 @@
 #include <tinker/detail/restrn.hh>
 #include <tinker/detail/sizes.hh>
 
-
 namespace tinker {
 void egeom_data(rc_op op)
 {
@@ -35,7 +34,6 @@ void egeom_data(rc_op op)
       degz = nullptr;
    }
 
-
    if (op & rc_alloc) {
       npfix = restrn::npfix;
       darray::allocate(npfix, &ipfix, &kpfix, &xpfix, &ypfix, &zpfix, &pfix);
@@ -56,7 +54,6 @@ void egeom_data(rc_op op)
       if (rc_a)
          buffer_allocate(rc_flag, &eg, &vir_eg, &degx, &degy, &degz);
    }
-
 
    if (op & rc_init) {
       std::vector<int> ipfixbuf(npfix);
@@ -93,14 +90,12 @@ void egeom_data(rc_op op)
    }
 }
 
-
 void egeom(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-
 
    if (rc_a) {
       host_zero(energy_eg, virial_eg);
@@ -113,9 +108,7 @@ void egeom(int vers)
          darray::zero(g::q0, n, degx, degy, degz);
    }
 
-
    egeom_acc(vers);
-
 
    if (rc_a) {
       if (do_e) {

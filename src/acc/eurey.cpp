@@ -1,5 +1,5 @@
-#include "add.h"
 #include "eurey.h"
+#include "add.h"
 #include "md.h"
 #include "seq_urey.h"
 
@@ -21,9 +21,9 @@ void eurey_acc1()
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_urey<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                   deubx, deuby, deubz,
+         deubx, deuby, deubz,
 
-                   ureyunit, i, iury, uk, ul, cury, qury, x, y, z);
+         ureyunit, i, iury, uk, ul, cury, qury, x, y, z);
       if CONSTEXPR (do_e)
          atomic_add(e, eub, offset);
       if CONSTEXPR (do_v)

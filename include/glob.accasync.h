@@ -1,7 +1,6 @@
 #pragma once
 #include "macro.h"
 
-
 namespace tinker {
 /**
  * \brief Global handles for the GPU runtime libraries.

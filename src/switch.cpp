@@ -3,7 +3,6 @@
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/nonpol.hh>
 
-
 namespace tinker {
 real switch_cut(switch_t mode)
 {
@@ -50,13 +49,11 @@ real switch_cut(switch_t mode)
       cut = nonpol::stoff;
       break;
    default: // switch_default
-      cut = min_of(vdwtaper, reptaper, disptaper, chgtaper, dpltaper,
-                   mpoletaper, ctrntaper);
+      cut = min_of(vdwtaper, reptaper, disptaper, chgtaper, dpltaper, mpoletaper, ctrntaper);
       break;
    }
    return cut;
 }
-
 
 real switch_off(switch_t mode)
 {

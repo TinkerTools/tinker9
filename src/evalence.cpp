@@ -2,7 +2,6 @@
 #include "platform.h"
 #include "tool/error.h"
 
-
 namespace tinker {
 void evalence(int vers)
 {
@@ -11,7 +10,6 @@ void evalence(int vers)
       evalence_cu(vers);
    else
 #endif
-      TINKER_THROW(
-         "Combined valence energy term should not have been called.\n");
+      TINKER_THROW("Combined valence energy term should not have been called.\n");
 }
 }

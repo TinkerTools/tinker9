@@ -1,5 +1,5 @@
-#include "add.h"
 #include "echarge.h"
+#include "add.h"
 #include "glob.nblist.h"
 #include "image.h"
 #include "md.h"
@@ -10,7 +10,6 @@
 #include "switch.h"
 #include "tool/gpu_card.h"
 
-
 namespace tinker {
 #define DEVICE_PTRS x, y, z, decx, decy, decz, pchg, nec, ec, vir_ec
 template <class Ver, class ETYP>
@@ -20,7 +19,6 @@ void echarge_acc1()
    constexpr bool do_a = Ver::a;
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
-
 
    real f = electric / dielec;
    real cut, off, aewald;
@@ -39,7 +37,6 @@ void echarge_acc1()
    const auto* lst = clist_unit->lst;
    auto bufsize = buffer_size();
 
-
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
@@ -52,7 +49,6 @@ void echarge_acc1()
       real ci = pchg[i];
       MAYBE_UNUSED real gxi = 0, gyi = 0, gzi = 0;
 
-
       int nlsti = nlst[i];
       #pragma acc loop vector independent reduction(+:gxi,gyi,gzi)
       for (int kk = 0; kk < nlsti; ++kk) {
@@ -63,11 +59,9 @@ void echarge_acc1()
          real zr = zi - z[k];
          real ck = pchg[k];
 
-
          real r2 = image2(xr, yr, zr);
          if (r2 <= off2) {
             real r = REAL_SQRT(r2);
-
 
             int ctl;
             real e, frcx, frcy, frcz, vxx, vxy, vxz, vyy, vyz, vzz;
@@ -91,13 +85,10 @@ void echarge_acc1()
                vzz = 0;
             }
 
-
             // EWALD           -> EWALD
             // NON_EWALD_TAPER -> NON_EWALD_TAPER
-            pair_charge<Ver, ETYP>(
-               r, xr, yr, zr, 1, ci, ck, ebuffer, f, aewald, cut, off, //
+            pair_charge<Ver, ETYP>(r, xr, yr, zr, 1, ci, ck, ebuffer, f, aewald, cut, off, //
                frcx, frcy, frcz, ctl, e, vxx, vxy, vxz, vyy, vyz, vzz);
-
 
             if CONSTEXPR (do_a)
                atomic_add(ctl, nec, offset);
@@ -116,7 +107,6 @@ void echarge_acc1()
          } // end if (include)
       }
 
-
       if CONSTEXPR (do_g) {
          atomic_add(gxi, decx, i);
          atomic_add(gyi, decy, i);
@@ -124,30 +114,25 @@ void echarge_acc1()
       }
    } // end for (int i)
 
-
    #pragma acc parallel async present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(DEVICE_PTRS, cexclude, cexclude_scale)
    #pragma acc loop independent
    for (int ii = 0; ii < ncexclude; ++ii) {
       int offset = ii & (bufsize - 1);
 
-
       int i = cexclude[ii][0];
       int k = cexclude[ii][1];
       real cscale = cexclude_scale[ii] - 1;
-
 
       real ci = pchg[i];
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
 
-
       real ck = pchg[k];
       real xr = xi - x[k];
       real yr = yi - y[k];
       real zr = zi - z[k];
-
 
       real r2 = image2(xr, yr, zr);
       if (r2 <= off2) {
@@ -173,20 +158,17 @@ void echarge_acc1()
             vzz = 0;
          }
 
-
          // EWALD           -> NON_EWALD
          // NON_EWALD_TAPER -> NON_EWALD_TAPER
          real r = REAL_SQRT(r2);
          if CONSTEXPR (eq<ETYP, EWALD>()) {
-            pair_charge<Ver, NON_EWALD>(
-               r, xr, yr, zr, cscale, ci, ck, ebuffer, f, 0, 0, 0, //
+            pair_charge<Ver, NON_EWALD>(r, xr, yr, zr, cscale, ci, ck, ebuffer, f, 0, 0, 0, //
                frcx, frcy, frcz, ctl, e, vxx, vxy, vxz, vyy, vyz, vzz);
          } else if CONSTEXPR (eq<ETYP, NON_EWALD_TAPER>()) {
-            pair_charge<Ver, NON_EWALD_TAPER>(
-               r, xr, yr, zr, cscale, ci, ck, ebuffer, f, 0, cut, off, //
+            pair_charge<Ver, NON_EWALD_TAPER>(r, xr, yr, zr, cscale, ci, ck, ebuffer, f, 0, cut,
+               off, //
                frcx, frcy, frcz, ctl, e, vxx, vxy, vxz, vyy, vyz, vzz);
          }
-
 
          if (e != 0) {
             if CONSTEXPR (do_a)
@@ -208,7 +190,6 @@ void echarge_acc1()
    }
 }
 
-
 void echarge_nonewald_acc(int vers)
 {
    if (vers == calc::v0)
@@ -224,7 +205,6 @@ void echarge_nonewald_acc(int vers)
    else if (vers == calc::v6)
       echarge_acc1<calc::V6, NON_EWALD_TAPER>();
 }
-
 
 void echarge_ewald_real_acc(int vers)
 {
@@ -242,9 +222,7 @@ void echarge_ewald_real_acc(int vers)
       echarge_acc1<calc::V6, EWALD>();
 }
 
-
 //====================================================================//
-
 
 template <class Ver, int bsorder>
 void echarge_acc3()
@@ -252,7 +230,6 @@ void echarge_acc3()
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
    constexpr bool do_g = Ver::g;
-
 
    real f = electric / dielec;
    const auto& st = *epme_unit;
@@ -263,7 +240,6 @@ void echarge_acc3()
    int nfft3 = st.nfft3;
    auto bufsize = buffer_size();
 
-
    #pragma acc parallel async deviceptr(pchg,qgrid,nec,ec,x,y,z,decx,decy,decz)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)
    #pragma acc loop independent
@@ -271,7 +247,6 @@ void echarge_acc3()
       real chgi = pchg[ii];
       if (chgi == 0)
          continue;
-
 
       // self energy, tinfoil
       if CONSTEXPR (do_e) {
@@ -284,13 +259,11 @@ void echarge_acc3()
          }
       }
 
-
       // recip gradient
       if CONSTEXPR (do_g) {
          real xi = x[ii];
          real yi = y[ii];
          real zi = z[ii];
-
 
          real w1 = xi * recipa.x + yi * recipa.y + zi * recipa.z;
          w1 = w1 + 0.5f - REAL_FLOOR(w1 + 0.5f);
@@ -298,20 +271,17 @@ void echarge_acc3()
          int igrid1 = REAL_FLOOR(fr1);
          w1 = fr1 - igrid1;
 
-
          real w2 = xi * recipb.x + yi * recipb.y + zi * recipb.z;
          w2 = w2 + 0.5f - REAL_FLOOR(w2 + 0.5f);
          real fr2 = nfft2 * w2;
          int igrid2 = REAL_FLOOR(fr2);
          w2 = fr2 - igrid2;
 
-
          real w3 = xi * recipc.x + yi * recipc.y + zi * recipc.z;
          w3 = w3 + 0.5f - REAL_FLOOR(w3 + 0.5f);
          real fr3 = nfft3 * w3;
          int igrid3 = REAL_FLOOR(fr3);
          w3 = fr3 - igrid3;
-
 
          igrid1 = igrid1 - bsorder + 1;
          igrid2 = igrid2 - bsorder + 1;
@@ -320,14 +290,12 @@ void echarge_acc3()
          igrid2 += (igrid2 < 0 ? nfft2 : 0);
          igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
-
          real thetai1[4 * 5];
          real thetai2[4 * 5];
          real thetai3[4 * 5];
          bsplgen<2>(w1, thetai1, bsorder);
          bsplgen<2>(w2, thetai2, bsorder);
          bsplgen<2>(w3, thetai3, bsorder);
-
 
          real fi = f * chgi;
          real de1 = 0, de2 = 0, de3 = 0;
@@ -360,7 +328,6 @@ void echarge_acc3()
             }
          } // end for (iz)
 
-
          real frcx = fi * (recipa.x * de1 + recipb.x * de2 + recipc.x * de3);
          real frcy = fi * (recipa.y * de1 + recipb.y * de2 + recipc.y * de3);
          real frcz = fi * (recipa.z * de1 + recipb.z * de2 + recipc.z * de3);
@@ -370,7 +337,6 @@ void echarge_acc3()
       }
    }
 }
-
 
 void echarge_ewald_fphi_self_acc(int vers)
 {

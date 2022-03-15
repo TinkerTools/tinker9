@@ -13,9 +13,8 @@ size_t buffer_size()
    return bsize;
 }
 
-
-void buffer_allocate(int flag, energy_buffer* pe, virial_buffer* pv,
-                     grad_prec** px, grad_prec** py, grad_prec** pz)
+void buffer_allocate(
+   int flag, energy_buffer* pe, virial_buffer* pv, grad_prec** px, grad_prec** py, grad_prec** pz)
 {
    assert(flag & calc::analyz);
    size_t bsize = buffer_size();
@@ -27,9 +26,8 @@ void buffer_allocate(int flag, energy_buffer* pe, virial_buffer* pv,
       darray::allocate(n, px, py, pz);
 }
 
-
-void buffer_deallocate(int flag, energy_buffer e, virial_buffer v,
-                       grad_prec* gx, grad_prec* gy, grad_prec* gz)
+void buffer_deallocate(
+   int flag, energy_buffer e, virial_buffer v, grad_prec* gx, grad_prec* gy, grad_prec* gz)
 {
    assert(flag & calc::analyz);
    if (flag & calc::energy)
@@ -40,14 +38,12 @@ void buffer_deallocate(int flag, energy_buffer e, virial_buffer v,
       darray::deallocate(gx, gy, gz);
 }
 
-
 void buffer_allocate(int flag, count_buffer* pc)
 {
    assert(flag & calc::analyz);
    size_t bsize = buffer_size();
    darray::allocate(bsize, pc);
 }
-
 
 void buffer_deallocate(int flag, count_buffer c)
 {
@@ -60,7 +56,6 @@ int count_reduce(const count_buffer ne)
    return c;
 }
 
-
 energy_prec energy_reduce(const energy_buffer e)
 {
    auto b = reduce_sum(e, buffer_size(), g::q0);
@@ -68,9 +63,7 @@ energy_prec energy_reduce(const energy_buffer e)
    return real_out;
 }
 
-
-void virial_reshape(virial_prec (&v_out)[9],
-                    const virial_prec (&v1)[virial_buffer_traits::N])
+void virial_reshape(virial_prec (&v_out)[9], const virial_prec (&v1)[virial_buffer_traits::N])
 {
    // xx yx zx yy zy zz
    //  0  1  2  3  4  5
@@ -85,16 +78,13 @@ void virial_reshape(virial_prec (&v_out)[9],
    v_out[8] = v1[5]; // zz
 }
 
-
-void virial_reduce(virial_prec (&v1)[virial_buffer_traits::N],
-                   const virial_buffer v)
+void virial_reduce(virial_prec (&v1)[virial_buffer_traits::N], const virial_buffer v)
 {
    virial_buffer_traits::type b[virial_buffer_traits::N];
    reduce_sum2(b, v, buffer_size(), g::q0);
    for (size_t i = 0; i < virial_buffer_traits::N; ++i)
       v1[i] = to_flt_host<virial_prec>(b[i]);
 }
-
 
 void virial_reduce(virial_prec (&v_out)[9], const virial_buffer v)
 {

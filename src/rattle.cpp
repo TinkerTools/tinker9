@@ -12,13 +12,11 @@
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/freeze.hh>
 
-
 namespace tinker {
 bool use_rattle()
 {
    return freeze::use_rattle;
 }
-
 
 namespace {
 // holonomic constraint information
@@ -31,7 +29,6 @@ struct HCInfo
    {
       return this->ir < h.ir;
    }
-
 
    // sorted by (i,k) pair
    struct less_ver2
@@ -49,7 +46,6 @@ struct HCInfo
    };
 };
 
-
 // HC-Molecule is a set of bonds.
 using HCMol = std::set<HCInfo>;
 bool operator<(const HCMol& h1, const HCMol& h2)
@@ -57,10 +53,9 @@ bool operator<(const HCMol& h1, const HCMol& h2)
    return *h1.begin() < *h2.begin();
 }
 
-
 namespace {
-bool HCMol_is_water(const HCMol& h, int& a, int& b, int& c, pos_prec& ab,
-                    pos_prec& ac, pos_prec& bc)
+bool HCMol_is_water(
+   const HCMol& h, int& a, int& b, int& c, pos_prec& ab, pos_prec& ac, pos_prec& bc)
 {
    if (h.size() != 3)
       return false;
@@ -92,10 +87,8 @@ bool HCMol_is_ch(const HCMol& h, int& a, int& b, pos_prec& ab)
    return true;
 }
 
-
 // methylene group, -NH2, etc.
-bool HCMol_is_ch2(const HCMol& h, int& a, int& b, int& c, pos_prec& ab,
-                  pos_prec& ac)
+bool HCMol_is_ch2(const HCMol& h, int& a, int& b, int& c, pos_prec& ab, pos_prec& ac)
 {
    if (h.size() != 2)
       return false;
@@ -135,10 +128,9 @@ bool HCMol_is_ch2(const HCMol& h, int& a, int& b, int& c, pos_prec& ab,
    return false;
 }
 
-
 // methyl group
-bool HCMol_is_ch3(const HCMol& h, int& a, int& b, int& c, int& d, pos_prec& ab,
-                  pos_prec& ac, pos_prec& ad)
+bool HCMol_is_ch3(
+   const HCMol& h, int& a, int& b, int& c, int& d, pos_prec& ab, pos_prec& ac, pos_prec& ad)
 {
    if (h.size() != 3)
       return false;
@@ -147,8 +139,7 @@ bool HCMol_is_ch3(const HCMol& h, int& a, int& b, int& c, int& d, pos_prec& ab,
    auto& m0 = m[0];
    auto& m1 = m[1];
    auto& m2 = m[2];
-   if (((m0.i == m1.i) or (m0.i == m1.k)) and
-       ((m0.i == m2.i) or (m0.i == m2.k))) {
+   if (((m0.i == m1.i) or (m0.i == m1.k)) and ((m0.i == m2.i) or (m0.i == m2.k))) {
       a = m0.i;
       b = m0.k;
       if (m0.i == m1.i)
@@ -163,8 +154,7 @@ bool HCMol_is_ch3(const HCMol& h, int& a, int& b, int& c, int& d, pos_prec& ab,
       ac = m1.dist;
       ad = m2.dist;
       return true;
-   } else if (((m0.k == m1.i) or (m0.k == m1.k)) and
-              ((m0.k == m2.i) or (m0.k == m2.k))) {
+   } else if (((m0.k == m1.i) or (m0.k == m1.k)) and ((m0.k == m2.i) or (m0.k == m2.k))) {
       a = m0.k;
       b = m0.i;
       if (m0.k == m1.i)
@@ -190,21 +180,19 @@ std::vector<HCMol> hc_mols;
 std::map<int, size_t> hc_dict;
 }
 
-
 void rattle_data(rc_op op)
 {
    if (not use_rattle())
       return;
 
-
    if (op & rc_dealloc) {
       rattle_dmol.nmol = 0;
       rattle_dmol.totmass = 0;
-      darray::deallocate(rattle_dmol.imol, rattle_dmol.kmol,
-                         rattle_dmol.molecule, rattle_dmol.molmass);
+      darray::deallocate(
+         rattle_dmol.imol, rattle_dmol.kmol, rattle_dmol.molecule, rattle_dmol.molmass);
       if (rc_flag & calc::md) {
-         darray::deallocate(ratcom_x, ratcom_y, ratcom_z, ratcom_vx, ratcom_vy,
-                            ratcom_vz, ratcom_massfrac);
+         darray::deallocate(
+            ratcom_x, ratcom_y, ratcom_z, ratcom_vx, ratcom_vy, ratcom_vz, ratcom_massfrac);
          ratcom_x = nullptr;
          ratcom_y = nullptr;
          ratcom_z = nullptr;
@@ -229,7 +217,6 @@ void rattle_data(rc_op op)
       darray::deallocate(rattle_xold, rattle_yold, rattle_zold);
    }
 
-
    if (op & rc_alloc) {
       // save data from Fortran library
       for (int ir = 0; ir < freeze::nrat; ++ir) {
@@ -240,7 +227,6 @@ void rattle_data(rc_op op)
          hc.k = std::max(i0, k0);
          hc.ir = ir;
          hc.dist = freeze::krat[ir];
-
 
          // check if atoms i or k are already recorded
          auto iloc = hc_dict.find(hc.i);
@@ -272,7 +258,6 @@ void rattle_data(rc_op op)
             hcm.insert(hc);
          }
       }
-
 
       // find the "rattle-molecules"
       {
@@ -355,8 +340,8 @@ void rattle_data(rc_op op)
          // allocate
          if (rc_flag & calc::md) {
             // Actually these arrays are only used for NPT RATTLE.
-            darray::allocate(n, &ratcom_x, &ratcom_y, &ratcom_z, &ratcom_vx,
-                             &ratcom_vy, &ratcom_vz, &ratcom_massfrac);
+            darray::allocate(n, &ratcom_x, &ratcom_y, &ratcom_z, &ratcom_vx, &ratcom_vy, &ratcom_vz,
+               &ratcom_massfrac);
          }
 
          int nrmol = hvec_molmass.size();
@@ -374,9 +359,7 @@ void rattle_data(rc_op op)
          wait_for(g::q0);
       }
 
-
       rateps = freeze::rateps;
-
 
       // find water-like constraints in hc_mols
       // find -CH, -CH2, -CH3
@@ -449,14 +432,11 @@ void rattle_data(rc_op op)
       darray::copyin(g::q0, nratch3, kratch3, veckch3.data());
       wait_for(g::q0);
 
-
       // erase water-like and methyl-like constraints in hc_mols
-      hc_mols.erase(
-         std::remove_if(hc_mols.begin(), hc_mols.end(),
-                        [](const HCMol& h) { return h.size() == 0; }),
+      hc_mols.erase(std::remove_if(hc_mols.begin(), hc_mols.end(),
+                       [](const HCMol& h) { return h.size() == 0; }),
          hc_mols.end());
       std::sort(hc_mols.begin(), hc_mols.end());
-
 
       nratmol = hc_mols.size();
       std::vector<int> iratm(2 * nratmol);
@@ -473,7 +453,6 @@ void rattle_data(rc_op op)
          iratm[2 * i + 0] = mbegin;
          iratm[2 * i + 1] = mbegin + msize;
 
-
          for (auto& hc : hcm) {
             iratn.push_back(hc.i);
             iratn.push_back(hc.k);
@@ -482,7 +461,6 @@ void rattle_data(rc_op op)
       }
       nrat = kr.size();
 
-
       darray::allocate(nrat, &irat, &krat);
       darray::allocate(nratmol, &iratmol);
       darray::copyin(g::q0, nrat, irat, iratn.data());
@@ -490,18 +468,14 @@ void rattle_data(rc_op op)
       darray::copyin(g::q0, nratmol, iratmol, iratm.data());
       wait_for(g::q0);
 
-
       darray::allocate(n, &rattle_xold, &rattle_yold, &rattle_zold);
-
 
       hc_mols.clear();
       hc_dict.clear();
    }
 }
 
-
-void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold,
-            const pos_prec* zold)
+void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    rattle_settle_acc(dt, xold, yold, zold);
    rattle_ch_acc(dt, xold, yold, zold);
@@ -512,13 +486,11 @@ void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold,
    rattle_acc(dt, xold, yold, zold);
 }
 
-
 void rattle2(time_prec dt, bool do_v)
 {
    if (do_v) {
       darray::zero(g::q0, buffer_size(), vir_buf);
    }
-
 
    rattle2_settle_acc(dt, do_v);
    rattle2_ch_acc(dt, do_v);
@@ -527,7 +499,6 @@ void rattle2(time_prec dt, bool do_v)
       rattle2_methyl_cu(dt, do_v);
 #endif
    rattle2_acc(dt, do_v);
-
 
    if (do_v) {
       virial_prec v[9];
@@ -538,9 +509,8 @@ void rattle2(time_prec dt, bool do_v)
    }
 }
 
-
-void shake(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-           const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
+void shake(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, const pos_prec* xold,
+   const pos_prec* yold, const pos_prec* zold)
 {
    shake_settle_acc(dt, xnew, ynew, znew, xold, yold, zold);
    shake_ch_acc(dt, xnew, ynew, znew, xold, yold, zold);

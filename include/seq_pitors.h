@@ -3,23 +3,18 @@
 #include "mathfunc.h"
 #include "seq_def.h"
 
-
 namespace tinker {
 #pragma acc routine seq
 template <class Ver>
 SEQ_CUDA
-void dk_pitors(real& restrict e, real& restrict vxx, real& restrict vyx,
-               real& restrict vzx, real& restrict vyy, real& restrict vzy,
-               real& restrict vzz,
+void dk_pitors(real& restrict e, real& restrict vxx, real& restrict vyx, real& restrict vzx,
+   real& restrict vyy, real& restrict vzy, real& restrict vzz,
 
-               grad_prec* restrict deptx, grad_prec* restrict depty,
-               grad_prec* restrict deptz,
+   grad_prec* restrict deptx, grad_prec* restrict depty, grad_prec* restrict deptz,
 
-               real ptorunit, int i, const int (*restrict ipit)[6],
-               const real* restrict kpit,
+   real ptorunit, int i, const int (*restrict ipit)[6], const real* restrict kpit,
 
-               const real* restrict x, const real* restrict y,
-               const real* restrict z)
+   const real* restrict x, const real* restrict y, const real* restrict z)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -95,7 +90,6 @@ void dk_pitors(real& restrict e, real& restrict vxx, real& restrict vyx,
    real rt2 = xt * xt + yt * yt + zt * zt;
    real ru2 = xu * xu + yu * yu + zu * zu;
    real rtru = REAL_SQRT(rt2 * ru2);
-
 
    if (rtru != 0) {
       real rdc = REAL_SQRT(xdc * xdc + ydc * ydc + zdc * zdc);

@@ -62,10 +62,10 @@ void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
                r2, xr, yr, zr, 1, 1, //
                ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, pdi,
                pti, //
-               rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
-               rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy],
-               rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz],
-               rpole[k][mpl_pme_zz], pdamp[k], thole[k], //
+               rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
+               rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz],
+               rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], pdamp[k],
+               thole[k], //
                0, fid, fip, fkd, fkp);
 
             gxi += fid.x;
@@ -131,10 +131,9 @@ void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
          pair_dfield<NON_EWALD>(                                             //
             r2, xr, yr, zr, dscale, pscale,                                  //
             ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, pdi, pti, //
-            rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
-            rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy],
-            rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz],
-            rpole[k][mpl_pme_zz], pdamp[k], thole[k], //
+            rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
+            rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
+            rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], pdamp[k], thole[k], //
             0, fid, fip, fkd, fkp);
 
          atomic_add(fid.x, &field[i][0]);
@@ -156,8 +155,8 @@ void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
 
 // see also subroutine ufield0b in induce.f
 #define UFIELD_DPTRS x, y, z, thole, pdamp, field, fieldp, uind, uinp
-void ufield_nonewald_acc(const real (*uind)[3], const real (*uinp)[3],
-                         real (*field)[3], real (*fieldp)[3])
+void ufield_nonewald_acc(
+   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
    darray::zero(g::q0, n, field, fieldp);
 
@@ -204,8 +203,8 @@ void ufield_nonewald_acc(const real (*uind)[3], const real (*uinp)[3],
             pair_ufield<NON_EWALD>(                                      //
                r2, xr, yr, zr, 1,                                        //
                uindi0, uindi1, uindi2, uinpi0, uinpi1, uinpi2, pdi, pti, //
-               uind[k][0], uind[k][1], uind[k][2], uinp[k][0], uinp[k][1],
-               uinp[k][2], pdamp[k], thole[k], //
+               uind[k][0], uind[k][1], uind[k][2], uinp[k][0], uinp[k][1], uinp[k][2], pdamp[k],
+               thole[k], //
                0, fid, fip, fkd, fkp);
 
             gxi += fid.x;
@@ -266,8 +265,8 @@ void ufield_nonewald_acc(const real (*uind)[3], const real (*uinp)[3],
          pair_ufield<NON_EWALD>(                                      //
             r2, xr, yr, zr, uscale,                                   //
             uindi0, uindi1, uindi2, uinpi0, uinpi1, uinpi2, pdi, pti, //
-            uind[k][0], uind[k][1], uind[k][2], uinp[k][0], uinp[k][1],
-            uinp[k][2], pdamp[k], thole[k], //
+            uind[k][0], uind[k][1], uind[k][2], uinp[k][0], uinp[k][1], uinp[k][2], pdamp[k],
+            thole[k], //
             0, fid, fip, fkd, fkp);
 
          atomic_add(fid.x, &field[i][0]);

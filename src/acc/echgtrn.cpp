@@ -1,5 +1,5 @@
-#include "add.h"
 #include "echgtrn.h"
+#include "add.h"
 #include "glob.nblist.h"
 #include "image.h"
 #include "md.h"
@@ -12,8 +12,7 @@
 #include <cassert>
 
 namespace tinker {
-#define DEVICE_PTRS                                                            \
-   x, y, z, dectx, decty, dectz, chgct, dmpct, nct, ect, vir_ect
+#define DEVICE_PTRS x, y, z, dectx, decty, dectz, chgct, dmpct, nct, ect, vir_ect
 template <class Ver>
 void echgtrn_acc1()
 {
@@ -65,8 +64,7 @@ void echgtrn_acc1()
          if (r2 <= off2) {
             real r = REAL_SQRT(r2);
             MAYBE_UNUSED real e, de;
-            pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e,
-                              de);
+            pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e, de);
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -109,7 +107,6 @@ void echgtrn_acc1()
       }
    } // end for (int i)
 
-
    #pragma acc parallel async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(DEVICE_PTRS,mdwexclude,mdwexclude_scale)
@@ -137,13 +134,11 @@ void echgtrn_acc1()
       if (r2 <= off2) {
          real r = REAL_SQRT(r2);
          MAYBE_UNUSED real e, de;
-         pair_chgtrn<do_g>(r, cut, off, mscale, f, alphai, chgi, alphak, chgk,
-                           e, de);
+         pair_chgtrn<do_g>(r, cut, off, mscale, f, alphai, chgi, alphak, chgk, e, de);
 
          if CONSTEXPR (do_a) {
             real e1, de1;
-            pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e1,
-                              de1);
+            pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e1, de1);
 
             if (mscale == -1 and e1 != 0)
                atomic_add(-1, nct, offset);

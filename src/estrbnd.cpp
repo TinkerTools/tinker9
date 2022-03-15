@@ -53,14 +53,12 @@ void estrbnd_data(rc_op op)
    }
 }
 
-
 void estrbnd(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-
 
    if (rc_a) {
       host_zero(energy_eba, virial_eba);
@@ -73,9 +71,7 @@ void estrbnd(int vers)
          darray::zero(g::q0, n, debax, debay, debaz);
    }
 
-
    estrbnd_acc(vers);
-
 
    if (rc_a) {
       if (do_e) {

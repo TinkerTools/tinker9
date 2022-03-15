@@ -7,25 +7,20 @@
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/units.hh>
 
-
 namespace tinker {
 namespace {
 const int maxiter = 500;
 const double sor = 1.25;
 }
 
-
 template <class HTYPE>
 void constrain_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-                   const pos_prec* xold, const pos_prec* yold,
-                   const pos_prec* zold)
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    if (nratmol <= 0)
       return;
 
-
    const double eps = rateps;
-
 
    #pragma acc parallel loop independent async\
            deviceptr(massinv,xnew,ynew,znew,vx,vy,vz,irat,krat,iratmol,\
@@ -33,7 +28,6 @@ void constrain_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
    for (int im = 0; im < nratmol; ++im) {
       int mbegin = iratmol[im][0];
       int mend = iratmol[im][1];
-
 
       bool done = false;
       #pragma acc loop seq
@@ -87,15 +81,12 @@ void constrain_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
    }
 }
 
-
 template <class HTYPE>
-void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-                 const pos_prec* xold, const pos_prec* yold,
-                 const pos_prec* zold)
+void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, const pos_prec* xold,
+   const pos_prec* yold, const pos_prec* zold)
 {
    if (nratwt <= 0)
       return;
-
 
    #pragma acc parallel loop independent async\
            deviceptr(xold,yold,zold,xnew,ynew,znew,vx,vy,vz,mass,\
@@ -125,10 +116,8 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
       }
       invm = 1 / (m0 + m1 + m2);
 
-
       // ABC0 is the triangle at t0.
       // ABC1 is the triangle at t0+dt in the absence of constraints.
-
 
       // global frame vectors AB0 and AC0
       double xb0, yb0, zb0, xc0, yc0, zc0;
@@ -139,13 +128,11 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
       yc0 = yold[ic] - yold[ia];
       zc0 = zold[ic] - zold[ia];
 
-
       // global frame centroid D1
       double xcom, ycom, zcom;
       xcom = (m0 * xnew[ia] + m1 * xnew[ib] + m2 * xnew[ic]) * invm;
       ycom = (m0 * ynew[ia] + m1 * ynew[ib] + m2 * ynew[ic]) * invm;
       zcom = (m0 * znew[ia] + m1 * znew[ib] + m2 * znew[ic]) * invm;
-
 
       // global frame vectors DA1, DB1, DC1
       double xa1, ya1, za1, xb1, yb1, zb1, xc1, yc1, zc1;
@@ -158,7 +145,6 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
       xc1 = xnew[ic] - xcom;
       yc1 = ynew[ic] - ycom;
       zc1 = znew[ic] - zcom;
-
 
       // local frame unit vectors x', y', z' and rotation matrix
       double xakszd, yakszd, zakszd;
@@ -194,7 +180,6 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
       trns23 = yakszd * azlng;
       trns33 = zakszd * azlng;
 
-
       // local frame vectors AB0 and AC0
       double xb0d, yb0d;
       double xc0d, yc0d;
@@ -202,7 +187,6 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
       yb0d = trns12 * xb0 + trns22 * yb0 + trns32 * zb0;
       xc0d = trns11 * xc0 + trns21 * yc0 + trns31 * zc0;
       yc0d = trns12 * xc0 + trns22 * yc0 + trns32 * zc0;
-
 
       // local frame vectors DA1, DB1, DC1
       // double xa1d, ya1d;
@@ -219,7 +203,6 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
       yc1d = trns12 * xc1 + trns22 * yc1 + trns32 * zc1;
       zc1d = trns13 * xc1 + trns23 * yc1 + trns33 * zc1;
 
-
       //====================================================================//
       // analogous to Eq.A1 for arbitrary triangular constraint
       // local frame coordinates of abc0'
@@ -235,7 +218,6 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
          sinA = sqrt(1 - cosA * cosA);
          xg = (m1 * lab + m2 * lac * cosA) * invm;
          yg = m2 * lac * sinA * invm;
-
 
          // vectors GA, GB, GC
          double xga, yga, xgb, ygb, xgc, ygc;
@@ -255,14 +237,12 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
          sinAGB = sqrt(1 - cosAGB * cosAGB);
          sinAGC = sqrt(1 - cosAGC * cosAGC);
 
-
          yra = lga;
          xrb = -sinAGB * lgb;
          yrb = cosAGB * lgb;
          xrc = sinAGC * lgc;
          yrc = cosAGC * lgc;
       }
-
 
       //====================================================================//
       // Eq.A5
@@ -271,7 +251,6 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
       cosphi = sqrt(1 - sinphi * sinphi);
       sinpsi = ((zb1d - zc1d) - (yrb - yrc) * sinphi) / ((xrc - xrb) * cosphi);
       cospsi = sqrt(1 - sinpsi * sinpsi);
-
 
       //====================================================================//
       // Eq.A3 local frame vectors da2', db2', dc2'
@@ -295,7 +274,6 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
       xb2d -= deltx * m2 / (m1 + m2);
       xc2d += deltx * m1 / (m1 + m2);
 
-
       //====================================================================//
       // Eq.A15
       double alpa, beta, gama, al2be2, sinthe, costhe;
@@ -308,7 +286,6 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
       al2be2 = alpa * alpa + beta * beta;
       sinthe = (alpa * gama - beta * sqrt(al2be2 - gama * gama)) / al2be2;
       costhe = sqrt(1 - sinthe * sinthe);
-
 
       //====================================================================//
       // Eq.A4 local frame vectors da3', db3', dc3'
@@ -325,7 +302,6 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
       yc3d = xc2d * sinthe + yc2d * costhe;
       zc3d = zc1d;
 
-
       // global frame coordinates DA3, DB3, DC3
       double xa3, ya3, za3;
       double xb3, yb3, zb3;
@@ -340,7 +316,6 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
       yc3 = trns21 * xc3d + trns22 * yc3d + trns23 * zc3d;
       zc3 = trns31 * xc3d + trns32 * yc3d + trns33 * zc3d;
 
-
       xnew[ia] = xcom + xa3;
       ynew[ia] = ycom + ya3;
       znew[ia] = zcom + za3;
@@ -351,10 +326,8 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
       ynew[ic] = ycom + yc3;
       znew[ic] = zcom + zc3;
 
-
       //====================================================================//
       // velocity correction due to the position constraints
-
 
       // This code is not in the original SETTLE paper, but is necessary for
       // the velocity verlet integrator.
@@ -373,15 +346,12 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
    }
 }
 
-
 template <class HTYPE>
-void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew,
-                       pos_prec* znew, const pos_prec* xold,
-                       const pos_prec* yold, const pos_prec* zold)
+void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    if (nratch <= 0)
       return;
-
 
    #pragma acc parallel loop independent vector_length(64) async\
            deviceptr(xold,yold,zold,xnew,ynew,znew,vx,vy,vz,massinv,\
@@ -404,7 +374,6 @@ void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew,
       }
       invm = rma + rmb;
 
-
       // vectors AB0, AB1
       // AB0 dot AB1
       double xb0, yb0, zb0, sqb0, xb1, yb1, zb1, sqb1, dot;
@@ -418,7 +387,6 @@ void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew,
       sqb1 = xb1 * xb1 + yb1 * yb1 + zb1 * zb1;
       dot = xb0 * xb1 + yb0 * yb1 + zb0 * zb1;
 
-
       // al lambda**2 - 2 * be lambda + ga = 0
       double al, be, ga, sqterm, lam;
       al = sqb0 * invm * invm;
@@ -426,7 +394,6 @@ void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew,
       ga = sqb1 - lab * lab;
       sqterm = be * be - al * ga;
       lam = (be - sqrt(sqterm)) / al;
-
 
       // delta_A and delta_B
       double dxa, dya, dza, dxb, dyb, dzb;
@@ -437,14 +404,12 @@ void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew,
       dyb = -lam * yb0 * rmb;
       dzb = -lam * zb0 * rmb;
 
-
       xnew[ia] += dxa;
       ynew[ia] += dya;
       znew[ia] += dza;
       xnew[ib] += dxb;
       ynew[ib] += dyb;
       znew[ib] += dzb;
-
 
       if CONSTEXPR (not eq<HTYPE, SHAKE>()) {
          double invdt = 1 / dt;
@@ -458,74 +423,57 @@ void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew,
    }
 }
 
-
-void rattle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
-                const pos_prec* zold)
+void rattle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    constrain_acc<RATTLE>(dt, xpos, ypos, zpos, xold, yold, zold);
 }
 
-
-void rattle_settle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
-                       const pos_prec* zold)
+void rattle_settle_acc(
+   time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    settle_acc1<RATTLE>(dt, xpos, ypos, zpos, xold, yold, zold);
 }
 
-
-void rattle_ch_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
-                   const pos_prec* zold)
+void rattle_ch_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    constrain_ch_acc1<RATTLE>(dt, xpos, ypos, zpos, xold, yold, zold);
 }
 
-
-void lprat_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
-               const pos_prec* zold)
+void lprat_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    constrain_acc<LPRAT>(dt, xpos, ypos, zpos, xold, yold, zold);
 }
 
-
-void lprat_settle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
-                      const pos_prec* zold)
+void lprat_settle_acc(
+   time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    settle_acc1<LPRAT>(dt, xpos, ypos, zpos, xold, yold, zold);
 }
 
-
-void lprat_ch_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold,
-                  const pos_prec* zold)
+void lprat_ch_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    constrain_ch_acc1<LPRAT>(dt, xpos, ypos, zpos, xold, yold, zold);
 }
 
-
-void shake_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-               const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
+void shake_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, const pos_prec* xold,
+   const pos_prec* yold, const pos_prec* zold)
 {
    constrain_acc<SHAKE>(dt, xnew, ynew, znew, xold, yold, zold);
 }
 
-
-void shake_settle_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew,
-                      pos_prec* znew, const pos_prec* xold,
-                      const pos_prec* yold, const pos_prec* zold)
+void shake_settle_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    settle_acc1<SHAKE>(dt, xnew, ynew, znew, xold, yold, zold);
 }
 
-
 void shake_ch_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-                  const pos_prec* xold, const pos_prec* yold,
-                  const pos_prec* zold)
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    constrain_ch_acc1<SHAKE>(dt, xnew, ynew, znew, xold, yold, zold);
 }
 
-
 //====================================================================//
-
 
 template <bool DO_V>
 void constrain2_acc(time_prec dt)
@@ -533,18 +481,15 @@ void constrain2_acc(time_prec dt)
    if (nratmol <= 0)
       return;
 
-
    const double eps = rateps / dt;
    const double vterm = 2 / (dt * units::ekcal);
    size_t bufsize = buffer_size();
-
 
    #pragma acc parallel loop independent async\
            deviceptr(massinv,xpos,ypos,zpos,vx,vy,vz,vir_buf,irat,krat,iratmol)
    for (int im = 0; im < nratmol; ++im) {
       int mbegin = iratmol[im][0];
       int mend = iratmol[im][1];
-
 
       bool done = false;
       #pragma acc loop seq
@@ -590,8 +535,8 @@ void constrain2_acc(time_prec dt)
                   vyy -= yr * yterm;
                   vzy -= zr * yterm;
                   vzz -= zr * zterm;
-                  atomic_add((real)vxx, (real)vyx, (real)vzx, (real)vyy,
-                             (real)vzy, (real)vzz, vir_buf, offset);
+                  atomic_add((real)vxx, (real)vyx, (real)vzx, (real)vyy, (real)vzy, (real)vzz,
+                     vir_buf, offset);
                }
             } // end if (delta > eps)
          }
@@ -599,17 +544,14 @@ void constrain2_acc(time_prec dt)
    }
 }
 
-
 template <bool DO_V>
 void settle2_acc1(time_prec dt)
 {
    if (nratwt <= 0)
       return;
 
-
    const double vterm = 2 / (dt * units::ekcal);
    size_t bufsize = buffer_size();
-
 
    #pragma acc parallel loop independent async\
            deviceptr(vx,vy,vz,xpos,ypos,zpos,mass,vir_buf,iratwt)
@@ -622,7 +564,6 @@ void settle2_acc1(time_prec dt)
       m0 = mass[ia];
       m1 = mass[ib];
       m2 = mass[ic];
-
 
       // vectors AB, BC, CA
       double xab, yab, zab;
@@ -637,7 +578,6 @@ void settle2_acc1(time_prec dt)
       xca = xpos[ia] - xpos[ic];
       yca = ypos[ia] - ypos[ic];
       zca = zpos[ia] - zpos[ic];
-
 
       // unit vectors eAB, eBC, eCA
       double ablng, bclng, calng;
@@ -657,7 +597,6 @@ void settle2_acc1(time_prec dt)
       yeca = yca * calng;
       zeca = zca * calng;
 
-
       // velocity vectors vAB, vBC, vCA
       double xvab, yvab, zvab;
       double xvbc, yvbc, zvbc;
@@ -672,18 +611,15 @@ void settle2_acc1(time_prec dt)
       yvca = vy[ia] - vy[ic];
       zvca = vz[ia] - vz[ic];
 
-
       double vabab, vbcbc, vcaca;
       vabab = xvab * xeab + yvab * yeab + zvab * zeab;
       vbcbc = xvbc * xebc + yvbc * yebc + zvbc * zebc;
       vcaca = xvca * xeca + yvca * yeca + zvca * zeca;
 
-
       double cosa, cosb, cosc;
       cosa = -xeab * xeca - yeab * yeca - zeab * zeca;
       cosb = -xebc * xeab - yebc * yeab - zebc * zeab;
       cosc = -xeca * xebc - yeca * yebc - zeca * zebc;
-
 
       //====================================================================//
       // Eq.B1
@@ -703,9 +639,7 @@ void settle2_acc1(time_prec dt)
       c2 = m0 * cosc;
       c3 = m2 + m0;
       // det(M)
-      denom = a1 * (b2 * c3 - b3 * c2) + a2 * (b3 * c1 - b1 * c3) +
-         a3 * (b1 * c2 - b2 * c1);
-
+      denom = a1 * (b2 * c3 - b3 * c2) + a2 * (b3 * c1 - b1 * c3) + a3 * (b1 * c2 - b2 * c1);
 
       // inverse(M)*det(M)
       double av1, av2, av3, bv1, bv2, bv3, cv1, cv2, cv3;
@@ -719,7 +653,6 @@ void settle2_acc1(time_prec dt)
       cv2 = c1 * a2 - c2 * a1;
       cv3 = a1 * b2 - a2 * b1;
 
-
       // t = inverse(M)*m2v
       // clang-format off
       double tabd, tbcd, tcad;
@@ -727,7 +660,6 @@ void settle2_acc1(time_prec dt)
       tbcd = bv1*m0*m1*vabab + bv2*m1*m2*vbcbc + bv3*m2*m0*vcaca;
       tcad = cv1*m0*m1*vabab + cv2*m1*m2*vbcbc + cv3*m2*m0*vcaca;
       // clang-format on
-
 
       denom = 1 / denom;
       vx[ia] += (xeab * tabd - xeca * tcad) / m0 * denom;
@@ -739,7 +671,6 @@ void settle2_acc1(time_prec dt)
       vx[ic] += (xeca * tcad - xebc * tbcd) / m2 * denom;
       vy[ic] += (yeca * tcad - yebc * tbcd) / m2 * denom;
       vz[ic] += (zeca * tcad - zebc * tbcd) / m2 * denom;
-
 
       if CONSTEXPR (DO_V) {
          double xterm, yterm, zterm;
@@ -772,14 +703,12 @@ void settle2_acc1(time_prec dt)
          vzy += zca * yterm;
          vzz += zca * zterm;
 
-
          size_t offset = iw & (bufsize - 1);
-         atomic_add((real)vxx, (real)vyx, (real)vzx, (real)vyy, (real)vzy,
-                    (real)vzz, vir_buf, offset);
+         atomic_add(
+            (real)vxx, (real)vyx, (real)vzx, (real)vyy, (real)vzy, (real)vzz, vir_buf, offset);
       }
    }
 }
-
 
 template <bool DO_V>
 void constrain2_ch_acc1(time_prec dt)
@@ -787,10 +716,8 @@ void constrain2_ch_acc1(time_prec dt)
    if (nratch <= 0)
       return;
 
-
    const double vterm = 2 / (dt * units::ekcal);
    size_t bufsize = buffer_size();
-
 
    #pragma acc parallel loop independent vector_length(64) async\
            deviceptr(massinv,xpos,ypos,zpos,vx,vy,vz,vir_buf,iratch)
@@ -801,7 +728,6 @@ void constrain2_ch_acc1(time_prec dt)
       ib = iratch[im][1];
       rma = massinv[ia];
       rmb = massinv[ib];
-
 
       // vectors AB3, vAB0, AB3 dot vAB0, -lam
       double xr, yr, zr, xv, yv, zv, dot, term;
@@ -814,7 +740,6 @@ void constrain2_ch_acc1(time_prec dt)
       dot = xr * xv + yr * yv + zr * zv;
       double r2 = xr * xr + yr * yr + zr * zr;
       term = -dot / ((rma + rmb) * r2);
-
 
       double xterm, yterm, zterm;
       xterm = xr * term;
@@ -839,12 +764,11 @@ void constrain2_ch_acc1(time_prec dt)
          vyy -= yr * yterm;
          vzy -= zr * yterm;
          vzz -= zr * zterm;
-         atomic_add((real)vxx, (real)vyx, (real)vzx, (real)vyy, (real)vzy,
-                    (real)vzz, vir_buf, offset);
+         atomic_add(
+            (real)vxx, (real)vyx, (real)vzx, (real)vyy, (real)vzy, (real)vzz, vir_buf, offset);
       }
    }
 }
-
 
 void rattle2_acc(time_prec dt, bool do_v)
 {
@@ -855,7 +779,6 @@ void rattle2_acc(time_prec dt, bool do_v)
    }
 }
 
-
 void rattle2_settle_acc(time_prec dt, bool do_v)
 {
    if (do_v)
@@ -863,7 +786,6 @@ void rattle2_settle_acc(time_prec dt, bool do_v)
    else
       settle2_acc1<false>(dt);
 }
-
 
 void rattle2_ch_acc(time_prec dt, bool do_v)
 {

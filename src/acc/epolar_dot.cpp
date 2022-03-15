@@ -15,7 +15,7 @@ void epolar0_dotprod_acc(const real (*gpu_uind)[3], const real (*gpu_udirp)[3])
       int offset = i & (bufsize - 1);
       real e = polarity_inv[i] *
          (gpu_uind[i][0] * gpu_udirp[i][0] + gpu_uind[i][1] * gpu_udirp[i][1] +
-          gpu_uind[i][2] * gpu_udirp[i][2]);
+            gpu_uind[i][2] * gpu_udirp[i][2]);
       atomic_add(f * e, ep, offset);
    }
 }

@@ -7,7 +7,6 @@
 #include "md.h"
 #include <cassert>
 
-
 namespace tinker {
 void bndchg_acc1()
 {
@@ -18,7 +17,6 @@ void bndchg_acc1()
       int ia = ibnd[i][0];
       int ib = ibnd[i][1];
 
-
       real pb = bflx[i];
       real ideal = bl[i];
       real xab = x[ia] - x[ib];
@@ -27,12 +25,10 @@ void bndchg_acc1()
       real rab = REAL_SQRT(xab * xab + yab * yab + zab * zab);
       real dq = pb * (rab - ideal);
 
-
       atomic_add(-dq, pdelta, ia);
       atomic_add(dq, pdelta, ib);
    } // end for (int i)
 }
-
 
 void angchg_acc1()
 {
@@ -43,7 +39,6 @@ void angchg_acc1()
       int ia = iang[i][0];
       int ib = iang[i][1];
       int ic = iang[i][2];
-
 
       real pa1 = aflx[i][0];
       real pa2 = aflx[i][1];
@@ -68,7 +63,6 @@ void angchg_acc1()
       real rab = REAL_SQRT(xab * xab + yab * yab + zab * zab);
       real rcb = REAL_SQRT(xcb * xcb + ycb * ycb + zcb * zcb);
 
-
       real dot, angle, cosine;
       if (rab != 0 and rcb != 0) {
          dot = xab * xcb + yab * ycb + zab * zcb;
@@ -76,7 +70,6 @@ void angchg_acc1()
          cosine = REAL_MIN(1.0, REAL_MAX(-1, cosine));
          angle = radian * REAL_ACOS(cosine);
       }
-
 
       int ab = balist[i][0];
       int cb = balist[i][1];
@@ -90,15 +83,12 @@ void angchg_acc1()
    } // end for (int i)
 }
 
-
 void alterchg_acc()
 {
    darray::zero(g::q0, n, pdelta);
 
-
    bndchg_acc1();
    angchg_acc1();
-
 
    // alter monopoles and charge penetration
    #pragma acc parallel loop independent async\

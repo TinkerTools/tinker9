@@ -12,13 +12,10 @@
 #include <set>
 #include <sstream>
 
-
 using namespace tinker;
-
 
 // static const int ans[5][216][70];
 #include "test_nblist.hh"
-
 
 namespace {
 // if all integers in ref can be found in array
@@ -39,9 +36,8 @@ bool find_match(const int* array, int na, int iframe, int iatom)
    if (missing.size() == 0) {
       return true;
    } else {
-      std::string line =
-         format("The following neighbors of atom %3d in frame %d are missing:",
-                iatom + 1, iframe + 1);
+      std::string line = format(
+         "The following neighbors of atom %3d in frame %d are missing:", iatom + 1, iframe + 1);
       for (auto i : missing) {
          line += format(" %3d", i + 1);
       }
@@ -50,7 +46,6 @@ bool find_match(const int* array, int na, int iframe, int iatom)
       return false;
    }
 }
-
 
 void goto_frame(int idx0)
 {
@@ -62,14 +57,11 @@ void goto_frame(int idx0)
    set_default_box(b);
 }
 
-
-void copyin_arc_file(const std::string& arcfile, int first1, int last1,
-                     int step)
+void copyin_arc_file(const std::string& arcfile, int first1, int last1, int step)
 {
 
    if (!(first1 >= 1 && last1 >= first1 && step > 0)) {
-      std::string msg = format("Invalid First/Last/Step Values  : %d/%d/%d",
-                               first1, last1, step);
+      std::string msg = format("Invalid First/Last/Step Values  : %d/%d/%d", first1, last1, step);
       TINKER_THROW(msg);
    }
 
@@ -77,7 +69,6 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
    // (1, 8, 2) -> 4
    int tn = (last1 - first1) / step + 1;
    assert(tn <= trajn);
-
 
    std::ifstream iarc(arcfile);
    if (iarc) {
@@ -122,15 +113,14 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
                std::getline(iarc, line);
                std::istringstream ss(line);
                int c = 6 * current;
-               ss >> bbuf[c] >> bbuf[c + 1] >> bbuf[c + 2] >> bbuf[c + 3] >>
-                  bbuf[c + 4] >> bbuf[c + 5];
+               ss >> bbuf[c] >> bbuf[c + 1] >> bbuf[c + 2] >> bbuf[c + 3] >> bbuf[c + 4] >>
+                  bbuf[c + 5];
             }
             int off = current * n;
             for (int j = 0; j < n; ++j) {
                std::getline(iarc, line);
                std::istringstream ss(line);
-               ss >> dummy1 >> dummy2 >> xbuf[off + j] >> ybuf[off + j] >>
-                  zbuf[off + j];
+               ss >> dummy1 >> dummy2 >> xbuf[off + j] >> ybuf[off + j] >> zbuf[off + j];
             }
             ++current;
          } else {
@@ -142,8 +132,8 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
       if (has_boxsize) {
          for (int i = 0; i < tn; ++i) {
             int c = i * 6;
-            box_lattice(trajbox[i], box_shape, bbuf[c], bbuf[c + 1],
-                        bbuf[c + 2], bbuf[c + 3], bbuf[c + 4], bbuf[c + 5]);
+            box_lattice(trajbox[i], box_shape, bbuf[c], bbuf[c + 1], bbuf[c + 2], bbuf[c + 3],
+               bbuf[c + 4], bbuf[c + 5]);
          }
       }
       darray::copyin(g::q0, n * tn, trajx, xbuf.data());
@@ -157,7 +147,6 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1,
    }
 }
 }
-
 
 TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]")
 {

@@ -3,27 +3,21 @@
 #include "mathfunc.h"
 #include "seq_def.h"
 
-
 namespace tinker {
 #pragma acc routine seq
 template <class Ver>
 SEQ_CUDA
-void dk_angtor(real& restrict e, real& restrict vxx, real& restrict vyx,
-               real& restrict vzx, real& restrict vyy, real& restrict vzy,
-               real& restrict vzz,
+void dk_angtor(real& restrict e, real& restrict vxx, real& restrict vyx, real& restrict vzx,
+   real& restrict vyy, real& restrict vzy, real& restrict vzz,
 
-               grad_prec* restrict deatx, grad_prec* restrict deaty,
-               grad_prec* restrict deatz,
+   grad_prec* restrict deatx, grad_prec* restrict deaty, grad_prec* restrict deatz,
 
-               real atorunit, int iangtor, const int (*restrict iat)[3],
-               const real (*restrict kant)[6],
+   real atorunit, int iangtor, const int (*restrict iat)[3], const real (*restrict kant)[6],
 
-               const real* restrict anat, const int (*restrict itors)[4],
-               const real (*restrict tors1)[4], const real (*restrict tors2)[4],
-               const real (*restrict tors3)[4],
+   const real* restrict anat, const int (*restrict itors)[4], const real (*restrict tors1)[4],
+   const real (*restrict tors2)[4], const real (*restrict tors3)[4],
 
-               const real* restrict x, const real* restrict y,
-               const real* restrict z)
+   const real* restrict x, const real* restrict y, const real* restrict z)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -33,13 +27,11 @@ void dk_angtor(real& restrict e, real& restrict vxx, real& restrict vyx,
    if CONSTEXPR (do_v)
       vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
 
-
    const int i = iat[iangtor][0];
    const int ia = itors[i][0];
    const int ib = itors[i][1];
    const int ic = itors[i][2];
    const int id = itors[i][3];
-
 
    real xia = x[ia];
    real yia = y[ia];
@@ -63,7 +55,6 @@ void dk_angtor(real& restrict e, real& restrict vxx, real& restrict vyx,
    real ydc = yid - yic;
    real zdc = zid - zic;
 
-
    real rba2 = xba * xba + yba * yba + zba * zba;
    real rcb2 = xcb * xcb + ycb * ycb + zcb * zcb;
    real rdc2 = xdc * xdc + ydc * ydc + zdc * zdc;
@@ -71,7 +62,6 @@ void dk_angtor(real& restrict e, real& restrict vxx, real& restrict vyx,
    rmin = REAL_MIN(rmin, rdc2);
    if (rmin == 0)
       return;
-
 
    real xt = yba * zcb - ycb * zba;
    real yt = zba * xcb - zcb * xba;
@@ -89,7 +79,6 @@ void dk_angtor(real& restrict e, real& restrict vxx, real& restrict vyx,
    real rtru = REAL_SQRT(rt2 * ru2);
    real rcb = REAL_SQRT(rcb2);
 
-
    real xca = xic - xia;
    real yca = yic - yia;
    real zca = zic - zia;
@@ -97,10 +86,8 @@ void dk_angtor(real& restrict e, real& restrict vxx, real& restrict vyx,
    real ydb = yid - yib;
    real zdb = zid - zib;
 
-
    real cosine = (xt * xu + yt * yu + zt * zu) * REAL_RECIP(rtru);
    real sine = (xcb * xtu + ycb * ytu + zcb * ztu) * REAL_RECIP(rcb * rtru);
-
 
    real c1 = tors1[i][2];
    real s1 = tors1[i][3];
@@ -116,7 +103,6 @@ void dk_angtor(real& restrict e, real& restrict vxx, real& restrict vyx,
    real phi2 = 1 + (cosine2 * c2 + sine2 * s2);
    real phi3 = 1 + (cosine3 * c3 + sine3 * s3);
 
-
    real dphi1, dphi2, dphi3;
    if CONSTEXPR (do_g) {
       dphi1 = cosine * s1 - sine * c1;
@@ -124,13 +110,11 @@ void dk_angtor(real& restrict e, real& restrict vxx, real& restrict vyx,
       dphi3 = 3 * (cosine3 * s3 - sine3 * c3);
    }
 
-
    real e1, e2;
    MAYBE_UNUSED real dedxia, dedyia, dedzia;
    MAYBE_UNUSED real dedxib, dedyib, dedzib;
    MAYBE_UNUSED real dedxic, dedyic, dedzic;
    MAYBE_UNUSED real dedxid, dedyid, dedzid;
-
 
    {
       real v1 = kant[iangtor][0];
@@ -152,33 +136,28 @@ void dk_angtor(real& restrict e, real& restrict vxx, real& restrict vyx,
          real dedyu = dedphi * (zcb * xu - xcb * zu) / (ru2 * rcb);
          real dedzu = dedphi * (xcb * yu - ycb * xu) / (ru2 * rcb);
 
-
          real terma = -ddt / (rba2 * REAL_SQRT(rt2));
          real termc = ddt / (rcb2 * REAL_SQRT(rt2));
          dedxia = terma * (zba * yt - yba * zt) + zcb * dedyt - ycb * dedzt;
          dedyia = terma * (xba * zt - zba * xt) + xcb * dedzt - zcb * dedxt;
          dedzia = terma * (yba * xt - xba * yt) + ycb * dedxt - xcb * dedyt;
-         dedxib = terma * (yba * zt - zba * yt) +
-            termc * (zcb * yt - ycb * zt) + yca * dedzt - zca * dedyt +
-            zdc * dedyu - ydc * dedzu;
-         dedyib = terma * (zba * xt - xba * zt) +
-            termc * (xcb * zt - zcb * xt) + zca * dedxt - xca * dedzt +
-            xdc * dedzu - zdc * dedxu;
-         dedzib = terma * (xba * yt - yba * xt) +
-            termc * (ycb * xt - xcb * yt) + xca * dedyt - yca * dedxt +
-            ydc * dedxu - xdc * dedyu;
-         dedxic = termc * (ycb * zt - zcb * yt) + zba * dedyt - yba * dedzt +
-            ydb * dedzu - zdb * dedyu;
-         dedyic = termc * (zcb * xt - xcb * zt) + xba * dedzt - zba * dedxt +
-            zdb * dedxu - xdb * dedzu;
-         dedzic = termc * (xcb * yt - ycb * xt) + yba * dedxt - xba * dedyt +
-            xdb * dedyu - ydb * dedxu;
+         dedxib = terma * (yba * zt - zba * yt) + termc * (zcb * yt - ycb * zt) + yca * dedzt -
+            zca * dedyt + zdc * dedyu - ydc * dedzu;
+         dedyib = terma * (zba * xt - xba * zt) + termc * (xcb * zt - zcb * xt) + zca * dedxt -
+            xca * dedzt + xdc * dedzu - zdc * dedxu;
+         dedzib = terma * (xba * yt - yba * xt) + termc * (ycb * xt - xcb * yt) + xca * dedyt -
+            yca * dedxt + ydc * dedxu - xdc * dedyu;
+         dedxic =
+            termc * (ycb * zt - zcb * yt) + zba * dedyt - yba * dedzt + ydb * dedzu - zdb * dedyu;
+         dedyic =
+            termc * (zcb * xt - xcb * zt) + xba * dedzt - zba * dedxt + zdb * dedxu - xdb * dedzu;
+         dedzic =
+            termc * (xcb * yt - ycb * xt) + yba * dedxt - xba * dedyt + xdb * dedyu - ydb * dedxu;
          dedxid = zcb * dedyu - ycb * dedzu;
          dedyid = xcb * dedzu - zcb * dedxu;
          dedzid = ycb * dedxu - xcb * dedyu;
       }
    }
-
 
    {
       real v1 = kant[iangtor][3];
@@ -200,33 +179,28 @@ void dk_angtor(real& restrict e, real& restrict vxx, real& restrict vyx,
          real dedyu = dedphi * (zcb * xu - xcb * zu) / (ru2 * rcb);
          real dedzu = dedphi * (xcb * yu - ycb * xu) / (ru2 * rcb);
 
-
          real termb = -ddt / (rcb2 * REAL_SQRT(ru2));
          real termd = ddt / (rdc2 * REAL_SQRT(ru2));
          dedxia += zcb * dedyt - ycb * dedzt;
          dedyia += xcb * dedzt - zcb * dedxt;
          dedzia += ycb * dedxt - xcb * dedyt;
-         dedxib += termb * (zcb * yu - ycb * zu) + yca * dedzt - zca * dedyt +
-            zdc * dedyu - ydc * dedzu;
-         dedyib += termb * (xcb * zu - zcb * xu) + zca * dedxt - xca * dedzt +
-            xdc * dedzu - zdc * dedxu;
-         dedzib += termb * (ycb * xu - xcb * yu) + xca * dedyt - yca * dedxt +
-            ydc * dedxu - xdc * dedyu;
-         dedxic += termb * (ycb * zu - zcb * yu) +
-            termd * (zdc * yu - ydc * zu) + zba * dedyt - yba * dedzt +
-            ydb * dedzu - zdb * dedyu;
-         dedyic += termb * (zcb * xu - xcb * zu) +
-            termd * (xdc * zu - zdc * xu) + xba * dedzt - zba * dedxt +
-            zdb * dedxu - xdb * dedzu;
-         dedzic += termb * (xcb * yu - ycb * xu) +
-            termd * (ydc * xu - xdc * yu) + yba * dedxt - xba * dedyt +
-            xdb * dedyu - ydb * dedxu;
+         dedxib +=
+            termb * (zcb * yu - ycb * zu) + yca * dedzt - zca * dedyt + zdc * dedyu - ydc * dedzu;
+         dedyib +=
+            termb * (xcb * zu - zcb * xu) + zca * dedxt - xca * dedzt + xdc * dedzu - zdc * dedxu;
+         dedzib +=
+            termb * (ycb * xu - xcb * yu) + xca * dedyt - yca * dedxt + ydc * dedxu - xdc * dedyu;
+         dedxic += termb * (ycb * zu - zcb * yu) + termd * (zdc * yu - ydc * zu) + zba * dedyt -
+            yba * dedzt + ydb * dedzu - zdb * dedyu;
+         dedyic += termb * (zcb * xu - xcb * zu) + termd * (xdc * zu - zdc * xu) + xba * dedzt -
+            zba * dedxt + zdb * dedxu - xdb * dedzu;
+         dedzic += termb * (xcb * yu - ycb * xu) + termd * (ydc * xu - xdc * yu) + yba * dedxt -
+            xba * dedyt + xdb * dedyu - ydb * dedxu;
          dedxid += termd * (ydc * zu - zdc * yu) + zcb * dedyu - ycb * dedzu;
          dedyid += termd * (zdc * xu - xdc * zu) + xcb * dedzu - zcb * dedxu;
          dedzid += termd * (xdc * yu - ydc * xu) + ycb * dedxu - xcb * dedyu;
       }
    }
-
 
    if CONSTEXPR (do_e) {
       e = e1 + e2;

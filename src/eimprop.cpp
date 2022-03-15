@@ -5,20 +5,15 @@
 #include <tinker/detail/improp.hh>
 #include <tinker/detail/torpot.hh>
 
-
 namespace tinker {
 void eimprop_data(rc_op op)
 {
    if (not use_potent(improp_term))
       return;
 
-
    bool rc_a = rc_flag & calc::analyz;
 
-
-   if (op & rc_dealloc) {
-   }
-
+   if (op & rc_dealloc) {}
 
    if (op & rc_alloc) {
       niprop = improp::niprop;
@@ -31,7 +26,6 @@ void eimprop_data(rc_op op)
       if (rc_a)
          buffer_allocate(rc_flag, &eid, &vir_eid, &deidx, &deidy, &deidz);
    }
-
 
    if (op & rc_init) {
       std::vector<int> ibuf(4 * niprop);
@@ -46,14 +40,12 @@ void eimprop_data(rc_op op)
    }
 }
 
-
 void eimprop(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-
 
    if (rc_a) {
       host_zero(energy_eid, virial_eid);
@@ -66,9 +58,7 @@ void eimprop(int vers)
          darray::zero(g::q0, n, deidx, deidy, deidz);
    }
 
-
    eimprop_acc(vers);
-
 
    if (rc_a) {
       if (do_e) {

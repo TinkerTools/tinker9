@@ -5,7 +5,6 @@
 #include "mod.tortor.h"
 #include "tool/rc_man.h"
 
-
 namespace tinker {
 void etortor_data(rc_op op);
 void etortor(int vers);

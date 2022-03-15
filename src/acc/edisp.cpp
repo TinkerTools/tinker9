@@ -1,6 +1,6 @@
+#include "edisp.h"
 #include "add.h"
 #include "box.h"
-#include "edisp.h"
 #include "glob.nblist.h"
 #include "image.h"
 #include "md.h"
@@ -9,7 +9,6 @@
 #include "seq_pair_disp.h"
 #include "switch.h"
 #include "tool/gpu_card.h"
-
 
 namespace tinker {
 template <bool DO_E, bool DO_V>
@@ -21,13 +20,11 @@ void disp_pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_v)
    const real* bsmod2 = st.bsmod2;
    const real* bsmod3 = st.bsmod3;
 
-
    const int nfft1 = st.nfft1;
    const int nfft2 = st.nfft2;
    const int nfft3 = st.nfft3;
    const int nff = nfft1 * nfft2;
    const int ntot = nfft1 * nfft2 * nfft3;
-
 
    const real aewald = st.aewald;
    const real bfac = M_PI / aewald;
@@ -36,7 +33,6 @@ void disp_pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_v)
    const real fac3 = -2 * aewald * M_PI * M_PI;
    const real vbox = volbox();
    const real denom0 = 6 * vbox / std::pow(M_PI, 1.5);
-
 
    size_t bufsize = buffer_size();
    #pragma acc parallel loop independent async\
@@ -49,23 +45,19 @@ void disp_pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_v)
          continue;
       }
 
-
       int k3 = i / nff;
       int j = i - k3 * nff;
       int k2 = j / nfft1;
       int k1 = j - k2 * nfft1;
 
-
       int r1 = (k1 < (nfft1 + 1) / 2) ? k1 : (k1 - nfft1);
       int r2 = (k2 < (nfft2 + 1) / 2) ? k2 : (k2 - nfft2);
       int r3 = (k3 < (nfft3 + 1) / 2) ? k3 : (k3 - nfft3);
-
 
       real h1 = recipa.x * r1 + recipb.x * r2 + recipc.x * r3;
       real h2 = recipa.y * r1 + recipb.y * r2 + recipc.y * r3;
       real h3 = recipa.z * r1 + recipb.z * r2 + recipc.z * r3;
       real hsq = h1 * h1 + h2 * h2 + h3 * h3;
-
 
       real gridx = qgrid[i][0];
       real gridy = qgrid[i][1];
@@ -89,17 +81,14 @@ void disp_pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_v)
             } // end if ((k1 + k2 + k3) % 2 != 0)
          }
 
-
          real struc2 = gridx * gridx + gridy * gridy;
-         eterm = (-fac1 * erfcterm * hhh - expterm * (fac2 + fac3 * hsq)) *
-            REAL_RECIP(denom);
+         eterm = (-fac1 * erfcterm * hhh - expterm * (fac2 + fac3 * hsq)) * REAL_RECIP(denom);
          real e = eterm * struc2;
          if CONSTEXPR (DO_E) {
             atomic_add(e, gpu_e, i & (bufsize - 1));
          }
          if CONSTEXPR (DO_V) {
-            real vterm = 3 * (fac1 * erfcterm * h + fac3 * expterm) * struc2 *
-               REAL_RECIP(denom);
+            real vterm = 3 * (fac1 * erfcterm * h + fac3 * expterm) * struc2 * REAL_RECIP(denom);
             real vxx = (h1 * h1 * vterm - e);
             real vxy = h1 * h2 * vterm;
             real vxz = h1 * h3 * vterm;
@@ -110,19 +99,16 @@ void disp_pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_v)
          }
       }
 
-
       qgrid[i][0] = eterm * gridx;
       qgrid[i][1] = eterm * gridy;
    }
 }
-
 
 void disp_pme_conv_acc(int vers)
 {
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    PMEUnit u = dpme_unit;
-
 
    if (do_e && do_v)
       disp_pme_conv_acc1<true, true>(u, edsp, vir_edsp);
@@ -134,9 +120,7 @@ void disp_pme_conv_acc(int vers)
       disp_pme_conv_acc1<false, false>(u, nullptr, nullptr);
 }
 
-
 //====================================================================//
-
 
 template <class Ver, class DTYP>
 void edisp_acc1()
@@ -145,7 +129,6 @@ void edisp_acc1()
    constexpr bool do_a = Ver::a;
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
-
 
    real cut, off;
    real aewald = 0;
@@ -163,7 +146,6 @@ void edisp_acc1()
    const auto* lst = dsplist_unit->lst;
    size_t bufsize = buffer_size();
 
-
    #pragma acc parallel async present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(x,y,z,dedspx,dedspy,dedspz,ndisp,edsp,vir_edsp,\
                csix,adisp,dspexclude,dspexclude_scale)
@@ -173,7 +155,6 @@ void edisp_acc1()
       int i = dspexclude[ii][0];
       int k = dspexclude[ii][1];
       real scalea = dspexclude_scale[ii];
-
 
       real ci = csix[i];
       real ai = adisp[i];
@@ -190,10 +171,8 @@ void edisp_acc1()
          real r = REAL_SQRT(r2);
          real rr1 = REAL_RECIP(r);
          real e0, de0, e1, de1;
-         pair_disp<do_g, DTYP, 0>(r, r2, rr1, scalea, aewald, ci, ai, ck, ak,
-                                  cut, off, e0, de0);
-         pair_disp<do_g, DTYP, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, cut,
-                                  off, e1, de1);
+         pair_disp<do_g, DTYP, 0>(r, r2, rr1, scalea, aewald, ci, ai, ck, ak, cut, off, e0, de0);
+         pair_disp<do_g, DTYP, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, cut, off, e1, de1);
          real e, de;
          e = e0 - e1;
          if CONSTEXPR (do_e) {
@@ -232,7 +211,6 @@ void edisp_acc1()
       }
    }
 
-
    MAYBE_UNUSED int ngrid = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(x,y,z,dedspx,dedspy,dedspz,ndisp,edsp,vir_edsp,\
@@ -247,10 +225,8 @@ void edisp_acc1()
       real ai = adisp[i];
       MAYBE_UNUSED int ctl = 0;
       MAYBE_UNUSED real etl = 0;
-      MAYBE_UNUSED real vxxtl = 0, vyxtl = 0, vzxtl = 0, vyytl = 0, vzytl = 0,
-                        vzztl = 0;
+      MAYBE_UNUSED real vxxtl = 0, vyxtl = 0, vzxtl = 0, vyytl = 0, vzytl = 0, vzztl = 0;
       MAYBE_UNUSED real gxi = 0, gyi = 0, gzi = 0;
-
 
       int nlsti = nlst[i];
       #pragma acc loop vector independent
@@ -266,8 +242,7 @@ void edisp_acc1()
             real r = REAL_SQRT(r2);
             real rr1 = REAL_RECIP(r);
             real e, de;
-            pair_disp<do_g, DTYP, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, cut,
-                                     off, e, de);
+            pair_disp<do_g, DTYP, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, cut, off, e, de);
             if CONSTEXPR (do_e) {
                etl += e;
             }
@@ -300,7 +275,6 @@ void edisp_acc1()
          }
       } // end loop (kk)
 
-
       if CONSTEXPR (do_e) {
          atomic_add(etl, edsp, offset);
       }
@@ -318,7 +292,6 @@ void edisp_acc1()
    }
 }
 
-
 void edisp_nonewald_acc(int vers)
 {
    if (vers == calc::v0)
@@ -334,7 +307,6 @@ void edisp_nonewald_acc(int vers)
    else if (vers == calc::v6)
       edisp_acc1<calc::V6, NON_EWALD_TAPER>();
 }
-
 
 void edisp_ewald_real_acc(int vers)
 {
@@ -352,7 +324,6 @@ void edisp_ewald_real_acc(int vers)
       edisp_acc1<calc::V6, DEWALD>();
 }
 
-
 template <class Ver, int bsorder>
 void edisp_acc2()
 {
@@ -360,14 +331,12 @@ void edisp_acc2()
    constexpr bool do_a = Ver::a;
    constexpr bool do_g = Ver::g;
 
-
    size_t bufsize = buffer_size();
    real aewald = dpme_unit->aewald;
    int nfft1 = dpme_unit->nfft1;
    int nfft2 = dpme_unit->nfft2;
    int nfft3 = dpme_unit->nfft3;
    const auto* qgrid = dpme_unit->qgrid;
-
 
    #pragma acc parallel async\
            present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
@@ -377,7 +346,6 @@ void edisp_acc2()
       real icsix = csix[ii];
       if (icsix == 0)
          continue;
-
 
       // self energy
       if CONSTEXPR (do_e) {
@@ -392,13 +360,11 @@ void edisp_acc2()
          }
       }
 
-
       // recip gradient
       if CONSTEXPR (do_g) {
          real xi = x[ii];
          real yi = y[ii];
          real zi = z[ii];
-
 
          real w1 = xi * recipa.x + yi * recipa.y + zi * recipa.z;
          w1 = w1 + 0.5f - REAL_FLOOR(w1 + 0.5f);
@@ -406,20 +372,17 @@ void edisp_acc2()
          int igrid1 = REAL_FLOOR(fr1);
          w1 = fr1 - igrid1;
 
-
          real w2 = xi * recipb.x + yi * recipb.y + zi * recipb.z;
          w2 = w2 + 0.5f - REAL_FLOOR(w2 + 0.5f);
          real fr2 = nfft2 * w2;
          int igrid2 = REAL_FLOOR(fr2);
          w2 = fr2 - igrid2;
 
-
          real w3 = xi * recipc.x + yi * recipc.y + zi * recipc.z;
          w3 = w3 + 0.5f - REAL_FLOOR(w3 + 0.5f);
          real fr3 = nfft3 * w3;
          int igrid3 = REAL_FLOOR(fr3);
          w3 = fr3 - igrid3;
-
 
          igrid1 = igrid1 - bsorder + 1;
          igrid2 = igrid2 - bsorder + 1;
@@ -428,14 +391,12 @@ void edisp_acc2()
          igrid2 += (igrid2 < 0 ? nfft2 : 0);
          igrid3 += (igrid3 < 0 ? nfft3 : 0);
 
-
          real thetai1[4 * 5];
          real thetai2[4 * 5];
          real thetai3[4 * 5];
          bsplgen<2>(w1, thetai1, bsorder);
          bsplgen<2>(w2, thetai2, bsorder);
          bsplgen<2>(w3, thetai3, bsorder);
-
 
          real fi = csix[ii];
          real de1 = 0, de2 = 0, de3 = 0;
@@ -465,7 +426,6 @@ void edisp_acc2()
             }
          } // end for (iz)
 
-
          real frcx = fi * (recipa.x * de1 + recipb.x * de2 + recipc.x * de3);
          real frcy = fi * (recipa.y * de1 + recipb.y * de2 + recipc.y * de3);
          real frcz = fi * (recipa.z * de1 + recipb.z * de2 + recipc.z * de3);
@@ -475,7 +435,6 @@ void edisp_acc2()
       }
    }
 }
-
 
 void edisp_ewald_recip_self_acc(int vers)
 {

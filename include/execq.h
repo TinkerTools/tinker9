@@ -2,14 +2,12 @@
 #include "tool/rc_man.h"
 #include <cstddef>
 
-
 namespace tinker {
 class ExecQ
 {
 private:
    class Impl;
    Impl* ptr;
-
 
 public:
    void deallocate();

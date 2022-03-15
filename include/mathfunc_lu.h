@@ -2,7 +2,6 @@
 #include "macro.h"
 #include "mathfunc_libfunc.h"
 
-
 namespace tinker {
 #pragma acc routine seq
 template <int n, class T = double>
@@ -11,7 +10,6 @@ void ludcmp(T* lu, int* indx)
    const T TINY = 1.0e-16;
    T big, temp;
    T vv[n];
-
 
    for (int i = 0; i < n; i++) {
       big = 0;
@@ -22,7 +20,6 @@ void ludcmp(T* lu, int* indx)
       // if (big == 0) throw("Singular matrix in LUdcmp");
       vv[i] = 1 / big;
    }
-
 
    for (int k = 0; k < n; k++) {
       big = 0;
@@ -53,7 +50,6 @@ void ludcmp(T* lu, int* indx)
    }
 }
 
-
 #pragma acc routine seq
 template <int n, class T = double>
 void lubksb(const T* lu, T* x, const int* indx)
@@ -80,7 +76,6 @@ void lubksb(const T* lu, T* x, const int* indx)
    }
 }
 
-
 #pragma acc routine seq
 template <int n, class R, class T = double>
 void lumprove(const T* lu, T* x, const int* indx, const T* aref, const R* b)
@@ -96,7 +91,6 @@ void lumprove(const T* lu, T* x, const int* indx, const T* aref, const R* b)
    for (int i = 0; i < n; i++)
       x[i] -= r[i];
 }
-
 
 /**
  * \ingroup math
@@ -122,7 +116,6 @@ void symlusolve(const R* aUpRowMajor, R* b)
       double x[n];     // solution
       int indx[n];     // permutation
 
-
       // Initialize the internal arrays.
       int c = 0;
       for (int k = 0; k < n; ++k) {
@@ -138,13 +131,11 @@ void symlusolve(const R* aUpRowMajor, R* b)
          }
       }
 
-
       double* plu = &lu[0][0];
       double* pa = &a[0][0];
       ludcmp<n>(plu, indx);
       lubksb<n>(plu, x, indx);
       lumprove<n>(plu, x, indx, pa, b);
-
 
       // Copy out the solution.
       for (int k = 0; k < n; ++k) {

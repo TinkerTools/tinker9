@@ -7,7 +7,6 @@
 #include <string>
 #include <vector>
 
-
 namespace tinker {
 namespace {
 const char* main_name = "tinker9";
@@ -21,15 +20,17 @@ const std::string testgrad_name = "testgrad";
 const std::map<std::string, std::function<void(int, char**)>>& launcher()
 {
    static std::map<std::string, std::function<void(int, char**)>> x = {
-      {analyze_name, x_analyze},   {bar_name, x_bar},
-      {dynamic_name, x_dynamic},   {helper_name, x_help},
-      {info_name, x_info},         {minimize_name, x_minimize},
+      {analyze_name, x_analyze},
+      {bar_name, x_bar},
+      {dynamic_name, x_dynamic},
+      {helper_name, x_help},
+      {info_name, x_info},
+      {minimize_name, x_minimize},
       {testgrad_name, x_testgrad},
    };
    return x;
 }
 }
-
 
 void x_help(int, char**)
 {
@@ -55,7 +56,6 @@ void x_help(int, char**)
 }
 }
 
-
 int main(int argc, char** argv)
 {
    using namespace tinker;
@@ -73,8 +73,7 @@ int main(int argc, char** argv)
       try {
          launcher().at(argv[0])(argc, argv);
       } catch (const std::exception& err) {
-         fprintf(stdout, " Terminating with uncaught exception :  %s\n",
-                 err.what());
+         fprintf(stdout, " Terminating with uncaught exception :  %s\n", err.what());
       }
       tinkerFortranRuntimeEnd();
       return 0;

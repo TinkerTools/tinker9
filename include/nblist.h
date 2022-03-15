@@ -4,7 +4,6 @@
 #include "tool/gen_unit.h"
 #include "tool/rc_man.h"
 
-
 namespace tinker {
 enum class nblist_t
 {
@@ -18,7 +17,6 @@ constexpr nblist_t NBL_UNDEFINED = nblist_t::UNDEFINED;
 constexpr nblist_t NBL_DOUBLE_LOOP = nblist_t::DOUBLE_LOOP;
 constexpr nblist_t NBL_VERLET = nblist_t::VERLET;
 constexpr nblist_t NBL_SPATIAL = nblist_t::SPATIAL;
-
 
 /// \brief
 /// Verlet list: pairwise neighbor list indices and storage.
@@ -40,7 +38,6 @@ struct NBList
    ~NBList();
 };
 using NBListUnit = GenericUnit<NBList, GenericUnitVersion::EnableOnDevice>;
-
 
 /**
  * \brief
@@ -69,13 +66,10 @@ nblist_t mlist_version();
 nblist_t ulist_version();
 nblist_t dsplist_version();
 
-
 void nblist_data(rc_op op);
-
 
 void nblist_build_acc(NBListUnit); // rc_init
 void nblist_update_acc(NBListUnit);
-
 
 void refresh_neighbors();
 }

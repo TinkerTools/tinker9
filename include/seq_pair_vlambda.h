@@ -3,7 +3,6 @@
 #include "seq_def.h"
 #include "seq_switch.h"
 
-
 namespace tinker {
 /**
  * \ingroup vdw

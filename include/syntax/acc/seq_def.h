@@ -1,6 +1,5 @@
 #pragma once
 
-
 /**
  * \def SEQ_ROUTINE
  * \ingroup acc_syntax
@@ -8,7 +7,6 @@
  * cannot use the `#pragma acc` syntax in a macro.
  */
 #define SEQ_ROUTINE _Pragma("acc routine seq")
-
 
 /**
  * \def SEQ_CUDA
