@@ -161,9 +161,8 @@ static double g0, g1, D;
 static bool atomT, molT, atomP, molP, constrain, aniso;
 static enum { KW_NULL = 0, KW_ATOM, KW_MOL } kw_p;
 static bool __pedantic;
-static const char* fmt_current_pres =
-   "\n"
-   " Current Pressure       %12.4lf Atm at Step %8d\n";
+static const char* fmt_current_pres = "\n"
+                                      " Current Pressure       %12.4lf Atm at Step %8d\n";
 
 void vv_lpiston_init()
 {
@@ -394,7 +393,6 @@ static void iso_tp(time_prec dt, bool prtpres = false, int iCurrentStep = 0)
       print(stdout, fmt_current_pres, pres, iCurrentStep);
    }
 }
-
 
 static void lpiston_npt_iso_pedantic(int, time_prec);
 static void lpiston_npt_aniso(int, time_prec);
@@ -890,17 +888,12 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
    }
 }
 
-
-extern void
-propagate_velocity_06_acc(double vbar, time_prec dt, const grad_prec* grx,
-                          const grad_prec* gry, const grad_prec* grz,
-                          time_prec dt2, const grad_prec* grx2,
-                          const grad_prec* gry2, const grad_prec* grz2);
-static void propagate_velocity_06(double vbar, time_prec dt,
-                                  const grad_prec* grx, const grad_prec* gry,
-                                  const grad_prec* grz, time_prec dt2,
-                                  const grad_prec* grx2, const grad_prec* gry2,
-                                  const grad_prec* grz2)
+extern void propagate_velocity_06_acc(double vbar, time_prec dt, const grad_prec* grx,
+   const grad_prec* gry, const grad_prec* grz, time_prec dt2, const grad_prec* grx2,
+   const grad_prec* gry2, const grad_prec* grz2);
+static void propagate_velocity_06(double vbar, time_prec dt, const grad_prec* grx,
+   const grad_prec* gry, const grad_prec* grz, time_prec dt2, const grad_prec* grx2,
+   const grad_prec* gry2, const grad_prec* grz2)
 {
    propagate_velocity_06_acc(vbar, dt, grx, gry, grz, dt2, grx2, gry2, grz2);
 }
@@ -939,19 +932,16 @@ static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
          atomP = true;
    }
 
-
    int vers1 = rc_flag & calc::vmask;
    if ((istep % inform::iwrite) != 0)
       vers1 &= ~calc::energy;
    if (not mid)
       vers1 &= ~calc::virial;
 
-
    double dt2 = 0.5 * dt, dti = dt / nrespa, dti2 = dt2 / nrespa;
    double xdt = nbaro * dt, xdt2 = 0.5 * xdt;
    double xdti = xdt / nrespa, xdti2 = 0.5 * xdti;
    double b = 2 * stodyn::friction * units::gasconst * bath::kelvin / qbar;
-
 
    if (TINKER_LPISTON_VBAR_CHAIN and istep == 1) {
       for (int i = 0; i < maxnose; ++i) {
@@ -960,22 +950,16 @@ static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
       }
    }
 
-
    if (TINKER_LPISTON_SEP_VBAR and atomP) {
       if (TINKER_LPISTON_VBAR_CHAIN) {
-         nhc_isot_96(xdt, maxnose, vbar_nhc, qbar_nhc, 1.0, local_vbar_ekin,
-                     local_scale_vbar);
+         nhc_isot_96(xdt, maxnose, vbar_nhc, qbar_nhc, 1.0, local_vbar_ekin, local_scale_vbar);
          vbar = vbar_nhc[0];
       } else {
-         vbar = ornstein_uhlenbeck_process(xdt2, vbar, stodyn::friction, 0.0, b,
-                                           rnd);
+         vbar = ornstein_uhlenbeck_process(xdt2, vbar, stodyn::friction, 0.0, b, rnd);
       }
    }
 
-
-   nhc_isot_96(dt, maxnose, vnh, qnh, g0, local_kinetic_atom,
-               local_scale_vel_atom);
-
+   nhc_isot_96(dt, maxnose, vnh, qnh, g0, local_kinetic_atom, local_scale_vel_atom);
 
    if (atomP) {
       virial_prec tr_vir = lp_vir[0] + lp_vir[4] + lp_vir[8];
@@ -986,24 +970,18 @@ static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
       if (TINKER_LPISTON_SEP_VBAR)
          vbar = vbar + gbar * xdt2;
       else
-         vbar = ornstein_uhlenbeck_process(xdt2, vbar, stodyn::friction, gbar,
-                                           b, rnd);
+         vbar = ornstein_uhlenbeck_process(xdt2, vbar, stodyn::friction, gbar, b, rnd);
    }
-
 
    if (nrespa > 1) {
       // gx1: fast; gx2: slow
-      propagate_velocity_06((1 + D / g1) * vbar, dti2, gx1, gy1, gz1, dt2, gx2,
-                            gy2, gz2);
+      propagate_velocity_06((1 + D / g1) * vbar, dti2, gx1, gy1, gz1, dt2, gx2, gy2, gz2);
    } else {
-      propagate_velocity_06((1 + D / g1) * vbar, dt2, gx, gy, gz, 0, nullptr,
-                            nullptr, nullptr);
+      propagate_velocity_06((1 + D / g1) * vbar, dt2, gx, gy, gz, 0, nullptr, nullptr, nullptr);
    }
-
 
    virial_prec vir_fast[9] = {0};
    energy_prec esum_f;
-
 
    double s = 1.0;
    if (mid) {
@@ -1036,7 +1014,6 @@ static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
       }
    }
 
-
    if (nrespa > 1) {
       // fast force
       energy(vers1, RESPA_FAST, respa_tsconfig());
@@ -1064,16 +1041,13 @@ static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
       }
 
       // gx1: fast; gx2: slow
-      propagate_velocity_06((1 + D / g1) * vbar, dti2, gx1, gy1, gz1, dt2, gx2,
-                            gy2, gz2);
+      propagate_velocity_06((1 + D / g1) * vbar, dti2, gx1, gy1, gz1, dt2, gx2, gy2, gz2);
    } else {
       energy(vers1);
       if (vers1 & calc::virial)
          lp_virial(molP);
-      propagate_velocity_06((1 + D / g1) * vbar, dt2, gx, gy, gz, 0, nullptr,
-                            nullptr, nullptr);
+      propagate_velocity_06((1 + D / g1) * vbar, dt2, gx, gy, gz, 0, nullptr, nullptr, nullptr);
    }
-
 
    if (mid)
       rnd = normal<double>();
@@ -1091,7 +1065,6 @@ static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
       print(stdout, fmt_current_pres, pres, istep);
    }
 
-
    if (atomP) {
       virial_prec tr_vir = lp_vir[0] + lp_vir[4] + lp_vir[8];
       double vol0 = volbox();
@@ -1101,33 +1074,26 @@ static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
       if (TINKER_LPISTON_SEP_VBAR)
          vbar = vbar + gbar * xdt2;
       else
-         vbar = ornstein_uhlenbeck_process(xdt2, vbar, stodyn::friction, gbar,
-                                           b, rnd);
+         vbar = ornstein_uhlenbeck_process(xdt2, vbar, stodyn::friction, gbar, b, rnd);
    }
 
-
-   nhc_isot_96(dt, maxnose, vnh, qnh, g0, local_kinetic_atom,
-               local_scale_vel_atom);
-
+   nhc_isot_96(dt, maxnose, vnh, qnh, g0, local_kinetic_atom, local_scale_vel_atom);
 
    if (TINKER_LPISTON_SEP_VBAR and atomP) {
       if (TINKER_LPISTON_VBAR_CHAIN) {
-         nhc_isot_96(xdt, maxnose, vbar_nhc, qbar_nhc, 1.0, local_vbar_ekin,
-                     local_scale_vbar);
+         nhc_isot_96(xdt, maxnose, vbar_nhc, qbar_nhc, 1.0, local_vbar_ekin, local_scale_vbar);
          vbar = vbar_nhc[0];
       } else {
-         vbar = ornstein_uhlenbeck_process(xdt2, vbar, stodyn::friction, 0.0, b,
-                                           rnd);
+         vbar = ornstein_uhlenbeck_process(xdt2, vbar, stodyn::friction, 0.0, b, rnd);
       }
    }
-
 
    if (molT and (istep % inform::iwrite) == 0) {
       lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
       lp_mol_kinetic();
       printf("\n"
              " Current MolKinetic     %12.4lf Kcal/mole at Frame %8d\n",
-             lp_eksum, istep / inform::iwrite);
+         lp_eksum, istep / inform::iwrite);
    }
 }
 }
