@@ -1,5 +1,5 @@
-#include "add.h"
 #include "epitors.h"
+#include "add.h"
 #include "md.h"
 #include "seq_pitors.h"
 
@@ -20,11 +20,11 @@ void epitors_acc1()
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_pitors<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                     deptx, depty, deptz,
+         deptx, depty, deptz,
 
-                     ptorunit, i, ipit, kpit,
+         ptorunit, i, ipit, kpit,
 
-                     x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e)
          atomic_add(e, ept, offset);
       if CONSTEXPR (do_v)

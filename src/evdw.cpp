@@ -16,7 +16,6 @@
 #include <tinker/detail/vdw.hh>
 #include <tinker/detail/vdwpot.hh>
 
-
 namespace tinker {
 namespace {
 using new_type = int; // new vdw class/type
@@ -27,15 +26,12 @@ std::vector<new_type> jvdwbuf;
 int jcount;
 }
 
-
 void evdw_data(rc_op op)
 {
    if (!use_potent(vdw_term))
       return;
 
-
    bool rc_a = rc_flag & calc::analyz;
-
 
    if (op & rc_dealloc) {
       // local static variables
@@ -44,23 +40,18 @@ void evdw_data(rc_op op)
       jvdwbuf.clear();
       jcount = 0;
 
-
       if (vdwtyp == evdw_t::hal)
          darray::deallocate(ired, kred, xred, yred, zred, gxred, gyred, gzred);
 
-
       darray::deallocate(jvdw, radmin, epsilon, mut);
-
 
       nvexclude = 0;
       darray::deallocate(vexclude, vexclude_scale);
-
 
       if (nvdw14 > 0) {
          darray::deallocate(radmin4, epsilon4, vdw14ik);
          nvdw14 = 0;
       }
-
 
       if (rc_a) {
          buffer_deallocate(rc_flag, nev);
@@ -73,11 +64,9 @@ void evdw_data(rc_op op)
       devy = nullptr;
       devz = nullptr;
 
-
       elrc_vol = 0;
       vlrc_vol = 0;
    }
-
 
    if (op & rc_alloc) {
       fstr_view str = vdwpot::vdwtyp;
@@ -135,9 +124,7 @@ void evdw_data(rc_op op)
          }
       }
 
-
       darray::allocate(n, &jvdw);
-
 
       jvdwbuf.resize(n);
       assert(jmap.size() == 0);
@@ -156,18 +143,14 @@ void evdw_data(rc_op op)
          }
       }
 
-
       darray::allocate(jcount * jcount, &radmin, &epsilon);
 
-
       darray::allocate(n, &mut);
-
 
       v2scale = vdwpot::v2scale;
       v3scale = vdwpot::v3scale;
       v4scale = vdwpot::v4scale;
       v5scale = vdwpot::v5scale;
-
 
       std::vector<int> exclik;
       std::vector<real> excls;
@@ -192,7 +175,6 @@ void evdw_data(rc_op op)
             }
          }
 
-
          if (v3scale != 1) {
             nn = couple::n13[i];
             bask = i * maxn13;
@@ -207,7 +189,6 @@ void evdw_data(rc_op op)
             }
          }
 
-
          if (v4scale != 1) {
             nn = couple::n14[i];
             bask = i * maxn14;
@@ -221,7 +202,6 @@ void evdw_data(rc_op op)
                }
             }
          }
-
 
          if (v5scale != 1) {
             nn = couple::n15[i];
@@ -243,19 +223,16 @@ void evdw_data(rc_op op)
       darray::copyin(g::q0, nvexclude, vexclude_scale, excls.data());
       wait_for(g::q0);
 
-
       // check VDW14 interations
       nvdw14 = 0;
       if (v4scale != 0) {
          // otherwise, there is no reason to worry about vdw14 energies
 
-
          // rad4 and eps4 (of module kvdws) have been overwritten by kvdw
          // must parse the parameter file and key file again for VDW14 keyword
          // vdw14         8               1.9000    -0.1000
 
-         auto parse_v14 = [](std::string line, int& j, double& r4,
-                             double& e4) -> bool {
+         auto parse_v14 = [](std::string line, int& j, double& r4, double& e4) -> bool {
             try {
                auto vs = Text::split(line);
                std::string k = vs.at(0);
@@ -297,20 +274,19 @@ void evdw_data(rc_op op)
             }
          }
 
-
          std::vector<int> v14ikbuf;
          for (int i = 0; i < n; ++i) {
             int nn = couple::n14[i];
             int bask = i * maxn14;
             int i_vclass = vdw::jvdw[i] - 1;
-            bool i_has_v14prm = (kvdws__rad4.count(i_vclass) > 0) ||
-               (kvdws__eps4.count(i_vclass) > 0);
+            bool i_has_v14prm =
+               (kvdws__rad4.count(i_vclass) > 0) || (kvdws__eps4.count(i_vclass) > 0);
             for (int j = 0; j < nn; ++j) {
                int k = couple::i14[bask + j];
                k -= 1;
                int k_vclass = vdw::jvdw[k] - 1;
-               bool k_has_v14prm = (kvdws__rad4.count(k_vclass) > 0) ||
-                  (kvdws__eps4.count(k_vclass) > 0);
+               bool k_has_v14prm =
+                  (kvdws__rad4.count(k_vclass) > 0) || (kvdws__eps4.count(k_vclass) > 0);
                if (k > i && (i_has_v14prm || k_has_v14prm)) {
                   v14ikbuf.push_back(i);
                   v14ikbuf.push_back(k);
@@ -318,7 +294,6 @@ void evdw_data(rc_op op)
                }
             }
          }
-
 
          if (nvdw14 > 0) {
             // radmin4 and epsilon4 are similar to radmin and epsilon
@@ -328,7 +303,6 @@ void evdw_data(rc_op op)
             wait_for(g::q0);
          }
       }
-
 
       nev = nullptr;
       ev = eng_buf_vdw;
@@ -342,7 +316,6 @@ void evdw_data(rc_op op)
       }
    }
 
-
    if (op & rc_init) {
       // Halgren
       if (vdwtyp == evdw_t::hal) {
@@ -350,7 +323,6 @@ void evdw_data(rc_op op)
          dhal = vdwpot::dhal;
          scexp = mutant::scexp;
          scalpha = mutant::scalpha;
-
 
          std::vector<int> iredbuf(n);
          std::vector<double> kredbuf(n);
@@ -364,11 +336,9 @@ void evdw_data(rc_op op)
          wait_for(g::q0);
       }
 
-
       darray::copyin(g::q0, n, jvdw, jvdwbuf.data());
       wait_for(g::q0);
       njvdw = jcount;
-
 
       // see also kvdw.f
       std::vector<double> radvec, epsvec;
@@ -385,7 +355,6 @@ void evdw_data(rc_op op)
       darray::copyin(g::q0, jcount * jcount, radmin, radvec.data());
       darray::copyin(g::q0, jcount * jcount, epsilon, epsvec.data());
       wait_for(g::q0);
-
 
       if (nvdw14) {
          std::vector<double> rad4buf, eps4buf;
@@ -404,7 +373,6 @@ void evdw_data(rc_op op)
          wait_for(g::q0);
       }
 
-
       if (static_cast<int>(evdw_t::decouple) == mutant::vcouple)
          vcouple = evdw_t::decouple;
       else if (static_cast<int>(evdw_t::annihilate) == mutant::vcouple)
@@ -421,7 +389,6 @@ void evdw_data(rc_op op)
       wait_for(g::q0);
       vlam = mutant::vlambda;
 
-
       // Initialize elrc and vlrc.
       if (vdwpot::use_vcorr) {
          double elrc = 0, vlrc = 0;
@@ -435,7 +402,6 @@ void evdw_data(rc_op op)
    }
 }
 
-
 void elj(int vers)
 {
 #if TINKER_CUDART
@@ -446,18 +412,15 @@ void elj(int vers)
       elj_acc(vers);
 }
 
-
 void ebuck(int vers)
 {
    ebuck_acc(vers);
 }
 
-
 void emm3hb(int vers)
 {
    emm3hb_acc(vers);
 }
-
 
 void ehal(int vers)
 {
@@ -469,24 +432,20 @@ void ehal(int vers)
       ehal_acc(vers);
 }
 
-
 void ehal_reduce_xyz()
 {
    ehal_reduce_xyz_acc();
 }
-
 
 void ehal_resolve_gradient()
 {
    ehal_resolve_gradient_acc();
 }
 
-
 void egauss(int vers)
 {
    egauss_acc(vers);
 }
-
 
 void evdw(int vers)
 {
@@ -495,7 +454,6 @@ void evdw(int vers)
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-
 
    host_zero(energy_ev, virial_ev);
    size_t bsize = buffer_size();
@@ -510,7 +468,6 @@ void evdw(int vers)
          darray::zero(g::q0, n, devx, devy, devz);
    }
 
-
    if (vdwtyp == evdw_t::lj)
       elj(vers);
    else if (vdwtyp == evdw_t::buck)
@@ -523,7 +480,6 @@ void evdw(int vers)
       egauss(vers);
    else
       assert(false);
-
 
    if (do_e) {
       if (elrc_vol != 0) {

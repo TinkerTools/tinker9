@@ -1,17 +1,14 @@
 #include "platform.h"
 #include "tinker_rt.h"
 
-
 namespace tinker {
 int pltfm_config;
-
 
 void platform_data(rc_op op)
 {
    if (op & rc_dealloc) {
       pltfm_config = UNSET_PLTFM;
    }
-
 
    if (op & rc_init) {
 #if TINKER_HOST

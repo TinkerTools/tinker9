@@ -3,14 +3,12 @@
 #include "seq_def.h"
 #include "seq_switch.h"
 
-
 namespace tinker {
 #pragma acc routine seq
 template <bool DO_G>
 SEQ_CUDA
-void pair_chgtrn(real r, real cut, real off, real mscale, real f, real alphai,
-                 real chgi, real alphak, real chgk, e_prec& restrict e,
-                 e_prec& restrict de)
+void pair_chgtrn(real r, real cut, real off, real mscale, real f, real alphai, real chgi,
+   real alphak, real chgk, e_prec& restrict e, e_prec& restrict de)
 {
    f *= mscale;
    real expi = REAL_EXP(-alphai * r);

@@ -14,7 +14,6 @@ void matmul3(T S[3][3], T A[3][3], T B[3][3])
 template void matmul3(double s[3][3], double A[3][3], double B[3][3]);
 template void matmul3(float s[3][3], float A[3][3], float B[3][3]);
 
-
 template <class T>
 void matmul3(T answer[3][3], T A[3][3])
 {
@@ -27,16 +26,13 @@ void matmul3(T answer[3][3], T A[3][3])
 template void matmul3(double ans[3][3], double A[3][3]);
 template void matmul3(float ans[3][3], float A[3][3]);
 
-
 //====================================================================//
-
 
 template <class T>
 static T get_eps()
 {
    return (T)1.0e-3;
 }
-
 
 /**
  * \f[
@@ -54,7 +50,6 @@ static T e2(T a, T b)
       return (std::exp(a) - std::exp(b)) / (a - b);
    }
 }
-
 
 /**
  * \f[
@@ -94,7 +89,6 @@ static T f2(T a, T b)
    }
 }
 
-
 /**
  * \f[
  * e_3(a,b,c)=\exp(a)f_2(b-a,c-a).
@@ -108,7 +102,6 @@ static T e3(T a, T b, T c)
    a = arr[2], b = arr[1], c = arr[0];
    return std::exp(a) * f2(b - a, c - a);
 }
-
 
 /**
  * \f[
@@ -133,11 +126,9 @@ static T f3(T a, T b, T c)
          l0 = 1;
          l1 = a + b + c;
          l2 = a2 + a * b + a * c + b2 + b * c + c2;
-         l3 = a3 + a2 * b + a * b2 + a * b * c + a2 * c + a * c2 + b3 + b2 * c +
-            b * c2 + c3;
-         l4 = a2 * a2 + a3 * b + a2 * b2 + a * b3 + b2 * b2 + a3 * c +
-            a2 * b * c + a * b2 * c + b3 * c + a2 * c2 + a * b * c2 + b2 * c2 +
-            a * c3 + b * c3 + c2 * c2;
+         l3 = a3 + a2 * b + a * b2 + a * b * c + a2 * c + a * c2 + b3 + b2 * c + b * c2 + c3;
+         l4 = a2 * a2 + a3 * b + a2 * b2 + a * b3 + b2 * b2 + a3 * c + a2 * b * c + a * b2 * c +
+            b3 * c + a2 * c2 + a * b * c2 + b2 * c2 + a * c3 + b * c3 + c2 * c2;
          return l0 * k0 + l1 * k1 + l2 * k2 + l3 * k3 + l4 * k4;
       } else {
          T x, y, z; // fabs(x) = max(fabs(a),fabs(b),fabs(c))
@@ -154,7 +145,6 @@ static T f3(T a, T b, T c)
       return (f2(a, b) - f2(b, c)) / (a - c);
    }
 }
-
 
 template <class T>
 void trimat_exp(T ans[3][3], T m[3][3], T t)
@@ -198,7 +188,6 @@ void trimat_exp(T ans[3][3], T m[3][3], T t)
 }
 template void trimat_exp(double ans[3][3], double m[3][3], double t);
 template void trimat_exp(float ans[3][3], float m[3][3], float t);
-
 
 template <class T>
 void trimat_expm1c(T ans[3][3], T m[3][3], T t)

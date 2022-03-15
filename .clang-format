@@ -1,12 +1,14 @@
 BasedOnStyle:                          LLVM
+AlignAfterOpenBracket:                 DontAlign
 AlignOperands:                         false
 AlignConsecutiveMacros:                true
 AlwaysBreakTemplateDeclarations:       true
-ColumnLimit:                           80
+ColumnLimit:                           100
 IndentPPDirectives:                    AfterHash
 FixNamespaceComments:                  false
 BreakConstructorInitializers:          BeforeComma
 PointerAlignment:                      Left
+AllowShortBlocksOnASingleLine:         Always
 AllowShortFunctionsOnASingleLine:      Empty
 
 MaxEmptyLinesToKeep:                   1

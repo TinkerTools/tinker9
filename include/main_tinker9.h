@@ -1,7 +1,6 @@
 #pragma once
 #include "macro.h"
 
-
 namespace tinker {
 void x_analyze(int, char**);
 void x_bar(int, char**);

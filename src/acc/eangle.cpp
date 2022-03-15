@@ -1,5 +1,5 @@
-#include "add.h"
 #include "eangle.h"
+#include "add.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "seq_angle.h"
@@ -21,13 +21,13 @@ void eangle_acc1()
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_angle<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                    deax, deay, deaz,
+         deax, deay, deaz,
 
-                    angtyp, angunit, i, iang, anat, ak, afld,
+         angtyp, angunit, i, iang, anat, ak, afld,
 
-                    cang, qang, pang, sang,
+         cang, qang, pang, sang,
 
-                    x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e)
          atomic_add(e, ea, offset);
       if CONSTEXPR (do_v)

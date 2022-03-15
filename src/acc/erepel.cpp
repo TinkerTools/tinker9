@@ -1,5 +1,5 @@
-#include "add.h"
 #include "erepel.h"
+#include "add.h"
 #include "glob.nblist.h"
 #include "image.h"
 #include "md.h"
@@ -10,11 +10,9 @@
 #include "switch.h"
 #include "tool/gpu_card.h"
 
-
 namespace tinker {
-#define DEVICE_PTRS                                                            \
-   x, y, z, derx, dery, derz, rpole, sizpr, dmppr, elepr, nrep, er, vir_er,    \
-      trqx, trqy, trqz
+#define DEVICE_PTRS                                                                                \
+   x, y, z, derx, dery, derz, rpole, sizpr, dmppr, elepr, nrep, er, vir_er, trqx, trqy, trqz
 template <class Ver>
 void erepel_acc1()
 {
@@ -33,7 +31,6 @@ void erepel_acc1()
    size_t bufsize = buffer_size();
 
    PairRepelGrad pgrad;
-
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
@@ -80,10 +77,9 @@ void erepel_acc1()
             real e;
             zero(pgrad);
             pair_repel<do_g>( //
-               r2, 1, cut, off, xr, yr, zr, sizi, dmpi, vali, ci, dix, diy, diz,
-               qixx, qixy, qixz, qiyy, qiyz, qizz, sizk, dmpk, valk,
-               rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
-               rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy],
+               r2, 1, cut, off, xr, yr, zr, sizi, dmpi, vali, ci, dix, diy, diz, qixx, qixy, qixz,
+               qiyy, qiyz, qizz, sizk, dmpk, valk, rpole[k][mpl_pme_0], rpole[k][mpl_pme_x],
+               rpole[k][mpl_pme_y], rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy],
                rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz],
                rpole[k][mpl_pme_zz], e, pgrad);
             if CONSTEXPR (do_a)
@@ -131,7 +127,6 @@ void erepel_acc1()
       }
    } // end for (int i)
 
-
    #pragma acc parallel async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(DEVICE_PTRS,repexclude,repexclude_scale)
@@ -171,12 +166,11 @@ void erepel_acc1()
       if (r2 <= off2 and rscale != 0) {
          real e;
          pair_repel<do_g>( //
-            r2, rscale, cut, off, xr, yr, zr, sizi, dmpi, vali, ci, dix, diy,
-            diz, qixx, qixy, qixz, qiyy, qiyz, qizz, sizk, dmpk, valk,
-            rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
-            rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy],
-            rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz],
-            rpole[k][mpl_pme_zz], e, pgrad);
+            r2, rscale, cut, off, xr, yr, zr, sizi, dmpi, vali, ci, dix, diy, diz, qixx, qixy, qixz,
+            qiyy, qiyz, qizz, sizk, dmpk, valk, rpole[k][mpl_pme_0], rpole[k][mpl_pme_x],
+            rpole[k][mpl_pme_y], rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy],
+            rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz],
+            e, pgrad);
          if CONSTEXPR (do_a)
             if (rscale == -1 and e != 0)
                atomic_add(-1, nrep, offset);

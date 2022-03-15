@@ -6,12 +6,9 @@
 #include "tool/device_zero.h"
 #include "tool/host_zero.h"
 
-
 namespace tinker {
 
-
 //====================================================================//
-
 
 void zero_egv(int vers)
 {
@@ -27,23 +24,18 @@ void zero_egv(int vers)
    }
 
    if (vers & calc::grad) {
-      zero9_async(n, gx, gy, gz, gx_vdw, gy_vdw, gz_vdw, gx_elec, gy_elec,
-                  gz_elec);
+      zero9_async(n, gx, gy, gz, gx_vdw, gy_vdw, gz_vdw, gx_elec, gy_elec, gz_elec);
    }
 }
-
 
 void zero_egv()
 {
    zero_egv(rc_flag);
 }
 
-
 //====================================================================//
 
-
-void scale_gradient(double scale, grad_prec* g0x, grad_prec* g0y,
-                    grad_prec* g0z)
+void scale_gradient(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z)
 {
    if (scale == 1)
       return;
@@ -53,25 +45,19 @@ void scale_gradient(double scale, grad_prec* g0x, grad_prec* g0y,
       scale_gradient_acc(scale, g0x, g0y, g0z);
 }
 
-
-void sum_gradient(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
-                  const grad_prec* g1x, const grad_prec* g1y,
-                  const grad_prec* g1z)
+void sum_gradient(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const grad_prec* g1x,
+   const grad_prec* g1y, const grad_prec* g1z)
 {
    sum_gradient_acc(g0x, g0y, g0z, g1x, g1y, g1z);
 }
 
-
-void sum_gradient(double s, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
-                  const grad_prec* g1x, const grad_prec* g1y,
-                  const grad_prec* g1z)
+void sum_gradient(double s, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const grad_prec* g1x,
+   const grad_prec* g1y, const grad_prec* g1z)
 {
    sum_gradient_acc(s, g0x, g0y, g0z, g1x, g1y, g1z);
 }
 
-
 //====================================================================//
-
 
 void copy_energy(int vers, energy_prec* eng)
 {
@@ -80,10 +66,8 @@ void copy_energy(int vers, energy_prec* eng)
    }
 }
 
-
-void copy_gradient(int vers, double* grdx, double* grdy, double* grdz,
-                   const grad_prec* gx_src, const grad_prec* gy_src,
-                   const grad_prec* gz_src, int queue)
+void copy_gradient(int vers, double* grdx, double* grdy, double* grdz, const grad_prec* gx_src,
+   const grad_prec* gy_src, const grad_prec* gz_src, int queue)
 {
    if (vers & calc::grad) {
       if (grdx && grdy && grdz) {
@@ -121,20 +105,16 @@ void copy_gradient(int vers, double* grdx, double* grdy, double* grdz,
    }
 }
 
-
-void copy_gradient(int vers, double* grdx, double* grdy, double* grdz,
-                   const grad_prec* gx_src, const grad_prec* gy_src,
-                   const grad_prec* gz_src)
+void copy_gradient(int vers, double* grdx, double* grdy, double* grdz, const grad_prec* gx_src,
+   const grad_prec* gy_src, const grad_prec* gz_src)
 {
    copy_gradient(vers, grdx, grdy, grdz, gx_src, gy_src, gz_src, g::q0);
 }
-
 
 void copy_gradient(int vers, double* grdx, double* grdy, double* grdz)
 {
    copy_gradient(vers, grdx, grdy, grdz, gx, gy, gz);
 }
-
 
 void copy_virial(int vers, virial_prec* virial)
 {
@@ -144,14 +124,11 @@ void copy_virial(int vers, virial_prec* virial)
    }
 }
 
-
 //====================================================================//
-
 
 void egv_data(rc_op op)
 {
    bool rc_a = rc_flag & calc::analyz;
-
 
    if (op & rc_dealloc) {
       using namespace detail;
@@ -159,12 +136,10 @@ void egv_data(rc_op op)
       ev_dptr = nullptr;
    }
 
-
    if (op & rc_alloc) {
       using namespace detail;
       device_memory_allocate_bytes((void**)(&ev_dptr), sizeof(DHFlow));
    }
-
 
    if (rc_flag & calc::energy) {
       if (op & rc_dealloc) {
@@ -176,7 +151,6 @@ void egv_data(rc_op op)
                darray::deallocate(eng_buf_elec);
          }
       }
-
 
       if (op & rc_alloc) {
          host_zero(eng_buf, eng_buf_vdw, eng_buf_elec);
@@ -191,7 +165,6 @@ void egv_data(rc_op op)
       }
    }
 
-
    if (rc_flag & calc::virial) {
       if (op & rc_dealloc) {
          if (!rc_a) {
@@ -202,7 +175,6 @@ void egv_data(rc_op op)
                darray::deallocate(vir_buf_elec);
          }
       }
-
 
       if (op & rc_alloc) {
          host_zero(vir_buf, vir_buf_vdw, vir_buf_elec);
@@ -217,7 +189,6 @@ void egv_data(rc_op op)
       }
    }
 
-
    if (rc_flag & calc::grad) {
       if (op & rc_dealloc) {
          darray::deallocate(gx, gy, gz);
@@ -227,10 +198,8 @@ void egv_data(rc_op op)
             darray::deallocate(gx_elec, gy_elec, gz_elec);
       }
 
-
       if (op & rc_alloc) {
-         host_zero(gx, gy, gz, gx_vdw, gy_vdw, gz_vdw, gx_elec, gy_elec,
-                   gz_elec);
+         host_zero(gx, gy, gz, gx_vdw, gy_vdw, gz_vdw, gx_elec, gy_elec, gz_elec);
          darray::allocate(n, &gx, &gy, &gz);
          if (use_energi_vdw())
             darray::allocate(n, &gx_vdw, &gy_vdw, &gz_vdw);

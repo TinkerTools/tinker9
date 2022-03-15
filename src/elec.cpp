@@ -28,7 +28,6 @@
 #include <tinker/detail/polgrp.hh>
 #include <tinker/detail/polpot.hh>
 
-
 namespace tinker {
 bool use_ewald()
 {
@@ -36,25 +35,20 @@ bool use_ewald()
    return flag;
 }
 
-
 //====================================================================//
-
 
 void pchg_data(rc_op op)
 {
    if (!use_potent(charge_term))
       return;
 
-
    if (op & rc_dealloc) {
       darray::deallocate(pchg);
    }
 
-
    if (op & rc_alloc) {
       darray::allocate(n, &pchg);
    }
-
 
    if (op & rc_init) {
       std::vector<real> pchgbuf(n);
@@ -73,26 +67,20 @@ void pchg_data(rc_op op)
    }
 }
 
-
 //====================================================================//
-
 
 void pole_data(rc_op op)
 {
-   if (!use_potent(mpole_term) && !use_potent(polar_term) &&
-       !use_potent(repuls_term))
+   if (!use_potent(mpole_term) && !use_potent(polar_term) && !use_potent(repuls_term))
       return;
-
 
    if (op & rc_dealloc) {
       darray::deallocate(zaxis, pole, rpole, udir, udirp, uind, uinp);
       darray::deallocate(trqx, trqy, trqz, vir_trq);
    }
 
-
    if (op & rc_alloc) {
       darray::allocate(n, &zaxis, &pole, &rpole);
-
 
       if (use_potent(polar_term)) {
          darray::allocate(n, &uind, &uinp, &udir, &udirp);
@@ -102,7 +90,6 @@ void pole_data(rc_op op)
          udir = nullptr;
          udirp = nullptr;
       }
-
 
       if (rc_flag & calc::grad) {
          darray::allocate(n, &trqx, &trqy, &trqz);
@@ -117,7 +104,6 @@ void pole_data(rc_op op)
          vir_trq = nullptr;
       }
    }
-
 
    if (op & rc_init) {
       // Regarding chkpole routine:
@@ -150,7 +136,6 @@ void pole_data(rc_op op)
       darray::copyin(g::q0, n, zaxis, zaxisbuf.data());
       wait_for(g::q0);
 
-
       std::vector<double> polebuf(mpl_total * n);
       for (int i = 0; i < n; ++i) {
          int b1 = mpl_total * i;
@@ -175,12 +160,10 @@ void pole_data(rc_op op)
    }
 }
 
-
 void mdpuscale_data(rc_op op)
 {
    if (not use_potent(mpole_term) and not use_potent(polar_term))
       return;
-
 
    if (op & rc_dealloc) {
       nmexclude = 0;
@@ -189,7 +172,6 @@ void mdpuscale_data(rc_op op)
       darray::deallocate(mdpuexclude, mdpuexclude_scale);
    }
 
-
    if (op & rc_alloc) {
       using key_t = std::pair<int, int>;
       struct m
@@ -197,8 +179,7 @@ void mdpuscale_data(rc_op op)
          real m;
       };
       std::map<key_t, m> ikm;
-      auto insert_m = [](std::map<key_t, m>& a, int i, int k, real val,
-                         char ch) {
+      auto insert_m = [](std::map<key_t, m>& a, int i, int k, real val, char ch) {
          key_t key;
          key.first = i;
          key.second = k;
@@ -219,8 +200,7 @@ void mdpuscale_data(rc_op op)
          real m, d, p, u;
       };
       std::map<key_t, mdpu> ik_scale;
-      auto insert_mdpu = [](std::map<key_t, mdpu>& a, int i, int k, real val,
-                            char ch) {
+      auto insert_mdpu = [](std::map<key_t, mdpu>& a, int i, int k, real val, char ch) {
          key_t key;
          key.first = i;
          key.second = k;
@@ -252,7 +232,6 @@ void mdpuscale_data(rc_op op)
          }
       };
 
-
       // see also attach.f
       const int maxn12 = sizes::maxval;
       const int maxn13 = 3 * sizes::maxval;
@@ -266,7 +245,6 @@ void mdpuscale_data(rc_op op)
       const real m3scale = mplpot::m3scale;
       const real m4scale = mplpot::m4scale;
       const real m5scale = mplpot::m5scale;
-
 
       const int maxp11 = polgrp::maxp11;
       const int maxp12 = polgrp::maxp12;
@@ -288,7 +266,6 @@ void mdpuscale_data(rc_op op)
       const real u2scale = polpot::u2scale;
       const real u3scale = polpot::u3scale;
       const real u4scale = polpot::u4scale;
-
 
       int nn, bask;
       for (int i = 0; i < n; ++i) {
@@ -345,7 +322,6 @@ void mdpuscale_data(rc_op op)
             }
          }
       }
-
 
       const bool usepolar = use_potent(polar_term);
       for (int i = 0; usepolar and i < n; ++i) {
@@ -509,7 +485,6 @@ void mdpuscale_data(rc_op op)
          }
       }
 
-
       std::vector<int> exclik;
       std::vector<real> excls;
       for (auto& it : ikm) {
@@ -522,7 +497,6 @@ void mdpuscale_data(rc_op op)
       darray::copyin(g::q0, nmexclude, mexclude, exclik.data());
       darray::copyin(g::q0, nmexclude, mexclude_scale, excls.data());
       wait_for(g::q0);
-
 
       std::vector<int> ik_vec;
       std::vector<real> scal_vec;
@@ -541,9 +515,7 @@ void mdpuscale_data(rc_op op)
       wait_for(g::q0);
    }
 
-
-   if (op & rc_init) {
-   }
+   if (op & rc_init) {}
 }
 
 //====================================================================//
@@ -566,12 +538,10 @@ void chgpen_data(rc_op op)
       const int maxn15 = 27 * sizes::maxval;
       const int maxp11 = polgrp::maxp11;
 
-
       const int* couple_i12 = &couple::i12[0][0];
       const int* couple_i13 = couple::i13;
       const int* couple_i14 = couple::i14;
       const int* couple_i15 = couple::i15;
-
 
       struct mdw
       {
@@ -579,8 +549,7 @@ void chgpen_data(rc_op op)
       };
 
       // mdw excl list
-      auto insert_mdw = [](std::map<std::pair<int, int>, mdw>& a, int i, int k,
-                           real val, char ch) {
+      auto insert_mdw = [](std::map<std::pair<int, int>, mdw>& a, int i, int k, real val, char ch) {
          std::pair<int, int> key;
          key.first = i;
          key.second = k;
@@ -666,7 +635,6 @@ void chgpen_data(rc_op op)
       const real p3iscale = polpot::p3iscale;
       const real p4iscale = polpot::p4iscale;
       const real p5iscale = polpot::p5iscale;
-
 
       // setup dscale values based on polar-scale and polar-iscale
       const bool usepolar = use_potent(polar_term);
@@ -839,7 +807,6 @@ void chgpen_data(rc_op op)
 
 //====================================================================//
 
-
 void elec_data(rc_op op)
 {
    if (op & rc_init) {
@@ -852,9 +819,7 @@ void elec_data(rc_op op)
    rc_man chgpen42{chgpen_data, op};
 }
 
-
 //====================================================================//
-
 
 void mpole_init(int vers)
 {
@@ -863,18 +828,16 @@ void mpole_init(int vers)
    if (vers & calc::virial)
       darray::zero(g::q0, buffer_size(), vir_trq);
 
-
    chkpole();
    rotpole();
-
 
    if (use_ewald()) {
       rpole_to_cmp();
       if (vir_m)
          darray::zero(g::q0, buffer_size(), vir_m);
       if (pltfm_config & CU_PLTFM) {
-         bool precompute_theta = (!TINKER_CU_THETA_ON_THE_FLY_GRID_MPOLE) ||
-            (!TINKER_CU_THETA_ON_THE_FLY_GRID_UIND);
+         bool precompute_theta =
+            (!TINKER_CU_THETA_ON_THE_FLY_GRID_MPOLE) || (!TINKER_CU_THETA_ON_THE_FLY_GRID_UIND);
          if (epme_unit.valid()) {
             if (precompute_theta)
                bspline_fill(epme_unit, 3);
@@ -891,18 +854,15 @@ void mpole_init(int vers)
    }
 }
 
-
 void chkpole()
 {
    chkpole_acc();
 }
 
-
 void rotpole()
 {
    rotpole_acc();
 }
-
 
 void torque(int vers, grad_prec* dx, grad_prec* dy, grad_prec* dz)
 {
@@ -913,7 +873,6 @@ void torque(int vers, grad_prec* dx, grad_prec* dy, grad_prec* dz)
    torque_acc(vers, dx, dy, dz);
 }
 
-
 bool amoeba_emplar(int vers)
 {
    if (mplpot::use_chgpen)
@@ -923,35 +882,28 @@ bool amoeba_emplar(int vers)
    if (vers & calc::analyz)
       return false;
 
-
-   return use_potent(mpole_term) && use_potent(polar_term) &&
-      (mlist_version() & NBL_SPATIAL);
+   return use_potent(mpole_term) && use_potent(polar_term) && (mlist_version() & NBL_SPATIAL);
 }
-
 
 bool amoeba_empole(int vers)
 {
    if (mplpot::use_chgpen)
       return false;
 
-
    if (amoeba_emplar(vers))
       return false;
    return use_potent(mpole_term);
 }
-
 
 bool amoeba_epolar(int vers)
 {
    if (mplpot::use_chgpen)
       return false;
 
-
    if (amoeba_emplar(vers))
       return false;
    return use_potent(polar_term);
 }
-
 
 bool amoeba_echglj(int vers)
 {
@@ -972,7 +924,6 @@ bool amoeba_echglj(int vers)
    return true;
 }
 
-
 bool amoeba_echarge(int vers)
 {
    if (amoeba_echglj(vers))
@@ -980,14 +931,12 @@ bool amoeba_echarge(int vers)
    return use_potent(charge_term);
 }
 
-
 bool amoeba_evdw(int vers)
 {
    if (amoeba_echglj(vers))
       return false;
    return use_potent(vdw_term);
 }
-
 
 bool hippo_empole(int vers)
 {
@@ -997,7 +946,6 @@ bool hippo_empole(int vers)
       return false;
    return use_potent(mpole_term);
 }
-
 
 bool hippo_epolar(int vers)
 {

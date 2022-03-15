@@ -14,17 +14,13 @@ void bspline_fill(PMEUnit pme_u, int level)
 #endif
 }
 
-
 //====================================================================//
-
 
 void grid_pchg(PMEUnit pme_u, real* pchg)
 {
    int bso = pme_u->bsorder;
    if (bso != 5 and bso != 4)
-      TINKER_THROW(
-         format("grid_pchg(): bsorder is %d; must be 4 or 5.\n", bso));
-
+      TINKER_THROW(format("grid_pchg(): bsorder is %d; must be 4 or 5.\n", bso));
 
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
@@ -34,13 +30,11 @@ void grid_pchg(PMEUnit pme_u, real* pchg)
       grid_pchg_acc(pme_u, pchg);
 }
 
-
 void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
 {
    int bso = pme_u->bsorder;
    if (bso != 5)
       TINKER_THROW(format("grid_mpole(): bsorder is %d; must be 5.\n", bso));
-
 
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
@@ -50,13 +44,11 @@ void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
       grid_mpole_acc(pme_u, fmp);
 }
 
-
 void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 {
    int bso = pme_u->bsorder;
    if (bso != 5)
       TINKER_THROW(format("grid_uind(): bsorder is %d; must be 5.\n", bso));
-
 
 #if TINKER_CUDART
    if (mlist_version() & NBL_SPATIAL)
@@ -66,13 +58,11 @@ void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
       grid_uind_acc(pme_u, fuind, fuinp);
 }
 
-
 void grid_disp(PMEUnit pme_u, real* csix)
 {
    int bso = pme_u->bsorder;
    if (bso != 4)
       TINKER_THROW(format("grid_disp(): bsorder is %d; must be 4.\n", bso));
-
 
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
@@ -82,9 +72,7 @@ void grid_disp(PMEUnit pme_u, real* csix)
       grid_disp_acc(pme_u, csix);
 }
 
-
 //====================================================================//
-
 
 void pme_conv(PMEUnit pme_u)
 {
@@ -96,7 +84,6 @@ void pme_conv(PMEUnit pme_u)
       pme_conv_acc(pme_u, nullptr, nullptr);
 }
 
-
 void pme_conv(PMEUnit pme_u, virial_buffer gpu_vir)
 {
 #if TINKER_CUDART
@@ -106,7 +93,6 @@ void pme_conv(PMEUnit pme_u, virial_buffer gpu_vir)
 #endif
       pme_conv_acc(pme_u, nullptr, gpu_vir);
 }
-
 
 void pme_conv(PMEUnit pme_u, energy_buffer gpu_e)
 {
@@ -118,7 +104,6 @@ void pme_conv(PMEUnit pme_u, energy_buffer gpu_e)
       pme_conv_acc(pme_u, gpu_e, nullptr);
 }
 
-
 void pme_conv(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
 {
 #if TINKER_CUDART
@@ -129,16 +114,13 @@ void pme_conv(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
       pme_conv_acc(pme_u, gpu_e, gpu_vir);
 }
 
-
 //====================================================================//
-
 
 void fphi_mpole(PMEUnit pme_u)
 {
    int bso = pme_u->bsorder;
    if (bso != 5)
       TINKER_THROW(format("fphi_mpole(): bsorder is %d; must be 5.\n", bso));
-
 
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
@@ -148,14 +130,12 @@ void fphi_mpole(PMEUnit pme_u)
       fphi_mpole_acc(pme_u, fphi);
 }
 
-
-void fphi_uind(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10],
-               real (*fdip_sum_phi)[20])
+void fphi_uind(
+   PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10], real (*fdip_sum_phi)[20])
 {
    int bso = pme_u->bsorder;
    if (bso != 5)
       TINKER_THROW(format("fphi_uind(): bsorder is %d; must be 5.\n", bso));
-
 
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
@@ -165,13 +145,11 @@ void fphi_uind(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10],
       fphi_uind_acc(pme_u, fdip_phi1, fdip_phi2, fdip_sum_phi);
 }
 
-
 void fphi_uind2(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10])
 {
    int bso = pme_u->bsorder;
    if (bso != 5)
       TINKER_THROW(format("fphi_uind2(): bsorder is %d; must be 5.\n", bso));
-
 
 #if TINKER_CUDART
    if (pltfm_config & CU_PLTFM)
@@ -181,28 +159,23 @@ void fphi_uind2(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10])
       fphi_uind2_acc(pme_u, fdip_phi1, fdip_phi2);
 }
 
-
 //====================================================================//
-
 
 void rpole_to_cmp()
 {
    rpole_to_cmp_acc();
 }
 
-
 void cmp_to_fmp(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
 {
    cmp_to_fmp_acc(pme_u, cmp, fmp);
 }
 
-
-void cuind_to_fuind(PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3],
-                    real (*fuind)[3], real (*fuinp)[3])
+void cuind_to_fuind(
+   PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3], real (*fuind)[3], real (*fuinp)[3])
 {
    cuind_to_fuind_acc(pme_u, cind, cinp, fuind, fuinp);
 }
-
 
 void fphi_to_cphi(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
 {

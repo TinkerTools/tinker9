@@ -71,7 +71,6 @@ void eopbend(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
-
    if (rc_a) {
       host_zero(energy_eopb, virial_eopb);
       auto bsize = buffer_size();
@@ -83,9 +82,7 @@ void eopbend(int vers)
          darray::zero(g::q0, n, deopbx, deopby, deopbz);
    }
 
-
    eopbend_acc(vers);
-
 
    if (rc_a) {
       if (do_e) {

@@ -1,7 +1,6 @@
 #pragma once
 #include "macro.h"
 
-
 namespace tinker {
 enum switch_t
 {
@@ -21,10 +20,8 @@ enum switch_t
    switch_gksa,
 };
 
-
 /// \return Distance at which switching of the potential begins.
 real switch_cut(switch_t mode);
-
 
 /// \return Distance at which the potential energy goes to zero.
 real switch_off(switch_t mode);

@@ -1,7 +1,6 @@
-#include "mdpq.h"
 #include "osrw.h"
+#include "mdpq.h"
 #include "potent.h"
-
 
 namespace tinker {
 void osrw_altele_acc(double el)
@@ -9,7 +8,6 @@ void osrw_altele_acc(double el)
    bool use_ec = use_potent(charge_term);
    bool use_em = use_potent(mpole_term);
    bool use_ep = use_potent(polar_term);
-
 
    if (use_ec) {
       #pragma acc parallel loop independent async\
@@ -22,7 +20,6 @@ void osrw_altele_acc(double el)
       }
    }
 
-
    if (use_em || use_ep) {
       #pragma acc parallel loop independent async\
               deviceptr(mut,pole,polarity,polarity_inv,osrw_pole,osrw_polarity)
@@ -33,7 +30,6 @@ void osrw_altele_acc(double el)
             if (mut[i])
                m *= el;
             pole[i][j] = m;
-
 
             if (use_ep) {
                real p = osrw_polarity[i];
@@ -49,12 +45,10 @@ void osrw_altele_acc(double el)
    }
 }
 
-
 void osrw_alttor_acc(double tl)
 {
    if (osrw_ntbnd <= 0)
       return;
-
 
    #pragma acc parallel loop independent async\
            deviceptr(osrw_tors1,osrw_tors2,osrw_tors3,\
@@ -85,7 +79,6 @@ void osrw_alttor_acc(double tl)
       tors6[i][1] = osrw_tors6[i][1];
       tors6[i][2] = osrw_tors6[i][2];
       tors6[i][3] = osrw_tors6[i][3];
-
 
       int ia = itors[i][0];
       int ib = itors[i][1];

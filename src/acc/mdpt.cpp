@@ -1,7 +1,6 @@
 #define TINKER_ENABLE_LOG 0
 #include "tool/log.h"
 
-
 #include "box.h"
 #include "energy.h"
 #include "glob.molecule.h"
@@ -18,11 +17,9 @@
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>
 
-
 namespace tinker {
-void kinetic_energy_acc(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
-                        int n, const double* mass, const vel_prec* vx,
-                        const vel_prec* vy, const vel_prec* vz)
+void kinetic_energy_acc(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n,
+   const double* mass, const vel_prec* vx, const vel_prec* vy, const vel_prec* vz)
 {
    const energy_prec ekcal_inv = 1.0 / units::ekcal;
    energy_prec exx = 0, eyy = 0, ezz = 0, exy = 0, eyz = 0, ezx = 0;
@@ -41,7 +38,6 @@ void kinetic_energy_acc(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
    }
    #pragma acc wait
 
-
    ekin_out[0][0] = exx;
    ekin_out[0][1] = exy;
    ekin_out[0][2] = ezx;
@@ -54,25 +50,20 @@ void kinetic_energy_acc(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
    eksum_out = exx + eyy + ezz;
 }
 
-
 //====================================================================//
-
 
 void bussi_thermostat_acc(time_prec dt_prec, T_prec temp_prec)
 {
    double dt = dt_prec;
    double temp = temp_prec;
 
-
    double tautemp = bath::tautemp;
    double kelvin = bath::kelvin;
    int nfree = mdstuf::nfree;
    double& eta = bath::eta;
 
-
    if (temp == 0)
       temp = 0.1;
-
 
    double c = std::exp(-dt / tautemp);
    double d = (1 - c) * (kelvin / temp) / nfree;
@@ -83,7 +74,6 @@ void bussi_thermostat_acc(time_prec dt_prec, T_prec temp_prec)
    if (r + std::sqrt(c / d) < 0)
       scale = -scale;
    eta *= scale;
-
 
    vel_prec sc = scale;
    #pragma acc parallel loop independent async deviceptr(vx,vy,vz)
@@ -99,9 +89,7 @@ void bussi_thermostat_acc(time_prec dt_prec, T_prec temp_prec)
    }
 }
 
-
 //====================================================================//
-
 
 void berendsen_barostat_acc(time_prec dt)
 {
@@ -152,28 +140,22 @@ void berendsen_barostat_acc(time_prec dt)
          }
       }
       double l0, l1, l2, a0 = 90, a1 = 90, a2 = 90;
-      l0 = std::sqrt(hbox[0][0] * hbox[0][0] + hbox[0][1] * hbox[0][1] +
-                     hbox[0][2] * hbox[0][2]);
-      l1 = std::sqrt(hbox[1][0] * hbox[1][0] + hbox[1][1] * hbox[1][1] +
-                     hbox[1][2] * hbox[1][2]);
-      l2 = std::sqrt(hbox[2][0] * hbox[2][0] + hbox[2][1] * hbox[2][1] +
-                     hbox[2][2] * hbox[2][2]);
+      l0 = std::sqrt(hbox[0][0] * hbox[0][0] + hbox[0][1] * hbox[0][1] + hbox[0][2] * hbox[0][2]);
+      l1 = std::sqrt(hbox[1][0] * hbox[1][0] + hbox[1][1] * hbox[1][1] + hbox[1][2] * hbox[1][2]);
+      l2 = std::sqrt(hbox[2][0] * hbox[2][0] + hbox[2][1] * hbox[2][1] + hbox[2][2] * hbox[2][2]);
       if (box_shape == MONO_BOX or box_shape == TRI_BOX) {
          // beta
-         a1 = (hbox[0][0] * hbox[2][0] + hbox[0][1] * hbox[2][1] +
-               hbox[0][2] * hbox[2][2]) /
+         a1 = (hbox[0][0] * hbox[2][0] + hbox[0][1] * hbox[2][1] + hbox[0][2] * hbox[2][2]) /
             (l0 * l2);
          a1 = radian * std::acos(a1);
       }
       if (box_shape == TRI_BOX) {
          // alpha
-         a0 = (hbox[1][0] * hbox[2][0] + hbox[1][1] * hbox[2][1] +
-               hbox[1][2] * hbox[2][2]) /
+         a0 = (hbox[1][0] * hbox[2][0] + hbox[1][1] * hbox[2][1] + hbox[1][2] * hbox[2][2]) /
             (l1 * l2);
          a0 = radian * std::acos(a0);
          // gamma
-         a2 = (hbox[0][0] * hbox[1][0] + hbox[0][1] * hbox[1][1] +
-               hbox[0][2] * hbox[1][2]) /
+         a2 = (hbox[0][0] * hbox[1][0] + hbox[0][1] * hbox[1][1] + hbox[0][2] * hbox[1][2]) /
             (l0 * l1);
          a2 = radian * std::acos(a2);
       }
@@ -193,8 +175,7 @@ void berendsen_barostat_acc(time_prec dt)
       }
       copy_pos_to_xyz();
    } else {
-      double scale =
-         1 + (dt * bath::compress / bath::taupres) * (pres - bath::atmsph);
+      double scale = 1 + (dt * bath::compress / bath::taupres) * (pres - bath::atmsph);
       scale = std::pow(scale, third);
 
       lvec1 *= scale;
@@ -213,14 +194,12 @@ void berendsen_barostat_acc(time_prec dt)
    }
 }
 
-
 void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
 {
    if (not bound::use_bounds)
       return;
    if (bath::isothermal)
       temp = bath::kelvin;
-
 
    fstr_view volscale = bath::volscale;
    double third = 1.0 / 3.0;
@@ -233,7 +212,6 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
    // if (bath::anisotrop && aniso_rdm > 0.5)
    //    isotropic = false;
 
-
    // save the system state prior to trial box size change
    Box boxold;
    get_default_box(boxold);
@@ -244,21 +222,18 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
    darray::copy(g::q0, n, y_pmonte, ypos);
    darray::copy(g::q0, n, z_pmonte, zpos);
 
-
    if (isotropic) {
       double step_rdm = 2 * random<double>() - 1;
       double step = volmove * step_rdm;
       volnew = volold + step;
       double scale = std::pow(volnew / volold, third);
-      TINKER_LOG("MC Barostat Isotropic: random = %.6f dV = %.6f scale = %.6f",
-                 step_rdm, step, scale);
-
+      TINKER_LOG(
+         "MC Barostat Isotropic: random = %.6f dV = %.6f scale = %.6f", step_rdm, step, scale);
 
       lvec1 *= scale;
       lvec2 *= scale;
       lvec3 *= scale;
       set_default_recip_box();
-
 
       if (volscale == "MOLECULAR") {
          int nmol = molecule.nmol;
@@ -306,26 +281,22 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
    double dpot = enew - eold;
    double dpv = bath::atmsph * (volnew - volold) / units::prescon;
 
-
    // estimate the kinetic energy change as an ideal gas term
    double dkin = 0;
    if (volscale == "MOLECULAR") {
       dkin = molecule.nmol * kt * std::log(volold / volnew);
    }
 
-
    // acceptance ratio from Epot change, Ekin change and PV work
    double term = -(dpot + dpv + dkin) / kt;
    double expterm = std::exp(term);
 
-
    // reject the step, and restore values prior to trial change
    double exp_rdm = random<double>();
-   TINKER_LOG("MC Barostat (kT): dU = %.6f dPV = %.6f dK = %.6f", dpot, dpv,
-              dkin);
+   TINKER_LOG("MC Barostat (kT): dU = %.6f dPV = %.6f dK = %.6f", dpot, dpv, dkin);
    TINKER_LOG("MC Barostat Accep. Ratio: %.6f; random: %.6f; "
               "reject this move if ramdom .gt. Accep. Ratio",
-              expterm, exp_rdm);
+      expterm, exp_rdm);
    if (exp_rdm > expterm) {
       TINKER_LOG("MC Barostat Move Rejected");
       esum = eold;
@@ -341,8 +312,8 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
       get_default_box(p);
       double xbox, ybox, zbox, a_deg, b_deg, c_deg;
       get_box_axes_angles(p, xbox, ybox, zbox, a_deg, b_deg, c_deg);
-      TINKER_LOG("MC Barostat Move Accepted; New box"_s + 6 * "%12.6f"_s, xbox,
-                 ybox, zbox, a_deg, b_deg, c_deg);
+      TINKER_LOG("MC Barostat Move Accepted; New box"_s + 6 * "%12.6f"_s, xbox, ybox, zbox, a_deg,
+         b_deg, c_deg);
 #endif
    }
 }

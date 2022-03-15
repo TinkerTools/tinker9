@@ -1,6 +1,5 @@
 #include "tool/gpu_card.h"
 
-
 namespace tinker {
 void gpu_card_data(rc_op op)
 {
@@ -15,12 +14,10 @@ void gpu_card_data(rc_op op)
    }
 }
 
-
 int get_grid_size(int)
 {
    return 1;
 }
-
 
 int gpu_max_nparallel(int)
 {

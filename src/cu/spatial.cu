@@ -1,7 +1,6 @@
 // Eventually thrust will drop c++11 support.
 #define THRUST_IGNORE_DEPRECATED_CPP_DIALECT
 
-
 #include "box.h"
 #include "image.h"
 #include "imagefc_cu.h"
@@ -19,7 +18,6 @@
 #include <thrust/transform_reduce.h>
 #include <thrust/transform_scan.h>
 
-
 namespace tinker {
 struct POPC
 {
@@ -30,11 +28,9 @@ struct POPC
    }
 };
 
-
 struct Int32
 {
    long4 lx, ly, lz, lw;
-
 
    __device__
    static bool is_long4_zero(const long4& l)
@@ -42,15 +38,13 @@ struct Int32
       return l.x == 0 && l.y == 0 && l.z == 0 && l.w == 0;
    }
 
-
    __device__
    static bool is_zero(const Int32& i32)
    {
-      return is_long4_zero(i32.lx) && is_long4_zero(i32.ly) &&
-         is_long4_zero(i32.lz) && is_long4_zero(i32.lw);
+      return is_long4_zero(i32.lx) && is_long4_zero(i32.ly) && is_long4_zero(i32.lz) &&
+         is_long4_zero(i32.lw);
    }
 };
-
 
 struct IntInt32Pair
 {
@@ -64,7 +58,6 @@ struct IntInt32Pair
    };
 };
 
-
 /**
  * \return
  * The original integer which has the smaller absolute value.
@@ -75,7 +68,6 @@ inline int min_by_abs(int a, int b)
    return (abs(b) < abs(a)) ? b : a;
 }
 
-
 __device__
 inline int ixyz_to_box(int ix, int iy, int iz, int px, int py, int pz)
 {
@@ -83,10 +75,9 @@ inline int ixyz_to_box(int ix, int iy, int iz, int px, int py, int pz)
    return id;
 }
 
-
 __device__
-inline void box_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
-                        int px, int py, int pz, int boxid)
+inline void box_to_ixyz(
+   int& restrict ix, int& restrict iy, int& restrict iz, int px, int py, int pz, int boxid)
 {
    ix = boxid >> (pz + py);         // ix = boxid / (dimz*dimy)
    boxid &= ((1 << (pz + py)) - 1); // boxid = boxid % (dimz*dimy)
@@ -94,14 +85,13 @@ inline void box_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
    iz = boxid & ((1 << pz) - 1);    // iz = boxid % dimz
 }
 
-
 /**
  * \note
  * Fractional coordinates have to be taken care of by the image routine first.
  */
 __device__
-inline void frac_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
-                         int px, int py, int pz, real fx, real fy, real fz)
+inline void frac_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz, int px, int py,
+   int pz, real fx, real fy, real fz)
 {
    // cannot use iw = fw * (1 << pw) + (1 << pw) / 2;
    // with the implicit cast rules of C,
@@ -121,7 +111,6 @@ inline void frac_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
    iz = ((double)fz) * (1 << pz) + (1 << pz) / 2;
 }
 
-
 /**
  * \brief
  * Check the `ix, iy, iz` parameters of a given spatial box used for truncated
@@ -133,8 +122,8 @@ inline void frac_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz,
  * `|x| + |y| + |z| = 3/4`, it is considered to be outside and needs updating.
  */
 __device__
-inline void ixyz_octahedron(int& restrict ix, int& restrict iy,
-                            int& restrict iz, int px, int py, int pz)
+inline void ixyz_octahedron(
+   int& restrict ix, int& restrict iy, int& restrict iz, int px, int py, int pz)
 {
    int qx = (1 << px);
    int qy = (1 << py);
@@ -143,12 +132,10 @@ inline void ixyz_octahedron(int& restrict ix, int& restrict iy,
    int qy2 = qy / 2;
    int qz2 = qz / 2;
 
-
    // Translate by half box size so fractional coordinate can start from -0.5.
    int ix1 = ix - qx2;
    int iy1 = iy - qy2;
    int iz1 = iz - qz2;
-
 
    // The innear-most vertex.
    int ix2 = min_by_abs(ix1, ix1 + 1);
@@ -172,17 +159,15 @@ inline void ixyz_octahedron(int& restrict ix, int& restrict iy,
       iz1 -= INT_COPYSIGN(qz2, iz1 - iz2);
    }
 
-
    // Translate by half box size again.
    ix = ix1 + qx2;
    iy = iy1 + qy2;
    iz = iz1 + qz2;
 }
 
-
 __device__
-inline bool nearby_box0(int px, int py, int pz, BoxShape box_shape, real3 lvec1,
-                        real3 lvec2, real3 lvec3, int boxj, real cutbuf2)
+inline bool nearby_box0(int px, int py, int pz, BoxShape box_shape, real3 lvec1, real3 lvec2,
+   real3 lvec3, int boxj, real cutbuf2)
 {
    int dimx = 1 << px;
    int dimy = 1 << py;
@@ -267,10 +252,9 @@ inline bool nearby_box0(int px, int py, int pz, BoxShape box_shape, real3 lvec1,
    return r2 <= cutbuf2;
 }
 
-
 __device__
-inline int offset_box(int ix1, int iy1, int iz1, int px, int py, int pz,
-                      int offset, BoxShape box_shape)
+inline int offset_box(
+   int ix1, int iy1, int iz1, int px, int py, int pz, int offset, BoxShape box_shape)
 {
    int dimx = (1 << px);
    int dimy = (1 << py);
@@ -286,19 +270,16 @@ inline int offset_box(int ix1, int iy1, int iz1, int px, int py, int pz,
    return id;
 }
 
-
 __global__
-void spatial_bc(int n, int px, int py, int pz,
-                Spatial::SortedAtom* restrict sorted, int* restrict boxnum,
-                int* restrict nax, //
-                const real* restrict x, const real* restrict y,
-                const real* restrict z, TINKER_IMAGE_PARAMS, real cutbuf2,
-                int ZERO_LBUF, real* restrict xold, real* restrict yold,
-                real* restrict zold, //
-                int nx, int* restrict nearby)
+void spatial_bc(int n, int px, int py, int pz, Spatial::SortedAtom* restrict sorted,
+   int* restrict boxnum,
+   int* restrict nax, //
+   const real* restrict x, const real* restrict y, const real* restrict z, TINKER_IMAGE_PARAMS,
+   real cutbuf2, int ZERO_LBUF, real* restrict xold, real* restrict yold,
+   real* restrict zold, //
+   int nx, int* restrict nearby)
 {
-   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
-        i += blockDim.x * gridDim.x) {
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n; i += blockDim.x * gridDim.x) {
       real xr = x[i];
       real yr = y[i];
       real zr = z[i];
@@ -329,11 +310,8 @@ void spatial_bc(int n, int px, int py, int pz,
       atomicAdd(&nax[id], 1); // B.4
    }
 
-
-   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < nx;
-        i += blockDim.x * gridDim.x) {
-      bool is_nearby0 =
-         nearby_box0(px, py, pz, box_shape, lvec1, lvec2, lvec3, i, cutbuf2);
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < nx; i += blockDim.x * gridDim.x) {
+      bool is_nearby0 = nearby_box0(px, py, pz, box_shape, lvec1, lvec2, lvec3, i, cutbuf2);
       if (is_nearby0)
          nearby[i] = i; // C.1 (close enough)
       else
@@ -341,17 +319,15 @@ void spatial_bc(int n, int px, int py, int pz,
    }
 }
 
-
 __global__
 void spatial_e(int n, int nak, const int* restrict boxnum, int* xakf,
-               const Spatial::SortedAtom* restrict sorted, TINKER_IMAGE_PARAMS)
+   const Spatial::SortedAtom* restrict sorted, TINKER_IMAGE_PARAMS)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
    const int prevlane = (ilane + WARP_SIZE - 1) & (WARP_SIZE - 1); // E.2
-
 
    for (int iw = iwarp; iw < nak; iw += nwarp) {
       int atomi = iw * WARP_SIZE + ilane;
@@ -363,7 +339,6 @@ void spatial_e(int n, int nak, const int* restrict boxnum, int* xakf,
          xakf[iw] = (flag == 0 ? 1 : flag); // E.4
    }
 }
-
 
 __global__
 void spatial_ghi(Spatial* restrict sp, int n, TINKER_IMAGE_PARAMS, real cutbuf2)
@@ -402,8 +377,8 @@ void spatial_ghi(Spatial* restrict sp, int n, TINKER_IMAGE_PARAMS, real cutbuf2)
       auto* restrict ixkf = xkf + iw * nxk;                    // H.2
       const int atom_block_min = iw * WARP_SIZE;               // H.4
       for (int j = ilane; j < nbox * near; j += WARP_SIZE) {
-         iakbuf[j] = iw;    // G.4
-         int i0 = j / near; // the i-th least significant bit is i0 + 1
+         iakbuf[j] = iw;                          // G.4
+         int i0 = j / near;                       // the i-th least significant bit is i0 + 1
          int pos = ffsn(flag, i0 + 1) - 1;        // E.8
          int ibox = boxnum[iw * WARP_SIZE + pos]; // E.8
          int ix1, iy1, iz1;
@@ -432,14 +407,12 @@ void spatial_ghi(Spatial* restrict sp, int n, TINKER_IMAGE_PARAMS, real cutbuf2)
       }
    }
 
-
    const auto* restrict sorted = sp->sorted;
    for (int iw = iwarp; iw < nak; iw += nwarp) {
       int offset = xakf_scan[iw];
       const auto* restrict iakbuf = iak + near * offset;
       auto* restrict lstbuf = lst + near * offset * WARP_SIZE;
       int naak_coarse = naak[iw]; // I.1
-
 
       int start_pos = 0;
       int atomi;
@@ -458,7 +431,6 @@ void spatial_ghi(Spatial* restrict sp, int n, TINKER_IMAGE_PARAMS, real cutbuf2)
          shz = sorted[shatomk].z;
          lstbuf[idx] = 0; // I.3
 
-
          int jflag = 0;
          for (int j = 0; j < WARP_SIZE; ++j) {
             int srclane = j;
@@ -467,13 +439,11 @@ void spatial_ghi(Spatial* restrict sp, int n, TINKER_IMAGE_PARAMS, real cutbuf2)
             real yr = yi - __shfl_sync(ALL_LANES, shy, srclane);
             real zr = zi - __shfl_sync(ALL_LANES, shz, srclane);
             real rik2 = imagen2(xr, yr, zr);
-            int ilane_incl_j =
-               (atomi < atomk && rik2 <= cutbuf2) ? 1 : 0; // I.5
+            int ilane_incl_j = (atomi < atomk && rik2 <= cutbuf2) ? 1 : 0; // I.5
             int incl_j = __ballot_sync(ALL_LANES, ilane_incl_j);
             if (incl_j)
                jflag |= (1 << j); // I.5
          }
-
 
          int njbit = __popc(jflag);
          int jth = ffsn(jflag, ilane + 1) - 1;
@@ -485,14 +455,11 @@ void spatial_ghi(Spatial* restrict sp, int n, TINKER_IMAGE_PARAMS, real cutbuf2)
    }
 }
 
-
 __global__
-void spatial_update_sorted(int n, Spatial::SortedAtom* restrict sorted,
-                           const real* restrict x, const real* restrict y,
-                           const real* restrict z, TINKER_IMAGE_PARAMS)
+void spatial_update_sorted(int n, Spatial::SortedAtom* restrict sorted, const real* restrict x,
+   const real* restrict y, const real* restrict z, TINKER_IMAGE_PARAMS)
 {
-   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
-        i += blockDim.x * gridDim.x) {
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n; i += blockDim.x * gridDim.x) {
       int ia = sorted[i].unsorted;
       real xr = x[ia];
       real yr = y[ia];
@@ -505,15 +472,12 @@ void spatial_update_sorted(int n, Spatial::SortedAtom* restrict sorted,
 }
 }
 
-
 namespace tinker {
 void spatial_data_update_sorted(SpatialUnit u)
 {
    auto& st = *u;
-   launch_k1s(g::s0, n, spatial_update_sorted, n, st.sorted, st.x, st.y, st.z,
-              TINKER_IMAGE_ARGS);
+   launch_k1s(g::s0, n, spatial_update_sorted, n, st.sorted, st.x, st.y, st.z, TINKER_IMAGE_ARGS);
 }
-
 
 void spatial_data_init_cu(SpatialUnit u)
 {
@@ -533,7 +497,6 @@ void spatial_data_init_cu(SpatialUnit u)
    int& iak_cap = u->iak_cap;
    int& niak = u->niak;
 
-
    auto*& sorted = u->sorted;
    auto*& boxnum = u->boxnum;
    auto*& naak = u->naak;
@@ -543,10 +506,8 @@ void spatial_data_init_cu(SpatialUnit u)
    auto*& ax_scan = u->ax_scan;
    auto*& xkf = u->xkf;
 
-
    // auto policy = thrust::device;
    auto policy = thrust::cuda::par(thrust_cache).on(g::s0);
-
 
    // B.1 D.1
    darray::zero(g::q0, nx + 1, ax_scan);
@@ -555,11 +516,10 @@ void spatial_data_init_cu(SpatialUnit u)
    const auto* ly = u->y;
    const auto* lz = u->z;
    int ZERO_LBUF = (lbuf <= 0 ? 1 : 0);
-   launch_k1s(g::s0, n, spatial_bc,                       //
-              n, px, py, pz, sorted, boxnum, ax_scan + 1, //
-              lx, ly, lz, TINKER_IMAGE_ARGS, cutbuf2, ZERO_LBUF, u->xold,
-              u->yold, u->zold, //
-              nx, nearby);
+   launch_k1s(g::s0, n, spatial_bc,                                                 //
+      n, px, py, pz, sorted, boxnum, ax_scan + 1,                                   //
+      lx, ly, lz, TINKER_IMAGE_ARGS, cutbuf2, ZERO_LBUF, u->xold, u->yold, u->zold, //
+      nx, nearby);
    // find max(nax) and compare to Spatial::BLOCK
    // ax_scan[0] == 0 can never be the maximum
    int level = px + py + pz;
@@ -591,11 +551,10 @@ void spatial_data_init_cu(SpatialUnit u)
 
       darray::zero(g::q0, nx + 1, ax_scan);
       int ZERO_LBUF = (lbuf <= 0 ? 1 : 0);
-      launch_k1s(g::s0, n, spatial_bc,                       //
-                 n, px, py, pz, sorted, boxnum, ax_scan + 1, //
-                 lx, ly, lz, TINKER_IMAGE_ARGS, cutbuf2, ZERO_LBUF, u->xold,
-                 u->yold, u->zold, //
-                 nx, nearby);
+      launch_k1s(g::s0, n, spatial_bc,                                                 //
+         n, px, py, pz, sorted, boxnum, ax_scan + 1,                                   //
+         lx, ly, lz, TINKER_IMAGE_ARGS, cutbuf2, ZERO_LBUF, u->xold, u->yold, u->zold, //
+         nx, nearby);
       mnaxptr = thrust::max_element(policy, ax_scan, ax_scan + 1 + nx);
       darray::copyout(g::q0, 1, &mnax, mnaxptr);
       wait_for(g::q0);
@@ -611,16 +570,13 @@ void spatial_data_init_cu(SpatialUnit u)
    // D.3
    thrust::inclusive_scan(policy, nax, nax + nx, nax);
 
-
    // E
-   launch_k1s(g::s0, padded, spatial_e, n, nak, boxnum, xakf, sorted,
-              TINKER_IMAGE_ARGS);
+   launch_k1s(g::s0, padded, spatial_e, n, nak, boxnum, xakf, sorted, TINKER_IMAGE_ARGS);
    // F.1
-   xak_sum = thrust::transform_reduce(policy, xakf, xakf + nak, POPC(), 0,
-                                      thrust::plus<int>());
+   xak_sum = thrust::transform_reduce(policy, xakf, xakf + nak, POPC(), 0, thrust::plus<int>());
    // F.2
-   thrust::transform_exclusive_scan(policy, xakf, xakf + nak, xakf_scan, POPC(),
-                                    0, thrust::plus<int>());
+   thrust::transform_exclusive_scan(
+      policy, xakf, xakf + nak, xakf_scan, POPC(), 0, thrust::plus<int>());
    size_t iak_size = near * xak_sum;            // F.3
    size_t lst_size = iak_size * Spatial::BLOCK; // F.4
    if (iak_size > (size_t)iak_cap) {
@@ -632,27 +588,22 @@ void spatial_data_init_cu(SpatialUnit u)
    // must update the device pointer to apply the changes in xak_sum
    u.update_deviceptr(*u, g::q0);
 
-
    darray::zero(g::q0, near * xak_sum * Spatial::BLOCK, u->lst); // G.6
    darray::zero(g::q0, nak, naak);                               // H.1
    darray::zero(g::q0, nak * nxk, xkf);                          // H.1
-   launch_k1s(g::s0, padded, spatial_ghi, u.deviceptr(), n, TINKER_IMAGE_ARGS,
-              cutbuf2);
-
+   launch_k1s(g::s0, padded, spatial_ghi, u.deviceptr(), n, TINKER_IMAGE_ARGS, cutbuf2);
 
    Int32* lst32 = (Int32*)u->lst;
-   auto tup_begin =
-      thrust::make_zip_iterator(thrust::make_tuple(u->iak, lst32));
+   auto tup_begin = thrust::make_zip_iterator(thrust::make_tuple(u->iak, lst32));
    auto tup_end = thrust::make_zip_iterator(
       thrust::make_tuple(u->iak + near * xak_sum, lst32 + near * xak_sum));
    auto end2 = thrust::remove_if(policy, tup_begin, tup_end,
-                                 IntInt32Pair::Int32IsZero());  // G.7
+      IntInt32Pair::Int32IsZero());                             // G.7
    u->niak = thrust::get<1>(end2.get_iterator_tuple()) - lst32; // G.7
    assert((thrust::get<0>(end2.get_iterator_tuple()) - u->iak) == u->niak);
    u.update_deviceptr(*u, g::q0);
 }
 }
-
 
 #if 0
 namespace tinker {
@@ -710,18 +661,14 @@ inline int ixyz_to_box(int ix, int iy, int iz, int px, int py, int pz)
 }
 #endif
 
-
 //====================================================================//
-
 
 #include "seq_triangle.h"
 #include "spatial2.h"
 
-
 namespace tinker {
 namespace {
 using coord_t = int;
-
 
 template <size_t n>
 __device__
@@ -742,23 +689,19 @@ inline void AxesToTranspose(coord_t (&x)[n], int b)
       }
    }
 
-
    #pragma unroll
    for (int i = 1; i < n; ++i)
       x[i] ^= x[i - 1];
-
 
    t = 0;
    for (coord_t Q = M; Q > 1; Q >>= 1)
       if (x[n - 1] & Q)
          t ^= Q - 1;
 
-
    #pragma unroll
    for (int i = 0; i < n; ++i)
       x[i] ^= t;
 }
-
 
 template <size_t n>
 __device__
@@ -776,22 +719,18 @@ inline int TransposeToIndex(coord_t (&x)[n], int b)
 }
 }
 
-
 __global__
 void spatial2_step1(int n, int pz, int2* restrict b2num, //
-                    const real* restrict x, const real* restrict y,
-                    const real* restrict z, TINKER_IMAGE_PARAMS, int nakpk,
-                    int* restrict akpf)
+   const real* restrict x, const real* restrict y, const real* restrict z, TINKER_IMAGE_PARAMS,
+   int nakpk, int* restrict akpf)
 {
    // i = unsorted atom number
    // b2num[i] = [box number][unsorted atom number]
-   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
-        i += blockDim.x * gridDim.x) {
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n; i += blockDim.x * gridDim.x) {
       real xr = x[i];
       real yr = y[i];
       real zr = z[i];
       real3 f = imagectof(xr, yr, zr);
-
 
       int ix, iy, iz;
       frac_to_ixyz(ix, iy, iz, pz, pz, pz, f.x, f.y, f.z);
@@ -817,21 +756,16 @@ void spatial2_step1(int n, int pz, int2* restrict b2num, //
       // b2num[i] = make_int2(i, i);
    }
 
-
-   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < nakpk;
-        i += blockDim.x * gridDim.x) {
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < nakpk; i += blockDim.x * gridDim.x) {
       akpf[i] = 0; // B.2
    }
 }
 
-
 __global__
-void spatial2_update_sorted(int n, Spatial::SortedAtom* restrict sorted,
-                            const real* restrict x, const real* restrict y,
-                            const real* restrict z, //
-                            TINKER_IMAGE_PARAMS, real cut,
-                            Spatial2::Center* restrict akc,
-                            Spatial2::Center* restrict half)
+void spatial2_update_sorted(int n, Spatial::SortedAtom* restrict sorted, const real* restrict x,
+   const real* restrict y,
+   const real* restrict z, //
+   TINKER_IMAGE_PARAMS, real cut, Spatial2::Center* restrict akc, Spatial2::Center* restrict half)
 {
    real xbox, ybox, zbox;
    xbox = lvec1.x * lvec1.x + lvec2.x * lvec2.x + lvec3.x * lvec3.x;
@@ -841,12 +775,9 @@ void spatial2_update_sorted(int n, Spatial::SortedAtom* restrict sorted,
    ybox = REAL_SQRT(ybox);
    zbox = REAL_SQRT(zbox);
 
-
    real xr, yr, zr, r, r2;
 
-
-   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
-        i += blockDim.x * gridDim.x) {
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n; i += blockDim.x * gridDim.x) {
       int atomi = sorted[i].unsorted;
       xr = x[atomi];
       yr = y[atomi];
@@ -854,7 +785,6 @@ void spatial2_update_sorted(int n, Spatial::SortedAtom* restrict sorted,
       sorted[i].x = xr;
       sorted[i].y = yr;
       sorted[i].z = zr;
-
 
       // C.4 mid point
       int tmask = __activemask();
@@ -906,7 +836,6 @@ void spatial2_update_sorted(int n, Spatial::SortedAtom* restrict sorted,
          and ybox > 2 * (yh + cut)        //
          and zbox > 2 * (zh + cut);
 
-
       int iblock = i / WARP_SIZE;
       int ilane = threadIdx.x & (WARP_SIZE - 1);
       if (ilane == 0) {
@@ -922,16 +851,12 @@ void spatial2_update_sorted(int n, Spatial::SortedAtom* restrict sorted,
    }
 }
 
-
 __global__
-void spatial2_step2(int n, Spatial::SortedAtom* restrict sorted,
-                    int* restrict bnum, int2* restrict b2num,
-                    const real* restrict x, const real* restrict y,
-                    const real* restrict z, int ZERO_LBUF, real* restrict xold,
-                    real* restrict yold, real* restrict zold, //
-                    TINKER_IMAGE_PARAMS, real cutbuf,
-                    Spatial2::Center* restrict akc,
-                    Spatial2::Center* restrict half)
+void spatial2_step2(int n, Spatial::SortedAtom* restrict sorted, int* restrict bnum,
+   int2* restrict b2num, const real* restrict x, const real* restrict y, const real* restrict z,
+   int ZERO_LBUF, real* restrict xold, real* restrict yold, real* restrict zold, //
+   TINKER_IMAGE_PARAMS, real cutbuf, Spatial2::Center* restrict akc,
+   Spatial2::Center* restrict half)
 {
    real xbox, ybox, zbox;
    xbox = lvec1.x * lvec1.x + lvec2.x * lvec2.x + lvec3.x * lvec3.x;
@@ -941,15 +866,12 @@ void spatial2_step2(int n, Spatial::SortedAtom* restrict sorted,
    ybox = REAL_SQRT(ybox);
    zbox = REAL_SQRT(zbox);
 
-
    real xr, yr, zr, r, r2;
-
 
    // b2num has been sorted by the box number
    // i: sorted index
    // b2num[i] = [box number][unsorted atom number]
-   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
-        i += blockDim.x * gridDim.x) {
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n; i += blockDim.x * gridDim.x) {
       int atomi = b2num[i].y;
       xr = x[atomi];
       yr = y[atomi];
@@ -965,7 +887,6 @@ void spatial2_step2(int n, Spatial::SortedAtom* restrict sorted,
       sorted[i].unsorted = atomi;
       bnum[atomi] = i;            // C.1
       b2num[i] = make_int2(0, 0); // C.3
-
 
       // C.4 mid point
       int tmask = __activemask();
@@ -1015,7 +936,6 @@ void spatial2_step2(int n, Spatial::SortedAtom* restrict sorted,
          and ybox > 2 * (yh + cutbuf)        //
          and zbox > 2 * (zh + cutbuf);
 
-
       int iblock = i / WARP_SIZE;
       int ilane = threadIdx.x & (WARP_SIZE - 1);
       if (ilane == 0) {
@@ -1030,7 +950,6 @@ void spatial2_step2(int n, Spatial::SortedAtom* restrict sorted,
       }
    }
 }
-
 
 __device__
 inline void spatial2_step3_atomicOr(int x0, int y0, int* akpf, int* sum_nakpl)
@@ -1048,21 +967,18 @@ inline void spatial2_step3_atomicOr(int x0, int y0, int* akpf, int* sum_nakpl)
    }
 }
 
-
 __global__
 void spatial2_step3(int nak, int* restrict akpf, int* nakpl_ptr0, //
-                    const int* restrict bnum, int nstype,         //
-                    int ns1, int (*restrict js1)[2],              //
-                    int ns2, int (*restrict js2)[2],              //
-                    int ns3, int (*restrict js3)[2],              //
-                    int ns4, int (*restrict js4)[2])
+   const int* restrict bnum, int nstype,                          //
+   int ns1, int (*restrict js1)[2],                               //
+   int ns2, int (*restrict js2)[2],                               //
+   int ns3, int (*restrict js3)[2],                               //
+   int ns4, int (*restrict js4)[2])
 {
    // D.1 Pairwise flag for (block i - block i) is always set.
-   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < nak;
-        i += blockDim.x * gridDim.x) {
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < nak; i += blockDim.x * gridDim.x) {
       spatial2_step3_atomicOr(i, i, akpf, nakpl_ptr0);
    }
-
 
    // pairwise flag
    int maxns = -1;
@@ -1070,8 +986,7 @@ void spatial2_step3(int nak, int* restrict akpf, int* nakpl_ptr0, //
    maxns = max(maxns, ns2);
    maxns = max(maxns, ns3);
    maxns = max(maxns, ns4);
-   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < maxns;
-        i += blockDim.x * gridDim.x) {
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < maxns; i += blockDim.x * gridDim.x) {
       int x0, y0;
       if (nstype >= 1 and i < ns1) {
          x0 = bnum[js1[i][0]] / WARP_SIZE;
@@ -1096,17 +1011,15 @@ void spatial2_step3(int nak, int* restrict akpf, int* nakpl_ptr0, //
    }
 }
 
-
 __global__
-void spatial2_step4(int nakpk, int* restrict nakpl_ptr1,
-                    const int* restrict akpf, int* restrict iakpl,
-                    int* restrict iakpl_rev,   //
-                    int cap_nakpl, int nstype, //
-                    unsigned int* restrict s1b0, unsigned int* restrict s2b0,
-                    unsigned int* restrict s3b0, unsigned int* restrict s4b0)
+void spatial2_step4(int nakpk, int* restrict nakpl_ptr1, const int* restrict akpf,
+   int* restrict iakpl,
+   int* restrict iakpl_rev,   //
+   int cap_nakpl, int nstype, //
+   unsigned int* restrict s1b0, unsigned int* restrict s2b0, unsigned int* restrict s3b0,
+   unsigned int* restrict s4b0)
 {
-   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < nakpk;
-        i += blockDim.x * gridDim.x) {
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < nakpk; i += blockDim.x * gridDim.x) {
       int flag = akpf[i];
       int count = __popc(flag);
       int base = atomicAdd(nakpl_ptr1, count);
@@ -1121,10 +1034,9 @@ void spatial2_step4(int nakpk, int* restrict nakpl_ptr1,
       }
    }
 
-
    // zero out bit0 and bit1
-   for (int i = threadIdx.x + blockIdx.x * blockDim.x;
-        i < WARP_SIZE * cap_nakpl; i += blockDim.x * gridDim.x) {
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < WARP_SIZE * cap_nakpl;
+        i += blockDim.x * gridDim.x) {
       if (nstype >= 1) {
          s1b0[i] = 0;
       }
@@ -1140,10 +1052,8 @@ void spatial2_step4(int nakpk, int* restrict nakpl_ptr1,
    }
 }
 
-
 __device__
-void spatial2_step5_bits(int x0, int y0, unsigned int* bit0,
-                         const int* iakpl_rev)
+void spatial2_step5_bits(int x0, int y0, unsigned int* bit0, const int* iakpl_rev)
 {
    int x, y;
    int bx, by, ax, ay;
@@ -1164,27 +1074,23 @@ void spatial2_step5_bits(int x0, int y0, unsigned int* bit0,
    }
 }
 
-
 template <class IMG>
 __global__
 void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
-                    Spatial2::ScaleInfo si1, Spatial2::ScaleInfo si2,
-                    Spatial2::ScaleInfo si3, Spatial2::ScaleInfo si4, //
-                    int* restrict dev_niak, int* restrict iak,
-                    int* restrict lst,                                //
-                    int n, int nak, real cutbuf, TINKER_IMAGE_PARAMS, //
-                    const int* restrict akpf,
-                    const Spatial::SortedAtom* restrict sorted,
-                    const Spatial2::Center* restrict akc,
-                    const Spatial2::Center* restrict half)
+   Spatial2::ScaleInfo si1, Spatial2::ScaleInfo si2, Spatial2::ScaleInfo si3,
+   Spatial2::ScaleInfo si4, //
+   int* restrict dev_niak, int* restrict iak,
+   int* restrict lst,                                //
+   int n, int nak, real cutbuf, TINKER_IMAGE_PARAMS, //
+   const int* restrict akpf, const Spatial::SortedAtom* restrict sorted,
+   const Spatial2::Center* restrict akc, const Spatial2::Center* restrict half)
 {
    int maxns = -1;
    maxns = max(maxns, si1.ns);
    maxns = max(maxns, si2.ns);
    maxns = max(maxns, si3.ns);
    maxns = max(maxns, si4.ns);
-   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < maxns;
-        i += blockDim.x * gridDim.x) {
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < maxns; i += blockDim.x * gridDim.x) {
       int x0, y0;
       if (nstype >= 1 and i < si1.ns) {
          auto& si = si1;
@@ -1212,24 +1118,20 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
       }
    }
 
-
    int ithread, iwarp, nwarp, ilane;
    ithread = threadIdx.x + blockIdx.x * blockDim.x;
    iwarp = ithread / WARP_SIZE;
    nwarp = blockDim.x * gridDim.x / WARP_SIZE;
    ilane = threadIdx.x & (WARP_SIZE - 1);
 
-
    constexpr int LEN_LSTBUF = BLOCK_DIM;
    __shared__ int lstbuf[LEN_LSTBUF * (BLOCK_DIM / WARP_SIZE)];
    int* buffer = &lstbuf[LEN_LSTBUF * (threadIdx.x / WARP_SIZE)];
    int lanemask = (1 << ilane) - 1;
 
-
    real xr, yr, zr, r2;
    real rlimit, rlimit2;
    real cutbuf2 = cutbuf * cutbuf;
-
 
    // Every warp loads a block of atoms as "i-block", denoted by "wy".
    for (int wy = iwarp; wy < nak - 1; wy += nwarp) {
@@ -1257,13 +1159,11 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
       // Number of k-neighbors found.
       int nknb = 0;
 
-
       // Every thread in the warp loads the center and size a bounding box,
       // denoted by "wx".
       for (int wx0 = wy + 1; wx0 < nak; wx0 += WARP_SIZE) {
          int wx = wx0 + ilane;
          bool calcwx = wx < nak; // wx cannot exceed nak-1.
-
 
          // If this block pair was recorded, we will skip it.
          if (calcwx) {
@@ -1274,7 +1174,6 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
             if (akpf[iwa] & (1 << iwb))
                calcwx = false;
          }
-
 
          // If this block pair was not recorded, but the blocks are far apart,
          // we will skip it.
@@ -1288,12 +1187,10 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
             xr = cxk - cxi;
             yr = cyk - cyi;
             zr = czk - czi;
-            r2 = IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS,
-                           TINKER_IMAGE_RECIP_ARGS);
+            r2 = IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS);
             if (r2 > rlimit2)
                calcwx = false;
          }
-
 
          // Check if the bounding boxes of two blocks overlap.
          if (calcwx) {
@@ -1309,7 +1206,6 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
                calcwx = false;
          }
 
-
          // Only loop over the k-blocks that are in-use.
          int wxflag = __ballot_sync(ALL_LANES, calcwx);
          while (wxflag) {
@@ -1317,7 +1213,6 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
             int jlane = __ffs(wxflag) - 1;
             // Clear the rightmost 1 digit.
             wxflag &= (wxflag - 1);
-
 
             wx = wx0 + jlane;
             real cxk = akc[wx].x;
@@ -1333,13 +1228,11 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
                xr = xk - cxi;
                yr = yk - cyi;
                zr = zk - czi;
-               IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS,
-                         TINKER_IMAGE_RECIP_ARGS);
+               IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS);
                xk = xr + cxi;
                yk = yr + cyi;
                zk = zr + czi;
             }
-
 
             // Check i-atoms and k-center.
             rlimit = rad1 + cutbuf;
@@ -1347,11 +1240,9 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
             xr = cxk - xi;
             yr = cyk - yi;
             zr = czk - zi;
-            r2 = IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS,
-                           TINKER_IMAGE_RECIP_ARGS);
+            r2 = IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS);
             // Only inlcude the "i-atoms" that are close to k-center.
             int iflag = __ballot_sync(ALL_LANES, r2 <= rlimit2);
-
 
             int includek = 0;
             if (iflag != 0) {
@@ -1373,8 +1264,7 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
                      xr = __shfl_sync(ALL_LANES, xi, j) - xk;
                      yr = __shfl_sync(ALL_LANES, yi, j) - yk;
                      zr = __shfl_sync(ALL_LANES, zi, j) - zk;
-                     r2 = IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS,
-                                    TINKER_IMAGE_RECIP_ARGS);
+                     r2 = IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS);
                      if (r2 <= cutbuf2)
                         includek = 1;
                   }
@@ -1382,7 +1272,6 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
             }
             includek = includek and (k < n);
             int kflag = __ballot_sync(ALL_LANES, includek);
-
 
             if (includek) {
                int pos = nknb + __popc(kflag & lanemask);
@@ -1414,7 +1303,6 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
          } // end while (wxflag)
       }
 
-
       if (nknb > 0) {
          int incr = (nknb + WARP_SIZE - 1) / WARP_SIZE;
          int pos;
@@ -1434,7 +1322,6 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
    }
 }
 
-
 struct spatial2_less
 {
    __device__
@@ -1444,7 +1331,6 @@ struct spatial2_less
    }
 };
 
-
 template <class IMG>
 void run_spatial2_step5(Spatial2Unit u)
 {
@@ -1452,25 +1338,23 @@ void run_spatial2_step5(Spatial2Unit u)
    int* dev_niak = &u->update[2];
    real cutbuf = u->cutoff + u->buffer;
    launch_k1s(g::s0, u->nakp, spatial2_step5<IMG>, //
-              u->bnum, u->iakpl_rev, u->nstype, u->si1, u->si2, u->si3,
-              u->si4,                               //
-              dev_niak, u->iak, u->lst,             //
-              n, u->nak, cutbuf, TINKER_IMAGE_ARGS, //
-              u->akpf, u->sorted, u->akc, u->half);
+      u->bnum, u->iakpl_rev, u->nstype, u->si1, u->si2, u->si3,
+      u->si4,                               //
+      dev_niak, u->iak, u->lst,             //
+      n, u->nak, cutbuf, TINKER_IMAGE_ARGS, //
+      u->akpf, u->sorted, u->akc, u->half);
    darray::copyout(g::q0, 1, &u->niak, dev_niak);
    wait_for(g::q0);
    if (u->niak > u->nak * Spatial2::LSTCAP) {
       int cap = Spatial2::LSTCAP;
       prterr();
-      TINKER_THROW(
-         format("An internal array in Spatial2 requested %1$d elements, "
-                "but only %4$d (%3$d*%2$d) were allocated. "
-                "Please increase Spatial2::LSTCAP (current value %3$d) "
-                "so as to make Spatial2::LSTCAP*%2$d >= %1$d.\n",
-                u->niak, u->nak, cap, cap * u->nak));
+      TINKER_THROW(format("An internal array in Spatial2 requested %1$d elements, "
+                          "but only %4$d (%3$d*%2$d) were allocated. "
+                          "Please increase Spatial2::LSTCAP (current value %3$d) "
+                          "so as to make Spatial2::LSTCAP*%2$d >= %1$d.\n",
+         u->niak, u->nak, cap, cap * u->nak));
    }
 }
-
 
 void spatial_data_init_cu(Spatial2Unit u)
 {
@@ -1478,9 +1362,7 @@ void spatial_data_init_cu(Spatial2Unit u)
    const real lbuf = u->buffer;
    const int n = u->n;
 
-
    auto policy = thrust::cuda::par(thrust_cache).on(g::s0);
-
 
    const auto* lx = u->x;
    const auto* ly = u->y;
@@ -1489,26 +1371,23 @@ void spatial_data_init_cu(Spatial2Unit u)
    real cutbuf = (u->cutoff + lbuf);
    int2* b2num = (int2*)u->update;
    launch_k1s(g::s0, n, spatial2_step1, //
-              n, u->pz, b2num, lx, ly, lz, TINKER_IMAGE_ARGS, u->nakpk,
-              u->akpf);
+      n, u->pz, b2num, lx, ly, lz, TINKER_IMAGE_ARGS, u->nakpk, u->akpf);
    // thrust::sort(policy, b2num, b2num + n, spatial2_less());
    thrust::stable_sort(policy, b2num, b2num + n, spatial2_less());
-   launch_k1s(g::s0, n, spatial2_step2, //
-              n, u->sorted, u->bnum, b2num, lx, ly, lz, ZERO_LBUF, u->xold,
-              u->yold, u->zold, //
-              TINKER_IMAGE_ARGS, cutbuf, u->akc, u->half);
-
+   launch_k1s(g::s0, n, spatial2_step2,                                               //
+      n, u->sorted, u->bnum, b2num, lx, ly, lz, ZERO_LBUF, u->xold, u->yold, u->zold, //
+      TINKER_IMAGE_ARGS, cutbuf, u->akc, u->half);
 
    auto& si1 = u->si1;
    auto& si2 = u->si2;
    auto& si3 = u->si3;
    auto& si4 = u->si4;
    int* nakpl_ptr0 = &u->update[0];
-   launch_k1s(g::s0, n, spatial2_step3,       //
-              u->nak, u->akpf, nakpl_ptr0,    //
-              u->bnum, u->nstype,             //
-              si1.ns, si1.js, si2.ns, si2.js, //
-              si3.ns, si3.js, si4.ns, si4.js);
+   launch_k1s(g::s0, n, spatial2_step3, //
+      u->nak, u->akpf, nakpl_ptr0,      //
+      u->bnum, u->nstype,               //
+      si1.ns, si1.js, si2.ns, si2.js,   //
+      si3.ns, si3.js, si4.ns, si4.js);
    darray::copyout(g::q0, 1, &u->nakpl, nakpl_ptr0);
    wait_for(g::q0);
    if (WARP_SIZE + u->nakpl > (unsigned)u->cap_nakpl) {
@@ -1537,13 +1416,11 @@ void spatial_data_init_cu(Spatial2Unit u)
       }
    }
 
-
    int* nakpl_ptr1 = &u->update[1];
-   launch_k1s(g::s0, u->nakp, spatial2_step4,                        //
-              u->nakpk, nakpl_ptr1, u->akpf, u->iakpl, u->iakpl_rev, //
-              u->cap_nakpl, u->nstype,                               //
-              si1.bit0, si2.bit0, si3.bit0, si4.bit0);
-
+   launch_k1s(g::s0, u->nakp, spatial2_step4,                //
+      u->nakpk, nakpl_ptr1, u->akpf, u->iakpl, u->iakpl_rev, //
+      u->cap_nakpl, u->nstype,                               //
+      si1.bit0, si2.bit0, si3.bit0, si4.bit0);
 
    if (box_shape == ORTHO_BOX) {
       run_spatial2_step5<PBC_ORTHO>(u);
@@ -1558,11 +1435,10 @@ void spatial_data_init_cu(Spatial2Unit u)
    }
 }
 
-
 void spatial_data_update_sorted(Spatial2Unit u)
 {
    launch_k1s(g::s0, u->n, spatial2_update_sorted, //
-              u->n, u->sorted, u->x, u->y, u->z,   //
-              TINKER_IMAGE_ARGS, u->cutoff, u->akc, u->half);
+      u->n, u->sorted, u->x, u->y, u->z,           //
+      TINKER_IMAGE_ARGS, u->cutoff, u->akc, u->half);
 }
 }

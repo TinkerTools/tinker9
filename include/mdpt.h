@@ -1,16 +1,12 @@
 #pragma once
 #include "mdprec.h"
 
-
 namespace tinker {
-void kinetic_energy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
-                    int n, const double* mass, const vel_prec* vx,
-                    const vel_prec* vy, const vel_prec* vz);
-void kinetic_explicit(T_prec& temp_out, energy_prec& eksum_out,
-                      energy_prec (&ekin_out)[3][3], const vel_prec* vx,
-                      const vel_prec* vy, const vel_prec* vz);
+void kinetic_energy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n,
+   const double* mass, const vel_prec* vx, const vel_prec* vy, const vel_prec* vz);
+void kinetic_explicit(T_prec& temp_out, energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
+   const vel_prec* vx, const vel_prec* vy, const vel_prec* vz);
 void kinetic(T_prec& temp);
-
 
 /**
  * \ingroup mdpt
@@ -28,13 +24,10 @@ void kinetic(T_prec& temp);
  *    </a>
  */
 
-
 //====================================================================//
-
 
 void bussi_thermostat(time_prec dt, T_prec temp);
 void bussi_thermostat_acc(time_prec dt, T_prec temp);
-
 
 extern pos_prec *x_pmonte, *y_pmonte, *z_pmonte;
 /**
@@ -45,13 +38,10 @@ extern pos_prec *x_pmonte, *y_pmonte, *z_pmonte;
 void monte_carlo_barostat(energy_prec epot, T_prec temp);
 void monte_carlo_barostat_acc(energy_prec epot, T_prec temp);
 
-
 void berendsen_barostat(time_prec dt);
 void berendsen_barostat_acc(time_prec);
 
-
 //====================================================================//
-
 
 /**
  * \ingroup mdpt
@@ -65,7 +55,6 @@ void berendsen_barostat_acc(time_prec);
  *    Molecular Physics, 87, 1117-1157 (1996).
  *    </a>
  */
-
 
 /**
  * \ingroup mdpt

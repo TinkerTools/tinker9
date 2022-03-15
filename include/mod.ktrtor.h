@@ -2,7 +2,6 @@
 #include "macro.h"
 #include <tinker/detail/ktrtor.hh>
 
-
 namespace tinker {
 // of size maxntt
 TINKER_EXTERN int* tnx;

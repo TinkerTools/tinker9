@@ -11,24 +11,18 @@
 #include "switch.h"
 #include "tool/gpu_card.h"
 
-
 namespace tinker {
 // ck.py Version 2.0.3
 template <class Ver>
 __global__
-void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
-             energy_buffer restrict ev, virial_buffer restrict vev,
-             grad_prec* restrict gx, grad_prec* restrict gy,
-             grad_prec* restrict gz, real cut, real off,
-             const unsigned* restrict info, int nexclude,
-             const int (*restrict exclude)[2],
-             const real* restrict exclude_scale, const real* restrict x,
-             const real* restrict y, const real* restrict z,
-             const Spatial::SortedAtom* restrict sorted, int nakpl,
-             const int* restrict iakpl, int niak, const int* restrict iak,
-             const int* restrict lst, int njvdw, const real* restrict radmin,
-             const real* restrict epsilon, const int* restrict jvdw,
-             const int* restrict mut, real vlam, evdw_t vcouple)
+void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buffer restrict ev,
+   virial_buffer restrict vev, grad_prec* restrict gx, grad_prec* restrict gy,
+   grad_prec* restrict gz, real cut, real off, const unsigned* restrict info, int nexclude,
+   const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x,
+   const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
+   int nakpl, const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
+   int njvdw, const real* restrict radmin, const real* restrict epsilon, const int* restrict jvdw,
+   const int* restrict mut, real vlam, evdw_t vcouple)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -38,7 +32,6 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
    const int iwarp = ithread / WARP_SIZE;
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
-
 
    int nevtl;
    if CONSTEXPR (do_a) {
@@ -76,7 +69,6 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
    int kjvdw;
    int kmut;
 
-
    //* /
    for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
       if CONSTEXPR (do_g) {
@@ -88,11 +80,9 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
          fkz = 0;
       }
 
-
       int i = exclude[ii][0];
       int k = exclude[ii][1];
       real scalea = exclude_scale[ii];
-
 
       xi = x[i];
       yi = y[i];
@@ -104,7 +94,6 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
       imut = mut[i];
       kjvdw = jvdw[k];
       kmut = mut[k];
-
 
       constexpr bool incl = true;
       real xr = xi - xk;
@@ -118,8 +107,7 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
          real eps = epsilon[ijvdw * njvdw + kjvdw];
          real e, de;
          real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
-         pair_lj_v3<do_g, true, 0>(r, invr, vlambda, scalea, rv, eps, cut, off,
-                                   e, de);
+         pair_lj_v3<do_g, true, 0>(r, invr, vlambda, scalea, rv, eps, cut, off, e, de);
          if CONSTEXPR (do_e) {
             evtl += cvt_to<ebuf_prec>(e);
             if CONSTEXPR (do_a) {
@@ -150,7 +138,6 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
          }
       }
 
-
       if CONSTEXPR (do_g) {
          atomic_add(fix, gx, i);
          atomic_add(fiy, gy, i);
@@ -162,7 +149,6 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
    }
    // */
 
-
    for (int iw = iwarp; iw < nakpl; iw += nwarp) {
       if CONSTEXPR (do_g) {
          fix = 0;
@@ -173,11 +159,9 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
          fkz = 0;
       }
 
-
       int tri, tx, ty;
       tri = iakpl[iw];
       tri_to_xy(tri, tx, ty);
-
 
       int iid = ty * WARP_SIZE + ilane;
       int atomi = min(iid, n - 1);
@@ -192,12 +176,10 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
-
       ijvdw = jvdw[i];
       imut = mut[i];
       kjvdw = jvdw[k];
       kmut = mut[k];
-
 
       unsigned int info0 = info[iw * WARP_SIZE + ilane];
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -216,8 +198,7 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
             real eps = epsilon[ijvdw * njvdw + kjvdw];
             real e, de;
             real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
-            pair_lj_v3<do_g, true, 1>(r, invr, vlambda, 1, rv, eps, cut, off, e,
-                                      de);
+            pair_lj_v3<do_g, true, 1>(r, invr, vlambda, 1, rv, eps, cut, off, e, de);
             if CONSTEXPR (do_e) {
                evtl += cvt_to<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
@@ -247,7 +228,6 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
                }
             }
          }
-
 
          iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
          xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
@@ -262,7 +242,6 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
          }
       }
 
-
       if CONSTEXPR (do_g) {
          atomic_add(fix, gx, i);
          atomic_add(fiy, gy, i);
@@ -273,7 +252,6 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
       }
    }
 
-
    for (int iw = iwarp; iw < niak; iw += nwarp) {
       if CONSTEXPR (do_g) {
          fix = 0;
@@ -283,7 +261,6 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
          fky = 0;
          fkz = 0;
       }
-
 
       int ty = iak[iw];
       int atomi = ty * WARP_SIZE + ilane;
@@ -297,12 +274,10 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
-
       ijvdw = jvdw[i];
       imut = mut[i];
       kjvdw = jvdw[k];
       kmut = mut[k];
-
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          bool incl = atomk > 0;
@@ -317,8 +292,7 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
             real eps = epsilon[ijvdw * njvdw + kjvdw];
             real e, de;
             real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
-            pair_lj_v3<do_g, true, 1>(r, invr, vlambda, 1, rv, eps, cut, off, e,
-                                      de);
+            pair_lj_v3<do_g, true, 1>(r, invr, vlambda, 1, rv, eps, cut, off, e, de);
             if CONSTEXPR (do_e) {
                evtl += cvt_to<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
@@ -349,7 +323,6 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
             }
          }
 
-
          xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
          yi = __shfl_sync(ALL_LANES, yi, ilane + 1);
          zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
@@ -362,7 +335,6 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
          }
       }
 
-
       if CONSTEXPR (do_g) {
          atomic_add(fix, gx, i);
          atomic_add(fiy, gy, i);
@@ -373,7 +345,6 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
       }
    }
 
-
    if CONSTEXPR (do_a) {
       atomic_add(nevtl, nev, ithread);
    }
@@ -381,30 +352,24 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev,
       atomic_add(evtl, ev, ithread);
    }
    if CONSTEXPR (do_v) {
-      atomic_add(vevtlxx, vevtlyx, vevtlzx, vevtlyy, vevtlzy, vevtlzz, vev,
-                 ithread);
+      atomic_add(vevtlxx, vevtlyx, vevtlzx, vevtlyy, vevtlzy, vevtlzz, vev, ithread);
    }
 }
-
 
 // special vdw14 interactions
 template <class Ver>
 __global__
-void elj_cu2(count_buffer restrict nebuf, energy_buffer restrict ebuf,
-             virial_buffer restrict vbuf, grad_prec* restrict gx,
-             grad_prec* restrict gy, grad_prec* restrict gz,
-             TINKER_IMAGE_PARAMS, real cut, real off, const real* restrict x,
-             const real* restrict y, const real* restrict z, //
-             int njvdw, const real* restrict radmin,
-             const real* restrict epsilon, const int* restrict jvdw,
-             const int* restrict mut, real vlam, evdw_t vcouple, //
-             real v4scale, int nvdw14, const int (*restrict vdw14ik)[2],
-             const real* restrict radmin4, const real* restrict epsilon4)
+void elj_cu2(count_buffer restrict nebuf, energy_buffer restrict ebuf, virial_buffer restrict vbuf,
+   grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, TINKER_IMAGE_PARAMS,
+   real cut, real off, const real* restrict x, const real* restrict y, const real* restrict z, //
+   int njvdw, const real* restrict radmin, const real* restrict epsilon, const int* restrict jvdw,
+   const int* restrict mut, real vlam, evdw_t vcouple, //
+   real v4scale, int nvdw14, const int (*restrict vdw14ik)[2], const real* restrict radmin4,
+   const real* restrict epsilon4)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
-
 
    using ebuf_prec = energy_buffer_traits::type;
    using vbuf_prec = virial_buffer_traits::type;
@@ -422,12 +387,10 @@ void elj_cu2(count_buffer restrict nebuf, energy_buffer restrict ebuf,
       vtlzz = 0;
    }
 
-
    int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    for (int ii = ithread; ii < nvdw14; ii += blockDim.x * gridDim.x) {
       int i = vdw14ik[ii][0];
       int k = vdw14ik[ii][1];
-
 
       int jit = jvdw[i];
       real xi = x[i];
@@ -435,13 +398,11 @@ void elj_cu2(count_buffer restrict nebuf, energy_buffer restrict ebuf,
       real zi = z[i];
       int imut = mut[i];
 
-
       int jkt = jvdw[k];
       real xr = xi - x[k];
       real yr = yi - y[k];
       real zr = zi - z[k];
       int kmut = mut[k];
-
 
       int pos = jit * njvdw + jkt;
       real rv = radmin[pos];
@@ -449,22 +410,17 @@ void elj_cu2(count_buffer restrict nebuf, energy_buffer restrict ebuf,
       real rv4 = radmin4[pos];
       real eps4 = epsilon4[pos];
 
-
       real r2 = image2(xr, yr, zr);
       real r = REAL_SQRT(r2);
       real invr = REAL_RECIP(r);
 
-
       real e, de, e4, de4;
       real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
-      pair_lj_v3<do_g, true, 0>(r, invr, vlambda, v4scale, rv, eps, cut, off, e,
-                                de);
-      pair_lj_v3<do_g, true, 0>(r, invr, vlambda, v4scale, rv4, eps4, cut, off,
-                                e4, de4);
+      pair_lj_v3<do_g, true, 0>(r, invr, vlambda, v4scale, rv, eps, cut, off, e, de);
+      pair_lj_v3<do_g, true, 0>(r, invr, vlambda, v4scale, rv4, eps4, cut, off, e4, de4);
       e = e4 - e;
       if CONSTEXPR (do_g)
          de = de4 - de;
-
 
       if CONSTEXPR (do_e) {
          // if CONSTEXPR (do_a) {}
@@ -492,7 +448,6 @@ void elj_cu2(count_buffer restrict nebuf, energy_buffer restrict ebuf,
       }
    }
 
-
    if CONSTEXPR (do_e) {
       atomic_add(etl, ebuf, ithread);
    }
@@ -501,7 +456,6 @@ void elj_cu2(count_buffer restrict nebuf, energy_buffer restrict ebuf,
    }
 }
 
-
 template <class Ver>
 void elj_cu4()
 {
@@ -509,15 +463,12 @@ void elj_cu4()
    const real cut = switch_cut(switch_vdw);
    const real off = switch_off(switch_vdw);
 
-
    int ngrid = get_grid_size(BLOCK_DIM);
-   elj_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(
-      st.n, TINKER_IMAGE_ARGS, nev, ev, vir_ev, devx, devy, devz, cut, off,
-      st.si2.bit0, nvexclude, vexclude, vexclude_scale, st.x, st.y, st.z,
-      st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, njvdw, radmin,
-      epsilon, jvdw, mut, vlam, vcouple);
+   elj_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nev, ev, vir_ev, devx,
+      devy, devz, cut, off, st.si2.bit0, nvexclude, vexclude, vexclude_scale, st.x, st.y, st.z,
+      st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, njvdw, radmin, epsilon, jvdw, mut,
+      vlam, vcouple);
 }
-
 
 template <class Ver>
 void elj_cu5()
@@ -527,15 +478,12 @@ void elj_cu5()
       const real cut = switch_cut(switch_vdw);
       const real off = switch_off(switch_vdw);
 
-
-      launch_k1b(g::s0, nvdw14, elj_cu2<Ver>, //
-                 nev, ev, vir_ev, devx, devy, devz, TINKER_IMAGE_ARGS, cut, off,
-                 st.x, st.y, st.z,                                 //
-                 njvdw, radmin, epsilon, jvdw, mut, vlam, vcouple, //
-                 v4scale, nvdw14, vdw14ik, radmin4, epsilon4);
+      launch_k1b(g::s0, nvdw14, elj_cu2<Ver>,                                              //
+         nev, ev, vir_ev, devx, devy, devz, TINKER_IMAGE_ARGS, cut, off, st.x, st.y, st.z, //
+         njvdw, radmin, epsilon, jvdw, mut, vlam, vcouple,                                 //
+         v4scale, nvdw14, vdw14ik, radmin4, epsilon4);
    }
 }
-
 
 void elj14_cu(int vers)
 {
@@ -553,7 +501,6 @@ void elj14_cu(int vers)
       elj_cu5<calc::V6>();
 }
 
-
 void elj_cu(int vers)
 {
    if (vers == calc::v0)
@@ -568,7 +515,6 @@ void elj_cu(int vers)
       elj_cu4<calc::V5>();
    else if (vers == calc::v6)
       elj_cu4<calc::V6>();
-
 
    elj14_cu(vers);
 }

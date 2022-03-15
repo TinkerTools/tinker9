@@ -2,12 +2,10 @@
 #include "macro.h"
 #include "tool/energy_buffer.h"
 
-
 namespace tinker {
 TINKER_EXTERN int nopbend;
 TINKER_EXTERN int* iopb;
 TINKER_EXTERN real* opbk;
-
 
 TINKER_EXTERN energy_buffer eopb;
 TINKER_EXTERN virial_buffer vir_eopb;

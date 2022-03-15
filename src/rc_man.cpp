@@ -1,18 +1,15 @@
 #include "tool/rc_man.h"
 
-
 namespace tinker {
 bool ResourceManagement::will_dealloc() const
 {
    return m_op & rc_dealloc;
 }
 
-
 bool ResourceManagement::only_dealloc() const
 {
    return m_op == rc_dealloc;
 }
-
 
 ResourceManagement::ResourceManagement(void (*f)(rc_op), rc_op op)
    : m_f(f)
@@ -23,7 +20,6 @@ ResourceManagement::ResourceManagement(void (*f)(rc_op), rc_op op)
    }
 }
 
-
 ResourceManagement::~ResourceManagement()
 {
    if (only_dealloc()) {
@@ -31,13 +27,11 @@ ResourceManagement::~ResourceManagement()
    }
 }
 
-
 void initialize()
 {
    rc_op op = rc_alloc | rc_init;
    device_data(op);
 }
-
 
 void finish()
 {
@@ -46,11 +40,9 @@ void finish()
 }
 }
 
-
 #include "platform.h"
 #include "random.h"
 #include "tool/gpu_card.h"
-
 
 #include "box.h"
 #include "couple.h"
@@ -64,7 +56,6 @@ void finish()
 #include "rattle.h"
 #include "tool/cudalib.h"
 
-
 namespace tinker {
 void device_data(rc_op op)
 {
@@ -72,7 +63,6 @@ void device_data(rc_op op)
    rc_man rand42{random_data, op};
    rc_man pf42{platform_data, op};
    rc_man gpu_card42{gpu_card_data, op};
-
 
    // device
    rc_man cl42{cudalib_data, op};

@@ -6,7 +6,6 @@
 #include "mod.mpole.h"
 #include "tool/rc_man.h"
 
-
 namespace tinker {
 void echgtrn_data(rc_op op);
 void echgtrn(int vers);

@@ -2,7 +2,6 @@
 #include "macro.h"
 #include "tool/energy_buffer.h"
 
-
 namespace tinker {
 /**
  * \ingroup vdw
@@ -35,13 +34,10 @@ TINKER_EXTERN real* epsilon;
 TINKER_EXTERN real* radmin4;
 TINKER_EXTERN real* epsilon4;
 
-
 //====================================================================//
-
 
 TINKER_EXTERN real* atom_rad;
 TINKER_EXTERN real* atom_eps;
-
 
 TINKER_EXTERN count_buffer nev;
 TINKER_EXTERN energy_buffer ev;
@@ -51,7 +47,6 @@ TINKER_EXTERN grad_prec* devy;
 TINKER_EXTERN grad_prec* devz;
 TINKER_EXTERN energy_prec energy_ev;
 TINKER_EXTERN virial_prec virial_ev[9];
-
 
 /**
  * \ingroup vdw

@@ -1,9 +1,8 @@
+#include "mdpq.h"
 #include "add.h"
 #include "glob.molecule.h"
 #include "image.h"
-#include "mdpq.h"
 #include <tinker/detail/units.hh>
-
 
 namespace tinker {
 void copy_pos_to_xyz_acc()
@@ -20,10 +19,8 @@ void copy_pos_to_xyz_acc()
       }
 }
 
-
-void propagate_pos_acc(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz,
-                       const vel_prec* vlx, const vel_prec* vly,
-                       const vel_prec* vlz)
+void propagate_pos_acc(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz, const vel_prec* vlx,
+   const vel_prec* vly, const vel_prec* vlz)
 {
    #pragma acc parallel loop independent async\
                deviceptr(qx,qy,qz,vlx,vly,vlz)
@@ -33,7 +30,6 @@ void propagate_pos_acc(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz,
       qz[i] += dt * vlz[i];
    }
 }
-
 
 void propagate_pos_axbv_acc(double a, double b)
 {
@@ -47,9 +43,8 @@ void propagate_pos_axbv_acc(double a, double b)
    }
 }
 
-
-void propagate_vel_avbf_acc(double a, double b, const grad_prec* grx,
-                            const grad_prec* gry, const grad_prec* grz)
+void propagate_vel_avbf_acc(
+   double a, double b, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz)
 {
    vel_prec ekcal = units::ekcal;
    vel_prec sa = a, sb = b;
@@ -73,14 +68,12 @@ void propagate_vel_avbf_acc(double a, double b, const grad_prec* grx,
    }
 }
 
-
 void bounds_pos_acc()
 {
    auto nmol = molecule.nmol;
    const auto* imol = molecule.imol;
    const auto* kmol = molecule.kmol;
    const auto* molmass = molecule.molmass;
-
 
    #pragma acc parallel loop independent async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
@@ -102,14 +95,12 @@ void bounds_pos_acc()
       ymid /= weigh;
       zmid /= weigh;
 
-
       // locate the image of the center inside PBC box
       real xc, yc, zc;
       xc = xmid;
       yc = ymid;
       zc = zmid;
       image(xc, yc, zc);
-
 
       #pragma acc loop seq
       for (int j = start; j < stop; ++j) {
@@ -121,15 +112,11 @@ void bounds_pos_acc()
    }
 }
 
-
 //====================================================================//
 
-
-void propagate_velocity_acc(time_prec dt, vel_prec* vlx, vel_prec* vly,
-                            vel_prec* vlz, const vel_prec* vlx0,
-                            const vel_prec* vly0, const vel_prec* vlz0,
-                            const grad_prec* grx, const grad_prec* gry,
-                            const grad_prec* grz)
+void propagate_velocity_acc(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz,
+   const vel_prec* vlx0, const vel_prec* vly0, const vel_prec* vlz0, const grad_prec* grx,
+   const grad_prec* gry, const grad_prec* grz)
 {
    const vel_prec ekcal = units::ekcal;
    #pragma acc parallel loop independent async\
@@ -148,10 +135,8 @@ void propagate_velocity_acc(time_prec dt, vel_prec* vlx, vel_prec* vly,
    }
 }
 
-
-void propagate_velocity_acc(time_prec dt, vel_prec* vlx, vel_prec* vly,
-                            vel_prec* vlz, const grad_prec* grx,
-                            const grad_prec* gry, const grad_prec* grz)
+void propagate_velocity_acc(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz,
+   const grad_prec* grx, const grad_prec* gry, const grad_prec* grz)
 {
    const vel_prec ekcal = units::ekcal;
    #pragma acc parallel loop independent async\
@@ -170,11 +155,9 @@ void propagate_velocity_acc(time_prec dt, vel_prec* vlx, vel_prec* vly,
    }
 }
 
-
-void propagate_velocity2_acc(time_prec dt, const grad_prec* grx,
-                             const grad_prec* gry, const grad_prec* grz,
-                             time_prec dt2, const grad_prec* grx2,
-                             const grad_prec* gry2, const grad_prec* grz2)
+void propagate_velocity2_acc(time_prec dt, const grad_prec* grx, const grad_prec* gry,
+   const grad_prec* grz, time_prec dt2, const grad_prec* grx2, const grad_prec* gry2,
+   const grad_prec* grz2)
 {
    const vel_prec ekcal = units::ekcal;
    #pragma acc parallel loop independent async\

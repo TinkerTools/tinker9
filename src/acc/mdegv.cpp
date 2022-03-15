@@ -1,11 +1,9 @@
-#include "add.h"
 #include "mdegv.h"
+#include "add.h"
 #include "mdpq.h"
 
-
 namespace tinker {
-void scale_gradient_acc(double scale, grad_prec* g0x, grad_prec* g0y,
-                        grad_prec* g0z)
+void scale_gradient_acc(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z)
 {
    real s = scale;
 #if TINKER_DETERMINISTIC_FORCE
@@ -30,10 +28,8 @@ void scale_gradient_acc(double scale, grad_prec* g0x, grad_prec* g0y,
 #endif
 }
 
-
-void sum_gradient_acc(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
-                      const grad_prec* g1x, const grad_prec* g1y,
-                      const grad_prec* g1z)
+void sum_gradient_acc(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const grad_prec* g1x,
+   const grad_prec* g1y, const grad_prec* g1z)
 {
    #pragma acc parallel loop independent async\
            deviceptr(g0x,g0y,g0z,g1x,g1y,g1z)
@@ -44,10 +40,8 @@ void sum_gradient_acc(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
    }
 }
 
-
 void sum_gradient_acc(double ss, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
-                      const grad_prec* g1x, const grad_prec* g1y,
-                      const grad_prec* g1z)
+   const grad_prec* g1x, const grad_prec* g1y, const grad_prec* g1z)
 {
    real s = ss;
 #if TINKER_DETERMINISTIC_FORCE

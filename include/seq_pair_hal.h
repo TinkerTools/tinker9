@@ -3,7 +3,6 @@
 #include "seq_def.h"
 #include "seq_switch.h"
 
-
 namespace tinker {
 /**
  * \ingroup vdw
@@ -12,8 +11,8 @@ namespace tinker {
 template <bool DO_G>
 SEQ_CUDA
 void pair_hal(real rik, real rv, real eps, real vscalek, real vlambda, //
-              real ghal, real dhal, real scexp, real scalpha,          //
-              real& restrict e, real& restrict de)
+   real ghal, real dhal, real scexp, real scalpha,                     //
+   real& restrict e, real& restrict de)
 {
    eps *= vscalek;
    real rho = rik * REAL_RECIP(rv);
@@ -33,16 +32,14 @@ void pair_hal(real rik, real rv, real eps, real vscalek, real vlambda, //
    }
 }
 
-
 /**
  * \ingroup vdw
  */
 #pragma acc routine seq
 template <bool DO_G, int SCALE>
 SEQ_CUDA
-void pair_hal_v2(real r, real vscale, real rv, real eps, real evcut, real evoff,
-                 real vlambda, real ghal, real dhal, real scexp, real scalpha,
-                 real& restrict e, real& restrict de)
+void pair_hal_v2(real r, real vscale, real rv, real eps, real evcut, real evoff, real vlambda,
+   real ghal, real dhal, real scexp, real scalpha, real& restrict e, real& restrict de)
 {
    if CONSTEXPR (SCALE != 1) {
       eps *= vscale;

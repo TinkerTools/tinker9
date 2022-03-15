@@ -8,12 +8,10 @@
 #include "tool/error.h"
 #include "tool/host_zero.h"
 
-
 namespace tinker {
 bool ecore_val;
 bool ecore_vdw;
 bool ecore_ele;
-
 
 void energy_data(rc_op op)
 {
@@ -70,7 +68,6 @@ void energy_data(rc_op op)
    rc_man fft42{fft_data, op};
 }
 
-
 bool use_energi_vdw()
 {
    bool ans = false;
@@ -84,7 +81,6 @@ bool use_energi_vdw()
 
    return ans;
 }
-
 
 bool use_energi_elec()
 {
@@ -101,32 +97,44 @@ bool use_energi_elec()
    return ans;
 }
 
-
 const TimeScaleConfig& default_tsconfig()
 {
    static TimeScaleConfig tsconfig{
-      {"ebond", 0},         {"eangle", 0},        {"estrbnd", 0},
-      {"eurey", 0},         {"eopbend", 0},       {"eimprop", 0},
-      {"eimptor", 0},       {"etors", 0},         {"epitors", 0},
-      {"estrtor", 0},       {"eangtor", 0},       {"etortor", 0},
+      {"ebond", 0},
+      {"eangle", 0},
+      {"estrbnd", 0},
+      {"eurey", 0},
+      {"eopbend", 0},
+      {"eimprop", 0},
+      {"eimptor", 0},
+      {"etors", 0},
+      {"epitors", 0},
+      {"estrtor", 0},
+      {"eangtor", 0},
+      {"etortor", 0},
       {"egeom", 0},
 
       {"evalence", 0},
 
       {"evdw", 0},
 
-      {"echarge", 0},       {"echglj", 0},
+      {"echarge", 0},
+      {"echglj", 0},
 
-      {"emplar", 0},        {"empole", 0},        {"epolar", 0},
+      {"emplar", 0},
+      {"empole", 0},
+      {"epolar", 0},
 
-      {"empole_chgpen", 0}, {"epolar_chgpen", 0},
+      {"empole_chgpen", 0},
+      {"epolar_chgpen", 0},
 
-      {"echgtrn", 0},       {"edisp", 0},         {"erepel", 0},
+      {"echgtrn", 0},
+      {"edisp", 0},
+      {"erepel", 0},
       {"ehippo", 0},
    };
    return tsconfig;
 }
-
 
 namespace {
 auto tscfg__ = [](std::string eng, bool& use_flag, unsigned tsflag,
@@ -144,33 +152,26 @@ auto tscfg__ = [](std::string eng, bool& use_flag, unsigned tsflag,
 #define tscfg(x, f) tscfg__(x, f, tsflag, tsconfig)
 }
 
-
 void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 {
    pme_stream_start_record(use_pme_stream);
 
-
    vers = vers & calc::vmask;
-
 
    ecore_val = false;
    ecore_vdw = false;
    ecore_ele = false;
 
-
    if (pltfm_config & CU_PLTFM) {
-      bool calc_val = use_potent(bond_term) or use_potent(angle_term) or
-         use_potent(strbnd_term) or use_potent(urey_term) or
-         use_potent(opbend_term) or use_potent(improp_term) or
-         use_potent(imptors_term) or use_potent(torsion_term) or
-         use_potent(pitors_term) or use_potent(strtor_term) or
-         use_potent(angtor_term) or use_potent(tortor_term) or
+      bool calc_val = use_potent(bond_term) or use_potent(angle_term) or use_potent(strbnd_term) or
+         use_potent(urey_term) or use_potent(opbend_term) or use_potent(improp_term) or
+         use_potent(imptors_term) or use_potent(torsion_term) or use_potent(pitors_term) or
+         use_potent(strtor_term) or use_potent(angtor_term) or use_potent(tortor_term) or
          use_potent(geom_term);
       if (calc_val and tscfg("evalence", ecore_val))
          evalence(vers);
    } else {
       // bonded terms
-
 
       if (use_potent(bond_term))
          if (tscfg("ebond", ecore_val))
@@ -209,23 +210,18 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          if (tscfg("etortor", ecore_val))
             etortor(vers);
 
-
       // misc. terms
-
 
       if (use_potent(geom_term))
          if (tscfg("egeom", ecore_val))
             egeom(vers);
    }
 
-
    // non-bonded terms
-
 
    if (amoeba_evdw(vers))
       if (tscfg("evdw", ecore_vdw))
          evdw(vers);
-
 
    if (amoeba_echarge(vers))
       if (tscfg("echarge", ecore_ele))
@@ -246,7 +242,6 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       if (tscfg("emplar", ecore_ele))
          emplar(vers);
 
-
    if (hippo_empole(vers))
       if (tscfg("empole_chgpen", ecore_ele))
          empole_chgpen(vers);
@@ -263,22 +258,18 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       if (tscfg("erepel", ecore_vdw))
          erepel(vers);
 
-
    pme_stream_finish_wait(use_pme_stream and not(vers & calc::analyz));
 }
-
 
 void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 {
    zero_egv(vers);
    energy_core(vers, tsflag, tsconfig);
 
-
    bool rc_a = rc_flag & calc::analyz;
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-
 
    bool must_wait = false;
    detail::ev_hobj.e_val = 0;
@@ -289,22 +280,18 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          size_t bufsize = buffer_size();
          if (ecore_val) {
             must_wait = true;
-            reduce_sum_on_device(&detail::ev_dptr->e_val, eng_buf, bufsize,
-                                 g::q0);
+            reduce_sum_on_device(&detail::ev_dptr->e_val, eng_buf, bufsize, g::q0);
          }
          if (ecore_vdw && eng_buf_vdw) {
             must_wait = true;
-            reduce_sum_on_device(&detail::ev_dptr->e_vdw, eng_buf_vdw, bufsize,
-                                 g::q0);
+            reduce_sum_on_device(&detail::ev_dptr->e_vdw, eng_buf_vdw, bufsize, g::q0);
          }
          if (ecore_ele && eng_buf_elec) {
             must_wait = true;
-            reduce_sum_on_device(&detail::ev_dptr->e_ele, eng_buf_elec, bufsize,
-                                 g::q0);
+            reduce_sum_on_device(&detail::ev_dptr->e_ele, eng_buf_elec, bufsize, g::q0);
          }
       }
    }
-
 
    host_zero(detail::ev_hobj.v_val);
    host_zero(detail::ev_hobj.v_vdw);
@@ -314,24 +301,20 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          size_t bufsize = buffer_size();
          if (ecore_val) {
             must_wait = true;
-            reduce_sum2_on_device(detail::ev_dptr->v_val, vir_buf, bufsize,
-                                  g::q0);
+            reduce_sum2_on_device(detail::ev_dptr->v_val, vir_buf, bufsize, g::q0);
          }
          if (ecore_vdw && vir_buf_vdw) {
             must_wait = true;
-            reduce_sum2_on_device(detail::ev_dptr->v_vdw, vir_buf_vdw, bufsize,
-                                  g::q0);
+            reduce_sum2_on_device(detail::ev_dptr->v_vdw, vir_buf_vdw, bufsize, g::q0);
          }
          if (ecore_ele && vir_buf_elec) {
             must_wait = true;
-            reduce_sum2_on_device(detail::ev_dptr->v_ele, vir_buf_elec, bufsize,
-                                  g::q0);
+            reduce_sum2_on_device(detail::ev_dptr->v_ele, vir_buf_elec, bufsize, g::q0);
          }
       }
    }
    if (must_wait) {
-      device_memory_copyout_bytes_async(&detail::ev_hobj, detail::ev_dptr,
-                                        sizeof(DHFlow), g::q0);
+      device_memory_copyout_bytes_async(&detail::ev_hobj, detail::ev_dptr, sizeof(DHFlow), g::q0);
       wait_for(g::q0);
    }
    if (do_e) {
@@ -385,7 +368,6 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          sum_gradient(gx, gy, gz, gx_elec, gy_elec, gz_elec);
    }
 }
-
 
 void energy(int vers)
 {

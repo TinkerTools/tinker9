@@ -11,25 +11,18 @@
 #include "switch.h"
 #include "tool/gpu_card.h"
 
-
 namespace tinker {
 // ck.py Version 2.0.3
 template <class Ver>
 __global__
-void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
-                energy_buffer restrict er, virial_buffer restrict vr,
-                grad_prec* restrict gx, grad_prec* restrict gy,
-                grad_prec* restrict gz, real cut, real off,
-                const unsigned* restrict rinfo, int nexclude,
-                const int (*restrict exclude)[2],
-                const real* restrict exclude_scale, const real* restrict x,
-                const real* restrict y, const real* restrict z,
-                const Spatial::SortedAtom* restrict sorted, int nakpl,
-                const int* restrict iakpl, int niak, const int* restrict iak,
-                const int* restrict lst, real* restrict trqx,
-                real* restrict trqy, real* restrict trqz,
-                const real (*restrict rpole)[10], const real* restrict sizpr,
-                const real* restrict elepr, const real* restrict dmppr)
+void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr, energy_buffer restrict er,
+   virial_buffer restrict vr, grad_prec* restrict gx, grad_prec* restrict gy,
+   grad_prec* restrict gz, real cut, real off, const unsigned* restrict rinfo, int nexclude,
+   const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x,
+   const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
+   int nakpl, const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
+   real* restrict trqx, real* restrict trqy, real* restrict trqz, const real (*restrict rpole)[10],
+   const real* restrict sizpr, const real* restrict elepr, const real* restrict dmppr)
 {
    constexpr bool do_a = Ver::a;
    constexpr bool do_e = Ver::e;
@@ -39,7 +32,6 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
    const int iwarp = ithread / WARP_SIZE;
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
-
 
    int nrtl;
    if CONSTEXPR (do_a) {
@@ -105,7 +97,6 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
    real dmpk;
    real valk;
 
-
    //* /
    for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
       const int klane = threadIdx.x;
@@ -124,11 +115,9 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
          tzk = 0;
       }
 
-
       int i = exclude[ii][0];
       int k = exclude[ii][1];
       real scalea = exclude_scale[ii];
-
 
       xi[klane] = x[i];
       yi[klane] = y[i];
@@ -163,7 +152,6 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
       dmpk = dmppr[k];
       valk = elepr[k];
 
-
       constexpr bool incl = true;
       real xr = xk - xi[klane];
       real yr = yk - yi[klane];
@@ -176,11 +164,10 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
          pair_repel<do_g>( //
-            r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane],
-            vali[klane], ci[klane], dix[klane], diy[klane], diz[klane],
-            qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
-            qizz[klane], sizk, dmpk, valk, ck, dkx, dky, dkz, qkxx, qkxy, qkxz,
-            qkyy, qkyz, qkzz, e, pgrad);
+            r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane],
+            dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane],
+            qiyz[klane], qizz[klane], sizk, dmpk, valk, ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy,
+            qkyz, qkzz, e, pgrad);
 
          if CONSTEXPR (do_a)
             if (e != 0)
@@ -195,7 +182,6 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
             gyk -= pgrad.frcy;
             gzk -= pgrad.frcz;
 
-
             txi[klane] += pgrad.ttqi[0];
             tyi[klane] += pgrad.ttqi[1];
             tzi[klane] += pgrad.ttqi[2];
@@ -205,17 +191,13 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
          }
          if CONSTEXPR (do_v) {
             vrtlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
-            vrtlyx +=
-               cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
-            vrtlzx +=
-               cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
+            vrtlyx += cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+            vrtlzx += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
             vrtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
-            vrtlzy +=
-               cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
+            vrtlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
             vrtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
          }
       } // end if (include)
-
 
       if CONSTEXPR (do_g) {
          atomic_add(gxi[threadIdx.x], gx, i);
@@ -234,7 +216,6 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
    }
    // */
 
-
    for (int iw = iwarp; iw < nakpl; iw += nwarp) {
       if CONSTEXPR (do_g) {
          gxi[threadIdx.x] = 0;
@@ -251,11 +232,9 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
          tzk = 0;
       }
 
-
       int tri, tx, ty;
       tri = iakpl[iw];
       tri_to_xy(tri, tx, ty);
-
 
       int iid = ty * WARP_SIZE + ilane;
       int atomi = min(iid, n - 1);
@@ -269,7 +248,6 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
       xk = sorted[atomk].x;
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
-
 
       ci[threadIdx.x] = rpole[i][mpl_pme_0];
       dix[threadIdx.x] = rpole[i][mpl_pme_x];
@@ -297,7 +275,6 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
       sizk = sizpr[k];
       dmpk = dmppr[k];
       valk = elepr[k];
-
 
       unsigned int rinfo0 = rinfo[iw * WARP_SIZE + ilane];
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -318,11 +295,10 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             pair_repel<do_g>( //
-               r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane],
-               vali[klane], ci[klane], dix[klane], diy[klane], diz[klane],
-               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
-               qizz[klane], sizk, dmpk, valk, ck, dkx, dky, dkz, qkxx, qkxy,
-               qkxz, qkyy, qkyz, qkzz, e, pgrad);
+               r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane],
+               dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane],
+               qiyy[klane], qiyz[klane], qizz[klane], sizk, dmpk, valk, ck, dkx, dky, dkz, qkxx,
+               qkxy, qkxz, qkyy, qkyz, qkzz, e, pgrad);
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -337,7 +313,6 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
                gyk -= pgrad.frcy;
                gzk -= pgrad.frcz;
 
-
                txi[klane] += pgrad.ttqi[0];
                tyi[klane] += pgrad.ttqi[1];
                tzi[klane] += pgrad.ttqi[2];
@@ -347,21 +322,16 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
             }
             if CONSTEXPR (do_v) {
                vrtlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
-               vrtlyx += cvt_to<vbuf_prec>(-0.5f *
-                                           (yr * pgrad.frcx + xr * pgrad.frcy));
-               vrtlzx += cvt_to<vbuf_prec>(-0.5f *
-                                           (zr * pgrad.frcx + xr * pgrad.frcz));
+               vrtlyx += cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+               vrtlzx += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
                vrtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
-               vrtlzy += cvt_to<vbuf_prec>(-0.5f *
-                                           (zr * pgrad.frcy + yr * pgrad.frcz));
+               vrtlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
                vrtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
             }
          } // end if (include)
 
-
          iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
       }
-
 
       if CONSTEXPR (do_g) {
          atomic_add(gxi[threadIdx.x], gx, i);
@@ -379,7 +349,6 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
       }
    }
 
-
    for (int iw = iwarp; iw < niak; iw += nwarp) {
       if CONSTEXPR (do_g) {
          gxi[threadIdx.x] = 0;
@@ -396,7 +365,6 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
          tzk = 0;
       }
 
-
       int ty = iak[iw];
       int atomi = ty * WARP_SIZE + ilane;
       int i = sorted[atomi].unsorted;
@@ -408,7 +376,6 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
       xk = sorted[atomk].x;
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
-
 
       ci[threadIdx.x] = rpole[i][mpl_pme_0];
       dix[threadIdx.x] = rpole[i][mpl_pme_x];
@@ -437,7 +404,6 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
       dmpk = dmppr[k];
       valk = elepr[k];
 
-
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
          int klane = srclane + threadIdx.x - ilane;
@@ -454,11 +420,10 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             pair_repel<do_g>( //
-               r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane],
-               vali[klane], ci[klane], dix[klane], diy[klane], diz[klane],
-               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
-               qizz[klane], sizk, dmpk, valk, ck, dkx, dky, dkz, qkxx, qkxy,
-               qkxz, qkyy, qkyz, qkzz, e, pgrad);
+               r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane],
+               dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane],
+               qiyy[klane], qiyz[klane], qizz[klane], sizk, dmpk, valk, ck, dkx, dky, dkz, qkxx,
+               qkxy, qkxz, qkyy, qkyz, qkzz, e, pgrad);
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -473,7 +438,6 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
                gyk -= pgrad.frcy;
                gzk -= pgrad.frcz;
 
-
                txi[klane] += pgrad.ttqi[0];
                tyi[klane] += pgrad.ttqi[1];
                tzi[klane] += pgrad.ttqi[2];
@@ -483,18 +447,14 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
             }
             if CONSTEXPR (do_v) {
                vrtlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
-               vrtlyx += cvt_to<vbuf_prec>(-0.5f *
-                                           (yr * pgrad.frcx + xr * pgrad.frcy));
-               vrtlzx += cvt_to<vbuf_prec>(-0.5f *
-                                           (zr * pgrad.frcx + xr * pgrad.frcz));
+               vrtlyx += cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+               vrtlzx += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
                vrtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
-               vrtlzy += cvt_to<vbuf_prec>(-0.5f *
-                                           (zr * pgrad.frcy + yr * pgrad.frcz));
+               vrtlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
                vrtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
             }
          } // end if (include)
       }
-
 
       if CONSTEXPR (do_g) {
          atomic_add(gxi[threadIdx.x], gx, i);
@@ -512,7 +472,6 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
       }
    }
 
-
    if CONSTEXPR (do_a) {
       atomic_add(nrtl, nr, ithread);
    }
@@ -524,7 +483,6 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr,
    }
 }
 
-
 template <class Ver>
 void erepel_cu2()
 {
@@ -532,15 +490,12 @@ void erepel_cu2()
    real cut = switch_cut(switch_repuls);
    real off = switch_off(switch_repuls);
 
-
    int ngrid = get_grid_size(BLOCK_DIM);
-   erepel_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(
-      st.n, TINKER_IMAGE_ARGS, nrep, er, vir_er, derx, dery, derz, cut, off,
-      st.si2.bit0, nrepexclude, repexclude, repexclude_scale, st.x, st.y, st.z,
-      st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, trqx, trqy, trqz,
-      rpole, sizpr, elepr, dmppr);
+   erepel_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nrep, er, vir_er, derx,
+      dery, derz, cut, off, st.si2.bit0, nrepexclude, repexclude, repexclude_scale, st.x, st.y,
+      st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, trqx, trqy, trqz, rpole, sizpr,
+      elepr, dmppr);
 }
-
 
 void erepel_cu(int vers)
 {

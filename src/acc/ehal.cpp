@@ -8,7 +8,6 @@
 #include "switch.h"
 #include "tool/gpu_card.h"
 
-
 namespace tinker {
 void ehal_reduce_xyz_acc()
 {
@@ -55,9 +54,8 @@ void ehal_resolve_gradient_acc()
    }
 }
 
-#define DEVICE_PTRS                                                            \
-   xred, yred, zred, gxred, gyred, gzred, jvdw, radmin, epsilon, mut, nev, ev, \
-      vir_ev
+#define DEVICE_PTRS                                                                                \
+   xred, yred, zred, gxred, gyred, gzred, jvdw, radmin, epsilon, mut, nev, ev, vir_ev
 template <class Ver>
 void ehal_acc1()
 {
@@ -117,9 +115,9 @@ void ehal_acc1()
             real eps = epsilon[it * njvdw + kt];
 
             MAYBE_UNUSED real e, de;
-            pair_hal<do_g>(rik, rv, eps, 1, vlambda,   //
-                           ghal, dhal, scexp, scalpha, //
-                           e, de);
+            pair_hal<do_g>(rik, rv, eps, 1, vlambda, //
+               ghal, dhal, scexp, scalpha,           //
+               e, de);
 
             if (rik2 > cut2) {
                real taper, dtaper;
@@ -208,8 +206,8 @@ void ehal_acc1()
 
          MAYBE_UNUSED real e, de;
          pair_hal<do_g>(rik, rv, eps, vscale, vlambda, //
-                        ghal, dhal, scexp, scalpha,    //
-                        e, de);
+            ghal, dhal, scexp, scalpha,                //
+            e, de);
 
          if (rik2 > cut2) {
             real taper, dtaper;

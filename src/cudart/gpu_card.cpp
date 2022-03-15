@@ -7,7 +7,6 @@
 #include <cuda_runtime.h>
 #include <thrust/version.h>
 
-
 namespace tinker {
 std::string get_cuda_runtime_version_string()
 {
@@ -19,7 +18,6 @@ std::string get_cuda_runtime_version_string()
    return format("%d.%d", major, minor);
 }
 
-
 std::string get_cuda_driver_version_string()
 {
    int ver, major, minor;
@@ -30,21 +28,17 @@ std::string get_cuda_driver_version_string()
    return format("%d.%d", major, minor);
 }
 
-
 std::string get_thrust_version_string()
 {
-   return format("%d.%d.%d patch %d", THRUST_MAJOR_VERSION,
-                 THRUST_MINOR_VERSION, THRUST_SUBMINOR_VERSION,
-                 THRUST_PATCH_NUMBER);
+   return format("%d.%d.%d patch %d", THRUST_MAJOR_VERSION, THRUST_MINOR_VERSION,
+      THRUST_SUBMINOR_VERSION, THRUST_PATCH_NUMBER);
 }
-
 
 std::vector<DeviceAttribute>& get_device_attributes()
 {
    static std::vector<DeviceAttribute> a;
    return a;
 }
-
 
 static std::string get_nvidia_smi()
 {
@@ -60,27 +54,22 @@ static std::string get_nvidia_smi()
    return smi;
 }
 
-
 static void get_device_attribute(DeviceAttribute& a, int device = 0)
 {
    cudaDeviceProp prop;
    check_rt(cudaGetDeviceProperties(&prop, device));
 
-
    a.device = device;
    a.name = prop.name;
-
 
    char pciBusID[16];
    check_rt(cudaDeviceGetPCIBusId(pciBusID, 13, device));
    a.pci_string = pciBusID;
 
-
    a.cc_major = prop.major;
    a.cc_minor = prop.minor;
    a.cc = a.cc_major * 10 + a.cc_minor;
    a.single_double_ratio = prop.singleToDoublePrecisionPerfRatio;
-
 
    if (prop.computeMode == cudaComputeModeExclusive)
       a.compute_mode_string = "exclusive thread";
@@ -95,10 +84,8 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
    else
       a.ecc_string = "off";
 
-
    check_rt(cudaSetDevice(device));
    check_rt(cudaMemGetInfo(&a.free_mem_bytes, &a.total_mem_bytes));
-
 
    a.max_threads_per_block = prop.maxThreadsPerBlock;
    a.max_shared_bytes_per_block = prop.sharedMemPerBlock;
@@ -107,10 +94,8 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
    a.max_threads_per_multiprocessor = prop.maxThreadsPerMultiProcessor;
    a.max_shared_bytes_per_multiprocessor = prop.sharedMemPerMultiprocessor;
 
-
    // nvidia cuda-c-programming-guide compute-capabilities
    bool found_cc = true;
-
 
    // Maximum number of resident blocks per multiprocessor
    if (a.cc > 86)
@@ -127,7 +112,6 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
       a.max_blocks_per_multiprocessor = 16;
    else
       found_cc = false;
-
 
    // Number of CUDA cores per multiprocessor, not tabulated in
    // cuda-c-programming-guide;
@@ -155,27 +139,21 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
    else
       found_cc = false;
 
-
    a.clock_rate_kHz = prop.clockRate;
-
 
    check_rt(cudaDeviceReset());
 
-
    if (!found_cc) {
-      TINKER_THROW(
-         format("The source code should be updated for compute capability %d; "
-                "Please let us know",
-                a.cc));
+      TINKER_THROW(format("The source code should be updated for compute capability %d; "
+                          "Please let us know",
+         a.cc));
    }
 }
-
 
 static int recommend_device(int ndev)
 {
    int usp = -1; // user-specified cuda device; -1 for not set
    const char* usp_str = nullptr;
-
 
    // if do not use xyz file, there is no key file
    if (usp < 0 && (rc_flag & calc::xyz)) {
@@ -195,7 +173,6 @@ static int recommend_device(int ndev)
          usp = std::stoi(str);
    }
 
-
    std::vector<int> gpercent, prcd; // precedence
    std::vector<double> gflops;
    for (int i = 0; i < ndev; ++i) {
@@ -203,7 +180,7 @@ static int recommend_device(int ndev)
       std::string smi = get_nvidia_smi();
       std::string cmd = format("%s --query-gpu=utilization.gpu "
                                "--format=csv,noheader,nounits -i %s",
-                               smi, a.pci_string);
+         smi, a.pci_string);
       std::string percent = exec(cmd);
       prcd.push_back(i);
       gpercent.push_back(std::stoi(percent));
@@ -212,13 +189,11 @@ static int recommend_device(int ndev)
       gflops.push_back(gf);
    }
 
-
    auto strictly_prefer = [&](int idev, int jdev) {
       // If idev is preferred return true.
       // If idev and jdev are considered equivalent return false.
       // If jdev is preferred return false.
       const int SIGNIFICANT_DIFFERENCE = 8;
-
 
       int igpuutil = gpercent[idev];
       int jgpuutil = gpercent[jdev];
@@ -229,7 +204,6 @@ static int recommend_device(int ndev)
       else if (jgpuutil + SIGNIFICANT_DIFFERENCE < igpuutil)
          return false;
 
-
       double igflp = gflops[idev];
       double jgflp = gflops[jdev];
       // choose the faster device
@@ -239,12 +213,10 @@ static int recommend_device(int ndev)
       else if (jgflp > igflp * (1.0 + SIGNIFICANT_DIFFERENCE / 100.0))
          return false;
 
-
       // If idev is preferred, the program would never reach this line.
       return false;
    };
    std::stable_sort(prcd.begin(), prcd.end(), strictly_prefer);
-
 
    int idev;
    if (usp < 0) {
@@ -254,16 +226,14 @@ static int recommend_device(int ndev)
       idev = usp;
    } else {
       print(stdout,
-            "\n CUDA-DEVICE Warning,"
-            " Program recommended Device %d but Device %d was set from %s\n",
-            prcd[0], usp, usp_str);
+         "\n CUDA-DEVICE Warning,"
+         " Program recommended Device %d but Device %d was set from %s\n",
+         prcd[0], usp, usp_str);
       idev = usp;
    }
-   print(stdout, "\n GPU Device :  Setting Device ID to %d from %s\n", idev,
-         usp_str);
+   print(stdout, "\n GPU Device :  Setting Device ID to %d from %s\n", idev, usp_str);
    return idev;
 }
-
 
 static unsigned int cuda_device_flags = 0;
 void gpu_card_data(rc_op op)
@@ -310,20 +280,17 @@ void gpu_card_data(rc_op op)
    }
 }
 
-
 int get_grid_size(int nthreads_per_block)
 {
    const auto& a = get_device_attributes()[idevice];
 
    nthreads_per_block = std::min(nthreads_per_block, a.max_threads_per_block);
    int max_nblocks_per_MP =
-      std::min((a.max_threads_per_multiprocessor + nthreads_per_block - 1) /
-                  nthreads_per_block,
-               a.max_blocks_per_multiprocessor);
+      std::min((a.max_threads_per_multiprocessor + nthreads_per_block - 1) / nthreads_per_block,
+         a.max_blocks_per_multiprocessor);
 
    return a.multiprocessor_count * max_nblocks_per_MP;
 }
-
 
 int gpu_max_nparallel(int idev)
 {

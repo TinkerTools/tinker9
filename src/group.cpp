@@ -4,7 +4,6 @@
 #include <tinker/detail/group.hh>
 #include <tinker/detail/sizes.hh>
 
-
 namespace tinker {
 void group_data(rc_op op)
 {
@@ -12,7 +11,6 @@ void group_data(rc_op op)
       auto& st = grp;
       darray::deallocate(st.kgrp, st.grplist, st.igrp, st.grpmass, st.wgrp);
    }
-
 
    if (op & rc_alloc) {
       auto& st = grp;
@@ -27,7 +25,6 @@ void group_data(rc_op op)
       darray::allocate(1 + st.ngrp, &st.igrp, &st.grpmass);
       darray::allocate((1 + st.ngrp) * (1 + st.ngrp), &st.wgrp);
    }
-
 
    if (op & rc_init) {
       // at most (n + 1) groups, e.g. NaCl ion pair

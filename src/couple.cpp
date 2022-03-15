@@ -5,14 +5,11 @@
 #include <tinker/detail/sizes.hh>
 #include <vector>
 
-
 namespace tinker {
 static_assert(couple_maxn12 >= sizes::maxval, "");
 
-
 int (*couple_i12)[couple_maxn12];
 int* couple_n12;
-
 
 void couple_data(rc_op op)
 {
@@ -20,11 +17,9 @@ void couple_data(rc_op op)
       darray::deallocate(couple_i12, couple_n12);
    }
 
-
    if (op & rc_alloc) {
       darray::allocate(n, &couple_i12, &couple_n12);
    }
-
 
    if (op & rc_init) {
       std::vector<int> ibuf;

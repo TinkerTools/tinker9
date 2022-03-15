@@ -97,10 +97,10 @@ void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
                r2, xr, yr, zr, 1, 1, //
                ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, pdi,
                pti, //
-               rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
-               rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy],
-               rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz],
-               rpole[k][mpl_pme_zz], pdamp[k], thole[k], //
+               rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
+               rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz],
+               rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], pdamp[k],
+               thole[k], //
                aewald, fid, fip, fkd, fkp);
 
             gxi += fid.x;
@@ -166,10 +166,9 @@ void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
          pair_dfield<NON_EWALD>(                                             //
             r2, xr, yr, zr, dscale, pscale,                                  //
             ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, pdi, pti, //
-            rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
-            rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy],
-            rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz],
-            rpole[k][mpl_pme_zz], pdamp[k], thole[k], //
+            rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
+            rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
+            rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], pdamp[k], thole[k], //
             0, fid, fip, fkd, fkp);
 
          atomic_add(fid.x, &field[i][0]);
@@ -190,8 +189,8 @@ void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
 }
 
 // see also subroutine umutual1 in induce.f
-void ufield_ewald_recip_self_acc(const real (*uind)[3], const real (*uinp)[3],
-                                 real (*field)[3], real (*fieldp)[3])
+void ufield_ewald_recip_self_acc(
+   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
    darray::zero(g::q0, n, field, fieldp);
 
@@ -229,10 +228,10 @@ void ufield_ewald_recip_self_acc(const real (*uind)[3], const real (*uinp)[3],
 
       #pragma acc loop seq
       for (int j = 0; j < 3; ++j) {
-         real df1 = a[0][j] * fdip_phi1[i][1] + a[1][j] * fdip_phi1[i][2] +
-            a[2][j] * fdip_phi1[i][3];
-         real df2 = a[0][j] * fdip_phi2[i][1] + a[1][j] * fdip_phi2[i][2] +
-            a[2][j] * fdip_phi2[i][3];
+         real df1 =
+            a[0][j] * fdip_phi1[i][1] + a[1][j] * fdip_phi1[i][2] + a[2][j] * fdip_phi1[i][3];
+         real df2 =
+            a[0][j] * fdip_phi2[i][1] + a[1][j] * fdip_phi2[i][2] + a[2][j] * fdip_phi2[i][3];
          field[i][j] += (term * uind[i][j] - df1);
          fieldp[i][j] += (term * uinp[i][j] - df2);
       }
@@ -240,8 +239,8 @@ void ufield_ewald_recip_self_acc(const real (*uind)[3], const real (*uinp)[3],
 }
 
 #define UFIELD_DPTRS x, y, z, thole, pdamp, field, fieldp, uind, uinp
-void ufield_ewald_real_acc(const real (*uind)[3], const real (*uinp)[3],
-                           real (*field)[3], real (*fieldp)[3])
+void ufield_ewald_real_acc(
+   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
    const real off = switch_off(switch_ewald);
    const real off2 = off * off;
@@ -289,8 +288,8 @@ void ufield_ewald_real_acc(const real (*uind)[3], const real (*uinp)[3],
             pair_ufield<EWALD>(                                          //
                r2, xr, yr, zr, 1,                                        //
                uindi0, uindi1, uindi2, uinpi0, uinpi1, uinpi2, pdi, pti, //
-               uind[k][0], uind[k][1], uind[k][2], uinp[k][0], uinp[k][1],
-               uinp[k][2], pdamp[k], thole[k], //
+               uind[k][0], uind[k][1], uind[k][2], uinp[k][0], uinp[k][1], uinp[k][2], pdamp[k],
+               thole[k], //
                aewald, fid, fip, fkd, fkp);
 
             gxi += fid.x;
@@ -351,8 +350,8 @@ void ufield_ewald_real_acc(const real (*uind)[3], const real (*uinp)[3],
          pair_ufield<NON_EWALD>(                                      //
             r2, xr, yr, zr, uscale,                                   //
             uindi0, uindi1, uindi2, uinpi0, uinpi1, uinpi2, pdi, pti, //
-            uind[k][0], uind[k][1], uind[k][2], uinp[k][0], uinp[k][1],
-            uinp[k][2], pdamp[k], thole[k], //
+            uind[k][0], uind[k][1], uind[k][2], uinp[k][0], uinp[k][1], uinp[k][2], pdamp[k],
+            thole[k], //
             0, fid, fip, fkd, fkp);
 
          atomic_add(fid.x, &field[i][0]);

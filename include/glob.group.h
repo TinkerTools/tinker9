@@ -2,7 +2,6 @@
 #include "macro.h"
 #include "mdprec.h"
 
-
 namespace tinker {
 /// \brief Partitioning of system into atom groups.
 struct Group

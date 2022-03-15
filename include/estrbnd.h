@@ -4,7 +4,6 @@
 #include "mod.strbnd.h"
 #include "tool/rc_man.h"
 
-
 namespace tinker {
 void estrbnd_data(rc_op op);
 void estrbnd(int vers);

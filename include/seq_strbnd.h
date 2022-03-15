@@ -2,26 +2,20 @@
 #include "mathfunc.h"
 #include "seq_def.h"
 
-
 namespace tinker {
 #pragma acc routine seq
 template <class Ver>
 SEQ_CUDA
-void dk_strbnd(real& restrict e, real& restrict vxx, real& restrict vyx,
-               real& restrict vzx, real& restrict vyy, real& restrict vzy,
-               real& restrict vzz,
+void dk_strbnd(real& restrict e, real& restrict vxx, real& restrict vyx, real& restrict vzx,
+   real& restrict vyy, real& restrict vzy, real& restrict vzz,
 
-               grad_prec* restrict debax, grad_prec* restrict debay,
-               grad_prec* restrict debaz,
+   grad_prec* restrict debax, grad_prec* restrict debay, grad_prec* restrict debaz,
 
-               real stbnunit, int istrbnd, const int (*restrict isb)[3],
-               const real (*restrict sbk)[2],
+   real stbnunit, int istrbnd, const int (*restrict isb)[3], const real (*restrict sbk)[2],
 
-               const real* restrict bl, const int (*restrict iang)[4],
-               const real* restrict anat,
+   const real* restrict bl, const int (*restrict iang)[4], const real* restrict anat,
 
-               const real* restrict x, const real* restrict y,
-               const real* restrict z)
+   const real* restrict x, const real* restrict y, const real* restrict z)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;

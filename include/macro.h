@@ -1,13 +1,11 @@
 #pragma once
 
-
 // C++11
 #ifdef __cplusplus
 #   if __cplusplus < 201103L
 #      error Must enable C++11.
 #   endif
 #endif
-
 
 /**
  * \ingroup cpp_syntax
@@ -16,7 +14,6 @@
 #ifdef __cplusplus
 #   define restrict __restrict__
 #endif
-
 
 #if defined(__INTEL_COMPILER)
 #   define TINKER_ICPC
@@ -41,7 +38,6 @@
 
 #endif
 
-
 // Suppress Warnings
 #ifdef TINKER_ICPC
 // #161: unrecognized #pragma
@@ -50,7 +46,6 @@
 #ifdef TINKER_CLANG
 #   pragma clang diagnostic ignored "-Wextern-c-compat"
 #endif
-
 
 /**
  * \ingroup cpp_syntax
@@ -63,7 +58,6 @@
 #else
 #   define CONSTEXPR
 #endif
-
 
 /**
  * \ingroup cpp_syntax
@@ -81,9 +75,7 @@
 #   define MAYBE_UNUSED
 #endif
 
-
 //====================================================================//
-
 
 /**
  * \ingroup cpp_syntax
@@ -92,9 +84,7 @@
 #define TINKER_STR(s)   TINKER_STR1_(s)
 #define TINKER_STR1_(s) #s
 
-
 //====================================================================//
-
 
 #define TINKER_GET_1ST_ARG(a1, ...)                         a1
 #define TINKER_GET_2ND_ARG(a1, a2, ...)                     a2
@@ -104,9 +94,7 @@
 #define TINKER_GET_6TH_ARG(a1, a2, a3, a4, a5, a6, ...)     a6
 #define TINKER_GET_7TH_ARG(a1, a2, a3, a4, a5, a6, a7, ...) a7
 
-
 //====================================================================//
-
 
 /**
  * \def TINKER_EXTERN_DEFINITION_FILE
@@ -131,9 +119,7 @@
 #   define TINKER_EXTERN extern
 #endif
 
-
 //====================================================================//
-
 
 /**
  * \ingroup compiler
@@ -146,9 +132,7 @@
 #   define TINKER_DEBUG 1
 #endif
 
-
 //====================================================================//
-
 
 /**
  * \def TINKER_HOST
@@ -170,9 +154,7 @@
 #   define TINKER_CUDART 0
 #endif
 
-
 //====================================================================//
-
 
 /**
  * \def TINKER_DOUBLE_PRECISION
@@ -215,11 +197,9 @@
 #else
 #   define TINKER_SINGLE_PRECISION 0
 #endif
-#if (TINKER_DOUBLE_PRECISION + TINKER_MIXED_PRECISION +                        \
-     TINKER_SINGLE_PRECISION) != 1
+#if (TINKER_DOUBLE_PRECISION + TINKER_MIXED_PRECISION + TINKER_SINGLE_PRECISION) != 1
 #   error Detected errors in TINKER_?_PRECISION macros.
 #endif
-
 
 namespace tinker {
 /**
@@ -239,7 +219,6 @@ namespace tinker {
  */
 using fixed = unsigned long long;
 static_assert(sizeof(fixed) == 8, "");
-
 
 #if TINKER_DOUBLE_PRECISION
 #   define TINKER_REAL_SIZE  8
@@ -261,9 +240,7 @@ using mixed = float;
 #endif
 }
 
-
 //====================================================================//
-
 
 #ifndef TINKER9_DIR
 #   error TINKER9_DIR is not set.
@@ -271,9 +248,7 @@ using mixed = float;
 #   define TINKER9_DIRSTR TINKER_STR(TINKER9_DIR)
 #endif
 
-
 //====================================================================//
-
 
 namespace tinker {
 constexpr int MAX_NCHAR = 240;

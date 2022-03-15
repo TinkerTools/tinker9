@@ -12,8 +12,7 @@ namespace tinker {
 void eangle_data(rc_op op)
 {
    if (not use_potent(angle_term) and not use_potent(strbnd_term) and
-       not use_potent(opbend_term) and not use_potent(angtor_term) and
-       not potent::use_chgflx)
+      not use_potent(opbend_term) and not use_potent(angtor_term) and not potent::use_chgflx)
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -86,7 +85,6 @@ void eangle(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
-
    if (rc_a) {
       host_zero(energy_ea, virial_ea);
       auto bsize = buffer_size();
@@ -98,9 +96,7 @@ void eangle(int vers)
          darray::zero(g::q0, n, deax, deay, deaz);
    }
 
-
    eangle_acc(vers);
-
 
    if (rc_a) {
       if (do_e) {

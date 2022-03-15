@@ -19,9 +19,12 @@ static const std::string testgrad_name = "testgrad";
 static const std::map<std::string, std::function<void(int, char**)>>& launcher()
 {
    static std::map<std::string, std::function<void(int, char**)>> x = {
-      {analyze_name, x_analyze},   {bar_name, x_bar},
-      {dynamic_name, x_dynamic},   {helper_name, x_help},
-      {info_name, x_info},         {minimize_name, x_minimize},
+      {analyze_name, x_analyze},
+      {bar_name, x_bar},
+      {dynamic_name, x_dynamic},
+      {helper_name, x_help},
+      {info_name, x_info},
+      {minimize_name, x_minimize},
       {testgrad_name, x_testgrad},
    };
    return x;

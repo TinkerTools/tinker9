@@ -1,8 +1,7 @@
-#include "mathfunc_parallel_acc.h"
 #include "glob.accasync.h"
+#include "mathfunc_parallel_acc.h"
 #include "tool/deduce_ptr.h"
 #include <cassert>
-
 
 namespace tinker {
 template <class T>
@@ -19,13 +18,10 @@ T reduce_sum_acc(const T* gpu_a, size_t cpu_n, int queue)
 template int reduce_sum_acc(const int*, size_t, int);
 template float reduce_sum_acc(const float*, size_t, int);
 template double reduce_sum_acc(const double*, size_t, int);
-template unsigned long long reduce_sum_acc(const unsigned long long*, size_t,
-                                           int);
-
+template unsigned long long reduce_sum_acc(const unsigned long long*, size_t, int);
 
 template <class HT, size_t HN, class DPTR>
-void reduce_sum2_acc(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem,
-                     int queue)
+void reduce_sum2_acc(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem, int queue)
 {
    typedef typename deduce_ptr<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type DT;
@@ -33,7 +29,6 @@ void reduce_sum2_acc(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem,
 
    constexpr size_t neach = deduce_ptr<DPTR>::n;
    static_assert(HN <= neach, "");
-
 
    for (size_t iv = 0; iv < HN; ++iv) {
       HT ans = 0;
@@ -47,9 +42,7 @@ void reduce_sum2_acc(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem,
 }
 template void reduce_sum2_acc(float (&)[6], float (*)[8], size_t, int);
 template void reduce_sum2_acc(double (&)[6], double (*)[8], size_t, int);
-template void reduce_sum2_acc(unsigned long long (&)[6],
-                              unsigned long long (*)[8], size_t, int);
-
+template void reduce_sum2_acc(unsigned long long (&)[6], unsigned long long (*)[8], size_t, int);
 
 template <class T>
 void reduce_sum_on_device_acc(T* dp_ans, const T* a, size_t nelem, int queue)
@@ -59,7 +52,6 @@ void reduce_sum_on_device_acc(T* dp_ans, const T* a, size_t nelem, int queue)
    #pragma acc enter data if(first) async(queue) create(ans1)
    if (first)
       first = false;
-
 
    ans1 = 0;
    #pragma acc update async(queue) device(ans1)
@@ -76,9 +68,7 @@ void reduce_sum_on_device_acc(T* dp_ans, const T* a, size_t nelem, int queue)
 template void reduce_sum_on_device_acc(int*, const int*, size_t, int);
 template void reduce_sum_on_device_acc(float*, const float*, size_t, int);
 template void reduce_sum_on_device_acc(double*, const double*, size_t, int);
-template void reduce_sum_on_device_acc(unsigned long long*,
-                                       const unsigned long long*, size_t, int);
-
+template void reduce_sum_on_device_acc(unsigned long long*, const unsigned long long*, size_t, int);
 
 template <class T, size_t HN, class DPTR>
 void reduce_sum2_on_device_acc(T (&dref)[HN], DPTR v, size_t nelem, int queue)
@@ -88,7 +78,6 @@ void reduce_sum2_on_device_acc(T (&dref)[HN], DPTR v, size_t nelem, int queue)
    #pragma acc enter data if(first) async(queue) create(ans1)
    if (first)
       first = false;
-
 
    T* dptr = &dref[0];
    for (size_t iv = 0; iv < HN; ++iv) {
@@ -105,17 +94,13 @@ void reduce_sum2_on_device_acc(T (&dref)[HN], DPTR v, size_t nelem, int queue)
       }
    }
 }
-template void reduce_sum2_on_device_acc(float (&)[6], float (*)[8], size_t,
-                                        int);
-template void reduce_sum2_on_device_acc(double (&)[6], double (*)[8], size_t,
-                                        int);
-template void reduce_sum2_on_device_acc(unsigned long long (&)[6],
-                                        unsigned long long (*)[8], size_t, int);
-
+template void reduce_sum2_on_device_acc(float (&)[6], float (*)[8], size_t, int);
+template void reduce_sum2_on_device_acc(double (&)[6], double (*)[8], size_t, int);
+template void reduce_sum2_on_device_acc(
+   unsigned long long (&)[6], unsigned long long (*)[8], size_t, int);
 
 template <class T>
-T dotprod_acc(const T* restrict gpu_a, const T* restrict gpu_b, size_t cpu_n,
-              int queue)
+T dotprod_acc(const T* restrict gpu_a, const T* restrict gpu_b, size_t cpu_n, int queue)
 {
    T val = 0;
    #pragma acc parallel loop independent async(queue)\
@@ -129,7 +114,6 @@ T dotprod_acc(const T* restrict gpu_a, const T* restrict gpu_b, size_t cpu_n,
 template float dotprod_acc(const float*, const float*, size_t, int);
 template double dotprod_acc(const double*, const double*, size_t, int);
 
-
 template <class T>
 void dotprod_acc(T* ans, const T* a, const T* b, size_t nelem, int queue)
 {
@@ -138,7 +122,6 @@ void dotprod_acc(T* ans, const T* a, const T* b, size_t nelem, int queue)
    #pragma acc enter data if(first) async(queue) create(ans1)
    if (first)
       first = false;
-
 
    ans1 = 0;
    #pragma acc update async(queue) device(ans1)
@@ -154,7 +137,6 @@ void dotprod_acc(T* ans, const T* a, const T* b, size_t nelem, int queue)
 }
 template void dotprod_acc(float*, const float*, const float*, size_t, int);
 template void dotprod_acc(double*, const double*, const double*, size_t, int);
-
 
 template <class T>
 void scale_array_acc(T* gpu_dst, T scal, size_t nelem, int queue)

@@ -10,22 +10,18 @@
 #include <tinker/detail/reppot.hh>
 #include <tinker/detail/sizes.hh>
 
-
 namespace tinker {
 void erepel_data(rc_op op)
 {
    if (!use_potent(repuls_term))
       return;
 
-
    bool rc_a = rc_flag & calc::analyz;
-
 
    if (op & rc_dealloc) {
       darray::deallocate(sizpr, dmppr, elepr);
       nrepexclude = 0;
       darray::deallocate(repexclude, repexclude_scale);
-
 
       if (rc_a) {
          buffer_deallocate(rc_flag, nrep);
@@ -39,10 +35,8 @@ void erepel_data(rc_op op)
       derz = nullptr;
    }
 
-
    if (op & rc_alloc) {
       darray::allocate(n, &sizpr, &dmppr, &elepr);
-
 
       nrep = nullptr;
       er = eng_buf_vdw;
@@ -54,7 +48,6 @@ void erepel_data(rc_op op)
          buffer_allocate(rc_flag, &nrep);
          buffer_allocate(rc_flag, &er, &vir_er, &derx, &dery, &derz);
       }
-
 
       r2scale = reppot::r2scale;
       r3scale = reppot::r3scale;
@@ -83,7 +76,6 @@ void erepel_data(rc_op op)
             }
          }
 
-
          if (r3scale != 1) {
             nn = couple::n13[i];
             bask = i * maxn13;
@@ -98,7 +90,6 @@ void erepel_data(rc_op op)
             }
          }
 
-
          if (r4scale != 1) {
             nn = couple::n14[i];
             bask = i * maxn14;
@@ -112,7 +103,6 @@ void erepel_data(rc_op op)
                }
             }
          }
-
 
          if (r5scale != 1) {
             nn = couple::n15[i];
@@ -135,7 +125,6 @@ void erepel_data(rc_op op)
       wait_for(g::q0);
    }
 
-
    if (op & rc_init) {
       darray::copyin(g::q0, n, sizpr, repel::sizpr);
       darray::copyin(g::q0, n, dmppr, repel::dmppr);
@@ -144,7 +133,6 @@ void erepel_data(rc_op op)
    }
 }
 
-
 void erepel(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -152,7 +140,6 @@ void erepel(int vers)
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-
 
    host_zero(energy_er, virial_er);
    size_t bsize = buffer_size();
@@ -166,7 +153,6 @@ void erepel(int vers)
       if (do_g)
          darray::zero(g::q0, n, derx, dery, derz);
    }
-
 
    mpole_init(vers);
 #if TINKER_CUDART
@@ -186,7 +172,6 @@ void erepel(int vers)
          virial_vdw[iv] += v2[iv];
       }
    }
-
 
    if (rc_a) {
       if (do_e) {

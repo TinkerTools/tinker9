@@ -1,7 +1,6 @@
 #pragma once
 #include "tool/energy_buffer.h"
 
-
 namespace tinker {
 struct DHFlow
 {

@@ -1,7 +1,6 @@
 #pragma once
 #include "macro.h"
 
-
 namespace tinker {
 // electrostatic field due to permanent multipoles
 // clang-format off
@@ -16,7 +15,6 @@ void dfield_chgpen_ewald_real_acc       (real (*field)[3]);
 void dfield_chgpen_nonewald_cu          (real (*field)[3]);
 void dfield_chgpen_ewald_real_cu        (real (*field)[3]);
 // clang-format on
-
 
 // mutual electrostatic field due to induced dipole moments
 // clang-format off

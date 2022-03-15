@@ -2,24 +2,20 @@
 #include "add.h"
 #include "seq_def.h"
 
-
 namespace tinker {
 // Computing angle from sine instead of cosine may have a higher precision.
 #pragma acc routine seq
 template <class Ver>
 SEQ_CUDA
-void dk_improp(real& restrict e, real& restrict vxx, real& restrict vyx,
-               real& restrict vzx, real& restrict vyy, real& restrict vzy,
-               real& restrict vzz,
+void dk_improp(real& restrict e, real& restrict vxx, real& restrict vyx, real& restrict vzx,
+   real& restrict vyy, real& restrict vzy, real& restrict vzz,
 
-               grad_prec* restrict deidx, grad_prec* restrict deidy,
-               grad_prec* restrict deidz,
+   grad_prec* restrict deidx, grad_prec* restrict deidy, grad_prec* restrict deidz,
 
-               real idihunit, int i, const int (*restrict iiprop)[4],
-               const real* restrict kprop, const real* restrict vprop,
+   real idihunit, int i, const int (*restrict iiprop)[4], const real* restrict kprop,
+   const real* restrict vprop,
 
-               const real* restrict x, const real* restrict y,
-               const real* restrict z)
+   const real* restrict x, const real* restrict y, const real* restrict z)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -83,7 +79,6 @@ void dk_improp(real& restrict e, real& restrict vxx, real& restrict vyx,
          dt -= 360;
       if (dt < -180)
          dt += 360;
-
 
       if CONSTEXPR (do_e) {
          e = idihunit * force * dt * dt;

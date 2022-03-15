@@ -2,7 +2,6 @@
 #include "macro.h"
 #include <type_traits>
 
-
 namespace tinker {
 /// \ingroup acc_syntax
 template <class T, class U>

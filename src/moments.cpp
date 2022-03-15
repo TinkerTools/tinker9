@@ -18,7 +18,6 @@
 #include <tinker/detail/units.hh>
 #include <vector>
 
-
 namespace tinker {
 void moments()
 {
@@ -40,7 +39,6 @@ void moments()
    moment::zyqpl = 0;
    moment::zzqpl = 0;
 
-
    bounds();
    // download x y z
    std::vector<pos_prec> xv(n), yv(n), zv(n);
@@ -53,7 +51,6 @@ void moments()
       atoms::y[i] = yv[i];
       atoms::z[i] = zv[i];
    }
-
 
    // center of mass
    double weigh = 0, xmid = 0, ymid = 0, zmid = 0;
@@ -76,7 +73,6 @@ void moments()
       zcm[i] = atoms::z[i] - zmid;
    }
 
-
    // partial charges
    for (int i = 0; i < n and charge::nion > 0; ++i) {
       double c = charge::pchg[i];
@@ -94,7 +90,6 @@ void moments()
       moment::zyqpl += zcm[i] * ycm[i] * c;
       moment::zzqpl += zcm[i] * zcm[i] * c;
    }
-
 
    // bond dipoles
    for (int i = 0; i < dipole::ndipole; ++i) {
@@ -123,7 +118,6 @@ void moments()
       moment::zyqpl += zc * ybnd + yc * zbnd;
       moment::zzqpl += 2 * zc * zbnd;
    }
-
 
    // atomic multipoles
    if (use_potent(mpole_term) or use_potent(polar_term)) {
@@ -163,34 +157,29 @@ void moments()
          mpole::rpole[13 * i + 2] += uindv[3 * i + 1];
          mpole::rpole[13 * i + 3] += uindv[3 * i + 2];
 
-
 #define RPOLE(j, i) mpole::rpole[13 * (i) + (j)-1]
          moment::netchg += RPOLE(1, i);
          moment::xdpl += xcm[i] * RPOLE(1, i) + RPOLE(2, i);
          moment::ydpl += ycm[i] * RPOLE(1, i) + RPOLE(3, i);
          moment::zdpl += zcm[i] * RPOLE(1, i) + RPOLE(4, i);
-         moment::xxqpl +=
-            xcm[i] * xcm[i] * RPOLE(1, i) + 2 * xcm[i] * RPOLE(2, i);
-         moment::xyqpl += xcm[i] * ycm[i] * RPOLE(1, i) + xcm[i] * RPOLE(3, i) +
-            ycm[i] * RPOLE(2, i);
-         moment::xzqpl += xcm[i] * zcm[i] * RPOLE(1, i) + xcm[i] * RPOLE(4, i) +
-            zcm[i] * RPOLE(2, i);
-         moment::yxqpl += +ycm[i] * xcm[i] * RPOLE(1, i) +
-            ycm[i] * RPOLE(2, i) + xcm[i] * RPOLE(3, i);
-         moment::yyqpl +=
-            ycm[i] * ycm[i] * RPOLE(1, i) + 2 * ycm[i] * RPOLE(3, i);
-         moment::yzqpl += ycm[i] * zcm[i] * RPOLE(1, i) + ycm[i] * RPOLE(4, i) +
-            zcm[i] * RPOLE(3, i);
-         moment::zxqpl += zcm[i] * xcm[i] * RPOLE(1, i) + zcm[i] * RPOLE(2, i) +
-            xcm[i] * RPOLE(4, i);
-         moment::zyqpl += zcm[i] * ycm[i] * RPOLE(1, i) + zcm[i] * RPOLE(3, i) +
-            ycm[i] * RPOLE(4, i);
-         moment::zzqpl +=
-            zcm[i] * zcm[i] * RPOLE(1, i) + 2 * zcm[i] * RPOLE(4, i);
+         moment::xxqpl += xcm[i] * xcm[i] * RPOLE(1, i) + 2 * xcm[i] * RPOLE(2, i);
+         moment::xyqpl +=
+            xcm[i] * ycm[i] * RPOLE(1, i) + xcm[i] * RPOLE(3, i) + ycm[i] * RPOLE(2, i);
+         moment::xzqpl +=
+            xcm[i] * zcm[i] * RPOLE(1, i) + xcm[i] * RPOLE(4, i) + zcm[i] * RPOLE(2, i);
+         moment::yxqpl +=
+            +ycm[i] * xcm[i] * RPOLE(1, i) + ycm[i] * RPOLE(2, i) + xcm[i] * RPOLE(3, i);
+         moment::yyqpl += ycm[i] * ycm[i] * RPOLE(1, i) + 2 * ycm[i] * RPOLE(3, i);
+         moment::yzqpl +=
+            ycm[i] * zcm[i] * RPOLE(1, i) + ycm[i] * RPOLE(4, i) + zcm[i] * RPOLE(3, i);
+         moment::zxqpl +=
+            zcm[i] * xcm[i] * RPOLE(1, i) + zcm[i] * RPOLE(2, i) + xcm[i] * RPOLE(4, i);
+         moment::zyqpl +=
+            zcm[i] * ycm[i] * RPOLE(1, i) + zcm[i] * RPOLE(3, i) + ycm[i] * RPOLE(4, i);
+         moment::zzqpl += zcm[i] * zcm[i] * RPOLE(1, i) + 2 * zcm[i] * RPOLE(4, i);
 #undef RPOLE
       }
    }
-
 
    // convert to traceless quadrupole
    double qave = (moment::xxqpl + moment::yyqpl + moment::zzqpl) / 3;
@@ -204,7 +193,6 @@ void moments()
    moment::zyqpl = 1.5 * moment::zyqpl;
    moment::zzqpl = 1.5 * (moment::zzqpl - qave);
 
-
    // add the atomic quadrupoles
    for (int i = 0; i < n and mpole::npole > 0; ++i) {
       moment::xxqpl += 3.0 * mpole::rpole[i * 13 + 4];
@@ -217,7 +205,6 @@ void moments()
       moment::zyqpl += 3.0 * mpole::rpole[i * 13 + 11];
       moment::zzqpl += 3.0 * mpole::rpole[i * 13 + 12];
    }
-
 
    // convert dipole to Debye and quadrupole to Buckingham
    moment::xdpl *= units::debye;
@@ -233,11 +220,9 @@ void moments()
    moment::zyqpl *= units::debye;
    moment::zzqpl *= units::debye;
 
-
    // get dipole magnitude and diagonalize quadrupole tensor
-   moment::netdpl =
-      std::sqrt(moment::xdpl * moment::xdpl + moment::ydpl * moment::ydpl +
-                moment::zdpl * moment::zdpl);
+   moment::netdpl = std::sqrt(
+      moment::xdpl * moment::xdpl + moment::ydpl * moment::ydpl + moment::zdpl * moment::zdpl);
    double a[3][3], b[3][3];
    a[0][0] = moment::xxqpl;
    a[1][0] = moment::xyqpl;

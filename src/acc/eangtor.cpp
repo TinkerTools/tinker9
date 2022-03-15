@@ -1,8 +1,7 @@
-#include "add.h"
 #include "eangtor.h"
+#include "add.h"
 #include "md.h"
 #include "seq_angtor.h"
-
 
 namespace tinker {
 template <class Ver>
@@ -12,7 +11,6 @@ void eangtor_acc1()
    constexpr bool do_v = Ver::v;
    size_t bufsize = buffer_size();
 
-
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,eat,vir_eat,deatx,deaty,deatz,\
                iat,kant,anat,itors,tors1,tors2,tors3)
@@ -21,18 +19,17 @@ void eangtor_acc1()
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_angtor<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz, deatx, deaty, deatz,
 
-                     atorunit, iangtor, iat, kant,
+         atorunit, iangtor, iat, kant,
 
-                     anat, itors, tors1, tors2, tors3,
+         anat, itors, tors1, tors2, tors3,
 
-                     x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e)
          atomic_add(e, eat, offset);
       if CONSTEXPR (do_v)
          atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_eat, offset);
    }
 }
-
 
 void eangtor_acc(int vers)
 {

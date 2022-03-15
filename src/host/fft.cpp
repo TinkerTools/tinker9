@@ -4,7 +4,6 @@
 #include "pme.h"
 #include <fftw3.h>
 
-
 namespace tinker {
 struct FFTPlanFFTW : public FFTPlan
 {
@@ -16,11 +15,9 @@ struct FFTPlanFFTW : public FFTPlan
    static_assert(false, "");
 #endif
 
-
    type planf; ///< FFT front plan.
    type planb; ///< FFT back plan.
 };
-
 
 void fft_data(rc_op op)
 {
@@ -69,19 +66,19 @@ void fft_data(rc_op op)
          const unsigned int iguess = 0;
          // different from FFTW Fortran API
 #if TINKER_REAL_SIZE == 4
-         iplan.planf = fftwf_plan_dft_3d(
-            nslow, nfft2, nfast, reinterpret_cast<fftwf_complex*>(st.qgrid),
-            reinterpret_cast<fftwf_complex*>(st.qgrid), ifront, iguess);
-         iplan.planb = fftwf_plan_dft_3d(
-            nslow, nfft2, nfast, reinterpret_cast<fftwf_complex*>(st.qgrid),
-            reinterpret_cast<fftwf_complex*>(st.qgrid), iback, iguess);
+         iplan.planf =
+            fftwf_plan_dft_3d(nslow, nfft2, nfast, reinterpret_cast<fftwf_complex*>(st.qgrid),
+               reinterpret_cast<fftwf_complex*>(st.qgrid), ifront, iguess);
+         iplan.planb =
+            fftwf_plan_dft_3d(nslow, nfft2, nfast, reinterpret_cast<fftwf_complex*>(st.qgrid),
+               reinterpret_cast<fftwf_complex*>(st.qgrid), iback, iguess);
 #elif TINKER_REAL_SIZE == 8
-         iplan.planf = fftw_plan_dft_3d(
-            nslow, nfft2, nfast, reinterpret_cast<fftw_complex*>(st.qgrid),
-            reinterpret_cast<fftw_complex*>(st.qgrid), ifront, iguess);
-         iplan.planb = fftw_plan_dft_3d(
-            nslow, nfft2, nfast, reinterpret_cast<fftw_complex*>(st.qgrid),
-            reinterpret_cast<fftw_complex*>(st.qgrid), iback, iguess);
+         iplan.planf =
+            fftw_plan_dft_3d(nslow, nfft2, nfast, reinterpret_cast<fftw_complex*>(st.qgrid),
+               reinterpret_cast<fftw_complex*>(st.qgrid), ifront, iguess);
+         iplan.planb =
+            fftw_plan_dft_3d(nslow, nfft2, nfast, reinterpret_cast<fftw_complex*>(st.qgrid),
+               reinterpret_cast<fftw_complex*>(st.qgrid), iback, iguess);
 #else
          static_assert(false, "");
 #endif
@@ -89,7 +86,6 @@ void fft_data(rc_op op)
       }
    }
 }
-
 
 void fftfront(PMEUnit pme_u)
 {
@@ -99,15 +95,14 @@ void fftfront(PMEUnit pme_u)
 
 #if TINKER_REAL_SIZE == 4
    fftwf_execute_dft(iplan.planf, reinterpret_cast<fftwf_complex*>(st.qgrid),
-                     reinterpret_cast<fftwf_complex*>(st.qgrid));
+      reinterpret_cast<fftwf_complex*>(st.qgrid));
 #elif TINKER_REAL_SIZE == 8
    fftw_execute_dft(iplan.planf, reinterpret_cast<fftw_complex*>(st.qgrid),
-                    reinterpret_cast<fftw_complex*>(st.qgrid));
+      reinterpret_cast<fftw_complex*>(st.qgrid));
 #else
    static_assert(false, "");
 #endif
 }
-
 
 void fftback(PMEUnit pme_u)
 {
@@ -117,10 +112,10 @@ void fftback(PMEUnit pme_u)
 
 #if TINKER_REAL_SIZE == 4
    fftwf_execute_dft(iplan.planb, reinterpret_cast<fftwf_complex*>(st.qgrid),
-                     reinterpret_cast<fftwf_complex*>(st.qgrid));
+      reinterpret_cast<fftwf_complex*>(st.qgrid));
 #elif TINKER_REAL_SIZE == 8
    fftw_execute_dft(iplan.planb, reinterpret_cast<fftw_complex*>(st.qgrid),
-                    reinterpret_cast<fftw_complex*>(st.qgrid));
+      reinterpret_cast<fftw_complex*>(st.qgrid));
 #else
    static_assert(false, "");
 #endif

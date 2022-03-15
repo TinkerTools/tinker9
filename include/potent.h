@@ -1,7 +1,6 @@
 #pragma once
 #include "macro.h"
 
-
 namespace tinker {
 typedef enum
 {

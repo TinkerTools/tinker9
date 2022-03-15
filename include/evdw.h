@@ -4,11 +4,9 @@
 #include "mod.vdwpot.h"
 #include "tool/rc_man.h"
 
-
 /**
  * \todo Test lj, buck, mm3hb, gauss.
  */
-
 
 namespace tinker {
 void evdw_data(rc_op op);

@@ -2,7 +2,6 @@
 #include "macro.h"
 #include "mod.vdwpot.h"
 
-
 namespace tinker {
 TINKER_EXTERN evdw_t vcouple;
 /**
@@ -16,9 +15,7 @@ TINKER_EXTERN real scexp;
  */
 TINKER_EXTERN real scalpha;
 
-
 //====================================================================//
-
 
 TINKER_EXTERN real vlam;
 /**

@@ -2,7 +2,6 @@
 #include "macro.h"
 #include "mdprec.h"
 
-
 namespace tinker {
 /**
  * \ingroup vdw
@@ -46,9 +45,7 @@ TINKER_EXTERN evdw_t vdwindex;
 TINKER_EXTERN evdw_t radrule;
 TINKER_EXTERN evdw_t epsrule;
 
-
 //====================================================================//
-
 
 /**
  * \ingroup vdw

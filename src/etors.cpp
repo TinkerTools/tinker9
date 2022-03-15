@@ -9,10 +9,8 @@
 namespace tinker {
 void etors_data(rc_op op)
 {
-   if (not use_potent(torsion_term) and not use_potent(strtor_term) and
-       not use_potent(angtor_term))
+   if (not use_potent(torsion_term) and not use_potent(strtor_term) and not use_potent(angtor_term))
       return;
-
 
    bool rc_a = rc_flag & calc::analyz;
 
@@ -30,8 +28,7 @@ void etors_data(rc_op op)
 
    if (op & rc_alloc) {
       ntors = count_bonded_term(torsion_term);
-      darray::allocate(ntors, &itors, &tors1, &tors2, &tors3, &tors4, &tors5,
-                       &tors6);
+      darray::allocate(ntors, &itors, &tors1, &tors2, &tors3, &tors4, &tors5, &tors6);
 
       et = eng_buf;
       vir_et = vir_buf;
@@ -66,7 +63,6 @@ void etors(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
-
    if (rc_a) {
       host_zero(energy_et, virial_et);
       auto bsize = buffer_size();
@@ -78,9 +74,7 @@ void etors(int vers)
          darray::zero(g::q0, n, detx, dety, detz);
    }
 
-
    etors_acc(vers);
-
 
    if (rc_a) {
       if (do_e) {

@@ -17,8 +17,7 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-void diag_precond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3],
-                  real (*zrsdp)[3])
+void diag_precond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
 {
    #pragma acc parallel loop independent async\
                deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
@@ -33,8 +32,8 @@ void diag_precond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3],
 }
 
 #define APPLY_DPTRS rsd, rsdp, zrsd, zrsdp, x, y, z, polarity, pdamp, thole
-void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
-                              real (*zrsd)[3], real (*zrsdp)[3])
+void sparse_precond_apply_acc(
+   const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
 {
    #pragma acc parallel loop independent async\
                deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
@@ -96,23 +95,17 @@ void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
          gyi += m1 * rsd[k][0] + m3 * rsd[k][1] + m4 * rsd[k][2];
          gzi += m2 * rsd[k][0] + m4 * rsd[k][1] + m5 * rsd[k][2];
 
-         atomic_add(m0 * rsd[i][0] + m1 * rsd[i][1] + m2 * rsd[i][2],
-                    &zrsd[k][0]);
-         atomic_add(m1 * rsd[i][0] + m3 * rsd[i][1] + m4 * rsd[i][2],
-                    &zrsd[k][1]);
-         atomic_add(m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2],
-                    &zrsd[k][2]);
+         atomic_add(m0 * rsd[i][0] + m1 * rsd[i][1] + m2 * rsd[i][2], &zrsd[k][0]);
+         atomic_add(m1 * rsd[i][0] + m3 * rsd[i][1] + m4 * rsd[i][2], &zrsd[k][1]);
+         atomic_add(m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2], &zrsd[k][2]);
 
          txi += m0 * rsdp[k][0] + m1 * rsdp[k][1] + m2 * rsdp[k][2];
          tyi += m1 * rsdp[k][0] + m3 * rsdp[k][1] + m4 * rsdp[k][2];
          tzi += m2 * rsdp[k][0] + m4 * rsdp[k][1] + m5 * rsdp[k][2];
 
-         atomic_add(m0 * rsdp[i][0] + m1 * rsdp[i][1] + m2 * rsdp[i][2],
-                    &zrsdp[k][0]);
-         atomic_add(m1 * rsdp[i][0] + m3 * rsdp[i][1] + m4 * rsdp[i][2],
-                    &zrsdp[k][1]);
-         atomic_add(m2 * rsdp[i][0] + m4 * rsdp[i][1] + m5 * rsdp[i][2],
-                    &zrsdp[k][2]);
+         atomic_add(m0 * rsdp[i][0] + m1 * rsdp[i][1] + m2 * rsdp[i][2], &zrsdp[k][0]);
+         atomic_add(m1 * rsdp[i][0] + m3 * rsdp[i][1] + m4 * rsdp[i][2], &zrsdp[k][1]);
+         atomic_add(m2 * rsdp[i][0] + m4 * rsdp[i][1] + m5 * rsdp[i][2], &zrsdp[k][2]);
       }
 
       atomic_add(gxi, &zrsd[i][0]);
@@ -170,19 +163,13 @@ void sparse_precond_apply_acc(const real (*rsd)[3], const real (*rsdp)[3],
       atomic_add(m1 * rsd[i][0] + m3 * rsd[i][1] + m4 * rsd[i][2], &zrsd[k][1]);
       atomic_add(m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2], &zrsd[k][2]);
 
-      atomic_add(m0 * rsdp[k][0] + m1 * rsdp[k][1] + m2 * rsdp[k][2],
-                 &zrsdp[i][0]);
-      atomic_add(m1 * rsdp[k][0] + m3 * rsdp[k][1] + m4 * rsdp[k][2],
-                 &zrsdp[i][1]);
-      atomic_add(m2 * rsdp[k][0] + m4 * rsdp[k][1] + m5 * rsdp[k][2],
-                 &zrsdp[i][2]);
+      atomic_add(m0 * rsdp[k][0] + m1 * rsdp[k][1] + m2 * rsdp[k][2], &zrsdp[i][0]);
+      atomic_add(m1 * rsdp[k][0] + m3 * rsdp[k][1] + m4 * rsdp[k][2], &zrsdp[i][1]);
+      atomic_add(m2 * rsdp[k][0] + m4 * rsdp[k][1] + m5 * rsdp[k][2], &zrsdp[i][2]);
 
-      atomic_add(m0 * rsdp[i][0] + m1 * rsdp[i][1] + m2 * rsdp[i][2],
-                 &zrsdp[k][0]);
-      atomic_add(m1 * rsdp[i][0] + m3 * rsdp[i][1] + m4 * rsdp[i][2],
-                 &zrsdp[k][1]);
-      atomic_add(m2 * rsdp[i][0] + m4 * rsdp[i][1] + m5 * rsdp[i][2],
-                 &zrsdp[k][2]);
+      atomic_add(m0 * rsdp[i][0] + m1 * rsdp[i][1] + m2 * rsdp[i][2], &zrsdp[k][0]);
+      atomic_add(m1 * rsdp[i][0] + m3 * rsdp[i][1] + m4 * rsdp[i][2], &zrsdp[k][1]);
+      atomic_add(m2 * rsdp[i][0] + m4 * rsdp[i][1] + m5 * rsdp[i][2], &zrsdp[k][2]);
    }
 }
 
@@ -387,7 +374,6 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
       if (sump != 0)
          bp = sump1 / sump;
 
-
       // calculate/update p
       #pragma acc parallel loop independent async\
                   deviceptr(conj,conjp,zrsd,zrsdp)
@@ -398,7 +384,6 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
             conjp[i][j] = zrsdp[i][j] + bp * conjp[i][j];
          }
       }
-
 
       sum = sum1;
       sump = sump1;
@@ -415,8 +400,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
       if (debug) {
          if (iter == 1) {
             print(stdout,
-                  "\n Determination of SCF Induced Dipole Moments\n\n"
-                  "    Iter    RMS Residual (Debye)\n\n");
+               "\n Determination of SCF Induced Dipole Moments\n\n"
+               "    Iter    RMS Residual (Debye)\n\n");
          }
          print(stdout, " %8d       %-16.10f\n", iter, eps);
       }
@@ -448,9 +433,9 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 
    if (debug) {
       print(stdout,
-            " Induced Dipoles :    Iterations %4d      RMS "
-            "Residual %14.10f\n",
-            iter, eps);
+         " Induced Dipoles :    Iterations %4d      RMS "
+         "Residual %14.10f\n",
+         iter, eps);
    }
 
    // terminate the calculation if dipoles failed to converge
@@ -460,7 +445,6 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
       TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
    }
 }
-
 
 void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
 {
@@ -472,13 +456,10 @@ void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
       induce_mutual_pcg1_acc(uind, uinp);
 }
 
-
-void ulspred_save_acc(const real (*restrict uind)[3],
-                      const real (*restrict uinp)[3])
+void ulspred_save_acc(const real (*restrict uind)[3], const real (*restrict uinp)[3])
 {
    if (polpred == UPred::NONE)
       return;
-
 
    // clang-format off
    real(*ud)[3];
@@ -508,7 +489,6 @@ void ulspred_save_acc(const real (*restrict uind)[3],
    if (nualt > 2 * maxualt)
       nualt = nualt - maxualt;
 
-
    #pragma acc parallel loop independent async\
                deviceptr(uind,uinp,ud,up)
    for (int i = 0; i < n; ++i) {
@@ -521,36 +501,33 @@ void ulspred_save_acc(const real (*restrict uind)[3],
    }
 }
 
-
 void ulspred_sum_acc(real (*restrict uind)[3], real (*restrict uinp)[3])
 {
    if (nualt < maxualt)
       return;
 
-
-   constexpr double aspc[16] = {62. / 17.,     //
-                                -310. / 51.,   //
-                                2170. / 323.,  //
-                                -2329. / 400., //
-                                1701. / 409.,  //
-                                -806. / 323.,  //
-                                1024. / 809.,  //
-                                -479. / 883.,  //
-                                257. / 1316.,  //
-                                -434. / 7429., //
-                                191. / 13375., //
-                                -62. / 22287., //
-                                3. / 7217.,    //
-                                -3. / 67015.,  //
-                                2. / 646323.,  //
-                                -1. / 9694845.};
-   constexpr double gear[6] = {6.,   //
-                               -15., //
-                               20.,  //
-                               -15., //
-                               6.,   //
-                               -1.};
-
+   constexpr double aspc[16] = {62. / 17., //
+      -310. / 51.,                         //
+      2170. / 323.,                        //
+      -2329. / 400.,                       //
+      1701. / 409.,                        //
+      -806. / 323.,                        //
+      1024. / 809.,                        //
+      -479. / 883.,                        //
+      257. / 1316.,                        //
+      -434. / 7429.,                       //
+      191. / 13375.,                       //
+      -62. / 22287.,                       //
+      3. / 7217.,                          //
+      -3. / 67015.,                        //
+      2. / 646323.,                        //
+      -1. / 9694845.};
+   constexpr double gear[6] = {6., //
+      -15.,                        //
+      20.,                         //
+      -15.,                        //
+      6.,                          //
+      -1.};
 
    if (polpred == UPred::ASPC) {
       double c00, c01, c02, c03, c04, c05, c06, c07;
@@ -579,42 +556,42 @@ void ulspred_sum_acc(real (*restrict uind)[3], real (*restrict uinp)[3])
               upalt_05,upalt_06,upalt_07,upalt_08,upalt_09,upalt_10,upalt_11,\
               upalt_12,upalt_13,upalt_14,upalt_15)
       for (int i = 0; i < n; ++i) {
-         uind[i][0] = c00 * udalt_00[i][0] + c01 * udalt_01[i][0] +
-            c02 * udalt_02[i][0] + c03 * udalt_03[i][0] + c04 * udalt_04[i][0] +
-            c05 * udalt_05[i][0] + c06 * udalt_06[i][0] + c07 * udalt_07[i][0] +
-            c08 * udalt_08[i][0] + c09 * udalt_09[i][0] + c10 * udalt_10[i][0] +
-            c11 * udalt_11[i][0] + c12 * udalt_12[i][0] + c13 * udalt_13[i][0] +
-            c14 * udalt_14[i][0] + c15 * udalt_15[i][0];
-         uind[i][1] = c00 * udalt_00[i][1] + c01 * udalt_01[i][1] +
-            c02 * udalt_02[i][1] + c03 * udalt_03[i][1] + c04 * udalt_04[i][1] +
-            c05 * udalt_05[i][1] + c06 * udalt_06[i][1] + c07 * udalt_07[i][1] +
-            c08 * udalt_08[i][1] + c09 * udalt_09[i][1] + c10 * udalt_10[i][1] +
-            c11 * udalt_11[i][1] + c12 * udalt_12[i][1] + c13 * udalt_13[i][1] +
-            c14 * udalt_14[i][1] + c15 * udalt_15[i][1];
-         uind[i][2] = c00 * udalt_00[i][2] + c01 * udalt_01[i][2] +
-            c02 * udalt_02[i][2] + c03 * udalt_03[i][2] + c04 * udalt_04[i][2] +
-            c05 * udalt_05[i][2] + c06 * udalt_06[i][2] + c07 * udalt_07[i][2] +
-            c08 * udalt_08[i][2] + c09 * udalt_09[i][2] + c10 * udalt_10[i][2] +
-            c11 * udalt_11[i][2] + c12 * udalt_12[i][2] + c13 * udalt_13[i][2] +
-            c14 * udalt_14[i][2] + c15 * udalt_15[i][2];
-         uinp[i][0] = c00 * upalt_00[i][0] + c01 * upalt_01[i][0] +
-            c02 * upalt_02[i][0] + c03 * upalt_03[i][0] + c04 * upalt_04[i][0] +
-            c05 * upalt_05[i][0] + c06 * upalt_06[i][0] + c07 * upalt_07[i][0] +
-            c08 * upalt_08[i][0] + c09 * upalt_09[i][0] + c10 * upalt_10[i][0] +
-            c11 * upalt_11[i][0] + c12 * upalt_12[i][0] + c13 * upalt_13[i][0] +
-            c14 * upalt_14[i][0] + c15 * upalt_15[i][0];
-         uinp[i][1] = c00 * upalt_00[i][1] + c01 * upalt_01[i][1] +
-            c02 * upalt_02[i][1] + c03 * upalt_03[i][1] + c04 * upalt_04[i][1] +
-            c05 * upalt_05[i][1] + c06 * upalt_06[i][1] + c07 * upalt_07[i][1] +
-            c08 * upalt_08[i][1] + c09 * upalt_09[i][1] + c10 * upalt_10[i][1] +
-            c11 * upalt_11[i][1] + c12 * upalt_12[i][1] + c13 * upalt_13[i][1] +
-            c14 * upalt_14[i][1] + c15 * upalt_15[i][1];
-         uinp[i][2] = c00 * upalt_00[i][2] + c01 * upalt_01[i][2] +
-            c02 * upalt_02[i][2] + c03 * upalt_03[i][2] + c04 * upalt_04[i][2] +
-            c05 * upalt_05[i][2] + c06 * upalt_06[i][2] + c07 * upalt_07[i][2] +
-            c08 * upalt_08[i][2] + c09 * upalt_09[i][2] + c10 * upalt_10[i][2] +
-            c11 * upalt_11[i][2] + c12 * upalt_12[i][2] + c13 * upalt_13[i][2] +
-            c14 * upalt_14[i][2] + c15 * upalt_15[i][2];
+         uind[i][0] = c00 * udalt_00[i][0] + c01 * udalt_01[i][0] + c02 * udalt_02[i][0] +
+            c03 * udalt_03[i][0] + c04 * udalt_04[i][0] + c05 * udalt_05[i][0] +
+            c06 * udalt_06[i][0] + c07 * udalt_07[i][0] + c08 * udalt_08[i][0] +
+            c09 * udalt_09[i][0] + c10 * udalt_10[i][0] + c11 * udalt_11[i][0] +
+            c12 * udalt_12[i][0] + c13 * udalt_13[i][0] + c14 * udalt_14[i][0] +
+            c15 * udalt_15[i][0];
+         uind[i][1] = c00 * udalt_00[i][1] + c01 * udalt_01[i][1] + c02 * udalt_02[i][1] +
+            c03 * udalt_03[i][1] + c04 * udalt_04[i][1] + c05 * udalt_05[i][1] +
+            c06 * udalt_06[i][1] + c07 * udalt_07[i][1] + c08 * udalt_08[i][1] +
+            c09 * udalt_09[i][1] + c10 * udalt_10[i][1] + c11 * udalt_11[i][1] +
+            c12 * udalt_12[i][1] + c13 * udalt_13[i][1] + c14 * udalt_14[i][1] +
+            c15 * udalt_15[i][1];
+         uind[i][2] = c00 * udalt_00[i][2] + c01 * udalt_01[i][2] + c02 * udalt_02[i][2] +
+            c03 * udalt_03[i][2] + c04 * udalt_04[i][2] + c05 * udalt_05[i][2] +
+            c06 * udalt_06[i][2] + c07 * udalt_07[i][2] + c08 * udalt_08[i][2] +
+            c09 * udalt_09[i][2] + c10 * udalt_10[i][2] + c11 * udalt_11[i][2] +
+            c12 * udalt_12[i][2] + c13 * udalt_13[i][2] + c14 * udalt_14[i][2] +
+            c15 * udalt_15[i][2];
+         uinp[i][0] = c00 * upalt_00[i][0] + c01 * upalt_01[i][0] + c02 * upalt_02[i][0] +
+            c03 * upalt_03[i][0] + c04 * upalt_04[i][0] + c05 * upalt_05[i][0] +
+            c06 * upalt_06[i][0] + c07 * upalt_07[i][0] + c08 * upalt_08[i][0] +
+            c09 * upalt_09[i][0] + c10 * upalt_10[i][0] + c11 * upalt_11[i][0] +
+            c12 * upalt_12[i][0] + c13 * upalt_13[i][0] + c14 * upalt_14[i][0] +
+            c15 * upalt_15[i][0];
+         uinp[i][1] = c00 * upalt_00[i][1] + c01 * upalt_01[i][1] + c02 * upalt_02[i][1] +
+            c03 * upalt_03[i][1] + c04 * upalt_04[i][1] + c05 * upalt_05[i][1] +
+            c06 * upalt_06[i][1] + c07 * upalt_07[i][1] + c08 * upalt_08[i][1] +
+            c09 * upalt_09[i][1] + c10 * upalt_10[i][1] + c11 * upalt_11[i][1] +
+            c12 * upalt_12[i][1] + c13 * upalt_13[i][1] + c14 * upalt_14[i][1] +
+            c15 * upalt_15[i][1];
+         uinp[i][2] = c00 * upalt_00[i][2] + c01 * upalt_01[i][2] + c02 * upalt_02[i][2] +
+            c03 * upalt_03[i][2] + c04 * upalt_04[i][2] + c05 * upalt_05[i][2] +
+            c06 * upalt_06[i][2] + c07 * upalt_07[i][2] + c08 * upalt_08[i][2] +
+            c09 * upalt_09[i][2] + c10 * upalt_10[i][2] + c11 * upalt_11[i][2] +
+            c12 * upalt_12[i][2] + c13 * upalt_13[i][2] + c14 * upalt_14[i][2] +
+            c15 * upalt_15[i][2];
       }
    } else if (polpred == UPred::GEAR) {
       double c00, c01, c02, c03, c04, c05;
@@ -629,40 +606,29 @@ void ulspred_sum_acc(real (*restrict uind)[3], real (*restrict uinp)[3])
               udalt_00,udalt_01,udalt_02,udalt_03,udalt_04,udalt_05,\
               upalt_00,upalt_01,upalt_02,upalt_03,upalt_04,upalt_05)
       for (int i = 0; i < n; ++i) {
-         uind[i][0] = c00 * udalt_00[i][0] + c01 * udalt_01[i][0] +
-            c02 * udalt_02[i][0] + c03 * udalt_03[i][0] + c04 * udalt_04[i][0] +
-            c05 * udalt_05[i][0];
-         uind[i][1] = c00 * udalt_00[i][1] + c01 * udalt_01[i][1] +
-            c02 * udalt_02[i][1] + c03 * udalt_03[i][1] + c04 * udalt_04[i][1] +
-            c05 * udalt_05[i][1];
-         uind[i][2] = c00 * udalt_00[i][2] + c01 * udalt_01[i][2] +
-            c02 * udalt_02[i][2] + c03 * udalt_03[i][2] + c04 * udalt_04[i][2] +
-            c05 * udalt_05[i][2];
-         uinp[i][0] = c00 * upalt_00[i][0] + c01 * upalt_01[i][0] +
-            c02 * upalt_02[i][0] + c03 * upalt_03[i][0] + c04 * upalt_04[i][0] +
-            c05 * upalt_05[i][0];
-         uinp[i][1] = c00 * upalt_00[i][1] + c01 * upalt_01[i][1] +
-            c02 * upalt_02[i][1] + c03 * upalt_03[i][1] + c04 * upalt_04[i][1] +
-            c05 * upalt_05[i][1];
-         uinp[i][2] = c00 * upalt_00[i][2] + c01 * upalt_01[i][2] +
-            c02 * upalt_02[i][2] + c03 * upalt_03[i][2] + c04 * upalt_04[i][2] +
-            c05 * upalt_05[i][2];
+         uind[i][0] = c00 * udalt_00[i][0] + c01 * udalt_01[i][0] + c02 * udalt_02[i][0] +
+            c03 * udalt_03[i][0] + c04 * udalt_04[i][0] + c05 * udalt_05[i][0];
+         uind[i][1] = c00 * udalt_00[i][1] + c01 * udalt_01[i][1] + c02 * udalt_02[i][1] +
+            c03 * udalt_03[i][1] + c04 * udalt_04[i][1] + c05 * udalt_05[i][1];
+         uind[i][2] = c00 * udalt_00[i][2] + c01 * udalt_01[i][2] + c02 * udalt_02[i][2] +
+            c03 * udalt_03[i][2] + c04 * udalt_04[i][2] + c05 * udalt_05[i][2];
+         uinp[i][0] = c00 * upalt_00[i][0] + c01 * upalt_01[i][0] + c02 * upalt_02[i][0] +
+            c03 * upalt_03[i][0] + c04 * upalt_04[i][0] + c05 * upalt_05[i][0];
+         uinp[i][1] = c00 * upalt_00[i][1] + c01 * upalt_01[i][1] + c02 * upalt_02[i][1] +
+            c03 * upalt_03[i][1] + c04 * upalt_04[i][1] + c05 * upalt_05[i][1];
+         uinp[i][2] = c00 * upalt_00[i][2] + c01 * upalt_01[i][2] + c02 * upalt_02[i][2] +
+            c03 * upalt_03[i][2] + c04 * upalt_04[i][2] + c05 * upalt_05[i][2];
       }
    } else if (polpred == UPred::LSQR) {
       using real3_ptr = real(*)[3];
-      real3_ptr ppd[7] = {udalt_00, udalt_01, udalt_02, udalt_03,
-                          udalt_04, udalt_05, udalt_06};
-      real3_ptr ppp[7] = {upalt_00, upalt_01, upalt_02, upalt_03,
-                          upalt_04, upalt_05, upalt_06};
+      real3_ptr ppd[7] = {udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, udalt_06};
+      real3_ptr ppp[7] = {upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05, upalt_06};
       real3_ptr pd[7] = {ppd[(nualt - 1 + 7) % 7], ppd[(nualt - 2 + 7) % 7],
-                         ppd[(nualt - 3 + 7) % 7], ppd[(nualt - 4 + 7) % 7],
-                         ppd[(nualt - 5 + 7) % 7], ppd[(nualt - 6 + 7) % 7],
-                         ppd[(nualt - 7 + 7) % 7]};
+         ppd[(nualt - 3 + 7) % 7], ppd[(nualt - 4 + 7) % 7], ppd[(nualt - 5 + 7) % 7],
+         ppd[(nualt - 6 + 7) % 7], ppd[(nualt - 7 + 7) % 7]};
       real3_ptr pp[7] = {ppp[(nualt - 1 + 7) % 7], ppp[(nualt - 2 + 7) % 7],
-                         ppp[(nualt - 3 + 7) % 7], ppp[(nualt - 4 + 7) % 7],
-                         ppp[(nualt - 5 + 7) % 7], ppp[(nualt - 6 + 7) % 7],
-                         ppp[(nualt - 7 + 7) % 7]};
-
+         ppp[(nualt - 3 + 7) % 7], ppp[(nualt - 4 + 7) % 7], ppp[(nualt - 5 + 7) % 7],
+         ppp[(nualt - 6 + 7) % 7], ppp[(nualt - 7 + 7) % 7]};
 
       // k = 1 ~ 7, m = k ~ 7
       // c(k,m) = u(k) dot u(m)
@@ -688,10 +654,8 @@ void ulspred_sum_acc(real (*restrict uind)[3], real (*restrict uinp)[3])
          }
       }
 
-
       symlusolve<6, real>(udalt_lsqr_a, udalt_lsqr_b);
       symlusolve<6, real>(upalt_lsqr_a, upalt_lsqr_b);
-
 
       real3_ptr pd0 = pd[0];
       real3_ptr pd1 = pd[1];
@@ -712,24 +676,18 @@ void ulspred_sum_acc(real (*restrict uind)[3], real (*restrict uinp)[3])
                   pd0,pd1,pd2,pd3,pd4,pd5,\
                   pp0,pp1,pp2,pp3,pp4,pp5)
       for (int i = 0; i < n; ++i) {
-         uind[i][0] = bd[0] * pd0[i][0] + bd[1] * pd1[i][0] +
-            bd[2] * pd2[i][0] + bd[3] * pd3[i][0] + bd[4] * pd4[i][0] +
-            bd[5] * pd5[i][0];
-         uind[i][1] = bd[0] * pd0[i][1] + bd[1] * pd1[i][1] +
-            bd[2] * pd2[i][1] + bd[3] * pd3[i][1] + bd[4] * pd4[i][1] +
-            bd[5] * pd5[i][1];
-         uind[i][2] = bd[0] * pd0[i][2] + bd[1] * pd1[i][2] +
-            bd[2] * pd2[i][2] + bd[3] * pd3[i][2] + bd[4] * pd4[i][2] +
-            bd[5] * pd5[i][2];
-         uinp[i][0] = bp[0] * pp0[i][0] + bp[1] * pp1[i][0] +
-            bp[2] * pp2[i][0] + bp[3] * pp3[i][0] + bp[4] * pp4[i][0] +
-            bp[5] * pp5[i][0];
-         uinp[i][1] = bp[0] * pp0[i][1] + bp[1] * pp1[i][1] +
-            bp[2] * pp2[i][1] + bp[3] * pp3[i][1] + bp[4] * pp4[i][1] +
-            bp[5] * pp5[i][1];
-         uinp[i][2] = bp[0] * pp0[i][2] + bp[1] * pp1[i][2] +
-            bp[2] * pp2[i][2] + bp[3] * pp3[i][2] + bp[4] * pp4[i][2] +
-            bp[5] * pp5[i][2];
+         uind[i][0] = bd[0] * pd0[i][0] + bd[1] * pd1[i][0] + bd[2] * pd2[i][0] +
+            bd[3] * pd3[i][0] + bd[4] * pd4[i][0] + bd[5] * pd5[i][0];
+         uind[i][1] = bd[0] * pd0[i][1] + bd[1] * pd1[i][1] + bd[2] * pd2[i][1] +
+            bd[3] * pd3[i][1] + bd[4] * pd4[i][1] + bd[5] * pd5[i][1];
+         uind[i][2] = bd[0] * pd0[i][2] + bd[1] * pd1[i][2] + bd[2] * pd2[i][2] +
+            bd[3] * pd3[i][2] + bd[4] * pd4[i][2] + bd[5] * pd5[i][2];
+         uinp[i][0] = bp[0] * pp0[i][0] + bp[1] * pp1[i][0] + bp[2] * pp2[i][0] +
+            bp[3] * pp3[i][0] + bp[4] * pp4[i][0] + bp[5] * pp5[i][0];
+         uinp[i][1] = bp[0] * pp0[i][1] + bp[1] * pp1[i][1] + bp[2] * pp2[i][1] +
+            bp[3] * pp3[i][1] + bp[4] * pp4[i][1] + bp[5] * pp5[i][1];
+         uinp[i][2] = bp[0] * pp0[i][2] + bp[1] * pp1[i][2] + bp[2] * pp2[i][2] +
+            bp[3] * pp3[i][2] + bp[4] * pp4[i][2] + bp[5] * pp5[i][2];
       }
    }
 }

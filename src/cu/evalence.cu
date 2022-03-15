@@ -22,125 +22,105 @@
 #include "tool/gpu_card.h"
 #include "tool/host_zero.h"
 
-
 namespace tinker {
 template <class Ver, bool rc_a>
 __global__
 void evalence_cu1(
    // ebond
-   energy_buffer restrict eb, virial_buffer restrict vir_eb,
-   grad_prec* restrict debx, grad_prec* restrict deby, grad_prec* restrict debz,
+   energy_buffer restrict eb, virial_buffer restrict vir_eb, grad_prec* restrict debx,
+   grad_prec* restrict deby, grad_prec* restrict debz,
 
-   ebond_t bndtyp, real bndunit, int nbond, const int (*restrict ibnd)[2],
-   const real* restrict bl, const real* restrict bk, real cbnd, real qbnd,
+   ebond_t bndtyp, real bndunit, int nbond, const int (*restrict ibnd)[2], const real* restrict bl,
+   const real* restrict bk, real cbnd, real qbnd,
 
    // eangle
-   energy_buffer restrict ea, virial_buffer restrict vir_ea,
-   grad_prec* restrict deax, grad_prec* restrict deay, grad_prec* restrict deaz,
+   energy_buffer restrict ea, virial_buffer restrict vir_ea, grad_prec* restrict deax,
+   grad_prec* restrict deay, grad_prec* restrict deaz,
 
-   const eangle_t* restrict angtyp, real angunit, int nangle,
-   const int (*restrict iang)[4], const real* restrict anat,
-   const real* restrict ak, const real* restrict afld,
+   const eangle_t* restrict angtyp, real angunit, int nangle, const int (*restrict iang)[4],
+   const real* restrict anat, const real* restrict ak, const real* restrict afld,
 
    real cang, real qang, real pang, real sang,
 
    // estrbnd
-   energy_buffer restrict eba, virial_buffer restrict vir_eba,
-   grad_prec* restrict debax, grad_prec* restrict debay,
-   grad_prec* restrict debaz,
+   energy_buffer restrict eba, virial_buffer restrict vir_eba, grad_prec* restrict debax,
+   grad_prec* restrict debay, grad_prec* restrict debaz,
 
-   real stbnunit, int nstrbnd, const int (*restrict isb)[3],
-   const real (*restrict sbk)[2],
+   real stbnunit, int nstrbnd, const int (*restrict isb)[3], const real (*restrict sbk)[2],
 
    // eurey
-   energy_buffer restrict eub, virial_buffer restrict vir_eub,
-   grad_prec* restrict deubx, grad_prec* restrict deuby,
-   grad_prec* restrict deubz,
+   energy_buffer restrict eub, virial_buffer restrict vir_eub, grad_prec* restrict deubx,
+   grad_prec* restrict deuby, grad_prec* restrict deubz,
 
-   real ureyunit, int nurey, const int (*restrict iury)[3],
-   const real* restrict uk, const real* restrict ul, real cury, real qury,
+   real ureyunit, int nurey, const int (*restrict iury)[3], const real* restrict uk,
+   const real* restrict ul, real cury, real qury,
 
    // eopbend
-   energy_buffer restrict eopb, virial_buffer restrict vir_eopb,
-   grad_prec* restrict deopbx, grad_prec* restrict deopby,
-   grad_prec* restrict deopbz,
+   energy_buffer restrict eopb, virial_buffer restrict vir_eopb, grad_prec* restrict deopbx,
+   grad_prec* restrict deopby, grad_prec* restrict deopbz,
 
-   eopbend_t opbtyp, real opbunit, int nopbend, const int* restrict iopb,
-   const real* restrict opbk, real copb, real qopb, real popb, real sopb,
+   eopbend_t opbtyp, real opbunit, int nopbend, const int* restrict iopb, const real* restrict opbk,
+   real copb, real qopb, real popb, real sopb,
 
    // eimprop
-   energy_buffer restrict eid, virial_buffer restrict vir_eid,
-   grad_prec* restrict deidx, grad_prec* restrict deidy,
-   grad_prec* restrict deidz,
+   energy_buffer restrict eid, virial_buffer restrict vir_eid, grad_prec* restrict deidx,
+   grad_prec* restrict deidy, grad_prec* restrict deidz,
 
-   real idihunit, int niprop, const int (*restrict iiprop)[4],
-   const real* restrict kprop, const real* restrict vprop,
+   real idihunit, int niprop, const int (*restrict iiprop)[4], const real* restrict kprop,
+   const real* restrict vprop,
 
    // eimptor
-   energy_buffer restrict eit, virial_buffer restrict vir_eit,
-   grad_prec* restrict deitx, grad_prec* restrict deity,
-   grad_prec* restrict deitz,
+   energy_buffer restrict eit, virial_buffer restrict vir_eit, grad_prec* restrict deitx,
+   grad_prec* restrict deity, grad_prec* restrict deitz,
 
-   real itorunit, int nitors, const int (*restrict iitors)[4],
-   const real (*restrict itors1)[4], const real (*restrict itors2)[4],
-   const real (*restrict itors3)[4],
+   real itorunit, int nitors, const int (*restrict iitors)[4], const real (*restrict itors1)[4],
+   const real (*restrict itors2)[4], const real (*restrict itors3)[4],
 
    // etors
-   energy_buffer restrict et, virial_buffer restrict vir_et,
-   grad_prec* restrict detx, grad_prec* restrict dety, grad_prec* restrict detz,
+   energy_buffer restrict et, virial_buffer restrict vir_et, grad_prec* restrict detx,
+   grad_prec* restrict dety, grad_prec* restrict detz,
 
-   real torsunit, int ntors, const int (*restrict itors)[4],
-   const real (*restrict tors1)[4], const real (*restrict tors2)[4],
-   const real (*restrict tors3)[4], const real (*restrict tors4)[4],
-   const real (*restrict tors5)[4], const real (*restrict tors6)[4],
+   real torsunit, int ntors, const int (*restrict itors)[4], const real (*restrict tors1)[4],
+   const real (*restrict tors2)[4], const real (*restrict tors3)[4],
+   const real (*restrict tors4)[4], const real (*restrict tors5)[4],
+   const real (*restrict tors6)[4],
 
    // epitors
-   energy_buffer restrict ept, virial_buffer restrict vir_ept,
-   grad_prec* restrict deptx, grad_prec* restrict depty,
-   grad_prec* restrict deptz,
+   energy_buffer restrict ept, virial_buffer restrict vir_ept, grad_prec* restrict deptx,
+   grad_prec* restrict depty, grad_prec* restrict deptz,
 
-   real ptorunit, int npitors, const int (*restrict ipit)[6],
-   const real* restrict kpit,
+   real ptorunit, int npitors, const int (*restrict ipit)[6], const real* restrict kpit,
 
    // estrtor
-   energy_buffer restrict ebt, virial_buffer restrict vir_ebt,
-   grad_prec* restrict debtx, grad_prec* restrict debty,
-   grad_prec* restrict debtz,
+   energy_buffer restrict ebt, virial_buffer restrict vir_ebt, grad_prec* restrict debtx,
+   grad_prec* restrict debty, grad_prec* restrict debtz,
 
-   real storunit, int nstrtor, const int (*restrict ist)[4],
-   const real (*restrict kst)[9],
+   real storunit, int nstrtor, const int (*restrict ist)[4], const real (*restrict kst)[9],
 
    // eangtor
-   energy_buffer restrict eat, virial_buffer restrict vir_eat,
-   grad_prec* restrict deatx, grad_prec* restrict deaty,
-   grad_prec* restrict deatz,
+   energy_buffer restrict eat, virial_buffer restrict vir_eat, grad_prec* restrict deatx,
+   grad_prec* restrict deaty, grad_prec* restrict deatz,
 
-   real atorunit, int nangtor, const int (*restrict iat)[3],
-   const real (*restrict kant)[6],
+   real atorunit, int nangtor, const int (*restrict iat)[3], const real (*restrict kant)[6],
 
    // etortor
-   energy_buffer restrict ett, virial_buffer restrict vir_ett,
-   grad_prec* restrict dettx, grad_prec* restrict detty,
-   grad_prec* restrict dettz,
+   energy_buffer restrict ett, virial_buffer restrict vir_ett, grad_prec* restrict dettx,
+   grad_prec* restrict detty, grad_prec* restrict dettz,
 
-   real ttorunit, int ntortor, const int (*restrict itt)[3],
-   const int (*restrict ibitor)[5], const int* restrict chkttor_ia_,
+   real ttorunit, int ntortor, const int (*restrict itt)[3], const int (*restrict ibitor)[5],
+   const int* restrict chkttor_ia_,
 
-   const int* restrict tnx, const int* restrict tny,
-   const real (*restrict ttx)[ktrtor::maxtgrd],
-   const real (*restrict tty)[ktrtor::maxtgrd],
-   const real (*restrict tbf)[ktrtor::maxtgrd2],
-   const real (*restrict tbx)[ktrtor::maxtgrd2],
-   const real (*restrict tby)[ktrtor::maxtgrd2],
+   const int* restrict tnx, const int* restrict tny, const real (*restrict ttx)[ktrtor::maxtgrd],
+   const real (*restrict tty)[ktrtor::maxtgrd], const real (*restrict tbf)[ktrtor::maxtgrd2],
+   const real (*restrict tbx)[ktrtor::maxtgrd2], const real (*restrict tby)[ktrtor::maxtgrd2],
    const real (*restrict tbxy)[ktrtor::maxtgrd2],
 
    // egeom
-   energy_buffer restrict eg, virial_buffer restrict vir_eg,
-   grad_prec* restrict degx, grad_prec* restrict degy, grad_prec* restrict degz,
+   energy_buffer restrict eg, virial_buffer restrict vir_eg, grad_prec* restrict degx,
+   grad_prec* restrict degy, grad_prec* restrict degz,
 
-   int npfix, const int* restrict ipfix, const int (*restrict kpfix)[3],
-   const real* restrict xpfix, const real* restrict ypfix,
-   const real* restrict zpfix, const real (*restrict pfix)[2],
+   int npfix, const int* restrict ipfix, const int (*restrict kpfix)[3], const real* restrict xpfix,
+   const real* restrict ypfix, const real* restrict zpfix, const real (*restrict pfix)[2],
 
    int ngfix, const int (*restrict igfix)[2], const real (*restrict gfix)[3],
 
@@ -155,15 +135,13 @@ void evalence_cu1(
 
    // other
    const real* restrict x, const real* restrict y, const real* restrict z,
-   const double* restrict mass, const int* restrict molec,
-   const int (*restrict igrp)[2], const int* restrict kgrp,
-   const double* restrict grpmass, TINKER_IMAGE_PARAMS)
+   const double* restrict mass, const int* restrict molec, const int (*restrict igrp)[2],
+   const int* restrict kgrp, const double* restrict grpmass, TINKER_IMAGE_PARAMS)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_v = Ver::v;
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int stride = blockDim.x * gridDim.x;
-
 
    using ebuf_prec = energy_buffer_traits::type;
    ebuf_prec e0b;   // ebond
@@ -225,17 +203,16 @@ void evalence_cu1(
       v0gxx = 0, v0gyx = 0, v0gzx = 0, v0gyy = 0, v0gzy = 0, v0gzz = 0;
    }
 
-
    // ebond
    for (int i = ithread; i < nbond; i += stride) {
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_bond<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                   debx, deby, debz,
+         debx, deby, debz,
 
-                   bndtyp, bndunit, i, ibnd, bl, bk, cbnd, qbnd,
+         bndtyp, bndunit, i, ibnd, bl, bk, cbnd, qbnd,
 
-                   x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e) {
          e0b += cvt_to<ebuf_prec>(e);
       }
@@ -257,19 +234,18 @@ void evalence_cu1(
          atomic_add(v0bxx, v0byx, v0bzx, v0byy, v0bzy, v0bzz, vir_eb, ithread);
    }
 
-
    // eangle
    for (int i = ithread; i < nangle; i += stride) {
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_angle<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                    deax, deay, deaz,
+         deax, deay, deaz,
 
-                    angtyp, angunit, i, iang, anat, ak, afld,
+         angtyp, angunit, i, iang, anat, ak, afld,
 
-                    cang, qang, pang, sang,
+         cang, qang, pang, sang,
 
-                    x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e) {
          e0a += cvt_to<ebuf_prec>(e);
       }
@@ -291,17 +267,16 @@ void evalence_cu1(
          atomic_add(v0axx, v0ayx, v0azx, v0ayy, v0azy, v0azz, vir_ea, ithread);
    }
 
-
    // estrbnd
    for (int i = ithread; i < nstrbnd; i += stride) {
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_strbnd<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                     debax, debay, debaz,
+         debax, debay, debaz,
 
-                     stbnunit, i, isb, sbk, bl, iang, anat,
+         stbnunit, i, isb, sbk, bl, iang, anat,
 
-                     x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e) {
          e0ba += cvt_to<ebuf_prec>(e);
       }
@@ -320,21 +295,19 @@ void evalence_cu1(
    }
    if CONSTEXPR (do_v and rc_a) {
       if (nstrbnd > 0)
-         atomic_add(v0baxx, v0bayx, v0bazx, v0bayy, v0bazy, v0bazz, vir_eba,
-                    ithread);
+         atomic_add(v0baxx, v0bayx, v0bazx, v0bayy, v0bazy, v0bazz, vir_eba, ithread);
    }
-
 
    // eurey
    for (int i = ithread; i < nurey; i += stride) {
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_urey<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                   deubx, deuby, deubz,
+         deubx, deuby, deubz,
 
-                   ureyunit, i, iury, uk, ul, cury, qury,
+         ureyunit, i, iury, uk, ul, cury, qury,
 
-                   x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e) {
          e0ub += cvt_to<ebuf_prec>(e);
       }
@@ -353,22 +326,19 @@ void evalence_cu1(
    }
    if CONSTEXPR (do_v and rc_a) {
       if (nurey > 0)
-         atomic_add(v0ubxx, v0ubyx, v0ubzx, v0ubyy, v0ubzy, v0ubzz, vir_eub,
-                    ithread);
+         atomic_add(v0ubxx, v0ubyx, v0ubzx, v0ubyy, v0ubzy, v0ubzz, vir_eub, ithread);
    }
-
 
    // eopbend
    for (int i = ithread; i < nopbend; i += stride) {
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_opbend<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                     deopbx, deopby, deopbz,
+         deopbx, deopby, deopbz,
 
-                     opbtyp, opbunit, i, iopb, opbk, iang, copb, qopb, popb,
-                     sopb,
+         opbtyp, opbunit, i, iopb, opbk, iang, copb, qopb, popb, sopb,
 
-                     x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e) {
          e0opb += cvt_to<ebuf_prec>(e);
       }
@@ -387,21 +357,19 @@ void evalence_cu1(
    }
    if CONSTEXPR (do_v and rc_a) {
       if (nopbend > 0)
-         atomic_add(v0opbxx, v0opbyx, v0opbzx, v0opbyy, v0opbzy, v0opbzz,
-                    vir_eopb, ithread);
+         atomic_add(v0opbxx, v0opbyx, v0opbzx, v0opbyy, v0opbzy, v0opbzz, vir_eopb, ithread);
    }
-
 
    // eimprop
    for (int i = ithread; i < niprop; i += stride) {
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_improp<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                     deidx, deidy, deidz,
+         deidx, deidy, deidz,
 
-                     idihunit, i, iiprop, kprop, vprop,
+         idihunit, i, iiprop, kprop, vprop,
 
-                     x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e) {
          e0id += cvt_to<ebuf_prec>(e);
       }
@@ -420,21 +388,19 @@ void evalence_cu1(
    }
    if CONSTEXPR (do_v and rc_a) {
       if (niprop > 0)
-         atomic_add(v0idxx, v0idyx, v0idzx, v0idyy, v0idzy, v0idzz, vir_eid,
-                    ithread);
+         atomic_add(v0idxx, v0idyx, v0idzx, v0idyy, v0idzy, v0idzz, vir_eid, ithread);
    }
-
 
    // eimptor
    for (int i = ithread; i < nitors; i += stride) {
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_imptor<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                     deitx, deity, deitz,
+         deitx, deity, deitz,
 
-                     itorunit, i, iitors, itors1, itors2, itors3,
+         itorunit, i, iitors, itors1, itors2, itors3,
 
-                     x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e) {
          e0it += cvt_to<ebuf_prec>(e);
       }
@@ -453,21 +419,19 @@ void evalence_cu1(
    }
    if CONSTEXPR (do_v and rc_a) {
       if (nitors > 0)
-         atomic_add(v0itxx, v0ityx, v0itzx, v0ityy, v0itzy, v0itzz, vir_eit,
-                    ithread);
+         atomic_add(v0itxx, v0ityx, v0itzx, v0ityy, v0itzy, v0itzz, vir_eit, ithread);
    }
-
 
    // etors
    for (int i = ithread; i < ntors; i += stride) {
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_tors<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                   detx, dety, detz,
+         detx, dety, detz,
 
-                   torsunit, i, itors,
+         torsunit, i, itors,
 
-                   tors1, tors2, tors3, tors4, tors5, tors6, x, y, z);
+         tors1, tors2, tors3, tors4, tors5, tors6, x, y, z);
       if CONSTEXPR (do_e) {
          e0t += cvt_to<ebuf_prec>(e);
       }
@@ -489,15 +453,14 @@ void evalence_cu1(
          atomic_add(v0txx, v0tyx, v0tzx, v0tyy, v0tzy, v0tzz, vir_et, ithread);
    }
 
-
    // epitors
    for (int i = ithread; i < npitors; i += stride) {
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_pitors<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                     deptx, depty, deptz,
+         deptx, depty, deptz,
 
-                     ptorunit, i, ipit, kpit, x, y, z);
+         ptorunit, i, ipit, kpit, x, y, z);
       if CONSTEXPR (do_e) {
          e0pt += cvt_to<ebuf_prec>(e);
       }
@@ -516,8 +479,7 @@ void evalence_cu1(
    }
    if CONSTEXPR (do_v and rc_a) {
       if (npitors > 0)
-         atomic_add(v0ptxx, v0ptyx, v0ptzx, v0ptyy, v0ptzy, v0ptzz, vir_ept,
-                    ithread);
+         atomic_add(v0ptxx, v0ptyx, v0ptzx, v0ptyy, v0ptzy, v0ptzz, vir_ept, ithread);
    }
 
    // estrtor
@@ -525,11 +487,11 @@ void evalence_cu1(
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_strtor<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz, debtx, debty, debtz,
 
-                     storunit, i, ist, kst,
+         storunit, i, ist, kst,
 
-                     bl, itors, tors1, tors2, tors3,
+         bl, itors, tors1, tors2, tors3,
 
-                     x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e) {
          e0bt += cvt_to<ebuf_prec>(e);
       }
@@ -548,8 +510,7 @@ void evalence_cu1(
    }
    if CONSTEXPR (do_v and rc_a) {
       if (nstrtor > 0)
-         atomic_add(v0btxx, v0btyx, v0btzx, v0btyy, v0btzy, v0btzz, vir_ebt,
-                    ithread);
+         atomic_add(v0btxx, v0btyx, v0btzx, v0btyy, v0btzy, v0btzz, vir_ebt, ithread);
    }
 
    // eangtor
@@ -557,11 +518,11 @@ void evalence_cu1(
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_angtor<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz, deatx, deaty, deatz,
 
-                     atorunit, i, iat, kant,
+         atorunit, i, iat, kant,
 
-                     anat, itors, tors1, tors2, tors3,
+         anat, itors, tors1, tors2, tors3,
 
-                     x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e) {
          e0at += cvt_to<ebuf_prec>(e);
       }
@@ -580,8 +541,7 @@ void evalence_cu1(
    }
    if CONSTEXPR (do_v and rc_a) {
       if (nangtor > 0)
-         atomic_add(v0atxx, v0atyx, v0atzx, v0atyy, v0atzy, v0atzz, vir_eat,
-                    ithread);
+         atomic_add(v0atxx, v0atyx, v0atzx, v0atyy, v0atzy, v0atzz, vir_eat, ithread);
    }
 
    // etortor
@@ -589,13 +549,13 @@ void evalence_cu1(
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_tortor<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                     dettx, detty, dettz,
+         dettx, detty, dettz,
 
-                     ttorunit, i, itt, ibitor, chkttor_ia_,
+         ttorunit, i, itt, ibitor, chkttor_ia_,
 
-                     tnx, tny, ttx, tty, tbf, tbx, tby, tbxy,
+         tnx, tny, ttx, tty, tbf, tbx, tby, tbxy,
 
-                     x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e) {
          e0tt += cvt_to<ebuf_prec>(e);
       }
@@ -614,21 +574,19 @@ void evalence_cu1(
    }
    if CONSTEXPR (do_v and rc_a) {
       if (ntortor > 0)
-         atomic_add(v0ttxx, v0ttyx, v0ttzx, v0ttyy, v0ttzy, v0ttzz, vir_ett,
-                    ithread);
+         atomic_add(v0ttxx, v0ttyx, v0ttzx, v0ttyy, v0ttzy, v0ttzz, vir_ett, ithread);
    }
-
 
    // egeom position
    for (int i = ithread; i < npfix; i += stride) {
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_geom_position<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                            degx, degy, degz,
+         degx, degy, degz,
 
-                            i, ipfix, kpfix, xpfix, ypfix, zpfix, pfix,
+         i, ipfix, kpfix, xpfix, ypfix, zpfix, pfix,
 
-                            x, y, z, TINKER_IMAGE_ARGS);
+         x, y, z, TINKER_IMAGE_ARGS);
       if CONSTEXPR (do_e) {
          e0g += cvt_to<ebuf_prec>(e);
       }
@@ -646,12 +604,11 @@ void evalence_cu1(
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_geom_group<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                         degx, degy, degz,
+         degx, degy, degz,
 
-                         i, igfix, gfix,
+         i, igfix, gfix,
 
-                         x, y, z, mass, molec, igrp, kgrp, grpmass,
-                         TINKER_IMAGE_ARGS);
+         x, y, z, mass, molec, igrp, kgrp, grpmass, TINKER_IMAGE_ARGS);
       if CONSTEXPR (do_e) {
          e0g += cvt_to<ebuf_prec>(e);
       }
@@ -669,11 +626,11 @@ void evalence_cu1(
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_geom_distance<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                            degx, degy, degz,
+         degx, degy, degz,
 
-                            i, idfix, dfix,
+         i, idfix, dfix,
 
-                            x, y, z, molec, TINKER_IMAGE_ARGS);
+         x, y, z, molec, TINKER_IMAGE_ARGS);
       if CONSTEXPR (do_e) {
          e0g += cvt_to<ebuf_prec>(e);
       }
@@ -691,9 +648,9 @@ void evalence_cu1(
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_geom_angle<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                         degx, degy, degz,
+         degx, degy, degz,
 
-                         i, iafix, afix, x, y, z);
+         i, iafix, afix, x, y, z);
       if CONSTEXPR (do_e) {
          e0g += cvt_to<ebuf_prec>(e);
       }
@@ -711,9 +668,9 @@ void evalence_cu1(
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_geom_torsion<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                           degx, degy, degz,
+         degx, degy, degz,
 
-                           i, itfix, tfix, x, y, z);
+         i, itfix, tfix, x, y, z);
       if CONSTEXPR (do_e) {
          e0g += cvt_to<ebuf_prec>(e);
       }
@@ -734,7 +691,6 @@ void evalence_cu1(
          atomic_add(v0gxx, v0gyx, v0gzx, v0gyy, v0gzy, v0gzz, vir_eg, ithread);
       }
    }
-
 
    // total energy and virial
    if CONSTEXPR (do_e and not rc_a) {
@@ -792,7 +748,6 @@ void evalence_cu1(
    }
 }
 
-
 // clang-format off
 #define EVALENCE_ARGS                                                          \
    /* ebond */ eb, vir_eb, debx, deby, debz, bndtyp, bndunit,                  \
@@ -830,51 +785,38 @@ void evalence_cu1(
    /* other */ x, y, z, mass, molecule.molecule,                               \
    grp.igrp, grp.kgrp, grp.grpmass, TINKER_IMAGE_ARGS
 // clang-format on
-void evalence_cu2(int vers, bool flag_bond, bool flag_angle, bool flag_strbnd,
-                  bool flag_urey, bool flag_opb, bool flag_improp,
-                  bool flag_imptor, bool flag_tors, bool flag_pitors,
-                  bool flag_strtor, bool flag_angtor, bool flag_tortor,
-                  bool flag_geom)
+void evalence_cu2(int vers, bool flag_bond, bool flag_angle, bool flag_strbnd, bool flag_urey,
+   bool flag_opb, bool flag_improp, bool flag_imptor, bool flag_tors, bool flag_pitors,
+   bool flag_strtor, bool flag_angtor, bool flag_tortor, bool flag_geom)
 {
    int ngrid = get_grid_size(BLOCK_DIM);
    if (rc_flag & calc::analyz) {
       if (vers == calc::v0 or vers == calc::v3)
-         evalence_cu1<calc::V0, true>
-            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
+         evalence_cu1<calc::V0, true><<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
       else if (vers == calc::v1)
-         evalence_cu1<calc::V1, true>
-            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
+         evalence_cu1<calc::V1, true><<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
       else if (vers == calc::v4)
-         evalence_cu1<calc::V4, true>
-            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
+         evalence_cu1<calc::V4, true><<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
       else if (vers == calc::v5)
-         evalence_cu1<calc::V5, true>
-            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
+         evalence_cu1<calc::V5, true><<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
       else if (vers == calc::v6)
-         evalence_cu1<calc::V6, true>
-            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
+         evalence_cu1<calc::V6, true><<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
    } else {
       if (vers == calc::v0)
-         evalence_cu1<calc::V0, false>
-            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
+         evalence_cu1<calc::V0, false><<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
       else if (vers == calc::v1)
-         evalence_cu1<calc::V1, false>
-            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
+         evalence_cu1<calc::V1, false><<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
       else if (vers == calc::v3)
          assert(false);
       else if (vers == calc::v4)
-         evalence_cu1<calc::V4, false>
-            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
+         evalence_cu1<calc::V4, false><<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
       else if (vers == calc::v5)
-         evalence_cu1<calc::V5, false>
-            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
+         evalence_cu1<calc::V5, false><<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
       else if (vers == calc::v6)
-         evalence_cu1<calc::V6, false>
-            <<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
+         evalence_cu1<calc::V6, false><<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);
    }
 }
 #undef EVALENCE_ARGS
-
 
 void evalence_cu(int vers)
 {
@@ -882,7 +824,6 @@ void evalence_cu(int vers)
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-
 
    bool flag_bond = use_potent(bond_term);
    bool flag_angle = use_potent(angle_term);
@@ -897,7 +838,6 @@ void evalence_cu(int vers)
    bool flag_angtor = use_potent(angtor_term);
    bool flag_tortor = use_potent(tortor_term);
    bool flag_geom = use_potent(geom_term);
-
 
    size_t bsize = buffer_size();
    if (rc_a and flag_bond) {
@@ -1016,15 +956,12 @@ void evalence_cu(int vers)
          darray::zero(g::q0, n, degx, degy, degz);
    }
 
-
-   if (flag_bond or flag_angle or flag_strbnd or flag_urey or flag_opb or
-       flag_improp or flag_imptor or flag_tors or flag_pitors or flag_strtor or
-       flag_angtor or flag_tortor or flag_geom) {
-      evalence_cu2(vers, flag_bond, flag_angle, flag_strbnd, flag_urey,
-                   flag_opb, flag_improp, flag_imptor, flag_tors, flag_pitors,
-                   flag_strtor, flag_angtor, flag_tortor, flag_geom);
+   if (flag_bond or flag_angle or flag_strbnd or flag_urey or flag_opb or flag_improp or
+      flag_imptor or flag_tors or flag_pitors or flag_strtor or flag_angtor or flag_tortor or
+      flag_geom) {
+      evalence_cu2(vers, flag_bond, flag_angle, flag_strbnd, flag_urey, flag_opb, flag_improp,
+         flag_imptor, flag_tors, flag_pitors, flag_strtor, flag_angtor, flag_tortor, flag_geom);
    }
-
 
    if (rc_a and flag_bond) {
       if (do_e) {

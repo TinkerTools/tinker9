@@ -9,8 +9,7 @@
 #include "tool/gpu_card.h"
 
 namespace tinker {
-#define DEVICE_PTRS                                                            \
-   x, y, z, demx, demy, demz, rpole, nem, em, vir_em, trqx, trqy, trqz
+#define DEVICE_PTRS x, y, z, demx, demy, demz, rpole, nem, em, vir_em, trqx, trqy, trqz
 template <class Ver>
 void empole_nonewald_acc1()
 {
@@ -68,9 +67,9 @@ void empole_nonewald_acc1()
             pair_mpole<do_e, do_g, NON_EWALD>(                        //
                r2, xr, yr, zr, 1,                                     //
                ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, //
-               rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
-               rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy],
-               rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz],
+               rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
+               rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz],
+               rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz],
                rpole[k][mpl_pme_zz], //
                f, 0, e, pgrad);
 
@@ -154,9 +153,9 @@ void empole_nonewald_acc1()
          pair_mpole<do_e, do_g, NON_EWALD>(                        //
             r2, xr, yr, zr, mscale,                                //
             ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, //
-            rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
-            rpole[k][mpl_pme_z], rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy],
-            rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz],
+            rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
+            rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
+            rpole[k][mpl_pme_yz],
             rpole[k][mpl_pme_zz], //
             f, 0, e, pgrad);
 

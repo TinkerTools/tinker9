@@ -1,5 +1,5 @@
-#include "add.h"
 #include "etors.h"
+#include "add.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "seq_torsion.h"
@@ -21,13 +21,13 @@ void etors_acc1()
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_tors<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                   detx, dety, detz,
+         detx, dety, detz,
 
-                   torsunit, i, itors,
+         torsunit, i, itors,
 
-                   tors1, tors2, tors3, tors4, tors5, tors6,
+         tors1, tors2, tors3, tors4, tors5, tors6,
 
-                   x, y, z);
+         x, y, z);
       if CONSTEXPR (do_e)
          atomic_add(e, et, offset);
       if CONSTEXPR (do_v)

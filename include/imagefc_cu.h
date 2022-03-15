@@ -1,7 +1,6 @@
 #pragma once
 #include "mathfunc.h"
 
-
 namespace tinker {
 __device__
 inline real3 ftoc_triclinic(real3 f, real3 l1, real3 l2, real3 l3)
@@ -12,7 +11,6 @@ inline real3 ftoc_triclinic(real3 f, real3 l1, real3 l2, real3 l3)
    return f;
 }
 
-
 __device__
 inline real3 ftoc_monoclinic(real3 f, real3 l1, real3 l2, real3 l3)
 {
@@ -22,7 +20,6 @@ inline real3 ftoc_monoclinic(real3 f, real3 l1, real3 l2, real3 l3)
    return f;
 }
 
-
 __device__
 inline real3 ftoc_orthogonal(real3 f, real3 l1, real3 l2, real3 l3)
 {
@@ -31,7 +28,6 @@ inline real3 ftoc_orthogonal(real3 f, real3 l1, real3 l2, real3 l3)
    f.z = f.z * l3.z;
    return f;
 }
-
 
 __device__
 inline real3 ftoc_general(real3 f, real3 l1, real3 l2, real3 l3)
@@ -45,14 +41,11 @@ inline real3 ftoc_general(real3 f, real3 l1, real3 l2, real3 l3)
    }
 }
 
-
 #ifndef ftoc
 #   define ftoc(f) ftoc_general(f, lvec1, lvec2, lvec3)
 #endif
 
-
 //====================================================================//
-
 
 __device__
 inline real3 imagef(real3 f)
@@ -63,13 +56,10 @@ inline real3 imagef(real3 f)
    return f;
 }
 
-
 //====================================================================//
 
-
 __device__
-inline real3 ctof_triclinic(real xr, real yr, real zr, real3 ra, real3 rb,
-                            real3 rc)
+inline real3 ctof_triclinic(real xr, real yr, real zr, real3 ra, real3 rb, real3 rc)
 {
    real3 f;
    f.x = zr * ra.z + yr * ra.y + xr * ra.x;
@@ -78,10 +68,8 @@ inline real3 ctof_triclinic(real xr, real yr, real zr, real3 ra, real3 rb,
    return f;
 }
 
-
 __device__
-inline real3 ctof_monoclinic(real xr, real yr, real zr, real3 ra, real3 rb,
-                             real3 rc)
+inline real3 ctof_monoclinic(real xr, real yr, real zr, real3 ra, real3 rb, real3 rc)
 {
    real3 f;
    f.x = zr * ra.z + xr * ra.x;
@@ -90,10 +78,8 @@ inline real3 ctof_monoclinic(real xr, real yr, real zr, real3 ra, real3 rb,
    return f;
 }
 
-
 __device__
-inline real3 ctof_orthogonal(real xr, real yr, real zr, real3 ra, real3 rb,
-                             real3 rc)
+inline real3 ctof_orthogonal(real xr, real yr, real zr, real3 ra, real3 rb, real3 rc)
 {
    real3 f;
    f.x = xr * ra.x;
@@ -102,10 +88,8 @@ inline real3 ctof_orthogonal(real xr, real yr, real zr, real3 ra, real3 rb,
    return f;
 }
 
-
 __device__
-inline real3 imagectof_general(real xr, real yr, real zr, real3 ra, real3 rb,
-                               real3 rc)
+inline real3 imagectof_general(real xr, real yr, real zr, real3 ra, real3 rb, real3 rc)
 {
    if (ra.z == 0) {
       return imagef(ctof_orthogonal(xr, yr, zr, ra, rb, rc));
@@ -116,9 +100,7 @@ inline real3 imagectof_general(real xr, real yr, real zr, real3 ra, real3 rb,
    }
 }
 
-
 #ifndef imagectof
-#   define imagectof(xr, yr, zr)                                               \
-      imagectof_general(xr, yr, zr, recipa, recipb, recipc)
+#   define imagectof(xr, yr, zr) imagectof_general(xr, yr, zr, recipa, recipb, recipc)
 #endif
 }

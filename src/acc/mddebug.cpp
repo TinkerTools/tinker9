@@ -1,15 +1,13 @@
+#include "mddebug.h"
 #include "glob.accasync.h"
 #include "mathfunc_libfunc.h"
-#include "mddebug.h"
 #include "mdpq.h"
 #include "tool/darray.h"
 #include "tool/error.h"
 
-
 namespace tinker {
-void __debug_norm_propagate_pos_acc(pos_prec poseps, time_prec dt,
-                                    const vel_prec* vlx, const vel_prec* vly,
-                                    const vel_prec* vlz)
+void __debug_norm_propagate_pos_acc(
+   pos_prec poseps, time_prec dt, const vel_prec* vlx, const vel_prec* vly, const vel_prec* vlz)
 {
    int which = -1;
    pos_prec tol2 = poseps * poseps;
@@ -28,12 +26,11 @@ void __debug_norm_propagate_pos_acc(pos_prec poseps, time_prec dt,
    }
    #pragma acc wait
 
-
    if (which >= 0) {
       prterr();
       TINKER_THROW(format("MD-DEBUG POS UPDATE  --  Atom %d Tried to Move More"
                           " than %.4lf Angstroms",
-                          which + 1, poseps));
+         which + 1, poseps));
    }
 }
 }

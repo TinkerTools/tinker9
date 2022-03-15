@@ -58,7 +58,6 @@ void epitors(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
-
    if (rc_a) {
       host_zero(energy_ept, virial_ept);
       auto bsize = buffer_size();
@@ -70,9 +69,7 @@ void epitors(int vers)
          darray::zero(g::q0, n, deptx, depty, deptz);
    }
 
-
    epitors_acc(vers);
-
 
    if (rc_a) {
       if (do_e) {

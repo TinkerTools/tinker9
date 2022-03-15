@@ -21,11 +21,9 @@ cvt_grad(grad_prec val)
 }
 #endif
 
-void velAvbfIso_acc(int nrespa, vel_prec a, vel_prec b, vel_prec* vx,
-                    vel_prec* vy, vel_prec* vz, const grad_prec* gx1,
-                    const grad_prec* gy1, const grad_prec* gz1,
-                    const grad_prec* gx2, const grad_prec* gy2,
-                    const grad_prec* gz2)
+void velAvbfIso_acc(int nrespa, vel_prec a, vel_prec b, vel_prec* vx, vel_prec* vy, vel_prec* vz,
+   const grad_prec* gx1, const grad_prec* gy1, const grad_prec* gz1, const grad_prec* gx2,
+   const grad_prec* gy2, const grad_prec* gz2)
 {
    auto ekcal = units::ekcal;
    if (nrespa == 1)
@@ -68,11 +66,9 @@ label_nrespa2:
    return;
 }
 
-void velAvbfAni_acc(int nrespa, vel_prec a[3][3], vel_prec b[3][3],
-                    vel_prec* vx, vel_prec* vy, vel_prec* vz,
-                    const grad_prec* gx1, const grad_prec* gy1,
-                    const grad_prec* gz1, const grad_prec* gx2,
-                    const grad_prec* gy2, const grad_prec* gz2)
+void velAvbfAni_acc(int nrespa, vel_prec a[3][3], vel_prec b[3][3], vel_prec* vx, vel_prec* vy,
+   vel_prec* vz, const grad_prec* gx1, const grad_prec* gy1, const grad_prec* gz1,
+   const grad_prec* gx2, const grad_prec* gy2, const grad_prec* gz2)
 {
    auto ekcal = units::ekcal;
    auto a00 = a[0][0], a01 = a[0][1], a02 = a[0][2];
@@ -127,16 +123,16 @@ label_nrespa2:
 }
 }
 
+
 namespace tinker {
 void lp_matvec_acc(int len, char transpose, double mat[3][3],
 
-                   pos_prec* ax, pos_prec* ay, pos_prec* az)
+   pos_prec* ax, pos_prec* ay, pos_prec* az)
 {
    double m00 = mat[0][0], m01 = mat[0][1], m02 = mat[0][2];
    double m10 = mat[1][0], m11 = mat[1][1], m12 = mat[1][2];
    double m20 = mat[2][0], m21 = mat[2][1], m22 = mat[2][2];
-   if (transpose == 't' or transpose == 'T' or transpose == 'y' or
-       transpose == 'Y') {
+   if (transpose == 't' or transpose == 'T' or transpose == 'y' or transpose == 'Y') {
       m01 = mat[1][0], m02 = mat[2][0];
       m10 = mat[0][1], m12 = mat[2][1];
       m20 = mat[0][2], m21 = mat[1][2];
@@ -329,9 +325,8 @@ void lp_mol_virial_acc()
    lp_vir[8] = mvzz + vir[8];
 }
 
-void lp_center_of_mass_acc(const pos_prec* ax, const pos_prec* ay,
-                           const pos_prec* az, pos_prec* mx, pos_prec* my,
-                           pos_prec* mz)
+void lp_center_of_mass_acc(const pos_prec* ax, const pos_prec* ay, const pos_prec* az, pos_prec* mx,
+   pos_prec* my, pos_prec* mz)
 {
    const int nmol = rattle_dmol.nmol;
    const auto* imol = rattle_dmol.imol;
@@ -358,9 +353,8 @@ void lp_center_of_mass_acc(const pos_prec* ax, const pos_prec* ay,
 }
 
 void propagate_velocity_06_acc(double vbar, time_prec dt, const grad_prec* grx,
-                               const grad_prec* gry, const grad_prec* grz,
-                               time_prec dt2, const grad_prec* grx2,
-                               const grad_prec* gry2, const grad_prec* grz2)
+   const grad_prec* gry, const grad_prec* grz, time_prec dt2, const grad_prec* grx2,
+   const grad_prec* gry2, const grad_prec* grz2)
 {
    const vel_prec ekcal = units::ekcal;
    if (dt != 0 and dt2 != 0 and dt >= dt2) {
@@ -483,9 +477,8 @@ void pLogVPosAtmAniso_acc(double (*a)[3], double (*b)[3])
    }
 }
 
-void propagate_vel_avbf_aniso_acc(double sa[3][3], double sb[3][3],
-                                  const grad_prec* grx, const grad_prec* gry,
-                                  const grad_prec* grz)
+void propagate_vel_avbf_aniso_acc(double sa[3][3], double sb[3][3], const grad_prec* grx,
+   const grad_prec* gry, const grad_prec* grz)
 {
    vel_prec ekcal = units::ekcal;
    vel_prec a00 = sa[0][0], a01 = sa[0][1], a02 = sa[0][2];

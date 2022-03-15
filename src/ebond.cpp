@@ -10,8 +10,8 @@
 namespace tinker {
 void ebond_data(rc_op op)
 {
-   if (not use_potent(bond_term) and not use_potent(strbnd_term) and
-       not use_potent(strtor_term) and not potent::use_chgflx)
+   if (not use_potent(bond_term) and not use_potent(strbnd_term) and not use_potent(strtor_term) and
+      not potent::use_chgflx)
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -70,7 +70,6 @@ void ebond(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
-
    if (rc_a) {
       host_zero(energy_eb, virial_eb);
       auto bsize = buffer_size();
@@ -82,9 +81,7 @@ void ebond(int vers)
          darray::zero(g::q0, n, debx, deby, debz);
    }
 
-
    ebond_acc(vers);
-
 
    if (rc_a) {
       if (do_e) {

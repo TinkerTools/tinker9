@@ -1,6 +1,5 @@
 #include "osrw.h"
 
-
 namespace tinker {
 void mechanic2()
 {

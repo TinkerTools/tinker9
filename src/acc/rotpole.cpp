@@ -2,15 +2,13 @@
 #include "mathfunc.h"
 #include "md.h"
 
-
 namespace tinker {
 void chkpole_acc()
 {
    #pragma acc parallel loop independent async deviceptr(x,y,z,zaxis,pole)
    for (int i = 0; i < n; ++i) {
       int polaxe = zaxis[i].polaxe;
-      bool check =
-         ((polaxe != pole_z_then_x) || (zaxis[i].yaxis) == 0) ? false : true;
+      bool check = ((polaxe != pole_z_then_x) || (zaxis[i].yaxis) == 0) ? false : true;
       if (check) {
          int k = zaxis[i].yaxis;
          int ia = i;
@@ -49,10 +47,9 @@ void chkpole_acc()
    }
 }
 
-
 #pragma acc routine seq
-static void rotsite(int isite, const real (*restrict a)[3],
-                    real (*restrict rpole)[10], const real (*restrict pole)[10])
+static void rotsite(int isite, const real (*restrict a)[3], real (*restrict rpole)[10],
+   const real (*restrict pole)[10])
 {
    static_assert(mpl_total == 10, "");
 
@@ -101,7 +98,6 @@ static void rotsite(int isite, const real (*restrict a)[3],
    rpole[isite][mpl_pme_zz] = rp[2][2];
 }
 
-
 #pragma acc routine seq
 static void rotpole_norm(real* a)
 {
@@ -111,7 +107,6 @@ static void rotpole_norm(real* a)
    a[2] *= a1;
 }
 
-
 #pragma acc routine seq
 static void rotpole_addto1(real* restrict a, const real* restrict b)
 {
@@ -120,16 +115,13 @@ static void rotpole_addto1(real* restrict a, const real* restrict b)
    a[2] += b[2];
 }
 
-
 #pragma acc routine seq
-static void rotpole_addto2(real* restrict a, const real* restrict b,
-                           const real* restrict c)
+static void rotpole_addto2(real* restrict a, const real* restrict b, const real* restrict c)
 {
    a[0] += (b[0] + c[0]);
    a[1] += (b[1] + c[1]);
    a[2] += (b[2] + c[2]);
 }
-
 
 void rotpole_acc()
 {
@@ -146,12 +138,10 @@ void rotpole_acc()
       // the default identity matrix
       real a[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 
-
       if (polaxe != pole_none) {
          real* restrict xx = &a[0][0];
          real* restrict yy = &a[1][0];
          real* restrict zz = &a[2][0];
-
 
          // STEP 1: PICK Z AND NORM Z
          // pick z
@@ -160,7 +150,6 @@ void rotpole_acc()
          zz[2] = z[iz] - zi;
          // norm z
          rotpole_norm(zz);
-
 
          // STEP 2: PICK X AND NORM X
          // even if it is not needef for z then x)
@@ -178,7 +167,6 @@ void rotpole_acc()
             rotpole_norm(xx);
          }
 
-
          // STEP 3: PICK Y AND NORM Y
          // only for z biscector and 3 fold
          if (polaxe == pole_z_bisect || polaxe == pole_3_fold) {
@@ -187,7 +175,6 @@ void rotpole_acc()
             yy[2] = z[iy] - zi;
             rotpole_norm(yy);
          }
-
 
          // STEP 4
          if (polaxe == pole_bisector) {
@@ -200,7 +187,6 @@ void rotpole_acc()
             rotpole_addto2(zz, xx, yy);
             rotpole_norm(zz);
          }
-
 
          // STEP 5
          // x -= (x.z) z
@@ -215,7 +201,6 @@ void rotpole_acc()
          a[1][1] = a[0][0] * a[2][2] - a[0][2] * a[2][0];
          a[1][2] = a[0][1] * a[2][0] - a[0][0] * a[2][1];
       } // end if (.not. pole_none)
-
 
       // rotsite routine
       rotsite(i, a, rpole, pole);

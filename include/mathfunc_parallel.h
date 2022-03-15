@@ -3,7 +3,6 @@
 #include "mathfunc_parallel_cu.h"
 #include "platform.h"
 
-
 namespace tinker {
 /**
  * \ingroup parallel_algo
@@ -22,7 +21,6 @@ T reduce_sum(const T* gpu_a, size_t nelem, int queue)
 #endif
       return reduce_sum_acc(gpu_a, nelem, queue);
 }
-
 
 /**
  * \ingroup parallel_algo
@@ -43,7 +41,6 @@ void reduce_sum2(HT (&h_ans)[HN], DPTR v, size_t nelem, int queue)
 #endif
       reduce_sum2_acc(h_ans, v, nelem, queue);
 }
-
 
 /**
  * \ingroup parallel_algo
@@ -68,7 +65,6 @@ void reduce_sum_on_device(T* dp_ans, const T* a, size_t nelem, int queue)
 #endif
       reduce_sum_on_device_acc(dp_ans, a, nelem, queue);
 }
-
 
 /**
  * \ingroup parallel_algo
@@ -100,7 +96,6 @@ void reduce_sum2_on_device(HT (&dref)[HN], DPTR v, size_t nelem, int queue)
       reduce_sum2_on_device_acc(dref, v, nelem, queue);
 }
 
-
 /**
  * \ingroup parallel_algo
  * \brief Dot product of two linear arrays.
@@ -113,7 +108,6 @@ T dotprod(const T* a, const T* b, size_t nelem, int queue)
 {
    return dotprod_acc(a, b, nelem, queue);
 }
-
 
 /**
  * \ingroup parallel_algo
@@ -129,7 +123,6 @@ void dotprod(T* ans, const T* a, const T* b, size_t nelem, int queue)
 #endif
       dotprod_acc(ans, a, b, nelem, queue);
 }
-
 
 /**
  * \ingroup parallel_algo

@@ -1,6 +1,6 @@
+#include "tool/cudalib.h"
 #include "glob.accasync.h"
 #include "platform.h"
-#include "tool/cudalib.h"
 #if TINKER_CUDART
 #   include "tool/error.h"
 #   include "tool/gpu_card.h"
@@ -8,14 +8,12 @@
 #   include <openacc.h>
 #endif
 
-
 namespace tinker {
 void cudalib_data(rc_op op)
 {
 #if TINKER_CUDART
    if (op & rc_dealloc) {
       check_rt(cudaProfilerStop());
-
 
       g::q0 = -42;
       g::q1 = -42;
@@ -26,14 +24,12 @@ void cudalib_data(rc_op op)
       check_rt(cudaFreeHost(pinned_buf));
       check_rt(cudaFree(dptr_buf));
 
-
       use_pme_stream = false;
       g::spme = nullptr;
       g::qpme = -42;
       check_rt(cudaEventDestroy(pme_event_start));
       check_rt(cudaEventDestroy(pme_event_finish));
    }
-
 
    if (op & rc_alloc) {
       g::q0 = acc_get_default_async();
@@ -49,11 +45,9 @@ void cudalib_data(rc_op op)
       check_rt(cublasSetPointerMode(g::h0, ptrflag));
       check_rt(cublasSetPointerMode(g::h1, ptrflag));
 
-
       int nblock = get_grid_size(BLOCK_DIM);
       check_rt(cudaMallocHost(&pinned_buf, nblock * sizeof(double)));
       check_rt(cudaMalloc(&dptr_buf, nblock * sizeof(double)));
-
 
       use_pme_stream = false;
       if (pltfm_config & CU_PLTFM) {
@@ -63,11 +57,8 @@ void cudalib_data(rc_op op)
          g::qpme = g::q0 + 1;
          g::spme = (cudaStream_t)acc_get_cuda_stream(g::qpme);
       }
-      check_rt(
-         cudaEventCreateWithFlags(&pme_event_start, cudaEventDisableTiming));
-      check_rt(
-         cudaEventCreateWithFlags(&pme_event_finish, cudaEventDisableTiming));
-
+      check_rt(cudaEventCreateWithFlags(&pme_event_start, cudaEventDisableTiming));
+      check_rt(cudaEventCreateWithFlags(&pme_event_finish, cudaEventDisableTiming));
 
       check_rt(cudaProfilerStart());
    }

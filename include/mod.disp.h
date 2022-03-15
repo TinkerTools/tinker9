@@ -2,17 +2,14 @@
 #include "macro.h"
 #include "tool/energy_buffer.h"
 
-
 namespace tinker {
 TINKER_EXTERN real csixpr;
 TINKER_EXTERN real* csix;
 TINKER_EXTERN real* adisp;
 
-
 TINKER_EXTERN int ndspexclude;
 TINKER_EXTERN int (*dspexclude)[2];
 TINKER_EXTERN real* dspexclude_scale;
-
 
 TINKER_EXTERN count_buffer ndisp;
 TINKER_EXTERN energy_buffer edsp;

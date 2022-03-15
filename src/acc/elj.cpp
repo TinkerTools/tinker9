@@ -8,10 +8,8 @@
 #include "switch.h"
 #include "tool/gpu_card.h"
 
-
 namespace tinker {
-#define DEVICE_PTRS                                                            \
-   x, y, z, devx, devy, devz, jvdw, radmin, epsilon, mut, nev, ev, vir_ev
+#define DEVICE_PTRS x, y, z, devx, devy, devz, jvdw, radmin, epsilon, mut, nev, ev, vir_ev
 template <class Ver>
 void elj_acc1()
 {
@@ -19,7 +17,6 @@ void elj_acc1()
    constexpr bool do_a = Ver::a;
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
-
 
    const real cut = switch_cut(switch_vdw);
    const real off = switch_off(switch_vdw);
@@ -29,9 +26,7 @@ void elj_acc1()
    const auto* nlst = clist_unit->nlst;
    const auto* lst = clist_unit->lst;
 
-
    auto bufsize = buffer_size();
-
 
    MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
@@ -46,7 +41,6 @@ void elj_acc1()
       real imut = mut[i];
       MAYBE_UNUSED grad_prec gxi = 0, gyi = 0, gzi = 0;
 
-
       int nvlsti = nlst[i];
       #pragma acc loop vector independent reduction(+:gxi,gyi,gzi)
       for (int kk = 0; kk < nvlsti; ++kk) {
@@ -58,18 +52,15 @@ void elj_acc1()
          real zr = zi - z[k];
          int kmut = mut[k];
 
-
          real rik2 = image2(xr, yr, zr);
          if (rik2 <= off2) {
             real rik = REAL_SQRT(rik2);
             real rv = radmin[it * njvdw + kt];
             real eps = epsilon[it * njvdw + kt];
 
-
             MAYBE_UNUSED real e, de;
             real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
             pair_lj_v1<do_g, true>(rik, vlambda, rv, eps, 1, e, de);
-
 
             if (rik2 > cut2) {
                real taper, dtaper;
@@ -79,7 +70,6 @@ void elj_acc1()
                if CONSTEXPR (do_e)
                   e = e * taper;
             }
-
 
             if CONSTEXPR (do_a)
                // vscale is always 1, exclude e == 0
@@ -111,14 +101,12 @@ void elj_acc1()
          }
       } // end for (int kk)
 
-
       if CONSTEXPR (do_g) {
          atomic_add(gxi, devx, i);
          atomic_add(gyi, devy, i);
          atomic_add(gzi, devz, i);
       }
    } // enf for (int i)
-
 
    #pragma acc parallel async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
@@ -127,11 +115,9 @@ void elj_acc1()
    for (int ii = 0; ii < nvexclude; ++ii) {
       int offset = ii & (bufsize - 1);
 
-
       int i = vexclude[ii][0];
       int k = vexclude[ii][1];
       real vscale = vexclude_scale[ii] - 1;
-
 
       int it = jvdw[i];
       real xi = x[i];
@@ -139,13 +125,11 @@ void elj_acc1()
       real zi = z[i];
       int imut = mut[i];
 
-
       int kt = jvdw[k];
       real xr = xi - x[k];
       real yr = yi - y[k];
       real zr = zi - z[k];
       int kmut = mut[k];
-
 
       real rik2 = image2(xr, yr, zr);
       if (rik2 <= off2) {
@@ -153,11 +137,9 @@ void elj_acc1()
          real rv = radmin[it * njvdw + kt];
          real eps = epsilon[it * njvdw + kt];
 
-
          MAYBE_UNUSED real e, de;
          real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
          pair_lj_v1<do_g, true>(rik, vlambda, rv, eps, vscale, e, de);
-
 
          if (rik2 > cut2) {
             real taper, dtaper;
@@ -167,7 +149,6 @@ void elj_acc1()
             if CONSTEXPR (do_e)
                e = e * taper;
          }
-
 
          if CONSTEXPR (do_a)
             if (vscale == -1 && e != 0)
@@ -198,7 +179,6 @@ void elj_acc1()
       }
    } // end for (int ii)
 
-
    #pragma acc parallel async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(DEVICE_PTRS,vdw14ik,radmin4,epsilon4)
@@ -206,10 +186,8 @@ void elj_acc1()
    for (int ii = 0; ii < nvdw14; ++ii) {
       int offset = ii & (bufsize - 1);
 
-
       int i = vdw14ik[ii][0];
       int k = vdw14ik[ii][1];
-
 
       int it = jvdw[i];
       real xi = x[i];
@@ -217,13 +195,11 @@ void elj_acc1()
       real zi = z[i];
       int imut = mut[i];
 
-
       int kt = jvdw[k];
       real xr = xi - x[k];
       real yr = yi - y[k];
       real zr = zi - z[k];
       int kmut = mut[k];
-
 
       real rik2 = image2(xr, yr, zr);
       if (rik2 <= off2) {
@@ -233,7 +209,6 @@ void elj_acc1()
          real rv4 = radmin4[it * njvdw + kt];
          real eps4 = epsilon4[it * njvdw + kt];
 
-
          MAYBE_UNUSED real e, de, e4, de4;
          real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
          pair_lj_v1<do_g, true>(rik, vlambda, rv, eps, v4scale, e, de);
@@ -241,7 +216,6 @@ void elj_acc1()
          e = e4 - e;
          if CONSTEXPR (do_g)
             de = de4 - de;
-
 
          if (rik2 > cut2) {
             real taper, dtaper;
@@ -251,7 +225,6 @@ void elj_acc1()
             if CONSTEXPR (do_e)
                e = e * taper;
          }
-
 
          // if CONSTEXPR (do_a) {}
          if CONSTEXPR (do_e)
@@ -281,7 +254,6 @@ void elj_acc1()
    } // end for (int ii)
 }
 
-
 void elj_acc(int vers)
 {
    if (vers == calc::v0)
@@ -297,7 +269,6 @@ void elj_acc(int vers)
    else if (vers == calc::v6)
       elj_acc1<calc::V6>();
 }
-
 
 void ebuck_acc(int) {}
 void emm3hb_acc(int) {}

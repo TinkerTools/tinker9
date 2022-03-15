@@ -1,8 +1,7 @@
-#include "add.h"
 #include "eimptor.h"
+#include "add.h"
 #include "md.h"
 #include "seq_imptor.h"
-
 
 namespace tinker {
 template <class Ver>
@@ -11,7 +10,6 @@ void eimptor_acc1()
    constexpr bool do_e = Ver::e;
    constexpr bool do_v = Ver::v;
    size_t bufsize = buffer_size();
-
 
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,deitx,deity,deitz,\
@@ -22,16 +20,15 @@ void eimptor_acc1()
       real e, vxx, vyx, vzx, vyy, vzy, vzz;
       dk_imptor<Ver>(e, vxx, vyx, vzx, vyy, vzy, vzz,
 
-                     deitx, deity, deitz,
+         deitx, deity, deitz,
 
-                     itorunit, i, iitors, itors1, itors2, itors3, x, y, z);
+         itorunit, i, iitors, itors1, itors2, itors3, x, y, z);
       if CONSTEXPR (do_e)
          atomic_add(e, eit, offset);
       if CONSTEXPR (do_v)
          atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir_eit, offset);
    }
 }
-
 
 void eimptor_acc(int vers)
 {

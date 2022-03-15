@@ -4,7 +4,6 @@
 #include "tool/cudalib.h"
 #include "tool/error.h"
 
-
 namespace tinker {
 /**
  * \ingroup cuda_syntax
@@ -23,7 +22,6 @@ void launch_k4(cudaStream_t st, size_t sh, int bs, int np, K k, Ts&&... a)
    int gs = (np + bs - 1) / bs;
    k<<<gs, bs, sh, st>>>(std::forward<Ts>(a)...);
 }
-
 
 /**
  * \ingroup cuda_syntax
@@ -45,7 +43,6 @@ void launch_k4b(cudaStream_t st, size_t sh, int bs, int np, K k, Ts&&... a)
    k<<<gs, bs, sh, st>>>(std::forward<Ts>(a)...);
 }
 
-
 /**
  * \ingroup cuda_syntax
  * Launch a non-blocking CUDA kernel with 0 dynamic shared memory.
@@ -57,7 +54,6 @@ void launch_k2s(cudaStream_t st, int bs, int np, K k, Ts&&... a)
    const size_t sh = 0;
    launch_k4(st, sh, bs, np, k, std::forward<Ts>(a)...);
 }
-
 
 /**
  * \ingroup cuda_syntax
@@ -71,7 +67,6 @@ void launch_k2b(cudaStream_t st, int bs, int np, K k, Ts&&... a)
    launch_k4b(st, sh, bs, np, k, std::forward<Ts>(a)...);
 }
 
-
 /**
  * \ingroup cuda_syntax
  * Launch a non-blocking CUDA kernel with 0 dynamic shared memory and the
@@ -84,7 +79,6 @@ void launch_k1s(cudaStream_t st, int np, K k, Ts&&... a)
    const int bs = BLOCK_DIM;
    launch_k2s(st, bs, np, k, std::forward<Ts>(a)...);
 }
-
 
 /**
  * \ingroup cuda_syntax

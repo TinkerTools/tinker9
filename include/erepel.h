@@ -4,7 +4,6 @@
 #include "mod.reppot.h"
 #include "tool/rc_man.h"
 
-
 namespace tinker {
 void erepel_data(rc_op op);
 void erepel(int vers);

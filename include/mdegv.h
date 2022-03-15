@@ -1,7 +1,6 @@
 #pragma once
 #include "glob.energi.h"
 
-
 namespace tinker {
 /**
  * \ingroup mdegv
@@ -20,34 +19,26 @@ void zero_egv(int vers);
  */
 void zero_egv();
 
-
 //====================================================================//
-
 
 /**
  * \ingroup mdegv
  */
-void scale_gradient(double scale, grad_prec* g0x, grad_prec* g0y,
-                    grad_prec* g0z);
-void sum_gradient(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
-                  const grad_prec* g1x, const grad_prec* g1y,
-                  const grad_prec* g1z);
+void scale_gradient(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z);
+void sum_gradient(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const grad_prec* g1x,
+   const grad_prec* g1y, const grad_prec* g1z);
 void sum_gradient(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
-                  const grad_prec* g1x, const grad_prec* g1y,
-                  const grad_prec* g1z);
+   const grad_prec* g1x, const grad_prec* g1y, const grad_prec* g1z);
 void scale_gradient_acc(double, grad_prec*, grad_prec*, grad_prec*);
-void sum_gradient_acc(grad_prec*, grad_prec*, grad_prec*, const grad_prec*,
-                      const grad_prec*, const grad_prec*);
-void sum_gradient_acc(double, grad_prec*, grad_prec*, grad_prec*,
-                      const grad_prec*, const grad_prec*, const grad_prec*);
-
+void sum_gradient_acc(
+   grad_prec*, grad_prec*, grad_prec*, const grad_prec*, const grad_prec*, const grad_prec*);
+void sum_gradient_acc(double, grad_prec*, grad_prec*, grad_prec*, const grad_prec*,
+   const grad_prec*, const grad_prec*);
 
 //====================================================================//
 
-
-void copy_gradient(int vers, double* grdx, double* grdy, double* grdz,
-                   const grad_prec* gx_src, const grad_prec* gy_src,
-                   const grad_prec* gz_src, int queue);
+void copy_gradient(int vers, double* grdx, double* grdy, double* grdz, const grad_prec* gx_src,
+   const grad_prec* gy_src, const grad_prec* gz_src, int queue);
 /**
  * \ingroup mdegv
  * \brief
@@ -61,9 +52,8 @@ void copy_energy(int vers, energy_prec* eng);
  * \brief
  * Copy the energy gradients from device to host.
  */
-void copy_gradient(int vers, double* grdx, double* grdy, double* grdz,
-                   const grad_prec* gx_src, const grad_prec* gy_src,
-                   const grad_prec* gz_src);
+void copy_gradient(int vers, double* grdx, double* grdy, double* grdz, const grad_prec* gx_src,
+   const grad_prec* gy_src, const grad_prec* gz_src);
 /**
  * \ingroup mdegv
  * \brief
@@ -83,9 +73,7 @@ void copy_gradient(int vers, double* grdx, double* grdy, double* grdz);
  */
 void copy_virial(int vers, virial_prec* virial);
 
-
 //====================================================================//
-
 
 void egv_data(rc_op op);
 }

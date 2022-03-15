@@ -5,16 +5,13 @@
 #include <tinker/detail/angtor.hh>
 #include <tinker/detail/torpot.hh>
 
-
 namespace tinker {
 void eangtor_data(rc_op op)
 {
    if (not use_potent(angtor_term))
       return;
 
-
    bool rc_a = rc_flag & calc::analyz;
-
 
    if (op & rc_dealloc) {
       nangtor = 0;
@@ -28,11 +25,9 @@ void eangtor_data(rc_op op)
       deatz = nullptr;
    }
 
-
    if (op & rc_alloc) {
       nangtor = count_bonded_term(angtor_term);
       darray::allocate(nangtor, &iat, &kant);
-
 
       eat = eng_buf;
       vir_eat = vir_buf;
@@ -42,7 +37,6 @@ void eangtor_data(rc_op op)
       if (rc_a)
          buffer_allocate(rc_flag, &eat, &vir_eat, &deatx, &deaty, &deatz);
    }
-
 
    if (op & rc_init) {
       std::vector<int> ibuf;
@@ -56,14 +50,12 @@ void eangtor_data(rc_op op)
    }
 }
 
-
 void eangtor(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-
 
    if (rc_a) {
       host_zero(energy_eat, virial_eat);
@@ -76,9 +68,7 @@ void eangtor(int vers)
          darray::zero(g::q0, n, deatx, deaty, deatz);
    }
 
-
    eangtor_acc(vers);
-
 
    if (rc_a) {
       if (do_e) {

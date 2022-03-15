@@ -31,8 +31,7 @@ static void init()
    write_ms = ud(e);
 
    mtx_cout.lock();
-   printf("RANDOM LAPSE: DUP %4d ms; WRITE %4d ms.\n\n", dup_ms,
-          dup_coef * dup_ms + write_ms);
+   printf("RANDOM LAPSE: DUP %4d ms; WRITE %4d ms.\n\n", dup_ms, dup_coef * dup_ms + write_ms);
    mtx_cout.unlock();
 }
 
@@ -61,8 +60,7 @@ static void write_step(int idx)
    mtx_write.unlock();
 
    mtx_cout.lock();
-   printf("== ASYNC_WRITE_2 %4d | GPU VALUE %4d | HOST %4d\n", idx, gpu_value,
-          host_value);
+   printf("== ASYNC_WRITE_2 %4d | GPU VALUE %4d | HOST %4d\n", idx, gpu_value, host_value);
    mtx_cout.unlock();
 }
 

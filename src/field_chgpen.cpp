@@ -4,7 +4,6 @@
 #include "md.h"
 #include "nblist.h"
 
-
 namespace tinker {
 void dfield_chgpen(real (*field)[3])
 {
@@ -13,7 +12,6 @@ void dfield_chgpen(real (*field)[3])
    else
       dfield_chgpen_nonewald(field);
 }
-
 
 void dfield_chgpen_nonewald(real (*field)[3])
 {
@@ -25,19 +23,16 @@ void dfield_chgpen_nonewald(real (*field)[3])
       dfield_chgpen_nonewald_acc(field);
 }
 
-
 void dfield_chgpen_ewald(real (*field)[3])
 {
    dfield_chgpen_ewald_recip_self(field);
    dfield_chgpen_ewald_real(field);
 }
 
-
 void dfield_chgpen_ewald_recip_self(real (*field)[3])
 {
    dfield_ewald_recip_self_acc(field);
 }
-
 
 void dfield_chgpen_ewald_real(real (*field)[3])
 {
@@ -49,7 +44,6 @@ void dfield_chgpen_ewald_real(real (*field)[3])
       dfield_chgpen_ewald_real_acc(field);
 }
 
-
 void ufield_chgpen(const real (*uind)[3], real (*field)[3])
 {
    if (use_ewald())
@@ -57,7 +51,6 @@ void ufield_chgpen(const real (*uind)[3], real (*field)[3])
    else
       ufield_chgpen_nonewald(uind, field);
 }
-
 
 void ufield_chgpen_nonewald(const real (*uind)[3], real (*field)[3])
 {
@@ -69,19 +62,16 @@ void ufield_chgpen_nonewald(const real (*uind)[3], real (*field)[3])
       ufield_chgpen_nonewald_acc(uind, field);
 }
 
-
 void ufield_chgpen_ewald(const real (*uind)[3], real (*field)[3])
 {
    ufield_chgpen_ewald_recip_self(uind, field);
    ufield_chgpen_ewald_real(uind, field);
 }
 
-
 void ufield_chgpen_ewald_recip_self(const real (*uind)[3], real (*field)[3])
 {
    ufield_chgpen_ewald_recip_self_acc(uind, field);
 }
-
 
 void ufield_chgpen_ewald_real(const real (*uind)[3], real (*field)[3])
 {

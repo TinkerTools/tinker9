@@ -1,4 +1,6 @@
 include/*template
+docker/Dockerfile*
+docker/*.dockerfile
 
 # macOS
 .DS_STORE

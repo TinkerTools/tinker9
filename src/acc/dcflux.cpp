@@ -10,7 +10,6 @@
 #include "tool/energy_buffer.h"
 #include "tool/gpu_card.h"
 
-
 namespace tinker {
 namespace {
 #pragma acc routine seq
@@ -19,7 +18,6 @@ real dot_vect(const real* restrict a, const real* restrict b)
    return (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]);
 }
 }
-
 
 void bnd_dcflux()
 {
@@ -49,7 +47,6 @@ void bnd_dcflux()
       atomic_add(fz, decfz, ib);
    }
 }
-
 
 void ang_dcflux()
 {
@@ -133,11 +130,10 @@ void ang_dcflux()
 }
 
 template <int DO_V>
-void dcflux_acc1(grad_prec* restrict gx, grad_prec* restrict gy,
-                 grad_prec* restrict gz, virial_buffer restrict vir)
+void dcflux_acc1(grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz,
+   virial_buffer restrict vir)
 {
    auto bufsize = buffer_size();
-
 
    #pragma acc parallel loop independent async\
                deviceptr(decfx,decfy,decfz)
@@ -147,10 +143,8 @@ void dcflux_acc1(grad_prec* restrict gx, grad_prec* restrict gy,
       decfz[i] = 0;
    }
 
-
    bnd_dcflux();
    ang_dcflux();
-
 
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,decfx,decfy,decfz,\
@@ -172,9 +166,7 @@ void dcflux_acc1(grad_prec* restrict gx, grad_prec* restrict gy,
    }
 }
 
-
-void dcflux_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz,
-                virial_buffer vir)
+void dcflux_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz, virial_buffer vir)
 {
    if (vers & calc::virial)
       dcflux_acc1<1>(gx, gy, gz, vir);

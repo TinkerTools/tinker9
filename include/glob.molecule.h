@@ -2,7 +2,6 @@
 #include "macro.h"
 #include "mdprec.h"
 
-
 namespace tinker {
 /// \brief Individual molecules in current system.
 struct Molecule

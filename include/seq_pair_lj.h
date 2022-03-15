@@ -2,7 +2,6 @@
 #include "mathfunc.h"
 #include "seq_pair_vlambda.h"
 
-
 namespace tinker {
 /**
  * \ingroup vdw
@@ -10,8 +9,8 @@ namespace tinker {
 #pragma acc routine seq
 template <bool DO_G, bool SOFTCORE>
 SEQ_CUDA
-void pair_lj_v0(real r, real invr, real vlambda, real rad, real eps,
-                real& restrict ev, real& restrict dev)
+void pair_lj_v0(
+   real r, real invr, real vlambda, real rad, real eps, real& restrict ev, real& restrict dev)
 {
    if CONSTEXPR (SOFTCORE) {
       if (rad == 0) {
@@ -44,20 +43,18 @@ void pair_lj_v0(real r, real invr, real vlambda, real rad, real eps,
    }
 }
 
-
 /**
  * \ingroup vdw
  */
 #pragma acc routine seq
 template <bool DO_G, bool SOFTCORE>
 SEQ_CUDA
-void pair_lj_v1(real rik, real vlambda, real rv, real eps, real vscalek,
-                real& restrict e, real& restrict de)
+void pair_lj_v1(
+   real rik, real vlambda, real rv, real eps, real vscalek, real& restrict e, real& restrict de)
 {
    eps *= vscalek;
    pair_lj_v0<DO_G, SOFTCORE>(rik, 1 / rik, vlambda, rv, eps, e, de);
 }
-
 
 /**
  * \ingroup vdw
@@ -66,8 +63,8 @@ void pair_lj_v1(real rik, real vlambda, real rv, real eps, real vscalek,
 template <bool DO_G, bool SOFTCORE, class RADRULE, class EPSRULE, int SCALE>
 SEQ_CUDA
 void pair_lj_v2(real r, real invr, real vlambda, //
-                real vscale, real radi, real epsi, real radk, real epsk,
-                real evcut, real evoff, real& restrict ev, real& restrict dev)
+   real vscale, real radi, real epsi, real radk, real epsk, real evcut, real evoff,
+   real& restrict ev, real& restrict dev)
 {
    if (r > evoff) {
       ev = 0;
@@ -91,7 +88,6 @@ void pair_lj_v2(real r, real invr, real vlambda, //
    }
 }
 
-
 /**
  * \ingroup vdw
  */
@@ -99,8 +95,7 @@ void pair_lj_v2(real r, real invr, real vlambda, //
 template <bool DO_G, bool SOFTCORE, int SCALE>
 SEQ_CUDA
 void pair_lj_v3(real r, real invr, real vlambda, //
-                real vscale, real rad, real eps, real evcut, real evoff,
-                real& restrict ev, real& restrict dev)
+   real vscale, real rad, real eps, real evcut, real evoff, real& restrict ev, real& restrict dev)
 {
    if CONSTEXPR (SCALE != 1) {
       eps *= vscale;

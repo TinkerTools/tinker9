@@ -3,7 +3,6 @@
 #include <tinker/detail/argue.hh>
 #include <tinker/detail/keys.hh>
 
-
 namespace tinker {
 void nextarg(size_t len, char* str, int& exist)
 {
@@ -24,11 +23,9 @@ void nextarg(size_t len, char* str, int& exist)
    }
 }
 
-
 namespace detail {
 template <class T>
 void vstr_to_val(T&, std::string);
-
 
 template <>
 void vstr_to_val<int>(int& v, std::string vstr)
@@ -36,13 +33,11 @@ void vstr_to_val<int>(int& v, std::string vstr)
    v = std::stoi(vstr);
 }
 
-
 template <>
 void vstr_to_val<double>(double& v, std::string vstr)
 {
    v = std::stod(vstr);
 }
-
 
 template <>
 void vstr_to_val<std::string>(std::string& v, std::string vstr)
@@ -51,7 +46,6 @@ void vstr_to_val<std::string>(std::string& v, std::string vstr)
    Text::upcase(v);
 }
 }
-
 
 template <class T1, class T2>
 void get_kv(std::string k, T1& v, T2 vdefault)
@@ -79,9 +73,8 @@ template void get_kv(std::string, double&, double);
 template void get_kv(std::string, std::string&, std::string);
 template void get_kv(std::string, std::string&, const char*);
 template <>
-void get_kv<std::vector<std::string>, const char*>(std::string k,
-                                                   std::vector<std::string>& v,
-                                                   const char*)
+void get_kv<std::vector<std::string>, const char*>(
+   std::string k, std::vector<std::string>& v, const char*)
 {
    for (int i = 0; i < keys::nkey; ++i) {
       fstr_view record = keys::keyline[i];
@@ -99,7 +92,6 @@ void get_kv<std::vector<std::string>, const char*>(std::string k,
       }
    }
 }
-
 
 template <class T>
 void get_kbool(std::string k, T& v, bool v_if_k_not_found)

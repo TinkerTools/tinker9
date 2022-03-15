@@ -1,7 +1,6 @@
 #pragma once
 #include "time_scale.h"
 
-
 #include "eangle.h"
 #include "eangtor.h"
 #include "ebond.h"
@@ -15,12 +14,9 @@
 #include "etortor.h"
 #include "eurey.h"
 
-
 #include "egeom.h"
 
-
 #include "evalence.h"
-
 
 #include "echarge.h"
 #include "echglj.h"
@@ -29,14 +25,12 @@
 #include "epolar.h"
 #include "evdw.h"
 
-
 #include "echgtrn.h"
 #include "edisp.h"
 #include "ehippo.h"
 #include "empole_chgpen.h"
 #include "epolar_chgpen.h"
 #include "erepel.h"
-
 
 namespace tinker {
 /**
@@ -53,7 +47,6 @@ extern bool ecore_val;
 extern bool ecore_vdw;
 extern bool ecore_ele;
 
-
 /**
  * \ingroup mdegv
  * \brief First, energy buffers, virial buffers, gradient arrays, and count
@@ -64,7 +57,6 @@ extern bool ecore_ele;
  */
 void energy(int vers);
 
-
 /**
  * \ingroup mdegv
  * \brief Zero-initialize and evaluate potential energy with time scale
@@ -72,7 +64,6 @@ void energy(int vers);
  * \see TimeScaleConfig
  */
 void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig);
-
 
 void energy_data(rc_op);
 bool use_energi_vdw();

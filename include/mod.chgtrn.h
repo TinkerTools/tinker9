@@ -2,11 +2,9 @@
 #include "macro.h"
 #include "tool/energy_buffer.h"
 
-
 namespace tinker {
 TINKER_EXTERN real* chgct;
 TINKER_EXTERN real* dmpct;
-
 
 TINKER_EXTERN count_buffer nct;
 TINKER_EXTERN energy_buffer ect;

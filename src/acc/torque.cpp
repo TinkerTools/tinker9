@@ -3,7 +3,6 @@
 #include "mathfunc.h"
 #include "md.h"
 
-
 namespace tinker {
 namespace {
 #pragma acc routine seq
@@ -12,16 +11,13 @@ real torque_dot(const real* restrict a, const real* restrict b)
    return (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]);
 }
 
-
 #pragma acc routine seq
-void torque_cross(real* restrict ans, const real* restrict u,
-                  const real* restrict v)
+void torque_cross(real* restrict ans, const real* restrict u, const real* restrict v)
 {
    ans[0] = u[1] * v[2] - u[2] * v[1];
    ans[1] = u[2] * v[0] - u[0] * v[2];
    ans[2] = u[0] * v[1] - u[1] * v[0];
 }
-
 
 #pragma acc routine seq
 void torque_normal(real* restrict a, real _1_na)
@@ -31,7 +27,6 @@ void torque_normal(real* restrict a, real _1_na)
    a[2] *= _1_na;
 }
 }
-
 
 /**
  * This commit `09beaa8b0215913c1b658b0b2d8ecdf97bda8c15` had a weird problem
@@ -52,8 +47,7 @@ void torque_normal(real* restrict a, real _1_na)
  * everything in the "local memory", the segfault would disappear.
  */
 template <int DO_V>
-void torque_acc1(virial_buffer gpu_vir, grad_prec* gx, grad_prec* gy,
-                 grad_prec* gz)
+void torque_acc1(virial_buffer gpu_vir, grad_prec* gx, grad_prec* gy, grad_prec* gz)
 {
    auto bufsize = buffer_size();
 
@@ -156,8 +150,7 @@ void torque_acc1(virial_buffer gpu_vir, grad_prec* gx, grad_prec* gy,
       frcy[1] = 0;
       frcy[2] = 0;
 
-      if (axetyp == pole_z_only || axetyp == pole_z_then_x ||
-          axetyp == pole_bisector) {
+      if (axetyp == pole_z_only || axetyp == pole_z_then_x || axetyp == pole_bisector) {
          // find the perpendicular and angle for each pair of axes
          // v cross u
          real uvsiz1;
@@ -178,8 +171,7 @@ void torque_acc1(virial_buffer gpu_vir, grad_prec* gx, grad_prec* gy,
          if (axetyp == pole_z_only) {
             #pragma acc loop seq
             for (int j = 0; j < 3; ++j) {
-               real du =
-                  uv[j] * dphidv * usiz1 * uvsin1 + uw[j] * dphidw * usiz1;
+               real du = uv[j] * dphidv * usiz1 * uvsin1 + uw[j] * dphidw * usiz1;
                deia[j] += du;
                deib[j] -= du;
                if CONSTEXPR (DO_V) {
@@ -189,8 +181,7 @@ void torque_acc1(virial_buffer gpu_vir, grad_prec* gx, grad_prec* gy,
          } else if (axetyp == pole_z_then_x) {
             #pragma acc loop seq
             for (int j = 0; j < 3; ++j) {
-               real du =
-                  uv[j] * dphidv * usiz1 * uvsin1 + uw[j] * dphidw * usiz1;
+               real du = uv[j] * dphidv * usiz1 * uvsin1 + uw[j] * dphidw * usiz1;
                real dv = -uv[j] * dphidu * vsiz1 * uvsin1;
                deia[j] += du;
                deic[j] += dv;
@@ -209,10 +200,8 @@ void torque_acc1(virial_buffer gpu_vir, grad_prec* gx, grad_prec* gy,
 
             #pragma acc loop seq
             for (int j = 0; j < 3; ++j) {
-               real du = uv[j] * dphidv * usiz1 * uvsin1 +
-                  0.5f * uw[j] * dphidw * usiz1;
-               real dv = -uv[j] * dphidu * vsiz1 * uvsin1 +
-                  0.5f * vw[j] * dphidw * vsiz1;
+               real du = uv[j] * dphidv * usiz1 * uvsin1 + 0.5f * uw[j] * dphidw * usiz1;
+               real dv = -uv[j] * dphidu * vsiz1 * uvsin1 + 0.5f * vw[j] * dphidw * vsiz1;
                deia[j] += du;
                deic[j] += dv;
                deib[j] -= (du + dv);
@@ -295,10 +284,8 @@ void torque_acc1(virial_buffer gpu_vir, grad_prec* gx, grad_prec* gy,
          #pragma acc loop seq
          for (int j = 0; j < 3; ++j) {
             real du = ur[j] * dphidr * usiz1 * ursin1 + us[j] * dphids * usiz1;
-            real dv = (vssin * s[j] - vscos * t1[j]) * dphidu * vsiz1 *
-               _1_ut1sin_ut2sin;
-            real dw = (wssin * s[j] - wscos * t2[j]) * dphidu * wsiz1 *
-               _1_ut1sin_ut2sin;
+            real dv = (vssin * s[j] - vscos * t1[j]) * dphidu * vsiz1 * _1_ut1sin_ut2sin;
+            real dw = (wssin * s[j] - wscos * t2[j]) * dphidu * wsiz1 * _1_ut1sin_ut2sin;
             deia[j] += du;
             deic[j] += dv;
             deid[j] += dw;
@@ -340,8 +327,7 @@ void torque_acc1(virial_buffer gpu_vir, grad_prec* gx, grad_prec* gy,
          torque_cross(eps, del, w);
          #pragma acc loop seq
          for (int j = 0; j < 3; ++j) {
-            real dw = del[j] * dphidr * wsiz1 * rwsin1 +
-               eps[j] * dphiddel * wpcos * wsiz1 * psiz1;
+            real dw = del[j] * dphidr * wsiz1 * rwsin1 + eps[j] * dphiddel * wpcos * wsiz1 * psiz1;
             deid[j] += dw;
             deib[j] -= dw;
             if CONSTEXPR (DO_V) {
@@ -364,8 +350,7 @@ void torque_acc1(virial_buffer gpu_vir, grad_prec* gx, grad_prec* gy,
          torque_cross(eps, del, u);
          #pragma acc loop seq
          for (int j = 0; j < 3; ++j) {
-            real du = del[j] * dphidr * usiz1 * rusin1 +
-               eps[j] * dphiddel * upcos * usiz1 * psiz1;
+            real du = del[j] * dphidr * usiz1 * rusin1 + eps[j] * dphiddel * upcos * usiz1 * psiz1;
             deia[j] += du;
             deib[j] -= du;
             if CONSTEXPR (DO_V) {
@@ -388,8 +373,7 @@ void torque_acc1(virial_buffer gpu_vir, grad_prec* gx, grad_prec* gy,
          torque_cross(eps, del, v);
          #pragma acc loop seq
          for (int j = 0; j < 3; ++j) {
-            real dv = del[j] * dphidr * vsiz1 * rvsin1 +
-               eps[j] * dphiddel * vpcos * vsiz1 * psiz1;
+            real dv = del[j] * dphidr * vsiz1 * rvsin1 + eps[j] * dphiddel * vpcos * vsiz1 * psiz1;
             deic[j] += dv;
             deib[j] -= dv;
             if CONSTEXPR (DO_V) {
@@ -434,22 +418,21 @@ void torque_acc1(virial_buffer gpu_vir, grad_prec* gx, grad_prec* gy,
 
          real vxx = xix * frcx[0] + xiy * frcy[0] + xiz * frcz[0];
          real vxy = 0.5f *
-            (yix * frcx[0] + yiy * frcy[0] + yiz * frcz[0] + xix * frcx[1] +
-             xiy * frcy[1] + xiz * frcz[1]);
+            (yix * frcx[0] + yiy * frcy[0] + yiz * frcz[0] + xix * frcx[1] + xiy * frcy[1] +
+               xiz * frcz[1]);
          real vxz = 0.5f *
-            (zix * frcx[0] + ziy * frcy[0] + ziz * frcz[0] + xix * frcx[2] +
-             xiy * frcy[2] + xiz * frcz[2]);
+            (zix * frcx[0] + ziy * frcy[0] + ziz * frcz[0] + xix * frcx[2] + xiy * frcy[2] +
+               xiz * frcz[2]);
          real vyy = yix * frcx[1] + yiy * frcy[1] + yiz * frcz[1];
          real vyz = 0.5f *
-            (zix * frcx[1] + ziy * frcy[1] + ziz * frcz[1] + yix * frcx[2] +
-             yiy * frcy[2] + yiz * frcz[2]);
+            (zix * frcx[1] + ziy * frcy[1] + ziz * frcz[1] + yix * frcx[2] + yiy * frcy[2] +
+               yiz * frcz[2]);
          real vzz = zix * frcx[2] + ziy * frcy[2] + ziz * frcz[2];
 
          atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir, i & (bufsize - 1));
       } // end if CONSTEXPR (DO_V)
    }    // end for (int i)
 }
-
 
 void torque_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz)
 {

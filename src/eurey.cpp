@@ -63,7 +63,6 @@ void eurey(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
-
    if (rc_a) {
       host_zero(energy_eub, virial_eub);
       auto bsize = buffer_size();
@@ -75,9 +74,7 @@ void eurey(int vers)
          darray::zero(g::q0, n, deubx, deuby, deubz);
    }
 
-
    eurey_acc(vers);
-
 
    if (rc_a) {
       if (do_e) {

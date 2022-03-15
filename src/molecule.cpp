@@ -3,7 +3,6 @@
 #include "tool/darray.h"
 #include <tinker/detail/molcul.hh>
 
-
 namespace tinker {
 void molecule_data(rc_op op)
 {
@@ -12,12 +11,10 @@ void molecule_data(rc_op op)
       darray::deallocate(st.imol, st.kmol, st.molecule, st.molmass);
    }
 
-
    if (op & rc_alloc) {
       auto& st = molecule;
       darray::allocate(n, &st.imol, &st.kmol, &st.molecule, &st.molmass);
    }
-
 
    if (op & rc_init) {
       auto& st = molecule;

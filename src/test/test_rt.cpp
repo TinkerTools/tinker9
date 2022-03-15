@@ -4,7 +4,6 @@
 #include <fstream>
 #include <tinker/detail/bath.hh>
 
-
 namespace tinker {
 TestFile::TestFile(const std::string& file, std::string dst, std::string extra)
 {
@@ -16,7 +15,6 @@ TestFile::TestFile(const std::string& file, std::string dst, std::string extra)
    } else {
       name = dst;
    }
-
 
    if (file != "") {
       std::ifstream fsrc(file, std::ios::binary);
@@ -37,24 +35,20 @@ TestFile::TestFile(const std::string& file, std::string dst, std::string extra)
    }
 }
 
-
 TestFile::~TestFile()
 {
    if (good)
       std::remove(name.c_str());
 }
 
-
 void TestFile::__keep()
 {
    good = false;
 }
 
-
 TestFileExpected::TestFileExpected(const std::string& name)
    : m_name(name)
 {}
-
 
 TestFileExpected::~TestFileExpected()
 {
@@ -64,20 +58,17 @@ TestFileExpected::~TestFileExpected()
    }
 }
 
-
 TestReference::TestReference(std::string fname)
 {
    std::ifstream fr(fname);
    if (!fr)
       TINKER_THROW(format("TestReference cannot open file %s", fname));
 
-
    std::string l;
    while (fr) {
       std::getline(fr, l);
       Text::upcase(l);
       size_t end = std::string::npos;
-
 
       if (l.find("TOTAL POTENTIAL ENERGY :") != end) {
          //  Total Potential Energy :               -863.8791 Kcal/mole
@@ -115,30 +106,25 @@ TestReference::TestReference(std::string fname)
    }
 }
 
-
 int TestReference::get_count() const
 {
    return this->count;
 }
-
 
 double TestReference::get_energy() const
 {
    return this->energy;
 }
 
-
 double (*TestReference::get_virial())[3]
 {
    return this->virial;
 }
 
-
 double (*TestReference::get_gradient())[3]
 {
    return reinterpret_cast<double(*)[3]>(this->gradient.data());
 }
-
 
 double test_get_eps(double eps_single, double eps_double)
 {
@@ -153,7 +139,6 @@ double test_get_eps(double eps_single, double eps_double)
 #endif
 }
 
-
 void test_begin_with_args(int argc, const char** argv)
 {
    tinkerFortranRuntimeBegin(argc, const_cast<char**>(argv));
@@ -165,13 +150,11 @@ void test_begin_with_args(int argc, const char** argv)
    mechanic2();
 }
 
-
 void test_end()
 {
    tinker_f_final();
    tinkerFortranRuntimeEnd();
 }
-
 
 void test_mdinit(double t, double atm)
 {

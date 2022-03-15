@@ -9,9 +9,8 @@
 #include "tool/gpu_card.h"
 
 namespace tinker {
-#define POLAR_DPTRS                                                            \
-   x, y, z, depx, depy, depz, rpole, thole, pdamp, uind, uinp, nep, ep,        \
-      vir_ep, ufld, dufld
+#define POLAR_DPTRS                                                                                \
+   x, y, z, depx, depy, depz, rpole, thole, pdamp, uind, uinp, nep, ep, vir_ep, ufld, dufld
 template <class Ver>
 void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
 {
@@ -103,10 +102,10 @@ void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
             MAYBE_UNUSED real e;
             pair_polar<do_e, do_g, NON_EWALD>( //
                r2, xr, yr, zr, 1, 1, 1,        //
-               ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
-               uiz, uixp, uiyp, uizp, pdi, pti, //
-               ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
-               ukz, ukxp, ukyp, ukzp, pdamp[k], thole[k], //
+               ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy, uiz, uixp, uiyp,
+               uizp, pdi, pti, //
+               ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky, ukz, ukxp, ukyp,
+               ukzp, pdamp[k], thole[k], //
                f, 0, e, pgrad);
 
             if CONSTEXPR (do_a)
@@ -239,10 +238,10 @@ void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
          MAYBE_UNUSED real e;
          pair_polar<do_e, do_g, NON_EWALD>(         //
             r2, xr, yr, zr, dscale, pscale, uscale, //
-            ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy,
-            uiz, uixp, uiyp, uizp, pdi, pti, //
-            ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
-            ukz, ukxp, ukyp, ukzp, pdamp[k], thole[k], //
+            ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy, uiz, uixp, uiyp, uizp,
+            pdi, pti, //
+            ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky, ukz, ukxp, ukyp, ukzp,
+            pdamp[k], thole[k], //
             f, 0, e, pgrad);
 
          if CONSTEXPR (do_a)
@@ -309,15 +308,12 @@ void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
          real qiyz = rpole[i][mpl_pme_yz];
          real qizz = rpole[i][mpl_pme_zz];
 
-         real tep1 = diz * ufld[i][1] - diy * ufld[i][2] + qixz * dufld[i][1] -
-            qixy * dufld[i][3] + 2 * qiyz * (dufld[i][2] - dufld[i][5]) +
-            (qizz - qiyy) * dufld[i][4];
-         real tep2 = dix * ufld[i][2] - diz * ufld[i][0] - qiyz * dufld[i][1] +
-            qixy * dufld[i][4] + 2 * qixz * (dufld[i][5] - dufld[i][0]) +
-            (qixx - qizz) * dufld[i][3];
-         real tep3 = diy * ufld[i][0] - dix * ufld[i][1] + qiyz * dufld[i][3] -
-            qixz * dufld[i][4] + 2 * qixy * (dufld[i][0] - dufld[i][2]) +
-            (qiyy - qixx) * dufld[i][1];
+         real tep1 = diz * ufld[i][1] - diy * ufld[i][2] + qixz * dufld[i][1] - qixy * dufld[i][3] +
+            2 * qiyz * (dufld[i][2] - dufld[i][5]) + (qizz - qiyy) * dufld[i][4];
+         real tep2 = dix * ufld[i][2] - diz * ufld[i][0] - qiyz * dufld[i][1] + qixy * dufld[i][4] +
+            2 * qixz * (dufld[i][5] - dufld[i][0]) + (qixx - qizz) * dufld[i][3];
+         real tep3 = diy * ufld[i][0] - dix * ufld[i][1] + qiyz * dufld[i][3] - qixz * dufld[i][4] +
+            2 * qixy * (dufld[i][0] - dufld[i][2]) + (qiyy - qixx) * dufld[i][1];
 
          trqx[i] += tep1;
          trqy[i] += tep2;

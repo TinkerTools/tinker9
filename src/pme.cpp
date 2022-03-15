@@ -13,16 +13,14 @@
 #include <tinker/detail/ewald.hh>
 #include <tinker/detail/pme.hh>
 
-
 namespace tinker {
 bool PME::Params::operator==(const Params& st) const
 {
    const double eps = 1.0e-6;
-   bool ans = std::fabs(aewald - st.aewald) < eps && nfft1 == st.nfft1 &&
-      nfft2 == st.nfft2 && nfft3 == st.nfft3 && bsorder == st.bsorder;
+   bool ans = std::fabs(aewald - st.aewald) < eps && nfft1 == st.nfft1 && nfft2 == st.nfft2 &&
+      nfft3 == st.nfft3 && bsorder == st.bsorder;
    return ans;
 }
-
 
 PME::Params::Params(real a, int n1, int n2, int n3, int o)
    : aewald(a)
@@ -31,7 +29,6 @@ PME::Params::Params(real a, int n1, int n2, int n3, int o)
    , nfft3(n3)
    , bsorder(o)
 {}
-
 
 void PME::set_params(const PME::Params& p)
 {
@@ -42,19 +39,16 @@ void PME::set_params(const PME::Params& p)
    bsorder = p.bsorder;
 }
 
-
 PME::Params PME::get_params() const
 {
    Params p0(aewald, nfft1, nfft2, nfft3, bsorder);
    return p0;
 }
 
-
 bool PME::operator==(const Params& p) const
 {
    return get_params() == p;
 }
-
 
 PME::~PME()
 {
@@ -81,13 +75,11 @@ void pme_op_alloc(PMEUnit& unit, const PME::Params& p, bool unique)
       darray::allocate(p.nfft3, &st.bsmod3);
       darray::allocate(2 * p.nfft1 * p.nfft2 * p.nfft3, &st.qgrid);
       darray::allocate(3 * n, &st.igrid);
-      darray::allocate(padded_n * p.bsorder * 4, &st.thetai1, &st.thetai2,
-                       &st.thetai3);
+      darray::allocate(padded_n * p.bsorder * 4, &st.thetai1, &st.thetai2, &st.thetai3);
 
       st.set_params(p);
    }
 }
-
 
 void pme_op_copyin(PMEUnit unit)
 {
@@ -127,13 +119,11 @@ void pme_op_copyin(PMEUnit unit)
 }
 }
 
-
 namespace tinker {
 void pme_data(rc_op op)
 {
    if (!use_ewald() && !use_dewald())
       return;
-
 
    if (op & rc_dealloc) {
       PMEUnit::clear();
@@ -142,7 +132,6 @@ void pme_data(rc_op op)
       pvpme_unit.close();
       dpme_unit.close();
    }
-
 
    if (op & rc_init) {
       if (!bound::use_bounds) {
@@ -155,38 +144,31 @@ void pme_data(rc_op op)
       }
    }
 
-
    if (use_potent(charge_term) && use_ewald()) {
       if (op & rc_alloc) {
          epme_unit.close();
-         PME::Params p(ewald::aeewald, pme::nefft1, pme::nefft2, pme::nefft3,
-                       pme::bseorder);
+         PME::Params p(ewald::aeewald, pme::nefft1, pme::nefft2, pme::nefft3, pme::bseorder);
          pme_op_alloc(epme_unit, p, false);
       }
-
 
       if (op & rc_init) {
          pme_op_copyin(epme_unit);
       }
    }
 
-
    if ((use_potent(mpole_term) || use_potent(polar_term)) && use_ewald()) {
       if (op & rc_dealloc) {
          darray::deallocate(cmp, fmp, cphi, fphi);
          if (use_potent(polar_term)) {
-            darray::deallocate(fuind, fuinp, fdip_phi1, fdip_phi2, cphidp,
-                               fphidp);
+            darray::deallocate(fuind, fuinp, fdip_phi1, fdip_phi2, cphidp, fphidp);
             darray::deallocate(vir_m);
          }
       }
 
-
       if (op & rc_alloc) {
          darray::allocate(n, &cmp, &fmp, &cphi, &fphi);
          if (use_potent(polar_term)) {
-            darray::allocate(n, &fuind, &fuinp, &fdip_phi1, &fdip_phi2, &cphidp,
-                             &fphidp);
+            darray::allocate(n, &fuind, &fuinp, &fdip_phi1, &fdip_phi2, &cphidp, &fphidp);
             if (rc_flag & calc::virial)
                darray::allocate(buffer_size(), &vir_m);
             else
@@ -195,26 +177,21 @@ void pme_data(rc_op op)
             vir_m = nullptr;
          }
 
-
          bool unique_grids = false;
-
 
          // electrostatics
          epme_unit.close();
          if (use_potent(mpole_term)) {
             unique_grids = false;
-            PME::Params p(ewald::aeewald, pme::nefft1, pme::nefft2, pme::nefft3,
-                          pme::bseorder);
+            PME::Params p(ewald::aeewald, pme::nefft1, pme::nefft2, pme::nefft3, pme::bseorder);
             pme_op_alloc(epme_unit, p, unique_grids);
          }
-
 
          // polarization
          ppme_unit.close();
          pvpme_unit.close();
          if (use_potent(polar_term)) {
-            PME::Params p(ewald::apewald, pme::nefft1, pme::nefft2, pme::nefft3,
-                          pme::bsporder);
+            PME::Params p(ewald::apewald, pme::nefft1, pme::nefft2, pme::nefft3, pme::bsporder);
             pme_op_alloc(ppme_unit, p, unique_grids);
             if (rc_flag & calc::virial) {
                unique_grids = true;
@@ -223,7 +200,6 @@ void pme_data(rc_op op)
          }
       }
 
-
       if (op & rc_init) {
          pme_op_copyin(epme_unit);
          pme_op_copyin(ppme_unit);
@@ -231,15 +207,12 @@ void pme_data(rc_op op)
       }
    }
 
-
    if (use_potent(disp_term) && use_dewald()) {
       if (op & rc_alloc) {
          dpme_unit.close();
-         PME::Params p(ewald::adewald, pme::ndfft1, pme::ndfft2, pme::ndfft3,
-                       pme::bsdorder);
+         PME::Params p(ewald::adewald, pme::ndfft1, pme::ndfft2, pme::ndfft3, pme::bsdorder);
          pme_op_alloc(dpme_unit, p, false);
       }
-
 
       if (op & rc_init) {
          pme_op_copyin(dpme_unit);

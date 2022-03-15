@@ -5,19 +5,18 @@
 #include "seq_damp_hippo.h"
 #include "seq_pair_mpole.h"
 
-
 namespace tinker {
 #pragma acc routine seq
 template <bool do_e, bool do_g, class ETYP, int CFLX>
 SEQ_CUDA
 void pair_mpole_chgpen(                             //
    real r2, real xr, real yr, real zr, real mscale, //
-   real ci, real dix, real diy, real diz, real corei, real vali, real alphai,
-   real qixx, real qixy, real qixz, real qiyy, real qiyz, real qizz, //
-   real ck, real dkx, real dky, real dkz, real corek, real valk, real alphak,
-   real qkxx, real qkxy, real qkxz, real qkyy, real qkyz, real qkzz, //
-   real f, real aewald, real& restrict e, real& restrict poti,
-   real& restrict potk, PairMPoleGrad& restrict pgrad)
+   real ci, real dix, real diy, real diz, real corei, real vali, real alphai, real qixx, real qixy,
+   real qixz, real qiyy, real qiyz, real qizz, //
+   real ck, real dkx, real dky, real dkz, real corek, real valk, real alphak, real qkxx, real qkxy,
+   real qkxz, real qkyy, real qkyz, real qkzz, //
+   real f, real aewald, real& restrict e, real& restrict poti, real& restrict potk,
+   PairMPoleGrad& restrict pgrad)
 {
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
@@ -52,8 +51,8 @@ void pair_mpole_chgpen(                             //
    real qik = qix * qkx + qiy * qky + qiz * qkz;
    real diqk = dix * qkx + diy * qky + diz * qkz;
    real dkqi = dkx * qix + dky * qiy + dkz * qiz;
-   real qiqk = 2 * (qixy * qkxy + qixz * qkxz + qiyz * qkyz) + qixx * qkxx +
-      qiyy * qkyy + qizz * qkzz;
+   real qiqk =
+      2 * (qixy * qkxy + qixz * qkxz + qiyz * qkyz) + qixx * qkxx + qiyy * qkyy + qizz * qkzz;
 
    // chgpen terms
    real term1 = corei * corek;
@@ -65,13 +64,11 @@ void pair_mpole_chgpen(                             //
    real term3k = corei * qkr;
    real term1ik = vali * valk;
    real term2ik = valk * dir - vali * dkr + dik;
-   real term3ik =
-      vali * qkr + valk * qir - dir * dkr + 2 * (dkqi - diqk + qiqk);
+   real term3ik = vali * qkr + valk * qir - dir * dkr + 2 * (dkqi - diqk + qiqk);
    real term4ik = dir * qkr - dkr * qir - 4 * qik;
    real term5ik = qir * qkr;
 
-   real rr1i, rr3i, rr5i, rr7i, rr1k, rr3k, rr5k, rr7k, rr1ik, rr3ik, rr5ik,
-      rr7ik, rr9ik, rr11ik;
+   real rr1i, rr3i, rr5i, rr7i, rr1k, rr3k, rr5k, rr7k, rr1ik, rr3ik, rr5ik, rr7ik, rr9ik, rr11ik;
 
    // Compute damping factors
    if CONSTEXPR (do_g) {
@@ -105,7 +102,6 @@ void pair_mpole_chgpen(                             //
          bn[5] = rr11;
    } // endif NON_EWALD
 
-
    rr1i = bn[0] - (1 - mscale * dmpi[0]) * rr1;
    rr3i = bn[1] - (1 - mscale * dmpi[1]) * rr3;
    rr5i = bn[2] - (1 - mscale * dmpi[2]) * rr5;
@@ -124,11 +120,10 @@ void pair_mpole_chgpen(                             //
    rr1 = bn[0] - (1 - mscale) * rr1;
    rr3 = bn[1] - (1 - mscale) * rr3;
 
-
    if CONSTEXPR (do_e) {
-      e = term1 * rr1 + term4ik * rr7ik + term5ik * rr9ik + term1i * rr1i +
-         term1k * rr1k + term1ik * rr1ik + term2i * rr3i + term2k * rr3k +
-         term2ik * rr3ik + term3i * rr5i + term3k * rr5k + term3ik * rr5ik;
+      e = term1 * rr1 + term4ik * rr7ik + term5ik * rr9ik + term1i * rr1i + term1k * rr1k +
+         term1ik * rr1ik + term2i * rr3i + term2k * rr3k + term2ik * rr3ik + term3i * rr5i +
+         term3k * rr5k + term3ik * rr5ik;
    } // end if (do_e)
 
    if CONSTEXPR (do_g) {
@@ -147,18 +142,15 @@ void pair_mpole_chgpen(                             //
       real dkqiy = dkx * qixy + dky * qiyy + dkz * qiyz;
       real dkqiz = dkx * qixz + dky * qiyz + dkz * qizz;
 
-      real de = term1 * rr3 + term4ik * rr9ik + term5ik * rr11ik +
-         term1i * rr3i + term1k * rr3k + term1ik * rr3ik + term2i * rr5i +
-         term2k * rr5k + term2ik * rr5ik + term3i * rr7i + term3k * rr7k +
-         term3ik * rr7ik;
+      real de = term1 * rr3 + term4ik * rr9ik + term5ik * rr11ik + term1i * rr3i + term1k * rr3k +
+         term1ik * rr3ik + term2i * rr5i + term2k * rr5k + term2ik * rr5ik + term3i * rr7i +
+         term3k * rr7k + term3ik * rr7ik;
 
       term1 = -corek * rr3i - valk * rr3ik + dkr * rr5ik - qkr * rr7ik;
       real term2 = corei * rr3k + vali * rr3ik + dir * rr5ik + qir * rr7ik;
       real term3 = 2 * rr5ik;
-      real term4 =
-         -2 * (corek * rr5i + valk * rr5ik - dkr * rr7ik + qkr * rr9ik);
-      real term5 =
-         -2 * (corei * rr5k + vali * rr5ik + dir * rr7ik + qir * rr9ik);
+      real term4 = -2 * (corek * rr5i + valk * rr5ik - dkr * rr7ik + qkr * rr9ik);
+      real term5 = -2 * (corei * rr5k + vali * rr5ik + dir * rr7ik + qir * rr9ik);
       real term6 = 4 * rr7ik;
 
       if CONSTEXPR (CFLX) {
@@ -172,16 +164,13 @@ void pair_mpole_chgpen(                             //
          potk = t1k + t2k + t3k;
       }
 
-      pgrad.frcx = de * xr + term1 * dix + term2 * dkx +
-         term3 * (diqkx - dkqix) + term4 * qix + term5 * qkx +
-         term6 * (qixk + qkxi);
+      pgrad.frcx = de * xr + term1 * dix + term2 * dkx + term3 * (diqkx - dkqix) + term4 * qix +
+         term5 * qkx + term6 * (qixk + qkxi);
 
-      pgrad.frcy = de * yr + term1 * diy + term2 * dky +
-         term3 * (diqky - dkqiy) + term4 * qiy + term5 * qky +
-         term6 * (qiyk + qkyi);
-      pgrad.frcz = de * zr + term1 * diz + term2 * dkz +
-         term3 * (diqkz - dkqiz) + term4 * qiz + term5 * qkz +
-         term6 * (qizk + qkzi);
+      pgrad.frcy = de * yr + term1 * diy + term2 * dky + term3 * (diqky - dkqiy) + term4 * qiy +
+         term5 * qky + term6 * (qiyk + qkyi);
+      pgrad.frcz = de * zr + term1 * diz + term2 * dkz + term3 * (diqkz - dkqiz) + term4 * qiz +
+         term5 * qkz + term6 * (qizk + qkzi);
 
       // torque
       real dirx = diy * zr - diz * yr;
@@ -219,30 +208,24 @@ void pair_mpole_chgpen(                             //
       real dkqirz = dkqiy * xr - dkqix * yr;
 
       real dqikx = diy * qkz - diz * qky + dky * qiz - dkz * qiy -
-         2 *
-            (qixy * qkxz + qiyy * qkyz + qiyz * qkzz - qixz * qkxy -
-             qiyz * qkyy - qizz * qkyz);
+         2 * (qixy * qkxz + qiyy * qkyz + qiyz * qkzz - qixz * qkxy - qiyz * qkyy - qizz * qkyz);
       real dqiky = diz * qkx - dix * qkz + dkz * qix - dkx * qiz -
-         2 *
-            (qixz * qkxx + qiyz * qkxy + qizz * qkxz - qixx * qkxz -
-             qixy * qkyz - qixz * qkzz);
+         2 * (qixz * qkxx + qiyz * qkxy + qizz * qkxz - qixx * qkxz - qixy * qkyz - qixz * qkzz);
       real dqikz = dix * qky - diy * qkx + dkx * qiy - dky * qix -
-         2 *
-            (qixx * qkxy + qixy * qkyy + qixz * qkyz - qixy * qkxx -
-             qiyy * qkxy - qiyz * qkxz);
+         2 * (qixx * qkxy + qixy * qkyy + qixz * qkyz - qixy * qkxx - qiyy * qkxy - qiyz * qkxz);
 
-      pgrad.ttmi[0] = -rr3ik * dikx + term1 * dirx + term3 * (dqikx + dkqirx) -
-         term4 * qirx - term6 * (qikrx + qikx);
-      pgrad.ttmi[1] = -rr3ik * diky + term1 * diry + term3 * (dqiky + dkqiry) -
-         term4 * qiry - term6 * (qikry + qiky);
-      pgrad.ttmi[2] = -rr3ik * dikz + term1 * dirz + term3 * (dqikz + dkqirz) -
-         term4 * qirz - term6 * (qikrz + qikz);
-      pgrad.ttmk[0] = rr3ik * dikx + term2 * dkrx - term3 * (dqikx + diqkrx) -
-         term5 * qkrx - term6 * (qkirx - qikx);
-      pgrad.ttmk[1] = rr3ik * diky + term2 * dkry - term3 * (dqiky + diqkry) -
-         term5 * qkry - term6 * (qkiry - qiky);
-      pgrad.ttmk[2] = rr3ik * dikz + term2 * dkrz - term3 * (dqikz + diqkrz) -
-         term5 * qkrz - term6 * (qkirz - qikz);
+      pgrad.ttmi[0] = -rr3ik * dikx + term1 * dirx + term3 * (dqikx + dkqirx) - term4 * qirx -
+         term6 * (qikrx + qikx);
+      pgrad.ttmi[1] = -rr3ik * diky + term1 * diry + term3 * (dqiky + dkqiry) - term4 * qiry -
+         term6 * (qikry + qiky);
+      pgrad.ttmi[2] = -rr3ik * dikz + term1 * dirz + term3 * (dqikz + dkqirz) - term4 * qirz -
+         term6 * (qikrz + qikz);
+      pgrad.ttmk[0] = rr3ik * dikx + term2 * dkrx - term3 * (dqikx + diqkrx) - term5 * qkrx -
+         term6 * (qkirx - qikx);
+      pgrad.ttmk[1] = rr3ik * diky + term2 * dkry - term3 * (dqiky + diqkry) - term5 * qkry -
+         term6 * (qkiry - qiky);
+      pgrad.ttmk[2] = rr3ik * dikz + term2 * dkrz - term3 * (dqikz + diqkrz) - term5 * qkrz -
+         term6 * (qkirz - qikz);
    } // end if (do_g)
 }
 }

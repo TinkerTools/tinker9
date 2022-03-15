@@ -6,7 +6,6 @@
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/sizes.hh>
 
-
 namespace tinker {
 void empole_data(rc_op op)
 {
@@ -43,10 +42,8 @@ void empole_data(rc_op op)
       }
    }
 
-   if (op & rc_init) {
-   }
+   if (op & rc_init) {}
 }
-
 
 void empole(int vers)
 {
@@ -55,7 +52,6 @@ void empole(int vers)
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-
 
    host_zero(energy_em, virial_em);
    size_t bsize = buffer_size();
@@ -69,7 +65,6 @@ void empole(int vers)
       if (do_g)
          darray::zero(g::q0, n, demx, demy, demz);
    }
-
 
    mpole_init(vers);
    if (use_ewald())
@@ -86,7 +81,6 @@ void empole(int vers)
          virial_elec[iv] += v2[iv];
       }
    }
-
 
    if (rc_a) {
       if (do_e) {
@@ -109,7 +103,6 @@ void empole(int vers)
    }
 }
 
-
 void empole_nonewald(int vers)
 {
 #if TINKER_CUDART
@@ -120,13 +113,11 @@ void empole_nonewald(int vers)
       empole_nonewald_acc(vers);
 }
 
-
 void empole_ewald(int vers)
 {
    empole_ewald_real_self(vers);
    empole_ewald_recip(vers);
 }
-
 
 void empole_ewald_real_self(int vers)
 {
@@ -137,7 +128,6 @@ void empole_ewald_real_self(int vers)
 #endif
       empole_ewald_real_self_acc(vers);
 }
-
 
 void empole_ewald_recip(int vers)
 {

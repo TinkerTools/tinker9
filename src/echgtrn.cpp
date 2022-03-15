@@ -7,16 +7,13 @@
 #include <tinker/detail/chgtrn.hh>
 #include <tinker/detail/ctrpot.hh>
 
-
 namespace tinker {
 void echgtrn_data(rc_op op)
 {
    if (!use_potent(chgtrn_term))
       return;
 
-
    bool rc_a = rc_flag & calc::analyz;
-
 
    if (op & rc_dealloc) {
       darray::deallocate(chgct, dmpct);
@@ -33,10 +30,8 @@ void echgtrn_data(rc_op op)
       dectz = nullptr;
    }
 
-
    if (op & rc_alloc) {
       darray::allocate(n, &chgct, &dmpct);
-
 
       nct = nullptr;
       ect = eng_buf_elec;
@@ -49,7 +44,6 @@ void echgtrn_data(rc_op op)
          buffer_allocate(rc_flag, &ect, &vir_ect, &dectx, &decty, &dectz);
       }
    }
-
 
    if (op & rc_init) {
       darray::copyin(g::q0, n, chgct, chgtrn::chgct);
@@ -65,7 +59,6 @@ void echgtrn_data(rc_op op)
    }
 }
 
-
 void echgtrn(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -73,7 +66,6 @@ void echgtrn(int vers)
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-
 
    host_zero(energy_ect, virial_ect);
    size_t bsize = buffer_size();
@@ -88,14 +80,12 @@ void echgtrn(int vers)
          darray::zero(g::q0, n, dectx, decty, dectz);
    }
 
-
 #if TINKER_CUDART
    if (mlist_version() & NBL_SPATIAL)
       echgtrn_cu(vers);
    else
 #endif
       echgtrn_acc(vers);
-
 
    if (rc_a) {
       if (do_e) {

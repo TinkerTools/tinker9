@@ -1,7 +1,6 @@
 #pragma once
 #include "mathfunc.h"
 
-
 namespace tinker {
 __device__
 inline int xy_to_tri(int x, int y)
@@ -10,7 +9,6 @@ inline int xy_to_tri(int x, int y)
    int base = (lx + 1) * lx / 2;
    return base + y;
 }
-
 
 __device__
 inline void tri_to_xy(int f, int& x, int& y)
