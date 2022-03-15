@@ -355,7 +355,8 @@ void rattle_data(rc_op op)
          darray::copyin(g::q0, nrmol, rattle_dmol.molmass, hvec_molmass.data());
          darray::copyin(g::q0, n, rattle_dmol.kmol, hvec_kmol.data());
          darray::copyin(g::q0, n, rattle_dmol.molecule, hvec_molec.data());
-         darray::copyin(g::q0, n, ratcom_massfrac, hvec_massfrac.data());
+         if (rc_flag & calc::md)
+            darray::copyin(g::q0, n, ratcom_massfrac, hvec_massfrac.data());
          wait_for(g::q0);
       }
 

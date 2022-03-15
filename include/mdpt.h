@@ -8,7 +8,6 @@ void kinetic_explicit(T_prec& temp_out, energy_prec& eksum_out, energy_prec (&ek
    const vel_prec* vx, const vel_prec* vy, const vel_prec* vz);
 void kinetic(T_prec& temp);
 
-void temper(time_prec dt, T_prec& temp, bool save);
 /**
  * \ingroup mdpt
  * \brief Berendsen barostat by scaling the coordinates and box dimensions via
@@ -24,51 +23,13 @@ void temper(time_prec dt, T_prec& temp, bool save);
  *    J. Chem. Phys., 81, 3684-3690 (1984).
  *    </a>
  */
-void pressure(time_prec dt);
-
-enum class Thermostat
-{
-   BERENDSEN,
-   BUSSI,
-   ANDERSEN,
-   NOSE_HOOVER_CHAIN,
-   LEAPFROG_LPISTON,
-   NONE
-};
-constexpr auto BERENDSEN_THERMOSTAT = Thermostat::BERENDSEN;
-constexpr auto BUSSI_THERMOSTAT = Thermostat::BUSSI;
-constexpr auto ANDERSEN_THERMOSTAT = Thermostat::ANDERSEN;
-constexpr auto NOSE_HOOVER_CHAIN_THERMOSTAT = Thermostat::NOSE_HOOVER_CHAIN;
-constexpr auto LEAPFROG_LPISTON_THERMOSTAT = Thermostat::LEAPFROG_LPISTON;
-constexpr auto NONE_THERMOSTAT = Thermostat::NONE;
-extern Thermostat thermostat;
 
 //====================================================================//
 
 void bussi_thermostat(time_prec dt, T_prec temp);
 void bussi_thermostat_acc(time_prec dt, T_prec temp);
 
-enum class Barostat
-{
-   BERENDSEN,
-   BUSSI,
-   NOSE_HOOVER_CHAIN,
-   LEAPFROG_LPISTON,
-   LANGEVIN,
-   MONTE_CARLO,
-   NONE
-};
-constexpr auto BERENDSEN_BAROSTAT = Barostat::BERENDSEN;
-constexpr auto BUSSI_BAROSTAT = Barostat::BUSSI;
-constexpr auto NOSE_HOOVER_CHAIN_BAROSTAT = Barostat::NOSE_HOOVER_CHAIN;
-constexpr auto LEAPFROG_LPISTON_BAROSTAT = Barostat::LEAPFROG_LPISTON;
-constexpr auto LANGEVIN_BAROSTAT = Barostat::LANGEVIN;
-constexpr auto MONTE_CARLO_BAROSTAT = Barostat::MONTE_CARLO;
-constexpr auto NONE_BAROSTAT = Barostat::NONE;
-extern Barostat barostat;
-
 extern pos_prec *x_pmonte, *y_pmonte, *z_pmonte;
-extern bool do_pmonte;
 /**
  * \ingroup mdpt
  * \param temp  Current temperature. If the simulation is also isotermal, this
@@ -94,7 +55,7 @@ void berendsen_barostat_acc(time_prec);
  *    Molecular Physics, 87, 1117-1157 (1996).
  *    </a>
  */
-inline void temper2(time_prec dt, T_prec& temp) {}
+
 /**
  * \ingroup mdpt
  * \brief Applies a box size correction as needed for the Monte Carlo barostat
@@ -107,5 +68,4 @@ inline void temper2(time_prec dt, T_prec& temp) {}
  *    Molecular Physics, 23, 41-58 (1972).
  *    </a>
  */
-void pressure2(energy_prec epot, T_prec temp);
 }

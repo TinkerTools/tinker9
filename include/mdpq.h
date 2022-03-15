@@ -99,10 +99,17 @@ void propagate_pos_acc(
 
 /**
  * \ingroup mdpq
- * x = a x + b v
+ * \brief x = a x + b v
  */
 void propagate_pos_axbv(double a, double b);
-void propagate_pos_axbv_acc(double a, double b);
+
+
+/**
+ * \ingroup mdpq
+ * \brief v = a v + b f
+ */
+void propagate_vel_avbf(double a, double b, const grad_prec* grx,
+                        const grad_prec* gry, const grad_prec* grz);
 
 /**
  * \ingroup mdpq

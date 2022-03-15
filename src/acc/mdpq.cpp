@@ -43,6 +43,31 @@ void propagate_pos_axbv_acc(double a, double b)
    }
 }
 
+void propagate_vel_avbf_acc(
+   double a, double b, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz)
+{
+   vel_prec ekcal = units::ekcal;
+   vel_prec sa = a, sb = b;
+   #pragma acc parallel loop independent async\
+               deviceptr(massinv,vx,vy,vz,grx,gry,grz)
+   for (int i = 0; i < n; ++i) {
+      vel_prec coef = -ekcal * massinv[i];
+      vel_prec v0x, v0y, v0z;
+      v0x = vx[i];
+      v0y = vy[i];
+      v0z = vz[i];
+#if TINKER_DETERMINISTIC_FORCE
+      vx[i] = sa * v0x + coef * sb * to_flt_acc<vel_prec>(grx[i]);
+      vy[i] = sa * v0y + coef * sb * to_flt_acc<vel_prec>(gry[i]);
+      vz[i] = sa * v0z + coef * sb * to_flt_acc<vel_prec>(grz[i]);
+#else
+      vx[i] = sa * v0x + coef * sb * grx[i];
+      vy[i] = sa * v0y + coef * sb * gry[i];
+      vz[i] = sa * v0z + coef * sb * grz[i];
+#endif
+   }
+}
+
 void bounds_pos_acc()
 {
    auto nmol = molecule.nmol;

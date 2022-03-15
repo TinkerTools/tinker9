@@ -83,9 +83,18 @@ void propagate_pos(time_prec dt)
    propagate_pos_acc(dt, xpos, ypos, zpos, vx, vy, vz);
 }
 
+void propagate_pos_axbv_acc(double a, double b);
 void propagate_pos_axbv(double a, double b)
 {
    propagate_pos_axbv_acc(a, b);
+}
+
+void propagate_vel_avbf_acc(
+   double a, double b, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz);
+void propagate_vel_avbf(
+   double a, double b, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz)
+{
+   propagate_vel_avbf_acc(a, b, grx, gry, grz);
 }
 
 void bounds()

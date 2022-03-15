@@ -2,8 +2,16 @@
 #include "tool/log.h"
 
 #include "energy.h"
-#include "lf_lpiston.h"
+#include "itgEnum.h"
+#include "itgiBasic.h"
+#include "itgiLP22.h"
+#include "itgiLeapFrogLP.h"
+#include "itgiNhc06.h"
+#include "itgiNhc96.h"
+#include "itgiRespa.h"
+#include "itgiVerlet.h"
 #include "lpiston.h"
+#include "mathfunc_pow2.h"
 #include "mdcalc.h"
 #include "mdegv.h"
 #include "mdintg.h"
@@ -22,6 +30,7 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
+void mdrest_acc(int istep);
 void mdrest(int istep)
 {
    mdrest_acc(istep);
@@ -38,22 +47,13 @@ void md_data(rc_op op)
 
 //====================================================================//
 
-namespace {
-void (*intg)(int, time_prec);
-}
+static BasicIntegrator* intg;
 
 void propagate(int nsteps, time_prec dt_ps)
 {
    for (int istep = 1; istep <= nsteps; ++istep) {
-      do_pmonte = false;
-      if (barostat == MONTE_CARLO_BAROSTAT) {
-         double rdm = random<double>();
-         if (rdm < 1.0 / bath::voltrial)
-            do_pmonte = true;
-      }
-
       TINKER_LOG("Integrating Step %10d", istep);
-      intg(istep, dt_ps);
+      intg->dynamic(istep, dt_ps);
 
       // mdstat
       bool save = (istep % inform::iwrite == 0);
@@ -72,137 +72,133 @@ void propagate(int nsteps, time_prec dt_ps)
 void integrate_data(rc_op op)
 {
    if (op & rc_dealloc) {
-      if (intg == lf_lpiston_npt) {
-         darray::deallocate(leapfrog_x, leapfrog_y, leapfrog_z);
-         darray::deallocate(
-            leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
-      }
-
-      if (intg == vv_lpiston_npt) {
-         vv_lpiston_destory();
-      }
-
-      if (intg == respa_fast_slow)
-         darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
-
-      if (barostat == MONTE_CARLO_BAROSTAT) {
-         darray::deallocate(x_pmonte, y_pmonte, z_pmonte);
-      }
-
+      delete intg;
       intg = nullptr;
    }
 
    if (op & rc_init) {
+      ThermostatEnum thermostat = ThermostatEnum::Null;
       if (bath::isothermal) {
          fstr_view th = bath::thermostat;
-         if (th == "BERENDSEN")
-            thermostat = BERENDSEN_THERMOSTAT;
+         if (th == "ANDERSEN")
+            thermostat = ThermostatEnum::Andersen;
+         else if (th == "BERENDSEN")
+            thermostat = ThermostatEnum::Berendsen;
          else if (th == "BUSSI")
-            thermostat = BUSSI_THERMOSTAT;
-         else if (th == "ANDERSEN")
-            thermostat = ANDERSEN_THERMOSTAT;
+            thermostat = ThermostatEnum::Bussi;
          else if (th == "NOSE-HOOVER")
-            thermostat = NOSE_HOOVER_CHAIN_THERMOSTAT;
+            thermostat = ThermostatEnum::Nhc;
          else if (th == "LPISTON")
-            thermostat = LEAPFROG_LPISTON_THERMOSTAT;
+            thermostat = ThermostatEnum::m_LeapFrogLP;
          else
             assert(false);
-      } else {
-         thermostat = NONE_THERMOSTAT;
       }
 
+      BarostatEnum barostat = BarostatEnum::Null;
       if (bath::isobaric) {
          fstr_view br = bath::barostat;
          if (br == "BERENDSEN")
-            barostat = BERENDSEN_BAROSTAT;
+            barostat = BarostatEnum::Berendsen;
          else if (br == "BUSSI")
-            barostat = BUSSI_BAROSTAT;
-         else if (br == "NOSE-HOOVER")
-            barostat = NOSE_HOOVER_CHAIN_BAROSTAT;
-         else if (br == "LPISTON")
-            barostat = LEAPFROG_LPISTON_BAROSTAT;
+            barostat = BarostatEnum::Bussi;
          else if (br == "LANGEVIN")
-            barostat = LANGEVIN_BAROSTAT;
-         else if (br == "MONTECARLO") {
-            barostat = MONTE_CARLO_BAROSTAT;
-            darray::allocate(n, &x_pmonte, &y_pmonte, &z_pmonte);
-         } else
+            barostat = BarostatEnum::LP2022;
+         else if (br == "MONTECARLO")
+            barostat = BarostatEnum::MonteCarlo;
+         else if (br == "NHC06")
+            barostat = BarostatEnum::Nhc2006;
+         else if (br == "LPISTON")
+            barostat = BarostatEnum::m_LeapFrogLP;
+         else if (br == "NOSE-HOOVER")
+            barostat = BarostatEnum::m_Nhc1996;
+         else
             assert(false);
-      } else {
-         barostat = NONE_BAROSTAT;
       }
+
+      IntegratorEnum integrator = IntegratorEnum::Beeman;
+      if (thermostat == ThermostatEnum::m_LeapFrogLP and
+          barostat == BarostatEnum::m_LeapFrogLP)
+         integrator = IntegratorEnum::LeapFrogLP;
+      else if (thermostat == ThermostatEnum::Nhc and
+               barostat == BarostatEnum::m_Nhc1996)
+         integrator = IntegratorEnum::Nhc1996;
 
       fstr_view itg = mdstuf::integrate;
-      intg = nullptr;
-      if (itg == "VERLET") {
-         intg = velocity_verlet;
+      if (itg == "RESPA") {
+         integrator = IntegratorEnum::Respa;
+      } else if (itg == "VERLET") {
+         integrator = IntegratorEnum::Verlet;
       } else if (itg == "LPISTON") {
-         intg = lf_lpiston_npt;
-         thermostat = LEAPFROG_LPISTON_THERMOSTAT;
-         barostat = LEAPFROG_LPISTON_BAROSTAT;
+         integrator = IntegratorEnum::LeapFrogLP;
+         thermostat = ThermostatEnum::m_LeapFrogLP;
+         barostat = BarostatEnum::m_LeapFrogLP;
       } else if (itg == "NOSE-HOOVER") {
-         intg = nhc_npt;
-         thermostat = NOSE_HOOVER_CHAIN_THERMOSTAT;
-         barostat = NOSE_HOOVER_CHAIN_BAROSTAT;
-      } else if (itg == "RESPA") {
-         intg = respa_fast_slow;
+         integrator = IntegratorEnum::Nhc1996;
+         thermostat = ThermostatEnum::m_Nhc1996;
+         barostat = BarostatEnum::m_Nhc1996;
       }
 
-      if (thermostat == LEAPFROG_LPISTON_THERMOSTAT and barostat == LEAPFROG_LPISTON_BAROSTAT) {
-         intg = lf_lpiston_npt;
-      } else if (barostat == LANGEVIN_BAROSTAT) {
-         if (itg == "VERLET" or itg == "RESPA")
-            intg = vv_lpiston_npt;
-      } else if (thermostat == NOSE_HOOVER_CHAIN_THERMOSTAT and
-         barostat == NOSE_HOOVER_CHAIN_BAROSTAT) {
-         intg = nhc_npt;
+      bool isNRespa1 = true;
+      if (integrator == IntegratorEnum::Verlet or
+          integrator == IntegratorEnum::Respa) {
+         if (barostat == BarostatEnum::LP2022) {
+            if (integrator == IntegratorEnum::Respa)
+               isNRespa1 = false;
+            integrator = IntegratorEnum::LP2022;
+            thermostat = ThermostatEnum::m_LP2022;
+         } else if (barostat == BarostatEnum::Nhc2006) {
+            if (integrator == IntegratorEnum::Respa)
+               isNRespa1 = false;
+            integrator = IntegratorEnum::Nhc2006;
+            thermostat = ThermostatEnum::m_Nhc2006;
+         }
       }
 
-      // Only gradient is necessary to start a simulation.
-      if (intg == velocity_verlet) {
-         // need full gradient to start/restart the simulation
-         energy(calc::grad);
-      } else if (intg == lf_lpiston_npt) {
-         darray::allocate(n, &leapfrog_x, &leapfrog_y, &leapfrog_z);
-         darray::allocate(n, &leapfrog_vx, &leapfrog_vy, &leapfrog_vz, &leapfrog_vxold,
-            &leapfrog_vyold, &leapfrog_vzold);
-         energy(calc::v1);
-      } else if (intg == vv_lpiston_npt) {
-         vv_lpiston_init();
-      } else if (intg == nhc_npt) {
-         if (use_rattle()) {
-            TINKER_THROW("Constraints under NH-NPT require the ROLL algorithm.");
-         }
-         double ekt = units::gasconst * bath::kelvin;
-         vbar = 0;
-         qbar = (mdstuf::nfree + 1) * ekt * bath::taupres * bath::taupres;
-         gbar = 0;
-         for (int i = 0; i < maxnose; ++i) {
-            vnh[i] = 0;
-            qnh[i] = ekt * bath::tautemp * bath::tautemp;
-            gnh[i] = 0;
-         }
-         qnh[0] *= mdstuf::nfree;
-         energy(calc::v6);
-      } else if (intg == respa_fast_slow) {
-         // need fast and slow gradients to start/restart the simulation
-         darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
-
-         // save fast gradients to gx1 etc.
-         energy(calc::grad, RESPA_FAST, respa_tsconfig());
-         darray::copy(g::q0, n, gx1, gx);
-         darray::copy(g::q0, n, gy1, gy);
-         darray::copy(g::q0, n, gz1, gz);
-
-         // save slow gradients to gx2 etc.
-         energy(calc::grad, RESPA_SLOW, respa_tsconfig());
-         darray::copy(g::q0, n, gx2, gx);
-         darray::copy(g::q0, n, gy2, gy);
-         darray::copy(g::q0, n, gz2, gz);
-      } else if (intg == nullptr) {
-         // beeman
+      intg = nullptr;
+      if (integrator == IntegratorEnum::Respa)
+         intg = new RespaIntegrator(thermostat, barostat);
+      else if (integrator == IntegratorEnum::Verlet)
+         intg = new VerletIntegrator(thermostat, barostat);
+      else if (integrator == IntegratorEnum::LeapFrogLP)
+         intg = new LeapFrogLPIntegrator;
+      else if (integrator == IntegratorEnum::LP2022)
+         intg = new LP22Integrator(isNRespa1);
+      else if (integrator == IntegratorEnum::Nhc1996)
+         intg = new Nhc96Integrator;
+      else if (integrator == IntegratorEnum::Nhc2006)
+         intg = new Nhc06Integrator(isNRespa1);
+      else if (integrator == IntegratorEnum::Beeman)
          TINKER_THROW("Beeman integrator is not available.");
-      }
+      intg->printDetail(stdout);
    }
+}
+
+grad_prec *gx1, *gy1, *gz1;
+grad_prec *gx2, *gy2, *gz2;
+const TimeScaleConfig& respa_tsconfig()
+{
+   constexpr int fast = floor_log2_constexpr(RESPA_FAST); // short-range
+   constexpr int slow = floor_log2_constexpr(RESPA_SLOW); // long-range
+   static TimeScaleConfig tsconfig{
+      {"ebond", fast},         {"eangle", fast},        {"estrbnd", fast},
+      {"eurey", fast},         {"eopbend", fast},       {"etors", fast},
+      {"eimprop", fast},       {"eimptor", fast},       {"epitors", fast},
+      {"estrtor", fast},       {"eangtor", fast},       {"etortor", fast},
+      {"egeom", fast},
+
+      {"evalence", fast},
+
+      {"evdw", slow},
+
+      {"echarge", slow},       {"echglj", slow},
+
+      {"emplar", slow},        {"empole", slow},        {"epolar", slow},
+
+      {"empole_chgpen", slow}, {"epolar_chgpen", slow},
+
+      {"echgtrn", slow},       {"edisp", slow},         {"erepel", slow},
+      {"ehippo", slow},
+   };
+   return tsconfig;
 }
 }

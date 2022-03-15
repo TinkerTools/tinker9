@@ -6,6 +6,8 @@
 using namespace tinker;
 
 #if TINKER_REAL_SIZE == 8
+#   include "itgEnum.h"
+#   include "itgiVerlet.h"
 static int usage_ = calc::xyz | calc::vel | calc::mass | calc::energy | calc::grad | calc::md;
 
 static double arbox_kin[] = {64.648662, 64.666678, 64.684785, 64.702988, 64.721287, 64.739686,
@@ -66,8 +68,9 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
    std::vector<double> epots, eksums;
    int old = inform::iwrite;
    inform::iwrite = 1;
+   VerletIntegrator vvi(ThermostatEnum::Null, BarostatEnum::Null);
    for (int i = 1; i <= nsteps; ++i) {
-      velocity_verlet(i, dt_ps);
+      vvi.dynamic(i, dt_ps);
       epots.push_back(esum);
       eksums.push_back(eksum);
    }

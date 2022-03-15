@@ -551,31 +551,28 @@ if (__T9_INSTALL_DEFINED)
 endif ()
 
 
-## scripts
-add_custom_target (__t9_copy_shell_exe)
+## symlinks
+add_custom_target (__t9_symlink)
 foreach (var
-   "${PROJECT_SOURCE_DIR}/shell/analyze9.sh"
-   "${PROJECT_SOURCE_DIR}/shell/bar9.sh"
-   "${PROJECT_SOURCE_DIR}/shell/dynamic9.sh"
-   "${PROJECT_SOURCE_DIR}/shell/info9.sh"
-   "${PROJECT_SOURCE_DIR}/shell/minimize9.sh"
-   "${PROJECT_SOURCE_DIR}/shell/testgrad9.sh"
+   analyze9
+   bar9
+   dynamic9
+   info9
+   minimize9
+   testgrad9
    )
-   get_filename_component (__t9_fname "${var}" NAME)
-   add_custom_command (TARGET __t9_copy_shell_exe POST_BUILD
+   add_custom_command (TARGET __t9_symlink POST_BUILD
       COMMAND
-         "${CMAKE_COMMAND}" -E copy "${var}" "${CMAKE_BINARY_DIR}"
-      BYPRODUCTS
-         "${CMAKE_BINARY_DIR}/${__t9_fname}"
+         "${CMAKE_COMMAND}" -E create_symlink tinker9 "${var}"
    )
    if (__T9_INSTALL_DEFINED)
-      install (PROGRAMS "${var}"
+      install (PROGRAMS "${CMAKE_BINARY_DIR}/${var}"
          DESTINATION
             "${__T9_INSTALL_DIR}"
       )
    endif ()
 endforeach ()
-add_dependencies (tinker9 __t9_copy_shell_exe)
+add_dependencies (tinker9 __t9_symlink)
 
 
 ## unit tests

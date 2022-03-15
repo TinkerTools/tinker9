@@ -174,27 +174,6 @@ void x_dynamic(int, char**)
    rc_flag = flags;
    initialize();
 
-   if (integrate == "VERLET")
-      print(stdout,
-         " Molecular Dynamics Trajectory via"
-         " Velocity Verlet Algorithm\n");
-   else if (integrate == "LPISTON")
-      print(stdout,
-         " Molecular Dynamics Trajectory via"
-         " Langevin Piston Algorithm\n");
-   else if (integrate == "VVLP")
-      print(stdout,
-         " Molecular Dynamics Trajectory via"
-         " Velocity Verlet Langevin Piston\n");
-   else if (integrate == "NOSE-HOOVER")
-      print(stdout,
-         " Molecular Dynamics Trajectory via"
-         " Nose-Hoover NPT Algorithm\n");
-   else if (integrate == "RESPA")
-      print(stdout,
-         " Molecular Dynamics Trajectory via"
-         " r-RESPA MTS Algorithm\n");
-
    auto t_start = std::chrono::steady_clock::now();
    propagate(nstep, dt);
    auto t_end = std::chrono::steady_clock::now();
