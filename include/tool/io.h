@@ -217,7 +217,7 @@ public:
 // read
 
 #include "tool/io.h"
-#include "tool/tinker_suppl.h"
+#include "tool/tinkersuppl.h"
 
 namespace tinker {
 /// \ingroup io

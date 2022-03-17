@@ -4,7 +4,7 @@
 #include "nblist.h"
 #include "pmestuf.h"
 #include "potent.h"
-#include "tool/host_zero.h"
+#include "tool/zero.h"
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/sizes.hh>
@@ -137,7 +137,7 @@ void echarge(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
-   host_zero(energy_ec, virial_ec);
+   zeroOnHost(energy_ec, virial_ec);
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)

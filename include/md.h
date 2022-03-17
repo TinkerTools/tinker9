@@ -66,7 +66,7 @@ using V6 = GradVir;
 //====================================================================//
 // mdpq
 
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 #include <istream>
 
 namespace tinker {

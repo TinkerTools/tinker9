@@ -3,7 +3,7 @@
 #include "nblist.h"
 #include "tool/darray.h"
 #include "tool/error.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 #include <cassert>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>

@@ -7,8 +7,8 @@
 #include "mathfunc.h"
 #include "md.h"
 #include "seq_bsplgen.h"
-#include "tool/energy_buffer.h"
-#include "tool/gpu_card.h"
+#include "tool/energybuffer.h"
+#include "tool/gpucard.h"
 
 namespace tinker {
 namespace {

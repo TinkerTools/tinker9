@@ -3,7 +3,7 @@
 #include "platform.h"
 #if TINKER_CUDART
 #   include "tool/error.h"
-#   include "tool/gpu_card.h"
+#   include "tool/gpucard.h"
 #   include <cuda_profiler_api.h>
 #   include <openacc.h>
 #endif

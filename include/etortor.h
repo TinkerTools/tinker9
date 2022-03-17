@@ -3,7 +3,7 @@
 #include "mod.ktrtor.h"
 #include "mod.torpot.h"
 #include "mod.tortor.h"
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 void etortor_data(RcOp);

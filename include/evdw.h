@@ -2,7 +2,7 @@
 #include "mod.mutant.h"
 #include "mod.vdw.h"
 #include "mod.vdwpot.h"
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 
 /**
  * \todo Test lj, buck, mm3hb, gauss.

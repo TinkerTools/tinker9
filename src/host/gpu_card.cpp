@@ -1,4 +1,4 @@
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 
 namespace tinker {
 void gpuData(RcOp op)

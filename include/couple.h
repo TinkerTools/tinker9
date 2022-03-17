@@ -1,5 +1,5 @@
 #pragma once
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 const int couple_maxn12 = 8;

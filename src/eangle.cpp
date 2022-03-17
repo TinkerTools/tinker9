@@ -1,8 +1,8 @@
 #include "eangle.h"
 #include "md.h"
 #include "potent.h"
-#include "tool/host_zero.h"
 #include "tool/io.h"
+#include "tool/zero.h"
 #include <cassert>
 #include <tinker/detail/angbnd.hh>
 #include <tinker/detail/angpot.hh>
@@ -86,7 +86,7 @@ void eangle(int vers)
    bool do_g = vers & calc::grad;
 
    if (rc_a) {
-      host_zero(energy_ea, virial_ea);
+      zeroOnHost(energy_ea, virial_ea);
       auto bsize = buffer_size();
       if (do_e)
          darray::zero(g::q0, bsize, ea);

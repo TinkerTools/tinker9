@@ -4,7 +4,7 @@
 #include "nblist.h"
 #include "potent.h"
 #include "tool/darray.h"
-#include "tool/host_zero.h"
+#include "tool/zero.h"
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/repel.hh>
 #include <tinker/detail/reppot.hh>
@@ -141,7 +141,7 @@ void erepel(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
-   host_zero(energy_er, virial_er);
+   zeroOnHost(energy_er, virial_er);
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)

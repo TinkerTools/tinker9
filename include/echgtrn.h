@@ -4,7 +4,7 @@
 #include "mod.ctrpot.h"
 #include "mod.mplpot.h"
 #include "mod.mpole.h"
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 void echgtrn_data(RcOp);

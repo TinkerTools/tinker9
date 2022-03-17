@@ -12,7 +12,7 @@
 #include "seq_damp.h"
 #include "seq_triangle.h"
 #include "switch.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 
 namespace tinker {
 // Rt Q = G

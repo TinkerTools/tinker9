@@ -1,7 +1,7 @@
 #include "nblist.h"
 #include "image.h"
 #include "md.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 
 #if TINKER_CUDART
 namespace tinker {

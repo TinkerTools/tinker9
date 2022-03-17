@@ -1,7 +1,7 @@
 #pragma once
 #include "mod.bndpot.h"
 #include "mod.bndstr.h"
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 void ebond_data(RcOp);

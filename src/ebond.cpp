@@ -1,8 +1,8 @@
 #include "ebond.h"
 #include "md.h"
 #include "potent.h"
-#include "tool/host_zero.h"
 #include "tool/io.h"
+#include "tool/zero.h"
 #include <tinker/detail/bndpot.hh>
 #include <tinker/detail/bndstr.hh>
 #include <tinker/detail/potent.hh>
@@ -71,7 +71,7 @@ void ebond(int vers)
    bool do_g = vers & calc::grad;
 
    if (rc_a) {
-      host_zero(energy_eb, virial_eb);
+      zeroOnHost(energy_eb, virial_eb);
       auto bsize = buffer_size();
       if (do_e)
          darray::zero(g::q0, bsize, eb);

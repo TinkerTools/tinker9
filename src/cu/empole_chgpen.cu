@@ -12,7 +12,7 @@
 #include "seq_pair_mpole_chgpen.h"
 #include "seq_triangle.h"
 #include "switch.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 
 namespace tinker {
 // ck.py Version 2.0.3

@@ -6,7 +6,7 @@
 #include "potent.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
-#include "tool/host_zero.h"
+#include "tool/zero.h"
 
 namespace tinker {
 bool ecore_val;
@@ -293,9 +293,9 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       }
    }
 
-   host_zero(detail::ev_hobj.v_val);
-   host_zero(detail::ev_hobj.v_vdw);
-   host_zero(detail::ev_hobj.v_ele);
+   zeroOnHost(detail::ev_hobj.v_val);
+   zeroOnHost(detail::ev_hobj.v_vdw);
+   zeroOnHost(detail::ev_hobj.v_ele);
    if (do_v) {
       if (!rc_a) {
          size_t bufsize = buffer_size();

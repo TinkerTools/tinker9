@@ -1,7 +1,7 @@
 #include "egeom.h"
 #include "md.h"
 #include "potent.h"
-#include "tool/host_zero.h"
+#include "tool/zero.h"
 #include <tinker/detail/restrn.hh>
 #include <tinker/detail/sizes.hh>
 
@@ -98,7 +98,7 @@ void egeom(int vers)
    bool do_g = vers & calc::grad;
 
    if (rc_a) {
-      host_zero(energy_eg, virial_eg);
+      zeroOnHost(energy_eg, virial_eg);
       auto bsize = buffer_size();
       if (do_e)
          darray::zero(g::q0, bsize, eg);

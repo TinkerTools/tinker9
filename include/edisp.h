@@ -1,7 +1,7 @@
 #pragma once
 #include "mod.disp.h"
 #include "mod.dsppot.h"
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 bool use_dewald();

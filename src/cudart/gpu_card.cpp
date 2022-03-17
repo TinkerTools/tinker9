@@ -1,9 +1,9 @@
-#include "tool/gpu_card.h"
 #include "algorithm"
 #include "md.h"
 #include "tinker_rt.h"
 #include "tool/error.h"
 #include "tool/exec.h"
+#include "tool/gpucard.h"
 #include <cuda_runtime.h>
 #include <thrust/version.h>
 

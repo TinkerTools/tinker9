@@ -1,6 +1,6 @@
-#include "tool/tinker_suppl.h"
 #include "f/tinker_supplement.h"
 #include "tool/io.h"
+#include "tool/tinkersuppl.h"
 #include <cassert>
 #include <cstring>
 

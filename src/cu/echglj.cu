@@ -12,7 +12,7 @@
 #include "seq_triangle.h"
 #include "spatial2.h"
 #include "switch.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 #include <tinker/detail/potent.hh>
 
 extern "C"

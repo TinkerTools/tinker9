@@ -1,7 +1,7 @@
 #include "launch.h"
 #include "md.h"
 #include "syntax/cu/reduce.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 #include <tinker/detail/units.hh>
 
 namespace tinker {

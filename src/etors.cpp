@@ -2,7 +2,7 @@
 #include "glob.accasync.h"
 #include "md.h"
 #include "potent.h"
-#include "tool/host_zero.h"
+#include "tool/zero.h"
 #include <tinker/detail/torpot.hh>
 #include <tinker/detail/tors.hh>
 
@@ -64,7 +64,7 @@ void etors(int vers)
    bool do_g = vers & calc::grad;
 
    if (rc_a) {
-      host_zero(energy_et, virial_et);
+      zeroOnHost(energy_et, virial_et);
       auto bsize = buffer_size();
       if (do_e)
          darray::zero(g::q0, bsize, et);

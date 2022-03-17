@@ -1,6 +1,6 @@
 #include "glob.accasync.h"
 #include "mathfunc_parallel_acc.h"
-#include "tool/deduce_ptr.h"
+#include "tool/deduceptr.h"
 #include <cassert>
 
 namespace tinker {

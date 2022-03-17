@@ -6,7 +6,7 @@
 #include "seq_pair_lj.h"
 #include "seq_switch.h"
 #include "switch.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 
 namespace tinker {
 #define DEVICE_PTRS x, y, z, devx, devy, devz, jvdw, radmin, epsilon, mut, nev, ev, vir_ev

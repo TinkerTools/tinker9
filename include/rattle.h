@@ -1,6 +1,6 @@
 #pragma once
 #include "mod.freeze.h"
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 
 extern "C"
 {

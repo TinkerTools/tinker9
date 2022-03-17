@@ -6,7 +6,7 @@
 #include "md.h"
 #include "pmestuf.h"
 #include "seq_bsplgen.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 
 namespace tinker {
 // compute theta values on the fly

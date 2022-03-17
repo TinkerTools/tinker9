@@ -2,7 +2,7 @@
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
-#include "tool/host_zero.h"
+#include "tool/zero.h"
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/sizes.hh>
 
@@ -53,7 +53,7 @@ void empole(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
-   host_zero(energy_em, virial_em);
+   zeroOnHost(energy_em, virial_em);
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)

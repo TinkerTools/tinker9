@@ -2,7 +2,7 @@
 #include "eangle.h"
 #include "ebond.h"
 #include "mod.strbnd.h"
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 void estrbnd_data(RcOp);

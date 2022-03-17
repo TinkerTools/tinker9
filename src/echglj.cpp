@@ -3,8 +3,8 @@
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
-#include "tool/host_zero.h"
 #include "tool/io.h"
+#include "tool/zero.h"
 #include <array>
 #include <map>
 #include <set>
@@ -275,8 +275,8 @@ void echglj(int vers)
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
 
-   host_zero(energy_ec, virial_ec);
-   host_zero(energy_ev, virial_ev);
+   zeroOnHost(energy_ec, virial_ec);
+   zeroOnHost(energy_ev, virial_ev);
 
    assert(vdwtyp == evdw_t::lj);
    assert(radrule == evdw_t::arithmetic);

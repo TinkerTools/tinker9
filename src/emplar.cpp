@@ -2,7 +2,7 @@
 #include "elec.h"
 #include "md.h"
 #include "tool/error.h"
-#include "tool/host_zero.h"
+#include "tool/zero.h"
 
 namespace tinker {
 void emplar(int vers)
@@ -10,7 +10,7 @@ void emplar(int vers)
 #if TINKER_CUDART
    bool do_v = vers & calc::virial;
 
-   host_zero(energy_em, virial_em);
+   zeroOnHost(energy_em, virial_em);
 
    mpole_init(vers);
    emplar_cu(vers);

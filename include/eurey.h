@@ -1,7 +1,7 @@
 #pragma once
 #include "mod.urey.h"
 #include "mod.urypot.h"
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 void eurey_data(RcOp);

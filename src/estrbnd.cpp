@@ -1,7 +1,7 @@
 #include "estrbnd.h"
 #include "md.h"
 #include "potent.h"
-#include "tool/host_zero.h"
+#include "tool/zero.h"
 #include <tinker/detail/angpot.hh>
 #include <tinker/detail/strbnd.hh>
 
@@ -61,7 +61,7 @@ void estrbnd(int vers)
    bool do_g = vers & calc::grad;
 
    if (rc_a) {
-      host_zero(energy_eba, virial_eba);
+      zeroOnHost(energy_eba, virial_eba);
       auto bsize = buffer_size();
       if (do_e)
          darray::zero(g::q0, bsize, eba);

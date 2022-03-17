@@ -1,7 +1,7 @@
 #include "rattle.h"
 #include "md.h"
 #include "tool/darray.h"
-#include "tool/energy_buffer.h"
+#include "tool/energybuffer.h"
 #include "tool/io.h"
 #include <algorithm>
 #include <cassert>

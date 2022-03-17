@@ -6,7 +6,7 @@
 #include "mod.ctrpot.h"
 #include "mod.mpole.h"
 #include "mod.polar.h"
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 bool use_ewald();

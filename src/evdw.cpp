@@ -3,8 +3,8 @@
 #include "nblist.h"
 #include "potent.h"
 #include "tinker_rt.h"
-#include "tool/host_zero.h"
 #include "tool/io.h"
+#include "tool/zero.h"
 #include <cassert>
 #include <map>
 #include <tinker/detail/couple.hh>
@@ -454,7 +454,7 @@ void evdw(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
-   host_zero(energy_ev, virial_ev);
+   zeroOnHost(energy_ev, virial_ev);
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)

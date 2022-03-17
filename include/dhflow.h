@@ -1,5 +1,5 @@
 #pragma once
-#include "tool/energy_buffer.h"
+#include "tool/energybuffer.h"
 
 namespace tinker {
 struct DHFlow

@@ -3,7 +3,7 @@
 #include "nblist.h"
 #include "potent.h"
 #include "tool/darray.h"
-#include "tool/host_zero.h"
+#include "tool/zero.h"
 #include <tinker/detail/chgtrn.hh>
 #include <tinker/detail/ctrpot.hh>
 
@@ -67,7 +67,7 @@ void echgtrn(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
-   host_zero(energy_ect, virial_ect);
+   zeroOnHost(energy_ect, virial_ect);
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)

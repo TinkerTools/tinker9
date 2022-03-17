@@ -1,7 +1,7 @@
 #pragma once
 #include "glob.accasync.h"
 #include "mathfunc.h"
-#include "tool/deduce_ptr.h"
+#include "tool/deduceptr.h"
 #include <vector>
 
 namespace tinker {

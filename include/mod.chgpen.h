@@ -1,6 +1,6 @@
 #pragma once
 #include "macro.h"
-#include "tool/energy_buffer.h"
+#include "tool/energybuffer.h"
 
 namespace tinker {
 TINKER_EXTERN real* pcore;

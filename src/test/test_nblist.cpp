@@ -5,7 +5,7 @@
 #include "test_rt.h"
 #include "tool/error.h"
 #include "tool/io.h"
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 #include <fstream>
 #include <set>
 #include <sstream>

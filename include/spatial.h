@@ -1,6 +1,6 @@
 #pragma once
-#include "tool/gen_unit.h"
-#include "tool/rc_man.h"
+#include "tool/genunit.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 /**

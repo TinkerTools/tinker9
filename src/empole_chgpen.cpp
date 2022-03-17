@@ -3,7 +3,7 @@
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
-#include "tool/host_zero.h"
+#include "tool/zero.h"
 #include <tinker/detail/chgpen.hh>
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/potent.hh>
@@ -59,7 +59,7 @@ void empole_chgpen(int vers)
    int use_cf = potent::use_chgflx;
    int use_cfgrad = use_cf and do_g;
 
-   host_zero(energy_em, virial_em);
+   zeroOnHost(energy_em, virial_em);
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)

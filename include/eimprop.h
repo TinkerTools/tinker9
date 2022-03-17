@@ -1,7 +1,7 @@
 #pragma once
 #include "mod.improp.h"
 #include "mod.torpot.h"
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 void eimprop_data(RcOp);

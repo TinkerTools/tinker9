@@ -1,25 +1,24 @@
 #include "energy.h"
 #include "glob.dhflow.h"
 #include "md.h"
-#include "tool/device_zero.h"
-#include "tool/host_zero.h"
+#include "tool/zero.h"
 
 namespace tinker {
 void zero_egv(int vers)
 {
    size_t bsize = buffer_size();
    if (vers & calc::energy) {
-      host_zero(esum, energy_valence, energy_vdw, energy_elec);
-      zero3_async(bsize, eng_buf, eng_buf_vdw, eng_buf_elec);
+      zeroOnHost(esum, energy_valence, energy_vdw, energy_elec);
+      zeroOnDevice3Async(bsize, eng_buf, eng_buf_vdw, eng_buf_elec);
    }
 
    if (vers & calc::virial) {
-      host_zero(vir, virial_valence, virial_vdw, virial_elec);
-      zero3_async(bsize, vir_buf, vir_buf_vdw, vir_buf_elec);
+      zeroOnHost(vir, virial_valence, virial_vdw, virial_elec);
+      zeroOnDevice3Async(bsize, vir_buf, vir_buf_vdw, vir_buf_elec);
    }
 
    if (vers & calc::grad) {
-      zero9_async(n, gx, gy, gz, gx_vdw, gy_vdw, gz_vdw, gx_elec, gy_elec, gz_elec);
+      zeroOnDevice9Async(n, gx, gy, gz, gx_vdw, gy_vdw, gz_vdw, gx_elec, gy_elec, gz_elec);
    }
 }
 
@@ -140,7 +139,7 @@ void egvData(RcOp op)
       }
 
       if (op & rc_alloc) {
-         host_zero(eng_buf, eng_buf_vdw, eng_buf_elec);
+         zeroOnHost(eng_buf, eng_buf_vdw, eng_buf_elec);
          if (!rc_a) {
             auto sz = buffer_size();
             darray::allocate(sz, &eng_buf);
@@ -164,7 +163,7 @@ void egvData(RcOp op)
       }
 
       if (op & rc_alloc) {
-         host_zero(vir_buf, vir_buf_vdw, vir_buf_elec);
+         zeroOnHost(vir_buf, vir_buf_vdw, vir_buf_elec);
          if (!rc_a) {
             auto sz = buffer_size();
             darray::allocate(sz, &vir_buf);
@@ -186,7 +185,7 @@ void egvData(RcOp op)
       }
 
       if (op & rc_alloc) {
-         host_zero(gx, gy, gz, gx_vdw, gy_vdw, gz_vdw, gx_elec, gy_elec, gz_elec);
+         zeroOnHost(gx, gy, gz, gx_vdw, gy_vdw, gz_vdw, gx_elec, gy_elec, gz_elec);
          darray::allocate(n, &gx, &gy, &gz);
          if (use_energi_vdw())
             darray::allocate(n, &gx_vdw, &gy_vdw, &gz_vdw);

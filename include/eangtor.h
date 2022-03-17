@@ -2,7 +2,7 @@
 #include "eangle.h"
 #include "etors.h"
 #include "mod.angtor.h"
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 void eangtor_data(RcOp);

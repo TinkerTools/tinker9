@@ -5,7 +5,7 @@
 #include "pmestuf.h"
 #include "potent.h"
 #include "tinker_rt.h"
-#include "tool/host_zero.h"
+#include "tool/zero.h"
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/disp.hh>
 #include <tinker/detail/dsppot.hh>
@@ -159,7 +159,7 @@ void edisp(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
-   host_zero(energy_edsp, virial_edsp);
+   zeroOnHost(energy_edsp, virial_edsp);
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)

@@ -10,7 +10,7 @@
 #include "mod.uprior.h"
 #include "seq_damp_hippo.h"
 #include "tool/error.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 #include "tool/io.h"
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/polpcg.hh>

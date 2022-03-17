@@ -1,7 +1,7 @@
 #pragma once
 #include "energy.h"
 #include "md.h"
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 #include <array>
 #include <string>
 #include <vector>

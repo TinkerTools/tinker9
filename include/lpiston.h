@@ -1,7 +1,7 @@
 #pragma once
 #include "md.h"
 #include "mod.freeze.h"
-#include "tool/energy_buffer.h"
+#include "tool/energybuffer.h"
 
 namespace tinker {
 extern double lp_rats1;

@@ -8,7 +8,7 @@
 #include "potent.h"
 #include "seq_pair_field_chgpen.h"
 #include "switch.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 
 namespace tinker {
 // see also subroutine udirect2b / dfield_chgpen0c in induce.f

@@ -1,7 +1,7 @@
 #pragma once
 #include "eangle.h"
 #include "mod.opbend.h"
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 void eopbend_data(RcOp);

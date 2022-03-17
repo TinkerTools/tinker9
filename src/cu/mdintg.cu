@@ -3,7 +3,7 @@
 #include "md.h"
 #include "syntax/cu/reduce.h"
 #include "tool/darray.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 #include <tinker/detail/molcul.hh>
 
 namespace tinker {

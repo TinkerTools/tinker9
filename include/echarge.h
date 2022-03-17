@@ -1,7 +1,7 @@
 #pragma once
 #include "elec.h"
-#include "tool/energy_buffer.h"
-#include "tool/rc_man.h"
+#include "tool/energybuffer.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 extern real ebuffer;

@@ -1,7 +1,7 @@
 #include "epitors.h"
 #include "md.h"
 #include "potent.h"
-#include "tool/host_zero.h"
+#include "tool/zero.h"
 #include <tinker/detail/pitors.hh>
 #include <tinker/detail/torpot.hh>
 
@@ -59,7 +59,7 @@ void epitors(int vers)
    bool do_g = vers & calc::grad;
 
    if (rc_a) {
-      host_zero(energy_ept, virial_ept);
+      zeroOnHost(energy_ept, virial_ept);
       auto bsize = buffer_size();
       if (do_e)
          darray::zero(g::q0, bsize, ept);

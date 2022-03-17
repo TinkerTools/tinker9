@@ -3,7 +3,7 @@
 #include "evdw.h"
 #include "glob.accasync.h"
 #include "glob.chglj.h"
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 void echglj_data(RcOp);

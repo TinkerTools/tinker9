@@ -1,8 +1,8 @@
 #include "eopbend.h"
 #include "md.h"
 #include "potent.h"
-#include "tool/host_zero.h"
 #include "tool/io.h"
+#include "tool/zero.h"
 #include <cassert>
 #include <tinker/detail/angpot.hh>
 #include <tinker/detail/opbend.hh>
@@ -72,7 +72,7 @@ void eopbend(int vers)
    bool do_g = vers & calc::grad;
 
    if (rc_a) {
-      host_zero(energy_eopb, virial_eopb);
+      zeroOnHost(energy_eopb, virial_eopb);
       auto bsize = buffer_size();
       if (do_e)
          darray::zero(g::q0, bsize, eopb);

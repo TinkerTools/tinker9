@@ -3,7 +3,7 @@
 #include "mathfunc.h"
 #include "test.h"
 #include "tinker_rt.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 #include <cmath>
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/boxes.hh>

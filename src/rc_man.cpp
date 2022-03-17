@@ -1,4 +1,4 @@
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 bool ResourceManagement::will_dealloc() const
@@ -42,7 +42,7 @@ void finish()
 
 #include "platform.h"
 #include "random.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 
 #include "box.h"
 #include "couple.h"

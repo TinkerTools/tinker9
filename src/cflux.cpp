@@ -5,8 +5,8 @@
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
-#include "tool/host_zero.h"
 #include "tool/io.h"
+#include "tool/zero.h"
 #include <cassert>
 #include <tinker/detail/angbnd.hh>
 #include <tinker/detail/angpot.hh>

@@ -4,7 +4,7 @@
 #include "md.h"
 #include "potent.h"
 #include "tinker_rt.h"
-#include "tool/host_zero.h"
+#include "tool/zero.h"
 
 namespace tinker {
 bool use_osrw;
@@ -250,7 +250,7 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    energy_prec osrw_du0 = 0;
    osrw_du1 = 0;
    virial_prec osrw_dv0[9] = {0};
-   host_zero(osrw_dv1);
+   zeroOnHost(osrw_dv1);
    if (vers & calc::grad)
       darray::zero(g::q0, n, osrw_dgx, osrw_dgy, osrw_dgz);
 

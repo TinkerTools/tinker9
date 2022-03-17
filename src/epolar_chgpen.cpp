@@ -6,8 +6,8 @@
 #include "nblist.h"
 #include "pme.h"
 #include "potent.h"
-#include "tool/host_zero.h"
 #include "tool/io.h"
+#include "tool/zero.h"
 #include <map>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mplpot.hh>
@@ -177,7 +177,7 @@ void epolar_chgpen(int vers)
    int use_cf = potent::use_chgflx;
    int use_cfgrad = use_cf and do_g;
 
-   host_zero(energy_ep, virial_ep);
+   zeroOnHost(energy_ep, virial_ep);
    size_t bsize = buffer_size();
    if (rc_a) {
       if (do_a)

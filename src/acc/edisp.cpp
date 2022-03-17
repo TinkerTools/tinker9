@@ -8,7 +8,7 @@
 #include "seq_bsplgen.h"
 #include "seq_pair_disp.h"
 #include "switch.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 
 namespace tinker {
 template <bool DO_E, bool DO_V>

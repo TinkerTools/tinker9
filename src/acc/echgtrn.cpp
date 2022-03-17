@@ -8,7 +8,7 @@
 #include "seq_pair_chgtrn.h"
 #include "seq_switch.h"
 #include "switch.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 #include <cassert>
 
 namespace tinker {

@@ -1,7 +1,7 @@
 #pragma once
 #include "mod.torpot.h"
 #include "mod.tors.h"
-#include "tool/rc_man.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 void etors_data(RcOp);

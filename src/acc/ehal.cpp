@@ -6,7 +6,7 @@
 #include "seq_pair_hal.h"
 #include "seq_switch.h"
 #include "switch.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 
 namespace tinker {
 void ehal_reduce_xyz_acc()

@@ -19,8 +19,8 @@
 #include "seq_torsion.h"
 #include "seq_tortor.h"
 #include "seq_urey.h"
-#include "tool/gpu_card.h"
-#include "tool/host_zero.h"
+#include "tool/gpucard.h"
+#include "tool/zero.h"
 
 namespace tinker {
 template <class Ver, bool rc_a>
@@ -841,7 +841,7 @@ void evalence_cu(int vers)
 
    size_t bsize = buffer_size();
    if (rc_a and flag_bond) {
-      host_zero(energy_eb, virial_eb);
+      zeroOnHost(energy_eb, virial_eb);
       if (do_e)
          darray::zero(g::q0, bsize, eb);
       if (do_v)
@@ -850,7 +850,7 @@ void evalence_cu(int vers)
          darray::zero(g::q0, n, debx, deby, debz);
    }
    if (rc_a and flag_angle) {
-      host_zero(energy_ea, virial_ea);
+      zeroOnHost(energy_ea, virial_ea);
       if (do_e)
          darray::zero(g::q0, bsize, ea);
       if (do_v)
@@ -859,7 +859,7 @@ void evalence_cu(int vers)
          darray::zero(g::q0, n, deax, deay, deaz);
    }
    if (rc_a and flag_strbnd) {
-      host_zero(energy_eba, virial_eba);
+      zeroOnHost(energy_eba, virial_eba);
       if (do_e)
          darray::zero(g::q0, bsize, eba);
       if (do_v)
@@ -868,7 +868,7 @@ void evalence_cu(int vers)
          darray::zero(g::q0, n, debax, debay, debaz);
    }
    if (rc_a and flag_urey) {
-      host_zero(energy_eub, virial_eub);
+      zeroOnHost(energy_eub, virial_eub);
       if (do_e)
          darray::zero(g::q0, bsize, eub);
       if (do_v)
@@ -877,7 +877,7 @@ void evalence_cu(int vers)
          darray::zero(g::q0, n, deubx, deuby, deubz);
    }
    if (rc_a and flag_opb) {
-      host_zero(energy_eopb, virial_eopb);
+      zeroOnHost(energy_eopb, virial_eopb);
       if (do_e)
          darray::zero(g::q0, bsize, eopb);
       if (do_v)
@@ -902,7 +902,7 @@ void evalence_cu(int vers)
          darray::zero(g::q0, n, deitx, deity, deitz);
    }
    if (rc_a and flag_tors) {
-      host_zero(energy_et, virial_et);
+      zeroOnHost(energy_et, virial_et);
       if (do_e)
          darray::zero(g::q0, bsize, et);
       if (do_v)
@@ -911,7 +911,7 @@ void evalence_cu(int vers)
          darray::zero(g::q0, n, detx, dety, detz);
    }
    if (rc_a and flag_pitors) {
-      host_zero(energy_ept, virial_ept);
+      zeroOnHost(energy_ept, virial_ept);
       if (do_e)
          darray::zero(g::q0, bsize, ept);
       if (do_v)
@@ -920,7 +920,7 @@ void evalence_cu(int vers)
          darray::zero(g::q0, n, deptx, depty, deptz);
    }
    if (rc_a and flag_strtor) {
-      host_zero(energy_ebt, virial_ebt);
+      zeroOnHost(energy_ebt, virial_ebt);
       if (do_e)
          darray::zero(g::q0, bsize, ebt);
       if (do_v)
@@ -929,7 +929,7 @@ void evalence_cu(int vers)
          darray::zero(g::q0, n, debtx, debty, debtz);
    }
    if (rc_a and flag_angtor) {
-      host_zero(energy_eat, virial_eat);
+      zeroOnHost(energy_eat, virial_eat);
       if (do_e)
          darray::zero(g::q0, bsize, eat);
       if (do_v)
@@ -938,7 +938,7 @@ void evalence_cu(int vers)
          darray::zero(g::q0, n, deatx, deaty, deatz);
    }
    if (rc_a and flag_tortor) {
-      host_zero(energy_ett, virial_ett);
+      zeroOnHost(energy_ett, virial_ett);
       if (do_e)
          darray::zero(g::q0, bsize, ett);
       if (do_v)
@@ -947,7 +947,7 @@ void evalence_cu(int vers)
          darray::zero(g::q0, n, dettx, detty, dettz);
    }
    if (rc_a and flag_geom) {
-      host_zero(energy_eg, virial_eg);
+      zeroOnHost(energy_eg, virial_eg);
       if (do_e)
          darray::zero(g::q0, bsize, eg);
       if (do_v)

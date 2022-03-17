@@ -1,9 +1,9 @@
 #pragma once
 #include "fft.h"
 #include "tool/darray.h"
-#include "tool/energy_buffer.h"
-#include "tool/gen_unit.h"
-#include "tool/rc_man.h"
+#include "tool/energybuffer.h"
+#include "tool/genunit.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 /**

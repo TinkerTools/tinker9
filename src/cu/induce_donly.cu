@@ -10,7 +10,7 @@
 #include "seq_damp_hippo.h"
 #include "seq_triangle.h"
 #include "switch.h"
-#include "tool/gpu_card.h"
+#include "tool/gpucard.h"
 
 namespace tinker {
 __global__
