@@ -291,14 +291,14 @@ void echglj(int vers)
 
    if (do_e) {
       if (elrc_vol != 0) {
-         energy_prec corr = elrc_vol / volbox();
+         energy_prec corr = elrc_vol / boxVolume();
          energy_ev += corr;
          energy_vdw += corr;
       }
    }
    if (do_v) {
       if (vlrc_vol != 0) {
-         virial_prec term = vlrc_vol / volbox();
+         virial_prec term = vlrc_vol / boxVolume();
          virial_ev[0] += term; // xx
          virial_ev[4] += term; // yy
          virial_ev[8] += term; // zz

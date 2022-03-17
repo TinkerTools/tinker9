@@ -57,7 +57,7 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    // duplicate
 
    dup_buf_esum = esum;
-   get_default_box(dup_buf_box);
+   boxGetDefault(dup_buf_box);
    darray::copy(g::q0, n, dup_buf_x, xpos);
    darray::copy(g::q0, n, dup_buf_y, ypos);
    darray::copy(g::q0, n, dup_buf_z, zpos);
@@ -86,7 +86,7 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    // get gpu buffer and write to external files
 
    energy_prec epot = dup_buf_esum;
-   set_tinker_box_module(dup_buf_box);
+   boxSetTinkerModule(dup_buf_box);
    if (sizeof(pos_prec) == sizeof(double)) {
       darray::copyout(g::q1, n, atoms::x, dup_buf_x);
       darray::copyout(g::q1, n, atoms::y, dup_buf_y);

@@ -592,7 +592,7 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
       const int nff = nfft1 * nfft2;
       const int ntot = nfft1 * nfft2 * nfft3;
       real pterm = (pi / aewald) * (pi / aewald);
-      real box_volume = volbox();
+      real box_volume = boxVolume();
 
       #pragma acc parallel loop independent async deviceptr(d,p,vir_ep)\
                   present(lvec1,lvec2,lvec3,recipa,recipb,recipc)

@@ -305,7 +305,7 @@ static void iso_tp(time_prec dt, bool prtpres = false, int iCurrentStep = 0)
    sd = std::sqrt(nbaro * dt * 2.0 * stodyn::friction * kbt / qbar) / (4 * ns);
 
    const virial_prec tr_vir = lp_vir[0] + lp_vir[4] + lp_vir[8];
-   const double vol0 = volbox();
+   const double vol0 = boxVolume();
    if (atomT) {
       lp_atom_kinetic();
    } else if (molT) {
@@ -447,7 +447,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
       lvec1 *= std::exp(vbar * xdt);
       lvec2 *= std::exp(vbar * xdt);
       lvec3 *= std::exp(vbar * xdt);
-      set_default_recip_box();
+      boxSetDefaultRecip();
       double vt2 = vbar * xdti2;
       // double s1b = 1.0;
       // double s1a = std::exp(vt2);
@@ -554,7 +554,7 @@ static void iso_tp_aniso(time_prec dt, bool prtpres = false, int iCurrentStep = 
    omgxt4 = 1.0 - stodyn::friction * xt4;
    sd = std::sqrt(nbaro * dt * 2.0 * stodyn::friction * kbt / qbar) / (4 * ns);
 
-   const double vol0 = volbox();
+   const double vol0 = boxVolume();
    if (atomT) {
       lp_atom_kinetic();
    } else if (molT) {
@@ -777,7 +777,7 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
       lvec1.x = h0[0][0], lvec1.y = h0[0][1], lvec1.z = h0[0][2];
       lvec2.x = h0[1][0], lvec2.y = h0[1][1], lvec2.z = h0[1][2];
       lvec3.x = h0[2][0], lvec3.y = h0[2][1], lvec3.z = h0[2][2];
-      set_default_recip_box();
+      boxSetDefaultRecip();
    }
    for (int ir = 0; ir < nrespa; ++ir) {
       if (mid and (kw_p == KW_ATOM or kw_p == KW_MOL)) {
@@ -963,7 +963,7 @@ static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
 
    if (atomP) {
       virial_prec tr_vir = lp_vir[0] + lp_vir[4] + lp_vir[8];
-      double vol0 = volbox();
+      double vol0 = boxVolume();
       double DelP = (1.0 + D / g1) * 2 * lp_eksum - tr_vir;
       DelP = DelP - D * vol0 * bath::atmsph / units::prescon;
       gbar = DelP / qbar;
@@ -988,7 +988,7 @@ static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
       lvec1 *= std::exp(vbar * xdt);
       lvec2 *= std::exp(vbar * xdt);
       lvec3 *= std::exp(vbar * xdt);
-      set_default_recip_box();
+      boxSetDefaultRecip();
       double vt2 = vbar * xdti2;
       double s1 = std::exp(vt2) * sinhc(vt2);
       s = s1;
@@ -1060,14 +1060,14 @@ static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
    }
    if (prtpres) {
       virial_prec tr_vir = lp_vir[0] + lp_vir[4] + lp_vir[8];
-      double vol0 = volbox();
+      double vol0 = boxVolume();
       double pres = units::prescon * (2 * lp_eksum - tr_vir) / (D * vol0);
       print(stdout, fmt_current_pres, pres, istep);
    }
 
    if (atomP) {
       virial_prec tr_vir = lp_vir[0] + lp_vir[4] + lp_vir[8];
-      double vol0 = volbox();
+      double vol0 = boxVolume();
       double DelP = (1.0 + D / g1) * 2 * lp_eksum - tr_vir;
       DelP = DelP - D * vol0 * bath::atmsph / units::prescon;
       gbar = DelP / qbar;

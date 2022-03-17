@@ -34,7 +34,7 @@ double press;
 
 void lf_langevin_piston(time_prec dt, virial_prec press)
 {
-   const double vbox = volbox();
+   const double vbox = boxVolume();
    const int df = mdstuf::nfree;
    hmass_lp = bath::taupres; // use these as input for the baro/thermostat masses
    pnhm_lp = bath::tautemp;
@@ -144,7 +144,7 @@ void lf_langevin_piston(time_prec dt, virial_prec press)
    lvec1.x = xtlabc;
    lvec2.y = xtlabc;
    lvec3.z = xtlabc;
-   set_default_recip_box();
+   boxSetDefaultRecip();
 
    pnh_lp = pnh_lp + pnhv_lp * dt + 0.5 * dt * dt * pnhf_lp;
 
@@ -235,7 +235,7 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
 
       // calculate eksum (at n+1/2) and eksum_old (at n-1/2)
       kinetic_leapfrog(temp);
-      double vbox = volbox();
+      double vbox = boxVolume();
       double factor = units::prescon / vbox;
       double stress[3][3];
 
@@ -291,7 +291,7 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
 
    kinetic_leapfrog(temp); // get eksum and eksum_old
 
-   double vbox = volbox();
+   double vbox = boxVolume();
    double factor = units::prescon / vbox;
    double stress[3][3];
    for (int i = 0; i < 3; ++i) {

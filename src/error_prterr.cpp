@@ -9,8 +9,8 @@ namespace tinker {
 void prterr()
 {
    Box p;
-   get_default_box(p);
-   set_tinker_box_module(p);
+   boxGetDefault(p);
+   boxSetTinkerModule(p);
    darray::copyout(g::q0, n, atoms::x, xpos);
    darray::copyout(g::q0, n, atoms::y, ypos);
    darray::copyout(g::q0, n, atoms::z, zpos);

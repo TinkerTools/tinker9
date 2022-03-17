@@ -158,7 +158,7 @@ static void x_analyze_v()
    const char* fmt_p = "\n"
                        " Pressure (Temp %3d K) :            %13.3lf Atmospheres\n";
    if (bound::use_bounds) {
-      double vol = volbox();
+      double vol = boxVolume();
       double tr_vir = vir[0] + vir[4] + vir[8];
       double pres_vir = -tr_vir;
       pres = 3 * n * units::gasconst * temp + pres_vir;

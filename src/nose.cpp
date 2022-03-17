@@ -29,7 +29,7 @@ void hoover(time_prec dt, virial_prec press)
       -1.70241438391931526809537561794292165384399875243428965665,
       1.351207191959657634047687808971460826921999376217144828328};
 
-   const double vbox = volbox();
+   const double vbox = boxVolume();
    T_prec temp;
    kinetic(temp);
    const double ekt = units::gasconst * bath::kelvin;
@@ -140,7 +140,7 @@ void nhc_npt(int istep, time_prec dt)
    lvec1 *= eterm2;
    lvec2 *= eterm2;
    lvec3 *= eterm2;
-   set_default_recip_box();
+   boxSetDefaultRecip();
 
    // update atomic positions via coupling to barostat
    // eq. 42 coordinates
@@ -162,7 +162,7 @@ void nhc_npt(int istep, time_prec dt)
    hoover(dt, press);
 
    // set isotropic pressure to the average of tensor diagonal
-   double vbox = volbox();
+   double vbox = boxVolume();
    double factor = units::prescon / vbox;
    double stress[3][3];
    for (int i = 0; i < 3; ++i) {

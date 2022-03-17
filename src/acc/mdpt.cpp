@@ -96,7 +96,7 @@ void berendsen_barostat_acc(time_prec dt)
    if (not bound::use_bounds)
       return;
 
-   double vol = volbox();
+   double vol = boxVolume();
    double factor = units::prescon / vol;
    double stress[3][3];
    for (int i = 0; i < 3; ++i) {
@@ -160,8 +160,8 @@ void berendsen_barostat_acc(time_prec dt)
          a2 = radian * std::acos(a2);
       }
       Box newbox;
-      box_lattice(newbox, box_shape, l0, l1, l2, a0, a1, a2);
-      set_default_box(newbox);
+      boxLattice(newbox, box_shape, l0, l1, l2, a0, a1, a2);
+      boxSetDefault(newbox);
 
       #pragma acc parallel loop independent async\
               deviceptr(xpos,ypos,zpos) firstprivate(ascale[0:3][0:3])
@@ -181,7 +181,7 @@ void berendsen_barostat_acc(time_prec dt)
       lvec1 *= scale;
       lvec2 *= scale;
       lvec3 *= scale;
-      set_default_recip_box();
+      boxSetDefaultRecip();
 
       #pragma acc parallel loop independent async\
               deviceptr(xpos,ypos,zpos)
@@ -214,8 +214,8 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
 
    // save the system state prior to trial box size change
    Box boxold;
-   get_default_box(boxold);
-   double volold = volbox();
+   boxGetDefault(boxold);
+   double volold = boxVolume();
    double volnew = 0;
    double eold = epot;
    darray::copy(g::q0, n, x_pmonte, xpos);
@@ -233,7 +233,7 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
       lvec1 *= scale;
       lvec2 *= scale;
       lvec3 *= scale;
-      set_default_recip_box();
+      boxSetDefaultRecip();
 
       if (volscale == "MOLECULAR") {
          int nmol = molecule.nmol;
@@ -300,7 +300,7 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
    if (exp_rdm > expterm) {
       TINKER_LOG("MC Barostat Move Rejected");
       esum = eold;
-      set_default_box(boxold);
+      boxSetDefault(boxold);
       darray::copy(g::q0, n, xpos, x_pmonte);
       darray::copy(g::q0, n, ypos, y_pmonte);
       darray::copy(g::q0, n, zpos, z_pmonte);
@@ -309,9 +309,9 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
    } else {
 #if TINKER_ENABLE_LOG
       Box p;
-      get_default_box(p);
+      boxGetDefault(p);
       double xbox, ybox, zbox, a_deg, b_deg, c_deg;
-      get_box_axes_angles(p, xbox, ybox, zbox, a_deg, b_deg, c_deg);
+      boxGetAxesAngles(p, xbox, ybox, zbox, a_deg, b_deg, c_deg);
       TINKER_LOG("MC Barostat Move Accepted; New box"_s + 6 * "%12.6f"_s, xbox, ybox, zbox, a_deg,
          b_deg, c_deg);
 #endif

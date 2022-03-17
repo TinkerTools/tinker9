@@ -1028,7 +1028,7 @@ void pme_conv_cu2(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
 
    real f = electric / dielec;
    real aewald = st.aewald;
-   real box_volume = volbox();
+   real box_volume = boxVolume();
 
    auto ker = pme_conv_cu1<DO_E, DO_V>;
    auto stream = use_pme_stream ? g::spme : g::s0;

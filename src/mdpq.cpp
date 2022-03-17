@@ -125,8 +125,8 @@ void read_frame_copyin_to_xyz(std::istream& ipt, int& done)
       double xr, yr, zr;
       if (matched == 6) {
          Box p;
-         box_lattice(p, box_shape, l1, l2, l3, a1, a2, a3);
-         set_default_box(p);
+         boxLattice(p, box_shape, l1, l2, l3, a1, a2, a3);
+         boxSetDefault(p);
       } else {
          std::sscanf(line.data(), "%d%s%lf%lf%lf", &index, name, &xr, &yr, &zr);
          index -= 1;

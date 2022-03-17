@@ -70,7 +70,7 @@ void device_data(rc_op op)
    rc_man n42{n_data, op};
    rc_man cpl42{couple_data, op};
 
-   rc_man box42{box_data, op};
+   rc_man box42{boxData, op};
 
    rc_man xyz42{xyz_data, op};
    rc_man vel42{vel_data, op};

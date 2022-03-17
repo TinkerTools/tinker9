@@ -393,8 +393,8 @@ void evdw_data(rc_op op)
       if (vdwpot::use_vcorr) {
          double elrc = 0, vlrc = 0;
          tinker_f_evcorr1({const_cast<char*>("VDW"), 3}, &elrc, &vlrc);
-         elrc_vol = elrc * volbox();
-         vlrc_vol = vlrc * volbox();
+         elrc_vol = elrc * boxVolume();
+         vlrc_vol = vlrc * boxVolume();
       } else {
          elrc_vol = 0;
          vlrc_vol = 0;
@@ -483,14 +483,14 @@ void evdw(int vers)
 
    if (do_e) {
       if (elrc_vol != 0) {
-         energy_prec corr = elrc_vol / volbox();
+         energy_prec corr = elrc_vol / boxVolume();
          energy_ev += corr;
          energy_vdw += corr;
       }
    }
    if (do_v) {
       if (vlrc_vol != 0) {
-         virial_prec term = vlrc_vol / volbox();
+         virial_prec term = vlrc_vol / boxVolume();
          virial_ev[0] += term; // xx
          virial_ev[4] += term; // yy
          virial_ev[8] += term; // zz

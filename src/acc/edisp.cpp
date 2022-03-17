@@ -31,7 +31,7 @@ void disp_pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_v)
    const real fac1 = 2 * std::pow(M_PI, 3.5);
    const real fac2 = aewald * aewald * aewald;
    const real fac3 = -2 * aewald * M_PI * M_PI;
-   const real vbox = volbox();
+   const real vbox = boxVolume();
    const real denom0 = 6 * vbox / std::pow(M_PI, 1.5);
 
    size_t bufsize = buffer_size();

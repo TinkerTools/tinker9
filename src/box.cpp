@@ -7,7 +7,7 @@
 #include <tinker/detail/boxes.hh>
 
 namespace tinker {
-void box_extent(double new_extent)
+void boxExtent(double new_extent)
 {
    if (box_shape != UNBOUND_BOX)
       return;
@@ -23,7 +23,13 @@ void box_extent(double new_extent)
    recipc.z = w1x;
 }
 
-void set_default_box(const Box& p)
+extern void boxCopyin_acc();
+void boxCopyin()
+{
+   boxCopyin_acc();
+}
+
+void boxSetDefault(const Box& p)
 {
    box_shape = p.box_shape;
    lvec1 = p.lvec1;
@@ -33,10 +39,10 @@ void set_default_box(const Box& p)
    recipb = p.recipb;
    recipc = p.recipc;
 
-   box_copyin_acc();
+   boxCopyin();
 }
 
-void get_default_box(Box& p)
+void boxGetDefault(Box& p)
 {
    p.box_shape = box_shape;
    p.lvec1 = lvec1;
@@ -47,7 +53,7 @@ void get_default_box(Box& p)
    p.recipc = recipc;
 }
 
-void set_recip_box(real3& recipa, real3& recipb, real3& recipc, BoxShape box_shape,
+static void boxSetRecip(real3& recipa, real3& recipb, real3& recipc, BoxShape box_shape,
    const real3& lvec1, const real3& lvec2, const real3& lvec3)
 {
    if (box_shape == ORTHO_BOX) {
@@ -102,14 +108,14 @@ void set_recip_box(real3& recipa, real3& recipb, real3& recipc, BoxShape box_sha
    }
 }
 
-void set_default_recip_box()
+void boxSetDefaultRecip()
 {
-   set_recip_box(recipa, recipb, recipc, box_shape, lvec1, lvec2, lvec3);
+   boxSetRecip(recipa, recipb, recipc, box_shape, lvec1, lvec2, lvec3);
 
-   box_copyin_acc();
+   boxCopyin();
 }
 
-void get_box_axes_angles(
+void boxGetAxesAngles(
    const Box& p, double& a, double& b, double& c, double& alpha, double& beta, double& gamma)
 {
    auto DOT3 = [](const double* a, const double* b) -> double {
@@ -138,7 +144,7 @@ void get_box_axes_angles(
    gamma = c_deg;
 }
 
-void set_tinker_box_module(const Box& p)
+void boxSetTinkerModule(const Box& p)
 {
    if (p.box_shape == UNBOUND_BOX)
       return;
@@ -157,7 +163,7 @@ void set_tinker_box_module(const Box& p)
       boxes::octahedron = 1;
 
    double xbox, ybox, zbox, a_deg, b_deg, c_deg;
-   get_box_axes_angles(p, xbox, ybox, zbox, a_deg, b_deg, c_deg);
+   boxGetAxesAngles(p, xbox, ybox, zbox, a_deg, b_deg, c_deg);
 
    boxes::xbox = xbox;
    boxes::ybox = ybox;
@@ -168,7 +174,7 @@ void set_tinker_box_module(const Box& p)
    tinker_f_lattice();
 }
 
-void get_tinker_box_module(Box& p)
+static void boxGetTinkerModule(Box& p)
 {
    if (!bound::use_bounds) {
       p.box_shape = UNBOUND_BOX;
@@ -212,7 +218,7 @@ void get_tinker_box_module(Box& p)
    p.lvec3.z = l[2][2];
 }
 
-void box_lattice(Box& p, BoxShape sh, double a, double b, double c, double alpha_deg,
+void boxLattice(Box& p, BoxShape sh, double a, double b, double c, double alpha_deg,
    double beta_deg, double gamma_deg)
 {
    p.box_shape = sh;
@@ -252,12 +258,13 @@ void box_lattice(Box& p, BoxShape sh, double a, double b, double c, double alpha
       p.lvec2 = make_real3(0, a, 0);
       p.lvec3 = make_real3(0, 0, a);
    }
-   set_recip_box(p.recipa, p.recipb, p.recipc, p.box_shape, p.lvec1, p.lvec2, p.lvec3);
+   boxSetRecip(p.recipa, p.recipb, p.recipc, p.box_shape, p.lvec1, p.lvec2, p.lvec3);
 }
 
-void box_data(rc_op op)
+extern void boxData_acc(rc_op);
+void boxData(rc_op op)
 {
-   box_data_acc(op);
+   boxData_acc(op);
 
    if (op & rc_dealloc) {
       if (calc::traj & rc_flag) {
@@ -276,12 +283,12 @@ void box_data(rc_op op)
 
    if (op & rc_init) {
       Box p;
-      get_tinker_box_module(p);
-      set_default_box(p);
+      boxGetTinkerModule(p);
+      boxSetDefault(p);
    }
 }
 
-real volbox()
+real boxVolume()
 {
    real ans = lvec1.x * lvec2.y * lvec3.z;
    if (box_shape == OCT_BOX)

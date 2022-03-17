@@ -61,8 +61,8 @@ void edisp_data(rc_op op)
       if (dsppot::use_dcorr && !use_dewald()) {
          double elrc = 0, vlrc = 0;
          tinker_f_evcorr1({const_cast<char*>("DISP"), 4}, &elrc, &vlrc);
-         elrc_vol_dsp = elrc * volbox();
-         vlrc_vol_dsp = vlrc * volbox();
+         elrc_vol_dsp = elrc * boxVolume();
+         vlrc_vol_dsp = vlrc * boxVolume();
       } else {
          elrc_vol_dsp = 0;
          vlrc_vol_dsp = 0;
@@ -179,14 +179,14 @@ void edisp(int vers)
 
    if (do_e) {
       if (elrc_vol_dsp != 0) {
-         energy_prec corr = elrc_vol_dsp / volbox();
+         energy_prec corr = elrc_vol_dsp / boxVolume();
          energy_edsp += corr;
          energy_vdw += corr;
       }
    }
    if (do_v) {
       if (vlrc_vol_dsp != 0) {
-         virial_prec term = vlrc_vol_dsp / volbox();
+         virial_prec term = vlrc_vol_dsp / boxVolume();
          virial_edsp[0] += term; // xx
          virial_edsp[4] += term; // yy
          virial_edsp[8] += term; // zz
@@ -247,7 +247,7 @@ void edisp_ewald(int vers)
    // account for the total energy and virial correction term
    if CONSTEXPR (do_e || do_v) {
       const real aewald = u->aewald;
-      const real denom0 = 6 * volbox() / std::pow(M_PI, 1.5);
+      const real denom0 = 6 * boxVolume() / std::pow(M_PI, 1.5);
       energy_prec term = csixpr * aewald * aewald * aewald / denom0;
       if CONSTEXPR (do_e) {
          energy_edsp -= term;

@@ -54,7 +54,7 @@ void goto_frame(int idx0)
    y = trajy + n * idx0;
    z = trajz + n * idx0;
    const Box& b = trajbox[idx0];
-   set_default_box(b);
+   boxSetDefault(b);
 }
 
 void copyin_arc_file(const std::string& arcfile, int first1, int last1, int step)
@@ -132,7 +132,7 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1, int step
       if (has_boxsize) {
          for (int i = 0; i < tn; ++i) {
             int c = i * 6;
-            box_lattice(trajbox[i], box_shape, bbuf[c], bbuf[c + 1], bbuf[c + 2], bbuf[c + 3],
+            boxLattice(trajbox[i], box_shape, bbuf[c], bbuf[c + 1], bbuf[c + 2], bbuf[c + 3],
                bbuf[c + 4], bbuf[c + 5]);
          }
       }

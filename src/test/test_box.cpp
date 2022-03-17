@@ -9,6 +9,10 @@
 #include <tinker/detail/boxes.hh>
 using namespace tinker;
 
+namespace tinker {
+extern void boxData_acc(rc_op);
+}
+
 namespace {
 void set_box(BoxShape shape, const double* p)
 {
@@ -16,8 +20,8 @@ void set_box(BoxShape shape, const double* p)
       return;
 
    Box bo;
-   box_lattice(bo, shape, p[0], p[1], p[2], p[3], p[4], p[5]);
-   set_default_box(bo);
+   boxLattice(bo, shape, p[0], p[1], p[2], p[3], p[4], p[5]);
+   boxSetDefault(bo);
 }
 }
 
@@ -49,7 +53,7 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
    tinkerFortranRuntimeBegin(argc, (char**)argv);
    initial();
    gpu_card_data(rc_alloc | rc_init);
-   box_data_acc(rc_alloc);
+   boxData_acc(rc_alloc);
 
    double eps = 1.0e-6;
    double p[] = {16, 16, 16, 90, 90, 90};
@@ -58,7 +62,7 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
    SECTION("  - volume")
    {
       double vol = p[0] * p[1] * p[2];
-      REQUIRE(volbox() == Approx(vol).margin(eps));
+      REQUIRE(boxVolume() == Approx(vol).margin(eps));
    }
 
    // image and imagen
@@ -94,7 +98,7 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
       compare_in();
    }
 
-   box_data_acc(rc_dealloc);
+   boxData_acc(rc_dealloc);
    gpu_card_data(rc_dealloc);
    tinker_f_final();
    tinkerFortranRuntimeEnd();
@@ -109,7 +113,7 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
    tinkerFortranRuntimeBegin(argc, (char**)argv);
    initial();
    gpu_card_data(rc_alloc | rc_init);
-   box_data_acc(rc_alloc);
+   boxData_acc(rc_alloc);
 
    double eps = 1.0e-6;
    double p[] = {32, 24, 20, 90, 30, 90};
@@ -133,7 +137,7 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
    SECTION("  - volume")
    {
       double vol = p[0] * p[1] * p[2] * SIN(p[4]);
-      REQUIRE(volbox() == Approx(vol).margin(eps));
+      REQUIRE(boxVolume() == Approx(vol).margin(eps));
    }
 
    // image and imagen
@@ -178,7 +182,7 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
       compare_in();
    }
 
-   box_data_acc(rc_dealloc);
+   boxData_acc(rc_dealloc);
    gpu_card_data(rc_dealloc);
    tinker_f_final();
    tinkerFortranRuntimeEnd();
@@ -194,7 +198,7 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
    tinkerFortranRuntimeBegin(argc, (char**)argv);
    initial();
    gpu_card_data(rc_alloc | rc_init);
-   box_data_acc(rc_alloc);
+   boxData_acc(rc_alloc);
 
    double eps = 1.0e-6;
    double p[] = {32, 24, 20, 75, 60, 45};
@@ -206,7 +210,7 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
    double ga = COS(p[5]);
    double sq = 1.0 - al * al - be * be - ga * ga + 2 * al * be * ga;
    double vol = p[0] * p[1] * p[2] * std::sqrt(sq);
-   REQUIRE(volbox() == Approx(vol).margin(eps));
+   REQUIRE(boxVolume() == Approx(vol).margin(eps));
 
    // image and imagen
    SECTION("  - origin")
@@ -242,7 +246,7 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
       compare_in();
    }
 
-   box_data_acc(rc_dealloc);
+   boxData_acc(rc_dealloc);
    gpu_card_data(rc_dealloc);
    tinker_f_final();
    tinkerFortranRuntimeEnd();

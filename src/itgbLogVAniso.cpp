@@ -15,7 +15,7 @@ namespace tinker {
 void LogVAnisoBarostat::control_1_2(time_prec dt)
 {
    time_prec dt2 = dt * 0.5;
-   double vol0 = volbox();
+   double vol0 = boxVolume();
    double b = 0;
    if (m_langevin)
       b = std::sqrt(2 * m_fric * units::gasconst * bath::kelvin / qbar);
@@ -30,8 +30,8 @@ void LogVAnisoBarostat::control_1_2(time_prec dt)
       gbar[i][j] += (2 * m_ekin[i][j] - m_vir[3 * i + j]);
       gbar[i][j] /= qbar;
       if (m_langevin)
-         vbar_matrix[i][j] = ornstein_uhlenbeck_process(
-            dt2, vbar_matrix[i][j], m_fric, gbar[i][j], b, m_rdn[i][j]);
+         vbar_matrix[i][j] =
+            ornstein_uhlenbeck_process(dt2, vbar_matrix[i][j], m_fric, gbar[i][j], b, m_rdn[i][j]);
       else
          vbar_matrix[i][j] += gbar[i][j] * dt2;
    }
@@ -125,13 +125,12 @@ void LogVAnisoBarostat::control3(time_prec dt)
 
    double scal[3][3];
    trimat_exp(scal, vbar_matrix, dt);
-   double h0[3][3] = {{lvec1.x, lvec1.y, lvec1.z},
-                      {lvec2.x, lvec2.y, lvec2.z},
-                      {lvec3.x, lvec3.y, lvec3.z}};
+   double h0[3][3] = {
+      {lvec1.x, lvec1.y, lvec1.z}, {lvec2.x, lvec2.y, lvec2.z}, {lvec3.x, lvec3.y, lvec3.z}};
    matmul3(h0, scal);
    lvec1.x = h0[0][0], lvec1.y = h0[0][1], lvec1.z = h0[0][2];
    lvec2.x = h0[1][0], lvec2.y = h0[1][1], lvec2.z = h0[1][2];
    lvec3.x = h0[2][0], lvec3.y = h0[2][1], lvec3.z = h0[2][2];
-   set_default_recip_box();
+   boxSetDefaultRecip();
 }
 }

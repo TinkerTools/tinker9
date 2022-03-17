@@ -14,7 +14,7 @@ namespace tinker {
 void LogVIsoBarostat::control_1_2(time_prec dt)
 {
    time_prec dt2 = dt * 0.5;
-   double vol0 = volbox();
+   double vol0 = boxVolume();
    double b = 0;
    if (m_langevin)
       b = std::sqrt(2 * m_fric * units::gasconst * bath::kelvin / qbar);
@@ -24,8 +24,7 @@ void LogVIsoBarostat::control_1_2(time_prec dt)
    double tr_vir = m_vir[0] + m_vir[4] + m_vir[8];
    double eksu1 = *m_eksum;
 
-   double gbar =
-      2 * eksu1 * al - tr_vir - dim * vol0 * bath::atmsph / units::prescon;
+   double gbar = 2 * eksu1 * al - tr_vir - dim * vol0 * bath::atmsph / units::prescon;
    gbar /= qbar;
    if (m_langevin)
       vbar = ornstein_uhlenbeck_process(dt2, vbar, m_fric, gbar, b, m_rdn);
@@ -97,6 +96,6 @@ void LogVIsoBarostat::control3(time_prec dt)
    lvec1 *= eterm2;
    lvec2 *= eterm2;
    lvec3 *= eterm2;
-   set_default_recip_box();
+   boxSetDefaultRecip();
 }
 }

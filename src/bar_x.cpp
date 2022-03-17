@@ -237,7 +237,7 @@ void x_bar_makebar()
       read_frame_copyin_to_xyz(a_arc, done);
       refresh_neighbors();
       energy(calc::energy);
-      double vol = volbox();
+      double vol = boxVolume();
       ua1.push_back(esum);
       vola.push_back(vol);
       if (inform::verbose) {
@@ -350,7 +350,7 @@ void x_bar_makebar()
       read_frame_copyin_to_xyz(b_arc, done);
       refresh_neighbors();
       energy(calc::energy);
-      double vol = volbox();
+      double vol = boxVolume();
       ub0.push_back(esum);
       volb.push_back(vol);
       if (inform::verbose) {

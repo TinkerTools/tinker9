@@ -236,7 +236,7 @@ void pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
    real aewald = st.aewald;
    real pterm = pi / aewald;
    pterm *= pterm;
-   real box_volume = volbox();
+   real box_volume = boxVolume();
 
    auto bufsize = buffer_size();
    #pragma acc parallel loop independent\

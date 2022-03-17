@@ -140,7 +140,7 @@ void pme_data(rc_op op)
          double ext;
          tinker_f_extent(&ext);
          double wbox = 2 * (ext + std::fmax(ecut, dcut));
-         box_extent(wbox);
+         boxExtent(wbox);
       }
    }
 
