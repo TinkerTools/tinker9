@@ -150,7 +150,8 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
       m_prop->updateVelocity2(dt2);
    else
       m_prop->updateVelocityR2(dt2, nrespa);
-   m_prop->rattle2(dt, vers1 & calc::virial);
+   // rattle2 does not change the molecular virial
+   m_prop->rattle2(dt, (vers1 & calc::virial) and atomic);
 
    m_thermo->control2(dt, save);
    m_baro->control2(dt);

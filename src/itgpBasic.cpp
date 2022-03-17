@@ -1,6 +1,7 @@
 #include "integrator.h"
 #include "md.h"
 #include "rattle.h"
+#include "tinker_rt.h"
 #include "tool/darray.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
@@ -17,9 +18,17 @@ BasicPropagator::BasicPropagator()
 
    atomic = not useRattle();
    aniso = bath::anisotrop;
+   get_kbool("SEMIISO-PRESSURE", semiiso, false);
+   if (semiiso)
+      aniso = true;
 }
 
 BasicPropagator::~BasicPropagator() {}
+
+void BasicPropagator::updatePosition(time_prec t)
+{
+   mdPos(t);
+}
 
 void BasicPropagator::updateVelocity1(time_prec t)
 {
@@ -39,11 +48,6 @@ void BasicPropagator::updateVelocityR0(time_prec t)
 void BasicPropagator::updateVelocityR1(time_prec t, int nrespa) {}
 
 void BasicPropagator::updateVelocityR2(time_prec t, int nrespa) {}
-
-void BasicPropagator::updatePosition(time_prec t)
-{
-   mdPos(t);
-}
 
 void BasicPropagator::rattleSave()
 {

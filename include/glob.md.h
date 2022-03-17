@@ -99,9 +99,9 @@ TINKER_EXTERN grad_prec *gx2, *gy2, *gz2;
 /// \var x_pmonte
 /// \brief Temporary coordinates created for the Monte Carlo barostat.
 /// \var y_pmonte
-/// \copydoc y_pmonte
+/// \copydoc x_pmonte
 /// \var z_pmonte
-/// \copydoc z_pmonte
+/// \copydoc x_pmonte
 /// \}
 TINKER_EXTERN pos_prec *x_pmonte, *y_pmonte, *z_pmonte;
 }

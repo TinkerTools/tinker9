@@ -5,6 +5,7 @@
 #include <string>
 
 namespace tinker {
+/// \ingroup mdintg
 class IntegratorStaticData
 {
 protected:
@@ -23,6 +24,7 @@ protected:
 
 //====================================================================//
 
+/// \ingroup mdintg
 enum class PropagatorEnum
 {
    Respa,
@@ -34,19 +36,39 @@ enum class PropagatorEnum
 class BasicPropagator;
 BasicPropagator* create(PropagatorEnum pe);
 
+/// \ingroup mdintg
+/// \brief The interface class of a Verlet or an RESPA-Verlet MD step.
 class BasicPropagator : virtual public IntegratorStaticData
 {
 public:
+   /// \brief Logical flag governing saving an MD step.
+   /// \param istep  Current number of MD step, started from 1.
    bool ifSave(int istep) const;
    BasicPropagator();
    virtual ~BasicPropagator();
 
-   virtual void updateVelocity1(time_prec t);
-   virtual void updateVelocity2(time_prec t);
-   virtual void updateVelocityR0(time_prec t);
-   virtual void updateVelocityR1(time_prec t, int nrespa);
-   virtual void updateVelocityR2(time_prec t, int nrespa);
+   /// \brief Position update.
+   /// \param t  Actual time interval.
    virtual void updatePosition(time_prec t);
+
+   /// \brief The first half-step velocity update.
+   /// \param t  Actual time interval, i.e., half-step.
+   virtual void updateVelocity1(time_prec t);
+   /// \brief The second half-step velocity update.
+   /// \param t  Actual time interval, i.e., half-step.
+   virtual void updateVelocity2(time_prec t);
+
+   /// \brief Velocity update for the inner RESPA time steps.
+   /// \param t  Actual time interval, i.e., time-step/nrespa.
+   virtual void updateVelocityR0(time_prec t);
+   /// \brief The first half-step velocity update for RESPA.
+   /// \param t  Actual time interval, i.e., half-step.
+   /// \param nrespa  Number of inner RESPA steps per time-step.
+   virtual void updateVelocityR1(time_prec t, int nrespa);
+   /// \brief The second half-step velocity update for RESPA.
+   /// \param t       Actual time interval, i.e., half-step.
+   /// \param nrespa  Number of inner RESPA steps per time-step.
+   virtual void updateVelocityR2(time_prec t, int nrespa);
 
    virtual void rattleSave();
    virtual void rattle(time_prec dt);
