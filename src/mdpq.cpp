@@ -1,6 +1,6 @@
 #include "mdpq.h"
 #include "box.h"
-#include "mdcalc.h"
+#include "mdprec.h"
 #include "nblist.h"
 #include "tool/darray.h"
 #include "tool/error.h"

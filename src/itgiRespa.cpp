@@ -1,9 +1,9 @@
 #include "itgiRespa.h"
 #include "energy.h"
-#include "mdcalc.h"
 #include "mdegv.h"
 #include "mdintg.h"
 #include "mdpq.h"
+#include "mdprec.h"
 
 namespace tinker {
 const char* RespaIntegrator::name() const

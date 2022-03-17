@@ -1,8 +1,8 @@
 #include "itgiLeapFrogLP.h"
 #include "energy.h"
 #include "lf_lpiston.h"
-#include "mdcalc.h"
 #include "mdpq.h"
+#include "mdprec.h"
 #include "tool/darray.h"
 
 namespace tinker {
@@ -20,16 +20,16 @@ LeapFrogLPIntegrator::LeapFrogLPIntegrator()
    : BasicIntegrator()
 {
    darray::allocate(n, &leapfrog_x, &leapfrog_y, &leapfrog_z);
-   darray::allocate(n, &leapfrog_vx, &leapfrog_vy, &leapfrog_vz,
-                    &leapfrog_vxold, &leapfrog_vyold, &leapfrog_vzold);
+   darray::allocate(n, &leapfrog_vx, &leapfrog_vy, &leapfrog_vz, &leapfrog_vxold, &leapfrog_vyold,
+      &leapfrog_vzold);
    this->kickoff();
 }
 
 LeapFrogLPIntegrator::~LeapFrogLPIntegrator()
 {
    darray::deallocate(leapfrog_x, leapfrog_y, leapfrog_z);
-   darray::deallocate(leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold,
-                      leapfrog_vyold, leapfrog_vzold);
+   darray::deallocate(
+      leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
 }
 
 void LeapFrogLPIntegrator::dynamic(int istep, time_prec dt)

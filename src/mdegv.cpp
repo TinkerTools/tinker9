@@ -1,8 +1,8 @@
 #include "mdegv.h"
 #include "energy.h"
 #include "glob.dhflow.h"
-#include "mdcalc.h"
 #include "mdpq.h"
+#include "mdprec.h"
 #include "tool/device_zero.h"
 #include "tool/host_zero.h"
 

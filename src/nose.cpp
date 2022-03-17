@@ -1,9 +1,9 @@
 #include "nose.h"
 #include "box.h"
 #include "energy.h"
-#include "mdcalc.h"
 #include "mdegv.h"
 #include "mdpq.h"
+#include "mdprec.h"
 #include "mdpt.h"
 #include <cmath>
 #include <tinker/detail/inform.hh>

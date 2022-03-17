@@ -1,6 +1,6 @@
 #include "itgiNhc96.h"
 #include "energy.h"
-#include "mdcalc.h"
+#include "mdprec.h"
 #include "nose.h"
 #include "tool/error.h"
 #include <tinker/detail/mdstuf.hh>

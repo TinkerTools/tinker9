@@ -1,8 +1,8 @@
 #include "mdpt.h"
-#include "mdcalc.h"
 #include "mdegv.h"
 #include "mdintg.h"
 #include "mdpq.h"
+#include "mdprec.h"
 #include "platform.h"
 #include <cassert>
 #include <tinker/detail/mdstuf.hh>

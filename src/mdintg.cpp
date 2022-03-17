@@ -12,10 +12,10 @@
 #include "itgiVerlet.h"
 #include "lpiston.h"
 #include "mathfunc_pow2.h"
-#include "mdcalc.h"
 #include "mdegv.h"
 #include "mdintg.h"
 #include "mdpq.h"
+#include "mdprec.h"
 #include "mdpt.h"
 #include "mdsave.h"
 #include "nose.h"
@@ -116,11 +116,9 @@ void integrate_data(rc_op op)
       }
 
       IntegratorEnum integrator = IntegratorEnum::Beeman;
-      if (thermostat == ThermostatEnum::m_LeapFrogLP and
-          barostat == BarostatEnum::m_LeapFrogLP)
+      if (thermostat == ThermostatEnum::m_LeapFrogLP and barostat == BarostatEnum::m_LeapFrogLP)
          integrator = IntegratorEnum::LeapFrogLP;
-      else if (thermostat == ThermostatEnum::Nhc and
-               barostat == BarostatEnum::m_Nhc1996)
+      else if (thermostat == ThermostatEnum::Nhc and barostat == BarostatEnum::m_Nhc1996)
          integrator = IntegratorEnum::Nhc1996;
 
       fstr_view itg = mdstuf::integrate;
@@ -139,8 +137,7 @@ void integrate_data(rc_op op)
       }
 
       bool isNRespa1 = true;
-      if (integrator == IntegratorEnum::Verlet or
-          integrator == IntegratorEnum::Respa) {
+      if (integrator == IntegratorEnum::Verlet or integrator == IntegratorEnum::Respa) {
          if (barostat == BarostatEnum::LP2022) {
             if (integrator == IntegratorEnum::Respa)
                isNRespa1 = false;
@@ -180,23 +177,37 @@ const TimeScaleConfig& respa_tsconfig()
    constexpr int fast = floor_log2_constexpr(RESPA_FAST); // short-range
    constexpr int slow = floor_log2_constexpr(RESPA_SLOW); // long-range
    static TimeScaleConfig tsconfig{
-      {"ebond", fast},         {"eangle", fast},        {"estrbnd", fast},
-      {"eurey", fast},         {"eopbend", fast},       {"etors", fast},
-      {"eimprop", fast},       {"eimptor", fast},       {"epitors", fast},
-      {"estrtor", fast},       {"eangtor", fast},       {"etortor", fast},
+      {"ebond", fast},
+      {"eangle", fast},
+      {"estrbnd", fast},
+      {"eurey", fast},
+      {"eopbend", fast},
+      {"etors", fast},
+      {"eimprop", fast},
+      {"eimptor", fast},
+      {"epitors", fast},
+      {"estrtor", fast},
+      {"eangtor", fast},
+      {"etortor", fast},
       {"egeom", fast},
 
       {"evalence", fast},
 
       {"evdw", slow},
 
-      {"echarge", slow},       {"echglj", slow},
+      {"echarge", slow},
+      {"echglj", slow},
 
-      {"emplar", slow},        {"empole", slow},        {"epolar", slow},
+      {"emplar", slow},
+      {"empole", slow},
+      {"epolar", slow},
 
-      {"empole_chgpen", slow}, {"epolar_chgpen", slow},
+      {"empole_chgpen", slow},
+      {"epolar_chgpen", slow},
 
-      {"echgtrn", slow},       {"edisp", slow},         {"erepel", slow},
+      {"echgtrn", slow},
+      {"edisp", slow},
+      {"erepel", slow},
       {"ehippo", slow},
    };
    return tsconfig;

@@ -1,10 +1,10 @@
 #include "itgiBasic.h"
 #include "energy.h"
 #include "lpiston.h"
-#include "mdcalc.h"
 #include "mdegv.h"
 #include "mdintg.h"
 #include "mdpq.h"
+#include "mdprec.h"
 #include "tool/io_print.h"
 
 namespace tinker {
@@ -29,8 +29,7 @@ void BasicIntegrator::plan(int istep)
       vers1 &= ~calc::energy;
 }
 
-BasicIntegrator::BasicIntegrator(PropagatorEnum pe, ThermostatEnum te,
-                                 BarostatEnum be)
+BasicIntegrator::BasicIntegrator(PropagatorEnum pe, ThermostatEnum te, BarostatEnum be)
    : m_prop(create(pe))
    , m_thermo(create(te))
    , m_baro(create(be))
