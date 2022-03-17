@@ -966,16 +966,16 @@ void echglj_cu3()
 
    int ngrid = get_grid_size(BLOCK_DIM);
    if (box_shape == ORTHO_BOX) {
-      auto ker1 = echglj_cu5<Ver, PBC_ORTHO, ETYP, RADRULE, EPSRULE, SOFTCORE, VOUT>;
+      auto ker1 = echglj_cu5<Ver, PbcOrtho, ETYP, RADRULE, EPSRULE, SOFTCORE, VOUT>;
       ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(ECHGLJ_CU3_V2_ARGS);
    } else if (box_shape == MONO_BOX) {
-      auto ker1 = echglj_cu5<Ver, PBC_MONO, ETYP, RADRULE, EPSRULE, SOFTCORE, VOUT>;
+      auto ker1 = echglj_cu5<Ver, PbcMono, ETYP, RADRULE, EPSRULE, SOFTCORE, VOUT>;
       ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(ECHGLJ_CU3_V2_ARGS);
    } else if (box_shape == TRI_BOX) {
-      auto ker1 = echglj_cu5<Ver, PBC_TRI, ETYP, RADRULE, EPSRULE, SOFTCORE, VOUT>;
+      auto ker1 = echglj_cu5<Ver, PbcTri, ETYP, RADRULE, EPSRULE, SOFTCORE, VOUT>;
       ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(ECHGLJ_CU3_V2_ARGS);
    } else if (box_shape == OCT_BOX) {
-      auto ker1 = echglj_cu5<Ver, PBC_OCT, ETYP, RADRULE, EPSRULE, SOFTCORE, VOUT>;
+      auto ker1 = echglj_cu5<Ver, PbcOct, ETYP, RADRULE, EPSRULE, SOFTCORE, VOUT>;
       ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(ECHGLJ_CU3_V2_ARGS);
    } else {
       assert(false);

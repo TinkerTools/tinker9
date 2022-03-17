@@ -3,13 +3,13 @@
 
 #include "box.h"
 #include "image.h"
-#include "imagefc_cu.h"
 #include "launch.h"
 #include "md.h"
 #include "nblist.h"
 #include "spatial.h"
 #include "syntax/cu/copysign.h"
 #include "syntax/cu/ffsn.h"
+#include "syntax/cu/imagefc.h"
 #include "thrust_cache.h"
 #include <thrust/extrema.h>
 #include <thrust/remove.h>
@@ -1423,13 +1423,13 @@ void spatial_data_init_cu(Spatial2Unit u)
       si1.bit0, si2.bit0, si3.bit0, si4.bit0);
 
    if (box_shape == ORTHO_BOX) {
-      run_spatial2_step5<PBC_ORTHO>(u);
+      run_spatial2_step5<PbcOrtho>(u);
    } else if (box_shape == MONO_BOX) {
-      run_spatial2_step5<PBC_MONO>(u);
+      run_spatial2_step5<PbcMono>(u);
    } else if (box_shape == TRI_BOX) {
-      run_spatial2_step5<PBC_TRI>(u);
+      run_spatial2_step5<PbcTri>(u);
    } else if (box_shape == OCT_BOX) {
-      run_spatial2_step5<PBC_OCT>(u);
+      run_spatial2_step5<PbcOct>(u);
    } else {
       assert(false);
    }
