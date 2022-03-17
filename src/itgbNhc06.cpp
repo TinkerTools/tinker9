@@ -1,6 +1,4 @@
-#include "itgbNhc06.h"
-#include "itgbLogVAniso.h"
-#include "itgbLogVIso.h"
+#include "integrator.h"
 #include "tool/io.h"
 
 namespace tinker {
@@ -9,7 +7,7 @@ Nhc06Barostat::Nhc06Barostat()
    , m_thermo(new Nhc06Thermostat)
    , m_baro(nullptr)
 {
-   m_baro = new LogVIsoBarostat(0.0);
+   m_baro = new IsoBaroDevice(0.0);
 }
 
 Nhc06Barostat::~Nhc06Barostat()

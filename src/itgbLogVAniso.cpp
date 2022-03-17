@@ -1,5 +1,5 @@
-#include "itgbLogVAniso.h"
 #include "box.h"
+#include "integrator.h"
 #include "lpiston.h"
 #include "mathfunc_ou.h"
 #include "nose.h"
@@ -11,7 +11,7 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-void LogVAnisoBarostat::control_1_2(time_prec dt)
+void AnisoBaroDevice::control_1_2(time_prec dt)
 {
    time_prec dt2 = dt * 0.5;
    double vol0 = boxVolume();
@@ -36,7 +36,7 @@ void LogVAnisoBarostat::control_1_2(time_prec dt)
    }
 }
 
-LogVAnisoBarostat::LogVAnisoBarostat(double fric)
+AnisoBaroDevice::AnisoBaroDevice(double fric)
    : BasicBarostat()
    , m_vir(nullptr)
    , m_eksum(nullptr)
@@ -86,25 +86,25 @@ LogVAnisoBarostat::LogVAnisoBarostat(double fric)
    }
 }
 
-BarostatEnum LogVAnisoBarostat::getBarostatEnum() const
+BarostatEnum AnisoBaroDevice::getBarostatEnum() const
 {
    return BarostatEnum::m_LogVAniso;
 }
 
-void LogVAnisoBarostat::printDetail(FILE* o)
+void AnisoBaroDevice::printDetail(FILE* o)
 {
    print(o, " VBar Mass          %12.2lf\n", qbar);
    printBasic(o);
 }
 
-void LogVAnisoBarostat::control1(time_prec dt)
+void AnisoBaroDevice::control1(time_prec dt)
 {
    if (not applyBaro)
       return;
    control_1_2(dt);
 }
 
-void LogVAnisoBarostat::control2(time_prec dt)
+void AnisoBaroDevice::control2(time_prec dt)
 {
    if (not applyBaro)
       return;
@@ -117,7 +117,7 @@ void LogVAnisoBarostat::control2(time_prec dt)
    control_1_2(dt);
 }
 
-void LogVAnisoBarostat::control3(time_prec dt)
+void AnisoBaroDevice::control3(time_prec dt)
 {
    if (not applyBaro)
       return;

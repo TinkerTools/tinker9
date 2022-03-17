@@ -1,7 +1,4 @@
-#include "itgiNhc06.h"
-#include "itgiRespa.h"
-#include "itgiVerlet.h"
-#include "itgpLogV.h"
+#include "integrator.h"
 #include "tool/error.h"
 #include <tinker/detail/bath.hh>
 
@@ -30,7 +27,7 @@ Nhc06Integrator::Nhc06Integrator(bool isNRespa1)
       TINKER_THROW("Cannot use ANISO-PRESSURE in Nhc06Integrator.");
 
    delete m_prop;
-   m_prop = new LogVPropagator(isNRespa1);
+   m_prop = new LogVDevice(isNRespa1);
 
    this->kickoff();
 }

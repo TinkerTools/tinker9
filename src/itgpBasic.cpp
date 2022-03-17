@@ -1,4 +1,4 @@
-#include "itgpBasic.h"
+#include "integrator.h"
 #include "md.h"
 #include "rattle.h"
 #include "tool/darray.h"

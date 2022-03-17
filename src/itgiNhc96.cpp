@@ -1,5 +1,5 @@
-#include "itgiNhc96.h"
 #include "energy.h"
+#include "integrator.h"
 #include "md.h"
 #include "nose.h"
 #include "tool/error.h"

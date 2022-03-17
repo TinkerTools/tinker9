@@ -1,7 +1,4 @@
-#include "itgiLP22.h"
-#include "itgiRespa.h"
-#include "itgiVerlet.h"
-#include "itgpLogV.h"
+#include "integrator.h"
 #include "lpiston.h"
 #include "tinker_rt.h"
 
@@ -27,7 +24,7 @@ LP22Integrator::LP22Integrator(bool isNRespa1)
    , m_isNRespa1(isNRespa1)
 {
    delete m_prop;
-   m_prop = new LogVPropagator(isNRespa1);
+   m_prop = new LogVDevice(isNRespa1);
 
    this->kickoff();
 }

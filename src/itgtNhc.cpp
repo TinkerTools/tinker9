@@ -1,4 +1,4 @@
-#include "itgtNhc.h"
+#include "integrator.h"
 #include "md.h"
 #include "tool/darray.h"
 #include "tool/io.h"

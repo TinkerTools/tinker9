@@ -1,5 +1,5 @@
-#include "itgiRespa.h"
 #include "energy.h"
+#include "integrator.h"
 #include "md.h"
 
 namespace tinker {

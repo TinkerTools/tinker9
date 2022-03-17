@@ -5,9 +5,8 @@
 
 using namespace tinker;
 
+#include "integrator.h"
 #if TINKER_REAL_SIZE == 8
-#   include "itgEnum.h"
-#   include "itgiVerlet.h"
 static int usage_ = calc::xyz | calc::vel | calc::mass | calc::energy | calc::grad | calc::md;
 
 static double arbox_kin[] = {64.648662, 64.666678, 64.684785, 64.702988, 64.721287, 64.739686,

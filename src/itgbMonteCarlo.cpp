@@ -1,5 +1,4 @@
-#include "itgbMonteCarlo.h"
-#include "itgEnum.h"
+#include "integrator.h"
 #include "md.h"
 #include "random.h"
 #include "tinker_rt.h"

@@ -1,5 +1,4 @@
-#include "itgbBerendsen.h"
-#include "itgEnum.h"
+#include "integrator.h"
 #include "md.h"
 #include "tool/io.h"
 

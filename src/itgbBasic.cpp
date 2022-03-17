@@ -1,5 +1,4 @@
-#include "itgbBasic.h"
-#include "itgbMonteCarlo.h"
+#include "integrator.h"
 #include "tinker_rt.h"
 #include "tool/io.h"
 #include <tinker/detail/bath.hh>

@@ -1,4 +1,4 @@
-#include "itgpLogV.h"
+#include "integrator.h"
 #include "lpiston.h"
 #include "mathfunc_sinhc.h"
 #include "md.h"
@@ -13,7 +13,7 @@ namespace tinker {
 // R0    0       1
 // R1    1     nsp
 // R2    2     nsp
-void LogVPropagator::updateVelocityImpl(time_prec t, int idx, int nrespa)
+void LogVDevice::updateVelocityImpl(time_prec t, int idx, int nrespa)
 {
    if (not applyBaro) {
       if (nrespa == 1) // v1, v2, R0
@@ -114,17 +114,17 @@ void LogVPropagator::updateVelocityImpl(time_prec t, int idx, int nrespa)
    }
 }
 
-LogVPropagator::LogVPropagator(bool isNRespa1)
+LogVDevice::LogVDevice(bool isNRespa1)
    : BasicPropagator()
    , m_respa(nullptr)
 {
    if (not isNRespa1) {
       nrespa = mdstuf::nrespa;
-      m_respa = new RespaPropagator;
+      m_respa = new RespaDevice;
    }
 }
 
-LogVPropagator::~LogVPropagator()
+LogVDevice::~LogVDevice()
 {
    if (m_respa) {
       delete m_respa;
@@ -135,7 +135,7 @@ LogVPropagator::~LogVPropagator()
 extern void pLogVPosMolIso_acc(double scal);
 extern void pLogVPosMolAniso_acc(double (*scal)[3]);
 extern void pLogVPosAtmAniso_acc(double (*a)[3], double (*b)[3]);
-void LogVPropagator::updatePosition(time_prec t)
+void LogVDevice::updatePosition(time_prec t)
 {
    if (atomic) {
       if (not applyBaro) {
@@ -172,27 +172,27 @@ void LogVPropagator::updatePosition(time_prec t)
    }
 }
 
-void LogVPropagator::updateVelocity1(time_prec t)
+void LogVDevice::updateVelocity1(time_prec t)
 {
    updateVelocityImpl(t, 1, 1);
 }
 
-void LogVPropagator::updateVelocity2(time_prec t)
+void LogVDevice::updateVelocity2(time_prec t)
 {
    updateVelocityImpl(t, 2, 1);
 }
 
-void LogVPropagator::updateVelocityR0(time_prec t)
+void LogVDevice::updateVelocityR0(time_prec t)
 {
    updateVelocityImpl(t, 0, 1);
 }
 
-void LogVPropagator::updateVelocityR1(time_prec t, int nrespa)
+void LogVDevice::updateVelocityR1(time_prec t, int nrespa)
 {
    updateVelocityImpl(t, 1, nrespa);
 }
 
-void LogVPropagator::updateVelocityR2(time_prec t, int nrespa)
+void LogVDevice::updateVelocityR2(time_prec t, int nrespa)
 {
    updateVelocityImpl(t, 2, nrespa);
 }

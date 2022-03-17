@@ -1,4 +1,4 @@
-#include "itgtNhc06.h"
+#include "integrator.h"
 #include "lpiston.h"
 #include "md.h"
 #include "nose.h"

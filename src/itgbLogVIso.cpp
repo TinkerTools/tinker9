@@ -1,5 +1,5 @@
-#include "itgbLogVIso.h"
 #include "box.h"
+#include "integrator.h"
 #include "lpiston.h"
 #include "mathfunc_ou.h"
 #include "md.h"
@@ -11,7 +11,7 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-void LogVIsoBarostat::control_1_2(time_prec dt)
+void IsoBaroDevice::control_1_2(time_prec dt)
 {
    time_prec dt2 = dt * 0.5;
    double vol0 = boxVolume();
@@ -32,7 +32,7 @@ void LogVIsoBarostat::control_1_2(time_prec dt)
       vbar += gbar * dt2;
 }
 
-LogVIsoBarostat::LogVIsoBarostat(double fric)
+IsoBaroDevice::IsoBaroDevice(double fric)
    : BasicBarostat()
    , m_vir(nullptr)
    , m_eksum(nullptr)
@@ -58,18 +58,18 @@ LogVIsoBarostat::LogVIsoBarostat(double fric)
    vbar = 0;
 }
 
-BarostatEnum LogVIsoBarostat::getBarostatEnum() const
+BarostatEnum IsoBaroDevice::getBarostatEnum() const
 {
    return BarostatEnum::m_LogVIso;
 }
 
-void LogVIsoBarostat::printDetail(FILE* o)
+void IsoBaroDevice::printDetail(FILE* o)
 {
    print(o, " VBar Mass          %12.2lf\n", qbar);
    printBasic(o);
 }
 
-void LogVIsoBarostat::control1(time_prec dt)
+void IsoBaroDevice::control1(time_prec dt)
 {
    if (not applyBaro)
       return;
@@ -77,7 +77,7 @@ void LogVIsoBarostat::control1(time_prec dt)
    control_1_2(dt);
 }
 
-void LogVIsoBarostat::control2(time_prec dt)
+void IsoBaroDevice::control2(time_prec dt)
 {
    if (not applyBaro)
       return;
@@ -86,7 +86,7 @@ void LogVIsoBarostat::control2(time_prec dt)
    control_1_2(dt);
 }
 
-void LogVIsoBarostat::control3(time_prec dt)
+void IsoBaroDevice::control3(time_prec dt)
 {
    if (not applyBaro)
       return;

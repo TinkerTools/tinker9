@@ -1,6 +1,4 @@
-#include "itgbLP22.h"
-#include "itgbLogVAniso.h"
-#include "itgbLogVIso.h"
+#include "integrator.h"
 #include "tool/io.h"
 #include <tinker/detail/stodyn.hh>
 
@@ -11,9 +9,9 @@ LP22Barostat::LP22Barostat()
    , m_baro(nullptr)
 {
    if (aniso)
-      m_baro = new LogVAnisoBarostat(stodyn::friction);
+      m_baro = new AnisoBaroDevice(stodyn::friction);
    else
-      m_baro = new LogVIsoBarostat(stodyn::friction);
+      m_baro = new IsoBaroDevice(stodyn::friction);
 }
 
 LP22Barostat::~LP22Barostat()

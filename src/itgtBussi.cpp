@@ -1,4 +1,4 @@
-#include "itgtBussi.h"
+#include "integrator.h"
 #include "md.h"
 #include "tool/io.h"
 

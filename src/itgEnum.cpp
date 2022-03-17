@@ -1,14 +1,12 @@
-#include "itgEnum.h"
+#include "integrator.h"
 
-#include "itgpBasic.h"
-#include "itgpRespa.h"
 namespace tinker {
 BasicPropagator* create(PropagatorEnum pe)
 {
    BasicPropagator* p = nullptr;
    switch (pe) {
    case PropagatorEnum::Respa:
-      p = new RespaPropagator;
+      p = new RespaDevice;
       break;
    default:
       p = new BasicPropagator;
@@ -18,9 +16,6 @@ BasicPropagator* create(PropagatorEnum pe)
 }
 }
 
-#include "itgtBasic.h"
-#include "itgtBussi.h"
-#include "itgtNhc.h"
 #include "md.h"
 #include <tinker/detail/mdstuf.hh>
 namespace tinker {
@@ -45,11 +40,6 @@ BasicThermostat* create(ThermostatEnum te)
 }
 }
 
-#include "itgbBasic.h"
-#include "itgbBerendsen.h"
-#include "itgbLP22.h"
-#include "itgbMonteCarlo.h"
-#include "itgbNhc06.h"
 namespace tinker {
 BasicBarostat* create(BarostatEnum be)
 {
@@ -80,6 +70,7 @@ int IntegratorStaticData::nrespa = 0;
 bool IntegratorStaticData::applyBaro = false;
 bool IntegratorStaticData::atomic = true;
 bool IntegratorStaticData::aniso = false;
+bool IntegratorStaticData::semiiso = false;
 double IntegratorStaticData::dofP = 1.0;
 int IntegratorStaticData::anisoArrayLength = 0;
 const int IntegratorStaticData::anisoArray[6][2] = {{0, 0}, {1, 1}, {2, 2}, {0, 2}, {0, 1}, {1, 2}};
