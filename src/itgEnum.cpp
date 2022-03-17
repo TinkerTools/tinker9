@@ -73,5 +73,5 @@ bool IntegratorStaticData::aniso = false;
 bool IntegratorStaticData::semiiso = false;
 double IntegratorStaticData::dofP = 1.0;
 int IntegratorStaticData::anisoArrayLength = 0;
-const int IntegratorStaticData::anisoArray[6][2] = {{0, 0}, {1, 1}, {2, 2}, {0, 2}, {0, 1}, {1, 2}};
+const int IntegratorStaticData::anisoArray[6][2] = {{2, 2}, {1, 1}, {0, 0}, {0, 2}, {0, 1}, {1, 2}};
 }

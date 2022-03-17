@@ -17,6 +17,7 @@ protected:
    static double dofP;
    static int anisoArrayLength;
    static const int anisoArray[6][2];
+   static constexpr int SemiIso = 2;
    static constexpr int OrthoOrOct = 3;
    static constexpr int Mono = 4;
    static constexpr int Tri = 6;

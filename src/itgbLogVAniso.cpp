@@ -23,16 +23,38 @@ void AnisoBaroDevice::control_1_2(time_prec dt)
    double gbar[3][3] = {0};
    for (int i = 0; i < 3; ++i)
       gbar[i][i] += 2 * eksu1 / dofP - vol0 * bath::atmsph / units::prescon;
+
+   double c_ekin[3][3] = {0};
+   double c_vir[9] = {0};
+   // copy 6 elements
+   for (int k = 0; k < Tri; ++k) {
+      int i = anisoArray[k][0];
+      int j = anisoArray[k][1];
+      c_ekin[i][j] = m_ekin[i][j];
+      c_vir[3 * i + j] = m_vir[3 * i + j];
+   }
+   if (anisoArrayLength == SemiIso) {
+      // average xx and yy
+      c_ekin[0][0] = 0.5 * (m_ekin[0][0] + m_ekin[1][1]);
+      c_ekin[1][1] = c_ekin[0][0];
+      c_vir[3 * 0 + 0] = 0.5 * (m_vir[3 * 0 + 0] + m_vir[3 * 1 + 1]);
+      c_vir[3 * 1 + 1] = c_vir[3 * 0 + 0];
+   }
+
    for (int k = 0; k < anisoArrayLength; ++k) {
       int i = anisoArray[k][0];
       int j = anisoArray[k][1];
-      gbar[i][j] += (2 * m_ekin[i][j] - m_vir[3 * i + j]);
+      gbar[i][j] += (2 * c_ekin[i][j] - c_vir[3 * i + j]);
       gbar[i][j] /= qbar;
       if (m_langevin)
          vbar_matrix[i][j] =
             ornstein_uhlenbeck_process(dt2, vbar_matrix[i][j], m_fric, gbar[i][j], b, m_rdn[i][j]);
       else
          vbar_matrix[i][j] += gbar[i][j] * dt2;
+   }
+   if (anisoArrayLength == SemiIso) {
+      // copy yy to xx
+      vbar_matrix[0][0] = vbar_matrix[1][1];
    }
 }
 
@@ -56,6 +78,8 @@ AnisoBaroDevice::AnisoBaroDevice(double fric)
       anisoArrayLength = OrthoOrOct;
       break;
    }
+   if (semiiso)
+      anisoArrayLength = SemiIso;
 
    if (atomic) {
       m_vir = vir;

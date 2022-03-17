@@ -80,6 +80,7 @@ double Nhc06Thermostat::kineticVbar()
    case Tri:
    case Mono:
    case OrthoOrOct:
+   case SemiIso:
       for (k = 0; k < anisoArrayLength; ++k) {
          i = anisoArray[k][0];
          j = anisoArray[k][1];
@@ -106,6 +107,13 @@ void Nhc06Thermostat::scaleVelocityVbar(double scale)
          vbar_matrix[i][j] *= scale;
       }
       break;
+   case SemiIso:
+      for (k = 0; k < OrthoOrOct; ++k) {
+         i = anisoArray[k][0];
+         j = anisoArray[k][1];
+         vbar_matrix[i][j] *= scale;
+      }
+      break;
    default:
       vbar *= scale;
       break;
@@ -117,13 +125,16 @@ double Nhc06Thermostat::dofVbar()
    double dof;
    switch (anisoArrayLength) {
    case Tri:
-      dof = 6.0;
+      dof = static_cast<double>(Tri);
       break;
    case Mono:
-      dof = 4.0;
+      dof = static_cast<double>(Mono);
       break;
    case OrthoOrOct:
-      dof = 3.0;
+      dof = static_cast<double>(OrthoOrOct);
+      break;
+   case SemiIso:
+      dof = static_cast<double>(SemiIso);
       break;
    default:
       dof = 1.0;
