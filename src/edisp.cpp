@@ -18,7 +18,7 @@ bool use_dewald()
    return use_potent(disp_term) and limits::use_dewald;
 }
 
-void edisp_data(rc_op op)
+void edisp_data(RcOp op)
 {
    if (!use_potent(disp_term))
       return;

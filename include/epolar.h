@@ -5,7 +5,7 @@
 #include "pmestuf.h"
 
 namespace tinker {
-void epolar_data(rc_op op);
+void epolar_data(RcOp);
 
 // different induction algorithms
 void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]);

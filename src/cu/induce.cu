@@ -417,7 +417,7 @@ void sparse_precond_apply_cu(
 
    launch_k1s(g::s0, n, sparse_precond_cu0, //
       rsd, rsdp, zrsd, zrsdp, polarity, n, udiag);
-   int ngrid = get_grid_size(BLOCK_DIM);
+   int ngrid = gpuGridSize(BLOCK_DIM);
    ngrid *= BLOCK_DIM;
    int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
    nparallel = std::max(nparallel, ngrid);

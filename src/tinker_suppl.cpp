@@ -1,6 +1,6 @@
 #include "tool/tinker_suppl.h"
 #include "f/tinker_supplement.h"
-#include "tool/io_fort_str.h"
+#include "tool/io.h"
 #include <cassert>
 #include <cstring>
 
@@ -14,7 +14,7 @@ std::string tinker_f_version(std::string file, std::string status)
    tinker_fchars str{buf, buffer_len};
    tinker_fchars sta{const_cast<char*>(status.c_str()), status.length()};
    tinker_f_version(str, sta);
-   return fstr_view(buf).trim();
+   return FstrView(buf).trim();
 }
 
 void tinker_f_rewind(int* unit)
@@ -55,5 +55,5 @@ std::string tinker_f_read_stdin_line()
    constexpr int buffer_len = 2048;
    char buf[buffer_len] = {0};
    suppl_read_stdin_line_(buf, buffer_len);
-   return fstr_view(buf).trim();
+   return FstrView(buf).trim();
 }

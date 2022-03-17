@@ -4,7 +4,7 @@
 #include "tool/rc_man.h"
 
 namespace tinker {
-void eurey_data(rc_op op);
+void eurey_data(RcOp);
 void eurey(int vers);
 void eurey_acc(int);
 }

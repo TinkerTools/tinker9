@@ -5,7 +5,7 @@
 #include "tool/rc_man.h"
 
 namespace tinker {
-void eangtor_data(rc_op);
+void eangtor_data(RcOp);
 void eangtor(int vers);
 void eangtor_acc(int);
 }

@@ -4,7 +4,7 @@
 #include "mod.mplpot.h"
 
 namespace tinker {
-void empole_chgpen_data(rc_op op);
+void empole_chgpen_data(RcOp);
 void empole_chgpen(int vers);
 
 void empole_chgpen_nonewald(int vers, int use_cf);

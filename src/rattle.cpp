@@ -2,7 +2,7 @@
 #include "md.h"
 #include "tool/darray.h"
 #include "tool/energy_buffer.h"
-#include "tool/io_print.h"
+#include "tool/io.h"
 #include <algorithm>
 #include <cassert>
 #include <map>
@@ -178,7 +178,7 @@ std::vector<HCMol> hc_mols;
 std::map<int, size_t> hc_dict;
 }
 
-void rattle_data(rc_op op)
+void rattle_data(RcOp op)
 {
    if (not use_rattle())
       return;

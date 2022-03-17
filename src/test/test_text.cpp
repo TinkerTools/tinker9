@@ -1,5 +1,5 @@
 #include "test.h"
-#include "tool/io_text.h"
+#include "tool/io.h"
 
 using namespace tinker;
 

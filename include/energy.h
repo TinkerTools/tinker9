@@ -65,7 +65,7 @@ void energy(int vers);
  */
 void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig);
 
-void energy_data(rc_op);
+void energy_data(RcOp);
 bool use_energi_vdw();
 bool use_energi_elec();
 }

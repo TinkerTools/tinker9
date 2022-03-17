@@ -1,7 +1,7 @@
 #include "md.h"
 #include "test.h"
 #include "test_rt.h"
-#include "tool/io_fort_str.h"
+#include "tool/io.h"
 #include <fstream>
 #include <tinker/detail/files.hh>
 
@@ -39,7 +39,7 @@ TEST_CASE("Bounds", "[ff][box]")
    rc_flag = calc::xyz | calc::mass;
    initialize();
 
-   fstr_view fsw = files::filename;
+   FstrView fsw = files::filename;
    std::string fname = fsw.trim();
    std::ifstream ipt(fname);
    int done = false;

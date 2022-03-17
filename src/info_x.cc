@@ -46,12 +46,12 @@ void x_info(int, char**)
    auto fmz = "    %-36s %zu\n";
 
    platform_data(rc_init);
-   gpu_card_data(rc_init);
+   gpuData(rc_init);
 
    print(out, "\n\n Program Information\n\n");
    print(out, fmt, "Version:", get_version_string());
    print(out, fmt, "Synchronized with Tinker commit:", get_SHA1());
-   print(out, fmt, "C++ compiler:", cxx_compiler_name());
+   print(out, fmt, "C++ compiler:", cxxCompilerName());
    print(out, fmz, "Size of real (bytes):", sizeof(real));
    print(out, fmz, "Size of mixed (bytes):", sizeof(mixed));
    print(out, fmt, "Using deterministic force:", TINKER_DETERMINISTIC_FORCE ? "true" : "false");
@@ -77,14 +77,14 @@ void x_info(int, char**)
       print(out, fmt, "Primary GPU package:", "CUDA");
    else if (pltfm_config & ACC_PLTFM)
       print(out, fmt, "Primary GPU package:", "OpenACC");
-   print(out, fmt, "Latest CUDA supported by driver:", get_cuda_driver_version_string());
-   print(out, fmt, "CUDA runtime version:", get_cuda_runtime_version_string());
-   print(out, fmt, "Thrust version:", get_thrust_version_string());
-   print(out, fmt, "CUDA compiler:", cuda_compiler_name());
-   print(out, fmt, "OpenACC compiler:", acc_compiler_name());
+   print(out, fmt, "Latest CUDA supported by driver:", gpuCudaDriverVersion());
+   print(out, fmt, "CUDA runtime version:", gpuCudaRuntimeVersion());
+   print(out, fmt, "Thrust version:", gpuThrustVersion());
+   print(out, fmt, "CUDA compiler:", cudaCompilerName());
+   print(out, fmt, "OpenACC compiler:", accCompilerName());
    if (ndevice > 0) {
       print(out, fmd, "GPU detected:", ndevice);
-      const auto& attribs = get_device_attributes();
+      const auto& attribs = gpuDeviceAttributes();
       for (const auto& a : attribs) {
          print(out, fm1, format("GPU %d:", a.device));
          print(out, fm2, "PCI:", a.pci_string);
@@ -105,7 +105,7 @@ void x_info(int, char**)
    }
 #endif
 
-   gpu_card_data(rc_dealloc);
+   gpuData(rc_dealloc);
    platform_data(rc_dealloc);
 }
 }

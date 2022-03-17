@@ -4,7 +4,7 @@
 #include "mathfunc_ou.h"
 #include "nose.h"
 #include "random.h"
-#include "tool/io_print.h"
+#include "tool/io.h"
 #include "tool/trimatexp.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/mdstuf.hh>
@@ -123,7 +123,7 @@ void LogVAnisoBarostat::control3(time_prec dt)
       return;
 
    double scal[3][3];
-   trimat_exp(scal, vbar_matrix, dt);
+   trimatExp(scal, vbar_matrix, dt);
    double h0[3][3] = {
       {lvec1.x, lvec1.y, lvec1.z}, {lvec2.x, lvec2.y, lvec2.z}, {lvec3.x, lvec3.y, lvec3.z}};
    matmul3(h0, scal);

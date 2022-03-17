@@ -76,7 +76,7 @@ void ehal_acc1()
    if CONSTEXPR (do_g)
       darray::zero(g::q0, n, gxred, gyred, gzred);
 
-   MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
+   MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(DEVICE_PTRS,vlst)

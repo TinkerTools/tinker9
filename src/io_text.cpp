@@ -1,4 +1,4 @@
-#include "tool/io_text.h"
+#include "tool/io.h"
 #include <algorithm>
 #include <bitset>
 #include <cassert>

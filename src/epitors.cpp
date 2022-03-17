@@ -6,7 +6,7 @@
 #include <tinker/detail/torpot.hh>
 
 namespace tinker {
-void epitors_data(rc_op op)
+void epitors_data(RcOp op)
 {
    if (!use_potent(pitors_term))
       return;

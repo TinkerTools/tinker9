@@ -4,16 +4,15 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-void nhc_isot_96(time_prec dt, int nnose, double* vnh, const double* qnh,
-                 double g0, double* (*f_kin)(), void (*scale_vel)(double))
+void nhc_isot_96(time_prec dt, int nnose, double* vnh, const double* qnh, double g0,
+   double* (*f_kin)(), void (*scale_vel)(double))
 {
    constexpr int nc = 5;
    constexpr int ns = 3;
    // w[0] = 1/(2 - 2**(1/3))
    // w[1] = 1 - w[0] - w[2]
    // w[2] = w[0]
-   constexpr double w[3] = {
-      1.351207191959657634047687808971460826921999376217144828328,
+   constexpr double w[3] = {1.351207191959657634047687808971460826921999376217144828328,
       -1.70241438391931526809537561794292165384399875243428965665,
       1.351207191959657634047687808971460826921999376217144828328};
 

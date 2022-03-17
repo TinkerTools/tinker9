@@ -113,19 +113,19 @@ void copy_gradient(int vers, double* grdx, double* grdy, double* grdz)
 
 //====================================================================//
 
-void egvData(rc_op op)
+void egvData(RcOp op)
 {
    bool rc_a = rc_flag & calc::analyz;
 
    if (op & rc_dealloc) {
       using namespace detail;
-      device_memory_deallocate_bytes(ev_dptr);
+      deviceMemoryDeallocate(ev_dptr);
       ev_dptr = nullptr;
    }
 
    if (op & rc_alloc) {
       using namespace detail;
-      device_memory_allocate_bytes((void**)(&ev_dptr), sizeof(DHFlow));
+      deviceMemoryAllocateBytes((void**)(&ev_dptr), sizeof(DHFlow));
    }
 
    if (rc_flag & calc::energy) {

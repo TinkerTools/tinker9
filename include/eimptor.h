@@ -4,7 +4,7 @@
 #include "tool/rc_man.h"
 
 namespace tinker {
-void eimptor_data(rc_op);
+void eimptor_data(RcOp);
 void eimptor(int vers);
 void eimptor_acc(int);
 }

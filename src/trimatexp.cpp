@@ -147,7 +147,7 @@ static T f3(T a, T b, T c)
 }
 
 template <class T>
-void trimat_exp(T ans[3][3], T m[3][3], T t)
+void trimatExp(T ans[3][3], T m[3][3], T t)
 {
    constexpr int unknown = 0x00;
    constexpr int ortho = 0x01;
@@ -186,11 +186,11 @@ void trimat_exp(T ans[3][3], T m[3][3], T t)
       }
    }
 }
-template void trimat_exp(double ans[3][3], double m[3][3], double t);
-template void trimat_exp(float ans[3][3], float m[3][3], float t);
+template void trimatExp(double ans[3][3], double m[3][3], double t);
+template void trimatExp(float ans[3][3], float m[3][3], float t);
 
 template <class T>
-void trimat_expm1c(T ans[3][3], T m[3][3], T t)
+void trimatExpm1c(T ans[3][3], T m[3][3], T t)
 {
    constexpr int unknown = 0x00;
    constexpr int ortho = 0x01;
@@ -230,6 +230,6 @@ void trimat_expm1c(T ans[3][3], T m[3][3], T t)
       }
    }
 }
-template void trimat_expm1c(double ans[3][3], double m[3][3], double t);
-template void trimat_expm1c(float ans[3][3], float m[3][3], float t);
+template void trimatExpm1c(double ans[3][3], double m[3][3], double t);
+template void trimatExpm1c(float ans[3][3], float m[3][3], float t);
 }

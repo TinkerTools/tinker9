@@ -261,8 +261,8 @@ void boxLattice(Box& p, BoxShape sh, double a, double b, double c, double alpha_
    boxSetRecip(p.recipa, p.recipb, p.recipc, p.box_shape, p.lvec1, p.lvec2, p.lvec3);
 }
 
-extern void boxData_acc(rc_op);
-void boxData(rc_op op)
+extern void boxData_acc(RcOp);
+void boxData(RcOp op)
 {
    boxData_acc(op);
 

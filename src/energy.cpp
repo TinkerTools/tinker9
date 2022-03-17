@@ -13,59 +13,59 @@ bool ecore_val;
 bool ecore_vdw;
 bool ecore_ele;
 
-void energy_data(rc_op op)
+void energy_data(RcOp op)
 {
    if ((rc_flag & calc::vmask) == 0)
       return;
 
-   rc_man egv42{egvData, op};
+   RcMan egv42{egvData, op};
 
    // bonded terms
 
-   rc_man ebond42{ebond_data, op};
-   rc_man eangle42{eangle_data, op};
-   rc_man estrbnd42{estrbnd_data, op};
-   rc_man eurey42{eurey_data, op};
-   rc_man eopbend42{eopbend_data, op};
-   rc_man eimprop42{eimprop_data, op};
-   rc_man eimptor42{eimptor_data, op};
-   rc_man etors42{etors_data, op};
-   rc_man epitors42{epitors_data, op};
-   rc_man estrtor42{estrtor_data, op};
-   rc_man eangtor42{eangtor_data, op};
-   rc_man etortor42{etortor_data, op};
+   RcMan ebond42{ebond_data, op};
+   RcMan eangle42{eangle_data, op};
+   RcMan estrbnd42{estrbnd_data, op};
+   RcMan eurey42{eurey_data, op};
+   RcMan eopbend42{eopbend_data, op};
+   RcMan eimprop42{eimprop_data, op};
+   RcMan eimptor42{eimptor_data, op};
+   RcMan etors42{etors_data, op};
+   RcMan epitors42{epitors_data, op};
+   RcMan estrtor42{estrtor_data, op};
+   RcMan eangtor42{eangtor_data, op};
+   RcMan etortor42{etortor_data, op};
 
    // misc. terms
 
-   rc_man egeom42{egeom_data, op};
+   RcMan egeom42{egeom_data, op};
 
    // non-bonded terms
 
-   rc_man evdw42{evdw_data, op};
+   RcMan evdw42{evdw_data, op};
 
    // Must call elec_data() before any electrostatics routine.
 
-   rc_man elec42{elec_data, op};
-   rc_man pme42{pme_data, op};
+   RcMan elec42{elec_data, op};
+   RcMan pme42{pme_data, op};
 
-   rc_man echarge42{echarge_data, op};
+   RcMan echarge42{echarge_data, op};
    // Must follow evdw_data() and echarge_data().
-   rc_man echglj42{echglj_data, op};
+   RcMan echglj42{echglj_data, op};
 
    // empole_data() must be in front of epolar_data().
-   rc_man empole42{empole_data, op};
-   rc_man epolar42{epolar_data, op};
+   RcMan empole42{empole_data, op};
+   RcMan epolar42{epolar_data, op};
 
    // HIPPO
-   rc_man cflux43{cflux_data, op};
-   rc_man empole43{empole_chgpen_data, op};
-   rc_man epolar43{epolar_chgpen_data, op};
-   rc_man echgtrn42{echgtrn_data, op};
-   rc_man erepel42{erepel_data, op};
-   rc_man edisp42{edisp_data, op};
+   RcMan cflux43{cflux_data, op};
+   RcMan empole43{empole_chgpen_data, op};
+   RcMan epolar43{epolar_chgpen_data, op};
+   RcMan echgtrn42{echgtrn_data, op};
+   RcMan erepel42{erepel_data, op};
+   RcMan edisp42{edisp_data, op};
 
    // Must call fft_data() after all of the electrostatics routines.
-   rc_man fft42{fft_data, op};
+   RcMan fft42{fft_data, op};
 }
 
 bool use_energi_vdw()
@@ -314,7 +314,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       }
    }
    if (must_wait) {
-      device_memory_copyout_bytes_async(&detail::ev_hobj, detail::ev_dptr, sizeof(DHFlow), g::q0);
+      deviceMemoryCopyoutBytesAsync(&detail::ev_hobj, detail::ev_dptr, sizeof(DHFlow), g::q0);
       wait_for(g::q0);
    }
    if (do_e) {

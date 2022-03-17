@@ -51,7 +51,7 @@ void kinetic_energy_cu(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], in
    energy_prec* dptr = reinterpret_cast<energy_prec*>(dptr_buf);
    energy_prec(*dptr6)[HN] = reinterpret_cast<energy_prec(*)[HN]>(dptr_buf);
    energy_prec* hptr = reinterpret_cast<energy_prec*>(pinned_buf);
-   int grid_siz1 = get_grid_size(BLOCK_DIM);
+   int grid_siz1 = gpuGridSize(BLOCK_DIM);
    grid_siz1 = grid_siz1 / HN;
    int grid_siz2 = (n + BLOCK_DIM - 1) / BLOCK_DIM;
    int grid_size = std::min(grid_siz1, grid_siz2);

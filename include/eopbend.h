@@ -4,7 +4,7 @@
 #include "tool/rc_man.h"
 
 namespace tinker {
-void eopbend_data(rc_op op);
+void eopbend_data(RcOp);
 void eopbend(int vers);
 void eopbend_acc(int);
 }

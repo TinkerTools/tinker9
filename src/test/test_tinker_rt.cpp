@@ -1,7 +1,7 @@
 #include "test.h"
 #include "test_rt.h"
 #include "tinker_rt.h"
-#include "tool/io_fort_str.h"
+#include "tool/io.h"
 #include <cstring>
 using namespace tinker;
 
@@ -32,25 +32,25 @@ TEST_CASE("Tinker_RT", "[util]")
 
       strncpy(string, TINKER9_DIRSTR "/CMakeLists", len);
       tinker_f_suffix({string, len}, txt, old);
-      ans = fstr_view(string).trim();
+      ans = FstrView(string).trim();
       ref = TINKER9_DIRSTR "/CMakeLists.txt";
       REQUIRE(ans == ref);
 
       strncpy(string, TINKER9_DIRSTR "/CMakeLists", len);
       tinker_f_suffix({string, len}, txt, new_);
-      ans = fstr_view(string).trim();
+      ans = FstrView(string).trim();
       ref = TINKER9_DIRSTR "/CMakeLists.txt_2";
       REQUIRE(ans == ref);
 
       strncpy(string, TINKER9_DIRSTR "/CMakeLists", len);
       tinker_f_suffix({string, len}, xyz, old);
-      ans = fstr_view(string).trim();
+      ans = FstrView(string).trim();
       ref = TINKER9_DIRSTR "/CMakeLists.xyz";
       REQUIRE(ans == ref);
 
       strncpy(string, TINKER9_DIRSTR "/CMakeLists", len);
       tinker_f_suffix({string, len}, xyz, new_);
-      ans = fstr_view(string).trim();
+      ans = FstrView(string).trim();
       ref = TINKER9_DIRSTR "/CMakeLists.xyz";
       REQUIRE(ans == ref);
    }

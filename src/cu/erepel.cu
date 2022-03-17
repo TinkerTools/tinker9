@@ -490,7 +490,7 @@ void erepel_cu2()
    real cut = switch_cut(switch_repuls);
    real off = switch_off(switch_repuls);
 
-   int ngrid = get_grid_size(BLOCK_DIM);
+   int ngrid = gpuGridSize(BLOCK_DIM);
    erepel_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nrep, er, vir_er, derx,
       dery, derz, cut, off, st.si2.bit0, nrepexclude, repexclude, repexclude_scale, st.x, st.y,
       st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, trqx, trqy, trqz, rpole, sizpr,

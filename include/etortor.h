@@ -6,7 +6,7 @@
 #include "tool/rc_man.h"
 
 namespace tinker {
-void etortor_data(rc_op op);
+void etortor_data(RcOp);
 void etortor(int vers);
 void etortor_acc(int);
 }

@@ -13,7 +13,7 @@
 #include <tinker/detail/usage.hh>
 
 namespace tinker {
-void mdNData(rc_op op)
+void mdNData(RcOp op)
 {
    if (op & rc_dealloc) {
       trajn = -1;
@@ -33,7 +33,7 @@ void mdNData(rc_op op)
       }
 
 #if TINKER_CUDART
-      nelem_buffer = gpu_max_nparallel(idevice);
+      nelem_buffer = gpuMaxNParallel(idevice);
       nelem_buffer = pow2_ge(nelem_buffer);
 #elif TINKER_HOST
       nelem_buffer = 1;
@@ -131,7 +131,7 @@ void mdReadFrameCopyinToXyz(std::istream& ipt, int& done)
       done = true;
 }
 
-void mdXyzData(rc_op op)
+void mdXyzData(RcOp op)
 {
    if ((calc::xyz & rc_flag) == 0)
       return;
@@ -209,7 +209,7 @@ void mdVel2(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad
    mdVel2_acc(dt, grx, gry, grz, dt2, grx2, gry2, grz2);
 }
 
-void mdMassData(rc_op op)
+void mdMassData(RcOp op)
 {
    if ((calc::mass & rc_flag) == 0)
       return;
@@ -232,7 +232,7 @@ void mdMassData(rc_op op)
    }
 }
 
-void mdVelData(rc_op op)
+void mdVelData(RcOp op)
 {
    if ((calc::vel & rc_flag) == 0)
       return;

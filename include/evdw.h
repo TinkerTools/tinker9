@@ -9,7 +9,7 @@
  */
 
 namespace tinker {
-void evdw_data(rc_op op);
+void evdw_data(RcOp);
 /**
  * \ingroup vdw
  * \brief Lennard-Jones 12-6 potential.

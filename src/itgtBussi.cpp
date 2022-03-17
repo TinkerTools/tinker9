@@ -1,6 +1,6 @@
 #include "itgtBussi.h"
 #include "md.h"
-#include "tool/io_print.h"
+#include "tool/io.h"
 
 namespace tinker {
 void BussiThermostat::printDetail(FILE* o)

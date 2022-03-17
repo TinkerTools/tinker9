@@ -1,7 +1,7 @@
 #include "tool/gpu_card.h"
 
 namespace tinker {
-void gpu_card_data(rc_op op)
+void gpuData(RcOp op)
 {
    if (op & rc_dealloc) {
       ndevice = 0;
@@ -14,12 +14,12 @@ void gpu_card_data(rc_op op)
    }
 }
 
-int get_grid_size(int)
+int gpuGridSize(int)
 {
    return 1;
 }
 
-int gpu_max_nparallel(int)
+int gpuMaxNParallel(int)
 {
    return 1;
 }

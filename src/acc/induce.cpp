@@ -10,7 +10,7 @@
 #include "seq_damp.h"
 #include "tool/error.h"
 #include "tool/gpu_card.h"
-#include "tool/io_print.h"
+#include "tool/io.h"
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/polpcg.hh>
 #include <tinker/detail/polpot.hh>
@@ -49,7 +49,7 @@ void sparse_precond_apply_acc(
    const int maxnlst = ulist_unit->maxnlst;
    const auto* ulst = ulist_unit.deviceptr();
 
-   MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
+   MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(APPLY_DPTRS,ulst)
@@ -441,7 +441,7 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
    // terminate the calculation if dipoles failed to converge
 
    if (iter >= maxiter || eps > epsold) {
-      prterr();
+      printError();
       TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
    }
 }

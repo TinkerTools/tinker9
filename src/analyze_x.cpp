@@ -4,8 +4,7 @@
 #include "osrw.h"
 #include "potent.h"
 #include "tinker_rt.h"
-#include "tool/io_print.h"
-#include "tool/io_read.h"
+#include "tool/io.h"
 #include <fstream>
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/chgpot.hh>
@@ -183,7 +182,7 @@ void x_analyze(int, char**)
    std::string opt;
    nextarg(string, exist);
    if (exist) {
-      read_string(opt, string);
+      ioReadString(opt, string);
    }
    std::string prompt = R"(
  The Tinker Energy Analysis Utility Can :
@@ -193,7 +192,7 @@ void x_analyze(int, char**)
  Internal Virial, dE/dV Values & Pressure [V]
 
  Enter the Desired Analysis Types [E] :  )";
-   read_stream(opt, prompt, std::string("#"), [](std::string s) {
+   ioReadStream(opt, prompt, std::string("#"), [](std::string s) {
       Text::upcase(s);
       auto failed = std::string::npos;
       if (s.find("E") != failed or s.find("M") != failed or s.find("V") != failed)
@@ -210,7 +209,7 @@ void x_analyze(int, char**)
 
    auto failed = std::string::npos;
    auto out = stdout;
-   fstr_view fsw = files::filename;
+   FstrView fsw = files::filename;
    std::string fname = fsw.trim();
    std::ifstream ipt(fname);
    int done = false;

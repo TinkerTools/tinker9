@@ -5,7 +5,7 @@
 #include <tinker/detail/sizes.hh>
 
 namespace tinker {
-void group_data(rc_op op)
+void group_data(RcOp op)
 {
    if (op & rc_dealloc) {
       auto& st = grp;

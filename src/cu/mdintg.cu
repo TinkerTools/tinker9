@@ -90,7 +90,7 @@ void mdrest_remove_pbc_momentum_cu(bool copyout, vel_prec& vtot1, vel_prec& vtot
    constexpr int HN = 3;
    constexpr int B = 64;
    vel_prec* ptr = &xout[4];
-   int grid_siz1 = -4 + get_grid_size(BLOCK_DIM);
+   int grid_siz1 = -4 + gpuGridSize(BLOCK_DIM);
    grid_siz1 /= HN;
    int grid_siz2 = (n + B - 1) / B;
    int ngrid = std::min(grid_siz1, grid_siz2);

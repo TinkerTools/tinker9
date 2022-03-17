@@ -6,7 +6,7 @@
 #include <tinker/detail/atoms.hh>
 
 namespace tinker {
-void prterr()
+void printError()
 {
    Box p;
    boxGetDefault(p);

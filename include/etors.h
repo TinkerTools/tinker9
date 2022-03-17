@@ -4,7 +4,7 @@
 #include "tool/rc_man.h"
 
 namespace tinker {
-void etors_data(rc_op op);
+void etors_data(RcOp);
 void etors(int vers);
 void etors_acc(int);
 }

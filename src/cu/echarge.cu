@@ -357,7 +357,7 @@ void echarge_cu()
       aewald = pu->aewald;
    }
 
-   int ngrid = get_grid_size(BLOCK_DIM);
+   int ngrid = gpuGridSize(BLOCK_DIM);
    auto ker1 = echarge_cu1<Ver, ETYP>;
    ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nec, ec, vir_ec, decx, decy, decz,
       cut, off, st.si1.bit0, ncexclude, cexclude, cexclude_scale, st.x, st.y, st.z, st.sorted,

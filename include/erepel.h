@@ -5,7 +5,7 @@
 #include "tool/rc_man.h"
 
 namespace tinker {
-void erepel_data(rc_op op);
+void erepel_data(RcOp);
 void erepel(int vers);
 void erepel_cu(int);
 void erepel_acc(int);

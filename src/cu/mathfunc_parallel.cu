@@ -15,7 +15,7 @@ template <class T, class Op>
 void reduce_to_dptr(const T* a, size_t nelem, cudaStream_t st)
 {
    T* dptr = (T*)dptr_buf;
-   int grid_siz1 = get_grid_size(BLOCK_DIM);
+   int grid_siz1 = gpuGridSize(BLOCK_DIM);
    int grid_siz2 = (nelem + BLOCK_DIM - 1) / BLOCK_DIM;
    int grid_size = std::min(grid_siz1, grid_siz2);
    reduce<T, BLOCK_DIM, Op><<<grid_size, BLOCK_DIM, 0, st>>>(dptr, a, nelem);
@@ -49,16 +49,16 @@ template unsigned long long reduce_sum_cu(const unsigned long long*, size_t, int
 template <class HT, size_t HN, class DPTR>
 void reduce_sum2_cu(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem, int queue)
 {
-   typedef typename deduce_ptr<DPTR>::type CONST_DT;
+   typedef typename DeducePtr<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type T;
    static_assert(std::is_same<HT, T>::value, "");
-   constexpr size_t N = deduce_ptr<DPTR>::n;
+   constexpr size_t N = DeducePtr<DPTR>::n;
    static_assert(HN <= N, "");
 
    cudaStream_t st = queue == g::q1 ? g::s1 : g::s0;
    T(*dptr)[HN] = (T(*)[HN])dptr_buf;
    T* hptr = (T*)pinned_buf;
-   int grid_siz1 = get_grid_size(BLOCK_DIM);
+   int grid_siz1 = gpuGridSize(BLOCK_DIM);
    grid_siz1 = grid_siz1 / HN; // limited by the output buffer
    int grid_siz2 = (nelem + BLOCK_DIM - 1) / BLOCK_DIM;
    int grid_size = std::min(grid_siz1, grid_siz2);
@@ -82,7 +82,7 @@ void reduce_sum_on_device_cu(T* dp_ans, const T* a, size_t nelem, int queue)
    T* dptr = (T*)dptr_buf;
    using Op = OpPlus<T>;
 
-   int grid_siz1 = get_grid_size(BLOCK_DIM);
+   int grid_siz1 = gpuGridSize(BLOCK_DIM);
    int grid_siz2 = (nelem + BLOCK_DIM - 1) / BLOCK_DIM;
    int grid_size = std::min(grid_siz1, grid_siz2);
    reduce<T, BLOCK_DIM, Op><<<grid_size, BLOCK_DIM, 0, st>>>(dptr, a, nelem);
@@ -96,16 +96,16 @@ template void reduce_sum_on_device_cu(unsigned long long*, const unsigned long l
 template <class HT, size_t HN, class DPTR>
 void reduce_sum2_on_device_cu(HT (&dref)[HN], DPTR v, size_t nelem, int queue)
 {
-   typedef typename deduce_ptr<DPTR>::type CONST_DT;
+   typedef typename DeducePtr<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type T;
    static_assert(std::is_same<HT, T>::value, "");
-   constexpr size_t N = deduce_ptr<DPTR>::n;
+   constexpr size_t N = DeducePtr<DPTR>::n;
    static_assert(HN <= N, "");
 
    cudaStream_t st = queue == g::q1 ? g::s1 : g::s0;
    T(*dptr)[HN] = (T(*)[HN])dptr_buf;
    T(*dpt2)[HN] = (T(*)[HN])dref;
-   int grid_siz1 = get_grid_size(BLOCK_DIM);
+   int grid_siz1 = gpuGridSize(BLOCK_DIM);
    grid_siz1 = grid_siz1 / HN; // limited by the output buffer
    int grid_siz2 = (nelem + BLOCK_DIM - 1) / BLOCK_DIM;
    int grid_size = std::min(grid_siz1, grid_siz2);

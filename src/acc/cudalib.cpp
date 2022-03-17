@@ -9,7 +9,7 @@
 #endif
 
 namespace tinker {
-void cudalib_data(rc_op op)
+void cudalibData(RcOp op)
 {
 #if TINKER_CUDART
    if (op & rc_dealloc) {
@@ -45,7 +45,7 @@ void cudalib_data(rc_op op)
       check_rt(cublasSetPointerMode(g::h0, ptrflag));
       check_rt(cublasSetPointerMode(g::h1, ptrflag));
 
-      int nblock = get_grid_size(BLOCK_DIM);
+      int nblock = gpuGridSize(BLOCK_DIM);
       check_rt(cudaMallocHost(&pinned_buf, nblock * sizeof(double)));
       check_rt(cudaMalloc(&dptr_buf, nblock * sizeof(double)));
 

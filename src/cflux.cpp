@@ -6,7 +6,7 @@
 #include "nblist.h"
 #include "potent.h"
 #include "tool/host_zero.h"
-#include "tool/io_fort_str.h"
+#include "tool/io.h"
 #include <cassert>
 #include <tinker/detail/angbnd.hh>
 #include <tinker/detail/angpot.hh>
@@ -19,7 +19,7 @@
 #include <tinker/detail/potent.hh>
 
 namespace tinker {
-void cflux_data(rc_op op)
+void cflux_data(RcOp op)
 {
    if (!potent::use_chgflx)
       return;

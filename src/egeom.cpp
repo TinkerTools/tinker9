@@ -6,7 +6,7 @@
 #include <tinker/detail/sizes.hh>
 
 namespace tinker {
-void egeom_data(rc_op op)
+void egeom_data(RcOp op)
 {
    if (!use_potent(geom_term))
       return;

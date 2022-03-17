@@ -15,7 +15,7 @@ extern "C"
 
 namespace tinker {
 bool use_rattle();
-void rattle_data(rc_op);
+void rattle_data(RcOp);
 
 void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
 void rattle_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);

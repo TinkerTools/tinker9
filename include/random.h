@@ -43,5 +43,5 @@ T normal(T u, T s);
 template <class T = real>
 T chi_squared(int k);
 
-void random_data(rc_op);
+void random_data(RcOp);
 }

@@ -5,7 +5,7 @@
 
 namespace tinker {
 bool use_dewald();
-void edisp_data(rc_op);
+void edisp_data(RcOp);
 void edisp(int vers);
 
 void edisp_ewald(int vers);

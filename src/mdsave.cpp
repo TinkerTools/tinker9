@@ -181,7 +181,7 @@ void mdsaveSynchronize()
       fut_dup_then_write.get();
 }
 
-void mdsaveData(rc_op op)
+void mdsaveData(RcOp op)
 {
    if (op & rc_dealloc) {
       dup_stream.deallocate();

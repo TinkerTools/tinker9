@@ -1,7 +1,7 @@
 #include "itgbLP22.h"
 #include "itgbLogVAniso.h"
 #include "itgbLogVIso.h"
-#include "tool/io_print.h"
+#include "tool/io.h"
 #include <tinker/detail/stodyn.hh>
 
 namespace tinker {

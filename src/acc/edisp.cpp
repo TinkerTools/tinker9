@@ -211,7 +211,7 @@ void edisp_acc1()
       }
    }
 
-   MAYBE_UNUSED int ngrid = get_grid_size(BLOCK_DIM);
+   MAYBE_UNUSED int ngrid = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(x,y,z,dedspx,dedspy,dedspz,ndisp,edsp,vir_edsp,\
                csix,adisp,nlst,lst) num_gangs(ngrid) vector_length(BLOCK_DIM)

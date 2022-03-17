@@ -10,7 +10,7 @@
 #include <tinker/detail/sizes.hh>
 
 namespace tinker {
-void empole_chgpen_data(rc_op op)
+void empole_chgpen_data(RcOp op)
 {
    if (not use_potent(mpole_term) and not use_potent(chgtrn_term))
       return;

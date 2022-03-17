@@ -4,7 +4,7 @@
 #include "tool/rc_man.h"
 
 namespace tinker {
-void ebond_data(rc_op op);
+void ebond_data(RcOp);
 void ebond(int vers);
 void ebond_acc(int);
 }

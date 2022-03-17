@@ -71,7 +71,7 @@ using V6 = GradVir;
 
 namespace tinker {
 /// \ingroup mdpq
-void mdNData(rc_op);
+void mdNData(RcOp);
 
 /// \ingroup mdpq
 /// \brief Update #x, #y, #z by #xpos, #ypos, and #zpos.
@@ -116,7 +116,7 @@ void mdBounds_acc();
 /// \ingroup mdpq
 void mdReadFrameCopyinToXyz(std::istream& input, int& done);
 /// \ingroup mdpq
-void mdXyzData(rc_op);
+void mdXyzData(RcOp);
 
 /// \ingroup mdpq
 /// \brief Update velocities via `v += -g/m dt`.
@@ -156,10 +156,10 @@ void mdVelAvbfAn(int nrespa, vel_prec a[3][3], vel_prec b[3][3],     //
    const grad_prec* gx2, const grad_prec* gy2, const grad_prec* gz2);
 
 /// \ingroup mdpq
-void mdVelData(rc_op);
+void mdVelData(RcOp);
 
 /// \ingroup mdpq
-void mdMassData(rc_op);
+void mdMassData(RcOp);
 }
 
 //====================================================================//
@@ -212,9 +212,9 @@ void mdBerendsenBarostat_acc(time_prec);
 
 namespace tinker {
 void mdrest(int istep);
-void mdData(rc_op op);
+void mdData(RcOp);
 void mdPropagate(int nsteps, time_prec dt_ps);
-void mdIntegrateData(rc_op);
+void mdIntegrateData(RcOp);
 
 constexpr unsigned RESPA_FAST = 1; // 2**0, fast group shall be 0.
 constexpr unsigned RESPA_SLOW = 2; // 2**1, slow group shall be 1.
@@ -222,7 +222,7 @@ const TimeScaleConfig& mdRespaTsconfig();
 
 void mdsaveAsync(int istep, time_prec dt);
 void mdsaveSynchronize();
-void mdsaveData(rc_op);
+void mdsaveData(RcOp);
 }
 
 #include "egv.h"

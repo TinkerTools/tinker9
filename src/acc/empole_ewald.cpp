@@ -33,7 +33,7 @@ void empole_ewald_real_self_acc1()
    const real aewald_sq_2 = 2 * aewald * aewald;
    const real fterm = -f * aewald * 0.5f * (real)(M_2_SQRTPI);
 
-   MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
+   MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(DEVICE_PTRS,mlst)

@@ -3,7 +3,7 @@
 #include "mod.chgpen.h"
 
 namespace tinker {
-void epolar_chgpen_data(rc_op op);
+void epolar_chgpen_data(RcOp);
 
 // different induction algorithms
 void induce_mutual_pcg2(real (*uind)[3]);

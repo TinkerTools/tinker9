@@ -14,7 +14,7 @@
 #include "pmestuf.h"
 #include "potent.h"
 #include "switch.h"
-#include "tool/io_fort_str.h"
+#include "tool/io.h"
 #include <tinker/detail/atoms.hh>
 #include <tinker/detail/charge.hh>
 #include <tinker/detail/chgpen.hh>
@@ -37,7 +37,7 @@ bool use_ewald()
 
 //====================================================================//
 
-void pchg_data(rc_op op)
+void pchg_data(RcOp op)
 {
    if (!use_potent(charge_term))
       return;
@@ -69,7 +69,7 @@ void pchg_data(rc_op op)
 
 //====================================================================//
 
-void pole_data(rc_op op)
+void pole_data(RcOp op)
 {
    if (!use_potent(mpole_term) && !use_potent(polar_term) && !use_potent(repuls_term))
       return;
@@ -117,7 +117,7 @@ void pole_data(rc_op op)
          zaxisbuf[i].zaxis = mpole::zaxis[i] - 1;
          zaxisbuf[i].xaxis = mpole::xaxis[i] - 1;
          zaxisbuf[i].yaxis = mpole::yaxis[i];
-         fstr_view str = mpole::polaxe[i];
+         FstrView str = mpole::polaxe[i];
          int val;
          if (str == "Z-Only")
             val = pole_z_only;
@@ -160,7 +160,7 @@ void pole_data(rc_op op)
    }
 }
 
-void mdpuscale_data(rc_op op)
+void mdpuscale_data(RcOp op)
 {
    if (not use_potent(mpole_term) and not use_potent(polar_term))
       return;
@@ -520,7 +520,7 @@ void mdpuscale_data(rc_op op)
 
 //====================================================================//
 
-void chgpen_data(rc_op op)
+void chgpen_data(RcOp op)
 {
    if (op & rc_dealloc) {
       nmdwexclude = 0;
@@ -807,16 +807,16 @@ void chgpen_data(rc_op op)
 
 //====================================================================//
 
-void elec_data(rc_op op)
+void elec_data(RcOp op)
 {
    if (op & rc_init) {
       electric = chgpot::electric;
       dielec = chgpot::dielec;
    }
-   rc_man pchg42{pchg_data, op};
-   rc_man pole42{pole_data, op};
-   rc_man mdpuscale42{mdpuscale_data, op};
-   rc_man chgpen42{chgpen_data, op};
+   RcMan pchg42{pchg_data, op};
+   RcMan pole42{pole_data, op};
+   RcMan mdpuscale42{mdpuscale_data, op};
+   RcMan chgpen42{chgpen_data, op};
 }
 
 //====================================================================//

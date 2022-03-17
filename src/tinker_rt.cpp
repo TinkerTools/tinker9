@@ -52,7 +52,7 @@ void get_kv(std::string k, T1& v, T2 vdefault)
 {
    std::string value_str = "";
    for (int i = 0; i < keys::nkey; ++i) {
-      fstr_view record = keys::keyline[i];
+      FstrView record = keys::keyline[i];
       auto vs = Text::split(record.trim());
       if (vs.size()) {
          std::string keyword = vs.at(0);
@@ -77,7 +77,7 @@ void get_kv<std::vector<std::string>, const char*>(
    std::string k, std::vector<std::string>& v, const char*)
 {
    for (int i = 0; i < keys::nkey; ++i) {
-      fstr_view record = keys::keyline[i];
+      FstrView record = keys::keyline[i];
       auto vs = Text::split(record.trim());
       if (vs.size()) {
          std::string keyword = vs.at(0);
@@ -98,7 +98,7 @@ void get_kbool(std::string k, T& v, bool v_if_k_not_found)
 {
    bool found = false;
    for (int i = 0; i < keys::nkey; ++i) {
-      fstr_view record = keys::keyline[i];
+      FstrView record = keys::keyline[i];
       auto vs = Text::split(record.trim());
       if (vs.size()) {
          std::string keyword = vs.at(0);

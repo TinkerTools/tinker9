@@ -48,10 +48,10 @@ struct PME
 };
 using PMEUnit = GenericUnit<PME, GenericUnitVersion::EnableOnDevice>;
 
-void pme_data(rc_op op);
+void pme_data(RcOp);
 // This function must be called after pme_data has been called because it
 // needs to know the number of pme objects created.
-void fft_data(rc_op op);
+void fft_data(RcOp);
 void fftfront(PMEUnit pme_u);
 void fftback(PMEUnit pme_u);
 using FFTPlanUnit = GenericUnit<FFTPlan, GenericUnitVersion::DisableOnDevice>;

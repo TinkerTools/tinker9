@@ -706,7 +706,7 @@ void epolar_chgpen_cu(const real (*uind)[3])
    if CONSTEXPR (do_g)
       darray::zero(g::q0, n, ufld, dufld);
 
-   int ngrid = get_grid_size(BLOCK_DIM);
+   int ngrid = gpuGridSize(BLOCK_DIM);
    epolar_chgpen_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nep,
       ep, vir_ep, depx, depy, depz, off, st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale,
       st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, ufld, dufld, uind,

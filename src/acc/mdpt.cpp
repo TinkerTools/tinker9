@@ -8,7 +8,7 @@
 #include "md.h"
 #include "nblist.h"
 #include "random.h"
-#include "tool/io_fort_str.h"
+#include "tool/io.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/mdstuf.hh>
@@ -198,7 +198,7 @@ void mdMonteCarloBarostat_acc(energy_prec epot, T_prec temp)
    if (bath::isothermal)
       temp = bath::kelvin;
 
-   fstr_view volscale = bath::volscale;
+   FstrView volscale = bath::volscale;
    double third = 1.0 / 3.0;
    double volmove = bath::volmove;
    double kt = units::gasconst * temp;

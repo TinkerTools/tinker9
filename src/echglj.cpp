@@ -4,8 +4,7 @@
 #include "nblist.h"
 #include "potent.h"
 #include "tool/host_zero.h"
-#include "tool/io_fort_str.h"
-#include "tool/io_text.h"
+#include "tool/io.h"
 #include <array>
 #include <map>
 #include <set>
@@ -20,7 +19,7 @@
 #include <tinker/detail/vdwpot.hh>
 
 namespace tinker {
-void echglj_data(rc_op op)
+void echglj_data(RcOp op)
 {
    if (!(clist_version() & NBL_SPATIAL))
       return;
@@ -66,7 +65,7 @@ void echglj_data(rc_op op)
          std::string record;
          // first prm
          for (int ii = 0; ii < params::nprm && !vdwpr_in_use; ++ii) {
-            fstr_view fsv = params::prmline[ii];
+            FstrView fsv = params::prmline[ii];
             record = fsv.trim();
             bool okay = parse_vdwpr(record, i, k, rad, eps);
             if (okay) {
@@ -79,7 +78,7 @@ void echglj_data(rc_op op)
          }
          // then key
          for (int ii = 0; ii < keys::nkey && !vdwpr_in_use; ++ii) {
-            fstr_view fsv = keys::keyline[ii];
+            FstrView fsv = keys::keyline[ii];
             record = fsv.trim();
             bool okay = parse_vdwpr(record, i, k, rad, eps);
             if (okay) {

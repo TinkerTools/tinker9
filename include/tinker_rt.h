@@ -1,8 +1,5 @@
 #pragma once
-#include "tool/io_fort_str.h"
-#include "tool/io_print.h"
-#include "tool/io_read.h"
-#include "tool/io_text.h"
+#include "tool/io.h"
 #include <tinker/routines.h>
 
 namespace tinker {

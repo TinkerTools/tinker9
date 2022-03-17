@@ -14,7 +14,6 @@ namespace tinker {
 template <class T>
 void matmul3(T R[3][3], T A[3][3], T B[3][3]);
 
-
 /**
  * \ingroup math
  * \brief Matrix multiplication of two 3 by 3 matrices. \f$ R = A R \f$.
@@ -27,10 +26,9 @@ void matmul3(T R[3][3], T A[3][3], T B[3][3]);
 template <class T>
 void matmul3(T R[3][3], T A[3][3]);
 
-
 /**
  * \ingroup math
- * \brief \f$ \exp(mt) \f$. Matrix m is a 3 by 3 upper triangular.
+ * \brief \f$ \exp(mt) \f$. Matrix m is 3 by 3 upper triangular.
  *
  * Matrices are stored in the row-major order (C-style).
  *
@@ -42,12 +40,11 @@ void matmul3(T R[3][3], T A[3][3]);
  * undefined.
  */
 template <class T>
-void trimat_exp(T ans[3][3], T m[3][3], T t);
-
+void trimatExp(T ans[3][3], T m[3][3], T t);
 
 /**
  * \ingroup math
- * \brief \f$ (\exp(mt)-I)/(mt) \f$. Matrix m is a 3 by 3 upper triangular.
+ * \brief \f$ (\exp(mt)-I)/(mt) \f$. Matrix m is 3 by 3 upper triangular.
  *
  * Matrices are stored in the row-major order (C-style).
  *
@@ -59,12 +56,11 @@ void trimat_exp(T ans[3][3], T m[3][3], T t);
  * undefined.
  */
 template <class T>
-void trimat_expm1c(T ans[3][3], T m[3][3], T t);
-
+void trimatExpm1c(T ans[3][3], T m[3][3], T t);
 
 /**
  * \ingroup math
- * \brief \f$ t (\exp(mt)-I)/(mt) \f$. Matrix m is a 3 by 3 upper triangular.
+ * \brief \f$ t (\exp(mt)-I)/(mt) \f$. Matrix m is 3 by 3 upper triangular.
  *
  * Matrices are stored in the row-major order (C-style).
  *
@@ -76,9 +72,9 @@ void trimat_expm1c(T ans[3][3], T m[3][3], T t);
  * undefined.
  */
 template <class T>
-void trimat_t_expm1c(T ans[3][3], T m[3][3], T t)
+void trimatTExpm1c(T ans[3][3], T m[3][3], T t)
 {
-   trimat_expm1c(ans, m, t);
+   trimatExpm1c(ans, m, t);
    for (int i = 0; i < 3; ++i)
       for (int j = 0; j < 3; ++j)
          ans[i][j] *= t;

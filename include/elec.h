@@ -13,20 +13,20 @@ bool use_ewald();
 
 //====================================================================//
 
-void pchg_data(rc_op);
+void pchg_data(RcOp);
 
 //====================================================================//
 
 // AMOBEA: multipole, polarization
 // HIPPO: repulsion
-void pole_data(rc_op);
+void pole_data(RcOp);
 
-void mdpuscale_data(rc_op);
+void mdpuscale_data(RcOp);
 
-void chgpen_data(rc_op op);
+void chgpen_data(RcOp);
 //====================================================================//
 
-void elec_data(rc_op op);
+void elec_data(RcOp);
 
 //====================================================================//
 

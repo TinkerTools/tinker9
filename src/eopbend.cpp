@@ -2,13 +2,13 @@
 #include "md.h"
 #include "potent.h"
 #include "tool/host_zero.h"
-#include "tool/io_fort_str.h"
+#include "tool/io.h"
 #include <cassert>
 #include <tinker/detail/angpot.hh>
 #include <tinker/detail/opbend.hh>
 
 namespace tinker {
-void eopbend_data(rc_op op)
+void eopbend_data(RcOp op)
 {
    if (!use_potent(opbend_term))
       return;
@@ -42,7 +42,7 @@ void eopbend_data(rc_op op)
    }
 
    if (op & rc_init) {
-      fstr_view otyp = angpot::opbtyp;
+      FstrView otyp = angpot::opbtyp;
       if (otyp == "W-D-C")
          opbtyp = eopbend_t::w_d_c;
       else if (otyp == "ALLINGER")

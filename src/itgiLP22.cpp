@@ -23,8 +23,7 @@ void LP22Integrator::kickoff()
 }
 
 LP22Integrator::LP22Integrator(bool isNRespa1)
-   : BasicIntegrator(PropagatorEnum::Verlet, ThermostatEnum::m_LP2022,
-                     BarostatEnum::LP2022)
+   : BasicIntegrator(PropagatorEnum::Verlet, ThermostatEnum::m_LP2022, BarostatEnum::LP2022)
    , m_isNRespa1(isNRespa1)
 {
    delete m_prop;

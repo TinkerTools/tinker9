@@ -4,8 +4,7 @@
 #include "potent.h"
 #include "tinker_rt.h"
 #include "tool/host_zero.h"
-#include "tool/io_fort_str.h"
-#include "tool/io_text.h"
+#include "tool/io.h"
 #include <cassert>
 #include <map>
 #include <tinker/detail/couple.hh>
@@ -26,7 +25,7 @@ std::vector<new_type> jvdwbuf;
 int jcount;
 }
 
-void evdw_data(rc_op op)
+void evdw_data(RcOp op)
 {
    if (!use_potent(vdw_term))
       return;
@@ -69,7 +68,7 @@ void evdw_data(rc_op op)
    }
 
    if (op & rc_alloc) {
-      fstr_view str = vdwpot::vdwtyp;
+      FstrView str = vdwpot::vdwtyp;
       if (str == "LENNARD-JONES")
          vdwtyp = evdw_t::lj;
       else if (str == "BUCKINGHAM")
@@ -83,7 +82,7 @@ void evdw_data(rc_op op)
       else
          assert(false);
 
-      fstr_view str1 = vdwpot::vdwindex;
+      FstrView str1 = vdwpot::vdwindex;
       if (str1 == "CLASS")
          vdwindex = evdw_t::atom_class;
       else if (str1 == "TYPE")
@@ -91,7 +90,7 @@ void evdw_data(rc_op op)
       else
          assert(false);
 
-      fstr_view str2 = vdwpot::radrule;
+      FstrView str2 = vdwpot::radrule;
       if (str2 == "ARITHMETIC")
          radrule = evdw_t::arithmetic;
       else if (str2 == "GEOMETRIC")
@@ -101,7 +100,7 @@ void evdw_data(rc_op op)
       else
          assert(false);
 
-      fstr_view str3 = vdwpot::epsrule;
+      FstrView str3 = vdwpot::epsrule;
       if (str3 == "ARITHMETIC")
          epsrule = evdw_t::arithmetic;
       else if (str3 == "GEOMETRIC")
@@ -251,7 +250,7 @@ void evdw_data(rc_op op)
          std::map<int, double> kvdws__rad4, kvdws__eps4;
          // first prm
          for (int i = 0; i < params::nprm; ++i) {
-            fstr_view fsv = params::prmline[i];
+            FstrView fsv = params::prmline[i];
             std::string record = fsv.trim();
             int j;
             double r4, e4;
@@ -263,7 +262,7 @@ void evdw_data(rc_op op)
          }
          // then key
          for (int i = 0; i < keys::nkey; ++i) {
-            fstr_view fsv = keys::keyline[i];
+            FstrView fsv = keys::keyline[i];
             std::string record = fsv.trim();
             int j;
             double r4, e4;

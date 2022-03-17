@@ -2,8 +2,7 @@
 #include "md.h"
 #include "nblist.h"
 #include "tinker_rt.h"
-#include "tool/io_fort_str.h"
-#include "tool/io_print.h"
+#include "tool/io.h"
 #include <tinker/detail/files.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/scales.hh>
@@ -35,21 +34,21 @@ void x_minimize(int, char**)
    double grdmin = -1.0;
    nextarg(string, exist);
    if (exist) {
-      read_string(grdmin, string);
+      ioReadString(grdmin, string);
    }
    std::string prompt = "\n"
                         " Enter RMS Gradient per Atom Criterion [0.01] :  ";
-   read_stream(grdmin, prompt, 0.01, [](double val) { return val < 0; });
+   ioReadStream(grdmin, prompt, 0.01, [](double val) { return val < 0; });
 
    // write out a copy of coordinates for later update
    int imin = tinker_f_freeunit();
    const int leng = files::leng;
-   std::string minfile = fstr_view(files::filename)(1, leng).trim() + ".xyz";
+   std::string minfile = FstrView(files::filename)(1, leng).trim() + ".xyz";
    minfile = tinker_f_version(minfile, "new");
    tinker_f_open(&imin, minfile, "new");
    tinker_f_prtxyz(&imin);
    tinker_f_close(&imin);
-   fstr_view outview = files::outfile;
+   FstrView outview = files::outfile;
    outview = minfile;
 
    int flags = calc::xyz + calc::mass;

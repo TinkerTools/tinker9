@@ -7,7 +7,7 @@
 #include <tinker/detail/tors.hh>
 
 namespace tinker {
-void etors_data(rc_op op)
+void etors_data(RcOp op)
 {
    if (not use_potent(torsion_term) and not use_potent(strtor_term) and not use_potent(angtor_term))
       return;

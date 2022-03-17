@@ -11,7 +11,7 @@ bool ResourceManagement::only_dealloc() const
    return m_op == rc_dealloc;
 }
 
-ResourceManagement::ResourceManagement(void (*f)(rc_op), rc_op op)
+ResourceManagement::ResourceManagement(void (*f)(RcOp), RcOp op)
    : m_f(f)
    , m_op(op)
 {
@@ -29,13 +29,13 @@ ResourceManagement::~ResourceManagement()
 
 void initialize()
 {
-   rc_op op = rc_alloc | rc_init;
+   RcOp op = rc_alloc | rc_init;
    device_data(op);
 }
 
 void finish()
 {
-   rc_op op = rc_dealloc;
+   RcOp op = rc_dealloc;
    device_data(op);
 }
 }
@@ -56,36 +56,36 @@ void finish()
 #include "tool/cudalib.h"
 
 namespace tinker {
-void device_data(rc_op op)
+void device_data(RcOp op)
 {
    // host
-   rc_man rand42{random_data, op};
-   rc_man pf42{platform_data, op};
-   rc_man gpu_card42{gpu_card_data, op};
+   RcMan rand42{random_data, op};
+   RcMan pf42{platform_data, op};
+   RcMan gpu42{gpuData, op};
 
    // device
-   rc_man cl42{cudalib_data, op};
+   RcMan cl42{cudalibData, op};
 
-   rc_man n42{mdNData, op};
-   rc_man cpl42{couple_data, op};
+   RcMan n42{mdNData, op};
+   RcMan cpl42{couple_data, op};
 
-   rc_man box42{boxData, op};
+   RcMan box42{boxData, op};
 
-   rc_man xyz42{mdXyzData, op};
-   rc_man vel42{mdVelData, op};
-   rc_man mass42{mdMassData, op};
-   rc_man molecule42{molecule_data, op};
-   rc_man group42{group_data, op};
+   RcMan xyz42{mdXyzData, op};
+   RcMan vel42{mdVelData, op};
+   RcMan mass42{mdMassData, op};
+   RcMan molecule42{molecule_data, op};
+   RcMan group42{group_data, op};
 
-   rc_man energy42{energy_data, op};
-   rc_man osrw42{osrw_data, op};
+   RcMan energy42{energy_data, op};
+   RcMan osrw42{osrw_data, op};
 
    // Neighbor lists must be initialized after potential initialization.
    // xred, yred, and zred need to be initialized in vdw (Halgren 14-7)
    // and will be used in nblist setups.
-   rc_man nbl42{nblist_data, op};
+   RcMan nbl42{nblist_data, op};
 
-   rc_man rattle42{rattle_data, op};
-   rc_man md42{mdData, op};
+   RcMan rattle42{rattle_data, op};
+   RcMan md42{mdData, op};
 }
 }

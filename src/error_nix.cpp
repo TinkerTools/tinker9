@@ -1,6 +1,6 @@
 #if defined(__APPLE__) || defined(__linux__)
 #   include "tool/error.h"
-#   include "tool/io_text.h"
+#   include "tool/io.h"
 #   include <cxxabi.h>
 #   include <execinfo.h>
 
@@ -66,7 +66,7 @@ void print_backtrace_tmpl(std::FILE* fp)
    free(strs);
 }
 
-void print_backtrace(std::FILE* out)
+void printBacktrace(std::FILE* out)
 {
 #   if defined(__APPLE__)
    print_backtrace_tmpl<BackTraceOS::macOS>(out);

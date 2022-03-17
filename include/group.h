@@ -3,5 +3,5 @@
 #include "tool/rc_man.h"
 
 namespace tinker {
-void group_data(rc_op);
+void group_data(RcOp);
 }

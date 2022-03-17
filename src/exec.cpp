@@ -1,6 +1,6 @@
 #include "tool/exec.h"
 #include "tool/error.h"
-#include "tool/io_print.h"
+#include "tool/io.h"
 #include <array>
 #include <cstdio>
 #include <memory>

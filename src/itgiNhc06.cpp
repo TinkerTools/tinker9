@@ -20,8 +20,7 @@ void Nhc06Integrator::kickoff()
 }
 
 Nhc06Integrator::Nhc06Integrator(bool isNRespa1)
-   : BasicIntegrator(PropagatorEnum::Verlet, ThermostatEnum::m_Nhc2006,
-                     BarostatEnum::Nhc2006)
+   : BasicIntegrator(PropagatorEnum::Verlet, ThermostatEnum::m_Nhc2006, BarostatEnum::Nhc2006)
    , m_isNRespa1(isNRespa1)
 {
    if (BasicPropagator::useRattle())

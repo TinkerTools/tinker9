@@ -1,7 +1,7 @@
 #include "itgbBerendsen.h"
 #include "itgEnum.h"
 #include "md.h"
-#include "tool/io_print.h"
+#include "tool/io.h"
 
 namespace tinker {
 void BerendsenBarostat::printDetail(FILE* o)

@@ -3,7 +3,6 @@
 #include <cassert>
 #include <memory>
 
-
 namespace tinker {
 enum class GenericUnitVersion
 {
@@ -11,10 +10,8 @@ enum class GenericUnitVersion
    EnableOnDevice
 };
 
-
 template <GenericUnitVersion VERS>
 struct GenericUnitAlloc;
-
 
 template <>
 struct GenericUnitAlloc<GenericUnitVersion::DisableOnDevice>
@@ -24,61 +21,49 @@ struct GenericUnitAlloc<GenericUnitVersion::DisableOnDevice>
    static void copyin(void*, const void*, size_t, int) {}
 };
 
-
 template <>
 struct GenericUnitAlloc<GenericUnitVersion::EnableOnDevice>
 {
    static void deallocate(void* p)
    {
-      device_memory_deallocate_bytes(p);
+      deviceMemoryDeallocate(p);
    }
 
    static void allocate(void** pp, size_t nb)
    {
-      device_memory_allocate_bytes(pp, nb);
+      deviceMemoryAllocateBytes(pp, nb);
    }
 
    static void copyin(void* d, const void* s, size_t nb, int queue)
    {
-      device_memory_copyin_bytes_async(d, s, nb, queue);
+      deviceMemoryCopyinBytesAsync(d, s, nb, queue);
    }
 };
 
-
-/**
- * \ingroup rc
- * Resource handle. Analogous to Fortran i/o unit represented by a signed
- * integer.
- */
-template <class T,
-          GenericUnitVersion VERSION = GenericUnitVersion::DisableOnDevice>
+/// \ingroup rc
+/// Resource handle. Analogous to Fortran i/o unit represented by a signed
+/// integer.
+template <class T, GenericUnitVersion VERSION = GenericUnitVersion::DisableOnDevice>
 class GenericUnit
 {
 private:
-   static constexpr bool USE_DPTR =
-      (VERSION == GenericUnitVersion::DisableOnDevice ? false : true);
+   static constexpr bool USE_DPTR = (VERSION == GenericUnitVersion::DisableOnDevice ? false : true);
    using mem_op = GenericUnitAlloc<VERSION>;
    int unit;
 
-
-   /**
-    * \note
-    * The host vector will almost definitely expand its capacity, so if you
-    * don't want to implement the move constructors and/or the copy constructors
-    * of every possible type T, don't change vector of host pointers to vector
-    * of host objects.
-    */
+   /// \note
+   /// The host vector will almost definitely expand its capacity, so if you
+   /// don't want to implement the move constructors and/or the copy constructors
+   /// of every possible type T, don't change vector of host pointers to vector
+   /// of host objects.
    using hostptr_vec = std::vector<std::unique_ptr<T>>;
-   using deviceptr_vec =
-      std::vector<std::unique_ptr<T, decltype(&mem_op::deallocate)>>;
-
+   using deviceptr_vec = std::vector<std::unique_ptr<T, decltype(&mem_op::deallocate)>>;
 
    static hostptr_vec& hostptrs()
    {
       static hostptr_vec o;
       return o;
    }
-
 
    static deviceptr_vec& deviceptrs()
    {
@@ -87,22 +72,17 @@ private:
       return o;
    }
 
-
    const T& obj() const
    {
-      assert(0 <= unit && unit < (int)hostptrs().size() &&
-             "const T& GenericUnit::obj() const");
+      assert(0 <= unit && unit < (int)hostptrs().size() && "const T& GenericUnit::obj() const");
       return *hostptrs()[unit];
    }
-
 
    T& obj()
    {
-      assert(0 <= unit && unit < (int)hostptrs().size() &&
-             "T& GenericUnit::obj()");
+      assert(0 <= unit && unit < (int)hostptrs().size() && "T& GenericUnit::obj()");
       return *hostptrs()[unit];
    }
-
 
 public:
    /// Gets the number of open units.
@@ -112,7 +92,6 @@ public:
          assert(hostptrs().size() == deviceptrs().size());
       return hostptrs().size();
    }
-
 
    /// Releases all of the resources and reset `size()` to 0.
    static void clear()
@@ -124,7 +103,6 @@ public:
          deviceptrs().clear();
    }
 
-
    /// Resizes the capacity for the objects on host.
    /// \note Cannot be called if device pointers are used.
    template <class DT = T>
@@ -135,7 +113,6 @@ public:
       for (int i = size(); i < s; ++i)
          hostptrs().emplace_back(new DT);
    }
-
 
    /// Similar to opening a new Fortran i/o unit.
    /// \return The new unit.
@@ -150,22 +127,18 @@ public:
       return size() - 1;
    }
 
-
    GenericUnit()
       : unit(-1)
    {}
-
 
    GenericUnit(int u)
       : unit(u)
    {}
 
-
    operator int() const
    {
       return unit;
    }
-
 
    /// Whether or not the current unit is open.
    bool valid() const
@@ -173,14 +146,12 @@ public:
       return unit >= 0;
    }
 
-
    /// Closes the current unit.
    /// \note The resource will not be released until `clear()` is called.
    void close()
    {
       unit = -1;
    }
-
 
    /// Gets the (const) reference to the object on host.
    const T& operator*() const
@@ -193,7 +164,6 @@ public:
       return obj();
    }
 
-
    /// Gets the (const) pointer to the object on host.
    const T* operator->() const
    {
@@ -205,22 +175,19 @@ public:
       return &obj();
    }
 
-
    /// Gets device pointer to the object.
    const T* deviceptr() const
    {
       assert(0 <= unit && (size_t)unit < deviceptrs().size() &&
-             "const T* GenericUnit::deviceptr() const");
+         "const T* GenericUnit::deviceptr() const");
       return deviceptrs()[unit].get();
    }
    /// Gets device pointer to the object.
    T* deviceptr()
    {
-      assert(0 <= unit && unit < (int)deviceptrs().size() &&
-             "T* GenericUnit::deviceptr()");
+      assert(0 <= unit && unit < (int)deviceptrs().size() && "T* GenericUnit::deviceptr()");
       return deviceptrs()[unit].get();
    }
-
 
    /// Updates the object on device by an object on host.
    /// \param hobj

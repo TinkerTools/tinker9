@@ -63,7 +63,7 @@ extern "C"
 }
 
 namespace tinker {
-void echglj_data_cu(rc_op op)
+void echglj_data_cu(RcOp op)
 {
    if (op & rc_dealloc) {
       use_pme_stream = false;
@@ -964,7 +964,7 @@ void echglj_cu3()
       aewald, chg_coalesced, st.si3.bit0, evcut, evoff, (const real2*)radeps_coalesced,            \
       mut_coalesced, vlam, vcouple, ev, vir_ev, devx, devy, devz
 
-   int ngrid = get_grid_size(BLOCK_DIM);
+   int ngrid = gpuGridSize(BLOCK_DIM);
    if (box_shape == ORTHO_BOX) {
       auto ker1 = echglj_cu5<Ver, PbcOrtho, ETYP, RADRULE, EPSRULE, SOFTCORE, VOUT>;
       ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(ECHGLJ_CU3_V2_ARGS);

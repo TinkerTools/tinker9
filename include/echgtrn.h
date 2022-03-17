@@ -7,7 +7,7 @@
 #include "tool/rc_man.h"
 
 namespace tinker {
-void echgtrn_data(rc_op op);
+void echgtrn_data(RcOp);
 void echgtrn(int vers);
 void echgtrn_cu(int);
 void echgtrn_acc(int);

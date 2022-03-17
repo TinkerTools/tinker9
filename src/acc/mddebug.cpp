@@ -26,7 +26,7 @@ void mdDebugPosNorm_acc(pos_prec poseps, time_prec dt, //
    #pragma acc wait
 
    if (which >= 0) {
-      prterr();
+      printError();
       TINKER_THROW(format("MD-DEBUG POS UPDATE  --  Atom %d Tried to Move More"
                           " than %.4lf Angstroms",
          which + 1, poseps));

@@ -61,5 +61,5 @@ void copy_gradient(int vers, double* grdx, double* grdy, double* grdz, const gra
  */
 void copy_gradient(int vers, double* grdx, double* grdy, double* grdz);
 
-void egvData(rc_op op);
+void egvData(RcOp);
 }

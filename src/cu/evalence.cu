@@ -789,7 +789,7 @@ void evalence_cu2(int vers, bool flag_bond, bool flag_angle, bool flag_strbnd, b
    bool flag_opb, bool flag_improp, bool flag_imptor, bool flag_tors, bool flag_pitors,
    bool flag_strtor, bool flag_angtor, bool flag_tortor, bool flag_geom)
 {
-   int ngrid = get_grid_size(BLOCK_DIM);
+   int ngrid = gpuGridSize(BLOCK_DIM);
    if (rc_flag & calc::analyz) {
       if (vers == calc::v0 or vers == calc::v3)
          evalence_cu1<calc::V0, true><<<ngrid, BLOCK_DIM, 0, g::s0>>>(EVALENCE_ARGS);

@@ -10,7 +10,7 @@ extern int ncexclude;
 extern int (*cexclude)[2];
 extern real* cexclude_scale;
 
-void echarge_data(rc_op);
+void echarge_data(RcOp);
 
 void echarge(int vers);
 

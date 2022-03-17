@@ -2,13 +2,13 @@
 #include "md.h"
 #include "potent.h"
 #include "tool/host_zero.h"
-#include "tool/io_fort_str.h"
+#include "tool/io.h"
 #include <tinker/detail/bndpot.hh>
 #include <tinker/detail/bndstr.hh>
 #include <tinker/detail/potent.hh>
 
 namespace tinker {
-void ebond_data(rc_op op)
+void ebond_data(RcOp op)
 {
    if (not use_potent(bond_term) and not use_potent(strbnd_term) and not use_potent(strtor_term) and
       not potent::use_chgflx)
@@ -42,7 +42,7 @@ void ebond_data(rc_op op)
    }
 
    if (op & rc_init) {
-      fstr_view btyp = bndpot::bndtyp;
+      FstrView btyp = bndpot::bndtyp;
       if (btyp == "HARMONIC")
          bndtyp = ebond_t::harmonic;
       else if (btyp == "MORSE")

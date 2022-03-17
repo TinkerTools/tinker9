@@ -37,8 +37,8 @@ void LogVPropagator::updateVelocityImpl(time_prec t, int idx, int nrespa)
             m[i][i] -= tr;
          }
 
-         trimat_exp(a, m, t);
-         trimat_t_expm1c(b, m, t);
+         trimatExp(a, m, t);
+         trimatTExpm1c(b, m, t);
          // transpose
          std::swap(a[0][1], a[1][0]);
          std::swap(a[0][2], a[2][0]);
@@ -73,7 +73,7 @@ void LogVPropagator::updateVelocityImpl(time_prec t, int idx, int nrespa)
                m[i][j] = -vbar_matrix[i][j];
             m[i][i] -= tr;
          }
-         trimat_exp(scal, m, t);
+         trimatExp(scal, m, t);
          for (int i = 0; i < 3; ++i)
             scal[i][i] -= 1;
          // transpose
@@ -142,8 +142,8 @@ void LogVPropagator::updatePosition(time_prec t)
          mdPos(t);
       } else if (aniso) {
          double a[3][3], b[3][3];
-         trimat_exp(a, vbar_matrix, t);
-         trimat_t_expm1c(b, vbar_matrix, t);
+         trimatExp(a, vbar_matrix, t);
+         trimatTExpm1c(b, vbar_matrix, t);
          pLogVPosAtmAniso_acc(a, b);
       } else {
          double vt = vbar * t;
@@ -158,7 +158,7 @@ void LogVPropagator::updatePosition(time_prec t)
       } else if (aniso) {
          lp_center_of_mass(xpos, ypos, zpos, ratcom_x, ratcom_y, ratcom_z);
          double scal[3][3];
-         trimat_exp(scal, vbar_matrix, t);
+         trimatExp(scal, vbar_matrix, t);
          for (int i = 0; i < 3; ++i)
             scal[i][i] -= 1;
          pLogVPosMolAniso_acc(scal);

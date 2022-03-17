@@ -4,7 +4,7 @@
 #include "random.h"
 #include "tinker_rt.h"
 #include "tool/darray.h"
-#include "tool/io_print.h"
+#include "tool/io.h"
 #include <tinker/detail/bath.hh>
 
 namespace tinker {

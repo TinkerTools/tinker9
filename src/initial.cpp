@@ -126,7 +126,7 @@ void initial()
    use_tophat = false;
    use_stophat = false;
 
-   fstr_view coordtype = output::coordtype;
+   FstrView coordtype = output::coordtype;
    coordtype = "NONE";
 
    using namespace boxes;

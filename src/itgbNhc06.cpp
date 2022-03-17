@@ -1,7 +1,7 @@
 #include "itgbNhc06.h"
 #include "itgbLogVAniso.h"
 #include "itgbLogVIso.h"
-#include "tool/io_print.h"
+#include "tool/io.h"
 
 namespace tinker {
 Nhc06Barostat::Nhc06Barostat()

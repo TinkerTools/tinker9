@@ -4,9 +4,7 @@
 #include "test.h"
 #include "test_rt.h"
 #include "tool/error.h"
-#include "tool/io_print.h"
-#include "tool/io_read.h"
-#include "tool/io_text.h"
+#include "tool/io.h"
 #include "tool/rc_man.h"
 #include <fstream>
 #include <set>
@@ -99,7 +97,7 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1, int step
             f.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       };
 
-      rewind_stream(iarc);
+      ioRewindStream(iarc);
 
       int current = 0;
       int dummy1;

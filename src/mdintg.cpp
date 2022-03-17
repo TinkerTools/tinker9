@@ -17,7 +17,7 @@
 #include "random.h"
 #include "rattle.h"
 #include "tool/darray.h"
-#include "tool/io_fort_str.h"
+#include "tool/io.h"
 #include <cassert>
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
@@ -31,13 +31,13 @@ void mdrest(int istep)
    mdrest_acc(istep);
 }
 
-void mdData(rc_op op)
+void mdData(RcOp op)
 {
    if ((calc::md & rc_flag) == 0)
       return;
 
-   rc_man intg42{mdIntegrateData, op};
-   rc_man save42{mdsaveData, op};
+   RcMan intg42{mdIntegrateData, op};
+   RcMan save42{mdsaveData, op};
 }
 
 //====================================================================//
@@ -64,7 +64,7 @@ void mdPropagate(int nsteps, time_prec dt_ps)
    mdsaveSynchronize();
 }
 
-void mdIntegrateData(rc_op op)
+void mdIntegrateData(RcOp op)
 {
    if (op & rc_dealloc) {
       delete intg;
@@ -74,7 +74,7 @@ void mdIntegrateData(rc_op op)
    if (op & rc_init) {
       ThermostatEnum thermostat = ThermostatEnum::Null;
       if (bath::isothermal) {
-         fstr_view th = bath::thermostat;
+         FstrView th = bath::thermostat;
          if (th == "ANDERSEN")
             thermostat = ThermostatEnum::Andersen;
          else if (th == "BERENDSEN")
@@ -91,7 +91,7 @@ void mdIntegrateData(rc_op op)
 
       BarostatEnum barostat = BarostatEnum::Null;
       if (bath::isobaric) {
-         fstr_view br = bath::barostat;
+         FstrView br = bath::barostat;
          if (br == "BERENDSEN")
             barostat = BarostatEnum::Berendsen;
          else if (br == "BUSSI")
@@ -116,7 +116,7 @@ void mdIntegrateData(rc_op op)
       else if (thermostat == ThermostatEnum::Nhc and barostat == BarostatEnum::m_Nhc1996)
          integrator = IntegratorEnum::Nhc1996;
 
-      fstr_view itg = mdstuf::integrate;
+      FstrView itg = mdstuf::integrate;
       if (itg == "RESPA") {
          integrator = IntegratorEnum::Respa;
       } else if (itg == "VERLET") {

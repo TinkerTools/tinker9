@@ -2,14 +2,14 @@
 #include "md.h"
 #include "potent.h"
 #include "tool/host_zero.h"
-#include "tool/io_fort_str.h"
+#include "tool/io.h"
 #include <cassert>
 #include <tinker/detail/angbnd.hh>
 #include <tinker/detail/angpot.hh>
 #include <tinker/detail/potent.hh>
 
 namespace tinker {
-void eangle_data(rc_op op)
+void eangle_data(RcOp op)
 {
    if (not use_potent(angle_term) and not use_potent(strbnd_term) and
       not use_potent(opbend_term) and not use_potent(angtor_term) and not potent::use_chgflx)
@@ -60,7 +60,7 @@ void eangle_data(rc_op op)
       sang = angpot::sang;
       std::vector<eangle_t> angtypvec(nangle);
       for (int i = 0; i < nangle; ++i) {
-         fstr_view atyp = angpot::angtyp[i];
+         FstrView atyp = angpot::angtyp[i];
          if (atyp == "IN-PLANE")
             angtypvec[i] = eangle_t::in_plane;
          else if (atyp == "HARMONIC")

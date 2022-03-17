@@ -84,7 +84,7 @@ void osrw_mech()
    assign(osrw_tor, record);
 }
 
-void osrw_data(rc_op op)
+void osrw_data(RcOp op)
 {
    if (!use_osrw)
       return;

@@ -463,7 +463,7 @@ void elj_cu4()
    const real cut = switch_cut(switch_vdw);
    const real off = switch_off(switch_vdw);
 
-   int ngrid = get_grid_size(BLOCK_DIM);
+   int ngrid = gpuGridSize(BLOCK_DIM);
    elj_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nev, ev, vir_ev, devx,
       devy, devz, cut, off, st.si2.bit0, nvexclude, vexclude, vexclude_scale, st.x, st.y, st.z,
       st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, njvdw, radmin, epsilon, jvdw, mut,

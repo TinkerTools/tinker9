@@ -1187,7 +1187,7 @@ void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
             nullptr, em, rpole, n, f, aewald);
       }
    }
-   int ngrid = get_grid_size(BLOCK_DIM);
+   int ngrid = gpuGridSize(BLOCK_DIM);
    auto kera = emplar_cu1a<Ver, ETYP>;
    kera<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, vir_em, demx, demy, demz, off, trqx,
       trqy, trqz, rpole, uind, uinp, thole, pdamp, f, aewald, //

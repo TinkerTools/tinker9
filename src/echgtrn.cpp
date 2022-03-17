@@ -8,7 +8,7 @@
 #include <tinker/detail/ctrpot.hh>
 
 namespace tinker {
-void echgtrn_data(rc_op op)
+void echgtrn_data(RcOp op)
 {
    if (!use_potent(chgtrn_term))
       return;

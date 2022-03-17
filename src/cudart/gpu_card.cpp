@@ -8,7 +8,7 @@
 #include <thrust/version.h>
 
 namespace tinker {
-std::string get_cuda_runtime_version_string()
+std::string gpuCudaRuntimeVersion()
 {
    int ver, major, minor;
    check_rt(cudaRuntimeGetVersion(&ver));
@@ -18,7 +18,7 @@ std::string get_cuda_runtime_version_string()
    return format("%d.%d", major, minor);
 }
 
-std::string get_cuda_driver_version_string()
+std::string gpuCudaDriverVersion()
 {
    int ver, major, minor;
    check_rt(cudaDriverGetVersion(&ver));
@@ -28,13 +28,13 @@ std::string get_cuda_driver_version_string()
    return format("%d.%d", major, minor);
 }
 
-std::string get_thrust_version_string()
+std::string gpuThrustVersion()
 {
    return format("%d.%d.%d patch %d", THRUST_MAJOR_VERSION, THRUST_MINOR_VERSION,
       THRUST_SUBMINOR_VERSION, THRUST_PATCH_NUMBER);
 }
 
-std::vector<DeviceAttribute>& get_device_attributes()
+std::vector<DeviceAttribute>& gpuDeviceAttributes()
 {
    static std::vector<DeviceAttribute> a;
    return a;
@@ -176,7 +176,7 @@ static int recommend_device(int ndev)
    std::vector<int> gpercent, prcd; // precedence
    std::vector<double> gflops;
    for (int i = 0; i < ndev; ++i) {
-      const auto& a = get_device_attributes()[i];
+      const auto& a = gpuDeviceAttributes()[i];
       std::string smi = get_nvidia_smi();
       std::string cmd = format("%s --query-gpu=utilization.gpu "
                                "--format=csv,noheader,nounits -i %s",
@@ -236,7 +236,7 @@ static int recommend_device(int ndev)
 }
 
 static unsigned int cuda_device_flags = 0;
-void gpu_card_data(rc_op op)
+void gpuData(RcOp op)
 {
    if (op & rc_dealloc) {
       /*
@@ -244,7 +244,7 @@ void gpu_card_data(rc_op op)
       // multiple GPUs available
       ndevice = 0;
 
-      get_device_attributes().clear();
+      gpuDeviceAttributes().clear();
 
       idevice = -1;
       */
@@ -257,7 +257,7 @@ void gpu_card_data(rc_op op)
 
       always_check_rt(cudaGetDeviceCount(&ndevice));
 
-      auto& all = get_device_attributes();
+      auto& all = gpuDeviceAttributes();
       all.resize(ndevice);
       for (int i = 0; i < ndevice; ++i)
          get_device_attribute(all[i], i);
@@ -280,9 +280,9 @@ void gpu_card_data(rc_op op)
    }
 }
 
-int get_grid_size(int nthreads_per_block)
+int gpuGridSize(int nthreads_per_block)
 {
-   const auto& a = get_device_attributes()[idevice];
+   const auto& a = gpuDeviceAttributes()[idevice];
 
    nthreads_per_block = std::min(nthreads_per_block, a.max_threads_per_block);
    int max_nblocks_per_MP =
@@ -292,9 +292,9 @@ int get_grid_size(int nthreads_per_block)
    return a.multiprocessor_count * max_nblocks_per_MP;
 }
 
-int gpu_max_nparallel(int idev)
+int gpuMaxNParallel(int idev)
 {
-   const auto& a = get_device_attributes().at(idev);
+   const auto& a = gpuDeviceAttributes().at(idev);
    int n_sm = a.multiprocessor_count;
    int n_thread = a.max_threads_per_multiprocessor;
    return n_sm * n_thread;

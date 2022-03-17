@@ -33,10 +33,10 @@ void x_bar(int, char**)
 
    nextarg(string, exist);
    if (exist)
-      read_string(mode, string);
+      ioReadString(mode, string);
    if (invalid_mode(mode))
       print(out, "%s", mode_string1);
-   read_stream(mode,
+   ioReadStream(mode,
       "\n"
       " Enter the Number of the Desired Choice :  ",
       0, invalid_mode);
@@ -92,8 +92,8 @@ void x_bar_makebar()
    tempa = -1;
    nextarg(string, exist);
    if (exist)
-      read_string(tempa, string);
-   read_stream(tempa,
+      ioReadString(tempa, string);
+   ioReadStream(tempa,
       "\n"
       " Enter Trajectory A Temperature in Degrees K [298] :  ",
       298.0, invalid_temperature);
@@ -120,8 +120,8 @@ void x_bar_makebar()
    tempb = -1;
    nextarg(string, exist);
    if (exist)
-      read_string(tempb, string);
-   read_stream(tempb,
+      ioReadString(tempb, string);
+   ioReadStream(tempb,
       "\n"
       " Enter Trajectory B Temperature in Degrees K [298] :  ",
       298.0, invalid_temperature);
@@ -131,8 +131,8 @@ void x_bar_makebar()
    char answer = ' ';
    nextarg(string, exist);
    if (exist)
-      read_string(answer, string);
-   read_stream(answer,
+      ioReadString(answer, string);
+   ioReadStream(answer,
       "\n"
       " Obtain Energies from Trajectory Logs if Available [N] :  ",
       'N', invalid_recompute_answer);
@@ -147,7 +147,7 @@ void x_bar_makebar()
    std::memcpy(string, filea, lenga);
    tinker_f_suffix(
       {string, MAX_NCHAR}, {const_cast<char*>("bar"), 3}, {const_cast<char*>("new"), 3});
-   std::string barfile = fstr_view(string).trim();
+   std::string barfile = FstrView(string).trim();
    std::vector<double> ua0, ua1, ub0, ub1, vola, volb;
 
    // check for log with energies of trajectory A in state 0
@@ -155,7 +155,7 @@ void x_bar_makebar()
       std::memcpy(string, filea, lenga);
       tinker_f_suffix(
          {string, MAX_NCHAR}, {const_cast<char*>("log"), 3}, {const_cast<char*>("old"), 3});
-      str = fstr_view(string).trim();
+      str = FstrView(string).trim();
       std::ifstream a_log(str);
       while (std::getline(a_log, str)) {
          double val;
@@ -176,13 +176,13 @@ void x_bar_makebar()
    tinker_f_suffix(
       {string, MAX_NCHAR}, {const_cast<char*>("arc"), 3}, {const_cast<char*>("old"), 3});
    iarc = tinker_f_freeunit();
-   str = fstr_view(string).trim();
+   str = FstrView(string).trim();
    tinker_f_open(&iarc, str, "old");
    std::ifstream a_arc(str);
 
    if (ua0.size() == 0) {
       // reset trajectory A using the parameters for state 0
-      rewind_stream(a_arc);
+      ioRewindStream(a_arc);
       tinker_f_rewind(&iarc);
       tinker_f_readxyz(&iarc);
       keys::nkey = nkey0;
@@ -215,7 +215,7 @@ void x_bar_makebar()
    }
 
    // reset trajectory A using the parameters for state 1
-   rewind_stream(a_arc);
+   ioRewindStream(a_arc);
    tinker_f_rewind(&iarc);
    tinker_f_readxyz(&iarc);
    keys::nkey = nkey1;
@@ -251,7 +251,7 @@ void x_bar_makebar()
    tinker_f_close(&iarc);
    FILE* ibar = std::fopen(barfile.c_str(), "w");
    int nfrma = std::min(ua0.size(), ua1.size());
-   str = fstr_view(titlea)(1, ltitlea).trim();
+   str = FstrView(titlea)(1, ltitlea).trim();
    print(ibar, "%8d%10.2lf  %s\n", nfrma, tempa, str);
    for (int i = 0; i < nfrma; ++i) {
       if (vola[i] == 0)
@@ -268,7 +268,7 @@ void x_bar_makebar()
       std::memcpy(string, fileb, lengb);
       tinker_f_suffix(
          {string, MAX_NCHAR}, {const_cast<char*>("log"), 3}, {const_cast<char*>("old"), 3});
-      str = fstr_view(string).trim();
+      str = FstrView(string).trim();
       std::ifstream b_log(str);
       while (std::getline(b_log, str)) {
          double val;
@@ -289,13 +289,13 @@ void x_bar_makebar()
    tinker_f_suffix(
       {string, MAX_NCHAR}, {const_cast<char*>("arc"), 3}, {const_cast<char*>("old"), 3});
    iarc = tinker_f_freeunit();
-   str = fstr_view(string).trim();
+   str = FstrView(string).trim();
    tinker_f_open(&iarc, str, "old");
    std::ifstream b_arc(str);
 
    if (ub1.size() == 0) {
       // reset trajectory B using the parameters for state 1
-      rewind_stream(b_arc);
+      ioRewindStream(b_arc);
       tinker_f_rewind(&iarc);
       tinker_f_readxyz(&iarc);
       keys::nkey = nkey1;
@@ -328,7 +328,7 @@ void x_bar_makebar()
    }
 
    // reset trajectory B using the parameters for state 0
-   rewind_stream(b_arc);
+   ioRewindStream(b_arc);
    tinker_f_rewind(&iarc);
    tinker_f_readxyz(&iarc);
    keys::nkey = nkey0;
@@ -363,7 +363,7 @@ void x_bar_makebar()
    // save potential energies and volumes for trajectory B
    tinker_f_close(&iarc);
    int nfrmb = std::min(ub0.size(), ub1.size());
-   str = fstr_view(titleb)(1, ltitleb).trim();
+   str = FstrView(titleb)(1, ltitleb).trim();
    print(ibar, "%8d%10.2lf  %s\n", nfrmb, tempb, str);
    for (int i = 0; i < nfrmb; ++i) {
       if (volb[i] == 0)
@@ -390,7 +390,7 @@ void x_bar_barcalc()
       tinker_f_basefile({string, MAX_NCHAR});
       tinker_f_suffix(
          {string, MAX_NCHAR}, {const_cast<char*>("bar"), 3}, {const_cast<char*>("old"), 3});
-      std::string str = fstr_view(string).trim();
+      std::string str = FstrView(string).trim();
       std::ifstream fr(str);
       return not fr;
    };
@@ -401,9 +401,9 @@ void x_bar_barcalc()
       tinker_f_basefile({string, MAX_NCHAR});
       tinker_f_suffix(
          {string, MAX_NCHAR}, {const_cast<char*>("bar"), 3}, {const_cast<char*>("old"), 3});
-      str = fstr_view(string).trim();
+      str = FstrView(string).trim();
    }
-   read_stream(str,
+   ioReadStream(str,
       "\n"
       " Enter Potential Energy BAR File Name :  ",
       std::string(""), invalid_barfile);
@@ -441,7 +441,7 @@ void x_bar_barcalc()
       }
    }
    str = std::to_string(starta) + " " + std::to_string(stopa) + " " + std::to_string(stepa);
-   read_stream(str,
+   ioReadStream(str,
       "\n"
       " First & Last Frame and Step Increment for Trajectory A :  ",
       std::string(""), invalid_frames);
@@ -476,7 +476,7 @@ void x_bar_barcalc()
    }
    str = std::to_string(startb) + " " + std::to_string(stopb) + " " + std::to_string(stepb);
    str = std::to_string(startb) + " " + std::to_string(stopb) + " " + std::to_string(stepb);
-   read_stream(str,
+   ioReadStream(str,
       "\n"
       " First & Last Frame and Step Increment for Trajectory B :  ",
       std::string(""), invalid_frames);

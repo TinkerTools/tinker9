@@ -5,7 +5,7 @@
 #include "md.h"
 #include "mod.uprior.h"
 #include "tool/cudalib.h"
-#include "tool/io_print.h"
+#include "tool/io.h"
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/polpcg.hh>
 #include <tinker/detail/polpot.hh>
@@ -267,7 +267,7 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
 
    // terminate the calculation if dipoles failed to converge
    if (iter >= maxiter || eps > epsold) {
-      prterr();
+      printError();
       TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
    }
 }

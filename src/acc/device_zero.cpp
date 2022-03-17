@@ -1,4 +1,5 @@
-#include "tool/device_zero_acc.h"
+#include "tool/device_zero.h"
+#include "precision.h"
 
 namespace tinker {
 template <class T>

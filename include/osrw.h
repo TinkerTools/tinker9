@@ -45,7 +45,7 @@ extern real (*osrw_tors5)[4];
 extern real (*osrw_tors6)[4];
 
 void osrw_mech();
-void osrw_data(rc_op);
+void osrw_data(RcOp);
 double osrw_lam_expr0(int form, double lam);
 double osrw_lam_expr1(int form, double lam);
 double osrw_lam_expr2(int form, double lam);

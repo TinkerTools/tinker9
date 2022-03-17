@@ -19,7 +19,7 @@ void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
 
-   MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
+   MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(DFIELD_DPTRS,mlst)
@@ -165,7 +165,7 @@ void ufield_nonewald_acc(
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
 
-   MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
+   MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(UFIELD_DPTRS,mlst)

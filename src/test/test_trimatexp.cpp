@@ -15,7 +15,7 @@ TEST_CASE("TriMatExp", "[util][math][trimatexp]")
 
       double r[3][3] = {{2.717466466, 2.718281869, 4.078193192}, {0, 2.719097435, -2.719641327},
          {0, 0, 2.720185292}};
-      trimat_exp(a, m, 0.1);
+      trimatExp(a, m, 0.1);
       REQUIRE((long long)(c * r[0][0]) == (long long)(c * a[0][0]));
       REQUIRE((long long)(c * r[0][1]) == (long long)(c * a[0][1]));
       REQUIRE((long long)(c * r[0][2]) == (long long)(c * a[0][2]));
@@ -29,7 +29,7 @@ TEST_CASE("TriMatExp", "[util][math][trimatexp]")
       double f[3][3] = {{1.717981861, 1.000000008, 1.641080723}, //
          {0, 1.718581861, -1.000359215},                         //
          {0, 0, 1.718982004}};
-      trimat_expm1c(a, m, 0.1);
+      trimatExpm1c(a, m, 0.1);
       REQUIRE((long long)(c * f[0][0]) == (long long)(c * a[0][0]));
       REQUIRE((long long)(c * f[0][1]) == (long long)(c * a[0][1]));
       REQUIRE((long long)(c * f[0][2]) == (long long)(c * a[0][2]));
@@ -50,7 +50,7 @@ TEST_CASE("TriMatExp", "[util][math][trimatexp]")
 
       double r[3][3] = {{2.717466466, 2.718281869, 4.835264155}, {0, 2.719097435, -3.171666575},
          {0, 0, 3.671866075}};
-      trimat_exp(a, m, 0.1);
+      trimatExp(a, m, 0.1);
       REQUIRE((long long)(c * r[0][0]) == (long long)(c * a[0][0]));
       REQUIRE((long long)(c * r[0][1]) == (long long)(c * a[0][1]));
       REQUIRE((long long)(c * r[0][2]) == (long long)(c * a[0][2]));
@@ -63,7 +63,7 @@ TEST_CASE("TriMatExp", "[util][math][trimatexp]")
 
       double f[3][3] = {{1.717981861, 1.000000008, 1.844622466}, {0, 1.718581861, -1.117155927},
          {0, 0, 2.054175501}};
-      trimat_expm1c(a, m, 0.1);
+      trimatExpm1c(a, m, 0.1);
       REQUIRE((long long)(c * f[0][0]) == (long long)(c * a[0][0]));
       REQUIRE((long long)(c * f[0][1]) == (long long)(c * a[0][1]));
       REQUIRE((long long)(c * f[0][2]) == (long long)(c * a[0][2]));
@@ -84,7 +84,7 @@ TEST_CASE("TriMatExp", "[util][math][trimatexp]")
 
       double r[3][3] = {{2.717466466, 3.170096991, 4.676958168}, {0, 3.670397622, -3.671131799},
          {0, 0, 3.671866075}};
-      trimat_exp(a, m, 0.1);
+      trimatExp(a, m, 0.1);
       REQUIRE((long long)(c * r[0][0]) == (long long)(c * a[0][0]));
       REQUIRE((long long)(c * r[0][1]) == (long long)(c * a[0][1]));
       REQUIRE((long long)(c * r[0][2]) == (long long)(c * a[0][2]));
@@ -97,7 +97,7 @@ TEST_CASE("TriMatExp", "[util][math][trimatexp]")
 
       double f[3][3] = {{1.717981861, 1.116753926, 1.812676538}, {0, 2.053678091, -1.243525569},
          {0, 0, 2.054175501}};
-      trimat_expm1c(a, m, 0.1);
+      trimatExpm1c(a, m, 0.1);
       REQUIRE((long long)(c * f[0][0]) == (long long)(c * a[0][0]));
       REQUIRE((long long)(c * f[0][1]) == (long long)(c * a[0][1]));
       REQUIRE((long long)(c * f[0][2]) == (long long)(c * a[0][2]));
@@ -118,7 +118,7 @@ TEST_CASE("TriMatExp", "[util][math][trimatexp]")
 
       double r[3][3] = {{2.224873366, 2.463729157, 4.363369259}, {0, 2.719097435, -3.171666575},
          {0, 0, 3.671866075}};
-      trimat_exp(a, m, 0.1);
+      trimatExp(a, m, 0.1);
       REQUIRE((long long)(c * r[0][0]) == (long long)(c * a[0][0]));
       REQUIRE((long long)(c * r[0][1]) == (long long)(c * a[0][1]));
       REQUIRE((long long)(c * r[0][2]) == (long long)(c * a[0][2]));
@@ -131,7 +131,7 @@ TEST_CASE("TriMatExp", "[util][math][trimatexp]")
 
       double f[3][3] = {{1.531666083, 0.931783540, 1.715861177}, {0, 1.718581861, -1.117155927},
          {0, 0, 2.054175501}};
-      trimat_expm1c(a, m, 0.1);
+      trimatExpm1c(a, m, 0.1);
       REQUIRE((long long)(c * f[0][0]) == (long long)(c * a[0][0]));
       REQUIRE((long long)(c * f[0][1]) == (long long)(c * a[0][1]));
       REQUIRE((long long)(c * f[0][2]) == (long long)(c * a[0][2]));

@@ -41,10 +41,8 @@
 
 #include "glob.accasync.h"
 #include "glob.chglj.h"
-#include "glob.cudalib.h"
 #include "glob.dhflow.h"
 #include "glob.energi.h"
-#include "glob.gpucard.h"
 #include "glob.group.h"
 #include "glob.molecule.h"
 #include "glob.mplar.h"
@@ -54,4 +52,6 @@
 #include "glob.spatial.h"
 
 #include "glob.box.h"
+#include "glob.cudalib.h"
+#include "glob.gpucard.h"
 #include "glob.md.h"

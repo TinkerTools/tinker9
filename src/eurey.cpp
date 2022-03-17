@@ -6,7 +6,7 @@
 #include <tinker/detail/urypot.hh>
 
 namespace tinker {
-void eurey_data(rc_op op)
+void eurey_data(RcOp op)
 {
    if (!use_potent(urey_term))
       return;

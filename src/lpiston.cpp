@@ -617,7 +617,7 @@ static void iso_tp_aniso(time_prec dt, bool prtpres = false, int iCurrentStep = 
          }
          // scal = exp(mat t/2)
          double scal[3][3];
-         trimat_exp(scal, mat, t2);
+         trimatExp(scal, mat, t2);
          std::swap(scal[0][1], scal[1][0]); // transpose
          std::swap(scal[0][2], scal[2][0]);
          std::swap(scal[1][2], scal[2][1]);
@@ -766,7 +766,7 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
 
    if (mid) {
       double scal[3][3];
-      trimat_exp(scal, vbar_matrix, nbaro * dt);
+      trimatExp(scal, vbar_matrix, nbaro * dt);
       double h0[3][3] = {
          {lvec1.x, lvec1.y, lvec1.z}, {lvec2.x, lvec2.y, lvec2.z}, {lvec3.x, lvec3.y, lvec3.z}};
       matmul3(h0, scal);
@@ -778,13 +778,13 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
    for (int ir = 0; ir < nrespa; ++ir) {
       if (mid and (kw_p == KW_ATOM or kw_p == KW_MOL)) {
          double sr[3][3], sv[3][3] = {0.0};
-         trimat_exp(sr, vbar_matrix, nbaro * dti);
+         trimatExp(sr, vbar_matrix, nbaro * dti);
          if (kw_p == KW_ATOM) {
             double vbm[3][3];
             for (int i = 0; i < 3; ++i)
                for (int j = 0; j < 3; ++j)
                   vbm[i][j] = nbaro * vbar_matrix[i][j];
-            trimat_t_expm1c(sv, vbm, dti);
+            trimatTExpm1c(sv, vbm, dti);
             propagate_pos_axbv_aniso(sr, sv);
          } else if (kw_p == KW_MOL) {
             sr[0][0] = sr[0][0] - 1.0;

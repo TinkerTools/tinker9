@@ -13,7 +13,7 @@ struct FFTPlanCUFFT : public FFTPlan
    cufftHandle h;
 };
 
-void fft_data(rc_op op)
+void fft_data(RcOp op)
 {
    if (!use_ewald() && !use_dewald())
       return;

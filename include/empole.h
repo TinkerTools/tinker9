@@ -3,7 +3,7 @@
 #include "mod.mplpot.h"
 
 namespace tinker {
-void empole_data(rc_op op);
+void empole_data(RcOp);
 void empole(int vers);
 
 void empole_nonewald(int vers);

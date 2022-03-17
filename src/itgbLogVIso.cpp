@@ -5,7 +5,7 @@
 #include "md.h"
 #include "nose.h"
 #include "random.h"
-#include "tool/io_print.h"
+#include "tool/io.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>

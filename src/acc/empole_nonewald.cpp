@@ -28,7 +28,7 @@ void empole_nonewald_acc1()
    auto bufsize = buffer_size();
    PairMPoleGrad pgrad;
 
-   MAYBE_UNUSED int GRID_DIM = get_grid_size(BLOCK_DIM);
+   MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(DEVICE_PTRS,mlst)

@@ -68,7 +68,7 @@ struct Box
    real3 recipa, recipb, recipc;
 };
 
-void boxData(rc_op);
+void boxData(RcOp);
 void boxExtent(double new_extent);
 void boxSetDefault(const Box&);
 void boxGetDefault(Box&);

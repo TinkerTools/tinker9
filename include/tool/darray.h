@@ -4,7 +4,6 @@
 #include "tool/deduce_ptr.h"
 #include <vector>
 
-
 namespace tinker {
 /**
  * \ingroup rc
@@ -20,8 +19,7 @@ void wait_for(int queue);
  * \param nbytes  Number of bytes.
  * \param queue   OpenACC queue.
  */
-void device_memory_copyin_bytes_async(void* dst, const void* src, size_t nbytes,
-                                      int queue);
+void deviceMemoryCopyinBytesAsync(void* dst, const void* src, size_t nbytes, int queue);
 /**
  * \ingroup rc
  * Similar to OpenACC async copyout, copies data from device to host.
@@ -30,8 +28,7 @@ void device_memory_copyin_bytes_async(void* dst, const void* src, size_t nbytes,
  * \param nbytes  Number of bytes.
  * \param queue   OpenACC queue.
  */
-void device_memory_copyout_bytes_async(void* dst, const void* src,
-                                       size_t nbytes, int queue);
+void deviceMemoryCopyoutBytesAsync(void* dst, const void* src, size_t nbytes, int queue);
 /**
  * \ingroup rc
  * Copies data between two pointers.
@@ -41,8 +38,7 @@ void device_memory_copyout_bytes_async(void* dst, const void* src,
  * \param nbytes  Number of bytes.
  * \param queue   OpenACC queue.
  */
-void device_memory_copy_bytes_async(void* dst, const void* src, size_t nbytes,
-                                    int queue);
+void deviceMemoryCopyBytesAsync(void* dst, const void* src, size_t nbytes, int queue);
 /**
  * \ingroup rc
  * Writes zero bytes on device.
@@ -50,33 +46,30 @@ void device_memory_copy_bytes_async(void* dst, const void* src, size_t nbytes,
  * \param nbytes  Number of bytes.
  * \param queue   OpenACC queue.
  */
-void device_memory_zero_bytes_async(void* dst, size_t nbytes, int queue);
+void deviceMemoryZeroBytesAsync(void* dst, size_t nbytes, int queue);
 /**
  * \ingroup rc
  * Deallocates device pointer.
  * \param ptr  Device pointer.
  */
-void device_memory_deallocate_bytes(void* ptr);
+void deviceMemoryDeallocate(void* ptr);
 /**
  * \ingroup rc
  * Allocates device pointer.
  * \param pptr    Pointer to the device pointer.
  * \param nbytes  Number of bytes.
  */
-void device_memory_allocate_bytes(void** pptr, size_t nbytes);
+void deviceMemoryAllocateBytes(void** pptr, size_t nbytes);
 }
-
 
 namespace tinker {
 template <class T>
-void device_memory_check_type()
+void deviceMemoryCheckType()
 {
    static_assert(std::is_enum<T>::value || std::is_integral<T>::value ||
-                    std::is_floating_point<T>::value ||
-                    std::is_trivial<T>::value,
-                 "");
+         std::is_floating_point<T>::value || std::is_trivial<T>::value,
+      "");
 }
-
 
 /**
  * \ingroup rc
@@ -87,25 +80,24 @@ void device_memory_check_type()
  * \param q      OpenACC queue.
  */
 template <class DT, class ST>
-void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem, int q)
+void deviceMemoryCopyin1dArray(DT* dst, const ST* src, size_t nelem, int q)
 {
-   device_memory_check_type<DT>();
-   device_memory_check_type<ST>();
+   deviceMemoryCheckType<DT>();
+   deviceMemoryCheckType<ST>();
    constexpr size_t ds = sizeof(DT); // device type
    constexpr size_t ss = sizeof(ST); // host type
 
    size_t size = ds * nelem;
    if (ds == ss) {
-      device_memory_copyin_bytes_async(dst, src, size, q);
+      deviceMemoryCopyinBytesAsync(dst, src, size, q);
    } else {
       std::vector<DT> buf(nelem);
       for (size_t i = 0; i < nelem; ++i)
          buf[i] = src[i];
-      device_memory_copyin_bytes_async(dst, buf.data(), size, q);
+      deviceMemoryCopyinBytesAsync(dst, buf.data(), size, q);
       wait_for(q);
    }
 }
-
 
 /**
  * \ingroup rc
@@ -117,26 +109,25 @@ void device_memory_copyin_1d_array(DT* dst, const ST* src, size_t nelem, int q)
  * \see LPFlag
  */
 template <class DT, class ST>
-void device_memory_copyout_1d_array(DT* dst, const ST* src, size_t nelem, int q)
+void deviceMemoryCopyout1dArray(DT* dst, const ST* src, size_t nelem, int q)
 {
-   device_memory_check_type<DT>();
-   device_memory_check_type<ST>();
+   deviceMemoryCheckType<DT>();
+   deviceMemoryCheckType<ST>();
    constexpr size_t ds = sizeof(DT); // host type
    constexpr size_t ss = sizeof(ST); // device type
 
    size_t size = ss * nelem;
    if (ds == ss) {
-      device_memory_copyout_bytes_async(dst, src, size, q);
+      deviceMemoryCopyoutBytesAsync(dst, src, size, q);
    } else {
       std::vector<ST> buf(nelem);
-      device_memory_copyout_bytes_async(buf.data(), src, size, q);
+      deviceMemoryCopyoutBytesAsync(buf.data(), src, size, q);
       wait_for(q);
       for (size_t i = 0; i < nelem; ++i)
          dst[i] = buf[i];
    }
 }
 }
-
 
 namespace tinker {
 /**
@@ -148,13 +139,11 @@ struct darray
    template <class T, size_t N>
    struct pointer;
 
-
    template <class T>
    struct pointer<T, 1>
    {
       typedef T* type;
    };
-
 
    template <class T, size_t N>
    struct pointer
@@ -163,24 +152,20 @@ struct darray
       typedef T (*type)[N];
    };
 
-
    template <class PTR>
-   static typename deduce_ptr<PTR>::type* flatten(PTR p)
+   static typename DeducePtr<PTR>::type* flatten(PTR p)
    {
-      typedef typename deduce_ptr<PTR>::type T;
+      typedef typename DeducePtr<PTR>::type T;
       return reinterpret_cast<T*>(p);
    }
-
 
    template <class PTR>
    static void allocate(size_t nelem, PTR* pp)
    {
-      typedef typename deduce_ptr<PTR>::type T;
-      constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_allocate_bytes(reinterpret_cast<void**>(pp),
-                                   sizeof(T) * nelem * N);
+      typedef typename DeducePtr<PTR>::type T;
+      constexpr size_t N = DeducePtr<PTR>::n;
+      deviceMemoryAllocateBytes(reinterpret_cast<void**>(pp), sizeof(T) * nelem * N);
    }
-
 
    template <class PTR, class... PTRS>
    static void allocate(size_t nelem, PTR* pp, PTRS... pps)
@@ -189,13 +174,11 @@ struct darray
       allocate(nelem, pps...);
    }
 
-
    template <class PTR>
    static void deallocate(PTR p)
    {
-      device_memory_deallocate_bytes(flatten(p));
+      deviceMemoryDeallocate(flatten(p));
    }
-
 
    template <class PTR, class... PTRS>
    static void deallocate(PTR p, PTRS... ps)
@@ -204,15 +187,13 @@ struct darray
       deallocate(ps...);
    }
 
-
    template <class PTR>
    static void zero(int q, size_t nelem, PTR p)
    {
-      typedef typename deduce_ptr<PTR>::type T;
-      constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_zero_bytes_async(flatten(p), sizeof(T) * nelem * N, q);
+      typedef typename DeducePtr<PTR>::type T;
+      constexpr size_t N = DeducePtr<PTR>::n;
+      deviceMemoryZeroBytesAsync(flatten(p), sizeof(T) * nelem * N, q);
    }
-
 
    template <class PTR, class... PTRS>
    static void zero(int q, size_t nelem, PTR p, PTRS... ps)
@@ -221,67 +202,59 @@ struct darray
       zero(q, nelem, ps...);
    }
 
-
    template <class PTR, class U>
    static void copyin(int q, size_t nelem, PTR dst, const U* src)
    {
-      constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_copyin_1d_array(flatten(dst), flatten(src), nelem * N, q);
+      constexpr size_t N = DeducePtr<PTR>::n;
+      deviceMemoryCopyin1dArray(flatten(dst), flatten(src), nelem * N, q);
    }
-
 
    template <class U, class PTR>
    static void copyout(int q, size_t nelem, U* dst, const PTR src)
    {
-      constexpr size_t N = deduce_ptr<PTR>::n;
-      device_memory_copyout_1d_array(flatten(dst), flatten(src), nelem * N, q);
+      constexpr size_t N = DeducePtr<PTR>::n;
+      deviceMemoryCopyout1dArray(flatten(dst), flatten(src), nelem * N, q);
    }
-
 
    template <class PTR, class U>
    static void copy(int q, size_t nelem, PTR dst, const U* src)
    {
-      constexpr size_t N = deduce_ptr<PTR>::n;
-      using DT = typename deduce_ptr<PTR>::type;
-      using ST = typename deduce_ptr<U*>::type;
+      constexpr size_t N = DeducePtr<PTR>::n;
+      using DT = typename DeducePtr<PTR>::type;
+      using ST = typename DeducePtr<U*>::type;
       static_assert(std::is_same<DT, ST>::value, "");
       size_t size = N * sizeof(ST) * nelem;
-      device_memory_copy_bytes_async(flatten(dst), flatten(src), size, q);
+      deviceMemoryCopyBytesAsync(flatten(dst), flatten(src), size, q);
    }
 
-
    template <class PTR, class PTR2>
-   static typename deduce_ptr<PTR>::type dot_wait(int q, size_t nelem,
-                                                  const PTR ptr, const PTR2 b)
+   static typename DeducePtr<PTR>::type dot_wait(int q, size_t nelem, const PTR ptr, const PTR2 b)
    {
-      typedef typename deduce_ptr<PTR>::type T;
-      constexpr size_t N = deduce_ptr<PTR>::n;
-      typedef typename deduce_ptr<PTR2>::type T2;
+      typedef typename DeducePtr<PTR>::type T;
+      constexpr size_t N = DeducePtr<PTR>::n;
+      typedef typename DeducePtr<PTR2>::type T2;
       static_assert(std::is_same<T, T2>::value, "");
       return dotprod(flatten(ptr), flatten(b), nelem * N, q);
    }
 
-
    template <class ANS, class PTR, class PTR2>
    static void dot(int q, size_t nelem, ANS ans, const PTR ptr, const PTR2 ptr2)
    {
-      typedef typename deduce_ptr<PTR>::type T;
-      constexpr size_t N = deduce_ptr<PTR>::n;
-      typedef typename deduce_ptr<PTR2>::type T2;
+      typedef typename DeducePtr<PTR>::type T;
+      constexpr size_t N = DeducePtr<PTR>::n;
+      typedef typename DeducePtr<PTR2>::type T2;
       static_assert(std::is_same<T, T2>::value, "");
-      typedef typename deduce_ptr<ANS>::type TA;
+      typedef typename DeducePtr<ANS>::type TA;
       static_assert(std::is_same<T, TA>::value, "");
       dotprod(ans, flatten(ptr), flatten(ptr2), nelem * N, q);
    }
 
-
    template <class FLT, class PTR>
    static void scale(int q, size_t nelem, FLT scal, PTR ptr)
    {
-      constexpr size_t N = deduce_ptr<PTR>::n;
+      constexpr size_t N = DeducePtr<PTR>::n;
       scale_array(flatten(ptr), scal, nelem * N, q);
    }
-
 
    template <class FLT, class PTR, class... PTRS>
    static void scale(int q, size_t nelem, FLT scal, PTR ptr, PTRS... ptrs)
@@ -290,7 +263,6 @@ struct darray
       scale(q, nelem, scal, ptrs...);
    }
 };
-
 
 /**
  * \ingroup rc

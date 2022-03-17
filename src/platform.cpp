@@ -4,7 +4,7 @@
 namespace tinker {
 int pltfm_config;
 
-void platform_data(rc_op op)
+void platform_data(RcOp op)
 {
    if (op & rc_dealloc) {
       pltfm_config = UNSET_PLTFM;

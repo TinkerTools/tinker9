@@ -1,8 +1,8 @@
 #include "tool/compilers.h"
-#include "tool/io_print.h"
+#include "tool/io.h"
 
 namespace tinker {
-std::string cxx_compiler_name()
+std::string cxxCompilerName()
 {
    std::string n = "unknown";
 #if defined(TINKER_ICPC)

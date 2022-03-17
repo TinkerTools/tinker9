@@ -6,7 +6,7 @@
 #include "tool/rc_man.h"
 
 namespace tinker {
-void cflux_data(rc_op op);
+void cflux_data(RcOp);
 void zero_pot();
 
 void alterchg();

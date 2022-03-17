@@ -6,7 +6,7 @@
 #include <tinker/detail/strbnd.hh>
 
 namespace tinker {
-void estrbnd_data(rc_op op)
+void estrbnd_data(RcOp op)
 {
    if (!use_potent(strbnd_term))
       return;

@@ -3,5 +3,5 @@
 #include "tool/rc_man.h"
 
 namespace tinker {
-void molecule_data(rc_op);
+void molecule_data(RcOp);
 }

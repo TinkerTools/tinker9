@@ -420,7 +420,7 @@ void ehal_cu3()
    if CONSTEXPR (do_g)
       darray::zero(g::q0, n, gxred, gyred, gzred);
 
-   int ngrid = get_grid_size(BLOCK_DIM);
+   int ngrid = gpuGridSize(BLOCK_DIM);
    auto ker1 = ehal_cu1<Ver>;
    ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nev, ev, vir_ev, gxred, gyred,
       gzred, cut, off, st.si1.bit0, nvexclude, vexclude, vexclude_scale, st.x, st.y, st.z,

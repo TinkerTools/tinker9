@@ -8,5 +8,5 @@ constexpr int CU_PLTFM = 0x002;
 
 extern int pltfm_config;
 
-void platform_data(rc_op);
+void platform_data(RcOp);
 }

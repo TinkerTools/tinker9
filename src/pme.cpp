@@ -120,7 +120,7 @@ void pme_op_copyin(PMEUnit unit)
 }
 
 namespace tinker {
-void pme_data(rc_op op)
+void pme_data(RcOp op)
 {
    if (!use_ewald() && !use_dewald())
       return;

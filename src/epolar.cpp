@@ -7,8 +7,7 @@
 #include "pme.h"
 #include "potent.h"
 #include "tool/host_zero.h"
-#include "tool/io_fort_str.h"
-#include "tool/io_print.h"
+#include "tool/io.h"
 #include <map>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/inform.hh>
@@ -21,7 +20,7 @@
 #include <tinker/detail/uprior.hh>
 
 namespace tinker {
-void epolar_data(rc_op op)
+void epolar_data(RcOp op)
 {
    if (!use_potent(polar_term))
       return;
@@ -404,7 +403,7 @@ void epolar_data(rc_op op)
          &work08_, &work09_, &work10_);
 
       if (uprior::use_pred) {
-         fstr_view predstr = uprior::polpred;
+         FstrView predstr = uprior::polpred;
          if (predstr == "ASPC") {
             polpred = UPred::ASPC;
          } else if (predstr == "GEAR") {

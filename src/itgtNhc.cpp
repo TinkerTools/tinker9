@@ -1,7 +1,7 @@
 #include "itgtNhc.h"
 #include "md.h"
 #include "tool/darray.h"
-#include "tool/io_print.h"
+#include "tool/io.h"
 #include <algorithm>
 #include <cmath>
 #include <tinker/detail/bath.hh>

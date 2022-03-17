@@ -356,7 +356,7 @@ void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
    const PMEUnit pu = ppme_unit;
    const real aewald = pu->aewald;
 
-   int ngrid = get_grid_size(BLOCK_DIM);
+   int ngrid = gpuGridSize(BLOCK_DIM);
    ngrid *= BLOCK_DIM;
    int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
    nparallel = std::max(nparallel, ngrid);
@@ -372,7 +372,7 @@ void dfield_nonewald_cu(real (*field)[3], real (*fieldp)[3])
    const real off = switch_off(switch_mpole);
 
    darray::zero(g::q0, n, field, fieldp);
-   int ngrid = get_grid_size(BLOCK_DIM);
+   int ngrid = gpuGridSize(BLOCK_DIM);
    ngrid *= BLOCK_DIM;
    int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
    nparallel = std::max(nparallel, ngrid);
@@ -689,7 +689,7 @@ void ufield_ewald_real_cu(
    const PMEUnit pu = ppme_unit;
    const real aewald = pu->aewald;
 
-   int ngrid = get_grid_size(BLOCK_DIM);
+   int ngrid = gpuGridSize(BLOCK_DIM);
    ngrid *= BLOCK_DIM;
    int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
    nparallel = std::max(nparallel, ngrid);
@@ -706,7 +706,7 @@ void ufield_nonewald_cu(
    const real off = switch_off(switch_mpole);
 
    darray::zero(g::q0, n, field, fieldp);
-   int ngrid = get_grid_size(BLOCK_DIM);
+   int ngrid = gpuGridSize(BLOCK_DIM);
    ngrid *= BLOCK_DIM;
    int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
    nparallel = std::max(nparallel, ngrid);

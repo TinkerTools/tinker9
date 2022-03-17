@@ -6,7 +6,7 @@
 #include <tinker/detail/torpot.hh>
 
 namespace tinker {
-void estrtor_data(rc_op op)
+void estrtor_data(RcOp op)
 {
    if (not use_potent(strtor_term))
       return;

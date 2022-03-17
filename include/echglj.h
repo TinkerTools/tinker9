@@ -6,8 +6,8 @@
 #include "tool/rc_man.h"
 
 namespace tinker {
-void echglj_data(rc_op op);
-void echglj_data_cu(rc_op);
+void echglj_data(RcOp);
+void echglj_data_cu(RcOp);
 void echglj(int vers);
 
 void echglj_rad_arith_eps_geom_nonewald_cu(int);

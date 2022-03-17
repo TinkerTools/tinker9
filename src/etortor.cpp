@@ -10,7 +10,7 @@
 #include <tinker/detail/tortor.hh>
 
 namespace tinker {
-void etortor_data(rc_op op)
+void etortor_data(RcOp op)
 {
    if (!use_potent(tortor_term))
       return;

@@ -1,6 +1,6 @@
 #include "md.h"
 #include "tinker_rt.h"
-#include "tool/io_print.h"
+#include "tool/io.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
@@ -8,8 +8,7 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-void mdrest_remove_pbc_momentum_cu(bool copyout, vel_prec& vtot1,
-                                   vel_prec& vtot2, vel_prec& vtot3);
+void mdrest_remove_pbc_momentum_cu(bool copyout, vel_prec& vtot1, vel_prec& vtot2, vel_prec& vtot3);
 void mdrest_acc(int istep)
 {
    if (!mdstuf::dorest)

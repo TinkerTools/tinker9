@@ -25,7 +25,7 @@ void x_dynamic(int, char**)
 
    // check for keywords containing any altered parameters
 
-   fstr_view integrate = mdstuf::integrate;
+   FstrView integrate = mdstuf::integrate;
    integrate = "BEEMAN";
    for (auto i = 0; i < keys::nkey; ++i) {
       auto record = Text::string(keys::keyline[i]);
@@ -46,9 +46,9 @@ void x_dynamic(int, char**)
    int nstep = -1;
    nextarg(string, exist);
    if (exist) {
-      read_string(nstep, string);
+      ioReadString(nstep, string);
    }
-   read_stream(nstep,
+   ioReadStream(nstep,
       "\n"
       " Enter the Number of Dynamics Steps to be Taken :  ",
       0, [](int i) { return i < 0; });
@@ -58,9 +58,9 @@ void x_dynamic(int, char**)
    double dt = -1;
    nextarg(string, exist);
    if (exist) {
-      read_string(dt, string);
+      ioReadString(dt, string);
    }
-   read_stream(dt,
+   ioReadStream(dt,
       "\n"
       " Enter the Time Step Length in Femtoseconds [1.0] :  ",
       1.0, [](double i) { return i <= 0; });
@@ -76,9 +76,9 @@ void x_dynamic(int, char**)
    double dtsave = -1;
    nextarg(string, exist);
    if (exist) {
-      read_string(dtsave, string);
+      ioReadString(dtsave, string);
    }
-   read_stream(dtsave,
+   ioReadStream(dtsave,
       "\n"
       " Enter Time between Saves in Picoseconds [0.1] :  ",
       0.1, [](double i) { return i <= 0; });
@@ -99,7 +99,7 @@ void x_dynamic(int, char**)
    if (bound::use_bounds) {
       nextarg(string, exist);
       if (exist) {
-         read_string(mode, string);
+         ioReadString(mode, string);
       }
       std::string prompt = R"(
  Available Statistical Mechanical Ensembles :
@@ -108,7 +108,7 @@ void x_dynamic(int, char**)
     (3) Isoenthalpic-Isobaric (NPH)
     (4) Isothermal-Isobaric (NPT)
  Enter the Number of the Desired Choice  [1] :  )";
-      read_stream(mode, prompt, 1, [](int i) { return i <= 0 || i > 4; });
+      ioReadStream(mode, prompt, 1, [](int i) { return i <= 0 || i > 4; });
 
       if (integrate == "BUSSI" || integrate == "NOSE-HOOVER" || integrate == "GHMC") {
          if (mode != 4) {
@@ -124,9 +124,9 @@ void x_dynamic(int, char**)
          bath::kelvin = -1;
          nextarg(string, exist);
          if (exist) {
-            read_string(bath::kelvin, string);
+            ioReadString(bath::kelvin, string);
          }
-         read_stream(bath::kelvin, ask_kelvin, default_kelvin, invalid_kelvin);
+         ioReadStream(bath::kelvin, ask_kelvin, default_kelvin, invalid_kelvin);
       }
 
       if (mode == 3 || mode == 4) {
@@ -134,30 +134,30 @@ void x_dynamic(int, char**)
          bath::atmsph = -1;
          nextarg(string, exist);
          if (exist) {
-            read_string(bath::atmsph, string);
+            ioReadString(bath::atmsph, string);
          }
-         read_stream(bath::atmsph, ask_atm, default_atm, invalid_atm);
+         ioReadStream(bath::atmsph, ask_atm, default_atm, invalid_atm);
       }
    } else {
       nextarg(string, exist);
       if (exist) {
-         read_string(mode, string);
+         ioReadString(mode, string);
       }
       std::string prompt = R"(
  Available Simulation Control Modes :
     (1) Constant Total Energy Value (E)
     (2) Constant Temperature via Thermostat (T)
  Enter the Number of the Desired Choice [1] :  )";
-      read_stream(mode, prompt, 1, [](int i) { return i <= 0; });
+      ioReadStream(mode, prompt, 1, [](int i) { return i <= 0; });
 
       if (mode == 2) {
          bath::isothermal = true;
          bath::kelvin = -1;
          nextarg(string, exist);
          if (exist) {
-            read_string(bath::kelvin, string);
+            ioReadString(bath::kelvin, string);
          }
-         read_stream(bath::kelvin, ask_kelvin, default_kelvin, invalid_kelvin);
+         ioReadStream(bath::kelvin, ask_kelvin, default_kelvin, invalid_kelvin);
       }
    }
 

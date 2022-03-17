@@ -16,7 +16,7 @@ int ncexclude;
 int (*cexclude)[2];
 real* cexclude_scale;
 
-void echarge_data(rc_op op)
+void echarge_data(RcOp op)
 {
    if (!use_potent(charge_term))
       return;

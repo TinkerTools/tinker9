@@ -279,7 +279,7 @@ static void spatial_update(Spatial2Unit unt)
 
 //====================================================================//
 
-void nblist_data(rc_op op)
+void nblist_data(RcOp op)
 {
    if (op & rc_dealloc) {
       NBListUnit::clear();

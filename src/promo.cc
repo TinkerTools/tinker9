@@ -1,4 +1,4 @@
-#include "tool/io_print.h"
+#include "tool/io.h"
 #include "version.h"
 
 namespace tinker {
