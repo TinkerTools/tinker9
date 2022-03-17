@@ -1,7 +1,6 @@
 Tinker9: Next Generation of Tinker with GPU Support
 ===================================================
 [//]: # (Badges)
-[![Build Status](https://travis-ci.com/tinkertools/tinker9.svg?branch=master)](https://travis-ci.com/tinkertools/tinker9)
 [![Docs Status](https://readthedocs.org/projects/tinker9-manual/badge/?version=latest&style=flat)](https://tinker9-manual.readthedocs.io)
 
 
@@ -15,14 +14,16 @@ Tinker9 is a complete rewrite and extension of the canonical Tinker software, cu
    3. [Build Tinker9 with CMake](doc/manual/m/install/buildwithcmake.rst)
 
 
-## Citing Tinker9
-See [Citations](https://tinkerdoc.readthedocs.io/en/latest/text/cite.html) for details.
+<!-- ## Citing Tinker9
+See [Citations](https://tinkerdoc.readthedocs.io/en/latest/text/cite.html) for details. -->
 
 
 ## User Manual (In Progress)
 The HTML version is hosted on [readthedocs](https://tinker9-manual.readthedocs.io)
 and the [PDF](https://tinker9-manual.readthedocs.io/_/downloads/en/latest/pdf/)
 version is accessible from the same webpage.
+
+We are trying to merge this documentation into [tinkerdoc.](https://tinkerdoc.readthedocs.io)
 
 
 ## Features and Progress Tracker
