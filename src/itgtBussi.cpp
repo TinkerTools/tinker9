@@ -1,5 +1,5 @@
 #include "itgtBussi.h"
-#include "mdpt.h"
+#include "md.h"
 #include "tool/io_print.h"
 
 namespace tinker {
@@ -13,7 +13,7 @@ void BussiThermostat::printDetail(FILE* o)
 void BussiThermostat::control2(time_prec dt, bool)
 {
    double temp;
-   kinetic(temp);
-   bussi_thermostat(dt, temp);
+   mdKinetic(temp);
+   mdBussiThermostat(dt, temp);
 }
 }

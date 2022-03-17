@@ -5,10 +5,7 @@
 #include "energy.h"
 #include "glob.molecule.h"
 #include "mathfunc.h"
-#include "mdegv.h"
-#include "mdpq.h"
-#include "mdprec.h"
-#include "mdpt.h"
+#include "md.h"
 #include "nblist.h"
 #include "random.h"
 #include "tool/io_fort_str.h"
@@ -52,7 +49,7 @@ void kinetic_energy_acc(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], i
 
 //====================================================================//
 
-void bussi_thermostat_acc(time_prec dt_prec, T_prec temp_prec)
+void mdBussiThermostat_acc(time_prec dt_prec, T_prec temp_prec)
 {
    double dt = dt_prec;
    double temp = temp_prec;
@@ -91,7 +88,7 @@ void bussi_thermostat_acc(time_prec dt_prec, T_prec temp_prec)
 
 //====================================================================//
 
-void berendsen_barostat_acc(time_prec dt)
+void mdBerendsenBarostat_acc(time_prec dt)
 {
    if (not bound::use_bounds)
       return;
@@ -173,7 +170,7 @@ void berendsen_barostat_acc(time_prec dt)
          ypos[i] = xk * ascale[1][0] + yk * ascale[1][1] + zk * ascale[1][2];
          zpos[i] = xk * ascale[2][0] + yk * ascale[2][1] + zk * ascale[2][2];
       }
-      copy_pos_to_xyz();
+      mdCopyPosToXyz();
    } else {
       double scale = 1 + (dt * bath::compress / bath::taupres) * (pres - bath::atmsph);
       scale = std::pow(scale, third);
@@ -190,11 +187,11 @@ void berendsen_barostat_acc(time_prec dt)
          ypos[i] *= scale;
          zpos[i] *= scale;
       }
-      copy_pos_to_xyz();
+      mdCopyPosToXyz();
    }
 }
 
-void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
+void mdMonteCarloBarostat_acc(energy_prec epot, T_prec temp)
 {
    if (not bound::use_bounds)
       return;
@@ -268,7 +265,7 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
                zpos[k] += zmove;
             }
          }
-         copy_pos_to_xyz();
+         mdCopyPosToXyz();
       }
    }
 
@@ -304,7 +301,7 @@ void monte_carlo_barostat_acc(energy_prec epot, T_prec temp)
       darray::copy(g::q0, n, xpos, x_pmonte);
       darray::copy(g::q0, n, ypos, y_pmonte);
       darray::copy(g::q0, n, zpos, z_pmonte);
-      copy_pos_to_xyz();
+      mdCopyPosToXyz();
       refresh_neighbors();
    } else {
 #if TINKER_ENABLE_LOG

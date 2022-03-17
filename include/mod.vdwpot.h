@@ -1,6 +1,5 @@
 #pragma once
-#include "macro.h"
-#include "mdprec.h"
+#include "precision.h"
 
 namespace tinker {
 /**

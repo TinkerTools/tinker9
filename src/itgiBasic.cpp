@@ -1,10 +1,7 @@
 #include "itgiBasic.h"
 #include "energy.h"
 #include "lpiston.h"
-#include "mdegv.h"
-#include "mdintg.h"
-#include "mdpq.h"
-#include "mdprec.h"
+#include "md.h"
 #include "tool/io_print.h"
 
 namespace tinker {
@@ -81,7 +78,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
    if (nrespa == 1) {
       m_prop->updatePosition(dt);
       m_prop->rattle(dt);
-      copy_pos_to_xyz(true);
+      mdCopyPosToXyz(true);
       energy(vers1);
       if (vers1 & calc::virial)
          if (not atomic)
@@ -93,8 +90,8 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
 
       for (int ifast = 1; ifast < nrespa; ++ifast) {
          m_prop->updatePosition(dta);
-         copy_pos_to_xyz(false);
-         energy(vers1, RESPA_FAST, respa_tsconfig());
+         mdCopyPosToXyz(false);
+         energy(vers1, RESPA_FAST, mdRespaTsconfig());
          m_prop->updateVelocityR0(dta);
          if (vers1 & calc::virial) {
             if (atomic) {
@@ -109,10 +106,10 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
       }
       m_prop->updatePosition(dta);
       m_prop->rattle(dt);
-      copy_pos_to_xyz(true);
+      mdCopyPosToXyz(true);
 
       // fast force
-      energy(vers1, RESPA_FAST, respa_tsconfig());
+      energy(vers1, RESPA_FAST, mdRespaTsconfig());
       darray::copy(g::q0, n, gx1, gx);
       darray::copy(g::q0, n, gy1, gy);
       darray::copy(g::q0, n, gz1, gz);
@@ -129,7 +126,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
       }
 
       // slow force
-      energy(vers1, RESPA_SLOW, respa_tsconfig());
+      energy(vers1, RESPA_SLOW, mdRespaTsconfig());
       darray::copy(g::q0, n, gx2, gx);
       darray::copy(g::q0, n, gy2, gy);
       darray::copy(g::q0, n, gz2, gz);

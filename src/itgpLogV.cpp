@@ -1,10 +1,7 @@
 #include "itgpLogV.h"
 #include "lpiston.h"
 #include "mathfunc_sinhc.h"
-#include "mdegv.h"
-#include "mdintg.h"
-#include "mdppg.h"
-#include "mdpq.h"
+#include "md.h"
 #include "nose.h"
 #include "tool/trimatexp.h"
 #include <tinker/detail/mdstuf.hh>
@@ -20,9 +17,9 @@ void LogVPropagator::updateVelocityImpl(time_prec t, int idx, int nrespa)
 {
    if (not applyBaro) {
       if (nrespa == 1) // v1, v2, R0
-         propagate_velocity(t, gx, gy, gz);
+         mdVel(t, gx, gy, gz);
       else // R1, R2
-         propagate_velocity2(t / nrespa, gx1, gy1, gz1, t, gx2, gy2, gz2);
+         mdVel2(t / nrespa, gx1, gy1, gz1, t, gx2, gy2, gz2);
 
       return;
    }
@@ -33,8 +30,7 @@ void LogVPropagator::updateVelocityImpl(time_prec t, int idx, int nrespa)
          double a[3][3];
          double b[3][3];
          double m[3][3];
-         double tr =
-            (vbar_matrix[0][0] + vbar_matrix[1][1] + vbar_matrix[2][2]) / dofP;
+         double tr = (vbar_matrix[0][0] + vbar_matrix[1][1] + vbar_matrix[2][2]) / dofP;
          for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j)
                m[i][j] = -vbar_matrix[i][j];
@@ -52,9 +48,9 @@ void LogVPropagator::updateVelocityImpl(time_prec t, int idx, int nrespa)
          std::swap(b[1][2], b[2][1]);
 
          if (nrespa == 1) // v1, v2, R0
-            velAvbfAni(1, a, b, gx, gy, gz, nullptr, nullptr, nullptr);
+            mdVelAvbfAn(1, a, b, gx, gy, gz, nullptr, nullptr, nullptr);
          else // R1, R2
-            velAvbfAni(nrespa, a, b, gx1, gy1, gz1, gx2, gy2, gz2);
+            mdVelAvbfAn(nrespa, a, b, gx1, gy1, gz1, gx2, gy2, gz2);
       } else {
          double al = 1.0 + 3.0 / dofP;
          double vt = al * vbar * t;
@@ -63,16 +59,15 @@ void LogVPropagator::updateVelocityImpl(time_prec t, int idx, int nrespa)
          double b = t * std::exp(-vt2) * sinhc(vt2);
 
          if (nrespa == 1) // v1, v2, R0
-            velAvbfIso(1, a, b, gx, gy, gz, nullptr, nullptr, nullptr);
+            mdVelAvbf(1, a, b, gx, gy, gz, nullptr, nullptr, nullptr);
          else // R1, R2
-            velAvbfIso(nrespa, a, b, gx1, gy1, gz1, gx2, gy2, gz2);
+            mdVelAvbf(nrespa, a, b, gx1, gy1, gz1, gx2, gy2, gz2);
       }
    } else {
       double scal[3][3], s;
       if (aniso) {
          double m[3][3];
-         double tr =
-            (vbar_matrix[0][0] + vbar_matrix[1][1] + vbar_matrix[2][2]) / dofP;
+         double tr = (vbar_matrix[0][0] + vbar_matrix[1][1] + vbar_matrix[2][2]) / dofP;
          for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j)
                m[i][j] = -vbar_matrix[i][j];
@@ -105,9 +100,9 @@ void LogVPropagator::updateVelocityImpl(time_prec t, int idx, int nrespa)
       }
 
       if (nrespa == 1)
-         propagate_velocity(t, gx, gy, gz);
+         mdVel(t, gx, gy, gz);
       else
-         propagate_velocity2(t / nrespa, gx1, gy1, gz1, t, gx2, gy2, gz2);
+         mdVel2(t / nrespa, gx1, gy1, gz1, t, gx2, gy2, gz2);
 
       if (idx == 2) {
          lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
@@ -144,7 +139,7 @@ void LogVPropagator::updatePosition(time_prec t)
 {
    if (atomic) {
       if (not applyBaro) {
-         propagate_pos(t);
+         mdPos(t);
       } else if (aniso) {
          double a[3][3], b[3][3];
          trimat_exp(a, vbar_matrix, t);
@@ -155,11 +150,11 @@ void LogVPropagator::updatePosition(time_prec t)
          double vt2 = vt * 0.5;
          double a = std::exp(vt);
          double b = t * std::exp(vt2) * sinhc(vt2);
-         propagate_pos_axbv(a, b);
+         mdPosAxbv(a, b);
       }
    } else {
       if (not applyBaro) {
-         propagate_pos(t);
+         mdPos(t);
       } else if (aniso) {
          lp_center_of_mass(xpos, ypos, zpos, ratcom_x, ratcom_y, ratcom_z);
          double scal[3][3];
@@ -167,12 +162,12 @@ void LogVPropagator::updatePosition(time_prec t)
          for (int i = 0; i < 3; ++i)
             scal[i][i] -= 1;
          pLogVPosMolAniso_acc(scal);
-         propagate_pos(t);
+         mdPos(t);
       } else {
          lp_center_of_mass(xpos, ypos, zpos, ratcom_x, ratcom_y, ratcom_z);
          double scal = std::exp(vbar * t) - 1;
          pLogVPosMolIso_acc(scal);
-         propagate_pos(t);
+         mdPos(t);
       }
    }
 }

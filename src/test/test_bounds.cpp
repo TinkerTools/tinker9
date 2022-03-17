@@ -1,4 +1,4 @@
-#include "mdpq.h"
+#include "md.h"
 #include "test.h"
 #include "test_rt.h"
 #include "tool/io_fort_str.h"
@@ -43,8 +43,8 @@ TEST_CASE("Bounds", "[ff][box]")
    std::string fname = fsw.trim();
    std::ifstream ipt(fname);
    int done = false;
-   read_frame_copyin_to_xyz(ipt, done);
-   bounds();
+   mdReadFrameCopyinToXyz(ipt, done);
+   mdBounds();
 
    double eps = 1.0e-5;
    double xref[] = {-9, 3};

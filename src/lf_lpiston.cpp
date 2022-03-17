@@ -1,11 +1,7 @@
 #include "lf_lpiston.h"
 #include "box.h"
 #include "energy.h"
-#include "mdegv.h"
-#include "mdintg.h"
-#include "mdpq.h"
-#include "mdprec.h"
-#include "mdpt.h"
+#include "md.h"
 #include "random.h"
 #include "rattle.h"
 #include <tinker/detail/bath.hh>
@@ -172,7 +168,7 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
 
          if (userat) {
             shake(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
-            copy_pos_to_xyz(true);
+            mdCopyPosToXyz(true);
             darray::copy(g::q0, n, leapfrog_x, xpos);
             darray::copy(g::q0, n, leapfrog_y, ypos);
             darray::copy(g::q0, n, leapfrog_z, zpos);
@@ -191,16 +187,15 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
             darray::copy(g::q0, n, leapfrog_z, zpos);
          }
 
-         copy_pos_to_xyz(true);
+         mdCopyPosToXyz(true);
          energy(vers1);
       }
 
       // in step 1, vx(new) and vxold are opposite from notation
       // v(-0.5) = v(0) - a(0)*dt/2
-      propagate_velocity(-t2, leapfrog_vx, leapfrog_vy, leapfrog_vz, vx, vy, vz, gx, gy, gz);
+      mdVelB(-t2, leapfrog_vx, leapfrog_vy, leapfrog_vz, vx, vy, vz, gx, gy, gz);
       // v(0.5) = v(0) + a(0)*dt/2
-      propagate_velocity(
-         t2, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold, vx, vy, vz, gx, gy, gz);
+      mdVelB(t2, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold, vx, vy, vz, gx, gy, gz);
 
       if (userat) {
 
@@ -217,7 +212,7 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
             leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
 
          // propagate vx = vnew + a(1)*dt
-         propagate_velocity(dt_ps, vx, vy, vz, leapfrog_vx, leapfrog_vy, leapfrog_vz, gx, gy, gz);
+         mdVelB(dt_ps, vx, vy, vz, leapfrog_vx, leapfrog_vy, leapfrog_vz, gx, gy, gz);
 
          shake(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
 
@@ -252,7 +247,7 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
    propagate_pos_lf(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z, leapfrog_vxold,
       leapfrog_vyold, leapfrog_vzold);
    lf_langevin_piston(dt_ps, press);
-   copy_pos_to_xyz(true);
+   mdCopyPosToXyz(true);
    energy(vers1);
 
    darray::copy(g::q0, n, leapfrog_x, xpos);
@@ -260,7 +255,7 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
    darray::copy(g::q0, n, leapfrog_z, zpos);
 
    // propagate v(0.5 -> 1.5 old): v = vold + a(1)*dt
-   propagate_velocity(dt_ps, leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold, leapfrog_vyold,
+   mdVelB(dt_ps, leapfrog_vx, leapfrog_vy, leapfrog_vz, leapfrog_vxold, leapfrog_vyold,
       leapfrog_vzold, gx, gy, gz);
 
    if (userat) {
@@ -310,12 +305,12 @@ void kinetic_leapfrog(T_prec& temp)
    // Ek at +1/2
    T_prec t1;
    energy_prec ekin1[3][3];
-   kinetic_explicit(t1, eksum, ekin1, leapfrog_vx, leapfrog_vy, leapfrog_vz);
+   mdKineticExplicit(t1, eksum, ekin1, leapfrog_vx, leapfrog_vy, leapfrog_vz);
 
    // Ek at -1/2
    T_prec t2;
    energy_prec ekin2[3][3];
-   kinetic_explicit(t2, eksum_old, ekin2, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
+   mdKineticExplicit(t2, eksum_old, ekin2, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
 
    ekin[0][0] = 0.5 * (ekin1[0][0] + ekin2[0][0]);
    ekin[0][1] = 0.5 * (ekin1[0][1] + ekin2[0][1]);

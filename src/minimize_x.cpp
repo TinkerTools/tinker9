@@ -122,7 +122,7 @@ void x_minimize(int, char**)
    print(o, "\n");
 
    // write the final coordinates into a file
-   bounds();
+   mdBounds();
    imin = tinker_f_freeunit();
    tinker_f_open(&imin, minfile, "old");
    tinker_f_rewind(&imin);
@@ -167,7 +167,7 @@ void minimize_set_xx(int n, double* xx, const double* scale)
 void minimize_set_xyz(int n, const double* xx, const double* scale)
 {
    minimize_set_pos_acc(n, xx, scale);
-   copy_pos_to_xyz();
+   mdCopyPosToXyz();
    refresh_neighbors();
 }
 }

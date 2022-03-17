@@ -6,7 +6,7 @@
 #include "image.h"
 #include "induce_donly.h"
 #include "launch.h"
-#include "mdpq.h"
+#include "md.h"
 #include "seq_damp_hippo.h"
 #include "seq_triangle.h"
 #include "switch.h"

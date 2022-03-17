@@ -1,5 +1,5 @@
 #pragma once
-#include "mdprec.h"
+#include "md.h"
 #include <tinker/detail/bath.hh>
 
 namespace tinker {
@@ -27,6 +27,6 @@ constexpr int maxnose = bath::maxnose;
  *                   kinetic energy.
  * \param scale_vel  Function to scale the velocities.
  */
-void nhc_isot_96(time_prec dt, int nnose, double* vnh, const double* qnh,
-                 double g0, double* (*f_kin)(), void (*scale_vel)(double));
+void nhc_isot_96(time_prec dt, int nnose, double* vnh, const double* qnh, double g0,
+   double* (*f_kin)(), void (*scale_vel)(double));
 }

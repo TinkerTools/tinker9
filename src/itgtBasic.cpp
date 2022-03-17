@@ -1,5 +1,5 @@
 #include "itgtBasic.h"
-#include "mdpt.h"
+#include "md.h"
 #include "tool/io_print.h"
 #include <tinker/detail/bath.hh>
 
@@ -22,7 +22,7 @@ void BasicThermostat::control2(time_prec, bool save)
 {
    if (save) {
       T_prec temp;
-      kinetic(temp);
+      mdKinetic(temp);
    }
 }
 }

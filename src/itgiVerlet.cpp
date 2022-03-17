@@ -1,7 +1,6 @@
 #include "itgiVerlet.h"
 #include "energy.h"
-#include "mdpq.h"
-#include "mdprec.h"
+#include "md.h"
 
 namespace tinker {
 const char* VerletIntegrator::name() const

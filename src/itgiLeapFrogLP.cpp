@@ -1,8 +1,7 @@
 #include "itgiLeapFrogLP.h"
 #include "energy.h"
 #include "lf_lpiston.h"
-#include "mdpq.h"
-#include "mdprec.h"
+#include "md.h"
 #include "tool/darray.h"
 
 namespace tinker {

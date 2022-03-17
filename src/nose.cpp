@@ -1,10 +1,7 @@
 #include "nose.h"
 #include "box.h"
 #include "energy.h"
-#include "mdegv.h"
-#include "mdpq.h"
-#include "mdprec.h"
-#include "mdpt.h"
+#include "md.h"
 #include <cmath>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
@@ -31,7 +28,7 @@ void hoover(time_prec dt, virial_prec press)
 
    const double vbox = boxVolume();
    T_prec temp;
-   kinetic(temp);
+   mdKinetic(temp);
    const double ekt = units::gasconst * bath::kelvin;
    const int df = mdstuf::nfree;
    const double odnf = 1 + 3.0 / df;
@@ -128,7 +125,7 @@ void nhc_npt(int istep, time_prec dt)
    // update thermostat and barostat values, scale atomic velocities
    hoover(dt, press);
 
-   propagate_velocity(dt_2, gx, gy, gz);
+   mdVel(dt_2, gx, gy, gz);
 
    double term = vbar * dt_2;
    double term2 = term * term;
@@ -151,12 +148,12 @@ void nhc_npt(int istep, time_prec dt)
    // sinh(x)/x: Taylor series
    double poly = 1 + term2 * (e2 + term2 * (e4 + term2 * (e6 + term2 * e8)));
    poly *= expterm * dt;
-   propagate_pos_axbv(eterm2, poly);
-   copy_pos_to_xyz(true);
+   mdPosAxbv(eterm2, poly);
+   mdCopyPosToXyz(true);
 
    energy(vers1);
 
-   propagate_velocity(dt_2, gx, gy, gz);
+   mdVel(dt_2, gx, gy, gz);
 
    // update thermostat and barostat values, scale atomic velocities
    hoover(dt, press);

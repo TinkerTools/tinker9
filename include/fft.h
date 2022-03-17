@@ -5,9 +5,7 @@
 namespace tinker {
 /**
  * \ingroup fft
- * \page fft
- *
- * # FFT API
+ * \page FFT_API
  *
  * \warning
  *
@@ -21,15 +19,14 @@ namespace tinker {
  *
  * The multi-dimensional `FFTW3` Fortran API in Tinker is called as follows,
  * \code{.f}
- *       call dfftw_plan_dft_3d (planf,nfft1,nfft2,nfft3,qgrid,
- *      &                           qgrid,ifront,iguess)
+ *       call dfftw_plan_dft_3d (planf,nfft1,nfft2,nfft3,qgrid,qgrid,ifront,iguess)
  * \endcode
  * which is different from the C API.
  *
  * <br>
  *
- * The difference is described on [FFTW website:]
- * (http://fftw.org/doc/Reversing-array-dimensions.html#Reversing-array-dimensions)
+ * The difference is described on the [FFTW website]
+ * (http://fftw.org/doc/Reversing-array-dimensions.html#Reversing-array-dimensions):
  *
  * > A minor annoyance in calling FFTW from Fortran is that FFTW’s array
  * > dimensions are defined in the C convention (row-major order), while

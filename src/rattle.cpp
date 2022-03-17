@@ -1,7 +1,5 @@
 #include "rattle.h"
-#include "mdegv.h"
-#include "mdpq.h"
-#include "mdprec.h"
+#include "md.h"
 #include "tool/darray.h"
 #include "tool/energy_buffer.h"
 #include "tool/io_print.h"

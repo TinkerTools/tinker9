@@ -1,6 +1,5 @@
 #include "itgpBasic.h"
-#include "mdegv.h"
-#include "mdpq.h"
+#include "md.h"
 #include "rattle.h"
 #include "tool/darray.h"
 #include <tinker/detail/bath.hh>
@@ -24,7 +23,7 @@ BasicPropagator::~BasicPropagator() {}
 
 void BasicPropagator::updateVelocity1(time_prec t)
 {
-   propagate_velocity(t, gx, gy, gz);
+   mdVel(t, gx, gy, gz);
 }
 
 void BasicPropagator::updateVelocity2(time_prec t)
@@ -43,7 +42,7 @@ void BasicPropagator::updateVelocityR2(time_prec t, int nrespa) {}
 
 void BasicPropagator::updatePosition(time_prec t)
 {
-   propagate_pos(t);
+   mdPos(t);
 }
 
 void BasicPropagator::rattleSave()

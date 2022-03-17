@@ -1,7 +1,5 @@
 #include "itgtNhc.h"
-#include "mdegv.h"
-#include "mdpq.h"
-#include "mdpt.h"
+#include "md.h"
 #include "tool/darray.h"
 #include "tool/io_print.h"
 #include <algorithm>
@@ -15,8 +13,7 @@ void NhcDevice::controlImpl(time_prec dt)
    const int nc = nhc_nc;
    constexpr int ns = nhc_nsy;
    static_assert(ns == 3, "");
-   constexpr double w[3] = {
-      1.351207191959657634047687808971460826921999376217144828328,
+   constexpr double w[3] = {1.351207191959657634047687808971460826921999376217144828328,
       -1.70241438391931526809537561794292165384399875243428965665,
       1.351207191959657634047687808971460826921999376217144828328};
 
@@ -71,8 +68,8 @@ void NhcDevice::controlImpl(time_prec dt)
    scale_vel(velsc0);
 }
 
-NhcDevice::NhcDevice(int nhclen, int nc, double dfree, double (*kin)(),
-                     void (*scale)(double), std::string str)
+NhcDevice::NhcDevice(
+   int nhclen, int nc, double dfree, double (*kin)(), void (*scale)(double), std::string str)
    : BasicThermostat()
    , nnose(nhclen)
    , nhc_nc(nc)
@@ -124,7 +121,7 @@ void NhcDevice::control2(time_prec dt, bool)
 double NhcDevice::kineticAtomic()
 {
    T_prec temp;
-   kinetic(temp);
+   mdKinetic(temp);
    return eksum;
 }
 

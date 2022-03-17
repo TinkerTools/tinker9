@@ -175,7 +175,7 @@ void x_dynamic(int, char**)
    initialize();
 
    auto t_start = std::chrono::steady_clock::now();
-   propagate(nstep, dt);
+   mdPropagate(nstep, dt);
    auto t_end = std::chrono::steady_clock::now();
 
    auto d_us = std::chrono::duration_cast<std::chrono::microseconds>(t_end - t_start).count();

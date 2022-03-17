@@ -1,6 +1,5 @@
-#include "mdpq.h"
 #include "box.h"
-#include "mdprec.h"
+#include "md.h"
 #include "nblist.h"
 #include "tool/darray.h"
 #include "tool/error.h"
@@ -14,15 +13,7 @@
 #include <tinker/detail/usage.hh>
 
 namespace tinker {
-int rc_flag = 0;
-
-//====================================================================//
-
-int n;
-int padded_n;
-int trajn;
-
-void n_data(rc_op op)
+void mdNData(rc_op op)
 {
    if (op & rc_dealloc) {
       trajn = -1;
@@ -56,57 +47,45 @@ void n_data(rc_op op)
 
 //====================================================================//
 
-real *x, *y, *z;
-real *trajx, *trajy, *trajz;
-pos_prec *xpos, *ypos, *zpos;
-
-void copy_pos_to_xyz()
+void mdCopyPosToXyz()
 {
-   copy_pos_to_xyz_acc();
+   mdCopyPosToXyz_acc();
 }
 
-void copy_pos_to_xyz(bool check_nblist)
+void mdCopyPosToXyz(bool check_nblist)
 {
-   copy_pos_to_xyz_acc();
+   mdCopyPosToXyz_acc();
    if (check_nblist)
       refresh_neighbors();
 }
 
-void propagate_pos(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz, const vel_prec* vlx,
+void mdPos(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz, const vel_prec* vlx,
    const vel_prec* vly, const vel_prec* vlz)
 {
-   propagate_pos_acc(dt, qx, qy, qz, vlx, vly, vlz);
+   mdPos_acc(dt, qx, qy, qz, vlx, vly, vlz);
 }
 
-void propagate_pos(time_prec dt)
+void mdPos(time_prec dt)
 {
-   propagate_pos_acc(dt, xpos, ypos, zpos, vx, vy, vz);
+   mdPos_acc(dt, xpos, ypos, zpos, vx, vy, vz);
 }
 
-void propagate_pos_axbv_acc(double a, double b);
-void propagate_pos_axbv(double a, double b)
+void propagate_pos_axbv_acc(pos_prec a, pos_prec b);
+void mdPosAxbv(pos_prec a, pos_prec b)
 {
    propagate_pos_axbv_acc(a, b);
 }
 
-void propagate_vel_avbf_acc(
-   double a, double b, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz);
-void propagate_vel_avbf(
-   double a, double b, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz)
-{
-   propagate_vel_avbf_acc(a, b, grx, gry, grz);
-}
-
-void bounds()
+void mdBounds()
 {
    if (!bound::use_bounds)
       return;
 
-   bounds_pos_acc();
-   copy_pos_to_xyz();
+   mdBounds_acc();
+   mdCopyPosToXyz();
 }
 
-void read_frame_copyin_to_xyz(std::istream& ipt, int& done)
+void mdReadFrameCopyinToXyz(std::istream& ipt, int& done)
 {
    if (done)
       return;
@@ -145,14 +124,14 @@ void read_frame_copyin_to_xyz(std::istream& ipt, int& done)
          atoms::z[index] = zr;
       }
 
-      xyz_data(rc_init);
+      mdXyzData(rc_init);
    }
 
    if (ipt.peek() == EOF)
       done = true;
 }
 
-void xyz_data(rc_op op)
+void mdXyzData(rc_op op)
 {
    if ((calc::xyz & rc_flag) == 0)
       return;
@@ -205,43 +184,32 @@ void xyz_data(rc_op op)
          darray::copyin(g::q0, n, xpos, atoms::x);
          darray::copyin(g::q0, n, ypos, atoms::y);
          darray::copyin(g::q0, n, zpos, atoms::z);
-         copy_pos_to_xyz();
+         mdCopyPosToXyz();
       }
    }
 }
 
 //====================================================================//
 
-double *mass, *massinv;
-vel_prec *vx, *vy, *vz;
-
-void propagate_velocity(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz,
-   const vel_prec* vlx0, const vel_prec* vly0, const vel_prec* vlz0, const grad_prec* grx,
-   const grad_prec* gry, const grad_prec* grz)
-{
-   propagate_velocity_acc(dt, vlx, vly, vlz, vlx0, vly0, vlz0, grx, gry, grz);
-}
-
-void propagate_velocity(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz,
+void mdVelB(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz, //
+   const vel_prec* vlx0, const vel_prec* vly0, const vel_prec* vlz0,   //
    const grad_prec* grx, const grad_prec* gry, const grad_prec* grz)
 {
-   propagate_velocity_acc(dt, vlx, vly, vlz, grx, gry, grz);
+   mdVelB_acc(dt, vlx, vly, vlz, vlx0, vly0, vlz0, grx, gry, grz);
 }
 
-void propagate_velocity(
-   time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz)
+void mdVel(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz)
 {
-   propagate_velocity(dt, vx, vy, vz, grx, gry, grz);
+   mdVelA_acc(dt, vx, vy, vz, grx, gry, grz);
 }
 
-void propagate_velocity2(time_prec dt, const grad_prec* grx, const grad_prec* gry,
-   const grad_prec* grz, time_prec dt2, const grad_prec* grx2, const grad_prec* gry2,
-   const grad_prec* grz2)
+void mdVel2(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz,
+   time_prec dt2, const grad_prec* grx2, const grad_prec* gry2, const grad_prec* grz2)
 {
-   propagate_velocity2_acc(dt, grx, gry, grz, dt2, grx2, gry2, grz2);
+   mdVel2_acc(dt, grx, gry, grz, dt2, grx2, gry2, grz2);
 }
 
-void mass_data(rc_op op)
+void mdMassData(rc_op op)
 {
    if ((calc::mass & rc_flag) == 0)
       return;
@@ -264,7 +232,7 @@ void mass_data(rc_op op)
    }
 }
 
-void vel_data(rc_op op)
+void mdVelData(rc_op op)
 {
    if ((calc::vel & rc_flag) == 0)
       return;

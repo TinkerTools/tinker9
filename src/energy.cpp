@@ -18,7 +18,7 @@ void energy_data(rc_op op)
    if ((rc_flag & calc::vmask) == 0)
       return;
 
-   rc_man egv42{egv_data, op};
+   rc_man egv42{egvData, op};
 
    // bonded terms
 

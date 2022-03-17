@@ -216,7 +216,7 @@ void x_analyze(int, char**)
    int done = false;
    int nframe_processed = 0;
    do {
-      read_frame_copyin_to_xyz(ipt, done);
+      mdReadFrameCopyinToXyz(ipt, done);
       refresh_neighbors();
       nframe_processed++;
       if (nframe_processed > 1)

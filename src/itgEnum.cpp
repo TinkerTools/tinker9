@@ -21,7 +21,7 @@ BasicPropagator* create(PropagatorEnum pe)
 #include "itgtBasic.h"
 #include "itgtBussi.h"
 #include "itgtNhc.h"
-#include "mdpq.h"
+#include "md.h"
 #include <tinker/detail/mdstuf.hh>
 namespace tinker {
 BasicThermostat* create(ThermostatEnum te)
@@ -33,9 +33,9 @@ BasicThermostat* create(ThermostatEnum te)
       break;
    case ThermostatEnum::Nhc:
       t = new NhcDevice(5, 5, static_cast<double>(mdstuf::nfree), //
-                        NhcDevice::kineticAtomic,                 //
-                        NhcDevice::scaleVelocityAtomic,           //
-                        std::string("NHC"));
+         NhcDevice::kineticAtomic,                                //
+         NhcDevice::scaleVelocityAtomic,                          //
+         std::string("NHC"));
       break;
    default:
       t = new BasicThermostat;
@@ -82,6 +82,5 @@ bool IntegratorStaticData::atomic = true;
 bool IntegratorStaticData::aniso = false;
 double IntegratorStaticData::dofP = 1.0;
 int IntegratorStaticData::anisoArrayLength = 0;
-const int IntegratorStaticData::anisoArray[6][2] = {{0, 0}, {1, 1}, {2, 2},
-                                                    {0, 2}, {0, 1}, {1, 2}};
+const int IntegratorStaticData::anisoArray[6][2] = {{0, 0}, {1, 1}, {2, 2}, {0, 2}, {0, 1}, {1, 2}};
 }

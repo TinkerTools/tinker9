@@ -48,8 +48,7 @@ void finish()
 #include "couple.h"
 #include "energy.h"
 #include "group.h"
-#include "mdintg.h"
-#include "mdpq.h"
+#include "md.h"
 #include "molecule.h"
 #include "nblist.h"
 #include "osrw.h"
@@ -67,14 +66,14 @@ void device_data(rc_op op)
    // device
    rc_man cl42{cudalib_data, op};
 
-   rc_man n42{n_data, op};
+   rc_man n42{mdNData, op};
    rc_man cpl42{couple_data, op};
 
    rc_man box42{boxData, op};
 
-   rc_man xyz42{xyz_data, op};
-   rc_man vel42{vel_data, op};
-   rc_man mass42{mass_data, op};
+   rc_man xyz42{mdXyzData, op};
+   rc_man vel42{mdVelData, op};
+   rc_man mass42{mdMassData, op};
    rc_man molecule42{molecule_data, op};
    rc_man group42{group_data, op};
 
@@ -87,6 +86,6 @@ void device_data(rc_op op)
    rc_man nbl42{nblist_data, op};
 
    rc_man rattle42{rattle_data, op};
-   rc_man md42{md_data, op};
+   rc_man md42{mdData, op};
 }
 }

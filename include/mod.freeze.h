@@ -1,7 +1,6 @@
 #pragma once
 #include "glob.molecule.h"
-#include "macro.h"
-#include "mdprec.h"
+#include "md.h"
 
 namespace tinker {
 TINKER_EXTERN pos_prec rateps;

@@ -12,12 +12,7 @@
 #include "itgiVerlet.h"
 #include "lpiston.h"
 #include "mathfunc_pow2.h"
-#include "mdegv.h"
-#include "mdintg.h"
-#include "mdpq.h"
-#include "mdprec.h"
-#include "mdpt.h"
-#include "mdsave.h"
+#include "md.h"
 #include "nose.h"
 #include "random.h"
 #include "rattle.h"
@@ -36,20 +31,20 @@ void mdrest(int istep)
    mdrest_acc(istep);
 }
 
-void md_data(rc_op op)
+void mdData(rc_op op)
 {
    if ((calc::md & rc_flag) == 0)
       return;
 
-   rc_man intg42{integrate_data, op};
-   rc_man save42{mdsave_data, op};
+   rc_man intg42{mdIntegrateData, op};
+   rc_man save42{mdsaveData, op};
 }
 
 //====================================================================//
 
 static BasicIntegrator* intg;
 
-void propagate(int nsteps, time_prec dt_ps)
+void mdPropagate(int nsteps, time_prec dt_ps)
 {
    for (int istep = 1; istep <= nsteps; ++istep) {
       TINKER_LOG("Integrating Step %10d", istep);
@@ -58,18 +53,18 @@ void propagate(int nsteps, time_prec dt_ps)
       // mdstat
       bool save = (istep % inform::iwrite == 0);
       if (save || (istep % BOUNDS_EVERY_X_STEPS) == 0)
-         bounds();
+         mdBounds();
       if (save) {
          T_prec temp;
-         kinetic(temp);
-         mdsave_async(istep, dt_ps);
+         mdKinetic(temp);
+         mdsaveAsync(istep, dt_ps);
       }
       mdrest(istep);
    }
-   mdsave_synchronize();
+   mdsaveSynchronize();
 }
 
-void integrate_data(rc_op op)
+void mdIntegrateData(rc_op op)
 {
    if (op & rc_dealloc) {
       delete intg;
@@ -170,9 +165,7 @@ void integrate_data(rc_op op)
    }
 }
 
-grad_prec *gx1, *gy1, *gz1;
-grad_prec *gx2, *gy2, *gz2;
-const TimeScaleConfig& respa_tsconfig()
+const TimeScaleConfig& mdRespaTsconfig()
 {
    constexpr int fast = floor_log2_constexpr(RESPA_FAST); // short-range
    constexpr int slow = floor_log2_constexpr(RESPA_SLOW); // long-range

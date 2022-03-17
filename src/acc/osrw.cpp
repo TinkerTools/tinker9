@@ -1,5 +1,5 @@
 #include "osrw.h"
-#include "mdpq.h"
+#include "md.h"
 #include "potent.h"
 
 namespace tinker {

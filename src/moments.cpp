@@ -1,8 +1,7 @@
 #include "elec.h"
 #include "epolar.h"
 #include "epolar_chgpen.h"
-#include "mdpq.h"
-#include "mdprec.h"
+#include "md.h"
 #include "potent.h"
 #include "tinker_rt.h"
 #include "tool/darray.h"
@@ -39,7 +38,7 @@ void moments()
    moment::zyqpl = 0;
    moment::zzqpl = 0;
 
-   bounds();
+   mdBounds();
    // download x y z
    std::vector<pos_prec> xv(n), yv(n), zv(n);
    darray::copyout(g::q0, n, xv.data(), xpos);

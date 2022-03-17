@@ -4,7 +4,7 @@
 #include "image.h"
 #include "induce.h"
 #include "launch.h"
-#include "mdpq.h"
+#include "md.h"
 #include "seq_damp.h"
 #include "seq_triangle.h"
 #include "spatial2.h"

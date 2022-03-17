@@ -1,6 +1,5 @@
 #pragma once
-#include "macro.h"
-#include "mdprec.h"
+#include "precision.h"
 
 namespace tinker {
 /// \brief Individual molecules in current system.

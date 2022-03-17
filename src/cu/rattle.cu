@@ -1,9 +1,7 @@
 #include "add.h"
 #include "launch.h"
 #include "lpiston.h"
-#include "mdegv.h"
-#include "mdpq.h"
-#include "mdprec.h"
+#include "md.h"
 #include "rattle.h"
 #include <tinker/detail/units.hh>
 

@@ -1,15 +1,10 @@
-#include "mdegv.h"
 #include "energy.h"
 #include "glob.dhflow.h"
-#include "mdpq.h"
-#include "mdprec.h"
+#include "md.h"
 #include "tool/device_zero.h"
 #include "tool/host_zero.h"
 
 namespace tinker {
-
-//====================================================================//
-
 void zero_egv(int vers)
 {
    size_t bsize = buffer_size();
@@ -116,17 +111,9 @@ void copy_gradient(int vers, double* grdx, double* grdy, double* grdz)
    copy_gradient(vers, grdx, grdy, grdz, gx, gy, gz);
 }
 
-void copy_virial(int vers, virial_prec* virial)
-{
-   if (virial && vers & calc::virial && virial != &vir[0]) {
-      for (int i = 0; i < 9; ++i)
-         virial[i] = vir[i];
-   }
-}
-
 //====================================================================//
 
-void egv_data(rc_op op)
+void egvData(rc_op op)
 {
    bool rc_a = rc_flag & calc::analyz;
 

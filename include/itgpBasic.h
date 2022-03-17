@@ -1,6 +1,6 @@
 #pragma once
 #include "itgEnum.h"
-#include "mdprec.h"
+#include "md.h"
 
 namespace tinker {
 class BasicPropagator : public IntegratorStaticData

@@ -1,8 +1,6 @@
 #include "lpiston.h"
 #include "add.h"
-#include "mdegv.h"
-#include "mdppg.h"
-#include "mdpq.h"
+#include "md.h"
 #include "rattle.h"
 #include <tinker/detail/units.hh>
 

@@ -19,8 +19,6 @@ void zero_egv(int vers);
  */
 void zero_egv();
 
-//====================================================================//
-
 /**
  * \ingroup mdegv
  */
@@ -34,8 +32,6 @@ void sum_gradient_acc(
    grad_prec*, grad_prec*, grad_prec*, const grad_prec*, const grad_prec*, const grad_prec*);
 void sum_gradient_acc(double, grad_prec*, grad_prec*, grad_prec*, const grad_prec*,
    const grad_prec*, const grad_prec*);
-
-//====================================================================//
 
 void copy_gradient(int vers, double* grdx, double* grdy, double* grdz, const grad_prec* gx_src,
    const grad_prec* gy_src, const grad_prec* gz_src, int queue);
@@ -64,16 +60,6 @@ void copy_gradient(int vers, double* grdx, double* grdy, double* grdz, const gra
  * \see gz
  */
 void copy_gradient(int vers, double* grdx, double* grdy, double* grdz);
-/**
- * \ingroup mdegv
- * \brief
- * Copy virial tensor to another variable. Avoid accessing #vir directly
- * because it is not always available in the calculation, in which case the
- * output variable will not be changed.
- */
-void copy_virial(int vers, virial_prec* virial);
 
-//====================================================================//
-
-void egv_data(rc_op op);
+void egvData(rc_op op);
 }

@@ -1,7 +1,6 @@
 #include "glob.cudalib.h"
 #include "launch.h"
-#include "mdintg.h"
-#include "mdpq.h"
+#include "md.h"
 #include "syntax/cu/reduce.h"
 #include "tool/darray.h"
 #include "tool/gpu_card.h"

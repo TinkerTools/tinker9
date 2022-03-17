@@ -1,8 +1,6 @@
 #include "itgbMonteCarlo.h"
 #include "itgEnum.h"
-#include "mdegv.h"
-#include "mdpq.h"
-#include "mdpt.h"
+#include "md.h"
 #include "random.h"
 #include "tinker_rt.h"
 #include "tool/darray.h"
@@ -41,8 +39,8 @@ void MonteCarloBarostat::control4(time_prec)
 
    T_prec temp = bath::kelvin;
    if (not bath::isothermal)
-      kinetic(temp);
-   monte_carlo_barostat(esum, temp);
+      mdKinetic(temp);
+   mdMonteCarloBarostat(esum, temp);
 }
 
 bool MonteCarloBarostat::ifApply(int)

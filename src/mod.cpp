@@ -40,7 +40,6 @@
 #include "mod.vdwpot.h"
 
 #include "glob.accasync.h"
-#include "glob.box.h"
 #include "glob.chglj.h"
 #include "glob.cudalib.h"
 #include "glob.dhflow.h"
@@ -53,3 +52,6 @@
 #include "glob.nelembuffer.h"
 #include "glob.pme.h"
 #include "glob.spatial.h"
+
+#include "glob.box.h"
+#include "glob.md.h"

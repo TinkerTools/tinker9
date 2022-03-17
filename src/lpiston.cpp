@@ -2,11 +2,7 @@
 #include "box.h"
 #include "energy.h"
 #include "mathfunc_ou.h"
-#include "mdegv.h"
-#include "mdintg.h"
-#include "mdpq.h"
-#include "mdprec.h"
-#include "mdpt.h"
+#include "md.h"
 #include "nose.h"
 #include "random.h"
 #include "rattle.h"
@@ -41,13 +37,13 @@ void lp_matvec(int len, char transpose, double mat[3][3], pos_prec* ax, pos_prec
 
 void lp_atom_kinetic()
 {
-   kinetic_energy(lp_eksum, lp_ekin, n, mass, vx, vy, vz);
+   mdKineticEnergy(lp_eksum, lp_ekin, n, mass, vx, vy, vz);
 }
 
 void lp_mol_kinetic()
 {
    auto& m = rattle_dmol;
-   kinetic_energy(lp_eksum, lp_ekin, m.nmol, m.molmass, ratcom_vx, ratcom_vy, ratcom_vz);
+   mdKineticEnergy(lp_eksum, lp_ekin, m.nmol, m.molmass, ratcom_vx, ratcom_vy, ratcom_vz);
 }
 
 extern void lp_mol_virial_acc();
@@ -232,13 +228,13 @@ void vv_lpiston_init()
       darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
 
       // save fast gradients to gx1 etc.
-      energy(calc::grad, RESPA_FAST, respa_tsconfig());
+      energy(calc::grad, RESPA_FAST, mdRespaTsconfig());
       darray::copy(g::q0, n, gx1, gx);
       darray::copy(g::q0, n, gy1, gy);
       darray::copy(g::q0, n, gz1, gz);
 
       // save slow gradients to gx2 etc.
-      energy(calc::grad, RESPA_SLOW, respa_tsconfig());
+      energy(calc::grad, RESPA_SLOW, mdRespaTsconfig());
       darray::copy(g::q0, n, gx2, gx);
       darray::copy(g::q0, n, gy2, gy);
       darray::copy(g::q0, n, gz2, gz);
@@ -428,9 +424,9 @@ void vv_lpiston_npt(int istep, time_prec dt)
    iso_tp(dt);
    if (nrespa > 1) {
       // gx1: fast; gx2: slow
-      propagate_velocity2(dti2, gx1, gy1, gz1, dt2, gx2, gy2, gz2);
+      mdVel2(dti2, gx1, gy1, gz1, dt2, gx2, gy2, gz2);
    } else {
-      propagate_velocity(dt2, gx, gy, gz);
+      mdVel(dt2, gx, gy, gz);
    }
 
    if (constrain) {
@@ -456,35 +452,35 @@ void vv_lpiston_npt(int istep, time_prec dt)
    }
    for (int ir = 0; ir < nrespa; ++ir) {
       if (mid and kw_p == KW_ATOM) {
-         propagate_pos_axbv(std::exp(vbar * xdti), s * dti);
+         mdPosAxbv(std::exp(vbar * xdti), s * dti);
       } else if (mid and kw_p == KW_MOL) {
          lp_center_of_mass(xpos, ypos, zpos, ratcom_x, ratcom_y, ratcom_z);
          propagate_pos_raxbv(std::exp(vbar * xdti) - 1.0, s * dti);
       } else {
-         propagate_pos(dti);
+         mdPos(dti);
       }
 
       if (ir < nrespa - 1) {
-         copy_pos_to_xyz(false);
-         energy(vers1, RESPA_FAST, respa_tsconfig());
+         mdCopyPosToXyz(false);
+         energy(vers1, RESPA_FAST, mdRespaTsconfig());
          if (vers1 & calc::virial) {
             lp_virial(molP);
             for (int i = 0; i < 9; ++i)
                vir_fast[i] += lp_vir[i];
          }
-         propagate_velocity(dti, gx, gy, gz);
+         mdVel(dti, gx, gy, gz);
       } else {
          if (constrain) {
             lp_rats1 = 1.0 / s;
             lprat(dt, rattle_xold, rattle_yold, rattle_zold);
          }
-         copy_pos_to_xyz(true);
+         mdCopyPosToXyz(true);
       }
    }
 
    if (nrespa > 1) {
       // fast force
-      energy(vers1, RESPA_FAST, respa_tsconfig());
+      energy(vers1, RESPA_FAST, mdRespaTsconfig());
       darray::copy(g::q0, n, gx1, gx);
       darray::copy(g::q0, n, gy1, gy);
       darray::copy(g::q0, n, gz1, gz);
@@ -496,7 +492,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
       }
 
       // slow force
-      energy(vers1, RESPA_SLOW, respa_tsconfig());
+      energy(vers1, RESPA_SLOW, mdRespaTsconfig());
       darray::copy(g::q0, n, gx2, gx);
       darray::copy(g::q0, n, gy2, gy);
       darray::copy(g::q0, n, gz2, gz);
@@ -509,12 +505,12 @@ void vv_lpiston_npt(int istep, time_prec dt)
       }
 
       // gx1: fast; gx2: slow
-      propagate_velocity2(dti2, gx1, gy1, gz1, dt2, gx2, gy2, gz2);
+      mdVel2(dti2, gx1, gy1, gz1, dt2, gx2, gy2, gz2);
    } else {
       energy(vers1);
       if (vers1 & calc::virial)
          lp_virial(molP);
-      propagate_velocity(dt2, gx, gy, gz);
+      mdVel(dt2, gx, gy, gz);
    }
    if (mid)
       rnd = normal<double>();
@@ -754,9 +750,9 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
    iso_tp_aniso(dt);
    if (nrespa > 1) {
       // gx1: fast; gx2: slow
-      propagate_velocity2(dti2, gx1, gy1, gz1, dt2, gx2, gy2, gz2);
+      mdVel2(dti2, gx1, gy1, gz1, dt2, gx2, gy2, gz2);
    } else {
-      propagate_velocity(dt2, gx, gy, gz);
+      mdVel(dt2, gx, gy, gz);
    }
 
    if (constrain) {
@@ -800,30 +796,30 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
             propagate_pos_raxbv_aniso(sr, sv);
          }
       } else {
-         propagate_pos(dti);
+         mdPos(dti);
       }
 
       if (ir < nrespa - 1) {
-         copy_pos_to_xyz(false);
-         energy(vers1, RESPA_FAST, respa_tsconfig());
+         mdCopyPosToXyz(false);
+         energy(vers1, RESPA_FAST, mdRespaTsconfig());
          if (vers1 & calc::virial) {
             lp_virial(molP);
             for (int iv = 0; iv < 9; ++iv)
                lp_vir[iv] += vir_fast[iv] / nrespa;
          }
-         propagate_velocity(dti, gx, gy, gz);
+         mdVel(dti, gx, gy, gz);
       } else {
          if (constrain) {
             // if using S_b, "rattle" will work here.
             rattle(dt, rattle_xold, rattle_yold, rattle_zold);
          }
-         copy_pos_to_xyz(true);
+         mdCopyPosToXyz(true);
       }
    }
 
    if (nrespa > 1) {
       // fast force
-      energy(vers1, RESPA_FAST, respa_tsconfig());
+      energy(vers1, RESPA_FAST, mdRespaTsconfig());
       darray::copy(g::q0, n, gx1, gx);
       darray::copy(g::q0, n, gy1, gy);
       darray::copy(g::q0, n, gz1, gz);
@@ -835,7 +831,7 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
       }
 
       // slow force
-      energy(vers1, RESPA_SLOW, respa_tsconfig());
+      energy(vers1, RESPA_SLOW, mdRespaTsconfig());
       darray::copy(g::q0, n, gx2, gx);
       darray::copy(g::q0, n, gy2, gy);
       darray::copy(g::q0, n, gz2, gz);
@@ -848,12 +844,12 @@ static void lpiston_npt_aniso(int istep, time_prec dt)
       }
 
       // gx1: fast; gx2: slow
-      propagate_velocity2(dti2, gx1, gy1, gz1, dt2, gx2, gy2, gz2);
+      mdVel2(dti2, gx1, gy1, gz1, dt2, gx2, gy2, gz2);
    } else {
       energy(vers1);
       if (vers1 & calc::virial)
          lp_virial(molP);
-      propagate_velocity(dt2, gx, gy, gz);
+      mdVel(dt2, gx, gy, gz);
    }
    if (mid) {
       rnd_matrix[0][0] = normal<double>();
@@ -995,28 +991,28 @@ static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
    }
    for (int ir = 0; ir < nrespa; ++ir) {
       if (mid and kw_p == KW_ATOM) {
-         propagate_pos_axbv(std::exp(vbar * xdti), s * dti);
+         mdPosAxbv(std::exp(vbar * xdti), s * dti);
       } else {
-         propagate_pos(dti);
+         mdPos(dti);
       }
 
       if (ir < nrespa - 1) {
-         copy_pos_to_xyz(false);
-         energy(vers1, RESPA_FAST, respa_tsconfig());
+         mdCopyPosToXyz(false);
+         energy(vers1, RESPA_FAST, mdRespaTsconfig());
          if (vers1 & calc::virial) {
             lp_virial(molP);
             for (int i = 0; i < 9; ++i)
                vir_fast[i] += lp_vir[i];
          }
-         propagate_velocity(dti, gx, gy, gz);
+         mdVel(dti, gx, gy, gz);
       } else {
-         copy_pos_to_xyz(true);
+         mdCopyPosToXyz(true);
       }
    }
 
    if (nrespa > 1) {
       // fast force
-      energy(vers1, RESPA_FAST, respa_tsconfig());
+      energy(vers1, RESPA_FAST, mdRespaTsconfig());
       darray::copy(g::q0, n, gx1, gx);
       darray::copy(g::q0, n, gy1, gy);
       darray::copy(g::q0, n, gz1, gz);
@@ -1028,7 +1024,7 @@ static void lpiston_npt_iso_pedantic(int istep, time_prec dt)
       }
 
       // slow force
-      energy(vers1, RESPA_SLOW, respa_tsconfig());
+      energy(vers1, RESPA_SLOW, mdRespaTsconfig());
       darray::copy(g::q0, n, gx2, gx);
       darray::copy(g::q0, n, gy2, gy);
       darray::copy(g::q0, n, gz2, gz);

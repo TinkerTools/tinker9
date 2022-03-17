@@ -1,13 +1,12 @@
-#include "mddebug.h"
 #include "glob.accasync.h"
 #include "mathfunc_libfunc.h"
-#include "mdpq.h"
+#include "md.h"
 #include "tool/darray.h"
 #include "tool/error.h"
 
 namespace tinker {
-void __debug_norm_propagate_pos_acc(
-   pos_prec poseps, time_prec dt, const vel_prec* vlx, const vel_prec* vly, const vel_prec* vlz)
+void mdDebugPosNorm_acc(pos_prec poseps, time_prec dt, //
+   const vel_prec* vlx, const vel_prec* vly, const vel_prec* vlz)
 {
    int which = -1;
    pos_prec tol2 = poseps * poseps;

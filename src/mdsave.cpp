@@ -162,7 +162,7 @@ void mdsave_dup_then_write(int istep, time_prec dt)
 }
 }
 
-void mdsave_async(int istep, time_prec dt)
+void mdsaveAsync(int istep, time_prec dt)
 {
    std::unique_lock<std::mutex> lck_write(mtx_write);
    cv_write.wait(lck_write, [=]() { return idle_write; });
@@ -175,13 +175,13 @@ void mdsave_async(int istep, time_prec dt)
    idle_dup = false;
 }
 
-void mdsave_synchronize()
+void mdsaveSynchronize()
 {
    if (fut_dup_then_write.valid())
       fut_dup_then_write.get();
 }
 
-void mdsave_data(rc_op op)
+void mdsaveData(rc_op op)
 {
    if (op & rc_dealloc) {
       dup_stream.deallocate();

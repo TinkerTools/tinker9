@@ -1,6 +1,6 @@
 #include "itgtNhc06.h"
 #include "lpiston.h"
-#include "mdpq.h"
+#include "md.h"
 #include "nose.h"
 #include <tinker/detail/mdstuf.hh>
 
@@ -15,18 +15,17 @@ Nhc06Thermostat::Nhc06Thermostat()
    // tpart
    if (atomic) {
       dofT = mdstuf::nfree;
-      m_tpart = new NhcDevice(nhclen, nc, dofT, NhcDevice::kineticAtomic,
-                              NhcDevice::scaleVelocityAtomic, "NHC");
+      m_tpart = new NhcDevice(
+         nhclen, nc, dofT, NhcDevice::kineticAtomic, NhcDevice::scaleVelocityAtomic, "NHC");
    } else {
       dofT = 3.0 * (rattle_dmol.nmol - 1);
-      m_tpart =
-         new NhcDevice(nhclen, nc, dofT, Nhc06Thermostat::kineticRattleGroup,
-                       Nhc06Thermostat::scaleVelocityRattleGroup, "NHC");
+      m_tpart = new NhcDevice(nhclen, nc, dofT, Nhc06Thermostat::kineticRattleGroup,
+         Nhc06Thermostat::scaleVelocityRattleGroup, "NHC");
    }
 
    // tbaro
    m_tbaro = new NhcDevice(nhclen, nc, dofVbar(), Nhc06Thermostat::kineticVbar,
-                           Nhc06Thermostat::scaleVelocityVbar, "NHCBaro");
+      Nhc06Thermostat::scaleVelocityVbar, "NHCBaro");
 }
 
 Nhc06Thermostat::~Nhc06Thermostat()

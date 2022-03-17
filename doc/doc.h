@@ -1,6 +1,5 @@
 #error This header file should never have been included.
 
-
 /// \defgroup lang  Compilers and Syntax
 /// \defgroup compiler  Compilers
 /// \ingroup lang
@@ -11,9 +10,15 @@
 /// \defgroup acc_syntax  OpenACC Specific Code
 /// \ingroup lang
 
-
 /// \defgroup prec  Precisions
 
+/// \defgroup md  Molecular Dynamics
+/// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)
+/// \ingroup md
+/// \defgroup mdcalc  Control Bits for MM and MD Calculations
+/// \ingroup md
+/// \defgroup mdintg  Integrators
+/// \ingroup md
 
 /// \defgroup io  I/O and Text
 /// \defgroup error  Errors and Exceptions
@@ -26,7 +31,6 @@
 
 /// \defgroup box  Periodic Boundary Box
 /// \defgroup mdegv  Energy, Gradient, and Virial Tensor
-
 /// \defgroup fft  Fast Fourier Transform
 
 /*
@@ -39,11 +43,10 @@
 /// \defgroup pme  Particle Mesh Ewald
 
 
-/// \defgroup mdcalc  Control Bits for MM and MD Calculations
-/// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)
+
 /// \defgroup mdsave  Saving MD Trajectory Snapshots
 /// \defgroup mdpt  Thermostats (T) and Barostats (P)
-/// \defgroup mdintg  Integrators
+
 /// \defgroup osrw  OSRW
 
 
@@ -51,9 +54,7 @@
 /// \defgroup nvidia  NVIDIA GPU
 */
 
-
 //====================================================================//
-
 
 /// \ingroup compiler
 /// \brief Macro for the Intel C++ compiler.

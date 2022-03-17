@@ -1,8 +1,7 @@
 #include "add.h"
 #include "launch.h"
 #include "lpiston.h"
-#include "mdegv.h"
-#include "mdpq.h"
+#include "md.h"
 #include "tool/darray.h"
 #include <tinker/detail/units.hh>
 
