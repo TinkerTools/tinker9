@@ -1,9 +1,9 @@
 #pragma once
-#include "nhc.h"
 #include "precision.h"
 #include "rattle.h"
 #include <cstdio>
 #include <string>
+#include <tinker/detail/bath.hh>
 
 namespace tinker {
 /// \ingroup mdintg
@@ -151,18 +151,19 @@ public:
    void control2(double timeStep, bool) override;
 };
 
-/**
- * \ingroup mdpt
- * \brief Applies a velocity correction as needed for the Nose-Hoover Chains
- * at the half time step.
- *
- * Literature reference:
- *    - <a href="https://doi.org/10.1080/00268979600100761">
- *    G. J. Martyna, M. E. Tuckerman, D. J. Tobias and M. L. Klein,
- *    "Explicit Reversible Integrators for Extended Systems Dynamics",
- *    Molecular Physics, 87, 1117-1157 (1996).
- *    </a>
- */
+/// \brief Maximum length of the NH chain.
+constexpr int maxnose = bath::maxnose;
+
+/// \ingroup mdpt
+/// \brief Applies a velocity correction as needed for the Nose-Hoover Chains
+/// at the half time step.
+///
+/// Literature reference:
+///    - <a href="https://doi.org/10.1080/00268979600100761">
+///    G. J. Martyna, M. E. Tuckerman, D. J. Tobias and M. L. Klein,
+///    "Explicit Reversible Integrators for Extended Systems Dynamics",
+///    Molecular Physics, 87, 1117-1157 (1996).
+///    </a>
 class NhcDevice : public BasicThermostat
 {
 protected:

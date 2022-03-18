@@ -312,15 +312,15 @@ void lp_mol_virial_acc()
    }
    #pragma acc wait
 
-   lp_vir[0] = mvxx + vir[0];
-   lp_vir[1] = mvxy + vir[1];
-   lp_vir[2] = mvxz + vir[2];
-   lp_vir[3] = mvxy + vir[3];
-   lp_vir[4] = mvyy + vir[4];
-   lp_vir[5] = mvyz + vir[5];
-   lp_vir[6] = mvxz + vir[6];
-   lp_vir[7] = mvyz + vir[7];
-   lp_vir[8] = mvzz + vir[8];
+   hc_vir[0] = mvxx + vir[0];
+   hc_vir[1] = mvxy + vir[1];
+   hc_vir[2] = mvxz + vir[2];
+   hc_vir[3] = mvxy + vir[3];
+   hc_vir[4] = mvyy + vir[4];
+   hc_vir[5] = mvyz + vir[5];
+   hc_vir[6] = mvxz + vir[6];
+   hc_vir[7] = mvyz + vir[7];
+   hc_vir[8] = mvzz + vir[8];
 }
 
 void lp_center_of_mass_acc(const pos_prec* ax, const pos_prec* ay, const pos_prec* az, pos_prec* mx,

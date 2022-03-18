@@ -6,7 +6,6 @@
 #include "lpiston.h"
 #include "mathfunc_pow2.h"
 #include "md.h"
-#include "nose.h"
 #include "random.h"
 #include "rattle.h"
 #include "tool/darray.h"

@@ -5,7 +5,7 @@
 namespace tinker {
 /**
  * \ingroup fft
- * \page FFT_API
+ * \page fft
  *
  * \warning
  *

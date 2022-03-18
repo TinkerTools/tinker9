@@ -104,4 +104,8 @@ TINKER_EXTERN grad_prec *gx2, *gy2, *gz2;
 /// \copydoc x_pmonte
 /// \}
 TINKER_EXTERN pos_prec *x_pmonte, *y_pmonte, *z_pmonte;
+
+TINKER_EXTERN double qbar;
+TINKER_EXTERN double vbar;
+TINKER_EXTERN double vbar_matrix[3][3];
 }

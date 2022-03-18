@@ -2,7 +2,6 @@
 #include "lpiston.h"
 #include "mathfunc_sinhc.h"
 #include "md.h"
-#include "nose.h"
 #include "tool/trimatexp.h"
 #include <tinker/detail/mdstuf.hh>
 

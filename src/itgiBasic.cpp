@@ -100,7 +100,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
             } else {
                lp_virial(true);
                for (int iv = 0; iv < 9; ++iv)
-                  vir_fast[iv] += lp_vir[iv];
+                  vir_fast[iv] += hc_vir[iv];
             }
          }
       }
@@ -121,7 +121,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
          } else {
             lp_virial(true);
             for (int iv = 0; iv < 9; ++iv)
-               vir_fast[iv] += lp_vir[iv];
+               vir_fast[iv] += hc_vir[iv];
          }
       }
 
@@ -139,7 +139,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
          } else {
             lp_virial(true);
             for (int iv = 0; iv < 9; ++iv)
-               lp_vir[iv] += vir_fast[iv] / nrespa;
+               hc_vir[iv] += vir_fast[iv] / nrespa;
          }
       }
    }

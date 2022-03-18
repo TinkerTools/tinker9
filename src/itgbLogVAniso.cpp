@@ -2,7 +2,6 @@
 #include "integrator.h"
 #include "lpiston.h"
 #include "mathfunc_ou.h"
-#include "nose.h"
 #include "random.h"
 #include "tool/io.h"
 #include "tool/trimatexp.h"
@@ -86,9 +85,9 @@ AnisoBaroDevice::AnisoBaroDevice(double fric)
       m_eksum = &eksum;
       m_ekin = ekin;
    } else {
-      m_vir = lp_vir;
-      m_eksum = &lp_eksum;
-      m_ekin = lp_ekin;
+      m_vir = hc_vir;
+      m_eksum = &hc_eksum;
+      m_ekin = hc_ekin;
    }
 
    if (m_langevin) {

@@ -1,5 +1,6 @@
 #pragma once
 #include "molecule.h"
+#include "tool/energybuffer.h"
 
 namespace tinker {
 TINKER_EXTERN pos_prec rateps;
@@ -41,4 +42,9 @@ TINKER_EXTERN vel_prec* ratcom_vx;
 TINKER_EXTERN vel_prec* ratcom_vy;
 TINKER_EXTERN vel_prec* ratcom_vz;
 TINKER_EXTERN double* ratcom_massfrac;
+
+TINKER_EXTERN energy_prec hc_eksum;
+TINKER_EXTERN energy_prec hc_ekin[3][3];
+TINKER_EXTERN virial_prec hc_vir[9];
+TINKER_EXTERN virial_buffer hc_vir_buf;
 }

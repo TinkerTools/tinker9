@@ -7,7 +7,7 @@
 
 namespace tinker {
 __global__
-void lp_mol_virial_cu1(virial_buffer restrict lp_vir_buf,
+void lp_mol_virial_cu1(virial_buffer restrict hc_vir_buf,
 
    const double* restrict mass, const pos_prec* restrict xpos, const pos_prec* restrict ypos,
    const pos_prec* restrict zpos, const grad_prec* restrict gx, const grad_prec* restrict gy,
@@ -63,23 +63,23 @@ void lp_mol_virial_cu1(virial_buffer restrict lp_vir_buf,
       vxy += 0.5 * (mgx * ry + mgy * rx) * mmassinv;
       vxz += 0.5 * (mgx * rz + mgz * rx) * mmassinv;
       vyz += 0.5 * (mgy * rz + mgz * ry) * mmassinv;
-      atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, lp_vir_buf, ithread);
+      atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, hc_vir_buf, ithread);
    }
 }
 
 void lp_mol_virial_cu()
 {
    auto bufsize = buffer_size();
-   darray::zero(g::q0, bufsize, lp_vir_buf);
+   darray::zero(g::q0, bufsize, hc_vir_buf);
 
    launch_k1b(g::s0, n, lp_mol_virial_cu1,
 
-      lp_vir_buf, mass, xpos, ypos, zpos, gx, gy, gz,
+      hc_vir_buf, mass, xpos, ypos, zpos, gx, gy, gz,
 
       rattle_dmol.nmol, rattle_dmol.imol, rattle_dmol.kmol, rattle_dmol.molmass);
 
-   virial_reduce(lp_vir, lp_vir_buf);
+   virial_reduce(hc_vir, hc_vir_buf);
    for (int iv = 0; iv < 9; ++iv)
-      lp_vir[iv] += vir[iv];
+      hc_vir[iv] += vir[iv];
 }
 }

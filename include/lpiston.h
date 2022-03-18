@@ -4,13 +4,6 @@
 #include "tool/energybuffer.h"
 
 namespace tinker {
-extern double lp_eksum;
-extern double lp_ekin[3][3];
-extern double lp_vir[9];
-extern virial_buffer lp_vir_buf;
-
-extern double vbar_matrix[3][3];
-
 // (ax,ay,az) = mat (ax,ay,az) or (ax,ay,az) = transpose(mat) (ax,ay,az)
 void lp_matvec(int len, char transpose, double mat[3][3], pos_prec* ax, pos_prec* ay, pos_prec* az);
 

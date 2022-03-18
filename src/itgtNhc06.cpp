@@ -1,7 +1,6 @@
 #include "integrator.h"
 #include "lpiston.h"
 #include "md.h"
-#include "nose.h"
 #include <tinker/detail/mdstuf.hh>
 
 namespace tinker {
@@ -58,16 +57,16 @@ double Nhc06Thermostat::kineticRattleGroup()
 {
    lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
    lp_mol_kinetic();
-   return lp_eksum;
+   return hc_eksum;
 }
 
 void Nhc06Thermostat::scaleVelocityRattleGroup(double scale)
 {
    double s2 = scale * scale;
-   lp_eksum *= s2;
+   hc_eksum *= s2;
    for (int i = 0; i < 3; ++i)
       for (int j = 0; j < 3; ++j)
-         lp_ekin[i][j] *= s2;
+         hc_ekin[i][j] *= s2;
    lp_propagate_mol_vel(scale - 1);
 }
 

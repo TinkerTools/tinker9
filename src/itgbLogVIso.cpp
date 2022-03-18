@@ -3,7 +3,6 @@
 #include "lpiston.h"
 #include "mathfunc_ou.h"
 #include "md.h"
-#include "nose.h"
 #include "random.h"
 #include "tool/io.h"
 #include <tinker/detail/bath.hh>
@@ -44,8 +43,8 @@ IsoBaroDevice::IsoBaroDevice(double fric)
       m_vir = vir;
       m_eksum = &eksum;
    } else {
-      m_vir = lp_vir;
-      m_eksum = &lp_eksum;
+      m_vir = hc_vir;
+      m_eksum = &hc_eksum;
    }
 
    if (m_langevin)
