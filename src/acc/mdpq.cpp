@@ -1,7 +1,7 @@
 #include "add.h"
-#include "glob.molecule.h"
 #include "image.h"
 #include "md.h"
+#include "molecule.h"
 #include <tinker/detail/units.hh>
 
 namespace tinker {

@@ -47,7 +47,6 @@ void finish()
 #include "box.h"
 #include "couple.h"
 #include "energy.h"
-#include "group.h"
 #include "md.h"
 #include "molecule.h"
 #include "nblist.h"
@@ -74,8 +73,8 @@ void device_data(RcOp op)
    RcMan xyz42{mdXyzData, op};
    RcMan vel42{mdVelData, op};
    RcMan mass42{mdMassData, op};
-   RcMan molecule42{molecule_data, op};
-   RcMan group42{group_data, op};
+   RcMan molecule42{moleculeData, op};
+   RcMan group42{groupData, op};
 
    RcMan energy42{energy_data, op};
    RcMan osrw42{osrw_data, op};
@@ -85,7 +84,7 @@ void device_data(RcOp op)
    // and will be used in nblist setups.
    RcMan nbl42{nblist_data, op};
 
-   RcMan rattle42{rattle_data, op};
+   RcMan rattle42{rattleData, op};
    RcMan md42{mdData, op};
 }
 }

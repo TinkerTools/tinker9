@@ -1,6 +1,6 @@
 #pragma once
+#include "glob.rattle.h"
 #include "md.h"
-#include "mod.freeze.h"
 #include "tool/energybuffer.h"
 
 namespace tinker {

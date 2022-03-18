@@ -1,6 +1,7 @@
 #pragma once
 #include "nhc.h"
 #include "precision.h"
+#include "rattle.h"
 #include <cstdio>
 #include <string>
 
@@ -74,7 +75,6 @@ public:
    virtual void rattleSave();
    virtual void rattle(time_prec dt);
    virtual void rattle2(time_prec dt, bool useVirial);
-   static bool useRattle();
 };
 
 typedef BasicPropagator VerletDevice;

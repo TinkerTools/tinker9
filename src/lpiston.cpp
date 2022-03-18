@@ -167,7 +167,7 @@ void vv_lpiston_init()
       for (int j = 0; j < 3; ++j)
          rnd_matrix[i][j] = 0.0;
 
-   constrain = use_rattle();
+   constrain = useRattle();
    D = 3.0;
 
    // keyword: "--PEDANTIC"

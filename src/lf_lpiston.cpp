@@ -108,7 +108,7 @@ void lf_langevin_piston(time_prec dt, virial_prec press)
       delp = delpr + 0.25 * (2.0 * eksum_new / vbox) / 3.0;
    } // end of loop
 
-   const bool userat = use_rattle();
+   const bool userat = useRattle();
    if (userat) {
 
       shake(dt, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
@@ -157,7 +157,7 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
       vers1 &= ~calc::energy;
    time_prec t2 = 0.5 * dt_ps;
    T_prec temp;
-   const bool userat = use_rattle();
+   const bool userat = useRattle();
    bool com_done = (((istep - 1) % mdstuf::irest) == 0);
    if (istep == 1 || com_done) {
 

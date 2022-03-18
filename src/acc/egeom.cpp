@@ -1,10 +1,9 @@
 #include "egeom.h"
 #include "add.h"
 #include "box.h"
-#include "glob.group.h"
-#include "glob.molecule.h"
 #include "image.h"
 #include "md.h"
+#include "molecule.h"
 #include "seq_geom.h"
 #include <cassert>
 

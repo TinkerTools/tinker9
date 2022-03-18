@@ -11,7 +11,7 @@
 #include <tinker/detail/freeze.hh>
 
 namespace tinker {
-bool use_rattle()
+bool useRattle()
 {
    return freeze::use_rattle;
 }
@@ -178,9 +178,9 @@ std::vector<HCMol> hc_mols;
 std::map<int, size_t> hc_dict;
 }
 
-void rattle_data(RcOp op)
+void rattleData(RcOp op)
 {
-   if (not use_rattle())
+   if (not useRattle())
       return;
 
    if (op & rc_dealloc) {
@@ -474,6 +474,11 @@ void rattle_data(RcOp op)
    }
 }
 
+void rattle_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
+void rattle_settle_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
+void rattle_ch_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
+// methylene and methyl groups
+void rattle_methyl_cu(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
 void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    rattle_settle_acc(dt, xold, yold, zold);
@@ -485,6 +490,10 @@ void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_
    rattle_acc(dt, xold, yold, zold);
 }
 
+void rattle2_acc(time_prec, bool);
+void rattle2_settle_acc(time_prec, bool);
+void rattle2_ch_acc(time_prec, bool);
+void rattle2_methyl_cu(time_prec, bool);
 void rattle2(time_prec dt, bool do_v)
 {
    if (do_v) {
@@ -508,6 +517,14 @@ void rattle2(time_prec dt, bool do_v)
    }
 }
 
+void shake_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, const pos_prec* xold,
+   const pos_prec* yold, const pos_prec* zold);
+void shake_settle_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
+void shake_ch_acc(
+   time_prec, pos_prec*, pos_prec*, pos_prec*, const pos_prec*, const pos_prec*, const pos_prec*);
+void shake_methyl_cu(
+   time_prec, pos_prec*, pos_prec*, pos_prec*, const pos_prec*, const pos_prec*, const pos_prec*);
 void shake(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, const pos_prec* xold,
    const pos_prec* yold, const pos_prec* zold)
 {

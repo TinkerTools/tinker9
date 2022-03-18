@@ -30,7 +30,7 @@ void Nhc96Integrator::kickoff()
 Nhc96Integrator::Nhc96Integrator()
    : BasicIntegrator()
 {
-   if (m_prop->useRattle())
+   if (useRattle())
       TINKER_THROW("Constraints under NH-NPT require the ROLL algorithm.");
 
    this->kickoff();

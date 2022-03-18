@@ -4,7 +4,7 @@
 #include <tinker/detail/molcul.hh>
 
 namespace tinker {
-void molecule_data(RcOp op)
+void moleculeData(RcOp op)
 {
    if (op & rc_dealloc) {
       auto& st = molecule;

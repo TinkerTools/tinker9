@@ -3,9 +3,9 @@
 
 #include "box.h"
 #include "energy.h"
-#include "glob.molecule.h"
 #include "mathfunc.h"
 #include "md.h"
+#include "molecule.h"
 #include "nblist.h"
 #include "random.h"
 #include "tool/io.h"

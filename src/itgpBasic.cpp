@@ -74,9 +74,4 @@ void BasicPropagator::rattle2(time_prec timeStep, bool doVirial)
 
    tinker::rattle2(timeStep, doVirial);
 }
-
-bool BasicPropagator::useRattle()
-{
-   return use_rattle();
-}
 }

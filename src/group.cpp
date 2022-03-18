@@ -1,11 +1,11 @@
-#include "group.h"
 #include "md.h"
+#include "molecule.h"
 #include "tool/darray.h"
 #include <tinker/detail/group.hh>
 #include <tinker/detail/sizes.hh>
 
 namespace tinker {
-void group_data(RcOp op)
+void groupData(RcOp op)
 {
    if (op & rc_dealloc) {
       auto& st = grp;
