@@ -1,6 +1,5 @@
 #include "add.h"
 #include "launch.h"
-#include "lpiston.h"
 #include "md.h"
 #include "rattle.h"
 #include <tinker/detail/units.hh>

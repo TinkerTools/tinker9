@@ -3,7 +3,6 @@
 
 #include "energy.h"
 #include "integrator.h"
-#include "lpiston.h"
 #include "mathfunc_pow2.h"
 #include "md.h"
 #include "random.h"

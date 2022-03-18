@@ -1,6 +1,5 @@
 #include "energy.h"
 #include "integrator.h"
-#include "lpiston.h"
 #include "md.h"
 #include "tool/io.h"
 
@@ -82,7 +81,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
       energy(vers1);
       if (vers1 & calc::virial)
          if (not atomic)
-            lp_virial(true);
+            hcVirial();
    } else {
       virial_prec vir_fast[9] = {0};
       energy_prec esum_f;
@@ -98,7 +97,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
                for (int iv = 0; iv < 9; ++iv)
                   vir_fast[iv] += vir[iv];
             } else {
-               lp_virial(true);
+               hcVirial();
                for (int iv = 0; iv < 9; ++iv)
                   vir_fast[iv] += hc_vir[iv];
             }
@@ -119,7 +118,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
             for (int iv = 0; iv < 9; ++iv)
                vir_fast[iv] += vir[iv];
          } else {
-            lp_virial(true);
+            hcVirial();
             for (int iv = 0; iv < 9; ++iv)
                vir_fast[iv] += hc_vir[iv];
          }
@@ -137,7 +136,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
             for (int iv = 0; iv < 9; ++iv)
                vir[iv] += vir_fast[iv] / nrespa;
          } else {
-            lp_virial(true);
+            hcVirial();
             for (int iv = 0; iv < 9; ++iv)
                hc_vir[iv] += vir_fast[iv] / nrespa;
          }

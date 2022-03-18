@@ -1,5 +1,4 @@
 #include "integrator.h"
-#include "lpiston.h"
 #include "mathfunc_sinhc.h"
 #include "md.h"
 #include "tool/trimatexp.h"
@@ -84,11 +83,11 @@ void LogVDevice::updateVelocityImpl(time_prec t, int idx, int nrespa)
       }
 
       if (idx == 1) {
-         lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
+         hcCenterOfMass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
          if (aniso)
-            lp_propagate_mol_vel_aniso(scal);
+            hcVelAn(scal);
          else
-            lp_propagate_mol_vel(s);
+            hcVelIso(s);
       }
 
       if (nrespa == 1)
@@ -97,11 +96,11 @@ void LogVDevice::updateVelocityImpl(time_prec t, int idx, int nrespa)
          mdVel2(t / nrespa, gx1, gy1, gz1, t, gx2, gy2, gz2); // R1, R2
 
       if (idx == 2) {
-         lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
+         hcCenterOfMass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
          if (aniso)
-            lp_propagate_mol_vel_aniso(scal);
+            hcVelAn(scal);
          else
-            lp_propagate_mol_vel(s);
+            hcVelIso(s);
       }
    }
 }
@@ -148,7 +147,7 @@ void LogVDevice::updatePosition(time_prec t)
       if (not applyBaro) {
          mdPos(t);
       } else if (aniso) {
-         lp_center_of_mass(xpos, ypos, zpos, ratcom_x, ratcom_y, ratcom_z);
+         hcCenterOfMass(xpos, ypos, zpos, ratcom_x, ratcom_y, ratcom_z);
          double scal[3][3];
          trimatExp(scal, vbar_matrix, t);
          for (int i = 0; i < 3; ++i)
@@ -156,7 +155,7 @@ void LogVDevice::updatePosition(time_prec t)
          pLogVPosMolAniso_acc(scal);
          mdPos(t);
       } else {
-         lp_center_of_mass(xpos, ypos, zpos, ratcom_x, ratcom_y, ratcom_z);
+         hcCenterOfMass(xpos, ypos, zpos, ratcom_x, ratcom_y, ratcom_z);
          double scal = std::exp(vbar * t) - 1;
          pLogVPosMolIso_acc(scal);
          mdPos(t);

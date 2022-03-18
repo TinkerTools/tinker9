@@ -1,4 +1,3 @@
-#include "lpiston.h"
 #include "add.h"
 #include "md.h"
 #include "rattle.h"
@@ -123,28 +122,6 @@ label_nrespa2:
 
 
 namespace tinker {
-void lp_matvec_acc(int len, char transpose, double mat[3][3],
-
-   pos_prec* ax, pos_prec* ay, pos_prec* az)
-{
-   double m00 = mat[0][0], m01 = mat[0][1], m02 = mat[0][2];
-   double m10 = mat[1][0], m11 = mat[1][1], m12 = mat[1][2];
-   double m20 = mat[2][0], m21 = mat[2][1], m22 = mat[2][2];
-   if (transpose == 't' or transpose == 'T' or transpose == 'y' or transpose == 'Y') {
-      m01 = mat[1][0], m02 = mat[2][0];
-      m10 = mat[0][1], m12 = mat[2][1];
-      m20 = mat[0][2], m21 = mat[1][2];
-   }
-   #pragma acc parallel loop independent async\
-               deviceptr(ax,ay,az)
-   for (int i = 0; i < len; ++i) {
-      auto x = ax[i], y = ay[i], z = az[i];
-      ax[i] = m00 * x + m01 * y + m02 * z;
-      ay[i] = m10 * x + m11 * y + m12 * z;
-      az[i] = m20 * x + m21 * y + m22 * z;
-   }
-}
-
 void propagate_pos_raxbv_acc(
 
    pos_prec* r1, pos_prec* r2, pos_prec* r3,
@@ -216,7 +193,7 @@ void propagate_pos_axbv_aniso_acc(double a[3][3], double b[3][3])
    }
 }
 
-void lp_propagate_mol_vel_acc(vel_prec scal)
+void hcVelIso_acc(vel_prec scal)
 {
    auto* molec = rattle_dmol.molecule;
    #pragma acc parallel loop independent async\
@@ -229,7 +206,7 @@ void lp_propagate_mol_vel_acc(vel_prec scal)
    }
 }
 
-void lp_propagate_mol_vel_aniso_acc(vel_prec scal[3][3])
+void hcVelAn_acc(vel_prec scal[3][3])
 {
    auto s00 = scal[0][0], s01 = scal[0][1], s02 = scal[0][2];
    auto s10 = scal[1][0], s11 = scal[1][1], s12 = scal[1][2];
@@ -323,7 +300,7 @@ void lp_mol_virial_acc()
    hc_vir[8] = mvzz + vir[8];
 }
 
-void lp_center_of_mass_acc(const pos_prec* ax, const pos_prec* ay, const pos_prec* az, pos_prec* mx,
+void hcCenterOfMass_acc(const pos_prec* ax, const pos_prec* ay, const pos_prec* az, pos_prec* mx,
    pos_prec* my, pos_prec* mz)
 {
    const int nmol = rattle_dmol.nmol;

@@ -1,5 +1,4 @@
 #include "integrator.h"
-#include "lpiston.h"
 #include "tinker_rt.h"
 
 namespace tinker {
@@ -16,7 +15,7 @@ void LP22Integrator::kickoff()
       RespaIntegrator::KickOff();
 
    if (not atomic)
-      lp_virial(true);
+      hcVirial();
 }
 
 LP22Integrator::LP22Integrator(bool isNRespa1)

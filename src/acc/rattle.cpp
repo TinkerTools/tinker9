@@ -1,6 +1,5 @@
 #include "rattle.h"
 #include "add.h"
-#include "lpiston.h"
 #include "md.h"
 #include "tool/darray.h"
 #include "tool/error.h"
