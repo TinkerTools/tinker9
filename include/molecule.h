@@ -3,6 +3,8 @@
 #include "tool/rcman.h"
 
 namespace tinker {
+void coupleData(RcOp);
+
 /// \brief Individual molecules in current system.
 struct Molecule
 {

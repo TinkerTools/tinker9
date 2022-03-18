@@ -45,7 +45,6 @@ void finish()
 #include "tool/gpucard.h"
 
 #include "box.h"
-#include "couple.h"
 #include "energy.h"
 #include "md.h"
 #include "molecule.h"
@@ -66,7 +65,7 @@ void device_data(RcOp op)
    RcMan cl42{cudalibData, op};
 
    RcMan n42{mdNData, op};
-   RcMan cpl42{couple_data, op};
+   RcMan cpl42{coupleData, op};
 
    RcMan box42{boxData, op};
 

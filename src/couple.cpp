@@ -1,5 +1,5 @@
-#include "couple.h"
 #include "md.h"
+#include "molecule.h"
 #include "tool/darray.h"
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/sizes.hh>
@@ -8,10 +8,7 @@
 namespace tinker {
 static_assert(couple_maxn12 >= sizes::maxval, "");
 
-int (*couple_i12)[couple_maxn12];
-int* couple_n12;
-
-void couple_data(RcOp op)
+void coupleData(RcOp op)
 {
    if (op & rc_dealloc) {
       darray::deallocate(couple_i12, couple_n12);
