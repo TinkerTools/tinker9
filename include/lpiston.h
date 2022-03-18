@@ -4,7 +4,6 @@
 #include "tool/energybuffer.h"
 
 namespace tinker {
-extern double lp_rats1;
 extern double lp_eksum;
 extern double lp_ekin[3][3];
 extern double lp_vir[9];
@@ -26,8 +25,6 @@ void lp_propagate_mol_vel(vel_prec scal);
 void lp_propagate_mol_vel_aniso(vel_prec scal[3][3]);
 void lp_center_of_mass(const pos_prec* atomx, const pos_prec* atomy, const pos_prec* atomz,
    pos_prec* molx, pos_prec* moly, pos_prec* molz);
-
-void lprat(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
 
 void vv_lpiston_init();
 void vv_lpiston_destory();

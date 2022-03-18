@@ -18,7 +18,6 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-double lp_rats1;
 double lp_eksum;
 double lp_ekin[3][3];
 double lp_vir[9];
@@ -129,23 +128,6 @@ void lp_center_of_mass(const pos_prec* atomx, const pos_prec* atomy, const pos_p
    static_assert(
       std::is_same<pos_prec, vel_prec>::value, "pos_prec and vel_prec must be the same type.");
    lp_center_of_mass_acc(atomx, atomy, atomz, molx, moly, molz);
-}
-
-//====================================================================//
-
-void lprat_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-void lprat_settle_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-void lprat_ch_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-void lprat_methyl_cu(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-void lprat(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
-{
-   lprat_settle_acc(dt, xold, yold, zold);
-   lprat_ch_acc(dt, xold, yold, zold);
-#if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
-      lprat_methyl_cu(dt, xold, yold, zold);
-#endif
-   lprat_acc(dt, xold, yold, zold);
 }
 
 //====================================================================//
@@ -471,8 +453,8 @@ void vv_lpiston_npt(int istep, time_prec dt)
          mdVel(dti, gx, gy, gz);
       } else {
          if (constrain) {
-            lp_rats1 = 1.0 / s;
-            lprat(dt, rattle_xold, rattle_yold, rattle_zold);
+            // lp_rats1 = 1.0 / s;
+            // lprat(dt, rattle_xold, rattle_yold, rattle_zold);
          }
          mdCopyPosToXyz(true);
       }

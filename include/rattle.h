@@ -9,8 +9,6 @@ extern "C"
    {};
    struct SHAKE
    {};
-   struct LPRAT
-   {};
 }
 
 namespace tinker {
