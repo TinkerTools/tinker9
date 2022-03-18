@@ -16,11 +16,10 @@ namespace tinker {
 void LogVDevice::updateVelocityImpl(time_prec t, int idx, int nrespa)
 {
    if (not applyBaro) {
-      if (nrespa == 1) // v1, v2, R0
-         mdVel(t, gx, gy, gz);
-      else // R1, R2
-         mdVel2(t / nrespa, gx1, gy1, gz1, t, gx2, gy2, gz2);
-
+      if (nrespa == 1)
+         mdVel(t, gx, gy, gz); // v1, v2, R0
+      else
+         mdVel2(t / nrespa, gx1, gy1, gz1, t, gx2, gy2, gz2); // R1, R2
       return;
    }
 
@@ -47,10 +46,10 @@ void LogVDevice::updateVelocityImpl(time_prec t, int idx, int nrespa)
          std::swap(b[0][2], b[2][0]);
          std::swap(b[1][2], b[2][1]);
 
-         if (nrespa == 1) // v1, v2, R0
-            mdVelAvbfAn(1, a, b, gx, gy, gz, nullptr, nullptr, nullptr);
-         else // R1, R2
-            mdVelAvbfAn(nrespa, a, b, gx1, gy1, gz1, gx2, gy2, gz2);
+         if (nrespa == 1)
+            mdVelAvbfAn(1, a, b, gx, gy, gz, nullptr, nullptr, nullptr); // v1, v2, R0
+         else
+            mdVelAvbfAn(nrespa, a, b, gx1, gy1, gz1, gx2, gy2, gz2); // R1, R2
       } else {
          double al = 1.0 + 3.0 / dofP;
          double vt = al * vbar * t;
@@ -58,10 +57,10 @@ void LogVDevice::updateVelocityImpl(time_prec t, int idx, int nrespa)
          double a = std::exp(-vt);
          double b = t * std::exp(-vt2) * sinhc(vt2);
 
-         if (nrespa == 1) // v1, v2, R0
-            mdVelAvbf(1, a, b, gx, gy, gz, nullptr, nullptr, nullptr);
-         else // R1, R2
-            mdVelAvbf(nrespa, a, b, gx1, gy1, gz1, gx2, gy2, gz2);
+         if (nrespa == 1)
+            mdVelAvbf(1, a, b, gx, gy, gz, nullptr, nullptr, nullptr); // v1, v2, R0
+         else
+            mdVelAvbf(nrespa, a, b, gx1, gy1, gz1, gx2, gy2, gz2); // R1, R2
       }
    } else {
       double scal[3][3], s;
@@ -80,12 +79,6 @@ void LogVDevice::updateVelocityImpl(time_prec t, int idx, int nrespa)
          std::swap(scal[0][1], scal[1][0]);
          std::swap(scal[0][2], scal[2][0]);
          std::swap(scal[1][2], scal[2][1]);
-
-         if (idx == 1)
-            lp_propagate_mol_vel_aniso(scal);
-
-         if (idx == 2)
-            lp_propagate_mol_vel_aniso(scal);
       } else {
          double al = 1.0 + 3.0 / dofP;
          s = std::exp(-al * vbar * t) - 1;
@@ -100,9 +93,9 @@ void LogVDevice::updateVelocityImpl(time_prec t, int idx, int nrespa)
       }
 
       if (nrespa == 1)
-         mdVel(t, gx, gy, gz);
+         mdVel(t, gx, gy, gz); // v1, v2, R0
       else
-         mdVel2(t / nrespa, gx1, gy1, gz1, t, gx2, gy2, gz2);
+         mdVel2(t / nrespa, gx1, gy1, gz1, t, gx2, gy2, gz2); // R1, R2
 
       if (idx == 2) {
          lp_center_of_mass(vx, vy, vz, ratcom_vx, ratcom_vy, ratcom_vz);
