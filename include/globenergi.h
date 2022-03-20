@@ -1,5 +1,5 @@
 #pragma once
-#include "tool/energybuffer.h"
+#include "energybuffer.h"
 
 namespace tinker {
 TINKER_EXTERN int nelem_buffer;

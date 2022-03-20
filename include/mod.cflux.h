@@ -1,6 +1,5 @@
 #pragma once
-#include "macro.h"
-#include "tool/energybuffer.h"
+#include "energybuffer.h"
 
 namespace tinker {
 TINKER_EXTERN real* bflx;

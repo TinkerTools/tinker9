@@ -1,12 +1,12 @@
 #include "add.h"
 #include "cflux.h"
 #include "elec.h"
+#include "energybuffer.h"
 #include "evalence.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "molecule.h"
 #include "seq_bsplgen.h"
-#include "tool/energybuffer.h"
 #include "tool/gpucard.h"
 
 namespace tinker {

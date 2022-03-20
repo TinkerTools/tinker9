@@ -1,6 +1,6 @@
 #pragma once
+#include "energybuffer.h"
 #include "molecule.h"
-#include "tool/energybuffer.h"
 
 namespace tinker {
 TINKER_EXTERN pos_prec rateps;

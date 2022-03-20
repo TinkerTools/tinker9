@@ -2,7 +2,6 @@
 #include "mathfunc.h"
 #include "precision.h"
 #include "tool/darray.h"
-#include <vector>
 
 namespace tinker {
 /**
