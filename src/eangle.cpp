@@ -1,4 +1,4 @@
-#include "eangle.h"
+#include "evalence.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/io.h"
@@ -9,7 +9,7 @@
 #include <tinker/detail/potent.hh>
 
 namespace tinker {
-void eangle_data(RcOp op)
+void eangleData(RcOp op)
 {
    if (not use_potent(angle_term) and not use_potent(strbnd_term) and
       not use_potent(opbend_term) and not use_potent(angtor_term) and not potent::use_chgflx)

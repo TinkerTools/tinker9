@@ -1,4 +1,4 @@
-#include "egeom.h"
+#include "evalence.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/zero.h"
@@ -6,7 +6,7 @@
 #include <tinker/detail/sizes.hh>
 
 namespace tinker {
-void egeom_data(RcOp op)
+void egeomData(RcOp op)
 {
    if (!use_potent(geom_term))
       return;

@@ -1,28 +1,12 @@
 #pragma once
 #include "time_scale.h"
 
-#include "eangle.h"
-#include "eangtor.h"
-#include "ebond.h"
-#include "eimprop.h"
-#include "eimptor.h"
-#include "eopbend.h"
-#include "epitors.h"
-#include "estrbnd.h"
-#include "estrtor.h"
-#include "etors.h"
-#include "etortor.h"
-#include "eurey.h"
-
-#include "egeom.h"
-
-#include "evalence.h"
-
 #include "echarge.h"
 #include "echglj.h"
 #include "emplar.h"
 #include "empole.h"
 #include "epolar.h"
+#include "evalence.h"
 #include "evdw.h"
 
 #include "echgtrn.h"

@@ -1,4 +1,4 @@
-#include "epitors.h"
+#include "evalence.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/zero.h"
@@ -6,7 +6,7 @@
 #include <tinker/detail/torpot.hh>
 
 namespace tinker {
-void epitors_data(RcOp op)
+void epitorsData(RcOp op)
 {
    if (!use_potent(pitors_term))
       return;

@@ -1,4 +1,4 @@
-#include "eimprop.h"
+#include "evalence.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/zero.h"
@@ -6,7 +6,7 @@
 #include <tinker/detail/torpot.hh>
 
 namespace tinker {
-void eimprop_data(RcOp op)
+void eimpropData(RcOp op)
 {
    if (not use_potent(improp_term))
       return;

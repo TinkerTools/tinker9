@@ -1,8 +1,7 @@
 #include "add.h"
 #include "cflux.h"
-#include "eangle.h"
-#include "ebond.h"
 #include "elec.h"
+#include "evalence.h"
 #include "mathfunc_const.h"
 #include "md.h"
 #include <cassert>

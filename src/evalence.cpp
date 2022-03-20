@@ -3,6 +3,7 @@
 #include "tool/error.h"
 
 namespace tinker {
+void evalence_cu(int vers);
 void evalence(int vers)
 {
 #if TINKER_CUDART

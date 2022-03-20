@@ -1,4 +1,4 @@
-#include "ebond.h"
+#include "evalence.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/io.h"
@@ -8,7 +8,7 @@
 #include <tinker/detail/potent.hh>
 
 namespace tinker {
-void ebond_data(RcOp op)
+void ebondData(RcOp op)
 {
    if (not use_potent(bond_term) and not use_potent(strbnd_term) and not use_potent(strtor_term) and
       not potent::use_chgflx)

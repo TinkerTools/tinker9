@@ -1,4 +1,4 @@
-#include "etortor.h"
+#include "evalence.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/zero.h"
@@ -10,7 +10,7 @@
 #include <tinker/detail/tortor.hh>
 
 namespace tinker {
-void etortor_data(RcOp op)
+void etortorData(RcOp op)
 {
    if (!use_potent(tortor_term))
       return;

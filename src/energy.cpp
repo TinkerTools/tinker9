@@ -22,22 +22,22 @@ void energy_data(RcOp op)
 
    // bonded terms
 
-   RcMan ebond42{ebond_data, op};
-   RcMan eangle42{eangle_data, op};
-   RcMan estrbnd42{estrbnd_data, op};
-   RcMan eurey42{eurey_data, op};
-   RcMan eopbend42{eopbend_data, op};
-   RcMan eimprop42{eimprop_data, op};
-   RcMan eimptor42{eimptor_data, op};
-   RcMan etors42{etors_data, op};
-   RcMan epitors42{epitors_data, op};
-   RcMan estrtor42{estrtor_data, op};
-   RcMan eangtor42{eangtor_data, op};
-   RcMan etortor42{etortor_data, op};
+   RcMan ebond42{ebondData, op};
+   RcMan eangle42{eangleData, op};
+   RcMan estrbnd42{estrbndData, op};
+   RcMan eurey42{eureyData, op};
+   RcMan eopbend42{eopbendData, op};
+   RcMan eimprop42{eimpropData, op};
+   RcMan eimptor42{eimptorData, op};
+   RcMan etors42{etorsData, op};
+   RcMan epitors42{epitorsData, op};
+   RcMan estrtor42{estrtorData, op};
+   RcMan eangtor42{eangtorData, op};
+   RcMan etortor42{etortorData, op};
 
    // misc. terms
 
-   RcMan egeom42{egeom_data, op};
+   RcMan egeom42{egeomData, op};
 
    // non-bonded terms
 

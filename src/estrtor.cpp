@@ -1,4 +1,4 @@
-#include "estrtor.h"
+#include "evalence.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/zero.h"
@@ -6,7 +6,7 @@
 #include <tinker/detail/torpot.hh>
 
 namespace tinker {
-void estrtor_data(RcOp op)
+void estrtorData(RcOp op)
 {
    if (not use_potent(strtor_term))
       return;

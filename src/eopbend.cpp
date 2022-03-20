@@ -1,4 +1,4 @@
-#include "eopbend.h"
+#include "evalence.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/io.h"
@@ -8,7 +8,7 @@
 #include <tinker/detail/opbend.hh>
 
 namespace tinker {
-void eopbend_data(RcOp op)
+void eopbendData(RcOp op)
 {
    if (!use_potent(opbend_term))
       return;

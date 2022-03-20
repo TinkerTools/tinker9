@@ -1,6 +1,5 @@
 #include "cflux.h"
-#include "eangle.h"
-#include "ebond.h"
+#include "evalence.h"
 #include "md.h"
 #include "molecule.h"
 #include "nblist.h"

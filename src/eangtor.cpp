@@ -1,4 +1,4 @@
-#include "eangtor.h"
+#include "evalence.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/zero.h"
@@ -6,7 +6,7 @@
 #include <tinker/detail/torpot.hh>
 
 namespace tinker {
-void eangtor_data(RcOp op)
+void eangtorData(RcOp op)
 {
    if (not use_potent(angtor_term))
       return;

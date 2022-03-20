@@ -1,4 +1,4 @@
-#include "estrbnd.h"
+#include "evalence.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/zero.h"
@@ -6,7 +6,7 @@
 #include <tinker/detail/strbnd.hh>
 
 namespace tinker {
-void estrbnd_data(RcOp op)
+void estrbndData(RcOp op)
 {
    if (!use_potent(strbnd_term))
       return;

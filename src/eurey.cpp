@@ -1,4 +1,4 @@
-#include "eurey.h"
+#include "evalence.h"
 #include "md.h"
 #include "potent.h"
 #include "tool/zero.h"
@@ -6,7 +6,7 @@
 #include <tinker/detail/urypot.hh>
 
 namespace tinker {
-void eurey_data(RcOp op)
+void eureyData(RcOp op)
 {
    if (!use_potent(urey_term))
       return;
