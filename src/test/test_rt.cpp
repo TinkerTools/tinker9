@@ -1,5 +1,5 @@
-#include "test_rt.h"
-#include "tinker_rt.h"
+#include "testrt.h"
+#include "tinkerrt.h"
 #include "tool/error.h"
 #include <fstream>
 #include <tinker/detail/bath.hh>
@@ -46,11 +46,11 @@ void TestFile::__keep()
    good = false;
 }
 
-TestFileExpected::TestFileExpected(const std::string& name)
+TestRemoveFileOnExit::TestRemoveFileOnExit(const std::string& name)
    : m_name(name)
 {}
 
-TestFileExpected::~TestFileExpected()
+TestRemoveFileOnExit::~TestRemoveFileOnExit()
 {
    std::ifstream chk(m_name);
    if (chk) {
@@ -126,7 +126,7 @@ double (*TestReference::get_gradient())[3]
    return reinterpret_cast<double(*)[3]>(this->gradient.data());
 }
 
-double test_get_eps(double eps_single, double eps_double)
+double testGetEps(double eps_single, double eps_double)
 {
 #if TINKER_REAL_SIZE == 4
    (void)eps_double;
@@ -139,7 +139,7 @@ double test_get_eps(double eps_single, double eps_double)
 #endif
 }
 
-void test_begin_with_args(int argc, const char** argv)
+void testBeginWithArgs(int argc, const char** argv)
 {
    tinkerFortranRuntimeBegin(argc, const_cast<char**>(argv));
 
@@ -150,13 +150,13 @@ void test_begin_with_args(int argc, const char** argv)
    mechanic2();
 }
 
-void test_end()
+void testEnd()
 {
    tinker_f_final();
    tinkerFortranRuntimeEnd();
 }
 
-void test_mdinit(double t, double atm)
+void testMdInit(double t, double atm)
 {
    if (t > 0) {
       bath::kelvin = t;

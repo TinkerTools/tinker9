@@ -1,5 +1,5 @@
-#include "promo.h"
-#include "tinker_rt.h"
+#include "tinkerrt.h"
+#include "version.h"
 #include <tinker/modcpp.h>
 #ifdef _OPENMP
 #   include <omp.h>

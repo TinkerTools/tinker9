@@ -1,6 +1,6 @@
 #pragma once
-#include "../pme.h"
 #include "macro.h"
+#include "mm/pme.h"
 
 namespace tinker {
 TINKER_EXTERN PMEUnit epme_unit;  // electrostatic

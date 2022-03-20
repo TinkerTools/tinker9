@@ -1,5 +1,5 @@
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 
 using namespace tinker;
 
@@ -55,14 +55,14 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
       const double ref_grad[][3] = {{184.4899, 0.0, 0.0}, {-184.4899, 0.0, 0.0}};
       const double ref_v[][3] = {{-405.878, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
-      test_begin_with_args(argc, argv);
+      testBeginWithArgs(argc, argv);
       rc_flag = usage;
       initialize();
 
       COMPARE_CODE_BLOCK1;
 
       finish();
-      test_end();
+      testEnd();
    }
 
    SECTION("  - ehal -- switch, near cut")
@@ -78,14 +78,14 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
       const double ref_grad[][3] = {{149.0904, 0.0, 0.0}, {-149.0904, 0.0, 0.0}};
       const double ref_v[][3] = {{-354.835, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
-      test_begin_with_args(argc, argv);
+      testBeginWithArgs(argc, argv);
       rc_flag = usage;
       initialize();
 
       COMPARE_CODE_BLOCK1;
 
       finish();
-      test_end();
+      testEnd();
    }
 
    SECTION("  - ehal -- switch, near off")
@@ -102,14 +102,14 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
       const double ref_grad[][3] = {{127.6639, 0.0, 0.0}, {-127.6639, 0.0, 0.0}};
       const double ref_v[][3] = {{-319.160, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
-      test_begin_with_args(argc, argv);
+      testBeginWithArgs(argc, argv);
       rc_flag = usage;
       initialize();
 
       COMPARE_CODE_BLOCK1;
 
       finish();
-      test_end();
+      testEnd();
    }
 
    SECTION("  - ehal -- evcorr vlambda = 1.0")
@@ -132,14 +132,14 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
       const double ref_grad[][3] = {{184.4899, 0.0, 0.0}, {-184.4899, 0.0, 0.0}};
       const double ref_v[][3] = {{-408.398, 0.0, 0.0}, {0.0, -2.521, 0.0}, {0.0, 0.0, -2.521}};
 
-      test_begin_with_args(argc, argv);
+      testBeginWithArgs(argc, argv);
       rc_flag = usage;
       initialize();
 
       COMPARE_CODE_BLOCK1;
 
       finish();
-      test_end();
+      testEnd();
    }
 
    SECTION("  - ehal -- evcorr vlambda = 0.9")
@@ -164,14 +164,14 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
       const double ref_grad[][3] = {{81.9570, 0.0, 0.0}, {-81.9570, 0.0, 0.0}};
       const double ref_v[][3] = {{-182.721, 0.0, 0.0}, {0.0, -2.415, 0.0}, {0.0, 0.0, -2.415}};
 
-      test_begin_with_args(argc, argv);
+      testBeginWithArgs(argc, argv);
       rc_flag = usage;
       initialize();
 
       COMPARE_CODE_BLOCK1;
 
       finish();
-      test_end();
+      testEnd();
    }
 }
 
@@ -229,14 +229,14 @@ TEST_CASE("NaCl-2", "[ff][empole][nonewald][nacl]")
       const double eps_v = eps;
       const double ref_v[][3] = {{150.938, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
-      test_begin_with_args(argc, argv);
+      testBeginWithArgs(argc, argv);
       rc_flag = usage;
       initialize();
 
       COMPARE_CODE_BLOCK2;
 
       finish();
-      test_end();
+      testEnd();
    }
 }
 
@@ -290,13 +290,13 @@ TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]")
       //                            {23.857, 26.659, 28.675},
       //                            {26.068, 28.675, 31.863}};
 
-      test_begin_with_args(argc, argv);
+      testBeginWithArgs(argc, argv);
       rc_flag = usage;
       initialize();
 
       COMPARE_CODE_BLOCK2;
 
       finish();
-      test_end();
+      testEnd();
    }
 }

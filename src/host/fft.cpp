@@ -1,4 +1,4 @@
-#include "fft.h"
+#include "tool/fft.h"
 #include "elec.h"
 #include "hippo/edisp.h"
 #include "pme.h"

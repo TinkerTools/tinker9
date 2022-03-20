@@ -1,4 +1,4 @@
-#include "tinker_rt.h"
+#include "tinkerrt.h"
 #include <algorithm>
 #include <tinker/detail/argue.hh>
 #include <tinker/detail/keys.hh>

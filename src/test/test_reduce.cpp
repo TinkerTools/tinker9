@@ -1,7 +1,7 @@
 #include "mathfunc.h"
 #include "md.h"
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 using namespace tinker;
 
 TEST_CASE("Reduce", "[util][math][reduce]")
@@ -62,7 +62,7 @@ TEST_CASE("Reduce", "[util][math][reduce]")
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoebapro13.prm");
    const char* argv[] = {"dummy", x1};
    int argc = 2;
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    initialize();
 
    darray::allocate(N, &di, &df, &dd, &du);
@@ -104,5 +104,5 @@ TEST_CASE("Reduce", "[util][math][reduce]")
    darray::deallocate(df2, dd2, du2);
 
    finish();
-   test_end();
+   testEnd();
 }

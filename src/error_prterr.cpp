@@ -1,6 +1,6 @@
 #include "box.h"
 #include "md.h"
-#include "tinker_rt.h"
+#include "tinkerrt.h"
 #include "tool/darray.h"
 #include "tool/error.h"
 #include <tinker/detail/atoms.hh>

@@ -3,7 +3,7 @@
 #include "energy.h"
 #include "md.h"
 #include "potent.h"
-#include "tinker_rt.h"
+#include "tinkerrt.h"
 #include "tool/zero.h"
 
 namespace tinker {

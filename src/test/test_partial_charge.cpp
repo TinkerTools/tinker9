@@ -1,5 +1,5 @@
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 
 using namespace tinker;
 
@@ -93,7 +93,7 @@ TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage]")
          {-0.0634, 5.0636, 1.3903}, {2.6545, -4.4121, -2.9500}, {3.0941, -0.3088, -0.0172},
          {-7.3074, 3.9036, 0.7184}, {4.7207, -0.7016, 2.1016}, {1.3439, 1.5807, 2.4695}};
 
-      test_begin_with_args(argc, argv);
+      testBeginWithArgs(argc, argv);
       initialize();
 
       energy(calc::v0);
@@ -124,7 +124,7 @@ TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage]")
             COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
       finish();
-      test_end();
+      testEnd();
    }
 
    SECTION("  - ec -- pbc, cutoff, ewald")
@@ -211,7 +211,7 @@ TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage]")
          {3.4054, -0.5440, 0.1161}, {-8.3359, 4.6215, 0.4214}, {5.3244, -1.1341, 2.2995},
          {1.0532, 1.8806, 2.0643}};
 
-      test_begin_with_args(argc, argv);
+      testBeginWithArgs(argc, argv);
       initialize();
 
       energy(calc::v0);
@@ -242,6 +242,6 @@ TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage]")
             COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
       finish();
-      test_end();
+      testEnd();
    }
 }

@@ -1,6 +1,6 @@
 #include "test.h"
-#include "test_rt.h"
-#include "tinker_rt.h"
+#include "testrt.h"
+#include "tinkerrt.h"
 #include "tool/io.h"
 #include <cstring>
 using namespace tinker;

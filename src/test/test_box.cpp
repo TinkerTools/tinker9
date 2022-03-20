@@ -2,7 +2,7 @@
 #include "image.h"
 #include "mathfunc.h"
 #include "test.h"
-#include "tinker_rt.h"
+#include "tinkerrt.h"
 #include "tool/gpucard.h"
 #include <cmath>
 #include <tinker/detail/bound.hh>

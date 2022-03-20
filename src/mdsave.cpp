@@ -1,9 +1,9 @@
 #include "amoeba/epolar.h"
 #include "box.h"
-#include "execq.h"
 #include "md.h"
 #include "potent.h"
-#include "tinker_rt.h"
+#include "tinkerrt.h"
+#include "tool/execq.h"
 #include <condition_variable>
 #include <future>
 #include <mutex>

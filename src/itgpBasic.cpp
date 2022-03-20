@@ -1,7 +1,7 @@
 #include "integrator.h"
 #include "md.h"
 #include "rattle.h"
-#include "tinker_rt.h"
+#include "tinkerrt.h"
 #include "tool/darray.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>

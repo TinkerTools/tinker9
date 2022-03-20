@@ -1,5 +1,5 @@
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 
 using namespace tinker;
 
@@ -13,9 +13,9 @@ TEST_CASE("EMPOLE-1-EWALD-HIPPO", "[ff][hippo][emhippo][ewald]")
    const char* argv[] = {"dummy", xn, "-k", kn};
    int argc = 4;
 
-   const double eps_e = test_get_eps(0.0015, 0.0001);
-   const double eps_g = test_get_eps(0.0002, 0.0001);
-   const double eps_v = test_get_eps(0.002, 0.001);
+   const double eps_e = testGetEps(0.0015, 0.0001);
+   const double eps_g = testGetEps(0.0002, 0.0001);
+   const double eps_v = testGetEps(0.002, 0.001);
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/emhippo.1.txt");
    auto ref_c = r.get_count();
@@ -24,7 +24,7 @@ TEST_CASE("EMPOLE-1-EWALD-HIPPO", "[ff][hippo][emhippo][ewald]")
    auto ref_g = r.get_gradient();
 
    rc_flag = calc::xyz | calc::vmask;
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    initialize();
 
    energy(calc::v0);
@@ -55,7 +55,7 @@ TEST_CASE("EMPOLE-1-EWALD-HIPPO", "[ff][hippo][emhippo][ewald]")
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
    finish();
-   test_end();
+   testEnd();
 }
 
 TEST_CASE("EMPOLE-2-NONEWALD-HIPPO", "[ff][hippo][emhippo][nonewald]")
@@ -68,9 +68,9 @@ TEST_CASE("EMPOLE-2-NONEWALD-HIPPO", "[ff][hippo][emhippo][nonewald]")
    const char* argv[] = {"dummy", xn, "-k", kn};
    int argc = 4;
 
-   const double eps_e = test_get_eps(0.0041, 0.0001);
-   const double eps_g = test_get_eps(0.0003, 0.0001);
-   const double eps_v = test_get_eps(0.0025, 0.001);
+   const double eps_e = testGetEps(0.0041, 0.0001);
+   const double eps_g = testGetEps(0.0003, 0.0001);
+   const double eps_v = testGetEps(0.0025, 0.001);
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/emhippo.2.txt");
    auto ref_c = r.get_count();
@@ -79,7 +79,7 @@ TEST_CASE("EMPOLE-2-NONEWALD-HIPPO", "[ff][hippo][emhippo][nonewald]")
    auto ref_g = r.get_gradient();
 
    rc_flag = calc::xyz | calc::vmask;
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    initialize();
 
    energy(calc::v0);
@@ -110,5 +110,5 @@ TEST_CASE("EMPOLE-2-NONEWALD-HIPPO", "[ff][hippo][emhippo][nonewald]")
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
    finish();
-   test_end();
+   testEnd();
 }

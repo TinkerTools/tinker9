@@ -1,5 +1,9 @@
 #pragma once
 
+namespace tinker {
+void promo();
+}
+
 #define TINKER9_VERSION_MAJOR 1
 #define TINKER9_VERSION_MINOR 0
 #define TINKER9_VERSION_PATCH 0

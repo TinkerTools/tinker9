@@ -1,5 +1,5 @@
 #include "random.h"
-#include "tinker_rt.h"
+#include "tinkerrt.h"
 #include <chrono>
 #include <random>
 

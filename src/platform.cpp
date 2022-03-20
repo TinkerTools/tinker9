@@ -1,5 +1,5 @@
 #include "platform.h"
-#include "tinker_rt.h"
+#include "tinkerrt.h"
 
 namespace tinker {
 int pltfm_config;

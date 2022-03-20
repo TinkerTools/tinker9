@@ -1,7 +1,7 @@
 #include "box.h"
 #include "mathfunc.h"
 #include "md.h"
-#include "tinker_rt.h"
+#include "tinkerrt.h"
 #include "tool/darray.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/boxes.hh>

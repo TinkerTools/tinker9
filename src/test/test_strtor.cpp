@@ -1,5 +1,5 @@
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 
 using namespace tinker;
 
@@ -26,7 +26,7 @@ TEST_CASE("Strtor-A4", "[ff][estrtor][a4]")
 
    const char* argv[] = {"dummy", x1};
    int argc = 2;
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = calc::xyz | calc::vmask;
    initialize();
 
@@ -55,5 +55,5 @@ TEST_CASE("Strtor-A4", "[ff][estrtor][a4]")
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
    finish();
-   test_end();
+   testEnd();
 }

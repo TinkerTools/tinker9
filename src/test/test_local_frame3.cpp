@@ -1,5 +1,5 @@
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 
 using namespace tinker;
 
@@ -34,7 +34,7 @@ TEST_CASE("Local-Frame3-1", "[ff][empole][epolar][emplar][nonewald][local-frame3
    TestFile fke("", kname, key);
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = usage;
    initialize();
 
@@ -95,7 +95,7 @@ TEST_CASE("Local-Frame3-1", "[ff][empole][epolar][emplar][nonewald][local-frame3
    }
 
    finish();
-   test_end();
+   testEnd();
 }
 
 TEST_CASE("Local-Frame3-2", "[ff][empole][epolar][emplar][ewald][local-frame3]")
@@ -107,7 +107,7 @@ TEST_CASE("Local-Frame3-2", "[ff][empole][epolar][emplar][ewald][local-frame3]")
    TestFile fke("", kname, key);
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = usage;
    initialize();
 
@@ -160,7 +160,7 @@ TEST_CASE("Local-Frame3-2", "[ff][empole][epolar][emplar][ewald][local-frame3]")
    }
 
    finish();
-   test_end();
+   testEnd();
 }
 
 TEST_CASE("Local-Frame3-3", "[ff][empole][epolar][emplar][ewald][local-frame3]")
@@ -172,7 +172,7 @@ TEST_CASE("Local-Frame3-3", "[ff][empole][epolar][emplar][ewald][local-frame3]")
    TestFile fke("", kname, key);
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
 
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = usage & ~calc::analyz;
    initialize();
 
@@ -219,5 +219,5 @@ TEST_CASE("Local-Frame3-3", "[ff][empole][epolar][emplar][ewald][local-frame3]")
    }
 
    finish();
-   test_end();
+   testEnd();
 }

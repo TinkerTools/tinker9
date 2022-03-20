@@ -1,5 +1,5 @@
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 
 using namespace tinker;
 
@@ -20,14 +20,14 @@ TEST_CASE("ALA-1", "[ff][eimptor][ala]")
    auto ref_count = r.get_count();
    auto ref_g = r.get_gradient();
 
-   const double eps_e = test_get_eps(0.0002, 0.0001);
+   const double eps_e = testGetEps(0.0002, 0.0001);
    const double eps_g = 0.0001;
    const double eps_v = 0.001;
 
    const char* argv[] = {"dummy", x};
    int argc = 2;
    int usage = calc::xyz | calc::vmask;
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = usage;
    initialize();
 
@@ -56,5 +56,5 @@ TEST_CASE("ALA-1", "[ff][eimptor][ala]")
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
    finish();
-   test_end();
+   testEnd();
 }

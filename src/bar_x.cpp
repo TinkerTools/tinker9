@@ -2,7 +2,7 @@
 #include "md.h"
 #include "nblist.h"
 #include "random.h"
-#include "tinker_rt.h"
+#include "tinkerrt.h"
 #include <array>
 #include <fstream>
 #include <tinker/detail/files.hh>

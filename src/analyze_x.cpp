@@ -3,7 +3,7 @@
 #include "nblist.h"
 #include "osrw.h"
 #include "potent.h"
-#include "tinker_rt.h"
+#include "tinkerrt.h"
 #include "tool/io.h"
 #include <fstream>
 #include <tinker/detail/bound.hh>

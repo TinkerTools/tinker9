@@ -2,7 +2,7 @@
 #include "md.h"
 #include "platform.h"
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 #include "tool/error.h"
 #include "tool/io.h"
 #include "tool/rcman.h"
@@ -160,7 +160,7 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]")
 
    const char* argv[] = {"dummy", x1};
    int argc = 2;
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
 
    rc_flag = usage_;
    pltfm_config = ACC_PLTFM; // to always use nblist
@@ -193,5 +193,5 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]")
    }
 
    finish();
-   test_end();
+   testEnd();
 }

@@ -1,5 +1,5 @@
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 
 using namespace tinker;
 
@@ -27,7 +27,7 @@ TEST_CASE("Truncated-Octahedron", "[ff][pbc][arbox]")
    auto ref_count = r.get_count();
    auto ref_g = r.get_gradient();
 
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    initialize();
 
    energy(calc::v0);
@@ -59,5 +59,5 @@ TEST_CASE("Truncated-Octahedron", "[ff][pbc][arbox]")
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
    finish();
-   test_end();
+   testEnd();
 }

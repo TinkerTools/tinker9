@@ -4,7 +4,7 @@
 #include "md.h"
 #include "random.h"
 #include "rattle.h"
-#include "tinker_rt.h"
+#include "tinkerrt.h"
 #include "tool/error.h"
 #include "tool/trimatexp.h"
 #include <cmath>

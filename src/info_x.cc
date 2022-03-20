@@ -1,5 +1,5 @@
 #include "md.h"
-#include "tinker_rt.h"
+#include "tinkerrt.h"
 #include "tool/compilers.h"
 #include "tool/gpucard.h"
 #include "version.h"

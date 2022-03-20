@@ -1,6 +1,6 @@
 #include "md.h"
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 
 using namespace tinker;
 
@@ -22,8 +22,8 @@ TEST_CASE("Kinetic-ArBox", "[ff][kinetic][arbox]")
 
    const char* argv[] = {"dummy", x};
    int argc = 2;
-   test_begin_with_args(argc, argv);
-   test_mdinit(0, 0);
+   testBeginWithArgs(argc, argv);
+   testMdInit(0, 0);
 
    rc_flag = usage_;
    initialize();
@@ -39,5 +39,5 @@ TEST_CASE("Kinetic-ArBox", "[ff][kinetic][arbox]")
    REQUIRE(temp == Approx(ref_temp).margin(eps_e));
 
    finish();
-   test_end();
+   testEnd();
 }

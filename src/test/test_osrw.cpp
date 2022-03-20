@@ -1,6 +1,6 @@
 #include "osrw.h"
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 
 using namespace tinker;
 
@@ -45,7 +45,7 @@ TEST_CASE("K-Water", "[ff][osrw]")
    flag &= ~calc::analyz;
 
    rc_flag = flag;
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    initialize();
 
    osrw_energy(calc::v0);
@@ -89,7 +89,7 @@ TEST_CASE("K-Water", "[ff][osrw]")
    }
 
    finish();
-   test_end();
+   testEnd();
 }
 
 TEST_CASE("K-Water-Analyze", "[ff][osrw]")
@@ -100,7 +100,7 @@ TEST_CASE("K-Water-Analyze", "[ff][osrw]")
    int flag = calc::xyz | calc::vmask;
 
    rc_flag = flag;
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    initialize();
 
    osrw_energy(calc::v3);
@@ -149,5 +149,5 @@ TEST_CASE("K-Water-Analyze", "[ff][osrw]")
    }
 
    finish();
-   test_end();
+   testEnd();
 }

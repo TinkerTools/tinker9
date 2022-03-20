@@ -1,5 +1,5 @@
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 
 using namespace tinker;
 
@@ -19,12 +19,12 @@ TEST_CASE("Opbend-Trpcage", "[ff][eopbend][allinger][trpcage]")
    auto ref_g = r.get_gradient();
 
    const double eps_e = 0.0001;
-   const double eps_g = test_get_eps(0.0004, 0.0001);
+   const double eps_g = testGetEps(0.0004, 0.0001);
    const double eps_v = 0.001;
 
    const char* argv[] = {"dummy", x1};
    int argc = 2;
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = calc::xyz | calc::vmask;
    initialize();
 
@@ -53,5 +53,5 @@ TEST_CASE("Opbend-Trpcage", "[ff][eopbend][allinger][trpcage]")
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
    finish();
-   test_end();
+   testEnd();
 }

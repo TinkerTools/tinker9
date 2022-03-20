@@ -1,5 +1,5 @@
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 
 using namespace tinker;
 
@@ -20,12 +20,12 @@ TEST_CASE("Angle-Trpcage", "[ff][eangle][trpcage]")
    auto ref_g = r.get_gradient();
 
    const double eps_e = 0.0001;
-   const double eps_g = test_get_eps(0.001, 0.0001);
-   const double eps_v = test_get_eps(0.003, 0.001);
+   const double eps_g = testGetEps(0.001, 0.0001);
+   const double eps_v = testGetEps(0.003, 0.001);
 
    const char* argv[] = {"dummy", x1};
    int argc = 2;
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = calc::xyz | calc::vmask;
    initialize();
 
@@ -54,7 +54,7 @@ TEST_CASE("Angle-Trpcage", "[ff][eangle][trpcage]")
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
    finish();
-   test_end();
+   testEnd();
 }
 
 TEST_CASE("Angle-2-fourier", "[ff][eangle][fourier][anglef]")
@@ -73,12 +73,12 @@ TEST_CASE("Angle-2-fourier", "[ff][eangle][fourier][anglef]")
    auto ref_g = r.get_gradient();
 
    const double eps_e = 0.0001;
-   const double eps_g = test_get_eps(0.0001, 0.0001);
-   const double eps_v = test_get_eps(0.001, 0.001);
+   const double eps_g = testGetEps(0.0001, 0.0001);
+   const double eps_v = testGetEps(0.001, 0.001);
 
    const char* argv[] = {"dummy", x1};
    int argc = 2;
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = calc::xyz | calc::vmask;
    initialize();
 
@@ -107,5 +107,5 @@ TEST_CASE("Angle-2-fourier", "[ff][eangle][fourier][anglef]")
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
    finish();
-   test_end();
+   testEnd();
 }

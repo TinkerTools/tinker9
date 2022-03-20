@@ -1,5 +1,5 @@
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 
 using namespace tinker;
 
@@ -48,7 +48,7 @@ TEST_CASE("Local-Frame2-1", "[ff][triclinic][evdw][hal][local-frame2]")
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
    TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz", x1);
 
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = usage;
    initialize();
 
@@ -65,7 +65,7 @@ TEST_CASE("Local-Frame2-1", "[ff][triclinic][evdw][hal][local-frame2]")
    }
 
    finish();
-   test_end();
+   testEnd();
 }
 
 TEST_CASE("Local-Frame2-2", "[ff][monoclinic][evdw][hal][local-frame2]")
@@ -77,7 +77,7 @@ TEST_CASE("Local-Frame2-2", "[ff][monoclinic][evdw][hal][local-frame2]")
    TestFile fpr(TINKER9_DIRSTR "/src/test/file/commit_6fe8e913/amoeba09.prm");
    TestFile fx1(TINKER9_DIRSTR "/src/test/file/local_frame/local_frame2.xyz", x1);
 
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = usage;
    initialize();
 
@@ -94,5 +94,5 @@ TEST_CASE("Local-Frame2-2", "[ff][monoclinic][evdw][hal][local-frame2]")
    }
 
    finish();
-   test_end();
+   testEnd();
 }

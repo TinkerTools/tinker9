@@ -1,5 +1,5 @@
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 
 using namespace tinker;
 
@@ -13,9 +13,9 @@ TEST_CASE("EREPEL-1", "[ff][hippo][erepel][c5h12-acnh2]")
    const char* argv[] = {"dummy", xn, "-k", kn};
    int argc = 4;
 
-   const double eps_e = test_get_eps(0.0001, 0.0001);
-   const double eps_g = test_get_eps(0.0001, 0.0001);
-   const double eps_v = test_get_eps(0.001, 0.001);
+   const double eps_e = testGetEps(0.0001, 0.0001);
+   const double eps_g = testGetEps(0.0001, 0.0001);
+   const double eps_v = testGetEps(0.001, 0.001);
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/rephippo.1.txt");
    auto ref_c = r.get_count();
@@ -24,7 +24,7 @@ TEST_CASE("EREPEL-1", "[ff][hippo][erepel][c5h12-acnh2]")
    auto ref_g = r.get_gradient();
 
    rc_flag = calc::xyz | calc::vmask;
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    initialize();
 
    energy(calc::v0);
@@ -55,7 +55,7 @@ TEST_CASE("EREPEL-1", "[ff][hippo][erepel][c5h12-acnh2]")
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
    finish();
-   test_end();
+   testEnd();
 }
 
 TEST_CASE("EREPEL-2", "[ff][hippo][erepel][water]")
@@ -68,9 +68,9 @@ TEST_CASE("EREPEL-2", "[ff][hippo][erepel][water]")
    const char* argv[] = {"dummy", xn, "-k", kn};
    int argc = 4;
 
-   const double eps_e = test_get_eps(0.0001, 0.0001);
-   const double eps_g = test_get_eps(0.0001, 0.0001);
-   const double eps_v = test_get_eps(0.001, 0.001);
+   const double eps_e = testGetEps(0.0001, 0.0001);
+   const double eps_g = testGetEps(0.0001, 0.0001);
+   const double eps_v = testGetEps(0.001, 0.001);
 
    TestReference r(TINKER9_DIRSTR "/src/test/ref/rephippo.2.txt");
    auto ref_c = r.get_count();
@@ -79,7 +79,7 @@ TEST_CASE("EREPEL-2", "[ff][hippo][erepel][water]")
    auto ref_g = r.get_gradient();
 
    rc_flag = calc::xyz | calc::vmask;
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    initialize();
 
    energy(calc::v0);
@@ -110,5 +110,5 @@ TEST_CASE("EREPEL-2", "[ff][hippo][erepel][water]")
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
    finish();
-   test_end();
+   testEnd();
 }

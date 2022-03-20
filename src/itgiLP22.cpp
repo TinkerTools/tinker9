@@ -1,5 +1,5 @@
 #include "integrator.h"
-#include "tinker_rt.h"
+#include "tinkerrt.h"
 
 namespace tinker {
 const char* LP22Integrator::name() const

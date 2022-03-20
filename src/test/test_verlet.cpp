@@ -1,6 +1,6 @@
 #include "md.h"
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 #include <tinker/detail/inform.hh>
 
 using namespace tinker;
@@ -55,8 +55,8 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
 
    const char* argv[] = {"dummy", x};
    int argc = 2;
-   test_begin_with_args(argc, argv);
-   test_mdinit(0, 0);
+   testBeginWithArgs(argc, argv);
+   testMdInit(0, 0);
 
    rc_flag = usage_;
    initialize();
@@ -76,14 +76,14 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
    inform::iwrite = old;
 
    finish();
-   test_end();
+   testEnd();
 
    for (int i = 0; i < nsteps; ++i) {
       REQUIRE(epots[i] == Approx(arbox_pot[i]).margin(eps_e));
       REQUIRE(eksums[i] == Approx(arbox_kin[i]).margin(eps_e));
    }
 
-   TestFileExpected("test_arbox.arc");
+   TestRemoveFileOnExit("test_arbox.arc");
 #else
    REQUIRE(true);
 #endif

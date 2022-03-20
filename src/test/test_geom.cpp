@@ -1,5 +1,5 @@
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 
 using namespace tinker;
 
@@ -37,7 +37,7 @@ restrainterm        only
    const double eps_g = 0.0001;
    const double eps_v = 0.001;
 
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = usage;
    initialize();
 
@@ -66,7 +66,7 @@ restrainterm        only
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
    finish();
-   test_end();
+   testEnd();
 }
 
 TEST_CASE("Geom-Distance-Local-Frame2", "[ff][egeom][local-frame2]")
@@ -97,7 +97,7 @@ restrainterm        only
    const double eps_g = 0.0001;
    const double eps_v = 0.001;
 
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = usage;
    initialize();
 
@@ -126,7 +126,7 @@ restrainterm        only
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
    finish();
-   test_end();
+   testEnd();
 }
 
 TEST_CASE("Geom-Angle-Local-Frame2", "[ff][egeom][local-frame2]")
@@ -157,7 +157,7 @@ restrainterm        only
    const double eps_g = 0.0001;
    const double eps_v = 0.001;
 
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = usage;
    initialize();
 
@@ -186,7 +186,7 @@ restrainterm        only
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
    finish();
-   test_end();
+   testEnd();
 }
 
 TEST_CASE("Geom-Torsion-Local-Frame2", "[ff][egeom][local-frame2]")
@@ -217,7 +217,7 @@ restrainterm        only
    const double eps_g = 0.1000;
    const double eps_v = 0.0015;
 
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = usage;
    initialize();
 
@@ -246,7 +246,7 @@ restrainterm        only
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
    finish();
-   test_end();
+   testEnd();
 }
 
 TEST_CASE("Geom-Position-Local-Frame2", "[ff][egeom][local-frame2]")
@@ -277,7 +277,7 @@ restrainterm        only
    const double eps_g = 0.1000;
    const double eps_v = 0.0015;
 
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = usage;
    initialize();
 
@@ -306,5 +306,5 @@ restrainterm        only
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
 
    finish();
-   test_end();
+   testEnd();
 }

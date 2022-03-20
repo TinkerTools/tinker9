@@ -1,6 +1,6 @@
 #include "amoeba/field.h"
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 #include <tinker/detail/units.hh>
 
 using namespace tinker;
@@ -69,7 +69,7 @@ TEST_CASE("Local-Frame-1", "[ff][empole][nonewald][local-frame]")
       const double ref_v[][3] = {
          {72.636, -34.992, 9.243}, {-34.992, 53.410, 6.517}, {9.243, 6.517, 4.708}};
 
-      test_begin_with_args(argc, argv);
+      testBeginWithArgs(argc, argv);
       rc_flag = usage;
       initialize();
 
@@ -86,7 +86,7 @@ TEST_CASE("Local-Frame-1", "[ff][empole][nonewald][local-frame]")
       COMPARE_COUNT(nem, ref_count);
 
       finish();
-      test_end();
+      testEnd();
    }
 }
 
@@ -138,7 +138,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]")
       const double ref_v[][3] = {
          {76.909, -31.146, 7.610}, {-31.146, 53.934, 7.245}, {7.610, 7.245, 3.181}};
 
-      test_begin_with_args(argc, argv);
+      testBeginWithArgs(argc, argv);
       rc_flag = usage;
       initialize();
 
@@ -155,7 +155,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]")
       COMPARE_COUNT(nem, ref_count);
 
       finish();
-      test_end();
+      testEnd();
    }
 }
 
@@ -207,7 +207,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
    const double debye = units::debye;
    const double eps_f = 0.0001;
 
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = usage;
    initialize();
 
@@ -361,7 +361,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
    }
 
    finish();
-   test_end();
+   testEnd();
 }
 
 TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
@@ -391,7 +391,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
    const double debye = units::debye;
    const double eps_f = 0.0001;
 
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = usage;
    initialize();
 
@@ -546,5 +546,5 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
    }
 
    finish();
-   test_end();
+   testEnd();
 }

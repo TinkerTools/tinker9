@@ -1,6 +1,6 @@
 #include "md.h"
 #include "test.h"
-#include "test_rt.h"
+#include "testrt.h"
 #include "tool/io.h"
 #include <fstream>
 #include <tinker/detail/files.hh>
@@ -35,7 +35,7 @@ TEST_CASE("Bounds", "[ff][box]")
 
    const char* argv[] = {"dummy", xn};
    int argc = 2;
-   test_begin_with_args(argc, argv);
+   testBeginWithArgs(argc, argv);
    rc_flag = calc::xyz | calc::mass;
    initialize();
 
@@ -64,5 +64,5 @@ TEST_CASE("Bounds", "[ff][box]")
    COMPARE_REALS(zans[1], zref[1], eps);
 
    finish();
-   test_end();
+   testEnd();
 }

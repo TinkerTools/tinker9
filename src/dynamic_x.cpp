@@ -1,5 +1,5 @@
 #include "md.h"
-#include "tinker_rt.h"
+#include "tinkerrt.h"
 #include <chrono>
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/bound.hh>
