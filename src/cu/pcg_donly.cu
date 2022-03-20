@@ -1,9 +1,9 @@
-#include "epolar_chgpen.h"
-#include "field_chgpen.h"
-#include "induce_donly.h"
+#include "glob/uprior.h"
+#include "hippo/epolar_chgpen.h"
+#include "hippo/field_chgpen.h"
+#include "hippo/induce_donly.h"
 #include "launch.h"
 #include "md.h"
-#include "mod.uprior.h"
 #include "tool/cudalib.h"
 #include "tool/io.h"
 #include <tinker/detail/inform.hh>

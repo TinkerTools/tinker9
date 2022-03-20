@@ -1,6 +1,6 @@
 #include "evalence.h"
 #include "md.h"
-#include "seq_improp.h"
+#include "seq/improp.h"
 
 namespace tinker {
 template <class Ver>

@@ -1,5 +1,5 @@
 #include "tool/trimatexp.h"
-#include "mathfunc_sinhc.h"
+#include "math/sinhc.h"
 #include <algorithm>
 #include <cmath>
 

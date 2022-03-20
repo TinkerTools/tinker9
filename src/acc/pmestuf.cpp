@@ -3,7 +3,7 @@
 #include "box.h"
 #include "elec.h"
 #include "md.h"
-#include "seq_bsplgen.h"
+#include "seq/bsplgen.h"
 
 namespace tinker {
 template <class T>

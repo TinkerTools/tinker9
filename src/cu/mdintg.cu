@@ -1,6 +1,6 @@
-#include "globcudalib.h"
 #include "launch.h"
 #include "md.h"
+#include "mod/cudalib.h"
 #include "syntax/cu/reduce.h"
 #include "tool/darray.h"
 #include "tool/gpucard.h"

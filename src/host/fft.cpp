@@ -1,6 +1,6 @@
 #include "fft.h"
-#include "edisp.h"
 #include "elec.h"
+#include "hippo/edisp.h"
 #include "pme.h"
 #include <fftw3.h>
 

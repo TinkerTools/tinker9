@@ -1,6 +1,6 @@
-#include "field_chgpen.h"
+#include "hippo/field_chgpen.h"
+#include "amoeba/field.h"
 #include "elec.h"
-#include "field.h"
 #include "md.h"
 #include "nblist.h"
 

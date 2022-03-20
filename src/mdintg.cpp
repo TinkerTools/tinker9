@@ -3,7 +3,7 @@
 
 #include "energy.h"
 #include "integrator.h"
-#include "mathfunc_pow2.h"
+#include "math/pow2.h"
 #include "md.h"
 #include "random.h"
 #include "rattle.h"

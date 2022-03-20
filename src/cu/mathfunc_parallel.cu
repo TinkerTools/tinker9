@@ -1,4 +1,4 @@
-#include "mathfunc_parallel_cu.h"
+#include "math/parallel_cu.h"
 #include "syntax/cu/reduce.h"
 #include "tool/cudalib.h"
 #include "tool/deduceptr.h"

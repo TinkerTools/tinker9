@@ -1,11 +1,11 @@
 #include "add.h"
+#include "amoeba/empole.h"
 #include "box.h"
-#include "empole.h"
-#include "glob.spatial.h"
+#include "glob/spatial.h"
 #include "launch.h"
 #include "md.h"
 #include "pmestuf.h"
-#include "seq_bsplgen.h"
+#include "seq/bsplgen.h"
 #include "tool/gpucard.h"
 
 namespace tinker {

@@ -1,5 +1,5 @@
 #include "tool/cudalib.h"
-#include "glob.accasync.h"
+#include "glob/accasync.h"
 #include "platform.h"
 #if TINKER_CUDART
 #   include "tool/error.h"

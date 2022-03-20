@@ -1,4 +1,4 @@
-#include "field.h"
+#include "amoeba/field.h"
 #include "elec.h"
 #include "md.h"
 #include "nblist.h"

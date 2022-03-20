@@ -1,6 +1,6 @@
 #include "energy.h"
-#include "cflux.h"
-#include "glob.dhflow.h"
+#include "glob/dhflow.h"
+#include "hippo/cflux.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"

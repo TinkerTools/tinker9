@@ -1,5 +1,5 @@
-#include "empole_chgpen.h"
-#include "cflux.h"
+#include "hippo/empole_chgpen.h"
+#include "hippo/cflux.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"

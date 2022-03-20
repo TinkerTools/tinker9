@@ -1,4 +1,4 @@
-#include "echglj.h"
+#include "pchg/echglj.h"
 #include "box.h"
 #include "md.h"
 #include "nblist.h"

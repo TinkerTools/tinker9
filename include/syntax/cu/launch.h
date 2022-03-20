@@ -1,6 +1,6 @@
 #pragma once
-#include "globenergi.h"
-#include "globgpucard.h"
+#include "mod/energi.h"
+#include "mod/gpucard.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
 

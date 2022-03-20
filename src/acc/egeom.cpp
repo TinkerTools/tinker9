@@ -4,7 +4,7 @@
 #include "image.h"
 #include "md.h"
 #include "molecule.h"
-#include "seq_geom.h"
+#include "seq/geom.h"
 #include <cassert>
 
 namespace tinker {

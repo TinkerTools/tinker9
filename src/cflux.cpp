@@ -1,4 +1,4 @@
-#include "cflux.h"
+#include "hippo/cflux.h"
 #include "evalence.h"
 #include "md.h"
 #include "molecule.h"

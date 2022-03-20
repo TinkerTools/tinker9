@@ -1,6 +1,6 @@
+#include "amoeba/epolar.h"
 #include "elec.h"
-#include "epolar.h"
-#include "epolar_chgpen.h"
+#include "hippo/epolar_chgpen.h"
 #include "md.h"
 #include "potent.h"
 #include "tinker_rt.h"

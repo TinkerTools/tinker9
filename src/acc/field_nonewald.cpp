@@ -1,9 +1,9 @@
 #include "add.h"
-#include "epolar.h"
-#include "glob.nblist.h"
+#include "amoeba/epolar.h"
+#include "glob/nblist.h"
 #include "image.h"
 #include "md.h"
-#include "seq_pair_field.h"
+#include "seq/pair_field.h"
 #include "switch.h"
 #include "tool/gpucard.h"
 

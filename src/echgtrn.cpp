@@ -1,4 +1,4 @@
-#include "echgtrn.h"
+#include "hippo/echgtrn.h"
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"

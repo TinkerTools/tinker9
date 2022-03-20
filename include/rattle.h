@@ -30,4 +30,4 @@ void hcVelIso(vel_prec s);
 void hcVelAn(vel_prec s[3][3]);
 }
 
-#include "globrattle.h"
+#include "mod/rattle.h"

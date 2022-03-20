@@ -1,5 +1,5 @@
 #pragma once
-#include "globenergi.h"
+#include "mod/energi.h"
 
 namespace tinker {
 /**

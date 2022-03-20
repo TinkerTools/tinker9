@@ -1,5 +1,5 @@
 #include "energy.h"
-#include "glob.dhflow.h"
+#include "glob/dhflow.h"
 #include "md.h"
 #include "tool/zero.h"
 

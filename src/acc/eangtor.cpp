@@ -1,7 +1,7 @@
 #include "add.h"
 #include "evalence.h"
 #include "md.h"
-#include "seq_angtor.h"
+#include "seq/angtor.h"
 
 namespace tinker {
 template <class Ver>

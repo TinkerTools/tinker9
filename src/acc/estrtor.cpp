@@ -1,7 +1,7 @@
 #include "add.h"
 #include "evalence.h"
 #include "md.h"
-#include "seq_strtor.h"
+#include "seq/strtor.h"
 
 namespace tinker {
 template <class Ver>

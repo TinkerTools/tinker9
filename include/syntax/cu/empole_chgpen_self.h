@@ -1,6 +1,6 @@
 #pragma once
 #include "add.h"
-#include "md.h"
+#include "glob/mpole.h"
 
 namespace tinker {
 template <bool do_a, bool do_e, int CFLX>

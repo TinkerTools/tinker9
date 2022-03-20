@@ -1,4 +1,5 @@
 #pragma once
+#include "glob/mpole.h"
 #include "macro.h"
 
 namespace tinker {

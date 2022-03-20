@@ -1,9 +1,9 @@
-#include "epolar.h"
-#include "field.h"
-#include "induce.h"
+#include "amoeba/epolar.h"
+#include "amoeba/field.h"
+#include "amoeba/induce.h"
+#include "glob/uprior.h"
 #include "launch.h"
 #include "md.h"
-#include "mod.uprior.h"
 #include "tool/cudalib.h"
 #include "tool/io.h"
 #include <tinker/detail/inform.hh>

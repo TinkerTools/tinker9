@@ -1,7 +1,7 @@
 #include "add.h"
 #include "evalence.h"
 #include "md.h"
-#include "seq_urey.h"
+#include "seq/urey.h"
 
 namespace tinker {
 template <class Ver>

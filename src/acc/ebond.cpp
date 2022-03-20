@@ -1,7 +1,7 @@
 #include "add.h"
 #include "evalence.h"
 #include "md.h"
-#include "seq_bond.h"
+#include "seq/bond.h"
 #include <cassert>
 
 namespace tinker {

@@ -5,4 +5,4 @@ namespace tinker {
 void cudalibData(RcOp);
 }
 
-#include "globcudalib.h"
+#include "mod/cudalib.h"

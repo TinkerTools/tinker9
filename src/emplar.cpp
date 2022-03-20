@@ -1,4 +1,4 @@
-#include "emplar.h"
+#include "amoeba/emplar.h"
 #include "elec.h"
 #include "md.h"
 #include "tool/error.h"

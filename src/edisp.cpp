@@ -1,4 +1,4 @@
-#include "edisp.h"
+#include "hippo/edisp.h"
 #include "box.h"
 #include "md.h"
 #include "nblist.h"

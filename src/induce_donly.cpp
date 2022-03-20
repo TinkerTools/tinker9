@@ -1,4 +1,4 @@
-#include "induce_donly.h"
+#include "hippo/induce_donly.h"
 #include "nblist.h"
 
 namespace tinker {

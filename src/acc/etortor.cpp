@@ -2,7 +2,7 @@
 #include "evalence.h"
 #include "mathfunc.h"
 #include "md.h"
-#include "seq_tortor.h"
+#include "seq/tortor.h"
 
 namespace tinker {
 template <class Ver>

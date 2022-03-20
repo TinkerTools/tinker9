@@ -1,4 +1,4 @@
-#include "empole.h"
+#include "amoeba/empole.h"
 #include "mathfunc.h"
 #include "md.h"
 

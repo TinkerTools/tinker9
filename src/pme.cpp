@@ -1,7 +1,7 @@
 #include "pme.h"
 #include "box.h"
-#include "edisp.h"
 #include "elec.h"
+#include "hippo/edisp.h"
 #include "mathfunc.h"
 #include "md.h"
 #include "pmestuf.h"

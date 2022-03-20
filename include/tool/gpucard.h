@@ -46,4 +46,4 @@ std::vector<DeviceAttribute>& gpuDeviceAttributes();
 }
 #endif
 
-#include "globgpucard.h"
+#include "mod/gpucard.h"

@@ -1,10 +1,10 @@
 #include "add.h"
-#include "empole.h"
-#include "glob.nblist.h"
+#include "amoeba/empole.h"
+#include "glob/nblist.h"
 #include "image.h"
 #include "md.h"
 #include "pmestuf.h"
-#include "seq_pair_mpole.h"
+#include "seq/pair_mpole.h"
 #include "switch.h"
 #include "tool/gpucard.h"
 

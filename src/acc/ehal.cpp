@@ -1,10 +1,10 @@
 #include "add.h"
 #include "evdw.h"
-#include "glob.nblist.h"
+#include "glob/nblist.h"
 #include "image.h"
 #include "md.h"
-#include "seq_pair_hal.h"
-#include "seq_switch.h"
+#include "seq/pair_hal.h"
+#include "seq/switch.h"
 #include "switch.h"
 #include "tool/gpucard.h"
 

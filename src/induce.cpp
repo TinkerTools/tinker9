@@ -1,4 +1,4 @@
-#include "induce.h"
+#include "amoeba/induce.h"
 #include "nblist.h"
 
 namespace tinker {

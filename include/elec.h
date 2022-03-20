@@ -1,11 +1,11 @@
 #pragma once
-#include "mod.cflux.h"
-#include "mod.charge.h"
-#include "mod.chgpen.h"
-#include "mod.chgpot.h"
-#include "mod.ctrpot.h"
-#include "mod.mpole.h"
-#include "mod.polar.h"
+#include "glob/cflux.h"
+#include "glob/charge.h"
+#include "glob/chgpen.h"
+#include "glob/chgpot.h"
+#include "glob/ctrpot.h"
+#include "glob/mpole.h"
+#include "glob/polar.h"
 #include "tool/rcman.h"
 
 namespace tinker {

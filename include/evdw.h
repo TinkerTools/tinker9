@@ -1,7 +1,7 @@
 #pragma once
-#include "mod.mutant.h"
-#include "mod.vdw.h"
-#include "mod.vdwpot.h"
+#include "glob/mutant.h"
+#include "glob/vdw.h"
+#include "glob/vdwpot.h"
 #include "tool/rcman.h"
 
 /**

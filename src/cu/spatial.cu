@@ -663,7 +663,7 @@ inline int ixyz_to_box(int ix, int iy, int iz, int px, int py, int pz)
 
 //====================================================================//
 
-#include "seq_triangle.h"
+#include "seq/triangle.h"
 #include "spatial2.h"
 
 namespace tinker {

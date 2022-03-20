@@ -1,5 +1,5 @@
-#include "glob.accasync.h"
-#include "mathfunc_parallel_acc.h"
+#include "glob/accasync.h"
+#include "math/parallel_acc.h"
 #include "tool/deduceptr.h"
 #include <cassert>
 

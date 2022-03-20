@@ -1,5 +1,5 @@
+#include "amoeba/epolar.h"
 #include "box.h"
-#include "epolar.h"
 #include "execq.h"
 #include "md.h"
 #include "potent.h"
@@ -16,7 +16,7 @@
 #include <tinker/detail/units.hh>
 
 #if TINKER_CUDART
-#   include "globgpucard.h"
+#   include "mod/gpucard.h"
 #   include "tool/error.h"
 #   include <cuda_runtime.h>
 #endif

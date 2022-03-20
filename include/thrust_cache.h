@@ -13,8 +13,8 @@ public:
    void clear();
 
 private:
-   size_t nbytes;
    value_type* ptr;
+   size_t nbytes;
 };
 extern ThrustCache thrust_cache;
 

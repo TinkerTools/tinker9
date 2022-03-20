@@ -1,4 +1,4 @@
-#include "erepel.h"
+#include "hippo/erepel.h"
 #include "elec.h"
 #include "md.h"
 #include "nblist.h"

@@ -69,8 +69,7 @@ int main(int argc, char** argv)
       try {
          launcher().at(arg0)(argc, argv);
       } catch (const std::exception& err) {
-         print(stdout, " Terminating with uncaught exception :  %s\n",
-               err.what());
+         print(stdout, " Terminating with uncaught exception :  %s\n", err.what());
       }
       tinkerFortranRuntimeEnd();
       return 0;

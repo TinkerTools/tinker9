@@ -1,5 +1,5 @@
 #include "integrator.h"
-#include "mathfunc_sinhc.h"
+#include "math/sinhc.h"
 #include "md.h"
 #include "tool/trimatexp.h"
 #include <tinker/detail/mdstuf.hh>

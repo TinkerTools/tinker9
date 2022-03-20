@@ -1,6 +1,6 @@
 #include "box.h"
 #include "energy.h"
-#include "mathfunc_ou.h"
+#include "math/ou.h"
 #include "md.h"
 #include "random.h"
 #include "rattle.h"

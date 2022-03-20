@@ -1,8 +1,8 @@
 #include "add.h"
-#include "cflux.h"
 #include "elec.h"
 #include "evalence.h"
-#include "mathfunc_const.h"
+#include "hippo/cflux.h"
+#include "math/const.h"
 #include "md.h"
 #include <cassert>
 

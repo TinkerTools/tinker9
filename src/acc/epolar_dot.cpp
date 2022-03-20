@@ -1,5 +1,5 @@
 #include "add.h"
-#include "epolar.h"
+#include "amoeba/epolar.h"
 #include "md.h"
 
 namespace tinker {

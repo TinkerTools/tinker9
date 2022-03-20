@@ -1,5 +1,5 @@
 #pragma once
-#include "glob.pme.h"
+#include "glob/pme.h"
 
 namespace tinker {
 void bspline_fill(PMEUnit, int level);

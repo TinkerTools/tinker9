@@ -1,6 +1,6 @@
 #include "energy.h"
 #include "integrator.h"
-#include "lf_lpiston.h"
+#include "lflpiston.h"
 #include "md.h"
 #include "tool/darray.h"
 
