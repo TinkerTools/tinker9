@@ -226,6 +226,4 @@ void mdsaveData(RcOp);
 }
 
 #include "egv.h"
-
-#include "glob.md.h"
-#include "glob.nelembuffer.h"
+#include "globmd.h"

@@ -2,6 +2,8 @@
 #include "tool/energybuffer.h"
 
 namespace tinker {
+TINKER_EXTERN int nelem_buffer;
+
 /// \ingroup mdegv
 /// \page mdegv
 ///

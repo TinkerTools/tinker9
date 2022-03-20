@@ -44,4 +44,4 @@ struct Group
 void groupData(RcOp);
 }
 
-#include "glob.molecule.h"
+#include "globmolecule.h"

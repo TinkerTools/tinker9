@@ -16,7 +16,7 @@
 #include <tinker/detail/units.hh>
 
 #if TINKER_CUDART
-#   include "glob.gpucard.h"
+#   include "globgpucard.h"
 #   include "tool/error.h"
 #   include <cuda_runtime.h>
 #endif

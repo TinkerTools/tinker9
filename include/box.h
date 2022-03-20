@@ -92,4 +92,4 @@ void boxCopyin();
 real boxVolume();
 }
 
-#include "glob.box.h"
+#include "globbox.h"

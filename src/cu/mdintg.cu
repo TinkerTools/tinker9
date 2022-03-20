@@ -1,4 +1,4 @@
-#include "glob.cudalib.h"
+#include "globcudalib.h"
 #include "launch.h"
 #include "md.h"
 #include "syntax/cu/reduce.h"
