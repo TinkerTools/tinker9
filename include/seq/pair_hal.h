@@ -1,7 +1,7 @@
 #pragma once
 #include "mathfunc.h"
 #include "seq/switch.h"
-#include "seq_def.h"
+#include "seqdef.h"
 
 namespace tinker {
 /**

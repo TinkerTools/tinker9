@@ -1,5 +1,5 @@
 #pragma once
-#include "seq_def.h"
+#include "seqdef.h"
 
 namespace tinker {
 /**

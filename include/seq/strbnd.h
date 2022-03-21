@@ -1,6 +1,6 @@
 #pragma once
 #include "mathfunc.h"
-#include "seq_def.h"
+#include "seqdef.h"
 
 namespace tinker {
 #pragma acc routine seq

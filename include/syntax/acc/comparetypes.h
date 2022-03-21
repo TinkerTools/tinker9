@@ -1,5 +1,4 @@
 #pragma once
-#include "macro.h"
 #include <type_traits>
 
 namespace tinker {

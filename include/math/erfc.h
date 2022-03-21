@@ -1,6 +1,6 @@
 #pragma once
 #include "macro.h"
-#include "seq_def.h"
+#include "seqdef.h"
 #include <cmath>
 
 namespace tinker {

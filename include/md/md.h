@@ -4,7 +4,7 @@
 //====================================================================//
 // mdcalc
 
-#include "compare_types.h"
+#include "comparetypes.h"
 
 namespace tinker {
 namespace calc {

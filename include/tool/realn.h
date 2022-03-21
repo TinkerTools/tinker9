@@ -1,7 +1,7 @@
 #pragma once
 #include "macro.h"
-#include "realn_def.h"
-#include "seq_def.h"
+#include "realndef.h"
+#include "seqdef.h"
 
 namespace tinker {
 #if TINKER_REAL_SIZE == 8
