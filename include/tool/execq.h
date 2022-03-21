@@ -1,5 +1,4 @@
 #pragma once
-#include "tool/rcman.h"
 #include <cstddef>
 
 namespace tinker {
@@ -12,7 +11,7 @@ private:
 public:
    void deallocate();
    void allocate();
-   void begin_copyout();
-   void end_copyout();
+   void beginCopyout();
+   void endCopyout();
 };
 }

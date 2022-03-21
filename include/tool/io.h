@@ -1,5 +1,4 @@
 #pragma once
-#include "macro.h"
 #include <cstring>
 #include <iostream>
 #include <sstream>

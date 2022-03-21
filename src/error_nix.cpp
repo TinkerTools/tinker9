@@ -1,4 +1,5 @@
 #if defined(__APPLE__) || defined(__linux__)
+#   include "macro.h"
 #   include "tool/error.h"
 #   include "tool/io.h"
 #   include <cxxabi.h>

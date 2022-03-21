@@ -1,4 +1,4 @@
-#include "tool/trimatexp.h"
+#include "math/trimatexp.h"
 #include "math/sinhc.h"
 #include <algorithm>
 #include <cmath>

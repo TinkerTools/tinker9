@@ -1,4 +1,5 @@
 #pragma once
+#include "macro.h"
 #include "realn_def.h"
 #include "seq_def.h"
 

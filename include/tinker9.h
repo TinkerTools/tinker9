@@ -1,6 +1,7 @@
 #pragma once
-#include <tinker/routines.h>
+#include "macro.h"
 #include <string>
+#include <tinker/routines.h>
 
 namespace tinker {
 void x_analyze(int, char**);

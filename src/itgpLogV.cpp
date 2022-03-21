@@ -1,7 +1,7 @@
 #include "integrator.h"
 #include "math/sinhc.h"
+#include "math/trimatexp.h"
 #include "md.h"
-#include "tool/trimatexp.h"
 #include <tinker/detail/mdstuf.hh>
 
 namespace tinker {

@@ -1,10 +1,10 @@
 #include "box.h"
 #include "integrator.h"
 #include "math/ou.h"
+#include "math/trimatexp.h"
 #include "md.h"
 #include "random.h"
 #include "tool/io.h"
-#include "tool/trimatexp.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>

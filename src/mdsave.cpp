@@ -76,7 +76,7 @@ void mdsave_dup_then_write(int istep, time_prec dt)
 
    // Record mdsave_begin_event when g::s0 is available.
    // g::s1 will wait until mdsave_begin_event is recorded.
-   dup_stream.begin_copyout();
+   dup_stream.beginCopyout();
 
    mtx_dup.lock();
    idle_dup = true;
@@ -148,7 +148,7 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    // Record mdsave_end_event when g::s1 is available.
    // g::s0 will wait until mdsave_end_event is recorded, so that the dup_
    // arrays are idle and ready to be written.
-   dup_stream.end_copyout();
+   dup_stream.endCopyout();
 
    double dt1 = dt;
    double epot1 = epot;

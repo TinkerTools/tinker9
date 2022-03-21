@@ -73,7 +73,7 @@ T chi_squared(int k)
 template float chi_squared<float>(int);
 template double chi_squared<double>(int);
 
-void random_data(RcOp op)
+void randomData(RcOp op)
 {
    if (op & rc_init) {
       int seed;

@@ -57,7 +57,7 @@ namespace tinker {
 void device_data(RcOp op)
 {
    // host
-   RcMan rand42{random_data, op};
+   RcMan rand42{randomData, op};
    RcMan pf42{platformData, op};
    RcMan gpu42{gpuData, op};
 

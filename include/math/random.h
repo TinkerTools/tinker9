@@ -1,4 +1,5 @@
 #pragma once
+#include "macro.h"
 #include "tool/rcman.h"
 
 namespace tinker {
@@ -43,5 +44,5 @@ T normal(T u, T s);
 template <class T = real>
 T chi_squared(int k);
 
-void random_data(RcOp);
+void randomData(RcOp);
 }

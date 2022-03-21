@@ -1,12 +1,12 @@
 #include "box.h"
 #include "energy.h"
 #include "math/ou.h"
+#include "math/trimatexp.h"
 #include "md.h"
 #include "random.h"
 #include "rattle.h"
 #include "tinker9.h"
 #include "tool/error.h"
-#include "tool/trimatexp.h"
 #include <cmath>
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/freeze.hh>

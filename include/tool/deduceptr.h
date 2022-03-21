@@ -1,5 +1,4 @@
 #pragma once
-#include "macro.h"
 #include <cstddef>
 #include <type_traits>
 

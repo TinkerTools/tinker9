@@ -15,7 +15,7 @@ void ExecQ::deallocate() {}
 
 void ExecQ::allocate() {}
 
-void ExecQ::begin_copyout() {}
+void ExecQ::beginCopyout() {}
 
-void ExecQ::end_copyout() {}
+void ExecQ::endCopyout() {}
 }

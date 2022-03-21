@@ -28,13 +28,13 @@ void ExecQ::allocate()
    check_rt(cudaEventCreateWithFlags(&ptr->mdsave_end_event, cudaEventDisableTiming));
 }
 
-void ExecQ::begin_copyout()
+void ExecQ::beginCopyout()
 {
    check_rt(cudaEventRecord(ptr->mdsave_begin_event, g::s0));
    check_rt(cudaStreamWaitEvent(ptr->ss, ptr->mdsave_begin_event, 0));
 }
 
-void ExecQ::end_copyout()
+void ExecQ::endCopyout()
 {
    check_rt(cudaEventRecord(ptr->mdsave_end_event, ptr->ss));
    check_rt(cudaStreamWaitEvent(g::s0, ptr->mdsave_end_event, 0));
