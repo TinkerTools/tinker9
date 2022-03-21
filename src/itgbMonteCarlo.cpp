@@ -1,7 +1,7 @@
 #include "integrator.h"
 #include "md.h"
 #include "random.h"
-#include "tinkerrt.h"
+#include "tinker9.h"
 #include "tool/darray.h"
 #include "tool/io.h"
 #include <tinker/detail/bath.hh>

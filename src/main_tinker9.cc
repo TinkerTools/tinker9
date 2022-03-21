@@ -1,5 +1,4 @@
-#include "maintinker9.h"
-#include "tinkerrt.h"
+#include "tinker9.h"
 #include "tool/io.h"
 #include <algorithm>
 #include <functional>

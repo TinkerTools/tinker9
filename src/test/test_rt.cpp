@@ -1,5 +1,5 @@
-#include "testrt.h"
-#include "tinkerrt.h"
+#include "test/testrt.h"
+#include "tinker9.h"
 #include "tool/error.h"
 #include <fstream>
 #include <tinker/detail/bath.hh>

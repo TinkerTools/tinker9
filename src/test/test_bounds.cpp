@@ -1,6 +1,6 @@
 #include "md.h"
-#include "test.h"
-#include "testrt.h"
+#include "test/test.h"
+#include "test/testrt.h"
 #include "tool/io.h"
 #include <fstream>
 #include <tinker/detail/files.hh>

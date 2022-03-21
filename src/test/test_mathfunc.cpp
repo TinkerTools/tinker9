@@ -1,5 +1,5 @@
 #include "mathfunc.h"
-#include "test.h"
+#include "test/test.h"
 using namespace tinker;
 
 TEST_CASE("MathFuncPow2", "[util][math]")

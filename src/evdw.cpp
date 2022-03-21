@@ -2,7 +2,7 @@
 #include "md.h"
 #include "nblist.h"
 #include "potent.h"
-#include "tinkerrt.h"
+#include "tinker9.h"
 #include "tool/io.h"
 #include "tool/zero.h"
 #include <cassert>

@@ -1,6 +1,6 @@
 #include "amoeba/field.h"
-#include "test.h"
-#include "testrt.h"
+#include "test/test.h"
+#include "test/testrt.h"
 #include <tinker/detail/units.hh>
 
 using namespace tinker;

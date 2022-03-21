@@ -1,7 +1,15 @@
 #pragma once
+#include <tinker/routines.h>
+#include <string>
 
 namespace tinker {
-void promo();
+void x_analyze(int, char**);
+void x_bar(int, char**);
+void x_dynamic(int, char**);
+void x_help(int, char**);
+void x_info(int, char**);
+void x_minimize(int, char**);
+void x_testgrad(int, char**);
 }
 
 #define TINKER9_VERSION_MAJOR 1
@@ -39,3 +47,23 @@ TINKER9_PROMO3__                                                                
 TINKER9_PROMO2__                                                                      \
 TINKER9_PROMO1__                                                                 "\n"
 // clang-format on
+
+namespace tinker {
+void promo();
+void initial();
+void mechanic2();
+
+void nextarg(size_t len, char* str, int& exist);
+
+template <size_t Len>
+void nextarg(char (&str)[Len], int& exist)
+{
+   nextarg(Len, str, exist);
+}
+
+template <class T1, class T2>
+void get_kv(std::string k, T1& v, T2 vdefault);
+
+template <class T>
+void get_kbool(std::string k, T& v, bool v_if_k_not_found);
+}

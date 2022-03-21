@@ -1,5 +1,5 @@
-#include "test.h"
-#include "testrt.h"
+#include "test/test.h"
+#include "test/testrt.h"
 
 using namespace tinker;
 

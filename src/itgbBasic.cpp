@@ -1,5 +1,5 @@
 #include "integrator.h"
-#include "tinkerrt.h"
+#include "tinker9.h"
 #include "tool/io.h"
 #include <tinker/detail/bath.hh>
 

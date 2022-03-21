@@ -1,7 +1,7 @@
 #include "energy.h"
 #include "md.h"
 #include "nblist.h"
-#include "tinkerrt.h"
+#include "tinker9.h"
 #include "tool/io.h"
 #include <tinker/detail/files.hh>
 #include <tinker/detail/inform.hh>

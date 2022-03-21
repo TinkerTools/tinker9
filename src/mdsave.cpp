@@ -2,7 +2,7 @@
 #include "box.h"
 #include "md.h"
 #include "potent.h"
-#include "tinkerrt.h"
+#include "tinker9.h"
 #include "tool/execq.h"
 #include <condition_variable>
 #include <future>

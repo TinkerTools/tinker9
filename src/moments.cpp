@@ -3,7 +3,7 @@
 #include "hippo/epolar_chgpen.h"
 #include "md.h"
 #include "potent.h"
-#include "tinkerrt.h"
+#include "tinker9.h"
 #include "tool/darray.h"
 #include <cmath>
 #include <tinker/detail/atomid.hh>

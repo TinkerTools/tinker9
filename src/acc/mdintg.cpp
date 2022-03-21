@@ -1,5 +1,5 @@
 #include "md.h"
-#include "tinkerrt.h"
+#include "tinker9.h"
 #include "tool/io.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/inform.hh>

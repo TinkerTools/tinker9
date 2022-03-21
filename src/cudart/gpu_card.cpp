@@ -1,6 +1,6 @@
 #include "algorithm"
 #include "md.h"
-#include "tinkerrt.h"
+#include "tinker9.h"
 #include "tool/error.h"
 #include "tool/exec.h"
 #include "tool/gpucard.h"

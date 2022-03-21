@@ -4,7 +4,7 @@
 #include "nblist.h"
 #include "pmestuf.h"
 #include "potent.h"
-#include "tinkerrt.h"
+#include "tinker9.h"
 #include "tool/zero.h"
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/disp.hh>

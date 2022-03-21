@@ -1,8 +1,8 @@
 #include "box.h"
 #include "image.h"
 #include "mathfunc.h"
-#include "test.h"
-#include "tinkerrt.h"
+#include "test/test.h"
+#include "tinker9.h"
 #include "tool/gpucard.h"
 #include <cmath>
 #include <tinker/detail/bound.hh>

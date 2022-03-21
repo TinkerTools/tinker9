@@ -1,8 +1,8 @@
 #include "md.h"
-#include "tinkerrt.h"
+#include "tinker9.h"
 #include "tool/compilers.h"
 #include "tool/gpucard.h"
-#include "version.h"
+#include "tool/io.h"
 
 namespace tinker {
 static const char* get_SHA1()

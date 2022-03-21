@@ -1,5 +1,5 @@
+#include "tinker9.h"
 #include "tool/io.h"
-#include "version.h"
 
 namespace tinker {
 void promo()

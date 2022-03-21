@@ -1,5 +1,5 @@
-#include "tinkerrt.h"
-#include "version.h"
+#include "tinker9.h"
+#include "tool/io.h"
 #include <tinker/modcpp.h>
 #ifdef _OPENMP
 #   include <omp.h>
