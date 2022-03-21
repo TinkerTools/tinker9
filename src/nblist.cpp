@@ -16,8 +16,8 @@
 #include "potent.h"
 #include "spatial2.h"
 #include "switch.h"
-#include "thrust_cache.h"
 #include "tool/darray.h"
+#include "tool/thrustcache.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/limits.hh>
@@ -297,7 +297,7 @@ void nblist_data(RcOp op)
       mspatial_v2_unit.close();
       dspspatial_v2_unit.close();
 
-      thrust_cache_dealloc();
+      ThrustCache::deallocate();
 #endif
    }
 
@@ -452,7 +452,7 @@ void nblist_data(RcOp op)
 
 #if TINKER_CUDART
    if (alloc_thrust_cache)
-      thrust_cache_alloc();
+      ThrustCache::allocate();
 #endif
 }
 

@@ -45,7 +45,7 @@ void x_info(int, char**)
    auto fmt = "    %-36s %s\n";
    auto fmz = "    %-36s %zu\n";
 
-   platform_data(rc_init);
+   platformData(rc_init);
    gpuData(rc_init);
 
    print(out, "\n\n Program Information\n\n");
@@ -106,6 +106,6 @@ void x_info(int, char**)
 #endif
 
    gpuData(rc_dealloc);
-   platform_data(rc_dealloc);
+   platformData(rc_dealloc);
 }
 }

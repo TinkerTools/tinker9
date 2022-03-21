@@ -2,9 +2,7 @@
 #include "tinkerrt.h"
 
 namespace tinker {
-int pltfm_config;
-
-void platform_data(RcOp op)
+void platformData(RcOp op)
 {
    if (op & rc_dealloc) {
       pltfm_config = UNSET_PLTFM;

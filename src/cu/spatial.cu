@@ -10,7 +10,7 @@
 #include "syntax/cu/copysign.h"
 #include "syntax/cu/ffsn.h"
 #include "syntax/cu/imagefc.h"
-#include "thrust_cache.h"
+#include "tool/thrustcache.h"
 #include <thrust/extrema.h>
 #include <thrust/remove.h>
 #include <thrust/scan.h>
@@ -507,7 +507,7 @@ void spatial_data_init_cu(SpatialUnit u)
    auto*& xkf = u->xkf;
 
    // auto policy = thrust::device;
-   auto policy = thrust::cuda::par(thrust_cache).on(g::s0);
+   auto policy = thrust::cuda::par(ThrustCache::instance()).on(g::s0);
 
    // B.1 D.1
    darray::zero(g::q0, nx + 1, ax_scan);
@@ -1362,7 +1362,7 @@ void spatial_data_init_cu(Spatial2Unit u)
    const real lbuf = u->buffer;
    const int n = u->n;
 
-   auto policy = thrust::cuda::par(thrust_cache).on(g::s0);
+   auto policy = thrust::cuda::par(ThrustCache::instance()).on(g::s0);
 
    const auto* lx = u->x;
    const auto* ly = u->y;

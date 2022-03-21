@@ -58,7 +58,7 @@ void device_data(RcOp op)
 {
    // host
    RcMan rand42{random_data, op};
-   RcMan pf42{platform_data, op};
+   RcMan pf42{platformData, op};
    RcMan gpu42{gpuData, op};
 
    // device

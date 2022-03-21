@@ -34,4 +34,5 @@
 #include "mod/gpucard.h"
 #include "mod/md.h"
 #include "mod/molecule.h"
+#include "mod/platform.h"
 #include "mod/rattle.h"

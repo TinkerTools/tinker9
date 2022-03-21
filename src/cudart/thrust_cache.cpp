@@ -1,6 +1,6 @@
-#include "thrust_cache.h"
 #include "md.h"
 #include "tool/darray.h"
+#include "tool/thrustcache.h"
 
 namespace tinker {
 ThrustCache::ThrustCache()
@@ -31,16 +31,20 @@ void ThrustCache::clear()
    nbytes = 0;
 }
 
-ThrustCache thrust_cache;
-
-void thrust_cache_dealloc()
+ThrustCache& ThrustCache::instance()
 {
-   thrust_cache.clear();
+   static ThrustCache thrust_cache;
+   return thrust_cache;
 }
 
-void thrust_cache_alloc()
+void ThrustCache::deallocate()
+{
+   ThrustCache::instance().clear();
+}
+
+void ThrustCache::allocate()
 {
    const size_t numbyte = 10 * n * sizeof(real);
-   thrust_cache.allocate(numbyte);
+   ThrustCache::instance().allocate(numbyte);
 }
 }

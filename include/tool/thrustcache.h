@@ -1,5 +1,4 @@
 #pragma once
-#include "macro.h"
 #include <cstddef>
 
 namespace tinker {
@@ -12,12 +11,12 @@ public:
    void deallocate(value_type*, size_t);
    void clear();
 
+   static ThrustCache& instance();
+   static void allocate();
+   static void deallocate();
+
 private:
    value_type* ptr;
    size_t nbytes;
 };
-extern ThrustCache thrust_cache;
-
-void thrust_cache_alloc();
-void thrust_cache_dealloc();
 }
