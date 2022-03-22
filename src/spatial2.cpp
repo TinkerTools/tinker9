@@ -35,7 +35,7 @@ void spatial2_data_alloc(Spatial2Unit& u, int n, double cutoff, double buffer, c
    st.nak = (n + Spatial::BLOCK - 1) / Spatial::BLOCK;
    st.nakp = (st.nak + 1) * st.nak / 2;
    st.nakpk = (st.nakp + Spatial::BLOCK - 1) / Spatial::BLOCK;
-   int level = 1 + floor_log2(st.nak - 1);
+   int level = 1 + floorLog2(st.nak - 1);
    spatial2_cut(st.px, st.py, st.pz, level);
    st.cap_nakpl = 32 + 8 * st.nak;
 
@@ -97,7 +97,7 @@ void Spatial2::ScaleInfo::set(int nns, int (*jjs)[2])
 void spatial2_cut(int& px, int& py, int& pz, int level)
 {
    spatial_cut(px, py, pz, level);
-   int pmax = max_of(px, py, pz) + 1;
+   int pmax = maxOf(px, py, pz) + 1;
    pmax = std::min(pmax, 10);
    px = pmax;
    py = pmax;

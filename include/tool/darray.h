@@ -1,6 +1,6 @@
 #pragma once
 #include "glob/accasync.h"
-#include "mathfunc.h"
+#include "math/inc.h"
 #include "tool/deduceptr.h"
 #include <vector>
 

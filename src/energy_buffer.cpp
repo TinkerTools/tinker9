@@ -1,7 +1,7 @@
 #include "box.h"
 #include "energybuffer.h"
 #include "evdw.h"
-#include "mathfunc.h"
+#include "math/inc.h"
 #include "md.h"
 #include <cassert>
 
@@ -9,7 +9,7 @@ namespace tinker {
 size_t buffer_size()
 {
    size_t bsize = nelem_buffer;
-   assert(is_pow2(bsize) && "buffer size must be power of 2.");
+   assert(isPow2(bsize) && "buffer size must be power of 2.");
    return bsize;
 }
 

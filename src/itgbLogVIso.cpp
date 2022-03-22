@@ -1,8 +1,7 @@
 #include "box.h"
 #include "integrator.h"
-#include "math/ou.h"
+#include "math/inc.h"
 #include "md.h"
-#include "random.h"
 #include "tool/io.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/mdstuf.hh>
@@ -25,7 +24,7 @@ void IsoBaroDevice::control_1_2(time_prec dt)
    double gbar = 2 * eksu1 * al - tr_vir - dim * vol0 * bath::atmsph / units::prescon;
    gbar /= qbar;
    if (m_langevin)
-      vbar = ornstein_uhlenbeck_process(dt2, vbar, m_fric, gbar, b, m_rdn);
+      vbar = ouProcess(dt2, vbar, m_fric, gbar, b, m_rdn);
    else
       vbar += gbar * dt2;
 }

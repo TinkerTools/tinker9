@@ -3,9 +3,8 @@
 
 #include "energy.h"
 #include "integrator.h"
-#include "math/pow2.h"
+#include "math/inc.h"
 #include "md.h"
-#include "random.h"
 #include "rattle.h"
 #include "tool/darray.h"
 #include "tool/io.h"
@@ -158,8 +157,8 @@ void mdIntegrateData(RcOp op)
 
 const TimeScaleConfig& mdRespaTsconfig()
 {
-   constexpr int fast = floor_log2_constexpr(RESPA_FAST); // short-range
-   constexpr int slow = floor_log2_constexpr(RESPA_SLOW); // long-range
+   constexpr int fast = floorLog2_constexpr(RESPA_FAST); // short-range
+   constexpr int slow = floorLog2_constexpr(RESPA_SLOW); // long-range
    static TimeScaleConfig tsconfig{
       {"ebond", fast},
       {"eangle", fast},

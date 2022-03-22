@@ -1,4 +1,4 @@
-#include "random.h"
+#include "math/inc.h"
 #include "tinker9.h"
 #include <chrono>
 #include <random>
@@ -52,7 +52,7 @@ template float normal<float>(float, float);
 template double normal<double>(double, double);
 
 template <class T>
-T chi_squared(int k)
+T chiSquared(int k)
 {
    if (k == 0)
       return 0;
@@ -70,8 +70,8 @@ T chi_squared(int k)
    return gam(generator);
 #endif
 }
-template float chi_squared<float>(int);
-template double chi_squared<double>(int);
+template float chiSquared<float>(int);
+template double chiSquared<double>(int);
 
 void randomData(RcOp op)
 {

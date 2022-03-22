@@ -1,7 +1,7 @@
 #include "energy.h"
+#include "math/inc.h"
 #include "md.h"
 #include "nblist.h"
-#include "random.h"
 #include "tinker9.h"
 #include "tool/io.h"
 #include <array>

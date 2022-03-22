@@ -86,7 +86,7 @@ void spatial_data_alloc(
    // internal
    st.n = n;
    st.nak = (n + Spatial::BLOCK - 1) / Spatial::BLOCK;
-   int level = 1 + floor_log2(st.nak - 1);
+   int level = 1 + floorLog2(st.nak - 1);
    spatial_cut(st.px, st.py, st.pz, level);
    st.nx = pow2(st.px + st.py + st.pz);
    st.nxk = (st.nx + Spatial::BLOCK - 1) / Spatial::BLOCK;

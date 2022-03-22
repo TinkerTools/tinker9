@@ -3,7 +3,7 @@
 #include "glob/spatial.h"
 #include "image.h"
 #include "launch.h"
-#include "mathfunc.h"
+#include "math/inc.h"
 #include "md.h"
 #include "osrw.h"
 #include "pchg/echglj.h"

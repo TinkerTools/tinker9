@@ -1,6 +1,6 @@
 #include "add.h"
 #include "elec.h"
-#include "mathfunc.h"
+#include "math/inc.h"
 #include "md.h"
 
 namespace tinker {

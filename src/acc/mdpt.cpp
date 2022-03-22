@@ -3,11 +3,10 @@
 
 #include "box.h"
 #include "energy.h"
-#include "mathfunc.h"
+#include "math/inc.h"
 #include "md.h"
 #include "molecule.h"
 #include "nblist.h"
-#include "random.h"
 #include "tool/io.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/bound.hh>
@@ -65,7 +64,7 @@ void mdBussiThermostat_acc(time_prec dt_prec, T_prec temp_prec)
    double c = std::exp(-dt / tautemp);
    double d = (1 - c) * (kelvin / temp) / nfree;
    double r = normal<double>();
-   double s = chi_squared<double>(nfree - 1);
+   double s = chiSquared<double>(nfree - 1);
    double scale = c + (s + r * r) * d + 2 * r * std::sqrt(c * d);
    scale = std::sqrt(scale);
    if (r + std::sqrt(c / d) < 0)

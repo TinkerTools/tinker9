@@ -1,5 +1,5 @@
 #pragma once
-#include "mathfunc.h"
+#include "math/inc.h"
 #include "precision.h"
 #include "tool/darray.h"
 

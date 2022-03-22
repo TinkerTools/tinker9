@@ -40,8 +40,8 @@ void finish()
 }
 }
 
+#include "math/inc.h"
 #include "platform.h"
-#include "random.h"
 #include "tool/gpucard.h"
 
 #include "box.h"

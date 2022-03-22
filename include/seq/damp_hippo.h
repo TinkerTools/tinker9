@@ -1,6 +1,6 @@
 #pragma once
 #include "fsinhc.h"
-#include "mathfunc.h"
+#include "math/inc.h"
 #include "seqdef.h"
 
 namespace tinker {

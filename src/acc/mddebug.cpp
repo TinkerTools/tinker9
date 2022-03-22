@@ -1,5 +1,5 @@
 #include "glob/accasync.h"
-#include "math/libfunc.h"
+#include "math/inc.h"
 #include "md.h"
 #include "tool/darray.h"
 #include "tool/error.h"

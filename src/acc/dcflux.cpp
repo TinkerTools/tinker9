@@ -3,7 +3,7 @@
 #include "energybuffer.h"
 #include "evalence.h"
 #include "hippo/cflux.h"
-#include "mathfunc.h"
+#include "math/inc.h"
 #include "md.h"
 #include "molecule.h"
 #include "seq/bsplgen.h"

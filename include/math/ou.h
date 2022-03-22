@@ -18,8 +18,7 @@ namespace tinker {
  * \param b       The parameter \f$ b \f$.
  * \param R       The random number of a standard normal distribution.
  */
-inline double ornstein_uhlenbeck_process(
-   double t, double x0, double gamma, double a, double b, double R)
+inline double ouProcess(double t, double x0, double gamma, double a, double b, double R)
 {
    if (gamma == 0) {
       return x0 + a * t + b * R * std::sqrt(t);

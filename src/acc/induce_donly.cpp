@@ -6,7 +6,7 @@
 #include "hippo/epolar_chgpen.h"
 #include "hippo/field_chgpen.h"
 #include "image.h"
-#include "math/lu.h"
+#include "math/inc.h"
 #include "md.h"
 #include "seq/damp_hippo.h"
 #include "tool/error.h"

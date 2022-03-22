@@ -1,5 +1,5 @@
 #include "box.h"
-#include "mathfunc.h"
+#include "math/inc.h"
 #include "md.h"
 #include "tinker9.h"
 #include "tool/darray.h"
@@ -132,9 +132,9 @@ void boxGetAxesAngles(
    double cos_a = DOT3(bx, cx) / (ybox * zbox);
    double cos_b = DOT3(cx, ax) / (zbox * xbox);
    double cos_c = DOT3(ax, bx) / (xbox * ybox);
-   double a_deg = radian_dp * std::acos(cos_a);
-   double b_deg = radian_dp * std::acos(cos_b);
-   double c_deg = radian_dp * std::acos(cos_c);
+   double a_deg = (180 / M_PI) * std::acos(cos_a);
+   double b_deg = (180 / M_PI) * std::acos(cos_b);
+   double c_deg = (180 / M_PI) * std::acos(cos_c);
 
    a = xbox;
    b = ybox;

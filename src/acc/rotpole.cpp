@@ -1,5 +1,5 @@
 #include "amoeba/empole.h"
-#include "mathfunc.h"
+#include "math/inc.h"
 #include "md.h"
 
 namespace tinker {

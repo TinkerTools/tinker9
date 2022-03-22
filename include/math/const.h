@@ -29,9 +29,7 @@ constexpr real sqrtpi = 1.77245385090551602730;
 /// \ingroup math
 /// \f$ 180/\pi \f$
 constexpr real radian = 57.2957795130823208768;
-constexpr double radian_dp = (180 / M_PI);
 /// \ingroup math
 /// \f$ \pi/180 \f$
 constexpr real _1radian = 0.01745329251994329576924;
-constexpr double _1radian_dp = (M_PI / 180);
 }

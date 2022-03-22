@@ -537,7 +537,7 @@ void spatial_data_init_cu(SpatialUnit u)
       // 65   / 64     / 2     / 4   / 2
       // 128  / 127    / 3     / 4   / 2
       // 129  / 128    / 4     / 8   / 3
-      int p = 1 + floor_log2(scale);
+      int p = 1 + floorLog2(scale);
       level += p;
       spatial_cut(px, py, pz, level);
       nx = pow2(px + py + pz);

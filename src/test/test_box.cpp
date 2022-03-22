@@ -1,6 +1,6 @@
 #include "box.h"
 #include "image.h"
-#include "mathfunc.h"
+#include "math/inc.h"
 #include "test/test.h"
 #include "tinker9.h"
 #include "tool/gpucard.h"

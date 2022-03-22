@@ -1,4 +1,4 @@
-#include "mathfunc.h"
+#include "math/inc.h"
 #include "test/test.h"
 using namespace tinker;
 
@@ -6,7 +6,7 @@ TEST_CASE("MathFuncPow2", "[util][math]")
 {
    SECTION("IsPow2")
    {
-      auto f = is_pow2;
+      auto f = isPow2;
 
       REQUIRE(f(0) == false);
       REQUIRE(f(1) == true);
@@ -42,9 +42,9 @@ TEST_CASE("MathFuncPow2", "[util][math]")
 
    SECTION("FloorLog2")
    {
-      auto f = floor_log2_constexpr;
-      int (*g)(int) = floor_log2;
-      int (*k)(long long) = floor_log2;
+      auto f = floorLog2_constexpr;
+      int (*g)(int) = floorLog2;
+      int (*k)(long long) = floorLog2;
 
       // corner case
       REQUIRE(f(0) == 0);
@@ -81,8 +81,8 @@ TEST_CASE("MathFuncPow2", "[util][math]")
 
    SECTION("CeilLog2")
    {
-      int (*f)(int) = ceil_log2;
-      int (*g)(long long) = ceil_log2;
+      int (*f)(int) = ceilLog2;
+      int (*g)(long long) = ceilLog2;
 
       REQUIRE(f(1) == 0);
       REQUIRE(f(2) == 1);

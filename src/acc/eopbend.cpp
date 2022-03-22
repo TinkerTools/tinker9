@@ -1,6 +1,6 @@
 #include "add.h"
 #include "evalence.h"
-#include "mathfunc.h"
+#include "math/inc.h"
 #include "md.h"
 #include "seq/opbend.h"
 #include <cassert>

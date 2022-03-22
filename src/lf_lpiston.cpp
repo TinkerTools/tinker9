@@ -1,8 +1,8 @@
 #include "box.h"
 #include "energy.h"
 #include "lflpiston.h"
+#include "math/inc.h"
 #include "md.h"
-#include "random.h"
 #include "rattle.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>

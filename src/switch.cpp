@@ -1,5 +1,5 @@
 #include "switch.h"
-#include "mathfunc.h"
+#include "math/inc.h"
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/nonpol.hh>
 
@@ -49,7 +49,7 @@ real switch_cut(switch_t mode)
       cut = nonpol::stoff;
       break;
    default: // switch_default
-      cut = min_of(vdwtaper, reptaper, disptaper, chgtaper, dpltaper, mpoletaper, ctrntaper);
+      cut = minOf(vdwtaper, reptaper, disptaper, chgtaper, dpltaper, mpoletaper, ctrntaper);
       break;
    }
    return cut;
@@ -100,7 +100,7 @@ real switch_off(switch_t mode)
       off = nonpol::stcut;
       break;
    default: // switch_default
-      off = min_of(vdwcut, repcut, dispcut, chgcut, dplcut, mpolecut, ctrncut);
+      off = minOf(vdwcut, repcut, dispcut, chgcut, dplcut, mpolecut, ctrncut);
       break;
    }
    return off;

@@ -2,7 +2,7 @@
 #include "box.h"
 #include "elec.h"
 #include "hippo/edisp.h"
-#include "mathfunc.h"
+#include "math/inc.h"
 #include "md.h"
 #include "pmestuf.h"
 #include "potent.h"
@@ -90,7 +90,7 @@ void pme_op_copyin(PMEUnit unit)
 
    // This code assumes that the FFT grids of an energy term will not change in
    // a calculation.
-   int maxfft = max_of(st.nfft1, st.nfft2, st.nfft3);
+   int maxfft = maxOf(st.nfft1, st.nfft2, st.nfft3);
    std::vector<double> array(st.bsorder);
    std::vector<double> bsarray(maxfft);
    double x = 0;

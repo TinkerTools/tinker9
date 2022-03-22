@@ -1,4 +1,4 @@
-#include "mathfunc.h"
+#include "math/inc.h"
 #include "md.h"
 #include "test/test.h"
 #include "test/testrt.h"
