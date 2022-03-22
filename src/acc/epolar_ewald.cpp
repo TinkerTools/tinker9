@@ -1,12 +1,12 @@
 #include "add.h"
 #include "ff/amoeba/epolar.h"
-#include "glob/nblist.h"
 #include "ff/image.h"
-#include "md.h"
 #include "ff/pme.h"
+#include "ff/switch.h"
+#include "glob/nblist.h"
+#include "md.h"
 #include "seq/pair_polar.h"
 #include "seq/switch.h"
-#include "ff/switch.h"
 #include "tool/gpucard.h"
 
 namespace tinker {

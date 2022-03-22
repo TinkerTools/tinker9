@@ -1,15 +1,15 @@
 // Eventually thrust will drop c++11 support.
 #define THRUST_IGNORE_DEPRECATED_CPP_DIALECT
 
-#include "ff/box.h"
 #include "copysign.h"
-#include "ffsn.h"
+#include "ff/box.h"
 #include "ff/image.h"
+#include "ff/nblist.h"
+#include "ff/spatial.h"
+#include "ffsn.h"
 #include "imagefc.h"
 #include "launch.h"
 #include "md.h"
-#include "ff/nblist.h"
-#include "ff/spatial.h"
 #include "tool/thrustcache.h"
 #include <thrust/extrema.h>
 #include <thrust/remove.h>
@@ -663,8 +663,8 @@ inline int ixyz_to_box(int ix, int iy, int iz, int px, int py, int pz)
 
 //====================================================================//
 
-#include "seq/triangle.h"
 #include "ff/spatial2.h"
+#include "seq/triangle.h"
 
 namespace tinker {
 namespace {

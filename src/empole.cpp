@@ -1,7 +1,7 @@
 #include "ff/amoeba/empole.h"
-#include "md.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
+#include "md.h"
 #include "tool/zero.h"
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/sizes.hh>

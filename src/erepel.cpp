@@ -1,8 +1,8 @@
 #include "ff/hippo/erepel.h"
 #include "ff/elec.h"
-#include "md.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
+#include "md.h"
 #include "tool/darray.h"
 #include "tool/zero.h"
 #include <tinker/detail/couple.hh>

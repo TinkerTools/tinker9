@@ -1,6 +1,6 @@
 #include "ff/energy.h"
-#include "md.h"
 #include "ff/nblist.h"
+#include "md.h"
 #include "tinker9.h"
 #include "tool/io.h"
 #include <tinker/detail/files.hh>

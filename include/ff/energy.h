@@ -4,10 +4,10 @@
 #include "ff/amoeba/emplar.h"
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
-#include "ff/pchg/evalence.h"
-#include "ff/pchg/evdw.h"
 #include "ff/pchg/echarge.h"
 #include "ff/pchg/echglj.h"
+#include "ff/pchg/evalence.h"
+#include "ff/pchg/evdw.h"
 
 #include "ff/hippo/echgtrn.h"
 #include "ff/hippo/edisp.h"

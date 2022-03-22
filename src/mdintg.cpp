@@ -2,10 +2,10 @@
 #include "tool/log.h"
 
 #include "ff/energy.h"
+#include "ff/rattle.h"
 #include "integrator.h"
 #include "math/inc.h"
 #include "md.h"
-#include "ff/rattle.h"
 #include "tool/darray.h"
 #include "tool/io.h"
 #include <cassert>

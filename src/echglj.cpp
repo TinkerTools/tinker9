@@ -1,8 +1,8 @@
 #include "ff/pchg/echglj.h"
 #include "ff/box.h"
-#include "md.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
+#include "md.h"
 #include "tool/io.h"
 #include "tool/zero.h"
 #include <array>

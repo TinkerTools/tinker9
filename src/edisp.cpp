@@ -1,9 +1,9 @@
 #include "ff/hippo/edisp.h"
 #include "ff/box.h"
-#include "md.h"
 #include "ff/nblist.h"
 #include "ff/pmestuf.h"
 #include "ff/potent.h"
+#include "md.h"
 #include "tinker9.h"
 #include "tool/zero.h"
 #include <tinker/detail/couple.hh>

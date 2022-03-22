@@ -1,8 +1,8 @@
 #include "ff/energy.h"
-#include "md.h"
 #include "ff/nblist.h"
-#include "osrw.h"
 #include "ff/potent.h"
+#include "md.h"
+#include "osrw.h"
 #include "tinker9.h"
 #include "tool/io.h"
 #include <fstream>

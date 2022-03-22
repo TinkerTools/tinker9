@@ -1,6 +1,6 @@
 #include "osrw.h"
-#include "md.h"
 #include "ff/potent.h"
+#include "md.h"
 
 namespace tinker {
 void osrw_altele_acc(double el)

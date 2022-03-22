@@ -1,10 +1,10 @@
 #include "add.h"
 #include "ff/amoeba/empole.h"
 #include "ff/box.h"
+#include "ff/pmestuf.h"
 #include "glob/spatial.h"
 #include "launch.h"
 #include "md.h"
-#include "ff/pmestuf.h"
 #include "seq/bsplgen.h"
 #include "tool/gpucard.h"
 

@@ -1,7 +1,7 @@
 #include "ff/pchg/evdw.h"
-#include "md.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
+#include "md.h"
 #include "tinker9.h"
 #include "tool/io.h"
 #include "tool/zero.h"

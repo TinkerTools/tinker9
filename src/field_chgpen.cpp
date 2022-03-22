@@ -1,8 +1,8 @@
 #include "ff/hippo/field_chgpen.h"
 #include "ff/amoeba/field.h"
 #include "ff/elec.h"
-#include "md.h"
 #include "ff/nblist.h"
+#include "md.h"
 
 namespace tinker {
 void dfield_chgpen(real (*field)[3])

@@ -1,14 +1,14 @@
 #include "add.h"
 #include "ff/amoeba/epolar.h"
 #include "ff/amoeba/induce.h"
-#include "glob/spatial.h"
 #include "ff/image.h"
+#include "ff/spatial2.h"
+#include "ff/switch.h"
+#include "glob/spatial.h"
 #include "launch.h"
 #include "md.h"
 #include "seq/damp.h"
 #include "seq/triangle.h"
-#include "ff/spatial2.h"
-#include "ff/switch.h"
 #include "tool/gpucard.h"
 
 namespace tinker {

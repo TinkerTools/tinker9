@@ -1,6 +1,6 @@
 #include "add.h"
-#include "md.h"
 #include "ff/rattle.h"
+#include "md.h"
 #include <tinker/detail/units.hh>
 
 namespace tinker {

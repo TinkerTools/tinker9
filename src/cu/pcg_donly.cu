@@ -1,7 +1,7 @@
-#include "glob/uprior.h"
 #include "ff/hippo/epolar_chgpen.h"
 #include "ff/hippo/field_chgpen.h"
 #include "ff/hippo/induce_donly.h"
+#include "glob/uprior.h"
 #include "launch.h"
 #include "md.h"
 #include "tool/cudalib.h"

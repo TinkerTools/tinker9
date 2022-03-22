@@ -1,6 +1,6 @@
 #include "ff/pchg/evalence.h"
-#include "md.h"
 #include "ff/potent.h"
+#include "md.h"
 #include "tool/zero.h"
 #include <tinker/detail/angpot.hh>
 #include <tinker/detail/strbnd.hh>

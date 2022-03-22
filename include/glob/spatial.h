@@ -1,7 +1,7 @@
 #pragma once
-#include "macro.h"
 #include "ff/spatial.h"
 #include "ff/spatial2.h"
+#include "macro.h"
 
 namespace tinker {
 TINKER_EXTERN Spatial2Unit cspatial_v2_unit;

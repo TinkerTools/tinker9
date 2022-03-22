@@ -1,11 +1,11 @@
 #include "add.h"
 #include "ff/amoeba/empole.h"
-#include "glob/nblist.h"
 #include "ff/image.h"
+#include "ff/switch.h"
+#include "glob/nblist.h"
 #include "md.h"
 #include "seq/pair_mpole.h"
 #include "seq/switch.h"
-#include "ff/switch.h"
 #include "tool/gpucard.h"
 
 namespace tinker {

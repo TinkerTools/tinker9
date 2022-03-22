@@ -1,6 +1,6 @@
 #pragma once
-#include "macro.h"
 #include "ff/nblist.h"
+#include "macro.h"
 
 namespace tinker {
 TINKER_EXTERN NBListUnit vlist_unit;

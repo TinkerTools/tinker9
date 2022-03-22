@@ -46,11 +46,11 @@ void finish()
 
 #include "ff/box.h"
 #include "ff/energy.h"
-#include "md.h"
 #include "ff/molecule.h"
 #include "ff/nblist.h"
-#include "osrw.h"
 #include "ff/rattle.h"
+#include "md.h"
+#include "osrw.h"
 #include "tool/cudalib.h"
 
 namespace tinker {

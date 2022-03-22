@@ -1,14 +1,14 @@
 #include "add.h"
-#include "glob/spatial.h"
 #include "ff/hippo/erepel.h"
 #include "ff/image.h"
+#include "ff/switch.h"
+#include "glob/spatial.h"
 #include "launch.h"
 #include "md.h"
 #include "seq/bsplgen.h"
 #include "seq/damp_hippo.h"
 #include "seq/pair_repel.h"
 #include "seq/triangle.h"
-#include "ff/switch.h"
 #include "tool/gpucard.h"
 
 namespace tinker {

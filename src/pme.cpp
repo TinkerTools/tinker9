@@ -2,11 +2,11 @@
 #include "ff/box.h"
 #include "ff/elec.h"
 #include "ff/hippo/edisp.h"
-#include "math/inc.h"
-#include "md.h"
 #include "ff/pmestuf.h"
 #include "ff/potent.h"
 #include "ff/switch.h"
+#include "math/inc.h"
+#include "md.h"
 #include "tinker9.h"
 #include "tool/error.h"
 #include <tinker/detail/bound.hh>
