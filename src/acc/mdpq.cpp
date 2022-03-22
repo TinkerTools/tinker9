@@ -99,9 +99,9 @@ void mdVelB_acc(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz, const
    for (int i = 0; i < n; ++i) {
       vel_prec coef = -ekcal * massinv[i] * dt;
 #if TINKER_DETERMINISTIC_FORCE
-      vlx[i] = vlx0[i] + coef * to_flt_acc<vel_prec>(grx[i]);
-      vly[i] = vly0[i] + coef * to_flt_acc<vel_prec>(gry[i]);
-      vlz[i] = vlz0[i] + coef * to_flt_acc<vel_prec>(grz[i]);
+      vlx[i] = vlx0[i] + coef * fixedTo<vel_prec>(grx[i]);
+      vly[i] = vly0[i] + coef * fixedTo<vel_prec>(gry[i]);
+      vlz[i] = vlz0[i] + coef * fixedTo<vel_prec>(grz[i]);
 #else
       vlx[i] = vlx0[i] + coef * grx[i];
       vly[i] = vly0[i] + coef * gry[i];
@@ -119,9 +119,9 @@ void mdVelA_acc(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz, const
    for (int i = 0; i < n; ++i) {
       vel_prec coef = -ekcal * massinv[i] * dt;
 #if TINKER_DETERMINISTIC_FORCE
-      vlx[i] += coef * to_flt_acc<vel_prec>(grx[i]);
-      vly[i] += coef * to_flt_acc<vel_prec>(gry[i]);
-      vlz[i] += coef * to_flt_acc<vel_prec>(grz[i]);
+      vlx[i] += coef * fixedTo<vel_prec>(grx[i]);
+      vly[i] += coef * fixedTo<vel_prec>(gry[i]);
+      vlz[i] += coef * fixedTo<vel_prec>(grz[i]);
 #else
       vlx[i] += coef * grx[i];
       vly[i] += coef * gry[i];
@@ -140,9 +140,9 @@ void mdVel2_acc(time_prec dt, const grad_prec* grx, const grad_prec* gry, const 
       vel_prec coef = -ekcal * massinv[i];
 #if TINKER_DETERMINISTIC_FORCE
       // clang-format off
-      vx[i] += coef*(to_flt_acc<vel_prec>(grx[i])*dt+to_flt_acc<vel_prec>(grx2[i])*dt2);
-      vy[i] += coef*(to_flt_acc<vel_prec>(gry[i])*dt+to_flt_acc<vel_prec>(gry2[i])*dt2);
-      vz[i] += coef*(to_flt_acc<vel_prec>(grz[i])*dt+to_flt_acc<vel_prec>(grz2[i])*dt2);
+      vx[i] += coef*(fixedTo<vel_prec>(grx[i])*dt+fixedTo<vel_prec>(grx2[i])*dt2);
+      vy[i] += coef*(fixedTo<vel_prec>(gry[i])*dt+fixedTo<vel_prec>(gry2[i])*dt2);
+      vz[i] += coef*(fixedTo<vel_prec>(grz[i])*dt+fixedTo<vel_prec>(grz2[i])*dt2);
       // clang-format on
 #else
       vx[i] += coef * (grx[i] * dt + grx2[i] * dt2);

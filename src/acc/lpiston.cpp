@@ -9,7 +9,7 @@ static inline vel_prec
 #if TINKER_DETERMINISTIC_FORCE
 cvt_grad(fixed val)
 {
-   return to_flt_acc<vel_prec>(val);
+   return fixedTo<vel_prec>(val);
 }
 #else
 cvt_grad(grad_prec val)
@@ -247,9 +247,9 @@ void lp_mol_virial_acc()
       for (int i = start; i < end; ++i) {
          int k = kmol[i];
 #if TINKER_DETERMINISTIC_FORCE
-         igx = to_flt_acc<double>(gx[k]);
-         igy = to_flt_acc<double>(gy[k]);
-         igz = to_flt_acc<double>(gz[k]);
+         igx = fixedTo<double>(gx[k]);
+         igy = fixedTo<double>(gy[k]);
+         igz = fixedTo<double>(gz[k]);
 #else
          igx = gx[k];
          igy = gy[k];
@@ -348,9 +348,9 @@ void propagate_velocity_06_acc(double vbar, time_prec dt, const grad_prec* grx,
               deviceptr(massinv,vx,vy,vz,grx,gry,grz)
       for (int i = 0; i < n; ++i) {
 #if TINKER_DETERMINISTIC_FORCE
-         auto gx = to_flt_acc<vel_prec>(grx[i]);
-         auto gy = to_flt_acc<vel_prec>(gry[i]);
-         auto gz = to_flt_acc<vel_prec>(grz[i]);
+         auto gx = fixedTo<vel_prec>(grx[i]);
+         auto gy = fixedTo<vel_prec>(gry[i]);
+         auto gz = fixedTo<vel_prec>(grz[i]);
 #else
          auto gx = grx[i];
          auto gy = gry[i];
@@ -370,12 +370,12 @@ void propagate_velocity_06_acc(double vbar, time_prec dt, const grad_prec* grx,
               deviceptr(massinv,vx,vy,vz,grx,gry,grz,grx2,gry2,grz2)
       for (int i = 0; i < n; ++i) {
 #if TINKER_DETERMINISTIC_FORCE
-         auto gx = to_flt_acc<vel_prec>(grx[i]);
-         auto gy = to_flt_acc<vel_prec>(gry[i]);
-         auto gz = to_flt_acc<vel_prec>(grz[i]);
-         auto gx2 = to_flt_acc<vel_prec>(grx2[i]);
-         auto gy2 = to_flt_acc<vel_prec>(gry2[i]);
-         auto gz2 = to_flt_acc<vel_prec>(grz2[i]);
+         auto gx = fixedTo<vel_prec>(grx[i]);
+         auto gy = fixedTo<vel_prec>(gry[i]);
+         auto gz = fixedTo<vel_prec>(grz[i]);
+         auto gx2 = fixedTo<vel_prec>(grx2[i]);
+         auto gy2 = fixedTo<vel_prec>(gry2[i]);
+         auto gz2 = fixedTo<vel_prec>(grz2[i]);
 #else
          auto gx = grx[i];
          auto gy = gry[i];
@@ -472,9 +472,9 @@ void propagate_vel_avbf_aniso_acc(double sa[3][3], double sb[3][3], const grad_p
       v0y = vy[i];
       v0z = vz[i];
 #if TINKER_DETERMINISTIC_FORCE
-      gx = to_flt_acc<vel_prec>(grx[i]);
-      gy = to_flt_acc<vel_prec>(gry[i]);
-      gz = to_flt_acc<vel_prec>(grz[i]);
+      gx = fixedTo<vel_prec>(grx[i]);
+      gy = fixedTo<vel_prec>(gry[i]);
+      gz = fixedTo<vel_prec>(grz[i]);
 #else
       gx = grx[i];
       gy = gry[i];

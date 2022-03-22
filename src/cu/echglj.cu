@@ -202,10 +202,10 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
       pair_lj_v2<do_g, SOFTCORE, RADRULE, EPSRULE, 0>( //
          r, invr, vlambda, vscale, radi, epsi, radk, epsk, evcut, evoff, evik, devik);
       if CONSTEXPR (do_e and not VOUT) {
-         ectl += cvt_to<ebuf_prec>(ecik + evik);
+         ectl += floatTo<ebuf_prec>(ecik + evik);
       } else if CONSTEXPR (do_e and VOUT) {
-         ectl += cvt_to<ebuf_prec>(ecik);
-         evtl += cvt_to<ebuf_prec>(evik);
+         ectl += floatTo<ebuf_prec>(ecik);
+         evtl += floatTo<ebuf_prec>(evik);
       }
       if CONSTEXPR (do_g and not VOUT) {
          real dedx, dedy, dedz;
@@ -221,12 +221,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
          atomic_add(-dedy, gy, k);
          atomic_add(-dedz, gz, k);
          if CONSTEXPR (do_v) {
-            vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-            vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-            vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-            vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-            vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-            vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+            vctlxx += floatTo<vbuf_prec>(xr * dedx);
+            vctlyx += floatTo<vbuf_prec>(yr * dedx);
+            vctlzx += floatTo<vbuf_prec>(zr * dedx);
+            vctlyy += floatTo<vbuf_prec>(yr * dedy);
+            vctlzy += floatTo<vbuf_prec>(zr * dedy);
+            vctlzz += floatTo<vbuf_prec>(zr * dedz);
          }
       } else if CONSTEXPR (do_g and VOUT) {
          real dedx, dedy, dedz;
@@ -241,12 +241,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
          atomic_add(-dedy, gy, k);
          atomic_add(-dedz, gz, k);
          if CONSTEXPR (do_v) {
-            vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-            vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-            vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-            vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-            vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-            vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+            vctlxx += floatTo<vbuf_prec>(xr * dedx);
+            vctlyx += floatTo<vbuf_prec>(yr * dedx);
+            vctlzx += floatTo<vbuf_prec>(zr * dedx);
+            vctlyy += floatTo<vbuf_prec>(yr * dedy);
+            vctlzy += floatTo<vbuf_prec>(zr * dedy);
+            vctlzz += floatTo<vbuf_prec>(zr * dedz);
          }
          devik *= invr;
          dedx = devik * xr;
@@ -259,12 +259,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
          atomic_add(-dedy, devy, k);
          atomic_add(-dedz, devz, k);
          if CONSTEXPR (do_v) {
-            vvtlxx += cvt_to<vbuf_prec>(xr * dedx);
-            vvtlyx += cvt_to<vbuf_prec>(yr * dedx);
-            vvtlzx += cvt_to<vbuf_prec>(zr * dedx);
-            vvtlyy += cvt_to<vbuf_prec>(yr * dedy);
-            vvtlzy += cvt_to<vbuf_prec>(zr * dedy);
-            vvtlzz += cvt_to<vbuf_prec>(zr * dedz);
+            vvtlxx += floatTo<vbuf_prec>(xr * dedx);
+            vvtlyx += floatTo<vbuf_prec>(yr * dedx);
+            vvtlzx += floatTo<vbuf_prec>(zr * dedx);
+            vvtlyy += floatTo<vbuf_prec>(yr * dedy);
+            vvtlzy += floatTo<vbuf_prec>(zr * dedy);
+            vvtlzz += floatTo<vbuf_prec>(zr * dedz);
          }
       }
    }
@@ -361,10 +361,10 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
             pair_lj_v2<do_g, SOFTCORE, RADRULE, EPSRULE, 1>( //
                r, invr, vlambda, 1, radi, epsi, radk, epsk, evcut, evoff, evik, devik);
             if CONSTEXPR (do_e and not VOUT) {
-               ectl += incl ? cvt_to<ebuf_prec>(ecik + evik) : 0;
+               ectl += incl ? floatTo<ebuf_prec>(ecik + evik) : 0;
             } else if CONSTEXPR (do_e and VOUT) {
-               ectl += incl ? cvt_to<ebuf_prec>(ecik) : 0;
-               evtl += incl ? cvt_to<ebuf_prec>(evik) : 0;
+               ectl += incl ? floatTo<ebuf_prec>(ecik) : 0;
+               evtl += incl ? floatTo<ebuf_prec>(evik) : 0;
             }
             if CONSTEXPR (do_g and not VOUT) {
                real dedx, dedy, dedz;
@@ -373,12 +373,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
                dedy = decik * yr;
                dedz = decik * zr;
                // if CONSTEXPR (do_v) {
-               //    vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-               //    vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-               //    vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-               //    vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-               //    vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-               //    vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+               //    vctlxx += floatTo<vbuf_prec>(xr * dedx);
+               //    vctlyx += floatTo<vbuf_prec>(yr * dedx);
+               //    vctlzx += floatTo<vbuf_prec>(zr * dedx);
+               //    vctlyy += floatTo<vbuf_prec>(yr * dedy);
+               //    vctlzy += floatTo<vbuf_prec>(zr * dedy);
+               //    vctlzz += floatTo<vbuf_prec>(zr * dedz);
                // }
                fix += dedx;
                fiy += dedy;
@@ -393,12 +393,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
                dedy = decik * yr;
                dedz = decik * zr;
                // if CONSTEXPR (do_v) {
-               //    vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-               //    vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-               //    vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-               //    vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-               //    vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-               //    vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+               //    vctlxx += floatTo<vbuf_prec>(xr * dedx);
+               //    vctlyx += floatTo<vbuf_prec>(yr * dedx);
+               //    vctlzx += floatTo<vbuf_prec>(zr * dedx);
+               //    vctlyy += floatTo<vbuf_prec>(yr * dedy);
+               //    vctlzy += floatTo<vbuf_prec>(zr * dedy);
+               //    vctlzz += floatTo<vbuf_prec>(zr * dedz);
                // }
                fix += dedx;
                fiy += dedy;
@@ -411,12 +411,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
                dedy = decik * yr;
                dedz = decik * zr;
                // if CONSTEXPR (do_v) {
-               //    vvtlyx += cvt_to<vbuf_prec>(yr * dedx);
-               //    vvtlxx += cvt_to<vbuf_prec>(xr * dedx);
-               //    vvtlzx += cvt_to<vbuf_prec>(zr * dedx);
-               //    vvtlyy += cvt_to<vbuf_prec>(yr * dedy);
-               //    vvtlzy += cvt_to<vbuf_prec>(zr * dedy);
-               //    vvtlzz += cvt_to<vbuf_prec>(zr * dedz);
+               //    vvtlyx += floatTo<vbuf_prec>(yr * dedx);
+               //    vvtlxx += floatTo<vbuf_prec>(xr * dedx);
+               //    vvtlzx += floatTo<vbuf_prec>(zr * dedx);
+               //    vvtlyy += floatTo<vbuf_prec>(yr * dedy);
+               //    vvtlzy += floatTo<vbuf_prec>(zr * dedy);
+               //    vvtlzz += floatTo<vbuf_prec>(zr * dedz);
                // }
                ivfx += dedx;
                ivfy += dedy;
@@ -446,19 +446,19 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
          }
 
          if CONSTEXPR (do_v) {
-            vctlxx += cvt_to<vbuf_prec>(xi * fix + xk * fkx);
-            vctlyx += cvt_to<vbuf_prec>(yi * fix + yk * fkx);
-            vctlzx += cvt_to<vbuf_prec>(zi * fix + zk * fkx);
-            vctlyy += cvt_to<vbuf_prec>(yi * fiy + yk * fky);
-            vctlzy += cvt_to<vbuf_prec>(zi * fiy + zk * fky);
-            vctlzz += cvt_to<vbuf_prec>(zi * fiz + zk * fkz);
+            vctlxx += floatTo<vbuf_prec>(xi * fix + xk * fkx);
+            vctlyx += floatTo<vbuf_prec>(yi * fix + yk * fkx);
+            vctlzx += floatTo<vbuf_prec>(zi * fix + zk * fkx);
+            vctlyy += floatTo<vbuf_prec>(yi * fiy + yk * fky);
+            vctlzy += floatTo<vbuf_prec>(zi * fiy + zk * fky);
+            vctlzz += floatTo<vbuf_prec>(zi * fiz + zk * fkz);
             if CONSTEXPR (VOUT) {
-               vvtlyx += cvt_to<vbuf_prec>(yi * ivfx + yk * kvfy);
-               vvtlxx += cvt_to<vbuf_prec>(xi * ivfx + xk * kvfx);
-               vvtlzx += cvt_to<vbuf_prec>(zi * ivfx + zk * kvfz);
-               vvtlyy += cvt_to<vbuf_prec>(yi * ivfy + yk * kvfy);
-               vvtlzy += cvt_to<vbuf_prec>(zi * ivfy + zk * kvfz);
-               vvtlzz += cvt_to<vbuf_prec>(zi * ivfz + zk * kvfz);
+               vvtlyx += floatTo<vbuf_prec>(yi * ivfx + yk * kvfy);
+               vvtlxx += floatTo<vbuf_prec>(xi * ivfx + xk * kvfx);
+               vvtlzx += floatTo<vbuf_prec>(zi * ivfx + zk * kvfz);
+               vvtlyy += floatTo<vbuf_prec>(yi * ivfy + yk * kvfy);
+               vvtlzy += floatTo<vbuf_prec>(zi * ivfy + zk * kvfz);
+               vvtlzz += floatTo<vbuf_prec>(zi * ivfz + zk * kvfz);
             }
          }
       } else {
@@ -483,10 +483,10 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
             pair_lj_v2<do_g, SOFTCORE, RADRULE, EPSRULE, 1>( //
                r, invr, vlambda, 1, radi, epsi, radk, epsk, evcut, evoff, evik, devik);
             if CONSTEXPR (do_e and not VOUT) {
-               ectl += incl ? cvt_to<ebuf_prec>(ecik + evik) : 0;
+               ectl += incl ? floatTo<ebuf_prec>(ecik + evik) : 0;
             } else if CONSTEXPR (do_e and VOUT) {
-               ectl += incl ? cvt_to<ebuf_prec>(ecik) : 0;
-               evtl += incl ? cvt_to<ebuf_prec>(evik) : 0;
+               ectl += incl ? floatTo<ebuf_prec>(ecik) : 0;
+               evtl += incl ? floatTo<ebuf_prec>(evik) : 0;
             }
             if CONSTEXPR (do_g and not VOUT) {
                real dedx, dedy, dedz;
@@ -495,12 +495,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
                dedy = decik * yr;
                dedz = decik * zr;
                if CONSTEXPR (do_v) {
-                  vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+                  vctlxx += floatTo<vbuf_prec>(xr * dedx);
+                  vctlyx += floatTo<vbuf_prec>(yr * dedx);
+                  vctlzx += floatTo<vbuf_prec>(zr * dedx);
+                  vctlyy += floatTo<vbuf_prec>(yr * dedy);
+                  vctlzy += floatTo<vbuf_prec>(zr * dedy);
+                  vctlzz += floatTo<vbuf_prec>(zr * dedz);
                }
                fix += dedx;
                fiy += dedy;
@@ -515,12 +515,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
                dedy = decik * yr;
                dedz = decik * zr;
                if CONSTEXPR (do_v) {
-                  vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+                  vctlxx += floatTo<vbuf_prec>(xr * dedx);
+                  vctlyx += floatTo<vbuf_prec>(yr * dedx);
+                  vctlzx += floatTo<vbuf_prec>(zr * dedx);
+                  vctlyy += floatTo<vbuf_prec>(yr * dedy);
+                  vctlzy += floatTo<vbuf_prec>(zr * dedy);
+                  vctlzz += floatTo<vbuf_prec>(zr * dedz);
                }
                fix += dedx;
                fiy += dedy;
@@ -533,12 +533,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
                dedy = decik * yr;
                dedz = decik * zr;
                if CONSTEXPR (do_v) {
-                  vvtlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vvtlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vvtlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vvtlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vvtlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vvtlzz += cvt_to<vbuf_prec>(zr * dedz);
+                  vvtlyx += floatTo<vbuf_prec>(yr * dedx);
+                  vvtlxx += floatTo<vbuf_prec>(xr * dedx);
+                  vvtlzx += floatTo<vbuf_prec>(zr * dedx);
+                  vvtlyy += floatTo<vbuf_prec>(yr * dedy);
+                  vvtlzy += floatTo<vbuf_prec>(zr * dedy);
+                  vvtlzz += floatTo<vbuf_prec>(zr * dedz);
                }
                ivfx += dedx;
                ivfy += dedy;
@@ -668,10 +668,10 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
             pair_lj_v2<do_g, SOFTCORE, RADRULE, EPSRULE, 1>( //
                r, invr, vlambda, 1, radi, epsi, radk, epsk, evcut, evoff, evik, devik);
             if CONSTEXPR (do_e and not VOUT) {
-               ectl += incl ? cvt_to<ebuf_prec>(ecik + evik) : 0;
+               ectl += incl ? floatTo<ebuf_prec>(ecik + evik) : 0;
             } else if CONSTEXPR (do_e and VOUT) {
-               ectl += incl ? cvt_to<ebuf_prec>(ecik) : 0;
-               evtl += incl ? cvt_to<ebuf_prec>(evik) : 0;
+               ectl += incl ? floatTo<ebuf_prec>(ecik) : 0;
+               evtl += incl ? floatTo<ebuf_prec>(evik) : 0;
             }
             if CONSTEXPR (do_g and not VOUT) {
                real dedx, dedy, dedz;
@@ -680,12 +680,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
                dedy = decik * yr;
                dedz = decik * zr;
                // if CONSTEXPR (do_v) {
-               //    vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-               //    vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-               //    vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-               //    vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-               //    vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-               //    vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+               //    vctlxx += floatTo<vbuf_prec>(xr * dedx);
+               //    vctlyx += floatTo<vbuf_prec>(yr * dedx);
+               //    vctlzx += floatTo<vbuf_prec>(zr * dedx);
+               //    vctlyy += floatTo<vbuf_prec>(yr * dedy);
+               //    vctlzy += floatTo<vbuf_prec>(zr * dedy);
+               //    vctlzz += floatTo<vbuf_prec>(zr * dedz);
                // }
                fix += dedx;
                fiy += dedy;
@@ -700,12 +700,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
                dedy = decik * yr;
                dedz = decik * zr;
                // if CONSTEXPR (do_v) {
-               //    vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-               //    vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-               //    vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-               //    vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-               //    vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-               //    vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+               //    vctlxx += floatTo<vbuf_prec>(xr * dedx);
+               //    vctlyx += floatTo<vbuf_prec>(yr * dedx);
+               //    vctlzx += floatTo<vbuf_prec>(zr * dedx);
+               //    vctlyy += floatTo<vbuf_prec>(yr * dedy);
+               //    vctlzy += floatTo<vbuf_prec>(zr * dedy);
+               //    vctlzz += floatTo<vbuf_prec>(zr * dedz);
                // }
                fix += dedx;
                fiy += dedy;
@@ -718,12 +718,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
                dedy = decik * yr;
                dedz = decik * zr;
                // if CONSTEXPR (do_v) {
-               //    vvtlyx += cvt_to<vbuf_prec>(yr * dedx);
-               //    vvtlxx += cvt_to<vbuf_prec>(xr * dedx);
-               //    vvtlzx += cvt_to<vbuf_prec>(zr * dedx);
-               //    vvtlyy += cvt_to<vbuf_prec>(yr * dedy);
-               //    vvtlzy += cvt_to<vbuf_prec>(zr * dedy);
-               //    vvtlzz += cvt_to<vbuf_prec>(zr * dedz);
+               //    vvtlyx += floatTo<vbuf_prec>(yr * dedx);
+               //    vvtlxx += floatTo<vbuf_prec>(xr * dedx);
+               //    vvtlzx += floatTo<vbuf_prec>(zr * dedx);
+               //    vvtlyy += floatTo<vbuf_prec>(yr * dedy);
+               //    vvtlzy += floatTo<vbuf_prec>(zr * dedy);
+               //    vvtlzz += floatTo<vbuf_prec>(zr * dedz);
                // }
                ivfx += dedx;
                ivfy += dedy;
@@ -752,19 +752,19 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
          }
 
          if CONSTEXPR (do_v) {
-            vctlxx += cvt_to<vbuf_prec>(xi * fix + xk * fkx);
-            vctlyx += cvt_to<vbuf_prec>(yi * fix + yk * fkx);
-            vctlzx += cvt_to<vbuf_prec>(zi * fix + zk * fkx);
-            vctlyy += cvt_to<vbuf_prec>(yi * fiy + yk * fky);
-            vctlzy += cvt_to<vbuf_prec>(zi * fiy + zk * fky);
-            vctlzz += cvt_to<vbuf_prec>(zi * fiz + zk * fkz);
+            vctlxx += floatTo<vbuf_prec>(xi * fix + xk * fkx);
+            vctlyx += floatTo<vbuf_prec>(yi * fix + yk * fkx);
+            vctlzx += floatTo<vbuf_prec>(zi * fix + zk * fkx);
+            vctlyy += floatTo<vbuf_prec>(yi * fiy + yk * fky);
+            vctlzy += floatTo<vbuf_prec>(zi * fiy + zk * fky);
+            vctlzz += floatTo<vbuf_prec>(zi * fiz + zk * fkz);
             if CONSTEXPR (VOUT) {
-               vvtlyx += cvt_to<vbuf_prec>(yi * ivfx + yk * kvfy);
-               vvtlxx += cvt_to<vbuf_prec>(xi * ivfx + xk * kvfx);
-               vvtlzx += cvt_to<vbuf_prec>(zi * ivfx + zk * kvfz);
-               vvtlyy += cvt_to<vbuf_prec>(yi * ivfy + yk * kvfy);
-               vvtlzy += cvt_to<vbuf_prec>(zi * ivfy + zk * kvfz);
-               vvtlzz += cvt_to<vbuf_prec>(zi * ivfz + zk * kvfz);
+               vvtlyx += floatTo<vbuf_prec>(yi * ivfx + yk * kvfy);
+               vvtlxx += floatTo<vbuf_prec>(xi * ivfx + xk * kvfx);
+               vvtlzx += floatTo<vbuf_prec>(zi * ivfx + zk * kvfz);
+               vvtlyy += floatTo<vbuf_prec>(yi * ivfy + yk * kvfy);
+               vvtlzy += floatTo<vbuf_prec>(zi * ivfy + zk * kvfz);
+               vvtlzz += floatTo<vbuf_prec>(zi * ivfz + zk * kvfz);
             }
          }
       } else {
@@ -786,10 +786,10 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
             pair_lj_v2<do_g, SOFTCORE, RADRULE, EPSRULE, 1>( //
                r, invr, vlambda, 1, radi, epsi, radk, epsk, evcut, evoff, evik, devik);
             if CONSTEXPR (do_e and not VOUT) {
-               ectl += incl ? cvt_to<ebuf_prec>(ecik + evik) : 0;
+               ectl += incl ? floatTo<ebuf_prec>(ecik + evik) : 0;
             } else if CONSTEXPR (do_e and VOUT) {
-               ectl += incl ? cvt_to<ebuf_prec>(ecik) : 0;
-               evtl += incl ? cvt_to<ebuf_prec>(evik) : 0;
+               ectl += incl ? floatTo<ebuf_prec>(ecik) : 0;
+               evtl += incl ? floatTo<ebuf_prec>(evik) : 0;
             }
             if CONSTEXPR (do_g and not VOUT) {
                real dedx, dedy, dedz;
@@ -798,12 +798,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
                dedy = decik * yr;
                dedz = decik * zr;
                if CONSTEXPR (do_v) {
-                  vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+                  vctlxx += floatTo<vbuf_prec>(xr * dedx);
+                  vctlyx += floatTo<vbuf_prec>(yr * dedx);
+                  vctlzx += floatTo<vbuf_prec>(zr * dedx);
+                  vctlyy += floatTo<vbuf_prec>(yr * dedy);
+                  vctlzy += floatTo<vbuf_prec>(zr * dedy);
+                  vctlzz += floatTo<vbuf_prec>(zr * dedz);
                }
                fix += dedx;
                fiy += dedy;
@@ -818,12 +818,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
                dedy = decik * yr;
                dedz = decik * zr;
                if CONSTEXPR (do_v) {
-                  vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+                  vctlxx += floatTo<vbuf_prec>(xr * dedx);
+                  vctlyx += floatTo<vbuf_prec>(yr * dedx);
+                  vctlzx += floatTo<vbuf_prec>(zr * dedx);
+                  vctlyy += floatTo<vbuf_prec>(yr * dedy);
+                  vctlzy += floatTo<vbuf_prec>(zr * dedy);
+                  vctlzz += floatTo<vbuf_prec>(zr * dedz);
                }
                fix += dedx;
                fiy += dedy;
@@ -836,12 +836,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
                dedy = decik * yr;
                dedz = decik * zr;
                if CONSTEXPR (do_v) {
-                  vvtlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vvtlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vvtlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vvtlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vvtlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vvtlzz += cvt_to<vbuf_prec>(zr * dedz);
+                  vvtlyx += floatTo<vbuf_prec>(yr * dedx);
+                  vvtlxx += floatTo<vbuf_prec>(xr * dedx);
+                  vvtlzx += floatTo<vbuf_prec>(zr * dedx);
+                  vvtlyy += floatTo<vbuf_prec>(yr * dedy);
+                  vvtlzy += floatTo<vbuf_prec>(zr * dedy);
+                  vvtlzz += floatTo<vbuf_prec>(zr * dedz);
                }
                ivfx += dedx;
                ivfy += dedy;

@@ -237,19 +237,19 @@ void epolar_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nep, energy_bu
             e, vxx, vyx, vzx, vyy, vzy, vzz);
          if CONSTEXPR (do_e) {
             e = e + e1;
-            eptl += cvt_to<ebuf_prec>(e);
+            eptl += floatTo<ebuf_prec>(e);
             if CONSTEXPR (do_a) {
                if (scalec != 0 and e != 0) // pscale != 0
                   neptl += 1;
             }
          }
          if CONSTEXPR (do_v) {
-            veptlxx += cvt_to<vbuf_prec>(vxx + vxx1);
-            veptlyx += cvt_to<vbuf_prec>(vyx + vyx1);
-            veptlzx += cvt_to<vbuf_prec>(vzx + vzx1);
-            veptlyy += cvt_to<vbuf_prec>(vyy + vyy1);
-            veptlzy += cvt_to<vbuf_prec>(vzy + vzy1);
-            veptlzz += cvt_to<vbuf_prec>(vzz + vzz1);
+            veptlxx += floatTo<vbuf_prec>(vxx + vxx1);
+            veptlyx += floatTo<vbuf_prec>(vyx + vyx1);
+            veptlzx += floatTo<vbuf_prec>(vzx + vzx1);
+            veptlyy += floatTo<vbuf_prec>(vyy + vyy1);
+            veptlzy += floatTo<vbuf_prec>(vzy + vzy1);
+            veptlzz += floatTo<vbuf_prec>(vzz + vzz1);
          }
       } // end if (include)
 
@@ -391,19 +391,19 @@ void epolar_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nep, energy_bu
                dufld5i[klane], dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
                e, vxx, vyx, vzx, vyy, vzy, vzz);
             if CONSTEXPR (do_e) {
-               eptl += cvt_to<ebuf_prec>(e);
+               eptl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
                   if (e != 0)
                      neptl += 1;
                }
             }
             if CONSTEXPR (do_v) {
-               veptlxx += cvt_to<vbuf_prec>(vxx);
-               veptlyx += cvt_to<vbuf_prec>(vyx);
-               veptlzx += cvt_to<vbuf_prec>(vzx);
-               veptlyy += cvt_to<vbuf_prec>(vyy);
-               veptlzy += cvt_to<vbuf_prec>(vzy);
-               veptlzz += cvt_to<vbuf_prec>(vzz);
+               veptlxx += floatTo<vbuf_prec>(vxx);
+               veptlyx += floatTo<vbuf_prec>(vyx);
+               veptlzx += floatTo<vbuf_prec>(vzx);
+               veptlyy += floatTo<vbuf_prec>(vyy);
+               veptlzy += floatTo<vbuf_prec>(vzy);
+               veptlzz += floatTo<vbuf_prec>(vzz);
             }
          } // end if (include)
 
@@ -539,19 +539,19 @@ void epolar_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nep, energy_bu
                dufld5i[klane], dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
                e, vxx, vyx, vzx, vyy, vzy, vzz);
             if CONSTEXPR (do_e) {
-               eptl += cvt_to<ebuf_prec>(e);
+               eptl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
                   if (e != 0)
                      neptl += 1;
                }
             }
             if CONSTEXPR (do_v) {
-               veptlxx += cvt_to<vbuf_prec>(vxx);
-               veptlyx += cvt_to<vbuf_prec>(vyx);
-               veptlzx += cvt_to<vbuf_prec>(vzx);
-               veptlyy += cvt_to<vbuf_prec>(vyy);
-               veptlzy += cvt_to<vbuf_prec>(vzy);
-               veptlzz += cvt_to<vbuf_prec>(vzz);
+               veptlxx += floatTo<vbuf_prec>(vxx);
+               veptlyx += floatTo<vbuf_prec>(vyx);
+               veptlzx += floatTo<vbuf_prec>(vzx);
+               veptlyy += floatTo<vbuf_prec>(vyy);
+               veptlzy += floatTo<vbuf_prec>(vzy);
+               veptlzz += floatTo<vbuf_prec>(vzz);
             }
          } // end if (include)
       }

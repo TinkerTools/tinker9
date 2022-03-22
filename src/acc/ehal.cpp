@@ -29,9 +29,9 @@ void ehal_resolve_gradient_acc()
    for (int ii = 0; ii < n; ++ii) {
       int iv = ired[ii];
 #if TINKER_DETERMINISTIC_FORCE
-      real fx = to_flt_acc<real>(gxred[ii]);
-      real fy = to_flt_acc<real>(gyred[ii]);
-      real fz = to_flt_acc<real>(gzred[ii]);
+      real fx = fixedTo<real>(gxred[ii]);
+      real fy = fixedTo<real>(gyred[ii]);
+      real fz = fixedTo<real>(gzred[ii]);
 #else
       real fx = gxred[ii];
       real fy = gyred[ii];

@@ -980,7 +980,7 @@ void pme_conv_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2],
             real struc2 = gridx * gridx + gridy * gridy;
             real eterm = 0.5f * f * expterm * struc2;
             if CONSTEXPR (DO_E) {
-               ectl += cvt_to<ebuf_prec>(eterm);
+               ectl += floatTo<ebuf_prec>(eterm);
             }
             if CONSTEXPR (DO_V) {
                real vterm = (2 / hsq) * (1 - term) * eterm;
@@ -990,12 +990,12 @@ void pme_conv_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2],
                real vyy = (h2 * h2 * vterm - eterm);
                real vzy = h2 * h3 * vterm;
                real vzz = (h3 * h3 * vterm - eterm);
-               vctlxx += cvt_to<vbuf_prec>(vxx);
-               vctlyx += cvt_to<vbuf_prec>(vyx);
-               vctlzx += cvt_to<vbuf_prec>(vzx);
-               vctlyy += cvt_to<vbuf_prec>(vyy);
-               vctlzy += cvt_to<vbuf_prec>(vzy);
-               vctlzz += cvt_to<vbuf_prec>(vzz);
+               vctlxx += floatTo<vbuf_prec>(vxx);
+               vctlyx += floatTo<vbuf_prec>(vyx);
+               vctlzx += floatTo<vbuf_prec>(vzx);
+               vctlyy += floatTo<vbuf_prec>(vyy);
+               vctlzy += floatTo<vbuf_prec>(vzy);
+               vctlzz += floatTo<vbuf_prec>(vzz);
             }
          } // end if (e or v)
       }

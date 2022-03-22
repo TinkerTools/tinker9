@@ -30,9 +30,9 @@ void lp_mol_virial_cu1(virial_buffer restrict hc_vir_buf,
       for (int i = start; i < end; ++i) {
          int k = kmol[i];
 #if TINKER_DETERMINISTIC_FORCE
-         igx = to_flt_cu<double>(gx[k]);
-         igy = to_flt_cu<double>(gy[k]);
-         igz = to_flt_cu<double>(gz[k]);
+         igx = fixedTo<double>(gx[k]);
+         igy = fixedTo<double>(gy[k]);
+         igz = fixedTo<double>(gz[k]);
 #else
          igx = gx[k];
          igy = gy[k];

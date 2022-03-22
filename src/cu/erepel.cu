@@ -173,7 +173,7 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr, energy_buf
             if (e != 0)
                nrtl += 1;
          if CONSTEXPR (do_e)
-            ertl += cvt_to<ebuf_prec>(e);
+            ertl += floatTo<ebuf_prec>(e);
          if CONSTEXPR (do_g) {
             gxi[klane] += pgrad.frcx;
             gyi[klane] += pgrad.frcy;
@@ -190,12 +190,12 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr, energy_buf
             tzk += pgrad.ttqk[2];
          }
          if CONSTEXPR (do_v) {
-            vrtlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
-            vrtlyx += cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
-            vrtlzx += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
-            vrtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
-            vrtlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
-            vrtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
+            vrtlxx += floatTo<vbuf_prec>(-xr * pgrad.frcx);
+            vrtlyx += floatTo<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+            vrtlzx += floatTo<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
+            vrtlyy += floatTo<vbuf_prec>(-yr * pgrad.frcy);
+            vrtlzy += floatTo<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
+            vrtlzz += floatTo<vbuf_prec>(-zr * pgrad.frcz);
          }
       } // end if (include)
 
@@ -304,7 +304,7 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr, energy_buf
                if (e != 0)
                   nrtl += 1;
             if CONSTEXPR (do_e)
-               ertl += cvt_to<ebuf_prec>(e);
+               ertl += floatTo<ebuf_prec>(e);
             if CONSTEXPR (do_g) {
                gxi[klane] += pgrad.frcx;
                gyi[klane] += pgrad.frcy;
@@ -321,12 +321,12 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr, energy_buf
                tzk += pgrad.ttqk[2];
             }
             if CONSTEXPR (do_v) {
-               vrtlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
-               vrtlyx += cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
-               vrtlzx += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
-               vrtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
-               vrtlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
-               vrtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
+               vrtlxx += floatTo<vbuf_prec>(-xr * pgrad.frcx);
+               vrtlyx += floatTo<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+               vrtlzx += floatTo<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
+               vrtlyy += floatTo<vbuf_prec>(-yr * pgrad.frcy);
+               vrtlzy += floatTo<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
+               vrtlzz += floatTo<vbuf_prec>(-zr * pgrad.frcz);
             }
          } // end if (include)
 
@@ -429,7 +429,7 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr, energy_buf
                if (e != 0)
                   nrtl += 1;
             if CONSTEXPR (do_e)
-               ertl += cvt_to<ebuf_prec>(e);
+               ertl += floatTo<ebuf_prec>(e);
             if CONSTEXPR (do_g) {
                gxi[klane] += pgrad.frcx;
                gyi[klane] += pgrad.frcy;
@@ -446,12 +446,12 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr, energy_buf
                tzk += pgrad.ttqk[2];
             }
             if CONSTEXPR (do_v) {
-               vrtlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
-               vrtlyx += cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
-               vrtlzx += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
-               vrtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
-               vrtlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
-               vrtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
+               vrtlxx += floatTo<vbuf_prec>(-xr * pgrad.frcx);
+               vrtlyx += floatTo<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+               vrtlzx += floatTo<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
+               vrtlyy += floatTo<vbuf_prec>(-yr * pgrad.frcy);
+               vrtlzy += floatTo<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
+               vrtlzz += floatTo<vbuf_prec>(-zr * pgrad.frcz);
             }
          } // end if (include)
       }

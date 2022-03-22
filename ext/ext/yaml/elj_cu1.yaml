@@ -70,7 +70,7 @@ SCALED_PAIRWISE_INTERACTION: |
     real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
     pair_lj_v3<do_g, true, 0>(r, invr, vlambda, scalea, rv, eps, cut, off, e, de);
     if CONSTEXPR (do_e) {
-      evtl += cvt_to<ebuf_prec>(e);
+      evtl += floatTo<ebuf_prec>(e);
       if CONSTEXPR (do_a) {
         if (scalea != 0 and e != 0)
           nevtl += 1;
@@ -89,12 +89,12 @@ SCALED_PAIRWISE_INTERACTION: |
       fky -= dedy;
       fkz -= dedz;
       if CONSTEXPR (do_v) {
-        vevtlxx += cvt_to<vbuf_prec>(xr * dedx);
-        vevtlyx += cvt_to<vbuf_prec>(yr * dedx);
-        vevtlzx += cvt_to<vbuf_prec>(zr * dedx);
-        vevtlyy += cvt_to<vbuf_prec>(yr * dedy);
-        vevtlzy += cvt_to<vbuf_prec>(zr * dedy);
-        vevtlzz += cvt_to<vbuf_prec>(zr * dedz);
+        vevtlxx += floatTo<vbuf_prec>(xr * dedx);
+        vevtlyx += floatTo<vbuf_prec>(yr * dedx);
+        vevtlzx += floatTo<vbuf_prec>(zr * dedx);
+        vevtlyy += floatTo<vbuf_prec>(yr * dedy);
+        vevtlzy += floatTo<vbuf_prec>(zr * dedy);
+        vevtlzz += floatTo<vbuf_prec>(zr * dedz);
       }
     }
   }
@@ -113,7 +113,7 @@ FULL_PAIRWISE_INTERACTION: |
     real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
     pair_lj_v3<do_g, true, 1>(r, invr, vlambda, 1, rv, eps, cut, off, e, de);
     if CONSTEXPR (do_e) {
-      evtl += cvt_to<ebuf_prec>(e);
+      evtl += floatTo<ebuf_prec>(e);
       if CONSTEXPR (do_a) {
         if (e != 0)
           nevtl += 1;
@@ -132,12 +132,12 @@ FULL_PAIRWISE_INTERACTION: |
       fky -= dedy;
       fkz -= dedz;
       if CONSTEXPR (do_v) {
-        vevtlxx += cvt_to<vbuf_prec>(xr * dedx);
-        vevtlyx += cvt_to<vbuf_prec>(yr * dedx);
-        vevtlzx += cvt_to<vbuf_prec>(zr * dedx);
-        vevtlyy += cvt_to<vbuf_prec>(yr * dedy);
-        vevtlzy += cvt_to<vbuf_prec>(zr * dedy);
-        vevtlzz += cvt_to<vbuf_prec>(zr * dedz);
+        vevtlxx += floatTo<vbuf_prec>(xr * dedx);
+        vevtlyx += floatTo<vbuf_prec>(yr * dedx);
+        vevtlzx += floatTo<vbuf_prec>(zr * dedx);
+        vevtlyy += floatTo<vbuf_prec>(yr * dedy);
+        vevtlzy += floatTo<vbuf_prec>(zr * dedy);
+        vevtlzz += floatTo<vbuf_prec>(zr * dedz);
       }
     }
   }

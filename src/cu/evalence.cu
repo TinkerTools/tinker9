@@ -213,15 +213,15 @@ void evalence_cu1(
 
          x, y, z);
       if CONSTEXPR (do_e) {
-         e0b += cvt_to<ebuf_prec>(e);
+         e0b += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0bxx += cvt_to<vbuf_prec>(vxx);
-         v0byx += cvt_to<vbuf_prec>(vyx);
-         v0bzx += cvt_to<vbuf_prec>(vzx);
-         v0byy += cvt_to<vbuf_prec>(vyy);
-         v0bzy += cvt_to<vbuf_prec>(vzy);
-         v0bzz += cvt_to<vbuf_prec>(vzz);
+         v0bxx += floatTo<vbuf_prec>(vxx);
+         v0byx += floatTo<vbuf_prec>(vyx);
+         v0bzx += floatTo<vbuf_prec>(vzx);
+         v0byy += floatTo<vbuf_prec>(vyy);
+         v0bzy += floatTo<vbuf_prec>(vzy);
+         v0bzz += floatTo<vbuf_prec>(vzz);
       }
    }
    if CONSTEXPR (do_e and rc_a) {
@@ -246,15 +246,15 @@ void evalence_cu1(
 
          x, y, z);
       if CONSTEXPR (do_e) {
-         e0a += cvt_to<ebuf_prec>(e);
+         e0a += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0axx += cvt_to<vbuf_prec>(vxx);
-         v0ayx += cvt_to<vbuf_prec>(vyx);
-         v0azx += cvt_to<vbuf_prec>(vzx);
-         v0ayy += cvt_to<vbuf_prec>(vyy);
-         v0azy += cvt_to<vbuf_prec>(vzy);
-         v0azz += cvt_to<vbuf_prec>(vzz);
+         v0axx += floatTo<vbuf_prec>(vxx);
+         v0ayx += floatTo<vbuf_prec>(vyx);
+         v0azx += floatTo<vbuf_prec>(vzx);
+         v0ayy += floatTo<vbuf_prec>(vyy);
+         v0azy += floatTo<vbuf_prec>(vzy);
+         v0azz += floatTo<vbuf_prec>(vzz);
       }
    }
    if CONSTEXPR (do_e and rc_a) {
@@ -277,15 +277,15 @@ void evalence_cu1(
 
          x, y, z);
       if CONSTEXPR (do_e) {
-         e0ba += cvt_to<ebuf_prec>(e);
+         e0ba += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0baxx += cvt_to<vbuf_prec>(vxx);
-         v0bayx += cvt_to<vbuf_prec>(vyx);
-         v0bazx += cvt_to<vbuf_prec>(vzx);
-         v0bayy += cvt_to<vbuf_prec>(vyy);
-         v0bazy += cvt_to<vbuf_prec>(vzy);
-         v0bazz += cvt_to<vbuf_prec>(vzz);
+         v0baxx += floatTo<vbuf_prec>(vxx);
+         v0bayx += floatTo<vbuf_prec>(vyx);
+         v0bazx += floatTo<vbuf_prec>(vzx);
+         v0bayy += floatTo<vbuf_prec>(vyy);
+         v0bazy += floatTo<vbuf_prec>(vzy);
+         v0bazz += floatTo<vbuf_prec>(vzz);
       }
    }
    if CONSTEXPR (do_e and rc_a) {
@@ -308,15 +308,15 @@ void evalence_cu1(
 
          x, y, z);
       if CONSTEXPR (do_e) {
-         e0ub += cvt_to<ebuf_prec>(e);
+         e0ub += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0ubxx += cvt_to<vbuf_prec>(vxx);
-         v0ubyx += cvt_to<vbuf_prec>(vyx);
-         v0ubzx += cvt_to<vbuf_prec>(vzx);
-         v0ubyy += cvt_to<vbuf_prec>(vyy);
-         v0ubzy += cvt_to<vbuf_prec>(vzy);
-         v0ubzz += cvt_to<vbuf_prec>(vzz);
+         v0ubxx += floatTo<vbuf_prec>(vxx);
+         v0ubyx += floatTo<vbuf_prec>(vyx);
+         v0ubzx += floatTo<vbuf_prec>(vzx);
+         v0ubyy += floatTo<vbuf_prec>(vyy);
+         v0ubzy += floatTo<vbuf_prec>(vzy);
+         v0ubzz += floatTo<vbuf_prec>(vzz);
       }
    }
    if CONSTEXPR (do_e and rc_a) {
@@ -339,15 +339,15 @@ void evalence_cu1(
 
          x, y, z);
       if CONSTEXPR (do_e) {
-         e0opb += cvt_to<ebuf_prec>(e);
+         e0opb += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0opbxx += cvt_to<vbuf_prec>(vxx);
-         v0opbyx += cvt_to<vbuf_prec>(vyx);
-         v0opbzx += cvt_to<vbuf_prec>(vzx);
-         v0opbyy += cvt_to<vbuf_prec>(vyy);
-         v0opbzy += cvt_to<vbuf_prec>(vzy);
-         v0opbzz += cvt_to<vbuf_prec>(vzz);
+         v0opbxx += floatTo<vbuf_prec>(vxx);
+         v0opbyx += floatTo<vbuf_prec>(vyx);
+         v0opbzx += floatTo<vbuf_prec>(vzx);
+         v0opbyy += floatTo<vbuf_prec>(vyy);
+         v0opbzy += floatTo<vbuf_prec>(vzy);
+         v0opbzz += floatTo<vbuf_prec>(vzz);
       }
    }
    if CONSTEXPR (do_e and rc_a) {
@@ -370,15 +370,15 @@ void evalence_cu1(
 
          x, y, z);
       if CONSTEXPR (do_e) {
-         e0id += cvt_to<ebuf_prec>(e);
+         e0id += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0idxx += cvt_to<vbuf_prec>(vxx);
-         v0idyx += cvt_to<vbuf_prec>(vyx);
-         v0idzx += cvt_to<vbuf_prec>(vzx);
-         v0idyy += cvt_to<vbuf_prec>(vyy);
-         v0idzy += cvt_to<vbuf_prec>(vzy);
-         v0idzz += cvt_to<vbuf_prec>(vzz);
+         v0idxx += floatTo<vbuf_prec>(vxx);
+         v0idyx += floatTo<vbuf_prec>(vyx);
+         v0idzx += floatTo<vbuf_prec>(vzx);
+         v0idyy += floatTo<vbuf_prec>(vyy);
+         v0idzy += floatTo<vbuf_prec>(vzy);
+         v0idzz += floatTo<vbuf_prec>(vzz);
       }
    }
    if CONSTEXPR (do_e and rc_a) {
@@ -401,15 +401,15 @@ void evalence_cu1(
 
          x, y, z);
       if CONSTEXPR (do_e) {
-         e0it += cvt_to<ebuf_prec>(e);
+         e0it += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0itxx += cvt_to<vbuf_prec>(vxx);
-         v0ityx += cvt_to<vbuf_prec>(vyx);
-         v0itzx += cvt_to<vbuf_prec>(vzx);
-         v0ityy += cvt_to<vbuf_prec>(vyy);
-         v0itzy += cvt_to<vbuf_prec>(vzy);
-         v0itzz += cvt_to<vbuf_prec>(vzz);
+         v0itxx += floatTo<vbuf_prec>(vxx);
+         v0ityx += floatTo<vbuf_prec>(vyx);
+         v0itzx += floatTo<vbuf_prec>(vzx);
+         v0ityy += floatTo<vbuf_prec>(vyy);
+         v0itzy += floatTo<vbuf_prec>(vzy);
+         v0itzz += floatTo<vbuf_prec>(vzz);
       }
    }
    if CONSTEXPR (do_e and rc_a) {
@@ -432,15 +432,15 @@ void evalence_cu1(
 
          tors1, tors2, tors3, tors4, tors5, tors6, x, y, z);
       if CONSTEXPR (do_e) {
-         e0t += cvt_to<ebuf_prec>(e);
+         e0t += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0txx += cvt_to<vbuf_prec>(vxx);
-         v0tyx += cvt_to<vbuf_prec>(vyx);
-         v0tzx += cvt_to<vbuf_prec>(vzx);
-         v0tyy += cvt_to<vbuf_prec>(vyy);
-         v0tzy += cvt_to<vbuf_prec>(vzy);
-         v0tzz += cvt_to<vbuf_prec>(vzz);
+         v0txx += floatTo<vbuf_prec>(vxx);
+         v0tyx += floatTo<vbuf_prec>(vyx);
+         v0tzx += floatTo<vbuf_prec>(vzx);
+         v0tyy += floatTo<vbuf_prec>(vyy);
+         v0tzy += floatTo<vbuf_prec>(vzy);
+         v0tzz += floatTo<vbuf_prec>(vzz);
       }
    }
    if CONSTEXPR (do_e and rc_a) {
@@ -461,15 +461,15 @@ void evalence_cu1(
 
          ptorunit, i, ipit, kpit, x, y, z);
       if CONSTEXPR (do_e) {
-         e0pt += cvt_to<ebuf_prec>(e);
+         e0pt += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0ptxx += cvt_to<vbuf_prec>(vxx);
-         v0ptyx += cvt_to<vbuf_prec>(vyx);
-         v0ptzx += cvt_to<vbuf_prec>(vzx);
-         v0ptyy += cvt_to<vbuf_prec>(vyy);
-         v0ptzy += cvt_to<vbuf_prec>(vzy);
-         v0ptzz += cvt_to<vbuf_prec>(vzz);
+         v0ptxx += floatTo<vbuf_prec>(vxx);
+         v0ptyx += floatTo<vbuf_prec>(vyx);
+         v0ptzx += floatTo<vbuf_prec>(vzx);
+         v0ptyy += floatTo<vbuf_prec>(vyy);
+         v0ptzy += floatTo<vbuf_prec>(vzy);
+         v0ptzz += floatTo<vbuf_prec>(vzz);
       }
    }
    if CONSTEXPR (do_e and rc_a) {
@@ -492,15 +492,15 @@ void evalence_cu1(
 
          x, y, z);
       if CONSTEXPR (do_e) {
-         e0bt += cvt_to<ebuf_prec>(e);
+         e0bt += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0btxx += cvt_to<vbuf_prec>(vxx);
-         v0btyx += cvt_to<vbuf_prec>(vyx);
-         v0btzx += cvt_to<vbuf_prec>(vzx);
-         v0btyy += cvt_to<vbuf_prec>(vyy);
-         v0btzy += cvt_to<vbuf_prec>(vzy);
-         v0btzz += cvt_to<vbuf_prec>(vzz);
+         v0btxx += floatTo<vbuf_prec>(vxx);
+         v0btyx += floatTo<vbuf_prec>(vyx);
+         v0btzx += floatTo<vbuf_prec>(vzx);
+         v0btyy += floatTo<vbuf_prec>(vyy);
+         v0btzy += floatTo<vbuf_prec>(vzy);
+         v0btzz += floatTo<vbuf_prec>(vzz);
       }
    }
    if CONSTEXPR (do_e and rc_a) {
@@ -523,15 +523,15 @@ void evalence_cu1(
 
          x, y, z);
       if CONSTEXPR (do_e) {
-         e0at += cvt_to<ebuf_prec>(e);
+         e0at += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0atxx += cvt_to<vbuf_prec>(vxx);
-         v0atyx += cvt_to<vbuf_prec>(vyx);
-         v0atzx += cvt_to<vbuf_prec>(vzx);
-         v0atyy += cvt_to<vbuf_prec>(vyy);
-         v0atzy += cvt_to<vbuf_prec>(vzy);
-         v0atzz += cvt_to<vbuf_prec>(vzz);
+         v0atxx += floatTo<vbuf_prec>(vxx);
+         v0atyx += floatTo<vbuf_prec>(vyx);
+         v0atzx += floatTo<vbuf_prec>(vzx);
+         v0atyy += floatTo<vbuf_prec>(vyy);
+         v0atzy += floatTo<vbuf_prec>(vzy);
+         v0atzz += floatTo<vbuf_prec>(vzz);
       }
    }
    if CONSTEXPR (do_e and rc_a) {
@@ -556,15 +556,15 @@ void evalence_cu1(
 
          x, y, z);
       if CONSTEXPR (do_e) {
-         e0tt += cvt_to<ebuf_prec>(e);
+         e0tt += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0ttxx += cvt_to<vbuf_prec>(vxx);
-         v0ttyx += cvt_to<vbuf_prec>(vyx);
-         v0ttzx += cvt_to<vbuf_prec>(vzx);
-         v0ttyy += cvt_to<vbuf_prec>(vyy);
-         v0ttzy += cvt_to<vbuf_prec>(vzy);
-         v0ttzz += cvt_to<vbuf_prec>(vzz);
+         v0ttxx += floatTo<vbuf_prec>(vxx);
+         v0ttyx += floatTo<vbuf_prec>(vyx);
+         v0ttzx += floatTo<vbuf_prec>(vzx);
+         v0ttyy += floatTo<vbuf_prec>(vyy);
+         v0ttzy += floatTo<vbuf_prec>(vzy);
+         v0ttzz += floatTo<vbuf_prec>(vzz);
       }
    }
    if CONSTEXPR (do_e and rc_a) {
@@ -587,15 +587,15 @@ void evalence_cu1(
 
          x, y, z, TINKER_IMAGE_ARGS);
       if CONSTEXPR (do_e) {
-         e0g += cvt_to<ebuf_prec>(e);
+         e0g += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0gxx += cvt_to<vbuf_prec>(vxx);
-         v0gyx += cvt_to<vbuf_prec>(vyx);
-         v0gzx += cvt_to<vbuf_prec>(vzx);
-         v0gyy += cvt_to<vbuf_prec>(vyy);
-         v0gzy += cvt_to<vbuf_prec>(vzy);
-         v0gzz += cvt_to<vbuf_prec>(vzz);
+         v0gxx += floatTo<vbuf_prec>(vxx);
+         v0gyx += floatTo<vbuf_prec>(vyx);
+         v0gzx += floatTo<vbuf_prec>(vzx);
+         v0gyy += floatTo<vbuf_prec>(vyy);
+         v0gzy += floatTo<vbuf_prec>(vzy);
+         v0gzz += floatTo<vbuf_prec>(vzz);
       }
    }
    // egeom group
@@ -609,15 +609,15 @@ void evalence_cu1(
 
          x, y, z, mass, molec, igrp, kgrp, grpmass, TINKER_IMAGE_ARGS);
       if CONSTEXPR (do_e) {
-         e0g += cvt_to<ebuf_prec>(e);
+         e0g += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0gxx += cvt_to<vbuf_prec>(vxx);
-         v0gyx += cvt_to<vbuf_prec>(vyx);
-         v0gzx += cvt_to<vbuf_prec>(vzx);
-         v0gyy += cvt_to<vbuf_prec>(vyy);
-         v0gzy += cvt_to<vbuf_prec>(vzy);
-         v0gzz += cvt_to<vbuf_prec>(vzz);
+         v0gxx += floatTo<vbuf_prec>(vxx);
+         v0gyx += floatTo<vbuf_prec>(vyx);
+         v0gzx += floatTo<vbuf_prec>(vzx);
+         v0gyy += floatTo<vbuf_prec>(vyy);
+         v0gzy += floatTo<vbuf_prec>(vzy);
+         v0gzz += floatTo<vbuf_prec>(vzz);
       }
    }
    // egeom distance
@@ -631,15 +631,15 @@ void evalence_cu1(
 
          x, y, z, molec, TINKER_IMAGE_ARGS);
       if CONSTEXPR (do_e) {
-         e0g += cvt_to<ebuf_prec>(e);
+         e0g += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0gxx += cvt_to<vbuf_prec>(vxx);
-         v0gyx += cvt_to<vbuf_prec>(vyx);
-         v0gzx += cvt_to<vbuf_prec>(vzx);
-         v0gyy += cvt_to<vbuf_prec>(vyy);
-         v0gzy += cvt_to<vbuf_prec>(vzy);
-         v0gzz += cvt_to<vbuf_prec>(vzz);
+         v0gxx += floatTo<vbuf_prec>(vxx);
+         v0gyx += floatTo<vbuf_prec>(vyx);
+         v0gzx += floatTo<vbuf_prec>(vzx);
+         v0gyy += floatTo<vbuf_prec>(vyy);
+         v0gzy += floatTo<vbuf_prec>(vzy);
+         v0gzz += floatTo<vbuf_prec>(vzz);
       }
    }
    // egeom angle
@@ -651,15 +651,15 @@ void evalence_cu1(
 
          i, iafix, afix, x, y, z);
       if CONSTEXPR (do_e) {
-         e0g += cvt_to<ebuf_prec>(e);
+         e0g += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0gxx += cvt_to<vbuf_prec>(vxx);
-         v0gyx += cvt_to<vbuf_prec>(vyx);
-         v0gzx += cvt_to<vbuf_prec>(vzx);
-         v0gyy += cvt_to<vbuf_prec>(vyy);
-         v0gzy += cvt_to<vbuf_prec>(vzy);
-         v0gzz += cvt_to<vbuf_prec>(vzz);
+         v0gxx += floatTo<vbuf_prec>(vxx);
+         v0gyx += floatTo<vbuf_prec>(vyx);
+         v0gzx += floatTo<vbuf_prec>(vzx);
+         v0gyy += floatTo<vbuf_prec>(vyy);
+         v0gzy += floatTo<vbuf_prec>(vzy);
+         v0gzz += floatTo<vbuf_prec>(vzz);
       }
    }
    // egeom torsion
@@ -671,15 +671,15 @@ void evalence_cu1(
 
          i, itfix, tfix, x, y, z);
       if CONSTEXPR (do_e) {
-         e0g += cvt_to<ebuf_prec>(e);
+         e0g += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_v) {
-         v0gxx += cvt_to<vbuf_prec>(vxx);
-         v0gyx += cvt_to<vbuf_prec>(vyx);
-         v0gzx += cvt_to<vbuf_prec>(vzx);
-         v0gyy += cvt_to<vbuf_prec>(vyy);
-         v0gzy += cvt_to<vbuf_prec>(vzy);
-         v0gzz += cvt_to<vbuf_prec>(vzz);
+         v0gxx += floatTo<vbuf_prec>(vxx);
+         v0gyx += floatTo<vbuf_prec>(vyx);
+         v0gzx += floatTo<vbuf_prec>(vzx);
+         v0gyy += floatTo<vbuf_prec>(vyy);
+         v0gzy += floatTo<vbuf_prec>(vzy);
+         v0gzz += floatTo<vbuf_prec>(vzz);
       }
    }
    if (npfix + ngfix + ndfix + nafix + ntfix > 0) {

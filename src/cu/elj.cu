@@ -109,7 +109,7 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buffe
          real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
          pair_lj_v3<do_g, true, 0>(r, invr, vlambda, scalea, rv, eps, cut, off, e, de);
          if CONSTEXPR (do_e) {
-            evtl += cvt_to<ebuf_prec>(e);
+            evtl += floatTo<ebuf_prec>(e);
             if CONSTEXPR (do_a) {
                if (scalea != 0 and e != 0)
                   nevtl += 1;
@@ -128,12 +128,12 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buffe
             fky -= dedy;
             fkz -= dedz;
             if CONSTEXPR (do_v) {
-               vevtlxx += cvt_to<vbuf_prec>(xr * dedx);
-               vevtlyx += cvt_to<vbuf_prec>(yr * dedx);
-               vevtlzx += cvt_to<vbuf_prec>(zr * dedx);
-               vevtlyy += cvt_to<vbuf_prec>(yr * dedy);
-               vevtlzy += cvt_to<vbuf_prec>(zr * dedy);
-               vevtlzz += cvt_to<vbuf_prec>(zr * dedz);
+               vevtlxx += floatTo<vbuf_prec>(xr * dedx);
+               vevtlyx += floatTo<vbuf_prec>(yr * dedx);
+               vevtlzx += floatTo<vbuf_prec>(zr * dedx);
+               vevtlyy += floatTo<vbuf_prec>(yr * dedy);
+               vevtlzy += floatTo<vbuf_prec>(zr * dedy);
+               vevtlzz += floatTo<vbuf_prec>(zr * dedz);
             }
          }
       }
@@ -200,7 +200,7 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buffe
             real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
             pair_lj_v3<do_g, true, 1>(r, invr, vlambda, 1, rv, eps, cut, off, e, de);
             if CONSTEXPR (do_e) {
-               evtl += cvt_to<ebuf_prec>(e);
+               evtl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
                   if (e != 0)
                      nevtl += 1;
@@ -219,12 +219,12 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buffe
                fky -= dedy;
                fkz -= dedz;
                if CONSTEXPR (do_v) {
-                  vevtlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vevtlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vevtlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vevtlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vevtlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vevtlzz += cvt_to<vbuf_prec>(zr * dedz);
+                  vevtlxx += floatTo<vbuf_prec>(xr * dedx);
+                  vevtlyx += floatTo<vbuf_prec>(yr * dedx);
+                  vevtlzx += floatTo<vbuf_prec>(zr * dedx);
+                  vevtlyy += floatTo<vbuf_prec>(yr * dedy);
+                  vevtlzy += floatTo<vbuf_prec>(zr * dedy);
+                  vevtlzz += floatTo<vbuf_prec>(zr * dedz);
                }
             }
          }
@@ -294,7 +294,7 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buffe
             real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
             pair_lj_v3<do_g, true, 1>(r, invr, vlambda, 1, rv, eps, cut, off, e, de);
             if CONSTEXPR (do_e) {
-               evtl += cvt_to<ebuf_prec>(e);
+               evtl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
                   if (e != 0)
                      nevtl += 1;
@@ -313,12 +313,12 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buffe
                fky -= dedy;
                fkz -= dedz;
                if CONSTEXPR (do_v) {
-                  vevtlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vevtlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vevtlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vevtlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vevtlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vevtlzz += cvt_to<vbuf_prec>(zr * dedz);
+                  vevtlxx += floatTo<vbuf_prec>(xr * dedx);
+                  vevtlyx += floatTo<vbuf_prec>(yr * dedx);
+                  vevtlzx += floatTo<vbuf_prec>(zr * dedx);
+                  vevtlyy += floatTo<vbuf_prec>(yr * dedy);
+                  vevtlzy += floatTo<vbuf_prec>(zr * dedy);
+                  vevtlzz += floatTo<vbuf_prec>(zr * dedz);
                }
             }
          }
@@ -424,7 +424,7 @@ void elj_cu2(count_buffer restrict nebuf, energy_buffer restrict ebuf, virial_bu
 
       if CONSTEXPR (do_e) {
          // if CONSTEXPR (do_a) {}
-         etl += cvt_to<ebuf_prec>(e);
+         etl += floatTo<ebuf_prec>(e);
       }
       if CONSTEXPR (do_g) {
          de *= invr;
@@ -432,12 +432,12 @@ void elj_cu2(count_buffer restrict nebuf, energy_buffer restrict ebuf, virial_bu
          real dedy = de * yr;
          real dedz = de * zr;
          if CONSTEXPR (do_v) {
-            vtlxx += cvt_to<vbuf_prec>(xr * dedx);
-            vtlyx += cvt_to<vbuf_prec>(yr * dedx);
-            vtlzx += cvt_to<vbuf_prec>(zr * dedx);
-            vtlyy += cvt_to<vbuf_prec>(yr * dedy);
-            vtlzy += cvt_to<vbuf_prec>(zr * dedy);
-            vtlzz += cvt_to<vbuf_prec>(zr * dedz);
+            vtlxx += floatTo<vbuf_prec>(xr * dedx);
+            vtlyx += floatTo<vbuf_prec>(yr * dedx);
+            vtlzx += floatTo<vbuf_prec>(zr * dedx);
+            vtlyy += floatTo<vbuf_prec>(yr * dedy);
+            vtlzy += floatTo<vbuf_prec>(zr * dedy);
+            vtlzz += floatTo<vbuf_prec>(zr * dedz);
          }
          atomic_add(dedx, gx, i);
          atomic_add(dedy, gy, i);

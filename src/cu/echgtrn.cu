@@ -110,7 +110,7 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nc, energy_bu
             if (e != 0 and scalea != 0)
                nctl += 1;
          if CONSTEXPR (do_e)
-            ectl += cvt_to<ebuf_prec>(e);
+            ectl += floatTo<ebuf_prec>(e);
          if CONSTEXPR (do_g) {
             de *= REAL_RECIP(r);
             real dedx = de * xr;
@@ -125,12 +125,12 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nc, energy_bu
             gzk += dedz;
 
             if CONSTEXPR (do_v) {
-               vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-               vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-               vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-               vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-               vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-               vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+               vctlxx += floatTo<vbuf_prec>(xr * dedx);
+               vctlyx += floatTo<vbuf_prec>(yr * dedx);
+               vctlzx += floatTo<vbuf_prec>(zr * dedx);
+               vctlyy += floatTo<vbuf_prec>(yr * dedy);
+               vctlzy += floatTo<vbuf_prec>(zr * dedy);
+               vctlzz += floatTo<vbuf_prec>(zr * dedz);
             }
          }
       } // end if (include)
@@ -196,7 +196,7 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nc, energy_bu
                if (e != 0)
                   nctl += 1;
             if CONSTEXPR (do_e)
-               ectl += cvt_to<ebuf_prec>(e);
+               ectl += floatTo<ebuf_prec>(e);
             if CONSTEXPR (do_g) {
                de *= REAL_RECIP(r);
                real dedx = de * xr;
@@ -211,12 +211,12 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nc, energy_bu
                gzk += dedz;
 
                if CONSTEXPR (do_v) {
-                  vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+                  vctlxx += floatTo<vbuf_prec>(xr * dedx);
+                  vctlyx += floatTo<vbuf_prec>(yr * dedx);
+                  vctlzx += floatTo<vbuf_prec>(zr * dedx);
+                  vctlyy += floatTo<vbuf_prec>(yr * dedy);
+                  vctlzy += floatTo<vbuf_prec>(zr * dedy);
+                  vctlzz += floatTo<vbuf_prec>(zr * dedz);
                }
             }
          } // end if (include)
@@ -285,7 +285,7 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nc, energy_bu
                if (e != 0)
                   nctl += 1;
             if CONSTEXPR (do_e)
-               ectl += cvt_to<ebuf_prec>(e);
+               ectl += floatTo<ebuf_prec>(e);
             if CONSTEXPR (do_g) {
                de *= REAL_RECIP(r);
                real dedx = de * xr;
@@ -300,12 +300,12 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nc, energy_bu
                gzk += dedz;
 
                if CONSTEXPR (do_v) {
-                  vctlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vctlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vctlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vctlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vctlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vctlzz += cvt_to<vbuf_prec>(zr * dedz);
+                  vctlxx += floatTo<vbuf_prec>(xr * dedx);
+                  vctlyx += floatTo<vbuf_prec>(yr * dedx);
+                  vctlzx += floatTo<vbuf_prec>(zr * dedx);
+                  vctlyy += floatTo<vbuf_prec>(yr * dedy);
+                  vctlzy += floatTo<vbuf_prec>(zr * dedy);
+                  vctlzz += floatTo<vbuf_prec>(zr * dedz);
                }
             }
          } // end if (include)

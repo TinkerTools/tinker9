@@ -162,19 +162,19 @@ void empole_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nem, energy_bu
             vzz1);
          if CONSTEXPR (do_e) {
             e = e + e1;
-            emtl += cvt_to<ebuf_prec>(e);
+            emtl += floatTo<ebuf_prec>(e);
             if CONSTEXPR (do_a) {
                if (scalea != 0 and e != 0)
                   nemtl += 1;
             }
          }
          if CONSTEXPR (do_v) {
-            vemtlxx += cvt_to<vbuf_prec>(vxx + vxx1);
-            vemtlyx += cvt_to<vbuf_prec>(vyx + vyx1);
-            vemtlzx += cvt_to<vbuf_prec>(vzx + vzx1);
-            vemtlyy += cvt_to<vbuf_prec>(vyy + vyy1);
-            vemtlzy += cvt_to<vbuf_prec>(vzy + vzy1);
-            vemtlzz += cvt_to<vbuf_prec>(vzz + vzz1);
+            vemtlxx += floatTo<vbuf_prec>(vxx + vxx1);
+            vemtlyx += floatTo<vbuf_prec>(vyx + vyx1);
+            vemtlzx += floatTo<vbuf_prec>(vzx + vzx1);
+            vemtlyy += floatTo<vbuf_prec>(vyy + vyy1);
+            vemtlzy += floatTo<vbuf_prec>(vzy + vzy1);
+            vemtlzz += floatTo<vbuf_prec>(vzz + vzz1);
          }
       } // end if (include)
 
@@ -268,19 +268,19 @@ void empole_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nem, energy_bu
                frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, trqxi[klane],
                trqyi[klane], trqzi[klane], trqxk, trqyk, trqzk, e, vxx, vyx, vzx, vyy, vzy, vzz);
             if CONSTEXPR (do_e) {
-               emtl += cvt_to<ebuf_prec>(e);
+               emtl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
                   if (e != 0)
                      nemtl += 1;
                }
             }
             if CONSTEXPR (do_v) {
-               vemtlxx += cvt_to<vbuf_prec>(vxx);
-               vemtlyx += cvt_to<vbuf_prec>(vyx);
-               vemtlzx += cvt_to<vbuf_prec>(vzx);
-               vemtlyy += cvt_to<vbuf_prec>(vyy);
-               vemtlzy += cvt_to<vbuf_prec>(vzy);
-               vemtlzz += cvt_to<vbuf_prec>(vzz);
+               vemtlxx += floatTo<vbuf_prec>(vxx);
+               vemtlyx += floatTo<vbuf_prec>(vyx);
+               vemtlzx += floatTo<vbuf_prec>(vzx);
+               vemtlyy += floatTo<vbuf_prec>(vyy);
+               vemtlzy += floatTo<vbuf_prec>(vzy);
+               vemtlzz += floatTo<vbuf_prec>(vzz);
             }
          } // end if (include)
 
@@ -368,19 +368,19 @@ void empole_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nem, energy_bu
                frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, trqxi[klane],
                trqyi[klane], trqzi[klane], trqxk, trqyk, trqzk, e, vxx, vyx, vzx, vyy, vzy, vzz);
             if CONSTEXPR (do_e) {
-               emtl += cvt_to<ebuf_prec>(e);
+               emtl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
                   if (e != 0)
                      nemtl += 1;
                }
             }
             if CONSTEXPR (do_v) {
-               vemtlxx += cvt_to<vbuf_prec>(vxx);
-               vemtlyx += cvt_to<vbuf_prec>(vyx);
-               vemtlzx += cvt_to<vbuf_prec>(vzx);
-               vemtlyy += cvt_to<vbuf_prec>(vyy);
-               vemtlzy += cvt_to<vbuf_prec>(vzy);
-               vemtlzz += cvt_to<vbuf_prec>(vzz);
+               vemtlxx += floatTo<vbuf_prec>(vxx);
+               vemtlyx += floatTo<vbuf_prec>(vyx);
+               vemtlzx += floatTo<vbuf_prec>(vzx);
+               vemtlyy += floatTo<vbuf_prec>(vyy);
+               vemtlzy += floatTo<vbuf_prec>(vzy);
+               vemtlzz += floatTo<vbuf_prec>(vzz);
             }
          } // end if (include)
       }

@@ -57,7 +57,7 @@ void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, fixed (*buffer)[8], si
 /// \ingroup acc_syntax
 #pragma acc routine seq
 template <class G, class T>
-G cvt_to(T val)
+G floatTo(T val)
 {
    static_assert(std::is_same<T, float>::value || std::is_same<T, double>::value, "");
    if CONSTEXPR (std::is_same<G, fixed>::value)
@@ -72,7 +72,7 @@ G cvt_to(T val)
  */
 #pragma acc routine seq
 template <class T>
-T to_flt_acc(fixed val)
+T fixedTo(fixed val)
 {
    return static_cast<T>(static_cast<long long>(val)) / 0x100000000ull;
 }

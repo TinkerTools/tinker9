@@ -9,12 +9,12 @@ void scale_gradient_acc(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec*
    #pragma acc parallel loop independent async\
            deviceptr(g0x,g0y,g0z)
    for (int i = 0; i < n; ++i) {
-      real dx = s * to_flt_acc<real>(g0x[i]);
-      real dy = s * to_flt_acc<real>(g0y[i]);
-      real dz = s * to_flt_acc<real>(g0z[i]);
-      g0x[i] = cvt_to<grad_prec>(dx);
-      g0y[i] = cvt_to<grad_prec>(dy);
-      g0z[i] = cvt_to<grad_prec>(dz);
+      real dx = s * fixedTo<real>(g0x[i]);
+      real dy = s * fixedTo<real>(g0y[i]);
+      real dz = s * fixedTo<real>(g0z[i]);
+      g0x[i] = floatTo<grad_prec>(dx);
+      g0y[i] = floatTo<grad_prec>(dy);
+      g0z[i] = floatTo<grad_prec>(dz);
    }
 #else
    #pragma acc parallel loop independent async\
@@ -47,12 +47,12 @@ void sum_gradient_acc(double ss, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
    #pragma acc parallel loop independent async\
            deviceptr(g0x,g0y,g0z,g1x,g1y,g1z)
    for (int i = 0; i < n; ++i) {
-      real dx = s * to_flt_acc<real>(g1x[i]);
-      real dy = s * to_flt_acc<real>(g1y[i]);
-      real dz = s * to_flt_acc<real>(g1z[i]);
-      g0x[i] += cvt_to<grad_prec>(dx);
-      g0y[i] += cvt_to<grad_prec>(dy);
-      g0z[i] += cvt_to<grad_prec>(dz);
+      real dx = s * fixedTo<real>(g1x[i]);
+      real dy = s * fixedTo<real>(g1y[i]);
+      real dz = s * fixedTo<real>(g1z[i]);
+      g0x[i] += floatTo<grad_prec>(dx);
+      g0y[i] += floatTo<grad_prec>(dy);
+      g0z[i] += floatTo<grad_prec>(dz);
    }
 #else
    #pragma acc parallel loop independent async\

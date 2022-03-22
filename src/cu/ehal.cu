@@ -151,7 +151,7 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buff
          pair_hal_v2<do_g, 0>(
             r, scalea, rv, eps, cut, off, vlambda, GHAL, DHAL, SCEXP, SCALPHA, e, de);
          if CONSTEXPR (do_e) {
-            evtl += cvt_to<ebuf_prec>(e);
+            evtl += floatTo<ebuf_prec>(e);
             if CONSTEXPR (do_a) {
                if (scalea != 0 and e != 0)
                   nevtl += 1;
@@ -170,12 +170,12 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buff
             fky -= dedy;
             fkz -= dedz;
             if CONSTEXPR (do_v) {
-               vevtlxx += cvt_to<vbuf_prec>(xr * dedx);
-               vevtlyx += cvt_to<vbuf_prec>(yr * dedx);
-               vevtlzx += cvt_to<vbuf_prec>(zr * dedx);
-               vevtlyy += cvt_to<vbuf_prec>(yr * dedy);
-               vevtlzy += cvt_to<vbuf_prec>(zr * dedy);
-               vevtlzz += cvt_to<vbuf_prec>(zr * dedz);
+               vevtlxx += floatTo<vbuf_prec>(xr * dedx);
+               vevtlyx += floatTo<vbuf_prec>(yr * dedx);
+               vevtlzx += floatTo<vbuf_prec>(zr * dedx);
+               vevtlyy += floatTo<vbuf_prec>(yr * dedy);
+               vevtlzy += floatTo<vbuf_prec>(zr * dedy);
+               vevtlzz += floatTo<vbuf_prec>(zr * dedz);
             }
          }
       }
@@ -247,7 +247,7 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buff
             pair_hal_v2<do_g, 1>(
                r, 1, rv, eps, cut, off, vlambda, GHAL, DHAL, SCEXP, SCALPHA, e, de);
             if CONSTEXPR (do_e) {
-               evtl += cvt_to<ebuf_prec>(e);
+               evtl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
                   if (e != 0)
                      nevtl += 1;
@@ -266,12 +266,12 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buff
                fky -= dedy;
                fkz -= dedz;
                if CONSTEXPR (do_v) {
-                  vevtlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vevtlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vevtlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vevtlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vevtlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vevtlzz += cvt_to<vbuf_prec>(zr * dedz);
+                  vevtlxx += floatTo<vbuf_prec>(xr * dedx);
+                  vevtlyx += floatTo<vbuf_prec>(yr * dedx);
+                  vevtlzx += floatTo<vbuf_prec>(zr * dedx);
+                  vevtlyy += floatTo<vbuf_prec>(yr * dedy);
+                  vevtlzy += floatTo<vbuf_prec>(zr * dedy);
+                  vevtlzz += floatTo<vbuf_prec>(zr * dedz);
                }
             }
          }
@@ -346,7 +346,7 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buff
             pair_hal_v2<do_g, 1>(
                r, 1, rv, eps, cut, off, vlambda, GHAL, DHAL, SCEXP, SCALPHA, e, de);
             if CONSTEXPR (do_e) {
-               evtl += cvt_to<ebuf_prec>(e);
+               evtl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
                   if (e != 0)
                      nevtl += 1;
@@ -365,12 +365,12 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buff
                fky -= dedy;
                fkz -= dedz;
                if CONSTEXPR (do_v) {
-                  vevtlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vevtlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vevtlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vevtlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vevtlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vevtlzz += cvt_to<vbuf_prec>(zr * dedz);
+                  vevtlxx += floatTo<vbuf_prec>(xr * dedx);
+                  vevtlyx += floatTo<vbuf_prec>(yr * dedx);
+                  vevtlzx += floatTo<vbuf_prec>(zr * dedx);
+                  vevtlyy += floatTo<vbuf_prec>(yr * dedy);
+                  vevtlzy += floatTo<vbuf_prec>(zr * dedy);
+                  vevtlzz += floatTo<vbuf_prec>(zr * dedz);
                }
             }
          }

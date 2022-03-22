@@ -2,14 +2,14 @@
 #define THRUST_IGNORE_DEPRECATED_CPP_DIALECT
 
 #include "box.h"
+#include "copysign.h"
+#include "ffsn.h"
 #include "image.h"
+#include "imagefc.h"
 #include "launch.h"
 #include "md.h"
 #include "nblist.h"
 #include "spatial.h"
-#include "syntax/cu/copysign.h"
-#include "syntax/cu/ffsn.h"
-#include "syntax/cu/imagefc.h"
 #include "tool/thrustcache.h"
 #include <thrust/extrema.h>
 #include <thrust/remove.h>

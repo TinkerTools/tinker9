@@ -701,15 +701,15 @@ void emplar_cu1c(TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf, virial_buffer
             trqyi[klane], trqzi[klane], trqxk, trqyk, trqzk, e1, vxx1, vyx1, vzx1, vyy1, vzy1,
             vzz1);
          if CONSTEXPR (do_e) {
-            ebuftl += cvt_to<ebuf_prec>(e1);
+            ebuftl += floatTo<ebuf_prec>(e1);
          }
          if CONSTEXPR (do_v) {
-            vbuftlxx += cvt_to<vbuf_prec>(vxx1);
-            vbuftlyx += cvt_to<vbuf_prec>(vyx1);
-            vbuftlzx += cvt_to<vbuf_prec>(vzx1);
-            vbuftlyy += cvt_to<vbuf_prec>(vyy1);
-            vbuftlzy += cvt_to<vbuf_prec>(vzy1);
-            vbuftlzz += cvt_to<vbuf_prec>(vzz1);
+            vbuftlxx += floatTo<vbuf_prec>(vxx1);
+            vbuftlyx += floatTo<vbuf_prec>(vyx1);
+            vbuftlzx += floatTo<vbuf_prec>(vzx1);
+            vbuftlyy += floatTo<vbuf_prec>(vyy1);
+            vbuftlzy += floatTo<vbuf_prec>(vzy1);
+            vbuftlzz += floatTo<vbuf_prec>(vzz1);
          }
       } // end if (include)
 
@@ -915,15 +915,15 @@ void emplar_cu1b(TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf, virial_buffer
                frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, trqxi[klane],
                trqyi[klane], trqzi[klane], trqxk, trqyk, trqzk, e, vxx, vyx, vzx, vyy, vzy, vzz);
             if CONSTEXPR (do_e) {
-               ebuftl += cvt_to<ebuf_prec>(e);
+               ebuftl += floatTo<ebuf_prec>(e);
             }
             if CONSTEXPR (do_v) {
-               vbuftlxx += cvt_to<vbuf_prec>(vxx);
-               vbuftlyx += cvt_to<vbuf_prec>(vyx);
-               vbuftlzx += cvt_to<vbuf_prec>(vzx);
-               vbuftlyy += cvt_to<vbuf_prec>(vyy);
-               vbuftlzy += cvt_to<vbuf_prec>(vzy);
-               vbuftlzz += cvt_to<vbuf_prec>(vzz);
+               vbuftlxx += floatTo<vbuf_prec>(vxx);
+               vbuftlyx += floatTo<vbuf_prec>(vyx);
+               vbuftlzx += floatTo<vbuf_prec>(vzx);
+               vbuftlyy += floatTo<vbuf_prec>(vyy);
+               vbuftlzy += floatTo<vbuf_prec>(vzy);
+               vbuftlzz += floatTo<vbuf_prec>(vzz);
             }
          } // end if (include)
 
@@ -1127,15 +1127,15 @@ void emplar_cu1a(TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf, virial_buffer
                frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, trqxi[klane],
                trqyi[klane], trqzi[klane], trqxk, trqyk, trqzk, e, vxx, vyx, vzx, vyy, vzy, vzz);
             if CONSTEXPR (do_e) {
-               ebuftl += cvt_to<ebuf_prec>(e);
+               ebuftl += floatTo<ebuf_prec>(e);
             }
             if CONSTEXPR (do_v) {
-               vbuftlxx += cvt_to<vbuf_prec>(vxx);
-               vbuftlyx += cvt_to<vbuf_prec>(vyx);
-               vbuftlzx += cvt_to<vbuf_prec>(vzx);
-               vbuftlyy += cvt_to<vbuf_prec>(vyy);
-               vbuftlzy += cvt_to<vbuf_prec>(vzy);
-               vbuftlzz += cvt_to<vbuf_prec>(vzz);
+               vbuftlxx += floatTo<vbuf_prec>(vxx);
+               vbuftlyx += floatTo<vbuf_prec>(vyx);
+               vbuftlzx += floatTo<vbuf_prec>(vzx);
+               vbuftlyy += floatTo<vbuf_prec>(vyy);
+               vbuftlzy += floatTo<vbuf_prec>(vzy);
+               vbuftlzz += floatTo<vbuf_prec>(vzz);
             }
          } // end if (include)
       }

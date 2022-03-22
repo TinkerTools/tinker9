@@ -105,7 +105,7 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd, energy_buff
          real e, de;
          pair_disp<do_g, DTYP, 0>(r, r2, rr1, scalea, aewald, ci, ai, ck, ak, cut, off, e, de);
          if CONSTEXPR (do_e) {
-            edtl += cvt_to<ebuf_prec>(e);
+            edtl += floatTo<ebuf_prec>(e);
             if CONSTEXPR (do_a) {
                if (scalea != 0 and e != 0)
                   ndtl += 1;
@@ -124,12 +124,12 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd, energy_buff
             gyk -= dedy;
             gzk -= dedz;
             if CONSTEXPR (do_v) {
-               vdtlxx += cvt_to<vbuf_prec>(xr * dedx);
-               vdtlyx += cvt_to<vbuf_prec>(yr * dedx);
-               vdtlzx += cvt_to<vbuf_prec>(zr * dedx);
-               vdtlyy += cvt_to<vbuf_prec>(yr * dedy);
-               vdtlzy += cvt_to<vbuf_prec>(zr * dedy);
-               vdtlzz += cvt_to<vbuf_prec>(zr * dedz);
+               vdtlxx += floatTo<vbuf_prec>(xr * dedx);
+               vdtlyx += floatTo<vbuf_prec>(yr * dedx);
+               vdtlzx += floatTo<vbuf_prec>(zr * dedx);
+               vdtlyy += floatTo<vbuf_prec>(yr * dedy);
+               vdtlzy += floatTo<vbuf_prec>(zr * dedy);
+               vdtlzz += floatTo<vbuf_prec>(zr * dedz);
             }
          }
       } // end if (include)
@@ -193,7 +193,7 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd, energy_buff
             real e, de;
             pair_disp<do_g, DTYP, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, cut, off, e, de);
             if CONSTEXPR (do_e) {
-               edtl += cvt_to<ebuf_prec>(e);
+               edtl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
                   if (e != 0)
                      ndtl += 1;
@@ -212,12 +212,12 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd, energy_buff
                gyk -= dedy;
                gzk -= dedz;
                if CONSTEXPR (do_v) {
-                  vdtlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vdtlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vdtlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vdtlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vdtlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vdtlzz += cvt_to<vbuf_prec>(zr * dedz);
+                  vdtlxx += floatTo<vbuf_prec>(xr * dedx);
+                  vdtlyx += floatTo<vbuf_prec>(yr * dedx);
+                  vdtlzx += floatTo<vbuf_prec>(zr * dedx);
+                  vdtlyy += floatTo<vbuf_prec>(yr * dedy);
+                  vdtlzy += floatTo<vbuf_prec>(zr * dedy);
+                  vdtlzz += floatTo<vbuf_prec>(zr * dedz);
                }
             }
          } // end if (include)
@@ -284,7 +284,7 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd, energy_buff
             real e, de;
             pair_disp<do_g, DTYP, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, cut, off, e, de);
             if CONSTEXPR (do_e) {
-               edtl += cvt_to<ebuf_prec>(e);
+               edtl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
                   if (e != 0)
                      ndtl += 1;
@@ -303,12 +303,12 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd, energy_buff
                gyk -= dedy;
                gzk -= dedz;
                if CONSTEXPR (do_v) {
-                  vdtlxx += cvt_to<vbuf_prec>(xr * dedx);
-                  vdtlyx += cvt_to<vbuf_prec>(yr * dedx);
-                  vdtlzx += cvt_to<vbuf_prec>(zr * dedx);
-                  vdtlyy += cvt_to<vbuf_prec>(yr * dedy);
-                  vdtlzy += cvt_to<vbuf_prec>(zr * dedy);
-                  vdtlzz += cvt_to<vbuf_prec>(zr * dedz);
+                  vdtlxx += floatTo<vbuf_prec>(xr * dedx);
+                  vdtlyx += floatTo<vbuf_prec>(yr * dedx);
+                  vdtlzx += floatTo<vbuf_prec>(zr * dedx);
+                  vdtlyy += floatTo<vbuf_prec>(yr * dedy);
+                  vdtlzy += floatTo<vbuf_prec>(zr * dedy);
+                  vdtlzz += floatTo<vbuf_prec>(zr * dedz);
                }
             }
          } // end if (include)

@@ -187,7 +187,7 @@ void empole_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nem,
             if (e != 0 and scalea != 0)
                nemtl += 1;
          if CONSTEXPR (do_e)
-            emtl += cvt_to<ebuf_prec>(e);
+            emtl += floatTo<ebuf_prec>(e);
          if CONSTEXPR (do_g) {
             gxi[klane] += pgrad.frcx;
             gyi[klane] += pgrad.frcy;
@@ -204,12 +204,12 @@ void empole_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nem,
             tzk += pgrad.ttmk[2];
          }
          if CONSTEXPR (do_v) {
-            vemtlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
-            vemtlyx += cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
-            vemtlzx += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
-            vemtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
-            vemtlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
-            vemtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
+            vemtlxx += floatTo<vbuf_prec>(-xr * pgrad.frcx);
+            vemtlyx += floatTo<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+            vemtlzx += floatTo<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
+            vemtlyy += floatTo<vbuf_prec>(-yr * pgrad.frcy);
+            vemtlzy += floatTo<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
+            vemtlzz += floatTo<vbuf_prec>(-zr * pgrad.frcz);
          }
          if CONSTEXPR (CFLX) {
             poti[klane] += pota;
@@ -333,7 +333,7 @@ void empole_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nem,
                if (e != 0)
                   nemtl += 1;
             if CONSTEXPR (do_e)
-               emtl += cvt_to<ebuf_prec>(e);
+               emtl += floatTo<ebuf_prec>(e);
             if CONSTEXPR (do_g) {
                gxi[klane] += pgrad.frcx;
                gyi[klane] += pgrad.frcy;
@@ -350,12 +350,12 @@ void empole_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nem,
                tzk += pgrad.ttmk[2];
             }
             if CONSTEXPR (do_v) {
-               vemtlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
-               vemtlyx += cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
-               vemtlzx += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
-               vemtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
-               vemtlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
-               vemtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
+               vemtlxx += floatTo<vbuf_prec>(-xr * pgrad.frcx);
+               vemtlyx += floatTo<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+               vemtlzx += floatTo<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
+               vemtlyy += floatTo<vbuf_prec>(-yr * pgrad.frcy);
+               vemtlzy += floatTo<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
+               vemtlzz += floatTo<vbuf_prec>(-zr * pgrad.frcz);
             }
             if CONSTEXPR (CFLX) {
                poti[klane] += pota;
@@ -473,7 +473,7 @@ void empole_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nem,
                if (e != 0)
                   nemtl += 1;
             if CONSTEXPR (do_e)
-               emtl += cvt_to<ebuf_prec>(e);
+               emtl += floatTo<ebuf_prec>(e);
             if CONSTEXPR (do_g) {
                gxi[klane] += pgrad.frcx;
                gyi[klane] += pgrad.frcy;
@@ -490,12 +490,12 @@ void empole_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nem,
                tzk += pgrad.ttmk[2];
             }
             if CONSTEXPR (do_v) {
-               vemtlxx += cvt_to<vbuf_prec>(-xr * pgrad.frcx);
-               vemtlyx += cvt_to<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
-               vemtlzx += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
-               vemtlyy += cvt_to<vbuf_prec>(-yr * pgrad.frcy);
-               vemtlzy += cvt_to<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
-               vemtlzz += cvt_to<vbuf_prec>(-zr * pgrad.frcz);
+               vemtlxx += floatTo<vbuf_prec>(-xr * pgrad.frcx);
+               vemtlyx += floatTo<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+               vemtlzx += floatTo<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
+               vemtlyy += floatTo<vbuf_prec>(-yr * pgrad.frcy);
+               vemtlzy += floatTo<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
+               vemtlzz += floatTo<vbuf_prec>(-zr * pgrad.frcz);
             }
             if CONSTEXPR (CFLX) {
                poti[klane] += pota;
