@@ -1,6 +1,6 @@
-#include "evalence.h"
+#include "ff/pchg/evalence.h"
 #include "md.h"
-#include "potent.h"
+#include "ff/potent.h"
 #include "tool/zero.h"
 #include <tinker/detail/restrn.hh>
 #include <tinker/detail/sizes.hh>

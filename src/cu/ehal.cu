@@ -1,14 +1,14 @@
 #include "add.h"
-#include "evdw.h"
+#include "ff/pchg/evdw.h"
 #include "glob/spatial.h"
-#include "image.h"
+#include "ff/image.h"
 #include "launch.h"
 #include "md.h"
 #include "seq/pair_hal.h"
 #include "seq/switch.h"
 #include "seq/triangle.h"
-#include "spatial2.h"
-#include "switch.h"
+#include "ff/spatial2.h"
+#include "ff/switch.h"
 #include "tool/gpucard.h"
 
 /**

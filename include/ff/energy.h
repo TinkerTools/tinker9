@@ -1,20 +1,20 @@
 #pragma once
-#include "time_scale.h"
+#include "ff/time_scale.h"
 
-#include "amoeba/emplar.h"
-#include "amoeba/empole.h"
-#include "amoeba/epolar.h"
-#include "evalence.h"
-#include "evdw.h"
-#include "pchg/echarge.h"
-#include "pchg/echglj.h"
+#include "ff/amoeba/emplar.h"
+#include "ff/amoeba/empole.h"
+#include "ff/amoeba/epolar.h"
+#include "ff/pchg/evalence.h"
+#include "ff/pchg/evdw.h"
+#include "ff/pchg/echarge.h"
+#include "ff/pchg/echglj.h"
 
-#include "hippo/echgtrn.h"
-#include "hippo/edisp.h"
-#include "hippo/ehippo.h"
-#include "hippo/empole_chgpen.h"
-#include "hippo/epolar_chgpen.h"
-#include "hippo/erepel.h"
+#include "ff/hippo/echgtrn.h"
+#include "ff/hippo/edisp.h"
+#include "ff/hippo/ehippo.h"
+#include "ff/hippo/empole_chgpen.h"
+#include "ff/hippo/epolar_chgpen.h"
+#include "ff/hippo/erepel.h"
 
 namespace tinker {
 /**

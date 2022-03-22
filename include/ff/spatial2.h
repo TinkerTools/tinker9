@@ -1,5 +1,5 @@
 #pragma once
-#include "spatial.h"
+#include "ff/spatial.h"
 
 namespace tinker {
 /**

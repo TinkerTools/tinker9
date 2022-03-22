@@ -1,4 +1,4 @@
-#include "energy.h"
+#include "ff/energy.h"
 #include "md.h"
 #include "tinker9.h"
 #include "tool/io.h"

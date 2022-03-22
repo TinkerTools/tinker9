@@ -1,5 +1,5 @@
-#include "rattle.h"
-#include "energybuffer.h"
+#include "ff/rattle.h"
+#include "ff/energybuffer.h"
 #include "md.h"
 #include "tool/darray.h"
 #include "tool/io.h"

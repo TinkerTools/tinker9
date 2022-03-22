@@ -1,6 +1,6 @@
 #include "integrator.h"
 #include "md.h"
-#include "rattle.h"
+#include "ff/rattle.h"
 #include "tinker9.h"
 #include "tool/darray.h"
 #include <tinker/detail/bath.hh>

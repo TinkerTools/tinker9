@@ -1,4 +1,4 @@
-#include "energy.h"
+#include "ff/energy.h"
 #include "integrator.h"
 #include "lflpiston.h"
 #include "md.h"

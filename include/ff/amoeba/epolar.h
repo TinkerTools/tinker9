@@ -1,8 +1,8 @@
 #pragma once
-#include "elec.h"
+#include "ff/elec.h"
 #include "glob//polar.h"
 #include "glob//polpot.h"
-#include "pmestuf.h"
+#include "ff/pmestuf.h"
 
 namespace tinker {
 void epolar_data(RcOp);

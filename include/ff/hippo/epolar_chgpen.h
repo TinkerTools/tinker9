@@ -1,5 +1,5 @@
 #pragma once
-#include "amoeba/epolar.h"
+#include "ff/amoeba/epolar.h"
 #include "glob//chgpen.h"
 
 namespace tinker {

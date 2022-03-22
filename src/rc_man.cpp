@@ -44,13 +44,13 @@ void finish()
 #include "platform.h"
 #include "tool/gpucard.h"
 
-#include "box.h"
-#include "energy.h"
+#include "ff/box.h"
+#include "ff/energy.h"
 #include "md.h"
-#include "molecule.h"
-#include "nblist.h"
+#include "ff/molecule.h"
+#include "ff/nblist.h"
 #include "osrw.h"
-#include "rattle.h"
+#include "ff/rattle.h"
 #include "tool/cudalib.h"
 
 namespace tinker {

@@ -1,13 +1,13 @@
-#include "hippo/echgtrn.h"
+#include "ff/hippo/echgtrn.h"
 #include "add.h"
 #include "glob/chgpot.h"
 #include "glob/nblist.h"
-#include "image.h"
+#include "ff/image.h"
 #include "md.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_chgtrn.h"
 #include "seq/switch.h"
-#include "switch.h"
+#include "ff/switch.h"
 #include "tool/gpucard.h"
 #include <cassert>
 

@@ -1,5 +1,5 @@
-#include "amoeba/induce.h"
-#include "nblist.h"
+#include "ff/amoeba/induce.h"
+#include "ff/nblist.h"
 
 namespace tinker {
 void sparse_precond_build() {}

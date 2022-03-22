@@ -1,5 +1,5 @@
 #pragma once
-#include "box.h"
+#include "ff/box.h"
 
 namespace tinker {
 TINKER_EXTERN BoxShape box_shape;

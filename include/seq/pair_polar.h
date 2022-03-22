@@ -1,5 +1,5 @@
 #pragma once
-#include "elec.h"
+#include "ff/elec.h"
 #include "md.h"
 #include "seq/damp.h"
 

@@ -1,4 +1,4 @@
-#include "switch.h"
+#include "ff/switch.h"
 #include "math/inc.h"
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/nonpol.hh>

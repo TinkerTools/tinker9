@@ -1,12 +1,12 @@
 #define TINKER_ENABLE_LOG 0
 #include "tool/log.h"
 
-#include "box.h"
-#include "energy.h"
+#include "ff/box.h"
+#include "ff/energy.h"
 #include "math/inc.h"
 #include "md.h"
-#include "molecule.h"
-#include "nblist.h"
+#include "ff/molecule.h"
+#include "ff/nblist.h"
 #include "tool/io.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/bound.hh>

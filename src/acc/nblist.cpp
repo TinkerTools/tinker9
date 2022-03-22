@@ -1,5 +1,5 @@
-#include "nblist.h"
-#include "image.h"
+#include "ff/nblist.h"
+#include "ff/image.h"
 #include "md.h"
 #include "tool/gpucard.h"
 

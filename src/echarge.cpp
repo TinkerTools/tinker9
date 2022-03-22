@@ -1,9 +1,9 @@
-#include "pchg/echarge.h"
+#include "ff/pchg/echarge.h"
 #include "md.h"
-#include "nblist.h"
-#include "pchg/echglj.h"
-#include "pmestuf.h"
-#include "potent.h"
+#include "ff/nblist.h"
+#include "ff/pchg/echglj.h"
+#include "ff/pmestuf.h"
+#include "ff/potent.h"
 #include "tool/zero.h"
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/couple.hh>

@@ -1,4 +1,4 @@
-#include "potent.h"
+#include "ff/potent.h"
 #include <cassert>
 #include <tinker/detail/angbnd.hh>
 #include <tinker/detail/angtor.hh>

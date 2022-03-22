@@ -1,5 +1,5 @@
 #pragma once
-#include "elec.h"
+#include "ff/elec.h"
 #include "glob//chgpen.h"
 #include "glob//mplpot.h"
 

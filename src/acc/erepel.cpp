@@ -1,13 +1,13 @@
-#include "hippo/erepel.h"
+#include "ff/hippo/erepel.h"
 #include "add.h"
 #include "glob/nblist.h"
-#include "image.h"
+#include "ff/image.h"
 #include "md.h"
 #include "seq/bsplgen.h"
 #include "seq/damp_hippo.h"
 #include "seq/pair_repel.h"
 #include "seq/switch.h"
-#include "switch.h"
+#include "ff/switch.h"
 #include "tool/gpucard.h"
 
 namespace tinker {

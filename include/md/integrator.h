@@ -1,6 +1,6 @@
 #pragma once
 #include "precision.h"
-#include "rattle.h"
+#include "ff/rattle.h"
 #include <cstdio>
 #include <string>
 #include <tinker/detail/bath.hh>

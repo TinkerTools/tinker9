@@ -1,5 +1,5 @@
 #pragma once
-#include "energybuffer.h"
+#include "ff/energybuffer.h"
 #include "tool/darray.h"
 #include "tool/fft.h"
 #include "tool/genunit.h"

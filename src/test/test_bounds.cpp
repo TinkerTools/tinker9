@@ -5,7 +5,7 @@
 #include <fstream>
 #include <tinker/detail/files.hh>
 
-#include "box.h"
+#include "ff/box.h"
 namespace {
 const char* coord = R"**(   2
    1 Na+    51.000000   -83.000000   164.000000     7

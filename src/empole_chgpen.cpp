@@ -1,8 +1,8 @@
-#include "hippo/empole_chgpen.h"
-#include "hippo/cflux.h"
+#include "ff/hippo/empole_chgpen.h"
+#include "ff/hippo/cflux.h"
 #include "md.h"
-#include "nblist.h"
-#include "potent.h"
+#include "ff/nblist.h"
+#include "ff/potent.h"
 #include "tool/zero.h"
 #include <tinker/detail/chgpen.hh>
 #include <tinker/detail/mplpot.hh>

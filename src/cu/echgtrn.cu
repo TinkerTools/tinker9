@@ -1,15 +1,15 @@
 #include "add.h"
 #include "glob/chgpot.h"
 #include "glob/spatial.h"
-#include "hippo/echgtrn.h"
-#include "image.h"
+#include "ff/hippo/echgtrn.h"
+#include "ff/image.h"
 #include "launch.h"
 #include "md.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_chgtrn.h"
 #include "seq/switch.h"
 #include "seq/triangle.h"
-#include "switch.h"
+#include "ff/switch.h"
 #include "tool/gpucard.h"
 #include <cassert>
 

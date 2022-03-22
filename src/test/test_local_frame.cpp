@@ -1,4 +1,4 @@
-#include "amoeba/field.h"
+#include "ff/amoeba/field.h"
 #include "test/test.h"
 #include "test/testrt.h"
 #include <tinker/detail/units.hh>

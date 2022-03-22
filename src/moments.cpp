@@ -1,8 +1,8 @@
-#include "amoeba/epolar.h"
-#include "elec.h"
-#include "hippo/epolar_chgpen.h"
+#include "ff/amoeba/epolar.h"
+#include "ff/elec.h"
+#include "ff/hippo/epolar_chgpen.h"
 #include "md.h"
-#include "potent.h"
+#include "ff/potent.h"
 #include "tinker9.h"
 #include "tool/darray.h"
 #include <cmath>

@@ -1,3 +1,7 @@
+# Qt Creator
+CMakeLists.txt.user
+
+# docker
 include/*template
 docker/Dockerfile*
 docker/*.dockerfile

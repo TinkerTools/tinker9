@@ -1,5 +1,5 @@
 #pragma once
-#include "energy.h"
+#include "ff/energy.h"
 #include "md.h"
 #include <array>
 #include <string>

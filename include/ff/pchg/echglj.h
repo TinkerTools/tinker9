@@ -1,8 +1,8 @@
 #pragma once
-#include "evdw.h"
+#include "ff/pchg/evdw.h"
 #include "glob/accasync.h"
 #include "glob/chglj.h"
-#include "pchg/echarge.h"
+#include "ff/pchg/echarge.h"
 #include "tool/rcman.h"
 
 namespace tinker {

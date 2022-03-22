@@ -1,6 +1,6 @@
-#include "box.h"
-#include "energybuffer.h"
-#include "evdw.h"
+#include "ff/box.h"
+#include "ff/energybuffer.h"
+#include "ff/pchg/evdw.h"
 #include "math/inc.h"
 #include "md.h"
 #include <cassert>

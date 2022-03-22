@@ -1,9 +1,9 @@
-#include "box.h"
-#include "energy.h"
+#include "ff/box.h"
+#include "ff/energy.h"
 #include "lflpiston.h"
 #include "math/inc.h"
 #include "md.h"
-#include "rattle.h"
+#include "ff/rattle.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>

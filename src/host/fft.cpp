@@ -1,7 +1,7 @@
 #include "tool/fft.h"
-#include "elec.h"
-#include "hippo/edisp.h"
-#include "pme.h"
+#include "ff/elec.h"
+#include "ff/hippo/edisp.h"
+#include "ff/pme.h"
 #include <fftw3.h>
 
 namespace tinker {

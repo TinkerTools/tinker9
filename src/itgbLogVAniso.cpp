@@ -1,4 +1,4 @@
-#include "box.h"
+#include "ff/box.h"
 #include "integrator.h"
 #include "math/inc.h"
 #include "md.h"

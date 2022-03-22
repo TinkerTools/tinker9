@@ -1,7 +1,7 @@
-#include "amoeba/field.h"
-#include "elec.h"
+#include "ff/amoeba/field.h"
+#include "ff/elec.h"
 #include "md.h"
-#include "nblist.h"
+#include "ff/nblist.h"
 
 namespace tinker {
 void dfield(real (*field)[3], real (*fieldp)[3])

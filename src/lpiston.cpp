@@ -1,8 +1,8 @@
-#include "box.h"
-#include "energy.h"
+#include "ff/box.h"
+#include "ff/energy.h"
 #include "math/inc.h"
 #include "md.h"
-#include "rattle.h"
+#include "ff/rattle.h"
 #include "tinker9.h"
 #include "tool/error.h"
 #include <cmath>

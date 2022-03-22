@@ -1,9 +1,9 @@
 #pragma once
-#include "elec.h"
+#include "ff/elec.h"
 #include "md.h"
 #include "seq/damp_hippo.h"
 #include "seq/switch.h"
-#include "switch.h"
+#include "ff/switch.h"
 
 namespace tinker {
 struct PairRepelGrad

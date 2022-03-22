@@ -1,5 +1,5 @@
 #pragma once
-#include "energybuffer.h"
+#include "ff/energybuffer.h"
 
 namespace tinker {
 TINKER_EXTERN real csixpr;

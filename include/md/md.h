@@ -50,7 +50,7 @@ struct Vers
 }
 }
 
-#include "cname.h"
+#include "ff/cname.h"
 
 namespace tinker {
 namespace calc {
@@ -208,7 +208,7 @@ void mdBerendsenBarostat_acc(time_prec);
 //====================================================================//
 // mdintg
 
-#include "time_scale.h"
+#include "ff/time_scale.h"
 
 namespace tinker {
 void mdrest(int istep);
@@ -225,5 +225,5 @@ void mdsaveSynchronize();
 void mdsaveData(RcOp);
 }
 
-#include "egv.h"
+#include "ff/egv.h"
 #include "mod/md.h"

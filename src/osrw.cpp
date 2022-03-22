@@ -1,8 +1,8 @@
 #include "osrw.h"
-#include "box.h"
-#include "energy.h"
+#include "ff/box.h"
+#include "ff/energy.h"
 #include "md.h"
-#include "potent.h"
+#include "ff/potent.h"
 #include "tinker9.h"
 #include "tool/zero.h"
 

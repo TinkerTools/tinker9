@@ -1,5 +1,5 @@
-#include "pmestuf.h"
-#include "nblist.h"
+#include "ff/pmestuf.h"
+#include "ff/nblist.h"
 #include "tool/error.h"
 
 namespace tinker {

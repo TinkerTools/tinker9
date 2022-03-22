@@ -1,5 +1,5 @@
-#include "box.h"
-#include "energy.h"
+#include "ff/box.h"
+#include "ff/energy.h"
 #include "integrator.h"
 #include "md.h"
 #include "tool/error.h"

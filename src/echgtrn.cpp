@@ -1,7 +1,7 @@
-#include "hippo/echgtrn.h"
+#include "ff/hippo/echgtrn.h"
 #include "md.h"
-#include "nblist.h"
-#include "potent.h"
+#include "ff/nblist.h"
+#include "ff/potent.h"
 #include "tool/darray.h"
 #include "tool/zero.h"
 #include <tinker/detail/chgtrn.hh>

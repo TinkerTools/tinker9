@@ -1,13 +1,13 @@
-#include "hippo/epolar_chgpen.h"
+#include "ff/hippo/epolar_chgpen.h"
 #include "add.h"
 #include "glob/nblist.h"
-#include "hippo/empole_chgpen.h"
-#include "image.h"
+#include "ff/hippo/empole_chgpen.h"
+#include "ff/image.h"
 #include "md.h"
-#include "pme.h"
+#include "ff/pme.h"
 #include "seq/pair_polar_chgpen.h"
 #include "seq/switch.h"
-#include "switch.h"
+#include "ff/switch.h"
 #include "tool/gpucard.h"
 
 namespace tinker {

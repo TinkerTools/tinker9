@@ -1,6 +1,6 @@
-#include "spatial.h"
+#include "ff/spatial.h"
 #include "md.h"
-#include "nblist.h"
+#include "ff/nblist.h"
 #include "tool/darray.h"
 #include "tool/error.h"
 

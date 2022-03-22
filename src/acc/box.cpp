@@ -1,4 +1,4 @@
-#include "box.h"
+#include "ff/box.h"
 
 namespace tinker {
 void boxData_acc(RcOp op)

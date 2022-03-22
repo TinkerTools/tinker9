@@ -1,5 +1,5 @@
-#include "amoeba/emplar.h"
-#include "elec.h"
+#include "ff/amoeba/emplar.h"
+#include "ff/elec.h"
 #include "md.h"
 #include "tool/error.h"
 #include "tool/zero.h"

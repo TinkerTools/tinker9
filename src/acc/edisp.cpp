@@ -1,13 +1,13 @@
-#include "hippo/edisp.h"
+#include "ff/hippo/edisp.h"
 #include "add.h"
-#include "box.h"
+#include "ff/box.h"
 #include "glob/nblist.h"
-#include "image.h"
+#include "ff/image.h"
 #include "md.h"
-#include "pmestuf.h"
+#include "ff/pmestuf.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_disp.h"
-#include "switch.h"
+#include "ff/switch.h"
 #include "tool/gpucard.h"
 
 namespace tinker {

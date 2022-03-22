@@ -1,11 +1,11 @@
 #define TINKER_ENABLE_LOG 0
 #include "tool/log.h"
 
-#include "energy.h"
+#include "ff/energy.h"
 #include "integrator.h"
 #include "math/inc.h"
 #include "md.h"
-#include "rattle.h"
+#include "ff/rattle.h"
 #include "tool/darray.h"
 #include "tool/io.h"
 #include <cassert>

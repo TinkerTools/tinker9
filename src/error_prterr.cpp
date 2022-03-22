@@ -1,4 +1,4 @@
-#include "box.h"
+#include "ff/box.h"
 #include "md.h"
 #include "tinker9.h"
 #include "tool/darray.h"

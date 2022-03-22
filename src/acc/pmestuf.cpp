@@ -1,7 +1,7 @@
-#include "pmestuf.h"
+#include "ff/pmestuf.h"
 #include "add.h"
-#include "box.h"
-#include "elec.h"
+#include "ff/box.h"
+#include "ff/elec.h"
 #include "md.h"
 #include "seq/bsplgen.h"
 

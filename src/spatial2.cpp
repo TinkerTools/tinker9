@@ -1,4 +1,4 @@
-#include "spatial2.h"
+#include "ff/spatial2.h"
 #include "tool/darray.h"
 #include "tool/error.h"
 

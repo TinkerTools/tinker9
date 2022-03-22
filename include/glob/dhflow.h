@@ -1,5 +1,5 @@
 #pragma once
-#include "mm/dhflow.h"
+#include "ff/dhflow.h"
 
 namespace tinker {
 namespace detail {

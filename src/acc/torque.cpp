@@ -1,5 +1,5 @@
 #include "add.h"
-#include "elec.h"
+#include "ff/elec.h"
 #include "math/inc.h"
 #include "md.h"
 

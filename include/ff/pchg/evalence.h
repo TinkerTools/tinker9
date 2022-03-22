@@ -100,4 +100,4 @@ void egeom(int vers);
 void egeom_acc(int);
 }
 
-#include "globevalence.h"
+#include "mod/evalence.h"
