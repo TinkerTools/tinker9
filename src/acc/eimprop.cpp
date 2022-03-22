@@ -1,5 +1,5 @@
 #include "ff/pchg/evalence.h"
-#include "md.h"
+#include "md/md.h"
 #include "seq/improp.h"
 
 namespace tinker {

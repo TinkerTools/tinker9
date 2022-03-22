@@ -1,5 +1,5 @@
 #include "ff/molecule.h"
-#include "md.h"
+#include "md/md.h"
 #include "tool/darray.h"
 #include <tinker/detail/molcul.hh>
 

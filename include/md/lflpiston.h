@@ -1,5 +1,5 @@
 #pragma once
-#include "md.h"
+#include "md/md.h"
 
 namespace tinker {
 // Langevin Piston barostat (Leap Frog)

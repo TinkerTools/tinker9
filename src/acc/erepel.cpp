@@ -3,7 +3,7 @@
 #include "ff/image.h"
 #include "ff/switch.h"
 #include "glob/nblist.h"
-#include "md.h"
+#include "md/md.h"
 #include "seq/bsplgen.h"
 #include "seq/damp_hippo.h"
 #include "seq/pair_repel.h"

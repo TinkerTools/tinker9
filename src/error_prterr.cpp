@@ -1,5 +1,5 @@
 #include "ff/box.h"
-#include "md.h"
+#include "md/md.h"
 #include "tinker9.h"
 #include "tool/darray.h"
 #include "tool/error.h"

@@ -4,7 +4,7 @@
 #include "ff/molecule.h"
 #include "ff/potent.h"
 #include "launch.h"
-#include "md.h"
+#include "md/md.h"
 #include "seq/angle.h"
 #include "seq/angtor.h"
 #include "seq/bond.h"

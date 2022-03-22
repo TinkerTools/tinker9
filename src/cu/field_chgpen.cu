@@ -6,7 +6,7 @@
 #include "ff/switch.h"
 #include "glob/spatial.h"
 #include "launch.h"
-#include "md.h"
+#include "md/md.h"
 #include "seq/pair_field_chgpen.h"
 #include "seq/triangle.h"
 #include "tool/cudalib.h"

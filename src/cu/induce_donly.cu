@@ -7,7 +7,7 @@
 #include "ff/switch.h"
 #include "glob/spatial.h"
 #include "launch.h"
-#include "md.h"
+#include "md/md.h"
 #include "seq/damp_hippo.h"
 #include "seq/triangle.h"
 #include "tool/gpucard.h"

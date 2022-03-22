@@ -3,7 +3,7 @@
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "glob/dhflow.h"
-#include "md.h"
+#include "md/md.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
 #include "tool/zero.h"

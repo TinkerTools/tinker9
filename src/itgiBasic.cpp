@@ -1,6 +1,6 @@
 #include "ff/energy.h"
-#include "integrator.h"
-#include "md.h"
+#include "md/integrator.h"
+#include "md/md.h"
 #include "tool/io.h"
 
 namespace tinker {

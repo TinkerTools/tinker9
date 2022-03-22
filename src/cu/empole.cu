@@ -7,7 +7,7 @@
 #include "glob/pme.h"
 #include "glob/spatial.h"
 #include "launch.h"
-#include "md.h"
+#include "md/md.h"
 #include "seq/pair_mpole.h"
 #include "seq/triangle.h"
 #include "tool/gpucard.h"

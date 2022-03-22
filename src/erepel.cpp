@@ -2,7 +2,7 @@
 #include "ff/elec.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
-#include "md.h"
+#include "md/md.h"
 #include "tool/darray.h"
 #include "tool/zero.h"
 #include <tinker/detail/couple.hh>

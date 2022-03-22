@@ -1,6 +1,6 @@
 #include "ff/nblist.h"
 #include "ff/image.h"
-#include "md.h"
+#include "md/md.h"
 #include "tool/gpucard.h"
 
 #if TINKER_CUDART

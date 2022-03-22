@@ -1,7 +1,7 @@
 #include "ff/energy.h"
-#include "integrator.h"
-#include "lflpiston.h"
-#include "md.h"
+#include "md/integrator.h"
+#include "md/lflpiston.h"
+#include "md/md.h"
 #include "tool/darray.h"
 
 namespace tinker {

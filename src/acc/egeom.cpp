@@ -3,7 +3,7 @@
 #include "ff/image.h"
 #include "ff/molecule.h"
 #include "ff/pchg/evalence.h"
-#include "md.h"
+#include "md/md.h"
 #include "seq/geom.h"
 #include <cassert>
 

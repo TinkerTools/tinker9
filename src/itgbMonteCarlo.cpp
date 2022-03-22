@@ -1,6 +1,6 @@
-#include "integrator.h"
 #include "math/inc.h"
-#include "md.h"
+#include "md/integrator.h"
+#include "md/md.h"
 #include "tinker9.h"
 #include "tool/darray.h"
 #include "tool/io.h"

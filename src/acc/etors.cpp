@@ -1,7 +1,7 @@
 #include "add.h"
 #include "ff/pchg/evalence.h"
 #include "math/inc.h"
-#include "md.h"
+#include "md/md.h"
 #include "seq/torsion.h"
 
 namespace tinker {

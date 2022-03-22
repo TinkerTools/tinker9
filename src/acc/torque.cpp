@@ -1,7 +1,7 @@
 #include "add.h"
 #include "ff/elec.h"
 #include "math/inc.h"
-#include "md.h"
+#include "md/md.h"
 
 namespace tinker {
 namespace {

@@ -1,5 +1,5 @@
 #include "algorithm"
-#include "md.h"
+#include "md/md.h"
 #include "tinker9.h"
 #include "tool/error.h"
 #include "tool/exec.h"

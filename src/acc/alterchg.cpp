@@ -3,7 +3,7 @@
 #include "ff/hippo/cflux.h"
 #include "ff/pchg/evalence.h"
 #include "math/const.h"
-#include "md.h"
+#include "md/md.h"
 #include <cassert>
 
 namespace tinker {

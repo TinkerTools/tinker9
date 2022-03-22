@@ -1,6 +1,6 @@
 #include "ff/rattle.h"
 #include "add.h"
-#include "md.h"
+#include "md/md.h"
 #include "tool/darray.h"
 #include "tool/error.h"
 #include <tinker/detail/inform.hh>

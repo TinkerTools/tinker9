@@ -4,7 +4,7 @@
 #include "ff/pmestuf.h"
 #include "glob/spatial.h"
 #include "launch.h"
-#include "md.h"
+#include "md/md.h"
 #include "seq/bsplgen.h"
 #include "tool/gpucard.h"
 

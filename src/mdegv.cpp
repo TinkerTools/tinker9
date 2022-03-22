@@ -1,6 +1,6 @@
 #include "ff/energy.h"
 #include "glob/dhflow.h"
-#include "md.h"
+#include "md/md.h"
 #include "tool/zero.h"
 
 namespace tinker {

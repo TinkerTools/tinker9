@@ -1,7 +1,7 @@
 #include "ff/amoeba/epolar.h"
 #include "ff/box.h"
 #include "ff/potent.h"
-#include "md.h"
+#include "md/md.h"
 #include "tinker9.h"
 #include "tool/execq.h"
 #include <condition_variable>

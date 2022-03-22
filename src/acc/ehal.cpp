@@ -3,7 +3,7 @@
 #include "ff/pchg/evdw.h"
 #include "ff/switch.h"
 #include "glob/nblist.h"
-#include "md.h"
+#include "md/md.h"
 #include "seq/pair_hal.h"
 #include "seq/switch.h"
 #include "tool/gpucard.h"

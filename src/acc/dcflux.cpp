@@ -5,7 +5,7 @@
 #include "ff/molecule.h"
 #include "ff/pchg/evalence.h"
 #include "math/inc.h"
-#include "md.h"
+#include "md/md.h"
 #include "seq/bsplgen.h"
 #include "tool/gpucard.h"
 

@@ -1,7 +1,7 @@
 #include "ff/box.h"
-#include "integrator.h"
 #include "math/inc.h"
-#include "md.h"
+#include "md/integrator.h"
+#include "md/md.h"
 #include "tool/io.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/mdstuf.hh>

@@ -1,4 +1,4 @@
-#include "md.h"
+#include "md/md.h"
 
 namespace tinker {
 void minimize_set_xx_by_pos_acc(int n, double* xx, const double* scale)

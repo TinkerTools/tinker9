@@ -1,4 +1,4 @@
-#include "integrator.h"
+#include "md/integrator.h"
 #include "tool/error.h"
 #include <tinker/detail/bath.hh>
 

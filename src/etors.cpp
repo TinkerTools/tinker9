@@ -1,7 +1,7 @@
 #include "ff/pchg/evalence.h"
 #include "ff/potent.h"
 #include "glob/accasync.h"
-#include "md.h"
+#include "md/md.h"
 #include "tool/zero.h"
 #include <tinker/detail/torpot.hh>
 #include <tinker/detail/tors.hh>

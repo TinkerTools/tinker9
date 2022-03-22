@@ -2,7 +2,7 @@
 #include "add.h"
 #include "ff/box.h"
 #include "ff/elec.h"
-#include "md.h"
+#include "md/md.h"
 #include "seq/bsplgen.h"
 
 namespace tinker {

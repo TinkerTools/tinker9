@@ -1,6 +1,6 @@
 #include "ff/amoeba/emplar.h"
 #include "ff/elec.h"
-#include "md.h"
+#include "md/md.h"
 #include "tool/error.h"
 #include "tool/zero.h"
 

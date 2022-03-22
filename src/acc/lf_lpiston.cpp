@@ -1,6 +1,6 @@
 #include "add.h"
-#include "lflpiston.h"
-#include "md.h"
+#include "md/lflpiston.h"
+#include "md/md.h"
 #include <tinker/detail/units.hh>
 
 namespace tinker {

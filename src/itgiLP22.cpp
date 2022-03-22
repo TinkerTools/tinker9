@@ -1,4 +1,4 @@
-#include "integrator.h"
+#include "md/integrator.h"
 #include "tinker9.h"
 
 namespace tinker {

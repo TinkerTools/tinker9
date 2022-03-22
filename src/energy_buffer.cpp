@@ -2,7 +2,7 @@
 #include "ff/energybuffer.h"
 #include "ff/pchg/evdw.h"
 #include "math/inc.h"
-#include "md.h"
+#include "md/md.h"
 #include <cassert>
 
 namespace tinker {

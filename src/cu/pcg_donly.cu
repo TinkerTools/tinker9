@@ -3,7 +3,7 @@
 #include "ff/hippo/induce_donly.h"
 #include "glob/uprior.h"
 #include "launch.h"
-#include "md.h"
+#include "md/md.h"
 #include "tool/cudalib.h"
 #include "tool/io.h"
 #include <tinker/detail/inform.hh>

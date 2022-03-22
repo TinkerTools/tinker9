@@ -1,4 +1,4 @@
-#include "integrator.h"
+#include "md/integrator.h"
 
 namespace tinker {
 BasicPropagator* create(PropagatorEnum pe)
@@ -16,7 +16,7 @@ BasicPropagator* create(PropagatorEnum pe)
 }
 }
 
-#include "md.h"
+#include "md/md.h"
 #include <tinker/detail/mdstuf.hh>
 namespace tinker {
 BasicThermostat* create(ThermostatEnum te)

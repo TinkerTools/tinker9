@@ -1,6 +1,6 @@
 #pragma once
 #include "ff/elec.h"
-#include "md.h"
+#include "md/md.h"
 #include "seq/damp.h"
 #include "seq/damp_hippo.h"
 #include "seq/pair_mpole.h"
