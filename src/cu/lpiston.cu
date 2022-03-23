@@ -1,7 +1,7 @@
 #include "add.h"
 #include "ff/rattle.h"
 #include "launch.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "tool/darray.h"
 #include <tinker/detail/units.hh>
 

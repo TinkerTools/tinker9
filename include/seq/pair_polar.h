@@ -1,7 +1,9 @@
 #pragma once
 #include "ff/elec.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "seq/damp.h"
+#include "ff/cname.h"
+#include "comparetypes.h"
 
 namespace tinker {
 struct PairPolarGrad

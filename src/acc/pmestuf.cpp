@@ -2,8 +2,10 @@
 #include "add.h"
 #include "ff/box.h"
 #include "ff/elec.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "seq/bsplgen.h"
+#include "ff/cname.h"
+#include "comparetypes.h"
 
 namespace tinker {
 template <class T>

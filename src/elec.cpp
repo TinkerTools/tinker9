@@ -13,7 +13,7 @@
 #include "glob//vdwpot.h"
 #include "glob/chglj.h"
 #include "glob/mplar.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "tool/io.h"
 #include <tinker/detail/atoms.hh>
 #include <tinker/detail/charge.hh>

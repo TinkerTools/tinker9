@@ -1,5 +1,5 @@
 #include "launch.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "mod/cudalib.h"
 #include "reduce.h"
 #include "tool/darray.h"

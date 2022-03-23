@@ -9,7 +9,7 @@
 #include "ffsn.h"
 #include "imagefc.h"
 #include "launch.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "tool/thrustcache.h"
 #include <thrust/extrema.h>
 #include <thrust/remove.h>

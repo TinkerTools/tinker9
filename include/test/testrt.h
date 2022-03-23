@@ -1,6 +1,6 @@
 #pragma once
 #include "ff/energy.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include <array>
 #include <string>
 #include <vector>

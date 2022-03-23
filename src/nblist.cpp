@@ -14,7 +14,7 @@
 #include "glob/mplar.h"
 #include "glob/nblist.h"
 #include "glob/spatial.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "platform.h"
 #include "tool/darray.h"
 #include "tool/thrustcache.h"

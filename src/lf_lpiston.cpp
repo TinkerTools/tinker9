@@ -3,7 +3,7 @@
 #include "ff/rattle.h"
 #include "math/inc.h"
 #include "md/lflpiston.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>

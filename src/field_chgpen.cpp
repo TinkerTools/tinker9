@@ -2,7 +2,7 @@
 #include "ff/amoeba/field.h"
 #include "ff/elec.h"
 #include "ff/nblist.h"
-#include "md/md.h"
+#include "md/inc.h"
 
 namespace tinker {
 void dfield_chgpen(real (*field)[3])

@@ -4,7 +4,7 @@
 #include "ff/switch.h"
 #include "glob/spatial.h"
 #include "launch.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "seq/bsplgen.h"
 #include "seq/damp_hippo.h"
 #include "seq/pair_repel.h"

@@ -1,10 +1,12 @@
 #include "add.h"
+#include "comparetypes.h"
 #include "ff/amoeba/empole.h"
 #include "ff/box.h"
+#include "ff/cname.h"
 #include "ff/pmestuf.h"
 #include "glob/spatial.h"
 #include "launch.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "seq/bsplgen.h"
 #include "tool/gpucard.h"
 

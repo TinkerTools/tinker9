@@ -3,7 +3,7 @@
 #include "ff/nblist.h"
 #include "ff/pmestuf.h"
 #include "ff/potent.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "tinker9.h"
 #include "tool/zero.h"
 #include <tinker/detail/couple.hh>

@@ -7,7 +7,7 @@
 #include "glob/mplar.h"
 #include "glob/spatial.h"
 #include "launch.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "seq/pair_polar.h"
 #include "seq/triangle.h"
 #include "tool/gpucard.h"

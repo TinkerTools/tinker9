@@ -5,7 +5,7 @@
 #include "ff/pme.h"
 #include "ff/potent.h"
 #include "glob//uprior.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "tool/io.h"
 #include "tool/zero.h"
 #include <map>

@@ -16,7 +16,7 @@ BasicPropagator* create(PropagatorEnum pe)
 }
 }
 
-#include "md/md.h"
+#include "md/inc.h"
 #include <tinker/detail/mdstuf.hh>
 namespace tinker {
 BasicThermostat* create(ThermostatEnum te)

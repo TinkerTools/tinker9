@@ -1,4 +1,4 @@
-#include "md/md.h"
+#include "md/inc.h"
 #include "tinker9.h"
 #include "tool/compilers.h"
 #include "tool/gpucard.h"

@@ -6,7 +6,7 @@
 #include "glob/nblist.h"
 #include "glob/uprior.h"
 #include "math/inc.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "seq/damp.h"
 #include "tool/error.h"
 #include "tool/gpucard.h"

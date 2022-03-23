@@ -2,7 +2,7 @@
 #include "ff/hippo/cflux.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "tool/zero.h"
 #include <tinker/detail/chgpen.hh>
 #include <tinker/detail/mplpot.hh>

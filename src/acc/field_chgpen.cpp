@@ -6,7 +6,7 @@
 #include "ff/potent.h"
 #include "ff/switch.h"
 #include "glob/nblist.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "seq/pair_field_chgpen.h"
 #include "tool/gpucard.h"
 

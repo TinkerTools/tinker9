@@ -4,7 +4,7 @@
 #include "ff/switch.h"
 #include "glob/chgpot.h"
 #include "glob/nblist.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_chgtrn.h"
 #include "seq/switch.h"

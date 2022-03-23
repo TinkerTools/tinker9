@@ -3,7 +3,7 @@
 #include "ff/image.h"
 #include "ff/switch.h"
 #include "glob/nblist.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "seq/pair_mpole.h"
 #include "seq/switch.h"
 #include "tool/gpucard.h"

@@ -1,7 +1,7 @@
 #pragma once
 #include "ff/elec.h"
 #include "ff/switch.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "seq/damp_hippo.h"
 #include "seq/switch.h"
 

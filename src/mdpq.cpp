@@ -1,6 +1,6 @@
 #include "ff/box.h"
 #include "ff/nblist.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "tool/darray.h"
 #include "tool/error.h"
 #include "tool/gpucard.h"

@@ -1,6 +1,6 @@
 #include "add.h"
 #include "ff/amoeba/epolar.h"
-#include "md/md.h"
+#include "md/inc.h"
 
 namespace tinker {
 void epolar0_dotprod_acc(const real (*gpu_uind)[3], const real (*gpu_udirp)[3])

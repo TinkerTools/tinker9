@@ -3,7 +3,7 @@
 #include "ff/pchg/echglj.h"
 #include "ff/pmestuf.h"
 #include "ff/potent.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "tool/zero.h"
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/couple.hh>

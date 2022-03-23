@@ -5,7 +5,7 @@
 #include "ff/pmestuf.h"
 #include "ff/switch.h"
 #include "glob/nblist.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_disp.h"
 #include "tool/gpucard.h"

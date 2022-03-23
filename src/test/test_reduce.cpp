@@ -1,5 +1,5 @@
 #include "math/inc.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "test/test.h"
 #include "test/testrt.h"
 using namespace tinker;

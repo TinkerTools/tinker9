@@ -2,7 +2,7 @@
 #include "ff/box.h"
 #include "ff/energy.h"
 #include "ff/potent.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "tinker9.h"
 #include "tool/zero.h"
 

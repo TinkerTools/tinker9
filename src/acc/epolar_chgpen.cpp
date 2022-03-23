@@ -5,7 +5,7 @@
 #include "ff/pme.h"
 #include "ff/switch.h"
 #include "glob/nblist.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "seq/pair_polar_chgpen.h"
 #include "seq/switch.h"
 #include "tool/gpucard.h"

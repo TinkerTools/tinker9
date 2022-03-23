@@ -5,7 +5,7 @@
 #include "ff/switch.h"
 #include "glob/spatial.h"
 #include "launch.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "seq/pair_hal.h"
 #include "seq/switch.h"
 #include "seq/triangle.h"

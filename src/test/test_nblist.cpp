@@ -1,5 +1,5 @@
 #include "glob/nblist.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "platform.h"
 #include "test/test.h"
 #include "test/testrt.h"

@@ -1,5 +1,4 @@
 #pragma once
-#include "md/md.h"
 
 extern "C"
 {
@@ -24,20 +23,6 @@ extern "C"
    {};
    struct NON_EWALD_TAPER
    {}; // Non-EWALD partial charge also uses switching functions.
-
-   // Energy versions.
-   struct Eng : public tinker::calc::Vers<tinker::calc::v0>
-   {};
-   struct EngGradVir : public tinker::calc::Vers<tinker::calc::v1>
-   {};
-   struct EngAlyz : public tinker::calc::Vers<tinker::calc::v3>
-   {};
-   struct EngGrad : public tinker::calc::Vers<tinker::calc::v4>
-   {};
-   struct Grad : public tinker::calc::Vers<tinker::calc::v5>
-   {};
-   struct GradVir : public tinker::calc::Vers<tinker::calc::v6>
-   {};
 
    // Bond terms.
    struct HARMONIC

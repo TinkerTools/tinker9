@@ -1,4 +1,4 @@
-#include "md/md.h"
+#include "md/inc.h"
 #include "platform.h"
 #include <cassert>
 #include <tinker/detail/mdstuf.hh>

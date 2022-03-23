@@ -1,5 +1,5 @@
 #include "ff/energy.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "tinker9.h"
 #include "tool/io.h"
 #include <tinker/detail/inform.hh>

@@ -4,7 +4,7 @@
 #include "ff/pmestuf.h"
 #include "ff/switch.h"
 #include "glob/nblist.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "seq/pair_mpole.h"
 #include "tool/gpucard.h"
 

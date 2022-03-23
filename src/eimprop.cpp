@@ -1,6 +1,6 @@
 #include "ff/pchg/evalence.h"
 #include "ff/potent.h"
-#include "md/md.h"
+#include "md/inc.h"
 #include "tool/zero.h"
 #include <tinker/detail/improp.hh>
 #include <tinker/detail/torpot.hh>

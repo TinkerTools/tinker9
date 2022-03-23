@@ -1,4 +1,5 @@
 #pragma once
+#include "ff/cname.h"
 #include "math/inc.h"
 #include "seq/switch.h"
 #include "seqdef.h"
