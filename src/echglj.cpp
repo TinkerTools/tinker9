@@ -1,5 +1,6 @@
 #include "ff/pchg/echglj.h"
 #include "ff/box.h"
+#include "ff/elec.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "md/inc.h"
@@ -19,7 +20,7 @@
 #include <tinker/detail/vdwpot.hh>
 
 namespace tinker {
-void echglj_data(RcOp op)
+void echgljData(RcOp op)
 {
    if (!(clist_version() & NBL_SPATIAL))
       return;

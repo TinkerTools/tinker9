@@ -1,4 +1,5 @@
 #include "ff/pchg/echarge.h"
+#include "ff/elec.h"
 #include "ff/nblist.h"
 #include "ff/pchg/echglj.h"
 #include "ff/pmestuf.h"
@@ -10,13 +11,7 @@
 #include <tinker/detail/sizes.hh>
 
 namespace tinker {
-real ebuffer;
-real c2scale, c3scale, c4scale, c5scale;
-int ncexclude;
-int (*cexclude)[2];
-real* cexclude_scale;
-
-void echarge_data(RcOp op)
+void echargeData(RcOp op)
 {
    if (!use_potent(charge_term))
       return;

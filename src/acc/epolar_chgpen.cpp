@@ -6,6 +6,7 @@
 #include "ff/switch.h"
 #include "glob/nblist.h"
 #include "md/inc.h"
+#include "mod/charge.h"
 #include "seq/pair_polar_chgpen.h"
 #include "seq/switch.h"
 #include "tool/gpucard.h"

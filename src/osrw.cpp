@@ -8,10 +8,11 @@
 
 #include "glob/chgtrn.h"
 #include "glob/disp.h"
-#include "glob/mutant.h"
 #include "glob/repel.h"
-#include "glob/vdw.h"
+#include "mod/charge.h"
 #include "mod/evalence.h"
+#include "mod/mutant.h"
+#include "mod/vdw.h"
 
 namespace tinker {
 bool use_osrw;

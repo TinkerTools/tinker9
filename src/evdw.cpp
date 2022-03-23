@@ -25,7 +25,7 @@ std::vector<new_type> jvdwbuf;
 int jcount;
 }
 
-void evdw_data(RcOp op)
+void evdwData(RcOp op)
 {
    if (!use_potent(vdw_term))
       return;

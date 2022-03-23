@@ -4,7 +4,7 @@
 #include "ff/nblist.h"
 #include "ff/pme.h"
 #include "ff/potent.h"
-#include "glob//uprior.h"
+#include "glob/uprior.h"
 #include "md/inc.h"
 #include "tool/io.h"
 #include "tool/zero.h"

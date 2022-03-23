@@ -1,15 +1,13 @@
 #pragma once
-#include "glob/mutant.h"
-#include "glob/vdw.h"
-#include "glob/vdwpot.h"
+#include "ff/pchg/evdw1.h"
+#include "mod/mutant.h"
+#include "mod/vdw.h"
 #include "tool/rcman.h"
 
-/**
- * \todo Test lj, buck, mm3hb, gauss.
- */
+/// \todo Test lj, buck, mm3hb, gauss.
 
 namespace tinker {
-void evdw_data(RcOp);
+void evdwData(RcOp);
 /**
  * \ingroup vdw
  * \brief Lennard-Jones 12-6 potential.

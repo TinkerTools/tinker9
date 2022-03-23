@@ -7,7 +7,7 @@
 #define TINKER_TESTGRAD_VIRIAL 0
 
 namespace tinker {
-void x_testgrad(int, char**)
+void xTestgrad(int, char**)
 {
    initial();
    tinker_f_getxyz();

@@ -4,10 +4,11 @@
 #include "glob/chgtrn.h"
 #include "glob/disp.h"
 #include "glob/repel.h"
-#include "glob/vdw.h"
 #include "md/inc.h"
 #include "md/osrw.h"
+#include "mod/charge.h"
 #include "mod/evalence.h"
+#include "mod/vdw.h"
 #include "tinker9.h"
 #include "tool/io.h"
 #include <fstream>
@@ -175,7 +176,7 @@ static void x_analyze_v()
    }
 }
 
-void x_analyze(int, char**)
+void xAnalyze(int, char**)
 {
    initial();
    tinker_f_getxyz();

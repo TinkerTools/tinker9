@@ -1,5 +1,5 @@
-#include "glob/vdw.h"
 #include "md/osrw.h"
+#include "mod/vdw.h"
 #include "test/test.h"
 #include "test/testrt.h"
 

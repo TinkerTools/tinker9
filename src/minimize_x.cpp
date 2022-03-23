@@ -19,7 +19,7 @@ void minimize_set_xyz(int n, const double* xx, const double* scale);
 void minimize_set_xx_by_pos_acc(int, double*, const double*);
 void minimize_set_pos_acc(int, const double*, const double*);
 
-void x_minimize(int, char**)
+void xMinimize(int, char**)
 {
    initial();
    tinker_f_getxyz();

@@ -1,12 +1,12 @@
 #pragma once
 #include "ff/pchg/echarge.h"
 #include "ff/pchg/evdw.h"
-#include "glob/chglj.h"
 #include "mod/accasync.h"
+#include "mod/chglj.h"
 #include "tool/rcman.h"
 
 namespace tinker {
-void echglj_data(RcOp);
+void echgljData(RcOp);
 void echglj_data_cu(RcOp);
 void echglj(int vers);
 

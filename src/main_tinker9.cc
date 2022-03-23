@@ -18,13 +18,13 @@ static const std::string testgrad_name = "testgrad";
 static const std::map<std::string, std::function<void(int, char**)>>& launcher()
 {
    static std::map<std::string, std::function<void(int, char**)>> x = {
-      {analyze_name, x_analyze},
-      {bar_name, x_bar},
-      {dynamic_name, x_dynamic},
-      {helper_name, x_help},
-      {info_name, x_info},
-      {minimize_name, x_minimize},
-      {testgrad_name, x_testgrad},
+      {analyze_name, xAnalyze},
+      {bar_name, xBar},
+      {dynamic_name, xDynamic},
+      {helper_name, xHelp},
+      {info_name, xInfo},
+      {minimize_name, xMinimize},
+      {testgrad_name, xTestgrad},
    };
    return x;
 }
@@ -80,7 +80,7 @@ help_message:
 }
 
 namespace tinker {
-void x_help(int, char**)
+void xHelp(int, char**)
 {
    std::vector<std::string> keys;
    for (const auto& x : launcher()) {

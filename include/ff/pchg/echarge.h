@@ -1,16 +1,9 @@
 #pragma once
-#include "ff/elec.h"
-#include "ff/energybuffer.h"
+#include "mod/charge.h"
 #include "tool/rcman.h"
 
 namespace tinker {
-extern real ebuffer;
-extern real c2scale, c3scale, c4scale, c5scale;
-extern int ncexclude;
-extern int (*cexclude)[2];
-extern real* cexclude_scale;
-
-void echarge_data(RcOp);
+void echargeData(RcOp);
 
 void echarge(int vers);
 

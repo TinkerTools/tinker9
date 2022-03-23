@@ -8,6 +8,7 @@
 #include "glob/spatial.h"
 #include "launch.h"
 #include "md/inc.h"
+#include "mod/charge.h"
 #include "seq/pair_polar.h"
 #include "seq/triangle.h"
 #include "tool/gpucard.h"

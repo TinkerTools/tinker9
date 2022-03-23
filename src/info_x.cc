@@ -39,7 +39,7 @@ static std::string get_version_string()
    return r;
 }
 
-void x_info(int, char**)
+void xInfo(int, char**)
 {
    auto out = stdout;
    auto fmt = "    %-36s %s\n";

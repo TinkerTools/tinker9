@@ -1,8 +1,6 @@
 #pragma once
 #include "glob/cflux.h"
-#include "glob/charge.h"
 #include "glob/chgpen.h"
-#include "glob/chgpot.h"
 #include "glob/ctrpot.h"
 #include "glob/mpole.h"
 #include "glob/polar.h"

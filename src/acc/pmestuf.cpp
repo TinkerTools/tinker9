@@ -5,6 +5,7 @@
 #include "ff/cname.h"
 #include "ff/elec.h"
 #include "md/inc.h"
+#include "mod/charge.h"
 #include "seq/bsplgen.h"
 
 namespace tinker {

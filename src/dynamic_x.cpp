@@ -9,7 +9,7 @@
 #include <tinker/detail/mdstuf.hh>
 
 namespace tinker {
-void x_dynamic(int, char**)
+void xDynamic(int, char**)
 {
    char string[240];
    int exist = false;

@@ -4,13 +4,13 @@
 #include <tinker/routines.h>
 
 namespace tinker {
-void x_analyze(int, char**);
-void x_bar(int, char**);
-void x_dynamic(int, char**);
-void x_help(int, char**);
-void x_info(int, char**);
-void x_minimize(int, char**);
-void x_testgrad(int, char**);
+void xAnalyze(int, char**);
+void xBar(int, char**);
+void xDynamic(int, char**);
+void xHelp(int, char**);
+void xInfo(int, char**);
+void xMinimize(int, char**);
+void xTestgrad(int, char**);
 }
 
 #define TINKER9_VERSION_MAJOR 1

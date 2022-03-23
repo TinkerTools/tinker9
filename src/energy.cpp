@@ -56,16 +56,16 @@ void energyData(RcOp op)
 
    // non-bonded terms
 
-   RcMan evdw42{evdw_data, op};
+   RcMan evdw42{evdwData, op};
 
    // Must call elec_data() before any electrostatics routine.
 
    RcMan elec42{elec_data, op};
    RcMan pme42{pme_data, op};
 
-   RcMan echarge42{echarge_data, op};
+   RcMan echarge42{echargeData, op};
    // Must follow evdw_data() and echarge_data().
-   RcMan echglj42{echglj_data, op};
+   RcMan echglj42{echgljData, op};
 
    // empole_data() must be in front of epolar_data().
    RcMan empole42{empole_data, op};

@@ -1,5 +1,5 @@
 #pragma once
-#include "glob/vdwpot.h"
+#include "ff/pchg/evdw1.h"
 #include "seq/switch.h"
 #include "seqdef.h"
 

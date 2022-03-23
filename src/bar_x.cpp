@@ -16,7 +16,7 @@ namespace tinker {
 void x_bar_makebar();
 void x_bar_barcalc();
 
-void x_bar(int, char**)
+void xBar(int, char**)
 {
    initial();
 

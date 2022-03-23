@@ -10,10 +10,10 @@
 #include "ff/pmestuf.h"
 #include "ff/potent.h"
 #include "ff/switch.h"
-#include "glob//vdwpot.h"
-#include "glob/chglj.h"
 #include "glob/mplar.h"
 #include "md/inc.h"
+#include "mod/chglj.h"
+#include "mod/vdw.h"
 #include "tool/io.h"
 #include <tinker/detail/atoms.hh>
 #include <tinker/detail/charge.hh>

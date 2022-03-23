@@ -1,7 +1,7 @@
 #pragma once
-#include "glob//mpole.h"
-#include "glob//repel.h"
-#include "glob//reppot.h"
+#include "glob/mpole.h"
+#include "glob/repel.h"
+#include "glob/reppot.h"
 #include "tool/rcman.h"
 
 namespace tinker {
