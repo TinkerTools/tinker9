@@ -75,7 +75,7 @@ void device_data(RcOp op)
    RcMan molecule42{moleculeData, op};
    RcMan group42{groupData, op};
 
-   RcMan energy42{energy_data, op};
+   RcMan energy42{energyData, op};
    RcMan osrw42{osrw_data, op};
 
    // Neighbor lists must be initialized after potential initialization.

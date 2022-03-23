@@ -1,3 +1,4 @@
+#include "mod/evalence.h"
 #include "test/test.h"
 #include "test/testrt.h"
 

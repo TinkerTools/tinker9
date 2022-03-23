@@ -4,8 +4,8 @@
 #include "ff/energy.h"
 #include "ff/rattle.h"
 #include "math/inc.h"
-#include "md/integrator.h"
 #include "md/inc.h"
+#include "md/integrator.h"
 #include "tool/darray.h"
 #include "tool/io.h"
 #include <cassert>
@@ -155,7 +155,7 @@ void mdIntegrateData(RcOp op)
    }
 }
 
-const TimeScaleConfig& mdRespaTsconfig()
+const TimeScaleConfig& respaTSConfig()
 {
    constexpr int fast = floorLog2_constexpr(RESPA_FAST); // short-range
    constexpr int slow = floorLog2_constexpr(RESPA_SLOW); // long-range

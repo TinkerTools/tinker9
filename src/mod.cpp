@@ -29,7 +29,7 @@
 #include "mod/accasync.h"
 #include "mod/box.h"
 #include "mod/cudalib.h"
-#include "mod/energi.h"
+#include "mod/energy.h"
 #include "mod/evalence.h"
 #include "mod/gpucard.h"
 #include "mod/md.h"

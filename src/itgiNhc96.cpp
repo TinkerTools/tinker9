@@ -1,7 +1,7 @@
 #include "ff/box.h"
 #include "ff/energy.h"
-#include "md/integrator.h"
 #include "md/inc.h"
+#include "md/integrator.h"
 #include "tool/error.h"
 #include <cmath>
 #include <tinker/detail/inform.hh>

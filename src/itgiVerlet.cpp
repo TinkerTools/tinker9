@@ -1,6 +1,6 @@
 #include "ff/energy.h"
-#include "md/integrator.h"
 #include "md/inc.h"
+#include "md/integrator.h"
 
 namespace tinker {
 const char* VerletIntegrator::name() const

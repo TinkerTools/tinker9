@@ -131,9 +131,9 @@ void egvData(RcOp op)
       if (op & rc_dealloc) {
          if (!rc_a) {
             darray::deallocate(eng_buf);
-            if (use_energi_vdw())
+            if (useEnergyVdw())
                darray::deallocate(eng_buf_vdw);
-            if (use_energi_elec())
+            if (useEnergyElec())
                darray::deallocate(eng_buf_elec);
          }
       }
@@ -143,9 +143,9 @@ void egvData(RcOp op)
          if (!rc_a) {
             auto sz = buffer_size();
             darray::allocate(sz, &eng_buf);
-            if (use_energi_vdw())
+            if (useEnergyVdw())
                darray::allocate(sz, &eng_buf_vdw);
-            if (use_energi_elec())
+            if (useEnergyElec())
                darray::allocate(sz, &eng_buf_elec);
          }
       }
@@ -155,9 +155,9 @@ void egvData(RcOp op)
       if (op & rc_dealloc) {
          if (!rc_a) {
             darray::deallocate(vir_buf);
-            if (use_energi_vdw())
+            if (useEnergyVdw())
                darray::deallocate(vir_buf_vdw);
-            if (use_energi_elec())
+            if (useEnergyElec())
                darray::deallocate(vir_buf_elec);
          }
       }
@@ -167,9 +167,9 @@ void egvData(RcOp op)
          if (!rc_a) {
             auto sz = buffer_size();
             darray::allocate(sz, &vir_buf);
-            if (use_energi_vdw())
+            if (useEnergyVdw())
                darray::allocate(sz, &vir_buf_vdw);
-            if (use_energi_elec())
+            if (useEnergyElec())
                darray::allocate(sz, &vir_buf_elec);
          }
       }
@@ -178,18 +178,18 @@ void egvData(RcOp op)
    if (rc_flag & calc::grad) {
       if (op & rc_dealloc) {
          darray::deallocate(gx, gy, gz);
-         if (use_energi_vdw())
+         if (useEnergyVdw())
             darray::deallocate(gx_vdw, gy_vdw, gz_vdw);
-         if (use_energi_elec())
+         if (useEnergyElec())
             darray::deallocate(gx_elec, gy_elec, gz_elec);
       }
 
       if (op & rc_alloc) {
          zeroOnHost(gx, gy, gz, gx_vdw, gy_vdw, gz_vdw, gx_elec, gy_elec, gz_elec);
          darray::allocate(n, &gx, &gy, &gz);
-         if (use_energi_vdw())
+         if (useEnergyVdw())
             darray::allocate(n, &gx_vdw, &gy_vdw, &gz_vdw);
-         if (use_energi_elec())
+         if (useEnergyElec())
             darray::allocate(n, &gx_elec, &gy_elec, &gz_elec);
       }
    }

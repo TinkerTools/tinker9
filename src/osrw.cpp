@@ -6,6 +6,13 @@
 #include "tinker9.h"
 #include "tool/zero.h"
 
+#include "glob/chgtrn.h"
+#include "glob/disp.h"
+#include "glob/mutant.h"
+#include "glob/repel.h"
+#include "glob/vdw.h"
+#include "mod/evalence.h"
+
 namespace tinker {
 bool use_osrw;
 double osrw_lambda;
@@ -422,6 +429,6 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 void osrw_energy(int vers)
 {
-   osrw_energy(vers, 1, default_tsconfig());
+   osrw_energy(vers, 1, defaultTSConfig());
 }
 }

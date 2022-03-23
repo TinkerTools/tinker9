@@ -31,7 +31,7 @@
 namespace tinker {
 bool use_ewald()
 {
-   bool flag = use_energi_elec() and limits::use_ewald;
+   bool flag = useEnergyElec() and limits::use_ewald;
    return flag;
 }
 

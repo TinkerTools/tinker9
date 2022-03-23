@@ -1,6 +1,6 @@
 #include "ff/energy.h"
-#include "md/integrator.h"
 #include "md/inc.h"
+#include "md/integrator.h"
 #include "tool/io.h"
 
 namespace tinker {
@@ -90,7 +90,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
       for (int ifast = 1; ifast < nrespa; ++ifast) {
          m_prop->updatePosition(dta);
          mdCopyPosToXyz(false);
-         energy(vers1, RESPA_FAST, mdRespaTsconfig());
+         energy(vers1, RESPA_FAST, respaTSConfig());
          m_prop->updateVelocityR0(dta);
          if (vers1 & calc::virial) {
             if (atomic) {
@@ -108,7 +108,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
       mdCopyPosToXyz(true);
 
       // fast force
-      energy(vers1, RESPA_FAST, mdRespaTsconfig());
+      energy(vers1, RESPA_FAST, respaTSConfig());
       darray::copy(g::q0, n, gx1, gx);
       darray::copy(g::q0, n, gy1, gy);
       darray::copy(g::q0, n, gz1, gz);
@@ -125,7 +125,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
       }
 
       // slow force
-      energy(vers1, RESPA_SLOW, mdRespaTsconfig());
+      energy(vers1, RESPA_SLOW, respaTSConfig());
       darray::copy(g::q0, n, gx2, gx);
       darray::copy(g::q0, n, gy2, gy);
       darray::copy(g::q0, n, gz2, gz);

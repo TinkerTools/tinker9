@@ -1,8 +1,13 @@
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
+#include "glob/chgtrn.h"
+#include "glob/disp.h"
+#include "glob/repel.h"
+#include "glob/vdw.h"
 #include "md/inc.h"
 #include "md/osrw.h"
+#include "mod/evalence.h"
 #include "tinker9.h"
 #include "tool/io.h"
 #include <fstream>

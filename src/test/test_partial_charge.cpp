@@ -1,3 +1,4 @@
+#include "glob/charge.h"
 #include "test/test.h"
 #include "test/testrt.h"
 

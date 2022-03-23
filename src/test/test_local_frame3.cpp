@@ -1,3 +1,5 @@
+#include "glob/mpole.h"
+#include "glob/polar.h"
 #include "test/test.h"
 #include "test/testrt.h"
 

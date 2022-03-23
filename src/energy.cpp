@@ -8,12 +8,27 @@
 #include "tool/error.h"
 #include "tool/zero.h"
 
-namespace tinker {
-bool ecore_val;
-bool ecore_vdw;
-bool ecore_ele;
+#include "ff/amoeba/emplar.h"
+#include "ff/amoeba/empole.h"
+#include "ff/amoeba/epolar.h"
+#include "ff/pchg/echarge.h"
+#include "ff/pchg/echglj.h"
+#include "ff/pchg/evalence.h"
+#include "ff/pchg/evdw.h"
 
-void energy_data(RcOp op)
+#include "ff/hippo/echgtrn.h"
+#include "ff/hippo/edisp.h"
+#include "ff/hippo/ehippo.h"
+#include "ff/hippo/empole_chgpen.h"
+#include "ff/hippo/epolar_chgpen.h"
+#include "ff/hippo/erepel.h"
+
+namespace tinker {
+static bool ecore_val;
+static bool ecore_vdw;
+static bool ecore_ele;
+
+void energyData(RcOp op)
 {
    if ((rc_flag & calc::vmask) == 0)
       return;
@@ -68,7 +83,7 @@ void energy_data(RcOp op)
    RcMan fft42{fft_data, op};
 }
 
-bool use_energi_vdw()
+bool useEnergyVdw()
 {
    bool ans = false;
 
@@ -82,7 +97,7 @@ bool use_energi_vdw()
    return ans;
 }
 
-bool use_energi_elec()
+bool useEnergyElec()
 {
    bool ans = false;
 
@@ -97,7 +112,7 @@ bool use_energi_elec()
    return ans;
 }
 
-const TimeScaleConfig& default_tsconfig()
+const TimeScaleConfig& defaultTSConfig()
 {
    static TimeScaleConfig tsconfig{
       {"ebond", 0},
@@ -371,6 +386,6 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 void energy(int vers)
 {
-   energy(vers, 1, default_tsconfig());
+   energy(vers, 1, defaultTSConfig());
 }
 }

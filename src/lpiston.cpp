@@ -184,13 +184,13 @@ void vv_lpiston_init()
    //    darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
 
    //    // save fast gradients to gx1 etc.
-   //    energy(calc::grad, RESPA_FAST, mdRespaTsconfig());
+   //    energy(calc::grad, RESPA_FAST, respaTSConfig());
    //    darray::copy(g::q0, n, gx1, gx);
    //    darray::copy(g::q0, n, gy1, gy);
    //    darray::copy(g::q0, n, gz1, gz);
 
    //    // save slow gradients to gx2 etc.
-   //    energy(calc::grad, RESPA_SLOW, mdRespaTsconfig());
+   //    energy(calc::grad, RESPA_SLOW, respaTSConfig());
    //    darray::copy(g::q0, n, gx2, gx);
    //    darray::copy(g::q0, n, gy2, gy);
    //    darray::copy(g::q0, n, gz2, gz);
@@ -418,7 +418,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 
    //    if (ir < nrespa - 1) {
    //       mdCopyPosToXyz(false);
-   //       energy(vers1, RESPA_FAST, mdRespaTsconfig());
+   //       energy(vers1, RESPA_FAST, respaTSConfig());
    //       if (vers1 & calc::virial) {
    //          lp_virial(molP);
    //          for (int i = 0; i < 9; ++i)
@@ -436,7 +436,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 
    // if (nrespa > 1) {
    //    // fast force
-   //    energy(vers1, RESPA_FAST, mdRespaTsconfig());
+   //    energy(vers1, RESPA_FAST, respaTSConfig());
    //    darray::copy(g::q0, n, gx1, gx);
    //    darray::copy(g::q0, n, gy1, gy);
    //    darray::copy(g::q0, n, gz1, gz);
@@ -448,7 +448,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
    //    }
 
    //    // slow force
-   //    energy(vers1, RESPA_SLOW, mdRespaTsconfig());
+   //    energy(vers1, RESPA_SLOW, respaTSConfig());
    //    darray::copy(g::q0, n, gx2, gx);
    //    darray::copy(g::q0, n, gy2, gy);
    //    darray::copy(g::q0, n, gz2, gz);
@@ -757,7 +757,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 
 //    if (ir < nrespa - 1) {
 //       mdCopyPosToXyz(false);
-//       energy(vers1, RESPA_FAST, mdRespaTsconfig());
+//       energy(vers1, RESPA_FAST, respaTSConfig());
 //       if (vers1 & calc::virial) {
 //          lp_virial(molP);
 //          for (int iv = 0; iv < 9; ++iv)
@@ -775,7 +775,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 
 // if (nrespa > 1) {
 //    // fast force
-//    energy(vers1, RESPA_FAST, mdRespaTsconfig());
+//    energy(vers1, RESPA_FAST, respaTSConfig());
 //    darray::copy(g::q0, n, gx1, gx);
 //    darray::copy(g::q0, n, gy1, gy);
 //    darray::copy(g::q0, n, gz1, gz);
@@ -787,7 +787,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 //    }
 
 //    // slow force
-//    energy(vers1, RESPA_SLOW, mdRespaTsconfig());
+//    energy(vers1, RESPA_SLOW, respaTSConfig());
 //    darray::copy(g::q0, n, gx2, gx);
 //    darray::copy(g::q0, n, gy2, gy);
 //    darray::copy(g::q0, n, gz2, gz);
@@ -954,7 +954,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 
 //    if (ir < nrespa - 1) {
 //       mdCopyPosToXyz(false);
-//       energy(vers1, RESPA_FAST, mdRespaTsconfig());
+//       energy(vers1, RESPA_FAST, respaTSConfig());
 //       if (vers1 & calc::virial) {
 //          lp_virial(molP);
 //          for (int i = 0; i < 9; ++i)
@@ -968,7 +968,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 
 // if (nrespa > 1) {
 //    // fast force
-//    energy(vers1, RESPA_FAST, mdRespaTsconfig());
+//    energy(vers1, RESPA_FAST, respaTSConfig());
 //    darray::copy(g::q0, n, gx1, gx);
 //    darray::copy(g::q0, n, gy1, gy);
 //    darray::copy(g::q0, n, gz1, gz);
@@ -980,7 +980,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 //    }
 
 //    // slow force
-//    energy(vers1, RESPA_SLOW, mdRespaTsconfig());
+//    energy(vers1, RESPA_SLOW, respaTSConfig());
 //    darray::copy(g::q0, n, gx2, gx);
 //    darray::copy(g::q0, n, gy2, gy);
 //    darray::copy(g::q0, n, gz2, gz);

@@ -1,6 +1,6 @@
 #include "math/inc.h"
-#include "md/integrator.h"
 #include "md/inc.h"
+#include "md/integrator.h"
 #include <tinker/detail/mdstuf.hh>
 
 namespace tinker {

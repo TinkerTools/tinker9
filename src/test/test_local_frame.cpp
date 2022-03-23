@@ -1,4 +1,7 @@
+#include "ff/amoeba/epolar.h"
 #include "ff/amoeba/field.h"
+#include "glob/mpole.h"
+#include "glob/polar.h"
 #include "test/test.h"
 #include "test/testrt.h"
 #include <tinker/detail/units.hh>

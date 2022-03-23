@@ -1,10 +1,10 @@
 #pragma once
+#include "comparetypes.h"
+#include "ff/cname.h"
 #include "ff/elec.h"
 #include "md/inc.h"
 #include "seq/damp.h"
 #include "seq/damp_hippo.h"
-#include "ff/cname.h"
-#include "comparetypes.h"
 
 namespace tinker {
 #pragma acc routine seq

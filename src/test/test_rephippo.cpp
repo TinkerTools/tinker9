@@ -1,3 +1,4 @@
+#include "glob/repel.h"
 #include "test/test.h"
 #include "test/testrt.h"
 
