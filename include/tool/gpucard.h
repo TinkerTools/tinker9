@@ -1,4 +1,5 @@
 #pragma once
+#include "mod/gpucard.h"
 #include "tool/rcman.h"
 
 namespace tinker {
@@ -45,5 +46,3 @@ std::string gpuThrustVersion();
 std::vector<DeviceAttribute>& gpuDeviceAttributes();
 }
 #endif
-
-#include "mod/gpucard.h"

@@ -1,4 +1,5 @@
 #pragma once
+#include "mod/evalence.h"
 #include "tool/rcman.h"
 
 namespace tinker {
@@ -6,29 +7,12 @@ void evalence(int vers);
 
 //
 
-enum class ebond_t
-{
-   harmonic,
-   morse
-};
 void ebondData(RcOp);
 void ebond(int vers);
 void ebond_acc(int);
 
 //
 
-enum class eangle_t : int
-{
-   in_plane,
-   harmonic,
-   linear,
-   fourier
-};
-enum class eopbend_t
-{
-   w_d_c,
-   allinger
-};
 void eangleData(RcOp);
 void eangle(int vers);
 void eangle_acc(int);
@@ -99,5 +83,3 @@ void egeomData(RcOp);
 void egeom(int vers);
 void egeom_acc(int);
 }
-
-#include "mod/evalence.h"

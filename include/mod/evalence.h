@@ -1,6 +1,6 @@
 #pragma once
 #include "ff/energybuffer.h"
-#include "ff/pchg/evalence.h"
+#include "ff/pchg/evalence1.h"
 
 // bndpot
 namespace tinker {

@@ -1,5 +1,5 @@
 #pragma once
-#include "glob/accasync.h"
+#include "macro.h"
 
 namespace tinker {
 /// \ingroup nvidia
@@ -10,9 +10,7 @@ constexpr unsigned WARP_SIZE = 32;
 constexpr unsigned ALL_LANES = 0xFFFFFFFF;
 /// \ingroup nvidia
 /// \brief Default dimension of thread blocks.
-// constexpr unsigned BLOCK_DIM = 64;
-constexpr unsigned BLOCK_DIM = 128;
-// constexpr unsigned BLOCK_DIM = 256;
+constexpr unsigned BLOCK_DIM = /* 64 */ 128 /* 256 */;
 
 constexpr int PME_BLOCKDIM = 64;
 TINKER_EXTERN int ndevice;

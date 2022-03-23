@@ -1,4 +1,5 @@
 #pragma once
+#include "mod/platform.h"
 #include "tool/rcman.h"
 
 namespace tinker {
@@ -8,5 +9,3 @@ constexpr int CU_PLTFM = 0x002;
 
 void platformData(RcOp);
 }
-
-#include "mod/platform.h"

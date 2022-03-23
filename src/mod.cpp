@@ -19,7 +19,6 @@
 #include "glob//vdw.h"
 #include "glob//vdwpot.h"
 
-#include "glob/accasync.h"
 #include "glob/chglj.h"
 #include "glob/dhflow.h"
 #include "glob/mplar.h"
@@ -27,6 +26,7 @@
 #include "glob/pme.h"
 #include "glob/spatial.h"
 
+#include "mod/accasync.h"
 #include "mod/box.h"
 #include "mod/cudalib.h"
 #include "mod/energi.h"

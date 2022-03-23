@@ -1,5 +1,5 @@
 #pragma once
-#include "precision.h"
+#include "mod/rattle.h"
 #include "tool/rcman.h"
 
 extern "C"
@@ -29,5 +29,3 @@ void hcVelIso(vel_prec s);
 // vi += MatS Vu
 void hcVelAn(vel_prec s[3][3]);
 }
-
-#include "mod/rattle.h"

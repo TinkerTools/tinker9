@@ -1,5 +1,5 @@
 #pragma once
-#include "ff/molecule.h"
+#include "ff/molecule1.h"
 
 namespace tinker {
 const int couple_maxn12 = 8;
