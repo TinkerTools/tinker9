@@ -76,8 +76,8 @@ void energyData(RcOp op)
    RcMan empole43{empole_chgpen_data, op};
    RcMan epolar43{epolar_chgpen_data, op};
    RcMan echgtrn42{echgtrn_data, op};
-   RcMan erepel42{erepel_data, op};
-   RcMan edisp42{edisp_data, op};
+   RcMan erepel42{erepelData, op};
+   RcMan edisp42{edispData, op};
 
    // Must call fft_data() after all of the electrostatics routines.
    RcMan fft42{fft_data, op};

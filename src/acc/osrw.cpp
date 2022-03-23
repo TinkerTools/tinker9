@@ -1,12 +1,12 @@
 #include "md/osrw.h"
 #include "ff/potent.h"
 #include "glob/chgtrn.h"
-#include "glob/disp.h"
-#include "glob/repel.h"
 #include "md/inc.h"
 #include "mod/charge.h"
+#include "mod/disp.h"
 #include "mod/evalence.h"
 #include "mod/mutant.h"
+#include "mod/repel.h"
 #include "mod/vdw.h"
 
 namespace tinker {

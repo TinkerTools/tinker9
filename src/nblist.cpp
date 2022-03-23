@@ -11,10 +11,10 @@
 #include "glob/mplar.h"
 #include "glob/mplpot.h"
 #include "glob/nblist.h"
-#include "glob/repel.h"
 #include "glob/spatial.h"
 #include "md/inc.h"
 #include "mod/chglj.h"
+#include "mod/repel.h"
 #include "platform.h"
 #include "tool/darray.h"
 #include "tool/thrustcache.h"
@@ -429,7 +429,7 @@ void nblist_data(RcOp op)
 
    // dsplist
    u = dsplist_version();
-   cut = use_dewald() ? switch_off(switch_dewald) : switch_off(switch_disp);
+   cut = useDEwald() ? switch_off(switch_dewald) : switch_off(switch_disp);
    buf = neigh::lbuffer;
    if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
       auto& unt = dsplist_unit;

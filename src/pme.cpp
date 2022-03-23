@@ -122,7 +122,7 @@ void pme_op_copyin(PMEUnit unit)
 namespace tinker {
 void pme_data(RcOp op)
 {
-   if (!use_ewald() && !use_dewald())
+   if (!use_ewald() && !useDEwald())
       return;
 
    if (op & rc_dealloc) {
@@ -207,7 +207,7 @@ void pme_data(RcOp op)
       }
    }
 
-   if (use_potent(disp_term) && use_dewald()) {
+   if (use_potent(disp_term) && useDEwald()) {
       if (op & rc_alloc) {
          dpme_unit.close();
          PME::Params p(ewald::adewald, pme::ndfft1, pme::ndfft2, pme::ndfft3, pme::bsdorder);

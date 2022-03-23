@@ -18,4 +18,12 @@ TINKER_EXTERN grad_prec* dedspy;
 TINKER_EXTERN grad_prec* dedspz;
 TINKER_EXTERN energy_prec energy_edsp;
 TINKER_EXTERN virial_prec virial_edsp[9];
+
+TINKER_EXTERN real dsp2scale;
+TINKER_EXTERN real dsp3scale;
+TINKER_EXTERN real dsp4scale;
+TINKER_EXTERN real dsp5scale;
+
+TINKER_EXTERN real elrc_vol_dsp;
+TINKER_EXTERN real vlrc_vol_dsp;
 }

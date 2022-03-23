@@ -11,7 +11,7 @@
 #include <tinker/detail/sizes.hh>
 
 namespace tinker {
-void erepel_data(RcOp op)
+void erepelData(RcOp op)
 {
    if (!use_potent(repuls_term))
       return;

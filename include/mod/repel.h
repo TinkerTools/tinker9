@@ -18,4 +18,9 @@ TINKER_EXTERN grad_prec* dery;
 TINKER_EXTERN grad_prec* derz;
 TINKER_EXTERN energy_prec energy_er;
 TINKER_EXTERN virial_prec virial_er[9];
+
+TINKER_EXTERN real r2scale;
+TINKER_EXTERN real r3scale;
+TINKER_EXTERN real r4scale;
+TINKER_EXTERN real r5scale;
 }

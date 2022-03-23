@@ -1,11 +1,10 @@
 #pragma once
-#include "glob/disp.h"
-#include "glob/dsppot.h"
+#include "mod/disp.h"
 #include "tool/rcman.h"
 
 namespace tinker {
-bool use_dewald();
-void edisp_data(RcOp);
+bool useDEwald();
+void edispData(RcOp);
 void edisp(int vers);
 
 void edisp_ewald(int vers);

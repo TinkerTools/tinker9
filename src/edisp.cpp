@@ -13,12 +13,12 @@
 #include <tinker/detail/sizes.hh>
 
 namespace tinker {
-bool use_dewald()
+bool useDEwald()
 {
    return use_potent(disp_term) and limits::use_dewald;
 }
 
-void edisp_data(RcOp op)
+void edispData(RcOp op)
 {
    if (!use_potent(disp_term))
       return;
@@ -58,7 +58,7 @@ void edisp_data(RcOp op)
          buffer_allocate(rc_flag, &edsp, &vir_edsp, &dedspx, &dedspy, &dedspz);
       }
 
-      if (dsppot::use_dcorr && !use_dewald()) {
+      if (dsppot::use_dcorr && !useDEwald()) {
          double elrc = 0, vlrc = 0;
          tinker_f_evcorr1({const_cast<char*>("DISP"), 4}, &elrc, &vlrc);
          elrc_vol_dsp = elrc * boxVolume();
@@ -172,7 +172,7 @@ void edisp(int vers)
          darray::zero(g::q0, n, dedspx, dedspy, dedspz);
    }
 
-   if (use_dewald())
+   if (useDEwald())
       edisp_ewald(vers);
    else
       edisp_nonewald(vers);
