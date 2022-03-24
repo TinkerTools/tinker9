@@ -519,7 +519,7 @@ if (HOST)
 else ()
    add_subdirectory (src/cu)
 endif ()
-add_subdirectory (src/test)
+add_subdirectory (test)
 
 
 ## executables
