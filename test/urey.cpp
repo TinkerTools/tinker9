@@ -15,10 +15,10 @@ TEST_CASE("Urey-Ten-Water", "[ff][eurey][h2o10]")
    TestFile fpr(TINKER9_DIRSTR "/test/file/commit_6fe8e913/water03.prm");
 
    TestReference r(TINKER9_DIRSTR "/test/ref/urey.txt");
-   auto ref_e = r.get_energy();
-   auto ref_v = r.get_virial();
-   auto ref_count = r.get_count();
-   auto ref_g = r.get_gradient();
+   auto ref_e = r.getEnergy();
+   auto ref_v = r.getVirial();
+   auto ref_count = r.getCount();
+   auto ref_g = r.getGradient();
 
    const char* argv[] = {"dummy", x1};
    int argc = 2;

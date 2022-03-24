@@ -32,7 +32,6 @@ partial_charge.cpp
 pitors.cpp
 reduce.cpp
 rephippo.cpp
-rt.cpp
 strbnd.cpp
 strtor.cpp
 text.cpp

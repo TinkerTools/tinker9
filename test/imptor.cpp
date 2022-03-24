@@ -16,10 +16,10 @@ TEST_CASE("ALA-1", "[ff][eimptor][ala]")
    TestFile fk1(TINKER9_DIRSTR "/test/file/ala/ala.key", k, k0);
 
    TestReference r(TINKER9_DIRSTR "/test/ref/imptor.txt");
-   auto ref_e = r.get_energy();
-   auto ref_v = r.get_virial();
-   auto ref_count = r.get_count();
-   auto ref_g = r.get_gradient();
+   auto ref_e = r.getEnergy();
+   auto ref_v = r.getVirial();
+   auto ref_count = r.getCount();
+   auto ref_g = r.getGradient();
 
    const double eps_e = testGetEps(0.0002, 0.0001);
    const double eps_g = 0.0001;

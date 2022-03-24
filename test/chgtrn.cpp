@@ -19,10 +19,10 @@ TEST_CASE("ECHGTRN-1", "[ff][hippo][echgtrn][dmso]")
    const double eps_v = testGetEps(0.0005, 0.0004);
 
    TestReference r(TINKER9_DIRSTR "/test/ref/chgtrn.1.txt");
-   auto ref_c = r.get_count();
-   auto ref_e = r.get_energy();
-   auto ref_v = r.get_virial();
-   auto ref_g = r.get_gradient();
+   auto ref_c = r.getCount();
+   auto ref_e = r.getEnergy();
+   auto ref_v = r.getVirial();
+   auto ref_g = r.getGradient();
 
    rc_flag = calc::xyz | calc::vmask;
    testBeginWithArgs(argc, argv);

@@ -5,7 +5,7 @@
 #include <tinker/detail/bath.hh>
 
 namespace tinker {
-TestFile::TestFile(const std::string& file, std::string dst, std::string extra)
+TestFile::TestFile(std::string file, std::string dst, std::string extra)
 {
    if (dst == "") {
       auto pos = file.find_last_of('/');
@@ -46,7 +46,7 @@ void TestFile::__keep()
    good = false;
 }
 
-TestRemoveFileOnExit::TestRemoveFileOnExit(const std::string& name)
+TestRemoveFileOnExit::TestRemoveFileOnExit(std::string name)
    : m_name(name)
 {}
 
@@ -106,24 +106,24 @@ TestReference::TestReference(std::string fname)
    }
 }
 
-int TestReference::get_count() const
+int TestReference::getCount() const
 {
    return this->count;
 }
 
-double TestReference::get_energy() const
+double TestReference::getEnergy() const
 {
    return this->energy;
 }
 
-double (*TestReference::get_virial())[3]
+const double (*TestReference::getVirial() const)[3]
 {
    return this->virial;
 }
 
-double (*TestReference::get_gradient())[3]
+const double (*TestReference::getGradient() const)[3]
 {
-   return reinterpret_cast<double(*)[3]>(this->gradient.data());
+   return reinterpret_cast<const double(*)[3]>(this->gradient.data());
 }
 
 double testGetEps(double eps_single, double eps_double)

@@ -25,10 +25,10 @@ TEST_CASE("Vdw14-Trpcage", "[ff][evdw][vdw14][lj][trpcage]")
       TestFile fpr(TINKER9_DIRSTR "/test/file/commit_11e84c69/charmm19.prm");
 
       TestReference r(TINKER9_DIRSTR "/test/ref/vdw14.1.txt");
-      auto ref_e = r.get_energy();
-      auto ref_v = r.get_virial();
-      auto ref_count = r.get_count();
-      auto ref_g = r.get_gradient();
+      auto ref_e = r.getEnergy();
+      auto ref_v = r.getVirial();
+      auto ref_count = r.getCount();
+      auto ref_g = r.getGradient();
 
       testBeginWithArgs(argc, argv);
       initialize();
@@ -79,10 +79,10 @@ TEST_CASE("Vdw14-Trpcage", "[ff][evdw][vdw14][lj][trpcage]")
       TestFile fpr(TINKER9_DIRSTR "/test/file/commit_11e84c69/charmm19.prm");
 
       TestReference r(TINKER9_DIRSTR "/test/ref/vdw14.2.txt");
-      auto ref_e = r.get_energy();
-      auto ref_v = r.get_virial();
-      auto ref_count = r.get_count();
-      auto ref_g = r.get_gradient();
+      auto ref_e = r.getEnergy();
+      auto ref_v = r.getVirial();
+      auto ref_count = r.getCount();
+      auto ref_g = r.getGradient();
 
       testBeginWithArgs(argc, argv);
       initialize();

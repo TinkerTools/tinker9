@@ -19,10 +19,10 @@ TEST_CASE("EPOLAR-1-EWALD-HIPPO", "[ff][hippo][ephippo][ewald]")
    const double eps_v = testGetEps(0.001, 0.001);
 
    TestReference r(TINKER9_DIRSTR "/test/ref/ephippo.1.txt");
-   auto ref_c = r.get_count();
-   auto ref_e = r.get_energy();
-   auto ref_v = r.get_virial();
-   auto ref_g = r.get_gradient();
+   auto ref_c = r.getCount();
+   auto ref_e = r.getEnergy();
+   auto ref_v = r.getVirial();
+   auto ref_g = r.getGradient();
 
    rc_flag = calc::xyz | calc::vmask;
    testBeginWithArgs(argc, argv);
@@ -74,10 +74,10 @@ TEST_CASE("EPOLAR-2-NONEWALD-HIPPO", "[ff][hippo][ephippo][nonewald]")
    const double eps_v = testGetEps(0.001, 0.001);
 
    TestReference r(TINKER9_DIRSTR "/test/ref/ephippo.2.txt");
-   auto ref_c = r.get_count();
-   auto ref_e = r.get_energy();
-   auto ref_v = r.get_virial();
-   auto ref_g = r.get_gradient();
+   auto ref_c = r.getCount();
+   auto ref_e = r.getEnergy();
+   auto ref_v = r.getVirial();
+   auto ref_g = r.getGradient();
 
    rc_flag = calc::xyz | calc::vmask;
    testBeginWithArgs(argc, argv);

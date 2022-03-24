@@ -15,10 +15,10 @@ TEST_CASE("Improp-Trpcage", "[ff][eimprop][trpcage]")
    TestFile fpr(TINKER9_DIRSTR "/test/file/commit_11e84c69/charmm19.prm");
 
    TestReference r(TINKER9_DIRSTR "/test/ref/improp.txt");
-   auto ref_e = r.get_energy();
-   auto ref_v = r.get_virial();
-   auto ref_count = r.get_count();
-   auto ref_g = r.get_gradient();
+   auto ref_e = r.getEnergy();
+   auto ref_v = r.getVirial();
+   auto ref_count = r.getCount();
+   auto ref_g = r.getGradient();
 
    const double eps_e = testGetEps(0.0001, 0.0001);
    const double eps_g = testGetEps(0.0003, 0.0001);

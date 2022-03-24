@@ -15,10 +15,10 @@ TEST_CASE("Angle-Trpcage", "[ff][eangle][trpcage]")
    TestFile fpr(TINKER9_DIRSTR "/test/file/commit_291a85c1/amoebapro13.prm");
 
    TestReference r(TINKER9_DIRSTR "/test/ref/angle.1.txt");
-   auto ref_e = r.get_energy();
-   auto ref_v = r.get_virial();
-   auto ref_count = r.get_count();
-   auto ref_g = r.get_gradient();
+   auto ref_e = r.getEnergy();
+   auto ref_v = r.getVirial();
+   auto ref_count = r.getCount();
+   auto ref_g = r.getGradient();
 
    const double eps_e = 0.0001;
    const double eps_g = testGetEps(0.001, 0.0001);
@@ -68,10 +68,10 @@ TEST_CASE("Angle-2-fourier", "[ff][eangle][fourier][anglef]")
    TestFile fpr(TINKER9_DIRSTR "/test/file/commit_6fe8e913/amoeba09.prm");
 
    TestReference r(TINKER9_DIRSTR "/test/ref/angle.2.txt");
-   auto ref_e = r.get_energy();
-   auto ref_v = r.get_virial();
-   auto ref_count = r.get_count();
-   auto ref_g = r.get_gradient();
+   auto ref_e = r.getEnergy();
+   auto ref_v = r.getVirial();
+   auto ref_count = r.getCount();
+   auto ref_g = r.getGradient();
 
    const double eps_e = 0.0001;
    const double eps_g = testGetEps(0.0001, 0.0001);

@@ -99,6 +99,7 @@ spatial.cpp
 spatial2.cpp
 switch.cpp
 testgrad_x.cpp
+testrt.cpp
 tinker_rt.cpp
 tinker_suppl.cpp
 trimatexp.cpp
