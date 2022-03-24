@@ -1,6 +1,6 @@
 #pragma once
-#include "macro.h"
 #include "mod/accasync.h"
+#include "precision.h"
 #include <cstddef>
 #include <type_traits>
 

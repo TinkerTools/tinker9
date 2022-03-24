@@ -1,6 +1,6 @@
 #pragma once
 #include "ff/pchg/evdw1.h"
-#include "macro.h"
+#include "precision.h"
 
 namespace tinker {
 TINKER_EXTERN evdw_t vcouple;

@@ -1,5 +1,5 @@
 #pragma once
-#include "macro.h"
+#include "precision.h"
 #include <cmath>
 
 namespace tinker {

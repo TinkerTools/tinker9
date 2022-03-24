@@ -16,6 +16,8 @@ namespace tinker {
 void x_bar_makebar();
 void x_bar_barcalc();
 
+static constexpr int MAX_NCHAR = 240;
+
 void xBar(int, char**)
 {
    initial();

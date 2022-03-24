@@ -3,16 +3,6 @@
 #include <string>
 #include <tinker/routines.h>
 
-namespace tinker {
-void xAnalyze(int, char**);
-void xBar(int, char**);
-void xDynamic(int, char**);
-void xHelp(int, char**);
-void xInfo(int, char**);
-void xMinimize(int, char**);
-void xTestgrad(int, char**);
-}
-
 #define TINKER9_VERSION_MAJOR 1
 #define TINKER9_VERSION_MINOR 0
 #define TINKER9_VERSION_PATCH 0
@@ -48,6 +38,16 @@ TINKER9_PROMO3__                                                                
 TINKER9_PROMO2__                                                                      \
 TINKER9_PROMO1__                                                                 "\n"
 // clang-format on
+
+namespace tinker {
+void xAnalyze(int, char**);
+void xBar(int, char**);
+void xDynamic(int, char**);
+void xHelp(int, char**);
+void xInfo(int, char**);
+void xMinimize(int, char**);
+void xTestgrad(int, char**);
+}
 
 namespace tinker {
 void promo();

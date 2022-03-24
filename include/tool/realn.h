@@ -1,5 +1,5 @@
 #pragma once
-#include "macro.h"
+#include "precision.h"
 #include "realndef.h"
 #include "seqdef.h"
 

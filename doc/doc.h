@@ -1,8 +1,6 @@
 #error This header file should never have been included.
 
 /// \defgroup lang  Compilers and Syntax
-/// \defgroup compiler  Compilers
-/// \ingroup lang
 /// \defgroup cpp_syntax  C++ Syntax
 /// \ingroup lang
 /// \defgroup cuda_syntax  CUDA Specific Code
@@ -56,22 +54,22 @@
 
 //====================================================================//
 
-/// \ingroup compiler
+/// \ingroup cpp_syntax
 /// \brief Macro for the Intel C++ compiler.
 #define TINKER_ICPC
-/// \ingroup compiler
+/// \ingroup cpp_syntax
 /// \brief Macro for the GNU C++ compiler.
 #define TINKER_GCC
-/// \ingroup compiler
+/// \ingroup cpp_syntax
 /// \brief Macro for the Clang C++ (either Apple or LLVM) compiler.
 #define TINKER_CLANG
-/// \ingroup compiler
+/// \ingroup cpp_syntax
 /// \brief Macro for the Clang C++ (Apple) compiler.
 #define TINKER_APPLE_CLANG
-/// \ingroup compiler
+/// \ingroup cpp_syntax
 /// \brief Macro for the Clang C++ (LLVM) compiler.
 #define TINKER_LLVM_CLANG
-/// \ingroup compiler
+/// \ingroup cpp_syntax
 /// \brief Macro for the PGI or NVHPC C++ compiler.
 #define TINKER_PGI
 #define TINKER_EXTERN_DEFINITION_FILE

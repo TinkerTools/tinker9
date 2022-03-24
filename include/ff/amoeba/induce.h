@@ -1,5 +1,5 @@
 #pragma once
-#include "macro.h"
+#include "precision.h"
 
 namespace tinker {
 void diag_precond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3]);

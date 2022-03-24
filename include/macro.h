@@ -46,7 +46,7 @@
 #endif
 
 /// \ingroup cpp_syntax
-/// \brief Since C++17, `if constexpr` is allowed in C++.
+/// \brief `if constexpr` has been added to C++ since C++17.
 /// `if CONSTEXPR` expands to `if constexpr` if this feature is supported.
 /// Otherwise it expands to `if`.
 #if __cplusplus >= 201703L && defined(__cpp_if_constexpr)
@@ -91,8 +91,7 @@
 /// \def TINKER_EXTERN
 /// \ingroup cpp_syntax
 /// \brief Expands to `extern`, unless `TINKER_EXTERN_DEFINITION_FILE` has been
-/// predefined to 1. This is useful to declare and define the global
-/// variables.
+/// predefined to 1. This is useful to declare and define the global variables.
 /// \see TINKER_EXTERN_DEFINITION_FILE
 #ifndef TINKER_EXTERN_DEFINITION_FILE
 #   define TINKER_EXTERN_DEFINITION_FILE 0
@@ -103,7 +102,7 @@
 #   define TINKER_EXTERN extern
 #endif
 
-/// \ingroup compiler
+/// \ingroup cpp_syntax
 /// \brief Expands to 0 if the macro `NDEBUG` was predefined.
 /// Expands to 1 otherwise.
 #ifdef NDEBUG
@@ -113,12 +112,12 @@
 #endif
 
 /// \def TINKER_HOST
-/// \ingroup compiler
+/// \ingroup cpp_syntax
 /// \brief Macro for the CPU-only code.
 /// \see TINKER_CUDART
 ///
 /// \def TINKER_CUDART
-/// \ingroup compiler
+/// \ingroup cpp_syntax
 /// \brief Macro for the CUDA runtime-enabled GPU code.
 /// \see TINKER_HOST
 #ifndef TINKER_HOST
@@ -141,8 +140,7 @@
 /// | MIXED  | float  | double |
 /// | SINGLE | float  | float  |
 ///
-/// Only one of the precision macros can be set to 1 and the others will
-/// be set to 0.
+/// Only one of the precision macros can be set to 1 and the others will be set to 0.
 ///
 /// \def TINKER_MIXED_PRECISION
 /// \ingroup prec
@@ -173,49 +171,11 @@
 #   error Detected errors in TINKER_?_PRECISION macros.
 #endif
 
-namespace tinker {
-/// \typedef fixed
-/// \ingroup prec
-/// \brief 64-bit unsigned integer type for fixed-point arithmetic.
-///
-/// \typedef real
-/// \ingroup prec
-/// \brief Floating-point type with lower precision (not higher than #mixed).
-/// \see TINKER_MIXED_PRECISION
-///
-/// \typedef mixed
-/// \ingroup prec
-/// \brief Floating-point type with higher precision (not lower than #real).
-/// \see TINKER_MIXED_PRECISION
-using fixed = unsigned long long;
-static_assert(sizeof(fixed) == 8, "");
-
-#if TINKER_DOUBLE_PRECISION
-#   define TINKER_REAL_SIZE  8
-#   define TINKER_MIXED_SIZE 8
-using real = double;
-using mixed = double;
-#endif
-#if TINKER_MIXED_PRECISION
-#   define TINKER_REAL_SIZE  4
-#   define TINKER_MIXED_SIZE 8
-using real = float;
-using mixed = double;
-#endif
-#if TINKER_SINGLE_PRECISION
-#   define TINKER_REAL_SIZE  4
-#   define TINKER_MIXED_SIZE 4
-using real = float;
-using mixed = float;
-#endif
-}
-
+/// \def TINKER9_DIR
+/// \ingroup cpp_syntax
+/// \brief Path to this source code directory; used in the unit tests.
 #ifndef TINKER9_DIR
 #   error TINKER9_DIR is not set.
 #else
 #   define TINKER9_DIRSTR TINKER_STR(TINKER9_DIR)
 #endif
-
-namespace tinker {
-constexpr int MAX_NCHAR = 240;
-}

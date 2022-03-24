@@ -1,5 +1,5 @@
 #pragma once
-#include "macro.h"
+#include "precision.h"
 
 namespace tinker {
 // electrostatic field due to permanent multipoles

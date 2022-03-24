@@ -2,24 +2,6 @@
 #include "macro.h"
 
 /// \ingroup prec
-/// \page prec
-///
-/// | Properties                  | Types       | Underlying Types |
-/// |----------------------------:|------------:|-----------------:|
-/// | time                        | time_prec   | mixed            |
-/// | temperature                 | T_prec      | mixed            |
-/// | velocity                    | vel_prec    | mixed            |
-/// | position (for integrators)  | pos_prec    | mixed            |
-/// | energy (for integrators)    | energy_prec | mixed            |
-/// | virial (for integrators)    | virial_prec | mixed            |
-/// | gradient (deterministic)    | grad_prec   | fixed            |
-/// | gradient (floating-point)   | grad_prec   | real             |
-/// | energy (individual terms)   | e_prec      | real             |
-/// | virial (individual terms)   | v_prec      | real             |
-/// | gradient (individual terms) | real        | real             |
-/// | position (for energies)     | real        | real             |
-
-/// \ingroup prec
 /// \def TINKER_DETERMINISTIC_FORCE
 /// \brief Logical macro for the underlying type of energy gradients.
 ///    - If `true`, always use fixed-point arithmetic to accumulate energy
@@ -65,14 +47,90 @@
 #endif
 
 namespace tinker {
+/// \typedef fixed
+/// \ingroup prec
+/// \brief 64-bit unsigned integer type for fixed-point arithmetic.
+///
+/// \typedef real
+/// \ingroup prec
+/// \brief Floating-point type with lower precision (not higher than #mixed).
+/// \see TINKER_MIXED_PRECISION
+///
+/// \typedef mixed
+/// \ingroup prec
+/// \brief Floating-point type with higher precision (not lower than #real).
+/// \see TINKER_MIXED_PRECISION
+using fixed = unsigned long long;
+static_assert(sizeof(fixed) == 8, "");
+
+#if TINKER_DOUBLE_PRECISION
+#   define TINKER_REAL_SIZE  8
+#   define TINKER_MIXED_SIZE 8
+using real = double;
+using mixed = double;
+#endif
+#if TINKER_MIXED_PRECISION
+#   define TINKER_REAL_SIZE  4
+#   define TINKER_MIXED_SIZE 8
+using real = float;
+using mixed = double;
+#endif
+#if TINKER_SINGLE_PRECISION
+#   define TINKER_REAL_SIZE  4
+#   define TINKER_MIXED_SIZE 4
+using real = float;
+using mixed = float;
+#endif
+
+/// \typedef time_prec
+/// \ingroup prec
+/// \brief Floating-point type for time.
+///
+/// \typedef T_prec
+/// \ingroup prec
+/// \brief Floating-point type for temperature.
+///
+/// \typedef vel_prec
+/// \ingroup prec
+/// \brief Floating-point type for velocities.
+///
+/// \typedef pos_prec
+/// \ingroup prec
+/// \brief Floating-point type for coordinates.
+///
+/// \typedef e_prec
+/// \ingroup prec
+/// \brief Recommended floating-point type for the pairwise energy components.
+///
+/// \typedef v_prec
+/// \ingroup prec
+/// \brief Recommended floating-point type for the pairwise virial components.
+///
+/// \typedef g_prec
+/// \ingroup prec
+/// \brief Recommended floating-point type for the pairwise gradient components.
+///
+/// \typedef energy_prec
+/// \ingroup prec
+/// \brief Floating-point type for total energies.
+///
+/// \typedef virial_prec
+/// \ingroup prec
+/// \brief Floating-point type for total virials.
+///
+/// \typedef grad_prec
+/// \ingroup prec
+/// \brief Floating-point or fixed-point type for the total gradients.
+/// \see TINKER_DETERMINISTIC_FORCE
 using time_prec = mixed;
 using T_prec = mixed;
 using vel_prec = mixed;
 using pos_prec = mixed;
-using energy_prec = mixed; // total energies
-using virial_prec = mixed; // total virial tensor
-using e_prec = real;       // individual energy
-using v_prec = real;       // individual virial
+using e_prec = real;
+using v_prec = real;
+using g_prec = real;
+using energy_prec = mixed;
+using virial_prec = mixed;
 #if TINKER_DETERMINISTIC_FORCE
 using grad_prec = fixed;
 #else
