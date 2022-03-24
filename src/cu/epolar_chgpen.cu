@@ -8,7 +8,7 @@
 #include "glob/spatial.h"
 #include "launch.h"
 #include "md/inc.h"
-#include "mod/charge.h"
+#include "mod/elecpchg.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_polar_chgpen.h"
 #include "seq/triangle.h"

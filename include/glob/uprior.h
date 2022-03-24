@@ -1,6 +1,7 @@
 #pragma once
 #include "macro.h"
 
+// uprior
 namespace tinker {
 enum class UPred
 {

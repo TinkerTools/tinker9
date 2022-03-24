@@ -1,6 +1,7 @@
 #pragma once
 #include "macro.h"
 
+// mplpot
 namespace tinker {
 TINKER_EXTERN real m2scale;
 TINKER_EXTERN real m3scale;

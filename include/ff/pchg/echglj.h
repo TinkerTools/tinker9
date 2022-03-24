@@ -2,7 +2,6 @@
 #include "ff/pchg/echarge.h"
 #include "ff/pchg/evdw.h"
 #include "mod/accasync.h"
-#include "mod/chglj.h"
 #include "tool/rcman.h"
 
 namespace tinker {

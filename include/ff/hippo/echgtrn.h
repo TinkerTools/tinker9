@@ -1,9 +1,8 @@
 #pragma once
 #include "ff/elec.h"
-#include "glob/chgtrn.h"
-#include "glob/ctrpot.h"
 #include "glob/mplpot.h"
 #include "glob/mpole.h"
+#include "mod/elechippo.h"
 #include "tool/rcman.h"
 
 namespace tinker {

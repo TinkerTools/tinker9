@@ -1,6 +1,7 @@
 #pragma once
 #include "macro.h"
 
+// polpot
 namespace tinker {
 TINKER_EXTERN real u1scale;
 TINKER_EXTERN real u2scale;

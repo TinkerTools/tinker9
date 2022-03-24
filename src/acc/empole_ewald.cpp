@@ -5,7 +5,7 @@
 #include "ff/switch.h"
 #include "glob/nblist.h"
 #include "md/inc.h"
-#include "mod/charge.h"
+#include "mod/elecpchg.h"
 #include "seq/pair_mpole.h"
 #include "tool/gpucard.h"
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "ff/energybuffer.h"
 
+// mpole
 namespace tinker {
 enum
 {

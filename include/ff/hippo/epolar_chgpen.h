@@ -1,6 +1,6 @@
 #pragma once
 #include "ff/amoeba/epolar.h"
-#include "glob/chgpen.h"
+#include "mod/elechippo.h"
 
 namespace tinker {
 void epolar_chgpen_data(RcOp);

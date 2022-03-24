@@ -6,9 +6,9 @@
 #include "tinker9.h"
 #include "tool/zero.h"
 
-#include "glob/chgtrn.h"
-#include "mod/charge.h"
 #include "mod/disp.h"
+#include "mod/elechippo.h"
+#include "mod/elecpchg.h"
 #include "mod/evalence.h"
 #include "mod/mutant.h"
 #include "mod/repel.h"

@@ -1,9 +1,5 @@
 #define TINKER_EXTERN_DEFINITION_FILE 1
 
-#include "glob/cflux.h"
-#include "glob/chgpen.h"
-#include "glob/chgtrn.h"
-#include "glob/ctrpot.h"
 #include "glob/mplpot.h"
 #include "glob/mpole.h"
 #include "glob/polar.h"
@@ -17,10 +13,12 @@
 
 #include "mod/accasync.h"
 #include "mod/box.h"
-#include "mod/charge.h"
-#include "mod/chglj.h"
 #include "mod/cudalib.h"
 #include "mod/disp.h"
+#include "mod/elec.h"
+#include "mod/elecamoeba.h"
+#include "mod/elechippo.h"
+#include "mod/elecpchg.h"
 #include "mod/energy.h"
 #include "mod/evalence.h"
 #include "mod/gpucard.h"

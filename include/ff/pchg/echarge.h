@@ -1,5 +1,5 @@
 #pragma once
-#include "mod/charge.h"
+#include "mod/elecpchg.h"
 #include "tool/rcman.h"
 
 namespace tinker {

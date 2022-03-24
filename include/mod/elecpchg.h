@@ -1,10 +1,9 @@
 #pragma once
 #include "ff/energybuffer.h"
+#include "mod/elec.h"
 
+// charge chgpot
 namespace tinker {
-TINKER_EXTERN real electric;
-TINKER_EXTERN real dielec;
-
 /// \ingroup charge
 /// \brief Magnitude of the partial charges (e-) of each **atom**.
 /// \note Unlike Tinker, where only non-zero charges will be stored, this
@@ -25,4 +24,13 @@ TINKER_EXTERN real c2scale, c3scale, c4scale, c5scale;
 TINKER_EXTERN int ncexclude;
 TINKER_EXTERN int (*cexclude)[2];
 TINKER_EXTERN real* cexclude_scale;
+}
+
+// chglj
+namespace tinker {
+TINKER_EXTERN int ncvexclude;
+TINKER_EXTERN int (*cvexclude)[2];
+TINKER_EXTERN real (*cvexclude_scale)[2];
+
+TINKER_EXTERN bool vdwpr_in_use;
 }
