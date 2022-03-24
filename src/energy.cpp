@@ -2,7 +2,6 @@
 #include "ff/hippo/cflux.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
-#include "glob/dhflow.h"
 #include "md/inc.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
@@ -22,6 +21,21 @@
 #include "ff/hippo/empole_chgpen.h"
 #include "ff/hippo/epolar_chgpen.h"
 #include "ff/hippo/erepel.h"
+
+namespace tinker {
+struct DHFlow
+{
+   energy_buffer_traits::type e_val;
+   energy_buffer_traits::type e_vdw;
+   energy_buffer_traits::type e_ele;
+   virial_buffer_traits::type v_val[virial_buffer_traits::N];
+   virial_buffer_traits::type v_vdw[virial_buffer_traits::N];
+   virial_buffer_traits::type v_ele[virial_buffer_traits::N];
+};
+
+static DHFlow ev_hobj;
+static DHFlow* ev_dptr;
+}
 
 namespace tinker {
 static bool ecore_val;
@@ -287,61 +301,61 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    bool do_g = vers & calc::grad;
 
    bool must_wait = false;
-   detail::ev_hobj.e_val = 0;
-   detail::ev_hobj.e_vdw = 0;
-   detail::ev_hobj.e_ele = 0;
+   ev_hobj.e_val = 0;
+   ev_hobj.e_vdw = 0;
+   ev_hobj.e_ele = 0;
    if (do_e) {
       if (!rc_a) {
          size_t bufsize = buffer_size();
          if (ecore_val) {
             must_wait = true;
-            reduce_sum_on_device(&detail::ev_dptr->e_val, eng_buf, bufsize, g::q0);
+            reduce_sum_on_device(&ev_dptr->e_val, eng_buf, bufsize, g::q0);
          }
          if (ecore_vdw && eng_buf_vdw) {
             must_wait = true;
-            reduce_sum_on_device(&detail::ev_dptr->e_vdw, eng_buf_vdw, bufsize, g::q0);
+            reduce_sum_on_device(&ev_dptr->e_vdw, eng_buf_vdw, bufsize, g::q0);
          }
          if (ecore_ele && eng_buf_elec) {
             must_wait = true;
-            reduce_sum_on_device(&detail::ev_dptr->e_ele, eng_buf_elec, bufsize, g::q0);
+            reduce_sum_on_device(&ev_dptr->e_ele, eng_buf_elec, bufsize, g::q0);
          }
       }
    }
 
-   zeroOnHost(detail::ev_hobj.v_val);
-   zeroOnHost(detail::ev_hobj.v_vdw);
-   zeroOnHost(detail::ev_hobj.v_ele);
+   zeroOnHost(ev_hobj.v_val);
+   zeroOnHost(ev_hobj.v_vdw);
+   zeroOnHost(ev_hobj.v_ele);
    if (do_v) {
       if (!rc_a) {
          size_t bufsize = buffer_size();
          if (ecore_val) {
             must_wait = true;
-            reduce_sum2_on_device(detail::ev_dptr->v_val, vir_buf, bufsize, g::q0);
+            reduce_sum2_on_device(ev_dptr->v_val, vir_buf, bufsize, g::q0);
          }
          if (ecore_vdw && vir_buf_vdw) {
             must_wait = true;
-            reduce_sum2_on_device(detail::ev_dptr->v_vdw, vir_buf_vdw, bufsize, g::q0);
+            reduce_sum2_on_device(ev_dptr->v_vdw, vir_buf_vdw, bufsize, g::q0);
          }
          if (ecore_ele && vir_buf_elec) {
             must_wait = true;
-            reduce_sum2_on_device(detail::ev_dptr->v_ele, vir_buf_elec, bufsize, g::q0);
+            reduce_sum2_on_device(ev_dptr->v_ele, vir_buf_elec, bufsize, g::q0);
          }
       }
    }
    if (must_wait) {
-      deviceMemoryCopyoutBytesAsync(&detail::ev_hobj, detail::ev_dptr, sizeof(DHFlow), g::q0);
+      deviceMemoryCopyoutBytesAsync(&ev_hobj, ev_dptr, sizeof(DHFlow), g::q0);
       wait_for(g::q0);
    }
    if (do_e) {
       if (!rc_a) {
          if (ecore_val) {
-            energy_valence += to_flt_host<energy_prec>(detail::ev_hobj.e_val);
+            energy_valence += to_flt_host<energy_prec>(ev_hobj.e_val);
          }
          if (ecore_vdw && eng_buf_vdw) {
-            energy_vdw += to_flt_host<energy_prec>(detail::ev_hobj.e_vdw);
+            energy_vdw += to_flt_host<energy_prec>(ev_hobj.e_vdw);
          }
          if (ecore_ele && eng_buf_elec) {
-            energy_elec += to_flt_host<energy_prec>(detail::ev_hobj.e_ele);
+            energy_elec += to_flt_host<energy_prec>(ev_hobj.e_ele);
          }
       }
       esum = energy_valence + energy_vdw + energy_elec;
@@ -351,7 +365,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          if (ecore_val) {
             virial_prec vval[virial_buffer_traits::N], v2val[9];
             for (int iv = 0; iv < (int)virial_buffer_traits::N; ++iv)
-               vval[iv] = to_flt_host<virial_prec>(detail::ev_hobj.v_val[iv]);
+               vval[iv] = to_flt_host<virial_prec>(ev_hobj.v_val[iv]);
             virial_reshape(v2val, vval);
             for (int iv = 0; iv < 9; ++iv)
                virial_valence[iv] += v2val[iv];
@@ -359,7 +373,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          if (ecore_vdw && vir_buf_vdw) {
             virial_prec vvdw[virial_buffer_traits::N], v2vdw[9];
             for (int iv = 0; iv < (int)virial_buffer_traits::N; ++iv)
-               vvdw[iv] = to_flt_host<virial_prec>(detail::ev_hobj.v_vdw[iv]);
+               vvdw[iv] = to_flt_host<virial_prec>(ev_hobj.v_vdw[iv]);
             virial_reshape(v2vdw, vvdw);
             for (int iv = 0; iv < 9; ++iv)
                virial_vdw[iv] += v2vdw[iv];
@@ -367,7 +381,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          if (ecore_ele && vir_buf_elec) {
             virial_prec vele[virial_buffer_traits::N], v2ele[9];
             for (int iv = 0; iv < (int)virial_buffer_traits::N; ++iv)
-               vele[iv] = to_flt_host<virial_prec>(detail::ev_hobj.v_ele[iv]);
+               vele[iv] = to_flt_host<virial_prec>(ev_hobj.v_ele[iv]);
             virial_reshape(v2ele, vele);
             for (int iv = 0; iv < 9; ++iv)
                virial_elec[iv] += v2ele[iv];
@@ -387,5 +401,86 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 void energy(int vers)
 {
    energy(vers, 1, defaultTSConfig());
+}
+
+void egvData(RcOp op)
+{
+   bool rc_a = rc_flag & calc::analyz;
+
+   if (op & rc_dealloc) {
+      deviceMemoryDeallocate(ev_dptr);
+      ev_dptr = nullptr;
+   }
+
+   if (op & rc_alloc) {
+      deviceMemoryAllocateBytes((void**)(&ev_dptr), sizeof(DHFlow));
+   }
+
+   if (rc_flag & calc::energy) {
+      if (op & rc_dealloc) {
+         if (!rc_a) {
+            darray::deallocate(eng_buf);
+            if (useEnergyVdw())
+               darray::deallocate(eng_buf_vdw);
+            if (useEnergyElec())
+               darray::deallocate(eng_buf_elec);
+         }
+      }
+
+      if (op & rc_alloc) {
+         zeroOnHost(eng_buf, eng_buf_vdw, eng_buf_elec);
+         if (!rc_a) {
+            auto sz = buffer_size();
+            darray::allocate(sz, &eng_buf);
+            if (useEnergyVdw())
+               darray::allocate(sz, &eng_buf_vdw);
+            if (useEnergyElec())
+               darray::allocate(sz, &eng_buf_elec);
+         }
+      }
+   }
+
+   if (rc_flag & calc::virial) {
+      if (op & rc_dealloc) {
+         if (!rc_a) {
+            darray::deallocate(vir_buf);
+            if (useEnergyVdw())
+               darray::deallocate(vir_buf_vdw);
+            if (useEnergyElec())
+               darray::deallocate(vir_buf_elec);
+         }
+      }
+
+      if (op & rc_alloc) {
+         zeroOnHost(vir_buf, vir_buf_vdw, vir_buf_elec);
+         if (!rc_a) {
+            auto sz = buffer_size();
+            darray::allocate(sz, &vir_buf);
+            if (useEnergyVdw())
+               darray::allocate(sz, &vir_buf_vdw);
+            if (useEnergyElec())
+               darray::allocate(sz, &vir_buf_elec);
+         }
+      }
+   }
+
+   if (rc_flag & calc::grad) {
+      if (op & rc_dealloc) {
+         darray::deallocate(gx, gy, gz);
+         if (useEnergyVdw())
+            darray::deallocate(gx_vdw, gy_vdw, gz_vdw);
+         if (useEnergyElec())
+            darray::deallocate(gx_elec, gy_elec, gz_elec);
+      }
+
+      if (op & rc_alloc) {
+         zeroOnHost(gx, gy, gz, gx_vdw, gy_vdw, gz_vdw, gx_elec, gy_elec, gz_elec);
+         darray::allocate(n, &gx, &gy, &gz);
+         if (useEnergyVdw())
+            darray::allocate(n, &gx_vdw, &gy_vdw, &gz_vdw);
+         if (useEnergyElec())
+            darray::allocate(n, &gx_elec, &gy_elec, &gz_elec);
+      }
+   }
 }
 }

@@ -1,5 +1,4 @@
 #include "ff/energy.h"
-#include "glob/dhflow.h"
 #include "md/inc.h"
 #include "tool/zero.h"
 
@@ -108,90 +107,5 @@ void copy_gradient(int vers, double* grdx, double* grdy, double* grdz, const gra
 void copy_gradient(int vers, double* grdx, double* grdy, double* grdz)
 {
    copy_gradient(vers, grdx, grdy, grdz, gx, gy, gz);
-}
-
-//====================================================================//
-
-void egvData(RcOp op)
-{
-   bool rc_a = rc_flag & calc::analyz;
-
-   if (op & rc_dealloc) {
-      using namespace detail;
-      deviceMemoryDeallocate(ev_dptr);
-      ev_dptr = nullptr;
-   }
-
-   if (op & rc_alloc) {
-      using namespace detail;
-      deviceMemoryAllocateBytes((void**)(&ev_dptr), sizeof(DHFlow));
-   }
-
-   if (rc_flag & calc::energy) {
-      if (op & rc_dealloc) {
-         if (!rc_a) {
-            darray::deallocate(eng_buf);
-            if (useEnergyVdw())
-               darray::deallocate(eng_buf_vdw);
-            if (useEnergyElec())
-               darray::deallocate(eng_buf_elec);
-         }
-      }
-
-      if (op & rc_alloc) {
-         zeroOnHost(eng_buf, eng_buf_vdw, eng_buf_elec);
-         if (!rc_a) {
-            auto sz = buffer_size();
-            darray::allocate(sz, &eng_buf);
-            if (useEnergyVdw())
-               darray::allocate(sz, &eng_buf_vdw);
-            if (useEnergyElec())
-               darray::allocate(sz, &eng_buf_elec);
-         }
-      }
-   }
-
-   if (rc_flag & calc::virial) {
-      if (op & rc_dealloc) {
-         if (!rc_a) {
-            darray::deallocate(vir_buf);
-            if (useEnergyVdw())
-               darray::deallocate(vir_buf_vdw);
-            if (useEnergyElec())
-               darray::deallocate(vir_buf_elec);
-         }
-      }
-
-      if (op & rc_alloc) {
-         zeroOnHost(vir_buf, vir_buf_vdw, vir_buf_elec);
-         if (!rc_a) {
-            auto sz = buffer_size();
-            darray::allocate(sz, &vir_buf);
-            if (useEnergyVdw())
-               darray::allocate(sz, &vir_buf_vdw);
-            if (useEnergyElec())
-               darray::allocate(sz, &vir_buf_elec);
-         }
-      }
-   }
-
-   if (rc_flag & calc::grad) {
-      if (op & rc_dealloc) {
-         darray::deallocate(gx, gy, gz);
-         if (useEnergyVdw())
-            darray::deallocate(gx_vdw, gy_vdw, gz_vdw);
-         if (useEnergyElec())
-            darray::deallocate(gx_elec, gy_elec, gz_elec);
-      }
-
-      if (op & rc_alloc) {
-         zeroOnHost(gx, gy, gz, gx_vdw, gy_vdw, gz_vdw, gx_elec, gy_elec, gz_elec);
-         darray::allocate(n, &gx, &gy, &gz);
-         if (useEnergyVdw())
-            darray::allocate(n, &gx_vdw, &gy_vdw, &gz_vdw);
-         if (useEnergyElec())
-            darray::allocate(n, &gx_elec, &gy_elec, &gz_elec);
-      }
-   }
 }
 }

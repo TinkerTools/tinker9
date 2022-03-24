@@ -10,7 +10,6 @@
 #include "glob/polpot.h"
 #include "glob/uprior.h"
 
-#include "glob/dhflow.h"
 #include "glob/mplar.h"
 #include "glob/nblist.h"
 #include "glob/pme.h"
