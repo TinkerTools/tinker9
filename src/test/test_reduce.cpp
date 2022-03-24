@@ -1,7 +1,7 @@
 #include "math/inc.h"
 #include "md/inc.h"
-#include "test/test.h"
-#include "test/testrt.h"
+#include "test.h"
+#include "testrt.h"
 using namespace tinker;
 
 TEST_CASE("Reduce", "[util][math][reduce]")

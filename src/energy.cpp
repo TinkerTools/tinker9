@@ -75,7 +75,7 @@ void energyData(RcOp op)
    // Must call elec_data() before any electrostatics routine.
 
    RcMan elec42{elec_data, op};
-   RcMan pme42{pme_data, op};
+   RcMan pme42{pmeData, op};
 
    RcMan echarge42{echargeData, op};
    // Must follow evdw_data() and echarge_data().
@@ -93,8 +93,8 @@ void energyData(RcOp op)
    RcMan erepel42{erepelData, op};
    RcMan edisp42{edispData, op};
 
-   // Must call fft_data() after all of the electrostatics routines.
-   RcMan fft42{fft_data, op};
+   // Must call fftData() after all of the electrostatics routines.
+   RcMan fft42{fftData, op};
 }
 
 bool useEnergyVdw()

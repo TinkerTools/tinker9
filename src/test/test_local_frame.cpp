@@ -1,8 +1,8 @@
 #include "ff/amoeba/epolar.h"
 #include "ff/amoeba/field.h"
 #include "mod/elecamoeba.h"
-#include "test/test.h"
-#include "test/testrt.h"
+#include "test.h"
+#include "testrt.h"
 #include <tinker/detail/units.hh>
 
 using namespace tinker;

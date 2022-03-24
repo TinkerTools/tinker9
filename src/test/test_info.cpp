@@ -1,4 +1,4 @@
-#include "test/test.h"
+#include "test.h"
 #include "tinker9.h"
 
 using namespace tinker;

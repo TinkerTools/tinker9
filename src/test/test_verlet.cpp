@@ -1,6 +1,6 @@
 #include "md/inc.h"
-#include "test/test.h"
-#include "test/testrt.h"
+#include "test.h"
+#include "testrt.h"
 #include <tinker/detail/inform.hh>
 
 using namespace tinker;

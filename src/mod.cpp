@@ -1,9 +1,5 @@
 #define TINKER_EXTERN_DEFINITION_FILE 1
 
-#include "glob/nblist.h"
-#include "glob/pme.h"
-#include "glob/spatial.h"
-
 #include "mod/accasync.h"
 #include "mod/box.h"
 #include "mod/cudalib.h"
@@ -18,6 +14,7 @@
 #include "mod/md.h"
 #include "mod/molecule.h"
 #include "mod/mutant.h"
+#include "mod/nblist.h"
 #include "mod/platform.h"
 #include "mod/rattle.h"
 #include "mod/repel.h"

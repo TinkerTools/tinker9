@@ -1,5 +1,5 @@
-#include "test/test.h"
-#include "test/testrt.h"
+#include "test.h"
+#include "testrt.h"
 #include "tinker9.h"
 #include "tool/io.h"
 #include <cstring>

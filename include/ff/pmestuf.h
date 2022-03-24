@@ -1,5 +1,19 @@
 #pragma once
-#include "glob/pme.h"
+#include "ff/energybuffer.h"
+#include "ff/pme.h"
+#include "mod/elec.h"
+#include "tool/darray.h"
+#include "tool/fft.h"
+#include "tool/rcman.h"
+
+namespace tinker {
+void pmeData(RcOp);
+// This function must be called after pmeData has been called because it
+// needs to know the number of pme objects created.
+void fftData(RcOp);
+void fftfront(PMEUnit pme_u);
+void fftback(PMEUnit pme_u);
+}
 
 namespace tinker {
 void bspline_fill(PMEUnit, int level);

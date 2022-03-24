@@ -5,8 +5,8 @@
 #include "ff/pmestuf.h"
 #include "ff/potent.h"
 #include "ff/switch.h"
-#include "glob/nblist.h"
 #include "md/inc.h"
+#include "mod/nblist.h"
 #include "seq/pair_field_chgpen.h"
 #include "tool/gpucard.h"
 

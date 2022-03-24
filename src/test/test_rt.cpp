@@ -1,4 +1,4 @@
-#include "test/testrt.h"
+#include "testrt.h"
 #include "tinker9.h"
 #include "tool/error.h"
 #include <fstream>

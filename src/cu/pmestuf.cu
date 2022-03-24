@@ -4,10 +4,10 @@
 #include "ff/box.h"
 #include "ff/cname.h"
 #include "ff/pmestuf.h"
-#include "glob/spatial.h"
 #include "launch.h"
 #include "md/inc.h"
 #include "mod/elecpchg.h"
+#include "mod/nblist.h"
 #include "seq/bsplgen.h"
 #include "tool/gpucard.h"
 
