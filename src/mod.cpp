@@ -1,12 +1,5 @@
 #define TINKER_EXTERN_DEFINITION_FILE 1
 
-#include "glob/mplpot.h"
-#include "glob/mpole.h"
-#include "glob/polar.h"
-#include "glob/polpot.h"
-#include "glob/uprior.h"
-
-#include "glob/mplar.h"
 #include "glob/nblist.h"
 #include "glob/pme.h"
 #include "glob/spatial.h"

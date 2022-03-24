@@ -1,3 +1,11 @@
 #pragma once
 
-namespace tinker {}
+namespace tinker {
+enum class UPred
+{
+   NONE,
+   GEAR,
+   ASPC,
+   LSQR
+};
+}

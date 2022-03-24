@@ -1,6 +1,6 @@
 #pragma once
 #include "ff/elec.h"
-#include "glob/mplpot.h"
+#include "mod/elecamoeba.h"
 
 namespace tinker {
 void empole_data(RcOp);

@@ -4,8 +4,8 @@
 #include "ff/nblist.h"
 #include "ff/pme.h"
 #include "ff/potent.h"
-#include "glob/uprior.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
 #include "tool/io.h"
 #include "tool/zero.h"
 #include <map>

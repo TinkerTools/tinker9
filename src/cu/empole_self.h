@@ -1,7 +1,7 @@
 #pragma once
 #include "add.h"
-#include "glob/mpole.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
 
 namespace tinker {
 template <bool do_a>

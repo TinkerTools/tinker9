@@ -10,8 +10,8 @@
 #include "ff/pmestuf.h"
 #include "ff/potent.h"
 #include "ff/switch.h"
-#include "glob/mplar.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
 #include "mod/vdw.h"
 #include "tool/io.h"
 #include <tinker/detail/atoms.hh>

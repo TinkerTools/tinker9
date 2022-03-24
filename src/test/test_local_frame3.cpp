@@ -1,5 +1,4 @@
-#include "glob/mpole.h"
-#include "glob/polar.h"
+#include "mod/elecamoeba.h"
 #include "test/test.h"
 #include "test/testrt.h"
 

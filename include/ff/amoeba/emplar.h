@@ -1,5 +1,5 @@
 #pragma once
-#include "glob/mplar.h"
+#include "mod/elecamoeba.h"
 #include "tool/rcman.h"
 
 namespace tinker {

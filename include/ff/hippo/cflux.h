@@ -1,6 +1,5 @@
 #pragma once
-#include "glob/mplpot.h"
-#include "glob/mpole.h"
+#include "mod/elecamoeba.h"
 #include "mod/elechippo.h"
 #include "tool/rcman.h"
 

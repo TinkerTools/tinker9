@@ -1,9 +1,9 @@
 #include "ff/amoeba/epolar.h"
 #include "ff/amoeba/field.h"
 #include "ff/amoeba/induce.h"
-#include "glob/uprior.h"
 #include "launch.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
 #include "tool/cudalib.h"
 #include "tool/io.h"
 #include <tinker/detail/inform.hh>
