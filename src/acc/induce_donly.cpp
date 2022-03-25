@@ -1,8 +1,7 @@
-#include "ff/hippo/induce_donly.h"
 #include "add.h"
 #include "ff/hippo/empole_chgpen.h"
 #include "ff/hippo/epolar_chgpen.h"
-#include "ff/hippo/field_chgpen.h"
+#include "ff/hippo/induce.h"
 #include "ff/image.h"
 #include "math/inc.h"
 #include "md/inc.h"
@@ -18,7 +17,7 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-void diag_precond2(const real (*rsd)[3], real (*zrsd)[3])
+void diagPrecond2(const real (*rsd)[3], real (*zrsd)[3])
 {
    #pragma acc parallel loop independent async\
                deviceptr(polarity,rsd,zrsd)
@@ -194,7 +193,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
       dirguess = true;
    }
    // get the electrostatic field due to permanent multipoles
-   dfield_chgpen(field);
+   dfieldChgpen(field);
    // direct induced dipoles
 
    #pragma acc parallel loop independent async\
@@ -208,7 +207,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
 
    // initial induced dipole
    if (predict) {
-      ulspred_sum2(uind);
+      ulspredSum2(uind);
    } else if (dirguess) {
       darray::copy(g::q0, n, uind, udir);
    } else {
@@ -222,7 +221,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
    //                       = -Tu udir
 
    if (predict) {
-      ufield_chgpen(uind, field);
+      ufieldChgpen(uind, field);
       #pragma acc parallel loop independent async\
               deviceptr(polarity_inv,rsd,udir,uind,field)
       for (int i = 0; i < n; ++i) {
@@ -232,7 +231,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
             rsd[i][j] = (udir[i][j] - uind[i][j]) * pol + field[i][j];
       }
    } else if (dirguess) {
-      ufield_chgpen(udir, rsd);
+      ufieldChgpen(udir, rsd);
    } else {
       darray::copy(g::q0, n, rsd, field);
    }
@@ -248,10 +247,10 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
    // initial M r(0) and p(0)
 
    if (sparse_prec) {
-      sparse_precond_build2();
-      sparse_precond_apply2(rsd, zrsd);
+      sparsePrecondBuild2();
+      sparsePrecondApply2(rsd, zrsd);
    } else {
-      diag_precond2(rsd, zrsd);
+      diagPrecond2(rsd, zrsd);
    }
    darray::copy(g::q0, n, conj, zrsd);
 
@@ -279,7 +278,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
 
       // vec = (inv_alpha + Tu) conj, field = -Tu conj
       // vec = inv_alpha * conj - field
-      ufield_chgpen(conj, field);
+      ufieldChgpen(conj, field);
       #pragma acc parallel loop independent async\
                   deviceptr(polarity_inv,vec,conj,field)
       for (int i = 0; i < n; ++i) {
@@ -315,9 +314,9 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
 
       // calculate/update M r
       if (sparse_prec)
-         sparse_precond_apply2(rsd, zrsd);
+         sparsePrecondApply2(rsd, zrsd);
       else
-         diag_precond2(rsd, zrsd);
+         diagPrecond2(rsd, zrsd);
 
       real b;
       real sum1;

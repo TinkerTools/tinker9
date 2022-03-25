@@ -1,6 +1,5 @@
 #include "ff/hippo/epolar_chgpen.h"
-#include "ff/hippo/field_chgpen.h"
-#include "ff/hippo/induce_donly.h"
+#include "ff/hippo/induce.h"
 #include "launch.h"
 #include "md/inc.h"
 #include "mod/elecamoeba.h"
@@ -133,13 +132,13 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
    }
 
    // get the electrostatic field due to permanent multipoles
-   dfield_chgpen(field);
+   dfieldChgpen(field);
    // direct induced dipoles
    launch_k1s(g::s0, n, pcg_udir_donly, n, polarity, udir, field);
 
    // initial induced dipole
    if (predict) {
-      ulspred_sum2(uind);
+      ulspredSum2(uind);
    } else if (dirguess) {
       darray::copy(g::q0, n, uind, udir);
    } else {
@@ -158,10 +157,10 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
    //
    // if do not use pcgguess, r(0) = E - T Zero = E
    if (predict) {
-      ufield_chgpen(uind, field);
+      ufieldChgpen(uind, field);
       launch_k1s(g::s0, n, pcg_rsd2, n, polarity_inv, rsd, udir, uind, field);
    } else if (dirguess) {
-      ufield_chgpen(udir, rsd);
+      ufieldChgpen(udir, rsd);
    } else {
       darray::copy(g::q0, n, rsd, field);
    }
@@ -169,10 +168,10 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
 
    // initial M r(0) and p(0)
    if (sparse_prec) {
-      sparse_precond_build2();
-      sparse_precond_apply2(rsd, zrsd);
+      sparsePrecondBuild2();
+      sparsePrecondApply2(rsd, zrsd);
    } else {
-      diag_precond2(rsd, zrsd);
+      diagPrecond2(rsd, zrsd);
    }
    darray::copy(g::q0, n, conj, zrsd);
 
@@ -199,7 +198,7 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
       // T p and p
       // vec = (inv_alpha + Tu) conj, field = -Tu conj
       // vec = inv_alpha * conj - field
-      ufield_chgpen(conj, field);
+      ufieldChgpen(conj, field);
       launch_k1s(g::s0, n, pcg_p4, n, polarity_inv, vec, conj, field);
 
       // a <- p T p
@@ -213,9 +212,9 @@ void induce_mutual_pcg2_cu(real (*uind)[3])
 
       // calculate/update M r
       if (sparse_prec)
-         sparse_precond_apply2(rsd, zrsd);
+         sparsePrecondApply2(rsd, zrsd);
       else
-         diag_precond2(rsd, zrsd);
+         diagPrecond2(rsd, zrsd);
 
       // b = sum1 / sum; bp = sump1 / sump
       real* sum1 = &((real*)dptr_buf)[2];

@@ -1,11 +1,34 @@
-#include "ff/hippo/field_chgpen.h"
 #include "ff/amoeba/field.h"
 #include "ff/elec.h"
+#include "ff/hippo/induce.h"
 #include "ff/nblist.h"
 #include "md/inc.h"
 
 namespace tinker {
-void dfield_chgpen(real (*field)[3])
+void dfield_chgpen_nonewald(real (*field)[3]);
+void dfield_chgpen_ewald(real (*field)[3]);
+void dfield_chgpen_ewald_recip_self(real (*field)[3]);
+void dfield_chgpen_ewald_real(real (*field)[3]);
+
+void dfield_chgpen_nonewald_acc(real (*field)[3]);
+void dfield_chgpen_ewald_real_acc(real (*field)[3]);
+void dfield_chgpen_nonewald_cu(real (*field)[3]);
+void dfield_chgpen_ewald_real_cu(real (*field)[3]);
+
+void ufield_chgpen_nonewald(const real (*uind)[3], real (*field)[3]);
+void ufield_chgpen_ewald(const real (*uind)[3], real (*field)[3]);
+void ufield_chgpen_ewald_recip_self(const real (*uind)[3], real (*field)[3]);
+void ufield_chgpen_ewald_real(const real (*uind)[3], real (*field)[3]);
+
+void ufield_chgpen_nonewald_acc(const real (*uind)[3], real (*field)[3]);
+void ufield_chgpen_ewald_recip_self_acc(const real (*uind)[3], real (*field)[3]);
+void ufield_chgpen_ewald_real_acc(const real (*uind)[3], real (*field)[3]);
+void ufield_chgpen_nonewald_cu(const real (*uind)[3], real (*field)[3]);
+void ufield_chgpen_ewald_real_cu(const real (*uind)[3], real (*field)[3]);
+}
+
+namespace tinker {
+void dfieldChgpen(real (*field)[3])
 {
    if (useEwald())
       dfield_chgpen_ewald(field);
@@ -44,7 +67,7 @@ void dfield_chgpen_ewald_real(real (*field)[3])
       dfield_chgpen_ewald_real_acc(field);
 }
 
-void ufield_chgpen(const real (*uind)[3], real (*field)[3])
+void ufieldChgpen(const real (*uind)[3], real (*field)[3])
 {
    if (useEwald())
       ufield_chgpen_ewald(uind, field);

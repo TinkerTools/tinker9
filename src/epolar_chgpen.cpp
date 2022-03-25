@@ -1,7 +1,7 @@
 #include "ff/hippo/epolar_chgpen.h"
 #include "ff/amoeba/empole.h"
 #include "ff/hippo/cflux.h"
-#include "ff/hippo/induce_donly.h"
+#include "ff/hippo/induce.h"
 #include "ff/nblist.h"
 #include "ff/pme.h"
 #include "ff/potent.h"
@@ -139,7 +139,7 @@ void epolar_chgpen_data(RcOp op)
 void induce2(real (*ud)[3])
 {
    induce_mutual_pcg2(ud);
-   ulspred_save2(ud);
+   ulspredSave2(ud);
 
    if (inform::debug && use_potent(polar_term)) {
       std::vector<double> uindbuf;
