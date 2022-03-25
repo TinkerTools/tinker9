@@ -1,4 +1,5 @@
 #pragma once
+#include "ff/amoeba/mpole1.h"
 #include "ff/elec.h"
 #include "ff/energy.h"
 #include "tool/rcman.h"

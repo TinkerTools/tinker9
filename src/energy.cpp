@@ -22,6 +22,8 @@
 #include "ff/hippo/epolar_chgpen.h"
 #include "ff/hippo/erepel.h"
 
+#include <tinker/detail/mplpot.hh>
+
 namespace tinker {
 struct DHFlow
 {
@@ -72,9 +74,9 @@ void energyData(RcOp op)
 
    RcMan evdw42{evdwData, op};
 
-   // Must call elec_data() before any electrostatics routine.
+   // Must call elecData() before any electrostatics routine.
 
-   RcMan elec42{elec_data, op};
+   RcMan elec42{elecData, op};
    RcMan pme42{pmeData, op};
 
    RcMan echarge42{echargeData, op};
@@ -179,6 +181,89 @@ auto tscfg__ = [](std::string eng, bool& use_flag, unsigned tsflag,
    }
 };
 #define tscfg(x, f) tscfg__(x, f, tsflag, tsconfig)
+}
+
+static bool amoeba_emplar(int vers)
+{
+   if (mplpot::use_chgpen)
+      return false;
+   if (rc_flag & calc::analyz)
+      return false;
+   if (vers & calc::analyz)
+      return false;
+
+   return use_potent(mpole_term) && use_potent(polar_term) && (mlist_version() & NBL_SPATIAL);
+}
+
+static bool amoeba_empole(int vers)
+{
+   if (mplpot::use_chgpen)
+      return false;
+
+   if (amoeba_emplar(vers))
+      return false;
+   return use_potent(mpole_term);
+}
+
+static bool amoeba_epolar(int vers)
+{
+   if (mplpot::use_chgpen)
+      return false;
+
+   if (amoeba_emplar(vers))
+      return false;
+   return use_potent(polar_term);
+}
+
+static bool amoeba_echglj(int vers)
+{
+   if (rc_flag & calc::analyz)
+      return false;
+   if (vers & calc::analyz)
+      return false;
+   if (!use_potent(charge_term) || !use_potent(vdw_term))
+      return false;
+   if (!(clist_version() & NBL_SPATIAL))
+      return false;
+   if (ebuffer != 0)
+      return false;
+   if (vdwtyp != evdw_t::lj)
+      return false;
+   if (vdwpr_in_use)
+      return false;
+   return true;
+}
+
+static bool amoeba_echarge(int vers)
+{
+   if (amoeba_echglj(vers))
+      return false;
+   return use_potent(charge_term);
+}
+
+static bool amoeba_evdw(int vers)
+{
+   if (amoeba_echglj(vers))
+      return false;
+   return use_potent(vdw_term);
+}
+
+static bool hippo_empole(int vers)
+{
+   if (not mplpot::use_chgpen)
+      return false;
+   if (amoeba_emplar(vers))
+      return false;
+   return use_potent(mpole_term);
+}
+
+static bool hippo_epolar(int vers)
+{
+   if (not mplpot::use_chgpen)
+      return false;
+   if (amoeba_emplar(vers))
+      return false;
+   return use_potent(polar_term);
 }
 
 void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)

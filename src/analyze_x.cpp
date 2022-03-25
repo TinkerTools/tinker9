@@ -4,6 +4,7 @@
 #include "md/inc.h"
 #include "md/osrw.h"
 #include "mod/disp.h"
+#include "mod/elecamoeba.h"
 #include "mod/elechippo.h"
 #include "mod/elecpchg.h"
 #include "mod/evalence.h"

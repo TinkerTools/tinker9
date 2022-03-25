@@ -145,7 +145,7 @@ void echarge(int vers)
          darray::zero(g::q0, n, decx, decy, decz);
    }
 
-   if (use_ewald()) {
+   if (useEwald()) {
       echarge_ewald_recip_self(vers);
 #if TINKER_CUDART
       if (clist_version() & NBL_SPATIAL)

@@ -1,4 +1,5 @@
 #include "ff/amoeba/emplar.h"
+#include "ff/amoeba/empole.h"
 #include "ff/elec.h"
 #include "md/inc.h"
 #include "tool/error.h"
@@ -12,7 +13,7 @@ void emplar(int vers)
 
    zeroOnHost(energy_em, virial_em);
 
-   mpole_init(vers);
+   mpoleInit(vers);
    emplar_cu(vers);
    torque(vers, demx, demy, demz);
    if (do_v) {

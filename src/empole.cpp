@@ -66,8 +66,8 @@ void empole(int vers)
          darray::zero(g::q0, n, demx, demy, demz);
    }
 
-   mpole_init(vers);
-   if (use_ewald())
+   mpoleInit(vers);
+   if (useEwald())
       empole_ewald(vers);
    else
       empole_nonewald(vers);

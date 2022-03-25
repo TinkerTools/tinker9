@@ -12,6 +12,7 @@
 #include "ff/switch.h"
 #include "md/inc.h"
 #include "mod/elecamoeba.h"
+#include "mod/elechippo.h"
 #include "mod/vdw.h"
 #include "tool/io.h"
 #include <tinker/detail/atoms.hh>
@@ -28,7 +29,7 @@
 #include <tinker/detail/polpot.hh>
 
 namespace tinker {
-bool use_ewald()
+bool useEwald()
 {
    bool flag = useEnergyElec() and limits::use_ewald;
    return flag;
@@ -36,7 +37,7 @@ bool use_ewald()
 
 //====================================================================//
 
-void pchg_data(RcOp op)
+static void pchgData(RcOp op)
 {
    if (!use_potent(charge_term))
       return;
@@ -68,7 +69,7 @@ void pchg_data(RcOp op)
 
 //====================================================================//
 
-void pole_data(RcOp op)
+static void mpoleData(RcOp op)
 {
    if (!use_potent(mpole_term) && !use_potent(polar_term) && !use_potent(repuls_term))
       return;
@@ -159,7 +160,7 @@ void pole_data(RcOp op)
    }
 }
 
-void mdpuscale_data(RcOp op)
+static void mdpuscaleData(RcOp op)
 {
    if (not use_potent(mpole_term) and not use_potent(polar_term))
       return;
@@ -519,7 +520,7 @@ void mdpuscale_data(RcOp op)
 
 //====================================================================//
 
-void chgpen_data(RcOp op)
+static void chgpenData(RcOp op)
 {
    if (op & rc_dealloc) {
       nmdwexclude = 0;
@@ -806,21 +807,43 @@ void chgpen_data(RcOp op)
 
 //====================================================================//
 
-void elec_data(RcOp op)
+void elecData(RcOp op)
 {
    if (op & rc_init) {
       electric = chgpot::electric;
       dielec = chgpot::dielec;
    }
-   RcMan pchg42{pchg_data, op};
-   RcMan pole42{pole_data, op};
-   RcMan mdpuscale42{mdpuscale_data, op};
-   RcMan chgpen42{chgpen_data, op};
+   RcMan pchg42{pchgData, op};
+   RcMan pole42{mpoleData, op};
+   RcMan mdpuscale42{mdpuscaleData, op};
+   RcMan chgpen42{chgpenData, op};
 }
 
 //====================================================================//
 
-void mpole_init(int vers)
+void chkpole_acc();
+void rotpole_acc();
+void torque_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz);
+static void chkpole()
+{
+   chkpole_acc();
+}
+
+static void rotpole()
+{
+   rotpole_acc();
+}
+
+void torque(int vers, grad_prec* dx, grad_prec* dy, grad_prec* dz)
+{
+   // #if TINKER_CUDART
+   //    if (pltfm_config & Platform::CUDA)
+   //    else
+   // #endif
+   torque_acc(vers, dx, dy, dz);
+}
+
+void mpoleInit(int vers)
 {
    if (vers & calc::grad)
       darray::zero(g::q0, n, trqx, trqy, trqz);
@@ -830,7 +853,7 @@ void mpole_init(int vers)
    chkpole();
    rotpole();
 
-   if (use_ewald()) {
+   if (useEwald()) {
       rpole_to_cmp();
       if (vir_m)
          darray::zero(g::q0, buffer_size(), vir_m);
@@ -853,105 +876,4 @@ void mpole_init(int vers)
    }
 }
 
-void chkpole()
-{
-   chkpole_acc();
-}
-
-void rotpole()
-{
-   rotpole_acc();
-}
-
-void torque(int vers, grad_prec* dx, grad_prec* dy, grad_prec* dz)
-{
-   // #if TINKER_CUDART
-   //    if (pltfm_config & Platform::CUDA)
-   //    else
-   // #endif
-   torque_acc(vers, dx, dy, dz);
-}
-
-bool amoeba_emplar(int vers)
-{
-   if (mplpot::use_chgpen)
-      return false;
-   if (rc_flag & calc::analyz)
-      return false;
-   if (vers & calc::analyz)
-      return false;
-
-   return use_potent(mpole_term) && use_potent(polar_term) && (mlist_version() & NBL_SPATIAL);
-}
-
-bool amoeba_empole(int vers)
-{
-   if (mplpot::use_chgpen)
-      return false;
-
-   if (amoeba_emplar(vers))
-      return false;
-   return use_potent(mpole_term);
-}
-
-bool amoeba_epolar(int vers)
-{
-   if (mplpot::use_chgpen)
-      return false;
-
-   if (amoeba_emplar(vers))
-      return false;
-   return use_potent(polar_term);
-}
-
-bool amoeba_echglj(int vers)
-{
-   if (rc_flag & calc::analyz)
-      return false;
-   if (vers & calc::analyz)
-      return false;
-   if (!use_potent(charge_term) || !use_potent(vdw_term))
-      return false;
-   if (!(clist_version() & NBL_SPATIAL))
-      return false;
-   if (ebuffer != 0)
-      return false;
-   if (vdwtyp != evdw_t::lj)
-      return false;
-   if (vdwpr_in_use)
-      return false;
-   return true;
-}
-
-bool amoeba_echarge(int vers)
-{
-   if (amoeba_echglj(vers))
-      return false;
-   return use_potent(charge_term);
-}
-
-bool amoeba_evdw(int vers)
-{
-   if (amoeba_echglj(vers))
-      return false;
-   return use_potent(vdw_term);
-}
-
-bool hippo_empole(int vers)
-{
-   if (not mplpot::use_chgpen)
-      return false;
-   if (amoeba_emplar(vers))
-      return false;
-   return use_potent(mpole_term);
-}
-
-bool hippo_epolar(int vers)
-{
-   if (not mplpot::use_chgpen)
-      return false;
-   if (amoeba_emplar(vers))
-      return false;
-   return use_potent(polar_term);
-}
 }

@@ -3,6 +3,9 @@
 #include "mod/elecamoeba.h"
 
 namespace tinker {
+void mpoleInit(int vers);
+void torque(int vers, grad_prec* dx, grad_prec* dy, grad_prec* dz);
+
 void empole_data(RcOp);
 void empole(int vers);
 

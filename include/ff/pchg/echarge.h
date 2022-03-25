@@ -3,6 +3,7 @@
 #include "tool/rcman.h"
 
 namespace tinker {
+
 void echargeData(RcOp);
 
 void echarge(int vers);

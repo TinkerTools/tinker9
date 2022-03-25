@@ -1,6 +1,5 @@
 #include "add.h"
 #include "comparetypes.h"
-#include "ff/cname.h"
 #include "ff/image.h"
 #include "ff/pchg/echarge.h"
 #include "ff/pmestuf.h"

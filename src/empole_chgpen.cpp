@@ -1,4 +1,5 @@
 #include "ff/hippo/empole_chgpen.h"
+#include "ff/amoeba/empole.h"
 #include "ff/hippo/cflux.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
@@ -74,11 +75,11 @@ void empole_chgpen(int vers)
 
    if (use_cf)
       alterchg();
-   mpole_init(vers);
+   mpoleInit(vers);
    if (use_cfgrad) {
       zero_pot();
    }
-   if (use_ewald())
+   if (useEwald())
       empole_chgpen_ewald(vers, use_cfgrad);
    else
       empole_chgpen_nonewald(vers, use_cfgrad);

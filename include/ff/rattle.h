@@ -2,14 +2,6 @@
 #include "mod/rattle.h"
 #include "tool/rcman.h"
 
-extern "C"
-{
-   struct RATTLE
-   {};
-   struct SHAKE
-   {};
-}
-
 namespace tinker {
 bool useRattle();
 void rattleData(RcOp);
@@ -28,4 +20,17 @@ void hcCenterOfMass(const pos_prec* atomx, const pos_prec* atomy, const pos_prec
 void hcVelIso(vel_prec s);
 // vi += MatS Vu
 void hcVelAn(vel_prec s[3][3]);
+}
+
+extern "C"
+{
+   struct RATTLE
+   {
+      int foo;
+   };
+
+   struct SHAKE
+   {
+      int foo;
+   };
 }

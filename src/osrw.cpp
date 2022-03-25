@@ -3,16 +3,16 @@
 #include "ff/energy.h"
 #include "ff/potent.h"
 #include "md/inc.h"
-#include "tinker9.h"
-#include "tool/zero.h"
-
 #include "mod/disp.h"
+#include "mod/elecamoeba.h"
 #include "mod/elechippo.h"
 #include "mod/elecpchg.h"
 #include "mod/evalence.h"
 #include "mod/mutant.h"
 #include "mod/repel.h"
 #include "mod/vdw.h"
+#include "tinker9.h"
+#include "tool/zero.h"
 
 namespace tinker {
 bool use_osrw;

@@ -2,6 +2,7 @@
 #include "ff/elec.h"
 #include "math/inc.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
 
 namespace tinker {
 namespace {

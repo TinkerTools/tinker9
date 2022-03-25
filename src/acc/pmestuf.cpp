@@ -1,10 +1,11 @@
 #include "ff/pmestuf.h"
 #include "add.h"
 #include "comparetypes.h"
+#include "ff/amoeba/mpole1.h"
 #include "ff/box.h"
-#include "ff/cname.h"
 #include "ff/elec.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
 #include "mod/elecpchg.h"
 #include "seq/bsplgen.h"
 

@@ -23,3 +23,32 @@ enum class evdw_t
    gauss, ///< Gaussian expansion VDW potential.
 };
 }
+
+extern "C"
+{
+   // VDW terms.
+   struct LJ
+   {
+      int foo;
+   };
+
+   struct BUCK
+   {
+      int foo;
+   };
+
+   struct MM3HB
+   {
+      int foo;
+   };
+
+   struct HAL
+   {
+      int foo;
+   };
+
+   struct GAUSS
+   {
+      int foo;
+   };
+}

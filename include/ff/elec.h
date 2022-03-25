@@ -1,50 +1,68 @@
 #pragma once
-#include "mod/elecamoeba.h"
-#include "mod/elechippo.h"
 #include "tool/rcman.h"
 
 namespace tinker {
-bool use_ewald();
+bool useEwald();
+void elecData(RcOp);
+}
 
-//====================================================================//
+extern "C"
+{
+   // PME grids.
+   struct PCHG
+   {
+      int foo;
+   };
 
-void pchg_data(RcOp);
+   struct MPOLE
+   {
+      int foo;
+   };
 
-//====================================================================//
+   struct UIND
+   {
+      int foo;
+   };
 
-// AMOBEA: multipole, polarization
-// HIPPO: repulsion
-void pole_data(RcOp);
+   struct UIND2
+   {
+      int foo;
+   };
 
-void mdpuscale_data(RcOp);
+   struct DISP
+   {
+      int foo;
+   };
 
-void chgpen_data(RcOp);
-//====================================================================//
+   // Ewald vs. Non-Ewald
+   struct EWALD
+   {
+      int foo;
+   };
 
-void elec_data(RcOp);
+   struct DEWALD
+   {
+      int foo;
+   }; // Dispersion PME
 
-//====================================================================//
+   struct NON_EWALD
+   {
+      int foo;
+   };
 
-void mpole_init(int vers);
-void chkpole();
-void rotpole();
-void torque(int vers, grad_prec* dx, grad_prec* dy, grad_prec* dz);
+   struct NON_EWALD_TAPER
+   {
+      int foo;
+   }; // Non-EWALD partial charge also uses switching functions.
 
-void chkpole_acc();
-void rotpole_acc();
-void torque_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz);
-// void torque_cu(int vers);
+   // GORDON1 vs. GORDON2 damping functions
+   struct GORDON1
+   {
+      int foo;
+   };
 
-//====================================================================//
-
-bool amoeba_emplar(int vers);
-bool amoeba_empole(int vers);
-bool amoeba_epolar(int vers);
-
-bool amoeba_echglj(int vers);
-bool amoeba_echarge(int vers);
-bool amoeba_evdw(int vers);
-
-bool hippo_empole(int vers);
-bool hippo_epolar(int vers);
+   struct GORDON2
+   {
+      int foo;
+   };
 }

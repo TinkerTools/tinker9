@@ -122,7 +122,7 @@ void pme_op_copyin(PMEUnit unit)
 namespace tinker {
 void pmeData(RcOp op)
 {
-   if (!use_ewald() && !useDEwald())
+   if (!useEwald() && !useDEwald())
       return;
 
    if (op & rc_dealloc) {
@@ -144,7 +144,7 @@ void pmeData(RcOp op)
       }
    }
 
-   if (use_potent(charge_term) && use_ewald()) {
+   if (use_potent(charge_term) && useEwald()) {
       if (op & rc_alloc) {
          epme_unit.close();
          PME::Params p(ewald::aeewald, pme::nefft1, pme::nefft2, pme::nefft3, pme::bseorder);
@@ -156,7 +156,7 @@ void pmeData(RcOp op)
       }
    }
 
-   if ((use_potent(mpole_term) || use_potent(polar_term)) && use_ewald()) {
+   if ((use_potent(mpole_term) || use_potent(polar_term)) && useEwald()) {
       if (op & rc_dealloc) {
          darray::deallocate(cmp, fmp, cphi, fphi);
          if (use_potent(polar_term)) {

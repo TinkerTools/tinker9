@@ -528,8 +528,8 @@ void epolar(int vers)
       }
    }
 
-   mpole_init(vers);
-   if (use_ewald())
+   mpoleInit(vers);
+   if (useEwald())
       epolar_ewald(vers);
    else
       epolar_nonewald(vers);

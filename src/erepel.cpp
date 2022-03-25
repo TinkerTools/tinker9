@@ -1,4 +1,5 @@
 #include "ff/hippo/erepel.h"
+#include "ff/amoeba/empole.h"
 #include "ff/elec.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
@@ -154,7 +155,7 @@ void erepel(int vers)
          darray::zero(g::q0, n, derx, dery, derz);
    }
 
-   mpole_init(vers);
+   mpoleInit(vers);
 #if TINKER_CUDART
    if (mlist_version() & NBL_SPATIAL)
       erepel_cu(vers);

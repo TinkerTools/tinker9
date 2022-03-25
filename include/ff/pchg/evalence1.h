@@ -21,3 +21,28 @@ enum class eopbend_t
    allinger
 };
 }
+
+extern "C"
+{
+   // Bond terms.
+   struct HARMONIC
+   {
+      int foo;
+   };
+
+   struct MORSE
+   {
+      int foo;
+   };
+
+   // Opbend terms.
+   struct WDC
+   {
+      int foo;
+   };
+
+   struct ALLINGER
+   {
+      int foo;
+   };
+}

@@ -1,7 +1,6 @@
 #include "ff/rattle.h"
 #include "add.h"
 #include "comparetypes.h"
-#include "ff/cname.h"
 #include "md/inc.h"
 #include "tool/darray.h"
 #include "tool/error.h"

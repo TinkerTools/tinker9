@@ -1,6 +1,5 @@
 #pragma once
 #include "comparetypes.h"
-#include "ff/cname.h"
 #include "ff/elec.h"
 #include "md/inc.h"
 #include "seq/damp.h"

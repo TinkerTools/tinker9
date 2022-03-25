@@ -1,3 +1,4 @@
+#include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
 #include "ff/amoeba/field.h"
 #include "mod/elecamoeba.h"
@@ -233,7 +234,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
          {0.1466, -0.1529, 0.0013}, {-0.1215, -0.1945, -0.0897}};
 
       zero_egv();
-      mpole_init(calc::v0);
+      mpoleInit(calc::v0);
       dfield_nonewald(udir, udirp);
       std::vector<std::array<double, 3>> fieldd, fieldp;
       fieldd.resize(n);
@@ -269,7 +270,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
          {0.7016, -1.3551, -0.9421}, {-1.4662, -0.8545, -1.3742}};
 
       zero_egv();
-      mpole_init(calc::v0);
+      mpoleInit(calc::v0);
       std::vector<std::array<double, 3>> ud, up;
       ud.resize(n);
       up.resize(n);
@@ -316,7 +317,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
          {0.3620, -0.1921, 0.0590}, {-0.2126, -0.4665, -0.1829}};
 
       zero_egv();
-      mpole_init(calc::v0);
+      mpoleInit(calc::v0);
       induce(uind, uinp);
       std::vector<std::array<double, 3>> ud, up;
       ud.resize(n);
@@ -417,7 +418,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
          {0.1436, -0.1515, 0.0008}, {-0.1249, -0.1932, -0.0900}};
 
       zero_egv();
-      mpole_init(calc::v0);
+      mpoleInit(calc::v0);
       dfield_ewald(udir, udirp);
       std::vector<std::array<double, 3>> fieldd, fieldp;
       fieldd.resize(n);
@@ -453,7 +454,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
          {0.7158, -1.3417, -0.9288}, {-1.4493, -0.8422, -1.3602}};
 
       zero_egv();
-      mpole_init(calc::v0);
+      mpoleInit(calc::v0);
       std::vector<std::array<double, 3>> ud, up;
       ud.resize(n);
       up.resize(n);
@@ -501,7 +502,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
          {0.3551, -0.1907, 0.0577}, {-0.2191, -0.4626, -0.1832}};
 
       zero_egv();
-      mpole_init(calc::v0);
+      mpoleInit(calc::v0);
       induce(uind, uinp);
       std::vector<std::array<double, 3>> ud, up;
       ud.resize(n);

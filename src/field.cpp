@@ -6,7 +6,7 @@
 namespace tinker {
 void dfield(real (*field)[3], real (*fieldp)[3])
 {
-   if (use_ewald())
+   if (useEwald())
       dfield_ewald(field, fieldp);
    else
       dfield_nonewald(field, fieldp);
@@ -46,7 +46,7 @@ void dfield_ewald_real(real (*field)[3], real (*fieldp)[3])
 
 void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
-   if (use_ewald())
+   if (useEwald())
       ufield_ewald(uind, uinp, field, fieldp);
    else
       ufield_nonewald(uind, uinp, field, fieldp);

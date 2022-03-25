@@ -7,7 +7,7 @@
 namespace tinker {
 void dfield_chgpen(real (*field)[3])
 {
-   if (use_ewald())
+   if (useEwald())
       dfield_chgpen_ewald(field);
    else
       dfield_chgpen_nonewald(field);
@@ -46,7 +46,7 @@ void dfield_chgpen_ewald_real(real (*field)[3])
 
 void ufield_chgpen(const real (*uind)[3], real (*field)[3])
 {
-   if (use_ewald())
+   if (useEwald())
       ufield_chgpen_ewald(uind, field);
    else
       ufield_chgpen_nonewald(uind, field);

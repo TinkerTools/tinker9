@@ -2,7 +2,6 @@
 #include "comparetypes.h"
 #include "ff/amoeba/empole.h"
 #include "ff/box.h"
-#include "ff/cname.h"
 #include "ff/pmestuf.h"
 #include "launch.h"
 #include "md/inc.h"

@@ -339,7 +339,7 @@ void nblist_data(RcOp op)
    u = clist_version();
    cut = -1;
    if (use_potent(charge_term)) {
-      cut = use_ewald() ? switch_off(switch_ewald) : switch_off(switch_charge);
+      cut = useEwald() ? switch_off(switch_ewald) : switch_off(switch_charge);
    }
    if (use_potent(vdw_term)) {
       double vdw_cut = switch_off(switch_vdw);
@@ -369,7 +369,7 @@ void nblist_data(RcOp op)
 
    // mlist
    u = mlist_version();
-   cut = use_ewald() ? switch_off(switch_ewald) : switch_off(switch_mpole);
+   cut = useEwald() ? switch_off(switch_ewald) : switch_off(switch_mpole);
    buf = neigh::lbuffer;
    if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
       auto& unt = mlist_unit;

@@ -1,4 +1,5 @@
 #include "ff/hippo/epolar_chgpen.h"
+#include "ff/amoeba/empole.h"
 #include "ff/hippo/cflux.h"
 #include "ff/hippo/induce_donly.h"
 #include "ff/nblist.h"
@@ -192,11 +193,11 @@ void epolar_chgpen(int vers)
 
    if (use_cf)
       alterchg();
-   mpole_init(vers);
+   mpoleInit(vers);
    if (use_cfgrad) {
       zero_pot();
    }
-   if (use_ewald())
+   if (useEwald())
       epolar_chgpen_ewald(vers, use_cfgrad);
    else
       epolar_chgpen_nonewald(vers, use_cfgrad);

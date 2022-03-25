@@ -1,3 +1,4 @@
+#include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
 #include "ff/elec.h"
 #include "ff/hippo/epolar_chgpen.h"
@@ -122,7 +123,7 @@ void moments()
    if (use_potent(mpole_term) or use_potent(polar_term)) {
       // download rpole, uind
       std::vector<real> rpolev(n * 10), uindv(n * 3);
-      mpole_init(calc::energy);
+      mpoleInit(calc::energy);
       darray::copyout(g::q0, n * 10, rpolev.data(), &rpole[0][0]);
       if (use_potent(polar_term)) {
          if (mplpot::use_chgpen)

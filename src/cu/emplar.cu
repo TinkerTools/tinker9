@@ -5,7 +5,6 @@
 #include "ff/amoeba/emplar.h"
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
-#include "ff/cname.h"
 #include "ff/image.h"
 #include "ff/pme.h"
 #include "ff/switch.h"
@@ -1237,7 +1236,7 @@ void emplar_nonewald_cu()
 
 void emplar_cu(int vers)
 {
-   if (use_ewald()) {
+   if (useEwald()) {
       if (vers == calc::v0)
          emplar_ewald_cu<calc::V0>();
       else if (vers == calc::v1)

@@ -1,7 +1,6 @@
 #include "add.h"
 #include "comparetypes.h"
 #include "ff/box.h"
-#include "ff/cname.h"
 #include "ff/image.h"
 #include "ff/pchg/echglj.h"
 #include "ff/pme.h"
