@@ -58,5 +58,5 @@ TINKER_EXTERN grad_prec* dectz;
 TINKER_EXTERN energy_prec energy_ect;
 TINKER_EXTERN virial_prec virial_ect[9];
 
-TINKER_EXTERN chgtrn_t ctrntyp;
+TINKER_EXTERN Chgtrn ctrntyp;
 }

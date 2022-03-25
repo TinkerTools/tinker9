@@ -7,7 +7,7 @@
 #include <tinker/detail/sizes.hh>
 
 namespace tinker {
-void empole_data(RcOp op)
+void empoleData(RcOp op)
 {
    if (!use_potent(mpole_term))
       return;

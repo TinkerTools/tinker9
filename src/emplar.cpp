@@ -6,6 +6,7 @@
 #include "tool/zero.h"
 
 namespace tinker {
+extern void emplar_cu(int);
 void emplar(int vers)
 {
 #if TINKER_CUDART

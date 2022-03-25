@@ -4,6 +4,7 @@
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "md/inc.h"
+#include "mod/repel.h"
 #include "tool/darray.h"
 #include "tool/zero.h"
 #include <tinker/detail/couple.hh>
@@ -134,6 +135,8 @@ void erepelData(RcOp op)
    }
 }
 
+void erepel_cu(int);
+void erepel_acc(int);
 void erepel(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

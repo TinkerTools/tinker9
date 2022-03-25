@@ -4,7 +4,7 @@
 #include "mod/elecamoeba.h"
 
 namespace tinker {
-void epolar_data(RcOp);
+void epolarData(RcOp);
 
 // different induction algorithms
 void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]);

@@ -2,13 +2,15 @@
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
+#include "mod/elechippo.h"
 #include "tool/darray.h"
 #include "tool/zero.h"
 #include <tinker/detail/chgtrn.hh>
 #include <tinker/detail/ctrpot.hh>
 
 namespace tinker {
-void echgtrn_data(RcOp op)
+void echgtrnData(RcOp op)
 {
    if (!use_potent(chgtrn_term))
       return;
@@ -59,6 +61,8 @@ void echgtrn_data(RcOp op)
    }
 }
 
+extern void echgtrn_cu(int);
+extern void echgtrn_acc(int);
 void echgtrn(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

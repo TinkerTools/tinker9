@@ -8,6 +8,7 @@
 #include "ff/spatial2.h"
 #include "ff/switch.h"
 #include "md/inc.h"
+#include "mod/disp.h"
 #include "mod/elecamoeba.h"
 #include "mod/elechippo.h"
 #include "mod/nblist.h"

@@ -195,7 +195,7 @@ void epolar_chgpen(int vers)
       alterchg();
    mpoleInit(vers);
    if (use_cfgrad) {
-      zero_pot();
+      cfluxZeroPot();
    }
    if (useEwald())
       epolar_chgpen_ewald(vers, use_cfgrad);

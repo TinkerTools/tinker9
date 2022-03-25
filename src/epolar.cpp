@@ -20,7 +20,7 @@
 #include <tinker/detail/uprior.hh>
 
 namespace tinker {
-void epolar_data(RcOp op)
+void epolarData(RcOp op)
 {
    if (!use_potent(polar_term))
       return;

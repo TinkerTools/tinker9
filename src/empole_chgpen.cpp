@@ -77,7 +77,7 @@ void empole_chgpen(int vers)
       alterchg();
    mpoleInit(vers);
    if (use_cfgrad) {
-      zero_pot();
+      cfluxZeroPot();
    }
    if (useEwald())
       empole_chgpen_ewald(vers, use_cfgrad);

@@ -1,7 +1,7 @@
 #pragma once
 
 namespace tinker {
-enum class chgtrn_t
+enum class Chgtrn
 {
    SEPARATE,
    COMBINED

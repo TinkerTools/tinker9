@@ -6,6 +6,8 @@
 #include "ff/pchg/evalence.h"
 #include "math/inc.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
+#include "mod/elechippo.h"
 #include "seq/bsplgen.h"
 #include "tool/gpucard.h"
 

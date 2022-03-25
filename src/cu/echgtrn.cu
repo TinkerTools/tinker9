@@ -4,6 +4,8 @@
 #include "ff/switch.h"
 #include "launch.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
+#include "mod/elechippo.h"
 #include "mod/elecpchg.h"
 #include "mod/nblist.h"
 #include "seq/bsplgen.h"
@@ -351,7 +353,7 @@ void echgtrn_cu2()
    real off = switch_off(switch_chgtrn);
    real f = electric / dielec;
 
-   assert(ctrntyp == chgtrn_t::SEPARATE);
+   assert(ctrntyp == Chgtrn::SEPARATE);
    int ngrid = gpuGridSize(BLOCK_DIM);
    echgtrn_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nct, ect, vir_ect,
       dectx, decty, dectz, cut, off, st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x,

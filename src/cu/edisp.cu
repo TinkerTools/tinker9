@@ -5,6 +5,7 @@
 #include "ff/switch.h"
 #include "launch.h"
 #include "md/inc.h"
+#include "mod/disp.h"
 #include "mod/nblist.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_disp.h"

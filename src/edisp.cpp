@@ -4,6 +4,7 @@
 #include "ff/pmestuf.h"
 #include "ff/potent.h"
 #include "md/inc.h"
+#include "mod/disp.h"
 #include "tinker9.h"
 #include "tool/zero.h"
 #include <tinker/detail/couple.hh>
@@ -150,6 +151,16 @@ void edispData(RcOp op)
       wait_for(g::q0);
    }
 }
+
+void edisp_nonewald(int vers);
+void edisp_nonewald_cu(int vers);
+void edisp_nonewald_acc(int vers);
+void edisp_ewald(int vers);
+void edisp_ewald_real_cu(int vers);
+void edisp_ewald_real_acc(int vers);
+void edisp_ewald_recip_self_cu(int vers);
+void edisp_ewald_recip_self_acc(int vers);
+void disp_pme_conv_acc(int vers);
 
 void edisp(int vers)
 {

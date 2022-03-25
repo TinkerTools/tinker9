@@ -3,6 +3,8 @@
 #include "ff/image.h"
 #include "ff/switch.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
+#include "mod/elechippo.h"
 #include "mod/elecpchg.h"
 #include "mod/nblist.h"
 #include "seq/bsplgen.h"
@@ -16,7 +18,7 @@ namespace tinker {
 template <class Ver>
 void echgtrn_acc1()
 {
-   assert(ctrntyp == chgtrn_t::SEPARATE);
+   assert(ctrntyp == Chgtrn::SEPARATE);
 
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;

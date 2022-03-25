@@ -17,7 +17,6 @@
 
 #include "ff/hippo/echgtrn.h"
 #include "ff/hippo/edisp.h"
-#include "ff/hippo/ehippo.h"
 #include "ff/hippo/empole_chgpen.h"
 #include "ff/hippo/epolar_chgpen.h"
 #include "ff/hippo/erepel.h"
@@ -83,15 +82,15 @@ void energyData(RcOp op)
    // Must follow evdw_data() and echarge_data().
    RcMan echglj42{echgljData, op};
 
-   // empole_data() must be in front of epolar_data().
-   RcMan empole42{empole_data, op};
-   RcMan epolar42{epolar_data, op};
+   // empoleData() must be in front of epolarData().
+   RcMan empole42{empoleData, op};
+   RcMan epolar42{epolarData, op};
 
    // HIPPO
-   RcMan cflux43{cflux_data, op};
+   RcMan cflux43{cfluxData, op};
    RcMan empole43{empole_chgpen_data, op};
    RcMan epolar43{epolar_chgpen_data, op};
-   RcMan echgtrn42{echgtrn_data, op};
+   RcMan echgtrn42{echgtrnData, op};
    RcMan erepel42{erepelData, op};
    RcMan edisp42{edispData, op};
 

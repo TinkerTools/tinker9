@@ -4,6 +4,7 @@
 #include "ff/pchg/evalence.h"
 #include "ff/potent.h"
 #include "md/inc.h"
+#include "mod/elechippo.h"
 #include "tool/io.h"
 #include "tool/zero.h"
 #include <cassert>
@@ -18,7 +19,7 @@
 #include <tinker/detail/potent.hh>
 
 namespace tinker {
-void cflux_data(RcOp op)
+void cfluxData(RcOp op)
 {
    if (!potent::use_chgflx)
       return;
@@ -65,16 +66,18 @@ void cflux_data(RcOp op)
    }
 }
 
-void zero_pot()
+void cfluxZeroPot()
 {
    darray::zero(g::q0, n, pot);
 }
 
+extern void alterchg_acc();
 void alterchg()
 {
    alterchg_acc();
 }
 
+extern void dcflux_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz, virial_buffer vir);
 void dcflux(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz, virial_buffer v)
 {
    dcflux_acc(vers, gx, gy, gz, v);
