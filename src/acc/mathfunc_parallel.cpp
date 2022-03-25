@@ -1,6 +1,6 @@
 #include "math/parallel_acc.h"
 #include "mod/accasync.h"
-#include "tool/deduceptr.h"
+#include "tool/ptrtrait.h"
 #include <cassert>
 
 namespace tinker {
@@ -23,11 +23,11 @@ template unsigned long long reduce_sum_acc(const unsigned long long*, size_t, in
 template <class HT, size_t HN, class DPTR>
 void reduce_sum2_acc(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem, int queue)
 {
-   typedef typename DeducePtr<DPTR>::type CONST_DT;
+   typedef typename PtrTrait<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type DT;
    static_assert(std::is_same<HT, DT>::value, "");
 
-   constexpr size_t neach = DeducePtr<DPTR>::n;
+   constexpr size_t neach = PtrTrait<DPTR>::n;
    static_assert(HN <= neach, "");
 
    for (size_t iv = 0; iv < HN; ++iv) {

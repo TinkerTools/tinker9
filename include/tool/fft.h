@@ -61,5 +61,5 @@ struct FFTPlan
 
    virtual ~FFTPlan() {}
 };
-using FFTPlanUnit = GenericUnit<FFTPlan, GenericUnitVersion::DisableOnDevice>;
+using FFTPlanUnit = GenericUnit<FFTPlan, GenericUnitVersion::DISABLE_ON_DEVICE>;
 }

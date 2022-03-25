@@ -246,7 +246,7 @@ struct Spatial
 
    ~Spatial();
 };
-using SpatialUnit = GenericUnit<Spatial, GenericUnitVersion::EnableOnDevice>;
+using SpatialUnit = GenericUnit<Spatial, GenericUnitVersion::ENABLE_ON_DEVICE>;
 
 /**
  * \ingroup spatial

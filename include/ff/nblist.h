@@ -37,7 +37,7 @@ struct NBList
 
    ~NBList();
 };
-using NBListUnit = GenericUnit<NBList, GenericUnitVersion::EnableOnDevice>;
+using NBListUnit = GenericUnit<NBList, GenericUnitVersion::ENABLE_ON_DEVICE>;
 
 /**
  * \brief

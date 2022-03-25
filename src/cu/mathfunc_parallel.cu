@@ -2,9 +2,9 @@
 #include "mod/accasync.h"
 #include "reduce.h"
 #include "tool/cudalib.h"
-#include "tool/deduceptr.h"
 #include "tool/error.h"
 #include "tool/gpucard.h"
+#include "tool/ptrtrait.h"
 #include <cassert>
 #include <cublas_v2.h>
 #include <cuda_runtime.h>
@@ -50,10 +50,10 @@ template unsigned long long reduce_sum_cu(const unsigned long long*, size_t, int
 template <class HT, size_t HN, class DPTR>
 void reduce_sum2_cu(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem, int queue)
 {
-   typedef typename DeducePtr<DPTR>::type CONST_DT;
+   typedef typename PtrTrait<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type T;
    static_assert(std::is_same<HT, T>::value, "");
-   constexpr size_t N = DeducePtr<DPTR>::n;
+   constexpr size_t N = PtrTrait<DPTR>::n;
    static_assert(HN <= N, "");
 
    cudaStream_t st = queue == g::q1 ? g::s1 : g::s0;
@@ -97,10 +97,10 @@ template void reduce_sum_on_device_cu(unsigned long long*, const unsigned long l
 template <class HT, size_t HN, class DPTR>
 void reduce_sum2_on_device_cu(HT (&dref)[HN], DPTR v, size_t nelem, int queue)
 {
-   typedef typename DeducePtr<DPTR>::type CONST_DT;
+   typedef typename PtrTrait<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type T;
    static_assert(std::is_same<HT, T>::value, "");
-   constexpr size_t N = DeducePtr<DPTR>::n;
+   constexpr size_t N = PtrTrait<DPTR>::n;
    static_assert(HN <= N, "");
 
    cudaStream_t st = queue == g::q1 ? g::s1 : g::s0;

@@ -1,7 +1,7 @@
 #pragma once
 #include "math/inc.h"
 #include "mod/accasync.h"
-#include "tool/deduceptr.h"
+#include "tool/ptrtrait.h"
 #include <vector>
 
 namespace tinker {
@@ -153,17 +153,17 @@ struct darray
    };
 
    template <class PTR>
-   static typename DeducePtr<PTR>::type* flatten(PTR p)
+   static typename PtrTrait<PTR>::type* flatten(PTR p)
    {
-      typedef typename DeducePtr<PTR>::type T;
+      typedef typename PtrTrait<PTR>::type T;
       return reinterpret_cast<T*>(p);
    }
 
    template <class PTR>
    static void allocate(size_t nelem, PTR* pp)
    {
-      typedef typename DeducePtr<PTR>::type T;
-      constexpr size_t N = DeducePtr<PTR>::n;
+      typedef typename PtrTrait<PTR>::type T;
+      constexpr size_t N = PtrTrait<PTR>::n;
       deviceMemoryAllocateBytes(reinterpret_cast<void**>(pp), sizeof(T) * nelem * N);
    }
 
@@ -190,8 +190,8 @@ struct darray
    template <class PTR>
    static void zero(int q, size_t nelem, PTR p)
    {
-      typedef typename DeducePtr<PTR>::type T;
-      constexpr size_t N = DeducePtr<PTR>::n;
+      typedef typename PtrTrait<PTR>::type T;
+      constexpr size_t N = PtrTrait<PTR>::n;
       deviceMemoryZeroBytesAsync(flatten(p), sizeof(T) * nelem * N, q);
    }
 
@@ -205,34 +205,34 @@ struct darray
    template <class PTR, class U>
    static void copyin(int q, size_t nelem, PTR dst, const U* src)
    {
-      constexpr size_t N = DeducePtr<PTR>::n;
+      constexpr size_t N = PtrTrait<PTR>::n;
       deviceMemoryCopyin1dArray(flatten(dst), flatten(src), nelem * N, q);
    }
 
    template <class U, class PTR>
    static void copyout(int q, size_t nelem, U* dst, const PTR src)
    {
-      constexpr size_t N = DeducePtr<PTR>::n;
+      constexpr size_t N = PtrTrait<PTR>::n;
       deviceMemoryCopyout1dArray(flatten(dst), flatten(src), nelem * N, q);
    }
 
    template <class PTR, class U>
    static void copy(int q, size_t nelem, PTR dst, const U* src)
    {
-      constexpr size_t N = DeducePtr<PTR>::n;
-      using DT = typename DeducePtr<PTR>::type;
-      using ST = typename DeducePtr<U*>::type;
+      constexpr size_t N = PtrTrait<PTR>::n;
+      using DT = typename PtrTrait<PTR>::type;
+      using ST = typename PtrTrait<U*>::type;
       static_assert(std::is_same<DT, ST>::value, "");
       size_t size = N * sizeof(ST) * nelem;
       deviceMemoryCopyBytesAsync(flatten(dst), flatten(src), size, q);
    }
 
    template <class PTR, class PTR2>
-   static typename DeducePtr<PTR>::type dot_wait(int q, size_t nelem, const PTR ptr, const PTR2 b)
+   static typename PtrTrait<PTR>::type dot_wait(int q, size_t nelem, const PTR ptr, const PTR2 b)
    {
-      typedef typename DeducePtr<PTR>::type T;
-      constexpr size_t N = DeducePtr<PTR>::n;
-      typedef typename DeducePtr<PTR2>::type T2;
+      typedef typename PtrTrait<PTR>::type T;
+      constexpr size_t N = PtrTrait<PTR>::n;
+      typedef typename PtrTrait<PTR2>::type T2;
       static_assert(std::is_same<T, T2>::value, "");
       return dotprod(flatten(ptr), flatten(b), nelem * N, q);
    }
@@ -240,11 +240,11 @@ struct darray
    template <class ANS, class PTR, class PTR2>
    static void dot(int q, size_t nelem, ANS ans, const PTR ptr, const PTR2 ptr2)
    {
-      typedef typename DeducePtr<PTR>::type T;
-      constexpr size_t N = DeducePtr<PTR>::n;
-      typedef typename DeducePtr<PTR2>::type T2;
+      typedef typename PtrTrait<PTR>::type T;
+      constexpr size_t N = PtrTrait<PTR>::n;
+      typedef typename PtrTrait<PTR2>::type T2;
       static_assert(std::is_same<T, T2>::value, "");
-      typedef typename DeducePtr<ANS>::type TA;
+      typedef typename PtrTrait<ANS>::type TA;
       static_assert(std::is_same<T, TA>::value, "");
       dotprod(ans, flatten(ptr), flatten(ptr2), nelem * N, q);
    }
@@ -252,7 +252,7 @@ struct darray
    template <class FLT, class PTR>
    static void scale(int q, size_t nelem, FLT scal, PTR ptr)
    {
-      constexpr size_t N = DeducePtr<PTR>::n;
+      constexpr size_t N = PtrTrait<PTR>::n;
       scale_array(flatten(ptr), scal, nelem * N, q);
    }
 

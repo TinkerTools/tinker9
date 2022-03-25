@@ -6,15 +6,15 @@
 namespace tinker {
 enum class GenericUnitVersion
 {
-   DisableOnDevice,
-   EnableOnDevice
+   DISABLE_ON_DEVICE,
+   ENABLE_ON_DEVICE
 };
 
 template <GenericUnitVersion VERS>
 struct GenericUnitAlloc;
 
 template <>
-struct GenericUnitAlloc<GenericUnitVersion::DisableOnDevice>
+struct GenericUnitAlloc<GenericUnitVersion::DISABLE_ON_DEVICE>
 {
    static void deallocate(void*) {}
    static void allocate(void**, size_t) {}
@@ -22,7 +22,7 @@ struct GenericUnitAlloc<GenericUnitVersion::DisableOnDevice>
 };
 
 template <>
-struct GenericUnitAlloc<GenericUnitVersion::EnableOnDevice>
+struct GenericUnitAlloc<GenericUnitVersion::ENABLE_ON_DEVICE>
 {
    static void deallocate(void* p)
    {
@@ -41,13 +41,13 @@ struct GenericUnitAlloc<GenericUnitVersion::EnableOnDevice>
 };
 
 /// \ingroup rc
-/// Resource handle. Analogous to Fortran i/o unit represented by a signed
-/// integer.
-template <class T, GenericUnitVersion VERSION = GenericUnitVersion::DisableOnDevice>
+/// \brief Resource handle. Analogous to Fortran i/o unit represented by a signed integer.
+template <class T, GenericUnitVersion VERSION = GenericUnitVersion::DISABLE_ON_DEVICE>
 class GenericUnit
 {
 private:
-   static constexpr bool USE_DPTR = (VERSION == GenericUnitVersion::DisableOnDevice ? false : true);
+   static constexpr bool USE_DPTR =
+      (VERSION == GenericUnitVersion::DISABLE_ON_DEVICE ? false : true);
    using mem_op = GenericUnitAlloc<VERSION>;
    int unit;
 

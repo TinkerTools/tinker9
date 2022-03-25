@@ -133,7 +133,7 @@ struct Spatial2
 
    ~Spatial2();
 };
-using Spatial2Unit = GenericUnit<Spatial2, GenericUnitVersion::DisableOnDevice>;
+using Spatial2Unit = GenericUnit<Spatial2, GenericUnitVersion::DISABLE_ON_DEVICE>;
 
 void spatial2_data_alloc(Spatial2Unit& u, int n, double cutoff, double buffer, const real* x,
    const real* y, const real* z,

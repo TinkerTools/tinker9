@@ -40,5 +40,5 @@ struct PME
 
    ~PME();
 };
-using PMEUnit = GenericUnit<PME, GenericUnitVersion::EnableOnDevice>;
+using PMEUnit = GenericUnit<PME, GenericUnitVersion::ENABLE_ON_DEVICE>;
 }
