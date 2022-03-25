@@ -17,8 +17,8 @@
 
 #include "ff/hippo/echgtrn.h"
 #include "ff/hippo/edisp.h"
-#include "ff/hippo/empole_chgpen.h"
-#include "ff/hippo/epolar_chgpen.h"
+#include "ff/hippo/empolechgpen.h"
+#include "ff/hippo/epolarchgpen.h"
 #include "ff/hippo/erepel.h"
 
 #include <tinker/detail/mplpot.hh>
@@ -88,7 +88,7 @@ void energyData(RcOp op)
 
    // HIPPO
    RcMan cflux43{cfluxData, op};
-   RcMan empole43{empole_chgpen_data, op};
+   RcMan empole43{empoleChgpenData, op};
    RcMan epolar43{epolar_chgpen_data, op};
    RcMan echgtrn42{echgtrnData, op};
    RcMan erepel42{erepelData, op};
@@ -357,7 +357,7 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
    if (hippo_empole(vers))
       if (tscfg("empole_chgpen", ecore_ele))
-         empole_chgpen(vers);
+         empoleChgpen(vers);
    if (hippo_epolar(vers))
       if (tscfg("epolar_chgpen", ecore_ele))
          epolar_chgpen(vers);

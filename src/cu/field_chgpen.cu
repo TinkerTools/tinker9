@@ -1,6 +1,6 @@
 #include "add.h"
-#include "ff/hippo/empole_chgpen.h"
-#include "ff/hippo/epolar_chgpen.h"
+#include "ff/hippo/empolechgpen.h"
+#include "ff/hippo/epolarchgpen.h"
 #include "ff/image.h"
 #include "ff/pme.h"
 #include "ff/switch.h"

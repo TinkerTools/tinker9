@@ -1,7 +1,7 @@
 #include "add.h"
 #include "epolar_trq.h"
 #include "ff/hippo/cflux.h"
-#include "ff/hippo/epolar_chgpen.h"
+#include "ff/hippo/epolarchgpen.h"
 #include "ff/image.h"
 #include "ff/pmestuf.h"
 #include "ff/switch.h"

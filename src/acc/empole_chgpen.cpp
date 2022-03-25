@@ -1,5 +1,7 @@
-#include "ff/hippo/empole_chgpen.h"
+#include "ff/hippo/empolechgpen.h"
 #include "add.h"
+#include "mod/elechippo.h"
+#include "mod/elecamoeba.h"
 #include "ff/image.h"
 #include "ff/pmestuf.h"
 #include "ff/switch.h"

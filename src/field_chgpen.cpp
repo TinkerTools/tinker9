@@ -1,6 +1,6 @@
 #include "ff/amoeba/field.h"
 #include "ff/elec.h"
-#include "ff/hippo/induce.h"
+#include "ff/hippo/inducechgpen.h"
 #include "ff/nblist.h"
 #include "md/inc.h"
 

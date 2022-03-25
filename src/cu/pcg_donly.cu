@@ -1,5 +1,5 @@
-#include "ff/hippo/epolar_chgpen.h"
-#include "ff/hippo/induce.h"
+#include "ff/hippo/epolarchgpen.h"
+#include "ff/hippo/inducechgpen.h"
 #include "launch.h"
 #include "md/inc.h"
 #include "mod/elecamoeba.h"

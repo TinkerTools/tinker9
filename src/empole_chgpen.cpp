@@ -1,4 +1,4 @@
-#include "ff/hippo/empole_chgpen.h"
+#include "ff/hippo/empolechgpen.h"
 #include "ff/amoeba/empole.h"
 #include "ff/hippo/cflux.h"
 #include "ff/nblist.h"
@@ -11,7 +11,20 @@
 #include <tinker/detail/sizes.hh>
 
 namespace tinker {
-void empole_chgpen_data(RcOp op)
+void empole_chgpen_nonewald_acc(int vers, int use_cf);
+void empole_chgpen_ewald_recip_acc(int vers, int use_cf);
+void empole_chgpen_ewald_real_self_acc(int vers, int use_cf);
+void empole_chgpen_nonewald_cu(int vers, int use_cf);
+void empole_chgpen_ewald_real_self_cu(int vers, int use_cf);
+
+void empole_chgpen_nonewald(int vers, int use_cf);
+void empole_chgpen_ewald(int vers, int use_cf);
+void empole_chgpen_ewald_real_self(int vers, int use_cf);
+void empole_chgpen_ewald_recip(int vers, int use_cf);
+}
+
+namespace tinker {
+void empoleChgpenData(RcOp op)
 {
    if (not use_potent(mpole_term) and not use_potent(chgtrn_term))
       return;
@@ -50,7 +63,7 @@ void empole_chgpen_data(RcOp op)
    if (op & rc_init) {}
 }
 
-void empole_chgpen(int vers)
+void empoleChgpen(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
    bool do_a = vers & calc::analyz;

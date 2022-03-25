@@ -1,4 +1,4 @@
-#include "ff/hippo/induce.h"
+#include "ff/hippo/inducechgpen.h"
 #include "ff/nblist.h"
 
 namespace tinker {
