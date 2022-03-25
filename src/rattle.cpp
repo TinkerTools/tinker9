@@ -392,7 +392,7 @@ void rattleData(RcOp op)
             vecich2.push_back(c);
             veckch2.push_back(ab);
             veckch2.push_back(ac);
-            if (TINKER_CUDART and pltfm_config & CU_PLTFM)
+            if (TINKER_CUDART and pltfm_config & Platform::CUDA)
                it.clear();
          } else if (HCMol_is_ch3(it, a, b, c, d, ab, ac, ad)) {
             vecich3.push_back(a);
@@ -402,7 +402,7 @@ void rattleData(RcOp op)
             veckch3.push_back(ab);
             veckch3.push_back(ac);
             veckch3.push_back(ad);
-            if (TINKER_CUDART and pltfm_config & CU_PLTFM)
+            if (TINKER_CUDART and pltfm_config & Platform::CUDA)
                it.clear();
          }
       }
@@ -484,7 +484,7 @@ void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_
    rattle_settle_acc(dt, xold, yold, zold);
    rattle_ch_acc(dt, xold, yold, zold);
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       rattle_methyl_cu(dt, xold, yold, zold);
 #endif
    rattle_acc(dt, xold, yold, zold);
@@ -503,7 +503,7 @@ void rattle2(time_prec dt, bool do_v)
    rattle2_settle_acc(dt, do_v);
    rattle2_ch_acc(dt, do_v);
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       rattle2_methyl_cu(dt, do_v);
 #endif
    rattle2_acc(dt, do_v);
@@ -531,7 +531,7 @@ void shake(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, const p
    shake_settle_acc(dt, xnew, ynew, znew, xold, yold, zold);
    shake_ch_acc(dt, xnew, ynew, znew, xold, yold, zold);
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       shake_methyl_cu(dt, xnew, ynew, znew, xold, yold, zold);
 #endif
    shake_acc(dt, xnew, ynew, znew, xold, yold, zold);

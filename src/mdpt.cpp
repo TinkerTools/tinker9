@@ -18,7 +18,7 @@ void mdKineticEnergy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int 
    const double* mass, const vel_prec* vx, const vel_prec* vy, const vel_prec* vz)
 {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       kinetic_energy_cu(eksum_out, ekin_out, n, mass, vx, vy, vz);
    else
 #endif

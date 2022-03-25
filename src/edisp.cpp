@@ -238,7 +238,7 @@ void edisp_ewald(int vers)
       fftback(u);
    }
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       edisp_ewald_recip_self_cu(vers);
    else
 #endif

@@ -15,7 +15,7 @@ template <class T>
 T reduce_sum(const T* gpu_a, size_t nelem, int queue)
 {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       return reduce_sum_cu(gpu_a, nelem, queue);
    else
 #endif
@@ -35,7 +35,7 @@ template <class HT, size_t HN, class DPTR>
 void reduce_sum2(HT (&h_ans)[HN], DPTR v, size_t nelem, int queue)
 {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       reduce_sum2_cu(h_ans, v, nelem, queue);
    else
 #endif
@@ -59,7 +59,7 @@ template <class T>
 void reduce_sum_on_device(T* dp_ans, const T* a, size_t nelem, int queue)
 {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       reduce_sum_on_device_cu(dp_ans, a, nelem, queue);
    else
 #endif
@@ -89,7 +89,7 @@ template <class HT, size_t HN, class DPTR>
 void reduce_sum2_on_device(HT (&dref)[HN], DPTR v, size_t nelem, int queue)
 {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       reduce_sum2_on_device_cu(dref, v, nelem, queue);
    else
 #endif
@@ -117,7 +117,7 @@ template <class T>
 void dotprod(T* ans, const T* a, const T* b, size_t nelem, int queue)
 {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       dotprod_cu(ans, a, b, nelem, queue);
    else
 #endif

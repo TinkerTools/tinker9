@@ -50,7 +50,7 @@ void cudalibData(RcOp op)
       check_rt(cudaMalloc(&dptr_buf, nblock * sizeof(double)));
 
       use_pme_stream = false;
-      if (pltfm_config & CU_PLTFM) {
+      if (pltfm_config & Platform::CUDA) {
          g::qpme = g::q1;
          g::spme = g::s1;
       } else {

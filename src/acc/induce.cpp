@@ -449,7 +449,7 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
 {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       induce_mutual_pcg1_cu(uind, uinp);
    else
 #endif

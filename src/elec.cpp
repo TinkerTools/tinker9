@@ -834,7 +834,7 @@ void mpole_init(int vers)
       rpole_to_cmp();
       if (vir_m)
          darray::zero(g::q0, buffer_size(), vir_m);
-      if (pltfm_config & CU_PLTFM) {
+      if (pltfm_config & Platform::CUDA) {
          bool precompute_theta =
             (!TINKER_CU_THETA_ON_THE_FLY_GRID_MPOLE) || (!TINKER_CU_THETA_ON_THE_FLY_GRID_UIND);
          if (epme_unit.valid()) {
@@ -866,7 +866,7 @@ void rotpole()
 void torque(int vers, grad_prec* dx, grad_prec* dy, grad_prec* dz)
 {
    // #if TINKER_CUDART
-   //    if (pltfm_config & CU_PLTFM)
+   //    if (pltfm_config & Platform::CUDA)
    //    else
    // #endif
    torque_acc(vers, dx, dy, dz);

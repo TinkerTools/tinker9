@@ -6,7 +6,7 @@ namespace tinker {
 void bspline_fill(PMEUnit pme_u, int level)
 {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       bspline_fill_cu(pme_u, level);
 #else
    (void)pme_u;
@@ -23,7 +23,7 @@ void grid_pchg(PMEUnit pme_u, real* pchg)
       TINKER_THROW(format("grid_pchg(): bsorder is %d; must be 4 or 5.\n", bso));
 
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       grid_pchg_cu(pme_u, pchg);
    else
 #endif
@@ -37,7 +37,7 @@ void grid_mpole(PMEUnit pme_u, real (*fmp)[10])
       TINKER_THROW(format("grid_mpole(): bsorder is %d; must be 5.\n", bso));
 
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       grid_mpole_cu(pme_u, fmp);
    else
 #endif
@@ -65,7 +65,7 @@ void grid_disp(PMEUnit pme_u, real* csix)
       TINKER_THROW(format("grid_disp(): bsorder is %d; must be 4.\n", bso));
 
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       grid_disp_cu(pme_u, csix);
    else
 #endif
@@ -77,7 +77,7 @@ void grid_disp(PMEUnit pme_u, real* csix)
 void pme_conv(PMEUnit pme_u)
 {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       pme_conv_cu(pme_u, nullptr, nullptr);
    else
 #endif
@@ -87,7 +87,7 @@ void pme_conv(PMEUnit pme_u)
 void pme_conv(PMEUnit pme_u, virial_buffer gpu_vir)
 {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       pme_conv_cu(pme_u, nullptr, gpu_vir);
    else
 #endif
@@ -97,7 +97,7 @@ void pme_conv(PMEUnit pme_u, virial_buffer gpu_vir)
 void pme_conv(PMEUnit pme_u, energy_buffer gpu_e)
 {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       pme_conv_cu(pme_u, gpu_e, nullptr);
    else
 #endif
@@ -107,7 +107,7 @@ void pme_conv(PMEUnit pme_u, energy_buffer gpu_e)
 void pme_conv(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
 {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       pme_conv_cu(pme_u, gpu_e, gpu_vir);
    else
 #endif
@@ -123,7 +123,7 @@ void fphi_mpole(PMEUnit pme_u)
       TINKER_THROW(format("fphi_mpole(): bsorder is %d; must be 5.\n", bso));
 
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       fphi_mpole_cu(pme_u, fphi);
    else
 #endif
@@ -138,7 +138,7 @@ void fphi_uind(
       TINKER_THROW(format("fphi_uind(): bsorder is %d; must be 5.\n", bso));
 
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       fphi_uind_cu(pme_u, fdip_phi1, fdip_phi2, fdip_sum_phi);
    else
 #endif
@@ -152,7 +152,7 @@ void fphi_uind2(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10])
       TINKER_THROW(format("fphi_uind2(): bsorder is %d; must be 5.\n", bso));
 
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       fphi_uind2_cu(pme_u, fdip_phi1, fdip_phi2);
    else
 #endif

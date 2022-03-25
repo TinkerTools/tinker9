@@ -7,7 +7,7 @@ void evalence_cu(int vers);
 void evalence(int vers)
 {
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       evalence_cu(vers);
    else
 #endif

@@ -73,9 +73,9 @@ void xInfo(int, char**)
    auto f2d = "       %-33s %d\n";
 
    print(out, fmt, "Platform:", "CUDA and OpenACC");
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       print(out, fmt, "Primary GPU package:", "CUDA");
-   else if (pltfm_config & ACC_PLTFM)
+   else if (pltfm_config & Platform::ACC)
       print(out, fmt, "Primary GPU package:", "OpenACC");
    print(out, fmt, "Latest CUDA supported by driver:", gpuCudaDriverVersion());
    print(out, fmt, "CUDA runtime version:", gpuCudaRuntimeVersion());

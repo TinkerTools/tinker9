@@ -3,6 +3,12 @@
 #include <string>
 #include <tinker/routines.h>
 
+/// \def TINKER9_VERSION_MAJOR
+/// \ingroup general
+/// \def TINKER9_VERSION_MINOR
+/// \ingroup general
+/// \def TINKER9_VERSION_PATCH
+/// \ingroup general
 #define TINKER9_VERSION_MAJOR 1
 #define TINKER9_VERSION_MINOR 0
 #define TINKER9_VERSION_PATCH 0

@@ -1,7 +1,7 @@
 #pragma once
 #include "ff/energy.h"
-#include "md/inc.h"
-#include <array>
+#include "md/calc.h"
+#include "mod/md.h"
 #include <string>
 #include <vector>
 
@@ -12,11 +12,11 @@ namespace tinker {
 class TestFile
 {
 private:
-   bool good;
    std::string name;
+   bool good;
 
 public:
-   /// \brief Copies file from `src` to `dst` and append `extra` text to `dst`
+   /// \brief Copies file from `src` to `dst` and append `extra` text to the file
    /// if `extra` is not empty. If `dst` is an empty string, the new file will
    /// be written to the current working directory with the same name as `src`.
    /// If `src` is an empty string, `dst` must be a valid name for the new file.
@@ -44,10 +44,10 @@ public:
 class TestReference
 {
 private:
-   int count;
-   double energy;
-   double virial[3][3];
    std::vector<double> gradient;
+   double virial[3][3];
+   double energy;
+   int count;
 
 public:
    TestReference(std::string pathToRefFile);
@@ -59,9 +59,9 @@ public:
 
 /// \ingroup test
 /// \brief Returns tolerance eps depending on the predefined floating-point precision.
-/// \param eps_single  Larger `eps` for lower floating-point precision.
-/// \param eps_double  Smaller `eps` for higher floating-point precision.
-double testGetEps(double eps_single, double eps_double);
+/// \param epsSingle  Larger `eps` for lower floating-point precision.
+/// \param epsDouble  Smaller `eps` for higher floating-point precision.
+double testGetEps(double epsSingle, double epsDouble);
 
 /// \ingroup test
 /// \brief Initializes the test.

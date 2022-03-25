@@ -163,7 +163,7 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]")
    testBeginWithArgs(argc, argv);
 
    rc_flag = usage_;
-   pltfm_config = ACC_PLTFM; // to always use nblist
+   pltfm_config = Platform::ACC; // to always use nblist
    trajn = 5;
    initialize();
 

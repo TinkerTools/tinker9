@@ -1,6 +1,7 @@
 #pragma once
 #include "macro.h"
+#include "platform1.h"
 
 namespace tinker {
-TINKER_EXTERN int pltfm_config;
+TINKER_EXTERN Platform pltfm_config;
 }

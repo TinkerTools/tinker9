@@ -6,16 +6,16 @@ namespace tinker {
 void platformData(RcOp op)
 {
    if (op & rc_dealloc) {
-      pltfm_config = UNSET_PLTFM;
+      pltfm_config = Platform::UNSET;
    }
 
    if (op & rc_init) {
 #if TINKER_HOST
-      pltfm_config = ACC_PLTFM;
+      pltfm_config = Platform::ACC;
 #endif
 #if TINKER_CUDART
       // Feature: If the platform has been hard-coded, do not change it.
-      if (pltfm_config == UNSET_PLTFM) {
+      if (pltfm_config == Platform::UNSET) {
          std::string gpu_package = "";
          if (const char* str = std::getenv("gpu_package")) {
             gpu_package = str;
@@ -29,10 +29,10 @@ void platformData(RcOp op)
             get_kv("GPU-PACKAGE", gpu_package, "CUDA");
          }
          if (gpu_package == "CUDA") {
-            pltfm_config = CU_PLTFM;
+            pltfm_config = Platform::CUDA;
             print(stdout, " Primary GPU package :  CUDA\n");
          } else if (gpu_package == "OPENACC") {
-            pltfm_config = ACC_PLTFM;
+            pltfm_config = Platform::ACC;
             print(stdout, " Primary GPU package :  OpenACC\n");
          }
       }

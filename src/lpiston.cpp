@@ -27,7 +27,7 @@ void hcVirial()
    for (int iv = 0; iv < 9; ++iv)
       hc_vir[iv] = 0;
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       lp_mol_virial_cu();
    else
 #endif

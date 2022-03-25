@@ -1,12 +1,13 @@
 #error This header file should never have been included.
 
-/// \defgroup lang  Compilers and Syntax
+/// \defgroup general  General Information
+/// \defgroup platform  Platforms and Syntaxes
 /// \defgroup cpp_syntax  C++ Syntax
-/// \ingroup lang
+/// \ingroup platform
 /// \defgroup cuda_syntax  CUDA Specific Code
-/// \ingroup lang
+/// \ingroup platform
 /// \defgroup acc_syntax  OpenACC Specific Code
-/// \ingroup lang
+/// \ingroup platform
 
 /// \defgroup prec  Precisions
 

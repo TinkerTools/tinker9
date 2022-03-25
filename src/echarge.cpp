@@ -218,7 +218,7 @@ void echarge_ewald_recip_self(int vers)
    // fphi_pchg, recip, self
 
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM)
+   if (pltfm_config & Platform::CUDA)
       echarge_ewald_fphi_self_cu(vers);
    else
 #endif

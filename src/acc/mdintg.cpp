@@ -25,7 +25,7 @@ void mdrest_acc(int istep)
    energy_prec etrans = 0;
 
 #if TINKER_CUDART
-   if (pltfm_config & CU_PLTFM) {
+   if (pltfm_config & Platform::CUDA) {
       bool copyout = inform::debug or not bound::use_bounds;
       mdrest_remove_pbc_momentum_cu(copyout, vtot1, vtot2, vtot3);
    } else

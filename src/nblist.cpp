@@ -43,7 +43,7 @@ nblist_t vlist_version()
       u = NBL_VERLET;
    } else {
 #if TINKER_CUDART
-      if (pltfm_config & CU_PLTFM)
+      if (pltfm_config & Platform::CUDA)
          u = NBL_SPATIAL;
       else
 #endif
@@ -69,7 +69,7 @@ nblist_t clist_version()
       u = NBL_VERLET;
    } else {
 #if TINKER_CUDART
-      if (pltfm_config & CU_PLTFM)
+      if (pltfm_config & Platform::CUDA)
          u = NBL_SPATIAL;
       else
 #endif
@@ -88,7 +88,7 @@ nblist_t clist_version()
       u = NBL_VERLET;
    } else {
 #if TINKER_CUDART
-      if (pltfm_config & CU_PLTFM)
+      if (pltfm_config & Platform::CUDA)
          u = NBL_SPATIAL;
       else
 #endif
@@ -109,7 +109,7 @@ nblist_t mlist_version()
       u = NBL_VERLET;
    } else {
 #if TINKER_CUDART
-      if (pltfm_config & CU_PLTFM)
+      if (pltfm_config & Platform::CUDA)
          u = NBL_SPATIAL;
       else
 #endif
@@ -129,7 +129,7 @@ nblist_t ulist_version()
       u = NBL_VERLET;
    } else {
 #if TINKER_CUDART
-      if (pltfm_config & CU_PLTFM)
+      if (pltfm_config & Platform::CUDA)
          u = NBL_SPATIAL;
       else
 #endif
@@ -149,7 +149,7 @@ nblist_t dsplist_version()
       u = NBL_VERLET;
    } else {
 #if TINKER_CUDART
-      if (pltfm_config & CU_PLTFM)
+      if (pltfm_config & Platform::CUDA)
          u = NBL_SPATIAL;
       else
 #endif
