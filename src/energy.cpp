@@ -10,6 +10,7 @@
 #include "ff/amoeba/emplar.h"
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
+#include "ff/elec.h"
 #include "ff/pchg/echarge.h"
 #include "ff/pchg/echglj.h"
 #include "ff/pchg/evalence.h"

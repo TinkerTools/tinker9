@@ -1,6 +1,7 @@
 #include "ff/amoeba/empole.h"
 #include "math/inc.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
 
 namespace tinker {
 void chkpole_acc()

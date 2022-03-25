@@ -6,6 +6,7 @@
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
 #include "ff/amoeba/induce.h"
+#include "ff/elec.h"
 #include "ff/image.h"
 #include "ff/pme.h"
 #include "ff/switch.h"
@@ -19,6 +20,7 @@
 #include "tool/gpucard.h"
 
 namespace tinker {
+void empole_ewald_recip(int vers);
 void epolar_ewald_recip_self(int vers);
 }
 

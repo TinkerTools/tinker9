@@ -1,10 +1,25 @@
 #include "ff/amoeba/empole.h"
+#include "ff/elec.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
 #include "tool/zero.h"
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/sizes.hh>
+
+namespace tinker {
+void empole_nonewald_acc(int vers);
+void empole_ewald_recip_acc(int vers);
+void empole_ewald_real_self_acc(int vers);
+void empole_nonewald_cu(int vers);
+void empole_ewald_real_self_cu(int vers);
+
+void empole_nonewald(int vers);
+void empole_ewald(int vers);
+void empole_ewald_real_self(int vers);
+void empole_ewald_recip(int vers);
+}
 
 namespace tinker {
 void empoleData(RcOp op)

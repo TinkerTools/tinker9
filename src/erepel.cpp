@@ -4,6 +4,7 @@
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
 #include "mod/repel.h"
 #include "tool/darray.h"
 #include "tool/zero.h"

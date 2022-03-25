@@ -1,5 +1,6 @@
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
+#include "ff/elec.h"
 #include "ff/hippo/cflux.h"
 #include "ff/hippo/epolarchgpen.h"
 #include "ff/hippo/inducechgpen.h"

@@ -6,6 +6,7 @@
 #include "ff/potent.h"
 #include "ff/switch.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
 #include "mod/nblist.h"
 #include "seq/pair_field.h"
 #include "tool/gpucard.h"

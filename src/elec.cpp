@@ -875,5 +875,4 @@ void mpoleInit(int vers)
       }
    }
 }
-
 }

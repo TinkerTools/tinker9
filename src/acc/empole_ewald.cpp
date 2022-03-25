@@ -4,6 +4,7 @@
 #include "ff/pmestuf.h"
 #include "ff/switch.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
 #include "mod/elecpchg.h"
 #include "mod/nblist.h"
 #include "seq/pair_mpole.h"
@@ -233,6 +234,8 @@ void empole_ewald_real_self_acc(int vers)
       empole_ewald_real_self_acc1<calc::V6>();
 }
 
+template <class Ver, int CFLX>
+extern void empole_generic_ewald_recip_acc();
 void empole_ewald_recip_acc(int vers)
 {
    if (vers == calc::v0)
