@@ -1,6 +1,6 @@
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
-#include "ff/amoeba/field.h"
+#include "ff/amoeba/induce.h"
 #include "mod/elecamoeba.h"
 #include "test.h"
 #include "testrt.h"
@@ -235,7 +235,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
 
       zero_egv();
       mpoleInit(calc::v0);
-      dfield_nonewald(udir, udirp);
+      dfieldNonEwald(udir, udirp);
       std::vector<std::array<double, 3>> fieldd, fieldp;
       fieldd.resize(n);
       fieldp.resize(n);
@@ -283,7 +283,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
       darray::copyin(g::q0, n, uind, &ud[0][0]);
       darray::copyin(g::q0, n, uinp, &up[0][0]);
       wait_for(g::q0);
-      ufield_nonewald(uind, uinp, udir, udirp);
+      ufieldNonEwald(uind, uinp, udir, udirp);
       ud.resize(n);
       up.resize(n);
       darray::copyout(g::q0, n, &ud[0][0], udir);
@@ -419,7 +419,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
 
       zero_egv();
       mpoleInit(calc::v0);
-      dfield_ewald(udir, udirp);
+      dfieldEwald(udir, udirp);
       std::vector<std::array<double, 3>> fieldd, fieldp;
       fieldd.resize(n);
       fieldp.resize(n);
@@ -467,7 +467,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
       darray::copyin(g::q0, n, uind, &ud[0][0]);
       darray::copyin(g::q0, n, uinp, &up[0][0]);
       wait_for(g::q0);
-      ufield_ewald(uind, uinp, udir, udirp);
+      ufieldEwald(uind, uinp, udir, udirp);
       ud.resize(n);
       up.resize(n);
       darray::copyout(g::q0, n, &ud[0][0], udir);

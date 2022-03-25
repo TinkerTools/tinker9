@@ -1,10 +1,12 @@
-#include "ff/amoeba/field.h"
+#include "ff/amoeba/induce.h"
 #include "ff/elec.h"
 #include "ff/hippo/inducechgpen.h"
 #include "ff/nblist.h"
 #include "md/inc.h"
 
 namespace tinker {
+void dfield_ewald_recip_self_acc(real (*field)[3]);
+
 void dfield_chgpen_nonewald(real (*field)[3]);
 void dfield_chgpen_ewald(real (*field)[3]);
 void dfield_chgpen_ewald_recip_self(real (*field)[3]);

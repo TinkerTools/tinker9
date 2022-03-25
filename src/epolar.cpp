@@ -476,7 +476,7 @@ void epolarData(RcOp op)
 void induce(real (*ud)[3], real (*up)[3])
 {
    induce_mutual_pcg1(ud, up);
-   ulspred_save(ud, up);
+   ulspredSave(ud, up);
 
    if (inform::debug && use_potent(polar_term)) {
       std::vector<double> uindbuf;

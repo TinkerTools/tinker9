@@ -2,16 +2,24 @@
 #include "precision.h"
 
 namespace tinker {
-void diag_precond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3]);
+// electrostatic field due to permanent multipoles
+void dfield(real (*field)[3], real (*fieldp)[3]);
+void dfieldNonEwald(real (*field)[3], real (*fieldp)[3]);
+void dfieldEwald(real (*field)[3], real (*fieldp)[3]);
 
-void sparse_precond_build();
-void sparse_precond_apply(
-   const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3]);
-void sparse_precond_apply_acc(const real (*)[3], const real (*)[3], real (*)[3], real (*)[3]);
-void sparse_precond_apply_cu(const real (*)[3], const real (*)[3], real (*)[3], real (*)[3]);
+// mutual electrostatic field due to induced dipole moments
+// -Tu operator
+void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
+void ufieldNonEwald(const real (*uind)[3], const real (*uinp)[3], //
+   real (*field)[3], real (*fieldp)[3]);
+void ufieldEwald(const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
 
-void ulspred_save(const real (*uind)[3], const real (*uinp)[3]);
-void ulspred_sum(real (*uind)[3], real (*uinp)[3]);
-void ulspred_save_acc(const real (*)[3], const real (*)[3]);
-void ulspred_sum_acc(real (*)[3], real (*)[3]);
+void diagPrecond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3]);
+
+void sparsePrecondBuild();
+void sparsePrecondApply(const real (*rsd)[3], const real (*rsdp)[3], //
+   real (*zrsd)[3], real (*zrsdp)[3]);
+
+void ulspredSave(const real (*uind)[3], const real (*uinp)[3]);
+void ulspredSum(real (*uind)[3], real (*uinp)[3]);
 }

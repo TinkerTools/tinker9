@@ -1,18 +1,45 @@
-#include "ff/amoeba/field.h"
+#include "ff/amoeba/induce.h"
 #include "ff/elec.h"
 #include "ff/nblist.h"
 #include "md/inc.h"
 
 namespace tinker {
+void dfield_ewald_recip_self(real (*field)[3], real (*fieldp)[3]);
+void dfield_ewald_real(real (*field)[3], real (*fieldp)[3]);
+
+void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3]);
+void dfield_ewald_recip_self_acc(real (*field)[3]);
+void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3]);
+void dfield_nonewald_cu(real (*field)[3], real (*fieldp)[3]);
+void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3]);
+
+void ufield_ewald_recip_self(
+   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
+void ufield_ewald_real(
+   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
+
+void ufield_nonewald_acc(
+   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
+void ufield_ewald_recip_self_acc(
+   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
+void ufield_ewald_real_acc(
+   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
+void ufield_nonewald_cu(
+   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
+void ufield_ewald_real_cu(
+   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
+}
+
+namespace tinker {
 void dfield(real (*field)[3], real (*fieldp)[3])
 {
    if (useEwald())
-      dfield_ewald(field, fieldp);
+      dfieldEwald(field, fieldp);
    else
-      dfield_nonewald(field, fieldp);
+      dfieldNonEwald(field, fieldp);
 }
 
-void dfield_nonewald(real (*field)[3], real (*fieldp)[3])
+void dfieldNonEwald(real (*field)[3], real (*fieldp)[3])
 {
 #if TINKER_CUDART
    if (mlist_version() & NBL_SPATIAL)
@@ -22,7 +49,7 @@ void dfield_nonewald(real (*field)[3], real (*fieldp)[3])
       dfield_nonewald_acc(field, fieldp);
 }
 
-void dfield_ewald(real (*field)[3], real (*fieldp)[3])
+void dfieldEwald(real (*field)[3], real (*fieldp)[3])
 {
    dfield_ewald_recip_self(field, fieldp);
    dfield_ewald_real(field, fieldp);
@@ -47,12 +74,12 @@ void dfield_ewald_real(real (*field)[3], real (*fieldp)[3])
 void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
    if (useEwald())
-      ufield_ewald(uind, uinp, field, fieldp);
+      ufieldEwald(uind, uinp, field, fieldp);
    else
-      ufield_nonewald(uind, uinp, field, fieldp);
+      ufieldNonEwald(uind, uinp, field, fieldp);
 }
 
-void ufield_nonewald(
+void ufieldNonEwald(
    const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
 #if TINKER_CUDART
@@ -63,7 +90,7 @@ void ufield_nonewald(
       ufield_nonewald_acc(uind, uinp, field, fieldp);
 }
 
-void ufield_ewald(const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
+void ufieldEwald(const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
    ufield_ewald_recip_self(uind, uinp, field, fieldp);
    ufield_ewald_real(uind, uinp, field, fieldp);

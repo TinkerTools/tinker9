@@ -1,7 +1,7 @@
 #include "ff/amoeba/induce.h"
 #include "add.h"
 #include "ff/amoeba/epolar.h"
-#include "ff/amoeba/field.h"
+#include "ff/amoeba/induce.h"
 #include "ff/image.h"
 #include "math/inc.h"
 #include "md/inc.h"
@@ -17,7 +17,7 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-void diag_precond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
+void diagPrecond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
 {
    #pragma acc parallel loop independent async\
                deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
@@ -234,7 +234,7 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 
    // initial induced dipole
    if (predict) {
-      ulspred_sum(uind, uinp);
+      ulspredSum(uind, uinp);
    } else if (dirguess) {
       darray::copy(g::q0, n, uind, udir);
       darray::copy(g::q0, n, uinp, udirp);
@@ -280,10 +280,10 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
    // initial M r(0) and p(0)
 
    if (sparse_prec) {
-      sparse_precond_build();
-      sparse_precond_apply(rsd, rsdp, zrsd, zrsdp);
+      sparsePrecondBuild();
+      sparsePrecondApply(rsd, rsdp, zrsd, zrsdp);
    } else {
-      diag_precond(rsd, rsdp, zrsd, zrsdp);
+      diagPrecond(rsd, rsdp, zrsd, zrsdp);
    }
    darray::copy(g::q0, n, conj, zrsd);
    darray::copy(g::q0, n, conjp, zrsdp);
@@ -359,9 +359,9 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 
       // calculate/update M r
       if (sparse_prec)
-         sparse_precond_apply(rsd, rsdp, zrsd, zrsdp);
+         sparsePrecondApply(rsd, rsdp, zrsd, zrsdp);
       else
-         diag_precond(rsd, rsdp, zrsd, zrsdp);
+         diagPrecond(rsd, rsdp, zrsd, zrsdp);
 
       real b, bp;
       real sum1, sump1;
