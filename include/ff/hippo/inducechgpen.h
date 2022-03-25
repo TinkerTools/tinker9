@@ -2,6 +2,8 @@
 #include "precision.h"
 
 namespace tinker {
+void induce2(real (*uind)[3]);
+
 // electrostatic field due to permanent multipoles
 void dfieldChgpen(real (*field)[3]);
 

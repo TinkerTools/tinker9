@@ -89,7 +89,7 @@ void energyData(RcOp op)
    // HIPPO
    RcMan cflux43{cfluxData, op};
    RcMan empole43{empoleChgpenData, op};
-   RcMan epolar43{epolar_chgpen_data, op};
+   RcMan epolar43{epolarChgpenData, op};
    RcMan echgtrn42{echgtrnData, op};
    RcMan erepel42{erepelData, op};
    RcMan edisp42{edispData, op};
@@ -360,7 +360,7 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          empoleChgpen(vers);
    if (hippo_epolar(vers))
       if (tscfg("epolar_chgpen", ecore_ele))
-         epolar_chgpen(vers);
+         epolarChgpen(vers);
    if (use_potent(chgtrn_term))
       if (tscfg("echgtrn", ecore_ele))
          echgtrn(vers);

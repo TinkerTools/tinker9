@@ -1,7 +1,7 @@
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
 #include "ff/elec.h"
-#include "ff/hippo/epolarchgpen.h"
+#include "ff/hippo/inducechgpen.h"
 #include "ff/potent.h"
 #include "md/inc.h"
 #include "tinker9.h"

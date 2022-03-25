@@ -7,6 +7,7 @@
 #include "ff/switch.h"
 #include "launch.h"
 #include "md/inc.h"
+#include "mod/elechippo.h"
 #include "mod/elecpchg.h"
 #include "mod/nblist.h"
 #include "seq/bsplgen.h"

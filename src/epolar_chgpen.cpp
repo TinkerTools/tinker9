@@ -1,6 +1,7 @@
-#include "ff/hippo/epolarchgpen.h"
 #include "ff/amoeba/empole.h"
+#include "ff/amoeba/epolar.h"
 #include "ff/hippo/cflux.h"
+#include "ff/hippo/epolarchgpen.h"
 #include "ff/hippo/inducechgpen.h"
 #include "ff/nblist.h"
 #include "ff/pme.h"
@@ -19,7 +20,20 @@
 #include <tinker/detail/uprior.hh>
 
 namespace tinker {
-void epolar_chgpen_data(RcOp op)
+void epolar_chgpen_nonewald(int vers, int use_cf);
+void epolar_chgpen_ewald(int vers, int use_cf);
+void epolar_chgpen_ewald_real(int vers, int use_cf);
+void epolar_chgpen_ewald_recip_self(int vers, int use_cf);
+
+void epolar_chgpen_nonewald_acc(int vers, int use_cf, const real (*d)[3]);
+void epolar_chgpen_ewald_real_acc(int vers, int use_cf, const real (*d)[3]);
+void epolar_chgpen_ewald_recip_self_acc(int vers, int use_cf, const real (*d)[3]);
+void epolar_chgpen_nonewald_cu(int vers, int use_cf, const real (*d)[3]);
+void epolar_chgpen_ewald_real_cu(int vers, int use_cf, const real (*d)[3]);
+}
+
+namespace tinker {
+void epolarChgpenData(RcOp op)
 {
    if (not use_potent(polar_term))
       return;
@@ -136,39 +150,7 @@ void epolar_chgpen_data(RcOp op)
    }
 }
 
-void induce2(real (*ud)[3])
-{
-   induce_mutual_pcg2(ud);
-   ulspredSave2(ud);
-
-   if (inform::debug && use_potent(polar_term)) {
-      std::vector<double> uindbuf;
-      uindbuf.resize(3 * n);
-      darray::copyout(g::q0, n, uindbuf.data(), ud);
-      wait_for(g::q0);
-      bool header = true;
-      for (int i = 0; i < n; ++i) {
-         if (polar::polarity[i] != 0) {
-            if (header) {
-               header = false;
-               print(stdout, "\n Induced Dipole Moments (Debye) :\n");
-               print(stdout, "\n    Atom %1$13s X %1$10s Y %1$10s Z %1$9s Total\n\n", "");
-            }
-            double u1 = uindbuf[3 * i];
-            double u2 = uindbuf[3 * i + 1];
-            double u3 = uindbuf[3 * i + 2];
-            double unorm = std::sqrt(u1 * u1 + u2 * u2 + u3 * u3);
-            u1 *= units::debye;
-            u2 *= units::debye;
-            u3 *= units::debye;
-            unorm *= units::debye;
-            print(stdout, "%8d     %13.4f%13.4f%13.4f %13.4f\n", i + 1, u1, u2, u3, unorm);
-         }
-      }
-   }
-}
-
-void epolar_chgpen(int vers)
+void epolarChgpen(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
    bool do_a = vers & calc::analyz;

@@ -6,6 +6,8 @@
 #include "ff/switch.h"
 #include "launch.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
+#include "mod/elechippo.h"
 #include "mod/nblist.h"
 #include "seq/pair_field_chgpen.h"
 #include "seq/triangle.h"

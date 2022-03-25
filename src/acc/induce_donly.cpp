@@ -6,6 +6,7 @@
 #include "math/inc.h"
 #include "md/inc.h"
 #include "mod/elecamoeba.h"
+#include "mod/elechippo.h"
 #include "mod/nblist.h"
 #include "seq/damp_hippo.h"
 #include "tool/error.h"
@@ -388,6 +389,8 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
       TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
    }
 }
+
+void induce_mutual_pcg2_cu(real (*uind)[3]);
 
 void induce_mutual_pcg2(real (*uind)[3])
 {

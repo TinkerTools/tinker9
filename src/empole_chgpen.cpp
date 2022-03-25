@@ -1,6 +1,6 @@
-#include "ff/hippo/empolechgpen.h"
 #include "ff/amoeba/empole.h"
 #include "ff/hippo/cflux.h"
+#include "ff/hippo/empolechgpen.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "md/inc.h"
