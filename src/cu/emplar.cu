@@ -5,16 +5,22 @@
 #include "ff/amoeba/emplar.h"
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
+#include "ff/amoeba/induce.h"
 #include "ff/image.h"
 #include "ff/pme.h"
 #include "ff/switch.h"
 #include "launch.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
 #include "mod/elecpchg.h"
 #include "mod/nblist.h"
 #include "seq/damp.h"
 #include "seq/triangle.h"
 #include "tool/gpucard.h"
+
+namespace tinker {
+void epolar_ewald_recip_self(int vers);
+}
 
 namespace tinker {
 // Rt Q = G
@@ -1219,7 +1225,7 @@ void emplar_ewald_cu()
 
    // epolar energy
    if CONSTEXPR (Ver::e)
-      epolar0_dotprod(uind, udirp);
+      epolar0DotProd(uind, udirp);
 }
 
 template <class Ver>
@@ -1231,7 +1237,7 @@ void emplar_nonewald_cu()
    // empole and epolar
    emplar_cu<Ver, NON_EWALD>(uind, uinp);
    if CONSTEXPR (Ver::e)
-      epolar0_dotprod(uind, udirp);
+      epolar0DotProd(uind, udirp);
 }
 
 void emplar_cu(int vers)

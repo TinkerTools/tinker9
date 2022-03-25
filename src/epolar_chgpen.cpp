@@ -234,7 +234,7 @@ void epolar_chgpen_nonewald(int vers, int use_cf)
 
    induce2(uind);
    if (edot)
-      epolar0_dotprod(uind, udir);
+      epolar0DotProd(uind, udir);
    if (vers != calc::v0) {
 #if TINKER_CUDART
       if (mlist_version() & NBL_SPATIAL)
@@ -262,7 +262,7 @@ void epolar_chgpen_ewald(int vers, int use_cf)
 
    induce2(uind);
    if (edot)
-      epolar0_dotprod(uind, udir);
+      epolar0DotProd(uind, udir);
    if (vers != calc::v0) {
       epolar_chgpen_ewald_real(ver2, use_cf);
       epolar_chgpen_ewald_recip_self(ver2, use_cf);

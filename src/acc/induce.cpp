@@ -17,6 +17,10 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
+void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3]);
+}
+
+namespace tinker {
 void diagPrecond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
 {
    #pragma acc parallel loop independent async\

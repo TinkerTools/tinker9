@@ -1,5 +1,5 @@
 #include "ff/amoeba/empole.h"
-#include "ff/amoeba/epolar.h"
+#include "ff/amoeba/induce.h"
 #include "ff/elec.h"
 #include "ff/hippo/inducechgpen.h"
 #include "ff/potent.h"

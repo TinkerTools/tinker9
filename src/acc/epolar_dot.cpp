@@ -1,6 +1,7 @@
 #include "add.h"
 #include "ff/amoeba/epolar.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
 #include "mod/elecpchg.h"
 
 namespace tinker {

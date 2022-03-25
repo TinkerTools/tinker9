@@ -1,8 +1,10 @@
 #include "ff/amoeba/epolar.h"
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/induce.h"
+#include "ff/elec.h"
 #include "ff/nblist.h"
 #include "ff/pme.h"
+#include "ff/pmestuf.h"
 #include "ff/potent.h"
 #include "md/inc.h"
 #include "mod/elecamoeba.h"
@@ -18,6 +20,20 @@
 #include <tinker/detail/sizes.hh>
 #include <tinker/detail/units.hh>
 #include <tinker/detail/uprior.hh>
+
+namespace tinker {
+void epolar_nonewald_acc(int vers, const real (*d)[3], const real (*p)[3]);
+void epolar_ewald_real_acc(int vers, const real (*d)[3], const real (*p)[3]);
+void epolar_ewald_recip_self_acc(int vers, const real (*d)[3], const real (*p)[3]);
+void epolar0_dotprod_acc(const real (*uind)[3], const real (*udirp)[3]);
+void epolar_nonewald_cu(int vers, const real (*d)[3], const real (*p)[3]);
+void epolar_ewald_real_cu(int vers, const real (*d)[3], const real (*p)[3]);
+
+void epolar_nonewald(int vers);
+void epolar_ewald(int vers);
+void epolar_ewald_real(int vers);
+void epolar_ewald_recip_self(int vers);
+}
 
 namespace tinker {
 void epolarData(RcOp op)
@@ -473,6 +489,7 @@ void epolarData(RcOp op)
    }
 }
 
+extern void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]);
 void induce(real (*ud)[3], real (*up)[3])
 {
    induce_mutual_pcg1(ud, up);
@@ -582,7 +599,7 @@ void epolar_nonewald(int vers)
 
    induce(uind, uinp);
    if (edot)
-      epolar0_dotprod(uind, udirp);
+      epolar0DotProd(uind, udirp);
    if (vers != calc::v0) {
 #if TINKER_CUDART
       if (mlist_version() & NBL_SPATIAL)
@@ -610,7 +627,7 @@ void epolar_ewald(int vers)
 
    induce(uind, uinp);
    if (edot)
-      epolar0_dotprod(uind, udirp);
+      epolar0DotProd(uind, udirp);
    if (vers != calc::v0) {
       epolar_ewald_real(ver2);
       epolar_ewald_recip_self(ver2);
@@ -632,7 +649,7 @@ void epolar_ewald_recip_self(int vers)
    epolar_ewald_recip_self_acc(vers, uind, uinp);
 }
 
-void epolar0_dotprod(const real (*uind)[3], const real (*udirp)[3])
+void epolar0DotProd(const real (*uind)[3], const real (*udirp)[3])
 {
    return epolar0_dotprod_acc(uind, udirp);
 }

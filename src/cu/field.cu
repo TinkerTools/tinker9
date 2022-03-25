@@ -5,6 +5,7 @@
 #include "ff/switch.h"
 #include "launch.h"
 #include "md/inc.h"
+#include "mod/elecamoeba.h"
 #include "mod/nblist.h"
 #include "seq/pair_field.h"
 #include "seq/triangle.h"
