@@ -9,7 +9,7 @@
 #include "mod/elecpchg.h"
 #include "mod/nblist.h"
 #include "seq/pair_polar.h"
-#include "seq/switch.h"
+#include "math/switch.h"
 #include "tool/gpucard.h"
 
 namespace tinker {

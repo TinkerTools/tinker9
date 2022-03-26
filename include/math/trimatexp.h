@@ -49,7 +49,7 @@ template <class T>
 void trimatExpm1c(T ans[3][3], T m[3][3], T t);
 
 /// \ingroup math
-/// \brief \f$ t (\exp(mt)-I)/(mt) \f$. Matrix m is 3 by 3 upper triangular.
+/// \brief \f$ t \frac{\exp(mt)-I}{mt} \f$. Matrix m is 3 by 3 upper triangular.
 ///
 /// Matrices are stored in the row-major order (C-style).
 ///

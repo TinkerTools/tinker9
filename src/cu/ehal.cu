@@ -7,7 +7,7 @@
 #include "md/inc.h"
 #include "mod/nblist.h"
 #include "seq/pair_hal.h"
-#include "seq/switch.h"
+#include "math/switch.h"
 #include "seq/triangle.h"
 #include "tool/gpucard.h"
 

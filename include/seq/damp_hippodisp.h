@@ -1,6 +1,6 @@
 #pragma once
-#include "fsinhc.h"
 #include "macro.h"
+#include "math/sinhc.h"
 
 namespace tinker {
 #pragma ac routine seq

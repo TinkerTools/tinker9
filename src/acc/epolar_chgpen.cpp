@@ -11,7 +11,7 @@
 #include "mod/elecpchg.h"
 #include "mod/nblist.h"
 #include "seq/pair_polar_chgpen.h"
-#include "seq/switch.h"
+#include "math/switch.h"
 #include "tool/gpucard.h"
 
 namespace tinker {

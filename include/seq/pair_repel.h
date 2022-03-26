@@ -3,7 +3,7 @@
 #include "ff/switch.h"
 #include "md/inc.h"
 #include "seq/damp_hippo.h"
-#include "seq/switch.h"
+#include "math/switch.h"
 
 namespace tinker {
 struct PairRepelGrad
@@ -214,7 +214,7 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr, real
 
    if (r2 > cut2) {
       real taper, dtaper;
-      switch_taper5<do_g>(r, cut, off, taper, dtaper);
+      switchTaper5<do_g>(r, cut, off, taper, dtaper);
       if CONSTEXPR (do_g) {
          dtaper *= e * rr1;
          pgrad.frcx = pgrad.frcx * taper - dtaper * xr;

@@ -62,7 +62,7 @@ template <class T, size_t Nincr>
 struct buffer_traits
 {
    static constexpr size_t N = Nincr;
-   static constexpr size_t value = pow2_ge(Nincr);
+   static constexpr size_t value = pow2Ge(Nincr);
    using type = T;
 };
 
@@ -74,7 +74,7 @@ template <size_t Nincr>
 struct buffer_traits<float, Nincr>
 {
    static constexpr size_t N = Nincr;
-   static constexpr size_t value = pow2_ge(Nincr);
+   static constexpr size_t value = pow2Ge(Nincr);
    using type = fixed;
 };
 

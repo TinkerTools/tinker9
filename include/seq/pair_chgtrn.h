@@ -1,6 +1,6 @@
 #pragma once
 #include "math/inc.h"
-#include "seq/switch.h"
+#include "math/switch.h"
 #include "seqdef.h"
 
 namespace tinker {
@@ -21,7 +21,7 @@ void pair_chgtrn(real r, real cut, real off, real mscale, real f, real alphai, r
    }
    if (r > cut) {
       real taper, dtaper;
-      switch_taper5<DO_G>(r, cut, off, taper, dtaper);
+      switchTaper5<DO_G>(r, cut, off, taper, dtaper);
       if CONSTEXPR (DO_G)
          de = e * dtaper + de * taper;
       e *= taper;

@@ -3,7 +3,7 @@
 #include "ff/elec.h"
 #include "math/inc.h"
 #include "seq/damp_hippodisp.h"
-#include "seq/switch.h"
+#include "math/switch.h"
 #include "seqdef.h"
 
 namespace tinker {
@@ -90,7 +90,7 @@ void pair_disp_obsolete(real r, real r2, real rr1, //
       e = e * damp * damp;
       if (r > edcut) {
          real taper, dtaper;
-         switch_taper5<DO_G>(r, edcut, edoff, taper, dtaper);
+         switchTaper5<DO_G>(r, edcut, edoff, taper, dtaper);
          if CONSTEXPR (DO_G)
             de = e * dtaper + de * taper;
          e = e * taper;
@@ -145,7 +145,7 @@ void pair_disp(real r, real r2, real rr1, //
       e = e * damp * damp;
       if (r > edcut) {
          real taper, dtaper;
-         switch_taper5<DO_G>(r, edcut, edoff, taper, dtaper);
+         switchTaper5<DO_G>(r, edcut, edoff, taper, dtaper);
          if CONSTEXPR (DO_G)
             de = e * dtaper + de * taper;
          e = e * taper;

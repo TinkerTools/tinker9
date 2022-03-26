@@ -107,7 +107,7 @@ TEST_CASE("MathFuncPow2", "[util][math]")
 
    SECTION("Pow2LessOrEqual")
    {
-      auto f = pow2_le;
+      auto f = pow2Le;
 
       REQUIRE(f(1) == 1);
       REQUIRE(f(2) == 2);
@@ -125,7 +125,7 @@ TEST_CASE("MathFuncPow2", "[util][math]")
 
    SECTION("Pow2GreaterOrEqual")
    {
-      auto f = pow2_ge;
+      auto f = pow2Ge;
 
       REQUIRE(f(0) == 1);
       REQUIRE(f(1) == 1);

@@ -1,7 +1,7 @@
 #pragma once
 #include "ff/elec.h"
 #include "math/inc.h"
-#include "seq/switch.h"
+#include "math/switch.h"
 #include "seqdef.h"
 
 namespace tinker {
@@ -81,7 +81,7 @@ void pair_charge(real r, real xr, real yr, real zr, real cscale, real chgi, real
          // switching
          if (r > cut) {
             real taper, dtaper;
-            switch_taper5<do_g>(r, cut, off, taper, dtaper);
+            switchTaper5<do_g>(r, cut, off, taper, dtaper);
 
             real trans, dtrans;
             real coef = fik * (REAL_RECIP(cut) - REAL_RECIP(off)) * REAL_RECIP((real)9.3);
@@ -186,7 +186,7 @@ void pair_chg_v2(real r, real invr, //
       ec -= shift;
       if (r > eccut) {
          real taper, dtaper;
-         switch_taper5<DO_G>(r, eccut, ecoff, taper, dtaper);
+         switchTaper5<DO_G>(r, eccut, ecoff, taper, dtaper);
          real trans, dtrans;
          real coef = fik * (REAL_RECIP(eccut) - REAL_RECIP(ecoff)) * REAL_RECIP((real)9.3);
          real invs = REAL_RECIP(ecoff - eccut);
@@ -239,7 +239,7 @@ void pair_chg_v3(real r, real cscale, real chgi, real chgk, real ebuffer, real f
       ec -= shift;
       if (r > eccut) {
          real taper, dtaper;
-         switch_taper5<DO_G>(r, eccut, ecoff, taper, dtaper);
+         switchTaper5<DO_G>(r, eccut, ecoff, taper, dtaper);
          real trans, dtrans;
          real coef = fik * (REAL_RECIP(eccut) - REAL_RECIP(ecoff)) * REAL_RECIP((real)9.3);
          real invs = REAL_RECIP(ecoff - eccut);

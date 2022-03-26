@@ -24,7 +24,7 @@ void nextarg(size_t len, char* str, int& exist)
    }
 }
 
-namespace detail {
+inline namespace v1 {
 template <class T>
 void vstr_to_val(T&, std::string);
 
@@ -64,7 +64,7 @@ void get_kv(std::string k, T1& v, T2 vdefault)
       }
    }
    if (value_str != "") {
-      detail::vstr_to_val(v, value_str);
+      vstr_to_val(v, value_str);
    } else {
       v = vdefault;
    }

@@ -81,7 +81,7 @@ void pair_lj_v2(real r, real invr, real vlambda, //
    // taper
    if (r > evcut) {
       real taper, dtaper;
-      switch_taper5<DO_G>(r, evcut, evoff, taper, dtaper);
+      switchTaper5<DO_G>(r, evcut, evoff, taper, dtaper);
       if CONSTEXPR (DO_G)
          dev = ev * dtaper + dev * taper;
       ev = ev * taper;
@@ -104,7 +104,7 @@ void pair_lj_v3(real r, real invr, real vlambda, //
    // taper
    if (r > evcut) {
       real taper, dtaper;
-      switch_taper5<DO_G>(r, evcut, evoff, taper, dtaper);
+      switchTaper5<DO_G>(r, evcut, evoff, taper, dtaper);
       if CONSTEXPR (DO_G)
          dev = ev * dtaper + dev * taper;
       ev = ev * taper;

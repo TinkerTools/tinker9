@@ -48,8 +48,6 @@
 
 /// \defgroup osrw  OSRW
 
-
-/// \defgroup rand  Random Number
 /// \defgroup nvidia  NVIDIA GPU
 */
 

@@ -5,7 +5,6 @@
 
 // https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#atomic-functions
 #if defined(__CUDA_ARCH__) && __CUDA_ARCH__ < 600
-namespace {
 __device__
 inline double atomicAdd(double* ptr, double v)
 {
@@ -18,7 +17,6 @@ inline double atomicAdd(double* ptr, double v)
    // using floating-point comparison will hang in case of NaN
    // (since NaN != NaN)
    return __longlong_as_double(old);
-}
 }
 #endif
 

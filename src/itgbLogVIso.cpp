@@ -24,7 +24,7 @@ void IsoBaroDevice::control_1_2(time_prec dt)
    double gbar = 2 * eksu1 * al - tr_vir - dim * vol0 * bath::atmsph / units::prescon;
    gbar /= qbar;
    if (m_langevin)
-      vbar = ouProcess(dt2, vbar, m_fric, gbar, b, m_rdn);
+      vbar = OUProcess(dt2, vbar, m_fric, gbar, b, m_rdn);
    else
       vbar += gbar * dt2;
 }

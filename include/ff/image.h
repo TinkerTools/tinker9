@@ -175,7 +175,7 @@ inline real imagen2General(real& xr, real& yr, real& zr, BoxShape sh, real3 l1, 
 
 /**
  * \def image
- * \ingroup math
+ * \ingroup box
  * Apply periodic boundary conditions to displacement (`xr, yr, zr`) and
  * preserve the correct signs.
  *

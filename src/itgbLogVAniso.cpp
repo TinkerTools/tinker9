@@ -44,7 +44,7 @@ void AnisoBaroDevice::control_1_2(time_prec dt)
       gbar[i][j] += (2 * c_ekin[i][j] - c_vir[3 * i + j]);
       gbar[i][j] /= qbar;
       if (m_langevin)
-         vbar_matrix[i][j] = ouProcess(dt2, vbar_matrix[i][j], m_fric, gbar[i][j], b, m_rdn[i][j]);
+         vbar_matrix[i][j] = OUProcess(dt2, vbar_matrix[i][j], m_fric, gbar[i][j], b, m_rdn[i][j]);
       else
          vbar_matrix[i][j] += gbar[i][j] * dt2;
    }

@@ -907,7 +907,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 //       nhc_isot_96(xdt, maxnose, vbar_nhc, qbar_nhc, 1.0, local_vbar_ekin, local_scale_vbar);
 //       vbar = vbar_nhc[0];
 //    } else {
-//       vbar = ouProcess(xdt2, vbar, stodyn::friction, 0.0, b, rnd);
+//       vbar = OUProcess(xdt2, vbar, stodyn::friction, 0.0, b, rnd);
 //    }
 // }
 
@@ -922,7 +922,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 //    if (TINKER_LPISTON_SEP_VBAR)
 //       vbar = vbar + gbar * xdt2;
 //    else
-//       vbar = ouProcess(xdt2, vbar, stodyn::friction, gbar, b, rnd);
+//       vbar = OUProcess(xdt2, vbar, stodyn::friction, gbar, b, rnd);
 // }
 
 // if (nrespa > 1) {
@@ -1026,7 +1026,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 //    if (TINKER_LPISTON_SEP_VBAR)
 //       vbar = vbar + gbar * xdt2;
 //    else
-//       vbar = ouProcess(xdt2, vbar, stodyn::friction, gbar, b, rnd);
+//       vbar = OUProcess(xdt2, vbar, stodyn::friction, gbar, b, rnd);
 // }
 
 // nhc_isot_96(dt, maxnose, vnh, qnh, g0, local_kinetic_atom, local_scale_vel_atom);
@@ -1036,7 +1036,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 //       nhc_isot_96(xdt, maxnose, vbar_nhc, qbar_nhc, 1.0, local_vbar_ekin, local_scale_vbar);
 //       vbar = vbar_nhc[0];
 //    } else {
-//       vbar = ouProcess(xdt2, vbar, stodyn::friction, 0.0, b, rnd);
+//       vbar = OUProcess(xdt2, vbar, stodyn::friction, 0.0, b, rnd);
 //    }
 // }
 

@@ -1,9 +1,42 @@
 #pragma once
-#include "math/erfc.h"
 #include <cmath>
 
+//====================================================================//
+// erfc
+
+#include "seqdef.h"
+
+extern "C"
+{
+   // The helper function for the complementary error function.
+   // \param ex2  exp(-x*x)
+   SEQ_ROUTINE
+   inline float tinkerErfcfHastings2Args(float x, float ex2)
+   {
+      float t = 1.0f / (1.0f + 0.3275911f * x);
+      return (0.254829592f +
+                (-0.284496736f + (1.421413741f + (-1.453152027f + 1.061405429f * t) * t) * t) * t) *
+         t * ex2;
+   }
+
+   // The complementary error function.
+   // C. Hastings. Approximations for Digital Computers.
+   // Princeton Univ. Press. (1955) p. 167.
+   SEQ_ROUTINE
+   inline float tinkerErfcfHastings(float x)
+   {
+      float exp2a = expf(-x * x);
+      return tinkerErfcfHastings2Args(x, exp2a);
+   }
+}
+
+//====================================================================//
+// libfunc
+
+// integer functions
 #define INT_ABS abs
 
+// double
 #if TINKER_REAL_SIZE == 8
 #   define REAL_SQRT     sqrt
 #   define REAL_EXP      exp
@@ -27,6 +60,7 @@
 #   define REAL_ERFC_V2(x, expterm) (1 - erf(x))
 #endif
 
+// float
 #if TINKER_REAL_SIZE == 4
 #   define REAL_SQRT     sqrtf
 #   define REAL_EXP      expf
@@ -42,13 +76,13 @@
 #   define REAL_SINH     sinhf
 #   define REAL_COSH     coshf
 #   define REAL_ERF      erff
-#   define REAL_ERFC     erfcf_hastings
+#   define REAL_ERFC     tinkerErfcfHastings
 #   define REAL_MIN      fminf
 #   define REAL_MAX      fmaxf
 #   define REAL_SIGN     copysignf
 // #   define REAL_ERFC     erfcf
 // #   define REAL_ERFC(x)  (1 - erff(x))
-#   define REAL_ERFC_V2(x, expterm) erfcf_hastings((x), (expterm))
+#   define REAL_ERFC_V2(x, expterm) tinkerErfcfHastings2Args((x), (expterm))
 #endif
 
 #ifdef _OPENACC

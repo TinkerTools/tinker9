@@ -1,6 +1,6 @@
 #pragma once
 #include "ff/pchg/evdw1.h"
-#include "seq/switch.h"
+#include "math/switch.h"
 #include "seqdef.h"
 
 namespace tinker {

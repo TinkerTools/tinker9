@@ -1,9 +1,10 @@
 #pragma once
 #include <cstddef>
 
-namespace tinker {
+//====================================================================//
 // constexpr functions
 
+namespace tinker {
 /// \ingroup math
 /// \brief Return true if and only if `val` is a power of 2.
 constexpr bool isPow2(size_t val)
@@ -27,8 +28,8 @@ constexpr long long pow2ll(int val)
 
 /// \ingroup math
 /// \brief The base-2 logarithm of `val`.
-/// \param val Must be greater than 0.
-/// \note Should return 0 if `val` is 0.
+/// \param val  Must be greater than 0.
+/// \note Returns 0 if `val` is 0.
 constexpr int floorLog2_constexpr(size_t val)
 {
    return val < 2 ? 0 : 1 + floorLog2_constexpr(val >> 1);
@@ -36,21 +37,24 @@ constexpr int floorLog2_constexpr(size_t val)
 
 /// \ingroup math
 /// \brief A power of 2 that is less than or equal to `val`.
-/// \param val Must be greater than 0.
-constexpr size_t pow2_le(size_t val)
+/// \param val  Must be greater than 0.
+constexpr size_t pow2Le(size_t val)
 {
    return 1ull << floorLog2_constexpr(val);
 }
 
 /// \ingroup math
 /// \brief A power of 2 that is greater than or equal to `val`.
-constexpr size_t pow2_ge(size_t val)
+constexpr size_t pow2Ge(size_t val)
 {
    return val <= 1 ? 1 : (1ull << (1 + floorLog2_constexpr(val - 1)));
 }
+}
 
+//====================================================================//
 // inline functions
 
+namespace tinker {
 /// \ingroup math
 /// \brief Non-constexpr `floorLog2(int)`.
 inline int floorLog2(int val)

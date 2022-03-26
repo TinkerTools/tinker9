@@ -1,6 +1,6 @@
 #pragma once
 #include "math/inc.h"
-#include "seq/switch.h"
+#include "math/switch.h"
 #include "seqdef.h"
 
 namespace tinker {
@@ -61,7 +61,7 @@ void pair_hal_v2(real r, real vscale, real rv, real eps, real evcut, real evoff,
    }
    if (r > evcut) {
       real taper, dtaper;
-      switch_taper5<DO_G>(r, evcut, evoff, taper, dtaper);
+      switchTaper5<DO_G>(r, evcut, evoff, taper, dtaper);
       if CONSTEXPR (DO_G)
          de = e * dtaper + de * taper;
       e = e * taper;

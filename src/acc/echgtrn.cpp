@@ -9,7 +9,7 @@
 #include "mod/nblist.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_chgtrn.h"
-#include "seq/switch.h"
+#include "math/switch.h"
 #include "tool/gpucard.h"
 #include <cassert>
 

@@ -5,7 +5,7 @@
 #include "md/inc.h"
 #include "mod/nblist.h"
 #include "seq/pair_hal.h"
-#include "seq/switch.h"
+#include "math/switch.h"
 #include "tool/gpucard.h"
 
 namespace tinker {
@@ -121,7 +121,7 @@ void ehal_acc1()
 
             if (rik2 > cut2) {
                real taper, dtaper;
-               switch_taper5<do_g>(rik, cut, off, taper, dtaper);
+               switchTaper5<do_g>(rik, cut, off, taper, dtaper);
                if CONSTEXPR (do_g)
                   de = e * dtaper + de * taper;
                if CONSTEXPR (do_e)
@@ -211,7 +211,7 @@ void ehal_acc1()
 
          if (rik2 > cut2) {
             real taper, dtaper;
-            switch_taper5<do_g>(rik, cut, off, taper, dtaper);
+            switchTaper5<do_g>(rik, cut, off, taper, dtaper);
             if CONSTEXPR (do_g)
                de = e * dtaper + de * taper;
             if CONSTEXPR (do_e)
