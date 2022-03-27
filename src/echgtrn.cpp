@@ -12,7 +12,7 @@
 namespace tinker {
 void echgtrnData(RcOp op)
 {
-   if (!use_potent(chgtrn_term))
+   if (!usePotent(Potent::CHGTRN))
       return;
 
    bool rc_a = rc_flag & calc::analyz;

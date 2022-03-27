@@ -946,20 +946,20 @@ void echglj_cu3()
    real eccut, ecoff;
    real aewald = 0;
    if CONSTEXPR (eq<ETYP, EWALD>()) {
-      ecoff = switchOff(SWITCH_EWALD);
+      ecoff = switchOff(Switch::EWALD);
       eccut = ecoff; // not used
       PMEUnit pu = epme_unit;
       aewald = pu->aewald;
    } else {
-      ecoff = switchOff(SWITCH_CHARGE);
-      eccut = switchCut(SWITCH_CHARGE);
+      ecoff = switchOff(Switch::CHARGE);
+      eccut = switchCut(Switch::CHARGE);
    }
    real f = electric / dielec;
    assert(ebuffer == 0);
 
    real evoff, evcut;
-   evoff = switchOff(SWITCH_VDW);
-   evcut = switchCut(SWITCH_VDW);
+   evoff = switchOff(Switch::VDW);
+   evcut = switchCut(Switch::VDW);
 
 #define ECHGLJ_CU3_V2_ARGS                                                                         \
    ec, vir_ec, decx, decy, decz, TINKER_IMAGE_ARGS, st.n, st.sorted, st.nakpl, st.iakpl, st.niak,  \

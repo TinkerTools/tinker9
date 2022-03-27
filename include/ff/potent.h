@@ -1,40 +1,42 @@
 #pragma once
-#include "macro.h"
 
 namespace tinker {
-typedef enum
+/// \ingroup ff
+enum class Potent
 {
-   bond_term,    // eb
-   angle_term,   // ea
-   strbnd_term,  // eba
-   urey_term,    // eub
-   angang_term,  // eaa
-   opbend_term,  // eopb
-   opdist_term,  // eopd
-   improp_term,  // eid
-   imptors_term, // eit
-   torsion_term, // et
-   pitors_term,  // ept
-   strtor_term,  // ebt
-   angtor_term,  // eat
-   tortor_term,  // ett
+   BOND,    // eb
+   ANGLE,   // ea
+   STRBND,  // eba
+   UREY,    // eub
+   ANGANG,  // eaa
+   OPBEND,  // eopb
+   OPDIST,  // eopd
+   IMPROP,  // eid
+   IMPTORS, // eit
+   TORSION, // et
+   PITORS,  // ept
+   STRTOR,  // ebt
+   ANGTOR,  // eat
+   TORTOR,  // ett
 
-   vdw_term,    // ev
-   repuls_term, // er
-   disp_term,   // edsp
-   charge_term, // ec
-   chgdpl_term, // ecd
-   dipole_term, // ed
-   mpole_term,  // em
-   polar_term,  // ep
-   chgtrn_term, // ect
-   rxnfld_term, // erxf
-   solv_term,   // es
-   metal_term,  // elf
-   geom_term,   // eg
-   extra_term   // ex
-} potent_t;
+   VDW,    // ev
+   REPULS, // er
+   DISP,   // edsp
+   CHARGE, // ec
+   CHGDPL, // ecd
+   DIPOLE, // ed
+   MPOLE,  // em
+   POLAR,  // ep
+   CHGTRN, // ect
+   RXNFLD, // erxf
+   SOLV,   // es
+   METAL,  // elf
+   GEOM,   // eg
+   EXTRA   // ex
+};
 
-int use_potent(potent_t term);
-int count_bonded_term(potent_t term);
+/// \ingroup ff
+int usePotent(Potent term);
+/// \ingroup ff
+int countBondedTerm(Potent term);
 }

@@ -10,8 +10,8 @@
 namespace tinker {
 void ebondData(RcOp op)
 {
-   if (not use_potent(bond_term) and not use_potent(strbnd_term) and not use_potent(strtor_term) and
-      not potent::use_chgflx)
+   if (not usePotent(Potent::BOND) and not usePotent(Potent::STRBND) and
+      not usePotent(Potent::STRTOR) and not potent::use_chgflx)
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -29,7 +29,7 @@ void ebondData(RcOp op)
    }
 
    if (op & rc_alloc) {
-      nbond = count_bonded_term(bond_term);
+      nbond = countBondedTerm(Potent::BOND);
       darray::allocate(nbond, &ibnd, &bl, &bk);
 
       eb = eng_buf;

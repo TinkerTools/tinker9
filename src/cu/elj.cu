@@ -460,8 +460,8 @@ template <class Ver>
 void elj_cu4()
 {
    const auto& st = *cspatial_v2_unit;
-   const real cut = switchCut(SWITCH_VDW);
-   const real off = switchOff(SWITCH_VDW);
+   const real cut = switchCut(Switch::VDW);
+   const real off = switchOff(Switch::VDW);
 
    int ngrid = gpuGridSize(BLOCK_DIM);
    elj_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nev, ev, vir_ev, devx,
@@ -475,8 +475,8 @@ void elj_cu5()
 {
    if (nvdw14 > 0) {
       const auto& st = *cspatial_v2_unit;
-      const real cut = switchCut(SWITCH_VDW);
-      const real off = switchOff(SWITCH_VDW);
+      const real cut = switchCut(Switch::VDW);
+      const real off = switchOff(Switch::VDW);
 
       launch_k1b(g::s0, nvdw14, elj_cu2<Ver>,                                              //
          nev, ev, vir_ev, devx, devy, devz, TINKER_IMAGE_ARGS, cut, off, st.x, st.y, st.z, //

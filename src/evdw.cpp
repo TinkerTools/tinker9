@@ -27,7 +27,7 @@ int jcount;
 
 void evdwData(RcOp op)
 {
-   if (!use_potent(vdw_term))
+   if (!usePotent(Potent::VDW))
       return;
 
    bool rc_a = rc_flag & calc::analyz;

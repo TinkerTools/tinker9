@@ -13,9 +13,9 @@
 namespace tinker {
 void osrw_altele_acc(double el)
 {
-   bool use_ec = use_potent(charge_term);
-   bool use_em = use_potent(mpole_term);
-   bool use_ep = use_potent(polar_term);
+   bool use_ec = usePotent(Potent::CHARGE);
+   bool use_em = usePotent(Potent::MPOLE);
+   bool use_ep = usePotent(Potent::POLAR);
 
    if (use_ec) {
       #pragma acc parallel loop independent async\

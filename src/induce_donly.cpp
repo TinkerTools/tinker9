@@ -47,7 +47,7 @@ void induce2(real (*ud)[3])
    induce_mutual_pcg2(ud);
    ulspredSave2(ud);
 
-   if (inform::debug && use_potent(polar_term)) {
+   if (inform::debug && usePotent(Potent::POLAR)) {
       std::vector<double> uindbuf;
       uindbuf.resize(3 * n);
       darray::copyout(g::q0, n, uindbuf.data(), ud);

@@ -547,9 +547,9 @@ void empole_chgpen_cu()
    const auto& st = *mspatial_v2_unit;
    real off;
    if CONSTEXPR (eq<ETYP, EWALD>())
-      off = switchOff(SWITCH_EWALD);
+      off = switchOff(Switch::EWALD);
    else
-      off = switchOff(SWITCH_MPOLE);
+      off = switchOff(Switch::MPOLE);
 
    const real f = electric / dielec;
    real aewald = 0;

@@ -26,8 +26,8 @@ void echgtrn_acc1()
    constexpr bool do_v = Ver::v;
 
    const real f = electric / dielec;
-   real cut = switchCut(SWITCH_CHGTRN);
-   real off = switchOff(SWITCH_CHGTRN);
+   real cut = switchCut(Switch::CHGTRN);
+   real off = switchOff(Switch::CHGTRN);
 
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;

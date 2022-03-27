@@ -604,9 +604,9 @@ void epolar_cu(const real (*uind)[3], const real (*uinp)[3])
    const auto& st = *mspatial_v2_unit;
    real off;
    if CONSTEXPR (eq<ETYP, EWALD>())
-      off = switchOff(SWITCH_EWALD);
+      off = switchOff(Switch::EWALD);
    else
-      off = switchOff(SWITCH_MPOLE);
+      off = switchOff(Switch::MPOLE);
 
    const real f = 0.5f * electric / dielec;
    real aewald = 0;

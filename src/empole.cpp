@@ -24,7 +24,7 @@ void empole_ewald_recip(int vers);
 namespace tinker {
 void empoleData(RcOp op)
 {
-   if (!use_potent(mpole_term))
+   if (!usePotent(Potent::MPOLE))
       return;
    if (mplpot::use_chgpen)
       return;

@@ -38,7 +38,7 @@ void epolar_ewald_recip_self(int vers);
 namespace tinker {
 void epolarData(RcOp op)
 {
-   if (!use_potent(polar_term))
+   if (!usePotent(Potent::POLAR))
       return;
    if (mplpot::use_chgpen)
       return;
@@ -495,7 +495,7 @@ void induce(real (*ud)[3], real (*up)[3])
    induce_mutual_pcg1(ud, up);
    ulspredSave(ud, up);
 
-   if (inform::debug && use_potent(polar_term)) {
+   if (inform::debug && usePotent(Potent::POLAR)) {
       std::vector<double> uindbuf;
       uindbuf.resize(3 * n);
       darray::copyout(g::q0, n, uindbuf.data(), ud);

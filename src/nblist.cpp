@@ -34,7 +34,7 @@ NBList::~NBList()
 nblist_t vlist_version()
 {
    nblist_t u;
-   if (!use_potent(vdw_term)) {
+   if (!usePotent(Potent::VDW)) {
       u = NBL_UNDEFINED;
    } else if (vdwtyp != evdw_t::hal) {
       u = NBL_UNDEFINED;
@@ -62,7 +62,7 @@ nblist_t clist_version()
 {
    nblist_t u;
    // First, forget about VDW, only check partial charge models.
-   if (!use_potent(charge_term) /* and !use_potent(solv_term) */) {
+   if (!usePotent(Potent::CHARGE) /* and !usePotent(Potent::SOLV) */) {
       u = NBL_UNDEFINED;
    } else if (!limits::use_clist) {
       u = NBL_DOUBLE_LOOP;
@@ -79,7 +79,7 @@ nblist_t clist_version()
    if (u != NBL_UNDEFINED)
       return u;
    // Then, check VDW if no partial charge term is in use.
-   if (!use_potent(vdw_term)) {
+   if (!usePotent(Potent::VDW)) {
       u = NBL_UNDEFINED;
    } else if (vdwtyp == evdw_t::hal) {
       u = NBL_UNDEFINED;
@@ -101,8 +101,8 @@ nblist_t clist_version()
 nblist_t mlist_version()
 {
    nblist_t u;
-   if (!use_potent(mpole_term) and !use_potent(polar_term) and !use_potent(chgtrn_term) and
-      !use_potent(repuls_term) /* and !use_potent(solv_term) */) {
+   if (!usePotent(Potent::MPOLE) and !usePotent(Potent::POLAR) and !usePotent(Potent::CHGTRN) and
+      !usePotent(Potent::REPULS) /* and !usePotent(Potent::SOLV) */) {
       u = NBL_UNDEFINED;
    } else if (!limits::use_mlist) {
       u = NBL_DOUBLE_LOOP;
@@ -122,7 +122,7 @@ nblist_t mlist_version()
 nblist_t ulist_version()
 {
    nblist_t u;
-   if (!use_potent(polar_term)) {
+   if (!usePotent(Potent::POLAR)) {
       u = NBL_UNDEFINED;
    } else if (!limits::use_ulist) {
       u = NBL_DOUBLE_LOOP;
@@ -142,7 +142,7 @@ nblist_t ulist_version()
 nblist_t dsplist_version()
 {
    nblist_t u;
-   if (!use_potent(disp_term)) {
+   if (!usePotent(Potent::DISP)) {
       u = NBL_UNDEFINED;
    } else if (!limits::use_dlist) {
       u = NBL_DOUBLE_LOOP;
@@ -313,7 +313,7 @@ void nblist_data(RcOp op)
 
    // vlist
    u = vlist_version();
-   cut = switchOff(SWITCH_VDW);
+   cut = switchOff(Switch::VDW);
    buf = neigh::lbuffer;
    if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
       auto& unt = vlist_unit;
@@ -339,11 +339,11 @@ void nblist_data(RcOp op)
    // clist
    u = clist_version();
    cut = -1;
-   if (use_potent(charge_term)) {
-      cut = useEwald() ? switchOff(SWITCH_EWALD) : switchOff(SWITCH_CHARGE);
+   if (usePotent(Potent::CHARGE)) {
+      cut = useEwald() ? switchOff(Switch::EWALD) : switchOff(Switch::CHARGE);
    }
-   if (use_potent(vdw_term)) {
-      double vdw_cut = switchOff(SWITCH_VDW);
+   if (usePotent(Potent::VDW)) {
+      double vdw_cut = switchOff(Switch::VDW);
       if (vdwtyp != evdw_t::hal)
          cut = std::max(cut, vdw_cut);
    }
@@ -370,7 +370,7 @@ void nblist_data(RcOp op)
 
    // mlist
    u = mlist_version();
-   cut = useEwald() ? switchOff(SWITCH_EWALD) : switchOff(SWITCH_MPOLE);
+   cut = useEwald() ? switchOff(Switch::EWALD) : switchOff(Switch::MPOLE);
    buf = neigh::lbuffer;
    if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
       auto& unt = mlist_unit;
@@ -399,7 +399,7 @@ void nblist_data(RcOp op)
 
    // ulist
    u = ulist_version();
-   cut = switchOff(SWITCH_USOLVE);
+   cut = switchOff(Switch::USOLVE);
    buf = neigh::pbuffer;
    if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
       auto& unt = ulist_unit;
@@ -427,7 +427,7 @@ void nblist_data(RcOp op)
 
    // dsplist
    u = dsplist_version();
-   cut = useDEwald() ? switchOff(SWITCH_DEWALD) : switchOff(SWITCH_DISP);
+   cut = useDEwald() ? switchOff(Switch::DEWALD) : switchOff(Switch::DISP);
    buf = neigh::lbuffer;
    if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
       auto& unt = dsplist_unit;

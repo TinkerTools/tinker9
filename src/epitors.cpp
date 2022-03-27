@@ -8,7 +8,7 @@
 namespace tinker {
 void epitorsData(RcOp op)
 {
-   if (!use_potent(pitors_term))
+   if (!usePotent(Potent::PITORS))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -26,9 +26,9 @@ void epitorsData(RcOp op)
    }
 
    if (op & rc_alloc) {
-      int ntors = count_bonded_term(torsion_term);
+      int ntors = countBondedTerm(Potent::TORSION);
       darray::allocate(ntors, &ipit, &kpit);
-      npitors = count_bonded_term(pitors_term);
+      npitors = countBondedTerm(Potent::PITORS);
 
       ept = eng_buf;
       vir_ept = vir_buf;
@@ -40,7 +40,7 @@ void epitorsData(RcOp op)
    }
 
    if (op & rc_init) {
-      int ntors = count_bonded_term(torsion_term);
+      int ntors = countBondedTerm(Potent::TORSION);
       std::vector<int> ibuf(6 * ntors);
       for (int i = 0; i < 6 * ntors; ++i)
          ibuf[i] = pitors::ipit[i] - 1;

@@ -8,7 +8,7 @@
 namespace tinker {
 void estrbndData(RcOp op)
 {
-   if (!use_potent(strbnd_term))
+   if (!usePotent(Potent::STRBND))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -26,9 +26,9 @@ void estrbndData(RcOp op)
    }
 
    if (op & rc_alloc) {
-      int nangle = count_bonded_term(angle_term);
+      int nangle = countBondedTerm(Potent::ANGLE);
       darray::allocate(nangle, &isb, &sbk);
-      nstrbnd = count_bonded_term(strbnd_term);
+      nstrbnd = countBondedTerm(Potent::STRBND);
 
       eba = eng_buf;
       vir_eba = vir_buf;
@@ -40,7 +40,7 @@ void estrbndData(RcOp op)
    }
 
    if (op & rc_init) {
-      int nangle = count_bonded_term(angle_term);
+      int nangle = countBondedTerm(Potent::ANGLE);
       std::vector<int> ibuf(3 * nangle);
       for (int i = 0; i < 3 * nangle; ++i) {
          ibuf[i] = strbnd::isb[i] - 1;

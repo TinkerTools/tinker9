@@ -17,78 +17,78 @@
 #include <tinker/detail/urey.hh>
 
 namespace tinker {
-int use_potent(potent_t term)
+int usePotent(Potent term)
 {
    int val = 0;
    switch (term) {
 
       // bonded terms
 
-   case bond_term:
+   case Potent::BOND:
       val = potent::use_bond;
       break;
-   case angle_term:
+   case Potent::ANGLE:
       val = potent::use_angle;
       break;
-   case strbnd_term:
+   case Potent::STRBND:
       val = potent::use_strbnd;
       break;
-   case urey_term:
+   case Potent::UREY:
       val = potent::use_urey;
       break;
-   case opbend_term:
+   case Potent::OPBEND:
       val = potent::use_opbend;
       break;
-   case improp_term:
+   case Potent::IMPROP:
       val = potent::use_improp;
       break;
-   case imptors_term:
+   case Potent::IMPTORS:
       val = potent::use_imptor;
       break;
-   case torsion_term:
+   case Potent::TORSION:
       val = potent::use_tors;
       break;
-   case pitors_term:
+   case Potent::PITORS:
       val = potent::use_pitors;
       break;
-   case strtor_term:
+   case Potent::STRTOR:
       val = potent::use_strtor;
       break;
-   case angtor_term:
+   case Potent::ANGTOR:
       val = potent::use_angtor;
       break;
-   case tortor_term:
+   case Potent::TORTOR:
       val = potent::use_tortor;
       break;
 
       // misc. terms
 
-   case geom_term:
+   case Potent::GEOM:
       val = potent::use_geom;
       break;
 
       // non-bonded terms
 
-   case vdw_term:
+   case Potent::VDW:
       val = potent::use_vdw;
       break;
-   case charge_term:
+   case Potent::CHARGE:
       val = potent::use_charge;
       break;
-   case mpole_term:
+   case Potent::MPOLE:
       val = potent::use_mpole;
       break;
-   case polar_term:
+   case Potent::POLAR:
       val = potent::use_polar;
       break;
 
-   case chgtrn_term:
+   case Potent::CHGTRN:
       val = potent::use_chgtrn;
       break;
-   case disp_term:
+   case Potent::DISP:
       val = potent::use_disp;
       break;
-   case repuls_term:
+   case Potent::REPULS:
       val = potent::use_repuls;
       break;
 
@@ -99,50 +99,50 @@ int use_potent(potent_t term)
    return val;
 }
 
-int count_bonded_term(potent_t term)
+int countBondedTerm(Potent term)
 {
    int val = -1;
    switch (term) {
-   case bond_term:
+   case Potent::BOND:
       val = bndstr::nbond;
       break;
-   case angle_term:
+   case Potent::ANGLE:
       val = angbnd::nangle;
       break;
-   case strbnd_term:
+   case Potent::STRBND:
       val = strbnd::nstrbnd;
       break;
-   case urey_term:
+   case Potent::UREY:
       val = urey::nurey;
       break;
-   case opbend_term:
+   case Potent::OPBEND:
       val = opbend::nopbend;
       break;
-   case improp_term:
+   case Potent::IMPROP:
       val = improp::niprop;
       break;
-   case imptors_term:
+   case Potent::IMPTORS:
       val = imptor::nitors;
       break;
-   case torsion_term:
+   case Potent::TORSION:
       val = tors::ntors;
       break;
-   case pitors_term:
+   case Potent::PITORS:
       val = pitors::npitors;
       break;
-   case strtor_term:
+   case Potent::STRTOR:
       val = strtor::nstrtor;
       break;
-   case angtor_term:
+   case Potent::ANGTOR:
       val = angtor::nangtor;
       break;
-   case tortor_term:
+   case Potent::TORTOR:
       val = tortor::ntortor;
       break;
 
       // misc. terms
 
-   case geom_term: {
+   case Potent::GEOM: {
       val = 0;
       val += restrn::npfix;    // position restraints
       val += restrn::ndfix;    // distance restraints

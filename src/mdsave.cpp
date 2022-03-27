@@ -31,7 +31,7 @@ std::future<void> fut_dup_then_write;
 
 bool mdsave_use_uind()
 {
-   return output::uindsave && use_potent(polar_term);
+   return output::uindsave && usePotent(Potent::POLAR);
 }
 
 ExecQ dup_stream;

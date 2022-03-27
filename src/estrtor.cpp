@@ -8,7 +8,7 @@
 namespace tinker {
 void estrtorData(RcOp op)
 {
-   if (not use_potent(strtor_term))
+   if (not usePotent(Potent::STRTOR))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -26,7 +26,7 @@ void estrtorData(RcOp op)
    }
 
    if (op & rc_alloc) {
-      nstrtor = count_bonded_term(strtor_term);
+      nstrtor = countBondedTerm(Potent::STRTOR);
       darray::allocate(nstrtor, &ist, &kst);
 
       ebt = eng_buf;

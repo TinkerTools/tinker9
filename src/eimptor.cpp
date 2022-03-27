@@ -8,7 +8,7 @@
 namespace tinker {
 void eimptorData(RcOp op)
 {
-   if (!use_potent(imptors_term))
+   if (!usePotent(Potent::IMPTORS))
       return;
 
    bool rc_a = rc_flag & calc::analyz;

@@ -8,7 +8,7 @@
 namespace tinker {
 void egeomData(RcOp op)
 {
-   if (!use_potent(geom_term))
+   if (!usePotent(Potent::GEOM))
       return;
 
    bool rc_a = rc_flag & calc::analyz;

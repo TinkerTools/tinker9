@@ -28,7 +28,7 @@ void empole_chgpen_ewald_recip(int vers, int use_cf);
 namespace tinker {
 void empoleChgpenData(RcOp op)
 {
-   if (not use_potent(mpole_term) and not use_potent(chgtrn_term))
+   if (not usePotent(Potent::MPOLE) and not usePotent(Potent::CHGTRN))
       return;
    if (not mplpot::use_chgpen)
       return;

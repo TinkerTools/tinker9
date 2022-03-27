@@ -825,19 +825,19 @@ void evalence_cu(int vers)
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
 
-   bool flag_bond = use_potent(bond_term);
-   bool flag_angle = use_potent(angle_term);
-   bool flag_strbnd = use_potent(strbnd_term);
-   bool flag_urey = use_potent(urey_term);
-   bool flag_opb = use_potent(opbend_term);
-   bool flag_improp = use_potent(improp_term);
-   bool flag_imptor = use_potent(imptors_term);
-   bool flag_tors = use_potent(torsion_term);
-   bool flag_pitors = use_potent(pitors_term);
-   bool flag_strtor = use_potent(strtor_term);
-   bool flag_angtor = use_potent(angtor_term);
-   bool flag_tortor = use_potent(tortor_term);
-   bool flag_geom = use_potent(geom_term);
+   bool flag_bond = usePotent(Potent::BOND);
+   bool flag_angle = usePotent(Potent::ANGLE);
+   bool flag_strbnd = usePotent(Potent::STRBND);
+   bool flag_urey = usePotent(Potent::UREY);
+   bool flag_opb = usePotent(Potent::OPBEND);
+   bool flag_improp = usePotent(Potent::IMPROP);
+   bool flag_imptor = usePotent(Potent::IMPTORS);
+   bool flag_tors = usePotent(Potent::TORSION);
+   bool flag_pitors = usePotent(Potent::PITORS);
+   bool flag_strtor = usePotent(Potent::STRTOR);
+   bool flag_angtor = usePotent(Potent::ANGTOR);
+   bool flag_tortor = usePotent(Potent::TORTOR);
+   bool flag_geom = usePotent(Potent::GEOM);
 
    size_t bsize = buffer_size();
    if (rc_a and flag_bond) {

@@ -38,7 +38,7 @@ bool useEwald()
 
 static void pchgData(RcOp op)
 {
-   if (!use_potent(charge_term))
+   if (!usePotent(Potent::CHARGE))
       return;
 
    if (op & rc_dealloc) {
@@ -70,7 +70,7 @@ static void pchgData(RcOp op)
 
 static void mpoleData(RcOp op)
 {
-   if (!use_potent(mpole_term) && !use_potent(polar_term) && !use_potent(repuls_term))
+   if (!usePotent(Potent::MPOLE) && !usePotent(Potent::POLAR) && !usePotent(Potent::REPULS))
       return;
 
    if (op & rc_dealloc) {
@@ -81,7 +81,7 @@ static void mpoleData(RcOp op)
    if (op & rc_alloc) {
       darray::allocate(n, &zaxis, &pole, &rpole);
 
-      if (use_potent(polar_term)) {
+      if (usePotent(Potent::POLAR)) {
          darray::allocate(n, &uind, &uinp, &udir, &udirp);
       } else {
          uind = nullptr;
@@ -161,7 +161,7 @@ static void mpoleData(RcOp op)
 
 static void mdpuscaleData(RcOp op)
 {
-   if (not use_potent(mpole_term) and not use_potent(polar_term))
+   if (not usePotent(Potent::MPOLE) and not usePotent(Potent::POLAR))
       return;
 
    if (op & rc_dealloc) {
@@ -322,7 +322,7 @@ static void mdpuscaleData(RcOp op)
          }
       }
 
-      const bool usepolar = use_potent(polar_term);
+      const bool usepolar = usePotent(Potent::POLAR);
       for (int i = 0; usepolar and i < n; ++i) {
          // p
          if (p2scale != 1 || p2iscale != 1) {
@@ -584,7 +584,7 @@ static void chgpenData(RcOp op)
 
       int nn, bask;
 
-      const bool usempole = use_potent(mpole_term) or use_potent(chgtrn_term);
+      const bool usempole = usePotent(Potent::MPOLE) or usePotent(Potent::CHGTRN);
       for (int i = 0; usempole and i < n; ++i) {
          if (m2scale != 1) {
             nn = couple::n12[i];
@@ -636,7 +636,7 @@ static void chgpenData(RcOp op)
       const real p5iscale = polpot::p5iscale;
 
       // setup dscale values based on polar-scale and polar-iscale
-      const bool usepolar = use_potent(polar_term);
+      const bool usepolar = usePotent(Potent::POLAR);
       for (int i = 0; usepolar and i < n; ++i) {
          if (p2scale != 1 or p2iscale != 1) {
             nn = couple::n12[i];

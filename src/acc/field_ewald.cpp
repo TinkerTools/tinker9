@@ -47,7 +47,7 @@ void dfield_ewald_recip_self_acc(real (*field)[3])
 #define DFIELD_DPTRS x, y, z, thole, pdamp, field, fieldp, rpole
 void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
 {
-   const real off = switchOff(SWITCH_EWALD);
+   const real off = switchOff(Switch::EWALD);
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
@@ -243,7 +243,7 @@ void ufield_ewald_recip_self_acc(
 void ufield_ewald_real_acc(
    const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
-   const real off = switchOff(SWITCH_EWALD);
+   const real off = switchOff(Switch::EWALD);
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();

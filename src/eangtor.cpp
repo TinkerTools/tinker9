@@ -8,7 +8,7 @@
 namespace tinker {
 void eangtorData(RcOp op)
 {
-   if (not use_potent(angtor_term))
+   if (not usePotent(Potent::ANGTOR))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -26,7 +26,7 @@ void eangtorData(RcOp op)
    }
 
    if (op & rc_alloc) {
-      nangtor = count_bonded_term(angtor_term);
+      nangtor = countBondedTerm(Potent::ANGTOR);
       darray::allocate(nangtor, &iat, &kant);
 
       eat = eng_buf;

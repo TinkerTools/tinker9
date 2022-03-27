@@ -104,11 +104,11 @@ bool useEnergyVdw()
    bool ans = false;
 
    // AMOEBA
-   ans = ans || use_potent(vdw_term);
+   ans = ans || usePotent(Potent::VDW);
 
    // HIPPO
-   ans = ans || use_potent(disp_term);
-   ans = ans || use_potent(repuls_term);
+   ans = ans || usePotent(Potent::DISP);
+   ans = ans || usePotent(Potent::REPULS);
 
    return ans;
 }
@@ -118,12 +118,12 @@ bool useEnergyElec()
    bool ans = false;
 
    // AMOEBA
-   ans = ans || use_potent(charge_term);
-   ans = ans || use_potent(mpole_term);
-   ans = ans || use_potent(polar_term);
+   ans = ans || usePotent(Potent::CHARGE);
+   ans = ans || usePotent(Potent::MPOLE);
+   ans = ans || usePotent(Potent::POLAR);
 
    // HIPPO
-   ans = ans || use_potent(chgtrn_term);
+   ans = ans || usePotent(Potent::CHGTRN);
 
    return ans;
 }
@@ -192,7 +192,7 @@ static bool amoeba_emplar(int vers)
    if (vers & calc::analyz)
       return false;
 
-   return use_potent(mpole_term) && use_potent(polar_term) && (mlist_version() & NBL_SPATIAL);
+   return usePotent(Potent::MPOLE) && usePotent(Potent::POLAR) && (mlist_version() & NBL_SPATIAL);
 }
 
 static bool amoeba_empole(int vers)
@@ -202,7 +202,7 @@ static bool amoeba_empole(int vers)
 
    if (amoeba_emplar(vers))
       return false;
-   return use_potent(mpole_term);
+   return usePotent(Potent::MPOLE);
 }
 
 static bool amoeba_epolar(int vers)
@@ -212,7 +212,7 @@ static bool amoeba_epolar(int vers)
 
    if (amoeba_emplar(vers))
       return false;
-   return use_potent(polar_term);
+   return usePotent(Potent::POLAR);
 }
 
 static bool amoeba_echglj(int vers)
@@ -221,7 +221,7 @@ static bool amoeba_echglj(int vers)
       return false;
    if (vers & calc::analyz)
       return false;
-   if (!use_potent(charge_term) || !use_potent(vdw_term))
+   if (!usePotent(Potent::CHARGE) || !usePotent(Potent::VDW))
       return false;
    if (!(clist_version() & NBL_SPATIAL))
       return false;
@@ -238,14 +238,14 @@ static bool amoeba_echarge(int vers)
 {
    if (amoeba_echglj(vers))
       return false;
-   return use_potent(charge_term);
+   return usePotent(Potent::CHARGE);
 }
 
 static bool amoeba_evdw(int vers)
 {
    if (amoeba_echglj(vers))
       return false;
-   return use_potent(vdw_term);
+   return usePotent(Potent::VDW);
 }
 
 static bool hippo_empole(int vers)
@@ -254,7 +254,7 @@ static bool hippo_empole(int vers)
       return false;
    if (amoeba_emplar(vers))
       return false;
-   return use_potent(mpole_term);
+   return usePotent(Potent::MPOLE);
 }
 
 static bool hippo_epolar(int vers)
@@ -263,7 +263,7 @@ static bool hippo_epolar(int vers)
       return false;
    if (amoeba_emplar(vers))
       return false;
-   return use_potent(polar_term);
+   return usePotent(Potent::POLAR);
 }
 
 void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
@@ -277,56 +277,56 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    ecore_ele = false;
 
    if (pltfm_config & Platform::CUDA) {
-      bool calc_val = use_potent(bond_term) or use_potent(angle_term) or use_potent(strbnd_term) or
-         use_potent(urey_term) or use_potent(opbend_term) or use_potent(improp_term) or
-         use_potent(imptors_term) or use_potent(torsion_term) or use_potent(pitors_term) or
-         use_potent(strtor_term) or use_potent(angtor_term) or use_potent(tortor_term) or
-         use_potent(geom_term);
+      bool calc_val = usePotent(Potent::BOND) or usePotent(Potent::ANGLE) or
+         usePotent(Potent::STRBND) or usePotent(Potent::UREY) or usePotent(Potent::OPBEND) or
+         usePotent(Potent::IMPROP) or usePotent(Potent::IMPTORS) or usePotent(Potent::TORSION) or
+         usePotent(Potent::PITORS) or usePotent(Potent::STRTOR) or usePotent(Potent::ANGTOR) or
+         usePotent(Potent::TORTOR) or usePotent(Potent::GEOM);
       if (calc_val and tscfg("evalence", ecore_val))
          evalence(vers);
    } else {
       // bonded terms
 
-      if (use_potent(bond_term))
+      if (usePotent(Potent::BOND))
          if (tscfg("ebond", ecore_val))
             ebond(vers);
-      if (use_potent(angle_term))
+      if (usePotent(Potent::ANGLE))
          if (tscfg("eangle", ecore_val))
             eangle(vers);
-      if (use_potent(strbnd_term))
+      if (usePotent(Potent::STRBND))
          if (tscfg("estrbnd", ecore_val))
             estrbnd(vers);
-      if (use_potent(urey_term))
+      if (usePotent(Potent::UREY))
          if (tscfg("eurey", ecore_val))
             eurey(vers);
-      if (use_potent(opbend_term))
+      if (usePotent(Potent::OPBEND))
          if (tscfg("eopbend", ecore_val))
             eopbend(vers);
-      if (use_potent(improp_term))
+      if (usePotent(Potent::IMPROP))
          if (tscfg("eimprop", ecore_val))
             eimprop(vers);
-      if (use_potent(imptors_term))
+      if (usePotent(Potent::IMPTORS))
          if (tscfg("eimptor", ecore_val))
             eimptor(vers);
-      if (use_potent(torsion_term))
+      if (usePotent(Potent::TORSION))
          if (tscfg("etors", ecore_val))
             etors(vers);
-      if (use_potent(pitors_term))
+      if (usePotent(Potent::PITORS))
          if (tscfg("epitors", ecore_val))
             epitors(vers);
-      if (use_potent(strtor_term))
+      if (usePotent(Potent::STRTOR))
          if (tscfg("estrtor", ecore_val))
             estrtor(vers);
-      if (use_potent(angtor_term))
+      if (usePotent(Potent::ANGTOR))
          if (tscfg("eangtor", ecore_val))
             eangtor(vers);
-      if (use_potent(tortor_term))
+      if (usePotent(Potent::TORTOR))
          if (tscfg("etortor", ecore_val))
             etortor(vers);
 
       // misc. terms
 
-      if (use_potent(geom_term))
+      if (usePotent(Potent::GEOM))
          if (tscfg("egeom", ecore_val))
             egeom(vers);
    }
@@ -362,13 +362,13 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (hippo_epolar(vers))
       if (tscfg("epolar_chgpen", ecore_ele))
          epolarChgpen(vers);
-   if (use_potent(chgtrn_term))
+   if (usePotent(Potent::CHGTRN))
       if (tscfg("echgtrn", ecore_ele))
          echgtrn(vers);
-   if (use_potent(disp_term))
+   if (usePotent(Potent::DISP))
       if (tscfg("edisp", ecore_vdw))
          edisp(vers);
-   if (use_potent(repuls_term))
+   if (usePotent(Potent::REPULS))
       if (tscfg("erepel", ecore_vdw))
          erepel(vers);
 

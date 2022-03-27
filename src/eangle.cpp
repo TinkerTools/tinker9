@@ -11,8 +11,8 @@
 namespace tinker {
 void eangleData(RcOp op)
 {
-   if (not use_potent(angle_term) and not use_potent(strbnd_term) and
-      not use_potent(opbend_term) and not use_potent(angtor_term) and not potent::use_chgflx)
+   if (not usePotent(Potent::ANGLE) and not usePotent(Potent::STRBND) and
+      not usePotent(Potent::OPBEND) and not usePotent(Potent::ANGTOR) and not potent::use_chgflx)
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -30,7 +30,7 @@ void eangleData(RcOp op)
    }
 
    if (op & rc_alloc) {
-      nangle = count_bonded_term(angle_term);
+      nangle = countBondedTerm(Potent::ANGLE);
       darray::allocate(nangle, &iang, &ak, &anat, &afld, &angtyp);
 
       ea = eng_buf;

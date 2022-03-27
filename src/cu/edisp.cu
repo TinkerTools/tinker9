@@ -353,11 +353,11 @@ void edisp_cu()
    const auto& st = *dspspatial_v2_unit;
    real cut, off;
    if CONSTEXPR (eq<DTYP, DEWALD>()) {
-      off = switchOff(SWITCH_DEWALD);
+      off = switchOff(Switch::DEWALD);
       cut = off; // not used
    } else {
-      off = switchOff(SWITCH_DISP);
-      cut = switchCut(SWITCH_DISP);
+      off = switchOff(Switch::DISP);
+      cut = switchCut(Switch::DISP);
    }
 
    real aewald = 0;

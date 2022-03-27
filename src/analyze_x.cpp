@@ -35,65 +35,65 @@ static void x_analyze_e()
 
    const char* fmt = " %-29s %18.4f %16d\n";
 
-   if (use_potent(bond_term))
-      print(out, fmt, "Bond Stretching", energy_eb, count_bonded_term(bond_term));
+   if (usePotent(Potent::BOND))
+      print(out, fmt, "Bond Stretching", energy_eb, countBondedTerm(Potent::BOND));
 
-   if (use_potent(angle_term))
-      print(out, fmt, "Angle Bending", energy_ea, count_bonded_term(angle_term));
+   if (usePotent(Potent::ANGLE))
+      print(out, fmt, "Angle Bending", energy_ea, countBondedTerm(Potent::ANGLE));
 
-   if (use_potent(strbnd_term))
-      print(out, fmt, "Stretch-Bend", energy_eba, count_bonded_term(strbnd_term));
+   if (usePotent(Potent::STRBND))
+      print(out, fmt, "Stretch-Bend", energy_eba, countBondedTerm(Potent::STRBND));
 
-   if (use_potent(urey_term))
-      print(out, fmt, "Urey-Bradley", energy_eub, count_bonded_term(urey_term));
+   if (usePotent(Potent::UREY))
+      print(out, fmt, "Urey-Bradley", energy_eub, countBondedTerm(Potent::UREY));
 
-   if (use_potent(opbend_term))
-      print(out, fmt, "Out-of-Plane Bend", energy_eopb, count_bonded_term(opbend_term));
+   if (usePotent(Potent::OPBEND))
+      print(out, fmt, "Out-of-Plane Bend", energy_eopb, countBondedTerm(Potent::OPBEND));
 
-   if (use_potent(improp_term))
-      print(out, fmt, "Improper Dihedral", energy_eid, count_bonded_term(improp_term));
+   if (usePotent(Potent::IMPROP))
+      print(out, fmt, "Improper Dihedral", energy_eid, countBondedTerm(Potent::IMPROP));
 
-   if (use_potent(imptors_term))
-      print(out, fmt, "Improper Torsion", energy_eit, count_bonded_term(imptors_term));
+   if (usePotent(Potent::IMPTORS))
+      print(out, fmt, "Improper Torsion", energy_eit, countBondedTerm(Potent::IMPTORS));
 
-   if (use_potent(torsion_term))
-      print(out, fmt, "Torsional Angle", energy_et, count_bonded_term(torsion_term));
+   if (usePotent(Potent::TORSION))
+      print(out, fmt, "Torsional Angle", energy_et, countBondedTerm(Potent::TORSION));
 
-   if (use_potent(pitors_term))
-      print(out, fmt, "Pi-Orbital Torsion", energy_ept, count_bonded_term(pitors_term));
+   if (usePotent(Potent::PITORS))
+      print(out, fmt, "Pi-Orbital Torsion", energy_ept, countBondedTerm(Potent::PITORS));
 
-   if (use_potent(strtor_term))
-      print(out, fmt, "Stretch-Torsion", energy_ebt, count_bonded_term(strtor_term));
+   if (usePotent(Potent::STRTOR))
+      print(out, fmt, "Stretch-Torsion", energy_ebt, countBondedTerm(Potent::STRTOR));
 
-   if (use_potent(angtor_term))
-      print(out, fmt, "Angle-Torsion", energy_eat, count_bonded_term(angle_term));
+   if (usePotent(Potent::ANGTOR))
+      print(out, fmt, "Angle-Torsion", energy_eat, countBondedTerm(Potent::ANGLE));
 
-   if (use_potent(tortor_term))
-      print(out, fmt, "Torsion-Torsion", energy_ett, count_bonded_term(tortor_term));
+   if (usePotent(Potent::TORTOR))
+      print(out, fmt, "Torsion-Torsion", energy_ett, countBondedTerm(Potent::TORTOR));
 
-   if (use_potent(vdw_term))
+   if (usePotent(Potent::VDW))
       print(out, fmt, "Van der Waals", energy_ev, count_reduce(nev));
 
-   if (use_potent(repuls_term))
+   if (usePotent(Potent::REPULS))
       print(out, fmt, "Repulsion", energy_er, count_reduce(nrep));
 
-   if (use_potent(disp_term))
+   if (usePotent(Potent::DISP))
       print(out, fmt, "Dispersion", energy_edsp, count_reduce(ndisp));
 
-   if (use_potent(charge_term))
+   if (usePotent(Potent::CHARGE))
       print(out, fmt, "Charge-Charge", energy_ec, count_reduce(nec));
 
-   if (use_potent(mpole_term))
+   if (usePotent(Potent::MPOLE))
       print(out, fmt, "Atomic Multipoles", energy_em, count_reduce(nem));
 
-   if (use_potent(polar_term))
+   if (usePotent(Potent::POLAR))
       print(out, fmt, "Polarization", energy_ep, count_reduce(nep));
 
-   if (use_potent(chgtrn_term))
+   if (usePotent(Potent::CHGTRN))
       print(out, fmt, "Charge Transfer", energy_ect, count_reduce(nct));
 
-   if (use_potent(geom_term))
-      print(out, fmt, "Geometric Restraints", energy_eg, count_bonded_term(geom_term));
+   if (usePotent(Potent::GEOM))
+      print(out, fmt, "Geometric Restraints", energy_eg, countBondedTerm(Potent::GEOM));
 }
 
 void moments();

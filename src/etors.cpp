@@ -9,7 +9,8 @@
 namespace tinker {
 void etorsData(RcOp op)
 {
-   if (not use_potent(torsion_term) and not use_potent(strtor_term) and not use_potent(angtor_term))
+   if (not usePotent(Potent::TORSION) and not usePotent(Potent::STRTOR) and
+      not usePotent(Potent::ANGTOR))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -27,7 +28,7 @@ void etorsData(RcOp op)
    }
 
    if (op & rc_alloc) {
-      ntors = count_bonded_term(torsion_term);
+      ntors = countBondedTerm(Potent::TORSION);
       darray::allocate(ntors, &itors, &tors1, &tors2, &tors3, &tors4, &tors5, &tors6);
 
       et = eng_buf;

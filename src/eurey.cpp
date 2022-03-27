@@ -8,7 +8,7 @@
 namespace tinker {
 void eureyData(RcOp op)
 {
-   if (!use_potent(urey_term))
+   if (!usePotent(Potent::UREY))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -26,10 +26,10 @@ void eureyData(RcOp op)
    }
 
    if (op & rc_alloc) {
-      int nangle = count_bonded_term(angle_term);
+      int nangle = countBondedTerm(Potent::ANGLE);
       darray::allocate(nangle, &iury, &uk, &ul);
 
-      nurey = count_bonded_term(urey_term);
+      nurey = countBondedTerm(Potent::UREY);
 
       eub = eng_buf;
       vir_eub = vir_buf;
@@ -41,7 +41,7 @@ void eureyData(RcOp op)
    }
 
    if (op & rc_init) {
-      int nangle = count_bonded_term(angle_term);
+      int nangle = countBondedTerm(Potent::ANGLE);
       std::vector<int> ibuf(3 * nangle);
       for (int i = 0; i < 3 * nangle; ++i)
          ibuf[i] = urey::iury[i] - 1;

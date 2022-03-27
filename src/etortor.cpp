@@ -12,7 +12,7 @@
 namespace tinker {
 void etortorData(RcOp op)
 {
-   if (!use_potent(tortor_term))
+   if (!usePotent(Potent::TORTOR))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -35,7 +35,7 @@ void etortorData(RcOp op)
 
       darray::allocate(ktrtor::maxntt, &tnx, &tny, &ttx, &tty, &tbf, &tbx, &tby, &tbxy);
 
-      ntortor = count_bonded_term(tortor_term);
+      ntortor = countBondedTerm(Potent::TORTOR);
       darray::allocate(ntortor, &chkttor_ia_);
 
       ett = eng_buf;

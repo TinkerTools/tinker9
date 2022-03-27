@@ -2,22 +2,23 @@
 #include "precision.h"
 
 namespace tinker {
-enum Switch
+/// \ingroup ff
+enum class Switch
 {
-   SWITCH_DEFAULT,
-   SWITCH_VDW,
-   SWITCH_REPULS,
-   SWITCH_DISP,
-   SWITCH_CHARGE,
-   SWITCH_CHGDPL,
-   SWITCH_DIPOLE,
-   SWITCH_MPOLE,
-   SWITCH_CHGTRN,
-   SWITCH_EWALD,
-   SWITCH_DEWALD,
-   SWITCH_USOLVE,
-   SWITCH_GKV,
-   SWITCH_GKSA,
+   DEFAULT,
+   VDW,
+   REPULS,
+   DISP,
+   CHARGE,
+   CHGDPL,
+   DIPOLE,
+   MPOLE,
+   CHGTRN,
+   EWALD,
+   DEWALD,
+   USOLVE,
+   GKV,
+   GKSA,
 };
 
 /// \ingroup ff

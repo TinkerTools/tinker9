@@ -9,43 +9,43 @@ real switchCut(Switch mode)
    real cut;
    using namespace limits;
    switch (mode) {
-   case SWITCH_VDW:
+   case Switch::VDW:
       cut = vdwtaper;
       break;
-   case SWITCH_REPULS:
+   case Switch::REPULS:
       cut = reptaper;
       break;
-   case SWITCH_DISP:
+   case Switch::DISP:
       cut = disptaper;
       break;
-   case SWITCH_CHARGE:
+   case Switch::CHARGE:
       cut = chgtaper;
       break;
-   case SWITCH_CHGDPL:
+   case Switch::CHGDPL:
       cut = std::sqrt(chgtaper * dpltaper);
       break;
-   case SWITCH_DIPOLE:
+   case Switch::DIPOLE:
       cut = dpltaper;
       break;
-   case SWITCH_MPOLE:
+   case Switch::MPOLE:
       cut = mpoletaper;
       break;
-   case SWITCH_CHGTRN:
+   case Switch::CHGTRN:
       cut = ctrntaper;
       break;
-   case SWITCH_EWALD:
+   case Switch::EWALD:
       cut = ewaldcut;
       break;
-   case SWITCH_DEWALD:
+   case Switch::DEWALD:
       cut = dewaldcut;
       break;
-   case SWITCH_USOLVE:
+   case Switch::USOLVE:
       cut = usolvcut;
       break;
-   case SWITCH_GKV:
+   case Switch::GKV:
       cut = nonpol::spcut;
       break;
-   case SWITCH_GKSA:
+   case Switch::GKSA:
       cut = nonpol::stoff;
       break;
    default:
@@ -60,43 +60,43 @@ real switchOff(Switch mode)
    real off;
    using namespace limits;
    switch (mode) {
-   case SWITCH_VDW:
+   case Switch::VDW:
       off = vdwcut;
       break;
-   case SWITCH_REPULS:
+   case Switch::REPULS:
       off = repcut;
       break;
-   case SWITCH_DISP:
+   case Switch::DISP:
       off = dispcut;
       break;
-   case SWITCH_CHARGE:
+   case Switch::CHARGE:
       off = chgcut;
       break;
-   case SWITCH_CHGDPL:
+   case Switch::CHGDPL:
       off = std::sqrt(chgcut * dplcut);
       break;
-   case SWITCH_DIPOLE:
+   case Switch::DIPOLE:
       off = dplcut;
       break;
-   case SWITCH_MPOLE:
+   case Switch::MPOLE:
       off = mpolecut;
       break;
-   case SWITCH_CHGTRN:
+   case Switch::CHGTRN:
       off = ctrncut;
       break;
-   case SWITCH_EWALD:
+   case Switch::EWALD:
       off = ewaldcut;
       break;
-   case SWITCH_DEWALD:
+   case Switch::DEWALD:
       off = dewaldcut;
       break;
-   case SWITCH_USOLVE:
+   case Switch::USOLVE:
       off = usolvcut;
       break;
-   case SWITCH_GKV:
+   case Switch::GKV:
       off = nonpol::spoff;
       break;
-   case SWITCH_GKSA:
+   case Switch::GKSA:
       off = nonpol::stcut;
       break;
    default:

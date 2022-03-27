@@ -25,7 +25,7 @@ void echgljData(RcOp op)
    if (!(clist_version() & NBL_SPATIAL))
       return;
 
-   if (!use_potent(charge_term) || !use_potent(vdw_term))
+   if (!usePotent(Potent::CHARGE) || !usePotent(Potent::VDW))
       return;
 
    if (op & rc_dealloc) {

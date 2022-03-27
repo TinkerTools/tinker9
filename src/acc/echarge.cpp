@@ -24,13 +24,13 @@ void echarge_acc1()
    real f = electric / dielec;
    real cut, off, aewald;
    if CONSTEXPR (eq<ETYP, EWALD>()) {
-      off = switchOff(SWITCH_EWALD);
+      off = switchOff(Switch::EWALD);
       // cut = off; // not used
       const auto& st = *epme_unit;
       aewald = st.aewald;
    } else if CONSTEXPR (eq<ETYP, NON_EWALD_TAPER>()) {
-      off = switchOff(SWITCH_CHARGE);
-      cut = switchCut(SWITCH_CHARGE);
+      off = switchOff(Switch::CHARGE);
+      cut = switchCut(Switch::CHARGE);
    }
    const real off2 = off * off;
    const int maxnlist = clist_unit->maxnlst;

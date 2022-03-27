@@ -489,8 +489,8 @@ template <class Ver>
 void erepel_cu2()
 {
    const auto& st = *mspatial_v2_unit;
-   real cut = switchCut(SWITCH_REPULS);
-   real off = switchOff(SWITCH_REPULS);
+   real cut = switchCut(Switch::REPULS);
+   real off = switchOff(Switch::REPULS);
 
    int ngrid = gpuGridSize(BLOCK_DIM);
    erepel_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nrep, er, vir_er, derx,

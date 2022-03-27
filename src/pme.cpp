@@ -135,8 +135,8 @@ void pmeData(RcOp op)
 
    if (op & rc_init) {
       if (!bound::use_bounds) {
-         double ecut = switchOff(SWITCH_EWALD);
-         double dcut = switchOff(SWITCH_DEWALD);
+         double ecut = switchOff(Switch::EWALD);
+         double dcut = switchOff(Switch::DEWALD);
          double ext;
          tinker_f_extent(&ext);
          double wbox = 2 * (ext + std::fmax(ecut, dcut));
@@ -144,7 +144,7 @@ void pmeData(RcOp op)
       }
    }
 
-   if (use_potent(charge_term) && useEwald()) {
+   if (usePotent(Potent::CHARGE) && useEwald()) {
       if (op & rc_alloc) {
          epme_unit.close();
          PME::Params p(ewald::aeewald, pme::nefft1, pme::nefft2, pme::nefft3, pme::bseorder);
@@ -156,10 +156,10 @@ void pmeData(RcOp op)
       }
    }
 
-   if ((use_potent(mpole_term) || use_potent(polar_term)) && useEwald()) {
+   if ((usePotent(Potent::MPOLE) || usePotent(Potent::POLAR)) && useEwald()) {
       if (op & rc_dealloc) {
          darray::deallocate(cmp, fmp, cphi, fphi);
-         if (use_potent(polar_term)) {
+         if (usePotent(Potent::POLAR)) {
             darray::deallocate(fuind, fuinp, fdip_phi1, fdip_phi2, cphidp, fphidp);
             darray::deallocate(vir_m);
          }
@@ -167,7 +167,7 @@ void pmeData(RcOp op)
 
       if (op & rc_alloc) {
          darray::allocate(n, &cmp, &fmp, &cphi, &fphi);
-         if (use_potent(polar_term)) {
+         if (usePotent(Potent::POLAR)) {
             darray::allocate(n, &fuind, &fuinp, &fdip_phi1, &fdip_phi2, &cphidp, &fphidp);
             if (rc_flag & calc::virial)
                darray::allocate(buffer_size(), &vir_m);
@@ -181,7 +181,7 @@ void pmeData(RcOp op)
 
          // electrostatics
          epme_unit.close();
-         if (use_potent(mpole_term)) {
+         if (usePotent(Potent::MPOLE)) {
             unique_grids = false;
             PME::Params p(ewald::aeewald, pme::nefft1, pme::nefft2, pme::nefft3, pme::bseorder);
             pme_op_alloc(epme_unit, p, unique_grids);
@@ -190,7 +190,7 @@ void pmeData(RcOp op)
          // polarization
          ppme_unit.close();
          pvpme_unit.close();
-         if (use_potent(polar_term)) {
+         if (usePotent(Potent::POLAR)) {
             PME::Params p(ewald::apewald, pme::nefft1, pme::nefft2, pme::nefft3, pme::bsporder);
             pme_op_alloc(ppme_unit, p, unique_grids);
             if (rc_flag & calc::virial) {
@@ -207,7 +207,7 @@ void pmeData(RcOp op)
       }
    }
 
-   if (use_potent(disp_term) && useDEwald()) {
+   if (usePotent(Potent::DISP) && useDEwald()) {
       if (op & rc_alloc) {
          dpme_unit.close();
          PME::Params p(ewald::adewald, pme::ndfft1, pme::ndfft2, pme::ndfft3, pme::bsdorder);

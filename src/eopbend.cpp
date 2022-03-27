@@ -10,7 +10,7 @@
 namespace tinker {
 void eopbendData(RcOp op)
 {
-   if (!use_potent(opbend_term))
+   if (!usePotent(Potent::OPBEND))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -28,9 +28,9 @@ void eopbendData(RcOp op)
    }
 
    if (op & rc_alloc) {
-      int nangle = count_bonded_term(angle_term);
+      int nangle = countBondedTerm(Potent::ANGLE);
       darray::allocate(nangle, &iopb, &opbk);
-      nopbend = count_bonded_term(opbend_term);
+      nopbend = countBondedTerm(Potent::OPBEND);
 
       eopb = eng_buf;
       vir_eopb = vir_buf;
@@ -49,7 +49,7 @@ void eopbendData(RcOp op)
          opbtyp = eopbend_t::allinger;
       else
          assert(false);
-      int nangle = count_bonded_term(angle_term);
+      int nangle = countBondedTerm(Potent::ANGLE);
       std::vector<int> ibuf(nangle);
       for (int i = 0; i < nangle; ++i)
          ibuf[i] = opbend::iopb[i] - 1;

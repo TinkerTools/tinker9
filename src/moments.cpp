@@ -122,12 +122,12 @@ void moments()
    }
 
    // atomic multipoles
-   if (use_potent(mpole_term) or use_potent(polar_term)) {
+   if (usePotent(Potent::MPOLE) or usePotent(Potent::POLAR)) {
       // download rpole, uind
       std::vector<real> rpolev(n * 10), uindv(n * 3);
       mpoleInit(calc::energy);
       darray::copyout(g::q0, n * 10, rpolev.data(), &rpole[0][0]);
-      if (use_potent(polar_term)) {
+      if (usePotent(Potent::POLAR)) {
          if (mplpot::use_chgpen)
             induce2(uind);
          else

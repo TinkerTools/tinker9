@@ -36,7 +36,7 @@ void epolar_chgpen_ewald_real_cu(int vers, int use_cf, const real (*d)[3]);
 namespace tinker {
 void epolarChgpenData(RcOp op)
 {
-   if (not use_potent(polar_term))
+   if (not usePotent(Potent::POLAR))
       return;
    if (not mplpot::use_chgpen)
       return;
