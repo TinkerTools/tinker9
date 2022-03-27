@@ -1,8 +1,8 @@
 #pragma once
 #include "mod/energy.h"
-#include "mod/gpucard.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
+#include "tool/gpucard.h"
 
 namespace tinker {
 /**

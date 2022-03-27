@@ -30,13 +30,13 @@ ResourceManagement::~ResourceManagement()
 void initialize()
 {
    RcOp op = rc_alloc | rc_init;
-   device_data(op);
+   deviceData(op);
 }
 
 void finish()
 {
    RcOp op = rc_dealloc;
-   device_data(op);
+   deviceData(op);
 }
 }
 
@@ -54,7 +54,7 @@ void finish()
 #include "tool/cudalib.h"
 
 namespace tinker {
-void device_data(RcOp op)
+void deviceData(RcOp op)
 {
    // host
    RcMan rand42{randomData, op};

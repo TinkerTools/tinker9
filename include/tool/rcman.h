@@ -1,7 +1,9 @@
 #pragma once
+#include "macro.h"
 #include <type_traits>
 
 namespace tinker {
+inline namespace v1 {
 /// \ingroup rc
 /// Direct mathematical calculation of enum class is prohibited in C++ syntax.
 template <class E>
@@ -9,6 +11,7 @@ struct EnableEnumBitMask
 {
    static constexpr bool value = false;
 };
+}
 
 /// \def TINKER_ENABLE_ENUM_BITMASK
 /// \ingroup rc
@@ -99,7 +102,7 @@ void finish();
 
 /// \ingroup rc
 /// Set up and clean up device environment.
-void device_data(RcOp);
+void deviceData(RcOp);
 }
 
 extern "C"
@@ -113,7 +116,7 @@ extern "C"
 }
 
 namespace tinker {
-/// \ingroup mdcalc
+/// \ingroup rc
 /// \brief Bitmasks for MD.
 struct calc
 {
@@ -150,7 +153,6 @@ struct calc
    using V5 = Grad;
    using V6 = GradVir;
 
-   /// \ingroup mdcalc
    /// \brief Sanity checks for version constants.
    template <int USE>
    class Vers
@@ -181,4 +183,16 @@ extern "C"
    {};
    struct GradVir : public tinker::calc::Vers<tinker::calc::v6>
    {};
+}
+
+//====================================================================//
+//                                                                    //
+//                          Global Variables                          //
+//                                                                    //
+//====================================================================//
+
+namespace tinker {
+/// \ingroup rc
+/// \brief Global bitmask.
+TINKER_EXTERN int rc_flag;
 }

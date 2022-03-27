@@ -1,5 +1,5 @@
 #include "tool/execq.h"
-#include "mod/cudalib.h"
+#include "tool/cudalib.h"
 #include "tool/error.h"
 #include <cuda_runtime.h>
 

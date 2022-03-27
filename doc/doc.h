@@ -16,8 +16,6 @@
 /// \defgroup md  Molecular Dynamics
 /// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)
 /// \ingroup md
-/// \defgroup mdcalc  Control Bits for MM and MD Calculations
-/// \ingroup md
 /// \defgroup mdintg  Integrators
 /// \ingroup md
 

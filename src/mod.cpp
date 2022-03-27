@@ -1,9 +1,7 @@
 #define TINKER_EXTERN_DEFINITION_FILE 1
 
 #include "mod/accasync.h"
-#include "mod/atom.h"
 #include "mod/box.h"
-#include "mod/cudalib.h"
 #include "mod/disp.h"
 #include "mod/elec.h"
 #include "mod/elecamoeba.h"
@@ -11,7 +9,6 @@
 #include "mod/elecpchg.h"
 #include "mod/energy.h"
 #include "mod/evalence.h"
-#include "mod/gpucard.h"
 #include "mod/md.h"
 #include "mod/molecule.h"
 #include "mod/mutant.h"
@@ -20,3 +17,8 @@
 #include "mod/rattle.h"
 #include "mod/repel.h"
 #include "mod/vdw.h"
+
+#include "ff/atom.h"
+#include "tool/cudalib.h"
+#include "tool/gpucard.h"
+#include "tool/rcman.h"
