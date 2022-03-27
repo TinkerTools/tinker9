@@ -2,8 +2,8 @@
 #include "comparetypes.h"
 #include "ff/elec.h"
 #include "math/inc.h"
-#include "seq/damp_hippodisp.h"
 #include "math/switch.h"
+#include "seq/damp_hippodisp.h"
 #include "seqdef.h"
 
 namespace tinker {

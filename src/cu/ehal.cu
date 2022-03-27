@@ -4,10 +4,10 @@
 #include "ff/spatial2.h"
 #include "ff/switch.h"
 #include "launch.h"
+#include "math/switch.h"
 #include "md/inc.h"
 #include "mod/nblist.h"
 #include "seq/pair_hal.h"
-#include "math/switch.h"
 #include "seq/triangle.h"
 #include "tool/gpucard.h"
 

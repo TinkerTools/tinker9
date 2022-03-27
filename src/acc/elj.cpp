@@ -2,10 +2,10 @@
 #include "ff/image.h"
 #include "ff/pchg/evdw.h"
 #include "ff/switch.h"
+#include "math/switch.h"
 #include "md/inc.h"
 #include "mod/nblist.h"
 #include "seq/pair_lj.h"
-#include "math/switch.h"
 #include "tool/gpucard.h"
 
 namespace tinker {

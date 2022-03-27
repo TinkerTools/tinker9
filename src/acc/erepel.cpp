@@ -2,6 +2,7 @@
 #include "add.h"
 #include "ff/image.h"
 #include "ff/switch.h"
+#include "math/switch.h"
 #include "md/inc.h"
 #include "mod/elecamoeba.h"
 #include "mod/nblist.h"
@@ -9,7 +10,6 @@
 #include "seq/bsplgen.h"
 #include "seq/damp_hippo.h"
 #include "seq/pair_repel.h"
-#include "math/switch.h"
 #include "tool/gpucard.h"
 
 namespace tinker {

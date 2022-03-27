@@ -3,6 +3,7 @@
 #include "ff/image.h"
 #include "ff/switch.h"
 #include "launch.h"
+#include "math/switch.h"
 #include "md/inc.h"
 #include "mod/elecamoeba.h"
 #include "mod/elechippo.h"
@@ -10,7 +11,6 @@
 #include "mod/nblist.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_chgtrn.h"
-#include "math/switch.h"
 #include "seq/triangle.h"
 #include "tool/gpucard.h"
 #include <cassert>

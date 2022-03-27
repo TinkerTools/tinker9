@@ -4,11 +4,11 @@
 #include "ff/image.h"
 #include "ff/pmestuf.h"
 #include "ff/switch.h"
+#include "math/switch.h"
 #include "md/inc.h"
 #include "mod/nblist.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_charge.h"
-#include "math/switch.h"
 #include "tool/gpucard.h"
 
 namespace tinker {
