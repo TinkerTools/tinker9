@@ -10,7 +10,6 @@
 #include "launch.h"
 #include "math/inc.h"
 #include "md/osrw.h"
-#include "mod/elec.h"
 #include "mod/nblist.h"
 #include "seq/pair_charge.h"
 #include "seq/pair_lj.h"

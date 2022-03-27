@@ -2,7 +2,7 @@
 #include "ff/box.h"
 #include "ff/energy.h"
 #include "ff/nblist.h"
-#include "ff/pmestuf.h"
+#include "ff/pme.h"
 #include "ff/potent.h"
 #include "mod/disp.h"
 #include "tinker9.h"

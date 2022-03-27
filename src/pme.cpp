@@ -2,7 +2,7 @@
 #include "ff/box.h"
 #include "ff/elec.h"
 #include "ff/hippo/edisp.h"
-#include "ff/pmestuf.h"
+#include "ff/pme.h"
 #include "ff/potent.h"
 #include "ff/switch.h"
 #include "math/inc.h"

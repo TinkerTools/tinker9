@@ -4,7 +4,7 @@
 #include "ff/amoeba/mpole1.h"
 #include "ff/box.h"
 #include "ff/elec.h"
-#include "ff/pmestuf.h"
+#include "ff/pme.h"
 #include "launch.h"
 #include "md/inc.h"
 #include "mod/elecpchg.h"

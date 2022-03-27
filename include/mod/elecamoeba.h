@@ -2,7 +2,6 @@
 #include "ff/amoeba/mpole1.h"
 #include "ff/amoeba/upred1.h"
 #include "ff/energybuffer.h"
-#include "mod/elec.h"
 
 // mpole
 namespace tinker {

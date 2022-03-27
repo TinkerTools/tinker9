@@ -2,7 +2,7 @@
 #include "ff/energy.h"
 #include "ff/hippo/empolechgpen.h"
 #include "ff/image.h"
-#include "ff/pmestuf.h"
+#include "ff/pme.h"
 #include "ff/switch.h"
 #include "math/switch.h"
 #include "mod/elecamoeba.h"

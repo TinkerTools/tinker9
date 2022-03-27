@@ -5,7 +5,6 @@
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "ff/pme.h"
-#include "ff/pmestuf.h"
 #include "ff/potent.h"
 #include "mod/elecamoeba.h"
 #include "tool/io.h"

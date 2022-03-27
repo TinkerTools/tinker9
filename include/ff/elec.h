@@ -1,4 +1,5 @@
 #pragma once
+#include "precision.h"
 #include "tool/rcman.h"
 
 namespace tinker {
@@ -65,4 +66,15 @@ extern "C"
    {
       int foo;
    };
+}
+
+//====================================================================//
+//                                                                    //
+//                          Global Variables                          //
+//                                                                    //
+//====================================================================//
+
+namespace tinker {
+TINKER_EXTERN real electric;
+TINKER_EXTERN real dielec;
 }

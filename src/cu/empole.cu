@@ -5,7 +5,6 @@
 #include "ff/image.h"
 #include "ff/switch.h"
 #include "launch.h"
-#include "mod/elec.h"
 #include "mod/elecamoeba.h"
 #include "mod/elecpchg.h"
 #include "mod/nblist.h"

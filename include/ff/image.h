@@ -1,6 +1,6 @@
 #pragma once
 #include "ff/box.h"
-#include "math/inc.h"
+#include "math/libfunc.h"
 #include "seqdef.h"
 
 namespace tinker {
@@ -173,16 +173,14 @@ inline real imagen2General(real& xr, real& yr, real& zr, BoxShape sh, real3 l1, 
 }
 }
 
-/**
- * \def image
- * \ingroup box
- * Apply periodic boundary conditions to displacement (`xr, yr, zr`) and
- * preserve the correct signs.
- *
- * For testing purpose, defining it in the source code before including this
- * header file will overwrite the default macro definition. Otherwise, it needs
- * to be undef-ed.
- */
+/// \def image
+/// \ingroup box
+/// Apply periodic boundary conditions to displacement (`xr, yr, zr`) and
+/// preserve the correct signs.
+///
+/// For testing purpose, defining it in the source code before including this
+/// header file will overwrite the default macro definition. Otherwise, it needs
+/// to be undef-ed.
 #ifndef image
 #   define image(x, y, z) imageGeneral(x, y, z, TINKER_IMAGE_ARGS)
 #endif

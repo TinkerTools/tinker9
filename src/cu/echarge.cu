@@ -3,7 +3,7 @@
 #include "ff/energy.h"
 #include "ff/image.h"
 #include "ff/pchg/echarge.h"
-#include "ff/pmestuf.h"
+#include "ff/pme.h"
 #include "ff/spatial2.h"
 #include "ff/switch.h"
 #include "launch.h"

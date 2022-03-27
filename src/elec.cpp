@@ -7,7 +7,7 @@
 #include "ff/hippo/epolarchgpen.h"
 #include "ff/nblist.h"
 #include "ff/pchg/echarge.h"
-#include "ff/pmestuf.h"
+#include "ff/pme.h"
 #include "ff/potent.h"
 #include "ff/switch.h"
 #include "mod/elecamoeba.h"

@@ -3,7 +3,7 @@
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "ff/pchg/echglj.h"
-#include "ff/pmestuf.h"
+#include "ff/pme.h"
 #include "ff/potent.h"
 #include "tool/zero.h"
 #include <tinker/detail/chgpot.hh>
