@@ -4,7 +4,6 @@
 #include "ff/molecule.h"
 #include "ff/potent.h"
 #include "launch.h"
-#include "md/inc.h"
 #include "mod/evalence.h"
 #include "seq/angle.h"
 #include "seq/angtor.h"

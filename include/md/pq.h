@@ -48,7 +48,6 @@ void mdBounds_acc();
 /// \ingroup mdpq
 void mdReadFrameCopyinToXyz(std::istream& input, int& done);
 
-
 /// \ingroup mdpq
 /// \brief Update velocities via `v += -g/m dt`.
 void mdVel(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz);

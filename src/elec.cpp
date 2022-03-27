@@ -10,7 +10,6 @@
 #include "ff/pmestuf.h"
 #include "ff/potent.h"
 #include "ff/switch.h"
-#include "md/inc.h"
 #include "mod/elecamoeba.h"
 #include "mod/elechippo.h"
 #include "mod/vdw.h"

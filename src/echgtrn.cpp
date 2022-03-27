@@ -1,7 +1,7 @@
 #include "ff/hippo/echgtrn.h"
+#include "ff/energy.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
-#include "md/inc.h"
 #include "mod/elecamoeba.h"
 #include "mod/elechippo.h"
 #include "tool/darray.h"

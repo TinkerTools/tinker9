@@ -1,5 +1,5 @@
+#include "ff/energy.h"
 #include "ff/pchg/evalence.h"
-#include "md/inc.h"
 #include "seq/improp.h"
 
 namespace tinker {

@@ -1,7 +1,7 @@
 #include "ff/amoeba/induce.h"
 #include "ff/elec.h"
+#include "ff/energy.h"
 #include "ff/nblist.h"
-#include "md/inc.h"
 
 namespace tinker {
 void dfield_ewald_recip_self(real (*field)[3], real (*fieldp)[3]);

@@ -1,6 +1,6 @@
 #include "add.h"
+#include "ff/energy.h"
 #include "ff/pchg/evalence.h"
-#include "md/inc.h"
 #include "seq/bond.h"
 #include <cassert>
 

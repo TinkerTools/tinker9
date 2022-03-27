@@ -1,8 +1,8 @@
 #include "ff/box.h"
+#include "ff/energy.h"
 #include "ff/energybuffer.h"
 #include "ff/pchg/evdw.h"
 #include "math/inc.h"
-#include "md/inc.h"
 #include <cassert>
 
 namespace tinker {

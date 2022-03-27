@@ -1,7 +1,7 @@
 #include "add.h"
+#include "ff/energy.h"
 #include "ff/pchg/evalence.h"
 #include "math/inc.h"
-#include "md/inc.h"
 #include "seq/angle.h"
 
 namespace tinker {

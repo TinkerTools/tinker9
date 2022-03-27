@@ -1,6 +1,6 @@
 #include "add.h"
 #include "ff/amoeba/epolar.h"
-#include "md/inc.h"
+#include "ff/energy.h"
 #include "mod/elecamoeba.h"
 #include "mod/elecpchg.h"
 

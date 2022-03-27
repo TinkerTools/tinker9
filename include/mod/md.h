@@ -2,11 +2,6 @@
 #include "precision.h"
 
 namespace tinker {
-/// \ingroup rc
-/// \var rc_flag
-/// \brief Global bitmask.
-TINKER_EXTERN int rc_flag;
-
 /// \ingroup mdpq
 /// \{
 /// \var vx

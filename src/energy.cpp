@@ -2,7 +2,6 @@
 #include "ff/hippo/cflux.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
-#include "md/inc.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
 #include "tool/zero.h"

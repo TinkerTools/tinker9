@@ -1,9 +1,9 @@
 #include "add.h"
 #include "ff/box.h"
+#include "ff/energy.h"
 #include "ff/image.h"
 #include "ff/molecule.h"
 #include "ff/pchg/evalence.h"
-#include "md/inc.h"
 #include "seq/geom.h"
 #include <cassert>
 

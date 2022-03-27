@@ -1,9 +1,9 @@
 #include "ff/pchg/echglj.h"
 #include "ff/box.h"
 #include "ff/elec.h"
+#include "ff/energy.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
-#include "md/inc.h"
 #include "tool/io.h"
 #include "tool/zero.h"
 #include <array>
