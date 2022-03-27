@@ -64,14 +64,11 @@ void device_data(RcOp op)
    // device
    RcMan cl42{cudalibData, op};
 
-   RcMan n42{mdNData, op};
-   RcMan cpl42{coupleData, op};
-
    RcMan box42{boxData, op};
-
-   RcMan xyz42{mdXyzData, op};
-   RcMan vel42{mdVelData, op};
-   RcMan mass42{mdMassData, op};
+   RcMan n42{nData, op};
+   RcMan mass42{massData, op};
+   RcMan xyz42{xyzData, op};
+   RcMan cpl42{coupleData, op};
    RcMan molecule42{moleculeData, op};
    RcMan group42{groupData, op};
 
@@ -84,6 +81,7 @@ void device_data(RcOp op)
    RcMan nbl42{nblist_data, op};
 
    RcMan rattle42{rattleData, op};
+   RcMan vel42{mdVelData, op};
    RcMan md42{mdData, op};
 }
 }

@@ -13,7 +13,7 @@
 #include <tinker/detail/usage.hh>
 
 namespace tinker {
-void mdNData(RcOp op)
+void nData(RcOp op)
 {
    if (op & rc_dealloc) {
       trajn = -1;
@@ -124,14 +124,14 @@ void mdReadFrameCopyinToXyz(std::istream& ipt, int& done)
          atoms::z[index] = zr;
       }
 
-      mdXyzData(rc_init);
+      xyzData(rc_init);
    }
 
    if (ipt.peek() == EOF)
       done = true;
 }
 
-void mdXyzData(RcOp op)
+void xyzData(RcOp op)
 {
    if ((calc::xyz & rc_flag) == 0)
       return;
@@ -209,7 +209,7 @@ void mdVel2(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad
    mdVel2_acc(dt, grx, gry, grz, dt2, grx2, gry2, grz2);
 }
 
-void mdMassData(RcOp op)
+void massData(RcOp op)
 {
    if ((calc::mass & rc_flag) == 0)
       return;

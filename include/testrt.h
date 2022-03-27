@@ -1,4 +1,5 @@
 #pragma once
+#include "ff/atom.h"
 #include "ff/energy.h"
 #include "md/calc.h"
 #include "mod/md.h"

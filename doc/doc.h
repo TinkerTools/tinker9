@@ -11,6 +11,8 @@
 
 /// \defgroup prec  Precisions
 
+/// \defgroup ff  Force Fields
+
 /// \defgroup md  Molecular Dynamics
 /// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)
 /// \ingroup md

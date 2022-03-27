@@ -1,12 +1,10 @@
 #pragma once
+#include "ff/atom.h"
 #include "precision.h"
 #include "tool/rcman.h"
 #include <istream>
 
 namespace tinker {
-/// \ingroup mdpq
-void mdNData(RcOp);
-
 /// \ingroup mdpq
 /// \brief Update #x, #y, #z by #xpos, #ypos, and #zpos.
 /// If #xpos etc. are only aliases, return directly.
@@ -49,8 +47,7 @@ void mdBounds_acc();
 
 /// \ingroup mdpq
 void mdReadFrameCopyinToXyz(std::istream& input, int& done);
-/// \ingroup mdpq
-void mdXyzData(RcOp);
+
 
 /// \ingroup mdpq
 /// \brief Update velocities via `v += -g/m dt`.
@@ -91,7 +88,4 @@ void mdVelAvbfAn(int nrespa, vel_prec a[3][3], vel_prec b[3][3],     //
 
 /// \ingroup mdpq
 void mdVelData(RcOp);
-
-/// \ingroup mdpq
-void mdMassData(RcOp);
 }

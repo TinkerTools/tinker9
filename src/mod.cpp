@@ -1,6 +1,7 @@
 #define TINKER_EXTERN_DEFINITION_FILE 1
 
 #include "mod/accasync.h"
+#include "mod/atom.h"
 #include "mod/box.h"
 #include "mod/cudalib.h"
 #include "mod/disp.h"
